@@ -1,5 +1,6 @@
 import Head from 'next/head';
 import Image from 'next/image';
+import Hero from '../components/layout/hero';
 import NavBar from '../components/layout/nav_bar';
 
 const Home = () => {
@@ -13,9 +14,16 @@ const Home = () => {
 			<NavBar />
 
 			<div className="bg-black flex min-h-screen flex-col items-center justify-center py-24 overflow-hidden">
-				{/* <header>
-			<NavBar />
-			</header> */}
+				<main>
+					<div className="">
+						<div className="overflow-y-auto">
+							<Hero
+								heading={`Trusted platform for Crypto investment`}
+								content={`Start investing now. On TideBit you can learn, buy and sell cryptocurrency assets with the best quality. `}
+							/>
+						</div>
+					</div>
+				</main>
 			</div>
 		</>
 	);

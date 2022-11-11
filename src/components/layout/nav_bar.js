@@ -12,6 +12,8 @@ import Link from 'next/link';
 const NavBar = () => {
 	const [navOpen, setNavOpen] = useState(true);
 
+	const TideButton = tideButton;
+
 	const clickHandler = () => setNavOpen(!navOpen);
 
 	return (
@@ -81,7 +83,7 @@ const NavBar = () => {
 								className="hover:cursor-pointer hover:text-cyan-300"
 							/>
 						</div>
-						<tideButton
+						<TideButton
 							isHover={false}
 							isFocus={true}
 							className="lg:mr-5"

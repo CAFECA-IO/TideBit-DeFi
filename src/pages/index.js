@@ -1,6 +1,6 @@
 import Head from 'next/head';
 import Image from 'next/image';
-import NavBar from '../components/Layout/NavBar';
+import NavBar from '../components/layout/nav_bar';
 
 const Home = () => {
 	return (

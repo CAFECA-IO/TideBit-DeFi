@@ -1,6 +1,10 @@
 import { useState } from 'react';
-import TideButton from '../Shared/Button/TideButton';
-import TideLink from '../Shared/Link/TideLink';
+import TideButton from '../shared/button/tide_button';
+import TideLink from '../shared/link/tide_link';
+import { AiOutlineGlobal } from 'react-icons/ai';
+import { BsFillBellFill } from 'react-icons/bs';
+import { TbMinusVertical } from 'react-icons/tb';
+import { FiMenu } from 'react-icons/fi';
 
 import React from 'react';
 import Link from 'next/link';
@@ -50,8 +54,7 @@ const NavBar = () => {
 											/>
 										</svg>
 									) : (
-										<p>Open</p>
-										// <FiMenu size={30} className="" />
+										<FiMenu size={30} className="" />
 									)}
 								</button>
 							</div>
@@ -68,7 +71,7 @@ const NavBar = () => {
 						<TideLink href="#" className="mr-5" content={'Help Center'} />
 
 						<div className="flex justify-center md:px-2 lg:px-5">
-							{/* <AiOutlineGlobal
+							<AiOutlineGlobal
 								size={30}
 								className="hover:cursor-pointer hover:text-cyan-300"
 							/>
@@ -76,7 +79,7 @@ const NavBar = () => {
 							<BsFillBellFill
 								size={28}
 								className="hover:cursor-pointer hover:text-cyan-300"
-							/> */}
+							/>
 						</div>
 						<TideButton
 							isHover={false}

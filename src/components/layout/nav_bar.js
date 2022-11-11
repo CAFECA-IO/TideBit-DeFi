@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import tideButton from '../shared/button/tide_button';
-import TideLink from '../shared/link/tide_link';
+import tideLink from '../shared/link/tide_link';
 import { AiOutlineGlobal } from 'react-icons/ai';
 import { BsFillBellFill } from 'react-icons/bs';
 import { TbMinusVertical } from 'react-icons/tb';
@@ -13,6 +13,8 @@ const NavBar = () => {
 	const [navOpen, setNavOpen] = useState(true);
 
 	const TideButton = tideButton;
+
+	const TideLink = tideLink;
 
 	const clickHandler = () => setNavOpen(!navOpen);
 

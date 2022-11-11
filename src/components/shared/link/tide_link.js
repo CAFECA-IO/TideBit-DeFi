@@ -1,7 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 
-const TideLink = ({ content = '', ...otherProps }) => {
+const tideLink = ({ content = '', ...otherProps }) => {
 	return (
 		<Link
 			href={`${otherProps.href}`}
@@ -12,4 +12,4 @@ const TideLink = ({ content = '', ...otherProps }) => {
 	);
 };
 
-export default TideLink;
+export default tideLink;

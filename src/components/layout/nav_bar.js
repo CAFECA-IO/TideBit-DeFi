@@ -76,12 +76,12 @@ const NavBar = () => {
 
 						<div className="flex justify-center md:px-2 lg:px-5">
 							<AiOutlineGlobal
-								size={30}
+								size={22}
 								className="hover:cursor-pointer hover:text-cyan-300"
 							/>
-							<TbMinusVertical size={30} className="" />
+							<TbMinusVertical size={25} className="" />
 							<BsFillBellFill
-								size={28}
+								size={23}
 								className="hover:cursor-pointer hover:text-cyan-300"
 							/>
 						</div>

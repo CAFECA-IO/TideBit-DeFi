@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import TideButton from '../shared/button/tide_button';
+import tideButton from '../shared/button/tide_button';
 import TideLink from '../shared/link/tide_link';
 import { AiOutlineGlobal } from 'react-icons/ai';
 import { BsFillBellFill } from 'react-icons/bs';
@@ -81,7 +81,7 @@ const NavBar = () => {
 								className="hover:cursor-pointer hover:text-cyan-300"
 							/>
 						</div>
-						<TideButton
+						<tideButton
 							isHover={false}
 							isFocus={true}
 							className="lg:mr-5"

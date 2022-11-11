@@ -1,6 +1,6 @@
 import React from 'react';
 
-const TideButton = ({
+const tideButton = ({
 	content = '',
 	isHover = false,
 	isFocus = false,
@@ -25,4 +25,4 @@ const TideButton = ({
 	);
 };
 
-export default TideButton;
+export default tideButton;

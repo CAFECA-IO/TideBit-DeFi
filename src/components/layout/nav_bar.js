@@ -1,31 +1,27 @@
+import Link from 'next/link';
+import TideButton from '../shared/button/tide_button';
 import { useState } from 'react';
-import tideButton from '../shared/button/tide_button';
-import tideLink from '../shared/link/tide_link';
 import { AiOutlineGlobal } from 'react-icons/ai';
 import { BsFillBellFill } from 'react-icons/bs';
 import { TbMinusVertical } from 'react-icons/tb';
 import { FiMenu } from 'react-icons/fi';
-
-import React from 'react';
-import Link from 'next/link';
+import { TfiBell } from 'react-icons/tfi';
+import { BsBell } from 'react-icons/bs';
+import TideLink from '../shared/link/tide_link';
+import ConnectButton from '../wallet/connect_button';
 
 const NavBar = () => {
-	const [navOpen, setNavOpen] = useState(true);
-
-	const TideButton = tideButton;
-
-	const TideLink = tideLink;
-
-	const clickHandler = () => setNavOpen(!navOpen);
-
+	const [navOpen, setNavOpen] = useState(false);
+	const clickHanlder = () => setNavOpen(!navOpen);
 	return (
-		<>
-			<header className="text-white bg-black body-font fixed inset-x-0 z-40">
-				<div className="flex flex-1 flex-wrap py-5 flex-col lg:flex-row items-center">
-					<div className="flex justify-between">
-						<div className="text-center xl:space-x-36 flex items-center justify-evenly title-font font-medium text-white mb-4 md:mb-0">
-							<Link href="/">
-								<div className="pl-5 inline-flex items-center hover:cursor-pointer hover:opacity-80">
+		<div className="fixed inset-x-0 z-50">
+			<nav className="bg-opacity-100 bg-black text-white">
+				<div className="max-w-7xl mx-auto px-8">
+					<div className="flex items-center justify-between h-16">
+						<div className="flex items-center">
+							{/* logo */}
+							<Link className="flex-shrink-0" href="/">
+								<div className="pt-5 pl-5 inline-flex items-center hover:cursor-pointer hover:opacity-100 hover:text-cyan-300">
 									<svg
 										xmlns="http://www.w3.org/2000/svg"
 										fill="none"
@@ -41,60 +37,108 @@ const NavBar = () => {
 									<span className="ml-3 text-xl">TideBit</span>
 								</div>
 							</Link>
+							{/* Desktop menu */}
+							<div className={`pb-2 hidden lg:block`}>
+								<div className="ml-10 flex flex-1 items-center mt-5 space-x-4">
+									<TideLink href="#" className="" content={'Trading'} />
+									<TideLink
+										href="#"
+										className="mr-5"
+										content={'TideBit University'}
+									/>
+									<TideLink href="#" className="mr-5" content={'Help Center'} />
 
-							<div className="ml-20 items-center justify-center lg:hidden">
-								<button className="" onClick={clickHandler}>
-									{navOpen ? (
-										<svg
-											xmlns="http://www.w3.org/2000/svg"
-											className="w-6 h-6 text-white"
-											viewBox="0 0 20 20"
-											fill="currentColor"
-										>
-											<path
-												fillRule="evenodd"
-												d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-												clipRule="evenodd"
-											/>
-										</svg>
-									) : (
-										<FiMenu size={30} className="" />
-									)}
-								</button>
+									{/* <div className="max-w-2xl mx-auto"></div> */}
+								</div>
 							</div>
 						</div>
+						<div className="pt-3 lg:flex hidden">
+							<div className="items-center flex justify-center px-5">
+								<AiOutlineGlobal
+									size={24}
+									className="hover:cursor-pointer hover:text-cyan-300"
+								/>
+								<TbMinusVertical size={30} className="" />
+
+								<BsBell
+									size={23}
+									className="hover:cursor-pointer hover:text-cyan-300"
+								/>
+							</div>
+							<div className="inline-flex mr-5">
+								<ConnectButton />
+							</div>
+						</div>
+
+						{/* Mobile menu toggle */}
+						<div className="pt-3 -mr-2 flex lg:hidden">
+							<button
+								onClick={clickHanlder}
+								className="hover:text-cyan-300 inline-flex items-center justify-center p-2 rounded-md focus:outline-none"
+							>
+								{!navOpen ? (
+									<FiMenu size={30} className="" />
+								) : (
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										className="w-6 h-6 text-white hover:text-cyan-300"
+										viewBox="0 0 20 20"
+										fill="currentColor"
+									>
+										<path
+											fillRule="evenodd"
+											d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+											clipRule="evenodd"
+										/>
+									</svg>
+								)}
+							</button>
+						</div>
 					</div>
+				</div>
 
-					<nav
-						className={`${
-							navOpen ? '' : 'hidden'
-						} lg:ml-auto flex flex-col space-y-3 lg:space-y-0 lg:flex-row lg:flex-nowrap xl:flex-wrap items-center text-base justify-center`}
-					>
-						<TideLink href="#" className="mr-5" content={'Trading'} />
-						<TideLink href="#" className="mr-5" content={'TideBit University'} />
-						<TideLink href="#" className="mr-5" content={'Help Center'} />
-
-						<div className="flex justify-center md:px-2 lg:px-5">
-							<AiOutlineGlobal
-								size={22}
-								className="hover:cursor-pointer hover:text-cyan-300"
+				{/* Mobile menu */}
+				<div className={`lg:hidden ${navOpen ? '' : 'hidden'}`}>
+					<div className="inline-block items-center px-2 ml-10 text-baseline pt-2 pb-3 sm:px-3">
+						<div className="space-y-1">
+							<TideLink
+								href="#"
+								className="block px-3 py-2 rounded-md text-base font-medium"
+								content={'Trading'}
 							/>
-							<TbMinusVertical size={25} className="" />
-							<BsFillBellFill
-								size={23}
-								className="hover:cursor-pointer hover:text-cyan-300"
+
+							<TideLink
+								href="#"
+								className="block px-3 py-2 rounded-md text-base font-medium"
+								content={'TideBit University'}
+							/>
+							<TideLink
+								href="#"
+								className="block px-3 py-2 rounded-md text-base font-medium"
+								content={'Help Center'}
 							/>
 						</div>
-						<TideButton
-							isHover={false}
-							isFocus={true}
-							className="lg:mr-5"
-							content={`Wallet Connect`}
-						/>
-					</nav>
+						<div className="pt-3">
+							<div className="items-center flex justify-start px-3">
+								<AiOutlineGlobal
+									size={24}
+									className="hover:cursor-pointer hover:text-cyan-300"
+								/>
+								<TbMinusVertical size={30} className="" />
+
+								<BsBell
+									size={23}
+									className="hover:cursor-pointer hover:text-cyan-300"
+								/>
+							</div>
+						</div>
+						<div className="mt-5">
+							<ConnectButton className="ml-2" />
+						</div>
+					</div>
 				</div>
-			</header>
-		</>
+			</nav>
+		</div>
 	);
 };
 

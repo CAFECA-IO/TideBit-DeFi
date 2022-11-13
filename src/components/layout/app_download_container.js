@@ -13,6 +13,7 @@ const AppDowloadContainer = () => {
 							src="https://dummyimage.com/250x250"
 						/>
 					</div>
+
 					<div className="flex flex-wrap md:ml-auto md:mr-0 mx-auto items-center justify-center flex-shrink-0 sm:space-x-4 mt-5">
 						<button className="border-2 border-slate-200 bg-black inline-flex py-3 px-5 rounded-xl items-center hover:bg-gray-700 hover:bg-opacity-50 focus:outline-none">
 							<svg
@@ -25,7 +26,7 @@ const AppDowloadContainer = () => {
 								<path d="M212.1 0c-15.76.64-34.67 10.35-45.97 23.58-9.6 11.13-19 29.68-16.52 48.38a2.5 2.5 0 002.29 2.17c1.06.08 2.15.12 3.23.12 15.41 0 32.04-8.52 43.4-22.25 11.94-14.5 17.99-33.1 16.16-49.77A2.52 2.52 0 00212.1 0z"></path>
 							</svg>
 							<span className="ml-4 flex items-start flex-col leading-none">
-								<span className="text-xs text-gray-500 mb-1">Download on the</span>
+								<span className="text-xs text-gray-500 mb-1">Download on</span>
 								<span className="title-font font-medium">App Store</span>
 							</span>
 						</button>

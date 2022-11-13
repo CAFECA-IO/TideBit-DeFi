@@ -14,14 +14,14 @@ const NavBar = () => {
 	const [navOpen, setNavOpen] = useState(false);
 	const clickHanlder = () => setNavOpen(!navOpen);
 	return (
-		<div className="fixed inset-x-0 z-50">
-			<nav className="bg-opacity-100 bg-black pb-1 text-white">
-				<div className="max-w-7xl mx-auto px-8">
+		<div className="w-full bg-black">
+			<nav className="fixed inset-x-0 z-50 container max-w-full mx-auto bg-opacity-100 bg-black pb-1 text-white">
+				<div className="max-w-full mx-auto px-8">
 					<div className="flex items-center justify-between h-16">
 						<div className="flex items-center">
 							{/* logo */}
 							<Link className="flex-shrink-0" href="/">
-								<div className="pt-5 pl-5 inline-flex items-center hover:cursor-pointer hover:opacity-100 hover:text-cyan-300">
+								<div className="pt-5 inline-flex items-center hover:cursor-pointer hover:opacity-100 hover:text-cyan-300">
 									<svg
 										xmlns="http://www.w3.org/2000/svg"
 										fill="none"

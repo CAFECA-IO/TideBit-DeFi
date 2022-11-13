@@ -58,7 +58,8 @@ const NavBar = () => {
 									size={24}
 									className="hover:cursor-pointer hover:text-cyan-300"
 								/>
-								<TbMinusVertical size={30} className="" />
+								{/* <TbMinusVertical size={30} className="" /> */}
+								<span className="inline-block h-10 w-px rounded bg-white mx-2"></span>
 
 								<BsBell
 									size={23}

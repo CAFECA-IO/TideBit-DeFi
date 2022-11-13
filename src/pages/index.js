@@ -2,6 +2,7 @@ import Head from 'next/head';
 import Image from 'next/image';
 import Hero from '../components/layout/hero';
 import NavBar from '../components/layout/nav_bar';
+import StatisticBlock from '../components/layout/statistic';
 
 const Home = () => {
 	return (
@@ -21,6 +22,7 @@ const Home = () => {
 								heading={`Trusted platform for Crypto investment`}
 								content={`Start investing now. On TideBit you can learn, buy and sell cryptocurrency assets with the best quality. `}
 							/>
+							<StatisticBlock />
 						</div>
 					</div>
 				</main>

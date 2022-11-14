@@ -7,6 +7,7 @@ import StatisticBlock from '../components/layout/statistic';
 import CryptoCategory from '../components/layout/crypto_category';
 import HeroReverse from '../components/layout/hero_reverse';
 import AppDowloadContainer from '../components/layout/app_download_container';
+import Footer from '../components/layout/footer';
 
 const Home = () => {
   return (
@@ -39,6 +40,9 @@ const Home = () => {
                 &nbsp;anywhere, anytime
               </h1>
               <AppDowloadContainer />
+            </div>
+            <div className="w-screen h-1/2">
+              <Footer />
             </div>
           </div>
         </main>

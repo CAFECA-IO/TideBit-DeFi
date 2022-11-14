@@ -97,7 +97,7 @@ const Footer = () => {
     <footer className="body-font lg:justify-center">
       <div className="container px-5 pt-24 pb-10 mx-auto flex md:items-center lg:items-start md:flex-row md:flex-nowrap flex-wrap flex-col">
         <div className="lg:w-1/6 md:w-1/4 w-full px-4 flex-shrink-0 md:mx-0 mx-auto text-center md:text-left">
-          <a className="flex title-font font-medium items-center md:justify-start justify-center text-white">
+          <a className="flex flex-col title-font font-medium items-center md:justify-start justify-center text-white">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -105,23 +105,22 @@ const Footer = () => {
               strokeLinecap="round"
               strokeLinejoin="round"
               strokeWidth="2"
-              className="w-10 h-10 text-white p-2 bg-cyan-600 rounded-full"
+              className="w-14 h-14 text-white p-2 bg-cyan-600 rounded-full"
               viewBox="0 0 24 24"
             >
               <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
             </svg>
-            <span className="ml-3 text-xl">TideBit</span>
+            <p className="mt-2 text-xl text-white">TideBit</p>
           </a>
-          <p className="mt-2 text-sm text-gray-500">
-            Air plant banjo lyft occupy retro adaptogen indego
-          </p>
-          <div className="inline-flex pt-5 sm:ml-auto sm:mt-0 mt-2 justify-center sm:justify-start">
+          <span className="container mx-auto flex justify-center h-px w-[120px] rounded bg-white mt-2 -mb-2 mb-3"></span>
+
+          <div className="container mx-auto inline-flex pt-5 sm:mt-0 mt-2 justify-center ">
             {socialMediaLinks.map(({label, path, icon}) => (
               <TideLink
                 key={label}
                 href={path}
                 content={icon}
-                className="mr-3 text-gray-400 hover:text-cyan-300"
+                className="flex justify-center mx-1.5 text-gray-400 hover:text-cyan-300"
                 target="_blank"
                 htmlref="noopener noreferrer"
               />

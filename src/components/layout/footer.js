@@ -93,7 +93,7 @@ const Footer = () => {
   // {label: 'Terms of use', path: '/'}
 
   return (
-    <footer className="body-font lg:justify-center -mb-10">
+    <footer className="body-font lg:justify-center -mb-20">
       <div className="container -px-20 pt-24 pb-10 mx-auto flex md:items-center lg:items-start md:flex-row md:flex-nowrap flex-wrap flex-col">
         <div className="lg:w-1/6 md:w-1/4 w-full px-4 flex-shrink-0 md:mx-0 mx-auto text-center md:text-left">
           <a className="flex flex-col title-font font-medium items-center md:justify-start justify-center text-white">

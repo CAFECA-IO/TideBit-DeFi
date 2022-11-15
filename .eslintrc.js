@@ -1,6 +1,6 @@
 module.exports = {
   parserOptions: {
-    ecmaVersion: 2020, // 支援 ECMAScript2019
+    ecmaVersion: 2020, // 支援 ECMAScript2020
     sourceType: 'module', // 使用 ECMAScript ****module
     ecmaFeatures: {
       jsx: true, // 支援 JSX

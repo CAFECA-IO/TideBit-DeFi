@@ -3,7 +3,7 @@ import {useEffect, useRef, useState} from 'react';
 import {ImCross} from 'react-icons/im';
 import Image from 'next/image';
 import WalletOption from './wallet_option';
-import useOuterClick from '/hooks/lib/useOuterClick';
+import useOuterClick from '/src/hooks/lib/useOuterClick';
 import TideButton from '../shared/button/tide_button';
 
 const ICON_SIZE = 50;
@@ -30,6 +30,12 @@ export default function WalletPanel(props) {
     {name: 'BitKeep', img: '/bitkeep.png'},
     {name: 'Others', img: '/others_wallet.png'},
   ];
+
+  const walletOptionsList = walletOptions.map(({name, img}) => (
+    <div key={name} className="col-span-1 flex justify-center items-center bg-gray-800 rounded">
+      <WalletOption name={name} img={img} iconSize={ICON_SIZE} />
+    </div>
+  ));
 
   return (
     <>
@@ -64,16 +70,7 @@ export default function WalletPanel(props) {
                 {/*body*/}
                 <div className="relative p-6 flex-auto mx-10">
                   <div className="my-4 text-white text-lg leading-relaxed">
-                    <div className="grid grid-cols-3 gap-3">
-                      {walletOptions.map(({name, img}) => (
-                        <div
-                          key={name}
-                          className="col-span-1 flex justify-center items-center bg-gray-800 rounded"
-                        >
-                          <WalletOption name={name} img={img} iconSize={ICON_SIZE} />
-                        </div>
-                      ))}
-                    </div>
+                    <div className="grid grid-cols-3 gap-3">{walletOptionsList}</div>
                   </div>
                 </div>
                 {/*footer*/}

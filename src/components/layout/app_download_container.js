@@ -16,7 +16,7 @@ const AppDowloadContainer = () => {
           </div>
 
           <div className="flex flex-wrap md:ml-auto md:mr-0 mx-auto items-center justify-center flex-shrink-0 sm:space-x-4 mt-5">
-            <button className="border-[1.5px] border-white rounded-lg hover:opacity-80">
+            <button className="border-[2px] border-white rounded-lg hover:opacity-80">
               <Image src="/app-store.svg" width={132} height={40} alt="app-store" />
               {/* <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -33,7 +33,7 @@ const AppDowloadContainer = () => {
               </span> */}
             </button>
 
-            <button className="border-[1.5px] border-white rounded-lg hover:opacity-80">
+            <button className="border-[2px] border-white rounded-lg hover:opacity-80">
               <Image src={'/google-play.svg'} width={132} height={40} alt="google play" />
               {/* <svg
                 xmlns="http://www.w3.org/2000/svg"

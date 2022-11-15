@@ -13,6 +13,7 @@ import ConnectButton from '../wallet/connect_button';
 const NavBar = () => {
   const [navOpen, setNavOpen] = useState(false);
   const clickHanlder = () => setNavOpen(!navOpen);
+  const notificationNumber = 2;
   return (
     <div className="w-full bg-black">
       <nav className="fixed inset-x-0 z-50 container max-w-full mx-auto bg-opacity-100 bg-black pb-1 text-white">
@@ -50,11 +51,18 @@ const NavBar = () => {
             </div>
             <div className="pt-3 lg:flex hidden">
               <div className="items-center flex justify-center px-5">
-                <AiOutlineGlobal size={24} className="hover:cursor-pointer hover:text-cyan-300" />
+                <div>
+                  <AiOutlineGlobal size={24} className="hover:cursor-pointer hover:text-cyan-300" />
+                </div>
                 {/* <TbMinusVertical size={30} className="" /> */}
                 <span className="inline-block h-10 w-px rounded bg-white mx-2"></span>
 
-                <BsBell size={23} className="hover:cursor-pointer hover:text-cyan-300" />
+                <div className="relative hover:cursor-pointer">
+                  <span className="absolute top-0 -right-0.5 inline-block rounded-xl bg-cyan-300 w-3 h-3 z-20">
+                    <p className="text-center text-[8px] hover:text-white">{notificationNumber}</p>
+                  </span>
+                  <BsBell size={23} className="hover:text-cyan-300"></BsBell>
+                </div>
               </div>
               <div className="inline-flex mr-5">
                 <ConnectButton />
@@ -111,10 +119,17 @@ const NavBar = () => {
             </div>
             <div className="pt-3">
               <div className="items-center flex justify-start px-3">
-                <AiOutlineGlobal size={24} className="hover:cursor-pointer hover:text-cyan-300" />
+                <div>
+                  <AiOutlineGlobal size={24} className="hover:cursor-pointer hover:text-cyan-300" />
+                </div>
                 <TbMinusVertical size={30} className="" />
 
-                <BsBell size={23} className="hover:cursor-pointer hover:text-cyan-300" />
+                <div className="relative hover:cursor-pointer">
+                  <span className="absolute top-0 -right-0.5 inline-block rounded-xl bg-cyan-300 w-3 h-3 z-20">
+                    <p className="text-center text-[8px] hover:text-white">{notificationNumber}</p>
+                  </span>
+                  <BsBell size={23} className="hover:text-cyan-300"></BsBell>
+                </div>
               </div>
             </div>
             <div className="mt-5">

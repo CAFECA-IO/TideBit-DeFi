@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import React from 'react';
 
 const AppDowloadContainer = () => {
@@ -15,8 +16,9 @@ const AppDowloadContainer = () => {
           </div>
 
           <div className="flex flex-wrap md:ml-auto md:mr-0 mx-auto items-center justify-center flex-shrink-0 sm:space-x-4 mt-5">
-            <button className="border-2 border-slate-200 bg-black inline-flex py-3 px-5 rounded-xl items-center hover:bg-gray-700 hover:bg-opacity-50 focus:outline-none">
-              <svg
+            <button className="border-[1.5px] border-white rounded-lg hover:opacity-80">
+              <Image src="/app-store.svg" width={132} height={40} />
+              {/* <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="currentColor"
                 className="w-6 h-6 text-white"
@@ -28,11 +30,12 @@ const AppDowloadContainer = () => {
               <span className="ml-4 flex items-start flex-col leading-none">
                 <span className="text-xs text-gray-500 mb-1">Download on</span>
                 <span className="title-font font-medium">App Store</span>
-              </span>
+              </span> */}
             </button>
 
-            <button className="border-2 border-slate-200 bg-black inline-flex py-3 px-5 rounded-xl items-center hover:bg-gray-700 hover:bg-opacity-50 focus:outline-none">
-              <svg
+            <button className="border-[1.5px] border-white rounded-lg hover:opacity-80">
+              <Image src={'/google-play.svg'} width={132} height={40} />
+              {/* <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="currentColor"
                 className="w-6 h-6"
@@ -43,7 +46,7 @@ const AppDowloadContainer = () => {
               <span className="ml-4 flex items-start flex-col leading-none">
                 <span className="text-xs text-gray-500 mb-1">GET IT ON</span>
                 <span className="title-font font-medium">Google Play</span>
-              </span>
+              </span> */}
             </button>
           </div>
         </div>

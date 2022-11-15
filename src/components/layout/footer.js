@@ -94,7 +94,7 @@ const Footer = () => {
 
   return (
     <footer className="body-font lg:justify-center -mb-10">
-      <div className="container px-5 pt-24 pb-10 mx-auto flex md:items-center lg:items-start md:flex-row md:flex-nowrap flex-wrap flex-col">
+      <div className="container -px-20 pt-24 pb-10 mx-auto flex md:items-center lg:items-start md:flex-row md:flex-nowrap flex-wrap flex-col">
         <div className="lg:w-1/6 md:w-1/4 w-full px-4 flex-shrink-0 md:mx-0 mx-auto text-center md:text-left">
           <a className="flex flex-col title-font font-medium items-center md:justify-start justify-center text-white">
             <svg
@@ -185,10 +185,10 @@ const Footer = () => {
                   type="text"
                   id="email"
                   name="email"
-                  className="w-full bg-black-800 rounded border bg-opacity-40 border-gray-700 focus:ring-2 focus:ring-cyan-900 focus:border-cyan-500 text-base outline-none text-black py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+                  className="block outline-none focus:bg-black active:bg-black ring-transparent bg-black text-white w-full rounded border border-white text-base py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
                 />
               </div>
-              <TideButton isFocus={true} content={`subscribe`.toUpperCase()} />
+              <TideButton isFocus={false} content={`subscribe`.toUpperCase()} />
             </div>
           </div>
         </div>

@@ -90,7 +90,34 @@ const Footer = () => {
     {label: 'Privacy policy', path: '/'},
   ];
 
-  // {label: 'Terms of use', path: '/'}
+  const socialMediaLinksList = socialMediaLinks.map(({label, path, icon}) => (
+    <TideLink
+      key={label}
+      href={path}
+      content={icon}
+      className="flex justify-center mx-1.5 text-gray-400 hover:text-cyan-300"
+      target="_blank"
+      htmlref="noopener noreferrer"
+    />
+  ));
+
+  const servicesLinksList = servicesLinks.map(({label, path}) => (
+    <li key={label} className="mt-2">
+      <TideLink href={path} content={label} className="text-gray-400 hover:text-slate-50" />
+    </li>
+  ));
+
+  const tideBitLinksList = tideBitLinks.map(({label, path}) => (
+    <li key={label} className="mt-2">
+      <TideLink href={path} content={label} className="text-gray-400 hover:text-slate-50" />
+    </li>
+  ));
+
+  const policyLinksList = policyLinks.map(({label, path}) => (
+    <li key={label} className="mt-2">
+      <TideLink href={path} content={label} className="text-gray-400 hover:text-slate-50" />
+    </li>
+  ));
 
   return (
     <footer className="body-font lg:justify-center -mb-20">
@@ -114,16 +141,7 @@ const Footer = () => {
           <span className="container mx-auto flex justify-center h-px w-[120px] rounded bg-white mt-2 -mb-2 mb-3"></span>
 
           <div className="container mx-auto inline-flex pt-5 sm:mt-0 mt-2 justify-center ">
-            {socialMediaLinks.map(({label, path, icon}) => (
-              <TideLink
-                key={label}
-                href={path}
-                content={icon}
-                className="flex justify-center mx-1.5 text-gray-400 hover:text-cyan-300"
-                target="_blank"
-                htmlref="noopener noreferrer"
-              />
-            ))}
+            {socialMediaLinksList}
           </div>
         </div>
         <div className="flex-grow flex flex-wrap md:pl-20 -mb-10 md:mt-0 mt-10 md:text-left text-center">
@@ -131,49 +149,19 @@ const Footer = () => {
             <h2 className="title-font font-medium text-white tracking-widest text-sm mb-3">
               Services
             </h2>
-            <nav className="list-none mb-5">
-              {servicesLinks.map(({label, path}) => (
-                <li key={label} className="mt-2">
-                  <TideLink
-                    href={path}
-                    content={label}
-                    className="text-gray-400 hover:text-slate-50"
-                  />
-                </li>
-              ))}
-            </nav>
+            <nav className="list-none mb-5">{servicesLinksList}</nav>
           </div>
           <div className="lg:w-1/6 md:w-1/2 w-full px-4">
             <h2 className="title-font font-medium text-white tracking-widest text-sm mb-3">
               TideBit
             </h2>
-            <nav className="list-none mb-5">
-              {tideBitLinks.map(({label, path}) => (
-                <li key={label} className="mt-2">
-                  <TideLink
-                    href={path}
-                    content={label}
-                    className="text-gray-400 hover:text-slate-50"
-                  />
-                </li>
-              ))}
-            </nav>
+            <nav className="list-none mb-5">{tideBitLinksList}</nav>
           </div>
           <div className="lg:w-1/6 md:w-1/2 w-full px-4">
             <h2 className="title-font font-medium text-white tracking-widest text-sm mb-3">
               Policy & Conditions
             </h2>
-            <nav className="list-none mb-5">
-              {policyLinks.map(({label, path}) => (
-                <li key={label} className="mt-2">
-                  <TideLink
-                    href={path}
-                    content={label}
-                    className="text-gray-400 hover:text-slate-50"
-                  />
-                </li>
-              ))}
-            </nav>
+            <nav className="list-none mb-5">{policyLinksList}</nav>
           </div>
           <div className="lg:w-1/3 lg:ml-20 md:w-1/2 w-full px-4 md:-mt-8 lg:mt-0">
             <h2 className="title-font font-medium text-white tracking-widest text-sm mb-3">

@@ -149,7 +149,8 @@ const NavBar = ({notificationNumber = 1}) => {
               </div>
             </div>
             <div className="mt-5">
-              <ConnectButton className="ml-2" />
+              {/* <ConnectButton className="ml-2" /> */}
+              <WalletPanel className="ml-2" />
             </div>
           </div>
         </div>

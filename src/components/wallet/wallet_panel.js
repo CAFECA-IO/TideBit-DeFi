@@ -8,7 +8,7 @@ import TideButton from '../shared/button/tide_button';
 
 const ICON_SIZE = 50;
 
-export default function WalletPanel() {
+export default function WalletPanel(props) {
   const {ref, componentVisible, setComponentVisible} = useOuterClick(false);
 
   const clickHandler = () => {
@@ -35,7 +35,7 @@ export default function WalletPanel() {
     <>
       <button
         onClick={clickHandler}
-        className={`text-white bg-cyan-400 border-0 mt-4 md:mt-0 py-2 px-5 focus:outline-none hover:bg-cyan-600 rounded text-base`}
+        className={`${props?.className} text-white bg-cyan-400 border-0 mt-4 md:mt-0 py-2 px-5 focus:outline-none hover:bg-cyan-600 rounded text-base`}
       >
         {`Wallet Connect`}
       </button>

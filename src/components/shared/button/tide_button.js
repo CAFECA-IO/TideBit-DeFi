@@ -1,6 +1,6 @@
 import React from 'react';
 
-const tideButton = ({content = '', isHover = false, isFocus = false, ...otherProps}) => {
+const TideButton = ({content = '', isHover = false, isFocus = false, ...otherProps}) => {
   // const hoverStyle =
   // 	isHover && `hover:scale-110 transition duration-300 ease-in-out`;
   const hoverStyle =
@@ -20,4 +20,4 @@ const tideButton = ({content = '', isHover = false, isFocus = false, ...otherPro
   );
 };
 
-export default tideButton;
+export default TideButton;

@@ -11,6 +11,7 @@ import TideLink from '../shared/link/tide_link';
 import ConnectButton from '../wallet/connect_button';
 import Image from 'next/image';
 import version from '../../lib/version';
+import WalletPanel from '../wallet/wallet_panel';
 
 const NavBar = ({notificationNumber = 1}) => {
   const [navOpen, setNavOpen] = useState(false);
@@ -79,7 +80,8 @@ const NavBar = ({notificationNumber = 1}) => {
                 </div>
               </div>
               <div className="inline-flex mr-5">
-                <ConnectButton />
+                {/* <ConnectButton /> */}
+                <WalletPanel />
               </div>
             </div>
 

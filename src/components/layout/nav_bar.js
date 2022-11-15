@@ -9,11 +9,13 @@ import {TfiBell} from 'react-icons/tfi';
 import {BsBell} from 'react-icons/bs';
 import TideLink from '../shared/link/tide_link';
 import ConnectButton from '../wallet/connect_button';
+import Image from 'next/image';
+import version from '../../lib/version';
 
-const NavBar = () => {
+const NavBar = ({notificationNumber = 1}) => {
   const [navOpen, setNavOpen] = useState(false);
   const clickHanlder = () => setNavOpen(!navOpen);
-  const notificationNumber = 2;
+
   return (
     <div className="w-full bg-black">
       <nav className="fixed inset-x-0 z-50 container max-w-full mx-auto bg-opacity-100 bg-black pb-1 text-white">
@@ -23,7 +25,19 @@ const NavBar = () => {
               {/* logo */}
               <Link className="flex-shrink-0" href="/">
                 <div className="pt-5 inline-flex items-center hover:cursor-pointer hover:opacity-100 hover:text-cyan-300">
-                  <svg
+                  <div className="mb-2 w-[150px] h-[55px] relative flex-col justify-center hover:cursor-pointer hover:opacity-80">
+                    <Image
+                      className=""
+                      src={'/tidebit_placeholder.png'}
+                      height={50}
+                      width={150}
+                      alt={'logo'}
+                    />
+                    <p className="pr-[10px] text-gray-500 container mx-auto text-end -mt-4 text-[10px]">
+                      V {version}
+                    </p>
+                  </div>
+                  {/* <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     stroke="currentColor"
@@ -35,7 +49,7 @@ const NavBar = () => {
                   >
                     <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
                   </svg>
-                  <span className="ml-3 text-xl">TideBit</span>
+                  <span className="ml-3 text-xl">TideBit</span> */}
                 </div>
               </Link>
               {/* Desktop menu */}

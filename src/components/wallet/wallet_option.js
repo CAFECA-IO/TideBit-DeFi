@@ -9,7 +9,7 @@ const WalletOption = ({name = 'Metamask', img = '/metamask.png', iconSize = '50'
       <Image
         className="bg-gray-800 p-1 rounded-xl hover:cursor-pointer hover:opacity-80"
         onClick={() => {
-          console.log(`${name} clicked`);
+          // console.log(`${name} clicked`);
         }}
         src={img}
         height={iconSize}

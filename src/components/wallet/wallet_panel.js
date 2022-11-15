@@ -13,7 +13,7 @@ export default function WalletPanel() {
 
   const clickHandler = () => {
     setComponentVisible(!componentVisible);
-    console.log('componentVisible clicked: ', componentVisible);
+    // console.log('componentVisible clicked: ', componentVisible);
   };
 
   const walletOptions = [
@@ -33,7 +33,12 @@ export default function WalletPanel() {
 
   return (
     <>
-      <TideButton content="Wallet Connect" isFocus={false} onClick={clickHandler} type="button" />
+      <button
+        onClick={clickHandler}
+        className={`text-white bg-cyan-400 border-0 mt-4 md:mt-0 py-2 px-5 focus:outline-none hover:bg-cyan-600 rounded text-base`}
+      >
+        {`Wallet Connect`}
+      </button>
       {componentVisible ? (
         <>
           <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none">

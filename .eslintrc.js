@@ -23,7 +23,7 @@ module.exports = {
   extends: ['plugin:import/typescript'],
   // 加上 no console log 規則
   rules: {
-    // 'no-console': 'error',
+    'no-console': 'error',
   },
   // 整合 prettier 和解決 prettier 衝突問題
   plugins: ['prettier', 'react'],

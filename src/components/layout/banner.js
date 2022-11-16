@@ -2,10 +2,10 @@ import React from 'react';
 
 const Banner = () => {
   return (
-    <section className="text-gray-400 bg-black body-font">
-      <div className="mx-auto flex flex-col px-5 py-24 justify-center items-center">
+    <section className="body-font bg-black text-gray-400">
+      <div className="mx-auto flex flex-col items-center justify-center px-5 py-24">
         <img
-          className="w-screen h-1/6 mb-10 object-cover object-center rounded"
+          className="mb-10 h-1/6 w-screen rounded object-cover object-center"
           alt="hero"
           src="https://dummyimage.com/1741x619"
         />

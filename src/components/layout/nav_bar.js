@@ -30,14 +30,14 @@ const NavBar = ({notificationNumber = 1}) => {
   return (
     <>
       <div className="w-full bg-black">
-        <nav className="fixed inset-x-0 z-50 container max-w-full mx-auto bg-opacity-100 bg-black pb-1 text-white">
-          <div className="max-w-full mx-auto px-8">
-            <div className="flex items-center justify-between h-16">
+        <nav className="container fixed inset-x-0 z-50 mx-auto max-w-full bg-black bg-opacity-100 pb-1 text-white">
+          <div className="mx-auto max-w-full px-8">
+            <div className="flex h-16 items-center justify-between">
               <div className="flex items-center">
                 {/* logo */}
                 <Link className="flex-shrink-0" href="/">
-                  <div className="pt-5 inline-flex items-center hover:cursor-pointer hover:opacity-100 hover:text-cyan-300">
-                    <div className="mb-2 w-[150px] h-[55px] relative flex-col justify-center hover:cursor-pointer hover:opacity-80">
+                  <div className="inline-flex items-center pt-5 hover:cursor-pointer hover:text-cyan-300 hover:opacity-100">
+                    <div className="relative mb-2 h-[55px] w-[150px] flex-col justify-center hover:cursor-pointer hover:opacity-80">
                       <Image
                         className=""
                         src={'/tidebit_placeholder.png'}
@@ -45,7 +45,7 @@ const NavBar = ({notificationNumber = 1}) => {
                         width={150}
                         alt={'logo'}
                       />
-                      <p className="pr-[10px] text-gray-500 container mx-auto text-end -mt-4 text-[10px]">
+                      <p className="container mx-auto -mt-4 pr-[10px] text-end text-[10px] text-gray-500">
                         V {version}
                       </p>
                     </div>
@@ -65,8 +65,8 @@ const NavBar = ({notificationNumber = 1}) => {
                   </div>
                 </Link>
                 {/* Desktop menu */}
-                <div className={`pb-2 hidden lg:block`}>
-                  <div className="ml-10 flex flex-1 items-center mt-5 space-x-4">
+                <div className={`hidden pb-2 lg:block`}>
+                  <div className="ml-10 mt-5 flex flex-1 items-center space-x-4">
                     <TideLink href="#" className="" content={'Trading'} />
                     <TideLink href="#" className="mr-5" content={'TideBit University'} />
                     <TideLink href="#" className="mr-5" content={'Help Center'} />
@@ -75,8 +75,8 @@ const NavBar = ({notificationNumber = 1}) => {
                   </div>
                 </div>
               </div>
-              <div className="pt-3 lg:flex hidden">
-                <div className="items-center flex justify-center px-5">
+              <div className="hidden pt-3 lg:flex">
+                <div className="flex items-center justify-center px-5">
                   <div>
                     <AiOutlineGlobal
                       size={24}
@@ -84,10 +84,10 @@ const NavBar = ({notificationNumber = 1}) => {
                     />
                   </div>
                   {/* <TbMinusVertical size={30} className="" /> */}
-                  <span className="inline-block h-10 w-px rounded bg-white mx-2"></span>
+                  <span className="mx-2 inline-block h-10 w-px rounded bg-white"></span>
 
                   <div onClick={sidebarOpenHandler} className="relative hover:cursor-pointer">
-                    <span className="absolute top-0 -right-0.5 inline-block rounded-xl bg-cyan-300 w-3 h-3 z-20">
+                    <span className="absolute top-0 -right-0.5 z-20 inline-block h-3 w-3 rounded-xl bg-cyan-300">
                       <p className="text-center text-[8px] hover:text-white">
                         {notificationNumber}
                       </p>
@@ -95,24 +95,24 @@ const NavBar = ({notificationNumber = 1}) => {
                     <BsBell size={23} className="hover:text-cyan-300"></BsBell>
                   </div>
                 </div>
-                <div className="inline-flex mr-5">
+                <div className="mr-5 inline-flex">
                   {/* <ConnectButton /> */}
                   <WalletPanel />
                 </div>
               </div>
 
               {/* Mobile menu toggle */}
-              <div className="pt-3 -mr-2 flex lg:hidden">
+              <div className="-mr-2 flex pt-3 lg:hidden">
                 <button
                   onClick={clickHanlder}
-                  className="hover:text-cyan-300 inline-flex items-center justify-center p-2 rounded-md focus:outline-none"
+                  className="inline-flex items-center justify-center rounded-md p-2 hover:text-cyan-300 focus:outline-none"
                 >
                   {!navOpen ? (
                     <FiMenu size={30} className="" />
                   ) : (
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      className="w-6 h-6 text-white hover:text-cyan-300"
+                      className="h-6 w-6 text-white hover:text-cyan-300"
                       viewBox="0 0 20 20"
                       fill="currentColor"
                     >
@@ -130,27 +130,27 @@ const NavBar = ({notificationNumber = 1}) => {
 
           {/* Mobile menu */}
           <div className={`lg:hidden ${navOpen ? '' : 'hidden'}`}>
-            <div className="inline-block items-center px-2 ml-10 text-baseline pt-2 pb-3 sm:px-3">
+            <div className="text-baseline ml-10 inline-block items-center px-2 pt-2 pb-3 sm:px-3">
               <div className="space-y-1">
                 <TideLink
                   href="#"
-                  className="block px-3 py-2 rounded-md text-base font-medium"
+                  className="block rounded-md px-3 py-2 text-base font-medium"
                   content={'Trading'}
                 />
 
                 <TideLink
                   href="#"
-                  className="block px-3 py-2 rounded-md text-base font-medium"
+                  className="block rounded-md px-3 py-2 text-base font-medium"
                   content={'TideBit University'}
                 />
                 <TideLink
                   href="#"
-                  className="block px-3 py-2 rounded-md text-base font-medium"
+                  className="block rounded-md px-3 py-2 text-base font-medium"
                   content={'Help Center'}
                 />
               </div>
               <div className="pt-3">
-                <div className="items-center flex justify-start px-3">
+                <div className="flex items-center justify-start px-3">
                   <div>
                     <AiOutlineGlobal
                       size={24}
@@ -160,7 +160,7 @@ const NavBar = ({notificationNumber = 1}) => {
                   <TbMinusVertical size={30} className="" />
 
                   <div onClick={sidebarOpenHandler} className="relative hover:cursor-pointer">
-                    <span className="absolute top-0 -right-0.5 inline-block rounded-xl bg-cyan-300 w-3 h-3 z-20">
+                    <span className="absolute top-0 -right-0.5 z-20 inline-block h-3 w-3 rounded-xl bg-cyan-300">
                       <p className="text-center text-[8px] hover:text-white">
                         {notificationNumber}
                       </p>
@@ -183,16 +183,16 @@ const NavBar = ({notificationNumber = 1}) => {
 							} */}
       {/*  absolute right-0 top-0 */}
       {sidebarOpen ? (
-        <div className="flex overflow-x-hidden overflow-y-hidden fixed right-1 top-10 z-10 outline-none focus:outline-none">
-          <div className="relative w-auto my-6 mx-auto max-w-xl">
+        <div className="fixed right-1 top-10 z-10 flex overflow-x-hidden overflow-y-hidden outline-none focus:outline-none">
+          <div className="relative my-6 mx-auto w-auto max-w-xl">
             {' '}
             <div className={`relative`}>
               <div
                 ref={ref}
-                className={`${'w-[479px]'} text-white bg-darkGray h-screen p-5 pt-8 duration-300`}
+                className={`${'w-[479px]'} h-screen bg-darkGray p-5 pt-8 text-white duration-300`}
               >
                 <div className="flex">
-                  <span className="inline-block h-[158px] w-[5px] rounded bg-tidebitTheme mx-2"></span>
+                  <span className="mx-2 inline-block h-[158px] w-[5px] rounded bg-tidebitTheme"></span>
                   <div className="flex items-baseline">
                     <Image src="/elements/megaphone.svg" width={30} height={26} alt="icon" />
                     <div>

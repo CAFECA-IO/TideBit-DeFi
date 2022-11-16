@@ -32,7 +32,7 @@ export default function WalletPanel(props) {
   ];
 
   const walletOptionsList = walletOptions.map(({name, img}) => (
-    <div key={name} className="col-span-1 flex justify-center items-center bg-gray-800 rounded">
+    <div key={name} className="col-span-1 flex items-center justify-center rounded bg-gray-800">
       <WalletOption name={name} img={img} iconSize={ICON_SIZE} />
     </div>
   ));
@@ -41,44 +41,44 @@ export default function WalletPanel(props) {
     <>
       <button
         onClick={clickHandler}
-        className={`${props?.className} text-white bg-cyan-400 border-0 mt-4 md:mt-0 py-2 px-5 focus:outline-none hover:bg-cyan-600 rounded text-base`}
+        className={`${props?.className} mt-4 rounded border-0 bg-cyan-400 py-2 px-5 text-base text-white hover:bg-cyan-600 focus:outline-none md:mt-0`}
       >
         {`Wallet Connect`}
       </button>
       {componentVisible ? (
         <>
-          <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none">
-            <div className="relative w-auto my-6 mx-auto max-w-xl">
+          <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none focus:outline-none">
+            <div className="relative my-6 mx-auto w-auto max-w-xl">
               {/*content & panel*/}
               <div
                 id="connectModal"
                 ref={ref}
-                className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-gray-900 outline-none focus:outline-none"
+                className="relative flex w-full flex-col rounded-lg border-0 bg-gray-900 shadow-lg outline-none focus:outline-none"
               >
                 {/*header*/}
-                <div className="flex items-start justify-between pt-8 rounded-t">
-                  <h3 className="text-3xl ml-auto font-semibold text-white">Wallet Connect</h3>
+                <div className="flex items-start justify-between rounded-t pt-8">
+                  <h3 className="ml-auto text-3xl font-semibold text-white">Wallet Connect</h3>
                   <button
-                    className="p-1 ml-auto bg-transparent border-0 text-gray-300 float-right text-md leading-none font-semibold outline-none focus:outline-none"
+                    className="text-md float-right ml-auto border-0 bg-transparent p-1 font-semibold leading-none text-gray-300 outline-none focus:outline-none"
                     onClick={clickHandler}
                   >
-                    <span className="h-6 w-6 -mx-8 -my-5 block outline-none focus:outline-none">
+                    <span className="-mx-8 -my-5 block h-6 w-6 outline-none focus:outline-none">
                       <ImCross />
                     </span>
                   </button>
                 </div>
                 {/*body*/}
-                <div className="relative p-6 flex-auto mx-10">
-                  <div className="my-4 text-white text-lg leading-relaxed">
+                <div className="relative mx-10 flex-auto p-6">
+                  <div className="my-4 text-lg leading-relaxed text-white">
                     <div className="grid grid-cols-3 gap-3">{walletOptionsList}</div>
                   </div>
                 </div>
                 {/*footer*/}
-                <div className="flex items-center justify-end p-2 rounded-b"></div>
+                <div className="flex items-center justify-end rounded-b p-2"></div>
               </div>
             </div>
           </div>
-          <div className="opacity-25 fixed inset-0 z-40 bg-black"></div>
+          <div className="fixed inset-0 z-40 bg-black opacity-25"></div>
         </>
       ) : null}
     </>

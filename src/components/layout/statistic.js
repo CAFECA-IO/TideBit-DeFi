@@ -6,18 +6,18 @@ const StatisticBlock = () => {
   ];
 
   const statisticContentList = statisticContent.map(({heading, content}) => (
-    <div key={heading} className="lg:w-1/3 w-screen lg:mb-0 mb-6 p-4 flex justify-center">
-      <div className="h-full lg:text-start text-center">
-        <p className="leading-relaxed text-lg">{heading}</p>
-        <h2 className="title-font font-medium text-3xl text-white">{content}</h2>
+    <div key={heading} className="mb-6 flex w-screen justify-center p-4 lg:mb-0 lg:w-1/3">
+      <div className="h-full text-center lg:text-start">
+        <p className="text-lg leading-relaxed">{heading}</p>
+        <h2 className="title-font text-3xl font-medium text-white">{content}</h2>
       </div>
     </div>
   ));
 
   return (
-    <section className="text-gray-400 bg-black body-font">
-      <div className="px-5 py-24 mx-auto">
-        <div className="flex flex-wrap -m-4">{statisticContentList}</div>
+    <section className="body-font bg-black text-gray-400">
+      <div className="mx-auto px-5 py-24">
+        <div className="-m-4 flex flex-wrap">{statisticContentList}</div>
       </div>
     </section>
   );

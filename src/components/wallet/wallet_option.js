@@ -5,9 +5,9 @@ import Image from 'next/image';
 
 const WalletOption = ({name = 'Metamask', img = '/metamask.png', iconSize = '50'}) => {
   return (
-    <div className="flex flex-col items-center bg-gray-800 px-1 py-3 rounded hover:cursor-pointer hover:opacity-80">
+    <div className="flex flex-col items-center rounded bg-gray-800 px-1 py-3 hover:cursor-pointer hover:opacity-80">
       <Image
-        className="bg-gray-800 p-1 rounded-xl hover:cursor-pointer hover:opacity-80"
+        className="rounded-xl bg-gray-800 p-1 hover:cursor-pointer hover:opacity-80"
         onClick={() => {
           // console.log(`${name} clicked`);
         }}
@@ -16,7 +16,7 @@ const WalletOption = ({name = 'Metamask', img = '/metamask.png', iconSize = '50'
         width={iconSize}
         alt={name}
       />
-      <p className="mt-1 mx-1 text-xs">{name}</p>
+      <p className="mx-1 mt-1 text-xs">{name}</p>
     </div>
   );
 };

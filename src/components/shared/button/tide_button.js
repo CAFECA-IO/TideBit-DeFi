@@ -13,7 +13,7 @@ const TideButton = ({content = '', isHover = false, isFocus = false, ...otherPro
 
   return (
     <button
-      className={`${otherProps?.className} ${hoverStyle} ${focusStyle} text-white bg-cyan-400 border-0 mt-4 md:mt-0 py-2 px-5 focus:outline-none hover:bg-cyan-600 rounded text-base`}
+      className={`${otherProps?.className} ${hoverStyle} ${focusStyle} mt-4 rounded border-0 bg-cyan-400 py-2 px-5 text-base text-white hover:bg-cyan-600 focus:outline-none md:mt-0`}
     >
       {content}
     </button>

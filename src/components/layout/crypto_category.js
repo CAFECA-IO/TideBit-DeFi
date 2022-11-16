@@ -2,43 +2,43 @@ import CryptoCard from '../shared/card/crypto_card';
 
 const CryptoCategory = () => {
   return (
-    <div className="mt-20 container mx-auto flex flex-wrap justify-center px-20 space-y-1">
-      <div className="flex flex-col text-center w-full mb-20">
-        <h1 className="sm:text-4xl text-3xl font-medium title-font mb-4 text-white items-center">
-          <span className="hidden md:inline-block h-px xl:w-1/4 lg:w-1/5 rounded bg-white xl:mx-2 mb-3"></span>
+    <div className="container mx-auto mt-20 flex flex-wrap justify-center space-y-1 px-20">
+      <div className="mb-20 flex w-full flex-col text-center">
+        <h1 className="title-font mb-4 items-center text-3xl font-medium text-white sm:text-4xl">
+          <span className="mb-3 hidden h-px rounded bg-white md:inline-block lg:w-1/5 xl:mx-2 xl:w-1/4"></span>
           <span className="text-blue-400">Popular</span> cryptocurrencies
-          <span className="hidden md:inline-block h-px xl:w-1/4 lg:w-1/5 rounded bg-white xl:mx-2 mb-3"></span>
+          <span className="mb-3 hidden h-px rounded bg-white md:inline-block lg:w-1/5 xl:mx-2 xl:w-1/4"></span>
         </h1>
       </div>
-      <div className="flex flex-wrap space-x-3 xl:space-x-0 xl:justify-between lg:justify-center justify-center">
-        <div className="flex xl:w-1/5 lg:w-1/4 flex-wrap justify-center my-5">
+      <div className="flex flex-wrap justify-center space-x-3 lg:justify-center xl:justify-between xl:space-x-0">
+        <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">
           <CryptoCard />
         </div>
-        <div className="flex xl:w-1/5 lg:w-1/4 flex-wrap justify-center my-5">
+        <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">
           <CryptoCard />
         </div>
-        <div className="flex xl:w-1/5 lg:w-1/4 flex-wrap justify-center my-5">
+        <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">
           <CryptoCard />
         </div>
-        <div className="flex xl:w-1/5 lg:w-1/4 flex-wrap justify-center my-5">
+        <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">
           <CryptoCard />
         </div>
-        <div className="flex xl:w-1/5 lg:w-1/4 flex-wrap justify-center my-5">
+        <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">
           <CryptoCard />
         </div>
-        <div className="flex xl:w-1/5 lg:w-1/4 flex-wrap justify-center my-5">
+        <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">
           <CryptoCard />
         </div>
-        <div className="flex xl:w-1/5 lg:w-1/4 flex-wrap justify-center my-5">
+        <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">
           <CryptoCard />
         </div>
-        <div className="flex xl:w-1/5 lg:w-1/4 flex-wrap justify-center my-5">
+        <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">
           <CryptoCard />
         </div>
-        <div className="flex xl:w-1/5 lg:w-1/4 flex-wrap justify-center my-5">
+        <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">
           <CryptoCard />
         </div>
-        <div className="flex xl:w-1/5 lg:w-1/4 flex-wrap justify-center my-5">
+        <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">
           <CryptoCard />
         </div>
       </div>

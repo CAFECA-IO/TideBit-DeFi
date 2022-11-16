@@ -5,7 +5,7 @@ const TideLink = ({content = '', ...otherProps}) => {
   return (
     <Link
       href={`${otherProps.href}`}
-      className={`${otherProps?.className} hover:text-cyan-300 hover:cursor-pointer`}
+      className={`${otherProps?.className} hover:cursor-pointer hover:text-cyan-300`}
     >
       {content}
     </Link>

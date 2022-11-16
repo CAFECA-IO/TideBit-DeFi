@@ -19,7 +19,7 @@ const Home = () => {
 
       <NavBar />
 
-      <div className="bg-black flex min-h-screen flex-col items-center justify-center py-24 overflow-hidden">
+      <div className="flex min-h-screen flex-col items-center justify-center overflow-hidden bg-black py-24">
         <main>
           <div className="">
             <div className="overflow-y-auto">
@@ -35,13 +35,13 @@ const Home = () => {
               <HeroReverse heading={`Security System`} />
               <Hero heading={`Free Online Courses`} />
 
-              <h1 className="lg:text-4xl md:text-3xl sm:text-2xl text-lg md:px-20 py-20 flex-shrink-0 text-white flex justify-center items-center px-2 font-bold">
+              <h1 className="flex flex-shrink-0 items-center justify-center py-20 px-2 text-lg font-bold text-white sm:text-2xl md:px-20 md:text-3xl lg:text-4xl">
                 Trade on&nbsp;<span className="text-cyan-400">TideBit</span>
                 &nbsp;anywhere, anytime
               </h1>
               <AppDowloadContainer />
             </div>
-            <div className="w-screen h-1/2">
+            <div className="h-1/2 w-screen">
               <Footer />
             </div>
           </div>

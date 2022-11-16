@@ -4,19 +4,19 @@ import React from 'react';
 const AppDowloadContainer = () => {
   const containerDescription = `container px-5 mx-auto flex items-center md:flex-row flex-col`;
   return (
-    <section className={`text-gray-400 bg-black body-font py-24`}>
-      <div className="container mx-auto flex px-5 pb-24 md:flex-row items-center flex-wrap space-y-2">
-        <div className="mx-auto lg:max-w-lg lg:w-full md:w-1/2 w-5/6 md:mb-0 mb-10">
+    <section className={`body-font bg-black py-24 text-gray-400`}>
+      <div className="container mx-auto flex flex-wrap items-center space-y-2 px-5 pb-24 md:flex-row">
+        <div className="mx-auto mb-10 w-5/6 md:mb-0 md:w-1/2 lg:w-full lg:max-w-lg">
           <div className="flex justify-center">
             <img
-              className="object-cover object-center rounded"
+              className="rounded object-cover object-center"
               alt="hero"
               src="https://dummyimage.com/250x250"
             />
           </div>
 
-          <div className="flex flex-wrap md:ml-auto md:mr-0 mx-auto items-center justify-center flex-shrink-0 sm:space-x-4 mt-5">
-            <button className="border-[2px] border-white rounded-lg hover:opacity-80">
+          <div className="mx-auto mt-5 flex flex-shrink-0 flex-wrap items-center justify-center sm:space-x-4 md:ml-auto md:mr-0">
+            <button className="rounded-lg border-[2px] border-white hover:opacity-80">
               <Image src="/app-store.svg" width={132} height={40} alt="app-store" />
               {/* <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -33,7 +33,7 @@ const AppDowloadContainer = () => {
               </span> */}
             </button>
 
-            <button className="border-[2px] border-white rounded-lg hover:opacity-80">
+            <button className="rounded-lg border-[2px] border-white hover:opacity-80">
               <Image src={'/google-play.svg'} width={132} height={40} alt="google play" />
               {/* <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -50,9 +50,9 @@ const AppDowloadContainer = () => {
             </button>
           </div>
         </div>
-        <div className="justify-center mx-auto flex items-center">
+        <div className="mx-auto flex items-center justify-center">
           <img
-            className="object-cover object-center rounded"
+            className="rounded object-cover object-center"
             alt="hero"
             src="https://dummyimage.com/720x450"
           />

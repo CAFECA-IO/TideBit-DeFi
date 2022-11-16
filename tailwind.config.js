@@ -40,6 +40,7 @@ module.exports = {
       colors: {
         darkGray: '#161719',
         lightGray: '#8B8E91',
+        lightGray1: '#EDECEC',
         lightWhite: '#F2F2F2',
         tidebitTheme: '#29C1E1',
       },

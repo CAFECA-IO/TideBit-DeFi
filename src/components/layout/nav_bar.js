@@ -40,12 +40,12 @@ const NavBar = ({notificationNumber = 1}) => {
                     <div className="relative mb-2 h-[55px] w-[150px] flex-col justify-center hover:cursor-pointer hover:opacity-80">
                       <Image
                         className=""
-                        src={'/tidebit_placeholder.png'}
+                        src={'/elements/nav-logo.svg'}
                         height={50}
                         width={150}
                         alt={'logo'}
                       />
-                      <p className="container mx-auto -mt-4 pr-[10px] text-end text-[10px] text-gray-500">
+                      <p className="container mx-auto -mt-1 ml-3 pr-[10px] text-end text-[10px] text-lightGray">
                         V {version}
                       </p>
                     </div>
@@ -65,7 +65,7 @@ const NavBar = ({notificationNumber = 1}) => {
                   </div>
                 </Link>
                 {/* Desktop menu */}
-                <div className={`hidden pb-2 lg:block`}>
+                <div className={`hidden pb-5 text-[16px] text-lightGray1 lg:block`}>
                   <div className="ml-10 mt-5 flex flex-1 items-center space-x-4">
                     <TideLink href="#" className="" content={'Trading'} />
                     <TideLink href="#" className="mr-5" content={'TideBit University'} />
@@ -78,21 +78,31 @@ const NavBar = ({notificationNumber = 1}) => {
               <div className="hidden pt-3 lg:flex">
                 <div className="flex items-center justify-center px-5">
                   <div>
-                    <AiOutlineGlobal
-                      size={24}
+                    <Image
+                      src="/elements/globe.svg"
+                      width={20}
+                      height={20}
                       className="hover:cursor-pointer hover:text-cyan-300"
+                      alt="icon"
                     />
                   </div>
                   {/* <TbMinusVertical size={30} className="" /> */}
-                  <span className="mx-2 inline-block h-10 w-px rounded bg-white"></span>
+                  <span className="mx-2 inline-block h-10 w-px rounded bg-lightGray1"></span>
 
                   <div onClick={sidebarOpenHandler} className="relative hover:cursor-pointer">
-                    <span className="absolute top-0 -right-0.5 z-20 inline-block h-3 w-3 rounded-xl bg-cyan-300">
+                    <span className="absolute top-0 -right-1 z-20 inline-block h-3 w-3 rounded-xl bg-cyan-300">
                       <p className="text-center text-[8px] hover:text-white">
                         {notificationNumber}
                       </p>
                     </span>
-                    <BsBell size={23} className="hover:text-cyan-300"></BsBell>
+
+                    <Image
+                      src="/elements/notifications-outline.svg"
+                      width={20}
+                      height={20}
+                      className="hover:cursor-pointer hover:text-cyan-300"
+                      alt="icon"
+                    />
                   </div>
                 </div>
                 <div className="mr-5 inline-flex">
@@ -152,20 +162,31 @@ const NavBar = ({notificationNumber = 1}) => {
               <div className="pt-3">
                 <div className="flex items-center justify-start px-3">
                   <div>
-                    <AiOutlineGlobal
-                      size={24}
+                    <Image
+                      src="/elements/globe.svg"
+                      width={20}
+                      height={20}
                       className="hover:cursor-pointer hover:text-cyan-300"
+                      alt="icon"
                     />
                   </div>
-                  <TbMinusVertical size={30} className="" />
+                  {/* <TbMinusVertical size={30} className="" /> */}
+                  <span className="mx-2 inline-block h-10 w-px rounded bg-lightGray1"></span>
 
                   <div onClick={sidebarOpenHandler} className="relative hover:cursor-pointer">
-                    <span className="absolute top-0 -right-0.5 z-20 inline-block h-3 w-3 rounded-xl bg-cyan-300">
+                    <span className="absolute top-0 -right-1 z-20 inline-block h-3 w-3 rounded-xl bg-cyan-300">
                       <p className="text-center text-[8px] hover:text-white">
                         {notificationNumber}
                       </p>
                     </span>
-                    <BsBell size={23} className="hover:text-cyan-300"></BsBell>
+
+                    <Image
+                      src="/elements/notifications-outline.svg"
+                      width={20}
+                      height={20}
+                      className="hover:cursor-pointer hover:text-cyan-300"
+                      alt="icon"
+                    />
                   </div>
                 </div>
               </div>

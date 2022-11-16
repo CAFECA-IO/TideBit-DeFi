@@ -191,16 +191,31 @@ const NavBar = ({notificationNumber = 1}) => {
                 ref={ref}
                 className={`${'w-[479px]'} h-screen bg-darkGray p-5 pt-8 text-white duration-300`}
               >
-                <div className="flex">
-                  <span className="mx-2 inline-block h-[158px] w-[5px] rounded bg-tidebitTheme"></span>
-                  <div className="flex items-baseline">
-                    <Image src="/elements/megaphone.svg" width={30} height={26} alt="icon" />
-                    <div>
-                      <div className="font-bold">Happy Birthday to TideBit</div>
-                      <div className="max-w-1/5">Lorem ipsum dolor sit amet,</div>
+                <div className="pl-5 text-[25px]">Notification</div>
+                <div className="mt-[83px] -mb-[17px] flex">
+                  <span className="mx-2 inline-block h-[158px] w-[5px] flex-shrink-0 bg-tidebitTheme"></span>
+                  <div className="-mt-[130px] flex items-center">
+                    <Image
+                      className="flex flex-shrink-0"
+                      src="/elements/megaphone.svg"
+                      width={30}
+                      height={26}
+                      alt="icon"
+                    />
+                    <div className="relative mt-[88px] ml-3 text-start">
+                      <div className="-pt-4 absolute top-[25px] font-bold">
+                        Happy Birthday to TideBit
+                      </div>
+                      <div className="flex flex-wrap pt-[70px] text-[12px] text-lightGray">
+                        Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy
+                        eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam
+                        voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet
+                        clita kasd gubergren, no sea takimata sanctus est Lorem
+                      </div>
                     </div>
                   </div>
                 </div>
+                <span className="ml-2 inline-block h-[1px] w-[438px] flex-shrink-0 bg-lightGray"></span>
               </div>
             </div>
           </div>

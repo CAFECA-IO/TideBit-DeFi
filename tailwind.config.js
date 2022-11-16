@@ -39,6 +39,7 @@ module.exports = {
     extend: {
       colors: {
         darkGray: '#161719',
+        lightGray: '#8B8E91',
         tidebitTheme: '#29C1E1',
       },
       fontFamily: {

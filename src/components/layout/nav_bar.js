@@ -191,22 +191,32 @@ const NavBar = ({notificationNumber = 1}) => {
                 ref={ref}
                 className={`${'w-[479px]'} h-screen bg-darkGray p-5 pt-8 text-white duration-300`}
               >
-                <div className="pl-5 text-[25px]">Notification</div>
-                <div className="mt-[83px] -mb-[17px] flex">
+                <h1 className="pl-5 text-[25px] font-bold">Notification</h1>
+                <div className="fixed right-[30px] text-[14px] text-tidebitTheme underline hover:cursor-pointer">
+                  Clear All
+                </div>
+                <div className="mt-[83px] -mb-[28px] flex">
                   <span className="mx-2 inline-block h-[158px] w-[5px] flex-shrink-0 bg-tidebitTheme"></span>
                   <div className="-mt-[130px] flex items-center">
                     <Image
-                      className="flex flex-shrink-0"
+                      className="ml-[8px] -mt-[10px] flex flex-shrink-0"
                       src="/elements/megaphone.svg"
                       width={30}
                       height={26}
                       alt="icon"
                     />
                     <div className="relative mt-[88px] ml-3 text-start">
-                      <div className="-pt-4 absolute top-[25px] font-bold">
-                        Happy Birthday to TideBit
+                      <div className="">
+                        <div className="absolute top-[40px] text-[25px] text-lightWhite">
+                          Happy Birthday to TideBit
+                        </div>
+                        <div className="right-[20px] pt-[42px] pl-[300px] pb-[50px] text-end text-[12px] text-lightGray">
+                          <div>2022-10-05</div>
+                          <div>14:28:38</div>
+                        </div>
                       </div>
-                      <div className="flex flex-wrap pt-[70px] text-[12px] text-lightGray">
+
+                      <div className="mb-[23px] -mt-[30px] flex flex-wrap text-[12px] text-lightGray">
                         Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy
                         eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam
                         voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet

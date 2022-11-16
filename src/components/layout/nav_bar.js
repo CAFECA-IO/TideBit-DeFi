@@ -27,6 +27,75 @@ const NavBar = ({notificationNumber = 1}) => {
     // console.log('sidebarOpenHandler clicked, componentVisible: ', componentVisible);
   };
 
+  const displayedMobileNavBar = !navOpen ? (
+    <FiMenu size={30} className="" />
+  ) : (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="h-6 w-6 text-white hover:text-cyan-300"
+      viewBox="0 0 20 20"
+      fill="currentColor"
+    >
+      <path
+        fillRule="evenodd"
+        d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+        clipRule="evenodd"
+      />
+    </svg>
+  );
+
+  const isDisplayedMobileNavBar = navOpen ? '' : 'hidden';
+
+  const isDisplayedNotificationSidebar = sidebarOpen ? (
+    <div className="fixed right-1 top-10 z-10 flex overflow-x-hidden overflow-y-hidden outline-none focus:outline-none">
+      <div className="relative my-6 mx-auto w-auto max-w-xl">
+        {' '}
+        <div className={`relative`}>
+          <div
+            ref={ref}
+            className={`${'w-[479px]'} h-screen bg-darkGray p-5 pt-8 text-white duration-300`}
+          >
+            <h1 className="pl-5 text-[25px] font-bold">Notification</h1>
+            <div className="fixed right-[30px] text-[14px] text-tidebitTheme underline hover:cursor-pointer">
+              Clear All
+            </div>
+            <div className="mt-[83px] -mb-[28px] flex">
+              <span className="mx-2 inline-block h-[158px] w-[5px] flex-shrink-0 bg-tidebitTheme"></span>
+              <div className="-mt-[130px] flex items-center">
+                <Image
+                  className="ml-[8px] -mt-[10px] flex flex-shrink-0"
+                  src="/elements/megaphone.svg"
+                  width={30}
+                  height={26}
+                  alt="icon"
+                />
+                <div className="relative mt-[88px] ml-3 text-start">
+                  <div className="">
+                    <div className="absolute top-[40px] text-[25px] text-lightWhite">
+                      Happy Birthday to TideBit
+                    </div>
+                    <div className="right-[20px] pt-[42px] pl-[300px] pb-[50px] text-end text-[12px] text-lightGray">
+                      <div>2022-10-05</div>
+                      <div>14:28:38</div>
+                    </div>
+                  </div>
+
+                  <div className="mb-[23px] -mt-[30px] flex flex-wrap text-[12px] text-lightGray">
+                    Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
+                    tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At
+                    vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren,
+                    no sea takimata sanctus est Lorem
+                  </div>
+                </div>
+              </div>
+            </div>
+            <span className="ml-2 inline-block h-[1px] w-[438px] flex-shrink-0 bg-lightGray"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  ) : null;
+
   return (
     <>
       <div className="w-full bg-black">
@@ -117,29 +186,13 @@ const NavBar = ({notificationNumber = 1}) => {
                   onClick={clickHanlder}
                   className="inline-flex items-center justify-center rounded-md p-2 hover:text-cyan-300 focus:outline-none"
                 >
-                  {!navOpen ? (
-                    <FiMenu size={30} className="" />
-                  ) : (
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-6 w-6 text-white hover:text-cyan-300"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  )}
+                  {displayedMobileNavBar}
                 </button>
               </div>
             </div>
           </div>
-
           {/* Mobile menu */}
-          <div className={`lg:hidden ${navOpen ? '' : 'hidden'}`}>
+          <div className={`lg:hidden ${isDisplayedMobileNavBar}`}>
             <div className="text-baseline ml-10 inline-block items-center px-2 pt-2 pb-3 sm:px-3">
               <div className="space-y-1">
                 <TideLink
@@ -198,60 +251,9 @@ const NavBar = ({notificationNumber = 1}) => {
           </div>
         </nav>
       </div>
-      {/* Notification Sidebar */}
-      {/* ${
-								sidebarOpen ? 'w-[479px]' : 'w-0 opacity-0'
-							} */}
-      {/*  absolute right-0 top-0 */}
-      {sidebarOpen ? (
-        <div className="fixed right-1 top-10 z-10 flex overflow-x-hidden overflow-y-hidden outline-none focus:outline-none">
-          <div className="relative my-6 mx-auto w-auto max-w-xl">
-            {' '}
-            <div className={`relative`}>
-              <div
-                ref={ref}
-                className={`${'w-[479px]'} h-screen bg-darkGray p-5 pt-8 text-white duration-300`}
-              >
-                <h1 className="pl-5 text-[25px] font-bold">Notification</h1>
-                <div className="fixed right-[30px] text-[14px] text-tidebitTheme underline hover:cursor-pointer">
-                  Clear All
-                </div>
-                <div className="mt-[83px] -mb-[28px] flex">
-                  <span className="mx-2 inline-block h-[158px] w-[5px] flex-shrink-0 bg-tidebitTheme"></span>
-                  <div className="-mt-[130px] flex items-center">
-                    <Image
-                      className="ml-[8px] -mt-[10px] flex flex-shrink-0"
-                      src="/elements/megaphone.svg"
-                      width={30}
-                      height={26}
-                      alt="icon"
-                    />
-                    <div className="relative mt-[88px] ml-3 text-start">
-                      <div className="">
-                        <div className="absolute top-[40px] text-[25px] text-lightWhite">
-                          Happy Birthday to TideBit
-                        </div>
-                        <div className="right-[20px] pt-[42px] pl-[300px] pb-[50px] text-end text-[12px] text-lightGray">
-                          <div>2022-10-05</div>
-                          <div>14:28:38</div>
-                        </div>
-                      </div>
 
-                      <div className="mb-[23px] -mt-[30px] flex flex-wrap text-[12px] text-lightGray">
-                        Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy
-                        eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam
-                        voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet
-                        clita kasd gubergren, no sea takimata sanctus est Lorem
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <span className="ml-2 inline-block h-[1px] w-[438px] flex-shrink-0 bg-lightGray"></span>
-              </div>
-            </div>
-          </div>
-        </div>
-      ) : null}
+      {/* Notification Sidebar */}
+      {isDisplayedNotificationSidebar}
     </>
   );
 };

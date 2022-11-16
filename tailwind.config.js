@@ -41,6 +41,9 @@ module.exports = {
         darkGray: '#161719',
         tidebitTheme: '#29C1E1',
       },
+      fontFamily: {
+        barlow: ['Barlow', 'sans-serif', 'ui-sans-serif', 'system-ui'],
+      },
     },
   },
   plugins: [],

@@ -51,7 +51,7 @@ export default function WalletPanel(props) {
             <div className="flex items-start justify-between rounded-t pt-8">
               <h3 className="ml-auto text-3xl font-semibold text-white">Wallet Connect</h3>
               <button
-                className="text-md float-right ml-auto border-0 bg-transparent p-1 font-semibold leading-none text-gray-300 outline-none focus:outline-none"
+                className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none"
                 onClick={clickHandler}
               >
                 <span className="-mx-8 -my-5 block h-6 w-6 outline-none focus:outline-none">

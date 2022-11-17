@@ -20,11 +20,29 @@ module.exports = {
       plugins: ['@typescript-eslint'],
     },
   ],
-  extends: ['plugin:import/typescript'],
+  extends: ['plugin:import/typescript', 'plugin:tailwindcss/recommended'],
   // 加上 no console log 規則
   rules: {
     'no-console': 'error',
+    'tailwindcss/no-contradicting-classname': 'error',
+    'tailwindcss/classnames-order': 'off',
+    'tailwindcss/enforces-negative-arbitrary-values': 'off',
+    'tailwindcss/enforces-shorthand': 'off',
+    'tailwindcss/migration-from-tailwind-2': 'off',
+    'tailwindcss/no-arbitrary-value': 'off',
+    'tailwindcss/no-custom-classname': 'off',
   },
   // 整合 prettier 和解決 prettier 衝突問題
-  plugins: ['prettier', 'react'],
+  plugins: ['prettier', 'react', 'tailwindcss'],
+  settings: {
+    tailwindcss: {
+      // These are the default values but feel free to customize
+      callees: ['classnames', 'clsx', 'ctl'],
+      config: 'tailwind.config.js',
+      cssFiles: ['**/*.css', '!**/node_modules', '!**/.*', '!**/dist', '!**/build'],
+      cssFilesRefreshRate: '5_000',
+      removeDuplicates: true,
+      whitelist: [],
+    },
+  },
 };

@@ -126,7 +126,7 @@ const Footer = () => {
                   type="text"
                   id="email"
                   name="email"
-                  className="block w-full rounded border border-white bg-darkGray py-1 px-3 text-[14px] text-base leading-8 text-white outline-none ring-transparent transition-colors duration-200 ease-in-out focus:bg-darkGray active:bg-darkGray xl:w-[220px]"
+                  className="block w-full rounded border border-white bg-darkGray py-1 px-3 text-[14px] leading-8 text-white outline-none ring-transparent transition-colors duration-200 ease-in-out focus:bg-darkGray active:bg-darkGray xl:w-[220px]"
                 />
               </div>
               <TideButton

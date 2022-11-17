@@ -3,7 +3,7 @@ import '../styles/dpr.css';
 
 function MyApp({Component, pageProps}) {
   return (
-    <div className="font-barlow">
+    <div className="">
       <Component {...pageProps} />
     </div>
   );

@@ -4,7 +4,7 @@ import React from 'react';
 const AppDowloadContainer = () => {
   const containerDescription = `container px-5 mx-auto flex items-center md:flex-row flex-col`;
   return (
-    <section className={`body-font bg-black py-24 text-gray-400`}>
+    <section className={` bg-black py-24 text-gray-400`}>
       <div className="container mx-auto flex flex-wrap items-center space-y-2 px-5 pb-24 md:flex-row">
         <div className="mx-auto mb-10 w-5/6 md:mb-0 md:w-1/2 lg:w-full lg:max-w-lg">
           <div className="flex justify-center">
@@ -29,7 +29,7 @@ const AppDowloadContainer = () => {
               </svg>
               <span className="ml-4 flex items-start flex-col leading-none">
                 <span className="text-xs text-gray-500 mb-1">Download on</span>
-                <span className="title-font font-medium">App Store</span>
+                <span className=" font-medium">App Store</span>
               </span> */}
             </button>
 
@@ -45,7 +45,7 @@ const AppDowloadContainer = () => {
               </svg>
               <span className="ml-4 flex items-start flex-col leading-none">
                 <span className="text-xs text-gray-500 mb-1">GET IT ON</span>
-                <span className="title-font font-medium">Google Play</span>
+                <span className=" font-medium">Google Play</span>
               </span> */}
             </button>
           </div>

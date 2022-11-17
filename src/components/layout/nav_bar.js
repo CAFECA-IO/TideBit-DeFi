@@ -193,7 +193,7 @@ const NavBar = ({notificationNumber = 1}) => {
           </div>
           {/* Mobile menu */}
           <div className={`lg:hidden ${isDisplayedMobileNavBar}`}>
-            <div className="text-baseline ml-10 inline-block items-center px-2 pt-2 pb-3 sm:px-3">
+            <div className=" ml-10 inline-block items-center px-2 pt-2 pb-3 sm:px-3">
               <div className="space-y-1">
                 <TideLink
                   href="#"

@@ -19,7 +19,7 @@ bag selvage hot chicken authentic tumeric truffaut hexagon try-hard
 chambray.`;
 
   return (
-    <section className="body-font bg-black text-gray-400">
+    <section className=" bg-black text-gray-400">
       <div className="container mx-auto flex flex-col items-center px-5 pb-24 md:flex-row">
         <div className="mb-10 w-5/6 md:mb-0 md:w-1/2 lg:w-full lg:max-w-lg">
           <img
@@ -29,7 +29,7 @@ chambray.`;
           />
         </div>
         <div className="flex flex-col items-center text-center md:w-1/2 md:items-start md:pl-16 md:text-left lg:flex-grow lg:pl-24 xl:ml-20">
-          <h1 className="title-font mb-4 text-3xl font-medium text-white sm:text-3xl md:text-center">
+          <h1 className=" mb-4 text-3xl font-medium text-white sm:text-3xl md:text-center">
             {displayedHeading}
           </h1>
           <p className="mb-8 leading-relaxed">{displayedContent}</p>

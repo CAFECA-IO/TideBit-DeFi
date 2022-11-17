@@ -87,7 +87,7 @@ const Footer = () => {
     <footer className="-mb-20 bg-darkGray text-[16px] lg:justify-center">
       <div className="mx-auto flex flex-col flex-wrap pl-[100px] pt-24 pb-10 md:flex-row md:flex-nowrap md:items-center lg:items-start">
         <div className="mx-auto w-full flex-shrink-0 px-4 text-center md:mx-0 md:w-1/4 md:text-left lg:w-1/6">
-          <a className="title-font flex flex-col items-center justify-center font-medium text-white md:justify-start">
+          <a className=" flex flex-col items-center justify-center font-medium text-white md:justify-start">
             <Image src="/elements/footer-logo.svg" width={120} height={100} alt="TideBit" />
           </a>
           <span className="container mx-auto mt-2 -mb-2 flex h-px w-[150px] justify-center rounded bg-white xl:w-[180px]"></span>
@@ -98,27 +98,21 @@ const Footer = () => {
         </div>
         <div className="-mb-10 mt-10 flex flex-grow flex-wrap text-center md:mt-0 md:pl-20 md:text-left">
           <div className="w-full px-4 md:w-1/2 lg:w-1/6">
-            <h2 className="title-font mb-3 text-[18px] font-bold tracking-widest text-white">
-              Services
-            </h2>
+            <h2 className=" mb-3 text-[18px] font-bold tracking-widest text-white">Services</h2>
             <nav className="mb-5 list-none">{servicesLinksList}</nav>
           </div>
           <div className="w-full px-4 md:w-1/2 lg:w-1/6">
-            <h2 className="title-font mb-3 text-[18px] font-bold tracking-widest text-white">
-              TideBit
-            </h2>
+            <h2 className=" mb-3 text-[18px] font-bold tracking-widest text-white">TideBit</h2>
             <nav className="mb-5 list-none">{tideBitLinksList}</nav>
           </div>
           <div className="w-full px-4 md:w-1/2 lg:w-1/6">
-            <h2 className="title-font mb-3 text-[18px] font-bold tracking-widest text-white">
+            <h2 className=" mb-3 text-[18px] font-bold tracking-widest text-white">
               Policy & Conditions
             </h2>
             <nav className="mb-5 list-none">{policyLinksList}</nav>
           </div>
           <div className="w-full px-4 md:-mt-8 md:w-1/2 lg:ml-20 lg:mt-0 lg:w-1/3 lg:pl-[50px]">
-            <h2 className="title-font mb-3 text-[18px] font-bold tracking-widest text-white">
-              Newsletter
-            </h2>
+            <h2 className=" mb-3 text-[18px] font-bold tracking-widest text-white">Newsletter</h2>
             <div className="flex flex-wrap items-end justify-center space-y-2 md:justify-start">
               <div className="relative mr-2 w-40 sm:mr-4 sm:w-auto lg:mr-0 xl:mr-4">
                 <input

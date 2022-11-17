@@ -3,7 +3,7 @@ import {FaEthereum} from 'react-icons/fa';
 
 const CryptoCard = () => {
   return (
-    <div className="w-50 rounded-2xl border-2 border-blue-900 bg-white from-blue-800 via-gray-900 to-black p-4 opacity-90 shadow-lg dark:bg-gradient-to-b">
+    <div className=" rounded-2xl border-2 border-blue-900 bg-white from-blue-800 via-gray-900 to-black p-4 opacity-90 shadow-lg dark:bg-gradient-to-b">
       <div className="flex items-center">
         <span className="relative h-10 w-10 rounded-full bg-blue-500 p-2">
           <FaEthereum

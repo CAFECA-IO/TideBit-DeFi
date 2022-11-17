@@ -13,11 +13,11 @@ Moon hashtag pop-up try-hard offal truffaut
 neutra sustainable fingerstache kickstarter.`;
 
   return (
-    <section className="body-font bg-black text-gray-400">
+    <section className=" bg-black text-gray-400">
       <div className="container mx-auto flex flex-wrap px-10 py-24 xl:px-20">
         <div className="-mx-4 mt-auto mb-auto flex flex-wrap content-start sm:w-2/3 sm:pr-10 lg:w-1/2">
           <div className="mb-6 w-full px-4 sm:p-4">
-            <h1 className="title-font mb-2 text-xl font-medium text-white">{displayedHeading}</h1>
+            <h1 className=" mb-2 text-xl font-medium text-white">{displayedHeading}</h1>
             <div className="leading-relaxed">{displayedContent}</div>
           </div>
         </div>

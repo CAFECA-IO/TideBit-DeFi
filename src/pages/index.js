@@ -8,6 +8,7 @@ import CryptoCategory from '../components/layout/crypto_category';
 import HeroReverse from '../components/layout/hero_reverse';
 import AppDowloadContainer from '../components/layout/app_download_container';
 import Footer from '../components/layout/footer';
+import Cta from '../components/layout/cta';
 
 const Home = () => {
   return (
@@ -23,10 +24,7 @@ const Home = () => {
         <main>
           <div className="">
             <div className="overflow-y-auto">
-              <Hero
-                heading={`Trusted platform for Crypto investment`}
-                content={`Start investing now. On TideBit you can learn, buy and sell cryptocurrency assets with the best quality. `}
-              />
+              <Cta />
               <StatisticBlock />
               <CryptoCategory />
               <Banner />

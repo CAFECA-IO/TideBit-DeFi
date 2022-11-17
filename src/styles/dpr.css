@@ -1,25 +1,11 @@
-.wanna {
-  color: rgb(77 143 241);
+.landingPageCTA1 {
+  background-image: url(/public/elements/Group\ 15198.png);
+  object-fit: contain;
 }
 
-/* Exact resolution */
-@media (device-pixel-ratio: 1) {
-  .wanna {
-    color: rgb(233 105 105);
-  }
-}
-
-/* Minimum resolution */
 @media (min-device-pixel-ratio: 2) {
-  .wanna {
-    color: brown;
-  }
-}
-
-/* Maximum resolution */
-@media (max-device-pixel-ratio: 3) {
-  .wanna {
-    background: rgb(4 101 67);
+  .landingPageCTA1 {
+    background-image: url(/public/elements/Group\ 15198@2x.png);
   }
 }
 

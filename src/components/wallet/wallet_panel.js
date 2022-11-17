@@ -52,12 +52,14 @@ export default function WalletPanel(props) {
           >
             {/*header*/}
             <div className="flex items-start justify-between rounded-t pt-8">
-              <h3 className="ml-auto text-3xl font-semibold text-lightWhite">Wallet Connect</h3>
+              <h3 className="-mb-3 -mt-2 ml-auto text-[36px] font-semibold text-lightWhite">
+                Wallet Connect
+              </h3>
               <button
                 className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none"
                 onClick={clickHandler}
               >
-                <span className="-mx-8 -my-5 block h-6 w-6 outline-none focus:outline-none">
+                <span className="-mx-8 -my-4 block h-6 w-6 outline-none focus:outline-none">
                   <ImCross />
                 </span>
               </button>

@@ -10,7 +10,7 @@ const Cta = () => {
           height={1500}
           className="landingPageCTA1 w-full object-fill object-center"
           src="/elements/Group 15198@2x.png"
-          alt="landing page CTA"
+          alt="landing page call to action"
         />
         <div className="absolute top-[5rem] left-[2rem] text-white md:top-[20rem] md:left-[12rem] ">
           <div className="max-w-lg text-3xl font-bold leading-[60px] tracking-wide md:max-w-3xl md:text-7xl">

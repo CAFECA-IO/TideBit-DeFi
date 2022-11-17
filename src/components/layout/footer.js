@@ -66,7 +66,7 @@ const Footer = () => {
   ));
 
   const servicesLinksList = servicesLinks.map(({label, path}) => (
-    <li key={label} className="mt-2">
+    <li key={label} className="mt-2 text-[15px]">
       <TideLink href={path} content={label} className="text-gray-400 hover:text-slate-50" />
     </li>
   ));
@@ -84,7 +84,7 @@ const Footer = () => {
   ));
 
   return (
-    <footer className="body-font -pb-10 -mb-20 bg-darkGray text-[16px] lg:justify-center">
+    <footer className="-mb-20 bg-darkGray text-[16px] lg:justify-center">
       <div className="mx-auto flex flex-col flex-wrap pl-[100px] pt-24 pb-10 md:flex-row md:flex-nowrap md:items-center lg:items-start">
         <div className="mx-auto w-full flex-shrink-0 px-4 text-center md:mx-0 md:w-1/4 md:text-left lg:w-1/6">
           <a className="title-font flex flex-col items-center justify-center font-medium text-white md:justify-start">

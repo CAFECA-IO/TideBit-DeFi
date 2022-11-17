@@ -5,7 +5,7 @@
     "git add"
   ],
   "**/*.+(css)": [
-    "./node_modules/.bin/stylelint *.css --fix",
+    "./node_modules/.bin/tailwindcss *.css --fix",
     "./node_modules/.bin/prettier --write",
     "git add"
   ]

@@ -1,0 +1,35 @@
+.wanna {
+  color: rgb(77 143 241);
+}
+
+/* Exact resolution */
+@media (device-pixel-ratio: 1) {
+  .wanna {
+    color: rgb(233 105 105);
+  }
+}
+
+/* Minimum resolution */
+@media (min-device-pixel-ratio: 2) {
+  .wanna {
+    color: brown;
+  }
+}
+
+/* Maximum resolution */
+@media (max-device-pixel-ratio: 3) {
+  .wanna {
+    background: rgb(4 101 67);
+  }
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.custom-no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.custom-no-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}

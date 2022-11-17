@@ -1,5 +1,7 @@
 module.exports = {
+  parser: '@typescript-eslint/parser',
   parserOptions: {
+    parser: '@babel/eslint-parser',
     ecmaVersion: 2020, // 支援 ECMAScript2020
     sourceType: 'module', // 使用 ECMAScript ****module
     ecmaFeatures: {
@@ -32,8 +34,9 @@ module.exports = {
     'tailwindcss/no-arbitrary-value': 'off',
     'tailwindcss/no-custom-classname': 'off',
   },
+
   // 整合 prettier 和解決 prettier 衝突問題
-  plugins: ['prettier', 'react', 'tailwindcss'],
+  plugins: ['tailwindcss', '@babel', 'prettier', 'react'],
   settings: {
     tailwindcss: {
       // These are the default values but feel free to customize

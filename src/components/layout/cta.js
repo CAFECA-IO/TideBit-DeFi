@@ -8,7 +8,7 @@ const Cta = () => {
       <div className="pl-[150px]">
         <div className="top-[5rem] left-[2rem] text-white md:top-[20rem] md:left-[12rem] ">
           <div className="max-w-lg text-3xl font-bold leading-[60px] tracking-wide md:max-w-3xl md:text-7xl">
-            <span className="text-tidebitTheme">Trusted</span> platform for Crypto investment
+            <span className="text-blue-500">Trusted</span> platform for Crypto investment
           </div>
           <div className="mt-[55px] max-w-md text-[20px] text-lightGray md:max-w-2xl">
             Start investing now. On TideBit you can learn, buy and sell cryptocurrency assets with

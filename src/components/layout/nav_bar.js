@@ -109,7 +109,7 @@ const NavBar = ({notificationNumber = 1}) => {
                     <div className="relative mb-2 h-[55px] w-[150px] flex-col justify-center hover:cursor-pointer hover:opacity-80">
                       <Image
                         className=""
-                        src={'/elements/nav-logo.svg'}
+                        src={'/elements/nav_logo.svg'}
                         height={50}
                         width={150}
                         alt={'logo'}

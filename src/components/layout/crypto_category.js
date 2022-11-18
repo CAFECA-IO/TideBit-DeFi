@@ -1,6 +1,6 @@
 import CryptoCard from '../shared/card/crypto_card';
 
-const CryptoCategory = () => {
+const CryptoCategory = ({img = '', chain = '', currency = '', star = ''}) => {
   return (
     <div className="container mx-auto mt-20 flex flex-wrap justify-center space-y-1 px-20">
       <div className="mb-20 flex w-full flex-col text-center">

@@ -1,7 +1,7 @@
 import React from 'react';
 import {FaEthereum} from 'react-icons/fa';
 
-const CryptoCard = () => {
+const CryptoCard = ({img = '', chain = '', currency = ''}) => {
   return (
     <div className=" rounded-2xl border-2 border-blue-900 bg-white from-blue-800 via-gray-900 to-black p-4 opacity-90 shadow-lg dark:bg-gradient-to-b">
       <div className="flex items-center">

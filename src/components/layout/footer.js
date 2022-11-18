@@ -88,7 +88,7 @@ const Footer = () => {
       <div className="mx-auto flex flex-col flex-wrap pl-[100px] pt-24 pb-10 md:flex-row md:flex-nowrap md:items-center lg:items-start">
         <div className="mx-auto w-full flex-shrink-0 px-4 text-center md:mx-0 md:w-1/4 md:text-left lg:w-1/6">
           <a className="flex flex-col items-center justify-center font-medium text-white md:justify-start">
-            <Image src="/elements/footer-logo.svg" width={120} height={100} alt="TideBit" />
+            <Image src="/elements/footer_logo.svg" width={120} height={100} alt="TideBit" />
           </a>
           <span className="container mx-auto mt-2 -mb-2 flex h-px w-[150px] justify-center rounded bg-white xl:w-[180px]"></span>
 
@@ -139,7 +139,6 @@ const Footer = () => {
           <p className="text-center text-[12px] text-gray-400 sm:text-left md:mt-5 lg:mr-36 lg:mt-0">
             TideBit © 2022
           </p>
-          <p className="text-blue-500">Test</p>
         </div>
       </div>
     </footer>

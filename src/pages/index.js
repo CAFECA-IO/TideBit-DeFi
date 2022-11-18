@@ -25,7 +25,7 @@ const Home = () => {
           <div className="">
             <div className="overflow-y-auto">
               <Cta />
-              <StatisticBlock />
+              <StatisticBlock className="py-40 md:py-0" />
               <CryptoCategory />
               <Banner />
               <HeroReverse heading={`Web 3.0`} />

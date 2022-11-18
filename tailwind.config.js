@@ -25,6 +25,8 @@ module.exports = {
       '9xl': ['128px', 1],
     },
     screens: {
+      xxs: '370px',
+      xs: '500px',
       sm: '640px',
       // => @media (min-width: 640px) { ... }
       md: '768px',
@@ -35,6 +37,7 @@ module.exports = {
       // => @media (min-width: 1280px) { ... }
       '2xl': '1536px',
       // => @media (min-width: 1536px) { ... }
+      '3xl': '1600px',
     },
     extend: {
       colors: {

@@ -1,11 +1,11 @@
 .landingPageCTA1 {
-  background-image: url(/public/elements/Group\ 15198.png);
+  background-image: url(/public/elements/group_15198.png);
   object-fit: contain;
 }
 
 @media (min-device-pixel-ratio: 2) {
   .landingPageCTA1 {
-    background-image: url(/public/elements/Group\ 15198@2x.png);
+    background-image: url(/public/elements/group_15198@2x.png);
   }
 }
 

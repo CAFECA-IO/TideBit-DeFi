@@ -1,4 +1,4 @@
-const StatisticBlock = () => {
+const StatisticBlock = props => {
   const statisticContent = [
     {heading: '24h volumn on TideBit', content: '365 Billion'},
     {heading: 'Users on TideBit', content: '30 Billion+'},
@@ -15,8 +15,8 @@ const StatisticBlock = () => {
   ));
 
   return (
-    <section className=" bg-black text-gray-400">
-      <div className="mx-auto px-5 py-24">
+    <section className={`bg-black text-gray-400 ${props?.className}`}>
+      <div className="mx-auto px-5">
         <div className="-m-4 flex flex-wrap">{statisticContentList}</div>
       </div>
     </section>

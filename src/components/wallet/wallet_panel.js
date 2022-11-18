@@ -18,16 +18,16 @@ export default function WalletPanel(props) {
 
   const walletOptions = [
     {name: 'Metamask', img: '/elements/74263ff26820cd0d895968e3b55e8902.svg'},
-    {name: 'iSunOne', img: '/elements/iSunOne.svg'},
-    {name: 'imToken', img: '/elements/Path 25918.svg'},
+    {name: 'iSunOne', img: '/elements/i_sun_one.svg'},
+    {name: 'imToken', img: '/elements/path_25918.svg'},
     {name: 'Coinbase', img: '/elements/18060234@2x.png'},
-    {name: 'Trust', img: '/elements/TWT@2x.png'},
+    {name: 'Trust', img: '/elements/twt@2x.png'},
     {name: 'Rainbow', img: '/elements/unnamed@2x.png'},
     {name: 'Houbi', img: '/elements/logo@2x.png'},
-    {name: 'Coin98', img: '/elements/coin98-c98-logo@2x.png'},
-    {name: 'TokenPocket', img: '/elements/TokenPocket-wallet-logo@2x.png'},
-    {name: 'WalletConnect', img: '/elements/walletconnect-logo-EE83B50C97-seeklogo.com@2x.png'},
-    {name: 'BitKeep', img: '/elements/Path 25917.svg', size: '40'},
+    {name: 'Coin98', img: '/elements/coin98_c98_logo@2x.png'},
+    {name: 'TokenPocket', img: '/elements/tokenpocket_wallet_logo@2x.png'},
+    {name: 'WalletConnect', img: '/elements/walletconnect@2x.png'},
+    {name: 'BitKeep', img: '/elements/path_25917.svg', size: '40'},
     {name: 'Others', img: '/elements/wallet@2x.png'},
   ];
 
@@ -76,10 +76,10 @@ export default function WalletPanel(props) {
                     />
                   </div>
                   <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2">
-                    <WalletOption name={`iSunOne`} img={`/elements/iSunOne.svg`} iconSize={50} />
+                    <WalletOption name={`iSunOne`} img={`/elements/i_sun_one.svg`} iconSize={50} />
                   </div>
                   <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2">
-                    <WalletOption name={`imToken`} img={`/elements/Path 25918.svg`} iconSize={50} />
+                    <WalletOption name={`imToken`} img={`/elements/path_25918.svg`} iconSize={50} />
                   </div>
                   <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2">
                     <WalletOption
@@ -89,7 +89,7 @@ export default function WalletPanel(props) {
                     />
                   </div>
                   <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2">
-                    <WalletOption name={`Trust`} img={`/elements/TWT@2x.png`} iconSize={50} />
+                    <WalletOption name={`Trust`} img={`/elements/twt@2x.png`} iconSize={50} />
                   </div>
                   <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2">
                     <WalletOption name={`Rainbow`} img={`/elements/unnamed@2x.png`} iconSize={50} />
@@ -100,26 +100,26 @@ export default function WalletPanel(props) {
                   <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2">
                     <WalletOption
                       name={`Coin98`}
-                      img={`/elements/coin98-c98-logo@2x.png`}
+                      img={`/elements/coin98_c98_logo@2x.png`}
                       iconSize={50}
                     />
                   </div>
                   <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2">
                     <WalletOption
                       name={`TokenPocket`}
-                      img={`/elements/TokenPocket-wallet-logo@2x.png`}
+                      img={`/elements/tokenpocket_wallet_logo@2x.png`}
                       iconSize={50}
                     />
                   </div>
                   <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2">
                     <WalletOption
                       name={`WalletConnect`}
-                      img={`/elements/walletconnect-logo-EE83B50C97-seeklogo.com@2x.png`}
+                      img={`/elements/walletconnect@2x.png`}
                       iconSize={50}
                     />
                   </div>
                   <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2">
-                    <WalletOption name={`BitKeep`} img={`/elements/Path 25917.svg`} iconSize={45} />
+                    <WalletOption name={`BitKeep`} img={`/elements/path_25917.svg`} iconSize={45} />
                   </div>
                   <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2">
                     <WalletOption name={`Others`} img={`/elements/wallet@2x.png`} iconSize={50} />

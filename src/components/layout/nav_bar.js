@@ -166,7 +166,7 @@ const NavBar = ({notificationNumber = 1}) => {
                     </span>
 
                     <Image
-                      src="/elements/notifications-outline.svg"
+                      src="/elements/notifications_outline.svg"
                       width={20}
                       height={20}
                       className="hover:cursor-pointer hover:text-cyan-300"

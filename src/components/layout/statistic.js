@@ -9,7 +9,7 @@ const StatisticBlock = () => {
     <div key={heading} className="mb-6 flex w-screen justify-center p-4 lg:mb-0 lg:w-1/3">
       <div className="h-full text-center lg:text-start">
         <p className="text-lg leading-relaxed">{heading}</p>
-        <h2 className=" text-3xl font-medium text-white">{content}</h2>
+        <h2 className="text-3xl font-medium text-white">{content}</h2>
       </div>
     </div>
   ));

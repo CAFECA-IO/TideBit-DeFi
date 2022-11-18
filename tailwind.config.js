@@ -49,6 +49,9 @@ module.exports = {
       fontFamily: {
         barlow: ['Barlow', 'sans-serif', 'ui-sans-serif', 'system-ui'],
       },
+      backgroundImage: {
+        landingPageCta1: "url('~/public/elements/Group_15198@2x.png')",
+      },
     },
   },
   plugins: [],

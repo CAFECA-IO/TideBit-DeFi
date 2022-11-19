@@ -6,7 +6,7 @@ const CryptoCategory = ({img = '', chain = '', currency = '', star = ''}) => {
       <div className="mb-20 flex w-full flex-col text-center">
         <h1 className=" mb-4 items-center text-3xl font-medium text-white sm:text-4xl">
           <span className="mb-3 hidden h-px rounded bg-white md:inline-block lg:w-1/5 xl:mx-2 xl:w-1/4"></span>
-          <span className="text-blue-400">Popular</span> cryptocurrencies
+          <span className="text-tidebitTheme">Popular</span> cryptocurrencies
           <span className="mb-3 hidden h-px rounded bg-white md:inline-block lg:w-1/5 xl:mx-2 xl:w-1/4"></span>
         </h1>
       </div>

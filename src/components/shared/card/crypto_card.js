@@ -20,15 +20,18 @@ const CryptoCard = ({
   currency = '',
   lineGraph = null,
   price = 0,
-  fluctuating = 0,
+  fluctuating = -1,
   star = false,
   starred = false,
   ...otherProps
 }) => {
   price = price > 0.001 ? price.toLocaleString() : price;
-  let priceUp = fluctuating > 0 ? true : false;
-  let fluctuatingRate = priceUp ? `(+${fluctuating}%)▴` : `(-${fluctuating}%)▾`;
-  const priceColor = priceUp ? `text-green-400` : `text-red-400`;
+  fluctuating = Number(fluctuating);
+  // console.log('fluctuating', fluctuating);
+  let priceRise = fluctuating > 0 ? true : false;
+  let fluctuatingRate = priceRise ? `(+${fluctuating}%)▴` : `(${fluctuating}%)▾`;
+  const priceColor = priceRise ? `text-green-400` : `text-red-400`;
+  // console.log('priceColor', priceColor);
 
   const upSvg = (
     <svg
@@ -84,10 +87,8 @@ const CryptoCard = ({
           <div className="relative mt-5 mb-2 h-2 w-28 rounded bg-gray-200">
             <div className="absolute top-0 left-0 h-2 w-2/3 rounded bg-blue-200"></div>
           </div>
-
-          <span
-            className={`-mb-5 flex items-center justify-between text-sm text-green-300 ${priceColor}`}
-          >
+          {/**@note no default text color, for it will make real text color not work */}
+          <span className={`-mb-5 flex items-center justify-between text-sm ${priceColor}`}>
             <p className="my-4 text-left text-base font-bold">{price ? `$ ${price}` : '$17,414'}</p>
             <div className="ml-10 flex">
               <span className="text-sm"> {fluctuatingRate ? fluctuatingRate : '(+11.1%)'}</span>

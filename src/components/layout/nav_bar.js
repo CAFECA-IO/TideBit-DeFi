@@ -54,8 +54,8 @@ const NavBar = ({notificationNumber = 1}) => {
       {/* cover of NavBar ***Bell Icon*** */}
       <div
         className={`${
-          componentVisible ? 'transition-opacity duration-700 ease-in-out' : 'invisible'
-        } invisible fixed z-50 flex h-16 items-center justify-center overflow-x-hidden overflow-y-hidden bg-transparent outline-none hover:cursor-pointer focus:outline-none lg:visible lg:right-52 lg:top-6 lg:h-8 lg:w-8`}
+          componentVisible ? 'visible animate-fade duration-700 ease-in-out' : 'invisible'
+        } invisible fixed z-50 flex h-16 items-center justify-center overflow-x-hidden overflow-y-hidden bg-red-500/50 outline-none hover:cursor-pointer focus:outline-none lg:visible lg:right-52 lg:top-6 lg:h-8 lg:w-8`}
       >
         {' '}
       </div>
@@ -163,7 +163,7 @@ const NavBar = ({notificationNumber = 1}) => {
                 {/* Desktop menu */}
                 <div className={`hidden pb-5 text-[16px] text-lightGray1 lg:block`}>
                   <div className="ml-10 mt-5 flex flex-1 items-center space-x-4">
-                    <TideLink href="#" className="" content={'Trading'} />
+                    <TideLink href="#" className="animate-fade" content={'Trading'} />
                     <TideLink href="#" className="mr-5" content={'TideBit University'} />
                     <TideLink href="#" className="mr-5" content={'Help Center'} />
 

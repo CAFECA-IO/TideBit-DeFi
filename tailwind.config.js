@@ -55,6 +55,19 @@ module.exports = {
       backgroundImage: {
         landingPageCta1: "url('~/public/elements/Group_15198@2x.png')",
       },
+      // animation class
+      animation: {
+        'spin-slow': 'spin 3s linear infinite',
+        'spin-fast': 'spin 1s linear infinite',
+        fade: 'fadeIn 0.5s ease-in-out',
+      },
+      // actual animation
+      keyframes: theme => ({
+        fadeIn: {
+          '100%': {opacity: 0},
+          '0%': {opacity: 1},
+        },
+      }),
     },
   },
   plugins: [],

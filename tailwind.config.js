@@ -59,7 +59,7 @@ module.exports = {
       animation: {
         'spin-slow': 'spin 3s linear infinite',
         'spin-fast': 'spin 1s linear infinite',
-        fade: 'fadeIn 0.5s ease-in-out',
+        fade: 'fadeIn 3s ease-in-out',
       },
       // actual animation
       keyframes: theme => ({

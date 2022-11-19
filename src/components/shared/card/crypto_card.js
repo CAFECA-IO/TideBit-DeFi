@@ -68,7 +68,7 @@ const CryptoCard = ({
   // );
 
   return (
-    <div className="rounded-2xl border-2 border-red-900 bg-white from-red-800 via-gray-900 to-black py-2 pl-3 pr-5 opacity-90 shadow-lg dark:bg-gradient-to-b">
+    <div className="h-[120px] w-[200px] rounded-2xl border-2 border-red-900 bg-white from-red-800 via-gray-900 to-black opacity-90 shadow-lg dark:bg-gradient-to-b">
       <div className="">
         <div className="flex items-center">
           <span className="relative">

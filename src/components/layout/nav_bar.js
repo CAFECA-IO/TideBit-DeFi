@@ -157,7 +157,9 @@ const NavBar = ({notificationNumber = 1}) => {
                   </div>
                   {/* <TbMinusVertical size={30} className="" /> */}
                   <span className="mx-2 inline-block h-10 w-px rounded bg-lightGray1"></span>
-                  {/* FIXME: Try */}
+                  {/* FIXME: Try 
+                1. btn 2. ref binded
+                */}
                   <button onClick={sidebarOpenHandler} className="relative hover:cursor-pointer">
                     <span className="absolute top-0 -right-1 z-20 inline-block h-3 w-3 rounded-xl bg-cyan-300">
                       <p className="text-center text-[8px] hover:text-white">

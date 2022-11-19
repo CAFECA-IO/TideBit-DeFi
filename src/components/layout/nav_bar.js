@@ -22,8 +22,8 @@ const NavBar = ({notificationNumber = 1}) => {
   const clickHanlder = () => setNavOpen(!navOpen);
 
   const sidebarOpenHandler = () => {
-    setSidebarOpen(!sidebarOpen);
-    // setComponentVisible(() => !componentVisible);
+    // setSidebarOpen(!sidebarOpen);
+    setComponentVisible(() => !componentVisible);
     // console.log('sidebarOpenHandler clicked, componentVisible: ', componentVisible);
   };
 
@@ -46,7 +46,7 @@ const NavBar = ({notificationNumber = 1}) => {
 
   const isDisplayedMobileNavBar = navOpen ? '' : 'hidden';
 
-  const isDisplayedNotificationSidebar = sidebarOpen ? (
+  const isDisplayedNotificationSidebar = componentVisible ? (
     <div className="fixed right-1 top-10 z-10 flex overflow-x-hidden overflow-y-hidden outline-none focus:outline-none">
       <div className="relative my-6 mx-auto w-auto max-w-xl">
         {' '}

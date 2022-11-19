@@ -22,6 +22,8 @@ const CryptoCategory = ({...otherProps}) => {
           <CryptoCard
             chain="Ethereum"
             currency="ETH"
+            price={1288.4}
+            fluctuating={1.14}
             tokenComponent=<img
               src="/elements/group_15143.svg"
               alt="eth"
@@ -32,10 +34,14 @@ const CryptoCategory = ({...otherProps}) => {
           />
         </div>
         <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">
-          <CryptoCard chain="Bitcoin" currency="BTC" />
+          <CryptoCard chain="Bitcoin" currency="BTC" price={19848.8} fluctuating={3.46} />
         </div>
         <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">
           <CryptoCard
+            chain="Litecoin"
+            currency="LTC"
+            price={54.57}
+            fluctuating={-3.46}
             tokenComponent=<img
               src="/elements/c5b7bda06ddfe2b3f59b37ed6bb65ab4.svg"
               alt="litecoin"
@@ -44,6 +50,10 @@ const CryptoCategory = ({...otherProps}) => {
         </div>
         <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">
           <CryptoCard
+            chain="Polygon"
+            currency="MATIC"
+            price={0.82}
+            fluctuating={-6.23}
             tokenComponent=<img
               src="/elements/9cc18b0cbe765b0a28791d253207f0c0.svg"
               alt="polygon"
@@ -51,22 +61,58 @@ const CryptoCategory = ({...otherProps}) => {
           />
         </div>
         <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">
-          <CryptoCard tokenComponent=<img src="/elements/group_2374.svg" alt="bnb" /> />
+          <CryptoCard
+            chain="BNB"
+            currency="BNB"
+            price={274.54}
+            tokenComponent=<img src="/elements/group_2374.svg" alt="bnb" />
+            fluctuating={-6.23}
+          />
         </div>
         <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">
-          <CryptoCard tokenComponent=<img src="/elements/group_2378.svg" alt="solana" /> />
+          <CryptoCard
+            chain="solana"
+            currency="SOL"
+            price={28.41}
+            fluctuating={1.14}
+            tokenComponent=<img src="/elements/group_2378.svg" alt="solana" />
+          />
         </div>
         <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">
-          <CryptoCard tokenComponent=<img src="/elements/group_2381.svg" alt="shiba inu" /> />
+          <CryptoCard
+            chain="Shiba Inu"
+            currency="SHIB"
+            price={0.0000099}
+            fluctuating={-3.46}
+            tokenComponent=<img src="/elements/group_2381.svg" alt="shiba inu" />
+          />
         </div>
         <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">
-          <CryptoCard tokenComponent=<img src="/elements/group_2385.svg" alt="polkadot" /> />
+          <CryptoCard
+            chain="Polkadot"
+            currency="DOT"
+            price={5.92}
+            fluctuating={3.46}
+            tokenComponent=<img src="/elements/group_2385.svg" alt="polkadot" />
+          />
         </div>
         <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">
-          <CryptoCard tokenComponent=<img src="/elements/group_2388.svg" alt="cardano" /> />
+          <CryptoCard
+            chain="Cardano"
+            currency="ADA"
+            price={0.3611}
+            fluctuating={1.14}
+            tokenComponent=<img src="/elements/group_2388.svg" alt="cardano" />
+          />
         </div>
         <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">
-          <CryptoCard tokenComponent=<img src="/elements/group_2391.svg" alt="avax" /> />
+          <CryptoCard
+            chain="Avalanche"
+            price={15.77}
+            currency="AVAX"
+            fluctuating={-6.23}
+            tokenComponent=<img src="/elements/group_2391.svg" alt="avax" />
+          />
         </div>
       </div>
     </div>

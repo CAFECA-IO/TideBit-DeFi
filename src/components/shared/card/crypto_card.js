@@ -4,6 +4,8 @@ import {FaEthereum} from 'react-icons/fa';
 // import {ReactComponent as ethIcon} from '/public/elements/group_15143.svg';
 // import {ReactComponent as Logo} from './logo.svg';
 
+// TODO: Fix the height and the weight of each cards
+
 /**
  * @dev used when it needs the star functionality
  * @param {star} empty star
@@ -21,10 +23,12 @@ const CryptoCard = ({
   fluctuating = 0,
   star = false,
   starred = false,
-  upOrDown = 'up',
   ...otherProps
 }) => {
-  const redOrGreen = fluctuating > 0 ? `(+${fluctuating}%)▴` : `(-${fluctuating}%▾)`;
+  price = price > 0.001 ? price.toLocaleString() : price;
+  let priceUp = fluctuating > 0 ? true : false;
+  let fluctuatingRate = priceUp ? `(+${fluctuating}%)▴` : `(-${fluctuating}%)▾`;
+  const priceColor = priceUp ? `text-green-400` : `text-red-400`;
 
   const upSvg = (
     <svg
@@ -61,7 +65,7 @@ const CryptoCard = ({
   // );
 
   return (
-    <div className="rounded-2xl border-2 border-blue-900 bg-white from-blue-800 via-gray-900 to-black py-2 pl-3 pr-5 opacity-90 shadow-lg dark:bg-gradient-to-b">
+    <div className="rounded-2xl border-2 border-red-900 bg-white from-red-800 via-gray-900 to-black py-2 pl-3 pr-5 opacity-90 shadow-lg dark:bg-gradient-to-b">
       <div className="">
         <div className="flex items-center">
           <span className="relative">
@@ -81,12 +85,12 @@ const CryptoCard = ({
             <div className="absolute top-0 left-0 h-2 w-2/3 rounded bg-blue-200"></div>
           </div>
 
-          <span className="-mb-5 flex items-center justify-between text-sm text-green-400">
-            <p className="my-4 text-left text-base font-bold text-green-400">
-              {price ? price : '$17,414'}
-            </p>
+          <span
+            className={`-mb-5 flex items-center justify-between text-sm text-green-300 ${priceColor}`}
+          >
+            <p className="my-4 text-left text-base font-bold">{price ? `$ ${price}` : '$17,414'}</p>
             <div className="ml-10 flex">
-              <span className="text-sm"> {fluctuating ? fluctuating : '(+11.1%)' && {upSvg}}</span>
+              <span className="text-sm"> {fluctuatingRate ? fluctuatingRate : '(+11.1%)'}</span>
             </div>
           </span>
         </div>

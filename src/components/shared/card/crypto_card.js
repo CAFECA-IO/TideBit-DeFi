@@ -10,7 +10,19 @@ import {FaEthereum} from 'react-icons/fa';
  * @param {starred} filled star or not
  *
  */
-const CryptoCard = ({}) => {
+const CryptoCard = ({
+  gradientColor = null,
+  tokenComponent = null,
+  img = '',
+  chain = '',
+  currency = '',
+  price = 0,
+  fluctuating = 0,
+  star = false,
+  starred = false,
+  upOrDown = 'up',
+  ...otherProps
+}) => {
   // const redOrGreen = upOrDown === 'up' ? 'green' : 'red';
 
   const EthIconDownloadOnline = (
@@ -24,6 +36,10 @@ const CryptoCard = ({}) => {
     <Image src="/elements/group_15143.svg" width={50} height={50} className="text-red-600" />
   );
 
+  const tokenComponentExample = (
+    <img src="/elements/c5b7bda06ddfe2b3f59b37ed6bb65ab4.svg" alt="token" />
+  );
+
   // const SvgComponent = props => (
   //   <svg width={48} height={1} xmlns="http://www.w3.org/2000/svg" {...props}>
   //     <title>{'Crypto Icon'}</title>
@@ -32,11 +48,9 @@ const CryptoCard = ({}) => {
   // );
 
   return (
-    <div className=" rounded-2xl border-2 border-blue-900 bg-white from-blue-800 via-gray-900 to-black p-4 opacity-90 shadow-lg dark:bg-gradient-to-b">
+    <div className="rounded-2xl border-2 border-blue-900 bg-white from-blue-800 via-gray-900 to-black p-4 opacity-90 shadow-lg dark:bg-gradient-to-b">
       <div className="flex items-center">
-        <span className="relative">
-          <img src="/elements/c5b7bda06ddfe2b3f59b37ed6bb65ab4.svg" alt="token" />
-        </span>
+        <span className="relative">{tokenComponentExample}</span>
         <div className="ml-2 items-center">
           <p className="text-sm font-bold text-gray-700 dark:text-gray-50">Ethereum</p>
           <p className="text-xs opacity-60 dark:text-gray-200">ETH</p>

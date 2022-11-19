@@ -19,13 +19,28 @@ const CryptoCategory = ({...otherProps}) => {
       </div>
       <div className="flex flex-wrap justify-center space-x-3 lg:justify-center xl:justify-between xl:space-x-0">
         <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">
-          <CryptoCard />
+          <CryptoCard
+            chain="Ethereum"
+            currency="ETH"
+            tokenComponent=<img
+              src="/elements/group_15143.svg"
+              alt="eth"
+              width={40}
+              height={40}
+              className="fill-red-500"
+            />
+          />
         </div>
         <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">
-          <CryptoCard />
+          <CryptoCard chain="Bitcoin" currency="BTC" />
         </div>
         <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">
-          <CryptoCard />
+          <CryptoCard
+            tokenComponent=<img
+              src="/elements/c5b7bda06ddfe2b3f59b37ed6bb65ab4.svg"
+              alt="litecoin"
+            />
+          />
         </div>
         <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">
           <CryptoCard

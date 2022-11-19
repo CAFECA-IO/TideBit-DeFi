@@ -26,6 +26,18 @@ const CryptoCard = ({
 }) => {
   const redOrGreen = fluctuating > 0 ? `(+${fluctuating}%)▴` : `(-${fluctuating}%▾)`;
 
+  const upSvg = (
+    <svg
+      width="20"
+      height="20"
+      fill="currentColor"
+      viewBox="0 0 1792 1792"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path d="M1408 1216q0 26-19 45t-45 19h-896q-26 0-45-19t-19-45 19-45l448-448q19-19 45-19t45 19l448 448q19 19 19 45z"></path>
+    </svg>
+  );
+
   const EthIconDownloadOnline = (
     <FaEthereum
       size={30}
@@ -56,8 +68,11 @@ const CryptoCard = ({
             {tokenComponent ? tokenComponent : tokenComponentExample}
           </span>
           <div className="ml-2 items-center">
-            <p className="text-sm font-bold text-gray-700 dark:text-gray-50">Ethereum</p>
-            <p className="text-xs opacity-60 dark:text-gray-200">ETH</p>
+            <p className="text-sm font-bold text-gray-700 dark:text-gray-50">
+              {' '}
+              {chain ? chain : 'Ethereum'}
+            </p>
+            <p className="text-xs opacity-60 dark:text-gray-200">{currency ? currency : 'ETH'}</p>
           </div>
         </div>
 
@@ -67,18 +82,11 @@ const CryptoCard = ({
           </div>
 
           <span className="-mb-5 flex items-center justify-between text-sm text-green-400">
-            <p className="my-4 text-left text-base font-bold text-green-400">$17,414</p>
+            <p className="my-4 text-left text-base font-bold text-green-400">
+              {price ? price : '$17,414'}
+            </p>
             <div className="ml-10 flex">
-              <span className="text-sm">(+11.1%)</span>
-              <svg
-                width="20"
-                height="20"
-                fill="currentColor"
-                viewBox="0 0 1792 1792"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path d="M1408 1216q0 26-19 45t-45 19h-896q-26 0-45-19t-19-45 19-45l448-448q19-19 45-19t45 19l448 448q19 19 19 45z"></path>
-              </svg>
+              <span className="text-sm"> {fluctuating ? fluctuating : '(+11.1%)' && {upSvg}}</span>
             </div>
           </span>
         </div>

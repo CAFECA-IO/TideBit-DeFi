@@ -23,7 +23,7 @@ const NavBar = ({notificationNumber = 1}) => {
 
   const sidebarOpenHandler = () => {
     // setSidebarOpen(!sidebarOpen);
-    setComponentVisible(() => !componentVisible);
+    setComponentVisible(!componentVisible);
     // console.log('sidebarOpenHandler clicked, componentVisible: ', componentVisible);
   };
 

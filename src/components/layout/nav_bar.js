@@ -14,6 +14,7 @@ import version from '../../lib/version';
 import WalletPanel from '../wallet/wallet_panel';
 import useOuterClick from '../../hooks/lib/useOuterClick';
 
+// TODO: Animation of navbar
 const NavBar = ({notificationNumber = 1}) => {
   const [navOpen, setNavOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -48,13 +49,15 @@ const NavBar = ({notificationNumber = 1}) => {
 
   const isDisplayedNotificationSidebar = componentVisible ? (
     <>
+      {/* TODO: Blur background done */}
       {/* cover */}
-      <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none focus:outline-none">
-        {/* sidebar */}
+      <div className="fixed inset-0 z-50 flex items-center justify-center overflow-x-hidden overflow-y-hidden bg-darkGray/10 outline-none backdrop-blur-sm focus:outline-none">
+        {/* sidebar section */}
         <div className="fixed right-1 top-10 z-10 flex overflow-x-hidden overflow-y-hidden outline-none focus:outline-none">
           <div className="relative my-6 mx-auto w-auto max-w-xl">
             {' '}
             <div className={`relative`}>
+              {/* sidebar self */}
               <div
                 ref={ref}
                 className={`${'w-[479px]'} h-screen bg-darkGray p-5 pt-8 text-white duration-300`}

@@ -24,25 +24,30 @@ const CryptoCategory = ({...otherProps}) => {
           <CryptoCard />
         </div>
         <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">
-          <CryptoCard />
+          <CryptoCard
+            tokenComponent=<img
+              src="/elements/9cc18b0cbe765b0a28791d253207f0c0.svg"
+              alt="polygon"
+            />
+          />
         </div>
         <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">
-          <CryptoCard />
+          <CryptoCard tokenComponent=<img src="/elements/group_2374.svg" alt="bnb" /> />
         </div>
         <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">
-          <CryptoCard />
+          <CryptoCard tokenComponent=<img src="/elements/group_2378.svg" alt="solana" /> />
         </div>
         <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">
-          <CryptoCard />
+          <CryptoCard tokenComponent=<img src="/elements/group_2381.svg" alt="shiba inu" /> />
         </div>
         <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">
-          <CryptoCard />
+          <CryptoCard tokenComponent=<img src="/elements/group_2385.svg" alt="polkadot" /> />
         </div>
         <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">
-          <CryptoCard />
+          <CryptoCard tokenComponent=<img src="/elements/group_2388.svg" alt="cardano" /> />
         </div>
         <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">
-          <CryptoCard />
+          <CryptoCard tokenComponent=<img src="/elements/group_2391.svg" alt="avax" /> />
         </div>
       </div>
     </div>

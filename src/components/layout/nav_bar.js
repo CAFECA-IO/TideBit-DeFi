@@ -60,7 +60,7 @@ const NavBar = ({notificationNumber = 1}) => {
               {/* sidebar self */}
               <div
                 ref={ref}
-                className={`${'w-[479px]'} h-screen bg-darkGray p-5 pt-8 text-white duration-300`}
+                className={`${'w-[479px]'} h-screen bg-darkGray/90 p-5 pt-8 text-white duration-300`}
               >
                 <h1 className="pl-5 text-[25px] font-bold">Notification</h1>
                 <div className="fixed right-[30px] text-[14px] text-tidebitTheme underline hover:cursor-pointer">

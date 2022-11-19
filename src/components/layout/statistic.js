@@ -7,9 +7,9 @@ const StatisticBlock = props => {
 
   const statisticContentList = statisticContent.map(({heading, content}) => (
     <div key={heading} className="mb-6 flex w-screen justify-center p-4 lg:mb-0 lg:w-1/3">
-      <div className="h-full text-center lg:text-start">
-        <p className="text-lg leading-relaxed">{heading}</p>
-        <h2 className="text-3xl font-medium text-white">{content}</h2>
+      <div className="ml-5 h-full text-center lg:text-start">
+        <p className="text-lg leading-relaxed xl:text-xl">{heading}</p>
+        <h2 className="text-3xl font-medium text-white md:text-4xl xl:text-5xl">{content}</h2>
       </div>
     </div>
   ));

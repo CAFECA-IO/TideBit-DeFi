@@ -1,15 +1,41 @@
+import Image from 'next/image';
 import React from 'react';
 import {FaEthereum} from 'react-icons/fa';
+// import {ReactComponent as ethIcon} from '/public/elements/group_15143.svg';
+// import {ReactComponent as Logo} from './logo.svg';
 
-const CryptoCard = ({img = '', chain = '', currency = ''}) => {
+/**
+ * @dev used when it needs the star functionality
+ * @param {star} empty star
+ * @param {starred} filled star or not
+ *
+ */
+const CryptoCard = ({}) => {
+  // const redOrGreen = upOrDown === 'up' ? 'green' : 'red';
+
+  const EthIconDownloadOnline = (
+    <FaEthereum
+      size={30}
+      className="absolute top-1/2 left-1/2 h-5 -translate-x-1/2 -translate-y-1/2 transform text-white"
+    />
+  );
+
+  const ImageComponent = (
+    <Image src="/elements/group_15143.svg" width={50} height={50} className="text-red-600" />
+  );
+
+  // const SvgComponent = props => (
+  //   <svg width={48} height={1} xmlns="http://www.w3.org/2000/svg" {...props}>
+  //     <title>{'Crypto Icon'}</title>
+  //     <path d="M0 0h48v1H0z" fill="#243c5a" fillRule="evenodd" />
+  //   </svg>
+  // );
+
   return (
     <div className=" rounded-2xl border-2 border-blue-900 bg-white from-blue-800 via-gray-900 to-black p-4 opacity-90 shadow-lg dark:bg-gradient-to-b">
       <div className="flex items-center">
-        <span className="relative h-10 w-10 rounded-full bg-blue-500 p-2">
-          <FaEthereum
-            size={30}
-            className="absolute top-1/2 left-1/2 h-5 -translate-x-1/2 -translate-y-1/2 transform text-white"
-          />
+        <span className="relative">
+          <img src="/elements/c5b7bda06ddfe2b3f59b37ed6bb65ab4.svg" alt="token" />
         </span>
         <div className="ml-2 items-center">
           <p className="text-sm font-bold text-gray-700 dark:text-gray-50">Ethereum</p>

@@ -14,6 +14,7 @@ import version from '../../lib/version';
 import WalletPanel from '../wallet/wallet_panel';
 import useOuterClick from '../../hooks/lib/useOuterClick';
 
+// TODO: Animation of navbar
 const NavBar = ({notificationNumber = 1}) => {
   const [navOpen, setNavOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -22,8 +23,8 @@ const NavBar = ({notificationNumber = 1}) => {
   const clickHanlder = () => setNavOpen(!navOpen);
 
   const sidebarOpenHandler = () => {
-    setSidebarOpen(!sidebarOpen);
-    // setComponentVisible(() => !componentVisible);
+    // setSidebarOpen(!sidebarOpen);
+    setComponentVisible(!componentVisible);
     // console.log('sidebarOpenHandler clicked, componentVisible: ', componentVisible);
   };
 
@@ -45,61 +46,87 @@ const NavBar = ({notificationNumber = 1}) => {
   );
 
   const isDisplayedMobileNavBar = navOpen ? '' : 'hidden';
+  // TODO: Open animation // Pass the sidebar as the props into the blur background?
+  const isDisplayedNotificationSidebar = componentVisible ? (
+    <>
+      {/* TODO: Blur background done */}
 
-  const isDisplayedNotificationSidebar = sidebarOpen ? (
-    <div className="fixed right-1 top-10 z-10 flex overflow-x-hidden overflow-y-hidden outline-none focus:outline-none">
-      <div className="relative my-6 mx-auto w-auto max-w-xl">
+      {/* cover of NavBar ***Bell Icon*** */}
+      <div
+        className={`${
+          componentVisible ? 'visible animate-fade duration-700 ease-in-out' : 'invisible'
+        } invisible fixed z-50 flex h-16 items-center justify-center overflow-x-hidden overflow-y-hidden bg-red-500/50 outline-none hover:cursor-pointer focus:outline-none lg:visible lg:right-52 lg:top-6 lg:h-8 lg:w-8`}
+      >
         {' '}
-        <div className={`relative`}>
-          <div
-            ref={ref}
-            className={`${'w-[479px]'} h-screen bg-darkGray p-5 pt-8 text-white duration-300`}
-          >
-            <h1 className="pl-5 text-[25px] font-bold">Notification</h1>
-            <div className="fixed right-[30px] text-[14px] text-tidebitTheme underline hover:cursor-pointer">
-              Clear All
-            </div>
-            <div className="mt-[83px] -mb-[28px] flex">
-              <span className="mx-2 inline-block h-[158px] w-[5px] flex-shrink-0 bg-tidebitTheme"></span>
-              <div className="-mt-[130px] flex items-center">
-                <Image
-                  className="ml-[8px] -mt-[10px] flex flex-shrink-0"
-                  src="/elements/megaphone.svg"
-                  width={30}
-                  height={26}
-                  alt="icon"
-                />
-                <div className="relative mt-[88px] ml-3 text-start">
-                  <div className="">
-                    <div className="absolute top-[40px] text-[25px] text-lightWhite">
-                      Happy Birthday to TideBit
-                    </div>
-                    <div className="right-[20px] pt-[42px] pl-[300px] pb-[50px] text-end text-[12px] text-lightGray">
-                      <div>2022-10-05</div>
-                      <div>14:28:38</div>
-                    </div>
-                  </div>
+      </div>
 
-                  <div className="mb-[23px] -mt-[30px] flex flex-wrap text-[12px] text-lightGray">
-                    Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
-                    tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At
-                    vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren,
-                    no sea takimata sanctus est Lorem
+      {/* cover o Main, Footer */}
+      <div
+        className={`${
+          componentVisible ? 'transition-opacity duration-700 ease-in-out' : 'invisible'
+        } fixed inset-0 z-30 flex items-center justify-center overflow-x-hidden overflow-y-hidden bg-darkGray/10 outline-none backdrop-blur-sm focus:outline-none`}
+      >
+        {' '}
+      </div>
+
+      {/* sidebar section */}
+      <div className="fixed right-1 top-[44px] z-30 flex overflow-x-hidden overflow-y-hidden outline-none focus:outline-none">
+        <div className="relative my-6 mx-auto w-auto max-w-xl">
+          {' '}
+          <div className={`relative`}>
+            {/* sidebar self */}
+            <div
+              ref={ref}
+              className={`${'w-[479px]'} h-screen ${
+                componentVisible ? 'translate-x-0' : 'translate-x-[479px]'
+              } bg-darkGray/90 p-5 pt-8 text-white transition-all duration-500 ease-in-out`}
+            >
+              <h1 className="pl-5 text-[25px] font-bold">Notification</h1>
+              <div className="fixed right-[30px] text-[14px] text-tidebitTheme underline hover:cursor-pointer">
+                Clear All
+              </div>
+              <div className="mt-[83px] -mb-[28px] flex">
+                <span className="mx-2 inline-block h-[158px] w-[5px] flex-shrink-0 bg-tidebitTheme"></span>
+                <div className="-mt-[130px] flex items-center">
+                  <Image
+                    className="ml-[8px] -mt-[10px] flex flex-shrink-0"
+                    src="/elements/megaphone.svg"
+                    width={30}
+                    height={26}
+                    alt="icon"
+                  />
+                  <div className="relative mt-[88px] ml-3 text-start">
+                    <div className="">
+                      <div className="absolute top-[40px] text-[25px] text-lightWhite">
+                        Happy Birthday to TideBit
+                      </div>
+                      <div className="right-[20px] pt-[42px] pl-[300px] pb-[50px] text-end text-[12px] text-lightGray">
+                        <div>2022-10-05</div>
+                        <div>14:28:38</div>
+                      </div>
+                    </div>
+
+                    <div className="mb-[23px] -mt-[30px] flex flex-wrap text-[12px] text-lightGray">
+                      Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy
+                      eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam
+                      voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita
+                      kasd gubergren, no sea takimata sanctus est Lorem
+                    </div>
                   </div>
                 </div>
               </div>
+              <span className="ml-2 inline-block h-[1px] w-[438px] flex-shrink-0 bg-lightGray"></span>
             </div>
-            <span className="ml-2 inline-block h-[1px] w-[438px] flex-shrink-0 bg-lightGray"></span>
           </div>
         </div>
       </div>
-    </div>
+    </>
   ) : null;
 
   return (
     <>
       <div className="w-full bg-black">
-        <nav className="container fixed inset-x-0 z-50 mx-auto max-w-full bg-black/100 pb-1 text-white">
+        <nav className="container fixed inset-x-0 z-40 mx-auto max-w-full bg-black/100 pb-1 text-white">
           <div className="mx-auto max-w-full px-8">
             <div className="flex h-16 items-center justify-between">
               <div className="flex items-center">
@@ -109,7 +136,7 @@ const NavBar = ({notificationNumber = 1}) => {
                     <div className="relative mb-2 h-[55px] w-[150px] flex-col justify-center hover:cursor-pointer hover:opacity-80">
                       <Image
                         className=""
-                        src={'/elements/nav-logo.svg'}
+                        src={'/elements/nav_logo.svg'}
                         height={50}
                         width={150}
                         alt={'logo'}
@@ -136,7 +163,7 @@ const NavBar = ({notificationNumber = 1}) => {
                 {/* Desktop menu */}
                 <div className={`hidden pb-5 text-[16px] text-lightGray1 lg:block`}>
                   <div className="ml-10 mt-5 flex flex-1 items-center space-x-4">
-                    <TideLink href="#" className="" content={'Trading'} />
+                    <TideLink href="#" className="animate-fade" content={'Trading'} />
                     <TideLink href="#" className="mr-5" content={'TideBit University'} />
                     <TideLink href="#" className="mr-5" content={'Help Center'} />
 
@@ -157,9 +184,11 @@ const NavBar = ({notificationNumber = 1}) => {
                   </div>
                   {/* <TbMinusVertical size={30} className="" /> */}
                   <span className="mx-2 inline-block h-10 w-px rounded bg-lightGray1"></span>
-
-                  <div onClick={sidebarOpenHandler} className="relative hover:cursor-pointer">
-                    <span className="absolute top-0 -right-1 z-20 inline-block h-3 w-3 rounded-xl bg-cyan-300">
+                  {/* FIXME: Try 
+                1. btn 2. ref binded
+                */}
+                  <button onClick={sidebarOpenHandler} className="relative hover:cursor-pointer">
+                    <span className="absolute bottom-3 left-3 z-20 inline-block h-3 w-3 rounded-xl bg-cyan-300">
                       <p className="text-center text-[8px] hover:text-white">
                         {notificationNumber}
                       </p>
@@ -172,7 +201,7 @@ const NavBar = ({notificationNumber = 1}) => {
                       className="hover:cursor-pointer hover:text-cyan-300"
                       alt="icon"
                     />
-                  </div>
+                  </button>
                 </div>
                 <div className="mr-5 inline-flex">
                   {/* <ConnectButton /> */}
@@ -225,22 +254,22 @@ const NavBar = ({notificationNumber = 1}) => {
                   </div>
                   {/* <TbMinusVertical size={30} className="" /> */}
                   <span className="mx-2 inline-block h-10 w-px rounded bg-lightGray1"></span>
-
-                  <div onClick={sidebarOpenHandler} className="relative hover:cursor-pointer">
-                    <span className="absolute top-0 -right-1 z-20 inline-block h-3 w-3 rounded-xl bg-cyan-300">
+                  {/*FIXME: mobile notify icon*/}
+                  <button onClick={sidebarOpenHandler} className="relative hover:cursor-pointer">
+                    <span className="absolute bottom-3 left-3 z-20 inline-block h-3 w-3 rounded-xl bg-cyan-300">
                       <p className="text-center text-[8px] hover:text-white">
                         {notificationNumber}
                       </p>
                     </span>
 
                     <Image
-                      src="/elements/notifications-outline.svg"
+                      src="/elements/notifications_outline.svg"
                       width={20}
                       height={20}
                       className="hover:cursor-pointer hover:text-cyan-300"
                       alt="icon"
                     />
-                  </div>
+                  </button>
                 </div>
               </div>
               <div className="mt-5">

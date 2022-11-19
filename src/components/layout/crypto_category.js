@@ -1,45 +1,118 @@
 import CryptoCard from '../shared/card/crypto_card';
 
-const CryptoCategory = ({img = '', chain = '', currency = '', star = ''}) => {
+const CryptoCategory = ({...otherProps}) => {
+  const customClassName = otherProps?.className;
   return (
-    <div className="container mx-auto mt-20 flex flex-wrap justify-center space-y-1 px-20">
+    <div
+      className={`${customClassName} container mx-auto mt-20 flex flex-wrap justify-center space-y-1`}
+    >
       <div className="mb-20 flex w-full flex-col text-center">
-        <h1 className=" mb-4 items-center text-3xl font-medium text-white sm:text-4xl">
-          <span className="mb-3 hidden h-px rounded bg-white md:inline-block lg:w-1/5 xl:mx-2 xl:w-1/4"></span>
-          <span className="text-blue-400">Popular</span> cryptocurrencies
-          <span className="mb-3 hidden h-px rounded bg-white md:inline-block lg:w-1/5 xl:mx-2 xl:w-1/4"></span>
-        </h1>
+        <div className="mb-4 items-center text-3xl font-medium text-white sm:text-4xl">
+          <div className="flex items-center justify-center">
+            <span className="my-auto hidden h-px rounded bg-white md:inline-block lg:w-1/5 xl:mx-2 xl:w-1/3"></span>
+            <h1 className="mx-1 text-center xl:w-1/3">
+              <span className="text-tidebitTheme">Popular</span> cryptocurrencies
+            </h1>
+            <span className="my-auto hidden h-px rounded bg-white md:inline-block lg:w-1/5 xl:mx-2 xl:w-1/3"></span>
+          </div>
+        </div>
       </div>
       <div className="flex flex-wrap justify-center space-x-3 lg:justify-center xl:justify-between xl:space-x-0">
         <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">
-          <CryptoCard />
+          <CryptoCard
+            chain="Ethereum"
+            currency="ETH"
+            price={1288.4}
+            fluctuating={1.14}
+            tokenComponent=<img
+              src="/elements/group_15143.svg"
+              alt="eth"
+              width={40}
+              height={40}
+              className="fill-red-500"
+            />
+          />
         </div>
         <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">
-          <CryptoCard />
+          <CryptoCard chain="Bitcoin" currency="BTC" price={19848.8} fluctuating={3.46} />
         </div>
         <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">
-          <CryptoCard />
+          <CryptoCard
+            chain="Litecoin"
+            currency="LTC"
+            price={54.57}
+            fluctuating={-3.46}
+            tokenComponent=<img
+              src="/elements/c5b7bda06ddfe2b3f59b37ed6bb65ab4.svg"
+              alt="litecoin"
+            />
+          />
         </div>
         <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">
-          <CryptoCard />
+          <CryptoCard
+            chain="Polygon"
+            currency="MATIC"
+            price={0.82}
+            fluctuating={-6.23}
+            tokenComponent=<img
+              src="/elements/9cc18b0cbe765b0a28791d253207f0c0.svg"
+              alt="polygon"
+            />
+          />
         </div>
         <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">
-          <CryptoCard />
+          <CryptoCard
+            chain="BNB"
+            currency="BNB"
+            price={274.54}
+            tokenComponent=<img src="/elements/group_2374.svg" alt="bnb" />
+            fluctuating={-6.23}
+          />
         </div>
         <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">
-          <CryptoCard />
+          <CryptoCard
+            chain="solana"
+            currency="SOL"
+            price={28.41}
+            fluctuating={1.14}
+            tokenComponent=<img src="/elements/group_2378.svg" alt="solana" />
+          />
         </div>
         <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">
-          <CryptoCard />
+          <CryptoCard
+            chain="Shiba Inu"
+            currency="SHIB"
+            price={0.0000099}
+            fluctuating={-3.46}
+            tokenComponent=<img src="/elements/group_2381.svg" alt="shiba inu" />
+          />
         </div>
         <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">
-          <CryptoCard />
+          <CryptoCard
+            chain="Polkadot"
+            currency="DOT"
+            price={5.92}
+            fluctuating={3.46}
+            tokenComponent=<img src="/elements/group_2385.svg" alt="polkadot" />
+          />
         </div>
         <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">
-          <CryptoCard />
+          <CryptoCard
+            chain="Cardano"
+            currency="ADA"
+            price={0.3611}
+            fluctuating={1.14}
+            tokenComponent=<img src="/elements/group_2388.svg" alt="cardano" />
+          />
         </div>
         <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">
-          <CryptoCard />
+          <CryptoCard
+            chain="Avalanche"
+            price={15.77}
+            currency="AVAX"
+            fluctuating={-6.23}
+            tokenComponent=<img src="/elements/group_2391.svg" alt="avax" />
+          />
         </div>
       </div>
     </div>

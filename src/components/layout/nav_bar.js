@@ -46,7 +46,7 @@ const NavBar = ({notificationNumber = 1}) => {
   );
 
   const isDisplayedMobileNavBar = navOpen ? '' : 'hidden';
-  // TODO: Pass the sidebar as the props into the blur background
+  // TODO: Open animation // Pass the sidebar as the props into the blur background?
   const isDisplayedNotificationSidebar = componentVisible ? (
     <>
       {/* TODO: Blur background done */}
@@ -70,7 +70,7 @@ const NavBar = ({notificationNumber = 1}) => {
       </div>
 
       {/* sidebar section */}
-      <div className="fixed right-1 top-[44px] z-50 flex overflow-x-hidden overflow-y-hidden outline-none focus:outline-none">
+      <div className="fixed right-1 top-[44px] z-30 flex overflow-x-hidden overflow-y-hidden outline-none focus:outline-none">
         <div className="relative my-6 mx-auto w-auto max-w-xl">
           {' '}
           <div className={`relative`}>
@@ -188,7 +188,7 @@ const NavBar = ({notificationNumber = 1}) => {
                 1. btn 2. ref binded
                 */}
                   <button onClick={sidebarOpenHandler} className="relative hover:cursor-pointer">
-                    <span className="absolute top-0 -right-1 z-20 inline-block h-3 w-3 rounded-xl bg-cyan-300">
+                    <span className="absolute bottom-3 left-3 z-20 inline-block h-3 w-3 rounded-xl bg-cyan-300">
                       <p className="text-center text-[8px] hover:text-white">
                         {notificationNumber}
                       </p>
@@ -255,21 +255,21 @@ const NavBar = ({notificationNumber = 1}) => {
                   {/* <TbMinusVertical size={30} className="" /> */}
                   <span className="mx-2 inline-block h-10 w-px rounded bg-lightGray1"></span>
                   {/*FIXME: mobile notify icon*/}
-                  <div onClick={sidebarOpenHandler} className="relative hover:cursor-pointer">
-                    <span className="absolute top-0 -right-1 z-20 inline-block h-3 w-3 rounded-xl bg-cyan-300">
+                  <button onClick={sidebarOpenHandler} className="relative hover:cursor-pointer">
+                    <span className="absolute bottom-3 left-3 z-20 inline-block h-3 w-3 rounded-xl bg-cyan-300">
                       <p className="text-center text-[8px] hover:text-white">
                         {notificationNumber}
                       </p>
                     </span>
 
                     <Image
-                      src="/elements/notifications-outline.svg"
+                      src="/elements/notifications_outline.svg"
                       width={20}
                       height={20}
                       className="hover:cursor-pointer hover:text-cyan-300"
                       alt="icon"
                     />
-                  </div>
+                  </button>
                 </div>
               </div>
               <div className="mt-5">

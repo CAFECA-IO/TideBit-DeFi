@@ -138,12 +138,13 @@ export default function WalletPanel(props) {
 
   return (
     <>
-      <button
+      <TideButton
         onClick={clickHandler}
         className={`${props?.className} mt-4 rounded border-0 bg-tidebitTheme py-2 px-5 text-base text-white hover:bg-cyan-600 focus:outline-none md:mt-0`}
+        content={`Wallet Connect`}
       >
         {`Wallet Connect`}
-      </button>
+      </TideButton>
       {isDisplayedWalletPanel}
     </>
   );

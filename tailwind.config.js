@@ -48,6 +48,8 @@ module.exports = {
         lightGray1: '#EDECEC',
         lightWhite: '#F2F2F2',
         tidebitTheme: '#29C1E1',
+        lightGreen: '#1AE2A0',
+        lightRed: '#E86D6D',
       },
       fontFamily: {
         barlow: ['Barlow', 'sans-serif', 'ui-sans-serif', 'system-ui'],

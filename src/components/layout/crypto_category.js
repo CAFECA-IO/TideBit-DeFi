@@ -24,7 +24,7 @@ const CryptoCategory = ({...otherProps}) => {
             currency="ETH"
             price={1288.4}
             fluctuating={1.14}
-            gradientColor="border-blue-900 bg-white from-blue-800 via-gray-900 to-black"
+            gradientColor="border-[#627EEA]/50 bg-black from-[#627eea]/60 via-zinc-900 to-black"
             tokenComponent=<img
               src="/elements/group_15143.svg"
               alt="eth"
@@ -105,6 +105,7 @@ const CryptoCategory = ({...otherProps}) => {
             currency="DOT"
             price={5.92}
             fluctuating={3.46}
+            gradientColor="border-[#E60B7A] from-[#E60B7A80] via-zinc-900 to-transparent"
             tokenComponent=<img src="/elements/group_2385.svg" alt="polkadot" />
           />
         </div>
@@ -114,6 +115,7 @@ const CryptoCategory = ({...otherProps}) => {
             currency="ADA"
             price={0.3611}
             fluctuating={1.14}
+            gradientColor="border-[#3CC8C8] from-[#3CC8C880] via-zinc-900 to-black"
             tokenComponent=<img src="/elements/group_2388.svg" alt="cardano" />
           />
         </div>
@@ -123,6 +125,7 @@ const CryptoCategory = ({...otherProps}) => {
             price={15.77}
             currency="AVAX"
             fluctuating={-6.23}
+            gradientColor="border-red-900 from-[#F3050480] via-zinc-900 to-black"
             tokenComponent=<img src="/elements/group_2391.svg" alt="avax" />
           />
         </div>

@@ -30,7 +30,7 @@ const CryptoCard = ({
   // console.log('fluctuating', fluctuating);
   let priceRise = fluctuating > 0 ? true : false;
   let fluctuatingRate = priceRise ? `(+${fluctuating}%)▴` : `(${fluctuating}%)▾`;
-  const priceColor = priceRise ? `text-green-400` : `text-red-400`;
+  const priceColor = priceRise ? `text-lightGreen` : `text-lightRed`;
   // console.log('priceColor', priceColor);
 
   const upSvg = (
@@ -69,7 +69,7 @@ const CryptoCard = ({
 
   return (
     <div
-      className={`h-[120px] w-[200px] rounded-2xl border-2 ${gradientColor} opacity-90 shadow-lg dark:bg-gradient-to-b`}
+      className={`h-[120px] w-[200px] rounded-2xl border-[0.5px] ${gradientColor} opacity-90 shadow-lg dark:bg-gradient-to-b`}
     >
       <div className="px-2 py-1">
         {/* token icon & chain & coin */}
@@ -88,13 +88,15 @@ const CryptoCard = ({
 
         {/* line graph & price & fluctuating rate */}
         <div className="flex flex-col justify-start">
-          <div className="relative mt-2 h-2 w-28 rounded bg-gray-200">
+          <div className="relative mt-4 h-2 w-36 rounded bg-gray-200">
             <div className="absolute top-0 left-0 h-2 w-2/3 rounded bg-blue-200"></div>
           </div>
           {/**@note no default text color, otherwise it will make actual text color not work */}
-          <div className="relative mt-2 flex w-[200px] justify-between">
-            <span className={`mb-5 flex items-center justify-between text-sm ${priceColor}`}>
-              <p className="my-4 text-left text-xl tracking-wide">
+          <div className="relative flex w-[200px] justify-between">
+            <span
+              className={`flex items-center justify-between text-sm ${priceColor} mt-3 align-middle`}
+            >
+              <p className="mx-1 text-left text-xl font-normal tracking-wide">
                 {price ? `$ ${price}` : '$17,414'}
               </p>
               <div className="absolute right-4 flex">

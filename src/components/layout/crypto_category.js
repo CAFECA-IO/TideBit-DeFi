@@ -95,7 +95,7 @@ const CryptoCategory = ({...otherProps}) => {
             currency="SHIB"
             price={0.0000099}
             fluctuating={-3.46}
-            gradientColor="border-red-900 bg-white from-red-800 via-gray-900 to-black"
+            gradientColor="border-red-900 from-[#F3050480] to-black"
             tokenComponent=<img src="/elements/group_2381.svg" alt="shiba inu" />
           />
         </div>

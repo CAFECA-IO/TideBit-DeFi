@@ -46,31 +46,14 @@ const NavBar = ({notificationNumber = 1}) => {
   );
 
   const isDisplayedMobileNavBar = navOpen ? '' : 'hidden';
-  // TODO: Open animation // Pass the sidebar as the props into the blur background?
-  const isDisplayedNotificationSidebar = componentVisible ? (
+  // componentVisible ? 'animate-fadeIn' : 'animate-fadeOut';
+
+  const isDisplayedNotificationSidebarSection = (
     <>
-      {/* TODO: Blur background done */}
-
-      {/* cover of NavBar ***Bell Icon*** */}
-      <div
-        className={`${
-          componentVisible ? 'visible animate-fade duration-700 ease-in-out' : 'invisible'
-        } invisible fixed z-50 flex h-16 items-center justify-center overflow-x-hidden overflow-y-hidden bg-red-500/50 outline-none hover:cursor-pointer focus:outline-none lg:visible lg:right-52 lg:top-6 lg:h-8 lg:w-8`}
-      >
-        {' '}
-      </div>
-
-      {/* cover o Main, Footer */}
-      <div
-        className={`${
-          componentVisible ? 'transition-opacity duration-700 ease-in-out' : 'invisible'
-        } fixed inset-0 z-30 flex items-center justify-center overflow-x-hidden overflow-y-hidden bg-darkGray/10 outline-none backdrop-blur-sm focus:outline-none`}
-      >
-        {' '}
-      </div>
-
       {/* sidebar section */}
-      <div className="fixed right-1 top-[44px] z-30 flex overflow-x-hidden overflow-y-hidden outline-none focus:outline-none">
+      <div
+        className={`fixed right-1 top-[44px] z-30 flex overflow-x-hidden overflow-y-hidden outline-none focus:outline-none`}
+      >
         <div className="relative my-6 mx-auto w-auto max-w-xl">
           {' '}
           <div className={`relative`}>
@@ -119,6 +102,31 @@ const NavBar = ({notificationNumber = 1}) => {
             </div>
           </div>
         </div>
+      </div>
+    </>
+  );
+
+  // TODO: Open animation // Pass the sidebar as the props into the blur background?
+  const isDisplayedNotificationSidebar = componentVisible ? (
+    <>
+      {/* TODO: Blur background done */}
+
+      {/* cover of NavBar ***Bell Icon*** */}
+      <div
+        className={`${
+          componentVisible ? 'visible animate-fade duration-700 ease-in-out' : 'invisible'
+        } invisible fixed z-50 flex h-16 items-center justify-center overflow-x-hidden overflow-y-hidden bg-blue-500/50 outline-none hover:cursor-pointer focus:outline-none lg:visible lg:right-52 lg:top-6 lg:h-8 lg:w-8`}
+      >
+        {' '}
+      </div>
+
+      {/* cover o Main, Footer */}
+      <div
+        className={`${
+          componentVisible ? 'transition-opacity duration-700 ease-in-out' : 'invisible'
+        } fixed inset-0 z-30 flex items-center justify-center overflow-x-hidden overflow-y-hidden bg-darkGray/10 outline-none backdrop-blur-sm focus:outline-none`}
+      >
+        {' '}
       </div>
     </>
   ) : null;
@@ -283,6 +291,7 @@ const NavBar = ({notificationNumber = 1}) => {
 
       {/* Notification Sidebar */}
       {isDisplayedNotificationSidebar}
+      {isDisplayedNotificationSidebarSection}
     </>
   );
 };

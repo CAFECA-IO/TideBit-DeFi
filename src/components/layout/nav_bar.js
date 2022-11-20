@@ -107,7 +107,7 @@ const NavBar = ({notificationNumber = 1}) => {
 
   const isDisplayedNotificationSidebarCover = componentVisible ? (
     <>
-      {/* cover of NavBar ***Bell Icon*** */}
+      {/* cover for NavBar ***Bell Icon*** */}
       <div
         className={`${
           componentVisible ? 'visible animate-fade duration-700 ease-in-out' : 'invisible'
@@ -116,7 +116,7 @@ const NavBar = ({notificationNumber = 1}) => {
         {' '}
       </div>
 
-      {/* cover o Main, Footer */}
+      {/* cover for Main, Footer */}
       <div
         className={`${
           componentVisible ? 'transition-opacity duration-700 ease-in-out' : 'invisible'

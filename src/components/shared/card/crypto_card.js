@@ -69,10 +69,10 @@ const CryptoCard = ({
 
   return (
     <div
-      className={`h-[120px] w-[200px] rounded-2xl border-[0.5px] ${gradientColor} opacity-90 shadow-lg dark:bg-gradient-to-b`}
+      className={`h-[120px] w-[200px] rounded-2xl border-[0.5px] ${gradientColor} bg-gradient-to-b opacity-90 shadow-lg`}
     >
       <div className="px-2 py-1">
-        {/* token icon & chain & coin */}
+        {/* token icon & chain & coin name */}
         <div className="flex items-center">
           <span className="relative">
             {tokenComponent ? tokenComponent : tokenComponentExample}

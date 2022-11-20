@@ -10,7 +10,7 @@ const CryptoCategory = ({...otherProps}) => {
         <div className="mb-4 items-center text-3xl font-medium text-white sm:text-4xl">
           <div className="flex items-center justify-center">
             <span className="my-auto hidden h-px rounded bg-white md:inline-block lg:w-1/5 xl:mx-2 xl:w-1/3"></span>
-            <h1 className="mx-1 text-center xl:w-1/3">
+            <h1 className="mx-1 text-center xl:w-[410px]">
               <span className="text-tidebitTheme">Popular</span> cryptocurrencies
             </h1>
             <span className="my-auto hidden h-px rounded bg-white md:inline-block lg:w-1/5 xl:mx-2 xl:w-1/3"></span>
@@ -24,7 +24,7 @@ const CryptoCategory = ({...otherProps}) => {
             currency="ETH"
             price={1288.4}
             fluctuating={1.14}
-            gradientColor="border-[#627EEA]/50 bg-black from-[#627eea]/60 via-zinc-900 to-black"
+            gradientColor="border-bluePurple/50 bg-black from-bluePurple/80 via-zinc-900 to-black"
             tokenComponent=<img
               src="/elements/group_15143.svg"
               alt="eth"

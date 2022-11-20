@@ -16,29 +16,29 @@ export default function WalletPanel(props) {
     // console.log('componentVisible clicked: ', componentVisible);
   };
 
-  const walletOptions = [
-    {name: 'Metamask', img: '/elements/74263ff26820cd0d895968e3b55e8902.svg'},
-    {name: 'iSunOne', img: '/elements/i_sun_one.svg'},
-    {name: 'imToken', img: '/elements/path_25918.svg'},
-    {name: 'Coinbase', img: '/elements/18060234@2x.png'},
-    {name: 'Trust', img: '/elements/twt@2x.png'},
-    {name: 'Rainbow', img: '/elements/unnamed@2x.png'},
-    {name: 'Houbi', img: '/elements/logo@2x.png'},
-    {name: 'Coin98', img: '/elements/coin98_c98_logo@2x.png'},
-    {name: 'TokenPocket', img: '/elements/tokenpocket_wallet_logo@2x.png'},
-    {name: 'WalletConnect', img: '/elements/walletconnect@2x.png'},
-    {name: 'BitKeep', img: '/elements/path_25917.svg', size: '40'},
-    {name: 'Others', img: '/elements/wallet@2x.png'},
-  ];
+  // const walletOptions = [
+  //   {label: 'Metamask', img: '/elements/74263ff26820cd0d895968e3b55e8902.svg'},
+  //   {label: 'iSunOne', img: '/elements/i_sun_one.svg'},
+  //   {label: 'imToken', img: '/elements/path_25918.svg'},
+  //   {label: 'Coinbase', img: '/elements/18060234@2x.png'},
+  //   {label: 'Trust', img: '/elements/twt@2x.png'},
+  //   {label: 'Rainbow', img: '/elements/unnamed@2x.png'},
+  //   {label: 'Houbi', img: '/elements/logo@2x.png'},
+  //   {label: 'Coin98', img: '/elements/coin98_c98_logo@2x.png'},
+  //   {label: 'TokenPocket', img: '/elements/tokenpocket_wallet_logo@2x.png'},
+  //   {label: 'WalletConnect', img: '/elements/walletconnect@2x.png'},
+  //   {label: 'BitKeep', img: '/elements/path_25917.svg', size: '40'},
+  //   {label: 'Others', img: '/elements/wallet@2x.png'},
+  // ];
 
-  const walletOptionsList = walletOptions.map(wallet => (
-    <div
-      key={wallet.name}
-      className="col-span-1 flex items-center justify-center rounded bg-darkGray2"
-    >
-      <WalletOption name={wallet.name} img={wallet.img} iconSize={ICON_SIZE} />
-    </div>
-  ));
+  // const walletOptionsList = walletOptions.map(wallet => (
+  //   <div
+  //     key={wallet.label}
+  //     className="col-span-1 flex items-center justify-center rounded bg-darkGray2"
+  //   >
+  //     <WalletOption name={wallet.label} img={wallet.img} iconSize={ICON_SIZE} />
+  //   </div>
+  // ));
 
   const isDisplayedWalletPanel = componentVisible ? (
     <>
@@ -138,12 +138,13 @@ export default function WalletPanel(props) {
 
   return (
     <>
-      <button
+      <TideButton
         onClick={clickHandler}
         className={`${props?.className} mt-4 rounded border-0 bg-tidebitTheme py-2 px-5 text-base text-white hover:bg-cyan-600 focus:outline-none md:mt-0`}
+        content={`Wallet Connect`}
       >
         {`Wallet Connect`}
-      </button>
+      </TideButton>
       {isDisplayedWalletPanel}
     </>
   );

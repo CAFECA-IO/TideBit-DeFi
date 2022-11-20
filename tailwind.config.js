@@ -44,10 +44,26 @@ module.exports = {
         darkGray: '#161719',
         darkGray1: '#242A31',
         darkGray2: '#2B323A',
+
         lightGray: '#8B8E91',
         lightGray1: '#EDECEC',
+
         lightWhite: '#F2F2F2',
         tidebitTheme: '#29C1E1',
+
+        lightGreen: '#1AE2A0',
+        lightRed: '#E86D6D',
+
+        bluePurple: '#627eea',
+        lightOrange: '#F7931A',
+        lightGray2: '#BEBEBE',
+        lightPurple: '#8247E5',
+        lightYellow: '#F0B90B',
+        lightPurple2: '#8578DB',
+        lightRed1: '#F30504',
+        lightPink: '#E60B7A',
+        lightGreen1: '#3CC8C8',
+        lightRed2: '#E84142',
       },
       fontFamily: {
         barlow: ['Barlow', 'sans-serif', 'ui-sans-serif', 'system-ui'],

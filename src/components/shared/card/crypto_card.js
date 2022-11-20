@@ -30,7 +30,7 @@ const CryptoCard = ({
   // console.log('fluctuating', fluctuating);
   let priceRise = fluctuating > 0 ? true : false;
   let fluctuatingRate = priceRise ? `(+${fluctuating}%)▴` : `(${fluctuating}%)▾`;
-  const priceColor = priceRise ? `text-green-400` : `text-red-400`;
+  const priceColor = priceRise ? `text-lightGreen` : `text-lightRed`;
   // console.log('priceColor', priceColor);
 
   const upSvg = (
@@ -68,32 +68,39 @@ const CryptoCard = ({
   // );
 
   return (
-    <div className="h-[120px] w-[200px] rounded-2xl border-2 border-red-900 bg-white from-red-800 via-gray-900 to-black opacity-90 shadow-lg dark:bg-gradient-to-b">
-      <div className="">
+    <div
+      className={`h-[120px] w-[200px] rounded-2xl border-[0.5px] ${gradientColor} bg-black bg-gradient-to-b opacity-90 shadow-lg`}
+    >
+      <div className="px-2 py-1">
+        {/* token icon & chain & coin name */}
         <div className="flex items-center">
           <span className="relative">
             {tokenComponent ? tokenComponent : tokenComponentExample}
           </span>
-          <div className="ml-2 items-center">
-            <p className="text-sm font-bold text-gray-700 dark:text-gray-50">
-              {' '}
-              {chain ? chain : 'Ethereum'}
-            </p>
-            <p className="text-xs opacity-60 dark:text-gray-200">{currency ? currency : 'ETH'}</p>
+          <div className="ml-3 items-center">
+            <p className="text-lg leading-6 text-lightWhite"> {chain ? chain : 'Ethereum'}</p>
+            <p className="text-sm text-lightWhite opacity-60">{currency ? currency : 'ETH'}</p>
           </div>
         </div>
 
+        {/* line graph & price & fluctuating rate */}
         <div className="flex flex-col justify-start">
-          <div className="relative mt-5 mb-2 h-2 w-28 rounded bg-gray-200">
+          <div className="relative mt-4 h-2 w-36 rounded bg-gray-200">
             <div className="absolute top-0 left-0 h-2 w-2/3 rounded bg-blue-200"></div>
           </div>
-          {/**@note no default text color, for it will make real text color not work */}
-          <span className={`-mb-5 flex items-center justify-between text-sm ${priceColor}`}>
-            <p className="my-4 text-left text-base font-bold">{price ? `$ ${price}` : '$17,414'}</p>
-            <div className="ml-10 flex">
-              <span className="text-sm"> {fluctuatingRate ? fluctuatingRate : '(+11.1%)'}</span>
-            </div>
-          </span>
+          {/**@note no default text color, otherwise it will make actual text color not work */}
+          <div className="relative flex w-[200px] justify-between">
+            <span
+              className={`flex items-center justify-between text-sm ${priceColor} mt-3 align-middle`}
+            >
+              <p className="mx-1 text-left text-xl font-normal tracking-wide">
+                {price ? `$ ${price}` : '$17,414'}
+              </p>
+              <div className="absolute right-4 flex">
+                <span className="text-sm"> {fluctuatingRate ? fluctuatingRate : '(+11.1%)'}</span>
+              </div>
+            </span>
+          </div>
         </div>
       </div>
     </div>

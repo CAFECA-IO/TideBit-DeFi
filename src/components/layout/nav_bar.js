@@ -14,7 +14,6 @@ import version from '../../lib/version';
 import WalletPanel from '../wallet/wallet_panel';
 import useOuterClick from '../../hooks/lib/useOuterClick';
 
-// TODO: Animation of navbar
 const NavBar = ({notificationNumber = 1}) => {
   const [navOpen, setNavOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -46,31 +45,14 @@ const NavBar = ({notificationNumber = 1}) => {
   );
 
   const isDisplayedMobileNavBar = navOpen ? '' : 'hidden';
-  // TODO: Open animation // Pass the sidebar as the props into the blur background?
-  const isDisplayedNotificationSidebar = componentVisible ? (
+  // componentVisible ? 'animate-fadeIn' : 'animate-fadeOut';
+
+  const isDisplayedNotificationSidebarSection = (
     <>
-      {/* TODO: Blur background done */}
-
-      {/* cover of NavBar ***Bell Icon*** */}
-      <div
-        className={`${
-          componentVisible ? 'visible animate-fade duration-700 ease-in-out' : 'invisible'
-        } invisible fixed z-50 flex h-16 items-center justify-center overflow-x-hidden overflow-y-hidden bg-red-500/50 outline-none hover:cursor-pointer focus:outline-none lg:visible lg:right-52 lg:top-6 lg:h-8 lg:w-8`}
-      >
-        {' '}
-      </div>
-
-      {/* cover o Main, Footer */}
-      <div
-        className={`${
-          componentVisible ? 'transition-opacity duration-700 ease-in-out' : 'invisible'
-        } fixed inset-0 z-30 flex items-center justify-center overflow-x-hidden overflow-y-hidden bg-darkGray/10 outline-none backdrop-blur-sm focus:outline-none`}
-      >
-        {' '}
-      </div>
-
       {/* sidebar section */}
-      <div className="fixed right-1 top-[44px] z-30 flex overflow-x-hidden overflow-y-hidden outline-none focus:outline-none">
+      <div
+        className={`fixed right-1 top-[44px] z-30 flex overflow-x-hidden overflow-y-hidden outline-none focus:outline-none`}
+      >
         <div className="relative my-6 mx-auto w-auto max-w-xl">
           {' '}
           <div className={`relative`}>
@@ -78,8 +60,8 @@ const NavBar = ({notificationNumber = 1}) => {
             <div
               ref={ref}
               className={`${'w-[479px]'} h-screen ${
-                componentVisible ? 'translate-x-0' : 'translate-x-[479px]'
-              } bg-darkGray/90 p-5 pt-8 text-white transition-all duration-500 ease-in-out`}
+                componentVisible ? 'translate-x-0' : 'translate-x-full'
+              } bg-darkGray/90 p-5 pt-8 text-white transition-all duration-300`}
             >
               <h1 className="pl-5 text-[25px] font-bold">Notification</h1>
               <div className="fixed right-[30px] text-[14px] text-tidebitTheme underline hover:cursor-pointer">
@@ -121,11 +103,34 @@ const NavBar = ({notificationNumber = 1}) => {
         </div>
       </div>
     </>
+  );
+
+  const isDisplayedNotificationSidebarCover = componentVisible ? (
+    <>
+      {/* cover for NavBar ***Bell Icon*** */}
+      <div
+        className={`${
+          componentVisible ? 'visible animate-fade duration-700 ease-in-out' : 'invisible'
+        } invisible fixed z-50 flex h-16 items-center justify-center overflow-x-hidden overflow-y-hidden bg-transparent outline-none hover:cursor-pointer focus:outline-none lg:visible lg:right-52 lg:top-6 lg:h-8 lg:w-8`}
+      >
+        {' '}
+      </div>
+
+      {/* cover for Main, Footer */}
+      <div
+        className={`${
+          componentVisible ? 'transition-opacity duration-700 ease-in-out' : 'invisible'
+        } fixed inset-0 z-30 flex items-center justify-center overflow-x-hidden overflow-y-hidden bg-darkGray/10 outline-none backdrop-blur-sm focus:outline-none`}
+      >
+        {' '}
+      </div>
+    </>
   ) : null;
 
   return (
     <>
       <div className="w-full bg-black">
+        {/* No bg blur `backdrop-blur-sm` because wallet panel's limited to navbar when it show up */}
         <nav className="container fixed inset-x-0 z-40 mx-auto max-w-full bg-black/100 pb-1 text-white">
           <div className="mx-auto max-w-full px-8">
             <div className="flex h-16 items-center justify-between">
@@ -163,7 +168,7 @@ const NavBar = ({notificationNumber = 1}) => {
                 {/* Desktop menu */}
                 <div className={`hidden pb-5 text-[16px] text-lightGray1 lg:block`}>
                   <div className="ml-10 mt-5 flex flex-1 items-center space-x-4">
-                    <TideLink href="#" className="animate-fade" content={'Trading'} />
+                    <TideLink href="#" className="" content={'Trading'} />
                     <TideLink href="#" className="mr-5" content={'TideBit University'} />
                     <TideLink href="#" className="mr-5" content={'Help Center'} />
 
@@ -184,9 +189,7 @@ const NavBar = ({notificationNumber = 1}) => {
                   </div>
                   {/* <TbMinusVertical size={30} className="" /> */}
                   <span className="mx-2 inline-block h-10 w-px rounded bg-lightGray1"></span>
-                  {/* FIXME: Try 
-                1. btn 2. ref binded
-                */}
+
                   <button onClick={sidebarOpenHandler} className="relative hover:cursor-pointer">
                     <span className="absolute bottom-3 left-3 z-20 inline-block h-3 w-3 rounded-xl bg-cyan-300">
                       <p className="text-center text-[8px] hover:text-white">
@@ -222,6 +225,15 @@ const NavBar = ({notificationNumber = 1}) => {
           </div>
           {/* Mobile menu */}
           <div className={`lg:hidden ${isDisplayedMobileNavBar}`}>
+            {/* Cover for mobile bell icon */}
+            <div
+              className={`${
+                componentVisible ? 'visible' : 'invisible'
+              } fixed top-52 left-24 z-50 flex h-10 w-8 items-center justify-center overflow-x-hidden overflow-y-hidden bg-transparent outline-none hover:cursor-pointer focus:outline-none`}
+            >
+              {' '}
+            </div>
+            {/* Mobile menu section */}
             <div className=" ml-10 inline-block items-center px-2 pt-2 pb-3 sm:px-3">
               <div className="space-y-1">
                 <TideLink
@@ -254,7 +266,6 @@ const NavBar = ({notificationNumber = 1}) => {
                   </div>
                   {/* <TbMinusVertical size={30} className="" /> */}
                   <span className="mx-2 inline-block h-10 w-px rounded bg-lightGray1"></span>
-                  {/*FIXME: mobile notify icon*/}
                   <button onClick={sidebarOpenHandler} className="relative hover:cursor-pointer">
                     <span className="absolute bottom-3 left-3 z-20 inline-block h-3 w-3 rounded-xl bg-cyan-300">
                       <p className="text-center text-[8px] hover:text-white">
@@ -282,7 +293,8 @@ const NavBar = ({notificationNumber = 1}) => {
       </div>
 
       {/* Notification Sidebar */}
-      {isDisplayedNotificationSidebar}
+      {isDisplayedNotificationSidebarCover}
+      {isDisplayedNotificationSidebarSection}
     </>
   );
 };

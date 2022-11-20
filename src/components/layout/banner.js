@@ -16,7 +16,7 @@ const Banner = () => {
         </div>
 
         {/* Slogan and Btn */}
-        <div className="flex w-full justify-center text-6xl">
+        <div className="flex w-full justify-center text-4xl lg:text-6xl">
           <div className="flex flex-col items-start justify-start space-y-10 text-start">
             <div className="text-white">New Wallet available</div>
             <div className="text-tidebitTheme">iSunOne</div>

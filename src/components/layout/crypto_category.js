@@ -71,7 +71,7 @@ const CryptoCategory = ({...otherProps}) => {
         </div>
         <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">
           <CryptoCard
-            chain="solana"
+            chain="Solana"
             currency="SOL"
             price={28.41}
             fluctuating={1.14}

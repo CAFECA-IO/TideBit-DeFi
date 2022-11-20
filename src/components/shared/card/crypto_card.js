@@ -68,7 +68,9 @@ const CryptoCard = ({
   // );
 
   return (
-    <div className="h-[120px] w-[200px] rounded-2xl border-2 border-red-900 bg-white from-red-800 via-gray-900 to-black opacity-90 shadow-lg dark:bg-gradient-to-b">
+    <div
+      className={`h-[120px] w-[200px] rounded-2xl border-2 ${gradientColor} opacity-90 shadow-lg dark:bg-gradient-to-b`}
+    >
       <div className="px-2 py-1">
         {/* token icon & chain & coin */}
         <div className="flex items-center">
@@ -95,7 +97,7 @@ const CryptoCard = ({
               <p className="my-4 text-left text-xl tracking-wide">
                 {price ? `$ ${price}` : '$17,414'}
               </p>
-              <div className="absolute right-5 flex">
+              <div className="absolute right-4 flex">
                 <span className="text-sm"> {fluctuatingRate ? fluctuatingRate : '(+11.1%)'}</span>
               </div>
             </span>

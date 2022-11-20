@@ -28,6 +28,7 @@ const Home = () => {
               <StatisticBlock className="py-40 md:py-0" />
               <CryptoCategory className="py-40" />
               <Banner />
+
               <HeroReverse heading={`Web 3.0`} />
               <Hero heading={`Easy Trade`} />
               <HeroReverse heading={`Security System`} />

@@ -14,7 +14,6 @@ import version from '../../lib/version';
 import WalletPanel from '../wallet/wallet_panel';
 import useOuterClick from '../../hooks/lib/useOuterClick';
 
-// TODO: Animation of navbar
 const NavBar = ({notificationNumber = 1}) => {
   const [navOpen, setNavOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -61,8 +60,8 @@ const NavBar = ({notificationNumber = 1}) => {
             <div
               ref={ref}
               className={`${'w-[479px]'} h-screen ${
-                componentVisible ? 'translate-x-0' : 'translate-x-[479px]'
-              } bg-darkGray/90 p-5 pt-8 text-white transition-all duration-500 ease-in-out`}
+                componentVisible ? 'translate-x-0' : 'translate-x-full'
+              } bg-darkGray/90 p-5 pt-8 text-white transition-all duration-300`}
             >
               <h1 className="pl-5 text-[25px] font-bold">Notification</h1>
               <div className="fixed right-[30px] text-[14px] text-tidebitTheme underline hover:cursor-pointer">
@@ -106,11 +105,8 @@ const NavBar = ({notificationNumber = 1}) => {
     </>
   );
 
-  // TODO: Open animation // Pass the sidebar as the props into the blur background?
-  const isDisplayedNotificationSidebar = componentVisible ? (
+  const isDisplayedNotificationSidebarCover = componentVisible ? (
     <>
-      {/* TODO: Blur background done */}
-
       {/* cover of NavBar ***Bell Icon*** */}
       <div
         className={`${
@@ -192,9 +188,7 @@ const NavBar = ({notificationNumber = 1}) => {
                   </div>
                   {/* <TbMinusVertical size={30} className="" /> */}
                   <span className="mx-2 inline-block h-10 w-px rounded bg-lightGray1"></span>
-                  {/* FIXME: Try 
-                1. btn 2. ref binded
-                */}
+
                   <button onClick={sidebarOpenHandler} className="relative hover:cursor-pointer">
                     <span className="absolute bottom-3 left-3 z-20 inline-block h-3 w-3 rounded-xl bg-cyan-300">
                       <p className="text-center text-[8px] hover:text-white">
@@ -290,7 +284,7 @@ const NavBar = ({notificationNumber = 1}) => {
       </div>
 
       {/* Notification Sidebar */}
-      {isDisplayedNotificationSidebar}
+      {isDisplayedNotificationSidebarCover}
       {isDisplayedNotificationSidebarSection}
     </>
   );

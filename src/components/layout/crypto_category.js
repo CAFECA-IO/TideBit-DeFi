@@ -24,6 +24,7 @@ const CryptoCategory = ({...otherProps}) => {
             currency="ETH"
             price={1288.4}
             fluctuating={1.14}
+            gradientColor="border-blue-900 bg-white from-blue-800 via-gray-900 to-black"
             tokenComponent=<img
               src="/elements/group_15143.svg"
               alt="eth"
@@ -34,7 +35,13 @@ const CryptoCategory = ({...otherProps}) => {
           />
         </div>
         <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">
-          <CryptoCard chain="Bitcoin" currency="BTC" price={19848.8} fluctuating={3.46} />
+          <CryptoCard
+            chain="Bitcoin"
+            currency="BTC"
+            price={19848.8}
+            gradientColor="border-yellow-800 bg-white from-yellow-800 via-gray-900 to-black"
+            fluctuating={3.46}
+          />
         </div>
         <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">
           <CryptoCard
@@ -42,6 +49,7 @@ const CryptoCategory = ({...otherProps}) => {
             currency="LTC"
             price={54.57}
             fluctuating={-3.46}
+            gradientColor="border-zinc-800 bg-white from-zinc-500 via-zinc-800 to-black"
             tokenComponent=<img
               src="/elements/c5b7bda06ddfe2b3f59b37ed6bb65ab4.svg"
               alt="litecoin"
@@ -54,6 +62,7 @@ const CryptoCategory = ({...otherProps}) => {
             currency="MATIC"
             price={0.82}
             fluctuating={-6.23}
+            gradientColor="border-purple-900 bg-white from-purple-900 via-gray-900 to-black"
             tokenComponent=<img
               src="/elements/9cc18b0cbe765b0a28791d253207f0c0.svg"
               alt="polygon"
@@ -65,8 +74,9 @@ const CryptoCategory = ({...otherProps}) => {
             chain="BNB"
             currency="BNB"
             price={274.54}
-            tokenComponent=<img src="/elements/group_2374.svg" alt="bnb" />
             fluctuating={-6.23}
+            gradientColor="border-amber-800 bg-white from-amber-800 via-gray-900 to-black"
+            tokenComponent=<img src="/elements/group_2374.svg" alt="bnb" />
           />
         </div>
         <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">
@@ -75,6 +85,7 @@ const CryptoCategory = ({...otherProps}) => {
             currency="SOL"
             price={28.41}
             fluctuating={1.14}
+            gradientColor="border-[#8578DB80] from-[#8578DB80] to-black"
             tokenComponent=<img src="/elements/group_2378.svg" alt="solana" />
           />
         </div>

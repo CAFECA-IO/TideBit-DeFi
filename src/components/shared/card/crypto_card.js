@@ -68,7 +68,7 @@ const CryptoCard = ({
   // );
 
   return (
-    <div className="h-[120px] w-[200px] rounded-2xl border-2 border-red-900 bg-white from-red-800 via-gray-900 to-black opacity-90 shadow-lg">
+    <div className="h-[120px] w-[200px] rounded-2xl border-2 border-red-900 bg-white from-red-800 via-gray-900 to-black opacity-90 shadow-lg dark:bg-gradient-to-b">
       <div className="px-2 py-1">
         {/* token icon & chain & coin */}
         <div className="flex items-center">

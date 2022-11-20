@@ -111,7 +111,7 @@ const NavBar = ({notificationNumber = 1}) => {
       <div
         className={`${
           componentVisible ? 'visible animate-fade duration-700 ease-in-out' : 'invisible'
-        } invisible fixed z-50 flex h-16 items-center justify-center overflow-x-hidden overflow-y-hidden bg-blue-500/50 outline-none hover:cursor-pointer focus:outline-none lg:visible lg:right-52 lg:top-6 lg:h-8 lg:w-8`}
+        } invisible fixed z-50 flex h-16 items-center justify-center overflow-x-hidden overflow-y-hidden bg-transparent outline-none hover:cursor-pointer focus:outline-none lg:visible lg:right-52 lg:top-6 lg:h-8 lg:w-8`}
       >
         {' '}
       </div>
@@ -224,6 +224,15 @@ const NavBar = ({notificationNumber = 1}) => {
           </div>
           {/* Mobile menu */}
           <div className={`lg:hidden ${isDisplayedMobileNavBar}`}>
+            {/* Cover for mobile bell icon */}
+            <div
+              className={`${
+                componentVisible ? 'visible' : 'invisible'
+              } fixed top-52 left-24 z-50 flex h-10 w-8 items-center justify-center overflow-x-hidden overflow-y-hidden bg-transparent outline-none hover:cursor-pointer focus:outline-none`}
+            >
+              {' '}
+            </div>
+            {/* Mobile menu section */}
             <div className=" ml-10 inline-block items-center px-2 pt-2 pb-3 sm:px-3">
               <div className="space-y-1">
                 <TideLink
@@ -256,7 +265,6 @@ const NavBar = ({notificationNumber = 1}) => {
                   </div>
                   {/* <TbMinusVertical size={30} className="" /> */}
                   <span className="mx-2 inline-block h-10 w-px rounded bg-lightGray1"></span>
-                  {/*FIXME: mobile notify icon*/}
                   <button onClick={sidebarOpenHandler} className="relative hover:cursor-pointer">
                     <span className="absolute bottom-3 left-3 z-20 inline-block h-3 w-3 rounded-xl bg-cyan-300">
                       <p className="text-center text-[8px] hover:text-white">

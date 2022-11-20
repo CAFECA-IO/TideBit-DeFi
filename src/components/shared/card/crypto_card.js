@@ -69,7 +69,7 @@ const CryptoCard = ({
 
   return (
     <div
-      className={`h-[120px] w-[200px] rounded-2xl border-[0.5px] ${gradientColor} bg-gradient-to-b opacity-90 shadow-lg`}
+      className={`h-[120px] w-[200px] rounded-2xl border-[0.5px] ${gradientColor} bg-black bg-gradient-to-b opacity-90 shadow-lg`}
     >
       <div className="px-2 py-1">
         {/* token icon & chain & coin name */}
@@ -77,12 +77,9 @@ const CryptoCard = ({
           <span className="relative">
             {tokenComponent ? tokenComponent : tokenComponentExample}
           </span>
-          <div className="ml-2 items-center">
-            <p className="text-lg leading-6 text-gray-700 dark:text-gray-50">
-              {' '}
-              {chain ? chain : 'Ethereum'}
-            </p>
-            <p className="text-sm opacity-60 dark:text-gray-200">{currency ? currency : 'ETH'}</p>
+          <div className="ml-3 items-center">
+            <p className="text-lg leading-6 text-lightWhite"> {chain ? chain : 'Ethereum'}</p>
+            <p className="text-sm text-lightWhite opacity-60">{currency ? currency : 'ETH'}</p>
           </div>
         </div>
 

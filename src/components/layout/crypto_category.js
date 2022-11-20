@@ -24,7 +24,7 @@ const CryptoCategory = ({...otherProps}) => {
             currency="ETH"
             price={1288.4}
             fluctuating={1.14}
-            gradientColor="border-bluePurple/50 bg-black from-bluePurple/80 via-zinc-900 to-black"
+            gradientColor="border-bluePurple/50 bg-black from-bluePurple/50 to-black"
             tokenComponent=<img
               src="/elements/group_15143.svg"
               alt="eth"
@@ -39,7 +39,7 @@ const CryptoCategory = ({...otherProps}) => {
             chain="Bitcoin"
             currency="BTC"
             price={19848.8}
-            gradientColor="border-yellow-800 bg-white from-yellow-800 via-gray-900 to-black"
+            gradientColor="border-lightOrange/50 bg-black from-lightOrange/50 to-black"
             fluctuating={3.46}
           />
         </div>
@@ -49,7 +49,7 @@ const CryptoCategory = ({...otherProps}) => {
             currency="LTC"
             price={54.57}
             fluctuating={-3.46}
-            gradientColor="border-zinc-800 bg-white from-zinc-500 via-zinc-800 to-black"
+            gradientColor="border-lightGray2/50 bg-black from-lightGray2/50 to-black"
             tokenComponent=<img
               src="/elements/c5b7bda06ddfe2b3f59b37ed6bb65ab4.svg"
               alt="litecoin"
@@ -62,7 +62,7 @@ const CryptoCategory = ({...otherProps}) => {
             currency="MATIC"
             price={0.82}
             fluctuating={-6.23}
-            gradientColor="border-purple-900 bg-white from-purple-900 via-gray-900 to-black"
+            gradientColor="border-lightPurple/60 bg-black from-lightPurple/60 to-black"
             tokenComponent=<img
               src="/elements/9cc18b0cbe765b0a28791d253207f0c0.svg"
               alt="polygon"
@@ -75,7 +75,7 @@ const CryptoCategory = ({...otherProps}) => {
             currency="BNB"
             price={274.54}
             fluctuating={-6.23}
-            gradientColor="border-amber-800 bg-white from-amber-800 via-gray-900 to-black"
+            gradientColor="border-lightYellow/60 bg-black from-lightYellow/50 to-black"
             tokenComponent=<img src="/elements/group_2374.svg" alt="bnb" />
           />
         </div>
@@ -85,7 +85,7 @@ const CryptoCategory = ({...otherProps}) => {
             currency="SOL"
             price={28.41}
             fluctuating={1.14}
-            gradientColor="border-[#8578DB80] from-[#8578DB80] to-black"
+            gradientColor="border-lightPurple2/60 from-lightPurple2/60 to-black"
             tokenComponent=<img src="/elements/group_2378.svg" alt="solana" />
           />
         </div>
@@ -95,7 +95,7 @@ const CryptoCategory = ({...otherProps}) => {
             currency="SHIB"
             price={0.0000099}
             fluctuating={-3.46}
-            gradientColor="border-red-900 from-[#F3050480] via-zinc-900 to-black"
+            gradientColor="border-lightRed1/50 from-lightRed1/50 to-black"
             tokenComponent=<img src="/elements/group_2381.svg" alt="shiba inu" />
           />
         </div>
@@ -105,7 +105,7 @@ const CryptoCategory = ({...otherProps}) => {
             currency="DOT"
             price={5.92}
             fluctuating={3.46}
-            gradientColor="border-[#E60B7A] from-[#E60B7A80] via-zinc-900 to-transparent"
+            gradientColor="border-lightPink/60 from-lightPink/60 to-black"
             tokenComponent=<img src="/elements/group_2385.svg" alt="polkadot" />
           />
         </div>
@@ -115,7 +115,7 @@ const CryptoCategory = ({...otherProps}) => {
             currency="ADA"
             price={0.3611}
             fluctuating={1.14}
-            gradientColor="border-[#3CC8C8] from-[#3CC8C880] via-zinc-900 to-black"
+            gradientColor="border-lightGreen1/60 from-lightGreen1/60 to-black"
             tokenComponent=<img src="/elements/group_2388.svg" alt="cardano" />
           />
         </div>
@@ -125,7 +125,7 @@ const CryptoCategory = ({...otherProps}) => {
             price={15.77}
             currency="AVAX"
             fluctuating={-6.23}
-            gradientColor="border-red-900 from-[#F3050480] via-zinc-900 to-black"
+            gradientColor="border-lightRed2/50 from-lightRed2/50 to-black"
             tokenComponent=<img src="/elements/group_2391.svg" alt="avax" />
           />
         </div>

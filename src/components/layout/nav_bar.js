@@ -167,7 +167,7 @@ const NavBar = ({notificationNumber = 1}) => {
                 {/* Desktop menu */}
                 <div className={`hidden pb-5 text-[16px] text-lightGray1 lg:block`}>
                   <div className="ml-10 mt-5 flex flex-1 items-center space-x-4">
-                    <TideLink href="#" className="animate-fade" content={'Trading'} />
+                    <TideLink href="#" className="" content={'Trading'} />
                     <TideLink href="#" className="mr-5" content={'TideBit University'} />
                     <TideLink href="#" className="mr-5" content={'Help Center'} />
 

@@ -1,14 +1,13 @@
 import React from 'react';
 
 // ml-20 & mr-40 are used to center the content
-const HeroReverse = ({heading, content, img, ...otherProps}) => {
-  const displayedHeading = heading ? (
-    heading
-  ) : (
-    <div>
-      Before they sold out
-      <span className="flex">NO parameter in</span>
+const HeroReverse = ({heading, highlight, content, img, ...otherProps}) => {
+  const displayedHeading = highlight ? (
+    <div className="font-bold">
+      {heading} <span className="text-tidebitTheme">{highlight}</span>
     </div>
+  ) : (
+    <div className="font-bold">{heading}</div>
   );
 
   const displayedContent = content
@@ -29,14 +28,15 @@ chambray.`;
   );
 
   return (
-    <section className="bg-black text-gray-400">
-      <div className="container mx-auto flex flex-col items-center px-5 pb-24 md:flex-row">
+    <section className="container mx-auto flex w-screen justify-center bg-black text-gray-400">
+      <div className="flex flex-col items-center pb-24 md:flex-row">
         <div className="mb-10 w-5/6 md:mb-0 md:w-1/2 lg:w-full lg:max-w-lg">{displayedImg}</div>
-        <div className="flex flex-col items-center text-center md:w-1/2 md:items-start md:pl-16 md:text-left lg:flex-grow lg:pl-24 xl:ml-20">
-          <h1 className="mb-4 text-3xl font-medium text-white sm:text-3xl md:text-center">
+
+        <div className="flex max-w-md flex-col items-center text-center md:w-1/2 md:items-start md:pl-16 md:text-left lg:pl-24 xl:ml-20">
+          <h1 className="mb-4 text-3xl font-medium text-white sm:text-5xl md:text-center">
             {displayedHeading}
           </h1>
-          <p className="mb-8 leading-relaxed">{displayedContent}</p>
+          <p className="mb-8 text-lg leading-10">{displayedContent}</p>
         </div>
       </div>
     </section>

@@ -20,7 +20,6 @@ const Banner = () => {
               width={892}
               height={712}
               src="/elements/group_15199@2x.png"
-              contain
             />
             <div className="absolute left-16 top-0 mt-5 flex text-xs xxs:left-20 xxs:mt-7 xxs:text-sm xs:left-28 xs:mt-10 xs:text-base sm:left-36 sm:top-3 sm:text-xl md:left-40 md:top-5 md:mt-12 md:text-3xl lg:top-5 lg:left-52 lg:mt-16 lg:text-4xl xl:top-10 xl:left-56 xl:text-5xl 2xl:left-72 2xl:text-6xl">
               <div className="flex flex-col items-start justify-start space-y-2 text-start font-bold sm:space-y-4 lg:space-y-8">

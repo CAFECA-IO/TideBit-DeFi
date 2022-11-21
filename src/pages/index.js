@@ -17,13 +17,13 @@ const Home = () => {
         <title>TideBit DeFi</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-
       <NavBar />
+      <div className=""></div>
 
       <div className="flex min-h-screen flex-col items-center justify-center overflow-hidden bg-black py-24">
         <main>
           <div className="">
-            <div className="overflow-y-auto">
+            <div className="">
               <Cta />
               <StatisticBlock className="py-40 md:py-0" />
               <CryptoCategory className="py-40" />

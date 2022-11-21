@@ -3,7 +3,7 @@ import '../styles/dpr.css';
 
 function MyApp({Component, pageProps}) {
   return (
-    <div className="">
+    <div className="custom-no-scrollbar">
       <Component {...pageProps} />
     </div>
   );

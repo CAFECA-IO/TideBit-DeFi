@@ -9,3 +9,22 @@
     font-family: barlow;
   }
 }
+
+@layer base {
+  ::-webkit-scrollbar {
+    @apply w-2 bg-darkGray;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-darkGray shadow-sm;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply rounded-xl bg-lightGray;
+  }
+}
+
+@layer base {
+  :root {
+    @apply dark:bg-black dark:text-white;
+  }
+}

@@ -26,7 +26,7 @@ const CryptoCategory = ({...otherProps}) => {
             fluctuating={1.14}
             gradientColor="border-bluePurple/50 bg-black from-bluePurple/50 to-black"
             tokenComponent=<img
-              src="/elements/group_15143.svg"
+              src="/elements/group_2371.svg"
               alt="eth"
               width={40}
               height={40}
@@ -41,6 +41,7 @@ const CryptoCategory = ({...otherProps}) => {
             price={19848.8}
             gradientColor="border-lightOrange/50 bg-black from-lightOrange/50 to-black"
             fluctuating={3.46}
+            tokenComponent=<img src="/elements/group_2372.svg" />
           />
         </div>
         <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">

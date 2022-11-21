@@ -29,7 +29,11 @@ const Home = () => {
               <CryptoCategory className="py-40" />
               <Banner />
 
-              <HeroReverse heading={`Web 3.0`} />
+              <HeroReverse
+                heading={`Web 3.0`}
+                content={`To fit in the new generation, TideBit uses Web 3.0 technology. Make it easy to buy and sell crypto currency.`}
+                img={<Image src="/elements/2634@2x.png" width={976} height={588} />}
+              />
               <Hero heading={`Easy Trade`} />
               <HeroReverse heading={`Security System`} />
               <Hero heading={`Free Online Courses`} />

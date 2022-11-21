@@ -4,7 +4,7 @@ import TideButton from '../shared/button/tide_button';
 // mx-auto flex flex-col items-center justify-center px-5 py-24
 const Banner = () => {
   return (
-    <section className="w-screen">
+    <section className="w-screen bg-darkGray3">
       <div className="">
         <div className="pb-[600px]">
           <div className="relative">

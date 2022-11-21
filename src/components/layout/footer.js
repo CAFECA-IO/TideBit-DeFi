@@ -123,7 +123,11 @@ const Footer = () => {
                   className="block w-full rounded border border-white bg-darkGray py-1 px-3 text-[14px] leading-8 text-white outline-none ring-transparent transition-colors duration-200 ease-in-out focus:bg-darkGray active:bg-darkGray xl:w-[220px]"
                 />
               </div>
-              <TideButton className="text-[14px]" content={`subscribe`.toUpperCase()} />
+              <TideButton className="text-[14px]" content={`SUBSCRIBE`} />
+
+              {/*  <button className="mt-4 rounded border-0 bg-tidebitTheme py-2 px-5 text-base text-white transition-colors duration-300 ease-out hover:cursor-pointer hover:bg-cyan-600 focus:outline-none md:mt-0">
+                SUBSCRIBE
+              </button> */}
             </div>
           </div>
         </div>

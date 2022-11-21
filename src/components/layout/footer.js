@@ -84,8 +84,8 @@ const Footer = () => {
   ));
 
   return (
-    <footer className="-mb-20 bg-darkGray text-base lg:justify-center">
-      <div className="mx-auto flex flex-col flex-wrap pl-[100px] pt-24 pb-10 md:flex-row md:flex-nowrap md:items-center lg:items-start">
+    <footer className="mx-auto w-screen bg-darkGray text-base lg:justify-center">
+      <div className="flex flex-col flex-wrap px-1/10 pt-24 pb-10 md:flex-row md:flex-nowrap md:items-center lg:items-start">
         <div className="mx-auto w-full flex-shrink-0 px-4 text-center md:mx-0 md:w-1/4 md:text-left lg:w-1/6">
           <a className="flex flex-col items-center justify-center font-medium text-white md:justify-start">
             <Image src="/elements/footer_logo.svg" width={120} height={100} alt="TideBit" />

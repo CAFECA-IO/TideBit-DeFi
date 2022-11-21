@@ -2,7 +2,7 @@ import Image from 'next/image';
 import React from 'react';
 
 const AppDowloadContainer = () => {
-  const containerDescription = `container px-5 mx-auto flex items-center md:flex-row flex-col`;
+  const containerDescription = `container mx-auto flex items-center md:flex-row flex-col`;
   return (
     <section className={`bg-black py-24 text-gray-400`}>
       <div className="container mx-auto flex flex-wrap items-center space-y-2 pb-24 md:flex-row">
@@ -60,9 +60,9 @@ const AppDowloadContainer = () => {
             </button>
           </div>
         </div>
-        <div className="flex w-full flex-col flex-wrap items-center justify-center pt-1/10 2xl:w-3/5 2xl:pt-0">
+        <div className="flex w-full max-w-2xl flex-col flex-wrap items-center justify-center pt-0">
           <Image
-            className="flex justify-center rounded pl-1/5 2xl:pl-0"
+            className="flex justify-center rounded object-contain 2xl:pl-0"
             alt="hero"
             src="/elements/group_15202@2x.png"
             width={1364}

@@ -32,8 +32,8 @@ chambray.`;
       <div className="flex flex-col items-center pb-24 md:flex-row">
         <div className="mb-10 w-5/6 md:mb-0 md:w-1/2 lg:w-full lg:max-w-lg">{displayedImg}</div>
 
-        <div className="flex max-w-md flex-col items-center text-center md:w-1/2 md:items-start md:pl-16 md:text-left lg:pl-24 xl:ml-20">
-          <h1 className="mb-4 text-3xl font-medium text-white sm:text-5xl md:text-center">
+        <div className="mt-5 flex max-w-xl flex-col items-center text-center md:w-1/2 md:items-start md:pl-16 md:text-left lg:mt-0 lg:pl-24 xl:ml-20">
+          <h1 className="mb-4 text-3xl font-medium text-white sm:text-4xl md:text-center">
             {displayedHeading}
           </h1>
           <p className="mb-8 text-lg leading-10">{displayedContent}</p>

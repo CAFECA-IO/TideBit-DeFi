@@ -8,10 +8,12 @@ const AppDowloadContainer = () => {
       <div className="container mx-auto flex flex-wrap items-center space-y-2 pb-24 md:flex-row">
         <div className="mx-auto mb-10 w-5/6 md:mb-0 md:w-1/2 lg:w-full lg:max-w-lg">
           <div className="flex justify-center">
-            <img
+            <Image
               className="rounded object-cover object-center"
-              alt="hero"
-              src="https://dummyimage.com/200x200"
+              alt="QR Code"
+              src="/elements/qrcode.png"
+              width={200}
+              height={200}
             />
           </div>
 

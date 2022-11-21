@@ -60,7 +60,7 @@ const AppDowloadContainer = () => {
             </button>
           </div>
         </div>
-        <div className="flex w-full flex-col flex-wrap items-center justify-center pt-1/10 xl:pt-0 2xl:w-3/5">
+        <div className="flex w-full flex-col flex-wrap items-center justify-center pt-1/10 2xl:w-3/5 2xl:pt-0">
           <Image
             className="flex justify-center rounded pl-1/5 2xl:pl-0"
             alt="hero"

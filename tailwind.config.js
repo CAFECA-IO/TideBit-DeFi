@@ -47,6 +47,10 @@ module.exports = {
         '1/5': '20%',
         '1/10': '10%',
       },
+      width: {
+        '1/10': '10%',
+        '1/3': '33.333333%',
+      },
       backgroundImage: {
         banner1: "url('~/img/group_15199@2x.png)",
       },

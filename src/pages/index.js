@@ -27,8 +27,12 @@ const Home = () => {
           <div className="">
             <div className="">
               <Cta />
-              <StatisticBlock className="py-40 md:py-0" />
-              <CryptoCategory className="py-40" />
+              <div className="py-40 md:py-0"></div>
+              <StatisticBlock />
+              <div className="py-40"></div>
+              <CryptoCategory />
+              <div className="py-40"></div>
+
               <Banner />
 
               {/* Web3.0 */}

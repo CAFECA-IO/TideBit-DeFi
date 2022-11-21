@@ -69,7 +69,7 @@ const CryptoCard = ({
 
   return (
     <div
-      className={`h-[120px] w-[200px] rounded-2xl border-[0.5px] ${gradientColor} bg-black bg-gradient-to-b opacity-90 shadow-lg`}
+      className={`${otherProps?.className} relative m-0 h-[120px] w-[200px] rounded-2xl border-[0.5px] p-0 ${gradientColor} bg-black bg-gradient-to-b opacity-90 shadow-lg`}
     >
       <div className="px-2 py-1">
         {/* token icon & chain & coin name */}

@@ -28,7 +28,7 @@ chambray.`;
   );
 
   return (
-    <section className="container mx-auto flex w-screen justify-center bg-black pt-96 text-gray-400">
+    <section className="container mx-auto flex w-screen justify-center bg-black text-gray-400">
       <div className="flex flex-col items-center pb-24 md:flex-row">
         <div className="mb-10 w-5/6 md:mb-0 md:w-1/2 lg:w-full lg:max-w-lg">{displayedImg}</div>
 

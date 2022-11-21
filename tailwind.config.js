@@ -44,6 +44,7 @@ module.exports = {
       padding: {
         '1/3': '33.333333%',
         '2/3': '66.666667%',
+        '1/5': '20%',
       },
       backgroundImage: {
         banner1: "url('~/img/group_15199@2x.png)",

@@ -5,7 +5,7 @@ import TideButton from '../shared/button/tide_button';
 // pb-[600px]
 const Banner = () => {
   return (
-    <section className="h-fit w-screen md:mb-40">
+    <section className="h-fit w-screen md:mb-10 lg:mb-40 xl:mb-80">
       <div className="">
         <div className="">
           <div className="relative">

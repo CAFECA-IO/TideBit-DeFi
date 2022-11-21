@@ -9,6 +9,7 @@ import HeroReverse from '../components/layout/hero_reverse';
 import AppDowloadContainer from '../components/layout/app_download_container';
 import Footer from '../components/layout/footer';
 import Cta from '../components/layout/cta';
+import HeroReverse1 from '../components/layout/hero_reverse1';
 
 const Home = () => {
   return (
@@ -36,7 +37,17 @@ const Home = () => {
                 img={<Image src="/elements/2634@2x.png" width={976} height={588} />}
               />
               <Hero heading={`Easy Trade`} />
-              <HeroReverse heading={`Security System`} />
+
+              <HeroReverse1
+                heading={
+                  <div className="font-bold">
+                    <span className="text-tidebitTheme">{`Secure `}</span>
+                    {` System`}
+                  </div>
+                }
+                content={`Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam`}
+                img={<Image src="/elements/group_15145@2x.png" width={1366} height={930} />}
+              />
               <Hero heading={`Free Online Courses`} />
 
               <h1 className="flex flex-shrink-0 items-center justify-center py-20 px-2 text-lg font-bold text-white sm:text-2xl md:px-20 md:text-3xl lg:text-4xl">

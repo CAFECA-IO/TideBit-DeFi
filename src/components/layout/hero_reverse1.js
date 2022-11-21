@@ -1,7 +1,7 @@
 import React from 'react';
 
 // ml-20 & mr-40 are used to center the content
-const HeroReverse = ({heading, highlight, content, img, ...otherProps}) => {
+const HeroReverse1 = ({heading, highlight, content, img, ...otherProps}) => {
   const displayedHeading = highlight ? (
     <div className="font-bold">
       {heading} <span className="text-tidebitTheme">{highlight}</span>
@@ -28,11 +28,11 @@ chambray.`;
   );
 
   return (
-    <section className="container mx-auto flex w-screen justify-center bg-black pt-96 text-gray-400">
+    <section className="container mx-auto flex w-screen justify-center bg-black text-gray-400">
       <div className="flex flex-col items-center pb-24 md:flex-row">
         <div className="mb-10 w-5/6 md:mb-0 md:w-1/2 lg:w-full lg:max-w-lg">{displayedImg}</div>
 
-        <div className="mt-1 flex max-w-xl flex-col items-center text-center sm:text-start md:mt-10 md:w-1/2 md:items-start md:pl-16 md:text-left lg:mt-0 lg:pl-8 xl:mt-10 xl:ml-20">
+        <div className="mt-1 flex max-w-xl flex-col items-center text-center sm:text-start md:mt-10 md:w-1/2 md:items-start md:pl-16 md:text-left lg:mt-0 lg:pl-8 xl:mt-5 xl:ml-20">
           <h1 className="mb-8 text-3xl font-medium text-white sm:text-4xl md:text-center">
             {displayedHeading}
           </h1>
@@ -43,4 +43,4 @@ chambray.`;
   );
 };
 
-export default HeroReverse;
+export default HeroReverse1;

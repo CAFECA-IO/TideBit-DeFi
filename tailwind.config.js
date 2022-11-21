@@ -9,6 +9,7 @@ module.exports = {
   theme: {
     container: {},
     fontSize: {
+      '3xs': ['8px', '12px'],
       xxs: ['10px', '12px'],
       xs: ['12px', '16px'],
       sm: ['14px', '20px'],
@@ -40,10 +41,20 @@ module.exports = {
       '3xl': '1600px',
     },
     extend: {
+      padding: {
+        '1/3': '33.333333%',
+        '2/3': '66.666667%',
+        '1/5': '20%',
+        '1/10': '10%',
+      },
+      backgroundImage: {
+        banner1: "url('~/img/group_15199@2x.png)",
+      },
       colors: {
         darkGray: '#161719',
         darkGray1: '#242A31',
         darkGray2: '#2B323A',
+        darkGray3: '#090909',
 
         lightGray: '#8B8E91',
         lightGray1: '#EDECEC',

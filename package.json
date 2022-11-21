@@ -13,6 +13,7 @@
     "validate": "npm run test && npm run check-format && npm run lint"
   },
   "dependencies": {
+    "ethers": "^5.7.2",
     "next": "13.0.2",
     "prettier": "^2.7.1",
     "react": "18.2.0",

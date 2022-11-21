@@ -20,7 +20,7 @@ const Cta = () => {
           </div>
           <div className="pt-2 md:pt-8 xl:pt-20">
             <TideButton
-              className="px-2 py-1 xxs:text-xxs sm:py-2 sm:px-5 sm:text-base xl:py-4 xl:px-9 xl:text-3xl"
+              className="px-2 py-1 font-normal xxs:text-xxs sm:py-2 sm:px-5 sm:text-base xl:py-4 xl:px-9 xl:text-3xl"
               content={`Get Started`.toUpperCase()}
             />
           </div>

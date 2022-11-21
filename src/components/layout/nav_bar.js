@@ -191,10 +191,8 @@ const NavBar = ({notificationNumber = 1}) => {
                   <span className="mx-2 inline-block h-10 w-px rounded bg-lightGray1"></span>
 
                   <button onClick={sidebarOpenHandler} className="relative hover:cursor-pointer">
-                    <span className="absolute bottom-3 left-3 z-20 inline-block h-3 w-3 rounded-xl bg-cyan-300">
-                      <p className="text-center text-[8px] hover:text-white">
-                        {notificationNumber}
-                      </p>
+                    <span className="absolute bottom-3 left-3 z-20 inline-block h-3 w-3 rounded-xl bg-tidebitTheme">
+                      <p className="text-center text-[8px]">{notificationNumber}</p>
                     </span>
 
                     <Image

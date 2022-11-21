@@ -5,19 +5,24 @@ const AppDowloadContainer = () => {
   const containerDescription = `container px-5 mx-auto flex items-center md:flex-row flex-col`;
   return (
     <section className={`bg-black py-24 text-gray-400`}>
-      <div className="container mx-auto flex flex-wrap items-center space-y-2 px-5 pb-24 md:flex-row">
+      <div className="container mx-auto flex flex-wrap items-center space-y-2 pb-24 md:flex-row">
         <div className="mx-auto mb-10 w-5/6 md:mb-0 md:w-1/2 lg:w-full lg:max-w-lg">
           <div className="flex justify-center">
             <img
               className="rounded object-cover object-center"
               alt="hero"
-              src="https://dummyimage.com/250x250"
+              src="https://dummyimage.com/200x200"
             />
           </div>
 
           <div className="mx-auto mt-5 flex flex-shrink-0 flex-wrap items-center justify-center sm:space-x-4 md:ml-auto md:mr-0">
-            <button className="rounded-lg border-[2px] border-white hover:opacity-80">
-              <Image src="/app-store.svg" width={132} height={40} alt="app-store" />
+            <button className="hover:opacity-80">
+              <Image
+                src="/elements/app_store_badge@2x.png"
+                width={120}
+                height={40}
+                alt="app-store"
+              />
               {/* <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="currentColor"
@@ -33,8 +38,13 @@ const AppDowloadContainer = () => {
               </span> */}
             </button>
 
-            <button className="rounded-lg border-[2px] border-white hover:opacity-80">
-              <Image src={'/google-play.svg'} width={132} height={40} alt="google play" />
+            <button className="hover:opacity-80">
+              <Image
+                src={'/elements/google_play_badge@2x.png'}
+                width={155}
+                height={40}
+                alt="google play"
+              />
               {/* <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="currentColor"
@@ -50,11 +60,13 @@ const AppDowloadContainer = () => {
             </button>
           </div>
         </div>
-        <div className="mx-auto flex items-center justify-center">
-          <img
-            className="rounded object-cover object-center"
+        <div className="flex w-full flex-col flex-wrap items-center justify-center pt-1/10 2xl:w-3/5 2xl:pt-0">
+          <Image
+            className="flex justify-center rounded pl-1/5 2xl:pl-0"
             alt="hero"
-            src="https://dummyimage.com/720x450"
+            src="/elements/group_15202@2x.png"
+            width={1364}
+            height={792}
           />
         </div>
       </div>

@@ -47,11 +47,14 @@ const NavBar = ({notificationNumber = 1}) => {
   const isDisplayedMobileNavBar = navOpen ? '' : 'hidden';
   // componentVisible ? 'animate-fadeIn' : 'animate-fadeOut';
 
+  // TODO: SettimeOut to open the sidebar `-z-10 animate-fade` ?
   const isDisplayedNotificationSidebarSection = (
     <>
       {/* sidebar section */}
       <div
-        className={`fixed right-1 top-[44px] z-30 flex overflow-x-hidden overflow-y-hidden outline-none focus:outline-none`}
+        className={`fixed right-1 top-[44px] ${
+          componentVisible ? 'z-30' : ''
+        } flex overflow-x-hidden overflow-y-hidden outline-none focus:outline-none`}
       >
         <div className="relative my-6 mx-auto w-auto max-w-xl">
           {' '}

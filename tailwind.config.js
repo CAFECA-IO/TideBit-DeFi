@@ -90,11 +90,11 @@ module.exports = {
       animation: {
         'spin-slow': 'spin 3s linear infinite',
         'spin-fast': 'spin 1s linear infinite',
-        fade: 'fadeIn 3s ease-in-out',
+        fade: 'fadeOut 3s ease-in-out',
       },
       // actual animation
       keyframes: theme => ({
-        fadeIn: {
+        fadeOut: {
           '100%': {opacity: 0},
           '0%': {opacity: 1},
         },

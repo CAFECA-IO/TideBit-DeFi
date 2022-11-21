@@ -40,6 +40,13 @@ module.exports = {
       '3xl': '1600px',
     },
     extend: {
+      padding: {
+        '1/3': '33.333333%',
+        '2/3': '66.666667%',
+      },
+      backgroundImage: {
+        banner1: "url('~/img/group_15199@2x.png)",
+      },
       colors: {
         darkGray: '#161719',
         darkGray1: '#242A31',

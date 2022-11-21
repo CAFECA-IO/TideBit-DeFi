@@ -4,15 +4,23 @@ import TideButton from '../shared/button/tide_button';
 // mx-auto flex flex-col items-center justify-center px-5 py-24
 const Banner = () => {
   return (
-    <section className="relative w-screen">
+    <section className="w-screen">
       <div className="">
-        <div>
-          <img
-            className="mb-10 h-1/6 w-screen rounded object-cover object-center"
+        <div className="relative">
+          <Image
+            className="absolute top-0 left-0"
             alt="hero"
             src="/elements/group_14583.svg"
+            width={1920}
+            height={1080}
           />
-          <img src="/elements/group_15199@2x.png" fill="true" />
+          <Image
+            className="absolute"
+            height={100}
+            width={200}
+            src="/elements/group_15199@2x.png"
+            contain
+          />
         </div>
 
         {/* Slogan and Btn */}

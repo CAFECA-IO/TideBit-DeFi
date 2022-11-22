@@ -53,7 +53,7 @@ const NavBar = ({notificationNumber = 1}) => {
       {/* sidebar section */}
       <div
         className={`fixed right-1 top-[44px] ${
-          componentVisible ? 'z-30' : ''
+          componentVisible ? 'z-30' : 'z-30'
         } flex overflow-x-hidden overflow-y-hidden outline-none focus:outline-none`}
       >
         <div className="relative my-6 mx-auto w-auto max-w-xl">
@@ -214,9 +214,8 @@ const NavBar = ({notificationNumber = 1}) => {
               </div>
 
               {/* Mobile menu toggle */}
-              <div className="-mr-2 flex pt-3 lg:hidden">
+              <div ref={ref} className="-mr-2 flex pt-3 lg:hidden">
                 <button
-                  ref={ref}
                   onClick={clickHanlder}
                   className="inline-flex items-center justify-center rounded-md p-2 hover:text-cyan-300 focus:outline-none"
                 >

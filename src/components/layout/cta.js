@@ -5,7 +5,9 @@ import TideButton from '../shared/button/tide_button';
 const Cta = () => {
   return (
     <section className="relative w-screen pl-[50px]">
-      <img
+      <Image
+        width={2409}
+        height={1500}
         className="h-auto max-w-full"
         src="/elements/group_15198@2x.png"
         alt="image description"

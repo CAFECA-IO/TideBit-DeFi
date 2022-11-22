@@ -41,6 +41,10 @@ module.exports = {
       '3xl': '1600px',
     },
     extend: {
+      margin: {
+        '1/3': '33.333333%',
+        '1/10': '10%',
+      },
       padding: {
         '1/3': '33.333333%',
         '2/3': '66.666667%',
@@ -50,6 +54,7 @@ module.exports = {
       width: {
         '1/10': '10%',
         '1/3': '33.333333%',
+        '3/5': '60%',
       },
       backgroundImage: {
         banner1: "url('~/img/group_15199@2x.png)",

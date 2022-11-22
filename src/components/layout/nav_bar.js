@@ -71,10 +71,10 @@ const NavBar = ({notificationNumber = 1}) => {
                 Clear All
               </div>
               <div className="mt-[83px] -mb-[28px] flex">
-                <span className="mx-2 inline-block h-[158px] w-[5px] flex-shrink-0 bg-tidebitTheme"></span>
+                <span className="mx-2 inline-block h-[158px] w-[5px] shrink-0 bg-tidebitTheme"></span>
                 <div className="-mt-[130px] flex items-center">
                   <Image
-                    className="ml-[8px] -mt-[10px] flex flex-shrink-0"
+                    className="ml-[8px] -mt-[10px] flex shrink-0"
                     src="/elements/megaphone.svg"
                     width={30}
                     height={26}
@@ -100,7 +100,7 @@ const NavBar = ({notificationNumber = 1}) => {
                   </div>
                 </div>
               </div>
-              <span className="ml-2 inline-block h-[1px] w-[438px] flex-shrink-0 bg-lightGray"></span>
+              <span className="ml-2 inline-block h-[1px] w-[438px] shrink-0 bg-lightGray"></span>
             </div>
           </div>
         </div>
@@ -139,7 +139,7 @@ const NavBar = ({notificationNumber = 1}) => {
             <div className="flex h-16 items-center justify-between">
               <div className="flex items-center">
                 {/* logo */}
-                <Link className="flex-shrink-0" href="/">
+                <Link className="shrink-0" href="/">
                   <div className="inline-flex items-center pt-5 hover:cursor-pointer hover:text-cyan-300 hover:opacity-100">
                     <div className="relative mb-2 h-[55px] w-[150px] flex-col justify-center hover:cursor-pointer hover:opacity-80">
                       <Image
@@ -216,6 +216,7 @@ const NavBar = ({notificationNumber = 1}) => {
               {/* Mobile menu toggle */}
               <div ref={ref} className="-mr-2 flex pt-3 lg:hidden">
                 <button
+                  ref={ref}
                   onClick={clickHanlder}
                   className="inline-flex items-center justify-center rounded-md p-2 hover:text-cyan-300 focus:outline-none"
                 >

@@ -59,7 +59,7 @@ const Footer = () => {
       key={label}
       href={path}
       content={icon}
-      className="mx-[10px] flex flex-shrink-0 justify-center text-gray-400 hover:text-cyan-300"
+      className="mx-[10px] flex shrink-0 justify-center text-gray-400 hover:text-cyan-300"
       target="_blank"
       htmlref="noopener noreferrer"
     />
@@ -86,7 +86,7 @@ const Footer = () => {
   return (
     <footer className="mx-auto w-screen bg-darkGray text-base lg:justify-center">
       <div className="flex flex-col flex-wrap px-1/10 pt-24 pb-10 md:flex-row md:flex-nowrap md:items-center lg:items-start">
-        <div className="mx-auto w-full flex-shrink-0 px-4 text-center md:mx-0 md:w-1/4 md:text-left lg:w-1/6">
+        <div className="mx-auto w-full shrink-0 px-4 text-center md:mx-0 md:w-1/4 md:text-left lg:w-1/6">
           <a className="flex flex-col items-center justify-center font-medium text-white md:justify-start">
             <Image src="/elements/footer_logo.svg" width={120} height={100} alt="TideBit" />
           </a>
@@ -96,7 +96,7 @@ const Footer = () => {
             {socialMediaLinksList}
           </div>
         </div>
-        <div className="-mb-10 mt-10 flex flex-grow flex-wrap text-center md:mt-0 md:pl-20 md:text-left">
+        <div className="-mb-10 mt-10 flex grow flex-wrap text-center md:mt-0 md:pl-20 md:text-left">
           <div className="w-full px-4 md:w-1/2 lg:w-1/6">
             <h2 className="mb-3 text-[18px] font-bold tracking-widest text-white">Services</h2>
             <nav className="mb-5 list-none">{servicesLinksList}</nav>

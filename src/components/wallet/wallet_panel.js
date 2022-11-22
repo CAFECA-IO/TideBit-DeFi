@@ -27,21 +27,21 @@ export default function WalletPanel(props) {
             className="relative flex w-full flex-col rounded-lg border-0 bg-darkGray1 shadow-lg outline-none focus:outline-none"
           >
             {/*header*/}
-            <div className="flex items-start justify-between rounded-t pt-8">
-              <h3 className="-mb-3 -mt-2 ml-auto text-4xl font-semibold text-lightWhite">
+            <div className="flex items-start justify-between rounded-t pt-6">
+              <h3 className="mx-auto mt-2 pl-1/8 text-4xl font-semibold text-lightWhite">
                 Wallet Connect
               </h3>
               <button
                 className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none"
                 onClick={clickHandler}
               >
-                <span className="-mx-8 -my-4 block h-6 w-6 outline-none focus:outline-none">
+                <span className="absolute top-5 right-5 block outline-none focus:outline-none">
                   <ImCross />
                 </span>
               </button>
             </div>
             {/*body*/}
-            <div className="relative mx-10 flex-auto p-6">
+            <div className="relative mx-10 flex-auto px-4 pb-4 pt-1">
               <div className="my-4 text-lg leading-relaxed text-white">
                 <div className="grid grid-cols-3 gap-3">
                   <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2">

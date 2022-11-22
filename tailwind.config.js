@@ -56,6 +56,7 @@ module.exports = {
         '1px': '1px',
         '5px': '5px',
         '10px': '10px',
+        '15px': '15px',
         '20px': '20px',
         '23px': '23px',
         '28px': '28px',
@@ -131,7 +132,6 @@ module.exports = {
       letterSpacing: {
         '0.02rem': '0.02rem',
       },
-
       width: {
         '5px': '5px',
         '479px': '479px',

@@ -216,7 +216,6 @@ const NavBar = ({notificationNumber = 1}) => {
               {/* Mobile menu toggle */}
               <div ref={ref} className="-mr-2 flex pt-3 lg:hidden">
                 <button
-                  ref={ref}
                   onClick={clickHanlder}
                   className="inline-flex items-center justify-center rounded-md p-2 hover:text-cyan-300 focus:outline-none"
                 >
@@ -226,7 +225,7 @@ const NavBar = ({notificationNumber = 1}) => {
             </div>
           </div>
           {/* Mobile menu */}
-          <div className={`lg:hidden ${isDisplayedMobileNavBar}`}>
+          <div ref={ref} className={`lg:hidden ${isDisplayedMobileNavBar}`}>
             {/* Cover for mobile bell icon */}
             <div
               className={`${

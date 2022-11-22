@@ -9,11 +9,11 @@ const CryptoCategory = ({...otherProps}) => {
       <div className="mb-10 flex w-full flex-col text-center xl:mb-20">
         <div className="mb-0 items-center text-3xl font-medium text-white sm:text-4xl">
           <div className="flex items-center justify-center">
-            <span className="my-auto h-px w-1/10 rounded bg-white/50 md:inline-block lg:w-1/5 xl:mx-2 xl:w-1/5"></span>
+            <span className="my-auto h-px w-1/8 rounded bg-white/50 md:inline-block lg:w-1/5 xl:mx-2 xl:w-1/4"></span>
             <h1 className="mx-1 text-center xl:w-410px">
               <span className="text-tidebitTheme">Popular</span> cryptocurrencies
             </h1>
-            <span className="my-auto h-px w-1/10 rounded bg-white/50 md:inline-block lg:w-1/5 xl:mx-2 xl:w-1/5"></span>
+            <span className="my-auto h-px w-1/8 rounded bg-white/50 md:inline-block lg:w-1/5 xl:mx-2 xl:w-1/4"></span>
           </div>
         </div>
       </div>

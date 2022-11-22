@@ -17,7 +17,7 @@ const AppDowloadContainer = () => {
             />
           </div>
 
-          <div className="mx-auto mt-10 flex flex-shrink-0 flex-wrap items-center justify-center sm:space-x-4 md:ml-auto md:mr-0">
+          <div className="mx-auto mt-10 flex shrink-0 flex-wrap items-center justify-center sm:space-x-4 md:ml-auto md:mr-0">
             <button className="hover:opacity-80">
               <Image
                 src="/elements/app_store_badge@2x.png"

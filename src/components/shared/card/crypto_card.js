@@ -48,7 +48,7 @@ const CryptoCard = ({
   const EthIconDownloadOnline = (
     <FaEthereum
       size={30}
-      className="absolute top-1/2 left-1/2 h-5 -translate-x-1/2 -translate-y-1/2 transform text-white"
+      className="absolute top-1/2 left-1/2 h-5 -translate-x-1/2 -translate-y-1/2 text-white"
     />
   );
 

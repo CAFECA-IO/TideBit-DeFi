@@ -30,7 +30,7 @@ module.exports = {
     'tailwindcss/classnames-order': 'off',
     'tailwindcss/enforces-negative-arbitrary-values': 'off',
     'tailwindcss/enforces-shorthand': 'off',
-    'tailwindcss/migration-from-tailwind-2': 'off',
+    'tailwindcss/migration-from-tailwind-2': 'error',
     'tailwindcss/no-arbitrary-value': 'off',
     'tailwindcss/no-custom-classname': 'error',
   },

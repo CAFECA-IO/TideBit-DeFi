@@ -46,7 +46,6 @@ const NavBar = ({notificationNumber = 1}) => {
   const isDisplayedMobileNavBar = navOpen ? '' : 'hidden';
   // componentVisible ? 'animate-fadeIn' : 'animate-fadeOut';
 
-  // TODO: SettimeOut to open the sidebar `-z-10 animate-fade` ?
   const isDisplayedNotificationSidebarSection = (
     <>
       {/* sidebar section */}

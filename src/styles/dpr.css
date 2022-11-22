@@ -1,3 +1,7 @@
+.pointer-events-boundingBox {
+  pointer-events: bounding-box;
+}
+
 .landingPageCTA1 {
   background-image: url(/public/elements/group_15198.png);
   object-fit: contain;

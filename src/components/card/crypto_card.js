@@ -4,8 +4,6 @@ import {FaEthereum} from 'react-icons/fa';
 // import {ReactComponent as ethIcon} from '/public/elements/group_15143.svg';
 // import {ReactComponent as Logo} from './logo.svg';
 
-// TODO: Fix the height and the weight of each cards
-
 /**
  * @dev used when it needs the star functionality
  * @param {star} empty star

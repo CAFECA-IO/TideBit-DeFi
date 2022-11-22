@@ -6,7 +6,7 @@ const AppDowloadContainer = () => {
   return (
     <section className={`bg-black py-24 text-gray-400`}>
       <div className="mx-auto flex flex-wrap items-center space-y-2 pb-24 md:flex-row">
-        <div className="mx-auto mb-10 max-w-md md:mb-0 md:w-1/2 lg:max-w-sm">
+        <div className="mx-auto mb-10 max-w-md md:mb-0 md:w-1/2 lg:max-w-sm 2xl:ml-1/8">
           <div className="flex justify-center">
             <Image
               className="rounded object-cover object-center"

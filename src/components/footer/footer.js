@@ -96,7 +96,7 @@ const Footer = () => {
             {socialMediaLinksList}
           </div>
         </div>
-        <div className="-mb-10 mt-10 flex grow flex-wrap text-center md:mt-0 md:pl-20 md:text-left">
+        <div className="flex grow flex-wrap text-center md:mt-0 md:pl-20 md:text-left">
           <div className="w-full px-4 md:w-1/2 lg:w-1/6">
             <h2 className="mb-3 text-lg font-bold tracking-widest text-white">Services</h2>
             <nav className="mb-5 list-none">{servicesLinksList}</nav>

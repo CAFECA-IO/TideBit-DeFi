@@ -93,7 +93,7 @@ const Home = () => {
               <AppDowloadContainer />
             </div>
             {/* Footer */}
-            <div className="-mb-[100px] h-1/2 w-screen">
+            <div className="-mb-100px h-1/2 w-screen">
               <Footer />
             </div>
           </div>

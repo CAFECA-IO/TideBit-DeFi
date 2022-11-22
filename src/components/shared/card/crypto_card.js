@@ -69,7 +69,7 @@ const CryptoCard = ({
 
   return (
     <div
-      className={`${otherProps?.className} relative m-0 h-[120px] w-[200px] rounded-2xl border-[0.5px] p-0 ${gradientColor} bg-black bg-gradient-to-b opacity-90 shadow-lg`}
+      className={`${otherProps?.className} relative m-0 h-120px w-200px rounded-2xl border-0.5px p-0 ${gradientColor} bg-black bg-gradient-to-b opacity-90 shadow-lg`}
     >
       <div className="px-2 py-1">
         {/* token icon & chain & coin name */}
@@ -89,7 +89,7 @@ const CryptoCard = ({
             <div className="absolute top-0 left-0 h-2 w-2/3 rounded bg-blue-200"></div>
           </div>
           {/**@note no default text color, otherwise it will make actual text color not work */}
-          <div className="relative flex w-[200px] justify-between">
+          <div className="relative flex w-200px justify-between">
             <span
               className={`flex items-center justify-between text-sm ${priceColor} mt-3 align-middle`}
             >

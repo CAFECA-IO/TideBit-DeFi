@@ -52,7 +52,7 @@ export default function WalletPanel(props) {
           >
             {/*header*/}
             <div className="flex items-start justify-between rounded-t pt-8">
-              <h3 className="-mb-3 -mt-2 ml-auto text-[36px] font-semibold text-lightWhite">
+              <h3 className="-mb-3 -mt-2 ml-auto text-4xl font-semibold text-lightWhite">
                 Wallet Connect
               </h3>
               <button

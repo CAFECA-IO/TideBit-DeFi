@@ -11,7 +11,7 @@ const AppDowloadContainer = () => {
             <Image
               className="rounded object-cover object-center"
               alt="QR Code"
-              src="/elements/qr_code.png"
+              src="/elements/tidebit_qrcode.png"
               width={200}
               height={200}
             />

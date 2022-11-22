@@ -12,6 +12,7 @@ import Image from 'next/image';
 import version from '../../lib/version';
 import WalletPanel from '../wallet/wallet_panel';
 import useOuterClick from '../../hooks/lib/useOuterClick';
+import Notification from '../notification/notification';
 
 const NavBar = ({notificationNumber = 1}) => {
   const [navOpen, setNavOpen] = useState(false);
@@ -296,6 +297,13 @@ const NavBar = ({notificationNumber = 1}) => {
       {/* Notification Sidebar */}
       {isDisplayedNotificationSidebarCover}
       {isDisplayedNotificationSidebarSection}
+
+      {/* TODO: forwardRef */}
+      {/* <Notification
+        ref={ref}
+        componentVisible={componentVisible}
+        setComponentVisible={setComponentVisible}
+      /> */}
     </>
   );
 };

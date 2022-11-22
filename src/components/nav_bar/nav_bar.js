@@ -129,6 +129,16 @@ const NavBar = ({notificationNumber = 1}) => {
     </>
   ) : null;
 
+  const isDisplayedNotificationSidebarMobileCover = (
+    <div
+      className={`${
+        componentVisible ? 'visible' : 'invisible'
+      } fixed top-52 left-24 z-50 flex h-10 w-8 items-center justify-center overflow-x-hidden overflow-y-hidden bg-transparent outline-none hover:cursor-pointer focus:outline-none`}
+    >
+      {' '}
+    </div>
+  );
+
   return (
     <>
       <div className="w-full bg-black">
@@ -225,13 +235,8 @@ const NavBar = ({notificationNumber = 1}) => {
           {/* Mobile menu */}
           <div ref={ref} className={`lg:hidden ${isDisplayedMobileNavBar}`}>
             {/* Cover for mobile bell icon */}
-            <div
-              className={`${
-                componentVisible ? 'visible' : 'invisible'
-              } fixed top-52 left-24 z-50 flex h-10 w-8 items-center justify-center overflow-x-hidden overflow-y-hidden bg-transparent outline-none hover:cursor-pointer focus:outline-none`}
-            >
-              {' '}
-            </div>
+            {isDisplayedNotificationSidebarMobileCover}
+
             {/* Mobile menu section */}
             <div className=" ml-10 inline-block items-center px-2 pt-2 pb-3 sm:px-3">
               <div className="space-y-1">

@@ -74,12 +74,10 @@ const CryptoCard = ({
       <div className="px-2 py-1">
         {/* token icon & chain & coin name */}
         <div className="flex items-center">
-          <span className="relative">
-            {tokenComponent ? tokenComponent : tokenComponentExample}
-          </span>
+          <span className="relative">{tokenComponent}</span>
           <div className="ml-3 items-center">
-            <p className="text-lg leading-6 text-lightWhite"> {chain ? chain : 'Ethereum'}</p>
-            <p className="text-sm text-lightWhite opacity-60">{currency ? currency : 'ETH'}</p>
+            <p className="text-lg leading-6 text-lightWhite"> {chain}</p>
+            <p className="text-sm text-lightWhite opacity-60">{currency}</p>
           </div>
         </div>
 
@@ -93,11 +91,9 @@ const CryptoCard = ({
             <span
               className={`flex items-center justify-between text-sm ${priceColor} mt-3 align-middle`}
             >
-              <p className="mx-1 text-left text-xl font-normal tracking-wide">
-                {price ? `$ ${price}` : '$17,414'}
-              </p>
+              <p className="mx-1 text-left text-xl font-normal tracking-wide">{price}</p>
               <div className="absolute right-4 flex">
-                <span className="text-sm"> {fluctuatingRate ? fluctuatingRate : '(+11.1%)'}</span>
+                <span className="text-sm"> {fluctuatingRate}</span>
               </div>
             </span>
           </div>

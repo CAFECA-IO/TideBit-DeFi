@@ -17,8 +17,7 @@ const CryptoCategory = ({...otherProps}) => {
           </div>
         </div>
       </div>
-      {/* FIXME: Workaround for the first card - ETH positioning */}
-      <div className="flex w-full items-center justify-center overflow-y-auto">
+      <div className="flex w-full items-center justify-center">
         <div className="mb-5 grid grid-cols-2 space-y-4 space-x-4 xl:grid-cols-5">
           <CryptoCard
             className="mt-4 ml-4"

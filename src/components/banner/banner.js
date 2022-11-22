@@ -30,7 +30,7 @@ const Banner = () => {
                 <div className="text-tidebitTheme">iSunOne</div>
                 <TideButton
                   className="px-2 py-1 font-normal xxs:text-xxs sm:py-2 sm:px-5 sm:text-base xl:py-3 xl:px-5 xl:text-lg"
-                  content={`Try it now`.toUpperCase()}
+                  content={`TRY IT NOW`}
                 />
               </div>
             </div>

@@ -51,7 +51,7 @@ const NavBar = ({notificationNumber = 1}) => {
     <>
       {/* sidebar section */}
       <div
-        className={`fixed right-1 top-44px ${
+        className={`pointer-events-none fixed right-1 top-44px ${
           componentVisible ? 'z-30' : 'z-30'
         } flex overflow-x-hidden overflow-y-hidden outline-none focus:outline-none`}
       >
@@ -61,7 +61,7 @@ const NavBar = ({notificationNumber = 1}) => {
             {/* sidebar self */}
             <div
               ref={ref}
-              className={`${'w-479px'} h-screen ${
+              className={`pointer-events-auto ${'w-479px'} h-screen ${
                 componentVisible ? 'translate-x-0' : 'translate-x-full'
               } bg-darkGray/90 p-5 pt-8 text-white transition-all duration-300`}
             >

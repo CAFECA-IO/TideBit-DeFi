@@ -1,4 +1,4 @@
-import CryptoCard from '../shared/card/crypto_card';
+import CryptoCard from '../card/crypto_card';
 
 const CryptoCategory = ({...otherProps}) => {
   const customClassName = otherProps?.className;

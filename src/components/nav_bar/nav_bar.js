@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import TideButton from '../shared/button/tide_button';
+import TideButton from '../button/tide_button';
 import {useState} from 'react';
 import {AiOutlineGlobal} from 'react-icons/ai';
 import {BsFillBellFill} from 'react-icons/bs';
@@ -7,8 +7,7 @@ import {TbMinusVertical} from 'react-icons/tb';
 import {FiMenu} from 'react-icons/fi';
 import {TfiBell} from 'react-icons/tfi';
 import {BsBell} from 'react-icons/bs';
-import TideLink from '../shared/link/tide_link';
-import ConnectButton from '../wallet/connect_button';
+import TideLink from '../link/tide_link';
 import Image from 'next/image';
 import version from '../../lib/version';
 import WalletPanel from '../wallet/wallet_panel';
@@ -208,7 +207,6 @@ const NavBar = ({notificationNumber = 1}) => {
                   </button>
                 </div>
                 <div className="mr-5 inline-flex">
-                  {/* <ConnectButton /> */}
                   <WalletPanel />
                 </div>
               </div>

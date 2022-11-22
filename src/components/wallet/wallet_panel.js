@@ -4,7 +4,7 @@ import {ImCross} from 'react-icons/im';
 import Image from 'next/image';
 import WalletOption from './wallet_option';
 import useOuterClick from '/src/hooks/lib/useOuterClick';
-import TideButton from '../shared/button/tide_button';
+import TideButton from '../button/tide_button';
 
 const ICON_SIZE = 50;
 
@@ -15,30 +15,6 @@ export default function WalletPanel(props) {
     setComponentVisible(!componentVisible);
     // console.log('componentVisible clicked: ', componentVisible);
   };
-
-  // const walletOptions = [
-  //   {label: 'Metamask', img: '/elements/74263ff26820cd0d895968e3b55e8902.svg'},
-  //   {label: 'iSunOne', img: '/elements/i_sun_one.svg'},
-  //   {label: 'imToken', img: '/elements/path_25918.svg'},
-  //   {label: 'Coinbase', img: '/elements/18060234@2x.png'},
-  //   {label: 'Trust', img: '/elements/twt@2x.png'},
-  //   {label: 'Rainbow', img: '/elements/unnamed@2x.png'},
-  //   {label: 'Houbi', img: '/elements/logo@2x.png'},
-  //   {label: 'Coin98', img: '/elements/coin98_c98_logo@2x.png'},
-  //   {label: 'TokenPocket', img: '/elements/tokenpocket_wallet_logo@2x.png'},
-  //   {label: 'WalletConnect', img: '/elements/walletconnect@2x.png'},
-  //   {label: 'BitKeep', img: '/elements/path_25917.svg', size: '40'},
-  //   {label: 'Others', img: '/elements/wallet@2x.png'},
-  // ];
-
-  // const walletOptionsList = walletOptions.map(wallet => (
-  //   <div
-  //     key={wallet.label}
-  //     className="col-span-1 flex items-center justify-center rounded bg-darkGray2"
-  //   >
-  //     <WalletOption name={wallet.label} img={wallet.img} iconSize={ICON_SIZE} />
-  //   </div>
-  // ));
 
   const isDisplayedWalletPanel = componentVisible ? (
     <>
@@ -52,7 +28,7 @@ export default function WalletPanel(props) {
           >
             {/*header*/}
             <div className="flex items-start justify-between rounded-t pt-8">
-              <h3 className="-mb-3 -mt-2 ml-auto text-[36px] font-semibold text-lightWhite">
+              <h3 className="-mb-3 -mt-2 ml-auto text-4xl font-semibold text-lightWhite">
                 Wallet Connect
               </h3>
               <button

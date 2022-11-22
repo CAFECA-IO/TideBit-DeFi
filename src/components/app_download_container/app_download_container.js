@@ -2,20 +2,22 @@ import Image from 'next/image';
 import React from 'react';
 
 const AppDowloadContainer = () => {
-  const containerDescription = `container px-5 mx-auto flex items-center md:flex-row flex-col`;
+  const containerDescription = `container mx-auto flex items-center md:flex-row flex-col`;
   return (
     <section className={`bg-black py-24 text-gray-400`}>
-      <div className="container mx-auto flex flex-wrap items-center space-y-2 pb-24 md:flex-row">
-        <div className="mx-auto mb-10 w-5/6 md:mb-0 md:w-1/2 lg:w-full lg:max-w-lg">
+      <div className="mx-auto flex flex-wrap items-center space-y-2 pb-24 md:flex-row">
+        <div className="mx-auto mb-10 max-w-md md:mb-0 md:w-1/2 lg:max-w-sm 2xl:ml-1/8">
           <div className="flex justify-center">
-            <img
+            <Image
               className="rounded object-cover object-center"
-              alt="hero"
-              src="https://dummyimage.com/200x200"
+              alt="QR Code"
+              src="/elements/tidebit_qrcode.png"
+              width={200}
+              height={200}
             />
           </div>
 
-          <div className="mx-auto mt-5 flex flex-shrink-0 flex-wrap items-center justify-center sm:space-x-4 md:ml-auto md:mr-0">
+          <div className="mx-auto mt-10 flex shrink-0 flex-wrap items-center justify-center sm:space-x-4 md:ml-auto md:mr-0">
             <button className="hover:opacity-80">
               <Image
                 src="/elements/app_store_badge@2x.png"
@@ -60,9 +62,9 @@ const AppDowloadContainer = () => {
             </button>
           </div>
         </div>
-        <div className="flex w-full flex-col flex-wrap items-center justify-center pt-1/10 2xl:w-3/5 2xl:pt-0">
+        <div className="mx-auto flex w-full flex-col flex-wrap items-center justify-center pt-20 pl-1/10 md:w-3/5 lg:pl-0 lg:pt-0">
           <Image
-            className="flex justify-center rounded pl-1/5 2xl:pl-0"
+            className="flex justify-center rounded object-contain"
             alt="hero"
             src="/elements/group_15202@2x.png"
             width={1364}

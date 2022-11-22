@@ -10,7 +10,7 @@ export default class MyDocument extends Document {
           <link
             href="https://fonts.googleapis.com/css2?family=Barlow&display=swap"
             rel="stylesheet"
-          />{' '}
+          />
         </Head>
 
         <body>

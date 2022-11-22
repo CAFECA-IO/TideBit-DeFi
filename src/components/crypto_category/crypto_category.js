@@ -1,49 +1,41 @@
-import CryptoCard from '../shared/card/crypto_card';
+import CryptoCard from '../card/crypto_card';
 
 const CryptoCategory = ({...otherProps}) => {
   const customClassName = otherProps?.className;
   return (
     <div
-      className={`${customClassName} container mx-auto mt-20 flex flex-wrap justify-center space-y-1`}
+      className={`${customClassName} container mx-auto flex shrink-0 flex-wrap justify-center space-y-1`}
     >
-      <div className="mb-5 flex w-full flex-col text-center">
+      <div className="mb-10 flex w-full flex-col text-center xl:mb-20">
         <div className="mb-0 items-center text-3xl font-medium text-white sm:text-4xl">
           <div className="flex items-center justify-center">
-            <span className="my-auto hidden h-px rounded bg-white/50 md:inline-block lg:w-1/5 xl:mx-2 xl:w-1/3"></span>
-            <h1 className="mx-1 text-center xl:w-[410px]">
+            <span className="my-auto h-px w-1/8 rounded bg-white/50 md:inline-block lg:w-1/5 xl:mx-2 xl:w-1/4"></span>
+            <h1 className="mx-1 text-center xl:w-410px">
               <span className="text-tidebitTheme">Popular</span> cryptocurrencies
             </h1>
-            <span className="my-auto hidden h-px rounded bg-white/50 md:inline-block lg:w-1/5 xl:mx-2 xl:w-1/3"></span>
+            <span className="my-auto h-px w-1/8 rounded bg-white/50 md:inline-block lg:w-1/5 xl:mx-2 xl:w-1/4"></span>
           </div>
         </div>
       </div>
-      <div className="flex flex-wrap justify-center space-x-3 lg:justify-center xl:justify-between xl:space-x-0">
-        <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">
+      <div className="flex w-full items-center justify-center">
+        <div className="mb-5 grid grid-cols-2 space-y-4 space-x-4 xl:grid-cols-5">
           <CryptoCard
+            className="mt-4 ml-4"
             chain="Ethereum"
             currency="ETH"
             price={1288.4}
             fluctuating={1.14}
             gradientColor="border-bluePurple/50 bg-black from-bluePurple/50 to-black"
-            tokenComponent=<img
-              src="/elements/group_15143.svg"
-              alt="eth"
-              width={40}
-              height={40}
-              className="fill-red-500"
-            />
+            tokenComponent=<img src="/elements/group_2371.svg" alt="eth" width={40} height={40} />
           />
-        </div>
-        <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">
           <CryptoCard
             chain="Bitcoin"
             currency="BTC"
             price={19848.8}
             gradientColor="border-lightOrange/50 bg-black from-lightOrange/50 to-black"
             fluctuating={3.46}
+            tokenComponent=<img src="/elements/group_2372.svg" />
           />
-        </div>
-        <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">
           <CryptoCard
             chain="Litecoin"
             currency="LTC"
@@ -55,8 +47,6 @@ const CryptoCategory = ({...otherProps}) => {
               alt="litecoin"
             />
           />
-        </div>
-        <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">
           <CryptoCard
             chain="Polygon"
             currency="MATIC"
@@ -68,8 +58,6 @@ const CryptoCategory = ({...otherProps}) => {
               alt="polygon"
             />
           />
-        </div>
-        <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">
           <CryptoCard
             chain="BNB"
             currency="BNB"
@@ -78,8 +66,6 @@ const CryptoCategory = ({...otherProps}) => {
             gradientColor="border-lightYellow/60 bg-black from-lightYellow/50 to-black"
             tokenComponent=<img src="/elements/group_2374.svg" alt="bnb" />
           />
-        </div>
-        <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">
           <CryptoCard
             chain="Solana"
             currency="SOL"
@@ -88,8 +74,6 @@ const CryptoCategory = ({...otherProps}) => {
             gradientColor="border-lightPurple2/60 from-lightPurple2/60 to-black"
             tokenComponent=<img src="/elements/group_2378.svg" alt="solana" />
           />
-        </div>
-        <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">
           <CryptoCard
             chain="Shiba Inu"
             currency="SHIB"
@@ -98,8 +82,6 @@ const CryptoCategory = ({...otherProps}) => {
             gradientColor="border-lightRed1/50 from-lightRed1/50 to-black"
             tokenComponent=<img src="/elements/group_2381.svg" alt="shiba inu" />
           />
-        </div>
-        <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">
           <CryptoCard
             chain="Polkadot"
             currency="DOT"
@@ -108,8 +90,6 @@ const CryptoCategory = ({...otherProps}) => {
             gradientColor="border-lightPink/60 from-lightPink/60 to-black"
             tokenComponent=<img src="/elements/group_2385.svg" alt="polkadot" />
           />
-        </div>
-        <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">
           <CryptoCard
             chain="Cardano"
             currency="ADA"
@@ -118,8 +98,6 @@ const CryptoCategory = ({...otherProps}) => {
             gradientColor="border-lightGreen1/60 from-lightGreen1/60 to-black"
             tokenComponent=<img src="/elements/group_2388.svg" alt="cardano" />
           />
-        </div>
-        <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">
           <CryptoCard
             chain="Avalanche"
             price={15.77}
@@ -128,6 +106,34 @@ const CryptoCategory = ({...otherProps}) => {
             gradientColor="border-lightRed2/50 from-lightRed2/50 to-black"
             tokenComponent=<img src="/elements/group_2391.svg" alt="avax" />
           />
+
+          {/* <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">
+          
+        </div>
+        <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">
+         
+        </div>
+        <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">
+          
+        </div>
+        <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">
+         
+        </div>
+        <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">
+          
+        </div>
+        <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">
+          
+        </div>
+        <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">
+          
+        </div>
+        <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">
+          
+        </div>
+        <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">
+          
+        </div> */}
         </div>
       </div>
     </div>

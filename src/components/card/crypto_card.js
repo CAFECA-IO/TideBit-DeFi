@@ -4,8 +4,6 @@ import {FaEthereum} from 'react-icons/fa';
 // import {ReactComponent as ethIcon} from '/public/elements/group_15143.svg';
 // import {ReactComponent as Logo} from './logo.svg';
 
-// TODO: Fix the height and the weight of each cards
-
 /**
  * @dev used when it needs the star functionality
  * @param {star} empty star
@@ -48,7 +46,7 @@ const CryptoCard = ({
   const EthIconDownloadOnline = (
     <FaEthereum
       size={30}
-      className="absolute top-1/2 left-1/2 h-5 -translate-x-1/2 -translate-y-1/2 transform text-white"
+      className="absolute top-1/2 left-1/2 h-5 -translate-x-1/2 -translate-y-1/2 text-white"
     />
   );
 
@@ -69,17 +67,15 @@ const CryptoCard = ({
 
   return (
     <div
-      className={`h-[120px] w-[200px] rounded-2xl border-[0.5px] ${gradientColor} bg-black bg-gradient-to-b opacity-90 shadow-lg`}
+      className={`${otherProps?.className} relative m-0 h-120px w-200px rounded-2xl border-0.5px p-0 ${gradientColor} bg-black bg-gradient-to-b opacity-90 shadow-lg`}
     >
       <div className="px-2 py-1">
         {/* token icon & chain & coin name */}
         <div className="flex items-center">
-          <span className="relative">
-            {tokenComponent ? tokenComponent : tokenComponentExample}
-          </span>
+          <span className="relative">{tokenComponent}</span>
           <div className="ml-3 items-center">
-            <p className="text-lg leading-6 text-lightWhite"> {chain ? chain : 'Ethereum'}</p>
-            <p className="text-sm text-lightWhite opacity-60">{currency ? currency : 'ETH'}</p>
+            <p className="text-lg leading-6 text-lightWhite"> {chain}</p>
+            <p className="text-sm text-lightWhite opacity-60">{currency}</p>
           </div>
         </div>
 
@@ -89,15 +85,13 @@ const CryptoCard = ({
             <div className="absolute top-0 left-0 h-2 w-2/3 rounded bg-blue-200"></div>
           </div>
           {/**@note no default text color, otherwise it will make actual text color not work */}
-          <div className="relative flex w-[200px] justify-between">
+          <div className="relative flex w-200px justify-between">
             <span
               className={`flex items-center justify-between text-sm ${priceColor} mt-3 align-middle`}
             >
-              <p className="mx-1 text-left text-xl font-normal tracking-wide">
-                {price ? `$ ${price}` : '$17,414'}
-              </p>
+              <p className="mx-1 text-left text-xl font-normal tracking-wide">{price}</p>
               <div className="absolute right-4 flex">
-                <span className="text-sm"> {fluctuatingRate ? fluctuatingRate : '(+11.1%)'}</span>
+                <span className="text-sm"> {fluctuatingRate}</span>
               </div>
             </span>
           </div>

@@ -29,7 +29,7 @@ const Banner = () => {
                 <div className="text-white">New Wallet available</div>
                 <div className="text-tidebitTheme">iSunOne</div>
                 <TideButton
-                  className="px-2 py-1 text-3xs sm:py-2 sm:px-4 sm:text-sm md:px-6 md:py-2 xl:py-4 xl:px-9 xl:text-3xl"
+                  className="px-2 py-1 font-normal xxs:text-xxs sm:py-2 sm:px-5 sm:text-base xl:py-3 xl:px-5 xl:text-lg"
                   content={`Try it now`.toUpperCase()}
                 />
               </div>

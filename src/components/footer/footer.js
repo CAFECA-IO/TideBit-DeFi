@@ -113,8 +113,9 @@ const Footer = () => {
           </div>
           <div className="w-full px-4 md:-mt-8 md:w-1/2 lg:ml-20 lg:mt-0 lg:w-1/3 lg:pl-50px">
             <h2 className="mb-3 text-lg font-bold tracking-widest text-white">Newsletter</h2>
+
             <div className="flex flex-wrap items-end justify-center space-y-2 md:justify-start">
-              <div className="relative mr-2 w-40 sm:mr-4 sm:w-auto lg:mr-0 xl:mr-4">
+              <div className="relative mr-2 w-2/3 sm:mr-4 sm:w-auto lg:mr-0 xl:mr-4">
                 <input
                   placeholder="Email Address"
                   type="text"
@@ -134,7 +135,7 @@ const Footer = () => {
       </div>
 
       {/* TODO: Margin & Padding */}
-      <div className="-mt-10 pb-2 md:pt-0">
+      <div className="mt-10 pb-2 md:pt-0 xl:mt-0">
         <div className="flex flex-col flex-wrap px-5 pt-1 pb-4 sm:flex-row sm:justify-center md:justify-end">
           <p className="text-center text-xs text-gray-400 sm:text-left md:mt-5 lg:mr-36 lg:mt-0">
             TideBit © 2022

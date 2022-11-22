@@ -26,6 +26,8 @@ module.exports = {
       '9xl': ['128px', 1],
     },
     screens: {
+      xxs: '370px',
+      xs: '500px',
       sm: '640px',
       // => @media (min-width: 640px) { ... }
       md: '768px',
@@ -43,6 +45,7 @@ module.exports = {
         '0.5px': '0.5px',
       },
       maxWidth: {
+        '100px': '100px',
         '160px': '160px',
         '200px': '200px',
         '250px': '250px',

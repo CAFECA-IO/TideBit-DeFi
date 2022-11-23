@@ -27,7 +27,7 @@ export default function HeroDescription() {
             <div className="py-10 lg:py-40"></div>
 
             <Banner />
-            <div className="py-16 lg:py-40"></div>
+            <div className="py-16 lg:pb-2/5 lg:pt-40"></div>
 
             {/* Web3.0 */}
             <HeroReverse
@@ -37,7 +37,7 @@ export default function HeroDescription() {
               img={<Image src="/elements/2634@2x.png" width={976} height={588} />}
             />
 
-            <div className="pt-48 lg:pt-96"></div>
+            <div className="py-5 lg:py-40"></div>
 
             {/* Easy Trade */}
             <Hero
@@ -51,8 +51,7 @@ export default function HeroDescription() {
               img={<Image src="/elements/group_15200@2x.png" width={1252} height={879} />}
             />
 
-            <div className="pt-48 lg:pt-96"></div>
-
+            <div className="py-5 lg:py-40"></div>
             {/* Secure System */}
             <HeroReverse1
               heading={
@@ -65,8 +64,7 @@ export default function HeroDescription() {
               img={<Image src="/elements/group_15145@2x.png" width={1366} height={930} />}
             />
 
-            <div className="pt-48 lg:pt-96"></div>
-
+            <div className="py-5 lg:py-40"></div>
             {/* Free Online Courses */}
             <Hero1
               heading={

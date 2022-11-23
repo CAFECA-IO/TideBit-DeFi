@@ -88,6 +88,7 @@ const Footer = () => {
 
   return (
     <>
+      {/* TODO: Fix -m */}
       {/* Desktop */}
       <div className={`${desktopVersionBreakpoint}`}>
         <footer className="mx-auto w-screen bg-darkGray text-base lg:justify-center">
@@ -117,6 +118,8 @@ const Footer = () => {
                 </h2>
                 <nav className="mb-5 list-none">{policyLinksList}</nav>
               </div>
+              {/* TODO: Fix -m */}
+
               <div className="w-full px-4 md:-mt-8 md:w-1/2 lg:ml-20 lg:mt-0 lg:w-1/3 lg:pl-50px">
                 <h2 className="mb-3 text-lg font-bold tracking-widest text-white">Newsletter</h2>
 

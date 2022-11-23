@@ -69,6 +69,8 @@ const NavBar = ({notificationNumber = 1}) => {
               <div className="fixed right-30px text-sm text-tidebitTheme underline hover:cursor-pointer">
                 Clear All
               </div>
+              {/* TODO: Fix -m */}
+
               <div className="-mb-28px mt-83px flex">
                 <span className="mx-2 inline-block h-158px w-5px shrink-0 bg-tidebitTheme"></span>
                 <div className="-mt-130px flex items-center">
@@ -89,6 +91,7 @@ const NavBar = ({notificationNumber = 1}) => {
                         <div>14:28:38</div>
                       </div>
                     </div>
+                    {/* TODO: Fix -m */}
 
                     <div className="mb-23px -mt-30px flex flex-wrap text-xs text-lightGray">
                       Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy
@@ -158,6 +161,8 @@ const NavBar = ({notificationNumber = 1}) => {
                         width={150}
                         alt={'logo'}
                       />
+                      {/* TODO: Fix -m */}
+
                       <p className="container mx-auto -mt-1 ml-3 pr-10px text-end text-xxs text-lightGray">
                         V {version}
                       </p>
@@ -220,6 +225,8 @@ const NavBar = ({notificationNumber = 1}) => {
                   <WalletPanel />
                 </div>
               </div>
+
+              {/* TODO: Fix -m */}
 
               {/* Mobile menu toggle */}
               <div ref={ref} className="-mr-2 flex pt-3 lg:hidden">

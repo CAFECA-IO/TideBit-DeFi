@@ -34,6 +34,8 @@ export default function Notification(props) {
               <div className="fixed right-30px text-sm text-tidebitTheme underline hover:cursor-pointer">
                 Clear All
               </div>
+              {/* TODO: Fix -m */}
+
               <div className="-mb-28px mt-83px flex">
                 <span className="mx-2 inline-block h-158px w-5px shrink-0 bg-tidebitTheme"></span>
                 <div className="-mt-130px flex items-center">

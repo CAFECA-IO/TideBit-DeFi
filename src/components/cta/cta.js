@@ -5,6 +5,7 @@ import TideButton from '../button/tide_button';
 const Cta = () => {
   return (
     <>
+      {/* Desktop version (width >= 1024 px) */}
       <section className="relative hidden w-screen pl-50px lg:flex">
         <Image
           width={2409}
@@ -31,6 +32,7 @@ const Cta = () => {
         </div>
       </section>
 
+      {/* Mobile version (width < 1024 px) */}
       <section className="mb-1/10 flex w-screen flex-col items-center justify-center lg:hidden">
         <Image className="ml-1/10" src="/elements/group_15215@2x.png" width={596} height={545} />
         <div className="flex justify-center text-center">

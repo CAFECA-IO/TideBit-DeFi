@@ -1,8 +1,10 @@
 import useOuterClick from '../../hooks/lib/useOuterClick';
 import Image from 'next/image';
+import {forwardRef} from 'react';
 
-export default function Notification({ref, componentVisible, setComponentVisible}) {
-  // const {ref, componentVisible, setComponentVisible} = useOuterClick(false);
+export default function Notification(props) {
+  const refP = forwardRef(props?.forwardedRef);
+  const {componentVisible, setComponentVisible} = useOuterClick(false, refP);
 
   const sidebarOpenHandler = () => {
     // setSidebarOpen(!sidebarOpen);
@@ -23,7 +25,7 @@ export default function Notification({ref, componentVisible, setComponentVisible
           <div className={`relative`}>
             {/* sidebar self */}
             <div
-              ref={ref}
+              ref={refP}
               className={`pointer-events-auto ${'w-479px'} h-screen ${
                 componentVisible ? 'translate-x-0' : 'translate-x-full'
               } bg-darkGray/90 p-5 pt-8 text-white transition-all duration-300`}
@@ -32,6 +34,8 @@ export default function Notification({ref, componentVisible, setComponentVisible
               <div className="fixed right-30px text-sm text-tidebitTheme underline hover:cursor-pointer">
                 Clear All
               </div>
+              {/* TODO: Fix -m */}
+
               <div className="-mb-28px mt-83px flex">
                 <span className="mx-2 inline-block h-158px w-5px shrink-0 bg-tidebitTheme"></span>
                 <div className="-mt-130px flex items-center">

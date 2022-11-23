@@ -41,6 +41,9 @@ module.exports = {
       '3xl': '1600px',
     },
     extend: {
+      gridTemplateColumns: {
+        cryptoCard: 'repeat(200px, minmax(134px, 200px) 100px)',
+      },
       borderWidth: {
         '0.5px': '0.5px',
       },
@@ -54,8 +57,10 @@ module.exports = {
       spacing: {
         // width / height / padding / margin / top / bottom / right / left
         '1px': '1px',
+        '2px': '2px',
         '5px': '5px',
         '10px': '10px',
+        '15px': '15px',
         '20px': '20px',
         '23px': '23px',
         '28px': '28px',
@@ -65,8 +70,10 @@ module.exports = {
         '44px': '44px',
         '50px': '50px',
         '55px': '55px',
+        '81px': '81px',
         '100px': '100px',
         '120px': '120px',
+        '134px': '134px',
         '150px': '150px',
         '158px': '158px',
         '180px': '180px',
@@ -90,6 +97,7 @@ module.exports = {
         '479px': '479px',
         '1/2': '50%',
         '1/5': '20%',
+        '2/5': '40%',
         '1/8': '12.5%',
         '1/10': '10%',
         '1/11': '9.09090909090909%',
@@ -131,7 +139,6 @@ module.exports = {
       letterSpacing: {
         '0.02rem': '0.02rem',
       },
-
       width: {
         '5px': '5px',
         '479px': '479px',
@@ -147,6 +154,7 @@ module.exports = {
         darkGray1: '#242A31',
         darkGray2: '#2B323A',
         darkGray3: '#090909',
+        darkGray4: '#181818',
 
         lightGray: '#8B8E91',
         lightGray1: '#EDECEC',

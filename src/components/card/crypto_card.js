@@ -4,8 +4,6 @@ import {FaEthereum} from 'react-icons/fa';
 // import {ReactComponent as ethIcon} from '/public/elements/group_15143.svg';
 // import {ReactComponent as Logo} from './logo.svg';
 
-// TODO: Fix the height and the weight of each cards
-
 /**
  * @dev used when it needs the star functionality
  * @param {star} empty star
@@ -33,32 +31,32 @@ const CryptoCard = ({
   const priceColor = priceRise ? `text-lightGreen` : `text-lightRed`;
   // console.log('priceColor', priceColor);
 
-  const upSvg = (
-    <svg
-      width="20"
-      height="20"
-      fill="currentColor"
-      viewBox="0 0 1792 1792"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path d="M1408 1216q0 26-19 45t-45 19h-896q-26 0-45-19t-19-45 19-45l448-448q19-19 45-19t45 19l448 448q19 19 19 45z"></path>
-    </svg>
-  );
+  // const upSvg = (
+  //   <svg
+  //     width="20"
+  //     height="20"
+  //     fill="currentColor"
+  //     viewBox="0 0 1792 1792"
+  //     xmlns="http://www.w3.org/2000/svg"
+  //   >
+  //     <path d="M1408 1216q0 26-19 45t-45 19h-896q-26 0-45-19t-19-45 19-45l448-448q19-19 45-19t45 19l448 448q19 19 19 45z"></path>
+  //   </svg>
+  // );
 
-  const EthIconDownloadOnline = (
-    <FaEthereum
-      size={30}
-      className="absolute top-1/2 left-1/2 h-5 -translate-x-1/2 -translate-y-1/2 text-white"
-    />
-  );
+  // const EthIconDownloadOnline = (
+  //   <FaEthereum
+  //     size={30}
+  //     className="absolute top-1/2 left-1/2 h-5 -translate-x-1/2 -translate-y-1/2 text-white"
+  //   />
+  // );
 
-  const ImageComponent = (
-    <Image src="/elements/group_15143.svg" width={50} height={50} className="text-red-600" />
-  );
+  // const ImageComponent = (
+  //   <Image src="/elements/group_15143.svg" width={50} height={50} className="text-red-600" />
+  // );
 
-  const tokenComponentExample = (
-    <img src="/elements/c5b7bda06ddfe2b3f59b37ed6bb65ab4.svg" alt="token" />
-  );
+  // const tokenComponentExample = (
+  //   <img src="/elements/c5b7bda06ddfe2b3f59b37ed6bb65ab4.svg" alt="token" />
+  // );
 
   // const SvgComponent = props => (
   //   <svg width={48} height={1} xmlns="http://www.w3.org/2000/svg" {...props}>
@@ -67,39 +65,78 @@ const CryptoCard = ({
   //   </svg>
   // );
 
+  const desktopVersionBreakpoint = 'xs:flex';
+  const mobileVersionBreakpoint = 'xs:hidden';
   return (
-    <div
-      className={`${otherProps?.className} relative m-0 h-120px w-200px rounded-2xl border-0.5px p-0 ${gradientColor} bg-black bg-gradient-to-b opacity-90 shadow-lg`}
-    >
-      <div className="px-2 py-1">
-        {/* token icon & chain & coin name */}
-        <div className="flex items-center">
-          <span className="relative">{tokenComponent}</span>
-          <div className="ml-3 items-center">
-            <p className="text-lg leading-6 text-lightWhite"> {chain}</p>
-            <p className="text-sm text-lightWhite opacity-60">{currency}</p>
+    <>
+      {/* Desktop (width > 500px) version (Card 200x120) */}
+      <div
+        className={`${desktopVersionBreakpoint} ${otherProps?.className} relative m-0 hidden h-120px w-200px rounded-2xl border-0.5px p-0 ${gradientColor} bg-black bg-gradient-to-b opacity-90 shadow-lg`}
+      >
+        <div className="px-2 py-1">
+          {/* token icon & chain & coin name */}
+          <div className="flex items-center">
+            <span className="relative h-40px w-40px">{tokenComponent}</span>
+            <div className="ml-3 items-center">
+              <p className="text-lg leading-6 text-lightWhite"> {chain}</p>
+              <p className="text-sm text-lightWhite opacity-60">{currency}</p>
+            </div>
           </div>
-        </div>
 
-        {/* line graph & price & fluctuating rate */}
-        <div className="flex flex-col justify-start">
-          <div className="relative mt-4 h-2 w-36 rounded bg-gray-200">
-            <div className="absolute top-0 left-0 h-2 w-2/3 rounded bg-blue-200"></div>
-          </div>
-          {/**@note no default text color, otherwise it will make actual text color not work */}
-          <div className="relative flex w-200px justify-between">
-            <span
-              className={`flex items-center justify-between text-sm ${priceColor} mt-3 align-middle`}
-            >
-              <p className="mx-1 text-left text-xl font-normal tracking-wide">{price}</p>
-              <div className="absolute right-4 flex">
-                <span className="text-sm"> {fluctuatingRate}</span>
-              </div>
-            </span>
+          {/* line graph & price & fluctuating rate */}
+          <div className="flex flex-col justify-start">
+            <div className="relative mt-4 h-2 w-36 rounded bg-gray-200">
+              <div className="absolute top-0 left-0 h-2 w-2/3 rounded bg-blue-200"></div>
+            </div>
+            {/**@note no default text color, otherwise it will make actual text color not work */}
+            <div className="relative flex w-200px justify-between">
+              <span
+                className={`flex items-center justify-between text-sm ${priceColor} mt-3 align-middle`}
+              >
+                <p className="mx-1 text-left text-xl font-normal tracking-wide">$ {price}</p>
+                <div className="absolute right-4 flex">
+                  <span className="text-sm"> {fluctuatingRate}</span>
+                </div>
+              </span>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+
+      {/* Mobile (width < 500px) version (Card 134x81) */}
+      <div
+        className={`${mobileVersionBreakpoint} ${otherProps?.className} relative m-0 h-81px w-134px rounded-2xl border-0.5px p-0 ${gradientColor} bg-black bg-gradient-to-b opacity-90 shadow-lg`}
+      >
+        <div className="px-2 py-1">
+          {/* token icon & chain & coin name */}
+          <div className="mb-1 flex items-center">
+            <span className="relative h-28px w-28px">{tokenComponent}</span>
+            <div className="ml-3 items-center">
+              <p className="text-sm leading-none text-lightWhite"> {chain}</p>
+              <p className="text-xs text-lightWhite opacity-60">{currency}</p>
+            </div>
+          </div>
+
+          {/* line graph & price & fluctuating rate */}
+          <div className="flex flex-col justify-start">
+            <div className="relative mt-1 h-2 w-24 rounded bg-gray-200">
+              <div className="absolute top-0 left-0 h-2 w-2/3 rounded bg-blue-200"></div>
+            </div>
+            {/**@note no default text color, otherwise it will make actual text color not work */}
+            <div className="relative flex w-134px justify-between">
+              <span
+                className={`flex items-center justify-between text-xs ${priceColor} mt-3 align-middle`}
+              >
+                <p className="ml-0 mb-1 text-left text-xs font-normal tracking-wide">$ {price}</p>
+                <div className="absolute bottom-5px right-4 flex">
+                  <span className="text-xxs"> {fluctuatingRate}</span>
+                </div>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
   );
 };
 

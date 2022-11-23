@@ -51,10 +51,10 @@ neutra sustainable fingerstache kickstarter.`;
           <div className="mb-10 w-5/6">{displayedImg}</div>
 
           <div className="mx-auto mt-0 flex max-w-lg flex-col items-center justify-center text-center align-baseline">
-            <h1 className="mx-auto mb-5 text-center text-3xl font-medium text-white">
+            <h1 className="mx-auto mb-5 text-center text-2xl font-medium text-white sm:text-3xl">
               {displayedHeading}
             </h1>
-            <p className="mb-8 text-center text-lg leading-8">{displayedContent}</p>
+            <p className="mb-8 text-center text-sm leading-8">{displayedContent}</p>
           </div>
         </div>
       </section>

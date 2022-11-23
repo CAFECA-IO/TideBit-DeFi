@@ -18,13 +18,16 @@ export default function HeroDescription() {
         <div className="">
           <div className="">
             <Cta />
-            <div className="py-10 lg:py-40"></div>
+            <div className="py-5 lg:py-20"></div>
+
             <StatisticBlock />
             <div className="py-10 lg:py-40"></div>
+
             <CryptoCategory />
             <div className="py-10 lg:py-40"></div>
 
             <Banner />
+            <div className="py-10 lg:py-40"></div>
 
             {/* Web3.0 */}
             <HeroReverse

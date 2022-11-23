@@ -15,10 +15,8 @@ const StatisticBlock = props => {
   ));
 
   return (
-    <section
-      className={`container mx-auto flex justify-center bg-black text-center text-gray-400 ${props?.className}`}
-    >
-      <div className="">
+    <section className={`bg-black text-gray-400 ${props?.className}`}>
+      <div className="mx-auto">
         <div className="flex flex-wrap">{statisticContentList}</div>
       </div>
     </section>

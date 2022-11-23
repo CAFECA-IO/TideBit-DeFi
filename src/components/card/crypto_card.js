@@ -65,11 +65,13 @@ const CryptoCard = ({
   //   </svg>
   // );
 
+  const desktopVersionBreakpoint = 'xs:flex';
+  const mobileVersionBreakpoint = 'xs:hidden';
   return (
     <>
       {/* Desktop (width > 500px) version (Card 200x120) */}
       <div
-        className={`${otherProps?.className} relative m-0 hidden h-120px w-200px rounded-2xl border-0.5px p-0 sm:flex ${gradientColor} bg-black bg-gradient-to-b opacity-90 shadow-lg`}
+        className={`${desktopVersionBreakpoint} ${otherProps?.className} relative m-0 hidden h-120px w-200px rounded-2xl border-0.5px p-0 ${gradientColor} bg-black bg-gradient-to-b opacity-90 shadow-lg`}
       >
         <div className="px-2 py-1">
           {/* token icon & chain & coin name */}
@@ -103,7 +105,7 @@ const CryptoCard = ({
 
       {/* Mobile (width < 500px) version (Card 134x81) */}
       <div
-        className={`${otherProps?.className} relative m-0 h-81px w-134px rounded-2xl border-0.5px p-0 sm:hidden ${gradientColor} bg-black bg-gradient-to-b opacity-90 shadow-lg`}
+        className={`${mobileVersionBreakpoint} ${otherProps?.className} relative m-0 h-81px w-134px rounded-2xl border-0.5px p-0 ${gradientColor} bg-black bg-gradient-to-b opacity-90 shadow-lg`}
       >
         <div className="px-2 py-1">
           {/* token icon & chain & coin name */}

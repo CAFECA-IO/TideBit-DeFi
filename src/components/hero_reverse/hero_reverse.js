@@ -59,7 +59,9 @@ chambray.`;
             <h1 className="mx-auto mb-5 text-center text-2xl font-medium text-white sm:text-3xl">
               {displayedHeading}
             </h1>
-            <p className="mb-8 text-center text-sm leading-8">{displayedContent}</p>
+            <p className="mb-8 text-center text-sm leading-8 md:text-xl md:leading-10">
+              {displayedContent}
+            </p>
           </div>
         </div>
       </section>

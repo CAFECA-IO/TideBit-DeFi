@@ -27,7 +27,7 @@ export default function HeroDescription() {
             <div className="py-10 lg:py-40"></div>
 
             <Banner />
-            <div className="py-10 lg:py-40"></div>
+            <div className="py-16 lg:py-40"></div>
 
             {/* Web3.0 */}
             <HeroReverse

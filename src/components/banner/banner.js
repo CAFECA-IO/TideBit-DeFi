@@ -9,7 +9,7 @@ const Banner = () => {
       {/* Desktop version (width >= 1024 px) */}
 
       <div className="hidden lg:block">
-        <section className="md:mb-10 lg:mb-40 xl:mb-96">
+        <section className="">
           <div className="">
             <div className="">
               <div className="relative">
@@ -47,7 +47,7 @@ const Banner = () => {
       </div>
 
       {/* Mobile version (width < 1024 px) */}
-      <section className="md:mb-10 lg:mb-40 lg:hidden xl:mb-96">
+      <section className="lg:hidden">
         <div className="">
           <div className="">
             <div className="relative bg-darkGray4 pt-10 pb-10">

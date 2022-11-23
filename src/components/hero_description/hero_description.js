@@ -82,7 +82,7 @@ export default function HeroDescription() {
             <AppDowloadContainer />
           </div>
           {/* Footer */}
-          <div className="-mb-100px h-1/2 w-screen">
+          <div className="bottom-0">
             <Footer />
           </div>
         </div>

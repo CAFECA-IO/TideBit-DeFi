@@ -41,6 +41,9 @@ module.exports = {
       '3xl': '1600px',
     },
     extend: {
+      gridTemplateColumns: {
+        cryptoCard: 'repeat(200px, minmax(134px, 200px) 100px)',
+      },
       borderWidth: {
         '0.5px': '0.5px',
       },
@@ -54,6 +57,7 @@ module.exports = {
       spacing: {
         // width / height / padding / margin / top / bottom / right / left
         '1px': '1px',
+        '2px': '2px',
         '5px': '5px',
         '10px': '10px',
         '15px': '15px',
@@ -66,8 +70,10 @@ module.exports = {
         '44px': '44px',
         '50px': '50px',
         '55px': '55px',
+        '81px': '81px',
         '100px': '100px',
         '120px': '120px',
+        '134px': '134px',
         '150px': '150px',
         '158px': '158px',
         '180px': '180px',

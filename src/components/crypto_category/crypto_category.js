@@ -9,16 +9,16 @@ const CryptoCategory = ({...otherProps}) => {
       <div className="mb-10 flex w-full flex-col text-center xl:mb-20">
         <div className="mb-0 items-center text-2xl font-medium text-white xs:text-3xl sm:text-4xl">
           <div className="flex items-center justify-center">
-            <span className="my-auto hidden h-px rounded bg-white/50 xs:inline-block xs:w-1/10 lg:w-1/5 xl:mx-2 xl:w-1/4"></span>
+            <span className="my-auto h-px w-1/11 rounded bg-white/50 xs:inline-block xs:w-1/10 lg:w-1/5 xl:mx-2 xl:w-1/4"></span>
             <h1 className="mx-1 text-center xl:w-410px">
               <span className="text-tidebitTheme">Popular</span> cryptocurrencies
             </h1>
-            <span className="my-auto hidden h-px rounded bg-white/50 xs:inline-block xs:w-1/10 lg:w-1/5 xl:mx-2 xl:w-1/4"></span>
+            <span className="my-auto h-px w-1/11 rounded bg-white/50 xs:inline-block xs:w-1/10 lg:w-1/5 xl:mx-2 xl:w-1/4"></span>
           </div>
         </div>
       </div>
       <div className="flex w-full items-center justify-center">
-        <div className="mb-5 grid grid-cols-2 space-y-4 space-x-4 xl:grid-cols-5">
+        <div className="mb-5 grid grid-cols-2 space-y-4 space-x-4 lg:grid-cols-5">
           <CryptoCard
             className="mt-4 ml-4"
             chain="Ethereum"
@@ -34,7 +34,7 @@ const CryptoCategory = ({...otherProps}) => {
             price={19848.8}
             gradientColor="border-lightOrange/50 bg-black from-lightOrange/50 to-black"
             fluctuating={3.46}
-            tokenComponent=<img src="/elements/group_2372.svg" />
+            tokenComponent=<img src="/elements/group_2372.svg" width={40} height={40} />
           />
           <CryptoCard
             chain="Litecoin"

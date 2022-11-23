@@ -18,11 +18,11 @@ export default function HeroDescription() {
         <div className="">
           <div className="">
             <Cta />
-            <div className="py-40 md:py-0"></div>
+            <div className="py-10 lg:py-40"></div>
             <StatisticBlock />
-            <div className="py-40"></div>
+            <div className="py-10 lg:py-40"></div>
             <CryptoCategory />
-            <div className="py-40"></div>
+            <div className="py-10 lg:py-40"></div>
 
             <Banner />
 

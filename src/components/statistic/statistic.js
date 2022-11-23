@@ -7,7 +7,7 @@ const StatisticBlock = props => {
 
   const statisticContentList = statisticContent.map(({heading, content}) => (
     <div key={heading} className="mb-6 flex w-screen justify-center p-4 lg:mb-0 lg:w-1/3">
-      <div className="ml-5 h-full text-center lg:text-start">
+      <div className="h-full text-center lg:text-start">
         <p className="text-lg leading-relaxed xl:text-xl">{heading}</p>
         <h2 className="text-3xl font-medium text-white md:text-4xl xl:text-5xl">{content}</h2>
       </div>
@@ -15,9 +15,11 @@ const StatisticBlock = props => {
   ));
 
   return (
-    <section className={`bg-black text-gray-400 ${props?.className}`}>
-      <div className="mx-auto px-5">
-        <div className="-m-4 flex flex-wrap">{statisticContentList}</div>
+    <section
+      className={`container mx-auto flex justify-center bg-black text-center text-gray-400 ${props?.className}`}
+    >
+      <div className="">
+        <div className="flex flex-wrap">{statisticContentList}</div>
       </div>
     </section>
   );

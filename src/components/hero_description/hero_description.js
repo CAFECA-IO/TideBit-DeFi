@@ -35,7 +35,6 @@ export default function HeroDescription() {
           content={`To fit in the new generation, TideBit uses Web 3.0 technology. Make it easy to buy and sell crypto currency.`}
           img={<Image src="/elements/2634@2x.png" width={976} height={588} />}
         />
-
         <div className="py-5 lg:py-40"></div>
 
         {/* Easy Trade */}
@@ -49,8 +48,8 @@ export default function HeroDescription() {
           content={`Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam`}
           img={<Image src="/elements/group_15200@2x.png" width={1252} height={879} />}
         />
-
         <div className="py-5 lg:py-40"></div>
+
         {/* Secure System */}
         <HeroReverse1
           heading={
@@ -62,8 +61,8 @@ export default function HeroDescription() {
           content={`Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam`}
           img={<Image src="/elements/group_15145@2x.png" width={1366} height={930} />}
         />
-
         <div className="py-5 lg:py-40"></div>
+
         {/* Free Online Courses */}
         <Hero1
           heading={
@@ -75,6 +74,7 @@ export default function HeroDescription() {
           content={`Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam`}
           img={<Image src={`/elements/group_15201.svg`} width={1364} height={820} />}
         />
+        <div className="py-5 lg:py-10"></div>
 
         {/* App download */}
 

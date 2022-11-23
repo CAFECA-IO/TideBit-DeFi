@@ -78,10 +78,7 @@ export default function HeroDescription() {
             />
 
             {/* App download */}
-            <h1 className="flex shrink-0 items-center justify-center py-20 px-2 text-lg font-bold text-white sm:text-2xl md:px-20 md:text-3xl lg:text-4xl xl:text-6xl">
-              Trade on&nbsp;<span className="text-cyan-400">TideBit</span>
-              &nbsp;anywhere, anytime
-            </h1>
+
             <AppDowloadContainer />
           </div>
           {/* Footer */}

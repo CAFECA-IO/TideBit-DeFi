@@ -3,8 +3,17 @@ import React from 'react';
 
 const AppDowloadContainer = () => {
   const containerDescription = `container mx-auto flex items-center md:flex-row flex-col`;
+
+  const desktopVersionBreakpoint = 'hidden lg:flex';
+  const mobileVersionBreakpoint = 'flex lg:hidden';
+
   return (
     <section className={`bg-black py-24 text-gray-400`}>
+      <h1 className="flex shrink-0 items-center justify-center py-20 px-2 text-lg font-bold text-white sm:text-2xl md:px-20 md:text-3xl lg:text-4xl xl:text-6xl">
+        Trade on&nbsp;<span className="text-cyan-400">TideBit</span>
+        &nbsp;anywhere, anytime
+      </h1>
+
       <div className="mx-auto flex flex-wrap items-center space-y-2 pb-24 md:flex-row">
         <div className="mx-auto mb-10 max-w-md md:mb-0 md:w-1/2 lg:max-w-sm 2xl:ml-1/8">
           <div className="flex justify-center">

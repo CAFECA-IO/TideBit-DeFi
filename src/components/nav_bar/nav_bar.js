@@ -300,7 +300,7 @@ const NavBar = ({notificationNumber = 1}) => {
 
       {/* TODO: forwardRef */}
       {/* <Notification
-        ref={ref}
+        forwardedRef={ref}
         componentVisible={componentVisible}
         setComponentVisible={setComponentVisible}
       /> */}

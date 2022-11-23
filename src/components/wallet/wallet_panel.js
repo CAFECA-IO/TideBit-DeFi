@@ -4,7 +4,7 @@ import {ImCross} from 'react-icons/im';
 import Image from 'next/image';
 import WalletOption from './wallet_option';
 import useOuterClick from '/src/hooks/lib/useOuterClick';
-import TideButton from '../shared/button/tide_button';
+import TideButton from '../button/tide_button';
 
 const ICON_SIZE = 50;
 
@@ -16,27 +16,6 @@ export default function WalletPanel(props) {
     // console.log('componentVisible clicked: ', componentVisible);
   };
 
-  const walletOptions = [
-    {name: 'Metamask', img: '/metamask.png'},
-    {name: 'iSunOne', img: '/iSunOne.png'},
-    {name: 'imToken', img: '/im_token.svg'},
-    {name: 'Coinbase', img: '/coinbase.png'},
-    {name: 'Trust', img: '/trust_wallet.svg'},
-    {name: 'Rainbow', img: '/rainbow4.png'},
-    {name: 'Houbi', img: '/huobi.png'},
-    {name: 'Coin98', img: '/coin98.png'},
-    {name: 'TokenPocket', img: '/token_pocket.png'},
-    {name: 'WalletConnect', img: '/wallet_connect.png'},
-    {name: 'BitKeep', img: '/bitkeep.png'},
-    {name: 'Others', img: '/others_wallet.png'},
-  ];
-
-  const walletOptionsList = walletOptions.map(({name, img}) => (
-    <div key={name} className="col-span-1 flex items-center justify-center rounded bg-gray-800">
-      <WalletOption name={name} img={img} iconSize={ICON_SIZE} />
-    </div>
-  ));
-
   const isDisplayedWalletPanel = componentVisible ? (
     <>
       <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none focus:outline-none">
@@ -45,16 +24,18 @@ export default function WalletPanel(props) {
           <div
             id="connectModal"
             ref={ref}
-            className="relative flex w-full flex-col rounded-lg border-0 bg-gray-900 shadow-lg outline-none focus:outline-none"
+            className="relative flex w-full flex-col rounded-lg border-0 bg-darkGray1 shadow-lg outline-none focus:outline-none"
           >
             {/*header*/}
             <div className="flex items-start justify-between rounded-t pt-8">
-              <h3 className="ml-auto text-3xl font-semibold text-white">Wallet Connect</h3>
+              <h3 className="-mb-3 -mt-2 ml-auto text-4xl font-semibold text-lightWhite">
+                Wallet Connect
+              </h3>
               <button
-                className="text-md float-right ml-auto border-0 bg-transparent p-1 font-semibold leading-none text-gray-300 outline-none focus:outline-none"
+                className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none"
                 onClick={clickHandler}
               >
-                <span className="-mx-8 -my-5 block h-6 w-6 outline-none focus:outline-none">
+                <span className="-mx-8 -my-4 block h-6 w-6 outline-none focus:outline-none">
                   <ImCross />
                 </span>
               </button>
@@ -62,7 +43,64 @@ export default function WalletPanel(props) {
             {/*body*/}
             <div className="relative mx-10 flex-auto p-6">
               <div className="my-4 text-lg leading-relaxed text-white">
-                <div className="grid grid-cols-3 gap-3">{walletOptionsList}</div>
+                <div className="grid grid-cols-3 gap-3">
+                  <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2">
+                    <WalletOption
+                      name={`Metamask`}
+                      img={`/elements/74263ff26820cd0d895968e3b55e8902.svg`}
+                      iconSize={50}
+                    />
+                  </div>
+                  <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2">
+                    <WalletOption name={`iSunOne`} img={`/elements/i_sun_one.svg`} iconSize={50} />
+                  </div>
+                  <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2">
+                    <WalletOption name={`imToken`} img={`/elements/path_25918.svg`} iconSize={50} />
+                  </div>
+                  <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2">
+                    <WalletOption
+                      name={`Coinbase`}
+                      img={`/elements/18060234@2x.png`}
+                      iconSize={50}
+                    />
+                  </div>
+                  <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2">
+                    <WalletOption name={`Trust`} img={`/elements/twt@2x.png`} iconSize={50} />
+                  </div>
+                  <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2">
+                    <WalletOption name={`Rainbow`} img={`/elements/unnamed@2x.png`} iconSize={50} />
+                  </div>
+                  <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2">
+                    <WalletOption name={`Houbi`} img={`/elements/logo@2x.png`} iconSize={50} />
+                  </div>
+                  <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2">
+                    <WalletOption
+                      name={`Coin98`}
+                      img={`/elements/coin98_c98_logo@2x.png`}
+                      iconSize={50}
+                    />
+                  </div>
+                  <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2">
+                    <WalletOption
+                      name={`TokenPocket`}
+                      img={`/elements/tokenpocket_wallet_logo@2x.png`}
+                      iconSize={50}
+                    />
+                  </div>
+                  <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2">
+                    <WalletOption
+                      name={`WalletConnect`}
+                      img={`/elements/walletconnect@2x.png`}
+                      iconSize={50}
+                    />
+                  </div>
+                  <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2">
+                    <WalletOption name={`BitKeep`} img={`/elements/path_25917.svg`} iconSize={45} />
+                  </div>
+                  <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2">
+                    <WalletOption name={`Others`} img={`/elements/wallet@2x.png`} iconSize={50} />
+                  </div>
+                </div>
               </div>
             </div>
             {/*footer*/}
@@ -76,12 +114,13 @@ export default function WalletPanel(props) {
 
   return (
     <>
-      <button
+      <TideButton
         onClick={clickHandler}
         className={`${props?.className} mt-4 rounded border-0 bg-tidebitTheme py-2 px-5 text-base text-white hover:bg-cyan-600 focus:outline-none md:mt-0`}
+        content={`Wallet Connect`}
       >
         {`Wallet Connect`}
-      </button>
+      </TideButton>
       {isDisplayedWalletPanel}
     </>
   );

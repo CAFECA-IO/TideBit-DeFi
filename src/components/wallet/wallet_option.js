@@ -3,11 +3,11 @@ import Image from 'next/image';
 
 // <div className="flex flex-col items-center bg-gray-800 p-3 rounded hover:cursor-pointer hover:opacity-80">
 
-const WalletOption = ({name = 'Metamask', img = '/metamask.png', iconSize = '50'}) => {
+const WalletOption = ({name = '', img = '', iconSize = ''}) => {
   return (
-    <div className="flex flex-col items-center rounded bg-gray-800 px-1 py-3 hover:cursor-pointer hover:opacity-80">
+    <div className="flex flex-col items-center rounded bg-darkGray2 px-1 py-3 text-sm hover:cursor-pointer hover:opacity-80">
       <Image
-        className="rounded-xl bg-gray-800 p-1 hover:cursor-pointer hover:opacity-80"
+        className="rounded-xl bg-darkGray2 p-1 hover:cursor-pointer hover:opacity-80"
         onClick={() => {
           // console.log(`${name} clicked`);
         }}

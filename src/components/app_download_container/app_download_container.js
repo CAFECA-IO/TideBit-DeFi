@@ -73,7 +73,7 @@ const AppDowloadContainer = () => {
           </div>
 
           <div className="mx-auto flex flex-wrap items-center space-y-2 pb-24 md:flex-row">
-            <div className="mx-auto flex w-full flex-col flex-wrap items-center justify-center py-5 pl-1/10 md:w-3/5">
+            <div className="mx-auto flex w-4/5 flex-col flex-wrap items-center justify-center py-5 pl-1/10 md:w-4/5">
               <Image
                 className="flex justify-center rounded object-contain"
                 alt="hero"
@@ -84,7 +84,18 @@ const AppDowloadContainer = () => {
             </div>
 
             <div className="mx-auto mb-10 max-w-md md:mb-0 md:w-1/2 lg:max-w-sm 2xl:ml-1/8">
-              <div className="flex justify-center">
+              {/* QR Code Size Automatic Toggle */}
+              <div className="hidden justify-center md:flex">
+                <Image
+                  className="rounded object-cover object-center"
+                  alt="QR Code"
+                  src="/elements/tidebit_qrcode.png"
+                  width={150}
+                  height={150}
+                />
+              </div>
+
+              <div className="flex justify-center md:hidden">
                 <Image
                   className="rounded object-cover object-center"
                   alt="QR Code"

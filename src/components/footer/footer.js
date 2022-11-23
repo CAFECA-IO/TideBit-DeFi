@@ -185,8 +185,8 @@ const Footer = () => {
                 <div className="w-full">
                   <h2 className="mb-3 text-lg font-bold tracking-widest text-white">Newsletter</h2>
 
-                  <div className="mx-1/8 flex flex-wrap items-end justify-center">
-                    <div className="relative mr-1/50 w-2/3 sm:w-auto">
+                  <div className="flex flex-col flex-wrap items-center justify-center">
+                    <div className="relative w-220px md:mb-5">
                       <input
                         placeholder="Email Address"
                         type="text"

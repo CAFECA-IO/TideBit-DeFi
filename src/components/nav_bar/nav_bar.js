@@ -127,9 +127,9 @@ const NavBar = ({notificationNumber = 1}) => {
             <div className="flex h-16 items-center justify-between">
               <div className="flex items-center">
                 {/* logo */}
-                <Link className="shrink-0" href="/">
-                  <div className="inline-flex items-center pt-5 hover:cursor-pointer hover:text-cyan-300 hover:opacity-100">
-                    <div className="relative mb-2 h-55px w-150px flex-col justify-center hover:cursor-pointer hover:opacity-80">
+                <Link className="shrink-0  pt-5" href="/">
+                  <div className="inline-flex items-center hover:cursor-pointer hover:text-cyan-300 hover:opacity-100">
+                    <div className="relative h-55px w-150px flex-col justify-center hover:cursor-pointer hover:opacity-80">
                       <Image
                         className=""
                         src={'/elements/nav_logo.svg'}
@@ -139,7 +139,7 @@ const NavBar = ({notificationNumber = 1}) => {
                       />
                       {/* TODO: Fix -m */}
 
-                      <p className="container mx-auto -mt-1 ml-3 pr-10px text-end text-xxs text-lightGray">
+                      <p className="absolute bottom-1 right-0 text-end text-xxs text-lightGray">
                         V {version}
                       </p>
                     </div>

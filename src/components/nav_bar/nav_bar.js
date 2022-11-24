@@ -137,7 +137,6 @@ const NavBar = ({notificationNumber = 1}) => {
                         width={150}
                         alt={'logo'}
                       />
-                      {/* TODO: Fix -m */}
 
                       <p className="absolute bottom-1 right-0 text-end text-xxs text-lightGray">
                         V {version}
@@ -202,10 +201,8 @@ const NavBar = ({notificationNumber = 1}) => {
                 </div>
               </div>
 
-              {/* TODO: Fix -m */}
-
               {/* Mobile menu toggle */}
-              <div ref={ref} className="-mr-2 flex pt-3 lg:hidden">
+              <div ref={ref} className="mr-0 flex pt-3 lg:hidden">
                 <button
                   onClick={clickHanlder}
                   className="inline-flex items-center justify-center rounded-md p-2 hover:text-cyan-300 focus:outline-none"
@@ -221,7 +218,7 @@ const NavBar = ({notificationNumber = 1}) => {
             {isDisplayedNotificationSidebarMobileCover}
 
             {/* Mobile menu section */}
-            <div className=" ml-10 inline-block items-center px-2 pt-2 pb-3 sm:px-3">
+            <div className="ml-10 inline-block items-center px-2 pt-2 pb-3 sm:px-3">
               <div className="space-y-1">
                 <TideLink
                   href="#"

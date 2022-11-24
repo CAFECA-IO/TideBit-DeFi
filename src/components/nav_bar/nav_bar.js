@@ -11,7 +11,7 @@ import TideLink from '../tide_link/tide_link';
 import Image from 'next/image';
 import version from '../../lib/version';
 import WalletPanel from '../wallet/wallet_panel';
-import useOuterClick from '../../hooks/lib/useOuterClick';
+import useOuterClick from '../../hooks/lib/use_outer_click';
 import Notification from '../notification/notification';
 import NotificationItem from '../notification_item/notification_item';
 

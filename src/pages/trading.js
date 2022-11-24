@@ -4,7 +4,7 @@ import ConnectingModal from '../components/connecting_modal/connecting_modal';
 export default function Trading() {
   return (
     <div>
-      <ConnectingModal />
+      <ConnectingModal showConnectingModal="true" />
     </div>
   );
 }

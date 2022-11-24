@@ -108,8 +108,9 @@ export default function ConnectingModal(props) {
               {/*body*/}
               <div className="relative mx-10 flex-auto px-4 pb-4 pt-1">
                 <div className="my-4 text-lg leading-relaxed text-white">
-                  <div className="flex justify-center">
-                    <div className="text-2xl">Loading Circle Animation</div>
+                  <div className="flex-col justify-center text-center">
+                    <div className="my-20 text-2xl text-blue-200">Loading Circle Animation</div>
+                    <div className="text-lg">connecting...</div>
 
                     {/* <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2"></div>
                   <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2"></div>

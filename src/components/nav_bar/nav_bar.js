@@ -70,8 +70,11 @@ const NavBar = ({notificationNumber = 1}) => {
               <div className="fixed right-30px text-sm text-tidebitTheme underline hover:cursor-pointer">
                 Clear All
               </div>
-              {/* TODO: Fix -m */}
-              <NotificationItem />
+              <div className="mt-20">
+                <NotificationItem />
+              </div>
+
+              {/* Divider */}
               <span className="ml-2 inline-block h-1px w-438px shrink-0 bg-lightGray"></span>
             </div>
           </div>

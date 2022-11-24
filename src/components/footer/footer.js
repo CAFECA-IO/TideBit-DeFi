@@ -88,18 +88,17 @@ const Footer = () => {
 
   return (
     <>
-      {/* TODO: Fix -m */}
       {/* Desktop */}
       <div className={`${desktopVersionBreakpoint}`}>
         <footer className="mx-auto w-screen bg-darkGray text-base lg:justify-center">
           <div className="flex flex-col flex-wrap px-1/10 pt-24 pb-10 md:flex-row md:flex-nowrap md:items-center lg:items-start">
-            <div className="mx-auto w-full shrink-0 px-4 text-center md:mx-0 md:w-1/4 md:text-left lg:w-1/6">
+            <div className="mx-auto w-full shrink-0 text-center md:mx-0 md:w-1/4 md:text-left lg:w-1/6">
               <a className="flex flex-col items-center justify-center font-medium text-white md:justify-start">
                 <Image src="/elements/footer_logo.svg" width={120} height={100} alt="TideBit" />
               </a>
-              <span className="container mx-auto mt-2 -mb-2 flex h-px w-150px justify-center rounded bg-white xl:w-180px"></span>
+              <span className="mt-3 flex h-px w-full justify-center rounded bg-white xl:w-full"></span>
 
-              <div className="container mx-auto mt-2 inline-flex justify-center pl-1 pt-5 sm:mt-0 lg:pl-3 xl:pl-0">
+              <div className="container mx-auto inline-flex justify-center pt-3 sm:mt-0">
                 {socialMediaLinksList}
               </div>
             </div>
@@ -118,9 +117,8 @@ const Footer = () => {
                 </h2>
                 <nav className="mb-5 list-none">{policyLinksList}</nav>
               </div>
-              {/* TODO: Fix -m */}
 
-              <div className="w-full px-4 md:-mt-8 md:w-1/2 lg:ml-20 lg:mt-0 lg:w-1/3 lg:pl-50px">
+              <div className="w-full px-4 lg:ml-20 lg:mt-0 lg:w-1/3 lg:pl-50px">
                 <h2 className="mb-3 text-lg font-bold tracking-widest text-white">Newsletter</h2>
 
                 <div className="flex flex-wrap items-end justify-center space-y-2 md:justify-start">
@@ -143,7 +141,6 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* TODO: Margin & Padding */}
           <div className="mt-0 pb-0">
             <div className="flex flex-col flex-wrap px-5 pt-1 pb-4 sm:flex-row sm:justify-center md:justify-end">
               <p className="text-center text-xs text-gray-400 sm:text-left md:mt-5 lg:mr-36 lg:mt-0">
@@ -163,9 +160,9 @@ const Footer = () => {
               <a className="flex flex-col items-center justify-center font-medium text-white md:justify-start">
                 <Image src="/elements/footer_logo.svg" width={120} height={100} alt="TideBit" />
               </a>
-              <span className="container mx-auto mt-2 flex h-px w-150px justify-center rounded bg-white xl:w-180px"></span>
+              <span className="container mx-auto mt-3 flex h-px w-150px justify-center rounded bg-white"></span>
 
-              <div className="container mx-auto inline-flex justify-center pl-1 pt-2 sm:mt-0 lg:pl-3 xl:pl-0">
+              <div className="container mx-auto inline-flex justify-center pt-3">
                 {socialMediaLinksList}
               </div>
 
@@ -209,7 +206,6 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* TODO: Margin & Padding */}
           <div className="mt-0 pb-0">
             <div className="flex flex-col flex-wrap px-5 pt-1 pb-4 sm:flex-row sm:justify-center md:justify-end">
               <p className="text-center text-xs text-gray-400 sm:text-left md:mt-5 lg:mr-36 lg:mt-0">

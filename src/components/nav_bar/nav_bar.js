@@ -54,7 +54,7 @@ const NavBar = ({notificationNumber = 1}) => {
       <div
         className={`pointer-events-none fixed right-1 top-44px ${
           componentVisible ? 'z-30' : 'z-30'
-        } flex overflow-x-hidden overflow-y-hidden outline-none focus:outline-none`}
+        } flex overflow-x-hidden outline-none focus:outline-none`}
       >
         <div className="relative my-6 mx-auto w-auto max-w-xl">
           {' '}
@@ -64,18 +64,20 @@ const NavBar = ({notificationNumber = 1}) => {
               ref={ref}
               className={`pointer-events-auto ${'w-479px'} h-screen ${
                 componentVisible ? 'translate-x-0' : 'translate-x-full'
-              } bg-darkGray/90 p-5 pt-8 text-white transition-all duration-300`}
+              } overflow-y-scroll bg-darkGray/90 p-5 pt-8 text-white transition-all  duration-300`}
             >
               <h1 className="pl-5 text-2xl font-bold">Notification</h1>
               <div className="fixed right-30px text-sm text-tidebitTheme underline hover:cursor-pointer">
                 Clear All
               </div>
 
-              <div className="mt-20">
-                <NotificationItem />
-              </div>
-              <div className="mt-5">
-                <NotificationItem />
+              <div className="mt-20 mb-20">
+                <div>
+                  <NotificationItem />
+                </div>
+                <div className="mt-5">
+                  <NotificationItem />
+                </div>
               </div>
             </div>
           </div>

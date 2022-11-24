@@ -16,37 +16,45 @@ export default function NotificationItem({title = '', date = '', time = '', cont
   sanctus est Lorem`;
 
   return (
-    <div className="">
-      <div className="flex">
+    <div className="relative">
+      <div className="mb-0 flex pb-0">
         {/* Vertical line */}
-        <span className="mx-2 inline-block h-158px w-5px shrink-0 bg-tidebitTheme"></span>
+        <span className="mx-2 h-158px w-5px shrink-0 bg-tidebitTheme"></span>
 
-        {/* Speaker & Heading & Content & Date */}
-        <div className="flex items-center">
-          <div>
-            <Image
-              className="ml-8px mb-10px flex shrink-0"
-              src="/elements/megaphone.svg"
-              width={30}
-              height={26}
-              alt="icon"
-            />
+        {/* contain divider */}
+        <div>
+          {/* Speaker & Heading & Content & Date */}
+          <div className="">
+            {/* Speaker & Heading & Date */}
+            <div className="flex items-start">
+              <Image
+                className="ml-8px"
+                src="/elements/megaphone.svg"
+                width={30}
+                height={26}
+                alt="icon"
+              />
 
-            <div className="relative mt-88px ml-3 text-start">
-              <div className="">
-                <div className="absolute top-40px text-2xl text-lightWhite">{title}</div>
-                <div className="right-20px pl-300px pt-42px pb-50px text-end text-xs text-lightGray">
-                  <div>{date}</div>
-                  <div>{time}</div>
+              <div className="relative ml-3 mb-7 text-start">
+                <div className="">
+                  <div className="absolute top-0 text-2xl text-lightWhite">{title}</div>
+                  <div className="pl-300px text-end text-xs text-lightGray">
+                    <div>{date}</div>
+                    <div>{time}</div>
+                  </div>
                 </div>
               </div>
             </div>
 
             {/* Content */}
-            <div className="flex flex-wrap text-xs text-lightGray">{content}</div>
+            <div className="mt-0 flex w-11/12 flex-wrap pl-12 pt-0 text-xs text-lightGray">
+              {content}
+            </div>
           </div>
         </div>
       </div>
+
+      <span className="absolute ml-2 inline-block h-1px w-438px shrink-0 bg-lightGray"></span>
     </div>
   );
 }

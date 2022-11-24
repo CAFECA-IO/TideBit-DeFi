@@ -1,6 +1,6 @@
 import {useState, useEffect, useRef, forwardRef} from 'react';
 
-function useOuterClick({initialVisibleState, ...otherProps}) {
+function useOuterClick(initialVisibleState) {
   const [componentVisible, setComponentVisible] = useState(initialVisibleState);
   const ref = useRef(null);
   // forwardRef(otherProps?.refP) ??

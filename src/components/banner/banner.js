@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import React from 'react';
-import TideButton from '../button/tide_button';
+import TideButton from '../tide_button/tide_button';
 // mx-auto flex flex-col items-center justify-center px-5 py-24
 // pb-[600px]
 const Banner = () => {

@@ -4,7 +4,7 @@ import {ImCross} from 'react-icons/im';
 import Image from 'next/image';
 import WalletOption from './wallet_option';
 import useOuterClick from '/src/hooks/lib/useOuterClick';
-import TideButton from '../button/tide_button';
+import TideButton from '../tide_button/tide_button';
 
 const ICON_SIZE = 50;
 

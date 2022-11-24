@@ -1,5 +1,6 @@
 import {useState, useEffect} from 'react';
 import {ImCross} from 'react-icons/im';
+import TideButton from '../tide_button/tide_button';
 
 // TODO: Loading component
 // TODO: Procedure component
@@ -20,6 +21,18 @@ export default function ConnectingModal() {
   const [errorMessage, setErrorMessage] = useState('');
   const [signature, setSignature] = useState(null);
   const [userBalance, setUserBalance] = useState(null);
+
+  async function connect() {
+    try {
+      setLoading(true);
+      const accounts = await window.ethereum.request({method: 'eth_requestAccounts'});
+      setDefaultAccount(accounts[0]);
+      setLoading(false);
+    } catch (error) {
+      setErrorMessage(error.message);
+      setLoading(false);
+    }
+  }
 
   return (
     <>
@@ -46,6 +59,7 @@ export default function ConnectingModal() {
               <div className="my-4 text-lg leading-relaxed text-white">
                 <div className="flex justify-center">
                   <div className="text-2xl">Loading Circle Animation</div>
+
                   {/* <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2"></div>
                   <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2"></div>
                   <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2"></div>

@@ -1,6 +1,6 @@
 import React from 'react';
 import Image from 'next/image';
-import TideButton from '../button/tide_button';
+import TideButton from '../tide_button/tide_button';
 
 const Cta = () => {
   return (

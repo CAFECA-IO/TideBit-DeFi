@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import React from 'react';
-import TideButton from '../button/tide_button';
-import TideLink from '../link/tide_link';
+import TideButton from '../tide_button/tide_button';
+import TideLink from '../tide_link/tide_link';
 
 const Footer = () => {
   const ICON_SIZE = 30;

@@ -22,19 +22,70 @@ neutra sustainable fingerstache kickstarter.`;
     />
   );
 
-  return (
-    <section className="container mx-auto flex w-screen justify-center bg-black text-gray-400">
-      <div className="flex flex-col items-center pb-24 md:flex-row">
-        <div className="mt-1 flex max-w-xl flex-col items-center text-center sm:text-start md:mr-32 md:mt-10 md:w-2/5 md:items-start md:pl-16 md:text-left lg:mt-0 lg:pl-8 xl:mt-5 xl:ml-20">
-          <h1 className="mb-8 text-3xl font-medium text-white sm:text-4xl md:text-center">
-            {displayedHeading}
-          </h1>
-          <p className="mb-8 text-lg leading-10">{displayedContent}</p>
-        </div>
+  const desktopVersionBreakpoint = 'hidden lg:flex';
+  const mobileVersionBreakpoint = 'flex lg:hidden';
 
-        <div className="mb-10 w-5/6 md:mb-0 md:w-1/2 lg:w-full lg:max-w-lg">{displayedImg}</div>
-      </div>
-    </section>
+  return (
+    <>
+      {/* Desktop */}
+      <section
+        className={`${desktopVersionBreakpoint} container mx-auto flex w-screen justify-center bg-black pl-1/25 pr-1/50 text-gray-400`}
+      >
+        <div className="flex flex-col items-center pb-24 md:flex-row">
+          <div className="mt-1 flex flex-col items-center text-center sm:text-start md:mt-10 md:w-3/5 md:items-start md:pl-16 md:text-left lg:mt-0 lg:pl-8 xl:mt-5">
+            <h1 className="mb-8 text-3xl font-medium text-white sm:text-4xl md:text-center">
+              {displayedHeading}
+            </h1>
+            <p className="mb-8 text-lg leading-10">{displayedContent}</p>
+          </div>
+
+          <div className="mb-10 w-5/6 md:mb-0 md:w-1/2 lg:w-full lg:max-w-lg">{displayedImg}</div>
+        </div>
+      </section>
+      {/* Mobile */}
+
+      <section
+        className={`${mobileVersionBreakpoint} container mx-auto w-screen justify-center bg-black text-gray-400`}
+      >
+        <div className="flex flex-col items-center pb-24">
+          <div className="mb-20 w-5/6 xs:mb-28">{displayedImg}</div>
+
+          <div className="mx-auto mt-0 flex max-w-lg flex-col items-center justify-center text-center align-baseline">
+            <h1 className="mx-auto mb-5 text-center text-2xl font-medium text-white sm:text-4xl">
+              {displayedHeading}
+            </h1>
+            <p className="mb-8 text-center text-sm leading-8 md:text-xl md:leading-10">
+              {displayedContent}
+            </p>
+          </div>
+        </div>
+        {/* <div className="flex flex-col items-center pb-24">
+          <div className="w-5/6">{displayedImg}</div>
+
+          <div className="mt-0 flex max-w-lg flex-col items-center justify-center text-center">
+            <h1 className="mb-8 text-center text-3xl font-medium text-white xs:text-4xl">
+              {displayedHeading}
+            </h1>
+            <p className="mb-8 text-lg leading-8 text-blue-400">{displayedContent}</p>
+          </div>
+        </div> */}
+      </section>
+
+      {/* <section
+        className={`${mobileVersionBreakpoint} container mx-auto flex w-screen justify-center bg-black text-gray-400`}
+      >
+        <div className="flex flex-col items-center pb-24 md:flex-row">
+          <div className="mt-1 flex max-w-xl flex-col items-center text-center sm:text-start md:mr-32 md:mt-10 md:w-2/5 md:items-start md:pl-16 md:text-left lg:mt-0 lg:pl-8 xl:mt-5 xl:ml-20">
+            <h1 className="mb-8 text-3xl font-medium text-white sm:text-4xl md:text-center">
+              {displayedHeading}
+            </h1>
+            <p className="mb-8 text-lg leading-10">{displayedContent}</p>
+          </div>
+
+          <div className="mb-10 w-5/6 md:mb-0 md:w-1/2 lg:w-full lg:max-w-lg">{displayedImg}</div>
+        </div>
+      </section> */}
+    </>
   );
 };
 

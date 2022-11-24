@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import TideButton from '../button/tide_button';
+import TideButton from '../tide_button/tide_button';
 import {useState} from 'react';
 import {AiOutlineGlobal} from 'react-icons/ai';
 import {BsFillBellFill} from 'react-icons/bs';
@@ -7,12 +7,13 @@ import {TbMinusVertical} from 'react-icons/tb';
 import {FiMenu} from 'react-icons/fi';
 import {TfiBell} from 'react-icons/tfi';
 import {BsBell} from 'react-icons/bs';
-import TideLink from '../link/tide_link';
+import TideLink from '../tide_link/tide_link';
 import Image from 'next/image';
 import version from '../../lib/version';
 import WalletPanel from '../wallet/wallet_panel';
-import useOuterClick from '../../hooks/lib/useOuterClick';
+import useOuterClick from '../../hooks/lib/use_outer_click';
 import Notification from '../notification/notification';
+import NotificationItem from '../notification_item/notification_item';
 
 const NavBar = ({notificationNumber = 1}) => {
   const [navOpen, setNavOpen] = useState(false);
@@ -53,7 +54,7 @@ const NavBar = ({notificationNumber = 1}) => {
       <div
         className={`pointer-events-none fixed right-1 top-44px ${
           componentVisible ? 'z-30' : 'z-30'
-        } flex overflow-x-hidden overflow-y-hidden outline-none focus:outline-none`}
+        } flex overflow-x-hidden outline-none focus:outline-none`}
       >
         <div className="relative my-6 mx-auto w-auto max-w-xl">
           {' '}
@@ -63,43 +64,21 @@ const NavBar = ({notificationNumber = 1}) => {
               ref={ref}
               className={`pointer-events-auto ${'w-479px'} h-screen ${
                 componentVisible ? 'translate-x-0' : 'translate-x-full'
-              } bg-darkGray/90 p-5 pt-8 text-white transition-all duration-300`}
+              } overflow-y-scroll bg-darkGray/90 p-5 pt-8 text-white transition-all  duration-300`}
             >
               <h1 className="pl-5 text-2xl font-bold">Notification</h1>
               <div className="fixed right-30px text-sm text-tidebitTheme underline hover:cursor-pointer">
                 Clear All
               </div>
-              <div className="-mb-28px mt-83px flex">
-                <span className="mx-2 inline-block h-158px w-5px shrink-0 bg-tidebitTheme"></span>
-                <div className="-mt-130px flex items-center">
-                  <Image
-                    className="ml-8px -mt-10px flex shrink-0"
-                    src="/elements/megaphone.svg"
-                    width={30}
-                    height={26}
-                    alt="icon"
-                  />
-                  <div className="relative mt-88px ml-3 text-start">
-                    <div className="">
-                      <div className="absolute top-40px text-2xl text-lightWhite">
-                        Happy Birthday to TideBit
-                      </div>
-                      <div className="right-20px pl-300px pt-42px pb-50px text-end text-xs text-lightGray">
-                        <div>2022-10-05</div>
-                        <div>14:28:38</div>
-                      </div>
-                    </div>
 
-                    <div className="mb-23px -mt-30px flex flex-wrap text-xs text-lightGray">
-                      Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy
-                      eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam
-                      voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita
-                      kasd gubergren, no sea takimata sanctus est Lorem
-                    </div>
-                  </div>
+              <div className="mt-20 mb-20">
+                <div>
+                  <NotificationItem />
+                </div>
+                <div className="mt-5">
+                  <NotificationItem />
                 </div>
               </div>
-              <span className="ml-2 inline-block h-1px w-438px shrink-0 bg-lightGray"></span>
             </div>
           </div>
         </div>
@@ -142,15 +121,15 @@ const NavBar = ({notificationNumber = 1}) => {
   return (
     <>
       <div className="w-full bg-black">
-        {/* No bg blur `backdrop-blur-sm` because wallet panel's limited to navbar when it show up */}
+        {/* No bg blur in NavBar `backdrop-blur-sm` because wallet panel's limited to navbar when it show up */}
         <nav className="container fixed inset-x-0 z-40 mx-auto max-w-full bg-black/100 pb-1 text-white">
           <div className="mx-auto max-w-full px-8">
             <div className="flex h-16 items-center justify-between">
               <div className="flex items-center">
                 {/* logo */}
-                <Link className="shrink-0" href="/">
-                  <div className="inline-flex items-center pt-5 hover:cursor-pointer hover:text-cyan-300 hover:opacity-100">
-                    <div className="relative mb-2 h-55px w-150px flex-col justify-center hover:cursor-pointer hover:opacity-80">
+                <Link className="shrink-0  pt-5" href="/">
+                  <div className="inline-flex items-center hover:cursor-pointer hover:text-cyan-300 hover:opacity-100">
+                    <div className="relative h-55px w-150px flex-col justify-center hover:cursor-pointer hover:opacity-80">
                       <Image
                         className=""
                         src={'/elements/nav_logo.svg'}
@@ -158,7 +137,8 @@ const NavBar = ({notificationNumber = 1}) => {
                         width={150}
                         alt={'logo'}
                       />
-                      <p className="container mx-auto -mt-1 ml-3 pr-10px text-end text-xxs text-lightGray">
+
+                      <p className="absolute bottom-1 right-0 text-end text-xxs text-lightGray">
                         V {version}
                       </p>
                     </div>
@@ -222,7 +202,7 @@ const NavBar = ({notificationNumber = 1}) => {
               </div>
 
               {/* Mobile menu toggle */}
-              <div ref={ref} className="-mr-2 flex pt-3 lg:hidden">
+              <div ref={ref} className="mr-0 flex pt-3 lg:hidden">
                 <button
                   onClick={clickHanlder}
                   className="inline-flex items-center justify-center rounded-md p-2 hover:text-cyan-300 focus:outline-none"
@@ -238,7 +218,7 @@ const NavBar = ({notificationNumber = 1}) => {
             {isDisplayedNotificationSidebarMobileCover}
 
             {/* Mobile menu section */}
-            <div className=" ml-10 inline-block items-center px-2 pt-2 pb-3 sm:px-3">
+            <div className="ml-10 inline-block items-center px-2 pt-2 pb-3 sm:px-3">
               <div className="space-y-1">
                 <TideLink
                   href="#"
@@ -300,7 +280,7 @@ const NavBar = ({notificationNumber = 1}) => {
 
       {/* TODO: forwardRef */}
       {/* <Notification
-        ref={ref}
+        forwardedRef={ref}
         componentVisible={componentVisible}
         setComponentVisible={setComponentVisible}
       /> */}

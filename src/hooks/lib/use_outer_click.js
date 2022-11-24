@@ -1,8 +1,10 @@
-import {useState, useEffect, useRef} from 'react';
+import {useState, useEffect, useRef, forwardRef} from 'react';
 
 function useOuterClick(initialVisibleState) {
   const [componentVisible, setComponentVisible] = useState(initialVisibleState);
   const ref = useRef(null);
+  // forwardRef(otherProps?.refP) ??
+  // const ref = useRef(null);
 
   const handleClickOutside = event => {
     // if (!componentVisible) return;

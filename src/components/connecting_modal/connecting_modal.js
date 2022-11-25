@@ -1,11 +1,14 @@
 import {useState, useEffect} from 'react';
 import {ImCross} from 'react-icons/im';
 import TideButton from '../tide_button/tide_button';
+import TideLink from '../tide_link/tide_link';
 import {ethers, providers} from 'ethers';
 import useOuterClick from '../../hooks/lib/use_outer_click';
+import Link from 'next/link';
 
 import Lottie from 'lottie-react';
 import connectingAnimation from '../../../public/animation/lf30_editor_qlduo5gq.json';
+import Image from 'next/image';
 
 // TODO: Loading component
 // TODO: Procedure component
@@ -85,6 +88,144 @@ export default function ConnectingModal(props) {
     setComponentVisible(!componentVisible);
   }
 
+  //**************************************Divider**************************************//
+
+  function SignatureProcedure() {
+    return componentVisible ? (
+      <>
+        <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none focus:outline-none">
+          <div className="relative my-6 mx-auto w-auto max-w-xl">
+            {/*content & panel*/}
+            <div
+              id="connectModal"
+              ref={ref}
+              className="relative flex h-600px w-450px flex-col rounded-3xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none"
+            >
+              {/*header*/}
+              <div className="flex items-start justify-between rounded-t pt-6">
+                <h3 className="mx-auto mt-2 w-20rem pl-1/8 text-4xl font-semibold text-lightWhite">
+                  Wallet Connect
+                </h3>
+                <button className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
+                  <span className="absolute top-5 right-5 block outline-none focus:outline-none">
+                    <ImCross onClick={clickModalHandler} />
+                  </span>
+                </button>
+              </div>
+              {/*body*/}
+              <div className="relative flex-auto pt-1">
+                <div className="text-lg leading-relaxed text-lightWhite">
+                  <div className="flex-col justify-center text-center">
+                    <Lottie className="ml-7 w-full pt-12" animationData={connectingAnimation} />
+                    <div className="mt-10 text-xl">Connecting...</div>
+                  </div>
+                </div>
+              </div>
+              {/*footer*/}
+              <div className="flex items-center justify-end rounded-b p-2"></div>
+            </div>
+          </div>
+        </div>
+        <div className="fixed inset-0 z-40 bg-black opacity-25"></div>
+      </>
+    ) : null;
+  }
+
+  function QrcodeModal() {
+    return componentVisible ? (
+      <>
+        <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none focus:outline-none">
+          <div className="relative my-6 mx-auto w-auto max-w-xl">
+            {/*content & panel*/}
+            <div
+              id="connectModal"
+              ref={ref}
+              className="relative flex h-600px w-450px flex-col rounded-3xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none"
+            >
+              {/*header*/}
+              <div className="flex items-start justify-between rounded-t pt-6">
+                <h3 className="mx-auto mt-2 w-20rem pl-1/8 text-4xl font-semibold text-lightWhite">
+                  Wallet Connect
+                </h3>
+                <button className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
+                  <span className="absolute top-5 right-5 block outline-none focus:outline-none">
+                    <ImCross onClick={clickModalHandler} />
+                  </span>
+                </button>
+              </div>
+              {/*body*/}
+              <div className="relative flex-auto pt-1">
+                <div className="text-lg leading-relaxed text-lightWhite">
+                  <div className="flex-col justify-center text-center">
+                    <Lottie className="ml-7 w-full pt-12" animationData={connectingAnimation} />
+                    <div className="mt-10 text-xl">Connecting...</div>
+                  </div>
+                </div>
+              </div>
+              {/*footer*/}
+              <div className="flex items-center justify-end rounded-b p-2"></div>
+            </div>
+          </div>
+        </div>
+        <div className="fixed inset-0 z-40 bg-black opacity-25"></div>
+      </>
+    ) : null;
+  }
+
+  function HelloModal() {
+    return componentVisible ? (
+      <>
+        <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none focus:outline-none">
+          <div className="relative my-6 mx-auto w-auto max-w-xl">
+            {/*content & panel*/}
+            <div
+              id="connectModal"
+              ref={ref}
+              className="relative flex h-600px w-450px flex-col rounded-3xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none"
+            >
+              {/*header*/}
+              <div className="flex items-start justify-between rounded-t pt-6">
+                <button className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
+                  <span className="absolute top-5 right-5 block outline-none focus:outline-none">
+                    <ImCross onClick={clickModalHandler} />
+                  </span>
+                </button>
+              </div>
+              {/*body*/}
+              <div className="flex flex-auto flex-col items-center pt-32">
+                <div className="text-lg leading-relaxed text-lightWhite">
+                  <div className="mx-auto flex flex-col items-center">
+                    <Image
+                      className="mt-10 w-100px"
+                      src="/elements/path_25939.svg"
+                      width={200}
+                      height={200}
+                      alt="Hello"
+                    />
+                    <div className="mt-8 text-xl text-lightGray">
+                      You can start using TideBit now.
+                    </div>
+
+                    <TideButton className="mt-40 px-12" content={`Done`} />
+                    <Link
+                      className="mt-3 text-base text-tidebitTheme underline underline-offset-4"
+                      href="#"
+                    >
+                      Connect my TideBit HK
+                    </Link>
+                  </div>
+                </div>
+              </div>
+              {/*footer*/}
+              <div className="flex items-center justify-end rounded-b p-2"></div>
+            </div>
+          </div>
+        </div>
+        <div className="fixed inset-0 z-40 bg-black opacity-25"></div>
+      </>
+    ) : null;
+  }
+
   function DisplayedConnecting() {
     // console.log('in displayed connecting modal, componentVisible: ', componentVisible);
     return componentVisible ? (
@@ -129,23 +270,8 @@ export default function ConnectingModal(props) {
 
   return (
     <>
-      {/* <div className="text-blue-500">I'm connecting modal</div> */}
-      <DisplayedConnecting />
+      {/* <DisplayedConnecting /> */}
+      <HelloModal />
     </>
   );
-}
-
-{
-  /* <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2"></div>
-                  <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2"></div>
-                  <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2"></div>
-                  <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2"></div>
-                  <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2"></div>
-                  <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2"></div>
-                  <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2"></div>
-                  <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2"></div>
-                  <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2"></div>
-                  <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2"></div>
-                  <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2"></div>
-                  <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2"></div> */
 }

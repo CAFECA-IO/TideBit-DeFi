@@ -65,6 +65,24 @@ export default function WalletPanel(props) {
 
   const isDisplayedConnectingModal = connecting ? <ConnectingModal /> : null;
 
+  // const connectingLoading = loadingVisible ? ( <ConnectingLoading /> ) : null;
+
+  // FIXME: To be improved
+  const clearState = () => {
+    if (!componentVisible) {
+      setConnecting(false);
+      setDefaultAccount(null);
+      setErrorMessages('');
+      setSignature(null);
+      setUserBalance(null);
+    }
+    // setConnecting(false);
+    // setDefaultAccount(null);
+    // setErrorMessages('');
+    // setSignature(null);
+    // setUserBalance(null);
+  };
+
   const isDisplayedWalletPanel = componentVisible ? (
     <>
       <div className="fixed inset-0 z-40 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">

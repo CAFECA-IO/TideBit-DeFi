@@ -144,7 +144,7 @@ export default function ConnectingModal(props) {
             >
               {/*header*/}
               <div className="flex items-start justify-between rounded-t pt-6">
-                <h3 className="mx-auto mt-2 w-20rem pl-1/8 text-4xl font-semibold text-lightWhite">
+                <h3 className="ml-1/8 mt-2 w-20rem pl-1/8 text-4xl font-semibold text-lightWhite">
                   Wallet Connect
                 </h3>
                 <button className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
@@ -157,8 +157,20 @@ export default function ConnectingModal(props) {
               <div className="relative flex-auto pt-1">
                 <div className="text-lg leading-relaxed text-lightWhite">
                   <div className="flex-col justify-center text-center">
-                    <Lottie className="ml-7 w-full pt-12" animationData={connectingAnimation} />
-                    <div className="mt-10 text-xl">Connecting...</div>
+                    <Image
+                      className="mx-auto mt-16 rounded object-cover object-center"
+                      alt="QR Code"
+                      src="/elements/tidebit_qrcode.png"
+                      width={340}
+                      height={340}
+                    />{' '}
+                    <div className="mt-10 text-lg">
+                      Please open your{' '}
+                      <span className="text-tidebitTheme">
+                        <Link href="#">wallet</Link>
+                      </span>{' '}
+                      to scan the QR code.
+                    </div>
                   </div>
                 </div>
               </div>
@@ -271,7 +283,8 @@ export default function ConnectingModal(props) {
   return (
     <>
       {/* <DisplayedConnecting /> */}
-      <HelloModal />
+      {/* <HelloModal /> */}
+      <QrcodeModal />
     </>
   );
 }

@@ -461,6 +461,67 @@ export default function WalletPanel(props) {
 
   // const isWalletConnectOpen =
 
+  async function funcSignTypedData() {
+    try {
+      setErrorMessages('');
+      setSignature(null);
+      const provider = new providers.Web3Provider(window.ethereum);
+      await provider.send('eth_requestAccounts', []);
+
+      const signer = provider.getSigner();
+      const address = await signer.getAddress();
+      const chainId = await signer.getChainId();
+      const balance = await signer.getBalance();
+      setDefaultAccount(address);
+      setUserBalance(ethers.utils.formatEther(balance));
+
+      // All properties on a domain are optional
+      // TODO: salt is optional, but if not provided, the signature will be different each time
+      const domain = {
+        name: 'TideBit Ex',
+        version: '0.8.15',
+        chainId: 1,
+        verifyingContract: '0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC',
+        salt: '0x' + '0000000000000000000000000000000000000000000000000000000000000002',
+      };
+
+      // The named list of all type definitions
+      const types = {
+        Person: [
+          {name: 'name', type: 'string'},
+          {name: 'wallet', type: 'address'},
+        ],
+        Mail: [
+          {name: 'from', type: 'Person'},
+          {name: 'to', type: 'Person'},
+          {name: 'contents', type: 'string'},
+        ],
+      };
+
+      // The data to sign
+      const value = {
+        from: {
+          name: 'User',
+          wallet: '0xCD2a3d9F938E13CD947Ec05AbC7FE734Df8DD826',
+        },
+        to: {
+          name: 'TideBit Ex',
+          wallet: '0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB',
+        },
+        contents: 'Agree to the terms and conditions',
+      };
+
+      let signature = await signer._signTypedData(domain, types, value);
+
+      setSignature(signature);
+
+      // console.log('[EIP712] Sign typed signature: ', signature);
+    } catch (error) {
+      // console.error(error);
+      setErrorMessages(error.message);
+    }
+  }
+
   const walletOptionClickHandler = async () => {
     // TODO: NNNNNNNotes
     // console.log('connecting modal should be visible: ', connectingModalVisible);
@@ -493,8 +554,9 @@ export default function WalletPanel(props) {
       // processModalController({loading: true});
       <SignatureProcess loading={true} />;
 
-      let signature = await signer.signMessage('TideBit DeFi test');
+      // let signature = await signer.signMessage('TideBit DeFi test');
       // console.log('Sign the message, get the signature is: ', signature);
+      funcSignTypedData();
     } catch (error) {
       // console.log(error);
       setErrorMessages(error);

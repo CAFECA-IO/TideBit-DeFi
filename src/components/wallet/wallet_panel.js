@@ -35,12 +35,17 @@ export default function WalletPanel(props) {
       let signer = provider.getSigner();
       let address = await signer.getAddress();
       setDefaultAccount(address);
+
       let balance = await provider.getBalance(address);
+      balance = ethers.utils.formatEther(balance);
+      setUserBalance(balance);
       // console.log('user balance: ', balance);
-      setUserBalance(ethers.utils.formatEther(balance));
+
       // console.log('connect to Metamask clicked, Account: ', address);
+
       let signature = await signer.signMessage('TideBit DeFi test');
       // console.log('Sign the message, get the signature is: ', signature);
+
       alert('Sign the message, get the signature is: ' + signature);
     } catch (error) {
       // console.log(error);

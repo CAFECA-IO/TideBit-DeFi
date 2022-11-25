@@ -4,6 +4,9 @@ import TideButton from '../tide_button/tide_button';
 import {ethers, providers} from 'ethers';
 import useOuterClick from '../../hooks/lib/use_outer_click';
 
+import Lottie from 'lottie-react';
+import connectingAnimation from '../../../public/animation/lf30_editor_qlduo5gq.json';
+
 // TODO: Loading component
 // TODO: Procedure component
 // TODO: Signature success or not
@@ -67,7 +70,7 @@ export default function ConnectingModal(props) {
       setDefaultAccount(accounts[0]);
       setLoading(false);
     } catch (error) {
-      setErrorMessage(error.message);
+      setErrorMessages(error.message);
       setLoading(false);
     }
   }
@@ -109,7 +112,7 @@ export default function ConnectingModal(props) {
               <div className="relative mx-10 flex-auto px-4 pb-4 pt-1">
                 <div className="my-4 text-lg leading-relaxed text-white">
                   <div className="flex-col justify-center text-center">
-                    <div className="my-20 text-2xl text-blue-200">Loading Circle Animation</div>
+                    <Lottie animationData={connectingAnimation} />
                     <div className="text-lg">connecting...</div>
 
                     {/* <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2"></div>

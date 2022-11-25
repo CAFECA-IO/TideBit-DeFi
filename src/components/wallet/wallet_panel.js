@@ -342,7 +342,7 @@ export default function WalletPanel(props) {
                       You can start using TideBit now.
                     </div>
 
-                    <TideButton className="px-12" content={`Done`} />
+                    <TideButton className="px-12" content={`Done`} onClick={helloClickHandler} />
                     <Link
                       className="mt-3 text-base text-tidebitTheme underline underline-offset-4"
                       href="#"

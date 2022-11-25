@@ -73,7 +73,7 @@ export default function WalletPanel(props) {
           <div
             ref={ref}
             id="connectModal"
-            className="relative flex w-full flex-col rounded-lg border-0 bg-darkGray1 shadow-lg outline-none focus:outline-none"
+            className="relative flex w-full flex-col rounded-3xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none"
           >
             {/*header*/}
             <div className="flex items-start justify-between rounded-t pt-6">

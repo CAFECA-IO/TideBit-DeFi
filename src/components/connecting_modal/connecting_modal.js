@@ -95,7 +95,7 @@ export default function ConnectingModal(props) {
             <div
               id="connectModal"
               ref={ref}
-              className="relative flex w-full flex-col rounded-lg border-0 bg-darkGray1 shadow-lg outline-none focus:outline-none"
+              className="relative flex h-600px w-450px flex-col rounded-3xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none"
             >
               {/*header*/}
               <div className="flex items-start justify-between rounded-t pt-6">
@@ -109,24 +109,11 @@ export default function ConnectingModal(props) {
                 </button>
               </div>
               {/*body*/}
-              <div className="relative mx-10 flex-auto px-4 pb-4 pt-1">
-                <div className="my-4 text-lg leading-relaxed text-white">
+              <div className="relative flex-auto pt-1">
+                <div className="text-lg leading-relaxed text-lightWhite">
                   <div className="flex-col justify-center text-center">
-                    <Lottie animationData={connectingAnimation} />
-                    <div className="text-lg">connecting...</div>
-
-                    {/* <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2"></div>
-                  <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2"></div>
-                  <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2"></div>
-                  <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2"></div>
-                  <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2"></div>
-                  <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2"></div>
-                  <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2"></div>
-                  <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2"></div>
-                  <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2"></div>
-                  <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2"></div>
-                  <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2"></div>
-                  <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2"></div> */}
+                    <Lottie className="ml-7 w-full pt-12" animationData={connectingAnimation} />
+                    <div className="mt-10 text-xl">Connecting...</div>
                   </div>
                 </div>
               </div>
@@ -146,4 +133,19 @@ export default function ConnectingModal(props) {
       <DisplayedConnecting />
     </>
   );
+}
+
+{
+  /* <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2"></div>
+                  <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2"></div>
+                  <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2"></div>
+                  <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2"></div>
+                  <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2"></div>
+                  <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2"></div>
+                  <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2"></div>
+                  <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2"></div>
+                  <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2"></div>
+                  <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2"></div>
+                  <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2"></div>
+                  <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2"></div> */
 }

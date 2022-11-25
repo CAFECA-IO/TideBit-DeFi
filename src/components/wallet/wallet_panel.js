@@ -231,8 +231,8 @@ export default function WalletPanel(props) {
       </>
     );
 
+    // TODO: Notes- object GOOD
     const secondStepSectionHandler = (
-      // {/* {secondStepSuccess ? 'success section' : secondStepError ? 'error section' : firstStepSuccess ? 'active section' :  'default section'} */}
       <>
         {secondStepSuccess
           ? secondStepSuccessView
@@ -243,6 +243,75 @@ export default function WalletPanel(props) {
           : secondStepDefaultView}
       </>
     );
+
+    // if (true) console.log('test')
+
+    //  TODO: Notes- function BAD
+    //   const secondStepSectionTestHandler = () =>
+    //     processModalVisible ? (
+    //       <>
+    //         <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none focus:outline-none">
+    //           <div className="relative my-6 mx-auto w-auto max-w-xl">
+    //             {/*content & panel*/}
+    //             <div
+    //               id="connectModal"
+    //               ref={processModalRef}
+    //               className="relative flex h-600px w-450px flex-col rounded-3xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none"
+    //             >
+    //               {/*header*/}
+    //               <div className="flex items-start justify-between rounded-t pt-6">
+    //                 <h3 className="ml-1/8 mt-2 w-20rem pl-1/8 text-4xl font-semibold text-lightWhite">
+    //                   Wallet Connect
+    //                 </h3>
+    //                 <button className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
+    //                   <span className="absolute top-5 right-5 block outline-none focus:outline-none">
+    //                     <ImCross onClick={processClickHandler} />
+    //                   </span>
+    //                 </button>
+    //               </div>
+    //               {/*body*/}
+
+    //               <div className="flex flex-auto flex-col items-center pt-5">
+    //                 <div className="text-lg leading-relaxed text-lightWhite">
+    //                   <div className="mx-auto flex flex-col items-center">
+    //                     <div className="mt-8 text-center text-lg text-lightGray">
+    //                       <div>You will receive two signature requests.</div>
+    //                       <div>
+    //                         {' '}
+    //                         Signing is{' '}
+    //                         <span className="text-tidebitTheme">
+    //                           <Link href="#">free</Link>
+    //                         </span>{' '}
+    //                         and will not send a transaction.
+    //                       </div>
+    //                     </div>
+
+    //                     {/* Activate First Step */}
+    //                     <div className={`${controlSpace} flex flex-col pt-16`}>
+    //                       <div className="flex items-center justify-center space-x-3">
+    //                         {firstStepSectionHandler}
+    //                       </div>
+
+    //                       {/* Second Step */}
+    //                       <div className="flex items-center justify-center space-x-3">
+    //                         {secondStepSectionHandler}
+    //                       </div>
+    //                     </div>
+
+    //                     <div className="mt-16">{requestButtonHandler}</div>
+    //                   </div>
+    //                 </div>
+    //               </div>
+    //               {/*footer*/}
+    //               <div className="flex items-center justify-end rounded-b p-2"></div>
+    //             </div>
+    //           </div>
+    //         </div>
+    //         <div className="fixed inset-0 z-40 bg-black opacity-25"></div>
+    //       </>
+    //     ) : null;
+
+    //   return <secondStepSectionTestHandler />;
 
     return processModalVisible ? (
       <>
@@ -414,6 +483,46 @@ export default function WalletPanel(props) {
       </>
     ) : null;
   }
+
+  // const DisplayedConnecting = () =>
+  //   connectingModalVisible ? (
+  //     <>
+  //       <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none focus:outline-none">
+  //         <div className="relative my-6 mx-auto w-auto max-w-xl">
+  //           {/*content & panel*/}
+  //           <div
+  //             id="connectModal"
+  //             ref={connectingModalRef}
+  //             className="relative flex h-600px w-450px flex-col rounded-3xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none"
+  //           >
+  //             {/*header*/}
+  //             <div className="flex items-start justify-between rounded-t pt-6">
+  //               <h3 className="mx-auto mt-2 w-20rem pl-1/8 text-4xl font-semibold text-lightWhite">
+  //                 Wallet Connect
+  //               </h3>
+  //               <button className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
+  //                 <span className="absolute top-5 right-5 block outline-none focus:outline-none">
+  //                   <ImCross onClick={connectingClickHandler} />
+  //                 </span>
+  //               </button>
+  //             </div>
+  //             {/*body*/}
+  //             <div className="relative flex-auto pt-1">
+  //               <div className="text-lg leading-relaxed text-lightWhite">
+  //                 <div className="flex-col justify-center text-center">
+  //                   <Lottie className="ml-7 w-full pt-12" animationData={bigConnectingAnimation} />
+  //                   <div className="mt-10 text-xl">Connecting...</div>
+  //                 </div>
+  //               </div>
+  //             </div>
+  //             {/*footer*/}
+  //             <div className="flex items-center justify-end rounded-b p-2"></div>
+  //           </div>
+  //         </div>
+  //       </div>
+  //       <div className="fixed inset-0 z-40 bg-black opacity-25"></div>
+  //     </>
+  //   ) : null;
 
   function DisplayedConnecting() {
     // console.log('in displayed connecting modal, componentVisible: ', componentVisible);
@@ -720,7 +829,7 @@ export default function WalletPanel(props) {
       <QrcodeModal />
 
       {/* <processModalController loading={true} /> */}
-      <SignatureProcess />
+      <SignatureProcess loading={true} />
 
       <HelloModal />
       {/* {isDisplayedQrcodeModal} */}

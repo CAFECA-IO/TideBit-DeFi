@@ -1,10 +1,10 @@
 import React from 'react';
-import ConnectingLoadingModal from '../components/connecting_modal/connecting_modal';
+import SignatureProcess from '../components/connecting_modal/connecting_modal';
 
 export default function Trading() {
   return (
     <div>
-      <ConnectingLoadingModal showConnectingModal="true" />
+      <SignatureProcess loading={true} />
     </div>
   );
 }

@@ -7,7 +7,8 @@ import useOuterClick from '../../hooks/lib/use_outer_click';
 import Link from 'next/link';
 
 import Lottie from 'lottie-react';
-import connectingAnimation from '../../../public/animation/lf30_editor_qlduo5gq.json';
+import bigConnectingAnimation from '../../../public/animation/lf30_editor_qlduo5gq.json';
+import smallConnectingAnimation from '../../../public/animation/lf30_editor_cnkxmhy3.json';
 import Image from 'next/image';
 
 // TODO: Loading component
@@ -90,7 +91,171 @@ export default function ConnectingModal(props) {
 
   //**************************************Divider**************************************//
 
-  function SignatureProcess({firstStep, secondStep}) {
+  function SignatureProcess({
+    loading = false,
+    firstStepSuccess = false,
+    firstStepError = false,
+    secondStepSuccess = false,
+    secondStepError = false,
+  }) {
+    const controlSpace = firstStepError || secondStepError ? 'space-y-12' : 'space-y-16';
+
+    const firstStepIcon = (
+      <Image src="/elements/group_2415.svg" width={32} height={32} alt="step 1 icon" />
+    );
+
+    const successIcon = (
+      <Image src="/elements/group_2415_check.svg" width={32} height={32} alt="successful icon" />
+    );
+
+    const errorIcon = (
+      <Image src="/elements/group_2418_error.svg" width={32} height={32} alt="error icon" />
+    );
+
+    const secondStepDefaultIcon = (
+      <Image src="/elements/group_2418.svg" width={32} height={32} alt="step 2 icon" />
+    );
+
+    const secondStepActivatedIcon = (
+      <Image src="/elements/group_2418(1).svg" width={32} height={32} alt="step 2 icon" />
+    );
+
+    const requestButtonHandler = loading ? (
+      <Lottie className="w-40px" animationData={smallConnectingAnimation} />
+    ) : (
+      <TideButton className="px-5" content={`Send Requests`} />
+    );
+
+    const firstStepDefaultView = (
+      <>
+        <div>{firstStepIcon}</div>
+        <div className="w-271px space-y-1 text-lightWhite">
+          <div className="text-lg">Verify ownership</div>
+          <div className="text-sm">Confirm you are the owner of this wallet</div>
+        </div>
+      </>
+    );
+
+    const firstStepSuccessView = (
+      <>
+        <div>{successIcon}</div>
+        <div className="w-271px space-y-1 text-lightWhite">
+          <div className="text-lg">Verify ownership</div>
+          <div className="text-sm">Confirm you are the owner of this wallet</div>
+        </div>
+      </>
+    );
+
+    const firstStepErrorView = (
+      <>
+        <div>{errorIcon}</div>
+        <div className="w-271px space-y-1 text-lightWhite">
+          <div className="text-lg">Verify ownership</div>
+          <div className="text-sm">Confirm you are the owner of this wallet</div>
+          <div className="text-sm text-lightRed3">Something went wrong, please try again</div>
+        </div>
+      </>
+    );
+
+    const firstStepSectionHandler = (
+      // {firstStepSuccess ? 'success section' : firstStepError ? 'error section' : 'default section'}
+      <>
+        {firstStepSuccess
+          ? firstStepSuccessView
+          : firstStepError
+          ? firstStepErrorView
+          : firstStepDefaultView}
+      </>
+    );
+
+    const secondStepDefaultView = (
+      <>
+        <div>{secondStepDefaultIcon}</div>
+        <div className="w-271px space-y-1 text-lightGray">
+          <div className="text-lg">Enable trading</div>
+          <div className="text-sm">
+            Enable secure access to our API for lightning quick trading.
+          </div>
+        </div>
+      </>
+    );
+    const secondStepActiveView = (
+      <>
+        <div>
+          {' '}
+          {secondStepActivatedIcon}
+          {/* <Image src="/elements/group_2418(1).svg" width={32} height={32} alt="step 2 icon" /> */}
+        </div>
+        <div className="w-271px space-y-1 text-lightWhite">
+          <div className="text-lg">Enable trading</div>
+          <div className="text-sm">
+            Enable secure access to our API for lightning quick trading.
+          </div>
+        </div>
+      </>
+    );
+
+    const secondStepSuccessView = (
+      <>
+        <div>
+          {successIcon}{' '}
+          {/* <Image src="/elements/group_2418(1).svg" width={32} height={32} alt="step 2 icon" /> */}
+        </div>
+        <div className="w-271px space-y-1 text-lightWhite">
+          <div className="text-lg">Enable trading</div>
+          <div className="text-sm">
+            Enable secure access to our API for lightning quick trading.
+          </div>
+        </div>
+      </>
+    );
+
+    const secondStepErrorView = (
+      <>
+        <div>
+          {' '}
+          {errorIcon}
+          {/* <Image src="/elements/group_2418(1).svg" width={32} height={32} alt="step 2 icon" /> */}
+        </div>
+        <div className="w-271px space-y-1 text-lightWhite">
+          <div className="text-lg">Enable trading</div>
+          <div className="text-sm">
+            Enable secure access to our API for lightning quick trading.
+          </div>
+          <div className="text-sm text-lightRed3">Something went wrong, please try again</div>
+        </div>
+      </>
+    );
+
+    const secondStepSectionHandler = (
+      // {/* {secondStepSuccess ? 'success section' : secondStepError ? 'error section' : firstStepSuccess ? 'active section' :  'default section'} */}
+      <>
+        {secondStepSuccess
+          ? secondStepSuccessView
+          : secondStepError
+          ? secondStepErrorView
+          : firstStepSuccess
+          ? secondStepActiveView
+          : secondStepDefaultView}
+      </>
+    );
+
+    // const secondStepSection = () => {
+    //   return (
+    //     <>
+    //       <div>
+    //         <Image src="/elements/group_2418.svg" width={32} height={32} alt="step 2 icon" />
+    //       </div>
+    //       <div className="w-271px space-y-1 text-lightGray">
+    //         <div className="text-lg">Enable trading</div>
+    //         <div className="text-sm">
+    //           Enable secure access to our API for lightning quick trading.
+    //         </div>
+    //       </div>
+    //     </>
+    //   );
+    // };
+
     return componentVisible ? (
       <>
         <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none focus:outline-none">
@@ -130,32 +295,18 @@ export default function ConnectingModal(props) {
                     </div>
 
                     {/* Activate First Step */}
-                    <div className="flex flex-col space-y-16 pt-16">
+                    <div className={`${controlSpace} flex flex-col pt-16`}>
                       <div className="flex items-center justify-center space-x-3">
-                        <div>
-                          <Image src="/elements/group_2415.svg" width={32} height={32} />
-                        </div>
-                        <div className="w-271px text-lightWhite">
-                          <div className="text-lg">Verify ownership</div>
-                          <div className="text-sm">Confirm you are the owner of this wallet</div>
-                        </div>
+                        {firstStepSectionHandler}
                       </div>
 
                       {/* Second Step */}
                       <div className="flex items-center justify-center space-x-3">
-                        <div>
-                          <Image src="/elements/group_2418.svg" width={32} height={32} />
-                        </div>
-                        <div className="w-271px text-lightGray">
-                          <div className="text-lg">Enable trading</div>
-                          <div className="text-sm">
-                            Enable secure access to our API for lightning quick trading.
-                          </div>
-                        </div>
+                        {secondStepSectionHandler}
                       </div>
                     </div>
 
-                    <TideButton className="mt-20 px-5" content={`Send Requests`} />
+                    <div className="mt-16">{requestButtonHandler}</div>
                   </div>
                 </div>
               </div>
@@ -303,7 +454,7 @@ export default function ConnectingModal(props) {
               <div className="relative flex-auto pt-1">
                 <div className="text-lg leading-relaxed text-lightWhite">
                   <div className="flex-col justify-center text-center">
-                    <Lottie className="ml-7 w-full pt-12" animationData={connectingAnimation} />
+                    <Lottie className="ml-7 w-full pt-12" animationData={bigConnectingAnimation} />
                     <div className="mt-10 text-xl">Connecting...</div>
                   </div>
                 </div>

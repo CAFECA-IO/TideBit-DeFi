@@ -71,7 +71,7 @@ export default function WalletPanel(props) {
   const clearState = () => {
     if (!componentVisible) {
       setConnecting(false);
-      setDefaultAccount(null);
+      // setDefaultAccount(null);
       setErrorMessages('');
       setSignature(null);
       setUserBalance(null);

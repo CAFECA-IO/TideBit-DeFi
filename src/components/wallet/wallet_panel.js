@@ -7,11 +7,38 @@ import useOuterClick from '/src/hooks/lib/use_outer_click';
 import TideButton from '../tide_button/tide_button';
 import ConnectingModal from '../connecting_modal/connecting_modal';
 import {ethers, providers} from 'ethers';
+import Link from 'next/link';
+import Lottie from 'lottie-react';
+import bigConnectingAnimation from '../../../public/animation/lf30_editor_qlduo5gq.json';
+import smallConnectingAnimation from '../../../public/animation/lf30_editor_cnkxmhy3.json';
 
 const ICON_SIZE = 50;
 
 export default function WalletPanel(props) {
   const {ref, componentVisible, setComponentVisible} = useOuterClick(false);
+  const {
+    ref: connectingModalRef,
+    componentVisible: connectingModalVisible,
+    setComponentVisible: setConnectingModalVisible,
+  } = useOuterClick(false);
+
+  const {
+    ref: processModalRef,
+    componentVisible: processModalVisible,
+    setComponentVisible: setProcessModalVisible,
+  } = useOuterClick(false);
+
+  const {
+    ref: qrcodeModalRef,
+    componentVisible: qrcodeModalVisible,
+    setComponentVisible: setQrcodeModalVisible,
+  } = useOuterClick(false);
+
+  const {
+    ref: helloModalRef,
+    componentVisible: helloModalVisible,
+    setComponentVisible: setHelloModalVisible,
+  } = useOuterClick(false);
 
   const [connecting, setConnecting] = useState(false);
 
@@ -22,12 +49,127 @@ export default function WalletPanel(props) {
   const [userBalance, setUserBalance] = useState(null);
 
   const clickHandler = () => {
-    // console.log('open wallet panel');
     setComponentVisible(!componentVisible);
-    // console.log('componentVisible clicked: ', componentVisible);
   };
 
+  const connectingClickHandler = () => {
+    setConnectingModalVisible(!connectingModalVisible);
+  };
+
+  const qrcodeClickHandler = () => {
+    setQrcodeModalVisible(!qrcodeModalVisible);
+    // console.log('wallet connect option clicked');
+  };
+
+  // const isDisplayedQrcodeModal =
+
+  function QrcodeModal() {
+    return qrcodeModalVisible ? (
+      <>
+        <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none focus:outline-none">
+          <div className="relative my-6 mx-auto w-auto max-w-xl">
+            {/*content & panel*/}
+            <div
+              id="connectModal"
+              ref={qrcodeModalRef}
+              className="relative flex h-600px w-450px flex-col rounded-3xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none"
+            >
+              {/*header*/}
+              <div className="flex items-start justify-between rounded-t pt-6">
+                <h3 className="ml-1/8 mt-2 w-20rem pl-1/8 text-4xl font-semibold text-lightWhite">
+                  Wallet Connect
+                </h3>
+                <button className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
+                  <span className="absolute top-5 right-5 block outline-none focus:outline-none">
+                    <ImCross onClick={qrcodeClickHandler} />
+                  </span>
+                </button>
+              </div>
+              {/*body*/}
+              <div className="relative flex-auto pt-1">
+                <div className="text-lg leading-relaxed text-lightWhite">
+                  <div className="flex-col justify-center text-center">
+                    <Image
+                      className="mx-auto mt-16 rounded object-cover object-center"
+                      alt="QR Code"
+                      src="/elements/tidebit_qrcode.png"
+                      width={340}
+                      height={340}
+                    />{' '}
+                    <div className="mt-10 text-lg">
+                      Please open your{' '}
+                      <span className="text-tidebitTheme">
+                        <Link href="#">wallet</Link>
+                      </span>{' '}
+                      to scan the QR code.
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {/*footer*/}
+              <div className="flex items-center justify-end rounded-b p-2"></div>
+            </div>
+          </div>
+        </div>
+        <div className="fixed inset-0 z-40 bg-black opacity-25"></div>
+      </>
+    ) : null;
+  }
+
+  function DisplayedConnecting() {
+    // console.log('in displayed connecting modal, componentVisible: ', componentVisible);
+    return connectingModalVisible ? (
+      <>
+        <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none focus:outline-none">
+          <div className="relative my-6 mx-auto w-auto max-w-xl">
+            {/*content & panel*/}
+            <div
+              id="connectModal"
+              ref={connectingModalRef}
+              className="relative flex h-600px w-450px flex-col rounded-3xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none"
+            >
+              {/*header*/}
+              <div className="flex items-start justify-between rounded-t pt-6">
+                <h3 className="mx-auto mt-2 w-20rem pl-1/8 text-4xl font-semibold text-lightWhite">
+                  Wallet Connect
+                </h3>
+                <button className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
+                  <span className="absolute top-5 right-5 block outline-none focus:outline-none">
+                    <ImCross onClick={connectingClickHandler} />
+                  </span>
+                </button>
+              </div>
+              {/*body*/}
+              <div className="relative flex-auto pt-1">
+                <div className="text-lg leading-relaxed text-lightWhite">
+                  <div className="flex-col justify-center text-center">
+                    <Lottie className="ml-7 w-full pt-12" animationData={bigConnectingAnimation} />
+                    <div className="mt-10 text-xl">Connecting...</div>
+                  </div>
+                </div>
+              </div>
+              {/*footer*/}
+              <div className="flex items-center justify-end rounded-b p-2"></div>
+            </div>
+          </div>
+        </div>
+        <div className="fixed inset-0 z-40 bg-black opacity-25"></div>
+      </>
+    ) : null;
+  }
+
+  const isLoading = loading ? <DisplayedConnecting /> : null;
+
+  // const isWalletConnectOpen =
+
   const walletOptionClickHandler = async () => {
+    setComponentVisible(!componentVisible);
+    setLoading(true);
+    setConnectingModalVisible(true);
+
+    // TODO: NNNNNNNotes
+    // console.log('connecting modal should be visible: ', connectingModalVisible);
+
     try {
       let provider = new ethers.providers.Web3Provider(window.ethereum, 'any');
       // pop up the metamask window
@@ -45,22 +187,28 @@ export default function WalletPanel(props) {
 
       let signature = await signer.signMessage('TideBit DeFi test');
       // console.log('Sign the message, get the signature is: ', signature);
-
-      alert('Sign the message, get the signature is: ' + signature);
     } catch (error) {
       // console.log(error);
       setErrorMessages(error);
-      alert(error);
     }
+
+    // TODO: NNNNNNNotes
+    // console.log('connecting modal should be invisible: ', connectingModalVisible);
+    setConnectingModalVisible(false);
+    setLoading(false);
   };
+
+  // click metamask => connect to metamask & show connecting modal
+  // connected => show signature modal
+  // click wallet connect => show QR code modal
+  // click
+  const modalHandler = async () => {};
 
   const connectStateHandler = () => {
     setConnecting(true);
     setComponentVisible(!componentVisible);
 
-    // console.log('connect State Handler func called');
-    <ConnectingModal showConnectingModal="true" />;
-    // console.log('modal props visible state: ', ConnectingModal.props.componentVisible);
+    // <ConnectingModal showConnectingModal="true" />;
   };
 
   const isDisplayedConnectingModal = connecting ? <ConnectingModal /> : null;
@@ -157,6 +305,7 @@ export default function WalletPanel(props) {
                   </div>
                   <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2">
                     <WalletOption
+                      onClick={qrcodeClickHandler}
                       name={`WalletConnect`}
                       img={`/elements/walletconnect@2x.png`}
                       iconSize={50}
@@ -193,6 +342,9 @@ export default function WalletPanel(props) {
       {isDisplayedWalletPanel}
 
       {isDisplayedConnectingModal}
+      {isLoading}
+      <QrcodeModal />
+      {/* {isDisplayedQrcodeModal} */}
       {/* <ConnectingModal /> */}
     </>
   );

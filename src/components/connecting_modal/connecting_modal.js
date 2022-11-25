@@ -240,22 +240,6 @@ export default function ConnectingModal(props) {
       </>
     );
 
-    // const secondStepSection = () => {
-    //   return (
-    //     <>
-    //       <div>
-    //         <Image src="/elements/group_2418.svg" width={32} height={32} alt="step 2 icon" />
-    //       </div>
-    //       <div className="w-271px space-y-1 text-lightGray">
-    //         <div className="text-lg">Enable trading</div>
-    //         <div className="text-sm">
-    //           Enable secure access to our API for lightning quick trading.
-    //         </div>
-    //       </div>
-    //     </>
-    //   );
-    // };
-
     return componentVisible ? (
       <>
         <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none focus:outline-none">

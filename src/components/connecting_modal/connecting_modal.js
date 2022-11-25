@@ -90,7 +90,7 @@ export default function ConnectingModal(props) {
 
   //**************************************Divider**************************************//
 
-  function SignatureProcedure() {
+  function SignatureProcess({firstStep, secondStep}) {
     return componentVisible ? (
       <>
         <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none focus:outline-none">
@@ -103,7 +103,7 @@ export default function ConnectingModal(props) {
             >
               {/*header*/}
               <div className="flex items-start justify-between rounded-t pt-6">
-                <h3 className="mx-auto mt-2 w-20rem pl-1/8 text-4xl font-semibold text-lightWhite">
+                <h3 className="ml-1/8 mt-2 w-20rem pl-1/8 text-4xl font-semibold text-lightWhite">
                   Wallet Connect
                 </h3>
                 <button className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
@@ -113,11 +113,49 @@ export default function ConnectingModal(props) {
                 </button>
               </div>
               {/*body*/}
-              <div className="relative flex-auto pt-1">
+
+              <div className="flex flex-auto flex-col items-center pt-5">
                 <div className="text-lg leading-relaxed text-lightWhite">
-                  <div className="flex-col justify-center text-center">
-                    <Lottie className="ml-7 w-full pt-12" animationData={connectingAnimation} />
-                    <div className="mt-10 text-xl">Connecting...</div>
+                  <div className="mx-auto flex flex-col items-center">
+                    <div className="mt-8 text-center text-lg text-lightGray">
+                      <div>You will receive two signature requests.</div>
+                      <div>
+                        {' '}
+                        Signing is{' '}
+                        <span className="text-tidebitTheme">
+                          <Link href="#">free</Link>
+                        </span>{' '}
+                        and will not send a transaction.
+                      </div>
+                    </div>
+
+                    {/* Activate First Step */}
+                    <div className="flex flex-col space-y-16 pt-16">
+                      <div className="flex items-center justify-center space-x-3">
+                        <div>
+                          <Image src="/elements/group_2415.svg" width={32} height={32} />
+                        </div>
+                        <div className="w-271px text-lightWhite">
+                          <div className="text-lg">Verify ownership</div>
+                          <div className="text-sm">Confirm you are the owner of this wallet</div>
+                        </div>
+                      </div>
+
+                      {/* Second Step */}
+                      <div className="flex items-center justify-center space-x-3">
+                        <div>
+                          <Image src="/elements/group_2418.svg" width={32} height={32} />
+                        </div>
+                        <div className="w-271px text-lightGray">
+                          <div className="text-lg">Enable trading</div>
+                          <div className="text-sm">
+                            Enable secure access to our API for lightning quick trading.
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <TideButton className="mt-20 px-5" content={`Send Requests`} />
                   </div>
                 </div>
               </div>
@@ -284,7 +322,8 @@ export default function ConnectingModal(props) {
     <>
       {/* <DisplayedConnecting /> */}
       {/* <HelloModal /> */}
-      <QrcodeModal />
+      {/* <QrcodeModal /> */}
+      <SignatureProcess />
     </>
   );
 }

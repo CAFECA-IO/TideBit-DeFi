@@ -574,8 +574,9 @@ export default function WalletPanel(props) {
   }
 
   const isConnecting = connecting ? <DisplayedConnecting /> : null;
-
   // const isWalletConnectOpen =
+  // TODO: Try to split connecting component
+  // const isConnecting = connecting ? <ConnectingModal isShowing={true} /> : null;
 
   async function funcSignTypedData() {
     try {

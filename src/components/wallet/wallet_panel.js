@@ -49,7 +49,11 @@ export default function WalletPanel(props) {
   const [signature, setSignature] = useState(null);
   const [userBalance, setUserBalance] = useState(null);
 
-  // const [showToast, setShowToast] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+
+  const toastHandler = () => {
+    setShowToast(!showToast);
+  };
 
   const clickHandler = () => {
     setComponentVisible(!componentVisible);
@@ -626,7 +630,8 @@ export default function WalletPanel(props) {
       let signature = await signer._signTypedData(domain, types, value);
 
       setSignature(signature);
-      // setShowToast(true);
+
+      setShowToast(true);
 
       // console.log('[EIP712] Sign typed signature: ', signature);
     } catch (error) {
@@ -635,7 +640,14 @@ export default function WalletPanel(props) {
     }
   }
 
-  const toastNotify = <Toast title="Your signature " content="blah blah blah" />;
+  let toastNotify = (
+    <Toast
+      title="Your signature "
+      content="blah blah blah"
+      toastHandler={toastHandler}
+      showToast={showToast}
+    />
+  );
 
   const walletOptionClickHandler = async () => {
     // TODO: NNNNNNNotes
@@ -832,7 +844,8 @@ export default function WalletPanel(props) {
       <QrcodeModal />
       {/* <processModalController loading={true} /> */}
       <SignatureProcess loading={true} />
-      {/* {toastNotify} */}
+      {toastNotify}
+
       <HelloModal />
       {/* {isDisplayedQrcodeModal} */}
       {/* <ConnectingModal /> */}

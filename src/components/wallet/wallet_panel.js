@@ -640,10 +640,10 @@ export default function WalletPanel(props) {
     }
   }
 
-  let toastNotify = (
+  const toastNotify = (
     <Toast
-      title="Your signature "
-      content="blah blah blah"
+      title="Your signature"
+      content={`EIP 712 Signature: \n ${signature}`}
       toastHandler={toastHandler}
       showToast={showToast}
     />

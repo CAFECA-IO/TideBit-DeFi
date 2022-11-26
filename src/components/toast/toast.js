@@ -10,7 +10,7 @@ const Toast = ({
   const {toastHandler, showToast} = otherProps;
 
   const isDisplayedToast = showToast && (
-    <div className="fixed top-10 right-3 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden bg-transparent outline-none focus:outline-none">
+    <div className="pointer-events-none fixed top-10 right-3 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden bg-transparent outline-none focus:outline-none">
       <div className="relative my-6 mx-auto w-auto max-w-xl">
         <div className="flex justify-center space-x-2">
           <div

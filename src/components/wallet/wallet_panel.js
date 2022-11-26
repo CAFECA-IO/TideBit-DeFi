@@ -840,7 +840,9 @@ export default function WalletPanel(props) {
       </TideButton>
       {isDisplayedWalletPanel}
       {/* {isDisplayedConnectingModal} */}
+
       {isConnecting}
+
       <QrcodeModal />
       {/* <processModalController loading={true} /> */}
       <SignatureProcess loading={true} />

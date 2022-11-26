@@ -122,3 +122,4 @@ public/tradingview/config.js
 
 # file transfer by-product
 *.Identifier
+.DS_Store

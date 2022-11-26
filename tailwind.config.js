@@ -158,6 +158,9 @@ module.exports = {
         banner1: "url('~/img/group_15199@2x.png)",
       },
       colors: {
+        cuteBlue: '#A5C4F3',
+        cuteBlue1: '#5895D9',
+
         darkGray: '#161719',
         darkGray1: '#242A31',
         darkGray2: '#2B323A',

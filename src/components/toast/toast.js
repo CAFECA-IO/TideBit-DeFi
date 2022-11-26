@@ -7,13 +7,7 @@ const Toast = ({
   time: mins = '2',
   ...otherProps
 }) => {
-  // const {showToast, setShowToast} = otherProps;
-  // const {toastDisplayHandler} = otherProps;
-  const [showToast, setShowToast] = useState(true);
-
-  const toastHandler = () => {
-    setShowToast(!showToast);
-  };
+  const {toastHandler, showToast} = otherProps;
 
   const isDisplayedToast = showToast && (
     <div className="fixed top-10 right-3 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden bg-transparent outline-none focus:outline-none">
@@ -21,7 +15,7 @@ const Toast = ({
         <div className="flex justify-center space-x-2">
           <div
             className="pointer-events-auto z-50 mx-auto mr-5 mt-2 block w-72 max-w-full rounded-lg bg-white bg-clip-padding text-sm shadow-md shadow-cuteBlue/70 outline-none focus:outline-none"
-            id="static-example"
+            id="delicious toast"
             role="alert"
             aria-live="assertive"
             aria-atomic="true"

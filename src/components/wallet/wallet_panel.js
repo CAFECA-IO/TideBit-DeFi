@@ -5,7 +5,7 @@ import Image from 'next/image';
 import WalletOption from './wallet_option';
 import useOuterClick from '/src/hooks/lib/use_outer_click';
 import TideButton from '../tide_button/tide_button';
-import ConnectingModal from '../connecting_modal/connecting_modal';
+import ConnectingModal from './connecting_modal';
 import {ethers, providers} from 'ethers';
 import Link from 'next/link';
 import Lottie from 'lottie-react';
@@ -573,10 +573,9 @@ export default function WalletPanel(props) {
     ) : null;
   }
 
-  const isConnecting = connecting ? <DisplayedConnecting /> : null;
-  // const isWalletConnectOpen =
+  // const isConnecting = connecting ? <DisplayedConnecting /> : null;
   // TODO: Try to split connecting component
-  // const isConnecting = connecting ? <ConnectingModal isShowing={true} /> : null;
+  const isConnecting = connecting ? <ConnectingModal isShowing={true} /> : null;
 
   async function funcSignTypedData() {
     try {
@@ -680,7 +679,7 @@ export default function WalletPanel(props) {
 
       setProcessModalVisible(true);
       // processModalController({loading: true});
-      <SignatureProcess loading={true} />;
+      // <SignatureProcess firstStepSuccess={true} loading={true} />;
 
       // let signature = await signer.signMessage('TideBit DeFi test');
       // console.log('Sign the message, get the signature is: ', signature);

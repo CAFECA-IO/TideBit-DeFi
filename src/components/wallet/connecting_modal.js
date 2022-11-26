@@ -1,7 +1,7 @@
 import useOuterClick from '/src/hooks/lib/use_outer_click';
 import Lottie from 'lottie-react';
 import bigConnectingAnimation from '../../../public/animation/lf30_editor_qlduo5gq.json';
-import smallConnectingAnimation from '../../../public/animation/lf30_editor_cnkxmhy3.json';
+import {ImCross} from 'react-icons/im';
 
 const ConnectingModal = props => {
   const {isShowing} = props;

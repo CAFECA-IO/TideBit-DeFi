@@ -11,6 +11,7 @@ import Link from 'next/link';
 import Lottie from 'lottie-react';
 import bigConnectingAnimation from '../../../public/animation/lf30_editor_qlduo5gq.json';
 import smallConnectingAnimation from '../../../public/animation/lf30_editor_cnkxmhy3.json';
+import Toast from '../toast/toast';
 
 const ICON_SIZE = 50;
 
@@ -47,6 +48,8 @@ export default function WalletPanel(props) {
   const [errorMessages, setErrorMessages] = useState('');
   const [signature, setSignature] = useState(null);
   const [userBalance, setUserBalance] = useState(null);
+
+  // const [showToast, setShowToast] = useState(false);
 
   const clickHandler = () => {
     setComponentVisible(!componentVisible);
@@ -623,6 +626,7 @@ export default function WalletPanel(props) {
       let signature = await signer._signTypedData(domain, types, value);
 
       setSignature(signature);
+      // setShowToast(true);
 
       // console.log('[EIP712] Sign typed signature: ', signature);
     } catch (error) {
@@ -630,6 +634,8 @@ export default function WalletPanel(props) {
       setErrorMessages(error.message);
     }
   }
+
+  const toastNotify = <Toast title="Your signature " content="blah blah blah" />;
 
   const walletOptionClickHandler = async () => {
     // TODO: NNNNNNNotes
@@ -820,17 +826,13 @@ export default function WalletPanel(props) {
       >
         {`Wallet Connect`}
       </TideButton>
-
       {isDisplayedWalletPanel}
-
       {/* {isDisplayedConnectingModal} */}
-
       {isConnecting}
       <QrcodeModal />
-
       {/* <processModalController loading={true} /> */}
       <SignatureProcess loading={true} />
-
+      {/* {toastNotify} */}
       <HelloModal />
       {/* {isDisplayedQrcodeModal} */}
       {/* <ConnectingModal /> */}

@@ -5,13 +5,16 @@ import Image from 'next/image';
 import WalletOption from './wallet_option';
 import useOuterClick from '/src/hooks/lib/use_outer_click';
 import TideButton from '../tide_button/tide_button';
-import ConnectingModal from '../connecting_modal/connecting_modal';
 import {ethers, providers} from 'ethers';
 import Link from 'next/link';
 import Lottie from 'lottie-react';
 import bigConnectingAnimation from '../../../public/animation/lf30_editor_qlduo5gq.json';
 import smallConnectingAnimation from '../../../public/animation/lf30_editor_cnkxmhy3.json';
 import Toast from '../toast/toast';
+import ConnectingModal from './connecting_modal';
+import SignatureProcessModal from './signature_process_modal';
+import QrcodeModal from './qrcode_modal';
+import HelloModal from './hello_modal';
 
 const ICON_SIZE = 50;
 
@@ -44,10 +47,12 @@ export default function WalletPanel(props) {
   const [connecting, setConnecting] = useState(false);
 
   const [loading, setLoading] = useState(false);
-  const [defaultAccount, setDefaultAccount] = useState(null);
+  const [defaultAccount, setDefaultAccount] = useState('');
   const [errorMessages, setErrorMessages] = useState('');
   const [signature, setSignature] = useState(null);
   const [userBalance, setUserBalance] = useState(null);
+
+  const [chainId, setChainId] = useState(null);
 
   const [showToast, setShowToast] = useState(false);
 
@@ -573,23 +578,37 @@ export default function WalletPanel(props) {
     ) : null;
   }
 
-  const isConnecting = connecting ? <DisplayedConnecting /> : null;
-
-  // const isWalletConnectOpen =
+  // const isConnecting = connecting ? <DisplayedConnecting /> : null;
+  // TODO: Try to split connecting component
+  const isConnecting = (
+    <ConnectingModal
+      connectingModalRef={connectingModalRef}
+      connectingModalVisible={connectingModalVisible}
+      connectingClickHandler={connectingClickHandler}
+    />
+  );
 
   async function funcSignTypedData() {
     try {
       setErrorMessages('');
       setSignature(null);
-      const provider = new providers.Web3Provider(window.ethereum);
+      let provider = new providers.Web3Provider(window.ethereum);
       await provider.send('eth_requestAccounts', []);
 
-      const signer = provider.getSigner();
-      const address = await signer.getAddress();
-      const chainId = await signer.getChainId();
-      const balance = await signer.getBalance();
+      let signer = provider.getSigner();
+      let address = await signer.getAddress();
+      let chainId = await signer.getChainId();
+      let balance = await signer.getBalance();
       setDefaultAccount(address);
+      // setChainId(chainId);
       setUserBalance(ethers.utils.formatEther(balance));
+
+      // console.log('chain id: ', chainId);
+      // // console.log('set chain id: ', chainId);
+      // console.log('address: ', address);
+      // console.log('default account: ', defaultAccount);
+      // console.log('setUserBalance: ', userBalance);
+      // console.log('balance: ', balance);
 
       // All properties on a domain are optional
       // TODO: salt is optional, but if not provided, the signature will be different each time
@@ -615,10 +634,11 @@ export default function WalletPanel(props) {
       };
 
       // The data to sign
+      // '0xCD2a3d9F938E13CD947Ec05AbC7FE734Df8DD826'
       const value = {
         from: {
           name: 'User',
-          wallet: '0xCD2a3d9F938E13CD947Ec05AbC7FE734Df8DD826',
+          wallet: `${address}`,
         },
         to: {
           name: 'TideBit Ex',
@@ -626,6 +646,10 @@ export default function WalletPanel(props) {
         },
         contents: 'Agree to the terms and conditions',
       };
+
+      // signNotify({value: value});
+
+      // console.log(value);
 
       let signature = await signer._signTypedData(domain, types, value);
 
@@ -640,14 +664,32 @@ export default function WalletPanel(props) {
     }
   }
 
-  const toastNotify = (
+  let toastNotify = (
     <Toast
       title="Your signature"
-      content={`EIP 712 Signature: \n ${signature}`}
+      content={
+        <>
+          <div>
+            Your Address: <span className="text-cuteBlue3">{defaultAccount}</span>
+          </div>
+          <div>
+            EIP 712 Signature: <span className="text-cuteBlue3">{signature}</span>
+          </div>
+        </>
+      }
       toastHandler={toastHandler}
       showToast={showToast}
     />
   );
+
+  // let signNotify = ({value}) => (
+  //   <Toast
+  //     title="Sign Test"
+  //     content={`${value}`}
+  //     toastHandler={toastHandler}
+  //     showToast={showToast}
+  //   />
+  // );
 
   const walletOptionClickHandler = async () => {
     // TODO: NNNNNNNotes
@@ -679,7 +721,7 @@ export default function WalletPanel(props) {
 
       setProcessModalVisible(true);
       // processModalController({loading: true});
-      <SignatureProcess loading={true} />;
+      // <SignatureProcess firstStepSuccess={true} loading={true} />;
 
       // let signature = await signer.signMessage('TideBit DeFi test');
       // console.log('Sign the message, get the signature is: ', signature);
@@ -840,11 +882,15 @@ export default function WalletPanel(props) {
       </TideButton>
       {isDisplayedWalletPanel}
       {/* {isDisplayedConnectingModal} */}
+
       {isConnecting}
+
       <QrcodeModal />
       {/* <processModalController loading={true} /> */}
-      <SignatureProcess loading={true} />
+      <SignatureProcess firstStepSuccess={true} loading={true} />
       {toastNotify}
+
+      {/* {signNotify} */}
 
       <HelloModal />
       {/* {isDisplayedQrcodeModal} */}

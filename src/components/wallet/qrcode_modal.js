@@ -1,7 +1,6 @@
 import {ImCross} from 'react-icons/im';
 import Image from 'next/image';
 import Link from 'next/link';
-import Lottie from 'lottie-react';
 
 const QrcodeModal = ({
   qrcodeModalRef = null,

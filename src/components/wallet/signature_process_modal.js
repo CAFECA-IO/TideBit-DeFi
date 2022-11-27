@@ -18,6 +18,9 @@ const SignatureProcessModal = ({
 }) => {
   const controlSpace = firstStepError || secondStepError ? 'space-y-12' : 'space-y-16';
 
+  // if (firstStepError && secondStepError) return
+  // if (firstStepError && secondStepSuccess) return
+
   const firstStepIcon = (
     <Image src="/elements/group_2415.svg" width={32} height={32} alt="step 1 icon" />
   );

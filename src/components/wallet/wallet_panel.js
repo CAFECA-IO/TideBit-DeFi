@@ -1,15 +1,9 @@
 import {useEffect, useRef, useState} from 'react';
-// import { createPortal } from 'react-dom';
 import {ImCross} from 'react-icons/im';
-import Image from 'next/image';
 import WalletOption from './wallet_option';
 import useOuterClick from '/src/hooks/lib/use_outer_click';
 import TideButton from '../tide_button/tide_button';
 import {ethers, providers} from 'ethers';
-import Link from 'next/link';
-import Lottie from 'lottie-react';
-import bigConnectingAnimation from '../../../public/animation/lf30_editor_qlduo5gq.json';
-import smallConnectingAnimation from '../../../public/animation/lf30_editor_cnkxmhy3.json';
 import Toast from '../toast/toast';
 import ConnectingModal from './connecting_modal';
 import SignatureProcessModal from './signature_process_modal';
@@ -96,7 +90,7 @@ export default function WalletPanel(props) {
     secondStepSuccess = false,
     secondStepError = false,
   }) => (
-    <SignatureProcess
+    <SignatureProcessModal
       loading={loading}
       firstStepSuccess={firstStepSuccess}
       firstStepError={firstStepError}
@@ -104,397 +98,6 @@ export default function WalletPanel(props) {
       secondStepError={secondStepError}
     />
   );
-
-  // const isDisplayedQrcodeModal =
-
-  function SignatureProcess({
-    loading = false,
-    firstStepSuccess = false,
-    firstStepError = false,
-    secondStepSuccess = false,
-    secondStepError = false,
-  }) {
-    const controlSpace = firstStepError || secondStepError ? 'space-y-12' : 'space-y-16';
-
-    const firstStepIcon = (
-      <Image src="/elements/group_2415.svg" width={32} height={32} alt="step 1 icon" />
-    );
-
-    const successIcon = (
-      <Image src="/elements/group_2415_check.svg" width={32} height={32} alt="successful icon" />
-    );
-
-    const errorIcon = (
-      <Image src="/elements/group_2418_error.svg" width={32} height={32} alt="error icon" />
-    );
-
-    const secondStepDefaultIcon = (
-      <Image src="/elements/group_2418.svg" width={32} height={32} alt="step 2 icon" />
-    );
-
-    const secondStepActivatedIcon = (
-      <Image src="/elements/group_2418(1).svg" width={32} height={32} alt="step 2 icon" />
-    );
-
-    const requestButtonHandler = loading ? (
-      <Lottie className="w-40px" animationData={smallConnectingAnimation} />
-    ) : (
-      <TideButton className="px-5" content={`Send Requests`} />
-    );
-
-    const firstStepDefaultView = (
-      <>
-        <div>{firstStepIcon}</div>
-        <div className="w-271px space-y-1 text-lightWhite">
-          <div className="text-lg">Verify ownership</div>
-          <div className="text-sm">Confirm you are the owner of this wallet</div>
-        </div>
-      </>
-    );
-
-    const firstStepSuccessView = (
-      <>
-        <div>{successIcon}</div>
-        <div className="w-271px space-y-1 text-lightWhite">
-          <div className="text-lg">Verify ownership</div>
-          <div className="text-sm">Confirm you are the owner of this wallet</div>
-        </div>
-      </>
-    );
-
-    const firstStepErrorView = (
-      <>
-        <div>{errorIcon}</div>
-        <div className="w-271px space-y-1 text-lightWhite">
-          <div className="text-lg">Verify ownership</div>
-          <div className="text-sm">Confirm you are the owner of this wallet</div>
-          <div className="text-sm text-lightRed3">Something went wrong, please try again</div>
-        </div>
-      </>
-    );
-
-    const firstStepSectionHandler = (
-      // {firstStepSuccess ? 'success section' : firstStepError ? 'error section' : 'default section'}
-      <>
-        {firstStepSuccess
-          ? firstStepSuccessView
-          : firstStepError
-          ? firstStepErrorView
-          : firstStepDefaultView}
-      </>
-    );
-
-    const secondStepDefaultView = (
-      <>
-        <div>{secondStepDefaultIcon}</div>
-        <div className="w-271px space-y-1 text-lightGray">
-          <div className="text-lg">Enable trading</div>
-          <div className="text-sm">
-            Enable secure access to our API for lightning quick trading.
-          </div>
-        </div>
-      </>
-    );
-    const secondStepActiveView = (
-      <>
-        <div>
-          {' '}
-          {secondStepActivatedIcon}
-          {/* <Image src="/elements/group_2418(1).svg" width={32} height={32} alt="step 2 icon" /> */}
-        </div>
-        <div className="w-271px space-y-1 text-lightWhite">
-          <div className="text-lg">Enable trading</div>
-          <div className="text-sm">
-            Enable secure access to our API for lightning quick trading.
-          </div>
-        </div>
-      </>
-    );
-
-    const secondStepSuccessView = (
-      <>
-        <div>
-          {successIcon}{' '}
-          {/* <Image src="/elements/group_2418(1).svg" width={32} height={32} alt="step 2 icon" /> */}
-        </div>
-        <div className="w-271px space-y-1 text-lightWhite">
-          <div className="text-lg">Enable trading</div>
-          <div className="text-sm">
-            Enable secure access to our API for lightning quick trading.
-          </div>
-        </div>
-      </>
-    );
-
-    const secondStepErrorView = (
-      <>
-        <div>
-          {' '}
-          {errorIcon}
-          {/* <Image src="/elements/group_2418(1).svg" width={32} height={32} alt="step 2 icon" /> */}
-        </div>
-        <div className="w-271px space-y-1 text-lightWhite">
-          <div className="text-lg">Enable trading</div>
-          <div className="text-sm">
-            Enable secure access to our API for lightning quick trading.
-          </div>
-          <div className="text-sm text-lightRed3">Something went wrong, please try again</div>
-        </div>
-      </>
-    );
-
-    // TODO: Notes- object GOOD
-    const secondStepSectionHandler = (
-      <>
-        {secondStepSuccess
-          ? secondStepSuccessView
-          : secondStepError
-          ? secondStepErrorView
-          : firstStepSuccess
-          ? secondStepActiveView
-          : secondStepDefaultView}
-      </>
-    );
-
-    // if (true) console.log('test')
-
-    //  TODO: Notes- function BAD
-    //   const secondStepSectionTestHandler = () =>
-    //     processModalVisible ? (
-    //       <>
-    //         <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none focus:outline-none">
-    //           <div className="relative my-6 mx-auto w-auto max-w-xl">
-    //             {/*content & panel*/}
-    //             <div
-    //               id="connectModal"
-    //               ref={processModalRef}
-    //               className="relative flex h-600px w-450px flex-col rounded-3xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none"
-    //             >
-    //               {/*header*/}
-    //               <div className="flex items-start justify-between rounded-t pt-6">
-    //                 <h3 className="ml-1/8 mt-2 w-20rem pl-1/8 text-4xl font-semibold text-lightWhite">
-    //                   Wallet Connect
-    //                 </h3>
-    //                 <button className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
-    //                   <span className="absolute top-5 right-5 block outline-none focus:outline-none">
-    //                     <ImCross onClick={processClickHandler} />
-    //                   </span>
-    //                 </button>
-    //               </div>
-    //               {/*body*/}
-
-    //               <div className="flex flex-auto flex-col items-center pt-5">
-    //                 <div className="text-lg leading-relaxed text-lightWhite">
-    //                   <div className="mx-auto flex flex-col items-center">
-    //                     <div className="mt-8 text-center text-lg text-lightGray">
-    //                       <div>You will receive two signature requests.</div>
-    //                       <div>
-    //                         {' '}
-    //                         Signing is{' '}
-    //                         <span className="text-tidebitTheme">
-    //                           <Link href="#">free</Link>
-    //                         </span>{' '}
-    //                         and will not send a transaction.
-    //                       </div>
-    //                     </div>
-
-    //                     {/* Activate First Step */}
-    //                     <div className={`${controlSpace} flex flex-col pt-16`}>
-    //                       <div className="flex items-center justify-center space-x-3">
-    //                         {firstStepSectionHandler}
-    //                       </div>
-
-    //                       {/* Second Step */}
-    //                       <div className="flex items-center justify-center space-x-3">
-    //                         {secondStepSectionHandler}
-    //                       </div>
-    //                     </div>
-
-    //                     <div className="mt-16">{requestButtonHandler}</div>
-    //                   </div>
-    //                 </div>
-    //               </div>
-    //               {/*footer*/}
-    //               <div className="flex items-center justify-end rounded-b p-2"></div>
-    //             </div>
-    //           </div>
-    //         </div>
-    //         <div className="fixed inset-0 z-40 bg-black opacity-25"></div>
-    //       </>
-    //     ) : null;
-
-    //   return <secondStepSectionTestHandler />;
-
-    return processModalVisible ? (
-      <>
-        <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none focus:outline-none">
-          <div className="relative my-6 mx-auto w-auto max-w-xl">
-            {/*content & panel*/}
-            <div
-              id="connectModal"
-              ref={processModalRef}
-              className="relative flex h-600px w-450px flex-col rounded-3xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none"
-            >
-              {/*header*/}
-              <div className="flex items-start justify-between rounded-t pt-6">
-                <h3 className="ml-1/8 mt-2 w-20rem pl-1/8 text-4xl font-semibold text-lightWhite">
-                  Wallet Connect
-                </h3>
-                <button className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
-                  <span className="absolute top-5 right-5 block outline-none focus:outline-none">
-                    <ImCross onClick={processClickHandler} />
-                  </span>
-                </button>
-              </div>
-              {/*body*/}
-
-              <div className="flex flex-auto flex-col items-center pt-5">
-                <div className="text-lg leading-relaxed text-lightWhite">
-                  <div className="mx-auto flex flex-col items-center">
-                    <div className="mt-8 text-center text-lg text-lightGray">
-                      <div>You will receive two signature requests.</div>
-                      <div>
-                        {' '}
-                        Signing is{' '}
-                        <span className="text-tidebitTheme">
-                          <Link href="#">free</Link>
-                        </span>{' '}
-                        and will not send a transaction.
-                      </div>
-                    </div>
-
-                    {/* Activate First Step */}
-                    <div className={`${controlSpace} flex flex-col pt-16`}>
-                      <div className="flex items-center justify-center space-x-3">
-                        {firstStepSectionHandler}
-                      </div>
-
-                      {/* Second Step */}
-                      <div className="flex items-center justify-center space-x-3">
-                        {secondStepSectionHandler}
-                      </div>
-                    </div>
-
-                    <div className="mt-16">{requestButtonHandler}</div>
-                  </div>
-                </div>
-              </div>
-              {/*footer*/}
-              <div className="flex items-center justify-end rounded-b p-2"></div>
-            </div>
-          </div>
-        </div>
-        <div className="fixed inset-0 z-40 bg-black opacity-25"></div>
-      </>
-    ) : null;
-  }
-
-  function HelloModal() {
-    return helloModalVisible ? (
-      <>
-        <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none focus:outline-none">
-          <div className="relative my-6 mx-auto w-auto max-w-xl">
-            {/*content & panel*/}
-            <div
-              id="connectModal"
-              ref={helloModalRef}
-              className="relative flex h-600px w-450px flex-col rounded-3xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none"
-            >
-              {/*header*/}
-              <div className="flex items-start justify-between rounded-t pt-6">
-                <button className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
-                  <span className="absolute top-5 right-5 block outline-none focus:outline-none">
-                    <ImCross onClick={helloClickHandler} />
-                  </span>
-                </button>
-              </div>
-              {/*body*/}
-              <div className="flex flex-auto flex-col items-center pt-32">
-                <div className="text-lg leading-relaxed text-lightWhite">
-                  <div className="mx-auto flex flex-col items-center">
-                    <Image
-                      className="mt-10 w-100px"
-                      src="/elements/path_25939.svg"
-                      width={200}
-                      height={200}
-                      alt="Hello"
-                    />
-                    <div className="mt-8 mb-40 text-xl text-lightGray">
-                      You can start using TideBit now.
-                    </div>
-
-                    <TideButton className="px-12" content={`Done`} onClick={helloClickHandler} />
-                    <Link
-                      className="mt-3 text-base text-tidebitTheme underline underline-offset-4"
-                      href="#"
-                    >
-                      Connect my TideBit HK
-                    </Link>
-                  </div>
-                </div>
-              </div>
-              {/*footer*/}
-              <div className="flex items-center justify-end rounded-b p-2"></div>
-            </div>
-          </div>
-        </div>
-        <div className="fixed inset-0 z-40 bg-black opacity-25"></div>
-      </>
-    ) : null;
-  }
-
-  function QrcodeModal() {
-    return qrcodeModalVisible ? (
-      <>
-        <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none focus:outline-none">
-          <div className="relative my-6 mx-auto w-auto max-w-xl">
-            {/*content & panel*/}
-            <div
-              id="connectModal"
-              ref={qrcodeModalRef}
-              className="relative flex h-600px w-450px flex-col rounded-3xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none"
-            >
-              {/*header*/}
-              <div className="flex items-start justify-between rounded-t pt-6">
-                <h3 className="ml-1/8 mt-2 w-20rem pl-1/8 text-4xl font-semibold text-lightWhite">
-                  Wallet Connect
-                </h3>
-                <button className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
-                  <span className="absolute top-5 right-5 block outline-none focus:outline-none">
-                    <ImCross onClick={qrcodeClickHandler} />
-                  </span>
-                </button>
-              </div>
-              {/*body*/}
-              <div className="relative flex-auto pt-1">
-                <div className="text-lg leading-relaxed text-lightWhite">
-                  <div className="flex-col justify-center text-center">
-                    <Image
-                      className="mx-auto mt-16 rounded object-cover object-center"
-                      alt="QR Code"
-                      src="/elements/tidebit_qrcode.png"
-                      width={340}
-                      height={340}
-                    />{' '}
-                    <div className="mt-10 text-lg">
-                      Please open your{' '}
-                      <span className="text-tidebitTheme">
-                        <Link href="#">wallet</Link>
-                      </span>{' '}
-                      to scan the QR code.
-                    </div>
-                  </div>
-                </div>
-              </div>
-              {/*footer*/}
-              <div className="flex items-center justify-end rounded-b p-2"></div>
-            </div>
-          </div>
-        </div>
-        <div className="fixed inset-0 z-40 bg-black opacity-25"></div>
-      </>
-    ) : null;
-  }
 
   // const DisplayedConnecting = () =>
   //   connectingModalVisible ? (
@@ -536,49 +139,6 @@ export default function WalletPanel(props) {
   //     </>
   //   ) : null;
 
-  function DisplayedConnecting() {
-    // console.log('in displayed connecting modal, componentVisible: ', componentVisible);
-    return connectingModalVisible ? (
-      <>
-        <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none focus:outline-none">
-          <div className="relative my-6 mx-auto w-auto max-w-xl">
-            {/*content & panel*/}
-            <div
-              id="connectModal"
-              ref={connectingModalRef}
-              className="relative flex h-600px w-450px flex-col rounded-3xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none"
-            >
-              {/*header*/}
-              <div className="flex items-start justify-between rounded-t pt-6">
-                <h3 className="mx-auto mt-2 w-20rem pl-1/8 text-4xl font-semibold text-lightWhite">
-                  Wallet Connect
-                </h3>
-                <button className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
-                  <span className="absolute top-5 right-5 block outline-none focus:outline-none">
-                    <ImCross onClick={connectingClickHandler} />
-                  </span>
-                </button>
-              </div>
-              {/*body*/}
-              <div className="relative flex-auto pt-1">
-                <div className="text-lg leading-relaxed text-lightWhite">
-                  <div className="flex-col justify-center text-center">
-                    <Lottie className="ml-7 w-full pt-12" animationData={bigConnectingAnimation} />
-                    <div className="mt-10 text-xl">Connecting...</div>
-                  </div>
-                </div>
-              </div>
-              {/*footer*/}
-              <div className="flex items-center justify-end rounded-b p-2"></div>
-            </div>
-          </div>
-        </div>
-        <div className="fixed inset-0 z-40 bg-black opacity-25"></div>
-      </>
-    ) : null;
-  }
-
-  // const isConnecting = connecting ? <DisplayedConnecting /> : null;
   // TODO: Try to split connecting component
   const isConnecting = (
     <ConnectingModal
@@ -664,6 +224,7 @@ export default function WalletPanel(props) {
     }
   }
 
+  // FIXME: nothing but taking notes
   let toastNotify = (
     <Toast
       title="Your signature"
@@ -883,16 +444,39 @@ export default function WalletPanel(props) {
       {isDisplayedWalletPanel}
       {/* {isDisplayedConnectingModal} */}
 
-      {isConnecting}
+      {/* {isConnecting} */}
 
-      <QrcodeModal />
+      <ConnectingModal
+        connectingModalRef={connectingModalRef}
+        connectingModalVisible={connectingModalVisible}
+        connectingClickHandler={connectingClickHandler}
+      />
+
+      <QrcodeModal
+        qrcodeModalRef={qrcodeModalRef}
+        qrcodeModalVisible={qrcodeModalVisible}
+        qrcodeClickHandler={qrcodeClickHandler}
+      />
       {/* <processModalController loading={true} /> */}
-      <SignatureProcess firstStepSuccess={true} loading={true} />
+
+      <HelloModal
+        helloModalRef={helloModalRef}
+        helloModalVisible={helloModalVisible}
+        helloClickHandler={helloClickHandler}
+      />
+
+      <SignatureProcessModal
+        firstStepSuccess={true}
+        loading={true}
+        processModalRef={processModalRef}
+        processModalVisible={processModalVisible}
+        processClickHandler={processClickHandler}
+      />
+
       {toastNotify}
 
       {/* {signNotify} */}
 
-      <HelloModal />
       {/* {isDisplayedQrcodeModal} */}
       {/* <ConnectingModal /> */}
     </>

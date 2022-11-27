@@ -5,13 +5,16 @@ import Image from 'next/image';
 import WalletOption from './wallet_option';
 import useOuterClick from '/src/hooks/lib/use_outer_click';
 import TideButton from '../tide_button/tide_button';
-import ConnectingModal from './connecting_modal';
 import {ethers, providers} from 'ethers';
 import Link from 'next/link';
 import Lottie from 'lottie-react';
 import bigConnectingAnimation from '../../../public/animation/lf30_editor_qlduo5gq.json';
 import smallConnectingAnimation from '../../../public/animation/lf30_editor_cnkxmhy3.json';
 import Toast from '../toast/toast';
+import ConnectingModal from './connecting_modal';
+import SignatureProcessModal from './signature_process_modal';
+import QrcodeModal from './qrcode_modal';
+import HelloModal from './hello_modal';
 
 const ICON_SIZE = 50;
 

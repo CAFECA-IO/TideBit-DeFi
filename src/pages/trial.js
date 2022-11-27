@@ -32,6 +32,7 @@ export default function Trial() {
 
     <SignatureProcessModal
       firstStepSuccess={true}
+      secondStepError={true}
       processModalRef={processModalRef}
       processModalVisible={processModalVisible}
       processClickHandler={processClickHandler}

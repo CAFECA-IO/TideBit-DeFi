@@ -3,17 +3,18 @@ import Toast from '../components/toast/toast';
 import ConnectingModal from '../components/wallet/connecting_modal';
 import useOuterClick from '../hooks/lib/use_outer_click';
 import HelloModal from '../components/wallet/hello_modal';
+import QrcodeModal from '../components/wallet/qrcode_modal';
 
 export default function Trial() {
   const [showToast, setShowToast] = useState(false);
   const {
-    ref: helloModalRef,
-    componentVisible: helloModalVisible,
-    setComponentVisible: setHelloModalVisible,
+    ref: qrcodeModalRef,
+    componentVisible: qrcodeModalVisible,
+    setComponentVisible: setQrcodeModalVisible,
   } = useOuterClick(true);
 
-  const helloClickHandler = () => {
-    setHelloModalVisible(!helloModalVisible);
+  const qrcodeClickHandler = () => {
+    setQrcodeModalVisible(!qrcodeModalVisible);
   };
 
   const toastHandler = () => {
@@ -22,10 +23,16 @@ export default function Trial() {
 
   return (
     // <ConnectingModal isShowing={true} />
-    <HelloModal
-      helloModalRef={helloModalRef}
-      helloModalVisible={helloModalVisible}
-      helloClickHandler={helloClickHandler}
+    // <HelloModal
+    //   helloModalRef={helloModalRef}
+    //   helloModalVisible={helloModalVisible}
+    //   helloClickHandler={helloClickHandler}
+    // />
+
+    <QrcodeModal
+      qrcodeModalRef={qrcodeModalRef}
+      qrcodeModalVisible={qrcodeModalVisible}
+      qrcodeClickHandler={qrcodeClickHandler}
     />
 
     // <div className="flex justify-center">

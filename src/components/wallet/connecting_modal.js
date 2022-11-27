@@ -1,4 +1,4 @@
-import useOuterClick from '/src/hooks/lib/use_outer_click';
+// import useOuterClick from '/src/hooks/lib/use_outer_click';
 import Lottie from 'lottie-react';
 import bigConnectingAnimation from '../../../public/animation/lf30_editor_qlduo5gq.json';
 import {ImCross} from 'react-icons/im';

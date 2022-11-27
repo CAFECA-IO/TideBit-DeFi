@@ -4,17 +4,18 @@ import ConnectingModal from '../components/wallet/connecting_modal';
 import useOuterClick from '../hooks/lib/use_outer_click';
 import HelloModal from '../components/wallet/hello_modal';
 import QrcodeModal from '../components/wallet/qrcode_modal';
+import SignatureProcessModal from '../components/wallet/signature_process_modal';
 
 export default function Trial() {
   const [showToast, setShowToast] = useState(false);
   const {
-    ref: qrcodeModalRef,
-    componentVisible: qrcodeModalVisible,
-    setComponentVisible: setQrcodeModalVisible,
+    ref: processModalRef,
+    componentVisible: processModalVisible,
+    setComponentVisible: setProcessModalVisible,
   } = useOuterClick(true);
 
-  const qrcodeClickHandler = () => {
-    setQrcodeModalVisible(!qrcodeModalVisible);
+  const processClickHandler = () => {
+    setProcessModalVisible(!processModalVisible);
   };
 
   const toastHandler = () => {
@@ -29,11 +30,18 @@ export default function Trial() {
     //   helloClickHandler={helloClickHandler}
     // />
 
-    <QrcodeModal
-      qrcodeModalRef={qrcodeModalRef}
-      qrcodeModalVisible={qrcodeModalVisible}
-      qrcodeClickHandler={qrcodeClickHandler}
+    <SignatureProcessModal
+      firstStepSuccess={true}
+      processModalRef={processModalRef}
+      processModalVisible={processModalVisible}
+      processClickHandler={processClickHandler}
     />
+
+    // <QrcodeModal
+    //   qrcodeModalRef={qrcodeModalRef}
+    //   qrcodeModalVisible={qrcodeModalVisible}
+    //   qrcodeClickHandler={qrcodeClickHandler}
+    // />
 
     // <div className="flex justify-center">
     //   <button

@@ -3,17 +3,23 @@ import Lottie from 'lottie-react';
 import bigConnectingAnimation from '../../../public/animation/lf30_editor_qlduo5gq.json';
 import {ImCross} from 'react-icons/im';
 
-const ConnectingModal = props => {
-  const {isShowing} = props;
-  const {
-    ref: connectingModalRef,
-    componentVisible: connectingModalVisible,
-    setComponentVisible: setConnectingModalVisible,
-  } = useOuterClick(isShowing);
+const ConnectingModal = ({
+  connectingModalRef = null,
+  connectingModalVisible = false,
+  connectingClickHandler = () => {},
+  ...otherProps
+}) => {
+  // const {isShowing} = props;
 
-  const connectingClickHandler = () => {
-    setConnectingModalVisible(!connectingModalVisible);
-  };
+  // const {
+  //   ref: connectingModalRef,
+  //   componentVisible: connectingModalVisible,
+  //   setComponentVisible: setConnectingModalVisible,
+  // } = useOuterClick(isShowing);
+
+  // const connectingClickHandler = () => {
+  //   setConnectingModalVisible(!connectingModalVisible);
+  // };
 
   const isDisplayedConnecting = connectingModalVisible ? (
     <>

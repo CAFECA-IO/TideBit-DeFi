@@ -1,28 +1,33 @@
 import React, {useState} from 'react';
-import SignatureProcess from '../components/connecting_modal/connecting_modal';
 import Toast from '../components/toast/toast';
 import ConnectingModal from '../components/wallet/connecting_modal';
+import useOuterClick from '../hooks/lib/use_outer_click';
+import HelloModal from '../components/wallet/hello_modal';
 
-// <SignatureProcess loading={true} />
-
-export default function Trading() {
+export default function Trial() {
   const [showToast, setShowToast] = useState(false);
+  const {
+    ref: helloModalRef,
+    componentVisible: helloModalVisible,
+    setComponentVisible: setHelloModalVisible,
+  } = useOuterClick(true);
+
+  const helloClickHandler = () => {
+    setHelloModalVisible(!helloModalVisible);
+  };
 
   const toastHandler = () => {
     setShowToast(!showToast);
   };
 
-  // const isDisplayedToast = showToast && (
-  //   <Toast
-  //     title="Test title"
-  //     content="custom content"
-  //     toastHandler={toastHandler}
-  //     showToast={showToast}
-  //   />
-  // );
-
   return (
-    <ConnectingModal isShowing={true} />
+    // <ConnectingModal isShowing={true} />
+    <HelloModal
+      helloModalRef={helloModalRef}
+      helloModalVisible={helloModalVisible}
+      helloClickHandler={helloClickHandler}
+    />
+
     // <div className="flex justify-center">
     //   <button
     //     onClick={toastHandler}

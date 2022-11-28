@@ -136,15 +136,6 @@ export default function WalletPanel(props) {
       // console.log(error)
       setErrorMessages(error.message);
     }
-
-    // const provider = new providers.Web3Provider(window.ethereum);
-    // const signer = provider.getSigner();
-    // const address = await signer.getAddress();
-    // setDefaultAccount(address);
-    // const balance = await signer.getBalance();
-    // setUserBalance(balance);
-    // const chainId = await signer.getChainId();
-    // setChainId(chainId);
   }
 
   async function funcSignTypedData() {

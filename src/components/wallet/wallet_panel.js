@@ -324,7 +324,6 @@ export default function WalletPanel(props) {
         <div className="relative my-6 mx-auto w-auto max-w-xl">
           {/*content & panel*/}
           <div
-            ref={panelRef}
             id="connectModal"
             className="relative flex w-full flex-col rounded-3xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none"
           >
@@ -355,12 +354,7 @@ export default function WalletPanel(props) {
                     />
                   </div>
                   <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2">
-                    <WalletOption
-                      onClick={helloClickHandler}
-                      name={`iSunOne`}
-                      img={`/elements/i_sun_one.svg`}
-                      iconSize={50}
-                    />
+                    <WalletOption name={`iSunOne`} img={`/elements/i_sun_one.svg`} iconSize={50} />
                   </div>
                   <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2">
                     <WalletOption name={`imToken`} img={`/elements/path_25918.svg`} iconSize={50} />
@@ -434,22 +428,16 @@ export default function WalletPanel(props) {
       {isDisplayedWalletPanel}
 
       <ConnectingModal
-        connectingModalRef={connectingModalRef}
         connectingModalVisible={connectingModalVisible}
         connectingClickHandler={connectingClickHandler}
       />
 
       <QrcodeModal
-        qrcodeModalRef={qrcodeModalRef}
         qrcodeModalVisible={qrcodeModalVisible}
         qrcodeClickHandler={qrcodeClickHandler}
       />
 
-      <HelloModal
-        helloModalRef={helloModalRef}
-        helloModalVisible={helloModalVisible}
-        helloClickHandler={helloClickHandler}
-      />
+      <HelloModal helloModalVisible={helloModalVisible} helloClickHandler={helloClickHandler} />
 
       <SignatureProcessModal
         requestSendingHandler={requestSendingHandler}
@@ -458,7 +446,6 @@ export default function WalletPanel(props) {
         secondStepSuccess={secondStepSuccess}
         secondStepError={secondStepError}
         loading={loading}
-        processModalRef={processModalRef}
         processModalVisible={processModalVisible}
         processClickHandler={processClickHandler}
       />

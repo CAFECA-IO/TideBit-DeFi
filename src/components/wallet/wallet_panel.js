@@ -91,73 +91,6 @@ export default function WalletPanel(props) {
     setProcessModalVisible(!processModalVisible);
   };
 
-  // TODO: Process Modal Controllerrrrrrrrr
-  // SignatureProcess
-  const processModalController = ({
-    loading = true,
-    firstStepSuccess = false,
-    firstStepError = false,
-    secondStepSuccess = false,
-    secondStepError = false,
-  }) => (
-    <SignatureProcessModal
-      loading={loading}
-      firstStepSuccess={firstStepSuccess}
-      firstStepError={firstStepError}
-      secondStepSuccess={secondStepSuccess}
-      secondStepError={secondStepError}
-    />
-  );
-
-  // const DisplayedConnecting = () =>
-  //   connectingModalVisible ? (
-  //     <>
-  //       <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none focus:outline-none">
-  //         <div className="relative my-6 mx-auto w-auto max-w-xl">
-  //           {/*content & panel*/}
-  //           <div
-  //             id="connectModal"
-  //             ref={connectingModalRef}
-  //             className="relative flex h-600px w-450px flex-col rounded-3xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none"
-  //           >
-  //             {/*header*/}
-  //             <div className="flex items-start justify-between rounded-t pt-6">
-  //               <h3 className="mx-auto mt-2 w-20rem pl-1/8 text-4xl font-semibold text-lightWhite">
-  //                 Wallet Connect
-  //               </h3>
-  //               <button className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
-  //                 <span className="absolute top-5 right-5 block outline-none focus:outline-none">
-  //                   <ImCross onClick={connectingClickHandler} />
-  //                 </span>
-  //               </button>
-  //             </div>
-  //             {/*body*/}
-  //             <div className="relative flex-auto pt-1">
-  //               <div className="text-lg leading-relaxed text-lightWhite">
-  //                 <div className="flex-col justify-center text-center">
-  //                   <Lottie className="ml-7 w-full pt-12" animationData={bigConnectingAnimation} />
-  //                   <div className="mt-10 text-xl">Connecting...</div>
-  //                 </div>
-  //               </div>
-  //             </div>
-  //             {/*footer*/}
-  //             <div className="flex items-center justify-end rounded-b p-2"></div>
-  //           </div>
-  //         </div>
-  //       </div>
-  //       <div className="fixed inset-0 z-40 bg-black opacity-25"></div>
-  //     </>
-  //   ) : null;
-
-  // TODO: Try to split connecting component
-  // const isConnecting = (
-  //   <ConnectingModal
-  //     connectingModalRef={connectingModalRef}
-  //     connectingModalVisible={connectingModalVisible}
-  //     connectingClickHandler={connectingClickHandler}
-  //   />
-  // );
-
   const requestSendingHandler = () => {
     funcSignTypedData();
   };
@@ -260,10 +193,6 @@ export default function WalletPanel(props) {
     }
   }
 
-  // let processModalController = (
-
-  // )
-
   // FIXME: nothing but taking notes
   let toastNotify = (
     <Toast
@@ -286,30 +215,6 @@ export default function WalletPanel(props) {
     />
   );
 
-  // let toastError = {errorMessages} && (
-  //   <Toast
-  //     title="Error"
-  //     content={
-  //       <>
-  //         <div>
-  //           <span className="text-lightRed">{errorMessages}</span>
-  //         </div>
-  //       </>
-  //     }
-  //     toastHandler={toastHandler}
-  //     showToast={showToast}
-  //   />
-  // );
-
-  // let signNotify = ({value}) => (
-  //   <Toast
-  //     title="Sign Test"
-  //     content={`${value}`}
-  //     toastHandler={toastHandler}
-  //     showToast={showToast}
-  //   />
-  // );
-
   const walletOptionClickHandler = async () => {
     // TODO: NNNNNNNotes
     // console.log('connecting modal should be visible: ', connectingModalVisible);
@@ -330,7 +235,6 @@ export default function WalletPanel(props) {
       balance = ethers.utils.formatEther(balance);
       setUserBalance(balance);
       // console.log('user balance: ', balance);
-
       // console.log('connect to Metamask clicked, Account: ', address);
 
       // TODO: NNNNNNNotes
@@ -339,8 +243,6 @@ export default function WalletPanel(props) {
       setConnecting(false);
 
       setProcessModalVisible(true);
-      // processModalController({loading: true});
-      // <SignatureProcess firstStepSuccess={true} loading={true} />;
 
       // let signature = await signer.signMessage('TideBit DeFi test');
       // console.log('Sign the message, get the signature is: ', signature);
@@ -355,23 +257,6 @@ export default function WalletPanel(props) {
       setConnecting(false);
     }
   };
-
-  // click metamask => connect to metamask & show connecting modal
-  // connected => show signature modal
-  // click wallet connect => show QR code modal
-  // click
-  const modalHandler = async () => {};
-
-  const connectStateHandler = () => {
-    setConnecting(true);
-    setPanelVisible(!panelVisible);
-
-    // <ConnectingModal showConnectingModal="true" />;
-  };
-
-  const isDisplayedConnectingModal = connecting ? <ConnectingModal /> : null;
-
-  // const connectingLoading = loadingVisible ? ( <ConnectingLoading /> ) : null;
 
   // FIXME: To be improved
   const clearState = () => {
@@ -501,10 +386,8 @@ export default function WalletPanel(props) {
       >
         {`Wallet Connect`}
       </TideButton>
-      {isDisplayedWalletPanel}
-      {/* {isDisplayedConnectingModal} */}
 
-      {/* {isConnecting} */}
+      {isDisplayedWalletPanel}
 
       <ConnectingModal
         connectingModalRef={connectingModalRef}
@@ -517,7 +400,6 @@ export default function WalletPanel(props) {
         qrcodeModalVisible={qrcodeModalVisible}
         qrcodeClickHandler={qrcodeClickHandler}
       />
-      {/* <processModalController loading={true} /> */}
 
       <HelloModal
         helloModalRef={helloModalRef}
@@ -538,12 +420,6 @@ export default function WalletPanel(props) {
       />
 
       {toastNotify}
-      {/* {toastError} */}
-
-      {/* {signNotify} */}
-
-      {/* {isDisplayedQrcodeModal} */}
-      {/* <ConnectingModal /> */}
     </>
   );
 }

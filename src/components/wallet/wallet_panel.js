@@ -99,44 +99,44 @@ export default function WalletPanel(props) {
     funcSignTypedData();
   };
 
-  async function walletConnectSignClient() {
-    // 1. Initiate your WalletConnect client with the relay server
-    const signClient = await SignClient.init({
-      projectId: projectId,
-      metadata: {
-        name: 'TideBit DeFi',
-        description: 'TideBit DeFi WalletConnect Sign Client',
-        url: 'https://defi.tidebit.com/app',
-        icons: ['https://walletconnect.com/walletconnect-logo.png'],
-      },
-    });
-    // console.log('in wallet connect sign client, projectid: ', projectId);
+  // async function walletConnectSignClient() {
+  //   // 1. Initiate your WalletConnect client with the relay server
+  //   const signClient = await SignClient.init({
+  //     projectId: projectId,
+  //     metadata: {
+  //       name: 'TideBit DeFi',
+  //       description: 'TideBit DeFi WalletConnect Sign Client',
+  //       url: 'https://defi.tidebit.com/app',
+  //       icons: ['https://walletconnect.com/walletconnect-logo.png'],
+  //     },
+  //   });
+  //   // console.log('in wallet connect sign client, projectid: ', projectId);
 
-    // 2. Add listeners for desired SignClient events.
-    signClient.on('session_event', ({events}) => {
-      // events.forEach((event) => {
-      //   if (event.type === "session_request") {}
-      // console.log('session_event', events);
-    });
+  //   // 2. Add listeners for desired SignClient events.
+  //   signClient.on('session_event', ({events}) => {
+  //     // events.forEach((event) => {
+  //     //   if (event.type === "session_request") {}
+  //     // console.log('session_event', events);
+  //   });
 
-    signClient.on('session_update', ({topic, params}) => {
-      const {namespaces} = params;
-      const _session = signClient.session.get(topic);
-      const updatedSession = {..._session, namespaces};
-      onSessionUpdate(updatedSession);
-    });
+  //   signClient.on('session_update', ({topic, params}) => {
+  //     const {namespaces} = params;
+  //     const _session = signClient.session.get(topic);
+  //     const updatedSession = {..._session, namespaces};
+  //     onSessionUpdate(updatedSession);
+  //   });
 
-    signClient.on('session_delete', () => {
-      // Session was deleted -> reset the dapp state, clean up from user session, etc.
-    });
+  //   signClient.on('session_delete', () => {
+  //     // Session was deleted -> reset the dapp state, clean up from user session, etc.
+  //   });
 
-    // 3. Connect the application and specify session permissions.
-    try {
-    } catch (error) {
-      // console.log(error)
-      setErrorMessages(error.message);
-    }
-  }
+  //   // 3. Connect the application and specify session permissions.
+  //   try {
+  //   } catch (error) {
+  //     // console.log(error)
+  //     setErrorMessages(error.message);
+  //   }
+  // }
 
   async function funcSignTypedData() {
     try {

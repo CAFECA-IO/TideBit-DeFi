@@ -171,8 +171,8 @@ export default function WalletPanel(props) {
       // console.log('setUserBalance: ', userBalance);
       // console.log('balance: ', balance);
 
-      // All properties on a domain are optional
-      // TODO: salt is optional, but if not provided, the signature will be different each time
+      // All properties on a domain are optional(?)
+      // TODO: salt is optional, but if not provided, the signature will be different each time(?)
       const domain = {
         name: 'TideBit Ex',
         version: '0.8.15',

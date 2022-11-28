@@ -13,7 +13,12 @@ import HelloModal from './hello_modal';
 const ICON_SIZE = 50;
 
 export default function WalletPanel(props) {
-  const {ref, componentVisible, setComponentVisible} = useOuterClick(false);
+  const {
+    ref: panelRef,
+    componentVisible: panelVisible,
+    setComponentVisible: setPanelVisible,
+  } = useOuterClick(false);
+
   const {
     ref: connectingModalRef,
     componentVisible: connectingModalVisible,
@@ -40,11 +45,16 @@ export default function WalletPanel(props) {
 
   const [connecting, setConnecting] = useState(false);
 
-  const [loading, setLoading] = useState(false);
   const [defaultAccount, setDefaultAccount] = useState('');
   const [errorMessages, setErrorMessages] = useState('');
   const [signature, setSignature] = useState(null);
   const [userBalance, setUserBalance] = useState(null);
+
+  const [loading, setLoading] = useState(false);
+  const [firstStepSuccess, setFirstStepSuccess] = useState(false);
+  const [firstStepError, setFirstStepError] = useState(false);
+  const [secondStepSuccess, setSecondStepSuccess] = useState(false);
+  const [secondStepError, setSecondStepError] = useState(false);
 
   const [chainId, setChainId] = useState(null);
 
@@ -55,7 +65,7 @@ export default function WalletPanel(props) {
   };
 
   const clickHandler = () => {
-    setComponentVisible(!componentVisible);
+    setPanelVisible(!panelVisible);
   };
 
   const connectingClickHandler = () => {
@@ -64,7 +74,7 @@ export default function WalletPanel(props) {
 
   const qrcodeClickHandler = () => {
     // TODO: temparary solution, need to be fixed
-    setComponentVisible(false);
+    setPanelVisible(false);
 
     setQrcodeModalVisible(!qrcodeModalVisible);
     // console.log('wallet connect option clicked');
@@ -72,7 +82,7 @@ export default function WalletPanel(props) {
 
   const helloClickHandler = () => {
     // TODO: temparary solution, need to be fixed
-    setComponentVisible(false);
+    // setPanelVisible(false);
 
     setHelloModalVisible(!helloModalVisible);
   };
@@ -140,18 +150,24 @@ export default function WalletPanel(props) {
   //   ) : null;
 
   // TODO: Try to split connecting component
-  const isConnecting = (
-    <ConnectingModal
-      connectingModalRef={connectingModalRef}
-      connectingModalVisible={connectingModalVisible}
-      connectingClickHandler={connectingClickHandler}
-    />
-  );
+  // const isConnecting = (
+  //   <ConnectingModal
+  //     connectingModalRef={connectingModalRef}
+  //     connectingModalVisible={connectingModalVisible}
+  //     connectingClickHandler={connectingClickHandler}
+  //   />
+  // );
+
+  const requestSendingHandler = () => {
+    funcSignTypedData();
+  };
 
   async function funcSignTypedData() {
     try {
       setErrorMessages('');
       setSignature(null);
+      setLoading(true);
+
       let provider = new providers.Web3Provider(window.ethereum);
       await provider.send('eth_requestAccounts', []);
 
@@ -160,6 +176,14 @@ export default function WalletPanel(props) {
       let chainId = await signer.getChainId();
       let balance = await signer.getBalance();
       setDefaultAccount(address);
+
+      // Connect to the wallet => first step success
+      // Clear other state of the process modal
+      setFirstStepSuccess(true);
+      // setFirstStepError(false);
+      setSecondStepSuccess(false);
+      setSecondStepError(false);
+
       // setChainId(chainId);
       setUserBalance(ethers.utils.formatEther(balance));
 
@@ -210,19 +234,35 @@ export default function WalletPanel(props) {
       // signNotify({value: value});
 
       // console.log(value);
-
+      setLoading(true);
       let signature = await signer._signTypedData(domain, types, value);
 
       setSignature(signature);
+      // setLoading(false);
+      setSecondStepSuccess(true);
+
+      setTimeout(() => setProcessModalVisible(false), 1000);
+
+      // setProcessModalVisible(false);
+      setHelloModalVisible(true);
 
       setShowToast(true);
+      // setLoading(false);
+
+      // setLoading(false);
 
       // console.log('[EIP712] Sign typed signature: ', signature);
     } catch (error) {
       // console.error(error);
       setErrorMessages(error.message);
+      setSecondStepError(true);
+      setLoading(false);
     }
   }
+
+  // let processModalController = (
+
+  // )
 
   // FIXME: nothing but taking notes
   let toastNotify = (
@@ -236,12 +276,30 @@ export default function WalletPanel(props) {
           <div>
             EIP 712 Signature: <span className="text-cuteBlue3">{signature}</span>
           </div>
+          <div>
+            <span className="text-lightRed">{errorMessages}</span>
+          </div>
         </>
       }
       toastHandler={toastHandler}
       showToast={showToast}
     />
   );
+
+  // let toastError = {errorMessages} && (
+  //   <Toast
+  //     title="Error"
+  //     content={
+  //       <>
+  //         <div>
+  //           <span className="text-lightRed">{errorMessages}</span>
+  //         </div>
+  //       </>
+  //     }
+  //     toastHandler={toastHandler}
+  //     showToast={showToast}
+  //   />
+  // );
 
   // let signNotify = ({value}) => (
   //   <Toast
@@ -257,7 +315,7 @@ export default function WalletPanel(props) {
     // console.log('connecting modal should be visible: ', connectingModalVisible);
 
     try {
-      setComponentVisible(!componentVisible);
+      setPanelVisible(!panelVisible);
       setConnecting(true);
       setConnectingModalVisible(true);
 
@@ -290,6 +348,7 @@ export default function WalletPanel(props) {
     } catch (error) {
       // console.log(error);
       setErrorMessages(error);
+      setFirstStepError(true);
 
       setConnectingModalVisible(false);
       setConnecting(false);
@@ -304,7 +363,7 @@ export default function WalletPanel(props) {
 
   const connectStateHandler = () => {
     setConnecting(true);
-    setComponentVisible(!componentVisible);
+    setPanelVisible(!panelVisible);
 
     // <ConnectingModal showConnectingModal="true" />;
   };
@@ -315,7 +374,7 @@ export default function WalletPanel(props) {
 
   // FIXME: To be improved
   const clearState = () => {
-    if (!componentVisible) {
+    if (!panelVisible) {
       setConnecting(false);
       // setDefaultAccount(null);
       setErrorMessages('');
@@ -329,13 +388,13 @@ export default function WalletPanel(props) {
     // setUserBalance(null);
   };
 
-  const isDisplayedWalletPanel = componentVisible ? (
+  const isDisplayedWalletPanel = panelVisible ? (
     <>
       <div className="fixed inset-0 z-40 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">
         <div className="relative my-6 mx-auto w-auto max-w-xl">
           {/*content & panel*/}
           <div
-            ref={ref}
+            ref={panelRef}
             id="connectModal"
             className="relative flex w-full flex-col rounded-3xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none"
           >
@@ -466,14 +525,19 @@ export default function WalletPanel(props) {
       />
 
       <SignatureProcessModal
-        firstStepSuccess={true}
-        loading={true}
+        requestSendingHandler={requestSendingHandler}
+        firstStepSuccess={firstStepSuccess}
+        firstStepError={firstStepError}
+        secondStepSuccess={secondStepSuccess}
+        secondStepError={secondStepError}
+        loading={loading}
         processModalRef={processModalRef}
         processModalVisible={processModalVisible}
         processClickHandler={processClickHandler}
       />
 
       {toastNotify}
+      {/* {toastError} */}
 
       {/* {signNotify} */}
 

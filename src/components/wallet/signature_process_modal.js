@@ -14,6 +14,7 @@ const SignatureProcessModal = ({
   processModalRef = null,
   processModalVisible = false,
   processClickHandler = () => {},
+  requestSendingHandler = () => {},
   ...otherProps
 }) => {
   const controlSpace = firstStepError || secondStepError ? 'space-y-12' : 'space-y-16';
@@ -44,7 +45,7 @@ const SignatureProcessModal = ({
   const requestButtonHandler = loading ? (
     <Lottie className="w-40px" animationData={smallConnectingAnimation} />
   ) : (
-    <TideButton className="px-5" content={`Send Requests`} />
+    <TideButton onClick={requestSendingHandler} className="px-5" content={`Send Requests`} />
   );
 
   const firstStepDefaultView = (

@@ -9,7 +9,7 @@ import ConnectingModal from './connecting_modal';
 import SignatureProcessModal from './signature_process_modal';
 import QrcodeModal from './qrcode_modal';
 import HelloModal from './hello_modal';
-import {projectId} from '/src/constants/walletconnect';
+// import {projectId} from '/src/constants/walletconnect';
 // import WalletConnectProvider from '@walletconnect/web3-provider';
 import SignClient from '@walletconnect/sign-client';
 // import QRCodeModal from '@walletconnect/qrcode-modal';

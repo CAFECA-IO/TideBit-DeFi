@@ -349,6 +349,7 @@ export default function WalletPanel(props) {
       // console.log(error);
       setErrorMessages(error);
       setFirstStepError(true);
+      setProcessModalVisible(true);
 
       setConnectingModalVisible(false);
       setConnecting(false);

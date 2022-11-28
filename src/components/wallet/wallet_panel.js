@@ -9,6 +9,10 @@ import ConnectingModal from './connecting_modal';
 import SignatureProcessModal from './signature_process_modal';
 import QrcodeModal from './qrcode_modal';
 import HelloModal from './hello_modal';
+import {projectId} from '/src/constants/walletconnect';
+// import WalletConnectProvider from '@walletconnect/web3-provider';
+import SignClient from '@walletconnect/sign-client';
+// import QRCodeModal from '@walletconnect/qrcode-modal';
 
 const ICON_SIZE = 50;
 
@@ -95,11 +99,60 @@ export default function WalletPanel(props) {
     funcSignTypedData();
   };
 
+  async function walletConnectSignClient() {
+    // 1. Initiate your WalletConnect client with the relay server
+    const signClient = await SignClient.init({
+      projectId: projectId,
+      metadata: {
+        name: 'TideBit DeFi',
+        description: 'TideBit DeFi WalletConnect Sign Client',
+        url: 'https://defi.tidebit.com/app',
+        icons: ['https://walletconnect.com/walletconnect-logo.png'],
+      },
+    });
+    // console.log('in wallet connect sign client, projectid: ', projectId);
+
+    // 2. Add listeners for desired SignClient events.
+    signClient.on('session_event', ({events}) => {
+      // events.forEach((event) => {
+      //   if (event.type === "session_request") {}
+      // console.log('session_event', events);
+    });
+
+    signClient.on('session_update', ({topic, params}) => {
+      const {namespaces} = params;
+      const _session = signClient.session.get(topic);
+      const updatedSession = {..._session, namespaces};
+      onSessionUpdate(updatedSession);
+    });
+
+    signClient.on('session_delete', () => {
+      // Session was deleted -> reset the dapp state, clean up from user session, etc.
+    });
+
+    // 3. Connect the application and specify session permissions.
+    try {
+    } catch (error) {
+      // console.log(error)
+      setErrorMessages(error.message);
+    }
+
+    // const provider = new providers.Web3Provider(window.ethereum);
+    // const signer = provider.getSigner();
+    // const address = await signer.getAddress();
+    // setDefaultAccount(address);
+    // const balance = await signer.getBalance();
+    // setUserBalance(balance);
+    // const chainId = await signer.getChainId();
+    // setChainId(chainId);
+  }
+
   async function funcSignTypedData() {
     try {
       setErrorMessages('');
       setSignature(null);
       setLoading(true);
+      // console.log('projectId', projectId);
 
       let provider = new providers.Web3Provider(window.ethereum);
       await provider.send('eth_requestAccounts', []);

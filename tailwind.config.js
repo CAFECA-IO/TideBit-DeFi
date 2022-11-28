@@ -81,10 +81,15 @@ module.exports = {
         '180px': '180px',
         '200px': '200px',
         '220px': '220px',
+        '271px': '271px',
         '300px': '300px',
         '320px': '320px',
+        '354px': '354px',
+        '372px': '372px',
         '410px': '410px',
         '438px': '438px',
+        '450px': '450px',
+        '600px': '600px',
         '2rem': '2rem',
         '3rem': '3rem',
         '4rem': '4rem',
@@ -153,6 +158,11 @@ module.exports = {
         banner1: "url('~/img/group_15199@2x.png)",
       },
       colors: {
+        cuteBlue: '#A5C4F3',
+        cuteBlue1: '#5895D9',
+        cuteBlue2: '#527dc7',
+        cuteBlue3: '#4165a3',
+
         darkGray: '#161719',
         darkGray1: '#242A31',
         darkGray2: '#2B323A',
@@ -178,6 +188,8 @@ module.exports = {
         lightPink: '#E60B7A',
         lightGreen1: '#3CC8C8',
         lightRed2: '#E84142',
+
+        lightRed3: '#E86D6D',
       },
       fontFamily: {
         barlow: ['Barlow', 'sans-serif', 'ui-sans-serif', 'system-ui'],

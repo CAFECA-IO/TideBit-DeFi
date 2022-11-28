@@ -34,7 +34,13 @@ const Cta = () => {
 
       {/* Mobile version (width < 1024 px) */}
       <section className="mb-1/10 flex w-screen flex-col items-center justify-center lg:hidden">
-        <Image className="ml-1/10" src="/elements/group_15215@2x.png" width={596} height={545} />
+        <Image
+          className="ml-1/10"
+          alt="candlestick chart view"
+          src="/elements/group_15215@2x.png"
+          width={596}
+          height={545}
+        />
         <div className="flex justify-center text-center">
           <div className="mx-1/10 w-fit text-2xl font-bold tracking-wide text-white xxs:mx-1/5 xxs:text-3xl xs:w-4/5 xs:text-4xl md:text-5xl">
             <span className="text-tidebitTheme">Trusted</span> platform for Crypto investment

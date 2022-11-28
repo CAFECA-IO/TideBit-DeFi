@@ -119,6 +119,8 @@ build
 src/constant/Config.js
 shell/restart.sh
 public/tradingview/config.js
+src/constants/walletconnect.js
 
 # file transfer by-product
 *.Identifier
+.DS_Store

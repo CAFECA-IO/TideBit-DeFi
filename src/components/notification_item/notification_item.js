@@ -4,7 +4,13 @@ import Image from 'next/image';
   /* Notification item itself */
 }
 
-export default function NotificationItem({title = '', date = '', time = '', content = ''}) {
+export default function NotificationItem({
+  title = '',
+  date = '',
+  time = '',
+  content = '',
+  itemHeight = 'h-158px',
+}) {
   title = title ? title : 'Happy Birthday to TideBit';
   date = date ? date : '2022-10-05';
   time = time ? time : '14:28:38';
@@ -19,7 +25,7 @@ export default function NotificationItem({title = '', date = '', time = '', cont
     <div className="relative">
       <div className="mb-0 flex pb-0">
         {/* Vertical line */}
-        <span className="mx-2 h-158px w-5px shrink-0 bg-tidebitTheme"></span>
+        <span className={`mx-2 ${itemHeight} w-5px shrink-0 bg-tidebitTheme`}></span>
 
         {/* contain divider */}
         <div>

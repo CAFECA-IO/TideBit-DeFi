@@ -65,6 +65,21 @@ export default function WalletPanel(props) {
 
   const [showToast, setShowToast] = useState(false);
 
+  const clearState = () => {
+    setConnecting(false);
+    setDefaultAccount('');
+    setErrorMessages('');
+    setSignature(null);
+    setUserBalance(null);
+    setLoading(false);
+    setFirstStepSuccess(false);
+    setFirstStepError(false);
+    setSecondStepSuccess(false);
+    setSecondStepError(false);
+    setChainId(null);
+    setShowToast(false);
+  };
+
   const toastHandler = () => {
     setShowToast(!showToast);
   };
@@ -125,12 +140,16 @@ export default function WalletPanel(props) {
     signClient.on('session_update', ({topic, params}) => {
       const {namespaces} = params;
       const _session = signClient.session.get(topic);
+      // Overwrite the `namespaces` of the existing session with the incoming one.
       const updatedSession = {..._session, namespaces};
+      // Integrate the updated session state into your dapp state.
       onSessionUpdate(updatedSession);
+      // console.log('session_update', updatedSession);
     });
 
     signClient.on('session_delete', () => {
       // Session was deleted -> reset the dapp state, clean up from user session, etc.
+      // console.log('session_delete');
     });
 
     // 3. Connect the application and specify session permissions.
@@ -221,6 +240,7 @@ export default function WalletPanel(props) {
       // console.log(value);
       setLoading(true);
       let signature = await signer._signTypedData(domain, types, value);
+      setErrorMessages('');
 
       setSignature(signature);
       // setLoading(false);
@@ -239,6 +259,7 @@ export default function WalletPanel(props) {
       // console.log('[EIP712] Sign typed signature: ', signature);
     } catch (error) {
       // console.error(error);
+      setSignature(null);
       setErrorMessages(error.message);
       setSecondStepError(true);
       setLoading(false);

@@ -202,7 +202,7 @@ export default function WalletPanel(props) {
           wallet: `${address}`,
         },
         to: {
-          name: 'TideBit Ex',
+          name: 'TideBit DeFi',
           wallet: '0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB',
         },
         contents: 'Agree to the terms and conditions',

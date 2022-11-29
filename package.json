@@ -13,6 +13,7 @@
     "validate": "npm run test && npm run check-format && npm run lint"
   },
   "dependencies": {
+    "@walletconnect/qrcode-modal": "^1.8.0",
     "@walletconnect/sign-client": "^2.1.4",
     "ethers": "^5.7.2",
     "lottie-react": "^2.3.1",

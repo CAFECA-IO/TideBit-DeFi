@@ -12,11 +12,14 @@ import HelloModal from './hello_modal';
 // import {projectId} from '/src/constants/walletconnect';
 // import WalletConnectProvider from '@walletconnect/web3-provider';
 import SignClient from '@walletconnect/sign-client';
-// import QRCodeModal from '@walletconnect/qrcode-modal';
+import QRCodeModal from '@walletconnect/qrcode-modal';
 
 const ICON_SIZE = 50;
+const WALLET_CONNECT_PROJECT_ID = process.env.WALLET_CONNECT_PROJECT_ID;
 
 export default function WalletPanel(props) {
+  // console.log('projectid: ', WALLET_CONNECT_PROJECT_ID);
+
   const {
     ref: panelRef,
     componentVisible: panelVisible,
@@ -99,44 +102,45 @@ export default function WalletPanel(props) {
     funcSignTypedData();
   };
 
-  // async function walletConnectSignClient() {
-  //   // 1. Initiate your WalletConnect client with the relay server
-  //   const signClient = await SignClient.init({
-  //     projectId: projectId,
-  //     metadata: {
-  //       name: 'TideBit DeFi',
-  //       description: 'TideBit DeFi WalletConnect Sign Client',
-  //       url: 'https://defi.tidebit.com/app',
-  //       icons: ['https://walletconnect.com/walletconnect-logo.png'],
-  //     },
-  //   });
-  //   // console.log('in wallet connect sign client, projectid: ', projectId);
+  // https://www.arealclimber.me/
+  async function walletConnectSignClient() {
+    // 1. Initiate your WalletConnect client with the relay server
+    const signClient = await SignClient.init({
+      projectId: WALLET_CONNECT_PROJECT_ID,
+      metadata: {
+        name: 'TideBit DeFi',
+        description: 'TideBit DeFi WalletConnect Sign Client',
+        url: 'https://defi.tidebit.com/app',
+        icons: ['https://walletconnect.com/_next/static/media/logo_mark.84dd8525.svg'],
+      },
+    });
+    // console.log('in wallet connect sign client, projectid: ', projectId);
 
-  //   // 2. Add listeners for desired SignClient events.
-  //   signClient.on('session_event', ({events}) => {
-  //     // events.forEach((event) => {
-  //     //   if (event.type === "session_request") {}
-  //     // console.log('session_event', events);
-  //   });
+    // 2. Add listeners for desired SignClient events.
+    signClient.on('session_event', ({events}) => {
+      // events.forEach((event) => {
+      //   if (event.type === "session_request") {}
+      // console.log('session_event', events);
+    });
 
-  //   signClient.on('session_update', ({topic, params}) => {
-  //     const {namespaces} = params;
-  //     const _session = signClient.session.get(topic);
-  //     const updatedSession = {..._session, namespaces};
-  //     onSessionUpdate(updatedSession);
-  //   });
+    signClient.on('session_update', ({topic, params}) => {
+      const {namespaces} = params;
+      const _session = signClient.session.get(topic);
+      const updatedSession = {..._session, namespaces};
+      onSessionUpdate(updatedSession);
+    });
 
-  //   signClient.on('session_delete', () => {
-  //     // Session was deleted -> reset the dapp state, clean up from user session, etc.
-  //   });
+    signClient.on('session_delete', () => {
+      // Session was deleted -> reset the dapp state, clean up from user session, etc.
+    });
 
-  //   // 3. Connect the application and specify session permissions.
-  //   try {
-  //   } catch (error) {
-  //     // console.log(error)
-  //     setErrorMessages(error.message);
-  //   }
-  // }
+    // 3. Connect the application and specify session permissions.
+    try {
+    } catch (error) {
+      // console.log(error)
+      setErrorMessages(error.message);
+    }
+  }
 
   async function funcSignTypedData() {
     try {
@@ -153,6 +157,11 @@ export default function WalletPanel(props) {
       let chainId = await signer.getChainId();
       let balance = await signer.getBalance();
       setDefaultAccount(address);
+      setChainId(chainId);
+
+      if (chainId !== 1) {
+        setShowToast(true);
+      }
 
       // Connect to the wallet => first step success
       // Clear other state of the process modal
@@ -244,6 +253,12 @@ export default function WalletPanel(props) {
       content={
         <>
           <div>
+            Chain Id: <span className="text-cuteBlue3">{chainId}</span>
+            {!!(chainId !== 1) && (
+              <div className="text-lightRed2">Please switch to ETH Mainnet</div>
+            )}
+          </div>
+          <div>
             Your Address: <span className="text-cuteBlue3">{defaultAccount}</span>
           </div>
           <div>
@@ -259,10 +274,8 @@ export default function WalletPanel(props) {
     />
   );
 
-  const walletOptionClickHandler = async () => {
-    // TODO: NNNNNNNotes
-    // console.log('connecting modal should be visible: ', connectingModalVisible);
-
+  async function metamaskConnect() {
+    // console.log('metamask connect func called');
     try {
       setPanelVisible(!panelVisible);
       setConnecting(true);
@@ -274,6 +287,13 @@ export default function WalletPanel(props) {
       let signer = provider.getSigner();
       let address = await signer.getAddress();
       setDefaultAccount(address);
+      let chainId = await signer.getChainId();
+      setChainId(chainId);
+
+      if (chainId !== 1) {
+        // console.log('Please switch to ETH mainnet');
+        setShowToast(true);
+      }
 
       let balance = await provider.getBalance(address);
       balance = ethers.utils.formatEther(balance);
@@ -300,6 +320,43 @@ export default function WalletPanel(props) {
       setConnectingModalVisible(false);
       setConnecting(false);
     }
+    // if (window.ethereum) {
+    //   window.ethereum
+    //     .request({method: 'eth_requestAccounts'})
+    //     .then((accounts) => {
+    //       setDefaultAccount(accounts[0]);
+    //       setFirstStepSuccess(true);
+    //       setFirstStepError(false);
+    //     })
+    //     .catch((error) => {
+    //       if (error.code === 4001) {
+    //         // EIP-1193 userRejectedRequest error
+    //         // If this happens, the user rejected the connection request.
+    //         // console.log('Please connect to MetaMask.');
+    //         setErrorMessages('Please connect to MetaMask.');
+    //         setFirstStepError(true);
+    //       } else {
+    //         console.error(error);
+    //       }
+    //     });
+    // } else {
+    //   console.log('Please install MetaMask!');
+    //   setErrorMessages('Please install MetaMask!');
+    //   setFirstStepError(true);
+    // }
+  }
+
+  const metamaskOptionClickHandler = async () => {
+    // TODO: NNNNNNNotes
+    // console.log('connecting modal should be visible: ', connectingModalVisible);
+
+    if (typeof window.ethereum === 'undefined') {
+      walletConnectSignClient();
+      // console.log('Metemask is uninstalled');
+      return;
+    }
+
+    metamaskConnect();
   };
 
   const isDisplayedWalletPanel = panelVisible ? (
@@ -331,7 +388,7 @@ export default function WalletPanel(props) {
                 <div className="grid grid-cols-3 gap-3">
                   <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2">
                     <WalletOption
-                      onClick={walletOptionClickHandler}
+                      onClick={metamaskOptionClickHandler}
                       name={`Metamask`}
                       img={`/elements/74263ff26820cd0d895968e3b55e8902.svg`}
                       iconSize={50}
@@ -434,7 +491,26 @@ export default function WalletPanel(props) {
         processClickHandler={processClickHandler}
       />
 
+      {/* TODO: Notes- the below is the same but `{toastNotify}` is easier to be changed and managed  */}
       {toastNotify}
+      {/* <Toast
+        title="Your signature"
+        content={
+          <>
+            <div>
+              Your Address: <span className="text-cuteBlue3">{defaultAccount}</span>
+            </div>
+            <div>
+              EIP 712 Signature: <span className="text-cuteBlue3">{signature}</span>
+            </div>
+            <div>
+              <span className="text-lightRed">{errorMessages}</span>
+            </div>
+          </>
+        }
+        toastHandler={toastHandler}
+        showToast={showToast}
+      /> */}
     </>
   );
 }

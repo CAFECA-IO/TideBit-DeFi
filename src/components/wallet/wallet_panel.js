@@ -302,22 +302,6 @@ export default function WalletPanel(props) {
     }
   };
 
-  // FIXME: To be improved
-  const clearState = () => {
-    if (!panelVisible) {
-      setConnecting(false);
-      // setDefaultAccount(null);
-      setErrorMessages('');
-      setSignature(null);
-      setUserBalance(null);
-    }
-    // setConnecting(false);
-    // setDefaultAccount(null);
-    // setErrorMessages('');
-    // setSignature(null);
-    // setUserBalance(null);
-  };
-
   const isDisplayedWalletPanel = panelVisible ? (
     <>
       <div className="fixed inset-0 z-40 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">

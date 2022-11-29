@@ -115,6 +115,83 @@ export default function WalletPanel(props) {
     funcSignTypedData();
   };
 
+  // async function walletConnectQrcodeModalApp({signClient}) {
+  //   try {
+  //     const {uri, approval} = await signClient.connect({
+  //       // Optionally: pass a known prior pairing (e.g. from `signClient.core.pairing.getPairings()`) to skip the `uri` step.
+  //       pairingTopic: pairing?.topic,
+  //       // Provide the namespaces and chains (e.g. `eip155` for EVM-based chains) we want to use in this session.
+  //       requiredNamespaces: {
+  //         eip155: {
+  //           methods: [
+  //             'eth_sendTransaction',
+  //             'eth_signTransaction',
+  //             'eth_sign',
+  //             'personal_sign',
+  //             'eth_signTypedData',
+  //           ],
+  //           chains: ['eip155:1'],
+  //           events: ['chainChanged', 'accountsChanged'],
+  //         },
+  //       },
+  //     });
+
+  //     // Open QRCode modal if a URI was returned (i.e. we're not connecting an existing pairing).
+  //     if (uri) {
+  //       QRCodeModal.open(uri, () => {
+  //         console.log('EVENT', 'QR Code Modal closed');
+  //       });
+  //     }
+
+  //     // Await session approval from the wallet.
+  //     const session = await approval();
+  //     // Handle the returned session (e.g. update UI to "connected" state).
+  //     await onSessionConnected(session);
+  //   } catch (e) {
+  //     console.error(e);
+  //   } finally {
+  //     // Close the QRCode modal in case it was open.
+  //     QRCodeModal.close();
+  //   }
+  //   // const provider = new providers.Web3Provider(window.ethereum);
+  //   // const signer = provider.getSigner();
+  //   // const address = await signer.getAddress();
+  //   // const client = new SignClient({
+  //   //   bridge: 'https://bridge.walletconnect.org',
+  //   //   qrcodeModal: QRCodeModal,
+  //   // });
+  //   // client.on('connect', (error, payload) => {
+  //   //   if (error) {
+  //   //     throw error;
+  //   //   }
+  //   //   // Get provided accounts and chainId
+  //   //   const {accounts, chainId} = payload.params[0];
+  //   //   console.log('accounts: ', accounts);
+  //   //   console.log('chainId: ', chainId);
+  //   // });
+  //   // client.on('session_update', (error, payload) => {
+  //   //   if (error) {
+  //   //     throw error;
+  //   //   }
+  //   //   // Get updated accounts and chainId
+  //   //   const {accounts, chainId} = payload.params[0];
+  //   //   console.log('accounts: ', accounts);
+  //   //   console.log('chainId: ', chainId);
+  //   // });
+  //   // client.on('disconnect', (error, payload) => {
+  //   //   if (error) {
+  //   //     throw error;
+  //   //   }
+  //   //   // Delete connector
+  //   // });
+  //   // // create new session
+  //   // client
+  //   //   .createSession({
+  //   //     permissions: {
+  //   //       blockchain: {
+  //   //         chains
+  // }
+
   async function walletConnectSignClient() {
     // console.log('projectid: ', WALLET_CONNECT_PROJECT_ID);
 
@@ -128,7 +205,8 @@ export default function WalletPanel(props) {
         icons: ['https://walletconnect.com/_next/static/media/logo_mark.84dd8525.svg'],
       },
     });
-    // console.log('in wallet connect sign client, projectid: ', projectId);
+
+    // console.log('signClient: ', signClient);
 
     // 2. Add listeners for desired SignClient events.
     signClient.on('session_event', ({events}) => {
@@ -149,15 +227,64 @@ export default function WalletPanel(props) {
 
     signClient.on('session_delete', () => {
       // Session was deleted -> reset the dapp state, clean up from user session, etc.
+      clearState();
       // console.log('session_delete');
     });
 
     // 3. Connect the application and specify session permissions.
+    // walletConnectQrcodeModalApp;
     try {
-    } catch (error) {
-      // console.log(error)
+      const {uri, approval} = await signClient.connect({
+        // Optionally: pass a known prior pairing (e.g. from `signClient.core.pairing.getPairings()`) to skip the `uri` step.
+        pairingTopic: pairing?.topic,
+        // Provide the namespaces and chains (e.g. `eip155` for EVM-based chains) we want to use in this session.
+        requiredNamespaces: {
+          eip155: {
+            methods: [
+              'eth_sendTransaction',
+              'eth_signTransaction',
+              'eth_sign',
+              'personal_sign',
+              'eth_signTypedData',
+            ],
+            chains: ['eip155:1'],
+            events: ['chainChanged', 'accountsChanged'],
+          },
+        },
+      });
+
+      // Open QRCode modal if a URI was returned (i.e. we're not connecting an existing pairing).
+      if (uri) {
+        QRCodeModal.open(uri, () => {
+          // console.log('EVENT', 'QR Code Modal closed, but the property is `open`');
+        });
+      }
+
+      // Await session approval from the wallet.
+      const session = await approval();
+      // Handle the returned session (e.g. update UI to "connected" state).
+      await onSessionConnected(session);
+    } catch (e) {
+      // console.error(e);
       setErrorMessages(error.message);
+    } finally {
+      // Close the QRCode modal in case it was open.
+      QRCodeModal.close();
     }
+
+    const result = await signClient.request({
+      topic: session.topic,
+      chainId: 'eip155:1',
+      request: {
+        id: 1,
+        jsonrpc: '2.0',
+        method: 'personal_sign',
+        params: [
+          '0x1d85568eEAbad713fBB5293B45ea066e552A90De',
+          '0x7468697320697320612074657374206d65737361676520746f206265207369676e6564',
+        ],
+      },
+    });
   }
 
   async function funcSignTypedData() {

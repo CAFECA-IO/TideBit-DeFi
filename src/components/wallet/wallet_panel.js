@@ -18,8 +18,6 @@ const ICON_SIZE = 50;
 const WALLET_CONNECT_PROJECT_ID = process.env.WALLET_CONNECT_PROJECT_ID;
 
 export default function WalletPanel(props) {
-  // console.log('projectid: ', WALLET_CONNECT_PROJECT_ID);
-
   const {
     ref: panelRef,
     componentVisible: panelVisible,
@@ -102,15 +100,16 @@ export default function WalletPanel(props) {
     funcSignTypedData();
   };
 
-  // https://www.arealclimber.me/
   async function walletConnectSignClient() {
+    // console.log('projectid: ', WALLET_CONNECT_PROJECT_ID);
+
     // 1. Initiate your WalletConnect client with the relay server
     const signClient = await SignClient.init({
       projectId: WALLET_CONNECT_PROJECT_ID,
       metadata: {
         name: 'TideBit DeFi',
         description: 'TideBit DeFi WalletConnect Sign Client',
-        url: 'https://defi.tidebit.com/app',
+        url: '#',
         icons: ['https://walletconnect.com/_next/static/media/logo_mark.84dd8525.svg'],
       },
     });
@@ -346,6 +345,10 @@ export default function WalletPanel(props) {
     // }
   }
 
+  const walletconnectOptionClickHandler = async () => {
+    walletConnectSignClient();
+  };
+
   const metamaskOptionClickHandler = async () => {
     // TODO: NNNNNNNotes
     // console.log('connecting modal should be visible: ', connectingModalVisible);
@@ -432,7 +435,7 @@ export default function WalletPanel(props) {
                   </div>
                   <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2">
                     <WalletOption
-                      onClick={qrcodeClickHandler}
+                      onClick={walletconnectOptionClickHandler}
                       name={`WalletConnect`}
                       img={`/elements/walletconnect@2x.png`}
                       iconSize={50}

@@ -1,25 +1,29 @@
 import {useEffect, useRef, useState} from 'react';
-// import { createPortal } from 'react-dom';
 import {ImCross} from 'react-icons/im';
-import Image from 'next/image';
 import WalletOption from './wallet_option';
 import useOuterClick from '/src/hooks/lib/use_outer_click';
 import TideButton from '../tide_button/tide_button';
 import {ethers, providers} from 'ethers';
-import Link from 'next/link';
-import Lottie from 'lottie-react';
-import bigConnectingAnimation from '../../../public/animation/lf30_editor_qlduo5gq.json';
-import smallConnectingAnimation from '../../../public/animation/lf30_editor_cnkxmhy3.json';
 import Toast from '../toast/toast';
 import ConnectingModal from './connecting_modal';
 import SignatureProcessModal from './signature_process_modal';
 import QrcodeModal from './qrcode_modal';
 import HelloModal from './hello_modal';
+// import {projectId} from '/src/constants/walletconnect';
+// import WalletConnectProvider from '@walletconnect/web3-provider';
+import SignClient from '@walletconnect/sign-client';
+import QRCodeModal from '@walletconnect/qrcode-modal';
 
 const ICON_SIZE = 50;
+const WALLET_CONNECT_PROJECT_ID = process.env.WALLET_CONNECT_PROJECT_ID;
 
 export default function WalletPanel(props) {
-  const {ref, componentVisible, setComponentVisible} = useOuterClick(false);
+  const {
+    ref: panelRef,
+    componentVisible: panelVisible,
+    setComponentVisible: setPanelVisible,
+  } = useOuterClick(false);
+
   const {
     ref: connectingModalRef,
     componentVisible: connectingModalVisible,
@@ -46,22 +50,42 @@ export default function WalletPanel(props) {
 
   const [connecting, setConnecting] = useState(false);
 
-  const [loading, setLoading] = useState(false);
   const [defaultAccount, setDefaultAccount] = useState('');
   const [errorMessages, setErrorMessages] = useState('');
   const [signature, setSignature] = useState(null);
   const [userBalance, setUserBalance] = useState(null);
 
+  const [loading, setLoading] = useState(false);
+  const [firstStepSuccess, setFirstStepSuccess] = useState(false);
+  const [firstStepError, setFirstStepError] = useState(false);
+  const [secondStepSuccess, setSecondStepSuccess] = useState(false);
+  const [secondStepError, setSecondStepError] = useState(false);
+
   const [chainId, setChainId] = useState(null);
 
   const [showToast, setShowToast] = useState(false);
+
+  const clearState = () => {
+    setConnecting(false);
+    setDefaultAccount('');
+    setErrorMessages('');
+    setSignature(null);
+    setUserBalance(null);
+    setLoading(false);
+    setFirstStepSuccess(false);
+    setFirstStepError(false);
+    setSecondStepSuccess(false);
+    setSecondStepError(false);
+    setChainId(null);
+    setShowToast(false);
+  };
 
   const toastHandler = () => {
     setShowToast(!showToast);
   };
 
   const clickHandler = () => {
-    setComponentVisible(!componentVisible);
+    setPanelVisible(!panelVisible);
   };
 
   const connectingClickHandler = () => {
@@ -70,7 +94,7 @@ export default function WalletPanel(props) {
 
   const qrcodeClickHandler = () => {
     // TODO: temparary solution, need to be fixed
-    setComponentVisible(false);
+    setPanelVisible(false);
 
     setQrcodeModalVisible(!qrcodeModalVisible);
     // console.log('wallet connect option clicked');
@@ -78,7 +102,7 @@ export default function WalletPanel(props) {
 
   const helloClickHandler = () => {
     // TODO: temparary solution, need to be fixed
-    setComponentVisible(false);
+    // setPanelVisible(false);
 
     setHelloModalVisible(!helloModalVisible);
   };
@@ -87,511 +111,189 @@ export default function WalletPanel(props) {
     setProcessModalVisible(!processModalVisible);
   };
 
-  // TODO: Process Modal Controllerrrrrrrrr
-  // SignatureProcess
-  const processModalController = ({
-    loading = true,
-    firstStepSuccess = false,
-    firstStepError = false,
-    secondStepSuccess = false,
-    secondStepError = false,
-  }) => (
-    <SignatureProcess
-      loading={loading}
-      firstStepSuccess={firstStepSuccess}
-      firstStepError={firstStepError}
-      secondStepSuccess={secondStepSuccess}
-      secondStepError={secondStepError}
-    />
-  );
+  const requestSendingHandler = () => {
+    funcSignTypedData();
+  };
 
-  // const isDisplayedQrcodeModal =
+  // async function walletConnectQrcodeModalApp({signClient}) {
+  //   try {
+  //     const {uri, approval} = await signClient.connect({
+  //       // Optionally: pass a known prior pairing (e.g. from `signClient.core.pairing.getPairings()`) to skip the `uri` step.
+  //       pairingTopic: pairing?.topic,
+  //       // Provide the namespaces and chains (e.g. `eip155` for EVM-based chains) we want to use in this session.
+  //       requiredNamespaces: {
+  //         eip155: {
+  //           methods: [
+  //             'eth_sendTransaction',
+  //             'eth_signTransaction',
+  //             'eth_sign',
+  //             'personal_sign',
+  //             'eth_signTypedData',
+  //           ],
+  //           chains: ['eip155:1'],
+  //           events: ['chainChanged', 'accountsChanged'],
+  //         },
+  //       },
+  //     });
 
-  function SignatureProcess({
-    loading = false,
-    firstStepSuccess = false,
-    firstStepError = false,
-    secondStepSuccess = false,
-    secondStepError = false,
-  }) {
-    const controlSpace = firstStepError || secondStepError ? 'space-y-12' : 'space-y-16';
+  //     // Open QRCode modal if a URI was returned (i.e. we're not connecting an existing pairing).
+  //     if (uri) {
+  //       QRCodeModal.open(uri, () => {
+  //         console.log('EVENT', 'QR Code Modal closed');
+  //       });
+  //     }
 
-    const firstStepIcon = (
-      <Image src="/elements/group_2415.svg" width={32} height={32} alt="step 1 icon" />
-    );
+  //     // Await session approval from the wallet.
+  //     const session = await approval();
+  //     // Handle the returned session (e.g. update UI to "connected" state).
+  //     await onSessionConnected(session);
+  //   } catch (e) {
+  //     console.error(e);
+  //   } finally {
+  //     // Close the QRCode modal in case it was open.
+  //     QRCodeModal.close();
+  //   }
+  //   // const provider = new providers.Web3Provider(window.ethereum);
+  //   // const signer = provider.getSigner();
+  //   // const address = await signer.getAddress();
+  //   // const client = new SignClient({
+  //   //   bridge: 'https://bridge.walletconnect.org',
+  //   //   qrcodeModal: QRCodeModal,
+  //   // });
+  //   // client.on('connect', (error, payload) => {
+  //   //   if (error) {
+  //   //     throw error;
+  //   //   }
+  //   //   // Get provided accounts and chainId
+  //   //   const {accounts, chainId} = payload.params[0];
+  //   //   console.log('accounts: ', accounts);
+  //   //   console.log('chainId: ', chainId);
+  //   // });
+  //   // client.on('session_update', (error, payload) => {
+  //   //   if (error) {
+  //   //     throw error;
+  //   //   }
+  //   //   // Get updated accounts and chainId
+  //   //   const {accounts, chainId} = payload.params[0];
+  //   //   console.log('accounts: ', accounts);
+  //   //   console.log('chainId: ', chainId);
+  //   // });
+  //   // client.on('disconnect', (error, payload) => {
+  //   //   if (error) {
+  //   //     throw error;
+  //   //   }
+  //   //   // Delete connector
+  //   // });
+  //   // // create new session
+  //   // client
+  //   //   .createSession({
+  //   //     permissions: {
+  //   //       blockchain: {
+  //   //         chains
+  // }
 
-    const successIcon = (
-      <Image src="/elements/group_2415_check.svg" width={32} height={32} alt="successful icon" />
-    );
+  async function walletConnectSignClient() {
+    // console.log('projectid: ', WALLET_CONNECT_PROJECT_ID);
 
-    const errorIcon = (
-      <Image src="/elements/group_2418_error.svg" width={32} height={32} alt="error icon" />
-    );
+    // 1. Initiate your WalletConnect client with the relay server
+    const signClient = await SignClient.init({
+      projectId: WALLET_CONNECT_PROJECT_ID,
+      metadata: {
+        name: 'TideBit DeFi',
+        description: 'TideBit DeFi WalletConnect Sign Client',
+        url: '#',
+        icons: ['https://walletconnect.com/_next/static/media/logo_mark.84dd8525.svg'],
+      },
+    });
 
-    const secondStepDefaultIcon = (
-      <Image src="/elements/group_2418.svg" width={32} height={32} alt="step 2 icon" />
-    );
+    // console.log('signClient: ', signClient);
 
-    const secondStepActivatedIcon = (
-      <Image src="/elements/group_2418(1).svg" width={32} height={32} alt="step 2 icon" />
-    );
+    // 2. Add listeners for desired SignClient events.
+    signClient.on('session_event', ({events}) => {
+      // events.forEach((event) => {
+      //   if (event.type === "session_request") {}
+      // console.log('session_event', events);
+    });
 
-    const requestButtonHandler = loading ? (
-      <Lottie className="w-40px" animationData={smallConnectingAnimation} />
-    ) : (
-      <TideButton className="px-5" content={`Send Requests`} />
-    );
+    signClient.on('session_update', ({topic, params}) => {
+      const {namespaces} = params;
+      const _session = signClient.session.get(topic);
+      // Overwrite the `namespaces` of the existing session with the incoming one.
+      const updatedSession = {..._session, namespaces};
+      // Integrate the updated session state into your dapp state.
+      onSessionUpdate(updatedSession);
+      // console.log('session_update', updatedSession);
+    });
 
-    const firstStepDefaultView = (
-      <>
-        <div>{firstStepIcon}</div>
-        <div className="w-271px space-y-1 text-lightWhite">
-          <div className="text-lg">Verify ownership</div>
-          <div className="text-sm">Confirm you are the owner of this wallet</div>
-        </div>
-      </>
-    );
+    signClient.on('session_delete', () => {
+      // Session was deleted -> reset the dapp state, clean up from user session, etc.
+      clearState();
+      // console.log('session_delete');
+    });
 
-    const firstStepSuccessView = (
-      <>
-        <div>{successIcon}</div>
-        <div className="w-271px space-y-1 text-lightWhite">
-          <div className="text-lg">Verify ownership</div>
-          <div className="text-sm">Confirm you are the owner of this wallet</div>
-        </div>
-      </>
-    );
+    // 3. Connect the application and specify session permissions.
+    // walletConnectQrcodeModalApp;
+    try {
+      const {uri, approval} = await signClient.connect({
+        // Optionally: pass a known prior pairing (e.g. from `signClient.core.pairing.getPairings()`) to skip the `uri` step.
+        pairingTopic: pairing?.topic,
+        // Provide the namespaces and chains (e.g. `eip155` for EVM-based chains) we want to use in this session.
+        requiredNamespaces: {
+          eip155: {
+            methods: [
+              'eth_sendTransaction',
+              'eth_signTransaction',
+              'eth_sign',
+              'personal_sign',
+              'eth_signTypedData',
+            ],
+            chains: ['eip155:1'],
+            events: ['chainChanged', 'accountsChanged'],
+          },
+        },
+      });
 
-    const firstStepErrorView = (
-      <>
-        <div>{errorIcon}</div>
-        <div className="w-271px space-y-1 text-lightWhite">
-          <div className="text-lg">Verify ownership</div>
-          <div className="text-sm">Confirm you are the owner of this wallet</div>
-          <div className="text-sm text-lightRed3">Something went wrong, please try again</div>
-        </div>
-      </>
-    );
+      // Open QRCode modal if a URI was returned (i.e. we're not connecting an existing pairing).
+      if (uri) {
+        QRCodeModal.open(uri, () => {
+          // console.log('EVENT', 'QR Code Modal closed, but the property is `open`');
+        });
+      }
 
-    const firstStepSectionHandler = (
-      // {firstStepSuccess ? 'success section' : firstStepError ? 'error section' : 'default section'}
-      <>
-        {firstStepSuccess
-          ? firstStepSuccessView
-          : firstStepError
-          ? firstStepErrorView
-          : firstStepDefaultView}
-      </>
-    );
+      // Await session approval from the wallet.
+      const session = await approval();
+      // Handle the returned session (e.g. update UI to "connected" state).
+      await onSessionConnected(session);
+    } catch (e) {
+      // console.error(e);
+      setErrorMessages(error.message);
+    } finally {
+      // Close the QRCode modal in case it was open.
+      QRCodeModal.close();
+    }
 
-    const secondStepDefaultView = (
-      <>
-        <div>{secondStepDefaultIcon}</div>
-        <div className="w-271px space-y-1 text-lightGray">
-          <div className="text-lg">Enable trading</div>
-          <div className="text-sm">
-            Enable secure access to our API for lightning quick trading.
-          </div>
-        </div>
-      </>
-    );
-    const secondStepActiveView = (
-      <>
-        <div>
-          {' '}
-          {secondStepActivatedIcon}
-          {/* <Image src="/elements/group_2418(1).svg" width={32} height={32} alt="step 2 icon" /> */}
-        </div>
-        <div className="w-271px space-y-1 text-lightWhite">
-          <div className="text-lg">Enable trading</div>
-          <div className="text-sm">
-            Enable secure access to our API for lightning quick trading.
-          </div>
-        </div>
-      </>
-    );
-
-    const secondStepSuccessView = (
-      <>
-        <div>
-          {successIcon}{' '}
-          {/* <Image src="/elements/group_2418(1).svg" width={32} height={32} alt="step 2 icon" /> */}
-        </div>
-        <div className="w-271px space-y-1 text-lightWhite">
-          <div className="text-lg">Enable trading</div>
-          <div className="text-sm">
-            Enable secure access to our API for lightning quick trading.
-          </div>
-        </div>
-      </>
-    );
-
-    const secondStepErrorView = (
-      <>
-        <div>
-          {' '}
-          {errorIcon}
-          {/* <Image src="/elements/group_2418(1).svg" width={32} height={32} alt="step 2 icon" /> */}
-        </div>
-        <div className="w-271px space-y-1 text-lightWhite">
-          <div className="text-lg">Enable trading</div>
-          <div className="text-sm">
-            Enable secure access to our API for lightning quick trading.
-          </div>
-          <div className="text-sm text-lightRed3">Something went wrong, please try again</div>
-        </div>
-      </>
-    );
-
-    // TODO: Notes- object GOOD
-    const secondStepSectionHandler = (
-      <>
-        {secondStepSuccess
-          ? secondStepSuccessView
-          : secondStepError
-          ? secondStepErrorView
-          : firstStepSuccess
-          ? secondStepActiveView
-          : secondStepDefaultView}
-      </>
-    );
-
-    // if (true) console.log('test')
-
-    //  TODO: Notes- function BAD
-    //   const secondStepSectionTestHandler = () =>
-    //     processModalVisible ? (
-    //       <>
-    //         <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none focus:outline-none">
-    //           <div className="relative my-6 mx-auto w-auto max-w-xl">
-    //             {/*content & panel*/}
-    //             <div
-    //               id="connectModal"
-    //               ref={processModalRef}
-    //               className="relative flex h-600px w-450px flex-col rounded-3xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none"
-    //             >
-    //               {/*header*/}
-    //               <div className="flex items-start justify-between rounded-t pt-6">
-    //                 <h3 className="ml-1/8 mt-2 w-20rem pl-1/8 text-4xl font-semibold text-lightWhite">
-    //                   Wallet Connect
-    //                 </h3>
-    //                 <button className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
-    //                   <span className="absolute top-5 right-5 block outline-none focus:outline-none">
-    //                     <ImCross onClick={processClickHandler} />
-    //                   </span>
-    //                 </button>
-    //               </div>
-    //               {/*body*/}
-
-    //               <div className="flex flex-auto flex-col items-center pt-5">
-    //                 <div className="text-lg leading-relaxed text-lightWhite">
-    //                   <div className="mx-auto flex flex-col items-center">
-    //                     <div className="mt-8 text-center text-lg text-lightGray">
-    //                       <div>You will receive two signature requests.</div>
-    //                       <div>
-    //                         {' '}
-    //                         Signing is{' '}
-    //                         <span className="text-tidebitTheme">
-    //                           <Link href="#">free</Link>
-    //                         </span>{' '}
-    //                         and will not send a transaction.
-    //                       </div>
-    //                     </div>
-
-    //                     {/* Activate First Step */}
-    //                     <div className={`${controlSpace} flex flex-col pt-16`}>
-    //                       <div className="flex items-center justify-center space-x-3">
-    //                         {firstStepSectionHandler}
-    //                       </div>
-
-    //                       {/* Second Step */}
-    //                       <div className="flex items-center justify-center space-x-3">
-    //                         {secondStepSectionHandler}
-    //                       </div>
-    //                     </div>
-
-    //                     <div className="mt-16">{requestButtonHandler}</div>
-    //                   </div>
-    //                 </div>
-    //               </div>
-    //               {/*footer*/}
-    //               <div className="flex items-center justify-end rounded-b p-2"></div>
-    //             </div>
-    //           </div>
-    //         </div>
-    //         <div className="fixed inset-0 z-40 bg-black opacity-25"></div>
-    //       </>
-    //     ) : null;
-
-    //   return <secondStepSectionTestHandler />;
-
-    return processModalVisible ? (
-      <>
-        <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none focus:outline-none">
-          <div className="relative my-6 mx-auto w-auto max-w-xl">
-            {/*content & panel*/}
-            <div
-              id="connectModal"
-              ref={processModalRef}
-              className="relative flex h-600px w-450px flex-col rounded-3xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none"
-            >
-              {/*header*/}
-              <div className="flex items-start justify-between rounded-t pt-6">
-                <h3 className="ml-1/8 mt-2 w-20rem pl-1/8 text-4xl font-semibold text-lightWhite">
-                  Wallet Connect
-                </h3>
-                <button className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
-                  <span className="absolute top-5 right-5 block outline-none focus:outline-none">
-                    <ImCross onClick={processClickHandler} />
-                  </span>
-                </button>
-              </div>
-              {/*body*/}
-
-              <div className="flex flex-auto flex-col items-center pt-5">
-                <div className="text-lg leading-relaxed text-lightWhite">
-                  <div className="mx-auto flex flex-col items-center">
-                    <div className="mt-8 text-center text-lg text-lightGray">
-                      <div>You will receive two signature requests.</div>
-                      <div>
-                        {' '}
-                        Signing is{' '}
-                        <span className="text-tidebitTheme">
-                          <Link href="#">free</Link>
-                        </span>{' '}
-                        and will not send a transaction.
-                      </div>
-                    </div>
-
-                    {/* Activate First Step */}
-                    <div className={`${controlSpace} flex flex-col pt-16`}>
-                      <div className="flex items-center justify-center space-x-3">
-                        {firstStepSectionHandler}
-                      </div>
-
-                      {/* Second Step */}
-                      <div className="flex items-center justify-center space-x-3">
-                        {secondStepSectionHandler}
-                      </div>
-                    </div>
-
-                    <div className="mt-16">{requestButtonHandler}</div>
-                  </div>
-                </div>
-              </div>
-              {/*footer*/}
-              <div className="flex items-center justify-end rounded-b p-2"></div>
-            </div>
-          </div>
-        </div>
-        <div className="fixed inset-0 z-40 bg-black opacity-25"></div>
-      </>
-    ) : null;
+    const result = await signClient.request({
+      topic: session.topic,
+      chainId: 'eip155:1',
+      request: {
+        id: 1,
+        jsonrpc: '2.0',
+        method: 'personal_sign',
+        params: [
+          '0x1d85568eEAbad713fBB5293B45ea066e552A90De',
+          '0x7468697320697320612074657374206d65737361676520746f206265207369676e6564',
+        ],
+      },
+    });
   }
-
-  function HelloModal() {
-    return helloModalVisible ? (
-      <>
-        <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none focus:outline-none">
-          <div className="relative my-6 mx-auto w-auto max-w-xl">
-            {/*content & panel*/}
-            <div
-              id="connectModal"
-              ref={helloModalRef}
-              className="relative flex h-600px w-450px flex-col rounded-3xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none"
-            >
-              {/*header*/}
-              <div className="flex items-start justify-between rounded-t pt-6">
-                <button className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
-                  <span className="absolute top-5 right-5 block outline-none focus:outline-none">
-                    <ImCross onClick={helloClickHandler} />
-                  </span>
-                </button>
-              </div>
-              {/*body*/}
-              <div className="flex flex-auto flex-col items-center pt-32">
-                <div className="text-lg leading-relaxed text-lightWhite">
-                  <div className="mx-auto flex flex-col items-center">
-                    <Image
-                      className="mt-10 w-100px"
-                      src="/elements/path_25939.svg"
-                      width={200}
-                      height={200}
-                      alt="Hello"
-                    />
-                    <div className="mt-8 mb-40 text-xl text-lightGray">
-                      You can start using TideBit now.
-                    </div>
-
-                    <TideButton className="px-12" content={`Done`} onClick={helloClickHandler} />
-                    <Link
-                      className="mt-3 text-base text-tidebitTheme underline underline-offset-4"
-                      href="#"
-                    >
-                      Connect my TideBit HK
-                    </Link>
-                  </div>
-                </div>
-              </div>
-              {/*footer*/}
-              <div className="flex items-center justify-end rounded-b p-2"></div>
-            </div>
-          </div>
-        </div>
-        <div className="fixed inset-0 z-40 bg-black opacity-25"></div>
-      </>
-    ) : null;
-  }
-
-  function QrcodeModal() {
-    return qrcodeModalVisible ? (
-      <>
-        <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none focus:outline-none">
-          <div className="relative my-6 mx-auto w-auto max-w-xl">
-            {/*content & panel*/}
-            <div
-              id="connectModal"
-              ref={qrcodeModalRef}
-              className="relative flex h-600px w-450px flex-col rounded-3xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none"
-            >
-              {/*header*/}
-              <div className="flex items-start justify-between rounded-t pt-6">
-                <h3 className="ml-1/8 mt-2 w-20rem pl-1/8 text-4xl font-semibold text-lightWhite">
-                  Wallet Connect
-                </h3>
-                <button className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
-                  <span className="absolute top-5 right-5 block outline-none focus:outline-none">
-                    <ImCross onClick={qrcodeClickHandler} />
-                  </span>
-                </button>
-              </div>
-              {/*body*/}
-              <div className="relative flex-auto pt-1">
-                <div className="text-lg leading-relaxed text-lightWhite">
-                  <div className="flex-col justify-center text-center">
-                    <Image
-                      className="mx-auto mt-16 rounded object-cover object-center"
-                      alt="QR Code"
-                      src="/elements/tidebit_qrcode.png"
-                      width={340}
-                      height={340}
-                    />{' '}
-                    <div className="mt-10 text-lg">
-                      Please open your{' '}
-                      <span className="text-tidebitTheme">
-                        <Link href="#">wallet</Link>
-                      </span>{' '}
-                      to scan the QR code.
-                    </div>
-                  </div>
-                </div>
-              </div>
-              {/*footer*/}
-              <div className="flex items-center justify-end rounded-b p-2"></div>
-            </div>
-          </div>
-        </div>
-        <div className="fixed inset-0 z-40 bg-black opacity-25"></div>
-      </>
-    ) : null;
-  }
-
-  // const DisplayedConnecting = () =>
-  //   connectingModalVisible ? (
-  //     <>
-  //       <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none focus:outline-none">
-  //         <div className="relative my-6 mx-auto w-auto max-w-xl">
-  //           {/*content & panel*/}
-  //           <div
-  //             id="connectModal"
-  //             ref={connectingModalRef}
-  //             className="relative flex h-600px w-450px flex-col rounded-3xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none"
-  //           >
-  //             {/*header*/}
-  //             <div className="flex items-start justify-between rounded-t pt-6">
-  //               <h3 className="mx-auto mt-2 w-20rem pl-1/8 text-4xl font-semibold text-lightWhite">
-  //                 Wallet Connect
-  //               </h3>
-  //               <button className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
-  //                 <span className="absolute top-5 right-5 block outline-none focus:outline-none">
-  //                   <ImCross onClick={connectingClickHandler} />
-  //                 </span>
-  //               </button>
-  //             </div>
-  //             {/*body*/}
-  //             <div className="relative flex-auto pt-1">
-  //               <div className="text-lg leading-relaxed text-lightWhite">
-  //                 <div className="flex-col justify-center text-center">
-  //                   <Lottie className="ml-7 w-full pt-12" animationData={bigConnectingAnimation} />
-  //                   <div className="mt-10 text-xl">Connecting...</div>
-  //                 </div>
-  //               </div>
-  //             </div>
-  //             {/*footer*/}
-  //             <div className="flex items-center justify-end rounded-b p-2"></div>
-  //           </div>
-  //         </div>
-  //       </div>
-  //       <div className="fixed inset-0 z-40 bg-black opacity-25"></div>
-  //     </>
-  //   ) : null;
-
-  function DisplayedConnecting() {
-    // console.log('in displayed connecting modal, componentVisible: ', componentVisible);
-    return connectingModalVisible ? (
-      <>
-        <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none focus:outline-none">
-          <div className="relative my-6 mx-auto w-auto max-w-xl">
-            {/*content & panel*/}
-            <div
-              id="connectModal"
-              ref={connectingModalRef}
-              className="relative flex h-600px w-450px flex-col rounded-3xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none"
-            >
-              {/*header*/}
-              <div className="flex items-start justify-between rounded-t pt-6">
-                <h3 className="mx-auto mt-2 w-20rem pl-1/8 text-4xl font-semibold text-lightWhite">
-                  Wallet Connect
-                </h3>
-                <button className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
-                  <span className="absolute top-5 right-5 block outline-none focus:outline-none">
-                    <ImCross onClick={connectingClickHandler} />
-                  </span>
-                </button>
-              </div>
-              {/*body*/}
-              <div className="relative flex-auto pt-1">
-                <div className="text-lg leading-relaxed text-lightWhite">
-                  <div className="flex-col justify-center text-center">
-                    <Lottie className="ml-7 w-full pt-12" animationData={bigConnectingAnimation} />
-                    <div className="mt-10 text-xl">Connecting...</div>
-                  </div>
-                </div>
-              </div>
-              {/*footer*/}
-              <div className="flex items-center justify-end rounded-b p-2"></div>
-            </div>
-          </div>
-        </div>
-        <div className="fixed inset-0 z-40 bg-black opacity-25"></div>
-      </>
-    ) : null;
-  }
-
-  // const isConnecting = connecting ? <DisplayedConnecting /> : null;
-  // TODO: Try to split connecting component
-  const isConnecting = (
-    <ConnectingModal
-      connectingModalRef={connectingModalRef}
-      connectingModalVisible={connectingModalVisible}
-      connectingClickHandler={connectingClickHandler}
-    />
-  );
 
   async function funcSignTypedData() {
     try {
       setErrorMessages('');
       setSignature(null);
+      setLoading(true);
+      // console.log('projectId', projectId);
+
       let provider = new providers.Web3Provider(window.ethereum);
       await provider.send('eth_requestAccounts', []);
 
@@ -600,6 +302,19 @@ export default function WalletPanel(props) {
       let chainId = await signer.getChainId();
       let balance = await signer.getBalance();
       setDefaultAccount(address);
+      setChainId(chainId);
+
+      if (chainId !== 1) {
+        setShowToast(true);
+      }
+
+      // Connect to the wallet => first step success
+      // Clear other state of the process modal
+      setFirstStepSuccess(true);
+      // setFirstStepError(false);
+      setSecondStepSuccess(false);
+      setSecondStepError(false);
+
       // setChainId(chainId);
       setUserBalance(ethers.utils.formatEther(balance));
 
@@ -610,8 +325,8 @@ export default function WalletPanel(props) {
       // console.log('setUserBalance: ', userBalance);
       // console.log('balance: ', balance);
 
-      // All properties on a domain are optional
-      // TODO: salt is optional, but if not provided, the signature will be different each time
+      // All properties on a domain are optional(?)
+      // TODO: salt is optional, but if not provided, the signature will be different each time(?)
       const domain = {
         name: 'TideBit Ex',
         version: '0.8.15',
@@ -641,7 +356,7 @@ export default function WalletPanel(props) {
           wallet: `${address}`,
         },
         to: {
-          name: 'TideBit Ex',
+          name: 'TideBit DeFi',
           wallet: '0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB',
         },
         contents: 'Agree to the terms and conditions',
@@ -650,30 +365,54 @@ export default function WalletPanel(props) {
       // signNotify({value: value});
 
       // console.log(value);
-
+      setLoading(true);
       let signature = await signer._signTypedData(domain, types, value);
+      setErrorMessages('');
 
       setSignature(signature);
+      // setLoading(false);
+      setSecondStepSuccess(true);
+
+      setTimeout(() => setProcessModalVisible(false), 1000);
+
+      // setProcessModalVisible(false);
+      setHelloModalVisible(true);
 
       setShowToast(true);
+      // setLoading(false);
+
+      // setLoading(false);
 
       // console.log('[EIP712] Sign typed signature: ', signature);
     } catch (error) {
       // console.error(error);
+      setSignature(null);
       setErrorMessages(error.message);
+      setSecondStepError(true);
+      setLoading(false);
     }
   }
 
+  // FIXME: nothing but taking notes
   let toastNotify = (
     <Toast
       title="Your signature"
       content={
         <>
           <div>
+            Chain Id: <span className="text-cuteBlue3">{chainId}</span>
+            {!!(chainId !== 1) && (
+              <div className="text-lightRed2">Please switch to ETH Mainnet</div>
+            )}
+          </div>
+          <div>
             Your Address: <span className="text-cuteBlue3">{defaultAccount}</span>
           </div>
           <div>
             EIP 712 Signature: <span className="text-cuteBlue3">{signature}</span>
+          </div>
+          <div>
+            <span className="text-lightRed">{errorMessages}</span>
           </div>
         </>
       }
@@ -682,21 +421,10 @@ export default function WalletPanel(props) {
     />
   );
 
-  // let signNotify = ({value}) => (
-  //   <Toast
-  //     title="Sign Test"
-  //     content={`${value}`}
-  //     toastHandler={toastHandler}
-  //     showToast={showToast}
-  //   />
-  // );
-
-  const walletOptionClickHandler = async () => {
-    // TODO: NNNNNNNotes
-    // console.log('connecting modal should be visible: ', connectingModalVisible);
-
+  async function metamaskConnect() {
+    // console.log('metamask connect func called');
     try {
-      setComponentVisible(!componentVisible);
+      setPanelVisible(!panelVisible);
       setConnecting(true);
       setConnectingModalVisible(true);
 
@@ -706,12 +434,18 @@ export default function WalletPanel(props) {
       let signer = provider.getSigner();
       let address = await signer.getAddress();
       setDefaultAccount(address);
+      let chainId = await signer.getChainId();
+      setChainId(chainId);
+
+      if (chainId !== 1) {
+        // console.log('Please switch to ETH mainnet');
+        setShowToast(true);
+      }
 
       let balance = await provider.getBalance(address);
       balance = ethers.utils.formatEther(balance);
       setUserBalance(balance);
       // console.log('user balance: ', balance);
-
       // console.log('connect to Metamask clicked, Account: ', address);
 
       // TODO: NNNNNNNotes
@@ -720,8 +454,6 @@ export default function WalletPanel(props) {
       setConnecting(false);
 
       setProcessModalVisible(true);
-      // processModalController({loading: true});
-      // <SignatureProcess firstStepSuccess={true} loading={true} />;
 
       // let signature = await signer.signMessage('TideBit DeFi test');
       // console.log('Sign the message, get the signature is: ', signature);
@@ -729,52 +461,61 @@ export default function WalletPanel(props) {
     } catch (error) {
       // console.log(error);
       setErrorMessages(error);
+      setFirstStepError(true);
+      setProcessModalVisible(true);
 
       setConnectingModalVisible(false);
       setConnecting(false);
     }
+    // if (window.ethereum) {
+    //   window.ethereum
+    //     .request({method: 'eth_requestAccounts'})
+    //     .then((accounts) => {
+    //       setDefaultAccount(accounts[0]);
+    //       setFirstStepSuccess(true);
+    //       setFirstStepError(false);
+    //     })
+    //     .catch((error) => {
+    //       if (error.code === 4001) {
+    //         // EIP-1193 userRejectedRequest error
+    //         // If this happens, the user rejected the connection request.
+    //         // console.log('Please connect to MetaMask.');
+    //         setErrorMessages('Please connect to MetaMask.');
+    //         setFirstStepError(true);
+    //       } else {
+    //         console.error(error);
+    //       }
+    //     });
+    // } else {
+    //   console.log('Please install MetaMask!');
+    //   setErrorMessages('Please install MetaMask!');
+    //   setFirstStepError(true);
+    // }
+  }
+
+  const walletconnectOptionClickHandler = async () => {
+    walletConnectSignClient();
   };
 
-  // click metamask => connect to metamask & show connecting modal
-  // connected => show signature modal
-  // click wallet connect => show QR code modal
-  // click
-  const modalHandler = async () => {};
+  const metamaskOptionClickHandler = async () => {
+    // TODO: NNNNNNNotes
+    // console.log('connecting modal should be visible: ', connectingModalVisible);
 
-  const connectStateHandler = () => {
-    setConnecting(true);
-    setComponentVisible(!componentVisible);
-
-    // <ConnectingModal showConnectingModal="true" />;
-  };
-
-  const isDisplayedConnectingModal = connecting ? <ConnectingModal /> : null;
-
-  // const connectingLoading = loadingVisible ? ( <ConnectingLoading /> ) : null;
-
-  // FIXME: To be improved
-  const clearState = () => {
-    if (!componentVisible) {
-      setConnecting(false);
-      // setDefaultAccount(null);
-      setErrorMessages('');
-      setSignature(null);
-      setUserBalance(null);
+    if (typeof window.ethereum === 'undefined') {
+      walletConnectSignClient();
+      // console.log('Metemask is uninstalled');
+      return;
     }
-    // setConnecting(false);
-    // setDefaultAccount(null);
-    // setErrorMessages('');
-    // setSignature(null);
-    // setUserBalance(null);
+
+    metamaskConnect();
   };
 
-  const isDisplayedWalletPanel = componentVisible ? (
+  const isDisplayedWalletPanel = panelVisible ? (
     <>
       <div className="fixed inset-0 z-40 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">
         <div className="relative my-6 mx-auto w-auto max-w-xl">
           {/*content & panel*/}
           <div
-            ref={ref}
             id="connectModal"
             className="relative flex w-full flex-col rounded-3xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none"
           >
@@ -798,19 +539,14 @@ export default function WalletPanel(props) {
                 <div className="grid grid-cols-3 gap-3">
                   <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2">
                     <WalletOption
-                      onClick={walletOptionClickHandler}
+                      onClick={metamaskOptionClickHandler}
                       name={`Metamask`}
                       img={`/elements/74263ff26820cd0d895968e3b55e8902.svg`}
                       iconSize={50}
                     />
                   </div>
                   <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2">
-                    <WalletOption
-                      onClick={helloClickHandler}
-                      name={`iSunOne`}
-                      img={`/elements/i_sun_one.svg`}
-                      iconSize={50}
-                    />
+                    <WalletOption name={`iSunOne`} img={`/elements/i_sun_one.svg`} iconSize={50} />
                   </div>
                   <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2">
                     <WalletOption name={`imToken`} img={`/elements/path_25918.svg`} iconSize={50} />
@@ -847,7 +583,7 @@ export default function WalletPanel(props) {
                   </div>
                   <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2">
                     <WalletOption
-                      onClick={qrcodeClickHandler}
+                      onClick={walletconnectOptionClickHandler}
                       name={`WalletConnect`}
                       img={`/elements/walletconnect@2x.png`}
                       iconSize={50}
@@ -880,21 +616,52 @@ export default function WalletPanel(props) {
       >
         {`Wallet Connect`}
       </TideButton>
+
       {isDisplayedWalletPanel}
-      {/* {isDisplayedConnectingModal} */}
 
-      {isConnecting}
+      <ConnectingModal
+        connectingModalVisible={connectingModalVisible}
+        connectingClickHandler={connectingClickHandler}
+      />
 
-      <QrcodeModal />
-      {/* <processModalController loading={true} /> */}
-      <SignatureProcess firstStepSuccess={true} loading={true} />
+      <QrcodeModal
+        qrcodeModalVisible={qrcodeModalVisible}
+        qrcodeClickHandler={qrcodeClickHandler}
+      />
+
+      <HelloModal helloModalVisible={helloModalVisible} helloClickHandler={helloClickHandler} />
+
+      <SignatureProcessModal
+        requestSendingHandler={requestSendingHandler}
+        firstStepSuccess={firstStepSuccess}
+        firstStepError={firstStepError}
+        secondStepSuccess={secondStepSuccess}
+        secondStepError={secondStepError}
+        loading={loading}
+        processModalVisible={processModalVisible}
+        processClickHandler={processClickHandler}
+      />
+
+      {/* TODO: Notes- the below is the same but `{toastNotify}` is easier to be changed and managed  */}
       {toastNotify}
-
-      {/* {signNotify} */}
-
-      <HelloModal />
-      {/* {isDisplayedQrcodeModal} */}
-      {/* <ConnectingModal /> */}
+      {/* <Toast
+        title="Your signature"
+        content={
+          <>
+            <div>
+              Your Address: <span className="text-cuteBlue3">{defaultAccount}</span>
+            </div>
+            <div>
+              EIP 712 Signature: <span className="text-cuteBlue3">{signature}</span>
+            </div>
+            <div>
+              <span className="text-lightRed">{errorMessages}</span>
+            </div>
+          </>
+        }
+        toastHandler={toastHandler}
+        showToast={showToast}
+      /> */}
     </>
   );
 }

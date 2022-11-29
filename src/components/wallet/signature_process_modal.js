@@ -14,9 +14,13 @@ const SignatureProcessModal = ({
   processModalRef = null,
   processModalVisible = false,
   processClickHandler = () => {},
+  requestSendingHandler = () => {},
   ...otherProps
 }) => {
   const controlSpace = firstStepError || secondStepError ? 'space-y-12' : 'space-y-16';
+
+  // if (firstStepError && secondStepError) return
+  // if (firstStepError && secondStepSuccess) return
 
   const firstStepIcon = (
     <Image src="/elements/group_2415.svg" width={32} height={32} alt="step 1 icon" />
@@ -41,7 +45,7 @@ const SignatureProcessModal = ({
   const requestButtonHandler = loading ? (
     <Lottie className="w-40px" animationData={smallConnectingAnimation} />
   ) : (
-    <TideButton className="px-5" content={`Send Requests`} />
+    <TideButton onClick={requestSendingHandler} className="px-5" content={`Send Requests`} />
   );
 
   const firstStepDefaultView = (
@@ -221,7 +225,7 @@ const SignatureProcessModal = ({
 
   const isDisplayedProcessModal = processModalVisible ? (
     <>
-      <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none focus:outline-none">
+      <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">
         <div className="relative my-6 mx-auto w-auto max-w-xl">
           {/*content & panel*/}
           <div

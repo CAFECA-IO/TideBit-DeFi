@@ -18,7 +18,7 @@ import NotificationItem from '../notification_item/notification_item';
 const NavBar = ({notificationNumber = 1}) => {
   const [navOpen, setNavOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const {ref, componentVisible, setComponentVisible} = useOuterClick(false);
+  const {ref: notifyRef, componentVisible, setComponentVisible} = useOuterClick(false);
 
   const clickHanlder = () => setNavOpen(!navOpen);
 
@@ -47,66 +47,6 @@ const NavBar = ({notificationNumber = 1}) => {
 
   const isDisplayedMobileNavBar = navOpen ? '' : 'hidden';
   // componentVisible ? 'animate-fadeIn' : 'animate-fadeOut';
-
-  const isDisplayedNotificationSidebarSection = (
-    <>
-      {/* sidebar section */}
-      <div
-        className={`pointer-events-none fixed right-1 top-44px ${
-          componentVisible ? 'z-30' : 'z-30'
-        } flex overflow-x-hidden outline-none focus:outline-none`}
-      >
-        <div className="relative my-6 mx-auto w-auto max-w-xl">
-          {' '}
-          <div className={`relative`}>
-            {/* sidebar self */}
-            <div
-              ref={ref}
-              className={`pointer-events-auto ${'w-479px'} h-screen ${
-                componentVisible ? 'translate-x-0' : 'translate-x-full'
-              } overflow-y-scroll bg-darkGray/90 p-5 pt-8 text-white transition-all  duration-300`}
-            >
-              <h1 className="pl-5 text-2xl font-bold">Notification</h1>
-              <div className="fixed right-30px text-sm text-tidebitTheme underline hover:cursor-pointer">
-                Clear All
-              </div>
-
-              <div className="mt-20 mb-20">
-                <div>
-                  <NotificationItem />
-                </div>
-                <div className="mt-5">
-                  <NotificationItem />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </>
-  );
-
-  const isDisplayedNotificationSidebarCover = componentVisible ? (
-    <>
-      {/* cover for NavBar ***Bell Icon*** */}
-      <div
-        className={`${
-          componentVisible ? 'visible animate-fade duration-700 ease-in-out' : 'invisible'
-        } invisible fixed z-50 flex h-16 items-center justify-center overflow-x-hidden overflow-y-hidden bg-transparent outline-none hover:cursor-pointer focus:outline-none lg:visible lg:right-52 lg:top-6 lg:h-8 lg:w-8`}
-      >
-        {' '}
-      </div>
-
-      {/* cover for Main, Footer */}
-      <div
-        className={`${
-          componentVisible ? 'transition-opacity duration-700 ease-in-out' : 'invisible'
-        } fixed inset-0 z-30 flex items-center justify-center overflow-x-hidden overflow-y-hidden bg-darkGray/10 outline-none backdrop-blur-sm focus:outline-none`}
-      >
-        {' '}
-      </div>
-    </>
-  ) : null;
 
   const isDisplayedNotificationSidebarMobileCover = (
     <div
@@ -142,19 +82,6 @@ const NavBar = ({notificationNumber = 1}) => {
                         V {version}
                       </p>
                     </div>
-                    {/* <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    className="w-10 h-10 text-white p-2 bg-cyan-600 rounded-full"
-                    viewBox="0 0 24 24"
-                  >
-                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
-                  </svg>
-                  <span className="ml-3 text-xl">TideBit</span> */}
                   </div>
                 </Link>
                 {/* Desktop menu */}
@@ -202,7 +129,7 @@ const NavBar = ({notificationNumber = 1}) => {
               </div>
 
               {/* Mobile menu toggle */}
-              <div ref={ref} className="mr-0 flex pt-3 lg:hidden">
+              <div ref={notifyRef} className="mr-0 flex pt-3 lg:hidden">
                 <button
                   onClick={clickHanlder}
                   className="inline-flex items-center justify-center rounded-md p-2 hover:text-cyan-300 focus:outline-none"
@@ -213,7 +140,7 @@ const NavBar = ({notificationNumber = 1}) => {
             </div>
           </div>
           {/* Mobile menu */}
-          <div ref={ref} className={`lg:hidden ${isDisplayedMobileNavBar}`}>
+          <div ref={notifyRef} className={`lg:hidden ${isDisplayedMobileNavBar}`}>
             {/* Cover for mobile bell icon */}
             {isDisplayedNotificationSidebarMobileCover}
 
@@ -275,15 +202,7 @@ const NavBar = ({notificationNumber = 1}) => {
       </div>
 
       {/* Notification Sidebar */}
-      {isDisplayedNotificationSidebarCover}
-      {isDisplayedNotificationSidebarSection}
-
-      {/* TODO: forwardRef */}
-      {/* <Notification
-        forwardedRef={ref}
-        componentVisible={componentVisible}
-        setComponentVisible={setComponentVisible}
-      /> */}
+      <Notification notifyRef={notifyRef} componentVisible={componentVisible} />
     </>
   );
 };

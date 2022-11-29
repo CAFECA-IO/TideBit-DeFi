@@ -4,15 +4,15 @@ import {forwardRef} from 'react';
 import NotificationItem from '../notification_item/notification_item';
 
 export default function Notification(props) {
-  const refP = forwardRef(props?.forwardedRef);
-  const {componentVisible, setComponentVisible} = useOuterClick(false, refP);
+  const {notifyRef, componentVisible} = props;
+  // const refP = forwardRef(props?.forwardedRef);
+  // const {componentVisible, setComponentVisible} = useOuterClick(false, refP);
 
-  const sidebarOpenHandler = () => {
-    // setSidebarOpen(!sidebarOpen);
-    setComponentVisible(!componentVisible);
-    // console.log('sidebarOpenHandler clicked, componentVisible: ', componentVisible);
-  };
+  // const sidebarOpenHandler = () => {
+  //   setComponentVisible(!componentVisible);
+  // };
 
+  // Desktop notification drawer
   const isDisplayedNotificationSidebarSection = (
     <>
       {/* sidebar section */}
@@ -26,7 +26,7 @@ export default function Notification(props) {
           <div className={`relative`}>
             {/* sidebar self */}
             <div
-              ref={refP}
+              ref={notifyRef}
               className={`pointer-events-auto ${'w-479px'} h-screen ${
                 componentVisible ? 'translate-x-0' : 'translate-x-full'
               } bg-darkGray/90 p-5 pt-8 text-white transition-all duration-300`}
@@ -49,6 +49,7 @@ export default function Notification(props) {
     </>
   );
 
+  // Cover for Desktop notification drawer
   const isDisplayedNotificationSidebarCover = componentVisible ? (
     <>
       {/* cover for NavBar ***Bell Icon*** */}
@@ -71,6 +72,7 @@ export default function Notification(props) {
     </>
   ) : null;
 
+  // Cover for Mobile notification drawer
   const isDisplayedNotificationSidebarMobileCover = (
     <div
       className={`${
@@ -80,6 +82,8 @@ export default function Notification(props) {
       {' '}
     </div>
   );
+
+  // TODO: Mobile notification drawer [Not yet implemented]
 
   return (
     <div>

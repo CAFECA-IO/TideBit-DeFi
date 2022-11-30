@@ -74,7 +74,7 @@ const CryptoCard = ({
 
   const sampleArray = randomArray(1100, 1200, 10);
 
-  // TODO: Notes execution order about parameters and logic flow
+  // TODO: Taking Notes- execution order about parameters and logic flow
   // #1AE2A0 is light green, #E86D6D is light red
   const fakeDataColor = () => {
     if (sampleArray[sampleArray.length - 1] > sampleArray[sampleArray.length - 2]) {

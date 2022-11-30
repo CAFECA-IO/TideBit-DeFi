@@ -45,7 +45,9 @@ const SignatureProcessModal = ({
   const requestButtonHandler = loading ? (
     <Lottie className="w-40px" animationData={smallConnectingAnimation} />
   ) : (
-    <TideButton onClick={requestSendingHandler} className="px-5" content={`Send Requests`} />
+    <TideButton onClick={requestSendingHandler} className="px-5">
+      Send Requests
+    </TideButton>
   );
 
   const firstStepDefaultView = (

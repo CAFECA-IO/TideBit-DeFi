@@ -23,10 +23,9 @@ const Cta = () => {
               the best quality.{' '}
             </div>
             <div className="pt-2 md:pt-8 xl:pt-10">
-              <TideButton
-                className="px-2 py-1 font-normal xxs:text-xxs sm:py-2 sm:px-5 sm:text-base xl:py-3 xl:px-5 xl:text-lg"
-                content={`GET STARTED`}
-              />
+              <TideButton className="px-2 py-1 font-normal xxs:text-xxs sm:py-2 sm:px-5 sm:text-base xl:py-3 xl:px-5 xl:text-lg">
+                GET STARTED
+              </TideButton>
             </div>
           </div>
         </div>
@@ -49,7 +48,9 @@ const Cta = () => {
               the best quality.{' '}
             </div>
             <div className="mx-auto pt-2 md:pt-8">
-              <TideButton className="px-5 py-2 font-normal " content={`GET STARTED`} />
+              <TideButton className="px-2 py-1 font-normal xxs:text-xxs sm:py-2 sm:px-5 sm:text-base xl:py-3 xl:px-5 xl:text-lg">
+                GET STARTED
+              </TideButton>{' '}
             </div>
           </div>
         </div>

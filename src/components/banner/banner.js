@@ -32,10 +32,9 @@ const Banner = () => {
                   <div className="flex flex-col items-start justify-start space-y-2 text-start font-bold sm:space-y-4 lg:space-y-8">
                     <div className="text-white">New Wallet available</div>
                     <div className="text-tidebitTheme">iSunOne</div>
-                    <TideButton
-                      className="px-2 py-1 font-normal xxs:text-xxs sm:py-2 sm:px-5 sm:text-base xl:py-3 xl:px-5 xl:text-lg"
-                      content={`TRY IT NOW`}
-                    />
+                    <TideButton className="px-2 py-1 font-normal xxs:text-xxs sm:py-2 sm:px-5 sm:text-base xl:py-3 xl:px-5 xl:text-lg">
+                      TRY IT NOW`
+                    </TideButton>
                   </div>
                 </div>
               </div>
@@ -66,10 +65,9 @@ const Banner = () => {
                     <div className="text-white">New Wallet available</div>
                     <div className="text-tidebitTheme">iSunOne</div>
                   </div>
-                  <TideButton
-                    className="px-5 py-2 font-normal sm:px-6 sm:py-3 sm:text-xl"
-                    content={`TRY IT NOW`}
-                  />
+                  <TideButton className="px-2 py-1 font-normal xxs:text-xxs sm:py-2 sm:px-5 sm:text-base xl:py-3 xl:px-5 xl:text-lg">
+                    TRY IT NOW`
+                  </TideButton>
                 </div>
               </div>
             </div>

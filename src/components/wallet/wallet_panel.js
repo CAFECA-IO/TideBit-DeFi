@@ -336,7 +336,6 @@ export default function WalletPanel(props) {
 
   // TODO: 1. connect 2. sign
   // make sure connected, and then pop up the sign modal to continue signing
-
   async function walletConnectClient() {
     connect();
 

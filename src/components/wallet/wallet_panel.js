@@ -95,12 +95,14 @@ export default function WalletPanel(props) {
   const clickHandler = () => {
     setPanelVisible(!panelVisible);
 
-    if (connector) {
-      killSession();
-    }
+    // TODO: wallet connect kill session part 1
+    // if (connector) {
+    //   killSession();
+    // }
   };
 
-  const walletConnectBtnTextHandler = connector ? 'Disconnect' : 'Wallet Connectt';
+  // TODO: wallet connect kill session part 2
+  // const walletConnectBtnTextHandler = connector ? 'Disconnect' : 'Wallet Connect';
 
   const connectingClickHandler = () => {
     setConnectingModalVisible(!connectingModalVisible);
@@ -146,8 +148,11 @@ export default function WalletPanel(props) {
     if (!connector.connected) {
       // setConnectingModalVisible(true);
       // console.log('connecting visible...');
+      // console.log('QR code opened...');
+      setShowToast(true);
 
       await connector.createSession();
+      setPanelVisible(false);
 
       // console.log('connecting Invisible...');
       // setConnectingModalVisible(false);
@@ -203,7 +208,10 @@ export default function WalletPanel(props) {
         await onConnect(chainId, accounts[0]);
         setFetching(false);
 
+        setPanelVisible(false);
         setProcessModalVisible(true);
+        setFirstStepSuccess(true);
+
         // console.log('connecting Invisible...');
         // setConnectingModalVisible(false);
       });
@@ -276,12 +284,29 @@ export default function WalletPanel(props) {
     ];
 
     try {
+      setLoading(true);
+      setSecondStepSuccess(false);
+      setErrorMessages('');
+      setSignature(null);
+
       const signature = await connector.signTypedData(msgParams);
       setSignature(signature);
-      // console.log('sigature: ', signature);
+
+      setSecondStepSuccess(true);
+      setTimeout(() => setProcessModalVisible(false), 1000);
+
+      setLoading(false);
+
+      setHelloModalVisible(true);
       setShowToast(true);
     } catch (error) {
       // console.error('sign 712 ERROR', error);
+      setSignature(null);
+      setErrorMessages(error.message);
+      setSecondStepError(true);
+      setLoading(false);
+
+      setShowToast(true);
     }
   }
 
@@ -531,8 +556,23 @@ export default function WalletPanel(props) {
 
   async function funcSignTypedData() {
     if (connector) {
-      _walletConnectSignEIP712();
+      await _walletConnectSignEIP712();
       return;
+      // // console.log('detect connector');
+      // try {
+      //   // console.log('start try signTypedData');
+      //   // setLoading(true);
+      //   await _walletConnectSignEIP712();
+      //   // setLoading(false);
+      //   // console.log('signTypedData success');
+      //   return;
+      // } catch (error) {
+      //   // console.log('wallet connect signTypedData error: ', error);
+      //   setErrorMessages(error.message);
+      //   setShowToast(true);
+      //   setLoading(false);
+      //   return;
+      // }
     }
 
     try {
@@ -867,7 +907,7 @@ export default function WalletPanel(props) {
         onClick={clickHandler}
         className={`${props?.className} mt-4 rounded border-0 bg-tidebitTheme py-2 px-5 text-base text-white hover:bg-cyan-600 focus:outline-none md:mt-0`}
       >
-        {walletConnectBtnTextHandler}
+        Wallet Connect
       </TideButton>
 
       {isDisplayedWalletPanel}

@@ -147,14 +147,10 @@ const WalletConnectCom = () => {
               Network not supported. Please disconnect, switch networks, and connect again.
             </strong>
           )}
-          <TideButton onClick={killSession} content="Disconnect">
-            Disconnect
-          </TideButton>
+          <TideButton onClick={killSession}>Disconnect</TideButton>
         </div>
       ) : (
-        <TideButton onClick={connect} content="Connect">
-          Connect Wallet
-        </TideButton>
+        <TideButton onClick={connect}>Connect Wallet</TideButton>
       )}
       {supported ? (
         <>

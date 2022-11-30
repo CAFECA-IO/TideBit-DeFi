@@ -1,6 +1,6 @@
 import React from 'react';
 
-const TideButton = ({content = '', isHover = false, isFocus = false, ...otherProps}) => {
+const TideButton = ({children, isHover = false, isFocus = false, ...otherProps}) => {
   // const hoverStyle =
   // 	isHover && `hover:scale-110 transition duration-300 ease-in-out`;
   const hoverStyle =
@@ -16,7 +16,7 @@ const TideButton = ({content = '', isHover = false, isFocus = false, ...otherPro
       {...otherProps}
       className={`${otherProps?.className} ${hoverStyle} ${focusStyle} mt-4 rounded border-0 bg-tidebitTheme py-2 px-5 text-base text-white transition-colors duration-300 hover:cursor-pointer hover:bg-cyan-600 focus:outline-none md:mt-0`}
     >
-      {content}
+      {children}
     </button>
   );
 };

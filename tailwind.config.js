@@ -162,6 +162,7 @@ module.exports = {
         cuteBlue1: '#5895D9',
         cuteBlue2: '#527dc7',
         cuteBlue3: '#4165a3',
+        cuteBlue4: '#057df5',
 
         darkGray: '#161719',
         darkGray1: '#242A31',

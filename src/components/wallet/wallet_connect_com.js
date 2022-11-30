@@ -219,12 +219,12 @@ const WalletConnectCom = () => {
               Network not supported. Please disconnect, switch networks, and connect again.
             </strong>
           )}
-          <TideButton onClick={killSession} className="bg-cuteBlue2 text-3xl hover:bg-cuteBlue">
+          <TideButton onClick={killSession} className="bg-cuteBlue2 text-3xl hover:bg-cuteBlue2/80">
             Disconnect
           </TideButton>
         </div>
       ) : (
-        <TideButton onClick={connect} className="bg-cuteBlue2 text-3xl hover:bg-cuteBlue">
+        <TideButton onClick={connect} className="bg-cuteBlue2 text-3xl hover:bg-cuteBlue2/80">
           Connect Wallet
         </TideButton>
       )}
@@ -244,7 +244,7 @@ const WalletConnectCom = () => {
             </TideButton>
           </div>
           <div>
-            <TideButton onClick={sendTransaction}>sendTransaction</TideButton>
+            <TideButton onClick={sendTransaction}>send transaction</TideButton>
           </div>
         </>
       ) : (

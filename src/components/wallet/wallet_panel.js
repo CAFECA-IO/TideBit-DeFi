@@ -11,9 +11,10 @@ import QrcodeModal from './qrcode_modal';
 import HelloModal from './hello_modal';
 // import {projectId} from '/src/constants/walletconnect';
 // import WalletConnectProvider from '@walletconnect/web3-provider';
-import SignClient from '@walletconnect/sign-client';
+// import SignClient from '@walletconnect/sign-client';
 import QRCodeModal from '@walletconnect/qrcode-modal';
 import WalletConnect from '@walletconnect/client';
+import {SUPPORTED_NETWORKS} from '../../constants/network';
 
 const ICON_SIZE = 50;
 const WALLET_CONNECT_PROJECT_ID = process.env.WALLET_CONNECT_PROJECT_ID;
@@ -66,6 +67,12 @@ export default function WalletPanel(props) {
 
   const [showToast, setShowToast] = useState(false);
 
+  const [connector, setConnector] = useState(null);
+  const [fetching, setFetching] = useState(false);
+  const [supported, setSupported] = useState(false);
+  const [symbol, setSymbol] = useState(null);
+  const [chooseWalletConnect, setChooseWalletConnect] = useState(false);
+
   const clearState = () => {
     setConnecting(false);
     setDefaultAccount('');
@@ -115,6 +122,220 @@ export default function WalletPanel(props) {
   const requestSendingHandler = () => {
     funcSignTypedData();
   };
+
+  const connect = async () => {
+    setFetching(true);
+
+    // 1. Create connector
+    const connector = new WalletConnect({
+      bridge: 'https://bridge.walletconnect.org',
+      qrcodeModal: QRCodeModal,
+    });
+
+    // 2. Update the connector state
+    setConnector(connector);
+
+    // 3. If not connected, create a new session
+    if (!connector.connected) {
+      await connector.createSession();
+    }
+
+    // 4. Sign typed data
+    // _walletConnectSignEIP712();
+  };
+
+  async function onConnect(chainId, connectedAccount) {
+    // handle connect event
+    setDefaultAccount(connectedAccount);
+    setChainId(chainId);
+    setChooseWalletConnect(true);
+
+    // get chain data
+    const networkData = SUPPORTED_NETWORKS.filter(chain => chain.chain_id === chainId)[0];
+
+    if (!networkData) {
+      setSupported(false);
+    } else {
+      setSupported(true);
+      // setNetwork(networkData.name);
+      // setSymbol(networkData.native_currency.symbol);
+      setChainId(chainId);
+
+      // 1. Create an Ethers provider
+      const provider = new ethers.providers.StaticJsonRpcProvider(networkData.rpc_url, {
+        chainId,
+        name: networkData.name,
+      });
+
+      // 2. Get the account balance
+      const balance = await provider.getBalance(connectedAccount);
+      // 3. Format the balance
+      const formattedBalance = ethers.utils.formatEther(balance);
+      // 4. Save the balance to state
+      setUserBalance(formattedBalance);
+    }
+  }
+
+  useEffect(() => {
+    if (connector) {
+      connector.on('connect', async (error, payload) => {
+        if (error) {
+          // console.error(error);
+          return;
+        }
+
+        const {chainId, accounts} = payload.params[0];
+        await onConnect(chainId, accounts[0]);
+        setFetching(false);
+      });
+
+      connector.on('disconnect', async (error, payload) => {
+        if (error) {
+          // console.error(error);
+        }
+
+        // handle disconnect event
+        resetApp();
+      });
+
+      // check state variables here & if needed refresh the app
+      // If any of these variables do not exist and the connector is connected, refresh the data
+      if ((!chainId || !defaultAccount || !userBalance) && connector.connected) {
+        refreshData();
+      }
+    }
+
+    async function refreshData() {
+      const {chainId, accounts} = connector;
+      await onConnect(chainId, accounts[0]);
+      setFetching(false);
+    }
+  }, [connector, chainId, defaultAccount, userBalance]);
+
+  async function _walletConnectSignEIP712() {
+    const typedData = {
+      types: {
+        EIP712Domain: [
+          {name: 'name', type: 'string'},
+          {name: 'version', type: 'string'},
+          {name: 'chainId', type: 'uint256'},
+          {name: 'verifyingContract', type: 'address'},
+        ],
+        Person: [
+          {name: 'name', type: 'string'},
+          {name: 'account', type: 'address'},
+        ],
+        Mail: [
+          {name: 'from', type: 'Person'},
+          {name: 'to', type: 'Person'},
+          {name: 'contents', type: 'string'},
+        ],
+      },
+      primaryType: 'Mail',
+      domain: {
+        name: 'TideBit DeFi',
+        version: '1.0',
+        chainId: 1,
+        verifyingContract: '0x0000000000000000000000000000000000000000',
+      },
+      message: {
+        from: {
+          name: 'User',
+          account: `${defaultAccount}`,
+        },
+        to: {
+          name: 'TideBit DeFi',
+          account: '0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB',
+        },
+        contents: 'Agree to the terms and conditions',
+      },
+    };
+
+    const msgParams = [
+      defaultAccount, // Required
+      JSON.stringify(typedData), // Required
+    ];
+
+    try {
+      const signature = await connector.signTypedData(msgParams);
+      setSignature(signature);
+      // console.log('sigature: ', signature);
+      setShowToast(true);
+    } catch (error) {
+      // console.error('sign 712 ERROR', error);
+    }
+  }
+
+  const killSession = () => {
+    // add logic to ensure the mobile wallet connection has been killed
+    // Make sure the connector exists before trying to kill the session
+    if (connector) {
+      connector.killSession();
+    }
+    resetApp();
+  };
+
+  const resetApp = () => {
+    // reset state variables here
+    setConnector(null);
+    setFetching(false);
+  };
+
+  // TODO: 1. connect 2. sign
+  // make sure connected, and then pop up the sign modal to continue signing
+
+  async function walletConnectClient() {
+    connect();
+    if (connector) {
+      _walletConnectSignEIP712();
+    }
+    // DOC: Sign Typed Data
+    // connector
+    //   .signTypedData(msgParams)
+    //   .then(result => {
+    //     // Returns signature.
+    //     console.log(result);
+    //   })
+    //   .catch(error => {
+    //     // Error returned when rejected
+    //     console.error(error);
+    //   });
+    //   try {
+    //     const client = new SignClient({
+    //       bridge: 'https://bridge.walletconnect.org',
+    //       qrcodeModal: QRCodeModal,
+    //     });
+    //     client.on('connect', (error, payload) => {
+    //       if (error) {
+    //         throw error;
+    //       }
+    //       // Get provided accounts and chainId
+    //       const {accounts, chainId} = payload.params[0];
+    //       console.log('accounts: ', accounts);
+    //       console.log('chainId: ', chainId);
+    //     });
+    //     client.on('session_update', (error, payload) => {
+    //       if (error) {
+    //         throw error;
+    //       }
+    //       // Get updated accounts and chainId
+    //       const {accounts, chainId} = payload.params[0];
+    //       console.log('accounts: ', accounts);
+    //       console.log('chainId: ', chainId);
+    //     });
+    //     client.on('disconnect', (error, payload) => {
+    //       if (error) {
+    //         throw error;
+    //       }
+    //       // Delete connector
+    //     });
+    //     // create new session
+    //     client
+    //       .createSession({
+    //         permissions: {
+    //           blockchain: {
+    // }}})
+  }
 
   // async function walletConnectQrcodeModalApp({signClient}) {
   //   try {
@@ -193,100 +414,100 @@ export default function WalletPanel(props) {
   //   //         chains
   // }
 
-  async function walletConnectSignClient() {
-    // console.log('projectid: ', WALLET_CONNECT_PROJECT_ID);
+  // async function walletConnectSignClient() {
+  //   // console.log('projectid: ', WALLET_CONNECT_PROJECT_ID);
 
-    // 1. Initiate your WalletConnect client with the relay server
-    const signClient = await SignClient.init({
-      projectId: WALLET_CONNECT_PROJECT_ID,
-      metadata: {
-        name: 'TideBit DeFi',
-        description: 'TideBit DeFi WalletConnect Sign Client',
-        url: '#',
-        icons: ['https://walletconnect.com/_next/static/media/logo_mark.84dd8525.svg'],
-      },
-    });
+  //   // 1. Initiate your WalletConnect client with the relay server
+  //   const signClient = await SignClient.init({
+  //     projectId: WALLET_CONNECT_PROJECT_ID,
+  //     metadata: {
+  //       name: 'TideBit DeFi',
+  //       description: 'TideBit DeFi WalletConnect Sign Client',
+  //       url: '#',
+  //       icons: ['https://walletconnect.com/_next/static/media/logo_mark.84dd8525.svg'],
+  //     },
+  //   });
 
-    // console.log('signClient: ', signClient);
+  //   // console.log('signClient: ', signClient);
 
-    // 2. Add listeners for desired SignClient events.
-    signClient.on('session_event', ({events}) => {
-      // events.forEach((event) => {
-      //   if (event.type === "session_request") {}
-      // console.log('session_event', events);
-    });
+  //   // 2. Add listeners for desired SignClient events.
+  //   signClient.on('session_event', ({events}) => {
+  //     // events.forEach((event) => {
+  //     //   if (event.type === "session_request") {}
+  //     // console.log('session_event', events);
+  //   });
 
-    signClient.on('session_update', ({topic, params}) => {
-      const {namespaces} = params;
-      const _session = signClient.session.get(topic);
-      // Overwrite the `namespaces` of the existing session with the incoming one.
-      const updatedSession = {..._session, namespaces};
-      // Integrate the updated session state into your dapp state.
-      onSessionUpdate(updatedSession);
-      // console.log('session_update', updatedSession);
-    });
+  //   signClient.on('session_update', ({topic, params}) => {
+  //     const {namespaces} = params;
+  //     const _session = signClient.session.get(topic);
+  //     // Overwrite the `namespaces` of the existing session with the incoming one.
+  //     const updatedSession = {..._session, namespaces};
+  //     // Integrate the updated session state into your dapp state.
+  //     onSessionUpdate(updatedSession);
+  //     // console.log('session_update', updatedSession);
+  //   });
 
-    signClient.on('session_delete', () => {
-      // Session was deleted -> reset the dapp state, clean up from user session, etc.
-      clearState();
-      // console.log('session_delete');
-    });
+  //   signClient.on('session_delete', () => {
+  //     // Session was deleted -> reset the dapp state, clean up from user session, etc.
+  //     clearState();
+  //     // console.log('session_delete');
+  //   });
 
-    // 3. Connect the application and specify session permissions.
-    // walletConnectQrcodeModalApp;
-    try {
-      const {uri, approval} = await signClient.connect({
-        // Optionally: pass a known prior pairing (e.g. from `signClient.core.pairing.getPairings()`) to skip the `uri` step.
-        pairingTopic: pairing?.topic,
-        // Provide the namespaces and chains (e.g. `eip155` for EVM-based chains) we want to use in this session.
-        requiredNamespaces: {
-          eip155: {
-            methods: [
-              'eth_sendTransaction',
-              'eth_signTransaction',
-              'eth_sign',
-              'personal_sign',
-              'eth_signTypedData',
-            ],
-            chains: ['eip155:1'],
-            events: ['chainChanged', 'accountsChanged'],
-          },
-        },
-      });
+  //   // 3. Connect the application and specify session permissions.
+  //   // walletConnectQrcodeModalApp;
+  //   try {
+  //     const {uri, approval} = await signClient.connect({
+  //       // Optionally: pass a known prior pairing (e.g. from `signClient.core.pairing.getPairings()`) to skip the `uri` step.
+  //       pairingTopic: pairing?.topic,
+  //       // Provide the namespaces and chains (e.g. `eip155` for EVM-based chains) we want to use in this session.
+  //       requiredNamespaces: {
+  //         eip155: {
+  //           methods: [
+  //             'eth_sendTransaction',
+  //             'eth_signTransaction',
+  //             'eth_sign',
+  //             'personal_sign',
+  //             'eth_signTypedData',
+  //           ],
+  //           chains: ['eip155:1'],
+  //           events: ['chainChanged', 'accountsChanged'],
+  //         },
+  //       },
+  //     });
 
-      // Open QRCode modal if a URI was returned (i.e. we're not connecting an existing pairing).
-      if (uri) {
-        QRCodeModal.open(uri, () => {
-          // console.log('EVENT', 'QR Code Modal closed, but the property is `open`');
-        });
-      }
+  //     // Open QRCode modal if a URI was returned (i.e. we're not connecting an existing pairing).
+  //     if (uri) {
+  //       QRCodeModal.open(uri, () => {
+  //         // console.log('EVENT', 'QR Code Modal closed, but the property is `open`');
+  //       });
+  //     }
 
-      // Await session approval from the wallet.
-      const session = await approval();
-      // Handle the returned session (e.g. update UI to "connected" state).
-      await onSessionConnected(session);
-    } catch (e) {
-      // console.error(e);
-      setErrorMessages(error.message);
-    } finally {
-      // Close the QRCode modal in case it was open.
-      QRCodeModal.close();
-    }
+  //     // Await session approval from the wallet.
+  //     const session = await approval();
+  //     // Handle the returned session (e.g. update UI to "connected" state).
+  //     await onSessionConnected(session);
+  //   } catch (e) {
+  //     // console.error(e);
+  //     setErrorMessages(error.message);
+  //   } finally {
+  //     // Close the QRCode modal in case it was open.
+  //     QRCodeModal.close();
+  //   }
 
-    const result = await signClient.request({
-      topic: session.topic,
-      chainId: 'eip155:1',
-      request: {
-        id: 1,
-        jsonrpc: '2.0',
-        method: 'personal_sign',
-        params: [
-          '0x1d85568eEAbad713fBB5293B45ea066e552A90De',
-          '0x7468697320697320612074657374206d65737361676520746f206265207369676e6564',
-        ],
-      },
-    });
-  }
+  //   const result = await signClient.request({
+  //     topic: session.topic,
+  //     chainId: 'eip155:1',
+  //     request: {
+  //       id: 1,
+  //       jsonrpc: '2.0',
+  //       method: 'personal_sign',
+  //       params: [
+  //         '0x1d85568eEAbad713fBB5293B45ea066e552A90De',
+  //         '0x7468697320697320612074657374206d65737361676520746f206265207369676e6564',
+  //       ],
+  //     },
+  //   });
+  // }
 
   async function funcSignTypedData() {
     try {
@@ -316,15 +537,7 @@ export default function WalletPanel(props) {
       setSecondStepSuccess(false);
       setSecondStepError(false);
 
-      // setChainId(chainId);
       setUserBalance(ethers.utils.formatEther(balance));
-
-      // console.log('chain id: ', chainId);
-      // // console.log('set chain id: ', chainId);
-      // console.log('address: ', address);
-      // console.log('default account: ', defaultAccount);
-      // console.log('setUserBalance: ', userBalance);
-      // console.log('balance: ', balance);
 
       // All properties on a domain are optional(?)
       // TODO: salt is optional, but if not provided, the signature will be different each time(?)
@@ -363,26 +576,19 @@ export default function WalletPanel(props) {
         contents: 'Agree to the terms and conditions',
       };
 
-      // signNotify({value: value});
-
-      // console.log(value);
       setLoading(true);
       let signature = await signer._signTypedData(domain, types, value);
       setErrorMessages('');
 
       setSignature(signature);
-      // setLoading(false);
+
       setSecondStepSuccess(true);
 
       setTimeout(() => setProcessModalVisible(false), 1000);
 
-      // setProcessModalVisible(false);
       setHelloModalVisible(true);
 
       setShowToast(true);
-      // setLoading(false);
-
-      // setLoading(false);
 
       // console.log('[EIP712] Sign typed signature: ', signature);
     } catch (error) {
@@ -395,11 +601,32 @@ export default function WalletPanel(props) {
   }
 
   // FIXME: nothing but taking notes
+  // {!!chooseWalletConnect ? (
+  //   connector ? (
+  //     <div>
+  //       <TideButton onClick={killSession} className="bg-cuteBlue2 hover:bg-cuteBlue2/80">
+  //         Kill session of wallet connect
+  //       </TideButton>
+  //     </div>
+  //   ) : (
+  //     <div className="text-cuteBlue4">Session closed successfully</div>
+  //   )
+  // ) : null}
   let toastNotify = (
     <Toast
       title="Your signature"
       content={
         <>
+          {!!chooseWalletConnect && connector ? (
+            <div>
+              <TideButton onClick={killSession} className="bg-cuteBlue2 hover:bg-cuteBlue2/80">
+                Kill session of wallet connect
+              </TideButton>
+            </div>
+          ) : !!chooseWalletConnect && !connector ? (
+            <div className="text-cuteBlue4">Session closed successfully</div>
+          ) : null}
+
           <div>
             Chain Id: <span className="text-cuteBlue3">{chainId}</span>
             {!!(chainId !== 1) && (
@@ -495,7 +722,8 @@ export default function WalletPanel(props) {
   }
 
   const walletconnectOptionClickHandler = async () => {
-    walletConnectSignClient();
+    // walletConnectSignClient();
+    walletConnectClient();
   };
 
   const metamaskOptionClickHandler = async () => {

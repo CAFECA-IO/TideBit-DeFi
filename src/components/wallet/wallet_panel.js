@@ -94,7 +94,13 @@ export default function WalletPanel(props) {
 
   const clickHandler = () => {
     setPanelVisible(!panelVisible);
+
+    if (connector) {
+      killSession();
+    }
   };
+
+  const walletConnectBtnTextHandler = connector ? 'Disconnect' : 'Wallet Connectt';
 
   const connectingClickHandler = () => {
     setConnectingModalVisible(!connectingModalVisible);
@@ -123,6 +129,7 @@ export default function WalletPanel(props) {
     funcSignTypedData();
   };
 
+  // Initialize WalletConnect
   const connect = async () => {
     setFetching(true);
 
@@ -137,13 +144,20 @@ export default function WalletPanel(props) {
 
     // 3. If not connected, create a new session
     if (!connector.connected) {
+      // setConnectingModalVisible(true);
+      // console.log('connecting visible...');
+
       await connector.createSession();
+
+      // console.log('connecting Invisible...');
+      // setConnectingModalVisible(false);
     }
 
     // 4. Sign typed data
     // _walletConnectSignEIP712();
   };
 
+  // Data collected when connected
   async function onConnect(chainId, connectedAccount) {
     // handle connect event
     setDefaultAccount(connectedAccount);
@@ -176,6 +190,7 @@ export default function WalletPanel(props) {
     }
   }
 
+  // Once connector, chainId, account, or balance chages, update the state
   useEffect(() => {
     if (connector) {
       connector.on('connect', async (error, payload) => {
@@ -187,6 +202,10 @@ export default function WalletPanel(props) {
         const {chainId, accounts} = payload.params[0];
         await onConnect(chainId, accounts[0]);
         setFetching(false);
+
+        setProcessModalVisible(true);
+        // console.log('connecting Invisible...');
+        // setConnectingModalVisible(false);
       });
 
       connector.on('disconnect', async (error, payload) => {
@@ -286,9 +305,10 @@ export default function WalletPanel(props) {
 
   async function walletConnectClient() {
     connect();
-    if (connector) {
-      _walletConnectSignEIP712();
-    }
+
+    // if (connector) {
+    //   _walletConnectSignEIP712();
+    // }
     // DOC: Sign Typed Data
     // connector
     //   .signTypedData(msgParams)
@@ -510,6 +530,11 @@ export default function WalletPanel(props) {
   // }
 
   async function funcSignTypedData() {
+    if (connector) {
+      _walletConnectSignEIP712();
+      return;
+    }
+
     try {
       setErrorMessages('');
       setSignature(null);
@@ -842,7 +867,7 @@ export default function WalletPanel(props) {
         onClick={clickHandler}
         className={`${props?.className} mt-4 rounded border-0 bg-tidebitTheme py-2 px-5 text-base text-white hover:bg-cyan-600 focus:outline-none md:mt-0`}
       >
-        Wallet Connect
+        {walletConnectBtnTextHandler}
       </TideButton>
 
       {isDisplayedWalletPanel}

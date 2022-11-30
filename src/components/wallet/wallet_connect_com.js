@@ -4,6 +4,7 @@ import {useState, useEffect} from 'react';
 import TideButton from '../tide_button/tide_button';
 import {SUPPORTED_NETWORKS} from '../../constants/network';
 import {ethers} from 'ethers';
+import Toast from '../toast/toast';
 
 const WalletConnectCom = () => {
   const [connector, setConnector] = useState(null);
@@ -15,6 +16,7 @@ const WalletConnectCom = () => {
   const [network, setNetwork] = useState(null);
   const [symbol, setSymbol] = useState(null);
   const [balance, setBalance] = useState(null);
+  const [signature, setSignature] = useState('');
 
   useEffect(() => {
     // add logic with side effects
@@ -151,6 +153,7 @@ const WalletConnectCom = () => {
 
     try {
       const signature = await connector.signTypedData(msgParams);
+      setSignature(signature);
       // console.log('sigature: ', signature);
     } catch (error) {
       // console.error('sign 712 ERROR', error);
@@ -194,63 +197,69 @@ const WalletConnectCom = () => {
   };
 
   return (
-    <div className="flex flex-col space-y-5">
-      <p>Lumii</p>
-      {/* buttons and network details will go here */}
-      {connector && !fetching ? (
-        <div>
+    <>
+      <div className="flex flex-col space-y-5">
+        <p>Lumii</p>
+        {/* buttons and network details will go here */}
+        {connector && !fetching ? (
           <div>
-            <strong>Connected Account: </strong>
-            {account}
-          </div>
-          <div>
-            <strong>Chain ID: </strong>
-            {chainId}
-          </div>
-          {supported ? (
             <div>
-              <div>
-                <strong>Network: </strong>
-                {network}
-              </div>
+              <strong>Connected Account: </strong>
+              {account}
             </div>
-          ) : (
-            <strong>
-              Network not supported. Please disconnect, switch networks, and connect again.
-            </strong>
-          )}
-          <TideButton onClick={killSession} className="bg-cuteBlue2 text-3xl hover:bg-cuteBlue2/80">
-            Disconnect
-          </TideButton>
-        </div>
-      ) : (
-        <TideButton onClick={connect} className="bg-cuteBlue2 text-3xl hover:bg-cuteBlue2/80">
-          Connect Wallet
-        </TideButton>
-      )}
-      {supported ? (
-        <>
-          <div>
-            <div>Network: </div>
-            {network}
-          </div>
-          <div>
-            <div>Balance: </div>
-            {balance} {symbol}
-          </div>
-          <div>
-            <TideButton onClick={signEIP712} className="text-xl">
-              Sign EIP712
+            <div>
+              <strong>Chain ID: </strong>
+              {chainId}
+            </div>
+            {supported ? (
+              <div>
+                <div>
+                  <strong>Network: </strong>
+                  {network}
+                </div>
+              </div>
+            ) : (
+              <strong>
+                Network not supported. Please disconnect, switch networks, and connect again.
+              </strong>
+            )}
+            <TideButton
+              onClick={killSession}
+              className="bg-cuteBlue2 text-3xl hover:bg-cuteBlue2/80"
+            >
+              Disconnect
             </TideButton>
           </div>
-          <div>
-            <TideButton onClick={sendTransaction}>send transaction</TideButton>
-          </div>
-        </>
-      ) : (
-        <div>Network not supported. Please disconnect, switch networks, and connect again.</div>
-      )}
-    </div>
+        ) : (
+          <TideButton onClick={connect} className="bg-cuteBlue2 text-3xl hover:bg-cuteBlue2/80">
+            Connect Wallet
+          </TideButton>
+        )}
+        {supported ? (
+          <>
+            <div>
+              <div>Network: </div>
+              {network}
+            </div>
+            <div>
+              <div>Balance: </div>
+              {balance} {symbol}
+            </div>
+            <div>
+              <TideButton onClick={signEIP712} className="text-xl">
+                Sign EIP712
+              </TideButton>
+            </div>
+            <div>
+              <TideButton onClick={sendTransaction}>send transaction</TideButton>
+            </div>
+          </>
+        ) : (
+          <div>Network not supported. Please disconnect, switch networks, and connect again.</div>
+        )}
+      </div>
+      <Toast content={signature} />
+    </>
   );
 };
 

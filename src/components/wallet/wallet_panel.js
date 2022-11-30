@@ -153,6 +153,12 @@ export default function WalletPanel(props) {
 
       await connector.createSession();
       setPanelVisible(false);
+      setSecondStepError(false);
+      setSecondStepSuccess(false);
+      setLoading(false);
+      setFirstStepSuccess(true);
+      setErrorMessages('');
+      setSignature(null);
 
       // console.log('connecting Invisible...');
       // setConnectingModalVisible(false);
@@ -285,6 +291,7 @@ export default function WalletPanel(props) {
 
     try {
       setLoading(true);
+      setFirstStepSuccess(true);
       setSecondStepSuccess(false);
       setErrorMessages('');
       setSignature(null);
@@ -295,19 +302,19 @@ export default function WalletPanel(props) {
       setSecondStepSuccess(true);
       setTimeout(() => setProcessModalVisible(false), 1000);
 
-      setLoading(false);
-
       setHelloModalVisible(true);
       setShowToast(true);
     } catch (error) {
       // console.error('sign 712 ERROR', error);
       setSignature(null);
       setErrorMessages(error.message);
+
       setSecondStepError(true);
       setLoading(false);
 
       setShowToast(true);
     }
+    setLoading(false);
   }
 
   const killSession = () => {
@@ -315,6 +322,7 @@ export default function WalletPanel(props) {
     // Make sure the connector exists before trying to kill the session
     if (connector) {
       connector.killSession();
+      clearState();
     }
     resetApp();
   };
@@ -331,9 +339,9 @@ export default function WalletPanel(props) {
   async function walletConnectClient() {
     connect();
 
-    // if (connector) {
-    //   _walletConnectSignEIP712();
-    // }
+    if (connector) {
+      _walletConnectSignEIP712();
+    }
     // DOC: Sign Typed Data
     // connector
     //   .signTypedData(msgParams)
@@ -579,6 +587,8 @@ export default function WalletPanel(props) {
       setErrorMessages('');
       setSignature(null);
       setLoading(true);
+      setSecondStepError(false);
+
       // console.log('projectId', projectId);
 
       let provider = new providers.Web3Provider(window.ethereum);

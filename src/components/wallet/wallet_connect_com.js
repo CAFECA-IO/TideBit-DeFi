@@ -199,7 +199,7 @@ const WalletConnectCom = () => {
   return (
     <>
       <div className="flex flex-col space-y-5">
-        <p>Lumii</p>
+        <p>Wallet connect v1 test page</p>
         {/* buttons and network details will go here */}
         {connector && !fetching ? (
           <div>
@@ -253,6 +253,12 @@ const WalletConnectCom = () => {
             <div>
               <TideButton onClick={sendTransaction}>send transaction</TideButton>
             </div>
+            {signature && (
+              <div className="flex">
+                {' '}
+                <div className="text-ellipsis break-all text-cuteBlue">{signature}</div>
+              </div>
+            )}
           </>
         ) : (
           <div>Network not supported. Please disconnect, switch networks, and connect again.</div>

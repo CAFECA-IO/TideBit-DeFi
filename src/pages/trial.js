@@ -24,7 +24,7 @@ export default function Trial() {
   return (
     <>
       <Head>
-        <title>Lumii title</title>
+        <title>Test for TideBit DeFi</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 

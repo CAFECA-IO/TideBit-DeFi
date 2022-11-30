@@ -291,6 +291,7 @@ export default function WalletPanel(props) {
 
     try {
       setLoading(true);
+      setProcessModalVisible(true);
       setFirstStepSuccess(true);
       setSecondStepSuccess(false);
       setErrorMessages('');
@@ -303,6 +304,7 @@ export default function WalletPanel(props) {
       setTimeout(() => setProcessModalVisible(false), 1000);
 
       setHelloModalVisible(true);
+      setPanelVisible(false);
       setShowToast(true);
     } catch (error) {
       // console.error('sign 712 ERROR', error);
@@ -314,7 +316,6 @@ export default function WalletPanel(props) {
 
       setShowToast(true);
     }
-    setLoading(false);
   }
 
   const killSession = () => {
@@ -340,7 +341,10 @@ export default function WalletPanel(props) {
     connect();
 
     if (connector) {
-      _walletConnectSignEIP712();
+      setSecondStepError(false);
+      setSecondStepSuccess(false);
+      await _walletConnectSignEIP712();
+      setLoading(false);
     }
     // DOC: Sign Typed Data
     // connector
@@ -806,7 +810,9 @@ export default function WalletPanel(props) {
     // console.log('connecting modal should be visible: ', connectingModalVisible);
 
     if (typeof window.ethereum === 'undefined') {
-      walletConnectSignClient();
+      // walletConnectSignClient();
+      // TODO: what about sign
+      walletconnectOptionClickHandler();
       // console.log('Metemask is uninstalled');
       return;
     }

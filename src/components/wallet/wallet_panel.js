@@ -13,6 +13,7 @@ import HelloModal from './hello_modal';
 // import WalletConnectProvider from '@walletconnect/web3-provider';
 import SignClient from '@walletconnect/sign-client';
 import QRCodeModal from '@walletconnect/qrcode-modal';
+import WalletConnect from '@walletconnect/client';
 
 const ICON_SIZE = 50;
 const WALLET_CONNECT_PROJECT_ID = process.env.WALLET_CONNECT_PROJECT_ID;

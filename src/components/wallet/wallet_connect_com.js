@@ -69,6 +69,9 @@ const WalletConnectCom = () => {
     if (!connector.connected) {
       await connector.createSession();
     }
+
+    // 4. Sign typed data
+    // signEIP712();
   };
 
   async function onConnect(chainId, connectedAccount) {
@@ -102,6 +105,70 @@ const WalletConnectCom = () => {
     }
   }
 
+  async function signEIP712() {
+    const typedData = {
+      types: {
+        EIP712Domain: [
+          {name: 'name', type: 'string'},
+          {name: 'version', type: 'string'},
+          {name: 'chainId', type: 'uint256'},
+          {name: 'verifyingContract', type: 'address'},
+        ],
+        Person: [
+          {name: 'name', type: 'string'},
+          {name: 'account', type: 'address'},
+        ],
+        Mail: [
+          {name: 'from', type: 'Person'},
+          {name: 'to', type: 'Person'},
+          {name: 'contents', type: 'string'},
+        ],
+      },
+      primaryType: 'Mail',
+      domain: {
+        name: 'TideBit DeFi',
+        version: '1.0',
+        chainId: 1,
+        verifyingContract: '0x0000000000000000000000000000000000000000',
+      },
+      message: {
+        from: {
+          name: 'User',
+          account: `${account}`,
+        },
+        to: {
+          name: 'TideBit DeFi',
+          account: '0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB',
+        },
+        contents: 'Agree to the terms and conditions',
+      },
+    };
+
+    const msgParams = [
+      account, // Required
+      JSON.stringify(typedData), // Required
+    ];
+
+    try {
+      const signature = await connector.signTypedData(msgParams);
+      // console.log('sigature: ', signature);
+    } catch (error) {
+      // console.error('sign 712 ERROR', error);
+    }
+
+    // DOC: Sign Typed Data
+    // connector
+    //   .signTypedData(msgParams)
+    //   .then(result => {
+    //     // Returns signature.
+    //     console.log(result);
+    //   })
+    //   .catch(error => {
+    //     // Error returned when rejected
+    //     console.error(error);
+    //   });
+  }
+
   const killSession = () => {
     // add logic to ensure the mobile wallet connection has been killed
     // Make sure the connector exists before trying to kill the session
@@ -112,7 +179,12 @@ const WalletConnectCom = () => {
   };
 
   const sendTransaction = async () => {
-    // add send transaction logic
+    try {
+      await connector.sendTransaction({from: account, to: account, value: '0x1BC16D674EC80000'});
+    } catch (e) {
+      // Handle the error as you see fit
+      // console.error(e);
+    }
   };
 
   const resetApp = () => {
@@ -147,10 +219,14 @@ const WalletConnectCom = () => {
               Network not supported. Please disconnect, switch networks, and connect again.
             </strong>
           )}
-          <TideButton onClick={killSession}>Disconnect</TideButton>
+          <TideButton onClick={killSession} className="bg-cuteBlue2 text-3xl hover:bg-cuteBlue">
+            Disconnect
+          </TideButton>
         </div>
       ) : (
-        <TideButton onClick={connect}>Connect Wallet</TideButton>
+        <TideButton onClick={connect} className="bg-cuteBlue2 text-3xl hover:bg-cuteBlue">
+          Connect Wallet
+        </TideButton>
       )}
       {supported ? (
         <>
@@ -161,6 +237,14 @@ const WalletConnectCom = () => {
           <div>
             <div>Balance: </div>
             {balance} {symbol}
+          </div>
+          <div>
+            <TideButton onClick={signEIP712} className="text-xl">
+              Sign EIP712
+            </TideButton>
+          </div>
+          <div>
+            <TideButton onClick={sendTransaction}>sendTransaction</TideButton>
           </div>
         </>
       ) : (

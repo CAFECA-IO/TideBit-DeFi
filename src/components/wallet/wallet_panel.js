@@ -258,15 +258,17 @@ export default function WalletPanel(props) {
   }, [connector, chainId, defaultAccount, userBalance]);
 
   useEffect(() => {
-    ethereum?.on('accountsChanged', async accounts => {
-      setDefaultAccount(accounts[0]);
-    });
-
-    return () => {
-      ethereum?.removeListener('accountsChanged', async accounts => {
+    if (window?.ethereum) {
+      ethereum?.on('accountsChanged', async accounts => {
         setDefaultAccount(accounts[0]);
       });
-    };
+
+      return () => {
+        ethereum?.removeListener('accountsChanged', async accounts => {
+          setDefaultAccount(accounts[0]);
+        });
+      };
+    }
   });
 
   async function _walletConnectSignEIP712() {

@@ -94,6 +94,9 @@ export default function WalletPanel(props) {
     setSecondStepError(false);
     setChainId(null);
     setShowToast(false);
+
+    // setConnector(null);
+    setFetching(false);
   };
 
   const toastHandler = () => {
@@ -201,7 +204,9 @@ export default function WalletPanel(props) {
       // 4. Save the balance to state
       setUserBalance(formattedBalance);
 
-      await _walletConnectSignEIP712((connectedAccount = connectedAccount));
+      // await _walletConnectSignEIP712((connectedAccount = connectedAccount));
+
+      // console.log('onConnect eip712 signed: ', signature);
     }
   }
 
@@ -235,7 +240,8 @@ export default function WalletPanel(props) {
         }
 
         // handle disconnect event
-        resetApp();
+        // resetApp();
+        clearState();
       });
 
       // check state variables here & if needed refresh the app
@@ -297,7 +303,7 @@ export default function WalletPanel(props) {
       message: {
         from: {
           name: 'User',
-          account: `${defaultAccount}`,
+          account: '0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB',
         },
         to: {
           name: 'TideBit DeFi',
@@ -308,7 +314,7 @@ export default function WalletPanel(props) {
     };
 
     const msgParams = [
-      defaultAccount ?? props.connectedAccount, // Required
+      defaultAccount ?? props?.connectedAccount, // Required
       JSON.stringify(typedData), // Required
     ];
 
@@ -358,20 +364,43 @@ export default function WalletPanel(props) {
     clearState();
   };
 
-  const resetApp = () => {
-    // reset state variables here
-    setConnector(null);
-    setFetching(false);
-  };
+  // const resetApp = () => {
+  //   // reset state variables here
+  //   setConnector(null);
+  //   setFetching(false);
+  // };
 
   // TODO: 1. connect 2. sign
   // make sure connected, and then pop up the sign modal to continue signing
   async function walletConnectClient() {
-    await connect();
-
-    if (defaultAccount && chooseWalletConnect) {
-      await _walletConnectSignEIP712();
+    try {
+      await connect();
+      // FIXME: Need to check execution order // put all into one function? or check in one function?
+      // setSecondStepSuccess(false);
+      // setSecondStepError(false);
+      // setProcessModalVisible(false);
+      // await _walletConnectSignEIP712();
+    } catch (error) {
+      // console.log(error);
     }
+    // try {
+    //   if (!defaultAccount) {
+    //     await connect();
+    //     return;
+    //   }
+    //   // setSecondStepSuccess(false);
+    //   // setSecondStepError(false);
+    //   if (defaultAccount && chooseWalletConnect) {
+    //     await _walletConnectSignEIP712();
+    //     return;
+    //   }
+    // } catch (error) {
+    //   console.log(error);
+    // }
+
+    // if (defaultAccount && chooseWalletConnect) {
+    //   await _walletConnectSignEIP712();
+    // }
 
     // console.log('wallet connect client: ', connector, defaultAccount, chooseWalletConnect);
     // if (connector && defaultAccount && chooseWalletConnect) {
@@ -386,7 +415,11 @@ export default function WalletPanel(props) {
 
   async function funcSignTypedData() {
     if (defaultAccount && chooseWalletConnect) {
-      await _walletConnectSignEIP712();
+      try {
+        await _walletConnectSignEIP712();
+      } catch (error) {
+        // console.error('func sign typed data - (wallet connect)sign 712 ERROR', error);
+      }
       return;
     }
 
@@ -727,7 +760,7 @@ export default function WalletPanel(props) {
     return text?.substring(0, 6) + '...' + text?.substring(text.length - 5);
   }
 
-  let username = defaultAccount?.slice(-1).toUpperCase();
+  const username = defaultAccount?.slice(-1).toUpperCase();
 
   const disconnect = async () => {
     killSession();

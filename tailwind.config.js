@@ -65,9 +65,14 @@ module.exports = {
         '23px': '23px',
         '28px': '28px',
         '30px': '30px',
+        '32px': '32px',
         '40px': '40px',
         '42px': '42px',
         '44px': '44px',
+        '45px': '45px',
+        '46px': '46px',
+        '47px': '47px',
+        '48px': '48px',
         '50px': '50px',
         '55px': '55px',
         '81px': '81px',
@@ -205,12 +210,17 @@ module.exports = {
         'spin-slow': 'spin 3s linear infinite',
         'spin-fast': 'spin 1s linear infinite',
         fade: 'fadeOut 3s ease-in-out',
+        wiggle: 'wiggle 1s ease-in-out infinite',
       },
       // actual animation
       keyframes: theme => ({
         fadeOut: {
           '100%': {opacity: 0},
           '0%': {opacity: 1},
+        },
+        wiggle: {
+          '0%, 100%': {transform: 'rotate(-3deg)'},
+          '50%': {transform: 'rotate(3deg)'},
         },
       }),
     },

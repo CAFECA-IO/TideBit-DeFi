@@ -3,6 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import TideButton from '../tide_button/tide_button';
 import smallConnectingAnimation from '../../../public/animation/lf30_editor_cnkxmhy3.json';
+import activeIconPulse from '../../../public/animation/lf30_editor_cyvxlluo.json';
 import Lottie from 'lottie-react';
 
 const SignatureProcessModal = ({
@@ -39,7 +40,18 @@ const SignatureProcessModal = ({
   );
 
   const secondStepActivatedIcon = (
-    <Image src="/elements/group_2418(1).svg" width={32} height={32} alt="step 2 icon" />
+    <div className="relative">
+      <Lottie className="relative w-32" animationData={activeIconPulse} />
+      {/* <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-sky-400 opacity-75"></span> */}
+
+      <Image
+        className="absolute top-48px left-46px"
+        src="/elements/group_2418(1).svg"
+        width={32}
+        height={32}
+        alt="step 2 icon"
+      />
+    </div>
   );
 
   const requestButtonHandler = loading ? (

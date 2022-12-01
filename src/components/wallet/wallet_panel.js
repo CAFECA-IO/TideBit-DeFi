@@ -20,28 +20,6 @@ import {DELAYED_HIDDEN_SECONDS} from '../../constants/display';
 const ICON_SIZE = 50;
 const WALLET_CONNECT_PROJECT_ID = process.env.WALLET_CONNECT_PROJECT_ID;
 
-// TODO: salt is optional, but if not provided, the signature will be different each time(?)
-const DOMAIN = {
-  name: 'TideBit DeFi',
-  version: '0.8.15',
-  chainId: 1,
-  verifyingContract: '0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC',
-  salt: '0x' + '0000000000000000000000000000000000000000000000000000000000000002',
-};
-
-// The named list of all type definitions
-const TYPES = {
-  Person: [
-    {name: 'name', type: 'string'},
-    {name: 'wallet', type: 'address'},
-  ],
-  Mail: [
-    {name: 'from', type: 'Person'},
-    {name: 'to', type: 'Person'},
-    {name: 'contents', type: 'string'},
-  ],
-};
-
 export default function WalletPanel(props) {
   const {
     ref: panelRef,
@@ -443,6 +421,28 @@ export default function WalletPanel(props) {
 
       setUserBalance(ethers.utils.formatEther(balance));
 
+      // TODO: salt is optional, but if not provided, the signature will be different each time(?)
+      const domain = {
+        name: 'TideBit DeFi',
+        version: '0.8.15',
+        chainId: 1,
+        verifyingContract: '0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC',
+        salt: '0x' + '0000000000000000000000000000000000000000000000000000000000000002',
+      };
+
+      // The named list of all type definitions
+      const types = {
+        Person: [
+          {name: 'name', type: 'string'},
+          {name: 'wallet', type: 'address'},
+        ],
+        Mail: [
+          {name: 'from', type: 'Person'},
+          {name: 'to', type: 'Person'},
+          {name: 'contents', type: 'string'},
+        ],
+      };
+
       // The data to sign
       // '0xCD2a3d9F938E13CD947Ec05AbC7FE734Df8DD826'
       const value = {
@@ -458,7 +458,7 @@ export default function WalletPanel(props) {
       };
 
       setLoading(true);
-      let signature = await signer._signTypedData(DOMAIN, TYPES, value);
+      let signature = await signer._signTypedData(domain, types, value);
       setErrorMessages('');
 
       setSignature(signature);

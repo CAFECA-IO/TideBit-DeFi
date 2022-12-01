@@ -253,7 +253,9 @@ export default function WalletPanel(props) {
     }
   }, [connector, chainId, defaultAccount, userBalance]);
 
+  // TODO: why it works with `[]`
   useEffect(() => {
+    // console.log('ethereum side effect');
     if (window?.ethereum) {
       ethereum?.on('accountsChanged', async accounts => {
         setDefaultAccount(accounts[0]);
@@ -265,7 +267,7 @@ export default function WalletPanel(props) {
         });
       };
     }
-  });
+  }, []);
 
   async function _walletConnectSignEIP712() {
     const typedData = {

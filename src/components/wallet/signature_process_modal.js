@@ -18,7 +18,8 @@ const SignatureProcessModal = ({
   requestSendingHandler = () => {},
   ...otherProps
 }) => {
-  const controlSpace = firstStepError || secondStepError ? 'space-y-12' : 'space-y-16';
+  const controlSpace = firstStepError || secondStepError ? 'space-y-12' : 'space-y-12';
+  const btnSpace = firstStepSuccess && !secondStepError && !secondStepSuccess ? 'mt-10' : 'mt-16';
 
   // if (firstStepError && secondStepError) return
   // if (firstStepError && secondStepSuccess) return
@@ -46,7 +47,7 @@ const SignatureProcessModal = ({
 
       {/* absolute top-48px left-46px */}
       <Image
-        className="absolute mr-3px mb-1px"
+        className="absolute mr-1 mb-1px"
         src="/elements/group_2418(1).svg"
         width={33}
         height={33}
@@ -58,14 +59,14 @@ const SignatureProcessModal = ({
   const requestButtonHandler = loading ? (
     <Lottie className="w-40px" animationData={smallConnectingAnimation} />
   ) : (
-    <TideButton onClick={requestSendingHandler} className="px-5">
+    <TideButton onmr-2pxClick={requestSendingHandler} className="px-5">
       Send Requests
     </TideButton>
   );
 
   const firstStepDefaultView = (
     <>
-      <div>{firstStepIcon}</div>
+      <div className="mr-2">{firstStepIcon}</div>
       <div className="w-271px space-y-1 text-lightWhite">
         <div className="text-lg">Verify ownership</div>
         <div className="text-sm">Confirm you are the owner of this wallet</div>
@@ -75,7 +76,7 @@ const SignatureProcessModal = ({
 
   const firstStepSuccessView = (
     <>
-      <div>{successIcon}</div>
+      <div className="mr-2">{successIcon}</div>
       <div className="w-271px space-y-1 text-lightWhite">
         <div className="text-lg">Verify ownership</div>
         <div className="text-sm">Confirm you are the owner of this wallet</div>
@@ -85,7 +86,7 @@ const SignatureProcessModal = ({
 
   const firstStepErrorView = (
     <>
-      <div>{errorIcon}</div>
+      <div className="mr-2">{errorIcon}</div>
       <div className="w-271px space-y-1 text-lightWhite">
         <div className="text-lg">Verify ownership</div>
         <div className="text-sm">Confirm you are the owner of this wallet</div>
@@ -107,7 +108,7 @@ const SignatureProcessModal = ({
 
   const secondStepDefaultView = (
     <>
-      <div>{secondStepDefaultIcon}</div>
+      <div className="mr-2">{secondStepDefaultIcon}</div>
       <div className="w-271px space-y-1 text-lightGray">
         <div className="text-lg">Enable trading</div>
         <div className="text-sm">Enable secure access to our API for lightning quick trading.</div>
@@ -134,7 +135,7 @@ const SignatureProcessModal = ({
 
   const secondStepSuccessView = (
     <>
-      <div>
+      <div className="mr-2">
         {successIcon}{' '}
         {/* <Image src="/elements/group_2418(1).svg" width={32} height={32} alt="step 2 icon" /> */}
       </div>
@@ -147,7 +148,7 @@ const SignatureProcessModal = ({
 
   const secondStepErrorView = (
     <>
-      <div>
+      <div className="mr-2">
         {' '}
         {errorIcon}
         {/* <Image src="/elements/group_2418(1).svg" width={32} height={32} alt="step 2 icon" /> */}
@@ -292,7 +293,7 @@ const SignatureProcessModal = ({
                     </div>
                   </div>
 
-                  <div className="mt-16">{requestButtonHandler}</div>
+                  <div className={`${btnSpace}`}>{requestButtonHandler}</div>
                 </div>
               </div>
             </div>

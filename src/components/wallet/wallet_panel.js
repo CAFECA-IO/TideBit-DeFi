@@ -14,7 +14,7 @@ import HelloModal from './hello_modal';
 // import SignClient from '@walletconnect/sign-client';
 import QRCodeModal from '@walletconnect/qrcode-modal';
 import WalletConnect from '@walletconnect/client';
-import {SUPPORTED_NETWORKS} from '../../constants/network';
+import {SUPPORTED_NETWORKS} from '../../constants/config';
 
 const ICON_SIZE = 50;
 const WALLET_CONNECT_PROJECT_ID = process.env.WALLET_CONNECT_PROJECT_ID;
@@ -135,18 +135,6 @@ export default function WalletPanel(props) {
     setAvatarMenuVisible(!avatarMenuVisible);
   };
 
-  // function truncate(text, startChars, endChars, maxLength) {
-  //   if (text.length > maxLength) {
-  //     var start = text.substring(0, startChars);
-  //     var end = text.substring(text.length - endChars, text.length);
-  //     while (start.length + end.length < maxLength) {
-  //       start = start + '.';
-  //     }
-  //     return start + end;
-  //   }
-  //   return text;
-  // }
-
   const requestSendingHandler = () => {
     funcSignTypedData();
   };
@@ -264,6 +252,18 @@ export default function WalletPanel(props) {
       setFetching(false);
     }
   }, [connector, chainId, defaultAccount, userBalance]);
+
+  useEffect(() => {
+    ethereum?.on('accountsChanged', async accounts => {
+      setDefaultAccount(accounts[0]);
+    });
+
+    return () => {
+      ethereum?.removeListener('accountsChanged', async accounts => {
+        setDefaultAccount(accounts[0]);
+      });
+    };
+  }, [ethereum]);
 
   async function _walletConnectSignEIP712() {
     const typedData = {
@@ -742,10 +742,10 @@ export default function WalletPanel(props) {
         className="absolute top-16 right-8 z-10 w-285px divide-y divide-lightGray rounded-none bg-darkGray shadow"
       >
         {/* Avatar Section */}
-        <div className="mx-3 items-center py-3 px-4 text-center text-sm dark:text-lightGray">
+        <div className="mx-3 items-center py-3 px-4 text-center text-sm text-lightGray">
           {/* Avatar */}
           <div className="relative ml-3 inline-flex h-28 w-28 items-center justify-center overflow-hidden rounded-full bg-tidebitTheme text-center">
-            <span className="text-5xl font-bold text-gray-600 dark:text-gray-300">{username}</span>
+            <span className="text-5xl font-bold text-lightWhite">{username}</span>
           </div>
           {/* Account */}
           <div className="ml-4 mt-2 truncate text-sm">{accountTruncate(defaultAccount)}</div>
@@ -790,7 +790,7 @@ export default function WalletPanel(props) {
         onClick={avatarClickHandler}
         className="relative ml-3 inline-flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-tidebitTheme"
       >
-        <span className="text-2xl font-bold text-gray-600 dark:text-gray-300">{username}</span>
+        <span className="text-2xl font-bold text-lightWhite">{username}</span>
       </button>
       {isDisplayedAvatarMenu}
     </>

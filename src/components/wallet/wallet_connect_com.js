@@ -2,7 +2,7 @@ import QRCodeModal from '@walletconnect/qrcode-modal';
 import WalletConnect from '@walletconnect/client';
 import {useState, useEffect} from 'react';
 import TideButton from '../tide_button/tide_button';
-import {SUPPORTED_NETWORKS} from '../../constants/network';
+import {SUPPORTED_NETWORKS} from '../../constants/config';
 import {ethers} from 'ethers';
 import Toast from '../toast/toast';
 

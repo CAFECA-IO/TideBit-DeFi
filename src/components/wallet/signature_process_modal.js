@@ -59,7 +59,7 @@ const SignatureProcessModal = ({
   const requestButtonHandler = loading ? (
     <Lottie className="w-40px" animationData={smallConnectingAnimation} />
   ) : (
-    <TideButton onmr-2pxClick={requestSendingHandler} className="px-5">
+    <TideButton onClick={requestSendingHandler} className="px-5">
       Send Requests
     </TideButton>
   );

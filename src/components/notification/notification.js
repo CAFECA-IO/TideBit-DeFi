@@ -50,6 +50,7 @@ export default function Notification(props) {
   );
 
   // Cover for Desktop notification drawer
+  // FIXME: Detect if user signed in or not (avator showing) and change the cover's position accordingly
   const isDisplayedNotificationSidebarCover = componentVisible ? (
     <>
       {/* cover for NavBar ***Bell Icon*** */}

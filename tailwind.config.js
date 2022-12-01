@@ -82,6 +82,7 @@ module.exports = {
         '200px': '200px',
         '220px': '220px',
         '271px': '271px',
+        '285px': '285px',
         '300px': '300px',
         '320px': '320px',
         '354px': '354px',
@@ -169,6 +170,7 @@ module.exports = {
         darkGray2: '#2B323A',
         darkGray3: '#090909',
         darkGray4: '#181818',
+        darkGray5: '#1E2329',
 
         lightGray: '#8B8E91',
         lightGray1: '#EDECEC',

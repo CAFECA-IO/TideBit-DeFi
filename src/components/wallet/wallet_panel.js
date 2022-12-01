@@ -14,7 +14,7 @@ import HelloModal from './hello_modal';
 // import SignClient from '@walletconnect/sign-client';
 import QRCodeModal from '@walletconnect/qrcode-modal';
 import WalletConnect from '@walletconnect/client';
-import {SUPPORTED_NETWORKS} from '../../constants/config';
+import {SUPPORTED_NETWORKS, WALLET_CONNECT_BRIDGE_URL} from '../../constants/config';
 import {DELAYED_HIDDEN_SECONDS} from '../../constants/display';
 
 const ICON_SIZE = 50;
@@ -168,7 +168,7 @@ export default function WalletPanel(props) {
 
     // 1. Create connector
     const walletConnector = new WalletConnect({
-      bridge: 'https://bridge.walletconnect.org',
+      bridge: WALLET_CONNECT_BRIDGE_URL,
       qrcodeModal: QRCodeModal,
     });
 

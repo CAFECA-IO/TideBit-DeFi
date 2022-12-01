@@ -15,9 +15,32 @@ import HelloModal from './hello_modal';
 import QRCodeModal from '@walletconnect/qrcode-modal';
 import WalletConnect from '@walletconnect/client';
 import {SUPPORTED_NETWORKS} from '../../constants/config';
+import {DELAYED_HIDDEN_SECONDS} from '../../constants/display';
 
 const ICON_SIZE = 50;
 const WALLET_CONNECT_PROJECT_ID = process.env.WALLET_CONNECT_PROJECT_ID;
+
+// TODO: salt is optional, but if not provided, the signature will be different each time(?)
+const DOMAIN = {
+  name: 'TideBit DeFi',
+  version: '0.8.15',
+  chainId: 1,
+  verifyingContract: '0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC',
+  salt: '0x' + '0000000000000000000000000000000000000000000000000000000000000002',
+};
+
+// The named list of all type definitions
+const TYPES = {
+  Person: [
+    {name: 'name', type: 'string'},
+    {name: 'wallet', type: 'address'},
+  ],
+  Mail: [
+    {name: 'from', type: 'Person'},
+    {name: 'to', type: 'Person'},
+    {name: 'contents', type: 'string'},
+  ],
+};
 
 export default function WalletPanel(props) {
   const {
@@ -144,29 +167,22 @@ export default function WalletPanel(props) {
     setFetching(true);
 
     // 1. Create connector
-    const connector = new WalletConnect({
+    const walletConnector = new WalletConnect({
       bridge: 'https://bridge.walletconnect.org',
       qrcodeModal: QRCodeModal,
     });
 
     // 2. Update the connector state
-    setConnector(connector);
+    setConnector(walletConnector);
 
     // 3. If not connected, create a new session
-    if (!connector.connected) {
+    if (!walletConnector.connected) {
       // setConnectingModalVisible(true);
       // console.log('connecting visible...');
       // console.log('QR code opened...');
       setShowToast(true);
 
-      await connector.createSession();
-      setPanelVisible(false);
-      setSecondStepError(false);
-      setSecondStepSuccess(false);
-      setLoading(false);
-      setFirstStepSuccess(true);
-      setErrorMessages('');
-      setSignature(null);
+      await walletConnector.createSession();
 
       // console.log('connecting Invisible...');
       // setConnectingModalVisible(false);
@@ -206,6 +222,8 @@ export default function WalletPanel(props) {
       const formattedBalance = ethers.utils.formatEther(balance);
       // 4. Save the balance to state
       setUserBalance(formattedBalance);
+
+      await _walletConnectSignEIP712((connectedAccount = connectedAccount));
     }
   }
 
@@ -222,12 +240,15 @@ export default function WalletPanel(props) {
         await onConnect(chainId, accounts[0]);
         setFetching(false);
 
-        setPanelVisible(false);
-        setProcessModalVisible(true);
-        setFirstStepSuccess(true);
+        // if (accounts[0]) await _walletConnectSignEIP712();
+        // console.log('useEffect connector listener accounts[0]: ', accounts[0]);
 
         // console.log('connecting Invisible...');
         // setConnectingModalVisible(false);
+      });
+
+      connector.on('session_update', async (error, payload) => {
+        // _walletConnectSignEIP712();
       });
 
       connector.on('disconnect', async (error, payload) => {
@@ -253,7 +274,7 @@ export default function WalletPanel(props) {
     }
   }, [connector, chainId, defaultAccount, userBalance]);
 
-  // TODO: why it works with `[]`
+  // TODO: Notes why it works with `[]`
   useEffect(() => {
     // console.log('ethereum side effect');
     if (window?.ethereum) {
@@ -269,7 +290,7 @@ export default function WalletPanel(props) {
     }
   }, []);
 
-  async function _walletConnectSignEIP712() {
+  async function _walletConnectSignEIP712(props) {
     const typedData = {
       types: {
         EIP712Domain: [
@@ -309,15 +330,20 @@ export default function WalletPanel(props) {
     };
 
     const msgParams = [
-      defaultAccount, // Required
+      defaultAccount ?? props.connectedAccount, // Required
       JSON.stringify(typedData), // Required
     ];
 
+    // if (defaultAccount) {
+    //   setFirstStepSuccess(true);
+    // }
+
     try {
+      setFirstStepSuccess(true);
       setLoading(true);
       setProcessModalVisible(true);
-      setFirstStepSuccess(true);
       setSecondStepSuccess(false);
+      setSecondStepError(false);
       setErrorMessages('');
       setSignature(null);
 
@@ -325,13 +351,15 @@ export default function WalletPanel(props) {
       setSignature(signature);
 
       setSecondStepSuccess(true);
-      setTimeout(() => setProcessModalVisible(false), 1000);
+
+      setTimeout(() => setProcessModalVisible(false), DELAYED_HIDDEN_SECONDS);
 
       setHelloModalVisible(true);
       setPanelVisible(false);
       setShowToast(true);
     } catch (error) {
       // console.error('sign 712 ERROR', error);
+
       setSignature(null);
       setErrorMessages(error.message);
 
@@ -361,18 +389,25 @@ export default function WalletPanel(props) {
   // TODO: 1. connect 2. sign
   // make sure connected, and then pop up the sign modal to continue signing
   async function walletConnectClient() {
-    connect();
+    await connect();
 
-    if (connector) {
-      setSecondStepError(false);
-      setSecondStepSuccess(false);
+    if (defaultAccount && chooseWalletConnect) {
       await _walletConnectSignEIP712();
-      setLoading(false);
     }
+
+    // console.log('wallet connect client: ', connector, defaultAccount, chooseWalletConnect);
+    // if (connector && defaultAccount && chooseWalletConnect) {
+    //   setPanelVisible(false);
+    //   setSecondStepError(false);
+    //   setSecondStepSuccess(false);
+    //   await _walletConnectSignEIP712();
+    //   setLoading(false);
+    // }
+    // await funcSignTypedData();
   }
 
   async function funcSignTypedData() {
-    if (connector) {
+    if (defaultAccount && chooseWalletConnect) {
       await _walletConnectSignEIP712();
       return;
     }
@@ -408,29 +443,6 @@ export default function WalletPanel(props) {
 
       setUserBalance(ethers.utils.formatEther(balance));
 
-      // All properties on a domain are optional(?)
-      // TODO: salt is optional, but if not provided, the signature will be different each time(?)
-      const domain = {
-        name: 'TideBit Ex',
-        version: '0.8.15',
-        chainId: 1,
-        verifyingContract: '0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC',
-        salt: '0x' + '0000000000000000000000000000000000000000000000000000000000000002',
-      };
-
-      // The named list of all type definitions
-      const types = {
-        Person: [
-          {name: 'name', type: 'string'},
-          {name: 'wallet', type: 'address'},
-        ],
-        Mail: [
-          {name: 'from', type: 'Person'},
-          {name: 'to', type: 'Person'},
-          {name: 'contents', type: 'string'},
-        ],
-      };
-
       // The data to sign
       // '0xCD2a3d9F938E13CD947Ec05AbC7FE734Df8DD826'
       const value = {
@@ -446,14 +458,14 @@ export default function WalletPanel(props) {
       };
 
       setLoading(true);
-      let signature = await signer._signTypedData(domain, types, value);
+      let signature = await signer._signTypedData(DOMAIN, TYPES, value);
       setErrorMessages('');
 
       setSignature(signature);
 
       setSecondStepSuccess(true);
 
-      setTimeout(() => setProcessModalVisible(false), 1000);
+      setTimeout(() => setProcessModalVisible(false), DELAYED_HIDDEN_SECONDS);
 
       setHelloModalVisible(true);
 
@@ -592,7 +604,8 @@ export default function WalletPanel(props) {
 
   const walletconnectOptionClickHandler = async () => {
     // walletConnectSignClient();
-    walletConnectClient();
+    setChooseWalletConnect(true);
+    await walletConnectClient();
   };
 
   const metamaskOptionClickHandler = async () => {
@@ -607,6 +620,7 @@ export default function WalletPanel(props) {
       return;
     }
 
+    setChooseWalletConnect(false);
     metamaskConnect();
   };
 
@@ -713,7 +727,7 @@ export default function WalletPanel(props) {
     return text?.substring(0, 6) + '...' + text?.substring(text.length - 5);
   }
 
-  const username = defaultAccount?.slice(-1).toUpperCase();
+  let username = defaultAccount?.slice(-1).toUpperCase();
 
   const disconnect = async () => {
     killSession();

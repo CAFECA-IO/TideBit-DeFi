@@ -40,15 +40,16 @@ const SignatureProcessModal = ({
   );
 
   const secondStepActivatedIcon = (
-    <div className="relative">
+    <div className="relative flex items-center justify-center">
       <Lottie className="relative w-32" animationData={activeIconPulse} />
       {/* <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-sky-400 opacity-75"></span> */}
 
+      {/* absolute top-48px left-46px */}
       <Image
-        className="absolute top-48px left-46px"
+        className="absolute mr-3px mb-1px"
         src="/elements/group_2418(1).svg"
-        width={32}
-        height={32}
+        width={33}
+        height={33}
         alt="step 2 icon"
       />
     </div>
@@ -115,14 +116,18 @@ const SignatureProcessModal = ({
   );
   const secondStepActiveView = (
     <>
-      <div>
-        {' '}
-        {secondStepActivatedIcon}
-        {/* <Image src="/elements/group_2418(1).svg" width={32} height={32} alt="step 2 icon" /> */}
-      </div>
-      <div className="w-271px space-y-1 text-lightWhite">
-        <div className="text-lg">Enable trading</div>
-        <div className="text-sm">Enable secure access to our API for lightning quick trading.</div>
+      <div className="inline-flex">
+        <div className="relative -ml-9">
+          {' '}
+          {secondStepActivatedIcon}
+          {/* <Image src="/elements/group_2418(1).svg" width={32} height={32} alt="step 2 icon" /> */}
+        </div>
+        <div className="-ml-7 w-271px space-y-1 pt-7 text-lightWhite">
+          <div className="text-lg">Enable trading</div>
+          <div className="text-sm">
+            Enable secure access to our API for lightning quick trading.
+          </div>
+        </div>
       </div>
     </>
   );

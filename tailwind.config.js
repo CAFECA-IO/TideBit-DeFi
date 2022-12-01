@@ -58,6 +58,7 @@ module.exports = {
         // width / height / padding / margin / top / bottom / right / left
         '1px': '1px',
         '2px': '2px',
+        '3px': '3px',
         '5px': '5px',
         '10px': '10px',
         '15px': '15px',

@@ -20,6 +20,10 @@ const ICON_SIZE = 50;
 const WALLET_CONNECT_PROJECT_ID = process.env.WALLET_CONNECT_PROJECT_ID;
 
 export default function WalletPanel(props) {
+  // if (window !== undefined) {
+  //   const {ethereum} = window;
+  // }
+
   const {
     ref: panelRef,
     componentVisible: panelVisible,
@@ -263,7 +267,7 @@ export default function WalletPanel(props) {
         setDefaultAccount(accounts[0]);
       });
     };
-  }, [ethereum]);
+  });
 
   async function _walletConnectSignEIP712() {
     const typedData = {

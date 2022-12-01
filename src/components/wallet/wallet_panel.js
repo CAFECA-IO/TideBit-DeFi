@@ -801,25 +801,24 @@ export default function WalletPanel(props) {
       </div>
     ) : null;
 
-  const isDisplayedUserAvatar =
-    defaultAccount && signature ? (
-      <>
-        <button
-          onClick={avatarClickHandler}
-          className="relative ml-3 inline-flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-tidebitTheme"
-        >
-          <span className="text-2xl font-bold text-lightWhite">{username}</span>
-        </button>
-        {isDisplayedAvatarMenu}
-      </>
-    ) : (
-      <TideButton
-        onClick={clickHandler}
-        className={`${props?.className} mt-4 rounded border-0 bg-tidebitTheme py-2 px-5 text-base text-white hover:bg-cyan-600 focus:outline-none md:mt-0`}
+  const isDisplayedUserAvatar = defaultAccount ? (
+    <>
+      <button
+        onClick={avatarClickHandler}
+        className="relative ml-3 inline-flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-tidebitTheme"
       >
-        Wallet Connect
-      </TideButton>
-    );
+        <span className="text-2xl font-bold text-lightWhite">{username}</span>
+      </button>
+      {isDisplayedAvatarMenu}
+    </>
+  ) : (
+    <TideButton
+      onClick={clickHandler}
+      className={`${props?.className} mt-4 rounded border-0 bg-tidebitTheme py-2 px-5 text-base text-white hover:bg-cyan-600 focus:outline-none md:mt-0`}
+    >
+      Wallet Connect
+    </TideButton>
+  );
 
   return (
     <>

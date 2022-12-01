@@ -53,6 +53,7 @@ export default function Trial() {
           {/* <WalletConnectCom /> */}
           <SignatureProcessModal
             firstStepSuccess={true}
+            secondStepSuccess={true}
             processModalRef={null}
             processModalVisible={true}
           />

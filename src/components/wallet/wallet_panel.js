@@ -14,7 +14,8 @@ import HelloModal from './hello_modal';
 // import SignClient from '@walletconnect/sign-client';
 import QRCodeModal from '@walletconnect/qrcode-modal';
 import WalletConnect from '@walletconnect/client';
-import {SUPPORTED_NETWORKS} from '../../constants/network';
+import {SUPPORTED_NETWORKS, WALLET_CONNECT_BRIDGE_URL} from '../../constants/config';
+import {DELAYED_HIDDEN_SECONDS} from '../../constants/display';
 
 const ICON_SIZE = 50;
 const WALLET_CONNECT_PROJECT_ID = process.env.WALLET_CONNECT_PROJECT_ID;
@@ -50,6 +51,12 @@ export default function WalletPanel(props) {
     setComponentVisible: setHelloModalVisible,
   } = useOuterClick(false);
 
+  const {
+    ref: avatarMenuRef,
+    componentVisible: avatarMenuVisible,
+    setComponentVisible: setAvatarMenuVisible,
+  } = useOuterClick(false);
+
   const [connecting, setConnecting] = useState(false);
 
   const [defaultAccount, setDefaultAccount] = useState('');
@@ -74,6 +81,7 @@ export default function WalletPanel(props) {
   const [chooseWalletConnect, setChooseWalletConnect] = useState(false);
 
   const clearState = () => {
+    setConnector(null);
     setConnecting(false);
     setDefaultAccount('');
     setErrorMessages('');
@@ -101,9 +109,6 @@ export default function WalletPanel(props) {
     // }
   };
 
-  // TODO: wallet connect kill session part 2
-  // const walletConnectBtnTextHandler = connector ? 'Disconnect' : 'Wallet Connect';
-
   const connectingClickHandler = () => {
     setConnectingModalVisible(!connectingModalVisible);
   };
@@ -127,6 +132,10 @@ export default function WalletPanel(props) {
     setProcessModalVisible(!processModalVisible);
   };
 
+  const avatarClickHandler = () => {
+    setAvatarMenuVisible(!avatarMenuVisible);
+  };
+
   const requestSendingHandler = () => {
     funcSignTypedData();
   };
@@ -136,29 +145,22 @@ export default function WalletPanel(props) {
     setFetching(true);
 
     // 1. Create connector
-    const connector = new WalletConnect({
-      bridge: 'https://bridge.walletconnect.org',
+    const walletConnector = new WalletConnect({
+      bridge: WALLET_CONNECT_BRIDGE_URL,
       qrcodeModal: QRCodeModal,
     });
 
     // 2. Update the connector state
-    setConnector(connector);
+    setConnector(walletConnector);
 
     // 3. If not connected, create a new session
-    if (!connector.connected) {
+    if (!walletConnector.connected) {
       // setConnectingModalVisible(true);
       // console.log('connecting visible...');
       // console.log('QR code opened...');
       setShowToast(true);
 
-      await connector.createSession();
-      setPanelVisible(false);
-      setSecondStepError(false);
-      setSecondStepSuccess(false);
-      setLoading(false);
-      setFirstStepSuccess(true);
-      setErrorMessages('');
-      setSignature(null);
+      await walletConnector.createSession();
 
       // console.log('connecting Invisible...');
       // setConnectingModalVisible(false);
@@ -198,6 +200,8 @@ export default function WalletPanel(props) {
       const formattedBalance = ethers.utils.formatEther(balance);
       // 4. Save the balance to state
       setUserBalance(formattedBalance);
+
+      await _walletConnectSignEIP712((connectedAccount = connectedAccount));
     }
   }
 
@@ -214,12 +218,15 @@ export default function WalletPanel(props) {
         await onConnect(chainId, accounts[0]);
         setFetching(false);
 
-        setPanelVisible(false);
-        setProcessModalVisible(true);
-        setFirstStepSuccess(true);
+        // if (accounts[0]) await _walletConnectSignEIP712();
+        // console.log('useEffect connector listener accounts[0]: ', accounts[0]);
 
         // console.log('connecting Invisible...');
         // setConnectingModalVisible(false);
+      });
+
+      connector.on('session_update', async (error, payload) => {
+        // _walletConnectSignEIP712();
       });
 
       connector.on('disconnect', async (error, payload) => {
@@ -245,7 +252,23 @@ export default function WalletPanel(props) {
     }
   }, [connector, chainId, defaultAccount, userBalance]);
 
-  async function _walletConnectSignEIP712() {
+  // TODO: Notes why it works with `[]`
+  useEffect(() => {
+    // console.log('ethereum side effect');
+    if (window?.ethereum) {
+      ethereum?.on('accountsChanged', async accounts => {
+        setDefaultAccount(accounts[0]);
+      });
+
+      return () => {
+        ethereum?.removeListener('accountsChanged', async accounts => {
+          setDefaultAccount(accounts[0]);
+        });
+      };
+    }
+  }, []);
+
+  async function _walletConnectSignEIP712(props) {
     const typedData = {
       types: {
         EIP712Domain: [
@@ -285,15 +308,20 @@ export default function WalletPanel(props) {
     };
 
     const msgParams = [
-      defaultAccount, // Required
+      defaultAccount ?? props.connectedAccount, // Required
       JSON.stringify(typedData), // Required
     ];
 
+    // if (defaultAccount) {
+    //   setFirstStepSuccess(true);
+    // }
+
     try {
+      setFirstStepSuccess(true);
       setLoading(true);
       setProcessModalVisible(true);
-      setFirstStepSuccess(true);
       setSecondStepSuccess(false);
+      setSecondStepError(false);
       setErrorMessages('');
       setSignature(null);
 
@@ -301,13 +329,15 @@ export default function WalletPanel(props) {
       setSignature(signature);
 
       setSecondStepSuccess(true);
-      setTimeout(() => setProcessModalVisible(false), 1000);
+
+      setTimeout(() => setProcessModalVisible(false), DELAYED_HIDDEN_SECONDS);
 
       setHelloModalVisible(true);
       setPanelVisible(false);
       setShowToast(true);
     } catch (error) {
       // console.error('sign 712 ERROR', error);
+
       setSignature(null);
       setErrorMessages(error.message);
 
@@ -325,7 +355,7 @@ export default function WalletPanel(props) {
       connector.killSession();
       clearState();
     }
-    resetApp();
+    clearState();
   };
 
   const resetApp = () => {
@@ -337,259 +367,33 @@ export default function WalletPanel(props) {
   // TODO: 1. connect 2. sign
   // make sure connected, and then pop up the sign modal to continue signing
   async function walletConnectClient() {
-    connect();
+    await connect();
 
-    if (connector) {
-      setSecondStepError(false);
-      setSecondStepSuccess(false);
+    if (defaultAccount && chooseWalletConnect) {
       await _walletConnectSignEIP712();
-      setLoading(false);
     }
-    // DOC: Sign Typed Data
-    // connector
-    //   .signTypedData(msgParams)
-    //   .then(result => {
-    //     // Returns signature.
-    //     console.log(result);
-    //   })
-    //   .catch(error => {
-    //     // Error returned when rejected
-    //     console.error(error);
-    //   });
-    //   try {
-    //     const client = new SignClient({
-    //       bridge: 'https://bridge.walletconnect.org',
-    //       qrcodeModal: QRCodeModal,
-    //     });
-    //     client.on('connect', (error, payload) => {
-    //       if (error) {
-    //         throw error;
-    //       }
-    //       // Get provided accounts and chainId
-    //       const {accounts, chainId} = payload.params[0];
-    //       console.log('accounts: ', accounts);
-    //       console.log('chainId: ', chainId);
-    //     });
-    //     client.on('session_update', (error, payload) => {
-    //       if (error) {
-    //         throw error;
-    //       }
-    //       // Get updated accounts and chainId
-    //       const {accounts, chainId} = payload.params[0];
-    //       console.log('accounts: ', accounts);
-    //       console.log('chainId: ', chainId);
-    //     });
-    //     client.on('disconnect', (error, payload) => {
-    //       if (error) {
-    //         throw error;
-    //       }
-    //       // Delete connector
-    //     });
-    //     // create new session
-    //     client
-    //       .createSession({
-    //         permissions: {
-    //           blockchain: {
-    // }}})
+
+    // console.log('wallet connect client: ', connector, defaultAccount, chooseWalletConnect);
+    // if (connector && defaultAccount && chooseWalletConnect) {
+    //   setPanelVisible(false);
+    //   setSecondStepError(false);
+    //   setSecondStepSuccess(false);
+    //   await _walletConnectSignEIP712();
+    //   setLoading(false);
+    // }
+    // await funcSignTypedData();
   }
 
-  // async function walletConnectQrcodeModalApp({signClient}) {
-  //   try {
-  //     const {uri, approval} = await signClient.connect({
-  //       // Optionally: pass a known prior pairing (e.g. from `signClient.core.pairing.getPairings()`) to skip the `uri` step.
-  //       pairingTopic: pairing?.topic,
-  //       // Provide the namespaces and chains (e.g. `eip155` for EVM-based chains) we want to use in this session.
-  //       requiredNamespaces: {
-  //         eip155: {
-  //           methods: [
-  //             'eth_sendTransaction',
-  //             'eth_signTransaction',
-  //             'eth_sign',
-  //             'personal_sign',
-  //             'eth_signTypedData',
-  //           ],
-  //           chains: ['eip155:1'],
-  //           events: ['chainChanged', 'accountsChanged'],
-  //         },
-  //       },
-  //     });
-
-  //     // Open QRCode modal if a URI was returned (i.e. we're not connecting an existing pairing).
-  //     if (uri) {
-  //       QRCodeModal.open(uri, () => {
-  //         console.log('EVENT', 'QR Code Modal closed');
-  //       });
-  //     }
-
-  //     // Await session approval from the wallet.
-  //     const session = await approval();
-  //     // Handle the returned session (e.g. update UI to "connected" state).
-  //     await onSessionConnected(session);
-  //   } catch (e) {
-  //     console.error(e);
-  //   } finally {
-  //     // Close the QRCode modal in case it was open.
-  //     QRCodeModal.close();
-  //   }
-  //   // const provider = new providers.Web3Provider(window.ethereum);
-  //   // const signer = provider.getSigner();
-  //   // const address = await signer.getAddress();
-  //   // const client = new SignClient({
-  //   //   bridge: 'https://bridge.walletconnect.org',
-  //   //   qrcodeModal: QRCodeModal,
-  //   // });
-  //   // client.on('connect', (error, payload) => {
-  //   //   if (error) {
-  //   //     throw error;
-  //   //   }
-  //   //   // Get provided accounts and chainId
-  //   //   const {accounts, chainId} = payload.params[0];
-  //   //   console.log('accounts: ', accounts);
-  //   //   console.log('chainId: ', chainId);
-  //   // });
-  //   // client.on('session_update', (error, payload) => {
-  //   //   if (error) {
-  //   //     throw error;
-  //   //   }
-  //   //   // Get updated accounts and chainId
-  //   //   const {accounts, chainId} = payload.params[0];
-  //   //   console.log('accounts: ', accounts);
-  //   //   console.log('chainId: ', chainId);
-  //   // });
-  //   // client.on('disconnect', (error, payload) => {
-  //   //   if (error) {
-  //   //     throw error;
-  //   //   }
-  //   //   // Delete connector
-  //   // });
-  //   // // create new session
-  //   // client
-  //   //   .createSession({
-  //   //     permissions: {
-  //   //       blockchain: {
-  //   //         chains
-  // }
-
-  // async function walletConnectSignClient() {
-  //   // console.log('projectid: ', WALLET_CONNECT_PROJECT_ID);
-
-  //   // 1. Initiate your WalletConnect client with the relay server
-  //   const signClient = await SignClient.init({
-  //     projectId: WALLET_CONNECT_PROJECT_ID,
-  //     metadata: {
-  //       name: 'TideBit DeFi',
-  //       description: 'TideBit DeFi WalletConnect Sign Client',
-  //       url: '#',
-  //       icons: ['https://walletconnect.com/_next/static/media/logo_mark.84dd8525.svg'],
-  //     },
-  //   });
-
-  //   // console.log('signClient: ', signClient);
-
-  //   // 2. Add listeners for desired SignClient events.
-  //   signClient.on('session_event', ({events}) => {
-  //     // events.forEach((event) => {
-  //     //   if (event.type === "session_request") {}
-  //     // console.log('session_event', events);
-  //   });
-
-  //   signClient.on('session_update', ({topic, params}) => {
-  //     const {namespaces} = params;
-  //     const _session = signClient.session.get(topic);
-  //     // Overwrite the `namespaces` of the existing session with the incoming one.
-  //     const updatedSession = {..._session, namespaces};
-  //     // Integrate the updated session state into your dapp state.
-  //     onSessionUpdate(updatedSession);
-  //     // console.log('session_update', updatedSession);
-  //   });
-
-  //   signClient.on('session_delete', () => {
-  //     // Session was deleted -> reset the dapp state, clean up from user session, etc.
-  //     clearState();
-  //     // console.log('session_delete');
-  //   });
-
-  //   // 3. Connect the application and specify session permissions.
-  //   // walletConnectQrcodeModalApp;
-  //   try {
-  //     const {uri, approval} = await signClient.connect({
-  //       // Optionally: pass a known prior pairing (e.g. from `signClient.core.pairing.getPairings()`) to skip the `uri` step.
-  //       pairingTopic: pairing?.topic,
-  //       // Provide the namespaces and chains (e.g. `eip155` for EVM-based chains) we want to use in this session.
-  //       requiredNamespaces: {
-  //         eip155: {
-  //           methods: [
-  //             'eth_sendTransaction',
-  //             'eth_signTransaction',
-  //             'eth_sign',
-  //             'personal_sign',
-  //             'eth_signTypedData',
-  //           ],
-  //           chains: ['eip155:1'],
-  //           events: ['chainChanged', 'accountsChanged'],
-  //         },
-  //       },
-  //     });
-
-  //     // Open QRCode modal if a URI was returned (i.e. we're not connecting an existing pairing).
-  //     if (uri) {
-  //       QRCodeModal.open(uri, () => {
-  //         // console.log('EVENT', 'QR Code Modal closed, but the property is `open`');
-  //       });
-  //     }
-
-  //     // Await session approval from the wallet.
-  //     const session = await approval();
-  //     // Handle the returned session (e.g. update UI to "connected" state).
-  //     await onSessionConnected(session);
-  //   } catch (e) {
-  //     // console.error(e);
-  //     setErrorMessages(error.message);
-  //   } finally {
-  //     // Close the QRCode modal in case it was open.
-  //     QRCodeModal.close();
-  //   }
-
-  //   const result = await signClient.request({
-  //     topic: session.topic,
-  //     chainId: 'eip155:1',
-  //     request: {
-  //       id: 1,
-  //       jsonrpc: '2.0',
-  //       method: 'personal_sign',
-  //       params: [
-  //         '0x1d85568eEAbad713fBB5293B45ea066e552A90De',
-  //         '0x7468697320697320612074657374206d65737361676520746f206265207369676e6564',
-  //       ],
-  //     },
-  //   });
-  // }
-
   async function funcSignTypedData() {
-    if (connector) {
+    if (defaultAccount && chooseWalletConnect) {
       await _walletConnectSignEIP712();
       return;
-      // // console.log('detect connector');
-      // try {
-      //   // console.log('start try signTypedData');
-      //   // setLoading(true);
-      //   await _walletConnectSignEIP712();
-      //   // setLoading(false);
-      //   // console.log('signTypedData success');
-      //   return;
-      // } catch (error) {
-      //   // console.log('wallet connect signTypedData error: ', error);
-      //   setErrorMessages(error.message);
-      //   setShowToast(true);
-      //   setLoading(false);
-      //   return;
-      // }
     }
 
     try {
       setErrorMessages('');
       setSignature(null);
-      setLoading(true);
+      setLoading(false);
       setSecondStepError(false);
 
       // console.log('projectId', projectId);
@@ -617,10 +421,9 @@ export default function WalletPanel(props) {
 
       setUserBalance(ethers.utils.formatEther(balance));
 
-      // All properties on a domain are optional(?)
       // TODO: salt is optional, but if not provided, the signature will be different each time(?)
       const domain = {
-        name: 'TideBit Ex',
+        name: 'TideBit DeFi',
         version: '0.8.15',
         chainId: 1,
         verifyingContract: '0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC',
@@ -662,7 +465,7 @@ export default function WalletPanel(props) {
 
       setSecondStepSuccess(true);
 
-      setTimeout(() => setProcessModalVisible(false), 1000);
+      setTimeout(() => setProcessModalVisible(false), DELAYED_HIDDEN_SECONDS);
 
       setHelloModalVisible(true);
 
@@ -801,7 +604,8 @@ export default function WalletPanel(props) {
 
   const walletconnectOptionClickHandler = async () => {
     // walletConnectSignClient();
-    walletConnectClient();
+    setChooseWalletConnect(true);
+    await walletConnectClient();
   };
 
   const metamaskOptionClickHandler = async () => {
@@ -816,6 +620,7 @@ export default function WalletPanel(props) {
       return;
     }
 
+    setChooseWalletConnect(false);
     metamaskConnect();
   };
 
@@ -916,14 +721,108 @@ export default function WalletPanel(props) {
     </>
   ) : null;
 
+  // TODO: wallet connect kill session part 2
+
+  function accountTruncate(text) {
+    return text?.substring(0, 6) + '...' + text?.substring(text.length - 5);
+  }
+
+  let username = defaultAccount?.slice(-1).toUpperCase();
+
+  const disconnect = async () => {
+    killSession();
+    setDefaultAccount(null);
+    setChooseWalletConnect(null);
+
+    const {ethereum} = window;
+    if (ethereum) {
+      try {
+        await ethereum.request({
+          method: 'eth_requestAccounts',
+          params: [{eth_accounts: {}}],
+        });
+        // console.log('Wallet Disconnected');
+        setDefaultAccount(null);
+        setUserBalance(null);
+      } catch (error) {
+        // console.error('Not connected to wallet', error);
+      }
+    }
+    setAvatarMenuVisible(false);
+  };
+
+  const isDisplayedAvatarMenu =
+    defaultAccount && avatarMenuVisible ? (
+      // Background
+      <div
+        id="userDropdown"
+        className="absolute top-16 right-8 z-10 w-285px divide-y divide-lightGray rounded-none bg-darkGray shadow"
+      >
+        {/* Avatar Section */}
+        <div className="mx-3 items-center py-3 px-4 text-center text-sm text-lightGray">
+          {/* Avatar */}
+          <div className="relative ml-3 inline-flex h-28 w-28 items-center justify-center overflow-hidden rounded-full bg-tidebitTheme text-center">
+            <span className="text-5xl font-bold text-lightWhite">{username}</span>
+          </div>
+          {/* Account */}
+          <div className="ml-4 mt-2 truncate text-sm">{accountTruncate(defaultAccount)}</div>
+        </div>
+
+        <ul
+          className="mx-3 py-1 pb-3 text-base text-gray-700 dark:text-gray-200"
+          aria-labelledby="avatarButton"
+        >
+          <li>
+            <a href="#" className="block py-2 pr-4 pl-6 hover:bg-darkGray5">
+              My Wallet
+            </a>
+          </li>
+          <li>
+            <a href="#" className="block py-2 pr-4 pl-6 hover:bg-darkGray5">
+              Deposit
+            </a>
+          </li>
+          <li>
+            <a href="#" className="block py-2 pr-4 pl-6 hover:bg-darkGray5">
+              Withdraw
+            </a>
+          </li>
+          <li>
+            <a href="#" className="block py-2 pr-4 pl-6 hover:bg-darkGray5">
+              My account
+            </a>
+          </li>
+          <li>
+            <a onClick={disconnect} href="#" className="block py-2 pr-4 pl-6 hover:bg-darkGray5">
+              Disconnect
+            </a>
+          </li>
+        </ul>
+      </div>
+    ) : null;
+
+  const isDisplayedUserAvatar = defaultAccount ? (
+    <>
+      <button
+        onClick={avatarClickHandler}
+        className="relative ml-3 inline-flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-tidebitTheme"
+      >
+        <span className="text-2xl font-bold text-lightWhite">{username}</span>
+      </button>
+      {isDisplayedAvatarMenu}
+    </>
+  ) : (
+    <TideButton
+      onClick={clickHandler}
+      className={`${props?.className} mt-4 rounded border-0 bg-tidebitTheme py-2 px-5 text-base text-white hover:bg-cyan-600 focus:outline-none md:mt-0`}
+    >
+      Wallet Connect
+    </TideButton>
+  );
+
   return (
     <>
-      <TideButton
-        onClick={clickHandler}
-        className={`${props?.className} mt-4 rounded border-0 bg-tidebitTheme py-2 px-5 text-base text-white hover:bg-cyan-600 focus:outline-none md:mt-0`}
-      >
-        Wallet Connect
-      </TideButton>
+      {isDisplayedUserAvatar}
 
       {isDisplayedWalletPanel}
 
@@ -952,24 +851,6 @@ export default function WalletPanel(props) {
 
       {/* TODO: Notes- the below is the same but `{toastNotify}` is easier to be changed and managed  */}
       {toastNotify}
-      {/* <Toast
-        title="Your signature"
-        content={
-          <>
-            <div>
-              Your Address: <span className="text-cuteBlue3">{defaultAccount}</span>
-            </div>
-            <div>
-              EIP 712 Signature: <span className="text-cuteBlue3">{signature}</span>
-            </div>
-            <div>
-              <span className="text-lightRed">{errorMessages}</span>
-            </div>
-          </>
-        }
-        toastHandler={toastHandler}
-        showToast={showToast}
-      /> */}
     </>
   );
 }

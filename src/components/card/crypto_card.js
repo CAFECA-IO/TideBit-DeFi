@@ -51,14 +51,14 @@ const CryptoCard = ({
   const desktopVersionBreakpoint = 'xs:flex';
   const mobileVersionBreakpoint = 'xs:hidden';
 
-  function randomeNumber(min, max) {
+  function randomNumber(min, max) {
     return Math.floor(Math.random() * (max - min + 1) + min);
   }
 
   function randomArray(min, max, length) {
     let arr = [];
     for (let i = 0; i < length; i++) {
-      arr.push(randomeNumber(min, max));
+      arr.push(randomNumber(min, max));
     }
     return arr;
   }

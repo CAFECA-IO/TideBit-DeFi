@@ -78,32 +78,6 @@ const SignatureProcessModal = ({
     </TideButton>
   );
 
-  //   <>
-  //   <div className="inline-flex">
-  //     <div className="relative -ml-11">
-  //       {' '}
-  //       {secondStepActivatedIcon}
-  //       {/* <Image src="/elements/group_2418(1).svg" width={32} height={32} alt="step 2 icon" /> */}
-  //     </div>
-  //     <div className="-ml-7 w-271px space-y-1 pt-7 text-lightWhite">
-  //       <div className="text-lg">Enable trading</div>
-  //       <div className="text-sm">
-  //         Enable secure access to our API for lightning quick trading.
-  //       </div>
-  //     </div>
-  //   </div>
-  // </>
-
-  {
-    /* <>
-      <div className="mr-5">{firstStepIcon}</div>
-      <div className="w-271px space-y-1 text-lightWhite">
-        <div className="text-lg">Verify ownership</div>
-        <div className="text-sm">Confirm you are the owner of this wallet</div>
-      </div>
-    </> */
-  }
-
   const firstStepDefaultView = (
     <>
       <div className="-mt-6 -mb-5 inline-flex">
@@ -183,16 +157,6 @@ const SignatureProcessModal = ({
     </>
   );
 
-  //   <>
-  //   <div className="mr-2">
-  //     {successIcon}{' '}
-  //     {/* <Image src="/elements/group_2418(1).svg" width={32} height={32} alt="step 2 icon" /> */}
-  //   </div>
-  //   <div className="w-271px space-y-1 text-lightWhite">
-  //     <div className="text-lg">Enable trading</div>
-  //     <div className="text-sm">Enable secure access to our API for lightning quick trading.</div>
-  //   </div>
-  // </>
   const secondStepSuccessView = (
     <>
       <div className="mr-6 mt-7 mb-1">{successIcon}</div>
@@ -202,17 +166,6 @@ const SignatureProcessModal = ({
       </div>
     </>
   );
-
-  {
-    /* <div className="mr-2">
-        {errorIcon}
-      </div>
-      <div className="w-271px space-y-1 text-lightWhite">
-        <div className="text-lg">Enable trading</div>
-        <div className="text-sm">Enable secure access to our API for lightning quick trading.</div>
-        <div className="text-sm text-lightRed3">Something went wrong, please try again</div>
-      </div> */
-  }
 
   const secondStepErrorView = (
     <>

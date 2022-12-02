@@ -1,6 +1,6 @@
 import LineGraph from '../components/line_graph/line_graph';
 import dynamic from 'next/dynamic';
-import WalletConnectCom from '../components/wallet/wallet_connect_com';
+import WalletConnectCom from '../components/wallet/wallet_connect_trial';
 import Head from 'next/head';
 import SignatureProcessModal from '../components/wallet/signature_process_modal';
 import {useEffect, useState} from 'react';

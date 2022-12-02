@@ -79,6 +79,7 @@ export default function WalletPanel(props) {
   const [supported, setSupported] = useState(false);
   const [symbol, setSymbol] = useState(null);
   const [chooseWalletConnect, setChooseWalletConnect] = useState(false);
+  const [walletConnectSuccessful, setWalletConnectSuccessful] = useState(false);
 
   const clearState = () => {
     setConnector(null);
@@ -147,6 +148,7 @@ export default function WalletPanel(props) {
   const connect = async () => {
     setFetching(true);
 
+    // TODO: Notes for global / local constants
     // 1. Create connector
     const walletConnector = new WalletConnect({
       bridge: WALLET_CONNECT_BRIDGE_URL,
@@ -167,6 +169,21 @@ export default function WalletPanel(props) {
 
       // console.log('connecting Invisible...');
       // setConnectingModalVisible(false);
+    }
+
+    // setProcessModalVisible(true)
+    // setPanelVisible(false);
+    // setProcessModalVisible(true);
+
+    // await _walletConnectSignEIP712();
+
+    // TODO: wallet connect combo
+    if (walletConnector.connected && defaultAccount) {
+      // console.log('connected...');
+      // console.log('QR code closed...');
+      setProcessModalVisible(true);
+      _walletConnectSignEIP712();
+      setFirstStepSuccess(true);
     }
 
     // 4. Sign typed data
@@ -196,21 +213,20 @@ export default function WalletPanel(props) {
         chainId,
         name: networkData.name,
       });
-
       // 2. Get the account balance
       const balance = await provider.getBalance(connectedAccount);
       // 3. Format the balance
       const formattedBalance = ethers.utils.formatEther(balance);
       // 4. Save the balance to state
       setUserBalance(formattedBalance);
-
-      // await _walletConnectSignEIP712((connectedAccount = connectedAccount));
-
-      // console.log('onConnect eip712 signed: ', signature);
     }
+    setWalletConnectSuccessful(true);
+
+    // console.log('onConnect eip712 signed: ', signature);
+    // await _walletConnectSignEIP712();
   }
 
-  // Once connector, chainId, account, or balance chages, update the state
+  // Once connector, chainId, account, or balance changes, update the state
   useEffect(() => {
     if (connector) {
       connector.on('connect', async (error, payload) => {
@@ -218,6 +234,7 @@ export default function WalletPanel(props) {
           // console.error(error);
           return;
         }
+        // console.log('connect listener: ', payload);
 
         const {chainId, accounts} = payload.params[0];
         await onConnect(chainId, accounts[0]);
@@ -232,12 +249,20 @@ export default function WalletPanel(props) {
 
       connector.on('session_update', async (error, payload) => {
         // _walletConnectSignEIP712();
+        // _walletConnectSignEIP712();
+        // console.log(error)
+        // console.log('session update', payload);
+
+        const {chainId, accounts} = payload.params[0];
+        await onConnect(chainId, accounts[0]);
+        setFetching(false);
       });
 
       connector.on('disconnect', async (error, payload) => {
         if (error) {
           // console.error(error);
         }
+        setWalletConnectSuccessful(false);
 
         // handle disconnect event
         // resetApp();
@@ -257,6 +282,10 @@ export default function WalletPanel(props) {
       setFetching(false);
     }
   }, [connector, chainId, defaultAccount, userBalance]);
+
+  // useEffect(() => {
+  //   _walletConnectSignEIP712();
+  // }, [walletConnectSuccessful]);
 
   // TODO: Notes why it works with `[]`
   useEffect(() => {
@@ -370,58 +399,19 @@ export default function WalletPanel(props) {
   //   setFetching(false);
   // };
 
-  // TODO: 1. connect 2. sign
-  // make sure connected, and then pop up the sign modal to continue signing
-  async function walletConnectClient() {
-    try {
-      await connect();
-      // FIXME: Need to check execution order // put all into one function? or check in one function?
-      // setSecondStepSuccess(false);
-      // setSecondStepError(false);
-      // setProcessModalVisible(false);
-      // await _walletConnectSignEIP712();
-    } catch (error) {
-      // console.log(error);
-    }
-    // try {
-    //   if (!defaultAccount) {
-    //     await connect();
-    //     return;
-    //   }
-    //   // setSecondStepSuccess(false);
-    //   // setSecondStepError(false);
-    //   if (defaultAccount && chooseWalletConnect) {
-    //     await _walletConnectSignEIP712();
-    //     return;
-    //   }
-    // } catch (error) {
-    //   console.log(error);
-    // }
-
-    // if (defaultAccount && chooseWalletConnect) {
-    //   await _walletConnectSignEIP712();
-    // }
-
-    // console.log('wallet connect client: ', connector, defaultAccount, chooseWalletConnect);
-    // if (connector && defaultAccount && chooseWalletConnect) {
-    //   setPanelVisible(false);
-    //   setSecondStepError(false);
-    //   setSecondStepSuccess(false);
-    //   await _walletConnectSignEIP712();
-    //   setLoading(false);
-    // }
-    // await funcSignTypedData();
-  }
-
   async function funcSignTypedData() {
-    if (defaultAccount && chooseWalletConnect) {
-      try {
-        await _walletConnectSignEIP712();
-      } catch (error) {
-        // console.error('func sign typed data - (wallet connect)sign 712 ERROR', error);
-      }
+    if (connector && defaultAccount) {
+      _walletConnectSignEIP712();
       return;
     }
+    // if (defaultAccount && chooseWalletConnect) {
+    //   try {
+    //     await _walletConnectSignEIP712();
+    //   } catch (error) {
+    //     // console.error('func sign typed data - (wallet connect)sign 712 ERROR', error);
+    //   }
+    //   return;
+    // }
 
     try {
       setErrorMessages('');
@@ -514,54 +504,100 @@ export default function WalletPanel(props) {
     }
   }
 
-  // FIXME: nothing but taking notes
-  // {!!chooseWalletConnect ? (
-  //   connector ? (
-  //     <div>
-  //       <TideButton onClick={killSession} className="bg-cuteBlue2 hover:bg-cuteBlue2/80">
-  //         Kill session of wallet connect
-  //       </TideButton>
-  //     </div>
-  //   ) : (
-  //     <div className="text-cuteBlue4">Session closed successfully</div>
-  //   )
-  // ) : null}
-  let toastNotify = (
-    <Toast
-      title="Your signature"
-      content={
-        <>
-          {!!chooseWalletConnect && connector ? (
-            <div>
-              <TideButton onClick={killSession} className="bg-cuteBlue2 hover:bg-cuteBlue2/80">
-                Kill session of wallet connect
-              </TideButton>
-            </div>
-          ) : !!chooseWalletConnect && !connector ? (
-            <div className="text-cuteBlue4">Session closed successfully</div>
-          ) : null}
+  // async function walletConnectProgram() {
+  //   // `connect()`
+  //   setFetching(true);
+  //   // let waitAccount = '';
 
-          <div>
-            Chain Id: <span className="text-cuteBlue3">{chainId}</span>
-            {!!(chainId !== 1) && (
-              <div className="text-lightRed2">Please switch to ETH Mainnet</div>
-            )}
-          </div>
-          <div>
-            Your Address: <span className="text-cuteBlue3">{defaultAccount}</span>
-          </div>
-          <div>
-            EIP 712 Signature: <span className="text-cuteBlue3">{signature}</span>
-          </div>
-          <div>
-            <span className="text-lightRed">{errorMessages}</span>
-          </div>
-        </>
-      }
-      toastHandler={toastHandler}
-      showToast={showToast}
-    />
-  );
+  //   // TODO: Notes for global / local constants
+  //   // 1. Create connector
+  //   const walletConnector = new WalletConnect({
+  //     bridge: WALLET_CONNECT_BRIDGE_URL,
+  //     qrcodeModal: QRCodeModal,
+  //   });
+
+  //   // 2. Update the connector state
+  //   setConnector(walletConnector);
+
+  //   // 3. If not connected, create a new session
+  //   if (!walletConnector.connected) {
+  //     // setConnectingModalVisible(true);
+  //     // console.log('connecting visible...');
+  //     // console.log('QR code opened...');
+  //     setShowToast(true);
+
+  //     await walletConnector.createSession();
+
+  //     // console.log('connecting Invisible...');
+  //     // setConnectingModalVisible(false);
+  //   }
+
+  //   // `onConnect()`
+  //   // 4. Store account info into state
+  //   if (connector) {
+  //     connector.on('connect', async (error, payload) => {
+  //       if (error) {
+  //         // console.error(error);
+  //         return;
+  //       }
+  //       // console.log('connect listener', payload);
+  //       const {chainId, accounts} = payload.params[0];
+  //       // waitAccount = accounts[0];
+  //       await onConnect(chainId, accounts[0]);
+  //       setFetching(false);
+
+  //       // if (accounts[0]) await _walletConnectSignEIP712();
+  //       // console.log('useEffect connector listener accounts[0]: ', accounts[0]);
+
+  //       // console.log('connecting Invisible...');
+  //       // setConnectingModalVisible(false);
+  //     });
+
+  //     connector.on('session_update', async (error, payload) => {
+  //       // _walletConnectSignEIP712();
+  //       // console.log(error)
+  //       // console.log('session update', payload);
+  //       const {chainId, accounts} = payload.params[0];
+  //       await onConnect(chainId, accounts[0]);
+  //       setFetching(false);
+  //     });
+
+  //     connector.on('disconnect', async (error, payload) => {
+  //       if (error) {
+  //         // console.error(error);
+  //       }
+  //       // handle disconnect event
+  //       clearState();
+  //     });
+  //   }
+
+  //   // TODO: (?) 5. Save the provider to state(used for signing) and local storage
+
+  //   // Sign EIP712
+  //   // setSecondStepError(false);
+  //   // setProcessModalVisible(false);
+
+  //   // if (waitAccount) {
+  //   //   console.log('waitAccount', waitAccount);
+  //   //   await _walletConnectSignEIP712();
+  //   // }
+  //   await _walletConnectSignEIP712();
+  // }
+
+  // TODO: 1. connect 2. sign
+  // make sure connected, and then pop up the sign modal to continue signing
+  async function walletConnectClient() {
+    try {
+      await connect();
+      // FIXME: Need to check execution order // put all into one function? or check in one function?
+      // setSecondStepSuccess(false);
+      // setSecondStepError(false);
+      // setProcessModalVisible(false);
+      // await _walletConnectSignEIP712();
+    } catch (error) {
+      // console.log(error);
+    }
+  }
 
   async function metamaskConnect() {
     // console.log('metamask connect func called');
@@ -639,6 +675,7 @@ export default function WalletPanel(props) {
     // walletConnectSignClient();
     setChooseWalletConnect(true);
     await walletConnectClient();
+    // await walletConnectProgram();
   };
 
   const metamaskOptionClickHandler = async () => {
@@ -656,6 +693,55 @@ export default function WalletPanel(props) {
     setChooseWalletConnect(false);
     metamaskConnect();
   };
+
+  // FIXME: nothing but taking notes
+  // {!!chooseWalletConnect ? (
+  //   connector ? (
+  //     <div>
+  //       <TideButton onClick={killSession} className="bg-cuteBlue2 hover:bg-cuteBlue2/80">
+  //         Kill session of wallet connect
+  //       </TideButton>
+  //     </div>
+  //   ) : (
+  //     <div className="text-cuteBlue4">Session closed successfully</div>
+  //   )
+  // ) : null}
+  let toastNotify = (
+    <Toast
+      title="Dev Receipt"
+      content={
+        <>
+          {!!chooseWalletConnect && connector ? (
+            <div>
+              <TideButton onClick={killSession} className="bg-cuteBlue2 hover:bg-cuteBlue2/80">
+                Kill session of wallet connect
+              </TideButton>
+            </div>
+          ) : !!chooseWalletConnect && !connector ? (
+            <div className="text-cuteBlue4">Session closed successfully</div>
+          ) : null}
+
+          <div>
+            Chain Id: <span className="text-cuteBlue3">{chainId}</span>
+            {!!(chainId !== 1) && (
+              <div className="text-lightRed2">Please switch to ETH Mainnet</div>
+            )}
+          </div>
+          <div>
+            Your Address: <span className="text-cuteBlue3">{defaultAccount}</span>
+          </div>
+          <div>
+            EIP 712 Signature: <span className="text-cuteBlue3">{signature}</span>
+          </div>
+          <div>
+            <span className="text-lightRed">{errorMessages}</span>
+          </div>
+        </>
+      }
+      toastHandler={toastHandler}
+      showToast={showToast}
+    />
+  );
 
   const isDisplayedWalletPanel = panelVisible ? (
     <>

@@ -25,7 +25,21 @@ const SignatureProcessModal = ({
   // if (firstStepError && secondStepSuccess) return
 
   const firstStepIcon = (
-    <Image src="/elements/group_2415.svg" width={32} height={32} alt="step 1 icon" />
+    <div className="relative flex items-center justify-center">
+      <Lottie className="relative w-32" animationData={activeIconPulse} />
+      {/* <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-sky-400 opacity-75"></span> */}
+
+      {/* absolute top-48px left-46px */}
+      <Image
+        className="absolute mr-1 mb-1px"
+        src="/elements/group_2415.svg"
+        width={33}
+        height={33}
+        alt="step 1 icon"
+      />
+    </div>
+
+    // <Image src="/elements/group_2415.svg" width={32} height={32} alt="step 1 icon" />
   );
 
   const successIcon = (
@@ -64,20 +78,52 @@ const SignatureProcessModal = ({
     </TideButton>
   );
 
-  const firstStepDefaultView = (
-    <>
-      <div className="mr-2">{firstStepIcon}</div>
+  //   <>
+  //   <div className="inline-flex">
+  //     <div className="relative -ml-11">
+  //       {' '}
+  //       {secondStepActivatedIcon}
+  //       {/* <Image src="/elements/group_2418(1).svg" width={32} height={32} alt="step 2 icon" /> */}
+  //     </div>
+  //     <div className="-ml-7 w-271px space-y-1 pt-7 text-lightWhite">
+  //       <div className="text-lg">Enable trading</div>
+  //       <div className="text-sm">
+  //         Enable secure access to our API for lightning quick trading.
+  //       </div>
+  //     </div>
+  //   </div>
+  // </>
+
+  {
+    /* <>
+      <div className="mr-5">{firstStepIcon}</div>
       <div className="w-271px space-y-1 text-lightWhite">
         <div className="text-lg">Verify ownership</div>
         <div className="text-sm">Confirm you are the owner of this wallet</div>
+      </div>
+    </> */
+  }
+
+  const firstStepDefaultView = (
+    <>
+      <div className="-mt-6 -mb-5 inline-flex">
+        <div className="relative -ml-11 -mt-2">
+          {' '}
+          {firstStepIcon}
+          {/* <Image src="/elements/group_2418(1).svg" width={32} height={32} alt="step 2 icon" /> */}
+        </div>
+        <div className="-ml-7 w-271px space-y-1 pt-7 text-lightWhite">
+          <div className="text-lg">Verify ownership</div>
+          <div className="text-sm">Confirm you are the owner of this wallet</div>
+        </div>
       </div>
     </>
   );
 
   const firstStepSuccessView = (
     <>
-      <div className="mr-2">{successIcon}</div>
-      <div className="w-271px space-y-1 text-lightWhite">
+      <div className="mr-6 mt-1">{successIcon}</div>
+      <div className="mt-1 w-271px space-y-1 text-lightWhite">
         <div className="text-lg">Verify ownership</div>
         <div className="text-sm">Confirm you are the owner of this wallet</div>
       </div>
@@ -86,7 +132,7 @@ const SignatureProcessModal = ({
 
   const firstStepErrorView = (
     <>
-      <div className="mr-2">{errorIcon}</div>
+      <div className="mr-6 mt-0">{errorIcon}</div>
       <div className="w-271px space-y-1 text-lightWhite">
         <div className="text-lg">Verify ownership</div>
         <div className="text-sm">Confirm you are the owner of this wallet</div>
@@ -108,17 +154,21 @@ const SignatureProcessModal = ({
 
   const secondStepDefaultView = (
     <>
-      <div className="mr-2">{secondStepDefaultIcon}</div>
-      <div className="w-271px space-y-1 text-lightGray">
-        <div className="text-lg">Enable trading</div>
-        <div className="text-sm">Enable secure access to our API for lightning quick trading.</div>
+      <div className="mt-2 mb-1 flex items-center justify-center">
+        <div className="mr-6">{secondStepDefaultIcon}</div>
+        <div className="w-271px space-y-1 text-lightGray">
+          <div className="text-lg">Enable trading</div>
+          <div className="text-sm">
+            Enable secure access to our API for lightning quick trading.
+          </div>
+        </div>
       </div>
     </>
   );
   const secondStepActiveView = (
     <>
       <div className="inline-flex">
-        <div className="relative -ml-9">
+        <div className="relative -ml-11">
           {' '}
           {secondStepActivatedIcon}
           {/* <Image src="/elements/group_2418(1).svg" width={32} height={32} alt="step 2 icon" /> */}
@@ -133,27 +183,41 @@ const SignatureProcessModal = ({
     </>
   );
 
+  //   <>
+  //   <div className="mr-2">
+  //     {successIcon}{' '}
+  //     {/* <Image src="/elements/group_2418(1).svg" width={32} height={32} alt="step 2 icon" /> */}
+  //   </div>
+  //   <div className="w-271px space-y-1 text-lightWhite">
+  //     <div className="text-lg">Enable trading</div>
+  //     <div className="text-sm">Enable secure access to our API for lightning quick trading.</div>
+  //   </div>
+  // </>
   const secondStepSuccessView = (
     <>
-      <div className="mr-2">
-        {successIcon}{' '}
-        {/* <Image src="/elements/group_2418(1).svg" width={32} height={32} alt="step 2 icon" /> */}
-      </div>
-      <div className="w-271px space-y-1 text-lightWhite">
+      <div className="mr-6 mt-7 mb-1">{successIcon}</div>
+      <div className="mt-7 mb-1 w-271px space-y-1 text-lightWhite">
         <div className="text-lg">Enable trading</div>
         <div className="text-sm">Enable secure access to our API for lightning quick trading.</div>
       </div>
     </>
   );
 
-  const secondStepErrorView = (
-    <>
-      <div className="mr-2">
-        {' '}
+  {
+    /* <div className="mr-2">
         {errorIcon}
-        {/* <Image src="/elements/group_2418(1).svg" width={32} height={32} alt="step 2 icon" /> */}
       </div>
       <div className="w-271px space-y-1 text-lightWhite">
+        <div className="text-lg">Enable trading</div>
+        <div className="text-sm">Enable secure access to our API for lightning quick trading.</div>
+        <div className="text-sm text-lightRed3">Something went wrong, please try again</div>
+      </div> */
+  }
+
+  const secondStepErrorView = (
+    <>
+      <div className="mr-6 mt-7 -mb-5">{errorIcon}</div>
+      <div className="mt-7 -mb-5 w-271px space-y-1 text-lightWhite">
         <div className="text-lg">Enable trading</div>
         <div className="text-sm">Enable secure access to our API for lightning quick trading.</div>
         <div className="text-sm text-lightRed3">Something went wrong, please try again</div>
@@ -283,12 +347,12 @@ const SignatureProcessModal = ({
 
                   {/* Activate First Step */}
                   <div className={`${controlSpace} flex flex-col pt-16`}>
-                    <div className="flex items-center justify-center space-x-3">
+                    <div className="flex items-center justify-center">
                       {firstStepSectionHandler}
                     </div>
 
                     {/* Second Step */}
-                    <div className="flex items-center justify-center space-x-3">
+                    <div className="flex items-center justify-center">
                       {secondStepSectionHandler}
                     </div>
                   </div>

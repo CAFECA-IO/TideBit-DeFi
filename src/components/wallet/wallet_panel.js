@@ -645,7 +645,7 @@ export default function WalletPanel(props) {
     // TODO: NNNNNNNotes
     // console.log('connecting modal should be visible: ', connectingModalVisible);
 
-    if (typeof window.ethereum === 'undefined') {
+    if (typeof window?.ethereum === 'undefined') {
       // walletConnectSignClient();
       // TODO: what about sign
       walletconnectOptionClickHandler();

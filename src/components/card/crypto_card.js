@@ -51,7 +51,7 @@ const CryptoCard = ({
   const desktopVersionBreakpoint = 'xs:flex';
   const mobileVersionBreakpoint = 'xs:hidden';
 
-  function randomeNumber(min, max) {
+  function randomNumber(min, max) {
     return Math.floor(Math.random() * (max - min + 1) + min);
   }
 

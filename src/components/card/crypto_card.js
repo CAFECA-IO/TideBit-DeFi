@@ -58,7 +58,7 @@ const CryptoCard = ({
   function randomArray(min, max, length) {
     let arr = [];
     for (let i = 0; i < length; i++) {
-      arr.push(randomeNumber(min, max));
+      arr.push(randomNumber(min, max));
     }
     return arr;
   }

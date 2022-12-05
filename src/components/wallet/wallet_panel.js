@@ -677,7 +677,7 @@ export default function WalletPanel(props) {
       // setSecondStepSuccess(false);
       // setSecondStepError(false);
       // setProcessModalVisible(false);
-      // await _walletConnectSignEIP712();
+      await _walletConnectSignEIP712();
     } catch (error) {
       // console.log(error);
     }

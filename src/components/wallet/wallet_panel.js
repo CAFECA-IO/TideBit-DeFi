@@ -80,6 +80,7 @@ export default function WalletPanel(props) {
   const [symbol, setSymbol] = useState(null);
   const [chooseWalletConnect, setChooseWalletConnect] = useState(false);
   const [walletConnectSuccessful, setWalletConnectSuccessful] = useState(false);
+  const [signInStore, setSignInStore] = useState(false);
 
   const clearState = () => {
     setConnector(null);
@@ -355,6 +356,10 @@ export default function WalletPanel(props) {
     //   setFirstStepSuccess(true);
     // }
 
+    if (signInStore) {
+      return;
+    }
+
     try {
       setFirstStepSuccess(true);
       setLoading(true);
@@ -374,6 +379,8 @@ export default function WalletPanel(props) {
         setHelloModalVisible(true);
         setPanelVisible(false);
         setShowToast(true);
+        setSignInStore(true);
+        // console.log('sign in store, ', signInStore);
       }
     } catch (error) {
       // console.error('sign 712 ERROR', error);
@@ -417,6 +424,10 @@ export default function WalletPanel(props) {
     //   }
     //   return;
     // }
+
+    if (signInStore) {
+      return;
+    }
 
     try {
       setErrorMessages('');
@@ -498,6 +509,9 @@ export default function WalletPanel(props) {
       setHelloModalVisible(true);
 
       setShowToast(true);
+
+      setSignInStore(true);
+      // console.log('sign in store, ', signInStore);
 
       // console.log('[EIP712] Sign typed signature: ', signature);
     } catch (error) {

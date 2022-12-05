@@ -19,45 +19,6 @@ import {DELAYED_HIDDEN_SECONDS} from '../../constants/display';
 
 const ICON_SIZE = 50;
 const WALLET_CONNECT_PROJECT_ID = process.env.WALLET_CONNECT_PROJECT_ID;
-const TYPED_DATA_WALLET_CONNECT = {
-  types: {
-    EIP712Domain: [
-      {name: 'name', type: 'string'},
-      {name: 'version', type: 'string'},
-      {name: 'chainId', type: 'uint256'},
-      {name: 'verifyingContract', type: 'address'},
-    ],
-    Person: [
-      {name: 'name', type: 'string'},
-      {name: 'account', type: 'address'},
-    ],
-    Mail: [
-      {name: 'from', type: 'Person'},
-      {name: 'to', type: 'Person'},
-      {name: 'contents', type: 'string'},
-    ],
-  },
-  primaryType: 'Mail',
-  domain: {
-    name: 'TideBit DeFi',
-    version: '1.0',
-    chainId: 1,
-    verifyingContract: '0x0000000000000000000000000000000000000000',
-  },
-  message: {
-    from: {
-      name: 'User',
-      account: '0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB',
-    },
-    to: {
-      name: 'TideBit DeFi',
-      account: '0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB',
-    },
-    contents: 'Agree to the terms and conditions',
-  },
-};
-
-const TYPED_DATA_WALLET_CONNECT_STRINGFY = JSON.stringify(TYPED_DATA_WALLET_CONNECT);
 
 export default function WalletPanel(props) {
   const {
@@ -184,15 +145,17 @@ export default function WalletPanel(props) {
   };
 
   // Initialize WalletConnect
+  // 1. Create connector
+  const walletConnector = new WalletConnect({
+    bridge: WALLET_CONNECT_BRIDGE_URL,
+    qrcodeModal: QRCodeModal,
+  });
+
   const connect = async () => {
     setFetching(true);
+    // console.log('start connect(), walletConnector.connected: ', walletConnector.connected);
 
     // TODO: Notes for global / local constants
-    // 1. Create connector
-    const walletConnector = new WalletConnect({
-      bridge: WALLET_CONNECT_BRIDGE_URL,
-      qrcodeModal: QRCodeModal,
-    });
 
     // 2. Update the connector state
     setConnector(walletConnector);
@@ -225,18 +188,69 @@ export default function WalletPanel(props) {
       setFirstStepSuccess(true);
     }
 
-    // Promise.resolve(defaultAccount)
-    //   .then(async () => {
-    //     await _walletConnectSignEIP712();
-    //     console.log('promise success');
-    //   })
-    //   .catch(error => {
-    //     console.log(error); // no response whatever
-    //   });
+    // walletConnecting();
 
     // 4. Sign typed data
     // _walletConnectSignEIP712();
   };
+
+  async function walletConnecting() {
+    await connect();
+    if (connector) {
+      connector.on('connect', async (error, payload) => {
+        if (error) {
+          // console.error(error);
+          return;
+        }
+        // console.log('connect listener: ', payload);
+        // console.log('wallet connecting...');
+
+        const {chainId, accounts} = payload.params[0];
+        await onConnect(chainId, accounts[0]);
+        setFetching(false);
+
+        // if (accounts[0]) await _walletConnectSignEIP712();
+        // console.log('useEffect connector listener accounts[0]: ', accounts[0]);
+
+        // console.log('connecting Invisible...');
+        // setConnectingModalVisible(false);
+      });
+
+      connector.on('session_update', async (error, payload) => {
+        // _walletConnectSignEIP712();
+        // _walletConnectSignEIP712();
+        // console.log(error)
+        // console.log('session update', payload);
+
+        const {chainId, accounts} = payload.params[0];
+        await onConnect(chainId, accounts[0]);
+        setFetching(false);
+      });
+
+      connector.on('disconnect', async (error, payload) => {
+        if (error) {
+          // console.error(error);
+        }
+        setWalletConnectSuccessful(false);
+
+        // handle disconnect event
+        // resetApp();
+        clearState();
+      });
+
+      // check state variables here & if needed refresh the app
+      // If any of these variables do not exist and the connector is connected, refresh the data
+      if ((!chainId || !defaultAccount || !userBalance) && connector.connected) {
+        refreshData();
+      }
+    }
+
+    async function refreshData() {
+      const {chainId, accounts} = connector;
+      await onConnect(chainId, accounts[0]);
+      setFetching(false);
+    }
+  }
 
   // Data collected when connected
   async function onConnect(chainId, connectedAccount) {
@@ -268,79 +282,59 @@ export default function WalletPanel(props) {
       // 4. Save the balance to state
       setUserBalance(formattedBalance);
     }
-    setWalletConnectSuccessful(true);
+
+    if (!walletConnectSuccessful) {
+      setWalletConnectSuccessful(true);
+      await _walletConnectSignEIP712();
+    }
 
     // console.log('onConnect eip712 signed: ', signature);
     // await _walletConnectSignEIP712();
   }
 
-  // Once connector, chainId, account, or balance changes, update the state
-  useEffect(() => {
-    if (connector) {
-      connector.on('connect', async (error, payload) => {
-        if (error) {
-          // console.error(error);
-          return;
-        }
-        // console.log('connect listener: ', payload);
+  // //// Once connector, chainId, account, or balance changes, update the state
+  // useEffect(() => {
+  //   if (connector) {
+  //     connector.on('connect', async (error, payload) => {
+  //       if (error) {
+  //         // console.error(error);
+  //         return;
+  //       }
 
-        const {chainId, accounts} = payload.params[0];
-        await onConnect(chainId, accounts[0]);
+  //       const {chainId, accounts} = payload.params[0];
+  //       await onConnect(chainId, accounts[0]);
+  //       setFetching(false);
+  //     });
 
-        // Promise.resolve(defaultAccount)
-        //   .then(() => {
-        //     _walletConnectSignEIP712();
-        //     console.log('promise success');
-        //   })
-        //   .catch(error => {
-        //     console.log(error); // no response whatever
-        //   });
+  //     connector.on('session_update', async (error, payload) => {
+  //       const {chainId, accounts} = payload.params[0];
+  //       await onConnect(chainId, accounts[0]);
+  //       setFetching(false);
+  //     });
 
-        setFetching(false);
+  //     connector.on('disconnect', async (error, payload) => {
+  //       if (error) {
+  //         // console.error(error);
+  //       }
+  //       setWalletConnectSuccessful(false);
 
-        // if (accounts[0]) await _walletConnectSignEIP712();
-        // console.log('useEffect connector listener accounts[0]: ', accounts[0]);
+  //       // handle disconnect event
+  //       clearState();
+  //     });
 
-        // console.log('connecting Invisible...');
-        // setConnectingModalVisible(false);
-      });
+  //     // check state variables here & if needed refresh the app
+  //     // If any of these variables do not exist and the connector is connected, refresh the data
+  //     if ((!chainId || !defaultAccount || !userBalance) && connector.connected) {
+  //       refreshData();
+  //     }
+  //   }
 
-      connector.on('session_update', async (error, payload) => {
-        // _walletConnectSignEIP712();
-        // _walletConnectSignEIP712();
-        // console.log(error)
-        // console.log('session update', payload);
-
-        const {chainId, accounts} = payload.params[0];
-        // await onConnect(chainId, accounts[0]);
-
-        setFetching(false);
-      });
-
-      connector.on('disconnect', async (error, payload) => {
-        if (error) {
-          // console.error(error);
-        }
-        setWalletConnectSuccessful(false);
-
-        // handle disconnect event
-        // resetApp();
-        clearState();
-      });
-
-      // check state variables here & if needed refresh the app
-      // If any of these variables do not exist and the connector is connected, refresh the data
-      if ((!chainId || !defaultAccount || !userBalance) && connector.connected) {
-        refreshData();
-      }
-    }
-
-    async function refreshData() {
-      const {chainId, accounts} = connector;
-      await onConnect(chainId, accounts[0]);
-      setFetching(false);
-    }
-  }, [connector, chainId, defaultAccount, userBalance]);
+  //   async function refreshData() {
+  //     const {chainId, accounts} = connector;
+  //     await onConnect(chainId, accounts[0]);
+  //     setFetching(false);
+  //   }
+  // }, [connector, chainId, defaultAccount, userBalance]);
 
   // useEffect(() => {
   //   _walletConnectSignEIP712();
@@ -362,10 +356,48 @@ export default function WalletPanel(props) {
     }
   }, []);
 
-  async function _walletConnectSignEIP712() {
+  async function _walletConnectSignEIP712(props) {
+    const typedData = {
+      types: {
+        EIP712Domain: [
+          {name: 'name', type: 'string'},
+          {name: 'version', type: 'string'},
+          {name: 'chainId', type: 'uint256'},
+          {name: 'verifyingContract', type: 'address'},
+        ],
+        Person: [
+          {name: 'name', type: 'string'},
+          {name: 'account', type: 'address'},
+        ],
+        Mail: [
+          {name: 'from', type: 'Person'},
+          {name: 'to', type: 'Person'},
+          {name: 'contents', type: 'string'},
+        ],
+      },
+      primaryType: 'Mail',
+      domain: {
+        name: 'TideBit DeFi',
+        version: '1.0',
+        chainId: 1,
+        verifyingContract: '0x0000000000000000000000000000000000000000',
+      },
+      message: {
+        from: {
+          name: 'User',
+          account: '0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB',
+        },
+        to: {
+          name: 'TideBit DeFi',
+          account: '0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB',
+        },
+        contents: 'Agree to the terms and conditions',
+      },
+    };
+
     const msgParams = [
-      defaultAccount, // Required
-      TYPED_DATA_WALLET_CONNECT_STRINGFY, // Required
+      defaultAccount ?? props?.connectedAccount, // Required
+      JSON.stringify(typedData), // Required
     ];
 
     // if (defaultAccount) {
@@ -382,15 +414,16 @@ export default function WalletPanel(props) {
       setSignature(null);
 
       const signature = await connector.signTypedData(msgParams);
-      setSignature(signature);
+      if (/^(0x|0X)?[a-fA-F0-9]+$/.test(signature)) {
+        setSignature(signature);
+        setSecondStepSuccess(true);
 
-      setSecondStepSuccess(true);
+        setTimeout(() => setProcessModalVisible(false), DELAYED_HIDDEN_SECONDS);
 
-      setTimeout(() => setProcessModalVisible(false), DELAYED_HIDDEN_SECONDS);
-
-      setHelloModalVisible(true);
-      setPanelVisible(false);
-      setShowToast(true);
+        setHelloModalVisible(true);
+        setPanelVisible(false);
+        setShowToast(true);
+      }
     } catch (error) {
       // console.error('sign 712 ERROR', error);
 
@@ -605,79 +638,18 @@ export default function WalletPanel(props) {
   //   await _walletConnectSignEIP712();
   // }
 
-  async function walletConnectPromise() {
-    return new Promise((resolve, reject) => {
-      if (connector) {
-        connector.on('connect', async (error, payload) => {
-          if (error) {
-            // console.error(error);
-            return;
-          }
-          // console.log('connect listener', payload);
-          const {chainId, accounts} = payload.params[0];
-          // waitAccount = accounts[0];
-          await onConnect(chainId, accounts[0]);
-          setFetching(false);
-
-          // if (accounts[0]) await _walletConnectSignEIP712();
-          // console.log('useEffect connector listener accounts[0]: ', accounts[0]);
-
-          // console.log('connecting Invisible...');
-          // setConnectingModalVisible(false);
-        });
-
-        connector.on('session_update', async (error, payload) => {
-          // _walletConnectSignEIP712();
-          // console.log(error)
-          // console.log('session update', payload);
-          const {chainId, accounts} = payload.params[0];
-          await onConnect(chainId, accounts[0]);
-          setFetching(false);
-        });
-
-        connector.on('disconnect', async (error, payload) => {
-          if (error) {
-            // console.error(error);
-          }
-          // handle disconnect event
-          clearState();
-        });
-      }
-    });
-  }
-
   // TODO: 1. connect 2. sign
   // make sure connected, and then pop up the sign modal to continue signing
   async function walletConnectClient() {
-    // Promise.resolve(async () => {
-    //   await connect();
-    //   // console.log('await now'); // no response whatever
-    // })
-    //   .then(async () => {
-    //     await _walletConnectSignEIP712();
-    //     console.log('promise success');
-    //   })
-    //   .catch(error => {
-    //     console.log(error); // no response whatever
-    //   });
-
     try {
-      await connect();
-      // await walletConnectPromise();
-
-      // Promise.resolve(defaultAccount)
-      //   .then(() => {
-      //     _walletConnectSignEIP712();
-      //   })
-      //   .catch(error => {
-      //     setErrorMessages(error.message);
-      //   });
-
+      // await connect();
+      await walletConnecting();
+      // await _walletConnectSignEIP712();
       // FIXME: Need to check execution order // put all into one function? or check in one function?
       // setSecondStepSuccess(false);
       // setSecondStepError(false);
       // setProcessModalVisible(false);
-      await _walletConnectSignEIP712();
+      // await _walletConnectSignEIP712();
     } catch (error) {
       // console.log(error);
     }

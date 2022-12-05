@@ -396,7 +396,7 @@
 //                       className="mt-3 text-base text-tidebitTheme underline underline-offset-4"
 //                       href="#"
 //                     >
-//                       Connect my TideBit HK
+//                       Connect my TideBit
 //                     </Link>
 //                   </div>
 //                 </div>

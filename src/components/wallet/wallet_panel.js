@@ -145,17 +145,15 @@ export default function WalletPanel(props) {
   };
 
   // Initialize WalletConnect
-  // 1. Create connector
-  const walletConnector = new WalletConnect({
-    bridge: WALLET_CONNECT_BRIDGE_URL,
-    qrcodeModal: QRCodeModal,
-  });
-
   const connect = async () => {
     setFetching(true);
-    // console.log('start connect(), walletConnector.connected: ', walletConnector.connected);
 
     // TODO: Notes for global / local constants
+    // 1. Create connector
+    const walletConnector = new WalletConnect({
+      bridge: WALLET_CONNECT_BRIDGE_URL,
+      qrcodeModal: QRCodeModal,
+    });
 
     // 2. Update the connector state
     setConnector(walletConnector);
@@ -188,14 +186,52 @@ export default function WalletPanel(props) {
       setFirstStepSuccess(true);
     }
 
-    // walletConnecting();
-
     // 4. Sign typed data
     // _walletConnectSignEIP712();
   };
 
-  async function walletConnecting() {
-    await connect();
+  // Data collected when connected
+  async function onConnect(chainId, connectedAccount) {
+    // handle connect event
+    setDefaultAccount(connectedAccount);
+    setChainId(chainId);
+    setChooseWalletConnect(true);
+
+    // get chain data
+    const networkData = SUPPORTED_NETWORKS.filter(chain => chain.chain_id === chainId)[0];
+
+    if (!networkData) {
+      setSupported(false);
+    } else {
+      setSupported(true);
+      // setNetwork(networkData.name);
+      // setSymbol(networkData.native_currency.symbol);
+      setChainId(chainId);
+
+      // 1. Create an Ethers provider
+      const provider = new ethers.providers.StaticJsonRpcProvider(networkData.rpc_url, {
+        chainId,
+        name: networkData.name,
+      });
+      // 2. Get the account balance
+      const balance = await provider.getBalance(connectedAccount);
+      // 3. Format the balance
+      const formattedBalance = ethers.utils.formatEther(balance);
+      // 4. Save the balance to state
+      setUserBalance(formattedBalance);
+    }
+
+    if (!walletConnectSuccessful) {
+      setWalletConnectSuccessful(true);
+      await _walletConnectSignEIP712();
+    }
+
+    // console.log('onConnect eip712 signed: ', signature);
+    // await _walletConnectSignEIP712();
+  }
+
+  // Once connector, chainId, account, or balance changes, update the state
+  useEffect(() => {
     if (connector) {
       connector.on('connect', async (error, payload) => {
         if (error) {
@@ -203,7 +239,6 @@ export default function WalletPanel(props) {
           return;
         }
         // console.log('connect listener: ', payload);
-        // console.log('wallet connecting...');
 
         const {chainId, accounts} = payload.params[0];
         await onConnect(chainId, accounts[0]);
@@ -250,91 +285,7 @@ export default function WalletPanel(props) {
       await onConnect(chainId, accounts[0]);
       setFetching(false);
     }
-  }
-
-  // Data collected when connected
-  async function onConnect(chainId, connectedAccount) {
-    // handle connect event
-    setDefaultAccount(connectedAccount);
-    setChainId(chainId);
-    setChooseWalletConnect(true);
-
-    // get chain data
-    const networkData = SUPPORTED_NETWORKS.filter(chain => chain.chain_id === chainId)[0];
-
-    if (!networkData) {
-      setSupported(false);
-    } else {
-      setSupported(true);
-      // setNetwork(networkData.name);
-      // setSymbol(networkData.native_currency.symbol);
-      setChainId(chainId);
-
-      // 1. Create an Ethers provider
-      const provider = new ethers.providers.StaticJsonRpcProvider(networkData.rpc_url, {
-        chainId,
-        name: networkData.name,
-      });
-      // 2. Get the account balance
-      const balance = await provider.getBalance(connectedAccount);
-      // 3. Format the balance
-      const formattedBalance = ethers.utils.formatEther(balance);
-      // 4. Save the balance to state
-      setUserBalance(formattedBalance);
-    }
-
-    if (!walletConnectSuccessful) {
-      setWalletConnectSuccessful(true);
-      await _walletConnectSignEIP712();
-    }
-
-    // console.log('onConnect eip712 signed: ', signature);
-    // await _walletConnectSignEIP712();
-  }
-
-  // //// Once connector, chainId, account, or balance changes, update the state
-  // useEffect(() => {
-  //   if (connector) {
-  //     connector.on('connect', async (error, payload) => {
-  //       if (error) {
-  //         // console.error(error);
-  //         return;
-  //       }
-
-  //       const {chainId, accounts} = payload.params[0];
-  //       await onConnect(chainId, accounts[0]);
-  //       setFetching(false);
-  //     });
-
-  //     connector.on('session_update', async (error, payload) => {
-  //       const {chainId, accounts} = payload.params[0];
-  //       await onConnect(chainId, accounts[0]);
-  //       setFetching(false);
-  //     });
-
-  //     connector.on('disconnect', async (error, payload) => {
-  //       if (error) {
-  //         // console.error(error);
-  //       }
-  //       setWalletConnectSuccessful(false);
-
-  //       // handle disconnect event
-  //       clearState();
-  //     });
-
-  //     // check state variables here & if needed refresh the app
-  //     // If any of these variables do not exist and the connector is connected, refresh the data
-  //     if ((!chainId || !defaultAccount || !userBalance) && connector.connected) {
-  //       refreshData();
-  //     }
-  //   }
-
-  //   async function refreshData() {
-  //     const {chainId, accounts} = connector;
-  //     await onConnect(chainId, accounts[0]);
-  //     setFetching(false);
-  //   }
-  // }, [connector, chainId, defaultAccount, userBalance]);
+  }, [connector, chainId, defaultAccount, userBalance]);
 
   // useEffect(() => {
   //   _walletConnectSignEIP712();
@@ -642,9 +593,7 @@ export default function WalletPanel(props) {
   // make sure connected, and then pop up the sign modal to continue signing
   async function walletConnectClient() {
     try {
-      // await connect();
-      await walletConnecting();
-      // await _walletConnectSignEIP712();
+      await connect();
       // FIXME: Need to check execution order // put all into one function? or check in one function?
       // setSecondStepSuccess(false);
       // setSecondStepError(false);

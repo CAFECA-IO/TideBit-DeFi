@@ -177,6 +177,9 @@ export default function WalletPanel(props) {
       // setConnectingModalVisible(false);
     }
 
+    // TODO: trial for split the function from useEffect
+    // await walletConnecting();
+
     // setProcessModalVisible(true)
     // setPanelVisible(false);
     // setProcessModalVisible(true);
@@ -186,6 +189,7 @@ export default function WalletPanel(props) {
     // TODO: wallet connect combo
     if (walletConnector.connected && defaultAccount) {
       // console.log('connected...');
+
       // console.log('QR code closed...');
       setProcessModalVisible(true);
       _walletConnectSignEIP712();
@@ -236,7 +240,63 @@ export default function WalletPanel(props) {
     // await _walletConnectSignEIP712();
   }
 
-  // Once connector, chainId, account, or balance changes, update the state
+  async function walletConnecting() {
+    if (connector) {
+      connector.on('connect', async (error, payload) => {
+        if (error) {
+          // console.error(error);
+          return;
+        }
+        // console.log('connect listener: ', payload);
+
+        const {chainId, accounts} = payload.params[0];
+        await onConnect(chainId, accounts[0]);
+        setFetching(false);
+
+        // if (accounts[0]) await _walletConnectSignEIP712();
+        // console.log('useEffect connector listener accounts[0]: ', accounts[0]);
+
+        // console.log('connecting Invisible...');
+        // setConnectingModalVisible(false);
+      });
+
+      connector.on('session_update', async (error, payload) => {
+        // _walletConnectSignEIP712();
+        // _walletConnectSignEIP712();
+        // console.log(error)
+        // console.log('session update', payload);
+
+        const {chainId, accounts} = payload.params[0];
+        await onConnect(chainId, accounts[0]);
+        setFetching(false);
+      });
+
+      connector.on('disconnect', async (error, payload) => {
+        if (error) {
+          // console.error(error);
+        }
+        setWalletConnectSuccessful(false);
+
+        // handle disconnect event
+        // resetApp();
+        clearState();
+      });
+
+      // check state variables here & if needed refresh the app
+      // If any of these variables do not exist and the connector is connected, refresh the data
+      if ((!chainId || !defaultAccount || !userBalance) && connector.connected) {
+        refreshData();
+      }
+    }
+
+    async function refreshData() {
+      const {chainId, accounts} = connector;
+      await onConnect(chainId, accounts[0]);
+      setFetching(false);
+    }
+  }
+
+  // // Once connector, chainId, account, or balance changes, update the state
   useEffect(() => {
     if (connector) {
       connector.on('connect', async (error, payload) => {
@@ -292,10 +352,6 @@ export default function WalletPanel(props) {
       setFetching(false);
     }
   }, [connector, chainId, defaultAccount, userBalance]);
-
-  // useEffect(() => {
-  //   _walletConnectSignEIP712();
-  // }, [walletConnectSuccessful]);
 
   // TODO: Notes why it works with `[]`
   useEffect(() => {
@@ -493,7 +549,7 @@ export default function WalletPanel(props) {
       const value = {
         from: {
           name: 'User',
-          wallet: `${address}`,
+          wallet: '0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB',
         },
         to: {
           name: 'TideBit DeFi',

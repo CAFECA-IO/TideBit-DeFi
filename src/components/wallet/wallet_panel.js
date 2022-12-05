@@ -82,6 +82,11 @@ export default function WalletPanel(props) {
   const [walletConnectSuccessful, setWalletConnectSuccessful] = useState(false);
   const [signInStore, setSignInStore] = useState(false);
 
+  const [pairingSignature, setPairingSignature] = useState({
+    account: '',
+    signature: '',
+  });
+
   const clearState = () => {
     setConnector(null);
     setConnecting(false);
@@ -412,7 +417,7 @@ export default function WalletPanel(props) {
   // };
 
   async function funcSignTypedData() {
-    if (connector && defaultAccount) {
+    if (connector && walletConnectSuccessful && defaultAccount) {
       _walletConnectSignEIP712();
       return;
     }
@@ -428,6 +433,7 @@ export default function WalletPanel(props) {
     if (signInStore) {
       return;
     }
+    // console.log('pairing signature before', pairingSignature.signature);
 
     try {
       setErrorMessages('');
@@ -511,6 +517,12 @@ export default function WalletPanel(props) {
       setShowToast(true);
 
       setSignInStore(true);
+      // setPairingSignature({account: defaultAccount, signature: signature});
+
+      // setTimeout(() => {
+      //   console.log('pairing signature after', pairingSignature.signature);
+      // }, 5000);
+
       // console.log('sign in store, ', signInStore);
 
       // console.log('[EIP712] Sign typed signature: ', signature);
@@ -749,6 +761,8 @@ export default function WalletPanel(props) {
           <div>
             Your Address: <span className="text-cuteBlue3">{defaultAccount}</span>
           </div>
+          {/* <div>{pairingSignature.account}</div>
+          <div>{pairingSignature.signature}</div> */}
           <div>
             EIP 712 Signature: <span className="text-cuteBlue3">{signature}</span>
           </div>

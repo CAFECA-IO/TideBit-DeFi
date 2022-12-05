@@ -2,41 +2,6 @@ const {ethers} = require('ethers');
 
 // const PRIVATE_KEY = process.env.TEST_WALLET_PRIVATE_KEY.toString();
 
-const domain = {
-  name: 'TideBit DeFi',
-  version: '0.8.15',
-  chainId: 1,
-  verifyingContract: '0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC',
-  salt: '0x' + '0000000000000000000000000000000000000000000000000000000000000002',
-};
-
-// The named list of all type definitions
-const types = {
-  Person: [
-    {name: 'name', type: 'string'},
-    {name: 'wallet', type: 'address'},
-  ],
-  Mail: [
-    {name: 'from', type: 'Person'},
-    {name: 'to', type: 'Person'},
-    {name: 'contents', type: 'string'},
-  ],
-};
-
-// The data to sign
-// '0xCD2a3d9F938E13CD947Ec05AbC7FE734Df8DD826'
-const value = {
-  from: {
-    name: 'User',
-    wallet: '0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB',
-  },
-  to: {
-    name: 'TideBit DeFi',
-    wallet: '0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB',
-  },
-  contents: 'Agree to the terms and conditions',
-};
-
 // TODO: Test 1
 // (async function () {
 //   // yarn ganache-cli -p 8545 -d
@@ -137,14 +102,51 @@ const value = {
 // test4();
 
 test('Check EIP712 signature by Metamask', async () => {
-  const wallet = new ethers.Wallet(
-    '9a0b942d6c06d8c0f751bb8a961fa1f41773988ee7888a74d12c9e0925bae3f8'
-  );
-  const eip712signature = await wallet._signTypedData(domain, types, value);
+  const domain = {
+    name: 'TideBit DeFi',
+    version: '0.8.15',
+    chainId: 1,
+    verifyingContract: '0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC',
+    salt: '0x' + '0000000000000000000000000000000000000000000000000000000000000002',
+  };
+
+  // The named list of all type definitions
+  const types = {
+    Person: [
+      {name: 'name', type: 'string'},
+      {name: 'wallet', type: 'address'},
+    ],
+    Mail: [
+      {name: 'from', type: 'Person'},
+      {name: 'to', type: 'Person'},
+      {name: 'contents', type: 'string'},
+    ],
+  };
+
+  // The data to sign
+  // '0xCD2a3d9F938E13CD947Ec05AbC7FE734Df8DD826'
+  const value = {
+    from: {
+      name: 'User',
+      wallet: '0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB',
+    },
+    to: {
+      name: 'TideBit DeFi',
+      wallet: '0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB',
+    },
+    contents: 'Agree to the terms and conditions',
+  };
+  // const wallet = new ethers.Wallet(
+  //   '9a0b942d6c06d8c0f751bb8a961fa1f41773988ee7888a74d12c9e0925bae3f8'
+  // );
+  // const eip712signature = await wallet._signTypedData(domain, types, value);
+  const eip712signature =
+    '0x0b38434b938c769857a43c6c46815693e00cef60a6a1198e9e0ea1cf3960de1776b13683ad25c285b3e86abffc0ace7e2136a5f1cbacb848fb266689bad4f6411b';
+
   const recoveredAddress = ethers.utils.verifyTypedData(domain, types, value, eip712signature);
 
   // console.log('recoveredAddress', recoveredAddress);
-  expect(recoveredAddress).toEqual(wallet.address);
+  expect(recoveredAddress).toEqual('0xb54898DB1250A6a629E5B566367E9C60a7Dd6C30');
 });
 
 test('Check the result of 5 + 2', () => {

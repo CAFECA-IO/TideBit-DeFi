@@ -171,7 +171,8 @@ export default function WalletPanel(props) {
       // console.log('QR code opened...');
       setShowToast(true);
 
-      await walletConnector.createSession();
+      const result = await walletConnector.createSession();
+      // console.log('result', result);
 
       // console.log('connecting Invisible...');
       // setConnectingModalVisible(false);
@@ -179,6 +180,10 @@ export default function WalletPanel(props) {
 
     // TODO: trial for split the function from useEffect
     // await walletConnecting();
+
+    // if (walletConnector.connected) {
+
+    // }
 
     // setProcessModalVisible(true)
     // setPanelVisible(false);
@@ -241,6 +246,9 @@ export default function WalletPanel(props) {
   }
 
   async function walletConnecting() {
+    // console.log('start connecting');
+    // console.log('connector: ', connector);
+
     if (connector) {
       connector.on('connect', async (error, payload) => {
         if (error) {

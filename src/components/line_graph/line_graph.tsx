@@ -17,7 +17,7 @@ export default function LineGraph({
   lineGraphWidth = '150',
   ...otherProps
 }: LineGraphProps): JSX.Element {
-  const originalData: ApexOptions = {
+  const chartOptions: ApexOptions = {
     chart: {
       type: 'line',
       zoom: {
@@ -60,7 +60,7 @@ export default function LineGraph({
     },
   };
   const [dataSample, setDataSample] = useState({
-    options: originalData,
+    options: chartOptions,
     toolbar: {
       show: false,
       enabled: false,

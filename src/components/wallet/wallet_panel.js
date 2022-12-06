@@ -20,6 +20,42 @@ import {DELAYED_HIDDEN_SECONDS} from '../../constants/display';
 const ICON_SIZE = 50;
 const WALLET_CONNECT_PROJECT_ID = process.env.WALLET_CONNECT_PROJECT_ID;
 
+// TODO: salt is optional, but if not provided, the signature will be different each time(?)
+const DOMAIN = {
+  name: 'TideBit DeFi',
+  version: '0.8.15',
+  chainId: 1,
+  verifyingContract: '0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC',
+  salt: '0x' + '0000000000000000000000000000000000000000000000000000000000000002',
+};
+
+// The named list of all type definitions
+const TYPES = {
+  Person: [
+    {name: 'name', type: 'string'},
+    {name: 'wallet', type: 'address'},
+  ],
+  Mail: [
+    {name: 'from', type: 'Person'},
+    {name: 'to', type: 'Person'},
+    {name: 'contents', type: 'string'},
+  ],
+};
+
+// The data to sign
+// '0xCD2a3d9F938E13CD947Ec05AbC7FE734Df8DD826'
+const VALUE = {
+  from: {
+    name: 'User',
+    wallet: '0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB',
+  },
+  to: {
+    name: 'TideBit DeFi',
+    wallet: '0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB',
+  },
+  contents: 'Agree to the terms and conditions',
+};
+
 export default function WalletPanel(props) {
   const {
     ref: panelRef,
@@ -101,6 +137,9 @@ export default function WalletPanel(props) {
     setFirstStepError(false);
     setSecondStepSuccess(false);
     setSecondStepError(false);
+
+    setProcessModalVisible(false);
+    setPanelVisible(false);
 
     setChainId(null);
     setShowToast(false);
@@ -407,6 +446,7 @@ export default function WalletPanel(props) {
         setDefaultAccount(accounts[0]);
         //   console.log('before setSignInStore');
         setSignInStore(false);
+        setSignature(null);
         //   console.log('after setSignInStore');
 
         //   if (!signInStore && accounts[0] !== defaultAccount) {
@@ -467,6 +507,32 @@ export default function WalletPanel(props) {
       JSON.stringify(typedData), // Required
     ];
 
+    const typedDataForVerifying = {
+      types: {
+        Person: [
+          {name: 'name', type: 'string'},
+          {name: 'account', type: 'address'},
+        ],
+      },
+      domain: {
+        name: 'TideBit DeFi',
+        version: '1.0',
+        chainId: 1,
+        verifyingContract: '0x0000000000000000000000000000000000000000',
+      },
+      message: {
+        from: {
+          name: 'User',
+          account: '0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB',
+        },
+        to: {
+          name: 'TideBit DeFi',
+          account: '0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB',
+        },
+        contents: 'Agree to the terms and conditions',
+      },
+    };
+
     // if (defaultAccount) {
     //   setFirstStepSuccess(true);
     // }
@@ -485,13 +551,71 @@ export default function WalletPanel(props) {
       setSignature(null);
 
       const signature = await connector.signTypedData(msgParams);
+      // console.log('signature: ', signature);
+
+      // const verifySignature = await ethers.utils.verifyTypedData(domain,)
+
+      try {
+        // const verifyedSignature =
+        //   defaultAccount.toString() ===
+        //   ethers.utils
+        //     .verifyTypedData(
+        //       typedDataForVerifying.domain,
+        //       typedDataForVerifying.types,
+        //       typedDataForVerifying.message,
+        //       signature
+        //     )
+        //     .toString();
+        const testVerifyMessage = await ethers.utils.verifyTypedData(
+          typedDataForVerifying.domain,
+          typedDataForVerifying.types,
+          typedDataForVerifying.message,
+          signature
+        );
+
+        // console.log(testVerifyMessage);
+      } catch (err) {
+        // console.log(err);
+      }
+      // const verifyedSignature =
+      //   defaultAccount.toString() ===
+      //   ethers.utils
+      //     .verifyTypedData(
+      //       typedDataForVerifying.domain,
+      //       typedData.types,
+      //       typedData.message,
+      //       signature
+      //     )
+      //     .toString();
+
+      // console.log(
+      //   ethers.utils.verifyTypedData(
+      //     typedData.domain,
+      //     typedData.types,
+      //     typedData.message,
+      //     signature
+      //   )
+      // );
+
       if (/^(0x|0X)?[a-fA-F0-9]+$/.test(signature)) {
+        // console.log(verifyedSignature, defaultAccount, signature);
+
+        // console.log(
+        //   ethers.utils.verifyTypedData(
+        //     typedData.domain,
+        //     typedData.types,
+        //     typedData.message,
+        //     signature
+        //   )
+        // );
+
         setSignature(signature);
         setSecondStepSuccess(true);
 
         setTimeout(() => setProcessModalVisible(false), DELAYED_HIDDEN_SECONDS);
 
         setHelloModalVisible(true);
+        setErrorMessages('');
         setPanelVisible(false);
         setShowToast(true);
         setSignInStore(true);
@@ -529,19 +653,10 @@ export default function WalletPanel(props) {
       _walletConnectSignEIP712();
       return;
     }
-    // if (defaultAccount && chooseWalletConnect) {
-    //   try {
-    //     await _walletConnectSignEIP712();
-    //   } catch (error) {
-    //     // console.error('func sign typed data - (wallet connect)sign 712 ERROR', error);
-    //   }
-    //   return;
-    // }
 
     if (signInStore) {
       return;
     }
-    // console.log('pairing signature before', pairingSignature.signature);
 
     try {
       setErrorMessages('');
@@ -575,57 +690,36 @@ export default function WalletPanel(props) {
 
       setUserBalance(ethers.utils.formatEther(balance));
 
-      // TODO: salt is optional, but if not provided, the signature will be different each time(?)
-      const domain = {
-        name: 'TideBit DeFi',
-        version: '0.8.15',
-        chainId: 1,
-        verifyingContract: '0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC',
-        salt: '0x' + '0000000000000000000000000000000000000000000000000000000000000002',
-      };
-
-      // The named list of all type definitions
-      const types = {
-        Person: [
-          {name: 'name', type: 'string'},
-          {name: 'wallet', type: 'address'},
-        ],
-        Mail: [
-          {name: 'from', type: 'Person'},
-          {name: 'to', type: 'Person'},
-          {name: 'contents', type: 'string'},
-        ],
-      };
-
-      // The data to sign
-      // '0xCD2a3d9F938E13CD947Ec05AbC7FE734Df8DD826'
-      const value = {
-        from: {
-          name: 'User',
-          wallet: '0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB',
-        },
-        to: {
-          name: 'TideBit DeFi',
-          wallet: '0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB',
-        },
-        contents: 'Agree to the terms and conditions',
-      };
-
       setLoading(true);
-      let signature = await signer._signTypedData(domain, types, value);
-      setErrorMessages('');
+      let signature = await signer._signTypedData(DOMAIN, TYPES, VALUE);
 
-      setSignature(signature);
+      // TODO: Notes why defaultAccount is '' here
+      const verifyedSignature =
+        address.toString() ===
+        ethers.utils.verifyTypedData(DOMAIN, TYPES, VALUE, signature).toString();
 
-      setSecondStepSuccess(true);
+      // console.log(
+      //   `Sign by ${ethers.utils
+      //     .verifyTypedData(DOMAIN, TYPES, VALUE, signature)
+      //     .toString()}, Expected ${address}`
+      // );
 
-      setTimeout(() => setProcessModalVisible(false), DELAYED_HIDDEN_SECONDS);
+      if (/^(0x|0X)?[a-fA-F0-9]+$/.test(signature) && verifyedSignature) {
+        setSignature(signature);
+        setSecondStepSuccess(true);
+        // console.log(verifyedSignature, defaultAccount, signature);
+        // console.log(typeof ethers.utils.verifyTypedData(domain, types, value, signature));
 
-      setHelloModalVisible(true);
+        setTimeout(() => setProcessModalVisible(false), DELAYED_HIDDEN_SECONDS);
 
-      setShowToast(true);
+        setHelloModalVisible(true);
+        setPanelVisible(false);
+        setErrorMessages('');
+        setShowToast(true);
+        setSignInStore(true);
+        // console.log('sign in store, ', signInStore);
+      }
 
-      setSignInStore(true);
       // setPairingSignature({account: defaultAccount, signature: signature});
 
       // setTimeout(() => {

@@ -82,14 +82,16 @@ export default function WalletPanel(props) {
   const [walletConnectSuccessful, setWalletConnectSuccessful] = useState(false);
   const [signInStore, setSignInStore] = useState(false);
 
-  const [pairingSignature, setPairingSignature] = useState({
-    account: '',
-    signature: '',
-  });
+  // const [pairingSignature, setPairingSignature] = useState({
+  //   account: '',
+  //   signature: '',
+  // });
 
-  const clearState = () => {
-    setConnector(null);
+  const resetApp = () => {
+    killSession();
+
     setConnecting(false);
+
     setDefaultAccount('');
     setErrorMessages('');
     setSignature(null);
@@ -99,8 +101,15 @@ export default function WalletPanel(props) {
     setFirstStepError(false);
     setSecondStepSuccess(false);
     setSecondStepError(false);
+
     setChainId(null);
     setShowToast(false);
+    setSignInStore(false);
+    setConnector(null);
+    setWalletConnectSuccessful(false);
+    setChooseWalletConnect(false);
+    setSupported(false);
+    setSymbol(null);
 
     // setConnector(null);
     setFetching(false);
@@ -148,6 +157,27 @@ export default function WalletPanel(props) {
 
   const requestSendingHandler = () => {
     funcSignTypedData();
+  };
+
+  const disconnect = async () => {
+    // killSession();
+    resetApp();
+
+    const {ethereum} = window;
+    if (ethereum) {
+      try {
+        await ethereum.request({
+          method: 'eth_requestAccounts',
+          params: [{eth_accounts: {}}],
+        });
+        // console.log('Wallet Disconnected');
+        setDefaultAccount(null);
+        setUserBalance(null);
+      } catch (error) {
+        // console.error('Not connected to wallet', error);
+      }
+    }
+    setAvatarMenuVisible(false);
   };
 
   // Initialize WalletConnect
@@ -255,7 +285,7 @@ export default function WalletPanel(props) {
           // console.error(error);
           return;
         }
-        // console.log('connect listener: ', payload);
+        // console.log('In wallet connecting connect listener: ', payload);
 
         const {chainId, accounts} = payload.params[0];
         await onConnect(chainId, accounts[0]);
@@ -283,11 +313,11 @@ export default function WalletPanel(props) {
         if (error) {
           // console.error(error);
         }
-        setWalletConnectSuccessful(false);
+        // setWalletConnectSuccessful(false);
 
         // handle disconnect event
         // resetApp();
-        clearState();
+        resetApp();
       });
 
       // check state variables here & if needed refresh the app
@@ -304,62 +334,67 @@ export default function WalletPanel(props) {
     }
   }
 
-  // // Once connector, chainId, account, or balance changes, update the state
   useEffect(() => {
-    if (connector) {
-      connector.on('connect', async (error, payload) => {
-        if (error) {
-          // console.error(error);
-          return;
-        }
-        // console.log('connect listener: ', payload);
-
-        const {chainId, accounts} = payload.params[0];
-        await onConnect(chainId, accounts[0]);
-        setFetching(false);
-
-        // if (accounts[0]) await _walletConnectSignEIP712();
-        // console.log('useEffect connector listener accounts[0]: ', accounts[0]);
-
-        // console.log('connecting Invisible...');
-        // setConnectingModalVisible(false);
-      });
-
-      connector.on('session_update', async (error, payload) => {
-        // _walletConnectSignEIP712();
-        // _walletConnectSignEIP712();
-        // console.log(error)
-        // console.log('session update', payload);
-
-        const {chainId, accounts} = payload.params[0];
-        await onConnect(chainId, accounts[0]);
-        setFetching(false);
-      });
-
-      connector.on('disconnect', async (error, payload) => {
-        if (error) {
-          // console.error(error);
-        }
-        setWalletConnectSuccessful(false);
-
-        // handle disconnect event
-        // resetApp();
-        clearState();
-      });
-
-      // check state variables here & if needed refresh the app
-      // If any of these variables do not exist and the connector is connected, refresh the data
-      if ((!chainId || !defaultAccount || !userBalance) && connector.connected) {
-        refreshData();
-      }
-    }
-
-    async function refreshData() {
-      const {chainId, accounts} = connector;
-      await onConnect(chainId, accounts[0]);
-      setFetching(false);
-    }
+    if (!connector) return;
+    walletConnecting();
   }, [connector, chainId, defaultAccount, userBalance]);
+
+  // // Once connector, chainId, account, or balance changes, update the state
+  // useEffect(() => {
+  //   if (connector) {
+  //     connector.on('connect', async (error, payload) => {
+  //       if (error) {
+  //         // console.error(error);
+  //         return;
+  //       }
+  //       // console.log('connect listener: ', payload);
+
+  //       const {chainId, accounts} = payload.params[0];
+  //       await onConnect(chainId, accounts[0]);
+  //       setFetching(false);
+
+  //       // if (accounts[0]) await _walletConnectSignEIP712();
+  //       // console.log('useEffect connector listener accounts[0]: ', accounts[0]);
+
+  //       // console.log('connecting Invisible...');
+  //       // setConnectingModalVisible(false);
+  //     });
+
+  //     connector.on('session_update', async (error, payload) => {
+  //       // _walletConnectSignEIP712();
+  //       // _walletConnectSignEIP712();
+  //       // console.log(error)
+  //       // console.log('session update', payload);
+
+  //       const {chainId, accounts} = payload.params[0];
+  //       await onConnect(chainId, accounts[0]);
+  //       setFetching(false);
+  //     });
+
+  //     connector.on('disconnect', async (error, payload) => {
+  //       if (error) {
+  //         // console.error(error);
+  //       }
+  //       setWalletConnectSuccessful(false);
+
+  //       // handle disconnect event
+  //       // resetApp();
+  //       clearState();
+  //     });
+
+  //     // check state variables here & if needed refresh the app
+  //     // If any of these variables do not exist and the connector is connected, refresh the data
+  //     if ((!chainId || !defaultAccount || !userBalance) && connector.connected) {
+  //       refreshData();
+  //     }
+  //   }
+
+  //   async function refreshData() {
+  //     const {chainId, accounts} = connector;
+  //     await onConnect(chainId, accounts[0]);
+  //     setFetching(false);
+  //   }
+  // }, [connector, chainId, defaultAccount, userBalance]);
 
   // TODO: Notes why it works with `[]`
   useEffect(() => {
@@ -469,9 +504,7 @@ export default function WalletPanel(props) {
     // Make sure the connector exists before trying to kill the session
     if (connector) {
       connector.killSession();
-      clearState();
     }
-    clearState();
   };
 
   // const resetApp = () => {
@@ -944,28 +977,6 @@ export default function WalletPanel(props) {
   }
 
   const username = defaultAccount?.slice(-1).toUpperCase();
-
-  const disconnect = async () => {
-    killSession();
-    setDefaultAccount(null);
-    setChooseWalletConnect(null);
-
-    const {ethereum} = window;
-    if (ethereum) {
-      try {
-        await ethereum.request({
-          method: 'eth_requestAccounts',
-          params: [{eth_accounts: {}}],
-        });
-        // console.log('Wallet Disconnected');
-        setDefaultAccount(null);
-        setUserBalance(null);
-      } catch (error) {
-        // console.error('Not connected to wallet', error);
-      }
-    }
-    setAvatarMenuVisible(false);
-  };
 
   const isDisplayedAvatarMenu =
     defaultAccount && avatarMenuVisible ? (

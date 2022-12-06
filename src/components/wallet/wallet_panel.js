@@ -20,6 +20,8 @@ import {DELAYED_HIDDEN_SECONDS} from '../../constants/display';
 const ICON_SIZE = 50;
 const WALLET_CONNECT_PROJECT_ID = process.env.WALLET_CONNECT_PROJECT_ID;
 
+// TODO: salt is optional, but if not provided, the signature will be different each time(?)
+
 export default function WalletPanel(props) {
   const {
     ref: panelRef,
@@ -80,10 +82,18 @@ export default function WalletPanel(props) {
   const [symbol, setSymbol] = useState(null);
   const [chooseWalletConnect, setChooseWalletConnect] = useState(false);
   const [walletConnectSuccessful, setWalletConnectSuccessful] = useState(false);
+  const [signInStore, setSignInStore] = useState(false);
 
-  const clearState = () => {
-    setConnector(null);
+  // const [pairingSignature, setPairingSignature] = useState({
+  //   account: '',
+  //   signature: '',
+  // });
+
+  const resetApp = () => {
+    // killSession();
+
     setConnecting(false);
+
     setDefaultAccount('');
     setErrorMessages('');
     setSignature(null);
@@ -93,8 +103,18 @@ export default function WalletPanel(props) {
     setFirstStepError(false);
     setSecondStepSuccess(false);
     setSecondStepError(false);
+
+    setProcessModalVisible(false);
+    setPanelVisible(false);
+
     setChainId(null);
     setShowToast(false);
+    setSignInStore(false);
+    setConnector(null);
+    setWalletConnectSuccessful(false);
+    setChooseWalletConnect(false);
+    setSupported(false);
+    setSymbol(null);
 
     // setConnector(null);
     setFetching(false);
@@ -144,6 +164,27 @@ export default function WalletPanel(props) {
     funcSignTypedData();
   };
 
+  const disconnect = async () => {
+    killSession();
+    resetApp();
+
+    const {ethereum} = window;
+    if (ethereum) {
+      try {
+        await ethereum.request({
+          method: 'eth_requestAccounts',
+          params: [{eth_accounts: {}}],
+        });
+        // console.log('Wallet Disconnected');
+        setDefaultAccount(null);
+        setUserBalance(null);
+      } catch (error) {
+        // console.error('Not connected to wallet', error);
+      }
+    }
+    setAvatarMenuVisible(false);
+  };
+
   // Initialize WalletConnect
   const connect = async () => {
     setFetching(true);
@@ -165,11 +206,19 @@ export default function WalletPanel(props) {
       // console.log('QR code opened...');
       setShowToast(true);
 
-      await walletConnector.createSession();
+      const result = await walletConnector.createSession();
+      // console.log('result', result);
 
       // console.log('connecting Invisible...');
       // setConnectingModalVisible(false);
     }
+
+    // TODO: trial for split the function from useEffect
+    // await walletConnecting();
+
+    // if (walletConnector.connected) {
+
+    // }
 
     // setProcessModalVisible(true)
     // setPanelVisible(false);
@@ -180,6 +229,7 @@ export default function WalletPanel(props) {
     // TODO: wallet connect combo
     if (walletConnector.connected && defaultAccount) {
       // console.log('connected...');
+
       // console.log('QR code closed...');
       setProcessModalVisible(true);
       _walletConnectSignEIP712();
@@ -220,21 +270,27 @@ export default function WalletPanel(props) {
       // 4. Save the balance to state
       setUserBalance(formattedBalance);
     }
-    setWalletConnectSuccessful(true);
+
+    if (!walletConnectSuccessful) {
+      setWalletConnectSuccessful(true);
+      await _walletConnectSignEIP712();
+    }
 
     // console.log('onConnect eip712 signed: ', signature);
     // await _walletConnectSignEIP712();
   }
 
-  // Once connector, chainId, account, or balance changes, update the state
-  useEffect(() => {
+  async function walletConnecting() {
+    // console.log('start connecting');
+    // console.log('connector: ', connector);
+
     if (connector) {
       connector.on('connect', async (error, payload) => {
         if (error) {
           // console.error(error);
           return;
         }
-        // console.log('connect listener: ', payload);
+        // console.log('In wallet connecting connect listener: ', payload);
 
         const {chainId, accounts} = payload.params[0];
         await onConnect(chainId, accounts[0]);
@@ -262,11 +318,14 @@ export default function WalletPanel(props) {
         if (error) {
           // console.error(error);
         }
-        setWalletConnectSuccessful(false);
+        // setWalletConnectSuccessful(false);
 
         // handle disconnect event
-        // resetApp();
-        clearState();
+        resetApp();
+
+        // // reset state variables here
+        //   setConnector(null);
+        //   setFetching(false);
       });
 
       // check state variables here & if needed refresh the app
@@ -281,18 +340,85 @@ export default function WalletPanel(props) {
       await onConnect(chainId, accounts[0]);
       setFetching(false);
     }
+  }
+
+  useEffect(() => {
+    if (!connector) return;
+    walletConnecting();
   }, [connector, chainId, defaultAccount, userBalance]);
 
+  // // Once connector, chainId, account, or balance changes, update the state
   // useEffect(() => {
-  //   _walletConnectSignEIP712();
-  // }, [walletConnectSuccessful]);
+  //   if (connector) {
+  //     connector.on('connect', async (error, payload) => {
+  //       if (error) {
+  //         // console.error(error);
+  //         return;
+  //       }
+  //       // console.log('connect listener: ', payload);
 
-  // TODO: Notes why it works with `[]`
+  //       const {chainId, accounts} = payload.params[0];
+  //       await onConnect(chainId, accounts[0]);
+  //       setFetching(false);
+
+  //       // if (accounts[0]) await _walletConnectSignEIP712();
+  //       // console.log('useEffect connector listener accounts[0]: ', accounts[0]);
+
+  //       // console.log('connecting Invisible...');
+  //       // setConnectingModalVisible(false);
+  //     });
+
+  //     connector.on('session_update', async (error, payload) => {
+  //       // _walletConnectSignEIP712();
+  //       // _walletConnectSignEIP712();
+  //       // console.log(error)
+  //       // console.log('session update', payload);
+
+  //       const {chainId, accounts} = payload.params[0];
+  //       await onConnect(chainId, accounts[0]);
+  //       setFetching(false);
+  //     });
+
+  //     connector.on('disconnect', async (error, payload) => {
+  //       if (error) {
+  //         // console.error(error);
+  //       }
+  //       setWalletConnectSuccessful(false);
+
+  //       // handle disconnect event
+  //       // resetApp();
+  //       clearState();
+  //     });
+
+  //     // check state variables here & if needed refresh the app
+  //     // If any of these variables do not exist and the connector is connected, refresh the data
+  //     if ((!chainId || !defaultAccount || !userBalance) && connector.connected) {
+  //       refreshData();
+  //     }
+  //   }
+
+  //   async function refreshData() {
+  //     const {chainId, accounts} = connector;
+  //     await onConnect(chainId, accounts[0]);
+  //     setFetching(false);
+  //   }
+  // }, [connector, chainId, defaultAccount, userBalance]);
+
+  // TODO: Notes every time component rendered, it'll run useEffect, that's why it works with `[]`
   useEffect(() => {
     // console.log('ethereum side effect');
     if (window?.ethereum) {
       ethereum?.on('accountsChanged', async accounts => {
         setDefaultAccount(accounts[0]);
+        //   console.log('before setSignInStore');
+        setSignInStore(false);
+        setSignature(null);
+        //   console.log('after setSignInStore');
+
+        //   if (!signInStore && accounts[0] !== defaultAccount) {
+        //     setSignInStore(true);
+        //     funcSignTypedData();
+        //   }
       });
 
       return () => {
@@ -347,9 +473,45 @@ export default function WalletPanel(props) {
       JSON.stringify(typedData), // Required
     ];
 
+    const typedDataForVerifying = {
+      types: {
+        Person: [
+          {name: 'name', type: 'string'},
+          {name: 'account', type: 'address'},
+        ],
+        Mail: [
+          {name: 'from', type: 'Person'},
+          {name: 'to', type: 'Person'},
+          {name: 'contents', type: 'string'},
+        ],
+      },
+      primaryType: 'Mail',
+      domain: {
+        name: 'TideBit DeFi',
+        version: '1.0',
+        chainId: 1,
+        verifyingContract: '0x0000000000000000000000000000000000000000',
+      },
+      message: {
+        from: {
+          name: 'User',
+          account: '0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB',
+        },
+        to: {
+          name: 'TideBit DeFi',
+          account: '0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB',
+        },
+        contents: 'Agree to the terms and conditions',
+      },
+    };
+
     // if (defaultAccount) {
     //   setFirstStepSuccess(true);
     // }
+
+    if (signInStore) {
+      return;
+    }
 
     try {
       setFirstStepSuccess(true);
@@ -361,17 +523,57 @@ export default function WalletPanel(props) {
       setSignature(null);
 
       const signature = await connector.signTypedData(msgParams);
-      setSignature(signature);
+      // TODO: Notes imToken will return `{}` as signature at first, if user sign it, it'll return correct signature later on
+      // console.log('signature by wallet connect library: ', signature);
 
-      setSecondStepSuccess(true);
+      // const verifySignature = await ethers.utils.verifyTypedData(domain,)
 
-      setTimeout(() => setProcessModalVisible(false), DELAYED_HIDDEN_SECONDS);
+      if (/^(0x|0X)?[a-fA-F0-9]+$/.test(signature)) {
+        const isVerifyedMessage =
+          defaultAccount ===
+          ethers.utils.verifyTypedData(
+            typedDataForVerifying.domain,
+            typedDataForVerifying.types,
+            typedDataForVerifying.message,
+            signature
+          );
 
-      setHelloModalVisible(true);
-      setPanelVisible(false);
-      setShowToast(true);
+        // const testVerification = ethers.utils.verifyTypedData(
+        //   typedDataForVerifying.domain,
+        //   typedDataForVerifying.types,
+        //   typedDataForVerifying.message,
+        //   signature
+        // );
+
+        // console.log('pk:', testVerification, 'boolean:', isVerifyedMessage);
+
+        if (isVerifyedMessage) {
+          setSignature(signature);
+          setSecondStepSuccess(true);
+
+          setTimeout(() => setProcessModalVisible(false), DELAYED_HIDDEN_SECONDS);
+
+          setHelloModalVisible(true);
+          setErrorMessages('');
+          setPanelVisible(false);
+          setShowToast(true);
+          setSignInStore(true);
+          // console.log('sign in store, ', signInStore);
+        }
+
+        // console.log(verifyedSignature, defaultAccount, signature);
+
+        // console.log(
+        //   ethers.utils.verifyTypedData(
+        //     typedData.domain,
+        //     typedData.types,
+        //     typedData.message,
+        //     signature
+        //   )
+        // );
+      }
     } catch (error) {
-      // console.error('sign 712 ERROR', error);
+      // console.error('sign 712 ERROR', error);killSession
 
       setSignature(null);
       setErrorMessages(error.message);
@@ -388,9 +590,7 @@ export default function WalletPanel(props) {
     // Make sure the connector exists before trying to kill the session
     if (connector) {
       connector.killSession();
-      clearState();
     }
-    clearState();
   };
 
   // const resetApp = () => {
@@ -400,24 +600,56 @@ export default function WalletPanel(props) {
   // };
 
   async function funcSignTypedData() {
-    if (connector && defaultAccount) {
+    if (connector && walletConnectSuccessful && defaultAccount) {
       _walletConnectSignEIP712();
       return;
     }
-    // if (defaultAccount && chooseWalletConnect) {
-    //   try {
-    //     await _walletConnectSignEIP712();
-    //   } catch (error) {
-    //     // console.error('func sign typed data - (wallet connect)sign 712 ERROR', error);
-    //   }
-    //   return;
-    // }
+
+    if (signInStore) {
+      return;
+    }
+
+    const DOMAIN = {
+      name: 'TideBit DeFi',
+      version: '0.8.15',
+      chainId: 1,
+      verifyingContract: '0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC',
+      salt: '0x' + '0000000000000000000000000000000000000000000000000000000000000002',
+    };
+
+    // The named list of all type definitions
+    const TYPES = {
+      Person: [
+        {name: 'name', type: 'string'},
+        {name: 'wallet', type: 'address'},
+      ],
+      Mail: [
+        {name: 'from', type: 'Person'},
+        {name: 'to', type: 'Person'},
+        {name: 'contents', type: 'string'},
+      ],
+    };
+
+    // The data to sign
+    // '0xCD2a3d9F938E13CD947Ec05AbC7FE734Df8DD826'
+    const VALUE = {
+      from: {
+        name: 'User',
+        wallet: '0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB',
+      },
+      to: {
+        name: 'TideBit DeFi',
+        wallet: '0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB',
+      },
+      contents: 'Agree to the terms and conditions',
+    };
 
     try {
       setErrorMessages('');
       setSignature(null);
       setLoading(false);
       setSecondStepError(false);
+      setProcessModalVisible(true);
 
       // console.log('projectId', projectId);
 
@@ -444,55 +676,43 @@ export default function WalletPanel(props) {
 
       setUserBalance(ethers.utils.formatEther(balance));
 
-      // TODO: salt is optional, but if not provided, the signature will be different each time(?)
-      const domain = {
-        name: 'TideBit DeFi',
-        version: '0.8.15',
-        chainId: 1,
-        verifyingContract: '0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC',
-        salt: '0x' + '0000000000000000000000000000000000000000000000000000000000000002',
-      };
-
-      // The named list of all type definitions
-      const types = {
-        Person: [
-          {name: 'name', type: 'string'},
-          {name: 'wallet', type: 'address'},
-        ],
-        Mail: [
-          {name: 'from', type: 'Person'},
-          {name: 'to', type: 'Person'},
-          {name: 'contents', type: 'string'},
-        ],
-      };
-
-      // The data to sign
-      // '0xCD2a3d9F938E13CD947Ec05AbC7FE734Df8DD826'
-      const value = {
-        from: {
-          name: 'User',
-          wallet: `${address}`,
-        },
-        to: {
-          name: 'TideBit DeFi',
-          wallet: '0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB',
-        },
-        contents: 'Agree to the terms and conditions',
-      };
-
       setLoading(true);
-      let signature = await signer._signTypedData(domain, types, value);
-      setErrorMessages('');
+      let signature = await signer._signTypedData(DOMAIN, TYPES, VALUE);
 
-      setSignature(signature);
+      // TODO: Notes why defaultAccount is '' here
+      const isVerifyedSignature =
+        address.toString() ===
+        ethers.utils.verifyTypedData(DOMAIN, TYPES, VALUE, signature).toString();
 
-      setSecondStepSuccess(true);
+      // console.log(
+      //   `Sign by ${ethers.utils
+      //     .verifyTypedData(DOMAIN, TYPES, VALUE, signature)
+      //     .toString()}, Expected ${address}`
+      // );
 
-      setTimeout(() => setProcessModalVisible(false), DELAYED_HIDDEN_SECONDS);
+      if (/^(0x|0X)?[a-fA-F0-9]+$/.test(signature) && isVerifyedSignature) {
+        setSignature(signature);
+        setSecondStepSuccess(true);
+        // console.log(verifyedSignature, defaultAccount, signature);
+        // console.log(typeof ethers.utils.verifyTypedData(domain, types, value, signature));
 
-      setHelloModalVisible(true);
+        setTimeout(() => setProcessModalVisible(false), DELAYED_HIDDEN_SECONDS);
 
-      setShowToast(true);
+        setHelloModalVisible(true);
+        setPanelVisible(false);
+        setErrorMessages('');
+        setShowToast(true);
+        setSignInStore(true);
+        // console.log('sign in store, ', signInStore);
+      }
+
+      // setPairingSignature({account: defaultAccount, signature: signature});
+
+      // setTimeout(() => {
+      //   console.log('pairing signature after', pairingSignature.signature);
+      // }, 5000);
+
+      // console.log('sign in store, ', signInStore);
 
       // console.log('[EIP712] Sign typed signature: ', signature);
     } catch (error) {
@@ -503,86 +723,6 @@ export default function WalletPanel(props) {
       setLoading(false);
     }
   }
-
-  // async function walletConnectProgram() {
-  //   // `connect()`
-  //   setFetching(true);
-  //   // let waitAccount = '';
-
-  //   // TODO: Notes for global / local constants
-  //   // 1. Create connector
-  //   const walletConnector = new WalletConnect({
-  //     bridge: WALLET_CONNECT_BRIDGE_URL,
-  //     qrcodeModal: QRCodeModal,
-  //   });
-
-  //   // 2. Update the connector state
-  //   setConnector(walletConnector);
-
-  //   // 3. If not connected, create a new session
-  //   if (!walletConnector.connected) {
-  //     // setConnectingModalVisible(true);
-  //     // console.log('connecting visible...');
-  //     // console.log('QR code opened...');
-  //     setShowToast(true);
-
-  //     await walletConnector.createSession();
-
-  //     // console.log('connecting Invisible...');
-  //     // setConnectingModalVisible(false);
-  //   }
-
-  //   // `onConnect()`
-  //   // 4. Store account info into state
-  //   if (connector) {
-  //     connector.on('connect', async (error, payload) => {
-  //       if (error) {
-  //         // console.error(error);
-  //         return;
-  //       }
-  //       // console.log('connect listener', payload);
-  //       const {chainId, accounts} = payload.params[0];
-  //       // waitAccount = accounts[0];
-  //       await onConnect(chainId, accounts[0]);
-  //       setFetching(false);
-
-  //       // if (accounts[0]) await _walletConnectSignEIP712();
-  //       // console.log('useEffect connector listener accounts[0]: ', accounts[0]);
-
-  //       // console.log('connecting Invisible...');
-  //       // setConnectingModalVisible(false);
-  //     });
-
-  //     connector.on('session_update', async (error, payload) => {
-  //       // _walletConnectSignEIP712();
-  //       // console.log(error)
-  //       // console.log('session update', payload);
-  //       const {chainId, accounts} = payload.params[0];
-  //       await onConnect(chainId, accounts[0]);
-  //       setFetching(false);
-  //     });
-
-  //     connector.on('disconnect', async (error, payload) => {
-  //       if (error) {
-  //         // console.error(error);
-  //       }
-  //       // handle disconnect event
-  //       clearState();
-  //     });
-  //   }
-
-  //   // TODO: (?) 5. Save the provider to state(used for signing) and local storage
-
-  //   // Sign EIP712
-  //   // setSecondStepError(false);
-  //   // setProcessModalVisible(false);
-
-  //   // if (waitAccount) {
-  //   //   console.log('waitAccount', waitAccount);
-  //   //   await _walletConnectSignEIP712();
-  //   // }
-  //   await _walletConnectSignEIP712();
-  // }
 
   // TODO: 1. connect 2. sign
   // make sure connected, and then pop up the sign modal to continue signing
@@ -730,6 +870,8 @@ export default function WalletPanel(props) {
           <div>
             Your Address: <span className="text-cuteBlue3">{defaultAccount}</span>
           </div>
+          {/* <div>{pairingSignature.account}</div>
+          <div>{pairingSignature.signature}</div> */}
           <div>
             EIP 712 Signature: <span className="text-cuteBlue3">{signature}</span>
           </div>
@@ -847,28 +989,6 @@ export default function WalletPanel(props) {
   }
 
   const username = defaultAccount?.slice(-1).toUpperCase();
-
-  const disconnect = async () => {
-    killSession();
-    setDefaultAccount(null);
-    setChooseWalletConnect(null);
-
-    const {ethereum} = window;
-    if (ethereum) {
-      try {
-        await ethereum.request({
-          method: 'eth_requestAccounts',
-          params: [{eth_accounts: {}}],
-        });
-        // console.log('Wallet Disconnected');
-        setDefaultAccount(null);
-        setUserBalance(null);
-      } catch (error) {
-        // console.error('Not connected to wallet', error);
-      }
-    }
-    setAvatarMenuVisible(false);
-  };
 
   const isDisplayedAvatarMenu =
     defaultAccount && avatarMenuVisible ? (

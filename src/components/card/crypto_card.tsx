@@ -13,7 +13,7 @@ import LineGraph from '../line_graph/line_graph';
  *
  */
 
-type CardProps = {
+interface CardProps {
   gradientColor?: string;
   tokenComponent?: JSX.Element;
   img?: string;
@@ -25,21 +25,21 @@ type CardProps = {
   star?: boolean;
   starred?: boolean;
   className?: string;
-};
+}
 
-const CryptoCard: FC<CardProps> = ({
+const CryptoCard = ({
   gradientColor = '',
-  tokenComponent = null,
+  tokenComponent,
   img = '',
   chain = '',
   currency = '',
-  lineGraph = null,
+  lineGraph,
   price = 0,
   fluctuating = -1,
   star = false,
   starred = false,
   ...otherProps
-}) => {
+}: CardProps): JSX.Element => {
   // FIXME: comment for `.tsx`
   // price = price > 0.001 ? price.toLocaleString() : price;
   fluctuating = Number(fluctuating);

@@ -648,6 +648,7 @@ export default function WalletPanel(props) {
       setErrorMessages('');
       setSignature(null);
       setLoading(false);
+      setFirstStepError(false);
       setSecondStepError(false);
       setProcessModalVisible(true);
 

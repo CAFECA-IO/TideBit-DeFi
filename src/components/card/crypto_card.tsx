@@ -1,5 +1,3 @@
-import Image from 'next/image';
-import {FC} from 'react';
 import LineGraph from '../line_graph/line_graph';
 // import {FaEthereum} from 'react-icons/fa';
 // // import {ReactComponent as ethIcon} from '/public/elements/group_15143.svg';

@@ -513,7 +513,13 @@ export default function WalletPanel(props) {
           {name: 'name', type: 'string'},
           {name: 'account', type: 'address'},
         ],
+        Mail: [
+          {name: 'from', type: 'Person'},
+          {name: 'to', type: 'Person'},
+          {name: 'contents', type: 'string'},
+        ],
       },
+      primaryType: 'Mail',
       domain: {
         name: 'TideBit DeFi',
         version: '1.0',
@@ -551,53 +557,44 @@ export default function WalletPanel(props) {
       setSignature(null);
 
       const signature = await connector.signTypedData(msgParams);
-      // console.log('signature: ', signature);
+      // TODO: Notes imToken will return `{}` as signature at first, if user sign it, it'll return correct signature later on
+      // console.log('signature by wallet connect library: ', signature);
 
       // const verifySignature = await ethers.utils.verifyTypedData(domain,)
 
-      try {
-        // const verifyedSignature =
-        //   defaultAccount.toString() ===
-        //   ethers.utils
-        //     .verifyTypedData(
-        //       typedDataForVerifying.domain,
-        //       typedDataForVerifying.types,
-        //       typedDataForVerifying.message,
-        //       signature
-        //     )
-        //     .toString();
-        const testVerifyMessage = await ethers.utils.verifyTypedData(
-          typedDataForVerifying.domain,
-          typedDataForVerifying.types,
-          typedDataForVerifying.message,
-          signature
-        );
-
-        // console.log(testVerifyMessage);
-      } catch (err) {
-        // console.log(err);
-      }
-      // const verifyedSignature =
-      //   defaultAccount.toString() ===
-      //   ethers.utils
-      //     .verifyTypedData(
-      //       typedDataForVerifying.domain,
-      //       typedData.types,
-      //       typedData.message,
-      //       signature
-      //     )
-      //     .toString();
-
-      // console.log(
-      //   ethers.utils.verifyTypedData(
-      //     typedData.domain,
-      //     typedData.types,
-      //     typedData.message,
-      //     signature
-      //   )
-      // );
-
       if (/^(0x|0X)?[a-fA-F0-9]+$/.test(signature)) {
+        const isVerifyedMessage =
+          defaultAccount ===
+          ethers.utils.verifyTypedData(
+            typedDataForVerifying.domain,
+            typedDataForVerifying.types,
+            typedDataForVerifying.message,
+            signature
+          );
+
+        // const testVerification = ethers.utils.verifyTypedData(
+        //   typedDataForVerifying.domain,
+        //   typedDataForVerifying.types,
+        //   typedDataForVerifying.message,
+        //   signature
+        // );
+
+        // console.log('pk:', testVerification, 'boolean:', isVerifyedMessage);
+
+        if (isVerifyedMessage) {
+          setSignature(signature);
+          setSecondStepSuccess(true);
+
+          setTimeout(() => setProcessModalVisible(false), DELAYED_HIDDEN_SECONDS);
+
+          setHelloModalVisible(true);
+          setErrorMessages('');
+          setPanelVisible(false);
+          setShowToast(true);
+          setSignInStore(true);
+          // console.log('sign in store, ', signInStore);
+        }
+
         // console.log(verifyedSignature, defaultAccount, signature);
 
         // console.log(
@@ -608,18 +605,6 @@ export default function WalletPanel(props) {
         //     signature
         //   )
         // );
-
-        setSignature(signature);
-        setSecondStepSuccess(true);
-
-        setTimeout(() => setProcessModalVisible(false), DELAYED_HIDDEN_SECONDS);
-
-        setHelloModalVisible(true);
-        setErrorMessages('');
-        setPanelVisible(false);
-        setShowToast(true);
-        setSignInStore(true);
-        // console.log('sign in store, ', signInStore);
       }
     } catch (error) {
       // console.error('sign 712 ERROR', error);killSession
@@ -694,7 +679,7 @@ export default function WalletPanel(props) {
       let signature = await signer._signTypedData(DOMAIN, TYPES, VALUE);
 
       // TODO: Notes why defaultAccount is '' here
-      const verifyedSignature =
+      const isVerifyedSignature =
         address.toString() ===
         ethers.utils.verifyTypedData(DOMAIN, TYPES, VALUE, signature).toString();
 
@@ -704,7 +689,7 @@ export default function WalletPanel(props) {
       //     .toString()}, Expected ${address}`
       // );
 
-      if (/^(0x|0X)?[a-fA-F0-9]+$/.test(signature) && verifyedSignature) {
+      if (/^(0x|0X)?[a-fA-F0-9]+$/.test(signature) && isVerifyedSignature) {
         setSignature(signature);
         setSecondStepSuccess(true);
         // console.log(verifyedSignature, defaultAccount, signature);

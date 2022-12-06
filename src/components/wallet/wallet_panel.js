@@ -405,6 +405,14 @@ export default function WalletPanel(props) {
     if (window?.ethereum) {
       ethereum?.on('accountsChanged', async accounts => {
         setDefaultAccount(accounts[0]);
+        //   console.log('before setSignInStore');
+        setSignInStore(false);
+        //   console.log('after setSignInStore');
+
+        //   if (!signInStore && accounts[0] !== defaultAccount) {
+        //     setSignInStore(true);
+        //     funcSignTypedData();
+        //   }
       });
 
       return () => {
@@ -540,6 +548,7 @@ export default function WalletPanel(props) {
       setSignature(null);
       setLoading(false);
       setSecondStepError(false);
+      setProcessModalVisible(true);
 
       // console.log('projectId', projectId);
 

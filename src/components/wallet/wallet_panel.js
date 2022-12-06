@@ -88,7 +88,7 @@ export default function WalletPanel(props) {
   // });
 
   const resetApp = () => {
-    killSession();
+    // killSession();
 
     setConnecting(false);
 
@@ -160,7 +160,7 @@ export default function WalletPanel(props) {
   };
 
   const disconnect = async () => {
-    // killSession();
+    killSession();
     resetApp();
 
     const {ethereum} = window;
@@ -316,8 +316,11 @@ export default function WalletPanel(props) {
         // setWalletConnectSuccessful(false);
 
         // handle disconnect event
-        // resetApp();
         resetApp();
+
+        // // reset state variables here
+        //   setConnector(null);
+        //   setFetching(false);
       });
 
       // check state variables here & if needed refresh the app
@@ -396,7 +399,7 @@ export default function WalletPanel(props) {
   //   }
   // }, [connector, chainId, defaultAccount, userBalance]);
 
-  // TODO: Notes why it works with `[]`
+  // TODO: Notes every time component rendered, it'll run useEffect, that's why it works with `[]`
   useEffect(() => {
     // console.log('ethereum side effect');
     if (window?.ethereum) {
@@ -487,7 +490,7 @@ export default function WalletPanel(props) {
         // console.log('sign in store, ', signInStore);
       }
     } catch (error) {
-      // console.error('sign 712 ERROR', error);
+      // console.error('sign 712 ERROR', error);killSession
 
       setSignature(null);
       setErrorMessages(error.message);
@@ -631,86 +634,6 @@ export default function WalletPanel(props) {
       setLoading(false);
     }
   }
-
-  // async function walletConnectProgram() {
-  //   // `connect()`
-  //   setFetching(true);
-  //   // let waitAccount = '';
-
-  //   // TODO: Notes for global / local constants
-  //   // 1. Create connector
-  //   const walletConnector = new WalletConnect({
-  //     bridge: WALLET_CONNECT_BRIDGE_URL,
-  //     qrcodeModal: QRCodeModal,
-  //   });
-
-  //   // 2. Update the connector state
-  //   setConnector(walletConnector);
-
-  //   // 3. If not connected, create a new session
-  //   if (!walletConnector.connected) {
-  //     // setConnectingModalVisible(true);
-  //     // console.log('connecting visible...');
-  //     // console.log('QR code opened...');
-  //     setShowToast(true);
-
-  //     await walletConnector.createSession();
-
-  //     // console.log('connecting Invisible...');
-  //     // setConnectingModalVisible(false);
-  //   }
-
-  //   // `onConnect()`
-  //   // 4. Store account info into state
-  //   if (connector) {
-  //     connector.on('connect', async (error, payload) => {
-  //       if (error) {
-  //         // console.error(error);
-  //         return;
-  //       }
-  //       // console.log('connect listener', payload);
-  //       const {chainId, accounts} = payload.params[0];
-  //       // waitAccount = accounts[0];
-  //       await onConnect(chainId, accounts[0]);
-  //       setFetching(false);
-
-  //       // if (accounts[0]) await _walletConnectSignEIP712();
-  //       // console.log('useEffect connector listener accounts[0]: ', accounts[0]);
-
-  //       // console.log('connecting Invisible...');
-  //       // setConnectingModalVisible(false);
-  //     });
-
-  //     connector.on('session_update', async (error, payload) => {
-  //       // _walletConnectSignEIP712();
-  //       // console.log(error)
-  //       // console.log('session update', payload);
-  //       const {chainId, accounts} = payload.params[0];
-  //       await onConnect(chainId, accounts[0]);
-  //       setFetching(false);
-  //     });
-
-  //     connector.on('disconnect', async (error, payload) => {
-  //       if (error) {
-  //         // console.error(error);
-  //       }
-  //       // handle disconnect event
-  //       clearState();
-  //     });
-  //   }
-
-  //   // TODO: (?) 5. Save the provider to state(used for signing) and local storage
-
-  //   // Sign EIP712
-  //   // setSecondStepError(false);
-  //   // setProcessModalVisible(false);
-
-  //   // if (waitAccount) {
-  //   //   console.log('waitAccount', waitAccount);
-  //   //   await _walletConnectSignEIP712();
-  //   // }
-  //   await _walletConnectSignEIP712();
-  // }
 
   // TODO: 1. connect 2. sign
   // make sure connected, and then pop up the sign modal to continue signing

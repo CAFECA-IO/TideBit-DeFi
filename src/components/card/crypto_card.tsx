@@ -93,11 +93,11 @@ const CryptoCard = ({
   const fakeDataColor = () => {
     if (sampleArray[sampleArray.length - 1] > sampleArray[sampleArray.length - 2]) {
       // priceColor = 'text-lightGreen';
-      return '#1AE2A0';
+      return ['#1AE2A0'];
     }
 
     // priceColor = 'text-lightRed';
-    return '#E86D6D';
+    return ['#E86D6D'];
   };
   const thisRandomColor = fakeDataColor();
 
@@ -175,7 +175,7 @@ const CryptoCard = ({
               {/* <div className="absolute top-0 left-0 h-2 w-2/3 rounded bg-blue-200"></div> */}
               <LineGraph
                 sampleArray={sampleArray}
-                strokeColor={fakeDataColor()}
+                strokeColor={thisRandomColor}
                 lineGraphWidth="140"
               />
             </div>

@@ -223,17 +223,12 @@ export default function WalletPanel(props) {
       } catch (error) {
         // console.error('error', error);
       }
-      // console.log('result', result);
-
-      // console.log('connecting Invisible...');
-      // setConnectingModalVisible(false);
     }
 
     // TODO: trial for split the function from useEffect
     // await walletConnecting();
 
     // if (walletConnector.connected) {
-
     // }
 
     // setProcessModalVisible(true)
@@ -242,15 +237,15 @@ export default function WalletPanel(props) {
 
     // await _walletConnectSignEIP712();
 
-    // TODO: wallet connect combo
-    if (walletConnector.connected && defaultAccount) {
-      // console.log('connected...');
+    // // TODO: wallet connect combo
+    // if (walletConnector.connected && defaultAccount) {
+    //   // console.log('connected...');
 
-      // console.log('QR code closed...');
-      setProcessModalVisible(true);
-      _walletConnectSignEIP712();
-      setFirstStepSuccess(true);
-    }
+    //   // console.log('QR code closed...');
+    //   setProcessModalVisible(true);
+    //   _walletConnectSignEIP712();
+    //   setFirstStepSuccess(true);
+    // }
 
     // 4. Sign typed data
     // _walletConnectSignEIP712();
@@ -287,9 +282,20 @@ export default function WalletPanel(props) {
       setUserBalance(formattedBalance);
     }
 
+    const defaulltAccountForCheck = defaultAccount.toUpperCase();
+    const connectedAccountForCheck = connectedAccount.toUpperCase();
+
     if (!walletConnectSuccessful) {
       setWalletConnectSuccessful(true);
-      await _walletConnectSignEIP712();
+      console.log('ready to check IF account state updated');
+      console.log('defaulltAccountForCheck: ', defaulltAccountForCheck);
+      console.log('connectedAccountForCheck: ', connectedAccountForCheck);
+
+      if (defaulltAccountForCheck === connectedAccountForCheck) {
+        console.log('before sending EIP 712 by wallet connect');
+        await _walletConnectSignEIP712();
+        console.log('after sending EIP 712 by wallet connect');
+      }
     }
 
     // console.log('onConnect eip712 signed: ', signature);
@@ -324,8 +330,17 @@ export default function WalletPanel(props) {
         // _walletConnectSignEIP712();
         // console.log(error)
         // console.log('session update', payload);
+        // ---------------------
+        // setDefaultAccount('');
+        setWalletConnectSuccessful(false);
+        setSignInStore(false);
+        setSignature(null);
 
         const {chainId, accounts} = payload.params[0];
+
+        // console.log('session_update accounts: ', accounts);
+        // console.log('session_update accounts[0]: ', accounts[0]);
+
         await onConnect(chainId, accounts[0]);
         setFetching(false);
       });
@@ -528,8 +543,10 @@ export default function WalletPanel(props) {
       },
     };
 
+    //       props?.connectedAccount ?? defaultAccount, // Required
+
     const msgParams = [
-      defaultAccount ?? props?.connectedAccount, // Required
+      defaultAccount, // Required
       JSON.stringify(typedData), // Required
     ];
 
@@ -582,58 +599,94 @@ export default function WalletPanel(props) {
       setErrorMessages('');
       setSignature(null);
 
+      console.log('before sending sign request, msgParams: ', msgParams);
+
       const signature = await connector.signTypedData(msgParams);
+      console.log('signature: ', signature);
       // TODO: Notes imToken will return `{}` as signature at first, if user sign it, it'll return correct signature later on
       // console.log('signature by wallet connect library: ', signature);
 
       // const verifySignature = await ethers.utils.verifyTypedData(domain,)
 
-      if (/^(0x|0X)?[a-fA-F0-9]+$/.test(signature)) {
-        const isVerifyedMessage =
-          defaultAccount ===
-          ethers.utils.verifyTypedData(
-            typedDataForVerifying.domain,
-            typedDataForVerifying.types,
-            typedDataForVerifying.message,
-            signature
-          );
+      // --------------------------------
+      console.log('Regex for sign', /^(0x|0X)?[a-fA-F0-9]+$/.test(signature));
 
-        // const testVerification = ethers.utils.verifyTypedData(
-        //   typedDataForVerifying.domain,
-        //   typedDataForVerifying.types,
-        //   typedDataForVerifying.message,
-        //   signature
-        // );
+      // try {
+      //   const testVerification = ethers.utils.verifyTypedData(
+      //     typedDataForVerifying.domain,
+      //     typedDataForVerifying.types,
+      //     typedDataForVerifying.message,
+      //     signature
+      //   );
+      // } catch (error) {
+      //   console.log(error);
+      // }
+      const testVerification = ethers.utils.verifyTypedData(
+        typedDataForVerifying.domain,
+        typedDataForVerifying.types,
+        typedDataForVerifying.message,
+        signature
+      );
 
-        // console.log('pk:', testVerification, 'boolean:', isVerifyedMessage);
+      const accountUpperCase = defaultAccount?.toUpperCase();
+      const testVerificationUpperCase = testVerification?.toUpperCase();
+      console.log('info about testVerification:', testVerification.length);
+      console.log('info about account:', defaultAccount.length);
 
-        if (isVerifyedMessage) {
-          setSignature(signature);
-          setSecondStepSuccess(true);
+      console.log('testVerification (Public Key recoverd from signature):', testVerification);
+      console.log(
+        'account ?= testVerification: ',
+        defaultAccount.toUpperCase() === testVerification.toUpperCase()
+      );
+      console.log(
+        'typeof account ?= testVerification: ',
+        typeof defaultAccount,
+        typeof testVerification
+      );
 
-          setTimeout(() => setProcessModalVisible(false), DELAYED_HIDDEN_SECONDS);
+      // --------------------------------
 
-          setHelloModalVisible(true);
-          setErrorMessages('');
-          setPanelVisible(false);
-          setShowToast(true);
-          setSignInStore(true);
-          // console.log('sign in store, ', signInStore);
-        }
+      if (accountUpperCase === testVerificationUpperCase) {
+        setSignature(signature);
+        setSecondStepSuccess(true);
 
-        // console.log(verifyedSignature, defaultAccount, signature);
+        setTimeout(() => setProcessModalVisible(false), DELAYED_HIDDEN_SECONDS);
 
-        // console.log(
-        //   ethers.utils.verifyTypedData(
-        //     typedData.domain,
-        //     typedData.types,
-        //     typedData.message,
-        //     signature
-        //   )
-        // );
+        setHelloModalVisible(true);
+        setErrorMessages('');
+        setPanelVisible(false);
+        setShowToast(true);
+        setSignInStore(true);
+        // console.log('sign in store, ', signInStore);
       }
+
+      // if (/^(0x|0X)?[a-fA-F0-9]+$/.test(signature)) {
+      //   const isVerifyedMessage =
+      //     defaultAccount ===
+      //     ethers.utils.verifyTypedData(
+      //       typedDataForVerifying.domain,
+      //       typedDataForVerifying.types,
+      //       typedDataForVerifying.message,
+      //       signature
+      //     );
+
+      //   if (isVerifyedMessage) {
+      //     setSignature(signature);
+      //     setSecondStepSuccess(true);
+
+      //     setTimeout(() => setProcessModalVisible(false), DELAYED_HIDDEN_SECONDS);
+
+      //     setHelloModalVisible(true);
+      //     setErrorMessages('');
+      //     setPanelVisible(false);
+      //     setShowToast(true);
+      //     setSignInStore(true);
+      //     // console.log('sign in store, ', signInStore);
+      //   }
+      // }
     } catch (error) {
       // console.error('sign 712 ERROR', error);killSession
+      console.log('wallet connect sign failure: ', error.message);
 
       setSignature(null);
       setErrorMessages(error.message);

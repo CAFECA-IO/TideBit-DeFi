@@ -434,58 +434,33 @@ export default function WalletPanel(props) {
   //     setFetching(false);
   //   }
   // }, [connector, chainId, defaultAccount, userBalance]);
+  windowEthereum();
 
-  // TODO: Notes every time component rendered, it'll run useEffect, that's why it works with `[]`
-  useEffect(() => {
-    // console.log('ethereum side effect');
-    if (window?.ethereum) {
-      ethereum?.on('accountsChanged', async accounts => {
-        if (!accounts[0]) {
-          // console.log('!accounts[0]');
+  function windowEthereum() {
+    console.log('winFunc First line for window?.ethereum');
+    if (walletConnectSuccessful) return;
 
-          killSession();
-          resetApp();
-          return;
+    try {
+      if (window?.ethereum) {
+        ethereum?.on('accountsChanged', async accounts => {
+          console.log('accountsChanged', accounts);
+          if (!accounts[0]) {
+            console.log('winFunc !accounts[0]');
 
-          // disconnect();
-          //   try {
-          //     await ethereum.request({
-          //       method: 'eth_requestAccounts',
-          //       params: [{eth_accounts: {}}],
-          //     });
-          //   } catch (error) {
-          //     // console.error('Not connected to wallet', error);
-          //   }
-          // }
-        }
+            // killSession();
+            resetApp();
+            return;
+          }
 
-        // try {
-        //   await ethereum.request({
-        //     method: 'eth_requestAccounts',
-        //     params: [{eth_accounts: {}}],
-        //   });
-        // } catch (error) {}
+          setErrorMessages('');
 
-        setErrorMessages('');
-
-        setDefaultAccount(accounts[0]);
-        //   console.log('before setSignInStore');
-        setSignInStore(false);
-        // setFirstStepSuccess(false);
-        setSignature(null);
-
-        // // TODO: when metamask is locked
-        // if (!accounts.length) {
-        //   // logic to handle what happens once MetaMask is locked
-        //   console.log('accounts.length: ', accounts.length);
-        // }
-        //   console.log('after setSignInStore');
-
-        //   if (!signInStore && accounts[0] !== defaultAccount) {
-        //     setSignInStore(true);
-        //     funcSignTypedData();
-        //   }
-      });
+          setDefaultAccount(accounts[0]);
+          //   console.log('before setSignInStore');
+          setSignInStore(false);
+          // setFirstStepSuccess(false);
+          setSignature(null);
+        });
+      }
 
       // ethereum?.on('chainChanged', async chainId => {
       //   setChainId(chainId);
@@ -495,14 +470,90 @@ export default function WalletPanel(props) {
       //   disconnect();
       //   console.log('ethereum disconnect');
       // });
-
-      return () => {
-        ethereum?.removeListener('accountsChanged', async accounts => {
-          setDefaultAccount(accounts[0]);
-        });
-      };
+    } catch (error) {
+      console.log(error);
     }
-  }, []);
+
+    return () => {
+      ethereum?.removeListener('accountsChanged', async accounts => {
+        setDefaultAccount(accounts[0]);
+      });
+    };
+  }
+
+  // TODO: Notes every time component rendered, it'll run useEffect, that's why it works with `[]`
+  // FIXME: split the logic out of useEffect
+  // useEffect(() => {
+  //   // console.log('ethereum side effect');
+  //   console.log('First line in useEffect for window?.ethereum');
+  //   if (walletConnectSuccessful) return;
+
+  //   if (window?.ethereum) {
+  //     ethereum?.on('accountsChanged', async accounts => {
+  //       console.log('accountsChanged', accounts);
+  //       if (!accounts[0]) {
+  //         console.log('!accounts[0]');
+
+  //         killSession();
+  //         resetApp();
+  //         return;
+
+  //         // disconnect();
+  //         //   try {
+  //         //     await ethereum.request({
+  //         //       method: 'eth_requestAccounts',
+  //         //       params: [{eth_accounts: {}}],
+  //         //     });
+  //         //   } catch (error) {
+  //         //     // console.error('Not connected to wallet', error);
+  //         //   }
+  //         // }
+  //       }
+
+  //       // try {
+  //       //   await ethereum.request({
+  //       //     method: 'eth_requestAccounts',
+  //       //     params: [{eth_accounts: {}}],
+  //       //   });
+  //       // } catch (error) {}
+
+  //       setErrorMessages('');
+
+  //       setDefaultAccount(accounts[0]);
+  //       //   console.log('before setSignInStore');
+  //       setSignInStore(false);
+  //       // setFirstStepSuccess(false);
+  //       setSignature(null);
+
+  //       // // TODO: when metamask is locked
+  //       // if (!accounts.length) {
+  //       //   // logic to handle what happens once MetaMask is locked
+  //       //   console.log('accounts.length: ', accounts.length);
+  //       // }
+  //       //   console.log('after setSignInStore');
+
+  //       //   if (!signInStore && accounts[0] !== defaultAccount) {
+  //       //     setSignInStore(true);
+  //       //     funcSignTypedData();
+  //       //   }
+  //     });
+
+  //     // ethereum?.on('chainChanged', async chainId => {
+  //     //   setChainId(chainId);
+  //     // });
+
+  //     // ethereum?.on('disconnect', () => {
+  //     //   disconnect();
+  //     //   console.log('ethereum disconnect');
+  //     // });
+
+  //     return () => {
+  //       ethereum?.removeListener('accountsChanged', async accounts => {
+  //         setDefaultAccount(accounts[0]);
+  //       });
+  //     };
+  //   }
+  // }, []);
 
   async function _walletConnectSignEIP712(props) {
     const typedData = {

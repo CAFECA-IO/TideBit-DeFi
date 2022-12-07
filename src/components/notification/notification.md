@@ -4,7 +4,7 @@ import {forwardRef} from 'react';
 import NotificationItem from '../notification_item/notification_item';
 
 interface NotificationProps {
-  notifyRef: HTMLDivElement;
+  notifyRef: HTMLInputElement;
   componentVisible: boolean;
 }
 

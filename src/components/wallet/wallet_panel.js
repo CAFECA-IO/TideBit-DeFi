@@ -83,6 +83,7 @@ export default function WalletPanel(props) {
   const [chooseWalletConnect, setChooseWalletConnect] = useState(false);
   const [walletConnectSuccessful, setWalletConnectSuccessful] = useState(false);
   const [signInStore, setSignInStore] = useState(false);
+  // const [chooseMetamask, setChooseMetamask] = useState(false);
 
   // const [pairingSignature, setPairingSignature] = useState({
   //   account: '',
@@ -93,19 +94,26 @@ export default function WalletPanel(props) {
     // killSession();
 
     setConnecting(false);
+    // setChooseMetamask(false);
 
     setDefaultAccount('');
     setErrorMessages('');
     setSignature(null);
     setUserBalance(null);
     setLoading(false);
+
     setFirstStepSuccess(false);
     setFirstStepError(false);
     setSecondStepSuccess(false);
     setSecondStepError(false);
 
-    setProcessModalVisible(false);
     setPanelVisible(false);
+    setAvatarMenuVisible(false);
+    setConnectingModalVisible(false);
+    setPanelVisible(false);
+    setProcessModalVisible(false);
+    setQrcodeModalVisible(false);
+    setHelloModalVisible(false);
 
     setChainId(null);
     setShowToast(false);
@@ -165,6 +173,7 @@ export default function WalletPanel(props) {
   };
 
   const disconnect = async () => {
+    // resetApp();
     killSession();
     resetApp();
 
@@ -182,6 +191,7 @@ export default function WalletPanel(props) {
         // console.error('Not connected to wallet', error);
       }
     }
+
     setAvatarMenuVisible(false);
   };
 
@@ -206,7 +216,11 @@ export default function WalletPanel(props) {
       // console.log('QR code opened...');
       setShowToast(true);
 
-      const result = await walletConnector.createSession();
+      try {
+        const result = await walletConnector.createSession();
+      } catch (error) {
+        // console.error('error', error);
+      }
       // console.log('result', result);
 
       // console.log('connecting Invisible...');
@@ -409,10 +423,45 @@ export default function WalletPanel(props) {
     // console.log('ethereum side effect');
     if (window?.ethereum) {
       ethereum?.on('accountsChanged', async accounts => {
+        if (!accounts[0]) {
+          // console.log('!accounts[0]');
+
+          killSession();
+          resetApp();
+          return;
+
+          // disconnect();
+          //   try {
+          //     await ethereum.request({
+          //       method: 'eth_requestAccounts',
+          //       params: [{eth_accounts: {}}],
+          //     });
+          //   } catch (error) {
+          //     // console.error('Not connected to wallet', error);
+          //   }
+          // }
+        }
+
+        // try {
+        //   await ethereum.request({
+        //     method: 'eth_requestAccounts',
+        //     params: [{eth_accounts: {}}],
+        //   });
+        // } catch (error) {}
+
+        setErrorMessages('');
+
         setDefaultAccount(accounts[0]);
         //   console.log('before setSignInStore');
         setSignInStore(false);
+        // setFirstStepSuccess(false);
         setSignature(null);
+
+        // // TODO: when metamask is locked
+        // if (!accounts.length) {
+        //   // logic to handle what happens once MetaMask is locked
+        //   console.log('accounts.length: ', accounts.length);
+        // }
         //   console.log('after setSignInStore');
 
         //   if (!signInStore && accounts[0] !== defaultAccount) {
@@ -420,6 +469,15 @@ export default function WalletPanel(props) {
         //     funcSignTypedData();
         //   }
       });
+
+      // ethereum?.on('chainChanged', async chainId => {
+      //   setChainId(chainId);
+      // });
+
+      // ethereum?.on('disconnect', () => {
+      //   disconnect();
+      //   console.log('ethereum disconnect');
+      // });
 
       return () => {
         ethereum?.removeListener('accountsChanged', async accounts => {
@@ -744,7 +802,7 @@ export default function WalletPanel(props) {
     // console.log('metamask connect func called');
     try {
       setPanelVisible(!panelVisible);
-      setConnecting(true);
+      // setConnecting(true);
       setConnectingModalVisible(true);
 
       let provider = new ethers.providers.Web3Provider(window.ethereum, 'any');
@@ -779,6 +837,9 @@ export default function WalletPanel(props) {
       funcSignTypedData();
     } catch (error) {
       // console.log(error);
+      // resetApp();
+      // return;
+
       setErrorMessages(error);
       setFirstStepError(true);
       setProcessModalVisible(false);
@@ -815,6 +876,8 @@ export default function WalletPanel(props) {
   const walletconnectOptionClickHandler = async () => {
     // walletConnectSignClient();
     setChooseWalletConnect(true);
+    setErrorMessages('');
+    // setChooseMetamask(false);
     await walletConnectClient();
     // await walletConnectProgram();
   };
@@ -822,6 +885,7 @@ export default function WalletPanel(props) {
   const metamaskOptionClickHandler = async () => {
     // TODO: NNNNNNNotes
     // console.log('connecting modal should be visible: ', connectingModalVisible);
+    setErrorMessages('');
 
     if (typeof window?.ethereum === 'undefined') {
       // walletConnectSignClient();
@@ -831,6 +895,7 @@ export default function WalletPanel(props) {
       return;
     }
 
+    // setChooseMetamask(true);
     setChooseWalletConnect(false);
     metamaskConnect();
   };
@@ -876,9 +941,7 @@ export default function WalletPanel(props) {
           <div>
             EIP 712 Signature: <span className="text-cuteBlue3">{signature}</span>
           </div>
-          <div>
-            <span className="text-lightRed">{errorMessages}</span>
-          </div>
+          <div>{/* <span className="text-lightRed">{errorMessages}</span> */}</div>
         </>
       }
       toastHandler={toastHandler}

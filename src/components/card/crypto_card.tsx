@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import React from 'react';
+import {FC} from 'react';
 import LineGraph from '../line_graph/line_graph';
 // import {FaEthereum} from 'react-icons/fa';
 // // import {ReactComponent as ethIcon} from '/public/elements/group_15143.svg';
@@ -12,8 +12,23 @@ import LineGraph from '../line_graph/line_graph';
  * @param {starred} filled star or not
  *
  */
-const CryptoCard = ({
-  gradientColor = null,
+
+type CardProps = {
+  gradientColor?: string;
+  tokenComponent?: JSX.Element;
+  img?: string;
+  chain: string;
+  currency: string;
+  lineGraph?: JSX.Element;
+  price: number;
+  fluctuating: number;
+  star?: boolean;
+  starred?: boolean;
+  className?: string;
+};
+
+const CryptoCard: FC<CardProps> = ({
+  gradientColor = '',
   tokenComponent = null,
   img = '',
   chain = '',
@@ -25,13 +40,14 @@ const CryptoCard = ({
   starred = false,
   ...otherProps
 }) => {
-  price = price > 0.001 ? price.toLocaleString() : price;
+  // FIXME: comment for `.tsx`
+  // price = price > 0.001 ? price.toLocaleString() : price;
   fluctuating = Number(fluctuating);
   // console.log('fluctuating', fluctuating);
-  let priceRise = fluctuating > 0 ? true : false;
-  let fluctuatingRate = priceRise ? `(+${fluctuating}%)▴` : `(${fluctuating}%)▾`;
+  const priceRise = fluctuating > 0 ? true : false;
+  const fluctuatingRate = priceRise ? `(+${fluctuating}%)▴` : `(${fluctuating}%)▾`;
   // TODO: input the data and price color change as props
-  let priceColor = priceRise ? `text-lightGreen` : `text-lightRed`;
+  const priceColor = priceRise ? `text-lightGreen` : `text-lightRed`;
   // let priceColor = '';
 
   // console.log('priceColor', priceColor);
@@ -51,12 +67,12 @@ const CryptoCard = ({
   const desktopVersionBreakpoint = 'xs:flex';
   const mobileVersionBreakpoint = 'xs:hidden';
 
-  function randomNumber(min, max) {
+  function randomNumber(min: number, max: number) {
     return Math.floor(Math.random() * (max - min + 1) + min);
   }
 
-  function randomArray(min, max, length) {
-    let arr = [];
+  function randomArray(min: number, max: number, length: number) {
+    const arr = [];
     for (let i = 0; i < length; i++) {
       arr.push(randomNumber(min, max));
     }

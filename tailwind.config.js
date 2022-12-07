@@ -58,6 +58,7 @@ module.exports = {
         // width / height / padding / margin / top / bottom / right / left
         '1px': '1px',
         '2px': '2px',
+        '3px': '3px',
         '5px': '5px',
         '10px': '10px',
         '15px': '15px',
@@ -65,9 +66,14 @@ module.exports = {
         '23px': '23px',
         '28px': '28px',
         '30px': '30px',
+        '32px': '32px',
         '40px': '40px',
         '42px': '42px',
         '44px': '44px',
+        '45px': '45px',
+        '46px': '46px',
+        '47px': '47px',
+        '48px': '48px',
         '50px': '50px',
         '55px': '55px',
         '81px': '81px',
@@ -82,6 +88,7 @@ module.exports = {
         '200px': '200px',
         '220px': '220px',
         '271px': '271px',
+        '285px': '285px',
         '300px': '300px',
         '320px': '320px',
         '354px': '354px',
@@ -162,12 +169,14 @@ module.exports = {
         cuteBlue1: '#5895D9',
         cuteBlue2: '#527dc7',
         cuteBlue3: '#4165a3',
+        cuteBlue4: '#057df5',
 
         darkGray: '#161719',
         darkGray1: '#242A31',
         darkGray2: '#2B323A',
         darkGray3: '#090909',
         darkGray4: '#181818',
+        darkGray5: '#1E2329',
 
         lightGray: '#8B8E91',
         lightGray1: '#EDECEC',
@@ -202,12 +211,17 @@ module.exports = {
         'spin-slow': 'spin 3s linear infinite',
         'spin-fast': 'spin 1s linear infinite',
         fade: 'fadeOut 3s ease-in-out',
+        wiggle: 'wiggle 1s ease-in-out infinite',
       },
       // actual animation
       keyframes: theme => ({
         fadeOut: {
           '100%': {opacity: 0},
           '0%': {opacity: 1},
+        },
+        wiggle: {
+          '0%, 100%': {transform: 'rotate(-3deg)'},
+          '50%': {transform: 'rotate(3deg)'},
         },
       }),
     },

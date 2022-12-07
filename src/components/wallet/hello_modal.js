@@ -42,12 +42,14 @@ const HelloModal = ({
                     You can start using TideBit now.
                   </div>
 
-                  <TideButton className="px-12" content={`Done`} onClick={helloClickHandler} />
+                  <TideButton className="px-12" onClick={helloClickHandler}>
+                    Done
+                  </TideButton>
                   <Link
                     className="mt-3 text-base text-tidebitTheme underline underline-offset-4"
                     href="#"
                   >
-                    Connect my TideBit HK
+                    Connect my TideBit
                   </Link>
                 </div>
               </div>

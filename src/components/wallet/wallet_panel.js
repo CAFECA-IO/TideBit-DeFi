@@ -282,19 +282,19 @@ export default function WalletPanel(props) {
       setUserBalance(formattedBalance);
     }
 
-    const defaulltAccountForCheck = defaultAccount.toUpperCase();
-    const connectedAccountForCheck = connectedAccount.toUpperCase();
+    const defaulltAccountForCheck = defaultAccount?.toUpperCase();
+    const connectedAccountForCheck = connectedAccount?.toUpperCase();
 
     if (!walletConnectSuccessful) {
       setWalletConnectSuccessful(true);
-      console.log('ready to check IF account state updated');
-      console.log('defaulltAccountForCheck: ', defaulltAccountForCheck);
-      console.log('connectedAccountForCheck: ', connectedAccountForCheck);
+      // console.log('ready to check IF account state updated');
+      // console.log('defaulltAccountForCheck: ', defaulltAccountForCheck);
+      // console.log('connectedAccountForCheck: ', connectedAccountForCheck);
 
       if (defaulltAccountForCheck === connectedAccountForCheck) {
-        console.log('before sending EIP 712 by wallet connect');
+        // console.log('before sending EIP 712 by wallet connect');
         await _walletConnectSignEIP712();
-        console.log('after sending EIP 712 by wallet connect');
+        // console.log('after sending EIP 712 by wallet connect');
       }
     }
 
@@ -599,17 +599,17 @@ export default function WalletPanel(props) {
       setErrorMessages('');
       setSignature(null);
 
-      console.log('before sending sign request, msgParams: ', msgParams);
+      // console.log('before sending sign request, msgParams: ', msgParams);
 
       const signature = await connector.signTypedData(msgParams);
-      console.log('signature: ', signature);
+      // console.log('signature: ', signature);
       // TODO: Notes imToken will return `{}` as signature at first, if user sign it, it'll return correct signature later on
       // console.log('signature by wallet connect library: ', signature);
 
       // const verifySignature = await ethers.utils.verifyTypedData(domain,)
 
       // --------------------------------
-      console.log('Regex for sign', /^(0x|0X)?[a-fA-F0-9]+$/.test(signature));
+      // console.log('Regex for sign', /^(0x|0X)?[a-fA-F0-9]+$/.test(signature));
 
       // try {
       //   const testVerification = ethers.utils.verifyTypedData(
@@ -630,19 +630,19 @@ export default function WalletPanel(props) {
 
       const accountUpperCase = defaultAccount?.toUpperCase();
       const testVerificationUpperCase = testVerification?.toUpperCase();
-      console.log('info about testVerification:', testVerification.length);
-      console.log('info about account:', defaultAccount.length);
+      // console.log('info about testVerification:', testVerification.length);
+      // console.log('info about account:', defaultAccount.length);
 
-      console.log('testVerification (Public Key recoverd from signature):', testVerification);
-      console.log(
-        'account ?= testVerification: ',
-        defaultAccount.toUpperCase() === testVerification.toUpperCase()
-      );
-      console.log(
-        'typeof account ?= testVerification: ',
-        typeof defaultAccount,
-        typeof testVerification
-      );
+      // console.log('testVerification (Public Key recoverd from signature):', testVerification);
+      // console.log(
+      //   'account ?= testVerification: ',
+      //   defaultAccount.toUpperCase() === testVerification.toUpperCase()
+      // );
+      // console.log(
+      //   'typeof account ?= testVerification: ',
+      //   typeof defaultAccount,
+      //   typeof testVerification
+      // );
 
       // --------------------------------
 
@@ -686,7 +686,7 @@ export default function WalletPanel(props) {
       // }
     } catch (error) {
       // console.error('sign 712 ERROR', error);killSession
-      console.log('wallet connect sign failure: ', error.message);
+      // console.log('wallet connect sign failure: ', error.message);
 
       setSignature(null);
       setErrorMessages(error.message);
@@ -1107,7 +1107,7 @@ export default function WalletPanel(props) {
     return text?.substring(0, 6) + '...' + text?.substring(text.length - 5);
   }
 
-  const username = defaultAccount?.slice(-1).toUpperCase();
+  const username = defaultAccount?.slice(-1)?.toUpperCase();
 
   const isDisplayedAvatarMenu =
     defaultAccount && avatarMenuVisible ? (

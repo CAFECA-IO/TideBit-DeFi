@@ -177,6 +177,8 @@ export default function WalletPanel(props) {
     killSession();
     resetApp();
 
+    if (walletConnectSuccessful) return;
+
     const {ethereum} = window;
     if (ethereum) {
       try {

@@ -456,17 +456,17 @@ export default function WalletPanel(props) {
   }, [chooseMetamask]);
 
   function injectedDetecting() {
-    console.log('First line for injectedDetecting');
+    // console.log('First line for injectedDetecting');
     if (walletConnectSuccessful) return;
 
     try {
       if (window?.ethereum) {
-        console.log('in window?.ethereum');
+        // console.log('in window?.ethereum');
 
         ethereum?.on('accountsChanged', async accounts => {
-          console.log('accountsChanged', accounts);
+          // console.log('accountsChanged', accounts);
           if (!accounts[0]) {
-            console.log('injectedDetecting !accounts[0]');
+            // console.log('injectedDetecting !accounts[0]');
 
             // killSession();
             resetApp();
@@ -474,8 +474,10 @@ export default function WalletPanel(props) {
           }
 
           setErrorMessages('');
-
           setDefaultAccount(accounts[0]);
+          if (accounts[0] !== defaultAccount) {
+            funcSignTypedData();
+          }
           //   console.log('before setSignInStore');
           setSignInStore(false);
           // setFirstStepSuccess(false);
@@ -962,6 +964,7 @@ export default function WalletPanel(props) {
       // let signature = await signer.signMessage('TideBit DeFi test');
       // console.log('Sign the message, get the signature is: ', signature);
       funcSignTypedData();
+      // injectedDetecting();
     } catch (error) {
       // console.log(error);
       // resetApp();

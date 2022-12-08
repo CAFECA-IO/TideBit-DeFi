@@ -83,7 +83,8 @@ export default function WalletPanel(props) {
   const [chooseWalletConnect, setChooseWalletConnect] = useState(false);
   const [walletConnectSuccessful, setWalletConnectSuccessful] = useState(false);
   const [signInStore, setSignInStore] = useState(false);
-  // const [chooseMetamask, setChooseMetamask] = useState(false);
+
+  const [chooseMetamask, setChooseMetamask] = useState(false);
 
   // const [pairingSignature, setPairingSignature] = useState({
   //   account: '',
@@ -121,6 +122,7 @@ export default function WalletPanel(props) {
     setConnector(null);
     setWalletConnectSuccessful(false);
     setChooseWalletConnect(false);
+    setChooseMetamask(false);
     setSupported(false);
     setSymbol(null);
 
@@ -174,10 +176,17 @@ export default function WalletPanel(props) {
 
   const disconnect = async () => {
     // resetApp();
-    killSession();
+    // if (connector) {
+    //   connector.killSession();
+    //   resetApp();
+    // }
+
     resetApp();
 
-    if (walletConnectSuccessful) return;
+    if (walletConnectSuccessful) {
+      killSession();
+      return;
+    }
 
     const {ethereum} = window;
     if (ethereum) {
@@ -194,7 +203,7 @@ export default function WalletPanel(props) {
       }
     }
 
-    setAvatarMenuVisible(false);
+    // setAvatarMenuVisible(false);
   };
 
   // Initialize WalletConnect
@@ -282,8 +291,8 @@ export default function WalletPanel(props) {
       setUserBalance(formattedBalance);
     }
 
-    const defaulltAccountForCheck = defaultAccount.toUpperCase();
-    const connectedAccountForCheck = connectedAccount.toUpperCase();
+    const defaulltAccountForCheck = defaultAccount?.toUpperCase();
+    const connectedAccountForCheck = connectedAccount?.toUpperCase();
 
     if (!walletConnectSuccessful) {
       setWalletConnectSuccessful(true);
@@ -352,6 +361,8 @@ export default function WalletPanel(props) {
         // setWalletConnectSuccessful(false);
 
         // handle disconnect event
+        // TODO: Couldn't be killed session when detected connector for the asynchronization?
+        // disconnect();
         resetApp();
 
         // // reset state variables here
@@ -434,18 +445,28 @@ export default function WalletPanel(props) {
   //     setFetching(false);
   //   }
   // }, [connector, chainId, defaultAccount, userBalance]);
-  windowEthereum();
 
-  function windowEthereum() {
-    console.log('winFunc First line for window?.ethereum');
+  useEffect(() => {
+    if (!chooseMetamask) return;
+
+    injectedDetecting();
+    // return () => {
+    //   second
+    // }
+  }, [chooseMetamask]);
+
+  function injectedDetecting() {
+    console.log('First line for injectedDetecting');
     if (walletConnectSuccessful) return;
 
     try {
       if (window?.ethereum) {
+        console.log('in window?.ethereum');
+
         ethereum?.on('accountsChanged', async accounts => {
           console.log('accountsChanged', accounts);
           if (!accounts[0]) {
-            console.log('winFunc !accounts[0]');
+            console.log('injectedDetecting !accounts[0]');
 
             // killSession();
             resetApp();
@@ -982,6 +1003,8 @@ export default function WalletPanel(props) {
   const walletconnectOptionClickHandler = async () => {
     // walletConnectSignClient();
     setChooseWalletConnect(true);
+    setChooseMetamask(false);
+
     setErrorMessages('');
     // setChooseMetamask(false);
     await walletConnectClient();
@@ -1001,8 +1024,8 @@ export default function WalletPanel(props) {
       return;
     }
 
-    // setChooseMetamask(true);
     setChooseWalletConnect(false);
+    setChooseMetamask(true);
     metamaskConnect();
   };
 

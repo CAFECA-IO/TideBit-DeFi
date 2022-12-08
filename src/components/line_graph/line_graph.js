@@ -5,7 +5,7 @@ const Chart = dynamic(() => import('react-apexcharts'), {ssr: false});
 // const Chart = dynamic(() => import('apexcharts'), {ssr: false});
 
 export default function LineGraph({
-  strokeColor = '#3CC8C8',
+  strokeColor = ['#3CC8C8'],
   sampleArray = [42, 50, 45, 55, 49, 52, 48],
   lineGraphWidth = '150',
   ...otherProps

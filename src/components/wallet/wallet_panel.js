@@ -296,7 +296,7 @@ export default function WalletPanel(props) {
 
     if (!walletConnectSuccessful) {
       setWalletConnectSuccessful(true);
-      console.log('ready to check IF account state updated');
+      console.log('---ready to check if account state updated:---');
       console.log('defaulltAccountForCheck: ', defaulltAccountForCheck);
       console.log('connectedAccountForCheck: ', connectedAccountForCheck);
 
@@ -304,11 +304,11 @@ export default function WalletPanel(props) {
         console.log('before sending EIP 712 by wallet connect');
         await _walletConnectSignEIP712();
         console.log('after sending EIP 712 by wallet connect');
+      } else {
+        console.log('send connectedAccount as props to `_walletConnectSignEIP712`');
+        await _walletConnectSignEIP712({connectedAccount: connectedAccountForCheck});
       }
     }
-
-    // console.log('onConnect eip712 signed: ', signature);
-    // await _walletConnectSignEIP712();
   }
 
   async function walletConnecting() {
@@ -321,34 +321,23 @@ export default function WalletPanel(props) {
           // console.error(error);
           return;
         }
-        // console.log('In wallet connecting connect listener: ', payload);
 
         const {chainId, accounts} = payload.params[0];
+
+        console.log('connect: ', payload.params[0]);
+
         await onConnect(chainId, accounts[0]);
         setFetching(false);
-
-        // if (accounts[0]) await _walletConnectSignEIP712();
-        // console.log('useEffect connector listener accounts[0]: ', accounts[0]);
-
-        // console.log('connecting Invisible...');
-        // setConnectingModalVisible(false);
       });
 
       connector.on('session_update', async (error, payload) => {
-        // _walletConnectSignEIP712();
-        // _walletConnectSignEIP712();
-        // console.log(error)
-        // console.log('session update', payload);
-        // ---------------------
-        // setDefaultAccount('');
         setWalletConnectSuccessful(false);
         setSignInStore(false);
         setSignature(null);
 
         const {chainId, accounts} = payload.params[0];
 
-        // console.log('session_update accounts: ', accounts);
-        // console.log('session_update accounts[0]: ', accounts[0]);
+        console.log('session_update: ', payload.params[0]);
 
         await onConnect(chainId, accounts[0]);
         setFetching(false);
@@ -475,9 +464,12 @@ export default function WalletPanel(props) {
 
           setErrorMessages('');
           setDefaultAccount(accounts[0]);
+
+          // When accounts changed, it sends a request to sign typed data
           if (accounts[0] !== defaultAccount) {
             funcSignTypedData();
           }
+
           //   console.log('before setSignInStore');
           setSignInStore(false);
           // setFirstStepSuccess(false);
@@ -579,6 +571,7 @@ export default function WalletPanel(props) {
   // }, []);
 
   async function _walletConnectSignEIP712(props) {
+    console.log('props in _walletConnectSignEIP712: ', props);
     const typedData = {
       types: {
         EIP712Domain: [
@@ -617,10 +610,11 @@ export default function WalletPanel(props) {
       },
     };
 
-    //       props?.connectedAccount ?? defaultAccount, // Required
+    //  props?.connectedAccount ?? defaultAccount, // Required
+    console.log('in EIP712 sign func, props?.connectedAccount: ', props?.connectedAccount);
 
     const msgParams = [
-      defaultAccount, // Required
+      props?.connectedAccount ?? defaultAccount, // Required
       JSON.stringify(typedData), // Required
     ];
 
@@ -695,43 +689,45 @@ export default function WalletPanel(props) {
       // } catch (error) {
       //   console.log(error);
       // }
-      const testVerification = ethers.utils.verifyTypedData(
-        typedDataForVerifying.domain,
-        typedDataForVerifying.types,
-        typedDataForVerifying.message,
-        signature
-      );
+      if (/^(0x|0X)?[a-fA-F0-9]+$/.test(signature)) {
+        const testVerification = ethers.utils.verifyTypedData(
+          typedDataForVerifying.domain,
+          typedDataForVerifying.types,
+          typedDataForVerifying.message,
+          signature
+        );
 
-      const accountUpperCase = defaultAccount?.toUpperCase();
-      const testVerificationUpperCase = testVerification?.toUpperCase();
-      console.log('info about testVerification:', testVerification.length);
-      console.log('info about account:', defaultAccount.length);
+        const accountUpperCase = defaultAccount?.toUpperCase() ?? connectedAccount?.toUpperCase();
+        const testVerificationUpperCase = testVerification?.toUpperCase();
+        console.log('info about testVerification:', testVerification.length);
+        console.log('info about account:', defaultAccount.length);
 
-      console.log('testVerification (Public Key recoverd from signature):', testVerification);
-      console.log(
-        'account ?= testVerification: ',
-        defaultAccount.toUpperCase() === testVerification.toUpperCase()
-      );
-      console.log(
-        'typeof account ?= testVerification: ',
-        typeof defaultAccount,
-        typeof testVerification
-      );
+        console.log('testVerification (Public Key recoverd from signature):', testVerification);
+        console.log(
+          'account ?= testVerification: ',
+          defaultAccount.toUpperCase() === testVerification.toUpperCase()
+        );
+        console.log(
+          'typeof account ?= testVerification: ',
+          typeof defaultAccount,
+          typeof testVerification
+        );
 
-      // --------------------------------
+        // --------------------------------
 
-      if (accountUpperCase === testVerificationUpperCase) {
-        setSignature(signature);
-        setSecondStepSuccess(true);
+        if (accountUpperCase === testVerificationUpperCase) {
+          setSignature(signature);
+          setSecondStepSuccess(true);
 
-        setTimeout(() => setProcessModalVisible(false), DELAYED_HIDDEN_SECONDS);
+          setTimeout(() => setProcessModalVisible(false), DELAYED_HIDDEN_SECONDS);
 
-        setHelloModalVisible(true);
-        setErrorMessages('');
-        setPanelVisible(false);
-        setShowToast(true);
-        setSignInStore(true);
-        // console.log('sign in store, ', signInStore);
+          setHelloModalVisible(true);
+          setErrorMessages('');
+          setPanelVisible(false);
+          setShowToast(true);
+          setSignInStore(true);
+          // console.log('sign in store, ', signInStore);
+        }
       }
 
       // if (/^(0x|0X)?[a-fA-F0-9]+$/.test(signature)) {

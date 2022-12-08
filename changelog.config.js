@@ -1,7 +1,7 @@
 module.exports = {
   disableEmoji: false, // 是否禁用 emoji
   format: '{type}{scope}: {emoji}{subject}', // Commit 訊息的格式
-  list: ['test', 'feat', 'fix', 'chore', 'docs', 'refactor', 'style', 'ci', 'perf'], // Commit 類型的清單
+  list: ['play', 'feat', 'fix', 'test', 'chore', 'docs', 'refactor', 'style', 'ci', 'perf'], // Commit 類型的清單
   maxMessageLength: 64, // Commit 訊息的最大長度
   minMessageLength: 3, // Commit 訊息的最小長度
   questions: ['type', 'scope', 'subject', 'body', 'breaking', 'issues', 'lerna'], // 問題的清單
@@ -57,6 +57,11 @@ module.exports = {
       description: 'Adding missing tests',
       emoji: '💍',
       value: 'test',
+    },
+    play: {
+      description: 'Taking notes and having fun',
+      emoji: '🐳',
+      value: 'play',
     },
   },
   messages: {

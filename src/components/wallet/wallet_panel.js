@@ -296,7 +296,7 @@ export default function WalletPanel(props) {
 
     if (!walletConnectSuccessful) {
       setWalletConnectSuccessful(true);
-      console.log('---ready to check if account state updated:---');
+      console.log('---ready to check if account state updated in `onConnect()`:---');
       console.log('defaulltAccountForCheck: ', defaulltAccountForCheck);
       console.log('connectedAccountForCheck: ', connectedAccountForCheck);
 
@@ -456,7 +456,6 @@ export default function WalletPanel(props) {
           // console.log('accountsChanged', accounts);
           if (!accounts[0]) {
             // console.log('injectedDetecting !accounts[0]');
-
             // killSession();
             resetApp();
             return;
@@ -465,7 +464,16 @@ export default function WalletPanel(props) {
           setErrorMessages('');
           setDefaultAccount(accounts[0]);
 
-          // When accounts changed, it sends a request to sign typed data
+          console.log('in injectedDetecting accounts[0]: ', accounts[0]);
+          console.log('in injectedDetecting defaultAccount: ', defaultAccount);
+          console.log('in injectedDetecting signInStore: ', signInStore);
+          console.log('in injectedDetecting signature: ', signature);
+
+          // FIXME: send twice sign request
+          // Avoid first time connected, send twice sign request `!accounts[0] && accounts[0] !== defaultAccount`
+          if (!defaultAccount && signInStore) return;
+
+          // When accounts changed, it sends a request to sign typed data `accounts[0] !== defaultAccount`
           if (accounts[0] !== defaultAccount) {
             funcSignTypedData();
           }
@@ -613,8 +621,11 @@ export default function WalletPanel(props) {
     //  props?.connectedAccount ?? defaultAccount, // Required
     console.log('in EIP712 sign func, props?.connectedAccount: ', props?.connectedAccount);
 
+    // FIXME: check if it's validated
+    const accountControl = props?.connectedAccount?.toLowerCase() ?? defaultAccount?.toLowerCase();
+
     const msgParams = [
-      props?.connectedAccount ?? defaultAccount, // Required
+      accountControl, // Required
       JSON.stringify(typedData), // Required
     ];
 
@@ -697,16 +708,22 @@ export default function WalletPanel(props) {
           signature
         );
 
-        const accountUpperCase = defaultAccount?.toUpperCase() ?? connectedAccount?.toUpperCase();
-        const testVerificationUpperCase = testVerification?.toUpperCase();
-        console.log('info about testVerification:', testVerification.length);
-        console.log('info about account:', defaultAccount.length);
+        // const accountControl = props?.connectedAccount?.toLowerCase() ?? defaultAccount?.toLowerCase();
+
+        // const accountLowercase = defaultAccount?.toLowerCase() ?? connectedAccount?.toLowerCase();
+        const testVerificationLowerCase = testVerification?.toLowerCase();
+        console.log('length about testVerification:', testVerification?.length);
+        // console.log('length about default account:', defaultAccount?.length);
+        // console.log('length about account:', connectedAccount?.length);
+
+        // console.log('account upper case:', accountUpperCase);
+        console.log('account control:', accountControl);
+        // TODO: Notes: when there's a condition, better to NOT log them separately, otherwise it'll error out
+        // console.log('default account upper case:', defaultAccount?.toLowerCase());
+        // console.log('connected account upper case:', connectedAccount?.toLowerCase());
 
         console.log('testVerification (Public Key recoverd from signature):', testVerification);
-        console.log(
-          'account ?= testVerification: ',
-          defaultAccount.toUpperCase() === testVerification.toUpperCase()
-        );
+        console.log('account ?= testVerification: ', accountControl === testVerificationLowerCase);
         console.log(
           'typeof account ?= testVerification: ',
           typeof defaultAccount,
@@ -715,7 +732,7 @@ export default function WalletPanel(props) {
 
         // --------------------------------
 
-        if (accountUpperCase === testVerificationUpperCase) {
+        if (accountControl === testVerificationLowerCase) {
           setSignature(signature);
           setSecondStepSuccess(true);
 

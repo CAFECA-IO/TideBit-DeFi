@@ -91,8 +91,12 @@ export default function WalletPanel(props) {
   //   signature: '',
   // });
 
+  // let waitingWalletConnect = false;
+
   const resetApp = () => {
     // killSession();
+
+    // waitingWalletConnect = false;
 
     setConnecting(false);
     // setChooseMetamask(false);
@@ -261,6 +265,7 @@ export default function WalletPanel(props) {
   };
 
   // Data collected when connected
+  let isSignaturePending = false;
   async function onConnect(chainId, connectedAccount) {
     // handle connect event
     setDefaultAccount(connectedAccount);
@@ -278,36 +283,82 @@ export default function WalletPanel(props) {
       // setSymbol(networkData.native_currency.symbol);
       setChainId(chainId);
 
-      // 1. Create an Ethers provider
-      const provider = new ethers.providers.StaticJsonRpcProvider(networkData.rpc_url, {
-        chainId,
-        name: networkData.name,
-      });
-      // 2. Get the account balance
-      const balance = await provider.getBalance(connectedAccount);
-      // 3. Format the balance
-      const formattedBalance = ethers.utils.formatEther(balance);
-      // 4. Save the balance to state
-      setUserBalance(formattedBalance);
+      try {
+        // 1. Create an Ethers provider
+        const provider = new ethers.providers.StaticJsonRpcProvider(networkData.rpc_url, {
+          chainId,
+          name: networkData.name,
+        });
+        // 2. Get the account balance
+        const balance = await provider.getBalance(connectedAccount);
+        // 3. Format the balance
+        const formattedBalance = ethers.utils.formatEther(balance);
+        // 4. Save the balance to state
+        setUserBalance(formattedBalance);
+      } catch (error) {
+        console.log(error.message);
+        setErrorMessages(error.message);
+      }
     }
 
-    const defaulltAccountForCheck = defaultAccount?.toUpperCase();
-    const connectedAccountForCheck = connectedAccount?.toUpperCase();
+    const defaulltAccountForCheck = defaultAccount?.toLowerCase();
+    const connectedAccountForCheck = connectedAccount?.toLowerCase();
 
-    if (!walletConnectSuccessful) {
+    console.log(
+      'before control flow of if (walletConnectSuccessful), check state of `walletConnectSuccessful`: ',
+      walletConnectSuccessful
+    );
+
+    console.log(
+      'before control flow of if (walletConnectSuccessful), check state of `isSignaturePending`: ',
+      isSignaturePending
+    );
+
+    if (!walletConnectSuccessful && !isSignaturePending) {
       setWalletConnectSuccessful(true);
+      isSignaturePending = true;
       console.log('---ready to check if account state updated in `onConnect()`:---');
       console.log('defaulltAccountForCheck: ', defaulltAccountForCheck);
       console.log('connectedAccountForCheck: ', connectedAccountForCheck);
+      // console.log('call `_walletConnectSignEIP712()` as SOLUTION:');
 
-      if (defaulltAccountForCheck === connectedAccountForCheck) {
-        console.log('before sending EIP 712 by wallet connect');
-        await _walletConnectSignEIP712();
-        console.log('after sending EIP 712 by wallet connect');
-      } else {
-        console.log('send connectedAccount as props to `_walletConnectSignEIP712`');
-        await _walletConnectSignEIP712({connectedAccount: connectedAccountForCheck});
-      }
+      console.log(
+        'in control flow, before CALL EIP712 of if (isSignaturePending), check state of `walletConnectSuccessful`: ',
+        isSignaturePending
+      );
+
+      await _walletConnectSignEIP712({connectedAccount: connectedAccountForCheck});
+      console.log(
+        'in control flow, after CALL EIP712 of if (isSignaturePending), check state of `walletConnectSuccessful`: ',
+        isSignaturePending
+      );
+
+      // if (!waitingWalletConnect && defaulltAccountForCheck === connectedAccountForCheck) {
+      //   console.log('Call `_walletConnectSignEIP712()`: before sending EIP 712 by wallet connect');
+      //   await _walletConnectSignEIP712();
+      //   console.log(
+      //     'after sending EIP 712 by wallet connect [No props into _walletConnectSignEIP712()]'
+      //   );
+      // } else {
+      //   console.log(
+      //     'Call `_walletConnectSignEIP712()`: send connectedAccount as props to `_walletConnectSignEIP712`'
+      //   );
+      //   await _walletConnectSignEIP712({connectedAccount: connectedAccountForCheck});
+      //   console.log(
+      //     'after sending EIP 712 by wallet connect [Pass props into _walletConnectSignEIP712()]'
+      //   );
+      // }
+
+      // 1209
+      // if (!loading) {
+      //   console.log(
+      //     'Call `_walletConnectSignEIP712()`: send connectedAccount as props to `_walletConnectSignEIP712`'
+      //   );
+      // await _walletConnectSignEIP712({connectedAccount: connectedAccountForCheck});
+      //   console.log(
+      //     'after sending EIP 712 by wallet connect [Pass props into _walletConnectSignEIP712()]'
+      //   );
+      // }
     }
   }
 
@@ -331,6 +382,7 @@ export default function WalletPanel(props) {
       });
 
       connector.on('session_update', async (error, payload) => {
+        // waitingWalletConnect = false;
         setWalletConnectSuccessful(false);
         setSignInStore(false);
         setSignature(null);
@@ -339,7 +391,7 @@ export default function WalletPanel(props) {
 
         console.log('session_update: ', payload.params[0]);
 
-        await onConnect(chainId, accounts[0]);
+        // await onConnect(chainId, accounts[0]);
         setFetching(false);
       });
 
@@ -452,6 +504,11 @@ export default function WalletPanel(props) {
       if (window?.ethereum) {
         // console.log('in window?.ethereum');
 
+        // FIXME: 拔掉電話線
+        ethereum?.removeListener('accountsChanged', async accounts => {
+          setDefaultAccount(accounts[0]);
+        });
+
         ethereum?.on('accountsChanged', async accounts => {
           // console.log('accountsChanged', accounts);
           if (!accounts[0]) {
@@ -497,11 +554,16 @@ export default function WalletPanel(props) {
       console.log(error);
     }
 
-    return () => {
-      ethereum?.removeListener('accountsChanged', async accounts => {
-        setDefaultAccount(accounts[0]);
-      });
-    };
+    // return () => {
+    //   ethereum?.removeListener('accountsChanged', async accounts => {
+    //     setDefaultAccount(accounts[0]);
+    //   });
+    // };
+    // return (() => {
+    //   ethereum?.removeListener('accountsChanged', async accounts => {
+    //     setDefaultAccount(accounts[0]);
+    //   });
+    // })();
   }
 
   // TODO: Notes every time component rendered, it'll run useEffect, that's why it works with `[]`
@@ -579,6 +641,8 @@ export default function WalletPanel(props) {
   // }, []);
 
   async function _walletConnectSignEIP712(props) {
+    // if (loading) return;
+
     console.log('props in _walletConnectSignEIP712: ', props);
     const typedData = {
       types: {
@@ -622,7 +686,9 @@ export default function WalletPanel(props) {
     console.log('in EIP712 sign func, props?.connectedAccount: ', props?.connectedAccount);
 
     // FIXME: check if it's validated
-    const accountControl = props?.connectedAccount?.toLowerCase() ?? defaultAccount?.toLowerCase();
+    // const accountControl = props?.connectedAccount?.toLowerCase() ?? defaultAccount?.toLowerCase();
+
+    const accountControl = props?.connectedAccount?.toLowerCase();
 
     const msgParams = [
       accountControl, // Required
@@ -665,9 +731,13 @@ export default function WalletPanel(props) {
     //   setFirstStepSuccess(true);
     // }
 
+    // FIXME: Should check if signature is pending
+    // loading ||
     if (signInStore) {
       return;
     }
+
+    // waitingWalletConnect = true;
 
     try {
       setFirstStepSuccess(true);
@@ -775,6 +845,7 @@ export default function WalletPanel(props) {
       // console.error('sign 712 ERROR', error);killSession
       console.log('wallet connect sign failure: ', error.message);
 
+      // waitingWalletConnect = false;
       setSignature(null);
       setErrorMessages(error.message);
 

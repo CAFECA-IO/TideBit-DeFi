@@ -549,10 +549,10 @@ export default function WalletPanel(props) {
 
       ethereum?.on('accountsChanged', async accounts => {
         // console.log('accountsChanged', accounts);
-        console.log(
-          'in accountsChanged, metamaskConnectFirstTimeSuccessful state: ',
-          metamaskConnectFirstTimeSuccessful
-        );
+        // console.log(
+        //   'in accountsChanged, metamaskConnectFirstTimeSuccessful state: ',
+        //   metamaskConnectFirstTimeSuccessful
+        // );
         // ---Detect User Diconnect the website from Metamask---
         if (!accounts[0]) {
           // console.log('injectedDetecting !accounts[0]');
@@ -571,10 +571,10 @@ export default function WalletPanel(props) {
         // console.log('in injectedDetecting signInStore: ', signInStore);
         // console.log('in injectedDetecting signature: ', signature);
 
-        console.log(
-          'metamaskConnectFirstTimeSuccessful state in account change: ',
-          metamaskConnectFirstTimeSuccessful
-        );
+        // console.log(
+        //   'metamaskConnectFirstTimeSuccessful state in account change: ',
+        //   metamaskConnectFirstTimeSuccessful
+        // );
 
         // No signature request sent when first time connected
         if (metamaskConnectFirstTimeSuccessful) return;
@@ -1005,10 +1005,10 @@ export default function WalletPanel(props) {
     }
 
     setMetamaskConnectFirstTimeSuccessful(false);
-    console.log(
-      'after sign, metamask connect first time successful',
-      metamaskConnectFirstTimeSuccessful
-    );
+    // console.log(
+    //   'after sign, metamask connect first time successful',
+    //   metamaskConnectFirstTimeSuccessful
+    // );
 
     const DOMAIN = {
       name: 'TideBit DeFi',
@@ -1126,7 +1126,7 @@ export default function WalletPanel(props) {
       setSignaturePending(false);
 
       setMetamaskConnectFirstTimeSuccessful(false);
-      console.log('metamask connect first time successful', metamaskConnectFirstTimeSuccessful);
+      // console.log('metamask connect first time successful', metamaskConnectFirstTimeSuccessful);
 
       setSignature(null);
       setErrorMessages(error.message);
@@ -1158,7 +1158,7 @@ export default function WalletPanel(props) {
       setConnectingModalVisible(true);
 
       // TODO: Notes: 追查呼叫這行code的function
-      console.trace('123');
+      // console.trace('123');
       setMetamaskConnectFirstTimeSuccessful(true);
 
       let provider = new ethers.providers.Web3Provider(window.ethereum, 'any');

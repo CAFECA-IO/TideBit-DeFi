@@ -25,7 +25,7 @@ module.exports = {
   extends: ['plugin:import/typescript', 'plugin:tailwindcss/recommended'],
   // 加上 no console log 規則
   rules: {
-    // 'no-console': 'error',
+    'no-console': 'error',
     'tailwindcss/no-contradicting-classname': 'error',
     'tailwindcss/classnames-order': 'off',
     'tailwindcss/enforces-negative-arbitrary-values': 'error',

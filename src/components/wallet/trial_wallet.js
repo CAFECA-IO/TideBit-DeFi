@@ -1,6 +1,6 @@
 import React from 'react';
 
-const WalletSplitTrial = () => {
+const TrialWallet = () => {
   // const connectWalletMethods = {
   //   metamask: function () {
   //     console.log('metamask');
@@ -13,4 +13,4 @@ const WalletSplitTrial = () => {
   return <div>Trial component</div>;
 };
 
-export default WalletSplitTrial;
+export default TrialWallet;

@@ -85,8 +85,12 @@ export default function WalletPanel(props) {
   const [signInStore, setSignInStore] = useState(false);
 
   const [chooseMetamask, setChooseMetamask] = useState(false);
+
+  // First time connect to metamask, make accountsChanged event listener NOT send signature request
+  const [metamaskConnectFirstTimeSuccessful, setMetamaskConnectFirstTimeSuccessful] =
+    useState(false);
+
   const [signaturePending, setSignaturePending] = useState(false);
-  const [metamaskConnectSuccessful, setMetamaskConnectSuccessful] = useState(false);
 
   // const [pairingSignature, setPairingSignature] = useState({
   //   account: '',
@@ -99,10 +103,11 @@ export default function WalletPanel(props) {
     // killSession();
 
     // waitingWalletConnect = false;
-    setMetamaskConnectSuccessful(false);
+    setMetamaskConnectFirstTimeSuccessful(false);
+    setSignaturePending(false);
+
     setConnecting(false);
     // setChooseMetamask(false);
-    setSignaturePending(false);
 
     setDefaultAccount('');
     setErrorMessages('');
@@ -135,6 +140,10 @@ export default function WalletPanel(props) {
 
     // setConnector(null);
     setFetching(false);
+
+    // windows?.ethereum?.removeListener('accountsChanged', async accounts => {
+    //   setDefaultAccount(accounts[0]);
+    // });
   };
 
   const toastHandler = () => {
@@ -394,7 +403,7 @@ export default function WalletPanel(props) {
 
         console.log('session_update: ', payload.params[0]);
 
-        await onConnect(chainId, accounts[0]);
+        // await onConnect(chainId, accounts[0]);
         setFetching(false);
       });
 
@@ -430,10 +439,8 @@ export default function WalletPanel(props) {
 
   useEffect(() => {
     if (!connector) return;
-    // TODO: 1209
-    if (signaturePending) return;
     walletConnecting();
-  }, [connector, chainId, defaultAccount]);
+  }, [connector, chainId, defaultAccount, userBalance]);
 
   // // Once connector, chainId, account, or balance changes, update the state
   // useEffect(() => {
@@ -492,50 +499,65 @@ export default function WalletPanel(props) {
   //   }
   // }, [connector, chainId, defaultAccount, userBalance]);
 
-  // flagForInjectedMetamask();
-  // function flagForInjectedMetamask() {
-  //   if (!chooseMetamask) return;
-  //   if (loading) return;
-  //   injectedDetecting();
-  // }
-
   useEffect(() => {
     if (!chooseMetamask) return;
 
     injectedDetecting();
+    return () => {
+      console.log('Remove event listeenr, useEffect for injectedDetecting()');
+      // FIXME: 拔掉電話線
+      ethereum?.removeListener('accountsChanged', async accounts => {
+        setDefaultAccount('');
+        resetApp();
+      });
+    };
+  }, [chooseMetamask]);
 
-    function injectedDetecting() {
-      // console.log('First line for injectedDetecting');
-      if (walletConnectSuccessful) return;
+  function injectedDetecting() {
+    // console.log('First line for injectedDetecting');
+    if (walletConnectSuccessful) return;
 
-      if (!metamaskConnectSuccessful) return;
-
-      if (loading) return;
-
+    try {
       if (window?.ethereum) {
         // console.log('in window?.ethereum');
 
+        // // FIXME: 拔掉電話線
+        // ethereum?.removeListener('accountsChanged', async accounts => {
+        //   setDefaultAccount(accounts[0]);
+        // });
+
         ethereum?.on('accountsChanged', async accounts => {
+          // console.log('accountsChanged', accounts);
+
           if (!accounts[0]) {
+            // console.log('injectedDetecting !accounts[0]');
+            // killSession();
             resetApp();
             return;
           }
 
+          // ---Account Detecetion---
           setErrorMessages('');
           setDefaultAccount(accounts[0]);
 
+          console.log('object');
+
+          // ---Send Sign Request when wallet changed---
           console.log('in injectedDetecting accounts[0]: ', accounts[0]);
           console.log('in injectedDetecting defaultAccount: ', defaultAccount);
           console.log('in injectedDetecting signInStore: ', signInStore);
           console.log('in injectedDetecting signature: ', signature);
 
+          // No signature request sent when first time connected
+          if (metamaskConnectFirstTimeSuccessful) return;
+
           // FIXME: send twice sign request
           // Avoid first time connected, send twice sign request `!accounts[0] && accounts[0] !== defaultAccount`
-          if (!defaultAccount) return;
+          // if (!defaultAccount && signInStore) return;
+          if (signaturePending) return;
 
           // When accounts changed, it sends a request to sign typed data `accounts[0] !== defaultAccount`
           if (accounts[0] !== defaultAccount) {
-            setLoading(true);
             funcSignTypedData();
           }
 
@@ -544,105 +566,31 @@ export default function WalletPanel(props) {
           // setFirstStepSuccess(false);
           setSignature(null);
         });
-
-        // ethereum?.on('chainChanged', async chainId => {
-        //   setChainId(chainId);
-        // });
-
-        ethereum?.on('disconnect', () => {
-          disconnect();
-          console.log('ethereum disconnect');
-        });
       }
 
-      // // FIXME: 拔掉電話線
-      // ethereum?.removeListener('accountsChanged', async accounts => {
-      //   setDefaultAccount(accounts[0]);
+      // ethereum?.on('chainChanged', async chainId => {
+      //   setChainId(chainId);
       // });
+
+      // ethereum?.on('disconnect', () => {
+      //   disconnect();
+      //   console.log('ethereum disconnect');
+      // });
+    } catch (error) {
+      console.log(error);
     }
 
-    return () => {
-      console.log('in useeffect, remove the listener');
-      ethereum?.removeListener('accountsChanged', async accounts => {
-        setDefaultAccount(accounts[0]);
-      });
-    };
-  }, [chooseMetamask]);
-
-  // injectedDetecting();
-  // function injectedDetecting() {
-  //   // console.log('First line for injectedDetecting');
-  //   if (walletConnectSuccessful) return;
-
-  //   if (!metamaskConnectSuccessful) return;
-
-  //   if (loading) return;
-
-  //   if (window?.ethereum) {
-  //     // console.log('in window?.ethereum');
-
-  //     ethereum?.on('accountsChanged', async accounts => {
-  //       // console.log('accountsChanged', accounts);
-  //       // Detect if user disconnect the wallet
-
-  //       if (!accounts[0]) {
-  //         // console.log('injectedDetecting !accounts[0]');
-  //         // killSession();
-  //         resetApp();
-  //         return;
-  //       }
-
-  //       setErrorMessages('');
-  //       setDefaultAccount(accounts[0]);
-
-  //       console.log('in injectedDetecting accounts[0]: ', accounts[0]);
-  //       console.log('in injectedDetecting defaultAccount: ', defaultAccount);
-  //       console.log('in injectedDetecting signInStore: ', signInStore);
-  //       console.log('in injectedDetecting signature: ', signature);
-
-  //       // FIXME: send twice sign request
-  //       // Avoid first time connected, send twice sign request `!accounts[0] && accounts[0] !== defaultAccount`
-  //       if (!defaultAccount) return;
-
-  //       // When accounts changed, it sends a request to sign typed data `accounts[0] !== defaultAccount`
-  //       if (accounts[0] !== defaultAccount) {
-  //         setLoading(true);
-
-  //         funcSignTypedData();
-  //       }
-
-  //       //   console.log('before setSignInStore');
-  //       setSignInStore(false);
-  //       // setFirstStepSuccess(false);
-  //       setSignature(null);
-  //     });
-
-  //     // ethereum?.on('chainChanged', async chainId => {
-  //     //   setChainId(chainId);
-  //     // });
-
-  //     ethereum?.on('disconnect', () => {
-  //       disconnect();
-  //       console.log('ethereum disconnect');
-  //     });
-  //   }
-
-  //   // // FIXME: 拔掉電話線
-  //   // ethereum?.removeListener('accountsChanged', async accounts => {
-  //   //   setDefaultAccount(accounts[0]);
-  //   // });
-
-  //   // return () => {
-  //   //   ethereum?.removeListener('accountsChanged', async accounts => {
-  //   //     setDefaultAccount(accounts[0]);
-  //   //   });
-  //   // };
-  //   // return (() => {
-  //   //   ethereum?.removeListener('accountsChanged', async accounts => {
-  //   //     setDefaultAccount(accounts[0]);
-  //   //   });
-  //   // })();
-  // }
+    // return () => {
+    //   ethereum?.removeListener('accountsChanged', async accounts => {
+    //     setDefaultAccount(accounts[0]);
+    //   });
+    // };
+    // return (() => {
+    //   ethereum?.removeListener('accountsChanged', async accounts => {
+    //     setDefaultAccount(accounts[0]);
+    //   });
+    // })();
+  }
 
   // TODO: Notes every time component rendered, it'll run useEffect, that's why it works with `[]`
   // FIXME: split the logic out of useEffect
@@ -818,7 +766,6 @@ export default function WalletPanel(props) {
     // waitingWalletConnect = true;
 
     try {
-      setSignaturePending(true);
       setFirstStepSuccess(true);
       setLoading(true);
       setProcessModalVisible(true);
@@ -892,7 +839,6 @@ export default function WalletPanel(props) {
           setPanelVisible(false);
           setShowToast(true);
           setSignInStore(true);
-          setSignaturePending(false);
           // console.log('sign in store, ', signInStore);
         }
       }
@@ -933,7 +879,6 @@ export default function WalletPanel(props) {
       setLoading(false);
 
       setShowToast(true);
-      setSignaturePending(false);
     }
   }
 
@@ -958,6 +903,10 @@ export default function WalletPanel(props) {
     }
 
     if (signInStore) {
+      return;
+    }
+
+    if (signaturePending) {
       return;
     }
 
@@ -997,10 +946,10 @@ export default function WalletPanel(props) {
     };
 
     try {
+      setSignaturePending(true);
       setErrorMessages('');
       setSignature(null);
-      setLoading(true); // to prevent send multiple requests
-
+      setLoading(false);
       setFirstStepError(false);
       setSecondStepError(false);
       setProcessModalVisible(true);
@@ -1052,6 +1001,8 @@ export default function WalletPanel(props) {
 
         setTimeout(() => setProcessModalVisible(false), DELAYED_HIDDEN_SECONDS);
 
+        setMetamaskConnectFirstTimeSuccessful(false);
+
         setHelloModalVisible(true);
         setPanelVisible(false);
         setErrorMessages('');
@@ -1059,6 +1010,7 @@ export default function WalletPanel(props) {
         setSignInStore(true);
         // console.log('sign in store, ', signInStore);
       }
+      setSignaturePending(false);
 
       // setPairingSignature({account: defaultAccount, signature: signature});
 
@@ -1071,10 +1023,13 @@ export default function WalletPanel(props) {
       // console.log('[EIP712] Sign typed signature: ', signature);
     } catch (error) {
       // console.error(error);
+      setMetamaskConnectFirstTimeSuccessful(false);
+
       setSignature(null);
       setErrorMessages(error.message);
       setSecondStepError(true);
       setLoading(false);
+      setSignaturePending(false);
     }
   }
 
@@ -1109,6 +1064,8 @@ export default function WalletPanel(props) {
       let chainId = await signer.getChainId();
       setChainId(chainId);
 
+      setMetamaskConnectFirstTimeSuccessful(true);
+
       if (chainId !== 1) {
         // console.log('Please switch to ETH mainnet');
         setShowToast(true);
@@ -1127,8 +1084,6 @@ export default function WalletPanel(props) {
 
       setProcessModalVisible(true);
 
-      setMetamaskConnectSuccessful(true);
-
       // let signature = await signer.signMessage('TideBit DeFi test');
       // console.log('Sign the message, get the signature is: ', signature);
       funcSignTypedData();
@@ -1137,7 +1092,6 @@ export default function WalletPanel(props) {
       // console.log(error);
       // resetApp();
       // return;
-      setMetamaskConnectSuccessful(false);
 
       setErrorMessages(error);
       setFirstStepError(true);
@@ -1242,10 +1196,7 @@ export default function WalletPanel(props) {
           <div>
             EIP 712 Signature: <span className="text-cuteBlue3">{signature}</span>
           </div>
-          <div>
-            {' '}
-            <span className="text-lightRed">{errorMessages}</span>
-          </div>
+          <div>{/* <span className="text-lightRed">{errorMessages}</span> */}</div>
         </>
       }
       toastHandler={toastHandler}

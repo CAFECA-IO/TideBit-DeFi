@@ -99,10 +99,48 @@ export default function WalletPanel(props) {
 
   // let waitingWalletConnect = false;
 
+  const clearStateForMetamaskAccountChange = () => {
+    setConnecting(false);
+    // setChooseMetamask(false);
+
+    setDefaultAccount('');
+    setErrorMessages('');
+    setSignature(null);
+    setUserBalance(null);
+    setLoading(false);
+
+    setFirstStepSuccess(false);
+    setFirstStepError(false);
+    setSecondStepSuccess(false);
+    setSecondStepError(false);
+
+    setPanelVisible(false);
+    setAvatarMenuVisible(false);
+    setConnectingModalVisible(false);
+    setPanelVisible(false);
+    setProcessModalVisible(false);
+    setQrcodeModalVisible(false);
+    setHelloModalVisible(false);
+
+    setChainId(null);
+    setShowToast(false);
+    setSignInStore(false);
+    setConnector(null);
+    setWalletConnectSuccessful(false);
+    setChooseWalletConnect(false);
+    setChooseMetamask(false);
+    setSupported(false);
+    setSymbol(null);
+
+    // setConnector(null);
+    setFetching(false);
+  };
+
   const resetApp = () => {
     // killSession();
 
     // waitingWalletConnect = false;
+
     setMetamaskConnectFirstTimeSuccessful(false);
     setSignaturePending(false);
 
@@ -140,10 +178,6 @@ export default function WalletPanel(props) {
 
     // setConnector(null);
     setFetching(false);
-
-    // windows?.ethereum?.removeListener('accountsChanged', async accounts => {
-    //   setDefaultAccount(accounts[0]);
-    // });
   };
 
   const toastHandler = () => {
@@ -403,7 +437,7 @@ export default function WalletPanel(props) {
 
         console.log('session_update: ', payload.params[0]);
 
-        // await onConnect(chainId, accounts[0]);
+        await onConnect(chainId, accounts[0]);
         setFetching(false);
       });
 
@@ -502,14 +536,82 @@ export default function WalletPanel(props) {
   useEffect(() => {
     if (!chooseMetamask) return;
 
-    injectedDetecting();
+    // injectedDetecting();
+    if (walletConnectSuccessful) return;
+
+    if (window?.ethereum) {
+      // console.log('in window?.ethereum');
+
+      // // FIXME: 拔掉電話線
+      // ethereum?.removeListener('accountsChanged', async accounts => {
+      //   setDefaultAccount(accounts[0]);
+      // });
+
+      ethereum?.on('accountsChanged', async accounts => {
+        // console.log('accountsChanged', accounts);
+
+        // ---Detect User Diconnect the website from Metamask---
+        if (!accounts[0]) {
+          // console.log('injectedDetecting !accounts[0]');
+          resetApp();
+          // clearStateForMetamaskAccountChange();
+          return;
+        }
+
+        // ---Account Detecetion---
+        setErrorMessages('');
+        setDefaultAccount(accounts[0]);
+
+        // ---Send Sign Request when wallet changed---
+        console.log('in injectedDetecting accounts[0]: ', accounts[0]);
+        console.log('in injectedDetecting defaultAccount: ', defaultAccount);
+        console.log('in injectedDetecting signInStore: ', signInStore);
+        console.log('in injectedDetecting signature: ', signature);
+
+        console.log(
+          'metamaskConnectFirstTimeSuccessful state: ',
+          metamaskConnectFirstTimeSuccessful
+        );
+
+        // No signature request sent when first time connected
+        if (metamaskConnectFirstTimeSuccessful) return;
+
+        // FIXME: send twice sign request
+        // Avoid first time connected, send twice sign request `!accounts[0] && accounts[0] !== defaultAccount`
+        // if (!defaultAccount && signInStore) return;
+        // if (loading) return;
+
+        // When accounts changed, it sends a request to sign typed data `accounts[0] !== defaultAccount`
+        // if (accounts[0] !== defaultAccount) {
+        //   funcSignTypedData();
+        // }
+
+        funcSignTypedData();
+
+        //   console.log('before setSignInStore');
+        setSignInStore(false);
+        // setFirstStepSuccess(false);
+        setSignature(null);
+      });
+    }
+
+    // ethereum?.on('chainChanged', async chainId => {
+    //   setChainId(chainId);
+    // });
+
+    // ethereum?.on('disconnect', () => {
+    //   disconnect();
+    //   console.log('ethereum disconnect');
+    // });
+
     return () => {
-      console.log('Remove event listeenr, useEffect for injectedDetecting()');
+      console.log('Remove event listener, useEffect for injectedDetecting()');
       // FIXME: 拔掉電話線
       ethereum?.removeListener('accountsChanged', async accounts => {
         setDefaultAccount('');
         resetApp();
       });
+      console.log('After Removing event listener, useEffect for injectedDetecting()');
     };
   }, [chooseMetamask]);
 
@@ -528,7 +630,6 @@ export default function WalletPanel(props) {
 
         ethereum?.on('accountsChanged', async accounts => {
           // console.log('accountsChanged', accounts);
-
           if (!accounts[0]) {
             // console.log('injectedDetecting !accounts[0]');
             // killSession();
@@ -536,25 +637,17 @@ export default function WalletPanel(props) {
             return;
           }
 
-          // ---Account Detecetion---
           setErrorMessages('');
           setDefaultAccount(accounts[0]);
 
-          console.log('object');
-
-          // ---Send Sign Request when wallet changed---
           console.log('in injectedDetecting accounts[0]: ', accounts[0]);
           console.log('in injectedDetecting defaultAccount: ', defaultAccount);
           console.log('in injectedDetecting signInStore: ', signInStore);
           console.log('in injectedDetecting signature: ', signature);
 
-          // No signature request sent when first time connected
-          if (metamaskConnectFirstTimeSuccessful) return;
-
           // FIXME: send twice sign request
           // Avoid first time connected, send twice sign request `!accounts[0] && accounts[0] !== defaultAccount`
-          // if (!defaultAccount && signInStore) return;
-          if (signaturePending) return;
+          if (!defaultAccount && signInStore) return;
 
           // When accounts changed, it sends a request to sign typed data `accounts[0] !== defaultAccount`
           if (accounts[0] !== defaultAccount) {
@@ -910,6 +1003,8 @@ export default function WalletPanel(props) {
       return;
     }
 
+    setMetamaskConnectFirstTimeSuccessful(false);
+
     const DOMAIN = {
       name: 'TideBit DeFi',
       version: '0.8.15',
@@ -947,6 +1042,7 @@ export default function WalletPanel(props) {
 
     try {
       setSignaturePending(true);
+
       setErrorMessages('');
       setSignature(null);
       setLoading(false);
@@ -1001,8 +1097,6 @@ export default function WalletPanel(props) {
 
         setTimeout(() => setProcessModalVisible(false), DELAYED_HIDDEN_SECONDS);
 
-        setMetamaskConnectFirstTimeSuccessful(false);
-
         setHelloModalVisible(true);
         setPanelVisible(false);
         setErrorMessages('');
@@ -1010,6 +1104,7 @@ export default function WalletPanel(props) {
         setSignInStore(true);
         // console.log('sign in store, ', signInStore);
       }
+
       setSignaturePending(false);
 
       // setPairingSignature({account: defaultAccount, signature: signature});
@@ -1023,13 +1118,14 @@ export default function WalletPanel(props) {
       // console.log('[EIP712] Sign typed signature: ', signature);
     } catch (error) {
       // console.error(error);
+      setSignaturePending(false);
+
       setMetamaskConnectFirstTimeSuccessful(false);
 
       setSignature(null);
       setErrorMessages(error.message);
       setSecondStepError(true);
       setLoading(false);
-      setSignaturePending(false);
     }
   }
 
@@ -1054,6 +1150,7 @@ export default function WalletPanel(props) {
       setPanelVisible(!panelVisible);
       // setConnecting(true);
       setConnectingModalVisible(true);
+      setMetamaskConnectFirstTimeSuccessful(true);
 
       let provider = new ethers.providers.Web3Provider(window.ethereum, 'any');
       // pop up the metamask window
@@ -1063,8 +1160,6 @@ export default function WalletPanel(props) {
       setDefaultAccount(address);
       let chainId = await signer.getChainId();
       setChainId(chainId);
-
-      setMetamaskConnectFirstTimeSuccessful(true);
 
       if (chainId !== 1) {
         // console.log('Please switch to ETH mainnet');

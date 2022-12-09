@@ -85,6 +85,7 @@ export default function WalletPanel(props) {
   const [signInStore, setSignInStore] = useState(false);
 
   const [chooseMetamask, setChooseMetamask] = useState(false);
+  const [signaturePending, setSignaturePending] = useState(false);
 
   // const [pairingSignature, setPairingSignature] = useState({
   //   account: '',
@@ -100,6 +101,7 @@ export default function WalletPanel(props) {
 
     setConnecting(false);
     // setChooseMetamask(false);
+    setSignaturePending(false);
 
     setDefaultAccount('');
     setErrorMessages('');
@@ -427,8 +429,10 @@ export default function WalletPanel(props) {
 
   useEffect(() => {
     if (!connector) return;
+    // TODO: 1209
+    if (signaturePending) return;
     walletConnecting();
-  }, [connector, chainId, defaultAccount, userBalance]);
+  }, [connector, chainId, defaultAccount]);
 
   // // Once connector, chainId, account, or balance changes, update the state
   // useEffect(() => {
@@ -740,6 +744,7 @@ export default function WalletPanel(props) {
     // waitingWalletConnect = true;
 
     try {
+      setSignaturePending(true);
       setFirstStepSuccess(true);
       setLoading(true);
       setProcessModalVisible(true);
@@ -813,6 +818,7 @@ export default function WalletPanel(props) {
           setPanelVisible(false);
           setShowToast(true);
           setSignInStore(true);
+          setSignaturePending(false);
           // console.log('sign in store, ', signInStore);
         }
       }
@@ -853,6 +859,7 @@ export default function WalletPanel(props) {
       setLoading(false);
 
       setShowToast(true);
+      setSignaturePending(false);
     }
   }
 

@@ -580,6 +580,7 @@ export default function WalletPanel(props) {
   //   //   };
   //   // }
   // }, [chooseMetamask]);
+
   injectedDetecting();
 
   function injectedDetecting() {

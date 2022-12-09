@@ -342,7 +342,7 @@ export default function WalletPanel(props) {
         // 4. Save the balance to state
         setUserBalance(formattedBalance);
       } catch (error) {
-        console.log(error.message);
+        // console.log(error.message);
         setErrorMessages(error.message);
       }
     }
@@ -350,34 +350,34 @@ export default function WalletPanel(props) {
     const defaulltAccountForCheck = defaultAccount?.toLowerCase();
     const connectedAccountForCheck = connectedAccount?.toLowerCase();
 
-    console.log(
-      'before control flow of if (walletConnectSuccessful), check state of `walletConnectSuccessful`: ',
-      walletConnectSuccessful
-    );
+    // console.log(
+    //   'before control flow of if (walletConnectSuccessful), check state of `walletConnectSuccessful`: ',
+    //   walletConnectSuccessful
+    // );
 
-    console.log(
-      'before control flow of if (walletConnectSuccessful), check state of `isSignaturePending`: ',
-      isSignaturePending
-    );
+    // console.log(
+    //   'before control flow of if (walletConnectSuccessful), check state of `isSignaturePending`: ',
+    //   isSignaturePending
+    // );
 
     if (!walletConnectSuccessful && !isSignaturePending) {
       setWalletConnectSuccessful(true);
       isSignaturePending = true;
-      console.log('---ready to check if account state updated in `onConnect()`:---');
-      console.log('defaulltAccountForCheck: ', defaulltAccountForCheck);
-      console.log('connectedAccountForCheck: ', connectedAccountForCheck);
+      // console.log('---ready to check if account state updated in `onConnect()`:---');
+      // console.log('defaulltAccountForCheck: ', defaulltAccountForCheck);
+      // console.log('connectedAccountForCheck: ', connectedAccountForCheck);
       // console.log('call `_walletConnectSignEIP712()` as SOLUTION:');
 
-      console.log(
-        'in control flow, before CALL EIP712 of if (isSignaturePending), check state of `walletConnectSuccessful`: ',
-        isSignaturePending
-      );
+      // console.log(
+      //   'in control flow, before CALL EIP712 of if (isSignaturePending), check state of `walletConnectSuccessful`: ',
+      //   isSignaturePending
+      // );
 
       await _walletConnectSignEIP712({connectedAccount: connectedAccountForCheck});
-      console.log(
-        'in control flow, after CALL EIP712 of if (isSignaturePending), check state of `walletConnectSuccessful`: ',
-        isSignaturePending
-      );
+      // console.log(
+      //   'in control flow, after CALL EIP712 of if (isSignaturePending), check state of `walletConnectSuccessful`: ',
+      //   isSignaturePending
+      // );
 
       // if (!waitingWalletConnect && defaulltAccountForCheck === connectedAccountForCheck) {
       //   console.log('Call `_walletConnectSignEIP712()`: before sending EIP 712 by wallet connect');
@@ -421,7 +421,7 @@ export default function WalletPanel(props) {
 
         const {chainId, accounts} = payload.params[0];
 
-        console.log('connect: ', payload.params[0]);
+        // console.log('connect: ', payload.params[0]);
 
         await onConnect(chainId, accounts[0]);
         setFetching(false);
@@ -435,7 +435,7 @@ export default function WalletPanel(props) {
 
         const {chainId, accounts} = payload.params[0];
 
-        console.log('session_update: ', payload.params[0]);
+        // console.log('session_update: ', payload.params[0]);
 
         await onConnect(chainId, accounts[0]);
         setFetching(false);
@@ -563,15 +563,15 @@ export default function WalletPanel(props) {
         setDefaultAccount(accounts[0]);
 
         // ---Send Sign Request when wallet changed---
-        console.log('in injectedDetecting accounts[0]: ', accounts[0]);
-        console.log('in injectedDetecting defaultAccount: ', defaultAccount);
-        console.log('in injectedDetecting signInStore: ', signInStore);
-        console.log('in injectedDetecting signature: ', signature);
+        // console.log('in injectedDetecting accounts[0]: ', accounts[0]);
+        // console.log('in injectedDetecting defaultAccount: ', defaultAccount);
+        // console.log('in injectedDetecting signInStore: ', signInStore);
+        // console.log('in injectedDetecting signature: ', signature);
 
-        console.log(
-          'metamaskConnectFirstTimeSuccessful state: ',
-          metamaskConnectFirstTimeSuccessful
-        );
+        // console.log(
+        //   'metamaskConnectFirstTimeSuccessful state: ',
+        //   metamaskConnectFirstTimeSuccessful
+        // );
 
         // No signature request sent when first time connected
         if (metamaskConnectFirstTimeSuccessful) return;
@@ -605,13 +605,13 @@ export default function WalletPanel(props) {
     // });
 
     return () => {
-      console.log('Remove event listener, useEffect for injectedDetecting()');
+      // console.log('Remove event listener, useEffect for injectedDetecting()');
       // FIXME: 拔掉電話線
       ethereum?.removeListener('accountsChanged', async accounts => {
         setDefaultAccount('');
         resetApp();
       });
-      console.log('After Removing event listener, useEffect for injectedDetecting()');
+      // console.log('After Removing event listener, useEffect for injectedDetecting()');
     };
   }, [chooseMetamask]);
 
@@ -640,10 +640,10 @@ export default function WalletPanel(props) {
           setErrorMessages('');
           setDefaultAccount(accounts[0]);
 
-          console.log('in injectedDetecting accounts[0]: ', accounts[0]);
-          console.log('in injectedDetecting defaultAccount: ', defaultAccount);
-          console.log('in injectedDetecting signInStore: ', signInStore);
-          console.log('in injectedDetecting signature: ', signature);
+          // console.log('in injectedDetecting accounts[0]: ', accounts[0]);
+          // console.log('in injectedDetecting defaultAccount: ', defaultAccount);
+          // console.log('in injectedDetecting signInStore: ', signInStore);
+          // console.log('in injectedDetecting signature: ', signature);
 
           // FIXME: send twice sign request
           // Avoid first time connected, send twice sign request `!accounts[0] && accounts[0] !== defaultAccount`
@@ -670,7 +670,7 @@ export default function WalletPanel(props) {
       //   console.log('ethereum disconnect');
       // });
     } catch (error) {
-      console.log(error);
+      // console.log(error);
     }
 
     // return () => {
@@ -762,7 +762,7 @@ export default function WalletPanel(props) {
   async function _walletConnectSignEIP712(props) {
     // if (loading) return;
 
-    console.log('props in _walletConnectSignEIP712: ', props);
+    // console.log('props in _walletConnectSignEIP712: ', props);
     const typedData = {
       types: {
         EIP712Domain: [
@@ -802,7 +802,7 @@ export default function WalletPanel(props) {
     };
 
     //  props?.connectedAccount ?? defaultAccount, // Required
-    console.log('in EIP712 sign func, props?.connectedAccount: ', props?.connectedAccount);
+    // console.log('in EIP712 sign func, props?.connectedAccount: ', props?.connectedAccount);
 
     // FIXME: check if it's validated
     // const accountControl = props?.connectedAccount?.toLowerCase() ?? defaultAccount?.toLowerCase();
@@ -867,17 +867,17 @@ export default function WalletPanel(props) {
       setErrorMessages('');
       setSignature(null);
 
-      console.log('before sending sign request, msgParams: ', msgParams);
+      // console.log('before sending sign request, msgParams: ', msgParams);
 
       const signature = await connector.signTypedData(msgParams);
-      console.log('signature: ', signature);
+      // console.log('signature: ', signature);
       // TODO: Notes imToken will return `{}` as signature at first, if user sign it, it'll return correct signature later on
       // console.log('signature by wallet connect library: ', signature);
 
       // const verifySignature = await ethers.utils.verifyTypedData(domain,)
 
       // --------------------------------
-      console.log('Regex for sign', /^(0x|0X)?[a-fA-F0-9]+$/.test(signature));
+      // console.log('Regex for sign', /^(0x|0X)?[a-fA-F0-9]+$/.test(signature));
 
       // try {
       //   const testVerification = ethers.utils.verifyTypedData(
@@ -901,23 +901,23 @@ export default function WalletPanel(props) {
 
         // const accountLowercase = defaultAccount?.toLowerCase() ?? connectedAccount?.toLowerCase();
         const testVerificationLowerCase = testVerification?.toLowerCase();
-        console.log('length about testVerification:', testVerification?.length);
-        // console.log('length about default account:', defaultAccount?.length);
-        // console.log('length about account:', connectedAccount?.length);
+        // console.log('length about testVerification:', testVerification?.length);
+        // // console.log('length about default account:', defaultAccount?.length);
+        // // console.log('length about account:', connectedAccount?.length);
 
-        // console.log('account upper case:', accountUpperCase);
-        console.log('account control:', accountControl);
-        // TODO: Notes: when there's a condition, better to NOT log them separately, otherwise it'll error out
-        // console.log('default account upper case:', defaultAccount?.toLowerCase());
-        // console.log('connected account upper case:', connectedAccount?.toLowerCase());
+        // // console.log('account upper case:', accountUpperCase);
+        // console.log('account control:', accountControl);
+        // // TODO: Notes: when there's a condition, better to NOT log them separately, otherwise it'll error out
+        // // console.log('default account upper case:', defaultAccount?.toLowerCase());
+        // // console.log('connected account upper case:', connectedAccount?.toLowerCase());
 
-        console.log('testVerification (Public Key recoverd from signature):', testVerification);
-        console.log('account ?= testVerification: ', accountControl === testVerificationLowerCase);
-        console.log(
-          'typeof account ?= testVerification: ',
-          typeof defaultAccount,
-          typeof testVerification
-        );
+        // console.log('testVerification (Public Key recoverd from signature):', testVerification);
+        // console.log('account ?= testVerification: ', accountControl === testVerificationLowerCase);
+        // console.log(
+        //   'typeof account ?= testVerification: ',
+        //   typeof defaultAccount,
+        //   typeof testVerification
+        // );
 
         // --------------------------------
 
@@ -962,7 +962,7 @@ export default function WalletPanel(props) {
       // }
     } catch (error) {
       // console.error('sign 712 ERROR', error);killSession
-      console.log('wallet connect sign failure: ', error.message);
+      // console.log('wallet connect sign failure: ', error.message);
 
       // waitingWalletConnect = false;
       setSignature(null);

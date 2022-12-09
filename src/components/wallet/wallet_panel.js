@@ -499,114 +499,24 @@ export default function WalletPanel(props) {
   //   injectedDetecting();
   // }
 
-  // useEffect(() => {
-  //   if (!chooseMetamask) return;
-  //   injectedDetecting();
+  useEffect(() => {
+    if (!chooseMetamask) return;
 
-  //   // if (walletConnectSuccessful) return;
+    injectedDetecting();
 
-  //   // if (window?.ethereum) {
-  //   //   ethereum?.on('accountsChanged', async accounts => {
-  //   //     console.log('accountsChanged', accounts);
+    function injectedDetecting() {
+      // console.log('First line for injectedDetecting');
+      if (walletConnectSuccessful) return;
 
-  //   //     if (!accounts[0]) {
-  //   //       console.log('!accounts[0]');
+      if (!metamaskConnectSuccessful) return;
 
-  //   //       resetApp();
-  //   //       return;
+      if (loading) return;
 
-  //   //       // disconnect();
-  //   //       //   try {
-  //   //       //     await ethereum.request({
-  //   //       //       method: 'eth_requestAccounts',
-  //   //       //       params: [{eth_accounts: {}}],
-  //   //       //     });
-  //   //       //   } catch (error) {
-  //   //       //     // console.error('Not connected to wallet', error);
-  //   //       //   }
-  //   //       // }
-  //   //     }
-
-  //   //     // // FIXME: send twice sign request
-  //   //     // // Avoid first time connected, send twice sign request `!accounts[0] && accounts[0] !== defaultAccount`
-  //   //     // if (!defaultAccount && signInStore) return;
-
-  //   //     // // When accounts changed, it sends a request to sign typed data `accounts[0] !== defaultAccount`
-  //   //     // if (accounts[0] !== defaultAccount) {
-  //   //     //   funcSignTypedData();
-  //   //     // }
-
-  //   //     // try {
-  //   //     //   await ethereum.request({
-  //   //     //     method: 'eth_requestAccounts',
-  //   //     //     params: [{eth_accounts: {}}],
-  //   //     //   });
-  //   //     // } catch (error) {}
-
-  //   //     setErrorMessages('');
-
-  //   //     setDefaultAccount(accounts[0]);
-  //   //     //   console.log('before setSignInStore');
-  //   //     setSignInStore(false);
-  //   //     // setFirstStepSuccess(false);
-  //   //     setSignature(null);
-
-  //   //     // // TODO: when metamask is locked
-  //   //     // if (!accounts.length) {
-  //   //     //   // logic to handle what happens once MetaMask is locked
-  //   //     //   console.log('accounts.length: ', accounts.length);
-  //   //     // }
-  //   //     //   console.log('after setSignInStore');
-
-  //   //     //   if (!signInStore && accounts[0] !== defaultAccount) {
-  //   //     //     setSignInStore(true);
-  //   //     //     funcSignTypedData();
-  //   //     //   }
-  //   //   });
-
-  //   //   // ethereum?.on('chainChanged', async chainId => {
-  //   //   //   setChainId(chainId);
-  //   //   // });
-
-  //   //   ethereum?.on('disconnect', () => {
-  //   //     resetApp();
-  //   //     console.log('ethereum disconnect');
-  //   //   });
-
-  //   //   return () => {
-  //   //     ethereum?.removeListener('accountsChanged', async accounts => {
-  //   //       setDefaultAccount(accounts[0]);
-  //   //     });
-  //   //   };
-  //   // }
-  // }, [chooseMetamask]);
-
-  injectedDetecting();
-
-  function injectedDetecting() {
-    // console.log('First line for injectedDetecting');
-    if (walletConnectSuccessful) return;
-
-    if (!metamaskConnectSuccessful) return;
-
-    if (loading) return;
-
-    try {
       if (window?.ethereum) {
         // console.log('in window?.ethereum');
 
-        // FIXME: 拔掉電話線
-        ethereum?.removeListener('accountsChanged', async accounts => {
-          setDefaultAccount(accounts[0]);
-        });
-
         ethereum?.on('accountsChanged', async accounts => {
-          // console.log('accountsChanged', accounts);
-          // Detect if user disconnect the wallet
-
           if (!accounts[0]) {
-            // console.log('injectedDetecting !accounts[0]');
-            // killSession();
             resetApp();
             return;
           }
@@ -626,7 +536,6 @@ export default function WalletPanel(props) {
           // When accounts changed, it sends a request to sign typed data `accounts[0] !== defaultAccount`
           if (accounts[0] !== defaultAccount) {
             setLoading(true);
-
             funcSignTypedData();
           }
 
@@ -635,31 +544,105 @@ export default function WalletPanel(props) {
           // setFirstStepSuccess(false);
           setSignature(null);
         });
+
+        // ethereum?.on('chainChanged', async chainId => {
+        //   setChainId(chainId);
+        // });
+
+        ethereum?.on('disconnect', () => {
+          disconnect();
+          console.log('ethereum disconnect');
+        });
       }
 
-      // ethereum?.on('chainChanged', async chainId => {
-      //   setChainId(chainId);
+      // // FIXME: 拔掉電話線
+      // ethereum?.removeListener('accountsChanged', async accounts => {
+      //   setDefaultAccount(accounts[0]);
       // });
-
-      ethereum?.on('disconnect', () => {
-        disconnect();
-        console.log('ethereum disconnect');
-      });
-    } catch (error) {
-      console.log(error);
     }
 
-    // return () => {
-    //   ethereum?.removeListener('accountsChanged', async accounts => {
-    //     setDefaultAccount(accounts[0]);
-    //   });
-    // };
-    // return (() => {
-    //   ethereum?.removeListener('accountsChanged', async accounts => {
-    //     setDefaultAccount(accounts[0]);
-    //   });
-    // })();
-  }
+    return () => {
+      console.log('in useeffect, remove the listener');
+      ethereum?.removeListener('accountsChanged', async accounts => {
+        setDefaultAccount(accounts[0]);
+      });
+    };
+  }, [chooseMetamask]);
+
+  // injectedDetecting();
+  // function injectedDetecting() {
+  //   // console.log('First line for injectedDetecting');
+  //   if (walletConnectSuccessful) return;
+
+  //   if (!metamaskConnectSuccessful) return;
+
+  //   if (loading) return;
+
+  //   if (window?.ethereum) {
+  //     // console.log('in window?.ethereum');
+
+  //     ethereum?.on('accountsChanged', async accounts => {
+  //       // console.log('accountsChanged', accounts);
+  //       // Detect if user disconnect the wallet
+
+  //       if (!accounts[0]) {
+  //         // console.log('injectedDetecting !accounts[0]');
+  //         // killSession();
+  //         resetApp();
+  //         return;
+  //       }
+
+  //       setErrorMessages('');
+  //       setDefaultAccount(accounts[0]);
+
+  //       console.log('in injectedDetecting accounts[0]: ', accounts[0]);
+  //       console.log('in injectedDetecting defaultAccount: ', defaultAccount);
+  //       console.log('in injectedDetecting signInStore: ', signInStore);
+  //       console.log('in injectedDetecting signature: ', signature);
+
+  //       // FIXME: send twice sign request
+  //       // Avoid first time connected, send twice sign request `!accounts[0] && accounts[0] !== defaultAccount`
+  //       if (!defaultAccount) return;
+
+  //       // When accounts changed, it sends a request to sign typed data `accounts[0] !== defaultAccount`
+  //       if (accounts[0] !== defaultAccount) {
+  //         setLoading(true);
+
+  //         funcSignTypedData();
+  //       }
+
+  //       //   console.log('before setSignInStore');
+  //       setSignInStore(false);
+  //       // setFirstStepSuccess(false);
+  //       setSignature(null);
+  //     });
+
+  //     // ethereum?.on('chainChanged', async chainId => {
+  //     //   setChainId(chainId);
+  //     // });
+
+  //     ethereum?.on('disconnect', () => {
+  //       disconnect();
+  //       console.log('ethereum disconnect');
+  //     });
+  //   }
+
+  //   // // FIXME: 拔掉電話線
+  //   // ethereum?.removeListener('accountsChanged', async accounts => {
+  //   //   setDefaultAccount(accounts[0]);
+  //   // });
+
+  //   // return () => {
+  //   //   ethereum?.removeListener('accountsChanged', async accounts => {
+  //   //     setDefaultAccount(accounts[0]);
+  //   //   });
+  //   // };
+  //   // return (() => {
+  //   //   ethereum?.removeListener('accountsChanged', async accounts => {
+  //   //     setDefaultAccount(accounts[0]);
+  //   //   });
+  //   // })();
+  // }
 
   // TODO: Notes every time component rendered, it'll run useEffect, that's why it works with `[]`
   // FIXME: split the logic out of useEffect
@@ -1016,7 +999,8 @@ export default function WalletPanel(props) {
     try {
       setErrorMessages('');
       setSignature(null);
-      setLoading(false);
+      setLoading(true); // to prevent send multiple requests
+
       setFirstStepError(false);
       setSecondStepError(false);
       setProcessModalVisible(true);

@@ -86,6 +86,7 @@ export default function WalletPanel(props) {
 
   const [chooseMetamask, setChooseMetamask] = useState(false);
   const [signaturePending, setSignaturePending] = useState(false);
+  const [metamaskConnectSuccessful, setMetamaskConnectSuccessful] = useState(false);
 
   // const [pairingSignature, setPairingSignature] = useState({
   //   account: '',
@@ -98,7 +99,7 @@ export default function WalletPanel(props) {
     // killSession();
 
     // waitingWalletConnect = false;
-
+    setMetamaskConnectSuccessful(false);
     setConnecting(false);
     // setChooseMetamask(false);
     setSignaturePending(false);
@@ -393,7 +394,7 @@ export default function WalletPanel(props) {
 
         console.log('session_update: ', payload.params[0]);
 
-        // await onConnect(chainId, accounts[0]);
+        await onConnect(chainId, accounts[0]);
         setFetching(false);
       });
 
@@ -491,18 +492,103 @@ export default function WalletPanel(props) {
   //   }
   // }, [connector, chainId, defaultAccount, userBalance]);
 
-  useEffect(() => {
-    if (!chooseMetamask) return;
+  // flagForInjectedMetamask();
+  // function flagForInjectedMetamask() {
+  //   if (!chooseMetamask) return;
+  //   if (loading) return;
+  //   injectedDetecting();
+  // }
 
-    injectedDetecting();
-    // return () => {
-    //   second
-    // }
-  }, [chooseMetamask]);
+  // useEffect(() => {
+  //   if (!chooseMetamask) return;
+  //   injectedDetecting();
+
+  //   // if (walletConnectSuccessful) return;
+
+  //   // if (window?.ethereum) {
+  //   //   ethereum?.on('accountsChanged', async accounts => {
+  //   //     console.log('accountsChanged', accounts);
+
+  //   //     if (!accounts[0]) {
+  //   //       console.log('!accounts[0]');
+
+  //   //       resetApp();
+  //   //       return;
+
+  //   //       // disconnect();
+  //   //       //   try {
+  //   //       //     await ethereum.request({
+  //   //       //       method: 'eth_requestAccounts',
+  //   //       //       params: [{eth_accounts: {}}],
+  //   //       //     });
+  //   //       //   } catch (error) {
+  //   //       //     // console.error('Not connected to wallet', error);
+  //   //       //   }
+  //   //       // }
+  //   //     }
+
+  //   //     // // FIXME: send twice sign request
+  //   //     // // Avoid first time connected, send twice sign request `!accounts[0] && accounts[0] !== defaultAccount`
+  //   //     // if (!defaultAccount && signInStore) return;
+
+  //   //     // // When accounts changed, it sends a request to sign typed data `accounts[0] !== defaultAccount`
+  //   //     // if (accounts[0] !== defaultAccount) {
+  //   //     //   funcSignTypedData();
+  //   //     // }
+
+  //   //     // try {
+  //   //     //   await ethereum.request({
+  //   //     //     method: 'eth_requestAccounts',
+  //   //     //     params: [{eth_accounts: {}}],
+  //   //     //   });
+  //   //     // } catch (error) {}
+
+  //   //     setErrorMessages('');
+
+  //   //     setDefaultAccount(accounts[0]);
+  //   //     //   console.log('before setSignInStore');
+  //   //     setSignInStore(false);
+  //   //     // setFirstStepSuccess(false);
+  //   //     setSignature(null);
+
+  //   //     // // TODO: when metamask is locked
+  //   //     // if (!accounts.length) {
+  //   //     //   // logic to handle what happens once MetaMask is locked
+  //   //     //   console.log('accounts.length: ', accounts.length);
+  //   //     // }
+  //   //     //   console.log('after setSignInStore');
+
+  //   //     //   if (!signInStore && accounts[0] !== defaultAccount) {
+  //   //     //     setSignInStore(true);
+  //   //     //     funcSignTypedData();
+  //   //     //   }
+  //   //   });
+
+  //   //   // ethereum?.on('chainChanged', async chainId => {
+  //   //   //   setChainId(chainId);
+  //   //   // });
+
+  //   //   ethereum?.on('disconnect', () => {
+  //   //     resetApp();
+  //   //     console.log('ethereum disconnect');
+  //   //   });
+
+  //   //   return () => {
+  //   //     ethereum?.removeListener('accountsChanged', async accounts => {
+  //   //       setDefaultAccount(accounts[0]);
+  //   //     });
+  //   //   };
+  //   // }
+  // }, [chooseMetamask]);
+  injectedDetecting();
 
   function injectedDetecting() {
     // console.log('First line for injectedDetecting');
     if (walletConnectSuccessful) return;
+
+    if (!metamaskConnectSuccessful) return;
+
+    if (loading) return;
 
     try {
       if (window?.ethereum) {
@@ -515,6 +601,8 @@ export default function WalletPanel(props) {
 
         ethereum?.on('accountsChanged', async accounts => {
           // console.log('accountsChanged', accounts);
+          // Detect if user disconnect the wallet
+
           if (!accounts[0]) {
             // console.log('injectedDetecting !accounts[0]');
             // killSession();
@@ -532,10 +620,12 @@ export default function WalletPanel(props) {
 
           // FIXME: send twice sign request
           // Avoid first time connected, send twice sign request `!accounts[0] && accounts[0] !== defaultAccount`
-          if (!defaultAccount && signInStore) return;
+          if (!defaultAccount) return;
 
           // When accounts changed, it sends a request to sign typed data `accounts[0] !== defaultAccount`
           if (accounts[0] !== defaultAccount) {
+            setLoading(true);
+
             funcSignTypedData();
           }
 
@@ -550,10 +640,10 @@ export default function WalletPanel(props) {
       //   setChainId(chainId);
       // });
 
-      // ethereum?.on('disconnect', () => {
-      //   disconnect();
-      //   console.log('ethereum disconnect');
-      // });
+      ethereum?.on('disconnect', () => {
+        disconnect();
+        console.log('ethereum disconnect');
+      });
     } catch (error) {
       console.log(error);
     }
@@ -1052,6 +1142,8 @@ export default function WalletPanel(props) {
 
       setProcessModalVisible(true);
 
+      setMetamaskConnectSuccessful(true);
+
       // let signature = await signer.signMessage('TideBit DeFi test');
       // console.log('Sign the message, get the signature is: ', signature);
       funcSignTypedData();
@@ -1060,6 +1152,7 @@ export default function WalletPanel(props) {
       // console.log(error);
       // resetApp();
       // return;
+      setMetamaskConnectSuccessful(false);
 
       setErrorMessages(error);
       setFirstStepError(true);

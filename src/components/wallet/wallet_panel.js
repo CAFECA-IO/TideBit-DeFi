@@ -1157,7 +1157,10 @@ export default function WalletPanel(props) {
           <div>
             EIP 712 Signature: <span className="text-cuteBlue3">{signature}</span>
           </div>
-          <div>{/* <span className="text-lightRed">{errorMessages}</span> */}</div>
+          <div>
+            {' '}
+            <span className="text-lightRed">{errorMessages}</span>
+          </div>
         </>
       }
       toastHandler={toastHandler}

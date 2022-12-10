@@ -5,6 +5,7 @@ interface ITideButton {
   isHover?: boolean;
   isFocus?: boolean;
   className?: string;
+  onClick?: () => void;
 }
 
 const TideButton = ({children, isHover = false, isFocus = false, ...otherProps}: ITideButton) => {

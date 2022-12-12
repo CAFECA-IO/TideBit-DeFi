@@ -9,7 +9,8 @@ function useOuterClick<T extends HTMLElement>(initialVisibleState: boolean) {
   const [componentVisible, setComponentVisible] = useState<boolean>(initialVisibleState);
 
   // const ref = useRef<HTMLDivElement>(null); // forwardRef(otherProps?.refP) ?? // const ref =
-  const ref = useRef<T>(null);
+
+  const targetRef = useRef<T>(null);
 
   // function assertIsNode(e: EventTarget | null): asserts e is Node {
   //   if (!e || !('nodeType' in e)) {
@@ -30,7 +31,8 @@ function useOuterClick<T extends HTMLElement>(initialVisibleState: boolean) {
   function handleClickOutside(this: Document, event: MouseEvent): void {
     // event.target instanceof HTMLElement
     // event.target instanceof Node
-    if (event.target instanceof HTMLElement && !ref.current?.contains(event.target)) {
+    // assertIsNode(event.target);
+    if (event.target instanceof HTMLElement && !targetRef.current?.contains(event.target)) {
       setComponentVisible(false);
     }
   }
@@ -42,7 +44,7 @@ function useOuterClick<T extends HTMLElement>(initialVisibleState: boolean) {
     };
   }, []);
 
-  return {ref, componentVisible, setComponentVisible};
+  return {targetRef: targetRef, componentVisible, setComponentVisible};
 }
 
 export default useOuterClick;

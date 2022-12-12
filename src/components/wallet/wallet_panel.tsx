@@ -146,37 +146,37 @@ const WALLET_CONNECT_PROJECT_ID = process.env.WALLET_CONNECT_PROJECT_ID;
 
 export default function WalletPanel(props: {className?: string}) {
   const {
-    ref: panelRef,
+    targetRef: panelRef,
     componentVisible: panelVisible,
     setComponentVisible: setPanelVisible,
   } = useOuterClick(false);
 
   const {
-    ref: connectingModalRef,
+    targetRef: connectingModalRef,
     componentVisible: connectingModalVisible,
     setComponentVisible: setConnectingModalVisible,
   } = useOuterClick(false);
 
   const {
-    ref: processModalRef,
+    targetRef: processModalRef,
     componentVisible: processModalVisible,
     setComponentVisible: setProcessModalVisible,
   } = useOuterClick(false);
 
   const {
-    ref: qrcodeModalRef,
+    targetRef: qrcodeModalRef,
     componentVisible: qrcodeModalVisible,
     setComponentVisible: setQrcodeModalVisible,
   } = useOuterClick(false);
 
   const {
-    ref: helloModalRef,
+    targetRef: helloModalRef,
     componentVisible: helloModalVisible,
     setComponentVisible: setHelloModalVisible,
   } = useOuterClick(false);
 
   const {
-    ref: avatarMenuRef,
+    targetRef: avatarMenuRef,
     componentVisible: avatarMenuVisible,
     setComponentVisible: setAvatarMenuVisible,
   } = useOuterClick(false);

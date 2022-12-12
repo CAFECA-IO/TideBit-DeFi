@@ -14,10 +14,19 @@ import useOuterClick from '../../hooks/lib/use_outer_click';
 import Notification from '../notification/notification';
 import NotificationItem from '../notification_item/notification_item';
 
+// interface INavBarProps {
+//   notifyRef: HTMLDivElement extends HTMLElement ? React.RefObject<HTMLDivElement> : null;
+//   componentVisible: boolean;
+// }
+
 const NavBar = ({notificationNumber = 1}) => {
   const [navOpen, setNavOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const {ref: notifyRef, componentVisible, setComponentVisible} = useOuterClick(false);
+  const {
+    targetRef: notifyRef,
+    componentVisible,
+    setComponentVisible,
+  } = useOuterClick<HTMLDivElement>(false);
 
   const clickHanlder = () => setNavOpen(!navOpen);
 

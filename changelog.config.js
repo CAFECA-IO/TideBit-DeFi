@@ -60,7 +60,7 @@ module.exports = {
     },
     play: {
       description: 'Taking notes and having fun',
-      emoji: '🐳',
+      emoji: '🐸',
       value: 'play',
     },
   },

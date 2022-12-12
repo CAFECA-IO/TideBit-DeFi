@@ -3,15 +3,15 @@ import Image from 'next/image';
 import {forwardRef} from 'react';
 import NotificationItem from '../notification_item/notification_item';
 
-interface NotificationProps {
-  notifyRef: HTMLInputElement;
+interface INotificationProps {
+  notifyRef: HTMLDivElement;
   componentVisible: boolean;
 }
 
 export default function Notification({
   notifyRef,
   componentVisible,
-}: NotificationProps): JSX.Element {
+}: INotificationProps): JSX.Element {
   // const {notifyRef, componentVisible} = props;
   // const refP = forwardRef(props?.forwardedRef);
   // const {componentVisible, setComponentVisible} = useOuterClick(false, refP);

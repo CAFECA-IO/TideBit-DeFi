@@ -4,10 +4,10 @@ import {forwardRef} from 'react';
 import NotificationItem from '../notification_item/notification_item';
 
 interface INotificationProps {
-  notifyRef: HTMLDivElement;
+  notifyRef: HTMLDivElement extends HTMLElement ? React.RefObject<HTMLDivElement> : null;
   componentVisible: boolean;
 }
-
+// <HTMLDivElement extends HTMLElement>
 export default function Notification({
   notifyRef,
   componentVisible,

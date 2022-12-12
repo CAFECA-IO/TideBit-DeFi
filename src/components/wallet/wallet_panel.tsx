@@ -1,7 +1,7 @@
 import {useEffect, useRef, useState} from 'react';
 import {ImCross} from 'react-icons/im';
 import WalletOption from './wallet_option';
-import useOuterClick from '../../hooks/lib/use_outer_click';
+import useOuterClick from '../../lib/hooks/use_outer_click';
 import TideButton from '../tide_button/tide_button';
 import {ethers, providers} from 'ethers';
 import Toast from '../toast/toast';

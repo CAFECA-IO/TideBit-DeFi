@@ -16,6 +16,11 @@ import QRCodeModal from '@walletconnect/qrcode-modal';
 import WalletConnect from '@walletconnect/client';
 import {SUPPORTED_NETWORKS, WALLET_CONNECT_BRIDGE_URL} from '../../constants/config';
 import {DELAYED_HIDDEN_SECONDS} from '../../constants/display';
+// import {IWalletConnectOptions, IPushServerOptions} from '@walletconnect/types';
+// import IConnector from '@walletconnect/types';
+import {IConnector} from '../../interfaces/wallet_connect';
+// import Connector from '@walletconnect/core';
+
 // import {ExternalProvider} from '@ethersproject/providers';
 // import {MetaMaskInpageProvider} from '@metamask/providers';
 // const {
@@ -78,7 +83,7 @@ import {DELAYED_HIDDEN_SECONDS} from '../../constants/display';
 // };
 
 // type EthersProvider = ExternalProvider & ExtensionForProvider;
-
+// console.log('IConnector:', IConnector);
 type ExternalProvider = {
   isMetaMask?: boolean | undefined;
   isStatus?: boolean | undefined;
@@ -110,13 +115,36 @@ declare global {
     ethereum?: ExternalProvider | any;
   }
 }
+// type IWalletConnectProps = {
+//   connected?: boolean;
+//   createSession?: () => Promise<void>;
+// };
+
+interface WalletType {
+  event: string;
+  params: Param[];
+}
+
+interface Param {
+  peerId: string;
+  peerMeta: PeerMeta;
+  chainId: number;
+  accounts: string[];
+}
+
+interface PeerMeta {
+  description: string;
+  icons: string[];
+  name: string;
+  url: string;
+}
 
 const ICON_SIZE = 50;
 const WALLET_CONNECT_PROJECT_ID = process.env.WALLET_CONNECT_PROJECT_ID;
 
 // TODO: salt is optional, but if not provided, the signature will be different each time(?)
 
-export default function WalletPanel() {
+export default function WalletPanel(props: {className?: string}) {
   const {
     ref: panelRef,
     componentVisible: panelVisible,
@@ -153,12 +181,19 @@ export default function WalletPanel() {
     setComponentVisible: setAvatarMenuVisible,
   } = useOuterClick(false);
 
+  interface IConnectingProps {
+    provider: providers.Web3Provider;
+  }
+  interface IConnectorProps {
+    provider: providers.Web3Provider;
+  }
+
   const [connecting, setConnecting] = useState(false);
 
   const [defaultAccount, setDefaultAccount] = useState('');
   const [errorMessages, setErrorMessages] = useState('');
-  const [signature, setSignature] = useState(null);
-  const [userBalance, setUserBalance] = useState(null);
+  const [signature, setSignature] = useState('');
+  const [userBalance, setUserBalance] = useState('');
 
   const [loading, setLoading] = useState(false);
   const [firstStepSuccess, setFirstStepSuccess] = useState(false);
@@ -166,11 +201,11 @@ export default function WalletPanel() {
   const [secondStepSuccess, setSecondStepSuccess] = useState(false);
   const [secondStepError, setSecondStepError] = useState(false);
 
-  const [chainId, setChainId] = useState(null);
+  const [chainId, setChainId] = useState(0);
 
   const [showToast, setShowToast] = useState(false);
-
-  const [connector, setConnector] = useState(null);
+  // IConnector
+  const [connector, setConnector] = useState<IConnector>();
   const [fetching, setFetching] = useState(false);
   const [supported, setSupported] = useState(false);
   const [symbol, setSymbol] = useState(null);
@@ -199,8 +234,8 @@ export default function WalletPanel() {
 
     setDefaultAccount('');
     setErrorMessages('');
-    setSignature(null);
-    setUserBalance(null);
+    setSignature('');
+    setUserBalance('');
     setLoading(false);
 
     setFirstStepSuccess(false);
@@ -216,10 +251,12 @@ export default function WalletPanel() {
     setQrcodeModalVisible(false);
     setHelloModalVisible(false);
 
-    setChainId(null);
+    setChainId(0);
     setShowToast(false);
     setSignInStore(false);
-    setConnector(null);
+
+    setConnector(undefined);
+
     setWalletConnectSuccessful(false);
     setChooseWalletConnect(false);
     setChooseMetamask(false);
@@ -243,8 +280,8 @@ export default function WalletPanel() {
 
     setDefaultAccount('');
     setErrorMessages('');
-    setSignature(null);
-    setUserBalance(null);
+    setSignature('');
+    setUserBalance('');
     setLoading(false);
 
     setFirstStepSuccess(false);
@@ -260,10 +297,10 @@ export default function WalletPanel() {
     setQrcodeModalVisible(false);
     setHelloModalVisible(false);
 
-    setChainId(null);
+    setChainId(0);
     setShowToast(false);
     setSignInStore(false);
-    setConnector(null);
+    setConnector(undefined);
     setWalletConnectSuccessful(false);
     setChooseWalletConnect(false);
     setChooseMetamask(false);
@@ -341,7 +378,7 @@ export default function WalletPanel() {
         });
         // console.log('Wallet Disconnected');
         setDefaultAccount('');
-        setUserBalance(null);
+        setUserBalance('');
       } catch (error) {
         // console.error('Not connected to wallet', error);
       }
@@ -406,7 +443,7 @@ export default function WalletPanel() {
 
   // Data collected when connected
   let isSignaturePending = false;
-  async function onConnect(chainId, connectedAccount) {
+  async function onConnect(chainId: number, connectedAccount: string) {
     // handle connect event
     setDefaultAccount(connectedAccount);
     setChainId(chainId);
@@ -435,7 +472,7 @@ export default function WalletPanel() {
         const formattedBalance = ethers.utils.formatEther(balance);
         // 4. Save the balance to state
         setUserBalance(formattedBalance);
-      } catch (error) {
+      } catch (error: any) {
         // console.log(error.message);
         setErrorMessages(error.message);
       }
@@ -507,7 +544,7 @@ export default function WalletPanel() {
     // console.log('connector: ', connector);
 
     if (connector) {
-      connector.on('connect', async (error: Error, payload) => {
+      connector.on('connect', async (error, payload) => {
         if (error) {
           // console.error(error);
           return;
@@ -521,11 +558,11 @@ export default function WalletPanel() {
         setFetching(false);
       });
 
-      connector.on('session_update', async (error: Error, payload) => {
+      connector.on('session_update', async (error, payload) => {
         // waitingWalletConnect = false;
         setWalletConnectSuccessful(false);
         setSignInStore(false);
-        setSignature(null);
+        setSignature('');
 
         const {chainId, accounts} = payload.params[0];
 
@@ -535,7 +572,7 @@ export default function WalletPanel() {
         setFetching(false);
       });
 
-      connector.on('disconnect', async (error: Error, payload) => {
+      connector.on('disconnect', async (error, payload) => {
         if (error) {
           // console.error(error);
         }
@@ -559,9 +596,11 @@ export default function WalletPanel() {
     }
 
     async function refreshData() {
-      const {chainId, accounts} = connector;
-      await onConnect(chainId, accounts[0]);
-      setFetching(false);
+      if (connector) {
+        const {chainId, accounts} = connector;
+        await onConnect(chainId, accounts[0]);
+        setFetching(false);
+      }
     }
   }
 
@@ -686,7 +725,7 @@ export default function WalletPanel() {
         //   console.log('before setSignInStore');
         setSignInStore(false);
         // setFirstStepSuccess(false);
-        setSignature(null);
+        setSignature('');
       });
     }
 
@@ -702,7 +741,7 @@ export default function WalletPanel() {
     return () => {
       // console.log('Remove event listener, useEffect for injectedDetecting()');
       // FIXME: 拔掉電話線
-      ethereum?.removeListener('accountsChanged', async accounts => {
+      window?.ethereum?.removeListener('accountsChanged', async (accounts: string[]) => {
         setDefaultAccount('');
         resetApp();
       });
@@ -723,7 +762,7 @@ export default function WalletPanel() {
         //   setDefaultAccount(accounts[0]);
         // });
 
-        ethereum?.on('accountsChanged', async accounts => {
+        window.ethereum?.on('accountsChanged', async (accounts: string[]) => {
           // console.log('accountsChanged', accounts);
           if (!accounts[0]) {
             // console.log('injectedDetecting !accounts[0]');
@@ -752,7 +791,7 @@ export default function WalletPanel() {
           //   console.log('before setSignInStore');
           setSignInStore(false);
           // setFirstStepSuccess(false);
-          setSignature(null);
+          setSignature('');
         });
       }
 
@@ -960,11 +999,13 @@ export default function WalletPanel() {
       setSecondStepSuccess(false);
       setSecondStepError(false);
       setErrorMessages('');
-      setSignature(null);
+      setSignature('');
 
       // console.log('before sending sign request, msgParams: ', msgParams);
+      if (connector) {
+        const signature = await connector.signTypedData(msgParams);
+      }
 
-      const signature = await connector.signTypedData(msgParams);
       // console.log('signature: ', signature);
       // TODO: Notes imToken will return `{}` as signature at first, if user sign it, it'll return correct signature later on
       // console.log('signature by wallet connect library: ', signature);
@@ -1055,12 +1096,12 @@ export default function WalletPanel() {
       //     // console.log('sign in store, ', signInStore);
       //   }
       // }
-    } catch (error) {
+    } catch (error: any) {
       // console.error('sign 712 ERROR', error);killSession
       // console.log('wallet connect sign failure: ', error.message);
 
       // waitingWalletConnect = false;
-      setSignature(null);
+      setSignature('');
       setErrorMessages(error.message);
 
       setSecondStepError(true);
@@ -1086,7 +1127,7 @@ export default function WalletPanel() {
 
   async function funcSignTypedData() {
     if (connector && walletConnectSuccessful && defaultAccount) {
-      _walletConnectSignEIP712();
+      _walletConnectSignEIP712({connectedAccount: defaultAccount});
       return;
     }
 
@@ -1143,7 +1184,7 @@ export default function WalletPanel() {
       setSignaturePending(true);
 
       setErrorMessages('');
-      setSignature(null);
+      setSignature('');
       setLoading(false);
       setFirstStepError(false);
       setSecondStepError(false);
@@ -1151,19 +1192,25 @@ export default function WalletPanel() {
 
       // console.log('projectId', projectId);
 
-      let provider = new providers.Web3Provider(window.ethereum);
+      const provider = new providers.Web3Provider(window.ethereum);
       await provider.send('eth_requestAccounts', []);
 
-      let signer = provider.getSigner();
-      let address = await signer.getAddress();
-      let chainId = await signer.getChainId();
-      let balance = await signer.getBalance();
+      const signer = provider.getSigner();
+      const address = await signer.getAddress();
+      const chainId = await signer.getChainId();
+      const balance = await signer.getBalance();
       setDefaultAccount(address);
       setChainId(chainId);
 
       if (chainId !== 1) {
         setShowToast(true);
       }
+
+      // let balance = await provider.getBalance(address);
+      const userBalance = ethers.utils.formatEther(balance);
+      setUserBalance(userBalance);
+
+      // setUserBalance(ethers.utils.formatEther(balance));
 
       // Connect to the wallet => first step success
       // Clear other state of the process modal
@@ -1172,10 +1219,8 @@ export default function WalletPanel() {
       setSecondStepSuccess(false);
       setSecondStepError(false);
 
-      setUserBalance(ethers.utils.formatEther(balance));
-
       setLoading(true);
-      let signature = await signer._signTypedData(DOMAIN, TYPES, VALUE);
+      const signature = await signer._signTypedData(DOMAIN, TYPES, VALUE);
 
       // TODO: Notes why defaultAccount is '' here
       const isVerifyedSignature =
@@ -1215,14 +1260,14 @@ export default function WalletPanel() {
       // console.log('sign in store, ', signInStore);
 
       // console.log('[EIP712] Sign typed signature: ', signature);
-    } catch (error) {
+    } catch (error: any) {
       // console.error(error);
       setSignaturePending(false);
 
       setMetamaskConnectFirstTimeSuccessful(false);
       // console.log('metamask connect first time successful', metamaskConnectFirstTimeSuccessful);
 
-      setSignature(null);
+      setSignature('');
       setErrorMessages(error.message);
       setSecondStepError(true);
       setLoading(false);
@@ -1255,13 +1300,13 @@ export default function WalletPanel() {
       // console.trace('123');
       setMetamaskConnectFirstTimeSuccessful(true);
 
-      let provider = new ethers.providers.Web3Provider(window.ethereum, 'any');
+      const provider = new ethers.providers.Web3Provider(window.ethereum, 'any');
       // pop up the metamask window
       await provider.send('eth_requestAccounts', []);
-      let signer = provider.getSigner();
-      let address = await signer.getAddress();
+      const signer = provider.getSigner();
+      const address = await signer.getAddress();
       setDefaultAccount(address);
-      let chainId = await signer.getChainId();
+      const chainId = await signer.getChainId();
       setChainId(chainId);
 
       if (chainId !== 1) {
@@ -1269,9 +1314,9 @@ export default function WalletPanel() {
         setShowToast(true);
       }
 
-      let balance = await provider.getBalance(address);
-      balance = ethers.utils.formatEther(balance);
-      setUserBalance(balance);
+      const balance = await provider.getBalance(address);
+      const userBalance = ethers.utils.formatEther(balance);
+      setUserBalance(userBalance);
       // console.log('user balance: ', balance);
       // console.log('connect to Metamask clicked, Account: ', address);
 
@@ -1286,12 +1331,12 @@ export default function WalletPanel() {
       // console.log('Sign the message, get the signature is: ', signature);
       funcSignTypedData();
       // injectedDetecting();
-    } catch (error) {
+    } catch (error: any) {
       // console.log(error);
       // resetApp();
       // return;
 
-      setErrorMessages(error);
+      setErrorMessages(error.message);
       setFirstStepError(true);
       setProcessModalVisible(false);
 

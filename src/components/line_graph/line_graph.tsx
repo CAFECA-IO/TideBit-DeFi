@@ -5,7 +5,7 @@ import {ApexOptions} from 'apexcharts';
 const Chart = dynamic(() => import('react-apexcharts'), {ssr: false});
 // const Chart = dynamic(() => import('apexcharts'), {ssr: false});
 
-interface LineGraphProps {
+interface ILineGraphProps {
   strokeColor?: string[];
   sampleArray?: number[];
   lineGraphWidth?: string;
@@ -16,7 +16,7 @@ export default function LineGraph({
   sampleArray = [42, 50, 45, 55, 49, 52, 48],
   lineGraphWidth = '150',
   ...otherProps
-}: LineGraphProps): JSX.Element {
+}: ILineGraphProps): JSX.Element {
   const chartOptions: ApexOptions = {
     chart: {
       type: 'line',

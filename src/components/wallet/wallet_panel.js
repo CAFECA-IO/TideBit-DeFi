@@ -411,13 +411,16 @@ export default function WalletPanel(props) {
   async function walletConnecting() {
     // console.log('start connecting');
     // console.log('connector: ', connector);
-
+    // : Array
     if (connector) {
       connector.on('connect', async (error, payload) => {
         if (error) {
           // console.error(error);
           return;
         }
+
+        // console.log('payload: ', payload);
+        // console.log('payload stringify: ', JSON.stringify(payload));
 
         const {chainId, accounts} = payload.params[0];
 

@@ -1,7 +1,7 @@
 import {useEffect, useRef, useState} from 'react';
 import {ImCross} from 'react-icons/im';
 import WalletOption from './wallet_option';
-import useOuterClick from '/src/hooks/lib/use_outer_click';
+import useOuterClick from '../../hooks/lib/use_outer_click';
 import TideButton from '../tide_button/tide_button';
 import {ethers, providers} from 'ethers';
 import Toast from '../toast/toast';
@@ -16,6 +16,100 @@ import QRCodeModal from '@walletconnect/qrcode-modal';
 import WalletConnect from '@walletconnect/client';
 import {SUPPORTED_NETWORKS, WALLET_CONNECT_BRIDGE_URL} from '../../constants/config';
 import {DELAYED_HIDDEN_SECONDS} from '../../constants/display';
+// import {ExternalProvider} from '@ethersproject/providers';
+// import {MetaMaskInpageProvider} from '@metamask/providers';
+// const {
+
+//   Provider,
+//   BaseProvider,
+
+//   JsonRpcProvider,
+//   StaticJsonRpcProvider,
+//   UrlJsonRpcProvider,
+
+//   FallbackProvider,
+
+//   AlchemyProvider,
+//   CloudflareProvider,
+//   EtherscanProvider,
+//   InfuraProvider,
+//   NodesmithProvider,
+
+//   IpcProvider,
+
+//   Web3Provider,
+
+//   WebSocketProvider,
+
+//   JsonRpcSigner,
+
+//   getDefaultProvider,
+
+//   getNetwork,
+
+//   Formatter,
+
+//   // Types
+
+//   TransactionReceipt,
+//   TransactionRequest,
+//   TransactionResponse,
+
+//   Listener,
+
+//   ExternalProvider,
+
+//   Block,
+//   BlockTag,
+//   EventType,
+//   Filter,
+//   Log,
+
+//   JsonRpcFetchFunc,
+
+//   Network,
+//   Networkish
+
+// } = require("@ethersproject/providers");
+// as { on: (e: string, l: () => void }
+
+// type ExtensionForProvider = {
+//   on: (event: string, callback: (...params: any) => void) => void;
+// };
+
+// type EthersProvider = ExternalProvider & ExtensionForProvider;
+
+type ExternalProvider = {
+  isMetaMask?: boolean | undefined;
+  isStatus?: boolean | undefined;
+  host?: string | undefined;
+  path?: string | undefined;
+  sendAsync?:
+    | ((
+        request: {
+          method: string;
+          params?: Array<any>;
+        },
+        callback: (error: any, response: any) => void
+      ) => void)
+    | undefined;
+  send?:
+    | ((
+        request: {
+          method: string;
+          params?: Array<any>;
+        },
+        callback: (error: any, response: any) => void
+      ) => void)
+    | undefined;
+  request?: ((request: {method: string; params?: Array<any>}) => Promise<any>) | undefined;
+};
+
+declare global {
+  interface Window {
+    ethereum?: ExternalProvider | any;
+  }
+}
 
 const ICON_SIZE = 50;
 const WALLET_CONNECT_PROJECT_ID = process.env.WALLET_CONNECT_PROJECT_ID;
@@ -246,7 +340,7 @@ export default function WalletPanel() {
           params: [{eth_accounts: {}}],
         });
         // console.log('Wallet Disconnected');
-        setDefaultAccount(null);
+        setDefaultAccount('');
         setUserBalance(null);
       } catch (error) {
         // console.error('Not connected to wallet', error);
@@ -413,7 +507,7 @@ export default function WalletPanel() {
     // console.log('connector: ', connector);
 
     if (connector) {
-      connector.on('connect', async (error, payload) => {
+      connector.on('connect', async (error: Error, payload) => {
         if (error) {
           // console.error(error);
           return;
@@ -427,7 +521,7 @@ export default function WalletPanel() {
         setFetching(false);
       });
 
-      connector.on('session_update', async (error, payload) => {
+      connector.on('session_update', async (error: Error, payload) => {
         // waitingWalletConnect = false;
         setWalletConnectSuccessful(false);
         setSignInStore(false);
@@ -441,7 +535,7 @@ export default function WalletPanel() {
         setFetching(false);
       });
 
-      connector.on('disconnect', async (error, payload) => {
+      connector.on('disconnect', async (error: Error, payload) => {
         if (error) {
           // console.error(error);
         }
@@ -547,7 +641,7 @@ export default function WalletPanel() {
       //   setDefaultAccount(accounts[0]);
       // });
 
-      ethereum?.on('accountsChanged', async accounts => {
+      window.ethereum.on('accountsChanged', async (accounts: string[]) => {
         // console.log('accountsChanged', accounts);
         // console.log(
         //   'in accountsChanged, metamaskConnectFirstTimeSuccessful state: ',
@@ -760,7 +854,7 @@ export default function WalletPanel() {
   //   }
   // }, []);
 
-  async function _walletConnectSignEIP712(props) {
+  async function _walletConnectSignEIP712(props: {connectedAccount: string}) {
     // if (loading) return;
 
     // console.log('props in _walletConnectSignEIP712: ', props);
@@ -1271,7 +1365,7 @@ export default function WalletPanel() {
   //     <div className="text-cuteBlue4">Session closed successfully</div>
   //   )
   // ) : null}
-  let toastNotify = (
+  const toastNotify = (
     <Toast
       title="Dev Receipt"
       content={
@@ -1407,7 +1501,7 @@ export default function WalletPanel() {
 
   // TODO: wallet connect kill session part 2
 
-  function accountTruncate(text) {
+  function accountTruncate(text: string) {
     return text?.substring(0, 6) + '...' + text?.substring(text.length - 5);
   }
 
@@ -1463,6 +1557,7 @@ export default function WalletPanel() {
       </div>
     ) : null;
 
+  // TODO: for .tsx: ${props?.className}
   const isDisplayedUserAvatar = defaultAccount ? (
     <>
       <button

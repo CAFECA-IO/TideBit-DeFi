@@ -10,18 +10,18 @@ module.exports = {
     },
   },
   // 加上 ts 相關規則
-  overrides: [
-    {
-      files: ['*.ts', '*.tsx'],
-      extends: [
-        'plugin:@typescript-eslint/eslint-recommended',
-        'plugin:@typescript-eslint/recommended',
-        'plugin:import/recommended',
-      ],
-      parser: '@typescript-eslint/parser',
-      plugins: ['@typescript-eslint'],
-    },
-  ],
+  // overrides: [
+  //   {
+  //     files: ['*.ts', '*.tsx'],
+  //     extends: [
+  //       'plugin:@typescript-eslint/eslint-recommended',
+  //       'plugin:@typescript-eslint/recommended',
+  //       'plugin:import/recommended',
+  //     ],
+  //     parser: '@typescript-eslint/parser',
+  //     plugins: ['@typescript-eslint'],
+  //   },
+  // ],
   extends: ['plugin:import/typescript', 'plugin:tailwindcss/recommended'],
   // 加上 no console log 規則
   rules: {

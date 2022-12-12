@@ -7,6 +7,7 @@ interface IWalletOption {
   name?: string;
   img?: string;
   iconSize?: number;
+  onClick?: () => void;
 }
 
 const WalletOption = ({name = '', img = '', iconSize, ...otherProps}: IWalletOption) => {

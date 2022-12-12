@@ -1,3 +1,10 @@
+import {ExternalProvider} from 'ethers';
+
+declare global {
+  interface Window {
+    ethereum?: ExternalProvider;
+  }
+}
 /// <reference types="next" />
 /// <reference types="next/image-types/global" />
 

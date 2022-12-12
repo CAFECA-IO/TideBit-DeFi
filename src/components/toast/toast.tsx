@@ -1,12 +1,20 @@
 import {useState} from 'react';
 import {ImCross} from 'react-icons/im';
 
+interface IToastProps {
+  title?: string;
+  content?: string | JSX.Element | undefined;
+  time?: string;
+  toastHandler?: () => void;
+  showToast?: boolean;
+}
+
 const Toast = ({
   title = 'Notification',
   content = 'Signature hash: ',
   time: mins = '2',
   ...otherProps
-}) => {
+}: IToastProps): JSX.Element => {
   const {toastHandler, showToast} = otherProps;
 
   const isDisplayedToast = showToast && (

@@ -1,48 +1,81 @@
-import Link from 'next/link'; import TideButton from '../tide_button/tide_button'; import {useState}
-from 'react'; import {AiOutlineGlobal} from 'react-icons/ai'; import {BsFillBellFill} from
-'react-icons/bs'; import {TbMinusVertical} from 'react-icons/tb'; import {FiMenu} from
-'react-icons/fi'; import {TfiBell} from 'react-icons/tfi'; import {BsBell} from 'react-icons/bs';
-import TideLink from '../tide_link/tide_link'; import Image from 'next/image'; import version from
-'../../lib/version'; import WalletPanel from '../wallet/wallet_panel'; import useOuterClick from
-'../../hooks/lib/use_outer_click'; import Notification from '../notification/notification'; import
-NotificationItem from '../notification_item/notification_item';
+import Link from 'next/link';
+import TideButton from '../tide_button/tide_button';
+import {useState} from 'react';
+import {AiOutlineGlobal} from 'react-icons/ai';
+import {BsFillBellFill, BsBell} from 'react-icons/bs';
+import {TbMinusVertical} from 'react-icons/tb';
+import {FiMenu} from 'react-icons/fi';
+import {TfiBell} from 'react-icons/tfi';
+import TideLink from '../tide_link/tide_link';
+import Image from 'next/image';
+import version from '../../lib/version';
+import WalletPanel from '../wallet/wallet_panel';
+import useOuterClick from '../../hooks/lib/use_outer_click';
+import Notification from '../notification/notification';
+import NotificationItem from '../notification_item/notification_item';
 
-const NavBar = ({notificationNumber = 1}) => { const [navOpen, setNavOpen] = useState(false); const
-[sidebarOpen, setSidebarOpen] = useState(false); const {ref: notifyRef, componentVisible,
-setComponentVisible} = useOuterClick(false);
+const NavBar = ({notificationNumber = 1}) => {
+  const [navOpen, setNavOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const {ref: notifyRef, componentVisible, setComponentVisible} = useOuterClick(false);
 
-const clickHanlder = () => setNavOpen(!navOpen);
+  const clickHanlder = () => setNavOpen(!navOpen);
 
-const sidebarOpenHandler = () => { // setSidebarOpen(!sidebarOpen);
-setComponentVisible(!componentVisible); // console.log('sidebarOpenHandler clicked,
-componentVisible: ', componentVisible); };
+  const sidebarOpenHandler = () => {
+    // setSidebarOpen(!sidebarOpen);
+    setComponentVisible(!componentVisible);
+    // console.log('sidebarOpenHandler clicked, componentVisible: ', componentVisible);
+  };
 
-const displayedMobileNavBar = !navOpen ? ( <FiMenu size={30} className="" /> ) : ( <svg
+  const displayedMobileNavBar = !navOpen ? (
+    <FiMenu size={30} className="" />
+  ) : (
+    <svg
       xmlns="http://www.w3.org/2000/svg"
       className="h-6 w-6 text-white hover:text-cyan-300"
       viewBox="0 0 20 20"
       fill="currentColor"
-    > <path
+    >
+      <path
         fillRule="evenodd"
         d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
         clipRule="evenodd"
-      /> </svg> );
+      />
+    </svg>
+  );
 
-const isDisplayedMobileNavBar = navOpen ? '' : 'hidden'; // componentVisible ? 'animate-fadeIn' :
-'animate-fadeOut';
+  const isDisplayedMobileNavBar = navOpen ? '' : 'hidden';
+  // componentVisible ? 'animate-fadeIn' : 'animate-fadeOut';
 
-const isDisplayedNotificationSidebarMobileCover = ( <div
-className={`${ componentVisible ? 'visible' : 'invisible' } fixed top-52 left-24 z-50 flex h-10 w-8 items-center justify-center overflow-x-hidden overflow-y-hidden bg-transparent outline-none hover:cursor-pointer focus:outline-none`} >
-{' '} </div> );
+  const isDisplayedNotificationSidebarMobileCover = (
+    <div
+      className={`${
+        componentVisible ? 'visible' : 'invisible'
+      } fixed top-52 left-24 z-50 flex h-10 w-8 items-center justify-center overflow-x-hidden overflow-y-hidden bg-transparent outline-none hover:cursor-pointer focus:outline-none`}
+    >
+      {' '}
+    </div>
+  );
 
-return ( <> <div className="w-full bg-black"> {/_ No bg blur in NavBar `backdrop-blur-sm` because
-wallet panel's limited to navbar when it show up _/}
-<nav className="container fixed inset-x-0 z-40 mx-auto max-w-full bg-black/100 pb-1 text-white">
-<div className="mx-auto max-w-full px-8"> <div className="flex h-16 items-center justify-between">
-<div className="flex items-center"> {/_ logo _/} <Link className="shrink-0  pt-5" href="/">
-<div className="inline-flex items-center hover:cursor-pointer hover:text-cyan-300 hover:opacity-100">
-<div className="relative h-55px w-150px flex-col justify-center hover:cursor-pointer hover:opacity-80">
-<Image className="" src={'/elements/nav_logo.svg'} height={50} width={150} alt={'logo'} />
+  return (
+    <>
+      <div className="w-full bg-black">
+        {/* No bg blur in NavBar `backdrop-blur-sm` because wallet panel's limited to navbar when it show up */}
+        <nav className="container fixed inset-x-0 z-40 mx-auto max-w-full bg-black/100 pb-1 text-white">
+          <div className="mx-auto max-w-full px-8">
+            <div className="flex h-16 items-center justify-between">
+              <div className="flex items-center">
+                {/* logo */}
+                <Link className="shrink-0  pt-5" href="/">
+                  <div className="inline-flex items-center hover:cursor-pointer hover:text-cyan-300 hover:opacity-100">
+                    <div className="relative h-55px w-150px flex-col justify-center hover:cursor-pointer hover:opacity-80">
+                      <Image
+                        className=""
+                        src={'/elements/nav_logo.svg'}
+                        height={50}
+                        width={150}
+                        alt={'logo'}
+                      />
 
                       <p className="absolute bottom-1 right-0 text-end text-xxs text-lightGray">
                         V {version}
@@ -170,7 +203,7 @@ wallet panel's limited to navbar when it show up _/}
       {/* Notification Sidebar */}
       <Notification notifyRef={notifyRef} componentVisible={componentVisible} />
     </>
-
-); };
+  );
+};
 
 export default NavBar;

@@ -1,7 +1,14 @@
 import React from 'react';
 
+interface HeroReverse1Props {
+  heading?: string | JSX.Element;
+  highlight?: string;
+  content?: string;
+  img?: JSX.Element;
+}
+
 // ml-20 & mr-40 are used to center the content
-const HeroReverse1 = ({heading, highlight, content, img, ...otherProps}) => {
+const HeroReverse1 = ({heading, highlight, content, img, ...otherProps}: HeroReverse1Props) => {
   const displayedHeading = highlight ? (
     <div className="font-bold">
       {heading} <span className="text-tidebitTheme">{highlight}</span>

@@ -1,5 +1,3 @@
-import Image from 'next/image';
-import {FC} from 'react';
 import LineGraph from '../line_graph/line_graph';
 // import {FaEthereum} from 'react-icons/fa';
 // // import {ReactComponent as ethIcon} from '/public/elements/group_15143.svg';
@@ -13,7 +11,7 @@ import LineGraph from '../line_graph/line_graph';
  *
  */
 
-type CardProps = {
+interface CardProps {
   gradientColor?: string;
   tokenComponent?: JSX.Element;
   img?: string;
@@ -25,21 +23,21 @@ type CardProps = {
   star?: boolean;
   starred?: boolean;
   className?: string;
-};
+}
 
-const CryptoCard: FC<CardProps> = ({
+const CryptoCard = ({
   gradientColor = '',
-  tokenComponent = null,
+  tokenComponent,
   img = '',
   chain = '',
   currency = '',
-  lineGraph = null,
+  lineGraph,
   price = 0,
   fluctuating = -1,
   star = false,
   starred = false,
   ...otherProps
-}) => {
+}: CardProps): JSX.Element => {
   // FIXME: comment for `.tsx`
   // price = price > 0.001 ? price.toLocaleString() : price;
   fluctuating = Number(fluctuating);
@@ -95,11 +93,11 @@ const CryptoCard: FC<CardProps> = ({
   const fakeDataColor = () => {
     if (sampleArray[sampleArray.length - 1] > sampleArray[sampleArray.length - 2]) {
       // priceColor = 'text-lightGreen';
-      return '#1AE2A0';
+      return ['#1AE2A0'];
     }
 
     // priceColor = 'text-lightRed';
-    return '#E86D6D';
+    return ['#E86D6D'];
   };
   const thisRandomColor = fakeDataColor();
 
@@ -177,7 +175,7 @@ const CryptoCard: FC<CardProps> = ({
               {/* <div className="absolute top-0 left-0 h-2 w-2/3 rounded bg-blue-200"></div> */}
               <LineGraph
                 sampleArray={sampleArray}
-                strokeColor={fakeDataColor()}
+                strokeColor={thisRandomColor}
                 lineGraphWidth="140"
               />
             </div>

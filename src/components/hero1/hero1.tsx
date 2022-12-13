@@ -1,6 +1,12 @@
 import React from 'react';
 
-const Hero1 = ({heading, content, img, ...otherProps}) => {
+interface Hero1Props {
+  heading?: string | JSX.Element;
+  content?: string;
+  img?: JSX.Element;
+}
+
+const Hero1 = ({heading, content, img, ...otherProps}: Hero1Props) => {
   const displayedHeading = heading
     ? heading
     : `

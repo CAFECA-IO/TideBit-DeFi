@@ -1,10 +1,18 @@
-import useOuterClick from '../../hooks/lib/use_outer_click';
+import useOuterClick from '../../lib/hooks/use_outer_click';
 import Image from 'next/image';
 import {forwardRef} from 'react';
 import NotificationItem from '../notification_item/notification_item';
 
-export default function Notification(props) {
-  const {notifyRef, componentVisible} = props;
+interface INotificationProps {
+  notifyRef: HTMLDivElement extends HTMLElement ? React.RefObject<HTMLDivElement> : null;
+  componentVisible: boolean;
+}
+// <HTMLDivElement extends HTMLElement>
+export default function Notification({
+  notifyRef,
+  componentVisible,
+}: INotificationProps): JSX.Element {
+  // const {notifyRef, componentVisible} = props;
   // const refP = forwardRef(props?.forwardedRef);
   // const {componentVisible, setComponentVisible} = useOuterClick(false, refP);
 

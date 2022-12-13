@@ -2,11 +2,17 @@ import {ImCross} from 'react-icons/im';
 import Image from 'next/image';
 import Link from 'next/link';
 
+interface IQrcodeModal {
+  qrcodeModalRef?: React.RefObject<HTMLDivElement>;
+  qrcodeModalVisible?: boolean;
+  qrcodeClickHandler?: () => void;
+}
+
 const QrcodeModal = ({
-  qrcodeModalRef = null,
+  qrcodeModalRef,
   qrcodeModalVisible = false,
-  qrcodeClickHandler = () => {},
-}) => {
+  qrcodeClickHandler,
+}: IQrcodeModal) => {
   const isDisaplayedQrcodeModal = qrcodeModalVisible ? (
     <>
       <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">

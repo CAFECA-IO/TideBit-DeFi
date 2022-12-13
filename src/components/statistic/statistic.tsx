@@ -1,4 +1,6 @@
-const StatisticBlock = props => {
+import React from 'react';
+
+const StatisticBlock = () => {
   const statisticContent = [
     {heading: '24h volumn on TideBit', content: '365 Billion'},
     {heading: 'Users on TideBit', content: '30 Billion+'},
@@ -15,7 +17,7 @@ const StatisticBlock = props => {
   ));
 
   return (
-    <section className={`bg-black text-gray-400 ${props?.className}`}>
+    <section className={`bg-black text-gray-400`}>
       <div className="mx-auto">
         <div className="flex flex-wrap">{statisticContentList}</div>
       </div>

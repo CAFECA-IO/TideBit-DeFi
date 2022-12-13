@@ -2,23 +2,31 @@ import Link from 'next/link';
 import TideButton from '../tide_button/tide_button';
 import {useState} from 'react';
 import {AiOutlineGlobal} from 'react-icons/ai';
-import {BsFillBellFill} from 'react-icons/bs';
+import {BsFillBellFill, BsBell} from 'react-icons/bs';
 import {TbMinusVertical} from 'react-icons/tb';
 import {FiMenu} from 'react-icons/fi';
 import {TfiBell} from 'react-icons/tfi';
-import {BsBell} from 'react-icons/bs';
 import TideLink from '../tide_link/tide_link';
 import Image from 'next/image';
 import version from '../../lib/version';
 import WalletPanel from '../wallet/wallet_panel';
-import useOuterClick from '../../hooks/lib/use_outer_click';
+import useOuterClick from '../../lib/hooks/use_outer_click';
 import Notification from '../notification/notification';
 import NotificationItem from '../notification_item/notification_item';
+
+// interface INavBarProps {
+//   notifyRef: HTMLDivElement extends HTMLElement ? React.RefObject<HTMLDivElement> : null;
+//   componentVisible: boolean;
+// }
 
 const NavBar = ({notificationNumber = 1}) => {
   const [navOpen, setNavOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const {ref: notifyRef, componentVisible, setComponentVisible} = useOuterClick(false);
+  const {
+    targetRef: notifyRef,
+    componentVisible,
+    setComponentVisible,
+  } = useOuterClick<HTMLDivElement>(false);
 
   const clickHanlder = () => setNavOpen(!navOpen);
 

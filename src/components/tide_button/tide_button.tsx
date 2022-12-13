@@ -1,6 +1,14 @@
 import React from 'react';
 
-const TideButton = ({children, isHover = false, isFocus = false, ...otherProps}) => {
+interface ITideButton {
+  children: React.ReactNode;
+  isHover?: boolean;
+  isFocus?: boolean;
+  className?: string;
+  onClick?: () => void;
+}
+
+const TideButton = ({children, isHover = false, isFocus = false, ...otherProps}: ITideButton) => {
   // const hoverStyle =
   // 	isHover && `hover:scale-110 transition duration-300 ease-in-out`;
   const hoverStyle =

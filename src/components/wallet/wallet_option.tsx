@@ -3,7 +3,14 @@ import Image from 'next/image';
 
 // <div className="flex flex-col items-center bg-gray-800 p-3 rounded hover:cursor-pointer hover:opacity-80">
 
-const WalletOption = ({name = '', img = '', iconSize = '', ...otherProps}) => {
+interface IWalletOption {
+  name?: string;
+  img?: string;
+  iconSize?: number;
+  onClick?: () => void;
+}
+
+const WalletOption = ({name = '', img = '', iconSize, ...otherProps}: IWalletOption) => {
   return (
     <div
       {...otherProps}

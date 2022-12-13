@@ -6,18 +6,30 @@ import smallConnectingAnimation from '../../../public/animation/lf30_editor_cnkx
 import activeIconPulse from '../../../public/animation/lf30_editor_cyvxlluo.json';
 import Lottie from 'lottie-react';
 
+interface ISignatureProcessModal {
+  loading?: boolean;
+  firstStepSuccess?: boolean;
+  firstStepError?: boolean;
+  secondStepSuccess?: boolean;
+  secondStepError?: boolean;
+  processModalRef?: React.RefObject<HTMLDivElement>;
+  processModalVisible?: boolean;
+  processClickHandler?: () => void;
+  requestSendingHandler?: () => void;
+}
+
 const SignatureProcessModal = ({
   loading = false,
   firstStepSuccess = false,
   firstStepError = false,
   secondStepSuccess = false,
   secondStepError = false,
-  processModalRef = null,
+  processModalRef,
   processModalVisible = false,
-  processClickHandler = () => {},
-  requestSendingHandler = () => {},
+  processClickHandler,
+  requestSendingHandler,
   ...otherProps
-}) => {
+}: ISignatureProcessModal) => {
   const controlSpace = firstStepError || secondStepError ? 'space-y-12' : 'space-y-12';
   const btnSpace = firstStepSuccess && !secondStepError && !secondStepSuccess ? 'mt-10' : 'mt-16';
 

@@ -3,12 +3,18 @@ import Image from 'next/image';
 import TideButton from '../tide_button/tide_button';
 import Link from 'next/link';
 
+interface IHelloModal {
+  helloModalRef?: React.RefObject<HTMLDivElement>;
+  helloModalVisible?: boolean;
+  helloClickHandler?: () => void;
+}
+
 const HelloModal = ({
-  helloModalRef = null,
+  helloModalRef,
   helloModalVisible = false,
-  helloClickHandler = () => {},
+  helloClickHandler,
   ...otherProps
-}) => {
+}: IHelloModal) => {
   const isDisplayedHelloModal = helloModalVisible ? (
     <>
       <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">

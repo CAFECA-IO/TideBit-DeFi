@@ -1,7 +1,7 @@
 import {useEffect, useRef, useState} from 'react';
 import {ImCross} from 'react-icons/im';
 import WalletOption from './wallet_option';
-import useOuterClick from '../../hooks/lib/use_outer_click';
+import useOuterClick from '../../lib/hooks/use_outer_click';
 import TideButton from '../tide_button/tide_button';
 import {ethers, providers} from 'ethers';
 import Toast from '../toast/toast';
@@ -145,41 +145,48 @@ const WALLET_CONNECT_PROJECT_ID = process.env.WALLET_CONNECT_PROJECT_ID;
 // TODO: salt is optional, but if not provided, the signature will be different each time(?)
 
 export default function WalletPanel(props: {className?: string}) {
-  const {
-    targetRef: panelRef,
-    componentVisible: panelVisible,
-    setComponentVisible: setPanelVisible,
-  } = useOuterClick(false);
+  // const {
+  //   targetRef: panelRef,
+  //   componentVisible: panelVisible,
+  //   setComponentVisible: setPanelVisible,
+  // } = useOuterClick<HTMLDivElement>(false);
 
-  const {
-    targetRef: connectingModalRef,
-    componentVisible: connectingModalVisible,
-    setComponentVisible: setConnectingModalVisible,
-  } = useOuterClick(false);
+  // const {
+  //   targetRef: connectingModalRef,
+  //   componentVisible: connectingModalVisible,
+  //   setComponentVisible: setConnectingModalVisible,
+  // } = useOuterClick<HTMLDivElement>(false);
 
-  const {
-    targetRef: processModalRef,
-    componentVisible: processModalVisible,
-    setComponentVisible: setProcessModalVisible,
-  } = useOuterClick(false);
+  // const {
+  //   targetRef: processModalRef,
+  //   componentVisible: processModalVisible,
+  //   setComponentVisible: setProcessModalVisible,
+  // } = useOuterClick<HTMLDivElement>(false);
 
-  const {
-    targetRef: qrcodeModalRef,
-    componentVisible: qrcodeModalVisible,
-    setComponentVisible: setQrcodeModalVisible,
-  } = useOuterClick(false);
+  // const {
+  //   targetRef: qrcodeModalRef,
+  //   componentVisible: qrcodeModalVisible,
+  //   setComponentVisible: setQrcodeModalVisible,
+  // } = useOuterClick<HTMLDivElement>(false);
 
-  const {
-    targetRef: helloModalRef,
-    componentVisible: helloModalVisible,
-    setComponentVisible: setHelloModalVisible,
-  } = useOuterClick(false);
+  const [panelVisible, setPanelVisible] = useState(false);
+  const [connectingModalVisible, setConnectingModalVisible] = useState(false);
+  const [processModalVisible, setProcessModalVisible] = useState(false);
+  const [qrcodeModalVisible, setQrcodeModalVisible] = useState(false);
+  const [helloModalVisible, setHelloModalVisible] = useState(false);
+  const [avatarMenuVisible, setAvatarMenuVisible] = useState(false);
 
-  const {
-    targetRef: avatarMenuRef,
-    componentVisible: avatarMenuVisible,
-    setComponentVisible: setAvatarMenuVisible,
-  } = useOuterClick(false);
+  // const {
+  //   targetRef: helloModalRef,
+  //   componentVisible: helloModalVisible,
+  //   setComponentVisible: setHelloModalVisible,
+  // } = useOuterClick<HTMLDivElement>(false);
+
+  // const {
+  //   targetRef: avatarMenuRef,
+  //   componentVisible: avatarMenuVisible,
+  //   setComponentVisible: setAvatarMenuVisible,
+  // } = useOuterClick<HTMLDivElement>(false);
 
   interface IConnectingProps {
     provider: providers.Web3Provider;

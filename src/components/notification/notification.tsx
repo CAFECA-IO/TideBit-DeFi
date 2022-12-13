@@ -1,4 +1,4 @@
-import useOuterClick from '../../hooks/lib/use_outer_click';
+import useOuterClick from '../../lib/hooks/use_outer_click';
 import Image from 'next/image';
 import {forwardRef} from 'react';
 import NotificationItem from '../notification_item/notification_item';

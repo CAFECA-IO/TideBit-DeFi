@@ -1,8 +1,9 @@
 import '../styles/globals.css';
 import '../styles/dpr.css';
 import type {AppProps} from 'next/app';
+import {appWithTranslation} from 'next-i18next';
 
-function MyApp({Component, pageProps}: AppProps) {
+function App({Component, pageProps}: AppProps) {
   return (
     <div className="custom-no-scrollbar">
       <Component {...pageProps} />
@@ -10,4 +11,4 @@ function MyApp({Component, pageProps}: AppProps) {
   );
 }
 
-export default MyApp;
+export default appWithTranslation(App);

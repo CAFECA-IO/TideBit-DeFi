@@ -1,3 +1,4 @@
+import {useTranslation} from 'next-i18next';
 import Link from 'next/link';
 import TideButton from '../tide_button/tide_button';
 import {useState} from 'react';
@@ -18,8 +19,10 @@ import NotificationItem from '../notification_item/notification_item';
 //   notifyRef: HTMLDivElement extends HTMLElement ? React.RefObject<HTMLDivElement> : null;
 //   componentVisible: boolean;
 // }
+type TranslateFunction = (s: string) => string;
 
 const NavBar = ({notificationNumber = 1}) => {
+  const {t}: {t: TranslateFunction} = useTranslation('common');
   const [navOpen, setNavOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const {
@@ -87,7 +90,7 @@ const NavBar = ({notificationNumber = 1}) => {
                       />
 
                       <p className="absolute bottom-1 right-0 text-end text-xxs text-lightGray">
-                        V {version}
+                        v {version}
                       </p>
                     </div>
                   </div>
@@ -95,7 +98,7 @@ const NavBar = ({notificationNumber = 1}) => {
                 {/* Desktop menu */}
                 <div className={`hidden pb-5 text-base text-lightGray1 lg:block`}>
                   <div className="ml-10 mt-5 flex flex-1 items-center space-x-4">
-                    <TideLink href="#" className="" content={'Trading'} />
+                    <TideLink href="#" className="" content={t('nav_bar.Trading')} />
                     <TideLink href="#" className="mr-5" content={'TideBit University'} />
                     <TideLink href="#" className="mr-5" content={'Help Center'} />
 
@@ -158,7 +161,7 @@ const NavBar = ({notificationNumber = 1}) => {
                 <TideLink
                   href="#"
                   className="block rounded-md px-3 py-2 text-base font-medium"
-                  content={'Trading'}
+                  content={t('nav_bar.Trading')}
                 />
 
                 <TideLink

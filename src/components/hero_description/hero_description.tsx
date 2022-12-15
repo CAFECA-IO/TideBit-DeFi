@@ -24,7 +24,7 @@ export default function HeroDescription() {
         <div className="py-10 lg:py-40"></div>
 
         <ReserveRatio />
-        <div className="py-1"></div>
+        <div className="pb-10"></div>
 
         <CryptoCategory />
         <div className="py-10 lg:py-40"></div>

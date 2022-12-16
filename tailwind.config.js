@@ -42,7 +42,7 @@ module.exports = {
     },
     extend: {
       backgroundImage: {
-        reserve: "url('/elements/group_15244.svg')",
+        reserve_bg: "url('./public/elements/group_15244.svg')",
       },
       gridTemplateColumns: {
         cryptoCard: 'repeat(200px, minmax(134px, 200px) 100px)',
@@ -90,6 +90,7 @@ module.exports = {
         '180px': '180px',
         '200px': '200px',
         '220px': '220px',
+        '250px': '250px',
         '271px': '271px',
         '278px': '278px',
         '285px': '285px',
@@ -185,6 +186,7 @@ module.exports = {
 
         lightGray: '#8B8E91',
         lightGray1: '#EDECEC',
+        lightGray3: '#404A55',
 
         lightWhite: '#F2F2F2',
         tidebitTheme: '#29C1E1',

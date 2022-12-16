@@ -32,13 +32,12 @@ const ReserveRatio = () => {
           alt="picture"
         />
         {/* </div> */}
-      </div>
-
-      <div className="w-278px p-4 lg:w-400px">
-        <div className="flex h-full flex-col rounded-lg bg-darkGray4 p-8">
-          <div className="mb-3 flex items-center">
-            <div className="mr-3 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-indigo-500 text-white">
-              {/* <svg
+        <div className="top-0 w-full">
+          <div className="absolute right-180px w-278px p-4 md:right-250px md:w-400px lg:right-1/3 xl:right-2/5">
+            <div className="flex h-full flex-col rounded-lg bg-darkGray4 p-8">
+              <div className="mb-3 flex items-center">
+                <div className="mr-3 inline-flex shrink-0 items-center justify-center rounded-full text-lightWhite">
+                  {/* <svg
                 fill="none"
                 stroke="currentColor"
                 stroke-linecap="round"
@@ -49,34 +48,52 @@ const ReserveRatio = () => {
               >
                 <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
               </svg> */}
-              <Image
-                src="/elements/tether-seeklogo.com.svg"
-                width={40}
-                height={40}
-                alt="tether-seeklogo.com.svg"
-              />
+                  <Image
+                    src="/elements/tether-seeklogo.com.svg"
+                    width={50}
+                    height={50}
+                    alt="tether-seeklogo.com.svg"
+                  />
+                </div>
+                <div className="flex flex-col">
+                  <h2 className="text-3xl font-medium text-lightGreen2">USDT</h2>
+                  <p className="-my-1 mb-1">reserve ratio</p>
+                </div>
+              </div>
+
+              <div className="grow">
+                <p className="font-bold">
+                  <span className="pr-2 text-6xl font-bold leading-relaxed">120</span> %
+                </p>
+                <label className="ml-52 rounded-full bg-lightGray3 px-3 py-1 text-sm">
+                  Blockchain
+                </label>
+                <span className="my-auto h-px w-full rounded bg-lightGray1/30 xs:inline-block"></span>
+
+                {/* <a className="mt-3 inline-flex items-center text-indigo-400">
+                  Learn More
+                  <svg
+                    fill="none"
+                    stroke="currentColor"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    className="ml-2 h-4 w-4"
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M5 12h14M12 5l7 7-7 7"></path>
+                  </svg>
+                </a> */}
+                <div className="mb-5 flex flex-col space-y-2">
+                  <div className="text-base text-lightGray">TideBit user asset holdings</div>
+                  <div>3,016,827,845</div>
+                </div>
+                <div className="flex flex-col space-y-2">
+                  <div className="text-base text-lightGray">TideBit wallet assets</div>
+                  <div>3,061,068,937</div>
+                </div>
+              </div>
             </div>
-            <div className="flex flex-col">
-              <h2 className="text-lg font-medium text-lightGreen2">USDT</h2>
-              <p className="-my-2">reserve ratio</p>
-            </div>
-          </div>
-          <div className="grow">
-            <p className="text-base leading-relaxed">120 %</p>
-            <a className="mt-3 inline-flex items-center text-indigo-400">
-              Learn More
-              <svg
-                fill="none"
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                className="ml-2 h-4 w-4"
-                viewBox="0 0 24 24"
-              >
-                <path d="M5 12h14M12 5l7 7-7 7"></path>
-              </svg>
-            </a>
           </div>
         </div>
       </div>

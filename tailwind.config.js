@@ -41,6 +41,9 @@ module.exports = {
       '3xl': '1600px',
     },
     extend: {
+      backgroundImage: {
+        reserve_bg: "url('./public/elements/group_15244.svg')",
+      },
       gridTemplateColumns: {
         cryptoCard: 'repeat(200px, minmax(134px, 200px) 100px)',
       },
@@ -87,12 +90,15 @@ module.exports = {
         '180px': '180px',
         '200px': '200px',
         '220px': '220px',
+        '250px': '250px',
         '271px': '271px',
+        '278px': '278px',
         '285px': '285px',
         '300px': '300px',
         '320px': '320px',
         '354px': '354px',
         '372px': '372px',
+        '400px': '400px',
         '410px': '410px',
         '438px': '438px',
         '450px': '450px',
@@ -180,6 +186,7 @@ module.exports = {
 
         lightGray: '#8B8E91',
         lightGray1: '#EDECEC',
+        lightGray3: '#404A55',
 
         lightWhite: '#F2F2F2',
         tidebitTheme: '#29C1E1',
@@ -199,6 +206,7 @@ module.exports = {
         lightRed2: '#E84142',
 
         lightRed3: '#E86D6D',
+        lightGreen2: '#53AE94',
       },
       fontFamily: {
         barlow: ['Barlow', 'sans-serif', 'ui-sans-serif', 'system-ui'],

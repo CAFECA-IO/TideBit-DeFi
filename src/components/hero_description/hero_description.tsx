@@ -10,6 +10,7 @@ import HeroReverse from '../hero_reverse/hero_reverse';
 import HeroReverse1 from '../hero_reverse1/hero_reverse1';
 import StatisticBlock from '../statistic/statistic';
 import Image from 'next/image';
+import ReserveRatio from '../reserve_ratio/reserve_ratio';
 
 export default function HeroDescription() {
   return (
@@ -21,6 +22,10 @@ export default function HeroDescription() {
 
         <StatisticBlock />
         <div className="py-10 lg:py-40"></div>
+
+        <ReserveRatio />
+        <div className="pb-96"></div>
+        <div className="pt-52"></div>
 
         <CryptoCategory />
         <div className="py-10 lg:py-40"></div>

@@ -42,7 +42,7 @@ module.exports = {
     },
     extend: {
       backgroundImage: {
-        reserve_bg: "url('./public/elements/group_15244.svg')",
+        'reserve': "url('./public/elements/group_15244.svg')",
       },
       gridTemplateColumns: {
         cryptoCard: 'repeat(200px, minmax(134px, 200px) 100px)',

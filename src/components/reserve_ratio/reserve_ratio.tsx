@@ -1,6 +1,8 @@
 import React from 'react';
 import Image from 'next/image';
 
+// TODO: mobile version
+// TODO: background image (overlay layout)
 const ReserveRatio = () => {
   return (
     <section>

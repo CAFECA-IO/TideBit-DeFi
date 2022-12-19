@@ -15,19 +15,20 @@ const I18n = () => {
   } = useOuterClick<HTMLDivElement>(false);
 
   const clickHandler = () => {
-    // setOpenMenu(() => !openMenu);
-    setComponentVisible(!componentVisible);
+    setOpenMenu(() => !openMenu);
+    // setComponentVisible(!componentVisible);
   };
 
   const internationalizationList = [
-    {label: 'TW', value: 'tw'},
-    {label: 'EN', value: 'en'},
+    {label: '繁體中文', value: 'tw'},
+    {label: 'English', value: 'en'},
   ];
-  const displayedDesktopMenu = componentVisible ? (
+
+  const displayedDesktopMenu = openMenu ? (
     <div className="hidden lg:flex">
       <div
         id="i18nDropdown"
-        className="absolute top-16 right-52 z-10 w-100px divide-y divide-lightGray rounded-none bg-darkGray shadow"
+        className="absolute top-16 right-52 z-10 w-150px divide-y divide-lightGray rounded-none bg-darkGray shadow"
       >
         <ul
           className="mx-3 py-1 pb-3 text-base text-gray-700 dark:text-gray-200"
@@ -49,7 +50,7 @@ const I18n = () => {
     </div>
   ) : null;
 
-  const displayedMobileMenu = componentVisible ? (
+  const displayedMobileMenu = openMenu ? (
     <div className="lg:hidden">
       <div
         id="i18nDropdown"

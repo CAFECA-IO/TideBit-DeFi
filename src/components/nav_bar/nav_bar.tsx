@@ -7,13 +7,15 @@ import {BsFillBellFill, BsBell} from 'react-icons/bs';
 import {TbMinusVertical} from 'react-icons/tb';
 import {FiMenu} from 'react-icons/fi';
 import {TfiBell} from 'react-icons/tfi';
-import TideLink from '../tide_link/tide_link';
+// import TideLink from '../tide_link/tide_link';
 import Image from 'next/image';
 import version from '../../lib/version';
 import WalletPanel from '../wallet/wallet_panel';
 import useOuterClick from '../../lib/hooks/use_outer_click';
 import Notification from '../notification/notification';
 import NotificationItem from '../notification_item/notification_item';
+import {useRouter} from 'next/router';
+import I18n from '../i18n/i18n';
 
 // interface INavBarProps {
 //   notifyRef: HTMLDivElement extends HTMLElement ? React.RefObject<HTMLDivElement> : null;
@@ -23,6 +25,8 @@ type TranslateFunction = (s: string) => string;
 
 const NavBar = ({notificationNumber = 1}) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
+  // TODO: i18n
+  const {locale, locales, defaultLocale, asPath} = useRouter();
   const [navOpen, setNavOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const {
@@ -98,9 +102,22 @@ const NavBar = ({notificationNumber = 1}) => {
                 {/* Desktop menu */}
                 <div className={`hidden pb-5 text-base text-lightGray1 lg:block`}>
                   <div className="ml-10 mt-5 flex flex-1 items-center space-x-4">
-                    <TideLink href="#" className="" content={t('nav_bar.Trading')} />
-                    <TideLink href="#" className="mr-5" content={'TideBit University'} />
-                    <TideLink href="#" className="mr-5" content={'Help Center'} />
+                    <Link href="#" className="hover:cursor-pointer hover:text-tidebitTheme">
+                      {t('nav_bar.Trading')}
+                    </Link>
+                    <Link href="#" className="mr-5 hover:cursor-pointer hover:text-tidebitTheme">
+                      TideBit University
+                    </Link>
+                    {/* <Link
+                      href={asPath}
+                      locale="tw"
+                      className="hover:cursor-pointer hover:text-tidebitTheme"
+                    >
+                      Test
+                    </Link> */}
+                    <Link href="#" className="mr-5 hover:cursor-pointer hover:text-tidebitTheme">
+                      Help Center
+                    </Link>
 
                     {/* <div className="max-w-2xl mx-auto"></div> */}
                   </div>
@@ -109,13 +126,7 @@ const NavBar = ({notificationNumber = 1}) => {
               <div className="hidden pt-3 lg:flex">
                 <div className="flex items-center justify-center px-5">
                   <div>
-                    <Image
-                      src="/elements/globe.svg"
-                      width={20}
-                      height={20}
-                      className="hover:cursor-pointer hover:text-cyan-300"
-                      alt="icon"
-                    />
+                    <I18n />
                   </div>
                   {/* <TbMinusVertical size={30} className="" /> */}
                   <span className="mx-2 inline-block h-10 w-px rounded bg-lightGray1"></span>
@@ -158,33 +169,29 @@ const NavBar = ({notificationNumber = 1}) => {
             {/* Mobile menu section */}
             <div className="ml-10 inline-block items-center px-2 pt-2 pb-3 sm:px-3">
               <div className="space-y-1">
-                <TideLink
+                <Link
                   href="#"
-                  className="block rounded-md px-3 py-2 text-base font-medium"
-                  content={t('nav_bar.Trading')}
-                />
-
-                <TideLink
+                  className="block rounded-md px-3 py-2 font-medium hover:cursor-pointer hover:text-tidebitTheme"
+                >
+                  {t('nav_bar.Trading')}
+                </Link>
+                <Link
                   href="#"
-                  className="block rounded-md px-3 py-2 text-base font-medium"
-                  content={'TideBit University'}
-                />
-                <TideLink
+                  className="block rounded-md px-3 py-2 font-medium hover:cursor-pointer hover:text-tidebitTheme"
+                >
+                  TideBit University
+                </Link>{' '}
+                <Link
                   href="#"
-                  className="block rounded-md px-3 py-2 text-base font-medium"
-                  content={'Help Center'}
-                />
+                  className="block rounded-md px-3 py-2 font-medium hover:cursor-pointer hover:text-tidebitTheme"
+                >
+                  Help Center
+                </Link>{' '}
               </div>
               <div className="pt-3">
                 <div className="flex items-center justify-start px-3">
                   <div>
-                    <Image
-                      src="/elements/globe.svg"
-                      width={20}
-                      height={20}
-                      className="hover:cursor-pointer hover:text-cyan-300"
-                      alt="icon"
-                    />
+                    <I18n />
                   </div>
                   {/* <TbMinusVertical size={30} className="" /> */}
                   <span className="mx-2 inline-block h-10 w-px rounded bg-lightGray1"></span>

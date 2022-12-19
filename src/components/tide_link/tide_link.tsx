@@ -33,6 +33,7 @@ const TideLink = ({content = '', ...otherProps}: TideLinkProps): JSX.Element => 
     <Link
       href={`${otherProps.href}`}
       className={`${otherProps?.className} hover:cursor-pointer hover:text-tidebitTheme`}
+      {...otherProps}
     >
       {content}
     </Link>

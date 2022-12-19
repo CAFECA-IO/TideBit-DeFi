@@ -39,7 +39,7 @@ const I18n = () => {
               <Link
                 locale={item.value}
                 href={asPath}
-                className="block rounded-none py-2 pr-4 pl-6 hover:bg-lightGray"
+                className="block rounded-none py-2 pr-4 pl-6 hover:bg-darkGray5"
               >
                 {item.label}
               </Link>
@@ -54,7 +54,7 @@ const I18n = () => {
     <div className="lg:hidden">
       <div
         id="i18nDropdown"
-        className="absolute top-64 left-10 z-10 w-100px divide-y divide-lightGray rounded-none bg-darkGray shadow"
+        className="absolute top-64 left-10 z-10 w-150px divide-y divide-lightGray rounded-none bg-darkGray shadow"
       >
         <ul
           className="mx-3 py-1 pb-3 text-base text-gray-700 dark:text-gray-200"
@@ -65,7 +65,7 @@ const I18n = () => {
               <Link
                 locale={item.value}
                 href={asPath}
-                className="block rounded-none py-2 pr-4 pl-6 hover:bg-lightGray"
+                className="block rounded-none py-2 pr-4 pl-6 hover:bg-darkGray5"
               >
                 {item.label}
               </Link>

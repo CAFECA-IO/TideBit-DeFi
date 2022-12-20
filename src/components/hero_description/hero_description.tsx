@@ -26,7 +26,7 @@ export default function HeroDescription() {
 
         {/* <TestReserveRatio /> */}
         <ReserveRatio />
-        <div className="pb-96"></div>
+        <div className="pb-40 lg:pb-96"></div>
         <div className="pt-52"></div>
 
         <CryptoCategory />
@@ -84,8 +84,9 @@ export default function HeroDescription() {
         <div className="py-5 lg:py-10"></div>
 
         {/* App download */}
-
-        <AppDowloadContainer />
+        <div className="flex w-full justify-center">
+          <AppDowloadContainer />
+        </div>
       </div>
 
       {/* Footer */}

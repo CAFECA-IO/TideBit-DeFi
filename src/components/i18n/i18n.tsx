@@ -40,7 +40,7 @@ const I18n = () => {
           aria-labelledby="i18nButton"
         >
           {internationalizationList.map((item, index) => (
-            <li key={index}>
+            <li key={index} onClick={clickHandler}>
               <Link
                 locale={item.value}
                 href={asPath}

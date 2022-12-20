@@ -1,6 +1,7 @@
 import React from 'react';
 import Image from 'next/image';
 import TideButton from '../tide_button/tide_button';
+import Link from 'next/link';
 
 const Cta = () => {
   return (
@@ -23,9 +24,11 @@ const Cta = () => {
               the best quality.{' '}
             </div>
             <div className="pt-2 md:pt-8 xl:pt-10">
-              <TideButton className="px-2 py-1 font-normal xxs:text-xxs sm:py-2 sm:px-5 sm:text-base xl:py-3 xl:px-5 xl:text-lg">
-                GET STARTED
-              </TideButton>
+              <Link href="/trading">
+                <TideButton className="px-2 py-1 font-normal xxs:text-xxs sm:py-2 sm:px-5 sm:text-base xl:py-3 xl:px-5 xl:text-lg">
+                  GET STARTED
+                </TideButton>
+              </Link>
             </div>
           </div>
         </div>

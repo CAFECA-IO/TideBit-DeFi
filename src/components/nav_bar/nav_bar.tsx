@@ -102,7 +102,7 @@ const NavBar = ({notificationNumber = 1}) => {
                 {/* Desktop menu */}
                 <div className={`hidden pb-5 text-base text-lightGray1 lg:block`}>
                   <div className="ml-10 mt-5 flex flex-1 items-center space-x-4">
-                    <Link href="#" className="hover:cursor-pointer hover:text-tidebitTheme">
+                    <Link href="/trading" className="hover:cursor-pointer hover:text-tidebitTheme">
                       {t('nav_bar.Trading')}
                     </Link>
                     <Link href="#" className="mr-5 hover:cursor-pointer hover:text-tidebitTheme">
@@ -170,7 +170,7 @@ const NavBar = ({notificationNumber = 1}) => {
             <div className="ml-10 inline-block items-center px-2 pt-2 pb-3 sm:px-3">
               <div className="space-y-1">
                 <Link
-                  href="#"
+                  href="/trading"
                   className="block rounded-md px-3 py-2 font-medium hover:cursor-pointer hover:text-tidebitTheme"
                 >
                   {t('nav_bar.Trading')}

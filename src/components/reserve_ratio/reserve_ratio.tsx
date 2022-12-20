@@ -1,5 +1,7 @@
 import React from 'react';
 import Image from 'next/image';
+import {FaLink} from 'react-icons/fa';
+import {BiLinkAlt} from 'react-icons/bi';
 
 // TODO: mobile version
 // TODO: background image (overlay layout)
@@ -17,6 +19,9 @@ const ReserveRatio = () => {
         </div>
       </div>
 
+      {/* <TestReserveRatio /> */}
+
+      {/* Reserve Ratio Card */}
       <div className="relative">
         {/* <div
           style={{
@@ -67,9 +72,13 @@ const ReserveRatio = () => {
                 <p className="font-bold">
                   <span className="pr-2 text-6xl font-bold leading-relaxed">120</span> %
                 </p>
-                <label className="ml-52 rounded-full bg-lightGray3 px-3 py-1 text-sm">
-                  Blockchain
-                </label>
+
+                <div className="ml-48 flex w-120px flex-row items-center rounded-full bg-lightGray3 px-3 py-1 text-sm text-lightWhite">
+                  <p>Blockchain</p>
+                  <div className="pl-2">
+                    <BiLinkAlt size={20} />
+                  </div>
+                </div>
                 <span className="my-auto h-px w-full rounded bg-lightGray1/30 xs:inline-block"></span>
 
                 {/* <a className="mt-3 inline-flex items-center text-indigo-400">

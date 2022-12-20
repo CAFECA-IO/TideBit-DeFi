@@ -28,5 +28,6 @@ const getStaticPropsFunction = async ({locale}: {locale: any}) => ({
   },
 });
 
-export default Home;
 export const getStaticProps = getStaticPropsFunction;
+
+export default Home;

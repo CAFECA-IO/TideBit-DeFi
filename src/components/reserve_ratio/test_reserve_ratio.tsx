@@ -7,8 +7,8 @@ const TestReserveRatio = () => {
 
   const test2BgImage = (
     <div
-      className="bg-scroll"
-      style={{backgroundImage: `url('/elements/group_15244.svg')`, height: '200px'}}
+      className="w-full"
+      style={{backgroundImage: `url('/elements/group_15244.svg')`, height: '500px', width: '100%'}}
     ></div>
   );
 

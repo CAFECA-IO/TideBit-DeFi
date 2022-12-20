@@ -106,7 +106,7 @@ const NavBar = ({notificationNumber = 1}) => {
                       {t('nav_bar.Trading')}
                     </Link>
                     <Link href="#" className="mr-5 hover:cursor-pointer hover:text-tidebitTheme">
-                      TideBit University
+                      {t('nav_bar.TideBitUniversity')}
                     </Link>
                     {/* <Link
                       href={asPath}
@@ -116,7 +116,7 @@ const NavBar = ({notificationNumber = 1}) => {
                       Test
                     </Link> */}
                     <Link href="#" className="mr-5 hover:cursor-pointer hover:text-tidebitTheme">
-                      Help Center
+                      {t('nav_bar.HelpCenter')}
                     </Link>
 
                     {/* <div className="max-w-2xl mx-auto"></div> */}
@@ -179,13 +179,14 @@ const NavBar = ({notificationNumber = 1}) => {
                   href="#"
                   className="block rounded-md px-3 py-2 font-medium hover:cursor-pointer hover:text-tidebitTheme"
                 >
-                  TideBit University
+                  {t('nav_bar.TideBitUniversity')}
                 </Link>{' '}
                 <Link
                   href="#"
                   className="block rounded-md px-3 py-2 font-medium hover:cursor-pointer hover:text-tidebitTheme"
                 >
-                  Help Center
+                  {' '}
+                  {t('nav_bar.HelpCenter')}
                 </Link>{' '}
               </div>
               <div className="pt-3">

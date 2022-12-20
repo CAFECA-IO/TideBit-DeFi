@@ -3,6 +3,7 @@ import Head from 'next/head';
 import TestReserveRatio from '../components/reserve_ratio/test_reserve_ratio';
 import NavBar from '../components/nav_bar/nav_bar';
 import {serverSideTranslations} from 'next-i18next/serverSideTranslations';
+import OrderSection from '../components/order_section/order_section';
 
 const Trading = () => {
   return (
@@ -14,7 +15,9 @@ const Trading = () => {
 
       <NavBar />
 
-      <main></main>
+      <main>
+        <OrderSection />
+      </main>
     </>
   );
 };

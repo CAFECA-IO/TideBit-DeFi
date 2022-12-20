@@ -16,6 +16,7 @@ import Notification from '../notification/notification';
 import NotificationItem from '../notification_item/notification_item';
 import {useRouter} from 'next/router';
 import I18n from '../i18n/i18n';
+import {IoIosArrowBack} from 'react-icons/io';
 
 // interface INavBarProps {
 //   notifyRef: HTMLDivElement extends HTMLElement ? React.RefObject<HTMLDivElement> : null;
@@ -44,20 +45,9 @@ const NavBar = ({notificationNumber = 1}) => {
   };
 
   const displayedMobileNavBar = !navOpen ? (
-    <FiMenu size={30} className="" />
+    <FiMenu size={25} className="" />
   ) : (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      className="h-6 w-6 text-white hover:text-cyan-300"
-      viewBox="0 0 20 20"
-      fill="currentColor"
-    >
-      <path
-        fillRule="evenodd"
-        d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-        clipRule="evenodd"
-      />
-    </svg>
+    <IoIosArrowBack size={25} />
   );
 
   const isDisplayedMobileNavBar = navOpen ? '' : 'hidden';
@@ -138,8 +128,8 @@ const NavBar = ({notificationNumber = 1}) => {
 
                     <Image
                       src="/elements/notifications_outline.svg"
-                      width={20}
-                      height={20}
+                      width={25}
+                      height={25}
                       className="hover:cursor-pointer hover:text-cyan-300"
                       alt="icon"
                     />
@@ -150,13 +140,31 @@ const NavBar = ({notificationNumber = 1}) => {
                 </div>
               </div>
 
+              {/* ---Mobile menu section--- */}
               {/* Mobile menu toggle */}
-              <div ref={notifyRef} className="mr-0 flex pt-3 lg:hidden">
-                <button
-                  onClick={clickHanlder}
-                  className="inline-flex items-center justify-center rounded-md p-2 hover:text-cyan-300 focus:outline-none"
-                >
-                  {displayedMobileNavBar}
+              <div className="inline-flex items-end justify-center lg:hidden">
+                <div className="mr-0 mt-3 flex lg:hidden">
+                  <button
+                    onClick={clickHanlder}
+                    className="inline-flex items-center justify-center rounded-md p-2 hover:text-cyan-300 focus:outline-none"
+                  >
+                    {displayedMobileNavBar}
+                  </button>
+                </div>
+
+                <span className="mx-2 inline-block h-10 w-px rounded bg-lightGray1"></span>
+                <button onClick={sidebarOpenHandler} className="relative hover:cursor-pointer">
+                  <span className="absolute bottom-4 left-3 z-20 inline-block h-3 w-3 rounded-xl bg-cyan-300">
+                    <p className="text-center text-3xs hover:text-white">{notificationNumber}</p>
+                  </span>
+
+                  <Image
+                    src="/elements/notifications_outline.svg"
+                    width={25}
+                    height={25}
+                    className="mb-2 hover:cursor-pointer hover:text-cyan-300"
+                    alt="icon"
+                  />
                 </button>
               </div>
             </div>
@@ -189,26 +197,13 @@ const NavBar = ({notificationNumber = 1}) => {
                   {t('nav_bar.HelpCenter')}
                 </Link>{' '}
               </div>
+
               <div className="pt-3">
                 <div className="flex items-center justify-start px-3">
                   <div>
                     <I18n />
                   </div>
                   {/* <TbMinusVertical size={30} className="" /> */}
-                  <span className="mx-2 inline-block h-10 w-px rounded bg-lightGray1"></span>
-                  <button onClick={sidebarOpenHandler} className="relative hover:cursor-pointer">
-                    <span className="absolute bottom-3 left-3 z-20 inline-block h-3 w-3 rounded-xl bg-cyan-300">
-                      <p className="text-center text-3xs hover:text-white">{notificationNumber}</p>
-                    </span>
-
-                    <Image
-                      src="/elements/notifications_outline.svg"
-                      width={20}
-                      height={20}
-                      className="hover:cursor-pointer hover:text-cyan-300"
-                      alt="icon"
-                    />
-                  </button>
                 </div>
               </div>
               <div className="mt-5">

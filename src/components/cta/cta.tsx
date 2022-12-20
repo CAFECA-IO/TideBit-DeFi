@@ -52,15 +52,17 @@ const Cta = () => {
         />
         <div className="flex justify-center text-center">
           <div className="mx-1/10 w-fit text-2xl font-bold tracking-wide text-white xxs:mx-1/5 xxs:text-3xl xs:w-4/5 xs:text-4xl md:text-5xl">
-            <span className="text-tidebitTheme">Trusted</span> platform for Crypto investment
+            <span className="leading-normal text-tidebitTheme">
+              {t('home_page.Cta_HighlightTitle')}
+            </span>{' '}
+            {t('home_page.Cta_RestTitle')}
             <div className="mx-1/10 mt-10 max-w-md text-sm font-normal tracking-0.02rem text-lightGray md:text-xl">
-              Start investing now. On TideBit you can learn, buy and sell cryptocurrency assets with
-              the best quality.{' '}
+              {t('home_page.Cta_Description')}
             </div>
             <div className="mx-auto pt-2 md:pt-8">
               <TideButton className="px-2 py-1 font-normal xxs:text-xxs sm:py-2 sm:px-5 sm:text-base xl:py-3 xl:px-5 xl:text-lg">
-                GET STARTED
-              </TideButton>{' '}
+                {t('home_page.Cta_Button')}
+              </TideButton>
             </div>
           </div>
         </div>

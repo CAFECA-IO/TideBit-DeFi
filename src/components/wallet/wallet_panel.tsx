@@ -19,6 +19,7 @@ import {DELAYED_HIDDEN_SECONDS} from '../../constants/display';
 // import {IWalletConnectOptions, IPushServerOptions} from '@walletconnect/types';
 // import IConnector from '@walletconnect/types';
 import {IConnector} from '../../interfaces/wallet_connect';
+import {useTranslation} from 'react-i18next';
 // import Connector from '@walletconnect/core';
 
 // import {ExternalProvider} from '@ethersproject/providers';
@@ -143,6 +144,7 @@ const ICON_SIZE = 50;
 const WALLET_CONNECT_PROJECT_ID = process.env.WALLET_CONNECT_PROJECT_ID;
 
 // TODO: salt is optional, but if not provided, the signature will be different each time(?)
+type TranslateFunction = (s: string) => string;
 
 export default function WalletPanel(props: {className?: string}) {
   // const {
@@ -168,6 +170,8 @@ export default function WalletPanel(props: {className?: string}) {
   //   componentVisible: qrcodeModalVisible,
   //   setComponentVisible: setQrcodeModalVisible,
   // } = useOuterClick<HTMLDivElement>(false);
+
+  const {t}: {t: TranslateFunction} = useTranslation('common');
 
   const [panelVisible, setPanelVisible] = useState(false);
   const [connectingModalVisible, setConnectingModalVisible] = useState(false);
@@ -1625,7 +1629,7 @@ export default function WalletPanel(props: {className?: string}) {
       onClick={clickHandler}
       className={`mt-4 rounded border-0 bg-tidebitTheme py-2 px-5 text-base text-white hover:bg-cyan-600 focus:outline-none md:mt-0`}
     >
-      Wallet Connect
+      {t('nav_bar.WalletConnect')}
     </TideButton>
   );
 

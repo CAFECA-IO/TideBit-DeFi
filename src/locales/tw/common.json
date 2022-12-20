@@ -9,6 +9,12 @@
     "Cta_HighlightTitle": "值得信賴的",
     "Cta_RestTitle": "加密貨幣投資平台",
     "Cta_Description": "現在就開始投資。 在 TideBit ，您可以免費學習以及買賣最優質的加密貨幣資產。",
-    "Cta_Button": "開始交易"
+    "Cta_Button": "開始交易",
+    "StatisticBlock_Title_1": "TideBit 的 24h 交易量",
+    "StatisticBlock_Description_1": "3650億",
+    "StatisticBlock_Title_2": "TideBit 的用戶",
+    "StatisticBlock_Description_2": "300億+",
+    "StatisticBlock_Title_3": "最低手續費",
+    "StatisticBlock_Description_3": "<0.10 %"
   }
 }

@@ -1,10 +1,29 @@
 import React from 'react';
+import {useTranslation} from 'next-i18next';
+
+type TranslateFunction = (s: string) => string;
 
 const StatisticBlock = () => {
+  const {t}: {t: TranslateFunction} = useTranslation('common');
+
+  // const statisticContent = [
+  //   {heading: '24h volumn on TideBit', content: '365 Billion'},
+  //   {heading: 'Users on TideBit', content: '30 Billion+'},
+  //   {heading: 'Lowest Fee', content: '<0.10 %'},
+  // ];
   const statisticContent = [
-    {heading: '24h volumn on TideBit', content: '365 Billion'},
-    {heading: 'Users on TideBit', content: '30 Billion+'},
-    {heading: 'Lowest Fee', content: '<0.10 %'},
+    {
+      heading: t('home_page.StatisticBlock_Title_1'),
+      content: t('home_page.StatisticBlock_Description_1'),
+    },
+    {
+      heading: t('home_page.StatisticBlock_Title_2'),
+      content: t('home_page.StatisticBlock_Description_2'),
+    },
+    {
+      heading: t('home_page.StatisticBlock_Title_3'),
+      content: t('home_page.StatisticBlock_Description_3'),
+    },
   ];
 
   const statisticContentList = statisticContent.map(({heading, content}) => (

@@ -11,6 +11,7 @@ import HeroReverse1 from '../hero_reverse1/hero_reverse1';
 import StatisticBlock from '../statistic/statistic';
 import Image from 'next/image';
 import ReserveRatio from '../reserve_ratio/reserve_ratio';
+import TestReserveRatio from '../reserve_ratio/test_reserve_ratio';
 
 export default function HeroDescription() {
   return (
@@ -23,8 +24,9 @@ export default function HeroDescription() {
         <StatisticBlock />
         <div className="py-10 lg:py-40"></div>
 
+        {/* <TestReserveRatio /> */}
         <ReserveRatio />
-        <div className="pb-96"></div>
+        <div className="pb-40 lg:pb-96"></div>
         <div className="pt-52"></div>
 
         <CryptoCategory />
@@ -82,8 +84,9 @@ export default function HeroDescription() {
         <div className="py-5 lg:py-10"></div>
 
         {/* App download */}
-
-        <AppDowloadContainer />
+        <div className="flex w-full justify-center">
+          <AppDowloadContainer />
+        </div>
       </div>
 
       {/* Footer */}

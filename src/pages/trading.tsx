@@ -1,23 +1,20 @@
-import {serverSideTranslations} from 'next-i18next/serverSideTranslations';
-// import {initReactI18next} from 'react-i18next';
-// import {i18n} from 'next-i18next';
+import Image from 'next/image';
 import Head from 'next/head';
+import TestReserveRatio from '../components/reserve_ratio/test_reserve_ratio';
 import NavBar from '../components/nav_bar/nav_bar';
-import HeroDescription from '../components/hero_description/hero_description';
+import {serverSideTranslations} from 'next-i18next/serverSideTranslations';
 
-const Home = () => {
+const Trading = () => {
   return (
     <>
       <Head>
-        <title>TideBit DeFi</title>
+        <title>Trading - TideBit DeFi</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <NavBar />
 
-      <main>
-        <HeroDescription />
-      </main>
+      <main></main>
     </>
   );
 };
@@ -27,7 +24,6 @@ const getStaticPropsFunction = async ({locale}: {locale: any}) => ({
     ...(await serverSideTranslations(locale, ['common', 'footer'])),
   },
 });
-
 export const getStaticProps = getStaticPropsFunction;
 
-export default Home;
+export default Trading;

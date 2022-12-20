@@ -5,9 +5,11 @@ import {appWithTranslation} from 'next-i18next';
 
 function App({Component, pageProps}: AppProps) {
   return (
-    <div className="custom-no-scrollbar">
-      <Component {...pageProps} />
-    </div>
+    <>
+      <div className="custom-no-scrollbar">
+        <Component {...pageProps} />
+      </div>
+    </>
   );
 }
 

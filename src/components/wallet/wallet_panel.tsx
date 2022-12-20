@@ -1,5 +1,5 @@
 import {useEffect, useRef, useState} from 'react';
-import {ImCross} from 'react-icons/im';
+import {ImCross, ImUpload2} from 'react-icons/im';
 import WalletOption from './wallet_option';
 import useOuterClick from '../../lib/hooks/use_outer_click';
 import TideButton from '../tide_button/tide_button';
@@ -19,6 +19,16 @@ import {DELAYED_HIDDEN_SECONDS} from '../../constants/display';
 // import {IWalletConnectOptions, IPushServerOptions} from '@walletconnect/types';
 // import IConnector from '@walletconnect/types';
 import {IConnector} from '../../interfaces/wallet_connect';
+import {useTranslation} from 'next-i18next';
+import {BiWallet} from 'react-icons/bi';
+import {HiOutlineSave} from 'react-icons/hi';
+import {CiSaveDown2} from 'react-icons/ci';
+import {FaDownload, FaUpload} from 'react-icons/fa';
+import {VscAccount} from 'react-icons/vsc';
+// import {IoExitOutline} from 'react-icons/io';
+// import {RxExit} from 'react-icons/rx';
+import {ImExit} from 'react-icons/im';
+
 // import Connector from '@walletconnect/core';
 
 // import {ExternalProvider} from '@ethersproject/providers';
@@ -143,6 +153,7 @@ const ICON_SIZE = 50;
 const WALLET_CONNECT_PROJECT_ID = process.env.WALLET_CONNECT_PROJECT_ID;
 
 // TODO: salt is optional, but if not provided, the signature will be different each time(?)
+type TranslateFunction = (s: string) => string;
 
 export default function WalletPanel(props: {className?: string}) {
   // const {
@@ -168,6 +179,8 @@ export default function WalletPanel(props: {className?: string}) {
   //   componentVisible: qrcodeModalVisible,
   //   setComponentVisible: setQrcodeModalVisible,
   // } = useOuterClick<HTMLDivElement>(false);
+
+  const {t}: {t: TranslateFunction} = useTranslation('common');
 
   const [panelVisible, setPanelVisible] = useState(false);
   const [connectingModalVisible, setConnectingModalVisible] = useState(false);
@@ -1577,32 +1590,47 @@ export default function WalletPanel(props: {className?: string}) {
         </div>
 
         <ul
-          className="mx-3 py-1 pb-3 text-base text-gray-700 dark:text-gray-200"
+          className="mx-3 py-1 pb-3 text-base font-normal text-gray-700 dark:text-gray-200"
           aria-labelledby="avatarButton"
         >
           <li>
-            <a href="#" className="block py-2 pr-4 pl-6 hover:bg-darkGray5">
-              My Wallet
+            <a href="#" className="block py-2 pr-4 pl-3 hover:bg-darkGray5">
+              <div className="flex flex-row items-center space-x-2">
+                <BiWallet />
+                <p>My Assets</p>
+              </div>
             </a>
           </li>
           <li>
-            <a href="#" className="block py-2 pr-4 pl-6 hover:bg-darkGray5">
-              Deposit
+            <a href="#" className="block py-2 pr-4 pl-3 hover:bg-darkGray5">
+              <div className="flex flex-row items-center space-x-2">
+                <FaDownload />
+                <p>Deposit</p>
+              </div>
             </a>
           </li>
           <li>
-            <a href="#" className="block py-2 pr-4 pl-6 hover:bg-darkGray5">
-              Withdraw
+            <a href="#" className="block py-2 pr-4 pl-3 hover:bg-darkGray5">
+              <div className="flex flex-row items-center space-x-2">
+                <FaUpload />
+                <p>Withdraw</p>
+              </div>
             </a>
           </li>
           <li>
-            <a href="#" className="block py-2 pr-4 pl-6 hover:bg-darkGray5">
-              My account
+            <a href="#" className="block py-2 pr-4 pl-3 hover:bg-darkGray5">
+              <div className="flex flex-row items-center space-x-2">
+                <VscAccount />
+                <p>My Account</p>
+              </div>
             </a>
           </li>
           <li>
-            <a onClick={disconnect} href="#" className="block py-2 pr-4 pl-6 hover:bg-darkGray5">
-              Disconnect
+            <a onClick={disconnect} href="#" className="block py-2 pr-4 pl-3 hover:bg-darkGray5">
+              <div className="flex flex-row items-center space-x-2">
+                <ImExit />
+                <p>Disconnect</p>
+              </div>
             </a>
           </li>
         </ul>
@@ -1625,7 +1653,8 @@ export default function WalletPanel(props: {className?: string}) {
       onClick={clickHandler}
       className={`mt-4 rounded border-0 bg-tidebitTheme py-2 px-5 text-base text-white hover:bg-cyan-600 focus:outline-none md:mt-0`}
     >
-      Wallet Connect
+      {/* Wallet Connect */}
+      {t('nav_bar.WalletConnect')}
     </TideButton>
   );
 

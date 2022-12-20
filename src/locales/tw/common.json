@@ -1,5 +1,8 @@
 {
   "nav_bar": {
-    "Trading": "交易"
+    "Trading": "交易",
+    "TideBitUniversity": "TideBit 大學",
+    "HelpCenter": "幫助中心",
+    "WalletConnect": "連接錢包"
   }
 }

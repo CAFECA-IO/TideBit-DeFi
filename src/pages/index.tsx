@@ -1,4 +1,6 @@
 import {serverSideTranslations} from 'next-i18next/serverSideTranslations';
+import {initReactI18next} from 'react-i18next';
+import {i18n} from 'next-i18next';
 import Head from 'next/head';
 import NavBar from '../components/nav_bar/nav_bar';
 import HeroDescription from '../components/hero_description/hero_description';

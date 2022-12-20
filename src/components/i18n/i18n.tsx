@@ -3,6 +3,11 @@ import Image from 'next/image';
 import {useRouter} from 'next/router';
 import Link from 'next/link';
 import useOuterClick from '../../lib/hooks/use_outer_click';
+// import {i18n} from 'next-i18next';
+// import {initReactI18next} from 'react-i18next';
+
+// export const testi18n = async () =>
+//   await i18n?.use(initReactI18next).init({fallbackLng: 'en', debug: true});
 
 const I18n = () => {
   // const [locale, setLocale] = useState('en');

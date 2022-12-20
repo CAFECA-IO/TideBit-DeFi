@@ -19,7 +19,7 @@ import {DELAYED_HIDDEN_SECONDS} from '../../constants/display';
 // import {IWalletConnectOptions, IPushServerOptions} from '@walletconnect/types';
 // import IConnector from '@walletconnect/types';
 import {IConnector} from '../../interfaces/wallet_connect';
-import {useTranslation} from 'react-i18next';
+import {useTranslation} from 'next-i18next';
 // import Connector from '@walletconnect/core';
 
 // import {ExternalProvider} from '@ethersproject/providers';
@@ -1629,8 +1629,8 @@ export default function WalletPanel(props: {className?: string}) {
       onClick={clickHandler}
       className={`mt-4 rounded border-0 bg-tidebitTheme py-2 px-5 text-base text-white hover:bg-cyan-600 focus:outline-none md:mt-0`}
     >
-      Wallet Connect
-      {/* {t('nav_bar.WalletConnect')} */}
+      {/* Wallet Connect */}
+      {t('nav_bar.WalletConnect')}
     </TideButton>
   );
 

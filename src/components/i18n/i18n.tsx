@@ -39,8 +39,8 @@ const I18n = () => {
           className="mx-3 py-1 pb-3 text-base text-gray-700 dark:text-gray-200"
           aria-labelledby="i18nButton"
         >
-          {internationalizationList.map(item => (
-            <li>
+          {internationalizationList.map((item, index) => (
+            <li key={index}>
               <Link
                 locale={item.value}
                 href={asPath}
@@ -65,8 +65,8 @@ const I18n = () => {
           className="mx-3 py-1 pb-3 text-base text-gray-700 dark:text-gray-200"
           aria-labelledby="i18nButton"
         >
-          {internationalizationList.map(item => (
-            <li>
+          {internationalizationList.map((item, index) => (
+            <li key={index}>
               <Link
                 locale={item.value}
                 href={asPath}

@@ -15,9 +15,9 @@ const Trading = () => {
 
       <NavBar />
 
-      {/* <main>
+      <main>
         <OrderSection />
-      </main> */}
+      </main>
     </>
   );
 };

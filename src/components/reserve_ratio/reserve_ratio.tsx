@@ -42,7 +42,7 @@ const ReserveRatio = () => {
           {/* </div> */}
           {/* Desktop Reserve Ratio Card */}
           <div className="top-0 hidden w-full xl:flex">
-            <div className="absolute right-180px w-278px p-4 md:right-250px md:w-400px lg:right-1/3 xl:right-2/5">
+            <div className="absolute w-278px p-4 md:right-250px md:w-400px lg:right-1/3 xl:-top-28 xl:right-1/3 2xl:right-2/5">
               <div className="flex h-full flex-col rounded-lg bg-darkGray4 p-8">
                 <div className="mb-3 flex items-center">
                   <div className="mr-3 inline-flex shrink-0 items-center justify-center rounded-full text-lightWhite">

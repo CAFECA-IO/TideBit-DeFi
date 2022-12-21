@@ -4,5 +4,18 @@
     "TideBitUniversity": "TideBit University",
     "HelpCenter": "Help Center",
     "WalletConnect": "Wallet Connect"
+  },
+  "home_page": {
+    "Cta_HighlightTitle": "Trusted",
+    "Cta_RestTitle": "platform for Crypto investment",
+    "Cta_Description": "Start investing now. On TideBit you can learn, buy and sell cryptocurrency assets with the best quality.",
+    "Cta_Button": "GET STARTED",
+    "StatisticBlock_Title_1": "24h volumn on TideBit",
+    "StatisticBlock_Description_1": "365 Billion",
+    "StatisticBlock_Title_2": "Users on TideBit",
+    "StatisticBlock_Description_2": "30 Billion+",
+    "StatisticBlock_Title_3": "Lowest Fee",
+    "StatisticBlock_Description_3": "<0.10 %"
   }
+
 }

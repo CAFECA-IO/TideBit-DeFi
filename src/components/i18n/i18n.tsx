@@ -40,7 +40,7 @@ const I18n = () => {
           aria-labelledby="i18nButton"
         >
           {internationalizationList.map((item, index) => (
-            <li key={index}>
+            <li key={index} onClick={clickHandler}>
               <Link
                 locale={item.value}
                 href={asPath}
@@ -86,8 +86,8 @@ const I18n = () => {
       <div ref={globalRef}>
         <Image
           src="/elements/globe.svg"
-          width={20}
-          height={20}
+          width={25}
+          height={25}
           className="hover:cursor-pointer hover:text-cyan-300"
           alt="icon"
           onClick={clickHandler}

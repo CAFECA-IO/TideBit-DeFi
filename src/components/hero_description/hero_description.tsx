@@ -26,7 +26,7 @@ export default function HeroDescription() {
 
         {/* <TestReserveRatio /> */}
         <ReserveRatio />
-        <div className="pb-40 lg:pb-96"></div>
+        <div className="pb-40 lg:pb-60 2xl:pb-72"></div>
         <div className="pt-52"></div>
 
         <CryptoCategory />

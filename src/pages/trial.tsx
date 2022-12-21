@@ -3,9 +3,9 @@ import TestReserveRatio from '../components/reserve_ratio/test_reserve_ratio';
 const Trial = () => {
   return (
     <>
-      <main>
+      <div className="flex h-screen w-full items-center justify-center">
         <TestReserveRatio />
-      </main>
+      </div>
     </>
   );
 };

@@ -2,10 +2,20 @@ import React from 'react';
 import Image from 'next/image';
 import {FaLink} from 'react-icons/fa';
 import {BiLinkAlt} from 'react-icons/bi';
+import {useTranslation} from 'next-i18next';
 
-// TODO: mobile version
+type TranslateFunction = (s: string) => string;
+
 // TODO: background image (overlay layout)
 const ReserveRatio = () => {
+  const {i18n} = useTranslation('common');
+  const {t}: {t: TranslateFunction} = useTranslation('common');
+  // console.log(i18n.language);
+
+  const isTw = i18n.language === 'tw';
+  const cardForTwMobile = isTw ? 'w-95px ml-40' : 'w-120px ml-36';
+  const cardForTwDesktop = isTw ? 'w-95px ml-52' : 'w-120px ml-48';
+
   return (
     <>
       <section className="">
@@ -13,8 +23,12 @@ const ReserveRatio = () => {
           <div className="flex items-center justify-center">
             <span className="my-auto h-px w-1/11 rounded bg-white/50 xs:inline-block xs:w-1/10 lg:w-1/5 xl:mx-2"></span>
             <h1 className="mx-1 text-center">
-              Latest
-              <span className="text-tidebitTheme"> reserve ratio</span> of TideBit holdings
+              {t('home_page.ReserveRatioBlock_Title')}
+              <span className="text-tidebitTheme">
+                {' '}
+                {t('home_page.ReserveRatioBlock_TitleHighlight')}
+              </span>{' '}
+              {t('home_page.ReserveRatioBlock_Title_2')}
             </h1>
             <span className="my-auto h-px w-1/11 rounded bg-white/50 xs:inline-block xs:w-1/10 lg:w-1/5 xl:mx-2"></span>
           </div>
@@ -66,7 +80,7 @@ const ReserveRatio = () => {
                   </div>
                   <div className="flex flex-col">
                     <h2 className="text-3xl font-medium text-lightGreen2">USDT</h2>
-                    <p className="-my-1 mb-1">reserve ratio</p>
+                    <p className="-my-1 mb-1"> {t('home_page.ReserveRatioBlock_Card')}</p>
                   </div>
                 </div>
 
@@ -75,8 +89,10 @@ const ReserveRatio = () => {
                     <span className="pr-2 text-6xl font-bold leading-relaxed">120</span> %
                   </p>
 
-                  <div className="ml-48 flex w-120px flex-row items-center rounded-full bg-lightGray3 px-3 py-1 text-sm text-lightWhite">
-                    <p>Blockchain</p>
+                  <div
+                    className={`${cardForTwDesktop} flex flex-row items-center rounded-full bg-lightGray3 px-3 py-1 text-sm text-lightWhite`}
+                  >
+                    <p> {t('home_page.ReserveRatioBlock_Card_2')}</p>
                     <div className="pl-2">
                       <BiLinkAlt size={20} />
                     </div>
@@ -98,11 +114,17 @@ const ReserveRatio = () => {
                   </svg>
                 </a> */}
                   <div className="mb-5 flex flex-col space-y-2">
-                    <div className="text-base text-lightGray">TideBit user asset holdings</div>
+                    <div className="text-base text-lightGray">
+                      {' '}
+                      {t('home_page.ReserveRatioBlock_Description')}
+                    </div>
                     <div>3,016,827,845</div>
                   </div>
                   <div className="flex flex-col space-y-2">
-                    <div className="text-base text-lightGray">TideBit wallet assets</div>
+                    <div className="text-base text-lightGray">
+                      {' '}
+                      {t('home_page.ReserveRatioBlock_Description_2')}
+                    </div>
                     <div>3,061,068,937</div>
                   </div>
                 </div>
@@ -136,7 +158,7 @@ const ReserveRatio = () => {
                   </div>
                   <div className="flex flex-col">
                     <h2 className="text-3xl font-medium text-lightGreen2">USDT</h2>
-                    <p className="-my-1 mb-1">reserve ratio</p>
+                    <p className="-my-1 mb-1"> {t('home_page.ReserveRatioBlock_Card')}</p>
                   </div>
                 </div>
 
@@ -145,8 +167,10 @@ const ReserveRatio = () => {
                     <span className="pr-2 text-6xl font-bold leading-relaxed">120</span> %
                   </p>
 
-                  <div className="ml-36 flex w-120px flex-row items-center rounded-full bg-lightGray3 px-3 py-1 text-sm text-lightWhite">
-                    <p>Blockchain</p>
+                  <div
+                    className={`${cardForTwMobile} flex flex-row items-center rounded-full bg-lightGray3 px-3 py-1 text-sm text-lightWhite`}
+                  >
+                    <p> {t('home_page.ReserveRatioBlock_Card_2')}</p>
                     <div className="pl-2">
                       <BiLinkAlt size={20} />
                     </div>
@@ -168,11 +192,17 @@ const ReserveRatio = () => {
                   </svg>
                 </a> */}
                   <div className="mb-5 flex flex-col space-y-2">
-                    <div className="text-base text-lightGray">TideBit user asset holdings</div>
+                    <div className="text-base text-lightGray">
+                      {' '}
+                      {t('home_page.ReserveRatioBlock_Description')}
+                    </div>
                     <div>3,016,827,845</div>
                   </div>
                   <div className="flex flex-col space-y-2">
-                    <div className="text-base text-lightGray">TideBit wallet assets</div>
+                    <div className="text-base text-lightGray">
+                      {' '}
+                      {t('home_page.ReserveRatioBlock_Description_2')}
+                    </div>
                     <div>3,061,068,937</div>
                   </div>
                 </div>

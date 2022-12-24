@@ -198,6 +198,7 @@ module.exports = {
         darkGray5: '#1E2329',
         darkGray6: '#121214',
         darkGray7: '#161719',
+        darkGray8: '#2A3139',
 
         lightGray: '#8B8E91',
         lightGray1: '#EDECEC',

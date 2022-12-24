@@ -55,12 +55,7 @@ const OrderSection = () => {
       {currentTab}
     </>
   );
-  return (
-    <>
-      <div className="pt-700px text-7xl text-blue-100">OrderSection</div>
-      {displayedTab}
-    </>
-  );
+  return <>{displayedTab}</>;
 };
 
 export default OrderSection;

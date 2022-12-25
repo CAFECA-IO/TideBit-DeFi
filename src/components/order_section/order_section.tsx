@@ -55,6 +55,7 @@ const OrderSection = () => {
       {currentTab}
     </>
   );
+
   return <>{displayedTab}</>;
 };
 

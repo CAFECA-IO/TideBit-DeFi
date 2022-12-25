@@ -1,6 +1,16 @@
-import React from 'react';
+import React, {useRef} from 'react';
 
 const TradeTab = () => {
+  const marginInputRef = useRef<HTMLInputElement>(null);
+
+  const marginInputHandler: React.ChangeEventHandler<HTMLInputElement> = event => {
+    const log = marginInputRef.current?.value;
+    // marginInputRef = event.target.value;
+
+    // console.log(event.target.value);
+    // console.log('margin input handler');
+  };
+
   return (
     <div>
       <div
@@ -48,9 +58,12 @@ const TradeTab = () => {
 
                 <div className="mb-5">
                   <input
+                    ref={marginInputRef}
                     type="number"
-                    className="mt-5 h-44px w-160px bg-darkGray8 pl-5 text-xl text-lightWhite"
+                    className="mt-5 h-44px w-160px bg-darkGray8 pl-5 text-xl text-lightWhite outline-none ring-transparent"
                     value="0.01"
+                    onChange={marginInputHandler}
+                    name="marginInput"
                   />
                 </div>
 

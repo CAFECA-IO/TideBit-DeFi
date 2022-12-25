@@ -15,6 +15,13 @@
     "StatisticBlock_Title_2": "TideBit 的用戶",
     "StatisticBlock_Description_2": "300億+",
     "StatisticBlock_Title_3": "最低手續費",
-    "StatisticBlock_Description_3": "<0.10 %"
+    "StatisticBlock_Description_3": "<0.10 %",
+    "ReserveRatioBlock_Title": "最新的 TideBit ",
+    "ReserveRatioBlock_TitleHighlight": "儲備金比例",
+    "ReserveRatioBlock_Title_2": "",
+    "ReserveRatioBlock_Card": "儲備金比例",
+    "ReserveRatioBlock_Card_2": "區塊鏈",
+    "ReserveRatioBlock_Description": "TideBit 用戶資產持有量",
+    "ReserveRatioBlock_Description_2": "TideBit 錢包資產"
   }
 }

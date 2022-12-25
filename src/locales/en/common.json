@@ -15,7 +15,14 @@
     "StatisticBlock_Title_2": "Users on TideBit",
     "StatisticBlock_Description_2": "30 Billion+",
     "StatisticBlock_Title_3": "Lowest Fee",
-    "StatisticBlock_Description_3": "<0.10 %"
+    "StatisticBlock_Description_3": "<0.10 %",
+    "ReserveRatioBlock_Title": "Latest",
+    "ReserveRatioBlock_TitleHighlight": "reserve ratio",
+    "ReserveRatioBlock_Title_2": "of TideBit holdings",
+    "ReserveRatioBlock_Card": "reserve ratio",
+    "ReserveRatioBlock_Card_2": "Blockchain",
+    "ReserveRatioBlock_Description": "TideBit user asset holdings",
+    "ReserveRatioBlock_Description_2": "TideBit wallet assets"
   }
 
 }

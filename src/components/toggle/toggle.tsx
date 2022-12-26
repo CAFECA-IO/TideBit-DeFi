@@ -1,11 +1,16 @@
 import {useState} from 'react';
 
-const Toggle = () => {
-  const [toggle, setToggle] = useState(false);
+interface IToggleProps {
+  toggle: boolean;
+  toggleClickHandler: () => void;
+}
 
-  const toggleClickHandler = () => {
-    setToggle(!toggle);
-  };
+const Toggle = ({toggle, toggleClickHandler}: IToggleProps) => {
+  // const [toggle, setToggle] = useState(false);
+
+  // const toggleClickHandler = () => {
+  //   setToggle(!toggle);
+  // };
 
   // TODO:[Notes] css solution: after, checked
   const blueStandardToggle = (
@@ -15,19 +20,19 @@ const Toggle = () => {
     </label>
   );
 
-  const toggleSwitch = ' transform translate-x-6';
+  //TODO: bg-tidebitTheme [#29C1E1]
+  const toggleSwitchStyle = toggle ? 'transform translate-x-full' : null;
+  const toggleBackgroundStyle = toggle ? 'bg-[#29C1E1]' : null;
 
   const tidebitToggle = (
     // Toggle background
     <div
       onClick={toggleClickHandler}
-      className="flex h-6 w-12 cursor-pointer items-center rounded-full bg-lightGray3 p-1 md:h-7 md:w-14"
+      className={`${toggleBackgroundStyle} flex h-2 w-8 cursor-pointer items-center rounded-full bg-lightGray3 duration-300 ease-in-out`}
     >
       {/* Switch */}
       <div
-        className={`${
-          toggle ? toggleSwitch : null
-        } h-5 w-5 rounded-full bg-white shadow-md duration-300 ease-in-out md:h-6 md:w-6`}
+        className={`${toggleSwitchStyle} h-4 w-4 rounded-full bg-white shadow-md duration-300 ease-in-out`}
       ></div>
     </div>
   );

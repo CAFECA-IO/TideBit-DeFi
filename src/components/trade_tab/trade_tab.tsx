@@ -4,8 +4,20 @@ import Toggle from '../toggle/toggle';
 const COUNT_CLICK = 0.01;
 
 const TradeTab = () => {
-  const marginInputRef = useRef<HTMLInputElement>(null);
+  // const marginInputRef = useRef<HTMLInputElement>(null);
   const [inputValue, setInputValue] = useState(0.02);
+  const [tpToggle, setTpToggle] = useState(false);
+  const [slToggle, setSlToggle] = useState(false);
+  // const tpToggle = <Toggle />;
+
+  const tpToggleClickHandler = () => {
+    setTpToggle(!tpToggle);
+  };
+
+  const slToggleClickHandler = () => {
+    setSlToggle(!slToggle);
+  };
+
   // const [count, setCount] = useState(0);
   // const count = useRef<number>(0.01);
 
@@ -169,7 +181,7 @@ const TradeTab = () => {
               </div>
 
               {/* ---custom trading info area--- */}
-              <div className="mt-5 flex justify-center text-center text-base tracking-wide">
+              <div className="mt-2 flex justify-center text-center text-base tracking-wide">
                 <div className="">
                   <div className="text-sm text-lightGray">Required Margin</div>
                   <div className="text-base text-lightWhite">$ 13.14 USDT</div>
@@ -185,39 +197,18 @@ const TradeTab = () => {
               </div>
 
               {/* TP */}
-              <div className="flex justify-between">
+              <div className="mt-3 mb-8 flex items-center justify-between">
                 <div className="text-sm text-lightGray">Close at profit</div>
-                <div className="text-base text-lightWhite">$ 65.69 USDT</div>
-
-                {/* <div className="flex justify-center">
-                  <div>
-                    <div className="form-check form-switch mb-7">
-                      <input
-                        className="form-check-input float-left -ml-10 h-5 w-9 cursor-pointer appearance-none rounded-full bg-white bg-gray-300 bg-contain bg-no-repeat align-top shadow-sm focus:outline-none"
-                        type="checkbox"
-                        role="switch"
-                        id="flexSwitchCheckDefault56"
-                      />
-                    </div>
-                    <div className="form-check form-switch">
-                      <input
-                        className="form-check-input float-left -ml-10 h-5 w-9 cursor-pointer appearance-none rounded-full bg-white bg-gray-300 bg-contain bg-no-repeat align-top shadow-sm focus:outline-none"
-                        type="checkbox"
-                        role="switch"
-                        id="flexSwitchCheckChecked76"
-                        checked
-                      />
-                    </div>
-                  </div>
-                </div> */}
+                <div className="hidden text-base text-lightWhite">$ 65.69 USDT</div>
+                <Toggle toggle={tpToggle} toggleClickHandler={tpToggleClickHandler} />
               </div>
 
               {/* SL */}
-              <div className="flex justify-between">
+              <div className="flex items-center justify-between">
                 <div className="text-sm text-lightGray">Clost at loss</div>
-                <div className="text-base text-lightWhite">$ 65.69 USDT</div>
+                <div className="hidden text-base text-lightWhite">$ 65.69 USDT</div>
+                <Toggle toggle={slToggle} toggleClickHandler={slToggleClickHandler} />
               </div>
-              <Toggle />
 
               {/* <div className="mt-20">
                 <NotificationItem />

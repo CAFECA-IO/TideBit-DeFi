@@ -4,51 +4,11 @@ const COUNT_CLICK = 0.01;
 
 const TradeTab = () => {
   const marginInputRef = useRef<HTMLInputElement>(null);
-  // const [inputValue, setInputValue] = useState('');
+  const [inputValue, setInputValue] = useState(0.02);
   // const [count, setCount] = useState(0);
   // const count = useRef<number>(0.01);
 
-  // const marginInputHandler: React.ChangeEventHandler<HTMLInputElement> = event => {
-  //   const log = marginInputRef.current?.value;
-  // };
-
-  const incrementMarginHandler = () => {
-    // console.log('increment margin handler');
-    // let currentInput = Number(marginInputRef.current?.value);
-    // currentInput++;
-    // marginInputRef.current.value = currentInput.toString();
-    // marginInputRef.current += 0.01;
-
-    // count.current += 0.01;
-    // const countRounded = Math.round(count.current * 100) / 100;
-
-    const change = Number(marginInputRef?.current?.value) + COUNT_CLICK;
-    const changeRounded = Math.round(change * 1000000) / 1000000;
-
-    if (marginInputRef.current) {
-      marginInputRef.current.value = changeRounded.toString();
-      // marginInputRef.current.value = change.toString();
-    }
-  };
-
-  const decrementMarginHandler = () => {
-    const change = Number(marginInputRef?.current?.value) - COUNT_CLICK;
-    const changeRounded = Math.round(change * 1000000) / 1000000;
-
-    if (Number(marginInputRef?.current?.value) <= 0 || changeRounded < 0) {
-      return;
-    }
-
-    // count.current -= 0.01;
-    // const countRounded = Math.round(count.current * 100) / 100;
-
-    if (marginInputRef.current) {
-      marginInputRef.current.value = changeRounded.toString();
-      // marginInputRef.current.value = change.toString();
-    }
-  };
-
-  // function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
+  // function maringInputChangeHandler(event: React.ChangeEvent<HTMLInputElement>) {
   //   // update the count and the value of the input element
   //   const value = event.target.value;
   //   const regex = /^\d*\.?\d{0,2}$/;
@@ -57,6 +17,49 @@ const TradeTab = () => {
   //     setCount(parseInt(value));
   //   }
   // }
+
+  const marginInputChangeHandler: React.ChangeEventHandler<HTMLInputElement> = event => {
+    // const log = marginInputRef.current?.value;
+    const regex = /^\d*\.?\d{0,2}$/;
+    const value = event.target.value;
+    if (regex.test(value)) {
+      setInputValue(Number(value));
+    }
+  };
+
+  const incrementMarginHandler = () => {
+    // const change = Number(marginInputRef?.current?.value) + COUNT_CLICK;
+    // const changeRounded = Math.round(change * 1000000) / 1000000;
+
+    // if (marginInputRef.current) {
+    //   marginInputRef.current.value = changeRounded.toString();
+    //     }
+
+    const change = inputValue + COUNT_CLICK;
+    const changeRounded = Math.round(change * 100) / 100;
+    setInputValue(changeRounded);
+  };
+
+  const decrementMarginHandler = () => {
+    // const change = Number(marginInputRef?.current?.value) - COUNT_CLICK;
+    // const changeRounded = Math.round(change * 1000000) / 1000000;
+
+    // if (Number(marginInputRef?.current?.value) <= 0 || changeRounded < 0) {
+    //   return;
+    // }
+
+    // if (marginInputRef.current) {
+    //   marginInputRef.current.value = changeRounded.toString();
+    // }
+    const change = inputValue - COUNT_CLICK;
+    const changeRounded = Math.round(change * 100) / 100;
+
+    // minimum margin is 0.01
+    if (inputValue <= 0 || changeRounded < 0.01) {
+      return;
+    }
+    setInputValue(changeRounded);
+  };
 
   return (
     <div>
@@ -105,11 +108,11 @@ const TradeTab = () => {
 
                 <div className="mb-5">
                   <input
-                    ref={marginInputRef}
                     type="number"
                     className="mt-5 h-44px w-160px bg-darkGray8 text-center text-xl text-lightWhite outline-none ring-transparent"
-                    defaultValue="0.01"
+                    value={inputValue}
                     name="marginInput"
+                    onChange={marginInputChangeHandler}
                   />
                 </div>
 

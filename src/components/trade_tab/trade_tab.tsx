@@ -1,10 +1,12 @@
-import React, {useRef} from 'react';
+import React, {useRef, useState} from 'react';
 
 const COUNT_CLICK = 0.01;
 
 const TradeTab = () => {
   const marginInputRef = useRef<HTMLInputElement>(null);
-  const count = useRef<number>(0.01);
+  // const [inputValue, setInputValue] = useState('');
+  // const [count, setCount] = useState(0);
+  // const count = useRef<number>(0.01);
 
   // const marginInputHandler: React.ChangeEventHandler<HTMLInputElement> = event => {
   //   const log = marginInputRef.current?.value;
@@ -17,30 +19,44 @@ const TradeTab = () => {
     // marginInputRef.current.value = currentInput.toString();
     // marginInputRef.current += 0.01;
 
-    count.current += 0.01;
-    // const change = count.current + COUNT_CLICK;
-    const countRounded = Math.round(count.current * 100) / 100;
+    // count.current += 0.01;
+    // const countRounded = Math.round(count.current * 100) / 100;
+
+    const change = Number(marginInputRef?.current?.value) + COUNT_CLICK;
+    const changeRounded = Math.round(change * 1000000) / 1000000;
 
     if (marginInputRef.current) {
-      marginInputRef.current.value = countRounded.toString();
+      marginInputRef.current.value = changeRounded.toString();
       // marginInputRef.current.value = change.toString();
     }
   };
 
   const decrementMarginHandler = () => {
-    if (count.current <= 0) {
+    const change = Number(marginInputRef?.current?.value) - COUNT_CLICK;
+    const changeRounded = Math.round(change * 1000000) / 1000000;
+
+    if (Number(marginInputRef?.current?.value) <= 0 || changeRounded < 0) {
       return;
     }
 
-    count.current -= 0.01;
-    // const change = count.current + COUNT_CLICK;
-    const countRounded = Math.round(count.current * 100) / 100;
+    // count.current -= 0.01;
+    // const countRounded = Math.round(count.current * 100) / 100;
 
     if (marginInputRef.current) {
-      marginInputRef.current.value = countRounded.toString();
+      marginInputRef.current.value = changeRounded.toString();
       // marginInputRef.current.value = change.toString();
     }
   };
+
+  // function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
+  //   // update the count and the value of the input element
+  //   const value = event.target.value;
+  //   const regex = /^\d*\.?\d{0,2}$/;
+  //   if (regex.test(value)) {
+  //     setInputValue(value);
+  //     setCount(parseInt(value));
+  //   }
+  // }
 
   return (
     <div>

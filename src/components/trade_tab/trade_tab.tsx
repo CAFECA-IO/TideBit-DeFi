@@ -5,9 +5,17 @@ import TradingInput from '../trading_input/trading_input';
 
 const INCREMENT_OR_DECREMENT_UNIT = 0.01;
 
+// TODO: Stop loss limit
+// 1388.4 * 0.82
+const LONG_RESTRICTION_SL = 1138.48;
+// 1388.4 * 1.18
+const SHORT_RESTRICTION_SL = 1638.31;
+
 const TradeTab = () => {
   // const marginInputRef = useRef<HTMLInputElement>(null);
   const [inputValue, setInputValue] = useState(0.02);
+  const [tpValue, setTpValue] = useState(1388.4);
+  const [slValue, setSlValue] = useState(1328.4);
   const [tpToggle, setTpToggle] = useState(false);
   const [slToggle, setSlToggle] = useState(false);
   // const tpToggle = <Toggle />;
@@ -19,19 +27,6 @@ const TradeTab = () => {
   const slToggleClickHandler = () => {
     setSlToggle(!slToggle);
   };
-
-  // const [count, setCount] = useState(0);
-  // const count = useRef<number>(0.01);
-
-  // function maringInputChangeHandler(event: React.ChangeEvent<HTMLInputElement>) {
-  //   // update the count and the value of the input element
-  //   const value = event.target.value;
-  //   const regex = /^\d*\.?\d{0,2}$/;
-  //   if (regex.test(value)) {
-  //     setInputValue(value);
-  //     setCount(parseInt(value));
-  //   }
-  // }
 
   const marginInputChangeHandler: React.ChangeEventHandler<HTMLInputElement> = event => {
     // const log = marginInputRef.current?.value;
@@ -76,6 +71,86 @@ const TradeTab = () => {
     setInputValue(changeRounded);
   };
 
+  const tpInputChangeHandler: React.ChangeEventHandler<HTMLInputElement> = event => {
+    const regex = /^\d*\.?\d{0,2}$/;
+    const value = event.target.value;
+    if (regex.test(value)) {
+      setTpValue(Number(value));
+    }
+  };
+
+  const incrementTpHandler = () => {
+    const change = tpValue + INCREMENT_OR_DECREMENT_UNIT;
+    const changeRounded = Math.round(change * 100) / 100;
+    setTpValue(changeRounded);
+  };
+
+  const decrementTpHandler = () => {
+    const change = tpValue - INCREMENT_OR_DECREMENT_UNIT;
+    const changeRounded = Math.round(change * 100) / 100;
+
+    // minimum margin is 0.01
+    if (tpValue <= 0 || changeRounded < 0.01) {
+      return;
+    }
+    setTpValue(changeRounded);
+  };
+
+  const slInputChangeHandler: React.ChangeEventHandler<HTMLInputElement> = event => {
+    const regex = /^\d*\.?\d{0,2}$/;
+    const value = event.target.value;
+    if (regex.test(value)) {
+      // TODO: Stop loss limit
+      if (Number(value) <= LONG_RESTRICTION_SL) {
+        // console.log('Stop loss restriction');
+      }
+      setSlValue(Number(value));
+    }
+  };
+
+  const incrementSlHandler = () => {
+    const change = slValue + INCREMENT_OR_DECREMENT_UNIT;
+    const changeRounded = Math.round(change * 100) / 100;
+    setSlValue(changeRounded);
+  };
+
+  const decrementSlHandler = () => {
+    const change = slValue - INCREMENT_OR_DECREMENT_UNIT;
+    const changeRounded = Math.round(change * 100) / 100;
+
+    // minimum margin is 0.01
+    if (slValue <= LONG_RESTRICTION_SL || changeRounded < 0.01) {
+      return;
+    }
+    setSlValue(changeRounded);
+  };
+
+  const displayedTpSetting = tpToggle ? (
+    <TradingInput
+      decrementClickHandler={decrementTpHandler}
+      incrementClickHandler={incrementTpHandler}
+      inputValue={tpValue}
+      inputName="tpInput"
+      inputSize="h-25px w-70px text-sm"
+      decrementBtnSize="25"
+      incrementBtnSize="25"
+      inputChangeHandler={tpInputChangeHandler}
+    />
+  ) : null;
+
+  const displayedSlSetting = slToggle ? (
+    <TradingInput
+      decrementClickHandler={decrementSlHandler}
+      incrementClickHandler={incrementSlHandler}
+      inputValue={slValue}
+      inputName="slInput"
+      inputSize="h-25px w-70px text-sm"
+      decrementBtnSize="25"
+      incrementBtnSize="25"
+      inputChangeHandler={slInputChangeHandler}
+    />
+  ) : null;
+
   return (
     <div>
       <div
@@ -96,7 +171,7 @@ const TradeTab = () => {
                 incrementClickHandler={incrementMarginHandler}
                 inputValue={inputValue}
                 inputName="marginInput"
-                inputSize="h-44px w-160px"
+                inputSize="h-44px w-160px text-xl"
                 decrementBtnSize="44"
                 incrementBtnSize="44"
                 inputChangeHandler={marginInputChangeHandler}
@@ -113,32 +188,41 @@ const TradeTab = () => {
 
               {/* ---custom trading info area--- */}
               <div className="mt-2 flex justify-center text-center text-base tracking-wide">
-                <div className="">
+                <div className="space-y-1">
                   <div className="text-sm text-lightGray">Required Margin</div>
                   <div className="text-base text-lightWhite">$ 13.14 USDT</div>
                 </div>
+
                 <div>
                   {/* ml-1 mr-5  */}
                   <span className="mx-5 inline-block h-11 w-px rounded bg-lightGray/50"></span>
                 </div>
-                <div>
+
+                <div className="space-y-1">
                   <div className="text-sm text-lightGray">Value</div>
                   <div className="text-base text-lightWhite">$ 65.69 USDT</div>
                 </div>
               </div>
 
-              {/* TP */}
-              <div className="mt-3 mb-8 flex items-center justify-between">
+              {/* Take Profit Setting */}
+              <div className="mt-3 mb-8 flex h-25px items-center justify-between">
                 <div className="text-sm text-lightGray">Close at profit</div>
                 <div className="hidden text-base text-lightWhite">$ 65.69 USDT</div>
+                {displayedTpSetting}
                 <Toggle toggle={tpToggle} toggleClickHandler={tpToggleClickHandler} />
               </div>
 
-              {/* SL */}
-              <div className="flex items-center justify-between">
-                <div className="text-sm text-lightGray">Clost at loss</div>
-                <div className="hidden text-base text-lightWhite">$ 65.69 USDT</div>
-                <Toggle toggle={slToggle} toggleClickHandler={slToggleClickHandler} />
+              {/* Stop Loss Setting */}
+              <div>
+                <div className="flex h-25px items-center justify-between">
+                  <div className="text-sm text-lightGray">Clost at loss</div>
+                  <div className="hidden text-base text-lightWhite">$ 65.69 USDT</div>
+                  {displayedSlSetting}
+                  <Toggle toggle={slToggle} toggleClickHandler={slToggleClickHandler} />
+                </div>
+                <div>
+                  <input type="checkbox" />
+                </div>
               </div>
 
               {/* <div className="mt-20">

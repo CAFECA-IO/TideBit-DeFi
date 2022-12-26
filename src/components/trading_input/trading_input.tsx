@@ -3,8 +3,8 @@ import React from 'react';
 interface ITradingInputProps {
   decrementClickHandler: () => void;
   incrementClickHandler: () => void;
-  inputValue: number;
   inputChangeHandler: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  inputValue: number;
   inputName: string;
   decrementBtnSize: string;
   incrementBtnSize: string;
@@ -17,7 +17,7 @@ const TradingInput = ({
   inputValue,
   inputChangeHandler,
   inputName,
-  inputSize = 'h-44px w-160px',
+  inputSize = 'h-44px w-160px text-xl',
   decrementBtnSize = '44',
   incrementBtnSize = '44',
   ...otherProps
@@ -59,7 +59,7 @@ const TradingInput = ({
         <div className="">
           <input
             type="number"
-            className={`${inputSize} bg-darkGray8 text-center text-xl text-lightWhite outline-none ring-transparent`}
+            className={`${inputSize} bg-darkGray8 text-center text-lightWhite outline-none ring-transparent`}
             value={inputValue}
             name={inputName}
             onChange={inputChangeHandler}

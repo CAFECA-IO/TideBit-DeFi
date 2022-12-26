@@ -1,7 +1,7 @@
 import React, {useRef, useState} from 'react';
 import Toggle from '../toggle/toggle';
 import TradingInput from '../trading_input/trading_input';
-// import TradingInput from '../trading_input/trading_input';
+import {AiOutlineQuestionCircle} from 'react-icons/ai';
 
 const INCREMENT_OR_DECREMENT_UNIT = 0.01;
 
@@ -13,19 +13,26 @@ const SHORT_RESTRICTION_SL = 1638.31;
 
 const TradeTab = () => {
   // const marginInputRef = useRef<HTMLInputElement>(null);
+  const [tooltipStatus, setTooltipStatus] = useState(0);
+
   const [inputValue, setInputValue] = useState(0.02);
-  const [tpValue, setTpValue] = useState(1388.4);
-  const [slValue, setSlValue] = useState(1328.4);
-  const [tpToggle, setTpToggle] = useState(false);
-  const [slToggle, setSlToggle] = useState(false);
-  // const tpToggle = <Toggle />;
+
+  const [longTpValue, setLongTpValue] = useState(1388.4);
+  const [longSlValue, setLongSlValue] = useState(1328.4);
+  const [longTpToggle, setLongTpToggle] = useState(false);
+  const [longSlToggle, setLongSlToggle] = useState(false);
+
+  const [shortTpValue, setShortTpValue] = useState(1328.4);
+  const [shortSlValue, setShortSlValue] = useState(1388.4);
+  const [shortTpToggle, setShortTpToggle] = useState(false);
+  const [shortSlToggle, setShortSlToggle] = useState(false);
 
   const tpToggleClickHandler = () => {
-    setTpToggle(!tpToggle);
+    setLongTpToggle(!longTpToggle);
   };
 
   const slToggleClickHandler = () => {
-    setSlToggle(!slToggle);
+    setLongSlToggle(!longSlToggle);
   };
 
   const marginInputChangeHandler: React.ChangeEventHandler<HTMLInputElement> = event => {
@@ -75,25 +82,25 @@ const TradeTab = () => {
     const regex = /^\d*\.?\d{0,2}$/;
     const value = event.target.value;
     if (regex.test(value)) {
-      setTpValue(Number(value));
+      setLongTpValue(Number(value));
     }
   };
 
   const incrementTpHandler = () => {
-    const change = tpValue + INCREMENT_OR_DECREMENT_UNIT;
+    const change = longTpValue + INCREMENT_OR_DECREMENT_UNIT;
     const changeRounded = Math.round(change * 100) / 100;
-    setTpValue(changeRounded);
+    setLongTpValue(changeRounded);
   };
 
   const decrementTpHandler = () => {
-    const change = tpValue - INCREMENT_OR_DECREMENT_UNIT;
+    const change = longTpValue - INCREMENT_OR_DECREMENT_UNIT;
     const changeRounded = Math.round(change * 100) / 100;
 
     // minimum margin is 0.01
-    if (tpValue <= 0 || changeRounded < 0.01) {
+    if (longTpValue <= 0 || changeRounded < 0.01) {
       return;
     }
-    setTpValue(changeRounded);
+    setLongTpValue(changeRounded);
   };
 
   const slInputChangeHandler: React.ChangeEventHandler<HTMLInputElement> = event => {
@@ -104,32 +111,32 @@ const TradeTab = () => {
       if (Number(value) <= LONG_RESTRICTION_SL) {
         // console.log('Stop loss restriction');
       }
-      setSlValue(Number(value));
+      setLongSlValue(Number(value));
     }
   };
 
   const incrementSlHandler = () => {
-    const change = slValue + INCREMENT_OR_DECREMENT_UNIT;
+    const change = longSlValue + INCREMENT_OR_DECREMENT_UNIT;
     const changeRounded = Math.round(change * 100) / 100;
-    setSlValue(changeRounded);
+    setLongSlValue(changeRounded);
   };
 
   const decrementSlHandler = () => {
-    const change = slValue - INCREMENT_OR_DECREMENT_UNIT;
+    const change = longSlValue - INCREMENT_OR_DECREMENT_UNIT;
     const changeRounded = Math.round(change * 100) / 100;
 
     // minimum margin is 0.01
-    if (slValue <= LONG_RESTRICTION_SL || changeRounded < 0.01) {
+    if (longSlValue <= LONG_RESTRICTION_SL || changeRounded < 0.01) {
       return;
     }
-    setSlValue(changeRounded);
+    setLongSlValue(changeRounded);
   };
 
-  const displayedTpSetting = tpToggle ? (
+  const displayedTpSetting = longTpToggle ? (
     <TradingInput
       decrementClickHandler={decrementTpHandler}
       incrementClickHandler={incrementTpHandler}
-      inputValue={tpValue}
+      inputValue={longTpValue}
       inputName="tpInput"
       inputSize="h-25px w-70px text-sm"
       decrementBtnSize="25"
@@ -138,11 +145,11 @@ const TradeTab = () => {
     />
   ) : null;
 
-  const displayedSlSetting = slToggle ? (
+  const displayedSlSetting = longSlToggle ? (
     <TradingInput
       decrementClickHandler={decrementSlHandler}
       incrementClickHandler={incrementSlHandler}
-      inputValue={slValue}
+      inputValue={longSlValue}
       inputName="slInput"
       inputSize="h-25px w-70px text-sm"
       decrementBtnSize="25"
@@ -151,8 +158,49 @@ const TradeTab = () => {
     />
   ) : null;
 
+  const guaranteedStop = longSlToggle ? (
+    <div className="mt-4 flex items-center">
+      <input
+        type="checkbox"
+        value=""
+        className="h-5 w-5 rounded text-lightWhite accent-tidebitTheme ring-tidebitTheme focus:accent-tidebitTheme focus:ring-0"
+      />
+      <label className="ml-2 flex text-sm font-medium text-lightGray">
+        Guaranteed stop &nbsp;
+        <span className="text-lightWhite"> (Fee: 0.77 USDT)</span>
+        {/* <span className="">
+          <AiOutlineQuestionCircle size={20} />
+        </span> */}
+        {/* tooltip */}
+        <div className="ml-1">
+          <div
+            className="relative"
+            onMouseEnter={() => setTooltipStatus(3)}
+            onMouseLeave={() => setTooltipStatus(0)}
+          >
+            <div className="cursor-pointer">
+              <AiOutlineQuestionCircle size={20} />
+            </div>
+            {tooltipStatus == 3 && (
+              <div
+                role="tooltip"
+                className="absolute -top-120px -left-52 z-20 mr-8 w-56 rounded bg-darkGray8 p-4 shadow-lg transition duration-150 ease-in-out"
+              >
+                <p className="pb-1 text-sm font-medium text-white">
+                  Guaranteed stop will force the position to close at your chosen rate (price) even
+                  if the market price surpasses it.
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+      </label>
+    </div>
+  ) : null;
+
   return (
     <div>
+      {/* `overflow-y-scroll scroll-smooth` only show the scroll bar but no functionality */}
       <div
         className={`pointer-events-none fixed top-82px right-0 z-10 flex overflow-x-hidden overflow-y-hidden outline-none focus:outline-none`}
       >
@@ -204,12 +252,13 @@ const TradeTab = () => {
                 </div>
               </div>
 
+              {/* ---Long Section--- */}
               {/* Take Profit Setting */}
-              <div className="mt-3 mb-8 flex h-25px items-center justify-between">
+              <div className="mt-3 mb-5 flex h-25px items-center justify-between">
                 <div className="text-sm text-lightGray">Close at profit</div>
                 <div className="hidden text-base text-lightWhite">$ 65.69 USDT</div>
                 {displayedTpSetting}
-                <Toggle toggle={tpToggle} toggleClickHandler={tpToggleClickHandler} />
+                <Toggle toggle={longTpToggle} toggleClickHandler={tpToggleClickHandler} />
               </div>
 
               {/* Stop Loss Setting */}
@@ -218,11 +267,62 @@ const TradeTab = () => {
                   <div className="text-sm text-lightGray">Clost at loss</div>
                   <div className="hidden text-base text-lightWhite">$ 65.69 USDT</div>
                   {displayedSlSetting}
-                  <Toggle toggle={slToggle} toggleClickHandler={slToggleClickHandler} />
+                  <Toggle toggle={longSlToggle} toggleClickHandler={slToggleClickHandler} />
                 </div>
+                {/* Guaranteed stop */}
+                {guaranteedStop}
+              </div>
+
+              {/* Below Use absolute for layout */}
+
+              {/* Long Button */}
+              <div className="absolute top-350px left-20">
+                {/* focus:outline-none focus:ring-4 focus:ring-green-300 */}
+                <button
+                  type="button"
+                  className="mr-2 mb-2 rounded-md bg-lightGreen px-7 py-1 text-sm font-medium tracking-wide text-white transition-colors duration-300 hover:bg-lightGreen/80"
+                >
+                  <b>UP</b> <br />
+                  Above $ 1545.0
+                </button>
+              </div>
+
+              {/* Divider between long and short */}
+              <span className="absolute top-420px my-auto h-px w-full rounded bg-white/50 xs:inline-block"></span>
+
+              {/* ---Short Section--- */}
+
+              <div className="absolute top-480px">
+                {/* Take Profit Setting */}
+                <div className="mt-3 mb-5 flex h-25px items-center justify-between">
+                  <div className="text-sm text-lightGray">Close at profit</div>
+                  <div className="hidden text-base text-lightWhite">$ 65.69 USDT</div>
+                  {displayedTpSetting}
+                  <Toggle toggle={longTpToggle} toggleClickHandler={tpToggleClickHandler} />
+                </div>
+
+                {/* Stop Loss Setting */}
                 <div>
-                  <input type="checkbox" />
+                  <div className="flex h-25px items-center justify-between">
+                    <div className="text-sm text-lightGray">Clost at loss</div>
+                    <div className="hidden text-base text-lightWhite">$ 65.69 USDT</div>
+                    {displayedSlSetting}
+                    <Toggle toggle={longSlToggle} toggleClickHandler={slToggleClickHandler} />
+                  </div>
+                  {/* Guaranteed stop */}
+                  {guaranteedStop}
                 </div>
+              </div>
+
+              {/* Short Button */}
+              <div className="absolute top-600px left-20">
+                <button
+                  type="button"
+                  className="mr-2 mb-2 rounded-md bg-lightRed px-7 py-1 text-sm font-medium tracking-wide text-white transition-colors duration-300 hover:bg-lightRed/80 focus:outline-none focus:ring-4 focus:ring-red-300"
+                >
+                  <b>Down</b> <br />
+                  Below $ 1030.0
+                </button>
               </div>
 
               {/* <div className="mt-20">

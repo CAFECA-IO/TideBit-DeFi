@@ -1,10 +1,12 @@
-import React from 'react';
+import {useState} from 'react';
+import {TRADING_INPUT_STEP} from '../../constants/display';
 
 interface ITradingInputProps {
-  decrementClickHandler: () => void;
-  incrementClickHandler: () => void;
-  inputChangeHandler: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  inputValue: number;
+  decrementClickHandler?: () => void;
+  incrementClickHandler?: () => void;
+  inputChangeHandler?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  inputInitialValue: number;
+  inputValue?: number;
   inputName: string;
   decrementBtnSize: string;
   incrementBtnSize: string;
@@ -12,16 +14,48 @@ interface ITradingInputProps {
 }
 
 const TradingInput = ({
-  decrementClickHandler,
-  incrementClickHandler,
-  inputValue,
-  inputChangeHandler,
+  inputInitialValue = 0.05,
   inputName,
   inputSize = 'h-44px w-160px text-xl',
   decrementBtnSize = '44',
   incrementBtnSize = '44',
   ...otherProps
 }: ITradingInputProps) => {
+  const [inputValue, setInputValue] = useState<number>(inputInitialValue);
+
+  const inputChangeHandler: React.ChangeEventHandler<HTMLInputElement> = event => {
+    // const log = marginInputRef.current?.value;
+    const regex = /^\d*\.?\d{0,2}$/;
+    const value = event.target.value;
+    if (regex.test(value)) {
+      setInputValue(Number(value));
+    }
+  };
+
+  const incrementClickHandler = () => {
+    // const change = Number(marginInputRef?.current?.value) + COUNT_CLICK;
+    // const changeRounded = Math.round(change * 1000000) / 1000000;
+
+    // if (marginInputRef.current) {
+    //   marginInputRef.current.value = changeRounded.toString();
+    //     }
+
+    const change = inputValue + TRADING_INPUT_STEP;
+    const changeRounded = Math.round(change * 100) / 100;
+    setInputValue(changeRounded);
+  };
+
+  const decrementClickHandler = () => {
+    const change = inputValue - TRADING_INPUT_STEP;
+    const changeRounded = Math.round(change * 100) / 100;
+
+    // minimum margin is 0.01
+    if (inputValue <= 0 || changeRounded < 0.01) {
+      return;
+    }
+    setInputValue(changeRounded);
+  };
+
   return (
     <>
       {' '}

@@ -3,8 +3,6 @@ import Toggle from '../toggle/toggle';
 import TradingInput from '../trading_input/trading_input';
 import {AiOutlineQuestionCircle} from 'react-icons/ai';
 
-const INCREMENT_OR_DECREMENT_UNIT = 0.01;
-
 // TODO: Stop loss limit
 // 1388.4 * 0.82
 const LONG_RESTRICTION_SL = 1138.48;
@@ -28,6 +26,9 @@ const TradeTab = () => {
   const [shortTpToggle, setShortTpToggle] = useState(false);
   const [shortSlToggle, setShortSlToggle] = useState(false);
 
+  // ----------margin area----------
+
+  // ----------long area----------
   const longTpToggleClickHandler = () => {
     setLongTpToggle(!longTpToggle);
   };
@@ -36,128 +37,23 @@ const TradeTab = () => {
     setLongSlToggle(!longSlToggle);
   };
 
-  // ----------margin area----------
-  const marginInputChangeHandler: React.ChangeEventHandler<HTMLInputElement> = event => {
-    // const log = marginInputRef.current?.value;
-    const regex = /^\d*\.?\d{0,2}$/;
-    const value = event.target.value;
-    if (regex.test(value)) {
-      setInputValue(Number(value));
-    }
-  };
-
-  const incrementMarginHandler = () => {
-    // const change = Number(marginInputRef?.current?.value) + COUNT_CLICK;
-    // const changeRounded = Math.round(change * 1000000) / 1000000;
-
-    // if (marginInputRef.current) {
-    //   marginInputRef.current.value = changeRounded.toString();
-    //     }
-
-    const change = inputValue + INCREMENT_OR_DECREMENT_UNIT;
-    const changeRounded = Math.round(change * 100) / 100;
-    setInputValue(changeRounded);
-  };
-
-  const decrementMarginHandler = () => {
-    // const change = Number(marginInputRef?.current?.value) - COUNT_CLICK;
-    // const changeRounded = Math.round(change * 1000000) / 1000000;
-
-    // if (Number(marginInputRef?.current?.value) <= 0 || changeRounded < 0) {
-    //   return;
-    // }
-
-    // if (marginInputRef.current) {
-    //   marginInputRef.current.value = changeRounded.toString();
-    // }
-    const change = inputValue - INCREMENT_OR_DECREMENT_UNIT;
-    const changeRounded = Math.round(change * 100) / 100;
-
-    // minimum margin is 0.01
-    if (inputValue <= 0 || changeRounded < 0.01) {
-      return;
-    }
-    setInputValue(changeRounded);
-  };
-
-  // ----------long area----------
-  const longTpInputChangeHandler: React.ChangeEventHandler<HTMLInputElement> = event => {
-    const regex = /^\d*\.?\d{0,2}$/;
-    const value = event.target.value;
-    if (regex.test(value)) {
-      setLongTpValue(Number(value));
-    }
-  };
-
-  const incrementLongTpHandler = () => {
-    const change = longTpValue + INCREMENT_OR_DECREMENT_UNIT;
-    const changeRounded = Math.round(change * 100) / 100;
-    setLongTpValue(changeRounded);
-  };
-
-  const decrementLongTpHandler = () => {
-    const change = longTpValue - INCREMENT_OR_DECREMENT_UNIT;
-    const changeRounded = Math.round(change * 100) / 100;
-
-    // minimum margin is 0.01
-    if (longTpValue <= 0 || changeRounded < 0.01) {
-      return;
-    }
-    setLongTpValue(changeRounded);
-  };
-
-  const longSlInputChangeHandler: React.ChangeEventHandler<HTMLInputElement> = event => {
-    const regex = /^\d*\.?\d{0,2}$/;
-    const value = event.target.value;
-    if (regex.test(value)) {
-      // TODO: Stop loss limit
-      if (Number(value) <= LONG_RESTRICTION_SL) {
-        // console.log('Stop loss restriction');
-      }
-      setLongSlValue(Number(value));
-    }
-  };
-
-  const incrementLongSlHandler = () => {
-    const change = longSlValue + INCREMENT_OR_DECREMENT_UNIT;
-    const changeRounded = Math.round(change * 100) / 100;
-    setLongSlValue(changeRounded);
-  };
-
-  const decrementLongSlHandler = () => {
-    const change = longSlValue - INCREMENT_OR_DECREMENT_UNIT;
-    const changeRounded = Math.round(change * 100) / 100;
-
-    // minimum margin is 0.01
-    if (longSlValue <= LONG_RESTRICTION_SL || changeRounded < 0.01) {
-      return;
-    }
-    setLongSlValue(changeRounded);
-  };
-
   const displayedLongTpSetting = longTpToggle ? (
     <TradingInput
-      decrementClickHandler={decrementLongTpHandler}
-      incrementClickHandler={incrementLongTpHandler}
-      inputValue={longTpValue}
+      inputInitialValue={longTpValue}
       inputName="tpInput"
       inputSize="h-25px w-70px text-sm"
       decrementBtnSize="25"
       incrementBtnSize="25"
-      inputChangeHandler={longTpInputChangeHandler}
     />
   ) : null;
 
   const displayedLongSlSetting = longSlToggle ? (
     <TradingInput
-      decrementClickHandler={decrementLongSlHandler}
-      incrementClickHandler={incrementLongSlHandler}
-      inputValue={longSlValue}
+      inputInitialValue={longSlValue}
       inputName="slInput"
       inputSize="h-25px w-70px text-sm"
       decrementBtnSize="25"
       incrementBtnSize="25"
-      inputChangeHandler={longSlInputChangeHandler}
     />
   ) : null;
 
@@ -210,83 +106,24 @@ const TradeTab = () => {
     setShortSlToggle(!shortSlToggle);
   };
 
-  const shortTpInputChangeHandler: React.ChangeEventHandler<HTMLInputElement> = event => {
-    const regex = /^\d*\.?\d{0,2}$/;
-    const value = event.target.value;
-    if (regex.test(value)) {
-      setShortTpValue(Number(value));
-    }
-  };
-
-  const incrementShortTpHandler = () => {
-    const change = shortTpValue + INCREMENT_OR_DECREMENT_UNIT;
-    const changeRounded = Math.round(change * 100) / 100;
-    setShortTpValue(changeRounded);
-  };
-
-  const decrementShortTpHandler = () => {
-    const change = shortTpValue - INCREMENT_OR_DECREMENT_UNIT;
-    const changeRounded = Math.round(change * 100) / 100;
-
-    // minimum margin is 0.01
-    if (longTpValue <= 0 || changeRounded < 0.01) {
-      return;
-    }
-    setShortTpValue(changeRounded);
-  };
-
-  const shortSlInputChangeHandler: React.ChangeEventHandler<HTMLInputElement> = event => {
-    const regex = /^\d*\.?\d{0,2}$/;
-    const value = event.target.value;
-    if (regex.test(value)) {
-      // TODO: Stop loss limit
-      if (Number(value) <= LONG_RESTRICTION_SL) {
-        // console.log('Stop loss restriction');
-      }
-      setShortSlValue(Number(value));
-    }
-  };
-
-  const incrementShortSlHandler = () => {
-    const change = shortSlValue + INCREMENT_OR_DECREMENT_UNIT;
-    const changeRounded = Math.round(change * 100) / 100;
-    setShortSlValue(changeRounded);
-  };
-
-  const decrementShortSlHandler = () => {
-    const change = shortSlValue - INCREMENT_OR_DECREMENT_UNIT;
-    const changeRounded = Math.round(change * 100) / 100;
-
-    // minimum margin is 0.01
-    if (shortSlValue <= LONG_RESTRICTION_SL || changeRounded < 0.01) {
-      return;
-    }
-    setShortSlValue(changeRounded);
-  };
-
   const displayedShortTpSetting = shortTpToggle ? (
     <TradingInput
-      decrementClickHandler={decrementShortTpHandler}
-      incrementClickHandler={incrementShortTpHandler}
-      inputValue={shortTpValue}
+      inputInitialValue={shortTpValue}
       inputName="shortTpInput"
       inputSize="h-25px w-70px text-sm"
       decrementBtnSize="25"
       incrementBtnSize="25"
-      inputChangeHandler={shortTpInputChangeHandler}
     />
   ) : null;
 
   const displayedShortSlSetting = shortSlToggle ? (
     <TradingInput
-      decrementClickHandler={decrementShortSlHandler}
-      incrementClickHandler={incrementShortSlHandler}
+      inputInitialValue={shortSlValue}
       inputValue={shortSlValue}
       inputName="slInput"
       inputSize="h-25px w-70px text-sm"
       decrementBtnSize="25"
       incrementBtnSize="25"
-      inputChangeHandler={shortSlInputChangeHandler}
     />
   ) : null;
 
@@ -347,14 +184,11 @@ const TradeTab = () => {
 
               {/* ---margin input area--- */}
               <TradingInput
-                decrementClickHandler={decrementMarginHandler}
-                incrementClickHandler={incrementMarginHandler}
-                inputValue={inputValue}
+                inputInitialValue={inputValue}
                 inputName="marginInput"
                 inputSize="h-44px w-160px text-xl"
                 decrementBtnSize="44"
                 incrementBtnSize="44"
-                inputChangeHandler={marginInputChangeHandler}
               />
 
               {/* ---universal trading info area--- */}
@@ -421,7 +255,7 @@ const TradeTab = () => {
 
               {/* Divider between long and short */}
               <span className="absolute top-420px my-auto h-px w-full rounded bg-white/50 xs:inline-block"></span>
-
+              {/* visible: false 保留位置 */}
               {/* ---Short Section--- */}
               <div className="">
                 {/* custom trading info */}

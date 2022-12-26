@@ -1,7 +1,9 @@
 import React, {useRef, useState} from 'react';
 import Toggle from '../toggle/toggle';
+import TradingInput from '../trading_input/trading_input';
+// import TradingInput from '../trading_input/trading_input';
 
-const COUNT_CLICK = 0.01;
+const INCREMENT_OR_DECREMENT_UNIT = 0.01;
 
 const TradeTab = () => {
   // const marginInputRef = useRef<HTMLInputElement>(null);
@@ -48,7 +50,7 @@ const TradeTab = () => {
     //   marginInputRef.current.value = changeRounded.toString();
     //     }
 
-    const change = inputValue + COUNT_CLICK;
+    const change = inputValue + INCREMENT_OR_DECREMENT_UNIT;
     const changeRounded = Math.round(change * 100) / 100;
     setInputValue(changeRounded);
   };
@@ -64,7 +66,7 @@ const TradeTab = () => {
     // if (marginInputRef.current) {
     //   marginInputRef.current.value = changeRounded.toString();
     // }
-    const change = inputValue - COUNT_CLICK;
+    const change = inputValue - INCREMENT_OR_DECREMENT_UNIT;
     const changeRounded = Math.round(change * 100) / 100;
 
     // minimum margin is 0.01
@@ -89,87 +91,15 @@ const TradeTab = () => {
               {/* <h1 className="pl-5 text-2xl font-bold">Start to trade</h1> */}
 
               {/* ---margin input area--- */}
-              <div className="mt-3 flex items-center justify-center">
-                {/* '-.svg' symbol */}
-                <button type="button" onClick={decrementMarginHandler}>
-                  <svg
-                    id="Group_15147"
-                    data-name="Group 15147"
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="44"
-                    height="44"
-                    viewBox="0 0 44 44"
-                  >
-                    <path
-                      id="Rectangle_812"
-                      data-name="Rectangle 812"
-                      d="M22,0H44a0,0,0,0,1,0,0V44a0,0,0,0,1,0,0H22A22,22,0,0,1,0,22v0A22,22,0,0,1,22,0Z"
-                      fill="#404a55"
-                    />
-                    <line
-                      id="Line_377"
-                      data-name="Line 377"
-                      x2="15"
-                      transform="translate(14.5 22.5)"
-                      fill="none"
-                      stroke="#f2f2f2"
-                      strokeLinecap="round"
-                      strokeWidth="3"
-                    />
-                  </svg>
-                </button>
-
-                <div className="">
-                  <input
-                    type="number"
-                    className="h-44px w-160px bg-darkGray8 text-center text-xl text-lightWhite outline-none ring-transparent"
-                    value={inputValue}
-                    name="marginInput"
-                    onChange={marginInputChangeHandler}
-                  />
-                </div>
-
-                {/* '+.svg' symbol */}
-                <button type="button" onClick={incrementMarginHandler} className="">
-                  <svg
-                    id="Group_15149"
-                    data-name="Group 15149"
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="44"
-                    height="44"
-                    viewBox="0 0 44 44"
-                  >
-                    <path
-                      id="Rectangle_813"
-                      data-name="Rectangle 813"
-                      d="M0,0H22A22,22,0,0,1,44,22v0A22,22,0,0,1,22,44H0a0,0,0,0,1,0,0V0A0,0,0,0,1,0,0Z"
-                      fill="#404a55"
-                    />
-                    <g id="Group_15148" data-name="Group 15148" transform="translate(11.26 15)">
-                      <line
-                        id="Line_375"
-                        data-name="Line 375"
-                        x2="15"
-                        transform="translate(0 7.5)"
-                        fill="none"
-                        stroke="#f2f2f2"
-                        strokeLinecap="round"
-                        strokeWidth="3"
-                      />
-                      <line
-                        id="Line_376"
-                        data-name="Line 376"
-                        y1="15"
-                        transform="translate(7.74)"
-                        fill="none"
-                        stroke="#f2f2f2"
-                        strokeLinecap="round"
-                        strokeWidth="3"
-                      />
-                    </g>
-                  </svg>
-                </button>
-              </div>
+              <TradingInput
+                decrementClickHandler={decrementMarginHandler}
+                incrementClickHandler={incrementMarginHandler}
+                inputValue={inputValue}
+                inputName="marginInput"
+                inputSize="h-44px w-160px"
+                decrementBtnSize="44"
+                incrementBtnSize="44"
+              />
 
               {/* ---universal trading info area--- */}
               <div className="mt-2 text-lightGray">

@@ -1,14 +1,45 @@
 import React, {useRef} from 'react';
 
+const COUNT_CLICK = 0.01;
+
 const TradeTab = () => {
   const marginInputRef = useRef<HTMLInputElement>(null);
+  const count = useRef<number>(0.01);
 
-  const marginInputHandler: React.ChangeEventHandler<HTMLInputElement> = event => {
-    const log = marginInputRef.current?.value;
-    // marginInputRef = event.target.value;
+  // const marginInputHandler: React.ChangeEventHandler<HTMLInputElement> = event => {
+  //   const log = marginInputRef.current?.value;
+  // };
 
-    // console.log(event.target.value);
-    // console.log('margin input handler');
+  const incrementMarginHandler = () => {
+    // console.log('increment margin handler');
+    // let currentInput = Number(marginInputRef.current?.value);
+    // currentInput++;
+    // marginInputRef.current.value = currentInput.toString();
+    // marginInputRef.current += 0.01;
+
+    count.current += 0.01;
+    // const change = count.current + COUNT_CLICK;
+    const countRounded = Math.round(count.current * 100) / 100;
+
+    if (marginInputRef.current) {
+      marginInputRef.current.value = countRounded.toString();
+      // marginInputRef.current.value = change.toString();
+    }
+  };
+
+  const decrementMarginHandler = () => {
+    if (count.current <= 0) {
+      return;
+    }
+
+    count.current -= 0.01;
+    // const change = count.current + COUNT_CLICK;
+    const countRounded = Math.round(count.current * 100) / 100;
+
+    if (marginInputRef.current) {
+      marginInputRef.current.value = countRounded.toString();
+      // marginInputRef.current.value = change.toString();
+    }
   };
 
   return (
@@ -28,7 +59,7 @@ const TradeTab = () => {
               {/* ---margin input area--- */}
               <div className="-mt-5 flex items-center">
                 {/* '-' svg */}
-                <div>
+                <button type="button" onClick={decrementMarginHandler}>
                   <svg
                     id="Group_15147"
                     data-name="Group 15147"
@@ -50,25 +81,24 @@ const TradeTab = () => {
                       transform="translate(14.5 22.5)"
                       fill="none"
                       stroke="#f2f2f2"
-                      stroke-linecap="round"
-                      stroke-width="3"
+                      strokeLinecap="round"
+                      strokeWidth="3"
                     />
                   </svg>
-                </div>
+                </button>
 
                 <div className="mb-5">
                   <input
                     ref={marginInputRef}
                     type="number"
-                    className="mt-5 h-44px w-160px bg-darkGray8 pl-5 text-xl text-lightWhite outline-none ring-transparent"
-                    value="0.01"
-                    onChange={marginInputHandler}
+                    className="mt-5 h-44px w-160px bg-darkGray8 text-center text-xl text-lightWhite outline-none ring-transparent"
+                    defaultValue="0.01"
                     name="marginInput"
                   />
                 </div>
 
                 {/* '+' svg */}
-                <div className="">
+                <button type="button" onClick={incrementMarginHandler} className="">
                   <svg
                     id="Group_15149"
                     data-name="Group 15149"
@@ -91,8 +121,8 @@ const TradeTab = () => {
                         transform="translate(0 7.5)"
                         fill="none"
                         stroke="#f2f2f2"
-                        stroke-linecap="round"
-                        stroke-width="3"
+                        strokeLinecap="round"
+                        strokeWidth="3"
                       />
                       <line
                         id="Line_376"
@@ -101,12 +131,12 @@ const TradeTab = () => {
                         transform="translate(7.74)"
                         fill="none"
                         stroke="#f2f2f2"
-                        stroke-linecap="round"
-                        stroke-width="3"
+                        strokeLinecap="round"
+                        strokeWidth="3"
                       />
                     </g>
                   </svg>
-                </div>
+                </button>
               </div>
 
               {/* <div className="mt-20">

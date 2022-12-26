@@ -128,6 +128,8 @@ module.exports = {
         '500px': '500px',
         '550px': '550px',
         '600px': '600px',
+        '620px': '620px',
+        '650px': '650px',
         '700px': '700px',
         '2rem': '2rem',
         '3rem': '3rem',

@@ -99,6 +99,7 @@ const TradeTab = () => {
                 inputSize="h-44px w-160px"
                 decrementBtnSize="44"
                 incrementBtnSize="44"
+                inputChangeHandler={marginInputChangeHandler}
               />
 
               {/* ---universal trading info area--- */}

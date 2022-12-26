@@ -16,6 +16,7 @@ const TradeTab = () => {
 
   const [inputValue, setInputValue] = useState(0.02);
 
+  // TODO: useState or constant to refresh?
   const [longTpValue, setLongTpValue] = useState(1388.4);
   const [longSlValue, setLongSlValue] = useState(1328.4);
   const [longTpToggle, setLongTpToggle] = useState(false);

@@ -1,24 +1,74 @@
 import {useState} from 'react';
 import {TRADING_INPUT_STEP} from '../../constants/display';
 
+export const TRADING_INPUT_HANDLER_TYPE_CLASSES = {
+  margin: {
+    input: 'margin-input',
+    decrement: 'margin-decrement',
+    increment: 'margin-increment',
+  },
+  long: {
+    takeProfit: {
+      input: 'long-take-profit-input',
+      decrement: 'long-take-profit-decrement',
+      increment: 'long-take-profit-increment',
+    },
+    stopLoss: {
+      input: 'long-stop-loss-input',
+      decrement: 'long-stop-loss-decrement',
+      increment: 'long-stop-loss-increment',
+    },
+  },
+  short: {
+    takeProfit: {
+      input: 'short-take-profit-input',
+      decrement: 'short-take-profit-decrement',
+      increment: 'short-take-profit-increment',
+    },
+    stopLoss: {
+      input: 'short-stop-loss-input',
+      decrement: 'short-stop-loss-decrement',
+      increment: 'short-stop-loss-increment',
+    },
+  },
+};
+
 interface ITradingInputProps {
   decrementClickHandler?: () => void;
   incrementClickHandler?: () => void;
   inputChangeHandler?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   inputInitialValue: number;
-  inputValue?: number;
+
+  inputValue: number;
+  setInputValue: React.Dispatch<React.SetStateAction<number>>;
+
   inputName: string;
   decrementBtnSize: string;
   incrementBtnSize: string;
   inputSize: string;
+
+  shortSlLimit: number;
+  longSlLimit: number;
+
+  shortTpLimit: number;
+  longTpLimit: number;
 }
 
 const TradingInput = ({
-  inputInitialValue = 0.05,
+  inputInitialValue,
   inputName,
   inputSize = 'h-44px w-160px text-xl',
   decrementBtnSize = '44',
   incrementBtnSize = '44',
+  // inputValue,
+  // setInputValue,
+
+  longSlLimit,
+  shortSlLimit,
+
+  longTpLimit,
+  shortTpLimit,
+
   ...otherProps
 }: ITradingInputProps) => {
   const [inputValue, setInputValue] = useState<number>(inputInitialValue);
@@ -54,6 +104,134 @@ const TradingInput = ({
       return;
     }
     setInputValue(changeRounded);
+  };
+
+  // ----------Margin handlers-----
+  const marginDecrementHandler = () => {
+    const change = inputValue - TRADING_INPUT_STEP;
+    const changeRounded = Math.round(change * 100) / 100;
+
+    // minimum margin is 0.01
+    if (inputValue <= 0 || changeRounded < 0.01) {
+      return;
+    }
+    setInputValue(changeRounded);
+  };
+
+  const marginIncrementHandler = () => {
+    const change = inputValue + TRADING_INPUT_STEP;
+    const changeRounded = Math.round(change * 100) / 100;
+    setInputValue(changeRounded);
+  };
+
+  const marginInputChangeHandler: React.ChangeEventHandler<HTMLInputElement> = event => {
+    // const log = marginInputRef.current?.value;
+    const regex = /^\d*\.?\d{0,2}$/;
+    const value = event.target.value;
+    if (regex.test(value)) {
+      setInputValue(Number(value));
+    }
+  };
+
+  // ----------Long handlers----------
+  const longSlInputChangeHandler: React.ChangeEventHandler<HTMLInputElement> = event => {
+    const regex = /^\d*\.?\d{0,2}$/;
+    const value = event.target.value;
+    if (regex.test(value)) {
+      // TODO: Stop loss limit
+      if (Number(value) <= longSlLimit) {
+        // console.log('Stop loss restriction');
+        // <p>Couldn't below longSlLimit</p>
+      }
+      setInputValue(Number(value));
+    }
+  };
+
+  // TODO: Logic condition for Long's stop loss
+  // const longSlIncrementHandler = () => {}
+  const longSlDecrementHandler = () => {
+    const change = inputValue - TRADING_INPUT_STEP;
+    const changeRounded = Math.round(change * 100) / 100;
+
+    // Long's stop loss limit
+    if (longSlLimit >= inputValue || changeRounded < 0.01) {
+      // <p>Couldn't below longSlLimit</p>
+      return;
+    }
+    setInputValue(changeRounded);
+  };
+
+  // TODO: Limit condition for Long's take profit
+  const longTpInputChangeHandler: React.ChangeEventHandler<HTMLInputElement> = event => {
+    const regex = /^\d*\.?\d{0,2}$/;
+    const value = event.target.value;
+    if (regex.test(value)) {
+      setInputValue(Number(value));
+    }
+  };
+
+  // TODO: Logic condition for Long's stop loss
+  // const longTpDecrementHandler = () => {}
+  // const longTpIncrementHandler = () => {}
+
+  // ----------Short handlers----------
+  const shortSlInputChangeHandler: React.ChangeEventHandler<HTMLInputElement> = event => {
+    const regex = /^\d*\.?\d{0,2}$/;
+    const value = event.target.value;
+    if (regex.test(value)) {
+      // TODO: Stop loss limit
+      if (shortSlLimit <= Number(value)) {
+        // console.log('Stop loss restriction');
+        // <p>Couldn't above shortSlLimit</p>
+      }
+      setInputValue(Number(value));
+    }
+  };
+
+  const shortSlDecrementHandler = () => {
+    const change = inputValue - TRADING_INPUT_STEP;
+    const changeRounded = Math.round(change * 100) / 100;
+
+    // Short's stop loss limit
+    if (shortSlLimit <= inputValue || changeRounded < 0.01) {
+      // <p>Couldn't above shortSlLimit</p>
+      return;
+    }
+    setInputValue(changeRounded);
+  };
+
+  const getHandler = (handlerType: string) => {
+    return {
+      [TRADING_INPUT_HANDLER_TYPE_CLASSES.margin.input]: marginInputChangeHandler,
+      [TRADING_INPUT_HANDLER_TYPE_CLASSES.margin.increment]: marginIncrementHandler,
+      [TRADING_INPUT_HANDLER_TYPE_CLASSES.margin.decrement]: marginDecrementHandler,
+      [TRADING_INPUT_HANDLER_TYPE_CLASSES.long.stopLoss.input]: longSlInputChangeHandler,
+      [TRADING_INPUT_HANDLER_TYPE_CLASSES.long.stopLoss.decrement]: longSlDecrementHandler,
+      [TRADING_INPUT_HANDLER_TYPE_CLASSES.long.takeProfit.input]: longTpInputChangeHandler,
+      [TRADING_INPUT_HANDLER_TYPE_CLASSES.short.stopLoss.input]: shortSlInputChangeHandler,
+      [TRADING_INPUT_HANDLER_TYPE_CLASSES.short.stopLoss.decrement]: shortSlDecrementHandler,
+    }[handlerType];
+
+    // switch (type) {
+    //   case 'marginDecrement':
+    //     return marginDecrementHandler;
+    //   case 'marginIncrement':
+    //     return marginIncrementHandler;
+    //   case 'marginInputChange':
+    //     return marginInputChangeHandler;
+    //   case 'longSlDecrement':
+    //     return longSlDecrementHandler;
+    //   case 'longSlInputChange':
+    //     return longSlInputChangeHandler;
+    //   case 'longTpInputChange':
+    //     return longTpInputChangeHandler;
+    //   case 'shortSlDecrement':
+    //     return shortSlDecrementHandler;
+    //   case 'shortSlInputChange':
+    //     return shortSlInputChangeHandler;
+    //   default:
+    //     return () => {};
+    // }
   };
 
   return (

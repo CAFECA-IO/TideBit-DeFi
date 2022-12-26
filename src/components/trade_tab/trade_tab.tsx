@@ -1,4 +1,5 @@
 import React, {useRef, useState} from 'react';
+import Toggle from '../toggle/toggle';
 
 const COUNT_CLICK = 0.01;
 
@@ -76,8 +77,8 @@ const TradeTab = () => {
               {/* <h1 className="pl-5 text-2xl font-bold">Start to trade</h1> */}
 
               {/* ---margin input area--- */}
-              <div className="-mt-5 flex items-center">
-                {/* '-' svg */}
+              <div className="mt-3 flex items-center justify-center">
+                {/* '-.svg' symbol */}
                 <button type="button" onClick={decrementMarginHandler}>
                   <svg
                     id="Group_15147"
@@ -106,17 +107,17 @@ const TradeTab = () => {
                   </svg>
                 </button>
 
-                <div className="mb-5">
+                <div className="">
                   <input
                     type="number"
-                    className="mt-5 h-44px w-160px bg-darkGray8 text-center text-xl text-lightWhite outline-none ring-transparent"
+                    className="h-44px w-160px bg-darkGray8 text-center text-xl text-lightWhite outline-none ring-transparent"
                     value={inputValue}
                     name="marginInput"
                     onChange={marginInputChangeHandler}
                   />
                 </div>
 
-                {/* '+' svg */}
+                {/* '+.svg' symbol */}
                 <button type="button" onClick={incrementMarginHandler} className="">
                   <svg
                     id="Group_15149"
@@ -157,6 +158,66 @@ const TradeTab = () => {
                   </svg>
                 </button>
               </div>
+
+              {/* ---universal trading info area--- */}
+              <div className="mt-2 text-lightGray">
+                <div className="flex justify-center text-xs">ETH</div>
+                <div className="mt-2">
+                  <div className="flex justify-center text-sm">Leverage</div>
+                  <div className="flex justify-center text-base text-lightWhite">1:5</div>
+                </div>
+              </div>
+
+              {/* ---custom trading info area--- */}
+              <div className="mt-5 flex justify-center text-center text-base tracking-wide">
+                <div className="">
+                  <div className="text-sm text-lightGray">Required Margin</div>
+                  <div className="text-base text-lightWhite">$ 13.14 USDT</div>
+                </div>
+                <div>
+                  {/* ml-1 mr-5  */}
+                  <span className="mx-5 inline-block h-11 w-px rounded bg-lightGray/50"></span>
+                </div>
+                <div>
+                  <div className="text-sm text-lightGray">Value</div>
+                  <div className="text-base text-lightWhite">$ 65.69 USDT</div>
+                </div>
+              </div>
+
+              {/* TP */}
+              <div className="flex justify-between">
+                <div className="text-sm text-lightGray">Close at profit</div>
+                <div className="text-base text-lightWhite">$ 65.69 USDT</div>
+
+                {/* <div className="flex justify-center">
+                  <div>
+                    <div className="form-check form-switch mb-7">
+                      <input
+                        className="form-check-input float-left -ml-10 h-5 w-9 cursor-pointer appearance-none rounded-full bg-white bg-gray-300 bg-contain bg-no-repeat align-top shadow-sm focus:outline-none"
+                        type="checkbox"
+                        role="switch"
+                        id="flexSwitchCheckDefault56"
+                      />
+                    </div>
+                    <div className="form-check form-switch">
+                      <input
+                        className="form-check-input float-left -ml-10 h-5 w-9 cursor-pointer appearance-none rounded-full bg-white bg-gray-300 bg-contain bg-no-repeat align-top shadow-sm focus:outline-none"
+                        type="checkbox"
+                        role="switch"
+                        id="flexSwitchCheckChecked76"
+                        checked
+                      />
+                    </div>
+                  </div>
+                </div> */}
+              </div>
+
+              {/* SL */}
+              <div className="flex justify-between">
+                <div className="text-sm text-lightGray">Clost at loss</div>
+                <div className="text-base text-lightWhite">$ 65.69 USDT</div>
+              </div>
+              <Toggle />
 
               {/* <div className="mt-20">
                 <NotificationItem />

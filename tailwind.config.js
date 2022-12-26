@@ -8,6 +8,9 @@ module.exports = {
   ],
   theme: {
     container: {},
+    content: {
+      "''": '',
+    },
     fontSize: {
       '3xs': ['8px', '12px'],
       xxs: ['10px', '12px'],
@@ -83,6 +86,7 @@ module.exports = {
         '54px': '54px',
         '55px': '55px',
         '65px': '65px',
+        '69px': '69px',
         '70px': '70px',
         '75px': '75px',
         '80px': '80px',

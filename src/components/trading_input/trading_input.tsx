@@ -92,7 +92,11 @@ const TradingInput = ({
 
     if (regex.test(value)) {
       // TODO: 讓 input 不能變成 '01' 的條件式
-      if (Number(value) >= upperLimit || Number(value) <= lowerLimit) {
+      // if (Number(value) >= upperLimit || Number(value) <= lowerLimit) {
+      //   return;
+      // }
+
+      if (Number(value) >= upperLimit) {
         return;
       }
 

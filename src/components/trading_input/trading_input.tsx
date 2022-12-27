@@ -34,24 +34,29 @@ export const TRADING_INPUT_HANDLER_TYPE_CLASSES = {
 };
 
 interface ITradingInputProps {
-  decrementClickHandler?: () => void;
-  incrementClickHandler?: () => void;
-  inputChangeHandler?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  // decrementClickHandler?: () => void;
+  // incrementClickHandler?: () => void;
+  // inputChangeHandler?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   inputInitialValue: number;
 
-  inputValue: number;
-  setInputValue: React.Dispatch<React.SetStateAction<number>>;
+  inputValue?: number;
+  setInputValue?: React.Dispatch<React.SetStateAction<number>>;
 
   inputName: string;
   decrementBtnSize: string;
   incrementBtnSize: string;
   inputSize: string;
 
-  shortSlLimit: number;
-  longSlLimit: number;
+  handlerType?: string;
+  lowerLimit: number;
+  upperLimit: number;
 
-  shortTpLimit: number;
-  longTpLimit: number;
+  shortSlLimit?: number;
+  longSlLimit?: number;
+  marginLimit?: number;
+
+  shortTpLimit?: number;
+  longTpLimit?: number;
 }
 
 const TradingInput = ({
@@ -63,8 +68,13 @@ const TradingInput = ({
   // inputValue,
   // setInputValue,
 
+  handlerType,
+  lowerLimit,
+  upperLimit,
+
   longSlLimit,
   shortSlLimit,
+  marginLimit,
 
   longTpLimit,
   shortTpLimit,
@@ -73,11 +83,19 @@ const TradingInput = ({
 }: ITradingInputProps) => {
   const [inputValue, setInputValue] = useState<number>(inputInitialValue);
 
+  const regex = /^\d*\.?\d{0,2}$/;
+
   const inputChangeHandler: React.ChangeEventHandler<HTMLInputElement> = event => {
     // const log = marginInputRef.current?.value;
-    const regex = /^\d*\.?\d{0,2}$/;
+    // const regex = /^\d*\.?\d{0,2}$/;
     const value = event.target.value;
+
     if (regex.test(value)) {
+      // TODO: 讓 input 不能變成 '01' 的條件式
+      if (Number(value) >= upperLimit || Number(value) <= lowerLimit) {
+        return;
+      }
+
       setInputValue(Number(value));
     }
   };
@@ -92,21 +110,34 @@ const TradingInput = ({
 
     const change = inputValue + TRADING_INPUT_STEP;
     const changeRounded = Math.round(change * 100) / 100;
-    setInputValue(changeRounded);
-  };
 
-  const decrementClickHandler = () => {
-    const change = inputValue - TRADING_INPUT_STEP;
-    const changeRounded = Math.round(change * 100) / 100;
-
-    // minimum margin is 0.01
-    if (inputValue <= 0 || changeRounded < 0.01) {
+    if (changeRounded >= upperLimit) {
       return;
     }
     setInputValue(changeRounded);
   };
 
-  // ----------Margin handlers-----
+  /** Margin
+ // minimum margin is 0.01
+    if (inputValue <= 0 || changeRounded < 0.01) {
+      return;
+    }
+   */
+  // TODO: refactor: use callback `someFunction: () => boolean`
+  // TODO: `handlerType?: string` error because it applies to `onClick`?
+  const decrementClickHandler = () => {
+    const change = inputValue - TRADING_INPUT_STEP;
+    const changeRounded = Math.round(change * 100) / 100;
+
+    // minimum margin is 0.01
+    if (inputValue <= 0 || changeRounded < 0.01 || changeRounded < lowerLimit) {
+      // getHandler(handlerType);
+      return;
+    }
+    setInputValue(changeRounded);
+  };
+
+  // *----------Margin handlers-----*
   const marginDecrementHandler = () => {
     const change = inputValue - TRADING_INPUT_STEP;
     const changeRounded = Math.round(change * 100) / 100;
@@ -118,30 +149,51 @@ const TradingInput = ({
     setInputValue(changeRounded);
   };
 
+  // TODO: make it easier to read `const localMarginLimit = upperLimit;`
   const marginIncrementHandler = () => {
     const change = inputValue + TRADING_INPUT_STEP;
     const changeRounded = Math.round(change * 100) / 100;
+
+    // limit to each one's deposit or trading restriction
+    const localMarginLimit = upperLimit;
+    if (inputValue >= localMarginLimit) {
+      // console.log('Margin restriction');
+      // <p>Couldn't above marginLimit</p>
+      return;
+    }
+
     setInputValue(changeRounded);
   };
 
   const marginInputChangeHandler: React.ChangeEventHandler<HTMLInputElement> = event => {
     // const log = marginInputRef.current?.value;
-    const regex = /^\d*\.?\d{0,2}$/;
+    // const regex = /^\d*\.?\d{0,2}$/;
     const value = event.target.value;
+
     if (regex.test(value)) {
+      const localMarginLimit = upperLimit;
+      if (localMarginLimit) {
+        if (Number(value) >= localMarginLimit) {
+          // console.log('Margin restriction');
+          // <p>Couldn't above marginLimit</p>
+          return;
+        }
+      }
       setInputValue(Number(value));
     }
   };
 
-  // ----------Long handlers----------
+  // *----------Long handlers----------*
   const longSlInputChangeHandler: React.ChangeEventHandler<HTMLInputElement> = event => {
-    const regex = /^\d*\.?\d{0,2}$/;
+    // const regex = /^\d*\.?\d{0,2}$/;
     const value = event.target.value;
     if (regex.test(value)) {
-      // TODO: Stop loss limit
-      if (Number(value) <= longSlLimit) {
+      // [lower limit] Long's stop-loss limit [longSlLimit/lowerLimit]
+      // let localLongStopLossLimit = lowerLimit
+      if (lowerLimit >= Number(value)) {
         // console.log('Stop loss restriction');
         // <p>Couldn't below longSlLimit</p>
+        return;
       }
       setInputValue(Number(value));
     }
@@ -153,8 +205,8 @@ const TradingInput = ({
     const change = inputValue - TRADING_INPUT_STEP;
     const changeRounded = Math.round(change * 100) / 100;
 
-    // Long's stop loss limit
-    if (longSlLimit >= inputValue || changeRounded < 0.01) {
+    // [lower limit] Long's stop-loss limit [longSlLimit/lowerLimit]
+    if (lowerLimit >= inputValue || changeRounded < 0.01) {
       // <p>Couldn't below longSlLimit</p>
       return;
     }
@@ -163,9 +215,17 @@ const TradingInput = ({
 
   // TODO: Limit condition for Long's take profit
   const longTpInputChangeHandler: React.ChangeEventHandler<HTMLInputElement> = event => {
-    const regex = /^\d*\.?\d{0,2}$/;
+    // const regex = /^\d*\.?\d{0,2}$/;
     const value = event.target.value;
     if (regex.test(value)) {
+      if (upperLimit) {
+        // [upper limit] Long's take-profit limit [longTpLimit/upperLimit]
+        if (Number(value) >= upperLimit) {
+          // console.log('Take profit restriction');
+          // <p>Couldn't above shortTpLimit</p>
+          return;
+        }
+      }
       setInputValue(Number(value));
     }
   };
@@ -176,14 +236,18 @@ const TradingInput = ({
 
   // ----------Short handlers----------
   const shortSlInputChangeHandler: React.ChangeEventHandler<HTMLInputElement> = event => {
-    const regex = /^\d*\.?\d{0,2}$/;
+    // const regex = /^\d*\.?\d{0,2}$/;
     const value = event.target.value;
     if (regex.test(value)) {
-      // TODO: Stop loss limit
-      if (shortSlLimit <= Number(value)) {
-        // console.log('Stop loss restriction');
-        // <p>Couldn't above shortSlLimit</p>
+      // [upper limit] Short's stop loss limit [shortSlLimit/upperLimit]
+      if (upperLimit) {
+        if (upperLimit <= Number(value)) {
+          // console.log('Stop loss restriction');
+          // <p>Couldn't above shortSlLimit</p>
+          return;
+        }
       }
+
       setInputValue(Number(value));
     }
   };
@@ -192,11 +256,14 @@ const TradingInput = ({
     const change = inputValue - TRADING_INPUT_STEP;
     const changeRounded = Math.round(change * 100) / 100;
 
-    // Short's stop loss limit
-    if (shortSlLimit <= inputValue || changeRounded < 0.01) {
-      // <p>Couldn't above shortSlLimit</p>
-      return;
+    // [upper limit] Short's stop loss limit [shortSlLimit/upperLimit]
+    if (upperLimit) {
+      if (upperLimit <= inputValue || changeRounded < 0.01) {
+        // <p>Couldn't above shortSlLimit</p>
+        return;
+      }
     }
+
     setInputValue(changeRounded);
   };
 

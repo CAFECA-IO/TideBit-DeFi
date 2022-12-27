@@ -1,6 +1,6 @@
 import React, {useRef, useState} from 'react';
 import Toggle from '../toggle/toggle';
-import TradingInput from '../trading_input/trading_input';
+import TradingInput, {TRADING_INPUT_HANDLER_TYPE_CLASSES} from '../trading_input/trading_input';
 import {AiOutlineQuestionCircle} from 'react-icons/ai';
 
 // TODO: Stop loss limit
@@ -40,6 +40,8 @@ const TradeTab = () => {
 
   const displayedLongTpSetting = longTpToggle ? (
     <TradingInput
+      lowerLimit={0}
+      upperLimit={1000000}
       inputInitialValue={longTpValue}
       inputName="tpInput"
       inputSize="h-25px w-70px text-sm"
@@ -50,6 +52,8 @@ const TradeTab = () => {
 
   const displayedLongSlSetting = longSlToggle ? (
     <TradingInput
+      lowerLimit={0}
+      upperLimit={1000000}
       inputInitialValue={longSlValue}
       inputName="slInput"
       inputSize="h-25px w-70px text-sm"
@@ -109,6 +113,8 @@ const TradeTab = () => {
 
   const displayedShortTpSetting = shortTpToggle ? (
     <TradingInput
+      lowerLimit={0}
+      upperLimit={1000000}
       inputInitialValue={shortTpValue}
       inputName="shortTpInput"
       inputSize="h-25px w-70px text-sm"
@@ -119,6 +125,8 @@ const TradeTab = () => {
 
   const displayedShortSlSetting = shortSlToggle ? (
     <TradingInput
+      lowerLimit={0}
+      upperLimit={1000000}
       inputInitialValue={shortSlValue}
       inputValue={shortSlValue}
       inputName="slInput"
@@ -185,6 +193,8 @@ const TradeTab = () => {
 
               {/* ---margin input area--- */}
               <TradingInput
+                lowerLimit={0}
+                upperLimit={1000000}
                 inputInitialValue={inputValue}
                 inputName="marginInput"
                 inputSize="h-44px w-160px text-xl"

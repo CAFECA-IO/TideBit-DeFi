@@ -27,9 +27,6 @@ const TradeTab = () => {
   const [shortTpToggle, setShortTpToggle] = useState(false);
   const [shortSlToggle, setShortSlToggle] = useState(false);
 
-  // ----------margin area----------
-
-  // ----------long area----------
   const longTpToggleClickHandler = () => {
     setLongTpToggle(!longTpToggle);
   };
@@ -38,32 +35,54 @@ const TradeTab = () => {
     setLongSlToggle(!longSlToggle);
   };
 
-  const displayedLongTpSetting = longTpToggle ? (
-    <TradingInput
-      lowerLimit={0}
-      upperLimit={1000000}
-      inputInitialValue={longTpValue}
-      inputName="tpInput"
-      inputSize="h-25px w-70px text-sm"
-      decrementBtnSize="25"
-      incrementBtnSize="25"
-    />
-  ) : null;
+  const shortTpToggleClickHandler = () => {
+    setShortTpToggle(!shortTpToggle);
+  };
 
-  const displayedLongSlSetting = longSlToggle ? (
-    <TradingInput
-      lowerLimit={0}
-      upperLimit={1000000}
-      inputInitialValue={longSlValue}
-      inputName="slInput"
-      inputSize="h-25px w-70px text-sm"
-      decrementBtnSize="25"
-      incrementBtnSize="25"
-    />
-  ) : null;
+  const shortSlToggleClickHandler = () => {
+    setShortSlToggle(!shortSlToggle);
+  };
 
-  const longGuaranteedStop = longSlToggle ? (
-    <div className="mt-4 flex items-center">
+  // `block` `flex`
+  const isDisplayedLongSlSetting = longSlToggle ? 'flex' : 'invisible';
+  const isDisplayedShortSlSetting = shortSlToggle ? 'flex' : 'invisible';
+
+  const isDisplayedLongTpSetting = longTpToggle ? 'flex' : 'invisible';
+  const isDisplayedShortTpSetting = shortTpToggle ? 'flex' : 'invisible';
+
+  // ----------margin area----------
+
+  // ----------long area----------
+  const displayedLongTpSetting = (
+    <div className={isDisplayedLongTpSetting}>
+      <TradingInput
+        lowerLimit={0}
+        upperLimit={1000000}
+        inputInitialValue={longTpValue}
+        inputName="tpInput"
+        inputSize="h-25px w-70px text-sm"
+        decrementBtnSize="25"
+        incrementBtnSize="25"
+      />
+    </div>
+  );
+
+  const displayedLongSlSetting = (
+    <div className={isDisplayedLongSlSetting}>
+      <TradingInput
+        lowerLimit={0}
+        upperLimit={1000000}
+        inputInitialValue={longSlValue}
+        inputName="slInput"
+        inputSize="h-25px w-70px text-sm"
+        decrementBtnSize="25"
+        incrementBtnSize="25"
+      />
+    </div>
+  );
+
+  const longGuaranteedStop = (
+    <div className={`${isDisplayedLongSlSetting} mt-4 items-center`}>
       <input
         type="checkbox"
         value=""
@@ -100,81 +119,80 @@ const TradeTab = () => {
         </div>
       </label>
     </div>
-  ) : null;
+  );
 
   // ----------short area----------
-  const shortTpToggleClickHandler = () => {
-    setShortTpToggle(!shortTpToggle);
-  };
 
-  const shortSlToggleClickHandler = () => {
-    setShortSlToggle(!shortSlToggle);
-  };
-
-  const displayedShortTpSetting = shortTpToggle ? (
-    <TradingInput
-      lowerLimit={0}
-      upperLimit={1000000}
-      inputInitialValue={shortTpValue}
-      inputName="shortTpInput"
-      inputSize="h-25px w-70px text-sm"
-      decrementBtnSize="25"
-      incrementBtnSize="25"
-    />
-  ) : null;
-
-  const displayedShortSlSetting = shortSlToggle ? (
-    <TradingInput
-      lowerLimit={0}
-      upperLimit={1000000}
-      inputInitialValue={shortSlValue}
-      inputValue={shortSlValue}
-      inputName="slInput"
-      inputSize="h-25px w-70px text-sm"
-      decrementBtnSize="25"
-      incrementBtnSize="25"
-    />
-  ) : null;
-
-  const shortGuaranteedStop = shortSlToggle ? (
-    <div className="mt-4 flex items-center">
-      <input
-        type="checkbox"
-        value=""
-        className="h-5 w-5 rounded text-lightWhite accent-tidebitTheme"
+  const displayedShortTpSetting = (
+    <div className={isDisplayedShortTpSetting}>
+      <TradingInput
+        lowerLimit={0}
+        upperLimit={1000000}
+        inputInitialValue={shortTpValue}
+        inputName="shortTpInput"
+        inputSize="h-25px w-70px text-sm"
+        decrementBtnSize="25"
+        incrementBtnSize="25"
       />
-      <label className="ml-2 flex text-sm font-medium text-lightGray">
-        Guaranteed stop &nbsp;
-        <span className="text-lightWhite"> (Fee: 0.77 USDT)</span>
-        {/* <span className="">
+    </div>
+  );
+
+  const displayedShortSlSetting = (
+    <div className={isDisplayedShortSlSetting}>
+      <TradingInput
+        lowerLimit={0}
+        upperLimit={1000000}
+        inputInitialValue={shortSlValue}
+        inputValue={shortSlValue}
+        inputName="slInput"
+        inputSize="h-25px w-70px text-sm"
+        decrementBtnSize="25"
+        incrementBtnSize="25"
+      />
+    </div>
+  );
+
+  const shortGuaranteedStop = (
+    <div className={isDisplayedShortSlSetting}>
+      <div className="mt-4 flex items-center">
+        <input
+          type="checkbox"
+          value=""
+          className="h-5 w-5 rounded text-lightWhite accent-tidebitTheme"
+        />
+        <label className="ml-2 flex text-sm font-medium text-lightGray">
+          Guaranteed stop &nbsp;
+          <span className="text-lightWhite"> (Fee: 0.77 USDT)</span>
+          {/* <span className="">
           <AiOutlineQuestionCircle size={20} />
         </span> */}
-        {/* tooltip */}
-        <div className="ml-1">
-          <div
-            className="relative"
-            onMouseEnter={() => setShortTooltipStatus(3)}
-            onMouseLeave={() => setShortTooltipStatus(0)}
-          >
-            <div className="cursor-pointer">
-              <AiOutlineQuestionCircle size={20} />
-            </div>
-            {shortTooltipStatus == 3 && (
-              <div
-                role="tooltip"
-                className="absolute -top-120px -left-52 z-20 mr-8 w-56 rounded bg-darkGray8 p-4 shadow-lg transition duration-150 ease-in-out"
-              >
-                <p className="pb-1 text-sm font-medium text-white">
-                  Guaranteed stop will force the position to close at your chosen rate (price) even
-                  if the market price surpasses it.
-                </p>
+          {/* tooltip */}
+          <div className="ml-1">
+            <div
+              className="relative"
+              onMouseEnter={() => setShortTooltipStatus(3)}
+              onMouseLeave={() => setShortTooltipStatus(0)}
+            >
+              <div className="cursor-pointer">
+                <AiOutlineQuestionCircle size={20} />
               </div>
-            )}
+              {shortTooltipStatus == 3 && (
+                <div
+                  role="tooltip"
+                  className="absolute -top-120px -left-52 z-20 mr-8 w-56 rounded bg-darkGray8 p-4 shadow-lg transition duration-150 ease-in-out"
+                >
+                  <p className="pb-1 text-sm font-medium text-white">
+                    Guaranteed stop will force the position to close at your chosen rate (price)
+                    even if the market price surpasses it.
+                  </p>
+                </div>
+              )}
+            </div>
           </div>
-        </div>
-      </label>
+        </label>
+      </div>
     </div>
-  ) : null;
+  );
 
   return (
     <div>
@@ -242,7 +260,7 @@ const TradeTab = () => {
               <div>
                 <div className="flex h-25px items-center justify-between">
                   <div className="text-sm text-lightGray">Clost at loss</div>
-                  <div className="hidden text-base text-lightWhite">$ 65.69 USDT</div>
+                  {/* <div className="hidden text-base text-lightWhite">$ 65.69 USDT</div> */}
                   {displayedLongSlSetting}
                   <Toggle toggle={longSlToggle} toggleClickHandler={longSlToggleClickHandler} />
                 </div>
@@ -265,12 +283,12 @@ const TradeTab = () => {
               </div>
 
               {/* Divider between long and short */}
-              <span className="absolute top-420px my-auto h-px w-full rounded bg-white/50 xs:inline-block"></span>
-              {/* visible: false 保留位置 */}
+              <span className="absolute top-420px my-auto h-px w-7/8 rounded bg-white/50"></span>
+
               {/* ---Short Section--- */}
               <div className="">
                 {/* custom trading info */}
-                <div className="absolute top-440px mt-2 flex justify-center text-center text-base tracking-wide">
+                <div className="absolute top-430px left-30px mt-2 flex justify-center text-center text-base tracking-wide">
                   <div className="space-y-1">
                     <div className="text-sm text-lightGray">Required Margin</div>
                     <div className="text-base text-lightWhite">$ 13.14 USDT</div>

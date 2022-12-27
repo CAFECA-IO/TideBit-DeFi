@@ -5,22 +5,39 @@ import {ApexOptions} from 'apexcharts';
 const Chart = dynamic(() => import('react-apexcharts'), {ssr: false});
 
 interface ICircularProgressBarProps {
-  percentage: number[];
+  // percentage?: number[];
   progressBarColor: string[];
-  label: string[];
+  // label?: string[];
+  numerator: number;
+  denominator: number;
+  circularBarSize?: string;
 }
-const testPercent = [(20 / 24) * 100];
+
 const CircularProgressBar = ({
-  percentage = testPercent,
-  progressBarColor = ['#E86D6D'],
-  label = ['11 H'],
+  numerator,
+  denominator,
+  progressBarColor,
+  circularBarSize,
 }: ICircularProgressBarProps) => {
+  const percentage = [(numerator / denominator) * 100];
+  const label = [`${numerator} H`];
+
   const chartOptions: ApexOptions = {
     series: percentage,
     colors: progressBarColor,
     chart: {
-      height: 350,
+      height: 0,
       type: 'radialBar',
+      // events: {
+      //   mouseMove: function (event, chartContext, config) {
+      //     console.log('mouse move in');
+      //     label = [`100 H`];
+      //   },
+      //   mouseLeave: function (event, chartContext, config) {
+      //     console.log('mouse leave');
+      //     chartOptions.labels = label;
+      //   },
+      // },
     },
     plotOptions: {
       radialBar: {
@@ -67,7 +84,7 @@ const CircularProgressBar = ({
     <div>
       <Chart
         options={chartOptions}
-        height={'100'}
+        height={circularBarSize}
         series={chartOptions.series}
         type={'radialBar'}
       />

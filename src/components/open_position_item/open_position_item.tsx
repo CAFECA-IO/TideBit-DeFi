@@ -19,6 +19,7 @@ const OpenPositionItem = ({
   ticker,
   remainingHour,
   pNL,
+  ...otherProps
 }: IOpenPositionItemProps) => {
   if (longOrShort !== 'long' && longOrShort !== 'short') return <></>;
   if (profitOrLoss !== 'profit' && profitOrLoss !== 'loss') return <></>;

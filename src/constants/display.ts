@@ -10,3 +10,14 @@ export const PROFIT_LOSS_COLOR_TYPE = {
   profit: '#56B78A',
   loss: '#E86D6D',
 };
+
+export const TRANSACTION_TYPE = {
+  long: {
+    title: 'Up',
+    subtitle: '(Buy)',
+  },
+  short: {
+    title: 'Down',
+    subtitle: '(Sell)',
+  },
+};

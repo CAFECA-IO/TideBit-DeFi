@@ -59,7 +59,7 @@ const OpenPositionItem = ({
       {/* brief of this open position */}
       <div className="">
         <div className="relative">
-          <div className="absolute -left-130px top-0">
+          <div className="w-90px">
             <CircularProgressBar
               numerator={remainingHour}
               denominator={24}

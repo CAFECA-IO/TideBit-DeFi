@@ -31,7 +31,7 @@ const HistoryPositionItem = ({
 
   return (
     <>
-      <div className="mt-3 text-sm">
+      <div className="mt-3 text-xs">
         <div className="flex justify-between">
           <div>
             <div className="text-lightGray">11 Nov</div>

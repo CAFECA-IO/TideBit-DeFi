@@ -59,7 +59,7 @@ const HistoryPositionItem = ({
             <div className=""></div>
           </div>
 
-          <div className="text-end">
+          <div className="w-65px text-end">
             <div>PNL</div>
             <div className={`${displayedColor}`}>
               <span className="">{displayedSymbol}</span> $ {pNL}

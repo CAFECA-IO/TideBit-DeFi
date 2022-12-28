@@ -1,3 +1,4 @@
+import CryptoCard from '../components/card/crypto_card';
 import OpenPositionItem from '../components/open_position_item/open_position_item';
 import TestReserveRatio from '../components/reserve_ratio/test_reserve_ratio';
 
@@ -42,6 +43,7 @@ const Trial = () => {
       <div className="w-1/4 pl-5">
         {/* <TestReserveRatio />
         {rippleEffect} */}
+        {/* -------------Open position trial------------- */}
         <OpenPositionItem
           profitOrLoss="profit"
           longOrShort="short"
@@ -54,6 +56,17 @@ const Trial = () => {
         />{' '}
         {/* Divider */}
         <div className="my-auto h-px w-full rounded bg-white/50"></div>
+        {/* -------------Open position trial------------- */}
+        <CryptoCard
+          star={true}
+          className="mt-4 ml-4"
+          chain="Ethereum"
+          currency="ETH"
+          price={1288.4}
+          fluctuating={1.14}
+          gradientColor="border-bluePurple/50 bg-black from-bluePurple/50 to-black"
+          tokenComponent={<img src="/elements/group_2371.svg" alt="eth" width={40} height={40} />}
+        />{' '}
       </div>
     </>
   );

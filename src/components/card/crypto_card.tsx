@@ -1,4 +1,6 @@
 import LineGraph from '../line_graph/line_graph';
+import {BsStar, BsStarFill} from 'react-icons/bs';
+import {useState} from 'react';
 // import {FaEthereum} from 'react-icons/fa';
 // // import {ReactComponent as ethIcon} from '/public/elements/group_15143.svg';
 // // import {ReactComponent as Logo} from './logo.svg';
@@ -23,6 +25,8 @@ interface CardProps {
   star?: boolean;
   starred?: boolean;
   className?: string;
+  starColor?: string;
+  getStarredState?: (props: boolean) => void;
 }
 
 const CryptoCard = ({
@@ -36,6 +40,8 @@ const CryptoCard = ({
   fluctuating = -1,
   star = false,
   starred = false,
+  starColor,
+  getStarredState: getStarredState,
   ...otherProps
 }: CardProps): JSX.Element => {
   // FIXME: comment for `.tsx`
@@ -61,6 +67,42 @@ const CryptoCard = ({
   //     <path d="M1408 1216q0 26-19 45t-45 19h-896q-26 0-45-19t-19-45 19-45l448-448q19-19 45-19t45 19l448 448q19 19 19 45z"></path>
   //   </svg>
   // );
+  const [starFilled, setStarFilled] = useState(false);
+
+  const passStarClickHandler = (data: boolean) => {
+    if (!getStarredState) return;
+
+    getStarredState(data);
+  };
+
+  const starClickHandler = () => {
+    setStarFilled(!starFilled);
+    passStarClickHandler(!starFilled);
+  };
+
+  const showStar = starFilled ? (
+    <div className="absolute top-2 right-3">
+      <BsStarFill
+        onClick={starClickHandler}
+        size={20}
+        className={`${starColor} hover:cursor-pointer`}
+      />
+    </div>
+  ) : star ? (
+    <div onClick={starClickHandler} className="absolute top-2 right-3 hover:cursor-pointer">
+      <BsStar size={20} className={`${starColor}`} />
+    </div>
+  ) : null;
+
+  const showStarMobile = starFilled ? (
+    <div onClick={starClickHandler} className="absolute top-1 right-1 hover:cursor-pointer">
+      <BsStarFill size={13} className={`${starColor}`} />
+    </div>
+  ) : star ? (
+    <div onClick={starClickHandler} className="absolute top-1 right-1 hover:cursor-pointer">
+      <BsStar size={13} className={`${starColor}`} />
+    </div>
+  ) : null;
 
   const desktopVersionBreakpoint = 'xs:flex';
   const mobileVersionBreakpoint = 'xs:hidden';
@@ -127,11 +169,12 @@ const CryptoCard = ({
               <p className="text-lg leading-6 text-lightWhite"> {chain}</p>
               <p className="text-sm text-lightWhite opacity-60">{currency}</p>
             </div>
+            <div className="">{showStar}</div>
           </div>
 
           {/* line graph & price & fluctuating rate */}
           <div className="flex flex-col justify-start">
-            <div className="absolute top-4 h-96 bg-transparent">
+            <div className="pointer-events-none absolute top-4 h-96 bg-transparent">
               <LineGraph
                 sampleArray={sampleArray}
                 strokeColor={thisRandomColor}
@@ -167,11 +210,12 @@ const CryptoCard = ({
               <p className="text-sm leading-none text-lightWhite"> {chain}</p>
               <p className="text-xs text-lightWhite opacity-60">{currency}</p>
             </div>
+            <div className="">{showStarMobile}</div>
           </div>
 
           {/* line graph & price & fluctuating rate */}
           <div className="flex flex-col justify-start">
-            <div className="absolute right-0 top-1 bg-transparent">
+            <div className="pointer-events-none absolute right-0 top-1 bg-transparent">
               {/* <div className="absolute top-0 left-0 h-2 w-2/3 rounded bg-blue-200"></div> */}
               <LineGraph
                 sampleArray={sampleArray}

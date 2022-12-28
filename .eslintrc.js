@@ -32,7 +32,7 @@ module.exports = {
     'tailwindcss/enforces-shorthand': 'off',
     'tailwindcss/migration-from-tailwind-2': 'error',
     'tailwindcss/no-arbitrary-value': 'error',
-    // 'tailwindcss/no-custom-classname': 'error',
+    'tailwindcss/no-custom-classname': 'warn',
   },
 
   // 整合 prettier 和解決 prettier 衝突問題

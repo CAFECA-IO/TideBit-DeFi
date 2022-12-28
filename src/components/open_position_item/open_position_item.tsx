@@ -29,6 +29,11 @@ const OpenPositionItem = ({
   // const [progress, setProgress] = useState(0);
   // const [label, setLabel] = useState('');
 
+  const clickHandler = () => {
+    // console.log('show the modal displaying transaction detail');
+    return;
+  };
+
   const displayedString = longOrShort === 'long' ? TRANSACTION_TYPE.long : TRANSACTION_TYPE.short;
   const displayedRadicalBarColor =
     profitOrLoss === 'profit' ? PROFIT_LOSS_COLOR_TYPE.profit : PROFIT_LOSS_COLOR_TYPE.loss;
@@ -66,7 +71,8 @@ const OpenPositionItem = ({
         <div className="mt-5 flex justify-between">
           <div className="relative -mt-4 -ml-2 w-50px">
             <div
-              className={`absolute left-14px top-26px z-10 h-6 w-6 ${displayedHoverPausedColor}`}
+              className={`absolute left-14px top-26px z-10 h-6 w-6 hover:cursor-pointer ${displayedHoverPausedColor}`}
+              onClick={clickHandler}
             ></div>
             <CircularProgressBar
               numerator={passedHour}

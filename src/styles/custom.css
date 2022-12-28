@@ -4,21 +4,13 @@
   --colorProfit: #1ae2a0;
 }
 
-.circularProgress {
-  fill: none;
-  stroke: var(--color1);
-  stroke-linecap: round;
-  stroke-linejoin: round;
+/* offset-x | offset-y | blur-radius | color */
+/* 1px 0 3px */
+/* 0 0 5px */
+.priceUpShadow {
+  text-shadow: 1px 0 3px var(--colorProfit), 1px 0 3px var(--colorProfit);
 }
 
-.circularBackground {
-  fill: none;
-  stroke: chocolate;
-}
-
-.circularBar {
-  fill: none;
-  stroke: var(--colorProfit);
-  stroke-linecap: round;
-  stroke-linejoin: round;
+.priceDownShadow {
+  text-shadow: 1px 0 3px var(--colorLoss), 1px 0 3px var(--colorLoss);
 }

@@ -59,7 +59,7 @@ const OpenPositionItem = ({
             ></div> */}
             {/* Pause square */}
             <div
-              className={`absolute left-17px top-28px z-20 h-5 w-5 hover:cursor-pointer ${displayedHoverPausedColor}`}
+              className={`absolute left-14px top-26px z-10 h-6 w-6 hover:cursor-pointer ${displayedHoverPausedColor}`}
               onClick={clickHandler}
             ></div>
 

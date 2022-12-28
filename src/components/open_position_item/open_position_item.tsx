@@ -34,6 +34,8 @@ const OpenPositionItem = ({
     profitOrLoss === 'profit' ? PROFIT_LOSS_COLOR_TYPE.profit : PROFIT_LOSS_COLOR_TYPE.loss;
 
   const displayedTextColor = profitOrLoss === 'profit' ? 'text-lightGreen' : 'text-lightRed';
+  const displayedHoverPausedColor =
+    profitOrLoss === 'profit' ? 'hover:bg-lightGreen' : 'hover:bg-lightRed';
 
   const displayedSymbol = profitOrLoss === 'profit' ? '+' : '-';
 
@@ -62,7 +64,10 @@ const OpenPositionItem = ({
       {/* brief of this open position */}
       <div className="">
         <div className="mt-5 flex justify-between">
-          <div className="-mt-4 -ml-2 w-50px">
+          <div className="relative -mt-4 -ml-2 w-50px">
+            <div
+              className={`absolute left-14px top-26px z-10 h-6 w-6 ${displayedHoverPausedColor}`}
+            ></div>
             <CircularProgressBar
               numerator={passedHour}
               denominator={24}

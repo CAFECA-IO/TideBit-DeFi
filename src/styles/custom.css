@@ -7,10 +7,11 @@
 /* offset-x | offset-y | blur-radius | color */
 /* 1px 0 3px */
 /* 0 0 5px */
+/* text-shadow: 1px 0 3px var(--colorLoss), 1px 0 3px var(--colorLoss); */
 .priceUpShadow {
-  text-shadow: 1px 0 3px var(--colorProfit), 1px 0 3px var(--colorProfit);
+  text-shadow: 0px 0 10px var(--colorProfit);
 }
 
 .priceDownShadow {
-  text-shadow: 1px 0 3px var(--colorLoss), 1px 0 3px var(--colorLoss);
+  text-shadow: 0px 0 10px var(--colorLoss);
 }

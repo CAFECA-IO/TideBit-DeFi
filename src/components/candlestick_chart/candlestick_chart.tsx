@@ -9,7 +9,7 @@ interface ILineGraphProps {
   strokeColor: string[];
   // dataArray: number[];
   candlestickChartWidth: string;
-  annotatedValue: number;
+  // annotatedValue: number;
   candlestickChartHeight: string;
 }
 
@@ -17,7 +17,6 @@ export default function CandlestickChart({
   strokeColor,
   candlestickChartWidth,
   candlestickChartHeight,
-  annotatedValue,
   ...otherProps
 }: ILineGraphProps): JSX.Element {
   const anotherSampleData = [1230, 1272, 1120, 1265, 1342, 1299];
@@ -266,12 +265,18 @@ export default function CandlestickChart({
   const chartOptions: ApexOptions = {
     chart: {
       type: 'candlestick',
-      zoom: {
-        enabled: false,
-      },
-      foreColor: '#373d3f',
-      toolbar: {
-        show: false,
+      height: 350,
+    },
+    title: {
+      text: 'CandleStick Chart',
+      align: 'left',
+    },
+    xaxis: {
+      type: 'datetime',
+    },
+    yaxis: {
+      tooltip: {
+        enabled: true,
       },
     },
     // markers: {
@@ -296,60 +301,6 @@ export default function CandlestickChart({
     //   fillOpacity: 0.5,
     //   dashArray: 2,
     // },
-    dataLabels: {
-      enabled: false,
-    },
-    stroke: {
-      curve: 'straight',
-      colors: strokeColor,
-      width: 1.2,
-    },
-    xaxis: {
-      axisBorder: {show: false},
-      axisTicks: {show: false},
-      labels: {
-        show: false,
-      },
-      type: 'numeric',
-    },
-    yaxis: {
-      axisBorder: {show: false},
-      axisTicks: {show: false},
-      labels: {
-        show: false,
-      },
-    },
-    grid: {
-      show: false,
-    },
-    tooltip: {
-      enabled: false,
-    },
-    annotations: {
-      position: 'front',
-      yaxis: [
-        {
-          y: annotatedValue,
-          strokeDashArray: 5,
-          borderColor: strokeColor[0],
-          width: '150%',
-          fillColor: '#ffffff',
-          label: {
-            position: 'right',
-            borderColor: 'transparent',
-            textAnchor: 'end',
-            offsetY: 10,
-            offsetX: 0,
-            style: {
-              color: '#ffffff',
-              background: strokeColor[0],
-            },
-            text: `$ ${annotatedValue.toString()}`,
-            borderWidth: 20,
-          },
-        },
-      ],
-    },
   };
 
   const [dataSample, setDataSample] = useState({
@@ -361,7 +312,7 @@ export default function CandlestickChart({
     series: [
       {
         name: 'series-1',
-        data: [...anotherSampleData],
+        data: [...candlestickData],
       },
     ],
   });
@@ -371,7 +322,7 @@ export default function CandlestickChart({
       <Chart
         options={dataSample.options}
         series={dataSample.series}
-        type="line"
+        type="candlestick"
         width={candlestickChartWidth}
         height={candlestickChartHeight}
       />

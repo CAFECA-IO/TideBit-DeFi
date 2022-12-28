@@ -11,8 +11,7 @@ const MarketSection = () => {
         <div className="pt-10">
           <CandlestickChart
             strokeColor={[`#1AE2A0`]}
-            candlestickChartWidth="700"
-            annotatedValue={1290}
+            candlestickChartWidth="900"
             candlestickChartHeight="400"
           />
         </div>

@@ -1,16 +1,24 @@
 import {useState} from 'react';
 
 interface IToggleProps {
-  toggle: boolean;
-  toggleClickHandler: () => void;
+  // toggle: boolean;
+  // toggleClickHandler: () => void;
+  getToggledState: (props: boolean) => void;
 }
 
-const Toggle = ({toggle, toggleClickHandler}: IToggleProps) => {
-  // const [toggle, setToggle] = useState(false);
+const Toggle = ({getToggledState}: IToggleProps) => {
+  const [toggle, setToggle] = useState(false);
 
-  // const toggleClickHandler = () => {
-  //   setToggle(!toggle);
-  // };
+  // function to handle pass the `toggle` state to parent component
+  const passToggledStateHandler = (data: boolean) => {
+    getToggledState(data);
+  };
+
+  // function to handle toggle state
+  const toggleClickHandler = () => {
+    setToggle(!toggle);
+    passToggledStateHandler(!toggle);
+  };
 
   // TODO:[Notes] css solution: after, checked
   const blueStandardToggle = (

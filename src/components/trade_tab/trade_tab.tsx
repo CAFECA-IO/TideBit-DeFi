@@ -27,21 +27,41 @@ const TradeTab = () => {
   const [shortTpToggle, setShortTpToggle] = useState(false);
   const [shortSlToggle, setShortSlToggle] = useState(false);
 
-  const longTpToggleClickHandler = () => {
-    setLongTpToggle(!longTpToggle);
+  const getToggledLongTpSetting = (bool: boolean) => {
+    // console.log('getToggledLongTpSetting', bool);
+    setLongTpToggle(bool);
   };
 
-  const longSlToggleClickHandler = () => {
-    setLongSlToggle(!longSlToggle);
+  const getToggledLongSlSetting = (bool: boolean) => {
+    // console.log('getToggledLongSlSetting', bool);
+    setLongSlToggle(bool);
   };
 
-  const shortTpToggleClickHandler = () => {
-    setShortTpToggle(!shortTpToggle);
+  const getToggledShortTpSetting = (bool: boolean) => {
+    // console.log('getToggledShortTpSetting', bool);
+    setShortTpToggle(bool);
   };
 
-  const shortSlToggleClickHandler = () => {
-    setShortSlToggle(!shortSlToggle);
+  const getToggledShortSlSetting = (bool: boolean) => {
+    // console.log('getToggledShortSlSetting', bool);
+    setShortSlToggle(bool);
   };
+
+  // const longTpToggleClickHandler = () => {
+  //   setLongTpToggle(!longTpToggle);
+  // };
+
+  // const longSlToggleClickHandler = () => {
+  //   setLongSlToggle(!longSlToggle);
+  // };
+
+  // const shortTpToggleClickHandler = () => {
+  //   setShortTpToggle(!shortTpToggle);
+  // };
+
+  // const shortSlToggleClickHandler = () => {
+  //   setShortSlToggle(!shortSlToggle);
+  // };
 
   // `block` `flex`
   const isDisplayedLongSlSetting = longSlToggle ? 'flex' : 'invisible';
@@ -257,7 +277,7 @@ const TradeTab = () => {
               <div className="mt-3 mb-5 flex h-25px items-center justify-between">
                 <div className="text-sm text-lightGray">Close at profit</div>
                 {displayedLongTpSetting}
-                <Toggle toggle={longTpToggle} toggleClickHandler={longTpToggleClickHandler} />
+                <Toggle getToggledState={getToggledLongTpSetting} />
               </div>
 
               {/* Stop Loss Setting */}
@@ -265,7 +285,7 @@ const TradeTab = () => {
                 <div className="flex h-25px items-center justify-between">
                   <div className="text-sm text-lightGray">Clost at loss</div>
                   <div className="w-105px">{displayedLongSlSetting}</div>
-                  <Toggle toggle={longSlToggle} toggleClickHandler={longSlToggleClickHandler} />
+                  <Toggle getToggledState={getToggledLongSlSetting} />
                 </div>
                 {/* Guaranteed stop */}
                 {longGuaranteedStop}
@@ -315,10 +335,7 @@ const TradeTab = () => {
                     {displayedShortTpSetting}
                     <div className="">
                       {' '}
-                      <Toggle
-                        toggle={shortTpToggle}
-                        toggleClickHandler={shortTpToggleClickHandler}
-                      />
+                      <Toggle getToggledState={getToggledShortTpSetting} />
                     </div>
                   </div>
 
@@ -328,10 +345,7 @@ const TradeTab = () => {
                       <div className="text-sm text-lightGray">Clost at loss</div>
                       <div className="w-105px">{displayedShortSlSetting}</div>
                       <div className="">
-                        <Toggle
-                          toggle={shortSlToggle}
-                          toggleClickHandler={shortSlToggleClickHandler}
-                        />
+                        <Toggle getToggledState={getToggledShortSlSetting} />
                       </div>
                     </div>
                     {/* Guaranteed stop */}

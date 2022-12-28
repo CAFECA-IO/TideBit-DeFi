@@ -6,14 +6,16 @@ const Chart = dynamic(() => import('react-apexcharts'), {ssr: false});
 // const Chart = dynamic(() => import('apexcharts'), {ssr: false});
 
 interface ILineGraphProps {
-  strokeColor?: string[];
-  sampleArray?: number[];
-  lineGraphWidth?: string;
+  strokeColor: string[];
+  dataArray: number[];
+  lineGraphWidth: string;
 }
+// sampleArray = [42, 50, 45, 55, 49, 52, 48],
+// sampleArray = [30, 72, 85, 65, 42, 99, 67, 55, 49, 32, 48, 20],
 
 export default function PositionLineGraph({
   strokeColor = ['#E86D6D'],
-  sampleArray = [99, 50, 45, 55, 49, 52, 48],
+  dataArray = [30, 72, 85, 65, 42, 99, 67, 55, 49, 32, 48, 20],
   lineGraphWidth = '150',
   ...otherProps
 }: ILineGraphProps): JSX.Element {
@@ -33,7 +35,7 @@ export default function PositionLineGraph({
       enabled: false,
     },
     stroke: {
-      curve: 'smooth',
+      curve: 'straight',
       colors: strokeColor,
       width: 1.2,
     },
@@ -59,6 +61,7 @@ export default function PositionLineGraph({
       enabled: false,
     },
   };
+
   const [dataSample, setDataSample] = useState({
     options: chartOptions,
     toolbar: {
@@ -68,7 +71,7 @@ export default function PositionLineGraph({
     series: [
       {
         name: 'series-1',
-        data: [...sampleArray],
+        data: [...dataArray],
       },
     ],
   });

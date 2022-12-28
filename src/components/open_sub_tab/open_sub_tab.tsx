@@ -16,7 +16,8 @@ const OpenSubTab = () => {
             value={656.9}
             ticker="BTC"
             passedHour={11}
-            pNL={34.9}
+            profitOrLossAmount={34.9}
+            tickerTrendArray={[30, 72, 85, 65, 42, 20, 67, 55, 49, 32, 48, 20]}
           />
         </div>
         {/* Divider */}
@@ -29,7 +30,8 @@ const OpenSubTab = () => {
             value={631.1}
             ticker="ETH"
             passedHour={15}
-            pNL={29.9}
+            profitOrLossAmount={29.9}
+            tickerTrendArray={[30, 72, 20, 65, 42, 99, 67, 55, 49, 32, 48, 20]}
           />
         </div>
         {/* Divider */}
@@ -42,7 +44,8 @@ const OpenSubTab = () => {
             value={1234567.8}
             ticker="BTC"
             passedHour={23}
-            pNL={1234.5}
+            profitOrLossAmount={1234.5}
+            tickerTrendArray={[90, 72, 60, 65, 42, 25, 32, 20, 15, 32, 48, 20]}
           />
         </div>
         {/* Divider */}

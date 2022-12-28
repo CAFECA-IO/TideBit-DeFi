@@ -9,7 +9,8 @@ interface IOpenPositionItemProps {
   ticker: string;
   passedHour: number;
   value: number;
-  pNL: number;
+  profitOrLossAmount: number;
+  tickerTrendArray: number[];
 }
 
 const OpenPositionItem = ({
@@ -18,7 +19,8 @@ const OpenPositionItem = ({
   value,
   ticker,
   passedHour,
-  pNL,
+  profitOrLossAmount,
+  tickerTrendArray,
   ...otherProps
 }: IOpenPositionItemProps) => {
   if (longOrShort !== 'long' && longOrShort !== 'short') return <></>;
@@ -35,7 +37,7 @@ const OpenPositionItem = ({
   };
 
   const displayedString = longOrShort === 'long' ? TRANSACTION_TYPE.long : TRANSACTION_TYPE.short;
-  const displayedRadicalBarColor =
+  const displayedColorHex =
     profitOrLoss === 'profit' ? PROFIT_LOSS_COLOR_TYPE.profit : PROFIT_LOSS_COLOR_TYPE.loss;
 
   const displayedTextColor = profitOrLoss === 'profit' ? 'text-lightGreen' : 'text-lightRed';
@@ -44,40 +46,27 @@ const OpenPositionItem = ({
 
   const displayedSymbol = profitOrLoss === 'profit' ? '+' : '-';
 
-  // TODO: Otherwise, it will destroy the layout
-  // It'll dest
-  const displayedTickerLayout =
-    ticker === 'ETH' ? (
-      <div className="">
-        <div className="text-sm">ETH</div>
-        <div className="text-sm text-lightWhite">
-          {displayedString.title}{' '}
-          <span className="text-xs text-lightGray">{displayedString.subtitle}</span>
-        </div>
-      </div>
-    ) : (
-      <div className="">
-        <div>BTC</div>
-        <div className="text-lightWhite">
-          {displayedString.title} <span className="text-lightGray">{displayedString.subtitle}</span>
-        </div>
-      </div>
-    );
-
   return (
     <div className="">
       {/* brief of this open position */}
       <div className="">
         <div className="mt-5 flex justify-between">
           <div className="relative -mt-4 -ml-2 w-50px">
+            {/* Pause square cover
             <div
-              className={`absolute left-14px top-26px z-10 h-6 w-6 hover:cursor-pointer ${displayedHoverPausedColor}`}
+              className={`absolute left-14px top-26px z-20 h-6 w-6 hover:cursor-pointer hover:bg-darkGray`}
+              onClick={clickHandler}
+            ></div> */}
+            {/* Pause square */}
+            <div
+              className={`absolute left-17px top-28px z-20 h-5 w-5 hover:cursor-pointer ${displayedHoverPausedColor}`}
               onClick={clickHandler}
             ></div>
+
             <CircularProgressBar
               numerator={passedHour}
               denominator={24}
-              progressBarColor={[displayedRadicalBarColor]}
+              progressBarColor={[displayedColorHex]}
               hollowSize="40%"
               circularBarSize="100"
             />
@@ -101,15 +90,19 @@ const OpenPositionItem = ({
           <div className="mt-1 w-60px">
             <div className="text-xs text-lightGray">PNL</div>
             <div className={`${displayedTextColor} text-sm`}>
-              <span className="">{displayedSymbol}</span> $ {pNL}
+              <span className="">{displayedSymbol}</span> $ {profitOrLossAmount}
             </div>
           </div>
         </div>
       </div>
 
       {/* Line graph */}
-      <div className="-mt-10 -ml-2">
-        <PositionLineGraph />
+      <div className="-mt-5 -ml-2 -mb-3">
+        <PositionLineGraph
+          strokeColor={[`${displayedColorHex}`]}
+          dataArray={tickerTrendArray}
+          lineGraphWidth="150"
+        />
       </div>
 
       {/* Divider */}

@@ -11,6 +11,7 @@ interface IOpenPositionItemProps {
   value: number;
   profitOrLossAmount: number;
   tickerTrendArray: number[];
+  horizontalValueLine: number;
 }
 
 const OpenPositionItem = ({
@@ -21,6 +22,7 @@ const OpenPositionItem = ({
   passedHour,
   profitOrLossAmount,
   tickerTrendArray,
+  horizontalValueLine,
   ...otherProps
 }: IOpenPositionItemProps) => {
   if (longOrShort !== 'long' && longOrShort !== 'short') return <></>;
@@ -97,11 +99,12 @@ const OpenPositionItem = ({
       </div>
 
       {/* Line graph */}
-      <div className="-mt-5 -ml-2 -mb-3">
+      <div className="-mt-8 -ml-2 -mb-7">
         <PositionLineGraph
           strokeColor={[`${displayedColorHex}`]}
           dataArray={tickerTrendArray}
-          lineGraphWidth="150"
+          lineGraphWidth="180"
+          annotatedValue={horizontalValueLine}
         />
       </div>
 

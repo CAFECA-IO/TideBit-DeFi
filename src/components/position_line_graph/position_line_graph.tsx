@@ -9,14 +9,16 @@ interface ILineGraphProps {
   strokeColor: string[];
   dataArray: number[];
   lineGraphWidth: string;
+  annotatedValue: number;
 }
 // sampleArray = [42, 50, 45, 55, 49, 52, 48],
 // sampleArray = [30, 72, 85, 65, 42, 99, 67, 55, 49, 32, 48, 20],
 
 export default function PositionLineGraph({
-  strokeColor = ['#E86D6D'],
-  dataArray = [30, 72, 85, 65, 42, 99, 67, 55, 49, 32, 48, 20],
-  lineGraphWidth = '150',
+  strokeColor,
+  dataArray,
+  lineGraphWidth,
+  annotatedValue,
   ...otherProps
 }: ILineGraphProps): JSX.Element {
   const chartOptions: ApexOptions = {
@@ -30,7 +32,28 @@ export default function PositionLineGraph({
         show: false,
       },
     },
-
+    markers: {
+      discrete: [
+        {
+          seriesIndex: 0,
+          dataPointIndex: dataArray.length - 1,
+          size: 1,
+          strokeColor: strokeColor[0],
+          shape: 'circle',
+        },
+      ],
+    },
+    // grid: {
+    //   show: true,
+    //   borderColor: strokeColor[0],
+    //   strokeDashArray: 5,
+    //   position: 'back',
+    // },
+    // forecastDataPoints: {
+    //   count: 2,
+    //   fillOpacity: 0.5,
+    //   dashArray: 2,
+    // },
     dataLabels: {
       enabled: false,
     },
@@ -59,6 +82,31 @@ export default function PositionLineGraph({
     },
     tooltip: {
       enabled: false,
+    },
+    annotations: {
+      position: 'front',
+      yaxis: [
+        {
+          y: annotatedValue,
+          strokeDashArray: 5,
+          borderColor: strokeColor[0],
+          width: '150%',
+          fillColor: '#ffffff',
+          label: {
+            position: 'right',
+            borderColor: 'transparent',
+            textAnchor: 'end',
+            offsetY: 10,
+            offsetX: 0,
+            style: {
+              color: '#ffffff',
+              background: strokeColor[0],
+            },
+            text: `$ ${annotatedValue.toString()}`,
+            borderWidth: 20,
+          },
+        },
+      ],
     },
   };
 

@@ -1,3 +1,4 @@
+import OpenPositionItem from '../components/open_position_item/open_position_item';
 import TestReserveRatio from '../components/reserve_ratio/test_reserve_ratio';
 
 const Trial = () => {
@@ -37,9 +38,22 @@ const Trial = () => {
 
   return (
     <>
-      <div className="flex h-screen w-full items-center justify-center">
-        <TestReserveRatio />
-        {rippleEffect}
+      {/* flex h-screen w-full items-center justify-center */}
+      <div className="w-1/4 pl-5">
+        {/* <TestReserveRatio />
+        {rippleEffect} */}
+        <OpenPositionItem
+          profitOrLoss="profit"
+          longOrShort="short"
+          value={1234567.8}
+          ticker="BTC"
+          passedHour={23}
+          profitOrLossAmount={1234.5}
+          tickerTrendArray={[90, 72, 60, 65, 42, 25, 32, 20, 15, 32, 48, 20]}
+          horizontalValueLine={80}
+        />{' '}
+        {/* Divider */}
+        <div className="my-auto h-px w-full rounded bg-white/50"></div>
       </div>
     </>
   );

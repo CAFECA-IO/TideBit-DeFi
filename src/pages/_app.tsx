@@ -7,7 +7,7 @@ import {appWithTranslation} from 'next-i18next';
 function App({Component, pageProps}: AppProps) {
   return (
     <>
-      <div className="custom-no-scrollbar">
+      <div className="custom-no-scrollbar selection:bg-tidebitTheme">
         <Component {...pageProps} />
       </div>
     </>

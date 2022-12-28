@@ -60,9 +60,11 @@ const Cta = () => {
               {t('home_page.Cta_Description')}
             </div>
             <div className="mx-auto pt-2 md:pt-8">
-              <TideButton className="px-2 py-1 font-normal xxs:text-xxs sm:py-2 sm:px-5 sm:text-base xl:py-3 xl:px-5 xl:text-lg">
-                {t('home_page.Cta_Button')}
-              </TideButton>
+              <Link href="/trading">
+                <TideButton className="px-2 py-1 font-normal xxs:text-xxs sm:py-2 sm:px-5 sm:text-base xl:py-3 xl:px-5 xl:text-lg">
+                  {t('home_page.Cta_Button')}
+                </TideButton>
+              </Link>
             </div>
           </div>
         </div>

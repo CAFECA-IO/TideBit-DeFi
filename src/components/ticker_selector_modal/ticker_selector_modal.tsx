@@ -144,7 +144,7 @@ const TickerSelectorModal = ({
 
   const isDisplayedTickerSelectorModal = tickerSelectorModalVisible ? (
     <>
-      <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">
+      <div className="fixed inset-0 z-50 flex items-center justify-center overflow-x-auto overflow-y-auto outline-none backdrop-blur-sm focus:outline-none">
         <div
           className="relative my-6 mx-auto w-auto"
           id="tickerSelectorModal"
@@ -156,14 +156,8 @@ const TickerSelectorModal = ({
           {/*content & panel*/}
           <div className="flex h-640px w-1200px flex-col rounded rounded-t-none border-0 bg-darkGray shadow-lg shadow-black/80 outline-none focus:outline-none">
             {/*header*/}
-            <div className="flex items-start justify-between rounded-t pt-6">
-              <button className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
-                {/* <span className="absolute top-5 right-5 block outline-none focus:outline-none">
-                  <ImCross onClick={tickerSelectorModalClickHandler} />
-                </span> */}
-              </button>
-            </div>
-            {/*body*/}
+
+            {/* ----- body ----- */}
             {/* search section */}
             {/* <div>
               <div className="flex h-10 w-200px items-center justify-end rounded-md bg-darkGray2">
@@ -179,7 +173,7 @@ const TickerSelectorModal = ({
             </div> */}
 
             {/* `border border-gray-300` for input border */}
-            <div className="relative mr-60px -mt-3 mb-5">
+            <div className="relative mr-60px mt-5 mb-5">
               <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center"></div>
               <input
                 type="search"
@@ -207,7 +201,8 @@ const TickerSelectorModal = ({
               <div className="text-lg leading-relaxed text-lightWhite">
                 <div className="mx-auto flex flex-col items-center">
                   <div className="flex w-full items-center justify-center">
-                    <div className="mb-5 grid grid-cols-2 space-y-4 space-x-4 lg:grid-cols-5">
+                    {/* 多出來的高度不會出現y卷軸 */}
+                    <div className="mb-5 grid grid-cols-5 space-y-4 space-x-4 overflow-x-hidden overflow-y-clip">
                       <CryptoCard
                         star={true}
                         starColor="text-bluePurple"

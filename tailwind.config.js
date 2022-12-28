@@ -88,6 +88,7 @@ module.exports = {
         '53px': '53px',
         '54px': '54px',
         '55px': '55px',
+        '60px': '60px',
         '65px': '65px',
         '69px': '69px',
         '70px': '70px',

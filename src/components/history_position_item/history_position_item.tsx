@@ -39,7 +39,7 @@ const HistoryPositionItem = ({
             {/* Divider */}
           </div>
 
-          <div className="">
+          <div className="w-60px">
             <div>{ticker}</div>
             <div className="text-lightWhite">
               {displayedString.title}{' '}

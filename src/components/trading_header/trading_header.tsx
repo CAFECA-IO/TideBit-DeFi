@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import TickerSelectorModal from '../ticker_selector/ticker_selector';
+import TickerSelectorModal from '../ticker_selector_modal/ticker_selector_modal';
 import {CgArrowsExchange} from 'react-icons/cg';
 import useOuterClick from '../../lib/hooks/use_outer_click';
 

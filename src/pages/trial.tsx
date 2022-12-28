@@ -1,8 +1,20 @@
 import CryptoCard from '../components/card/crypto_card';
 import OpenPositionItem from '../components/open_position_item/open_position_item';
 import TestReserveRatio from '../components/reserve_ratio/test_reserve_ratio';
+import TickerSelectorModal from '../components/ticker_selector_modal/ticker_selector_modal';
+import useOuterClick from '../lib/hooks/use_outer_click';
 
 const Trial = () => {
+  const {
+    targetRef: tickerBoxRef,
+    componentVisible: tickerBoxVisible,
+    setComponentVisible: setTickerBoxVisible,
+  } = useOuterClick<HTMLDivElement>(true);
+
+  const tickerBoxClickHandler = () => {
+    setTickerBoxVisible(!tickerBoxVisible);
+  };
+
   const flowTest = (
     <>
       <button
@@ -44,7 +56,7 @@ const Trial = () => {
         {/* <TestReserveRatio />
         {rippleEffect} */}
         {/* -------------Open position trial------------- */}
-        <OpenPositionItem
+        {/* <OpenPositionItem
           profitOrLoss="profit"
           longOrShort="short"
           value={1234567.8}
@@ -53,11 +65,11 @@ const Trial = () => {
           profitOrLossAmount={1234.5}
           tickerTrendArray={[90, 72, 60, 65, 42, 25, 32, 20, 15, 32, 48, 20]}
           horizontalValueLine={80}
-        />{' '}
+        />{' '} */}
         {/* Divider */}
-        <div className="my-auto h-px w-full rounded bg-white/50"></div>
+        {/* <div className="my-auto h-px w-full rounded bg-white/50"></div> */}
         {/* -------------Open position trial------------- */}
-        <CryptoCard
+        {/* <CryptoCard
           star={true}
           className="mt-4 ml-4"
           chain="Ethereum"
@@ -66,6 +78,11 @@ const Trial = () => {
           fluctuating={1.14}
           gradientColor="border-bluePurple/50 bg-black from-bluePurple/50 to-black"
           tokenComponent={<img src="/elements/group_2371.svg" alt="eth" width={40} height={40} />}
+        />{' '} */}
+        <TickerSelectorModal
+          tickerSelectorModalRef={tickerBoxRef}
+          tickerSelectorModalVisible={tickerBoxVisible}
+          tickerSelectorModalClickHandler={tickerBoxClickHandler}
         />{' '}
       </div>
     </>

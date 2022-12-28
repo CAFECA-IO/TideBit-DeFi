@@ -40,9 +40,23 @@ const TickerSelectorModal = ({
   const activePositionTabStyle =
     activeTab == 'Position' ? 'bg-darkGray7 text-lightWhite' : 'bg-darkGray6 text-lightGray';
 
+  const searchIcon = (
+    <svg xmlns="http://www.w3.org/2000/svg" width="25" height="24.984" viewBox="0 0 25 24.984">
+      <g id="search" transform="translate(-5.993 -2.299)">
+        <path
+          id="Path_25775"
+          data-name="Path 25775"
+          d="M24.934,19.358a10.589,10.589,0,1,0-1.867,1.866l.057.06,5.61,5.611a1.323,1.323,0,1,0,1.872-1.872l-5.611-5.61q-.029-.029-.06-.056Zm-2.745-12.1a7.934,7.934,0,1,1-11.221,0,7.933,7.933,0,0,1,11.221,0Z"
+          fill="#f2f2f2"
+          fillRule="evenodd"
+        />
+      </g>
+    </svg>
+  );
+
   const tabPart = (
     <>
-      <div className="z-10 flex w-1200px flex-wrap border-gray-200 text-center text-sm font-medium text-gray-500 dark:border-gray-700 dark:text-gray-400">
+      <div className="z-10 flex w-1200px flex-wrap border-gray-200 text-center text-sm font-medium text-gray-400">
         <div className="pr-1">
           <button
             type="button"
@@ -119,7 +133,7 @@ const TickerSelectorModal = ({
         <div className="">
           <button
             type="button"
-            className={`${activePositionTabStyle} inline-block rounded-t-lg px-38px py-2 hover:cursor-pointer`}
+            className={`${activePositionTabStyle} inline-block rounded-t-lg px-40px py-2 hover:cursor-pointer`}
           >
             Polkadot
           </button>
@@ -132,7 +146,7 @@ const TickerSelectorModal = ({
     <>
       <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">
         <div
-          className="relative my-6 mx-auto w-auto max-w-xl"
+          className="relative my-6 mx-auto w-auto"
           id="tickerSelectorModal"
           ref={tickerSelectorModalRef}
         >
@@ -150,6 +164,45 @@ const TickerSelectorModal = ({
               </button>
             </div>
             {/*body*/}
+            {/* search section */}
+            {/* <div>
+              <div className="flex h-10 w-200px items-center justify-end rounded-md bg-darkGray2">
+                {searchIcon}
+              </div>
+              <input
+                placeholder="Email Address"
+                type="text"
+                id="email"
+                name="email"
+                className="block w-full rounded border border-white bg-darkGray py-1 px-3 text-sm leading-8 text-white outline-none ring-transparent transition-colors duration-200 ease-in-out focus:bg-darkGray active:bg-darkGray"
+              />
+            </div> */}
+
+            {/* `border border-gray-300` for input border */}
+            <div className="relative mr-60px -mt-3 mb-5">
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center"></div>
+              <input
+                type="search"
+                id="default-search"
+                className="absolute right-0 block w-430px rounded-full bg-darkGray2 p-3 pl-10 text-sm text-white focus:border-blue-500 focus:outline-none focus:ring-0 focus:ring-blue-500"
+                placeholder="Search Cryptocurrencies"
+                required
+              />
+              <button
+                type="button"
+                className="absolute right-0 top-1 rounded-lg bg-transparent px-4 py-2 text-sm font-medium text-white hover:text-gray-700/80 focus:outline-none focus:ring-0 focus:ring-blue-300"
+              >
+                {searchIcon}
+              </button>
+              {/* <button
+                type="submit"
+                className="absolute right-2.5 bottom-2.5 rounded-lg bg-blue-700 px-4 py-2 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 bg-blue-600 hover:bg-blue-700 focus:ring-blue-800"
+              >
+                Search
+              </button> */}
+            </div>
+
+            {/* Card section */}
             <div className="flex flex-auto flex-col items-center pt-10">
               <div className="text-lg leading-relaxed text-lightWhite">
                 <div className="mx-auto flex flex-col items-center">

@@ -36,7 +36,7 @@ const OpenSubTab = () => {
             profitOrLoss="profit"
             longOrShort="short"
             value={1234567.8}
-            ticker="ETH"
+            ticker="BTC"
             passedHour={23}
             pNL={1234.5}
           />

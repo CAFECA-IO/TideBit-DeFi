@@ -41,14 +41,15 @@ const OpenPositionItem = ({
   // It'll dest
   const displayedTickerLayout =
     ticker === 'ETH' ? (
-      <div className="absolute right-140px top-3">
-        <div>ETH</div>
-        <div className="text-lightWhite">
-          {displayedString.title} <span className="text-lightGray">{displayedString.subtitle}</span>
+      <div className="">
+        <div className="text-sm">ETH</div>
+        <div className="text-sm text-lightWhite">
+          {displayedString.title}{' '}
+          <span className="text-xs text-lightGray">{displayedString.subtitle}</span>
         </div>
       </div>
     ) : (
-      <div className="absolute right-140px top-3">
+      <div className="">
         <div>BTC</div>
         <div className="text-lightWhite">
           {displayedString.title} <span className="text-lightGray">{displayedString.subtitle}</span>
@@ -60,8 +61,8 @@ const OpenPositionItem = ({
     <div className="">
       {/* brief of this open position */}
       <div className="">
-        <div className="relative">
-          <div className="w-50px">
+        <div className="mt-5 flex justify-between">
+          <div className="-mt-4 -ml-2 w-50px">
             <CircularProgressBar
               numerator={remainingHour}
               denominator={24}
@@ -71,16 +72,24 @@ const OpenPositionItem = ({
             />
           </div>
 
-          {displayedTickerLayout}
-
-          <div className="absolute right-20 top-3">
-            <div>Value</div>
-            <div>$ {value}</div>
+          {/* TODO: switch the layout */}
+          {/* {displayedTickerLayout} */}
+          <div className="w-70px">
+            <div className="text-sm">{ticker}</div>
+            <div className="text-sm text-lightWhite">
+              {displayedString.title}{' '}
+              <span className="text-xs text-lightGray">{displayedString.subtitle}</span>
+            </div>
           </div>
 
-          <div className="absolute right-0 top-3">
-            <div>PNL</div>
-            <div className={`${displayedTextColor}`}>
+          <div className="mt-1 w-70px">
+            <div className="text-xs text-lightGray">Value</div>
+            <div className="text-sm">$ {value}</div>
+          </div>
+
+          <div className="mt-1 w-60px">
+            <div className="text-xs text-lightGray">PNL</div>
+            <div className={`${displayedTextColor} text-sm`}>
               <span className="">{displayedSymbol}</span> $ {pNL}
             </div>
           </div>
@@ -88,7 +97,7 @@ const OpenPositionItem = ({
       </div>
 
       {/* Line graph */}
-      <div>
+      <div className="-mt-10 -ml-2">
         <PositionLineGraph />
       </div>
 

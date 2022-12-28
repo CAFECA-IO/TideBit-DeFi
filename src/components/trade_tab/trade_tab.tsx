@@ -59,6 +59,7 @@ const TradeTab = () => {
         lowerLimit={0}
         upperLimit={1000000}
         inputInitialValue={longTpValue}
+        inputPlaceholder="profit-taking setting"
         inputName="tpInput"
         inputSize="h-25px w-70px text-sm"
         decrementBtnSize="25"
@@ -72,6 +73,7 @@ const TradeTab = () => {
       <TradingInput
         lowerLimit={0}
         upperLimit={1000000}
+        inputPlaceholder="stop-loss setting"
         inputInitialValue={longSlValue}
         inputName="slInput"
         inputSize="h-25px w-70px text-sm"
@@ -129,6 +131,7 @@ const TradeTab = () => {
         lowerLimit={0}
         upperLimit={1000000}
         inputInitialValue={shortTpValue}
+        inputPlaceholder="profit-taking setting"
         inputName="shortTpInput"
         inputSize="h-25px w-70px text-sm"
         decrementBtnSize="25"
@@ -144,6 +147,7 @@ const TradeTab = () => {
         upperLimit={1000000}
         inputInitialValue={shortSlValue}
         inputValue={shortSlValue}
+        inputPlaceholder="stop-loss setting"
         inputName="slInput"
         inputSize="h-25px w-70px text-sm"
         decrementBtnSize="25"
@@ -214,6 +218,7 @@ const TradeTab = () => {
                 lowerLimit={0}
                 upperLimit={1000000}
                 inputInitialValue={inputValue}
+                inputPlaceholder="margin input"
                 inputName="marginInput"
                 inputSize="h-44px w-160px text-xl"
                 decrementBtnSize="44"

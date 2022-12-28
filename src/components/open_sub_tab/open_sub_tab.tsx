@@ -7,29 +7,42 @@ const OpenSubTab = () => {
       <div className="">
         <div className="">
           <OpenPositionItem
-            profitOrLoss="profit"
+            profitOrLoss="loss"
             longOrShort="long"
-            value={639}
+            value={656.9}
             ticker="BTC"
-            remainingHour={20}
+            remainingHour={11}
             pNL={34.9}
           />
         </div>
         {/* Divider */}
-        <div className="absolute top-200px my-auto h-px w-7/8 rounded bg-white/50"></div>
+        <div className="my-auto h-px w-full rounded bg-white/50"></div>
 
         <div className="">
           <OpenPositionItem
-            profitOrLoss="loss"
+            profitOrLoss="profit"
             longOrShort="short"
-            value={600}
+            value={631.1}
             ticker="ETH"
-            remainingHour={15}
-            pNL={23.55}
+            remainingHour={10}
+            pNL={29.9}
           />
         </div>
         {/* Divider */}
-        <div className="absolute top-400px my-auto h-px w-7/8 rounded bg-white/50"></div>
+        <div className="my-auto h-px w-full rounded bg-white/50"></div>
+
+        <div className="">
+          <OpenPositionItem
+            profitOrLoss="profit"
+            longOrShort="short"
+            value={1234567.8}
+            ticker="ETH"
+            remainingHour={2}
+            pNL={1234.5}
+          />
+        </div>
+        {/* Divider */}
+        <div className="my-auto h-px w-full rounded bg-white/50"></div>
       </div>
     </>
   );

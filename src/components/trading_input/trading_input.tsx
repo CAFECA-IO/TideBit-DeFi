@@ -46,6 +46,7 @@ interface ITradingInputProps {
   decrementBtnSize: string;
   incrementBtnSize: string;
   inputSize: string;
+  inputPlaceholder: string;
 
   handlerType?: string;
   lowerLimit: number;
@@ -67,11 +68,12 @@ const TradingInput = ({
   incrementBtnSize = '44',
   // inputValue,
   // setInputValue,
+  inputPlaceholder,
 
-  handlerType,
   lowerLimit,
   upperLimit,
 
+  handlerType,
   longSlLimit,
   shortSlLimit,
   marginLimit,
@@ -346,6 +348,7 @@ const TradingInput = ({
             value={inputValue}
             name={inputName}
             onChange={inputChangeHandler}
+            placeholder={inputPlaceholder}
           />
         </div>
 

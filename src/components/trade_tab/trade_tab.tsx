@@ -256,7 +256,6 @@ const TradeTab = () => {
               {/* Take Profit Setting */}
               <div className="mt-3 mb-5 flex h-25px items-center justify-between">
                 <div className="text-sm text-lightGray">Close at profit</div>
-                <div className="hidden text-base text-lightWhite">$ 65.69 USDT</div>
                 {displayedLongTpSetting}
                 <Toggle toggle={longTpToggle} toggleClickHandler={longTpToggleClickHandler} />
               </div>
@@ -265,8 +264,7 @@ const TradeTab = () => {
               <div>
                 <div className="flex h-25px items-center justify-between">
                   <div className="text-sm text-lightGray">Clost at loss</div>
-                  {/* <div className="hidden text-base text-lightWhite">$ 65.69 USDT</div> */}
-                  {displayedLongSlSetting}
+                  <div className="w-105px">{displayedLongSlSetting}</div>
                   <Toggle toggle={longSlToggle} toggleClickHandler={longSlToggleClickHandler} />
                 </div>
                 {/* Guaranteed stop */}
@@ -328,7 +326,7 @@ const TradeTab = () => {
                   <div>
                     <div className="flex h-25px items-center justify-between">
                       <div className="text-sm text-lightGray">Clost at loss</div>
-                      {displayedShortSlSetting}
+                      <div className="w-105px">{displayedShortSlSetting}</div>
                       <div className="">
                         <Toggle
                           toggle={shortSlToggle}

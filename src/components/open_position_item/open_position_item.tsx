@@ -7,7 +7,7 @@ interface IOpenPositionItemProps {
   profitOrLoss: string;
   longOrShort: string;
   ticker: string;
-  remainingHour: number;
+  passedHour: number;
   value: number;
   pNL: number;
 }
@@ -17,7 +17,7 @@ const OpenPositionItem = ({
   longOrShort,
   value,
   ticker,
-  remainingHour,
+  passedHour,
   pNL,
   ...otherProps
 }: IOpenPositionItemProps) => {
@@ -64,7 +64,7 @@ const OpenPositionItem = ({
         <div className="mt-5 flex justify-between">
           <div className="-mt-4 -ml-2 w-50px">
             <CircularProgressBar
-              numerator={remainingHour}
+              numerator={passedHour}
               denominator={24}
               progressBarColor={[displayedRadicalBarColor]}
               hollowSize="40%"

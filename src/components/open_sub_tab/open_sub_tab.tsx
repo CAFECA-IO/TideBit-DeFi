@@ -11,7 +11,7 @@ const OpenSubTab = () => {
             longOrShort="long"
             value={656.9}
             ticker="BTC"
-            remainingHour={11}
+            passedHour={11}
             pNL={34.9}
           />
         </div>
@@ -24,7 +24,7 @@ const OpenSubTab = () => {
             longOrShort="short"
             value={631.1}
             ticker="ETH"
-            remainingHour={10}
+            passedHour={15}
             pNL={29.9}
           />
         </div>
@@ -37,7 +37,7 @@ const OpenSubTab = () => {
             longOrShort="short"
             value={1234567.8}
             ticker="ETH"
-            remainingHour={2}
+            passedHour={23}
             pNL={1234.5}
           />
         </div>

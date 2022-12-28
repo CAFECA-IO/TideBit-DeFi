@@ -5,7 +5,7 @@ const OpenSubTab = () => {
   return (
     <>
       <div className="">
-        <div className="pb-36">
+        <div className="">
           <OpenPositionItem
             profitOrLoss="profit"
             longOrShort="long"
@@ -20,11 +20,11 @@ const OpenSubTab = () => {
 
         <div className="">
           <OpenPositionItem
-            profitOrLoss="profit"
+            profitOrLoss="loss"
             longOrShort="short"
             value={600}
             ticker="ETH"
-            remainingHour={2}
+            remainingHour={15}
             pNL={23.55}
           />
         </div>

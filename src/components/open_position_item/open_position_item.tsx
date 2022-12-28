@@ -30,8 +30,10 @@ const OpenPositionItem = ({
   // const [label, setLabel] = useState('');
 
   const displayedString = longOrShort === 'long' ? TRANSACTION_TYPE.long : TRANSACTION_TYPE.short;
+  const displayedRadicalBarColor =
+    profitOrLoss === 'profit' ? PROFIT_LOSS_COLOR_TYPE.profit : PROFIT_LOSS_COLOR_TYPE.loss;
 
-  const displayedColor = profitOrLoss === 'profit' ? 'text-lightGreen' : 'text-lightRed';
+  const displayedTextColor = profitOrLoss === 'profit' ? 'text-lightGreen' : 'text-lightRed';
 
   const displayedSymbol = profitOrLoss === 'profit' ? '+' : '-';
 
@@ -59,11 +61,12 @@ const OpenPositionItem = ({
       {/* brief of this open position */}
       <div className="">
         <div className="relative">
-          <div className="w-90px">
+          <div className="w-50px">
             <CircularProgressBar
               numerator={remainingHour}
               denominator={24}
-              progressBarColor={[PROFIT_LOSS_COLOR_TYPE.loss]}
+              progressBarColor={[displayedRadicalBarColor]}
+              hollowSize="40%"
               circularBarSize="100"
             />
           </div>
@@ -77,7 +80,7 @@ const OpenPositionItem = ({
 
           <div className="absolute right-0 top-3">
             <div>PNL</div>
-            <div className={`${displayedColor}`}>
+            <div className={`${displayedTextColor}`}>
               <span className="">{displayedSymbol}</span> $ {pNL}
             </div>
           </div>

@@ -7,7 +7,7 @@ interface IHistoryPositionItemProps {
   ticker: string;
   openValue: number;
   closeValue: number;
-  pNL: number;
+  profitOrLossAmount: number;
 }
 
 const HistoryPositionItem = ({
@@ -16,7 +16,7 @@ const HistoryPositionItem = ({
   openValue,
   closeValue,
   ticker,
-  pNL,
+  profitOrLossAmount: pNL,
   ...otherProps
 }: IHistoryPositionItemProps) => {
   if (longOrShort !== 'long' && longOrShort !== 'short') return <></>;

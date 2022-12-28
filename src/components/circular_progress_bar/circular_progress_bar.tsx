@@ -10,17 +10,23 @@ interface ICircularProgressBarProps {
   // label?: string[];
   numerator: number;
   denominator: number;
-  circularBarSize?: string;
+  hollowSize: string;
+  circularBarSize: string;
+  clickHandler?: () => void;
 }
 
 const CircularProgressBar = ({
   numerator,
   denominator,
   progressBarColor,
+  hollowSize,
   circularBarSize,
+  clickHandler,
 }: ICircularProgressBarProps) => {
   const percentage = [(numerator / denominator) * 100];
   const label = [`${numerator} H`];
+  // const hollowSizeNumber = parseInt(hollowSize, 10);
+  // const localHollowSize = `${hollowSize}`
 
   const chartOptions: ApexOptions = {
     series: percentage,
@@ -42,7 +48,7 @@ const CircularProgressBar = ({
     plotOptions: {
       radialBar: {
         hollow: {
-          size: '40%',
+          size: `${hollowSize}`,
           margin: 10,
         },
         track: {
@@ -81,14 +87,16 @@ const CircularProgressBar = ({
   };
 
   return (
-    <div>
-      <Chart
-        options={chartOptions}
-        height={circularBarSize}
-        series={chartOptions.series}
-        type={'radialBar'}
-      />
-    </div>
+    <>
+      <div onClick={clickHandler}>
+        <Chart
+          options={chartOptions}
+          height={circularBarSize}
+          series={chartOptions.series}
+          type={'radialBar'}
+        />
+      </div>
+    </>
   );
 };
 

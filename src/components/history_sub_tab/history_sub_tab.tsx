@@ -11,7 +11,7 @@ const HistorySubTab = () => {
           openValue={639.9}
           closeValue={638.3}
           ticker="ETH"
-          pNL={34.9}
+          profitOrLossAmount={34.9}
         />
       </div>
       <div>
@@ -21,7 +21,7 @@ const HistorySubTab = () => {
           openValue={639.9}
           closeValue={700.3}
           ticker="BTC"
-          pNL={123456.9}
+          profitOrLossAmount={123456.9}
         />
       </div>
       <div>
@@ -31,7 +31,7 @@ const HistorySubTab = () => {
           openValue={639.9}
           closeValue={500}
           ticker="ETH"
-          pNL={9452.3}
+          profitOrLossAmount={9452.3}
         />
       </div>
     </>

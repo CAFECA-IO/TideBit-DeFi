@@ -150,7 +150,7 @@ const TickerSelectorModal = ({
               </button>
             </div>
             {/*body*/}
-            <div className="flex flex-auto flex-col items-center pt-32">
+            <div className="flex flex-auto flex-col items-center pt-10">
               <div className="text-lg leading-relaxed text-lightWhite">
                 <div className="mx-auto flex flex-col items-center">
                   <div className="flex w-full items-center justify-center">
@@ -277,6 +277,73 @@ const TickerSelectorModal = ({
                         fluctuating={-6.23}
                         gradientColor="border-lightRed2/50 from-lightRed2/50 to-black"
                         tokenComponent={<img src="/elements/group_2391.svg" alt="avax" />}
+                      />
+
+                      <CryptoCard
+                        star={true}
+                        starColor="text-lightOrange1"
+                        starred={true}
+                        chain="Dai"
+                        price={15.77}
+                        currency="Dai"
+                        fluctuating={-6.23}
+                        gradientColor="border-lightOrange1/50 from-lightOrange1/50 to-black"
+                        tokenComponent={<img src="/elements/layer_x0020_1.svg" alt="dai" />}
+                      />
+                      <CryptoCard
+                        star={true}
+                        starColor="text-lightGreen3"
+                        starred={true}
+                        chain="Maker"
+                        price={15.77}
+                        currency="MKR"
+                        fluctuating={-6.23}
+                        gradientColor="border-lightGreen3/50 from-lightGreen3/50 to-black"
+                        tokenComponent={<img src="/elements/layer_2.svg" alt="Maker" />}
+                      />
+                      <CryptoCard
+                        star={true}
+                        starColor="text-lightGray4"
+                        starred={true}
+                        chain="XRP"
+                        price={15.77}
+                        currency="XRP"
+                        fluctuating={-6.23}
+                        gradientColor="border-lightGray4/50 from-lightGray4/50 to-black"
+                        tokenComponent={<img src="/elements/group_2406.svg" alt="XRP" />}
+                      />
+                      <CryptoCard
+                        star={true}
+                        starColor="text-lightYellow1"
+                        starred={true}
+                        chain="Dogecoin"
+                        price={15.77}
+                        currency="DOGE"
+                        fluctuating={-6.23}
+                        gradientColor="border-lightYellow1/50 from-lightYellow1/50 to-black"
+                        tokenComponent={<img src="/elements/layer_2-1.svg" alt="DOGE" />}
+                      />
+                      <CryptoCard
+                        star={true}
+                        starColor="text-lightPink1"
+                        starred={true}
+                        chain="Uniswap"
+                        price={15.77}
+                        currency="UNI"
+                        fluctuating={-6.23}
+                        gradientColor="border-lightPink1/50 from-lightPink1/50 to-black"
+                        tokenComponent={<img src="/elements/layer_2.svg" alt="Uniswap" />}
+                      />
+                      <CryptoCard
+                        star={true}
+                        starColor="text-lightGreen4"
+                        starred={true}
+                        chain="Flow"
+                        price={15.77}
+                        currency="FLOW"
+                        fluctuating={-6.23}
+                        gradientColor="border-lightGreen4/50 from-lightGreen4/50 to-black"
+                        tokenComponent={<img src="/elements/layer_2_1_.svg" alt="avax" />}
                       />
 
                       {/* <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">

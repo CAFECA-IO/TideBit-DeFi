@@ -48,7 +48,7 @@ const HistoryPositionItem = ({
           </div>
 
           <div>
-            <div className="text-lightGray">Open/ Close Value</div>
+            <div className="text-lightGray">Open / Close Value</div>
             <div className="">
               $ {openValue} / $ {closeValue}
             </div>

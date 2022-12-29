@@ -5,6 +5,7 @@ import TestReserveRatio from '../components/reserve_ratio/test_reserve_ratio';
 import TickerSelectorModal from '../components/ticker_selector_modal/ticker_selector_modal';
 import useOuterClick from '../lib/hooks/use_outer_click';
 import HorizontalRelativeLineGraph from '../components/horizontal_relative_line_graph/horizontal_relative_line_graph';
+import PositionLineGraph from '../components/position_line_graph/position_line_graph';
 
 const Trial = () => {
   const {
@@ -54,7 +55,7 @@ const Trial = () => {
   return (
     <>
       {/* flex h-screen w-full items-center justify-center */}
-      <div className="w-1/4 pl-5">
+      <div className="w-full pl-5">
         {/* <TestReserveRatio />
         {rippleEffect} */}
         {/* -------------Open position trial------------- */}
@@ -68,12 +69,26 @@ const Trial = () => {
           tickerTrendArray={[90, 72, 60, 65, 42, 25, 32, 20, 15, 32, 48, 20]}
           horizontalValueLine={80}
         />{' '} */}
-        <HorizontalRelativeLineGraph
-          strokeColor={[`#1AE2A0`]}
-          dataArray={[1223, 1223]}
-          lineGraphWidth="250"
-          annotatedValue={1230}
-        />
+        <div className="relative">
+          <div className="">
+            <PositionLineGraph
+              strokeColor={[`#1AE2A0`]}
+              dataArray={[1230, 1272, 1120, 1265, 1342, 1299]}
+              lineGraphWidth="180"
+              annotatedValue={1230}
+            />
+          </div>
+
+          <div className="absolute -top-5">
+            <HorizontalRelativeLineGraph
+              strokeColor={[`#1AE2A0`]}
+              dataArray={[1230, 1272, 1120, 1265, 1342, 1299]}
+              lineGraphWidth="250"
+              annotatedValue={1230}
+            />
+          </div>
+        </div>
+
         {/* Divider */}
         <div className="my-auto h-px w-full rounded bg-white/50"></div>
         {/* -------------Open position trial------------- */}

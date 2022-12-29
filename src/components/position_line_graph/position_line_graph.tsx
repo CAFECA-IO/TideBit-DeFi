@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import dynamic from 'next/dynamic';
 import {ApexOptions} from 'apexcharts';
+import {INVISIBLE_STROKE_COLOR} from '../../constants/display';
 
 const Chart = dynamic(() => import('react-apexcharts'), {ssr: false});
 // const Chart = dynamic(() => import('apexcharts'), {ssr: false});
@@ -32,17 +33,17 @@ export default function PositionLineGraph({
         show: false,
       },
     },
-    // markers: {
-    //   discrete: [
-    //     {
-    //       seriesIndex: 0,
-    //       dataPointIndex: dataArray.length - 1,
-    //       size: 1,
-    //       strokeColor: strokeColor[0],
-    //       shape: 'circle',
-    //     },
-    //   ],
-    // },
+    markers: {
+      discrete: [
+        {
+          seriesIndex: 0,
+          dataPointIndex: dataArray.length - 1,
+          size: 1,
+          strokeColor: strokeColor[0],
+          shape: 'circle',
+        },
+      ],
+    },
     // grid: {
     //   show: true,
     //   borderColor: strokeColor[0],
@@ -61,6 +62,7 @@ export default function PositionLineGraph({
       curve: 'straight',
       colors: strokeColor,
       width: 1.2,
+      // lineCap: 'round',
     },
     xaxis: {
       axisBorder: {show: false},
@@ -83,31 +85,39 @@ export default function PositionLineGraph({
     tooltip: {
       enabled: false,
     },
-    annotations: {
-      position: 'front',
-      yaxis: [
-        {
-          y: annotatedValue,
-          strokeDashArray: 5,
-          borderColor: strokeColor[0],
-          width: '150%',
-          fillColor: '#ffffff',
-          label: {
-            position: 'right',
-            borderColor: 'transparent',
-            textAnchor: 'end',
-            offsetY: 10,
-            offsetX: 0,
-            style: {
-              color: '#ffffff',
-              background: strokeColor[0],
-            },
-            text: `$ ${annotatedValue.toString()}`,
-            borderWidth: 20,
-          },
-        },
-      ],
-    },
+    // Horizontal line overlaid by another component
+    // annotations: {
+    //   position: 'front',
+    //   yaxis: [
+    //     {
+    //       y: annotatedValue,
+    //       strokeDashArray: 5,
+    //       borderColor: strokeColor[0],
+    //       width: '150%',
+    //       fillColor: '#ffffff',
+    //       label: {
+    //         position: 'right',
+    //         borderColor: 'transparent',
+    //         textAnchor: 'end',
+    //         offsetY: 10,
+    //         offsetX: 10,
+    //         style: {
+    //           color: '#ffffff',
+    //           background: strokeColor[0],
+    //           // padding: {
+    //           //   left: 0,
+    //           //   right: 0,
+    //           //   top: 0,
+    //           //   bottom: 10,
+    //           // },
+    //         },
+    //         text: `$ ${annotatedValue.toString()}`,
+    //         borderWidth: 20,
+    //       },
+    //       offsetX: -10,
+    //     },
+    //   ],
+    // },
   };
 
   const [dataSample, setDataSample] = useState({
@@ -125,7 +135,7 @@ export default function PositionLineGraph({
   });
 
   return (
-    <div>
+    <div className="w-full">
       <Chart
         options={dataSample.options}
         series={dataSample.series}

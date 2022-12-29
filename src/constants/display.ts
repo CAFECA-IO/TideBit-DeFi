@@ -21,3 +21,8 @@ export const TRANSACTION_TYPE = {
     subtitle: '(Sell)',
   },
 };
+
+export const INVISIBLE_STROKE_COLOR = {
+  dark: '#161719',
+  sample: '#A5C4F3',
+};

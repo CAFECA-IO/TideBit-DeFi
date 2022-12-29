@@ -99,7 +99,7 @@ const OpenPositionItem = ({
       </div>
 
       {/* Line graph */}
-      <div className="-mt-8 -ml-2 -mb-7">
+      <div className="-mt-8 -ml-2 -mb-7 w-250px">
         <PositionLineGraph
           strokeColor={[`${displayedColorHex}`]}
           dataArray={tickerTrendArray}

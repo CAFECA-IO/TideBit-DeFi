@@ -100,7 +100,7 @@ const OpenPositionItem = ({
       </div>
 
       {/* Line graph */}
-      <div className="relative -mt-8 -ml-2 -mb-7">
+      <div className="-mt-8 -ml-2 -mb-7">
         <PositionLineGraph
           strokeColor={[`${displayedColorHex}`]}
           dataArray={tickerTrendArray}
@@ -108,14 +108,14 @@ const OpenPositionItem = ({
           annotatedValue={horizontalValueLine}
         />
 
-        <div className="absolute -top-5">
+        {/* <div className="absolute -top-5">
           <HorizontalRelativeLineGraph
             strokeColor={[`#A5C4F3`]}
             dataArray={tickerTrendArray}
             lineGraphWidth="250"
             annotatedValue={horizontalValueLine}
           />
-        </div>
+        </div> */}
       </div>
 
       {/* Divider */}

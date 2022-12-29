@@ -21,6 +21,29 @@
   color: blue;
 } */
 
-.apexchartHorizontalLine {
+/* .apexchartHorizontalLine {
+  width: 250px;
+  font-size: 20px;
+  font-weight: bold;
+} */
+
+.apexchartHorizontalLine svg {
   width: 250px;
 }
+
+/* .apexchartExtend rect {
+  transform: translate(100px, 100px);
+} */
+
+/* svg {
+  width: 250px;
+} */
+/* 
+#apexchartskv28bp2g {
+  width: 250px;
+} */
+
+/* .my-annotation-class {
+  font-size: 18px;
+  font-weight: bold;
+} */

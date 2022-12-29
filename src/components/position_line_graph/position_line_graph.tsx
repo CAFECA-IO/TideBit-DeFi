@@ -100,20 +100,16 @@ export default function PositionLineGraph({
             borderColor: 'transparent',
             textAnchor: 'end',
             offsetY: 10,
-            offsetX: 10,
+            offsetX: 2,
             style: {
               color: '#ffffff',
-              background: strokeColor[0],
-              // padding: {
-              //   left: 0,
-              //   right: 0,
-              //   top: 0,
-              //   bottom: 10,
-              // },
+              background: '#A5C4F350',
+              // cssClass: 'apexchartHorizontalLine',
             },
             text: `$ ${annotatedValue.toString()}`,
             borderWidth: 20,
           },
+
           offsetX: -10,
         },
       ],
@@ -135,7 +131,7 @@ export default function PositionLineGraph({
   });
 
   return (
-    <div className="w-full">
+    <div className="apexchartHorizontalLine">
       <Chart
         options={dataSample.options}
         series={dataSample.series}

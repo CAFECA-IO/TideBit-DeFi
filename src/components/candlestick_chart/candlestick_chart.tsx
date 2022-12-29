@@ -20,6 +20,7 @@ export default function CandlestickChart({
   ...otherProps
 }: ILineGraphProps): JSX.Element {
   const anotherSampleData = [1230, 1272, 1120, 1265, 1342, 1299];
+  const CANDLESTICK_CHART_BORDER_COLOR = '#8B8E91';
 
   const candlestickData = [
     {
@@ -277,7 +278,7 @@ export default function CandlestickChart({
       type: 'datetime',
       labels: {
         style: {
-          colors: '#8B8E91',
+          colors: CANDLESTICK_CHART_BORDER_COLOR,
         },
       },
       axisTicks: {
@@ -303,10 +304,17 @@ export default function CandlestickChart({
         show: true,
         align: 'center',
         style: {
-          colors: '#8B8E91',
+          colors: CANDLESTICK_CHART_BORDER_COLOR,
         },
       },
       opposite: true,
+      axisBorder: {
+        show: true,
+        color: CANDLESTICK_CHART_BORDER_COLOR,
+      },
+      axisTicks: {
+        show: false,
+      },
     },
     tooltip: {
       enabled: true,

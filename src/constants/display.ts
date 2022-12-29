@@ -22,6 +22,7 @@ export const TRANSACTION_TYPE = {
   },
 };
 
+// Used to display dash line on `open position item` but failed
 export const INVISIBLE_STROKE_COLOR = {
   dark: '#161719',
   sample: '#A5C4F3',

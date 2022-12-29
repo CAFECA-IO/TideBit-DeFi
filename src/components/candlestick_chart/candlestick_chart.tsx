@@ -1,6 +1,8 @@
 import React, {useState, useEffect} from 'react';
 import dynamic from 'next/dynamic';
 import {ApexOptions} from 'apexcharts';
+import {PROFIT_LOSS_COLOR_TYPE} from '../../constants/display';
+import {BsFillArrowDownCircleFill, BsFillArrowUpCircleFill} from 'react-icons/bs';
 
 const Chart = dynamic(() => import('react-apexcharts'), {ssr: false});
 // const Chart = dynamic(() => import('apexcharts'), {ssr: false});
@@ -364,6 +366,65 @@ export default function CandlestickChart({
     //   fillOpacity: 0.5,
     //   dashArray: 2,
     // },
+    annotations: {
+      position: 'back',
+      yaxis: [
+        {
+          y: 6630,
+          strokeDashArray: 3,
+          borderColor: PROFIT_LOSS_COLOR_TYPE.loss,
+          width: '100%',
+          fillColor: '#ffffff',
+
+          label: {
+            position: 'right',
+            borderColor: 'transparent',
+            textAnchor: 'end',
+            offsetY: 10,
+            offsetX: -10,
+            style: {
+              color: '#ffffff',
+              fontSize: '12px',
+              background: PROFIT_LOSS_COLOR_TYPE.loss,
+              padding: {
+                right: 23,
+              },
+            },
+            text: `Position $6660 Close`,
+            borderWidth: 20,
+          },
+
+          offsetX: 0,
+        },
+        {
+          y: 6585,
+          strokeDashArray: 3,
+          borderColor: PROFIT_LOSS_COLOR_TYPE.profit,
+          width: '100%',
+          fillColor: '#ffffff',
+
+          label: {
+            position: 'right',
+            borderColor: 'transparent',
+            textAnchor: 'end',
+            offsetY: 10,
+            offsetX: -10,
+            style: {
+              color: '#ffffff',
+              fontSize: '12px',
+              background: PROFIT_LOSS_COLOR_TYPE.profit,
+              padding: {
+                right: 23,
+              },
+            },
+            text: `Position $6760 Close`,
+            borderWidth: 20,
+          },
+
+          offsetX: 0,
+        },
+      ],
+    },
   };
 
   const [dataSample, setDataSample] = useState({

@@ -85,7 +85,7 @@ export default function PositionLineGraph({
     tooltip: {
       enabled: false,
     },
-    // Horizontal line overlaid by another component
+    // Horizontal dash line
     annotations: {
       position: 'front',
       yaxis: [

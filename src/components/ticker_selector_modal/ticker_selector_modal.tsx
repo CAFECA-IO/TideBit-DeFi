@@ -56,7 +56,7 @@ const TickerSelectorModal = ({
 
   const tabPart = (
     <>
-      <div className="z-10 flex w-1200px flex-wrap border-gray-200 text-center text-sm font-medium text-gray-400">
+      <div className="z-10 hidden w-1200px flex-wrap border-gray-200 text-center text-sm font-medium text-gray-400 xl:flex">
         <div className="pr-1">
           <button
             type="button"
@@ -144,9 +144,9 @@ const TickerSelectorModal = ({
 
   const isDisplayedTickerSelectorModal = tickerSelectorModalVisible ? (
     <>
-      <div className="fixed inset-0 z-50 flex items-center justify-center overflow-x-auto overflow-y-auto outline-none backdrop-blur-sm focus:outline-none">
+      <div className="fixed inset-0 z-50 hidden items-center justify-center overflow-x-auto overflow-y-auto outline-none backdrop-blur-sm focus:outline-none xl:flex">
         <div
-          className="relative my-6 mx-auto w-auto"
+          className="relative my-6 mx-auto min-w-fit"
           id="tickerSelectorModal"
           ref={tickerSelectorModalRef}
         >
@@ -380,7 +380,7 @@ const TickerSelectorModal = ({
                         currency="UNI"
                         fluctuating={-6.23}
                         gradientColor="border-lightPink1/50 from-lightPink1/50 to-black"
-                        tokenComponent={<img src="/elements/layer_2.svg" alt="Uniswap" />}
+                        tokenComponent={<img src="/elements/uniswap-uni-logo.svg" alt="Uniswap" />}
                       />
                       <CryptoCard
                         star={true}

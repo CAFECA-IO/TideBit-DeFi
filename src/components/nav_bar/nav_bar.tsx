@@ -17,6 +17,7 @@ import NotificationItem from '../notification_item/notification_item';
 import {useRouter} from 'next/router';
 import I18n from '../i18n/i18n';
 import {IoIosArrowBack} from 'react-icons/io';
+import UserOverview from '../user_overview/user_overview';
 
 // interface INavBarProps {
 //   notifyRef: HTMLDivElement extends HTMLElement ? React.RefObject<HTMLDivElement> : null;
@@ -30,6 +31,9 @@ const NavBar = ({notificationNumber = 1}) => {
   const {locale, locales, defaultLocale, asPath} = useRouter();
   const [navOpen, setNavOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const [userOverview, setUserOverview] = useState(false);
+
   const {
     targetRef: notifyRef,
     componentVisible,
@@ -42,6 +46,10 @@ const NavBar = ({notificationNumber = 1}) => {
     // setSidebarOpen(!sidebarOpen);
     setComponentVisible(!componentVisible);
     // console.log('sidebarOpenHandler clicked, componentVisible: ', componentVisible);
+  };
+
+  const getUserLoginHandler = (bool: boolean) => {
+    setUserOverview(bool);
   };
 
   const displayedMobileNavBar = !navOpen ? (
@@ -62,6 +70,15 @@ const NavBar = ({notificationNumber = 1}) => {
       {' '}
     </div>
   );
+
+  const isDisplayedUserOverview = userOverview ? (
+    <UserOverview
+      depositAvailable={100.34}
+      marginLocked={100.34}
+      profitOrLoss={'profit'}
+      profitOrLossAmount={100.96}
+    />
+  ) : null;
 
   return (
     <>
@@ -108,6 +125,9 @@ const NavBar = ({notificationNumber = 1}) => {
                     <Link href="#" className="mr-5 hover:cursor-pointer hover:text-tidebitTheme">
                       {t('nav_bar.HelpCenter')}
                     </Link>
+                    <span className="mx-2 inline-block h-10 w-px rounded bg-lightGray1/50"></span>
+
+                    {isDisplayedUserOverview}
 
                     {/* <div className="max-w-2xl mx-auto"></div> */}
                   </div>
@@ -136,7 +156,7 @@ const NavBar = ({notificationNumber = 1}) => {
                   </button>
                 </div>
                 <div className="mr-5 inline-flex">
-                  <WalletPanel />
+                  <WalletPanel getUserLoginState={getUserLoginHandler} />
                 </div>
               </div>
 
@@ -208,7 +228,7 @@ const NavBar = ({notificationNumber = 1}) => {
               </div>
               <div className="mt-5">
                 {/* <ConnectButton className="ml-2" /> */}
-                <WalletPanel className="ml-2" />
+                <WalletPanel className="ml-2" getUserLoginState={getUserLoginHandler} />
               </div>
             </div>
           </div>

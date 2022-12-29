@@ -155,7 +155,19 @@ const WALLET_CONNECT_PROJECT_ID = process.env.WALLET_CONNECT_PROJECT_ID;
 // TODO: salt is optional, but if not provided, the signature will be different each time(?)
 type TranslateFunction = (s: string) => string;
 
-export default function WalletPanel(props: {className?: string}) {
+interface IWalletPanelProps {
+  className?: string;
+  getUserLoginState: (props: boolean) => void;
+  // getUserLoginState: (props: boolean) => Promise<void>;
+  // getUserInfo: (address: string) => Promise<void>;
+  // getUserSignatureWithSaltAndMessage: (
+  //   address: string,
+  //   salt: string,
+  //   message: string
+  // ) => Promise<void>;
+}
+
+export default function WalletPanel({className, getUserLoginState}: IWalletPanelProps) {
   // const {
   //   targetRef: panelRef,
   //   componentVisible: panelVisible,
@@ -248,11 +260,17 @@ export default function WalletPanel(props: {className?: string}) {
 
   // let waitingWalletConnect = false;
 
+  const passUserLoginState = async (props: boolean) => {
+    getUserLoginState(props);
+  };
+
   const clearStateForMetamaskAccountChange = () => {
     setConnecting(false);
     // setChooseMetamask(false);
 
     setDefaultAccount('');
+    passUserLoginState(false);
+
     setErrorMessages('');
     setSignature('');
     setUserBalance('');
@@ -299,6 +317,8 @@ export default function WalletPanel(props: {className?: string}) {
     // setChooseMetamask(false);
 
     setDefaultAccount('');
+    passUserLoginState(false);
+
     setErrorMessages('');
     setSignature('');
     setUserBalance('');
@@ -398,6 +418,8 @@ export default function WalletPanel(props: {className?: string}) {
         });
         // console.log('Wallet Disconnected');
         setDefaultAccount('');
+        passUserLoginState(false);
+
         setUserBalance('');
       } catch (error) {
         // console.error('Not connected to wallet', error);
@@ -466,6 +488,8 @@ export default function WalletPanel(props: {className?: string}) {
   async function onConnect(chainId: number, connectedAccount: string) {
     // handle connect event
     setDefaultAccount(connectedAccount);
+    passUserLoginState(true);
+
     setChainId(chainId);
     setChooseWalletConnect(true);
 
@@ -717,6 +741,7 @@ export default function WalletPanel(props: {className?: string}) {
         // ---Account Detecetion---
         setErrorMessages('');
         setDefaultAccount(accounts[0]);
+        passUserLoginState(true);
 
         // ---Send Sign Request when wallet changed---
         // console.log('in injectedDetecting accounts[0]: ', accounts[0]);
@@ -763,6 +788,8 @@ export default function WalletPanel(props: {className?: string}) {
       // FIXME: 拔掉電話線
       window?.ethereum?.removeListener('accountsChanged', async (accounts: string[]) => {
         setDefaultAccount('');
+        passUserLoginState(true);
+
         resetApp();
       });
       // console.log('After Removing event listener, useEffect for injectedDetecting()');
@@ -793,6 +820,7 @@ export default function WalletPanel(props: {className?: string}) {
 
           setErrorMessages('');
           setDefaultAccount(accounts[0]);
+          passUserLoginState(true);
 
           // console.log('in injectedDetecting accounts[0]: ', accounts[0]);
           // console.log('in injectedDetecting defaultAccount: ', defaultAccount);
@@ -1220,6 +1248,8 @@ export default function WalletPanel(props: {className?: string}) {
       const chainId = await signer.getChainId();
       const balance = await signer.getBalance();
       setDefaultAccount(address);
+      passUserLoginState(true);
+
       setChainId(chainId);
 
       if (chainId !== 1) {
@@ -1326,6 +1356,8 @@ export default function WalletPanel(props: {className?: string}) {
       const signer = provider.getSigner();
       const address = await signer.getAddress();
       setDefaultAccount(address);
+      passUserLoginState(true);
+
       const chainId = await signer.getChainId();
       setChainId(chainId);
 

@@ -20,6 +20,7 @@ export default function CandlestickChart({
   ...otherProps
 }: ILineGraphProps): JSX.Element {
   const anotherSampleData = [1230, 1272, 1120, 1265, 1342, 1299];
+
   const candlestickData = [
     {
       x: new Date(1538778600000),
@@ -262,21 +263,65 @@ export default function CandlestickChart({
       y: [6604.98, 6606, 6604.07, 6606],
     },
   ];
+
   const chartOptions: ApexOptions = {
     chart: {
       type: 'candlestick',
       height: 350,
     },
     title: {
-      text: 'CandleStick Chart',
+      text: '',
       align: 'left',
     },
     xaxis: {
       type: 'datetime',
+      labels: {
+        style: {
+          colors: '#8B8E91',
+        },
+      },
+      axisTicks: {
+        show: false,
+      },
     },
+    grid: {
+      show: false,
+      // show: true,
+      // yaxis: {
+      //   lines: {show: false},
+      // },
+      // xaxis: {
+      //   lines: {show: false},
+      // },
+    },
+
     yaxis: {
       tooltip: {
         enabled: true,
+      },
+      labels: {
+        show: true,
+        align: 'center',
+        style: {
+          colors: '#8B8E91',
+        },
+      },
+      opposite: true,
+    },
+    tooltip: {
+      enabled: true,
+      fillSeriesColor: false,
+      theme: 'dark',
+    },
+    plotOptions: {
+      candlestick: {
+        colors: {
+          upward: '#1AE2A0',
+          downward: '#E86D6D',
+        },
+        wick: {
+          useFillColor: true,
+        },
       },
     },
     // markers: {

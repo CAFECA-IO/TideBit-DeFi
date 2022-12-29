@@ -15,3 +15,8 @@
 .priceDownShadow {
   text-shadow: 0px 0 10px var(--colorLoss);
 }
+
+/* .apexchartsCandlestickTooltip {
+  background: #e86d6d;
+  color: blue;
+} */

@@ -6,7 +6,7 @@ import {
   TRANSACTION_TYPE,
 } from '../../constants/display';
 import PositionLineGraph from '../position_line_graph/position_line_graph';
-import HorizontalRelativeLineGraph from '../horizontal_relative_line_graph/horizontal_relative_line_graph';
+// import HorizontalRelativeLineGraph from '../horizontal_relative_line_graph/horizontal_relative_line_graph';
 
 interface IOpenPositionItemProps {
   profitOrLoss: string;

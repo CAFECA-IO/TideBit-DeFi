@@ -1,10 +1,9 @@
 import CryptoCard from '../components/card/crypto_card';
 import OpenPositionItem from '../components/open_position_item/open_position_item';
-// import {HorizontalRelativeLineGraph} from '../components/position_line_graph/position_line_graph';
 import TestReserveRatio from '../components/reserve_ratio/test_reserve_ratio';
 import TickerSelectorModal from '../components/ticker_selector_modal/ticker_selector_modal';
 import useOuterClick from '../lib/hooks/use_outer_click';
-import HorizontalRelativeLineGraph from '../components/horizontal_relative_line_graph/horizontal_relative_line_graph';
+// import HorizontalRelativeLineGraph from '../components/horizontal_relative_line_graph/horizontal_relative_line_graph';
 import PositionLineGraph from '../components/position_line_graph/position_line_graph';
 
 const Trial = () => {
@@ -70,7 +69,7 @@ const Trial = () => {
           horizontalValueLine={80}
         />{' '} */}
         {/*  dataArray={[1230, 1272, 1120, 1265, 1342, 1299]} */}
-        <div className="relative">
+        {/* <div className="relative">
           <div className="">
             <PositionLineGraph
               strokeColor={[`#1AE2A0`]}
@@ -88,7 +87,7 @@ const Trial = () => {
               annotatedValue={50}
             />
           </div>
-        </div>
+        </div> */}
 
         {/* Divider */}
         <div className="my-auto h-px w-full rounded bg-white/50"></div>

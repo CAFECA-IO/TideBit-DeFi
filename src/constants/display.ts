@@ -9,6 +9,7 @@ export const TRADING_INPUT_STEP = 0.01;
 export const PROFIT_LOSS_COLOR_TYPE = {
   profit: '#1AE2A0',
   loss: '#E86D6D',
+  tidebitTheme: '#29C1E1',
 };
 
 export const TRANSACTION_TYPE = {

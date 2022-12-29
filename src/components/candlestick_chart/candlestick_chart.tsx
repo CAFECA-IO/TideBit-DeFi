@@ -423,6 +423,34 @@ export default function CandlestickChart({
 
           offsetX: 0,
         },
+        {
+          y: 6570,
+          strokeDashArray: 0,
+          borderColor: PROFIT_LOSS_COLOR_TYPE.tidebitTheme,
+          width: '100%',
+          fillColor: '#ffffff',
+
+          label: {
+            position: 'right',
+            borderColor: 'transparent',
+            textAnchor: 'end',
+            offsetY: 10,
+            offsetX: 50,
+            style: {
+              color: '#ffffff',
+              fontSize: '12px',
+              background: PROFIT_LOSS_COLOR_TYPE.tidebitTheme,
+              padding: {
+                left: -5,
+                right: 18,
+              },
+            },
+            text: `$6570`,
+            borderWidth: 20,
+          },
+
+          offsetX: 0,
+        },
       ],
     },
   };

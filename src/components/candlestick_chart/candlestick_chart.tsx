@@ -269,6 +269,15 @@ export default function CandlestickChart({
     chart: {
       type: 'candlestick',
       height: 350,
+      toolbar: {
+        show: false,
+        tools: {
+          zoom: false,
+          zoomin: false,
+          zoomout: false,
+          pan: false,
+        },
+      },
     },
     title: {
       text: '',
@@ -321,6 +330,7 @@ export default function CandlestickChart({
       fillSeriesColor: false,
       theme: 'dark',
     },
+
     plotOptions: {
       candlestick: {
         colors: {

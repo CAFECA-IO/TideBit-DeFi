@@ -73,18 +73,18 @@ const Trial = () => {
           <div className="">
             <PositionLineGraph
               strokeColor={[`#1AE2A0`]}
-              dataArray={[1230, 1272, 1120, 1265, 1342, 1299]}
+              dataArray={[90, 72, 60, 65, 42, 25, 32, 20, 15, 32, 90, 10]}
               lineGraphWidth="180"
-              annotatedValue={1230}
+              annotatedValue={100}
             />
           </div>
 
           <div className="absolute -top-5">
             <HorizontalRelativeLineGraph
               strokeColor={[`#1AE2A0`]}
-              dataArray={[1230, 1272, 1120, 1265, 1342, 1299]}
+              dataArray={[90, 72, 60, 65, 42, 25, 32, 20, 15, 32, 90, 10]}
               lineGraphWidth="250"
-              annotatedValue={1230}
+              annotatedValue={100}
             />
           </div>
         </div>

@@ -81,27 +81,39 @@ const CryptoCard = ({
   };
 
   const showStar = starFilled ? (
-    <div className="absolute top-2 right-3">
+    <button type="button" className="absolute top-2 right-3">
       <BsStarFill
         onClick={starClickHandler}
         size={20}
         className={`${starColor} hover:cursor-pointer`}
       />
-    </div>
+    </button>
   ) : star ? (
-    <div onClick={starClickHandler} className="absolute top-2 right-3 hover:cursor-pointer">
+    <button
+      type="button"
+      onClick={starClickHandler}
+      className="absolute top-2 right-3 hover:cursor-pointer"
+    >
       <BsStar size={20} className={`${starColor}`} />
-    </div>
+    </button>
   ) : null;
 
   const showStarMobile = starFilled ? (
-    <div onClick={starClickHandler} className="absolute top-1 right-1 hover:cursor-pointer">
+    <button
+      type="button"
+      onClick={starClickHandler}
+      className="absolute top-1 right-1 hover:cursor-pointer"
+    >
       <BsStarFill size={13} className={`${starColor}`} />
-    </div>
+    </button>
   ) : star ? (
-    <div onClick={starClickHandler} className="absolute top-1 right-1 hover:cursor-pointer">
+    <button
+      type="button"
+      onClick={starClickHandler}
+      className="absolute top-1 right-1 hover:cursor-pointer"
+    >
       <BsStar size={13} className={`${starColor}`} />
-    </div>
+    </button>
   ) : null;
 
   const desktopVersionBreakpoint = 'xs:flex';

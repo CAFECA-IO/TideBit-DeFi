@@ -18,10 +18,15 @@ const TickerSelectorModal = ({
 }: ITickerSelectorModal) => {
   const [activeTab, setActiveTab] = useState('All');
   const [ethStarred, setEthStarred] = useState(false);
+  const [btcStarred, setBtcStarred] = useState(false);
 
   const getEthStarred = (bool: boolean) => {
     setEthStarred(bool);
     // console.log('eth starred: ', bool);
+  };
+
+  const getBtcStarred = (bool: boolean) => {
+    setBtcStarred(bool);
   };
 
   const allTabClickHandler = () => {
@@ -222,6 +227,7 @@ const TickerSelectorModal = ({
                         star={true}
                         starColor="text-lightOrange"
                         starred={true}
+                        getStarredState={getBtcStarred}
                         chain="Bitcoin"
                         currency="BTC"
                         price={19848.8}

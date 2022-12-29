@@ -161,7 +161,7 @@ const NavBar = ({notificationNumber = 1}) => {
               </div>
 
               {/* ---Mobile menu section--- */}
-              {/* Mobile menu toggle */}
+              {/* Mobile menu toggle & notification */}
               <div className="inline-flex items-end justify-center lg:hidden">
                 <div className="mr-0 mt-3 flex lg:hidden">
                   <button
@@ -195,7 +195,7 @@ const NavBar = ({notificationNumber = 1}) => {
             {isDisplayedNotificationSidebarMobileCover}
 
             {/* Mobile menu section */}
-            <div className="ml-10 inline-block items-center px-2 pt-2 pb-3 sm:px-3">
+            <div className="inline-block items-center justify-center px-2 pt-2 pb-3 text-base sm:px-3">
               <div className="space-y-1">
                 <Link
                   href="/trading"
@@ -229,6 +229,12 @@ const NavBar = ({notificationNumber = 1}) => {
               <div className="mt-5">
                 {/* <ConnectButton className="ml-2" /> */}
                 <WalletPanel className="ml-2" getUserLoginState={getUserLoginHandler} />
+              </div>
+
+              <div className="mt-5">
+                <div className="my-auto h-px w-full rounded bg-white/50"></div>
+
+                {isDisplayedUserOverview}
               </div>
             </div>
           </div>

@@ -25,4 +25,5 @@ export const TRANSACTION_TYPE = {
 export const INVISIBLE_STROKE_COLOR = {
   dark: '#161719',
   sample: '#A5C4F3',
+  transparent: '#A16171900',
 };

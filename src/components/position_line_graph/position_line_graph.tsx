@@ -86,38 +86,38 @@ export default function PositionLineGraph({
       enabled: false,
     },
     // Horizontal line overlaid by another component
-    // annotations: {
-    //   position: 'front',
-    //   yaxis: [
-    //     {
-    //       y: annotatedValue,
-    //       strokeDashArray: 5,
-    //       borderColor: strokeColor[0],
-    //       width: '150%',
-    //       fillColor: '#ffffff',
-    //       label: {
-    //         position: 'right',
-    //         borderColor: 'transparent',
-    //         textAnchor: 'end',
-    //         offsetY: 10,
-    //         offsetX: 10,
-    //         style: {
-    //           color: '#ffffff',
-    //           background: strokeColor[0],
-    //           // padding: {
-    //           //   left: 0,
-    //           //   right: 0,
-    //           //   top: 0,
-    //           //   bottom: 10,
-    //           // },
-    //         },
-    //         text: `$ ${annotatedValue.toString()}`,
-    //         borderWidth: 20,
-    //       },
-    //       offsetX: -10,
-    //     },
-    //   ],
-    // },
+    annotations: {
+      position: 'front',
+      yaxis: [
+        {
+          y: annotatedValue,
+          strokeDashArray: 5,
+          borderColor: strokeColor[0],
+          width: '150%',
+          fillColor: '#ffffff',
+          label: {
+            position: 'right',
+            borderColor: 'transparent',
+            textAnchor: 'end',
+            offsetY: 10,
+            offsetX: 10,
+            style: {
+              color: '#ffffff',
+              background: strokeColor[0],
+              // padding: {
+              //   left: 0,
+              //   right: 0,
+              //   top: 0,
+              //   bottom: 10,
+              // },
+            },
+            text: `$ ${annotatedValue.toString()}`,
+            borderWidth: 20,
+          },
+          offsetX: -10,
+        },
+      ],
+    },
   };
 
   const [dataSample, setDataSample] = useState({

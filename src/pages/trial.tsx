@@ -69,22 +69,23 @@ const Trial = () => {
           tickerTrendArray={[90, 72, 60, 65, 42, 25, 32, 20, 15, 32, 48, 20]}
           horizontalValueLine={80}
         />{' '} */}
+        {/*  dataArray={[1230, 1272, 1120, 1265, 1342, 1299]} */}
         <div className="relative">
           <div className="">
             <PositionLineGraph
               strokeColor={[`#1AE2A0`]}
-              dataArray={[90, 72, 60, 65, 42, 25, 32, 20, 15, 32, 90, 10]}
+              dataArray={[90, 72, 60, 65, 42, 25]}
               lineGraphWidth="180"
-              annotatedValue={100}
+              annotatedValue={50}
             />
           </div>
 
           <div className="absolute -top-5">
             <HorizontalRelativeLineGraph
-              strokeColor={[`#1AE2A0`]}
-              dataArray={[90, 72, 60, 65, 42, 25, 32, 20, 15, 32, 90, 10]}
+              strokeColor={[`#A5C4F3`]}
+              dataArray={[90, 72, 60, 65, 42, 25]}
               lineGraphWidth="250"
-              annotatedValue={100}
+              annotatedValue={50}
             />
           </div>
         </div>

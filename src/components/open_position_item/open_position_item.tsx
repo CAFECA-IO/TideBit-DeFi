@@ -2,6 +2,7 @@ import {useState} from 'react';
 import CircularProgressBar from '../circular_progress_bar/circular_progress_bar';
 import {PROFIT_LOSS_COLOR_TYPE, TRANSACTION_TYPE} from '../../constants/display';
 import PositionLineGraph from '../position_line_graph/position_line_graph';
+import HorizontalRelativeLineGraph from '../horizontal_relative_line_graph/horizontal_relative_line_graph';
 
 interface IOpenPositionItemProps {
   profitOrLoss: string;
@@ -99,13 +100,22 @@ const OpenPositionItem = ({
       </div>
 
       {/* Line graph */}
-      <div className="-mt-8 -ml-2 -mb-7 w-250px">
+      <div className="relative -mt-8 -ml-2 -mb-7">
         <PositionLineGraph
           strokeColor={[`${displayedColorHex}`]}
           dataArray={tickerTrendArray}
           lineGraphWidth="180"
           annotatedValue={horizontalValueLine}
         />
+
+        <div className="absolute -top-5">
+          <HorizontalRelativeLineGraph
+            strokeColor={[`#A5C4F3`]}
+            dataArray={tickerTrendArray}
+            lineGraphWidth="250"
+            annotatedValue={horizontalValueLine}
+          />
+        </div>
       </div>
 
       {/* Divider */}

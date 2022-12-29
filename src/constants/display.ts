@@ -27,3 +27,5 @@ export const INVISIBLE_STROKE_COLOR = {
   sample: '#A5C4F3',
   transparent: '#A16171900',
 };
+
+export const TRADING_CHART_SWITCH_BUTTON_SIZE = 30;

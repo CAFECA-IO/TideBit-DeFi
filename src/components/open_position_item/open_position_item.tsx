@@ -1,6 +1,10 @@
 import {useState} from 'react';
 import CircularProgressBar from '../circular_progress_bar/circular_progress_bar';
-import {PROFIT_LOSS_COLOR_TYPE, TRANSACTION_TYPE} from '../../constants/display';
+import {
+  OPEN_POSITION_LINE_GRAPH_WIDTH,
+  PROFIT_LOSS_COLOR_TYPE,
+  TRANSACTION_TYPE,
+} from '../../constants/display';
 import PositionLineGraph from '../position_line_graph/position_line_graph';
 import HorizontalRelativeLineGraph from '../horizontal_relative_line_graph/horizontal_relative_line_graph';
 
@@ -104,7 +108,7 @@ const OpenPositionItem = ({
         <PositionLineGraph
           strokeColor={[`${displayedColorHex}`]}
           dataArray={tickerTrendArray}
-          lineGraphWidth="180"
+          lineGraphWidth={OPEN_POSITION_LINE_GRAPH_WIDTH}
           annotatedValue={horizontalValueLine}
         />
 

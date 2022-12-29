@@ -32,8 +32,8 @@ const OpenSubTab = () => {
             ticker="ETH"
             passedHour={15}
             profitOrLossAmount={29.9}
-            tickerTrendArray={[1530, 1372, 1220, 1265, 1342, 1299]}
-            horizontalValueLine={1300.6}
+            tickerTrendArray={[153000, 137200, 122000, 126500, 134200, 129900]}
+            horizontalValueLine={130000.6}
           />
         </div>
         {/* Divider */}

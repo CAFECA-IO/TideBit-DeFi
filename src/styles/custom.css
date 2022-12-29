@@ -1,0 +1,22 @@
+:root {
+  --color1: #404a55;
+  --colorLoss: #e86d6d;
+  --colorProfit: #1ae2a0;
+}
+
+/* offset-x | offset-y | blur-radius | color */
+/* 1px 0 3px */
+/* 0 0 5px */
+/* text-shadow: 1px 0 3px var(--colorLoss), 1px 0 3px var(--colorLoss); */
+.priceUpShadow {
+  text-shadow: 0px 0 10px var(--colorProfit);
+}
+
+.priceDownShadow {
+  text-shadow: 0px 0 10px var(--colorLoss);
+}
+
+/* .apexchartsCandlestickTooltip {
+  background: #e86d6d;
+  color: blue;
+} */

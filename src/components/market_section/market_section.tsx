@@ -2,6 +2,7 @@ import {useState} from 'react';
 import TradingHeader from '../trading_header/trading_header';
 import CandlestickChart from '../candlestick_chart/candlestick_chart';
 import TradingChartSwitch from '../trading_chart_switch/trading_chart_switch';
+import TradingLineGraphChart from '../trading_line_graph_chart/trading_line_graph_chart';
 
 const MarketSection = () => {
   const [selectedChartType, setSelectedChartType] = useState('candlestick');
@@ -37,7 +38,7 @@ const MarketSection = () => {
         candlestickChartHeight="400"
       />
     ) : (
-      'another chart component'
+      <TradingLineGraphChart />
     );
 
   return (

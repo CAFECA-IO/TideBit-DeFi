@@ -99,25 +99,47 @@ const TradingChartSwitch = ({
         type="button"
         className="rounded-sm bg-darkGray5 p-1 hover:opacity-90"
       >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width={TRADING_CHART_SWITCH_BUTTON_SIZE}
-          height={TRADING_CHART_SWITCH_BUTTON_SIZE}
-          data-name="Group 2293"
-          viewBox="0 0 22.703 30"
-        >
-          <path
-            fill="#29c1e1"
-            d="M3.243 25.135V21.08H0V6.486h3.243V.811a.811.811 0 111.621 0v5.675h3.245V21.08H4.864v4.054a.811.811 0 11-1.621 0z"
-            data-name="Union 35"
-          ></path>
-          <path
-            fill="#29c1e1"
-            d="M3.243 25.135V20.27H0V5.676h3.243V.811a.811.811 0 111.621 0v4.865h3.245V20.27H4.864v4.864a.811.811 0 11-1.621 0z"
-            data-name="Union 36"
-            transform="translate(14.594 4.054)"
-          ></path>
-        </svg>
+        {activeChartType === 'candlestick' ? (
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width={TRADING_CHART_SWITCH_BUTTON_SIZE}
+            height={TRADING_CHART_SWITCH_BUTTON_SIZE}
+            data-name="Group 2293"
+            viewBox="0 0 22.703 30"
+          >
+            <path
+              fill="#29c1e1"
+              d="M3.243 25.135V21.08H0V6.486h3.243V.811a.811.811 0 111.621 0v5.675h3.245V21.08H4.864v4.054a.811.811 0 11-1.621 0z"
+              data-name="Union 35"
+            ></path>
+            <path
+              fill="#29c1e1"
+              d="M3.243 25.135V20.27H0V5.676h3.243V.811a.811.811 0 111.621 0v4.865h3.245V20.27H4.864v4.864a.811.811 0 11-1.621 0z"
+              data-name="Union 36"
+              transform="translate(14.594 4.054)"
+            ></path>
+          </svg>
+        ) : (
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="22.703"
+            height="30"
+            data-name="Group 2293"
+            viewBox="0 0 22.703 30"
+          >
+            <path
+              fill="#8b8e91"
+              d="M3.243 25.135V21.08H0V6.486h3.243V.811a.811.811 0 111.621 0v5.675h3.245V21.08H4.864v4.054a.811.811 0 11-1.621 0z"
+              data-name="Union 35"
+            ></path>
+            <path
+              fill="#8b8e91"
+              d="M3.243 25.135V20.27H0V5.676h3.243V.811a.811.811 0 111.621 0v4.865h3.245V20.27H4.864v4.864a.811.811 0 11-1.621 0z"
+              data-name="Union 36"
+              transform="translate(14.594 4.054)"
+            ></path>
+          </svg>
+        )}
       </button>
     </div>
   );
@@ -129,42 +151,81 @@ const TradingChartSwitch = ({
         type="button"
         className="rounded-sm bg-darkGray5 p-1 hover:opacity-90"
       >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width={TRADING_CHART_SWITCH_BUTTON_SIZE}
-          height={TRADING_CHART_SWITCH_BUTTON_SIZE}
-          viewBox="0 0 31.403 30.697"
-        >
-          <defs>
-            <linearGradient
-              id="linear-gradient"
-              x1="0.5"
-              x2="0.5"
-              y1="0.019"
-              y2="1"
-              gradientUnits="objectBoundingBox"
-            >
-              <stop offset="0" stopColor="#8b8e91"></stop>
-              <stop offset="1" stopColor="#121214" stopOpacity="0"></stop>
-            </linearGradient>
-          </defs>
-          <g data-name="Group 15162" transform="translate(-41.294 -205.625)">
-            <path
-              fill="url(#linear-gradient)"
-              d="M-3222 349.957v-5.068l10.292-10.759 11 5.374 8.71-13.075v29.808h-30z"
-              data-name="Path 26342"
-              transform="translate(3264 -119.915)"
-            ></path>
-            <path
-              fill="none"
-              stroke="#8b8e91"
-              strokeLinecap="round"
-              strokeWidth="1"
-              d="M42 225.516l10.038-11.212 10.828 4.934L72 206.322"
-              data-name="Path 503"
-            ></path>
-          </g>
-        </svg>
+        {activeChartType === 'line' ? (
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="31.403"
+            height="30.697"
+            viewBox="0 0 31.403 30.697"
+          >
+            <defs>
+              <linearGradient
+                id="linear-gradient"
+                x1="0.5"
+                x2="0.5"
+                y1="0.019"
+                y2="1"
+                gradientUnits="objectBoundingBox"
+              >
+                <stop offset="0" stopColor="#29c1e1"></stop>
+                <stop offset="1" stopColor="#121214" stopOpacity="0"></stop>
+              </linearGradient>
+            </defs>
+            <g data-name="Group 15162" transform="translate(-41.294 -205.625)">
+              <path
+                fill="url(#linear-gradient)"
+                d="M-3222 349.957v-5.068l10.292-10.759 11 5.374 8.71-13.075v29.808h-30z"
+                data-name="Path 26342"
+                transform="translate(3264 -119.915)"
+              ></path>
+              <path
+                fill="none"
+                stroke="#29c1e1"
+                strokeLinecap="round"
+                strokeWidth="1"
+                d="M42 225.516l10.038-11.212 10.828 4.934L72 206.322"
+                data-name="Path 503"
+              ></path>
+            </g>
+          </svg>
+        ) : (
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width={TRADING_CHART_SWITCH_BUTTON_SIZE}
+            height={TRADING_CHART_SWITCH_BUTTON_SIZE}
+            viewBox="0 0 31.403 30.697"
+          >
+            <defs>
+              <linearGradient
+                id="linear-gradient"
+                x1="0.5"
+                x2="0.5"
+                y1="0.019"
+                y2="1"
+                gradientUnits="objectBoundingBox"
+              >
+                <stop offset="0" stopColor="#8b8e91"></stop>
+                <stop offset="1" stopColor="#121214" stopOpacity="0"></stop>
+              </linearGradient>
+            </defs>
+            <g data-name="Group 15162" transform="translate(-41.294 -205.625)">
+              <path
+                fill="url(#linear-gradient)"
+                d="M-3222 349.957v-5.068l10.292-10.759 11 5.374 8.71-13.075v29.808h-30z"
+                data-name="Path 26342"
+                transform="translate(3264 -119.915)"
+              ></path>
+              <path
+                fill="none"
+                stroke="#8b8e91"
+                strokeLinecap="round"
+                strokeWidth="1"
+                d="M42 225.516l10.038-11.212 10.828 4.934L72 206.322"
+                data-name="Path 503"
+              ></path>
+            </g>
+          </svg>
+        )}
       </button>
     </div>
   );

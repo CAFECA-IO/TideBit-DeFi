@@ -74,7 +74,7 @@ const TickerSelectorModal = ({
             Favorite
           </button>
         </div>
-        <div className="">
+        {/* <div className="">
           <button
             type="button"
             className={`${activePositionTabStyle} inline-block rounded-t-lg px-38px py-2 hover:cursor-pointer`}
@@ -137,7 +137,7 @@ const TickerSelectorModal = ({
           >
             Polkadot
           </button>
-        </div>
+        </div> */}
       </div>
     </>
   );

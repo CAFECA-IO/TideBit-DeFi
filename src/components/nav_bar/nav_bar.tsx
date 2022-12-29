@@ -80,12 +80,16 @@ const NavBar = ({notificationNumber = 1}) => {
     />
   ) : null;
 
+  const userOverviewDividerDesktop = userOverview ? (
+    <span className="mx-2 inline-block h-10 w-px rounded bg-lightGray1/50"></span>
+  ) : null;
+
   return (
     <>
       <div className="w-full bg-black">
         {/* No bg blur in NavBar `backdrop-blur-sm` because wallet panel's limited to navbar when it show up */}
         <nav className="container fixed inset-x-0 z-40 mx-auto max-w-full bg-black/100 pb-1 text-white">
-          <div className="mx-auto max-w-full px-8">
+          <div className="mx-auto max-w-full px-5">
             <div className="flex h-16 items-center justify-between">
               <div className="flex items-center">
                 {/* logo */}
@@ -108,7 +112,7 @@ const NavBar = ({notificationNumber = 1}) => {
                 </Link>
                 {/* Desktop menu */}
                 <div className={`hidden pb-5 text-base text-lightGray1 lg:block`}>
-                  <div className="ml-10 mt-5 flex flex-1 items-center space-x-4">
+                  <div className="ml-10 mt-5 flex flex-1 items-center space-x-4 xl:ml-10">
                     <Link href="/trading" className="hover:cursor-pointer hover:text-tidebitTheme">
                       {t('nav_bar.Trading')}
                     </Link>
@@ -125,8 +129,9 @@ const NavBar = ({notificationNumber = 1}) => {
                     <Link href="#" className="mr-5 hover:cursor-pointer hover:text-tidebitTheme">
                       {t('nav_bar.HelpCenter')}
                     </Link>
-                    <span className="mx-2 inline-block h-10 w-px rounded bg-lightGray1/50"></span>
 
+                    {/* User overview */}
+                    {userOverviewDividerDesktop}
                     {isDisplayedUserOverview}
 
                     {/* <div className="max-w-2xl mx-auto"></div> */}
@@ -231,11 +236,7 @@ const NavBar = ({notificationNumber = 1}) => {
                 <WalletPanel className="ml-2" getUserLoginState={getUserLoginHandler} />
               </div>
 
-              <div className="mt-5">
-                <div className="my-auto h-px w-full rounded bg-white/50"></div>
-
-                {isDisplayedUserOverview}
-              </div>
+              {isDisplayedUserOverview}
             </div>
           </div>
         </nav>

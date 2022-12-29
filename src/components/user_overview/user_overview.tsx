@@ -20,41 +20,48 @@ const UserOverview = ({
   return (
     <>
       {/* ----------Desktop version---------- */}
-      <div className="hidden space-x-5 lg:flex xl:space-x-20">
-        <div className="">
-          <div className="text-sm text-lightGray4">Available</div>
-          <div className="text-base">{depositAvailable} USDT</div>
-        </div>
+      <div className="">
+        <div className="hidden space-x-5 lg:flex xl:space-x-20">
+          <div className="">
+            <div className="text-sm text-lightGray4">Available</div>
+            <div className="text-sm xl:text-base">{depositAvailable} USDT</div>
+          </div>
 
-        <div className="">
-          <div className="text-sm text-lightGray4">M. Margin</div>
-          <div className="text-base">{marginLocked} USDT</div>
-        </div>
+          <div className="">
+            <div className="text-sm text-lightGray4">M. Margin</div>
+            <div className="text-sm xl:text-base">{marginLocked} USDT</div>
+          </div>
 
-        <div className="">
-          <div className="text-sm text-lightGray4">PNL</div>
-          <div className="text-base">
-            {displayedSymbol} {profitOrLossAmount} USDT
+          <div className="">
+            <div className="text-sm text-lightGray4">PNL</div>
+            <div className="text-sm xl:text-base">
+              {displayedSymbol} {profitOrLossAmount} USDT
+            </div>
           </div>
         </div>
       </div>
 
       {/* ----------Mobile version---------- */}
-      <div className="flex space-x-10 text-center lg:hidden">
-        <div className="">
-          <div className="text-xs text-lightGray4">Available</div>
-          <div className="text-xs">{depositAvailable} USDT</div>
-        </div>
 
-        <div className="">
-          <div className="text-xs text-lightGray4">M. Margin</div>
-          <div className="text-xs">{marginLocked} USDT</div>
-        </div>
+      <div className="mt-5">
+        <div className="my-auto h-px w-full rounded bg-white/50"></div>
 
-        <div className="">
-          <div className="text-xs text-lightGray4">PNL</div>
-          <div className="text-xs">
-            {displayedSymbol} {profitOrLossAmount} USDT
+        <div className="flex space-x-10 text-center lg:hidden">
+          <div className="">
+            <div className="text-xs text-lightGray4">Available</div>
+            <div className="text-xs">{depositAvailable} USDT</div>
+          </div>
+
+          <div className="">
+            <div className="text-xs text-lightGray4">M. Margin</div>
+            <div className="text-xs">{marginLocked} USDT</div>
+          </div>
+
+          <div className="">
+            <div className="text-xs text-lightGray4">PNL</div>
+            <div className="text-xs">
+              {displayedSymbol} {profitOrLossAmount} USDT
+            </div>
           </div>
         </div>
       </div>

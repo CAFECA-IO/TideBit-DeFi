@@ -1,7 +1,7 @@
 import React from 'react';
 
 const TradingLineGraphChart = () => {
-  return <div>Trading Line Graph Chart</div>;
+  return <div></div>;
 };
 
 export default TradingLineGraphChart;

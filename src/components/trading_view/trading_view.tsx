@@ -45,7 +45,7 @@ const TradingView = () => {
       {/* <div className="pt-700px text-7xl text-blue-100">Market Section</div> */}
       <div className="">
         <div className="pt-10">{displayedTradingView}</div>
-        <div className="py-10">
+        <div className="ml-5 py-10">
           <TradingChartSwitch
             getTradingViewType={getTradingViewSelected}
             getTradingViewInterval={getTradingViewIntervaleSelected}

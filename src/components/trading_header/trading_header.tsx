@@ -5,9 +5,10 @@ import useOuterClick from '../../lib/hooks/use_outer_click';
 
 interface ITradingHeaderProps {
   upOrDown: string;
+  tradingVolume: string | number;
 }
 
-const TradingHeader = ({upOrDown}: ITradingHeaderProps) => {
+const TradingHeader = ({upOrDown, tradingVolume}: ITradingHeaderProps) => {
   if (upOrDown !== 'up' && upOrDown !== 'down') return <></>;
 
   // const [ticker, setTicker] = useState('ETH/USDT');
@@ -112,6 +113,13 @@ const TradingHeader = ({upOrDown}: ITradingHeaderProps) => {
         <div className={`${priceShadowColor} flex items-end space-x-7`}>
           <div className="text-3xl">$ 1,288.4</div>
           <div className="text-lg">▴ $24.7 (+1.14%)</div>
+        </div>
+
+        {/* Trading volume */}
+        <div className="relative">
+          <div className="absolute top-10 text-sm text-lightWhite/60">
+            24h Volume {tradingVolume} USDT
+          </div>
         </div>
       </div>
     </>

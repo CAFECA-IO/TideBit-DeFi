@@ -424,7 +424,7 @@ export default function CandlestickChart({
           offsetX: 0,
         },
         {
-          y: 6570,
+          y: 6606,
           strokeDashArray: 0,
           borderColor: PROFIT_LOSS_COLOR_TYPE.tidebitTheme,
           width: '100%',
@@ -445,7 +445,7 @@ export default function CandlestickChart({
                 right: 18,
               },
             },
-            text: `$6570`,
+            text: `$6606`,
             borderWidth: 20,
           },
 

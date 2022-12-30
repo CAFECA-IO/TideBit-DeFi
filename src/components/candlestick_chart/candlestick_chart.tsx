@@ -15,6 +15,12 @@ interface ILineGraphProps {
   candlestickChartHeight: string;
 }
 
+/**
+ *
+ * @param
+ * @returns `candlestickData`- dataObject:nullObject = 9:5
+ */
+
 export default function CandlestickChart({
   strokeColor,
   candlestickChartWidth,

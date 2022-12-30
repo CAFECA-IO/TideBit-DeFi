@@ -200,8 +200,8 @@ const NavBar = ({notificationNumber = 1}) => {
             {isDisplayedNotificationSidebarMobileCover}
 
             {/* Mobile menu section */}
-            <div className="inline-block items-center justify-center px-2 pt-2 pb-3 text-base sm:px-3">
-              <div className="space-y-1">
+            <div className="flex h-screen flex-col items-center justify-start px-2 pt-2 pb-3 text-base sm:px-3">
+              <div className="space-y-3">
                 <Link
                   href="/trading"
                   className="block rounded-md px-3 py-2 font-medium hover:cursor-pointer hover:text-tidebitTheme"

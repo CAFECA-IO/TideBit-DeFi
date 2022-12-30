@@ -17,6 +17,7 @@ import NotificationItem from '../notification_item/notification_item';
 import {useRouter} from 'next/router';
 import I18n from '../i18n/i18n';
 import {IoIosArrowBack} from 'react-icons/io';
+import UserOverview from '../user_overview/user_overview';
 
 // interface INavBarProps {
 //   notifyRef: HTMLDivElement extends HTMLElement ? React.RefObject<HTMLDivElement> : null;
@@ -30,6 +31,9 @@ const NavBar = ({notificationNumber = 1}) => {
   const {locale, locales, defaultLocale, asPath} = useRouter();
   const [navOpen, setNavOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const [userOverview, setUserOverview] = useState(false);
+
   const {
     targetRef: notifyRef,
     componentVisible,
@@ -42,6 +46,10 @@ const NavBar = ({notificationNumber = 1}) => {
     // setSidebarOpen(!sidebarOpen);
     setComponentVisible(!componentVisible);
     // console.log('sidebarOpenHandler clicked, componentVisible: ', componentVisible);
+  };
+
+  const getUserLoginHandler = (bool: boolean) => {
+    setUserOverview(bool);
   };
 
   const displayedMobileNavBar = !navOpen ? (
@@ -63,12 +71,25 @@ const NavBar = ({notificationNumber = 1}) => {
     </div>
   );
 
+  const isDisplayedUserOverview = userOverview ? (
+    <UserOverview
+      depositAvailable={100.34}
+      marginLocked={100.34}
+      profitOrLoss={'profit'}
+      profitOrLossAmount={100.96}
+    />
+  ) : null;
+
+  const userOverviewDividerDesktop = userOverview ? (
+    <span className="mx-2 inline-block h-10 w-px rounded bg-lightGray1/50"></span>
+  ) : null;
+
   return (
     <>
-      <div className="w-full bg-black">
+      <div className="w-full bg-black text-center lg:text-start">
         {/* No bg blur in NavBar `backdrop-blur-sm` because wallet panel's limited to navbar when it show up */}
         <nav className="container fixed inset-x-0 z-40 mx-auto max-w-full bg-black/100 pb-1 text-white">
-          <div className="mx-auto max-w-full px-8">
+          <div className="mx-auto max-w-full px-5">
             <div className="flex h-16 items-center justify-between">
               <div className="flex items-center">
                 {/* logo */}
@@ -91,7 +112,7 @@ const NavBar = ({notificationNumber = 1}) => {
                 </Link>
                 {/* Desktop menu */}
                 <div className={`hidden pb-5 text-base text-lightGray1 lg:block`}>
-                  <div className="ml-10 mt-5 flex flex-1 items-center space-x-4">
+                  <div className="ml-10 mt-5 flex flex-1 items-center space-x-4 xl:ml-10">
                     <Link href="/trading" className="hover:cursor-pointer hover:text-tidebitTheme">
                       {t('nav_bar.Trading')}
                     </Link>
@@ -108,6 +129,10 @@ const NavBar = ({notificationNumber = 1}) => {
                     <Link href="#" className="mr-5 hover:cursor-pointer hover:text-tidebitTheme">
                       {t('nav_bar.HelpCenter')}
                     </Link>
+
+                    {/* User overview */}
+                    {userOverviewDividerDesktop}
+                    {isDisplayedUserOverview}
 
                     {/* <div className="max-w-2xl mx-auto"></div> */}
                   </div>
@@ -136,12 +161,12 @@ const NavBar = ({notificationNumber = 1}) => {
                   </button>
                 </div>
                 <div className="mr-5 inline-flex">
-                  <WalletPanel />
+                  <WalletPanel getUserLoginState={getUserLoginHandler} />
                 </div>
               </div>
 
               {/* ---Mobile menu section--- */}
-              {/* Mobile menu toggle */}
+              {/* Mobile menu toggle & notification */}
               <div className="inline-flex items-end justify-center lg:hidden">
                 <div className="mr-0 mt-3 flex lg:hidden">
                   <button
@@ -175,7 +200,7 @@ const NavBar = ({notificationNumber = 1}) => {
             {isDisplayedNotificationSidebarMobileCover}
 
             {/* Mobile menu section */}
-            <div className="ml-10 inline-block items-center px-2 pt-2 pb-3 sm:px-3">
+            <div className="inline-block items-center justify-center px-2 pt-2 pb-3 text-base sm:px-3">
               <div className="space-y-1">
                 <Link
                   href="/trading"
@@ -208,8 +233,10 @@ const NavBar = ({notificationNumber = 1}) => {
               </div>
               <div className="mt-5">
                 {/* <ConnectButton className="ml-2" /> */}
-                <WalletPanel className="ml-2" />
+                <WalletPanel className="ml-2" getUserLoginState={getUserLoginHandler} />
               </div>
+
+              {isDisplayedUserOverview}
             </div>
           </div>
         </nav>

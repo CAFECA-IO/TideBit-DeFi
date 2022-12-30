@@ -18,10 +18,15 @@ const TickerSelectorModal = ({
 }: ITickerSelectorModal) => {
   const [activeTab, setActiveTab] = useState('All');
   const [ethStarred, setEthStarred] = useState(false);
+  const [btcStarred, setBtcStarred] = useState(false);
 
   const getEthStarred = (bool: boolean) => {
     setEthStarred(bool);
     // console.log('eth starred: ', bool);
+  };
+
+  const getBtcStarred = (bool: boolean) => {
+    setBtcStarred(bool);
   };
 
   const allTabClickHandler = () => {
@@ -56,7 +61,7 @@ const TickerSelectorModal = ({
 
   const tabPart = (
     <>
-      <div className="z-10 flex w-1200px flex-wrap border-gray-200 text-center text-sm font-medium text-gray-400">
+      <div className="z-10 hidden w-1200px flex-wrap border-gray-200 text-center text-sm font-medium text-gray-400 xl:flex">
         <div className="pr-1">
           <button
             type="button"
@@ -74,7 +79,7 @@ const TickerSelectorModal = ({
             Favorite
           </button>
         </div>
-        <div className="">
+        {/* <div className="">
           <button
             type="button"
             className={`${activePositionTabStyle} inline-block rounded-t-lg px-38px py-2 hover:cursor-pointer`}
@@ -137,16 +142,16 @@ const TickerSelectorModal = ({
           >
             Polkadot
           </button>
-        </div>
+        </div> */}
       </div>
     </>
   );
 
   const isDisplayedTickerSelectorModal = tickerSelectorModalVisible ? (
     <>
-      <div className="fixed inset-0 z-50 flex items-center justify-center overflow-x-auto overflow-y-auto outline-none backdrop-blur-sm focus:outline-none">
+      <div className="fixed inset-0 z-50 hidden items-center justify-center overflow-x-auto overflow-y-auto outline-none backdrop-blur-sm focus:outline-none xl:flex">
         <div
-          className="relative my-6 mx-auto w-auto"
+          className="relative my-6 mx-auto min-w-fit"
           id="tickerSelectorModal"
           ref={tickerSelectorModalRef}
         >
@@ -222,6 +227,7 @@ const TickerSelectorModal = ({
                         star={true}
                         starColor="text-lightOrange"
                         starred={true}
+                        getStarredState={getBtcStarred}
                         chain="Bitcoin"
                         currency="BTC"
                         price={19848.8}
@@ -380,7 +386,7 @@ const TickerSelectorModal = ({
                         currency="UNI"
                         fluctuating={-6.23}
                         gradientColor="border-lightPink1/50 from-lightPink1/50 to-black"
-                        tokenComponent={<img src="/elements/layer_2.svg" alt="Uniswap" />}
+                        tokenComponent={<img src="/elements/uniswap-uni-logo.svg" alt="Uniswap" />}
                       />
                       <CryptoCard
                         star={true}

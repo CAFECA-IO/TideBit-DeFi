@@ -1,6 +1,8 @@
 import React, {useState, useEffect} from 'react';
 import dynamic from 'next/dynamic';
 import {ApexOptions} from 'apexcharts';
+import {PROFIT_LOSS_COLOR_TYPE} from '../../constants/display';
+import {BsFillArrowDownCircleFill, BsFillArrowUpCircleFill} from 'react-icons/bs';
 
 const Chart = dynamic(() => import('react-apexcharts'), {ssr: false});
 // const Chart = dynamic(() => import('apexcharts'), {ssr: false});
@@ -20,6 +22,7 @@ export default function CandlestickChart({
   ...otherProps
 }: ILineGraphProps): JSX.Element {
   const anotherSampleData = [1230, 1272, 1120, 1265, 1342, 1299];
+  const CANDLESTICK_CHART_BORDER_COLOR = '#8B8E91';
 
   const candlestickData = [
     {
@@ -268,6 +271,15 @@ export default function CandlestickChart({
     chart: {
       type: 'candlestick',
       height: 350,
+      toolbar: {
+        show: false,
+        tools: {
+          zoom: false,
+          zoomin: false,
+          zoomout: false,
+          pan: false,
+        },
+      },
     },
     title: {
       text: '',
@@ -277,7 +289,7 @@ export default function CandlestickChart({
       type: 'datetime',
       labels: {
         style: {
-          colors: '#8B8E91',
+          colors: CANDLESTICK_CHART_BORDER_COLOR,
         },
       },
       axisTicks: {
@@ -303,16 +315,24 @@ export default function CandlestickChart({
         show: true,
         align: 'center',
         style: {
-          colors: '#8B8E91',
+          colors: CANDLESTICK_CHART_BORDER_COLOR,
         },
       },
       opposite: true,
+      axisBorder: {
+        show: true,
+        color: CANDLESTICK_CHART_BORDER_COLOR,
+      },
+      axisTicks: {
+        show: false,
+      },
     },
     tooltip: {
       enabled: true,
       fillSeriesColor: false,
       theme: 'dark',
     },
+
     plotOptions: {
       candlestick: {
         colors: {
@@ -346,6 +366,93 @@ export default function CandlestickChart({
     //   fillOpacity: 0.5,
     //   dashArray: 2,
     // },
+    annotations: {
+      position: 'back',
+      yaxis: [
+        {
+          y: 6630,
+          strokeDashArray: 3,
+          borderColor: PROFIT_LOSS_COLOR_TYPE.loss,
+          width: '100%',
+          fillColor: '#ffffff',
+
+          label: {
+            position: 'right',
+            borderColor: 'transparent',
+            textAnchor: 'end',
+            offsetY: 10,
+            offsetX: -10,
+            style: {
+              color: '#ffffff',
+              fontSize: '12px',
+              background: PROFIT_LOSS_COLOR_TYPE.loss,
+              padding: {
+                right: 23,
+              },
+            },
+            text: `Position $6660 Close`,
+            borderWidth: 20,
+          },
+
+          offsetX: 0,
+        },
+        {
+          y: 6585,
+          strokeDashArray: 3,
+          borderColor: PROFIT_LOSS_COLOR_TYPE.profit,
+          width: '100%',
+          fillColor: '#ffffff',
+
+          label: {
+            position: 'right',
+            borderColor: 'transparent',
+            textAnchor: 'end',
+            offsetY: 10,
+            offsetX: -10,
+            style: {
+              color: '#ffffff',
+              fontSize: '12px',
+              background: PROFIT_LOSS_COLOR_TYPE.profit,
+              padding: {
+                right: 23,
+              },
+            },
+            text: `Position $6760 Close`,
+            borderWidth: 20,
+          },
+
+          offsetX: 0,
+        },
+        {
+          y: 6606,
+          strokeDashArray: 0,
+          borderColor: PROFIT_LOSS_COLOR_TYPE.tidebitTheme,
+          width: '100%',
+          fillColor: '#ffffff',
+
+          label: {
+            position: 'right',
+            borderColor: 'transparent',
+            textAnchor: 'end',
+            offsetY: 10,
+            offsetX: 50,
+            style: {
+              color: '#ffffff',
+              fontSize: '12px',
+              background: PROFIT_LOSS_COLOR_TYPE.tidebitTheme,
+              padding: {
+                left: -5,
+                right: 18,
+              },
+            },
+            text: `$6606`,
+            borderWidth: 20,
+          },
+
+          offsetX: 0,
+        },
+      ],
+    },
   };
 
   const [dataSample, setDataSample] = useState({

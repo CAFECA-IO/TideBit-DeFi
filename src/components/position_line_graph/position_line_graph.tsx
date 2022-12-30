@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import dynamic from 'next/dynamic';
 import {ApexOptions} from 'apexcharts';
+import {INVISIBLE_STROKE_COLOR, OPEN_POSITION_LINE_LABEL_POSITION} from '../../constants/display';
 
 const Chart = dynamic(() => import('react-apexcharts'), {ssr: false});
 // const Chart = dynamic(() => import('apexcharts'), {ssr: false});
@@ -32,17 +33,17 @@ export default function PositionLineGraph({
         show: false,
       },
     },
-    // markers: {
-    //   discrete: [
-    //     {
-    //       seriesIndex: 0,
-    //       dataPointIndex: dataArray.length - 1,
-    //       size: 1,
-    //       strokeColor: strokeColor[0],
-    //       shape: 'circle',
-    //     },
-    //   ],
-    // },
+    markers: {
+      discrete: [
+        {
+          seriesIndex: 0,
+          dataPointIndex: dataArray.length - 1,
+          size: 1,
+          strokeColor: strokeColor[0],
+          shape: 'circle',
+        },
+      ],
+    },
     // grid: {
     //   show: true,
     //   borderColor: strokeColor[0],
@@ -61,6 +62,7 @@ export default function PositionLineGraph({
       curve: 'straight',
       colors: strokeColor,
       width: 1.2,
+      // lineCap: 'round',
     },
     xaxis: {
       axisBorder: {show: false},
@@ -83,6 +85,7 @@ export default function PositionLineGraph({
     tooltip: {
       enabled: false,
     },
+    // Horizontal dash line
     annotations: {
       position: 'front',
       yaxis: [
@@ -97,14 +100,17 @@ export default function PositionLineGraph({
             borderColor: 'transparent',
             textAnchor: 'end',
             offsetY: 10,
-            offsetX: 0,
+            offsetX: OPEN_POSITION_LINE_LABEL_POSITION,
             style: {
               color: '#ffffff',
               background: strokeColor[0],
+              // cssClass: 'apexchartHorizontalLine',
             },
             text: `$ ${annotatedValue.toString()}`,
             borderWidth: 20,
           },
+
+          offsetX: 0,
         },
       ],
     },
@@ -125,7 +131,7 @@ export default function PositionLineGraph({
   });
 
   return (
-    <div>
+    <div className="apexchartHorizontalLine">
       <Chart
         options={dataSample.options}
         series={dataSample.series}

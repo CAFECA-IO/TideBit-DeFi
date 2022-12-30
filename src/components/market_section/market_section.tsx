@@ -1,19 +1,18 @@
-import React from 'react';
+import {useState} from 'react';
 import TradingHeader from '../trading_header/trading_header';
-import CandlestickChart from '../candlestick_chart/candlestick_chart';
+import TradingView from '../trading_view/trading_view';
 
 const MarketSection = () => {
   return (
     <div>
       {/* <div className="pt-700px text-7xl text-blue-100">Market Section</div> */}
       <div className="ml-5 pt-100px">
-        <TradingHeader upOrDown="down" />
-        <div className="pt-10">
-          <CandlestickChart
-            strokeColor={[`#1AE2A0`]}
-            candlestickChartWidth="900"
-            candlestickChartHeight="400"
-          />
+        <div className="ml-5">
+          <TradingHeader upOrDown="up" tradingVolume="217,268,645" />
+        </div>
+
+        <div>
+          <TradingView />
         </div>
       </div>
     </div>

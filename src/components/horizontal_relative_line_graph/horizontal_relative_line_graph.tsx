@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import dynamic from 'next/dynamic';
 import {ApexOptions} from 'apexcharts';
+import {INVISIBLE_STROKE_COLOR} from '../../constants/display';
 
 const Chart = dynamic(() => import('react-apexcharts'), {ssr: false});
 // const Chart = dynamic(() => import('apexcharts'), {ssr: false});
@@ -59,9 +60,9 @@ export default function HorizontalRelativeLineGraph({
     },
     stroke: {
       curve: 'straight',
-      colors: strokeColor,
+      colors: [INVISIBLE_STROKE_COLOR.sample],
       width: 1.2,
-      dashArray: [12, 15, 23, 24],
+      // lineCap: 'round',
     },
     xaxis: {
       axisBorder: {show: false},
@@ -84,32 +85,128 @@ export default function HorizontalRelativeLineGraph({
     tooltip: {
       enabled: false,
     },
-    // annotations: {
-    //   position: 'front',
-    //   yaxis: [
-    //     {
-    //       y: annotatedValue,
-    //       strokeDashArray: 10,
-    //       borderColor: strokeColor[0],
-    //       width: '150%',
-    //       fillColor: '#ffffff',
-    //       label: {
-    //         position: 'right',
-    //         borderColor: 'transparent',
-    //         textAnchor: 'end',
-    //         offsetY: 10,
-    //         offsetX: 0,
-    //         style: {
-    //           color: '#ffffff',
-    //           background: strokeColor[0],
-    //         },
-    //         text: `$ ${annotatedValue.toString()}`,
-    //         borderWidth: 20,
-    //       },
-    //     },
-    //   ],
-    // },
+    annotations: {
+      position: 'front',
+      yaxis: [
+        {
+          y: annotatedValue,
+          strokeDashArray: 5,
+          borderColor: strokeColor[0],
+          width: '150%',
+          fillColor: '#ffffff',
+          label: {
+            position: 'right',
+            borderColor: 'transparent',
+            textAnchor: 'end',
+            offsetY: 10,
+            offsetX: 2,
+            style: {
+              color: '#ffffff',
+              background: strokeColor[0],
+              // padding: {
+              //   left: 0,
+              //   right: 0,
+              //   top: 0,
+              //   bottom: 10,
+              // },
+            },
+            text: `$ ${annotatedValue.toString()}`,
+            borderWidth: 20,
+          },
+          offsetX: 0,
+        },
+      ],
+    },
   };
+  // const chartOptions: ApexOptions = {
+  //   chart: {
+  //     type: 'line',
+  //     zoom: {
+  //       enabled: false,
+  //     },
+  //     foreColor: '#373d3f',
+  //     toolbar: {
+  //       show: false,
+  //     },
+  //   },
+  //   // markers: {
+  //   //   discrete: [
+  //   //     {
+  //   //       seriesIndex: 0,
+  //   //       dataPointIndex: dataArray.length - 1,
+  //   //       size: 1,
+  //   //       strokeColor: strokeColor[0],
+  //   //       shape: 'circle',
+  //   //     },
+  //   //   ],
+  //   // },
+  //   // grid: {
+  //   //   show: true,
+  //   //   borderColor: strokeColor[0],
+  //   //   strokeDashArray: 5,
+  //   //   position: 'back',
+  //   // },
+  //   // forecastDataPoints: {
+  //   //   count: 2,
+  //   //   fillOpacity: 0.5,
+  //   //   dashArray: 2,
+  //   // },
+  //   dataLabels: {
+  //     enabled: false,
+  //   },
+  //   stroke: {
+  //     curve: 'straight',
+  //     colors: strokeColor,
+  //     width: 1.2,
+  //     dashArray: [12, 15, 23, 24],
+  //   },
+  //   xaxis: {
+  //     axisBorder: {show: false},
+  //     axisTicks: {show: false},
+  //     labels: {
+  //       show: false,
+  //     },
+  //     type: 'numeric',
+  //   },
+  //   yaxis: {
+  //     axisBorder: {show: false},
+  //     axisTicks: {show: false},
+  //     labels: {
+  //       show: false,
+  //     },
+  //   },
+  //   grid: {
+  //     show: false,
+  //   },
+  //   tooltip: {
+  //     enabled: false,
+  //   },
+  //   // annotations: {
+  //   //   position: 'front',
+  //   //   yaxis: [
+  //   //     {
+  //   //       y: annotatedValue,
+  //   //       strokeDashArray: 10,
+  //   //       borderColor: strokeColor[0],
+  //   //       width: '150%',
+  //   //       fillColor: '#ffffff',
+  //   //       label: {
+  //   //         position: 'right',
+  //   //         borderColor: 'transparent',
+  //   //         textAnchor: 'end',
+  //   //         offsetY: 10,
+  //   //         offsetX: 0,
+  //   //         style: {
+  //   //           color: '#ffffff',
+  //   //           background: strokeColor[0],
+  //   //         },
+  //   //         text: `$ ${annotatedValue.toString()}`,
+  //   //         borderWidth: 20,
+  //   //       },
+  //   //     },
+  //   //   ],
+  //   // },
+  // };
 
   const [dataSample, setDataSample] = useState({
     options: chartOptions,

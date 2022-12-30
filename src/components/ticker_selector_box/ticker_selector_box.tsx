@@ -16,18 +16,532 @@ const TickerSelectorBox = ({
   tickerSelectorBoxVisible: tickerSelectorBoxVisible,
   tickerSelectorBoxClickHandler: tickerSelectorBoxClickHandler,
 }: ITickerSelectorBox) => {
+  // {name: '', component: ()}
+  const allCryptoCards = [
+    {
+      label: 'ETH',
+      content: (
+        <CryptoCard
+          star={true}
+          starColor="text-bluePurple"
+          starred={true}
+          getStarredState={getEthStarred}
+          className="mt-4 ml-4"
+          chain="Ethereum"
+          currency="ETH"
+          price={1288.4}
+          fluctuating={1.14}
+          gradientColor="border-bluePurple/50 bg-black from-bluePurple/50 to-black"
+          tokenComponent={<img src="/elements/group_2371.svg" alt="eth" width={40} height={40} />}
+        />
+      ),
+    },
+    {
+      label: 'BTC',
+      content: (
+        <CryptoCard
+          star={true}
+          starColor="text-lightOrange"
+          starred={true}
+          getStarredState={getBtcStarred}
+          chain="Bitcoin"
+          currency="BTC"
+          price={19848.8}
+          gradientColor="border-lightOrange/50 bg-black from-lightOrange/50 to-black"
+          fluctuating={3.46}
+          tokenComponent={<img src="/elements/group_2372.svg" width={40} height={40} />}
+        />
+      ),
+    },
+    {
+      label: 'LTC',
+      content: (
+        <CryptoCard
+          star={true}
+          starColor="text-lightGray2"
+          starred={true}
+          chain="Litecoin"
+          currency="LTC"
+          price={54.57}
+          fluctuating={-3.46}
+          gradientColor="border-lightGray2/50 bg-black from-lightGray2/50 to-black"
+          tokenComponent={
+            <img src="/elements/c5b7bda06ddfe2b3f59b37ed6bb65ab4.svg" alt="litecoin" />
+          }
+        />
+      ),
+    },
+    {
+      label: 'MATIC',
+      content: (
+        <CryptoCard
+          star={true}
+          starColor="text-lightPurple"
+          starred={true}
+          chain="Polygon"
+          currency="MATIC"
+          price={0.82}
+          fluctuating={-6.23}
+          gradientColor="border-lightPurple/60 bg-black from-lightPurple/60 to-black"
+          tokenComponent={
+            <img src="/elements/9cc18b0cbe765b0a28791d253207f0c0.svg" alt="polygon" />
+          }
+        />
+      ),
+    },
+    {
+      label: 'BNB',
+      content: (
+        <CryptoCard
+          star={true}
+          starColor="text-lightYellow"
+          starred={true}
+          chain="BNB"
+          currency="BNB"
+          price={274.54}
+          fluctuating={-6.23}
+          gradientColor="border-lightYellow/60 bg-black from-lightYellow/50 to-black"
+          tokenComponent={<img src="/elements/group_2374.svg" alt="bnb" />}
+        />
+      ),
+    },
+    {
+      label: 'SOL',
+      content: (
+        <CryptoCard
+          star={true}
+          starColor="text-lightPurple2"
+          starred={true}
+          chain="Solana"
+          currency="SOL"
+          price={28.41}
+          fluctuating={1.14}
+          gradientColor="border-lightPurple2/60 from-lightPurple2/60 to-black"
+          tokenComponent={<img src="/elements/group_2378.svg" alt="solana" />}
+        />
+      ),
+    },
+    {
+      label: 'SHIB',
+      content: (
+        <CryptoCard
+          star={true}
+          starColor="text-lightRed1"
+          starred={true}
+          chain="Shiba Inu"
+          currency="SHIB"
+          price={0.0000099}
+          fluctuating={-3.46}
+          gradientColor="border-lightRed1/50 from-lightRed1/50 to-black"
+          tokenComponent={<img src="/elements/group_2381.svg" alt="shiba inu" />}
+        />
+      ),
+    },
+    {
+      label: 'DOT',
+      content: (
+        <CryptoCard
+          star={true}
+          starColor="text-lightPink"
+          starred={true}
+          chain="Polkadot"
+          currency="DOT"
+          price={5.92}
+          fluctuating={3.46}
+          gradientColor="border-lightPink/60 from-lightPink/60 to-black"
+          tokenComponent={<img src="/elements/group_2385.svg" alt="polkadot" />}
+        />
+      ),
+    },
+    {
+      label: 'ADA',
+      content: (
+        <CryptoCard
+          star={true}
+          starColor="text-lightGreen1"
+          starred={true}
+          chain="Cardano"
+          currency="ADA"
+          price={0.3611}
+          fluctuating={1.14}
+          gradientColor="border-lightGreen1/60 from-lightGreen1/60 to-black"
+          tokenComponent={<img src="/elements/group_2388.svg" alt="cardano" />}
+        />
+      ),
+    },
+    {
+      label: 'AVAX',
+      content: (
+        <CryptoCard
+          star={true}
+          starColor="text-lightRed2"
+          starred={true}
+          chain="Avalanche"
+          price={15.77}
+          currency="AVAX"
+          fluctuating={-6.23}
+          gradientColor="border-lightRed2/50 from-lightRed2/50 to-black"
+          tokenComponent={<img src="/elements/group_2391.svg" alt="avax" />}
+        />
+      ),
+    },
+    {
+      label: 'Dai',
+      content: (
+        <CryptoCard
+          star={true}
+          starColor="text-lightOrange1"
+          starred={true}
+          chain="Dai"
+          price={15.77}
+          currency="Dai"
+          fluctuating={-6.23}
+          gradientColor="border-lightOrange1/50 from-lightOrange1/50 to-black"
+          tokenComponent={<img src="/elements/layer_x0020_1.svg" alt="dai" />}
+        />
+      ),
+    },
+    {
+      label: 'MKR',
+      content: (
+        <CryptoCard
+          star={true}
+          starColor="text-lightGreen3"
+          starred={true}
+          chain="Maker"
+          price={15.77}
+          currency="MKR"
+          fluctuating={-6.23}
+          gradientColor="border-lightGreen3/50 from-lightGreen3/50 to-black"
+          tokenComponent={<img src="/elements/layer_2.svg" alt="Maker" />}
+        />
+      ),
+    },
+    {
+      label: 'XRP',
+      content: (
+        <CryptoCard
+          star={true}
+          starColor="text-lightGray4"
+          starred={true}
+          chain="XRP"
+          price={15.77}
+          currency="XRP"
+          fluctuating={-6.23}
+          gradientColor="border-lightGray4/50 from-lightGray4/50 to-black"
+          tokenComponent={<img src="/elements/group_2406.svg" alt="XRP" />}
+        />
+      ),
+    },
+    {
+      label: 'DOGE',
+      content: (
+        <CryptoCard
+          star={true}
+          starColor="text-lightYellow1"
+          starred={true}
+          chain="Dogecoin"
+          price={15.77}
+          currency="DOGE"
+          fluctuating={-6.23}
+          gradientColor="border-lightYellow1/50 from-lightYellow1/50 to-black"
+          tokenComponent={<img src="/elements/layer_2-1.svg" alt="DOGE" />}
+        />
+      ),
+    },
+    {
+      label: 'UNI',
+      content: (
+        <CryptoCard
+          star={true}
+          starColor="text-lightPink1"
+          starred={true}
+          chain="Uniswap"
+          price={15.77}
+          currency="UNI"
+          fluctuating={-6.23}
+          gradientColor="border-lightPink1/50 from-lightPink1/50 to-black"
+          tokenComponent={<img src="/elements/uniswap-uni-logo.svg" alt="Uniswap" />}
+        />
+      ),
+    },
+    {
+      label: 'FLOW',
+      content: (
+        <CryptoCard
+          star={true}
+          starColor="text-lightGreen4"
+          starred={true}
+          chain="Flow"
+          price={15.77}
+          currency="FLOW"
+          fluctuating={-6.23}
+          gradientColor="border-lightGreen4/50 from-lightGreen4/50 to-black"
+          tokenComponent={<img src="/elements/layer_2_1_.svg" alt="avax" />}
+        />
+      ),
+    },
+  ];
+
+  const allCryptoCardsObject = {
+    'ETH': (
+      <CryptoCard
+        star={true}
+        starColor="text-bluePurple"
+        starred={true}
+        getStarredState={getEthStarred}
+        className="mt-4 ml-4"
+        chain="Ethereum"
+        currency="ETH"
+        price={1288.4}
+        fluctuating={1.14}
+        gradientColor="border-bluePurple/50 bg-black from-bluePurple/50 to-black"
+        tokenComponent={<img src="/elements/group_2371.svg" alt="eth" width={40} height={40} />}
+      />
+    ),
+    'BTC': (
+      <CryptoCard
+        star={true}
+        starColor="text-lightOrange"
+        starred={true}
+        getStarredState={getBtcStarred}
+        chain="Bitcoin"
+        currency="BTC"
+        price={19848.8}
+        gradientColor="border-lightOrange/50 bg-black from-lightOrange/50 to-black"
+        fluctuating={3.46}
+        tokenComponent={<img src="/elements/group_2372.svg" width={40} height={40} />}
+      />
+    ),
+    'LTC': (
+      <CryptoCard
+        star={true}
+        starColor="text-lightGray2"
+        starred={true}
+        chain="Litecoin"
+        currency="LTC"
+        price={54.57}
+        fluctuating={-3.46}
+        gradientColor="border-lightGray2/50 bg-black from-lightGray2/50 to-black"
+        tokenComponent={<img src="/elements/c5b7bda06ddfe2b3f59b37ed6bb65ab4.svg" alt="litecoin" />}
+      />
+    ),
+    'MATIC': (
+      <CryptoCard
+        star={true}
+        starColor="text-lightPurple"
+        starred={true}
+        chain="Polygon"
+        currency="MATIC"
+        price={0.82}
+        fluctuating={-6.23}
+        gradientColor="border-lightPurple/60 bg-black from-lightPurple/60 to-black"
+        tokenComponent={<img src="/elements/9cc18b0cbe765b0a28791d253207f0c0.svg" alt="polygon" />}
+      />
+    ),
+    'BNB': (
+      <CryptoCard
+        star={true}
+        starColor="text-lightYellow"
+        starred={true}
+        chain="BNB"
+        currency="BNB"
+        price={274.54}
+        fluctuating={-6.23}
+        gradientColor="border-lightYellow/60 bg-black from-lightYellow/50 to-black"
+        tokenComponent={<img src="/elements/group_2374.svg" alt="bnb" />}
+      />
+    ),
+    'SOL': (
+      <CryptoCard
+        star={true}
+        starColor="text-lightPurple2"
+        starred={true}
+        chain="Solana"
+        currency="SOL"
+        price={28.41}
+        fluctuating={1.14}
+        gradientColor="border-lightPurple2/60 from-lightPurple2/60 to-black"
+        tokenComponent={<img src="/elements/group_2378.svg" alt="solana" />}
+      />
+    ),
+    'SHIB': (
+      <CryptoCard
+        star={true}
+        starColor="text-lightRed1"
+        starred={true}
+        chain="Shiba Inu"
+        currency="SHIB"
+        price={0.0000099}
+        fluctuating={-3.46}
+        gradientColor="border-lightRed1/50 from-lightRed1/50 to-black"
+        tokenComponent={<img src="/elements/group_2381.svg" alt="shiba inu" />}
+      />
+    ),
+    'DOT': (
+      <CryptoCard
+        star={true}
+        starColor="text-lightPink"
+        starred={true}
+        chain="Polkadot"
+        currency="DOT"
+        price={5.92}
+        fluctuating={3.46}
+        gradientColor="border-lightPink/60 from-lightPink/60 to-black"
+        tokenComponent={<img src="/elements/group_2385.svg" alt="polkadot" />}
+      />
+    ),
+    'ADA': (
+      <CryptoCard
+        star={true}
+        starColor="text-lightGreen1"
+        starred={true}
+        chain="Cardano"
+        currency="ADA"
+        price={0.3611}
+        fluctuating={1.14}
+        gradientColor="border-lightGreen1/60 from-lightGreen1/60 to-black"
+        tokenComponent={<img src="/elements/group_2388.svg" alt="cardano" />}
+      />
+    ),
+    'AVAX': (
+      <CryptoCard
+        star={true}
+        starColor="text-lightRed2"
+        starred={true}
+        chain="Avalanche"
+        price={15.77}
+        currency="AVAX"
+        fluctuating={-6.23}
+        gradientColor="border-lightRed2/50 from-lightRed2/50 to-black"
+        tokenComponent={<img src="/elements/group_2391.svg" alt="avax" />}
+      />
+    ),
+    'Dai': (
+      <CryptoCard
+        star={true}
+        starColor="text-lightOrange1"
+        starred={true}
+        chain="Dai"
+        price={15.77}
+        currency="Dai"
+        fluctuating={-6.23}
+        gradientColor="border-lightOrange1/50 from-lightOrange1/50 to-black"
+        tokenComponent={<img src="/elements/layer_x0020_1.svg" alt="dai" />}
+      />
+    ),
+    'MKR': (
+      <CryptoCard
+        star={true}
+        starColor="text-lightGreen3"
+        starred={true}
+        chain="Maker"
+        price={15.77}
+        currency="MKR"
+        fluctuating={-6.23}
+        gradientColor="border-lightGreen3/50 from-lightGreen3/50 to-black"
+        tokenComponent={<img src="/elements/layer_2.svg" alt="Maker" />}
+      />
+    ),
+    'XRP': (
+      <CryptoCard
+        star={true}
+        starColor="text-lightGray4"
+        starred={true}
+        chain="XRP"
+        price={15.77}
+        currency="XRP"
+        fluctuating={-6.23}
+        gradientColor="border-lightGray4/50 from-lightGray4/50 to-black"
+        tokenComponent={<img src="/elements/group_2406.svg" alt="XRP" />}
+      />
+    ),
+    'DOGE': (
+      <CryptoCard
+        star={true}
+        starColor="text-lightYellow1"
+        starred={true}
+        chain="Dogecoin"
+        price={15.77}
+        currency="DOGE"
+        fluctuating={-6.23}
+        gradientColor="border-lightYellow1/50 from-lightYellow1/50 to-black"
+        tokenComponent={<img src="/elements/layer_2-1.svg" alt="DOGE" />}
+      />
+    ),
+    'UNI': (
+      <CryptoCard
+        star={true}
+        starColor="text-lightPink1"
+        starred={true}
+        chain="Uniswap"
+        price={15.77}
+        currency="UNI"
+        fluctuating={-6.23}
+        gradientColor="border-lightPink1/50 from-lightPink1/50 to-black"
+        tokenComponent={<img src="/elements/uniswap-uni-logo.svg" alt="Uniswap" />}
+      />
+    ),
+    'FLOW': (
+      <CryptoCard
+        star={true}
+        starColor="text-lightGreen4"
+        starred={true}
+        chain="Flow"
+        price={15.77}
+        currency="FLOW"
+        fluctuating={-6.23}
+        gradientColor="border-lightGreen4/50 from-lightGreen4/50 to-black"
+        tokenComponent={<img src="/elements/layer_2_1_.svg" alt="avax" />}
+      />
+    ),
+  };
+
   const [activeTab, setActiveTab] = useState('All');
   const [ethStarred, setEthStarred] = useState(false);
   const [btcStarred, setBtcStarred] = useState(false);
 
-  const getEthStarred = (bool: boolean) => {
-    setEthStarred(bool);
-    // console.log('eth starred: ', bool);
-  };
+  const [favorites, setFavorites] =
+    useState<{label: string; content: JSX.Element}[]>(allCryptoCards);
 
-  const getBtcStarred = (bool: boolean) => {
+  const [searches, setSearches] = useState(['']);
+  // ['BTC', 'ETH', 'ADA', 'DOGE', 'XRP', 'DOT', 'UNI']
+
+  // const favoritesHandler = (cryptoClicked: string) => {
+  //   // Avoid repeated favorites
+  //   if (!favorites.includes(cryptoClicked)) {
+  //     setFavorites([...favorites, cryptoClicked]);
+  //     //  setFavorites(favorites => [...favorites, card]);
+  //   } else {
+  //     setFavorites(favorites.filter(favorite => favorite !== cryptoClicked));
+  //   }
+  // };
+
+  // const removeFavorite = (crypto: string) => {};
+
+  function getEthStarred(bool: boolean) {
+    setEthStarred(bool);
+    // favoritesHandler('ETH');
+
+    // if (bool) {
+    //   favoritesHandler('ETH');
+    // }
+    // setFavorites(previous => [...previous, 'ETH']);
+    // console.log('string clicked: ', 'ETH');
+    // console.log('favorites: ', favorites);
+    // console.log('eth starred: ', bool);
+  }
+
+  function getBtcStarred(bool: boolean) {
     setBtcStarred(bool);
-  };
+    // favoritesHandler('BTC');
+
+    // if (bool) {
+    //   favoritesHandler('BTC');
+    // }
+    // console.log('string clicked:', 'BTC');
+    // console.log('favorites: ', favorites);
+  }
 
   const allTabClickHandler = () => {
     setActiveTab('All');
@@ -39,11 +553,207 @@ const TickerSelectorBox = ({
 
   // const currentTab = activeTab === 'Trade' ? <TradeTab /> : <PositionTab />;
 
+  // const favoriteCryptoCards = (
+  //   <ul>
+  //     {favoriteCryptocurrencies.map(cryptocurrency => (
+  //       <li key={cryptocurrency}>{cryptocurrency}</li>
+  //     ))}
+  //   </ul>
+  // );
+
   const activeAllTabStyle =
     activeTab == 'All' ? 'bg-darkGray7 text-lightWhite' : 'bg-darkGray6 text-lightGray';
 
-  const activePositionTabStyle =
-    activeTab == 'Position' ? 'bg-darkGray7 text-lightWhite' : 'bg-darkGray6 text-lightGray';
+  const activeFavoriteTabStyle =
+    activeTab == 'Favorite' ? 'bg-darkGray7 text-lightWhite' : 'bg-darkGray6 text-lightGray';
+
+  const displayedAllCryptoCards = (
+    <>
+      <CryptoCard
+        star={true}
+        starColor="text-bluePurple"
+        starred={true}
+        getStarredState={getEthStarred}
+        className="mt-4 ml-4"
+        chain="Ethereum"
+        currency="ETH"
+        price={1288.4}
+        fluctuating={1.14}
+        gradientColor="border-bluePurple/50 bg-black from-bluePurple/50 to-black"
+        tokenComponent={<img src="/elements/group_2371.svg" alt="eth" width={40} height={40} />}
+      />
+      <CryptoCard
+        star={true}
+        starColor="text-lightOrange"
+        starred={true}
+        getStarredState={getBtcStarred}
+        chain="Bitcoin"
+        currency="BTC"
+        price={19848.8}
+        gradientColor="border-lightOrange/50 bg-black from-lightOrange/50 to-black"
+        fluctuating={3.46}
+        tokenComponent={<img src="/elements/group_2372.svg" width={40} height={40} />}
+      />
+      <CryptoCard
+        star={true}
+        starColor="text-lightGray2"
+        starred={true}
+        chain="Litecoin"
+        currency="LTC"
+        price={54.57}
+        fluctuating={-3.46}
+        gradientColor="border-lightGray2/50 bg-black from-lightGray2/50 to-black"
+        tokenComponent={<img src="/elements/c5b7bda06ddfe2b3f59b37ed6bb65ab4.svg" alt="litecoin" />}
+      />
+      <CryptoCard
+        star={true}
+        starColor="text-lightPurple"
+        starred={true}
+        chain="Polygon"
+        currency="MATIC"
+        price={0.82}
+        fluctuating={-6.23}
+        gradientColor="border-lightPurple/60 bg-black from-lightPurple/60 to-black"
+        tokenComponent={<img src="/elements/9cc18b0cbe765b0a28791d253207f0c0.svg" alt="polygon" />}
+      />
+      <CryptoCard
+        star={true}
+        starColor="text-lightYellow"
+        starred={true}
+        chain="BNB"
+        currency="BNB"
+        price={274.54}
+        fluctuating={-6.23}
+        gradientColor="border-lightYellow/60 bg-black from-lightYellow/50 to-black"
+        tokenComponent={<img src="/elements/group_2374.svg" alt="bnb" />}
+      />
+      <CryptoCard
+        star={true}
+        starColor="text-lightPurple2"
+        starred={true}
+        chain="Solana"
+        currency="SOL"
+        price={28.41}
+        fluctuating={1.14}
+        gradientColor="border-lightPurple2/60 from-lightPurple2/60 to-black"
+        tokenComponent={<img src="/elements/group_2378.svg" alt="solana" />}
+      />
+      <CryptoCard
+        star={true}
+        starColor="text-lightRed1"
+        starred={true}
+        chain="Shiba Inu"
+        currency="SHIB"
+        price={0.0000099}
+        fluctuating={-3.46}
+        gradientColor="border-lightRed1/50 from-lightRed1/50 to-black"
+        tokenComponent={<img src="/elements/group_2381.svg" alt="shiba inu" />}
+      />
+      <CryptoCard
+        star={true}
+        starColor="text-lightPink"
+        starred={true}
+        chain="Polkadot"
+        currency="DOT"
+        price={5.92}
+        fluctuating={3.46}
+        gradientColor="border-lightPink/60 from-lightPink/60 to-black"
+        tokenComponent={<img src="/elements/group_2385.svg" alt="polkadot" />}
+      />
+      <CryptoCard
+        star={true}
+        starColor="text-lightGreen1"
+        starred={true}
+        chain="Cardano"
+        currency="ADA"
+        price={0.3611}
+        fluctuating={1.14}
+        gradientColor="border-lightGreen1/60 from-lightGreen1/60 to-black"
+        tokenComponent={<img src="/elements/group_2388.svg" alt="cardano" />}
+      />
+      <CryptoCard
+        star={true}
+        starColor="text-lightRed2"
+        starred={true}
+        chain="Avalanche"
+        price={15.77}
+        currency="AVAX"
+        fluctuating={-6.23}
+        gradientColor="border-lightRed2/50 from-lightRed2/50 to-black"
+        tokenComponent={<img src="/elements/group_2391.svg" alt="avax" />}
+      />
+
+      <CryptoCard
+        star={true}
+        starColor="text-lightOrange1"
+        starred={true}
+        chain="Dai"
+        price={15.77}
+        currency="Dai"
+        fluctuating={-6.23}
+        gradientColor="border-lightOrange1/50 from-lightOrange1/50 to-black"
+        tokenComponent={<img src="/elements/layer_x0020_1.svg" alt="dai" />}
+      />
+      <CryptoCard
+        star={true}
+        starColor="text-lightGreen3"
+        starred={true}
+        chain="Maker"
+        price={15.77}
+        currency="MKR"
+        fluctuating={-6.23}
+        gradientColor="border-lightGreen3/50 from-lightGreen3/50 to-black"
+        tokenComponent={<img src="/elements/layer_2.svg" alt="Maker" />}
+      />
+      <CryptoCard
+        star={true}
+        starColor="text-lightGray4"
+        starred={true}
+        chain="XRP"
+        price={15.77}
+        currency="XRP"
+        fluctuating={-6.23}
+        gradientColor="border-lightGray4/50 from-lightGray4/50 to-black"
+        tokenComponent={<img src="/elements/group_2406.svg" alt="XRP" />}
+      />
+      <CryptoCard
+        star={true}
+        starColor="text-lightYellow1"
+        starred={true}
+        chain="Dogecoin"
+        price={15.77}
+        currency="DOGE"
+        fluctuating={-6.23}
+        gradientColor="border-lightYellow1/50 from-lightYellow1/50 to-black"
+        tokenComponent={<img src="/elements/layer_2-1.svg" alt="DOGE" />}
+      />
+      <CryptoCard
+        star={true}
+        starColor="text-lightPink1"
+        starred={true}
+        chain="Uniswap"
+        price={15.77}
+        currency="UNI"
+        fluctuating={-6.23}
+        gradientColor="border-lightPink1/50 from-lightPink1/50 to-black"
+        tokenComponent={<img src="/elements/uniswap-uni-logo.svg" alt="Uniswap" />}
+      />
+      <CryptoCard
+        star={true}
+        starColor="text-lightGreen4"
+        starred={true}
+        chain="Flow"
+        price={15.77}
+        currency="FLOW"
+        fluctuating={-6.23}
+        gradientColor="border-lightGreen4/50 from-lightGreen4/50 to-black"
+        tokenComponent={<img src="/elements/layer_2_1_.svg" alt="avax" />}
+      />
+    </>
+  );
+
+  const displayedCryptoCards =
+    activeTab === 'All' ? displayedAllCryptoCards : 'favoriteCryptoCards';
 
   const searchIcon = (
     <svg xmlns="http://www.w3.org/2000/svg" width="25" height="24.984" viewBox="0 0 25 24.984">
@@ -74,7 +784,8 @@ const TickerSelectorBox = ({
         <div className="">
           <button
             type="button"
-            className={`${activePositionTabStyle} inline-block rounded-t-lg px-38px py-2 hover:cursor-pointer`}
+            onClick={favoriteTabClickHandler}
+            className={`${activeFavoriteTabStyle} inline-block rounded-t-lg px-38px py-2 hover:cursor-pointer`}
           >
             Favorite
           </button>
@@ -208,198 +919,7 @@ const TickerSelectorBox = ({
                   <div className="flex w-full items-center justify-center">
                     {/* 多出來的高度不會出現y卷軸 */}
                     <div className="mb-5 grid grid-cols-5 space-y-4 space-x-4 overflow-x-hidden overflow-y-clip">
-                      <CryptoCard
-                        star={true}
-                        starColor="text-bluePurple"
-                        starred={true}
-                        getStarredState={getEthStarred}
-                        className="mt-4 ml-4"
-                        chain="Ethereum"
-                        currency="ETH"
-                        price={1288.4}
-                        fluctuating={1.14}
-                        gradientColor="border-bluePurple/50 bg-black from-bluePurple/50 to-black"
-                        tokenComponent={
-                          <img src="/elements/group_2371.svg" alt="eth" width={40} height={40} />
-                        }
-                      />
-                      <CryptoCard
-                        star={true}
-                        starColor="text-lightOrange"
-                        starred={true}
-                        getStarredState={getBtcStarred}
-                        chain="Bitcoin"
-                        currency="BTC"
-                        price={19848.8}
-                        gradientColor="border-lightOrange/50 bg-black from-lightOrange/50 to-black"
-                        fluctuating={3.46}
-                        tokenComponent={
-                          <img src="/elements/group_2372.svg" width={40} height={40} />
-                        }
-                      />
-                      <CryptoCard
-                        star={true}
-                        starColor="text-lightGray2"
-                        starred={true}
-                        chain="Litecoin"
-                        currency="LTC"
-                        price={54.57}
-                        fluctuating={-3.46}
-                        gradientColor="border-lightGray2/50 bg-black from-lightGray2/50 to-black"
-                        tokenComponent={
-                          <img
-                            src="/elements/c5b7bda06ddfe2b3f59b37ed6bb65ab4.svg"
-                            alt="litecoin"
-                          />
-                        }
-                      />
-                      <CryptoCard
-                        star={true}
-                        starColor="text-lightPurple"
-                        starred={true}
-                        chain="Polygon"
-                        currency="MATIC"
-                        price={0.82}
-                        fluctuating={-6.23}
-                        gradientColor="border-lightPurple/60 bg-black from-lightPurple/60 to-black"
-                        tokenComponent={
-                          <img src="/elements/9cc18b0cbe765b0a28791d253207f0c0.svg" alt="polygon" />
-                        }
-                      />
-                      <CryptoCard
-                        star={true}
-                        starColor="text-lightYellow"
-                        starred={true}
-                        chain="BNB"
-                        currency="BNB"
-                        price={274.54}
-                        fluctuating={-6.23}
-                        gradientColor="border-lightYellow/60 bg-black from-lightYellow/50 to-black"
-                        tokenComponent={<img src="/elements/group_2374.svg" alt="bnb" />}
-                      />
-                      <CryptoCard
-                        star={true}
-                        starColor="text-lightPurple2"
-                        starred={true}
-                        chain="Solana"
-                        currency="SOL"
-                        price={28.41}
-                        fluctuating={1.14}
-                        gradientColor="border-lightPurple2/60 from-lightPurple2/60 to-black"
-                        tokenComponent={<img src="/elements/group_2378.svg" alt="solana" />}
-                      />
-                      <CryptoCard
-                        star={true}
-                        starColor="text-lightRed1"
-                        starred={true}
-                        chain="Shiba Inu"
-                        currency="SHIB"
-                        price={0.0000099}
-                        fluctuating={-3.46}
-                        gradientColor="border-lightRed1/50 from-lightRed1/50 to-black"
-                        tokenComponent={<img src="/elements/group_2381.svg" alt="shiba inu" />}
-                      />
-                      <CryptoCard
-                        star={true}
-                        starColor="text-lightPink"
-                        starred={true}
-                        chain="Polkadot"
-                        currency="DOT"
-                        price={5.92}
-                        fluctuating={3.46}
-                        gradientColor="border-lightPink/60 from-lightPink/60 to-black"
-                        tokenComponent={<img src="/elements/group_2385.svg" alt="polkadot" />}
-                      />
-                      <CryptoCard
-                        star={true}
-                        starColor="text-lightGreen1"
-                        starred={true}
-                        chain="Cardano"
-                        currency="ADA"
-                        price={0.3611}
-                        fluctuating={1.14}
-                        gradientColor="border-lightGreen1/60 from-lightGreen1/60 to-black"
-                        tokenComponent={<img src="/elements/group_2388.svg" alt="cardano" />}
-                      />
-                      <CryptoCard
-                        star={true}
-                        starColor="text-lightRed2"
-                        starred={true}
-                        chain="Avalanche"
-                        price={15.77}
-                        currency="AVAX"
-                        fluctuating={-6.23}
-                        gradientColor="border-lightRed2/50 from-lightRed2/50 to-black"
-                        tokenComponent={<img src="/elements/group_2391.svg" alt="avax" />}
-                      />
-
-                      <CryptoCard
-                        star={true}
-                        starColor="text-lightOrange1"
-                        starred={true}
-                        chain="Dai"
-                        price={15.77}
-                        currency="Dai"
-                        fluctuating={-6.23}
-                        gradientColor="border-lightOrange1/50 from-lightOrange1/50 to-black"
-                        tokenComponent={<img src="/elements/layer_x0020_1.svg" alt="dai" />}
-                      />
-                      <CryptoCard
-                        star={true}
-                        starColor="text-lightGreen3"
-                        starred={true}
-                        chain="Maker"
-                        price={15.77}
-                        currency="MKR"
-                        fluctuating={-6.23}
-                        gradientColor="border-lightGreen3/50 from-lightGreen3/50 to-black"
-                        tokenComponent={<img src="/elements/layer_2.svg" alt="Maker" />}
-                      />
-                      <CryptoCard
-                        star={true}
-                        starColor="text-lightGray4"
-                        starred={true}
-                        chain="XRP"
-                        price={15.77}
-                        currency="XRP"
-                        fluctuating={-6.23}
-                        gradientColor="border-lightGray4/50 from-lightGray4/50 to-black"
-                        tokenComponent={<img src="/elements/group_2406.svg" alt="XRP" />}
-                      />
-                      <CryptoCard
-                        star={true}
-                        starColor="text-lightYellow1"
-                        starred={true}
-                        chain="Dogecoin"
-                        price={15.77}
-                        currency="DOGE"
-                        fluctuating={-6.23}
-                        gradientColor="border-lightYellow1/50 from-lightYellow1/50 to-black"
-                        tokenComponent={<img src="/elements/layer_2-1.svg" alt="DOGE" />}
-                      />
-                      <CryptoCard
-                        star={true}
-                        starColor="text-lightPink1"
-                        starred={true}
-                        chain="Uniswap"
-                        price={15.77}
-                        currency="UNI"
-                        fluctuating={-6.23}
-                        gradientColor="border-lightPink1/50 from-lightPink1/50 to-black"
-                        tokenComponent={<img src="/elements/uniswap-uni-logo.svg" alt="Uniswap" />}
-                      />
-                      <CryptoCard
-                        star={true}
-                        starColor="text-lightGreen4"
-                        starred={true}
-                        chain="Flow"
-                        price={15.77}
-                        currency="FLOW"
-                        fluctuating={-6.23}
-                        gradientColor="border-lightGreen4/50 from-lightGreen4/50 to-black"
-                        tokenComponent={<img src="/elements/layer_2_1_.svg" alt="avax" />}
-                      />
-
+                      {displayedCryptoCards}
                       {/* <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">
           
         </div>

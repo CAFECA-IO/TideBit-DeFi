@@ -70,6 +70,7 @@ const CryptoCard = ({
   const [starFilled, setStarFilled] = useState(false);
 
   const passStarClickHandler = (data: boolean) => {
+    // make sure the function is not undefined
     if (!getStarredState) return;
 
     getStarredState(data);

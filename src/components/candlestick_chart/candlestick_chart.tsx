@@ -265,12 +265,21 @@ export default function CandlestickChart({
       x: new Date(1538884800000),
       y: [6604.98, 6606, 6604.07, 6606],
     },
+    // {
+    //   x: new Date(1538886600000),
+    //   y: [0, 0, 0, 0],
+    // },
+    // {
+    //   x: new Date(1538888400000),
+    //   y: [0, 0, 0, 0],
+    // },
   ];
 
   const chartOptions: ApexOptions = {
     chart: {
       type: 'candlestick',
-      height: 350,
+      height: 0,
+
       toolbar: {
         show: false,
         tools: {
@@ -280,7 +289,25 @@ export default function CandlestickChart({
           pan: false,
         },
       },
+
+      // dropShadow: {
+      //   enabled: true,
+      //   top: 0,
+      //   left: 0,
+      //   blur: 3,
+      //   opacity: 0.5,
+      // },
     },
+    responsive: [
+      {
+        breakpoint: 500,
+        options: {
+          candlestick: {
+            width: '1000',
+          },
+        },
+      },
+    ],
     title: {
       text: '',
       align: 'left',
@@ -305,6 +332,9 @@ export default function CandlestickChart({
       // xaxis: {
       //   lines: {show: false},
       // },
+      padding: {
+        right: 300,
+      },
     },
 
     yaxis: {
@@ -344,6 +374,7 @@ export default function CandlestickChart({
         },
       },
     },
+
     // markers: {
     //   discrete: [
     //     {
@@ -373,7 +404,7 @@ export default function CandlestickChart({
           y: 6630,
           strokeDashArray: 3,
           borderColor: PROFIT_LOSS_COLOR_TYPE.loss,
-          width: '100%',
+          width: '155%',
           fillColor: '#ffffff',
 
           label: {
@@ -381,7 +412,7 @@ export default function CandlestickChart({
             borderColor: 'transparent',
             textAnchor: 'end',
             offsetY: 10,
-            offsetX: -10,
+            offsetX: 280,
             style: {
               color: '#ffffff',
               fontSize: '12px',
@@ -400,7 +431,7 @@ export default function CandlestickChart({
           y: 6585,
           strokeDashArray: 3,
           borderColor: PROFIT_LOSS_COLOR_TYPE.profit,
-          width: '100%',
+          width: '155%',
           fillColor: '#ffffff',
 
           label: {
@@ -408,7 +439,7 @@ export default function CandlestickChart({
             borderColor: 'transparent',
             textAnchor: 'end',
             offsetY: 10,
-            offsetX: -10,
+            offsetX: 280,
             style: {
               color: '#ffffff',
               fontSize: '12px',
@@ -427,7 +458,7 @@ export default function CandlestickChart({
           y: 6606,
           strokeDashArray: 0,
           borderColor: PROFIT_LOSS_COLOR_TYPE.tidebitTheme,
-          width: '100%',
+          width: '160%',
           fillColor: '#ffffff',
 
           label: {
@@ -435,7 +466,7 @@ export default function CandlestickChart({
             borderColor: 'transparent',
             textAnchor: 'end',
             offsetY: 10,
-            offsetX: 50,
+            offsetX: 340,
             style: {
               color: '#ffffff',
               fontSize: '12px',

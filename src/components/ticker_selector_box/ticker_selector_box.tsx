@@ -11,7 +11,7 @@ interface ITickerSelectorModal {
   tickerSelectorModalClickHandler: () => void;
 }
 
-const TickerSelectorModal = ({
+const TickerSelectorBox = ({
   tickerSelectorModalRef,
   tickerSelectorModalVisible,
   tickerSelectorModalClickHandler,
@@ -444,4 +444,4 @@ const TickerSelectorModal = ({
   return <div>{isDisplayedTickerSelectorModal}</div>;
 };
 
-export default TickerSelectorModal;
+export default TickerSelectorBox;

@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import TickerSelectorModal from '../ticker_selector_modal/ticker_selector_modal';
+import TickerSelectorBox from '../ticker_selector_box/ticker_selector_box';
 import {CgArrowsExchange} from 'react-icons/cg';
 import useOuterClick from '../../lib/hooks/use_outer_click';
 
@@ -128,7 +128,7 @@ const TradingHeader = ({upOrDown, tradingVolume}: ITradingHeaderProps) => {
   return (
     <div>
       {ethHeader}
-      <TickerSelectorModal
+      <TickerSelectorBox
         tickerSelectorModalRef={tickerBoxRef}
         tickerSelectorModalVisible={tickerBoxVisible}
         tickerSelectorModalClickHandler={tickerBoxClickHandler}

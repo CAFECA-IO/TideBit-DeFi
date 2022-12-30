@@ -1,7 +1,7 @@
 import CryptoCard from '../components/card/crypto_card';
 import OpenPositionItem from '../components/open_position_item/open_position_item';
 import TestReserveRatio from '../components/reserve_ratio/test_reserve_ratio';
-import TickerSelectorModal from '../components/ticker_selector_modal/ticker_selector_modal';
+import TickerSelectorBox from '../components/ticker_selector_box/ticker_selector_box';
 import useOuterClick from '../lib/hooks/use_outer_click';
 // import HorizontalRelativeLineGraph from '../components/horizontal_relative_line_graph/horizontal_relative_line_graph';
 import PositionLineGraph from '../components/position_line_graph/position_line_graph';

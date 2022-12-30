@@ -5,17 +5,17 @@ import Link from 'next/link';
 import {useState} from 'react';
 import CryptoCard from '../card/crypto_card';
 
-interface ITickerSelectorModal {
-  tickerSelectorModalRef: React.RefObject<HTMLDivElement>;
-  tickerSelectorModalVisible: boolean;
-  tickerSelectorModalClickHandler: () => void;
+interface ITickerSelectorBox {
+  tickerSelectorBoxRef: React.RefObject<HTMLDivElement>;
+  tickerSelectorBoxVisible: boolean;
+  tickerSelectorBoxClickHandler: () => void;
 }
 
 const TickerSelectorBox = ({
-  tickerSelectorModalRef,
-  tickerSelectorModalVisible,
-  tickerSelectorModalClickHandler,
-}: ITickerSelectorModal) => {
+  tickerSelectorBoxRef: tickerSelectorBoxRef,
+  tickerSelectorBoxVisible: tickerSelectorBoxVisible,
+  tickerSelectorBoxClickHandler: tickerSelectorBoxClickHandler,
+}: ITickerSelectorBox) => {
   const [activeTab, setActiveTab] = useState('All');
   const [ethStarred, setEthStarred] = useState(false);
   const [btcStarred, setBtcStarred] = useState(false);
@@ -33,8 +33,8 @@ const TickerSelectorBox = ({
     setActiveTab('All');
   };
 
-  const positionTabClickHandler = () => {
-    setActiveTab('Position');
+  const favoriteTabClickHandler = () => {
+    setActiveTab('Favorite');
   };
 
   // const currentTab = activeTab === 'Trade' ? <TradeTab /> : <PositionTab />;
@@ -147,13 +147,13 @@ const TickerSelectorBox = ({
     </>
   );
 
-  const isDisplayedTickerSelectorModal = tickerSelectorModalVisible ? (
+  const isDisplayedTickerSelectorBox = tickerSelectorBoxVisible ? (
     <>
       <div className="fixed inset-0 z-50 hidden items-center justify-center overflow-x-auto overflow-y-auto outline-none backdrop-blur-sm focus:outline-none xl:flex">
         <div
           className="relative my-6 mx-auto min-w-fit"
           id="tickerSelectorModal"
-          ref={tickerSelectorModalRef}
+          ref={tickerSelectorBoxRef}
         >
           {/* tab section */}
           <div className="">{tabPart}</div>
@@ -441,7 +441,7 @@ const TickerSelectorBox = ({
     </>
   ) : null;
 
-  return <div>{isDisplayedTickerSelectorModal}</div>;
+  return <div>{isDisplayedTickerSelectorBox}</div>;
 };
 
 export default TickerSelectorBox;

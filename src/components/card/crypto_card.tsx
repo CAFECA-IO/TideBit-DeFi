@@ -13,6 +13,7 @@ import {useState} from 'react';
  *
  */
 
+// FIXME: no JSX in props
 interface CardProps {
   gradientColor?: string;
   tokenComponent?: JSX.Element;

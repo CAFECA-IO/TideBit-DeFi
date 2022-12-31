@@ -20,6 +20,7 @@ interface ITickerSelectorBox {
 //   rodney: false,
 // };
 
+// FIXME: no JSX in props
 interface ICryptoCardData {
   currency: string;
   chain: string;

@@ -1,6 +1,6 @@
 import CryptoCard from '../components/card/crypto_card';
 import OpenPositionItem from '../components/open_position_item/open_position_item';
-import TestReserveRatio from '../components/reserve_ratio/test_reserve_ratio';
+import TrialComponent from '../components/trial_component/trial_component';
 import TickerSelectorBox from '../components/ticker_selector_box/ticker_selector_box';
 import useOuterClick from '../lib/hooks/use_outer_click';
 // import HorizontalRelativeLineGraph from '../components/horizontal_relative_line_graph/horizontal_relative_line_graph';
@@ -54,7 +54,8 @@ const Trial = () => {
   return (
     <>
       {/* flex h-screen w-full items-center justify-center */}
-      <div className="w-full pl-5">
+      <div className="w-full space-y-10 p-10">
+        <TrialComponent />
         {/* <TestReserveRatio />
         {rippleEffect} */}
         {/* -------------Open position trial------------- */}

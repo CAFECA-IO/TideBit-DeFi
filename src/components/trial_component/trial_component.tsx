@@ -1,7 +1,7 @@
 import Image from 'next/image';
-import {useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 
-const TestReserveRatio = () => {
+const TrialComponent = () => {
   const [tooltipStatus, setTooltipStatus] = useState(0);
 
   // const bgNextTailwindImage = (
@@ -489,14 +489,57 @@ const TestReserveRatio = () => {
     </>
   );
 
+  const buttonRef = useRef<HTMLButtonElement>();
+
+  useEffect(() => {
+    const applyContainerProperties = () => {
+      if (!buttonRef) return;
+      buttonRef?.current.classList.add('effectContainer');
+    };
+
+    const onClick = () => {
+      buttonRef?.current.classList.remove('active');
+
+      setTimeout(() => {
+        buttonRef?.current.classList.add('active');
+      }, 1);
+    };
+
+    applyContainerProperties();
+
+    // Add the event listener on mount
+    buttonRef?.current.addEventListener('mouseup', onClick);
+
+    // Needed for referencing the ref in the return function
+    const cleanupRef = buttonRef.current;
+
+    return () => {
+      // Remove the event listener on unmount
+      buttonRef?.current.removeEventListener('mouseup', onClick);
+    };
+  }, [buttonRef]);
+
+  const rippleButton = (
+    <div>
+      <button
+        className="rounded-md bg-cuteBlue2 px-5 py-2 transition-all"
+        type="button"
+        ref={buttonRef}
+      >
+        Click me
+      </button>
+    </div>
+  );
+
   return (
     <>
       {/* {test2BgImage} */}
       {/* {testPopoverCom} */}
       {/* {anotherTooltipCom} */}
-      {tooltipCom1}
+      {/* {tooltipCom1} */}
+      {rippleButton}
     </>
   );
 };
 
-export default TestReserveRatio;
+export default TrialComponent;

@@ -489,7 +489,7 @@ const TrialComponent = () => {
     </>
   );
 
-  const buttonRef = useRef<HTMLButtonElement>();
+  const buttonRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const applyContainerProperties = () => {
@@ -497,12 +497,25 @@ const TrialComponent = () => {
       buttonRef?.current.classList.add('effectContainer');
     };
 
-    const onClick = () => {
-      buttonRef?.current.classList.remove('active');
+    // MouseEvent property
+    const applyStyles = (e: MouseEvent) => {
+      const {offsetX, offsetY} = e;
+      const {style} = buttonRef.current;
+      const sizeOffset = 50;
 
-      setTimeout(() => {
-        buttonRef?.current.classList.add('active');
-      }, 1);
+      style.setProperty('--effect-top', `${offsetY - sizeOffset}px`);
+      style.setProperty('--effect-left', `${offsetX - sizeOffset}px`);
+    };
+
+    const onClick = (e: HTMLButtonElement) => {
+      buttonRef?.current.classList.remove('active');
+      applyStyles(e);
+
+      buttonRef?.current.classList.add('active');
+
+      // setTimeout(() => {
+      //   buttonRef?.current.classList.add('active');
+      // }, 1);
     };
 
     applyContainerProperties();
@@ -522,7 +535,7 @@ const TrialComponent = () => {
   const rippleButton = (
     <div>
       <button
-        className="rounded-md bg-cuteBlue2 px-5 py-2 transition-all"
+        className="rounded-md bg-tidebitTheme px-8 py-4 transition-all"
         type="button"
         ref={buttonRef}
       >

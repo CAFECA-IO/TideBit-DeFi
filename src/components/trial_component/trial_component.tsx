@@ -489,7 +489,7 @@ const TrialComponent = () => {
     </>
   );
 
-  const buttonRef = useRef<HTMLElement>(null);
+  const buttonRef = useRef<HTMLElement | undefined>();
 
   useEffect(() => {
     const applyContainerProperties = () => {
@@ -507,7 +507,7 @@ const TrialComponent = () => {
       style.setProperty('--effect-left', `${offsetX - sizeOffset}px`);
     };
 
-    const onClick = (e: HTMLButtonElement) => {
+    const onClick = (e: MouseEvent) => {
       buttonRef?.current.classList.remove('active');
       applyStyles(e);
 
@@ -535,7 +535,7 @@ const TrialComponent = () => {
   const rippleButton = (
     <div>
       <button
-        className="rounded-md bg-tidebitTheme px-8 py-4 transition-all"
+        className="rounded-md bg-tidebitTheme px-8 py-2 transition-all"
         type="button"
         ref={buttonRef}
       >

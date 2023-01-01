@@ -5,6 +5,7 @@ import TickerSelectorBox from '../components/ticker_selector_box/ticker_selector
 import useOuterClick from '../lib/hooks/use_outer_click';
 // import HorizontalRelativeLineGraph from '../components/horizontal_relative_line_graph/horizontal_relative_line_graph';
 import PositionLineGraph from '../components/position_line_graph/position_line_graph';
+import RippleButton from '../components/ripple_button/ripple_button';
 
 const Trial = () => {
   const {
@@ -108,6 +109,7 @@ const Trial = () => {
           tickerSelectorModalVisible={tickerBoxVisible}
           tickerSelectorModalClickHandler={tickerBoxClickHandler}
         />{' '} */}
+        <RippleButton>Ripple</RippleButton>
       </div>
     </>
   );

@@ -58,7 +58,7 @@
   --effect-left: 0px;
   --effect-height: 100px;
   --effect-width: 100px;
-  --effect-color: white;
+  --effect-color: #ffffff;
 }
 
 .effectContainer::before {

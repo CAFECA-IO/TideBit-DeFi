@@ -54,7 +54,7 @@ const RippleButton = ({className, buttonStyle, children}: IRippleButtonProps) =>
   return (
     <div>
       <button
-        className="rounded-md bg-lightRed px-8 py-2 transition-all"
+        className={`${className} rounded-md bg-tidebitTheme px-8 py-2 transition-all hover:opacity-90`}
         type="button"
         ref={buttonRef}
       >

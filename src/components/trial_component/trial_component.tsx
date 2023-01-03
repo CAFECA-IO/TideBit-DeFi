@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import {useEffect, useRef, useState} from 'react';
-import useRippleAnimation from '../../lib/hooks/use_ripple_animation';
+// import useRippleAnimation from '../../lib/hooks/use_ripple_animation';
 import {config} from 'process';
 
 const TrialComponent = () => {

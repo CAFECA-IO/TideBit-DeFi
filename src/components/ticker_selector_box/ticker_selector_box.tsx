@@ -20,7 +20,6 @@ interface ITickerSelectorBox {
 //   rodney: false,
 // };
 
-// FIXME: no JSX in props
 interface ICryptoCardData {
   currency: string;
   chain: string;
@@ -52,29 +51,12 @@ const TickerSelectorBox = ({
     },
   ];
 
-  /**
-   * {
-    currency: string;
-    chain: string;
-    star: boolean;
-    starred: boolean;
-    starColor: string;
-    getStarredStateCallback: (bool: boolean) => void;
-    price: number;
-    fluctuating: number;
-    gradientColor: string;
-    // tokenComponent: JSX.Element;
-    tokenImg: string;
-  }
-
-   */
-
   const TRADING_CRYPTO_DATA: ICryptoCardData[] = [
     {
       currency: 'ETH',
       chain: 'Ethereum',
       star: true,
-      starred: true,
+      starred: false,
       starColor: 'text-bluePurple',
       getStarredStateCallback: getEthStarred,
       price: 1288.4,
@@ -86,7 +68,7 @@ const TickerSelectorBox = ({
       currency: 'BTC',
       chain: 'Bitcoin',
       star: true,
-      starred: true,
+      starred: false,
       starColor: 'text-lightOrange',
       getStarredStateCallback: getBtcStarred,
       price: 1288.4,
@@ -98,7 +80,7 @@ const TickerSelectorBox = ({
       currency: 'LTC',
       chain: 'Litecoin',
       star: true,
-      starred: true,
+      starred: false,
       starColor: 'text-lightGray2',
       getStarredStateCallback: getLtcStarred,
       price: 1288.4,
@@ -110,7 +92,7 @@ const TickerSelectorBox = ({
       currency: 'MATIC',
       chain: 'Polygon',
       star: true,
-      starred: true,
+      starred: false,
       starColor: 'text-lightPurple',
       getStarredStateCallback: getMaticStarred,
       price: 1288.4,
@@ -122,7 +104,7 @@ const TickerSelectorBox = ({
       currency: 'BNB',
       chain: 'BNB',
       star: true,
-      starred: true,
+      starred: false,
       starColor: 'text-lightYellow',
       getStarredStateCallback: getBnbStarred,
       price: 1288.4,
@@ -134,7 +116,7 @@ const TickerSelectorBox = ({
       currency: 'SOL',
       chain: 'Solana',
       star: true,
-      starred: true,
+      starred: false,
       starColor: 'text-lightPurple2',
       getStarredStateCallback: getSolStarred,
       price: 1288.4,
@@ -146,7 +128,7 @@ const TickerSelectorBox = ({
       currency: 'SHIB',
       chain: 'Shiba Inu',
       star: true,
-      starred: true,
+      starred: false,
       starColor: 'text-lightRed1',
       getStarredStateCallback: getShibStarred,
       price: 1288.4,
@@ -158,7 +140,7 @@ const TickerSelectorBox = ({
       currency: 'DOT',
       chain: 'Polkadot',
       star: true,
-      starred: true,
+      starred: false,
       starColor: 'text-lightPink',
       getStarredStateCallback: getDotStarred,
       price: 1288.4,
@@ -170,7 +152,7 @@ const TickerSelectorBox = ({
       currency: 'ADA',
       chain: 'Cardano',
       star: true,
-      starred: true,
+      starred: false,
       starColor: 'text-lightGreen1',
       getStarredStateCallback: getAdaStarred,
       price: 1288.4,
@@ -182,7 +164,7 @@ const TickerSelectorBox = ({
       currency: 'AVAX',
       chain: 'Avalanche',
       star: true,
-      starred: true,
+      starred: false,
       starColor: 'text-lightRed2',
       getStarredStateCallback: getAvaxStarred,
       price: 1288.4,
@@ -194,7 +176,7 @@ const TickerSelectorBox = ({
       currency: 'Dai',
       chain: 'Dai',
       star: true,
-      starred: true,
+      starred: false,
       starColor: 'text-lightOrange1',
       getStarredStateCallback: getDaiStarred,
       price: 1288.4,
@@ -206,7 +188,7 @@ const TickerSelectorBox = ({
       currency: 'MKR',
       chain: 'Maker',
       star: true,
-      starred: true,
+      starred: false,
       starColor: 'text-lightGreen3',
       getStarredStateCallback: getMkrStarred,
       price: 1288.4,
@@ -218,7 +200,7 @@ const TickerSelectorBox = ({
       currency: 'XRP',
       chain: 'XRP',
       star: true,
-      starred: true,
+      starred: false,
       starColor: 'text-lightGray4',
       getStarredStateCallback: getXrpStarred,
       price: 1288.4,
@@ -230,7 +212,7 @@ const TickerSelectorBox = ({
       currency: 'DOGE',
       chain: 'Dogecoin',
       star: true,
-      starred: true,
+      starred: false,
       starColor: 'text-lightYellow1',
       getStarredStateCallback: getDogeStarred,
       price: 1288.4,
@@ -242,7 +224,7 @@ const TickerSelectorBox = ({
       currency: 'UNI',
       chain: 'Uniswap',
       star: true,
-      starred: true,
+      starred: false,
       starColor: 'text-lightPink1',
       getStarredStateCallback: getUniStarred,
       price: 1288.4,
@@ -254,7 +236,7 @@ const TickerSelectorBox = ({
       currency: 'Flow',
       chain: 'Flow',
       star: true,
-      starred: true,
+      starred: false,
       starColor: 'text-lightGreen4',
       getStarredStateCallback: getFlowStarred,
       price: 1288.4,
@@ -264,7 +246,7 @@ const TickerSelectorBox = ({
     },
   ];
 
-  const TRADING_CRYPTO_DATA_COMPONENTS = TRADING_CRYPTO_DATA.map((cryptoCard, index) => {
+  const ALL_TRADING_CRYPTO_DATA_COMPONENTS = TRADING_CRYPTO_DATA.map((cryptoCard, index) => {
     return {
       label: cryptoCard.currency,
       content: (
@@ -287,486 +269,6 @@ const TickerSelectorBox = ({
 
   // console.log('components:', TRADING_CRYPTO_DATA_COMPONENTS);
 
-  // const allCryptoCards = [
-  //   {
-  //     label: 'ETH',
-  //     content: (
-  //       <CryptoCard
-  //         star={true}
-  //         starColor="text-bluePurple"
-  //         starred={true}
-  //         getStarredState={getEthStarred}
-  //         className="mt-4 ml-4"
-  //         chain="Ethereum"
-  //         currency="ETH"
-  //         price={1288.4}
-  //         fluctuating={1.14}
-  //         gradientColor="border-bluePurple/50 bg-black from-bluePurple/50 to-black"
-  //        tokenImg="/elements/group_2371.svg" alt="eth" width={40} height={40} />}
-  //       />
-  //     ),
-  //   },
-  //   {
-  //     label: 'BTC',
-  //     content: (
-  //       <CryptoCard
-  //         star={true}
-  //         starColor="text-lightOrange"
-  //         starred={true}
-  //         getStarredState={getBtcStarred}
-  //         chain="Bitcoin"
-  //         currency="BTC"
-  //         price={19848.8}
-  //         gradientColor="border-lightOrange/50 bg-black from-lightOrange/50 to-black"
-  //         fluctuating={3.46}
-  //        tokenImg="/elements/group_2372.svg" width={40} height={40} />}
-  //       />
-  //     ),
-  //   },
-  //   {
-  //     label: 'LTC',
-  //     content: (
-  //       <CryptoCard
-  //         star={true}
-  //         starColor="text-lightGray2"
-  //         starred={true}
-  //         chain="Litecoin"
-  //         currency="LTC"
-  //         price={54.57}
-  //         fluctuating={-3.46}
-  //         gradientColor="border-lightGray2/50 bg-black from-lightGray2/50 to-black"
-  //         tokenComponent={
-  //           <img src="/elements/c5b7bda06ddfe2b3f59b37ed6bb65ab4.svg" alt="litecoin" />
-  //         }
-  //       />
-  //     ),
-  //   },
-  //   {
-  //     label: 'MATIC',
-  //     content: (
-  //       <CryptoCard
-  //         star={true}
-  //         starColor="text-lightPurple"
-  //         starred={true}
-  //         chain="Polygon"
-  //         currency="MATIC"
-  //         price={0.82}
-  //         fluctuating={-6.23}
-  //         gradientColor="border-lightPurple/60 bg-black from-lightPurple/60 to-black"
-  //         tokenComponent={
-  //           <img src="/elements/9cc18b0cbe765b0a28791d253207f0c0.svg" alt="polygon" />
-  //         }
-  //       />
-  //     ),
-  //   },
-  //   {
-  //     label: 'BNB',
-  //     content: (
-  //       <CryptoCard
-  //         star={true}
-  //         starColor="text-lightYellow"
-  //         starred={true}
-  //         chain="BNB"
-  //         currency="BNB"
-  //         price={274.54}
-  //         fluctuating={-6.23}
-  //         gradientColor="border-lightYellow/60 bg-black from-lightYellow/50 to-black"
-  //        tokenImg="/elements/group_2374.svg" alt="bnb" />}
-  //       />
-  //     ),
-  //   },
-  //   {
-  //     label: 'SOL',
-  //     content: (
-  //       <CryptoCard
-  //         star={true}
-  //         starColor="text-lightPurple2"
-  //         starred={true}
-  //         chain="Solana"
-  //         currency="SOL"
-  //         price={28.41}
-  //         fluctuating={1.14}
-  //         gradientColor="border-lightPurple2/60 from-lightPurple2/60 to-black"
-  //        tokenImg="/elements/group_2378.svg" alt="solana" />}
-  //       />
-  //     ),
-  //   },
-  //   {
-  //     label: 'SHIB',
-  //     content: (
-  //       <CryptoCard
-  //         star={true}
-  //         starColor="text-lightRed1"
-  //         starred={true}
-  //         chain="Shiba Inu"
-  //         currency="SHIB"
-  //         price={0.0000099}
-  //         fluctuating={-3.46}
-  //         gradientColor="border-lightRed1/50 from-lightRed1/50 to-black"
-  //        tokenImg="/elements/group_2381.svg" alt="shiba inu" />}
-  //       />
-  //     ),
-  //   },
-  //   {
-  //     label: 'DOT',
-  //     content: (
-  //       <CryptoCard
-  //         star={true}
-  //         starColor="text-lightPink"
-  //         starred={true}
-  //         chain="Polkadot"
-  //         currency="DOT"
-  //         price={5.92}
-  //         fluctuating={3.46}
-  //         gradientColor="border-lightPink/60 from-lightPink/60 to-black"
-  //        tokenImg="/elements/group_2385.svg" alt="polkadot" />}
-  //       />
-  //     ),
-  //   },
-  //   {
-  //     label: 'ADA',
-  //     content: (
-  //       <CryptoCard
-  //         star={true}
-  //         starColor="text-lightGreen1"
-  //         starred={true}
-  //         chain="Cardano"
-  //         currency="ADA"
-  //         price={0.3611}
-  //         fluctuating={1.14}
-  //         gradientColor="border-lightGreen1/60 from-lightGreen1/60 to-black"
-  //        tokenImg="/elements/group_2388.svg" alt="cardano" />}
-  //       />
-  //     ),
-  //   },
-  //   {
-  //     label: 'AVAX',
-  //     content: (
-  //       <CryptoCard
-  //         star={true}
-  //         starColor="text-lightRed2"
-  //         starred={true}
-  //         chain="Avalanche"
-  //         price={15.77}
-  //         currency="AVAX"
-  //         fluctuating={-6.23}
-  //         gradientColor="border-lightRed2/50 from-lightRed2/50 to-black"
-  //        tokenImg="/elements/group_2391.svg" alt="avax" />}
-  //       />
-  //     ),
-  //   },
-  //   {
-  //     label: 'Dai',
-  //     content: (
-  //       <CryptoCard
-  //         star={true}
-  //         starColor="text-lightOrange1"
-  //         starred={true}
-  //         chain="Dai"
-  //         price={15.77}
-  //         currency="Dai"
-  //         fluctuating={-6.23}
-  //         gradientColor="border-lightOrange1/50 from-lightOrange1/50 to-black"
-  //        tokenImg="/elements/layer_x0020_1.svg" alt="dai" />}
-  //       />
-  //     ),
-  //   },
-  //   {
-  //     label: 'MKR',
-  //     content: (
-  //       <CryptoCard
-  //         star={true}
-  //         starColor="text-lightGreen3"
-  //         starred={true}
-  //         chain="Maker"
-  //         price={15.77}
-  //         currency="MKR"
-  //         fluctuating={-6.23}
-  //         gradientColor="border-lightGreen3/50 from-lightGreen3/50 to-black"
-  //        tokenImg="/elements/layer_2.svg" alt="Maker" />}
-  //       />
-  //     ),
-  //   },
-  //   {
-  //     label: 'XRP',
-  //     content: (
-  //       <CryptoCard
-  //         star={true}
-  //         starColor="text-lightGray4"
-  //         starred={true}
-  //         chain="XRP"
-  //         price={15.77}
-  //         currency="XRP"
-  //         fluctuating={-6.23}
-  //         gradientColor="border-lightGray4/50 from-lightGray4/50 to-black"
-  //        tokenImg="/elements/group_2406.svg" alt="XRP" />}
-  //       />
-  //     ),
-  //   },
-  //   {
-  //     label: 'DOGE',
-  //     content: (
-  //       <CryptoCard
-  //         star={true}
-  //         starColor="text-lightYellow1"
-  //         starred={true}
-  //         chain="Dogecoin"
-  //         price={15.77}
-  //         currency="DOGE"
-  //         fluctuating={-6.23}
-  //         gradientColor="border-lightYellow1/50 from-lightYellow1/50 to-black"
-  //        tokenImg="/elements/layer_2-1.svg" alt="DOGE" />}
-  //       />
-  //     ),
-  //   },
-  //   {
-  //     label: 'UNI',
-  //     content: (
-  //       <CryptoCard
-  //         star={true}
-  //         starColor="text-lightPink1"
-  //         starred={true}
-  //         chain="Uniswap"
-  //         price={15.77}
-  //         currency="UNI"
-  //         fluctuating={-6.23}
-  //         gradientColor="border-lightPink1/50 from-lightPink1/50 to-black"
-  //        tokenImg="/elements/uniswap-uni-logo.svg" alt="Uniswap" />}
-  //       />
-  //     ),
-  //   },
-  //   {
-  //     label: 'FLOW',
-  //     content: (
-  //       <CryptoCard
-  //         star={true}
-  //         starColor="text-lightGreen4"
-  //         starred={true}
-  //         chain="Flow"
-  //         price={15.77}
-  //         currency="FLOW"
-  //         fluctuating={-6.23}
-  //         gradientColor="border-lightGreen4/50 from-lightGreen4/50 to-black"
-  //        tokenImg="/elements/layer_2_1_.svg" alt="avax" />}
-  //       />
-  //     ),
-  //   },
-  // ];
-
-  const allCryptoCardsObject = {
-    'ETH': (
-      <CryptoCard
-        star={true}
-        starColor="text-bluePurple"
-        starred={true}
-        getStarredState={getEthStarred}
-        className="mt-4 ml-4"
-        chain="Ethereum"
-        currency="ETH"
-        price={1288.4}
-        fluctuating={1.14}
-        gradientColor="border-bluePurple/50 bg-black from-bluePurple/50 to-black"
-        tokenImg="/elements/group_2371.svg"
-      />
-    ),
-    'BTC': (
-      <CryptoCard
-        star={true}
-        starColor="text-lightOrange"
-        starred={true}
-        getStarredState={getBtcStarred}
-        chain="Bitcoin"
-        currency="BTC"
-        price={19848.8}
-        gradientColor="border-lightOrange/50 bg-black from-lightOrange/50 to-black"
-        fluctuating={3.46}
-        tokenImg="/elements/group_2372.svg"
-      />
-    ),
-    'LTC': (
-      <CryptoCard
-        star={true}
-        starColor="text-lightGray2"
-        starred={true}
-        chain="Litecoin"
-        currency="LTC"
-        price={54.57}
-        fluctuating={-3.46}
-        gradientColor="border-lightGray2/50 bg-black from-lightGray2/50 to-black"
-        tokenImg="/elements/c5b7bda06ddfe2b3f59b37ed6bb65ab4.svg"
-      />
-    ),
-    'MATIC': (
-      <CryptoCard
-        star={true}
-        starColor="text-lightPurple"
-        starred={true}
-        chain="Polygon"
-        currency="MATIC"
-        price={0.82}
-        fluctuating={-6.23}
-        gradientColor="border-lightPurple/60 bg-black from-lightPurple/60 to-black"
-        tokenImg="/elements/9cc18b0cbe765b0a28791d253207f0c0.svg"
-      />
-    ),
-    'BNB': (
-      <CryptoCard
-        star={true}
-        starColor="text-lightYellow"
-        starred={true}
-        chain="BNB"
-        currency="BNB"
-        price={274.54}
-        fluctuating={-6.23}
-        gradientColor="border-lightYellow/60 bg-black from-lightYellow/50 to-black"
-        tokenImg="/elements/group_2374.svg"
-      />
-    ),
-    'SOL': (
-      <CryptoCard
-        star={true}
-        starColor="text-lightPurple2"
-        starred={true}
-        chain="Solana"
-        currency="SOL"
-        price={28.41}
-        fluctuating={1.14}
-        gradientColor="border-lightPurple2/60 from-lightPurple2/60 to-black"
-        tokenImg="/elements/group_2378.svg"
-      />
-    ),
-    'SHIB': (
-      <CryptoCard
-        star={true}
-        starColor="text-lightRed1"
-        starred={true}
-        chain="Shiba Inu"
-        currency="SHIB"
-        price={0.0000099}
-        fluctuating={-3.46}
-        gradientColor="border-lightRed1/50 from-lightRed1/50 to-black"
-        tokenImg="/elements/group_2381.svg"
-      />
-    ),
-    'DOT': (
-      <CryptoCard
-        star={true}
-        starColor="text-lightPink"
-        starred={true}
-        chain="Polkadot"
-        currency="DOT"
-        price={5.92}
-        fluctuating={3.46}
-        gradientColor="border-lightPink/60 from-lightPink/60 to-black"
-        tokenImg="/elements/group_2385.svg"
-      />
-    ),
-    'ADA': (
-      <CryptoCard
-        star={true}
-        starColor="text-lightGreen1"
-        starred={true}
-        chain="Cardano"
-        currency="ADA"
-        price={0.3611}
-        fluctuating={1.14}
-        gradientColor="border-lightGreen1/60 from-lightGreen1/60 to-black"
-        tokenImg="/elements/group_2388.svg"
-      />
-    ),
-    'AVAX': (
-      <CryptoCard
-        star={true}
-        starColor="text-lightRed2"
-        starred={true}
-        chain="Avalanche"
-        price={15.77}
-        currency="AVAX"
-        fluctuating={-6.23}
-        gradientColor="border-lightRed2/50 from-lightRed2/50 to-black"
-        tokenImg="/elements/group_2391.svg"
-      />
-    ),
-    'Dai': (
-      <CryptoCard
-        star={true}
-        starColor="text-lightOrange1"
-        starred={true}
-        chain="Dai"
-        price={15.77}
-        currency="Dai"
-        fluctuating={-6.23}
-        gradientColor="border-lightOrange1/50 from-lightOrange1/50 to-black"
-        tokenImg="/elements/layer_x0020_1.svg"
-      />
-    ),
-    'MKR': (
-      <CryptoCard
-        star={true}
-        starColor="text-lightGreen3"
-        starred={true}
-        chain="Maker"
-        price={15.77}
-        currency="MKR"
-        fluctuating={-6.23}
-        gradientColor="border-lightGreen3/50 from-lightGreen3/50 to-black"
-        tokenImg="/elements/layer_2.svg"
-      />
-    ),
-    'XRP': (
-      <CryptoCard
-        star={true}
-        starColor="text-lightGray4"
-        starred={true}
-        chain="XRP"
-        price={15.77}
-        currency="XRP"
-        fluctuating={-6.23}
-        gradientColor="border-lightGray4/50 from-lightGray4/50 to-black"
-        tokenImg="/elements/group_2406.svg"
-      />
-    ),
-    'DOGE': (
-      <CryptoCard
-        star={true}
-        starColor="text-lightYellow1"
-        starred={true}
-        chain="Dogecoin"
-        price={15.77}
-        currency="DOGE"
-        fluctuating={-6.23}
-        gradientColor="border-lightYellow1/50 from-lightYellow1/50 to-black"
-        tokenImg="/elements/layer_2-1.svg"
-      />
-    ),
-    'UNI': (
-      <CryptoCard
-        star={true}
-        starColor="text-lightPink1"
-        starred={true}
-        chain="Uniswap"
-        price={15.77}
-        currency="UNI"
-        fluctuating={-6.23}
-        gradientColor="border-lightPink1/50 from-lightPink1/50 to-black"
-        tokenImg="/elements/uniswap-uni-logo.svg"
-      />
-    ),
-    'FLOW': (
-      <CryptoCard
-        star={true}
-        starColor="text-lightGreen4"
-        starred={true}
-        chain="Flow"
-        price={15.77}
-        currency="FLOW"
-        fluctuating={-6.23}
-        gradientColor="border-lightGreen4/50 from-lightGreen4/50 to-black"
-        tokenImg="/elements/layer_2_1_.svg"
-      />
-    ),
-  };
-
   const [activeTab, setActiveTab] = useState('All');
 
   const [ethStarred, setEthStarred] = useState(false);
@@ -786,33 +288,65 @@ const TickerSelectorBox = ({
   const [uniStarred, setUniStarred] = useState(false);
   const [flowStarred, setFlowStarred] = useState(false);
 
-  const [favorites, setFavorites] = useState<{label: string; content: JSX.Element}[]>([]);
+  // const [favorites, setFavorites] = useState<{label: string; content: JSX.Element}[]>([]);
+  const [favorites, setFavorites] = useState<ICryptoCardData[]>([]);
 
   const [searches, setSearches] = useState<string[]>([]);
+
   const baseFavoriteArray = ['BTC', 'DOGE', 'MKR'];
   // baseFavoriteArray= ['BTC', 'ETH', 'ADA', 'DOGE', 'XRP', 'DOT', 'UNI', 'FLOW', 'DAI', 'MKR', 'AVAX', 'SOL', 'BNB', 'MATIC', 'LTC', 'SHIB']
   // ['BTC', 'ETH', 'ADA', 'DOGE', 'XRP', 'DOT', 'UNI']
 
-  const favoritesHandler = (cryptoClicked: string) => {
-    // console.log('`favorite` object entries', Object.entries(favorites));
-    // console.log(
-    //   'all entries `TRADING_CRYPTO_DATA_COMPONENTS`[0] ',
-    //   Object.entries(TRADING_CRYPTO_DATA_COMPONENTS)[0]
-    // );
-    // console.log(
-    //   'all entries `TRADING_CRYPTO_DATA_COMPONENTS` ',
-    //   Object.entries(TRADING_CRYPTO_DATA_COMPONENTS)
-    // );
-    // setFavorites([
-    //   ...favorites,
-    //   {label: cryptoClicked, content: Object.entries(TRADING_CRYPTO_DATA_COMPONENTS)[0]},
-    // ]);
-    // Avoid repeated favorites
-    // if (!Object.entries(favorites)[0].includes(cryptoClicked)) {
-    //   setFavorites([...favorites, {label:cryptoClicked, content: Object.keys(TRADING_CRYPTO_DATA_COMPONENTS)});
-    //   // setFavorites([...favorites, [cryptoClicked]: allCryptoCardsObject[cryptoClicked]);
-    // }
+  const favoritesHandler = (index: number) => {
+    // const newFavorites = [...favorites];
+
+    // const newFavorites = [...TRADING_CRYPTO_DATA].map((each, i) => {
+    //   return each.starred = !(each.starred)
+    // })
+
+    // TODO: 這樣會製造出新的陣列，但是沒有改變原本的 starred 狀態
+    const newFavorites = [...TRADING_CRYPTO_DATA][index];
+    newFavorites.starred = !newFavorites.starred;
+
+    setFavorites(previous => [...previous, newFavorites]);
+
+    // console.log('newFavorites', newFavorites);
+
+    // console.log('setFavorites', setFavorites);
+    /**
+     * setFavorites ƒ dispatchSetState(fiber, queue, action) {
+      {
+    if (typeof arguments[3] === 'function') {
+      error("State updates from the useState() and useReducer() Hooks don't support the " + 'second callback…
+     */
+
+    // newFavorites[index].starred = !newFavorites[index].starred;
+
+    // setFavorites(newFavorites);
+    // console.log('index:', index, 'favorites handler `starred`:', !newFavorites[index].starred);
+    // newFavorites[index].content = (
   };
+
+  // const favoritesHandler = (cryptoClicked: string) => {
+  //   console.log('`favorite` object entries', Object.entries(favorites));
+  //   console.log(
+  //     'all entries `TRADING_CRYPTO_DATA_COMPONENTS`[0] ',
+  //     Object.entries(ALL_TRADING_CRYPTO_DATA_COMPONENTS)[0]
+  //   );
+  //   console.log(
+  //     'all entries `TRADING_CRYPTO_DATA_COMPONENTS` ',
+  //     Object.entries(ALL_TRADING_CRYPTO_DATA_COMPONENTS)
+  //   );
+  //   // setFavorites([
+  //   //   ...favorites,
+  //   //   {label: cryptoClicked, content: Object.entries(TRADING_CRYPTO_DATA_COMPONENTS)[0]},
+  //   // ]);
+  //   // Avoid repeated favorites
+  //   // if (!Object.entries(favorites)[0].includes(cryptoClicked)) {
+  //   //   setFavorites([...favorites, {label:cryptoClicked, content: Object.keys(TRADING_CRYPTO_DATA_COMPONENTS)});
+  //   //   // setFavorites([...favorites, [cryptoClicked]: allCryptoCardsObject[cryptoClicked]);
+  //   // }
+  // };
 
   // const favoritesHandler = (cryptoClicked: string) => {
   //   // Avoid repeated favorites
@@ -832,7 +366,7 @@ const TickerSelectorBox = ({
 
   function getEthStarred(bool: boolean) {
     setEthStarred(bool);
-    favoritesHandler('ETH');
+    // favoritesHandler('ETH');
     // setFavorites(previous => [...previous, {label: 'ETH', content: allCryptoCardsObject['ETH']}]);
     // favoritesHandler('ETH');
 
@@ -847,7 +381,7 @@ const TickerSelectorBox = ({
 
   function getBtcStarred(bool: boolean) {
     setBtcStarred(bool);
-    favoritesHandler('BTC');
+    // favoritesHandler('BTC');
     // console.log('string clicked:', 'BTC');
     // console.log('favorites: ', favorites);
   }
@@ -916,8 +450,6 @@ const TickerSelectorBox = ({
     setActiveTab('Favorite');
   };
 
-  // const currentTab = activeTab === 'Trade' ? <TradeTab /> : <PositionTab />;
-
   // const favoriteCryptoCards = (
   //   <ul>
   //     {favoriteCryptocurrencies.map(cryptocurrency => (
@@ -933,212 +465,284 @@ const TickerSelectorBox = ({
     activeTab == 'Favorite' ? 'bg-darkGray7 text-lightWhite' : 'bg-darkGray6 text-lightGray';
 
   // const displayedFavorites = favorites.map(favorite => favorite.content);
-  const displayedFavorites = TRADING_CRYPTO_DATA_COMPONENTS.filter(
-    (cryptoCard: {label: string; content: JSX.Element}) => {
-      for (let j = 0; j < baseFavoriteArray.length; j++) {
-        if (cryptoCard.label === baseFavoriteArray[j]) {
-          return cryptoCard.label === baseFavoriteArray[j];
-        }
-      }
+
+  // const displayedFavorites = ALL_TRADING_CRYPTO_DATA_COMPONENTS.filter(
+  //   (cryptoCard: {label: string; content: JSX.Element}) => {
+  //     for (let j = 0; j < baseFavoriteArray.length; j++) {
+  //       if (cryptoCard.label === baseFavoriteArray[j]) {
+  //         return cryptoCard.label === baseFavoriteArray[j];
+  //       }
+  //     }
+  //   }
+  // ).map((cryptoCard: {label: string; content: JSX.Element}, index) => {
+  //   // if (cryptoCard.content.props.starred !== true) return <></>;
+  //   if (index === 0) {
+  //     return (
+  //       <div key={index} className="mt-4 ml-4">
+  //         {cryptoCard.content}
+  //       </div>
+  //     );
+  //   }
+  //   return <div key={index}>{cryptoCard.content}</div>;
+  // });
+
+  const displayedFavorites = favorites.map((cryptoCard, i) => {
+    if (i === 0) {
+      return (
+        <CryptoCard
+          key={i}
+          className="mt-4 ml-4"
+          star={cryptoCard.star}
+          starColor={cryptoCard.starColor}
+          starred={cryptoCard.starred}
+          getStarredState={cryptoCard.getStarredStateCallback}
+          chain={cryptoCard.chain}
+          currency={cryptoCard.currency}
+          price={cryptoCard.price}
+          fluctuating={cryptoCard.fluctuating}
+          gradientColor={cryptoCard.gradientColor}
+          tokenImg={cryptoCard.tokenImg}
+        />
+      );
     }
-  ).map((cryptoCard: {label: string; content: JSX.Element}, index) => {
-    // if (cryptoCard.content.props.starred !== true) return <></>;
+
+    return (
+      <CryptoCard
+        key={i}
+        star={cryptoCard.star}
+        starColor={cryptoCard.starColor}
+        starred={cryptoCard.starred}
+        getStarredState={cryptoCard.getStarredStateCallback}
+        chain={cryptoCard.chain}
+        currency={cryptoCard.currency}
+        price={cryptoCard.price}
+        fluctuating={cryptoCard.fluctuating}
+        gradientColor={cryptoCard.gradientColor}
+        tokenImg={cryptoCard.tokenImg}
+      />
+    );
+  });
+
+  // const displayedFavorites = TRADING_CRYPTO_DATA_COMPONENTS.filter(
+  //   (cryptoCard: {label: string; content: JSX.Element}) => {
+  //     return cryptoCard.content.props.starred === true;
+  //     // return Object.entries(favorites)[0].includes(cryptoCard.label);
+  //   }
+  // ).map((cryptoCard: {label: string; content: JSX.Element}, index) => {
+  //   // if (cryptoCard.content.props.starred !== true) return <></>;
+  //   if (index === 0) {
+  //     return (
+  //       <div key={index} className="mt-4 ml-4">
+  //         {cryptoCard.content}
+  //       </div>
+  //     );
+  //   }
+  //   return <div key={index}>{cryptoCard.content}</div>;
+  // });
+
+  // console.log('displayedFavorites', displayedFavorites);
+
+  // const displayedAllCryptoCards = (
+  //   <>
+  //     <CryptoCard
+  //       star={true}
+  //       starColor="text-bluePurple"
+  //       starred={false}
+  //       getStarredState={getEthStarred}
+  //       className="mt-4 ml-4"
+  //       chain="Ethereum"
+  //       currency="ETH"
+  //       price={1288.4}
+  //       fluctuating={1.14}
+  //       gradientColor="border-bluePurple/50 bg-black from-bluePurple/50 to-black"
+  //       tokenImg="/elements/group_2371.svg"
+  //     />
+  //     <CryptoCard
+  //       star={true}
+  //       starColor="text-lightOrange"
+  //       starred={false}
+  //       getStarredState={getBtcStarred}
+  //       chain="Bitcoin"
+  //       currency="BTC"
+  //       price={19848.8}
+  //       gradientColor="border-lightOrange/50 bg-black from-lightOrange/50 to-black"
+  //       fluctuating={3.46}
+  //       tokenImg="/elements/group_2372.svg"
+  //     />
+  //     <CryptoCard
+  //       star={true}
+  //       starColor="text-lightGray2"
+  //       starred={false}
+  //       chain="Litecoin"
+  //       currency="LTC"
+  //       price={54.57}
+  //       fluctuating={-3.46}
+  //       gradientColor="border-lightGray2/50 bg-black from-lightGray2/50 to-black"
+  //       tokenImg="/elements/c5b7bda06ddfe2b3f59b37ed6bb65ab4.svg"
+  //     />
+  //     <CryptoCard
+  //       star={true}
+  //       starColor="text-lightPurple"
+  //       starred={false}
+  //       chain="Polygon"
+  //       currency="MATIC"
+  //       price={0.82}
+  //       fluctuating={-6.23}
+  //       gradientColor="border-lightPurple/60 bg-black from-lightPurple/60 to-black"
+  //       tokenImg="/elements/9cc18b0cbe765b0a28791d253207f0c0.svg"
+  //     />
+  //     <CryptoCard
+  //       star={true}
+  //       starColor="text-lightYellow"
+  //       starred={false}
+  //       chain="BNB"
+  //       currency="BNB"
+  //       price={274.54}
+  //       fluctuating={-6.23}
+  //       gradientColor="border-lightYellow/60 bg-black from-lightYellow/50 to-black"
+  //       tokenImg="/elements/group_2374.svg"
+  //     />
+  //     <CryptoCard
+  //       star={true}
+  //       starColor="text-lightPurple2"
+  //       starred={false}
+  //       chain="Solana"
+  //       currency="SOL"
+  //       price={28.41}
+  //       fluctuating={1.14}
+  //       gradientColor="border-lightPurple2/60 from-lightPurple2/60 to-black"
+  //       tokenImg="/elements/group_2378.svg"
+  //     />
+  //     <CryptoCard
+  //       star={true}
+  //       starColor="text-lightRed1"
+  //       starred={false}
+  //       chain="Shiba Inu"
+  //       currency="SHIB"
+  //       price={0.0000099}
+  //       fluctuating={-3.46}
+  //       gradientColor="border-lightRed1/50 from-lightRed1/50 to-black"
+  //       tokenImg="/elements/group_2381.svg"
+  //     />
+  //     <CryptoCard
+  //       star={true}
+  //       starColor="text-lightPink"
+  //       starred={false}
+  //       chain="Polkadot"
+  //       currency="DOT"
+  //       price={5.92}
+  //       fluctuating={3.46}
+  //       gradientColor="border-lightPink/60 from-lightPink/60 to-black"
+  //       tokenImg="/elements/group_2385.svg"
+  //     />
+  //     <CryptoCard
+  //       star={true}
+  //       starColor="text-lightGreen1"
+  //       starred={false}
+  //       chain="Cardano"
+  //       currency="ADA"
+  //       price={0.3611}
+  //       fluctuating={1.14}
+  //       gradientColor="border-lightGreen1/60 from-lightGreen1/60 to-black"
+  //       tokenImg="/elements/group_2388.svg"
+  //     />
+  //     <CryptoCard
+  //       star={true}
+  //       starColor="text-lightRed2"
+  //       starred={false}
+  //       chain="Avalanche"
+  //       price={15.77}
+  //       currency="AVAX"
+  //       fluctuating={-6.23}
+  //       gradientColor="border-lightRed2/50 from-lightRed2/50 to-black"
+  //       tokenImg="/elements/group_2391.svg"
+  //     />
+
+  //     <CryptoCard
+  //       star={true}
+  //       starColor="text-lightOrange1"
+  //       starred={false}
+  //       chain="Dai"
+  //       price={15.77}
+  //       currency="Dai"
+  //       fluctuating={-6.23}
+  //       gradientColor="border-lightOrange1/50 from-lightOrange1/50 to-black"
+  //       tokenImg="/elements/layer_x0020_1.svg"
+  //     />
+  //     <CryptoCard
+  //       star={true}
+  //       starColor="text-lightGreen3"
+  //       starred={false}
+  //       chain="Maker"
+  //       price={15.77}
+  //       currency="MKR"
+  //       fluctuating={-6.23}
+  //       gradientColor="border-lightGreen3/50 from-lightGreen3/50 to-black"
+  //       tokenImg="/elements/layer_2.svg"
+  //     />
+  //     <CryptoCard
+  //       star={true}
+  //       starColor="text-lightGray4"
+  //       starred={false}
+  //       chain="XRP"
+  //       price={15.77}
+  //       currency="XRP"
+  //       fluctuating={-6.23}
+  //       gradientColor="border-lightGray4/50 from-lightGray4/50 to-black"
+  //       tokenImg="/elements/group_2406.svg"
+  //     />
+  //     <CryptoCard
+  //       star={true}
+  //       starColor="text-lightYellow1"
+  //       starred={false}
+  //       chain="Dogecoin"
+  //       price={15.77}
+  //       currency="DOGE"
+  //       fluctuating={-6.23}
+  //       gradientColor="border-lightYellow1/50 from-lightYellow1/50 to-black"
+  //       tokenImg="/elements/layer_2-1.svg"
+  //     />
+  //     <CryptoCard
+  //       star={true}
+  //       starColor="text-lightPink1"
+  //       starred={false}
+  //       chain="Uniswap"
+  //       price={15.77}
+  //       currency="UNI"
+  //       fluctuating={-6.23}
+  //       gradientColor="border-lightPink1/50 from-lightPink1/50 to-black"
+  //       tokenImg="/elements/uniswap-uni-logo.svg"
+  //     />
+  //     <CryptoCard
+  //       star={true}
+  //       starColor="text-lightGreen4"
+  //       starred={false}
+  //       chain="Flow"
+  //       price={15.77}
+  //       currency="FLOW"
+  //       fluctuating={-6.23}
+  //       gradientColor="border-lightGreen4/50 from-lightGreen4/50 to-black"
+  //       tokenImg="/elements/layer_2_1_.svg"
+  //     />
+  //   </>
+  // );
+
+  const displayedAllCryptoCards = ALL_TRADING_CRYPTO_DATA_COMPONENTS.map((cryptoCard, index) => {
+    // console.log('...cryptoCard', {...cryptoCard});
     if (index === 0) {
       return (
-        <div key={index} className="mt-4 ml-4">
+        <div key={index} className="mt-4 ml-4" onClick={() => favoritesHandler(index)}>
           {cryptoCard.content}
         </div>
       );
     }
-    return <div key={index}>{cryptoCard.content}</div>;
+
+    return (
+      <div key={index} className="" onClick={() => favoritesHandler(index)}>
+        {cryptoCard.content}
+      </div>
+    );
   });
-
-  // console.log('displayedFavorites', displayedFavorites);
-
-  const displayedAllCryptoCards = (
-    <>
-      <CryptoCard
-        star={true}
-        starColor="text-bluePurple"
-        starred={false}
-        getStarredState={getEthStarred}
-        className="mt-4 ml-4"
-        chain="Ethereum"
-        currency="ETH"
-        price={1288.4}
-        fluctuating={1.14}
-        gradientColor="border-bluePurple/50 bg-black from-bluePurple/50 to-black"
-        tokenImg="/elements/group_2371.svg"
-      />
-      <CryptoCard
-        star={true}
-        starColor="text-lightOrange"
-        starred={false}
-        getStarredState={getBtcStarred}
-        chain="Bitcoin"
-        currency="BTC"
-        price={19848.8}
-        gradientColor="border-lightOrange/50 bg-black from-lightOrange/50 to-black"
-        fluctuating={3.46}
-        tokenImg="/elements/group_2372.svg"
-      />
-      <CryptoCard
-        star={true}
-        starColor="text-lightGray2"
-        starred={false}
-        chain="Litecoin"
-        currency="LTC"
-        price={54.57}
-        fluctuating={-3.46}
-        gradientColor="border-lightGray2/50 bg-black from-lightGray2/50 to-black"
-        tokenImg="/elements/c5b7bda06ddfe2b3f59b37ed6bb65ab4.svg"
-      />
-      <CryptoCard
-        star={true}
-        starColor="text-lightPurple"
-        starred={false}
-        chain="Polygon"
-        currency="MATIC"
-        price={0.82}
-        fluctuating={-6.23}
-        gradientColor="border-lightPurple/60 bg-black from-lightPurple/60 to-black"
-        tokenImg="/elements/9cc18b0cbe765b0a28791d253207f0c0.svg"
-      />
-      <CryptoCard
-        star={true}
-        starColor="text-lightYellow"
-        starred={false}
-        chain="BNB"
-        currency="BNB"
-        price={274.54}
-        fluctuating={-6.23}
-        gradientColor="border-lightYellow/60 bg-black from-lightYellow/50 to-black"
-        tokenImg="/elements/group_2374.svg"
-      />
-      <CryptoCard
-        star={true}
-        starColor="text-lightPurple2"
-        starred={false}
-        chain="Solana"
-        currency="SOL"
-        price={28.41}
-        fluctuating={1.14}
-        gradientColor="border-lightPurple2/60 from-lightPurple2/60 to-black"
-        tokenImg="/elements/group_2378.svg"
-      />
-      <CryptoCard
-        star={true}
-        starColor="text-lightRed1"
-        starred={false}
-        chain="Shiba Inu"
-        currency="SHIB"
-        price={0.0000099}
-        fluctuating={-3.46}
-        gradientColor="border-lightRed1/50 from-lightRed1/50 to-black"
-        tokenImg="/elements/group_2381.svg"
-      />
-      <CryptoCard
-        star={true}
-        starColor="text-lightPink"
-        starred={false}
-        chain="Polkadot"
-        currency="DOT"
-        price={5.92}
-        fluctuating={3.46}
-        gradientColor="border-lightPink/60 from-lightPink/60 to-black"
-        tokenImg="/elements/group_2385.svg"
-      />
-      <CryptoCard
-        star={true}
-        starColor="text-lightGreen1"
-        starred={false}
-        chain="Cardano"
-        currency="ADA"
-        price={0.3611}
-        fluctuating={1.14}
-        gradientColor="border-lightGreen1/60 from-lightGreen1/60 to-black"
-        tokenImg="/elements/group_2388.svg"
-      />
-      <CryptoCard
-        star={true}
-        starColor="text-lightRed2"
-        starred={false}
-        chain="Avalanche"
-        price={15.77}
-        currency="AVAX"
-        fluctuating={-6.23}
-        gradientColor="border-lightRed2/50 from-lightRed2/50 to-black"
-        tokenImg="/elements/group_2391.svg"
-      />
-
-      <CryptoCard
-        star={true}
-        starColor="text-lightOrange1"
-        starred={false}
-        chain="Dai"
-        price={15.77}
-        currency="Dai"
-        fluctuating={-6.23}
-        gradientColor="border-lightOrange1/50 from-lightOrange1/50 to-black"
-        tokenImg="/elements/layer_x0020_1.svg"
-      />
-      <CryptoCard
-        star={true}
-        starColor="text-lightGreen3"
-        starred={false}
-        chain="Maker"
-        price={15.77}
-        currency="MKR"
-        fluctuating={-6.23}
-        gradientColor="border-lightGreen3/50 from-lightGreen3/50 to-black"
-        tokenImg="/elements/layer_2.svg"
-      />
-      <CryptoCard
-        star={true}
-        starColor="text-lightGray4"
-        starred={false}
-        chain="XRP"
-        price={15.77}
-        currency="XRP"
-        fluctuating={-6.23}
-        gradientColor="border-lightGray4/50 from-lightGray4/50 to-black"
-        tokenImg="/elements/group_2406.svg"
-      />
-      <CryptoCard
-        star={true}
-        starColor="text-lightYellow1"
-        starred={false}
-        chain="Dogecoin"
-        price={15.77}
-        currency="DOGE"
-        fluctuating={-6.23}
-        gradientColor="border-lightYellow1/50 from-lightYellow1/50 to-black"
-        tokenImg="/elements/layer_2-1.svg"
-      />
-      <CryptoCard
-        star={true}
-        starColor="text-lightPink1"
-        starred={false}
-        chain="Uniswap"
-        price={15.77}
-        currency="UNI"
-        fluctuating={-6.23}
-        gradientColor="border-lightPink1/50 from-lightPink1/50 to-black"
-        tokenImg="/elements/uniswap-uni-logo.svg"
-      />
-      <CryptoCard
-        star={true}
-        starColor="text-lightGreen4"
-        starred={false}
-        chain="Flow"
-        price={15.77}
-        currency="FLOW"
-        fluctuating={-6.23}
-        gradientColor="border-lightGreen4/50 from-lightGreen4/50 to-black"
-        tokenImg="/elements/layer_2_1_.svg"
-      />
-    </>
-  );
 
   // displayedFavorites
   // TRADING_CRYPTO_DATA_COMPONENTS
@@ -1179,6 +783,7 @@ const TickerSelectorBox = ({
             Favorite
           </button>
         </div>
+        {/* Other tabs */}
         {/* <div className="">
           <button
             type="button"
@@ -1257,8 +862,8 @@ const TickerSelectorBox = ({
         >
           {/* tab section */}
           <div className="">{tabPart}</div>
+
           {/* ticker cards section */}
-          {/*content & panel*/}
           <div className="flex h-640px w-1200px flex-col rounded rounded-t-none border-0 bg-darkGray shadow-lg shadow-black/80 outline-none focus:outline-none">
             {/*header*/}
 
@@ -1309,33 +914,6 @@ const TickerSelectorBox = ({
                     {/* 多出來的高度不會出現y卷軸 */}
                     <div className="mb-5 grid grid-cols-5 space-y-4 space-x-4 overflow-x-hidden overflow-y-clip">
                       {displayedCryptoCards}
-                      {/* <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">
-          
-        </div>
-        <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">
-         
-        </div>
-        <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">
-          
-        </div>
-        <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">
-         
-        </div>
-        <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">
-          
-        </div>
-        <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">
-          
-        </div>
-        <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">
-          
-        </div>
-        <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">
-          
-        </div>
-        <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">
-          
-        </div> */}
                     </div>
                   </div>
                 </div>

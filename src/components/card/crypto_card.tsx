@@ -23,7 +23,6 @@ interface ILineGraphProps {
   lineGraphWidth?: string;
 }
 
-// FIXME: no JSX in props
 interface CardProps {
   gradientColor?: string;
   // tokenComponent?: JSX.Element;

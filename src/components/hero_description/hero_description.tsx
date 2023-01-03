@@ -40,7 +40,7 @@ export default function HeroDescription() {
           heading={`Web`}
           highlight={`3.0`}
           content={`To fit in the new generation, TideBit uses Web 3.0 technology. Make it easy to buy and sell crypto currency.`}
-          img={<Image src="/elements/2634@2x.png" width={976} height={588} alt="picture" />}
+          img="/elements/2634@2x.png"
         />
         <div className="py-5 lg:py-40"></div>
 
@@ -53,7 +53,7 @@ export default function HeroDescription() {
             </div>
           }
           content={`Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam`}
-          img={<Image src="/elements/group_15200@2x.png" width={1252} height={879} alt="picture" />}
+          img="/elements/group_15200@2x.png"
         />
         <div className="py-5 lg:py-40"></div>
 
@@ -66,7 +66,7 @@ export default function HeroDescription() {
             </div>
           }
           content={`Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam`}
-          img={<Image src="/elements/group_15145@2x.png" width={1366} height={930} alt="picture" />}
+          img="/elements/group_15145@2x.png"
         />
         <div className="py-5 lg:py-40"></div>
 
@@ -79,7 +79,7 @@ export default function HeroDescription() {
             </div>
           }
           content={`Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam`}
-          img={<Image src={`/elements/group_15201.svg`} width={1364} height={820} alt="picture" />}
+          img={`/elements/group_15201.svg`}
         />
         <div className="py-5 lg:py-10"></div>
 

@@ -1,10 +1,11 @@
 import React from 'react';
+import Image from 'next/image';
 
 interface HeroReverse1Props {
   heading?: string | JSX.Element;
   highlight?: string;
   content?: string;
-  img?: JSX.Element;
+  img?: string;
 }
 
 // ml-20 & mr-40 are used to center the content
@@ -25,7 +26,7 @@ bag selvage hot chicken authentic tumeric truffaut hexagon try-hard
 chambray.`;
 
   const displayedImg = img ? (
-    img
+    <Image src={img} width={1366} height={930} alt="picture" />
   ) : (
     <img
       className="rounded object-cover object-center"

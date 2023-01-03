@@ -1,6 +1,8 @@
-import LineGraph from '../line_graph/line_graph';
+// import LineGraph from '../line_graph/line_graph';
 import {BsStar, BsStarFill} from 'react-icons/bs';
 import {useState} from 'react';
+import dynamic from 'next/dynamic';
+import {ApexOptions} from 'apexcharts';
 // import {FaEthereum} from 'react-icons/fa';
 // // import {ReactComponent as ethIcon} from '/public/elements/group_15143.svg';
 // // import {ReactComponent as Logo} from './logo.svg';
@@ -13,14 +15,22 @@ import {useState} from 'react';
  *
  */
 
+const Chart = dynamic(() => import('react-apexcharts'), {ssr: false});
+
+interface ILineGraphProps {
+  strokeColor?: string[];
+  sampleArray?: number[];
+  lineGraphWidth?: string;
+}
+
 // FIXME: no JSX in props
 interface CardProps {
   gradientColor?: string;
-  tokenComponent?: JSX.Element;
-  img?: string;
+  // tokenComponent?: JSX.Element;
+  tokenImg?: string;
   chain: string;
   currency: string;
-  lineGraph?: JSX.Element;
+  // lineGraph?: JSX.Element;
   price: number;
   fluctuating: number;
   star?: boolean;
@@ -32,11 +42,9 @@ interface CardProps {
 
 const CryptoCard = ({
   gradientColor = '',
-  tokenComponent,
-  img = '',
+  tokenImg = '',
   chain = '',
   currency = '',
-  lineGraph,
   price = 0,
   fluctuating = -1,
   star = false,
@@ -68,7 +76,7 @@ const CryptoCard = ({
   //     <path d="M1408 1216q0 26-19 45t-45 19h-896q-26 0-45-19t-19-45 19-45l448-448q19-19 45-19t45 19l448 448q19 19 19 45z"></path>
   //   </svg>
   // );
-  const [starFilled, setStarFilled] = useState(false);
+  const [starFilled, setStarFilled] = useState(starred);
 
   const passStarClickHandler = (data: boolean) => {
     // make sure the function is not undefined
@@ -120,6 +128,80 @@ const CryptoCard = ({
 
   const desktopVersionBreakpoint = 'xs:flex';
   const mobileVersionBreakpoint = 'xs:hidden';
+
+  function lineGraph({
+    strokeColor = ['#3CC8C8'],
+    sampleArray = [42, 50, 45, 55, 49, 52, 48],
+    lineGraphWidth = '150',
+    ...otherProps
+  }: ILineGraphProps) {
+    const chartOptions: ApexOptions = {
+      chart: {
+        type: 'line',
+        zoom: {
+          enabled: false,
+        },
+        foreColor: '#373d3f',
+        toolbar: {
+          show: false,
+        },
+      },
+
+      dataLabels: {
+        enabled: false,
+      },
+      stroke: {
+        curve: 'smooth',
+        colors: strokeColor,
+        width: 1.2,
+      },
+      xaxis: {
+        axisBorder: {show: false},
+        axisTicks: {show: false},
+        labels: {
+          show: false,
+        },
+        type: 'numeric',
+      },
+      yaxis: {
+        axisBorder: {show: false},
+        axisTicks: {show: false},
+        labels: {
+          show: false,
+        },
+      },
+      grid: {
+        show: false,
+      },
+      tooltip: {
+        enabled: false,
+      },
+    };
+    const [dataSample, setDataSample] = useState({
+      options: chartOptions,
+      toolbar: {
+        show: false,
+        enabled: false,
+      },
+      series: [
+        {
+          name: 'series-1',
+          data: [...sampleArray],
+        },
+      ],
+    });
+
+    return (
+      <div>
+        <Chart
+          options={dataSample.options}
+          series={dataSample.series}
+          type="line"
+          width={lineGraphWidth}
+        />
+      </div>
+    );
+  }
 
   function randomNumber(min: number, max: number) {
     return Math.floor(Math.random() * (max - min + 1) + min);
@@ -178,7 +260,9 @@ const CryptoCard = ({
         <div className="px-2 py-1">
           {/* token icon & chain & coin name */}
           <div className="flex items-center">
-            <span className="relative h-40px w-40px">{tokenComponent}</span>
+            <span className="relative h-40px w-40px">
+              <img src={tokenImg} alt={currency} />
+            </span>
             <div className="ml-3 items-center">
               <p className="text-lg leading-6 text-lightWhite"> {chain}</p>
               <p className="text-sm text-lightWhite opacity-60">{currency}</p>
@@ -189,11 +273,16 @@ const CryptoCard = ({
           {/* line graph & price & fluctuating rate */}
           <div className="flex flex-col justify-start">
             <div className="pointer-events-none absolute top-4 h-96 bg-transparent">
-              <LineGraph
+              {lineGraph({
+                sampleArray: sampleArray,
+                strokeColor: thisRandomColor,
+                lineGraphWidth: '170',
+              })}
+              {/* <LineGraph
                 sampleArray={sampleArray}
                 strokeColor={thisRandomColor}
                 lineGraphWidth="170"
-              />
+              /> */}
 
               {/* <div className="absolute top-0 left-0 h-2 w-2/3 rounded bg-blue-200"></div> */}
             </div>
@@ -219,7 +308,10 @@ const CryptoCard = ({
         <div className="px-2 py-1">
           {/* token icon & chain & coin name */}
           <div className="mb-1 flex items-center">
-            <span className="relative h-28px w-28px">{tokenComponent}</span>
+            <span className="relative h-28px w-28px">
+              {' '}
+              <img src={tokenImg} alt={currency} />
+            </span>
             <div className="ml-3 items-center">
               <p className="text-sm leading-none text-lightWhite"> {chain}</p>
               <p className="text-xs text-lightWhite opacity-60">{currency}</p>
@@ -231,11 +323,16 @@ const CryptoCard = ({
           <div className="flex flex-col justify-start">
             <div className="pointer-events-none absolute right-0 top-1 bg-transparent">
               {/* <div className="absolute top-0 left-0 h-2 w-2/3 rounded bg-blue-200"></div> */}
-              <LineGraph
+              {lineGraph({
+                sampleArray: sampleArray,
+                strokeColor: thisRandomColor,
+                lineGraphWidth: '140',
+              })}
+              {/* <LineGraph
                 sampleArray={sampleArray}
                 strokeColor={thisRandomColor}
                 lineGraphWidth="140"
-              />
+              /> */}
             </div>
             {/**@note no default text color, otherwise it will make actual text color not work */}
             <div className="absolute bottom-0 flex w-134px justify-between">

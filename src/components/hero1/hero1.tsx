@@ -1,9 +1,10 @@
+import Image from 'next/image';
 import React from 'react';
 
 interface Hero1Props {
   heading?: string | JSX.Element;
   content?: string;
-  img?: JSX.Element;
+  img?: string;
 }
 
 const Hero1 = ({heading, content, img, ...otherProps}: Hero1Props) => {
@@ -19,7 +20,7 @@ Moon hashtag pop-up try-hard offal truffaut
 neutra sustainable fingerstache kickstarter.`;
 
   const displayedImg = img ? (
-    img
+    <Image src={img} width={1364} height={820} alt="picture" />
   ) : (
     <img
       className="h-full w-full object-cover object-center"

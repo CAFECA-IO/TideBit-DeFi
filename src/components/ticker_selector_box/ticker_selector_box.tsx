@@ -31,7 +31,8 @@ interface ICryptoCardData {
   price: number;
   fluctuating: number;
   gradientColor: string;
-  tokenComponent: JSX.Element;
+  // tokenComponent: JSX.Element;
+  tokenImg: string;
   // tokenComponent: React.ReactElement;
 }
 
@@ -293,7 +294,7 @@ const TickerSelectorBox = ({
   //         price={1288.4}
   //         fluctuating={1.14}
   //         gradientColor="border-bluePurple/50 bg-black from-bluePurple/50 to-black"
-  //         tokenComponent={<img src="/elements/group_2371.svg" alt="eth" width={40} height={40} />}
+  //        tokenImg="/elements/group_2371.svg" alt="eth" width={40} height={40} />}
   //       />
   //     ),
   //   },
@@ -310,7 +311,7 @@ const TickerSelectorBox = ({
   //         price={19848.8}
   //         gradientColor="border-lightOrange/50 bg-black from-lightOrange/50 to-black"
   //         fluctuating={3.46}
-  //         tokenComponent={<img src="/elements/group_2372.svg" width={40} height={40} />}
+  //        tokenImg="/elements/group_2372.svg" width={40} height={40} />}
   //       />
   //     ),
   //   },
@@ -362,7 +363,7 @@ const TickerSelectorBox = ({
   //         price={274.54}
   //         fluctuating={-6.23}
   //         gradientColor="border-lightYellow/60 bg-black from-lightYellow/50 to-black"
-  //         tokenComponent={<img src="/elements/group_2374.svg" alt="bnb" />}
+  //        tokenImg="/elements/group_2374.svg" alt="bnb" />}
   //       />
   //     ),
   //   },
@@ -378,7 +379,7 @@ const TickerSelectorBox = ({
   //         price={28.41}
   //         fluctuating={1.14}
   //         gradientColor="border-lightPurple2/60 from-lightPurple2/60 to-black"
-  //         tokenComponent={<img src="/elements/group_2378.svg" alt="solana" />}
+  //        tokenImg="/elements/group_2378.svg" alt="solana" />}
   //       />
   //     ),
   //   },
@@ -394,7 +395,7 @@ const TickerSelectorBox = ({
   //         price={0.0000099}
   //         fluctuating={-3.46}
   //         gradientColor="border-lightRed1/50 from-lightRed1/50 to-black"
-  //         tokenComponent={<img src="/elements/group_2381.svg" alt="shiba inu" />}
+  //        tokenImg="/elements/group_2381.svg" alt="shiba inu" />}
   //       />
   //     ),
   //   },
@@ -410,7 +411,7 @@ const TickerSelectorBox = ({
   //         price={5.92}
   //         fluctuating={3.46}
   //         gradientColor="border-lightPink/60 from-lightPink/60 to-black"
-  //         tokenComponent={<img src="/elements/group_2385.svg" alt="polkadot" />}
+  //        tokenImg="/elements/group_2385.svg" alt="polkadot" />}
   //       />
   //     ),
   //   },
@@ -426,7 +427,7 @@ const TickerSelectorBox = ({
   //         price={0.3611}
   //         fluctuating={1.14}
   //         gradientColor="border-lightGreen1/60 from-lightGreen1/60 to-black"
-  //         tokenComponent={<img src="/elements/group_2388.svg" alt="cardano" />}
+  //        tokenImg="/elements/group_2388.svg" alt="cardano" />}
   //       />
   //     ),
   //   },
@@ -442,7 +443,7 @@ const TickerSelectorBox = ({
   //         currency="AVAX"
   //         fluctuating={-6.23}
   //         gradientColor="border-lightRed2/50 from-lightRed2/50 to-black"
-  //         tokenComponent={<img src="/elements/group_2391.svg" alt="avax" />}
+  //        tokenImg="/elements/group_2391.svg" alt="avax" />}
   //       />
   //     ),
   //   },
@@ -458,7 +459,7 @@ const TickerSelectorBox = ({
   //         currency="Dai"
   //         fluctuating={-6.23}
   //         gradientColor="border-lightOrange1/50 from-lightOrange1/50 to-black"
-  //         tokenComponent={<img src="/elements/layer_x0020_1.svg" alt="dai" />}
+  //        tokenImg="/elements/layer_x0020_1.svg" alt="dai" />}
   //       />
   //     ),
   //   },
@@ -474,7 +475,7 @@ const TickerSelectorBox = ({
   //         currency="MKR"
   //         fluctuating={-6.23}
   //         gradientColor="border-lightGreen3/50 from-lightGreen3/50 to-black"
-  //         tokenComponent={<img src="/elements/layer_2.svg" alt="Maker" />}
+  //        tokenImg="/elements/layer_2.svg" alt="Maker" />}
   //       />
   //     ),
   //   },
@@ -490,7 +491,7 @@ const TickerSelectorBox = ({
   //         currency="XRP"
   //         fluctuating={-6.23}
   //         gradientColor="border-lightGray4/50 from-lightGray4/50 to-black"
-  //         tokenComponent={<img src="/elements/group_2406.svg" alt="XRP" />}
+  //        tokenImg="/elements/group_2406.svg" alt="XRP" />}
   //       />
   //     ),
   //   },
@@ -506,7 +507,7 @@ const TickerSelectorBox = ({
   //         currency="DOGE"
   //         fluctuating={-6.23}
   //         gradientColor="border-lightYellow1/50 from-lightYellow1/50 to-black"
-  //         tokenComponent={<img src="/elements/layer_2-1.svg" alt="DOGE" />}
+  //        tokenImg="/elements/layer_2-1.svg" alt="DOGE" />}
   //       />
   //     ),
   //   },
@@ -522,7 +523,7 @@ const TickerSelectorBox = ({
   //         currency="UNI"
   //         fluctuating={-6.23}
   //         gradientColor="border-lightPink1/50 from-lightPink1/50 to-black"
-  //         tokenComponent={<img src="/elements/uniswap-uni-logo.svg" alt="Uniswap" />}
+  //        tokenImg="/elements/uniswap-uni-logo.svg" alt="Uniswap" />}
   //       />
   //     ),
   //   },
@@ -538,7 +539,7 @@ const TickerSelectorBox = ({
   //         currency="FLOW"
   //         fluctuating={-6.23}
   //         gradientColor="border-lightGreen4/50 from-lightGreen4/50 to-black"
-  //         tokenComponent={<img src="/elements/layer_2_1_.svg" alt="avax" />}
+  //        tokenImg="/elements/layer_2_1_.svg" alt="avax" />}
   //       />
   //     ),
   //   },
@@ -557,7 +558,7 @@ const TickerSelectorBox = ({
   //       price={1288.4}
   //       fluctuating={1.14}
   //       gradientColor="border-bluePurple/50 bg-black from-bluePurple/50 to-black"
-  //       tokenComponent={<img src="/elements/group_2371.svg" alt="eth" width={40} height={40} />}
+  //      tokenImg="/elements/group_2371.svg" alt="eth" width={40} height={40} />}
   //     />
   //   ),
   //   'BTC': (
@@ -571,7 +572,7 @@ const TickerSelectorBox = ({
   //       price={19848.8}
   //       gradientColor="border-lightOrange/50 bg-black from-lightOrange/50 to-black"
   //       fluctuating={3.46}
-  //       tokenComponent={<img src="/elements/group_2372.svg" width={40} height={40} />}
+  //      tokenImg="/elements/group_2372.svg" width={40} height={40} />}
   //     />
   //   ),
   //   'LTC': (
@@ -584,7 +585,7 @@ const TickerSelectorBox = ({
   //       price={54.57}
   //       fluctuating={-3.46}
   //       gradientColor="border-lightGray2/50 bg-black from-lightGray2/50 to-black"
-  //       tokenComponent={<img src="/elements/c5b7bda06ddfe2b3f59b37ed6bb65ab4.svg" alt="litecoin" />}
+  //      tokenImg="/elements/c5b7bda06ddfe2b3f59b37ed6bb65ab4.svg" alt="litecoin" />}
   //     />
   //   ),
   //   'MATIC': (
@@ -597,7 +598,7 @@ const TickerSelectorBox = ({
   //       price={0.82}
   //       fluctuating={-6.23}
   //       gradientColor="border-lightPurple/60 bg-black from-lightPurple/60 to-black"
-  //       tokenComponent={<img src="/elements/9cc18b0cbe765b0a28791d253207f0c0.svg" alt="polygon" />}
+  //      tokenImg="/elements/9cc18b0cbe765b0a28791d253207f0c0.svg" alt="polygon" />}
   //     />
   //   ),
   //   'BNB': (
@@ -610,7 +611,7 @@ const TickerSelectorBox = ({
   //       price={274.54}
   //       fluctuating={-6.23}
   //       gradientColor="border-lightYellow/60 bg-black from-lightYellow/50 to-black"
-  //       tokenComponent={<img src="/elements/group_2374.svg" alt="bnb" />}
+  //      tokenImg="/elements/group_2374.svg" alt="bnb" />}
   //     />
   //   ),
   //   'SOL': (
@@ -623,7 +624,7 @@ const TickerSelectorBox = ({
   //       price={28.41}
   //       fluctuating={1.14}
   //       gradientColor="border-lightPurple2/60 from-lightPurple2/60 to-black"
-  //       tokenComponent={<img src="/elements/group_2378.svg" alt="solana" />}
+  //      tokenImg="/elements/group_2378.svg" alt="solana" />}
   //     />
   //   ),
   //   'SHIB': (
@@ -636,7 +637,7 @@ const TickerSelectorBox = ({
   //       price={0.0000099}
   //       fluctuating={-3.46}
   //       gradientColor="border-lightRed1/50 from-lightRed1/50 to-black"
-  //       tokenComponent={<img src="/elements/group_2381.svg" alt="shiba inu" />}
+  //      tokenImg="/elements/group_2381.svg" alt="shiba inu" />}
   //     />
   //   ),
   //   'DOT': (
@@ -649,7 +650,7 @@ const TickerSelectorBox = ({
   //       price={5.92}
   //       fluctuating={3.46}
   //       gradientColor="border-lightPink/60 from-lightPink/60 to-black"
-  //       tokenComponent={<img src="/elements/group_2385.svg" alt="polkadot" />}
+  //      tokenImg="/elements/group_2385.svg" alt="polkadot" />}
   //     />
   //   ),
   //   'ADA': (
@@ -662,7 +663,7 @@ const TickerSelectorBox = ({
   //       price={0.3611}
   //       fluctuating={1.14}
   //       gradientColor="border-lightGreen1/60 from-lightGreen1/60 to-black"
-  //       tokenComponent={<img src="/elements/group_2388.svg" alt="cardano" />}
+  //      tokenImg="/elements/group_2388.svg" alt="cardano" />}
   //     />
   //   ),
   //   'AVAX': (
@@ -675,7 +676,7 @@ const TickerSelectorBox = ({
   //       currency="AVAX"
   //       fluctuating={-6.23}
   //       gradientColor="border-lightRed2/50 from-lightRed2/50 to-black"
-  //       tokenComponent={<img src="/elements/group_2391.svg" alt="avax" />}
+  //      tokenImg="/elements/group_2391.svg" alt="avax" />}
   //     />
   //   ),
   //   'Dai': (
@@ -688,7 +689,7 @@ const TickerSelectorBox = ({
   //       currency="Dai"
   //       fluctuating={-6.23}
   //       gradientColor="border-lightOrange1/50 from-lightOrange1/50 to-black"
-  //       tokenComponent={<img src="/elements/layer_x0020_1.svg" alt="dai" />}
+  //      tokenImg="/elements/layer_x0020_1.svg" alt="dai" />}
   //     />
   //   ),
   //   'MKR': (
@@ -701,7 +702,7 @@ const TickerSelectorBox = ({
   //       currency="MKR"
   //       fluctuating={-6.23}
   //       gradientColor="border-lightGreen3/50 from-lightGreen3/50 to-black"
-  //       tokenComponent={<img src="/elements/layer_2.svg" alt="Maker" />}
+  //      tokenImg="/elements/layer_2.svg" alt="Maker" />}
   //     />
   //   ),
   //   'XRP': (
@@ -714,7 +715,7 @@ const TickerSelectorBox = ({
   //       currency="XRP"
   //       fluctuating={-6.23}
   //       gradientColor="border-lightGray4/50 from-lightGray4/50 to-black"
-  //       tokenComponent={<img src="/elements/group_2406.svg" alt="XRP" />}
+  //      tokenImg="/elements/group_2406.svg" alt="XRP" />}
   //     />
   //   ),
   //   'DOGE': (
@@ -727,7 +728,7 @@ const TickerSelectorBox = ({
   //       currency="DOGE"
   //       fluctuating={-6.23}
   //       gradientColor="border-lightYellow1/50 from-lightYellow1/50 to-black"
-  //       tokenComponent={<img src="/elements/layer_2-1.svg" alt="DOGE" />}
+  //      tokenImg="/elements/layer_2-1.svg" alt="DOGE" />}
   //     />
   //   ),
   //   'UNI': (
@@ -740,7 +741,7 @@ const TickerSelectorBox = ({
   //       currency="UNI"
   //       fluctuating={-6.23}
   //       gradientColor="border-lightPink1/50 from-lightPink1/50 to-black"
-  //       tokenComponent={<img src="/elements/uniswap-uni-logo.svg" alt="Uniswap" />}
+  //      tokenImg="/elements/uniswap-uni-logo.svg" alt="Uniswap" />}
   //     />
   //   ),
   //   'FLOW': (
@@ -753,7 +754,7 @@ const TickerSelectorBox = ({
   //       currency="FLOW"
   //       fluctuating={-6.23}
   //       gradientColor="border-lightGreen4/50 from-lightGreen4/50 to-black"
-  //       tokenComponent={<img src="/elements/layer_2_1_.svg" alt="avax" />}
+  //      tokenImg="/elements/layer_2_1_.svg" alt="avax" />}
   //     />
   //   ),
   // };
@@ -916,7 +917,7 @@ const TickerSelectorBox = ({
       <CryptoCard
         star={true}
         starColor="text-bluePurple"
-        starred={true}
+        starred={false}
         getStarredState={getEthStarred}
         className="mt-4 ml-4"
         chain="Ethereum"
@@ -924,174 +925,174 @@ const TickerSelectorBox = ({
         price={1288.4}
         fluctuating={1.14}
         gradientColor="border-bluePurple/50 bg-black from-bluePurple/50 to-black"
-        tokenComponent={<img src="/elements/group_2371.svg" alt="eth" width={40} height={40} />}
+        tokenImg="/elements/group_2371.svg"
       />
       <CryptoCard
         star={true}
         starColor="text-lightOrange"
-        starred={true}
+        starred={false}
         getStarredState={getBtcStarred}
         chain="Bitcoin"
         currency="BTC"
         price={19848.8}
         gradientColor="border-lightOrange/50 bg-black from-lightOrange/50 to-black"
         fluctuating={3.46}
-        tokenComponent={<img src="/elements/group_2372.svg" width={40} height={40} />}
+        tokenImg="/elements/group_2372.svg"
       />
       <CryptoCard
         star={true}
         starColor="text-lightGray2"
-        starred={true}
+        starred={false}
         chain="Litecoin"
         currency="LTC"
         price={54.57}
         fluctuating={-3.46}
         gradientColor="border-lightGray2/50 bg-black from-lightGray2/50 to-black"
-        tokenComponent={<img src="/elements/c5b7bda06ddfe2b3f59b37ed6bb65ab4.svg" alt="litecoin" />}
+        tokenImg="/elements/c5b7bda06ddfe2b3f59b37ed6bb65ab4.svg"
       />
       <CryptoCard
         star={true}
         starColor="text-lightPurple"
-        starred={true}
+        starred={false}
         chain="Polygon"
         currency="MATIC"
         price={0.82}
         fluctuating={-6.23}
         gradientColor="border-lightPurple/60 bg-black from-lightPurple/60 to-black"
-        tokenComponent={<img src="/elements/9cc18b0cbe765b0a28791d253207f0c0.svg" alt="polygon" />}
+        tokenImg="/elements/9cc18b0cbe765b0a28791d253207f0c0.svg"
       />
       <CryptoCard
         star={true}
         starColor="text-lightYellow"
-        starred={true}
+        starred={false}
         chain="BNB"
         currency="BNB"
         price={274.54}
         fluctuating={-6.23}
         gradientColor="border-lightYellow/60 bg-black from-lightYellow/50 to-black"
-        tokenComponent={<img src="/elements/group_2374.svg" alt="bnb" />}
+        tokenImg="/elements/group_2374.svg"
       />
       <CryptoCard
         star={true}
         starColor="text-lightPurple2"
-        starred={true}
+        starred={false}
         chain="Solana"
         currency="SOL"
         price={28.41}
         fluctuating={1.14}
         gradientColor="border-lightPurple2/60 from-lightPurple2/60 to-black"
-        tokenComponent={<img src="/elements/group_2378.svg" alt="solana" />}
+        tokenImg="/elements/group_2378.svg"
       />
       <CryptoCard
         star={true}
         starColor="text-lightRed1"
-        starred={true}
+        starred={false}
         chain="Shiba Inu"
         currency="SHIB"
         price={0.0000099}
         fluctuating={-3.46}
         gradientColor="border-lightRed1/50 from-lightRed1/50 to-black"
-        tokenComponent={<img src="/elements/group_2381.svg" alt="shiba inu" />}
+        tokenImg="/elements/group_2381.svg"
       />
       <CryptoCard
         star={true}
         starColor="text-lightPink"
-        starred={true}
+        starred={false}
         chain="Polkadot"
         currency="DOT"
         price={5.92}
         fluctuating={3.46}
         gradientColor="border-lightPink/60 from-lightPink/60 to-black"
-        tokenComponent={<img src="/elements/group_2385.svg" alt="polkadot" />}
+        tokenImg="/elements/group_2385.svg"
       />
       <CryptoCard
         star={true}
         starColor="text-lightGreen1"
-        starred={true}
+        starred={false}
         chain="Cardano"
         currency="ADA"
         price={0.3611}
         fluctuating={1.14}
         gradientColor="border-lightGreen1/60 from-lightGreen1/60 to-black"
-        tokenComponent={<img src="/elements/group_2388.svg" alt="cardano" />}
+        tokenImg="/elements/group_2388.svg"
       />
       <CryptoCard
         star={true}
         starColor="text-lightRed2"
-        starred={true}
+        starred={false}
         chain="Avalanche"
         price={15.77}
         currency="AVAX"
         fluctuating={-6.23}
         gradientColor="border-lightRed2/50 from-lightRed2/50 to-black"
-        tokenComponent={<img src="/elements/group_2391.svg" alt="avax" />}
+        tokenImg="/elements/group_2391.svg"
       />
 
       <CryptoCard
         star={true}
         starColor="text-lightOrange1"
-        starred={true}
+        starred={false}
         chain="Dai"
         price={15.77}
         currency="Dai"
         fluctuating={-6.23}
         gradientColor="border-lightOrange1/50 from-lightOrange1/50 to-black"
-        tokenComponent={<img src="/elements/layer_x0020_1.svg" alt="dai" />}
+        tokenImg="/elements/layer_x0020_1.svg"
       />
       <CryptoCard
         star={true}
         starColor="text-lightGreen3"
-        starred={true}
+        starred={false}
         chain="Maker"
         price={15.77}
         currency="MKR"
         fluctuating={-6.23}
         gradientColor="border-lightGreen3/50 from-lightGreen3/50 to-black"
-        tokenComponent={<img src="/elements/layer_2.svg" alt="Maker" />}
+        tokenImg="/elements/layer_2.svg"
       />
       <CryptoCard
         star={true}
         starColor="text-lightGray4"
-        starred={true}
+        starred={false}
         chain="XRP"
         price={15.77}
         currency="XRP"
         fluctuating={-6.23}
         gradientColor="border-lightGray4/50 from-lightGray4/50 to-black"
-        tokenComponent={<img src="/elements/group_2406.svg" alt="XRP" />}
+        tokenImg="/elements/group_2406.svg"
       />
       <CryptoCard
         star={true}
         starColor="text-lightYellow1"
-        starred={true}
+        starred={false}
         chain="Dogecoin"
         price={15.77}
         currency="DOGE"
         fluctuating={-6.23}
         gradientColor="border-lightYellow1/50 from-lightYellow1/50 to-black"
-        tokenComponent={<img src="/elements/layer_2-1.svg" alt="DOGE" />}
+        tokenImg="/elements/layer_2-1.svg"
       />
       <CryptoCard
         star={true}
         starColor="text-lightPink1"
-        starred={true}
+        starred={false}
         chain="Uniswap"
         price={15.77}
         currency="UNI"
         fluctuating={-6.23}
         gradientColor="border-lightPink1/50 from-lightPink1/50 to-black"
-        tokenComponent={<img src="/elements/uniswap-uni-logo.svg" alt="Uniswap" />}
+        tokenImg="/elements/uniswap-uni-logo.svg"
       />
       <CryptoCard
         star={true}
         starColor="text-lightGreen4"
-        starred={true}
+        starred={false}
         chain="Flow"
         price={15.77}
         currency="FLOW"
         fluctuating={-6.23}
         gradientColor="border-lightGreen4/50 from-lightGreen4/50 to-black"
-        tokenComponent={<img src="/elements/layer_2_1_.svg" alt="avax" />}
+        tokenImg="/elements/layer_2_1_.svg"
       />
     </>
   );

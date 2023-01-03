@@ -294,15 +294,11 @@ const TickerSelectorBox = ({
 
   const [searches, setSearches] = useState<string[]>([]);
 
-  const baseFavoriteArray = ['BTC', 'DOGE', 'MKR'];
+  // const baseFavoriteArray = ['BTC', 'DOGE', 'MKR'];
   // baseFavoriteArray= ['BTC', 'ETH', 'ADA', 'DOGE', 'XRP', 'DOT', 'UNI', 'FLOW', 'DAI', 'MKR', 'AVAX', 'SOL', 'BNB', 'MATIC', 'LTC', 'SHIB']
   // ['BTC', 'ETH', 'ADA', 'DOGE', 'XRP', 'DOT', 'UNI']
 
-  // const cardStarClickHandler = (index: number) => {
-  //   favoritesHandler(index);
-  // };
-
-  const favoritesHandler = (index: number) => {
+  const favoritesHandler = (index: number, bool: boolean) => {
     // const newFavorites = [...favorites];
 
     // const newFavorites = [...TRADING_CRYPTO_DATA].map((each, i) => {
@@ -317,13 +313,24 @@ const TickerSelectorBox = ({
     // const clicked = TRADING_CRYPTO_DATA[index].starred = !TRADING_CRYPTO_DATA[index].starred;
     // setAllCards((card) => [...card, clicked]);
 
-    TRADING_CRYPTO_DATA[index].starred = !TRADING_CRYPTO_DATA[index].starred;
-    setAllCards(TRADING_CRYPTO_DATA);
-    // console.log('starred:', !TRADING_CRYPTO_DATA[index].starred);
+    // TRADING_CRYPTO_DATA[index].starred = !TRADING_CRYPTO_DATA[index].starred;
+    // setAllCards(TRADING_CRYPTO_DATA);
 
+    // `.find()` used to find the index of the clicked card
+    // const testBase = TRADING_CRYPTO_DATA.find(each => each.currency === 'BTC');
+    // console.log('test base:', testBase);
+
+    // console.log('starred:', !TRADING_CRYPTO_DATA[index].starred);
     // setFavorites(previous => {TRADING_CRYPTO_DATA.filter(each => each.starred && each)})
 
-    setFavorites(previous => [...previous, TRADING_CRYPTO_DATA[index]]);
+    TRADING_CRYPTO_DATA[index].starred = bool;
+
+    setFavorites(() => {
+      return TRADING_CRYPTO_DATA.filter(each => each.starred);
+    });
+
+    // console.log(TRADING_CRYPTO_DATA.filter(each => each.starred && each));
+    // console.log('favorites:', favorites);
 
     // setFavorites(previous => {
     //   if (!previous) return [];
@@ -389,8 +396,10 @@ const TickerSelectorBox = ({
   //   }
 
   function getEthStarred(bool: boolean) {
-    setEthStarred(bool);
-    favoritesHandler(0);
+    // setEthStarred(bool);
+
+    favoritesHandler(0, bool);
+
     // setFavorites(previous => [...previous, ]);
 
     // favoritesHandler('ETH');
@@ -408,7 +417,7 @@ const TickerSelectorBox = ({
 
   function getBtcStarred(bool: boolean) {
     setBtcStarred(bool);
-    favoritesHandler(1);
+    favoritesHandler(1, bool);
     // favoritesHandler('BTC');
     // console.log('string clicked:', 'BTC');
     // console.log('favorites: ', favorites);
@@ -416,72 +425,72 @@ const TickerSelectorBox = ({
 
   function getLtcStarred(bool: boolean) {
     setLtcStarred(bool);
-    favoritesHandler(2);
+    favoritesHandler(2, bool);
   }
 
   function getMaticStarred(bool: boolean) {
     setMaticStarred(bool);
-    favoritesHandler(3);
+    favoritesHandler(3, bool);
   }
 
   function getBnbStarred(bool: boolean) {
     setBnbStarred(bool);
-    favoritesHandler(4);
+    favoritesHandler(4, bool);
   }
 
   function getSolStarred(bool: boolean) {
     setSolStarred(bool);
-    favoritesHandler(5);
+    favoritesHandler(5, bool);
   }
 
   function getShibStarred(bool: boolean) {
     setShibStarred(bool);
-    favoritesHandler(6);
+    favoritesHandler(6, bool);
   }
 
   function getDotStarred(bool: boolean) {
     setDotStarred(bool);
-    favoritesHandler(7);
+    favoritesHandler(7, bool);
   }
 
   function getAdaStarred(bool: boolean) {
     setAdaStarred(bool);
-    favoritesHandler(8);
+    favoritesHandler(8, bool);
   }
 
   function getAvaxStarred(bool: boolean) {
     setAvaxStarred(bool);
-    favoritesHandler(9);
+    favoritesHandler(9, bool);
   }
 
   function getDaiStarred(bool: boolean) {
     setDaiStarred(bool);
-    favoritesHandler(10);
+    favoritesHandler(10, bool);
   }
 
   function getMkrStarred(bool: boolean) {
     setMkrStarred(bool);
-    favoritesHandler(11);
+    favoritesHandler(11, bool);
   }
 
   function getXrpStarred(bool: boolean) {
     setXrpStarred(bool);
-    favoritesHandler(12);
+    favoritesHandler(12, bool);
   }
 
   function getDogeStarred(bool: boolean) {
     setDogeStarred(bool);
-    favoritesHandler(13);
+    favoritesHandler(13, bool);
   }
 
   function getUniStarred(bool: boolean) {
     setUniStarred(bool);
-    favoritesHandler(14);
+    favoritesHandler(14, bool);
   }
 
   function getFlowStarred(bool: boolean) {
     setFlowStarred(bool);
-    favoritesHandler(15);
+    favoritesHandler(15, bool);
   }
 
   const allTabClickHandler = () => {
@@ -865,70 +874,6 @@ const TickerSelectorBox = ({
           </button>
         </div>
         {/* Other tabs */}
-        {/* <div className="">
-          <button
-            type="button"
-            className={`${activePositionTabStyle} inline-block rounded-t-lg px-38px py-2 hover:cursor-pointer`}
-          >
-            Top
-          </button>
-        </div>
-        <div className="">
-          <button
-            type="button"
-            className={`${activePositionTabStyle} inline-block rounded-t-lg px-38px py-2 hover:cursor-pointer`}
-          >
-            Storage
-          </button>
-        </div>
-        <div className="">
-          <button
-            type="button"
-            className={`${activePositionTabStyle} inline-block rounded-t-lg px-38px py-2 hover:cursor-pointer`}
-          >
-            DeFi
-          </button>
-        </div>
-        <div className="">
-          <button
-            type="button"
-            className={`${activePositionTabStyle} inline-block rounded-t-lg px-38px py-2 hover:cursor-pointer`}
-          >
-            Grayscale
-          </button>
-        </div>
-        <div className="">
-          <button
-            type="button"
-            className={`${activePositionTabStyle} inline-block rounded-t-lg px-38px py-2 hover:cursor-pointer`}
-          >
-            GameFi
-          </button>
-        </div>
-        <div className="">
-          <button
-            type="button"
-            className={`${activePositionTabStyle} inline-block rounded-t-lg px-38px py-2 hover:cursor-pointer`}
-          >
-            Blockchain
-          </button>
-        </div>
-        <div className="">
-          <button
-            type="button"
-            className={`${activePositionTabStyle} inline-block rounded-t-lg px-38px py-2 hover:cursor-pointer`}
-          >
-            Layer 2
-          </button>
-        </div>
-        <div className="">
-          <button
-            type="button"
-            className={`${activePositionTabStyle} inline-block rounded-t-lg px-40px py-2 hover:cursor-pointer`}
-          >
-            Polkadot
-          </button>
-        </div> */}
       </div>
     </>
   );

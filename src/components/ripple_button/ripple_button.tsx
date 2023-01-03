@@ -7,62 +7,72 @@ interface IRippleButtonProps {
 }
 
 const RippleButton = ({className, buttonStyle, children}: IRippleButtonProps) => {
-  const buttonRef = useRef<HTMLDivElement | undefined>();
+  const buttonRef = useRef<HTMLDivElement>();
 
-  useEffect(() => {
-    const applyContainerProperties = () => {
-      if (!buttonRef) return;
-      buttonRef?.current?.classList.add('effectContainer');
-    };
+  // useEffect(() => {
+  //   // // const box: Element | null
+  //   // const element = document.querySelector('#effectContainer') as HTMLElement | null;
 
-    // MouseEvent property
-    const applyStyles = (e: MouseEvent) => {
-      const {offsetX, offsetY} = e;
-      const {style} = buttonRef.current;
-      const sizeOffset = 50;
+  //   // // box has type Element or null here
 
-      style.setProperty('--effect-top', `${offsetY - sizeOffset}px`);
-      style.setProperty('--effect-left', `${offsetX - sizeOffset}px`);
-    };
+  //   // if (element != null) {
+  //   //   // box has type Element here
+  //   //   element.style.backgroundColor = 'salmon';
+  //   // }
 
-    const onClick = (e: MouseEvent) => {
-      // if (buttonRef)
-      buttonRef?.current?.classList.remove('active');
-      applyStyles(e);
+  //   const applyContainerProperties = () => {
+  //     if (!buttonRef) return;
+  //     buttonRef?.current?.classList.add('effectContainer');
+  //   };
 
-      buttonRef?.current?.classList.add('active');
+  //   // MouseEvent property
+  //   const applyStyles = (e: MouseEvent) => {
+  //     const {offsetX, offsetY} = e;
+  //     const {style} = buttonRef.current;
+  //     const sizeOffset = 50;
 
-      // setTimeout(() => {
-      //   buttonRef?.current.classList.add('active');
-      // }, 1);
-    };
+  //     style.setProperty('--effect-top', `${offsetY - sizeOffset}px`);
+  //     style.setProperty('--effect-left', `${offsetX - sizeOffset}px`);
+  //   };
 
-    applyContainerProperties();
+  //   const onClick = (e: MouseEvent) => {
+  //     // if (buttonRef)
+  //     buttonRef?.current?.classList.remove('active');
+  //     applyStyles(e);
 
-    // Add the event listener on mount
-    buttonRef?.current?.addEventListener('mouseup', onClick);
+  //     buttonRef?.current?.classList.add('active');
 
-    // Needed for referencing the ref in the return function
-    const cleanupRef = buttonRef?.current;
+  //     // setTimeout(() => {
+  //     //   buttonRef?.current.classList.add('active');
+  //     // }, 1);
+  //   };
 
-    return () => {
-      // Remove the event listener on unmount
-      cleanupRef?.removeEventListener('mouseup', onClick);
-    };
-  });
+  //   applyContainerProperties();
 
-  return (
-    <div>
-      <button
-        className={`${className} rounded-md bg-tidebitTheme px-8 py-2 transition-all hover:opacity-90`}
-        type="button"
-        ref={buttonRef}
-      >
-        {children}
-      </button>
-      {/* <Image ref={buttonRef} src="/elements/group_15198@2x.png" width={512} height={512} /> */}
-    </div>
-  );
+  //   // Add the event listener on mount
+  //   buttonRef?.current?.addEventListener('mouseup', onClick);
+
+  //   // Needed for referencing the ref in the return function
+  //   const cleanupRef = buttonRef?.current;
+
+  //   return () => {
+  //     // Remove the event listener on unmount
+  //     cleanupRef?.removeEventListener('mouseup', onClick);
+  //   };
+  // });
+
+  // return (
+  //   <div>
+  //     <button
+  //       className={`${className} rounded-md bg-tidebitTheme px-8 py-2 transition-all hover:opacity-90`}
+  //       type="button"
+  //       ref={buttonRef}
+  //     >
+  //       {children}
+  //     </button>
+  //     {/* <Image ref={buttonRef} src="/elements/group_15198@2x.png" width={512} height={512} /> */}
+  //   </div>
+  // );
 };
 
 export default RippleButton;

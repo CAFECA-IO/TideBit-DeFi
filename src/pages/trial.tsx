@@ -109,7 +109,7 @@ const Trial = () => {
           tickerSelectorModalVisible={tickerBoxVisible}
           tickerSelectorModalClickHandler={tickerBoxClickHandler}
         />{' '} */}
-        <RippleButton className="bg-blue-400">Ripple</RippleButton>
+        {/* <RippleButton className="bg-blue-400">Ripple</RippleButton> */}
       </div>
     </>
   );

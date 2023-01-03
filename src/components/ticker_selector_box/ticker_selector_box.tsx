@@ -271,22 +271,22 @@ const TickerSelectorBox = ({
 
   const [activeTab, setActiveTab] = useState('All');
 
-  const [ethStarred, setEthStarred] = useState(false);
-  const [btcStarred, setBtcStarred] = useState(false);
-  const [ltcStarred, setLtcStarred] = useState(false);
-  const [maticStarred, setMaticStarred] = useState(false);
-  const [bnbStarred, setBnbStarred] = useState(false);
-  const [solStarred, setSolStarred] = useState(false);
-  const [shibStarred, setShibStarred] = useState(false);
-  const [dotStarred, setDotStarred] = useState(false);
-  const [adaStarred, setAdaStarred] = useState(false);
-  const [avaxStarred, setAvaxStarred] = useState(false);
-  const [daiStarred, setDaiStarred] = useState(false);
-  const [mkrStarred, setMkrStarred] = useState(false);
-  const [xrpStarred, setXrpStarred] = useState(false);
-  const [dogeStarred, setDogeStarred] = useState(false);
-  const [uniStarred, setUniStarred] = useState(false);
-  const [flowStarred, setFlowStarred] = useState(false);
+  // const [ethStarred, setEthStarred] = useState(false);
+  // const [btcStarred, setBtcStarred] = useState(false);
+  // const [ltcStarred, setLtcStarred] = useState(false);
+  // const [maticStarred, setMaticStarred] = useState(false);
+  // const [bnbStarred, setBnbStarred] = useState(false);
+  // const [solStarred, setSolStarred] = useState(false);
+  // const [shibStarred, setShibStarred] = useState(false);
+  // const [dotStarred, setDotStarred] = useState(false);
+  // const [adaStarred, setAdaStarred] = useState(false);
+  // const [avaxStarred, setAvaxStarred] = useState(false);
+  // const [daiStarred, setDaiStarred] = useState(false);
+  // const [mkrStarred, setMkrStarred] = useState(false);
+  // const [xrpStarred, setXrpStarred] = useState(false);
+  // const [dogeStarred, setDogeStarred] = useState(false);
+  // const [uniStarred, setUniStarred] = useState(false);
+  // const [flowStarred, setFlowStarred] = useState(false);
 
   // const [favorites, setFavorites] = useState<{label: string; content: JSX.Element}[]>([]);
   const [favorites, setFavorites] = useState<ICryptoCardData[]>([]);
@@ -416,7 +416,7 @@ const TickerSelectorBox = ({
   }
 
   function getBtcStarred(bool: boolean) {
-    setBtcStarred(bool);
+    // setBtcStarred(bool);
     favoritesHandler(1, bool);
     // favoritesHandler('BTC');
     // console.log('string clicked:', 'BTC');
@@ -424,72 +424,72 @@ const TickerSelectorBox = ({
   }
 
   function getLtcStarred(bool: boolean) {
-    setLtcStarred(bool);
+    // setLtcStarred(bool);
     favoritesHandler(2, bool);
   }
 
   function getMaticStarred(bool: boolean) {
-    setMaticStarred(bool);
+    // setMaticStarred(bool);
     favoritesHandler(3, bool);
   }
 
   function getBnbStarred(bool: boolean) {
-    setBnbStarred(bool);
+    // setBnbStarred(bool);
     favoritesHandler(4, bool);
   }
 
   function getSolStarred(bool: boolean) {
-    setSolStarred(bool);
+    // setSolStarred(bool);
     favoritesHandler(5, bool);
   }
 
   function getShibStarred(bool: boolean) {
-    setShibStarred(bool);
+    // setShibStarred(bool);
     favoritesHandler(6, bool);
   }
 
   function getDotStarred(bool: boolean) {
-    setDotStarred(bool);
+    // setDotStarred(bool);
     favoritesHandler(7, bool);
   }
 
   function getAdaStarred(bool: boolean) {
-    setAdaStarred(bool);
+    // setAdaStarred(bool);
     favoritesHandler(8, bool);
   }
 
   function getAvaxStarred(bool: boolean) {
-    setAvaxStarred(bool);
+    // setAvaxStarred(bool);
     favoritesHandler(9, bool);
   }
 
   function getDaiStarred(bool: boolean) {
-    setDaiStarred(bool);
+    // setDaiStarred(bool);
     favoritesHandler(10, bool);
   }
 
   function getMkrStarred(bool: boolean) {
-    setMkrStarred(bool);
+    // setMkrStarred(bool);
     favoritesHandler(11, bool);
   }
 
   function getXrpStarred(bool: boolean) {
-    setXrpStarred(bool);
+    // setXrpStarred(bool);
     favoritesHandler(12, bool);
   }
 
   function getDogeStarred(bool: boolean) {
-    setDogeStarred(bool);
+    // setDogeStarred(bool);
     favoritesHandler(13, bool);
   }
 
   function getUniStarred(bool: boolean) {
-    setUniStarred(bool);
+    // setUniStarred(bool);
     favoritesHandler(14, bool);
   }
 
   function getFlowStarred(bool: boolean) {
-    setFlowStarred(bool);
+    // setFlowStarred(bool);
     favoritesHandler(15, bool);
   }
 

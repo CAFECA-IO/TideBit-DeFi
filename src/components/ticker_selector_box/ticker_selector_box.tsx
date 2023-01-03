@@ -271,40 +271,13 @@ const TickerSelectorBox = ({
 
   const [activeTab, setActiveTab] = useState('All');
 
-  // const [ethStarred, setEthStarred] = useState(false);
-  // const [btcStarred, setBtcStarred] = useState(false);
-  // const [ltcStarred, setLtcStarred] = useState(false);
-  // const [maticStarred, setMaticStarred] = useState(false);
-  // const [bnbStarred, setBnbStarred] = useState(false);
-  // const [solStarred, setSolStarred] = useState(false);
-  // const [shibStarred, setShibStarred] = useState(false);
-  // const [dotStarred, setDotStarred] = useState(false);
-  // const [adaStarred, setAdaStarred] = useState(false);
-  // const [avaxStarred, setAvaxStarred] = useState(false);
-  // const [daiStarred, setDaiStarred] = useState(false);
-  // const [mkrStarred, setMkrStarred] = useState(false);
-  // const [xrpStarred, setXrpStarred] = useState(false);
-  // const [dogeStarred, setDogeStarred] = useState(false);
-  // const [uniStarred, setUniStarred] = useState(false);
-  // const [flowStarred, setFlowStarred] = useState(false);
-
   // const [favorites, setFavorites] = useState<{label: string; content: JSX.Element}[]>([]);
   const [favorites, setFavorites] = useState<ICryptoCardData[]>([]);
   const [allCards, setAllCards] = useState<ICryptoCardData[]>(TRADING_CRYPTO_DATA);
 
   const [searches, setSearches] = useState<string[]>([]);
 
-  // const baseFavoriteArray = ['BTC', 'DOGE', 'MKR'];
-  // baseFavoriteArray= ['BTC', 'ETH', 'ADA', 'DOGE', 'XRP', 'DOT', 'UNI', 'FLOW', 'DAI', 'MKR', 'AVAX', 'SOL', 'BNB', 'MATIC', 'LTC', 'SHIB']
-  // ['BTC', 'ETH', 'ADA', 'DOGE', 'XRP', 'DOT', 'UNI']
-
   const favoritesHandler = (index: number, bool: boolean) => {
-    // const newFavorites = [...favorites];
-
-    // const newFavorites = [...TRADING_CRYPTO_DATA].map((each, i) => {
-    //   return each.starred = !(each.starred)
-    // })
-
     // // TODO: 這樣會製造出新的陣列，但是沒有改變原本的 starred 狀態
     // const newFavorites = [...TRADING_CRYPTO_DATA][index];
     // newFavorites.starred = !newFavorites.starred;
@@ -328,169 +301,150 @@ const TickerSelectorBox = ({
     setFavorites(() => {
       return TRADING_CRYPTO_DATA.filter(each => each.starred);
     });
-
-    // console.log(TRADING_CRYPTO_DATA.filter(each => each.starred && each));
-    // console.log('favorites:', favorites);
-
-    // setFavorites(previous => {
-    //   if (!previous) return [];
-    //   if (previous.filter(each => each.currency === TRADING_CRYPTO_DATA[index].currency)) {
-    //     return [...previous];
-    //   } else {
-    //     return [...previous, TRADING_CRYPTO_DATA[index]];
-    //   }
-    // });
-
-    // console.log('newFavorites', newFavorites);
-
-    // console.log('setFavorites', setFavorites);
-    /**
-     * setFavorites ƒ dispatchSetState(fiber, queue, action) {
-      {
-    if (typeof arguments[3] === 'function') {
-      error("State updates from the useState() and useReducer() Hooks don't support the " + 'second callback…
-     */
-
-    // newFavorites[index].starred = !newFavorites[index].starred;
-
-    // setFavorites(newFavorites);
-    // console.log('index:', index, 'favorites handler `starred`:', !newFavorites[index].starred);
-    // newFavorites[index].content = (
   };
 
-  // const favoritesHandler = (cryptoClicked: string) => {
-  //   console.log('`favorite` object entries', Object.entries(favorites));
-  //   console.log(
-  //     'all entries `TRADING_CRYPTO_DATA_COMPONENTS`[0] ',
-  //     Object.entries(ALL_TRADING_CRYPTO_DATA_COMPONENTS)[0]
-  //   );
-  //   console.log(
-  //     'all entries `TRADING_CRYPTO_DATA_COMPONENTS` ',
-  //     Object.entries(ALL_TRADING_CRYPTO_DATA_COMPONENTS)
-  //   );
-  //   // setFavorites([
-  //   //   ...favorites,
-  //   //   {label: cryptoClicked, content: Object.entries(TRADING_CRYPTO_DATA_COMPONENTS)[0]},
-  //   // ]);
-  //   // Avoid repeated favorites
-  //   // if (!Object.entries(favorites)[0].includes(cryptoClicked)) {
-  //   //   setFavorites([...favorites, {label:cryptoClicked, content: Object.keys(TRADING_CRYPTO_DATA_COMPONENTS)});
-  //   //   // setFavorites([...favorites, [cryptoClicked]: allCryptoCardsObject[cryptoClicked]);
-  //   // }
-  // };
-
-  // const favoritesHandler = (cryptoClicked: string) => {
-  //   // Avoid repeated favorites
-  //   if (!favorites.includes(cryptoClicked)) {
-  //     setFavorites([...favorites, cryptoClicked]);
-  //     //  setFavorites(favorites => [...favorites, card]);
-  //   } else {
-  //     setFavorites(favorites.filter(favorite => favorite !== cryptoClicked));
-  //   }
-  // };
-
-  //   const favoritesHandler = (cryptoClicked: string) => {
-  // if (!Object.entries(favorites).includes(cryptoClicked)) {
-  //       setFavorites([...favorites, [cryptoClicked]: allCryptoCardsObject[cryptoClicked]);
-  // }
-  //   }
-
   function getEthStarred(bool: boolean) {
-    // setEthStarred(bool);
-
     favoritesHandler(0, bool);
+    TRADING_CRYPTO_DATA[0].starred = bool;
 
-    // setFavorites(previous => [...previous, ]);
-
-    // favoritesHandler('ETH');
-    // setFavorites(previous => [...previous, {label: 'ETH', content: allCryptoCardsObject['ETH']}]);
-    // favoritesHandler('ETH');
-
-    // if (bool) {
-    //   favoritesHandler('ETH');
-    // }
-    // setFavorites(previous => [...previous, 'ETH']);
-    // console.log('string clicked: ', 'ETH');
-    // console.log('favorites: ', favorites);
-    // console.log('eth starred: ', bool);
+    setFavorites(() => {
+      return TRADING_CRYPTO_DATA.filter(each => each.starred);
+    });
   }
 
   function getBtcStarred(bool: boolean) {
     // setBtcStarred(bool);
-    favoritesHandler(1, bool);
-    // favoritesHandler('BTC');
-    // console.log('string clicked:', 'BTC');
-    // console.log('favorites: ', favorites);
+    TRADING_CRYPTO_DATA[1].starred = bool;
+
+    setFavorites(() => {
+      return TRADING_CRYPTO_DATA.filter(each => each.starred);
+    });
   }
 
   function getLtcStarred(bool: boolean) {
     // setLtcStarred(bool);
-    favoritesHandler(2, bool);
+    TRADING_CRYPTO_DATA[2].starred = bool;
+
+    setFavorites(() => {
+      return TRADING_CRYPTO_DATA.filter(each => each.starred);
+    });
   }
 
   function getMaticStarred(bool: boolean) {
     // setMaticStarred(bool);
-    favoritesHandler(3, bool);
+    TRADING_CRYPTO_DATA[3].starred = bool;
+
+    setFavorites(() => {
+      return TRADING_CRYPTO_DATA.filter(each => each.starred);
+    });
   }
 
   function getBnbStarred(bool: boolean) {
     // setBnbStarred(bool);
-    favoritesHandler(4, bool);
+    TRADING_CRYPTO_DATA[4].starred = bool;
+
+    setFavorites(() => {
+      return TRADING_CRYPTO_DATA.filter(each => each.starred);
+    });
   }
 
   function getSolStarred(bool: boolean) {
     // setSolStarred(bool);
-    favoritesHandler(5, bool);
+    TRADING_CRYPTO_DATA[5].starred = bool;
+
+    setFavorites(() => {
+      return TRADING_CRYPTO_DATA.filter(each => each.starred);
+    });
   }
 
   function getShibStarred(bool: boolean) {
     // setShibStarred(bool);
-    favoritesHandler(6, bool);
+    TRADING_CRYPTO_DATA[6].starred = bool;
+
+    setFavorites(() => {
+      return TRADING_CRYPTO_DATA.filter(each => each.starred);
+    });
   }
 
   function getDotStarred(bool: boolean) {
     // setDotStarred(bool);
-    favoritesHandler(7, bool);
+    TRADING_CRYPTO_DATA[7].starred = bool;
+
+    setFavorites(() => {
+      return TRADING_CRYPTO_DATA.filter(each => each.starred);
+    });
   }
 
   function getAdaStarred(bool: boolean) {
     // setAdaStarred(bool);
-    favoritesHandler(8, bool);
+    TRADING_CRYPTO_DATA[8].starred = bool;
+
+    setFavorites(() => {
+      return TRADING_CRYPTO_DATA.filter(each => each.starred);
+    });
   }
 
   function getAvaxStarred(bool: boolean) {
     // setAvaxStarred(bool);
-    favoritesHandler(9, bool);
+    TRADING_CRYPTO_DATA[9].starred = bool;
+
+    setFavorites(() => {
+      return TRADING_CRYPTO_DATA.filter(each => each.starred);
+    });
   }
 
   function getDaiStarred(bool: boolean) {
     // setDaiStarred(bool);
-    favoritesHandler(10, bool);
+    TRADING_CRYPTO_DATA[10].starred = bool;
+
+    setFavorites(() => {
+      return TRADING_CRYPTO_DATA.filter(each => each.starred);
+    });
   }
 
   function getMkrStarred(bool: boolean) {
     // setMkrStarred(bool);
-    favoritesHandler(11, bool);
+    TRADING_CRYPTO_DATA[11].starred = bool;
+
+    setFavorites(() => {
+      return TRADING_CRYPTO_DATA.filter(each => each.starred);
+    });
   }
 
   function getXrpStarred(bool: boolean) {
     // setXrpStarred(bool);
-    favoritesHandler(12, bool);
+    TRADING_CRYPTO_DATA[12].starred = bool;
+
+    setFavorites(() => {
+      return TRADING_CRYPTO_DATA.filter(each => each.starred);
+    });
   }
 
   function getDogeStarred(bool: boolean) {
     // setDogeStarred(bool);
-    favoritesHandler(13, bool);
+    TRADING_CRYPTO_DATA[13].starred = bool;
+
+    setFavorites(() => {
+      return TRADING_CRYPTO_DATA.filter(each => each.starred);
+    });
   }
 
   function getUniStarred(bool: boolean) {
     // setUniStarred(bool);
-    favoritesHandler(14, bool);
+    TRADING_CRYPTO_DATA[14].starred = bool;
+
+    setFavorites(() => {
+      return TRADING_CRYPTO_DATA.filter(each => each.starred);
+    });
   }
 
   function getFlowStarred(bool: boolean) {
     // setFlowStarred(bool);
-    favoritesHandler(15, bool);
+    TRADING_CRYPTO_DATA[15].starred = bool;
+
+    setFavorites(() => {
+      return TRADING_CRYPTO_DATA.filter(each => each.starred);
+    });
   }
 
   const allTabClickHandler = () => {

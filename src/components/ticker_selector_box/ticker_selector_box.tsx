@@ -566,6 +566,8 @@ const TickerSelectorBox = ({
   });
 
   const displayedFavorites = favorites.map((cryptoCard, i) => {
+    if (cryptoCard.starred !== true) return <></>;
+
     if (i === 0) {
       return (
         <CryptoCard

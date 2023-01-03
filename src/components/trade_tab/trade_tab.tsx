@@ -298,7 +298,7 @@ const TradeTab = () => {
                 {/* focus:outline-none focus:ring-4 focus:ring-green-300 */}
                 <button
                   type="button"
-                  className="mr-2 mb-2 rounded-md bg-lightGreen px-7 py-1 text-sm font-medium tracking-wide text-white transition-colors duration-300 hover:bg-lightGreen/80"
+                  className="mr-2 mb-2 rounded-md bg-lightGreen5 px-7 py-1 text-sm font-medium tracking-wide text-white transition-colors duration-300 hover:bg-lightGreen5/80"
                 >
                   <b>UP</b> <br />
                   Above $ 1545.0

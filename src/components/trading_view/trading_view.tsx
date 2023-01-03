@@ -32,7 +32,7 @@ const TradingView = () => {
   const displayedTradingView =
     selectedChartType === 'candlestick' ? (
       <CandlestickChart
-        strokeColor={[`#1AE2A0`]}
+        strokeColor={[`#17BF88`]}
         candlestickChartWidth="900"
         candlestickChartHeight="400"
       />

@@ -47,9 +47,9 @@ const OpenPositionItem = ({
   const displayedColorHex =
     profitOrLoss === 'profit' ? PROFIT_LOSS_COLOR_TYPE.profit : PROFIT_LOSS_COLOR_TYPE.loss;
 
-  const displayedTextColor = profitOrLoss === 'profit' ? 'text-lightGreen' : 'text-lightRed';
+  const displayedTextColor = profitOrLoss === 'profit' ? 'text-lightGreen5' : 'text-lightRed';
   const displayedHoverPausedColor =
-    profitOrLoss === 'profit' ? 'hover:bg-lightGreen' : 'hover:bg-lightRed';
+    profitOrLoss === 'profit' ? 'hover:bg-lightGreen5' : 'hover:bg-lightRed';
 
   const displayedSymbol = profitOrLoss === 'profit' ? '+' : '-';
 

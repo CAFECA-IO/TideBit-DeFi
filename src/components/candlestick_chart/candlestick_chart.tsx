@@ -441,7 +441,7 @@ export default function CandlestickChart({
     plotOptions: {
       candlestick: {
         colors: {
-          upward: '#1AE2A0',
+          upward: '#17BF88',
           downward: '#E86D6D',
         },
         wick: {

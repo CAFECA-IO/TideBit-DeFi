@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react';
 import dynamic from 'next/dynamic';
 import {ApexOptions} from 'apexcharts';
 import {
+  TRADING_CHART_BORDER_COLOR,
   INVISIBLE_STROKE_COLOR,
   OPEN_POSITION_LINE_LABEL_POSITION,
   PROFIT_LOSS_COLOR_TYPE,
@@ -13,6 +14,7 @@ interface ILineGraphProps {
   strokeColor: string[];
   dataArray: (number | null)[];
   lineGraphWidth: string;
+  lineGraphHeight: string;
   annotatedValue: number;
 }
 
@@ -20,6 +22,7 @@ export default function TradingLineGraphChart({
   strokeColor,
   dataArray,
   lineGraphWidth,
+  lineGraphHeight,
   annotatedValue,
   ...otherProps
 }: ILineGraphProps): JSX.Element {
@@ -45,6 +48,7 @@ export default function TradingLineGraphChart({
         },
       ],
     },
+
     // grid: {
     //   show: true,
     //   borderColor: strokeColor[0],
@@ -69,22 +73,32 @@ export default function TradingLineGraphChart({
       axisBorder: {show: false},
       axisTicks: {show: false},
       labels: {
-        show: false,
+        show: true,
+        style: {
+          colors: TRADING_CHART_BORDER_COLOR,
+        },
       },
       type: 'numeric',
     },
     yaxis: {
-      axisBorder: {show: false},
+      axisBorder: {show: true, color: TRADING_CHART_BORDER_COLOR},
       axisTicks: {show: false},
       labels: {
-        show: false,
+        show: true,
+        style: {
+          colors: TRADING_CHART_BORDER_COLOR,
+        },
       },
+      opposite: true,
     },
     grid: {
       show: false,
     },
     tooltip: {
       enabled: true,
+      // x: {
+      //   show: true,
+      // },
     },
     // Horizontal dash line
     // annotations: {
@@ -197,6 +211,7 @@ export default function TradingLineGraphChart({
         series={dataSample.series}
         type="line"
         width={lineGraphWidth}
+        height={lineGraphHeight}
       />
     </div>
   );

@@ -85,7 +85,8 @@ const TradingView = () => {
           null,
           null,
         ]}
-        lineGraphWidth={'700'}
+        lineGraphWidth={'900'}
+        lineGraphHeight={'400'}
         annotatedValue={1324.4}
       />
     );

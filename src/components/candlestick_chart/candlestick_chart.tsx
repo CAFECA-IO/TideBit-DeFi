@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import dynamic from 'next/dynamic';
 import {ApexOptions} from 'apexcharts';
-import {PROFIT_LOSS_COLOR_TYPE} from '../../constants/display';
+import {TRADING_CHART_BORDER_COLOR, PROFIT_LOSS_COLOR_TYPE} from '../../constants/display';
 import {BsFillArrowDownCircleFill, BsFillArrowUpCircleFill} from 'react-icons/bs';
 
 const Chart = dynamic(() => import('react-apexcharts'), {ssr: false});
@@ -28,7 +28,7 @@ export default function CandlestickChart({
   ...otherProps
 }: ILineGraphProps): JSX.Element {
   const anotherSampleData = [1230, 1272, 1120, 1265, 1342, 1299];
-  const CANDLESTICK_CHART_BORDER_COLOR = '#8B8E91';
+  // const CANDLESTICK_CHART_BORDER_COLOR = '#8B8E91';
 
   const candlestickData = [
     // {
@@ -391,7 +391,7 @@ export default function CandlestickChart({
       type: 'datetime',
       labels: {
         style: {
-          colors: CANDLESTICK_CHART_BORDER_COLOR,
+          colors: TRADING_CHART_BORDER_COLOR,
         },
       },
       axisTicks: {
@@ -420,13 +420,13 @@ export default function CandlestickChart({
         show: true,
         align: 'center',
         style: {
-          colors: CANDLESTICK_CHART_BORDER_COLOR,
+          colors: TRADING_CHART_BORDER_COLOR,
         },
       },
       opposite: true,
       axisBorder: {
         show: true,
-        color: CANDLESTICK_CHART_BORDER_COLOR,
+        color: TRADING_CHART_BORDER_COLOR,
       },
       axisTicks: {
         show: false,

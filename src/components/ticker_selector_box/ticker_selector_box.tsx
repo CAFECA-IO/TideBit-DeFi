@@ -94,7 +94,6 @@ const TickerSelectorBox = ({
       gradientColor: 'border-lightOrange/50 bg-black from-lightOrange/50 to-black',
       tokenImg: '/elements/group_2372.svg',
     },
-    ,
     {
       currency: 'LTC',
       chain: 'Litecoin',
@@ -266,28 +265,6 @@ const TickerSelectorBox = ({
   ];
 
   const TRADING_CRYPTO_DATA_COMPONENTS = TRADING_CRYPTO_DATA.map((cryptoCard, index) => {
-    if (index === 0) {
-      return {
-        label: cryptoCard.currency,
-        content: (
-          <CryptoCard
-            className="mt-4 ml-4"
-            key={index}
-            star={cryptoCard.star}
-            starColor={cryptoCard.starColor}
-            starred={cryptoCard.starred}
-            getStarredState={cryptoCard.getStarredStateCallback}
-            chain={cryptoCard.chain}
-            currency={cryptoCard.currency}
-            price={cryptoCard.price}
-            fluctuating={cryptoCard.fluctuating}
-            gradientColor={cryptoCard.gradientColor}
-            tokenImg={cryptoCard.tokenImg}
-          />
-        ),
-      };
-    }
-
     return {
       label: cryptoCard.currency,
       content: (
@@ -816,19 +793,26 @@ const TickerSelectorBox = ({
   // baseFavoriteArray= ['BTC', 'ETH', 'ADA', 'DOGE', 'XRP', 'DOT', 'UNI', 'FLOW', 'DAI', 'MKR', 'AVAX', 'SOL', 'BNB', 'MATIC', 'LTC', 'SHIB']
   // ['BTC', 'ETH', 'ADA', 'DOGE', 'XRP', 'DOT', 'UNI']
 
-  // const favoritesHandler = (cryptoClicked: string) => {
-  //   console.log('`favorite` object entries', Object.entries(favorites));
-  //   console.log(
-  //     'all card `TRADING_CRYPTO_DATA_COMPONENTS` ',
-  //     Object.entries(TRADING_CRYPTO_DATA_COMPONENTS)
-  //   );
-  //   // Avoid repeated favorites
-  //   // if (!Object.entries(favorites)[0].includes(cryptoClicked)) {
-  //   //   setFavorites([...favorites, {label:cryptoClicked, content: Object.keys(TRADING_CRYPTO_DATA_COMPONENTS)});
-
-  //   //   // setFavorites([...favorites, [cryptoClicked]: allCryptoCardsObject[cryptoClicked]);
-  //   // }
-  // };
+  const favoritesHandler = (cryptoClicked: string) => {
+    // console.log('`favorite` object entries', Object.entries(favorites));
+    // console.log(
+    //   'all entries `TRADING_CRYPTO_DATA_COMPONENTS`[0] ',
+    //   Object.entries(TRADING_CRYPTO_DATA_COMPONENTS)[0]
+    // );
+    // console.log(
+    //   'all entries `TRADING_CRYPTO_DATA_COMPONENTS` ',
+    //   Object.entries(TRADING_CRYPTO_DATA_COMPONENTS)
+    // );
+    // setFavorites([
+    //   ...favorites,
+    //   {label: cryptoClicked, content: Object.entries(TRADING_CRYPTO_DATA_COMPONENTS)[0]},
+    // ]);
+    // Avoid repeated favorites
+    // if (!Object.entries(favorites)[0].includes(cryptoClicked)) {
+    //   setFavorites([...favorites, {label:cryptoClicked, content: Object.keys(TRADING_CRYPTO_DATA_COMPONENTS)});
+    //   // setFavorites([...favorites, [cryptoClicked]: allCryptoCardsObject[cryptoClicked]);
+    // }
+  };
 
   // const favoritesHandler = (cryptoClicked: string) => {
   //   // Avoid repeated favorites
@@ -848,7 +832,7 @@ const TickerSelectorBox = ({
 
   function getEthStarred(bool: boolean) {
     setEthStarred(bool);
-    // favoritesHandler('ETH');
+    favoritesHandler('ETH');
     // setFavorites(previous => [...previous, {label: 'ETH', content: allCryptoCardsObject['ETH']}]);
     // favoritesHandler('ETH');
 
@@ -863,7 +847,7 @@ const TickerSelectorBox = ({
 
   function getBtcStarred(bool: boolean) {
     setBtcStarred(bool);
-    // favoritesHandler('BTC');
+    favoritesHandler('BTC');
     // console.log('string clicked:', 'BTC');
     // console.log('favorites: ', favorites);
   }

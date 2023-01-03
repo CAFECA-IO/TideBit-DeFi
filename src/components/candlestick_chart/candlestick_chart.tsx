@@ -441,8 +441,8 @@ export default function CandlestickChart({
     plotOptions: {
       candlestick: {
         colors: {
-          upward: '#17BF88',
-          downward: '#E86D6D',
+          upward: PROFIT_LOSS_COLOR_TYPE.profit,
+          downward: PROFIT_LOSS_COLOR_TYPE.loss,
         },
         wick: {
           useFillColor: true,

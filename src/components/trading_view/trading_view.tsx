@@ -29,6 +29,25 @@ const TradingView = () => {
     // console.log('market section get chart interval: ', props);
   };
 
+  // function getRandomIntInclusive(min, max) {
+  //   min = Math.ceil(min);
+  //   max = Math.floor(max);
+  //   return Math.floor(Math.random() * (max - min + 1)) + min; //The maximum is inclusive and the minimum is inclusive
+  // }
+
+  // function getRandomArray(elementNumber: number, min: number, max: number) {
+  //   const arr: number[] = [];
+
+  //   for (let i = 0; i < elementNumber; i++) {
+  //     arr.push(getRandomIntInclusive(min, max));
+  //   }
+
+  //   return arr;
+  // }
+
+  // const randomArray = getRandomArray(18, 6582, 6612);
+  // console.log('randomArray', randomArray);
+
   const displayedTradingView =
     selectedChartType === 'candlestick' ? (
       <CandlestickChart
@@ -37,7 +56,38 @@ const TradingView = () => {
         candlestickChartHeight="400"
       />
     ) : (
-      <TradingLineGraphChart />
+      <TradingLineGraphChart
+        strokeColor={['#29C1E1']}
+        dataArray={[
+          6594,
+          6599,
+          6606,
+          6609,
+          6592,
+          6595,
+          6593,
+          6608,
+          6589,
+          6611,
+          6593,
+          6590,
+          6602,
+          6598,
+          6596,
+          6590,
+          6607,
+          6610,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+        ]}
+        lineGraphWidth={'700'}
+        annotatedValue={1324.4}
+      />
     );
 
   return (

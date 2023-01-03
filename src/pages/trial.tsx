@@ -6,6 +6,7 @@ import useOuterClick from '../lib/hooks/use_outer_click';
 // import HorizontalRelativeLineGraph from '../components/horizontal_relative_line_graph/horizontal_relative_line_graph';
 import PositionLineGraph from '../components/position_line_graph/position_line_graph';
 import RippleButton from '../components/ripple_button/ripple_button';
+import TradingLineGraphChart from '../components/trading_line_graph_chart/trading_line_graph_chart';
 
 const Trial = () => {
   const {
@@ -110,6 +111,12 @@ const Trial = () => {
           tickerSelectorModalClickHandler={tickerBoxClickHandler}
         />{' '} */}
         {/* <RippleButton className="bg-blue-400">Ripple</RippleButton> */}
+        <TradingLineGraphChart
+          strokeColor={['#29C1E1']}
+          dataArray={[1230, 1272, 1120, 1265, 1342, 1299]}
+          lineGraphWidth={'900'}
+          annotatedValue={1324.4}
+        />
       </div>
     </>
   );

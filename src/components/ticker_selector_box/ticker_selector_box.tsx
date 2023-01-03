@@ -5,6 +5,7 @@ import Link from 'next/link';
 import {useState} from 'react';
 import CryptoCard from '../card/crypto_card';
 
+// TODO: useContext
 interface ITickerSelectorBox {
   tickerSelectorBoxRef: React.RefObject<HTMLDivElement>;
   tickerSelectorBoxVisible: boolean;
@@ -304,12 +305,17 @@ const TickerSelectorBox = ({
   };
 
   function getEthStarred(bool: boolean) {
-    favoritesHandler(0, bool);
+    // favoritesHandler(0, bool);
     TRADING_CRYPTO_DATA[0].starred = bool;
 
     setFavorites(() => {
       return TRADING_CRYPTO_DATA.filter(each => each.starred);
     });
+
+    // console.log(
+    //   'find object in array:',
+    //   TRADING_CRYPTO_DATA.find(each => each.currency === 'ETH')
+    // );
   }
 
   function getBtcStarred(bool: boolean) {

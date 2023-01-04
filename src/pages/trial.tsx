@@ -110,10 +110,16 @@ const Trial = () => {
           tickerSelectorModalVisible={tickerBoxVisible}
           tickerSelectorModalClickHandler={tickerBoxClickHandler}
         />{' '} */}
-        <RippleButton className="rounded-md bg-blue-400 px-8 py-3 transition-all hover:opacity-90 ">
+        <RippleButton
+          buttonType="button"
+          className="rounded-md bg-blue-400 px-8 py-3 transition-all hover:opacity-90 "
+        >
           Ripple Trial Btn
         </RippleButton>
-        <RippleButton className="rounded-md bg-tidebitTheme px-5 py-2 transition-all hover:opacity-90 ">
+        <RippleButton
+          buttonType="button"
+          className="rounded-md bg-tidebitTheme px-5 py-2 transition-all hover:opacity-90 "
+        >
           Wallet Connect
         </RippleButton>
 

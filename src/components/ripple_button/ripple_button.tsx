@@ -3,13 +3,20 @@ import {useEffect, useRef} from 'react';
 interface IRippleButtonProps {
   className?: string;
   buttonStyle?: string;
-  children: React.ReactNode;
+  children: React.ReactNode | string;
+  buttonType: 'button' | 'submit' | 'reset';
 }
 
 // interface RefObject<T> {
 //   readonly current: T | null;
 // }
-const RippleButton = ({className, buttonStyle, children}: IRippleButtonProps) => {
+const RippleButton = ({
+  className,
+  buttonStyle,
+  children,
+  buttonType: buttonType = 'button',
+  ...otherProps
+}: IRippleButtonProps) => {
   const buttonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
@@ -72,7 +79,7 @@ const RippleButton = ({className, buttonStyle, children}: IRippleButtonProps) =>
 
   return (
     <div>
-      <button className={`${className}`} type="button" ref={buttonRef}>
+      <button className={`${className}`} type={buttonType} ref={buttonRef} {...otherProps}>
         {children}
       </button>
       {/* <Image ref={buttonRef} src="/elements/group_15198@2x.png" width={512} height={512} /> */}

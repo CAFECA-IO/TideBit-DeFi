@@ -1,4 +1,5 @@
 import React from 'react';
+import RippleButton from '../ripple_button/ripple_button';
 
 interface ITideButton {
   children: React.ReactNode;
@@ -20,12 +21,13 @@ const TideButton = ({children, isHover = false, isFocus = false, ...otherProps}:
     `focus:ring-cyan-500 focus:ring-offset-cyan-200 ease-in duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2`;
 
   return (
-    <button
-      {...otherProps}
+    <RippleButton
+      buttonType="button"
       className={`${otherProps?.className} ${hoverStyle} ${focusStyle} mt-4 rounded border-0 bg-tidebitTheme py-2 px-5 text-base text-white transition-colors duration-300 hover:cursor-pointer hover:bg-cyan-600 focus:outline-none md:mt-0`}
+      {...otherProps}
     >
       {children}
-    </button>
+    </RippleButton>
   );
 };
 

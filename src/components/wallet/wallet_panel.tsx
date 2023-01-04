@@ -1683,7 +1683,7 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
   ) : (
     <TideButton
       onClick={clickHandler}
-      className={`mt-4 rounded border-0 bg-tidebitTheme py-2 px-5 text-base text-white hover:bg-cyan-600 focus:outline-none md:mt-0`}
+      className={`mt-4 rounded border-0 bg-tidebitTheme py-2 px-5 text-base text-white transition-all hover:opacity-90 md:mt-0`}
     >
       {/* Wallet Connect */}
       {t('nav_bar.WalletConnect')}

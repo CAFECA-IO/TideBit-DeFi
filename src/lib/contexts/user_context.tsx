@@ -1,12 +1,20 @@
 import React, {useContext, useState, useEffect, createContext} from 'react';
 
-interface IUser {
+const SAMPLE_USER = {
+  id: 1,
+  name: 'Tidebit DeFi Test User',
+  address: ['0xb54898DB1250A6a629E5B566367E9C60a7Dd6C30'],
+  favoriteTickers: ['MKR'],
+};
+
+export interface IUser {
+  id: number;
   name: string;
   // tidebitAccount: string;
   // email: string;
-  // address: string[];
+  address: string[];
   // avatar: string;
-  favoriteList: string[];
+  favoriteTickers: string[];
   // availableBalance: number;
   // lockedBalance: number;
   // profitOrLoss: {timeSpan: string; amount: number; profitOrLoss: string}[];
@@ -15,11 +23,11 @@ interface IUser {
   // positionList: {status: string; ticker: string; amount: number; price: number}[];
 }
 
-interface IUserProvider {
+export interface IUserProvider {
   children: React.ReactNode;
 }
 
-interface IUserContext {
+export interface IUserContext {
   user: IUser[] | null;
   setUser: (user: IUser[] | null) => void;
 }
@@ -30,7 +38,7 @@ export const UserContext = createContext<IUserContext | null>({
 });
 
 export const UserProvider = ({children}: IUserProvider) => {
-  const [user, setUser] = useState<IUser[] | null>([]);
+  const [user, setUser] = useState<IUser[] | null>([SAMPLE_USER]);
   // const [user, setUser] = useState<IUserContext>(null);
   const defaultValue = {user, setUser};
   // useEffect(() => {

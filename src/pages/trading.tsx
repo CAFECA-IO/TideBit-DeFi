@@ -14,6 +14,7 @@ const Trading = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
+      {/* TODO: `Context` detecting the width of browser and displaying different layout */}
       <NavBar />
 
       <main>

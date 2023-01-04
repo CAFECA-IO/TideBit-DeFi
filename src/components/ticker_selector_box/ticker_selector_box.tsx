@@ -5,6 +5,7 @@ import Link from 'next/link';
 import {useContext, useState} from 'react';
 import CryptoCard from '../card/crypto_card';
 import {MarketContext, IMarketContext, IMarketProvider} from '../../lib/contexts/market_context';
+import {UserContext, IUserContext} from '../../lib/contexts/user_context';
 
 // TODO: useContext
 interface ITickerSelectorBox {
@@ -281,6 +282,8 @@ const TickerSelectorBox = ({
 
   const {availableTickers} = useContext(MarketContext) as IMarketContext;
   // console.log('availableTickers:', availableTickers);
+  const {user} = useContext(UserContext) as IUserContext;
+  // console.log('user:', user && user[0]?.favoriteTickers);
 
   const favoritesHandler = (index: number, bool: boolean) => {
     // // TODO: 這樣會製造出新的陣列，但是沒有改變原本的 starred 狀態

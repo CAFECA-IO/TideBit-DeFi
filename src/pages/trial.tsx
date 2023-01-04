@@ -111,12 +111,12 @@ const Trial = () => {
           tickerSelectorModalClickHandler={tickerBoxClickHandler}
         />{' '} */}
         {/* <RippleButton className="bg-blue-400">Ripple</RippleButton> */}
-        <TradingLineGraphChart
+        {/* <TradingLineGraphChart
           strokeColor={['#29C1E1']}
           dataArray={[1230, 1272, 1120, 1265, 1342, 1299]}
           lineGraphWidth={'900'}
           annotatedValue={1324.4}
-        />
+        /> */}
       </div>
     </>
   );

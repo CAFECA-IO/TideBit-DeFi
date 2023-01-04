@@ -719,6 +719,7 @@ const TickerSelectorBox = ({
           if (each.currency === user[0].favoriteTickers[i]) {
             each.starred = true;
             // console.log('cryptoCard.starred: ', each.currency);
+            // setFavorites(previous=>[...previous, each])
             return each;
           }
         }
@@ -767,23 +768,45 @@ const TickerSelectorBox = ({
       );
     });
 
-  const displayedFavorites = STARRED_TRADING_CRYPTO_DATA.filter(cryptoCard => {
-    if (!user) return;
-    // console.log('in displayedFavorites `filter` ');
-    for (let i = 0; i < user[0].favoriteTickers.length; i++) {
-      if (cryptoCard.currency === user[0].favoriteTickers[i]) {
-        return cryptoCard;
+  const displayedFavorites = allCards
+    .filter(cryptoCard => {
+      if (!user) return;
+      // console.log('in displayedFavorites `filter` ');
+      for (let i = 0; i < user[0].favoriteTickers.length; i++) {
+        if (cryptoCard.currency === user[0].favoriteTickers[i]) {
+          cryptoCard.starred = true;
+          // console.log('cryptoCard.starred: ', cryptoCard.currency);
+          return cryptoCard;
+        }
       }
-    }
-  }).map((cryptoCard, i) => {
-    if (i === 0) {
+    })
+    .map((cryptoCard, i) => {
+      if (cryptoCard.starred !== true) return;
+      if (i === 0) {
+        return (
+          <CryptoCard
+            key={i}
+            className="mt-4 ml-4"
+            star={cryptoCard.star}
+            starColor={cryptoCard.starColor}
+            starred={true}
+            getStarredState={cryptoCard.getStarredStateCallback}
+            chain={cryptoCard.chain}
+            currency={cryptoCard.currency}
+            price={cryptoCard.price}
+            fluctuating={cryptoCard.fluctuating}
+            gradientColor={cryptoCard.gradientColor}
+            tokenImg={cryptoCard.tokenImg}
+          />
+        );
+      }
+
       return (
         <CryptoCard
           key={i}
-          className="mt-4 ml-4"
           star={cryptoCard.star}
           starColor={cryptoCard.starColor}
-          starred={true}
+          starred={cryptoCard.starred}
           getStarredState={cryptoCard.getStarredStateCallback}
           chain={cryptoCard.chain}
           currency={cryptoCard.currency}
@@ -793,24 +816,7 @@ const TickerSelectorBox = ({
           tokenImg={cryptoCard.tokenImg}
         />
       );
-    }
-
-    return (
-      <CryptoCard
-        key={i}
-        star={cryptoCard.star}
-        starColor={cryptoCard.starColor}
-        starred={cryptoCard.starred}
-        getStarredState={cryptoCard.getStarredStateCallback}
-        chain={cryptoCard.chain}
-        currency={cryptoCard.currency}
-        price={cryptoCard.price}
-        fluctuating={cryptoCard.fluctuating}
-        gradientColor={cryptoCard.gradientColor}
-        tokenImg={cryptoCard.tokenImg}
-      />
-    );
-  });
+    });
 
   // const displayedFavorites = TRADING_CRYPTO_DATA_COMPONENTS.filter(
   //   (cryptoCard: {label: string; content: JSX.Element}) => {

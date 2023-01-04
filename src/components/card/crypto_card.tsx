@@ -46,8 +46,8 @@ const CryptoCard = ({
   currency = '',
   price = 0,
   fluctuating = -1,
-  star = false,
-  starred = false,
+  star,
+  starred,
   starColor,
   getStarredState: getStarredState,
   ...otherProps

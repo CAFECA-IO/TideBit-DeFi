@@ -12,7 +12,8 @@ const Chart = dynamic(() => import('react-apexcharts'), {ssr: false});
 
 interface ILineGraphProps {
   strokeColor: string[];
-  dataArray: (number | null)[];
+  // dataArray: (number | null)[];
+  dataArray: {x: Date; y: (number | null)[]}[];
   lineGraphWidth: string;
   lineGraphHeight: string;
   annotatedValue: number;
@@ -78,7 +79,7 @@ export default function TradingLineGraphChart({
           colors: TRADING_CHART_BORDER_COLOR,
         },
       },
-      type: 'numeric',
+      type: 'datetime',
     },
     yaxis: {
       axisBorder: {show: true, color: TRADING_CHART_BORDER_COLOR},
@@ -96,9 +97,11 @@ export default function TradingLineGraphChart({
     },
     tooltip: {
       enabled: true,
-      // x: {
-      //   show: true,
-      // },
+      fillSeriesColor: false,
+      theme: 'dark',
+      x: {
+        show: true,
+      },
     },
     // Horizontal dash line
     // annotations: {
@@ -198,7 +201,7 @@ export default function TradingLineGraphChart({
     },
     series: [
       {
-        name: 'series-1',
+        name: 'price',
         data: [...dataArray],
       },
     ],

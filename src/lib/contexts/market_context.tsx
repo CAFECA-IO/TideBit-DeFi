@@ -8,7 +8,7 @@ export interface IMarketContext {
   availableTickers: string[] | null;
 }
 
-export const MarketContext = createContext<IMarketContext | null>({
+export const MarketContext = createContext<IMarketContext>({
   availableTickers: null,
 });
 

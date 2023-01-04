@@ -2,17 +2,17 @@ import React, {useContext, useState, useEffect, createContext} from 'react';
 
 interface IUser {
   name: string;
-  tidebitAccount: string;
-  email: string;
-  address: string[];
-  avatar: string;
+  // tidebitAccount: string;
+  // email: string;
+  // address: string[];
+  // avatar: string;
   favoriteList: string[];
-  availableBalance: number;
-  lockedBalance: number;
-  profitOrLoss: {timeSpan: string; amount: number; profitOrLoss: string}[];
+  // availableBalance: number;
+  // lockedBalance: number;
+  // profitOrLoss: {timeSpan: string; amount: number; profitOrLoss: string}[];
   // signature: {type:string; data: string}[];
-  signServiceTerms: boolean;
-  position: {status: string; ticker: string; amount: number; price: number}[];
+  // signServiceTerms: boolean;
+  // positionList: {status: string; ticker: string; amount: number; price: number}[];
 }
 
 interface IUserProvider {
@@ -32,12 +32,12 @@ export const UserContext = createContext<IUserContext | null>({
 export const UserProvider = ({children}: IUserProvider) => {
   const [user, setUser] = useState<IUser[] | null>([]);
   // const [user, setUser] = useState<IUserContext>(null);
-  const defaultValue = {user};
+  const defaultValue = {user, setUser};
   // useEffect(() => {
   //   const user = localStorage.getItem('user');
   //   setUser(user);
   // }, []);
 
   // FIXME: 'setUser' is missing in type '{ user: IUser[] | null; }'
-  // return <UserContext.Provider value={defaultValue}>{children}</UserContext.Provider>;
+  return <UserContext.Provider value={defaultValue}>{children}</UserContext.Provider>;
 };

@@ -515,12 +515,19 @@ const TickerSelectorBox = ({
   const onSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const searchString = event.target.value.toLocaleLowerCase();
     setSearches(searchString);
+
+    // // TODO: 這樣寫，會顯示上一部的搜尋結果
+    // const newSearchResult = TRADING_CRYPTO_DATA.filter(each => {
+    //   return each.chain.toLocaleLowerCase().includes(searches || '');
+    // });
+    // setFilteredCards(newSearchResult);
   };
 
-  const newSearchResult = allCards.filter(each => {
+  const newSearchResult = TRADING_CRYPTO_DATA.filter(each => {
     return each.chain.toLocaleLowerCase().includes(searches || '');
   });
 
+  // TODO: 搜尋完後關掉 ticker box 會顯示剛剛的搜尋結果但是input是空的
   useEffect(() => {
     setFilteredCards(newSearchResult);
   }, [searches]);
@@ -540,7 +547,13 @@ const TickerSelectorBox = ({
     favoriteTickersHandler('ETH');
     // console.log(user && user[0].favoriteTickers);
 
-    TRADING_CRYPTO_DATA[0].starred = bool;
+    // TRADING_CRYPTO_DATA[0].starred = bool;
+    TRADING_CRYPTO_DATA.find(each => each.currency === 'ETH')!.starred = bool;
+    // console.log(
+    //   'eth clicked',
+    //   TRADING_CRYPTO_DATA.find(each => each.currency === 'ETH')
+    // );
+
     setFavorites(() => {
       return TRADING_CRYPTO_DATA.filter(each => each.starred);
     });
@@ -906,6 +919,7 @@ const TickerSelectorBox = ({
               <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center"></div>
               <input
                 type="search"
+                value={searches}
                 className="absolute right-0 block w-430px rounded-full bg-darkGray2 p-3 pl-10 text-sm text-white focus:border-blue-500 focus:outline-none focus:ring-0 focus:ring-blue-500"
                 placeholder="Search Cryptocurrencies"
                 required

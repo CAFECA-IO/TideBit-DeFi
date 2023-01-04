@@ -2,7 +2,7 @@ import {ImCross} from 'react-icons/im';
 import Image from 'next/image';
 import TideButton from '../tide_button/tide_button';
 import Link from 'next/link';
-import {useContext, useState} from 'react';
+import {useContext, useEffect, useState} from 'react';
 import CryptoCard from '../card/crypto_card';
 import {
   MarketContext,
@@ -59,7 +59,6 @@ const TickerSelectorBox = ({
   tickerSelectorBoxVisible: tickerSelectorBoxVisible,
   tickerSelectorBoxClickHandler: tickerSelectorBoxClickHandler,
 }: ITickerSelectorBox) => {
-  // {name: '', component: ()}
   const emitToast = ({message}: IToastType) => {
     return toast.info(`${message}`, {
       position: 'bottom-left',
@@ -505,12 +504,28 @@ const TickerSelectorBox = ({
   const [favorites, setFavorites] = useState<ICryptoCardData[]>(STARRED_TRADING_CRYPTO_DATA);
   const [allCards, setAllCards] = useState<ICryptoCardData[]>(TRADING_CRYPTO_DATA);
 
-  const [searches, setSearches] = useState<string[]>([]);
+  const [searches, setSearches] = useState<string>();
 
   const {availableTickers} = useContext(MarketContext) as IMarketContext;
   // console.log('availableTickers:', availableTickers);
   const {user, favoriteTickersHandler} = useContext(UserContext) as IUserContext;
   // const {favoriteTickers} = user;
+  const [filteredCards, setFilteredCards] = useState<ICryptoCardData[]>(TRADING_CRYPTO_DATA);
+
+  const onSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const searchString = event.target.value.toLocaleLowerCase();
+    setSearches(searchString);
+  };
+
+  const newSearchResult = allCards.filter(each => {
+    return each.chain.toLocaleLowerCase().includes(searches || '');
+  });
+
+  useEffect(() => {
+    setFilteredCards(newSearchResult);
+  }, [searches]);
+
+  // console.log('newSearchResult:', newSearchResult);
 
   const favoritesHandler = (index: number, bool: boolean) => {
     TRADING_CRYPTO_DATA[index].starred = bool;
@@ -705,7 +720,7 @@ const TickerSelectorBox = ({
   const activeFavoriteTabStyle =
     activeTab == 'Favorite' ? 'bg-darkGray7 text-lightWhite' : 'bg-darkGray6 text-lightGray';
 
-  const displayedAllCryptoCards = allCards
+  const displayedAllCryptoCards = filteredCards
     .filter(each => {
       if (!availableTickers) return;
 
@@ -894,6 +909,7 @@ const TickerSelectorBox = ({
                 className="absolute right-0 block w-430px rounded-full bg-darkGray2 p-3 pl-10 text-sm text-white focus:border-blue-500 focus:outline-none focus:ring-0 focus:ring-blue-500"
                 placeholder="Search Cryptocurrencies"
                 required
+                onChange={onSearchChange}
               />
               <button
                 type="button"

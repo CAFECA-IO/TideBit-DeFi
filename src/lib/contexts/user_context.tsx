@@ -1,15 +1,15 @@
 import React, {useContext, useState, useEffect, createContext} from 'react';
 
 const SAMPLE_USER = {
-  id: 1,
-  name: 'Tidebit DeFi Test User',
+  id: '002',
+  username: 'Tidebit DeFi Test User',
   address: ['0xb54898DB1250A6a629E5B566367E9C60a7Dd6C30'],
-  favoriteTickers: ['MKR'],
+  favoriteTickers: ['MKR', 'XRP'],
 };
 
 export interface IUser {
-  id: number;
-  name: string;
+  id: string;
+  username: string;
   // tidebitAccount: string;
   // email: string;
   address: string[];

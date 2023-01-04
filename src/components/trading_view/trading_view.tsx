@@ -50,17 +50,6 @@ const TradingView = () => {
   // const randomArray = getRandomArray(18, 6582, 6612);
   // console.log('randomArray', randomArray);
 
-  const displayedCandlestickChartView = (
-    <div className="">
-      <Lottie className="ml-7 pt-12" animationData={spotAnimation} />
-      <CandlestickChart
-        strokeColor={[`#17BF88`]}
-        candlestickChartWidth="900"
-        candlestickChartHeight="400"
-      />
-    </div>
-  );
-
   const displayedTradingView =
     selectedChartType === 'candlestick' ? (
       <div className="relative">

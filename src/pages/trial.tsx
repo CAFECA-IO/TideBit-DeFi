@@ -110,7 +110,7 @@ const Trial = () => {
           tickerSelectorModalVisible={tickerBoxVisible}
           tickerSelectorModalClickHandler={tickerBoxClickHandler}
         />{' '} */}
-        <RippleButton
+        {/* <RippleButton
           buttonType="button"
           className="rounded-md bg-blue-400 px-8 py-3 transition-all hover:opacity-90 "
         >
@@ -121,7 +121,7 @@ const Trial = () => {
           className="rounded-md bg-tidebitTheme px-5 py-2 transition-all hover:opacity-90 "
         >
           Wallet Connect
-        </RippleButton>
+        </RippleButton> */}
 
         {/* <TradingLineGraphChart
           strokeColor={['#29C1E1']}

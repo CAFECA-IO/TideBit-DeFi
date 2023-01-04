@@ -523,6 +523,8 @@ const TickerSelectorBox = ({
   }
 
   function getLtcStarred(bool: boolean) {
+    favoriteTickersHandler('LTC');
+
     TRADING_CRYPTO_DATA[2].starred = bool;
 
     setFavorites(() => {
@@ -531,6 +533,8 @@ const TickerSelectorBox = ({
   }
 
   function getMaticStarred(bool: boolean) {
+    favoriteTickersHandler('MATIC');
+
     TRADING_CRYPTO_DATA[3].starred = bool;
 
     setFavorites(() => {
@@ -539,6 +543,8 @@ const TickerSelectorBox = ({
   }
 
   function getBnbStarred(bool: boolean) {
+    favoriteTickersHandler('BNB');
+
     TRADING_CRYPTO_DATA[4].starred = bool;
 
     setFavorites(() => {
@@ -547,6 +553,8 @@ const TickerSelectorBox = ({
   }
 
   function getSolStarred(bool: boolean) {
+    favoriteTickersHandler('SOL');
+
     TRADING_CRYPTO_DATA[5].starred = bool;
 
     setFavorites(() => {
@@ -555,6 +563,8 @@ const TickerSelectorBox = ({
   }
 
   function getShibStarred(bool: boolean) {
+    favoriteTickersHandler('SHIB');
+
     TRADING_CRYPTO_DATA[6].starred = bool;
 
     setFavorites(() => {
@@ -563,6 +573,8 @@ const TickerSelectorBox = ({
   }
 
   function getDotStarred(bool: boolean) {
+    favoriteTickersHandler('DOT');
+
     TRADING_CRYPTO_DATA[7].starred = bool;
 
     setFavorites(() => {
@@ -571,6 +583,8 @@ const TickerSelectorBox = ({
   }
 
   function getAdaStarred(bool: boolean) {
+    favoriteTickersHandler('ADA');
+
     TRADING_CRYPTO_DATA[8].starred = bool;
 
     setFavorites(() => {
@@ -579,6 +593,8 @@ const TickerSelectorBox = ({
   }
 
   function getAvaxStarred(bool: boolean) {
+    favoriteTickersHandler('AVAX');
+
     TRADING_CRYPTO_DATA[9].starred = bool;
 
     setFavorites(() => {
@@ -587,6 +603,8 @@ const TickerSelectorBox = ({
   }
 
   function getDaiStarred(bool: boolean) {
+    favoriteTickersHandler('Dai');
+
     TRADING_CRYPTO_DATA[10].starred = bool;
 
     setFavorites(() => {
@@ -595,6 +613,8 @@ const TickerSelectorBox = ({
   }
 
   function getMkrStarred(bool: boolean) {
+    favoriteTickersHandler('MKR');
+
     TRADING_CRYPTO_DATA[11].starred = bool;
 
     setFavorites(() => {
@@ -603,6 +623,8 @@ const TickerSelectorBox = ({
   }
 
   function getXrpStarred(bool: boolean) {
+    favoriteTickersHandler('XRP');
+
     TRADING_CRYPTO_DATA[12].starred = bool;
 
     setFavorites(() => {
@@ -611,6 +633,8 @@ const TickerSelectorBox = ({
   }
 
   function getDogeStarred(bool: boolean) {
+    favoriteTickersHandler('DOGE');
+
     TRADING_CRYPTO_DATA[13].starred = bool;
 
     setFavorites(() => {
@@ -619,6 +643,8 @@ const TickerSelectorBox = ({
   }
 
   function getUniStarred(bool: boolean) {
+    favoriteTickersHandler('UNI');
+
     TRADING_CRYPTO_DATA[14].starred = bool;
 
     setFavorites(() => {
@@ -627,6 +653,8 @@ const TickerSelectorBox = ({
   }
 
   function getFlowStarred(bool: boolean) {
+    favoriteTickersHandler('Flow');
+
     TRADING_CRYPTO_DATA[15].starred = bool;
 
     setFavorites(() => {
@@ -704,9 +732,9 @@ const TickerSelectorBox = ({
       );
     });
 
-  const displayedFavorites = favorites
+  const displayedFavorites = allCards
     .filter(cryptoCard => {
-      if (!user) return;
+      if (!user || !user[0].favoriteTickers) return;
       if (cryptoCard.starred !== true) return;
 
       for (let i = 0; i < user[0].favoriteTickers.length; i++) {

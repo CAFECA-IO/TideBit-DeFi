@@ -124,3 +124,5 @@ src/constants/walletconnect.js
 # file transfer by-product
 *.Identifier
 .DS_Store
+
+.vscode

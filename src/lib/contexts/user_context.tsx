@@ -4,7 +4,7 @@ const SAMPLE_USER = {
   id: '002',
   username: 'Tidebit DeFi Test User',
   address: ['0xb54898DB1250A6a629E5B566367E9C60a7Dd6C30'],
-  favoriteTickers: ['ETH', 'MKR', 'XRP'],
+  favoriteTickers: null,
 };
 
 export interface IUser {
@@ -14,7 +14,7 @@ export interface IUser {
   // email: string;
   address: string[];
   // avatar: string;
-  favoriteTickers: string[];
+  favoriteTickers: string[] | null;
 
   // availableBalance: number;
   // lockedBalance: number;
@@ -47,15 +47,51 @@ export const UserProvider = ({children}: IUserProvider) => {
     if (!user) return;
 
     // ticker handler
-    if (user[0].favoriteTickers.includes(newFavorite)) {
-      setUser([
+    if (user[0]?.favoriteTickers?.includes(newFavorite)) {
+      // console.log('included, ready to remove: ', newFavorite);
+
+      // setUser(previousData => {
+      //   if (!previousData) return;
+      //   const updated = [...previousData];
+      //   updated[0].favoriteTickers = [...previousData[0].favoriteTickers, newFavorite];
+      // });
+      const newUserArray = [
         {
           ...user[0],
           favoriteTickers: user[0].favoriteTickers.filter(ticker => ticker !== newFavorite),
         },
-      ]);
+      ];
+      // console.log('new user array: ', newUserArray);
+      setUser(newUserArray);
+      // console.log('REAL user array in context: ', user);
+
+      // setUser([
+      //   {
+      //     ...user[0],
+      //     favoriteTickers: user[0].favoriteTickers.filter(ticker => ticker !== newFavorite),
+      //   },
+      // ]);
+      // addFavorite(newFavorite);
     } else {
-      setUser([{...user[0], favoriteTickers: [...user[0].favoriteTickers, newFavorite]}]);
+      // console.log('not included, ready to add: ', newFavorite);
+      // <Toast content={`not included, ready to add:  ${newFavorite}`} />;
+
+      if (!user[0].favoriteTickers) {
+        const newUserArray = [{...user[0], favoriteTickers: [newFavorite]}];
+        // console.log('new user array: ', newUserArray);
+        setUser(newUserArray);
+        // console.log('REAL user array in context: ', user);
+      } else {
+        const newUserArray = [
+          {...user[0], favoriteTickers: [...user[0].favoriteTickers, newFavorite]},
+        ];
+
+        // console.log('new user array: ', newUserArray);
+        setUser(newUserArray);
+        // console.log('REAL user array in context: ', user);
+      }
+
+      // removeFavorite(newFavorite);
     }
 
     // console.log('receive favoriteTickers: ', newFavorite);

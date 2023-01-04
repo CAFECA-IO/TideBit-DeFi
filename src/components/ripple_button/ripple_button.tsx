@@ -9,9 +9,8 @@ interface IRippleButtonProps {
 // interface RefObject<T> {
 //   readonly current: T | null;
 // }
-
-function RippleButton({className, buttonStyle, children}: IRippleButtonProps) {
-  const buttonRef = useRef<T>(null);
+const RippleButton = ({className, buttonStyle, children}: IRippleButtonProps) => {
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     // // const box: Element | null
@@ -79,6 +78,6 @@ function RippleButton({className, buttonStyle, children}: IRippleButtonProps) {
       {/* <Image ref={buttonRef} src="/elements/group_15198@2x.png" width={512} height={512} /> */}
     </div>
   );
-}
+};
 
 export default RippleButton;

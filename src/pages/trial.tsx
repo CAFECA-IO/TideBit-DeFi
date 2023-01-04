@@ -7,6 +7,8 @@ import useOuterClick from '../lib/hooks/use_outer_click';
 import PositionLineGraph from '../components/position_line_graph/position_line_graph';
 import RippleButton from '../components/ripple_button/ripple_button';
 import TradingLineGraphChart from '../components/trading_line_graph_chart/trading_line_graph_chart';
+import {ToastContainer, toast} from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Trial = () => {
   const {
@@ -17,6 +19,20 @@ const Trial = () => {
 
   const tickerBoxClickHandler = () => {
     setTickerBoxVisible(!tickerBoxVisible);
+  };
+
+  const notifyFunction = () => {
+    const text = `Hello World`;
+    return toast.info(`${text}`, {
+      position: 'bottom-left',
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: false,
+      progress: undefined,
+      theme: 'dark',
+    });
   };
 
   const flowTest = (
@@ -91,7 +107,6 @@ const Trial = () => {
             />
           </div>
         </div> */}
-
         {/* Divider */}
         <div className="my-auto h-px w-full rounded bg-white/50"></div>
         {/* -------------Open position trial------------- */}
@@ -122,13 +137,27 @@ const Trial = () => {
         >
           Wallet Connect
         </RippleButton> */}
-
         {/* <TradingLineGraphChart
           strokeColor={['#29C1E1']}
           dataArray={[1230, 1272, 1120, 1265, 1342, 1299]}
           lineGraphWidth={'900'}
           annotatedValue={1324.4}
         /> */}
+        <button onClick={notifyFunction}>Notify!</button>
+
+        <ToastContainer
+          position="bottom-left"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable={false}
+          pauseOnHover
+          theme="dark"
+          limit={10}
+        />
       </div>
     </>
   );

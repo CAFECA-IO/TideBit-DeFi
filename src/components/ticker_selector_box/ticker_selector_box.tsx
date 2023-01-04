@@ -11,6 +11,9 @@ import {
   IMarketCryptoCardData,
 } from '../../lib/contexts/market_context';
 import {UserContext, IUserContext} from '../../lib/contexts/user_context';
+import {ToastContainer, toast, ToastOptions, useToast} from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import {DEV_TOAST_CONFIG} from '../../constants/display';
 
 // TODO: useContext
 interface ITickerSelectorBox {
@@ -46,12 +49,30 @@ interface ICryptoCardDataArray {
   // element: ICryptoCardData;
 }
 
+interface IToastType {
+  // type: 'info' | 'success' | 'warning' | 'error' | 'default';
+  message: string;
+}
+
 const TickerSelectorBox = ({
   tickerSelectorBoxRef: tickerSelectorBoxRef,
   tickerSelectorBoxVisible: tickerSelectorBoxVisible,
   tickerSelectorBoxClickHandler: tickerSelectorBoxClickHandler,
 }: ITickerSelectorBox) => {
   // {name: '', component: ()}
+  const emitToast = ({message}: IToastType) => {
+    return toast.info(`${message}`, {
+      position: 'bottom-left',
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: false,
+      progress: undefined,
+      theme: 'dark',
+    });
+  };
+
   const defaultFavCrypto = [
     {
       label: '',
@@ -500,6 +521,7 @@ const TickerSelectorBox = ({
   };
 
   function getEthStarred(bool: boolean) {
+    emitToast({message: 'ETH star clicked'});
     favoriteTickersHandler('ETH');
     // console.log(user && user[0].favoriteTickers);
 
@@ -517,6 +539,7 @@ const TickerSelectorBox = ({
   // console.log('after clicking star:', user && user[0].favoriteTickers);
 
   function getBtcStarred(bool: boolean) {
+    emitToast({message: 'BTC star clicked'});
     favoriteTickersHandler('BTC');
     // console.log('user data: ', user[0]);
 
@@ -528,6 +551,7 @@ const TickerSelectorBox = ({
   }
 
   function getLtcStarred(bool: boolean) {
+    emitToast({message: 'LTC star clicked'});
     favoriteTickersHandler('LTC');
 
     TRADING_CRYPTO_DATA[2].starred = bool;
@@ -907,7 +931,24 @@ const TickerSelectorBox = ({
     </>
   ) : null;
 
-  return <div>{isDisplayedTickerSelectorBox}</div>;
+  return (
+    <div>
+      {isDisplayedTickerSelectorBox}
+      <ToastContainer
+        position="bottom-left"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable={false}
+        pauseOnHover
+        theme="dark"
+        limit={10}
+      />
+    </div>
+  );
 };
 
 export default TickerSelectorBox;

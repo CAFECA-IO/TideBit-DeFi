@@ -2,7 +2,13 @@
   --color1: #404a55;
   --colorLoss: #e86d6d;
   --colorProfit: #17bf88;
+  /* --toastify-color-info: #a5c4f3;
+  --toastify-color-progress-info: var(--toastify-color-info); */
 }
+
+/* .Toastify__progress-bar--info {
+  background-color: #a5c4f3;
+} */
 
 /* offset-x | offset-y | blur-radius | color */
 /* 1px 0 3px */

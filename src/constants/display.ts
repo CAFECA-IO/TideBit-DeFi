@@ -2,6 +2,28 @@
 //   setTimeout(() => setProcessModalVisible(false), 1000);
 // };
 
+export interface IDEV_TOAST_CONFIG {
+  position: string;
+  autoClose: number;
+  hideProgressBar: boolean;
+  closeOnClick: boolean;
+  pauseOnHover: boolean;
+  draggable: boolean;
+  progress: undefined;
+  theme: string;
+}
+
+export const DEV_TOAST_CONFIG = {
+  position: 'bottom-left',
+  autoClose: 3000,
+  hideProgressBar: false,
+  closeOnClick: true,
+  pauseOnHover: true,
+  draggable: false,
+  progress: undefined,
+  theme: 'dark',
+};
+
 export const DELAYED_HIDDEN_SECONDS = 1000;
 
 export const TRADING_INPUT_STEP = 0.01;

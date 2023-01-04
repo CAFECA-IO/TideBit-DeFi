@@ -21,7 +21,7 @@ const TradingChartSwitch = ({
   // const [twelveHrsButton, setTwelveHrsButton] = useState(false);
   // const [oneDayButton, setOneDayButton] = useState(false);
 
-  const timeIntervalButtonStyle = 'mr-1 rounded-sm bg-transparent px-8 transition-all duration-300';
+  const timeIntervalButtonStyle = 'mr-1 rounded-sm px-8 transition-all duration-300';
 
   const timeIntervalButtonClickedStyle = `bg-tidebitTheme hover:bg-tidebitTheme ${timeIntervalButtonStyle}`;
 

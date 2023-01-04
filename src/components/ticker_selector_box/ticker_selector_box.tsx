@@ -508,9 +508,10 @@ const TickerSelectorBox = ({
   //   return <div key={index}>{cryptoCard.content}</div>;
   // });
 
+  // if `availableTickers` is `null`, rendering blank ticker box
   const displayedAllCryptoCards = allCards
     .filter(each => {
-      if (!availableTickers) return 'no tickers';
+      if (!availableTickers) return;
       for (let i = 0; i < availableTickers.length; i++) {
         if (each.currency === (availableTickers && availableTickers[i])) {
           return each;

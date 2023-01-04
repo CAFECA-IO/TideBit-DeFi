@@ -4,7 +4,12 @@ import TideButton from '../tide_button/tide_button';
 import Link from 'next/link';
 import {useContext, useState} from 'react';
 import CryptoCard from '../card/crypto_card';
-import {MarketContext, IMarketContext, IMarketProvider} from '../../lib/contexts/market_context';
+import {
+  MarketContext,
+  IMarketContext,
+  IMarketProvider,
+  IMarketCryptoCardData,
+} from '../../lib/contexts/market_context';
 import {UserContext, IUserContext} from '../../lib/contexts/user_context';
 
 // TODO: useContext
@@ -682,10 +687,13 @@ const TickerSelectorBox = ({
 
       if (user && user[0].favoriteTickers) {
         for (let i = 0; i < user[0].favoriteTickers.length; i++) {
-          if (each.currency === user[0].favoriteTickers[i]) {
-            each.starred = true;
-            return each;
-          }
+          return user[0].favoriteTickers.find(
+            (fav: IMarketCryptoCardData) => fav.currency === each.currency
+          );
+          // if (each.currency === user[0].favoriteTickers.find((each: ICryptoCardData) => each)) {
+          //   each.starred = true;
+          //   return each;
+          // }
         }
       }
 
@@ -737,12 +745,12 @@ const TickerSelectorBox = ({
       if (!user || !user[0].favoriteTickers) return;
       if (cryptoCard.starred !== true) return;
 
-      for (let i = 0; i < user[0].favoriteTickers.length; i++) {
-        if (cryptoCard.currency === user[0].favoriteTickers[i]) {
-          cryptoCard.starred = true;
-          return [cryptoCard];
-        }
-      }
+      // for (let i = 0; i < user[0].favoriteTickers.length; i++) {
+      //   if (cryptoCard.currency === user[0].favoriteTickers[i]) {
+      //     cryptoCard.starred = true;
+      //     return [cryptoCard];
+      //   }
+      // }
     })
     .map((cryptoCard, i) => {
       if (cryptoCard.starred !== true) return;

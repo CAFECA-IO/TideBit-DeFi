@@ -1,7 +1,9 @@
 import Image from 'next/image';
-import {useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
+// import useRippleAnimation from '../../lib/hooks/use_ripple_animation';
+import {config} from 'process';
 
-const TestReserveRatio = () => {
+const TrialComponent = () => {
   const [tooltipStatus, setTooltipStatus] = useState(0);
 
   // const bgNextTailwindImage = (
@@ -489,14 +491,73 @@ const TestReserveRatio = () => {
     </>
   );
 
+  // const buttonRef = useRef<HTMLDivElement | undefined>();
+  // // useRippleAnimation((element = buttonRef), config);
+
+  // useEffect(() => {
+  //   const applyContainerProperties = () => {
+  //     if (!buttonRef) return;
+  //     buttonRef?.current?.classList.add('effectContainer');
+  //   };
+
+  //   // MouseEvent property
+  //   const applyStyles = (e: MouseEvent) => {
+  //     const {offsetX, offsetY} = e;
+  //     const {style} = buttonRef.current;
+  //     const sizeOffset = 50;
+
+  //     style.setProperty('--effect-top', `${offsetY - sizeOffset}px`);
+  //     style.setProperty('--effect-left', `${offsetX - sizeOffset}px`);
+  //   };
+
+  //   const onClick = (e: MouseEvent) => {
+  //     // if (buttonRef)
+  //     buttonRef?.current?.classList.remove('active');
+  //     applyStyles(e);
+
+  //     buttonRef?.current?.classList.add('active');
+
+  //     // setTimeout(() => {
+  //     //   buttonRef?.current.classList.add('active');
+  //     // }, 1);
+  //   };
+
+  //   applyContainerProperties();
+
+  //   // Add the event listener on mount
+  //   buttonRef?.current?.addEventListener('mouseup', onClick);
+
+  //   // Needed for referencing the ref in the return function
+  //   const cleanupRef = buttonRef?.current;
+
+  //   return () => {
+  //     // Remove the event listener on unmount
+  //     cleanupRef?.removeEventListener('mouseup', onClick);
+  //   };
+  // });
+
+  // const rippleButton = (
+  //   <div>
+  //     <button
+  //       className="rounded-md bg-lightRed px-8 py-2 transition-all"
+  //       type="button"
+  //       ref={buttonRef}
+  //     >
+  //       Click me
+  //     </button>
+  //     {/* <Image ref={buttonRef} src="/elements/group_15198@2x.png" width={512} height={512} /> */}
+  //   </div>
+  // );
+
   return (
     <>
       {/* {test2BgImage} */}
       {/* {testPopoverCom} */}
       {/* {anotherTooltipCom} */}
-      {tooltipCom1}
+      {/* {tooltipCom1} */}
+      {/* {rippleButton} */}
     </>
   );
 };
 
-export default TestReserveRatio;
+export default TrialComponent;

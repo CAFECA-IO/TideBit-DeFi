@@ -7,7 +7,7 @@ export const DELAYED_HIDDEN_SECONDS = 1000;
 export const TRADING_INPUT_STEP = 0.01;
 
 export const PROFIT_LOSS_COLOR_TYPE = {
-  profit: '#1AE2A0',
+  profit: '#17BF88',
   loss: '#E86D6D',
   tidebitTheme: '#29C1E1',
 };

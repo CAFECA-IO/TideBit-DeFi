@@ -26,7 +26,7 @@ const CryptoCategory = ({...otherProps}) => {
             price={1288.4}
             fluctuating={1.14}
             gradientColor="border-bluePurple/50 bg-black from-bluePurple/50 to-black"
-            tokenComponent={<img src="/elements/group_2371.svg" alt="eth" width={40} height={40} />}
+            tokenImg="/elements/group_2371.svg"
           />
           <CryptoCard
             chain="Bitcoin"
@@ -34,7 +34,7 @@ const CryptoCategory = ({...otherProps}) => {
             price={19848.8}
             gradientColor="border-lightOrange/50 bg-black from-lightOrange/50 to-black"
             fluctuating={3.46}
-            tokenComponent={<img src="/elements/group_2372.svg" width={40} height={40} />}
+            tokenImg="/elements/group_2372.svg"
           />
           <CryptoCard
             chain="Litecoin"
@@ -42,9 +42,7 @@ const CryptoCategory = ({...otherProps}) => {
             price={54.57}
             fluctuating={-3.46}
             gradientColor="border-lightGray2/50 bg-black from-lightGray2/50 to-black"
-            tokenComponent={
-              <img src="/elements/c5b7bda06ddfe2b3f59b37ed6bb65ab4.svg" alt="litecoin" />
-            }
+            tokenImg="/elements/c5b7bda06ddfe2b3f59b37ed6bb65ab4.svg"
           />
           <CryptoCard
             chain="Polygon"
@@ -52,9 +50,7 @@ const CryptoCategory = ({...otherProps}) => {
             price={0.82}
             fluctuating={-6.23}
             gradientColor="border-lightPurple/60 bg-black from-lightPurple/60 to-black"
-            tokenComponent={
-              <img src="/elements/9cc18b0cbe765b0a28791d253207f0c0.svg" alt="polygon" />
-            }
+            tokenImg="/elements/9cc18b0cbe765b0a28791d253207f0c0.svg"
           />
           <CryptoCard
             chain="BNB"
@@ -62,7 +58,7 @@ const CryptoCategory = ({...otherProps}) => {
             price={274.54}
             fluctuating={-6.23}
             gradientColor="border-lightYellow/60 bg-black from-lightYellow/50 to-black"
-            tokenComponent={<img src="/elements/group_2374.svg" alt="bnb" />}
+            tokenImg="/elements/group_2374.svg"
           />
           <CryptoCard
             chain="Solana"
@@ -70,7 +66,7 @@ const CryptoCategory = ({...otherProps}) => {
             price={28.41}
             fluctuating={1.14}
             gradientColor="border-lightPurple2/60 from-lightPurple2/60 to-black"
-            tokenComponent={<img src="/elements/group_2378.svg" alt="solana" />}
+            tokenImg="/elements/group_2378.svg"
           />
           <CryptoCard
             chain="Shiba Inu"
@@ -78,7 +74,7 @@ const CryptoCategory = ({...otherProps}) => {
             price={0.0000099}
             fluctuating={-3.46}
             gradientColor="border-lightRed1/50 from-lightRed1/50 to-black"
-            tokenComponent={<img src="/elements/group_2381.svg" alt="shiba inu" />}
+            tokenImg="/elements/group_2381.svg"
           />
           <CryptoCard
             chain="Polkadot"
@@ -86,7 +82,7 @@ const CryptoCategory = ({...otherProps}) => {
             price={5.92}
             fluctuating={3.46}
             gradientColor="border-lightPink/60 from-lightPink/60 to-black"
-            tokenComponent={<img src="/elements/group_2385.svg" alt="polkadot" />}
+            tokenImg="/elements/group_2385.svg"
           />
           <CryptoCard
             chain="Cardano"
@@ -94,7 +90,7 @@ const CryptoCategory = ({...otherProps}) => {
             price={0.3611}
             fluctuating={1.14}
             gradientColor="border-lightGreen1/60 from-lightGreen1/60 to-black"
-            tokenComponent={<img src="/elements/group_2388.svg" alt="cardano" />}
+            tokenImg="/elements/group_2388.svg"
           />
           <CryptoCard
             chain="Avalanche"
@@ -102,7 +98,7 @@ const CryptoCategory = ({...otherProps}) => {
             currency="AVAX"
             fluctuating={-6.23}
             gradientColor="border-lightRed2/50 from-lightRed2/50 to-black"
-            tokenComponent={<img src="/elements/group_2391.svg" alt="avax" />}
+            tokenImg="/elements/group_2391.svg"
           />
 
           {/* <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">

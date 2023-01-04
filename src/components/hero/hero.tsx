@@ -1,9 +1,10 @@
 import React from 'react';
+import Image from 'next/image';
 
 interface HeroProps {
   heading?: string | JSX.Element;
   content?: string;
-  img?: JSX.Element;
+  img: string;
 }
 
 const Hero = ({heading, content, img, ...otherProps}: HeroProps): JSX.Element => {
@@ -18,7 +19,7 @@ Moon hashtag pop-up try-hard offal truffaut
     : `Pour-over craft beer pug drinking vinegar live-edge gastropub, keytar
 neutra sustainable fingerstache kickstarter.`;
 
-  const displayedImg = img;
+  const displayedImg = <Image src={img} alt="img" width={1252} height={879} />;
 
   // const displayedImg = img ? (
   //   img

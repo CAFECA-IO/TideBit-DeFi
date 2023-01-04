@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import TickerSelectorModal from '../ticker_selector_modal/ticker_selector_modal';
+import TickerSelectorBox from '../ticker_selector_box/ticker_selector_box';
 import {CgArrowsExchange} from 'react-icons/cg';
 import useOuterClick from '../../lib/hooks/use_outer_click';
 
@@ -12,7 +12,7 @@ const TradingHeader = ({upOrDown, tradingVolume}: ITradingHeaderProps) => {
   if (upOrDown !== 'up' && upOrDown !== 'down') return <></>;
 
   // const [ticker, setTicker] = useState('ETH/USDT');
-  const [showTickerSelector, setShowTickerSelector] = useState(false);
+  // const [showTickerSelector, setShowTickerSelector] = useState(false);
   const {
     targetRef: tickerBoxRef,
     componentVisible: tickerBoxVisible,
@@ -21,6 +21,7 @@ const TradingHeader = ({upOrDown, tradingVolume}: ITradingHeaderProps) => {
 
   const tickerBoxClickHandler = () => {
     setTickerBoxVisible(!tickerBoxVisible);
+    // console.log('header clicked', !tickerBoxVisible);
   };
 
   const priceShadowColor = upOrDown === 'up' ? 'priceUpShadow' : 'priceDownShadow';
@@ -93,13 +94,14 @@ const TradingHeader = ({upOrDown, tradingVolume}: ITradingHeaderProps) => {
       <div className="flex flex-col space-y-5">
         {/* Ticker */}
         <div className="flex w-200px items-center space-x-3 text-center">
-          <div
+          <button
+            type="button"
             className="flex items-center space-x-3 text-center hover:cursor-pointer"
             onClick={tickerBoxClickHandler}
           >
             {ethIcon}
             {ethTitle}
-          </div>
+          </button>
 
           <div className="pl-0 hover:cursor-pointer">
             {' '}
@@ -128,10 +130,10 @@ const TradingHeader = ({upOrDown, tradingVolume}: ITradingHeaderProps) => {
   return (
     <div>
       {ethHeader}
-      <TickerSelectorModal
-        tickerSelectorModalRef={tickerBoxRef}
-        tickerSelectorModalVisible={tickerBoxVisible}
-        tickerSelectorModalClickHandler={tickerBoxClickHandler}
+      <TickerSelectorBox
+        tickerSelectorBoxRef={tickerBoxRef}
+        tickerSelectorBoxVisible={tickerBoxVisible}
+        tickerSelectorBoxClickHandler={tickerBoxClickHandler}
       />
     </div>
   );

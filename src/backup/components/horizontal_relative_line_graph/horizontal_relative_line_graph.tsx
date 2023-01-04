@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import dynamic from 'next/dynamic';
 import {ApexOptions} from 'apexcharts';
-import {INVISIBLE_STROKE_COLOR} from '../../constants/display';
+import {INVISIBLE_STROKE_COLOR} from '../../../constants/display';
 
 const Chart = dynamic(() => import('react-apexcharts'), {ssr: false});
 // const Chart = dynamic(() => import('apexcharts'), {ssr: false});

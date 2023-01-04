@@ -2,8 +2,9 @@ import {ImCross} from 'react-icons/im';
 import Image from 'next/image';
 import TideButton from '../tide_button/tide_button';
 import Link from 'next/link';
-import {useState} from 'react';
+import {useContext, useState} from 'react';
 import CryptoCard from '../card/crypto_card';
+import {MarketContext, IMarketContext, IMarketProvider} from '../../lib/contexts/market_context';
 
 // TODO: useContext
 interface ITickerSelectorBox {
@@ -277,6 +278,9 @@ const TickerSelectorBox = ({
   const [allCards, setAllCards] = useState<ICryptoCardData[]>(TRADING_CRYPTO_DATA);
 
   const [searches, setSearches] = useState<string[]>([]);
+
+  const {availableTickers} = useContext(MarketContext) as IMarketContext;
+  // console.log('availableTickers:', availableTickers);
 
   const favoritesHandler = (index: number, bool: boolean) => {
     // // TODO: 這樣會製造出新的陣列，但是沒有改變原本的 starred 狀態

@@ -4,7 +4,7 @@ const SAMPLE_USER = {
   id: '002',
   username: 'Tidebit DeFi Test User',
   address: ['0xb54898DB1250A6a629E5B566367E9C60a7Dd6C30'],
-  favoriteTickers: ['MKR', 'XRP'],
+  favoriteTickers: ['ETH', 'MKR', 'XRP'],
 };
 
 export interface IUser {
@@ -15,6 +15,7 @@ export interface IUser {
   address: string[];
   // avatar: string;
   favoriteTickers: string[];
+
   // availableBalance: number;
   // lockedBalance: number;
   // profitOrLoss: {timeSpan: string; amount: number; profitOrLoss: string}[];
@@ -30,21 +31,38 @@ export interface IUserProvider {
 export interface IUserContext {
   user: IUser[] | null;
   setUser: (user: IUser[] | null) => void;
+  favoriteTickersHandler: (newFavorite: string) => void;
 }
 
 export const UserContext = createContext<IUserContext | null>({
   user: null,
   setUser: (user: IUser[] | null) => null,
+  favoriteTickersHandler: (newFavorite: string) => null,
 });
 
 export const UserProvider = ({children}: IUserProvider) => {
   const [user, setUser] = useState<IUser[] | null>([SAMPLE_USER]);
-  // const [user, setUser] = useState<IUserContext>(null);
-  const defaultValue = {user, setUser};
-  // useEffect(() => {
-  //   const user = localStorage.getItem('user');
-  //   setUser(user);
-  // }, []);
+
+  const favoriteTickersHandler = (newFavorite: string) => {
+    if (!user) return;
+
+    // ticker handler
+    if (user[0].favoriteTickers.includes(newFavorite)) {
+      setUser([
+        {
+          ...user[0],
+          favoriteTickers: user[0].favoriteTickers.filter(ticker => ticker !== newFavorite),
+        },
+      ]);
+    } else {
+      setUser([{...user[0], favoriteTickers: [...user[0].favoriteTickers, newFavorite]}]);
+    }
+
+    // console.log('receive favoriteTickers: ', newFavorite);
+    // console.log('user favorite in context: ', user[0].favoriteTickers);
+  };
+
+  const defaultValue = {user, setUser, favoriteTickersHandler};
 
   // FIXME: 'setUser' is missing in type '{ user: IUser[] | null; }'
   return <UserContext.Provider value={defaultValue}>{children}</UserContext.Provider>;

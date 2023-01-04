@@ -476,14 +476,15 @@ const TickerSelectorBox = ({
   const [activeTab, setActiveTab] = useState('All');
 
   // const [favorites, setFavorites] = useState<{label: string; content: JSX.Element}[]>([]);
-  const [favorites, setFavorites] = useState<ICryptoCardData[]>([]);
+  const [favorites, setFavorites] = useState<ICryptoCardData[]>(STARRED_TRADING_CRYPTO_DATA);
   const [allCards, setAllCards] = useState<ICryptoCardData[]>(TRADING_CRYPTO_DATA);
 
   const [searches, setSearches] = useState<string[]>([]);
 
   const {availableTickers} = useContext(MarketContext) as IMarketContext;
   // console.log('availableTickers:', availableTickers);
-  const {user} = useContext(UserContext) as IUserContext;
+  const {user, favoriteTickersHandler} = useContext(UserContext) as IUserContext;
+  // const {favoriteTickers} = user;
 
   const favoritesHandler = (index: number, bool: boolean) => {
     TRADING_CRYPTO_DATA[index].starred = bool;
@@ -494,13 +495,26 @@ const TickerSelectorBox = ({
   };
 
   function getEthStarred(bool: boolean) {
+    favoriteTickersHandler('ETH');
+    // console.log(user && user[0].favoriteTickers);
+
     TRADING_CRYPTO_DATA[0].starred = bool;
     setFavorites(() => {
       return TRADING_CRYPTO_DATA.filter(each => each.starred);
     });
+    // user[0].favoriteTickers.find(each => each === 'ETH') ? user[0].favoriteTickers.splice(user[0].favoriteTickers.indexOf('ETH'), 1) : user[0].favoriteTickers.push('ETH');
+    // if (user) {
+    //   user[0].favoriteTickers.filter(each => each !== 'ETH');
+    //   setUser(user.filter(attribute => attribute.favoriteTickers.filter(item => item !== 'ETH')));
+    //   console.log(user[0].favoriteTickers);
+    // }
   }
+  // console.log('after clicking star:', user && user[0].favoriteTickers);
 
   function getBtcStarred(bool: boolean) {
+    favoriteTickersHandler('BTC');
+    // console.log('user data: ', user[0]);
+
     TRADING_CRYPTO_DATA[1].starred = bool;
 
     setFavorites(() => {
@@ -690,14 +704,15 @@ const TickerSelectorBox = ({
       );
     });
 
-  const displayedFavorites = allCards
+  const displayedFavorites = favorites
     .filter(cryptoCard => {
       if (!user) return;
+      if (cryptoCard.starred !== true) return;
 
       for (let i = 0; i < user[0].favoriteTickers.length; i++) {
         if (cryptoCard.currency === user[0].favoriteTickers[i]) {
           cryptoCard.starred = true;
-          return cryptoCard;
+          return [cryptoCard];
         }
       }
     })

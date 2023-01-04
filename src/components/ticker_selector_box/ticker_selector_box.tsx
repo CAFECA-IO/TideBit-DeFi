@@ -284,6 +284,10 @@ const TickerSelectorBox = ({
   // console.log('availableTickers:', availableTickers);
   const {user} = useContext(UserContext) as IUserContext;
   // console.log('user:', user && user[0]?.favoriteTickers);
+  // console.log(
+  //   'all cards',
+  //   allCards.map(card => card.currency)
+  // );
 
   const favoritesHandler = (index: number, bool: boolean) => {
     // // TODO: 這樣會製造出新的陣列，但是沒有改變原本的 starred 狀態
@@ -504,12 +508,38 @@ const TickerSelectorBox = ({
   //   return <div key={index}>{cryptoCard.content}</div>;
   // });
 
-  const displayedAllCryptoCards = allCards.map((cryptoCard, i) => {
-    if (i === 0) {
+  const displayedAllCryptoCards = allCards
+    .filter(each => {
+      if (!availableTickers) return 'no tickers';
+      for (let i = 0; i < availableTickers.length; i++) {
+        if (each.currency === (availableTickers && availableTickers[i])) {
+          return each;
+        }
+      }
+    })
+    .map((cryptoCard, i) => {
+      if (i === 0) {
+        return (
+          <CryptoCard
+            key={i}
+            className="mt-4 ml-4"
+            star={cryptoCard.star}
+            starColor={cryptoCard.starColor}
+            starred={cryptoCard.starred}
+            getStarredState={cryptoCard.getStarredStateCallback}
+            chain={cryptoCard.chain}
+            currency={cryptoCard.currency}
+            price={cryptoCard.price}
+            fluctuating={cryptoCard.fluctuating}
+            gradientColor={cryptoCard.gradientColor}
+            tokenImg={cryptoCard.tokenImg}
+          />
+        );
+      }
+
       return (
         <CryptoCard
           key={i}
-          className="mt-4 ml-4"
           star={cryptoCard.star}
           starColor={cryptoCard.starColor}
           starred={cryptoCard.starred}
@@ -522,24 +552,7 @@ const TickerSelectorBox = ({
           tokenImg={cryptoCard.tokenImg}
         />
       );
-    }
-
-    return (
-      <CryptoCard
-        key={i}
-        star={cryptoCard.star}
-        starColor={cryptoCard.starColor}
-        starred={cryptoCard.starred}
-        getStarredState={cryptoCard.getStarredStateCallback}
-        chain={cryptoCard.chain}
-        currency={cryptoCard.currency}
-        price={cryptoCard.price}
-        fluctuating={cryptoCard.fluctuating}
-        gradientColor={cryptoCard.gradientColor}
-        tokenImg={cryptoCard.tokenImg}
-      />
-    );
-  });
+    });
 
   const displayedFavorites = favorites.map((cryptoCard, i) => {
     if (cryptoCard.starred !== true) return <></>;

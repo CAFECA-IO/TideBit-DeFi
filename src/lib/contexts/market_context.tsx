@@ -277,11 +277,11 @@ export interface IMarketProvider {
 }
 
 export interface IMarketContext {
-  availableTickers: ITickerData[];
+  availableTickers: ITickerData[] | null;
 }
 
 export const MarketContext = createContext<IMarketContext>({
-  availableTickers: [],
+  availableTickers: null,
 });
 
 export const MarketProvider = ({children}: IMarketProvider) => {

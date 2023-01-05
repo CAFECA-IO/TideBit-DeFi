@@ -81,15 +81,21 @@ const TradeSuspendedTab = () => {
               >
                 {/* <h1 className="pl-5 text-2xl font-bold">Start to trade</h1> */}
 
-                <div className="h-screen w-full flex-col items-center justify-center text-center">
-                  <div>{conesSvg}</div>
+                <div className="h-full w-full flex-col justify-center pt-2/3">
+                  <div className="">
+                    <div className="px-1/3">{conesSvg}</div>
 
-                  <h1 className="text-xl tracking-wide text-lightWhite">Stop Trading</h1>
-                  <p className="text-sm tracking-tight text-lightGray">
-                    {' '}
-                    Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
-                    tempor
-                  </p>
+                    <div className="space-y-2 pt-3">
+                      <h1 className="text-center text-xl tracking-normal text-lightWhite">
+                        Stop Trading
+                      </h1>
+                      <p className="text-center text-xs tracking-wide text-lightGray">
+                        {' '}
+                        Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy
+                        eirmod tempor
+                      </p>
+                    </div>
+                  </div>
                 </div>
 
                 {/* Divider */}

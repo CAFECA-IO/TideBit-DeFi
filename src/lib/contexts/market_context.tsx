@@ -277,11 +277,14 @@ export interface IMarketProvider {
 }
 
 export interface IMarketContext {
-  availableTickers: ITickerData[] | null;
+  availableTickers: ITickerData[];
+  // getTickerData: (ticker: string) => ITickerData; // 會拿到哪些是被star的
 }
 
+// _app.tsx
 export const MarketContext = createContext<IMarketContext>({
-  availableTickers: null,
+  availableTickers: [],
+  // getTickerData: () => ITickerData,
 });
 
 export const MarketProvider = ({children}: IMarketProvider) => {

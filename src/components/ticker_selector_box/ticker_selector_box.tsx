@@ -75,7 +75,7 @@ const TickerSelectorBox = ({
   // console.log('availableTickers in `ticker box`:', availableTickers);
 
   // const {user, favoriteTickersHandler} = useContext<IUserContext | null>(UserContext);
-  const {user, favoriteTickersHandler} = useContext(UserContext) as IUserContext;
+  const {user} = useContext(UserContext) as IUserContext;
 
   const [activeTab, setActiveTab] = useState('All');
 
@@ -98,7 +98,7 @@ const TickerSelectorBox = ({
           ...each,
           getStarredStateCallback: (bool: boolean) => {
             // console.log(each.currency, 'clicked');
-            favoriteTickersHandler(each.currency);
+            // favoriteTickersHandler(each.currency);
           },
         };
       })
@@ -410,7 +410,7 @@ const TickerSelectorBox = ({
 
   const displayedFavorites = filteredCards
     ?.filter(cryptoCard => {
-      if (!user || !user[0].favoriteTickers) return;
+      if (!user || !user.favoriteTickers) return;
       if (cryptoCard.starred !== true) return;
 
       // for (let i = 0; i < user[0].favoriteTickers.length; i++) {

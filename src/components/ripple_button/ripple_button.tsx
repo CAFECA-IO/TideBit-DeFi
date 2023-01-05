@@ -4,7 +4,7 @@ interface IRippleButtonProps {
   className?: string;
   buttonStyle?: string;
   children: React.ReactNode | string;
-  buttonType: 'button' | 'submit' | 'reset';
+  buttonType: 'button' | 'submit' | 'reset'; // declare the possible values for buttonType
 }
 
 // interface RefObject<T> {

@@ -13,24 +13,7 @@ export interface ITickerData {
   tokenImg: string;
 }
 
-const SAMPLE_TICKERS = [
-  'ETH',
-  'BTC',
-  'LTC',
-  'MATIC',
-  'BNB',
-  'SOL',
-  'SHIB',
-  'DOT',
-  'ADA',
-  'AVAX',
-  'Dai',
-  'MKR',
-  'XRP',
-  'DOGE',
-  'UNI',
-  'Flow',
-];
+const SAMPLE_TICKERS = ['MATIC', 'BNB', 'SOL', 'MKR'];
 
 const userFavorites: ITickerData[] = [
   {
@@ -231,45 +214,52 @@ const SAMPLE_USER = {
   id: '002',
   username: 'Tidebit DeFi Test User',
   address: ['0xb54898DB1250A6a629E5B566367E9C60a7Dd6C30'],
-  favoriteTickers: userFavorites,
+  favoriteTickers: SAMPLE_TICKERS,
 };
 
 export interface IUser {
   id: string;
   username: string;
-  // tidebitAccount: string;
-  // email: string;
-  address: string[];
-  // avatar: string;
-  // favoriteTickers: string[] | null;
-  favoriteTickers: ITickerData[] | null;
+  email: string;
+  wallet: string[];
 
-  // availableBalance: number;
-  // lockedBalance: number;
-  // profitOrLoss: {timeSpan: string; amount: number; profitOrLoss: string}[];
-  // signature: {type:string; data: string}[];
-  // signServiceTerms: boolean;
-  // positionList: {status: string; ticker: string; amount: number; price: number}[];
+  favoriteTickers: string[];
+
+  // orderEngine: string; // 產生 EIP 712 / 出金入金 要的資料
+  isSubscibedNewsletters: boolean;
+  isEnabledEmailNotification: boolean;
+  isConnected: boolean;
+  isConnectedWithEmail: boolean;
+  isConnectedWithTideBit: boolean;
+  walletId: string;
+  tideBitId: string;
+  enableServiceTerm: boolean;
 }
 
 export interface IUserProvider {
   children: React.ReactNode;
 }
 
+/**
+ *   setUser: (user: IUser) => null,
+  favoriteTickersHandler: (newFavorite: string) => null,
+ */
+
+// TODO: Class diagram
+// + addFavoriteTicker()
+// + removeFavoriteTicker()
+// + getFavoriteTickers()
+
 export interface IUserContext {
-  user: IUser[] | null;
-  setUser: (user: IUser[] | null) => void;
-  favoriteTickersHandler: (newFavorite: string) => void;
+  user: IUser | null;
 }
 
-export const UserContext = createContext<IUserContext | null>({
+export const UserContext = createContext<IUserContext>({
   user: null,
-  setUser: (user: IUser[] | null) => null,
-  favoriteTickersHandler: (newFavorite: string) => null,
 });
 
 export const UserProvider = ({children}: IUserProvider) => {
-  const [user, setUser] = useState<IUser[] | null>([SAMPLE_USER]);
+  const [user, setUser] = useState<IUser | null>(null);
 
   const favoriteTickersHandler = (newFavorite: string) => {
     if (!user) return;
@@ -328,7 +318,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     // // console.log('user favorite in context: ', user[0].favoriteTickers);
   };
 
-  const defaultValue = {user, setUser, favoriteTickersHandler};
+  const defaultValue = {user};
 
   // FIXME: 'setUser' is missing in type '{ user: IUser[] | null; }'
   return <UserContext.Provider value={defaultValue}>{children}</UserContext.Provider>;

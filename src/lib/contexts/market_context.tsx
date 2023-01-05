@@ -14,7 +14,7 @@ export interface ITickerData {
   gradientColor: string;
   tokenImg: string;
 
-  lineGraphProps?: ILineGraphProps;
+  lineGraphProps: ILineGraphProps;
 }
 
 const SAMPLE_TICKERS = [
@@ -50,7 +50,7 @@ function randomArray(min: number, max: number, length: number) {
 
 // const sampleArray = randomArray(1100, 1200, 10);
 
-const fakeDataColor = (sampleArray: number[]) => {
+const strokeColorDisplayed = (sampleArray: number[]) => {
   if (sampleArray[sampleArray.length - 1] > sampleArray[sampleArray.length - 2]) {
     // priceColor = 'text-lightGreen';
     return [PROFIT_LOSS_COLOR_TYPE.profit];
@@ -60,7 +60,7 @@ const fakeDataColor = (sampleArray: number[]) => {
   return [PROFIT_LOSS_COLOR_TYPE.loss];
 };
 
-const TRADING_CRYPTO_DATA: ITickerData[] = [
+const TRADING_CRYPTO_DATA = [
   {
     currency: 'ETH',
     chain: 'Ethereum',
@@ -255,33 +255,39 @@ const TRADING_CRYPTO_DATA: ITickerData[] = [
   },
 ];
 
+// Add line graph property to each object in array
+const addPropertyToArray: ITickerData[] = TRADING_CRYPTO_DATA.map(item => {
+  const dataArray = randomArray(1100, 1200, 10);
+  const strokeColor = strokeColorDisplayed(dataArray);
+  const newArray = {
+    ...item,
+    lineGraphProps: {
+      dataArray: dataArray,
+      strokeColor: strokeColor,
+      lineGraphWidth: '170',
+    },
+  };
+
+  return newArray;
+});
+
 export interface IMarketProvider {
   children: React.ReactNode;
 }
 
 export interface IMarketContext {
-  availableTickers: string[] | null;
+  availableTickers: ITickerData[];
 }
 
 export const MarketContext = createContext<IMarketContext>({
-  availableTickers: null,
+  availableTickers: [],
 });
 
 export const MarketProvider = ({children}: IMarketProvider) => {
-  const [availableTickers, setAvailableTickers] = useState<string[] | null>(SAMPLE_TICKERS);
-
-  const addPropertyToArray = TRADING_CRYPTO_DATA.map(item => {
-    return {
-      ...item,
-      lineGraphProps: {
-        dataArray: randomArray(1100, 1200, 10),
-        strokeColor: [PROFIT_LOSS_COLOR_TYPE.profit],
-        lineGraphWidth: '170',
-      },
-    };
-  });
+  const [availableTickers, setAvailableTickers] = useState<ITickerData[]>(addPropertyToArray);
 
   // console.log('Whole array [addPropertyToArray]:', addPropertyToArray);
+  // setAvailableTickers(addPropertyToArray); // infinite loop
 
   const defaultValue = {availableTickers};
   return <MarketContext.Provider value={defaultValue}>{children}</MarketContext.Provider>;

@@ -1,8 +1,10 @@
-import {ImCross} from 'react-icons/im';
-import Image from 'next/image';
-import Link from 'next/link';
-import {useContext, useEffect, useState} from 'react';
-import CryptoCard from '../card/crypto_card';
+import {ToastContainer, toast, ToastOptions, useToast} from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import {DEV_TOAST_CONFIG, PROFIT_LOSS_COLOR_TYPE} from '../../constants/display';
+
+import {useContext, useEffect, useState, useMemo} from 'react';
+import CryptoCard, {ILineGraphProps} from '../card/crypto_card';
+
 import {
   MarketContext,
   IMarketContext,
@@ -10,9 +12,6 @@ import {
   ITickerData,
 } from '../../lib/contexts/market_context';
 import {UserContext, IUserContext} from '../../lib/contexts/user_context';
-import {ToastContainer, toast, ToastOptions, useToast} from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import {DEV_TOAST_CONFIG, PROFIT_LOSS_COLOR_TYPE} from '../../constants/display';
 
 // TODO: useContext
 interface ITickerSelectorBox {
@@ -41,6 +40,7 @@ interface ICryptoCardData {
   fluctuating: number;
   gradientColor: string;
   tokenImg: string;
+  lineGraphProps: ILineGraphProps;
 }
 
 interface ICryptoCardDataArray {
@@ -77,437 +77,458 @@ const TickerSelectorBox = ({
     },
   ];
 
-  const TRADING_CRYPTO_DATA: ICryptoCardData[] = [
-    {
-      currency: 'ETH',
-      chain: 'Ethereum',
-      star: true,
-      starred: false,
-      starColor: 'text-bluePurple',
-      getStarredStateCallback: getEthStarred,
-      price: 1288.4,
-      fluctuating: 1.14,
-      gradientColor: 'border-bluePurple/50 bg-black from-bluePurple/50 to-black',
-      tokenImg: '/elements/group_2371.svg',
-    },
-    {
-      currency: 'BTC',
-      chain: 'Bitcoin',
-      star: true,
-      starred: false,
-      starColor: 'text-lightOrange',
-      getStarredStateCallback: getBtcStarred,
-      price: 1288.4,
-      fluctuating: 1.14,
-      gradientColor: 'border-lightOrange/50 bg-black from-lightOrange/50 to-black',
-      tokenImg: '/elements/group_2372.svg',
-    },
-    {
-      currency: 'LTC',
-      chain: 'Litecoin',
-      star: true,
-      starred: false,
-      starColor: 'text-lightGray2',
-      getStarredStateCallback: getLtcStarred,
-      price: 1288.4,
-      fluctuating: 1.14,
-      gradientColor: 'border-lightGray2/50 bg-black from-lightGray2/50 to-black',
-      tokenImg: '/elements/c5b7bda06ddfe2b3f59b37ed6bb65ab4.svg',
-    },
-    {
-      currency: 'MATIC',
-      chain: 'Polygon',
-      star: true,
-      starred: false,
-      starColor: 'text-lightPurple',
-      getStarredStateCallback: getMaticStarred,
-      price: 1288.4,
-      fluctuating: 1.14,
-      gradientColor: 'border-lightPurple/60 bg-black from-lightPurple/60 to-black',
-      tokenImg: '/elements/9cc18b0cbe765b0a28791d253207f0c0.svg',
-    },
-    {
-      currency: 'BNB',
-      chain: 'BNB',
-      star: true,
-      starred: false,
-      starColor: 'text-lightYellow',
-      getStarredStateCallback: getBnbStarred,
-      price: 1288.4,
-      fluctuating: 1.14,
-      gradientColor: 'border-lightYellow/60 bg-black from-lightYellow/50 to-black',
-      tokenImg: '/elements/group_2374.svg',
-    },
-    {
-      currency: 'SOL',
-      chain: 'Solana',
-      star: true,
-      starred: false,
-      starColor: 'text-lightPurple2',
-      getStarredStateCallback: getSolStarred,
-      price: 1288.4,
-      fluctuating: 1.14,
-      gradientColor: 'border-lightPurple2/60 from-lightPurple2/60 to-black',
-      tokenImg: '/elements/group_2378.svg',
-    },
-    {
-      currency: 'SHIB',
-      chain: 'Shiba Inu',
-      star: true,
-      starred: false,
-      starColor: 'text-lightRed1',
-      getStarredStateCallback: getShibStarred,
-      price: 1288.4,
-      fluctuating: 1.14,
-      gradientColor: 'border-lightRed1/50 from-lightRed1/50 to-black',
-      tokenImg: '/elements/group_2381.svg',
-    },
-    {
-      currency: 'DOT',
-      chain: 'Polkadot',
-      star: true,
-      starred: false,
-      starColor: 'text-lightPink',
-      getStarredStateCallback: getDotStarred,
-      price: 1288.4,
-      fluctuating: 1.14,
-      gradientColor: 'border-lightPink/60 from-lightPink/60 to-black',
-      tokenImg: '/elements/group_2385.svg',
-    },
-    {
-      currency: 'ADA',
-      chain: 'Cardano',
-      star: true,
-      starred: false,
-      starColor: 'text-lightGreen1',
-      getStarredStateCallback: getAdaStarred,
-      price: 1288.4,
-      fluctuating: 1.14,
-      gradientColor: 'border-lightGreen1/60 from-lightGreen1/60 to-black',
-      tokenImg: '/elements/group_2388.svg',
-    },
-    {
-      currency: 'AVAX',
-      chain: 'Avalanche',
-      star: true,
-      starred: false,
-      starColor: 'text-lightRed2',
-      getStarredStateCallback: getAvaxStarred,
-      price: 1288.4,
-      fluctuating: 1.14,
-      gradientColor: 'border-lightRed2/50 from-lightRed2/50 to-black',
-      tokenImg: '/elements/group_2391.svg',
-    },
-    {
-      currency: 'Dai',
-      chain: 'Dai',
-      star: true,
-      starred: false,
-      starColor: 'text-lightOrange1',
-      getStarredStateCallback: getDaiStarred,
-      price: 1288.4,
-      fluctuating: 1.14,
-      gradientColor: 'border-lightOrange1/50 from-lightOrange1/50 to-black',
-      tokenImg: '/elements/layer_x0020_1.svg',
-    },
-    {
-      currency: 'MKR',
-      chain: 'Maker',
-      star: true,
-      starred: false,
-      starColor: 'text-lightGreen3',
-      getStarredStateCallback: getMkrStarred,
-      price: 1288.4,
-      fluctuating: 1.14,
-      gradientColor: 'border-lightGreen3/50 from-lightGreen3/50 to-black',
-      tokenImg: '/elements/layer_2.svg',
-    },
-    {
-      currency: 'XRP',
-      chain: 'XRP',
-      star: true,
-      starred: false,
-      starColor: 'text-lightGray4',
-      getStarredStateCallback: getXrpStarred,
-      price: 1288.4,
-      fluctuating: 1.14,
-      gradientColor: 'border-lightGray4/50 from-lightGray4/50 to-black',
-      tokenImg: '/elements/group_2406.svg',
-    },
-    {
-      currency: 'DOGE',
-      chain: 'Dogecoin',
-      star: true,
-      starred: false,
-      starColor: 'text-lightYellow1',
-      getStarredStateCallback: getDogeStarred,
-      price: 1288.4,
-      fluctuating: 1.14,
-      gradientColor: 'border-lightYellow1/50 from-lightYellow1/50 to-black',
-      tokenImg: '/elements/layer_2-1.svg',
-    },
-    {
-      currency: 'UNI',
-      chain: 'Uniswap',
-      star: true,
-      starred: false,
-      starColor: 'text-lightPink1',
-      getStarredStateCallback: getUniStarred,
-      price: 1288.4,
-      fluctuating: 1.14,
-      gradientColor: 'border-lightPink1/50 from-lightPink1/50 to-black',
-      tokenImg: '/elements/uniswap-uni-logo.svg',
-    },
-    {
-      currency: 'Flow',
-      chain: 'Flow',
-      star: true,
-      starred: false,
-      starColor: 'text-lightGreen4',
-      getStarredStateCallback: getFlowStarred,
-      price: 1288.4,
-      fluctuating: 1.14,
-      gradientColor: 'border-lightGreen4/50 from-lightGreen4/50 to-black',
-      tokenImg: '/elements/layer_2_1_.svg',
-    },
-  ];
+  // const TRADING_CRYPTO_DATA = [
+  //   {
+  //     currency: 'ETH',
+  //     chain: 'Ethereum',
+  //     star: true,
+  //     starred: false,
+  //     starColor: 'text-bluePurple',
+  //     getStarredStateCallback: getEthStarred,
+  //     price: 1288.4,
+  //     fluctuating: 1.14,
+  //     gradientColor: 'border-bluePurple/50 bg-black from-bluePurple/50 to-black',
+  //     tokenImg: '/elements/group_2371.svg',
+  //   },
+  //   {
+  //     currency: 'BTC',
+  //     chain: 'Bitcoin',
+  //     star: true,
+  //     starred: false,
+  //     starColor: 'text-lightOrange',
+  //     getStarredStateCallback: getBtcStarred,
+  //     price: 1288.4,
+  //     fluctuating: 1.14,
+  //     gradientColor: 'border-lightOrange/50 bg-black from-lightOrange/50 to-black',
+  //     tokenImg: '/elements/group_2372.svg',
+  //   },
+  //   {
+  //     currency: 'LTC',
+  //     chain: 'Litecoin',
+  //     star: true,
+  //     starred: false,
+  //     starColor: 'text-lightGray2',
+  //     getStarredStateCallback: getLtcStarred,
+  //     price: 1288.4,
+  //     fluctuating: 1.14,
+  //     gradientColor: 'border-lightGray2/50 bg-black from-lightGray2/50 to-black',
+  //     tokenImg: '/elements/c5b7bda06ddfe2b3f59b37ed6bb65ab4.svg',
+  //   },
+  //   {
+  //     currency: 'MATIC',
+  //     chain: 'Polygon',
+  //     star: true,
+  //     starred: false,
+  //     starColor: 'text-lightPurple',
+  //     getStarredStateCallback: getMaticStarred,
+  //     price: 1288.4,
+  //     fluctuating: 1.14,
+  //     gradientColor: 'border-lightPurple/60 bg-black from-lightPurple/60 to-black',
+  //     tokenImg: '/elements/9cc18b0cbe765b0a28791d253207f0c0.svg',
+  //   },
+  //   {
+  //     currency: 'BNB',
+  //     chain: 'BNB',
+  //     star: true,
+  //     starred: false,
+  //     starColor: 'text-lightYellow',
+  //     getStarredStateCallback: getBnbStarred,
+  //     price: 1288.4,
+  //     fluctuating: 1.14,
+  //     gradientColor: 'border-lightYellow/60 bg-black from-lightYellow/50 to-black',
+  //     tokenImg: '/elements/group_2374.svg',
+  //   },
+  //   {
+  //     currency: 'SOL',
+  //     chain: 'Solana',
+  //     star: true,
+  //     starred: false,
+  //     starColor: 'text-lightPurple2',
+  //     getStarredStateCallback: getSolStarred,
+  //     price: 1288.4,
+  //     fluctuating: 1.14,
+  //     gradientColor: 'border-lightPurple2/60 from-lightPurple2/60 to-black',
+  //     tokenImg: '/elements/group_2378.svg',
+  //   },
+  //   {
+  //     currency: 'SHIB',
+  //     chain: 'Shiba Inu',
+  //     star: true,
+  //     starred: false,
+  //     starColor: 'text-lightRed1',
+  //     getStarredStateCallback: getShibStarred,
+  //     price: 1288.4,
+  //     fluctuating: 1.14,
+  //     gradientColor: 'border-lightRed1/50 from-lightRed1/50 to-black',
+  //     tokenImg: '/elements/group_2381.svg',
+  //   },
+  //   {
+  //     currency: 'DOT',
+  //     chain: 'Polkadot',
+  //     star: true,
+  //     starred: false,
+  //     starColor: 'text-lightPink',
+  //     getStarredStateCallback: getDotStarred,
+  //     price: 1288.4,
+  //     fluctuating: 1.14,
+  //     gradientColor: 'border-lightPink/60 from-lightPink/60 to-black',
+  //     tokenImg: '/elements/group_2385.svg',
+  //   },
+  //   {
+  //     currency: 'ADA',
+  //     chain: 'Cardano',
+  //     star: true,
+  //     starred: false,
+  //     starColor: 'text-lightGreen1',
+  //     getStarredStateCallback: getAdaStarred,
+  //     price: 1288.4,
+  //     fluctuating: 1.14,
+  //     gradientColor: 'border-lightGreen1/60 from-lightGreen1/60 to-black',
+  //     tokenImg: '/elements/group_2388.svg',
+  //   },
+  //   {
+  //     currency: 'AVAX',
+  //     chain: 'Avalanche',
+  //     star: true,
+  //     starred: false,
+  //     starColor: 'text-lightRed2',
+  //     getStarredStateCallback: getAvaxStarred,
+  //     price: 1288.4,
+  //     fluctuating: 1.14,
+  //     gradientColor: 'border-lightRed2/50 from-lightRed2/50 to-black',
+  //     tokenImg: '/elements/group_2391.svg',
+  //   },
+  //   {
+  //     currency: 'Dai',
+  //     chain: 'Dai',
+  //     star: true,
+  //     starred: false,
+  //     starColor: 'text-lightOrange1',
+  //     getStarredStateCallback: getDaiStarred,
+  //     price: 1288.4,
+  //     fluctuating: 1.14,
+  //     gradientColor: 'border-lightOrange1/50 from-lightOrange1/50 to-black',
+  //     tokenImg: '/elements/layer_x0020_1.svg',
+  //   },
+  //   {
+  //     currency: 'MKR',
+  //     chain: 'Maker',
+  //     star: true,
+  //     starred: false,
+  //     starColor: 'text-lightGreen3',
+  //     getStarredStateCallback: getMkrStarred,
+  //     price: 1288.4,
+  //     fluctuating: 1.14,
+  //     gradientColor: 'border-lightGreen3/50 from-lightGreen3/50 to-black',
+  //     tokenImg: '/elements/layer_2.svg',
+  //   },
+  //   {
+  //     currency: 'XRP',
+  //     chain: 'XRP',
+  //     star: true,
+  //     starred: false,
+  //     starColor: 'text-lightGray4',
+  //     getStarredStateCallback: getXrpStarred,
+  //     price: 1288.4,
+  //     fluctuating: 1.14,
+  //     gradientColor: 'border-lightGray4/50 from-lightGray4/50 to-black',
+  //     tokenImg: '/elements/group_2406.svg',
+  //   },
+  //   {
+  //     currency: 'DOGE',
+  //     chain: 'Dogecoin',
+  //     star: true,
+  //     starred: false,
+  //     starColor: 'text-lightYellow1',
+  //     getStarredStateCallback: getDogeStarred,
+  //     price: 1288.4,
+  //     fluctuating: 1.14,
+  //     gradientColor: 'border-lightYellow1/50 from-lightYellow1/50 to-black',
+  //     tokenImg: '/elements/layer_2-1.svg',
+  //   },
+  //   {
+  //     currency: 'UNI',
+  //     chain: 'Uniswap',
+  //     star: true,
+  //     starred: false,
+  //     starColor: 'text-lightPink1',
+  //     getStarredStateCallback: getUniStarred,
+  //     price: 1288.4,
+  //     fluctuating: 1.14,
+  //     gradientColor: 'border-lightPink1/50 from-lightPink1/50 to-black',
+  //     tokenImg: '/elements/uniswap-uni-logo.svg',
+  //   },
+  //   {
+  //     currency: 'Flow',
+  //     chain: 'Flow',
+  //     star: true,
+  //     starred: false,
+  //     starColor: 'text-lightGreen4',
+  //     getStarredStateCallback: getFlowStarred,
+  //     price: 1288.4,
+  //     fluctuating: 1.14,
+  //     gradientColor: 'border-lightGreen4/50 from-lightGreen4/50 to-black',
+  //     tokenImg: '/elements/layer_2_1_.svg',
+  //   },
+  // ];
 
-  // const middle_object = [...TRADING_CRYPTO_DATA];
-  // const STARRED_TRADING_CRYPTO_DATA = middle_object.map(each => {
-  //   each.starred = true;
-  //   return each;
+  // // const middle_object = [...TRADING_CRYPTO_DATA];
+  // // const STARRED_TRADING_CRYPTO_DATA = middle_object.map(each => {
+  // //   each.starred = true;
+  // //   return each;
+  // // });
+  // // console.log('trading starred data:', STARRED_TRADING_CRYPTO_DATA);
+  // const STARRED_TRADING_CRYPTO_DATA = [
+  //   {
+  //     currency: 'ETH',
+  //     chain: 'Ethereum',
+  //     star: true,
+  //     starred: true,
+  //     starColor: 'text-bluePurple',
+  //     getStarredStateCallback: getEthStarred,
+  //     price: 1288.4,
+  //     fluctuating: 1.14,
+  //     gradientColor: 'border-bluePurple/50 bg-black from-bluePurple/50 to-black',
+  //     tokenImg: '/elements/group_2371.svg',
+  //   },
+  //   {
+  //     currency: 'BTC',
+  //     chain: 'Bitcoin',
+  //     star: true,
+  //     starred: true,
+  //     starColor: 'text-lightOrange',
+  //     getStarredStateCallback: getBtcStarred,
+  //     price: 1288.4,
+  //     fluctuating: 1.14,
+  //     gradientColor: 'border-lightOrange/50 bg-black from-lightOrange/50 to-black',
+  //     tokenImg: '/elements/group_2372.svg',
+  //   },
+  //   {
+  //     currency: 'LTC',
+  //     chain: 'Litecoin',
+  //     star: true,
+  //     starred: true,
+  //     starColor: 'text-lightGray2',
+  //     getStarredStateCallback: getLtcStarred,
+  //     price: 1288.4,
+  //     fluctuating: 1.14,
+  //     gradientColor: 'border-lightGray2/50 bg-black from-lightGray2/50 to-black',
+  //     tokenImg: '/elements/c5b7bda06ddfe2b3f59b37ed6bb65ab4.svg',
+  //   },
+  //   {
+  //     currency: 'MATIC',
+  //     chain: 'Polygon',
+  //     star: true,
+  //     starred: true,
+  //     starColor: 'text-lightPurple',
+  //     getStarredStateCallback: getMaticStarred,
+  //     price: 1288.4,
+  //     fluctuating: 1.14,
+  //     gradientColor: 'border-lightPurple/60 bg-black from-lightPurple/60 to-black',
+  //     tokenImg: '/elements/9cc18b0cbe765b0a28791d253207f0c0.svg',
+  //   },
+  //   {
+  //     currency: 'BNB',
+  //     chain: 'BNB',
+  //     star: true,
+  //     starred: true,
+  //     starColor: 'text-lightYellow',
+  //     getStarredStateCallback: getBnbStarred,
+  //     price: 1288.4,
+  //     fluctuating: 1.14,
+  //     gradientColor: 'border-lightYellow/60 bg-black from-lightYellow/50 to-black',
+  //     tokenImg: '/elements/group_2374.svg',
+  //   },
+  //   {
+  //     currency: 'SOL',
+  //     chain: 'Solana',
+  //     star: true,
+  //     starred: true,
+  //     starColor: 'text-lightPurple2',
+  //     getStarredStateCallback: getSolStarred,
+  //     price: 1288.4,
+  //     fluctuating: 1.14,
+  //     gradientColor: 'border-lightPurple2/60 from-lightPurple2/60 to-black',
+  //     tokenImg: '/elements/group_2378.svg',
+  //   },
+  //   {
+  //     currency: 'SHIB',
+  //     chain: 'Shiba Inu',
+  //     star: true,
+  //     starred: true,
+  //     starColor: 'text-lightRed1',
+  //     getStarredStateCallback: getShibStarred,
+  //     price: 1288.4,
+  //     fluctuating: 1.14,
+  //     gradientColor: 'border-lightRed1/50 from-lightRed1/50 to-black',
+  //     tokenImg: '/elements/group_2381.svg',
+  //   },
+  //   {
+  //     currency: 'DOT',
+  //     chain: 'Polkadot',
+  //     star: true,
+  //     starred: true,
+  //     starColor: 'text-lightPink',
+  //     getStarredStateCallback: getDotStarred,
+  //     price: 1288.4,
+  //     fluctuating: 1.14,
+  //     gradientColor: 'border-lightPink/60 from-lightPink/60 to-black',
+  //     tokenImg: '/elements/group_2385.svg',
+  //   },
+  //   {
+  //     currency: 'ADA',
+  //     chain: 'Cardano',
+  //     star: true,
+  //     starred: true,
+  //     starColor: 'text-lightGreen1',
+  //     getStarredStateCallback: getAdaStarred,
+  //     price: 1288.4,
+  //     fluctuating: 1.14,
+  //     gradientColor: 'border-lightGreen1/60 from-lightGreen1/60 to-black',
+  //     tokenImg: '/elements/group_2388.svg',
+  //   },
+  //   {
+  //     currency: 'AVAX',
+  //     chain: 'Avalanche',
+  //     star: true,
+  //     starred: true,
+  //     starColor: 'text-lightRed2',
+  //     getStarredStateCallback: getAvaxStarred,
+  //     price: 1288.4,
+  //     fluctuating: 1.14,
+  //     gradientColor: 'border-lightRed2/50 from-lightRed2/50 to-black',
+  //     tokenImg: '/elements/group_2391.svg',
+  //   },
+  //   {
+  //     currency: 'Dai',
+  //     chain: 'Dai',
+  //     star: true,
+  //     starred: true,
+  //     starColor: 'text-lightOrange1',
+  //     getStarredStateCallback: getDaiStarred,
+  //     price: 1288.4,
+  //     fluctuating: 1.14,
+  //     gradientColor: 'border-lightOrange1/50 from-lightOrange1/50 to-black',
+  //     tokenImg: '/elements/layer_x0020_1.svg',
+  //   },
+  //   {
+  //     currency: 'MKR',
+  //     chain: 'Maker',
+  //     star: true,
+  //     starred: true,
+  //     starColor: 'text-lightGreen3',
+  //     getStarredStateCallback: getMkrStarred,
+  //     price: 1288.4,
+  //     fluctuating: 1.14,
+  //     gradientColor: 'border-lightGreen3/50 from-lightGreen3/50 to-black',
+  //     tokenImg: '/elements/layer_2.svg',
+  //   },
+  //   {
+  //     currency: 'XRP',
+  //     chain: 'XRP',
+  //     star: true,
+  //     starred: true,
+  //     starColor: 'text-lightGray4',
+  //     getStarredStateCallback: getXrpStarred,
+  //     price: 1288.4,
+  //     fluctuating: 1.14,
+  //     gradientColor: 'border-lightGray4/50 from-lightGray4/50 to-black',
+  //     tokenImg: '/elements/group_2406.svg',
+  //   },
+  //   {
+  //     currency: 'DOGE',
+  //     chain: 'Dogecoin',
+  //     star: true,
+  //     starred: true,
+  //     starColor: 'text-lightYellow1',
+  //     getStarredStateCallback: getDogeStarred,
+  //     price: 1288.4,
+  //     fluctuating: 1.14,
+  //     gradientColor: 'border-lightYellow1/50 from-lightYellow1/50 to-black',
+  //     tokenImg: '/elements/layer_2-1.svg',
+  //   },
+  //   {
+  //     currency: 'UNI',
+  //     chain: 'Uniswap',
+  //     star: true,
+  //     starred: true,
+  //     starColor: 'text-lightPink1',
+  //     getStarredStateCallback: getUniStarred,
+  //     price: 1288.4,
+  //     fluctuating: 1.14,
+  //     gradientColor: 'border-lightPink1/50 from-lightPink1/50 to-black',
+  //     tokenImg: '/elements/uniswap-uni-logo.svg',
+  //   },
+  //   {
+  //     currency: 'Flow',
+  //     chain: 'Flow',
+  //     star: true,
+  //     starred: true,
+  //     starColor: 'text-lightGreen4',
+  //     getStarredStateCallback: getFlowStarred,
+  //     price: 1288.4,
+  //     fluctuating: 1.14,
+  //     gradientColor: 'border-lightGreen4/50 from-lightGreen4/50 to-black',
+  //     tokenImg: '/elements/layer_2_1_.svg',
+  //   },
+  // ];
+
+  // const ALL_TRADING_CRYPTO_DATA_COMPONENTS = TRADING_CRYPTO_DATA.map((cryptoCard, index) => {
+  //   return {
+  //     label: cryptoCard.currency,
+  //     content: (
+  //       <CryptoCard
+  //         key={index}
+  //         star={cryptoCard.star}
+  //         starColor={cryptoCard.starColor}
+  //         starred={cryptoCard.starred}
+  //         getStarredState={cryptoCard.getStarredStateCallback}
+  //         chain={cryptoCard.chain}
+  //         currency={cryptoCard.currency}
+  //         price={cryptoCard.price}
+  //         fluctuating={cryptoCard.fluctuating}
+  //         gradientColor={cryptoCard.gradientColor}
+  //         tokenImg={cryptoCard.tokenImg}
+  //       />
+  //     ),
+  //   };
   // });
-  // console.log('trading starred data:', STARRED_TRADING_CRYPTO_DATA);
-  const STARRED_TRADING_CRYPTO_DATA: ICryptoCardData[] = [
-    {
-      currency: 'ETH',
-      chain: 'Ethereum',
-      star: true,
-      starred: true,
-      starColor: 'text-bluePurple',
-      getStarredStateCallback: getEthStarred,
-      price: 1288.4,
-      fluctuating: 1.14,
-      gradientColor: 'border-bluePurple/50 bg-black from-bluePurple/50 to-black',
-      tokenImg: '/elements/group_2371.svg',
-    },
-    {
-      currency: 'BTC',
-      chain: 'Bitcoin',
-      star: true,
-      starred: true,
-      starColor: 'text-lightOrange',
-      getStarredStateCallback: getBtcStarred,
-      price: 1288.4,
-      fluctuating: 1.14,
-      gradientColor: 'border-lightOrange/50 bg-black from-lightOrange/50 to-black',
-      tokenImg: '/elements/group_2372.svg',
-    },
-    {
-      currency: 'LTC',
-      chain: 'Litecoin',
-      star: true,
-      starred: true,
-      starColor: 'text-lightGray2',
-      getStarredStateCallback: getLtcStarred,
-      price: 1288.4,
-      fluctuating: 1.14,
-      gradientColor: 'border-lightGray2/50 bg-black from-lightGray2/50 to-black',
-      tokenImg: '/elements/c5b7bda06ddfe2b3f59b37ed6bb65ab4.svg',
-    },
-    {
-      currency: 'MATIC',
-      chain: 'Polygon',
-      star: true,
-      starred: true,
-      starColor: 'text-lightPurple',
-      getStarredStateCallback: getMaticStarred,
-      price: 1288.4,
-      fluctuating: 1.14,
-      gradientColor: 'border-lightPurple/60 bg-black from-lightPurple/60 to-black',
-      tokenImg: '/elements/9cc18b0cbe765b0a28791d253207f0c0.svg',
-    },
-    {
-      currency: 'BNB',
-      chain: 'BNB',
-      star: true,
-      starred: true,
-      starColor: 'text-lightYellow',
-      getStarredStateCallback: getBnbStarred,
-      price: 1288.4,
-      fluctuating: 1.14,
-      gradientColor: 'border-lightYellow/60 bg-black from-lightYellow/50 to-black',
-      tokenImg: '/elements/group_2374.svg',
-    },
-    {
-      currency: 'SOL',
-      chain: 'Solana',
-      star: true,
-      starred: true,
-      starColor: 'text-lightPurple2',
-      getStarredStateCallback: getSolStarred,
-      price: 1288.4,
-      fluctuating: 1.14,
-      gradientColor: 'border-lightPurple2/60 from-lightPurple2/60 to-black',
-      tokenImg: '/elements/group_2378.svg',
-    },
-    {
-      currency: 'SHIB',
-      chain: 'Shiba Inu',
-      star: true,
-      starred: true,
-      starColor: 'text-lightRed1',
-      getStarredStateCallback: getShibStarred,
-      price: 1288.4,
-      fluctuating: 1.14,
-      gradientColor: 'border-lightRed1/50 from-lightRed1/50 to-black',
-      tokenImg: '/elements/group_2381.svg',
-    },
-    {
-      currency: 'DOT',
-      chain: 'Polkadot',
-      star: true,
-      starred: true,
-      starColor: 'text-lightPink',
-      getStarredStateCallback: getDotStarred,
-      price: 1288.4,
-      fluctuating: 1.14,
-      gradientColor: 'border-lightPink/60 from-lightPink/60 to-black',
-      tokenImg: '/elements/group_2385.svg',
-    },
-    {
-      currency: 'ADA',
-      chain: 'Cardano',
-      star: true,
-      starred: true,
-      starColor: 'text-lightGreen1',
-      getStarredStateCallback: getAdaStarred,
-      price: 1288.4,
-      fluctuating: 1.14,
-      gradientColor: 'border-lightGreen1/60 from-lightGreen1/60 to-black',
-      tokenImg: '/elements/group_2388.svg',
-    },
-    {
-      currency: 'AVAX',
-      chain: 'Avalanche',
-      star: true,
-      starred: true,
-      starColor: 'text-lightRed2',
-      getStarredStateCallback: getAvaxStarred,
-      price: 1288.4,
-      fluctuating: 1.14,
-      gradientColor: 'border-lightRed2/50 from-lightRed2/50 to-black',
-      tokenImg: '/elements/group_2391.svg',
-    },
-    {
-      currency: 'Dai',
-      chain: 'Dai',
-      star: true,
-      starred: true,
-      starColor: 'text-lightOrange1',
-      getStarredStateCallback: getDaiStarred,
-      price: 1288.4,
-      fluctuating: 1.14,
-      gradientColor: 'border-lightOrange1/50 from-lightOrange1/50 to-black',
-      tokenImg: '/elements/layer_x0020_1.svg',
-    },
-    {
-      currency: 'MKR',
-      chain: 'Maker',
-      star: true,
-      starred: true,
-      starColor: 'text-lightGreen3',
-      getStarredStateCallback: getMkrStarred,
-      price: 1288.4,
-      fluctuating: 1.14,
-      gradientColor: 'border-lightGreen3/50 from-lightGreen3/50 to-black',
-      tokenImg: '/elements/layer_2.svg',
-    },
-    {
-      currency: 'XRP',
-      chain: 'XRP',
-      star: true,
-      starred: true,
-      starColor: 'text-lightGray4',
-      getStarredStateCallback: getXrpStarred,
-      price: 1288.4,
-      fluctuating: 1.14,
-      gradientColor: 'border-lightGray4/50 from-lightGray4/50 to-black',
-      tokenImg: '/elements/group_2406.svg',
-    },
-    {
-      currency: 'DOGE',
-      chain: 'Dogecoin',
-      star: true,
-      starred: true,
-      starColor: 'text-lightYellow1',
-      getStarredStateCallback: getDogeStarred,
-      price: 1288.4,
-      fluctuating: 1.14,
-      gradientColor: 'border-lightYellow1/50 from-lightYellow1/50 to-black',
-      tokenImg: '/elements/layer_2-1.svg',
-    },
-    {
-      currency: 'UNI',
-      chain: 'Uniswap',
-      star: true,
-      starred: true,
-      starColor: 'text-lightPink1',
-      getStarredStateCallback: getUniStarred,
-      price: 1288.4,
-      fluctuating: 1.14,
-      gradientColor: 'border-lightPink1/50 from-lightPink1/50 to-black',
-      tokenImg: '/elements/uniswap-uni-logo.svg',
-    },
-    {
-      currency: 'Flow',
-      chain: 'Flow',
-      star: true,
-      starred: true,
-      starColor: 'text-lightGreen4',
-      getStarredStateCallback: getFlowStarred,
-      price: 1288.4,
-      fluctuating: 1.14,
-      gradientColor: 'border-lightGreen4/50 from-lightGreen4/50 to-black',
-      tokenImg: '/elements/layer_2_1_.svg',
-    },
-  ];
-
-  const ALL_TRADING_CRYPTO_DATA_COMPONENTS = TRADING_CRYPTO_DATA.map((cryptoCard, index) => {
-    return {
-      label: cryptoCard.currency,
-      content: (
-        <CryptoCard
-          key={index}
-          star={cryptoCard.star}
-          starColor={cryptoCard.starColor}
-          starred={cryptoCard.starred}
-          getStarredState={cryptoCard.getStarredStateCallback}
-          chain={cryptoCard.chain}
-          currency={cryptoCard.currency}
-          price={cryptoCard.price}
-          fluctuating={cryptoCard.fluctuating}
-          gradientColor={cryptoCard.gradientColor}
-          tokenImg={cryptoCard.tokenImg}
-        />
-      ),
-    };
-  });
 
   // console.log('components:', TRADING_CRYPTO_DATA_COMPONENTS);
 
+  const {availableTickers} = useContext<IMarketContext>(MarketContext);
+  // const {availableTickers} = useContext(MarketContext) as IMarketContext;
+  // console.log('availableTickers in `ticker box`:', availableTickers);
+
+  const {user, favoriteTickersHandler} = useContext(UserContext) as IUserContext;
+
   const [activeTab, setActiveTab] = useState('All');
 
-  // const [favorites, setFavorites] = useState<{label: string; content: JSX.Element}[]>([]);
-  const [favorites, setFavorites] = useState<ICryptoCardData[]>(STARRED_TRADING_CRYPTO_DATA);
-  const [allCards, setAllCards] = useState<ICryptoCardData[]>(TRADING_CRYPTO_DATA);
+  // const [favorites, setFavorites] = useState<ICryptoCardData[]>(STARRED_TRADING_CRYPTO_DATA);
+  // const [allCards, setAllCards] = useState<ICryptoCardData[]>(TRADING_CRYPTO_DATA);
 
   const [searches, setSearches] = useState<string>();
-  const [filteredCards, setFilteredCards] = useState<ICryptoCardData[]>(TRADING_CRYPTO_DATA);
 
-  const {availableTickers} = useContext(MarketContext) as IMarketContext;
-  // console.log('availableTickers:', availableTickers);
-  const {user, favoriteTickersHandler} = useContext(UserContext) as IUserContext;
+  // const cryptoCards = useMemo(() => {
+  //   if (activeTab === 'All') {
+  //     return allCards;
+  //   } else {
+  //     return favorites;
+  //   }
+  // }, [activeTab, allCards, favorites]);
+
+  const cryptoCardsData = availableTickers?.map((each, index) => {
+    return {
+      ...each,
+      getStarredStateCallback: (bool: boolean) => {
+        // console.log(each.currency, 'clicked');
+        favoriteTickersHandler(each.currency);
+      },
+    };
+  });
+
+  const [filteredCards, setFilteredCards] = useState<ICryptoCardData[]>(cryptoCardsData);
+
   // const {favoriteTickers} = user;
 
   const onSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -521,7 +542,7 @@ const TickerSelectorBox = ({
     // setFilteredCards(newSearchResult);
   };
 
-  const newSearchResult = TRADING_CRYPTO_DATA.filter(each => {
+  const newSearchResult = cryptoCardsData.filter(each => {
     const result =
       each.chain.toLocaleLowerCase().includes(searches || '') ||
       each.currency.toLocaleLowerCase().includes(searches || '');
@@ -537,190 +558,190 @@ const TickerSelectorBox = ({
 
   // console.log('newSearchResult:', newSearchResult);
 
-  const favoritesHandler = (index: number, bool: boolean) => {
-    TRADING_CRYPTO_DATA[index].starred = bool;
+  // const favoritesHandler = (index: number, bool: boolean) => {
+  //   TRADING_CRYPTO_DATA[index].starred = bool;
 
-    setFavorites(() => {
-      return TRADING_CRYPTO_DATA.filter(each => each.starred);
-    });
-  };
+  //   setFavorites(() => {
+  //     return TRADING_CRYPTO_DATA.filter(each => each.starred);
+  //   });
+  // };
 
-  function getEthStarred(bool: boolean) {
-    emitToast({message: 'ETH star clicked'});
-    favoriteTickersHandler('ETH');
-    // console.log(user && user[0].favoriteTickers);
+  // function getEthStarred(bool: boolean) {
+  //   emitToast({message: 'ETH star clicked'});
+  //   favoriteTickersHandler('ETH');
+  //   // console.log(user && user[0].favoriteTickers);
 
-    // TRADING_CRYPTO_DATA[0].starred = bool;
-    TRADING_CRYPTO_DATA.find(each => each.currency === 'ETH')!.starred = bool;
-    // console.log(
-    //   'eth clicked',
-    //   TRADING_CRYPTO_DATA.find(each => each.currency === 'ETH')
-    // );
+  //   // TRADING_CRYPTO_DATA[0].starred = bool;
+  //   TRADING_CRYPTO_DATA.find(each => each.currency === 'ETH')!.starred = bool;
+  //   // console.log(
+  //   //   'eth clicked',
+  //   //   TRADING_CRYPTO_DATA.find(each => each.currency === 'ETH')
+  //   // );
 
-    setFavorites(() => {
-      return TRADING_CRYPTO_DATA.filter(each => each.starred);
-    });
-    // user[0].favoriteTickers.find(each => each === 'ETH') ? user[0].favoriteTickers.splice(user[0].favoriteTickers.indexOf('ETH'), 1) : user[0].favoriteTickers.push('ETH');
-    // if (user) {
-    //   user[0].favoriteTickers.filter(each => each !== 'ETH');
-    //   setUser(user.filter(attribute => attribute.favoriteTickers.filter(item => item !== 'ETH')));
-    //   console.log(user[0].favoriteTickers);
-    // }
-  }
-  // console.log('after clicking star:', user && user[0].favoriteTickers);
+  //   setFavorites(() => {
+  //     return TRADING_CRYPTO_DATA.filter(each => each.starred);
+  //   });
+  //   // user[0].favoriteTickers.find(each => each === 'ETH') ? user[0].favoriteTickers.splice(user[0].favoriteTickers.indexOf('ETH'), 1) : user[0].favoriteTickers.push('ETH');
+  //   // if (user) {
+  //   //   user[0].favoriteTickers.filter(each => each !== 'ETH');
+  //   //   setUser(user.filter(attribute => attribute.favoriteTickers.filter(item => item !== 'ETH')));
+  //   //   console.log(user[0].favoriteTickers);
+  //   // }
+  // }
+  // // console.log('after clicking star:', user && user[0].favoriteTickers);
 
-  function getBtcStarred(bool: boolean) {
-    emitToast({message: 'BTC star clicked'});
-    favoriteTickersHandler('BTC');
-    // console.log('user data: ', user[0]);
+  // function getBtcStarred(bool: boolean) {
+  //   emitToast({message: 'BTC star clicked'});
+  //   favoriteTickersHandler('BTC');
+  //   // console.log('user data: ', user[0]);
 
-    TRADING_CRYPTO_DATA[1].starred = bool;
+  //   TRADING_CRYPTO_DATA[1].starred = bool;
 
-    setFavorites(() => {
-      return TRADING_CRYPTO_DATA.filter(each => each.starred);
-    });
-  }
+  //   setFavorites(() => {
+  //     return TRADING_CRYPTO_DATA.filter(each => each.starred);
+  //   });
+  // }
 
-  function getLtcStarred(bool: boolean) {
-    emitToast({message: 'LTC star clicked'});
-    favoriteTickersHandler('LTC');
+  // function getLtcStarred(bool: boolean) {
+  //   emitToast({message: 'LTC star clicked'});
+  //   favoriteTickersHandler('LTC');
 
-    TRADING_CRYPTO_DATA[2].starred = bool;
+  //   TRADING_CRYPTO_DATA[2].starred = bool;
 
-    setFavorites(() => {
-      return TRADING_CRYPTO_DATA.filter(each => each.starred);
-    });
-  }
+  //   setFavorites(() => {
+  //     return TRADING_CRYPTO_DATA.filter(each => each.starred);
+  //   });
+  // }
 
-  function getMaticStarred(bool: boolean) {
-    favoriteTickersHandler('MATIC');
+  // function getMaticStarred(bool: boolean) {
+  //   favoriteTickersHandler('MATIC');
 
-    TRADING_CRYPTO_DATA[3].starred = bool;
+  //   TRADING_CRYPTO_DATA[3].starred = bool;
 
-    setFavorites(() => {
-      return TRADING_CRYPTO_DATA.filter(each => each.starred);
-    });
-  }
+  //   setFavorites(() => {
+  //     return TRADING_CRYPTO_DATA.filter(each => each.starred);
+  //   });
+  // }
 
-  function getBnbStarred(bool: boolean) {
-    favoriteTickersHandler('BNB');
+  // function getBnbStarred(bool: boolean) {
+  //   favoriteTickersHandler('BNB');
 
-    TRADING_CRYPTO_DATA[4].starred = bool;
+  //   TRADING_CRYPTO_DATA[4].starred = bool;
 
-    setFavorites(() => {
-      return TRADING_CRYPTO_DATA.filter(each => each.starred);
-    });
-  }
+  //   setFavorites(() => {
+  //     return TRADING_CRYPTO_DATA.filter(each => each.starred);
+  //   });
+  // }
 
-  function getSolStarred(bool: boolean) {
-    favoriteTickersHandler('SOL');
+  // function getSolStarred(bool: boolean) {
+  //   favoriteTickersHandler('SOL');
 
-    TRADING_CRYPTO_DATA[5].starred = bool;
+  //   TRADING_CRYPTO_DATA[5].starred = bool;
 
-    setFavorites(() => {
-      return TRADING_CRYPTO_DATA.filter(each => each.starred);
-    });
-  }
+  //   setFavorites(() => {
+  //     return TRADING_CRYPTO_DATA.filter(each => each.starred);
+  //   });
+  // }
 
-  function getShibStarred(bool: boolean) {
-    favoriteTickersHandler('SHIB');
+  // function getShibStarred(bool: boolean) {
+  //   favoriteTickersHandler('SHIB');
 
-    TRADING_CRYPTO_DATA[6].starred = bool;
+  //   TRADING_CRYPTO_DATA[6].starred = bool;
 
-    setFavorites(() => {
-      return TRADING_CRYPTO_DATA.filter(each => each.starred);
-    });
-  }
+  //   setFavorites(() => {
+  //     return TRADING_CRYPTO_DATA.filter(each => each.starred);
+  //   });
+  // }
 
-  function getDotStarred(bool: boolean) {
-    favoriteTickersHandler('DOT');
+  // function getDotStarred(bool: boolean) {
+  //   favoriteTickersHandler('DOT');
 
-    TRADING_CRYPTO_DATA[7].starred = bool;
+  //   TRADING_CRYPTO_DATA[7].starred = bool;
 
-    setFavorites(() => {
-      return TRADING_CRYPTO_DATA.filter(each => each.starred);
-    });
-  }
+  //   setFavorites(() => {
+  //     return TRADING_CRYPTO_DATA.filter(each => each.starred);
+  //   });
+  // }
 
-  function getAdaStarred(bool: boolean) {
-    favoriteTickersHandler('ADA');
+  // function getAdaStarred(bool: boolean) {
+  //   favoriteTickersHandler('ADA');
 
-    TRADING_CRYPTO_DATA[8].starred = bool;
+  //   TRADING_CRYPTO_DATA[8].starred = bool;
 
-    setFavorites(() => {
-      return TRADING_CRYPTO_DATA.filter(each => each.starred);
-    });
-  }
+  //   setFavorites(() => {
+  //     return TRADING_CRYPTO_DATA.filter(each => each.starred);
+  //   });
+  // }
 
-  function getAvaxStarred(bool: boolean) {
-    favoriteTickersHandler('AVAX');
+  // function getAvaxStarred(bool: boolean) {
+  //   favoriteTickersHandler('AVAX');
 
-    TRADING_CRYPTO_DATA[9].starred = bool;
+  //   TRADING_CRYPTO_DATA[9].starred = bool;
 
-    setFavorites(() => {
-      return TRADING_CRYPTO_DATA.filter(each => each.starred);
-    });
-  }
+  //   setFavorites(() => {
+  //     return TRADING_CRYPTO_DATA.filter(each => each.starred);
+  //   });
+  // }
 
-  function getDaiStarred(bool: boolean) {
-    favoriteTickersHandler('Dai');
+  // function getDaiStarred(bool: boolean) {
+  //   favoriteTickersHandler('Dai');
 
-    TRADING_CRYPTO_DATA[10].starred = bool;
+  //   TRADING_CRYPTO_DATA[10].starred = bool;
 
-    setFavorites(() => {
-      return TRADING_CRYPTO_DATA.filter(each => each.starred);
-    });
-  }
+  //   setFavorites(() => {
+  //     return TRADING_CRYPTO_DATA.filter(each => each.starred);
+  //   });
+  // }
 
-  function getMkrStarred(bool: boolean) {
-    favoriteTickersHandler('MKR');
+  // function getMkrStarred(bool: boolean) {
+  //   favoriteTickersHandler('MKR');
 
-    TRADING_CRYPTO_DATA[11].starred = bool;
+  //   TRADING_CRYPTO_DATA[11].starred = bool;
 
-    setFavorites(() => {
-      return TRADING_CRYPTO_DATA.filter(each => each.starred);
-    });
-  }
+  //   setFavorites(() => {
+  //     return TRADING_CRYPTO_DATA.filter(each => each.starred);
+  //   });
+  // }
 
-  function getXrpStarred(bool: boolean) {
-    favoriteTickersHandler('XRP');
+  // function getXrpStarred(bool: boolean) {
+  //   favoriteTickersHandler('XRP');
 
-    TRADING_CRYPTO_DATA[12].starred = bool;
+  //   TRADING_CRYPTO_DATA[12].starred = bool;
 
-    setFavorites(() => {
-      return TRADING_CRYPTO_DATA.filter(each => each.starred);
-    });
-  }
+  //   setFavorites(() => {
+  //     return TRADING_CRYPTO_DATA.filter(each => each.starred);
+  //   });
+  // }
 
-  function getDogeStarred(bool: boolean) {
-    favoriteTickersHandler('DOGE');
+  // function getDogeStarred(bool: boolean) {
+  //   favoriteTickersHandler('DOGE');
 
-    TRADING_CRYPTO_DATA[13].starred = bool;
+  //   TRADING_CRYPTO_DATA[13].starred = bool;
 
-    setFavorites(() => {
-      return TRADING_CRYPTO_DATA.filter(each => each.starred);
-    });
-  }
+  //   setFavorites(() => {
+  //     return TRADING_CRYPTO_DATA.filter(each => each.starred);
+  //   });
+  // }
 
-  function getUniStarred(bool: boolean) {
-    favoriteTickersHandler('UNI');
+  // function getUniStarred(bool: boolean) {
+  //   favoriteTickersHandler('UNI');
 
-    TRADING_CRYPTO_DATA[14].starred = bool;
+  //   TRADING_CRYPTO_DATA[14].starred = bool;
 
-    setFavorites(() => {
-      return TRADING_CRYPTO_DATA.filter(each => each.starred);
-    });
-  }
+  //   setFavorites(() => {
+  //     return TRADING_CRYPTO_DATA.filter(each => each.starred);
+  //   });
+  // }
 
-  function getFlowStarred(bool: boolean) {
-    favoriteTickersHandler('Flow');
+  // function getFlowStarred(bool: boolean) {
+  //   favoriteTickersHandler('Flow');
 
-    TRADING_CRYPTO_DATA[15].starred = bool;
+  //   TRADING_CRYPTO_DATA[15].starred = bool;
 
-    setFavorites(() => {
-      return TRADING_CRYPTO_DATA.filter(each => each.starred);
-    });
-  }
+  //   setFavorites(() => {
+  //     return TRADING_CRYPTO_DATA.filter(each => each.starred);
+  //   });
+  // }
 
   const allTabClickHandler = () => {
     setActiveTab('All');
@@ -755,36 +776,33 @@ const TickerSelectorBox = ({
   const cryptoCardLineGraphWidth = '170';
 
   const displayedAllCryptoCards = filteredCards
-    .filter(each => {
-      if (!availableTickers) return;
+    // .filter(each => {
+    //   if (!availableTickers) return;
 
-      if (user && user[0].favoriteTickers) {
-        for (let i = 0; i < user[0].favoriteTickers.length; i++) {
-          return user[0].favoriteTickers.find((fav: ITickerData) => fav.currency === each.currency);
-          // if (each.currency === user[0].favoriteTickers.find((each: ICryptoCardData) => each)) {
-          //   each.starred = true;
-          //   return each;
-          // }
-        }
-      }
+    //   // // TODO: Displaying the favorite tickers on all tab
+    //   // if (user && user[0].favoriteTickers) {
+    //   //   for (let i = 0; i < user[0].favoriteTickers.length; i++) {
+    //   //     return user[0].favoriteTickers.find((fav: ITickerData) => fav.currency === each.currency);
+    //   //     // if (each.currency === user[0].favoriteTickers.find((each: ICryptoCardData) => each)) {
+    //   //     //   each.starred = true;
+    //   //     //   return each;
+    //   //     // }
+    //   //   }
+    //   // }
 
-      for (let i = 0; i < availableTickers.length; i++) {
-        if (each.currency === (availableTickers && availableTickers[i])) {
-          return each;
-        }
-      }
-    })
+    //   // for (let i = 0; i < availableTickers.length; i++) {
+    //   //   if (each.currency === (availableTickers && availableTickers[i])) {
+    //   //     return each;
+    //   //   }
+    //   // }
+    // })
     .map((cryptoCard, i) => {
       if (i === 0) {
         return (
           <CryptoCard
             key={i}
             className="mt-4 ml-4"
-            lineGraphProps={{
-              dataArray: cryptoCardLineGraphDataArray,
-              strokeColor: cryptoCardLineGraphStrokeColor,
-              lineGraphWidth: cryptoCardLineGraphWidth,
-            }}
+            lineGraphProps={cryptoCard.lineGraphProps}
             star={cryptoCard.star}
             starColor={cryptoCard.starColor}
             starred={cryptoCard.starred}
@@ -802,11 +820,7 @@ const TickerSelectorBox = ({
       return (
         <CryptoCard
           key={i}
-          lineGraphProps={{
-            dataArray: cryptoCardLineGraphDataArray,
-            strokeColor: cryptoCardLineGraphStrokeColor,
-            lineGraphWidth: cryptoCardLineGraphWidth,
-          }}
+          lineGraphProps={cryptoCard.lineGraphProps}
           star={cryptoCard.star}
           starColor={cryptoCard.starColor}
           starred={cryptoCard.starred}
@@ -821,7 +835,7 @@ const TickerSelectorBox = ({
       );
     });
 
-  const displayedFavorites = allCards
+  const displayedFavorites = filteredCards
     .filter(cryptoCard => {
       if (!user || !user[0].favoriteTickers) return;
       if (cryptoCard.starred !== true) return;

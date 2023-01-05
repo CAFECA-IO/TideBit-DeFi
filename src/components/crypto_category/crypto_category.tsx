@@ -1,7 +1,52 @@
 import CryptoCard from '../card/crypto_card';
+import {useContext, useEffect, useState} from 'react';
+
+import {
+  MarketContext,
+  IMarketContext,
+  IMarketProvider,
+  ITickerData,
+} from '../../lib/contexts/market_context';
+import {UserContext, IUserContext} from '../../lib/contexts/user_context';
+
+// TODO: import data from market context
 
 const CryptoCategory = ({...otherProps}) => {
   const customClassName = otherProps?.className;
+
+  const {availableTickers} = useContext<IMarketContext>(MarketContext);
+
+  const displayedAllTickers = availableTickers?.map((cryptoCard, i) => {
+    if (i === 0) {
+      return (
+        <CryptoCard
+          key={i}
+          className="mt-4 ml-4"
+          lineGraphProps={cryptoCard.lineGraphProps}
+          chain={cryptoCard.chain}
+          currency={cryptoCard.currency}
+          price={cryptoCard.price}
+          fluctuating={cryptoCard.fluctuating}
+          gradientColor={cryptoCard.gradientColor}
+          tokenImg={cryptoCard.tokenImg}
+        />
+      );
+    }
+
+    return (
+      <CryptoCard
+        key={i}
+        lineGraphProps={cryptoCard.lineGraphProps}
+        chain={cryptoCard.chain}
+        currency={cryptoCard.currency}
+        price={cryptoCard.price}
+        fluctuating={cryptoCard.fluctuating}
+        gradientColor={cryptoCard.gradientColor}
+        tokenImg={cryptoCard.tokenImg}
+      />
+    );
+  });
+
   return (
     <div
       className={`${customClassName} container mx-auto flex shrink-0 flex-wrap justify-center space-y-1`}
@@ -19,87 +64,7 @@ const CryptoCategory = ({...otherProps}) => {
       </div>
       <div className="flex w-full items-center justify-center">
         <div className="mb-5 grid grid-cols-2 space-y-4 space-x-4 lg:grid-cols-5">
-          <CryptoCard
-            className="mt-4 ml-4"
-            chain="Ethereum"
-            currency="ETH"
-            price={1288.4}
-            fluctuating={1.14}
-            gradientColor="border-bluePurple/50 bg-black from-bluePurple/50 to-black"
-            tokenImg="/elements/group_2371.svg"
-          />
-          <CryptoCard
-            chain="Bitcoin"
-            currency="BTC"
-            price={19848.8}
-            gradientColor="border-lightOrange/50 bg-black from-lightOrange/50 to-black"
-            fluctuating={3.46}
-            tokenImg="/elements/group_2372.svg"
-          />
-          <CryptoCard
-            chain="Litecoin"
-            currency="LTC"
-            price={54.57}
-            fluctuating={-3.46}
-            gradientColor="border-lightGray2/50 bg-black from-lightGray2/50 to-black"
-            tokenImg="/elements/c5b7bda06ddfe2b3f59b37ed6bb65ab4.svg"
-          />
-          <CryptoCard
-            chain="Polygon"
-            currency="MATIC"
-            price={0.82}
-            fluctuating={-6.23}
-            gradientColor="border-lightPurple/60 bg-black from-lightPurple/60 to-black"
-            tokenImg="/elements/9cc18b0cbe765b0a28791d253207f0c0.svg"
-          />
-          <CryptoCard
-            chain="BNB"
-            currency="BNB"
-            price={274.54}
-            fluctuating={-6.23}
-            gradientColor="border-lightYellow/60 bg-black from-lightYellow/50 to-black"
-            tokenImg="/elements/group_2374.svg"
-          />
-          <CryptoCard
-            chain="Solana"
-            currency="SOL"
-            price={28.41}
-            fluctuating={1.14}
-            gradientColor="border-lightPurple2/60 from-lightPurple2/60 to-black"
-            tokenImg="/elements/group_2378.svg"
-          />
-          <CryptoCard
-            chain="Shiba Inu"
-            currency="SHIB"
-            price={0.0000099}
-            fluctuating={-3.46}
-            gradientColor="border-lightRed1/50 from-lightRed1/50 to-black"
-            tokenImg="/elements/group_2381.svg"
-          />
-          <CryptoCard
-            chain="Polkadot"
-            currency="DOT"
-            price={5.92}
-            fluctuating={3.46}
-            gradientColor="border-lightPink/60 from-lightPink/60 to-black"
-            tokenImg="/elements/group_2385.svg"
-          />
-          <CryptoCard
-            chain="Cardano"
-            currency="ADA"
-            price={0.3611}
-            fluctuating={1.14}
-            gradientColor="border-lightGreen1/60 from-lightGreen1/60 to-black"
-            tokenImg="/elements/group_2388.svg"
-          />
-          <CryptoCard
-            chain="Avalanche"
-            price={15.77}
-            currency="AVAX"
-            fluctuating={-6.23}
-            gradientColor="border-lightRed2/50 from-lightRed2/50 to-black"
-            tokenImg="/elements/group_2391.svg"
-          />
+          {displayedAllTickers}
 
           {/* <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">
           

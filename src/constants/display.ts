@@ -2,6 +2,9 @@
 //   setTimeout(() => setProcessModalVisible(false), 1000);
 // };
 
+export const TIDEBIT_BUTTON_CONFIG =
+  'rounded px-5 py-2 text-base transition-all hover:opacity-90 text-white bg-tidebitTheme';
+
 export interface IDEV_TOAST_CONFIG {
   position: string;
   autoClose: number;

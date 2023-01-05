@@ -1469,7 +1469,10 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
         <>
           {!!chooseWalletConnect && connector ? (
             <div>
-              <TideButton onClick={killSession} className="bg-cuteBlue2 hover:bg-cuteBlue2/80">
+              <TideButton
+                onClick={killSession}
+                className="rounded bg-cuteBlue2 px-5 py-2 text-base text-white transition-all hover:bg-cuteBlue2/80"
+              >
                 Kill session of wallet connect
               </TideButton>
             </div>

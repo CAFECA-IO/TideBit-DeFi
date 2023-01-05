@@ -14,7 +14,7 @@ const RippleButton = ({
   className,
   buttonStyle,
   children,
-  buttonType: buttonType = 'button',
+  buttonType = 'button',
   ...otherProps
 }: IRippleButtonProps) => {
   const buttonRef = useRef<HTMLButtonElement>(null);

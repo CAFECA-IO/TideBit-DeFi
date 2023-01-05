@@ -1,6 +1,5 @@
 import {ImCross} from 'react-icons/im';
 import Image from 'next/image';
-import TideButton from '../tide_button/tide_button';
 import Link from 'next/link';
 import {useContext, useEffect, useState} from 'react';
 import CryptoCard from '../card/crypto_card';

@@ -85,7 +85,10 @@ const SignatureProcessModal = ({
   const requestButtonHandler = loading ? (
     <Lottie className="w-40px" animationData={smallConnectingAnimation} />
   ) : (
-    <TideButton onClick={requestSendingHandler} className="px-5">
+    <TideButton
+      onClick={requestSendingHandler}
+      className="rounded bg-tidebitTheme px-5 py-2 text-base transition-all hover:opacity-90"
+    >
       Send Requests
     </TideButton>
   );

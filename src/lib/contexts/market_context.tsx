@@ -278,21 +278,24 @@ export interface IMarketProvider {
 
 export interface IMarketContext {
   availableTickers: ITickerData[] | null;
+  isCFDTradable: boolean;
   // getTickerData: (ticker: string) => ITickerData; // 會拿到哪些是被star的
 }
 
-// _app.tsx
+// TODO: Note: _app.tsx 啟動的時候 => createContext
 export const MarketContext = createContext<IMarketContext>({
   availableTickers: null,
+  isCFDTradable: false,
   // getTickerData: () => ITickerData,
 });
 
 export const MarketProvider = ({children}: IMarketProvider) => {
   const [availableTickers, setAvailableTickers] = useState<ITickerData[]>(addPropertyToArray);
+  const [isCFDTradable, setIsCFDTradable] = useState<boolean>(true);
 
   // console.log('Whole array [addPropertyToArray]:', addPropertyToArray);
   // setAvailableTickers(addPropertyToArray); // infinite loop
 
-  const defaultValue = {availableTickers};
+  const defaultValue = {availableTickers, isCFDTradable};
   return <MarketContext.Provider value={defaultValue}>{children}</MarketContext.Provider>;
 };

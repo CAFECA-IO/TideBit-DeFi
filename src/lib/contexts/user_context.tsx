@@ -307,6 +307,7 @@ export const UserContext = createContext<IUserContext>({
 });
 
 export const UserProvider = ({children}: IUserProvider) => {
+  // TODO: get partial user type from `IUserContext`
   const [user, setUser] = useState<IUser | null>(SAMPLE_USER);
 
   const favoriteTickersHandler = (newFavorite: string) => {

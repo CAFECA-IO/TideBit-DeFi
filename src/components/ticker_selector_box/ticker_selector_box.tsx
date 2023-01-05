@@ -500,6 +500,7 @@ const TickerSelectorBox = ({
   // const {availableTickers} = useContext(MarketContext) as IMarketContext;
   // console.log('availableTickers in `ticker box`:', availableTickers);
 
+  // const {user, favoriteTickersHandler} = useContext<IUserContext | null>(UserContext);
   const {user, favoriteTickersHandler} = useContext(UserContext) as IUserContext;
 
   const [activeTab, setActiveTab] = useState('All');
@@ -771,10 +772,6 @@ const TickerSelectorBox = ({
   //   tokenImg: '/elements/group_2371.svg',
   // };
 
-  const cryptoCardLineGraphDataArray = [10, 10, 10, 10, 10, 10, 10, 10, 10, 10];
-  const cryptoCardLineGraphStrokeColor = [PROFIT_LOSS_COLOR_TYPE.loss];
-  const cryptoCardLineGraphWidth = '170';
-
   const displayedAllCryptoCards = filteredCards
     // .filter(each => {
     //   if (!availableTickers) return;
@@ -854,11 +851,7 @@ const TickerSelectorBox = ({
           <CryptoCard
             key={i}
             className="mt-4 ml-4"
-            lineGraphProps={{
-              dataArray: cryptoCardLineGraphDataArray,
-              strokeColor: cryptoCardLineGraphStrokeColor,
-              lineGraphWidth: cryptoCardLineGraphWidth,
-            }}
+            lineGraphProps={cryptoCard.lineGraphProps}
             star={cryptoCard.star}
             starColor={cryptoCard.starColor}
             starred={true}
@@ -876,11 +869,7 @@ const TickerSelectorBox = ({
       return (
         <CryptoCard
           key={i}
-          lineGraphProps={{
-            dataArray: cryptoCardLineGraphDataArray,
-            strokeColor: cryptoCardLineGraphStrokeColor,
-            lineGraphWidth: cryptoCardLineGraphWidth,
-          }}
+          lineGraphProps={cryptoCard.lineGraphProps}
           star={cryptoCard.star}
           starColor={cryptoCard.starColor}
           starred={cryptoCard.starred}

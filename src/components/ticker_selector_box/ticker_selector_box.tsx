@@ -83,16 +83,18 @@ const TickerSelectorBox = ({
   //   }
   // }, [activeTab, allCards, favorites]);
 
-  const cryptoCardsData = availableTickers?.map((each, index) => {
-    const addCallbackFunc = {
-      ...each,
-      getStarredStateCallback: (bool: boolean) => {
-        // console.log(each.currency, 'clicked');
-        // favoriteTickersHandler(each.currency);
-      },
-    };
-    return addCallbackFunc;
-  });
+  const cryptoCardsData = availableTickers
+    ? availableTickers?.map((each, index) => {
+        const addCallbackFunc = {
+          ...each,
+          getStarredStateCallback: (bool: boolean) => {
+            // console.log(each.currency, 'clicked');
+            // favoriteTickersHandler(each.currency);
+          },
+        };
+        return addCallbackFunc;
+      })
+    : [];
 
   const favoriteTabCardsData = user?.favoriteTickers
     ?.filter(item => item.starred)

@@ -265,6 +265,7 @@ const addPropertyToArray: ITickerData[] = TRADING_CRYPTO_DATA.map(item => {
       dataArray: dataArray,
       strokeColor: strokeColor,
       lineGraphWidth: '170',
+      lineGraphWidthMobile: '140',
     },
   };
 

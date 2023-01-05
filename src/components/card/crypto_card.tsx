@@ -22,6 +22,7 @@ export interface ILineGraphProps {
   dataArray?: number[];
   strokeColor?: string[];
   lineGraphWidth?: string;
+  lineGraphWidthMobile?: string;
 }
 
 export interface ICardProps {
@@ -140,7 +141,7 @@ const CryptoCard = ({
   function lineGraph({
     strokeColor = ['#3CC8C8'],
     dataArray = [42, 50, 45, 55, 49, 52, 48, 68, 48, 20],
-    lineGraphWidth = '150',
+    lineGraphWidth,
     ...otherProps
   }: ILineGraphProps) {
     const chartOptions: ApexOptions = {
@@ -335,7 +336,7 @@ const CryptoCard = ({
               {lineGraph({
                 dataArray: lineGraphProps?.dataArray || sampleArray,
                 strokeColor: lineGraphProps?.strokeColor || thisRandomColor,
-                lineGraphWidth: lineGraphProps?.lineGraphWidth || '140',
+                lineGraphWidth: lineGraphProps?.lineGraphWidthMobile || '140',
               })}
               {/* <LineGraph
                 sampleArray={sampleArray}

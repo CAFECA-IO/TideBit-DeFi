@@ -241,7 +241,7 @@ export const MarketContext = createContext<IMarketContext>({
 
 export const MarketProvider = ({children}: IMarketProvider) => {
   const [availableTickers, setAvailableTickers] = useState<string[] | null>(SAMPLE_TICKERS);
-  const defaultValue = {availableTickers};
 
+  const defaultValue = {availableTickers};
   return <MarketContext.Provider value={defaultValue}>{children}</MarketContext.Provider>;
 };

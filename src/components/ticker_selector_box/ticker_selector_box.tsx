@@ -505,18 +505,18 @@ const TickerSelectorBox = ({
   const [allCards, setAllCards] = useState<ICryptoCardData[]>(TRADING_CRYPTO_DATA);
 
   const [searches, setSearches] = useState<string>();
+  const [filteredCards, setFilteredCards] = useState<ICryptoCardData[]>(TRADING_CRYPTO_DATA);
 
   const {availableTickers} = useContext(MarketContext) as IMarketContext;
   // console.log('availableTickers:', availableTickers);
   const {user, favoriteTickersHandler} = useContext(UserContext) as IUserContext;
   // const {favoriteTickers} = user;
-  const [filteredCards, setFilteredCards] = useState<ICryptoCardData[]>(TRADING_CRYPTO_DATA);
 
   const onSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const searchString = event.target.value.toLocaleLowerCase();
     setSearches(searchString);
 
-    // // TODO: 這樣寫，會顯示上一部的搜尋結果
+    // // 這樣寫，會顯示上一步的搜尋結果
     // const newSearchResult = TRADING_CRYPTO_DATA.filter(each => {
     //   return each.chain.toLocaleLowerCase().includes(searches || '');
     // });
@@ -524,10 +524,15 @@ const TickerSelectorBox = ({
   };
 
   const newSearchResult = TRADING_CRYPTO_DATA.filter(each => {
-    return each.chain.toLocaleLowerCase().includes(searches || '');
+    const result =
+      each.chain.toLocaleLowerCase().includes(searches || '') ||
+      each.currency.toLocaleLowerCase().includes(searches || '');
+    return result;
   });
 
-  // TODO: 搜尋完後關掉 ticker box 會顯示剛剛的搜尋結果但是input是空的
+  // const testResult =
+
+  // 搜尋完後關掉 ticker box 會顯示剛剛的搜尋結果但是input是空的 => input value={searches}
   useEffect(() => {
     setFilteredCards(newSearchResult);
   }, [searches]);
@@ -732,6 +737,20 @@ const TickerSelectorBox = ({
 
   const activeFavoriteTabStyle =
     activeTab == 'Favorite' ? 'bg-darkGray7 text-lightWhite' : 'bg-darkGray6 text-lightGray';
+
+  // const cryptoCardData = {
+  //   key: 0,
+  //   currency: 'ETH',
+  //   chain: 'Ethereum',
+  //   star: true,
+  //   starred: false,
+  //   starColor: 'text-bluePurple',
+  //   // getStarredStateCallback: getEthStarred,
+  //   price: 1288.4,
+  //   fluctuating: 1.14,
+  //   gradientColor: 'border-bluePurple/50 bg-black from-bluePurple/50 to-black',
+  //   tokenImg: '/elements/group_2371.svg',
+  // };
 
   const displayedAllCryptoCards = filteredCards
     .filter(each => {

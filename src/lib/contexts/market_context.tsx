@@ -1,4 +1,6 @@
 import React, {useState, createContext} from 'react';
+import {ICardProps, ILineGraphProps} from '../../components/card/crypto_card';
+import {PROFIT_LOSS_COLOR_TYPE} from '../../constants/display';
 
 export interface ITickerData {
   currency: string;
@@ -11,6 +13,8 @@ export interface ITickerData {
   fluctuating: number;
   gradientColor: string;
   tokenImg: string;
+
+  lineGraphProps?: ILineGraphProps;
 }
 
 const SAMPLE_TICKERS = [
@@ -32,6 +36,30 @@ const SAMPLE_TICKERS = [
   'Flow',
 ];
 
+function randomNumber(min: number, max: number) {
+  return Math.floor(Math.random() * (max - min + 1) + min);
+}
+
+function randomArray(min: number, max: number, length: number) {
+  const arr = [];
+  for (let i = 0; i < length; i++) {
+    arr.push(randomNumber(min, max));
+  }
+  return arr;
+}
+
+// const sampleArray = randomArray(1100, 1200, 10);
+
+const fakeDataColor = (sampleArray: number[]) => {
+  if (sampleArray[sampleArray.length - 1] > sampleArray[sampleArray.length - 2]) {
+    // priceColor = 'text-lightGreen';
+    return [PROFIT_LOSS_COLOR_TYPE.profit];
+  }
+
+  // priceColor = 'text-lightRed';
+  return [PROFIT_LOSS_COLOR_TYPE.loss];
+};
+
 const TRADING_CRYPTO_DATA: ITickerData[] = [
   {
     currency: 'ETH',
@@ -44,6 +72,11 @@ const TRADING_CRYPTO_DATA: ITickerData[] = [
     fluctuating: 1.14,
     gradientColor: 'border-bluePurple/50 bg-black from-bluePurple/50 to-black',
     tokenImg: '/elements/group_2371.svg',
+    lineGraphProps: {
+      dataArray: randomArray(1100, 1200, 10),
+      strokeColor: [PROFIT_LOSS_COLOR_TYPE.profit],
+      lineGraphWidth: '170',
+    },
   },
   {
     currency: 'BTC',
@@ -56,6 +89,11 @@ const TRADING_CRYPTO_DATA: ITickerData[] = [
     fluctuating: 1.14,
     gradientColor: 'border-lightOrange/50 bg-black from-lightOrange/50 to-black',
     tokenImg: '/elements/group_2372.svg',
+    lineGraphProps: {
+      dataArray: randomArray(1100, 1200, 10),
+      strokeColor: [PROFIT_LOSS_COLOR_TYPE.profit],
+      lineGraphWidth: '170',
+    },
   },
   {
     currency: 'LTC',
@@ -68,6 +106,11 @@ const TRADING_CRYPTO_DATA: ITickerData[] = [
     fluctuating: 1.14,
     gradientColor: 'border-lightGray2/50 bg-black from-lightGray2/50 to-black',
     tokenImg: '/elements/c5b7bda06ddfe2b3f59b37ed6bb65ab4.svg',
+    lineGraphProps: {
+      dataArray: randomArray(1100, 1200, 10),
+      strokeColor: [PROFIT_LOSS_COLOR_TYPE.profit],
+      lineGraphWidth: '170',
+    },
   },
   {
     currency: 'MATIC',
@@ -80,6 +123,11 @@ const TRADING_CRYPTO_DATA: ITickerData[] = [
     fluctuating: 1.14,
     gradientColor: 'border-lightPurple/60 bg-black from-lightPurple/60 to-black',
     tokenImg: '/elements/9cc18b0cbe765b0a28791d253207f0c0.svg',
+    lineGraphProps: {
+      dataArray: randomArray(1100, 1200, 10),
+      strokeColor: [PROFIT_LOSS_COLOR_TYPE.profit],
+      lineGraphWidth: '170',
+    },
   },
   {
     currency: 'BNB',
@@ -92,6 +140,11 @@ const TRADING_CRYPTO_DATA: ITickerData[] = [
     fluctuating: 1.14,
     gradientColor: 'border-lightYellow/60 bg-black from-lightYellow/50 to-black',
     tokenImg: '/elements/group_2374.svg',
+    lineGraphProps: {
+      dataArray: randomArray(1100, 1200, 10),
+      strokeColor: [PROFIT_LOSS_COLOR_TYPE.profit],
+      lineGraphWidth: '170',
+    },
   },
   {
     currency: 'SOL',
@@ -104,6 +157,11 @@ const TRADING_CRYPTO_DATA: ITickerData[] = [
     fluctuating: 1.14,
     gradientColor: 'border-lightPurple2/60 from-lightPurple2/60 to-black',
     tokenImg: '/elements/group_2378.svg',
+    lineGraphProps: {
+      dataArray: randomArray(1100, 1200, 10),
+      strokeColor: [PROFIT_LOSS_COLOR_TYPE.profit],
+      lineGraphWidth: '170',
+    },
   },
   {
     currency: 'SHIB',
@@ -116,6 +174,11 @@ const TRADING_CRYPTO_DATA: ITickerData[] = [
     fluctuating: 1.14,
     gradientColor: 'border-lightRed1/50 from-lightRed1/50 to-black',
     tokenImg: '/elements/group_2381.svg',
+    lineGraphProps: {
+      dataArray: randomArray(1100, 1200, 10),
+      strokeColor: [PROFIT_LOSS_COLOR_TYPE.profit],
+      lineGraphWidth: '170',
+    },
   },
   {
     currency: 'DOT',
@@ -128,6 +191,11 @@ const TRADING_CRYPTO_DATA: ITickerData[] = [
     fluctuating: 1.14,
     gradientColor: 'border-lightPink/60 from-lightPink/60 to-black',
     tokenImg: '/elements/group_2385.svg',
+    lineGraphProps: {
+      dataArray: randomArray(1100, 1200, 10),
+      strokeColor: [PROFIT_LOSS_COLOR_TYPE.profit],
+      lineGraphWidth: '170',
+    },
   },
   {
     currency: 'ADA',
@@ -140,6 +208,11 @@ const TRADING_CRYPTO_DATA: ITickerData[] = [
     fluctuating: 1.14,
     gradientColor: 'border-lightGreen1/60 from-lightGreen1/60 to-black',
     tokenImg: '/elements/group_2388.svg',
+    lineGraphProps: {
+      dataArray: randomArray(1100, 1200, 10),
+      strokeColor: [PROFIT_LOSS_COLOR_TYPE.profit],
+      lineGraphWidth: '170',
+    },
   },
   {
     currency: 'AVAX',
@@ -152,6 +225,11 @@ const TRADING_CRYPTO_DATA: ITickerData[] = [
     fluctuating: 1.14,
     gradientColor: 'border-lightRed2/50 from-lightRed2/50 to-black',
     tokenImg: '/elements/group_2391.svg',
+    lineGraphProps: {
+      dataArray: randomArray(1100, 1200, 10),
+      strokeColor: [PROFIT_LOSS_COLOR_TYPE.profit],
+      lineGraphWidth: '170',
+    },
   },
   {
     currency: 'Dai',
@@ -164,6 +242,11 @@ const TRADING_CRYPTO_DATA: ITickerData[] = [
     fluctuating: 1.14,
     gradientColor: 'border-lightOrange1/50 from-lightOrange1/50 to-black',
     tokenImg: '/elements/layer_x0020_1.svg',
+    lineGraphProps: {
+      dataArray: randomArray(1100, 1200, 10),
+      strokeColor: [PROFIT_LOSS_COLOR_TYPE.profit],
+      lineGraphWidth: '170',
+    },
   },
   {
     currency: 'MKR',
@@ -176,6 +259,11 @@ const TRADING_CRYPTO_DATA: ITickerData[] = [
     fluctuating: 1.14,
     gradientColor: 'border-lightGreen3/50 from-lightGreen3/50 to-black',
     tokenImg: '/elements/layer_2.svg',
+    lineGraphProps: {
+      dataArray: randomArray(1100, 1200, 10),
+      strokeColor: [PROFIT_LOSS_COLOR_TYPE.profit],
+      lineGraphWidth: '170',
+    },
   },
   {
     currency: 'XRP',
@@ -188,6 +276,11 @@ const TRADING_CRYPTO_DATA: ITickerData[] = [
     fluctuating: 1.14,
     gradientColor: 'border-lightGray4/50 from-lightGray4/50 to-black',
     tokenImg: '/elements/group_2406.svg',
+    lineGraphProps: {
+      dataArray: randomArray(1100, 1200, 10),
+      strokeColor: [PROFIT_LOSS_COLOR_TYPE.profit],
+      lineGraphWidth: '170',
+    },
   },
   {
     currency: 'DOGE',
@@ -200,6 +293,11 @@ const TRADING_CRYPTO_DATA: ITickerData[] = [
     fluctuating: 1.14,
     gradientColor: 'border-lightYellow1/50 from-lightYellow1/50 to-black',
     tokenImg: '/elements/layer_2-1.svg',
+    lineGraphProps: {
+      dataArray: randomArray(1100, 1200, 10),
+      strokeColor: [PROFIT_LOSS_COLOR_TYPE.profit],
+      lineGraphWidth: '170',
+    },
   },
   {
     currency: 'UNI',
@@ -212,6 +310,11 @@ const TRADING_CRYPTO_DATA: ITickerData[] = [
     fluctuating: 1.14,
     gradientColor: 'border-lightPink1/50 from-lightPink1/50 to-black',
     tokenImg: '/elements/uniswap-uni-logo.svg',
+    lineGraphProps: {
+      dataArray: randomArray(1100, 1200, 10),
+      strokeColor: [PROFIT_LOSS_COLOR_TYPE.profit],
+      lineGraphWidth: '170',
+    },
   },
   {
     currency: 'Flow',
@@ -224,6 +327,11 @@ const TRADING_CRYPTO_DATA: ITickerData[] = [
     fluctuating: 1.14,
     gradientColor: 'border-lightGreen4/50 from-lightGreen4/50 to-black',
     tokenImg: '/elements/layer_2_1_.svg',
+    lineGraphProps: {
+      dataArray: randomArray(1100, 1200, 10),
+      strokeColor: [PROFIT_LOSS_COLOR_TYPE.profit],
+      lineGraphWidth: '170',
+    },
   },
 ];
 
@@ -243,5 +351,6 @@ export const MarketProvider = ({children}: IMarketProvider) => {
   const [availableTickers, setAvailableTickers] = useState<string[] | null>(SAMPLE_TICKERS);
 
   const defaultValue = {availableTickers};
+
   return <MarketContext.Provider value={defaultValue}>{children}</MarketContext.Provider>;
 };

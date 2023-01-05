@@ -45,7 +45,6 @@ interface ICryptoCardData {
 
 interface ICryptoCardDataArray {
   [index: number]: ICryptoCardData;
-  // element: ICryptoCardData;
 }
 
 interface IToastType {
@@ -803,6 +802,11 @@ const TickerSelectorBox = ({
       return (
         <CryptoCard
           key={i}
+          lineGraphProps={{
+            dataArray: cryptoCardLineGraphDataArray,
+            strokeColor: cryptoCardLineGraphStrokeColor,
+            lineGraphWidth: cryptoCardLineGraphWidth,
+          }}
           star={cryptoCard.star}
           starColor={cryptoCard.starColor}
           starred={cryptoCard.starred}
@@ -836,6 +840,11 @@ const TickerSelectorBox = ({
           <CryptoCard
             key={i}
             className="mt-4 ml-4"
+            lineGraphProps={{
+              dataArray: cryptoCardLineGraphDataArray,
+              strokeColor: cryptoCardLineGraphStrokeColor,
+              lineGraphWidth: cryptoCardLineGraphWidth,
+            }}
             star={cryptoCard.star}
             starColor={cryptoCard.starColor}
             starred={true}
@@ -853,6 +862,11 @@ const TickerSelectorBox = ({
       return (
         <CryptoCard
           key={i}
+          lineGraphProps={{
+            dataArray: cryptoCardLineGraphDataArray,
+            strokeColor: cryptoCardLineGraphStrokeColor,
+            lineGraphWidth: cryptoCardLineGraphWidth,
+          }}
           star={cryptoCard.star}
           starColor={cryptoCard.starColor}
           starred={cryptoCard.starred}

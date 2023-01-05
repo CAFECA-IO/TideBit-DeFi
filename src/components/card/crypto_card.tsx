@@ -18,30 +18,30 @@ import {PROFIT_LOSS_COLOR_TYPE} from '../../constants/display';
 
 const Chart = dynamic(() => import('react-apexcharts'), {ssr: false});
 
-interface ILineGraphProps {
+export interface ILineGraphProps {
   dataArray?: number[];
   strokeColor?: string[];
   lineGraphWidth?: string;
 }
 
-interface CardProps {
-  gradientColor?: string;
-  // tokenComponent?: JSX.Element;
-  tokenImg?: string;
+export interface ICardProps {
+  tokenImg: string;
   chain: string;
   currency: string;
-  // lineGraph?: JSX.Element;
   price: number;
   fluctuating: number;
+  gradientColor: string;
+  lineGraphProps: ILineGraphProps;
+
   star?: boolean;
-  starred?: boolean;
-  className?: string;
   starColor?: string;
+  starred?: boolean;
   getStarredState?: (props: boolean) => void;
-  lineGraphProps?: ILineGraphProps;
-  lineGraphDataArray?: number[];
-  lineGraphStrokeColor?: string[];
-  lineGraphWidth?: string;
+
+  className?: string;
+  // lineGraphDataArray?: number[];
+  // lineGraphStrokeColor?: string[];
+  // lineGraphWidth?: string;
 }
 
 const CryptoCard = ({
@@ -60,7 +60,7 @@ const CryptoCard = ({
   // lineGraphStrokeColor,
   // lineGraphWidth,
   ...otherProps
-}: CardProps): JSX.Element => {
+}: ICardProps): JSX.Element => {
   // FIXME: comment for `.tsx`
   // price = price > 0.001 ? price.toLocaleString() : price;
   fluctuating = Number(fluctuating);
@@ -233,6 +233,7 @@ const CryptoCard = ({
   // console.log(arrayGenerator());
 
   const sampleArray = randomArray(1100, 1200, 10);
+  // console.log('sample array', sampleArray);
 
   // TODO: Taking Notes- execution order about parameters and logic flow
   // #17BF88 is light green, #E86D6D is light red
@@ -284,7 +285,7 @@ const CryptoCard = ({
               {lineGraph({
                 dataArray: lineGraphProps?.dataArray || sampleArray,
                 strokeColor: lineGraphProps?.strokeColor || thisRandomColor,
-                lineGraphWidth: lineGraphProps?.lineGraphWidth || '140',
+                lineGraphWidth: lineGraphProps?.lineGraphWidth || '170',
               })}
               {/* <LineGraph
                 sampleArray={sampleArray}

@@ -1,9 +1,11 @@
 import {useState} from 'react';
 import TradeTab from '../trade_tab/trade_tab';
 import PositionTab from '../position_tab/position_tab';
+import TradeSuspendedTab from '../trade_suspended_tab/trade_suspended_tab';
 
 const OrderSection = () => {
   const [activeTab, setActiveTab] = useState('Trade');
+  const [suspendTrade, setSuspendTrade] = useState(true);
 
   const tradeTabClickHandler = () => {
     setActiveTab('Trade');
@@ -13,7 +15,14 @@ const OrderSection = () => {
     setActiveTab('Position');
   };
 
-  const currentTab = activeTab === 'Trade' ? <TradeTab /> : <PositionTab />;
+  const currentTab =
+    activeTab === 'Position' ? (
+      <PositionTab />
+    ) : suspendTrade ? (
+      <TradeSuspendedTab />
+    ) : (
+      <TradeTab />
+    );
 
   const activeTradeTabStyle =
     activeTab == 'Trade' ? 'bg-darkGray7 text-lightWhite' : 'bg-darkGray6 text-lightGray';

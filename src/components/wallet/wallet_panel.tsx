@@ -1612,7 +1612,7 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
       // Background
       <div
         id="userDropdown"
-        className="absolute top-16 right-8 z-10 w-285px divide-y divide-lightGray rounded-none bg-darkGray shadow"
+        className="avatarMenuShadow absolute top-16 right-8 z-10 w-285px divide-y divide-lightGray rounded-none bg-darkGray shadow"
       >
         {/* Avatar Section */}
         <div className="mx-3 items-center py-3 px-4 text-center text-sm text-lightGray">

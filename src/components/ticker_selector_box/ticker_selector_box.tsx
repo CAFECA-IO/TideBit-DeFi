@@ -7,12 +7,12 @@ import {
   MarketContext,
   IMarketContext,
   IMarketProvider,
-  IMarketCryptoCardData,
+  ITickerData,
 } from '../../lib/contexts/market_context';
 import {UserContext, IUserContext} from '../../lib/contexts/user_context';
 import {ToastContainer, toast, ToastOptions, useToast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import {DEV_TOAST_CONFIG} from '../../constants/display';
+import {DEV_TOAST_CONFIG, PROFIT_LOSS_COLOR_TYPE} from '../../constants/display';
 
 // TODO: useContext
 interface ITickerSelectorBox {
@@ -751,15 +751,17 @@ const TickerSelectorBox = ({
   //   tokenImg: '/elements/group_2371.svg',
   // };
 
+  const cryptoCardLineGraphDataArray = [10, 10, 10, 10, 10, 10, 10, 10, 10, 10];
+  const cryptoCardLineGraphStrokeColor = [PROFIT_LOSS_COLOR_TYPE.loss];
+  const cryptoCardLineGraphWidth = '170';
+
   const displayedAllCryptoCards = filteredCards
     .filter(each => {
       if (!availableTickers) return;
 
       if (user && user[0].favoriteTickers) {
         for (let i = 0; i < user[0].favoriteTickers.length; i++) {
-          return user[0].favoriteTickers.find(
-            (fav: IMarketCryptoCardData) => fav.currency === each.currency
-          );
+          return user[0].favoriteTickers.find((fav: ITickerData) => fav.currency === each.currency);
           // if (each.currency === user[0].favoriteTickers.find((each: ICryptoCardData) => each)) {
           //   each.starred = true;
           //   return each;
@@ -779,6 +781,11 @@ const TickerSelectorBox = ({
           <CryptoCard
             key={i}
             className="mt-4 ml-4"
+            lineGraphProps={{
+              dataArray: cryptoCardLineGraphDataArray,
+              strokeColor: cryptoCardLineGraphStrokeColor,
+              lineGraphWidth: cryptoCardLineGraphWidth,
+            }}
             star={cryptoCard.star}
             starColor={cryptoCard.starColor}
             starred={cryptoCard.starred}

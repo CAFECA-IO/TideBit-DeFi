@@ -1,6 +1,6 @@
 import React, {useContext, useState, useEffect, createContext} from 'react';
 
-interface IMarketCryptoCardData {
+export interface ITickerData {
   currency: string;
   chain: string;
   star: boolean;
@@ -32,7 +32,7 @@ const SAMPLE_TICKERS = [
   'Flow',
 ];
 
-const userFavorites: IMarketCryptoCardData[] = [
+const userFavorites: ITickerData[] = [
   {
     currency: 'ETH',
     chain: 'Ethereum',
@@ -242,7 +242,7 @@ export interface IUser {
   address: string[];
   // avatar: string;
   // favoriteTickers: string[] | null;
-  favoriteTickers: IMarketCryptoCardData[] | null;
+  favoriteTickers: ITickerData[] | null;
 
   // availableBalance: number;
   // lockedBalance: number;

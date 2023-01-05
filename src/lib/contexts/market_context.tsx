@@ -1,6 +1,6 @@
 import React, {useState, createContext} from 'react';
 
-export interface IMarketCryptoCardData {
+export interface ITickerData {
   currency: string;
   chain: string;
   star: boolean;
@@ -32,7 +32,7 @@ const SAMPLE_TICKERS = [
   'Flow',
 ];
 
-const TRADING_CRYPTO_DATA: IMarketCryptoCardData[] = [
+const TRADING_CRYPTO_DATA: ITickerData[] = [
   {
     currency: 'ETH',
     chain: 'Ethereum',

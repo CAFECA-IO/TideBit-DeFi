@@ -1,4 +1,6 @@
 import React, {useContext, useState, useEffect, createContext} from 'react';
+import {ICardProps, ILineGraphProps} from '../../components/card/crypto_card';
+import {PROFIT_LOSS_COLOR_TYPE} from '../../constants/display';
 
 export interface ITickerData {
   currency: string;
@@ -11,16 +13,40 @@ export interface ITickerData {
   fluctuating: number;
   gradientColor: string;
   tokenImg: string;
+
+  lineGraphProps: ILineGraphProps;
 }
 
-const SAMPLE_TICKERS = ['MATIC', 'BNB', 'SOL', 'MKR'];
+function randomNumber(min: number, max: number) {
+  return Math.floor(Math.random() * (max - min + 1) + min);
+}
 
-const userFavorites: ITickerData[] = [
+function randomArray(min: number, max: number, length: number) {
+  const arr = [];
+  for (let i = 0; i < length; i++) {
+    arr.push(randomNumber(min, max));
+  }
+  return arr;
+}
+
+// const sampleArray = randomArray(1100, 1200, 10);
+
+const strokeColorDisplayed = (sampleArray: number[]) => {
+  if (sampleArray[sampleArray.length - 1] > sampleArray[sampleArray.length - 2]) {
+    // priceColor = 'text-lightGreen';
+    return [PROFIT_LOSS_COLOR_TYPE.profit];
+  }
+
+  // priceColor = 'text-lightRed';
+  return [PROFIT_LOSS_COLOR_TYPE.loss];
+};
+
+const TRADING_CRYPTO_DATA = [
   {
     currency: 'ETH',
     chain: 'Ethereum',
     star: true,
-    starred: true,
+    starred: false,
     starColor: 'text-bluePurple',
     // getStarredStateCallback: getEthStarred,
     price: 1288.4,
@@ -32,7 +58,7 @@ const userFavorites: ITickerData[] = [
     currency: 'BTC',
     chain: 'Bitcoin',
     star: true,
-    starred: true,
+    starred: false,
     starColor: 'text-lightOrange',
     // getStarredStateCallback: getBtcStarred,
     price: 1288.4,
@@ -68,7 +94,7 @@ const userFavorites: ITickerData[] = [
     currency: 'BNB',
     chain: 'BNB',
     star: true,
-    starred: true,
+    starred: false,
     starColor: 'text-lightYellow',
     // getStarredStateCallback: getBnbStarred,
     price: 1288.4,
@@ -92,7 +118,7 @@ const userFavorites: ITickerData[] = [
     currency: 'SHIB',
     chain: 'Shiba Inu',
     star: true,
-    starred: true,
+    starred: false,
     starColor: 'text-lightRed1',
     // getStarredStateCallback: getShibStarred,
     price: 1288.4,
@@ -116,7 +142,7 @@ const userFavorites: ITickerData[] = [
     currency: 'ADA',
     chain: 'Cardano',
     star: true,
-    starred: true,
+    starred: false,
     starColor: 'text-lightGreen1',
     // getStarredStateCallback: getAdaStarred,
     price: 1288.4,
@@ -128,7 +154,7 @@ const userFavorites: ITickerData[] = [
     currency: 'AVAX',
     chain: 'Avalanche',
     star: true,
-    starred: true,
+    starred: false,
     starColor: 'text-lightRed2',
     // getStarredStateCallback: getAvaxStarred,
     price: 1288.4,
@@ -140,7 +166,7 @@ const userFavorites: ITickerData[] = [
     currency: 'Dai',
     chain: 'Dai',
     star: true,
-    starred: true,
+    starred: false,
     starColor: 'text-lightOrange1',
     // getStarredStateCallback: getDaiStarred,
     price: 1288.4,
@@ -152,7 +178,7 @@ const userFavorites: ITickerData[] = [
     currency: 'MKR',
     chain: 'Maker',
     star: true,
-    starred: true,
+    starred: false,
     starColor: 'text-lightGreen3',
     // getStarredStateCallback: getMkrStarred,
     price: 1288.4,
@@ -164,7 +190,7 @@ const userFavorites: ITickerData[] = [
     currency: 'XRP',
     chain: 'XRP',
     star: true,
-    starred: true,
+    starred: false,
     starColor: 'text-lightGray4',
     // getStarredStateCallback: getXrpStarred,
     price: 1288.4,
@@ -176,7 +202,7 @@ const userFavorites: ITickerData[] = [
     currency: 'DOGE',
     chain: 'Dogecoin',
     star: true,
-    starred: true,
+    starred: false,
     starColor: 'text-lightYellow1',
     // getStarredStateCallback: getDogeStarred,
     price: 1288.4,
@@ -188,7 +214,7 @@ const userFavorites: ITickerData[] = [
     currency: 'UNI',
     chain: 'Uniswap',
     star: true,
-    starred: true,
+    starred: false,
     starColor: 'text-lightPink1',
     // getStarredStateCallback: getUniStarred,
     price: 1288.4,
@@ -200,7 +226,7 @@ const userFavorites: ITickerData[] = [
     currency: 'Flow',
     chain: 'Flow',
     star: true,
-    starred: true,
+    starred: false,
     starColor: 'text-lightGreen4',
     // getStarredStateCallback: getFlowStarred,
     price: 1288.4,
@@ -210,30 +236,52 @@ const userFavorites: ITickerData[] = [
   },
 ];
 
+// Add line graph property to each object in array
+const addPropertyToArray: ITickerData[] = TRADING_CRYPTO_DATA.filter(each => each.starred).map(
+  item => {
+    // console.log('favorite in user context:', item);
+    const dataArray = randomArray(1100, 1200, 10);
+    const strokeColor = strokeColorDisplayed(dataArray);
+    const newArray = {
+      ...item,
+      lineGraphProps: {
+        dataArray: dataArray,
+        strokeColor: strokeColor,
+        lineGraphWidth: '170',
+        lineGraphWidthMobile: '140',
+      },
+    };
+
+    return newArray;
+  }
+);
+
+const SAMPLE_TICKERS = ['MATIC', 'BNB', 'SOL', 'MKR'];
+
 const SAMPLE_USER = {
   id: '002',
   username: 'Tidebit DeFi Test User',
-  address: ['0xb54898DB1250A6a629E5B566367E9C60a7Dd6C30'],
-  favoriteTickers: SAMPLE_TICKERS,
+  wallet: ['0xb54898DB1250A6a629E5B566367E9C60a7Dd6C30'],
+  favoriteTickers: addPropertyToArray,
 };
 
 export interface IUser {
-  id: string;
-  username: string;
-  email: string;
-  wallet: string[];
+  // id: string;
+  // username: string;
+  // email?: string;
+  // wallet: string[];
 
-  favoriteTickers: string[];
+  favoriteTickers: ITickerData[];
 
-  // orderEngine: string; // 產生 EIP 712 / 出金入金 要的資料
-  isSubscibedNewsletters: boolean;
-  isEnabledEmailNotification: boolean;
-  isConnected: boolean;
-  isConnectedWithEmail: boolean;
-  isConnectedWithTideBit: boolean;
-  walletId: string;
-  tideBitId: string;
-  enableServiceTerm: boolean;
+  // // orderEngine: string; // 產生 EIP 712 / 出金入金 要的資料
+  // isSubscibedNewsletters: boolean;
+  // isEnabledEmailNotification: boolean;
+  // isConnected: boolean;
+  // isConnectedWithEmail: boolean;
+  // isConnectedWithTideBit: boolean;
+  // walletId: string;
+  // tideBitId: string;
+  // enableServiceTerm: boolean;
 }
 
 export interface IUserProvider {
@@ -259,7 +307,7 @@ export const UserContext = createContext<IUserContext>({
 });
 
 export const UserProvider = ({children}: IUserProvider) => {
-  const [user, setUser] = useState<IUser | null>(null);
+  const [user, setUser] = useState<IUser | null>(SAMPLE_USER);
 
   const favoriteTickersHandler = (newFavorite: string) => {
     if (!user) return;

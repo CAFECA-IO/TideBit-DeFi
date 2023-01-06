@@ -22,7 +22,7 @@ export interface IRealUser {
   getOpenedCFD: () => null;
 
   /*
-   * time: string; 前端拿到該倉位結束的時間，然後自己算出剩下多久
+   * time: timestamp; 前端拿到該倉位結束的時間，然後自己算出剩下多久
    * ticker: string;
    * 操作: string;
    * 倉位 value: string;

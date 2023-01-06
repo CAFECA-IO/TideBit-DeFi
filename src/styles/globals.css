@@ -4,6 +4,10 @@
 @tailwind components;
 @tailwind utilities;
 
+/* .btnSuccess {
+  @apply rounded bg-green-500 px-4 py-2 font-bold text-white hover:bg-green-700;
+} */
+
 @layer base {
   html {
     font-family: barlow;

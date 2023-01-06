@@ -1469,7 +1469,10 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
         <>
           {!!chooseWalletConnect && connector ? (
             <div>
-              <TideButton onClick={killSession} className="bg-cuteBlue2 hover:bg-cuteBlue2/80">
+              <TideButton
+                onClick={killSession}
+                className="rounded bg-cuteBlue2 px-5 py-2 text-base text-white transition-all hover:bg-cuteBlue2/80"
+              >
                 Kill session of wallet connect
               </TideButton>
             </div>
@@ -1609,7 +1612,7 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
       // Background
       <div
         id="userDropdown"
-        className="absolute top-16 right-8 z-10 w-285px divide-y divide-lightGray rounded-none bg-darkGray shadow"
+        className="avatarMenuShadow absolute top-16 right-8 z-10 w-285px divide-y divide-lightGray rounded-none bg-darkGray shadow"
       >
         {/* Avatar Section */}
         <div className="mx-3 items-center py-3 px-4 text-center text-sm text-lightGray">
@@ -1683,7 +1686,7 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
   ) : (
     <TideButton
       onClick={clickHandler}
-      className={`mt-4 rounded border-0 bg-tidebitTheme py-2 px-5 text-base text-white hover:bg-cyan-600 focus:outline-none md:mt-0`}
+      className={`mt-4 rounded border-0 bg-tidebitTheme py-2 px-5 text-base text-white transition-all hover:opacity-90 md:mt-0`}
     >
       {/* Wallet Connect */}
       {t('nav_bar.WalletConnect')}

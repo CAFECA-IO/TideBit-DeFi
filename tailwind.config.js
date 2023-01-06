@@ -44,6 +44,10 @@ module.exports = {
       '3xl': '1600px',
     },
     extend: {
+      borderRadius: {
+        '5px': '5px',
+      },
+      boxShadow: {},
       backgroundImage: {
         'reserve': "url('./public/elements/group_15244.svg')",
       },
@@ -139,6 +143,9 @@ module.exports = {
         '479px': '479px',
         '480px': '480px',
         '500px': '500px',
+        '505px': '505px',
+        '510px': '510px',
+        '520px': '520px',
         '550px': '550px',
         '600px': '600px',
         '620px': '620px',

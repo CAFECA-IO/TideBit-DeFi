@@ -48,7 +48,10 @@ const HelloModal = ({
                     You can start using TideBit now.
                   </div>
 
-                  <TideButton className="px-12" onClick={helloClickHandler}>
+                  <TideButton
+                    className="rounded bg-tidebitTheme px-12 py-2 font-normal transition-all hover:opacity-90"
+                    onClick={helloClickHandler}
+                  >
                     Done
                   </TideButton>
                   <Link

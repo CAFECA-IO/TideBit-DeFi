@@ -3,6 +3,7 @@ import {BsStar, BsStarFill} from 'react-icons/bs';
 import {useState} from 'react';
 import dynamic from 'next/dynamic';
 import {ApexOptions} from 'apexcharts';
+import {PROFIT_LOSS_COLOR_TYPE} from '../../constants/display';
 // import {FaEthereum} from 'react-icons/fa';
 // // import {ReactComponent as ethIcon} from '/public/elements/group_15143.svg';
 // // import {ReactComponent as Logo} from './logo.svg';
@@ -17,41 +18,50 @@ import {ApexOptions} from 'apexcharts';
 
 const Chart = dynamic(() => import('react-apexcharts'), {ssr: false});
 
-interface ILineGraphProps {
+export interface ILineGraphProps {
+  dataArray?: number[];
   strokeColor?: string[];
-  sampleArray?: number[];
   lineGraphWidth?: string;
+  lineGraphWidthMobile?: string;
 }
 
-interface CardProps {
-  gradientColor?: string;
-  // tokenComponent?: JSX.Element;
-  tokenImg?: string;
+export interface ICardProps {
+  tokenImg: string;
   chain: string;
   currency: string;
-  // lineGraph?: JSX.Element;
   price: number;
   fluctuating: number;
+  gradientColor: string;
+  lineGraphProps: ILineGraphProps;
+
   star?: boolean;
-  starred?: boolean;
-  className?: string;
   starColor?: string;
+  starred?: boolean;
   getStarredState?: (props: boolean) => void;
+
+  className?: string;
+  // lineGraphDataArray?: number[];
+  // lineGraphStrokeColor?: string[];
+  // lineGraphWidth?: string;
 }
 
 const CryptoCard = ({
-  gradientColor = '',
-  tokenImg = '',
-  chain = '',
-  currency = '',
+  gradientColor,
+  tokenImg,
+  chain,
+  currency,
   price = 0,
   fluctuating = -1,
-  star = false,
-  starred = false,
+  star,
+  starred,
   starColor,
   getStarredState: getStarredState,
+  lineGraphProps,
+  // lineGraphDataArray,
+  // lineGraphStrokeColor,
+  // lineGraphWidth,
   ...otherProps
-}: CardProps): JSX.Element => {
+}: ICardProps): JSX.Element => {
   // FIXME: comment for `.tsx`
   // price = price > 0.001 ? price.toLocaleString() : price;
   fluctuating = Number(fluctuating);
@@ -59,7 +69,7 @@ const CryptoCard = ({
   const priceRise = fluctuating > 0 ? true : false;
   const fluctuatingRate = priceRise ? `(+${fluctuating}%)▴` : `(${fluctuating}%)▾`;
   // TODO: input the data and price color change as props
-  const priceColor = priceRise ? `text-lightGreen` : `text-lightRed`;
+  const priceColor = priceRise ? `text-lightGreen5` : `text-lightRed`;
   // let priceColor = '';
 
   // console.log('priceColor', priceColor);
@@ -130,8 +140,8 @@ const CryptoCard = ({
 
   function lineGraph({
     strokeColor = ['#3CC8C8'],
-    sampleArray = [42, 50, 45, 55, 49, 52, 48],
-    lineGraphWidth = '150',
+    dataArray = [42, 50, 45, 55, 49, 52, 48, 68, 48, 20],
+    lineGraphWidth,
     ...otherProps
   }: ILineGraphProps) {
     const chartOptions: ApexOptions = {
@@ -185,7 +195,7 @@ const CryptoCard = ({
       series: [
         {
           name: 'series-1',
-          data: [...sampleArray],
+          data: [...dataArray],
         },
       ],
     });
@@ -224,17 +234,18 @@ const CryptoCard = ({
   // console.log(arrayGenerator());
 
   const sampleArray = randomArray(1100, 1200, 10);
+  // console.log('sample array', sampleArray);
 
   // TODO: Taking Notes- execution order about parameters and logic flow
-  // #1AE2A0 is light green, #E86D6D is light red
+  // #17BF88 is light green, #E86D6D is light red
   const fakeDataColor = () => {
     if (sampleArray[sampleArray.length - 1] > sampleArray[sampleArray.length - 2]) {
       // priceColor = 'text-lightGreen';
-      return ['#1AE2A0'];
+      return [PROFIT_LOSS_COLOR_TYPE.profit];
     }
 
     // priceColor = 'text-lightRed';
-    return ['#E86D6D'];
+    return [PROFIT_LOSS_COLOR_TYPE.loss];
   };
   const thisRandomColor = fakeDataColor();
 
@@ -273,9 +284,9 @@ const CryptoCard = ({
           <div className="flex flex-col justify-start">
             <div className="pointer-events-none absolute top-4 h-96 bg-transparent">
               {lineGraph({
-                sampleArray: sampleArray,
-                strokeColor: thisRandomColor,
-                lineGraphWidth: '170',
+                dataArray: lineGraphProps?.dataArray || sampleArray,
+                strokeColor: lineGraphProps?.strokeColor || thisRandomColor,
+                lineGraphWidth: lineGraphProps?.lineGraphWidth || '170',
               })}
               {/* <LineGraph
                 sampleArray={sampleArray}
@@ -323,9 +334,9 @@ const CryptoCard = ({
             <div className="pointer-events-none absolute right-0 top-1 bg-transparent">
               {/* <div className="absolute top-0 left-0 h-2 w-2/3 rounded bg-blue-200"></div> */}
               {lineGraph({
-                sampleArray: sampleArray,
-                strokeColor: thisRandomColor,
-                lineGraphWidth: '140',
+                dataArray: lineGraphProps?.dataArray || sampleArray,
+                strokeColor: lineGraphProps?.strokeColor || thisRandomColor,
+                lineGraphWidth: lineGraphProps?.lineGraphWidthMobile || '140',
               })}
               {/* <LineGraph
                 sampleArray={sampleArray}

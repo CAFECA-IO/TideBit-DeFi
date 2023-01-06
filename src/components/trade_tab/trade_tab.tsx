@@ -2,6 +2,7 @@ import React, {useRef, useState} from 'react';
 import Toggle from '../toggle/toggle';
 import TradingInput, {TRADING_INPUT_HANDLER_TYPE_CLASSES} from '../trading_input/trading_input';
 import {AiOutlineQuestionCircle} from 'react-icons/ai';
+import RippleButton from '../ripple_button/ripple_button';
 
 // TODO: Stop loss limit
 // 1388.4 * 0.82
@@ -296,13 +297,13 @@ const TradeTab = () => {
               {/* Long Button */}
               <div className="absolute top-350px left-20">
                 {/* focus:outline-none focus:ring-4 focus:ring-green-300 */}
-                <button
-                  type="button"
+                <RippleButton
+                  buttonType="button"
                   className="mr-2 mb-2 rounded-md bg-lightGreen5 px-7 py-1 text-sm font-medium tracking-wide text-white transition-colors duration-300 hover:bg-lightGreen5/80"
                 >
                   <b>UP</b> <br />
                   Above $ 1545.0
-                </button>
+                </RippleButton>
               </div>
 
               {/* Divider between long and short */}
@@ -355,13 +356,13 @@ const TradeTab = () => {
 
                 {/* Short Button */}
                 <div className="absolute top-650px left-20">
-                  <button
-                    type="button"
+                  <RippleButton
+                    buttonType="button"
                     className="mr-2 mb-2 rounded-md bg-lightRed px-7 py-1 text-sm font-medium tracking-wide text-white transition-colors duration-300 hover:bg-lightRed/80"
                   >
                     <b>Down</b> <br />
                     Below $ 1030.0
-                  </button>
+                  </RippleButton>
                 </div>
               </div>
             </div>

@@ -3,6 +3,7 @@ import Image from 'next/image';
 import TideButton from '../tide_button/tide_button';
 import Link from 'next/link';
 import {useTranslation} from 'next-i18next';
+import RippleButton from '../ripple_button/ripple_button';
 
 type TranslateFunction = (s: string) => string;
 
@@ -31,11 +32,12 @@ const Cta = () => {
               {t('home_page.Cta_Description')}
             </div>
             <div className="pt-2 md:pt-8 xl:pt-5">
-              <Link href="/trading">
-                <TideButton className="px-2 py-1 font-normal xxs:text-xxs sm:py-2 sm:px-5 sm:text-base xl:py-3 xl:px-5 xl:text-lg">
-                  {t('home_page.Cta_Button')}
-                </TideButton>
-              </Link>
+              <a
+                href="/trading"
+                className="px-2 py-1 font-normal xxs:text-xxs sm:py-2 sm:px-5 sm:text-base xl:py-3 xl:px-5 xl:text-lg"
+              >
+                <TideButton>{t('home_page.Cta_Button')}</TideButton>
+              </a>
             </div>
           </div>
         </div>
@@ -60,11 +62,12 @@ const Cta = () => {
               {t('home_page.Cta_Description')}
             </div>
             <div className="mx-auto pt-2 md:pt-8">
-              <Link href="/trading">
-                <TideButton className="px-2 py-1 font-normal xxs:text-xxs sm:py-2 sm:px-5 sm:text-base xl:py-3 xl:px-5 xl:text-lg">
-                  {t('home_page.Cta_Button')}
-                </TideButton>
-              </Link>
+              <a
+                href="/trading"
+                className="px-2 py-1 font-normal xxs:text-xxs sm:py-2 sm:px-5 sm:text-base xl:py-3 xl:px-5 xl:text-lg"
+              >
+                <TideButton>{t('home_page.Cta_Button')}</TideButton>
+              </a>
             </div>
           </div>
         </div>

@@ -143,7 +143,14 @@ const Trial = () => {
           lineGraphWidth={'900'}
           annotatedValue={1324.4}
         /> */}
-        <button onClick={notifyFunction}>Notify!</button>
+        {/*  relative m-0 hidden h-120px w-200px rounded-2xl border-0.5px p-0 ${gradientColor} bg-black bg-gradient-to-b opacity-90 shadow-lg */}
+        <button
+          onClick={notifyFunction}
+          className="h-120px w-200px rounded border-0.5px border-lightOrange/50 bg-lightOrange bg-gradient-to-b from-lightOrange/50 to-black p-0 px-5 opacity-90 shadow-lg"
+        >
+          Notify!
+        </button>
+        <p className="text-lightOrange">Hee</p>
 
         <ToastContainer
           position="bottom-left"

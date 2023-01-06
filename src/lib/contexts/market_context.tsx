@@ -277,14 +277,14 @@ export interface IMarketProvider {
 }
 
 export interface IMarketContext {
-  availableTickers: ITickerData[] | null;
+  availableTickers: ITickerData[];
   isCFDTradable: boolean;
   // getTickerData: (ticker: string) => ITickerData; // 會拿到哪些是被star的
 }
 
 // TODO: Note: _app.tsx 啟動的時候 => createContext
 export const MarketContext = createContext<IMarketContext>({
-  availableTickers: null,
+  availableTickers: [],
   isCFDTradable: false,
   // getTickerData: () => ITickerData,
 });

@@ -106,7 +106,7 @@ const TRADING_CRYPTO_DATA = [
     // getStarredStateCallback: getMaticStarred,
     price: 1288.4,
     fluctuating: 1.14,
-    gradientColor: 'border-lightPurple/60 bg-black from-lightPurple/60 to-black',
+    gradientColor: 'border-lightPurple/50 bg-black from-lightPurple/50 to-black',
     tokenImg: '/elements/9cc18b0cbe765b0a28791d253207f0c0.svg',
   },
   {
@@ -118,7 +118,7 @@ const TRADING_CRYPTO_DATA = [
     // getStarredStateCallback: getBnbStarred,
     price: 1288.4,
     fluctuating: 1.14,
-    gradientColor: 'border-lightYellow/60 bg-black from-lightYellow/50 to-black',
+    gradientColor: 'border-lightYellow/50 bg-black from-lightYellow/50 to-black',
     tokenImg: '/elements/group_2374.svg',
   },
   {
@@ -130,7 +130,7 @@ const TRADING_CRYPTO_DATA = [
     // getStarredStateCallback: getSolStarred,
     price: 1288.4,
     fluctuating: 1.14,
-    gradientColor: 'border-lightPurple2/60 from-lightPurple2/60 to-black',
+    gradientColor: 'border-lightPurple2/50 from-lightPurple2/50 to-black',
     tokenImg: '/elements/group_2378.svg',
   },
   {
@@ -154,7 +154,7 @@ const TRADING_CRYPTO_DATA = [
     // getStarredStateCallback: getDotStarred,
     price: 1288.4,
     fluctuating: 1.14,
-    gradientColor: 'border-lightPink/60 from-lightPink/60 to-black',
+    gradientColor: 'border-lightPink/50 from-lightPink/50 to-black',
     tokenImg: '/elements/group_2385.svg',
   },
   {
@@ -166,7 +166,7 @@ const TRADING_CRYPTO_DATA = [
     // getStarredStateCallback: getAdaStarred,
     price: 1288.4,
     fluctuating: 1.14,
-    gradientColor: 'border-lightGreen1/60 from-lightGreen1/60 to-black',
+    gradientColor: 'border-lightGreen1/50 from-lightGreen1/50 to-black',
     tokenImg: '/elements/group_2388.svg',
   },
   {
@@ -268,6 +268,7 @@ const addPropertyToArray: ITickerData[] = TRADING_CRYPTO_DATA.map(item => {
       lineGraphWidthMobile: '140',
     },
   };
+  // console.log('starColor:', item.starColor, 'gradientColor:', item.gradientColor);
 
   return newArray;
 });

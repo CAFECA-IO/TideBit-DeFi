@@ -8,6 +8,7 @@ import {
   ITickerData,
 } from '../../lib/contexts/market_context';
 import {UserContext, IUserContext} from '../../lib/contexts/user_context';
+import {CRYPTO_CARD_COLORS} from '../../constants/display';
 
 // TODO: import data from market context
 
@@ -16,36 +17,45 @@ const CryptoCategory = ({...otherProps}) => {
 
   const {availableTickers} = useContext<IMarketContext>(MarketContext);
 
-  const displayedAllTickers = availableTickers?.map((cryptoCard, i) => {
-    if (i === 0) {
+  const displayedAllTickers = availableTickers
+    ?.filter(item => CRYPTO_CARD_COLORS.some(i => i.owner === item.currency))
+    ?.map((item, i) => {
+      const color = CRYPTO_CARD_COLORS.find(i => i.owner === item.currency);
+      return {
+        ...item,
+        gradientColor: color?.gradientColor,
+      };
+    })
+    ?.map((cryptoCard, i) => {
+      if (i === 0) {
+        return (
+          <CryptoCard
+            key={i}
+            className="mt-4 ml-4"
+            lineGraphProps={cryptoCard.lineGraphProps}
+            chain={cryptoCard.chain}
+            currency={cryptoCard.currency}
+            price={cryptoCard.price}
+            fluctuating={cryptoCard.fluctuating}
+            gradientColor={cryptoCard?.gradientColor ?? ''}
+            tokenImg={cryptoCard.tokenImg}
+          />
+        );
+      }
+
       return (
         <CryptoCard
           key={i}
-          className="mt-4 ml-4"
           lineGraphProps={cryptoCard.lineGraphProps}
           chain={cryptoCard.chain}
           currency={cryptoCard.currency}
           price={cryptoCard.price}
           fluctuating={cryptoCard.fluctuating}
-          gradientColor={cryptoCard.gradientColor}
+          gradientColor={cryptoCard?.gradientColor ?? ''}
           tokenImg={cryptoCard.tokenImg}
         />
       );
-    }
-
-    return (
-      <CryptoCard
-        key={i}
-        lineGraphProps={cryptoCard.lineGraphProps}
-        chain={cryptoCard.chain}
-        currency={cryptoCard.currency}
-        price={cryptoCard.price}
-        fluctuating={cryptoCard.fluctuating}
-        gradientColor={cryptoCard.gradientColor}
-        tokenImg={cryptoCard.tokenImg}
-      />
-    );
-  });
+    });
 
   return (
     <div

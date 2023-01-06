@@ -1,6 +1,11 @@
 import {ToastContainer, toast, ToastOptions, useToast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import {DEV_TOAST_CONFIG, PROFIT_LOSS_COLOR_TYPE} from '../../constants/display';
+import {
+  CRYPTO_CARD_COLORS,
+  DEV_TOAST_CONFIG,
+  PROFIT_LOSS_COLOR_TYPE,
+  ICRYPTO_CARD_COLORS,
+} from '../../constants/display';
 
 import {useContext, useEffect, useState, useMemo} from 'react';
 import CryptoCard, {ILineGraphProps} from '../card/crypto_card';
@@ -12,6 +17,7 @@ import {
   ITickerData,
 } from '../../lib/contexts/market_context';
 import {UserContext, IUserContext} from '../../lib/contexts/user_context';
+import {BiColorFill} from 'react-icons/bi';
 
 // TODO: useContext
 interface ITickerSelectorBox {
@@ -34,13 +40,15 @@ interface ICryptoCardData {
   chain: string;
   star: boolean;
   starred: boolean;
-  starColor: string;
-  getStarredStateCallback: (bool: boolean) => void;
   price: number;
   fluctuating: number;
-  gradientColor: string;
   tokenImg: string;
   lineGraphProps: ILineGraphProps;
+
+  getStarredStateCallback: (bool: boolean) => void;
+
+  starColor?: string;
+  gradientColor?: string;
 }
 
 interface ICryptoCardDataArray {
@@ -91,7 +99,7 @@ const TickerSelectorBox = ({
   //   }
   // }, [activeTab, allCards, favorites]);
 
-  // // TODO: fix trial
+  // // // TODO: fix trial
   // const cryptoCardsData = availableTickers?.map((each, index) => {
   //   return {
   //     ...each,
@@ -102,20 +110,33 @@ const TickerSelectorBox = ({
   //   };
   // });
 
-  const cryptoCardsData = availableTickers
-    ? availableTickers?.map((each, index) => {
-        const addCallbackFunc = {
-          ...each,
-          getStarredStateCallback: (bool: boolean) => {
-            // console.log(each.currency, 'clicked');
-            // favoriteTickersHandler(each.currency);
-          },
-        };
-        return addCallbackFunc;
-      })
-    : [];
+  const addCallbackToCryptoCardsData = availableTickers?.map((each, index) => {
+    const addCallbackFunc = {
+      ...each,
+      getStarredStateCallback: (bool: boolean) => {
+        // console.log(each.currency, 'clicked');
+        // favoriteTickersHandler(each.currency);
+      },
+    };
+    return addCallbackFunc;
+  });
 
-  const favoriteTabCardsData = user?.favoriteTickers
+  const cryptoCardsData = addCallbackToCryptoCardsData
+    .filter(item => CRYPTO_CARD_COLORS.some(i => i.owner === item.currency))
+    ?.map((each, index) => {
+      const color: ICRYPTO_CARD_COLORS | undefined = CRYPTO_CARD_COLORS.find(
+        i => i.owner === each.currency
+      );
+      return {
+        ...each,
+        starColor: color?.starColor,
+        gradientColor: color?.gradientColor,
+      };
+    });
+
+  // console.log('cryptoCardsData in ticker selector box: ', cryptoCardsData);
+
+  const addCallbackToFavoriteTabCardsData = user?.favoriteTickers
     ?.filter(item => item.starred)
     ?.map((each, index) => {
       const addCallbackFunc = {
@@ -126,6 +147,19 @@ const TickerSelectorBox = ({
         },
       };
       return addCallbackFunc;
+    });
+
+  const favoriteTabCardsData = addCallbackToFavoriteTabCardsData
+    ?.filter(item => CRYPTO_CARD_COLORS.some(i => i.owner === item.currency))
+    ?.map((each, index) => {
+      const color: ICRYPTO_CARD_COLORS | undefined = CRYPTO_CARD_COLORS.find(
+        i => i.owner === each.currency
+      );
+      return {
+        ...each,
+        starColor: color?.starColor,
+        gradientColor: color?.gradientColor,
+      };
     });
 
   const [favoritesSearches, setFavoritesSearches] = useState<string>();
@@ -429,7 +463,7 @@ const TickerSelectorBox = ({
             currency={cryptoCard.currency}
             price={cryptoCard.price}
             fluctuating={cryptoCard.fluctuating}
-            gradientColor={cryptoCard.gradientColor}
+            gradientColor={cryptoCard?.gradientColor ?? ''}
             tokenImg={cryptoCard.tokenImg}
           />
         );
@@ -438,7 +472,7 @@ const TickerSelectorBox = ({
       return (
         <CryptoCard
           key={cryptoCard.currency}
-          className="mt-1"
+          className="mt-0"
           lineGraphProps={cryptoCard.lineGraphProps}
           star={cryptoCard.star}
           starColor={cryptoCard.starColor}
@@ -448,7 +482,7 @@ const TickerSelectorBox = ({
           currency={cryptoCard.currency}
           price={cryptoCard.price}
           fluctuating={cryptoCard.fluctuating}
-          gradientColor={cryptoCard.gradientColor}
+          gradientColor={cryptoCard?.gradientColor ?? ''}
           tokenImg={cryptoCard.tokenImg}
         />
       );
@@ -470,7 +504,7 @@ const TickerSelectorBox = ({
           currency={cryptoCard.currency}
           price={cryptoCard.price}
           fluctuating={cryptoCard.fluctuating}
-          gradientColor={cryptoCard.gradientColor}
+          gradientColor={cryptoCard?.gradientColor ?? ''}
           tokenImg={cryptoCard.tokenImg}
         />
       );
@@ -479,7 +513,7 @@ const TickerSelectorBox = ({
     return (
       <CryptoCard
         key={cryptoCard.currency}
-        className="mt-1"
+        className="mt-0"
         lineGraphProps={cryptoCard.lineGraphProps}
         star={cryptoCard.star}
         starColor={cryptoCard.starColor}
@@ -489,7 +523,7 @@ const TickerSelectorBox = ({
         currency={cryptoCard.currency}
         price={cryptoCard.price}
         fluctuating={cryptoCard.fluctuating}
-        gradientColor={cryptoCard.gradientColor}
+        gradientColor={cryptoCard?.gradientColor ?? ''}
         tokenImg={cryptoCard.tokenImg}
       />
     );

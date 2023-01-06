@@ -9,6 +9,9 @@ import RippleButton from '../components/ripple_button/ripple_button';
 import TradingLineGraphChart from '../components/trading_line_graph_chart/trading_line_graph_chart';
 import {ToastContainer, toast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import {CRYPTO_CARD_COLORS} from '../constants/display';
+import {useContext} from 'react';
+import {MarketContext} from '../lib/contexts/market_context';
 
 const Trial = () => {
   const {
@@ -307,18 +310,52 @@ const Trial = () => {
     );
   });
 
+  const cryptoCardColor = TRADING_CRYPTO_DATA.map((cryptoCard, index) => {
+    const colorObject = {
+      owner: cryptoCard.currency,
+      starColor: cryptoCard.starColor,
+      gradientColor: cryptoCard.gradientColor,
+    };
+    return colorObject;
+  });
+
+  const cryptoCardDataWithoutColor = TRADING_CRYPTO_DATA.map((cryptoCard, index) => {
+    const {starColor, gradientColor, ...rest} = cryptoCard;
+    return rest;
+  });
+
+  // console.log('cryptoCardDataWithoutColor', cryptoCardDataWithoutColor);
+
+  // console.log('cryptoCardColor', cryptoCardColor);
+  // console.log('from display file: ', CRYPTO_CARD_COLORS);
+
+  const {availableTickers} = useContext(MarketContext);
+
+  const cryptoCardsData = availableTickers
+    .filter(item => CRYPTO_CARD_COLORS.some(i => i.owner === item.currency))
+    .map((each, index) => {
+      const color = CRYPTO_CARD_COLORS.find(i => i.owner === each.currency);
+      return {
+        ...each,
+        starColor: color?.starColor,
+        gradientColor: color?.gradientColor,
+      };
+    });
+
+  // console.log('cryptoCardsData', cryptoCardsData);
+
   return (
     <>
       {/* flex h-screen w-full items-center justify-center */}
       <div className="w-full space-y-10 p-10">
-        {forCryptoCard}
+        {/* {forCryptoCard} */}
         <TrialComponent />
 
         {/* Divider */}
         <div className="my-auto h-px w-full rounded bg-white/50"></div>
         <button
           onClick={notifyFunction}
-          className="h-120px w-200px rounded border-0.5px border-lightGreen4/50 bg-lightGreen4 bg-gradient-to-b from-lightGreen4/50 to-black p-0 px-5 text-lightGreen4 opacity-90 shadow-lg"
+          className="h-120px w-200px rounded border-0.5px border-lightWhite/50 bg-lightWhite bg-gradient-to-b from-lightWhite/50 to-black p-0 px-5 text-lightWhite opacity-90 shadow-lg"
         >
           Notify!
         </button>

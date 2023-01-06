@@ -87,7 +87,7 @@ const TickerSelectorBox = ({
   // ];
 
   const {availableTickers} = useContext<IMarketContext>(MarketContext);
-  const {user} = useContext(UserContext) as IUserContext;
+  const {user, addFavorites, removeFavorites} = useContext(UserContext) as IUserContext;
 
   const [activeTab, setActiveTab] = useState('All');
 
@@ -114,8 +114,14 @@ const TickerSelectorBox = ({
     const addCallbackFunc = {
       ...each,
       getStarredStateCallback: (bool: boolean) => {
+        // `bool` 是從 Crypto Card 得到的最新的 starred 狀態，each.starred只是從 availableTickers 得到的初始 starred 狀態
+        // console.log('if starred: ', each.starred, 'boolean: ', bool);
+        if (bool) {
+          addFavorites(each.currency);
+        } else {
+          removeFavorites(each.currency);
+        }
         // console.log(each.currency, 'clicked');
-        // favoriteTickersHandler(each.currency);
       },
     };
     return addCallbackFunc;
@@ -142,8 +148,14 @@ const TickerSelectorBox = ({
       const addCallbackFunc = {
         ...each,
         getStarredStateCallback: (bool: boolean) => {
+          // `bool` 是從 Crypto Card 得到的最新的 starred 狀態，each.starred只是從 availableTickers 得到的初始 starred 狀態
+          // console.log('if starred: ', each.starred, 'boolean: ', bool);
+          if (bool) {
+            addFavorites(each.currency);
+          } else {
+            removeFavorites(each.currency);
+          }
           // console.log(each.currency, 'clicked');
-          // favoriteTickersHandler(each.currency);
         },
       };
       return addCallbackFunc;
@@ -210,6 +222,10 @@ const TickerSelectorBox = ({
       setFilteredFavorites(newSearchResult);
     }
   }, [searches, activeTab]);
+
+  // function starClickHandler(currency: string) {
+  //   if (currency)
+  // }
 
   // console.log('newSearchResult:', newSearchResult);
 

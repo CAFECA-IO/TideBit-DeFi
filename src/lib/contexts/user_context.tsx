@@ -447,74 +447,88 @@ export interface IUserProvider {
 
 export interface IUserContext {
   user: IUser | null;
+  addFavorites: (props: string) => void;
+  removeFavorites: (props: string) => void;
 }
 
 export const UserContext = createContext<IUserContext>({
   user: null,
+  addFavorites: (props: string) => null,
+  removeFavorites: (props: string) => null,
 });
 
 export const UserProvider = ({children}: IUserProvider) => {
   // TODO: get partial user type from `IUserContext`
   const [user, setUser] = useState<IUser | null>(SAMPLE_USER);
 
-  const favoriteTickersHandler = (newFavorite: string) => {
-    if (!user) return;
-
-    // TODO: check if the clicked ticker is already in the array
-
-    // // ticker handler
-    // if (user[0]?.favoriteTickers?.includes(newFavorite)) {
-    //   // console.log('included, ready to remove: ', newFavorite);
-
-    //   // setUser(previousData => {
-    //   //   if (!previousData) return;
-    //   //   const updated = [...previousData];
-    //   //   updated[0].favoriteTickers = [...previousData[0].favoriteTickers, newFavorite];
-    //   // });
-    //   const newUserArray = [
-    //     {
-    //       ...user[0],
-    //       favoriteTickers: user[0].favoriteTickers.filter(ticker => ticker !== newFavorite),
-    //     },
-    //   ];
-    //   // console.log('new user array: ', newUserArray);
-    //   setUser(newUserArray);
-    //   // console.log('REAL user array in context: ', user);
-
-    //   // setUser([
-    //   //   {
-    //   //     ...user[0],
-    //   //     favoriteTickers: user[0].favoriteTickers.filter(ticker => ticker !== newFavorite),
-    //   //   },
-    //   // ]);
-    //   // addFavorite(newFavorite);
-    // } else {
-    //   // console.log('not included, ready to add: ', newFavorite);
-    //   // <Toast content={`not included, ready to add:  ${newFavorite}`} />;
-
-    //   if (!user[0].favoriteTickers) {
-    //     const newUserArray = [{...user[0], favoriteTickers: [newFavorite]}];
-    //     // console.log('new user array: ', newUserArray);
-    //     setUser(newUserArray);
-    //     // console.log('REAL user array in context: ', user);
-    //   } else {
-    //     const newUserArray = [
-    //       {...user[0], favoriteTickers: [...user[0].favoriteTickers, newFavorite]},
-    //     ];
-
-    //     // console.log('new user array: ', newUserArray);
-    //     setUser(newUserArray);
-    //     // console.log('REAL user array in context: ', user);
-    //   }
-
-    //   // removeFavorite(newFavorite);
-    // }
-
-    // // console.log('receive favoriteTickers: ', newFavorite);
-    // // console.log('user favorite in context: ', user[0].favoriteTickers);
+  const addFavorites = (newFavorite: string) => {
+    // console.log(newFavorite, '`addFavorites` // ready to add: ');
+    // return;
   };
 
-  const defaultValue = {user};
+  const removeFavorites = (previousFavorite: string) => {
+    // console.log(previousFavorite, '`removeFavorites` // ready to remove: ');
+    // return;
+  };
+
+  // const favoriteTickersHandler = (newFavorite: string) => {
+  //   if (!user) return;
+
+  //   // TODO: check if the clicked ticker is already in the array
+
+  //   // // ticker handler
+  //   // if (user[0]?.favoriteTickers?.includes(newFavorite)) {
+  //   //   // console.log('included, ready to remove: ', newFavorite);
+
+  //   //   // setUser(previousData => {
+  //   //   //   if (!previousData) return;
+  //   //   //   const updated = [...previousData];
+  //   //   //   updated[0].favoriteTickers = [...previousData[0].favoriteTickers, newFavorite];
+  //   //   // });
+  //   //   const newUserArray = [
+  //   //     {
+  //   //       ...user[0],
+  //   //       favoriteTickers: user[0].favoriteTickers.filter(ticker => ticker !== newFavorite),
+  //   //     },
+  //   //   ];
+  //   //   // console.log('new user array: ', newUserArray);
+  //   //   setUser(newUserArray);
+  //   //   // console.log('REAL user array in context: ', user);
+
+  //   //   // setUser([
+  //   //   //   {
+  //   //   //     ...user[0],
+  //   //   //     favoriteTickers: user[0].favoriteTickers.filter(ticker => ticker !== newFavorite),
+  //   //   //   },
+  //   //   // ]);
+  //   //   // addFavorite(newFavorite);
+  //   // } else {
+  //   //   // console.log('not included, ready to add: ', newFavorite);
+  //   //   // <Toast content={`not included, ready to add:  ${newFavorite}`} />;
+
+  //   //   if (!user[0].favoriteTickers) {
+  //   //     const newUserArray = [{...user[0], favoriteTickers: [newFavorite]}];
+  //   //     // console.log('new user array: ', newUserArray);
+  //   //     setUser(newUserArray);
+  //   //     // console.log('REAL user array in context: ', user);
+  //   //   } else {
+  //   //     const newUserArray = [
+  //   //       {...user[0], favoriteTickers: [...user[0].favoriteTickers, newFavorite]},
+  //   //     ];
+
+  //   //     // console.log('new user array: ', newUserArray);
+  //   //     setUser(newUserArray);
+  //   //     // console.log('REAL user array in context: ', user);
+  //   //   }
+
+  //   //   // removeFavorite(newFavorite);
+  //   // }
+
+  //   // // console.log('receive favoriteTickers: ', newFavorite);
+  //   // // console.log('user favorite in context: ', user[0].favoriteTickers);
+  // };
+
+  const defaultValue = {user, addFavorites, removeFavorites};
 
   // FIXME: 'setUser' is missing in type '{ user: IUser[] | null; }'
   return <UserContext.Provider value={defaultValue}>{children}</UserContext.Provider>;

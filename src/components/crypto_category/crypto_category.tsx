@@ -18,15 +18,16 @@ const CryptoCategory = ({...otherProps}) => {
   const {availableTickers} = useContext<IMarketContext>(MarketContext);
 
   const displayedAllTickers = availableTickers
-    ?.filter(item => CRYPTO_CARD_COLORS.some(i => i.owner === item.currency))
+    // ?.filter(item => CRYPTO_CARD_COLORS.some(i => i.owner === item.currency))
     ?.map((item, i) => {
+      // step 1: 放顏色
       const color = CRYPTO_CARD_COLORS.find(i => i.owner === item.currency);
-      return {
+      const cryptoCard = {
         ...item,
         gradientColor: color?.gradientColor,
       };
-    })
-    ?.map((cryptoCard, i) => {
+
+      // step 2: 把 json 放進 component
       if (i === 0) {
         return (
           <CryptoCard

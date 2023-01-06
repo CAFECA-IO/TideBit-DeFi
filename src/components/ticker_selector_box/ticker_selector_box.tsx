@@ -128,11 +128,9 @@ const TickerSelectorBox = ({
   });
 
   const cryptoCardsData = addCallbackToCryptoCardsData
-    .filter(item => CRYPTO_CARD_COLORS.some(i => i.owner === item.currency))
+    // .filter(item => CRYPTO_CARD_COLORS.some(i => i.owner === item.currency))
     ?.map((each, index) => {
-      const color: ICRYPTO_CARD_COLORS | undefined = CRYPTO_CARD_COLORS.find(
-        i => i.owner === each.currency
-      );
+      const color = CRYPTO_CARD_COLORS.find(i => i.owner === each.currency);
       return {
         ...each,
         starColor: color?.starColor,
@@ -162,11 +160,9 @@ const TickerSelectorBox = ({
     });
 
   const favoriteTabCardsData = addCallbackToFavoriteTabCardsData
-    ?.filter(item => CRYPTO_CARD_COLORS.some(i => i.owner === item.currency))
+    // ?.filter(item => CRYPTO_CARD_COLORS.some(i => i.owner === item.currency))
     ?.map((each, index) => {
-      const color: ICRYPTO_CARD_COLORS | undefined = CRYPTO_CARD_COLORS.find(
-        i => i.owner === each.currency
-      );
+      const color = CRYPTO_CARD_COLORS.find(i => i.owner === each.currency);
       return {
         ...each,
         starColor: color?.starColor,

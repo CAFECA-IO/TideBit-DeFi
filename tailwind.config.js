@@ -44,10 +44,6 @@ module.exports = {
       '3xl': '1600px',
     },
     extend: {
-      borderRadius: {
-        '5px': '5px',
-      },
-      boxShadow: {},
       backgroundImage: {
         'reserve': "url('./public/elements/group_15244.svg')",
       },
@@ -169,6 +165,7 @@ module.exports = {
         '1/2': '50%',
         '1/5': '20%',
         '2/5': '40%',
+        '4/5': '80%',
         '1/8': '12.5%',
         '7/8': '87.5%',
         '1/10': '10%',
@@ -297,5 +294,4 @@ module.exports = {
       }),
     },
   },
-  plugins: [],
 };

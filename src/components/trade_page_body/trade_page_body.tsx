@@ -8,18 +8,18 @@ import {UserProvider} from '../../lib/contexts/user_context';
 const TradePageBody = () => {
   return (
     <>
-      <div className="flex min-h-screen flex-col overflow-hidden bg-black">
-        <MarketProvider>
-          <UserProvider>
+      <MarketProvider>
+        <UserProvider>
+          <div className="flex min-h-screen flex-col overflow-hidden bg-black">
             <MarketSection />
             <OrderSection />
-          </UserProvider>
-        </MarketProvider>
 
-        {/* <div>
+            {/* <div>
           <Footer />
         </div> */}
-      </div>
+          </div>
+        </UserProvider>
+      </MarketProvider>
     </>
   );
 };

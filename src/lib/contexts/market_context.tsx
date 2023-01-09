@@ -3,7 +3,9 @@ import {ICardProps, ILineGraphProps} from '../../components/card/crypto_card';
 import {
   INITIAL_POSITION_LABEL_DISPLAYED_STATE,
   PROFIT_LOSS_COLOR_TYPE,
+  TRADING_CHART_BORDER_COLOR,
 } from '../../constants/display';
+import {ApexOptions} from 'apexcharts';
 
 export interface ITickerData {
   currency: string;
@@ -210,201 +212,6 @@ const TRADING_CRYPTO_DATA = [
   },
 ];
 
-// const TRADING_CRYPTO_DATA = [
-//   {
-//     currency: 'ETH',
-//     chain: 'Ethereum',
-//     star: true,
-//     starred: false,
-//     starColor: 'text-bluePurple',
-//     // getStarredStateCallback: getEthStarred,
-//     price: 1288.4,
-//     fluctuating: 1.14,
-//     gradientColor: 'border-bluePurple/50 bg-black from-bluePurple/50 to-black',
-//     tokenImg: '/elements/group_2371.svg',
-//   },
-//   {
-//     currency: 'BTC',
-//     chain: 'Bitcoin',
-//     star: true,
-//     starred: false,
-//     starColor: 'text-lightOrange',
-//     // getStarredStateCallback: getBtcStarred,
-//     price: 1288.4,
-//     fluctuating: 1.14,
-//     gradientColor: 'border-lightOrange/50 bg-black from-lightOrange/50 to-black',
-//     tokenImg: '/elements/group_2372.svg',
-//   },
-//   {
-//     currency: 'LTC',
-//     chain: 'Litecoin',
-//     star: true,
-//     starred: true,
-//     starColor: 'text-lightGray2',
-//     // getStarredStateCallback: getLtcStarred,
-//     price: 1288.4,
-//     fluctuating: 1.14,
-//     gradientColor: 'border-lightGray2/50 bg-black from-lightGray2/50 to-black',
-//     tokenImg: '/elements/c5b7bda06ddfe2b3f59b37ed6bb65ab4.svg',
-//   },
-//   {
-//     currency: 'MATIC',
-//     chain: 'Polygon',
-//     star: true,
-//     starred: true,
-//     starColor: 'text-lightPurple',
-//     // getStarredStateCallback: getMaticStarred,
-//     price: 1288.4,
-//     fluctuating: 1.14,
-//     gradientColor: 'border-lightPurple/50 bg-black from-lightPurple/50 to-black',
-//     tokenImg: '/elements/9cc18b0cbe765b0a28791d253207f0c0.svg',
-//   },
-//   {
-//     currency: 'BNB',
-//     chain: 'BNB',
-//     star: true,
-//     starred: false,
-//     starColor: 'text-lightYellow',
-//     // getStarredStateCallback: getBnbStarred,
-//     price: 1288.4,
-//     fluctuating: 1.14,
-//     gradientColor: 'border-lightYellow/50 bg-black from-lightYellow/50 to-black',
-//     tokenImg: '/elements/group_2374.svg',
-//   },
-//   {
-//     currency: 'SOL',
-//     chain: 'Solana',
-//     star: true,
-//     starred: true,
-//     starColor: 'text-lightPurple2',
-//     // getStarredStateCallback: getSolStarred,
-//     price: 1288.4,
-//     fluctuating: 1.14,
-//     gradientColor: 'border-lightPurple2/50 from-lightPurple2/50 to-black',
-//     tokenImg: '/elements/group_2378.svg',
-//   },
-//   {
-//     currency: 'SHIB',
-//     chain: 'Shiba Inu',
-//     star: true,
-//     starred: false,
-//     starColor: 'text-lightRed1',
-//     // getStarredStateCallback: getShibStarred,
-//     price: 1288.4,
-//     fluctuating: 1.14,
-//     gradientColor: 'border-lightRed1/50 from-lightRed1/50 to-black',
-//     tokenImg: '/elements/group_2381.svg',
-//   },
-//   {
-//     currency: 'DOT',
-//     chain: 'Polkadot',
-//     star: true,
-//     starred: true,
-//     starColor: 'text-lightPink',
-//     // getStarredStateCallback: getDotStarred,
-//     price: 1288.4,
-//     fluctuating: 1.14,
-//     gradientColor: 'border-lightPink/50 from-lightPink/50 to-black',
-//     tokenImg: '/elements/group_2385.svg',
-//   },
-//   {
-//     currency: 'ADA',
-//     chain: 'Cardano',
-//     star: true,
-//     starred: false,
-//     starColor: 'text-lightGreen1',
-//     // getStarredStateCallback: getAdaStarred,
-//     price: 1288.4,
-//     fluctuating: 1.14,
-//     gradientColor: 'border-lightGreen1/50 from-lightGreen1/50 to-black',
-//     tokenImg: '/elements/group_2388.svg',
-//   },
-//   {
-//     currency: 'AVAX',
-//     chain: 'Avalanche',
-//     star: true,
-//     starred: false,
-//     starColor: 'text-lightRed2',
-//     // getStarredStateCallback: getAvaxStarred,
-//     price: 1288.4,
-//     fluctuating: 1.14,
-//     gradientColor: 'border-lightRed2/50 from-lightRed2/50 to-black',
-//     tokenImg: '/elements/group_2391.svg',
-//   },
-//   {
-//     currency: 'Dai',
-//     chain: 'Dai',
-//     star: true,
-//     starred: false,
-//     starColor: 'text-lightOrange1',
-//     // getStarredStateCallback: getDaiStarred,
-//     price: 1288.4,
-//     fluctuating: 1.14,
-//     gradientColor: 'border-lightOrange1/50 from-lightOrange1/50 to-black',
-//     tokenImg: '/elements/layer_x0020_1.svg',
-//   },
-//   {
-//     currency: 'MKR',
-//     chain: 'Maker',
-//     star: true,
-//     starred: false,
-//     starColor: 'text-lightGreen3',
-//     // getStarredStateCallback: getMkrStarred,
-//     price: 1288.4,
-//     fluctuating: 1.14,
-//     gradientColor: 'border-lightGreen3/50 from-lightGreen3/50 to-black',
-//     tokenImg: '/elements/layer_2.svg',
-//   },
-//   {
-//     currency: 'XRP',
-//     chain: 'XRP',
-//     star: true,
-//     starred: false,
-//     starColor: 'text-lightGray4',
-//     // getStarredStateCallback: getXrpStarred,
-//     price: 1288.4,
-//     fluctuating: 1.14,
-//     gradientColor: 'border-lightGray4/50 from-lightGray4/50 to-black',
-//     tokenImg: '/elements/group_2406.svg',
-//   },
-//   {
-//     currency: 'DOGE',
-//     chain: 'Dogecoin',
-//     star: true,
-//     starred: false,
-//     starColor: 'text-lightYellow1',
-//     // getStarredStateCallback: getDogeStarred,
-//     price: 1288.4,
-//     fluctuating: 1.14,
-//     gradientColor: 'border-lightYellow1/50 from-lightYellow1/50 to-black',
-//     tokenImg: '/elements/layer_2-1.svg',
-//   },
-//   {
-//     currency: 'UNI',
-//     chain: 'Uniswap',
-//     star: true,
-//     starred: false,
-//     starColor: 'text-lightPink1',
-//     // getStarredStateCallback: getUniStarred,
-//     price: 1288.4,
-//     fluctuating: 1.14,
-//     gradientColor: 'border-lightPink1/50 from-lightPink1/50 to-black',
-//     tokenImg: '/elements/uniswap-uni-logo.svg',
-//   },
-//   {
-//     currency: 'Flow',
-//     chain: 'Flow',
-//     star: true,
-//     starred: false,
-//     starColor: 'text-lightGreen4',
-//     // getStarredStateCallback: getFlowStarred,
-//     price: 1288.4,
-//     fluctuating: 1.14,
-//     gradientColor: 'border-lightGreen4/50 from-lightGreen4/50 to-black',
-//     tokenImg: '/elements/layer_2_1_.svg',
-//   },
-// ];
-
 // Add line graph property to each object in array
 const addPropertyToArray: ITickerData[] = TRADING_CRYPTO_DATA.map(item => {
   const dataArray = randomArray(1100, 1200, 10);
@@ -423,6 +230,219 @@ const addPropertyToArray: ITickerData[] = TRADING_CRYPTO_DATA.map(item => {
   return newArray;
 });
 
+// export interface IPositionInfoOnChart {}
+
+export const PositionInfoOnChart: ApexOptions = {
+  chart: {
+    type: 'candlestick',
+    height: 0,
+
+    toolbar: {
+      show: false,
+      tools: {
+        zoom: false,
+        zoomin: false,
+        zoomout: false,
+        pan: false,
+      },
+    },
+
+    // dropShadow: {
+    //   enabled: true,
+    //   top: 0,
+    //   left: 0,
+    //   blur: 3,
+    //   opacity: 0.5,
+    // },
+  },
+  responsive: [
+    {
+      breakpoint: 500,
+      options: {
+        candlestick: {
+          width: '1000',
+        },
+      },
+    },
+  ],
+  title: {
+    text: '',
+    align: 'left',
+  },
+  xaxis: {
+    type: 'datetime',
+    labels: {
+      style: {
+        colors: TRADING_CHART_BORDER_COLOR,
+      },
+    },
+    axisTicks: {
+      show: false,
+    },
+  },
+  grid: {
+    show: false,
+    // show: true,
+    // yaxis: {
+    //   lines: {show: false},
+    // },
+    // xaxis: {
+    //   lines: {show: false},
+    // },
+    // padding: {
+    //   right: 300,
+    // },
+  },
+
+  yaxis: {
+    tooltip: {
+      enabled: true,
+    },
+    labels: {
+      show: true,
+      align: 'center',
+      style: {
+        colors: TRADING_CHART_BORDER_COLOR,
+      },
+    },
+    opposite: true,
+    axisBorder: {
+      show: true,
+      color: TRADING_CHART_BORDER_COLOR,
+    },
+    axisTicks: {
+      show: false,
+    },
+  },
+  tooltip: {
+    enabled: true,
+    fillSeriesColor: false,
+    theme: 'dark',
+  },
+
+  plotOptions: {
+    candlestick: {
+      colors: {
+        upward: PROFIT_LOSS_COLOR_TYPE.profit,
+        downward: PROFIT_LOSS_COLOR_TYPE.loss,
+      },
+      wick: {
+        useFillColor: true,
+      },
+    },
+  },
+
+  // markers: {
+  //   discrete: [
+  //     {
+  //       seriesIndex: 0,
+  //       dataPointIndex: dataArray.length - 1,
+  //       size: 1,
+  //       strokeColor: strokeColor[0],
+  //       shape: 'circle',
+  //     },
+  //   ],
+  // },
+  // grid: {
+  //   show: true,
+  //   borderColor: strokeColor[0],
+  //   strokeDashArray: 5,
+  //   position: 'back',
+  // },
+  // forecastDataPoints: {
+  //   count: 2,
+  //   fillOpacity: 0.5,
+  //   dashArray: 2,
+  // },
+  annotations: {
+    position: 'back',
+    yaxis: [
+      {
+        y: 1800,
+        strokeDashArray: 3,
+        borderColor: PROFIT_LOSS_COLOR_TYPE.loss,
+        width: '100%',
+        fillColor: '#ffffff',
+
+        label: {
+          position: 'right',
+          borderColor: 'transparent',
+          textAnchor: 'end',
+          offsetY: 10,
+          offsetX: 2,
+          style: {
+            color: '#ffffff',
+            fontSize: '12px',
+            background: PROFIT_LOSS_COLOR_TYPE.loss,
+            padding: {
+              right: 10,
+            },
+          },
+          text: `Position $1800 Close`,
+          borderWidth: 20,
+        },
+
+        offsetX: 0,
+      },
+      {
+        y: 3500,
+        strokeDashArray: 3,
+        borderColor: PROFIT_LOSS_COLOR_TYPE.profit,
+        width: '100%',
+        fillColor: '#ffffff',
+
+        label: {
+          position: 'right',
+          borderColor: 'transparent',
+          textAnchor: 'end',
+          offsetY: 10,
+          offsetX: 2,
+          style: {
+            color: '#ffffff',
+            fontSize: '12px',
+            background: PROFIT_LOSS_COLOR_TYPE.profit,
+            padding: {
+              right: 10,
+            },
+          },
+          text: `Position $3500 Close`,
+          borderWidth: 20,
+        },
+
+        offsetX: 0,
+      },
+      {
+        y: 3000,
+        strokeDashArray: 0,
+        borderColor: PROFIT_LOSS_COLOR_TYPE.tidebitTheme,
+        width: '105%',
+        fillColor: '#ffffff',
+
+        label: {
+          position: 'right',
+          borderColor: 'transparent',
+          textAnchor: 'end',
+          offsetY: 10,
+          offsetX: 42,
+          style: {
+            color: '#ffffff',
+            fontSize: '12px',
+            background: PROFIT_LOSS_COLOR_TYPE.tidebitTheme,
+            padding: {
+              left: -5,
+              right: 20,
+            },
+          },
+          text: `$3000`,
+          borderWidth: 20,
+        },
+
+        offsetX: 0,
+      },
+    ],
+  },
+};
+
 export interface IMarketProvider {
   children: React.ReactNode;
 }
@@ -432,6 +452,7 @@ export interface IMarketContext {
   isCFDTradable: boolean;
   showPositionOnChart: boolean;
   showPositionOnChartHandler: (bool: boolean) => void;
+  positionInfoOnChart: ApexOptions | null;
   // getTickerData: (ticker: string) => ITickerData; // 會拿到哪些是被star的
 }
 
@@ -441,6 +462,7 @@ export const MarketContext = createContext<IMarketContext>({
   isCFDTradable: false,
   showPositionOnChart: false,
   showPositionOnChartHandler: () => null,
+  positionInfoOnChart: null,
   // getTickerData: () => ITickerData,
 });
 
@@ -451,6 +473,8 @@ export const MarketProvider = ({children}: IMarketProvider) => {
   const [showPositionOnChart, setShowPositionOnChart] = useState<boolean>(
     INITIAL_POSITION_LABEL_DISPLAYED_STATE
   );
+
+  const [positionInfoOnChart, setPositionInfoOnChart] = useState<ApexOptions>(PositionInfoOnChart);
 
   const showPositionOnChartHandler = (bool: boolean) => {
     setShowPositionOnChart(bool);
@@ -465,6 +489,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     isCFDTradable,
     showPositionOnChart,
     showPositionOnChartHandler,
+    positionInfoOnChart,
   };
   return <MarketContext.Provider value={defaultValue}>{children}</MarketContext.Provider>;
 };

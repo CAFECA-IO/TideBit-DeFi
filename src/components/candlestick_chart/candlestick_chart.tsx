@@ -1,4 +1,4 @@
-import React, {useState, useContext} from 'react';
+import React, {useState, useContext, useEffect} from 'react';
 import dynamic from 'next/dynamic';
 import {ApexOptions} from 'apexcharts';
 import {TRADING_CHART_BORDER_COLOR, PROFIT_LOSS_COLOR_TYPE} from '../../constants/display';
@@ -63,7 +63,9 @@ export default function CandlestickChart({
   candlestickChartHeight,
   ...otherProps
 }: ILineGraphProps): JSX.Element {
-  const {showPositionOnChart} = useContext(MarketContext);
+  const {showPositionOnChart, positionInfoOnChart} = useContext(MarketContext);
+
+  // console.log('position context info in candlestick chart', positionInfoOnChart);
 
   // console.log('in candlestick chart, showPositionOnChart:', showPositionOnChart);
 
@@ -445,11 +447,14 @@ export default function CandlestickChart({
     },
   };
 
-  const displayedPosition = chartOptionsWithPositionLabel;
+  // const displayedPosition = chartOptionsWithPositionLabel;
 
-  // const displayedPosition = showPositionOnChart
-  //   ? chartOptionsWithPositionLabel
-  //   : chartOptionsWithoutPositionLabel;
+  const displayedPosition = showPositionOnChart
+    ? chartOptionsWithPositionLabel
+    : chartOptionsWithoutPositionLabel;
+
+  // console.log('showPosition state:', showPositionOnChart);
+  // console.log('display option:', displayedPosition.annotations.yaxis[0].label.text);
 
   const [dataSample, setDataSample] = useState({
     options: displayedPosition,
@@ -465,13 +470,37 @@ export default function CandlestickChart({
     ],
   });
 
+  useEffect(() => {
+    setDataSample({
+      options: displayedPosition,
+      toolbar: {show: false, enabled: false},
+      series: [
+        {
+          name: 'series-1',
+          data: [...candlestickData],
+        },
+      ],
+    });
+  }, []);
+
+  // setDataSample({
+  //   options: displayedPosition,
+  // });
+
   // const displayedChart = showPositionOnChart ? () : ()
 
   return (
     <div>
-      <MarketContext.Consumer>
-        {showPositionOnChart => {
-          // console.log('showPositionOnChart in chart', showPositionOnChart);
+      <Chart
+        options={dataSample.options}
+        series={dataSample.series}
+        type="candlestick"
+        width={candlestickChartWidth}
+        height={candlestickChartHeight}
+      />
+      {/* <MarketContext.Consumer>
+        {({showPositionOnChart}) => {
+          console.log('showPositionOnChart in chart rendering: ', showPositionOnChart);
           return (
             <Chart
               options={dataSample.options}
@@ -482,7 +511,7 @@ export default function CandlestickChart({
             />
           );
         }}
-      </MarketContext.Consumer>
+      </MarketContext.Consumer> */}
     </div>
   );
 }

@@ -8,7 +8,7 @@ import spotAnimation from '../../../public/animation/circle.json';
 
 const defaultChartWidth = 900;
 const defaultChartHeight = 400;
-const maxScreenWidth = 1024;
+const minScreenWidth = 1024;
 const tradeTabWidth = 350;
 const switchHeight = 40;
 
@@ -16,9 +16,9 @@ const getChartSize = () => {
   const windowSize = useWindowSize();
   const defaultChartSize = {width: defaultChartWidth, height: defaultChartHeight};
   const chartWidth =
-    windowSize.width - tradeTabWidth > maxScreenWidth - tradeTabWidth
+    windowSize.width - tradeTabWidth > minScreenWidth - tradeTabWidth
       ? windowSize.width - tradeTabWidth
-      : maxScreenWidth - tradeTabWidth;
+      : minScreenWidth - tradeTabWidth;
   const chartSize = {
     width: chartWidth.toString(),
     height: ((defaultChartSize.height / defaultChartSize.width) * chartWidth).toString(),
@@ -30,9 +30,9 @@ const getChartSize = () => {
 const getSwitchWidth = () => {
   const windowSize = useWindowSize();
   const switchWidth =
-    windowSize.width - tradeTabWidth > maxScreenWidth - tradeTabWidth
+    windowSize.width - tradeTabWidth > minScreenWidth - tradeTabWidth
       ? windowSize.width - tradeTabWidth
-      : maxScreenWidth - tradeTabWidth;
+      : minScreenWidth - tradeTabWidth;
   const switchSize = {
     width: switchWidth.toString(),
     height: switchHeight.toString(),

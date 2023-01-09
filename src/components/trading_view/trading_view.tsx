@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 import CandlestickChart from '../candlestick_chart/candlestick_chart';
 import TradingChartSwitch from '../trading_chart_switch/trading_chart_switch';
 import TradingLineGraphChart from '../trading_line_graph_chart/trading_line_graph_chart';
@@ -50,14 +50,28 @@ const TradingView = () => {
   // const randomArray = getRandomArray(18, 6582, 6612);
   // console.log('randomArray', randomArray);
 
+  const [windowSize, setWindowSize] = useState(0);
+  const handleWindowSize = () => {
+    const size = window.innerWidth;
+    setWindowSize(size);
+  };
+  useEffect(() => {
+    window.addEventListener('resize', handleWindowSize);
+    handleWindowSize();
+
+    return () => {
+      window.removeEventListener('resize', handleWindowSize);
+    };
+  }, []);
+
   const displayedTradingView =
     selectedChartType === 'candlestick' ? (
       <div className="relative">
         <Lottie className="absolute left-505px top-70px w-50px" animationData={spotAnimation} />
         <CandlestickChart
           strokeColor={[`#17BF88`]}
-          candlestickChartWidth="900"
-          candlestickChartHeight="400"
+          candlestickChartWidth={String(windowSize)} //"900"
+          candlestickChartHeight={String((windowSize / 9) * 4)} //"400"
         />
       </div>
     ) : (

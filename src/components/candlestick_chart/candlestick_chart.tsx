@@ -32,17 +32,17 @@ const dummyChartData = (n = 50) => {
     });
     point = lastPrice;
 
-    const result = {
+    const result: any = {
       x: new Date(nowSecond - (n - i) * 1000),
       y,
     };
     return result;
   });
-  const addition = n / 10;
+  const addition = n / 1.68;
 
   // null data
   data.push({
-    x: new Date(nowSecond + 10000),
+    x: new Date(nowSecond + addition * 1000),
     y: [null, null, null, null],
   });
 
@@ -64,7 +64,7 @@ export default function CandlestickChart({
   const anotherSampleData = [1230, 1272, 1120, 1265, 1342, 1299];
   // const CANDLESTICK_CHART_BORDER_COLOR = '#8B8E91';
 
-  const candlestickData = dummyChartData(100);
+  const candlestickData = dummyChartData(80);
   // console.log('data length', candlestickData.length);
 
   const chartOptions: ApexOptions = {

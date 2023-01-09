@@ -10,11 +10,11 @@ function App({Component, pageProps}: AppProps) {
   return (
     <>
       <div className="custom-no-scrollbar selection:bg-tidebitTheme">
-        <MarketProvider>
-          <UserProvider>
-            <Component {...pageProps} />
-          </UserProvider>
-        </MarketProvider>
+        {/* <MarketProvider> */}
+        {/* <UserProvider> */}
+        <Component {...pageProps} />
+        {/* </UserProvider> */}
+        {/* </MarketProvider> */}
       </div>
     </>
   );

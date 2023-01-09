@@ -67,18 +67,14 @@ const TradingView = () => {
 
   const displayedTradingView =
     selectedChartType === 'candlestick' ? (
-      showPositionOnChart ? (
-        <div className="relative">
-          <Lottie className="absolute left-505px top-70px w-50px" animationData={spotAnimation} />
-          <CandlestickChart
-            strokeColor={[`#17BF88`]}
-            candlestickChartWidth="900"
-            candlestickChartHeight="400"
-          />
-        </div>
-      ) : (
-        <></>
-      )
+      <div className="relative">
+        <Lottie className="absolute left-505px top-70px w-50px" animationData={spotAnimation} />
+        <CandlestickChart
+          strokeColor={[`#17BF88`]}
+          candlestickChartWidth="900"
+          candlestickChartHeight="400"
+        />
+      </div>
     ) : (
       <div className="relative">
         <Lottie className="absolute left-505px top-60px w-50px" animationData={spotAnimation} />

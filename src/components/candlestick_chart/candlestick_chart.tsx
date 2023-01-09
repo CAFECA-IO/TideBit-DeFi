@@ -469,13 +469,20 @@ export default function CandlestickChart({
 
   return (
     <div>
-      <Chart
-        options={dataSample.options}
-        series={dataSample.series}
-        type="candlestick"
-        width={candlestickChartWidth}
-        height={candlestickChartHeight}
-      />
+      <MarketContext.Consumer>
+        {showPositionOnChart => {
+          // console.log('showPositionOnChart in chart', showPositionOnChart);
+          return (
+            <Chart
+              options={dataSample.options}
+              series={dataSample.series}
+              type="candlestick"
+              width={candlestickChartWidth}
+              height={candlestickChartHeight}
+            />
+          );
+        }}
+      </MarketContext.Consumer>
     </div>
   );
 }

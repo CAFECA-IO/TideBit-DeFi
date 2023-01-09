@@ -5,6 +5,8 @@ import NavBar from '../components/nav_bar/nav_bar';
 import {serverSideTranslations} from 'next-i18next/serverSideTranslations';
 import OrderSection from '../components/order_section/order_section';
 import TradePageBody from '../components/trade_page_body/trade_page_body';
+import {MarketContext, MarketProvider} from '../lib/contexts/market_context';
+import {UserContext, UserProvider} from '../lib/contexts/user_context';
 
 const Trading = () => {
   return (
@@ -17,9 +19,13 @@ const Trading = () => {
       {/* TODO: `Context` detecting the width of browser and displaying different layout */}
       <NavBar />
 
+      {/* <MarketProvider> */}
+      {/* <UserProvider> */}
       <main>
         <TradePageBody />
       </main>
+      {/* </UserProvider> */}
+      {/* </MarketProvider> */}
     </>
   );
 };

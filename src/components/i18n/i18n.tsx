@@ -44,7 +44,7 @@ const I18n = () => {
               <Link
                 locale={item.value}
                 href={asPath}
-                className="block rounded-none py-2 pr-4 pl-6 hover:bg-darkGray5"
+                className="block rounded-none py-2 text-center hover:bg-darkGray5"
               >
                 {item.label}
               </Link>

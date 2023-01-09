@@ -1,5 +1,6 @@
 import {useState} from 'react';
 import {TRADING_CHART_SWITCH_BUTTON_SIZE} from '../../constants/display';
+import Toggle from '../toggle/toggle';
 
 interface ITradingChartSwitchProps {
   getTradingViewType: (tradingViewState: string) => void;
@@ -12,16 +13,8 @@ const TradingChartSwitch = ({
 }: ITradingChartSwitchProps) => {
   const [activeButton, setActiveButton] = useState('live');
   const [activeChartType, setActiveChartType] = useState('candlestick');
-  // const [liveButton, setLiveButton] = useState(true);
-  // const [fiveMinsButton, setFiveMinsButton] = useState(false);
-  // const [fifteenMinsButton, setFifteenMinsButton] = useState(false);
-  // const [thirtyMinsButton, setThirtyMinsButton] = useState(false);
-  // const [oneHrButton, setOneHrButton] = useState(false);
-  // const [fourHrsButton, setFourHrsButton] = useState(false);
-  // const [twelveHrsButton, setTwelveHrsButton] = useState(false);
-  // const [oneDayButton, setOneDayButton] = useState(false);
 
-  const timeIntervalButtonStyle = 'mr-1 rounded-sm px-8 transition-all duration-300';
+  const timeIntervalButtonStyle = 'mr-1 rounded-sm px-6 transition-all duration-300';
 
   const timeIntervalButtonClickedStyle = `bg-tidebitTheme hover:bg-tidebitTheme ${timeIntervalButtonStyle}`;
 
@@ -229,6 +222,9 @@ const TradingChartSwitch = ({
       </button>
     </div>
   );
+  const getDisplayedPositionsState = (bool: boolean) => {
+    // console.log('bool:', bool);
+  };
 
   return (
     <>
@@ -237,6 +233,13 @@ const TradingChartSwitch = ({
         <div className="flex space-x-2">
           {candlestickChartButton}
           {lineGraphChartButton}
+        </div>
+        <div className="flex items-center space-x-5">
+          <p className="text-lightGray">Positions</p>
+          <div className="pt-1">
+            {' '}
+            <Toggle initialToggleState={true} getToggledState={getDisplayedPositionsState} />
+          </div>
         </div>
 
         {/* Switch time interval */}

@@ -30,11 +30,6 @@ interface ITickerSelectorBox {
 //   [key: string]: boolean | Horse;
 // };
 
-// const conforms: OnlyBoolsAndHorses = {
-//   del: true,
-//   rodney: false,
-// };
-
 interface ICryptoCardData {
   currency: string;
   chain: string;
@@ -78,14 +73,6 @@ const TickerSelectorBox = ({
     });
   };
 
-  // // TODO: fix trial
-  // const defaultFavCrypto = [
-  //   {
-  //     label: '',
-  //     content: <></>,
-  //   },
-  // ];
-
   const {availableTickers} = useContext<IMarketContext>(MarketContext);
   const {user, addFavorites, removeFavorites} = useContext(UserContext) as IUserContext;
 
@@ -98,17 +85,6 @@ const TickerSelectorBox = ({
   //     return favorites;
   //   }
   // }, [activeTab, allCards, favorites]);
-
-  // // // TODO: fix trial
-  // const cryptoCardsData = availableTickers?.map((each, index) => {
-  //   return {
-  //     ...each,
-  //     getStarredStateCallback: (bool: boolean) => {
-  //       // console.log(each.currency, 'clicked');
-  //       // favoriteTickersHandler(each.currency);
-  //     },
-  //   };
-  // });
 
   const addCallbackToCryptoCardsData = availableTickers?.map((each, index) => {
     const addCallbackFunc = {
@@ -219,197 +195,6 @@ const TickerSelectorBox = ({
     }
   }, [searches, activeTab]);
 
-  // function starClickHandler(currency: string) {
-  //   if (currency)
-  // }
-
-  // console.log('newSearchResult:', newSearchResult);
-
-  // const favoritesHandler = (index: number, bool: boolean) => {
-  //   TRADING_CRYPTO_DATA[index].starred = bool;
-
-  //   setFavorites(() => {
-  //     return TRADING_CRYPTO_DATA.filter(each => each.starred);
-  //   });
-  // };
-
-  // function getEthStarred(bool: boolean) {
-  //   emitToast({message: 'ETH star clicked'});
-  //   favoriteTickersHandler('ETH');
-  //   // console.log(user && user[0].favoriteTickers);
-
-  //   // TRADING_CRYPTO_DATA[0].starred = bool;
-  //   TRADING_CRYPTO_DATA.find(each => each.currency === 'ETH')!.starred = bool;
-  //   // console.log(
-  //   //   'eth clicked',
-  //   //   TRADING_CRYPTO_DATA.find(each => each.currency === 'ETH')
-  //   // );
-
-  //   setFavorites(() => {
-  //     return TRADING_CRYPTO_DATA.filter(each => each.starred);
-  //   });
-  //   // user[0].favoriteTickers.find(each => each === 'ETH') ? user[0].favoriteTickers.splice(user[0].favoriteTickers.indexOf('ETH'), 1) : user[0].favoriteTickers.push('ETH');
-  //   // if (user) {
-  //   //   user[0].favoriteTickers.filter(each => each !== 'ETH');
-  //   //   setUser(user.filter(attribute => attribute.favoriteTickers.filter(item => item !== 'ETH')));
-  //   //   console.log(user[0].favoriteTickers);
-  //   // }
-  // }
-  // // console.log('after clicking star:', user && user[0].favoriteTickers);
-
-  // function getBtcStarred(bool: boolean) {
-  //   emitToast({message: 'BTC star clicked'});
-  //   favoriteTickersHandler('BTC');
-  //   // console.log('user data: ', user[0]);
-
-  //   TRADING_CRYPTO_DATA[1].starred = bool;
-
-  //   setFavorites(() => {
-  //     return TRADING_CRYPTO_DATA.filter(each => each.starred);
-  //   });
-  // }
-
-  // function getLtcStarred(bool: boolean) {
-  //   emitToast({message: 'LTC star clicked'});
-  //   favoriteTickersHandler('LTC');
-
-  //   TRADING_CRYPTO_DATA[2].starred = bool;
-
-  //   setFavorites(() => {
-  //     return TRADING_CRYPTO_DATA.filter(each => each.starred);
-  //   });
-  // }
-
-  // function getMaticStarred(bool: boolean) {
-  //   favoriteTickersHandler('MATIC');
-
-  //   TRADING_CRYPTO_DATA[3].starred = bool;
-
-  //   setFavorites(() => {
-  //     return TRADING_CRYPTO_DATA.filter(each => each.starred);
-  //   });
-  // }
-
-  // function getBnbStarred(bool: boolean) {
-  //   favoriteTickersHandler('BNB');
-
-  //   TRADING_CRYPTO_DATA[4].starred = bool;
-
-  //   setFavorites(() => {
-  //     return TRADING_CRYPTO_DATA.filter(each => each.starred);
-  //   });
-  // }
-
-  // function getSolStarred(bool: boolean) {
-  //   favoriteTickersHandler('SOL');
-
-  //   TRADING_CRYPTO_DATA[5].starred = bool;
-
-  //   setFavorites(() => {
-  //     return TRADING_CRYPTO_DATA.filter(each => each.starred);
-  //   });
-  // }
-
-  // function getShibStarred(bool: boolean) {
-  //   favoriteTickersHandler('SHIB');
-
-  //   TRADING_CRYPTO_DATA[6].starred = bool;
-
-  //   setFavorites(() => {
-  //     return TRADING_CRYPTO_DATA.filter(each => each.starred);
-  //   });
-  // }
-
-  // function getDotStarred(bool: boolean) {
-  //   favoriteTickersHandler('DOT');
-
-  //   TRADING_CRYPTO_DATA[7].starred = bool;
-
-  //   setFavorites(() => {
-  //     return TRADING_CRYPTO_DATA.filter(each => each.starred);
-  //   });
-  // }
-
-  // function getAdaStarred(bool: boolean) {
-  //   favoriteTickersHandler('ADA');
-
-  //   TRADING_CRYPTO_DATA[8].starred = bool;
-
-  //   setFavorites(() => {
-  //     return TRADING_CRYPTO_DATA.filter(each => each.starred);
-  //   });
-  // }
-
-  // function getAvaxStarred(bool: boolean) {
-  //   favoriteTickersHandler('AVAX');
-
-  //   TRADING_CRYPTO_DATA[9].starred = bool;
-
-  //   setFavorites(() => {
-  //     return TRADING_CRYPTO_DATA.filter(each => each.starred);
-  //   });
-  // }
-
-  // function getDaiStarred(bool: boolean) {
-  //   favoriteTickersHandler('Dai');
-
-  //   TRADING_CRYPTO_DATA[10].starred = bool;
-
-  //   setFavorites(() => {
-  //     return TRADING_CRYPTO_DATA.filter(each => each.starred);
-  //   });
-  // }
-
-  // function getMkrStarred(bool: boolean) {
-  //   favoriteTickersHandler('MKR');
-
-  //   TRADING_CRYPTO_DATA[11].starred = bool;
-
-  //   setFavorites(() => {
-  //     return TRADING_CRYPTO_DATA.filter(each => each.starred);
-  //   });
-  // }
-
-  // function getXrpStarred(bool: boolean) {
-  //   favoriteTickersHandler('XRP');
-
-  //   TRADING_CRYPTO_DATA[12].starred = bool;
-
-  //   setFavorites(() => {
-  //     return TRADING_CRYPTO_DATA.filter(each => each.starred);
-  //   });
-  // }
-
-  // function getDogeStarred(bool: boolean) {
-  //   favoriteTickersHandler('DOGE');
-
-  //   TRADING_CRYPTO_DATA[13].starred = bool;
-
-  //   setFavorites(() => {
-  //     return TRADING_CRYPTO_DATA.filter(each => each.starred);
-  //   });
-  // }
-
-  // function getUniStarred(bool: boolean) {
-  //   favoriteTickersHandler('UNI');
-
-  //   TRADING_CRYPTO_DATA[14].starred = bool;
-
-  //   setFavorites(() => {
-  //     return TRADING_CRYPTO_DATA.filter(each => each.starred);
-  //   });
-  // }
-
-  // function getFlowStarred(bool: boolean) {
-  //   favoriteTickersHandler('Flow');
-
-  //   TRADING_CRYPTO_DATA[15].starred = bool;
-
-  //   setFavorites(() => {
-  //     return TRADING_CRYPTO_DATA.filter(each => each.starred);
-  //   });
-  // }
-
   const allTabClickHandler = () => {
     setActiveTab('All');
   };
@@ -423,20 +208,6 @@ const TickerSelectorBox = ({
 
   const activeFavoriteTabStyle =
     activeTab == 'Favorite' ? 'bg-darkGray7 text-lightWhite' : 'bg-darkGray6 text-lightGray';
-
-  // const cryptoCardData = {
-  //   key: 0,
-  //   currency: 'ETH',
-  //   chain: 'Ethereum',
-  //   star: true,
-  //   starred: false,
-  //   starColor: 'text-bluePurple',
-  //   // getStarredStateCallback: getEthStarred,
-  //   price: 1288.4,
-  //   fluctuating: 1.14,
-  //   gradientColor: 'border-bluePurple/50 bg-black from-bluePurple/50 to-black',
-  //   tokenImg: '/elements/group_2371.svg',
-  // };
 
   const displayedAllCryptoCards = filteredCards
     // .filter(each => {
@@ -459,7 +230,6 @@ const TickerSelectorBox = ({
     //   //   }
     //   // }
     // })
-    // TODO: fix trial
     ?.map((cryptoCard, i) => {
       if (i === 0) {
         return (
@@ -541,58 +311,6 @@ const TickerSelectorBox = ({
     );
   });
 
-  // const displayedFavorites = filteredCards
-  //   ?.filter(cryptoCard => {
-  //     if (!user || !user.favoriteTickers) return;
-  //     if (cryptoCard.starred !== true) return;
-
-  //     // for (let i = 0; i < user[0].favoriteTickers.length; i++) {
-  //     //   if (cryptoCard.currency === user[0].favoriteTickers[i]) {
-  //     //     cryptoCard.starred = true;
-  //     //     return [cryptoCard];
-  //     //   }
-  //     // }
-  //   })
-  //   ?.map((cryptoCard, i) => {
-  //     if (cryptoCard.starred !== true) return;
-  //     if (i === 0) {
-  //       return (
-  //         <CryptoCard
-  //           key={i}
-  //           className="mt-4 ml-4"
-  //           lineGraphProps={cryptoCard.lineGraphProps}
-  //           star={cryptoCard.star}
-  //           starColor={cryptoCard.starColor}
-  //           starred={true}
-  //           getStarredState={cryptoCard.getStarredStateCallback}
-  //           chain={cryptoCard.chain}
-  //           currency={cryptoCard.currency}
-  //           price={cryptoCard.price}
-  //           fluctuating={cryptoCard.fluctuating}
-  //           gradientColor={cryptoCard.gradientColor}
-  //           tokenImg={cryptoCard.tokenImg}
-  //         />
-  //       );
-  //     }
-
-  //     return (
-  //       <CryptoCard
-  //         key={i}
-  //         lineGraphProps={cryptoCard.lineGraphProps}
-  //         star={cryptoCard.star}
-  //         starColor={cryptoCard.starColor}
-  //         starred={cryptoCard.starred}
-  //         getStarredState={cryptoCard.getStarredStateCallback}
-  //         chain={cryptoCard.chain}
-  //         currency={cryptoCard.currency}
-  //         price={cryptoCard.price}
-  //         fluctuating={cryptoCard.fluctuating}
-  //         gradientColor={cryptoCard.gradientColor}
-  //         tokenImg={cryptoCard.tokenImg}
-  //       />
-  //     );
-  //   });
-
   const displayedCryptoCards = activeTab === 'All' ? displayedAllCryptoCards : displayedFavorites;
 
   const searchIcon = (
@@ -656,19 +374,6 @@ const TickerSelectorBox = ({
             {/*header*/}
 
             {/* ----- body ----- */}
-            {/* search section */}
-            {/* <div>
-              <div className="flex h-10 w-200px items-center justify-end rounded-md bg-darkGray2">
-                {searchIcon}
-              </div>
-              <input
-                placeholder="Email Address"
-                type="text"
-                id="email"
-                name="email"
-                className="block w-full rounded border border-white bg-darkGray py-1 px-3 text-sm leading-8 text-white outline-none ring-transparent transition-colors duration-200 ease-in-out focus:bg-darkGray active:bg-darkGray"
-              />
-            </div> */}
 
             {/* `border border-gray-300` for input border */}
             <div className="relative mr-60px mt-5 mb-5">
@@ -687,12 +392,6 @@ const TickerSelectorBox = ({
               >
                 {searchIcon}
               </button>
-              {/* <button
-                type="submit"
-                className="absolute right-2.5 bottom-2.5 rounded-lg bg-blue-700 px-4 py-2 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 bg-blue-600 hover:bg-blue-700 focus:ring-blue-800"
-              >
-                Search
-              </button> */}
             </div>
 
             {/* Card section */}

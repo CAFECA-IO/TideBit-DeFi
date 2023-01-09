@@ -4,10 +4,22 @@ import TradingChartSwitch from '../trading_chart_switch/trading_chart_switch';
 import TradingLineGraphChart from '../trading_line_graph_chart/trading_line_graph_chart';
 import Lottie from 'lottie-react';
 import spotAnimation from '../../../public/animation/circle.json';
+import {INITIAL_POSITION_LABEL_DISPLAYED_STATE} from '../../constants/display';
 
 const TradingView = () => {
   const [selectedChartType, setSelectedChartType] = useState('candlestick');
   const [selectedChartInterval, setSelectedChartInterval] = useState('live');
+  const [showPositionLabel, setShowPositionLabel] = useState(
+    INITIAL_POSITION_LABEL_DISPLAYED_STATE
+  );
+
+  // Get toggle state from `trading_chart_switch`, which gets it from `toggle`
+  // and pass to `candlestick_chart` component
+  const getDisplayedPositionLabelState = (bool: boolean) => {
+    // console.log('bool in trading_view', bool);
+    setShowPositionLabel(bool);
+    // return bool;
+  };
 
   const getTradingViewSelected = (props: string) => {
     if (props !== 'candlestick' && props !== 'line') return;
@@ -55,6 +67,7 @@ const TradingView = () => {
       <div className="relative">
         <Lottie className="absolute left-505px top-70px w-50px" animationData={spotAnimation} />
         <CandlestickChart
+          positionDisplayingState={showPositionLabel}
           strokeColor={[`#17BF88`]}
           candlestickChartWidth="900"
           candlestickChartHeight="400"
@@ -196,6 +209,7 @@ const TradingView = () => {
           <TradingChartSwitch
             getTradingViewType={getTradingViewSelected}
             getTradingViewInterval={getTradingViewIntervaleSelected}
+            getDisplayedPositionLabel={getDisplayedPositionLabelState}
           />
         </div>
       </div>

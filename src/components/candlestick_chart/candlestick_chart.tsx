@@ -13,6 +13,7 @@ interface ILineGraphProps {
   candlestickChartWidth: string;
   // annotatedValue: number;
   candlestickChartHeight: string;
+  positionDisplayingState: boolean;
 }
 
 const dummyChartData = (n = 50) => {
@@ -59,6 +60,7 @@ export default function CandlestickChart({
   strokeColor,
   candlestickChartWidth,
   candlestickChartHeight,
+  positionDisplayingState,
   ...otherProps
 }: ILineGraphProps): JSX.Element {
   const anotherSampleData = [1230, 1272, 1120, 1265, 1342, 1299];
@@ -66,7 +68,12 @@ export default function CandlestickChart({
   const candlestickData = dummyChartData(60);
   // console.log('data length', candlestickData.length);
 
-  const chartOptions: ApexOptions = {
+  // console.log('positionDisplayingState', positionDisplayingState);
+  // const [showPosition, setShowPosition] = useState<boolean>(positionDisplayingState);
+
+  // console.log('showPosition', showPosition);
+
+  const chartOptionsWithPositionLabel: ApexOptions = {
     chart: {
       type: 'candlestick',
       height: 0,
@@ -277,8 +284,169 @@ export default function CandlestickChart({
     },
   };
 
+  const chartOptionsWithoutPositionLabel: ApexOptions = {
+    chart: {
+      type: 'candlestick',
+      height: 0,
+
+      toolbar: {
+        show: false,
+        tools: {
+          zoom: false,
+          zoomin: false,
+          zoomout: false,
+          pan: false,
+        },
+      },
+
+      // dropShadow: {
+      //   enabled: true,
+      //   top: 0,
+      //   left: 0,
+      //   blur: 3,
+      //   opacity: 0.5,
+      // },
+    },
+    responsive: [
+      {
+        breakpoint: 500,
+        options: {
+          candlestick: {
+            width: '1000',
+          },
+        },
+      },
+    ],
+    title: {
+      text: '',
+      align: 'left',
+    },
+    xaxis: {
+      type: 'datetime',
+      labels: {
+        style: {
+          colors: TRADING_CHART_BORDER_COLOR,
+        },
+      },
+      axisTicks: {
+        show: false,
+      },
+    },
+    grid: {
+      show: false,
+      // show: true,
+      // yaxis: {
+      //   lines: {show: false},
+      // },
+      // xaxis: {
+      //   lines: {show: false},
+      // },
+      // padding: {
+      //   right: 300,
+      // },
+    },
+
+    yaxis: {
+      tooltip: {
+        enabled: true,
+      },
+      labels: {
+        show: true,
+        align: 'center',
+        style: {
+          colors: TRADING_CHART_BORDER_COLOR,
+        },
+      },
+      opposite: true,
+      axisBorder: {
+        show: true,
+        color: TRADING_CHART_BORDER_COLOR,
+      },
+      axisTicks: {
+        show: false,
+      },
+    },
+    tooltip: {
+      enabled: true,
+      fillSeriesColor: false,
+      theme: 'dark',
+    },
+
+    plotOptions: {
+      candlestick: {
+        colors: {
+          upward: PROFIT_LOSS_COLOR_TYPE.profit,
+          downward: PROFIT_LOSS_COLOR_TYPE.loss,
+        },
+        wick: {
+          useFillColor: true,
+        },
+      },
+    },
+
+    // markers: {
+    //   discrete: [
+    //     {
+    //       seriesIndex: 0,
+    //       dataPointIndex: dataArray.length - 1,
+    //       size: 1,
+    //       strokeColor: strokeColor[0],
+    //       shape: 'circle',
+    //     },
+    //   ],
+    // },
+    // grid: {
+    //   show: true,
+    //   borderColor: strokeColor[0],
+    //   strokeDashArray: 5,
+    //   position: 'back',
+    // },
+    // forecastDataPoints: {
+    //   count: 2,
+    //   fillOpacity: 0.5,
+    //   dashArray: 2,
+    // },
+    annotations: {
+      position: 'back',
+      yaxis: [
+        {
+          y: 3000,
+          strokeDashArray: 0,
+          borderColor: PROFIT_LOSS_COLOR_TYPE.tidebitTheme,
+          width: '105%',
+          fillColor: '#ffffff',
+
+          label: {
+            position: 'right',
+            borderColor: 'transparent',
+            textAnchor: 'end',
+            offsetY: 10,
+            offsetX: 42,
+            style: {
+              color: '#ffffff',
+              fontSize: '12px',
+              background: PROFIT_LOSS_COLOR_TYPE.tidebitTheme,
+              padding: {
+                left: -5,
+                right: 20,
+              },
+            },
+            text: `$3000`,
+            borderWidth: 20,
+          },
+
+          offsetX: 0,
+        },
+      ],
+    },
+  };
+
+  const displayedPosition = positionDisplayingState
+    ? chartOptionsWithPositionLabel
+    : chartOptionsWithoutPositionLabel;
+
   const [dataSample, setDataSample] = useState({
-    options: chartOptions,
+    options: displayedPosition,
     toolbar: {
       show: false,
       enabled: false,

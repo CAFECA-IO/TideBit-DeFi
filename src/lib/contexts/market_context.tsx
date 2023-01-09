@@ -427,6 +427,8 @@ export interface IMarketProvider {
 export interface IMarketContext {
   availableTickers: ITickerData[];
   isCFDTradable: boolean;
+  showPositionOnChart: boolean;
+  setShowPositionOnChart: (value: boolean) => void;
   // getTickerData: (ticker: string) => ITickerData; // 會拿到哪些是被star的
 }
 
@@ -434,16 +436,24 @@ export interface IMarketContext {
 export const MarketContext = createContext<IMarketContext>({
   availableTickers: [],
   isCFDTradable: false,
+  showPositionOnChart: false,
+  setShowPositionOnChart: () => null,
   // getTickerData: () => ITickerData,
 });
 
 export const MarketProvider = ({children}: IMarketProvider) => {
   const [availableTickers, setAvailableTickers] = useState<ITickerData[]>(addPropertyToArray);
   const [isCFDTradable, setIsCFDTradable] = useState<boolean>(true);
+  const [showPositionOnChart, setShowPositionOnChart] = useState<boolean>(false);
 
   // console.log('Whole array [addPropertyToArray]:', addPropertyToArray);
   // setAvailableTickers(addPropertyToArray); // infinite loop
 
-  const defaultValue = {availableTickers, isCFDTradable};
+  const defaultValue = {
+    availableTickers,
+    isCFDTradable,
+    showPositionOnChart,
+    setShowPositionOnChart,
+  };
   return <MarketContext.Provider value={defaultValue}>{children}</MarketContext.Provider>;
 };

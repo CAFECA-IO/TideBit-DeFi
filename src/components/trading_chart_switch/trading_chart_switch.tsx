@@ -1,23 +1,35 @@
 import {useState} from 'react';
-import {TRADING_CHART_SWITCH_BUTTON_SIZE} from '../../constants/display';
+import {
+  INITIAL_POSITION_LABEL_DISPLAYED_STATE,
+  TRADING_CHART_SWITCH_BUTTON_SIZE,
+} from '../../constants/display';
 import Toggle from '../toggle/toggle';
 
 interface ITradingChartSwitchProps {
   getTradingViewType: (tradingViewState: string) => void;
   getTradingViewInterval: (tradingViewInterval: string) => void;
+  getDisplayedPositionLabel: (bool: boolean) => void;
 }
 
 const TradingChartSwitch = ({
   getTradingViewType,
   getTradingViewInterval,
+  getDisplayedPositionLabel,
 }: ITradingChartSwitchProps) => {
   const [activeButton, setActiveButton] = useState('live');
   const [activeChartType, setActiveChartType] = useState('candlestick');
+
+  // Get toggle state and pass to `trading_view` component
+  const getDisplayedPositionsState = (bool: boolean) => {
+    // console.log('bool:', bool);
+    getDisplayedPositionLabel(bool);
+  };
 
   const timeIntervalButtonStyle = 'mr-1 rounded-sm px-6 transition-all duration-300';
 
   const timeIntervalButtonClickedStyle = `bg-tidebitTheme hover:bg-tidebitTheme ${timeIntervalButtonStyle}`;
 
+  // TODO: Refactor to object type (easier to read)
   const liveButtonStyle =
     activeButton === 'live' ? timeIntervalButtonClickedStyle : timeIntervalButtonStyle;
   const fiveMinButtonStyle =
@@ -222,9 +234,6 @@ const TradingChartSwitch = ({
       </button>
     </div>
   );
-  const getDisplayedPositionsState = (bool: boolean) => {
-    // console.log('bool:', bool);
-  };
 
   return (
     <>
@@ -238,7 +247,10 @@ const TradingChartSwitch = ({
           <p className="text-lightGray">Positions</p>
           <div className="pt-1">
             {' '}
-            <Toggle initialToggleState={true} getToggledState={getDisplayedPositionsState} />
+            <Toggle
+              initialToggleState={INITIAL_POSITION_LABEL_DISPLAYED_STATE}
+              getToggledState={getDisplayedPositionsState}
+            />
           </div>
         </div>
 

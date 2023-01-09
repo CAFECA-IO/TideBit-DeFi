@@ -1,9 +1,10 @@
-import {useState} from 'react';
+import {useState, useContext} from 'react';
 import {
   INITIAL_POSITION_LABEL_DISPLAYED_STATE,
   TRADING_CHART_SWITCH_BUTTON_SIZE,
 } from '../../constants/display';
 import Toggle from '../toggle/toggle';
+import {MarketContext} from '../../lib/contexts/market_context';
 
 interface ITradingChartSwitchProps {
   getTradingViewType: (tradingViewState: string) => void;
@@ -18,11 +19,17 @@ const TradingChartSwitch = ({
 }: ITradingChartSwitchProps) => {
   const [activeButton, setActiveButton] = useState('live');
   const [activeChartType, setActiveChartType] = useState('candlestick');
+  const {showPositionOnChart, setShowPositionOnChart, showPositionOnChartHandler} =
+    useContext(MarketContext);
 
   // Get toggle state and pass to `trading_view` component
   const getDisplayedPositionsState = (bool: boolean) => {
     // console.log('bool:', bool);
     getDisplayedPositionLabel(bool);
+    showPositionOnChartHandler(bool);
+
+    // setShowPositionOnChart(bool);
+    // console.log(showPositionOnChart);
   };
 
   const timeIntervalButtonStyle = 'mr-1 rounded-sm px-6 transition-all duration-300';

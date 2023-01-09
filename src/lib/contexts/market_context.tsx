@@ -1,6 +1,9 @@
 import React, {useState, createContext} from 'react';
 import {ICardProps, ILineGraphProps} from '../../components/card/crypto_card';
-import {PROFIT_LOSS_COLOR_TYPE} from '../../constants/display';
+import {
+  INITIAL_POSITION_LABEL_DISPLAYED_STATE,
+  PROFIT_LOSS_COLOR_TYPE,
+} from '../../constants/display';
 
 export interface ITickerData {
   currency: string;
@@ -429,6 +432,7 @@ export interface IMarketContext {
   isCFDTradable: boolean;
   showPositionOnChart: boolean;
   setShowPositionOnChart: (value: boolean) => void;
+  showPositionOnChartHandler: (bool: boolean) => void;
   // getTickerData: (ticker: string) => ITickerData; // 會拿到哪些是被star的
 }
 
@@ -438,13 +442,22 @@ export const MarketContext = createContext<IMarketContext>({
   isCFDTradable: false,
   showPositionOnChart: false,
   setShowPositionOnChart: () => null,
+  showPositionOnChartHandler: () => null,
   // getTickerData: () => ITickerData,
 });
 
 export const MarketProvider = ({children}: IMarketProvider) => {
   const [availableTickers, setAvailableTickers] = useState<ITickerData[]>(addPropertyToArray);
   const [isCFDTradable, setIsCFDTradable] = useState<boolean>(true);
-  const [showPositionOnChart, setShowPositionOnChart] = useState<boolean>(false);
+
+  const [showPositionOnChart, setShowPositionOnChart] = useState<boolean>(
+    INITIAL_POSITION_LABEL_DISPLAYED_STATE
+  );
+
+  const showPositionOnChartHandler = (bool: boolean) => {
+    setShowPositionOnChart(bool);
+    // console.log('in market context, position context boolean:', bool);
+  };
 
   // console.log('Whole array [addPropertyToArray]:', addPropertyToArray);
   // setAvailableTickers(addPropertyToArray); // infinite loop
@@ -454,6 +467,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     isCFDTradable,
     showPositionOnChart,
     setShowPositionOnChart,
+    showPositionOnChartHandler,
   };
   return <MarketContext.Provider value={defaultValue}>{children}</MarketContext.Provider>;
 };

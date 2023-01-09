@@ -10,6 +10,7 @@ const defaultChartWidth = 900;
 const defaultChartHeight = 400;
 const maxScreenWidth = 1024;
 const tradeTabWidth = 350;
+const switchHeight = 40;
 
 const getChartSize = () => {
   const windowSize = useWindowSize();
@@ -29,10 +30,12 @@ const getChartSize = () => {
 const getSwitchWidth = () => {
   const windowSize = useWindowSize();
   const switchWidth =
-    windowSize.width - tradeTabWidth > 674 ? windowSize.width - tradeTabWidth : 674;
+    windowSize.width - tradeTabWidth > maxScreenWidth - tradeTabWidth
+      ? windowSize.width - tradeTabWidth
+      : maxScreenWidth - tradeTabWidth;
   const switchSize = {
     width: switchWidth.toString(),
-    height: (40).toString(),
+    height: switchHeight.toString(),
   };
   return switchSize;
 };

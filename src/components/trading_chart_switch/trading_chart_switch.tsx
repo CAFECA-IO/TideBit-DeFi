@@ -1,5 +1,6 @@
 import {useState} from 'react';
 import {TRADING_CHART_SWITCH_BUTTON_SIZE} from '../../constants/display';
+import useWindowSize from '../../lib/hooks/use_window_size';
 
 interface ITradingChartSwitchProps {
   getTradingViewType: (tradingViewState: string) => void;
@@ -240,7 +241,14 @@ const TradingChartSwitch = ({
         </div>
 
         {/* Switch time interval */}
-        <div className="flex rounded-sm bg-darkGray6 py-2 px-2">
+        <div
+          className="flex rounded-sm bg-darkGray6 py-2 px-2"
+          style={{
+            width: '100%',
+            justifyContent: 'space-between',
+            whiteSpace: 'nowrap',
+          }}
+        >
           <button type="button" className={`${liveButtonStyle}`} onClick={liveButtonClickHandler}>
             Live
           </button>

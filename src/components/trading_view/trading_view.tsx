@@ -2,12 +2,46 @@ import {useState, useEffect} from 'react';
 import CandlestickChart from '../candlestick_chart/candlestick_chart';
 import TradingChartSwitch from '../trading_chart_switch/trading_chart_switch';
 import TradingLineGraphChart from '../trading_line_graph_chart/trading_line_graph_chart';
+import useWindowSize from '../../lib/hooks/use_window_size';
 import Lottie from 'lottie-react';
 import spotAnimation from '../../../public/animation/circle.json';
+
+const defaultChartWidth = 900;
+const defaultChartHeight = 400;
+const maxScreenWidth = 1024;
+const tradeTabWidth = 350;
+
+const getChartSize = () => {
+  const windowSize = useWindowSize();
+  const defaultChartSize = {width: defaultChartWidth, height: defaultChartHeight};
+  const chartWidth =
+    windowSize.width - tradeTabWidth > maxScreenWidth - tradeTabWidth
+      ? windowSize.width - tradeTabWidth
+      : maxScreenWidth - tradeTabWidth;
+  const chartSize = {
+    width: chartWidth.toString(),
+    height: ((defaultChartSize.height / defaultChartSize.width) * chartWidth).toString(),
+  };
+
+  return chartSize;
+};
+
+const getSwitchWidth = () => {
+  const windowSize = useWindowSize();
+  const switchWidth =
+    windowSize.width - tradeTabWidth > 674 ? windowSize.width - tradeTabWidth : 674;
+  const switchSize = {
+    width: switchWidth.toString(),
+    height: (40).toString(),
+  };
+  return switchSize;
+};
 
 const TradingView = () => {
   const [selectedChartType, setSelectedChartType] = useState('candlestick');
   const [selectedChartInterval, setSelectedChartInterval] = useState('live');
+  const chartSize = getChartSize();
+  const switchSize = getSwitchWidth();
 
   const getTradingViewSelected = (props: string) => {
     if (props !== 'candlestick' && props !== 'line') return;
@@ -50,28 +84,14 @@ const TradingView = () => {
   // const randomArray = getRandomArray(18, 6582, 6612);
   // console.log('randomArray', randomArray);
 
-  const [windowSize, setWindowSize] = useState(0);
-  const handleWindowSize = () => {
-    const size = window.innerWidth;
-    setWindowSize(size);
-  };
-  useEffect(() => {
-    window.addEventListener('resize', handleWindowSize);
-    handleWindowSize();
-
-    return () => {
-      window.removeEventListener('resize', handleWindowSize);
-    };
-  }, []);
-
   const displayedTradingView =
     selectedChartType === 'candlestick' ? (
       <div className="relative">
         <Lottie className="absolute left-505px top-70px w-50px" animationData={spotAnimation} />
         <CandlestickChart
           strokeColor={[`#17BF88`]}
-          candlestickChartWidth={String(windowSize)} //"900"
-          candlestickChartHeight={String((windowSize / 9) * 4)} //"400"
+          candlestickChartWidth={chartSize.width}
+          candlestickChartHeight={chartSize.height}
         />
       </div>
     ) : (
@@ -206,7 +226,10 @@ const TradingView = () => {
       {/* <div className="pt-700px text-7xl text-blue-100">Market Section</div> */}
       <div className="">
         <div className="pt-10">{displayedTradingView}</div>
-        <div className="ml-5 py-10">
+        <div
+          className="ml-5 py-10"
+          style={{width: `${switchSize.width}px`, height: `${switchSize.height}px`}}
+        >
           <TradingChartSwitch
             getTradingViewType={getTradingViewSelected}
             getTradingViewInterval={getTradingViewIntervaleSelected}

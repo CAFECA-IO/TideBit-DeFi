@@ -3,7 +3,7 @@ import dynamic from 'next/dynamic';
 import {ApexOptions} from 'apexcharts';
 import {TRADING_CHART_BORDER_COLOR, PROFIT_LOSS_COLOR_TYPE} from '../../constants/display';
 import {BsFillArrowDownCircleFill, BsFillArrowUpCircleFill} from 'react-icons/bs';
-import {MarketContext} from '../../lib/contexts/market_context';
+import {MarketContext, MarketProvider} from '../../lib/contexts/market_context';
 
 const Chart = dynamic(() => import('react-apexcharts'), {ssr: false});
 // const Chart = dynamic(() => import('apexcharts'), {ssr: false});
@@ -14,7 +14,7 @@ interface ILineGraphProps {
   candlestickChartWidth: string;
   // annotatedValue: number;
   candlestickChartHeight: string;
-  positionDisplayingState: boolean;
+  // positionDisplayingState: boolean;
 }
 
 const dummyChartData = (n = 50) => {
@@ -61,10 +61,11 @@ export default function CandlestickChart({
   strokeColor,
   candlestickChartWidth,
   candlestickChartHeight,
-  positionDisplayingState,
   ...otherProps
 }: ILineGraphProps): JSX.Element {
   const {showPositionOnChart} = useContext(MarketContext);
+
+  // console.log('in candlestick chart, showPositionOnChart:', showPositionOnChart);
 
   const anotherSampleData = [1230, 1272, 1120, 1265, 1342, 1299];
 
@@ -444,9 +445,11 @@ export default function CandlestickChart({
     },
   };
 
-  const displayedPosition = showPositionOnChart
-    ? chartOptionsWithPositionLabel
-    : chartOptionsWithoutPositionLabel;
+  const displayedPosition = chartOptionsWithPositionLabel;
+
+  // const displayedPosition = showPositionOnChart
+  //   ? chartOptionsWithPositionLabel
+  //   : chartOptionsWithoutPositionLabel;
 
   const [dataSample, setDataSample] = useState({
     options: displayedPosition,
@@ -461,6 +464,8 @@ export default function CandlestickChart({
       },
     ],
   });
+
+  // const displayedChart = showPositionOnChart ? () : ()
 
   return (
     <div>

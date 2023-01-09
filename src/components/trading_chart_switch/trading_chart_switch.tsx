@@ -19,8 +19,7 @@ const TradingChartSwitch = ({
 }: ITradingChartSwitchProps) => {
   const [activeButton, setActiveButton] = useState('live');
   const [activeChartType, setActiveChartType] = useState('candlestick');
-  const {showPositionOnChart, setShowPositionOnChart, showPositionOnChartHandler} =
-    useContext(MarketContext);
+  const {showPositionOnChart, showPositionOnChartHandler} = useContext(MarketContext);
 
   // Get toggle state and pass to `trading_view` component
   const getDisplayedPositionsState = (bool: boolean) => {

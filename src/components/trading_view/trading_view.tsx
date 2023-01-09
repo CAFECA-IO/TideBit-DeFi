@@ -1,23 +1,26 @@
-import {useState} from 'react';
+import {useState, useContext} from 'react';
 import CandlestickChart from '../candlestick_chart/candlestick_chart';
 import TradingChartSwitch from '../trading_chart_switch/trading_chart_switch';
 import TradingLineGraphChart from '../trading_line_graph_chart/trading_line_graph_chart';
 import Lottie from 'lottie-react';
 import spotAnimation from '../../../public/animation/circle.json';
 import {INITIAL_POSITION_LABEL_DISPLAYED_STATE} from '../../constants/display';
+import {MarketContext} from '../../lib/contexts/market_context';
 
 const TradingView = () => {
+  const {showPositionOnChart} = useContext(MarketContext);
+
   const [selectedChartType, setSelectedChartType] = useState('candlestick');
   const [selectedChartInterval, setSelectedChartInterval] = useState('live');
-  const [showPositionLabel, setShowPositionLabel] = useState(
-    INITIAL_POSITION_LABEL_DISPLAYED_STATE
-  );
+  // const [showPositionLabel, setShowPositionLabel] = useState(
+  //   INITIAL_POSITION_LABEL_DISPLAYED_STATE
+  // );
 
   // Get toggle state from `trading_chart_switch`, which gets it from `toggle`
   // and pass to `candlestick_chart` component
   const getDisplayedPositionLabelState = (bool: boolean) => {
     // console.log('bool in trading_view', bool);
-    setShowPositionLabel(bool);
+    // setShowPositionLabel(bool);
     // return bool;
   };
 
@@ -64,15 +67,18 @@ const TradingView = () => {
 
   const displayedTradingView =
     selectedChartType === 'candlestick' ? (
-      <div className="relative">
-        <Lottie className="absolute left-505px top-70px w-50px" animationData={spotAnimation} />
-        <CandlestickChart
-          positionDisplayingState={showPositionLabel}
-          strokeColor={[`#17BF88`]}
-          candlestickChartWidth="900"
-          candlestickChartHeight="400"
-        />
-      </div>
+      showPositionOnChart ? (
+        <div className="relative">
+          <Lottie className="absolute left-505px top-70px w-50px" animationData={spotAnimation} />
+          <CandlestickChart
+            strokeColor={[`#17BF88`]}
+            candlestickChartWidth="900"
+            candlestickChartHeight="400"
+          />
+        </div>
+      ) : (
+        <></>
+      )
     ) : (
       <div className="relative">
         <Lottie className="absolute left-505px top-60px w-50px" animationData={spotAnimation} />

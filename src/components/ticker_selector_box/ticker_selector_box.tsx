@@ -15,6 +15,7 @@ import {
   IMarketContext,
   IMarketProvider,
   ITickerData,
+  MarketProvider,
 } from '../../lib/contexts/market_context';
 import {UserContext, IUserContext} from '../../lib/contexts/user_context';
 import {BiColorFill} from 'react-icons/bi';
@@ -417,22 +418,24 @@ const TickerSelectorBox = ({
   ) : null;
 
   return (
-    <div>
-      {isDisplayedTickerSelectorBox}
-      <ToastContainer
-        position="bottom-left"
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable={false}
-        pauseOnHover
-        theme="dark"
-        limit={10}
-      />
-    </div>
+    <MarketProvider>
+      <div>
+        {isDisplayedTickerSelectorBox}
+        <ToastContainer
+          position="bottom-left"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable={false}
+          pauseOnHover
+          theme="dark"
+          limit={10}
+        />
+      </div>
+    </MarketProvider>
   );
 };
 

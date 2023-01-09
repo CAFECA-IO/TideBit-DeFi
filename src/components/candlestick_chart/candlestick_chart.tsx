@@ -38,11 +38,11 @@ const dummyChartData = (n = 50) => {
     };
     return result;
   });
-  const addition = n / 10;
+  const addition = n / 1.68;
 
   // null data
   data.push({
-    x: new Date(nowSecond + 10000),
+    x: new Date(nowSecond + addition * 1000),
     y: [null, null, null, null],
   });
 
@@ -62,9 +62,8 @@ export default function CandlestickChart({
   ...otherProps
 }: ILineGraphProps): JSX.Element {
   const anotherSampleData = [1230, 1272, 1120, 1265, 1342, 1299];
-  // const CANDLESTICK_CHART_BORDER_COLOR = '#8B8E91';
 
-  const candlestickData = dummyChartData(100);
+  const candlestickData = dummyChartData(60);
   // console.log('data length', candlestickData.length);
 
   const chartOptions: ApexOptions = {
@@ -193,7 +192,7 @@ export default function CandlestickChart({
       position: 'back',
       yaxis: [
         {
-          y: 6610,
+          y: 1800,
           strokeDashArray: 3,
           borderColor: PROFIT_LOSS_COLOR_TYPE.loss,
           width: '100%',
@@ -204,23 +203,23 @@ export default function CandlestickChart({
             borderColor: 'transparent',
             textAnchor: 'end',
             offsetY: 10,
-            offsetX: 10,
+            offsetX: 2,
             style: {
               color: '#ffffff',
               fontSize: '12px',
               background: PROFIT_LOSS_COLOR_TYPE.loss,
               padding: {
-                right: 23,
+                right: 10,
               },
             },
-            text: `Position $6660 Close`,
+            text: `Position $1800 Close`,
             borderWidth: 20,
           },
 
           offsetX: 0,
         },
         {
-          y: 6585,
+          y: 3500,
           strokeDashArray: 3,
           borderColor: PROFIT_LOSS_COLOR_TYPE.profit,
           width: '100%',
@@ -231,23 +230,23 @@ export default function CandlestickChart({
             borderColor: 'transparent',
             textAnchor: 'end',
             offsetY: 10,
-            offsetX: 10,
+            offsetX: 2,
             style: {
               color: '#ffffff',
               fontSize: '12px',
               background: PROFIT_LOSS_COLOR_TYPE.profit,
               padding: {
-                right: 23,
+                right: 10,
               },
             },
-            text: `Position $6760 Close`,
+            text: `Position $3500 Close`,
             borderWidth: 20,
           },
 
           offsetX: 0,
         },
         {
-          y: 6606,
+          y: 3000,
           strokeDashArray: 0,
           borderColor: PROFIT_LOSS_COLOR_TYPE.tidebitTheme,
           width: '105%',
@@ -258,17 +257,17 @@ export default function CandlestickChart({
             borderColor: 'transparent',
             textAnchor: 'end',
             offsetY: 10,
-            offsetX: 55,
+            offsetX: 42,
             style: {
               color: '#ffffff',
               fontSize: '12px',
               background: PROFIT_LOSS_COLOR_TYPE.tidebitTheme,
               padding: {
-                left: -15,
+                left: -5,
                 right: 20,
               },
             },
-            text: `$6606`,
+            text: `$3000`,
             borderWidth: 20,
           },
 

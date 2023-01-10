@@ -4,6 +4,7 @@ import {serverSideTranslations} from 'next-i18next/serverSideTranslations';
 import Head from 'next/head';
 import NavBar from '../components/nav_bar/nav_bar';
 import HeroDescription from '../components/hero_description/hero_description';
+import {MarketProvider} from '../lib/contexts/market_context';
 
 const Home = () => {
   return (
@@ -15,9 +16,11 @@ const Home = () => {
 
       <NavBar />
 
+      {/* <MarketProvider> */}
       <main>
         <HeroDescription />
       </main>
+      {/* </MarketProvider> */}
     </>
   );
 };

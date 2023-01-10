@@ -12,6 +12,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import {CRYPTO_CARD_COLORS} from '../constants/display';
 import {useContext} from 'react';
 import {MarketContext} from '../lib/contexts/market_context';
+import TransferProcessModal from '../components/transfer_process_modal/transfer_process_modal';
 
 const Trial = () => {
   const {
@@ -353,14 +354,14 @@ const Trial = () => {
 
         {/* Divider */}
         <div className="my-auto h-px w-full rounded bg-white/50"></div>
-        <button
+
+        {/* Toast and gradient */}
+        {/* <button
           onClick={notifyFunction}
           className="h-120px w-200px rounded border-0.5px border-lightWhite/50 bg-lightWhite bg-gradient-to-b from-lightWhite/50 to-black p-0 px-5 text-lightWhite opacity-90 shadow-lg"
         >
           Notify!
         </button>
-
-        {/* <p className="text-lightGreen4">Hee</p> */}
 
         <ToastContainer
           position="bottom-left"
@@ -374,7 +375,16 @@ const Trial = () => {
           pauseOnHover
           theme="dark"
           limit={10}
-        />
+        /> */}
+        {/* 
+        <RippleButton
+          buttonType="button"
+          className="mt-4 rounded border-0 bg-cuteBlue py-2 px-5 text-base text-black transition-colors duration-300 hover:cursor-pointer hover:bg-cuteBlue/80 focus:outline-none md:mt-0"
+        >
+          Show the modal
+        </RippleButton> */}
+
+        <TransferProcessModal modalType="Deposit" />
       </div>
     </>
   );

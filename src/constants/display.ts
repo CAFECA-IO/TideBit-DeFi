@@ -2,7 +2,7 @@
 //   setTimeout(() => setProcessModalVisible(false), 1000);
 // };
 
-export const INITIAL_POSITION_LABEL_DISPLAYED_STATE = false;
+export const INITIAL_POSITION_LABEL_DISPLAYED_STATE = true;
 
 export interface ICRYPTO_CARD_COLORS {
   owner: string;

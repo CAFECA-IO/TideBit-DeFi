@@ -63,7 +63,8 @@ export default function CandlestickChart({
   candlestickChartHeight,
   ...otherProps
 }: ILineGraphProps): JSX.Element {
-  const {showPositionOnChart, positionInfoOnChart} = useContext(MarketContext);
+  const {showPositionOnChart, positionInfoOnChart, candlestickChartIdHandler} =
+    useContext(MarketContext);
 
   // console.log('position context info in candlestick chart', positionInfoOnChart);
 
@@ -77,10 +78,14 @@ export default function CandlestickChart({
   // console.log('positionDisplayingState', positionDisplayingState);
   // const [showPosition, setShowPosition] = useState<boolean>(positionDisplayingState);
 
-  // console.log('showPosition', showPosition);
+  // console.log('showPositionOnChart in chart component', showPositionOnChart);
+
+  // let data = '';
 
   const chartOptionsWithPositionLabel: ApexOptions = {
     chart: {
+      // id: candlestickChartIdHandler(id),
+      // id: data,
       type: 'candlestick',
       height: 0,
 
@@ -470,18 +475,18 @@ export default function CandlestickChart({
     ],
   });
 
-  useEffect(() => {
-    setDataSample({
-      options: displayedPosition,
-      toolbar: {show: false, enabled: false},
-      series: [
-        {
-          name: 'series-1',
-          data: [...candlestickData],
-        },
-      ],
-    });
-  }, []);
+  // useEffect(() => {
+  //   setDataSample({
+  //     options: displayedPosition,
+  //     toolbar: {show: false, enabled: false},
+  //     series: [
+  //       {
+  //         name: 'series-1',
+  //         data: [...candlestickData],
+  //       },
+  //     ],
+  //   });
+  // }, []);
 
   // setDataSample({
   //   options: displayedPosition,

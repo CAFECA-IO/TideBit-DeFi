@@ -453,6 +453,8 @@ export interface IMarketContext {
   showPositionOnChart: boolean;
   showPositionOnChartHandler: (bool: boolean) => void;
   positionInfoOnChart: ApexOptions | null;
+  candlestickId: string;
+  candlestickChartIdHandler: (id: string) => void;
   // getTickerData: (ticker: string) => ITickerData; // 會拿到哪些是被star的
 }
 
@@ -463,12 +465,15 @@ export const MarketContext = createContext<IMarketContext>({
   showPositionOnChart: false,
   showPositionOnChartHandler: () => null,
   positionInfoOnChart: null,
+  candlestickId: '',
+  candlestickChartIdHandler: () => null,
   // getTickerData: () => ITickerData,
 });
 
 export const MarketProvider = ({children}: IMarketProvider) => {
   const [availableTickers, setAvailableTickers] = useState<ITickerData[]>(addPropertyToArray);
   const [isCFDTradable, setIsCFDTradable] = useState<boolean>(true);
+  const [candlestickId, setCandlestickId] = useState<string>('');
 
   const [showPositionOnChart, setShowPositionOnChart] = useState<boolean>(
     INITIAL_POSITION_LABEL_DISPLAYED_STATE
@@ -481,6 +486,11 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     // console.log('in market context, position context boolean:', bool);
   };
 
+  const candlestickChartIdHandler = (id: string) => {
+    setCandlestickId(id);
+    // console.log('in market context, candlestick id:', id);
+  };
+
   // console.log('Whole array [addPropertyToArray]:', addPropertyToArray);
   // setAvailableTickers(addPropertyToArray); // infinite loop
 
@@ -490,6 +500,8 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     showPositionOnChart,
     showPositionOnChartHandler,
     positionInfoOnChart,
+    candlestickId,
+    candlestickChartIdHandler,
   };
   return <MarketContext.Provider value={defaultValue}>{children}</MarketContext.Provider>;
 };

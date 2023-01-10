@@ -5,6 +5,7 @@ import type {AppProps} from 'next/app';
 import {appWithTranslation} from 'next-i18next';
 import {MarketProvider} from '../lib/contexts/market_context';
 import {UserProvider} from '../lib/contexts/user_context';
+import {ViewportProvider} from '../lib/contexts/theme_context';
 
 function App({Component, pageProps}: AppProps) {
   return (
@@ -12,7 +13,9 @@ function App({Component, pageProps}: AppProps) {
       <div className="custom-no-scrollbar selection:bg-tidebitTheme">
         {/* <MarketProvider> */}
         {/* <UserProvider> */}
-        <Component {...pageProps} />
+        <ViewportProvider>
+          <Component {...pageProps} />
+        </ViewportProvider>
         {/* </UserProvider> */}
         {/* </MarketProvider> */}
       </div>

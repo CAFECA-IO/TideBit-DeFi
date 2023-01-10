@@ -7,8 +7,15 @@ import OrderSection from '../components/order_section/order_section';
 import TradePageBody from '../components/trade_page_body/trade_page_body';
 import {MarketContext, MarketProvider} from '../lib/contexts/market_context';
 import {UserContext, UserProvider} from '../lib/contexts/user_context';
+import {useContext} from 'react';
+import {ViewportContext} from '../lib/contexts/theme_context';
+import {LAYOUT_BREAKPOINT} from '../constants/display';
 
 const Trading = () => {
+  const {width} = useContext(ViewportContext);
+  // console.log('view port width:', width);
+  // const displayedLayout = width < LAYOUT_BREAKPOINT ? <></> : <NavBar />;
+
   return (
     <>
       <Head>
@@ -16,7 +23,7 @@ const Trading = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      {/* TODO: `Context` detecting the width of browser and displaying different layout */}
+      {/* {displayedLayout} */}
       <NavBar />
 
       {/* <MarketProvider> */}

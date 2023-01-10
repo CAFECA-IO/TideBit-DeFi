@@ -124,116 +124,14 @@ const TransferProcessModal = ({modalType, ...otherProps}: ITransferProcessModal)
     <div className="relative flex-auto pt-1">
       <div className="text-lg leading-relaxed text-lightWhite">
         <div className="flex-col justify-center text-center">
-          {/* <Lottie className="ml-1/6 w-350px pt-10" animationData={bigConnectingAnimation} /> */}
-
-          {/* <form>
-            <div className="flex">
-              <label
-                htmlFor="search-dropdown"
-                className="sr-only mb-2 text-sm font-medium text-gray-900 dark:text-white"
-              >
-                Your Email
-              </label>
-              <button
-                id="dropdown-button"
-                data-dropdown-toggle="dropdown"
-                className="z-10 inline-flex shrink-0 items-center rounded-l-lg border border-gray-300 bg-gray-100 py-2.5 px-4 text-center text-sm font-medium text-gray-900 hover:bg-gray-200 focus:outline-none focus:ring-4 focus:ring-gray-300 dark:border-gray-700 dark:bg-gray-600 dark:text-white dark:hover:bg-gray-700 dark:focus:ring-gray-800"
-                type="button"
-              >
-                All categories{' '}
-                <svg
-                  aria-hidden="true"
-                  className="ml-1 h-4 w-4"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    fill-rule="evenodd"
-                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                    clip-rule="evenodd"
-                  ></path>
-                </svg>
-              </button>
-              <div
-                id="dropdown"
-                className="z-10 hidden w-44 divide-y divide-gray-100 rounded bg-white shadow dark:bg-gray-700"
-              >
-                <ul
-                  className="py-1 text-sm text-gray-700 dark:text-gray-200"
-                  aria-labelledby="dropdown-button"
-                >
-                  <li>
-                    <a
-                      href="#"
-                      className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                    >
-                      Shopping
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="#"
-                      className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                    >
-                      Images
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="#"
-                      className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                    >
-                      News
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="#"
-                      className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                    >
-                      Finance
-                    </a>
-                  </li>
-                </ul>
-              </div>
-              <div className="relative w-full">
-                <input
-                  type="search"
-                  id="search-dropdown"
-                  className="dark:placeholder:gray-400 z-20 block w-full rounded-r-lg border border-l-2 border-gray-300 border-l-gray-100 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:border-blue-500"
-                  placeholder="Search"
-                  required
-                />
-                <button
-                  type="submit"
-                  className="absolute top-0 right-0 rounded-r-lg border border-blue-700 bg-blue-700 p-2.5 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                >
-                  <svg
-                    aria-hidden="true"
-                    className="h-5 w-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                    ></path>
-                  </svg>
-                </button>
-              </div>
-            </div>
-          </form> */}
-
-          <div className="mx-20 pt-16 text-start">
+          {/* ----------Type input---------- */}
+          <div
+            className="mx-20 pt-16 text-start hover:cursor-pointer"
+            onClick={cryptoMenuClickHandler}
+          >
             <p className="text-sm text-lightGray4">Asset</p>
-
-            <div>
-              <div className={`${formStyle} flex max-w-xl rounded-md bg-darkGray8`}>
+            <div className="">
+              <div className={`${formStyle} flex rounded-md bg-darkGray8`}>
                 <div className={`z-50 flex items-center space-x-2 pl-2`}>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -257,11 +155,15 @@ const TransferProcessModal = ({modalType, ...otherProps}: ITransferProcessModal)
                   <p className="text-lg text-lightWhite">USDT</p>
                 </div>
 
+                {/* TODO: input search */}
                 <input
-                  className="bg-darkGray8 py-2 pl-3 text-sm text-lightGray focus:outline-none focus:ring-0"
+                  className="bg-darkGray8 py-2 pl-3 text-sm text-lightGray hover:cursor-pointer focus:outline-none focus:ring-0"
                   type="text"
                   placeholder="Tether"
                   disabled
+                  onFocus={() => {
+                    // console.log('focusing');
+                  }}
                 />
 
                 <button
@@ -279,6 +181,7 @@ const TransferProcessModal = ({modalType, ...otherProps}: ITransferProcessModal)
             </div>
           </div>
 
+          {/* ----------Amount input---------- */}
           <div className="mx-20 pt-12 text-start">
             <p className="text-sm text-lightGray4">Amount</p>
             {/* <div className="max-w-xl bg-darkGray8">Tether</div> */}
@@ -289,8 +192,12 @@ const TransferProcessModal = ({modalType, ...otherProps}: ITransferProcessModal)
                 placeholder=""
               />
 
-              <button className="mx-1 text-xs text-lightWhite">USDT</button>
-              <button className="my-1 rounded-sm bg-lightGray3 px-2 text-xs text-white">MAX</button>
+              <button className="mx-1 mr-1 text-xs text-lightWhite hover:cursor-default">
+                USDT
+              </button>
+              <button className="my-1 mx-1 rounded-sm bg-lightGray3 px-2 text-xs text-white hover:bg-lightGray3/80">
+                MAX
+              </button>
             </div>
 
             <p className="pt-3 text-end text-sm tracking-wide">
@@ -298,9 +205,9 @@ const TransferProcessModal = ({modalType, ...otherProps}: ITransferProcessModal)
             </p>
           </div>
 
-          {/* <!-- Dropdown menu --> */}
+          {/* ----------Crypto Menu---------- */}
           <div
-            id="dropdownDots"
+            id="dropdownIcon"
             className={`absolute top-125px right-20 z-10 ${showMenu} w-290px divide-y divide-gray-100 rounded bg-white shadow dark:divide-gray-600 dark:bg-darkGray8`}
           >
             <ul
@@ -308,17 +215,17 @@ const TransferProcessModal = ({modalType, ...otherProps}: ITransferProcessModal)
               aria-labelledby="dropdownMenuIconButton"
             >
               <li>
-                <p className="block px-8 py-3 text-base hover:cursor-pointer hover:bg-darkGray8">
+                <p className="mx-3 my-1 block rounded px-5 py-2 text-base hover:cursor-pointer hover:bg-darkGray5">
                   BTC
                 </p>
               </li>
               <li>
-                <p className="block px-8 py-3 text-base hover:cursor-pointer hover:bg-darkGray8">
+                <p className="mx-3 my-1 block rounded px-5 py-2 text-base hover:cursor-pointer hover:bg-darkGray5">
                   ETH
                 </p>
               </li>
               <li>
-                <p className="block px-8 py-3 text-base hover:cursor-pointer hover:bg-darkGray8">
+                <p className="mx-3 my-1 block rounded px-5 py-2 text-base hover:cursor-pointer hover:bg-darkGray5">
                   USDT
                 </p>
               </li>
@@ -426,10 +333,11 @@ const TransferProcessModal = ({modalType, ...otherProps}: ITransferProcessModal)
   const isDisplayedModal = modalVisible ? (
     <>
       <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">
-        <div className="relative my-6 mx-auto w-auto max-w-xl">
+        {/* The position of the modal */}
+        <div className="relative my-6 mx-auto min-w-fit">
           {/*content & panel*/}
           <div
-            id="connectModal"
+            id="transferProcessModal"
             // ref={modalRef}
             className="relative flex h-480px w-450px flex-col rounded-3xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none"
           >

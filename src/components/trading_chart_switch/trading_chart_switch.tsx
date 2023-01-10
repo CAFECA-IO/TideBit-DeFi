@@ -5,6 +5,7 @@ import {
 } from '../../constants/display';
 import Toggle from '../toggle/toggle';
 import {MarketContext} from '../../lib/contexts/market_context';
+import useWindowSize from '../../lib/hooks/use_window_size';
 
 interface ITradingChartSwitchProps {
   getTradingViewType: (tradingViewState: string) => void;
@@ -258,7 +259,14 @@ const TradingChartSwitch = ({
         </div>
 
         {/* Switch time interval */}
-        <div className="flex rounded-sm bg-darkGray6 py-2 px-2">
+        <div
+          className="flex rounded-sm bg-darkGray6 py-2 px-2"
+          style={{
+            width: '100%',
+            justifyContent: 'space-between',
+            whiteSpace: 'nowrap',
+          }}
+        >
           <button type="button" className={`${liveButtonStyle}`} onClick={liveButtonClickHandler}>
             Live
           </button>

@@ -17,9 +17,13 @@ interface ILineGraphProps {
   // positionDisplayingState: boolean;
 }
 
+const chartBlank = 1.68;
+const dummyDataSize = 80;
+const unitOfLive = 1000;
+
 const dummyChartData = (n = 50) => {
   const now = new Date().getTime();
-  const nowSecond = now - (now % 1000);
+  const nowSecond = now - (now % unitOfLive);
   let point = 1288.4;
   let lastPrice = 0;
   const data = new Array(n).fill(0).map((v, i) => {
@@ -34,17 +38,17 @@ const dummyChartData = (n = 50) => {
     });
     point = lastPrice;
 
-    const result = {
-      x: new Date(nowSecond - (n - i) * 1000),
+    const result: any = {
+      x: new Date(nowSecond - (n - i) * unitOfLive),
       y,
     };
     return result;
   });
-  const addition = n / 1.68;
+  const addition = n / chartBlank;
 
   // null data
   data.push({
-    x: new Date(nowSecond + addition * 1000),
+    x: new Date(nowSecond + addition * unitOfLive),
     y: [null, null, null, null],
   });
 
@@ -72,7 +76,7 @@ export default function CandlestickChart({
 
   const anotherSampleData = [1230, 1272, 1120, 1265, 1342, 1299];
 
-  const candlestickData = dummyChartData(60);
+  const candlestickData = dummyChartData(dummyDataSize);
   // console.log('data length', candlestickData.length);
 
   // console.log('positionDisplayingState', positionDisplayingState);

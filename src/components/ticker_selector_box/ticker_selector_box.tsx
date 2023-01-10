@@ -87,7 +87,9 @@ const TickerSelectorBox = ({
   // ];
 
   const {availableTickers} = useContext<IMarketContext>(MarketContext);
-  const {user, addFavorites, removeFavorites} = useContext(UserContext) as IUserContext;
+  const {enableServiceTerm, favoriteTickers, addFavoriteTicker, removeFavoriteTicker} = useContext(
+    UserContext
+  ) as IUserContext;
 
   const [activeTab, setActiveTab] = useState('All');
 
@@ -117,9 +119,9 @@ const TickerSelectorBox = ({
         // `bool` 是從 Crypto Card 得到的最新的 starred 狀態，each.starred只是從 availableTickers 得到的初始 starred 狀態
         // console.log('if starred: ', each.starred, 'boolean: ', bool);
         if (bool) {
-          addFavorites(each.currency);
+          addFavoriteTicker(each);
         } else {
-          removeFavorites(each.currency);
+          removeFavoriteTicker(each);
         }
         // console.log(each.currency, 'clicked');
       },
@@ -140,7 +142,7 @@ const TickerSelectorBox = ({
 
   // console.log('cryptoCardsData in ticker selector box: ', cryptoCardsData);
 
-  const addCallbackToFavoriteTabCardsData = user?.favoriteTickers
+  const addCallbackToFavoriteTabCardsData = favoriteTickers
     ?.filter(item => item.starred)
     ?.map((each, index) => {
       const addCallbackFunc = {
@@ -149,9 +151,9 @@ const TickerSelectorBox = ({
           // `bool` 是從 Crypto Card 得到的最新的 starred 狀態，each.starred只是從 availableTickers 得到的初始 starred 狀態
           // console.log('if starred: ', each.starred, 'boolean: ', bool);
           if (bool) {
-            addFavorites(each.currency);
+            addFavoriteTicker(each);
           } else {
-            removeFavorites(each.currency);
+            removeFavoriteTicker(each);
           }
           // console.log(each.currency, 'clicked');
         },
@@ -621,7 +623,7 @@ const TickerSelectorBox = ({
             All
           </button>
         </div>
-        {user ? (
+        {enableServiceTerm ? (
           <div className="">
             <button
               type="button"

@@ -413,10 +413,10 @@ const SAMPLE_USER = {
 };
 
 export interface IUser {
-  // id: string;
+  id: string;
   // username: string;
   // email?: string;
-  // wallet: string[];
+  wallets: string[];
 
   favoriteTickers: ITickerData[];
 
@@ -446,29 +446,87 @@ export interface IUserProvider {
 // + getFavoriteTickers()
 
 export interface IUserContext {
-  user: IUser | null;
-  addFavorites: (props: string) => void;
-  removeFavorites: (props: string) => void;
+  id: string | null;
+  username: string | null;
+  email: string | null;
+  wallet: string | null;
+  favoriteTickers: ITickerData[];
+  isSubscibedNewsletters: boolean;
+  isEnabledEmailNotification: boolean;
+  isConnected: boolean;
+  isConnectedWithEmail: boolean;
+  isConnectedWithTideBit: boolean;
+  walletId: string | null;
+  tideBitId: string | null;
+  enableServiceTerm: boolean;
+  connect: () => Promise<boolean>;
+  disconnect: () => Promise<void>;
+  signServiceTerm: () => Promise<boolean>;
+  addFavoriteTicker: (props: ITickerData) => Promise<void>;
+  removeFavoriteTicker: (props: ITickerData) => Promise<void>;
 }
 
 export const UserContext = createContext<IUserContext>({
-  user: null,
-  addFavorites: (props: string) => null,
-  removeFavorites: (props: string) => null,
+  id: null,
+  username: null,
+  email: null,
+  wallet: null,
+  favoriteTickers: [],
+  isSubscibedNewsletters: false,
+  isEnabledEmailNotification: false,
+  isConnected: false,
+  isConnectedWithEmail: false,
+  isConnectedWithTideBit: false,
+  walletId: null,
+  tideBitId: null,
+  enableServiceTerm: false,
+  connect: () => Promise.resolve(true),
+  disconnect: () => Promise.resolve(),
+  signServiceTerm: () => Promise.resolve(true),
+  addFavoriteTicker: (props: ITickerData) => Promise.resolve(),
+  removeFavoriteTicker: (props: ITickerData) => Promise.resolve(),
 });
 
 export const UserProvider = ({children}: IUserProvider) => {
   // TODO: get partial user type from `IUserContext`
-  const [user, setUser] = useState<IUser | null>(SAMPLE_USER);
+  const [id, setId] = useState<string | null>(null);
+  const [username, setUsername] = useState<string | null>(null);
+  const [email, setEmail] = useState<string | null>(null);
+  const [wallet, setWallet] = useState<string | null>(null);
+  const [favoriteTickers, setFavoriteTickers] = useState<ITickerData[]>([]);
+  const [isSubscibedNewsletters, setIsSubscibedNewsletters] = useState<boolean>(false);
+  const [isEnabledEmailNotification, setIsEnabledEmailNotification] = useState<boolean>(false);
+  const [isConnected, setIsConnected] = useState<boolean>(false);
+  const [isConnectedWithEmail, setIsConnectedWithEmail] = useState<boolean>(false);
+  const [isConnectedWithTideBit, setIsConnectedWithTideBit] = useState<boolean>(false);
+  const [walletId, setWalletId] = useState<string | null>(null);
+  const [tideBitId, setTideBitId] = useState<string | null>(null);
+  const [enableServiceTerm, setEnableServiceTerm] = useState<boolean>(false);
 
-  const addFavorites = (newFavorite: string) => {
-    // console.log(newFavorite, '`addFavorites` // ready to add: ');
-    // return;
+  const connect = () => {
+    setIsConnected(true);
+    return Promise.resolve(true);
   };
 
-  const removeFavorites = (previousFavorite: string) => {
+  const disconnect = () => {
+    setIsConnected(false);
+    setEnableServiceTerm(false);
+    return Promise.resolve();
+  };
+
+  const signServiceTerm = () => {
+    setEnableServiceTerm(true);
+    return Promise.resolve(true);
+  };
+
+  const addFavoriteTicker = (newFavorite: ITickerData) => {
+    // console.log(newFavorite, '`addFavorites` // ready to add: ');
+    return Promise.resolve();
+  };
+
+  const removeFavoriteTicker = (previousFavorite: ITickerData) => {
     // console.log(previousFavorite, '`removeFavorites` // ready to remove: ');
-    // return;
+    return Promise.resolve();
   };
 
   // const favoriteTickersHandler = (newFavorite: string) => {
@@ -528,8 +586,31 @@ export const UserProvider = ({children}: IUserProvider) => {
   //   // // console.log('user favorite in context: ', user[0].favoriteTickers);
   // };
 
-  const defaultValue = {user, addFavorites, removeFavorites};
-
   // FIXME: 'setUser' is missing in type '{ user: IUser[] | null; }'
-  return <UserContext.Provider value={defaultValue}>{children}</UserContext.Provider>;
+  return (
+    <UserContext.Provider
+      value={{
+        id,
+        username,
+        email,
+        wallet,
+        favoriteTickers,
+        isSubscibedNewsletters,
+        isEnabledEmailNotification,
+        isConnected,
+        isConnectedWithEmail,
+        isConnectedWithTideBit,
+        walletId,
+        tideBitId,
+        enableServiceTerm,
+        connect,
+        disconnect,
+        signServiceTerm,
+        addFavoriteTicker,
+        removeFavoriteTicker,
+      }}
+    >
+      {children}
+    </UserContext.Provider>
+  );
 };

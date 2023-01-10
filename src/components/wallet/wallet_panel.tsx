@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState} from 'react';
+import {useEffect, useRef, useContext, useState} from 'react';
 import {ImCross, ImUpload2} from 'react-icons/im';
 import WalletOption from './wallet_option';
 import useOuterClick from '../../lib/hooks/use_outer_click';
@@ -28,6 +28,8 @@ import {VscAccount} from 'react-icons/vsc';
 // import {IoExitOutline} from 'react-icons/io';
 // import {RxExit} from 'react-icons/rx';
 import {ImExit} from 'react-icons/im';
+
+import {UserContext} from '../../lib/contexts/user_context';
 
 // import Connector from '@walletconnect/core';
 
@@ -200,6 +202,8 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
   const [qrcodeModalVisible, setQrcodeModalVisible] = useState(false);
   const [helloModalVisible, setHelloModalVisible] = useState(false);
   const [avatarMenuVisible, setAvatarMenuVisible] = useState(false);
+  const userContext = useContext(UserContext);
+  const {wallet, isConnected, enableServiceTerm, signServiceTerm} = userContext;
 
   // const {
   //   targetRef: helloModalRef,
@@ -401,7 +405,7 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
     //   connector.killSession();
     //   resetApp();
     // }
-
+    userContext.disconnect();
     resetApp();
 
     if (walletConnectSuccessful) {
@@ -412,7 +416,7 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
     const {ethereum} = window;
     if (ethereum) {
       try {
-        await ethereum.request({
+        const account = await ethereum.request({
           method: 'eth_requestAccounts',
           params: [{eth_accounts: {}}],
         });
@@ -1108,6 +1112,7 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
         if (accountControl === testVerificationLowerCase) {
           setSignature(signature);
           setSecondStepSuccess(true);
+          userContext.signServiceTerm();
 
           setTimeout(() => setProcessModalVisible(false), DELAYED_HIDDEN_SECONDS);
 
@@ -1284,6 +1289,7 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
       // );
 
       if (/^(0x|0X)?[a-fA-F0-9]+$/.test(signature) && isVerifyedSignature) {
+        userContext.signServiceTerm();
         setSignature(signature);
         setSecondStepSuccess(true);
         // console.log(verifyedSignature, defaultAccount, signature);
@@ -1357,6 +1363,7 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
       const address = await signer.getAddress();
       setDefaultAccount(address);
       passUserLoginState(true);
+      //userContext.connect();
 
       const chainId = await signer.getChainId();
       setChainId(chainId);
@@ -1673,7 +1680,7 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
     ) : null;
 
   // TODO: for .tsx: ${props?.className}
-  const isDisplayedUserAvatar = defaultAccount ? (
+  const isDisplayedUserAvatar = enableServiceTerm ? (
     <>
       <button
         onClick={avatarClickHandler}

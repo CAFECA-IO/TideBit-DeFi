@@ -8,7 +8,7 @@ import {MarketContext, IMarketContext} from '../../lib/contexts/market_context';
 import PositionVisitorTab from '../position_visitor_tab/position_visitor_tab';
 
 const OrderSection = () => {
-  const {user} = useContext(UserContext);
+  const {enableServiceTerm} = useContext(UserContext);
   const {isCFDTradable} = useContext(MarketContext);
 
   const [activeTab, setActiveTab] = useState('Trade');
@@ -29,14 +29,14 @@ const OrderSection = () => {
 
   const currentTab =
     activeTab === 'Position' ? (
-      user ? (
+      enableServiceTerm ? (
         <PositionTab />
       ) : (
         <PositionVisitorTab />
       )
     ) : !isCFDTradable ? (
       <TradeSuspendedTab />
-    ) : !user ? (
+    ) : !enableServiceTerm ? (
       <TradeVisitorTab />
     ) : (
       <TradeTab />

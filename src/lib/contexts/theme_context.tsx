@@ -1,5 +1,6 @@
 import {createContext, useState, useEffect, useContext} from 'react';
 import useWindowSize from '../hooks/use_window_size';
+import useViewport from '../hooks/use_viewport';
 
 export interface IViewportProvider {
   children: React.ReactNode;
@@ -17,6 +18,8 @@ export const ViewportContext = createContext<IViewportContext>({
 
 export const ViewportProvider = ({children}: IViewportProvider) => {
   const windowSize = useWindowSize();
+  // const windowSize = useViewport();
+  // console.log('from hook:', windowSize);
   // const [width, setWidth] = useState(100);
   // const [height, setHeight] = useState(100);
 

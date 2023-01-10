@@ -1,17 +1,18 @@
-import {useState, useEffect, useContext} from 'react';
+import {useState, useEffect, useContext, useLayoutEffect} from 'react';
 import {ViewportContext} from '../contexts/theme_context';
 
 const useViewport = () => {
-  // const [width, setWidth] = useState(window.innerWidth)
-  // const [height, setHeight] = useState(window.innerHeight)
-  const {width, height} = useContext(ViewportContext);
+  const [width, setWidth] = useState(100);
+  const [height, setHeight] = useState(100);
+  // const {width, height} = useContext(ViewportContext);
+  const timedelay = 1000;
 
   const handleWindowResize = () => {
-    // setWidth(window.innerWidth);
-    // setHeight(window.innerHeight);
+    setWidth(window.innerWidth);
+    setHeight(window.innerHeight);
   };
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     window.addEventListener('resize', handleWindowResize);
     return () => window.removeEventListener('resize', handleWindowResize);
   }, []);
@@ -23,3 +24,5 @@ const useViewport = () => {
   // );
   return {width, height};
 };
+
+export default useViewport;

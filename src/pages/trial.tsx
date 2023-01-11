@@ -348,12 +348,12 @@ const Trial = () => {
   return (
     <>
       {/* flex h-screen w-full items-center justify-center */}
-      <div className="w-full space-y-10 p-10">
+      <div className="w-full space-y-10 bg-cuteBlue">
         {/* {forCryptoCard} */}
-        <TrialComponent />
+        {/* <TrialComponent /> */}
 
         {/* Divider */}
-        <div className="my-auto h-px w-full rounded bg-white/50"></div>
+        {/* <div className="my-auto h-px w-full rounded bg-white/50"></div> */}
 
         {/* Toast and gradient */}
         {/* <button

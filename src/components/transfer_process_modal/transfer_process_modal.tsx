@@ -12,6 +12,7 @@ import {TRANSFER_CRYPTO_TYPES} from '../../constants/display';
 
 interface ITransferProcessModal {
   modalType: 'Deposit' | 'Withdraw';
+  userAvailableBalance: number;
   // modalRef?: React.RefObject<HTMLDivElement>;
   // modalVisible?: boolean;
   // clickHandler?: () => void;
@@ -34,10 +35,15 @@ export const TRANSFER_PROCESS_MODAL_TYPE_CLASSES = {
   },
 };
 
-const TransferProcessModal = ({modalType, ...otherProps}: ITransferProcessModal) => {
+const TransferProcessModal = ({
+  modalType,
+  userAvailableBalance,
+  ...otherProps
+}: ITransferProcessModal) => {
   const [modalVisible, setModalVisible] = useState(true);
   const [showCryptoMenu, setShowCryptoMenu] = useState(false);
   const [selectedCrypto, setSelectedCrypto] = useState(TRANSFER_CRYPTO_TYPES[0]);
+  const [amountInput, setAmountInput] = useState<number>();
   // console.log('selectedCrypto', selectedCrypto);
 
   // const {
@@ -52,6 +58,11 @@ const TransferProcessModal = ({modalType, ...otherProps}: ITransferProcessModal)
 
   const cryptoMenuClickHandler = () => {
     setShowCryptoMenu(!showCryptoMenu);
+  };
+
+  const maxClickHandler = () => {
+    // console.log('max clicked');
+    setAmountInput(userAvailableBalance);
   };
 
   const showMenu = showCryptoMenu ? 'block' : 'invisible';
@@ -242,21 +253,38 @@ const TransferProcessModal = ({modalType, ...otherProps}: ITransferProcessModal)
             {/* <div className="max-w-xl bg-darkGray8">Tether</div> */}
             <div className="flex rounded-md bg-darkGray8">
               <input
-                className="w-250px rounded-md bg-darkGray8 py-2 pl-3 text-sm text-lightGray focus:outline-none focus:ring-0"
+                className="w-250px rounded-md bg-darkGray8 py-2 pl-3 text-sm text-white focus:outline-none focus:ring-0"
                 type="number"
                 placeholder=""
+                value={amountInput}
               />
 
-              <button className="mx-1 mr-1 text-xs text-lightWhite hover:cursor-default">
+              <button
+                type="button"
+                className="mx-1 mr-1 text-xs text-lightWhite hover:cursor-default"
+              >
                 USDT
               </button>
-              <button className="my-1 mx-1 rounded-sm bg-lightGray3 px-2 text-xs text-white hover:bg-lightGray3/80">
+              {modalType === 'Withdraw' && (
+                <button
+                  type="button"
+                  onClick={maxClickHandler}
+                  className="my-1 mx-1 rounded-sm bg-lightGray3 px-2 text-xs text-white hover:bg-lightGray3/80"
+                >
+                  MAX
+                </button>
+              )}
+              {/* <button
+                type="button"
+                onClick={maxClickHandler}
+                className="my-1 mx-1 rounded-sm bg-lightGray3 px-2 text-xs text-white hover:bg-lightGray3/80"
+              >
                 MAX
-              </button>
+              </button> */}
             </div>
 
             <p className="pt-3 text-end text-sm tracking-wide">
-              Available: <span className="text-tidebitTheme">100.34</span> USDT
+              Available: <span className="text-tidebitTheme">{userAvailableBalance}</span> USDT
             </p>
           </div>
 

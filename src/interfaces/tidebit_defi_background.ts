@@ -110,7 +110,7 @@ export interface ITickerData {
   // starColor: string;
   // getStarredStateCallback: (bool: boolean) => void;
   price: number;
-  fluctuating: number;
+  fluctuating: fluctuatingProps;
   // gradientColor: string;
   tokenImg: string;
 

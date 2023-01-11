@@ -260,7 +260,7 @@ const TransferProcessModal = ({
           {/* ----------Crypto Menu---------- */}
           <div
             id="dropdownIcon"
-            className={`absolute top-125px right-20 z-10 ${showMenu} ${fadeStyle} w-290px divide-y divide-gray-600 rounded bg-darkGray8 shadow transition-all duration-300`}
+            className={`absolute top-125px right-20 z-10 ${showMenu} ${fadeStyle} w-290px divide-y divide-gray-600 rounded bg-darkGray8 shadow transition-all duration-100`}
           >
             <ul
               className="h-320px overflow-y-scroll py-1 text-start text-sm text-gray-200"

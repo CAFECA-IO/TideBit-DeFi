@@ -9,13 +9,11 @@ import {MarketContext, MarketProvider} from '../lib/contexts/market_context';
 import {UserContext, UserProvider} from '../lib/contexts/user_context';
 import {useContext} from 'react';
 import {ViewportContext} from '../lib/contexts/theme_context';
-import {LAYOUT_BREAKPOINT} from '../constants/display';
+import NavBarMobile from '../components/nav_bar_mobile/nav_bar_mobile';
 
 const Trading = () => {
-  // const {layoutAssertion, initialColorMode} = useContext(ViewportContext);
-  // console.log('layoutAssertion:', layoutAssertion);
-  // console.log('initialColorMode:', initialColorMode);
-  // const displayedLayout = width < LAYOUT_BREAKPOINT ? <></> : <NavBar />;
+  const {layoutAssertion} = useContext(ViewportContext);
+  const displayedNavBar = layoutAssertion === 'mobile' ? <NavBarMobile /> : <NavBar />;
 
   return (
     <>
@@ -24,16 +22,12 @@ const Trading = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      {/* {displayedLayout} */}
-      <NavBar />
+      {displayedNavBar}
+      {/* <NavBar /> */}
 
-      {/* <MarketProvider> */}
-      {/* <UserProvider> */}
       <main>
         <TradePageBody />
       </main>
-      {/* </UserProvider> */}
-      {/* </MarketProvider> */}
     </>
   );
 };

@@ -5,8 +5,14 @@ import Head from 'next/head';
 import NavBar from '../components/nav_bar/nav_bar';
 import HeroDescription from '../components/hero_description/hero_description';
 import {MarketProvider} from '../lib/contexts/market_context';
+import {useContext} from 'react';
+import {ViewportContext} from '../lib/contexts/theme_context';
+import NavBarMobile from '../components/nav_bar_mobile/nav_bar_mobile';
 
 const Home = () => {
+  const {layoutAssertion} = useContext(ViewportContext);
+  const displayedNavBar = layoutAssertion === 'mobile' ? <NavBarMobile /> : <NavBar />;
+
   return (
     <>
       <Head>
@@ -14,7 +20,8 @@ const Home = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <NavBar />
+      {displayedNavBar}
+      {/* <NavBar /> */}
 
       {/* <MarketProvider> */}
       <main>

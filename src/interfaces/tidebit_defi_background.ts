@@ -43,12 +43,13 @@ export interface ICFD {
   // trend: number[]; // gained from Market object
   state: 'OPENING' | 'CLOSED';
 
-  closedType: 'TIME_IS_UP' | 'STOP_OUT' | 'STOP_LOSS' | 'TAKE_PROFIT' | 'CLOSED_BY_USER';
+  closedType?: 'SCHEDULE' | 'STOP_OUT' | 'STOP_LOSS' | 'TAKE_PROFIT' | 'BY_USER';
   forcedClosed: boolean;
 
   openTimestamp: number;
 
-  forcedClosingTimestamp: number;
+  scheduledClosingTimestamp: number;
+
   closedTimestamp?: number; // remaining hrs gained from context
   closedValue?: number;
   stopOutLevel: number; // 清算水平
@@ -59,9 +60,9 @@ export interface ICFD {
 }
 
 export interface IUserBalance {
-  'available': number;
-  'locked': number;
-  'PNL': number;
+  available: number;
+  locked: number;
+  PNL: number;
   // label: 'available' | 'locked' | 'PNL'; // 'Available' | 'Locked/Margin' | 'PNL'
   // balance: number;
 }

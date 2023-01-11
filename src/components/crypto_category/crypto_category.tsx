@@ -6,6 +6,7 @@ import {
   IMarketContext,
   IMarketProvider,
   ITickerData,
+  MarketProvider,
 } from '../../lib/contexts/market_context';
 import {UserContext, IUserContext} from '../../lib/contexts/user_context';
 import {CRYPTO_CARD_COLORS} from '../../constants/display';
@@ -59,6 +60,8 @@ const CryptoCategory = ({...otherProps}) => {
     });
 
   return (
+    // <MarketContext.Provider value={{availableTickers}}>
+    // <MarketProvider>
     <div
       className={`${customClassName} container mx-auto flex shrink-0 flex-wrap justify-center space-y-1`}
     >
@@ -107,6 +110,8 @@ const CryptoCategory = ({...otherProps}) => {
         </div>
       </div>
     </div>
+    // </MarketProvider>
+    // </MarketContext.Provider>
   );
 };
 

@@ -1,10 +1,12 @@
-import {useState, useEffect} from 'react';
+import {useState, useEffect, useContext} from 'react';
 import CandlestickChart from '../candlestick_chart/candlestick_chart';
 import TradingChartSwitch from '../trading_chart_switch/trading_chart_switch';
 import TradingLineGraphChart from '../trading_line_graph_chart/trading_line_graph_chart';
 import useWindowSize from '../../lib/hooks/use_window_size';
 import Lottie from 'lottie-react';
 import spotAnimation from '../../../public/animation/circle.json';
+import {INITIAL_POSITION_LABEL_DISPLAYED_STATE} from '../../constants/display';
+import {MarketContext} from '../../lib/contexts/market_context';
 
 const defaultChartWidth = 900;
 const defaultChartHeight = 400;
@@ -41,8 +43,21 @@ const getSwitchWidth = () => {
 };
 
 const TradingView = () => {
+  const {showPositionOnChart} = useContext(MarketContext);
+
   const [selectedChartType, setSelectedChartType] = useState('candlestick');
   const [selectedChartInterval, setSelectedChartInterval] = useState('live');
+  // const [showPositionLabel, setShowPositionLabel] = useState(
+  //   INITIAL_POSITION_LABEL_DISPLAYED_STATE
+  // );
+
+  // Get toggle state from `trading_chart_switch`, which gets it from `toggle`
+  // and pass to `candlestick_chart` component
+  const getDisplayedPositionLabelState = (bool: boolean) => {
+    // console.log('bool in trading_view', bool);
+    // setShowPositionLabel(bool);
+    // return bool;
+  };
   const chartSize = getChartSize();
   const switchSize = getSwitchWidth();
 
@@ -236,6 +251,7 @@ const TradingView = () => {
           <TradingChartSwitch
             getTradingViewType={getTradingViewSelected}
             getTradingViewInterval={getTradingViewIntervaleSelected}
+            getDisplayedPositionLabel={getDisplayedPositionLabelState}
           />
         </div>
       </div>

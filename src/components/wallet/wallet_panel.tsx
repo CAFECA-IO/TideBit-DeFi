@@ -1625,7 +1625,7 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
         </div>
 
         <ul
-          className="mx-3 py-1 pb-3 text-base font-normal text-gray-700 dark:text-gray-200"
+          className="mx-3 py-1 pb-3 text-base font-normal text-gray-200"
           aria-labelledby="avatarButton"
         >
           <li>

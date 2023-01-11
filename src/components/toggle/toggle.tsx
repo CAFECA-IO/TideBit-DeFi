@@ -3,11 +3,12 @@ import {useState} from 'react';
 interface IToggleProps {
   // toggle: boolean;
   // toggleClickHandler: () => void;
+  initialToggleState?: boolean;
   getToggledState: (props: boolean) => void;
 }
 
-const Toggle = ({getToggledState}: IToggleProps) => {
-  const [toggle, setToggle] = useState(false);
+const Toggle = ({initialToggleState = false, getToggledState}: IToggleProps) => {
+  const [toggle, setToggle] = useState(initialToggleState);
 
   // function to handle pass the `toggle` state to parent component
   const passToggledStateHandler = (data: boolean) => {

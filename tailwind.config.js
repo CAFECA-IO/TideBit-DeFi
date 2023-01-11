@@ -110,7 +110,9 @@ module.exports = {
         '95px': '95px',
         '100px': '100px',
         '105px': '105px',
+        '110px': '110px',
         '120px': '120px',
+        '125px': '125px',
         '130px': '130px',
         '134px': '134px',
         '140px': '140px',
@@ -123,7 +125,9 @@ module.exports = {
         '250px': '250px',
         '271px': '271px',
         '278px': '278px',
+        '280px': '280px',
         '285px': '285px',
+        '290px': '290px',
         '300px': '300px',
         '320px': '320px',
         '350px': '350px',
@@ -163,6 +167,7 @@ module.exports = {
         '20rem': '20rem',
 
         '1/2': '50%',
+        '1/4': '25%',
         '1/5': '20%',
         '2/5': '40%',
         '4/5': '80%',
@@ -278,8 +283,9 @@ module.exports = {
       animation: {
         'spin-slow': 'spin 3s linear infinite',
         'spin-fast': 'spin 1s linear infinite',
-        fade: 'fadeOut 3s ease-in-out',
+        fadeOut: 'fadeOut 3s ease-in-out',
         wiggle: 'wiggle 1s ease-in-out infinite',
+        openMenu: 'open-menu 0.5s ease-in-out forwards',
       },
       // actual animation
       keyframes: theme => ({
@@ -290,6 +296,12 @@ module.exports = {
         wiggle: {
           '0%, 100%': {transform: 'rotate(-3deg)'},
           '50%': {transform: 'rotate(3deg)'},
+        },
+        openMenu: {
+          // '0%': {transform: 'scaleY(0)'},
+          // '80%': {transform: 'scaleY(1.2)'},
+          // '100%': {transform: 'scaleY(1)'},
+          '0%, 20%': {transform: 'rotate(-3deg)'},
         },
       }),
     },

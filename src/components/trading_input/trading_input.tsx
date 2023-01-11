@@ -98,7 +98,7 @@ const TradingInput = ({
       //   return;
       // }
 
-      if (Number(value) >= upperLimit) {
+      if (Number(value) > upperLimit) {
         return;
       }
 

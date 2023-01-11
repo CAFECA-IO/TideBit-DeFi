@@ -1,31 +1,39 @@
-import {useState} from 'react';
-import {TRADING_CHART_SWITCH_BUTTON_SIZE} from '../../constants/display';
+import {useState, useContext} from 'react';
+import {
+  INITIAL_POSITION_LABEL_DISPLAYED_STATE,
+  TRADING_CHART_SWITCH_BUTTON_SIZE,
+} from '../../constants/display';
+import Toggle from '../toggle/toggle';
+import {MarketContext} from '../../lib/contexts/market_context';
 import useWindowSize from '../../lib/hooks/use_window_size';
 
 interface ITradingChartSwitchProps {
   getTradingViewType: (tradingViewState: string) => void;
   getTradingViewInterval: (tradingViewInterval: string) => void;
+  getDisplayedPositionLabel: (bool: boolean) => void;
 }
 
 const TradingChartSwitch = ({
   getTradingViewType,
   getTradingViewInterval,
+  getDisplayedPositionLabel,
 }: ITradingChartSwitchProps) => {
   const [activeButton, setActiveButton] = useState('live');
   const [activeChartType, setActiveChartType] = useState('candlestick');
-  // const [liveButton, setLiveButton] = useState(true);
-  // const [fiveMinsButton, setFiveMinsButton] = useState(false);
-  // const [fifteenMinsButton, setFifteenMinsButton] = useState(false);
-  // const [thirtyMinsButton, setThirtyMinsButton] = useState(false);
-  // const [oneHrButton, setOneHrButton] = useState(false);
-  // const [fourHrsButton, setFourHrsButton] = useState(false);
-  // const [twelveHrsButton, setTwelveHrsButton] = useState(false);
-  // const [oneDayButton, setOneDayButton] = useState(false);
+  const {showPositionOnChartHandler} = useContext(MarketContext);
 
-  const timeIntervalButtonStyle = 'mr-1 rounded-sm px-8 transition-all duration-300';
+  // Get toggle state and pass to `trading_view` component
+  const getDisplayedPositionsState = (bool: boolean) => {
+    // console.log('bool:', bool);
+    getDisplayedPositionLabel(bool);
+    showPositionOnChartHandler(bool);
+  };
 
-  const timeIntervalButtonClickedStyle = `bg-tidebitTheme hover:bg-tidebitTheme ${timeIntervalButtonStyle}`;
+  const timeIntervalButtonStyle = 'mr-1 rounded-sm px-6 transition-all duration-300 text-white';
 
+  const timeIntervalButtonClickedStyle = `text-white bg-tidebitTheme hover:bg-tidebitTheme ${timeIntervalButtonStyle}`;
+
+  // TODO: Refactor to object type (easier to read)
   const liveButtonStyle =
     activeButton === 'live' ? timeIntervalButtonClickedStyle : timeIntervalButtonStyle;
   const fiveMinButtonStyle =
@@ -238,6 +246,18 @@ const TradingChartSwitch = ({
         <div className="flex space-x-2">
           {candlestickChartButton}
           {lineGraphChartButton}
+        </div>
+
+        {/* Diplaying position info toggle */}
+        <div className="flex items-center space-x-5">
+          <p className="text-lightGray">Positions</p>
+          <div className="pt-1">
+            {' '}
+            <Toggle
+              initialToggleState={INITIAL_POSITION_LABEL_DISPLAYED_STATE}
+              getToggledState={getDisplayedPositionsState}
+            />
+          </div>
         </div>
 
         {/* Switch time interval */}

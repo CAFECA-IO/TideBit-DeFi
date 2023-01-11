@@ -64,7 +64,7 @@ export default function Notification({
       {/* cover for NavBar ***Bell Icon*** */}
       <div
         className={`${
-          componentVisible ? 'visible animate-fade duration-700 ease-in-out' : 'invisible'
+          componentVisible ? 'visible duration-700 ease-in-out' : 'invisible'
         } invisible fixed z-50 flex h-16 items-center justify-center overflow-x-hidden overflow-y-hidden bg-transparent outline-none hover:cursor-pointer focus:outline-none lg:visible lg:right-52 lg:top-6 lg:h-8 lg:w-8`}
       >
         {' '}

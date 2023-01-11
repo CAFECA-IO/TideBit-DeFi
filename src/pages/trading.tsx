@@ -12,8 +12,9 @@ import {ViewportContext} from '../lib/contexts/theme_context';
 import {LAYOUT_BREAKPOINT} from '../constants/display';
 
 const Trading = () => {
-  const {width} = useContext(ViewportContext);
-  // console.log('view port width:', width);
+  // const {layoutAssertion, initialColorMode} = useContext(ViewportContext);
+  // console.log('layoutAssertion:', layoutAssertion);
+  // console.log('initialColorMode:', initialColorMode);
   // const displayedLayout = width < LAYOUT_BREAKPOINT ? <></> : <NavBar />;
 
   return (

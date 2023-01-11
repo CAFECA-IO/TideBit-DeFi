@@ -18,8 +18,8 @@ export interface IUser {
   addFavoriteTicker: (props: ITickerData) => Promise<void>;
   removeFavoriteTicker: (props: ITickerData) => Promise<void>;
 
-  balances: IUserBalance[];
-  getTotalBalace: () => IUserBalance[];
+  balances: IUserBalance;
+  getTotalBalace: () => IUserBalance;
   // getPnL: () => null;
 
   CFDs: ICFD[];
@@ -30,19 +30,40 @@ export interface IUser {
 }
 
 export interface ICFD {
-  // id: string;
+  id: string;
   ticker: string; // 'BTC' | 'ETH'
-  operation: 'buy' | 'sell'; // 'Buy' | 'Sell'
-  // leverage: number;
-  value: number;
-  // pnl: number; // calculated by frontend
-  // trend: number[]; // gained by Market
-  closingTimestamp: number;
+  operation: 'BUY' | 'SELL'; // 'Buy' | 'Sell'
+  leverage: number;
+  margin: number;
+  opendValue: number; // margin x leverage x price = value
+  opendPrice: number;
+  closedPrice?: number;
+
+  pnl: number; // gained from context
+  // trend: number[]; // gained from Market object
+  state: 'OPENING' | 'CLOSED';
+
+  closedType: 'TIME_IS_UP' | 'STOP_OUT' | 'STOP_LOSS' | 'TAKE_PROFIT' | 'CLOSED_BY_USER';
+  forcedClosed: boolean;
+
+  openTimestamp: number;
+
+  forcedClosingTimestamp: number;
+  closedTimestamp?: number; // remaining hrs gained from context
+  closedValue?: number;
+  stopOutLevel: number; // 清算水平
+
+  takeProfit?: number;
+  stopLoss?: number;
+  guranteedStop: boolean;
 }
 
 export interface IUserBalance {
-  label: 'available' | 'locked' | 'PNL'; // 'Available' | 'Locked/Margin' | 'PNL'
-  balance: number;
+  'available': number;
+  'locked': number;
+  'PNL': number;
+  // label: 'available' | 'locked' | 'PNL'; // 'Available' | 'Locked/Margin' | 'PNL'
+  // balance: number;
 }
 
 export interface IMarket {
@@ -52,31 +73,47 @@ export interface IMarket {
   isCFDTradable: boolean;
 
   getTicker: (id: number) => ITickerInfo; // 會拿到現在這個交易對的資料
-  getCandlestickData: (ticker: string, timeSpan: timeSpan) => ICandlestick[];
+  getCandlestickData: (ticker: string, timeSpan: timeSpan) => ICandlestick[]; // x 100
 }
 
 export type timeSpan = '15s' | '5m' | '15m' | '30m' | '1h' | '4h' | '12h' | '1d';
 
 export interface ICandlestick {
   timestamp: number;
-  OHLC: number[]; // [open, high, low, close] x 100
-  average: number;
+  OHLC: number[]; // x4
+  average: number; // x1
 
-  nowPrice: number;
+  // nowPrice: number;
 
-  latestOHLC: number[]; // [open, high, low, close] x 10
+  // latestOHLC: number[];
   // volume: number;
 }
+
+export interface ITickerLineGraph {
+  dataArray: number[]; // x10
+  // price: number;
+  // strokeColor
+}
+
+export interface IPositionLineGraph extends ITickerLineGraph {
+  // id: string;
+  openPrice: number; // annotated value
+}
+
+// [open, high, low, close] x 10
+// [open, high, low, close] x 100
 
 export interface ITickerInfo {
   label: string;
   price: number;
   fluctuating: fluctuatingProps;
   volume: number; // 24 hr volume
+  spread: number; // 點差
+  fee: number; // 手續費
 }
 
 export interface fluctuatingProps {
-  type: 'up' | 'down' | 'equal';
+  type: 'UP' | 'DOWN' | 'EQUAL';
   value: number;
   percentage: number;
 }

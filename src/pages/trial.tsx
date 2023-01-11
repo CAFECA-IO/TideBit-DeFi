@@ -384,7 +384,7 @@ const Trial = () => {
           Show the modal
         </RippleButton> */}
 
-        <TransferProcessModal modalType="Withdraw" userAvailableBalance={314.15} />
+        <TransferProcessModal modalType="Deposit" userAvailableBalance={314.15} />
       </div>
     </>
   );

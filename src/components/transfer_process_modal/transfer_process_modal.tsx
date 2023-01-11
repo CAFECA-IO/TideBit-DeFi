@@ -122,6 +122,8 @@ const TransferProcessModal = ({modalType, ...otherProps}: ITransferProcessModal)
 
   const rotationStyle = showCryptoMenu ? ' -rotate-90' : 'rotate-0';
 
+  const fadeStyle = showCryptoMenu ? 'opacity-100' : 'opacity-0';
+
   const formContent = (
     <div className="relative flex-auto pt-1">
       <div className="text-lg leading-relaxed text-lightWhite">
@@ -216,7 +218,7 @@ const TransferProcessModal = ({modalType, ...otherProps}: ITransferProcessModal)
           {/* ----------Crypto Menu---------- */}
           <div
             id="dropdownIcon"
-            className={`absolute top-125px right-20 z-10 ${showMenu} w-290px divide-y divide-gray-600 rounded bg-darkGray8 shadow`}
+            className={`absolute top-125px right-20 z-10 ${showMenu} ${fadeStyle} w-290px divide-y divide-gray-600 rounded bg-darkGray8 shadow transition-all duration-300`}
           >
             <ul
               className="py-1 text-start text-sm text-gray-200"

@@ -283,7 +283,7 @@ module.exports = {
       animation: {
         'spin-slow': 'spin 3s linear infinite',
         'spin-fast': 'spin 1s linear infinite',
-        fade: 'fadeOut 3s ease-in-out',
+        fadeOut: 'fadeOut 3s ease-in-out',
         wiggle: 'wiggle 1s ease-in-out infinite',
         openMenu: 'open-menu 0.5s ease-in-out forwards',
       },

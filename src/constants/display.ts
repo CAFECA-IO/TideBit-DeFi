@@ -2,6 +2,13 @@
 //   setTimeout(() => setProcessModalVisible(false), 1000);
 // };
 
+export const TRANSFER_CRYPTO_TYPES = [
+  {label: 'USDT', content: 'Tether'},
+  {label: 'ETH', content: 'ETH'},
+  {label: 'BTC', content: 'BTC'},
+  {label: 'USDC', content: 'USD Coin'},
+];
+
 export const LAYOUT_BREAKPOINT = 1024;
 
 export const INITIAL_POSITION_LABEL_DISPLAYED_STATE = true;

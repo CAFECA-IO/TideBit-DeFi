@@ -8,6 +8,7 @@ import useOuterClick from '../../lib/hooks/use_outer_click';
 import {useState} from 'react';
 import {MdKeyboardArrowDown, MdKeyboardArrowRight} from 'react-icons/md';
 import RippleButton from '../ripple_button/ripple_button';
+import {TRANSFER_CRYPTO_TYPES} from '../../constants/display';
 
 interface ITransferProcessModal {
   modalType: 'Deposit' | 'Withdraw';
@@ -36,6 +37,8 @@ export const TRANSFER_PROCESS_MODAL_TYPE_CLASSES = {
 const TransferProcessModal = ({modalType, ...otherProps}: ITransferProcessModal) => {
   const [modalVisible, setModalVisible] = useState(true);
   const [showCryptoMenu, setShowCryptoMenu] = useState(false);
+  const [selectedCrypto, setSelectedCrypto] = useState(TRANSFER_CRYPTO_TYPES[0]);
+  // console.log('selectedCrypto', selectedCrypto);
 
   // const {
   //   targetRef: modalRef,
@@ -43,7 +46,7 @@ const TransferProcessModal = ({modalType, ...otherProps}: ITransferProcessModal)
   //   setComponentVisible: setModalVisible,
   // } = useOuterClick(true);
 
-  const clickHandler = () => {
+  const modalClickHandler = () => {
     setModalVisible(!modalVisible);
   };
 
@@ -124,6 +127,29 @@ const TransferProcessModal = ({modalType, ...otherProps}: ITransferProcessModal)
 
   const fadeStyle = showCryptoMenu ? 'opacity-100' : 'opacity-0';
 
+  const avaliableCryptoMenu = TRANSFER_CRYPTO_TYPES.map(item => {
+    return (
+      <li
+        key={item.label}
+        onClick={() => {
+          cryptoItemClickHandler(item);
+        }}
+      >
+        <p className="mx-3 my-1 block rounded px-5 py-2 text-base hover:cursor-pointer hover:bg-darkGray5">
+          {item.label}
+        </p>
+      </li>
+    );
+  });
+
+  const cryptoItemClickHandler = (target: {label: string; content: string}) => {
+    // const {label} = target;
+    // console.log('target', {target});
+    // console.log('label', {label});
+    setSelectedCrypto(target);
+    cryptoMenuClickHandler();
+  };
+
   const formContent = (
     <div className="relative flex-auto pt-1">
       <div className="text-lg leading-relaxed text-lightWhite">
@@ -156,7 +182,7 @@ const TransferProcessModal = ({modalType, ...otherProps}: ITransferProcessModal)
                     ></path>
                   </svg>
 
-                  <p className="text-lg text-lightWhite">USDT</p>
+                  <p className="text-lg text-lightWhite">{selectedCrypto.label}</p>
                 </div>
                 {/* TODO: input search */}
                 <input
@@ -167,6 +193,7 @@ const TransferProcessModal = ({modalType, ...otherProps}: ITransferProcessModal)
                   onFocus={() => {
                     // console.log('focusing');
                   }}
+                  value={selectedCrypto.content}
                 />
 
                 <button
@@ -224,7 +251,8 @@ const TransferProcessModal = ({modalType, ...otherProps}: ITransferProcessModal)
               className="py-1 text-start text-sm text-gray-200"
               aria-labelledby="dropdownMenuIconButton"
             >
-              <li>
+              {avaliableCryptoMenu}
+              {/* <li>
                 <p className="mx-3 my-1 block rounded px-5 py-2 text-base hover:cursor-pointer hover:bg-darkGray5">
                   BTC
                 </p>
@@ -238,7 +266,7 @@ const TransferProcessModal = ({modalType, ...otherProps}: ITransferProcessModal)
                 <p className="mx-3 my-1 block rounded px-5 py-2 text-base hover:cursor-pointer hover:bg-darkGray5">
                   USDT
                 </p>
-              </li>
+              </li> */}
             </ul>
             {/* <div className="py-1">
               <a
@@ -362,7 +390,7 @@ const TransferProcessModal = ({modalType, ...otherProps}: ITransferProcessModal)
               </h3>
               <button className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
                 <span className="absolute top-5 right-5 block outline-none focus:outline-none">
-                  <ImCross onClick={clickHandler} />
+                  <ImCross onClick={modalClickHandler} />
                 </span>
               </button>
             </div>

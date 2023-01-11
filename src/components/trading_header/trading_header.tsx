@@ -91,7 +91,7 @@ const TradingHeader = ({upOrDown, tradingVolume}: ITradingHeaderProps) => {
 
   const ethHeader = (
     <>
-      <div className="flex flex-col space-y-5">
+      <div className="flex flex-col space-y-5 text-white">
         {/* Ticker */}
         <div className="flex w-200px items-center space-x-3 text-center">
           <button

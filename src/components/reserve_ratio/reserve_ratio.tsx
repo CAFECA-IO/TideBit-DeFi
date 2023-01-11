@@ -18,7 +18,8 @@ const ReserveRatio = () => {
 
   return (
     <>
-      <section className="">
+      {/* TODO: `text-white` in ReserveRatioBlock_Card doesn't work */}
+      <section className="text-white">
         <div className="mb-40 items-center text-2xl font-medium text-white lg:text-3xl xl:text-4xl">
           <div className="flex items-center justify-center">
             <span className="my-auto h-px w-1/11 rounded bg-white/50 xs:inline-block xs:w-1/10 lg:w-1/5 xl:mx-2"></span>
@@ -80,7 +81,10 @@ const ReserveRatio = () => {
                   </div>
                   <div className="flex flex-col">
                     <h2 className="text-3xl font-medium text-lightGreen2">USDT</h2>
-                    <p className="-my-1 mb-1"> {t('home_page.ReserveRatioBlock_Card')}</p>
+                    <p className="-my-1 mb-1 text-white">
+                      {' '}
+                      {t('home_page.ReserveRatioBlock_Card')}
+                    </p>
                   </div>
                 </div>
 

@@ -272,7 +272,7 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
     setConnecting(false);
     // setChooseMetamask(false);
 
-    setDefaultAccount('');
+    userContext.connect();
     passUserLoginState(false);
 
     setErrorMessages('');
@@ -320,7 +320,7 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
     setConnecting(false);
     // setChooseMetamask(false);
 
-    setDefaultAccount('');
+    userContext.connect();
     passUserLoginState(false);
 
     setErrorMessages('');
@@ -421,7 +421,7 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
           params: [{eth_accounts: {}}],
         });
         // console.log('Wallet Disconnected');
-        setDefaultAccount('');
+        userContext.connect();
         passUserLoginState(false);
 
         setUserBalance('');
@@ -491,7 +491,7 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
   let isSignaturePending = false;
   async function onConnect(chainId: number, connectedAccount: string) {
     // handle connect event
-    setDefaultAccount(connectedAccount);
+    userContext.connect();
     passUserLoginState(true);
 
     setChainId(chainId);
@@ -526,7 +526,7 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
       }
     }
 
-    const defaulltAccountForCheck = defaultAccount?.toLowerCase();
+    const defaulltAccountForCheck = wallet?.toLowerCase();
     const connectedAccountForCheck = connectedAccount?.toLowerCase();
 
     // console.log(
@@ -638,7 +638,7 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
 
       // check state variables here & if needed refresh the app
       // If any of these variables do not exist and the connector is connected, refresh the data
-      if ((!chainId || !defaultAccount || !userBalance) && connector.connected) {
+      if ((!chainId || !wallet || !userBalance) && connector.connected) {
         refreshData();
       }
     }
@@ -655,7 +655,7 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
   useEffect(() => {
     if (!connector) return;
     walletConnecting();
-  }, [connector, chainId, defaultAccount, userBalance]);
+  }, [connector, chainId, wallet, userBalance]);
 
   // // Once connector, chainId, account, or balance changes, update the state
   // useEffect(() => {
@@ -737,6 +737,7 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
         // ---Detect User Diconnect the website from Metamask---
         if (!accounts[0]) {
           // console.log('injectedDetecting !accounts[0]');
+          userContext.disconnect();
           resetApp();
           // clearStateForMetamaskAccountChange();
           return;
@@ -744,7 +745,7 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
 
         // ---Account Detecetion---
         setErrorMessages('');
-        setDefaultAccount(accounts[0]);
+        userContext.connect();
         passUserLoginState(true);
 
         // ---Send Sign Request when wallet changed---
@@ -791,9 +792,8 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
       // console.log('Remove event listener, useEffect for injectedDetecting()');
       // FIXME: 拔掉電話線
       window?.ethereum?.removeListener('accountsChanged', async (accounts: string[]) => {
-        setDefaultAccount('');
         passUserLoginState(true);
-
+        userContext.disconnect();
         resetApp();
       });
       // console.log('After Removing event listener, useEffect for injectedDetecting()');
@@ -823,7 +823,7 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
           }
 
           setErrorMessages('');
-          setDefaultAccount(accounts[0]);
+          userContext.connect();
           passUserLoginState(true);
 
           // console.log('in injectedDetecting accounts[0]: ', accounts[0]);
@@ -833,10 +833,10 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
 
           // FIXME: send twice sign request
           // Avoid first time connected, send twice sign request `!accounts[0] && accounts[0] !== defaultAccount`
-          if (!defaultAccount && signInStore) return;
+          if (!wallet && signInStore) return;
 
           // When accounts changed, it sends a request to sign typed data `accounts[0] !== defaultAccount`
-          if (accounts[0] !== defaultAccount) {
+          if (accounts[0] !== wallet) {
             funcSignTypedData();
           }
 
@@ -1179,8 +1179,8 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
   // };
 
   async function funcSignTypedData() {
-    if (connector && walletConnectSuccessful && defaultAccount) {
-      _walletConnectSignEIP712({connectedAccount: defaultAccount});
+    if (connector && walletConnectSuccessful && wallet) {
+      _walletConnectSignEIP712({connectedAccount: wallet});
       return;
     }
 
@@ -1252,7 +1252,7 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
       const address = await signer.getAddress();
       const chainId = await signer.getChainId();
       const balance = await signer.getBalance();
-      setDefaultAccount(address);
+      userContext.connect();
       passUserLoginState(true);
 
       setChainId(chainId);
@@ -1361,7 +1361,7 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
       await provider.send('eth_requestAccounts', []);
       const signer = provider.getSigner();
       const address = await signer.getAddress();
-      setDefaultAccount(address);
+      userContext.connect();
       passUserLoginState(true);
       //userContext.connect();
 
@@ -1494,7 +1494,7 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
             )}
           </div>
           <div>
-            Your Address: <span className="text-cuteBlue3">{defaultAccount}</span>
+            Your Address: <span className="text-cuteBlue3">{wallet}</span>
           </div>
           {/* <div>{pairingSignature.account}</div>
           <div>{pairingSignature.signature}</div> */}
@@ -1612,72 +1612,71 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
     return text?.substring(0, 6) + '...' + text?.substring(text.length - 5);
   }
 
-  const username = defaultAccount?.slice(-1).toUpperCase();
+  const username = wallet?.slice(-1).toUpperCase();
 
-  const isDisplayedAvatarMenu =
-    defaultAccount && avatarMenuVisible ? (
-      // Background
-      <div
-        id="userDropdown"
-        className="avatarMenuShadow absolute top-16 right-8 z-10 w-285px divide-y divide-lightGray rounded-none bg-darkGray shadow"
-      >
-        {/* Avatar Section */}
-        <div className="mx-3 items-center py-3 px-4 text-center text-sm text-lightGray">
-          {/* Avatar */}
-          <div className="relative ml-3 inline-flex h-28 w-28 items-center justify-center overflow-hidden rounded-full bg-tidebitTheme text-center">
-            <span className="text-5xl font-bold text-lightWhite">{username}</span>
-          </div>
-          {/* Account */}
-          <div className="ml-4 mt-2 truncate text-sm">{accountTruncate(defaultAccount)}</div>
+  const isDisplayedAvatarMenu = avatarMenuVisible ? (
+    // Background
+    <div
+      id="userDropdown"
+      className="avatarMenuShadow absolute top-16 right-8 z-10 w-285px divide-y divide-lightGray rounded-none bg-darkGray shadow"
+    >
+      {/* Avatar Section */}
+      <div className="mx-3 items-center py-3 px-4 text-center text-sm text-lightGray">
+        {/* Avatar */}
+        <div className="relative ml-3 inline-flex h-28 w-28 items-center justify-center overflow-hidden rounded-full bg-tidebitTheme text-center">
+          <span className="text-5xl font-bold text-lightWhite">{username}</span>
         </div>
-
-        <ul
-          className="mx-3 py-1 pb-3 text-base font-normal text-gray-700 dark:text-gray-200"
-          aria-labelledby="avatarButton"
-        >
-          <li>
-            <a href="#" className="block py-2 pr-4 pl-3 hover:bg-darkGray5">
-              <div className="flex flex-row items-center space-x-2">
-                <BiWallet />
-                <p>My Assets</p>
-              </div>
-            </a>
-          </li>
-          <li>
-            <a href="#" className="block py-2 pr-4 pl-3 hover:bg-darkGray5">
-              <div className="flex flex-row items-center space-x-2">
-                <FaDownload />
-                <p>Deposit</p>
-              </div>
-            </a>
-          </li>
-          <li>
-            <a href="#" className="block py-2 pr-4 pl-3 hover:bg-darkGray5">
-              <div className="flex flex-row items-center space-x-2">
-                <FaUpload />
-                <p>Withdraw</p>
-              </div>
-            </a>
-          </li>
-          <li>
-            <a href="#" className="block py-2 pr-4 pl-3 hover:bg-darkGray5">
-              <div className="flex flex-row items-center space-x-2">
-                <VscAccount />
-                <p>My Account</p>
-              </div>
-            </a>
-          </li>
-          <li>
-            <a onClick={disconnect} href="#" className="block py-2 pr-4 pl-3 hover:bg-darkGray5">
-              <div className="flex flex-row items-center space-x-2">
-                <ImExit />
-                <p>Disconnect</p>
-              </div>
-            </a>
-          </li>
-        </ul>
+        {/* Account */}
+        <div className="ml-4 mt-2 truncate text-sm">{accountTruncate(wallet || '')}</div>
       </div>
-    ) : null;
+
+      <ul
+        className="mx-3 py-1 pb-3 text-base font-normal text-gray-700 dark:text-gray-200"
+        aria-labelledby="avatarButton"
+      >
+        <li>
+          <a href="#" className="block py-2 pr-4 pl-3 hover:bg-darkGray5">
+            <div className="flex flex-row items-center space-x-2">
+              <BiWallet />
+              <p>My Assets</p>
+            </div>
+          </a>
+        </li>
+        <li>
+          <a href="#" className="block py-2 pr-4 pl-3 hover:bg-darkGray5">
+            <div className="flex flex-row items-center space-x-2">
+              <FaDownload />
+              <p>Deposit</p>
+            </div>
+          </a>
+        </li>
+        <li>
+          <a href="#" className="block py-2 pr-4 pl-3 hover:bg-darkGray5">
+            <div className="flex flex-row items-center space-x-2">
+              <FaUpload />
+              <p>Withdraw</p>
+            </div>
+          </a>
+        </li>
+        <li>
+          <a href="#" className="block py-2 pr-4 pl-3 hover:bg-darkGray5">
+            <div className="flex flex-row items-center space-x-2">
+              <VscAccount />
+              <p>My Account</p>
+            </div>
+          </a>
+        </li>
+        <li>
+          <a onClick={disconnect} href="#" className="block py-2 pr-4 pl-3 hover:bg-darkGray5">
+            <div className="flex flex-row items-center space-x-2">
+              <ImExit />
+              <p>Disconnect</p>
+            </div>
+          </a>
+        </li>
+      </ul>
+    </div>
+  ) : null;
 
   // TODO: for .tsx: ${props?.className}
   const isDisplayedUserAvatar = enableServiceTerm ? (

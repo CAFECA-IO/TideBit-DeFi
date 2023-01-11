@@ -1,4 +1,5 @@
 import React, {useContext, useState, useEffect, createContext} from 'react';
+import {ethers, providers} from 'ethers';
 import {ICardProps, ILineGraphProps} from '../../components/card/crypto_card';
 import {PROFIT_LOSS_COLOR_TYPE} from '../../constants/display';
 
@@ -503,30 +504,36 @@ export const UserProvider = ({children}: IUserProvider) => {
   const [tideBitId, setTideBitId] = useState<string | null>(null);
   const [enableServiceTerm, setEnableServiceTerm] = useState<boolean>(false);
 
-  const connect = () => {
+  const connect = async () => {
     setIsConnected(true);
-    return Promise.resolve(true);
+    const provider = new providers.Web3Provider(window.ethereum);
+    await provider.send('eth_requestAccounts', []);
+
+    const signer = provider.getSigner();
+    const address = await signer.getAddress();
+    setWallet(address);
+    return true;
   };
 
-  const disconnect = () => {
+  const disconnect = async () => {
     setIsConnected(false);
     setEnableServiceTerm(false);
-    return Promise.resolve();
+    return;
   };
 
-  const signServiceTerm = () => {
+  const signServiceTerm = async () => {
     setEnableServiceTerm(true);
-    return Promise.resolve(true);
+    return true;
   };
 
-  const addFavoriteTicker = (newFavorite: ITickerData) => {
+  const addFavoriteTicker = async (newFavorite: ITickerData) => {
     // console.log(newFavorite, '`addFavorites` // ready to add: ');
-    return Promise.resolve();
+    return;
   };
 
-  const removeFavoriteTicker = (previousFavorite: ITickerData) => {
+  const removeFavoriteTicker = async (previousFavorite: ITickerData) => {
     // console.log(previousFavorite, '`removeFavorites` // ready to remove: ');
-    return Promise.resolve();
+    return;
   };
 
   // const favoriteTickersHandler = (newFavorite: string) => {

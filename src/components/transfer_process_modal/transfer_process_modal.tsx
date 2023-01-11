@@ -120,6 +120,8 @@ const TransferProcessModal = ({modalType, ...otherProps}: ITransferProcessModal)
 
   const formStyle = showCryptoMenu ? 'ring-1 ring-tidebitTheme' : '';
 
+  const rotationStyle = showCryptoMenu ? ' -rotate-90' : 'rotate-0';
+
   const formContent = (
     <div className="relative flex-auto pt-1">
       <div className="text-lg leading-relaxed text-lightWhite">
@@ -154,7 +156,6 @@ const TransferProcessModal = ({modalType, ...otherProps}: ITransferProcessModal)
 
                   <p className="text-lg text-lightWhite">USDT</p>
                 </div>
-
                 {/* TODO: input search */}
                 <input
                   className="bg-darkGray8 py-2 pl-3 text-sm text-lightGray hover:cursor-pointer focus:outline-none focus:ring-0"
@@ -171,11 +172,18 @@ const TransferProcessModal = ({modalType, ...otherProps}: ITransferProcessModal)
                   className="animate-openMenu pl-3"
                   onClick={cryptoMenuClickHandler}
                 >
-                  {showCryptoMenu ? (
-                    <MdKeyboardArrowRight size={30} />
+                  <MdKeyboardArrowDown
+                    className={`transition-all duration-300 ${rotationStyle}`}
+                    size={30}
+                  />
+                  {/* {showCryptoMenu ? (
+                    <MdKeyboardArrowRight className="text-blue-300" size={30} />
                   ) : (
-                    <MdKeyboardArrowDown size={30} />
-                  )}
+                    <MdKeyboardArrowDown
+                      className={`text-blue-300 ${rotationStyle}`}
+                      size={30}
+                    />
+                  )} */}
                 </button>
               </div>
             </div>

@@ -13,7 +13,7 @@ export default class MyDocument extends Document {
           />
         </Head>
 
-        <body>
+        <body className="bg-black dark:bg-black">
           <Main />
           <NextScript />
         </body>

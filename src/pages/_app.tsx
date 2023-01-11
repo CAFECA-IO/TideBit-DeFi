@@ -10,7 +10,7 @@ import {ViewportProvider} from '../lib/contexts/theme_context';
 function App({Component, pageProps}: AppProps) {
   return (
     <>
-      <div className="custom-no-scrollbar selection:bg-tidebitTheme">
+      <div className="custom-no-scrollbar selection:bg-tidebitTheme dark:selection:bg-tidebitTheme">
         {/* <MarketProvider> */}
         {/* <UserProvider> */}
         <ViewportProvider>

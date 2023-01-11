@@ -208,10 +208,10 @@ const TransferProcessModal = ({modalType, ...otherProps}: ITransferProcessModal)
           {/* ----------Crypto Menu---------- */}
           <div
             id="dropdownIcon"
-            className={`absolute top-125px right-20 z-10 ${showMenu} w-290px divide-y divide-gray-100 rounded bg-white shadow dark:divide-gray-600 dark:bg-darkGray8`}
+            className={`absolute top-125px right-20 z-10 ${showMenu} w-290px divide-y divide-gray-600 rounded bg-darkGray8 shadow`}
           >
             <ul
-              className="py-1 text-start text-sm text-gray-700 dark:text-gray-200"
+              className="py-1 text-start text-sm text-gray-200"
               aria-labelledby="dropdownMenuIconButton"
             >
               <li>

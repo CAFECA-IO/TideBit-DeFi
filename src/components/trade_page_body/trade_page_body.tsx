@@ -10,7 +10,7 @@ const TradePageBody = () => {
     <>
       <MarketProvider>
         <UserProvider>
-          <div className="flex min-h-screen flex-col overflow-hidden bg-black">
+          <div className="flex min-h-screen flex-col overflow-hidden">
             <MarketSection />
             <OrderSection />
 

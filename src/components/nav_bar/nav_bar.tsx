@@ -86,7 +86,7 @@ const NavBar = ({notificationNumber = 1}) => {
 
   return (
     <>
-      <div className="w-full bg-black text-center lg:text-start">
+      <div className="w-full text-center lg:text-start">
         {/* No bg blur in NavBar `backdrop-blur-sm` because wallet panel's limited to navbar when it show up */}
         <nav className="container fixed inset-x-0 z-40 mx-auto max-w-full bg-black/100 pb-1 text-white">
           <div className="mx-auto max-w-full px-5">

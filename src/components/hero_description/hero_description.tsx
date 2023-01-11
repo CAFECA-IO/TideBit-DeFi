@@ -16,7 +16,7 @@ import {MarketProvider} from '../../lib/contexts/market_context';
 
 export default function HeroDescription() {
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center overflow-hidden bg-black pt-24">
+    <div className="flex min-h-screen flex-col items-center justify-center overflow-hidden pt-24">
       {/* Body */}
       <div className="">
         <Cta />

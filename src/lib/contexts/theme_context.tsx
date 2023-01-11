@@ -28,7 +28,7 @@ export const ViewportProvider = ({children}: IViewportProvider) => {
   const {width, height} = windowSize;
   const layoutAssertion: LayoutAssertionUnion = width < LAYOUT_BREAKPOINT ? 'mobile' : 'desktop';
 
-  // const [colorMode, setColorMode] = useState<'light' | 'dark'>('dark');
+  const [colorMode, setColorMode] = useState<'light' | 'dark'>('dark');
   const initialColorMode: ColorModeUnion = 'dark';
 
   const defaultValue = {width, height, layoutAssertion, initialColorMode};

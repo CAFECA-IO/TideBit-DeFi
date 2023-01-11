@@ -7,6 +7,14 @@ export const TRANSFER_CRYPTO_TYPES = [
   {label: 'ETH', content: 'ETH'},
   {label: 'BTC', content: 'BTC'},
   {label: 'USDC', content: 'USD Coin'},
+  {label: 'DAI', content: 'DAI'},
+  {label: 'BNB', content: 'BNB'},
+  {label: 'BCH', content: 'BCH'},
+  {label: 'LTC', content: 'LTC'},
+  {label: 'ETC', content: 'ETC'},
+  {label: 'USX', content: 'USX'},
+  {label: 'NEO', content: 'NEO'},
+  {label: 'EOS', content: 'EOS'},
 ];
 
 export const LAYOUT_BREAKPOINT = 1024;

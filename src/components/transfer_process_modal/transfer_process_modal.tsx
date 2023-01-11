@@ -155,12 +155,9 @@ const TransferProcessModal = ({modalType, ...otherProps}: ITransferProcessModal)
       <div className="text-lg leading-relaxed text-lightWhite">
         <div className="flex-col justify-center text-center">
           {/* ----------Type input---------- */}
-          <div
-            className="mx-20 pt-16 text-start hover:cursor-pointer"
-            onClick={cryptoMenuClickHandler}
-          >
+          <div className="mx-20 pt-16 text-start">
             <p className="text-sm text-lightGray4">Asset</p>
-            <div className="">
+            <div className="hover:cursor-pointer" onClick={cryptoMenuClickHandler}>
               <div className={`${formStyle} flex rounded-md bg-darkGray8`}>
                 <div className={`z-50 flex items-center space-x-2 pl-2`}>
                   <svg
@@ -218,6 +215,27 @@ const TransferProcessModal = ({modalType, ...otherProps}: ITransferProcessModal)
             </div>
           </div>
 
+          {/* ----------Crypto Menu---------- */}
+          <div
+            id="dropdownIcon"
+            className={`absolute top-125px right-20 z-10 ${showMenu} ${fadeStyle} w-290px divide-y divide-gray-600 rounded bg-darkGray8 shadow transition-all duration-300`}
+          >
+            <ul
+              className="h-320px overflow-y-scroll py-1 text-start text-sm text-gray-200"
+              aria-labelledby="dropdownMenuIconButton"
+            >
+              {avaliableCryptoMenu}
+            </ul>
+            {/* <div className="py-1">
+              <a
+                href="#"
+                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600 dark:hover:text-white"
+              >
+                Separated link
+              </a>
+            </div> */}
+          </div>
+
           {/* ----------Amount input---------- */}
           <div className="mx-20 pt-12 text-start">
             <p className="text-sm text-lightGray4">Amount</p>
@@ -240,42 +258,6 @@ const TransferProcessModal = ({modalType, ...otherProps}: ITransferProcessModal)
             <p className="pt-3 text-end text-sm tracking-wide">
               Available: <span className="text-tidebitTheme">100.34</span> USDT
             </p>
-          </div>
-
-          {/* ----------Crypto Menu---------- */}
-          <div
-            id="dropdownIcon"
-            className={`absolute top-125px right-20 z-10 ${showMenu} ${fadeStyle} w-290px divide-y divide-gray-600 rounded bg-darkGray8 shadow transition-all duration-300`}
-          >
-            <ul
-              className="py-1 text-start text-sm text-gray-200"
-              aria-labelledby="dropdownMenuIconButton"
-            >
-              {avaliableCryptoMenu}
-              {/* <li>
-                <p className="mx-3 my-1 block rounded px-5 py-2 text-base hover:cursor-pointer hover:bg-darkGray5">
-                  BTC
-                </p>
-              </li>
-              <li>
-                <p className="mx-3 my-1 block rounded px-5 py-2 text-base hover:cursor-pointer hover:bg-darkGray5">
-                  ETH
-                </p>
-              </li>
-              <li>
-                <p className="mx-3 my-1 block rounded px-5 py-2 text-base hover:cursor-pointer hover:bg-darkGray5">
-                  USDT
-                </p>
-              </li> */}
-            </ul>
-            {/* <div className="py-1">
-              <a
-                href="#"
-                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600 dark:hover:text-white"
-              >
-                Separated link
-              </a>
-            </div> */}
           </div>
 
           <div>

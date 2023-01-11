@@ -74,7 +74,7 @@ export interface IMarket {
   isCFDTradable: boolean;
 
   getTicker: (id: number) => ITickerInfo; // 會拿到現在這個交易對的資料
-  getCandlestickData: (ticker: string, timeSpan: timeSpan) => ICandlestick[]; // x 100
+  getCandlestickData: (props: {ticker: string; timeSpan: timeSpan}) => ICandlestick[]; // x 100
 }
 
 export type timeSpan = '15s' | '5m' | '15m' | '30m' | '1h' | '4h' | '12h' | '1d';

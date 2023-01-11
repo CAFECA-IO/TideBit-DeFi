@@ -44,6 +44,9 @@ const TransferProcessModal = ({
   const [showCryptoMenu, setShowCryptoMenu] = useState(false);
   const [selectedCrypto, setSelectedCrypto] = useState(TRANSFER_CRYPTO_TYPES[0]);
   const [amountInput, setAmountInput] = useState<number>();
+
+  const regex = /^\d*\.?\d{0,2}$/;
+
   // console.log('selectedCrypto', selectedCrypto);
 
   // const {
@@ -63,6 +66,34 @@ const TransferProcessModal = ({
   const maxClickHandler = () => {
     // console.log('max clicked');
     setAmountInput(userAvailableBalance);
+  };
+
+  const amountOnChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+
+    // setAmountInput(Number(event.target.value));
+    // console.log(Number(event.target.value));
+
+    if (regex.test(value)) {
+      // TODO: 讓 input 不能變成 '01' 的條件式
+      // if (Number(value) >= upperLimit || Number(value) <= lowerLimit) {
+      //   return;
+      // }
+
+      // No upperlimit in deposit modal
+      if (modalType === 'Deposit') {
+        setAmountInput(Number(value));
+        return;
+      }
+
+      // Upperlimit in withdraw modal
+      if (Number(value) > userAvailableBalance) {
+        setAmountInput(Number(userAvailableBalance));
+        return;
+      }
+
+      setAmountInput(Number(value));
+    }
   };
 
   const showMenu = showCryptoMenu ? 'block' : 'invisible';
@@ -257,6 +288,7 @@ const TransferProcessModal = ({
                 type="number"
                 placeholder=""
                 value={amountInput}
+                onChange={amountOnChangeHandler}
               />
 
               <button

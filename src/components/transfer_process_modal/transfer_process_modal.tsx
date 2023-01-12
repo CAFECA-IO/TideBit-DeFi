@@ -47,14 +47,6 @@ const TransferProcessModal = ({
 
   const regex = /^\d*\.?\d{0,2}$/;
 
-  // console.log('selectedCrypto', selectedCrypto);
-
-  // const {
-  //   targetRef: modalRef,
-  //   componentVisible: modalVisible,
-  //   setComponentVisible: setModalVisible,
-  // } = useOuterClick(true);
-
   const modalClickHandler = () => {
     setModalVisible(!modalVisible);
   };
@@ -64,15 +56,17 @@ const TransferProcessModal = ({
   };
 
   const maxClickHandler = () => {
-    // console.log('max clicked');
     setAmountInput(userAvailableBalance);
+  };
+
+  // TODO: send withdraw / deposit request
+  const submitClickHandler = () => {
+    // console.log('select cypto:', selectedCrypto);
+    // console.log('amount:', amountInput);
   };
 
   const amountOnChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
-
-    // setAmountInput(Number(event.target.value));
-    // console.log(Number(event.target.value));
 
     if (regex.test(value)) {
       // TODO: 讓 input 不能變成 '01' 的條件式
@@ -322,6 +316,7 @@ const TransferProcessModal = ({
 
           <div>
             <RippleButton
+              onClick={submitClickHandler}
               buttonType="button"
               className="mt-16 rounded border-0 bg-tidebitTheme py-2 px-10 text-base text-white transition-colors duration-300 hover:cursor-pointer hover:bg-cyan-600 focus:outline-none"
             >

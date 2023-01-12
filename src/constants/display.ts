@@ -2,7 +2,7 @@
 //   setTimeout(() => setProcessModalVisible(false), 1000);
 // };
 
-export const TRANSFER_CRYPTO_TYPES = [
+export const TRANSFER_OPTIONS = [
   {label: 'USDT', content: 'Tether'},
   {label: 'ETH', content: 'ETH'},
   {label: 'BTC', content: 'BTC'},

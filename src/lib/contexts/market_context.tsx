@@ -455,7 +455,15 @@ export interface IMarketContext {
   positionInfoOnChart: ApexOptions | null;
   candlestickId: string;
   candlestickChartIdHandler: (id: string) => void;
+  TRANSFER_OPTIONS: ITransferOptions[];
+  // transferOptions: ITransferOptions[];
   // getTickerData: (ticker: string) => ITickerData; // 會拿到哪些是被star的
+}
+
+export interface ITransferOptions {
+  // [key: string]: {
+  label: string;
+  content: string;
 }
 
 // TODO: Note: _app.tsx 啟動的時候 => createContext
@@ -467,13 +475,32 @@ export const MarketContext = createContext<IMarketContext>({
   positionInfoOnChart: null,
   candlestickId: '',
   candlestickChartIdHandler: () => null,
+  TRANSFER_OPTIONS: [],
+  // transferOptions: [],
   // getTickerData: () => ITickerData,
 });
+
+export const TRANSFER_OPTIONS = [
+  {label: 'USDT', content: 'Tether'},
+  {label: 'ETH', content: 'ETH'},
+  {label: 'BTC', content: 'BTC'},
+  {label: 'USDC', content: 'USD Coin'},
+  {label: 'DAI', content: 'DAI'},
+  {label: 'BNB', content: 'BNB'},
+  {label: 'BCH', content: 'BCH'},
+  {label: 'LTC', content: 'LTC'},
+  {label: 'ETC', content: 'ETC'},
+  {label: 'USX', content: 'USX'},
+  {label: 'NEO', content: 'NEO'},
+  {label: 'EOS', content: 'EOS'},
+];
 
 export const MarketProvider = ({children}: IMarketProvider) => {
   const [availableTickers, setAvailableTickers] = useState<ITickerData[]>(addPropertyToArray);
   const [isCFDTradable, setIsCFDTradable] = useState<boolean>(true);
   const [candlestickId, setCandlestickId] = useState<string>('');
+
+  const [transferOptions, setTransferOptions] = useState<ITransferOptions[]>(TRANSFER_OPTIONS);
 
   const [showPositionOnChart, setShowPositionOnChart] = useState<boolean>(
     INITIAL_POSITION_LABEL_DISPLAYED_STATE
@@ -491,6 +518,8 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     // console.log('in market context, candlestick id:', id);
   };
 
+  // console.log('market context:', TRANSFER_OPTIONS);
+
   // console.log('Whole array [addPropertyToArray]:', addPropertyToArray);
   // setAvailableTickers(addPropertyToArray); // infinite loop
 
@@ -502,6 +531,9 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     positionInfoOnChart,
     candlestickId,
     candlestickChartIdHandler,
+    // transferOptions,
+    TRANSFER_OPTIONS,
   };
+
   return <MarketContext.Provider value={defaultValue}>{children}</MarketContext.Provider>;
 };

@@ -5,10 +5,11 @@ import canceledAnimation from '../../../public/animation/lf30_editor_frrs7znj.js
 import failedAnimation from '../../../public/animation/Lottie_Main_Comp.json';
 import {ImCross} from 'react-icons/im';
 import useOuterClick from '../../lib/hooks/use_outer_click';
-import {useState} from 'react';
+import {useState, useContext} from 'react';
 import {MdKeyboardArrowDown, MdKeyboardArrowRight} from 'react-icons/md';
 import RippleButton from '../ripple_button/ripple_button';
-import {TRANSFER_CRYPTO_TYPES} from '../../constants/display';
+import {TRANSFER_OPTIONS} from '../../constants/display';
+import {MarketContext} from '../../lib/contexts/market_context';
 
 interface ITransferProcessModal {
   transferType: 'deposit' | 'withdraw';
@@ -57,10 +58,13 @@ const TransferProcessModal = ({
   getSubmissionState,
   ...otherProps
 }: ITransferProcessModal) => {
+  const {TRANSFER_OPTIONS: test_options} = useContext(MarketContext);
+  // console.log('test options in modal:', test_options);
+
   // const [modalVisible, setModalVisible] = useState(true);
 
   const [showCryptoMenu, setShowCryptoMenu] = useState(false);
-  const [selectedCrypto, setSelectedCrypto] = useState(TRANSFER_CRYPTO_TYPES[0]);
+  const [selectedCrypto, setSelectedCrypto] = useState(TRANSFER_OPTIONS[0]);
   const [amountInput, setAmountInput] = useState<number>();
   const [showWarning, setShowWarning] = useState(false);
 
@@ -202,7 +206,7 @@ const TransferProcessModal = ({
 
   const warningStyle = showWarning ? 'block' : 'invisible';
 
-  const avaliableCryptoMenu = TRANSFER_CRYPTO_TYPES.map(item => {
+  const avaliableCryptoMenu = TRANSFER_OPTIONS.map(item => {
     return (
       <li
         key={item.label}

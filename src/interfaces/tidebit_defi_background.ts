@@ -35,15 +35,17 @@ export interface ICFD {
   operation: 'BUY' | 'SELL'; // 'Buy' | 'Sell'
   leverage: number;
   margin: number;
-  opendValue: number; // margin x leverage x price = value
-  opendPrice: number;
+
+  openValue: number; // margin x leverage x price (USDT) = value (USDT)
+  estimatedFilledPrice: number; // estimated filled price 預估成交價格
+  openPrice: number; // Avg. Open Price 平均開倉價格
   closedPrice?: number;
 
-  pnl: number; // gained from context
+  pnl: number; // calculated by context
   // trend: number[]; // gained from Market object
   state: 'OPENING' | 'CLOSED';
 
-  closedType?: 'SCHEDULE' | 'STOP_OUT' | 'STOP_LOSS' | 'TAKE_PROFIT' | 'BY_USER';
+  closedType?: 'SCHEDULE' | 'FORCED_LIQUIDATION' | 'STOP_LOSS' | 'TAKE_PROFIT' | 'BY_USER';
   forcedClosed: boolean;
 
   openTimestamp: number;
@@ -52,11 +54,13 @@ export interface ICFD {
 
   closedTimestamp?: number; // remaining hrs gained from context
   closedValue?: number;
-  stopOutLevel: number; // 清算水平
+  liquidationPrice: number; // 強平價 / 清算水平 stop-out level
 
   takeProfit?: number;
   stopLoss?: number;
   guranteedStop: boolean;
+
+  positionLineGraph: (props: {openTimestamp: number; openPrice: number}) => ITickerLineGraph; //
 }
 
 export interface IUserBalance {
@@ -69,11 +73,11 @@ export interface IUserBalance {
 
 export interface IMarket {
   // availableTickers: ITickerData[];
-  getTickers: (id: number) => ITickerData[]; // 會拿到交易對清單
+  getTickers: (id: number) => ITickerData[]; // 拿到交易對清單
 
   isCFDTradable: boolean;
 
-  getTicker: (id: number) => ITickerInfo; // 會拿到現在這個交易對的資料
+  getTicker: (id: number) => ITickerInfo; // 拿到現在這個交易對的資料
   getCandlestickData: (props: {ticker: string; timeSpan: timeSpan}) => ICandlestick[]; // x 100
 }
 
@@ -81,8 +85,8 @@ export type timeSpan = '15s' | '5m' | '15m' | '30m' | '1h' | '4h' | '12h' | '1d'
 
 export interface ICandlestick {
   timestamp: number;
-  OHLC: number[]; // x4
-  average: number; // x1
+  OHLC: number[]; // lottie locates the last one
+  average: number;
 
   // nowPrice: number;
 
@@ -92,17 +96,12 @@ export interface ICandlestick {
 
 export interface ITickerLineGraph {
   dataArray: number[]; // x10
-  // price: number;
-  // strokeColor
 }
 
 export interface IPositionLineGraph extends ITickerLineGraph {
-  // id: string;
+  // id: string; // CFD id
   openPrice: number; // annotated value
 }
-
-// [open, high, low, close] x 10
-// [open, high, low, close] x 100
 
 export interface ITickerInfo {
   label: string;
@@ -111,6 +110,7 @@ export interface ITickerInfo {
   volume: number; // 24 hr volume
   spread: number; // 點差
   fee: number; // 手續費
+  // slippage: number; // 滑價
 }
 
 export interface fluctuatingProps {

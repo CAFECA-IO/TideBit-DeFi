@@ -58,8 +58,8 @@ const TransferProcessModal = ({
   getSubmissionState,
   ...otherProps
 }: ITransferProcessModal) => {
-  const {TRANSFER_OPTIONS: test_options} = useContext(MarketContext);
-  // console.log('test options in modal:', test_options);
+  const {transferOptions} = useContext(MarketContext);
+  // console.log('test options in modal:', transferOptions);
 
   // const [modalVisible, setModalVisible] = useState(true);
 

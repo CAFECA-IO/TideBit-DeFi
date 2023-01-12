@@ -10,6 +10,7 @@ const OpenSubTab = () => {
     <>
       <div className="">
         <div className="">
+          {/* 6 */}
           <OpenPositionItem
             profitOrLoss="loss"
             longOrShort="long"
@@ -25,6 +26,7 @@ const OpenSubTab = () => {
         <div className="my-auto h-px w-full rounded bg-white/50"></div>
 
         <div className="">
+          {/* 6 */}
           <OpenPositionItem
             profitOrLoss="profit"
             longOrShort="short"
@@ -40,15 +42,35 @@ const OpenSubTab = () => {
         <div className="my-auto h-px w-full rounded bg-white/50"></div>
 
         <div className="">
+          {/* 12 */}
           <OpenPositionItem
             profitOrLoss="profit"
             longOrShort="short"
             value={1234567.8}
             ticker="BTC"
-            passedHour={23}
+            passedHour={20}
             profitOrLossAmount={1234.5}
             tickerTrendArray={[90, 72, 60, 65, 42, 25, 32, 20, 15, 32, 90, 10]}
             horizontalValueLine={90}
+          />
+        </div>
+        {/* Divider */}
+        <div className="my-auto h-px w-full rounded bg-white/50"></div>
+
+        <div className="">
+          {/* 31 */}
+          <OpenPositionItem
+            profitOrLoss="loss"
+            longOrShort="long"
+            value={1234567.8}
+            ticker="BTC"
+            passedHour={23}
+            profitOrLossAmount={1234.5}
+            tickerTrendArray={[
+              80, 55, 100, 90, 150, 140, 130, 160, 45, 20, 76, 45, 65, 44, 39, 65, 85, 47, 61, 23,
+              72, 60, 65, 42, 25, 32, 20, 15, 32, 90, 10,
+            ]}
+            horizontalValueLine={80}
           />
         </div>
         {/* Divider */}

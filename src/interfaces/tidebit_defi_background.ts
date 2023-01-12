@@ -26,7 +26,17 @@ export interface IUser {
   getOpenedCFD: () => ICFD[];
   getClosedCFD: () => ICFD[];
 
+  // 拿到歷史PnL紀錄
   // getHistory: () => null;
+
+  createOrder: (props: ICFDOrderRequest) => Promise<ICFD>;
+  closeOrder: (props: {id: string}) => Promise<ICFD>;
+  updateOrder: (props: {
+    id: string;
+    takeProfit?: number;
+    stopLoss?: number;
+    guranteedStop: boolean;
+  }) => Promise<ICFD>;
 }
 
 export interface ICFD {
@@ -36,21 +46,21 @@ export interface ICFD {
   leverage: number;
   margin: number;
 
-  openValue: number; // margin x leverage x price (USDT) = value (USDT)
-  estimatedFilledPrice: number; // estimated filled price 預估成交價格
-  openPrice: number; // Avg. Open Price 平均開倉價格
-  closedPrice?: number;
-
-  pnl: number; // calculated by context
-  // trend: number[]; // gained from Market object
-  state: 'OPENING' | 'CLOSED';
-
   closedType?: 'SCHEDULE' | 'FORCED_LIQUIDATION' | 'STOP_LOSS' | 'TAKE_PROFIT' | 'BY_USER';
   forcedClosed: boolean;
 
   openTimestamp: number;
 
   scheduledClosingTimestamp: number;
+
+  openValue: number; // margin x leverage x price (USDT) = value (USDT)
+  // estimatedFilledPrice: number; // estimated filled price 預估成交價格
+  openPrice: number; // Avg. Open Price 平均開倉價格
+  closedPrice?: number;
+
+  pnl: number; // calculated by context
+  // trend: number[]; // gained from Market object
+  state: 'OPENING' | 'CLOSED';
 
   closedTimestamp?: number; // remaining hrs gained from context
   closedValue?: number;
@@ -60,25 +70,47 @@ export interface ICFD {
   stopLoss?: number;
   guranteedStop: boolean;
 
-  positionLineGraph: (props: {openTimestamp: number; openPrice: number}) => ITickerLineGraph; //
+  positionLineGraph: ITickerLineGraph;
+  // positionLineGraph: (props: {openTimestamp: number; openPrice: number}) => ITickerLineGraph; //
+}
+
+export interface ICFDOrderRequest {
+  ticker: string;
+  operation: 'BUY' | 'SELL';
+  leverage: number;
+  margin: number;
+  takeProfit?: number;
+  stopLoss?: number;
+  guranteedStop: boolean;
+  estimatedFilledPrice: number; // estimated filled price 預估成交價格
+  // value: number; // margin x leverage x price (USDT) = value (USDT)
 }
 
 export interface IUserBalance {
   available: number;
   locked: number;
   PNL: number;
+  walletBalance: number; // deposit required info
   // label: 'available' | 'locked' | 'PNL'; // 'Available' | 'Locked/Margin' | 'PNL'
   // balance: number;
 }
 
 export interface IMarket {
-  // availableTickers: ITickerData[];
+  availableTickers: ITickerData[];
   getTickers: (id: number) => ITickerData[]; // 拿到交易對清單
 
   isCFDTradable: boolean;
 
-  getTicker: (id: number) => ITickerInfo; // 拿到現在這個交易對的資料
+  getTicker: (id: number) => ITickerDetails; // 拿到現在這個交易對的資料
   getCandlestickData: (props: {ticker: string; timeSpan: timeSpan}) => ICandlestick[]; // x 100
+
+  transferOptions: ITransferOption[]; // 可供入金出金的選項
+}
+
+export interface ITransferOption {
+  label: string;
+  content: string;
+  // fee: number;
 }
 
 export type timeSpan = '15s' | '5m' | '15m' | '30m' | '1h' | '4h' | '12h' | '1d';
@@ -95,7 +127,7 @@ export interface ICandlestick {
 }
 
 export interface ITickerLineGraph {
-  dataArray: number[]; // x10
+  dataArray: number[]; // at least x6
 }
 
 export interface IPositionLineGraph extends ITickerLineGraph {
@@ -103,7 +135,7 @@ export interface IPositionLineGraph extends ITickerLineGraph {
   openPrice: number; // annotated value
 }
 
-export interface ITickerInfo {
+export interface ITickerDetails {
   label: string;
   price: number;
   fluctuating: fluctuatingProps;
@@ -111,6 +143,7 @@ export interface ITickerInfo {
   spread: number; // 點差
   fee: number; // 手續費
   // slippage: number; // 滑價
+  estimatedFilledPrice: number; // estimated filled price 預估成交價格
 }
 
 export interface fluctuatingProps {
@@ -143,8 +176,8 @@ export interface fluctuatingProps {
 export interface ITickerData {
   currency: string;
   chain: string;
-  star: boolean;
-  starred: boolean;
+  // star: boolean;
+  // starred: boolean;
   // starColor: string;
   // getStarredStateCallback: (bool: boolean) => void;
   price: number;
@@ -152,12 +185,12 @@ export interface ITickerData {
   // gradientColor: string;
   tokenImg: string;
 
-  lineGraphProps: ILineGraphProps;
+  lineGraphProps: ITickerLineGraph;
 }
 
-export interface ILineGraphProps {
-  dataArray?: number[];
-  strokeColor?: string[];
-  lineGraphWidth?: string;
-  lineGraphWidthMobile?: string;
-}
+// export interface ILineGraphProps {
+//   dataArray?: number[];
+//   strokeColor?: string[];
+//   lineGraphWidth?: string;
+//   lineGraphWidthMobile?: string;
+// }

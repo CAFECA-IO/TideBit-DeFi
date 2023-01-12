@@ -29,6 +29,10 @@ const Trial = () => {
     setModalVisible(!modalVisible);
   };
 
+  const getSubmissionState = (state: 'success' | 'cancellation' | 'fail') => {
+    // console.log('result boolean: ', state);
+  };
+
   // const tickerBoxClickHandler = () => {
   //   setTickerBoxVisible(!tickerBoxVisible);
   // };
@@ -393,6 +397,7 @@ const Trial = () => {
         </RippleButton> */}
 
         <TransferProcessModal
+          getSubmissionState={getSubmissionState}
           transferType="deposit"
           transferStep="success"
           userAvailableBalance={314.15}

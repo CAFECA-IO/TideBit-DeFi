@@ -16,6 +16,7 @@ interface ITransferProcessModal {
   transferStep: 'form' | 'loading' | 'success' | 'cancellation' | 'fail';
   modalVisible: boolean;
   modalClickHandler: () => void;
+  getSubmissionState: (props: 'success' | 'cancellation' | 'fail') => void;
   // transferProcessStep: string;
   // modalRef?: React.RefObject<HTMLDivElement>;
   // modalVisible?: boolean;
@@ -53,6 +54,7 @@ const TransferProcessModal = ({
   transferStep,
   modalVisible,
   modalClickHandler,
+  getSubmissionState,
   ...otherProps
 }: ITransferProcessModal) => {
   // const [modalVisible, setModalVisible] = useState(true);
@@ -78,10 +80,15 @@ const TransferProcessModal = ({
     setAmountInput(userAvailableBalance);
   };
 
+  const passSubmissionStateHandler = (props: 'success' | 'cancellation' | 'fail') => {
+    getSubmissionState(props);
+  };
+
   // TODO: send withdraw / deposit request
   const submitClickHandler = () => {
     // console.log('select cypto:', selectedCrypto);
     // console.log('amount:', amountInput);
+    passSubmissionStateHandler('success');
   };
 
   const amountOnChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {

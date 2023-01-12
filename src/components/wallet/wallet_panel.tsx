@@ -367,6 +367,23 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
     // }
   };
 
+  const [depositProcess, setDepositProcess] = useState<
+    'form' | 'loading' | 'success' | 'cancellation' | 'fail'
+  >('form');
+  const [withdrawProcess, setWithdrawProcess] = useState<
+    'form' | 'loading' | 'success' | 'cancellation' | 'fail'
+  >('form');
+
+  const getDepositSubmissionState = (state: 'success' | 'cancellation' | 'fail') => {
+    // console.log('result boolean: ', state);
+    setDepositProcess(state);
+  };
+
+  const getWithdrawSubmissionState = (state: 'success' | 'cancellation' | 'fail') => {
+    // console.log('result boolean: ', state);
+    setWithdrawProcess(state);
+  };
+
   const depositModalClickHandler = () => {
     setDepositModalVisible(!depositModalVisible);
   };
@@ -377,8 +394,9 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
 
   const withdrawProcessModal = (
     <TransferProcessModal
+      getSubmissionState={getWithdrawSubmissionState}
       transferType="withdraw"
-      transferStep="form"
+      transferStep={withdrawProcess}
       userAvailableBalance={0.45}
       modalVisible={withdrawModalVisible}
       modalClickHandler={withdrawModalClickHandler}
@@ -387,6 +405,7 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
 
   const depositProcessModal = (
     <TransferProcessModal
+      getSubmissionState={getDepositSubmissionState}
       transferType="deposit"
       transferStep="form"
       userAvailableBalance={123.45}

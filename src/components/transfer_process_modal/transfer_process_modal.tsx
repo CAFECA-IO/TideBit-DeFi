@@ -62,6 +62,7 @@ const TransferProcessModal = ({
   const [showCryptoMenu, setShowCryptoMenu] = useState(false);
   const [selectedCrypto, setSelectedCrypto] = useState(TRANSFER_CRYPTO_TYPES[0]);
   const [amountInput, setAmountInput] = useState<number>();
+  const [showWarning, setShowWarning] = useState(false);
 
   const regex = /^\d*\.?\d{0,2}$/;
 
@@ -88,15 +89,25 @@ const TransferProcessModal = ({
   const submitClickHandler = () => {
     // console.log('select cypto:', selectedCrypto);
     // console.log('amount:', amountInput);
-    passSubmissionStateHandler('success');
+
+    if (amountInput === 0 || amountInput === undefined) {
+      setShowWarning(true);
+      return;
+    }
+
+    setShowWarning(false);
+
+    setTimeout(() => {
+      passSubmissionStateHandler('success');
+    }, 1000);
   };
 
   const amountOnChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
 
     if (regex.test(value)) {
-      // TODO: 讓 input 不能變成 '01' 的條件式
-      // if (Number(value) >= upperLimit || Number(value) <= lowerLimit) {
+      // // TODO: 讓 input 不能變成 '01' 的條件式
+      // if (Number(value) >= userAvailableBalance || Number(value) <= 0) {
       //   return;
       // }
 
@@ -188,6 +199,8 @@ const TransferProcessModal = ({
   const rotationStyle = showCryptoMenu ? ' -rotate-90' : 'rotate-0';
 
   const fadeStyle = showCryptoMenu ? 'opacity-100' : 'opacity-0';
+
+  const warningStyle = showWarning ? 'block' : 'invisible';
 
   const avaliableCryptoMenu = TRANSFER_CRYPTO_TYPES.map(item => {
     return (
@@ -335,9 +348,15 @@ const TransferProcessModal = ({
               )} */}
             </div>
 
-            <p className="pt-3 text-end text-sm tracking-wide">
-              Available: <span className="text-tidebitTheme">{userAvailableBalance}</span> USDT
-            </p>
+            <div className="flex justify-between">
+              <p className={`${warningStyle} pt-3 text-end text-sm tracking-wide text-lightRed`}>
+                Invalid input
+              </p>
+
+              <p className="pt-3 text-end text-sm tracking-wide">
+                Available: <span className="text-tidebitTheme">{userAvailableBalance}</span> USDT
+              </p>
+            </div>
           </div>
 
           <div>

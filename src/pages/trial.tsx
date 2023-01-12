@@ -398,8 +398,8 @@ const Trial = () => {
 
         <TransferProcessModal
           getSubmissionState={getSubmissionState}
-          transferType="deposit"
-          transferStep="success"
+          transferType="withdraw"
+          transferStep="form"
           userAvailableBalance={314.15}
           modalVisible={modalVisible}
           modalClickHandler={modalClickHandler}

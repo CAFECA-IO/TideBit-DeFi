@@ -28,6 +28,7 @@ import {VscAccount} from 'react-icons/vsc';
 // import {IoExitOutline} from 'react-icons/io';
 // import {RxExit} from 'react-icons/rx';
 import {ImExit} from 'react-icons/im';
+import TransferProcessModal from '../transfer_process_modal/transfer_process_modal';
 
 // import Connector from '@walletconnect/core';
 
@@ -200,6 +201,8 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
   const [qrcodeModalVisible, setQrcodeModalVisible] = useState(false);
   const [helloModalVisible, setHelloModalVisible] = useState(false);
   const [avatarMenuVisible, setAvatarMenuVisible] = useState(false);
+  const [depositModalVisible, setDepositModalVisible] = useState(false);
+  const [withdrawModalVisible, setWithdrawModalVisible] = useState(false);
 
   // const {
   //   targetRef: helloModalRef,
@@ -363,6 +366,34 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
     //   killSession();
     // }
   };
+
+  const depositModalClickHandler = () => {
+    setDepositModalVisible(!depositModalVisible);
+  };
+
+  const withdrawModalClickHandler = () => {
+    setWithdrawModalVisible(!withdrawModalVisible);
+  };
+
+  const withdrawProcessModal = (
+    <TransferProcessModal
+      transferType="withdraw"
+      transferStep="form"
+      userAvailableBalance={0.45}
+      modalVisible={withdrawModalVisible}
+      modalClickHandler={withdrawModalClickHandler}
+    />
+  );
+
+  const depositProcessModal = (
+    <TransferProcessModal
+      transferType="deposit"
+      transferStep="form"
+      userAvailableBalance={123.45}
+      modalVisible={depositModalVisible}
+      modalClickHandler={depositModalClickHandler}
+    />
+  );
 
   const connectingClickHandler = () => {
     setConnectingModalVisible(!connectingModalVisible);
@@ -1636,21 +1667,29 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
               </div>
             </a>
           </li>
-          <li>
-            <a href="#" className="block py-2 pr-4 pl-3 hover:bg-darkGray5">
-              <div className="flex flex-row items-center space-x-2">
-                <FaDownload />
-                <p>Deposit</p>
-              </div>
-            </a>
+          <li
+            onClick={() => {
+              avatarClickHandler();
+              depositModalClickHandler();
+            }}
+            className="block py-2 pr-4 pl-3 hover:cursor-pointer hover:bg-darkGray5"
+          >
+            <div className="flex flex-row items-center space-x-2">
+              <FaDownload />
+              <p>Deposit</p>
+            </div>
           </li>
-          <li>
-            <a href="#" className="block py-2 pr-4 pl-3 hover:bg-darkGray5">
-              <div className="flex flex-row items-center space-x-2">
-                <FaUpload />
-                <p>Withdraw</p>
-              </div>
-            </a>
+          <li
+            onClick={() => {
+              avatarClickHandler();
+              withdrawModalClickHandler();
+            }}
+            className="block py-2 pr-4 pl-3 hover:cursor-pointer hover:bg-darkGray5"
+          >
+            <div className="flex flex-row items-center space-x-2">
+              <FaUpload />
+              <p>Withdraw</p>
+            </div>
           </li>
           <li>
             <a href="#" className="block py-2 pr-4 pl-3 hover:bg-darkGray5">
@@ -1721,6 +1760,9 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
         processModalVisible={processModalVisible}
         processClickHandler={processClickHandler}
       />
+
+      {depositProcessModal}
+      {withdrawProcessModal}
 
       {/* TODO: Notes- the below is the same but `{toastNotify}` is easier to be changed and managed  */}
       {toastNotify}

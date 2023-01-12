@@ -10,9 +10,11 @@ import TradingLineGraphChart from '../components/trading_line_graph_chart/tradin
 import {ToastContainer, toast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {CRYPTO_CARD_COLORS} from '../constants/display';
-import {useContext} from 'react';
+import {useContext, useState} from 'react';
 import {MarketContext} from '../lib/contexts/market_context';
-import TransferProcessModal from '../components/transfer_process_modal/transfer_process_modal';
+import TransferProcessModal, {
+  TRANSFER_PROCESS_MODAL_STEP_CLASSES,
+} from '../components/transfer_process_modal/transfer_process_modal';
 
 const Trial = () => {
   const {
@@ -20,6 +22,12 @@ const Trial = () => {
     componentVisible: tickerBoxVisible,
     setComponentVisible: setTickerBoxVisible,
   } = useOuterClick<HTMLDivElement>(true);
+
+  const [modalVisible, setModalVisible] = useState(true);
+
+  const modalClickHandler = () => {
+    setModalVisible(!modalVisible);
+  };
 
   // const tickerBoxClickHandler = () => {
   //   setTickerBoxVisible(!tickerBoxVisible);
@@ -384,7 +392,13 @@ const Trial = () => {
           Show the modal
         </RippleButton> */}
 
-        <TransferProcessModal modalType="Deposit" userAvailableBalance={314.15} />
+        <TransferProcessModal
+          transferType="deposit"
+          transferStep="success"
+          userAvailableBalance={314.15}
+          modalVisible={modalVisible}
+          modalClickHandler={modalClickHandler}
+        />
       </div>
     </>
   );

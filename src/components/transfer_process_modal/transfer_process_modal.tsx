@@ -11,45 +11,64 @@ import RippleButton from '../ripple_button/ripple_button';
 import {TRANSFER_CRYPTO_TYPES} from '../../constants/display';
 
 interface ITransferProcessModal {
-  modalType: 'Deposit' | 'Withdraw';
+  transferType: 'deposit' | 'withdraw';
   userAvailableBalance: number;
+  transferStep: 'form' | 'loading' | 'success' | 'cancellation' | 'fail';
+  modalVisible: boolean;
+  modalClickHandler: () => void;
+  // transferProcessStep: string;
   // modalRef?: React.RefObject<HTMLDivElement>;
   // modalVisible?: boolean;
   // clickHandler?: () => void;
 }
 
-export const TRANSFER_PROCESS_MODAL_TYPE_CLASSES = {
-  deposit: {
-    form: 'deposit-form',
-    loading: 'deposit-loading',
-    success: 'deposit-success',
-    cancellation: 'deposit-cancellation',
-    fail: 'deposit-fail',
-  },
-  withdraw: {
-    form: 'withdraw-form',
-    loading: 'withdraw-loading',
-    success: 'withdraw-success',
-    cancellation: 'withdraw-cancellation',
-    fail: 'withdraw-fail',
-  },
+export const TRANSFER_PROCESS_MODAL_STEP_CLASSES = {
+  form: 'form',
+  loading: 'loading',
+  success: 'success',
+  cancellation: 'cancellation',
+  fail: 'fail',
 };
 
+// export const TRANSFER_PROCESS_MODAL_STEP_CLASSES = {
+//   deposit: {
+//     form: 'deposit-form',
+//     loading: 'deposit-loading',
+//     success: 'deposit-success',
+//     cancellation: 'deposit-cancellation',
+//     fail: 'deposit-fail',
+//   },
+//   withdraw: {
+//     form: 'withdraw-form',
+//     loading: 'withdraw-loading',
+//     success: 'withdraw-success',
+//     cancellation: 'withdraw-cancellation',
+//     fail: 'withdraw-fail',
+//   },
+// };
+
 const TransferProcessModal = ({
-  modalType,
+  transferType,
   userAvailableBalance,
+  transferStep,
+  modalVisible,
+  modalClickHandler,
   ...otherProps
 }: ITransferProcessModal) => {
-  const [modalVisible, setModalVisible] = useState(true);
+  // const [modalVisible, setModalVisible] = useState(true);
+
   const [showCryptoMenu, setShowCryptoMenu] = useState(false);
   const [selectedCrypto, setSelectedCrypto] = useState(TRANSFER_CRYPTO_TYPES[0]);
   const [amountInput, setAmountInput] = useState<number>();
 
   const regex = /^\d*\.?\d{0,2}$/;
 
-  const modalClickHandler = () => {
-    setModalVisible(!modalVisible);
-  };
+  // const modalClickHandler = () => {
+  //   setModalVisible(!modalVisible);
+  // };
+
+  // TODO: i18n
+  const displayedModalTitle = transferType === 'deposit' ? 'Deposit' : 'Withdraw';
 
   const cryptoMenuClickHandler = () => {
     setShowCryptoMenu(!showCryptoMenu);
@@ -74,11 +93,11 @@ const TransferProcessModal = ({
       //   return;
       // }
 
-      // No upperlimit in deposit modal
-      if (modalType === 'Deposit') {
-        setAmountInput(Number(value));
-        return;
-      }
+      // // No upperlimit in deposit modal
+      // if (modalType === 'Deposit') {
+      //   setAmountInput(Number(value));
+      //   return;
+      // }
 
       // Upperlimit in withdraw modal
       if (Number(value) > userAvailableBalance) {
@@ -93,9 +112,9 @@ const TransferProcessModal = ({
   const showMenu = showCryptoMenu ? 'block' : 'invisible';
 
   const formButton =
-    modalType === 'Deposit' ? (
+    transferType === 'deposit' ? (
       <p className="flex items-center space-x-3 text-center">
-        {modalType}{' '}
+        {displayedModalTitle}{' '}
         <span className="ml-3">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -125,7 +144,7 @@ const TransferProcessModal = ({
       </p>
     ) : (
       <p className="flex items-center space-x-3 text-center">
-        {modalType}{' '}
+        {displayedModalTitle} {/* {transferProcessStep.} */}
         <span className="ml-3">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -332,8 +351,8 @@ const TransferProcessModal = ({
     <div className="relative flex-auto pt-1">
       <div className="text-lg leading-relaxed text-lightWhite">
         <div className="flex-col justify-center text-center">
-          <Lottie className="ml-1/6 w-350px pt-10" animationData={bigConnectingAnimation} />
-          <div className="mt-5 text-lg">Confirm the transaction</div>
+          <Lottie className="ml-60px w-400px pt-5" animationData={bigConnectingAnimation} />
+          <div className="mt-3 text-lg">Confirm the transaction</div>
         </div>
       </div>
     </div>
@@ -403,7 +422,17 @@ const TransferProcessModal = ({
 
   const displayedContent = formContent;
 
-  // const contentHandler = (type: string) => {};
+  const contentHandler = (type: string) => {
+    return {
+      [TRANSFER_PROCESS_MODAL_STEP_CLASSES.form]: formContent,
+      [TRANSFER_PROCESS_MODAL_STEP_CLASSES.loading]: loadingContent,
+      [TRANSFER_PROCESS_MODAL_STEP_CLASSES.success]: successContent,
+      [TRANSFER_PROCESS_MODAL_STEP_CLASSES.cancellation]: cancellationContent,
+      [TRANSFER_PROCESS_MODAL_STEP_CLASSES.fail]: failContent,
+    }[type];
+  };
+
+  // console.log('content handler:', contentHandler(TRANSFER_PROCESS_MODAL_TYPE_CLASSES.deposit.form));
 
   const isDisplayedModal = modalVisible ? (
     <>
@@ -423,7 +452,8 @@ const TransferProcessModal = ({
             {/*header*/}
             <div className="flex items-start justify-between rounded-t pt-6">
               <h3 className="mt-2 w-full text-center text-4xl font-normal text-lightWhite">
-                {modalType}
+                {displayedModalTitle}
+                {/* {(transferProcessStep = 'deposit-' ? 'Deposit' : 'Withdraw')} */}
               </h3>
               <button className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
                 <span className="absolute top-5 right-5 block outline-none focus:outline-none">
@@ -432,7 +462,8 @@ const TransferProcessModal = ({
               </button>
             </div>
             {/*body*/}
-            {displayedContent}
+            {/* {displayedContent} */}
+            {contentHandler(transferStep)}
             {/*footer*/}
             <div className="flex items-center justify-end rounded-b p-2"></div>
           </div>

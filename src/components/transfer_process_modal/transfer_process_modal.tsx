@@ -215,11 +215,11 @@ const TransferProcessModal = ({
                     ></path>
                   </svg>
 
-                  <p className="text-lg text-lightWhite">{selectedCrypto.label}</p>
+                  <p className="w-60px text-lg text-lightWhite">{selectedCrypto.label}</p>
                 </div>
                 {/* TODO: input search */}
                 <input
-                  className="bg-darkGray8 py-2 pl-3 text-sm text-lightGray hover:cursor-pointer focus:outline-none focus:ring-0"
+                  className="w-150px bg-darkGray8 py-2 pl-3 text-sm text-lightGray hover:cursor-pointer focus:outline-none focus:ring-0"
                   type="text"
                   placeholder="Tether"
                   disabled
@@ -231,7 +231,7 @@ const TransferProcessModal = ({
 
                 <button
                   type="button"
-                  className="animate-openMenu pl-4"
+                  className="animate-openMenu pl-2"
                   onClick={cryptoMenuClickHandler}
                 >
                   <MdKeyboardArrowDown
@@ -291,7 +291,14 @@ const TransferProcessModal = ({
               >
                 USDT
               </button>
-              {modalType === 'Withdraw' && (
+              <button
+                type="button"
+                onClick={maxClickHandler}
+                className="my-1 mx-1 rounded-sm bg-lightGray3 px-2 text-xs text-white hover:bg-lightGray3/80"
+              >
+                MAX
+              </button>
+              {/* {modalType === 'Withdraw' && (
                 <button
                   type="button"
                   onClick={maxClickHandler}
@@ -299,14 +306,7 @@ const TransferProcessModal = ({
                 >
                   MAX
                 </button>
-              )}
-              {/* <button
-                type="button"
-                onClick={maxClickHandler}
-                className="my-1 mx-1 rounded-sm bg-lightGray3 px-2 text-xs text-white hover:bg-lightGray3/80"
-              >
-                MAX
-              </button> */}
+              )} */}
             </div>
 
             <p className="pt-3 text-end text-sm tracking-wide">

@@ -518,7 +518,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     // console.log('in market context, candlestick id:', id);
   };
 
-  // console.log('market context:', TRANSFER_OPTIONS);
+  // console.log('market context:', transferOptions);
 
   // console.log('Whole array [addPropertyToArray]:', addPropertyToArray);
   // setAvailableTickers(addPropertyToArray); // infinite loop

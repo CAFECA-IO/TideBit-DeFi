@@ -237,7 +237,7 @@ const TransferProcessModal = ({
 
                 <button
                   type="button"
-                  className="animate-openMenu pl-8"
+                  className="animate-openMenu pl-4"
                   onClick={cryptoMenuClickHandler}
                 >
                   <MdKeyboardArrowDown

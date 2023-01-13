@@ -410,7 +410,21 @@ const SAMPLE_USER = {
   username: 'Tidebit DeFi Test User',
   wallet: ['0xb54898DB1250A6a629E5B566367E9C60a7Dd6C30'],
   favoriteTickers: addPropertyToArray,
+  balance: {
+    available: 1296.47,
+    locked: 583.62,
+    PNL: 1956.84,
+  },
+  walletBalance: 894,
 };
+
+export interface IUserBalance {
+  available: number;
+  locked: number;
+  PNL: number;
+  // walletBalance: number; // deposit required info
+  // interest: number; // 入金的利息
+}
 
 export interface IUser {
   // id: string;
@@ -419,6 +433,8 @@ export interface IUser {
   // wallet: string[];
 
   favoriteTickers: ITickerData[];
+  balance: IUserBalance;
+  walletBalance: number;
 
   // // orderEngine: string; // 產生 EIP 712 / 出金入金 要的資料
   // isSubscibedNewsletters: boolean;

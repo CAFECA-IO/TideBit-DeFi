@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState} from 'react';
+import {useEffect, useRef, useState, useContext} from 'react';
 import {ImCross, ImUpload2} from 'react-icons/im';
 import WalletOption from './wallet_option';
 import useOuterClick from '../../lib/hooks/use_outer_click';
@@ -29,6 +29,8 @@ import {VscAccount} from 'react-icons/vsc';
 // import {RxExit} from 'react-icons/rx';
 import {ImExit} from 'react-icons/im';
 import TransferProcessModal from '../transfer_process_modal/transfer_process_modal';
+import {MarketContext} from '../../lib/contexts/market_context';
+import {UserContext} from '../../lib/contexts/user_context';
 
 // import Connector from '@walletconnect/core';
 
@@ -192,6 +194,8 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
   //   componentVisible: qrcodeModalVisible,
   //   setComponentVisible: setQrcodeModalVisible,
   // } = useOuterClick<HTMLDivElement>(false);
+
+  const {availableTransferOptions} = useContext(MarketContext);
 
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
@@ -367,6 +371,11 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
     // }
   };
 
+  const {user} = useContext(UserContext);
+
+  // const {balance} = user;
+  // console.log('wallet panel user: ', user?.walletBalance);
+
   const [depositProcess, setDepositProcess] = useState<
     'form' | 'loading' | 'success' | 'cancellation' | 'fail'
   >('form');
@@ -394,10 +403,11 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
 
   const withdrawProcessModal = (
     <TransferProcessModal
+      transferOptions={availableTransferOptions}
       getSubmissionState={getWithdrawSubmissionState}
       transferType="withdraw"
       transferStep={withdrawProcess}
-      userAvailableBalance={0.45}
+      userAvailableBalance={user?.balance?.available ?? 0}
       modalVisible={withdrawModalVisible}
       modalClickHandler={withdrawModalClickHandler}
     />
@@ -405,10 +415,11 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
 
   const depositProcessModal = (
     <TransferProcessModal
+      transferOptions={availableTransferOptions}
       getSubmissionState={getDepositSubmissionState}
       transferType="deposit"
       transferStep="form"
-      userAvailableBalance={123.45}
+      userAvailableBalance={user?.walletBalance ?? 0}
       modalVisible={depositModalVisible}
       modalClickHandler={depositModalClickHandler}
     />

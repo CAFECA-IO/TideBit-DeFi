@@ -22,12 +22,16 @@ const Trading = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      {displayedNavBar}
-      {/* <NavBar /> */}
+      <MarketProvider>
+        <UserProvider>
+          {displayedNavBar}
+          {/* <NavBar /> */}
 
-      <main>
-        <TradePageBody />
-      </main>
+          <main>
+            <TradePageBody />
+          </main>
+        </UserProvider>
+      </MarketProvider>
     </>
   );
 };

@@ -8,7 +8,7 @@ import useOuterClick from '../../lib/hooks/use_outer_click';
 import {useState, useContext} from 'react';
 import {MdKeyboardArrowDown, MdKeyboardArrowRight} from 'react-icons/md';
 import RippleButton from '../ripple_button/ripple_button';
-import {TRANSFER_OPTIONS} from '../../constants/display';
+// import {TRANSFER_OPTIONS} from '../../constants/display';
 import {MarketContext} from '../../lib/contexts/market_context';
 
 interface ITransferProcessModal {
@@ -18,10 +18,19 @@ interface ITransferProcessModal {
   modalVisible: boolean;
   modalClickHandler: () => void;
   getSubmissionState: (props: 'success' | 'cancellation' | 'fail') => void;
+  transferOptions: ITransferOptions[];
   // transferProcessStep: string;
   // modalRef?: React.RefObject<HTMLDivElement>;
   // modalVisible?: boolean;
   // clickHandler?: () => void;
+}
+
+export interface ITransferOptions {
+  // [key: string]: {
+  label: string;
+  content: string;
+  // icon: string;
+  // fee: number;
 }
 
 export const TRANSFER_PROCESS_MODAL_STEP_CLASSES = {
@@ -56,15 +65,16 @@ const TransferProcessModal = ({
   modalVisible,
   modalClickHandler,
   getSubmissionState,
+  transferOptions: transferOptions,
   ...otherProps
 }: ITransferProcessModal) => {
-  const {transferOptions, TRANSFER_OPTIONS_MARKET} = useContext(MarketContext);
+  // const {transferOptions, TRANSFER_OPTIONS_MARKET} = useContext(MarketContext);
   // console.log('test options in modal:', transferOptions);
 
   // const [modalVisible, setModalVisible] = useState(true);
 
   const [showCryptoMenu, setShowCryptoMenu] = useState(false);
-  const [selectedCrypto, setSelectedCrypto] = useState(TRANSFER_OPTIONS[0]);
+  const [selectedCrypto, setSelectedCrypto] = useState(transferOptions[0]);
   const [amountInput, setAmountInput] = useState<number>();
   const [showWarning, setShowWarning] = useState(false);
 
@@ -206,7 +216,7 @@ const TransferProcessModal = ({
 
   const warningStyle = showWarning ? 'block' : 'invisible';
 
-  const avaliableCryptoMenu = TRANSFER_OPTIONS.map(item => {
+  const avaliableCryptoMenu = transferOptions.map(item => {
     return (
       <li
         key={item.label}
@@ -258,7 +268,7 @@ const TransferProcessModal = ({
                     ></path>
                   </svg>
 
-                  <p className="w-60px text-lg text-lightWhite">{selectedCrypto.label}</p>
+                  <p className="w-60px text-lg text-lightWhite">{selectedCrypto?.label}</p>
                 </div>
                 {/* TODO: input search */}
                 <input
@@ -269,7 +279,7 @@ const TransferProcessModal = ({
                   onFocus={() => {
                     // console.log('focusing');
                   }}
-                  value={selectedCrypto.content}
+                  value={selectedCrypto?.content}
                 />
 
                 <button

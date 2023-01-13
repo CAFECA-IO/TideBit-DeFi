@@ -1,7 +1,7 @@
 import {useTranslation} from 'next-i18next';
 import Link from 'next/link';
 import TideButton from '../tide_button/tide_button';
-import {useState} from 'react';
+import {useContext, useState} from 'react';
 import {AiOutlineGlobal} from 'react-icons/ai';
 import {BsFillBellFill, BsBell} from 'react-icons/bs';
 import {TbMinusVertical} from 'react-icons/tb';
@@ -18,6 +18,7 @@ import {useRouter} from 'next/router';
 import I18n from '../i18n/i18n';
 import {IoIosArrowBack} from 'react-icons/io';
 import UserOverview from '../user_overview/user_overview';
+import {UserContext} from '../../lib/contexts/user_context';
 
 // interface INavBarProps {
 //   notifyRef: HTMLDivElement extends HTMLElement ? React.RefObject<HTMLDivElement> : null;
@@ -71,12 +72,13 @@ const NavBar = ({notificationNumber = 1}) => {
     </div>
   );
 
+  const {user} = useContext(UserContext);
+
   const isDisplayedUserOverview = userOverview ? (
     <UserOverview
-      depositAvailable={100.34}
-      marginLocked={100.34}
-      profitOrLoss={'profit'}
-      profitOrLossAmount={100.96}
+      depositAvailable={user?.balance?.available ?? 0}
+      marginLocked={user?.balance?.locked ?? 0}
+      profitOrLossAmount={user?.balance?.PNL ?? 0}
     />
   ) : null;
 

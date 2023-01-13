@@ -196,6 +196,14 @@ export interface IMarket {
   isCFDTradable: boolean;
   tickerDetails: ITickerDetails;
   candlestickData: ICandlestick[]; // x 100
+  // home page
+  tidebitPromotion: {volume: number; users: number; fee: number};
+  reserveInformation: {
+    asset: string;
+    reserveRatio: number;
+    userHoldings: number;
+    totalCollateral: number;
+  }; // TODO
 
   getTicker: (id: number) => ITickerDetails; // 拿到現在這個交易對的資料
   getCandlestickData: (props: {ticker: string; timeSpan: TimeSpanUnion}) => ICandlestick[]; // x 100

@@ -20,7 +20,7 @@ export interface IUser {
   removeFavoriteTicker: (props: ITickerItem) => Promise<void>;
 
   balances: IUserBalance;
-  walletBalance: ITransferBalance;
+  getWalletBalance: (asset: string) => number;
   // getTotalBalace: () => IUserBalance;
   // getPnL: () => null;
 
@@ -45,11 +45,6 @@ export interface IUser {
   // receipts: IReceipt[];
   // getHistory: () => null;
   // + getHistory():Array<SignedOrder:SignedWithdraw, SingedDeposit, SignedCFD>
-}
-
-export interface ITransferBalance {
-  asset: string;
-  amount: number;
 }
 
 export type OrderStatusUnion = 'processing' | 'success' | 'cancellation' | 'fail';

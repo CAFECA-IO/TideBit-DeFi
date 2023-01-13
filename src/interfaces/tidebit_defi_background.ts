@@ -200,7 +200,7 @@ export interface ITransferOption {
   label: string; // USDT
   content: string; // Tether
   // icon: string; // svg
-  // fee: number; // TODO
+  fee: number;
 }
 
 export type TimeSpanUnion = '15s' | '5m' | '15m' | '30m' | '1h' | '4h' | '12h' | '1d';

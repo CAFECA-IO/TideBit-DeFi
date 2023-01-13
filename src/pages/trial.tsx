@@ -396,7 +396,7 @@ const Trial = () => {
           Show the modal
         </RippleButton> */}
 
-        <TransferProcessModal
+        {/* <TransferProcessModal
           transferOptions={[
             {label: 'USDT', content: 'Tether'},
             {label: 'ETH', content: 'ETH'},
@@ -417,7 +417,7 @@ const Trial = () => {
           userAvailableBalance={314.15}
           modalVisible={modalVisible}
           modalClickHandler={modalClickHandler}
-        />
+        /> */}
       </div>
     </>
   );

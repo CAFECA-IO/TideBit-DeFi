@@ -15,20 +15,20 @@ const TradePageBody = () => {
 
   return (
     <>
-      <MarketProvider>
-        <UserProvider>
-          <div className="flex min-h-screen flex-col overflow-hidden">
-            <MarketSection />
+      {/* <MarketProvider> */}
+      {/* <UserProvider> */}
+      <div className="flex min-h-screen flex-col overflow-hidden">
+        <MarketSection />
 
-            {displayedOrdersection}
-            {/* <OrderSection /> */}
+        {displayedOrdersection}
+        {/* <OrderSection /> */}
 
-            {/* <div>
+        {/* <div>
           <Footer />
         </div> */}
-          </div>
-        </UserProvider>
-      </MarketProvider>
+      </div>
+      {/* </UserProvider> */}
+      {/* </MarketProvider> */}
     </>
   );
 };

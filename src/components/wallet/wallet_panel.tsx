@@ -227,6 +227,8 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
     provider: providers.Web3Provider;
   }
 
+  const {user} = useContext(UserContext);
+
   const [connecting, setConnecting] = useState(false);
 
   const [defaultAccount, setDefaultAccount] = useState('');
@@ -259,6 +261,16 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
     useState(false);
 
   const [signaturePending, setSignaturePending] = useState(false);
+
+  const [depositProcess, setDepositProcess] = useState<
+    'form' | 'loading' | 'success' | 'cancellation' | 'fail'
+  >('form');
+  const [withdrawProcess, setWithdrawProcess] = useState<
+    'form' | 'loading' | 'success' | 'cancellation' | 'fail'
+  >('form');
+
+  const [withdrawData, setWithdrawData] = useState<{asset: string; amount: number}>();
+  const [depositData, setDepositData] = useState<{asset: string; amount: number}>();
 
   // const [pairingSignature, setPairingSignature] = useState({
   //   account: '',
@@ -371,17 +383,8 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
     // }
   };
 
-  const {user} = useContext(UserContext);
-
   // const {balance} = user;
   // console.log('wallet panel user: ', user?.walletBalance);
-
-  const [depositProcess, setDepositProcess] = useState<
-    'form' | 'loading' | 'success' | 'cancellation' | 'fail'
-  >('form');
-  const [withdrawProcess, setWithdrawProcess] = useState<
-    'form' | 'loading' | 'success' | 'cancellation' | 'fail'
-  >('form');
 
   const getDepositSubmissionState = (state: 'success' | 'cancellation' | 'fail') => {
     // console.log('result boolean: ', state);
@@ -395,14 +398,93 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
 
   const depositModalClickHandler = () => {
     setDepositModalVisible(!depositModalVisible);
+    setDepositProcess('form');
   };
 
   const withdrawModalClickHandler = () => {
     setWithdrawModalVisible(!withdrawModalVisible);
+    setWithdrawProcess('form');
+  };
+
+  // TODO: To extract the certain possibility of transfer options from `ITransferOption`
+  const getWithdrawData = (props: {asset: string; amount: number}) => {
+    // console.log('get withdraw data:', props);
+    setWithdrawData(props);
+    // withdrawData?.amount
+  };
+
+  const withdrawSubmitHandler = (props: {asset: string; amount: number}) => {
+    // setWithdrawData(props);
+    // withdraw(withdrawData)
+
+    setWithdrawProcess('loading');
+    // console.log('send withdraw request in wallet panel', withdrawData?.asset, withdrawData?.amount);
+
+    setTimeout(() => {
+      setWithdrawProcess('success');
+
+      setTimeout(() => {
+        setWithdrawProcess('cancellation');
+
+        setTimeout(() => {
+          setWithdrawProcess('fail');
+        }, 5000);
+      }, 5000);
+    }, 3000);
+    // withdraw(withdrawData?.asset, withdrawData?.amount)
+    //   .then((res) => {
+    //     console.log('withdraw res: ', res);
+    //     setWithdrawProcess('success');
+    //   })
+    //   .catch((err) => {
+    //     console.log('withdraw err: ', err);
+    //     setWithdrawProcess('fail');
+    //   });
+
+    // const withdraw = async () => {
+    //   try {
+    //     const res = await withdraw(withdrawData?.asset, withdrawData?.amount);
+    //     console.log('withdraw res: ', res);
+    //     setWithdrawProcess('success');
+    //   } catch (err) {
+    //     console.log('withdraw err: ', err);
+    //     setWithdrawProcess('fail');
+    //   }
+    // }
+  };
+
+  // TODO: To extract the certain possibility of transfer options from `ITransferOption`
+  const getDepositData = (props: {asset: string; amount: number}) => {
+    // console.log('get deposit data:', props);
+    setDepositData(props);
+  };
+
+  // TODO: to be continued
+  const depositSubmitHandler = (props: {asset: string; amount: number}) => {
+    // setDepositData(props);
+    // deposit(depositData)
+
+    setDepositProcess('loading');
+    // console.log('send deposit request in wallet panel', depositData?.asset, depositData?.amount);
+
+    setTimeout(() => {
+      setDepositProcess('success');
+
+      setTimeout(() => {
+        setDepositProcess('cancellation');
+
+        setTimeout(() => {
+          setDepositProcess('fail');
+        }, 5000);
+      }, 5000);
+    }, 3000);
   };
 
   const withdrawProcessModal = (
     <TransferProcessModal
+      getTransferData={getWithdrawData}
+      // initialAmountInput={undefined}
+      submitHandler={withdrawSubmitHandler}
       transferOptions={availableTransferOptions}
       getSubmissionState={getWithdrawSubmissionState}
       transferType="withdraw"
@@ -415,10 +497,13 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
 
   const depositProcessModal = (
     <TransferProcessModal
+      getTransferData={getDepositData}
+      // initialAmountInput={user?.walletBalance ?? 0}
+      submitHandler={depositSubmitHandler}
       transferOptions={availableTransferOptions}
       getSubmissionState={getDepositSubmissionState}
       transferType="deposit"
-      transferStep="form"
+      transferStep={depositProcess}
       userAvailableBalance={user?.walletBalance ?? 0}
       modalVisible={depositModalVisible}
       modalClickHandler={depositModalClickHandler}

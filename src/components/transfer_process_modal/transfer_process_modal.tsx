@@ -19,6 +19,9 @@ interface ITransferProcessModal {
   modalClickHandler: () => void;
   getSubmissionState: (props: 'success' | 'cancellation' | 'fail') => void;
   transferOptions: ITransferOptions[];
+  getTransferData: (props: {asset: string; amount: number}) => void;
+  submitHandler: (props: {asset: string; amount: number}) => void;
+  // initialAmountInput: undefined | number;
   // transferProcessStep: string;
   // modalRef?: React.RefObject<HTMLDivElement>;
   // modalVisible?: boolean;
@@ -65,6 +68,9 @@ const TransferProcessModal = ({
   modalVisible,
   modalClickHandler,
   getSubmissionState,
+  // initialAmountInput,
+  getTransferData,
+  submitHandler,
   transferOptions: transferOptions,
   ...otherProps
 }: ITransferProcessModal) => {
@@ -75,7 +81,7 @@ const TransferProcessModal = ({
 
   const [showCryptoMenu, setShowCryptoMenu] = useState(false);
   const [selectedCrypto, setSelectedCrypto] = useState(transferOptions[0]);
-  const [amountInput, setAmountInput] = useState<number>();
+  const [amountInput, setAmountInput] = useState<number | undefined>();
   const [showWarning, setShowWarning] = useState(false);
 
   const regex = /^\d*\.?\d{0,2}$/;
@@ -93,6 +99,7 @@ const TransferProcessModal = ({
 
   const maxClickHandler = () => {
     setAmountInput(userAvailableBalance);
+    getTransferData({asset: selectedCrypto.label, amount: userAvailableBalance});
   };
 
   const passSubmissionStateHandler = (props: 'success' | 'cancellation' | 'fail') => {
@@ -101,7 +108,7 @@ const TransferProcessModal = ({
 
   // TODO: send withdraw / deposit request
   const submitClickHandler = () => {
-    // console.log('select cypto:', selectedCrypto);
+    // console.log('select cwwypto:', selectedCrypto);
     // console.log('amount:', amountInput);
 
     if (amountInput === 0 || amountInput === undefined) {
@@ -111,9 +118,14 @@ const TransferProcessModal = ({
 
     setShowWarning(false);
 
-    setTimeout(() => {
-      passSubmissionStateHandler('success');
-    }, 1000);
+    submitHandler({asset: selectedCrypto.label, amount: amountInput});
+
+    // console.log('in modal, after clicking submit: ', selectedCrypto.label, amountInput);
+
+    setAmountInput(undefined);
+    // setTimeout(() => {
+    //   passSubmissionStateHandler('loading');
+    // }, 500);
   };
 
   const amountOnChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -138,6 +150,7 @@ const TransferProcessModal = ({
       }
 
       setAmountInput(Number(value));
+      getTransferData({asset: selectedCrypto.label, amount: Number(value)});
     }
   };
 
@@ -237,6 +250,8 @@ const TransferProcessModal = ({
     // console.log('label', {label});
     setSelectedCrypto(target);
     cryptoMenuClickHandler();
+
+    getTransferData({asset: target.label, amount: amountInput ?? 0});
   };
 
   const formContent = (

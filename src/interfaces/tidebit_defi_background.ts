@@ -37,7 +37,12 @@ export interface IUser {
     stopLoss?: number;
     guranteedStop: boolean;
   }) => Promise<ICFD>;
+  // + createOrder(orderType<CFD, Deposite, Withdraw, SpotTrade>, data):PublicOrder
+  deposit: (props: {asset: string; amount: number}) => Promise<TransferStateUnion>;
+  withdraw: (props: {asset: string; amount: number}) => Promise<TransferStateUnion>;
 }
+
+export type TransferStateUnion = 'success' | 'cancellation' | 'fail';
 
 export interface ICFD {
   id: string;
@@ -70,6 +75,8 @@ export interface ICFD {
   stopLoss?: number;
   guranteedStop: boolean;
 
+  fee: number; // TODO
+
   positionLineGraph: ITickerLineGraph;
   // positionLineGraph: (props: {openTimestamp: number; openPrice: number}) => ITickerLineGraph; //
 }
@@ -83,6 +90,7 @@ export interface ICFDOrderRequest {
   stopLoss?: number;
   guranteedStop: boolean;
   estimatedFilledPrice: number; // estimated filled price 預估成交價格
+  fee: number; // TODO
   // value: number; // margin x leverage x price (USDT) = value (USDT)
 }
 
@@ -102,18 +110,19 @@ export interface IMarket {
   isCFDTradable: boolean;
 
   getTicker: (id: number) => ITickerDetails; // 拿到現在這個交易對的資料
-  getCandlestickData: (props: {ticker: string; timeSpan: timeSpan}) => ICandlestick[]; // x 100
+  getCandlestickData: (props: {ticker: string; timeSpan: TimeSpanUnion}) => ICandlestick[]; // x 100
 
   transferOptions: ITransferOption[]; // 可供入金出金的選項
 }
 
 export interface ITransferOption {
-  label: string;
-  content: string;
-  // fee: number;
+  label: string; // USDT
+  content: string; // Tether
+  // icon: string; // svg
+  // fee: number; // TODO
 }
 
-export type timeSpan = '15s' | '5m' | '15m' | '30m' | '1h' | '4h' | '12h' | '1d';
+export type TimeSpanUnion = '15s' | '5m' | '15m' | '30m' | '1h' | '4h' | '12h' | '1d';
 
 export interface ICandlestick {
   timestamp: number;
@@ -127,7 +136,7 @@ export interface ICandlestick {
 }
 
 export interface ITickerLineGraph {
-  dataArray: number[]; // at least x6
+  dataArray: number[]; // position item: at least x6, ticker item: at least x10
 }
 
 export interface IPositionLineGraph extends ITickerLineGraph {
@@ -140,10 +149,34 @@ export interface ITickerDetails {
   price: number;
   fluctuating: fluctuatingProps;
   volume: number; // 24 hr volume
-  spread: number; // 點差
+  spread: number; // 點差 %
   fee: number; // 手續費
+  guranteedStopFee: boolean; // 保證停損手續費
   // slippage: number; // 滑價
-  estimatedFilledPrice: number; // estimated filled price 預估成交價格
+  estimatedFilledPrice: number; // price + spread = estimated filled price
+  bullAndBearIndex: number; // BBI 多空指數
+  priceData: IPriceData; // [5m, 60m, 1d]
+  cryptoDetails: ICryptoDetails;
+}
+
+export interface IPriceData {
+  '5m': {low: number; high: number; now: number}; // [low, high, now]
+  '60m': {low: number; high: number; now: number};
+  '1d': {low: number; high: number; now: number};
+}
+
+export interface ICryptoDetails {
+  price: number;
+  rank: number;
+  publishTime: number;
+  publishAmount: number; // circulatingSupply / totalSupply / maxSupply
+  tradingVolume: number;
+  totalValue: number; // marketCap
+  tradingValue: number;
+
+  introduction: string;
+  whitePaper: string;
+  website: string;
 }
 
 export interface fluctuatingProps {
@@ -174,15 +207,11 @@ export interface fluctuatingProps {
 // });
 
 export interface ITickerData {
-  currency: string;
+  currency: string; // token name
   chain: string;
-  // star: boolean;
-  // starred: boolean;
-  // starColor: string;
-  // getStarredStateCallback: (bool: boolean) => void;
   price: number;
   fluctuating: fluctuatingProps;
-  // gradientColor: string;
+
   tokenImg: string;
 
   lineGraphProps: ITickerLineGraph;

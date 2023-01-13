@@ -3,7 +3,7 @@ export interface IUser {
   username: string | null;
   email: string | null;
   wallet: string | null;
-  favoriteTickers: ITickerData[];
+  favoriteTickers: ITickerItem[];
   isSubscibedNewsletters: boolean;
   isEnabledEmailNotification: boolean;
   isConnected: boolean;
@@ -12,73 +12,160 @@ export interface IUser {
   walletId: string | null;
   tideBitId: string | null;
   enableServiceTerm: boolean;
+
   connect: () => Promise<boolean>;
   disconnect: () => Promise<void>;
   signServiceTerm: () => Promise<boolean>;
-  addFavoriteTicker: (props: ITickerData) => Promise<void>;
-  removeFavoriteTicker: (props: ITickerData) => Promise<void>;
+  addFavoriteTicker: (props: ITickerItem) => Promise<void>;
+  removeFavoriteTicker: (props: ITickerItem) => Promise<void>;
 
   balances: IUserBalance;
-  getTotalBalace: () => IUserBalance;
+  walletBalance: number;
+  // getTotalBalace: () => IUserBalance;
   // getPnL: () => null;
 
-  CFDs: ICFD[];
-  getOpenedCFD: () => ICFD[];
-  getClosedCFD: () => ICFD[];
+  CFDDetails: ICFDDetails;
 
-  // 拿到歷史PnL紀錄
-  // getHistory: () => null;
+  openItem: IOpenCFD[];
+  closedItem: IClosedCFD[];
+  // getOpenedCFD: () => ICFDDetails[];
+  // getClosedCFD: () => ICFDDetails[];
 
-  createOrder: (props: ICFDOrderRequest) => Promise<ICFD>;
-  closeOrder: (props: {id: string}) => Promise<ICFD>;
+  createOrder: (props: ICFDOrderRequest) => Promise<ICFDDetails>;
+  closeOrder: (props: {id: string}) => Promise<ICFDDetails>;
   updateOrder: (props: {
     id: string;
     takeProfit?: number;
     stopLoss?: number;
     guranteedStop: boolean;
-  }) => Promise<ICFD>;
+  }) => Promise<ICFDDetails>;
   // + createOrder(orderType<CFD, Deposite, Withdraw, SpotTrade>, data):PublicOrder
   deposit: (props: {asset: string; amount: number}) => Promise<TransferStateUnion>;
   withdraw: (props: {asset: string; amount: number}) => Promise<TransferStateUnion>;
+
+  // -----------Ignores below----------------
+  // 拿到所有withdraw / deposit / CFD 紀錄
+  // receipts: IReceipt[];
+  // getHistory: () => null;
+  // + getHistory():Array<SignedOrder:SignedWithdraw, SingedDeposit, SignedCFD>
 }
 
-export type TransferStateUnion = 'success' | 'cancellation' | 'fail';
+export type TransferStateUnion = 'processing' | 'success' | 'cancellation' | 'fail';
 
-export interface ICFD {
+// -----------Ignores below----------------
+// export interface IReceipt {
+//   // id: string;
+//   // ad: string; // month & year
+//   timestamp: number;
+//   type: 'DEPOSIT' | 'WITHDRAW' | 'OPEN_POSITION' | 'CLOSE_POSITION';
+//   asset: string;
+//   amount: number;
+//   details: IReceiptDetails;
+//   fee: number;
+//   available: number; // available balance after this transaction
+// }
+
+// export interface IReceiptDetails {
+//   state: TransferStateUnion;
+//   tx?: string; // tx hash (on etherscan?)
+//   CFD?: {
+//     ticker: string;
+//   }
+// }
+
+// 使用格式
+
+// export interface ICFDDisclosure {
+
+// }
+
+export interface IOpenCFD {
   id: string;
+  ticker: string;
+  operation: 'BUY' | 'SELL';
+  // openTimestamp: number;
+  remainingHrs: number;
+  openValue: number;
+  pNL: number;
+  positionLineGraph: ITickerLineGraph;
+}
+
+export interface IClosedCFD {
+  id: string;
+  ticker: string;
+  operation: 'BUY' | 'SELL';
+  closedTimestamp: number;
+  openValue: number;
+  closedValue: number;
+  pNL: number;
+}
+
+export interface IOpenCFDDetails {
+  id: string;
+
   ticker: string; // 'BTC' | 'ETH'
   operation: 'BUY' | 'SELL'; // 'Buy' | 'Sell'
   leverage: number;
   margin: number;
+  openPrice: number; // Avg. Open Price 平均開倉價格
+  takeProfit?: number;
+  stopLoss?: number;
+  guranteedStop: boolean;
+  fee: number;
+
+  openTimestamp: number;
+  scheduledClosingTimestamp: number;
+
+  openValue: number; // margin x leverage x price (USDT) = value (USDT)
+  pnl: number; // calculated by context
+
+  liquidationPrice: number; // 強平價 / 清算水平 stop-out level
+}
+
+// export interface IPNL {
+//   profitOrLoss: number;
+//   amount: number;
+// }
+
+export interface IClosedCFDDetails extends IOpenCFDDetails {
+  closedType: 'SCHEDULE' | 'FORCED_LIQUIDATION' | 'STOP_LOSS' | 'TAKE_PROFIT' | 'BY_USER';
+  forcedClosed: boolean;
+  closedTimestamp: number; // remaining hrs gained from context
+  closedValue: number;
+}
+
+export interface ICFDDetails {
+  id: string;
+
+  ticker: string; // 'BTC' | 'ETH'
+  operation: 'BUY' | 'SELL'; // 'Buy' | 'Sell'
+  leverage: number;
+  margin: number;
+  openPrice: number; // Avg. Open Price 平均開倉價格
+  takeProfit?: number;
+  stopLoss?: number;
+  guranteedStop: boolean;
+  fee: number;
+
+  openTimestamp: number;
+  scheduledClosingTimestamp: number;
 
   closedType?: 'SCHEDULE' | 'FORCED_LIQUIDATION' | 'STOP_LOSS' | 'TAKE_PROFIT' | 'BY_USER';
   forcedClosed: boolean;
 
-  openTimestamp: number;
-
-  scheduledClosingTimestamp: number;
-
   openValue: number; // margin x leverage x price (USDT) = value (USDT)
   // estimatedFilledPrice: number; // estimated filled price 預估成交價格
-  openPrice: number; // Avg. Open Price 平均開倉價格
   closedPrice?: number;
 
   pnl: number; // calculated by context
-  // trend: number[]; // gained from Market object
   state: 'OPENING' | 'CLOSED';
 
   closedTimestamp?: number; // remaining hrs gained from context
   closedValue?: number;
   liquidationPrice: number; // 強平價 / 清算水平 stop-out level
 
-  takeProfit?: number;
-  stopLoss?: number;
-  guranteedStop: boolean;
-
-  fee: number; // TODO
-
-  positionLineGraph: ITickerLineGraph;
-  // positionLineGraph: (props: {openTimestamp: number; openPrice: number}) => ITickerLineGraph; //
+  // positionLineGraph: ITickerLineGraph;
+  // positionLineGraph: (props: {openTimestamp: number; openPrice: number}) => ITickerLineGraph;
 }
 
 export interface ICFDOrderRequest {
@@ -89,8 +176,8 @@ export interface ICFDOrderRequest {
   takeProfit?: number;
   stopLoss?: number;
   guranteedStop: boolean;
-  estimatedFilledPrice: number; // estimated filled price 預估成交價格
-  fee: number; // TODO
+  estimatedFilledPrice: number; // estimated filled price / open price 預估成交價格
+  fee: number;
   // value: number; // margin x leverage x price (USDT) = value (USDT)
 }
 
@@ -98,22 +185,27 @@ export interface IUserBalance {
   available: number;
   locked: number;
   PNL: number;
-  walletBalance: number; // deposit required info
-  // label: 'available' | 'locked' | 'PNL'; // 'Available' | 'Locked/Margin' | 'PNL'
-  // balance: number;
+  // walletBalance: number; // deposit required info
+  // interest: number; // 入金的利息
 }
 
 export interface IMarket {
-  availableTickers: ITickerData[];
-  getTickers: (id: number) => ITickerData[]; // 拿到交易對清單
+  availableTickers: ITickerItem[];
+  // getTickers: (id: number) => ITickerData[]; // 拿到交易對清單
 
   isCFDTradable: boolean;
+  tickerDetails: ITickerDetails;
+  candlestickData: ICandlestick[]; // x 100
 
   getTicker: (id: number) => ITickerDetails; // 拿到現在這個交易對的資料
   getCandlestickData: (props: {ticker: string; timeSpan: TimeSpanUnion}) => ICandlestick[]; // x 100
 
   transferOptions: ITransferOption[]; // 可供入金出金的選項
 }
+
+// export interface ITransferProps {
+//   walletBalance: number; // deposit required info
+// }
 
 export interface ITransferOption {
   label: string; // USDT
@@ -149,20 +241,22 @@ export interface ITickerDetails {
   price: number;
   fluctuating: fluctuatingProps;
   volume: number; // 24 hr volume
+
   spread: number; // 點差 %
   fee: number; // 手續費
-  guranteedStopFee: boolean; // 保證停損手續費
+  guranteedStopFee: number; // 保證停損手續費
   // slippage: number; // 滑價
   estimatedFilledPrice: number; // price + spread = estimated filled price
+
   bullAndBearIndex: number; // BBI 多空指數
   priceData: IPriceData; // [5m, 60m, 1d]
   cryptoDetails: ICryptoDetails;
 }
 
 export interface IPriceData {
-  '5m': {low: number; high: number; now: number}; // [low, high, now]
-  '60m': {low: number; high: number; now: number};
-  '1d': {low: number; high: number; now: number};
+  fiveMin: {low: number; high: number; now: number}; // [low, high, now]
+  sixtyMin: {low: number; high: number; now: number};
+  oneDay: {low: number; high: number; now: number};
 }
 
 export interface ICryptoDetails {
@@ -185,41 +279,15 @@ export interface fluctuatingProps {
   percentage: number;
 }
 
-// export const UserContext = createContext<IUserContext>({
-//   id: null,
-//   username: null,
-//   email: null,
-//   wallet: null,
-//   favoriteTickers: [],
-//   isSubscibedNewsletters: false,
-//   isEnabledEmailNotification: false,
-//   isConnected: false,
-//   isConnectedWithEmail: false,
-//   isConnectedWithTideBit: false,
-//   walletId: null,
-//   tideBitId: null,
-//   enableServiceTerm: false,
-//   connect: () => Promise.resolve(true),
-//   disconnect: () => Promise.resolve(),
-//   signServiceTerm: () => Promise.resolve(true),
-//   addFavoriteTicker: (props: ITickerData) => Promise.resolve(),
-//   removeFavoriteTicker: (props: ITickerData) => Promise.resolve(),
-// });
-
-export interface ITickerData {
+export interface ITickerItem {
   currency: string; // token name
   chain: string;
   price: number;
   fluctuating: fluctuatingProps;
 
+  starred: boolean; // TODO
+
   tokenImg: string;
 
   lineGraphProps: ITickerLineGraph;
 }
-
-// export interface ILineGraphProps {
-//   dataArray?: number[];
-//   strokeColor?: string[];
-//   lineGraphWidth?: string;
-//   lineGraphWidthMobile?: string;
-// }

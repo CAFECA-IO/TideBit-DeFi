@@ -455,7 +455,7 @@ export interface IMarketContext {
   positionInfoOnChart: ApexOptions | null;
   candlestickId: string;
   candlestickChartIdHandler: (id: string) => void;
-  // TRANSFER_OPTIONS: ITransferOptions[];
+  TRANSFER_OPTIONS_MARKET: ITransferOptions[];
   transferOptions: ITransferOptions[];
   // getTickerData: (ticker: string) => ITickerData; // 會拿到哪些是被star的
 }
@@ -475,12 +475,12 @@ export const MarketContext = createContext<IMarketContext>({
   positionInfoOnChart: null,
   candlestickId: '',
   candlestickChartIdHandler: () => null,
-  // TRANSFER_OPTIONS: [],
+  TRANSFER_OPTIONS_MARKET: [],
   transferOptions: [],
   // getTickerData: () => ITickerData,
 });
 
-const TRANSFER_OPTIONS = [
+const TRANSFER_OPTIONS_MARKET = [
   {label: 'USDT', content: 'Tether'},
   {label: 'ETH', content: 'ETH'},
   {label: 'BTC', content: 'BTC'},
@@ -500,7 +500,8 @@ export const MarketProvider = ({children}: IMarketProvider) => {
   const [isCFDTradable, setIsCFDTradable] = useState<boolean>(true);
   const [candlestickId, setCandlestickId] = useState<string>('');
 
-  const [transferOptions, setTransferOptions] = useState<ITransferOptions[]>(TRANSFER_OPTIONS);
+  const [transferOptions, setTransferOptions] =
+    useState<ITransferOptions[]>(TRANSFER_OPTIONS_MARKET);
 
   const [showPositionOnChart, setShowPositionOnChart] = useState<boolean>(
     INITIAL_POSITION_LABEL_DISPLAYED_STATE
@@ -532,7 +533,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     candlestickId,
     candlestickChartIdHandler,
     transferOptions,
-    // TRANSFER_OPTIONS,
+    TRANSFER_OPTIONS_MARKET: TRANSFER_OPTIONS_MARKET,
   };
 
   return <MarketContext.Provider value={defaultValue}>{children}</MarketContext.Provider>;

@@ -28,6 +28,7 @@ export interface IUser {
   // CFDDetails: ICFDDetails;
   openCFDItems: IOpenCFDBrief[];
   closedCFDItems: IClosedCFDBrief[];
+  positionsOnChart: ICFDPositionOnChart[];
 
   // function 用於不須及時更新的資料
   getOpenedCFD: (id: number) => IOpenCFDDetails[];
@@ -91,6 +92,10 @@ export interface ICFDBrief {
   pNL: IPnLProps;
 }
 
+export interface ICFDPositionOnChart extends ICFDBrief {
+  openPrice: number;
+}
+
 export interface IOpenCFDBrief extends ICFDBrief {
   remainingHrs: number;
   positionLineGraph: ITickerLineGraph;
@@ -99,6 +104,13 @@ export interface IOpenCFDBrief extends ICFDBrief {
 export interface IClosedCFDBrief extends ICFDBrief {
   closedTimestamp: number;
   closedValue: number;
+}
+
+export interface INotification {
+  id: string;
+  timestamp: number;
+  title: string;
+  content: string;
 }
 
 // export interface IPNL {
@@ -163,6 +175,7 @@ export interface IMarket {
   availableTickers: ITickerItem[];
   // getTickers: (id: number) => ITickerData[]; // 拿到交易對清單
 
+  nowPrice: number;
   isCFDTradable: boolean;
   tickerDetails: ITickerDetails;
   candlestickData: ICandlestick[]; // x 100
@@ -231,11 +244,14 @@ export interface ITickerDetails {
   fluctuating: IFluctuatingProps;
   volume: number; // 24 hr volume
 
+  leverage: number;
+
   spread: number; // 點差 %
   fee: number; // 手續費
   guranteedStopFee: number; // 保證停損手續費
   // slippage: number; // 滑價
-  estimatedFilledPrice: number; // price + spread = estimated filled price
+  buyEstimatedFilledPrice: number; // price + spread = estimated filled price
+  sellEstimatedFilledPrice: number; // price - spread = estimated filled price
 
   bullAndBearIndex: number; // BBI 多空指數
   priceData: IPriceData; // [5m, 60m, 1d]

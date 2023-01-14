@@ -1,7 +1,7 @@
 import {useTranslation} from 'next-i18next';
 import Link from 'next/link';
 import TideButton from '../tide_button/tide_button';
-import {useState} from 'react';
+import {useContext, useState} from 'react';
 import {AiOutlineGlobal} from 'react-icons/ai';
 import {BsFillBellFill, BsBell} from 'react-icons/bs';
 import {TbMinusVertical} from 'react-icons/tb';
@@ -18,6 +18,7 @@ import {useRouter} from 'next/router';
 import I18n from '../i18n/i18n';
 import {IoIosArrowBack} from 'react-icons/io';
 import UserOverview from '../user_overview/user_overview';
+import {UserContext} from '../../lib/contexts/user_context';
 
 // interface INavBarProps {
 //   notifyRef: HTMLDivElement extends HTMLElement ? React.RefObject<HTMLDivElement> : null;
@@ -71,12 +72,13 @@ const NavBar = ({notificationNumber = 1}) => {
     </div>
   );
 
+  const {user} = useContext(UserContext);
+
   const isDisplayedUserOverview = userOverview ? (
     <UserOverview
-      depositAvailable={100.34}
-      marginLocked={100.34}
-      profitOrLoss={'profit'}
-      profitOrLossAmount={100.96}
+      depositAvailable={user?.balance?.available ?? 0}
+      marginLocked={user?.balance?.locked ?? 0}
+      profitOrLossAmount={user?.balance?.PNL ?? 0}
     />
   ) : null;
 
@@ -86,7 +88,7 @@ const NavBar = ({notificationNumber = 1}) => {
 
   return (
     <>
-      <div className="w-full bg-black text-center lg:text-start">
+      <div className="w-full text-center lg:text-start">
         {/* No bg blur in NavBar `backdrop-blur-sm` because wallet panel's limited to navbar when it show up */}
         <nav className="container fixed inset-x-0 z-40 mx-auto max-w-full bg-black/100 pb-1 text-white">
           <div className="mx-auto max-w-full px-5">
@@ -147,7 +149,7 @@ const NavBar = ({notificationNumber = 1}) => {
                   <span className="mx-2 inline-block h-10 w-px rounded bg-lightGray1"></span>
 
                   <button onClick={sidebarOpenHandler} className="relative hover:cursor-pointer">
-                    <span className="absolute bottom-3 left-3 z-20 inline-block h-3 w-3 rounded-xl bg-tidebitTheme">
+                    <span className="absolute bottom-4 left-3 z-20 inline-block h-3 w-3 rounded-xl bg-tidebitTheme">
                       <p className="text-center text-3xs">{notificationNumber}</p>
                     </span>
 
@@ -179,7 +181,7 @@ const NavBar = ({notificationNumber = 1}) => {
 
                 <span className="mx-2 inline-block h-10 w-px rounded bg-lightGray1"></span>
                 <button onClick={sidebarOpenHandler} className="relative hover:cursor-pointer">
-                  <span className="absolute bottom-4 left-3 z-20 inline-block h-3 w-3 rounded-xl bg-cyan-300">
+                  <span className="absolute top-0 right-0 z-20 inline-block h-3 w-3 rounded-xl bg-tidebitTheme">
                     <p className="text-center text-3xs hover:text-white">{notificationNumber}</p>
                   </span>
 

@@ -5,12 +5,14 @@ interface IRippleButtonProps {
   buttonStyle?: string;
   children: React.ReactNode | string;
   buttonType: 'button' | 'submit' | 'reset'; // declare the possible values for buttonType
+  onClick?: () => void;
 }
 
 // interface RefObject<T> {
 //   readonly current: T | null;
 // }
 const RippleButton = ({
+  onClick,
   className,
   buttonStyle,
   children,
@@ -79,7 +81,13 @@ const RippleButton = ({
 
   return (
     <div>
-      <button className={`${className}`} type={buttonType} ref={buttonRef} {...otherProps}>
+      <button
+        onClick={onClick}
+        className={`${className}`}
+        type={buttonType}
+        ref={buttonRef}
+        {...otherProps}
+      >
         {children}
       </button>
       {/* <Image ref={buttonRef} src="/elements/group_15198@2x.png" width={512} height={512} /> */}

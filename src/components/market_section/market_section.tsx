@@ -1,18 +1,34 @@
-import {useState} from 'react';
+import {useState, useContext} from 'react';
 import TradingHeader from '../trading_header/trading_header';
 import TradingView from '../trading_view/trading_view';
+import {ViewportContext} from '../../lib/contexts/theme_context';
+import TradingViewMobile from '../trading_view_mobile/trading_view_mobile';
+import TradingHeaderMobile from '../trading_header_mobile/trading_header_mobile';
 
 const MarketSection = () => {
+  const {layoutAssertion} = useContext(ViewportContext);
+
+  const displayedTickerHeader =
+    layoutAssertion === 'mobile' ? (
+      <TradingHeaderMobile />
+    ) : (
+      <TradingHeader upOrDown="up" tradingVolume="217,268,645" />
+    );
+
+  const displayedTradingView =
+    layoutAssertion === 'mobile' ? <TradingViewMobile /> : <TradingView />;
+
   return (
     <div>
-      {/* <div className="pt-700px text-7xl text-blue-100">Market Section</div> */}
       <div className="ml-5 pt-100px">
         <div className="ml-5">
-          <TradingHeader upOrDown="up" tradingVolume="217,268,645" />
+          {displayedTickerHeader}
+          {/* <TradingHeader upOrDown="up" tradingVolume="217,268,645" /> */}
         </div>
 
         <div>
-          <TradingView />
+          {displayedTradingView}
+          {/* <TradingView /> */}
         </div>
       </div>
     </div>

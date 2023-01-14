@@ -35,16 +35,13 @@ const I18n = () => {
         id="i18nDropdown"
         className="absolute top-16 right-52 z-10 w-150px divide-y divide-lightGray rounded-none bg-darkGray shadow"
       >
-        <ul
-          className="mx-3 py-1 pb-3 text-base text-gray-700 dark:text-gray-200"
-          aria-labelledby="i18nButton"
-        >
+        <ul className="mx-3 py-1 pb-3 text-base text-gray-200" aria-labelledby="i18nButton">
           {internationalizationList.map((item, index) => (
             <li key={index} onClick={clickHandler}>
               <Link
                 locale={item.value}
                 href={asPath}
-                className="block rounded-none py-2 pr-4 pl-6 hover:bg-darkGray5"
+                className="block rounded-none py-2 text-center hover:bg-darkGray5"
               >
                 {item.label}
               </Link>

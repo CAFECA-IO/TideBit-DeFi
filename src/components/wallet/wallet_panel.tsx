@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState} from 'react';
+import {useEffect, useRef, useState, useContext} from 'react';
 import {ImCross, ImUpload2} from 'react-icons/im';
 import WalletOption from './wallet_option';
 import useOuterClick from '../../lib/hooks/use_outer_click';
@@ -28,6 +28,9 @@ import {VscAccount} from 'react-icons/vsc';
 // import {IoExitOutline} from 'react-icons/io';
 // import {RxExit} from 'react-icons/rx';
 import {ImExit} from 'react-icons/im';
+import TransferProcessModal from '../transfer_process_modal/transfer_process_modal';
+import {MarketContext} from '../../lib/contexts/market_context';
+import {UserContext} from '../../lib/contexts/user_context';
 
 // import Connector from '@walletconnect/core';
 
@@ -192,6 +195,8 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
   //   setComponentVisible: setQrcodeModalVisible,
   // } = useOuterClick<HTMLDivElement>(false);
 
+  const {availableTransferOptions} = useContext(MarketContext);
+
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
   const [panelVisible, setPanelVisible] = useState(false);
@@ -200,6 +205,8 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
   const [qrcodeModalVisible, setQrcodeModalVisible] = useState(false);
   const [helloModalVisible, setHelloModalVisible] = useState(false);
   const [avatarMenuVisible, setAvatarMenuVisible] = useState(false);
+  const [depositModalVisible, setDepositModalVisible] = useState(false);
+  const [withdrawModalVisible, setWithdrawModalVisible] = useState(false);
 
   // const {
   //   targetRef: helloModalRef,
@@ -219,6 +226,8 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
   interface IConnectorProps {
     provider: providers.Web3Provider;
   }
+
+  const {user} = useContext(UserContext);
 
   const [connecting, setConnecting] = useState(false);
 
@@ -252,6 +261,16 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
     useState(false);
 
   const [signaturePending, setSignaturePending] = useState(false);
+
+  const [depositProcess, setDepositProcess] = useState<
+    'form' | 'loading' | 'success' | 'cancellation' | 'fail'
+  >('form');
+  const [withdrawProcess, setWithdrawProcess] = useState<
+    'form' | 'loading' | 'success' | 'cancellation' | 'fail'
+  >('form');
+
+  const [withdrawData, setWithdrawData] = useState<{asset: string; amount: number}>();
+  const [depositData, setDepositData] = useState<{asset: string; amount: number}>();
 
   // const [pairingSignature, setPairingSignature] = useState({
   //   account: '',
@@ -363,6 +382,133 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
     //   killSession();
     // }
   };
+
+  // const {balance} = user;
+  // console.log('wallet panel user: ', user?.walletBalance);
+
+  const getDepositSubmissionState = (state: 'success' | 'cancellation' | 'fail') => {
+    // console.log('result boolean: ', state);
+    setDepositProcess(state);
+  };
+
+  const getWithdrawSubmissionState = (state: 'success' | 'cancellation' | 'fail') => {
+    // console.log('result boolean: ', state);
+    setWithdrawProcess(state);
+  };
+
+  const depositModalClickHandler = () => {
+    setDepositModalVisible(!depositModalVisible);
+    setDepositProcess('form');
+  };
+
+  const withdrawModalClickHandler = () => {
+    setWithdrawModalVisible(!withdrawModalVisible);
+    setWithdrawProcess('form');
+  };
+
+  // TODO: To extract the certain possibility of transfer options from `ITransferOption`
+  const getWithdrawData = (props: {asset: string; amount: number}) => {
+    // console.log('get withdraw data:', props);
+    setWithdrawData(props);
+    // withdrawData?.amount
+  };
+
+  const withdrawSubmitHandler = (props: {asset: string; amount: number}) => {
+    // setWithdrawData(props);
+    // withdraw(withdrawData)
+
+    setWithdrawProcess('loading');
+    // console.log('send withdraw request in wallet panel', withdrawData?.asset, withdrawData?.amount);
+
+    setTimeout(() => {
+      setWithdrawProcess('success');
+
+      setTimeout(() => {
+        setWithdrawProcess('cancellation');
+
+        setTimeout(() => {
+          setWithdrawProcess('fail');
+        }, 5000);
+      }, 5000);
+    }, 3000);
+    // withdraw(withdrawData?.asset, withdrawData?.amount)
+    //   .then((res) => {
+    //     console.log('withdraw res: ', res);
+    //     setWithdrawProcess('success');
+    //   })
+    //   .catch((err) => {
+    //     console.log('withdraw err: ', err);
+    //     setWithdrawProcess('fail');
+    //   });
+
+    // const withdraw = async () => {
+    //   try {
+    //     const res = await withdraw(withdrawData?.asset, withdrawData?.amount);
+    //     console.log('withdraw res: ', res);
+    //     setWithdrawProcess('success');
+    //   } catch (err) {
+    //     console.log('withdraw err: ', err);
+    //     setWithdrawProcess('fail');
+    //   }
+    // }
+  };
+
+  // TODO: To extract the certain possibility of transfer options from `ITransferOption`
+  const getDepositData = (props: {asset: string; amount: number}) => {
+    // console.log('get deposit data:', props);
+    setDepositData(props);
+  };
+
+  // TODO: to be continued
+  const depositSubmitHandler = (props: {asset: string; amount: number}) => {
+    // setDepositData(props);
+    // deposit(depositData)
+
+    setDepositProcess('loading');
+    // console.log('send deposit request in wallet panel', depositData?.asset, depositData?.amount);
+
+    setTimeout(() => {
+      setDepositProcess('success');
+
+      setTimeout(() => {
+        setDepositProcess('cancellation');
+
+        setTimeout(() => {
+          setDepositProcess('fail');
+        }, 5000);
+      }, 5000);
+    }, 3000);
+  };
+
+  const withdrawProcessModal = (
+    <TransferProcessModal
+      getTransferData={getWithdrawData}
+      // initialAmountInput={undefined}
+      submitHandler={withdrawSubmitHandler}
+      transferOptions={availableTransferOptions}
+      getSubmissionState={getWithdrawSubmissionState}
+      transferType="withdraw"
+      transferStep={withdrawProcess}
+      userAvailableBalance={user?.balance?.available ?? 0}
+      modalVisible={withdrawModalVisible}
+      modalClickHandler={withdrawModalClickHandler}
+    />
+  );
+
+  const depositProcessModal = (
+    <TransferProcessModal
+      getTransferData={getDepositData}
+      // initialAmountInput={user?.walletBalance ?? 0}
+      submitHandler={depositSubmitHandler}
+      transferOptions={availableTransferOptions}
+      getSubmissionState={getDepositSubmissionState}
+      transferType="deposit"
+      transferStep={depositProcess}
+      userAvailableBalance={user?.walletBalance ?? 0}
+      modalVisible={depositModalVisible}
+      modalClickHandler={depositModalClickHandler}
+    />
+  );
 
   const connectingClickHandler = () => {
     setConnectingModalVisible(!connectingModalVisible);
@@ -1625,7 +1771,7 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
         </div>
 
         <ul
-          className="mx-3 py-1 pb-3 text-base font-normal text-gray-700 dark:text-gray-200"
+          className="mx-3 py-1 pb-3 text-base font-normal text-gray-200"
           aria-labelledby="avatarButton"
         >
           <li>
@@ -1636,21 +1782,29 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
               </div>
             </a>
           </li>
-          <li>
-            <a href="#" className="block py-2 pr-4 pl-3 hover:bg-darkGray5">
-              <div className="flex flex-row items-center space-x-2">
-                <FaDownload />
-                <p>Deposit</p>
-              </div>
-            </a>
+          <li
+            onClick={() => {
+              avatarClickHandler();
+              depositModalClickHandler();
+            }}
+            className="block py-2 pr-4 pl-3 hover:cursor-pointer hover:bg-darkGray5"
+          >
+            <div className="flex flex-row items-center space-x-2">
+              <FaDownload />
+              <p>Deposit</p>
+            </div>
           </li>
-          <li>
-            <a href="#" className="block py-2 pr-4 pl-3 hover:bg-darkGray5">
-              <div className="flex flex-row items-center space-x-2">
-                <FaUpload />
-                <p>Withdraw</p>
-              </div>
-            </a>
+          <li
+            onClick={() => {
+              avatarClickHandler();
+              withdrawModalClickHandler();
+            }}
+            className="block py-2 pr-4 pl-3 hover:cursor-pointer hover:bg-darkGray5"
+          >
+            <div className="flex flex-row items-center space-x-2">
+              <FaUpload />
+              <p>Withdraw</p>
+            </div>
           </li>
           <li>
             <a href="#" className="block py-2 pr-4 pl-3 hover:bg-darkGray5">
@@ -1721,6 +1875,9 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
         processModalVisible={processModalVisible}
         processClickHandler={processClickHandler}
       />
+
+      {depositProcessModal}
+      {withdrawProcessModal}
 
       {/* TODO: Notes- the below is the same but `{toastNotify}` is easier to be changed and managed  */}
       {toastNotify}

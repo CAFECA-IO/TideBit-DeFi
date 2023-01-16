@@ -4,6 +4,7 @@ import TradingView from '../trading_view/trading_view';
 import {ViewportContext} from '../../lib/contexts/theme_context';
 import TradingViewMobile from '../trading_view_mobile/trading_view_mobile';
 import TradingHeaderMobile from '../trading_header_mobile/trading_header_mobile';
+import TradeStatistics from '../trade_statistics/trade_statistics';
 
 const MarketSection = () => {
   const {layoutAssertion} = useContext(ViewportContext);
@@ -29,6 +30,10 @@ const MarketSection = () => {
         <div>
           {displayedTradingView}
           {/* <TradingView /> */}
+        </div>
+
+        <div>
+          <TradeStatistics />
         </div>
       </div>
     </div>

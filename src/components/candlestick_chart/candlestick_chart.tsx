@@ -89,7 +89,7 @@ export default function CandlestickChart({
   const chartOptionsWithPositionLabel: ApexOptions = {
     chart: {
       // id: candlestickChartIdHandler(id),
-      // id: data,
+      id: '',
       type: 'candlestick',
       height: 0,
 

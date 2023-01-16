@@ -73,7 +73,8 @@ const TradeStatistics = ({
           {/* Bar */}
           <div className={`relative mb-4 h-2 w-full rounded-full bg-lightRed`}>
             <div
-              className={`absolute top-0 left-0 h-2 ${displayedBBI} rounded-l bg-lightGreen5`}
+              className={`absolute top-0 left-0 h-2 rounded-l bg-lightGreen5`}
+              style={{width: `${bullAndBearIndex}%`}}
             ></div>
           </div>
         </div>

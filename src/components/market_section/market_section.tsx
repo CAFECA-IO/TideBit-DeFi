@@ -40,7 +40,7 @@ const MarketSection = () => {
             fiveMin={{low: 1200, now: '32rem', high: 1320}}
             sixtyMin={{low: 1100, now: '18rem', high: 1840}}
             oneDay={{low: 1060, now: '18rem', high: 1900}}
-            bullAndBearIndex="1/3"
+            bullAndBearIndex="33"
             long={33}
             short={67}
           />

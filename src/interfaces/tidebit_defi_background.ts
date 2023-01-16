@@ -41,6 +41,9 @@ export interface IUser {
   deposit: (props: {asset: string; amount: number}) => Promise<OrderStatusUnion>;
   withdraw: (props: {asset: string; amount: number}) => Promise<OrderStatusUnion>;
 
+  notifications: INotification[];
+  // getNotifications: () => INotification[];
+
   // -----------Ignores below----------------
   // 拿到所有withdraw / deposit / CFD 紀錄
   // receipts: IReceipt[];

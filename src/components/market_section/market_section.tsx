@@ -33,7 +33,8 @@ const MarketSection = () => {
         </div>
 
         <div>
-          <TradeStatistics />
+          {/* TODO: more completed spacing configuration */}
+          <TradeStatistics bullAndBearIndex="1/3" long={33} short={67} />
         </div>
       </div>
     </div>

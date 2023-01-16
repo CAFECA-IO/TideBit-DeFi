@@ -18,7 +18,8 @@ const TradeStatistics = ({
   sixtyMin,
   oneDay,
 }: ITradeStatistics) => {
-  const overallWidth = 'w-2/3 xl:w-3/4';
+  const overallWidth = 'w-full pr-5 lg:p-0 lg:w-2/3 xl:w-3/4';
+  const dividerWidth = 'w-full lg:w-2/3 xl:w-3/4';
   const displayedBBI = `w-${bullAndBearIndex}`;
 
   // const fiveMinNow = `ml-${fiveMin.now} -mb-4`;
@@ -60,7 +61,7 @@ const TradeStatistics = ({
     <>
       <div className="mt-5 flex-col justify-start lg:mt-8 lg:pl-5">
         <h1 className="text-start text-xl text-lightWhite">Live Statistics</h1>
-        <span className={`${overallWidth} mb-3 inline-block h-px rounded bg-white/30`}></span>
+        <span className={`${dividerWidth} mb-3 inline-block h-px rounded bg-white/30`}></span>
 
         {/* ----------Sellers vs. Buyers---------- */}
         <p className="mb-3 text-base text-lightGray">Traders' Sentiment</p>

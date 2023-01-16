@@ -21,9 +21,14 @@ const TradeStatistics = ({
   const overallWidth = 'w-2/3 xl:w-3/4';
   const displayedBBI = `w-${bullAndBearIndex}`;
 
-  const fiveMinNow = `ml-${fiveMin.now}`;
-  const sixtyMinNow = `ml-${sixtyMin.now}`;
-  const oneDayNow = `ml-${oneDay.now}`;
+  // const fiveMinNow = `ml-${fiveMin.now} -mb-4`;
+  // const sixtyMinNow = `ml-${sixtyMin.now} -mb-4`;
+  // const oneDayNow = `ml-${oneDay.now} -mb-4`;
+
+  const fiveMinStyle = {
+    '@media (minWidth: 1024px)': {marginLeft: `${fiveMin.now}rem`},
+    '@media (minWidth: 700px)': {marginLeft: `${Number(fiveMin.now) / 2}rem`},
+  };
 
   // console.log('six。tyNow: ', sixtyMinNow);
   const nowPointer = (
@@ -85,7 +90,9 @@ const TradeStatistics = ({
           {/* [5 min] Progress bar and triangle */}
           <div className="mb-3">
             <div>
-              <div className={`-mb-4 ${fiveMinNow}`}>{nowPointer}</div>
+              <div className={`-mb-4`} style={{marginLeft: fiveMin.now}}>
+                {nowPointer}
+              </div>
               <div className={`-z-10 mb-2 h-2 w-full rounded-full bg-lightGray3`}></div>
             </div>
 
@@ -99,7 +106,9 @@ const TradeStatistics = ({
           {/* [60 min] Progress bar and triangle */}
           <div className="mb-3">
             <div>
-              <div className={`${sixtyMinNow} -mb-4`}>{nowPointer}</div>
+              <div className={`-mb-4`} style={{marginLeft: sixtyMin.now}}>
+                {nowPointer}
+              </div>
               <div className={`-z-10 mb-2 h-2 w-full rounded-full bg-lightGray3`}></div>
             </div>
 
@@ -113,7 +122,9 @@ const TradeStatistics = ({
           {/* [1 day] Progress bar and triangle */}
           <div className="mb-3">
             <div>
-              <div className={`-mb-4 ${oneDayNow}`}>{nowPointer}</div>
+              <div className={`-mb-4`} style={{marginLeft: oneDay.now}}>
+                {nowPointer}
+              </div>
               <div className={`-z-10 mb-2 h-2 w-full rounded-full bg-lightGray3`}></div>
             </div>
 

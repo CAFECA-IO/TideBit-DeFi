@@ -60,13 +60,13 @@ const TradeStatistics = ({bullAndBearIndex, long, short}: ITradeStatistics) => {
         {/* High and Low vs. Now */}
         <p className="mb-3 text-base text-lightGray">High/ Low</p>
         {/* <div className={`${overallWidth}`}> */}
-        <div className={`${overallWidth} absolute`}>
+        <div className={`${overallWidth}`}>
           <div className={`-mb-4`}>{triangle}</div>
           {/* <div className={`z-10 -mb-5`}>
             <VscTriangleDown size={20} />
           </div> */}
 
-          <div className={`relative -z-10 mb-4 h-2 w-full rounded-full bg-lightGray3`}></div>
+          <div className={`-z-10 mb-4 h-2 w-full rounded-full bg-lightGray3`}></div>
         </div>
         {/* </div> */}
       </div>

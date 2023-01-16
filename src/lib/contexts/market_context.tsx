@@ -6,7 +6,7 @@ import {
   TRADING_CHART_BORDER_COLOR,
 } from '../../constants/display';
 import {ApexOptions} from 'apexcharts';
-import {IPriceData} from '../../interfaces/tidebit_defi_background';
+import {IPriceData, ITickerDetails} from '../../interfaces/tidebit_defi_background';
 
 export interface ITickerData {
   currency: string;
@@ -458,6 +458,7 @@ export interface IMarketContext {
   candlestickChartIdHandler: (id: string) => void;
   availableTransferOptions: ITransferOptions[];
   liveStatstics: IPriceData | null;
+  bullAndBearIndex: number;
   // transferOptions: ITransferOptions[];
   // getTickerData: (ticker: string) => ITickerData; // 會拿到哪些是被star的
 }
@@ -479,6 +480,7 @@ export const MarketContext = createContext<IMarketContext>({
   candlestickChartIdHandler: () => null,
   availableTransferOptions: [],
   liveStatstics: null,
+  bullAndBearIndex: 0,
   // transferOptions: [],
   // getTickerData: () => ITickerData,
 });
@@ -503,6 +505,8 @@ const liveStatstics: IPriceData = {
   sixtyMin: {low: 1100, high: 1840, now: '27'},
   oneDay: {low: 1060, high: 2040, now: '39'},
 };
+
+const bullAndBearIndex = 62;
 
 export const MarketProvider = ({children}: IMarketProvider) => {
   const [availableTickers, setAvailableTickers] = useState<ITickerData[]>(addPropertyToArray);
@@ -544,6 +548,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     // transferOptions,
     availableTransferOptions: availableTransferOptions,
     liveStatstics,
+    bullAndBearIndex,
   };
 
   return <MarketContext.Provider value={defaultValue}>{children}</MarketContext.Provider>;

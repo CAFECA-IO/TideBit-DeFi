@@ -9,7 +9,7 @@ import {MarketContext} from '../../lib/contexts/market_context';
 
 const MarketSection = () => {
   const {layoutAssertion} = useContext(ViewportContext);
-  const {liveStatstics} = useContext(MarketContext);
+  const {liveStatstics, bullAndBearIndex} = useContext(MarketContext);
   const {fiveMin, sixtyMin, oneDay} = liveStatstics ?? {};
   // console.log('live statstic:', liveStatstics);
 
@@ -45,9 +45,9 @@ const MarketSection = () => {
               high: sixtyMin?.high ?? 0,
             }}
             oneDay={{low: oneDay?.low ?? 0, now: oneDay?.now ?? '', high: oneDay?.high ?? 0}}
-            bullAndBearIndex="33"
-            long={33}
-            short={67}
+            bullAndBearIndex={bullAndBearIndex}
+            long={bullAndBearIndex}
+            short={100 - bullAndBearIndex}
           />
         </div>
       </div>

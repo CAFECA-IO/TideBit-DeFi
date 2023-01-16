@@ -2,7 +2,7 @@ import React from 'react';
 import {VscTriangleDown} from 'react-icons/vsc';
 
 interface ITradeStatistics {
-  bullAndBearIndex: string;
+  bullAndBearIndex: number;
   long: number;
   short: number;
   fiveMin: {low: number; high: number; now: string};

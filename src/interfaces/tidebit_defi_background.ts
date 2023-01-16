@@ -262,9 +262,9 @@ export interface ITickerDetails {
 }
 
 export interface IPriceData {
-  fiveMin: {low: number; high: number; now: number}; // [low, high, now]
-  sixtyMin: {low: number; high: number; now: number};
-  oneDay: {low: number; high: number; now: number};
+  fiveMin: {low: number; high: number; now: string}; // [low, high, now]
+  sixtyMin: {low: number; high: number; now: string};
+  oneDay: {low: number; high: number; now: string};
 }
 
 export interface ICryptoDetails {

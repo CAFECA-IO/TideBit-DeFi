@@ -495,6 +495,8 @@ const availableTransferOptions = [
   {label: 'EOS', content: 'EOS'},
 ];
 
+// const;
+
 export const MarketProvider = ({children}: IMarketProvider) => {
   const [availableTickers, setAvailableTickers] = useState<ITickerData[]>(addPropertyToArray);
   const [isCFDTradable, setIsCFDTradable] = useState<boolean>(true);

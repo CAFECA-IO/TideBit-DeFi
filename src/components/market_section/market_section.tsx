@@ -34,7 +34,15 @@ const MarketSection = () => {
 
         <div>
           {/* TODO: more completed spacing configuration */}
-          <TradeStatistics bullAndBearIndex="1/3" long={33} short={67} />
+          {/* now:1300 => (1300-1200)/(1320-1200)=5/6 */}
+          <TradeStatistics
+            fiveMin={{low: 1200, now: '5/6', high: 1320}}
+            sixtyMin={{low: 1100, now: '3/10', high: 1840}}
+            oneDay={{low: 1060, now: '3/10', high: 1900}}
+            bullAndBearIndex="1/3"
+            long={33}
+            short={67}
+          />
         </div>
       </div>
     </div>

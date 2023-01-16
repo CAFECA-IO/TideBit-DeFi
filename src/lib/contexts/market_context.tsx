@@ -6,6 +6,7 @@ import {
   TRADING_CHART_BORDER_COLOR,
 } from '../../constants/display';
 import {ApexOptions} from 'apexcharts';
+import {IPriceData} from '../../interfaces/tidebit_defi_background';
 
 export interface ITickerData {
   currency: string;
@@ -456,6 +457,7 @@ export interface IMarketContext {
   candlestickId: string;
   candlestickChartIdHandler: (id: string) => void;
   availableTransferOptions: ITransferOptions[];
+  liveStatstics: IPriceData | null;
   // transferOptions: ITransferOptions[];
   // getTickerData: (ticker: string) => ITickerData; // 會拿到哪些是被star的
 }
@@ -476,6 +478,7 @@ export const MarketContext = createContext<IMarketContext>({
   candlestickId: '',
   candlestickChartIdHandler: () => null,
   availableTransferOptions: [],
+  liveStatstics: null,
   // transferOptions: [],
   // getTickerData: () => ITickerData,
 });
@@ -495,7 +498,11 @@ const availableTransferOptions = [
   {label: 'EOS', content: 'EOS'},
 ];
 
-// const;
+const liveStatstics: IPriceData = {
+  fiveMin: {low: 1200, high: 1320, now: '80'},
+  sixtyMin: {low: 1100, high: 1840, now: '27'},
+  oneDay: {low: 1060, high: 2040, now: '39'},
+};
 
 export const MarketProvider = ({children}: IMarketProvider) => {
   const [availableTickers, setAvailableTickers] = useState<ITickerData[]>(addPropertyToArray);
@@ -536,6 +543,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     candlestickChartIdHandler,
     // transferOptions,
     availableTransferOptions: availableTransferOptions,
+    liveStatstics,
   };
 
   return <MarketContext.Provider value={defaultValue}>{children}</MarketContext.Provider>;

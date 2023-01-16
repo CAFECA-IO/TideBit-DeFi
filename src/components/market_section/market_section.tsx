@@ -5,9 +5,13 @@ import {ViewportContext} from '../../lib/contexts/theme_context';
 import TradingViewMobile from '../trading_view_mobile/trading_view_mobile';
 import TradingHeaderMobile from '../trading_header_mobile/trading_header_mobile';
 import TradeStatistics from '../trade_statistics/trade_statistics';
+import {MarketContext} from '../../lib/contexts/market_context';
 
 const MarketSection = () => {
   const {layoutAssertion} = useContext(ViewportContext);
+  const {liveStatstics} = useContext(MarketContext);
+  const {fiveMin, sixtyMin, oneDay} = liveStatstics ?? {};
+  // console.log('live statstic:', liveStatstics);
 
   const displayedTickerHeader =
     layoutAssertion === 'mobile' ? (
@@ -33,11 +37,14 @@ const MarketSection = () => {
         </div>
 
         <div>
-          {/* TODO: more completed spacing configuration */}
           <TradeStatistics
-            fiveMin={{low: 1200, now: '80', high: 1320}}
-            sixtyMin={{low: 1100, now: '27', high: 1840}}
-            oneDay={{low: 1060, now: '27', high: 1900}}
+            fiveMin={{low: fiveMin?.low ?? 0, now: fiveMin?.now ?? '', high: fiveMin?.high ?? 0}}
+            sixtyMin={{
+              low: sixtyMin?.low ?? 0,
+              now: sixtyMin?.now ?? '',
+              high: sixtyMin?.high ?? 0,
+            }}
+            oneDay={{low: oneDay?.low ?? 0, now: oneDay?.now ?? '', high: oneDay?.high ?? 0}}
             bullAndBearIndex="33"
             long={33}
             short={67}

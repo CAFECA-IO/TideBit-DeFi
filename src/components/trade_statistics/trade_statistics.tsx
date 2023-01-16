@@ -20,7 +20,7 @@ const TradeStatistics = ({
 }: ITradeStatistics) => {
   const overallWidth = 'w-full pr-5 lg:p-0 lg:w-2/3 xl:w-3/4';
   const dividerWidth = 'w-full lg:w-2/3 xl:w-3/4';
-  const displayedBBI = `w-${bullAndBearIndex}`;
+  // const displayedBBI = `w-${bullAndBearIndex}`;
 
   // const fiveMinNow = `ml-${fiveMin.now} -mb-4`;
   // const sixtyMinNow = `ml-${sixtyMin.now} -mb-4`;
@@ -31,7 +31,8 @@ const TradeStatistics = ({
   //   '@media (minWidth: 700px)': {marginLeft: `${Number(fiveMin.now) / 2}rem`},
   // };
 
-  // console.log('six。tyNow: ', sixtyMinNow);
+  // console.log('oneDay', oneDay);
+
   const nowPointer = (
     <div className="">
       <svg xmlns="http://www.w3.org/2000/svg" width="33" height="31" viewBox="0 0 33 31">

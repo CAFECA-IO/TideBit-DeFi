@@ -59,6 +59,7 @@ module.exports = {
         '200px': '200px',
         '250px': '250px',
         '350px': '350px',
+        '3xs': '200px',
       },
       spacing: {
         // width / height / padding / margin / top / bottom / right / left

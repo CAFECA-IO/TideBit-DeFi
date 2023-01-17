@@ -39,7 +39,7 @@ const CryptoNewsItem = ({heading, highlight, content, img, ...otherProps}: INews
     <>
       <section className={`${overallWidth}`}>
         <div className="mx-auto flex flex-col items-center px-0 py-0 lg:flex-row">
-          <div className="mb-2 flex w-2/5 justify-center md:mb-0 lg:mb-10 lg:justify-start">
+          <div className="mb-2 flex max-w-3xs justify-center md:mb-0 lg:mb-10 lg:justify-start">
             {displayedImg}
           </div>
           <div className="flex flex-col items-center text-center lg:grow lg:items-start lg:pl-7 lg:text-left">

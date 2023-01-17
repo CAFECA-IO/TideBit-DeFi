@@ -26,7 +26,7 @@ const CryptoNewsItem = ({heading, highlight, content, img, ...otherProps}: INews
     accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea`;
 
   const displayedImg = img ? (
-    <Image src={img} alt="news" width={400} height={230} />
+    <Image src={img} alt="news" width={900} height={500} />
   ) : (
     <img
       className="rounded object-cover object-center"
@@ -39,7 +39,7 @@ const CryptoNewsItem = ({heading, highlight, content, img, ...otherProps}: INews
     <>
       <section className={`${overallWidth}`}>
         <div className="mx-auto flex flex-col items-center px-0 py-0 lg:flex-row">
-          <div className="mb-10 flex w-2/5 justify-center md:mb-0 lg:justify-start">
+          <div className="mb-2 flex w-2/5 justify-center md:mb-0 lg:mb-10 lg:justify-start">
             {displayedImg}
           </div>
           <div className="flex flex-col items-center text-center lg:grow lg:items-start lg:pl-7 lg:text-left">

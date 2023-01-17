@@ -115,39 +115,41 @@ const CryptoSummary = () => {
               </div>
 
               {/* Right side */}
-              <div className="flex flex-col justify-start md:w-1/2 md:pl-12">
-                <div className="flex justify-evenly pr-0 text-sm text-lightGray5">
+              <div className="mt-4 flex w-full flex-col justify-start lg:w-1/2 lg:pl-12">
+                <div className="flex justify-between pb-5 text-sm text-lightGray5 lg:pr-10">
                   <p>Price</p>
-
                   <p>39051 USDT</p>
                 </div>
-                {/* <h2 className="mb-3 text-sm font-semibold tracking-wider text-white">CATEGORIES</h2> */}
-                {/* <nav className="-mb-1 flex list-none flex-wrap">
-                  <li className="mb-1 w-1/2 lg:w-1/3">
-                    <a className="hover:text-white">First Link</a>
-                  </li>
-                  <li className="mb-1 w-1/2 lg:w-1/3">
-                    <a className="hover:text-white">Second Link</a>
-                  </li>
-                  <li className="mb-1 w-1/2 lg:w-1/3">
-                    <a className="hover:text-white">Third Link</a>
-                  </li>
-                  <li className="mb-1 w-1/2 lg:w-1/3">
-                    <a className="hover:text-white">Fourth Link</a>
-                  </li>
-                  <li className="mb-1 w-1/2 lg:w-1/3">
-                    <a className="hover:text-white">Fifth Link</a>
-                  </li>
-                  <li className="mb-1 w-1/2 lg:w-1/3">
-                    <a className="hover:text-white">Sixth Link</a>
-                  </li>
-                  <li className="mb-1 w-1/2 lg:w-1/3">
-                    <a className="hover:text-white">Seventh Link</a>
-                  </li>
-                  <li className="mb-1 w-1/2 lg:w-1/3">
-                    <a className="hover:text-white">Eighth Link</a>
-                  </li>
-                </nav> */}
+
+                <div className="flex justify-between pb-5 text-sm text-lightGray5 lg:pr-10">
+                  <p>Rank</p>
+                  <p>1</p>
+                </div>
+
+                <div className="flex justify-between pb-5 text-sm text-lightGray5 lg:pr-10">
+                  <p>Publish time</p>
+                  <p>2008-11-01</p>
+                </div>
+
+                <div className="flex justify-between pb-5 text-sm text-lightGray5 lg:pr-10">
+                  <p>Publish amount</p>
+                  <p>39051 USDT</p>
+                </div>
+
+                <div className="flex justify-between pb-5 text-sm text-lightGray5 lg:pr-10">
+                  <p>Trading volume</p>
+                  <p>19,014,962</p>
+                </div>
+
+                <div className="flex justify-between pb-5 text-sm text-lightGray5 lg:pr-10">
+                  <p>Total value</p>
+                  <p>820,071,000,000 USDT</p>
+                </div>
+
+                <div className="flex justify-between pb-5 text-sm text-lightGray5 lg:pr-10">
+                  <p>Trading value</p>
+                  <p>742,553,281,052 USDT</p>
+                </div>
               </div>
             </div>
           </section>

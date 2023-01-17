@@ -116,7 +116,7 @@ const CryptoSummary = () => {
 
               {/* Right side */}
               <div className="flex flex-col justify-start md:w-1/2 md:pl-12">
-                <div className="flex justify-between pr-5 text-sm text-lightGray5">
+                <div className="flex justify-evenly pr-0 text-sm text-lightGray5">
                   <p>Price</p>
 
                   <p>39051 USDT</p>

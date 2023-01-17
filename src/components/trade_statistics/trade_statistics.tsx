@@ -60,7 +60,7 @@ const TradeStatistics = ({
 
   return (
     <>
-      <div className="mt-5 flex-col justify-start lg:mt-8 lg:pl-5">
+      <div className="flex-col justify-start">
         <h1 className="text-start text-xl text-lightWhite">Live Statistics</h1>
         <span className={`${dividerWidth} mb-3 inline-block h-px rounded bg-white/30`}></span>
 

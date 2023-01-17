@@ -6,6 +6,7 @@ import TradingViewMobile from '../trading_view_mobile/trading_view_mobile';
 import TradingHeaderMobile from '../trading_header_mobile/trading_header_mobile';
 import TradeStatistics from '../trade_statistics/trade_statistics';
 import {MarketContext} from '../../lib/contexts/market_context';
+import CryptoSummary from '../crypto_summary/crypto_summary';
 
 const MarketSection = () => {
   const {layoutAssertion} = useContext(ViewportContext);
@@ -36,7 +37,7 @@ const MarketSection = () => {
           {/* <TradingView /> */}
         </div>
 
-        <div>
+        <div className="mt-5 lg:mt-8 lg:pl-5">
           <TradeStatistics
             fiveMin={{low: fiveMin?.low ?? 0, now: fiveMin?.now ?? '', high: fiveMin?.high ?? 0}}
             sixtyMin={{
@@ -49,6 +50,10 @@ const MarketSection = () => {
             long={bullAndBearIndex}
             short={100 - bullAndBearIndex}
           />
+        </div>
+
+        <div className="mt-5 lg:mt-8 lg:pl-5">
+          <CryptoSummary />
         </div>
       </div>
     </div>

@@ -262,6 +262,22 @@ export interface ITickerDetails {
   news: IBriefNewsItem[];
 }
 
+export interface ICryptoSummary {
+  // icon: string; // TODO: svg
+  label: string;
+  introduction: string;
+  whitePaperLink: string;
+  websiteLink: string;
+
+  price: string;
+  rank: number;
+  publishTime: string;
+  publishAmount: string; // circulatingSupply / totalSupply / maxSupply
+  tradingVolume: string;
+  totalValue: string; // marketCap
+  tradingValue: string;
+}
+
 export interface IBriefNewsItem {
   // id: string;
   // timestamp: number;

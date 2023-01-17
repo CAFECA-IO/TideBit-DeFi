@@ -15,6 +15,21 @@ const MarketSection = () => {
   const {fiveMin, sixtyMin, oneDay} = liveStatstics ?? {};
   // console.log('live statstic:', liveStatstics);
 
+  const {cryptoSummary} = useContext(MarketContext);
+  const {
+    label,
+    introduction,
+    whitePaperLink,
+    websiteLink,
+    price,
+    rank,
+    publishTime,
+    publishAmount,
+    tradingVolume,
+    totalValue,
+    tradingValue,
+  } = cryptoSummary ?? {};
+
   const displayedTickerHeader =
     layoutAssertion === 'mobile' ? (
       <TradingHeaderMobile />
@@ -54,7 +69,19 @@ const MarketSection = () => {
         </div>
 
         <div className="mt-5 lg:mt-8 lg:pl-5">
-          <CryptoSummary />
+          <CryptoSummary
+            label={label ?? ''}
+            introduction={introduction ?? ''}
+            whitePaperLink={whitePaperLink ?? ''}
+            websiteLink={websiteLink ?? ''}
+            price={price ?? ''}
+            rank={rank ?? 0}
+            publishTime={publishTime ?? ''}
+            publishAmount={publishAmount ?? ''}
+            tradingVolume={tradingVolume ?? ''}
+            totalValue={totalValue ?? ''}
+            tradingValue={tradingValue ?? ''}
+          />
         </div>
 
         <div className="mb-10 mt-5 lg:mt-8 lg:pl-5">

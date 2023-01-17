@@ -1,7 +1,21 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import {BiLinkAlt} from 'react-icons/bi';
+import {MarketContext} from '../../lib/contexts/market_context';
+import {ICryptoSummary} from '../../interfaces/tidebit_defi_background';
 
-const CryptoSummary = () => {
+const CryptoSummary = ({
+  label,
+  introduction,
+  whitePaperLink,
+  websiteLink,
+  price,
+  rank,
+  publishTime,
+  publishAmount,
+  tradingVolume,
+  totalValue,
+  tradingValue,
+}: ICryptoSummary) => {
   const overallWidth = 'w-full pr-5 lg:p-0 lg:w-2/3 xl:w-3/4';
   const dividerWidth = 'w-full lg:w-2/3 xl:w-3/4';
 
@@ -65,17 +79,10 @@ const CryptoSummary = () => {
                 {/* Icon and name */}
                 <div className="flex items-center space-x-3 text-center">
                   <div className="">{cryptoIcon}</div>
-                  <h1 className="text-lg font-medium text-white">Ethereum</h1>
+                  <h1 className="text-lg font-medium text-white">{label}</h1>
                 </div>
 
-                <p className="pt-2 text-sm leading-relaxed text-lightGray5">
-                  Ethereum (ETH) was launched in 2015. Ethereum is a decentralized blockchain that
-                  supports smart contracts-essentially computer programs-that can automatically
-                  execute when certain conditions are met. The native cryptocurrency-essentially
-                  computer programs-of the platform is called ether or ethereum. Ethereum is
-                  divisible to 18 decimal places. There is currently no hard cap on the total supply
-                  of ETH.
-                </p>
+                <p className="pt-2 text-sm leading-relaxed text-lightGray5">{introduction}</p>
 
                 {/* Links */}
                 <div className="mt-5 flex space-x-2">
@@ -83,7 +90,7 @@ const CryptoSummary = () => {
                     className={`flex w-120px flex-row items-center rounded-full bg-lightGray3 px-3 py-1 text-sm text-lightWhite`}
                   >
                     <p>Whitepaper</p>
-                    <a href="/trading" className="pl-2">
+                    <a href={whitePaperLink} className="pl-2">
                       <BiLinkAlt size={20} />
                     </a>
                   </div>
@@ -92,7 +99,7 @@ const CryptoSummary = () => {
                     className={`flex w-100px flex-row items-center rounded-full bg-lightGray3 px-3 py-1 text-sm text-lightWhite`}
                   >
                     <p>Website</p>
-                    <a href="/trading" className="pl-2">
+                    <a href={websiteLink} className="pl-2">
                       <BiLinkAlt size={20} />
                     </a>
                   </div>
@@ -118,37 +125,37 @@ const CryptoSummary = () => {
               <div className="mt-4 flex w-full flex-col justify-start lg:w-1/2 lg:pl-12">
                 <div className="flex justify-between pb-5 text-sm text-lightGray5 lg:pr-10">
                   <p>Price</p>
-                  <p>39051 USDT</p>
+                  <p>{price}</p>
                 </div>
 
                 <div className="flex justify-between pb-5 text-sm text-lightGray5 lg:pr-10">
                   <p>Rank</p>
-                  <p>1</p>
+                  <p>{rank}</p>
                 </div>
 
                 <div className="flex justify-between pb-5 text-sm text-lightGray5 lg:pr-10">
                   <p>Publish time</p>
-                  <p>2008-11-01</p>
+                  <p>{publishTime}</p>
                 </div>
 
                 <div className="flex justify-between pb-5 text-sm text-lightGray5 lg:pr-10">
                   <p>Publish amount</p>
-                  <p>39051 USDT</p>
+                  <p>{publishAmount}</p>
                 </div>
 
                 <div className="flex justify-between pb-5 text-sm text-lightGray5 lg:pr-10">
                   <p>Trading volume</p>
-                  <p>19,014,962</p>
+                  <p>{tradingVolume}</p>
                 </div>
 
                 <div className="flex justify-between pb-5 text-sm text-lightGray5 lg:pr-10">
                   <p>Total value</p>
-                  <p>820,071,000,000 USDT</p>
+                  <p>{totalValue}</p>
                 </div>
 
                 <div className="flex justify-between pb-5 text-sm text-lightGray5 lg:pr-10">
                   <p>Trading value</p>
-                  <p>742,553,281,052 USDT</p>
+                  <p>{tradingValue}</p>
                 </div>
               </div>
             </div>

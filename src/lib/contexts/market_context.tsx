@@ -6,7 +6,12 @@ import {
   TRADING_CHART_BORDER_COLOR,
 } from '../../constants/display';
 import {ApexOptions} from 'apexcharts';
-import {IBriefNewsItem, IPriceData, ITickerDetails} from '../../interfaces/tidebit_defi_background';
+import {
+  IBriefNewsItem,
+  ICryptoSummary,
+  IPriceData,
+  ITickerDetails,
+} from '../../interfaces/tidebit_defi_background';
 
 export interface ITickerData {
   currency: string;
@@ -460,8 +465,7 @@ export interface IMarketContext {
   liveStatstics: IPriceData | null;
   bullAndBearIndex: number;
   cryptoBriefNews: IBriefNewsItem[];
-  // transferOptions: ITransferOptions[];
-  // getTickerData: (ticker: string) => ITickerData; // 會拿到哪些是被star的
+  cryptoSummary: ICryptoSummary | null;
 }
 
 export interface ITransferOptions {
@@ -483,8 +487,7 @@ export const MarketContext = createContext<IMarketContext>({
   liveStatstics: null,
   bullAndBearIndex: 0,
   cryptoBriefNews: [],
-  // transferOptions: [],
-  // getTickerData: () => ITickerData,
+  cryptoSummary: null,
 });
 
 const availableTransferOptions = [
@@ -532,6 +535,21 @@ const cryptoBriefNews: IBriefNewsItem[] = [
   },
 ];
 
+const cryptoSummary: ICryptoSummary = {
+  label: 'Ethereum',
+  introduction: `Ethereum (ETH) was launched in 2015. Ethereum is a decentralized blockchain that supports smart contracts-essentially computer programs-that can automatically execute when certain conditions are met. The native cryptocurrency-essentially computer programs-of the platform is called ether or ethereum. Ethereum is divisible to 18 decimal places. There is currently no hard cap on the total supply
+of ETH.`,
+  whitePaperLink: '#',
+  websiteLink: '#',
+  price: '39051 USDT',
+  rank: 1,
+  publishTime: '2008-11-01',
+  publishAmount: '21,000,000',
+  tradingValue: '576,461,120',
+  tradingVolume: '19,014,962',
+  totalValue: '820,071,000,000 USDT',
+};
+
 export const MarketProvider = ({children}: IMarketProvider) => {
   const [availableTickers, setAvailableTickers] = useState<ITickerData[]>(addPropertyToArray);
   const [isCFDTradable, setIsCFDTradable] = useState<boolean>(true);
@@ -574,6 +592,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     liveStatstics,
     bullAndBearIndex,
     cryptoBriefNews,
+    cryptoSummary,
   };
 
   return <MarketContext.Provider value={defaultValue}>{children}</MarketContext.Provider>;

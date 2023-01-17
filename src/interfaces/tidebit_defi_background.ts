@@ -259,7 +259,8 @@ export interface ITickerDetails {
   bullAndBearIndex: number; // BBI 多空指數
   priceData: IPriceData; // [5m, 60m, 1d]
   cryptoDetails: ICryptoDetails;
-  news: IBriefNewsItem[];
+
+  news: (props: string) => IBriefNewsItem[];
 }
 
 export interface ICryptoSummary {

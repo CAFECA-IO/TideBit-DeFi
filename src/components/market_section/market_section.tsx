@@ -7,6 +7,7 @@ import TradingHeaderMobile from '../trading_header_mobile/trading_header_mobile'
 import TradeStatistics from '../trade_statistics/trade_statistics';
 import {MarketContext} from '../../lib/contexts/market_context';
 import CryptoSummary from '../crypto_summary/crypto_summary';
+import CryptoNewsSection from '../crypto_news_section/crypto_news_section';
 
 const MarketSection = () => {
   const {layoutAssertion} = useContext(ViewportContext);
@@ -54,6 +55,10 @@ const MarketSection = () => {
 
         <div className="mt-5 lg:mt-8 lg:pl-5">
           <CryptoSummary />
+        </div>
+
+        <div className="mb-5 mt-5 lg:mt-8 lg:pl-5">
+          <CryptoNewsSection />
         </div>
       </div>
     </div>

@@ -12,11 +12,11 @@ const CryptoNewsItem = ({heading, highlight, content, img, ...otherProps}: INews
   const overallWidth = 'w-full pr-5 lg:p-0 lg:w-2/3 xl:w-3/4';
 
   const displayedHeading = highlight ? (
-    <div className="font-bold">
+    <div className="">
       {heading} <span className="text-tidebitTheme">{highlight}</span>
     </div>
   ) : (
-    <div className="font-bold">{heading}</div>
+    <div className="">{heading}</div>
   );
 
   const displayedContent = content
@@ -37,20 +37,19 @@ const CryptoNewsItem = ({heading, highlight, content, img, ...otherProps}: INews
 
   return (
     <>
-      {/* Desktop */}
       <section className={`${overallWidth}`}>
         <div className="mx-auto flex flex-col items-center px-0 py-0 lg:flex-row">
           <div className="mb-10 flex w-2/5 justify-center md:mb-0 lg:justify-start">
             {displayedImg}
           </div>
           <div className="flex flex-col items-center text-center lg:grow lg:items-start lg:pl-7 lg:text-left">
-            <h1 className="mt-6 mb-2 text-lg font-medium text-lightWhite">
+            <h1 className="mt-3 mb-3 text-lg text-lightWhite">
               {displayedHeading}
               {/* Add news title here */}
               {/* <br className="hidden lg:inline-block" />
               readymade gluten */}
             </h1>
-            <p className="mb-8 text-xs leading-relaxed">
+            <p className="mb-12 text-xs leading-relaxed">
               {displayedContent}
               {/* Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
               invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et

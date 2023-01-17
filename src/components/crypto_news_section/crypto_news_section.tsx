@@ -12,6 +12,21 @@ const CryptoNewsSection = () => {
         <h1 className="pr-12 text-start text-xl text-lightWhite">News</h1>
         <span className={`${dividerWidth} mb-3 inline-block h-px rounded bg-white/30`}></span>
         <CryptoNewsItem
+          img="/elements/rectangle_715@2x.png"
+          heading={`Add news title here`}
+          content={`Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
+              invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et
+              accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea`}
+        />
+        <CryptoNewsItem
+          img="/elements/rectangle_716@2x.png"
+          heading={`Add news title here`}
+          content={`Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
+              invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et
+              accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea`}
+        />
+        <CryptoNewsItem
+          img="/elements/rectangle_717@2x.png"
           heading={`Add news title here`}
           content={`Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
               invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et

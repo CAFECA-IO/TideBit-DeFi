@@ -1,4 +1,5 @@
 import React from 'react';
+import {BiLinkAlt} from 'react-icons/bi';
 
 const CryptoSummary = () => {
   const overallWidth = 'w-full pr-5 lg:p-0 lg:w-2/3 xl:w-3/4';
@@ -54,13 +55,13 @@ const CryptoSummary = () => {
     <>
       <div className="flex-col justify-start">
         {' '}
-        <h1 className="text-start text-xl text-lightWhite">About</h1>
+        <h1 className="pr-12 text-start text-xl text-lightWhite">About</h1>
         <span className={`${dividerWidth} mb-3 inline-block h-px rounded bg-white/30`}></span>
         <div className={`${overallWidth}`}>
           <section className="">
-            <div className="container mx-auto flex flex-wrap items-center pb-5">
+            <div className="mx-auto flex flex-wrap pb-5">
               {/* Left side */}
-              <div className="mb-0 border-b border-gray-800 pb-10 md:mb-0 md:w-1/2 md:border-r md:border-b-0 md:py-0 md:pr-12">
+              <div className="mb-0 border-b border-white/30 pb-10 lg:mb-0 lg:w-1/2 lg:border-r-2 lg:border-b-0 lg:py-0 lg:pr-12">
                 {/* Icon and name */}
                 <div className="flex items-center space-x-3 text-center">
                   <div className="">{cryptoIcon}</div>
@@ -75,6 +76,27 @@ const CryptoSummary = () => {
                   divisible to 18 decimal places. There is currently no hard cap on the total supply
                   of ETH.
                 </p>
+
+                {/* Links */}
+                <div className="mt-5 flex space-x-2">
+                  <div
+                    className={`flex w-120px flex-row items-center rounded-full bg-lightGray3 px-3 py-1 text-sm text-lightWhite`}
+                  >
+                    <p>Whitepaper</p>
+                    <a href="/trading" className="pl-2">
+                      <BiLinkAlt size={20} />
+                    </a>
+                  </div>
+
+                  <div
+                    className={`flex w-100px flex-row items-center rounded-full bg-lightGray3 px-3 py-1 text-sm text-lightWhite`}
+                  >
+                    <p>Website</p>
+                    <a href="/trading" className="pl-2">
+                      <BiLinkAlt size={20} />
+                    </a>
+                  </div>
+                </div>
 
                 {/* <a className="mt-4 inline-flex items-center text-blue-400">
                   Learn More
@@ -93,11 +115,14 @@ const CryptoSummary = () => {
               </div>
 
               {/* Right side */}
-              {/* <div className="flex flex-col md:w-1/2 md:pl-12">
-                <h2 className="title-font mb-3 text-sm font-semibold tracking-wider text-white">
-                  CATEGORIES
-                </h2>
-                <nav className="-mb-1 flex list-none flex-wrap">
+              <div className="flex flex-col justify-start md:w-1/2 md:pl-12">
+                <div className="flex justify-between pr-5 text-sm text-lightGray5">
+                  <p>Price</p>
+
+                  <p>39051 USDT</p>
+                </div>
+                {/* <h2 className="mb-3 text-sm font-semibold tracking-wider text-white">CATEGORIES</h2> */}
+                {/* <nav className="-mb-1 flex list-none flex-wrap">
                   <li className="mb-1 w-1/2 lg:w-1/3">
                     <a className="hover:text-white">First Link</a>
                   </li>
@@ -122,8 +147,8 @@ const CryptoSummary = () => {
                   <li className="mb-1 w-1/2 lg:w-1/3">
                     <a className="hover:text-white">Eighth Link</a>
                   </li>
-                </nav>
-              </div> */}
+                </nav> */}
+              </div>
             </div>
           </section>
         </div>

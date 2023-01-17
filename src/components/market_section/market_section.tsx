@@ -57,7 +57,7 @@ const MarketSection = () => {
           <CryptoSummary />
         </div>
 
-        <div className="mb-5 mt-5 lg:mt-8 lg:pl-5">
+        <div className="mb-10 mt-5 lg:mt-8 lg:pl-5">
           <CryptoNewsSection />
         </div>
       </div>

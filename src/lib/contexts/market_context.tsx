@@ -6,7 +6,7 @@ import {
   TRADING_CHART_BORDER_COLOR,
 } from '../../constants/display';
 import {ApexOptions} from 'apexcharts';
-import {IPriceData, ITickerDetails} from '../../interfaces/tidebit_defi_background';
+import {IBriefNewsItem, IPriceData, ITickerDetails} from '../../interfaces/tidebit_defi_background';
 
 export interface ITickerData {
   currency: string;
@@ -459,6 +459,7 @@ export interface IMarketContext {
   availableTransferOptions: ITransferOptions[];
   liveStatstics: IPriceData | null;
   bullAndBearIndex: number;
+  cryptoBriefNews: IBriefNewsItem[];
   // transferOptions: ITransferOptions[];
   // getTickerData: (ticker: string) => ITickerData; // 會拿到哪些是被star的
 }
@@ -481,6 +482,7 @@ export const MarketContext = createContext<IMarketContext>({
   availableTransferOptions: [],
   liveStatstics: null,
   bullAndBearIndex: 0,
+  cryptoBriefNews: [],
   // transferOptions: [],
   // getTickerData: () => ITickerData,
 });
@@ -507,6 +509,28 @@ const liveStatstics: IPriceData = {
 };
 
 const bullAndBearIndex = 62;
+
+const cryptoBriefNews: IBriefNewsItem[] = [
+  {
+    title: 'Add news title here',
+    content:
+      'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea',
+    // img: 'https://www.tidebit.com/wp-content/uploads/2020/09/20200915_1.jpg',
+    img: '/elements/rectangle_715@2x.png',
+  },
+  {
+    title: 'Add news title here',
+    content:
+      'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea',
+    img: '/elements/rectangle_716@2x.png',
+  },
+  {
+    title: 'Add news title here',
+    content:
+      'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea',
+    img: '/elements/rectangle_717@2x.png',
+  },
+];
 
 export const MarketProvider = ({children}: IMarketProvider) => {
   const [availableTickers, setAvailableTickers] = useState<ITickerData[]>(addPropertyToArray);
@@ -549,6 +573,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     availableTransferOptions: availableTransferOptions,
     liveStatstics,
     bullAndBearIndex,
+    cryptoBriefNews,
   };
 
   return <MarketContext.Provider value={defaultValue}>{children}</MarketContext.Provider>;

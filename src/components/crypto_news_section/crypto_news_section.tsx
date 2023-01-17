@@ -9,7 +9,7 @@ const CryptoNewsSection = () => {
 
   const displayedCryptoNews = cryptoBriefNews?.map((news, index) => {
     return (
-      <CryptoNewsItem key={news.img} img={news.img} heading={news.title} content={news.content} />
+      <CryptoNewsItem key={news.img} img={news.img} title={news.title} content={news.content} />
     );
   });
 

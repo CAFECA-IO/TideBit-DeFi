@@ -1,23 +1,19 @@
 import Image from 'next/image';
 import React from 'react';
+import {IBriefNewsItem} from '../../interfaces/tidebit_defi_background';
 
-interface INewsItemProps {
-  heading?: string;
-  highlight?: string;
-  content?: string;
-  img?: string;
-}
-
-const CryptoNewsItem = ({heading, highlight, content, img, ...otherProps}: INewsItemProps) => {
+const CryptoNewsItem = ({title: heading, content, img, ...otherProps}: IBriefNewsItem) => {
   const overallWidth = 'w-full pr-5 lg:p-0 lg:w-2/3 xl:w-3/4';
 
-  const displayedHeading = highlight ? (
-    <div className="">
-      {heading} <span className="text-tidebitTheme">{highlight}</span>
-    </div>
-  ) : (
-    <div className="">{heading}</div>
-  );
+  // const displayedHeading = highlight ? (
+  //   <div className="">
+  //     {heading} <span className="text-tidebitTheme">{highlight}</span>
+  //   </div>
+  // ) : (
+  //   <div className="">{heading}</div>
+  // );
+
+  const displayedHeading = <div className="">{heading}</div>;
 
   const displayedContent = content
     ? content

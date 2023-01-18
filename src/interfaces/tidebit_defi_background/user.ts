@@ -1,6 +1,6 @@
 import {ICFDBrief} from './cfd_brief';
-import {ICFDOrderRequest} from './cfd_order_request';
-import {ICFDOrderUpdate} from './cfd_order_update';
+import {ICFDOrderCreatingRequest} from './cfd_order_request';
+import {ICFDOrderUpdateRequest} from './cfd_order_update';
 import {IClosedCFDBrief} from './closed_cfd_brief';
 import {IClosedCFDDetails} from './closed_cfd_details';
 import {INotificationItem} from './notification_item';
@@ -53,9 +53,9 @@ export interface IUser {
   getClosedCFD: () => IClosedCFDDetails[];
 
   // TODO: uncertain props
-  createOrder: (props: ICFDOrderRequest) => Promise<IOrderStatusUnion>;
+  createOrder: (props: ICFDOrderCreatingRequest) => Promise<IOrderStatusUnion>;
   closeOrder: (props: {id: string}) => Promise<IOrderStatusUnion>;
-  updateOrder: (props: ICFDOrderUpdate) => Promise<IOrderStatusUnion>;
+  updateOrder: (props: ICFDOrderUpdateRequest) => Promise<IOrderStatusUnion>;
   deposit: (props: {asset: string; amount: number}) => Promise<IOrderStatusUnion>;
   withdraw: (props: {asset: string; amount: number}) => Promise<IOrderStatusUnion>;
   // + createOrder(orderType<CFD, Deposite, Withdraw, SpotTrade>, data):PublicOrder

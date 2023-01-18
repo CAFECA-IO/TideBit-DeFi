@@ -1,4 +1,4 @@
-export interface ICFDOrderRequest {
+export interface ICFDOrderCreatingRequest {
   ticker: string;
   operation: 'BUY' | 'SELL';
   leverage: number;

@@ -1,4 +1,4 @@
-export interface ICFDOrderUpdate {
+export interface ICFDOrderUpdateRequest {
   id: string;
   takeProfit?: number;
   stopLoss?: number;

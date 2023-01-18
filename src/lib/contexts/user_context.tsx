@@ -2,6 +2,7 @@ import React, {useContext, useState, useEffect, createContext} from 'react';
 import {ethers, providers} from 'ethers';
 import {ICardProps, ILineGraphProps} from '../../components/card/crypto_card';
 import {PROFIT_LOSS_COLOR_TYPE} from '../../constants/display';
+import Lunar from '@cafeca/lunar';
 
 export interface ITickerData {
   currency: string;
@@ -505,6 +506,8 @@ export const UserProvider = ({children}: IUserProvider) => {
   const [enableServiceTerm, setEnableServiceTerm] = useState<boolean>(false);
 
   const connect = async () => {
+    const lunar = new Lunar();
+    lunar.connect();
     setIsConnected(true);
     const provider = new providers.Web3Provider(window.ethereum);
     await provider.send('eth_requestAccounts', []);

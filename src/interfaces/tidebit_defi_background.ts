@@ -92,7 +92,7 @@ export interface ICFDBrief {
   ticker: string;
   operation: 'BUY' | 'SELL';
   openValue: number;
-  pNL: IPnLProps;
+  pNL: IPnL;
 }
 
 export interface ICFDPositionOnChart extends ICFDBrief {
@@ -138,7 +138,7 @@ export interface ICFDDetails {
   scheduledClosingTimestamp: number;
 
   openValue: number; // margin x leverage x price (USDT) = value (USDT)
-  pnl: IPnLProps; // calculated by context
+  pnl: IPnL; // calculated by context
 
   liquidationPrice: number; // 強平價 / 清算水平 stop-out level
 }
@@ -244,7 +244,7 @@ export interface IPositionLineGraph extends ITickerLineGraph {
 export interface ITickerDetails {
   label: string;
   price: number;
-  fluctuating: IFluctuatingProps;
+  fluctuating: IFluctuating;
   volume: number; // 24 hr volume
 
   leverage: number;
@@ -309,13 +309,13 @@ export interface ICryptoDetails {
   website: string;
 }
 
-export interface IFluctuatingProps {
+export interface IFluctuating {
   type: 'UP' | 'DOWN' | 'EQUAL';
   value: number;
   percentage: number;
 }
 
-export interface IPnLProps {
+export interface IPnL {
   type: 'UP' | 'DOWN' | 'EQUAL';
   value: number;
 }
@@ -325,11 +325,11 @@ export interface ITickerItem {
   currency: string; // token name
   chain: string;
   price: number;
-  fluctuating: IFluctuatingProps;
+  fluctuating: IFluctuating;
 
   starred: boolean; // TODO
 
   tokenImg: string;
 
-  lineGraphProps: ITickerLineGraph;
+  lineGraph: ITickerLineGraph;
 }

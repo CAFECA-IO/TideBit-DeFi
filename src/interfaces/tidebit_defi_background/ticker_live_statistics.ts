@@ -4,6 +4,9 @@ import {IPriceStatistics} from './price_statistics';
 export interface ITickerLiveStatistics {
   id: string;
 
+  spread: number; // 點差 %
+  fee: number; // 手續費
+
   volume: number; // 24 hr volume
   price: number;
   fluctuating: IFluctuating;

@@ -1,13 +1,17 @@
 import {ICandlestick} from './candlestick';
 import {IReserve} from './reserve';
-import {ITicker} from './ticker';
+import {ITickerStatic} from './ticker_static';
 import {ITickerItem} from './ticker_item';
 import {ITickerLiveStatistics} from './ticker_live_statistics';
 import {ITideBitPromotion} from './tidebit_promotion';
 import {ITimeSpanUnion} from './time_span_union';
 import {ITransferOption} from './transfer_option';
+import {ITicker} from './ticker';
 
 export interface IMarket {
+  // TODO: 切換整個交易對資料
+  switchTicker: (tickerId: string) => ITicker; // 切換交易對
+
   tickers: ITickerItem[];
   // availableTickers: ITickerItem[];
   getTickers: (tickerId: string) => ITickerItem[]; // 拿到交易對清單
@@ -15,8 +19,8 @@ export interface IMarket {
   isCFDTradable: boolean;
   getIsCFDTradable: (tickerId: string) => boolean; // TODO: parameter
 
-  ticker: ITicker;
-  getTicker: (tickerId: string) => ITicker;
+  ticker: ITickerStatic;
+  getTicker: (tickerId: string) => ITickerStatic;
 
   /**
    * + getTickerWithDetails(tickerId)

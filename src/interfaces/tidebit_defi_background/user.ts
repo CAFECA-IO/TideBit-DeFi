@@ -3,7 +3,7 @@ import {ICFDOrderRequest} from './cfd_order_request';
 import {ICFDOrderUpdate} from './cfd_order_update';
 import {IClosedCFDBrief} from './closed_cfd_brief';
 import {IClosedCFDDetails} from './closed_cfd_details';
-import {INotification} from './notification';
+import {INotificationItem} from './notification_item';
 import {IOpenCFDBrief} from './open_cfd_brief';
 import {IOpenCFDDetails} from './open_cfd_details';
 import {IOrderStatusUnion} from './order_status_union';
@@ -15,7 +15,6 @@ export interface IUser {
   username: string | null;
   email: string | null;
   wallet: string | null;
-  favoriteTickers: ITickerItem[];
   isSubscibedNewsletters: boolean;
   isEnabledEmailNotification: boolean;
   isConnected: boolean;
@@ -25,16 +24,23 @@ export interface IUser {
   tideBitId: string | null;
   enableServiceTerm: boolean;
 
-  connect: () => Promise<boolean>;
-  disconnect: () => Promise<void>;
-  signServiceTerm: () => Promise<boolean>;
+  connectWallet: () => Promise<boolean>;
+  disconnectWallet: () => Promise<void>;
+  signServiceTerms: () => Promise<boolean>;
   addFavoriteTicker: (props: ITickerItem) => Promise<void>;
   removeFavoriteTicker: (props: ITickerItem) => Promise<void>;
 
+  favoriteTickers: ITickerItem[]; // TODO: missed in the document
+  getFavoriteTickers: () => ITickerItem[];
+
   balances: IUserBalance;
-  getWalletBalance: (asset: string) => number;
-  // getTotalBalace: () => IUserBalance;
-  // getPnL: () => null;
+  // + getTotalBalace(userId): return total balance in USDT with abvl and locked
+  // + getPnL(): return today, 30days, total PNL
+
+  // TODO: function name
+  getWalletBalance: (asset: string) => number; // 可入金多少
+  // getBalances: (source: string, currencyId?: string) => IUserBalance;
+  // + getBalances(source, currencyId[optional]):<Balance>
 
   // attribute 在前端用 useState 或用 const 來寫
   // CFDDetails: ICFDDetails;
@@ -43,22 +49,20 @@ export interface IUser {
   positionsOnChart: ICFDBrief[];
 
   // function 用於不須及時更新的資料
-  getOpenedCFD: (id: number) => IOpenCFDDetails[];
-  getClosedCFD: (id: number) => IClosedCFDDetails[];
+  getOpenedCFD: () => IOpenCFDDetails[];
+  getClosedCFD: () => IClosedCFDDetails[];
 
+  // TODO: uncertain props
   createOrder: (props: ICFDOrderRequest) => Promise<IOrderStatusUnion>;
   closeOrder: (props: {id: string}) => Promise<IOrderStatusUnion>;
   updateOrder: (props: ICFDOrderUpdate) => Promise<IOrderStatusUnion>;
-  // + createOrder(orderType<CFD, Deposite, Withdraw, SpotTrade>, data):PublicOrder
   deposit: (props: {asset: string; amount: number}) => Promise<IOrderStatusUnion>;
   withdraw: (props: {asset: string; amount: number}) => Promise<IOrderStatusUnion>;
-
-  notifications: INotification[];
-  // getNotifications: () => INotification[];
-
-  // -----------Ignores below----------------
-  // 拿到所有withdraw / deposit / CFD 紀錄
-  // receipts: IReceipt[];
-  // getHistory: () => null;
-  // + getHistory():Array<SignedOrder:SignedWithdraw, SingedDeposit, SignedCFD>
+  // + createOrder(orderType<CFD, Deposite, Withdraw, SpotTrade>, data):PublicOrder
 }
+
+// -----------Ignores below----------------
+// 拿到所有withdraw / deposit / CFD 紀錄
+// receipts: IReceipt[];
+// getHistory: () => null;
+// + getHistory():Array<SignedOrder:SignedWithdraw, SingedDeposit, SignedCFD>

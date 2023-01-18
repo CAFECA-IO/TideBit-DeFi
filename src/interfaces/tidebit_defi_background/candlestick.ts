@@ -1,9 +1,8 @@
 export interface ICandlestick {
   timestamp: number;
-  OHLC: number[]; // lottie locates the last one
+  OHLC: number[];
   average: number;
-
-  // nowPrice: number;
+  nowPrice: number; // location of lottie and horizontal line
 
   // latestOHLC: number[];
   // volume: number;

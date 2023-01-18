@@ -1,6 +1,6 @@
+import {INotificationItem} from './notification_item';
+
 export interface INotification {
-  id: string;
-  timestamp: number;
-  title: string;
-  content: string;
+  notifications: INotificationItem[];
+  // getNotifications: () => INotification[];
 }

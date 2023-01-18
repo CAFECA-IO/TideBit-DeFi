@@ -1,13 +1,13 @@
+import {IFluctuating} from './fluctuating';
+import {ITickerLineGraph} from './ticker_line_graph';
+
 export interface ITickerItem {
   id: string;
   currency: string; // token name
   chain: string;
   price: number;
-  // fluctuating: IFluctuatingProps;
-
-  // starred: boolean; // TODO
-
-  // tokenImg: string;
-
-  // lineGraphProps: ITickerLineGraph;
+  fluctuating: IFluctuating;
+  starred: boolean;
+  tokenImg: string; // img src
+  lineGraph: ITickerLineGraph;
 }

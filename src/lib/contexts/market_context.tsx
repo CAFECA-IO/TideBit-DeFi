@@ -9,7 +9,7 @@ import {ApexOptions} from 'apexcharts';
 import {
   IBriefNewsItem,
   ICryptoSummary,
-  IPriceData,
+  IPriceStatistics,
   ITickerDetails,
 } from '../../interfaces/tidebit_defi_background';
 
@@ -462,7 +462,7 @@ export interface IMarketContext {
   candlestickId: string;
   candlestickChartIdHandler: (id: string) => void;
   availableTransferOptions: ITransferOptions[];
-  liveStatstics: IPriceData | null;
+  liveStatstics: IPriceStatistics | null;
   bullAndBearIndex: number;
   cryptoBriefNews: IBriefNewsItem[];
   cryptoSummary: ICryptoSummary | null;
@@ -505,7 +505,7 @@ const availableTransferOptions = [
   {label: 'EOS', content: 'EOS'},
 ];
 
-const liveStatstics: IPriceData = {
+const liveStatstics: IPriceStatistics = {
   fiveMin: {low: 1200, high: 1320, now: '80'},
   sixtyMin: {low: 1100, high: 1840, now: '27'},
   oneDay: {low: 1060, high: 2040, now: '39'},
@@ -535,7 +535,9 @@ const cryptoBriefNews: IBriefNewsItem[] = [
   },
 ];
 
+// TODO: icon svg replaced by img src string
 const cryptoSummary: ICryptoSummary = {
+  icon: '',
   label: 'Ethereum',
   introduction: `Ethereum (ETH) was launched in 2015. Ethereum is a decentralized blockchain that supports smart contracts-essentially computer programs-that can automatically execute when certain conditions are met. The native cryptocurrency-essentially computer programs-of the platform is called ether or ethereum. Ethereum is divisible to 18 decimal places. There is currently no hard cap on the total supply
 of ETH.`,

@@ -28,7 +28,7 @@ export interface IUser {
   // CFDDetails: ICFDDetails;
   openCFDItems: IOpenCFDBrief[];
   closedCFDItems: IClosedCFDBrief[];
-  positionsOnChart: ICFDPositionOnChart[];
+  positionsOnChart: ICFDBrief[];
 
   // function 用於不須及時更新的資料
   getOpenedCFD: (id: number) => IOpenCFDDetails[];
@@ -91,12 +91,9 @@ export interface ICFDBrief {
   id: string;
   ticker: string;
   operation: 'BUY' | 'SELL';
+  openPrice: number;
   openValue: number;
   pNL: IPnL;
-}
-
-export interface ICFDPositionOnChart extends ICFDBrief {
-  openPrice: number;
 }
 
 export interface IOpenCFDBrief extends ICFDBrief {
@@ -175,6 +172,8 @@ export interface IUserBalance {
 }
 
 export interface IMarket {
+  tickers: ITickerItem[];
+
   availableTickers: ITickerItem[];
   // getTickers: (id: number) => ITickerData[]; // 拿到交易對清單
 
@@ -187,7 +186,7 @@ export interface IMarket {
   // tideBitPromotion: ITideBitPromotion;
   // reserveInformation: IReserveInformation
   getTideBitPromotion: () => ITideBitPromotion;
-  getReserveInformation: () => IReserveInformation;
+  getReserveInformation: () => IReserve;
 
   // getTicker: (id: number) => ITickerDetails; // 拿到現在這個交易對的資料
   getCandlestickData: (props: {ticker: string; timeSpan: ITimeSpanUnion}) => ICandlestick[]; // x 100
@@ -201,7 +200,7 @@ export interface ITideBitPromotion {
   fee: number;
 }
 
-export interface IReserveInformation {
+export interface IReserve {
   asset: string;
   reserveRatio: number;
   totalDebt: number;
@@ -257,14 +256,16 @@ export interface ITickerDetails {
   sellEstimatedFilledPrice: number; // price - spread = estimated filled price
 
   bullAndBearIndex: number; // BBI 多空指數
-  priceData: IPriceData; // [5m, 60m, 1d]
-  cryptoDetails: ICryptoDetails;
+  priceData: IPriceStatistics; // [5m, 60m, 1d]
+  cryptoSummary: ICryptoSummary;
+  cryptoNews: IBriefNewsItem[];
 
-  news: (props: string) => IBriefNewsItem[];
+  // cryptoDetails: ICryptoDetails;
+  // news: (props: string) => IBriefNewsItem[];
 }
 
 export interface ICryptoSummary {
-  // icon: string; // TODO: svg
+  icon: string; // TODO: wrap it with Image component
   label: string;
   introduction: string;
   whitePaperLink: string;
@@ -289,24 +290,10 @@ export interface IBriefNewsItem {
   img: string;
 }
 
-export interface IPriceData {
+export interface IPriceStatistics {
   fiveMin: {low: number; high: number; now: string}; // now = [(now - low) / (high - low)] x 100
   sixtyMin: {low: number; high: number; now: string};
   oneDay: {low: number; high: number; now: string};
-}
-
-export interface ICryptoDetails {
-  price: number;
-  rank: number;
-  publishTime: number;
-  publishAmount: number; // circulatingSupply / totalSupply / maxSupply
-  tradingVolume: number;
-  totalValue: number; // marketCap
-  tradingValue: number;
-
-  introduction: string;
-  whitePaper: string;
-  website: string;
 }
 
 export interface IFluctuating {

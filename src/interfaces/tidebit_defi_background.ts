@@ -34,12 +34,12 @@ export interface IUser {
   getOpenedCFD: (id: number) => IOpenCFDDetails[];
   getClosedCFD: (id: number) => IClosedCFDDetails[];
 
-  createOrder: (props: ICFDOrderRequest) => Promise<OrderStatusUnion>;
-  closeOrder: (props: {id: string}) => Promise<OrderStatusUnion>;
-  updateOrder: (props: ICFDOrderUpdate) => Promise<OrderStatusUnion>;
+  createOrder: (props: ICFDOrderRequest) => Promise<IOrderStatusUnion>;
+  closeOrder: (props: {id: string}) => Promise<IOrderStatusUnion>;
+  updateOrder: (props: ICFDOrderUpdate) => Promise<IOrderStatusUnion>;
   // + createOrder(orderType<CFD, Deposite, Withdraw, SpotTrade>, data):PublicOrder
-  deposit: (props: {asset: string; amount: number}) => Promise<OrderStatusUnion>;
-  withdraw: (props: {asset: string; amount: number}) => Promise<OrderStatusUnion>;
+  deposit: (props: {asset: string; amount: number}) => Promise<IOrderStatusUnion>;
+  withdraw: (props: {asset: string; amount: number}) => Promise<IOrderStatusUnion>;
 
   notifications: INotification[];
   // getNotifications: () => INotification[];
@@ -51,7 +51,7 @@ export interface IUser {
   // + getHistory():Array<SignedOrder:SignedWithdraw, SingedDeposit, SignedCFD>
 }
 
-export type OrderStatusUnion = 'processing' | 'success' | 'cancellation' | 'fail';
+export type IOrderStatusUnion = 'processing' | 'success' | 'cancellation' | 'fail';
 
 export interface ICFDOrderUpdate {
   id: string;
@@ -190,7 +190,7 @@ export interface IMarket {
   getReserveInformation: () => IReserveInformation;
 
   // getTicker: (id: number) => ITickerDetails; // 拿到現在這個交易對的資料
-  getCandlestickData: (props: {ticker: string; timeSpan: TimeSpanUnion}) => ICandlestick[]; // x 100
+  getCandlestickData: (props: {ticker: string; timeSpan: ITimeSpanUnion}) => ICandlestick[]; // x 100
 
   transferOptions: ITransferOption[]; // 可供入金出金的選項
 }
@@ -219,7 +219,7 @@ export interface ITransferOption {
   fee: number;
 }
 
-export type TimeSpanUnion = '15s' | '5m' | '15m' | '30m' | '1h' | '4h' | '12h' | '1d';
+export type ITimeSpanUnion = '15s' | '5m' | '15m' | '30m' | '1h' | '4h' | '12h' | '1d';
 
 export interface ICandlestick {
   timestamp: number;

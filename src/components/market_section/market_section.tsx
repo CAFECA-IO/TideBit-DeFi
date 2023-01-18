@@ -17,6 +17,7 @@ const MarketSection = () => {
 
   const {cryptoSummary} = useContext(MarketContext);
   const {
+    icon,
     label,
     introduction,
     whitePaperLink,
@@ -70,6 +71,7 @@ const MarketSection = () => {
 
         <div className="mt-5 lg:mt-8 lg:pl-5">
           <CryptoSummary
+            icon={icon ?? ''}
             label={label ?? ''}
             introduction={introduction ?? ''}
             whitePaperLink={whitePaperLink ?? ''}

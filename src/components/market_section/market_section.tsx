@@ -12,15 +12,23 @@ import CryptoNewsSection from '../crypto_news_section/crypto_news_section';
 const MarketSection = () => {
   const {layoutAssertion} = useContext(ViewportContext);
 
-  const {liveStatstics, tickerLiveStatistics} = useContext(MarketContext);
-  const {id, bullAndBearIndex, priceStatistics} = tickerLiveStatistics ?? {};
+  const {liveStatstics, tickerStatic, tickerLiveStatistics} = useContext(MarketContext);
 
+  const {id, bullAndBearIndex, priceStatistics} = tickerLiveStatistics ?? {};
   const {fiveMin, sixtyMin, oneDay} = priceStatistics ?? {};
 
-  // const {fiveMin, sixtyMin, oneDay} = liveStatstics ?? {};
-  // console.log('live statstic:', liveStatstics);
+  // Trial: getCryptoSummary() in context
+  // let cryptoSum = {};
+  // const {getCryptoSummary} = tickerStatic ?? {};
+  // if (getCryptoSummary) {
+  //   cryptoSum = getCryptoSummary() ?? {};
+  //   // console.log(cryptoSum);
+  // }
+  // console.log(cryptoSum);
+  // const {icon} = cryptoSum ?? {};
 
-  const {cryptoSummary} = useContext(MarketContext);
+  // Trial: cryptoSummary attribute in context
+  const {cryptoSummary} = tickerStatic ?? {};
   const {
     icon,
     label,
@@ -35,6 +43,22 @@ const MarketSection = () => {
     totalValue,
     tradingValue,
   } = cryptoSummary ?? {};
+
+  // const {cryptoSummary} = useContext(MarketContext);
+  // const {
+  // icon,
+  // label,
+  // introduction,
+  // whitePaperLink,
+  // websiteLink,
+  // price,
+  // rank,
+  // publishTime,
+  // publishAmount,
+  // tradingVolume,
+  // totalValue,
+  // tradingValue,
+  // } = cryptoSummary ?? {};
 
   const displayedTickerHeader =
     layoutAssertion === 'mobile' ? (

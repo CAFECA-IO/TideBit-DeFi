@@ -473,7 +473,7 @@ export interface IMarketContext {
   liveStatstics: IPriceStatistics | null;
   bullAndBearIndex: number;
   cryptoBriefNews: IBriefNewsItem[];
-  cryptoSummary: ICryptoSummary | null;
+  // cryptoSummary: ICryptoSummary | null;
   tickerStatic: ITickerStatic | null;
   tickerLiveStatistics: ITickerLiveStatistics | null;
 }
@@ -490,7 +490,7 @@ export const MarketContext = createContext<IMarketContext>({
   liveStatstics: null,
   bullAndBearIndex: 0,
   cryptoBriefNews: [],
-  cryptoSummary: null,
+  // cryptoSummary: null,
   tickerStatic: null,
   tickerLiveStatistics: null,
 });
@@ -515,6 +515,27 @@ const tickerStatic: ITickerStatic = {
   label: 'ETH',
   leverage: 5,
   guranteedStopFee: 0.2,
+  cryptoNews: [
+    {
+      title: 'Add news title here',
+      content:
+        'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea',
+      // img: 'https://www.tidebit.com/wp-content/uploads/2020/09/20200915_1.jpg',
+      img: '/elements/rectangle_715@2x.png',
+    },
+    {
+      title: 'Add news title here',
+      content:
+        'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea',
+      img: '/elements/rectangle_716@2x.png',
+    },
+    {
+      title: 'Add news title here',
+      content:
+        'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea',
+      img: '/elements/rectangle_717@2x.png',
+    },
+  ],
   getCryptoNews: () => [
     {
       title: 'Add news title here',
@@ -536,6 +557,21 @@ const tickerStatic: ITickerStatic = {
       img: '/elements/rectangle_717@2x.png',
     },
   ],
+  cryptoSummary: {
+    icon: '',
+    label: 'Ethereum',
+    introduction: `Ethereum (ETH) was launched in 2015. Ethereum is a decentralized blockchain that supports smart contracts-essentially computer programs-that can automatically execute when certain conditions are met. The native cryptocurrency-essentially computer programs-of the platform is called ether or ethereum. Ethereum is divisible to 18 decimal places. There is currently no hard cap on the total supply
+of ETH.`,
+    whitePaperLink: '#',
+    websiteLink: '#',
+    price: '39051 USDT',
+    rank: 1,
+    publishTime: '2008-11-01',
+    publishAmount: '21,000,000',
+    tradingValue: '576,461,120',
+    tradingVolume: '19,014,962',
+    totalValue: '820,071,000,000 USDT',
+  },
   getCryptoSummary: () => {
     return {
       icon: '',
@@ -602,22 +638,22 @@ const cryptoBriefNews: IBriefNewsItem[] = [
   },
 ];
 
-// TODO: icon svg replaced by img src string
-const cryptoSummary: ICryptoSummary = {
-  icon: '',
-  label: 'Ethereum',
-  introduction: `Ethereum (ETH) was launched in 2015. Ethereum is a decentralized blockchain that supports smart contracts-essentially computer programs-that can automatically execute when certain conditions are met. The native cryptocurrency-essentially computer programs-of the platform is called ether or ethereum. Ethereum is divisible to 18 decimal places. There is currently no hard cap on the total supply
-of ETH.`,
-  whitePaperLink: '#',
-  websiteLink: '#',
-  price: '39051 USDT',
-  rank: 1,
-  publishTime: '2008-11-01',
-  publishAmount: '21,000,000',
-  tradingValue: '576,461,120',
-  tradingVolume: '19,014,962',
-  totalValue: '820,071,000,000 USDT',
-};
+// // TODO: icon svg replaced by img src string
+// const cryptoSummary: ICryptoSummary = {
+//   icon: '',
+//   label: 'Ethereum',
+//   introduction: `Ethereum (ETH) was launched in 2015. Ethereum is a decentralized blockchain that supports smart contracts-essentially computer programs-that can automatically execute when certain conditions are met. The native cryptocurrency-essentially computer programs-of the platform is called ether or ethereum. Ethereum is divisible to 18 decimal places. There is currently no hard cap on the total supply
+// of ETH.`,
+//   whitePaperLink: '#',
+//   websiteLink: '#',
+//   price: '39051 USDT',
+//   rank: 1,
+//   publishTime: '2008-11-01',
+//   publishAmount: '21,000,000',
+//   tradingValue: '576,461,120',
+//   tradingVolume: '19,014,962',
+//   totalValue: '820,071,000,000 USDT',
+// };
 
 export const MarketProvider = ({children}: IMarketProvider) => {
   const [availableTickers, setAvailableTickers] = useState<ITickerData[]>(addPropertyToArray);
@@ -661,7 +697,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     liveStatstics,
     bullAndBearIndex,
     cryptoBriefNews,
-    cryptoSummary,
+    // cryptoSummary,
     tickerStatic,
     tickerLiveStatistics,
   };

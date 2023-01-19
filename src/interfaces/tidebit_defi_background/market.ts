@@ -9,18 +9,16 @@ import {ITransferOption} from './transfer_option';
 import {ITicker} from './ticker';
 
 export interface IMarket {
-  // TODO: 切換整個交易對資料
   switchTicker: (tickerId: string) => ITicker; // 切換交易對
 
-  tickers: ITickerItem[];
-  // availableTickers: ITickerItem[];
-  getTickers: (tickerId: string) => ITickerItem[]; // 拿到交易對清單
+  tickers: ITickerItem[]; // availableTickers: ITickerItem[];
+  // getTickers: (tickerId: string) => ITickerItem[]; // 拿到交易對清單
 
   isCFDTradable: boolean;
-  getIsCFDTradable: (tickerId: string) => boolean; // TODO: parameter
+  // getIsCFDTradable: (tickerId: string) => boolean; // TODO: parameter
 
   ticker: ITickerStatic;
-  getTicker: (tickerId: string) => ITickerStatic;
+  // getTicker: (tickerId: string) => ITickerStatic;
 
   /**
    * + getTickerWithDetails(tickerId)
@@ -30,7 +28,7 @@ export interface IMarket {
    */
   // TODO: function name
   tickerLiveStatistics: ITickerLiveStatistics;
-  getTickerLiveStatistics: (tickerId: string) => ITickerLiveStatistics;
+  // getTickerLiveStatistics: (tickerId: string) => ITickerLiveStatistics;
 
   candlestickData: ICandlestick[]; // x 100
   getCandlestickChartData: (props: {tickerId: string; timeSpan: ITimeSpanUnion}) => ICandlestick[]; // x 100 // TODO: parameter

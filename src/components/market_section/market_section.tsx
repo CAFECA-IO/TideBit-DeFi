@@ -8,6 +8,7 @@ import TradeStatistics from '../trade_statistics/trade_statistics';
 import {MarketContext} from '../../lib/contexts/market_context';
 import CryptoSummary from '../crypto_summary/crypto_summary';
 import CryptoNewsSection from '../crypto_news_section/crypto_news_section';
+import {ICryptoSummary} from '../../interfaces/tidebit_defi_background';
 
 const MarketSection = () => {
   const {layoutAssertion} = useContext(ViewportContext);
@@ -17,15 +18,28 @@ const MarketSection = () => {
   const {id, bullAndBearIndex, priceStatistics} = tickerLiveStatistics ?? {};
   const {fiveMin, sixtyMin, oneDay} = priceStatistics ?? {};
 
-  // Trial: getCryptoSummary() in context
+  // // Trial: getCryptoSummary() in context
   // let cryptoSum = {};
-  // const {getCryptoSummary} = tickerStatic ?? {};
+  // const {getCryptoSummary}: ICryptoSummary = tickerStatic ?? {};
   // if (getCryptoSummary) {
   //   cryptoSum = getCryptoSummary() ?? {};
   //   // console.log(cryptoSum);
   // }
   // console.log(cryptoSum);
-  // const {icon} = cryptoSum ?? {};
+  // const {
+  //   icon,
+  //   label,
+  //   introduction,
+  //   whitePaperLink,
+  //   websiteLink,
+  //   price,
+  //   rank,
+  //   publishTime,
+  //   publishAmount,
+  //   tradingVolume,
+  //   totalValue,
+  //   tradingValue,
+  // } = cryptoSum ?? {};
 
   // Trial: cryptoSummary attribute in context
   const {cryptoSummary} = tickerStatic ?? {};

@@ -11,8 +11,13 @@ import CryptoNewsSection from '../crypto_news_section/crypto_news_section';
 
 const MarketSection = () => {
   const {layoutAssertion} = useContext(ViewportContext);
-  const {liveStatstics, bullAndBearIndex} = useContext(MarketContext);
-  const {fiveMin, sixtyMin, oneDay} = liveStatstics ?? {};
+
+  const {liveStatstics, tickerLiveStatistics} = useContext(MarketContext);
+  const {id, bullAndBearIndex, priceStatistics} = tickerLiveStatistics ?? {};
+
+  const {fiveMin, sixtyMin, oneDay} = priceStatistics ?? {};
+
+  // const {fiveMin, sixtyMin, oneDay} = liveStatstics ?? {};
   // console.log('live statstic:', liveStatstics);
 
   const {cryptoSummary} = useContext(MarketContext);
@@ -63,9 +68,9 @@ const MarketSection = () => {
               high: sixtyMin?.high ?? 0,
             }}
             oneDay={{low: oneDay?.low ?? 0, now: oneDay?.now ?? '', high: oneDay?.high ?? 0}}
-            bullAndBearIndex={bullAndBearIndex}
-            long={bullAndBearIndex}
-            short={100 - bullAndBearIndex}
+            bullAndBearIndex={bullAndBearIndex ?? 0}
+            long={bullAndBearIndex ?? 0}
+            short={100 - (bullAndBearIndex ?? 0)}
           />
         </div>
 

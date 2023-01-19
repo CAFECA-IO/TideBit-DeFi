@@ -6,6 +6,11 @@
   --toastify-color-progress-info: var(--toastify-color-info); */
 }
 
+/* .thousands-separator:lang(en):before,
+.thousands-separator:lang(zh):before {
+  content: ',';
+} */
+
 /* .Toastify__progress-bar--info {
   background-color: #a5c4f3;
 } */

@@ -5,7 +5,9 @@ import {MarketContext} from '../../lib/contexts/market_context';
 const CryptoNewsSection = () => {
   const overallWidth = 'w-full pr-5 lg:p-0 lg:w-2/3 xl:w-3/4';
   const dividerWidth = 'w-full lg:w-2/3 xl:w-3/4';
-  const {cryptoBriefNews} = useContext(MarketContext);
+  const {tickerStatic} = useContext(MarketContext);
+
+  const {cryptoBriefNews} = tickerStatic ?? {};
 
   const displayedCryptoNews = cryptoBriefNews?.map((news, index) => {
     return (

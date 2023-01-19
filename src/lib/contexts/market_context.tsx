@@ -472,7 +472,7 @@ export interface IMarketContext {
   availableTransferOptions: ITransferOptions[];
   liveStatstics: IPriceStatistics | null;
   bullAndBearIndex: number;
-  cryptoBriefNews: IBriefNewsItem[];
+  // cryptoBriefNews: IBriefNewsItem[];
   // cryptoSummary: ICryptoSummary | null;
   tickerStatic: ITickerStatic | null;
   tickerLiveStatistics: ITickerLiveStatistics | null;
@@ -489,7 +489,7 @@ export const MarketContext = createContext<IMarketContext>({
   availableTransferOptions: [],
   liveStatstics: null,
   bullAndBearIndex: 0,
-  cryptoBriefNews: [],
+  // cryptoBriefNews: [],
   // cryptoSummary: null,
   tickerStatic: null,
   tickerLiveStatistics: null,
@@ -515,7 +515,7 @@ const tickerStatic: ITickerStatic = {
   label: 'ETH',
   leverage: 5,
   guranteedStopFee: 0.2,
-  cryptoNews: [
+  cryptoBriefNews: [
     {
       title: 'Add news title here',
       content:
@@ -696,7 +696,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     availableTransferOptions: availableTransferOptions,
     liveStatstics,
     bullAndBearIndex,
-    cryptoBriefNews,
+    // cryptoBriefNews,
     // cryptoSummary,
     tickerStatic,
     tickerLiveStatistics,

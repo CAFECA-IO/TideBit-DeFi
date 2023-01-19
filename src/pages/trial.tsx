@@ -360,7 +360,7 @@ const Trial = () => {
   return (
     <>
       {/* flex h-screen w-full items-center justify-center */}
-      <div className="w-full space-y-10 bg-cuteBlue">
+      <div className="ml-5/6 w-full space-y-10 bg-cuteBlue">
         {/* {forCryptoCard} */}
         {/* <TrialComponent /> */}
 

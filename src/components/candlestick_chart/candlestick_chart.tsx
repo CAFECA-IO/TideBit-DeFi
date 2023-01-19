@@ -1,10 +1,11 @@
 import React, {useState, useContext, useEffect} from 'react';
 import dynamic from 'next/dynamic';
-import {ApexOptions} from 'apexcharts';
+import ApexCharts, {ApexOptions} from 'apexcharts';
 import {TRADING_CHART_BORDER_COLOR, PROFIT_LOSS_COLOR_TYPE} from '../../constants/display';
 import {BsFillArrowDownCircleFill, BsFillArrowUpCircleFill} from 'react-icons/bs';
 import {MarketContext, MarketProvider} from '../../lib/contexts/market_context';
 
+// import ReactApexChart from 'react-apexcharts';
 const Chart = dynamic(() => import('react-apexcharts'), {ssr: false});
 // const Chart = dynamic(() => import('apexcharts'), {ssr: false});
 
@@ -89,7 +90,7 @@ export default function CandlestickChart({
   const chartOptionsWithPositionLabel: ApexOptions = {
     chart: {
       // id: candlestickChartIdHandler(id),
-      // id: data,
+      id: 'candles',
       type: 'candlestick',
       height: 0,
 
@@ -466,7 +467,7 @@ export default function CandlestickChart({
   // console.log('display option:', displayedPosition.annotations.yaxis[0].label.text);
 
   const [dataSample, setDataSample] = useState({
-    options: displayedPosition,
+    options: chartOptionsWithPositionLabel,
     toolbar: {
       show: false,
       enabled: false,
@@ -478,6 +479,11 @@ export default function CandlestickChart({
       },
     ],
   });
+
+  // useEffect(() => {
+  //   // let chart = new ApexCharts(el, options);
+  //   ApexCharts.exec('candles', 'updateOptions', displayedPosition);
+  // }, [showPositionOnChart]);
 
   // useEffect(() => {
   //   setDataSample({

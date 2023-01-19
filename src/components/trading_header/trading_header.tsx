@@ -2,6 +2,7 @@ import {useState} from 'react';
 import TickerSelectorBox from '../ticker_selector_box/ticker_selector_box';
 import {CgArrowsExchange} from 'react-icons/cg';
 import useOuterClick from '../../lib/hooks/use_outer_click';
+import {UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
 
 interface ITradingHeaderProps {
   upOrDown: string;
@@ -89,6 +90,8 @@ const TradingHeader = ({upOrDown, tradingVolume}: ITradingHeaderProps) => {
   );
   const ethTitle = <h1 className="text-3xl font-medium">ETH</h1>;
 
+  const dummyPrice = 1290.41;
+
   const ethHeader = (
     <>
       <div className="flex flex-col items-center justify-center space-y-5 text-start text-white lg:items-start lg:justify-start">
@@ -113,9 +116,11 @@ const TradingHeader = ({upOrDown, tradingVolume}: ITradingHeaderProps) => {
         {/* border-spacing-1 border-2 border-cyan-400  */}
         {/*  bg-gradient-to-r from-lightGreen to-purple-800 bg-clip-text text-transparent */}
         <div
-          className={`${priceShadowColor} flex w-200px flex-wrap items-start space-x-7 text-center lg:w-300px lg:items-end lg:text-start`}
+          className={`${priceShadowColor} flex w-200px flex-wrap items-start space-x-7 text-center lg:w-400px lg:items-end lg:text-start`}
         >
-          <div className="text-3xl">$ 1,288.4</div>
+          <div className="text-3xl">
+            $ <span className="">{dummyPrice.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}</span>
+          </div>
           <div className="text-lg">▴ $24.7 (+1.14%)</div>
         </div>
 

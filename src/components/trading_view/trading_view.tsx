@@ -44,6 +44,7 @@ const getSwitchWidth = () => {
 
 const TradingView = () => {
   const {showPositionOnChart} = useContext(MarketContext);
+  // console.log('showPositionOnChart in Trading view', showPositionOnChart);
 
   const [selectedChartType, setSelectedChartType] = useState('candlestick');
   const [selectedChartInterval, setSelectedChartInterval] = useState('live');

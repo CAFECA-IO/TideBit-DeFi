@@ -58,7 +58,7 @@ const NavBarMobile = ({notificationNumber = 1}) => {
     <div
       className={`${
         navOpen ? 'visible' : 'invisible'
-      } fixed top-0 left-24 z-50 flex h-10 w-8 items-center justify-center overflow-x-hidden overflow-y-hidden bg-black/100 outline-none hover:cursor-pointer focus:outline-none`}
+      } fixed top-12px left-24 z-50 flex h-10 w-250px items-center justify-center overflow-x-hidden overflow-y-hidden bg-black/100 outline-none hover:cursor-pointer focus:outline-none`}
     ></div>
   );
 

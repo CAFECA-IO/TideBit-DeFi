@@ -57,8 +57,8 @@ const NavBarMobile = ({notificationNumber = 1}) => {
   const isDisplayedNotificationSidebarMobileCover = (
     <div
       className={`${
-        componentVisible ? 'visible' : 'invisible'
-      } fixed top-52 left-24 z-50 flex h-10 w-8 items-center justify-center overflow-x-hidden overflow-y-hidden bg-transparent outline-none hover:cursor-pointer focus:outline-none`}
+        navOpen ? 'visible' : 'invisible'
+      } fixed top-0 left-24 z-50 flex h-10 w-8 items-center justify-center overflow-x-hidden overflow-y-hidden bg-black/100 outline-none hover:cursor-pointer focus:outline-none`}
     ></div>
   );
 

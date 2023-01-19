@@ -476,6 +476,8 @@ export interface IMarketContext {
   // cryptoSummary: ICryptoSummary | null;
   tickerStatic: ITickerStatic | null;
   tickerLiveStatistics: ITickerLiveStatistics | null;
+  getCryptoSummary: (tickerId: string) => ICryptoSummary | null;
+  getCryptoNews: (tickerId: string) => IBriefNewsItem[] | null;
 }
 // TODO: Note: _app.tsx 啟動的時候 => createContext
 export const MarketContext = createContext<IMarketContext>({
@@ -493,6 +495,8 @@ export const MarketContext = createContext<IMarketContext>({
   // cryptoSummary: null,
   tickerStatic: null,
   tickerLiveStatistics: null,
+  getCryptoSummary: () => null,
+  getCryptoNews: () => null,
 });
 
 const availableTransferOptions = [
@@ -510,33 +514,52 @@ const availableTransferOptions = [
   {label: 'EOS', content: 'EOS'},
 ];
 
+const getCryptoSummary = (tickerId = 'ETH') => {
+  return {
+    icon: '',
+    label: 'Ethereum',
+    introduction: `Ethereum (ETH) was launched in 2015. Ethereum is a decentralized blockchain that supports smart contracts-essentially computer programs-that can automatically execute when certain conditions are met. The native cryptocurrency-essentially computer programs-of the platform is called ether or ethereum. Ethereum is divisible to 18 decimal places. There is currently no hard cap on the total supply
+  of ETH.`,
+    whitePaperLink: '#',
+    websiteLink: '#',
+    price: '39051 USDT',
+    rank: 1,
+    publishTime: '2008-11-01',
+    publishAmount: '21,000,000',
+    tradingValue: '576,461,120',
+    tradingVolume: '19,014,962',
+    totalValue: '820,071,000,000 USDT',
+  };
+};
+
+const getCryptoNews = (tickerId = 'ETH') => [
+  {
+    title: 'Add news title here',
+    content:
+      'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea',
+    // img: 'https://www.tidebit.com/wp-content/uploads/2020/09/20200915_1.jpg',
+    img: '/elements/rectangle_715@2x.png',
+  },
+  {
+    title: 'Add news title here',
+    content:
+      'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea',
+    img: '/elements/rectangle_716@2x.png',
+  },
+  {
+    title: 'Add news title here',
+    content:
+      'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea',
+    img: '/elements/rectangle_717@2x.png',
+  },
+];
+
 const tickerStatic: ITickerStatic = {
   id: 'ETH',
   label: 'ETH',
   leverage: 5,
   guranteedStopFee: 0.2,
   cryptoBriefNews: [
-    {
-      title: 'Add news title here',
-      content:
-        'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea',
-      // img: 'https://www.tidebit.com/wp-content/uploads/2020/09/20200915_1.jpg',
-      img: '/elements/rectangle_715@2x.png',
-    },
-    {
-      title: 'Add news title here',
-      content:
-        'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea',
-      img: '/elements/rectangle_716@2x.png',
-    },
-    {
-      title: 'Add news title here',
-      content:
-        'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea',
-      img: '/elements/rectangle_717@2x.png',
-    },
-  ],
-  getCryptoNews: () => [
     {
       title: 'Add news title here',
       content:
@@ -571,23 +594,6 @@ of ETH.`,
     tradingValue: '576,461,120',
     tradingVolume: '19,014,962',
     totalValue: '820,071,000,000 USDT',
-  },
-  getCryptoSummary: () => {
-    return {
-      icon: '',
-      label: 'Ethereum',
-      introduction: `Ethereum (ETH) was launched in 2015. Ethereum is a decentralized blockchain that supports smart contracts-essentially computer programs-that can automatically execute when certain conditions are met. The native cryptocurrency-essentially computer programs-of the platform is called ether or ethereum. Ethereum is divisible to 18 decimal places. There is currently no hard cap on the total supply
-    of ETH.`,
-      whitePaperLink: '#',
-      websiteLink: '#',
-      price: '39051 USDT',
-      rank: 1,
-      publishTime: '2008-11-01',
-      publishAmount: '21,000,000',
-      tradingValue: '576,461,120',
-      tradingVolume: '19,014,962',
-      totalValue: '820,071,000,000 USDT',
-    };
   },
 };
 
@@ -700,6 +706,8 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     // cryptoSummary,
     tickerStatic,
     tickerLiveStatistics,
+    getCryptoSummary,
+    getCryptoNews,
   };
 
   return <MarketContext.Provider value={defaultValue}>{children}</MarketContext.Provider>;

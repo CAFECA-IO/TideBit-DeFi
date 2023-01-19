@@ -11,7 +11,7 @@ export interface ITickerStatic {
   guranteedStopFee: number; // 保證停損手續費
   // slippage: number; // 滑價
   cryptoBriefNews: IBriefNewsItem[]; // 相關新聞
-  getCryptoNews: () => IBriefNewsItem[];
+  // getCryptoNews: () => IBriefNewsItem[];
   cryptoSummary: ICryptoSummary; // 相關資訊
-  getCryptoSummary: () => ICryptoSummary;
+  // getCryptoSummary: () => ICryptoSummary;
 }

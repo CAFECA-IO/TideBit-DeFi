@@ -13,19 +13,40 @@ import {ICryptoSummary} from '../../interfaces/tidebit_defi_background';
 const MarketSection = () => {
   const {layoutAssertion} = useContext(ViewportContext);
 
-  const {liveStatstics, tickerStatic, tickerLiveStatistics} = useContext(MarketContext);
+  const {liveStatstics, tickerStatic, tickerLiveStatistics, getCryptoSummary} =
+    useContext(MarketContext);
 
   const {id, bullAndBearIndex, priceStatistics} = tickerLiveStatistics ?? {};
   const {fiveMin, sixtyMin, oneDay} = priceStatistics ?? {};
 
+  // const [cryptoSummary, setCryptoSummary] = useState<ICryptoSummary | undefined>(undefined);
+  const {
+    icon,
+    label,
+    introduction,
+    whitePaperLink,
+    websiteLink,
+    price,
+    rank,
+    publishTime,
+    publishAmount,
+    tradingVolume,
+    totalValue,
+    tradingValue,
+  } = getCryptoSummary('ETH') ?? {};
+  // console.log('getCryptoSummary', sth);
+  // const {} = cryptoSummaryFunc ?? {};
+
   // // Trial: getCryptoSummary() in context
   // let cryptoSum = {};
-  // const {getCryptoSummary}: ICryptoSummary = tickerStatic ?? {};
-  // if (getCryptoSummary) {
-  //   cryptoSum = getCryptoSummary() ?? {};
-  //   // console.log(cryptoSum);
-  // }
-  // console.log(cryptoSum);
+  // const {getCryptoSummary} = tickerStatic;
+  // cryptoSum = getCryptoSummary() ?? {};
+  // console.log('cryptoSum', cryptoSum);
+  // // if (getCryptoSummary) {
+  // //   cryptoSum = getCryptoSummary() ?? {};
+  // //   console.log('cryptoSum', cryptoSum);
+  // // }
+  // // console.log(cryptoSum);
   // const {
   //   icon,
   //   label,
@@ -41,22 +62,22 @@ const MarketSection = () => {
   //   tradingValue,
   // } = cryptoSum ?? {};
 
-  // Trial: cryptoSummary attribute in context
-  const {cryptoSummary} = tickerStatic ?? {};
-  const {
-    icon,
-    label,
-    introduction,
-    whitePaperLink,
-    websiteLink,
-    price,
-    rank,
-    publishTime,
-    publishAmount,
-    tradingVolume,
-    totalValue,
-    tradingValue,
-  } = cryptoSummary ?? {};
+  // // Trial: cryptoSummary attribute in context
+  // const {cryptoSummary} = tickerStatic ?? {};
+  // const {
+  //   icon,
+  //   label,
+  //   introduction,
+  //   whitePaperLink,
+  //   websiteLink,
+  //   price,
+  //   rank,
+  //   publishTime,
+  //   publishAmount,
+  //   tradingVolume,
+  //   totalValue,
+  //   tradingValue,
+  // } = cryptoSummary ?? {};
 
   // const {cryptoSummary} = useContext(MarketContext);
   // const {

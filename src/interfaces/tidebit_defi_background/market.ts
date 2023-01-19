@@ -7,6 +7,8 @@ import {ITideBitPromotion} from './tidebit_promotion';
 import {ITimeSpanUnion} from './time_span_union';
 import {ITransferOption} from './transfer_option';
 import {ITicker} from './ticker';
+import {IBriefNewsItem} from './brief_news_item';
+import {ICryptoSummary} from './crypto_summary';
 
 export interface IMarket {
   switchTicker: (tickerId: string) => ITicker; // 切換交易對
@@ -19,6 +21,9 @@ export interface IMarket {
 
   ticker: ITickerStatic;
   // getTicker: (tickerId: string) => ITickerStatic;
+
+  getCryptoNews: (tickerId: string) => IBriefNewsItem[];
+  getCryptoSummary: (tickerId: string) => ICryptoSummary;
 
   /**
    * + getTickerWithDetails(tickerId)

@@ -103,7 +103,7 @@ const I18n = () => {
           </svg>
         </div>
       </div>
-      <button type="button" className="flex hover:text-tidebitTheme lg:hidden">
+      <button type="button" className="inline-flex hover:text-tidebitTheme lg:hidden">
         Language
       </button>
     </>

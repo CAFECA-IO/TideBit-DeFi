@@ -15,6 +15,7 @@ import {MarketContext} from '../lib/contexts/market_context';
 import TransferProcessModal, {
   TRANSFER_PROCESS_MODAL_STEP_CLASSES,
 } from '../components/transfer_process_modal/transfer_process_modal';
+import CfdPositionModal from '../components/cfd_position_modal/cfd_position_modal';
 
 const Trial = () => {
   const {
@@ -360,13 +361,12 @@ const Trial = () => {
   return (
     <>
       {/* flex h-screen w-full items-center justify-center */}
-      <div className="ml-5/6 w-full space-y-10 bg-cuteBlue">
+      <div className="w-full space-y-10 bg-cuteBlue">
+        <CfdPositionModal />
         {/* {forCryptoCard} */}
         {/* <TrialComponent /> */}
-
         {/* Divider */}
         {/* <div className="my-auto h-px w-full rounded bg-white/50"></div> */}
-
         {/* Toast and gradient */}
         {/* <button
           onClick={notifyFunction}
@@ -395,7 +395,6 @@ const Trial = () => {
         >
           Show the modal
         </RippleButton> */}
-
         {/* <TransferProcessModal
           transferOptions={[
             {label: 'USDT', content: 'Tether'},

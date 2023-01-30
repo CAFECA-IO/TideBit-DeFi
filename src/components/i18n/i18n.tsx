@@ -1,5 +1,5 @@
-import {Dispatch, SetStateAction, useState} from 'react';
-import Image from 'next/image';
+import {useState} from 'react';
+//import Image from 'next/image';
 import {useRouter} from 'next/router';
 import Link from 'next/link';
 import useOuterClick from '../../lib/hooks/use_outer_click';
@@ -9,9 +9,16 @@ import useOuterClick from '../../lib/hooks/use_outer_click';
 // export const testi18n = async () =>
 //   await i18n?.use(initReactI18next).init({fallbackLng: 'en', debug: true});
 
-const I18n = ({setLangIsOpen}: any) => {
+const I18n = (
+  {
+    langIsOpen,
+    setLangIsOpen,
+  }: any /* langIsOpen: boolean, setLangIsOpen: Dispatch<SetStateAction<boolean>> */
+) => {
   // const [locale, setLocale] = useState('en');
-  const [openMenu, setOpenMenu] = useState(false);
+  const [openMenu, setOpenMenu] =
+    typeof setLangIsOpen !== 'function' ? useState(false) : [langIsOpen, setLangIsOpen];
+
   const {locale, locales, defaultLocale, asPath} = useRouter();
   const {
     targetRef: globalRef,
@@ -20,10 +27,9 @@ const I18n = ({setLangIsOpen}: any) => {
   } = useOuterClick<HTMLDivElement>(false);
 
   const clickHandler = () => {
-    setOpenMenu(() => !openMenu);
-    setLangIsOpen = !openMenu;
-    //console.log(setLangIsOpen);
+    // setOpenMenu(() => !openMenu);
     // setComponentVisible(!componentVisible);
+    setOpenMenu(!openMenu);
   };
 
   const internationalizationList = [
@@ -58,7 +64,7 @@ const I18n = ({setLangIsOpen}: any) => {
     <div className="lg:hidden">
       <div
         id="i18nDropdown"
-        className="absolute top-44 left-0 z-10 h-full w-screen bg-darkGray8 opacity-100 shadow transition-all duration-300"
+        className="absolute top-44 left-0 z-10 h-full w-screen bg-black/100 opacity-100 shadow transition-all duration-300"
       >
         <ul className="pt-3 text-center text-base dark:text-gray-200" aria-labelledby="i18nButton">
           {internationalizationList.map((item, index) => (
@@ -73,14 +79,6 @@ const I18n = ({setLangIsOpen}: any) => {
             </li>
           ))}
         </ul>
-        <div>
-          <button
-            className="z-50 inline-flex items-center justify-center rounded-md p-2"
-            onClick={clickHandler}
-          >
-            close
-          </button>
-        </div>
       </div>
     </div>
   ) : null;

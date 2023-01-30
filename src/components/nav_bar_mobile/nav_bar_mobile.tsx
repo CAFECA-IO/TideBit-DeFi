@@ -33,7 +33,7 @@ const NavBarMobile = ({notificationNumber = 1}) => {
 
   const clickHanlder = () => {
     if (langIsOpen) {
-      setLangIsOpen(!langIsOpen);
+      setLangIsOpen(false);
     } else {
       setNavOpen(!navOpen);
     }
@@ -72,7 +72,7 @@ const NavBarMobile = ({notificationNumber = 1}) => {
         navOpen ? 'visible' : 'invisible'
       } fixed top-3 left-24 z-50 flex h-10 w-250px items-center overflow-x-hidden overflow-y-hidden bg-black/100 outline-none`}
     >
-      <p>{MENU_TEXT}</p>
+      <p className="transition-all duration-300">{MENU_TEXT}</p>
     </div>
   );
 
@@ -177,8 +177,7 @@ const NavBarMobile = ({notificationNumber = 1}) => {
 
               <div className="flex items-center justify-start px-3">
                 <div className="px-3 py-2">
-                  <I18n setLangIsOpen={setLangIsOpen} />
-                  <p>{langIsOpen}</p>
+                  <I18n langIsOpen={langIsOpen} setLangIsOpen={setLangIsOpen} />
                 </div>
                 {/* <TbMinusVertical size={30} className="" /> */}
               </div>

@@ -19,18 +19,30 @@ const NavBarMobile = ({notificationNumber = 1}) => {
 
   const [userOverview, setUserOverview] = useState(false);
 
+  //lang sub menu
+  const [langIsOpen, setLangIsOpen] = useState(false);
+
+  //menu text
+  const MENU_TEXT = langIsOpen ? 'Language' : 'Menu';
+
   const {
     targetRef: notifyRef,
     componentVisible,
     setComponentVisible,
   } = useOuterClick<HTMLDivElement>(false);
 
-  const clickHanlder = () => setNavOpen(!navOpen);
+  const clickHanlder = () => {
+    if (langIsOpen) {
+      setLangIsOpen(!langIsOpen);
+    } else {
+      setNavOpen(!navOpen);
+    }
+  };
 
   const sidebarOpenHandler = () => {
-    // setSidebarOpen(!sidebarOpen);
+    setSidebarOpen(!sidebarOpen);
     setComponentVisible(!componentVisible);
-    // console.log('sidebarOpenHandler clicked, componentVisible: ', componentVisible);
+    //console.log('sidebarOpenHandler clicked, componentVisible: ', componentVisible);
   };
 
   const getUserLoginHandler = (bool: boolean) => {
@@ -38,19 +50,19 @@ const NavBarMobile = ({notificationNumber = 1}) => {
   };
 
   const hamburgerStyles =
-    'block bg-lightWhite h-3px rounded-[12px] opacity-100 left-0 w-full rotate-0 ease-in duration-300';
+    'block bg-lightWhite h-3px rounded-12px opacity-100 left-0 w-full rotate-0 ease-in duration-300';
 
   // hamburger animation
   const displayedMobileNavBarLine1 = !navOpen
     ? 'translate-y-0'
-    : 'translate-y-1.5 origin-left w-3/4 rotate-[-35deg]';
+    : 'translate-y-1.5 origin-left w-3/4 rotate-m35';
   const displayedMobileNavBarLine2 = !navOpen ? 'translate-y-1.5' : 'w-0 opacity-0';
   const displayedMobileNavBarLine3 = !navOpen
     ? 'translate-y-3'
-    : 'translate-y-0 origin-left w-3/4 rotate-[35deg]';
+    : 'translate-y-0 origin-left w-3/4 rotate-35';
 
   const isDisplayedMobileNavBar = navOpen
-    ? 'min-h-[100vh] inset-0 bg-black/100 opacity-100'
+    ? 'min-h-screen inset-0 bg-black/100 opacity-100'
     : 'opacity-0';
   // componentVisible ? 'animate-fadeIn' : 'animate-fadeOut';
 
@@ -58,8 +70,10 @@ const NavBarMobile = ({notificationNumber = 1}) => {
     <div
       className={`${
         navOpen ? 'visible' : 'invisible'
-      } fixed top-12px left-24 z-50 flex h-10 w-250px items-center justify-center overflow-x-hidden overflow-y-hidden bg-black/100 outline-none hover:cursor-pointer focus:outline-none`}
-    ></div>
+      } fixed top-3 left-24 z-50 flex h-10 w-250px items-center overflow-x-hidden overflow-y-hidden bg-black/100 outline-none`}
+    >
+      <p>{MENU_TEXT}</p>
+    </div>
   );
 
   const {user} = useContext(UserContext);
@@ -78,7 +92,7 @@ const NavBarMobile = ({notificationNumber = 1}) => {
             <div className="mr-0 mt-3 flex lg:hidden">
               <button
                 onClick={clickHanlder}
-                className="z-50 inline-flex items-center justify-center rounded-md p-2 hover:text-cyan-300 focus:outline-none"
+                className="z-50 inline-flex items-center justify-center rounded-md p-2"
               >
                 <div className="relative h-20px w-30px cursor-pointer">
                   <span className={`${hamburgerStyles} ${displayedMobileNavBarLine1}`}></span>
@@ -117,7 +131,7 @@ const NavBarMobile = ({notificationNumber = 1}) => {
           {isDisplayedNotificationSidebarMobileCover}
 
           {/* Mobile menu section */}
-          <div className="flex h-screen  flex-col items-center justify-start px-2 pt-20 pb-3 text-base sm:px-3">
+          <div className="flex h-screen flex-col items-center justify-start px-2 pt-20 pb-3 text-base sm:px-3">
             <div className="flex h-full w-screen flex-col items-center justify-between">
               <div className="flex items-center justify-start px-3 pt-3">
                 <Link className="shrink-0" href="/">
@@ -134,7 +148,7 @@ const NavBarMobile = ({notificationNumber = 1}) => {
                   </div>
                 </Link>
               </div>
-              <div className="flex items-center justify-start px-3 pt-3">
+              <div className="flex items-center justify-start px-3">
                 <Link
                   href="/trading"
                   className="block rounded-md px-3 py-2 font-medium hover:cursor-pointer hover:text-tidebitTheme"
@@ -143,7 +157,7 @@ const NavBarMobile = ({notificationNumber = 1}) => {
                 </Link>
               </div>
 
-              <div className="flex items-center justify-start px-3 pt-3">
+              <div className="flex items-center justify-start px-3">
                 <Link
                   href="#"
                   className="block rounded-md px-3 py-2 font-medium hover:cursor-pointer hover:text-tidebitTheme"
@@ -152,7 +166,7 @@ const NavBarMobile = ({notificationNumber = 1}) => {
                 </Link>
               </div>
 
-              <div className="flex items-center justify-start px-3 pt-3">
+              <div className="flex items-center justify-start px-3">
                 <Link
                   href="#"
                   className="block rounded-md px-3 py-2 font-medium hover:cursor-pointer hover:text-tidebitTheme"
@@ -161,9 +175,10 @@ const NavBarMobile = ({notificationNumber = 1}) => {
                 </Link>
               </div>
 
-              <div className="flex items-center justify-start px-3 py-3">
-                <div>
-                  <I18n />
+              <div className="flex items-center justify-start px-3">
+                <div className="px-3 py-2">
+                  <I18n setLangIsOpen={setLangIsOpen} />
+                  <p>{langIsOpen}</p>
                 </div>
                 {/* <TbMinusVertical size={30} className="" /> */}
               </div>

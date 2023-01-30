@@ -5,15 +5,16 @@ interface IToggleProps {
   // toggleClickHandler: () => void;
   disabled?: boolean;
   initialToggleState?: boolean;
-  toggleStateFromParent?: boolean;
+  // toggleStateFromParent?: boolean;
   getToggledState: (props: boolean) => void;
+  getToggleFunction?: (props: () => void) => void;
 }
 
 const Toggle = ({
   initialToggleState = false,
-  toggleStateFromParent,
   getToggledState,
   disabled,
+  getToggleFunction,
 }: IToggleProps) => {
   const [toggle, setToggle] = useState(initialToggleState);
 
@@ -27,18 +28,20 @@ const Toggle = ({
     if (disabled) return;
     setToggle(!toggle);
     passToggledStateHandler(!toggle);
+
+    // passToggleFunction(toggleClickHandler);
   };
 
-  // // TODO:[Notes] css solution: after, checked
-  // const blueStandardToggle = (
-  //   <label className="relative right-5 mb-5 inline-flex cursor-pointer items-center">
-  //     <input type="checkbox" value="" className="peer sr-only" />
-  //     <div className="absolute h-5 w-9 rounded-full bg-gray-200 after:absolute after:top-2px after:left-2px after:h-4 after:w-4 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-'' peer-checked:bg-blue-600 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"></div>
-  //   </label>
-  // );
+  const passToggleFunction = () => {
+    if (getToggleFunction) {
+      getToggleFunction(toggleClickHandler);
+      // console.log('pass function from children component');
+    }
+    // toggleClickHandler();
+  };
 
   //TODO: bg-tidebitTheme [#29C1E1]
-  const toggleSwitchStyle = toggleStateFromParent || toggle ? 'transform translate-x-full' : null;
+  const toggleSwitchStyle = toggle || disabled ? 'transform translate-x-full' : null;
   const toggleBackgroundStyle = disabled ? 'bg-[#8B8E91]' : toggle ? 'bg-[#29C1E1]' : null;
 
   const tidebitToggle = (

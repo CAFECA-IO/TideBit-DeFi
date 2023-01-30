@@ -49,8 +49,8 @@ export interface IUser {
   positionsOnChart: ICFDBrief[];
 
   // function 用於不須及時更新的資料
-  getOpenedCFD: () => IOpenCFDDetails[];
-  getClosedCFD: () => IClosedCFDDetails[];
+  getOpenedCFD: (positionId: string) => IOpenCFDDetails[];
+  getClosedCFD: (positionId: string) => IClosedCFDDetails[];
 
   // TODO: uncertain props
   createOrder: (props: ICFDOrderCreatingRequest) => Promise<IOrderStatusUnion>;

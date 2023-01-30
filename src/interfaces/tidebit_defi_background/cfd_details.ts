@@ -4,7 +4,7 @@ export interface ICFDDetails {
   id: string;
 
   ticker: string; // 'BTC' | 'ETH'
-  operation: 'BUY' | 'SELL'; // 'Buy' | 'Sell'
+  typeOfPosition: 'BUY' | 'SELL'; // 'Buy' | 'Sell'
   leverage: number;
   margin: number;
   openPrice: number; // Avg. Open Price 平均開倉價格

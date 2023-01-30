@@ -25,89 +25,89 @@ export const LAYOUT_BREAKPOINT = 1024;
 export const INITIAL_POSITION_LABEL_DISPLAYED_STATE = true;
 
 export interface ICRYPTO_CARD_COLORS {
-  owner: string;
+  label: string;
   starColor: string;
   gradientColor: string;
 }
 
 export const CRYPTO_CARD_COLORS = [
   {
-    owner: 'ETH',
+    label: 'ETH',
     starColor: 'text-bluePurple',
     gradientColor: 'border-bluePurple/50 bg-black from-bluePurple/50 to-black',
   },
   {
-    owner: 'BTC',
+    label: 'BTC',
     starColor: 'text-lightOrange',
     gradientColor: 'border-lightOrange/50 bg-black from-lightOrange/50 to-black',
   },
   {
-    owner: 'LTC',
+    label: 'LTC',
     starColor: 'text-lightGray2',
     gradientColor: 'border-lightGray2/50 bg-black from-lightGray2/50 to-black',
   },
   {
-    owner: 'MATIC',
+    label: 'MATIC',
     starColor: 'text-lightPurple',
     gradientColor: 'border-lightPurple/50 bg-black from-lightPurple/50 to-black',
   },
   {
-    owner: 'BNB',
+    label: 'BNB',
     starColor: 'text-lightYellow',
     gradientColor: 'border-lightYellow/50 bg-black from-lightYellow/50 to-black',
   },
   {
-    owner: 'SOL',
+    label: 'SOL',
     starColor: 'text-lightPurple2',
     gradientColor: 'border-lightPurple2/50 from-lightPurple2/50 to-black',
   },
   {
-    owner: 'SHIB',
+    label: 'SHIB',
     starColor: 'text-lightRed1',
     gradientColor: 'border-lightRed1/50 from-lightRed1/50 to-black',
   },
   {
-    owner: 'DOT',
+    label: 'DOT',
     starColor: 'text-lightPink',
     gradientColor: 'border-lightPink/50 from-lightPink/50 to-black',
   },
   {
-    owner: 'ADA',
+    label: 'ADA',
     starColor: 'text-lightGreen1',
     gradientColor: 'border-lightGreen1/50 from-lightGreen1/50 to-black',
   },
   {
-    owner: 'AVAX',
+    label: 'AVAX',
     starColor: 'text-lightRed2',
     gradientColor: 'border-lightRed2/50 from-lightRed2/50 to-black',
   },
   {
-    owner: 'Dai',
+    label: 'Dai',
     starColor: 'text-lightOrange1',
     gradientColor: 'border-lightOrange1/50 from-lightOrange1/50 to-black',
   },
   {
-    owner: 'MKR',
+    label: 'MKR',
     starColor: 'text-lightGreen3',
     gradientColor: 'border-lightGreen3/50 from-lightGreen3/50 to-black',
   },
   {
-    owner: 'XRP',
+    label: 'XRP',
     starColor: 'text-lightGray4',
     gradientColor: 'border-lightGray4/50 from-lightGray4/50 to-black',
   },
   {
-    owner: 'DOGE',
+    label: 'DOGE',
     starColor: 'text-lightYellow1',
     gradientColor: 'border-lightYellow1/50 from-lightYellow1/50 to-black',
   },
   {
-    owner: 'UNI',
+    label: 'UNI',
     starColor: 'text-lightPink1',
     gradientColor: 'border-lightPink1/50 from-lightPink1/50 to-black',
   },
   {
-    owner: 'Flow',
+    label: 'Flow',
     starColor: 'text-lightGreen4',
     gradientColor: 'border-lightGreen4/50 from-lightGreen4/50 to-black',
   },

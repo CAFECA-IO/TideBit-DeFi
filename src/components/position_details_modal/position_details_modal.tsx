@@ -5,16 +5,20 @@ import {IOpenCFDDetails} from '../../interfaces/tidebit_defi_background/open_cfd
 interface IPositionDetailsModal {
   modalVisible: boolean;
   modalClickHandler: () => void;
-  ticker: string;
-  date: string;
-  time: string;
-  typeOfPosition: string;
-  entryPrice: string;
+  // ticker: string;
+  // date: string;
+  // time: string;
+  // typeOfPosition: string;
+  // entryPrice: string;
   // exitPrice: string;
-  openCfdDetails: IOpenCFDDetails;
+  openCfdDetails?: IOpenCFDDetails;
 }
 
-const PositionDetailsModal = ({modalVisible, modalClickHandler}: IPositionDetailsModal) => {
+const PositionDetailsModal = ({
+  // openCfdDetails,
+  modalVisible,
+  modalClickHandler,
+}: IPositionDetailsModal) => {
   const dataFormat = {
     type: 'UP (Buy)',
     amount: '0.1',
@@ -69,32 +73,13 @@ const PositionDetailsModal = ({modalVisible, modalClickHandler}: IPositionDetail
             </div>
             {/*body*/}
             <div className="relative flex-auto pt-1">
-              <div className="mx-10 mt-5 border-2 border-blue-400 text-base leading-relaxed text-lightWhite">
+              <div className="mx-10 mt-5 border-1px border-lightGreen text-base leading-relaxed text-lightWhite">
                 <div className="flex-col justify-center text-center">
-                  {displayedDataFormat()}
-                  {/* {dataFormat.map(
-                    ({
-                      type,
-                      amount,
-                      PNL,
-                      openValue,
-                      openPrice,
-                      openTime,
-                      takeProfit,
-                      stopLoss,
-                      liquidationPrice,
-                      state,
-                    }) => (
-                      <div className="mx-6 my-5 flex justify-between">
-                        <div className="text-lightGray">PNL</div>
-                        <div className="">{PNL}</div>
-                      </div>
-                    )
-                  )} */}
+                  {/* {displayedDataFormat()} */}
 
-                  {/* <div className="mx-6 my-5 flex justify-between">
+                  <div className="mx-6 my-5 flex justify-between">
                     <div className="text-lightGray">Type</div>
-                    <div className="">UP (Buy)</div>
+                    {/* <div className="">{openCfdDetails.typeOfPosition}</div> */}
                   </div>
 
                   <div className="mx-6 my-5 flex justify-between">
@@ -102,20 +87,48 @@ const PositionDetailsModal = ({modalVisible, modalClickHandler}: IPositionDetail
                     <div className="">0.1</div>
                   </div>
 
-                  <div className="">
-                    <div className=""></div>
-                    <div className=""></div>
+                  <div className="mx-6 my-5 flex justify-between">
+                    <div className="text-lightGray">PNL</div>
+                    <div className="">$ +34.9</div>
                   </div>
 
-                  <div className="">
-                    <div className=""></div>
-                    <div className=""></div>
+                  <div className="mx-6 my-5 flex justify-between">
+                    <div className="text-lightGray">Open Value</div>
+                    <div className="">$ 656.9</div>
                   </div>
 
-                  <div className="">
-                    <div className=""></div>
-                    <div className=""></div>
-                  </div> */}
+                  <div className="mx-6 my-5 flex justify-between">
+                    <div className="text-lightGray">Open Price</div>
+                    <div className="">$ 131.8</div>
+                  </div>
+
+                  <div className="mx-6 my-5 flex justify-between">
+                    <div className="text-lightGray">Open Time</div>
+                    <div className="">2022-05-30 13:04:57</div>
+                  </div>
+
+                  <div className="mx-6 my-5 flex justify-between">
+                    <div className="text-lightGray">Limit/ Stop</div>
+                    <div className="">- / -</div>
+                  </div>
+
+                  <div className="mx-6 my-5 flex justify-between">
+                    <div className="text-lightGray">Liquidation Price</div>
+                    <div className="">$ 1182.5</div>
+                  </div>
+
+                  <div className="mx-6 my-5 flex justify-between">
+                    <div className="text-lightGray">State</div>
+                    <div className="">
+                      Open{' '}
+                      <button
+                        type="button"
+                        className="ml-2 text-tidebitTheme underline underline-offset-2"
+                      >
+                        Close
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

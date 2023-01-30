@@ -53,6 +53,26 @@ const Trial = () => {
     });
   };
 
+  const dataFormat = {
+    id: '202301300005',
+    ticker: 'ETH',
+    typeOfPosition: 'BUY',
+    amount: '0.1',
+    PNL: '34.9',
+    openValue: '656.9',
+    openPrice: '131.8',
+    openTime: '2022-05-30 13:04:57', // date + time
+    takeProfit: '-',
+    stopLoss: '-',
+    liquidationPrice: '1183.6',
+    state: 'Open',
+    guranteedStop: false,
+    fee: 0,
+    scheduledClosingTimestamp: 123456,
+    leverage: 5,
+    margin: 200,
+  };
+
   // const []
 
   // console.log('cryptoCardsData', cryptoCardsData);
@@ -61,7 +81,11 @@ const Trial = () => {
     <>
       {/* flex h-screen w-full items-center justify-center */}
       <div className="w-full space-y-10 bg-cuteBlue">
-        <PositionDetailsModal modalVisible={modalVisible} modalClickHandler={modalClickHandler} />
+        <PositionDetailsModal
+          // openCfdDetails={dataFormat}
+          modalVisible={modalVisible}
+          modalClickHandler={modalClickHandler}
+        />
         {/* <CfdPositionModal /> */}
         {/* {forCryptoCard} */}
         {/* <TrialComponent /> */}

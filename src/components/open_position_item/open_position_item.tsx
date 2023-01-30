@@ -6,6 +6,7 @@ import {
   TRANSACTION_TYPE,
 } from '../../constants/display';
 import PositionLineGraph from '../position_line_graph/position_line_graph';
+import PositionDetailsModal from '../position_details_modal/position_details_modal';
 // import HorizontalRelativeLineGraph from '../horizontal_relative_line_graph/horizontal_relative_line_graph';
 
 interface IOpenPositionItemProps {
@@ -17,6 +18,7 @@ interface IOpenPositionItemProps {
   profitOrLossAmount: number;
   tickerTrendArray: number[];
   horizontalValueLine: number;
+  // circularClick?: () => void;
 }
 
 const OpenPositionItem = ({
@@ -28,11 +30,18 @@ const OpenPositionItem = ({
   profitOrLossAmount,
   tickerTrendArray,
   horizontalValueLine,
+  // circularClick: circularClick,
   ...otherProps
 }: IOpenPositionItemProps) => {
   if (longOrShort !== 'long' && longOrShort !== 'short') return <></>;
   if (profitOrLoss !== 'profit' && profitOrLoss !== 'loss') return <></>;
   if (ticker !== 'ETH' && ticker !== 'BTC') return <></>;
+
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const modalClickHandler = () => {
+    setModalVisible(!modalVisible);
+  };
 
   // const progressPercentage = 50;
   // const [progress, setProgress] = useState(0);
@@ -40,6 +49,7 @@ const OpenPositionItem = ({
 
   const clickHandler = () => {
     // console.log('show the modal displaying transaction detail');
+    modalClickHandler();
     return;
   };
 
@@ -70,13 +80,16 @@ const OpenPositionItem = ({
               onClick={clickHandler}
             ></div>
 
-            <CircularProgressBar
-              numerator={passedHour}
-              denominator={24}
-              progressBarColor={[displayedColorHex]}
-              hollowSize="40%"
-              circularBarSize="100"
-            />
+            <div>
+              <CircularProgressBar
+                numerator={passedHour}
+                denominator={24}
+                progressBarColor={[displayedColorHex]}
+                hollowSize="40%"
+                circularBarSize="100"
+                // clickHandler={circularClick}
+              />
+            </div>
           </div>
 
           {/* TODO: switch the layout */}
@@ -124,6 +137,12 @@ const OpenPositionItem = ({
 
       {/* Divider */}
       {/* <div className="absolute top-200px my-auto h-px w-7/8 rounded bg-white/50"></div> */}
+
+      <PositionDetailsModal
+        // openCfdDetails={dataFormat}
+        modalVisible={modalVisible}
+        modalClickHandler={modalClickHandler}
+      />
     </div>
   );
 };

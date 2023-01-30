@@ -1,11 +1,8 @@
-import React from 'react';
+import React, {useState} from 'react';
 import OpenPositionItem from '../open_position_item/open_position_item';
+import PositionDetailsModal from '../position_details_modal/position_details_modal';
 
 const OpenSubTab = () => {
-  // const clickCircularPauseHandler = () => {
-  //   console.log('clickCircularPauseHandler');
-  // };
-
   return (
     <>
       <div className="">
@@ -21,6 +18,11 @@ const OpenSubTab = () => {
             tickerTrendArray={[1230, 1272, 1120, 1265, 1342, 1299]}
             horizontalValueLine={1230}
           />
+          {/* <PositionDetailsModal
+            // openCfdDetails={dataFormat}
+            modalVisible={modalVisible}
+            modalClickHandler={modalClickHandler}
+          /> */}
         </div>
         {/* Divider */}
         <div className="my-auto h-px w-full rounded bg-white/50"></div>

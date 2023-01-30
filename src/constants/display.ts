@@ -148,6 +148,18 @@ export const PROFIT_LOSS_COLOR_TYPE = {
   tidebitTheme: '#29C1E1',
 };
 
+export const PNL_COLOR_TYPE = {
+  profit: 'text-lightGreen',
+  loss: 'text-lightRed',
+  equal: 'text-lightGray',
+};
+
+export const BORDER_COLOR_TYPE = {
+  profit: 'border-lightGreen',
+  loss: 'border-lightRed',
+  equal: 'border-lightGray',
+};
+
 export const TRANSACTION_TYPE = {
   long: {
     title: 'Up',

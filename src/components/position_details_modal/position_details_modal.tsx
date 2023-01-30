@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import {ImCross} from 'react-icons/im';
 import {IOpenCFDDetails} from '../../interfaces/tidebit_defi_background/open_cfd_details';
+import {BORDER_COLOR_TYPE, PNL_COLOR_TYPE} from '../../constants/display';
 
 interface IPositionDetailsModal {
   modalVisible: boolean;
@@ -53,7 +54,7 @@ const PositionDetailsModal = ({
           <div className="relative flex h-726px w-450px flex-col rounded-3xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none">
             {/*header*/}
             <div className="flex items-start justify-between rounded-t pt-6">
-              <div className="mx-10 mt-6 flex w-450px justify-between">
+              <div className="ml-10 mr-8 mt-6 flex w-450px justify-between">
                 <div className="flex items-center space-x-3 text-center text-4xl text-lightWhite">
                   <Image src="/elements/group_2371.svg" width={40} height={40} alt="icon" />
                   <h3 className="">ETH </h3>
@@ -73,13 +74,16 @@ const PositionDetailsModal = ({
             </div>
             {/*body*/}
             <div className="relative flex-auto pt-1">
-              <div className="mx-10 mt-5 border-1px border-lightGreen text-base leading-relaxed text-lightWhite">
+              <div
+                className={`${BORDER_COLOR_TYPE.profit} mx-10 mt-5 border-1px text-base leading-relaxed text-lightWhite`}
+              >
                 <div className="flex-col justify-center text-center">
                   {/* {displayedDataFormat()} */}
 
                   <div className="mx-6 my-5 flex justify-between">
                     <div className="text-lightGray">Type</div>
                     {/* <div className="">{openCfdDetails.typeOfPosition}</div> */}
+                    <div className="">Up (Buy)</div>
                   </div>
 
                   <div className="mx-6 my-5 flex justify-between">
@@ -89,7 +93,7 @@ const PositionDetailsModal = ({
 
                   <div className="mx-6 my-5 flex justify-between">
                     <div className="text-lightGray">PNL</div>
-                    <div className="">$ +34.9</div>
+                    <div className={`${PNL_COLOR_TYPE.profit}`}>$ +34.9</div>
                   </div>
 
                   <div className="mx-6 my-5 flex justify-between">

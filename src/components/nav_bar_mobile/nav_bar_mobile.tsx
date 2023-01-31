@@ -62,8 +62,6 @@ const NavBarMobile = ({notificationNumber = 1}) => {
     ></div>
   );
 
-  const {user} = useContext(UserContext);
-
   const isDisplayedUserOverview = userOverview ? <UserMobile /> : null;
 
   const userOverviewDividerDesktop = userOverview ? (

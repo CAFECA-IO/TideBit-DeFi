@@ -420,35 +420,6 @@ const SAMPLE_USER = {
   walletBalance: 894,
 };
 
-export interface IUserBalance {
-  available: number;
-  locked: number;
-  PNL: number;
-  // walletBalance: number; // deposit required info
-  // interest: number; // 入金的利息
-}
-
-export interface IUser {
-  id: string;
-  // username: string;
-  // email?: string;
-  wallets: string[];
-
-  favoriteTickers: ITickerData[];
-  balance: IUserBalance;
-  walletBalance: number;
-
-  // // orderEngine: string; // 產生 EIP 712 / 出金入金 要的資料
-  // isSubscibedNewsletters: boolean;
-  // isEnabledEmailNotification: boolean;
-  // isConnected: boolean;
-  // isConnectedWithEmail: boolean;
-  // isConnectedWithTideBit: boolean;
-  // walletId: string;
-  // tideBitId: string;
-  // enableServiceTerm: boolean;
-}
-
 export interface IUserProvider {
   children: React.ReactNode;
 }
@@ -490,6 +461,7 @@ export interface IBalance {
   available: number;
   locked: number;
   total: number;
+  pnl: number;
 }
 
 export const UserContext = createContext<IUserContext>({
@@ -502,6 +474,7 @@ export const UserContext = createContext<IUserContext>({
     available: 0,
     locked: 0,
     total: 0,
+    pnl: 0,
   },
   favoriteTickers: [],
   isSubscibedNewsletters: false,
@@ -530,6 +503,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     available: 0,
     locked: 0,
     total: 0,
+    pnl: 0,
   });
   const [favoriteTickers, setFavoriteTickers] = useState<ITickerData[]>([]);
   const [isSubscibedNewsletters, setIsSubscibedNewsletters] = useState<boolean>(false);

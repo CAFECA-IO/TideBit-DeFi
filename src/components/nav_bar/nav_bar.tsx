@@ -72,13 +72,13 @@ const NavBar = ({notificationNumber = 1}) => {
     </div>
   );
 
-  const {user} = useContext(UserContext);
+  const {balance} = useContext(UserContext);
 
   const isDisplayedUserOverview = userOverview ? (
     <UserOverview
-      depositAvailable={user?.balance?.available ?? 0}
-      marginLocked={user?.balance?.locked ?? 0}
-      profitOrLossAmount={user?.balance?.PNL ?? 0}
+      depositAvailable={balance?.available ?? 0}
+      marginLocked={balance?.locked ?? 0}
+      profitOrLossAmount={balance?.pnl ?? 0}
     />
   ) : null;
 

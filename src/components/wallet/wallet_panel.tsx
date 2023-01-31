@@ -3,7 +3,6 @@ import {ImCross, ImUpload2} from 'react-icons/im';
 import WalletOption from './wallet_option';
 import useOuterClick from '../../lib/hooks/use_outer_click';
 import TideButton from '../tide_button/tide_button';
-import {ethers, providers} from 'ethers';
 import Toast from '../toast/toast';
 import ConnectingModal from './connecting_modal';
 import SignatureProcessModal from './signature_process_modal';
@@ -216,13 +215,6 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
   //   componentVisible: avatarMenuVisible,
   //   setComponentVisible: setAvatarMenuVisible,
   // } = useOuterClick<HTMLDivElement>(false);
-
-  interface IConnectingProps {
-    provider: providers.Web3Provider;
-  }
-  interface IConnectorProps {
-    provider: providers.Web3Provider;
-  }
 
   const [connecting, setConnecting] = useState(false);
 
@@ -509,23 +501,6 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
       // setNetwork(networkData.name);
       // setSymbol(networkData.native_currency.symbol);
       setChainId(chainId);
-
-      try {
-        // 1. Create an Ethers provider
-        const provider = new ethers.providers.StaticJsonRpcProvider(networkData.rpc_url, {
-          chainId,
-          name: networkData.name,
-        });
-        // 2. Get the account balance
-        const balance = await provider.getBalance(connectedAccount);
-        // 3. Format the balance
-        const formattedBalance = ethers.utils.formatEther(balance);
-        // 4. Save the balance to state
-        setUserBalance(formattedBalance);
-      } catch (error: any) {
-        // console.log(error.message);
-        setErrorMessages(error.message);
-      }
     }
 
     const defaulltAccountForCheck = wallet?.toLowerCase();
@@ -1061,64 +1036,11 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
 
       // console.log('before sending sign request, msgParams: ', msgParams);
       if (connector) {
-        const signature = await userContext.signServiceTerm();
-      }
-
-      // console.log('signature: ', signature);
-      // TODO: Notes imToken will return `{}` as signature at first, if user sign it, it'll return correct signature later on
-      // console.log('signature by wallet connect library: ', signature);
-
-      // const verifySignature = await ethers.utils.verifyTypedData(domain,)
-
-      // --------------------------------
-      // console.log('Regex for sign', /^(0x|0X)?[a-fA-F0-9]+$/.test(signature));
-
-      // try {
-      //   const testVerification = ethers.utils.verifyTypedData(
-      //     typedDataForVerifying.domain,
-      //     typedDataForVerifying.types,
-      //     typedDataForVerifying.message,
-      //     signature
-      //   );
-      // } catch (error) {
-      //   console.log(error);
-      // }
-      if (/^(0x|0X)?[a-fA-F0-9]+$/.test(signature)) {
-        const testVerification = ethers.utils.verifyTypedData(
-          typedDataForVerifying.domain,
-          typedDataForVerifying.types,
-          typedDataForVerifying.message,
-          signature
-        );
-
-        // const accountControl = props?.connectedAccount?.toLowerCase() ?? defaultAccount?.toLowerCase();
-
-        // const accountLowercase = defaultAccount?.toLowerCase() ?? connectedAccount?.toLowerCase();
-        const testVerificationLowerCase = testVerification?.toLowerCase();
-        // console.log('length about testVerification:', testVerification?.length);
-        // // console.log('length about default account:', defaultAccount?.length);
-        // // console.log('length about account:', connectedAccount?.length);
-
-        // // console.log('account upper case:', accountUpperCase);
-        // console.log('account control:', accountControl);
-        // // TODO: Notes: when there's a condition, better to NOT log them separately, otherwise it'll error out
-        // // console.log('default account upper case:', defaultAccount?.toLowerCase());
-        // // console.log('connected account upper case:', connectedAccount?.toLowerCase());
-
-        // console.log('testVerification (Public Key recoverd from signature):', testVerification);
-        // console.log('account ?= testVerification: ', accountControl === testVerificationLowerCase);
-        // console.log(
-        //   'typeof account ?= testVerification: ',
-        //   typeof defaultAccount,
-        //   typeof testVerification
-        // );
-
-        // --------------------------------
-
-        if (accountControl === testVerificationLowerCase) {
+        const result = await signServiceTerm();
+        if (result) {
           setSignature(signature);
           setSecondStepSuccess(true);
-          userContext.signServiceTerm();
+          signServiceTerm();
 
           setTimeout(() => setProcessModalVisible(false), DELAYED_HIDDEN_SECONDS);
 
@@ -1127,7 +1049,6 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
           setPanelVisible(false);
           setShowToast(true);
           setSignInStore(true);
-          // console.log('sign in store, ', signInStore);
         }
       }
 
@@ -1250,28 +1171,8 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
       setProcessModalVisible(true);
 
       // console.log('projectId', projectId);
-
-      const provider = new providers.Web3Provider(window.ethereum);
-      await provider.send('eth_requestAccounts', []);
-
-      const signer = provider.getSigner();
-      const address = await signer.getAddress();
-      const chainId = await signer.getChainId();
-      const balance = await signer.getBalance();
-      userContext.connect();
+      await userContext.connect();
       passUserLoginState(true);
-
-      setChainId(chainId);
-
-      if (chainId !== 1) {
-        setShowToast(true);
-      }
-
-      // let balance = await provider.getBalance(address);
-      const userBalance = ethers.utils.formatEther(balance);
-      setUserBalance(userBalance);
-
-      // setUserBalance(ethers.utils.formatEther(balance));
 
       // Connect to the wallet => first step success
       // Clear other state of the process modal
@@ -1281,37 +1182,16 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
       setSecondStepError(false);
 
       setLoading(true);
-      const signature = await signer._signTypedData(DOMAIN, TYPES, VALUE);
-
-      // TODO: Notes why defaultAccount is '' here
-      const isVerifyedSignature =
-        address.toString() ===
-        ethers.utils.verifyTypedData(DOMAIN, TYPES, VALUE, signature).toString();
-
-      // console.log(
-      //   `Sign by ${ethers.utils
-      //     .verifyTypedData(DOMAIN, TYPES, VALUE, signature)
-      //     .toString()}, Expected ${address}`
-      // );
-
-      if (/^(0x|0X)?[a-fA-F0-9]+$/.test(signature) && isVerifyedSignature) {
-        userContext.signServiceTerm();
-        setSignature(signature);
+      const agreeServiceTerm = await signServiceTerm();
+      if (agreeServiceTerm) {
         setSecondStepSuccess(true);
-        // console.log(verifyedSignature, defaultAccount, signature);
-        // console.log(typeof ethers.utils.verifyTypedData(domain, types, value, signature));
-
         setTimeout(() => setProcessModalVisible(false), DELAYED_HIDDEN_SECONDS);
-
         setHelloModalVisible(true);
         setPanelVisible(false);
         setErrorMessages('');
         setShowToast(true);
         setSignInStore(true);
-        // console.log('sign in store, ', signInStore);
       }
-
-      setSignaturePending(false);
 
       // setPairingSignature({account: defaultAccount, signature: signature});
 
@@ -1362,28 +1242,8 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
       // console.trace('123');
       setMetamaskConnectFirstTimeSuccessful(true);
 
-      const provider = new ethers.providers.Web3Provider(window.ethereum, 'any');
-      // pop up the metamask window
-      await provider.send('eth_requestAccounts', []);
-      const signer = provider.getSigner();
-      const address = await signer.getAddress();
-      userContext.connect();
+      await userContext.connect();
       passUserLoginState(true);
-      //userContext.connect();
-
-      const chainId = await signer.getChainId();
-      setChainId(chainId);
-
-      if (chainId !== 1) {
-        // console.log('Please switch to ETH mainnet');
-        setShowToast(true);
-      }
-
-      const balance = await provider.getBalance(address);
-      const userBalance = ethers.utils.formatEther(balance);
-      setUserBalance(userBalance);
-      // console.log('user balance: ', balance);
-      // console.log('connect to Metamask clicked, Account: ', address);
 
       // TODO: NNNNNNNotes
       // console.log('connecting modal should be invisible: ', connectingModalVisible);

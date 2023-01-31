@@ -4,6 +4,8 @@ import {ICardProps, ILineGraphProps} from '../../components/card/crypto_card';
 import {PROFIT_LOSS_COLOR_TYPE} from '../../constants/display';
 import Lunar from '@cafeca/lunar';
 
+const lunar = new Lunar();
+
 export interface ITickerData {
   currency: string;
   chain: string;
@@ -506,8 +508,7 @@ export const UserProvider = ({children}: IUserProvider) => {
   const [enableServiceTerm, setEnableServiceTerm] = useState<boolean>(false);
 
   const connect = async () => {
-    const lunar = new Lunar();
-    lunar.connect();
+    lunar.connect({});
     setIsConnected(true);
     const provider = new providers.Web3Provider(window.ethereum);
     await provider.send('eth_requestAccounts', []);
@@ -519,12 +520,15 @@ export const UserProvider = ({children}: IUserProvider) => {
   };
 
   const disconnect = async () => {
+    lunar.disconnect();
     setIsConnected(false);
     setEnableServiceTerm(false);
     return;
   };
 
   const signServiceTerm = async () => {
+    const serviceTerm = {Hello: 'world'};
+    const result = await lunar.signTypedData(serviceTerm);
     setEnableServiceTerm(true);
     return true;
   };

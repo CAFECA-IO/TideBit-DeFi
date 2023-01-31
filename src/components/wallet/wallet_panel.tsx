@@ -413,6 +413,7 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
       return;
     }
 
+    /*
     const {ethereum} = window;
     if (ethereum) {
       try {
@@ -429,6 +430,7 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
         // console.error('Not connected to wallet', error);
       }
     }
+    */
 
     // setAvatarMenuVisible(false);
   };
@@ -720,6 +722,7 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
     // injectedDetecting();
     if (walletConnectSuccessful) return;
 
+    /*
     if (window?.ethereum) {
       // console.log('in window?.ethereum');
 
@@ -778,6 +781,7 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
         setSignature('');
       });
     }
+    */
 
     // ethereum?.on('chainChanged', async chainId => {
     //   setChainId(chainId);
@@ -800,6 +804,7 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
     };
   }, [chooseMetamask]);
 
+  /*
   function injectedDetecting() {
     // console.log('First line for injectedDetecting');
     if (walletConnectSuccessful) return;
@@ -870,6 +875,7 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
     //   });
     // })();
   }
+  */
 
   // TODO: Notes every time component rendered, it'll run useEffect, that's why it works with `[]`
   // FIXME: split the logic out of useEffect
@@ -1055,7 +1061,7 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
 
       // console.log('before sending sign request, msgParams: ', msgParams);
       if (connector) {
-        const signature = await connector.signTypedData(msgParams);
+        const signature = await userContext.signServiceTerm();
       }
 
       // console.log('signature: ', signature);

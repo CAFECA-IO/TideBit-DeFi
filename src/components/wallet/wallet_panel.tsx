@@ -1,5 +1,5 @@
 import {useEffect, useRef, useState, useContext} from 'react';
-import {ImCross, ImUpload2} from 'react-icons/im';
+import {ImCross, ImUpload2, ImExit} from 'react-icons/im';
 import WalletOption from './wallet_option';
 import useOuterClick from '../../lib/hooks/use_outer_click';
 import TideButton from '../tide_button/tide_button';
@@ -24,13 +24,8 @@ import {HiOutlineSave} from 'react-icons/hi';
 import {CiSaveDown2} from 'react-icons/ci';
 import {FaDownload, FaUpload} from 'react-icons/fa';
 import {VscAccount} from 'react-icons/vsc';
-// import {IoExitOutline} from 'react-icons/io';
-// import {RxExit} from 'react-icons/rx';
-import {ImExit} from 'react-icons/im';
 import TransferProcessModal from '../transfer_process_modal/transfer_process_modal';
 import {MarketContext} from '../../lib/contexts/market_context';
-import {UserContext} from '../../lib/contexts/user_context';
-
 import {UserContext} from '../../lib/contexts/user_context';
 
 // import Connector from '@walletconnect/core';
@@ -222,8 +217,6 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
   //   componentVisible: avatarMenuVisible,
   //   setComponentVisible: setAvatarMenuVisible,
   // } = useOuterClick<HTMLDivElement>(false);
-
-  const {user} = userContext;
 
   const [connecting, setConnecting] = useState(false);
 
@@ -485,7 +478,7 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
       getSubmissionState={getWithdrawSubmissionState}
       transferType="withdraw"
       transferStep={withdrawProcess}
-      userAvailableBalance={user?.balance?.available ?? 0}
+      userAvailableBalance={userContext?.balance?.available ?? 0}
       modalVisible={withdrawModalVisible}
       modalClickHandler={withdrawModalClickHandler}
     />
@@ -500,7 +493,7 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
       getSubmissionState={getDepositSubmissionState}
       transferType="deposit"
       transferStep={depositProcess}
-      userAvailableBalance={user?.walletBalance ?? 0}
+      userAvailableBalance={userContext?.walletBalance ?? 0}
       modalVisible={depositModalVisible}
       modalClickHandler={depositModalClickHandler}
     />

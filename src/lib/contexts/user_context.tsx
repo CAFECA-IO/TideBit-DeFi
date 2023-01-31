@@ -468,6 +468,8 @@ export interface IUserContext {
   username: string | null;
   email: string | null;
   wallet: string | null;
+  walletBalance: number;
+  balance: IBalance;
   favoriteTickers: ITickerData[];
   isSubscibedNewsletters: boolean;
   isEnabledEmailNotification: boolean;
@@ -484,11 +486,23 @@ export interface IUserContext {
   removeFavoriteTicker: (props: ITickerData) => Promise<void>;
 }
 
+export interface IBalance {
+  available: number;
+  locked: number;
+  total: number;
+}
+
 export const UserContext = createContext<IUserContext>({
   id: null,
   username: null,
   email: null,
   wallet: null,
+  walletBalance: 0,
+  balance: {
+    available: 0,
+    locked: 0,
+    total: 0,
+  },
   favoriteTickers: [],
   isSubscibedNewsletters: false,
   isEnabledEmailNotification: false,
@@ -511,6 +525,12 @@ export const UserProvider = ({children}: IUserProvider) => {
   const [username, setUsername] = useState<string | null>(null);
   const [email, setEmail] = useState<string | null>(null);
   const [wallet, setWallet] = useState<string | null>(null);
+  const [walletBalance, setWalletBalance] = useState<number>(0);
+  const [balance, setBalance] = useState<IBalance>({
+    available: 0,
+    locked: 0,
+    total: 0,
+  });
   const [favoriteTickers, setFavoriteTickers] = useState<ITickerData[]>([]);
   const [isSubscibedNewsletters, setIsSubscibedNewsletters] = useState<boolean>(false);
   const [isEnabledEmailNotification, setIsEnabledEmailNotification] = useState<boolean>(false);
@@ -621,6 +641,8 @@ export const UserProvider = ({children}: IUserProvider) => {
         username,
         email,
         wallet,
+        walletBalance,
+        balance,
         favoriteTickers,
         isSubscibedNewsletters,
         isEnabledEmailNotification,

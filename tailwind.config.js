@@ -235,6 +235,20 @@ module.exports = {
         '1/3': '33.333333%',
         '3/5': '60%',
       },
+      borderRadius: {
+        '12px': '12px',
+      },
+      rotate: {
+        '35': '35deg',
+        'm35': '-35deg',
+      },
+      zIndex: {
+        '60': '60',
+        '70': '70',
+        '80': '80',
+        '90': '90',
+        '100': '100',
+      },
       backgroundImage: {
         banner1: "url('~/img/group_15199@2x.png)",
       },

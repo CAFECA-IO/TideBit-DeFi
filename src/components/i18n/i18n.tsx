@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import Image from 'next/image';
+//import Image from 'next/image';
 import {useRouter} from 'next/router';
 import Link from 'next/link';
 import useOuterClick from '../../lib/hooks/use_outer_click';
@@ -9,9 +9,16 @@ import useOuterClick from '../../lib/hooks/use_outer_click';
 // export const testi18n = async () =>
 //   await i18n?.use(initReactI18next).init({fallbackLng: 'en', debug: true});
 
-const I18n = () => {
+const I18n = (
+  {
+    langIsOpen,
+    setLangIsOpen,
+  }: any /* langIsOpen: boolean, setLangIsOpen: Dispatch<SetStateAction<boolean>> */
+) => {
   // const [locale, setLocale] = useState('en');
-  const [openMenu, setOpenMenu] = useState(false);
+  const [openMenu, setOpenMenu] =
+    typeof setLangIsOpen !== 'function' ? useState(false) : [langIsOpen, setLangIsOpen];
+
   const {locale, locales, defaultLocale, asPath} = useRouter();
   const {
     targetRef: globalRef,
@@ -20,8 +27,9 @@ const I18n = () => {
   } = useOuterClick<HTMLDivElement>(false);
 
   const clickHandler = () => {
-    setOpenMenu(() => !openMenu);
+    // setOpenMenu(() => !openMenu);
     // setComponentVisible(!componentVisible);
+    setOpenMenu(!openMenu);
   };
 
   const internationalizationList = [
@@ -56,18 +64,15 @@ const I18n = () => {
     <div className="lg:hidden">
       <div
         id="i18nDropdown"
-        className="absolute top-64 left-10 z-10 w-150px divide-y divide-lightGray rounded-none bg-darkGray shadow"
+        className="absolute top-44 left-0 z-10 h-full w-screen bg-black/100 opacity-100 shadow transition-all duration-300"
       >
-        <ul
-          className="mx-3 py-1 pb-3 text-base text-gray-700 dark:text-gray-200"
-          aria-labelledby="i18nButton"
-        >
+        <ul className="pt-3 text-center text-base dark:text-gray-200" aria-labelledby="i18nButton">
           {internationalizationList.map((item, index) => (
             <li key={index}>
               <Link
                 locale={item.value}
                 href={asPath}
-                className="block rounded-none py-2 pr-4 pl-6 hover:bg-darkGray5"
+                className="block rounded-none px-3 py-7 font-medium hover:cursor-pointer hover:text-tidebitTheme"
               >
                 {item.label}
               </Link>
@@ -103,7 +108,11 @@ const I18n = () => {
           </svg>
         </div>
       </div>
-      <button type="button" className="inline-flex hover:text-tidebitTheme lg:hidden">
+      <button
+        onClick={clickHandler}
+        type="button"
+        className="inline-flex hover:text-tidebitTheme lg:hidden"
+      >
         Language
       </button>
     </>

@@ -59,6 +59,7 @@ module.exports = {
         '200px': '200px',
         '250px': '250px',
         '350px': '350px',
+        '3xs': '200px',
       },
       spacing: {
         // width / height / padding / margin / top / bottom / right / left
@@ -110,7 +111,9 @@ module.exports = {
         '95px': '95px',
         '100px': '100px',
         '105px': '105px',
+        '110px': '110px',
         '120px': '120px',
+        '125px': '125px',
         '130px': '130px',
         '134px': '134px',
         '140px': '140px',
@@ -123,7 +126,9 @@ module.exports = {
         '250px': '250px',
         '271px': '271px',
         '278px': '278px',
+        '280px': '280px',
         '285px': '285px',
+        '290px': '290px',
         '300px': '300px',
         '320px': '320px',
         '350px': '350px',
@@ -162,15 +167,30 @@ module.exports = {
         '15rem': '15rem',
         '20rem': '20rem',
 
+        '0.5': '50%',
         '1/2': '50%',
+        '1/4': '25%',
         '1/5': '20%',
         '2/5': '40%',
+        '3/5': '60%',
         '4/5': '80%',
         '1/8': '12.5%',
+        '3/8': '37.5%',
+        '5/8': '62.5%',
         '7/8': '87.5%',
         '1/10': '10%',
+        '2/10': '20%',
+        '3/10': '30%',
+        '4/10': '40%',
+        '5/10': '50%',
+        '6/10': '60%',
+        '7/10': '70%',
+        '8/10': '80%',
+        '9/10': '90%',
+        '10/10': '100%',
         '1/11': '9.09090909090909%',
         '2/11': '18.181818181818183%',
+        '10/11': '90.909%',
         '1/3': '33.333333%',
         '3/5': '60%',
       },
@@ -267,6 +287,8 @@ module.exports = {
         lightGreen4: '#00EF8B',
 
         lightGreen5: '#17BF88',
+
+        lightGray5: '#D4D4D4',
       },
       fontFamily: {
         barlow: ['Barlow', 'sans-serif', 'ui-sans-serif', 'system-ui'],
@@ -278,8 +300,9 @@ module.exports = {
       animation: {
         'spin-slow': 'spin 3s linear infinite',
         'spin-fast': 'spin 1s linear infinite',
-        fade: 'fadeOut 3s ease-in-out',
+        fadeOut: 'fadeOut 3s ease-in-out',
         wiggle: 'wiggle 1s ease-in-out infinite',
+        openMenu: 'open-menu 0.5s ease-in-out forwards',
       },
       // actual animation
       keyframes: theme => ({
@@ -290,6 +313,12 @@ module.exports = {
         wiggle: {
           '0%, 100%': {transform: 'rotate(-3deg)'},
           '50%': {transform: 'rotate(3deg)'},
+        },
+        openMenu: {
+          // '0%': {transform: 'scaleY(0)'},
+          // '80%': {transform: 'scaleY(1.2)'},
+          // '100%': {transform: 'scaleY(1)'},
+          '0%, 20%': {transform: 'rotate(-3deg)'},
         },
       }),
     },

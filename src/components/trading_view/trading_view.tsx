@@ -1,24 +1,26 @@
-import {useState, useEffect} from 'react';
+import {useState, useEffect, useContext} from 'react';
 import CandlestickChart from '../candlestick_chart/candlestick_chart';
 import TradingChartSwitch from '../trading_chart_switch/trading_chart_switch';
 import TradingLineGraphChart from '../trading_line_graph_chart/trading_line_graph_chart';
 import useWindowSize from '../../lib/hooks/use_window_size';
 import Lottie from 'lottie-react';
 import spotAnimation from '../../../public/animation/circle.json';
+import {INITIAL_POSITION_LABEL_DISPLAYED_STATE} from '../../constants/display';
+import {MarketContext} from '../../lib/contexts/market_context';
 
-const defaultChartWidth = 900;
-const defaultChartHeight = 400;
-const minScreenWidth = 1024;
-const tradeTabWidth = 350;
-const switchHeight = 40;
+const DEFAULT_CHART_WIDTH = 900;
+const DEFAULT_CHART_HEIGHT = 400;
+const MIN_SCREEN_WIDTH = 1024;
+const TRADE_TAB_WIDTH = 350;
+const SWITCH_HEIGHT = 40;
 
 const getChartSize = () => {
   const windowSize = useWindowSize();
-  const defaultChartSize = {width: defaultChartWidth, height: defaultChartHeight};
+  const defaultChartSize = {width: DEFAULT_CHART_WIDTH, height: DEFAULT_CHART_HEIGHT};
   const chartWidth =
-    windowSize.width - tradeTabWidth > minScreenWidth - tradeTabWidth
-      ? windowSize.width - tradeTabWidth
-      : minScreenWidth - tradeTabWidth;
+    windowSize.width - TRADE_TAB_WIDTH > MIN_SCREEN_WIDTH - TRADE_TAB_WIDTH
+      ? windowSize.width - TRADE_TAB_WIDTH
+      : MIN_SCREEN_WIDTH - TRADE_TAB_WIDTH;
   const chartSize = {
     width: chartWidth.toString(),
     height: ((defaultChartSize.height / defaultChartSize.width) * chartWidth).toString(),
@@ -30,19 +32,33 @@ const getChartSize = () => {
 const getSwitchWidth = () => {
   const windowSize = useWindowSize();
   const switchWidth =
-    windowSize.width - tradeTabWidth > minScreenWidth - tradeTabWidth
-      ? windowSize.width - tradeTabWidth
-      : minScreenWidth - tradeTabWidth;
+    windowSize.width - TRADE_TAB_WIDTH > MIN_SCREEN_WIDTH - TRADE_TAB_WIDTH
+      ? windowSize.width - TRADE_TAB_WIDTH
+      : MIN_SCREEN_WIDTH - TRADE_TAB_WIDTH;
   const switchSize = {
     width: switchWidth.toString(),
-    height: switchHeight.toString(),
+    height: SWITCH_HEIGHT.toString(),
   };
   return switchSize;
 };
 
 const TradingView = () => {
+  const {showPositionOnChart} = useContext(MarketContext);
+  // console.log('showPositionOnChart in Trading view', showPositionOnChart);
+
   const [selectedChartType, setSelectedChartType] = useState('candlestick');
   const [selectedChartInterval, setSelectedChartInterval] = useState('live');
+  // const [showPositionLabel, setShowPositionLabel] = useState(
+  //   INITIAL_POSITION_LABEL_DISPLAYED_STATE
+  // );
+
+  // Get toggle state from `trading_chart_switch`, which gets it from `toggle`
+  // and pass to `candlestick_chart` component
+  const getDisplayedPositionLabelState = (bool: boolean) => {
+    // console.log('bool in trading_view', bool);
+    // setShowPositionLabel(bool);
+    // return bool;
+  };
   const chartSize = getChartSize();
   const switchSize = getSwitchWidth();
 
@@ -236,6 +252,7 @@ const TradingView = () => {
           <TradingChartSwitch
             getTradingViewType={getTradingViewSelected}
             getTradingViewInterval={getTradingViewIntervaleSelected}
+            getDisplayedPositionLabel={getDisplayedPositionLabelState}
           />
         </div>
       </div>

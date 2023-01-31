@@ -6,14 +6,14 @@ export default class MyDocument extends Document {
       <Html lang="en">
         <Head>
           <link rel="preconnect" href="https://fonts.googleapis.com" />
-          <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="true" />
+          <link rel="preconnect" href="https://fonts.gstatic.com" />
           <link
             href="https://fonts.googleapis.com/css2?family=Barlow&display=swap"
             rel="stylesheet"
           />
         </Head>
 
-        <body>
+        <body className="bg-black text-white dark:bg-black dark:text-white">
           <Main />
           <NextScript />
         </body>

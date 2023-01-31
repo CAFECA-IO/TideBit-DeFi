@@ -10,8 +10,11 @@ import TradingLineGraphChart from '../components/trading_line_graph_chart/tradin
 import {ToastContainer, toast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {CRYPTO_CARD_COLORS} from '../constants/display';
-import {useContext} from 'react';
+import {useContext, useState} from 'react';
 import {MarketContext} from '../lib/contexts/market_context';
+import TransferProcessModal, {
+  TRANSFER_PROCESS_MODAL_STEP_CLASSES,
+} from '../components/transfer_process_modal/transfer_process_modal';
 
 const Trial = () => {
   const {
@@ -19,6 +22,16 @@ const Trial = () => {
     componentVisible: tickerBoxVisible,
     setComponentVisible: setTickerBoxVisible,
   } = useOuterClick<HTMLDivElement>(true);
+
+  const [modalVisible, setModalVisible] = useState(true);
+
+  const modalClickHandler = () => {
+    setModalVisible(!modalVisible);
+  };
+
+  const getSubmissionState = (state: 'success' | 'cancellation' | 'fail') => {
+    // console.log('result boolean: ', state);
+  };
 
   // const tickerBoxClickHandler = () => {
   //   setTickerBoxVisible(!tickerBoxVisible);
@@ -347,20 +360,20 @@ const Trial = () => {
   return (
     <>
       {/* flex h-screen w-full items-center justify-center */}
-      <div className="w-full space-y-10 p-10">
+      <div className="ml-5/6 w-full space-y-10 bg-cuteBlue">
         {/* {forCryptoCard} */}
-        <TrialComponent />
+        {/* <TrialComponent /> */}
 
         {/* Divider */}
-        <div className="my-auto h-px w-full rounded bg-white/50"></div>
-        <button
+        {/* <div className="my-auto h-px w-full rounded bg-white/50"></div> */}
+
+        {/* Toast and gradient */}
+        {/* <button
           onClick={notifyFunction}
           className="h-120px w-200px rounded border-0.5px border-lightWhite/50 bg-lightWhite bg-gradient-to-b from-lightWhite/50 to-black p-0 px-5 text-lightWhite opacity-90 shadow-lg"
         >
           Notify!
         </button>
-
-        {/* <p className="text-lightGreen4">Hee</p> */}
 
         <ToastContainer
           position="bottom-left"
@@ -374,7 +387,37 @@ const Trial = () => {
           pauseOnHover
           theme="dark"
           limit={10}
-        />
+        /> */}
+        {/* 
+        <RippleButton
+          buttonType="button"
+          className="mt-4 rounded border-0 bg-cuteBlue py-2 px-5 text-base text-black transition-colors duration-300 hover:cursor-pointer hover:bg-cuteBlue/80 focus:outline-none md:mt-0"
+        >
+          Show the modal
+        </RippleButton> */}
+
+        {/* <TransferProcessModal
+          transferOptions={[
+            {label: 'USDT', content: 'Tether'},
+            {label: 'ETH', content: 'ETH'},
+            {label: 'BTC', content: 'BTC'},
+            {label: 'USDC', content: 'USD Coin'},
+            {label: 'DAI', content: 'DAI'},
+            {label: 'BNB', content: 'BNB'},
+            {label: 'BCH', content: 'BCH'},
+            {label: 'LTC', content: 'LTC'},
+            {label: 'ETC', content: 'ETC'},
+            {label: 'USX', content: 'USX'},
+            {label: 'NEO', content: 'NEO'},
+            {label: 'EOS', content: 'EOS'},
+          ]}
+          getSubmissionState={getSubmissionState}
+          transferType="withdraw"
+          transferStep="form"
+          userAvailableBalance={314.15}
+          modalVisible={modalVisible}
+          modalClickHandler={modalClickHandler}
+        /> */}
       </div>
     </>
   );

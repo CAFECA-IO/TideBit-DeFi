@@ -33,7 +33,7 @@ const PositionDetailsModal = ({
   const [guaranteedTooltipStatus, setGuaranteedTooltipStatus] = useState(0);
 
   const [disabledSlToggle, setDisabledSlToggle] = useState(false);
-  const [slToggleState, setSlToggleState] = useState(false);
+  // const [slToggleState, setSlToggleState] = useState(false);
   const [guaranteedChecked, setGuaranteedChecked] = useState(false);
 
   const getToggledTpSetting = (bool: boolean) => {
@@ -270,7 +270,7 @@ const PositionDetailsModal = ({
                     disabled={disabledSlToggle}
                     // initialToggleState={slToggleState}
                     // toggleStateFromParent={slToggleState}
-                    getToggleFunction={getSlToggleFunction}
+                    // getToggleFunction={getSlToggleFunction}
                   />
                 </div>
 

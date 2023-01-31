@@ -7,15 +7,15 @@ interface IToggleProps {
   initialToggleState?: boolean;
   // toggleStateFromParent?: boolean;
   getToggledState: (props: boolean) => void;
-  getToggleFunction?: (props: () => void) => void;
+  // getToggleFunction?: (props: () => void) => void;
 }
 
 const Toggle = ({
   initialToggleState = false,
   getToggledState,
   disabled,
-  getToggleFunction,
-}: IToggleProps) => {
+}: // getToggleFunction,
+IToggleProps) => {
   const [toggle, setToggle] = useState(initialToggleState);
 
   // function to handle pass the `toggle` state to parent component
@@ -32,15 +32,16 @@ const Toggle = ({
     // passToggleFunction(toggleClickHandler);
   };
 
-  const passToggleFunction = () => {
-    if (getToggleFunction) {
-      getToggleFunction(toggleClickHandler);
-      // console.log('pass function from children component');
-    }
-    // toggleClickHandler();
-  };
+  // const passToggleFunction = () => {
+  //   if (getToggleFunction) {
+  //     getToggleFunction(toggleClickHandler);
+  //     // console.log('pass function from children component');
+  //   }
+  //   // toggleClickHandler();
+  // };
 
   //TODO: bg-tidebitTheme [#29C1E1]
+  // FIXME: `disabled` changed to `lockedToOpen`
   const toggleSwitchStyle = toggle || disabled ? 'transform translate-x-full' : null;
   const toggleBackgroundStyle = disabled ? 'bg-[#8B8E91]' : toggle ? 'bg-[#29C1E1]' : null;
 

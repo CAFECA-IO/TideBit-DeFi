@@ -37,18 +37,23 @@ export default function Notification({
               ref={notifyRef}
               className={`pointer-events-auto ${'w-479px'} h-screen ${
                 componentVisible ? 'translate-x-0' : 'translate-x-full'
-              } bg-darkGray/90 p-5 pt-8 text-white transition-all duration-300`}
+              } flex flex-col bg-darkGray/90 p-5 pt-8 text-white transition-all duration-300`}
             >
-              <h1 className="pl-5 text-2xl font-bold">Notification</h1>
-              <div className="fixed right-30px text-sm text-tidebitTheme underline hover:cursor-pointer">
-                Clear All
+              <div className="mb-10 flex flex-col justify-center">
+                <h1 className="pl-5 text-2xl font-bold">Notification</h1>
+                <div className="fixed right-30px text-sm text-tidebitTheme underline hover:cursor-pointer">
+                  Clear All
+                </div>
               </div>
 
-              <div className="mt-20">
-                <NotificationItem />
-              </div>
-              <div className="mt-5">
-                <NotificationItem />
+              {/* Notification List*/}
+              <div className="flex basis-full flex-col space-y-10 overflow-y-auto overflow-x-hidden">
+                <div>
+                  <NotificationItem />
+                </div>
+                <div>
+                  <NotificationItem />
+                </div>
               </div>
             </div>
           </div>

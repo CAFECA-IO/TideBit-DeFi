@@ -90,7 +90,7 @@ export interface ICFDOrderUpdate {
 export interface ICFDBrief {
   id: string;
   ticker: string;
-  operation: 'BUY' | 'SELL';
+  typeOfPosition: 'BUY' | 'SELL';
   openPrice: number;
   openValue: number;
   pNL: IPnL;
@@ -122,7 +122,7 @@ export interface ICFDDetails {
   id: string;
 
   ticker: string; // 'BTC' | 'ETH'
-  operation: 'BUY' | 'SELL'; // 'Buy' | 'Sell'
+  typeOfPosition: 'BUY' | 'SELL'; // 'Buy' | 'Sell'
   leverage: number;
   margin: number;
   openPrice: number; // Avg. Open Price 平均開倉價格
@@ -154,7 +154,7 @@ export interface IClosedCFDDetails extends ICFDDetails {
 
 export interface ICFDOrderRequest {
   ticker: string;
-  operation: 'BUY' | 'SELL';
+  typeOfPosition: 'BUY' | 'SELL';
   leverage: number;
   margin: number;
   takeProfit?: number;

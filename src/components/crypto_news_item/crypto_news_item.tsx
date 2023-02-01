@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import React from 'react';
-import {IBriefNewsItem} from '../../interfaces/tidebit_defi_background';
+import {IBriefNewsItem} from '../../interfaces/depre_tidebit_defi_background';
 
 const CryptoNewsItem = ({title: heading, content, img, ...otherProps}: IBriefNewsItem) => {
   const overallWidth = 'w-full pr-5 lg:p-0 lg:w-2/3 xl:w-3/4';

@@ -19,7 +19,7 @@ interface IOpenPositionItemProps {
   profitOrLossAmount: number;
   tickerTrendArray: number[];
   horizontalValueLine: number;
-  // openCfdDetails: IOpenCFDDetails;
+  openCfdDetails: IOpenCFDDetails;
   // circularClick?: () => void;
 }
 
@@ -32,7 +32,7 @@ const OpenPositionItem = ({
   profitOrLossAmount,
   tickerTrendArray,
   horizontalValueLine,
-  // openCfdDetails,
+  openCfdDetails,
   // circularClick: circularClick,
   ...otherProps
 }: IOpenPositionItemProps) => {
@@ -149,6 +149,7 @@ const OpenPositionItem = ({
 
       <PositionDetailsModal
         // openCfdDetails={dataFormat}
+        openCfdDetails={openCfdDetails}
         modalVisible={detailedModalVisible}
         modalClickHandler={detailedModalClickHandler}
       />

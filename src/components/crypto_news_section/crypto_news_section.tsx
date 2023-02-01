@@ -1,16 +1,14 @@
 import React, {useContext} from 'react';
 import CryptoNewsItem from '../crypto_news_item/crypto_news_item';
 import {MarketContext} from '../../lib/contexts/market_context';
-import {IBriefNewsItem} from '../../interfaces/tidebit_defi_background';
+import {IBriefNewsItem} from '../../interfaces/depre_tidebit_defi_background';
 
 const CryptoNewsSection = () => {
   const overallWidth = 'w-full pr-5 lg:p-0 lg:w-2/3 xl:w-3/4';
   const dividerWidth = 'w-full lg:w-2/3 xl:w-3/4';
-  const {tickerStatic, getCryptoNews} = useContext(MarketContext);
+  const {getCryptoNews} = useContext(MarketContext);
 
   const cryptoBriefNews = getCryptoNews('ETH') ?? {};
-
-  // const {cryptoBriefNews} = tickerStatic ?? {};
 
   const displayedCryptoNews =
     cryptoBriefNews instanceof Array &&

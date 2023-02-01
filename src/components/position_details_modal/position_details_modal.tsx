@@ -25,6 +25,7 @@ const PositionDetailsModal = ({
   // openCfdDetails,
   modalVisible,
   modalClickHandler,
+  openCfdDetails,
 }: IPositionDetailsModal) => {
   const [takeProfitValue, setTakeProfitValue] = useState(1246.5);
   const [stopLossValue, setStopLossValue] = useState(1320.5);

@@ -10,6 +10,8 @@ const LONG_RESTRICTION_SL = 1138.48;
 // 1388.4 * 1.18
 const SHORT_RESTRICTION_SL = 1638.31;
 
+const MARGIN_LIMIT = 0.05;
+
 const TradeTab = () => {
   // const marginInputRef = useRef<HTMLInputElement>(null);
   const [longTooltipStatus, setLongTooltipStatus] = useState(0);
@@ -29,6 +31,14 @@ const TradeTab = () => {
   const [shortSlToggle, setShortSlToggle] = useState(false);
 
   const [marginWarning, setMarginWarning] = useState(true);
+
+  const marginDetection = (value: number) => {
+    if (value > MARGIN_LIMIT) {
+      setMarginWarning(true);
+    } else {
+      setMarginWarning(false);
+    }
+  };
 
   const getToggledLongTpSetting = (bool: boolean) => {
     // console.log('getToggledLongTpSetting', bool);
@@ -77,6 +87,19 @@ const TradeTab = () => {
   const isDisplayedMarginWarning = marginWarning ? 'flex' : 'invisible';
 
   // ----------margin area----------
+  const displayedMarginSetting = (
+    <TradingInput
+      lowerLimit={0}
+      upperLimit={MARGIN_LIMIT}
+      inputInitialValue={inputValue}
+      inputPlaceholder="margin input"
+      inputName="marginInput"
+      inputSize="h-44px w-160px text-xl"
+      decrementBtnSize="44"
+      incrementBtnSize="44"
+    />
+  );
+
   const displayedRequiredMargin = (
     <>
       {/* <div className="mt-1 text-base text-lightWhite">$ 13.14 USDT</div> */}
@@ -249,16 +272,7 @@ const TradeTab = () => {
               {/* <h1 className="pl-5 text-2xl font-bold">Start to trade</h1> */}
 
               {/* ---margin input area--- */}
-              <TradingInput
-                lowerLimit={0}
-                upperLimit={1000000}
-                inputInitialValue={inputValue}
-                inputPlaceholder="margin input"
-                inputName="marginInput"
-                inputSize="h-44px w-160px text-xl"
-                decrementBtnSize="44"
-                incrementBtnSize="44"
-              />
+              {displayedMarginSetting}
 
               {/* ---universal trading info area--- */}
               <div className="mt-2 text-lightGray">

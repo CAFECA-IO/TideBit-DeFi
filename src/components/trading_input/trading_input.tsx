@@ -73,14 +73,6 @@ const TradingInput = ({
   lowerLimit,
   upperLimit,
 
-  handlerType,
-  longSlLimit,
-  shortSlLimit,
-  marginLimit,
-
-  longTpLimit,
-  shortTpLimit,
-
   ...otherProps
 }: ITradingInputProps) => {
   const [inputValue, setInputValue] = useState<number>(inputInitialValue);

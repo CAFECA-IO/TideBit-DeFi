@@ -37,21 +37,21 @@ const OpenPositionItem = ({
   if (profitOrLoss !== 'profit' && profitOrLoss !== 'loss') return <></>;
   if (ticker !== 'ETH' && ticker !== 'BTC') return <></>;
 
-  const [modalVisible, setModalVisible] = useState(false);
+  const [detailedModalVisible, setDetailedModalVisible] = useState(false);
 
-  const modalClickHandler = () => {
-    setModalVisible(!modalVisible);
+  const detailedModalClickHandler = () => {
+    setDetailedModalVisible(!detailedModalVisible);
   };
 
   // const progressPercentage = 50;
   // const [progress, setProgress] = useState(0);
   // const [label, setLabel] = useState('');
 
-  const clickHandler = () => {
-    // console.log('show the modal displaying transaction detail');
-    modalClickHandler();
-    return;
-  };
+  // const clickHandler = () => {
+  //   // console.log('show the modal displaying transaction detail');
+  //   detailedModalClickHandler();
+  //   return;
+  // };
 
   const displayedString = longOrShort === 'long' ? TRANSACTION_TYPE.long : TRANSACTION_TYPE.short;
   const displayedColorHex =
@@ -74,10 +74,11 @@ const OpenPositionItem = ({
               className={`absolute left-14px top-26px z-20 h-6 w-6 hover:cursor-pointer hover:bg-darkGray`}
               onClick={clickHandler}
             ></div> */}
-            {/* Pause square */}
+
+            {/* -----Paused square----- */}
             <div
               className={`absolute left-14px top-26px z-10 h-6 w-6 hover:cursor-pointer ${displayedHoverPausedColor}`}
-              onClick={clickHandler}
+              // onClick={detailedModalClickHandler}
             ></div>
 
             <div>
@@ -94,7 +95,7 @@ const OpenPositionItem = ({
 
           {/* TODO: switch the layout */}
           {/* {displayedTickerLayout} */}
-          <div className="w-70px">
+          <div className="w-70px hover:cursor-pointer" onClick={detailedModalClickHandler}>
             <div className="text-sm">{ticker}</div>
             <div className="text-sm text-lightWhite">
               {displayedString.title}{' '}
@@ -102,12 +103,12 @@ const OpenPositionItem = ({
             </div>
           </div>
 
-          <div className="mt-1 w-70px">
+          <div className="mt-1 w-70px hover:cursor-pointer" onClick={detailedModalClickHandler}>
             <div className="text-xs text-lightGray">Value</div>
             <div className="text-sm">$ {value}</div>
           </div>
 
-          <div className="mt-1 w-60px">
+          <div className="mt-1 w-60px hover:cursor-pointer" onClick={detailedModalClickHandler}>
             <div className="text-xs text-lightGray">PNL</div>
             <div className={`${displayedTextColor} text-sm`}>
               <span className="">{displayedSymbol}</span> $ {profitOrLossAmount}
@@ -117,7 +118,7 @@ const OpenPositionItem = ({
       </div>
 
       {/* Line graph */}
-      <div className="-mt-8 -ml-2 -mb-7">
+      <div className="-mt-8 -ml-2 -mb-0 hover:cursor-pointer" onClick={detailedModalClickHandler}>
         <PositionLineGraph
           strokeColor={[`${displayedColorHex}`]}
           dataArray={tickerTrendArray}
@@ -140,8 +141,8 @@ const OpenPositionItem = ({
 
       <PositionDetailsModal
         // openCfdDetails={dataFormat}
-        modalVisible={modalVisible}
-        modalClickHandler={modalClickHandler}
+        modalVisible={detailedModalVisible}
+        modalClickHandler={detailedModalClickHandler}
       />
     </div>
   );

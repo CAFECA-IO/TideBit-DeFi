@@ -10,6 +10,8 @@ const LONG_RESTRICTION_SL = 1138.48;
 // 1388.4 * 1.18
 const SHORT_RESTRICTION_SL = 1638.31;
 
+const MARGIN_LIMIT = 0.05;
+
 const TradeTab = () => {
   // const marginInputRef = useRef<HTMLInputElement>(null);
   const [longTooltipStatus, setLongTooltipStatus] = useState(0);
@@ -27,6 +29,16 @@ const TradeTab = () => {
   const [shortSlValue, setShortSlValue] = useState(1388.4);
   const [shortTpToggle, setShortTpToggle] = useState(false);
   const [shortSlToggle, setShortSlToggle] = useState(false);
+
+  const [marginWarning, setMarginWarning] = useState(true);
+
+  const marginDetection = (value: number) => {
+    if (value > MARGIN_LIMIT) {
+      setMarginWarning(true);
+    } else {
+      setMarginWarning(false);
+    }
+  };
 
   const getToggledLongTpSetting = (bool: boolean) => {
     // console.log('getToggledLongTpSetting', bool);
@@ -71,7 +83,32 @@ const TradeTab = () => {
   const isDisplayedLongTpSetting = longTpToggle ? 'flex' : 'invisible';
   const isDisplayedShortTpSetting = shortTpToggle ? 'flex' : 'invisible';
 
+  const isDisplayedMarginStyle = marginWarning ? 'text-lightGray' : 'text-lightWhite';
+  const isDisplayedMarginWarning = marginWarning ? 'flex' : 'invisible';
+
   // ----------margin area----------
+  const displayedMarginSetting = (
+    <TradingInput
+      lowerLimit={0}
+      upperLimit={1000000}
+      inputInitialValue={inputValue}
+      inputPlaceholder="margin input"
+      inputName="marginInput"
+      inputSize="h-44px w-160px text-xl"
+      decrementBtnSize="44"
+      incrementBtnSize="44"
+    />
+  );
+
+  const displayedRequiredMargin = (
+    <>
+      {/* <div className="mt-1 text-base text-lightWhite">$ 13.14 USDT</div> */}
+      <div className={`${isDisplayedMarginStyle} mt-1 text-base`}>$ 13.14 USDT</div>
+      <div className={`${isDisplayedMarginWarning} ml-3 text-xs text-lightRed`}>
+        * Not enough margin
+      </div>
+    </>
+  );
 
   // ----------long area----------
   const displayedLongTpSetting = (
@@ -235,16 +272,7 @@ const TradeTab = () => {
               {/* <h1 className="pl-5 text-2xl font-bold">Start to trade</h1> */}
 
               {/* ---margin input area--- */}
-              <TradingInput
-                lowerLimit={0}
-                upperLimit={1000000}
-                inputInitialValue={inputValue}
-                inputPlaceholder="margin input"
-                inputName="marginInput"
-                inputSize="h-44px w-160px text-xl"
-                decrementBtnSize="44"
-                incrementBtnSize="44"
-              />
+              {displayedMarginSetting}
 
               {/* ---universal trading info area--- */}
               <div className="mt-2 text-lightGray">
@@ -257,17 +285,17 @@ const TradeTab = () => {
 
               {/* ---custom trading info area--- */}
               <div className="mt-2 flex justify-center text-center text-base tracking-wide">
-                <div className="space-y-1">
+                <div className="mr-0">
                   <div className="text-sm text-lightGray">Required Margin</div>
-                  <div className="text-base text-lightWhite">$ 13.14 USDT</div>
+                  {displayedRequiredMargin}
                 </div>
 
                 <div>
                   {/* ml-1 mr-5  */}
-                  <span className="mx-5 inline-block h-11 w-px rounded bg-lightGray/50"></span>
+                  <span className="mx-2 inline-block h-11 w-px rounded bg-lightGray/50"></span>
                 </div>
 
-                <div className="space-y-1">
+                <div className="ml-3 space-y-1">
                   <div className="text-sm text-lightGray">Value</div>
                   <div className="text-base text-lightWhite">$ 65.69 USDT</div>
                 </div>

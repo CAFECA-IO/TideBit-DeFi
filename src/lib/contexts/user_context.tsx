@@ -1,6 +1,11 @@
 import React, {useContext, useState, useEffect, createContext} from 'react';
 import {ICardProps, ILineGraphProps} from '../../components/card/crypto_card';
 import {PROFIT_LOSS_COLOR_TYPE} from '../../constants/display';
+import {
+  IOpenCFDDetails,
+  dummyOpenCFDDetails,
+} from '../../interfaces/tidebit_defi_background/open_cfd_details';
+import {dummyOpenCfds} from '../../interfaces/tidebit_defi_background/user';
 
 export interface ITickerData {
   currency: string;
@@ -451,31 +456,28 @@ export interface IUserProvider {
   children: React.ReactNode;
 }
 
-/**
- *   setUser: (user: IUser) => null,
-  favoriteTickersHandler: (newFavorite: string) => null,
- */
-
-// TODO: Class diagram
-// + addFavoriteTicker()
-// + removeFavoriteTicker()
-// + getFavoriteTickers()
-
 export interface IUserContext {
   user: IUser | null;
   addFavorites: (props: string) => void;
   removeFavorites: (props: string) => void;
+  getOpenedCFD: () => IOpenCFDDetails[];
 }
 
 export const UserContext = createContext<IUserContext>({
   user: null,
   addFavorites: (props: string) => null,
   removeFavorites: (props: string) => null,
+  getOpenedCFD: () => [],
 });
+
+const getOpenedCFD = () => {
+  return dummyOpenCfds;
+};
 
 export const UserProvider = ({children}: IUserProvider) => {
   // TODO: get partial user type from `IUserContext`
   const [user, setUser] = useState<IUser | null>(SAMPLE_USER);
+  // const openedCFD = user?.getOpenedCFD();
 
   const addFavorites = (newFavorite: string) => {
     // console.log(newFavorite, '`addFavorites` // ready to add: ');
@@ -544,7 +546,7 @@ export const UserProvider = ({children}: IUserProvider) => {
   //   // // console.log('user favorite in context: ', user[0].favoriteTickers);
   // };
 
-  const defaultValue = {user, addFavorites, removeFavorites};
+  const defaultValue = {user, addFavorites, removeFavorites, getOpenedCFD};
 
   // FIXME: 'setUser' is missing in type '{ user: IUser[] | null; }'
   return <UserContext.Provider value={defaultValue}>{children}</UserContext.Provider>;

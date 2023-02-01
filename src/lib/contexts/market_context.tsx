@@ -11,7 +11,7 @@ import {
   ICryptoSummary,
   IPriceStatistics,
   ITickerDetails,
-} from '../../interfaces/tidebit_defi_background';
+} from '../../interfaces/depre_tidebit_defi_background';
 import {ITickerLiveStatistics} from '../../interfaces/tidebit_defi_background/ticker_live_statistics';
 import {ITickerStatic} from '../../interfaces/tidebit_defi_background/ticker_static';
 

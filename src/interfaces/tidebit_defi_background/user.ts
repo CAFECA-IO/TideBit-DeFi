@@ -5,7 +5,7 @@ import {IClosedCFDBrief} from './closed_cfd_brief';
 import {IClosedCFDDetails} from './closed_cfd_details';
 import {INotificationItem} from './notification_item';
 import {IOpenCFDBrief} from './open_cfd_brief';
-import {IOpenCFDDetails} from './open_cfd_details';
+import {IOpenCFDDetails, dummyOpenCFDDetails} from './open_cfd_details';
 import {IOrderStatusUnion} from './order_status_union';
 import {ITickerItem} from './ticker_item';
 import {IUserBalance} from './user_balance';
@@ -48,9 +48,9 @@ export interface IUser {
   closedCFDItems: IClosedCFDBrief[];
   positionsOnChart: ICFDBrief[];
 
-  // function 用於不須及時更新的資料
-  getOpenedCFD: (positionId: string) => IOpenCFDDetails[];
-  getClosedCFD: (positionId: string) => IClosedCFDDetails[];
+  // 拿到所有 CFD 資料；function 用於不須及時更新的資料
+  getOpenedCFD: () => IOpenCFDDetails[];
+  getClosedCFD: () => IClosedCFDDetails[];
 
   // TODO: uncertain props
   createOrder: (props: ICFDOrderCreatingRequest) => Promise<IOrderStatusUnion>;
@@ -60,6 +60,13 @@ export interface IUser {
   withdraw: (props: {asset: string; amount: number}) => Promise<IOrderStatusUnion>;
   // + createOrder(orderType<CFD, Deposite, Withdraw, SpotTrade>, data):PublicOrder
 }
+
+export const dummyOpenCfds: IOpenCFDDetails[] = [
+  dummyOpenCFDDetails,
+  dummyOpenCFDDetails,
+  dummyOpenCFDDetails,
+  dummyOpenCFDDetails,
+];
 
 // -----------Ignores below----------------
 // 拿到所有withdraw / deposit / CFD 紀錄

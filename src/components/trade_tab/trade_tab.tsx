@@ -90,7 +90,7 @@ const TradeTab = () => {
   const displayedMarginSetting = (
     <TradingInput
       lowerLimit={0}
-      upperLimit={MARGIN_LIMIT}
+      upperLimit={1000000}
       inputInitialValue={inputValue}
       inputPlaceholder="margin input"
       inputName="marginInput"

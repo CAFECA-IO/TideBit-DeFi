@@ -21,12 +21,31 @@ interface IPositionDetailsModal {
   openCfdDetails?: IOpenCFDDetails;
 }
 
+const timestampToDateString = (timestamp: number) => {
+  const date = new Date(timestamp * 1000);
+  const year = date.getFullYear();
+  const month = date.getMonth() + 1;
+  const day = date.getDate();
+  const hour = date.getHours();
+  const minute = date.getMinutes();
+  const second = date.getSeconds();
+  const dateString = `${year}-${month}-${day} ${hour}:${minute}:${second}`;
+  return dateString;
+};
+
 const PositionDetailsModal = ({
   // openCfdDetails,
   modalVisible,
   modalClickHandler,
   openCfdDetails,
 }: IPositionDetailsModal) => {
+  // if (openCfdDetails?.openTimestamp) {
+  //   const dateString = timestampToDateString(openCfdDetails?.openTimestamp)
+  // }
+  const dateString = timestampToDateString(openCfdDetails?.openTimestamp ?? 0);
+
+  // console.log('in position, timestamp from open cfd details:', dateString);
+
   const [takeProfitValue, setTakeProfitValue] = useState(1246.5);
   const [stopLossValue, setStopLossValue] = useState(1320.5);
   const [takeProfitToggle, setTakeProfitToggle] = useState(false);

@@ -69,6 +69,11 @@ const OpenPositionItem = ({
       <div className="">
         <div className="mt-5 flex justify-between">
           <div className="relative -mt-4 -ml-2 w-50px">
+            <div
+              className="absolute top-3 z-10 h-110px w-280px bg-transparent hover:cursor-pointer"
+              onClick={detailedModalClickHandler}
+            ></div>
+
             {/* Pause square cover
             <div
               className={`absolute left-14px top-26px z-20 h-6 w-6 hover:cursor-pointer hover:bg-darkGray`}
@@ -77,7 +82,7 @@ const OpenPositionItem = ({
 
             {/* -----Paused square----- */}
             <div
-              className={`absolute left-14px top-26px z-10 h-6 w-6 hover:cursor-pointer ${displayedHoverPausedColor}`}
+              className={`absolute left-14px top-26px z-30 h-6 w-6 hover:cursor-pointer ${displayedHoverPausedColor}`}
               // onClick={detailedModalClickHandler}
             ></div>
 
@@ -95,7 +100,7 @@ const OpenPositionItem = ({
 
           {/* TODO: switch the layout */}
           {/* {displayedTickerLayout} */}
-          <div className="w-70px hover:cursor-pointer" onClick={detailedModalClickHandler}>
+          <div className="w-70px">
             <div className="text-sm">{ticker}</div>
             <div className="text-sm text-lightWhite">
               {displayedString.title}{' '}
@@ -103,12 +108,12 @@ const OpenPositionItem = ({
             </div>
           </div>
 
-          <div className="mt-1 w-70px hover:cursor-pointer" onClick={detailedModalClickHandler}>
+          <div className="mt-1 w-70px">
             <div className="text-xs text-lightGray">Value</div>
             <div className="text-sm">$ {value}</div>
           </div>
 
-          <div className="mt-1 w-60px hover:cursor-pointer" onClick={detailedModalClickHandler}>
+          <div className="mt-1 w-60px">
             <div className="text-xs text-lightGray">PNL</div>
             <div className={`${displayedTextColor} text-sm`}>
               <span className="">{displayedSymbol}</span> $ {profitOrLossAmount}
@@ -118,7 +123,7 @@ const OpenPositionItem = ({
       </div>
 
       {/* Line graph */}
-      <div className="-mt-8 -ml-2 -mb-0 hover:cursor-pointer" onClick={detailedModalClickHandler}>
+      <div className="-mt-8 -ml-2 -mb-7">
         <PositionLineGraph
           strokeColor={[`${displayedColorHex}`]}
           dataArray={tickerTrendArray}

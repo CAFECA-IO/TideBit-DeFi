@@ -9,13 +9,12 @@ import useOuterClick from '../../lib/hooks/use_outer_click';
 // export const testi18n = async () =>
 //   await i18n?.use(initReactI18next).init({fallbackLng: 'en', debug: true});
 
-const I18n = ({
-  langIsOpen,
-  setLangIsOpen,
-}: {
+interface II18nParams {
   langIsOpen: boolean;
-  setLangIsOpen: Dispatch<SetStateAction<boolean>>;
-}) => {
+  setLangIsOpen: SetStateAction<boolean>;
+}
+
+const I18n = ({langIsOpen, setLangIsOpen}: II18nParams | any) => {
   // const [locale, setLocale] = useState('en');
   const [openMenu, setOpenMenu] =
     typeof setLangIsOpen !== 'function' ? useState(false) : [langIsOpen, setLangIsOpen];

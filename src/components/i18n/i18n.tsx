@@ -11,7 +11,7 @@ import useOuterClick from '../../lib/hooks/use_outer_click';
 
 interface II18nParams {
   langIsOpen?: boolean;
-  setLangIsOpen?: (prevState: boolean) => void;
+  setLangIsOpen?: Dispatch<SetStateAction<boolean>>;
 }
 
 const I18n = ({langIsOpen, setLangIsOpen}: II18nParams) => {

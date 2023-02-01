@@ -5,6 +5,7 @@ module.exports = {
     './src/app/**/*.{js,ts,jsx,tsx}',
     './src/pages/**/*.{js,ts,jsx,tsx}',
     './src/components/**/*.{js,ts,jsx,tsx}',
+    './src/constants/**/*.{js,ts,jsx,tsx}',
   ],
   theme: {
     container: {},
@@ -52,6 +53,7 @@ module.exports = {
       },
       borderWidth: {
         '0.5px': '0.5px',
+        '1px': '1px',
       },
       maxWidth: {
         '100px': '100px',
@@ -153,6 +155,7 @@ module.exports = {
         '640px': '640px',
         '650px': '650px',
         '700px': '700px',
+        '726px': '726px',
         '1200px': '1200px',
         '2rem': '2rem',
         '3rem': '3rem',
@@ -229,6 +232,7 @@ module.exports = {
         '0.02rem': '0.02rem',
       },
       width: {
+        '1px': '1px',
         '5px': '5px',
         '479px': '479px',
         '1/10': '10%',

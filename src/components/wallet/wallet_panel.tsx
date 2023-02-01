@@ -1381,20 +1381,22 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
       // console.trace('123');
       setMetamaskConnectFirstTimeSuccessful(true);
 
-      await userContext.connect();
-      passUserLoginState(true);
+      const connectResult = await userContext.connect();
+      if (connectResult) {
+        passUserLoginState(true);
 
-      // TODO: NNNNNNNotes
-      // console.log('connecting modal should be invisible: ', connectingModalVisible);
-      setConnectingModalVisible(false);
-      setConnecting(false);
+        // TODO: NNNNNNNotes
+        // console.log('connecting modal should be invisible: ', connectingModalVisible);
+        setConnectingModalVisible(false);
+        setConnecting(false);
 
-      setProcessModalVisible(true);
+        setProcessModalVisible(true);
 
-      // let signature = await signer.signMessage('TideBit DeFi test');
-      // console.log('Sign the message, get the signature is: ', signature);
-      funcSignTypedData();
-      // injectedDetecting();
+        // let signature = await signer.signMessage('TideBit DeFi test');
+        // console.log('Sign the message, get the signature is: ', signature);
+        funcSignTypedData();
+        // injectedDetecting();
+      }
     } catch (error: any) {
       // console.log(error);
       // resetApp();

@@ -7,6 +7,7 @@ import {
 } from '../../constants/display';
 import PositionLineGraph from '../position_line_graph/position_line_graph';
 import PositionDetailsModal from '../position_details_modal/position_details_modal';
+import {IOpenCFDDetails} from '../../interfaces/tidebit_defi_background/open_cfd_details';
 // import HorizontalRelativeLineGraph from '../horizontal_relative_line_graph/horizontal_relative_line_graph';
 
 interface IOpenPositionItemProps {
@@ -18,6 +19,7 @@ interface IOpenPositionItemProps {
   profitOrLossAmount: number;
   tickerTrendArray: number[];
   horizontalValueLine: number;
+  // openCfdDetails: IOpenCFDDetails;
   // circularClick?: () => void;
 }
 
@@ -30,6 +32,7 @@ const OpenPositionItem = ({
   profitOrLossAmount,
   tickerTrendArray,
   horizontalValueLine,
+  // openCfdDetails,
   // circularClick: circularClick,
   ...otherProps
 }: IOpenPositionItemProps) => {

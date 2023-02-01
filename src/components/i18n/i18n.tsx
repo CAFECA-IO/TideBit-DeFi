@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {Dispatch, SetStateAction, useState} from 'react';
 //import Image from 'next/image';
 import {useRouter} from 'next/router';
 import Link from 'next/link';
@@ -9,12 +9,13 @@ import useOuterClick from '../../lib/hooks/use_outer_click';
 // export const testi18n = async () =>
 //   await i18n?.use(initReactI18next).init({fallbackLng: 'en', debug: true});
 
-const I18n = (
-  {
-    langIsOpen,
-    setLangIsOpen,
-  }: any /* langIsOpen: boolean, setLangIsOpen: Dispatch<SetStateAction<boolean>> */
-) => {
+const I18n = ({
+  langIsOpen,
+  setLangIsOpen,
+}: {
+  langIsOpen: boolean;
+  setLangIsOpen: Dispatch<SetStateAction<boolean>>;
+}) => {
   // const [locale, setLocale] = useState('en');
   const [openMenu, setOpenMenu] =
     typeof setLangIsOpen !== 'function' ? useState(false) : [langIsOpen, setLangIsOpen];
@@ -61,14 +62,14 @@ const I18n = (
   ) : null;
 
   const displayedMobileMenu = openMenu ? (
-    <div className="lg:hidden">
+    <div className="opacity-100 transition-opacity lg:hidden">
       <div
         id="i18nDropdown"
-        className="absolute top-44 left-0 z-10 h-full w-screen bg-black/100 opacity-100 shadow transition-all duration-300"
+        className="absolute top-44 left-0 z-10 h-full w-screen bg-black/100 shadow"
       >
         <ul className="pt-3 text-center text-base dark:text-gray-200" aria-labelledby="i18nButton">
           {internationalizationList.map((item, index) => (
-            <li key={index}>
+            <li key={index} onClick={clickHandler}>
               <Link
                 locale={item.value}
                 href={asPath}
@@ -81,7 +82,9 @@ const I18n = (
         </ul>
       </div>
     </div>
-  ) : null;
+  ) : (
+    <div className="invisible opacity-0 transition-opacity"></div>
+  );
 
   const displayedI18n = (
     <>

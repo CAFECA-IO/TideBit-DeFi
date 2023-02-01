@@ -42,7 +42,11 @@ IToggleProps) => {
 
   //TODO: bg-tidebitTheme [#29C1E1]
   // FIXME: `disabled` changed to `lockedToOpen`
-  const toggleSwitchStyle = toggle || disabled ? 'transform translate-x-full' : null;
+  const toggleSwitchStyle = toggle
+    ? 'transform translate-x-full bg-white'
+    : disabled
+    ? 'transform translate-x-full bg-lightGray shadow-lg shadow-black/80'
+    : 'bg-white';
   const toggleBackgroundStyle = disabled ? 'bg-[#8B8E91]' : toggle ? 'bg-[#29C1E1]' : null;
 
   const tidebitToggle = (
@@ -53,7 +57,7 @@ IToggleProps) => {
     >
       {/* Switch */}
       <div
-        className={`${toggleSwitchStyle} h-4 w-4 rounded-full bg-white shadow-md duration-300 ease-in-out`}
+        className={`${toggleSwitchStyle} h-4 w-4 rounded-full shadow-md duration-300 ease-in-out`}
       ></div>
     </div>
   );

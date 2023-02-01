@@ -72,6 +72,13 @@ const TradeTab = () => {
   const isDisplayedShortTpSetting = shortTpToggle ? 'flex' : 'invisible';
 
   // ----------margin area----------
+  const displayedRequiredMargin = (
+    <>
+      {/* <div className="mt-1 text-base text-lightWhite">$ 13.14 USDT</div> */}
+      <div className="mt-1 text-base text-lightGray">$ 13.14 USDT</div>
+      <div className="ml-3 text-xs text-lightRed">* Not enough margin</div>
+    </>
+  );
 
   // ----------long area----------
   const displayedLongTpSetting = (
@@ -257,17 +264,17 @@ const TradeTab = () => {
 
               {/* ---custom trading info area--- */}
               <div className="mt-2 flex justify-center text-center text-base tracking-wide">
-                <div className="space-y-1">
+                <div className="mr-0">
                   <div className="text-sm text-lightGray">Required Margin</div>
-                  <div className="text-base text-lightWhite">$ 13.14 USDT</div>
+                  {displayedRequiredMargin}
                 </div>
 
                 <div>
                   {/* ml-1 mr-5  */}
-                  <span className="mx-5 inline-block h-11 w-px rounded bg-lightGray/50"></span>
+                  <span className="mx-2 inline-block h-11 w-px rounded bg-lightGray/50"></span>
                 </div>
 
-                <div className="space-y-1">
+                <div className="ml-3 space-y-1">
                   <div className="text-sm text-lightGray">Value</div>
                   <div className="text-base text-lightWhite">$ 65.69 USDT</div>
                 </div>

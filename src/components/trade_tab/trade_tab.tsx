@@ -28,6 +28,8 @@ const TradeTab = () => {
   const [shortTpToggle, setShortTpToggle] = useState(false);
   const [shortSlToggle, setShortSlToggle] = useState(false);
 
+  const [marginWarning, setMarginWarning] = useState(true);
+
   const getToggledLongTpSetting = (bool: boolean) => {
     // console.log('getToggledLongTpSetting', bool);
     setLongTpToggle(bool);
@@ -71,12 +73,17 @@ const TradeTab = () => {
   const isDisplayedLongTpSetting = longTpToggle ? 'flex' : 'invisible';
   const isDisplayedShortTpSetting = shortTpToggle ? 'flex' : 'invisible';
 
+  const isDisplayedMarginStyle = marginWarning ? 'text-lightGray' : 'text-lightWhite';
+  const isDisplayedMarginWarning = marginWarning ? 'flex' : 'invisible';
+
   // ----------margin area----------
   const displayedRequiredMargin = (
     <>
       {/* <div className="mt-1 text-base text-lightWhite">$ 13.14 USDT</div> */}
-      <div className="mt-1 text-base text-lightGray">$ 13.14 USDT</div>
-      <div className="ml-3 text-xs text-lightRed">* Not enough margin</div>
+      <div className={`${isDisplayedMarginStyle} mt-1 text-base`}>$ 13.14 USDT</div>
+      <div className={`${isDisplayedMarginWarning} ml-3 text-xs text-lightRed`}>
+        * Not enough margin
+      </div>
     </>
   );
 

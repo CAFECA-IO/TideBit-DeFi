@@ -1,4 +1,4 @@
-import {Dispatch, useState} from 'react';
+import {Dispatch, useState, SetStateAction} from 'react';
 //import Image from 'next/image';
 import {useRouter} from 'next/router';
 import Link from 'next/link';
@@ -10,7 +10,7 @@ import useOuterClick from '../../lib/hooks/use_outer_click';
 //   await i18n?.use(initReactI18next).init({fallbackLng: 'en', debug: true});
 interface II18nParams {
   langIsOpen?: boolean;
-  setLangIsOpen?: Dispatch<boolean>;
+  setLangIsOpen?: Dispatch<SetStateAction<boolean>>;
   // setLangIsOpen?: (prevState: boolean) => void;
 }
 

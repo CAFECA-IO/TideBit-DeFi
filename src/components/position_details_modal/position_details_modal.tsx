@@ -268,10 +268,8 @@ const PositionDetailsModal = ({
                   <div className="mx-6 my-4 flex justify-between">
                     <div className="text-lightGray">Limit/ Stop</div>
                     <div className="">
-                      <span className={`${PNL_COLOR_TYPE.profit}`}>
-                        {openCfdDetails?.takeProfit}
-                      </span>
-                      / <span className={`${PNL_COLOR_TYPE.loss}`}>{openCfdDetails?.stopLoss}</span>
+                      <span className={`text-lightWhite`}>{openCfdDetails?.takeProfit}</span> /{' '}
+                      <span className={`text-lightWhite`}>{openCfdDetails?.stopLoss}</span>
                     </div>
                   </div>
 

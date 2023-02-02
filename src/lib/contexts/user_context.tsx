@@ -452,6 +452,8 @@ export interface IUserContext {
   username: string | null;
   email: string | null;
   wallet: string | null;
+  walletBalance: number;
+  balance: IBalance;
   favoriteTickers: ITickerData[];
   isSubscibedNewsletters: boolean;
   isEnabledEmailNotification: boolean;
@@ -461,11 +463,54 @@ export interface IUserContext {
   walletId: string | null;
   tideBitId: string | null;
   enableServiceTerm: boolean;
+  openedCFDs: Array<ISignedOpendCFD> | null;
+  closedCFDs: Array<ISignedClosedCFD> | null;
   connect: () => Promise<boolean>;
   disconnect: () => Promise<void>;
   signServiceTerm: () => Promise<boolean>;
   addFavoriteTicker: (props: ITickerData) => Promise<void>;
   removeFavoriteTicker: (props: ITickerData) => Promise<void>;
+  getOpenedCFDs: () => Promise<Array<ISignedOpendCFD>>;
+  getClosedCFDs: () => Promise<Array<ISignedClosedCFD>>;
+}
+
+export interface ISignedOpendCFD {
+  // id: string;
+  // timestamp: number;
+  // state: IOrderState;
+  // price: number;
+  // amount: number;
+  // orderType: IOrderType;
+  profitOrLoss: string;
+  longOrShort: string;
+  value: number;
+  ticker: string;
+  passedHour: number;
+  profitOrLossAmount: number;
+  tickerTrendArray: Array<number>;
+  horizontalValueLine: number;
+}
+
+export interface ISignedClosedCFD {
+  profitOrLoss: string;
+  longOrShort: string;
+  openValue: number;
+  closeValue: number;
+  ticker: string;
+  profitOrLossAmount: number;
+}
+
+export enum IOrderType {
+  Withdraw,
+  Deposit,
+  CFD,
+}
+
+export interface IBalance {
+  available: number;
+  locked: number;
+  total: number;
+  pnl: number;
 }
 
 export const UserContext = createContext<IUserContext>({
@@ -473,6 +518,13 @@ export const UserContext = createContext<IUserContext>({
   username: null,
   email: null,
   wallet: null,
+  walletBalance: 0,
+  balance: {
+    available: 0,
+    locked: 0,
+    total: 0,
+    pnl: 0,
+  },
   favoriteTickers: [],
   isSubscibedNewsletters: false,
   isEnabledEmailNotification: false,
@@ -482,11 +534,15 @@ export const UserContext = createContext<IUserContext>({
   walletId: null,
   tideBitId: null,
   enableServiceTerm: false,
+  openedCFDs: null,
+  closedCFDs: null,
   connect: () => Promise.resolve(true),
   disconnect: () => Promise.resolve(),
   signServiceTerm: () => Promise.resolve(true),
   addFavoriteTicker: (props: ITickerData) => Promise.resolve(),
   removeFavoriteTicker: (props: ITickerData) => Promise.resolve(),
+  getOpenedCFDs: () => Promise.resolve<Array<ISignedOpendCFD>>([]),
+  getClosedCFDs: () => Promise.resolve<Array<ISignedClosedCFD>>([]),
 });
 
 export const UserProvider = ({children}: IUserProvider) => {
@@ -495,6 +551,13 @@ export const UserProvider = ({children}: IUserProvider) => {
   const [username, setUsername] = useState<string | null>(null);
   const [email, setEmail] = useState<string | null>(null);
   const [wallet, setWallet] = useState<string | null>(null);
+  const [walletBalance, setWalletBalance] = useState<number>(0);
+  const [balance, setBalance] = useState<IBalance>({
+    available: 0,
+    locked: 0,
+    total: 0,
+    pnl: 0,
+  });
   const [favoriteTickers, setFavoriteTickers] = useState<ITickerData[]>([]);
   const [isSubscibedNewsletters, setIsSubscibedNewsletters] = useState<boolean>(false);
   const [isEnabledEmailNotification, setIsEnabledEmailNotification] = useState<boolean>(false);
@@ -504,17 +567,27 @@ export const UserProvider = ({children}: IUserProvider) => {
   const [walletId, setWalletId] = useState<string | null>(null);
   const [tideBitId, setTideBitId] = useState<string | null>(null);
   const [enableServiceTerm, setEnableServiceTerm] = useState<boolean>(false);
+  const [openedCFDs, setOpenedCFDs] = useState<Array<ISignedOpendCFD> | null>(null);
+  const [closedCFDs, setClosedCFDs] = useState<Array<ISignedClosedCFD> | null>(null);
 
   const connect = async () => {
     const lunar = new Lunar();
+    const connect = true;
     lunar.connect();
-    setIsConnected(true);
+    setIsConnected(connect);
     const provider = new providers.Web3Provider(window.ethereum);
     await provider.send('eth_requestAccounts', []);
 
     const signer = provider.getSigner();
     const address = await signer.getAddress();
     setWallet(address);
+
+    if (connect) {
+      const openedCFDs = await getOpenedCFDs();
+      const closedCFDs = await getClosedCFDs();
+      setOpenedCFDs(openedCFDs);
+      setClosedCFDs(closedCFDs);
+    }
     return true;
   };
 
@@ -597,6 +670,73 @@ export const UserProvider = ({children}: IUserProvider) => {
   // };
 
   // FIXME: 'setUser' is missing in type '{ user: IUser[] | null; }'
+
+  const getOpenedCFDs = async () => {
+    const signedCFDs: Array<ISignedOpendCFD> = [
+      {
+        profitOrLoss: 'loss',
+        longOrShort: 'long',
+        value: 656.9,
+        ticker: 'BTC',
+        passedHour: 11,
+        profitOrLossAmount: 34.9,
+        tickerTrendArray: [1230, 1272, 1120, 1265, 1342, 1299],
+        horizontalValueLine: 1324.4,
+      },
+      {
+        profitOrLoss: 'profit',
+        longOrShort: 'short',
+        value: 631.1,
+        ticker: 'ETH',
+        passedHour: 15,
+        profitOrLossAmount: 29.9,
+        tickerTrendArray: [153000, 137200, 122000, 126500, 134200, 129900],
+        horizontalValueLine: 130000.6,
+      },
+      {
+        profitOrLoss: 'profit',
+        longOrShort: 'short',
+        value: 1234567.8,
+        ticker: 'BTC',
+        passedHour: 23,
+        profitOrLossAmount: 1234.5,
+        tickerTrendArray: [90, 72, 60, 65, 42, 25, 32, 20, 15, 32, 90, 10],
+        horizontalValueLine: 100,
+      },
+    ];
+    return Promise.resolve(signedCFDs);
+  };
+
+  const getClosedCFDs = async () => {
+    const signedCFDs: Array<ISignedClosedCFD> = [
+      {
+        profitOrLoss: 'loss',
+        longOrShort: 'long',
+        openValue: 639.9,
+        closeValue: 638.3,
+        ticker: 'BTC',
+        profitOrLossAmount: 34.9,
+      },
+      {
+        profitOrLoss: 'profit',
+        longOrShort: 'short',
+        openValue: 639.9,
+        closeValue: 638.3,
+        ticker: 'ETH',
+        profitOrLossAmount: 29.9,
+      },
+      {
+        profitOrLoss: 'profit',
+        longOrShort: 'short',
+        openValue: 639.9,
+        closeValue: 638.3,
+        ticker: 'BTC',
+        profitOrLossAmount: 1234.5,
+      },
+    ];
+    return Promise.resolve(signedCFDs);
+  };
+
   return (
     <UserContext.Provider
       value={{
@@ -604,6 +744,8 @@ export const UserProvider = ({children}: IUserProvider) => {
         username,
         email,
         wallet,
+        walletBalance,
+        balance,
         favoriteTickers,
         isSubscibedNewsletters,
         isEnabledEmailNotification,
@@ -613,11 +755,15 @@ export const UserProvider = ({children}: IUserProvider) => {
         walletId,
         tideBitId,
         enableServiceTerm,
+        openedCFDs,
+        closedCFDs,
         connect,
         disconnect,
         signServiceTerm,
         addFavoriteTicker,
         removeFavoriteTicker,
+        getOpenedCFDs,
+        getClosedCFDs,
       }}
     >
       {children}

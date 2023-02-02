@@ -3,19 +3,19 @@ import React from 'react';
 interface IUserOverviewProps {
   depositAvailable: number;
   marginLocked: number;
-  profitOrLoss: string;
+  // profitOrLoss: string;
   profitOrLossAmount: number;
 }
 
 const UserOverview = ({
   depositAvailable,
   marginLocked,
-  profitOrLoss,
+  // profitOrLoss,
   profitOrLossAmount,
 }: IUserOverviewProps) => {
-  if (profitOrLoss !== 'profit' && profitOrLoss !== 'loss') return <></>;
+  // if (profitOrLoss !== 'profit' && profitOrLoss !== 'loss') return <></>;
 
-  const displayedSymbol = profitOrLoss === 'profit' ? '+' : '-';
+  // const displayedSymbol = profitOrLoss === 'profit' ? '+' : '-';
 
   return (
     <>
@@ -34,9 +34,7 @@ const UserOverview = ({
 
           <div className="">
             <div className="text-sm text-lightGray4">PNL</div>
-            <div className="text-sm xl:text-base">
-              {displayedSymbol} {profitOrLossAmount} USDT
-            </div>
+            <div className="text-sm xl:text-base">{profitOrLossAmount} USDT</div>
           </div>
         </div>
       </div>
@@ -59,9 +57,7 @@ const UserOverview = ({
 
           <div className="">
             <div className="text-xs text-lightGray4">PNL</div>
-            <div className="text-xs">
-              {displayedSymbol} {profitOrLossAmount} USDT
-            </div>
+            <div className="text-xs">{profitOrLossAmount} USDT</div>
           </div>
         </div>
       </div>

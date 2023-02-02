@@ -1,41 +1,26 @@
-import React from 'react';
+import React, {useContext} from 'react';
+import {ISignedClosedCFD, UserContext} from '../../lib/contexts/user_context';
 import HistoryPositionItem from '../history_position_item/history_position_item';
 
 const HistorySubTab = () => {
-  return (
-    <>
+  const {closedCFDs} = useContext(UserContext);
+  const closedCFDList = !!closedCFDs ? (
+    closedCFDs.map((closedCFD: ISignedClosedCFD) => (
       <div>
         <HistoryPositionItem
-          profitOrLoss="loss"
-          longOrShort="long"
-          openValue={639.9}
-          closeValue={638.3}
-          ticker="ETH"
-          profitOrLossAmount={34.9}
+          profitOrLoss={closedCFD.profitOrLoss}
+          longOrShort={closedCFD.longOrShort}
+          openValue={closedCFD.openValue}
+          closeValue={closedCFD.closeValue}
+          ticker={closedCFD.ticker}
+          profitOrLossAmount={closedCFD.profitOrLossAmount}
         />
       </div>
-      <div>
-        <HistoryPositionItem
-          profitOrLoss="profit"
-          longOrShort="long"
-          openValue={639.9}
-          closeValue={700.3}
-          ticker="BTC"
-          profitOrLossAmount={123456.9}
-        />
-      </div>
-      <div>
-        <HistoryPositionItem
-          profitOrLoss="profit"
-          longOrShort="short"
-          openValue={639.9}
-          closeValue={500}
-          ticker="ETH"
-          profitOrLossAmount={9452.3}
-        />
-      </div>
-    </>
+    ))
+  ) : (
+    <></>
   );
+  return <>{closedCFDList}</>;
 };
 
 export default HistorySubTab;

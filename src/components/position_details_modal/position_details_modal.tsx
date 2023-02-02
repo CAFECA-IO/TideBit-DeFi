@@ -52,8 +52,6 @@ const PositionDetailsModal = ({
   const [stopLossToggle, setStopLossToggle] = useState(false);
   const [guaranteedTooltipStatus, setGuaranteedTooltipStatus] = useState(0);
 
-  const [disabledSlToggle, setDisabledSlToggle] = useState(false);
-  // const [slToggleState, setSlToggleState] = useState(false);
   const [guaranteedChecked, setGuaranteedChecked] = useState(false);
 
   const getToggledTpSetting = (bool: boolean) => {
@@ -69,7 +67,7 @@ const PositionDetailsModal = ({
   };
 
   const isDisplayedTakeProfitSetting = takeProfitToggle ? 'flex' : 'invisible';
-  const isDisplayedStopLossSetting = stopLossToggle || disabledSlToggle ? 'flex' : 'invisible';
+  const isDisplayedStopLossSetting = stopLossToggle || guaranteedChecked ? 'flex' : 'invisible';
 
   const displayedTakeProfitSetting = (
     <div className={`${isDisplayedTakeProfitSetting}`}>
@@ -103,13 +101,8 @@ const PositionDetailsModal = ({
     </div>
   );
   const guaranteedCheckedChangeHandler = () => {
-    setGuaranteedChecked(!guaranteedChecked);
-    // console.log(guaranteedChecked);
-    // slToggleDisabledDetector();
     if (!guaranteedChecked) {
-      setDisabledSlToggle(true);
-    } else {
-      setDisabledSlToggle(false);
+      setGuaranteedChecked(!guaranteedChecked);
     }
   };
 
@@ -287,7 +280,7 @@ const PositionDetailsModal = ({
                   <div className="-mr-50px">{displayedStopLossSetting}</div>
                   <Toggle
                     getToggledState={getToggledSlSetting}
-                    disabled={disabledSlToggle}
+                    disabled={guaranteedChecked}
                     // initialToggleState={slToggleState}
                     // toggleStateFromParent={slToggleState}
                     // getToggleFunction={getSlToggleFunction}

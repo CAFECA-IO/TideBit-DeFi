@@ -64,7 +64,7 @@ const I18n = ({langIsOpen, setLangIsOpen}: II18nParams | any) => {
     <div className="opacity-100 transition-opacity lg:hidden">
       <div
         id="i18nDropdown"
-        className="absolute top-44 left-0 z-10 h-full w-screen bg-black/100 shadow"
+        className="absolute top-32 left-0 z-10 h-full w-screen bg-darkGray/100 shadow"
       >
         <ul className="pt-3 text-center text-base dark:text-gray-200" aria-labelledby="i18nButton">
           {internationalizationList.map((item, index) => (

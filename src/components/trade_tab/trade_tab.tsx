@@ -204,7 +204,7 @@ const TradeTab = () => {
         lowerLimit={0}
         upperLimit={1000000}
         inputInitialValue={shortSlValue}
-        inputValue={shortSlValue}
+        inputValueFromParent={shortSlValue}
         inputPlaceholder="stop-loss setting"
         inputName="slInput"
         inputSize="h-25px w-70px text-sm"

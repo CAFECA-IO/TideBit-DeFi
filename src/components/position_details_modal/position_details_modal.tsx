@@ -50,6 +50,8 @@ const PositionDetailsModal = ({
   const [guaranteedTooltipStatus, setGuaranteedTooltipStatus] = useState(0);
 
   const [guaranteedChecked, setGuaranteedChecked] = useState(false);
+  const [slLowerLimit, setSlLowerLimit] = useState(0);
+  const [slUpperLimit, setSlUpperLimit] = useState(2023);
 
   const getToggledTpSetting = (bool: boolean) => {
     setTakeProfitToggle(bool);
@@ -62,9 +64,6 @@ const PositionDetailsModal = ({
   // const getSlToggleFunction = (slToggleFunction: () => void) => {
   //   slToggleFunction();
   // };
-
-  let spLowerLimit = 0;
-  let spUpperLimit = 2001;
 
   // TODO: i18n
   const displayedTypeOfPosition =
@@ -89,7 +88,7 @@ const PositionDetailsModal = ({
         lowerLimit={0}
         upperLimit={1000000}
         inputInitialValue={takeProfitValue}
-        inputValue={takeProfitValue}
+        inputValueFromParent={takeProfitValue}
         inputPlaceholder="take-profit setting"
         inputName="tpInput"
         inputSize="h-25px w-70px text-sm"
@@ -102,10 +101,11 @@ const PositionDetailsModal = ({
   const displayedStopLossSetting = (
     <div className={`${isDisplayedStopLossSetting}`}>
       <TradingInput
-        lowerLimit={spLowerLimit}
-        upperLimit={spUpperLimit}
+        lowerLimit={slLowerLimit}
+        upperLimit={slUpperLimit}
         inputInitialValue={stopLossValue}
-        inputValue={stopLossValue}
+        setInputValueFromParent={setStopLossValue}
+        inputValueFromParent={stopLossValue}
         inputPlaceholder="stop-loss setting"
         inputName="slInput"
         inputSize="h-25px w-70px text-sm"
@@ -118,8 +118,9 @@ const PositionDetailsModal = ({
     if (!guaranteedChecked) {
       setGuaranteedChecked(!guaranteedChecked);
     }
-    spLowerLimit = 1320.5;
-    spUpperLimit = 1320.5;
+    setSlLowerLimit(1320.5);
+    setSlUpperLimit(1320.5);
+    setStopLossValue(1320.5);
 
     // console.log('toggle state in position details modal:', guaranteedChecked);
   };

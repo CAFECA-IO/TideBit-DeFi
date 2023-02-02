@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useState, Dispatch, SetStateAction} from 'react';
 import {TRADING_INPUT_STEP} from '../../constants/display';
 
 export const TRADING_INPUT_HANDLER_TYPE_CLASSES = {
@@ -39,8 +39,8 @@ interface ITradingInputProps {
   // inputChangeHandler?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   inputInitialValue: number;
 
-  inputValue?: number;
-  setInputValue?: React.Dispatch<React.SetStateAction<number>>;
+  inputValueFromParent?: number;
+  setInputValueFromParent?: Dispatch<SetStateAction<number>>;
 
   inputName: string;
   decrementBtnSize: string;
@@ -66,8 +66,8 @@ const TradingInput = ({
   inputSize = 'h-44px w-160px text-xl',
   decrementBtnSize = '44',
   incrementBtnSize = '44',
-  // inputValue,
-  // setInputValue,
+  inputValueFromParent,
+  setInputValueFromParent,
   inputPlaceholder,
 
   lowerLimit,
@@ -75,7 +75,10 @@ const TradingInput = ({
 
   ...otherProps
 }: ITradingInputProps) => {
-  const [inputValue, setInputValue] = useState<number>(inputInitialValue);
+  const [inputValue, setInputValue] =
+    inputValueFromParent && setInputValueFromParent
+      ? [inputValueFromParent, setInputValueFromParent]
+      : useState<number>(inputInitialValue);
 
   const regex = /^\d*\.?\d{0,2}$/;
 

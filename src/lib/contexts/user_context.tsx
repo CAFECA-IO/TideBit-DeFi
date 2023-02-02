@@ -573,7 +573,7 @@ export const UserProvider = ({children}: IUserProvider) => {
   const connect = async () => {
     const lunar = new Lunar();
     const connect = true;
-    lunar.connect();
+    lunar.connect({});
     setIsConnected(connect);
     const provider = new providers.Web3Provider(window.ethereum);
     await provider.send('eth_requestAccounts', []);

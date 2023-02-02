@@ -52,6 +52,9 @@ const NavBarMobile = ({notificationNumber = 1}) => {
   const hamburgerStyles =
     'block bg-lightWhite h-3px rounded-12px opacity-100 left-0 w-full rotate-0 ease-in duration-300';
 
+  const menuItemStyles =
+    'block rounded-md px-3 py-2 font-medium hover:cursor-pointer hover:text-tidebitTheme';
+
   // hamburger animation
   const displayedMobileNavBarLine1 = !navOpen
     ? 'translate-y-0'
@@ -88,7 +91,7 @@ const NavBarMobile = ({notificationNumber = 1}) => {
     <>
       <div className="container fixed inset-x-0 z-40 mx-auto inline-flex max-w-full items-end justify-center bg-black/100 pb-1 text-white lg:hidden">
         <div className="flex w-full items-center justify-between px-5 pb-2">
-          <div className="flex items-end">
+          <div className="flex basis-full items-end">
             <div className="mr-0 mt-3 flex lg:hidden">
               <button
                 onClick={clickHanlder}
@@ -104,22 +107,25 @@ const NavBarMobile = ({notificationNumber = 1}) => {
 
             <span className="z-50 mx-2 inline-block h-10 w-px rounded bg-lightGray1"></span>
 
-            <button onClick={sidebarOpenHandler} className="relative hover:cursor-pointer">
-              <span className="absolute top-0 right-0 z-20 inline-block h-3 w-3 rounded-xl bg-tidebitTheme">
-                <p className="text-center text-3xs hover:text-white">{notificationNumber}</p>
-              </span>
+            <div className="flex">
+              <button onClick={sidebarOpenHandler} className="relative hover:cursor-pointer">
+                <span className="absolute top-0 right-0 z-20 inline-block h-3 w-3 rounded-xl bg-tidebitTheme">
+                  <p className="text-center text-3xs hover:text-white">{notificationNumber}</p>
+                </span>
 
-              <Image
-                src="/elements/notifications_outline.svg"
-                width={25}
-                height={25}
-                className="mb-1 hover:cursor-pointer hover:text-cyan-300"
-                alt="icon"
-              />
-            </button>
-          </div>
-          <div>
-            <WalletPanel getUserLoginState={getUserLoginHandler} />
+                <Image
+                  src="/elements/notifications_outline.svg"
+                  width={25}
+                  height={25}
+                  className="mb-1 hover:cursor-pointer hover:text-cyan-300"
+                  alt="icon"
+                />
+              </button>
+            </div>
+
+            <div className="ml-auto">
+              <WalletPanel className="flex:auto" getUserLoginState={getUserLoginHandler} />
+            </div>
           </div>
         </div>
 
@@ -149,28 +155,19 @@ const NavBarMobile = ({notificationNumber = 1}) => {
                 </Link>
               </div>
               <div className="flex items-center justify-start px-3">
-                <Link
-                  href="/trading"
-                  className="block rounded-md px-3 py-2 font-medium hover:cursor-pointer hover:text-tidebitTheme"
-                >
+                <Link href="/trading" className={menuItemStyles}>
                   {t('nav_bar.Trading')}
                 </Link>
               </div>
 
               <div className="flex items-center justify-start px-3">
-                <Link
-                  href="#"
-                  className="block rounded-md px-3 py-2 font-medium hover:cursor-pointer hover:text-tidebitTheme"
-                >
+                <Link href="#" className={menuItemStyles}>
                   {t('nav_bar.TideBitUniversity')}
                 </Link>
               </div>
 
               <div className="flex items-center justify-start px-3">
-                <Link
-                  href="#"
-                  className="block rounded-md px-3 py-2 font-medium hover:cursor-pointer hover:text-tidebitTheme"
-                >
+                <Link href="#" className={menuItemStyles}>
                   {t('nav_bar.HelpCenter')}
                 </Link>
               </div>

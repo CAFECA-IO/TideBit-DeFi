@@ -59,9 +59,9 @@ const PositionDetailsModal = ({
     setStopLossToggle(bool);
   };
 
-  const getSlToggleFunction = (slToggleFunction: () => void) => {
-    slToggleFunction();
-  };
+  // const getSlToggleFunction = (slToggleFunction: () => void) => {
+  //   slToggleFunction();
+  // };
 
   // TODO: i18n
   const displayedTypeOfPosition =
@@ -115,6 +115,7 @@ const PositionDetailsModal = ({
     if (!guaranteedChecked) {
       setGuaranteedChecked(!guaranteedChecked);
     }
+    // console.log('toggle state in position details modal:', guaranteedChecked);
   };
 
   const guaranteedStopLoss = (
@@ -301,9 +302,10 @@ const PositionDetailsModal = ({
                   <div className="-mr-50px">{displayedStopLossSetting}</div>
                   <Toggle
                     getToggledState={getToggledSlSetting}
-                    disabled={guaranteedChecked}
-                    // initialToggleState={slToggleState}
-                    // toggleStateFromParent={slToggleState}
+                    lockedToOpen={guaranteedChecked}
+                    initialToggleState={guaranteedChecked}
+                    toggleStateFromParent={guaranteedChecked}
+                    setToggleStateFromParent={setGuaranteedChecked}
                     // getToggleFunction={getSlToggleFunction}
                   />
                 </div>

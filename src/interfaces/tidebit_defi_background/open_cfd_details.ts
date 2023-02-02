@@ -4,14 +4,18 @@ export interface IOpenCFDDetails extends ICFDDetails {
   state: 'OPENING';
 }
 
+function randomIntFromInterval(min: number, max: number) {
+  return Math.floor(Math.random() * (max - min + 1) + min);
+}
+
 export const dummyOpenCFDDetails: IOpenCFDDetails = {
   id: '123',
-  ticker: 'BTC',
+  ticker: 'ETH',
   amount: '1.8',
   state: 'OPENING',
   typeOfPosition: 'BUY',
   leverage: 5,
-  margin: 7520,
+  margin: randomIntFromInterval(650, 10000),
   openPrice: '24058',
   fee: 0,
   guranteedStop: false,
@@ -20,7 +24,9 @@ export const dummyOpenCFDDetails: IOpenCFDDetails = {
   openValue: 19247,
   pnl: {
     type: 'UP',
-    value: 90752,
+    value: '+ 90752',
   },
-  liquidationPrice: 0,
+  liquidationPrice: 19537,
+  takeProfit: '26419',
+  stopLoss: '21697',
 };

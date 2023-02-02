@@ -12,25 +12,24 @@ import RippleButton from '../ripple_button/ripple_button';
 interface IPositionDetailsModal {
   modalVisible: boolean;
   modalClickHandler: () => void;
-  // ticker: string;
-  // date: string;
-  // time: string;
-  // typeOfPosition: string;
-  // entryPrice: string;
-  // exitPrice: string;
   openCfdDetails?: IOpenCFDDetails;
 }
 
-const timestampToDateString = (timestamp: number) => {
+const timestampToString = (timestamp: number) => {
+  if (timestamp === 0) return ['-', '-'];
+
   const date = new Date(timestamp * 1000);
   const year = date.getFullYear();
-  const month = date.getMonth() + 1;
-  const day = date.getDate();
-  const hour = date.getHours();
-  const minute = date.getMinutes();
-  const second = date.getSeconds();
-  const dateString = `${year}-${month}-${day} ${hour}:${minute}:${second}`;
-  return dateString;
+  const month = ('0' + (date.getMonth() + 1)).slice(-2);
+  const day = ('0' + date.getDate()).slice(-2);
+  const hour = ('0' + date.getHours()).slice(-2);
+  const minute = ('0' + date.getMinutes()).slice(-2);
+  const second = ('0' + date.getSeconds()).slice(-2);
+
+  const dateString = `${year}-${month}-${day}`;
+  const timeString = `${hour}:${minute}:${second}`;
+
+  return [dateString, timeString];
 };
 
 const PositionDetailsModal = ({
@@ -39,12 +38,10 @@ const PositionDetailsModal = ({
   modalClickHandler,
   openCfdDetails,
 }: IPositionDetailsModal) => {
-  // if (openCfdDetails?.openTimestamp) {
-  //   const dateString = timestampToDateString(openCfdDetails?.openTimestamp)
-  // }
-  const dateString = timestampToDateString(openCfdDetails?.openTimestamp ?? 0);
+  const dateString = timestampToString(openCfdDetails?.openTimestamp ?? 0);
 
   // console.log('in position, timestamp from open cfd details:', dateString);
+  // console.log('in position, open cfd details:', openCfdDetails?.margin ?? 0);
 
   const [takeProfitValue, setTakeProfitValue] = useState(1246.5);
   const [stopLossValue, setStopLossValue] = useState(1320.5);
@@ -65,6 +62,20 @@ const PositionDetailsModal = ({
   const getSlToggleFunction = (slToggleFunction: () => void) => {
     slToggleFunction();
   };
+
+  // TODO: i18n
+  const displayedTypeOfPosition =
+    openCfdDetails?.typeOfPosition === 'BUY' ? 'Up (Buy)' : 'Down (Sell)';
+
+  const displayedPnLColor =
+    openCfdDetails?.pnl.type === 'UP'
+      ? PNL_COLOR_TYPE.profit
+      : openCfdDetails?.pnl.type === 'DOWN'
+      ? PNL_COLOR_TYPE.loss
+      : PNL_COLOR_TYPE.equal;
+
+  const displayedBorderColor =
+    openCfdDetails?.typeOfPosition === 'BUY' ? BORDER_COLOR_TYPE.long : BORDER_COLOR_TYPE.short;
 
   const isDisplayedTakeProfitSetting = takeProfitToggle ? 'flex' : 'invisible';
   const isDisplayedStopLossSetting = stopLossToggle || guaranteedChecked ? 'flex' : 'invisible';
@@ -163,18 +174,18 @@ const PositionDetailsModal = ({
     state: 'Open',
   };
 
-  const displayedDataFormat = () => {
-    const elements = [];
-    for (const [key, value] of Object.entries(dataFormat)) {
-      elements.push(
-        <div className="mx-6 my-5 flex justify-between">
-          <div className="text-lightGray">{key}</div>
-          <div className="">{value}</div>
-        </div>
-      );
-    }
-    return elements;
-  };
+  // const displayedDataFormat = () => {
+  //   const elements = [];
+  //   for (const [key, value] of Object.entries(dataFormat)) {
+  //     elements.push(
+  //       <div className="mx-6 my-5 flex justify-between">
+  //         <div className="text-lightGray">{key}</div>
+  //         <div className="">{value}</div>
+  //       </div>
+  //     );
+  //   }
+  //   return elements;
+  // };
 
   const isDisplayedDetailedPositionModal = modalVisible ? (
     <>
@@ -187,12 +198,12 @@ const PositionDetailsModal = ({
               <div className="ml-10 mr-8 mt-6 flex w-450px justify-between">
                 <div className="flex items-center space-x-3 text-center text-4xl text-lightWhite">
                   <Image src="/elements/group_2371.svg" width={40} height={40} alt="icon" />
-                  <h3 className="">ETH </h3>
+                  <h3 className="">{openCfdDetails?.ticker} </h3>
                 </div>
 
                 <div className="text-end text-base text-lightGray">
-                  <p className="">2022-05-30</p>
-                  <p className="">13:04:57</p>
+                  <p className="">{timestampToString(openCfdDetails?.openTimestamp ?? 0)[0]}</p>
+                  <p className="">{timestampToString(openCfdDetails?.openTimestamp ?? 0)[1]}</p>
                 </div>
               </div>
 
@@ -204,8 +215,9 @@ const PositionDetailsModal = ({
             </div>
             {/*body*/}
             <div className="relative flex-auto pt-1">
+              {/* TODO: border color */}
               <div
-                className={`${BORDER_COLOR_TYPE.profit} mx-10 mt-3 border-1px text-base leading-relaxed text-lightWhite`}
+                className={`${displayedBorderColor} mx-10 mt-3 border-1px text-base leading-relaxed text-lightWhite`}
               >
                 <div className="flex-col justify-center text-center">
                   {/* {displayedDataFormat()} */}
@@ -213,48 +225,57 @@ const PositionDetailsModal = ({
                   <div className="mx-6 my-4 flex justify-between">
                     <div className="text-lightGray">Type</div>
                     {/* <div className="">{openCfdDetails.typeOfPosition}</div> */}
-                    <div className="">Up (Buy)</div>
+                    {/* TODO: i18n */}
+                    <div className="">{displayedTypeOfPosition}</div>
                   </div>
 
                   <div className="mx-6 my-4 flex justify-between">
                     <div className="text-lightGray">Amount</div>
-                    <div className="">0.1</div>
+                    <div className="">{openCfdDetails?.amount ?? 0}</div>
                   </div>
 
                   <div className="mx-6 my-4 flex justify-between">
                     <div className="text-lightGray">PNL</div>
-                    <div className={`${PNL_COLOR_TYPE.profit}`}>$ +34.9</div>
+                    <div className={`${displayedPnLColor}`}>$ {openCfdDetails?.pnl.value}</div>
                   </div>
 
                   <div className="mx-6 my-4 flex justify-between">
                     <div className="text-lightGray">Open Value</div>
-                    <div className="">$ 656.9</div>
+                    <div className="">$ {openCfdDetails?.openValue ?? 0}</div>
                   </div>
 
                   <div className="mx-6 my-4 flex justify-between">
                     <div className="text-lightGray">Open Price</div>
-                    <div className="">$ 131.8</div>
+                    <div className="">$ {openCfdDetails?.openPrice ?? 0}</div>
                   </div>
 
                   <div className="mx-6 my-4 flex justify-between">
                     <div className="text-lightGray">Open Time</div>
-                    <div className="">2022-05-30 13:04:57</div>
+                    <div className="">
+                      {timestampToString(openCfdDetails?.openTimestamp ?? 0)[0]}{' '}
+                      {timestampToString(openCfdDetails?.openTimestamp ?? 0)[1]}
+                    </div>
                   </div>
 
                   <div className="mx-6 my-4 flex justify-between">
                     <div className="text-lightGray">Limit/ Stop</div>
-                    <div className="">- / -</div>
+                    <div className="">
+                      <span className={`${PNL_COLOR_TYPE.profit}`}>
+                        {openCfdDetails?.takeProfit}
+                      </span>
+                      / <span className={`${PNL_COLOR_TYPE.loss}`}>{openCfdDetails?.stopLoss}</span>
+                    </div>
                   </div>
 
                   <div className="mx-6 my-4 flex justify-between">
                     <div className="text-lightGray">Liquidation Price</div>
-                    <div className="">$ 1182.5</div>
+                    <div className="">$ {openCfdDetails?.liquidationPrice}</div>
                   </div>
 
                   <div className="mx-6 my-4 flex justify-between">
                     <div className="text-lightGray">State</div>
                     <div className="">
-                      Open{' '}
+                      Open
                       <button
                         type="button"
                         className="ml-2 text-tidebitTheme underline underline-offset-2"

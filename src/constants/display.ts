@@ -149,15 +149,15 @@ export const PROFIT_LOSS_COLOR_TYPE = {
 };
 
 export const PNL_COLOR_TYPE = {
-  profit: 'text-lightGreen',
+  profit: 'text-lightGreen5',
   loss: 'text-lightRed',
-  equal: 'text-lightGray',
+  equal: 'text-lightWhite',
 };
 
 export const BORDER_COLOR_TYPE = {
-  profit: 'border-lightGreen',
-  loss: 'border-lightRed',
-  equal: 'border-lightGray',
+  long: 'border-lightGreen5',
+  short: 'border-lightRed',
+  normal: 'border-lightWhite',
 };
 
 export const TRANSACTION_TYPE = {

@@ -1,4 +1,4 @@
 export interface IPnL {
   type: 'UP' | 'DOWN' | 'EQUAL';
-  value: number;
+  value: string; // 改成 string
 }

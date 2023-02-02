@@ -72,6 +72,7 @@ export default function Notification({
             <div
               ref={notifyRef}
               className={`pointer-events-auto h-screen w-screen ${`sm:w-479px`} ${
+                //修改 h 高度
                 componentVisible ? 'opacity-100 sm:translate-x-0' : 'opacity-0 sm:translate-x-full'
               } flex flex-col bg-darkGray/90 pt-8 pb-20 text-white transition-all duration-300 sm:p-5`}
             >

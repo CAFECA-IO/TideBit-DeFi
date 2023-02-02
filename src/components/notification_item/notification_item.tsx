@@ -42,7 +42,7 @@ export default function NotificationItem({
               />
 
               <div className="relative mb-3 ml-3 basis-full text-start sm:mb-7">
-                <div className="flex">
+                <div className="flex pr-2">
                   <div className="mr-5px text-xl text-lightWhite sm:whitespace-nowrap sm:text-2xl">
                     {title}
                   </div>

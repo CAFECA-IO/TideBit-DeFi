@@ -73,7 +73,7 @@ export default function Notification({
               ref={notifyRef}
               className={`pointer-events-auto h-screen w-screen ${`sm:w-479px`} ${
                 componentVisible ? 'opacity-100 sm:translate-x-0' : 'opacity-0 sm:translate-x-full'
-              } flex flex-col bg-darkGray/90 p-5 pt-8 pb-20 text-white transition-all duration-300`}
+              } flex flex-col bg-darkGray/90 pt-8 pb-20 text-white transition-all duration-300 sm:p-5`}
             >
               <div className="mb-10 flex flex-col justify-center">
                 <h1 className="hidden pl-5 text-2xl font-bold sm:block">Notification</h1>

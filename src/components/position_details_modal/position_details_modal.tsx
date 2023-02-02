@@ -63,6 +63,9 @@ const PositionDetailsModal = ({
   //   slToggleFunction();
   // };
 
+  let spLowerLimit = 0;
+  let spUpperLimit = 2001;
+
   // TODO: i18n
   const displayedTypeOfPosition =
     openCfdDetails?.typeOfPosition === 'BUY' ? 'Up (Buy)' : 'Down (Sell)';
@@ -99,8 +102,8 @@ const PositionDetailsModal = ({
   const displayedStopLossSetting = (
     <div className={`${isDisplayedStopLossSetting}`}>
       <TradingInput
-        lowerLimit={0}
-        upperLimit={1000000}
+        lowerLimit={spLowerLimit}
+        upperLimit={spUpperLimit}
         inputInitialValue={stopLossValue}
         inputValue={stopLossValue}
         inputPlaceholder="stop-loss setting"
@@ -115,6 +118,9 @@ const PositionDetailsModal = ({
     if (!guaranteedChecked) {
       setGuaranteedChecked(!guaranteedChecked);
     }
+    spLowerLimit = 1320.5;
+    spUpperLimit = 1320.5;
+
     // console.log('toggle state in position details modal:', guaranteedChecked);
   };
 

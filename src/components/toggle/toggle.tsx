@@ -5,7 +5,7 @@ interface IToggleProps {
   // toggleClickHandler: () => void;
   lockedToOpen?: boolean;
   initialToggleState?: boolean;
-  getToggledState?: (props: boolean) => void;
+  getToggledState: (props: boolean) => void;
   // getToggleFunction?: (props: () => void) => void;
   toggleStateFromParent?: boolean;
   setToggleStateFromParent?: Dispatch<SetStateAction<boolean>>;
@@ -25,9 +25,7 @@ const Toggle = ({
 
   // function to handle pass the `toggle` state to parent component
   const passToggledStateHandler = (data: boolean) => {
-    if (getToggledState) {
-      getToggledState(data);
-    }
+    getToggledState(data);
   };
 
   // function to handle toggle state
@@ -49,12 +47,11 @@ const Toggle = ({
   // };
 
   //TODO: bg-tidebitTheme [#29C1E1]
-  const toggleSwitchStyle =
-    toggle && lockedToOpen
-      ? 'transform translate-x-full bg-lightGray shadow-lg shadow-black/80'
-      : toggle
-      ? 'transform translate-x-full bg-white'
-      : 'bg-white';
+  const toggleSwitchStyle = lockedToOpen
+    ? 'transform translate-x-full bg-lightGray shadow-lg shadow-black/80'
+    : toggle
+    ? 'transform translate-x-full bg-white'
+    : 'bg-white';
   const toggleBackgroundStyle = lockedToOpen ? 'bg-[#8B8E91]' : toggle ? 'bg-[#29C1E1]' : null;
 
   const tidebitToggle = (

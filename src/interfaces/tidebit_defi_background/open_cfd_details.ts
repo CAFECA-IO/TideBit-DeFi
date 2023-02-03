@@ -29,4 +29,6 @@ export const dummyOpenCFDDetails: IOpenCFDDetails = {
   },
   liquidationPrice: 19537,
   stopLoss: 20102,
+  guranteedStopAt: 21412,
+  recommendedTp: 35412,
 };

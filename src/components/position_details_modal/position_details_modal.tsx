@@ -54,10 +54,10 @@ const PositionDetailsModal = ({
   const initialTpToggle = openCfdDetails?.takeProfit ? true : false;
   const initialSlToggle = openCfdDetails?.stopLoss ? true : false;
 
-  const initialSlInput = openCfdDetails?.stopLoss ?? openCfdDetails?.openPrice ?? 0;
+  const initialSlInput = openCfdDetails?.stopLoss ?? openCfdDetails?.recommendedSl ?? 0;
   // const initailSlInput = openCfdDetails?.stopLoss ?? openCfdDetails?.openPrice ?? 0;
 
-  const initialTpInput = openCfdDetails?.takeProfit ?? openCfdDetails?.openPrice ?? 0;
+  const initialTpInput = openCfdDetails?.takeProfit ?? openCfdDetails?.recommendedTp ?? 0;
 
   const [takeProfitValue, setTakeProfitValue] = useState(initialTpInput);
   const [stopLossValue, setStopLossValue] = useState(initialSlInput);
@@ -131,12 +131,12 @@ const PositionDetailsModal = ({
     </div>
   );
   const guaranteedCheckedChangeHandler = () => {
-    if (!guaranteedChecked) {
+    if (!openCfdDetails?.guranteedStop) {
       setGuaranteedChecked(!guaranteedChecked);
     }
-    setSlLowerLimit(1320.5);
-    setSlUpperLimit(1320.5);
-    setStopLossValue(1320.5);
+    setSlLowerLimit(openCfdDetails.guranteedStopAt);
+    setSlUpperLimit(openCfdDetails.guranteedStopAt);
+    setStopLossValue(openCfdDetails.guranteedStopAt);
 
     // console.log('toggle state in position details modal:', guaranteedChecked);
   };

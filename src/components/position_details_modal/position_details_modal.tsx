@@ -49,15 +49,20 @@ const PositionDetailsModal = ({
   modalClickHandler,
   openCfdDetails,
 }: IPositionDetailsModal) => {
-  const dateString = timestampToString(openCfdDetails?.openTimestamp ?? 0);
-
   // console.log('in position, timestamp from open cfd details:', dateString);
   // console.log('in position, open cfd details:', openCfdDetails?.margin ?? 0);
+  const initialTpToggle = openCfdDetails?.takeProfit ? true : false;
+  const initialSlToggle = openCfdDetails?.stopLoss ? true : false;
 
-  const [takeProfitValue, setTakeProfitValue] = useState(1246.5);
-  const [stopLossValue, setStopLossValue] = useState(1320.5);
-  const [takeProfitToggle, setTakeProfitToggle] = useState(false);
-  const [stopLossToggle, setStopLossToggle] = useState(false);
+  const initialSlInput = openCfdDetails?.stopLoss ?? openCfdDetails?.openPrice ?? 0;
+  // const initailSlInput = openCfdDetails?.stopLoss ?? openCfdDetails?.openPrice ?? 0;
+
+  const initialTpInput = openCfdDetails?.takeProfit ?? openCfdDetails?.openPrice ?? 0;
+
+  const [takeProfitValue, setTakeProfitValue] = useState(initialTpInput);
+  const [stopLossValue, setStopLossValue] = useState(initialSlInput);
+  const [takeProfitToggle, setTakeProfitToggle] = useState(initialTpToggle);
+  const [stopLossToggle, setStopLossToggle] = useState(initialSlToggle);
   const [guaranteedTooltipStatus, setGuaranteedTooltipStatus] = useState(0);
 
   const [guaranteedChecked, setGuaranteedChecked] = useState(false);
@@ -99,7 +104,8 @@ const PositionDetailsModal = ({
         lowerLimit={0}
         inputInitialValue={takeProfitValue}
         inputValueFromParent={takeProfitValue}
-        inputPlaceholder="take-profit setting"
+        setInputValueFromParent={setTakeProfitValue}
+        inputPlaceholder="take profit"
         inputName="tpInput"
         inputSize="h-25px w-70px text-sm"
         decrementBtnSize="25"
@@ -116,7 +122,7 @@ const PositionDetailsModal = ({
         inputInitialValue={stopLossValue}
         setInputValueFromParent={setStopLossValue}
         inputValueFromParent={stopLossValue}
-        inputPlaceholder="stop-loss setting"
+        inputPlaceholder="stop loss"
         inputName="slInput"
         inputSize="h-25px w-70px text-sm"
         decrementBtnSize="25"

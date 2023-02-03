@@ -21,13 +21,12 @@ export const dummyOpenCFDDetails: IOpenCFDDetails = {
   guranteedStop: false,
   openTimestamp: 1675299651,
   scheduledClosingTimestamp: 1675386051, // openTimestamp + 86400
-  openValue: 19247,
+  openValue: 74589658,
   pnl: {
     type: 'UP',
     symbol: '+',
     value: 90752,
   },
   liquidationPrice: 19537,
-  takeProfit: 26419,
-  stopLoss: 21697,
+  stopLoss: 20102,
 };

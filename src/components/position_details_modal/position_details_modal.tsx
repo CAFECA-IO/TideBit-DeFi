@@ -337,7 +337,7 @@ const PositionDetailsModal = ({
                   <Toggle
                     setToggleStateFromParent={setTakeProfitToggle}
                     toggleStateFromParent={takeProfitToggle}
-                    getToggledState={getToggledTpSetting}
+                    // getToggledState={getToggledTpSetting}
                   />
                 </div>
 
@@ -345,7 +345,7 @@ const PositionDetailsModal = ({
                   <div className="text-lightGray">Close at loss</div>
                   <div className="-mr-50px">{displayedStopLossSetting}</div>
                   <Toggle
-                    getToggledState={getToggledSlSetting}
+                    // getToggledState={getToggledSlSetting}
                     lockedToOpen={guaranteedChecked}
                     initialToggleState={guaranteedChecked}
                     toggleStateFromParent={stopLossToggle}

@@ -5,7 +5,7 @@ interface IToggleProps {
   // toggleClickHandler: () => void;
   lockedToOpen?: boolean;
   initialToggleState?: boolean;
-  getToggledState: (props: boolean) => void;
+  getToggledState?: (props: boolean) => void;
   // getToggleFunction?: (props: () => void) => void;
   toggleStateFromParent?: boolean;
   setToggleStateFromParent?: Dispatch<SetStateAction<boolean>>;
@@ -25,7 +25,9 @@ const Toggle = ({
 
   // function to handle pass the `toggle` state to parent component
   const passToggledStateHandler = (data: boolean) => {
-    getToggledState(data);
+    if (getToggledState) {
+      getToggledState(data);
+    }
   };
 
   // function to handle toggle state

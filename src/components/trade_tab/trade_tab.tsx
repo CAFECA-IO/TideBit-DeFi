@@ -90,7 +90,6 @@ const TradeTab = () => {
   const displayedMarginSetting = (
     <TradingInput
       lowerLimit={0}
-      upperLimit={1000000}
       inputInitialValue={inputValue}
       inputPlaceholder="margin input"
       inputName="marginInput"
@@ -115,7 +114,6 @@ const TradeTab = () => {
     <div className={isDisplayedLongTpSetting}>
       <TradingInput
         lowerLimit={0}
-        upperLimit={1000000}
         inputInitialValue={longTpValue}
         inputPlaceholder="profit-taking setting"
         inputName="tpInput"
@@ -130,7 +128,6 @@ const TradeTab = () => {
     <div className={isDisplayedLongSlSetting}>
       <TradingInput
         lowerLimit={0}
-        upperLimit={1000000}
         inputPlaceholder="stop-loss setting"
         inputInitialValue={longSlValue}
         inputName="slInput"
@@ -187,7 +184,6 @@ const TradeTab = () => {
     <div className={isDisplayedShortTpSetting}>
       <TradingInput
         lowerLimit={0}
-        upperLimit={1000000}
         inputInitialValue={shortTpValue}
         inputPlaceholder="profit-taking setting"
         inputName="shortTpInput"
@@ -202,7 +198,6 @@ const TradeTab = () => {
     <div className={isDisplayedShortSlSetting}>
       <TradingInput
         lowerLimit={0}
-        upperLimit={1000000}
         inputInitialValue={shortSlValue}
         inputValueFromParent={shortSlValue}
         inputPlaceholder="stop-loss setting"

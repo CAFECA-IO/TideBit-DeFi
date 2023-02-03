@@ -19,6 +19,7 @@ const timestampToString = (timestamp: number) => {
   if (timestamp === 0) return ['-', '-'];
 
   const date = new Date(timestamp * 1000);
+  // const date = new Date();
   const year = date.getFullYear();
   // const month = ('' + (date.getMonth() + 1)).slice(-2);
   // const day = ('0' + date.getDate()).slice(-2);
@@ -57,7 +58,7 @@ const PositionDetailsModal = ({
 
   const [guaranteedChecked, setGuaranteedChecked] = useState(false);
   const [slLowerLimit, setSlLowerLimit] = useState(0);
-  const [slUpperLimit, setSlUpperLimit] = useState(2023);
+  const [slUpperLimit, setSlUpperLimit] = useState(Infinity);
 
   const getToggledTpSetting = (bool: boolean) => {
     setTakeProfitToggle(bool);
@@ -92,7 +93,6 @@ const PositionDetailsModal = ({
     <div className={`${isDisplayedTakeProfitSetting}`}>
       <TradingInput
         lowerLimit={0}
-        upperLimit={1000000}
         inputInitialValue={takeProfitValue}
         inputValueFromParent={takeProfitValue}
         inputPlaceholder="take-profit setting"

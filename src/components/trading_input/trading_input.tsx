@@ -50,7 +50,7 @@ interface ITradingInputProps {
 
   handlerType?: string;
   lowerLimit: number;
-  upperLimit: number;
+  upperLimit?: number;
 
   shortSlLimit?: number;
   longSlLimit?: number;
@@ -93,7 +93,7 @@ const TradingInput = ({
       //   return;
       // }
 
-      if (Number(value) > upperLimit) {
+      if (upperLimit && Number(value) > upperLimit) {
         return;
       }
 
@@ -112,7 +112,7 @@ const TradingInput = ({
     const change = inputValue + TRADING_INPUT_STEP;
     const changeRounded = Math.round(change * 100) / 100;
 
-    if (changeRounded >= upperLimit) {
+    if (upperLimit && changeRounded >= upperLimit) {
       return;
     }
     setInputValue(changeRounded);
@@ -156,7 +156,7 @@ const TradingInput = ({
     const changeRounded = Math.round(change * 100) / 100;
 
     // limit to each one's deposit or trading restriction
-    const localMarginLimit = upperLimit;
+    const localMarginLimit = upperLimit ?? 0;
     if (inputValue >= localMarginLimit) {
       // console.log('Margin restriction');
       // <p>Couldn't above marginLimit</p>

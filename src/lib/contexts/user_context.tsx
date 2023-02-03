@@ -676,7 +676,7 @@ export const UserProvider = ({children}: IUserProvider) => {
       {
         profitOrLoss: 'loss',
         longOrShort: 'long',
-        value: 656.9,
+        value: 556.9,
         ticker: 'BTC',
         passedHour: 11,
         profitOrLossAmount: 34.9,
@@ -686,7 +686,7 @@ export const UserProvider = ({children}: IUserProvider) => {
       {
         profitOrLoss: 'profit',
         longOrShort: 'short',
-        value: 631.1,
+        value: 531.1,
         ticker: 'ETH',
         passedHour: 15,
         profitOrLossAmount: 29.9,
@@ -696,7 +696,7 @@ export const UserProvider = ({children}: IUserProvider) => {
       {
         profitOrLoss: 'profit',
         longOrShort: 'short',
-        value: 1234567.8,
+        value: 2234567.8,
         ticker: 'BTC',
         passedHour: 23,
         profitOrLossAmount: 1234.5,
@@ -712,7 +712,7 @@ export const UserProvider = ({children}: IUserProvider) => {
       {
         profitOrLoss: 'loss',
         longOrShort: 'long',
-        openValue: 639.9,
+        openValue: 439.9,
         closeValue: 638.3,
         ticker: 'BTC',
         profitOrLossAmount: 34.9,
@@ -720,7 +720,7 @@ export const UserProvider = ({children}: IUserProvider) => {
       {
         profitOrLoss: 'profit',
         longOrShort: 'short',
-        openValue: 639.9,
+        openValue: 439.9,
         closeValue: 638.3,
         ticker: 'ETH',
         profitOrLossAmount: 29.9,
@@ -728,7 +728,7 @@ export const UserProvider = ({children}: IUserProvider) => {
       {
         profitOrLoss: 'profit',
         longOrShort: 'short',
-        openValue: 639.9,
+        openValue: 439.9,
         closeValue: 638.3,
         ticker: 'BTC',
         profitOrLossAmount: 1234.5,

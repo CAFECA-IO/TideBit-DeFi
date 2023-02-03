@@ -1,22 +1,27 @@
-import {useState} from 'react';
+import {Dispatch, SetStateAction, useState} from 'react';
 
 interface IToggleProps {
   // toggle: boolean;
   // toggleClickHandler: () => void;
-  disabled?: boolean;
+  lockedToOpen?: boolean;
   initialToggleState?: boolean;
-  // toggleStateFromParent?: boolean;
   getToggledState: (props: boolean) => void;
   // getToggleFunction?: (props: () => void) => void;
+  toggleStateFromParent?: boolean;
+  setToggleStateFromParent?: Dispatch<SetStateAction<boolean>>;
 }
 
 const Toggle = ({
   initialToggleState = false,
   getToggledState,
-  disabled,
-}: // getToggleFunction,
-IToggleProps) => {
-  const [toggle, setToggle] = useState(initialToggleState);
+  lockedToOpen: lockedToOpen,
+  toggleStateFromParent,
+  setToggleStateFromParent,
+}: IToggleProps) => {
+  const [toggle, setToggle] =
+    toggleStateFromParent && setToggleStateFromParent
+      ? [toggleStateFromParent, setToggleStateFromParent]
+      : useState(initialToggleState);
 
   // function to handle pass the `toggle` state to parent component
   const passToggledStateHandler = (data: boolean) => {
@@ -25,10 +30,11 @@ IToggleProps) => {
 
   // function to handle toggle state
   const toggleClickHandler = () => {
-    if (disabled) return;
+    if (lockedToOpen) return;
     setToggle(!toggle);
     passToggledStateHandler(!toggle);
 
+    // console.log('toggle state from toggle: ', toggle);
     // passToggleFunction(toggleClickHandler);
   };
 
@@ -41,13 +47,13 @@ IToggleProps) => {
   // };
 
   //TODO: bg-tidebitTheme [#29C1E1]
-  // FIXME: `disabled` changed to `lockedToOpen`
-  const toggleSwitchStyle = toggle
-    ? 'transform translate-x-full bg-white'
-    : disabled
-    ? 'transform translate-x-full bg-lightGray shadow-lg shadow-black/80'
-    : 'bg-white';
-  const toggleBackgroundStyle = disabled ? 'bg-[#8B8E91]' : toggle ? 'bg-[#29C1E1]' : null;
+  const toggleSwitchStyle =
+    toggle && lockedToOpen
+      ? 'transform translate-x-full bg-lightGray shadow-lg shadow-black/80'
+      : toggle
+      ? 'transform translate-x-full bg-white'
+      : 'bg-white';
+  const toggleBackgroundStyle = lockedToOpen ? 'bg-[#8B8E91]' : toggle ? 'bg-[#29C1E1]' : null;
 
   const tidebitToggle = (
     // Toggle background

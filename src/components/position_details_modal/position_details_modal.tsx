@@ -1,7 +1,11 @@
 import Image from 'next/image';
 import {ImCross} from 'react-icons/im';
 import {IOpenCFDDetails} from '../../interfaces/tidebit_defi_background/open_cfd_details';
-import {BORDER_COLOR_TYPE, PNL_COLOR_TYPE} from '../../constants/display';
+import {
+  BORDER_COLOR_TYPE,
+  PNL_COLOR_TYPE,
+  UNIVERSAL_NUMBER_FORMAT_LOCALE,
+} from '../../constants/display';
 import Toggle from '../toggle/toggle';
 import {useState} from 'react';
 import TradingInput from '../trading_input/trading_input';
@@ -245,22 +249,34 @@ const PositionDetailsModal = ({
 
                   <div className="mx-6 my-4 flex justify-between">
                     <div className="text-lightGray">Amount</div>
-                    <div className="">{openCfdDetails?.amount ?? 0}</div>
+                    <div className="">
+                      {openCfdDetails?.amount?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0}
+                    </div>
                   </div>
 
                   <div className="mx-6 my-4 flex justify-between">
                     <div className="text-lightGray">PNL</div>
-                    <div className={`${displayedPnLColor}`}>$ {openCfdDetails?.pnl.value}</div>
+                    <div className={`${displayedPnLColor}`}>
+                      $ {openCfdDetails?.pnl.value?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}
+                    </div>
                   </div>
 
                   <div className="mx-6 my-4 flex justify-between">
                     <div className="text-lightGray">Open Value</div>
-                    <div className="">$ {openCfdDetails?.openValue ?? 0}</div>
+                    <div className="">
+                      ${' '}
+                      {openCfdDetails?.openValue?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ??
+                        0}
+                    </div>
                   </div>
 
                   <div className="mx-6 my-4 flex justify-between">
                     <div className="text-lightGray">Open Price</div>
-                    <div className="">$ {openCfdDetails?.openPrice ?? 0}</div>
+                    <div className="">
+                      ${' '}
+                      {openCfdDetails?.openPrice?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ??
+                        0}
+                    </div>
                   </div>
 
                   <div className="mx-6 my-4 flex justify-between">
@@ -274,14 +290,27 @@ const PositionDetailsModal = ({
                   <div className="mx-6 my-4 flex justify-between">
                     <div className="text-lightGray">Limit/ Stop</div>
                     <div className="">
-                      <span className={`text-lightWhite`}>{openCfdDetails?.takeProfit}</span> /{' '}
-                      <span className={`text-lightWhite`}>{openCfdDetails?.stopLoss}</span>
+                      <span className={`text-lightWhite`}>
+                        {openCfdDetails?.takeProfit?.toLocaleString(
+                          UNIVERSAL_NUMBER_FORMAT_LOCALE
+                        ) ?? '-'}
+                      </span>{' '}
+                      /{' '}
+                      <span className={`text-lightWhite`}>
+                        {openCfdDetails?.stopLoss?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ??
+                          '-'}
+                      </span>
                     </div>
                   </div>
 
                   <div className="mx-6 my-4 flex justify-between">
                     <div className="text-lightGray">Liquidation Price</div>
-                    <div className="">$ {openCfdDetails?.liquidationPrice}</div>
+                    <div className="">
+                      ${' '}
+                      {openCfdDetails?.liquidationPrice?.toLocaleString(
+                        UNIVERSAL_NUMBER_FORMAT_LOCALE
+                      )}
+                    </div>
                   </div>
 
                   <div className="mx-6 my-4 flex justify-between">

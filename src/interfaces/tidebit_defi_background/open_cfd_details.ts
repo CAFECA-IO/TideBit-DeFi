@@ -11,12 +11,12 @@ function randomIntFromInterval(min: number, max: number) {
 export const dummyOpenCFDDetails: IOpenCFDDetails = {
   id: '123',
   ticker: 'ETH',
-  amount: '1.8',
+  amount: 1.8,
   state: 'OPENING',
   typeOfPosition: 'BUY',
   leverage: 5,
   margin: randomIntFromInterval(650, 10000),
-  openPrice: '24058',
+  openPrice: 24058,
   fee: 0,
   guranteedStop: false,
   openTimestamp: 1675299651,
@@ -24,9 +24,10 @@ export const dummyOpenCFDDetails: IOpenCFDDetails = {
   openValue: 19247,
   pnl: {
     type: 'UP',
-    value: '+ 90752',
+    symbol: '+',
+    value: 90752,
   },
   liquidationPrice: 19537,
-  takeProfit: '26419',
-  stopLoss: '21697',
+  takeProfit: 26419,
+  stopLoss: 21697,
 };

@@ -1,5 +1,8 @@
+import {IPnL} from './pnl';
+
 export interface IUserBalance {
   available: number;
   locked: number;
-  PNL: number; // TODO: IPnLProps
+  total: number;
+  PNL: IPnL; // TODO: IPnLProps
 }

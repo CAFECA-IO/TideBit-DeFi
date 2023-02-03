@@ -65,7 +65,7 @@ const PositionDetailsModal = ({
   const [stopLossToggle, setStopLossToggle] = useState(initialSlToggle);
   const [guaranteedTooltipStatus, setGuaranteedTooltipStatus] = useState(0);
 
-  const [guaranteedChecked, setGuaranteedChecked] = useState(false);
+  const [guaranteedChecked, setGuaranteedChecked] = useState(openCfdDetails.guranteedStop);
   const [slLowerLimit, setSlLowerLimit] = useState(0);
   const [slUpperLimit, setSlUpperLimit] = useState(Infinity);
 

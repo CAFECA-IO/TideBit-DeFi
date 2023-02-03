@@ -46,6 +46,18 @@ export default function Notification({
     {
       id: 'n4',
     },
+    {
+      id: 'n5',
+    },
+    {
+      id: 'n6',
+    },
+    {
+      id: 'n7',
+    },
+    {
+      id: 'n8',
+    },
   ];
 
   const NotificationList = DUMMY_DATA.map(v => {
@@ -71,20 +83,20 @@ export default function Notification({
             {/* sidebar self */}
             <div
               ref={notifyRef}
-              className={`pointer-events-auto h-screen w-screen ${`sm:w-479px`} ${
+              className={`pointer-events-auto min-h-screen w-screen ${`sm:w-479px`} ${
                 //修改 h 高度
                 componentVisible ? 'opacity-100 sm:translate-x-0' : 'opacity-0 sm:translate-x-full'
               } flex flex-col bg-darkGray/90 pt-8 pb-20 text-white transition-all duration-300 sm:p-5`}
             >
-              <div className="mb-10 flex flex-col justify-center">
+              <div className="mb-10 flex flex items-center">
                 <h1 className="hidden pl-5 text-2xl font-bold sm:block">Notification</h1>
-                <div className="fixed right-30px text-sm text-tidebitTheme underline hover:cursor-pointer">
+                <div className="ml-auto pr-30px text-sm text-tidebitTheme underline hover:cursor-pointer">
                   Clear All
                 </div>
               </div>
 
               {/* Notification List*/}
-              <div className="flex basis-full flex-col space-y-10 overflow-y-auto overflow-x-hidden">
+              <div className="flex h-80vh flex-col space-y-10 overflow-y-auto overflow-x-hidden pb-5">
                 {NotificationList}
               </div>
             </div>

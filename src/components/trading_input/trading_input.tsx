@@ -97,6 +97,10 @@ const TradingInput = ({
         return;
       }
 
+      if (upperLimit && lowerLimit === upperLimit) {
+        return;
+      }
+
       setInputValue(Number(value));
     }
   };

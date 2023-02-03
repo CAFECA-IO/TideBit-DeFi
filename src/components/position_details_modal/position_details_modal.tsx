@@ -192,32 +192,6 @@ const PositionDetailsModal = ({
     </div>
   );
 
-  const dataFormat = {
-    type: 'UP (Buy)',
-    amount: '0.1',
-    PNL: '34.9',
-    openValue: '656.9',
-    openPrice: '131.8',
-    openTime: '2022-05-30 13:04:57', // date + time
-    takeProfit: '-',
-    stopLoss: '-',
-    liquidationPrice: '1183.6',
-    state: 'Open',
-  };
-
-  // const displayedDataFormat = () => {
-  //   const elements = [];
-  //   for (const [key, value] of Object.entries(dataFormat)) {
-  //     elements.push(
-  //       <div className="mx-6 my-5 flex justify-between">
-  //         <div className="text-lightGray">{key}</div>
-  //         <div className="">{value}</div>
-  //       </div>
-  //     );
-  //   }
-  //   return elements;
-  // };
-
   const isDisplayedDetailedPositionModal = modalVisible ? (
     <>
       <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">

@@ -133,10 +133,17 @@ const PositionDetailsModal = ({
   const guaranteedCheckedChangeHandler = () => {
     if (!openCfdDetails?.guranteedStop) {
       setGuaranteedChecked(!guaranteedChecked);
+
+      if (!guaranteedChecked) {
+        setSlLowerLimit(openCfdDetails.guranteedStopAt);
+        setSlUpperLimit(openCfdDetails.guranteedStopAt);
+        setStopLossValue(openCfdDetails.guranteedStopAt);
+      } else {
+        setSlLowerLimit(0);
+        setSlUpperLimit(Infinity);
+        setStopLossValue(openCfdDetails?.stopLoss ?? openCfdDetails?.recommendedSl);
+      }
     }
-    setSlLowerLimit(openCfdDetails.guranteedStopAt);
-    setSlUpperLimit(openCfdDetails.guranteedStopAt);
-    setStopLossValue(openCfdDetails.guranteedStopAt);
 
     // console.log('toggle state in position details modal:', guaranteedChecked);
   };

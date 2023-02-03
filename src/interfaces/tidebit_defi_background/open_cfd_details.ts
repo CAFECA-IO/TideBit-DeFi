@@ -31,4 +31,5 @@ export const dummyOpenCFDDetails: IOpenCFDDetails = {
   stopLoss: 20102,
   guranteedStopAt: 21412,
   recommendedTp: 35412,
+  recommendedSl: 19453,
 };

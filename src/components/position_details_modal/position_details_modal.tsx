@@ -334,7 +334,11 @@ const PositionDetailsModal = ({
                 <div className="flex items-center justify-between">
                   <div className="text-lightGray">Close at profit</div>
                   <div className="-mr-10">{displayedTakeProfitSetting}</div>
-                  <Toggle getToggledState={getToggledTpSetting} />
+                  <Toggle
+                    setToggleStateFromParent={setTakeProfitToggle}
+                    toggleStateFromParent={takeProfitToggle}
+                    getToggledState={getToggledTpSetting}
+                  />
                 </div>
 
                 <div className="flex items-center justify-between">
@@ -344,8 +348,8 @@ const PositionDetailsModal = ({
                     getToggledState={getToggledSlSetting}
                     lockedToOpen={guaranteedChecked}
                     initialToggleState={guaranteedChecked}
-                    toggleStateFromParent={guaranteedChecked}
-                    setToggleStateFromParent={setGuaranteedChecked}
+                    toggleStateFromParent={stopLossToggle}
+                    setToggleStateFromParent={setStopLossToggle}
                     // getToggleFunction={getSlToggleFunction}
                   />
                 </div>

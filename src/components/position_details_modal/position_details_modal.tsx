@@ -16,7 +16,7 @@ import RippleButton from '../ripple_button/ripple_button';
 interface IPositionDetailsModal {
   modalVisible: boolean;
   modalClickHandler: () => void;
-  openCfdDetails?: IOpenCFDDetails;
+  openCfdDetails: IOpenCFDDetails;
 }
 
 const timestampToString = (timestamp: number) => {

@@ -14,6 +14,7 @@ const OpenSubTab = () => {
         <div className="">
           {/* 6 */}
           <OpenPositionItem
+            openCfdDetails={allOpenedCFDs[0]}
             profitOrLoss="loss"
             longOrShort="long"
             value={656.9}

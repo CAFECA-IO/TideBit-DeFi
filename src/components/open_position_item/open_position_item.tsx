@@ -19,7 +19,7 @@ interface IOpenPositionItemProps {
   profitOrLossAmount: number;
   tickerTrendArray: number[];
   horizontalValueLine: number;
-  openCfdDetails?: IOpenCFDDetails;
+  openCfdDetails: IOpenCFDDetails;
   // circularClick?: () => void;
 }
 

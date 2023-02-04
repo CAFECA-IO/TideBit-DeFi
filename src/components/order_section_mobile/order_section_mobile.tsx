@@ -4,8 +4,7 @@ import TradeTabMobile from '../trade_tab_mobile/trade_tab_mobile';
 
 const OrderSectionMobile = () => {
   return (
-    <div className="text-blue-300">
-      OrderSectionMobile
+    <div className="fixed bottom-0 flex w-screen basis-full items-center justify-center bg-darkGray py-3 px-5">
       <TradeTabMobile />
       <PositionTabMobile />
     </div>

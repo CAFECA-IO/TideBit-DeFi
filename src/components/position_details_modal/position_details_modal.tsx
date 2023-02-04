@@ -114,18 +114,18 @@ const PositionDetailsModal = ({
     </div>
   );
 
-  // const displayedSlLowerLimit = openCfdDetails?.guranteedStop
-  //   ? openCfdDetails?.stopLoss ?? openCfdDetails.recommendedSl
-  //   : slLowerLimit;
-  // const displayedSlUpperLimit = openCfdDetails?.guranteedStop
-  //   ? openCfdDetails?.stopLoss ?? openCfdDetails.recommendedSl
-  //   : slUpperLimit;
+  const displayedSlLowerLimit = openCfdDetails?.guranteedStop
+    ? openCfdDetails?.stopLoss ?? openCfdDetails.recommendedSl
+    : slLowerLimit;
+  const displayedSlUpperLimit = openCfdDetails?.guranteedStop
+    ? openCfdDetails?.stopLoss ?? openCfdDetails.recommendedSl
+    : slUpperLimit;
 
   const displayedStopLossSetting = (
     <div className={`${isDisplayedStopLossSetting}`}>
       <TradingInput
-        lowerLimit={slLowerLimit}
-        upperLimit={slUpperLimit}
+        lowerLimit={displayedSlLowerLimit}
+        upperLimit={displayedSlUpperLimit}
         inputInitialValue={stopLossValue}
         setInputValueFromParent={setStopLossValue}
         inputValueFromParent={stopLossValue}

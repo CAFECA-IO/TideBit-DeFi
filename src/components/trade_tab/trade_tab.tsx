@@ -30,7 +30,7 @@ const TradeTab = () => {
   const [shortTpToggle, setShortTpToggle] = useState(false);
   const [shortSlToggle, setShortSlToggle] = useState(false);
 
-  const [marginWarning, setMarginWarning] = useState(true);
+  const [marginWarning, setMarginWarning] = useState(false);
 
   const getMarginInputValue = (value: number) => {
     setInputValue(value);

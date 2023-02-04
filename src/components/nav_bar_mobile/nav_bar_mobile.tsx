@@ -64,18 +64,16 @@ const NavBarMobile = ({notificationNumber = 1}) => {
     ? 'translate-y-3'
     : 'translate-y-0 origin-left w-3/4 rotate-35';
 
-  const isDisplayedMobileNavBar = navOpen
-    ? 'min-h-screen inset-0 bg-black/100 opacity-100'
-    : 'opacity-0';
+  const isDisplayedMobileNavBar = navOpen ? 'top-16 min-h-screen inset-0 bg-darkGray/100' : '';
   // componentVisible ? 'animate-fadeIn' : 'animate-fadeOut';
 
   const isDisplayedNotificationSidebarMobileCover = (
     <div
       className={`${
-        navOpen ? 'visible' : 'invisible'
-      } fixed top-3 left-24 z-50 flex h-10 w-250px items-center overflow-x-hidden overflow-y-hidden bg-black/100 outline-none`}
+        navOpen ? 'visible opacity-100' : 'invisible opacity-0'
+      } fixed top-3 left-20 z-50 flex h-10 w-250px items-center overflow-x-hidden overflow-y-hidden bg-black/100 outline-none`}
     >
-      <p className="transition-all duration-300">{MENU_TEXT}</p>
+      <p className="pl-5 transition-all duration-300">{MENU_TEXT}</p>
     </div>
   );
 
@@ -123,7 +121,7 @@ const NavBarMobile = ({notificationNumber = 1}) => {
               </button>
             </div>
 
-            <div className="ml-auto">
+            <div className="invisible ml-auto lg:visible">
               <WalletPanel className="flex:auto" getUserLoginState={getUserLoginHandler} />
             </div>
           </div>
@@ -137,7 +135,7 @@ const NavBarMobile = ({notificationNumber = 1}) => {
           {isDisplayedNotificationSidebarMobileCover}
 
           {/* Mobile menu section */}
-          <div className="flex h-screen flex-col items-center justify-start px-2 pt-20 pb-3 text-base sm:px-3">
+          <div className="flex h-screen flex-col items-center justify-start px-2 pt-10 pb-3 text-base sm:px-3">
             <div className="flex h-full w-screen flex-col items-center justify-between">
               <div className="flex items-center justify-start px-3 pt-3">
                 <Link className="shrink-0" href="/">

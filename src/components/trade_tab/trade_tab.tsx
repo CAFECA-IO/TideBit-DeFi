@@ -32,6 +32,12 @@ const TradeTab = () => {
 
   const [marginWarning, setMarginWarning] = useState(true);
 
+  const getMarginInputValue = (value: number) => {
+    setInputValue(value);
+    marginDetection(value);
+    // console.log('maring input value from getMarginInputValue', value);
+  };
+
   const marginDetection = (value: number) => {
     if (value > MARGIN_LIMIT) {
       setMarginWarning(true);
@@ -89,8 +95,11 @@ const TradeTab = () => {
   // ----------margin area----------
   const displayedMarginSetting = (
     <TradingInput
+      getInputValue={getMarginInputValue}
       lowerLimit={0}
       inputInitialValue={inputValue}
+      inputValueFromParent={inputValue}
+      setInputValueFromParent={setInputValue}
       inputPlaceholder="margin input"
       inputName="marginInput"
       inputSize="h-44px w-160px text-xl"

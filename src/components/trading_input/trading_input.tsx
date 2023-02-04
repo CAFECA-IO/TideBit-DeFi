@@ -127,6 +127,7 @@ const TradingInput = ({
       return;
     }
     setInputValue(changeRounded);
+    passValeHandler(changeRounded);
   };
 
   /** Margin
@@ -147,6 +148,7 @@ const TradingInput = ({
       return;
     }
     setInputValue(changeRounded);
+    passValeHandler(changeRounded);
   };
 
   // *----------Margin handlers-----*

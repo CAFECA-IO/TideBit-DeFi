@@ -116,9 +116,39 @@ const PositionDetailsModal = ({
     : slUpperLimit;
 
   const buttonClickHandler = () => {
+    // // take-profit toggle is different
+    // if (!!openCfdDetails?.takeProfit !== !!takeProfitToggle) {
+    //   console.log('take profit toggle is different');
+    //   // if take profit toggle is on
+    //   if (takeProfitToggle && takeProfitValue) {
+    //     console.log('takeProfitToggle', takeProfitToggle);
+    //     if (openCfdDetails?.takeProfit !== takeProfitValue) {
+    //       console.log('takeProfitValue', takeProfitValue);
+    //     }
+    //   } else {
+    //     // if take profit toggle is off
+    //     console.log('take profit toggle is off', takeProfitToggle);
+    //   }
+    // } else {
+    //   console.log('take profit toggle is same');
+    // }
+    // if (!!openCfdDetails?.stopLoss !== !!stopLossToggle) {
+    //   console.log('stop loss toggle is different');
+    // } else {
+    //   console.log('stop loss toggle is same');
+    // }
+    // // if (openCfdDetails?.takeProfit !== takeProfitValue) {
+    // //   console.log('take profit value changed');
+    // // }
+    // if (openCfdDetails?.stopLoss !== stopLossValue) {
+    //   console.log('stop loss value changed');
+    // }
+    // if (openCfdDetails?.guranteedStop !== guaranteedChecked) {
+    //   console.log('guaranteed stop changed');
+    // }
     // console.log('guaranteed checked:', guaranteedChecked);
-    // console.log('take profit toggle:', takeProfitToggle);
-    // console.log('take profit value:', takeProfitValue);
+    // // console.log('take profit toggle:', takeProfitToggle);
+    // // console.log('take profit value:', takeProfitValue);
     // console.log('stop loss toggle:', stopLossToggle);
     // console.log('stop loss value:', stopLossValue);
   };

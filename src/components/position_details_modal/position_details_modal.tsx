@@ -116,18 +116,19 @@ const PositionDetailsModal = ({
     : slUpperLimit;
 
   const buttonClickHandler = () => {
-    // TODO: copy object and compare with initial values
+    // // TODO: copy object and compare with initial values
+    // const originalOpenCfdDetails: IOpenCFDDetails = {...openCfdDetails};
     // let updatedOpenCfdDetails = {...openCfdDetails};
 
     // const detailsToCheck = [
     //   {
-    //     key: takeProfit,
+    //     key: 'takeProfit',
     //     value: takeProfitValue,
     //     toggle: takeProfitToggle,
     //     initialValue: initialTpToggle,
     //   },
     //   {
-    //     key: stopLoss,
+    //     key: 'stopLoss',
     //     value: stopLossValue,
     //     toggle: stopLossToggle,
     //     initialValue: initialSlToggle,
@@ -143,7 +144,7 @@ const PositionDetailsModal = ({
     //     }
     //   } else {
     //     if (toggle && value) {
-    //       if (openCfdDetails[key] !== value) {
+    //       if (originalOpenCfdDetails[key] !== value) {
     //         // console.log(`[submit] ${key}`, value);
     //         return {[key]: value};
     //       }

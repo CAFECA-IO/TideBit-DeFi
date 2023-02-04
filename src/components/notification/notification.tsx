@@ -96,7 +96,7 @@ export default function Notification({
               </div>
 
               {/* Notification List*/}
-              <div className="flex h-80vh flex-col space-y-10 overflow-y-auto overflow-x-hidden pb-5">
+              <div className="flex h-80vh flex-col space-y-10 overflow-y-auto overflow-x-hidden pb-40 sm:pb-10">
                 {NotificationList}
               </div>
             </div>

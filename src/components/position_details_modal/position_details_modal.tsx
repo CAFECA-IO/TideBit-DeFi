@@ -169,7 +169,7 @@ const PositionDetailsModal = ({
         />
         <label className="ml-2 flex text-sm font-medium text-lightGray">
           Guaranteed stop &nbsp;
-          <span className="text-lightWhite"> (Fee: 0.77 USDT)</span>
+          <span className="text-lightWhite"> (Fee: {openCfdDetails?.guranteedStopFee} USDT)</span>
           {/* tooltip */}
           <div className="ml-1">
             <div

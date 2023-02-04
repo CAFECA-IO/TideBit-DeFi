@@ -19,6 +19,7 @@ export const dummyOpenCFDDetails: IOpenCFDDetails = {
   openPrice: 24058,
   fee: 0,
   guranteedStop: false,
+  guranteedStopFee: 0.77,
   openTimestamp: 1675299651,
   scheduledClosingTimestamp: 1675386051, // openTimestamp + 86400
   openValue: 74589658,

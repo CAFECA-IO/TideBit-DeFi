@@ -144,7 +144,7 @@ const PositionDetailsModal = ({
 
       setSlLowerLimit(0);
       setSlUpperLimit(Infinity);
-      setStopLossValue(openCfdDetails?.stopLoss ?? openCfdDetails?.recommendedSl);
+      // setStopLossValue(openCfdDetails?.stopLoss ?? openCfdDetails?.recommendedSl);
 
       // User's behavior to check the guaranteed stop loss checkbox
       // if (!guaranteedChecked) {

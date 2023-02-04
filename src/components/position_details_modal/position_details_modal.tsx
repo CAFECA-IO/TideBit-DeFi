@@ -119,7 +119,6 @@ const PositionDetailsModal = ({
     // // TODO: copy object and compare with initial values
     // const originalOpenCfdDetails: IOpenCFDDetails = {...openCfdDetails};
     // let updatedOpenCfdDetails = {...openCfdDetails};
-
     // const detailsToCheck = [
     //   {
     //     key: 'takeProfit',
@@ -135,7 +134,7 @@ const PositionDetailsModal = ({
     //   },
     //   {key: 'guranteedStop', value: guaranteedChecked, initialValue: openCfdDetails.guranteedStop},
     // ];
-
+    // // FIXME: check toggle's change before checking value's change
     // const updatedDetails = detailsToCheck.map(({key, value, toggle, initialValue}) => {
     //   if (key === 'guranteedStop') {
     //     if (value !== initialValue) {
@@ -149,47 +148,39 @@ const PositionDetailsModal = ({
     //         return {[key]: value};
     //       }
     //     }
-
     //     if (initialValue !== toggle) {
     //       // console.log(`[submit] ${key}Toggle`, toggle);
     //       return {[`${key}Toggle`]: toggle};
     //     }
     //   }
-
     //   return {};
     // });
-
     // updatedOpenCfdDetails = {...updatedOpenCfdDetails, ...Object.assign({}, ...updatedDetails)};
-    // // console.log('updatedOpenCfdDetails', updatedOpenCfdDetails);
-
-    // -----check if value of take-profit is different-----
-    if (takeProfitToggle && takeProfitValue) {
-      if (openCfdDetails?.takeProfit !== takeProfitValue) {
-        // console.log('[submit] takeProfitValue', takeProfitValue);
-      }
-    }
-
-    // check if value of take-profit is different
-    if (stopLossToggle && stopLossValue) {
-      if (openCfdDetails?.stopLoss !== stopLossValue) {
-        // console.log('[submit] stopLossValue', stopLossValue);
-      }
-    }
-
-    // check if `guranteedStop` is different
-    if (guaranteedChecked !== openCfdDetails?.guranteedStop) {
-      // console.log('[submit] guaranteedChecked', guaranteedChecked);
-    }
-
-    // check if `take-profit toggle boolean` is different
-    if (initialTpToggle !== takeProfitToggle) {
-      // console.log('[submit] takeProfitToggle', takeProfitToggle);
-    }
-
-    // check if `stop-loss toggle boolean` is different
-    if (initialSlToggle !== stopLossToggle) {
-      // console.log('[submit] stopLossToggle', stopLossToggle);
-    }
+    // console.log('updatedOpenCfdDetails', updatedOpenCfdDetails);
+    // // -----check if value of take-profit is different-----
+    // if (takeProfitToggle && takeProfitValue) {
+    //   if (openCfdDetails?.takeProfit !== takeProfitValue) {
+    //     // console.log('[submit] takeProfitValue', takeProfitValue);
+    //   }
+    // }
+    // // check if value of take-profit is different
+    // if (stopLossToggle && stopLossValue) {
+    //   if (openCfdDetails?.stopLoss !== stopLossValue) {
+    //     // console.log('[submit] stopLossValue', stopLossValue);
+    //   }
+    // }
+    // // check if `guranteedStop` is different
+    // if (guaranteedChecked !== openCfdDetails?.guranteedStop) {
+    //   // console.log('[submit] guaranteedChecked', guaranteedChecked);
+    // }
+    // // check if `take-profit toggle boolean` is different
+    // if (initialTpToggle !== takeProfitToggle) {
+    //   // console.log('[submit] takeProfitToggle', takeProfitToggle);
+    // }
+    // // check if `stop-loss toggle boolean` is different
+    // if (initialSlToggle !== stopLossToggle) {
+    //   // console.log('[submit] stopLossToggle', stopLossToggle);
+    // }
   };
 
   const displayedTakeProfitSetting = (

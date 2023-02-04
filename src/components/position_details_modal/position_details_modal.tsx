@@ -114,6 +114,13 @@ const PositionDetailsModal = ({
     </div>
   );
 
+  // const displayedSlLowerLimit = openCfdDetails?.guranteedStop
+  //   ? openCfdDetails?.stopLoss ?? openCfdDetails.recommendedSl
+  //   : slLowerLimit;
+  // const displayedSlUpperLimit = openCfdDetails?.guranteedStop
+  //   ? openCfdDetails?.stopLoss ?? openCfdDetails.recommendedSl
+  //   : slUpperLimit;
+
   const displayedStopLossSetting = (
     <div className={`${isDisplayedStopLossSetting}`}>
       <TradingInput
@@ -132,20 +139,28 @@ const PositionDetailsModal = ({
   );
   const guaranteedCheckedChangeHandler = () => {
     if (!openCfdDetails?.guranteedStop) {
+      // console.log('!openCfdDetails?.guranteedStop', !openCfdDetails?.guranteedStop);
       setGuaranteedChecked(!guaranteedChecked);
 
-      if (!guaranteedChecked) {
-        // setSlLowerLimit(openCfdDetails.guranteedStopAt);
-        // setSlUpperLimit(openCfdDetails.guranteedStopAt);
-        // setStopLossValue(openCfdDetails.guranteedStopAt);
-      } else {
-        setSlLowerLimit(0);
-        setSlUpperLimit(Infinity);
-        setStopLossValue(openCfdDetails?.stopLoss ?? openCfdDetails?.recommendedSl);
-      }
-    }
+      setSlLowerLimit(0);
+      setSlUpperLimit(Infinity);
+      setStopLossValue(openCfdDetails?.stopLoss ?? openCfdDetails?.recommendedSl);
 
-    // console.log('toggle state in position details modal:', guaranteedChecked);
+      // User's behavior to check the guaranteed stop loss checkbox
+      // if (!guaranteedChecked) {
+      //   // setSlLowerLimit(openCfdDetails.guranteedStopAt);
+      //   // setSlUpperLimit(openCfdDetails.guranteedStopAt);
+      //   // setStopLossValue(openCfdDetails.guranteedStopAt);
+      // } else {
+      //   setSlLowerLimit(0);
+      //   setSlUpperLimit(Infinity);
+      //   setStopLossValue(openCfdDetails?.stopLoss ?? openCfdDetails?.recommendedSl);
+      // }
+    } else {
+      setSlLowerLimit(openCfdDetails?.stopLoss ?? openCfdDetails?.recommendedSl);
+      setSlUpperLimit(openCfdDetails?.stopLoss ?? openCfdDetails?.recommendedSl);
+      setStopLossValue(openCfdDetails?.stopLoss ?? openCfdDetails?.recommendedSl);
+    }
   };
 
   const guaranteedStopLoss = (

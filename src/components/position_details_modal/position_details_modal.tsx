@@ -135,9 +135,9 @@ const PositionDetailsModal = ({
       setGuaranteedChecked(!guaranteedChecked);
 
       if (!guaranteedChecked) {
-        setSlLowerLimit(openCfdDetails.guranteedStopAt);
-        setSlUpperLimit(openCfdDetails.guranteedStopAt);
-        setStopLossValue(openCfdDetails.guranteedStopAt);
+        // setSlLowerLimit(openCfdDetails.guranteedStopAt);
+        // setSlUpperLimit(openCfdDetails.guranteedStopAt);
+        // setStopLossValue(openCfdDetails.guranteedStopAt);
       } else {
         setSlLowerLimit(0);
         setSlUpperLimit(Infinity);

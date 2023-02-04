@@ -139,23 +139,9 @@ const PositionDetailsModal = ({
   );
   const guaranteedCheckedChangeHandler = () => {
     if (!openCfdDetails?.guranteedStop) {
-      // console.log('!openCfdDetails?.guranteedStop', !openCfdDetails?.guranteedStop);
       setGuaranteedChecked(!guaranteedChecked);
-
       setSlLowerLimit(0);
       setSlUpperLimit(Infinity);
-      // setStopLossValue(openCfdDetails?.stopLoss ?? openCfdDetails?.recommendedSl);
-
-      // User's behavior to check the guaranteed stop loss checkbox
-      // if (!guaranteedChecked) {
-      //   // setSlLowerLimit(openCfdDetails.guranteedStopAt);
-      //   // setSlUpperLimit(openCfdDetails.guranteedStopAt);
-      //   // setStopLossValue(openCfdDetails.guranteedStopAt);
-      // } else {
-      //   setSlLowerLimit(0);
-      //   setSlUpperLimit(Infinity);
-      //   setStopLossValue(openCfdDetails?.stopLoss ?? openCfdDetails?.recommendedSl);
-      // }
     } else {
       setSlLowerLimit(openCfdDetails?.stopLoss ?? openCfdDetails?.recommendedSl);
       setSlUpperLimit(openCfdDetails?.stopLoss ?? openCfdDetails?.recommendedSl);
@@ -176,9 +162,6 @@ const PositionDetailsModal = ({
         <label className="ml-2 flex text-sm font-medium text-lightGray">
           Guaranteed stop &nbsp;
           <span className="text-lightWhite"> (Fee: 0.77 USDT)</span>
-          {/* <span className="">
-          <AiOutlineQuestionCircle size={20} />
-        </span> */}
           {/* tooltip */}
           <div className="ml-1">
             <div

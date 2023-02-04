@@ -12,7 +12,7 @@ export interface ICFDDetails {
   openPrice: number; // Avg. Open Price 平均開倉價格
   takeProfit?: number;
   stopLoss?: number;
-  recommendedTp: number; // 若用戶沒有設定 takeProfit，則推薦的 takeProfit 點位
+  recommendedTp: number; // 推薦的 takeProfit 點位
   recommendedSl: number;
 
   guranteedStop: boolean;

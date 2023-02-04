@@ -17,7 +17,7 @@ export interface ICFDDetails {
 
   guranteedStop: boolean;
   fee: number;
-  guranteedStopFee: number; // 保證止損點位
+  guranteedStopFee: number; // 保證止損費用
 
   openTimestamp: number;
   scheduledClosingTimestamp: number;

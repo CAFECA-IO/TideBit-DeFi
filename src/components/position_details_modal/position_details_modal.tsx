@@ -98,6 +98,21 @@ const PositionDetailsModal = ({
   const isDisplayedTakeProfitSetting = takeProfitToggle ? 'flex' : 'invisible';
   const isDisplayedStopLossSetting = stopLossToggle || guaranteedChecked ? 'flex' : 'invisible';
 
+  const displayedSlLowerLimit = openCfdDetails?.guranteedStop
+    ? openCfdDetails?.stopLoss ?? openCfdDetails.recommendedSl
+    : slLowerLimit;
+  const displayedSlUpperLimit = openCfdDetails?.guranteedStop
+    ? openCfdDetails?.stopLoss ?? openCfdDetails.recommendedSl
+    : slUpperLimit;
+
+  const buttonClickHandler = () => {
+    // console.log('guaranteed checked:', guaranteedChecked);
+    // console.log('take profit toggle:', takeProfitToggle);
+    // console.log('take profit value:', takeProfitValue);
+    // console.log('stop loss toggle:', stopLossToggle);
+    // console.log('stop loss value:', stopLossValue);
+  };
+
   const displayedTakeProfitSetting = (
     <div className={`${isDisplayedTakeProfitSetting}`}>
       <TradingInput
@@ -113,13 +128,6 @@ const PositionDetailsModal = ({
       />
     </div>
   );
-
-  const displayedSlLowerLimit = openCfdDetails?.guranteedStop
-    ? openCfdDetails?.stopLoss ?? openCfdDetails.recommendedSl
-    : slLowerLimit;
-  const displayedSlUpperLimit = openCfdDetails?.guranteedStop
-    ? openCfdDetails?.stopLoss ?? openCfdDetails.recommendedSl
-    : slUpperLimit;
 
   const displayedStopLossSetting = (
     <div className={`${isDisplayedStopLossSetting}`}>
@@ -342,6 +350,7 @@ const PositionDetailsModal = ({
                 {guaranteedStopLoss}
 
                 <RippleButton
+                  onClick={buttonClickHandler}
                   buttonType="button"
                   className="mt-5 rounded border-0 bg-tidebitTheme px-32 py-2 text-base text-white transition-colors duration-300 hover:cursor-pointer hover:bg-cyan-600 focus:outline-none md:mt-0"
                 >

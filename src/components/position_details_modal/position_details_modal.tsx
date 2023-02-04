@@ -77,6 +77,16 @@ const PositionDetailsModal = ({
     setStopLossToggle(bool);
   };
 
+  const getTpValue = (value: number) => {
+    setTakeProfitValue(value);
+    // console.log('tp value from Trading Input:', value);
+  };
+
+  const getSlValue = (value: number) => {
+    setStopLossValue(value);
+    // console.log('sl value from Trading Input:', value);
+  };
+
   // const getSlToggleFunction = (slToggleFunction: () => void) => {
   //   slToggleFunction();
   // };
@@ -116,6 +126,7 @@ const PositionDetailsModal = ({
   const displayedTakeProfitSetting = (
     <div className={`${isDisplayedTakeProfitSetting}`}>
       <TradingInput
+        getInputValue={getTpValue}
         lowerLimit={0}
         inputInitialValue={takeProfitValue}
         inputValueFromParent={takeProfitValue}
@@ -132,6 +143,7 @@ const PositionDetailsModal = ({
   const displayedStopLossSetting = (
     <div className={`${isDisplayedStopLossSetting}`}>
       <TradingInput
+        getInputValue={getSlValue}
         lowerLimit={displayedSlLowerLimit}
         upperLimit={displayedSlUpperLimit}
         inputInitialValue={stopLossValue}

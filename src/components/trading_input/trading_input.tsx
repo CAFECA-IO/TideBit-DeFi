@@ -38,6 +38,7 @@ interface ITradingInputProps {
   // incrementClickHandler?: () => void;
   // inputChangeHandler?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   inputInitialValue: number;
+  getInputValue?: (props: number) => void;
 
   inputValueFromParent?: number;
   setInputValueFromParent?: Dispatch<SetStateAction<number>>;
@@ -69,6 +70,7 @@ const TradingInput = ({
   inputValueFromParent,
   setInputValueFromParent,
   inputPlaceholder,
+  getInputValue,
 
   lowerLimit,
   upperLimit,
@@ -81,6 +83,10 @@ const TradingInput = ({
       : useState<number>(inputInitialValue);
 
   const regex = /^\d*\.?\d{0,2}$/;
+
+  const passValeHandler = (data: number) => {
+    getInputValue && getInputValue(data);
+  };
 
   const inputChangeHandler: React.ChangeEventHandler<HTMLInputElement> = event => {
     // const log = marginInputRef.current?.value;
@@ -102,6 +108,7 @@ const TradingInput = ({
       }
 
       setInputValue(Number(value));
+      passValeHandler(Number(value));
     }
   };
 

@@ -121,13 +121,13 @@ const PositionDetailsModal = ({
 
     // const detailsToCheck = [
     //   {
-    //     key: 'takeProfit',
+    //     key: takeProfit,
     //     value: takeProfitValue,
     //     toggle: takeProfitToggle,
     //     initialValue: initialTpToggle,
     //   },
     //   {
-    //     key: 'stopLoss',
+    //     key: stopLoss,
     //     value: stopLossValue,
     //     toggle: stopLossToggle,
     //     initialValue: initialSlToggle,

@@ -116,7 +116,52 @@ const PositionDetailsModal = ({
     : slUpperLimit;
 
   const buttonClickHandler = () => {
-    // check if value of take-profit is different
+    // TODO: copy object and compare with initial values
+    // let updatedOpenCfdDetails = {...openCfdDetails};
+
+    // const detailsToCheck = [
+    //   {
+    //     key: 'takeProfit',
+    //     value: takeProfitValue,
+    //     toggle: takeProfitToggle,
+    //     initialValue: initialTpToggle,
+    //   },
+    //   {
+    //     key: 'stopLoss',
+    //     value: stopLossValue,
+    //     toggle: stopLossToggle,
+    //     initialValue: initialSlToggle,
+    //   },
+    //   {key: 'guranteedStop', value: guaranteedChecked, initialValue: openCfdDetails.guranteedStop},
+    // ];
+
+    // const updatedDetails = detailsToCheck.map(({key, value, toggle, initialValue}) => {
+    //   if (key === 'guranteedStop') {
+    //     if (value !== initialValue) {
+    //       // console.log(`[submit] ${key}`, value);
+    //       return {[key]: value};
+    //     }
+    //   } else {
+    //     if (toggle && value) {
+    //       if (openCfdDetails[key] !== value) {
+    //         // console.log(`[submit] ${key}`, value);
+    //         return {[key]: value};
+    //       }
+    //     }
+
+    //     if (initialValue !== toggle) {
+    //       // console.log(`[submit] ${key}Toggle`, toggle);
+    //       return {[`${key}Toggle`]: toggle};
+    //     }
+    //   }
+
+    //   return {};
+    // });
+
+    // updatedOpenCfdDetails = {...updatedOpenCfdDetails, ...Object.assign({}, ...updatedDetails)};
+    // // console.log('updatedOpenCfdDetails', updatedOpenCfdDetails);
+
+    // -----check if value of take-profit is different-----
     if (takeProfitToggle && takeProfitValue) {
       if (openCfdDetails?.takeProfit !== takeProfitValue) {
         // console.log('[submit] takeProfitValue', takeProfitValue);

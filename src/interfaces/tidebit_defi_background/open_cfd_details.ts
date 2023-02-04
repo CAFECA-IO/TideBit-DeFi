@@ -29,8 +29,8 @@ export const dummyOpenCFDDetails: IOpenCFDDetails = {
     value: 90752,
   },
   liquidationPrice: 19537,
-  takeProfit: 74521,
-  stopLoss: 20102,
+  'takeProfit': 74521,
+  // stopLoss: 20102,
   recommendedTp: 35412,
   recommendedSl: 19453,
 };

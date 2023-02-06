@@ -122,6 +122,7 @@ const PositionDetailsModal = ({
     let takeProfit = {};
     let stopLoss = {};
 
+    // TODO: Test senario that gurannteed stop is on
     // Detect if tpValue has changed
     if (takeProfitToggle && takeProfitValue !== openCfdDetails.takeProfit) {
       takeProfit = {...takeProfit, takeProfitAmount: takeProfitValue};
@@ -169,6 +170,8 @@ const PositionDetailsModal = ({
       // }
       toast.success('Changes: \n' + JSON.stringify(changedProperties));
     }
+
+    return changedProperties;
 
     // // TODO: copy object and compare with initial values
     // const originalOpenCfdDetails: IOpenCFDDetails = {...openCfdDetails};

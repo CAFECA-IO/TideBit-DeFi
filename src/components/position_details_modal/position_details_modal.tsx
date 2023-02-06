@@ -280,6 +280,7 @@ const PositionDetailsModal = ({
   const guaranteedCheckedChangeHandler = () => {
     if (!openCfdDetails?.guranteedStop) {
       setGuaranteedChecked(!guaranteedChecked);
+      setStopLossToggle(!stopLossToggle);
       setSlLowerLimit(0);
       setSlUpperLimit(Infinity);
     } else {

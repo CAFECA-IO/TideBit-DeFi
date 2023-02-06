@@ -130,6 +130,8 @@ const TradeTab = () => {
   const isDisplayedMarginWarning = marginWarning ? 'flex' : 'invisible';
   const isDisplayedMarginSize = marginLength > 7 ? 'text-sm' : 'text-base';
   const isDisplayedValueSize = valueOfPositionLength > 7 ? 'text-sm' : 'text-base';
+  const isDisplayedDividerSpacing =
+    valueOfPositionLength > 10 || marginLength > 10 ? 'top-430px' : 'top-420px';
 
   // ----------margin area----------
   const displayedMarginSetting = (
@@ -373,7 +375,8 @@ const TradeTab = () => {
               {/* Below Use absolute for layout */}
 
               {/* Long Button */}
-              <div className="absolute top-350px left-20">
+              {/* absolute top-350px left-20 */}
+              <div className="mt-0 ml-12">
                 {/* focus:outline-none focus:ring-4 focus:ring-green-300 */}
                 <RippleButton
                   buttonType="button"
@@ -385,12 +388,14 @@ const TradeTab = () => {
               </div>
 
               {/* Divider between long and short */}
-              <span className="absolute top-420px my-auto h-px w-7/8 rounded bg-white/50"></span>
+              <span
+                className={`${isDisplayedDividerSpacing} absolute top-420px my-auto h-px w-7/8 rounded bg-white/50`}
+              ></span>
 
               {/* ---Short Section--- */}
               <div className="">
                 {/* ---custom trading info--- */}
-                <div className="mt-20 flex justify-center text-center text-base tracking-normal">
+                <div className="mt-8 flex justify-center text-center text-base tracking-normal">
                   <div className="w-1/2 space-y-1">
                     <div className="text-sm text-lightGray">Required Margin</div>
                     {displayedRequiredMarginStyle}
@@ -435,7 +440,7 @@ const TradeTab = () => {
                 </div>
 
                 {/* Short Button */}
-                <div className="absolute top-650px left-20">
+                <div className="mt-5 ml-12">
                   <RippleButton
                     buttonType="button"
                     className="mr-2 mb-2 rounded-md bg-lightRed px-7 py-1 text-sm font-medium tracking-wide text-white transition-colors duration-300 hover:bg-lightRed/80"

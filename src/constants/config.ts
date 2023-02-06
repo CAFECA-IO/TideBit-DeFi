@@ -1,3 +1,5 @@
+// const can be changed later
+
 export const WALLET_CONNECT_BRIDGE_URL = 'https://bridge.walletconnect.org';
 
 export const SUPPORTED_NETWORKS = [

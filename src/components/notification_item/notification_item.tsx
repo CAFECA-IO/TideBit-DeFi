@@ -34,17 +34,19 @@ export default function NotificationItem({
             {/* Speaker & Heading & Date */}
             <div className="flex items-start">
               <Image
-                className="ml-8px"
+                className="sm:ml-8px"
                 src="/elements/megaphone.svg"
                 width={30}
                 height={26}
                 alt="icon"
               />
 
-              <div className="relative ml-3 mb-7 text-start">
-                <div className="">
-                  <div className="absolute top-0 text-2xl text-lightWhite">{title}</div>
-                  <div className="pl-300px text-end text-xs text-lightGray">
+              <div className="relative mb-3 ml-3 basis-full text-start sm:mb-7">
+                <div className="flex pr-2">
+                  <div className="mr-5px text-xl text-lightWhite sm:whitespace-nowrap sm:text-2xl">
+                    {title}
+                  </div>
+                  <div className="ml-auto whitespace-nowrap text-end text-xs text-lightGray">
                     <div>{date}</div>
                     <div>{time}</div>
                   </div>
@@ -53,7 +55,7 @@ export default function NotificationItem({
             </div>
 
             {/* Content */}
-            <div className="mt-0 flex w-11/12 flex-wrap pl-12 pt-0 text-xs text-lightGray">
+            <div className="mt-0 mb-5 flex w-11/12 flex-wrap pl-12 pt-0 text-xs text-lightGray">
               {content}
             </div>
           </div>

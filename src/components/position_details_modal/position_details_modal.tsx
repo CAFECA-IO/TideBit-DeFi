@@ -157,6 +157,7 @@ const PositionDetailsModal = ({
     // });
     // updatedOpenCfdDetails = {...updatedOpenCfdDetails, ...Object.assign({}, ...updatedDetails)};
     // console.log('updatedOpenCfdDetails', updatedOpenCfdDetails);
+    // // console.log('updatedDetails', updatedDetails);
     // // -----check if value of take-profit is different-----
     // if (takeProfitToggle && takeProfitValue) {
     //   if (openCfdDetails?.takeProfit !== takeProfitValue) {
@@ -181,6 +182,11 @@ const PositionDetailsModal = ({
     // if (initialSlToggle !== stopLossToggle) {
     //   // console.log('[submit] stopLossToggle', stopLossToggle);
     // }
+    // // console.log('stopLossToggle', stopLossToggle);
+    // // console.log('takeProfitToggle', takeProfitToggle);
+    // // console.log('guaranteedChecked', guaranteedChecked);
+    // // console.log('stopLossValue', stopLossValue);
+    // // console.log('takeProfitValue', takeProfitValue);
   };
 
   const displayedTakeProfitSetting = (

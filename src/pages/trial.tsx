@@ -81,11 +81,11 @@ const Trial = () => {
     <>
       {/* flex h-screen w-full items-center justify-center */}
       <div className="w-full space-y-10 bg-cuteBlue">
-        <PositionDetailsModal
+        {/* <PositionDetailsModal
           // openCfdDetails={dataFormat}
           modalVisible={modalVisible}
           modalClickHandler={modalClickHandler}
-        />
+        /> */}
         {/* <CfdPositionModal /> */}
         {/* {forCryptoCard} */}
         {/* <TrialComponent /> */}

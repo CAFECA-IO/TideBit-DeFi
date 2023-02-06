@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useState, Dispatch, SetStateAction} from 'react';
 import {TRADING_INPUT_STEP} from '../../constants/display';
 
 export const TRADING_INPUT_HANDLER_TYPE_CLASSES = {
@@ -38,9 +38,10 @@ interface ITradingInputProps {
   // incrementClickHandler?: () => void;
   // inputChangeHandler?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   inputInitialValue: number;
+  getInputValue?: (props: number) => void;
 
-  inputValue?: number;
-  setInputValue?: React.Dispatch<React.SetStateAction<number>>;
+  inputValueFromParent?: number;
+  setInputValueFromParent?: Dispatch<SetStateAction<number>>;
 
   inputName: string;
   decrementBtnSize: string;
@@ -50,7 +51,7 @@ interface ITradingInputProps {
 
   handlerType?: string;
   lowerLimit: number;
-  upperLimit: number;
+  upperLimit?: number;
 
   shortSlLimit?: number;
   longSlLimit?: number;
@@ -66,18 +67,26 @@ const TradingInput = ({
   inputSize = 'h-44px w-160px text-xl',
   decrementBtnSize = '44',
   incrementBtnSize = '44',
-  // inputValue,
-  // setInputValue,
+  inputValueFromParent,
+  setInputValueFromParent,
   inputPlaceholder,
+  getInputValue,
 
   lowerLimit,
   upperLimit,
 
   ...otherProps
 }: ITradingInputProps) => {
-  const [inputValue, setInputValue] = useState<number>(inputInitialValue);
+  const [inputValue, setInputValue] =
+    inputValueFromParent && setInputValueFromParent
+      ? [inputValueFromParent, setInputValueFromParent]
+      : useState<number>(inputInitialValue);
 
   const regex = /^\d*\.?\d{0,2}$/;
+
+  const passValeHandler = (data: number) => {
+    getInputValue && getInputValue(data);
+  };
 
   const inputChangeHandler: React.ChangeEventHandler<HTMLInputElement> = event => {
     // const log = marginInputRef.current?.value;
@@ -90,11 +99,16 @@ const TradingInput = ({
       //   return;
       // }
 
-      if (Number(value) > upperLimit) {
+      if (upperLimit && Number(value) > upperLimit) {
+        return;
+      }
+
+      if (upperLimit && lowerLimit === upperLimit) {
         return;
       }
 
       setInputValue(Number(value));
+      passValeHandler(Number(value));
     }
   };
 
@@ -109,10 +123,11 @@ const TradingInput = ({
     const change = inputValue + TRADING_INPUT_STEP;
     const changeRounded = Math.round(change * 100) / 100;
 
-    if (changeRounded >= upperLimit) {
+    if (upperLimit && changeRounded >= upperLimit) {
       return;
     }
     setInputValue(changeRounded);
+    passValeHandler(changeRounded);
   };
 
   /** Margin
@@ -133,6 +148,7 @@ const TradingInput = ({
       return;
     }
     setInputValue(changeRounded);
+    passValeHandler(changeRounded);
   };
 
   // *----------Margin handlers-----*
@@ -153,7 +169,7 @@ const TradingInput = ({
     const changeRounded = Math.round(change * 100) / 100;
 
     // limit to each one's deposit or trading restriction
-    const localMarginLimit = upperLimit;
+    const localMarginLimit = upperLimit ?? 0;
     if (inputValue >= localMarginLimit) {
       // console.log('Margin restriction');
       // <p>Couldn't above marginLimit</p>

@@ -11,6 +11,8 @@ const LONG_RESTRICTION_SL = 1138.48;
 const SHORT_RESTRICTION_SL = 1638.31;
 
 const MARGIN_LIMIT = 0.05;
+const MARKET_PRICE = 6290.41;
+const USER_BALANCE = 500;
 
 const TradeTab = () => {
   // const marginInputRef = useRef<HTMLInputElement>(null);
@@ -39,11 +41,14 @@ const TradeTab = () => {
   };
 
   const marginDetection = (value: number) => {
-    if (value > MARGIN_LIMIT) {
-      setMarginWarning(true);
-    } else {
-      setMarginWarning(false);
-    }
+    // const requiredMargin = (inputValue * MARKET_PRICE) / 5;
+    // console.log(requiredMargin);
+    setMarginWarning(value > MARGIN_LIMIT);
+    // if (value > MARGIN_LIMIT) {
+    //   setMarginWarning(true);
+    // } else {
+    //   setMarginWarning(false);
+    // }
   };
 
   const getToggledLongTpSetting = (bool: boolean) => {
@@ -108,7 +113,7 @@ const TradeTab = () => {
     />
   );
 
-  const displayedRequiredMargin = (
+  const displayedRequiredMarginStyle = (
     <>
       {/* <div className="mt-1 text-base text-lightWhite">$ 13.14 USDT</div> */}
       <div className={`${isDisplayedMarginStyle} mt-1 text-base`}>$ 13.14 USDT</div>
@@ -293,7 +298,7 @@ const TradeTab = () => {
               <div className="mt-2 flex justify-center text-center text-base tracking-wide">
                 <div className="mr-0">
                   <div className="text-sm text-lightGray">Required Margin</div>
-                  {displayedRequiredMargin}
+                  {displayedRequiredMarginStyle}
                 </div>
 
                 <div>
@@ -349,7 +354,7 @@ const TradeTab = () => {
                 <div className="absolute top-430px left-30px mt-2 flex justify-center text-center text-base tracking-wide">
                   <div className="space-y-1">
                     <div className="text-sm text-lightGray">Required Margin</div>
-                    {displayedRequiredMargin}
+                    {displayedRequiredMarginStyle}
                   </div>
 
                   <div>

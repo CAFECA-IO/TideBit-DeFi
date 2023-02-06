@@ -29,23 +29,23 @@ const PositionTabMobile = () => {
 
   const tabPart = (
     <div
-      className={`flex items-center justify-center ${
+      className={`flex items-center ${
         openSubMenu ? 'visible opacity-100' : 'invisible opacity-0'
-      } absolute left-3 bottom-0 h-70px w-3/4 bg-darkGray transition-all duration-300`}
+      } absolute bottom-0 left-2 xs:left-24 ${'h-76px'} w-3/4 bg-darkGray transition-all duration-300 xs:w-1/2`}
     >
-      <ul className="flex basis-full flex-wrap justify-between text-center text-sm font-medium">
-        <li className="">
+      <ul className="flex basis-full items-center text-center text-sm font-medium">
+        <li className="w-full">
           <button
             onClick={openTabClickHandler}
-            className={`${activeOpenTabStyle} inline-block rounded-md py-3 px-12`}
+            className={`${activeOpenTabStyle} inline-block w-full rounded-md py-3 px-7`}
           >
             Open
           </button>
         </li>
-        <li className="">
+        <li className="ml-1 w-full">
           <button
             onClick={historyTabClickHandler}
-            className={`${activeHistoryTabStyle} inline-block rounded-md py-3 px-12`}
+            className={`${activeHistoryTabStyle} inline-block w-full rounded-md py-3 px-7`}
           >
             History
           </button>
@@ -58,7 +58,7 @@ const PositionTabMobile = () => {
     <div
       className={`flex h-screen w-screen flex-col items-center justify-center bg-darkGray ${
         openSubMenu ? 'visible translate-y-0 opacity-100' : 'invisible translate-y-full opacity-0'
-      } absolute left-0 bottom-16 overflow-hidden pt-150px transition-all duration-150`}
+      } absolute left-0 ${'bottom-76px'} overflow-hidden pt-150px transition-all duration-150`}
     >
       <div className="mb-3 mr-30px flex self-end sm:pr-30px">
         <ImCross onClick={subMenuHandler} className="cursor-pointer" />
@@ -69,10 +69,10 @@ const PositionTabMobile = () => {
 
   return (
     <div className="ml-4 rounded-md bg-darkGray5 p-3">
-      {tabPart}
       <button onClick={subMenuHandler} className="m-auto block">
         <Image src="/elements/position_tab_icon.svg" alt="position_icon" width={25} height={25} />
       </button>
+      {tabPart}
 
       {subMenu}
     </div>

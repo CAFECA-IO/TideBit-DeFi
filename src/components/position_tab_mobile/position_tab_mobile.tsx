@@ -55,7 +55,7 @@ const PositionTabMobile = () => {
 
   const subMenu = (
     <div
-      className={`flex h-80vh w-screen justify-center bg-darkGray ${
+      className={`flex h-screen w-screen justify-center bg-darkGray pt-150px ${
         openSubMenu ? 'visible translate-y-0 opacity-100' : 'invisible translate-y-full opacity-0'
       } absolute left-0 bottom-16 overflow-hidden transition-all duration-150`}
     >

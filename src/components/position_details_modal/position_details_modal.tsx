@@ -10,8 +10,8 @@ import Toggle from '../toggle/toggle';
 import {useState} from 'react';
 import TradingInput from '../trading_input/trading_input';
 import {AiOutlineQuestionCircle} from 'react-icons/ai';
-import TideButton from '../tide_button/tide_button';
 import RippleButton from '../ripple_button/ripple_button';
+import {ToastContainer, toast, ToastOptions, useToast} from 'react-toastify';
 
 interface IPositionDetailsModal {
   modalVisible: boolean;
@@ -119,39 +119,55 @@ const PositionDetailsModal = ({
     // console.log('btn clicked');
 
     let changedProperties = {};
+    let takeProfit = {};
+    let stopLoss = {};
 
     // Detect if tpValue has changed
     if (takeProfitToggle && takeProfitValue !== openCfdDetails.takeProfit) {
-      changedProperties = {...changedProperties, takeProfitAmount: takeProfitValue};
+      takeProfit = {...takeProfit, takeProfitAmount: takeProfitValue};
+      changedProperties = {
+        ...changedProperties,
+        takeProfit,
+      };
     }
 
     // Detect if spValue has changed
     if (stopLossToggle && stopLossValue !== openCfdDetails.stopLoss) {
-      changedProperties = {...changedProperties, stopLossAmount: stopLossValue};
+      stopLoss = {...stopLoss, stopLossAmount: stopLossValue};
+      changedProperties = {...changedProperties, stopLoss};
     }
 
     // Detect if tpToggle has changed
     if (initialTpToggle !== takeProfitToggle) {
-      changedProperties = {...changedProperties, takeProfitToggle: takeProfitToggle};
+      takeProfit = {...takeProfit, takeProfitToggle: takeProfitToggle};
+      changedProperties = {
+        ...changedProperties,
+        takeProfit,
+      };
     }
 
     // Detect if slToggle has changed
     if (initialSlToggle !== stopLossToggle) {
-      changedProperties = {...changedProperties, stopLossToggle: stopLossToggle};
+      stopLoss = {...stopLoss, stopLossToggle: stopLossToggle};
+      changedProperties = {...changedProperties, stopLoss};
     }
 
     // Detect if guaranteedStop has changed
     if (guaranteedChecked !== openCfdDetails.guranteedStop) {
+      stopLoss = {stopLossToggle: stopLossToggle, stopLossAmount: stopLossValue};
       changedProperties = {
         ...changedProperties,
         guranteedStopChecked: guaranteedChecked,
-        stopLossToggle: stopLossToggle,
-        stopLossAmount: stopLossValue,
+        stopLoss,
       };
     }
 
     if (Object.keys(changedProperties).length > 0) {
       // console.log(changedProperties);
+      // for (const [key, value] of Object.entries(changedProperties)) {
+      //   console.log(`${key}: ${value}\n`);
+      // }
+      toast.success('Changes: \n' + JSON.stringify(changedProperties));
     }
 
     // // TODO: copy object and compare with initial values
@@ -483,7 +499,24 @@ const PositionDetailsModal = ({
     </>
   ) : null;
 
-  return <>{isDisplayedDetailedPositionModal}</>;
+  return (
+    <>
+      {isDisplayedDetailedPositionModal}
+      <ToastContainer
+        position="bottom-left"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable={false}
+        pauseOnHover
+        theme="dark"
+        limit={10}
+      />
+    </>
+  );
 };
 
 export default PositionDetailsModal;

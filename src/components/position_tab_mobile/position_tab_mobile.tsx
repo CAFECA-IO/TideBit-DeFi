@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import Image from 'next/image';
+import {ImCross} from 'react-icons/im';
 import OpenSubTabMobile from '../open_sub_tab_mobile/open_sub_tab_mobile';
 import HistorySubTabMobile from '../history_sub_tab_mobile/history_sub_tab_mobile';
 
@@ -19,12 +20,7 @@ const PositionTabMobile = () => {
     setActiveTab('History');
   };
 
-  const currentSubTab =
-    activeTab === 'Open' ? (
-      <OpenSubTabMobile openSubMenu={openSubMenu} setOpenSubMenu={setOpenSubMenu} />
-    ) : (
-      <HistorySubTabMobile />
-    );
+  const currentSubTab = activeTab === 'Open' ? <OpenSubTabMobile /> : <HistorySubTabMobile />;
 
   const activeOpenTabStyle =
     activeTab == 'Open' ? 'bg-darkGray8 text-lightWhite' : 'bg-darkGray6 text-lightGray';
@@ -60,10 +56,13 @@ const PositionTabMobile = () => {
 
   const subMenu = (
     <div
-      className={`flex h-screen w-screen justify-center bg-darkGray pt-150px ${
+      className={`flex h-screen w-screen flex-col items-center justify-center bg-darkGray ${
         openSubMenu ? 'visible translate-y-0 opacity-100' : 'invisible translate-y-full opacity-0'
-      } absolute left-0 bottom-16 overflow-hidden transition-all duration-150`}
+      } absolute left-0 bottom-16 overflow-hidden pt-150px transition-all duration-150`}
     >
+      <div className="mb-3 mr-30px flex self-end sm:pr-30px">
+        <ImCross onClick={subMenuHandler} className="cursor-pointer" />
+      </div>
       {currentSubTab}
     </div>
   );

@@ -19,7 +19,12 @@ const PositionTabMobile = () => {
     setActiveTab('History');
   };
 
-  const currentSubTab = activeTab === 'Open' ? <OpenSubTabMobile /> : <HistorySubTabMobile />;
+  const currentSubTab =
+    activeTab === 'Open' ? (
+      <OpenSubTabMobile openSubMenu={openSubMenu} setOpenSubMenu={setOpenSubMenu} />
+    ) : (
+      <HistorySubTabMobile />
+    );
 
   const activeOpenTabStyle =
     activeTab == 'Open' ? 'bg-darkGray8 text-lightWhite' : 'bg-darkGray6 text-lightGray';

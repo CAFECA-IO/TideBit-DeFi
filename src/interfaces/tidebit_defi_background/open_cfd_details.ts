@@ -18,7 +18,7 @@ export const dummyOpenCFDDetails: IOpenCFDDetails = {
   margin: randomIntFromInterval(650, 10000),
   openPrice: 24058,
   fee: 0,
-  guranteedStop: true,
+  guranteedStop: false,
   guranteedStopFee: 0.77,
   openTimestamp: 1675299651,
   scheduledClosingTimestamp: 1675386051, // openTimestamp + 86400
@@ -29,8 +29,8 @@ export const dummyOpenCFDDetails: IOpenCFDDetails = {
     value: 90752,
   },
   liquidationPrice: 19537,
-  // takeProfit: 74521,
-  stopLoss: 25250,
+  takeProfit: 74521,
+  // stopLoss: 25250,
   recommendedTp: 35412,
   recommendedSl: 19453,
 };

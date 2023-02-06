@@ -116,6 +116,44 @@ const PositionDetailsModal = ({
     : slUpperLimit;
 
   const buttonClickHandler = () => {
+    // console.log('btn clicked');
+
+    let changedProperties = {};
+
+    // Detect if tpValue has changed
+    if (takeProfitToggle && takeProfitValue !== openCfdDetails.takeProfit) {
+      changedProperties = {...changedProperties, takeProfitAmount: takeProfitValue};
+    }
+
+    // Detect if spValue has changed
+    if (stopLossToggle && stopLossValue !== openCfdDetails.stopLoss) {
+      changedProperties = {...changedProperties, stopLossAmount: stopLossValue};
+    }
+
+    // Detect if tpToggle has changed
+    if (initialTpToggle !== takeProfitToggle) {
+      changedProperties = {...changedProperties, takeProfitToggle: takeProfitToggle};
+    }
+
+    // Detect if slToggle has changed
+    if (initialSlToggle !== stopLossToggle) {
+      changedProperties = {...changedProperties, stopLossToggle: stopLossToggle};
+    }
+
+    // Detect if guaranteedStop has changed
+    if (guaranteedChecked !== openCfdDetails.guranteedStop) {
+      changedProperties = {
+        ...changedProperties,
+        guranteedStopChecked: guaranteedChecked,
+        stopLossToggle: stopLossToggle,
+        stopLossAmount: stopLossValue,
+      };
+    }
+
+    if (Object.keys(changedProperties).length > 0) {
+      // console.log(changedProperties);
+    }
+
     // // TODO: copy object and compare with initial values
     // const originalOpenCfdDetails: IOpenCFDDetails = {...openCfdDetails};
     // let updatedOpenCfdDetails = {...openCfdDetails};

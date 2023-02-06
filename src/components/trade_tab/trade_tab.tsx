@@ -118,6 +118,8 @@ const TradeTab = () => {
     </>
   );
 
+  // const displayedValueofPosition =
+
   // ----------long area----------
   const displayedLongTpSetting = (
     <div className={isDisplayedLongTpSetting}>
@@ -347,7 +349,7 @@ const TradeTab = () => {
                 <div className="absolute top-430px left-30px mt-2 flex justify-center text-center text-base tracking-wide">
                   <div className="space-y-1">
                     <div className="text-sm text-lightGray">Required Margin</div>
-                    <div className="text-base text-lightWhite">$ 13.14 USDT</div>
+                    {displayedRequiredMargin}
                   </div>
 
                   <div>

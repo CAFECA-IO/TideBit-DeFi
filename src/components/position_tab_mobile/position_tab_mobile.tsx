@@ -33,7 +33,7 @@ const PositionTabMobile = () => {
         openSubMenu ? 'visible opacity-100' : 'invisible opacity-0'
       } absolute bottom-0 left-2 xs:left-24 ${'h-76px'} w-3/4 bg-darkGray transition-all duration-300 xs:w-1/2`}
     >
-      <ul className="flex basis-full items-center text-center text-sm font-medium">
+      <ul className="ml-5 flex basis-full items-center text-center text-sm font-medium">
         <li className="w-full">
           <button
             onClick={openTabClickHandler}

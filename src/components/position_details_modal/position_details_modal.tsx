@@ -156,15 +156,18 @@ const PositionDetailsModal = ({
       };
     }
 
+    // If there's no updates, do nothing
     if (Object.keys(changedProperties).length > 0) {
+      // TODO: send changedProperties to MetaMask for signature
+
+      toast.success('Changes: \n' + JSON.stringify(changedProperties));
+
       // console.log(changedProperties);
       // for (const [key, value] of Object.entries(changedProperties)) {
       //   console.log(`${key}: ${value}\n`);
       // }
-      toast.success('Changes: \n' + JSON.stringify(changedProperties));
+      return changedProperties;
     }
-
-    return changedProperties;
   };
 
   const displayedTakeProfitSetting = (

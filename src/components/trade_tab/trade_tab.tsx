@@ -13,16 +13,17 @@ const SHORT_RESTRICTION_SL = 1638.31;
 const TradeTab = () => {
   // TODO: Use Stop loss limit and other data from Market context
   const MARKET_PRICE = 6290.41;
+  const LIQUIDATION_PRICE = 7548;
   const USER_BALANCE = 1000;
   const LEVERAGE = 5;
   const guranteedStopFee = 0.97;
   const longPrice = (MARKET_PRICE * 1.18).toFixed(2); // market price * (1+spread)
   const shortPrice = (MARKET_PRICE * 0.82).toFixed(2); // market price * (1-spread)
   // TODO: pass and get data from `trading input`
-  const longRecommendedTp = (MARKET_PRICE * 1.2).toFixed(2); // recommendedTp
-  const longRecommendedSl = (MARKET_PRICE * 0.9).toFixed(2);
-  const shortRecommendedTp = (MARKET_PRICE * 0.8).toFixed(2);
-  const shortRecommendedSl = (MARKET_PRICE * 1.1).toFixed(2);
+  const recommendedTp = Number((MARKET_PRICE * 1.15).toFixed(2)); // recommendedTp // MARKET_PRICE * 1.15
+  const recommendedSl = Number((MARKET_PRICE * 0.85).toFixed(2)); // recommendedSl // MARKET_PRICE * 0.85
+  // const shortRecommendedTp = Number((MARKET_PRICE * 0.85).toFixed(2));
+  // const shortRecommendedSl = Number((MARKET_PRICE * 1.15).toFixed(2));
 
   const roundToDecimalPlaces = (val: number, precision: number): number => {
     const roundedNumber = Number(val.toFixed(precision));
@@ -35,13 +36,13 @@ const TradeTab = () => {
 
   const [margingInputValue, setMarginInputValue] = useState(0.02);
 
-  const [longTpValue, setLongTpValue] = useState(1388.4);
-  const [longSlValue, setLongSlValue] = useState(1328.4);
+  const [longTpValue, setLongTpValue] = useState(recommendedTp);
+  const [longSlValue, setLongSlValue] = useState(recommendedSl);
   const [longTpToggle, setLongTpToggle] = useState(false);
   const [longSlToggle, setLongSlToggle] = useState(false);
 
-  const [shortTpValue, setShortTpValue] = useState(1328.4);
-  const [shortSlValue, setShortSlValue] = useState(1388.4);
+  const [shortTpValue, setShortTpValue] = useState(recommendedSl);
+  const [shortSlValue, setShortSlValue] = useState(recommendedTp);
   const [shortTpToggle, setShortTpToggle] = useState(false);
   const [shortSlToggle, setShortSlToggle] = useState(false);
 
@@ -63,7 +64,21 @@ const TradeTab = () => {
   const getMarginInputValue = (value: number) => {
     setMarginInputValue(value);
     marginDetection(value);
-    // console.log('maring input value from getMarginInputValue', value);
+  };
+  const getLongTpValue = (value: number) => {
+    setLongTpValue(value);
+  };
+
+  const getLongSlValue = (value: number) => {
+    setLongSlValue(value);
+  };
+
+  const getShortTpValue = (value: number) => {
+    setShortTpValue(value);
+  };
+
+  const getShortSlValue = (value: number) => {
+    setShortSlValue(value);
   };
 
   const marginDetection = (value: number) => {
@@ -143,8 +158,8 @@ const TradeTab = () => {
   // ----------margin area----------
   const displayedMarginSetting = (
     <TradingInput
-      getInputValue={getMarginInputValue}
       lowerLimit={0}
+      getInputValue={getMarginInputValue}
       inputInitialValue={margingInputValue}
       inputValueFromParent={margingInputValue}
       setInputValueFromParent={setMarginInputValue}
@@ -176,6 +191,9 @@ const TradeTab = () => {
       <TradingInput
         lowerLimit={0}
         inputInitialValue={longTpValue}
+        inputValueFromParent={longTpValue}
+        setInputValueFromParent={setLongTpValue}
+        getInputValue={getLongTpValue}
         inputPlaceholder="profit-taking setting"
         inputName="tpInput"
         inputSize="h-25px w-70px text-sm"
@@ -189,6 +207,9 @@ const TradeTab = () => {
     <div className={`${isDisplayedLongSlSetting}`}>
       <TradingInput
         lowerLimit={0}
+        inputValueFromParent={longSlValue}
+        setInputValueFromParent={setLongSlValue}
+        getInputValue={getLongSlValue}
         inputPlaceholder="stop-loss setting"
         inputInitialValue={longSlValue}
         inputName="slInput"
@@ -246,6 +267,9 @@ const TradeTab = () => {
     <div className={isDisplayedShortTpSetting}>
       <TradingInput
         lowerLimit={0}
+        inputValueFromParent={shortTpValue}
+        setInputValueFromParent={setShortTpValue}
+        getInputValue={getShortTpValue}
         inputInitialValue={shortTpValue}
         inputPlaceholder="profit-taking setting"
         inputName="shortTpInput"
@@ -262,6 +286,8 @@ const TradeTab = () => {
         lowerLimit={0}
         inputInitialValue={shortSlValue}
         inputValueFromParent={shortSlValue}
+        setInputValueFromParent={setShortSlValue}
+        getInputValue={getShortSlValue}
         inputPlaceholder="stop-loss setting"
         inputName="slInput"
         inputSize="h-25px w-70px text-sm"

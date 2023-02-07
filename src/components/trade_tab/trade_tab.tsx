@@ -375,9 +375,12 @@ const TradeTab = () => {
                   {displayedRequiredMarginStyle}
                 </div>
 
+                {/* Left Divider */}
+                <div className="mx-2 h-14 justify-center border-r-1px border-lightGray"></div>
+
                 <div>
                   {/* ml-1 mr-5  */}
-                  <span className="mx-1 inline-block h-11 w-px rounded bg-lightGray/50"></span>
+                  {/* <span className="mx-1 inline-block h-11 w-px rounded bg-lightGray/50"></span> */}
                 </div>
 
                 <div className="ml-0 w-1/2 space-y-1">
@@ -411,7 +414,7 @@ const TradeTab = () => {
 
               {/* Long Button */}
               {/* absolute top-350px left-20 */}
-              <div className="mt-0 ml-12">
+              <div className="mt-0 ml-14">
                 {/* focus:outline-none focus:ring-4 focus:ring-green-300 */}
                 <RippleButton
                   buttonType="button"
@@ -421,24 +424,28 @@ const TradeTab = () => {
                   Above $ {longPrice}
                 </RippleButton>
               </div>
+              {/* Divider: border-bottom */}
+              <div className="mt-3 border-b-1px border-lightGray"></div>
 
               {/* Divider between long and short */}
-              <span
+              {/* <span
                 className={`${isDisplayedDividerSpacing} absolute top-420px my-auto h-px w-7/8 rounded bg-white/50`}
-              ></span>
+              ></span> */}
 
               {/* ---Short Section--- */}
               <div className="">
                 {/* ---custom trading info--- */}
-                <div className="mt-8 flex justify-center text-center text-base tracking-normal">
+                <div className="mt-5 flex justify-center text-center text-base tracking-normal">
                   <div className="w-1/2 space-y-1">
                     <div className="text-sm text-lightGray">Required Margin</div>
                     {displayedRequiredMarginStyle}
                   </div>
+                  {/* Left Divider */}
+                  <div className="mx-2 h-14 justify-center border-r-1px border-lightGray"></div>
 
                   <div>
                     {/* ml-1 mr-5  */}
-                    <span className="mx-1 inline-block h-11 w-px rounded bg-lightGray/50"></span>
+                    {/* <span className="mx-1 inline-block h-11 w-px rounded bg-lightGray/50"></span> */}
                   </div>
 
                   <div className="w-1/2 space-y-1">
@@ -475,7 +482,7 @@ const TradeTab = () => {
                 </div>
 
                 {/* Short Button */}
-                <div className="mt-5 ml-12">
+                <div className="mt-5 ml-14">
                   <RippleButton
                     buttonType="button"
                     className="mr-2 mb-2 rounded-md bg-lightRed px-7 py-1 text-sm font-medium tracking-wide text-white transition-colors duration-300 hover:bg-lightRed/80"

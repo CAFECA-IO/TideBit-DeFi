@@ -11,18 +11,28 @@ const TradeTabMobile = () => {
   const [longTooltipStatus, setLongTooltipStatus] = useState(0);
   const [shortTooltipStatus, setShortTooltipStatus] = useState(0);
 
+  const [inputValue, setInputValue] = useState(0.02);
+
   const [activeTab, setActiveTab] = useState('');
   const [openSubMenu, setOpenSubMenu] = useState(false);
 
-  const [longTpValue, setLongTpValue] = useState(1388.4);
-  const [longSlValue, setLongSlValue] = useState(1328.4);
+  const [longTpValue, setLongTpValue] = useState(1388.1);
+  const [longSlValue, setLongSlValue] = useState(1328.2);
   const [longTpToggle, setLongTpToggle] = useState(false);
   const [longSlToggle, setLongSlToggle] = useState(false);
 
-  const [shortTpValue, setShortTpValue] = useState(1328.4);
+  const [shortTpValue, setShortTpValue] = useState(1329.3);
   const [shortSlValue, setShortSlValue] = useState(1388.4);
   const [shortTpToggle, setShortTpToggle] = useState(false);
   const [shortSlToggle, setShortSlToggle] = useState(false);
+
+  const {user} = useContext(UserContext);
+
+  const isDisplayedLongSlSetting = longSlToggle ? 'flex' : 'invisible';
+  const isDisplayedShortSlSetting = shortSlToggle ? 'flex' : 'invisible';
+
+  const isDisplayedLongTpSetting = longTpToggle ? 'flex' : 'invisible';
+  const isDisplayedShortTpSetting = shortTpToggle ? 'flex' : 'invisible';
 
   const getToggledLongTpSetting = (bool: boolean) => {
     // console.log('getToggledLongTpSetting', bool);
@@ -39,23 +49,133 @@ const TradeTabMobile = () => {
     setShortTpToggle(bool);
   };
 
+  const getToggledShortSlSetting = (bool: boolean) => {
+    // console.log('getToggledShortSlSetting', bool);
+    setShortSlToggle(bool);
+  };
+
   const longSectionClickHandler = () => {
-    setOpenSubMenu(true);
     setActiveTab('Long');
+    setOpenSubMenu(true);
+    setShortTpToggle(false);
+    setShortSlToggle(false);
   };
 
   const shortSectionClickHandler = () => {
-    setOpenSubMenu(true);
     setActiveTab('Short');
+    setOpenSubMenu(true);
+    setLongTpToggle(false);
+    setLongSlToggle(false);
   };
 
-  const {user} = useContext(UserContext);
+  const longButtonStyles = activeTab === 'Long' && openSubMenu ? '' : 'w-120px'; //z-50 w-320px -translate-x-16 absolute
 
-  const isDisplayedLongSlSetting = longSlToggle ? 'flex' : 'invisible';
-  const isDisplayedShortSlSetting = shortSlToggle ? 'flex' : 'invisible';
+  const shortButtonStyles = activeTab === 'Short' && openSubMenu ? '' : 'ml-4 w-120px'; //z-50 w-320px -translate-x-16 absolute
 
-  const isDisplayedLongTpSetting = longTpToggle ? 'flex' : 'invisible';
-  const isDisplayedShortTpSetting = shortTpToggle ? 'flex' : 'invisible';
+  // ----------short area----------
+  const displayedShortTpSetting = (
+    <div className={isDisplayedShortTpSetting}>
+      <TradingInput
+        lowerLimit={0}
+        upperLimit={1000000}
+        inputInitialValue={shortTpValue}
+        inputPlaceholder="profit-taking setting"
+        inputName="shortTpInput"
+        inputSize="h-25px w-70px text-sm"
+        decrementBtnSize="25"
+        incrementBtnSize="25"
+      />
+    </div>
+  );
+
+  const displayedShortSlSetting = (
+    <div className={isDisplayedShortSlSetting}>
+      <TradingInput
+        lowerLimit={0}
+        upperLimit={1000000}
+        inputInitialValue={shortSlValue}
+        inputValue={shortSlValue}
+        inputPlaceholder="stop-loss setting"
+        inputName="shortSlInput"
+        inputSize="h-25px w-70px text-sm"
+        decrementBtnSize="25"
+        incrementBtnSize="25"
+      />
+    </div>
+  );
+
+  const shortGuaranteedStop = (
+    <div className={isDisplayedShortSlSetting}>
+      <div className="mt-4 flex items-center">
+        <input
+          type="checkbox"
+          value=""
+          className="h-5 w-5 rounded text-lightWhite accent-tidebitTheme"
+        />
+        <label className="ml-2 flex text-sm font-medium text-lightGray">
+          Guaranteed stop &nbsp;
+          <span className="text-lightWhite"> (Fee: 0.77 USDT)</span>
+          {/* <span className="">
+          <AiOutlineQuestionCircle size={20} />
+        </span> */}
+          {/* tooltip */}
+          <div className="ml-1">
+            <div
+              className="relative"
+              onMouseEnter={() => setShortTooltipStatus(3)}
+              onMouseLeave={() => setShortTooltipStatus(0)}
+            >
+              <div className="cursor-pointer">
+                <AiOutlineQuestionCircle size={20} />
+              </div>
+              {shortTooltipStatus == 3 && (
+                <div
+                  role="tooltip"
+                  className="absolute -top-120px -left-52 z-20 mr-8 w-56 rounded bg-darkGray8 p-4 shadow-lg transition duration-150 ease-in-out"
+                >
+                  <p className="pb-1 text-sm font-medium text-white">
+                    Guaranteed stop will force the position to close at your chosen rate (price)
+                    even if the market price surpasses it.
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        </label>
+      </div>
+    </div>
+  );
+
+  // ----------long area----------
+  const displayedLongTpSetting = (
+    <div className={isDisplayedLongTpSetting}>
+      <TradingInput
+        lowerLimit={0}
+        upperLimit={1000000}
+        inputInitialValue={longTpValue}
+        inputPlaceholder="profit-taking setting"
+        inputName="longTpInput" //?
+        inputSize="h-25px w-70px text-sm"
+        decrementBtnSize="25"
+        incrementBtnSize="25"
+      />
+    </div>
+  );
+
+  const displayedLongSlSetting = (
+    <div className={isDisplayedLongSlSetting}>
+      <TradingInput
+        lowerLimit={0}
+        upperLimit={1000000}
+        inputPlaceholder="stop-loss setting"
+        inputInitialValue={longSlValue}
+        inputName="shortlInput"
+        inputSize="h-25px w-70px text-sm"
+        decrementBtnSize="25"
+        incrementBtnSize="25"
+      />
+    </div>
+  );
 
   const longGuaranteedStop = (
     <div className={`${isDisplayedLongSlSetting} mt-4 items-center`}>
@@ -97,39 +217,21 @@ const TradeTabMobile = () => {
     </div>
   );
 
-  // ----------long area----------
-  const displayedLongTpSetting = (
-    <div className={isDisplayedLongTpSetting}>
-      <TradingInput
-        lowerLimit={0}
-        upperLimit={1000000}
-        inputInitialValue={longTpValue}
-        inputPlaceholder="profit-taking setting"
-        inputName="tpInput"
-        inputSize="h-25px w-70px text-sm"
-        decrementBtnSize="25"
-        incrementBtnSize="25"
-      />
-    </div>
-  );
+  const displayedTpSetting =
+    activeTab === 'Long' ? displayedLongTpSetting : displayedShortTpSetting;
+  const getToggledTpSetting =
+    activeTab === 'Long' ? getToggledLongTpSetting : getToggledShortTpSetting;
+  const tpToggle = activeTab === 'Long' ? longTpToggle : shortTpToggle;
+  const displayedSlSetting =
+    activeTab === 'Long' ? displayedLongSlSetting : displayedShortSlSetting;
+  const getToggledSlSetting =
+    activeTab === 'Long' ? getToggledLongSlSetting : getToggledShortSlSetting;
+  const slToggle = activeTab === 'Long' ? longSlToggle : shortSlToggle;
+  const guaranteedStop =
+    activeTab === 'Long' ? <>Long:{String(tpToggle)}</> : <>Short:{String(tpToggle)}</>; //longGuaranteedStop : shortGuaranteedStop;
 
-  const displayedLongSlSetting = (
-    <div className={isDisplayedLongSlSetting}>
-      <TradingInput
-        lowerLimit={0}
-        upperLimit={1000000}
-        inputPlaceholder="stop-loss setting"
-        inputInitialValue={longSlValue}
-        inputName="slInput"
-        inputSize="h-25px w-70px text-sm"
-        decrementBtnSize="25"
-        incrementBtnSize="25"
-      />
-    </div>
-  );
-
-  const longSection = (
-    <div className="w-screen px-8 sm:w-1/2">
+  const currentSubMenu = (
+    <div className="h-auto w-screen px-8 sm:w-1/2">
       <div className="flex flex-col items-center justify-center space-y-3">
         <div className="flex w-full items-center justify-center">
           <UserOverview
@@ -142,7 +244,7 @@ const TradeTabMobile = () => {
           <TradingInput
             lowerLimit={0}
             upperLimit={1000000}
-            inputInitialValue={0.1} //{inputValue}
+            inputInitialValue={inputValue}
             inputPlaceholder="margin input"
             inputName="marginInput"
             inputSize="h-44px w-full text-xl"
@@ -181,36 +283,34 @@ const TradeTabMobile = () => {
         {/* Take Profit Setting */}
         <div className="flex w-full items-center justify-between px-1">
           <div className="text-sm text-lightGray">Close at profit</div>
-          {displayedLongTpSetting}
-          <Toggle getToggledState={getToggledLongTpSetting} />
+          {displayedTpSetting}
+          <Toggle initialToggleState={tpToggle} getToggledState={getToggledTpSetting} />
         </div>
 
         {/* Stop Loss Setting */}
         <div className="flex w-full flex-col items-center justify-between px-1">
           <div className="flex w-full items-center justify-between">
             <div className="text-sm text-lightGray">Clost at loss</div>
-            <div className="w-105px">{displayedLongSlSetting}</div>
-            <Toggle getToggledState={getToggledLongSlSetting} />
+            <div className="w-105px">{displayedSlSetting}</div>
+            <Toggle initialToggleState={slToggle} getToggledState={getToggledSlSetting} />
           </div>
           {/* Guaranteed stop */}
-          {longGuaranteedStop}
+          {guaranteedStop}
         </div>
       </div>
     </div>
   );
 
-  const currentSubTab = activeTab === 'Long' ? longSection : <></>;
-
   const subMenu = (
     <div
       className={`flex h-screen w-screen flex-col items-center bg-darkGray ${
         openSubMenu ? 'visible translate-y-0 opacity-100' : 'invisible translate-y-full opacity-0'
-      } absolute left-0 ${'bottom-76px'} overflow-hidden pt-150px transition-all duration-150`}
+      } absolute left-0 ${'bottom-76px'} overflow-hidden pt-40 transition-all duration-150`}
     >
       <div className="mb-3 mr-30px flex self-end sm:pr-30px">
         <ImCross onClick={() => setOpenSubMenu(false)} className="cursor-pointer" />
       </div>
-      {currentSubTab}
+      {currentSubMenu}
     </div>
   );
 
@@ -218,10 +318,10 @@ const TradeTabMobile = () => {
     <>
       <div className="flex items-center justify-between">
         {/* Long Button */}
-        <div className="">
+        <div className={`bg-black/100 transition-all duration-300 ease-in-out ${longButtonStyles}`}>
           <RippleButton
             buttonType="button"
-            className={`${'w-120px'} rounded-md bg-lightGreen5 py-2 text-sm font-medium tracking-wide text-white transition-colors duration-300 hover:bg-lightGreen5/80`}
+            className={`w-full rounded-md bg-lightGreen5 py-2 text-sm font-medium tracking-wide text-white transition-colors duration-300 hover:bg-lightGreen5/80`}
             onClick={longSectionClickHandler}
           >
             <b>UP</b> <br />
@@ -230,10 +330,12 @@ const TradeTabMobile = () => {
         </div>
 
         {/* Short Button */}
-        <div className="ml-4">
+        <div
+          className={`bg-black/100 transition-all duration-300 ease-in-out ${shortButtonStyles}`}
+        >
           <RippleButton
             buttonType="button"
-            className={`${'w-120px'} rounded-md bg-lightRed py-2 text-sm font-medium tracking-wide text-white transition-colors duration-300 hover:bg-lightRed/80`}
+            className={`w-full rounded-md bg-lightRed py-2 text-sm font-medium tracking-wide text-white transition-colors duration-300 hover:bg-lightRed/80`}
             onClick={shortSectionClickHandler}
           >
             <b>Down</b> <br />

@@ -58,7 +58,7 @@ const NavBarMobile = ({notificationNumber = 1}) => {
   // hamburger animation
   const displayedMobileNavBarLine1 = !navOpen
     ? 'translate-y-0'
-    : 'translate-y-1.5 origin-left w-3/4 rotate-m35';
+    : 'translate-y-1.5 origin-left w-3/4 -rotate-35';
   const displayedMobileNavBarLine2 = !navOpen ? 'translate-y-1.5' : 'w-0 opacity-0';
   const displayedMobileNavBarLine3 = !navOpen
     ? 'translate-y-3'

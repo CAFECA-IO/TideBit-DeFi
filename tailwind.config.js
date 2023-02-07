@@ -243,7 +243,6 @@ module.exports = {
       },
       rotate: {
         '35': '35deg',
-        'm35': '-35deg',
       },
       zIndex: {
         '60': '60',

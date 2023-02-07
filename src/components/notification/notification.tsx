@@ -27,7 +27,7 @@ export default function Notification({
   // hamburger animation
   const displayedMobileNavBarLine1 = !componentVisible
     ? 'translate-y-0'
-    : 'translate-y-1.5 origin-left w-3/4 rotate-m35';
+    : 'translate-y-1.5 origin-left w-3/4 -rotate-35';
   const displayedMobileNavBarLine2 = !componentVisible ? 'translate-y-1.5' : 'w-0 opacity-0';
   const displayedMobileNavBarLine3 = !componentVisible
     ? 'translate-y-3'

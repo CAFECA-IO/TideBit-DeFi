@@ -18,11 +18,10 @@ const TradeTab = () => {
   const USER_BALANCE = 1000;
   const LEVERAGE = 5;
   const guranteedStopFee = 0.97;
-  const longPrice = (MARKET_PRICE * 1.18).toFixed(2); // market price * (1+spread)
-  const shortPrice = (MARKET_PRICE * 0.82).toFixed(2); // market price * (1-spread)
-  // TODO: pass and get data from `trading input`
-  const recommendedTp = Number((MARKET_PRICE * 1.15).toFixed(2)); // recommendedTp // MARKET_PRICE * 1.15
-  const recommendedSl = Number((MARKET_PRICE * 0.85).toFixed(2)); // recommendedSl // MARKET_PRICE * 0.85
+  const longPrice = (MARKET_PRICE * 1.008).toFixed(2); // market price * (1+spread)
+  const shortPrice = (MARKET_PRICE * 0.992).toFixed(2); // market price * (1-spread)
+  const longRecommendedTp = Number((MARKET_PRICE * 1.15).toFixed(2)); // recommendedTp // MARKET_PRICE * 1.15
+  const longRecommendedSl = Number((MARKET_PRICE * 0.85).toFixed(2)); // recommendedSl // MARKET_PRICE * 0.85
   // const shortRecommendedTp = Number((MARKET_PRICE * 0.85).toFixed(2));
   // const shortRecommendedSl = Number((MARKET_PRICE * 1.15).toFixed(2));
 
@@ -37,13 +36,13 @@ const TradeTab = () => {
 
   const [margingInputValue, setMarginInputValue] = useState(0.02);
 
-  const [longTpValue, setLongTpValue] = useState(recommendedTp);
-  const [longSlValue, setLongSlValue] = useState(recommendedSl);
+  const [longTpValue, setLongTpValue] = useState(longRecommendedTp);
+  const [longSlValue, setLongSlValue] = useState(longRecommendedSl);
   const [longTpToggle, setLongTpToggle] = useState(false);
   const [longSlToggle, setLongSlToggle] = useState(false);
 
-  const [shortTpValue, setShortTpValue] = useState(recommendedSl);
-  const [shortSlValue, setShortSlValue] = useState(recommendedTp);
+  const [shortTpValue, setShortTpValue] = useState(longRecommendedSl);
+  const [shortSlValue, setShortSlValue] = useState(longRecommendedTp);
   const [shortTpToggle, setShortTpToggle] = useState(false);
   const [shortSlToggle, setShortSlToggle] = useState(false);
 
@@ -86,19 +85,11 @@ const TradeTab = () => {
     const newValueOfPosition = value * MARKET_PRICE;
     const roundedValueOfPosition = roundToDecimalPlaces(newValueOfPosition, 2);
     setValueOfPosition(roundedValueOfPosition);
-    // console.log(
-    //   'value',
-    //   roundedValueOfPosition.toString().length,
-    //   roundedValueOfPosition.toString()
-    // );
 
     const margin = newValueOfPosition / 5;
     const roundedMargin = roundToDecimalPlaces(margin, 2);
     setRequiredMargin(roundedMargin);
 
-    // console.log('required margin', roundToDecimalPlaces(margin, 2).toString().length);
-    // console.log('requiredMargin', margin);
-    // console.log('user balance', USER_BALANCE);
     setMarginWarning(margin > USER_BALANCE);
 
     setMarginLength(roundedMargin.toString().length);
@@ -106,17 +97,14 @@ const TradeTab = () => {
   };
 
   const getToggledLongTpSetting = (bool: boolean) => {
-    // console.log('getToggledLongTpSetting', bool);
     setLongTpToggle(bool);
   };
 
   const getToggledLongSlSetting = (bool: boolean) => {
-    // console.log('getToggledLongSlSetting', bool);
     setLongSlToggle(bool);
   };
 
   const getToggledShortTpSetting = (bool: boolean) => {
-    // console.log('getToggledShortTpSetting', bool);
     setShortTpToggle(bool);
   };
 

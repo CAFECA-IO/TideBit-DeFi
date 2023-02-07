@@ -8,6 +8,7 @@ import {
 import PositionLineGraph from '../position_line_graph/position_line_graph';
 import PositionDetailsModal from '../position_details_modal/position_details_modal';
 import {IOpenCFDDetails} from '../../interfaces/tidebit_defi_background/open_cfd_details';
+import {toast} from 'react-toastify';
 // import HorizontalRelativeLineGraph from '../horizontal_relative_line_graph/horizontal_relative_line_graph';
 
 interface IOpenPositionItemProps {
@@ -50,11 +51,12 @@ const OpenPositionItem = ({
   // const [progress, setProgress] = useState(0);
   // const [label, setLabel] = useState('');
 
-  // const clickHandler = () => {
-  //   // console.log('show the modal displaying transaction detail');
-  //   detailedModalClickHandler();
-  //   return;
-  // };
+  const squareClickHandler = () => {
+    toast.error('test', {toastId: 'errorTest'});
+
+    // console.log('show the modal displaying transaction detail');
+    // return;
+  };
 
   const displayedString = longOrShort === 'long' ? TRANSACTION_TYPE.long : TRANSACTION_TYPE.short;
   const displayedColorHex =
@@ -86,7 +88,7 @@ const OpenPositionItem = ({
             {/* -----Paused square----- */}
             <div
               className={`absolute left-14px top-26px z-30 h-6 w-6 hover:cursor-pointer ${displayedHoverPausedColor}`}
-              // onClick={detailedModalClickHandler}
+              // onClick={squareClickHandler}
             ></div>
 
             <div>

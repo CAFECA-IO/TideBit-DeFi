@@ -43,14 +43,10 @@ const PositionDetailsModal = ({
   modalClickHandler,
   openCfdDetails,
 }: IPositionDetailsModal) => {
-  // console.log('in position, timestamp from open cfd details:', dateString);
-  // console.log('in position, open cfd details:', openCfdDetails?.margin ?? 0);
   const initialTpToggle = openCfdDetails?.takeProfit ? true : false;
   const initialSlToggle = openCfdDetails?.stopLoss ? true : false;
 
   const initialSlInput = openCfdDetails?.stopLoss ?? openCfdDetails?.recommendedSl ?? 0;
-  // const initailSlInput = openCfdDetails?.stopLoss ?? openCfdDetails?.openPrice ?? 0;
-
   const initialTpInput = openCfdDetails?.takeProfit ?? openCfdDetails?.recommendedTp ?? 0;
 
   const [takeProfitValue, setTakeProfitValue] = useState(initialTpInput);
@@ -59,7 +55,7 @@ const PositionDetailsModal = ({
   const [stopLossToggle, setStopLossToggle] = useState(initialSlToggle);
   const [guaranteedTooltipStatus, setGuaranteedTooltipStatus] = useState(0);
 
-  const [guaranteedChecked, setGuaranteedChecked] = useState(openCfdDetails.guranteedStop);
+  const [guaranteedChecked, setGuaranteedChecked] = useState(openCfdDetails.guaranteedStop);
   const [slLowerLimit, setSlLowerLimit] = useState(0);
   const [slUpperLimit, setSlUpperLimit] = useState(Infinity);
 
@@ -102,10 +98,10 @@ const PositionDetailsModal = ({
   const isDisplayedTakeProfitSetting = takeProfitToggle ? 'flex' : 'invisible';
   const isDisplayedStopLossSetting = stopLossToggle ? 'flex' : 'invisible';
 
-  const displayedSlLowerLimit = openCfdDetails?.guranteedStop
+  const displayedSlLowerLimit = openCfdDetails?.guaranteedStop
     ? openCfdDetails?.stopLoss ?? openCfdDetails.recommendedSl
     : slLowerLimit;
-  const displayedSlUpperLimit = openCfdDetails?.guranteedStop
+  const displayedSlUpperLimit = openCfdDetails?.guaranteedStop
     ? openCfdDetails?.stopLoss ?? openCfdDetails.recommendedSl
     : slUpperLimit;
 
@@ -113,54 +109,55 @@ const PositionDetailsModal = ({
     // console.log('btn clicked');
 
     let changedProperties = {};
-    let takeProfit = {};
-    let stopLoss = {};
 
     // Detect if tpValue has changed
     if (takeProfitToggle && takeProfitValue !== openCfdDetails.takeProfit) {
-      takeProfit = {...takeProfit, takeProfitAmount: takeProfitValue};
       changedProperties = {
         ...changedProperties,
-        takeProfit,
+        takeProfitAmount: takeProfitValue,
       };
     }
 
     // Detect if spValue has changed
     if (stopLossToggle && stopLossValue !== openCfdDetails.stopLoss) {
-      stopLoss = {...stopLoss, stopLossAmount: stopLossValue};
-      changedProperties = {...changedProperties, stopLoss};
+      changedProperties = {...changedProperties, stopLossAmount: stopLossValue};
     }
 
     // Detect if tpToggle has changed
     if (initialTpToggle !== takeProfitToggle) {
-      takeProfit = {...takeProfit, takeProfitToggle: takeProfitToggle};
       changedProperties = {
         ...changedProperties,
-        takeProfit,
+        takeProfitAmount: takeProfitToggle ? takeProfitValue : 0,
       };
     }
 
     // Detect if slToggle has changed
     if (initialSlToggle !== stopLossToggle) {
-      stopLoss = {...stopLoss, stopLossToggle: stopLossToggle};
-      changedProperties = {...changedProperties, stopLoss};
+      changedProperties = {
+        ...changedProperties,
+        stopLossAmount: stopLossToggle ? stopLossValue : 0,
+      };
     }
 
     // Detect if guaranteedStop has changed
-    if (guaranteedChecked !== openCfdDetails.guranteedStop) {
-      stopLoss = {stopLossToggle: stopLossToggle, stopLossAmount: stopLossValue};
+    if (guaranteedChecked !== openCfdDetails.guaranteedStop) {
+      const stopLossAmount = stopLossValue !== openCfdDetails.stopLoss ? stopLossValue : undefined;
       changedProperties = {
         ...changedProperties,
         guranteedStopChecked: guaranteedChecked,
-        stopLoss,
+        stopLossAmount,
       };
     }
 
     // If there's no updates, do nothing
     if (Object.keys(changedProperties).length > 0) {
       // TODO: send changedProperties to MetaMask for signature
+      changedProperties = {orderId: openCfdDetails.id, ...changedProperties};
 
-      toast.success('Changes: \n' + JSON.stringify(changedProperties));
+      // User toastId to prevent duplicate toast in stack (not overlaying)
+      toast.success('Changes: \n' + JSON.stringify(changedProperties), {
+        toastId: 'updateOrder_PositionDetailsModal',
+      });
 
       // console.log(changedProperties);
       // for (const [key, value] of Object.entries(changedProperties)) {
@@ -205,7 +202,7 @@ const PositionDetailsModal = ({
     </div>
   );
   const guaranteedCheckedChangeHandler = () => {
-    if (!openCfdDetails?.guranteedStop) {
+    if (!openCfdDetails?.guaranteedStop) {
       setGuaranteedChecked(!guaranteedChecked);
       setStopLossToggle(true);
       setSlLowerLimit(0);
@@ -229,7 +226,7 @@ const PositionDetailsModal = ({
         />
         <label className="ml-2 flex text-sm font-medium text-lightGray">
           Guaranteed stop &nbsp;
-          <span className="text-lightWhite"> (Fee: {openCfdDetails?.guranteedStopFee} USDT)</span>
+          <span className="text-lightWhite"> (Fee: {openCfdDetails?.guaranteedStopFee} USDT)</span>
           {/* tooltip */}
           <div className="ml-1">
             <div
@@ -409,6 +406,7 @@ const PositionDetailsModal = ({
                 {guaranteedStopLoss}
 
                 <RippleButton
+                  // disabled
                   onClick={buttonClickHandler}
                   buttonType="button"
                   className="mt-5 rounded border-0 bg-tidebitTheme px-32 py-2 text-base text-white transition-colors duration-300 hover:cursor-pointer hover:bg-cyan-600 focus:outline-none md:mt-0"
@@ -429,7 +427,7 @@ const PositionDetailsModal = ({
   return (
     <>
       {isDisplayedDetailedPositionModal}
-      <ToastContainer
+      {/* <ToastContainer
         position="bottom-left"
         autoClose={3000}
         hideProgressBar={false}
@@ -441,7 +439,7 @@ const PositionDetailsModal = ({
         pauseOnHover
         theme="dark"
         limit={10}
-      />
+      /> */}
     </>
   );
 };

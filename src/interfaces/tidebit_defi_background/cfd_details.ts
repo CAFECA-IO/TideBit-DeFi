@@ -15,9 +15,9 @@ export interface ICFDDetails {
   recommendedTp: number; // 推薦的 takeProfit 點位
   recommendedSl: number;
 
-  guranteedStop: boolean;
+  guaranteedStop: boolean;
   fee: number;
-  guranteedStopFee: number; // 保證止損費用
+  guaranteedStopFee: number; // 保證止損費用
 
   openTimestamp: number;
   scheduledClosingTimestamp: number;

@@ -68,9 +68,11 @@ const TradeTabMobile = () => {
     setLongSlToggle(false);
   };
 
-  const longButtonStyles = activeTab === 'Long' && openSubMenu ? '' : 'w-120px'; //z-50 w-320px -translate-x-16 absolute
+  const longButtonStyles =
+    activeTab === 'Long' && openSubMenu ? 'z-50 w-320px -translate-x-16 absolute' : 'w-120px'; //z-50 w-320px -translate-x-16 absolute
 
-  const shortButtonStyles = activeTab === 'Short' && openSubMenu ? '' : 'ml-4 w-120px'; //z-50 w-320px -translate-x-16 absolute
+  const shortButtonStyles =
+    activeTab === 'Short' && openSubMenu ? 'z-50 w-320px -translate-x-16 absolute' : 'ml-4 w-120px'; //z-50 w-320px -translate-x-16 absolute
 
   // ----------short area----------
   const displayedShortTpSetting = (
@@ -217,18 +219,49 @@ const TradeTabMobile = () => {
     </div>
   );
 
-  const displayedTpSetting =
-    activeTab === 'Long' ? displayedLongTpSetting : displayedShortTpSetting;
-  const getToggledTpSetting =
-    activeTab === 'Long' ? getToggledLongTpSetting : getToggledShortTpSetting;
-  const tpToggle = activeTab === 'Long' ? longTpToggle : shortTpToggle;
-  const displayedSlSetting =
-    activeTab === 'Long' ? displayedLongSlSetting : displayedShortSlSetting;
-  const getToggledSlSetting =
-    activeTab === 'Long' ? getToggledLongSlSetting : getToggledShortSlSetting;
-  const slToggle = activeTab === 'Long' ? longSlToggle : shortSlToggle;
-  const guaranteedStop =
-    activeTab === 'Long' ? <>Long:{String(tpToggle)}</> : <>Short:{String(tpToggle)}</>; //longGuaranteedStop : shortGuaranteedStop;
+  const longSetting = (
+    <>
+      {/* Take Profit Setting */}
+      <div className="flex w-full items-center justify-between px-1">
+        <div className="text-sm text-lightGray">Close at profit</div>
+        {displayedLongTpSetting}
+        <Toggle initialToggleState={longTpToggle} getToggledState={getToggledLongTpSetting} />
+      </div>
+
+      {/* Stop Loss Setting */}
+      <div className="flex w-full flex-col items-center justify-between px-1">
+        <div className="flex w-full items-center justify-between">
+          <div className="text-sm text-lightGray">Clost at loss</div>
+          <div className="w-105px">{displayedLongSlSetting}</div>
+          <Toggle initialToggleState={longSlToggle} getToggledState={getToggledLongSlSetting} />
+        </div>
+        {/* Guaranteed stop */}
+        {longGuaranteedStop}
+      </div>
+    </>
+  );
+
+  const shortSetting = (
+    <>
+      {/* Take Profit Setting */}
+      <div className="flex w-full items-center justify-between px-1">
+        <div className="text-sm text-lightGray">Close at profit</div>
+        {displayedShortTpSetting}
+        <Toggle initialToggleState={shortTpToggle} getToggledState={getToggledShortTpSetting} />
+      </div>
+
+      {/* Stop Loss Setting */}
+      <div className="flex w-full flex-col items-center justify-between px-1">
+        <div className="flex w-full items-center justify-between">
+          <div className="text-sm text-lightGray">Clost at loss</div>
+          <div className="w-105px">{displayedShortSlSetting}</div>
+          <Toggle initialToggleState={shortSlToggle} getToggledState={getToggledShortSlSetting} />
+        </div>
+        {/* Guaranteed stop */}
+        {shortGuaranteedStop}
+      </div>
+    </>
+  );
 
   const currentSubMenu = (
     <div className="h-auto w-screen px-8 sm:w-1/2">
@@ -279,24 +312,8 @@ const TradeTabMobile = () => {
             <div className="text-base text-lightWhite">$ 65.69 USDT</div>
           </div>
         </div>
-
-        {/* Take Profit Setting */}
-        <div className="flex w-full items-center justify-between px-1">
-          <div className="text-sm text-lightGray">Close at profit</div>
-          {displayedTpSetting}
-          <Toggle initialToggleState={tpToggle} getToggledState={getToggledTpSetting} />
-        </div>
-
-        {/* Stop Loss Setting */}
-        <div className="flex w-full flex-col items-center justify-between px-1">
-          <div className="flex w-full items-center justify-between">
-            <div className="text-sm text-lightGray">Clost at loss</div>
-            <div className="w-105px">{displayedSlSetting}</div>
-            <Toggle initialToggleState={slToggle} getToggledState={getToggledSlSetting} />
-          </div>
-          {/* Guaranteed stop */}
-          {guaranteedStop}
-        </div>
+        {/* Take Profit & Stop Loss Setting */}
+        {activeTab === 'Long' ? longSetting : shortSetting}
       </div>
     </div>
   );

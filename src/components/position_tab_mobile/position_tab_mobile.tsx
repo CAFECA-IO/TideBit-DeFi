@@ -58,7 +58,7 @@ const PositionTabMobile = () => {
     <div
       className={`flex h-screen w-screen flex-col items-center justify-center bg-darkGray ${
         openSubMenu ? 'visible translate-y-0 opacity-100' : 'invisible translate-y-full opacity-0'
-      } absolute left-0 ${'bottom-76px'} overflow-hidden pt-150px transition-all duration-150`}
+      } absolute left-0 ${'bottom-76px'} overflow-hidden pt-40 transition-all duration-150`}
     >
       <div className="mb-3 mr-30px flex self-end sm:pr-30px">
         <ImCross onClick={subMenuHandler} className="cursor-pointer" />

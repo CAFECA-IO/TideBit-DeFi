@@ -4,7 +4,7 @@ import HistoryPositionItem from '../history_position_item/history_position_item'
 
 const historyPositionList = DUMMY_HISTORY_POSITION_DATA.map(items => {
   return (
-    <>
+    <div key={items.id}>
       <HistoryPositionItem
         profitOrLoss={items.profitOrLoss}
         longOrShort={items.longOrShort}
@@ -13,7 +13,7 @@ const historyPositionList = DUMMY_HISTORY_POSITION_DATA.map(items => {
         ticker={items.ticker}
         profitOrLossAmount={items.profitOrLossAmount}
       />
-    </>
+    </div>
   );
 });
 

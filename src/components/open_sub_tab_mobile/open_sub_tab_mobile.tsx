@@ -4,9 +4,8 @@ import OpenPositionItem from '../open_position_item/open_position_item';
 
 const openPositionList = DUMMY_OPEN_POSITION_DATA.map(items => {
   return (
-    <>
+    <div key={items.id}>
       <OpenPositionItem
-        key={items.id}
         profitOrLoss={items.profitOrLoss}
         longOrShort={items.longOrShort}
         value={items.value}
@@ -18,7 +17,7 @@ const openPositionList = DUMMY_OPEN_POSITION_DATA.map(items => {
       />
 
       <span className="my-auto block h-px w-full rounded bg-white/50"></span>
-    </>
+    </div>
   );
 });
 

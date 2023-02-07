@@ -198,6 +198,7 @@ const TickerSelectorBox = ({
 
   const allTabClickHandler = () => {
     setActiveTab('All');
+    // emitToast({message: 'all tab clicked'});
   };
 
   const favoriteTabClickHandler = () => {
@@ -422,7 +423,7 @@ const TickerSelectorBox = ({
     <MarketProvider>
       <div>
         {isDisplayedTickerSelectorBox}
-        <ToastContainer
+        {/* <ToastContainer
           position="bottom-left"
           autoClose={3000}
           hideProgressBar={false}
@@ -434,7 +435,7 @@ const TickerSelectorBox = ({
           pauseOnHover
           theme="dark"
           limit={10}
-        />
+        /> */}
       </div>
     </MarketProvider>
   );

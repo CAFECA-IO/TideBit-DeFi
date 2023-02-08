@@ -10,6 +10,8 @@ import {UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
 import {MARGIN_LIMIT_DIGITS} from '../../constants/config';
 
 const TradeTabMobile = () => {
+  // TODO: Use Stop loss limit and other data from Market context
+  // TODO: USER_BALANCE from userContext
   const MARKET_PRICE = 6290.41;
   const LIQUIDATION_PRICE = 7548;
   const USER_BALANCE = 1000;
@@ -160,10 +162,12 @@ const TradeTabMobile = () => {
     <div className={isDisplayedLongTpSetting}>
       <TradingInput
         lowerLimit={0}
-        upperLimit={1000000}
         inputInitialValue={longTpValue}
+        inputValueFromParent={longTpValue}
+        setInputValueFromParent={setLongTpValue}
+        getInputValue={getLongTpValue}
         inputPlaceholder="profit-taking setting"
-        inputName="longTpInput" //?
+        inputName="longTpInput"
         inputSize="h-25px w-70px text-sm"
         decrementBtnSize="25"
         incrementBtnSize="25"
@@ -175,10 +179,12 @@ const TradeTabMobile = () => {
     <div className={isDisplayedLongSlSetting}>
       <TradingInput
         lowerLimit={0}
-        upperLimit={1000000}
-        inputPlaceholder="stop-loss setting"
         inputInitialValue={longSlValue}
-        inputName="shortlInput"
+        inputValueFromParent={longSlValue}
+        setInputValueFromParent={setLongSlValue}
+        getInputValue={getLongSlValue}
+        inputPlaceholder="stop-loss setting"
+        inputName="longSlInput"
         inputSize="h-25px w-70px text-sm"
         decrementBtnSize="25"
         incrementBtnSize="25"
@@ -380,8 +386,8 @@ const TradeTabMobile = () => {
       </div>
 
       {/* ---------- margin setting ---------- */}
-      <div className="h-auto w-screen px-8 sm:w-1/2">
-        <div className="flex flex-col items-center justify-center space-y-3">
+      <div className="w-screen px-8 sm:w-1/2">
+        <div className="flex flex-col items-center justify-between space-y-3">
           <div className="flex w-full items-center justify-center">
             <UserOverview
               depositAvailable={user?.balance?.available ?? 0}
@@ -401,8 +407,8 @@ const TradeTabMobile = () => {
           </div>
 
           {/* ---custom trading info area--- */}
-          <div className="flex w-full items-center justify-center text-center text-base tracking-wide">
-            <div className="w-full space-y-1">
+          <div className="flex w-full justify-center text-center text-base tracking-wide">
+            <div className="w-1/2">
               <div className="text-sm text-lightGray">Required Margin</div>
               {displayedRequiredMarginStyle}
             </div>
@@ -412,11 +418,9 @@ const TradeTabMobile = () => {
               <span className="mx-5 inline-block h-14 w-px rounded bg-lightGray/50"></span>
             </div>
 
-            <div className="w-full space-y-1">
-              <div className="text-sm text-lightGray">Value</div>
-              <div className="text-base text-lightWhite">
-                $ {valueOfPosition?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)} USDT
-              </div>
+            <div className="w-1/2">
+              <div className="text-sm text-lightGray">Value</div>${' '}
+              {valueOfPosition?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)} USDT
             </div>
           </div>
           {/* Take Profit & Stop Loss Setting */}

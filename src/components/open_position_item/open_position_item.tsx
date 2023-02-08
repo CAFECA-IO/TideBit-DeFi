@@ -9,6 +9,7 @@ import PositionLineGraph from '../position_line_graph/position_line_graph';
 import PositionDetailsModal from '../position_details_modal/position_details_modal';
 import {IOpenCFDDetails} from '../../interfaces/tidebit_defi_background/open_cfd_details';
 import {toast} from 'react-toastify';
+import {useGlobal} from '../../lib/contexts/global_context';
 // import HorizontalRelativeLineGraph from '../horizontal_relative_line_graph/horizontal_relative_line_graph';
 
 interface IOpenPositionItemProps {
@@ -40,11 +41,21 @@ const OpenPositionItem = ({
   if (longOrShort !== 'long' && longOrShort !== 'short') return <></>;
   if (profitOrLoss !== 'profit' && profitOrLoss !== 'loss') return <></>;
   if (ticker !== 'ETH' && ticker !== 'BTC') return <></>;
+  const {
+    visiblePositionDetailsModal,
+    visiblePositionDetailsModalHandler,
+    positionDetailsModalDataHandler,
+  } = useGlobal();
 
   const [detailedModalVisible, setDetailedModalVisible] = useState(false);
 
   const detailedModalClickHandler = () => {
-    setDetailedModalVisible(!detailedModalVisible);
+    // setDetailedModalVisible(!detailedModalVisible);
+    visiblePositionDetailsModalHandler(!visiblePositionDetailsModal);
+  };
+
+  const passOrderIdHandler = (orderId: string) => {
+    positionDetailsModalDataHandler({orderIdPositionDetails: orderId});
   };
 
   // const progressPercentage = 50;
@@ -53,7 +64,6 @@ const OpenPositionItem = ({
 
   const squareClickHandler = () => {
     // toast.error('test', {toastId: 'errorTest'});
-
     // console.log('show the modal displaying transaction detail');
     // return;
   };
@@ -152,7 +162,7 @@ const OpenPositionItem = ({
       <PositionDetailsModal
         // openCfdDetails={dataFormat}
         openCfdDetails={openCfdDetails}
-        modalVisible={detailedModalVisible}
+        modalVisible={visiblePositionDetailsModal}
         modalClickHandler={detailedModalClickHandler}
       />
     </div>

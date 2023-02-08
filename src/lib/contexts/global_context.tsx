@@ -57,6 +57,10 @@ export interface IGlobalContext {
   colorMode: ColorModeUnion;
   toggleColorMode: () => void;
   toast: (props: IToastify) => void;
+  visiblePositionDetailsModal: boolean;
+  visiblePositionDetailsModalHandler: (visible: boolean) => void;
+  positionDetailsModalData: IDataPositionDetailsModal | null;
+  positionDetailsModalDataHandler: (data: IDataPositionDetailsModal) => void;
 }
 
 export const GlobalContext = createContext<IGlobalContext>({
@@ -67,15 +71,25 @@ export const GlobalContext = createContext<IGlobalContext>({
   colorMode: '' as ColorModeUnion,
   toggleColorMode: () => null,
   toast: () => null,
+  visiblePositionDetailsModal: false,
+  visiblePositionDetailsModalHandler: () => null,
+  positionDetailsModalData: null,
+  positionDetailsModalDataHandler: () => null,
 });
+
+export interface IDataPositionDetailsModal {
+  orderIdPositionDetails: string;
+}
 
 export const GlobalProvider = ({children}: IGlobalProvider) => {
   const windowSize = useWindowSize();
   const {width, height} = windowSize;
-  const layoutAssertion: LayoutAssertionUnion = width < LAYOUT_BREAKPOINT ? 'mobile' : 'desktop';
 
   const initialColorMode: ColorModeUnion = 'dark';
   const [colorMode, setColorMode] = useState<ColorModeUnion>(initialColorMode);
+
+  const layoutAssertion: LayoutAssertionUnion = width < LAYOUT_BREAKPOINT ? 'mobile' : 'desktop';
+
   const toggleColorMode = () => {
     setColorMode(colorMode === 'light' ? 'dark' : 'light');
   };
@@ -89,6 +103,21 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     toastHandler({type: type, message: message, toastId: toastId});
   };
 
+  const [visiblePositionDetailsModal, setVisiblePositionDetailsModal] = useState(false);
+  const [positionDetailsModalData, setDataPositionDetailsModal] =
+    useState<IDataPositionDetailsModal>({orderIdPositionDetails: ''});
+  const visiblePositionDetailsModalHandler = (visible: boolean) => {
+    setVisiblePositionDetailsModal(visible);
+    // toast({
+    //   type: 'info',
+    //   message: 'visiblePositionDetailsModalHandler',
+    //   toastId: 'visiblePositionDetailsModalHandler',
+    // });
+  };
+  const positionDetailsModalDataHandler = (data: IDataPositionDetailsModal) => {
+    setDataPositionDetailsModal(data);
+  };
+
   const defaultValue = {
     width,
     height,
@@ -97,6 +126,10 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     colorMode,
     toggleColorMode,
     toast,
+    visiblePositionDetailsModal,
+    visiblePositionDetailsModalHandler,
+    positionDetailsModalData,
+    positionDetailsModalDataHandler,
   };
   return <GlobalContext.Provider value={defaultValue}>{children}</GlobalContext.Provider>;
 };

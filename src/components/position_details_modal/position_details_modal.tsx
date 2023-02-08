@@ -167,6 +167,10 @@ const PositionDetailsModal = ({
       // for (const [key, value] of Object.entries(changedProperties)) {
       //   console.log(`${key}: ${value}\n`);
       // }
+      setTimeout(() => {
+        globalContext.visiblePositionDetailsModalHandler(false);
+        // console.log('modal visible: ', modalVisible);
+      }, 1000);
       return changedProperties;
     }
   };

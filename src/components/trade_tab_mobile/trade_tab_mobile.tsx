@@ -57,15 +57,11 @@ const TradeTabMobile = () => {
   const longSectionClickHandler = () => {
     setActiveTab('Long');
     setOpenSubMenu(true);
-    setShortTpToggle(false);
-    setShortSlToggle(false);
   };
 
   const shortSectionClickHandler = () => {
     setActiveTab('Short');
     setOpenSubMenu(true);
-    setLongTpToggle(false);
-    setLongSlToggle(false);
   };
 
   const longButtonStyles =

@@ -599,6 +599,8 @@ of ETH.`,
 
 const tickerLiveStatistics: ITickerLiveStatistics = {
   id: 'ETH',
+  longRecommendedSl: 5346.85,
+  longRecommendedTp: 7233.97,
   spread: 0.1,
   fee: 0,
   volume: 92154731,

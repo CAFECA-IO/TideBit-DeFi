@@ -13,8 +13,8 @@ const TradeTab = () => {
   const USER_BALANCE = 1000;
   const LEVERAGE = 5;
   const guranteedStopFee = 0.97;
-  const longPrice = (MARKET_PRICE * 1.008).toFixed(2); // market price * (1+spread)
-  const shortPrice = (MARKET_PRICE * 0.992).toFixed(2); // market price * (1-spread)
+  const buyEstimatedFilledPrice = (MARKET_PRICE * 1.008).toFixed(2); // market price * (1+spread)
+  const sellEstimatedFilledPrice = (MARKET_PRICE * 0.992).toFixed(2); // market price * (1-spread)
   const longRecommendedTp = Number((MARKET_PRICE * 1.15).toFixed(2)); // recommendedTp // MARKET_PRICE * 1.15
   const longRecommendedSl = Number((MARKET_PRICE * 0.85).toFixed(2)); // recommendedSl // MARKET_PRICE * 0.85
   // const shortRecommendedTp = Number((MARKET_PRICE * 0.85).toFixed(2));
@@ -405,7 +405,7 @@ const TradeTab = () => {
                   className="mr-2 mb-2 rounded-md bg-lightGreen5 px-7 py-1 text-sm font-medium tracking-wide text-white transition-colors duration-300 hover:bg-lightGreen5/80"
                 >
                   <b>UP</b> <br />
-                  Above $ {longPrice}
+                  Above $ {buyEstimatedFilledPrice}
                 </RippleButton>
               </div>
               {/* Divider: border-bottom */}
@@ -472,7 +472,7 @@ const TradeTab = () => {
                     className="mr-2 mb-2 rounded-md bg-lightRed px-7 py-1 text-sm font-medium tracking-wide text-white transition-colors duration-300 hover:bg-lightRed/80"
                   >
                     <b>Down</b> <br />
-                    Below $ {shortPrice}
+                    Below $ {sellEstimatedFilledPrice}
                   </RippleButton>
                 </div>
               </div>

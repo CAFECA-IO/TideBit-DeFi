@@ -2,6 +2,46 @@ import {createContext, useState, useEffect, useContext, Dispatch, SetStateAction
 import useWindowSize from '../hooks/use_window_size';
 import {LAYOUT_BREAKPOINT} from '../../constants/display';
 import {toast as toastify} from 'react-toastify';
+
+export interface IToastify {
+  type: 'error' | 'warning' | 'info' | 'success';
+  message: string;
+  toastId?: string | number; // Prevent duplicate toast
+}
+
+export const TOAST_CLASSES_TYPE = {
+  error: 'error',
+  warning: 'warning',
+  info: 'info',
+  success: 'success',
+};
+
+const toastHandler = ({type, message, toastId}: IToastify) => {
+  // return {
+  //   [TOAST_CLASSES_TYPE.error]: toastify.error(message),
+  //   [TOAST_CLASSES_TYPE.warning]: toastify.warning(message),
+  //   [TOAST_CLASSES_TYPE.info]: toastify.info(message),
+  // }[type];
+
+  // const present = Date.now(); // Make sure toastId is unique (no worries about the same content of toast) but produce duplicate toast
+  switch (type) {
+    case 'error':
+      toastify.error(message, {toastId: type + message + toastId});
+      break;
+    case 'warning':
+      toastify.warning(message, {toastId: type + message + toastId});
+      break;
+    case 'info':
+      toastify.info(message, {toastId: type + message + toastId});
+      break;
+    case 'success':
+      toastify.success(message, {toastId: type + message + toastId});
+      break;
+    default:
+      return;
+  }
+};
+
 export interface IGlobalProvider {
   children: React.ReactNode;
 }
@@ -16,7 +56,7 @@ export interface IGlobalContext {
   initialColorMode: ColorModeUnion;
   colorMode: ColorModeUnion;
   toggleColorMode: () => void;
-  toast: (props: {type: string; message: string}) => void;
+  toast: (props: IToastify) => void;
 }
 
 export const GlobalContext = createContext<IGlobalContext>({
@@ -45,31 +85,9 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
   // useEffect(() => {
   //   setMounted(true);
   // }, []);
-  interface IToastify {
-    type: string;
-    message: string;
-  }
 
-  const TOAST_CLASSES_TYPE = {
-    error: 'error',
-    warning: 'warning',
-    info: 'info',
-  };
-
-  const toastHandler = ({type, message}: IToastify) => {
-    return {
-      [TOAST_CLASSES_TYPE.error]: toastify.error(message),
-      [TOAST_CLASSES_TYPE.warning]: toastify.warning(message),
-      [TOAST_CLASSES_TYPE.info]: toastify.info(message),
-    }[type];
-  };
-
-  const toast = ({type, message}: IToastify) => {
-    // toastify.info('toast in global context');
-    // toastify.error(message);
-    toastHandler({type: type, message: message});
-    // console.log(TOAST_CLASSES_TYPE.error);
-    // console.log(toastHandler);
+  const toast = ({type, message, toastId}: IToastify) => {
+    toastHandler({type: type, message: message, toastId: toastId});
   };
 
   const defaultValue = {

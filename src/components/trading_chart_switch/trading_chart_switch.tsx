@@ -6,7 +6,7 @@ import {
 import Toggle from '../toggle/toggle';
 import {MarketContext} from '../../lib/contexts/market_context';
 import useWindowSize from '../../lib/hooks/use_window_size';
-import {useGlobal} from '../../lib/contexts/global_context';
+import {TOAST_CLASSES_TYPE, useGlobal} from '../../lib/contexts/global_context';
 
 interface ITradingChartSwitchProps {
   getTradingViewType: (tradingViewState: string) => void;
@@ -24,7 +24,25 @@ const TradingChartSwitch = ({
   const {showPositionOnChartHandler} = useContext(MarketContext);
   const {toast} = useGlobal();
   const testClick = () => {
-    toast({message: 'Position revelation toggle', type: 'warning'});
+    toast({message: 'Position revelation toggle', type: 'info'});
+    toast({message: 'Position revelation toggle', type: 'info'});
+
+    toast({message: 'Position revelation toggle', type: 'info'});
+  };
+
+  const testClick2 = () => {
+    toast({message: 'candlestick', type: 'success'});
+    toast({message: 'candlestick', type: 'info'});
+    toast({message: 'candlestick', type: 'error'});
+    toast({message: 'candlestick', type: 'warning', toastId: Date.now()});
+  };
+
+  const testClick3 = () => {
+    toast({
+      message: `line graph ${new Date(Date.now())} / ${new Date()}`,
+      type: 'warning',
+      toastId: Date.now(),
+    });
   };
   // console.log(toast);
 
@@ -60,11 +78,13 @@ const TradingChartSwitch = ({
   const candlestickClickHandler = () => {
     setActiveChartType('candlestick');
     getTradingViewType('candlestick');
+    testClick2();
   };
 
   const lineClickHandler = () => {
     setActiveChartType('line');
     getTradingViewType('line');
+    testClick3();
   };
 
   const liveButtonClickHandler = () => {

@@ -6,7 +6,7 @@ import {
 import Toggle from '../toggle/toggle';
 import {MarketContext} from '../../lib/contexts/market_context';
 import useWindowSize from '../../lib/hooks/use_window_size';
-import {TOAST_CLASSES_TYPE, useGlobal} from '../../lib/contexts/global_context';
+import {useGlobal} from '../../lib/contexts/global_context';
 
 interface ITradingChartSwitchProps {
   getTradingViewType: (tradingViewState: string) => void;
@@ -22,29 +22,6 @@ const TradingChartSwitch = ({
   const [activeButton, setActiveButton] = useState('live');
   const [activeChartType, setActiveChartType] = useState('candlestick');
   const {showPositionOnChartHandler} = useContext(MarketContext);
-  const {toast} = useGlobal();
-  const idd = useId();
-  const testClick = () => {
-    toast({message: `Position revelation toggle ${idd}`, type: 'info', toastId: idd});
-    toast({message: 'Position revelation toggle', type: 'info'});
-    toast({message: 'Position revelation toggle', type: 'info'});
-  };
-
-  const testClick2 = () => {
-    toast({message: 'candlestick', type: 'success'});
-    toast({message: 'candlestick', type: 'info'});
-    toast({message: 'candlestick', type: 'error'});
-    toast({message: 'candlestick', type: 'warning', toastId: Date.now()});
-  };
-
-  const testClick3 = () => {
-    toast({
-      message: `line graph ${new Date(Date.now())} / ${new Date()}`,
-      type: 'warning',
-      toastId: Date.now(),
-    });
-  };
-  // console.log(toast);
 
   // Get toggle state and pass to `trading_view` component
   const getDisplayedPositionsState = (bool: boolean) => {
@@ -78,13 +55,11 @@ const TradingChartSwitch = ({
   const candlestickClickHandler = () => {
     setActiveChartType('candlestick');
     getTradingViewType('candlestick');
-    testClick2();
   };
 
   const lineClickHandler = () => {
     setActiveChartType('line');
     getTradingViewType('line');
-    testClick3();
   };
 
   const liveButtonClickHandler = () => {
@@ -277,7 +252,7 @@ const TradingChartSwitch = ({
         {/* Diplaying position info toggle */}
         <div className="flex items-center space-x-5">
           <p className="text-lightGray">Positions</p>
-          <div className="pt-1" onClick={testClick}>
+          <div className="pt-1">
             {' '}
             <Toggle
               initialToggleState={INITIAL_POSITION_LABEL_DISPLAYED_STATE}

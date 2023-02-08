@@ -9,12 +9,12 @@ export interface IToastify {
   toastId?: string | number; // Prevent duplicate toast
 }
 
-export const TOAST_CLASSES_TYPE = {
-  error: 'error',
-  warning: 'warning',
-  info: 'info',
-  success: 'success',
-};
+// export const TOAST_CLASSES_TYPE = {
+//   error: 'error',
+//   warning: 'warning',
+//   info: 'info',
+//   success: 'success',
+// };
 
 const toastHandler = ({type, message, toastId}: IToastify) => {
   // return {
@@ -67,7 +67,6 @@ export const GlobalContext = createContext<IGlobalContext>({
   colorMode: '' as ColorModeUnion,
   toggleColorMode: () => null,
   toast: () => null,
-  // setColorMode: (() => {}) as Dispatch<SetStateAction<ColorModeUnion>>,
 });
 
 export const GlobalProvider = ({children}: IGlobalProvider) => {

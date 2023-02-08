@@ -1,4 +1,4 @@
-import {useState, useContext} from 'react';
+import {useState, useContext, useId} from 'react';
 import {
   INITIAL_POSITION_LABEL_DISPLAYED_STATE,
   TRADING_CHART_SWITCH_BUTTON_SIZE,
@@ -6,6 +6,7 @@ import {
 import Toggle from '../toggle/toggle';
 import {MarketContext} from '../../lib/contexts/market_context';
 import useWindowSize from '../../lib/hooks/use_window_size';
+import {useGlobal} from '../../lib/contexts/global_context';
 
 interface ITradingChartSwitchProps {
   getTradingViewType: (tradingViewState: string) => void;

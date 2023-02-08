@@ -6,11 +6,6 @@ import RippleButton from '../ripple_button/ripple_button';
 import {UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
 import {MARGIN_LIMIT_DIGITS} from '../../constants/config';
 
-// 1388.4 * 0.82
-const LONG_RESTRICTION_SL = 1138.48;
-// 1388.4 * 1.18
-const SHORT_RESTRICTION_SL = 1638.31;
-
 const TradeTab = () => {
   // TODO: Use Stop loss limit and other data from Market context
   const MARKET_PRICE = 6290.41;
@@ -18,8 +13,8 @@ const TradeTab = () => {
   const USER_BALANCE = 1000;
   const LEVERAGE = 5;
   const guranteedStopFee = 0.97;
-  const longPrice = (MARKET_PRICE * 1.008).toFixed(2); // market price * (1+spread)
-  const shortPrice = (MARKET_PRICE * 0.992).toFixed(2); // market price * (1-spread)
+  const buyEstimatedFilledPrice = (MARKET_PRICE * 1.008).toFixed(2); // market price * (1+spread)
+  const sellEstimatedFilledPrice = (MARKET_PRICE * 0.992).toFixed(2); // market price * (1-spread)
   const longRecommendedTp = Number((MARKET_PRICE * 1.15).toFixed(2)); // recommendedTp // MARKET_PRICE * 1.15
   const longRecommendedSl = Number((MARKET_PRICE * 0.85).toFixed(2)); // recommendedSl // MARKET_PRICE * 0.85
   // const shortRecommendedTp = Number((MARKET_PRICE * 0.85).toFixed(2));
@@ -31,6 +26,7 @@ const TradeTab = () => {
   };
 
   // const marginInputRef = useRef<HTMLInputElement>(null);
+
   const [longTooltipStatus, setLongTooltipStatus] = useState(0);
   const [shortTooltipStatus, setShortTooltipStatus] = useState(0);
 
@@ -64,6 +60,7 @@ const TradeTab = () => {
   const getMarginInputValue = (value: number) => {
     setMarginInputValue(value);
     marginDetection(value);
+    // console.log('getMarginInputValue', value);
   };
   const getLongTpValue = (value: number) => {
     setLongTpValue(value);
@@ -409,7 +406,7 @@ const TradeTab = () => {
                   className="mr-2 mb-2 rounded-md bg-lightGreen5 px-7 py-1 text-sm font-medium tracking-wide text-white transition-colors duration-300 hover:bg-lightGreen5/80"
                 >
                   <b>UP</b> <br />
-                  Above $ {longPrice}
+                  Above $ {buyEstimatedFilledPrice}
                 </RippleButton>
               </div>
               {/* Divider: border-bottom */}
@@ -476,7 +473,7 @@ const TradeTab = () => {
                     className="mr-2 mb-2 rounded-md bg-lightRed px-7 py-1 text-sm font-medium tracking-wide text-white transition-colors duration-300 hover:bg-lightRed/80"
                   >
                     <b>Down</b> <br />
-                    Below $ {shortPrice}
+                    Below $ {sellEstimatedFilledPrice}
                   </RippleButton>
                 </div>
               </div>

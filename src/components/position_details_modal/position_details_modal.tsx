@@ -7,11 +7,12 @@ import {
   UNIVERSAL_NUMBER_FORMAT_LOCALE,
 } from '../../constants/display';
 import Toggle from '../toggle/toggle';
-import {useState} from 'react';
+import {useRef, useState} from 'react';
 import TradingInput from '../trading_input/trading_input';
 import {AiOutlineQuestionCircle} from 'react-icons/ai';
 import RippleButton from '../ripple_button/ripple_button';
-import {ToastContainer, toast, ToastOptions, useToast} from 'react-toastify';
+import {useGlobal} from '../../lib/contexts/global_context';
+// import {ToastContainer, toast, ToastOptions, useToast} from 'react-toastify';
 
 interface IPositionDetailsModal {
   modalVisible: boolean;
@@ -43,6 +44,8 @@ const PositionDetailsModal = ({
   modalClickHandler,
   openCfdDetails,
 }: IPositionDetailsModal) => {
+  const globalContext = useGlobal();
+
   const initialTpToggle = openCfdDetails?.takeProfit ? true : false;
   const initialSlToggle = openCfdDetails?.stopLoss ? true : false;
 
@@ -154,9 +157,10 @@ const PositionDetailsModal = ({
       // TODO: send changedProperties to MetaMask for signature
       changedProperties = {orderId: openCfdDetails.id, ...changedProperties};
 
-      // User toastId to prevent duplicate toast in stack (not overlaying)
-      toast.success('Changes: \n' + JSON.stringify(changedProperties), {
-        toastId: 'updateOrder_PositionDetailsModal',
+      globalContext.toast({
+        type: 'info',
+        message: 'Changes: \n' + JSON.stringify(changedProperties),
+        toastId: JSON.stringify(changedProperties),
       });
 
       // console.log(changedProperties);
@@ -424,24 +428,7 @@ const PositionDetailsModal = ({
     </>
   ) : null;
 
-  return (
-    <>
-      {isDisplayedDetailedPositionModal}
-      {/* <ToastContainer
-        position="bottom-left"
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable={false}
-        pauseOnHover
-        theme="dark"
-        limit={10}
-      /> */}
-    </>
-  );
+  return <>{isDisplayedDetailedPositionModal}</>;
 };
 
 export default PositionDetailsModal;

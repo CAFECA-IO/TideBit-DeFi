@@ -7,6 +7,9 @@ export interface ITickerLiveStatistics {
   spread: number; // 點差 %
   fee: number; // 手續費
 
+  longRecommendedTp: number; // the same as shortRecommendedSl
+  longRecommendedSl: number; // the same as shortRecommendedTp
+
   volume: number; // 24 hr volume
   price: number;
   fluctuating: IFluctuating;

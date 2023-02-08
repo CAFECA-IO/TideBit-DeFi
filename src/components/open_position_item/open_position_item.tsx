@@ -6,6 +6,9 @@ import {
   TRANSACTION_TYPE,
 } from '../../constants/display';
 import PositionLineGraph from '../position_line_graph/position_line_graph';
+import PositionDetailsModal from '../position_details_modal/position_details_modal';
+import {IOpenCFDDetails} from '../../interfaces/tidebit_defi_background/open_cfd_details';
+import {toast} from 'react-toastify';
 // import HorizontalRelativeLineGraph from '../horizontal_relative_line_graph/horizontal_relative_line_graph';
 
 interface IOpenPositionItemProps {
@@ -17,6 +20,8 @@ interface IOpenPositionItemProps {
   profitOrLossAmount: number;
   tickerTrendArray: number[];
   horizontalValueLine: number;
+  openCfdDetails: IOpenCFDDetails;
+  // circularClick?: () => void;
 }
 
 const OpenPositionItem = ({
@@ -28,19 +33,28 @@ const OpenPositionItem = ({
   profitOrLossAmount,
   tickerTrendArray,
   horizontalValueLine,
+  openCfdDetails,
+  // circularClick: circularClick,
   ...otherProps
 }: IOpenPositionItemProps) => {
   if (longOrShort !== 'long' && longOrShort !== 'short') return <></>;
   if (profitOrLoss !== 'profit' && profitOrLoss !== 'loss') return <></>;
   if (ticker !== 'ETH' && ticker !== 'BTC') return <></>;
 
+  const [detailedModalVisible, setDetailedModalVisible] = useState(false);
+
+  const detailedModalClickHandler = () => {
+    setDetailedModalVisible(!detailedModalVisible);
+  };
+
   // const progressPercentage = 50;
   // const [progress, setProgress] = useState(0);
   // const [label, setLabel] = useState('');
 
-  const clickHandler = () => {
+  const squareClickHandler = () => {
+    // toast.error('test', {toastId: 'errorTest'});
     // console.log('show the modal displaying transaction detail');
-    return;
+    // return;
   };
 
   const displayedString = longOrShort === 'long' ? TRANSACTION_TYPE.long : TRANSACTION_TYPE.short;
@@ -59,24 +73,33 @@ const OpenPositionItem = ({
       <div className="">
         <div className="mt-5 flex justify-between">
           <div className="relative -mt-4 -ml-2 w-50px">
+            <div
+              className="absolute top-3 z-10 h-110px w-280px bg-transparent hover:cursor-pointer"
+              onClick={detailedModalClickHandler}
+            ></div>
+
             {/* Pause square cover
             <div
               className={`absolute left-14px top-26px z-20 h-6 w-6 hover:cursor-pointer hover:bg-darkGray`}
               onClick={clickHandler}
             ></div> */}
-            {/* Pause square */}
+
+            {/* -----Paused square----- */}
             <div
-              className={`absolute left-14px top-26px z-10 h-6 w-6 hover:cursor-pointer ${displayedHoverPausedColor}`}
-              onClick={clickHandler}
+              className={`absolute left-14px top-26px z-30 h-6 w-6 hover:cursor-pointer ${displayedHoverPausedColor}`}
+              // onClick={squareClickHandler}
             ></div>
 
-            <CircularProgressBar
-              numerator={passedHour}
-              denominator={24}
-              progressBarColor={[displayedColorHex]}
-              hollowSize="40%"
-              circularBarSize="100"
-            />
+            <div>
+              <CircularProgressBar
+                numerator={passedHour}
+                denominator={24}
+                progressBarColor={[displayedColorHex]}
+                hollowSize="40%"
+                circularBarSize="100"
+                // clickHandler={circularClick}
+              />
+            </div>
           </div>
 
           {/* TODO: switch the layout */}
@@ -124,6 +147,13 @@ const OpenPositionItem = ({
 
       {/* Divider */}
       {/* <div className="absolute top-200px my-auto h-px w-7/8 rounded bg-white/50"></div> */}
+
+      <PositionDetailsModal
+        // openCfdDetails={dataFormat}
+        openCfdDetails={openCfdDetails}
+        modalVisible={detailedModalVisible}
+        modalClickHandler={detailedModalClickHandler}
+      />
     </div>
   );
 };

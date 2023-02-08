@@ -3,15 +3,21 @@ import {IPnL} from './pnl';
 export interface ICFDDetails {
   id: string;
 
+  amount: number;
+
   ticker: string; // 'BTC' | 'ETH'
-  operation: 'BUY' | 'SELL'; // 'Buy' | 'Sell'
+  typeOfPosition: 'BUY' | 'SELL'; // 'Buy' | 'Sell'
   leverage: number;
   margin: number;
   openPrice: number; // Avg. Open Price 平均開倉價格
   takeProfit?: number;
   stopLoss?: number;
-  guranteedStop: boolean;
+  recommendedTp: number; // 推薦的 takeProfit 點位
+  recommendedSl: number;
+
+  guaranteedStop: boolean;
   fee: number;
+  guaranteedStopFee: number; // 保證止損費用
 
   openTimestamp: number;
   scheduledClosingTimestamp: number;

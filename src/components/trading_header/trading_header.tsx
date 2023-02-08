@@ -90,7 +90,7 @@ const TradingHeader = ({upOrDown, tradingVolume}: ITradingHeaderProps) => {
   );
   const ethTitle = <h1 className="text-3xl font-medium">ETH</h1>;
 
-  const dummyPrice = 1290.41;
+  const dummyPrice = 6290.41;
 
   const ethHeader = (
     <>

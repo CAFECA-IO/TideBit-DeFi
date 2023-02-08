@@ -8,7 +8,7 @@ import TradeStatistics from '../trade_statistics/trade_statistics';
 import {MarketContext} from '../../lib/contexts/market_context';
 import CryptoSummary from '../crypto_summary/crypto_summary';
 import CryptoNewsSection from '../crypto_news_section/crypto_news_section';
-import {ICryptoSummary} from '../../interfaces/tidebit_defi_background';
+import {ICryptoSummary} from '../../interfaces/depre_tidebit_defi_background';
 
 const MarketSection = () => {
   const {layoutAssertion} = useContext(ViewportContext);

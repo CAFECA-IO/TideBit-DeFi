@@ -1,14 +1,27 @@
-import {useState} from 'react';
+import {Dispatch, SetStateAction, useState} from 'react';
 
 interface IToggleProps {
   // toggle: boolean;
   // toggleClickHandler: () => void;
+  lockedToOpen?: boolean;
   initialToggleState?: boolean;
   getToggledState: (props: boolean) => void;
+  // getToggleFunction?: (props: () => void) => void;
+  toggleStateFromParent?: boolean;
+  setToggleStateFromParent?: Dispatch<SetStateAction<boolean>>;
 }
 
-const Toggle = ({initialToggleState = false, getToggledState}: IToggleProps) => {
-  const [toggle, setToggle] = useState(initialToggleState);
+const Toggle = ({
+  initialToggleState = false,
+  getToggledState,
+  lockedToOpen: lockedToOpen,
+  toggleStateFromParent,
+  setToggleStateFromParent,
+}: IToggleProps) => {
+  const [toggle, setToggle] =
+    toggleStateFromParent && setToggleStateFromParent
+      ? [toggleStateFromParent, setToggleStateFromParent]
+      : useState(initialToggleState);
 
   // function to handle pass the `toggle` state to parent component
   const passToggledStateHandler = (data: boolean) => {
@@ -17,21 +30,29 @@ const Toggle = ({initialToggleState = false, getToggledState}: IToggleProps) => 
 
   // function to handle toggle state
   const toggleClickHandler = () => {
+    if (lockedToOpen) return;
     setToggle(!toggle);
     passToggledStateHandler(!toggle);
+
+    // console.log('toggle state from toggle: ', toggle);
+    // passToggleFunction(toggleClickHandler);
   };
 
-  // TODO:[Notes] css solution: after, checked
-  const blueStandardToggle = (
-    <label className="relative right-5 mb-5 inline-flex cursor-pointer items-center">
-      <input type="checkbox" value="" className="peer sr-only" />
-      <div className="absolute h-5 w-9 rounded-full bg-gray-200 after:absolute after:top-2px after:left-2px after:h-4 after:w-4 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-'' peer-checked:bg-blue-600 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"></div>
-    </label>
-  );
+  // const passToggleFunction = () => {
+  //   if (getToggleFunction) {
+  //     getToggleFunction(toggleClickHandler);
+  //     // console.log('pass function from children component');
+  //   }
+  //   // toggleClickHandler();
+  // };
 
   //TODO: bg-tidebitTheme [#29C1E1]
-  const toggleSwitchStyle = toggle ? 'transform translate-x-full' : null;
-  const toggleBackgroundStyle = toggle ? 'bg-[#29C1E1]' : null;
+  const toggleSwitchStyle = lockedToOpen
+    ? 'transform translate-x-full bg-lightGray shadow-lg shadow-black/80'
+    : toggle
+    ? 'transform translate-x-full bg-white'
+    : 'bg-white';
+  const toggleBackgroundStyle = lockedToOpen ? 'bg-[#8B8E91]' : toggle ? 'bg-[#29C1E1]' : null;
 
   const tidebitToggle = (
     // Toggle background
@@ -41,7 +62,7 @@ const Toggle = ({initialToggleState = false, getToggledState}: IToggleProps) => 
     >
       {/* Switch */}
       <div
-        className={`${toggleSwitchStyle} h-4 w-4 rounded-full bg-white shadow-md duration-300 ease-in-out`}
+        className={`${toggleSwitchStyle} h-4 w-4 rounded-full shadow-md duration-300 ease-in-out`}
       ></div>
     </div>
   );

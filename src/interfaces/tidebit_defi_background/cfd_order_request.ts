@@ -1,6 +1,6 @@
 export interface ICFDOrderCreatingRequest {
   ticker: string;
-  operation: 'BUY' | 'SELL';
+  typeOfPosition: 'BUY' | 'SELL';
   leverage: number;
   margin: number;
   takeProfit?: number;

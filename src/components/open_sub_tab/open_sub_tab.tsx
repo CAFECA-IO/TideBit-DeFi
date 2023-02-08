@@ -1,17 +1,20 @@
-import React from 'react';
+import React, {useContext, useState} from 'react';
 import OpenPositionItem from '../open_position_item/open_position_item';
+import PositionDetailsModal from '../position_details_modal/position_details_modal';
+import {UserContext} from '../../lib/contexts/user_context';
 
 const OpenSubTab = () => {
-  // const clickCircularPauseHandler = () => {
-  //   console.log('clickCircularPauseHandler');
-  // };
+  const {getOpenedCFD} = useContext(UserContext);
+  const allOpenedCFDs = getOpenedCFD();
 
+  // console.log('in open sub tab, opened CFDs:', getOpenedCFD());
   return (
     <>
       <div className="">
         <div className="">
           {/* 6 */}
           <OpenPositionItem
+            openCfdDetails={allOpenedCFDs[0]}
             profitOrLoss="loss"
             longOrShort="long"
             value={656.9}
@@ -21,6 +24,11 @@ const OpenSubTab = () => {
             tickerTrendArray={[1230, 1272, 1120, 1265, 1342, 1299]}
             horizontalValueLine={1230}
           />
+          {/* <PositionDetailsModal
+            // openCfdDetails={dataFormat}
+            modalVisible={modalVisible}
+            modalClickHandler={modalClickHandler}
+          /> */}
         </div>
         {/* Divider */}
         <div className="my-auto h-px w-full rounded bg-white/50"></div>
@@ -28,6 +36,7 @@ const OpenSubTab = () => {
         <div className="">
           {/* 6 */}
           <OpenPositionItem
+            openCfdDetails={allOpenedCFDs[1]}
             profitOrLoss="profit"
             longOrShort="short"
             value={631.1}
@@ -44,6 +53,7 @@ const OpenSubTab = () => {
         <div className="">
           {/* 12 */}
           <OpenPositionItem
+            openCfdDetails={allOpenedCFDs[2]}
             profitOrLoss="profit"
             longOrShort="short"
             value={1234567.8}
@@ -60,6 +70,7 @@ const OpenSubTab = () => {
         <div className="">
           {/* 31 */}
           <OpenPositionItem
+            openCfdDetails={allOpenedCFDs[3]}
             profitOrLoss="loss"
             longOrShort="long"
             value={1234567.8}

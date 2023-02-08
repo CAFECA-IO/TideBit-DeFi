@@ -6,6 +6,7 @@ interface IRippleButtonProps {
   children: React.ReactNode | string;
   buttonType: 'button' | 'submit' | 'reset'; // declare the possible values for buttonType
   onClick?: () => void;
+  disabled?: boolean;
 }
 
 // interface RefObject<T> {
@@ -17,6 +18,7 @@ const RippleButton = ({
   buttonStyle,
   children,
   buttonType = 'button',
+  disabled,
   ...otherProps
 }: IRippleButtonProps) => {
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -86,6 +88,7 @@ const RippleButton = ({
         className={`${className}`}
         type={buttonType}
         ref={buttonRef}
+        disabled={disabled}
         {...otherProps}
       >
         {children}

@@ -1,4 +1,5 @@
-import React, {useState, createContext} from 'react';
+/* eslint-disable no-console */
+import React, {useState, createContext, useContext, useEffect} from 'react';
 import {ICardProps, ILineGraphProps} from '../../components/card/crypto_card';
 import {
   INITIAL_POSITION_LABEL_DISPLAYED_STATE,
@@ -14,6 +15,7 @@ import {
 } from '../../interfaces/depre_tidebit_defi_background';
 import {ITickerLiveStatistics} from '../../interfaces/tidebit_defi_background/ticker_live_statistics';
 import {ITickerStatic} from '../../interfaces/tidebit_defi_background/ticker_static';
+import {UserContext} from './user_context';
 
 export interface ITickerData {
   currency: string;
@@ -87,7 +89,7 @@ const TRADING_CRYPTO_DATA = [
     currency: 'BTC',
     chain: 'Bitcoin',
     star: true,
-    starred: true,
+    starred: false,
     price: 1288.4,
     fluctuating: 1.14,
     tokenImg: '/elements/group_2372.svg',
@@ -96,7 +98,7 @@ const TRADING_CRYPTO_DATA = [
     currency: 'LTC',
     chain: 'Litecoin',
     star: true,
-    starred: true,
+    starred: false,
     price: 1288.4,
     fluctuating: 1.14,
     tokenImg: '/elements/c5b7bda06ddfe2b3f59b37ed6bb65ab4.svg',
@@ -105,7 +107,7 @@ const TRADING_CRYPTO_DATA = [
     currency: 'MATIC',
     chain: 'Polygon',
     star: true,
-    starred: true,
+    starred: false,
     price: 1288.4,
     fluctuating: 1.14,
     tokenImg: '/elements/9cc18b0cbe765b0a28791d253207f0c0.svg',
@@ -159,7 +161,7 @@ const TRADING_CRYPTO_DATA = [
     currency: 'AVAX',
     chain: 'Avalanche',
     star: true,
-    starred: true,
+    starred: false,
     price: 1288.4,
     fluctuating: 1.14,
     tokenImg: '/elements/group_2391.svg',
@@ -168,7 +170,7 @@ const TRADING_CRYPTO_DATA = [
     currency: 'Dai',
     chain: 'Dai',
     star: true,
-    starred: true,
+    starred: false,
     price: 1288.4,
     fluctuating: 1.14,
     tokenImg: '/elements/layer_x0020_1.svg',
@@ -177,7 +179,7 @@ const TRADING_CRYPTO_DATA = [
     currency: 'MKR',
     chain: 'Maker',
     star: true,
-    starred: true,
+    starred: false,
     price: 1288.4,
     fluctuating: 1.14,
     tokenImg: '/elements/layer_2.svg',
@@ -226,6 +228,7 @@ const addPropertyToArray: ITickerData[] = TRADING_CRYPTO_DATA.map(item => {
   const strokeColor = strokeColorDisplayed(dataArray);
   const newArray = {
     ...item,
+    starred: false,
     lineGraphProps: {
       dataArray: dataArray,
       strokeColor: strokeColor,
@@ -662,7 +665,24 @@ const cryptoBriefNews: IBriefNewsItem[] = [
 // };
 
 export const MarketProvider = ({children}: IMarketProvider) => {
-  const [availableTickers, setAvailableTickers] = useState<ITickerData[]>(addPropertyToArray);
+  const userCtx = useContext(UserContext);
+  const tickersCombineUserFavorite = () => {
+    let availableTickers: ITickerData[] = [];
+    if (userCtx.user) {
+      availableTickers = addPropertyToArray.map(ticker => {
+        return {
+          ...ticker,
+          starred: userCtx.user
+            ? userCtx.user.favoriteTickers.some(currency => currency === ticker.currency)
+            : false,
+        };
+      });
+    } else availableTickers = addPropertyToArray;
+    return availableTickers;
+  };
+  const [availableTickers, setAvailableTickers] = useState<ITickerData[]>(
+    tickersCombineUserFavorite
+  );
   const [isCFDTradable, setIsCFDTradable] = useState<boolean>(true);
   const [candlestickId, setCandlestickId] = useState<string>('');
 
@@ -689,6 +709,22 @@ export const MarketProvider = ({children}: IMarketProvider) => {
 
   // console.log('Whole array [addPropertyToArray]:', addPropertyToArray);
   // setAvailableTickers(addPropertyToArray); // infinite loop
+
+  useEffect(() => {
+    console.log(`userCtx.user in MarketContext`, userCtx.user);
+    if (userCtx.user) {
+      const updateAvailableTickers = availableTickers.map(ticker => {
+        return {
+          ...ticker,
+          starred: userCtx.user
+            ? userCtx.user.favoriteTickers.some(currency => currency === ticker.currency)
+            : false,
+        };
+      });
+      console.log(`updateAvailableTickers`, updateAvailableTickers);
+      setAvailableTickers(updateAvailableTickers);
+    }
+  }, [userCtx.user]);
 
   const defaultValue = {
     availableTickers,

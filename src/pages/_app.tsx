@@ -12,29 +12,27 @@ function App({Component, pageProps}: AppProps) {
   return (
     <>
       <div className="custom-no-scrollbar selection:bg-tidebitTheme dark:selection:bg-tidebitTheme">
-        {/* <MarketProvider> */}
-        {/* <UserProvider> */}
-
-        <ViewportProvider>
-          <Component {...pageProps} />
-        </ViewportProvider>
-        {/* One container avoids duplicating toast overlaying */}
-        <ToastContainer
-          position="bottom-left"
-          autoClose={3000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable={false}
-          pauseOnHover
-          theme="dark"
-          limit={10}
-        />
-
-        {/* </UserProvider> */}
-        {/* </MarketProvider> */}
+        <UserProvider>
+          <MarketProvider>
+            <ViewportProvider>
+              <Component {...pageProps} />
+            </ViewportProvider>
+            {/* One container avoids duplicating toast overlaying */}
+            <ToastContainer
+              position="bottom-left"
+              autoClose={3000}
+              hideProgressBar={false}
+              newestOnTop={false}
+              closeOnClick
+              rtl={false}
+              pauseOnFocusLoss
+              draggable={false}
+              pauseOnHover
+              theme="dark"
+              limit={10}
+            />
+          </MarketProvider>
+        </UserProvider>
       </div>
     </>
   );

@@ -1,4 +1,4 @@
-import {useState, useContext} from 'react';
+import {useState, useContext, useId} from 'react';
 import {
   INITIAL_POSITION_LABEL_DISPLAYED_STATE,
   TRADING_CHART_SWITCH_BUTTON_SIZE,
@@ -23,10 +23,10 @@ const TradingChartSwitch = ({
   const [activeChartType, setActiveChartType] = useState('candlestick');
   const {showPositionOnChartHandler} = useContext(MarketContext);
   const {toast} = useGlobal();
+  const idd = useId();
   const testClick = () => {
+    toast({message: `Position revelation toggle ${idd}`, type: 'info', toastId: idd});
     toast({message: 'Position revelation toggle', type: 'info'});
-    toast({message: 'Position revelation toggle', type: 'info'});
-
     toast({message: 'Position revelation toggle', type: 'info'});
   };
 

@@ -8,7 +8,7 @@ import TradePageBody from '../components/trade_page_body/trade_page_body';
 import {MarketContext, MarketProvider} from '../lib/contexts/market_context';
 import {UserContext, UserProvider} from '../lib/contexts/user_context';
 import {useContext} from 'react';
-import {GlobalContext, useGlobal} from '../lib/contexts/theme_context';
+import {GlobalContext, useGlobal} from '../lib/contexts/global_context';
 import NavBarMobile from '../components/nav_bar_mobile/nav_bar_mobile';
 
 const Trading = () => {

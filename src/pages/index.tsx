@@ -6,7 +6,7 @@ import NavBar from '../components/nav_bar/nav_bar';
 import HeroDescription from '../components/hero_description/hero_description';
 import {MarketProvider} from '../lib/contexts/market_context';
 import {useContext} from 'react';
-import {GlobalContext, useGlobal} from '../lib/contexts/theme_context';
+import {GlobalContext, useGlobal} from '../lib/contexts/global_context';
 import NavBarMobile from '../components/nav_bar_mobile/nav_bar_mobile';
 
 const Home = () => {

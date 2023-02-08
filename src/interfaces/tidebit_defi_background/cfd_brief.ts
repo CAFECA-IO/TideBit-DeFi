@@ -7,4 +7,5 @@ export interface ICFDBrief {
   openPrice: number;
   openValue: number;
   pNL: IPnL;
+  openTimestamp: number;
 }

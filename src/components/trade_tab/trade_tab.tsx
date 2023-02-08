@@ -6,11 +6,6 @@ import RippleButton from '../ripple_button/ripple_button';
 import {UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
 import {MARGIN_LIMIT_DIGITS} from '../../constants/config';
 
-// 1388.4 * 0.82
-const LONG_RESTRICTION_SL = 1138.48;
-// 1388.4 * 1.18
-const SHORT_RESTRICTION_SL = 1638.31;
-
 const TradeTab = () => {
   // TODO: Use Stop loss limit and other data from Market context
   const MARKET_PRICE = 6290.41;
@@ -64,6 +59,7 @@ const TradeTab = () => {
   const getMarginInputValue = (value: number) => {
     setMarginInputValue(value);
     marginDetection(value);
+    // console.log('getMarginInputValue', value);
   };
   const getLongTpValue = (value: number) => {
     setLongTpValue(value);

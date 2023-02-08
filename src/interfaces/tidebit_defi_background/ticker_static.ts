@@ -9,6 +9,9 @@ export interface ITickerStatic {
   leverage: number;
 
   guranteedStopFee: number; // 保證停損手續費
+  longRecommendedTp: number; // the same as shortRecommendedSl
+  longRecommendedSl: number; // the same as shortRecommendedTp
+
   // slippage: number; // 滑價
   cryptoBriefNews: IBriefNewsItem[]; // 相關新聞
   // getCryptoNews: () => IBriefNewsItem[];

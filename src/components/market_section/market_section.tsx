@@ -14,8 +14,6 @@ const MarketSection = () => {
   // const {layoutAssertion} = useContext(GlobalContext);
   const {layoutAssertion} = useGlobal();
 
-  // console.log('toggleColorMode', toggleColorMode);
-
   const {liveStatstics, tickerStatic, tickerLiveStatistics, getCryptoSummary} =
     useContext(MarketContext);
 

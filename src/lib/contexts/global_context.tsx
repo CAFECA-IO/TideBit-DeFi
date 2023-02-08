@@ -1,6 +1,7 @@
 import {createContext, useState, useEffect, useContext, Dispatch, SetStateAction} from 'react';
 import useWindowSize from '../hooks/use_window_size';
 import {LAYOUT_BREAKPOINT} from '../../constants/display';
+import {toast as toastify} from 'react-toastify';
 export interface IGlobalProvider {
   children: React.ReactNode;
 }
@@ -15,6 +16,7 @@ export interface IGlobalContext {
   initialColorMode: ColorModeUnion;
   colorMode: ColorModeUnion;
   toggleColorMode: () => void;
+  toast: (props: {type: string; message: string}) => void;
 }
 
 export const GlobalContext = createContext<IGlobalContext>({
@@ -24,6 +26,7 @@ export const GlobalContext = createContext<IGlobalContext>({
   initialColorMode: '' as ColorModeUnion,
   colorMode: '' as ColorModeUnion,
   toggleColorMode: () => null,
+  toast: () => null,
   // setColorMode: (() => {}) as Dispatch<SetStateAction<ColorModeUnion>>,
 });
 
@@ -38,6 +41,37 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     setColorMode(colorMode === 'light' ? 'dark' : 'light');
   };
 
+  // const [mounted, setMounted] = useState(false);
+  // useEffect(() => {
+  //   setMounted(true);
+  // }, []);
+  interface IToastify {
+    type: string;
+    message: string;
+  }
+
+  const TOAST_CLASSES_TYPE = {
+    error: 'error',
+    warning: 'warning',
+    info: 'info',
+  };
+
+  const toastHandler = ({type, message}: IToastify) => {
+    return {
+      [TOAST_CLASSES_TYPE.error]: toastify.error(message),
+      [TOAST_CLASSES_TYPE.warning]: toastify.warning(message),
+      [TOAST_CLASSES_TYPE.info]: toastify.info(message),
+    }[type];
+  };
+
+  const toast = ({type, message}: IToastify) => {
+    // toastify.info('toast in global context');
+    // toastify.error(message);
+    toastHandler({type: type, message: message});
+    // console.log(TOAST_CLASSES_TYPE.error);
+    // console.log(toastHandler);
+  };
+
   const defaultValue = {
     width,
     height,
@@ -45,6 +79,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     initialColorMode,
     colorMode,
     toggleColorMode,
+    toast,
   };
   return <GlobalContext.Provider value={defaultValue}>{children}</GlobalContext.Provider>;
 };

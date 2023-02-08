@@ -6,6 +6,7 @@ import {
 import Toggle from '../toggle/toggle';
 import {MarketContext} from '../../lib/contexts/market_context';
 import useWindowSize from '../../lib/hooks/use_window_size';
+import {useGlobal} from '../../lib/contexts/global_context';
 
 interface ITradingChartSwitchProps {
   getTradingViewType: (tradingViewState: string) => void;
@@ -21,6 +22,11 @@ const TradingChartSwitch = ({
   const [activeButton, setActiveButton] = useState('live');
   const [activeChartType, setActiveChartType] = useState('candlestick');
   const {showPositionOnChartHandler} = useContext(MarketContext);
+  const {toast} = useGlobal();
+  const testClick = () => {
+    toast({message: 'Position revelation toggle', type: 'warning'});
+  };
+  // console.log(toast);
 
   // Get toggle state and pass to `trading_view` component
   const getDisplayedPositionsState = (bool: boolean) => {
@@ -251,7 +257,7 @@ const TradingChartSwitch = ({
         {/* Diplaying position info toggle */}
         <div className="flex items-center space-x-5">
           <p className="text-lightGray">Positions</p>
-          <div className="pt-1">
+          <div className="pt-1" onClick={testClick}>
             {' '}
             <Toggle
               initialToggleState={INITIAL_POSITION_LABEL_DISPLAYED_STATE}

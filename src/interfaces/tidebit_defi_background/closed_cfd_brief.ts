@@ -1,4 +1,5 @@
 import {ICFDBrief} from './cfd_brief';
+import {dummyCloseCFDDetails} from './closed_cfd_details';
 
 export interface IClosedCFDBrief extends ICFDBrief {
   closedTimestamp: number;
@@ -6,17 +7,13 @@ export interface IClosedCFDBrief extends ICFDBrief {
 }
 
 export const dummyCloseCFDBrief: IClosedCFDBrief = {
-  id: 'TBD202302080000001',
-  ticker: 'ETH',
-  typeOfPosition: 'SELL',
-  openPrice: 37.8,
-  openValue: 739.2,
-  openTimestamp: 12,
-  closedTimestamp: 9,
-  closedValue: 824.3,
-  pNL: {
-    type: 'DOWN',
-    symbol: '-',
-    value: 90204,
-  },
+  id: dummyCloseCFDDetails.id,
+  ticker: dummyCloseCFDDetails.ticker,
+  typeOfPosition: dummyCloseCFDDetails.typeOfPosition,
+  openPrice: dummyCloseCFDDetails.openPrice,
+  openValue: dummyCloseCFDDetails.openValue,
+  openTimestamp: dummyCloseCFDDetails.openTimestamp,
+  pNL: dummyCloseCFDDetails.pnl,
+  closedValue: dummyCloseCFDDetails.closedValue,
+  closedTimestamp: dummyCloseCFDDetails.closedTimestamp,
 };

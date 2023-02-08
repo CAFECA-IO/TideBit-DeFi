@@ -1,23 +1,20 @@
 import React from 'react';
-import {DUMMY_HISTORY_POSITION_DATA} from '../../constants/config';
 import HistoryPositionItem from '../history_position_item/history_position_item';
 
-const historyPositionList = DUMMY_HISTORY_POSITION_DATA.map(items => {
-  return (
-    <div key={items.id}>
+const HistorySubTabMobile = () => {
+  const historyPositionList = (
+    <div>
       <HistoryPositionItem
-        profitOrLoss={items.profitOrLoss}
-        longOrShort={items.longOrShort}
-        openValue={items.openValue}
-        closeValue={items.closeValue}
-        ticker={items.ticker}
-        profitOrLossAmount={items.profitOrLossAmount}
+        profitOrLoss="loss"
+        longOrShort="long"
+        openValue={639.9}
+        closeValue={638.3}
+        ticker="ETH"
+        profitOrLossAmount={34.9}
       />
     </div>
   );
-});
 
-const HistorySubTabMobile = () => {
   return (
     <>
       <div className="flex w-screen flex-col overflow-x-hidden px-8 sm:w-700px">

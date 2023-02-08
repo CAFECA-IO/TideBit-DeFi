@@ -1,7 +1,7 @@
 import {useState, useContext} from 'react';
 import TradingHeader from '../trading_header/trading_header';
 import TradingView from '../trading_view/trading_view';
-import {ViewportContext, useViewport} from '../../lib/contexts/theme_context';
+import {GlobalContext, useGlobal} from '../../lib/contexts/theme_context';
 import TradingViewMobile from '../trading_view_mobile/trading_view_mobile';
 import TradingHeaderMobile from '../trading_header_mobile/trading_header_mobile';
 import TradeStatistics from '../trade_statistics/trade_statistics';
@@ -11,9 +11,10 @@ import CryptoNewsSection from '../crypto_news_section/crypto_news_section';
 import {ICryptoSummary} from '../../interfaces/depre_tidebit_defi_background';
 
 const MarketSection = () => {
-  const {layoutAssertion} = useContext(ViewportContext);
-  const {layoutAssertion: test} = useViewport();
-  // console.log('test', test);
+  // const {layoutAssertion} = useContext(GlobalContext);
+  const {layoutAssertion} = useGlobal();
+
+  // console.log('toggleColorMode', toggleColorMode);
 
   const {liveStatstics, tickerStatic, tickerLiveStatistics, getCryptoSummary} =
     useContext(MarketContext);

@@ -26,6 +26,7 @@ const TradeTab = () => {
   };
 
   // const marginInputRef = useRef<HTMLInputElement>(null);
+
   const [longTooltipStatus, setLongTooltipStatus] = useState(0);
   const [shortTooltipStatus, setShortTooltipStatus] = useState(0);
 

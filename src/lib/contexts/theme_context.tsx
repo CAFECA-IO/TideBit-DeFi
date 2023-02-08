@@ -35,6 +35,6 @@ export const ViewportProvider = ({children}: IViewportProvider) => {
   return <ViewportContext.Provider value={defaultValue}>{children}</ViewportContext.Provider>;
 };
 
-// export const useViewport = () => {
-//   return useContext<IViewportContext>(ViewportContext);
-// };
+export const useViewport = () => {
+  return useContext(ViewportContext);
+};

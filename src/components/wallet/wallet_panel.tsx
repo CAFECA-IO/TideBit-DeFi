@@ -405,6 +405,7 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
 
   const withdrawModalClickHandler = () => {
     // setWithdrawModalVisible(!withdrawModalVisible);
+    globalCtx.dataTransferProcessModalHandler({transferType: 'withdraw'});
     globalCtx.visibleTransferProcessModalHandler();
     setWithdrawProcess('form');
   };
@@ -488,7 +489,7 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
       getTransferData={getWithdrawData}
       // initialAmountInput={undefined}
       submitHandler={withdrawSubmitHandler}
-      transferOptions={availableTransferOptions}
+      // transferOptions={availableTransferOptions}
       getSubmissionState={getWithdrawSubmissionState}
       transferType="withdraw"
       transferStep={withdrawProcess}
@@ -503,7 +504,7 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
       getTransferData={getDepositData}
       // initialAmountInput={user?.walletBalance ?? 0}
       submitHandler={depositSubmitHandler}
-      transferOptions={availableTransferOptions}
+      // transferOptions={availableTransferOptions}
       getSubmissionState={getDepositSubmissionState}
       transferType="deposit"
       transferStep={depositProcess}
@@ -1880,7 +1881,7 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
       />
 
       {depositProcessModal}
-      {withdrawProcessModal}
+      {/* {withdrawProcessModal} */}
 
       {/* TODO: Notes- the below is the same but `{toastNotify}` is easier to be changed and managed  */}
       {toastNotify}

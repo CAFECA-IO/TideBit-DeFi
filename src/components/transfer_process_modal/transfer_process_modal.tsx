@@ -18,7 +18,7 @@ interface ITransferProcessModal {
   modalVisible: boolean;
   modalClickHandler: () => void;
   getSubmissionState: (props: 'success' | 'cancellation' | 'fail') => void;
-  transferOptions: ITransferOptions[];
+  // transferOptions: ITransferOptions[];
   getTransferData: (props: {asset: string; amount: number}) => void;
   submitHandler: (props: {asset: string; amount: number}) => void;
   // initialAmountInput: undefined | number;
@@ -61,28 +61,30 @@ export const TRANSFER_PROCESS_MODAL_STEP_CLASSES = {
 //   },
 // };
 
+// TODO: refactor this component `Transfer Modal`
 const TransferProcessModal = ({
-  transferType,
-  userAvailableBalance,
-  transferStep,
+  transferType, // globalContext
+  userAvailableBalance, // userContext
+  transferStep, // to be removed
   modalVisible,
   modalClickHandler,
-  getSubmissionState,
+  getSubmissionState, // [process] to be removed
   // initialAmountInput,
-  getTransferData,
-  submitHandler,
-  transferOptions: transferOptions,
+  getTransferData, // pass data to parent component
+  submitHandler, // submit information from parent component
+  // transferOptions: transferOptions, // marketContext
   ...otherProps
 }: ITransferProcessModal) => {
-  // const {transferOptions, TRANSFER_OPTIONS_MARKET} = useContext(MarketContext);
-  // console.log('test options in modal:', transferOptions);
-
   // const [modalVisible, setModalVisible] = useState(true);
+  const {availableTransferOptions} = useContext(MarketContext);
+  // console.log('availableTransferOptions: ', availableTransferOptions);
 
   const [showCryptoMenu, setShowCryptoMenu] = useState(false);
-  const [selectedCrypto, setSelectedCrypto] = useState(transferOptions[0]);
+  const [selectedCrypto, setSelectedCrypto] = useState(availableTransferOptions[0]);
   const [amountInput, setAmountInput] = useState<number | undefined>();
   const [showWarning, setShowWarning] = useState(false);
+
+  // console.log('selectedCrypto: ', selectedCrypto);
 
   const regex = /^\d*\.?\d{0,2}$/;
 
@@ -229,7 +231,7 @@ const TransferProcessModal = ({
 
   const warningStyle = showWarning ? 'block' : 'invisible';
 
-  const avaliableCryptoMenu = transferOptions.map(item => {
+  const avaliableCryptoMenu = availableTransferOptions.map(item => {
     return (
       <li
         key={item.label}
@@ -238,7 +240,7 @@ const TransferProcessModal = ({
         }}
       >
         <p className="mx-3 my-1 block rounded px-5 py-2 text-base hover:cursor-pointer hover:bg-darkGray5">
-          {item.label}
+          {item.content}
         </p>
       </li>
     );

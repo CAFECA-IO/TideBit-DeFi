@@ -3,6 +3,7 @@ import useWindowSize from '../hooks/use_window_size';
 import {LAYOUT_BREAKPOINT} from '../../constants/display';
 import {toast as toastify} from 'react-toastify';
 import PositionDetailsModal from '../../components/position_details_modal/position_details_modal';
+import TransferProcessModal from '../../components/transfer_process_modal/transfer_process_modal';
 
 export interface IToastify {
   type: 'error' | 'warning' | 'info' | 'success';
@@ -139,6 +140,67 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     setDataTransferProcessModal(data);
   };
 
+  const [depositProcess, setDepositProcess] = useState<
+    'form' | 'loading' | 'success' | 'cancellation' | 'fail'
+  >('form');
+  const [withdrawProcess, setWithdrawProcess] = useState<
+    'form' | 'loading' | 'success' | 'cancellation' | 'fail'
+  >('form');
+
+  const [withdrawData, setWithdrawData] = useState<{asset: string; amount: number}>();
+  const [depositData, setDepositData] = useState<{asset: string; amount: number}>();
+
+  const getWithdrawSubmissionState = (state: 'success' | 'cancellation' | 'fail') => {
+    // console.log('result boolean: ', state);
+    setWithdrawProcess(state);
+  };
+
+  const getWithdrawData = (props: {asset: string; amount: number}) => {
+    // console.log('get withdraw data:', props);
+    setWithdrawData(props);
+    // withdrawData?.amount
+  };
+
+  const withdrawSubmitHandler = (props: {asset: string; amount: number}) => {
+    // setWithdrawData(props);
+    // withdraw(withdrawData)
+
+    setWithdrawProcess('loading');
+    // console.log('send withdraw request in wallet panel', withdrawData?.asset, withdrawData?.amount);
+
+    setTimeout(() => {
+      setWithdrawProcess('success');
+
+      setTimeout(() => {
+        setWithdrawProcess('cancellation');
+
+        setTimeout(() => {
+          setWithdrawProcess('fail');
+        }, 5000);
+      }, 5000);
+    }, 3000);
+    // withdraw(withdrawData?.asset, withdrawData?.amount)
+    //   .then((res) => {
+    //     console.log('withdraw res: ', res);
+    //     setWithdrawProcess('success');
+    //   })
+    //   .catch((err) => {
+    //     console.log('withdraw err: ', err);
+    //     setWithdrawProcess('fail');
+    //   });
+
+    // const withdraw = async () => {
+    //   try {
+    //     const res = await withdraw(withdrawData?.asset, withdrawData?.amount);
+    //     console.log('withdraw res: ', res);
+    //     setWithdrawProcess('success');
+    //   } catch (err) {
+    //     console.log('withdraw err: ', err);
+    //     setWithdrawProcess('fail');
+    //   }
+    // }
+  };
+
   // const positionDetailedModal = (
   //   <PositionDetailsModal
   //     openCfdDetails={openCfdDetails}
@@ -166,9 +228,30 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     dataTransferProcessModal,
     dataTransferProcessModalHandler,
   };
-  return <GlobalContext.Provider value={defaultValue}>{children}</GlobalContext.Provider>;
+  return (
+    <GlobalContext.Provider value={defaultValue}>
+      <TransferProcessModal
+        getTransferData={getWithdrawData}
+        // initialAmountInput={undefined}
+        submitHandler={withdrawSubmitHandler}
+        // transferOptions={availableTransferOptions}
+        getSubmissionState={getWithdrawSubmissionState}
+        transferType={dataTransferProcessModal.transferType}
+        transferStep={withdrawProcess}
+        userAvailableBalance={123}
+        modalVisible={visibleTransferProcessModal}
+        modalClickHandler={visibleTransferProcessModalHandler}
+      />
+      {children}
+    </GlobalContext.Provider>
+  );
 };
 
 export const useGlobal = () => {
-  return useContext(GlobalContext);
+  const context = useContext(GlobalContext);
+  // If not in a provider, it still reveals `createContext<IGlobalContext>` data, meaning it'll never be falsy.
+  // if (context === undefined) {
+  //   throw new Error('useGlobal must be used within a GlobalProvider');
+  // }
+  return context;
 };

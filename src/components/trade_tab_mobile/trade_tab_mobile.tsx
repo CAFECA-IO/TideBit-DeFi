@@ -1,5 +1,6 @@
 import React, {useState, useContext} from 'react';
 import {UserContext} from '../../lib/contexts/user_context';
+//import {MarketContext} from '../../lib/contexts/market_context';
 import {ImCross} from 'react-icons/im';
 import Toggle from '../toggle/toggle';
 import TradingInput from '../trading_input/trading_input';
@@ -9,9 +10,15 @@ import RippleButton from '../ripple_button/ripple_button';
 import {UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
 import {MARGIN_LIMIT_DIGITS} from '../../constants/config';
 
+// 1388.4 * 0.82
+const LONG_RESTRICTION_SL = 1138.48;
+// 1388.4 * 1.18
+const SHORT_RESTRICTION_SL = 1638.31;
+
 const TradeTabMobile = () => {
+  const {user} = useContext(UserContext);
   // TODO: Use Stop loss limit and other data from Market context
-  // TODO: USER_BALANCE from userContext
+  // TODO: USER_BALANCE from userContext => ok line 101
   const MARKET_PRICE = 6290.41;
   const LIQUIDATION_PRICE = 7548;
   const USER_BALANCE = 1000;
@@ -21,12 +28,15 @@ const TradeTabMobile = () => {
   const shortPrice = (MARKET_PRICE * 0.992).toFixed(2); // market price * (1-spread)
   const longRecommendedTp = Number((MARKET_PRICE * 1.15).toFixed(2)); // recommendedTp // MARKET_PRICE * 1.15
   const longRecommendedSl = Number((MARKET_PRICE * 0.85).toFixed(2)); // recommendedSl // MARKET_PRICE * 0.85
+  // const shortRecommendedTp = Number((MARKET_PRICE * 0.85).toFixed(2));
+  // const shortRecommendedSl = Number((MARKET_PRICE * 1.15).toFixed(2));
 
   const roundToDecimalPlaces = (val: number, precision: number): number => {
     const roundedNumber = Number(val.toFixed(precision));
     return roundedNumber;
   };
 
+  // const marginInputRef = useRef<HTMLInputElement>(null);
   const [longTooltipStatus, setLongTooltipStatus] = useState(0);
   const [shortTooltipStatus, setShortTooltipStatus] = useState(0);
 
@@ -89,29 +99,25 @@ const TradeTabMobile = () => {
     const roundedMargin = roundToDecimalPlaces(margin, 2);
     setRequiredMargin(roundedMargin);
 
-    setMarginWarning(margin > USER_BALANCE);
+    setMarginWarning(margin > (user?.balance?.available ?? 0));
 
     setMarginLength(roundedMargin.toString().length);
     setValueOfPositionLength(roundedValueOfPosition.toString().length);
   };
 
   const getToggledLongTpSetting = (bool: boolean) => {
-    // console.log('getToggledLongTpSetting', bool);
     setLongTpToggle(bool);
   };
 
   const getToggledLongSlSetting = (bool: boolean) => {
-    // console.log('getToggledLongSlSetting', bool);
     setLongSlToggle(bool);
   };
 
   const getToggledShortTpSetting = (bool: boolean) => {
-    // console.log('getToggledShortTpSetting', bool);
     setShortTpToggle(bool);
   };
 
   const getToggledShortSlSetting = (bool: boolean) => {
-    // console.log('getToggledShortSlSetting', bool);
     setShortSlToggle(bool);
   };
 
@@ -192,9 +198,10 @@ const TradeTabMobile = () => {
     </div>
   );
 
+  // TODO:　Guranteed stop Layout
   const longGuaranteedStop = (
     <div className={`${isDisplayedLongSlSetting}`}>
-      <div className="mt-4 flex items-center">
+      <div className="flex items-center">
         <input
           type="checkbox"
           value=""
@@ -207,7 +214,7 @@ const TradeTabMobile = () => {
           <AiOutlineQuestionCircle size={20} />
         </span> */}
           {/* tooltip */}
-          <div className="ml-1">
+          <div className="ml-2">
             <div
               className="relative"
               onMouseEnter={() => setLongTooltipStatus(3)}
@@ -236,17 +243,19 @@ const TradeTabMobile = () => {
 
   const longSetting = (
     <div
-      className={`${activeTab === 'Long' ? 'flex' : 'hidden'} flex-col items-center justify-center`}
+      className={`${
+        activeTab === 'Long' ? 'flex' : 'hidden'
+      } w-full flex-col items-center justify-center space-y-5`}
     >
       {/* Take Profit Setting */}
-      <div className="flex w-full items-center justify-between p-2">
+      <div className="flex w-full items-center justify-between">
         <div className="text-sm text-lightGray">Close at profit</div>
         {displayedLongTpSetting}
         <Toggle initialToggleState={longTpToggle} getToggledState={getToggledLongTpSetting} />
       </div>
 
       {/* Stop Loss Setting */}
-      <div className="flex w-full flex-col items-center justify-between p-2">
+      <div className="flex w-full flex-col items-center justify-between space-y-5">
         <div className="flex w-full items-center justify-between">
           <div className="text-sm text-lightGray">Clost at loss</div>
           <div className="w-105px">{displayedLongSlSetting}</div>
@@ -263,8 +272,10 @@ const TradeTabMobile = () => {
     <div className={isDisplayedShortTpSetting}>
       <TradingInput
         lowerLimit={0}
-        upperLimit={1000000}
         inputInitialValue={shortTpValue}
+        inputValueFromParent={shortTpValue}
+        setInputValueFromParent={setShortTpValue}
+        getInputValue={getShortTpValue}
         inputPlaceholder="profit-taking setting"
         inputName="shortTpInput"
         inputSize="h-25px w-70px text-sm"
@@ -278,8 +289,10 @@ const TradeTabMobile = () => {
     <div className={isDisplayedShortSlSetting}>
       <TradingInput
         lowerLimit={0}
-        upperLimit={1000000}
         inputInitialValue={shortSlValue}
+        inputValueFromParent={shortSlValue}
+        setInputValueFromParent={setShortSlValue}
+        getInputValue={getShortSlValue}
         inputPlaceholder="stop-loss setting"
         inputName="shortSlInput"
         inputSize="h-25px w-70px text-sm"
@@ -291,7 +304,7 @@ const TradeTabMobile = () => {
 
   const shortGuaranteedStop = (
     <div className={isDisplayedShortSlSetting}>
-      <div className="mt-4 flex items-center">
+      <div className="flex items-center">
         <input
           type="checkbox"
           value=""
@@ -304,7 +317,7 @@ const TradeTabMobile = () => {
           <AiOutlineQuestionCircle size={20} />
         </span> */}
           {/* tooltip */}
-          <div className="ml-1">
+          <div className="ml-2">
             <div
               className="relative"
               onMouseEnter={() => setShortTooltipStatus(3)}
@@ -335,17 +348,17 @@ const TradeTabMobile = () => {
     <div
       className={`${
         activeTab === 'Short' ? 'flex' : 'hidden'
-      } flex-col items-center justify-center`}
+      } w-full flex-col items-center justify-center space-y-5`}
     >
       {/* Take Profit Setting */}
-      <div className="flex w-full items-center justify-between p-2">
+      <div className="flex w-full items-center justify-between">
         <div className="text-sm text-lightGray">Close at profit</div>
         {displayedShortTpSetting}
         <Toggle initialToggleState={shortTpToggle} getToggledState={getToggledShortTpSetting} />
       </div>
 
       {/* Stop Loss Setting */}
-      <div className="flex w-full flex-col items-center justify-between p-2">
+      <div className="flex w-full flex-col items-center justify-between space-y-5">
         <div className="flex w-full items-center justify-between">
           <div className="text-sm text-lightGray">Clost at loss</div>
           <div className="w-105px">{displayedShortSlSetting}</div>
@@ -373,8 +386,6 @@ const TradeTabMobile = () => {
   const shortButtonStyles =
     activeTab === 'Short' && openSubMenu ? 'z-50 w-320px -translate-x-16 absolute' : 'ml-4 w-120px'; //z-50 w-320px -translate-x-16 absolute
 
-  const {user} = useContext(UserContext);
-
   const subMenu = (
     <div
       className={`flex h-screen w-screen flex-col items-center bg-darkGray ${
@@ -387,7 +398,7 @@ const TradeTabMobile = () => {
 
       {/* ---------- margin setting ---------- */}
       <div className="w-screen px-8 sm:w-1/2">
-        <div className="flex flex-col items-center justify-between space-y-3">
+        <div className="flex flex-col items-center justify-between space-y-7">
           <div className="flex w-full items-center justify-center">
             <UserOverview
               depositAvailable={user?.balance?.available ?? 0}
@@ -400,7 +411,7 @@ const TradeTabMobile = () => {
           {/* ---universal trading info area--- */}
           <div className="flex w-full flex-col items-center justify-center text-lightGray">
             <div className="flex justify-center text-sm">ETH</div>
-            <div className="mt-2 flex flex-col items-center justify-center">
+            <div className="mt-2 flex flex-col items-center justify-center space-y-2">
               <div className="text-sm">Leverage</div>
               <div className="text-base text-lightWhite">1:5</div>
             </div>
@@ -419,8 +430,10 @@ const TradeTabMobile = () => {
             </div>
 
             <div className="w-1/2">
-              <div className="text-sm text-lightGray">Value</div>${' '}
-              {valueOfPosition?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)} USDT
+              <div className="text-sm text-lightGray">Value</div>
+              <div className={`text-base text-lightWhite ${isDisplayedValueSize}`}>
+                $ {valueOfPosition?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)} USDT
+              </div>
             </div>
           </div>
           {/* Take Profit & Stop Loss Setting */}

@@ -5,7 +5,6 @@ import type {AppProps} from 'next/app';
 import {appWithTranslation} from 'next-i18next';
 import {MarketProvider} from '../lib/contexts/market_context';
 import {UserProvider} from '../lib/contexts/user_context';
-import {ViewportProvider} from '../lib/contexts/theme_context';
 import {GlobalProvider} from '../lib/contexts/global_context';
 import {ToastContainer} from 'react-toastify';
 
@@ -15,9 +14,9 @@ function App({Component, pageProps}: AppProps) {
       <div className="custom-no-scrollbar selection:bg-tidebitTheme dark:selection:bg-tidebitTheme">
         <UserProvider>
           <MarketProvider>
-            <ViewportProvider>
+            <GlobalProvider>
               <Component {...pageProps} />
-            </ViewportProvider>
+            </GlobalProvider>
             {/* One container avoids duplicating toast overlaying */}
             <ToastContainer
               position="bottom-left"

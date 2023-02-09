@@ -124,16 +124,16 @@ const dummyOpenCFDDetails1: IOpenCFDDetails = {
 //   };
 // });
 
-export const dummyOpenCfds = [
+export const dummyOpenCfds: IOpenCFDDetails[] = [
   {
-    id: 'TBD20230207001',
+    id: 'TBD202302070000001',
     ticker: 'ETH',
     amount: 1.8,
     state: 'OPENING',
     typeOfPosition: 'BUY',
     leverage: 5,
     margin: randomIntFromInterval(650, 10000),
-    openPrice: randomIntFromInterval(10, 100),
+    openPrice: 24058,
     fee: 0,
     guaranteedStop: false,
     guaranteedStopFee: 0.77,
@@ -143,7 +143,7 @@ export const dummyOpenCfds = [
     pnl: {
       type: 'UP',
       symbol: '+',
-      value: randomIntFromInterval(1000, 10000),
+      value: 90752,
     },
     liquidationPrice: 19537,
     takeProfit: 74521,

@@ -4,3 +4,5 @@ import {ITickerLineGraph} from './ticker_line_graph';
 export interface IOpenCFDBrief extends ICFDBrief {
   positionLineGraph: ITickerLineGraph;
 }
+
+export const dummyOpenCFDBriefs: IOpenCFDBrief[] = [];

@@ -670,12 +670,12 @@ export const MarketProvider = ({children}: IMarketProvider) => {
   const userCtx = useContext(UserContext);
   const updateAvailableTickers = () => {
     let updateTickers = [...addPropertyToArray];
-    if (userCtx.user) {
+    if (userCtx.id) {
       updateTickers = updateTickers.map(ticker => {
         return {
           ...ticker,
-          starred: userCtx.user
-            ? userCtx.user.favoriteTickers.some(currency => currency === ticker.currency)
+          starred: userCtx.id
+            ? userCtx.favoriteTickers.some(currency => currency === ticker.currency)
             : false,
         };
       });

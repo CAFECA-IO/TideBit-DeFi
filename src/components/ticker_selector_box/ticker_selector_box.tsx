@@ -172,7 +172,7 @@ const TickerSelectorBox = ({
     const favoriteTabCardsData = cryptoCardsData.filter(cryptoCardData => cryptoCardData.starred);
     setFilteredFavorites(favoriteTabCardsData);
     console.log(`favoriteTabCardsData`, favoriteTabCardsData);
-  }, [userCtx.user]);
+  }, [userCtx.favoriteTickers]);
 
   // 搜尋完後關掉 ticker box 會顯示剛剛的搜尋結果但是input是空的 => input value={searches}
   useEffect(() => {

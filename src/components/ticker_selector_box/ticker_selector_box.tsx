@@ -344,7 +344,7 @@ const TickerSelectorBox = ({
             All
           </button>
         </div>
-        {userCtx.id ? (
+        {userCtx.isConnected ? (
           <div className="">
             <button
               type="button"

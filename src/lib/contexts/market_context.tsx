@@ -672,11 +672,11 @@ export const MarketProvider = ({children}: IMarketProvider) => {
   const userCtx = useContext(UserContext);
   const updateAvailableTickers = () => {
     let updateTickers = [...addPropertyToArray];
-    if (userCtx.id) {
+    if (userCtx.isConnected) {
       updateTickers = updateTickers.map(ticker => {
         return {
           ...ticker,
-          starred: userCtx.id
+          starred: userCtx.isConnected
             ? userCtx.favoriteTickers.some(currency => currency === ticker.currency)
             : false,
         };

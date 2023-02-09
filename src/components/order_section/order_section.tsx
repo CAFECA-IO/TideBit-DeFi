@@ -29,14 +29,14 @@ const OrderSection = () => {
 
   const currentTab =
     activeTab === 'Position' ? (
-      userCtx.id ? (
+      userCtx.isConnected ? (
         <PositionTab />
       ) : (
         <PositionVisitorTab />
       )
     ) : !isCFDTradable ? (
       <TradeSuspendedTab />
-    ) : !userCtx.id ? (
+    ) : !userCtx.isConnected ? (
       <TradeVisitorTab />
     ) : (
       <TradeTab />

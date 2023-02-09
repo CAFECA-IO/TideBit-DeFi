@@ -2,6 +2,7 @@ import {createContext, useState, useEffect, useContext, Dispatch, SetStateAction
 import useWindowSize from '../hooks/use_window_size';
 import {LAYOUT_BREAKPOINT} from '../../constants/display';
 import {toast as toastify} from 'react-toastify';
+import PositionDetailsModal from '../../components/position_details_modal/position_details_modal';
 
 export interface IToastify {
   type: 'error' | 'warning' | 'info' | 'success';
@@ -59,8 +60,13 @@ export interface IGlobalContext {
   toast: (props: IToastify) => void;
   visiblePositionDetailsModal: boolean;
   visiblePositionDetailsModalHandler: (visible: boolean) => void;
-  positionDetailsModalData: IDataPositionDetailsModal | null;
-  positionDetailsModalDataHandler: (data: IDataPositionDetailsModal) => void;
+  dataPositionDetailsModal: IDataPositionDetailsModal | null;
+  dataPositionDetailsModalHandler: (data: IDataPositionDetailsModal) => void;
+
+  visibleTransferProcessModal: boolean;
+  visibleTransferProcessModalHandler: () => void;
+  dataTransferProcessModal: IDataTransferProcessModal | null;
+  dataTransferProcessModalHandler: (data: IDataTransferProcessModal) => void;
 }
 
 export const GlobalContext = createContext<IGlobalContext>({
@@ -73,12 +79,21 @@ export const GlobalContext = createContext<IGlobalContext>({
   toast: () => null,
   visiblePositionDetailsModal: false,
   visiblePositionDetailsModalHandler: () => null,
-  positionDetailsModalData: null,
-  positionDetailsModalDataHandler: () => null,
+  dataPositionDetailsModal: null,
+  dataPositionDetailsModalHandler: () => null,
+
+  visibleTransferProcessModal: false,
+  visibleTransferProcessModalHandler: () => null,
+  dataTransferProcessModal: null,
+  dataTransferProcessModalHandler: () => null,
 });
 
 export interface IDataPositionDetailsModal {
   orderIdPositionDetailsModal: string;
+}
+
+export interface IDataTransferProcessModal {
+  transferType: 'deposit' | 'withdraw';
 }
 
 const initialColorMode: ColorModeUnion = 'dark';
@@ -105,19 +120,32 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
   };
 
   const [visiblePositionDetailsModal, setVisiblePositionDetailsModal] = useState(false);
-  const [positionDetailsModalData, setDataPositionDetailsModal] =
+  const [dataPositionDetailsModal, setDataPositionDetailsModal] =
     useState<IDataPositionDetailsModal>({orderIdPositionDetailsModal: ''});
   const visiblePositionDetailsModalHandler = (visible: boolean) => {
     setVisiblePositionDetailsModal(visible);
-    // toast({
-    //   type: 'info',
-    //   message: 'visiblePositionDetailsModalHandler',
-    //   toastId: 'visiblePositionDetailsModalHandler',
-    // });
   };
-  const positionDetailsModalDataHandler = (data: IDataPositionDetailsModal) => {
+  const dataPositionDetailsModalHandler = (data: IDataPositionDetailsModal) => {
     setDataPositionDetailsModal(data);
   };
+
+  const [visibleTransferProcessModal, setVisibleTransferProcessModal] = useState(false);
+  const [dataTransferProcessModal, setDataTransferProcessModal] =
+    useState<IDataTransferProcessModal>({transferType: 'deposit'});
+  const visibleTransferProcessModalHandler = () => {
+    setVisibleTransferProcessModal(!visibleTransferProcessModal);
+  };
+  const dataTransferProcessModalHandler = (data: IDataTransferProcessModal) => {
+    setDataTransferProcessModal(data);
+  };
+
+  // const positionDetailedModal = (
+  //   <PositionDetailsModal
+  //     openCfdDetails={openCfdDetails}
+  //     modalVisible={visiblePositionDetailsModal}
+  //     modalClickHandler={visiblePositionDetailsModalHandler}
+  //   />
+  // );
 
   const defaultValue = {
     width,
@@ -127,10 +155,16 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     colorMode,
     toggleColorMode,
     toast,
+
     visiblePositionDetailsModal,
     visiblePositionDetailsModalHandler,
-    positionDetailsModalData,
-    positionDetailsModalDataHandler,
+    dataPositionDetailsModal,
+    dataPositionDetailsModalHandler,
+
+    visibleTransferProcessModal,
+    visibleTransferProcessModalHandler,
+    dataTransferProcessModal,
+    dataTransferProcessModalHandler,
   };
   return <GlobalContext.Provider value={defaultValue}>{children}</GlobalContext.Provider>;
 };

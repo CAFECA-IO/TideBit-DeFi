@@ -31,6 +31,7 @@ import {ImExit} from 'react-icons/im';
 import TransferProcessModal from '../transfer_process_modal/transfer_process_modal';
 import {MarketContext} from '../../lib/contexts/market_context';
 import {UserContext} from '../../lib/contexts/user_context';
+import {useGlobal} from '../../lib/contexts/global_context';
 
 // import Connector from '@walletconnect/core';
 
@@ -195,6 +196,7 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
   //   setComponentVisible: setQrcodeModalVisible,
   // } = useOuterClick<HTMLDivElement>(false);
 
+  const globalCtx = useGlobal();
   const {availableTransferOptions} = useContext(MarketContext);
 
   const {t}: {t: TranslateFunction} = useTranslation('common');
@@ -402,7 +404,8 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
   };
 
   const withdrawModalClickHandler = () => {
-    setWithdrawModalVisible(!withdrawModalVisible);
+    // setWithdrawModalVisible(!withdrawModalVisible);
+    globalCtx.visibleTransferProcessModalHandler();
     setWithdrawProcess('form');
   };
 
@@ -490,8 +493,8 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
       transferType="withdraw"
       transferStep={withdrawProcess}
       userAvailableBalance={user?.balance?.available ?? 0}
-      modalVisible={withdrawModalVisible}
-      modalClickHandler={withdrawModalClickHandler}
+      modalVisible={globalCtx.visibleTransferProcessModal}
+      modalClickHandler={globalCtx.visibleTransferProcessModalHandler}
     />
   );
 

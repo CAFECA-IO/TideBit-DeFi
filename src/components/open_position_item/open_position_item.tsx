@@ -44,8 +44,8 @@ const OpenPositionItem = ({
   const {
     visiblePositionDetailsModal,
     visiblePositionDetailsModalHandler,
-    positionDetailsModalDataHandler,
-    positionDetailsModalData,
+    dataPositionDetailsModalHandler: positionDetailsModalDataHandler,
+    dataPositionDetailsModal: positionDetailsModalData,
     toast,
   } = useGlobal();
 

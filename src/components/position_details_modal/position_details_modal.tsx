@@ -16,7 +16,7 @@ import {useGlobal} from '../../lib/contexts/global_context';
 
 interface IPositionDetailsModal {
   modalVisible: boolean;
-  modalClickHandler: () => void;
+  modalClickHandler: (bool?: boolean | any) => void;
   openCfdDetails: IOpenCFDDetails;
   id?: string;
 }

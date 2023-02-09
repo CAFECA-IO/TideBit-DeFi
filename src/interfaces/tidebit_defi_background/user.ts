@@ -61,12 +61,186 @@ export interface IUser {
   // + createOrder(orderType<CFD, Deposite, Withdraw, SpotTrade>, data):PublicOrder
 }
 
-export const dummyOpenCfds: IOpenCFDDetails[] = [
-  dummyOpenCFDDetails,
-  dummyOpenCFDDetails,
-  dummyOpenCFDDetails,
-  dummyOpenCFDDetails,
+function randomIntFromInterval(min: number, max: number) {
+  return Math.floor(Math.random() * (max - min + 1) + min);
+}
+
+const dummyOpenCFDDetails1: IOpenCFDDetails = {
+  id: 'TBD202302070000001',
+  ticker: 'ETH',
+  amount: 1.8,
+  state: 'OPENING',
+  typeOfPosition: 'BUY',
+  leverage: 5,
+  margin: randomIntFromInterval(650, 10000),
+  openPrice: 24058,
+  fee: 0,
+  guaranteedStop: false,
+  guaranteedStopFee: 0.77,
+  openTimestamp: 1675299651,
+  scheduledClosingTimestamp: 1675386051, // openTimestamp + 86400
+  openValue: 74589658,
+  pnl: {
+    type: 'UP',
+    symbol: '+',
+    value: 90752,
+  },
+  liquidationPrice: 19537,
+  takeProfit: 74521,
+  stopLoss: 25250,
+  recommendedTp: 35412,
+  recommendedSl: 19453,
+};
+
+// [true, false][randomIntFromInterval(0, 1)]
+// ['+', '-'][randomIntFromInterval(0, 1)]
+
+// const dummyOpenCFDDetailsArray: IOpenCFDDetails[] = Array.from({ length: 10 }, () => {
+//   return {
+//     id: `TBD${randomIntFromInterval(100000000, 999999999)}`,
+//     ticker: ['ETH', 'BTC'][randomIntFromInterval(0, 1)],
+//     amount: randomIntFromInterval(1, 10) + Math.random(),
+//     state: 'OPENING',
+//     typeOfPosition: ['BUY', 'SELL'][randomIntFromInterval(0, 1)],
+//     leverage: 5,
+//     margin: randomIntFromInterval(650, 10000),
+//     openPrice: randomIntFromInterval(10000, 100000),
+//     fee: Math.random(),
+//     guaranteedStop: false,
+//     guaranteedStopFee: Math.random(),
+//     openTimestamp: 1675299651,
+//     scheduledClosingTimestamp: 1675386051,
+//     openValue: randomIntFromInterval(1000000, 1000000000),
+//     pnl: {
+//       type: 'UP',
+//       symbol: '+',
+//       value: 90752,
+//     },
+//     liquidationPrice: randomIntFromInterval(10000, 100000),
+//     // takeProfit: randomIntFromInterval(10000, 100000),
+//     // stopLoss: randomIntFromInterval(10000, 100000),
+//     recommendedTp: randomIntFromInterval(10000, 100000),
+//     recommendedSl: randomIntFromInterval(10000, 100000),
+//   };
+// });
+
+export const dummyOpenCfds = [
+  {
+    id: 'TBD20230207001',
+    ticker: 'ETH',
+    amount: 1.8,
+    state: 'OPENING',
+    typeOfPosition: 'BUY',
+    leverage: 5,
+    margin: randomIntFromInterval(650, 10000),
+    openPrice: randomIntFromInterval(10, 100),
+    fee: 0,
+    guaranteedStop: false,
+    guaranteedStopFee: 0.77,
+    openTimestamp: 1675299651,
+    scheduledClosingTimestamp: 1675386051, // openTimestamp + 86400
+    openValue: 74589658,
+    pnl: {
+      type: 'UP',
+      symbol: '+',
+      value: randomIntFromInterval(1000, 10000),
+    },
+    liquidationPrice: 19537,
+    takeProfit: 74521,
+    stopLoss: 25250,
+    recommendedTp: 35412,
+    recommendedSl: 19453,
+  },
+  {
+    id: 'TBD20230207002',
+    ticker: 'ETH',
+    amount: 1.8,
+    state: 'OPENING',
+    typeOfPosition: 'BUY',
+    leverage: 5,
+    margin: randomIntFromInterval(650, 10000),
+    openPrice: 24058,
+    fee: 0,
+    guaranteedStop: false,
+    guaranteedStopFee: 0.77,
+    openTimestamp: 1675299651,
+    scheduledClosingTimestamp: 1675386051, // openTimestamp + 86400
+    openValue: 74589658,
+    pnl: {
+      type: 'UP',
+      symbol: '+',
+      value: randomIntFromInterval(1000, 10000),
+    },
+    liquidationPrice: 19537,
+    takeProfit: 74521,
+    stopLoss: 25250,
+    recommendedTp: 35412,
+    recommendedSl: 19453,
+  },
+  {
+    id: 'TBD20230207003',
+    ticker: 'ETH',
+    amount: 1.8,
+    state: 'OPENING',
+    typeOfPosition: 'BUY',
+    leverage: 5,
+    margin: randomIntFromInterval(650, 10000),
+    openPrice: 24058,
+    fee: 0,
+    guaranteedStop: false,
+    guaranteedStopFee: 0.77,
+    openTimestamp: 1675299651,
+    scheduledClosingTimestamp: 1675386051, // openTimestamp + 86400
+    openValue: 74589658,
+    pnl: {
+      type: 'UP',
+      symbol: '+',
+      value: 9075200,
+    },
+    liquidationPrice: 19537,
+    takeProfit: 74521,
+    stopLoss: 25250,
+    recommendedTp: 35412,
+    recommendedSl: 19453,
+  },
+  {
+    id: 'TBD20230207004',
+    ticker: 'ETH',
+    amount: 1.8,
+    state: 'OPENING',
+    typeOfPosition: 'BUY',
+    leverage: 5,
+    margin: randomIntFromInterval(650, 10000),
+    openPrice: 24058,
+    fee: 0,
+    guaranteedStop: false,
+    guaranteedStopFee: 0.77,
+    openTimestamp: 1675299651,
+    scheduledClosingTimestamp: 1675386051, // openTimestamp + 86400
+    openValue: 74589658,
+    pnl: {
+      type: 'UP',
+      symbol: '+',
+      value: randomIntFromInterval(1000, 10000),
+    },
+    liquidationPrice: 19537,
+    takeProfit: 74521,
+    stopLoss: 25250,
+    recommendedTp: 35412,
+    recommendedSl: 19453,
+  },
 ];
+
+// TODO: Produce different data for each elements
+// : IOpenCFDDetails[]
+// export const dummyOpenCfds = [...dummyOpenCfdOrders]
+
+// [
+//   dummyOpenCFDDetails,
+//   dummyOpenCFDDetails,
+//   dummyOpenCFDDetails,
+//   dummyOpenCFDDetails,
+// ];
 
 // -----------Ignores below----------------
 // 拿到所有withdraw / deposit / CFD 紀錄

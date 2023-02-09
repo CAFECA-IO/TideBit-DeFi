@@ -41,21 +41,21 @@ const OpenPositionItem = ({
   if (longOrShort !== 'long' && longOrShort !== 'short') return <></>;
   if (profitOrLoss !== 'profit' && profitOrLoss !== 'loss') return <></>;
   if (ticker !== 'ETH' && ticker !== 'BTC') return <></>;
-  const {
-    visiblePositionDetailsModal,
-    visiblePositionDetailsModalHandler,
-    positionDetailsModalDataHandler,
-  } = useGlobal();
+  // const {
+  //   visiblePositionDetailsModal,
+  //   visiblePositionDetailsModalHandler,
+  //   positionDetailsModalDataHandler,
+  // } = useGlobal();
 
   const [detailedModalVisible, setDetailedModalVisible] = useState(false);
 
   const detailedModalClickHandler = () => {
-    // setDetailedModalVisible(!detailedModalVisible);
-    visiblePositionDetailsModalHandler(!visiblePositionDetailsModal);
+    setDetailedModalVisible(!detailedModalVisible);
+    // visiblePositionDetailsModalHandler(!visiblePositionDetailsModal);
   };
 
   const passOrderIdHandler = (orderId: string) => {
-    positionDetailsModalDataHandler({orderIdPositionDetails: orderId});
+    // positionDetailsModalDataHandler({orderIdPositionDetails: orderId});
   };
 
   // const progressPercentage = 50;
@@ -162,7 +162,7 @@ const OpenPositionItem = ({
       <PositionDetailsModal
         // openCfdDetails={dataFormat}
         openCfdDetails={openCfdDetails}
-        modalVisible={visiblePositionDetailsModal}
+        modalVisible={detailedModalVisible}
         modalClickHandler={detailedModalClickHandler}
       />
     </div>

@@ -44,6 +44,7 @@ const PositionDetailsModal = ({
   modalClickHandler,
   openCfdDetails,
 }: IPositionDetailsModal) => {
+  // console.log('openCfdDetails in details modal: ', openCfdDetails.id);
   const globalContext = useGlobal();
 
   const initialTpToggle = openCfdDetails?.takeProfit ? true : false;

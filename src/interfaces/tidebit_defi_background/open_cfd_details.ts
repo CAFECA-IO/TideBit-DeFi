@@ -16,7 +16,7 @@ export const dummyOpenCFDDetails: IOpenCFDDetails = {
   typeOfPosition: 'BUY',
   leverage: 5,
   margin: randomIntFromInterval(650, 10000),
-  openPrice: 24058,
+  openPrice: randomIntFromInterval(10, 100),
   fee: 0,
   guaranteedStop: false,
   guaranteedStopFee: 0.77,

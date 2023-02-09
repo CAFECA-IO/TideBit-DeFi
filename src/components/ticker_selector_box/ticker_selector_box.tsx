@@ -36,7 +36,7 @@ interface ICryptoCardData {
   tokenImg: string;
   lineGraphProps: ILineGraphProps;
 
-  getStarredStateCallback: (bool: boolean) => void;
+  // getStarredStateCallback: (bool: boolean) => void;
 
   starColor?: string;
   gradientColor?: string;
@@ -87,16 +87,16 @@ const TickerSelectorBox = ({
       const color = CRYPTO_CARD_COLORS.find(i => i.label === each.currency);
       const addCallbackFunc: ICryptoCardData = {
         ...each,
-        getStarredStateCallback: (bool: boolean) => {
-          // `bool` 是從 Crypto Card 得到的最新的 starred 狀態，each.starred只是從 availableTickers 得到的初始 starred 狀態
-          // console.log('if starred: ', each.starred, 'boolean: ', bool);
-          if (bool) {
-            userCtx.addFavorites(each.currency);
-          } else {
-            userCtx.removeFavorites(each.currency);
-          }
-          // console.log(each.currency, 'clicked');
-        },
+        // getStarredStateCallback: (bool: boolean) => {
+        //   // `bool` 是從 Crypto Card 得到的最新的 starred 狀態，each.starred只是從 availableTickers 得到的初始 starred 狀態
+        //   // console.log('if starred: ', each.starred, 'boolean: ', bool);
+        //   if (bool) {
+        //     userCtx.addFavorites(each.currency);
+        //   } else {
+        //     userCtx.removeFavorites(each.currency);
+        //   }
+        //   // console.log(each.currency, 'clicked');
+        // },
         starColor: color?.starColor,
         gradientColor: color?.gradientColor,
       };
@@ -245,7 +245,7 @@ const TickerSelectorBox = ({
             star={cryptoCard.star}
             starColor={cryptoCard.starColor}
             starred={cryptoCard.starred}
-            getStarredState={cryptoCard.getStarredStateCallback}
+            // getStarredState={cryptoCard.getStarredStateCallback}
             chain={cryptoCard.chain}
             currency={cryptoCard.currency}
             price={cryptoCard.price}
@@ -264,7 +264,7 @@ const TickerSelectorBox = ({
           star={cryptoCard.star}
           starColor={cryptoCard.starColor}
           starred={cryptoCard.starred}
-          getStarredState={cryptoCard.getStarredStateCallback}
+          // getStarredState={cryptoCard.getStarredStateCallback}
           chain={cryptoCard.chain}
           currency={cryptoCard.currency}
           price={cryptoCard.price}
@@ -286,7 +286,7 @@ const TickerSelectorBox = ({
           star={cryptoCard.star}
           starColor={cryptoCard.starColor}
           starred={cryptoCard.starred}
-          getStarredState={cryptoCard.getStarredStateCallback}
+          // getStarredState={cryptoCard.getStarredStateCallback}
           chain={cryptoCard.chain}
           currency={cryptoCard.currency}
           price={cryptoCard.price}
@@ -305,7 +305,7 @@ const TickerSelectorBox = ({
         star={cryptoCard.star}
         starColor={cryptoCard.starColor}
         starred={cryptoCard.starred}
-        getStarredState={cryptoCard.getStarredStateCallback}
+        // getStarredState={cryptoCard.getStarredStateCallback}
         chain={cryptoCard.chain}
         currency={cryptoCard.currency}
         price={cryptoCard.price}

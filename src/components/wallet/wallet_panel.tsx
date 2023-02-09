@@ -227,7 +227,7 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
     provider: providers.Web3Provider;
   }
 
-  const {user} = useContext(UserContext);
+  const userCtx = useContext(UserContext);
 
   const [connecting, setConnecting] = useState(false);
 
@@ -489,7 +489,7 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
       getSubmissionState={getWithdrawSubmissionState}
       transferType="withdraw"
       transferStep={withdrawProcess}
-      userAvailableBalance={user?.balance?.available ?? 0}
+      userAvailableBalance={userCtx.balance?.available ?? 0}
       modalVisible={withdrawModalVisible}
       modalClickHandler={withdrawModalClickHandler}
     />
@@ -498,13 +498,13 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
   const depositProcessModal = (
     <TransferProcessModal
       getTransferData={getDepositData}
-      // initialAmountInput={user?.walletBalance ?? 0}
+      // initialAmountInput={userCtx.walletBalance ?? 0}
       submitHandler={depositSubmitHandler}
       transferOptions={availableTransferOptions}
       getSubmissionState={getDepositSubmissionState}
       transferType="deposit"
       transferStep={depositProcess}
-      userAvailableBalance={user?.walletBalance ?? 0}
+      userAvailableBalance={userCtx.walletBalance ?? 0}
       modalVisible={depositModalVisible}
       modalClickHandler={depositModalClickHandler}
     />

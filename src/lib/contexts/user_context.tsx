@@ -19,21 +19,6 @@ import {
   dummyCloseCFDDetails,
 } from '../../interfaces/tidebit_defi_background/closed_cfd_details';
 
-export interface ITickerData {
-  currency: string;
-  chain: string;
-  star: boolean;
-  starred: boolean;
-  // starColor: string;
-  // getStarredStateCallback: (bool: boolean) => void;
-  price: number;
-  fluctuating: number;
-  // gradientColor: string;
-  tokenImg: string;
-
-  lineGraphProps: ILineGraphProps;
-}
-
 function randomNumber(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
@@ -56,19 +41,6 @@ const strokeColorDisplayed = (sampleArray: number[]) => {
 
   // priceColor = 'text-lightRed';
   return [PROFIT_LOSS_COLOR_TYPE.loss];
-};
-
-const SAMPLE_USER = {
-  id: '002',
-  username: 'Tidebit DeFi Test User',
-  wallet: ['0xb54898DB1250A6a629E5B566367E9C60a7Dd6C30'],
-  favoriteTickers: [],
-  balance: {
-    available: 1296.47,
-    locked: 583.62,
-    PNL: 1956.84,
-  },
-  walletBalance: 894,
 };
 
 export interface IUserBalance {
@@ -115,8 +87,10 @@ export interface IUserContext {
   removeFavorites: (props: string) => void;
   listOpenedCFDs: () => IOpenCFDBrief[];
   listClosedCFDs: () => IClosedCFDBrief[];
-  getOpenedCFD: (props: string) => Promise<IOpenCFDDetails>;
-  getClosedCFD: (props: string) => Promise<IClosedCFDDetails>;
+  // getOpendCFD: (props: string) => Promise<IOpenCFDDetails>;
+  // getClosedCFD: (props: string) => Promise<IClosedCFDDetails>;
+  getOpendCFD: (props: string) => IOpenCFDDetails;
+  getClosedCFD: (props: string) => IClosedCFDDetails;
 }
 
 export const UserContext = createContext<IUserContext>({
@@ -130,8 +104,10 @@ export const UserContext = createContext<IUserContext>({
   removeFavorites: (props: string) => null,
   listOpenedCFDs: () => dummyOpenCFDBriefs,
   listClosedCFDs: () => dummyClosedCFDBriefs,
-  getOpenedCFD: (props: string) => Promise.resolve<IOpenCFDDetails>(dummyOpenCFDDetails),
-  getClosedCFD: (props: string) => Promise.resolve<IClosedCFDDetails>(dummyCloseCFDDetails),
+  // getOpendCFD: (props: string) => Promise.resolve<IOpenCFDDetails>(dummyOpenCFDDetails),
+  // getClosedCFD: (props: string) => Promise.resolve<IClosedCFDDetails>(dummyCloseCFDDetails),
+  getOpendCFD: (props: string) => dummyOpenCFDDetails,
+  getClosedCFD: (props: string) => dummyCloseCFDDetails,
 });
 
 export const UserProvider = ({children}: IUserProvider) => {
@@ -140,7 +116,11 @@ export const UserProvider = ({children}: IUserProvider) => {
   const [username, setUsername] = useState<string | null>('Tidebit DeFi Test User');
   const [wallet, setWallet] = useState<string[]>(['0xb54898DB1250A6a629E5B566367E9C60a7Dd6C30']);
   const [walletBalance, setWalletBalance] = useState<number | null>(894);
-  const [balance, setBalance] = useState<IUserBalance | null>(null);
+  const [balance, setBalance] = useState<IUserBalance | null>({
+    available: 1296.47,
+    locked: 583.62,
+    PNL: 1956.84,
+  });
   const [favoriteTickers, setFavoriteTickers] = useState<string[]>([]);
 
   const addFavorites = (newFavorite: string) => {
@@ -168,15 +148,19 @@ export const UserProvider = ({children}: IUserProvider) => {
 
   const listClosedCFDs = () => dummyClosedCFDBriefs;
 
-  const getOpenedCFD = async (props: string) => {
-    const openCFDDetails: IOpenCFDDetails = await Promise.resolve(dummyOpenCFDDetails);
-    return openCFDDetails;
-  };
+  // const getOpendCFD = async (props: string) => {
+  //   const openCFDDetails: IOpenCFDDetails = await Promise.resolve(dummyOpenCFDDetails);
+  //   return openCFDDetails;
+  // };
 
-  const getClosedCFD = async (props: string) => {
-    const closedCFDDetails: IClosedCFDDetails = await Promise.resolve(dummyCloseCFDDetails);
-    return closedCFDDetails;
-  };
+  // const getClosedCFD = async (props: string) => {
+  //   const closedCFDDetails: IClosedCFDDetails = await Promise.resolve(dummyCloseCFDDetails);
+  //   return closedCFDDetails;
+  // };
+
+  const getOpendCFD = (id: string) => dummyOpenCFDDetails;
+
+  const getClosedCFD = (id: string) => dummyCloseCFDDetails;
 
   const defaultValue = {
     id,
@@ -188,7 +172,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     addFavorites,
     removeFavorites,
     listOpenedCFDs,
-    getOpenedCFD,
+    getOpendCFD,
     listClosedCFDs,
     getClosedCFD,
   };

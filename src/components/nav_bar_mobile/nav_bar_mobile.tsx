@@ -77,7 +77,7 @@ const NavBarMobile = ({notificationNumber = 1}) => {
     </div>
   );
 
-  const {user} = useContext(UserContext);
+  const userCtx = useContext(UserContext);
 
   const isDisplayedUserOverview = userOverview ? <UserMobile /> : null;
 

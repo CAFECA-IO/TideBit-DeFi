@@ -70,7 +70,7 @@ const TickerSelectorBox = ({
   };
 
   const marketCtx = useContext<IMarketContext>(MarketContext);
-  const {user, addFavorites, removeFavorites} = useContext(UserContext) as IUserContext;
+  const userCtx = useContext(UserContext) as IUserContext;
 
   const [activeTab, setActiveTab] = useState('All');
 
@@ -91,9 +91,9 @@ const TickerSelectorBox = ({
           // `bool` 是從 Crypto Card 得到的最新的 starred 狀態，each.starred只是從 availableTickers 得到的初始 starred 狀態
           // console.log('if starred: ', each.starred, 'boolean: ', bool);
           if (bool) {
-            addFavorites(each.currency);
+            userCtx.addFavorites(each.currency);
           } else {
-            removeFavorites(each.currency);
+            userCtx.removeFavorites(each.currency);
           }
           // console.log(each.currency, 'clicked');
         },
@@ -166,17 +166,17 @@ const TickerSelectorBox = ({
   // const testResult =
 
   useEffect(() => {
-    const cryptoCardsData = convertTickersToCryptoCardsData(marketCtx.availableTickers);
+    const cryptoCardsData = convertTickersToCryptoCardsData(marketCtx.listAvailableTickers());
     setFilteredCards(cryptoCardsData);
     console.log(`cryptoCardsData`, cryptoCardsData);
     const favoriteTabCardsData = cryptoCardsData.filter(cryptoCardData => cryptoCardData.starred);
     setFilteredFavorites(favoriteTabCardsData);
     console.log(`favoriteTabCardsData`, favoriteTabCardsData);
-  }, [marketCtx.availableTickers]);
+  }, [userCtx.user]);
 
   // 搜尋完後關掉 ticker box 會顯示剛剛的搜尋結果但是input是空的 => input value={searches}
   useEffect(() => {
-    const cryptoCardsData = convertTickersToCryptoCardsData(marketCtx.availableTickers);
+    const cryptoCardsData = convertTickersToCryptoCardsData(marketCtx.listAvailableTickers());
     if (activeTab === 'All') {
       const newSearchResult = cryptoCardsData.filter(each => {
         const result =
@@ -344,7 +344,7 @@ const TickerSelectorBox = ({
             All
           </button>
         </div>
-        {user ? (
+        {userCtx.user ? (
           <div className="">
             <button
               type="button"

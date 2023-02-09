@@ -481,6 +481,7 @@ export interface IMarketContext {
   tickerLiveStatistics: ITickerLiveStatistics | null;
   getCryptoSummary: (tickerId: string) => ICryptoSummary | null;
   getCryptoNews: (tickerId: string) => IBriefNewsItem[] | null;
+  listAvailableTickers: () => ITickerData[];
 }
 // TODO: Note: _app.tsx 啟動的時候 => createContext
 export const MarketContext = createContext<IMarketContext>({
@@ -500,6 +501,7 @@ export const MarketContext = createContext<IMarketContext>({
   tickerLiveStatistics: null,
   getCryptoSummary: () => null,
   getCryptoNews: () => null,
+  listAvailableTickers: () => [],
 });
 
 const availableTransferOptions = [
@@ -666,10 +668,10 @@ const cryptoBriefNews: IBriefNewsItem[] = [
 
 export const MarketProvider = ({children}: IMarketProvider) => {
   const userCtx = useContext(UserContext);
-  const tickersCombineUserFavorite = () => {
-    let availableTickers: ITickerData[] = [];
+  const updateAvailableTickers = () => {
+    let updateTickers = [...addPropertyToArray];
     if (userCtx.user) {
-      availableTickers = addPropertyToArray.map(ticker => {
+      updateTickers = updateTickers.map(ticker => {
         return {
           ...ticker,
           starred: userCtx.user
@@ -677,12 +679,16 @@ export const MarketProvider = ({children}: IMarketProvider) => {
             : false,
         };
       });
-    } else availableTickers = addPropertyToArray;
-    return availableTickers;
+    }
+    console.log(`updateTickers`, updateTickers);
+    return updateTickers;
   };
-  const [availableTickers, setAvailableTickers] = useState<ITickerData[]>(
-    tickersCombineUserFavorite
-  );
+  const [availableTickers, setAvailableTickers] = useState<ITickerData[]>(updateAvailableTickers());
+  const listAvailableTickers = () => {
+    const updateTickers = updateAvailableTickers();
+    setAvailableTickers(updateTickers);
+    return updateTickers;
+  };
   const [isCFDTradable, setIsCFDTradable] = useState<boolean>(true);
   const [candlestickId, setCandlestickId] = useState<string>('');
 
@@ -710,22 +716,6 @@ export const MarketProvider = ({children}: IMarketProvider) => {
   // console.log('Whole array [addPropertyToArray]:', addPropertyToArray);
   // setAvailableTickers(addPropertyToArray); // infinite loop
 
-  useEffect(() => {
-    console.log(`userCtx.user in MarketContext`, userCtx.user);
-    if (userCtx.user) {
-      const updateAvailableTickers = availableTickers.map(ticker => {
-        return {
-          ...ticker,
-          starred: userCtx.user
-            ? userCtx.user.favoriteTickers.some(currency => currency === ticker.currency)
-            : false,
-        };
-      });
-      console.log(`updateAvailableTickers`, updateAvailableTickers);
-      setAvailableTickers(updateAvailableTickers);
-    }
-  }, [userCtx.user]);
-
   const defaultValue = {
     availableTickers,
     isCFDTradable,
@@ -744,6 +734,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     tickerLiveStatistics,
     getCryptoSummary,
     getCryptoNews,
+    listAvailableTickers,
   };
 
   return <MarketContext.Provider value={defaultValue}>{children}</MarketContext.Provider>;

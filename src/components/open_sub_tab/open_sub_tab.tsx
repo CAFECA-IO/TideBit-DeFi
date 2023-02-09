@@ -35,7 +35,7 @@ const OpenSubTab = () => {
         <div className="">
           {/* 6 */}
           <OpenPositionItem
-            openCfdDetails={userCtx.getOpendCFD('TBD202302070000001')}
+            openCfdDetails={userCtx.getOpendCFD('TBD202302070000002')}
             profitOrLoss="profit"
             longOrShort="short"
             value={631.1}
@@ -52,7 +52,7 @@ const OpenSubTab = () => {
         <div className="">
           {/* 12 */}
           <OpenPositionItem
-            openCfdDetails={userCtx.getOpendCFD('TBD202302070000001')}
+            openCfdDetails={userCtx.getOpendCFD('TBD202302070000003')}
             profitOrLoss="profit"
             longOrShort="short"
             value={1234567.8}

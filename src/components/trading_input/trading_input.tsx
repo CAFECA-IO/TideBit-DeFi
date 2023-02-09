@@ -84,7 +84,7 @@ const TradingInput = ({
 
   const regex = /^\d*\.?\d{0,2}$/;
 
-  const passValeHandler = (data: number) => {
+  const passValueHandler = (data: number) => {
     getInputValue && getInputValue(data);
   };
 
@@ -100,6 +100,9 @@ const TradingInput = ({
       // }
 
       if (upperLimit && Number(value) >= upperLimit) {
+        setInputValue(upperLimit);
+        passValueHandler(upperLimit);
+
         return;
       }
 
@@ -108,7 +111,7 @@ const TradingInput = ({
       }
 
       setInputValue(Number(value));
-      passValeHandler(Number(value));
+      passValueHandler(Number(value));
     }
   };
 
@@ -127,7 +130,7 @@ const TradingInput = ({
       return;
     }
     setInputValue(changeRounded);
-    passValeHandler(changeRounded);
+    passValueHandler(changeRounded);
   };
 
   /** Margin
@@ -148,7 +151,7 @@ const TradingInput = ({
       return;
     }
     setInputValue(changeRounded);
-    passValeHandler(changeRounded);
+    passValueHandler(changeRounded);
   };
 
   // *----------Margin handlers-----*

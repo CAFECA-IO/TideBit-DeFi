@@ -42,22 +42,22 @@ const UserOverview = ({
       {/* ----------Mobile version---------- */}
 
       <div className="mt-5">
-        <div className="my-auto h-px w-full rounded bg-white/50"></div>
+        {/* <div className="my-auto h-px w-full rounded bg-white/50"></div> */}
 
         <div className="flex space-x-10 text-center lg:hidden">
           <div className="">
-            <div className="text-xs text-lightGray4">Available</div>
-            <div className="text-xs">{depositAvailable} USDT</div>
+            <div className="whitespace-nowrap p-2 text-sm text-lightGray4">Available</div>
+            <div className="whitespace-nowrap p-2 text-xs">{depositAvailable} USDT</div>
           </div>
 
           <div className="">
-            <div className="text-xs text-lightGray4">M. Margin</div>
-            <div className="text-xs">{marginLocked} USDT</div>
+            <div className="whitespace-nowrap p-2 text-sm text-lightGray4">M. Margin</div>
+            <div className="whitespace-nowrap p-2 text-xs">{marginLocked} USDT</div>
           </div>
 
           <div className="">
-            <div className="text-xs text-lightGray4">PNL</div>
-            <div className="text-xs">{profitOrLossAmount} USDT</div>
+            <div className="whitespace-nowrap p-2 text-sm text-lightGray4">PNL</div>
+            <div className="whitespace-nowrap p-2 text-xs">{profitOrLossAmount} USDT</div>
           </div>
         </div>
       </div>

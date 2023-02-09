@@ -388,7 +388,7 @@ const TradeTabMobile = () => {
 
   const subMenu = (
     <div
-      className={`flex h-screen w-screen flex-col items-center bg-darkGray ${
+      className={`flex h-screen w-screen flex-col items-center overflow-y-auto bg-darkGray ${
         openSubMenu ? 'visible translate-y-0 opacity-100' : 'invisible translate-y-full opacity-0'
       } absolute left-0 ${'bottom-76px'} overflow-hidden pt-40 transition-all duration-150`}
     >

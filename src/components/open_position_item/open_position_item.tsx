@@ -57,15 +57,16 @@ const OpenPositionItem = ({
     passOrderIdHandler(openCfdDetails.id);
   };
 
+  // FIXME: Position Details Modal Data
   const passOrderIdHandler = (orderId: string) => {
     positionDetailsModalDataHandler({orderIdPositionDetailsModal: orderId});
-    toast({type: 'info', message: `pass OrderId Handler order id, ${orderId}`});
-    toast({
-      type: 'info',
-      message: `position Details Modal Data from context, ${JSON.stringify(
-        positionDetailsModalData
-      )}`,
-    });
+    // toast({type: 'info', message: `pass OrderId Handler order id, ${orderId}`});
+    // toast({
+    //   type: 'info',
+    //   message: `position Details Modal Data from context, ${JSON.stringify(
+    //     positionDetailsModalData
+    //   )}`,
+    // });
 
     // console.log('pass OrderId Handler `order id`', orderId);
     // console.log('position Details Modal Data `from context`', positionDetailsModalData);

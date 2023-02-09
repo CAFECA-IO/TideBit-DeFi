@@ -18,6 +18,7 @@ interface IPositionDetailsModal {
   modalVisible: boolean;
   modalClickHandler: () => void;
   openCfdDetails: IOpenCFDDetails;
+  id?: string;
 }
 
 const timestampToString = (timestamp: number) => {
@@ -43,6 +44,8 @@ const PositionDetailsModal = ({
   modalVisible,
   modalClickHandler,
   openCfdDetails,
+  id,
+  ...otherProps
 }: IPositionDetailsModal) => {
   // console.log('openCfdDetails in details modal: ', openCfdDetails.id);
   const globalContext = useGlobal();
@@ -265,7 +268,7 @@ const PositionDetailsModal = ({
   );
 
   const isDisplayedDetailedPositionModal = modalVisible ? (
-    <>
+    <div id={id} {...otherProps}>
       <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">
         <div className="relative my-6 mx-auto w-auto max-w-xl">
           {/*content & panel*/}
@@ -430,7 +433,7 @@ const PositionDetailsModal = ({
         </div>
       </div>
       <div className="fixed inset-0 z-40 bg-black opacity-25"></div>
-    </>
+    </div>
   ) : null;
 
   return <>{isDisplayedDetailedPositionModal}</>;

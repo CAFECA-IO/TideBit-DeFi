@@ -78,15 +78,16 @@ export const GlobalContext = createContext<IGlobalContext>({
 });
 
 export interface IDataPositionDetailsModal {
-  orderIdPositionDetails: string;
+  orderIdPositionDetailsModal: string;
 }
 
+const initialColorMode: ColorModeUnion = 'dark';
+
 export const GlobalProvider = ({children}: IGlobalProvider) => {
+  const [colorMode, setColorMode] = useState<ColorModeUnion>(initialColorMode);
+
   const windowSize = useWindowSize();
   const {width, height} = windowSize;
-
-  const initialColorMode: ColorModeUnion = 'dark';
-  const [colorMode, setColorMode] = useState<ColorModeUnion>(initialColorMode);
 
   const layoutAssertion: LayoutAssertionUnion = width < LAYOUT_BREAKPOINT ? 'mobile' : 'desktop';
 
@@ -105,7 +106,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
 
   const [visiblePositionDetailsModal, setVisiblePositionDetailsModal] = useState(false);
   const [positionDetailsModalData, setDataPositionDetailsModal] =
-    useState<IDataPositionDetailsModal>({orderIdPositionDetails: ''});
+    useState<IDataPositionDetailsModal>({orderIdPositionDetailsModal: ''});
   const visiblePositionDetailsModalHandler = (visible: boolean) => {
     setVisiblePositionDetailsModal(visible);
     // toast({

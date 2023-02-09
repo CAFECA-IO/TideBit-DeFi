@@ -41,21 +41,34 @@ const OpenPositionItem = ({
   if (longOrShort !== 'long' && longOrShort !== 'short') return <></>;
   if (profitOrLoss !== 'profit' && profitOrLoss !== 'loss') return <></>;
   if (ticker !== 'ETH' && ticker !== 'BTC') return <></>;
-  // const {
-  //   visiblePositionDetailsModal,
-  //   visiblePositionDetailsModalHandler,
-  //   positionDetailsModalDataHandler,
-  // } = useGlobal();
+  const {
+    visiblePositionDetailsModal,
+    visiblePositionDetailsModalHandler,
+    positionDetailsModalDataHandler,
+    positionDetailsModalData,
+    toast,
+  } = useGlobal();
 
   const [detailedModalVisible, setDetailedModalVisible] = useState(false);
 
   const detailedModalClickHandler = () => {
-    setDetailedModalVisible(!detailedModalVisible);
-    // visiblePositionDetailsModalHandler(!visiblePositionDetailsModal);
+    // setDetailedModalVisible(!detailedModalVisible);
+    visiblePositionDetailsModalHandler(!visiblePositionDetailsModal);
+    passOrderIdHandler(openCfdDetails.id);
   };
 
   const passOrderIdHandler = (orderId: string) => {
-    // positionDetailsModalDataHandler({orderIdPositionDetails: orderId});
+    positionDetailsModalDataHandler({orderIdPositionDetailsModal: orderId});
+    toast({type: 'info', message: `pass OrderId Handler order id, ${orderId}`});
+    toast({
+      type: 'info',
+      message: `position Details Modal Data from context, ${JSON.stringify(
+        positionDetailsModalData
+      )}`,
+    });
+
+    // console.log('pass OrderId Handler `order id`', orderId);
+    // console.log('position Details Modal Data `from context`', positionDetailsModalData);
   };
 
   // const progressPercentage = 50;
@@ -160,9 +173,10 @@ const OpenPositionItem = ({
       {/* <div className="absolute top-200px my-auto h-px w-7/8 rounded bg-white/50"></div> */}
 
       <PositionDetailsModal
+        id={`TBD20230207001`}
         // openCfdDetails={dataFormat}
         openCfdDetails={openCfdDetails}
-        modalVisible={detailedModalVisible}
+        modalVisible={visiblePositionDetailsModal}
         modalClickHandler={detailedModalClickHandler}
       />
     </div>

@@ -57,6 +57,7 @@ export interface IUser {
   createOrder: (props: ICFDOrderCreatingRequest) => Promise<IOrderStatusUnion>;
   closeOrder: (props: {id: string}) => Promise<IOrderStatusUnion>;
   updateOrder: (props: ICFDOrderUpdateRequest) => Promise<IOrderStatusUnion>;
+  // TODO: [Discussion]
   deposit: (props: IDepositOrder) => Promise<IOrderStatusUnion>;
   withdraw: (props: IWithdrawalOrder) => Promise<IOrderStatusUnion>;
   // + createOrder(orderType<CFD, Deposite, Withdraw, SpotTrade>, data):PublicOrder

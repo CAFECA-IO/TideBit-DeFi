@@ -8,7 +8,7 @@ export interface IClosedCFDDetails extends ICFDDetails {
   closedValue: number;
 }
 
-export const dummyCloseCFDDetails: IClosedCFDDetails = {
+export const dummyClosedCFDDetails: IClosedCFDDetails = {
   id: 'TBD202302070000002',
   ticker: 'ETH',
   amount: 1.8,

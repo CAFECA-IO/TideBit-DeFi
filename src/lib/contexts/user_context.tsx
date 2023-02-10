@@ -5,21 +5,30 @@ import {providers} from 'ethers';
 import {ICardProps, ILineGraphProps} from '../../components/card/crypto_card';
 import {PROFIT_LOSS_COLOR_TYPE} from '../../constants/display';
 import {
-  dummyOpenCFDBriefs,
-  IOpenCFDBrief,
-} from '../../interfaces/tidebit_defi_background/open_cfd_brief';
+  dummyWalletBalancelist,
+  IWalletBalance,
+} from '../../interfaces/tidebit_defi_background/wallet_balance';
 import {
-  IOpenCFDDetails,
-  dummyOpenCFDDetails,
-} from '../../interfaces/tidebit_defi_background/open_cfd_details';
+  dummyFailedResult,
+  dummySuccessResult,
+  IResult,
+} from '../../interfaces/tidebit_defi_background/result';
 import {
-  dummyClosedCFDBriefs,
-  IClosedCFDBrief,
-} from '../../interfaces/tidebit_defi_background/closed_cfd_brief';
+  IListOpenCFDResult,
+  IListClosedCFDResult,
+  dummySuccessListOpenCFDBriefsResult,
+  dummyFailedListOpenCFDBriefsResult,
+  dummyFailedListClosedCFDBriefsResult,
+  dummySuccessListClosedCFDBriefsResult,
+} from '../../interfaces/tidebit_defi_background/list_cfd_result';
 import {
-  IClosedCFDDetails,
-  dummyCloseCFDDetails,
-} from '../../interfaces/tidebit_defi_background/closed_cfd_details';
+  dummySuccessOpenCFDDetailsResult,
+  dummySuccessClosedCFDDetailsResult,
+  IOpenCFDDetailsResult,
+  IClosedCFDDetailsResult,
+} from '../../interfaces/tidebit_defi_background/cfd_details_result';
+import {IOpenCFDBrief} from '../../interfaces/tidebit_defi_background/open_cfd_brief';
+import {IClosedCFDBrief} from '../../interfaces/tidebit_defi_background/closed_cfd_brief';
 
 function randomNumber(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1) + min);
@@ -82,7 +91,7 @@ export interface IUserContext {
   id: string | null;
   username: string | null;
   wallet: string | null;
-  walletBalance: number | null;
+  walletBalance: IWalletBalance[];
   balance: IUserBalance | null;
   favoriteTickers: string[];
   isConnected: boolean;
@@ -92,21 +101,19 @@ export interface IUserContext {
   connect: () => Promise<boolean>;
   signServiceTerm: () => Promise<boolean>;
   disconnect: () => Promise<boolean>;
-  addFavorites: (props: string) => void;
-  removeFavorites: (props: string) => void;
-  listOpenCFDBriefs: () => Promise<IOpenCFDBrief[]>;
-  listClosedCFDBriefs: () => Promise<IClosedCFDBrief[]>;
-  // getOpendCFD: (props: string) => Promise<IOpenCFDDetails>;
-  // getClosedCFD: (props: string) => Promise<IClosedCFDDetails>;
-  getOpendCFD: (props: string) => IOpenCFDDetails;
-  getClosedCFD: (props: string) => IClosedCFDDetails;
+  addFavorites: (props: string) => IResult;
+  removeFavorites: (props: string) => IResult;
+  listOpenCFDBriefs: () => Promise<IListOpenCFDResult>;
+  listClosedCFDBriefs: () => Promise<IListClosedCFDResult>;
+  getOpenCFD: (props: string) => Promise<IOpenCFDDetailsResult>;
+  getClosedCFD: (props: string) => Promise<IClosedCFDDetailsResult>;
 }
 
 export const UserContext = createContext<IUserContext>({
   id: null,
   username: null,
   wallet: null,
-  walletBalance: null,
+  walletBalance: [],
   balance: null,
   favoriteTickers: [],
   isConnected: false,
@@ -116,14 +123,17 @@ export const UserContext = createContext<IUserContext>({
   connect: () => Promise.resolve(true),
   signServiceTerm: () => Promise.resolve(true),
   disconnect: () => Promise.resolve(true),
-  addFavorites: (props: string) => null,
-  removeFavorites: (props: string) => null,
-  listOpenCFDBriefs: () => Promise.resolve<IOpenCFDBrief[]>(dummyOpenCFDBriefs),
-  listClosedCFDBriefs: () => Promise.resolve<IClosedCFDBrief[]>(dummyClosedCFDBriefs),
-  // getOpendCFD: (props: string) => Promise.resolve<IOpenCFDDetails>(dummyOpenCFDDetails),
+  addFavorites: (props: string) => dummySuccessResult,
+  removeFavorites: (props: string) => dummySuccessResult,
+  listOpenCFDBriefs: () => Promise.resolve<IListOpenCFDResult>(dummySuccessListOpenCFDBriefsResult),
+  listClosedCFDBriefs: () =>
+    Promise.resolve<IListClosedCFDResult>(dummyFailedListClosedCFDBriefsResult),
+  // getOpenCFD: (props: string) => Promise.resolve<IOpenCFDDetails>(dummyOpenCFDDetails),
   // getClosedCFD: (props: string) => Promise.resolve<IClosedCFDDetails>(dummyCloseCFDDetails),
-  getOpendCFD: (props: string) => dummyOpenCFDDetails,
-  getClosedCFD: (props: string) => dummyCloseCFDDetails,
+  getOpenCFD: (props: string) =>
+    Promise.resolve<IOpenCFDDetailsResult>(dummySuccessOpenCFDDetailsResult),
+  getClosedCFD: (props: string) =>
+    Promise.resolve<IClosedCFDDetailsResult>(dummySuccessClosedCFDDetailsResult),
 });
 
 export const UserProvider = ({children}: IUserProvider) => {
@@ -131,7 +141,7 @@ export const UserProvider = ({children}: IUserProvider) => {
   const [id, setId] = useState<string | null>(null);
   const [username, setUsername] = useState<string | null>(null);
   const [wallet, setWallet] = useState<string | null>(null);
-  const [walletBalance, setWalletBalance] = useState<number | null>(null);
+  const [walletBalance, setWalletBalance] = useState<IWalletBalance[]>([]);
   const [balance, setBalance] = useState<IUserBalance | null>(null);
   const [favoriteTickers, setFavoriteTickers] = useState<string[]>([]);
   const [isConnected, setIsConnected] = useState<boolean>(false);
@@ -140,19 +150,24 @@ export const UserProvider = ({children}: IUserProvider) => {
   const [closedCFDBriefs, setClosedCFDBriefs] = useState<Array<IClosedCFDBrief>>([]);
 
   const listOpenCFDBriefs = async () => {
-    let openCFDBriefs: IOpenCFDBrief[] = [];
+    let result: IListOpenCFDResult = dummyFailedListOpenCFDBriefsResult;
+    // let openCFDBriefs: IOpenCFDBrief[] = [];
     if (isConnected) {
-      openCFDBriefs = await Promise.resolve<IOpenCFDBrief[]>(dummyOpenCFDBriefs);
+      result = await Promise.resolve<IListOpenCFDResult>(dummySuccessListOpenCFDBriefsResult);
+      // if (result.success) openCFDBriefs = result.data;
     }
-    return openCFDBriefs;
+    return result;
   };
 
   const listClosedCFDBriefs = async () => {
-    let closedCFDBriefs: IClosedCFDBrief[] = [];
+    let result: IListClosedCFDResult = dummyFailedListClosedCFDBriefsResult;
+    //let result:IClosedCFD
+    // let closedCFDBriefs: IClosedCFDBrief[] = [];
     if (isConnected) {
-      closedCFDBriefs = await Promise.resolve<IClosedCFDBrief[]>(dummyClosedCFDBriefs);
+      result = await Promise.resolve<IListClosedCFDResult>(dummySuccessListClosedCFDBriefsResult);
+      //   if (result.success) closedCFDBriefs = result.data;
     }
-    return closedCFDBriefs;
+    return result;
   };
 
   const connect = async () => {
@@ -170,19 +185,19 @@ export const UserProvider = ({children}: IUserProvider) => {
       setWallet(address);
 
       if (connect) {
-        const openedCFDs = await listOpenCFDBriefs();
-        const closedCFDs = await listClosedCFDBriefs();
+        const openCFDsResult = await listOpenCFDBriefs();
+        const closedCFDsResult = await listClosedCFDBriefs();
         setId('002');
         setUsername('Tidebit DeFi Test User');
         setWallet('0xb54898DB1250A6a629E5B566367E9C60a7Dd6C30');
-        setWalletBalance(894);
+        setWalletBalance(dummyWalletBalancelist);
         setBalance({
           available: 1296.47,
           locked: 583.62,
           PNL: 1956.84,
         });
-        setOpenedCFDBriefs(openedCFDs);
-        setClosedCFDBriefs(closedCFDs);
+        setOpenedCFDBriefs(openCFDsResult.data);
+        setClosedCFDBriefs(closedCFDsResult.data);
         success = true;
       }
     } catch (error) {
@@ -204,7 +219,7 @@ export const UserProvider = ({children}: IUserProvider) => {
       setId(null);
       setUsername(null);
       setWallet(null);
-      setWalletBalance(null);
+      setWalletBalance([]);
       setBalance(null);
       setOpenedCFDBriefs([]);
       setClosedCFDBriefs([]);
@@ -216,37 +231,65 @@ export const UserProvider = ({children}: IUserProvider) => {
   };
 
   const addFavorites = (newFavorite: string) => {
+    let result: IResult = dummyFailedResult;
     if (isConnected) {
       const updatedFavoriteTickers = [...favoriteTickers];
       updatedFavoriteTickers.push(newFavorite);
       setFavoriteTickers(updatedFavoriteTickers);
       console.log(`updatedFavoriteTickers`, updatedFavoriteTickers);
+      result = dummySuccessResult;
     }
+    return result;
   };
 
   const removeFavorites = (previousFavorite: string) => {
+    let result: IResult = dummyFailedResult;
     if (isConnected) {
       const updatedFavoriteTickers = [...favoriteTickers];
       const index: number = updatedFavoriteTickers.findIndex(
         currency => currency === previousFavorite
       );
-      if (index !== -1) updatedFavoriteTickers.splice(index, 1);
-      setFavoriteTickers(updatedFavoriteTickers);
-      console.log(`updatedFavoriteTickers`, updatedFavoriteTickers);
+      if (index !== -1) {
+        updatedFavoriteTickers.splice(index, 1);
+        setFavoriteTickers(updatedFavoriteTickers);
+        console.log(`updatedFavoriteTickers`, updatedFavoriteTickers);
+        result = dummySuccessResult;
+      }
     }
+    return result;
   };
 
-  // const getOpendCFD = async (props: string) => {
+  // const getOpenCFD = async (props: string) => {
   //   const openCFDDetails: IOpenCFDDetails = await Promise.resolve(dummyOpenCFDDetails);
   //   return openCFDDetails;
   // };
-  const getOpendCFD = (id: string) => dummyOpenCFDDetails;
+  const getOpenCFD = async (id: string) => {
+    // let openCFDDetails: IOpenCFDDetails | null = null;
+    // if (isConnected) {
+    //   const result: IOpenCFDDetailsResult = await Promise.resolve<IOpenCFDDetailsResult>(
+    //     dummySuccessOpenCFDDetailsResult
+    //   );
+    //   if (result.success) openCFDDetails = result.data;
+    // }
+    // return openCFDDetails;
+    return dummySuccessOpenCFDDetailsResult;
+  };
 
   // const getClosedCFD = async (props: string) => {
   //   const closedCFDDetails: IClosedCFDDetails = await Promise.resolve(dummyCloseCFDDetails);
   //   return closedCFDDetails;
   // };
-  const getClosedCFD = (id: string) => dummyCloseCFDDetails;
+  const getClosedCFD = async (id: string) => {
+    // let closedCFDDetails: IClosedCFDDetails | null = null;
+    // if (isConnected) {
+    //   const result: IClosedCFDDetailsResult = await Promise.resolve<IClosedCFDDetailsResult>(
+    //     dummySuccessClosedCFDDetailsResult
+    //   );
+    //   if (result.success) closedCFDDetails = result.data;
+    // }
+    // return closedCFDDetails;
+    return dummySuccessClosedCFDDetailsResult;
+  };
 
   const defaultValue = {
     id,
@@ -262,7 +305,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     addFavorites,
     removeFavorites,
     listOpenCFDBriefs,
-    getOpendCFD,
+    getOpenCFD,
     listClosedCFDBriefs,
     getClosedCFD,
     connect,

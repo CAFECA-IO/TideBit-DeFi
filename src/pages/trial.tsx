@@ -18,6 +18,7 @@ import TransferProcessModal, {
 import CfdPositionModal from '../components/cfd_position_modal/cfd_position_modal';
 import PositionDetailsModal from '../components/position_details_modal/position_details_modal';
 import LoadingModal from '../components/loading_modal/loading_modal';
+import FailedModal from '../components/failed_modal/failed_modal';
 
 const Trial = () => {
   const {
@@ -82,13 +83,21 @@ const Trial = () => {
     <>
       {/* flex h-screen w-full items-center justify-center */}
       <div className="w-full space-y-10 bg-cuteBlue">
-        <LoadingModal
+        {/* <LoadingModal
           modalTitle="Wallet Connect"
           modalContent="Connecting..."
           modalVisible={modalVisible}
           modalClickHandler={modalClickHandler}
-          // btnMsg="Good"
+          // btnMsg="View on Etherscan"
           // btnUrl="https://etherscan.io/"
+        /> */}
+        <FailedModal
+          modalTitle="Deposit"
+          modalContent="Transaction failed"
+          modalVisible={modalVisible}
+          modalClickHandler={modalClickHandler}
+          btnMsg="View on Etherscan"
+          failedMsg="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et"
         />
       </div>
     </>

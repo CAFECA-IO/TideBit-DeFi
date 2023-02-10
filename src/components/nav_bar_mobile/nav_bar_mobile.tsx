@@ -58,7 +58,7 @@ const NavBarMobile = ({notificationNumber = 1}) => {
   // hamburger animation
   const displayedMobileNavBarLine1 = !navOpen
     ? 'translate-y-0'
-    : 'translate-y-1.5 origin-left w-3/4 rotate-m35';
+    : 'translate-y-1.5 origin-left w-3/4 -rotate-35';
   const displayedMobileNavBarLine2 = !navOpen ? 'translate-y-1.5' : 'w-0 opacity-0';
   const displayedMobileNavBarLine3 = !navOpen
     ? 'translate-y-3'
@@ -73,7 +73,7 @@ const NavBarMobile = ({notificationNumber = 1}) => {
         navOpen ? 'visible opacity-100' : 'invisible opacity-0'
       } fixed top-3 left-20 z-50 flex h-10 w-250px items-center overflow-x-hidden overflow-y-hidden bg-black/100 outline-none`}
     >
-      <p className="pl-5 transition-all duration-300">{MENU_TEXT}</p>
+      <p className="pl-5">{MENU_TEXT}</p>
     </div>
   );
 

@@ -5,7 +5,7 @@ import {providers} from 'ethers';
 import {ICardProps, ILineGraphProps} from '../../components/card/crypto_card';
 import {PROFIT_LOSS_COLOR_TYPE} from '../../constants/display';
 import {
-  dummyOpenCFDBriefs,
+  dummyOpenCFDBrief,
   IOpenCFDBrief,
 } from '../../interfaces/tidebit_defi_background/open_cfd_brief';
 import {
@@ -13,7 +13,7 @@ import {
   dummyOpenCFDDetails,
 } from '../../interfaces/tidebit_defi_background/open_cfd_details';
 import {
-  dummyClosedCFDBriefs,
+  dummyCloseCFDBrief,
   IClosedCFDBrief,
 } from '../../interfaces/tidebit_defi_background/closed_cfd_brief';
 import {
@@ -118,8 +118,8 @@ export const UserContext = createContext<IUserContext>({
   disconnect: () => Promise.resolve(true),
   addFavorites: (props: string) => null,
   removeFavorites: (props: string) => null,
-  listOpenCFDBriefs: () => Promise.resolve<IOpenCFDBrief[]>(dummyOpenCFDBriefs),
-  listClosedCFDBriefs: () => Promise.resolve<IClosedCFDBrief[]>(dummyClosedCFDBriefs),
+  listOpenCFDBriefs: () => Promise.resolve<IOpenCFDBrief[]>([dummyOpenCFDBrief]),
+  listClosedCFDBriefs: () => Promise.resolve<IClosedCFDBrief[]>([dummyCloseCFDBrief]),
   // getOpendCFD: (props: string) => Promise.resolve<IOpenCFDDetails>(dummyOpenCFDDetails),
   // getClosedCFD: (props: string) => Promise.resolve<IClosedCFDDetails>(dummyCloseCFDDetails),
   getOpendCFD: (props: string) => dummyOpenCFDDetails,
@@ -142,7 +142,7 @@ export const UserProvider = ({children}: IUserProvider) => {
   const listOpenCFDBriefs = async () => {
     let openCFDBriefs: IOpenCFDBrief[] = [];
     if (isConnected) {
-      openCFDBriefs = await Promise.resolve<IOpenCFDBrief[]>(dummyOpenCFDBriefs);
+      openCFDBriefs = await Promise.resolve<IOpenCFDBrief[]>([dummyOpenCFDBrief]);
     }
     return openCFDBriefs;
   };
@@ -150,7 +150,7 @@ export const UserProvider = ({children}: IUserProvider) => {
   const listClosedCFDBriefs = async () => {
     let closedCFDBriefs: IClosedCFDBrief[] = [];
     if (isConnected) {
-      closedCFDBriefs = await Promise.resolve<IClosedCFDBrief[]>(dummyClosedCFDBriefs);
+      closedCFDBriefs = await Promise.resolve<IClosedCFDBrief[]>([dummyCloseCFDBrief]);
     }
     return closedCFDBriefs;
   };

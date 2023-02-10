@@ -1,5 +1,4 @@
 import {ICFDDetails} from './cfd_details';
-
 export interface IClosedCFDDetails extends ICFDDetails {
   state: 'CLOSED';
   closedType: 'SCHEDULE' | 'FORCED_LIQUIDATION' | 'STOP_LOSS' | 'TAKE_PROFIT' | 'BY_USER';
@@ -8,14 +7,18 @@ export interface IClosedCFDDetails extends ICFDDetails {
   closedValue: number;
 }
 
+function randomIntFromInterval(min: number, max: number) {
+  return Math.floor(Math.random() * (max - min + 1) + min);
+}
+
 export const dummyCloseCFDDetails: IClosedCFDDetails = {
-  id: 'TBD202302070000002',
+  id: 'TBD202302070000001',
   ticker: 'ETH',
   amount: 1.8,
   state: 'CLOSED',
   typeOfPosition: 'BUY',
   leverage: 5,
-  margin: 650,
+  margin: randomIntFromInterval(650, 10000),
   openPrice: 24058,
   fee: 0,
   guaranteedStop: false,
@@ -33,8 +36,8 @@ export const dummyCloseCFDDetails: IClosedCFDDetails = {
   stopLoss: 25250,
   recommendedTp: 35412,
   recommendedSl: 19453,
-  closedType: 'STOP_LOSS',
-  forcedClosed: true,
-  closedTimestamp: 1675399651, // remaining hrs gained from context
-  closedValue: 25250,
+  closedType: 'SCHEDULE',
+  forcedClosed: false,
+  closedTimestamp: 5,
+  closedValue: 73820133,
 };

@@ -53,7 +53,6 @@ const OpenPositionItem = ({
 
   const squareClickHandler = () => {
     // toast.error('test', {toastId: 'errorTest'});
-
     // console.log('show the modal displaying transaction detail');
     // return;
   };

@@ -159,7 +159,6 @@ export const UserProvider = ({children}: IUserProvider) => {
   });
   lunar.on('accountsChanged', () => {
     setWallet(lunar.address);
-    console.log('setWallet', lunar.address);
   });
 
   const listOpenCFDBriefs = async () => {

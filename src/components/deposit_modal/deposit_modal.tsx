@@ -16,6 +16,7 @@ interface IDepositModal {
   submitHandler: (props: {asset: string; amount: number}) => void;
 }
 
+// TODO: SVG icon from Context
 const DepositModal = ({
   // transferType, // [to be removed]globalContext
   // transferStep, // [to be removed]

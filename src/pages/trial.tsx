@@ -12,9 +12,6 @@ import 'react-toastify/dist/ReactToastify.css';
 import {CRYPTO_CARD_COLORS} from '../constants/display';
 import {useContext, useState} from 'react';
 import {MarketContext} from '../contexts/market_context';
-import TransferProcessModal, {
-  TRANSFER_PROCESS_MODAL_STEP_CLASSES,
-} from '../components/transfer_process_modal/transfer_process_modal';
 import CfdPositionModal from '../components/cfd_position_modal/cfd_position_modal';
 import PositionDetailsModal from '../components/position_details_modal/position_details_modal';
 import LoadingModal from '../components/loading_modal/loading_modal';

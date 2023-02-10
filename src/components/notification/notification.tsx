@@ -27,7 +27,7 @@ export default function Notification({
   // hamburger animation
   const displayedMobileNavBarLine1 = !componentVisible
     ? 'translate-y-0'
-    : 'translate-y-1.5 origin-left w-3/4 rotate-m35';
+    : 'translate-y-1.5 origin-left w-3/4 -rotate-35';
   const displayedMobileNavBarLine2 = !componentVisible ? 'translate-y-1.5' : 'w-0 opacity-0';
   const displayedMobileNavBarLine3 = !componentVisible
     ? 'translate-y-3'
@@ -84,8 +84,9 @@ export default function Notification({
             <div
               ref={notifyRef}
               className={`pointer-events-auto min-h-screen w-screen ${`sm:w-479px`} ${
-                //修改 h 高度
-                componentVisible ? 'opacity-100 sm:translate-x-0' : 'opacity-0 sm:translate-x-full'
+                componentVisible
+                  ? 'visible opacity-100 sm:translate-x-0'
+                  : 'invisible opacity-0 sm:translate-x-full'
               } flex flex-col bg-darkGray/90 pt-8 pb-20 text-white transition-all duration-300 sm:p-5`}
             >
               <div className="mb-10 flex flex items-center">
@@ -96,7 +97,7 @@ export default function Notification({
               </div>
 
               {/* Notification List*/}
-              <div className="flex h-80vh flex-col space-y-10 overflow-y-auto overflow-x-hidden pb-5">
+              <div className="flex h-80vh flex-col space-y-10 overflow-y-auto overflow-x-hidden pb-40 sm:pb-10">
                 {NotificationList}
               </div>
             </div>

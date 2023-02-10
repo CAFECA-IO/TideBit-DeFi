@@ -1,9 +1,11 @@
 import {createContext, useState, useEffect, useContext, Dispatch, SetStateAction} from 'react';
 import useWindowSize from '../hooks/use_window_size';
 import {LAYOUT_BREAKPOINT} from '../../constants/display';
-import {toast as toastify} from 'react-toastify';
+import {ToastContainer, toast as toastify} from 'react-toastify';
 import PositionDetailsModal from '../../components/position_details_modal/position_details_modal';
 import TransferProcessModal from '../../components/transfer_process_modal/transfer_process_modal';
+import {MarketContext} from './market_context';
+import Toast from '../../components/toast/toast';
 
 export interface IToastify {
   type: 'error' | 'warning' | 'info' | 'success';
@@ -100,6 +102,9 @@ export interface IDataTransferProcessModal {
 const initialColorMode: ColorModeUnion = 'dark';
 
 export const GlobalProvider = ({children}: IGlobalProvider) => {
+  const {availableTransferOptions} = useContext(MarketContext);
+  // console.log('options in global context:', availableTransferOptions);
+
   const [colorMode, setColorMode] = useState<ColorModeUnion>(initialColorMode);
 
   const windowSize = useWindowSize();
@@ -234,7 +239,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
         getTransferData={getWithdrawData}
         // initialAmountInput={undefined}
         submitHandler={withdrawSubmitHandler}
-        // transferOptions={availableTransferOptions}
+        transferOptions={availableTransferOptions}
         getSubmissionState={getWithdrawSubmissionState}
         transferType={dataTransferProcessModal.transferType}
         transferStep={withdrawProcess}
@@ -242,6 +247,8 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
         modalVisible={visibleTransferProcessModal}
         modalClickHandler={visibleTransferProcessModalHandler}
       />
+      {/* One container avoids duplicating toast overlaying */}
+      <Toast />
       {children}
     </GlobalContext.Provider>
   );

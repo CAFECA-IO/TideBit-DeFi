@@ -4,7 +4,7 @@ import WalletOption from './wallet_option';
 import useOuterClick from '../../lib/hooks/use_outer_click';
 import TideButton from '../tide_button/tide_button';
 import {ethers, providers} from 'ethers';
-import Toast from '../toast/toast';
+import DevToast from '../dev_toast/dev_toast';
 import ConnectingModal from './connecting_modal';
 import SignatureProcessModal from './signature_process_modal';
 import QrcodeModal from './qrcode_modal';
@@ -489,7 +489,7 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
       getTransferData={getWithdrawData}
       // initialAmountInput={undefined}
       submitHandler={withdrawSubmitHandler}
-      // transferOptions={availableTransferOptions}
+      transferOptions={availableTransferOptions}
       getSubmissionState={getWithdrawSubmissionState}
       transferType="withdraw"
       transferStep={withdrawProcess}
@@ -504,7 +504,7 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
       getTransferData={getDepositData}
       // initialAmountInput={user?.walletBalance ?? 0}
       submitHandler={depositSubmitHandler}
-      // transferOptions={availableTransferOptions}
+      transferOptions={availableTransferOptions}
       getSubmissionState={getDepositSubmissionState}
       transferType="deposit"
       transferStep={depositProcess}
@@ -1613,7 +1613,7 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
   //   )
   // ) : null}
   const toastNotify = (
-    <Toast
+    <DevToast
       title="Dev Receipt"
       content={
         <>

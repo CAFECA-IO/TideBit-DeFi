@@ -16,6 +16,7 @@ interface IWithdrawalModal {
   submitHandler: (props: {asset: string; amount: number}) => void;
 }
 
+// TODO: SVG icon from Context
 const WithdrawalModal = ({
   // transferType, // [to be removed]globalContext
   // transferStep, // [to be removed]

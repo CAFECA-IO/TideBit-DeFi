@@ -150,6 +150,18 @@ export const UserProvider = ({children}: IUserProvider) => {
   const [openCFDBriefs, setOpenedCFDBriefs] = useState<Array<IOpenCFDBrief>>([]);
   const [closedCFDBriefs, setClosedCFDBriefs] = useState<Array<IClosedCFDBrief>>([]);
 
+  const lunar = new Lunar();
+  lunar.on('connected', () => {
+    setIsConnected(true);
+  });
+  lunar.on('disconnected', () => {
+    setDisconnected();
+  });
+  lunar.on('accountsChanged', () => {
+    setWallet(lunar.address);
+    console.log('setWallet', lunar.address);
+  });
+
   const listOpenCFDBriefs = async () => {
     let openCFDBriefs: IOpenCFDBrief[] = [];
     if (isConnected) {
@@ -169,23 +181,13 @@ export const UserProvider = ({children}: IUserProvider) => {
   const connect = async () => {
     let success = false;
     try {
-      const lunar = new Lunar();
-      const connect = true;
-      lunar.connect({});
-      setIsConnected(connect);
-      const provider = new providers.Web3Provider(window.ethereum);
-      await provider.send('eth_requestAccounts', []);
-
-      const signer = provider.getSigner();
-      const address = await signer.getAddress();
-      setWallet(address);
-
+      const connect = await lunar.connect({});
+      const address = lunar.address;
       if (connect) {
         const openedCFDs = await listOpenCFDBriefs();
         const closedCFDs = await listClosedCFDBriefs();
         setId('002');
         setUsername('Tidebit DeFi Test User');
-        setWallet('0xb54898DB1250A6a629E5B566367E9C60a7Dd6C30');
         setWalletBalance([dummyWalletBalance_BTC, dummyWalletBalance_ETH, dummyWalletBalance_USDT]);
         setBalance({
           available: 1296.47,
@@ -210,20 +212,24 @@ export const UserProvider = ({children}: IUserProvider) => {
   const disconnect = async () => {
     let success = false;
     try {
-      setIsConnected(false);
-      setEnableServiceTerm(false);
-      setId(null);
-      setUsername(null);
-      setWallet(null);
-      setWalletBalance(null);
-      setBalance(null);
-      setOpenedCFDBriefs([]);
-      setClosedCFDBriefs([]);
+      await lunar.disconnect();
       success = true;
     } catch (error) {
       console.error(`userContext disconnect error`, error);
     }
     return success;
+  };
+
+  const setDisconnected = () => {
+    setIsConnected(false);
+    setEnableServiceTerm(false);
+    setId(null);
+    setUsername(null);
+    setWallet(null);
+    setWalletBalance(null);
+    setBalance(null);
+    setOpenedCFDBriefs([]);
+    setClosedCFDBriefs([]);
   };
 
   const addFavorites = (newFavorite: string) => {

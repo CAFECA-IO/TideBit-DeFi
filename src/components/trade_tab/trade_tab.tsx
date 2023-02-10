@@ -160,12 +160,27 @@ const TradeTab = () => {
     // });
     // globalCtx.visibleFailedModalHandler();
 
-    globalCtx.dataSuccessfulModalHandler({
+    // globalCtx.dataSuccessfulModalHandler({
+    //   modalTitle: 'Open Position',
+    //   modalContent: 'Transaction succeed',
+    //   btnMsg: 'View position',
+    // });
+    // globalCtx.visibleSuccessfulModalHandler();
+
+    // globalCtx.dataCanceledModalHandler({
+    //   modalTitle: 'Open Position',
+    //   modalContent: 'Transaction canceled',
+    //   // btnMsg: 'Try again',
+    // });
+    // globalCtx.visibleCanceledModalHandler();
+
+    globalCtx.dataFailedModalHandler({
       modalTitle: 'Open Position',
-      modalContent: 'Transaction succeed',
-      btnMsg: 'View position',
+      modalContent: 'Failed to submit long position',
+      failedMsg: 'Please try again later blah blah blah blah blah blah blah blah blah blah blah',
+      btnMsg: 'Try again',
     });
-    globalCtx.visibleSuccessfulModalHandler();
+    globalCtx.visibleFailedModalHandler();
   };
 
   const shortOrderSubmitHandler = () => {

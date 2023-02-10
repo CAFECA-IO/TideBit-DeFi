@@ -28,7 +28,7 @@ import {VscAccount} from 'react-icons/vsc';
 // import {IoExitOutline} from 'react-icons/io';
 // import {RxExit} from 'react-icons/rx';
 import {ImExit} from 'react-icons/im';
-import TransferProcessModal from '../transfer_process_modal/transfer_process_modal';
+// import TransferProcessModal from '../transfer_process_modal/transfer_process_modal';
 import {MarketContext} from '../../contexts/market_context';
 import {UserContext} from '../../contexts/user_context';
 import {useGlobal} from '../../contexts/global_context';

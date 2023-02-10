@@ -3,7 +3,7 @@ import useWindowSize from '../lib/hooks/use_window_size';
 import {LAYOUT_BREAKPOINT} from '../constants/display';
 import {ToastContainer, toast as toastify} from 'react-toastify';
 import PositionDetailsModal from '../components/position_details_modal/position_details_modal';
-import TransferProcessModal from '../components/transfer_process_modal/transfer_process_modal';
+// import TransferProcessModal from '../components/transfer_process_modal/transfer_process_modal';
 import {MarketContext} from './market_context';
 import Toast from '../components/toast/toast';
 import LoadingModal from '../components/loading_modal/loading_modal';

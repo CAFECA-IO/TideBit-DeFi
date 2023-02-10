@@ -1767,7 +1767,7 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
             <span className="text-5xl font-bold text-lightWhite">{username}</span>
           </div>
           {/* Account */}
-          <div className="ml-4 mt-2 truncate text-sm">{accountTruncate(userCtx.wallet || '')}</div>
+          <div className="ml-4 mt-2 truncate text-sm">{accountTruncate(userCtx.wallet)}</div>
         </div>
 
         <ul

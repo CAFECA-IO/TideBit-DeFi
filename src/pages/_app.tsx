@@ -17,20 +17,6 @@ function App({Component, pageProps}: AppProps) {
             <GlobalProvider>
               <Component {...pageProps} />
             </GlobalProvider>
-            {/* One container avoids duplicating toast overlaying */}
-            <ToastContainer
-              position="bottom-left"
-              autoClose={3000}
-              hideProgressBar={false}
-              newestOnTop={false}
-              closeOnClick
-              rtl={false}
-              pauseOnFocusLoss
-              draggable={false}
-              pauseOnHover
-              theme="dark"
-              limit={10}
-            />
           </MarketProvider>
         </UserProvider>
       </div>

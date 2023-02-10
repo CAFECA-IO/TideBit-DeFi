@@ -286,7 +286,7 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
     setConnecting(false);
     // setChooseMetamask(false);
 
-    userCtx.connect();
+    userCtx.disconnect();
     passUserLoginState(false);
 
     setErrorMessages('');
@@ -334,7 +334,7 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
     setConnecting(false);
     // setChooseMetamask(false);
 
-    userCtx.connect();
+    userCtx.disconnect();
     passUserLoginState(false);
 
     setErrorMessages('');
@@ -560,7 +560,7 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
           params: [{eth_accounts: {}}],
         });
         // console.log('Wallet Disconnected');
-        userCtx.connect();
+        userCtx.disconnect();
         passUserLoginState(false);
 
         setUserBalance('');
@@ -880,11 +880,12 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
           resetApp();
           // clearStateForMetamaskAccountChange();
           return;
+        } else {
+          userCtx.connect();
         }
 
         // ---Account Detecetion---
         setErrorMessages('');
-        userCtx.connect();
         passUserLoginState(true);
 
         // ---Send Sign Request when wallet changed---
@@ -1493,18 +1494,14 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
 
       // TODO: Notes: 追查呼叫這行code的function
       // console.trace('123');
-      setMetamaskConnectFirstTimeSuccessful(true);
+      const metamaskConnectFirstTimeSuccessful = await userCtx.connect();
+      setMetamaskConnectFirstTimeSuccessful(metamaskConnectFirstTimeSuccessful);
 
-      const provider = new ethers.providers.Web3Provider(window.ethereum, 'any');
       // pop up the metamask window
-      await provider.send('eth_requestAccounts', []);
-      const signer = provider.getSigner();
-      const address = await signer.getAddress();
-      userCtx.connect();
-      passUserLoginState(true);
-      //userContext.connect();
+      const address = await userCtx.wallet;
+      passUserLoginState(metamaskConnectFirstTimeSuccessful);
 
-      const chainId = await signer.getChainId();
+      const chainId = 1;
       setChainId(chainId);
 
       if (chainId !== 1) {
@@ -1512,9 +1509,8 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
         setShowToast(true);
       }
 
-      const balance = await provider.getBalance(address);
-      const userBalance = ethers.utils.formatEther(balance);
-      setUserBalance(userBalance);
+      const available = userCtx.balance?.available.toString() || '';
+      setUserBalance(available);
       // console.log('user balance: ', balance);
       // console.log('connect to Metamask clicked, Account: ', address);
 
@@ -1767,7 +1763,7 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
             <span className="text-5xl font-bold text-lightWhite">{username}</span>
           </div>
           {/* Account */}
-          <div className="ml-4 mt-2 truncate text-sm">{accountTruncate(userCtx.wallet || '')}</div>
+          <div className="ml-4 mt-2 truncate text-sm">{accountTruncate(userCtx.wallet)}</div>
         </div>
 
         <ul

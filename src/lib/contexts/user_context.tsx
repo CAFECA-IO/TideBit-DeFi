@@ -193,6 +193,18 @@ export const UserProvider = ({children}: IUserProvider) => {
   const [isConnectedWithEmail, setIsConnectedWithEmail] = useState<boolean>(false);
   const [isConnectedWithTideBit, setIsConnectedWithTideBit] = useState<boolean>(false);
 
+  const lunar = new Lunar();
+  lunar.on('connected', () => {
+    setIsConnected(true);
+  });
+  lunar.on('disconnected', () => {
+    setDisconnected();
+  });
+  lunar.on('accountsChanged', () => {
+    setWallet(lunar.address);
+    setUser(lunar.address);
+  });
+
   const listOpenCFDBriefs = async () => {
     let openCFDBriefs: IOpenCFDBrief[] = [];
     if (isConnected) {
@@ -226,18 +238,10 @@ export const UserProvider = ({children}: IUserProvider) => {
   const connect = async () => {
     let success = false;
     try {
-      const lunar = new Lunar();
-      const connect = true;
-      lunar.connect({});
-      setIsConnected(connect);
-      const provider = new providers.Web3Provider(window.ethereum);
-      await provider.send('eth_requestAccounts', []);
-
-      const signer = provider.getSigner();
-      const address = await signer.getAddress();
-      setWallet(address);
-
+      const connect = await lunar.connect({});
+      const address = lunar.address;
       if (connect) {
+        setUser(address);
         const openedCFDs = await listOpenCFDBriefs();
         const closedCFDs = await listClosedCFDBriefs();
         setOpenedCFDBriefs(openedCFDs);
@@ -258,20 +262,24 @@ export const UserProvider = ({children}: IUserProvider) => {
   const disconnect = async () => {
     let success = false;
     try {
-      setIsConnected(false);
-      setEnableServiceTerm(false);
-      setId(null);
-      setUsername(null);
-      setWallet(null);
-      setWalletBalances(null);
-      setBalance(null);
-      setOpenedCFDBriefs([]);
-      setClosedCFDBriefs([]);
+      await lunar.disconnect();
       success = true;
     } catch (error) {
       console.error(`userContext disconnect error`, error);
     }
     return success;
+  };
+
+  const setDisconnected = () => {
+    setIsConnected(false);
+    setEnableServiceTerm(false);
+    setId(null);
+    setUsername(null);
+    setWallet(null);
+    setWalletBalances(null);
+    setBalance(null);
+    setOpenedCFDBriefs([]);
+    setClosedCFDBriefs([]);
   };
 
   const addFavorites = (newFavorite: string) => {

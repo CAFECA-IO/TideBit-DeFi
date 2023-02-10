@@ -399,8 +399,9 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
   };
 
   const depositModalClickHandler = () => {
-    setDepositModalVisible(!depositModalVisible);
-    setDepositProcess('form');
+    globalCtx.visibleDepositModalHandler();
+    // setDepositModalVisible(!depositModalVisible);
+    // setDepositProcess('form');
   };
 
   const withdrawModalClickHandler = () => {
@@ -1880,7 +1881,7 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
         processClickHandler={processClickHandler}
       />
 
-      {depositProcessModal}
+      {/* {depositProcessModal} */}
       {/* {withdrawProcessModal} */}
 
       {/* TODO: Notes- the below is the same but `{toastNotify}` is easier to be changed and managed  */}

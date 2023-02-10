@@ -21,6 +21,7 @@ import LoadingModal from '../components/loading_modal/loading_modal';
 import FailedModal from '../components/failed_modal/failed_modal';
 import CanceledModal from '../components/canceled_modal/canceled_modal';
 import SuccessfulModal from '../components/successful_modal/successful_modal';
+import DepositModal from '../components/deposit_modal/deposit_modal';
 
 const Trial = () => {
   const {
@@ -108,13 +109,13 @@ const Trial = () => {
           modalClickHandler={modalClickHandler}
           // btnMsg="View on Etherscan"
         /> */}
-        <SuccessfulModal
+        {/* <SuccessfulModal
           modalTitle="Withdraw"
           // modalContent="Transaction succeeded"
           modalVisible={modalVisible}
           modalClickHandler={modalClickHandler}
           btnMsg="Done"
-        />
+        /> */}
       </div>
     </>
   );

@@ -28,8 +28,8 @@ const SuccessfulModal = ({
     <div className="relative flex-auto pt-1">
       <div className="text-lg leading-relaxed text-lightWhite">
         <div className="flex-col justify-center text-center">
-          <Lottie className="ml-70px w-150px pt-5 pb-5" animationData={successfulAnimation} />
-          <div className="mt-3 mb-2 text-base ">
+          <Lottie className="ml-70px w-150px pt-7 pb-5" animationData={successfulAnimation} />
+          <div className="mt-6 mb-2 text-base ">
             {modalContent ? (
               modalContent
             ) : (
@@ -39,7 +39,7 @@ const SuccessfulModal = ({
               </p>
             )}
           </div>
-          <div className="mt-7">
+          <div className="mt-5">
             {btnUrl && btnMsg ? (
               <a href={btnUrl} target="_blank">
                 <RippleButton

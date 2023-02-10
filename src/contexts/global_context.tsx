@@ -10,6 +10,7 @@ import LoadingModal from '../components/loading_modal/loading_modal';
 import FailedModal from '../components/failed_modal/failed_modal';
 import CanceledModal from '../components/canceled_modal/canceled_modal';
 import SuccessfulModal from '../components/successful_modal/successful_modal';
+import DepositModal from '../components/deposit_modal/deposit_modal';
 
 export interface IToastify {
   type: 'error' | 'warning' | 'info' | 'success';
@@ -83,6 +84,9 @@ export interface IGlobalContext {
   dataPositionDetailsModal: IDataPositionDetailsModal | null;
   dataPositionDetailsModalHandler: (data: IDataPositionDetailsModal) => void;
 
+  visibleDepositModal: boolean;
+  visibleDepositModalHandler: () => void;
+
   visibleTransferProcessModal: boolean;
   visibleTransferProcessModalHandler: () => void;
   dataTransferProcessModal: IDataTransferProcessModal | null;
@@ -122,6 +126,9 @@ export const GlobalContext = createContext<IGlobalContext>({
   dataPositionDetailsModal: null,
   dataPositionDetailsModalHandler: () => null,
 
+  visibleDepositModal: false,
+  visibleDepositModalHandler: () => null,
+
   visibleTransferProcessModal: false,
   visibleTransferProcessModalHandler: () => null,
   dataTransferProcessModal: null,
@@ -157,9 +164,12 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
   const [dataPositionDetailsModal, setDataPositionDetailsModal] =
     useState<IDataPositionDetailsModal>({orderIdPositionDetailsModal: ''});
 
-  const [visibleTransferProcessModal, setVisibleTransferProcessModal] = useState(false);
+  // TODO: transfer
+  const [visibleWithdrawalModal, setVisibleWithdrawalModal] = useState(false);
   const [dataTransferProcessModal, setDataTransferProcessModal] =
     useState<IDataTransferProcessModal>({transferType: 'deposit'});
+
+  const [visibleDepositModal, setVisibleDepositModal] = useState(false);
 
   const [visibleLoadingModal, setVisibleLoadingModal] = useState(false);
   const [dataLoadingModal, setDataLoadingModal] = useState<IProcessDataModal>({
@@ -224,8 +234,12 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     setDataPositionDetailsModal(data);
   };
 
+  const visibleDepositModalHandler = () => {
+    setVisibleDepositModal(!visibleDepositModal);
+  };
+
   const visibleTransferProcessModalHandler = () => {
-    setVisibleTransferProcessModal(!visibleTransferProcessModal);
+    setVisibleWithdrawalModal(!visibleWithdrawalModal);
   };
   const dataTransferProcessModalHandler = (data: IDataTransferProcessModal) => {
     setDataTransferProcessModal(data);
@@ -274,24 +288,36 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     setWithdrawProcess(state);
   };
 
+  const getDepositData = (props: {asset: string; amount: number}) => {
+    setDepositData(props);
+  };
+
   const getWithdrawData = (props: {asset: string; amount: number}) => {
     setWithdrawData(props);
+  };
+
+  const getDepositSubmissionState = (state: 'success' | 'cancellation' | 'fail') => {
+    setDepositProcess(state);
+  };
+
+  const depositSubmitHandler = (props: {asset: string; amount: number}) => {
+    setDepositProcess('loading');
   };
 
   const withdrawSubmitHandler = (props: {asset: string; amount: number}) => {
     setWithdrawProcess('loading');
 
-    setTimeout(() => {
-      setWithdrawProcess('success');
+    // setTimeout(() => {
+    //   setWithdrawProcess('success');
 
-      setTimeout(() => {
-        setWithdrawProcess('cancellation');
+    //   setTimeout(() => {
+    //     setWithdrawProcess('cancellation');
 
-        setTimeout(() => {
-          setWithdrawProcess('fail');
-        }, 5000);
-      }, 5000);
-    }, 3000);
+    //     setTimeout(() => {
+    //       setWithdrawProcess('fail');
+    //     }, 5000);
+    //   }, 5000);
+    // }, 3000);
   };
 
   // const positionDetailedModal = (
@@ -316,7 +342,10 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     dataPositionDetailsModal,
     dataPositionDetailsModalHandler,
 
-    visibleTransferProcessModal,
+    visibleDepositModal,
+    visibleDepositModalHandler,
+
+    visibleTransferProcessModal: visibleWithdrawalModal,
     visibleTransferProcessModalHandler,
     dataTransferProcessModal,
     dataTransferProcessModalHandler,
@@ -352,9 +381,10 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
         transferType={dataTransferProcessModal.transferType}
         transferStep={withdrawProcess}
         // userAvailableBalance={123}
-        modalVisible={visibleTransferProcessModal}
+        modalVisible={visibleWithdrawalModal}
         modalClickHandler={visibleTransferProcessModalHandler}
       />
+
       <LoadingModal
         modalVisible={visibleLoadingModal}
         modalClickHandler={visibleLoadingModalHandler}
@@ -388,6 +418,14 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
         modalClickHandler={visibleSuccessfulModalHandler}
         btnMsg={dataSuccessfulModal?.btnMsg}
         btnUrl={dataSuccessfulModal?.btnUrl}
+      />
+
+      <DepositModal
+        getTransferData={getDepositData}
+        submitHandler={depositSubmitHandler}
+        getSubmissionState={getDepositSubmissionState}
+        modalVisible={visibleDepositModal}
+        modalClickHandler={visibleDepositModalHandler}
       />
       {/* One toast container avoids duplicating toast overlaying */}
       <Toast />

@@ -6,7 +6,6 @@ import {appWithTranslation} from 'next-i18next';
 import {MarketProvider} from '../lib/contexts/market_context';
 import {UserProvider} from '../lib/contexts/user_context';
 import {GlobalProvider} from '../lib/contexts/global_context';
-import {ToastContainer} from 'react-toastify';
 
 function App({Component, pageProps}: AppProps) {
   return (

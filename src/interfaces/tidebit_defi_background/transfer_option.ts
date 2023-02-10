@@ -6,7 +6,7 @@ export interface ITransferOption {
 }
 
 // TODO: [Discussion] and rename `transfer_currency` afterward
-export interface ITransferCurrency {
+export interface ICryptocurrency {
   id: string;
   name: string; // Tether
   symbol: string; // USDT
@@ -15,7 +15,7 @@ export interface ITransferCurrency {
   fee: number;
 }
 
-export const dummyTransferCurrency: ITransferCurrency = {
+export const dummyTransferCurrency: ICryptocurrency = {
   id: 'USDT',
   name: 'Tether',
   symbol: 'USDT',

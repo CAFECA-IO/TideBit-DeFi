@@ -1,11 +1,12 @@
-import {ITransferOrder} from './transfer_order';
+import {IOrder} from './order';
 
-export interface IWithdrawalOrder extends ITransferOrder {
-  type: 'withdrawal';
+export interface IWithdrawalOrder extends IOrder {
+  type: 'WITHDRAW';
 }
 
 export const dummyWithdrawalOrder: IWithdrawalOrder = {
-  type: 'withdrawal',
+  timestamp: 1675299651,
+  type: 'WITHDRAW',
   asset: 'USDT',
   amount: 15,
 };

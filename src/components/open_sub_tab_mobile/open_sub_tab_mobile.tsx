@@ -1,5 +1,5 @@
 import React, {useContext} from 'react';
-import {dummyOpenCFDBrief} from '../../interfaces/tidebit_defi_background/open_cfd_brief';
+import {dummyOpenCFDBriefs} from '../../interfaces/tidebit_defi_background/open_cfd_brief';
 import OpenPositionItem from '../open_position_item/open_position_item';
 import {UserContext} from '../../lib/contexts/user_context';
 

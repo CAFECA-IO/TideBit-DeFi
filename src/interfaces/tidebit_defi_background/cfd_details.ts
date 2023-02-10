@@ -1,6 +1,7 @@
 import {IPnL} from './pnl';
 
 export interface ICFDDetails {
+  // icon: string;
   id: string;
 
   amount: number;

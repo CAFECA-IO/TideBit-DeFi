@@ -12,6 +12,10 @@ import CanceledModal from '../components/canceled_modal/canceled_modal';
 import SuccessfulModal from '../components/successful_modal/successful_modal';
 import DepositModal from '../components/deposit_modal/deposit_modal';
 import WithdrawalModal from '../components/withdrawal_modal/withdrawal_modal';
+import {
+  IOpenCFDDetails,
+  dummyOpenCFDDetails,
+} from '../interfaces/tidebit_defi_background/open_cfd_details';
 
 export interface IToastify {
   type: 'error' | 'warning' | 'info' | 'success';
@@ -20,7 +24,7 @@ export interface IToastify {
 }
 
 export interface IDataPositionDetailsModal {
-  orderIdPositionDetailsModal: string;
+  openCfdDetails: IOpenCFDDetails;
 }
 
 export interface IDataTransferProcessModal {
@@ -81,7 +85,7 @@ export interface IGlobalContext {
   toggleColorMode: () => void;
   toast: (props: IToastify) => void;
   visiblePositionDetailsModal: boolean;
-  visiblePositionDetailsModalHandler: (visible: boolean) => void;
+  visiblePositionDetailsModalHandler: () => void;
   dataPositionDetailsModal: IDataPositionDetailsModal | null;
   dataPositionDetailsModalHandler: (data: IDataPositionDetailsModal) => void;
 
@@ -169,7 +173,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
 
   const [visiblePositionDetailsModal, setVisiblePositionDetailsModal] = useState(false);
   const [dataPositionDetailsModal, setDataPositionDetailsModal] =
-    useState<IDataPositionDetailsModal>({orderIdPositionDetailsModal: ''});
+    useState<IDataPositionDetailsModal>({openCfdDetails: dummyOpenCFDDetails});
 
   // TODO: transfer
   const [visibleWithdrawalModal, setVisibleWithdrawalModal] = useState(false);
@@ -234,8 +238,8 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     toastHandler({type: type, message: message, toastId: toastId});
   };
 
-  const visiblePositionDetailsModalHandler = (visible: boolean) => {
-    setVisiblePositionDetailsModal(visible);
+  const visiblePositionDetailsModalHandler = () => {
+    setVisiblePositionDetailsModal(!visiblePositionDetailsModal);
   };
   const dataPositionDetailsModalHandler = (data: IDataPositionDetailsModal) => {
     setDataPositionDetailsModal(data);
@@ -430,6 +434,11 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
         getSubmissionState={getWithdrawSubmissionState}
         modalVisible={visibleWithdrawalModal}
         modalClickHandler={visibleWithdrawalModalHandler}
+      />
+      <PositionDetailsModal
+        openCfdDetails={dataPositionDetailsModal.openCfdDetails}
+        modalVisible={visiblePositionDetailsModal}
+        modalClickHandler={visiblePositionDetailsModalHandler}
       />
       {/* <TransferProcessModal
         getTransferData={getWithdrawData}

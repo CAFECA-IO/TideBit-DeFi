@@ -44,8 +44,8 @@ const OpenPositionItem = ({
   const {
     visiblePositionDetailsModal,
     visiblePositionDetailsModalHandler,
-    dataPositionDetailsModalHandler: positionDetailsModalDataHandler,
-    dataPositionDetailsModal: positionDetailsModalData,
+    dataPositionDetailsModalHandler,
+    dataPositionDetailsModal,
     toast,
   } = useGlobal();
 
@@ -53,28 +53,28 @@ const OpenPositionItem = ({
 
   // TODO: 先跟 user context 拿特定 order id 的資料，再呼叫 function 拿到單一筆 CFD 詳細資料 。 global context 設定 cfd id，再顯示 position details modal
   // dataPositionDetailsModal 拿到的是整個JSON
-  // TODO: 把 IOpenCFDDetails 跟 IOpenCFDBrief 合併成一個 interface?
   // globalContext.dataPositionDetailsModalHandler(cfd.orderId);
   const detailedModalClickHandler = () => {
     // setDetailedModalVisible(!detailedModalVisible);
-    visiblePositionDetailsModalHandler(!visiblePositionDetailsModal);
-    passOrderIdHandler(openCfdDetails.id);
+    visiblePositionDetailsModalHandler();
+    dataPositionDetailsModalHandler({openCfdDetails});
+    // passOrderIdHandler(openCfdDetails.id);
   };
 
-  // FIXME: Position Details Modal Data
-  const passOrderIdHandler = (orderId: string) => {
-    positionDetailsModalDataHandler({orderIdPositionDetailsModal: orderId});
-    // toast({type: 'info', message: `pass OrderId Handler order id, ${orderId}`});
-    // toast({
-    //   type: 'info',
-    //   message: `position Details Modal Data from context, ${JSON.stringify(
-    //     positionDetailsModalData
-    //   )}`,
-    // });
+  // // FIXME: Position Details Modal Data
+  // const passOrderIdHandler = (orderId: string) => {
+  //   positionDetailsModalDataHandler({orderIdPositionDetailsModal: orderId});
+  //   // toast({type: 'info', message: `pass OrderId Handler order id, ${orderId}`});
+  //   // toast({
+  //   //   type: 'info',
+  //   //   message: `position Details Modal Data from context, ${JSON.stringify(
+  //   //     positionDetailsModalData
+  //   //   )}`,
+  //   // });
 
-    // console.log('pass OrderId Handler `order id`', orderId);
-    // console.log('position Details Modal Data `from context`', positionDetailsModalData);
-  };
+  //   // console.log('pass OrderId Handler `order id`', orderId);
+  //   // console.log('position Details Modal Data `from context`', positionDetailsModalData);
+  // };
 
   // const progressPercentage = 50;
   // const [progress, setProgress] = useState(0);

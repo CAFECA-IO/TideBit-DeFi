@@ -559,7 +559,7 @@ const tickerStatic: ITickerStatic = {
   id: 'ETH',
   label: 'ETH',
   leverage: 5,
-  guranteedStopFee: 0.2,
+  guaranteedStopFee: 0.2,
   cryptoBriefNews: [
     {
       id: 'NEWS20230210001',

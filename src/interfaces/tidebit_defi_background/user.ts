@@ -1,5 +1,5 @@
 import {ICFDBrief} from './cfd_brief';
-import {ICFDOrderCreatingRequest} from './cfd_order_request';
+import {ICFDOrderCreatingProps} from './cfd_order_request';
 import {ICFDOrderUpdateRequest} from './cfd_order_update';
 import {IClosedCFDBrief} from './closed_cfd_brief';
 import {IClosedCFDDetails} from './closed_cfd_details';
@@ -7,6 +7,7 @@ import {IDepositOrder} from './deposit_order';
 import {INotificationItem} from './notification_item';
 import {IOpenCFDBrief} from './open_cfd_brief';
 import {IOpenCFDDetails, dummyOpenCFDDetails} from './open_cfd_details';
+import {IOpenCFDOrder} from './open_cfd_order';
 import {IOrderStatusUnion} from './order_status_union';
 import {ITickerItem} from './ticker_item';
 import {IUserBalance} from './user_balance';
@@ -53,11 +54,10 @@ export interface IUser {
   getOpenedCFD: () => IOpenCFDDetails[];
   getClosedCFD: () => IClosedCFDDetails[];
 
-  // TODO: uncertain props
-  createOrder: (props: ICFDOrderCreatingRequest) => Promise<IOrderStatusUnion>;
+  // TODO: Replace IOrderStatusUnion with IResult (or better replacement)
+  createOrder: (props: IOpenCFDOrder) => Promise<IOrderStatusUnion>;
   closeOrder: (props: {id: string}) => Promise<IOrderStatusUnion>;
   updateOrder: (props: ICFDOrderUpdateRequest) => Promise<IOrderStatusUnion>;
-  // TODO: [Discussion]
   deposit: (props: IDepositOrder) => Promise<IOrderStatusUnion>;
   withdraw: (props: IWithdrawalOrder) => Promise<IOrderStatusUnion>;
   // + createOrder(orderType<CFD, Deposite, Withdraw, SpotTrade>, data):PublicOrder

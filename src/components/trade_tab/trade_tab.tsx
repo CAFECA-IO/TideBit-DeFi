@@ -12,7 +12,7 @@ const TradeTab = () => {
   const LIQUIDATION_PRICE = 7548;
   const USER_BALANCE = 1000;
   const LEVERAGE = 5;
-  const guranteedStopFee = 0.97;
+  const guaranteedStopFee = 0.97;
   const buyEstimatedFilledPrice = (MARKET_PRICE * 1.008).toFixed(2); // market price * (1+spread)
   const sellEstimatedFilledPrice = (MARKET_PRICE * 0.992).toFixed(2); // market price * (1-spread)
   const longRecommendedTp = Number((MARKET_PRICE * 1.15).toFixed(2)); // recommendedTp // MARKET_PRICE * 1.15
@@ -217,7 +217,7 @@ const TradeTab = () => {
       />
       <label className={`ml-2 flex text-sm font-medium text-lightGray`}>
         Guaranteed stop &nbsp;
-        <span className="text-lightWhite"> (Fee: {guranteedStopFee} USDT)</span>
+        <span className="text-lightWhite"> (Fee: {guaranteedStopFee} USDT)</span>
         {/* <span className="">
           <AiOutlineQuestionCircle size={20} />
         </span> */}
@@ -294,7 +294,7 @@ const TradeTab = () => {
         />
         <label className="ml-2 flex text-sm font-medium text-lightGray">
           Guaranteed stop &nbsp;
-          <span className="text-lightWhite"> (Fee: {guranteedStopFee} USDT)</span>
+          <span className="text-lightWhite"> (Fee: {guaranteedStopFee} USDT)</span>
           {/* <span className="">
           <AiOutlineQuestionCircle size={20} />
         </span> */}

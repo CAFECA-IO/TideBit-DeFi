@@ -1,9 +1,9 @@
 export interface ICryptocurrency {
   id: string;
+  icon: string; // svg src
   name: string; // Tether
   symbol: string; // USDT
   decimals: number; // decimal places
-  icon: string; // svg src
   fee: number;
 }
 

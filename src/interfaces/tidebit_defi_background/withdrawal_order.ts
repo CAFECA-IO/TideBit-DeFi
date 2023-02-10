@@ -7,6 +7,7 @@ export interface IWithdrawalOrder extends IOrder {
 export const dummyWithdrawalOrder: IWithdrawalOrder = {
   timestamp: 1675299651,
   type: 'WITHDRAW',
-  asset: 'USDT',
-  amount: 15,
+  targetAsset: 'USDT',
+  targetAmount: 15,
+  fee: 0,
 };

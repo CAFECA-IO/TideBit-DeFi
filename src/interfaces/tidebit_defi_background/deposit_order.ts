@@ -7,7 +7,8 @@ export interface IDepositOrder extends IOrder {
 export const dummyDepositOrder: IDepositOrder = {
   timestamp: 1675299651,
   type: 'DEPOSIT',
-  asset: 'USDT',
-  amount: 2000,
+  targetAsset: 'USDT',
+  targetAmount: 2000,
   remarks: 'sth',
+  fee: 0,
 };

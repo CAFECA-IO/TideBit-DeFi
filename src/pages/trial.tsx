@@ -66,7 +66,7 @@ const Trial = () => {
     stopLoss: '-',
     liquidationPrice: '1183.6',
     state: 'Open',
-    guranteedStop: false,
+    guaranteedStop: false,
     fee: 0,
     scheduledClosingTimestamp: 123456,
     leverage: 5,

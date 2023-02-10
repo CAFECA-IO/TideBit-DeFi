@@ -153,7 +153,7 @@ const PositionDetailsModal = ({
       const stopLossAmount = stopLossValue !== openCfdDetails.stopLoss ? stopLossValue : undefined;
       changedProperties = {
         ...changedProperties,
-        guranteedStopChecked: guaranteedChecked,
+        guaranteedStopChecked: guaranteedChecked,
         stopLossAmount,
       };
     }

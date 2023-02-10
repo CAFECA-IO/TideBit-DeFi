@@ -6,6 +6,7 @@ import PositionDetailsModal from '../components/position_details_modal/position_
 import TransferProcessModal from '../components/transfer_process_modal/transfer_process_modal';
 import {MarketContext} from './market_context';
 import Toast from '../components/toast/toast';
+import LoadingModal from '../components/loading_modal/loading_modal';
 
 export interface IToastify {
   type: 'error' | 'warning' | 'info' | 'success';
@@ -13,12 +14,20 @@ export interface IToastify {
   toastId?: string | number; // Prevent duplicate toast
 }
 
-// export const TOAST_CLASSES_TYPE = {
-//   error: 'error',
-//   warning: 'warning',
-//   info: 'info',
-//   success: 'success',
-// };
+export interface IDataPositionDetailsModal {
+  orderIdPositionDetailsModal: string;
+}
+
+export interface IDataTransferProcessModal {
+  transferType: 'deposit' | 'withdraw';
+}
+
+export interface IDataLoadingModal {
+  modalTitle: string;
+  modalContent: string;
+  btnMsg?: string;
+  btnUrl?: string;
+}
 
 const toastHandler = ({type, message, toastId}: IToastify) => {
   // return {
@@ -70,6 +79,11 @@ export interface IGlobalContext {
   visibleTransferProcessModalHandler: () => void;
   dataTransferProcessModal: IDataTransferProcessModal | null;
   dataTransferProcessModalHandler: (data: IDataTransferProcessModal) => void;
+
+  visibleLoadingModal: boolean;
+  visibleLoadingModalHandler: () => void;
+  dataLoadingModal: IDataLoadingModal | null;
+  dataLoadingModalHandler: (data: IDataLoadingModal) => void;
 }
 
 export const GlobalContext = createContext<IGlobalContext>({
@@ -89,23 +103,40 @@ export const GlobalContext = createContext<IGlobalContext>({
   visibleTransferProcessModalHandler: () => null,
   dataTransferProcessModal: null,
   dataTransferProcessModalHandler: () => null,
+
+  visibleLoadingModal: false,
+  visibleLoadingModalHandler: () => null,
+  dataLoadingModal: null,
+  dataLoadingModalHandler: () => null,
 });
-
-export interface IDataPositionDetailsModal {
-  orderIdPositionDetailsModal: string;
-}
-
-export interface IDataTransferProcessModal {
-  transferType: 'deposit' | 'withdraw';
-}
 
 const initialColorMode: ColorModeUnion = 'dark';
 
 export const GlobalProvider = ({children}: IGlobalProvider) => {
-  // const {availableTransferOptions} = useContext(MarketContext);
-  // console.log('options in global context:', availableTransferOptions);
-
   const [colorMode, setColorMode] = useState<ColorModeUnion>(initialColorMode);
+
+  const [visiblePositionDetailsModal, setVisiblePositionDetailsModal] = useState(false);
+  const [dataPositionDetailsModal, setDataPositionDetailsModal] =
+    useState<IDataPositionDetailsModal>({orderIdPositionDetailsModal: ''});
+
+  const [visibleTransferProcessModal, setVisibleTransferProcessModal] = useState(false);
+  const [dataTransferProcessModal, setDataTransferProcessModal] =
+    useState<IDataTransferProcessModal>({transferType: 'deposit'});
+
+  const [visibleLoadingModal, setVisibleLoadingModal] = useState(false);
+  const [dataLoadingModal, setDataLoadingModal] = useState<IDataLoadingModal>({
+    modalTitle: '',
+    modalContent: '',
+  });
+
+  const [depositProcess, setDepositProcess] = useState<
+    'form' | 'loading' | 'success' | 'cancellation' | 'fail'
+  >('form');
+  const [withdrawProcess, setWithdrawProcess] = useState<
+    'form' | 'loading' | 'success' | 'cancellation' | 'fail'
+  >('form');
+  const [withdrawData, setWithdrawData] = useState<{asset: string; amount: number}>();
+  const [depositData, setDepositData] = useState<{asset: string; amount: number}>();
 
   const windowSize = useWindowSize();
   const {width, height} = windowSize;
@@ -125,9 +156,6 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     toastHandler({type: type, message: message, toastId: toastId});
   };
 
-  const [visiblePositionDetailsModal, setVisiblePositionDetailsModal] = useState(false);
-  const [dataPositionDetailsModal, setDataPositionDetailsModal] =
-    useState<IDataPositionDetailsModal>({orderIdPositionDetailsModal: ''});
   const visiblePositionDetailsModalHandler = (visible: boolean) => {
     setVisiblePositionDetailsModal(visible);
   };
@@ -135,9 +163,6 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     setDataPositionDetailsModal(data);
   };
 
-  const [visibleTransferProcessModal, setVisibleTransferProcessModal] = useState(false);
-  const [dataTransferProcessModal, setDataTransferProcessModal] =
-    useState<IDataTransferProcessModal>({transferType: 'deposit'});
   const visibleTransferProcessModalHandler = () => {
     setVisibleTransferProcessModal(!visibleTransferProcessModal);
   };
@@ -145,15 +170,12 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     setDataTransferProcessModal(data);
   };
 
-  const [depositProcess, setDepositProcess] = useState<
-    'form' | 'loading' | 'success' | 'cancellation' | 'fail'
-  >('form');
-  const [withdrawProcess, setWithdrawProcess] = useState<
-    'form' | 'loading' | 'success' | 'cancellation' | 'fail'
-  >('form');
-
-  const [withdrawData, setWithdrawData] = useState<{asset: string; amount: number}>();
-  const [depositData, setDepositData] = useState<{asset: string; amount: number}>();
+  const visibleLoadingModalHandler = () => {
+    setVisibleLoadingModal(!visibleLoadingModal);
+  };
+  const dataLoadingModalHandler = (data: IDataLoadingModal) => {
+    setDataLoadingModal(data);
+  };
 
   const getWithdrawSubmissionState = (state: 'success' | 'cancellation' | 'fail') => {
     setWithdrawProcess(state);
@@ -177,26 +199,6 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
         }, 5000);
       }, 5000);
     }, 3000);
-    // withdraw(withdrawData?.asset, withdrawData?.amount)
-    //   .then((res) => {
-    //     console.log('withdraw res: ', res);
-    //     setWithdrawProcess('success');
-    //   })
-    //   .catch((err) => {
-    //     console.log('withdraw err: ', err);
-    //     setWithdrawProcess('fail');
-    //   });
-
-    // const withdraw = async () => {
-    //   try {
-    //     const res = await withdraw(withdrawData?.asset, withdrawData?.amount);
-    //     console.log('withdraw res: ', res);
-    //     setWithdrawProcess('success');
-    //   } catch (err) {
-    //     console.log('withdraw err: ', err);
-    //     setWithdrawProcess('fail');
-    //   }
-    // }
   };
 
   // const positionDetailedModal = (
@@ -225,6 +227,11 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     visibleTransferProcessModalHandler,
     dataTransferProcessModal,
     dataTransferProcessModalHandler,
+
+    visibleLoadingModal,
+    visibleLoadingModalHandler,
+    dataLoadingModal,
+    dataLoadingModalHandler,
   };
   return (
     <GlobalContext.Provider value={defaultValue}>
@@ -239,6 +246,14 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
         // userAvailableBalance={123}
         modalVisible={visibleTransferProcessModal}
         modalClickHandler={visibleTransferProcessModalHandler}
+      />
+      <LoadingModal
+        modalVisible={visibleLoadingModal}
+        modalClickHandler={visibleLoadingModalHandler}
+        modalTitle={dataLoadingModal.modalTitle}
+        modalContent={dataLoadingModal.modalContent}
+        btnMsg={dataLoadingModal?.btnMsg}
+        btnUrl={dataLoadingModal?.btnUrl}
       />
       {/* One toast container avoids duplicating toast overlaying */}
       <Toast />

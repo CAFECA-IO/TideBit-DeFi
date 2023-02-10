@@ -17,6 +17,7 @@ import TransferProcessModal, {
 } from '../components/transfer_process_modal/transfer_process_modal';
 import CfdPositionModal from '../components/cfd_position_modal/cfd_position_modal';
 import PositionDetailsModal from '../components/position_details_modal/position_details_modal';
+import LoadingModal from '../components/loading_modal/loading_modal';
 
 const Trial = () => {
   const {
@@ -81,66 +82,14 @@ const Trial = () => {
     <>
       {/* flex h-screen w-full items-center justify-center */}
       <div className="w-full space-y-10 bg-cuteBlue">
-        {/* <PositionDetailsModal
-          // openCfdDetails={dataFormat}
+        <LoadingModal
+          modalTitle="Wallet Connect"
+          modalContent="Connecting..."
           modalVisible={modalVisible}
           modalClickHandler={modalClickHandler}
-        /> */}
-        {/* <CfdPositionModal /> */}
-        {/* {forCryptoCard} */}
-        {/* <TrialComponent /> */}
-        {/* Divider */}
-        {/* <div className="my-auto h-px w-full rounded bg-white/50"></div> */}
-        {/* Toast and gradient */}
-        {/* <button
-          onClick={notifyFunction}
-          className="h-120px w-200px rounded border-0.5px border-lightWhite/50 bg-lightWhite bg-gradient-to-b from-lightWhite/50 to-black p-0 px-5 text-lightWhite opacity-90 shadow-lg"
-        >
-          Notify!
-        </button>
-
-        <ToastContainer
-          position="bottom-left"
-          autoClose={3000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable={false}
-          pauseOnHover
-          theme="dark"
-          limit={10}
-        /> */}
-        {/* 
-        <RippleButton
-          buttonType="button"
-          className="mt-4 rounded border-0 bg-cuteBlue py-2 px-5 text-base text-black transition-colors duration-300 hover:cursor-pointer hover:bg-cuteBlue/80 focus:outline-none md:mt-0"
-        >
-          Show the modal
-        </RippleButton> */}
-        {/* <TransferProcessModal
-          transferOptions={[
-            {label: 'USDT', content: 'Tether'},
-            {label: 'ETH', content: 'ETH'},
-            {label: 'BTC', content: 'BTC'},
-            {label: 'USDC', content: 'USD Coin'},
-            {label: 'DAI', content: 'DAI'},
-            {label: 'BNB', content: 'BNB'},
-            {label: 'BCH', content: 'BCH'},
-            {label: 'LTC', content: 'LTC'},
-            {label: 'ETC', content: 'ETC'},
-            {label: 'USX', content: 'USX'},
-            {label: 'NEO', content: 'NEO'},
-            {label: 'EOS', content: 'EOS'},
-          ]}
-          getSubmissionState={getSubmissionState}
-          transferType="withdraw"
-          transferStep="form"
-          userAvailableBalance={314.15}
-          modalVisible={modalVisible}
-          modalClickHandler={modalClickHandler}
-        /> */}
+          // btnMsg="Good"
+          // btnUrl="https://etherscan.io/"
+        />
       </div>
     </>
   );

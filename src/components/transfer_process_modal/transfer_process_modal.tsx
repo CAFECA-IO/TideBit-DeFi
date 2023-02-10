@@ -76,7 +76,7 @@ const TransferProcessModal = ({
   // transferOptions: transferOptions, // [to be removed] marketContext
   ...otherProps
 }: ITransferProcessModal) => {
-  // TODO: deposit: userCtx.walletBalance, withdraw: userCtx.balance?.available
+  // TODO: [UserContext] deposit: userCtx.walletBalance, withdraw: userCtx.balance?.available
   const userAvailableBalance = 1620;
   const {availableTransferOptions} = useContext(MarketContext);
 

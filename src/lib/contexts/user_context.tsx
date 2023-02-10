@@ -25,6 +25,12 @@ import {
   dummyResultSuccess,
   IResult,
 } from '../../interfaces/tidebit_defi_background/result';
+import {
+  dummyWalletBalance_BTC,
+  dummyWalletBalance_ETH,
+  dummyWalletBalance_USDT,
+  IWalletBalance,
+} from '../../interfaces/tidebit_defi_background/wallet_balance';
 
 function randomNumber(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1) + min);
@@ -87,7 +93,7 @@ export interface IUserContext {
   id: string | null;
   username: string | null;
   wallet: string | null;
-  walletBalance: number | null;
+  walletBalance: IWalletBalance[] | null;
   balance: IUserBalance | null;
   favoriteTickers: string[];
   isConnected: boolean;
@@ -136,7 +142,7 @@ export const UserProvider = ({children}: IUserProvider) => {
   const [id, setId] = useState<string | null>(null);
   const [username, setUsername] = useState<string | null>(null);
   const [wallet, setWallet] = useState<string | null>(null);
-  const [walletBalance, setWalletBalance] = useState<number | null>(null);
+  const [walletBalance, setWalletBalance] = useState<IWalletBalance[] | null>(null);
   const [balance, setBalance] = useState<IUserBalance | null>(null);
   const [favoriteTickers, setFavoriteTickers] = useState<string[]>([]);
   const [isConnected, setIsConnected] = useState<boolean>(false);
@@ -180,7 +186,7 @@ export const UserProvider = ({children}: IUserProvider) => {
         setId('002');
         setUsername('Tidebit DeFi Test User');
         setWallet('0xb54898DB1250A6a629E5B566367E9C60a7Dd6C30');
-        setWalletBalance(894);
+        setWalletBalance([dummyWalletBalance_BTC, dummyWalletBalance_ETH, dummyWalletBalance_USDT]);
         setBalance({
           available: 1296.47,
           locked: 583.62,

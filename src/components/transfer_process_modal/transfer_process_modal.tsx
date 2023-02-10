@@ -14,7 +14,7 @@ import {UserContext} from '../../contexts/user_context';
 
 interface ITransferProcessModal {
   transferType: 'deposit' | 'withdraw';
-  userAvailableBalance: number;
+  // userAvailableBalance: number;
   transferStep: 'form' | 'loading' | 'success' | 'cancellation' | 'fail';
   modalVisible: boolean;
   modalClickHandler: () => void;
@@ -64,20 +64,22 @@ export const TRANSFER_PROCESS_MODAL_STEP_CLASSES = {
 
 // TODO: refactor this component `Transfer Modal`
 const TransferProcessModal = ({
-  transferType, // globalContext
-  userAvailableBalance, // userContext
-  transferStep, // to be removed
+  transferType, // [to be removed]globalContext
+  // userAvailableBalance, // [to be removed] userContext
+  transferStep, // [to be removed]
   modalVisible,
   modalClickHandler,
   getSubmissionState, // [process] to be removed
   // initialAmountInput,
   getTransferData, // pass data to parent component
   submitHandler, // submit information from parent component
-  // transferOptions: transferOptions, // marketContext
+  // transferOptions: transferOptions, // [to be removed] marketContext
   ...otherProps
 }: ITransferProcessModal) => {
-  // const [modalVisible, setModalVisible] = useState(true);
+  // TODO: deposit: userCtx.walletBalance, withdraw: userCtx.balance?.available
+  const userAvailableBalance = 1620;
   const {availableTransferOptions} = useContext(MarketContext);
+
   const {user} = useContext(UserContext);
   // console.log('availableTransferOptions: ', availableTransferOptions);
 

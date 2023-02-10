@@ -236,7 +236,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
         getSubmissionState={getWithdrawSubmissionState}
         transferType={dataTransferProcessModal.transferType}
         transferStep={withdrawProcess}
-        userAvailableBalance={123}
+        // userAvailableBalance={123}
         modalVisible={visibleTransferProcessModal}
         modalClickHandler={visibleTransferProcessModalHandler}
       />

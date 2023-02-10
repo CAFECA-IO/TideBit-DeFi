@@ -10,6 +10,7 @@ import {MdKeyboardArrowDown, MdKeyboardArrowRight} from 'react-icons/md';
 import RippleButton from '../ripple_button/ripple_button';
 // import {TRANSFER_OPTIONS} from '../../constants/display';
 import {MarketContext} from '../../lib/contexts/market_context';
+import {UserContext} from '../../lib/contexts/user_context';
 
 interface ITransferProcessModal {
   transferType: 'deposit' | 'withdraw';
@@ -18,7 +19,7 @@ interface ITransferProcessModal {
   modalVisible: boolean;
   modalClickHandler: () => void;
   getSubmissionState: (props: 'success' | 'cancellation' | 'fail') => void;
-  transferOptions: ITransferOptions[];
+  // transferOptions: ITransferOptions[];
   getTransferData: (props: {asset: string; amount: number}) => void;
   submitHandler: (props: {asset: string; amount: number}) => void;
   // initialAmountInput: undefined | number;
@@ -72,15 +73,16 @@ const TransferProcessModal = ({
   // initialAmountInput,
   getTransferData, // pass data to parent component
   submitHandler, // submit information from parent component
-  transferOptions: transferOptions, // marketContext
+  // transferOptions: transferOptions, // marketContext
   ...otherProps
 }: ITransferProcessModal) => {
   // const [modalVisible, setModalVisible] = useState(true);
-  // const {availableTransferOptions} = useContext(MarketContext);
+  const {availableTransferOptions} = useContext(MarketContext);
+  const {user} = useContext(UserContext);
   // console.log('availableTransferOptions: ', availableTransferOptions);
 
   const [showCryptoMenu, setShowCryptoMenu] = useState(false);
-  const [selectedCrypto, setSelectedCrypto] = useState(transferOptions[0]);
+  const [selectedCrypto, setSelectedCrypto] = useState(availableTransferOptions[0]);
   const [amountInput, setAmountInput] = useState<number | undefined>();
   const [showWarning, setShowWarning] = useState(false);
 
@@ -231,7 +233,7 @@ const TransferProcessModal = ({
 
   const warningStyle = showWarning ? 'block' : 'invisible';
 
-  const avaliableCryptoMenu = transferOptions.map(item => {
+  const avaliableCryptoMenu = availableTransferOptions.map(item => {
     return (
       <li
         key={item.label}

@@ -1,5 +1,10 @@
 import {IPnL} from './pnl';
+import {ITickerLineGraph} from './ticker_line_graph';
 
+/** Extended by
+ * @interface IOpenCFDDetails
+ * @interface ICloseCFDDetails
+ */
 export interface ICFDDetails {
   // icon: string;
   id: string;

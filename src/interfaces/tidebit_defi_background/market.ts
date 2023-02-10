@@ -17,7 +17,7 @@ export interface IMarket {
   // getTickers: (tickerId: string) => ITickerItem[]; // 拿到交易對清單
 
   isCFDTradable: boolean;
-  // getIsCFDTradable: (tickerId: string) => boolean; // TODO: parameter
+  // getIsCFDTradable: (tickerId: string) => boolean;
 
   ticker: ITickerStatic;
   // getTicker: (tickerId: string) => ITickerStatic;
@@ -31,12 +31,11 @@ export interface IMarket {
    * + getTickerDetails(tickerId)
    * + getCryptocurrencyDetails(cryptocurrencyId)
    */
-  // TODO: function name
   tickerLiveStatistics: ITickerLiveStatistics;
   // getTickerLiveStatistics: (tickerId: string) => ITickerLiveStatistics;
 
   candlestickData: ICandlestick[]; // x 100
-  getCandlestickChartData: (props: {tickerId: string; timeSpan: ITimeSpanUnion}) => ICandlestick[]; // x 100 // TODO: parameter
+  getCandlestickChartData: (props: {tickerId: string; timeSpan: ITimeSpanUnion}) => ICandlestick[]; // x 100
 
   // home page
   // tideBitPromotion: ITideBitPromotion;
@@ -46,5 +45,6 @@ export interface IMarket {
 
   // getTicker: (id: number) => ITickerDetails; // 拿到現在這個交易對的資料
 
-  transferOptions: ITransferOption[]; // 可供入金出金的選項
+  withdrawOptions: ITransferOption[]; // 可供出金的選項
+  depositOptions: ITransferOption[]; // 可供入金的選項
 }

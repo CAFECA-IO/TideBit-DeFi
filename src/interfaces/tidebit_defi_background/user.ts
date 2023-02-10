@@ -3,12 +3,14 @@ import {ICFDOrderCreatingRequest} from './cfd_order_request';
 import {ICFDOrderUpdateRequest} from './cfd_order_update';
 import {IClosedCFDBrief} from './closed_cfd_brief';
 import {IClosedCFDDetails} from './closed_cfd_details';
+import {IDepositOrder} from './deposit_order';
 import {INotificationItem} from './notification_item';
 import {IOpenCFDBrief} from './open_cfd_brief';
 import {IOpenCFDDetails, dummyOpenCFDDetails} from './open_cfd_details';
 import {IOrderStatusUnion} from './order_status_union';
 import {ITickerItem} from './ticker_item';
 import {IUserBalance} from './user_balance';
+import {IWithdrawalOrder} from './withdrawal_order';
 
 export interface IUser {
   id: string | null;
@@ -30,14 +32,13 @@ export interface IUser {
   addFavoriteTicker: (props: ITickerItem) => Promise<void>;
   removeFavoriteTicker: (props: ITickerItem) => Promise<void>;
 
-  favoriteTickers: ITickerItem[]; // TODO: missed in the document
+  favoriteTickers: ITickerItem[];
   getFavoriteTickers: () => ITickerItem[];
 
   balances: IUserBalance;
   // + getTotalBalace(userId): return total balance in USDT with abvl and locked
   // + getPnL(): return today, 30days, total PNL
 
-  // TODO: function name
   getWalletBalance: (asset: string) => number; // 可入金多少
   // getBalances: (source: string, currencyId?: string) => IUserBalance;
   // + getBalances(source, currencyId[optional]):<Balance>
@@ -56,8 +57,8 @@ export interface IUser {
   createOrder: (props: ICFDOrderCreatingRequest) => Promise<IOrderStatusUnion>;
   closeOrder: (props: {id: string}) => Promise<IOrderStatusUnion>;
   updateOrder: (props: ICFDOrderUpdateRequest) => Promise<IOrderStatusUnion>;
-  deposit: (props: {asset: string; amount: number}) => Promise<IOrderStatusUnion>;
-  withdraw: (props: {asset: string; amount: number}) => Promise<IOrderStatusUnion>;
+  deposit: (props: IDepositOrder) => Promise<IOrderStatusUnion>;
+  withdraw: (props: IWithdrawalOrder) => Promise<IOrderStatusUnion>;
   // + createOrder(orderType<CFD, Deposite, Withdraw, SpotTrade>, data):PublicOrder
 }
 

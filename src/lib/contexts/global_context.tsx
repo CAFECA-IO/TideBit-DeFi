@@ -102,7 +102,7 @@ export interface IDataTransferProcessModal {
 const initialColorMode: ColorModeUnion = 'dark';
 
 export const GlobalProvider = ({children}: IGlobalProvider) => {
-  const {availableTransferOptions} = useContext(MarketContext);
+  // const {availableTransferOptions} = useContext(MarketContext);
   // console.log('options in global context:', availableTransferOptions);
 
   const [colorMode, setColorMode] = useState<ColorModeUnion>(initialColorMode);
@@ -156,22 +156,15 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
   const [depositData, setDepositData] = useState<{asset: string; amount: number}>();
 
   const getWithdrawSubmissionState = (state: 'success' | 'cancellation' | 'fail') => {
-    // console.log('result boolean: ', state);
     setWithdrawProcess(state);
   };
 
   const getWithdrawData = (props: {asset: string; amount: number}) => {
-    // console.log('get withdraw data:', props);
     setWithdrawData(props);
-    // withdrawData?.amount
   };
 
   const withdrawSubmitHandler = (props: {asset: string; amount: number}) => {
-    // setWithdrawData(props);
-    // withdraw(withdrawData)
-
     setWithdrawProcess('loading');
-    // console.log('send withdraw request in wallet panel', withdrawData?.asset, withdrawData?.amount);
 
     setTimeout(() => {
       setWithdrawProcess('success');
@@ -239,7 +232,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
         getTransferData={getWithdrawData}
         // initialAmountInput={undefined}
         submitHandler={withdrawSubmitHandler}
-        transferOptions={availableTransferOptions}
+        // transferOptions={availableTransferOptions}
         getSubmissionState={getWithdrawSubmissionState}
         transferType={dataTransferProcessModal.transferType}
         transferStep={withdrawProcess}
@@ -247,7 +240,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
         modalVisible={visibleTransferProcessModal}
         modalClickHandler={visibleTransferProcessModalHandler}
       />
-      {/* One container avoids duplicating toast overlaying */}
+      {/* One toast container avoids duplicating toast overlaying */}
       <Toast />
       {children}
     </GlobalContext.Provider>

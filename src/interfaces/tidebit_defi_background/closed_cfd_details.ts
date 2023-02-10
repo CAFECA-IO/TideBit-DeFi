@@ -2,9 +2,11 @@ import {ICFDDetails} from './cfd_details';
 export interface IClosedCFDDetails extends ICFDDetails {
   state: 'CLOSED';
   closedType: 'SCHEDULE' | 'FORCED_LIQUIDATION' | 'STOP_LOSS' | 'TAKE_PROFIT' | 'BY_USER';
-  forcedClosed: boolean;
-  closedTimestamp: number; // remaining hrs gained from context
+  forcedClosed: boolean; // 強制執行 // TODO: [Discussion]
+  closedTimestamp: number;
   closedValue: number;
+
+  // TODO: [Discussion] no extra amendment for merged closed_cfd_brief
 }
 
 function randomIntFromInterval(min: number, max: number) {

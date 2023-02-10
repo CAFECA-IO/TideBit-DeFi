@@ -489,7 +489,7 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
       getTransferData={getWithdrawData}
       // initialAmountInput={undefined}
       submitHandler={withdrawSubmitHandler}
-      transferOptions={availableTransferOptions}
+      // transferOptions={availableTransferOptions}
       getSubmissionState={getWithdrawSubmissionState}
       transferType="withdraw"
       transferStep={withdrawProcess}
@@ -504,7 +504,7 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
       getTransferData={getDepositData}
       // initialAmountInput={user?.walletBalance ?? 0}
       submitHandler={depositSubmitHandler}
-      transferOptions={availableTransferOptions}
+      // transferOptions={availableTransferOptions}
       getSubmissionState={getDepositSubmissionState}
       transferType="deposit"
       transferStep={depositProcess}

@@ -9,7 +9,7 @@ import PositionLineGraph from '../position_line_graph/position_line_graph';
 import PositionDetailsModal from '../position_details_modal/position_details_modal';
 import {IOpenCFDDetails} from '../../interfaces/tidebit_defi_background/open_cfd_details';
 import {toast} from 'react-toastify';
-import {useGlobal} from '../../lib/contexts/global_context';
+import {useGlobal} from '../../contexts/global_context';
 // import HorizontalRelativeLineGraph from '../horizontal_relative_line_graph/horizontal_relative_line_graph';
 
 interface IOpenPositionItemProps {

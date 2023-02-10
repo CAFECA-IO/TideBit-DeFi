@@ -3,9 +3,9 @@ import '../styles/dpr.css';
 import '../styles/custom.css';
 import type {AppProps} from 'next/app';
 import {appWithTranslation} from 'next-i18next';
-import {MarketProvider} from '../lib/contexts/market_context';
-import {UserProvider} from '../lib/contexts/user_context';
-import {GlobalProvider} from '../lib/contexts/global_context';
+import {MarketProvider} from '../contexts/market_context';
+import {UserProvider} from '../contexts/user_context';
+import {GlobalProvider} from '../contexts/global_context';
 
 function App({Component, pageProps}: AppProps) {
   return (

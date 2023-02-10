@@ -16,8 +16,8 @@ import {
   IMarketProvider,
   ITickerData,
   MarketProvider,
-} from '../../lib/contexts/market_context';
-import {UserContext, IUserContext} from '../../lib/contexts/user_context';
+} from '../../contexts/market_context';
+import {UserContext, IUserContext} from '../../contexts/user_context';
 import {BiColorFill} from 'react-icons/bi';
 
 // TODO: useContext

@@ -1,11 +1,11 @@
 import React, {useContext, useState, useEffect, createContext} from 'react';
-import {ICardProps, ILineGraphProps} from '../../components/card/crypto_card';
-import {PROFIT_LOSS_COLOR_TYPE} from '../../constants/display';
+import {ICardProps, ILineGraphProps} from '../components/card/crypto_card';
+import {PROFIT_LOSS_COLOR_TYPE} from '../constants/display';
 import {
   IOpenCFDDetails,
   dummyOpenCFDDetails,
-} from '../../interfaces/tidebit_defi_background/open_cfd_details';
-import {dummyOpenCfds} from '../../interfaces/tidebit_defi_background/user';
+} from '../interfaces/tidebit_defi_background/open_cfd_details';
+import {dummyOpenCfds} from '../interfaces/tidebit_defi_background/user';
 
 export interface ITickerData {
   currency: string;

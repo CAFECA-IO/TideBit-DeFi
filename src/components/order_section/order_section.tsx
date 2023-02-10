@@ -3,8 +3,8 @@ import TradeTab from '../trade_tab/trade_tab';
 import PositionTab from '../position_tab/position_tab';
 import TradeSuspendedTab from '../trade_suspended_tab/trade_suspended_tab';
 import TradeVisitorTab from '../trade_visitor_tab/trade_visitor_tab';
-import {UserContext, IUserContext} from '../../lib/contexts/user_context';
-import {MarketContext, IMarketContext} from '../../lib/contexts/market_context';
+import {UserContext, IUserContext} from '../../contexts/user_context';
+import {MarketContext, IMarketContext} from '../../contexts/market_context';
 import PositionVisitorTab from '../position_visitor_tab/position_visitor_tab';
 
 const OrderSection = () => {

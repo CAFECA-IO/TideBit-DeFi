@@ -11,7 +11,7 @@ import {useRef, useState} from 'react';
 import TradingInput from '../trading_input/trading_input';
 import {AiOutlineQuestionCircle} from 'react-icons/ai';
 import RippleButton from '../ripple_button/ripple_button';
-import {useGlobal} from '../../lib/contexts/global_context';
+import {useGlobal} from '../../contexts/global_context';
 
 interface IPositionDetailsModal {
   modalVisible: boolean;

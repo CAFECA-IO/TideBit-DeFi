@@ -18,7 +18,7 @@ import {useRouter} from 'next/router';
 import I18n from '../i18n/i18n';
 import {IoIosArrowBack} from 'react-icons/io';
 import UserOverview from '../user_overview/user_overview';
-import {UserContext} from '../../lib/contexts/user_context';
+import {UserContext} from '../../contexts/user_context';
 
 // interface INavBarProps {
 //   notifyRef: HTMLDivElement extends HTMLElement ? React.RefObject<HTMLDivElement> : null;

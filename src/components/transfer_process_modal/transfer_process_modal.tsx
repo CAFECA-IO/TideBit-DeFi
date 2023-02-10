@@ -9,8 +9,8 @@ import {useState, useContext} from 'react';
 import {MdKeyboardArrowDown, MdKeyboardArrowRight} from 'react-icons/md';
 import RippleButton from '../ripple_button/ripple_button';
 // import {TRANSFER_OPTIONS} from '../../constants/display';
-import {MarketContext} from '../../lib/contexts/market_context';
-import {UserContext} from '../../lib/contexts/user_context';
+import {MarketContext} from '../../contexts/market_context';
+import {UserContext} from '../../contexts/user_context';
 
 interface ITransferProcessModal {
   transferType: 'deposit' | 'withdraw';

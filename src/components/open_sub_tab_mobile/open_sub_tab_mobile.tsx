@@ -1,7 +1,7 @@
 import React, {useContext} from 'react';
 import {dummyOpenCFDBriefs} from '../../interfaces/tidebit_defi_background/open_cfd_brief';
 import OpenPositionItem from '../open_position_item/open_position_item';
-import {UserContext} from '../../lib/contexts/user_context';
+import {UserContext} from '../../contexts/user_context';
 
 const OpenSubTabMobile = () => {
   const {getOpenedCFD} = useContext(UserContext);

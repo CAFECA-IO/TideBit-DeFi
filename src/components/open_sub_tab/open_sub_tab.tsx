@@ -1,7 +1,7 @@
 import React, {useContext, useState} from 'react';
 import OpenPositionItem from '../open_position_item/open_position_item';
 import PositionDetailsModal from '../position_details_modal/position_details_modal';
-import {UserContext} from '../../lib/contexts/user_context';
+import {UserContext} from '../../contexts/user_context';
 
 const OpenSubTab = () => {
   const {getOpenedCFD} = useContext(UserContext);

@@ -29,9 +29,9 @@ import {VscAccount} from 'react-icons/vsc';
 // import {RxExit} from 'react-icons/rx';
 import {ImExit} from 'react-icons/im';
 import TransferProcessModal from '../transfer_process_modal/transfer_process_modal';
-import {MarketContext} from '../../lib/contexts/market_context';
-import {UserContext} from '../../lib/contexts/user_context';
-import {useGlobal} from '../../lib/contexts/global_context';
+import {MarketContext} from '../../contexts/market_context';
+import {UserContext} from '../../contexts/user_context';
+import {useGlobal} from '../../contexts/global_context';
 
 // import Connector from '@walletconnect/core';
 

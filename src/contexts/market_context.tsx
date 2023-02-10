@@ -1,19 +1,19 @@
 import React, {useState, createContext} from 'react';
-import {ICardProps, ILineGraphProps} from '../../components/card/crypto_card';
+import {ICardProps, ILineGraphProps} from '../components/card/crypto_card';
 import {
   INITIAL_POSITION_LABEL_DISPLAYED_STATE,
   PROFIT_LOSS_COLOR_TYPE,
   TRADING_CHART_BORDER_COLOR,
-} from '../../constants/display';
+} from '../constants/display';
 import {ApexOptions} from 'apexcharts';
 import {
   IBriefNewsItem,
   ICryptoSummary,
   IPriceStatistics,
   ITickerDetails,
-} from '../../interfaces/depre_tidebit_defi_background';
-import {ITickerLiveStatistics} from '../../interfaces/tidebit_defi_background/ticker_live_statistics';
-import {ITickerStatic} from '../../interfaces/tidebit_defi_background/ticker_static';
+} from '../interfaces/depre_tidebit_defi_background';
+import {ITickerLiveStatistics} from '../interfaces/tidebit_defi_background/ticker_live_statistics';
+import {ITickerStatic} from '../interfaces/tidebit_defi_background/ticker_static';
 
 export interface ITickerData {
   currency: string;

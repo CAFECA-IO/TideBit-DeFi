@@ -6,7 +6,7 @@ import useWindowSize from '../../lib/hooks/use_window_size';
 import Lottie from 'lottie-react';
 import spotAnimation from '../../../public/animation/circle.json';
 import {INITIAL_POSITION_LABEL_DISPLAYED_STATE} from '../../constants/display';
-import {MarketContext} from '../../lib/contexts/market_context';
+import {MarketContext} from '../../contexts/market_context';
 
 const DEFAULT_CHART_WIDTH = 900;
 const DEFAULT_CHART_HEIGHT = 400;

@@ -5,7 +5,7 @@ import I18n from '../i18n/i18n';
 import WalletPanel from '../wallet/wallet_panel';
 import Notification from '../notification/notification';
 import useOuterClick from '../../lib/hooks/use_outer_click';
-import {UserContext} from '../../lib/contexts/user_context';
+import {UserContext} from '../../contexts/user_context';
 import {useTranslation} from 'next-i18next';
 import UserMobile from '../user_mobile/user_mobile';
 

@@ -4,9 +4,9 @@ import {serverSideTranslations} from 'next-i18next/serverSideTranslations';
 import Head from 'next/head';
 import NavBar from '../components/nav_bar/nav_bar';
 import HeroDescription from '../components/hero_description/hero_description';
-import {MarketProvider} from '../lib/contexts/market_context';
+import {MarketProvider} from '../contexts/market_context';
 import {useContext} from 'react';
-import {GlobalContext, GlobalProvider, useGlobal} from '../lib/contexts/global_context';
+import {GlobalContext, GlobalProvider, useGlobal} from '../contexts/global_context';
 import NavBarMobile from '../components/nav_bar_mobile/nav_bar_mobile';
 
 const Home = () => {

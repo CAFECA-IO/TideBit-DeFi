@@ -11,7 +11,7 @@ import {ToastContainer, toast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {CRYPTO_CARD_COLORS} from '../constants/display';
 import {useContext, useState} from 'react';
-import {MarketContext} from '../lib/contexts/market_context';
+import {MarketContext} from '../contexts/market_context';
 import TransferProcessModal, {
   TRANSFER_PROCESS_MODAL_STEP_CLASSES,
 } from '../components/transfer_process_modal/transfer_process_modal';

@@ -1,6 +1,6 @@
 import React, {useContext} from 'react';
 import {BiLinkAlt} from 'react-icons/bi';
-import {MarketContext} from '../../lib/contexts/market_context';
+import {MarketContext} from '../../contexts/market_context';
 import {ICryptoSummary} from '../../interfaces/depre_tidebit_defi_background';
 
 const CryptoSummary = ({

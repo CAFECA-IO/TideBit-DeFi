@@ -12,7 +12,7 @@ import StatisticBlock from '../statistic/statistic';
 import Image from 'next/image';
 import ReserveRatio from '../reserve_ratio/reserve_ratio';
 import TrialComponent from '../trial_component/trial_component';
-import {MarketProvider} from '../../lib/contexts/market_context';
+import {MarketProvider} from '../../contexts/market_context';
 
 export default function HeroDescription() {
   return (

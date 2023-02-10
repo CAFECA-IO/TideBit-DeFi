@@ -1,5 +1,5 @@
 import React, {useState, useContext} from 'react';
-import {UserContext} from '../../lib/contexts/user_context';
+import {UserContext} from '../../contexts/user_context';
 //import {MarketContext} from '../../lib/contexts/market_context';
 import {ImCross} from 'react-icons/im';
 import Toggle from '../toggle/toggle';

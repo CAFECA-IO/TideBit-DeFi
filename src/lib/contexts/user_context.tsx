@@ -349,7 +349,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     let result: IOrderResult = dummyResultFailed;
     if (isConnected) {
       const balance: IBalance | null = getBalance(props.ticker); // TODO: ticker is not currency
-      if (balance && balance.available > props.margin) {
+      if (balance && balance.available >= props.margin) {
         // TODO: balance.available > ?
         // TODO: OrderEngine create signable order data
         result = {
@@ -394,7 +394,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     if (isConnected) {
       const walletBalance: IWalletBalance | null = getWalletBalance(props.asset);
       // if(balance is enough)
-      if (walletBalance && walletBalance.balance > 0) {
+      if (walletBalance && walletBalance.balance >= props.amount) {
         // TODO: OrderEngine create signable deposit data
         // TODO: updateWalletBalances
         result = {
@@ -410,7 +410,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     let result: IOrderResult = dummyResultFailed;
     if (isConnected) {
       const balance: IBalance | null = getBalance(props.asset); // TODO: ticker is not currency
-      if (balance && balance.available > props.amount) {
+      if (balance && balance.available >= props.amount) {
         // TODO: balance.available > ?
         // TODO: OrderEngine create withdraw order data
         result = {

@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState, useContext} from 'react';
+import {useEffect, useRef, useContext, useState} from 'react';
 import {ImCross, ImUpload2} from 'react-icons/im';
 import WalletOption from './wallet_option';
 import useOuterClick from '../../lib/hooks/use_outer_click';
@@ -30,6 +30,7 @@ import {VscAccount} from 'react-icons/vsc';
 import {ImExit} from 'react-icons/im';
 import TransferProcessModal from '../transfer_process_modal/transfer_process_modal';
 import {MarketContext} from '../../lib/contexts/market_context';
+
 import {UserContext} from '../../lib/contexts/user_context';
 
 // import Connector from '@walletconnect/core';
@@ -194,7 +195,6 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
   //   componentVisible: qrcodeModalVisible,
   //   setComponentVisible: setQrcodeModalVisible,
   // } = useOuterClick<HTMLDivElement>(false);
-
   const {availableTransferOptions} = useContext(MarketContext);
 
   const {t}: {t: TranslateFunction} = useTranslation('common');
@@ -207,6 +207,7 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
   const [avatarMenuVisible, setAvatarMenuVisible] = useState(false);
   const [depositModalVisible, setDepositModalVisible] = useState(false);
   const [withdrawModalVisible, setWithdrawModalVisible] = useState(false);
+  const userCtx = useContext(UserContext);
 
   // const {
   //   targetRef: helloModalRef,
@@ -226,8 +227,6 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
   interface IConnectorProps {
     provider: providers.Web3Provider;
   }
-
-  const {user} = useContext(UserContext);
 
   const [connecting, setConnecting] = useState(false);
 
@@ -287,7 +286,7 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
     setConnecting(false);
     // setChooseMetamask(false);
 
-    setDefaultAccount('');
+    userCtx.disconnect();
     passUserLoginState(false);
 
     setErrorMessages('');
@@ -335,7 +334,7 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
     setConnecting(false);
     // setChooseMetamask(false);
 
-    setDefaultAccount('');
+    userCtx.disconnect();
     passUserLoginState(false);
 
     setErrorMessages('');
@@ -489,27 +488,29 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
       getSubmissionState={getWithdrawSubmissionState}
       transferType="withdraw"
       transferStep={withdrawProcess}
-      userAvailableBalance={user?.balance?.available ?? 0}
+      userAvailableBalance={userCtx.balance?.available ?? 0}
       modalVisible={withdrawModalVisible}
       modalClickHandler={withdrawModalClickHandler}
     />
   );
-
   const depositProcessModal = (
     <TransferProcessModal
       getTransferData={getDepositData}
-      // initialAmountInput={user?.walletBalance ?? 0}
+      // initialAmountInput={userCtx.walletBalance ?? 0}
       submitHandler={depositSubmitHandler}
       transferOptions={availableTransferOptions}
       getSubmissionState={getDepositSubmissionState}
       transferType="deposit"
       transferStep={depositProcess}
-      userAvailableBalance={user?.walletBalance ?? 0}
+      userAvailableBalance={
+        userCtx.walletBalance
+          ? userCtx.walletBalance.find(wb => wb.currency === 'USDT')?.balance || 0
+          : 0
+      }
       modalVisible={depositModalVisible}
       modalClickHandler={depositModalClickHandler}
     />
   );
-
   const connectingClickHandler = () => {
     setConnectingModalVisible(!connectingModalVisible);
   };
@@ -547,7 +548,7 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
     //   connector.killSession();
     //   resetApp();
     // }
-
+    userCtx.disconnect();
     resetApp();
 
     if (walletConnectSuccessful) {
@@ -558,12 +559,12 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
     const {ethereum} = window;
     if (ethereum) {
       try {
-        await ethereum.request({
+        const account = await ethereum.request({
           method: 'eth_requestAccounts',
           params: [{eth_accounts: {}}],
         });
         // console.log('Wallet Disconnected');
-        setDefaultAccount('');
+        userCtx.disconnect();
         passUserLoginState(false);
 
         setUserBalance('');
@@ -633,7 +634,7 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
   let isSignaturePending = false;
   async function onConnect(chainId: number, connectedAccount: string) {
     // handle connect event
-    setDefaultAccount(connectedAccount);
+    userCtx.connect();
     passUserLoginState(true);
 
     setChainId(chainId);
@@ -668,7 +669,7 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
       }
     }
 
-    const defaulltAccountForCheck = defaultAccount?.toLowerCase();
+    const defaulltAccountForCheck = userCtx.wallet?.toLowerCase();
     const connectedAccountForCheck = connectedAccount?.toLowerCase();
 
     // console.log(
@@ -780,7 +781,7 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
 
       // check state variables here & if needed refresh the app
       // If any of these variables do not exist and the connector is connected, refresh the data
-      if ((!chainId || !defaultAccount || !userBalance) && connector.connected) {
+      if ((!chainId || !userCtx.wallet || !userBalance) && connector.connected) {
         refreshData();
       }
     }
@@ -797,7 +798,7 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
   useEffect(() => {
     if (!connector) return;
     walletConnecting();
-  }, [connector, chainId, defaultAccount, userBalance]);
+  }, [connector, chainId, userCtx.wallet, userBalance]);
 
   // // Once connector, chainId, account, or balance changes, update the state
   // useEffect(() => {
@@ -879,14 +880,16 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
         // ---Detect User Diconnect the website from Metamask---
         if (!accounts[0]) {
           // console.log('injectedDetecting !accounts[0]');
+          userCtx.disconnect();
           resetApp();
           // clearStateForMetamaskAccountChange();
           return;
+        } else {
+          userCtx.connect();
         }
 
         // ---Account Detecetion---
         setErrorMessages('');
-        setDefaultAccount(accounts[0]);
         passUserLoginState(true);
 
         // ---Send Sign Request when wallet changed---
@@ -933,9 +936,8 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
       // console.log('Remove event listener, useEffect for injectedDetecting()');
       // FIXME: 拔掉電話線
       window?.ethereum?.removeListener('accountsChanged', async (accounts: string[]) => {
-        setDefaultAccount('');
         passUserLoginState(true);
-
+        userCtx.disconnect();
         resetApp();
       });
       // console.log('After Removing event listener, useEffect for injectedDetecting()');
@@ -965,7 +967,7 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
           }
 
           setErrorMessages('');
-          setDefaultAccount(accounts[0]);
+          userCtx.connect();
           passUserLoginState(true);
 
           // console.log('in injectedDetecting accounts[0]: ', accounts[0]);
@@ -975,10 +977,10 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
 
           // FIXME: send twice sign request
           // Avoid first time connected, send twice sign request `!accounts[0] && accounts[0] !== defaultAccount`
-          if (!defaultAccount && signInStore) return;
+          if (!userCtx.wallet && signInStore) return;
 
           // When accounts changed, it sends a request to sign typed data `accounts[0] !== defaultAccount`
-          if (accounts[0] !== defaultAccount) {
+          if (accounts[0] !== userCtx.wallet) {
             funcSignTypedData();
           }
 
@@ -1254,6 +1256,7 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
         if (accountControl === testVerificationLowerCase) {
           setSignature(signature);
           setSecondStepSuccess(true);
+          userCtx.signServiceTerm();
 
           setTimeout(() => setProcessModalVisible(false), DELAYED_HIDDEN_SECONDS);
 
@@ -1320,8 +1323,8 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
   // };
 
   async function funcSignTypedData() {
-    if (connector && walletConnectSuccessful && defaultAccount) {
-      _walletConnectSignEIP712({connectedAccount: defaultAccount});
+    if (connector && walletConnectSuccessful && userCtx.wallet) {
+      _walletConnectSignEIP712({connectedAccount: userCtx.wallet});
       return;
     }
 
@@ -1393,7 +1396,7 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
       const address = await signer.getAddress();
       const chainId = await signer.getChainId();
       const balance = await signer.getBalance();
-      setDefaultAccount(address);
+      userCtx.connect();
       passUserLoginState(true);
 
       setChainId(chainId);
@@ -1430,6 +1433,7 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
       // );
 
       if (/^(0x|0X)?[a-fA-F0-9]+$/.test(signature) && isVerifyedSignature) {
+        userCtx.signServiceTerm();
         setSignature(signature);
         setSecondStepSuccess(true);
         // console.log(verifyedSignature, defaultAccount, signature);
@@ -1494,17 +1498,14 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
 
       // TODO: Notes: 追查呼叫這行code的function
       // console.trace('123');
-      setMetamaskConnectFirstTimeSuccessful(true);
+      const metamaskConnectFirstTimeSuccessful = await userCtx.connect();
+      setMetamaskConnectFirstTimeSuccessful(metamaskConnectFirstTimeSuccessful);
 
-      const provider = new ethers.providers.Web3Provider(window.ethereum, 'any');
       // pop up the metamask window
-      await provider.send('eth_requestAccounts', []);
-      const signer = provider.getSigner();
-      const address = await signer.getAddress();
-      setDefaultAccount(address);
-      passUserLoginState(true);
+      const address = await userCtx.wallet;
+      passUserLoginState(metamaskConnectFirstTimeSuccessful);
 
-      const chainId = await signer.getChainId();
+      const chainId = 1;
       setChainId(chainId);
 
       if (chainId !== 1) {
@@ -1512,9 +1513,8 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
         setShowToast(true);
       }
 
-      const balance = await provider.getBalance(address);
-      const userBalance = ethers.utils.formatEther(balance);
-      setUserBalance(userBalance);
+      const available = userCtx.balance?.available.toString() || '';
+      setUserBalance(available);
       // console.log('user balance: ', balance);
       // console.log('connect to Metamask clicked, Account: ', address);
 
@@ -1633,7 +1633,7 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
             )}
           </div>
           <div>
-            Your Address: <span className="text-cuteBlue3">{defaultAccount}</span>
+            Your Address: <span className="text-cuteBlue3">{userCtx.wallet}</span>
           </div>
           {/* <div>{pairingSignature.account}</div>
           <div>{pairingSignature.signature}</div> */}
@@ -1751,10 +1751,10 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
     return text?.substring(0, 6) + '...' + text?.substring(text.length - 5);
   }
 
-  const username = defaultAccount?.slice(-1).toUpperCase();
+  const username = userCtx.wallet?.slice(-1).toUpperCase();
 
   const isDisplayedAvatarMenu =
-    defaultAccount && avatarMenuVisible ? (
+    userCtx.wallet && avatarMenuVisible ? (
       // Background
       <div
         id="userDropdown"
@@ -1767,7 +1767,7 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
             <span className="text-5xl font-bold text-lightWhite">{username}</span>
           </div>
           {/* Account */}
-          <div className="ml-4 mt-2 truncate text-sm">{accountTruncate(defaultAccount)}</div>
+          <div className="ml-4 mt-2 truncate text-sm">{accountTruncate(userCtx.wallet)}</div>
         </div>
 
         <ul
@@ -1827,7 +1827,7 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
     ) : null;
 
   // TODO: for .tsx: ${props?.className}
-  const isDisplayedUserAvatar = defaultAccount ? (
+  const isDisplayedUserAvatar = userCtx.enableServiceTerm ? (
     <>
       <button
         onClick={avatarClickHandler}
@@ -1840,7 +1840,7 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
   ) : (
     <TideButton
       onClick={clickHandler}
-      className={`mt-4 rounded border-0 bg-tidebitTheme py-2 px-5 text-base text-white transition-all hover:opacity-90 lg:mt-0`}
+      className={`mt-4 rounded border-0 bg-tidebitTheme py-2 px-5 text-base text-white transition-all hover:opacity-90 md:mt-0`}
     >
       {/* Wallet Connect */}
       {t('nav_bar.WalletConnect')}

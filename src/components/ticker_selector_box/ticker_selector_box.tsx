@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import {ToastContainer, toast, ToastOptions, useToast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {
@@ -10,13 +11,7 @@ import {
 import {useContext, useEffect, useState, useMemo} from 'react';
 import CryptoCard, {ILineGraphProps} from '../card/crypto_card';
 
-import {
-  MarketContext,
-  IMarketContext,
-  IMarketProvider,
-  ITickerData,
-  MarketProvider,
-} from '../../lib/contexts/market_context';
+import {MarketContext, IMarketContext, ITickerData} from '../../lib/contexts/market_context';
 import {UserContext, IUserContext} from '../../lib/contexts/user_context';
 import {BiColorFill} from 'react-icons/bi';
 
@@ -41,7 +36,7 @@ interface ICryptoCardData {
   tokenImg: string;
   lineGraphProps: ILineGraphProps;
 
-  getStarredStateCallback: (bool: boolean) => void;
+  // getStarredStateCallback: (bool: boolean) => void;
 
   starColor?: string;
   gradientColor?: string;
@@ -74,8 +69,8 @@ const TickerSelectorBox = ({
     });
   };
 
-  const {availableTickers} = useContext<IMarketContext>(MarketContext);
-  const {user, addFavorites, removeFavorites} = useContext(UserContext) as IUserContext;
+  const marketCtx = useContext<IMarketContext>(MarketContext);
+  const userCtx = useContext(UserContext) as IUserContext;
 
   const [activeTab, setActiveTab] = useState('All');
 
@@ -87,76 +82,73 @@ const TickerSelectorBox = ({
   //   }
   // }, [activeTab, allCards, favorites]);
 
-  const addCallbackToCryptoCardsData = availableTickers?.map((each, index) => {
-    const addCallbackFunc = {
-      ...each,
-      getStarredStateCallback: (bool: boolean) => {
-        // `bool` 是從 Crypto Card 得到的最新的 starred 狀態，each.starred只是從 availableTickers 得到的初始 starred 狀態
-        // console.log('if starred: ', each.starred, 'boolean: ', bool);
-        if (bool) {
-          addFavorites(each.currency);
-        } else {
-          removeFavorites(each.currency);
-        }
-        // console.log(each.currency, 'clicked');
-      },
-    };
-    return addCallbackFunc;
-  });
-
-  const cryptoCardsData = addCallbackToCryptoCardsData
-    // .filter(item => CRYPTO_CARD_COLORS.some(i => i.label === item.currency))
-    ?.map((each, index) => {
+  const convertTickersToCryptoCardsData = (availableTickers: ITickerData[]) => {
+    const cryptoCardsData: ICryptoCardData[] = availableTickers?.map((each, index) => {
       const color = CRYPTO_CARD_COLORS.find(i => i.label === each.currency);
-      return {
+      const addCallbackFunc: ICryptoCardData = {
         ...each,
+        // getStarredStateCallback: (bool: boolean) => {
+        //   // `bool` 是從 Crypto Card 得到的最新的 starred 狀態，each.starred只是從 availableTickers 得到的初始 starred 狀態
+        //   // console.log('if starred: ', each.starred, 'boolean: ', bool);
+        //   if (bool) {
+        //     userCtx.addFavorites(each.currency);
+        //   } else {
+        //     userCtx.removeFavorites(each.currency);
+        //   }
+        //   // console.log(each.currency, 'clicked');
+        // },
         starColor: color?.starColor,
         gradientColor: color?.gradientColor,
-      };
-    });
-
-  // console.log('cryptoCardsData in ticker selector box: ', cryptoCardsData);
-
-  const addCallbackToFavoriteTabCardsData = user?.favoriteTickers
-    ?.filter(item => item.starred)
-    ?.map((each, index) => {
-      const addCallbackFunc = {
-        ...each,
-        getStarredStateCallback: (bool: boolean) => {
-          // `bool` 是從 Crypto Card 得到的最新的 starred 狀態，each.starred只是從 availableTickers 得到的初始 starred 狀態
-          // console.log('if starred: ', each.starred, 'boolean: ', bool);
-          if (bool) {
-            addFavorites(each.currency);
-          } else {
-            removeFavorites(each.currency);
-          }
-          // console.log(each.currency, 'clicked');
-        },
       };
       return addCallbackFunc;
     });
+    return cryptoCardsData;
+  };
 
-  const favoriteTabCardsData = addCallbackToFavoriteTabCardsData
-    // ?.filter(item => CRYPTO_CARD_COLORS.some(i => i.label === item.currency))
-    ?.map((each, index) => {
-      const color = CRYPTO_CARD_COLORS.find(i => i.label === each.currency);
-      return {
-        ...each,
-        starColor: color?.starColor,
-        gradientColor: color?.gradientColor,
-      };
-    });
+  // const addCallbackToCryptoCardsData = availableTickers?.map((each, index) => {
+  //   const addCallbackFunc = {
+  //     ...each,
+  //     getStarredStateCallback: (bool: boolean) => {
+  //       // `bool` 是從 Crypto Card 得到的最新的 starred 狀態，each.starred只是從 availableTickers 得到的初始 starred 狀態
+  //       // console.log('if starred: ', each.starred, 'boolean: ', bool);
+  //       if (bool) {
+  //         addFavorites(each.currency);
+  //       } else {
+  //         removeFavorites(each.currency);
+  //       }
+  //       // console.log(each.currency, 'clicked');
+  //     },
+  //   };
+  //   return addCallbackFunc;
+  // });
+
+  // const cryptoCardsData: ICryptoCardData[] = addCallbackToCryptoCardsData
+  //   // .filter(item => CRYPTO_CARD_COLORS.some(i => i.label === item.currency))
+  //   ?.map((each, index) => {
+  //     const color = CRYPTO_CARD_COLORS.find(i => i.label === each.currency);
+  //     return {
+  //       ...each,
+  //       starColor: color?.starColor,
+  //       gradientColor: color?.gradientColor,
+  //     };
+  //   });
+
+  // const cryptoCardsData: ICryptoCardData[] = convertTickersToCryptoCardsData(availableTickers);
+
+  // console.log('cryptoCardsData in ticker selector box: ', cryptoCardsData);
+
+  // const favoriteTabCardsData = cryptoCardsData.filter(cryptoCardData => cryptoCardData.starred);
 
   const [favoritesSearches, setFavoritesSearches] = useState<string>();
 
   const [filteredFavorites, setFilteredFavorites] = useState<ICryptoCardData[] | undefined>(
-    favoriteTabCardsData
+    undefined
   );
 
   const [searches, setSearches] = useState<string>();
 
   // TODO: fix trial
-  const [filteredCards, setFilteredCards] = useState<ICryptoCardData[]>(cryptoCardsData);
+  const [filteredCards, setFilteredCards] = useState<ICryptoCardData[]>([]);
 
   // const [filteredCards, setFilteredCards] = useState<ICryptoCardData[] | null>(cryptoCardsData);
 
@@ -173,8 +165,18 @@ const TickerSelectorBox = ({
 
   // const testResult =
 
+  useEffect(() => {
+    const cryptoCardsData = convertTickersToCryptoCardsData(marketCtx.listAvailableTickers());
+    setFilteredCards(cryptoCardsData);
+    console.log(`cryptoCardsData`, cryptoCardsData);
+    const favoriteTabCardsData = cryptoCardsData.filter(cryptoCardData => cryptoCardData.starred);
+    setFilteredFavorites(favoriteTabCardsData);
+    console.log(`favoriteTabCardsData`, favoriteTabCardsData);
+  }, [userCtx.favoriteTickers]);
+
   // 搜尋完後關掉 ticker box 會顯示剛剛的搜尋結果但是input是空的 => input value={searches}
   useEffect(() => {
+    const cryptoCardsData = convertTickersToCryptoCardsData(marketCtx.listAvailableTickers());
     if (activeTab === 'All') {
       const newSearchResult = cryptoCardsData.filter(each => {
         const result =
@@ -185,10 +187,11 @@ const TickerSelectorBox = ({
 
       setFilteredCards(newSearchResult);
     } else if (activeTab === 'Favorite') {
-      const newSearchResult = favoriteTabCardsData?.filter(each => {
+      const newSearchResult = cryptoCardsData?.filter(each => {
         const result =
-          each.chain.toLocaleLowerCase().includes(searches || '') ||
-          each.currency.toLocaleLowerCase().includes(searches || '');
+          each.starred &&
+          (each.chain.toLocaleLowerCase().includes(searches || '') ||
+            each.currency.toLocaleLowerCase().includes(searches || ''));
         return result;
       });
 
@@ -242,7 +245,7 @@ const TickerSelectorBox = ({
             star={cryptoCard.star}
             starColor={cryptoCard.starColor}
             starred={cryptoCard.starred}
-            getStarredState={cryptoCard.getStarredStateCallback}
+            // getStarredState={cryptoCard.getStarredStateCallback}
             chain={cryptoCard.chain}
             currency={cryptoCard.currency}
             price={cryptoCard.price}
@@ -261,7 +264,7 @@ const TickerSelectorBox = ({
           star={cryptoCard.star}
           starColor={cryptoCard.starColor}
           starred={cryptoCard.starred}
-          getStarredState={cryptoCard.getStarredStateCallback}
+          // getStarredState={cryptoCard.getStarredStateCallback}
           chain={cryptoCard.chain}
           currency={cryptoCard.currency}
           price={cryptoCard.price}
@@ -283,7 +286,7 @@ const TickerSelectorBox = ({
           star={cryptoCard.star}
           starColor={cryptoCard.starColor}
           starred={cryptoCard.starred}
-          getStarredState={cryptoCard.getStarredStateCallback}
+          // getStarredState={cryptoCard.getStarredStateCallback}
           chain={cryptoCard.chain}
           currency={cryptoCard.currency}
           price={cryptoCard.price}
@@ -302,7 +305,7 @@ const TickerSelectorBox = ({
         star={cryptoCard.star}
         starColor={cryptoCard.starColor}
         starred={cryptoCard.starred}
-        getStarredState={cryptoCard.getStarredStateCallback}
+        // getStarredState={cryptoCard.getStarredStateCallback}
         chain={cryptoCard.chain}
         currency={cryptoCard.currency}
         price={cryptoCard.price}
@@ -341,7 +344,7 @@ const TickerSelectorBox = ({
             All
           </button>
         </div>
-        {user ? (
+        {userCtx.isConnected ? (
           <div className="">
             <button
               type="button"
@@ -420,10 +423,9 @@ const TickerSelectorBox = ({
   ) : null;
 
   return (
-    <MarketProvider>
-      <div>
-        {isDisplayedTickerSelectorBox}
-        {/* <ToastContainer
+    <div>
+      {isDisplayedTickerSelectorBox}
+      {/* <ToastContainer
           position="bottom-left"
           autoClose={3000}
           hideProgressBar={false}
@@ -436,8 +438,7 @@ const TickerSelectorBox = ({
           theme="dark"
           limit={10}
         /> */}
-      </div>
-    </MarketProvider>
+    </div>
   );
 };
 

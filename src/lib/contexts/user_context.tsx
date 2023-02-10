@@ -1,26 +1,36 @@
-import React, {useContext, useState, useEffect, createContext} from 'react';
+/* eslint-disable no-console */
+import Lunar from '@cafeca/lunar';
+import React, {useState, createContext} from 'react';
+import {providers} from 'ethers';
 import {ICardProps, ILineGraphProps} from '../../components/card/crypto_card';
 import {PROFIT_LOSS_COLOR_TYPE} from '../../constants/display';
+import {
+  dummyOpenCFDBrief,
+  IOpenCFDBrief,
+} from '../../interfaces/tidebit_defi_background/open_cfd_brief';
 import {
   IOpenCFDDetails,
   dummyOpenCFDDetails,
 } from '../../interfaces/tidebit_defi_background/open_cfd_details';
-import {dummyOpenCfds} from '../../interfaces/tidebit_defi_background/user';
-
-export interface ITickerData {
-  currency: string;
-  chain: string;
-  star: boolean;
-  starred: boolean;
-  // starColor: string;
-  // getStarredStateCallback: (bool: boolean) => void;
-  price: number;
-  fluctuating: number;
-  // gradientColor: string;
-  tokenImg: string;
-
-  lineGraphProps: ILineGraphProps;
-}
+import {
+  dummyCloseCFDBrief,
+  IClosedCFDBrief,
+} from '../../interfaces/tidebit_defi_background/closed_cfd_brief';
+import {
+  IClosedCFDDetails,
+  dummyCloseCFDDetails,
+} from '../../interfaces/tidebit_defi_background/closed_cfd_details';
+import {
+  dummyResultFailed,
+  dummyResultSuccess,
+  IResult,
+} from '../../interfaces/tidebit_defi_background/result';
+import {
+  dummyWalletBalance_BTC,
+  dummyWalletBalance_ETH,
+  dummyWalletBalance_USDT,
+  IWalletBalance,
+} from '../../interfaces/tidebit_defi_background/wallet_balance';
 
 function randomNumber(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1) + min);
@@ -46,383 +56,6 @@ const strokeColorDisplayed = (sampleArray: number[]) => {
   return [PROFIT_LOSS_COLOR_TYPE.loss];
 };
 
-const TRADING_CRYPTO_DATA = [
-  {
-    currency: 'ETH',
-    chain: 'Ethereum',
-    star: true,
-    starred: false,
-    price: 1288.4,
-    fluctuating: 1.14,
-    tokenImg: '/elements/group_2371.svg',
-  },
-  {
-    currency: 'BTC',
-    chain: 'Bitcoin',
-    star: true,
-    starred: true,
-    price: 1288.4,
-    fluctuating: 1.14,
-    tokenImg: '/elements/group_2372.svg',
-  },
-  {
-    currency: 'LTC',
-    chain: 'Litecoin',
-    star: true,
-    starred: true,
-    price: 1288.4,
-    fluctuating: 1.14,
-    tokenImg: '/elements/c5b7bda06ddfe2b3f59b37ed6bb65ab4.svg',
-  },
-  {
-    currency: 'MATIC',
-    chain: 'Polygon',
-    star: true,
-    starred: true,
-    price: 1288.4,
-    fluctuating: 1.14,
-    tokenImg: '/elements/9cc18b0cbe765b0a28791d253207f0c0.svg',
-  },
-  {
-    currency: 'BNB',
-    chain: 'BNB',
-    star: true,
-    starred: false,
-    price: 1288.4,
-    fluctuating: 1.14,
-    tokenImg: '/elements/group_2374.svg',
-  },
-  {
-    currency: 'SOL',
-    chain: 'Solana',
-    star: true,
-    starred: false,
-    price: 1288.4,
-    fluctuating: 1.14,
-    tokenImg: '/elements/group_2378.svg',
-  },
-  {
-    currency: 'SHIB',
-    chain: 'Shiba Inu',
-    star: true,
-    starred: false,
-    price: 1288.4,
-    fluctuating: 1.14,
-    tokenImg: '/elements/group_2381.svg',
-  },
-  {
-    currency: 'DOT',
-    chain: 'Polkadot',
-    star: true,
-    starred: false,
-    price: 1288.4,
-    fluctuating: 1.14,
-    tokenImg: '/elements/group_2385.svg',
-  },
-  {
-    currency: 'ADA',
-    chain: 'Cardano',
-    star: true,
-    starred: false,
-    price: 1288.4,
-    fluctuating: 1.14,
-    tokenImg: '/elements/group_2388.svg',
-  },
-  {
-    currency: 'AVAX',
-    chain: 'Avalanche',
-    star: true,
-    starred: true,
-    price: 1288.4,
-    fluctuating: 1.14,
-    tokenImg: '/elements/group_2391.svg',
-  },
-  {
-    currency: 'Dai',
-    chain: 'Dai',
-    star: true,
-    starred: true,
-    price: 1288.4,
-    fluctuating: 1.14,
-    tokenImg: '/elements/layer_x0020_1.svg',
-  },
-  {
-    currency: 'MKR',
-    chain: 'Maker',
-    star: true,
-    starred: true,
-    price: 1288.4,
-    fluctuating: 1.14,
-    tokenImg: '/elements/layer_2.svg',
-  },
-  {
-    currency: 'XRP',
-    chain: 'XRP',
-    star: true,
-    starred: false,
-    price: 1288.4,
-    fluctuating: 1.14,
-    tokenImg: '/elements/group_2406.svg',
-  },
-  {
-    currency: 'DOGE',
-    chain: 'Dogecoin',
-    star: true,
-    starred: false,
-    price: 1288.4,
-    fluctuating: 1.14,
-    tokenImg: '/elements/layer_2-1.svg',
-  },
-  {
-    currency: 'UNI',
-    chain: 'Uniswap',
-    star: true,
-    starred: false,
-    price: 1288.4,
-    fluctuating: 1.14,
-    tokenImg: '/elements/uniswap-uni-logo.svg',
-  },
-  {
-    currency: 'Flow',
-    chain: 'Flow',
-    star: true,
-    starred: false,
-    price: 1288.4,
-    fluctuating: 1.14,
-    tokenImg: '/elements/layer_2_1_.svg',
-  },
-];
-
-// const TRADING_CRYPTO_DATA = [
-//   {
-//     currency: 'ETH',
-//     chain: 'Ethereum',
-//     star: true,
-//     starred: false,
-//     starColor: 'text-bluePurple',
-//     // getStarredStateCallback: getEthStarred,
-//     price: 1288.4,
-//     fluctuating: 1.14,
-//     gradientColor: 'border-bluePurple/50 bg-black from-bluePurple/50 to-black',
-//     tokenImg: '/elements/group_2371.svg',
-//   },
-//   {
-//     currency: 'BTC',
-//     chain: 'Bitcoin',
-//     star: true,
-//     starred: false,
-//     starColor: 'text-lightOrange',
-//     // getStarredStateCallback: getBtcStarred,
-//     price: 1288.4,
-//     fluctuating: 1.14,
-//     gradientColor: 'border-lightOrange/50 bg-black from-lightOrange/50 to-black',
-//     tokenImg: '/elements/group_2372.svg',
-//   },
-//   {
-//     currency: 'LTC',
-//     chain: 'Litecoin',
-//     star: true,
-//     starred: true,
-//     starColor: 'text-lightGray2',
-//     // getStarredStateCallback: getLtcStarred,
-//     price: 1288.4,
-//     fluctuating: 1.14,
-//     gradientColor: 'border-lightGray2/50 bg-black from-lightGray2/50 to-black',
-//     tokenImg: '/elements/c5b7bda06ddfe2b3f59b37ed6bb65ab4.svg',
-//   },
-//   {
-//     currency: 'MATIC',
-//     chain: 'Polygon',
-//     star: true,
-//     starred: true,
-//     starColor: 'text-lightPurple',
-//     // getStarredStateCallback: getMaticStarred,
-//     price: 1288.4,
-//     fluctuating: 1.14,
-//     gradientColor: 'border-lightPurple/60 bg-black from-lightPurple/60 to-black',
-//     tokenImg: '/elements/9cc18b0cbe765b0a28791d253207f0c0.svg',
-//   },
-//   {
-//     currency: 'BNB',
-//     chain: 'BNB',
-//     star: true,
-//     starred: false,
-//     starColor: 'text-lightYellow',
-//     // getStarredStateCallback: getBnbStarred,
-//     price: 1288.4,
-//     fluctuating: 1.14,
-//     gradientColor: 'border-lightYellow/60 bg-black from-lightYellow/50 to-black',
-//     tokenImg: '/elements/group_2374.svg',
-//   },
-//   {
-//     currency: 'SOL',
-//     chain: 'Solana',
-//     star: true,
-//     starred: true,
-//     starColor: 'text-lightPurple2',
-//     // getStarredStateCallback: getSolStarred,
-//     price: 1288.4,
-//     fluctuating: 1.14,
-//     gradientColor: 'border-lightPurple2/60 from-lightPurple2/60 to-black',
-//     tokenImg: '/elements/group_2378.svg',
-//   },
-//   {
-//     currency: 'SHIB',
-//     chain: 'Shiba Inu',
-//     star: true,
-//     starred: false,
-//     starColor: 'text-lightRed1',
-//     // getStarredStateCallback: getShibStarred,
-//     price: 1288.4,
-//     fluctuating: 1.14,
-//     gradientColor: 'border-lightRed1/50 from-lightRed1/50 to-black',
-//     tokenImg: '/elements/group_2381.svg',
-//   },
-//   {
-//     currency: 'DOT',
-//     chain: 'Polkadot',
-//     star: true,
-//     starred: true,
-//     starColor: 'text-lightPink',
-//     // getStarredStateCallback: getDotStarred,
-//     price: 1288.4,
-//     fluctuating: 1.14,
-//     gradientColor: 'border-lightPink/60 from-lightPink/60 to-black',
-//     tokenImg: '/elements/group_2385.svg',
-//   },
-//   {
-//     currency: 'ADA',
-//     chain: 'Cardano',
-//     star: true,
-//     starred: false,
-//     starColor: 'text-lightGreen1',
-//     // getStarredStateCallback: getAdaStarred,
-//     price: 1288.4,
-//     fluctuating: 1.14,
-//     gradientColor: 'border-lightGreen1/60 from-lightGreen1/60 to-black',
-//     tokenImg: '/elements/group_2388.svg',
-//   },
-//   {
-//     currency: 'AVAX',
-//     chain: 'Avalanche',
-//     star: true,
-//     starred: false,
-//     starColor: 'text-lightRed2',
-//     // getStarredStateCallback: getAvaxStarred,
-//     price: 1288.4,
-//     fluctuating: 1.14,
-//     gradientColor: 'border-lightRed2/50 from-lightRed2/50 to-black',
-//     tokenImg: '/elements/group_2391.svg',
-//   },
-//   {
-//     currency: 'Dai',
-//     chain: 'Dai',
-//     star: true,
-//     starred: false,
-//     starColor: 'text-lightOrange1',
-//     // getStarredStateCallback: getDaiStarred,
-//     price: 1288.4,
-//     fluctuating: 1.14,
-//     gradientColor: 'border-lightOrange1/50 from-lightOrange1/50 to-black',
-//     tokenImg: '/elements/layer_x0020_1.svg',
-//   },
-//   {
-//     currency: 'MKR',
-//     chain: 'Maker',
-//     star: true,
-//     starred: false,
-//     starColor: 'text-lightGreen3',
-//     // getStarredStateCallback: getMkrStarred,
-//     price: 1288.4,
-//     fluctuating: 1.14,
-//     gradientColor: 'border-lightGreen3/50 from-lightGreen3/50 to-black',
-//     tokenImg: '/elements/layer_2.svg',
-//   },
-//   {
-//     currency: 'XRP',
-//     chain: 'XRP',
-//     star: true,
-//     starred: false,
-//     starColor: 'text-lightGray4',
-//     // getStarredStateCallback: getXrpStarred,
-//     price: 1288.4,
-//     fluctuating: 1.14,
-//     gradientColor: 'border-lightGray4/50 from-lightGray4/50 to-black',
-//     tokenImg: '/elements/group_2406.svg',
-//   },
-//   {
-//     currency: 'DOGE',
-//     chain: 'Dogecoin',
-//     star: true,
-//     starred: false,
-//     starColor: 'text-lightYellow1',
-//     // getStarredStateCallback: getDogeStarred,
-//     price: 1288.4,
-//     fluctuating: 1.14,
-//     gradientColor: 'border-lightYellow1/50 from-lightYellow1/50 to-black',
-//     tokenImg: '/elements/layer_2-1.svg',
-//   },
-//   {
-//     currency: 'UNI',
-//     chain: 'Uniswap',
-//     star: true,
-//     starred: false,
-//     starColor: 'text-lightPink1',
-//     // getStarredStateCallback: getUniStarred,
-//     price: 1288.4,
-//     fluctuating: 1.14,
-//     gradientColor: 'border-lightPink1/50 from-lightPink1/50 to-black',
-//     tokenImg: '/elements/uniswap-uni-logo.svg',
-//   },
-//   {
-//     currency: 'Flow',
-//     chain: 'Flow',
-//     star: true,
-//     starred: false,
-//     starColor: 'text-lightGreen4',
-//     // getStarredStateCallback: getFlowStarred,
-//     price: 1288.4,
-//     fluctuating: 1.14,
-//     gradientColor: 'border-lightGreen4/50 from-lightGreen4/50 to-black',
-//     tokenImg: '/elements/layer_2_1_.svg',
-//   },
-// ];
-
-// Add line graph property to each object in array
-const addPropertyToArray: ITickerData[] = TRADING_CRYPTO_DATA.filter(each => each.starred).map(
-  item => {
-    // console.log('favorite in user context:', item);
-    const dataArray = randomArray(1100, 1200, 10);
-    const strokeColor = strokeColorDisplayed(dataArray);
-    const newArray = {
-      ...item,
-      lineGraphProps: {
-        dataArray: dataArray,
-        strokeColor: strokeColor,
-        lineGraphWidth: '170',
-        lineGraphWidthMobile: '140',
-      },
-    };
-
-    return newArray;
-  }
-);
-
-const SAMPLE_TICKERS = ['MATIC', 'BNB', 'SOL', 'MKR'];
-
-const SAMPLE_USER = {
-  id: '002',
-  username: 'Tidebit DeFi Test User',
-  wallet: ['0xb54898DB1250A6a629E5B566367E9C60a7Dd6C30'],
-  favoriteTickers: addPropertyToArray,
-  balance: {
-    available: 1296.47,
-    locked: 583.62,
-    PNL: 1956.84,
-  },
-  walletBalance: 894,
-};
-
 export interface IUserBalance {
   available: number;
   locked: number;
@@ -432,14 +65,14 @@ export interface IUserBalance {
 }
 
 export interface IUser {
-  // id: string;
+  id: string;
   // username: string;
   // email?: string;
   // wallet: string[];
 
-  favoriteTickers: ITickerData[];
-  balance: IUserBalance;
-  walletBalance: number;
+  // favoriteTickers: string[];
+  // balance: IUserBalance;
+  // walletBalance: number;
 
   // // orderEngine: string; // 產生 EIP 712 / 出金入金 要的資料
   // isSubscibedNewsletters: boolean;
@@ -457,96 +90,207 @@ export interface IUserProvider {
 }
 
 export interface IUserContext {
-  user: IUser | null;
-  addFavorites: (props: string) => void;
-  removeFavorites: (props: string) => void;
-  getOpenedCFD: () => IOpenCFDDetails[];
+  id: string | null;
+  username: string | null;
+  wallet: string | null;
+  walletBalance: IWalletBalance[] | null;
+  balance: IUserBalance | null;
+  favoriteTickers: string[];
+  isConnected: boolean;
+  enableServiceTerm: boolean;
+  openCFDBriefs: IOpenCFDBrief[];
+  closedCFDBriefs: IClosedCFDBrief[];
+  connect: () => Promise<boolean>;
+  signServiceTerm: () => Promise<boolean>;
+  disconnect: () => Promise<boolean>;
+  addFavorites: (props: string) => IResult;
+  removeFavorites: (props: string) => IResult;
+  listOpenCFDBriefs: () => Promise<IOpenCFDBrief[]>;
+  listClosedCFDBriefs: () => Promise<IClosedCFDBrief[]>;
+  // getOpendCFD: (props: string) => Promise<IOpenCFDDetails>;
+  // getClosedCFD: (props: string) => Promise<IClosedCFDDetails>;
+  getOpendCFD: (props: string) => IOpenCFDDetails;
+  getClosedCFD: (props: string) => IClosedCFDDetails;
 }
 
 export const UserContext = createContext<IUserContext>({
-  user: null,
-  addFavorites: (props: string) => null,
-  removeFavorites: (props: string) => null,
-  getOpenedCFD: () => [],
+  id: null,
+  username: null,
+  wallet: null,
+  walletBalance: null,
+  balance: null,
+  favoriteTickers: [],
+  isConnected: false,
+  enableServiceTerm: false,
+  openCFDBriefs: [],
+  closedCFDBriefs: [],
+  connect: () => Promise.resolve(true),
+  signServiceTerm: () => Promise.resolve(true),
+  disconnect: () => Promise.resolve(true),
+  addFavorites: (props: string) => dummyResultSuccess,
+  removeFavorites: (props: string) => dummyResultSuccess,
+  listOpenCFDBriefs: () => Promise.resolve<IOpenCFDBrief[]>([dummyOpenCFDBrief]),
+  listClosedCFDBriefs: () => Promise.resolve<IClosedCFDBrief[]>([dummyCloseCFDBrief]),
+  // getOpendCFD: (props: string) => Promise.resolve<IOpenCFDDetails>(dummyOpenCFDDetails),
+  // getClosedCFD: (props: string) => Promise.resolve<IClosedCFDDetails>(dummyCloseCFDDetails),
+  getOpendCFD: (props: string) => dummyOpenCFDDetails,
+  getClosedCFD: (props: string) => dummyCloseCFDDetails,
 });
-
-const getOpenedCFD = () => {
-  return dummyOpenCfds;
-};
 
 export const UserProvider = ({children}: IUserProvider) => {
   // TODO: get partial user type from `IUserContext`
-  const [user, setUser] = useState<IUser | null>(SAMPLE_USER);
-  // const openedCFD = user?.getOpenedCFD();
+  const [id, setId] = useState<string | null>(null);
+  const [username, setUsername] = useState<string | null>(null);
+  const [wallet, setWallet] = useState<string | null>(null);
+  const [walletBalance, setWalletBalance] = useState<IWalletBalance[] | null>(null);
+  const [balance, setBalance] = useState<IUserBalance | null>(null);
+  const [favoriteTickers, setFavoriteTickers] = useState<string[]>([]);
+  const [isConnected, setIsConnected] = useState<boolean>(false);
+  const [enableServiceTerm, setEnableServiceTerm] = useState<boolean>(false);
+  const [openCFDBriefs, setOpenedCFDBriefs] = useState<Array<IOpenCFDBrief>>([]);
+  const [closedCFDBriefs, setClosedCFDBriefs] = useState<Array<IClosedCFDBrief>>([]);
+
+  const lunar = new Lunar();
+  lunar.on('connected', () => {
+    setIsConnected(true);
+  });
+  lunar.on('disconnected', () => {
+    setDisconnected();
+  });
+  lunar.on('accountsChanged', () => {
+    setWallet(lunar.address);
+  });
+
+  const listOpenCFDBriefs = async () => {
+    let openCFDBriefs: IOpenCFDBrief[] = [];
+    if (isConnected) {
+      openCFDBriefs = await Promise.resolve<IOpenCFDBrief[]>([dummyOpenCFDBrief]);
+    }
+    return openCFDBriefs;
+  };
+
+  const listClosedCFDBriefs = async () => {
+    let closedCFDBriefs: IClosedCFDBrief[] = [];
+    if (isConnected) {
+      closedCFDBriefs = await Promise.resolve<IClosedCFDBrief[]>([dummyCloseCFDBrief]);
+    }
+    return closedCFDBriefs;
+  };
+
+  const connect = async () => {
+    let success = false;
+    try {
+      const connect = await lunar.connect({});
+      const address = lunar.address;
+      if (connect) {
+        const openedCFDs = await listOpenCFDBriefs();
+        const closedCFDs = await listClosedCFDBriefs();
+        setId('002');
+        setUsername('Tidebit DeFi Test User');
+        setWalletBalance([dummyWalletBalance_BTC, dummyWalletBalance_ETH, dummyWalletBalance_USDT]);
+        setBalance({
+          available: 1296.47,
+          locked: 583.62,
+          PNL: 1956.84,
+        });
+        setOpenedCFDBriefs(openedCFDs);
+        setClosedCFDBriefs(closedCFDs);
+        success = true;
+      }
+    } catch (error) {
+      console.error(`userContext connect error`, error);
+    }
+    return success;
+  };
+
+  const signServiceTerm = async () => {
+    setEnableServiceTerm(true);
+    return true;
+  };
+
+  const disconnect = async () => {
+    let success = false;
+    try {
+      await lunar.disconnect();
+      success = true;
+    } catch (error) {
+      console.error(`userContext disconnect error`, error);
+    }
+    return success;
+  };
+
+  const setDisconnected = () => {
+    setIsConnected(false);
+    setEnableServiceTerm(false);
+    setId(null);
+    setUsername(null);
+    setWallet(null);
+    setWalletBalance(null);
+    setBalance(null);
+    setOpenedCFDBriefs([]);
+    setClosedCFDBriefs([]);
+  };
 
   const addFavorites = (newFavorite: string) => {
-    // console.log(newFavorite, '`addFavorites` // ready to add: ');
-    // return;
+    let result: IResult = dummyResultFailed;
+    if (isConnected) {
+      const updatedFavoriteTickers = [...favoriteTickers];
+      updatedFavoriteTickers.push(newFavorite);
+      setFavoriteTickers(updatedFavoriteTickers);
+      console.log(`updatedFavoriteTickers`, updatedFavoriteTickers);
+      result = dummyResultSuccess;
+    }
+    return result;
   };
 
   const removeFavorites = (previousFavorite: string) => {
-    // console.log(previousFavorite, '`removeFavorites` // ready to remove: ');
-    // return;
+    let result: IResult = dummyResultFailed;
+    if (isConnected) {
+      const updatedFavoriteTickers = [...favoriteTickers];
+      const index: number = updatedFavoriteTickers.findIndex(
+        currency => currency === previousFavorite
+      );
+      if (index !== -1) updatedFavoriteTickers.splice(index, 1);
+      setFavoriteTickers(updatedFavoriteTickers);
+      console.log(`updatedFavoriteTickers`, updatedFavoriteTickers);
+      result = dummyResultSuccess;
+    }
+    return result;
   };
 
-  // const favoriteTickersHandler = (newFavorite: string) => {
-  //   if (!user) return;
-
-  //   // TODO: check if the clicked ticker is already in the array
-
-  //   // // ticker handler
-  //   // if (user[0]?.favoriteTickers?.includes(newFavorite)) {
-  //   //   // console.log('included, ready to remove: ', newFavorite);
-
-  //   //   // setUser(previousData => {
-  //   //   //   if (!previousData) return;
-  //   //   //   const updated = [...previousData];
-  //   //   //   updated[0].favoriteTickers = [...previousData[0].favoriteTickers, newFavorite];
-  //   //   // });
-  //   //   const newUserArray = [
-  //   //     {
-  //   //       ...user[0],
-  //   //       favoriteTickers: user[0].favoriteTickers.filter(ticker => ticker !== newFavorite),
-  //   //     },
-  //   //   ];
-  //   //   // console.log('new user array: ', newUserArray);
-  //   //   setUser(newUserArray);
-  //   //   // console.log('REAL user array in context: ', user);
-
-  //   //   // setUser([
-  //   //   //   {
-  //   //   //     ...user[0],
-  //   //   //     favoriteTickers: user[0].favoriteTickers.filter(ticker => ticker !== newFavorite),
-  //   //   //   },
-  //   //   // ]);
-  //   //   // addFavorite(newFavorite);
-  //   // } else {
-  //   //   // console.log('not included, ready to add: ', newFavorite);
-  //   //   // <Toast content={`not included, ready to add:  ${newFavorite}`} />;
-
-  //   //   if (!user[0].favoriteTickers) {
-  //   //     const newUserArray = [{...user[0], favoriteTickers: [newFavorite]}];
-  //   //     // console.log('new user array: ', newUserArray);
-  //   //     setUser(newUserArray);
-  //   //     // console.log('REAL user array in context: ', user);
-  //   //   } else {
-  //   //     const newUserArray = [
-  //   //       {...user[0], favoriteTickers: [...user[0].favoriteTickers, newFavorite]},
-  //   //     ];
-
-  //   //     // console.log('new user array: ', newUserArray);
-  //   //     setUser(newUserArray);
-  //   //     // console.log('REAL user array in context: ', user);
-  //   //   }
-
-  //   //   // removeFavorite(newFavorite);
-  //   // }
-
-  //   // // console.log('receive favoriteTickers: ', newFavorite);
-  //   // // console.log('user favorite in context: ', user[0].favoriteTickers);
+  // const getOpendCFD = async (props: string) => {
+  //   const openCFDDetails: IOpenCFDDetails = await Promise.resolve(dummyOpenCFDDetails);
+  //   return openCFDDetails;
   // };
+  const getOpendCFD = (id: string) => dummyOpenCFDDetails;
 
-  const defaultValue = {user, addFavorites, removeFavorites, getOpenedCFD};
+  // const getClosedCFD = async (props: string) => {
+  //   const closedCFDDetails: IClosedCFDDetails = await Promise.resolve(dummyCloseCFDDetails);
+  //   return closedCFDDetails;
+  // };
+  const getClosedCFD = (id: string) => dummyCloseCFDDetails;
+
+  const defaultValue = {
+    id,
+    username,
+    wallet,
+    walletBalance,
+    balance,
+    favoriteTickers,
+    isConnected,
+    enableServiceTerm,
+    openCFDBriefs,
+    closedCFDBriefs,
+    addFavorites,
+    removeFavorites,
+    listOpenCFDBriefs,
+    getOpendCFD,
+    listClosedCFDBriefs,
+    getClosedCFD,
+    connect,
+    signServiceTerm,
+    disconnect,
+  };
 
   // FIXME: 'setUser' is missing in type '{ user: IUser[] | null; }'
   return <UserContext.Provider value={defaultValue}>{children}</UserContext.Provider>;

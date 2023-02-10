@@ -1,16 +1,15 @@
 import React, {useContext} from 'react';
-import {dummyOpenCFDBrief} from '../../interfaces/tidebit_defi_background/open_cfd_brief';
 import OpenPositionItem from '../open_position_item/open_position_item';
 import {UserContext} from '../../lib/contexts/user_context';
+import {dummyOpenCFDDetails} from '../../interfaces/tidebit_defi_background/open_cfd_details';
 
 const OpenSubTabMobile = () => {
-  const {getOpenedCFD} = useContext(UserContext);
-  const allOpenedCFDs = getOpenedCFD();
+  const userCtx = useContext(UserContext);
 
   const openPositionList = (
     <div>
       <OpenPositionItem
-        openCfdDetails={allOpenedCFDs[0]}
+        openCfdDetails={dummyOpenCFDDetails}
         profitOrLoss="loss"
         longOrShort="long"
         value={656.9}

@@ -19,6 +19,8 @@ import CfdPositionModal from '../components/cfd_position_modal/cfd_position_moda
 import PositionDetailsModal from '../components/position_details_modal/position_details_modal';
 import LoadingModal from '../components/loading_modal/loading_modal';
 import FailedModal from '../components/failed_modal/failed_modal';
+import CanceledModal from '../components/canceled_modal/canceled_modal';
+import SuccessfulModal from '../components/successful_modal/successful_modal';
 
 const Trial = () => {
   const {
@@ -91,13 +93,27 @@ const Trial = () => {
           // btnMsg="View on Etherscan"
           // btnUrl="https://etherscan.io/"
         /> */}
-        <FailedModal
+        {/* <FailedModal
           modalTitle="Deposit"
           modalContent="Transaction failed"
           modalVisible={modalVisible}
           modalClickHandler={modalClickHandler}
           btnMsg="View on Etherscan"
           failedMsg="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et"
+        /> */}
+        {/* <CanceledModal
+          modalTitle="Withdraw"
+          modalContent="Transaction failed"
+          modalVisible={modalVisible}
+          modalClickHandler={modalClickHandler}
+          // btnMsg="View on Etherscan"
+        /> */}
+        <SuccessfulModal
+          modalTitle="Withdraw"
+          // modalContent="Transaction succeeded"
+          modalVisible={modalVisible}
+          modalClickHandler={modalClickHandler}
+          btnMsg="Done"
         />
       </div>
     </>

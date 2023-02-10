@@ -7,6 +7,9 @@ import TransferProcessModal from '../components/transfer_process_modal/transfer_
 import {MarketContext} from './market_context';
 import Toast from '../components/toast/toast';
 import LoadingModal from '../components/loading_modal/loading_modal';
+import FailedModal from '../components/failed_modal/failed_modal';
+import CanceledModal from '../components/canceled_modal/canceled_modal';
+import SuccessfulModal from '../components/successful_modal/successful_modal';
 
 export interface IToastify {
   type: 'error' | 'warning' | 'info' | 'success';
@@ -22,11 +25,16 @@ export interface IDataTransferProcessModal {
   transferType: 'deposit' | 'withdraw';
 }
 
-export interface IDataLoadingModal {
+export interface IProcessDataModal {
   modalTitle: string;
   modalContent: string;
   btnMsg?: string;
   btnUrl?: string;
+}
+
+export interface IDataFailedModal extends IProcessDataModal {
+  failedTitle?: string;
+  failedMsg: string;
 }
 
 const toastHandler = ({type, message, toastId}: IToastify) => {
@@ -82,8 +90,23 @@ export interface IGlobalContext {
 
   visibleLoadingModal: boolean;
   visibleLoadingModalHandler: () => void;
-  dataLoadingModal: IDataLoadingModal | null;
-  dataLoadingModalHandler: (data: IDataLoadingModal) => void;
+  dataLoadingModal: IProcessDataModal | null;
+  dataLoadingModalHandler: (data: IProcessDataModal) => void;
+
+  visibleFailedModal: boolean;
+  visibleFailedModalHandler: () => void;
+  dataFailedModal: IDataFailedModal | null;
+  dataFailedModalHandler: (data: IDataFailedModal) => void;
+
+  visibleCanceledModal: boolean;
+  visibleCanceledModalHandler: () => void;
+  dataCanceledModal: IProcessDataModal | null;
+  dataCanceledModalHandler: (data: IProcessDataModal) => void;
+
+  visibleSuccessfulModal: boolean;
+  visibleSuccessfulModalHandler: () => void;
+  dataSuccessfulModal: IProcessDataModal | null;
+  dataSuccessfulModalHandler: (data: IProcessDataModal) => void;
 }
 
 export const GlobalContext = createContext<IGlobalContext>({
@@ -108,6 +131,21 @@ export const GlobalContext = createContext<IGlobalContext>({
   visibleLoadingModalHandler: () => null,
   dataLoadingModal: null,
   dataLoadingModalHandler: () => null,
+
+  visibleFailedModal: false,
+  visibleFailedModalHandler: () => null,
+  dataFailedModal: null,
+  dataFailedModalHandler: () => null,
+
+  visibleCanceledModal: false,
+  visibleCanceledModalHandler: () => null,
+  dataCanceledModal: null,
+  dataCanceledModalHandler: () => null,
+
+  visibleSuccessfulModal: false,
+  visibleSuccessfulModalHandler: () => null,
+  dataSuccessfulModal: null,
+  dataSuccessfulModalHandler: () => null,
 });
 
 const initialColorMode: ColorModeUnion = 'dark';
@@ -124,17 +162,40 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     useState<IDataTransferProcessModal>({transferType: 'deposit'});
 
   const [visibleLoadingModal, setVisibleLoadingModal] = useState(false);
-  const [dataLoadingModal, setDataLoadingModal] = useState<IDataLoadingModal>({
+  const [dataLoadingModal, setDataLoadingModal] = useState<IProcessDataModal>({
     modalTitle: '',
     modalContent: '',
   });
 
+  const [visibleFailedModal, setVisibleFailedModal] = useState(false);
+  const [dataFailedModal, setDataFailedModal] = useState<IDataFailedModal>({
+    modalTitle: '',
+    modalContent: '',
+    failedMsg:
+      'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et',
+  });
+
+  const [visibleSuccessfulModal, setVisibleSuccessfulModal] = useState(false);
+  const [dataSuccessfulModal, setDataSuccessfulModal] = useState<IProcessDataModal>({
+    modalTitle: '',
+    modalContent: '',
+  });
+
+  const [visibleCanceledModal, setVisibleCanceledModal] = useState(false);
+  const [dataCanceledModal, setDataCanceledModal] = useState<IProcessDataModal>({
+    modalTitle: '',
+    modalContent: '',
+  });
+
+  // ---------------TODO: To be removed------------------
   const [depositProcess, setDepositProcess] = useState<
     'form' | 'loading' | 'success' | 'cancellation' | 'fail'
   >('form');
   const [withdrawProcess, setWithdrawProcess] = useState<
     'form' | 'loading' | 'success' | 'cancellation' | 'fail'
   >('form');
+  // ---------------TODO: To be removed------------------
+
   const [withdrawData, setWithdrawData] = useState<{asset: string; amount: number}>();
   const [depositData, setDepositData] = useState<{asset: string; amount: number}>();
 
@@ -173,8 +234,32 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
   const visibleLoadingModalHandler = () => {
     setVisibleLoadingModal(!visibleLoadingModal);
   };
-  const dataLoadingModalHandler = (data: IDataLoadingModal) => {
+  const dataLoadingModalHandler = (data: IProcessDataModal) => {
     setDataLoadingModal(data);
+  };
+
+  const visibleFailedModalHandler = () => {
+    setVisibleFailedModal(!visibleFailedModal);
+  };
+
+  const dataFailedModalHandler = (data: IDataFailedModal) => {
+    setDataFailedModal(data);
+  };
+
+  const visibleSuccessfulModalHandler = () => {
+    setVisibleSuccessfulModal(!visibleSuccessfulModal);
+  };
+
+  const dataSuccessfulModalHandler = (data: IProcessDataModal) => {
+    setDataSuccessfulModal(data);
+  };
+
+  const visibleCanceledModalHandler = () => {
+    setVisibleCanceledModal(!visibleCanceledModal);
+  };
+
+  const dataCanceledModalHandler = (data: IProcessDataModal) => {
+    setDataCanceledModal(data);
   };
 
   const getWithdrawSubmissionState = (state: 'success' | 'cancellation' | 'fail') => {
@@ -232,6 +317,21 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     visibleLoadingModalHandler,
     dataLoadingModal,
     dataLoadingModalHandler,
+
+    visibleFailedModal,
+    visibleFailedModalHandler,
+    dataFailedModal,
+    dataFailedModalHandler,
+
+    visibleSuccessfulModal,
+    visibleSuccessfulModalHandler,
+    dataSuccessfulModal,
+    dataSuccessfulModalHandler,
+
+    visibleCanceledModal,
+    visibleCanceledModalHandler,
+    dataCanceledModal,
+    dataCanceledModalHandler,
   };
   return (
     <GlobalContext.Provider value={defaultValue}>
@@ -254,6 +354,32 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
         modalContent={dataLoadingModal.modalContent}
         btnMsg={dataLoadingModal?.btnMsg}
         btnUrl={dataLoadingModal?.btnUrl}
+      />
+      <FailedModal
+        modalTitle={dataFailedModal.modalTitle}
+        modalContent={dataFailedModal.modalContent}
+        modalVisible={visibleFailedModal}
+        modalClickHandler={visibleFailedModalHandler}
+        btnMsg={dataFailedModal?.btnMsg}
+        btnUrl={dataFailedModal?.btnUrl}
+        failedTitle={dataFailedModal?.failedTitle}
+        failedMsg={dataFailedModal?.failedMsg}
+      />
+      <CanceledModal
+        modalTitle={dataCanceledModal.modalTitle}
+        modalContent={dataCanceledModal.modalContent}
+        modalVisible={visibleCanceledModal}
+        modalClickHandler={visibleCanceledModalHandler}
+        btnMsg={dataCanceledModal?.btnMsg}
+        btnUrl={dataCanceledModal?.btnUrl}
+      />
+      <SuccessfulModal
+        modalTitle={dataSuccessfulModal.modalTitle}
+        modalContent={dataSuccessfulModal.modalContent}
+        modalVisible={visibleSuccessfulModal}
+        modalClickHandler={visibleSuccessfulModalHandler}
+        btnMsg={dataSuccessfulModal?.btnMsg}
+        btnUrl={dataSuccessfulModal?.btnUrl}
       />
       {/* One toast container avoids duplicating toast overlaying */}
       <Toast />

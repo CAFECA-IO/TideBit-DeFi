@@ -150,14 +150,23 @@ const TradeTab = () => {
     //   modalContent: 'Please wait...',
     // });
     // globalCtx.visibleLoadingModalHandler();
+
+    globalCtx.dataFailedModalHandler({
+      modalTitle: 'Open Position',
+      modalContent: 'Failed to submit long position',
+      failedMsg:
+        'Please try again later blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah',
+      btnMsg: 'Try again',
+    });
+    globalCtx.visibleFailedModalHandler();
   };
 
   const shortOrderSubmitHandler = () => {
-    // globalCtx.dataLoadingModalHandler({
-    //   modalTitle: 'Short position',
-    //   modalContent: 'Please wait...',
-    // });
-    // globalCtx.visibleLoadingModalHandler();
+    globalCtx.dataLoadingModalHandler({
+      modalTitle: 'Open position',
+      modalContent: 'Please wait...',
+    });
+    globalCtx.visibleLoadingModalHandler();
   };
 
   // ----------margin area----------

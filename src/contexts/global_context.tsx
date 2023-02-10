@@ -233,6 +233,14 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
 
   const visibleLoadingModalHandler = () => {
     setVisibleLoadingModal(!visibleLoadingModal);
+    if (visibleLoadingModal) {
+      toast({
+        type: 'info',
+        message:
+          '[TODO] Pending toast which cannot be closed manually and automatically unless the process is finished',
+        toastId: 'loadingModalClosed',
+      });
+    }
   };
   const dataLoadingModalHandler = (data: IProcessDataModal) => {
     setDataLoadingModal(data);

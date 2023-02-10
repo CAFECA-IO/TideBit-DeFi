@@ -2,6 +2,7 @@ import React, {useContext, useState} from 'react';
 import OpenPositionItem from '../open_position_item/open_position_item';
 import PositionDetailsModal from '../position_details_modal/position_details_modal';
 import {UserContext} from '../../lib/contexts/user_context';
+import {dummyOpenCFDDetails} from '../../interfaces/tidebit_defi_background/open_cfd_details';
 
 const OpenSubTab = () => {
   const userCtx = useContext(UserContext);
@@ -13,7 +14,7 @@ const OpenSubTab = () => {
         <div className="">
           {/* 6 */}
           <OpenPositionItem
-            openCfdDetails={userCtx.getOpendCFD('TBD202302070000001')}
+            openCfdDetails={dummyOpenCFDDetails}
             profitOrLoss="loss"
             longOrShort="long"
             value={656.9}
@@ -35,7 +36,7 @@ const OpenSubTab = () => {
         <div className="">
           {/* 6 */}
           <OpenPositionItem
-            openCfdDetails={userCtx.getOpendCFD('TBD202302070000002')}
+            openCfdDetails={dummyOpenCFDDetails}
             profitOrLoss="profit"
             longOrShort="short"
             value={631.1}
@@ -52,7 +53,7 @@ const OpenSubTab = () => {
         <div className="">
           {/* 12 */}
           <OpenPositionItem
-            openCfdDetails={userCtx.getOpendCFD('TBD202302070000003')}
+            openCfdDetails={dummyOpenCFDDetails}
             profitOrLoss="profit"
             longOrShort="short"
             value={1234567.8}
@@ -69,7 +70,7 @@ const OpenSubTab = () => {
         <div className="">
           {/* 31 */}
           <OpenPositionItem
-            openCfdDetails={userCtx.getOpendCFD('TBD202302070000001')}
+            openCfdDetails={dummyOpenCFDDetails}
             profitOrLoss="loss"
             longOrShort="long"
             value={1234567.8}

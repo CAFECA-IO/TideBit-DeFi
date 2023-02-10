@@ -128,8 +128,6 @@ export const UserContext = createContext<IUserContext>({
   listOpenCFDBriefs: () => Promise.resolve<IListOpenCFDResult>(dummySuccessListOpenCFDBriefsResult),
   listClosedCFDBriefs: () =>
     Promise.resolve<IListClosedCFDResult>(dummyFailedListClosedCFDBriefsResult),
-  // getOpenCFD: (props: string) => Promise.resolve<IOpenCFDDetails>(dummyOpenCFDDetails),
-  // getClosedCFD: (props: string) => Promise.resolve<IClosedCFDDetails>(dummyCloseCFDDetails),
   getOpenCFD: (props: string) =>
     Promise.resolve<IOpenCFDDetailsResult>(dummySuccessOpenCFDDetailsResult),
   getClosedCFD: (props: string) =>
@@ -260,36 +258,16 @@ export const UserProvider = ({children}: IUserProvider) => {
   };
 
   // const getOpenCFD = async (props: string) => {
-  //   const openCFDDetails: IOpenCFDDetails = await Promise.resolve(dummyOpenCFDDetails);
+  //   const openCFDDetails: IOpenCFDDetailsResult = await Promise.resolve(dummySuccessOpenCFDDetailsResult);
   //   return openCFDDetails;
   // };
-  const getOpenCFD = async (id: string) => {
-    // let openCFDDetails: IOpenCFDDetails | null = null;
-    // if (isConnected) {
-    //   const result: IOpenCFDDetailsResult = await Promise.resolve<IOpenCFDDetailsResult>(
-    //     dummySuccessOpenCFDDetailsResult
-    //   );
-    //   if (result.success) openCFDDetails = result.data;
-    // }
-    // return openCFDDetails;
-    return dummySuccessOpenCFDDetailsResult;
-  };
+  const getOpenCFD = async (id: string) => dummySuccessOpenCFDDetailsResult;
 
   // const getClosedCFD = async (props: string) => {
-  //   const closedCFDDetails: IClosedCFDDetails = await Promise.resolve(dummyCloseCFDDetails);
+  //   const closedCFDDetails: IClosedCFDDetailsResult = await Promise.resolve(dummySuccessClosedCFDDetailsResult);
   //   return closedCFDDetails;
   // };
-  const getClosedCFD = async (id: string) => {
-    // let closedCFDDetails: IClosedCFDDetails | null = null;
-    // if (isConnected) {
-    //   const result: IClosedCFDDetailsResult = await Promise.resolve<IClosedCFDDetailsResult>(
-    //     dummySuccessClosedCFDDetailsResult
-    //   );
-    //   if (result.success) closedCFDDetails = result.data;
-    // }
-    // return closedCFDDetails;
-    return dummySuccessClosedCFDDetailsResult;
-  };
+  const getClosedCFD = async (id: string) => dummySuccessClosedCFDDetailsResult;
 
   const defaultValue = {
     id,

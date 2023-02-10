@@ -1,4 +1,4 @@
-import React, {useState, createContext} from 'react';
+import React, {useState, useContext, createContext} from 'react';
 import {ICardProps, ILineGraphProps} from '../components/card/crypto_card';
 import {
   INITIAL_POSITION_LABEL_DISPLAYED_STATE,
@@ -14,6 +14,7 @@ import {
 } from '../interfaces/depre_tidebit_defi_background';
 import {ITickerLiveStatistics} from '../interfaces/tidebit_defi_background/ticker_live_statistics';
 import {ITickerStatic} from '../interfaces/tidebit_defi_background/ticker_static';
+import {UserContext} from './user_context';
 
 export interface ITickerData {
   currency: string;
@@ -87,7 +88,7 @@ const TRADING_CRYPTO_DATA = [
     currency: 'BTC',
     chain: 'Bitcoin',
     star: true,
-    starred: true,
+    starred: false,
     price: 1288.4,
     fluctuating: 1.14,
     tokenImg: '/elements/group_2372.svg',
@@ -96,7 +97,7 @@ const TRADING_CRYPTO_DATA = [
     currency: 'LTC',
     chain: 'Litecoin',
     star: true,
-    starred: true,
+    starred: false,
     price: 1288.4,
     fluctuating: 1.14,
     tokenImg: '/elements/c5b7bda06ddfe2b3f59b37ed6bb65ab4.svg',
@@ -105,7 +106,7 @@ const TRADING_CRYPTO_DATA = [
     currency: 'MATIC',
     chain: 'Polygon',
     star: true,
-    starred: true,
+    starred: false,
     price: 1288.4,
     fluctuating: 1.14,
     tokenImg: '/elements/9cc18b0cbe765b0a28791d253207f0c0.svg',
@@ -159,7 +160,7 @@ const TRADING_CRYPTO_DATA = [
     currency: 'AVAX',
     chain: 'Avalanche',
     star: true,
-    starred: true,
+    starred: false,
     price: 1288.4,
     fluctuating: 1.14,
     tokenImg: '/elements/group_2391.svg',
@@ -168,7 +169,7 @@ const TRADING_CRYPTO_DATA = [
     currency: 'Dai',
     chain: 'Dai',
     star: true,
-    starred: true,
+    starred: false,
     price: 1288.4,
     fluctuating: 1.14,
     tokenImg: '/elements/layer_x0020_1.svg',
@@ -177,7 +178,7 @@ const TRADING_CRYPTO_DATA = [
     currency: 'MKR',
     chain: 'Maker',
     star: true,
-    starred: true,
+    starred: false,
     price: 1288.4,
     fluctuating: 1.14,
     tokenImg: '/elements/layer_2.svg',
@@ -226,6 +227,7 @@ const addPropertyToArray: ITickerData[] = TRADING_CRYPTO_DATA.map(item => {
   const strokeColor = strokeColorDisplayed(dataArray);
   const newArray = {
     ...item,
+    starred: false,
     lineGraphProps: {
       dataArray: dataArray,
       strokeColor: strokeColor,
@@ -479,6 +481,7 @@ export interface IMarketContext {
   tickerLiveStatistics: ITickerLiveStatistics | null;
   getCryptoSummary: (tickerId: string) => ICryptoSummary | null;
   getCryptoNews: (tickerId: string) => IBriefNewsItem[] | null;
+  listAvailableTickers: () => ITickerData[];
 }
 // TODO: Note: _app.tsx 啟動的時候 => createContext
 export const MarketContext = createContext<IMarketContext>({
@@ -498,6 +501,7 @@ export const MarketContext = createContext<IMarketContext>({
   tickerLiveStatistics: null,
   getCryptoSummary: () => null,
   getCryptoNews: () => null,
+  listAvailableTickers: () => [],
 });
 
 const availableTransferOptions = [
@@ -672,7 +676,27 @@ const cryptoBriefNews: IBriefNewsItem[] = [
 // };
 
 export const MarketProvider = ({children}: IMarketProvider) => {
-  const [availableTickers, setAvailableTickers] = useState<ITickerData[]>(addPropertyToArray);
+  const userCtx = useContext(UserContext);
+  const updateAvailableTickers = () => {
+    let updateTickers = [...addPropertyToArray];
+    if (userCtx.isConnected) {
+      updateTickers = updateTickers.map(ticker => {
+        return {
+          ...ticker,
+          starred: userCtx.isConnected
+            ? userCtx.favoriteTickers.some(currency => currency === ticker.currency)
+            : false,
+        };
+      });
+    }
+    return updateTickers;
+  };
+  const [availableTickers, setAvailableTickers] = useState<ITickerData[]>(updateAvailableTickers());
+  const listAvailableTickers = () => {
+    const updateTickers = updateAvailableTickers();
+    setAvailableTickers(updateTickers);
+    return updateTickers;
+  };
   const [isCFDTradable, setIsCFDTradable] = useState<boolean>(true);
   const [candlestickId, setCandlestickId] = useState<string>('');
 
@@ -718,6 +742,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     tickerLiveStatistics,
     getCryptoSummary,
     getCryptoNews,
+    listAvailableTickers,
   };
 
   return <MarketContext.Provider value={defaultValue}>{children}</MarketContext.Provider>;

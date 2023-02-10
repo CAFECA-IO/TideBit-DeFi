@@ -1,9 +1,10 @@
 // import LineGraph from '../line_graph/line_graph';
 import {BsStar, BsStarFill} from 'react-icons/bs';
-import {useState} from 'react';
+import {useContext, useState} from 'react';
 import dynamic from 'next/dynamic';
 import {ApexOptions} from 'apexcharts';
 import {PROFIT_LOSS_COLOR_TYPE} from '../../constants/display';
+import {UserContext, IUserContext} from '../../contexts/user_context';
 // import {FaEthereum} from 'react-icons/fa';
 // // import {ReactComponent as ethIcon} from '/public/elements/group_15143.svg';
 // // import {ReactComponent as Logo} from './logo.svg';
@@ -55,13 +56,13 @@ const CryptoCard = ({
   star,
   starred,
   starColor,
-  getStarredState: getStarredState,
   lineGraphProps,
   // lineGraphDataArray,
   // lineGraphStrokeColor,
   // lineGraphWidth,
   ...otherProps
 }: ICardProps): JSX.Element => {
+  const userCtx = useContext(UserContext) as IUserContext;
   // FIXME: comment for `.tsx`
   // price = price > 0.001 ? price.toLocaleString() : price;
   fluctuating = Number(fluctuating);
@@ -85,21 +86,25 @@ const CryptoCard = ({
   //     <path d="M1408 1216q0 26-19 45t-45 19h-896q-26 0-45-19t-19-45 19-45l448-448q19-19 45-19t45 19l448 448q19 19 19 45z"></path>
   //   </svg>
   // );
-  const [starFilled, setStarFilled] = useState(starred);
+  // const [starFilled, setStarFilled] = useState(starred);
 
-  const passStarClickHandler = (data: boolean) => {
-    // make sure the function is not undefined
-    if (!getStarredState) return;
+  // const passStarClickHandler = (data: boolean) => {
+  //   // make sure the function is not undefined
+  //   if (!getStarredState) return;
 
-    getStarredState(data);
-  };
+  //   getStarredState(data);
+  // };
 
   const starClickHandler = () => {
-    setStarFilled(!starFilled);
-    passStarClickHandler(!starFilled);
+    // setStarFilled(!starFilled);
+    if (!starred) {
+      userCtx.addFavorites(currency);
+    } else {
+      userCtx.removeFavorites(currency);
+    }
   };
 
-  const showStar = starFilled ? (
+  const showStar = starred ? (
     <button type="button" className="absolute top-2 right-3">
       <BsStarFill
         onClick={starClickHandler}
@@ -117,7 +122,7 @@ const CryptoCard = ({
     </button>
   ) : null;
 
-  const showStarMobile = starFilled ? (
+  const showStarMobile = starred ? (
     <button
       type="button"
       onClick={starClickHandler}

@@ -13,7 +13,7 @@ export const dummyClosedCFDBriefs: IClosedCFDBrief[] = [
     typeOfPosition: 'BUY',
     openPrice: 24058,
     openValue: 74589658,
-    pNL: {
+    pnl: {
       type: 'EQUAL',
       // symbol?: string; // + or -
       value: 0,
@@ -21,6 +21,17 @@ export const dummyClosedCFDBriefs: IClosedCFDBrief[] = [
     openTimestamp: 1675299651,
     closedTimestamp: 1675300651,
     closedValue: 24058,
+    amount: 74589658 / 24058,
+    state: 'CLOSED',
+    leverage: 5,
+    margin: 74589658 / 5,
+    recommendedTp: 24058 * 1.2,
+    recommendedSl: 24058 * 0.8,
+    guaranteedStop: false,
+    guaranteedStopFee: 1.0,
+    fee: 0,
+    scheduledClosingTimestamp: 1675299651 + 86400,
+    liquidationPrice: 24058 / (74589658 / 24058),
   },
   {
     id: 'TBD202302070000005',
@@ -28,7 +39,7 @@ export const dummyClosedCFDBriefs: IClosedCFDBrief[] = [
     typeOfPosition: 'BUY',
     openPrice: 24058,
     openValue: 74589658,
-    pNL: {
+    pnl: {
       type: 'EQUAL',
       // symbol?: string; // + or -
       value: 0,
@@ -36,6 +47,17 @@ export const dummyClosedCFDBriefs: IClosedCFDBrief[] = [
     openTimestamp: 1675299651,
     closedTimestamp: 1675300651,
     closedValue: 24058,
+    amount: 74589658 / 24058,
+    state: 'CLOSED',
+    leverage: 5,
+    margin: 74589658 / 5,
+    recommendedTp: 24058 * 1.2,
+    recommendedSl: 24058 * 0.8,
+    guaranteedStop: false,
+    guaranteedStopFee: 1.0,
+    fee: 0,
+    scheduledClosingTimestamp: 1675299651 + 86400,
+    liquidationPrice: 24058 / (74589658 / 24058),
   },
   {
     id: 'TBD202302070000006',
@@ -43,7 +65,7 @@ export const dummyClosedCFDBriefs: IClosedCFDBrief[] = [
     typeOfPosition: 'BUY',
     openPrice: 24058,
     openValue: 74589658,
-    pNL: {
+    pnl: {
       type: 'EQUAL',
       // symbol?: string; // + or -
       value: 0,
@@ -51,5 +73,18 @@ export const dummyClosedCFDBriefs: IClosedCFDBrief[] = [
     openTimestamp: 1675299651,
     closedTimestamp: 1675300651,
     closedValue: 24058,
+    amount: 74589658 / 24058,
+    state: 'CLOSED',
+    leverage: 5,
+    margin: 74589658 / 5,
+    recommendedTp: 24058 * 1.2,
+    recommendedSl: 24058 * 0.8,
+    guaranteedStop: false,
+    guaranteedStopFee: 1.0,
+    fee: 0,
+    scheduledClosingTimestamp: 1675299651 + 86400,
+    liquidationPrice: 24058 / (74589658 / 24058),
   },
 ];
+
+export const dummyClosedCFDBrief = dummyClosedCFDBriefs[0];

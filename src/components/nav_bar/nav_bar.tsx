@@ -72,17 +72,17 @@ const NavBar = ({notificationNumber = 1}) => {
     </div>
   );
 
-  const {user} = useContext(UserContext);
+  const userCtx = useContext(UserContext);
 
-  const isDisplayedUserOverview = userOverview ? (
+  const isDisplayedUserOverview = userCtx.isConnected ? (
     <UserOverview
-      depositAvailable={user?.balance?.available ?? 0}
-      marginLocked={user?.balance?.locked ?? 0}
-      profitOrLossAmount={user?.balance?.PNL ?? 0}
+      depositAvailable={userCtx.balance?.available ?? 0}
+      marginLocked={userCtx.balance?.locked ?? 0}
+      profitOrLossAmount={userCtx.balance?.PNL ?? 0}
     />
   ) : null;
 
-  const userOverviewDividerDesktop = userOverview ? (
+  const userOverviewDividerDesktop = userCtx.isConnected ? (
     <span className="mx-2 inline-block h-10 w-px rounded bg-lightGray1/50"></span>
   ) : null;
 

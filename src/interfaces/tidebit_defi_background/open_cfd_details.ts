@@ -2,7 +2,6 @@ import {ICFDDetails} from './cfd_details';
 import {ITickerLineGraph} from './ticker_line_graph';
 
 export interface IOpenCFDDetails extends ICFDDetails {
-  state: 'OPENING';
   positionLineGraph: ITickerLineGraph;
 }
 

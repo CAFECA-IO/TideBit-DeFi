@@ -16,7 +16,7 @@ const LONG_RESTRICTION_SL = 1138.48;
 const SHORT_RESTRICTION_SL = 1638.31;
 
 const TradeTabMobile = () => {
-  const {user} = useContext(UserContext);
+  const userCtx = useContext(UserContext);
   // TODO: Use Stop loss limit and other data from Market context
   // TODO: USER_BALANCE from userContext => ok line 101
   const MARKET_PRICE = 6290.41;
@@ -99,7 +99,7 @@ const TradeTabMobile = () => {
     const roundedMargin = roundToDecimalPlaces(margin, 2);
     setRequiredMargin(roundedMargin);
 
-    setMarginWarning(margin > (user?.balance?.available ?? 0));
+    setMarginWarning(margin > (userCtx?.balance?.available ?? 0));
 
     setMarginLength(roundedMargin.toString().length);
     setValueOfPositionLength(roundedValueOfPosition.toString().length);
@@ -401,9 +401,9 @@ const TradeTabMobile = () => {
         <div className="flex flex-col items-center justify-between space-y-7">
           <div className="flex w-full items-center justify-center">
             <UserOverview
-              depositAvailable={user?.balance?.available ?? 0}
-              marginLocked={user?.balance?.locked ?? 0}
-              profitOrLossAmount={user?.balance?.PNL ?? 0}
+              depositAvailable={userCtx?.balance?.available ?? 0}
+              marginLocked={userCtx?.balance?.locked ?? 0}
+              profitOrLossAmount={userCtx?.balance?.PNL ?? 0}
             />
           </div>
           <div className="flex w-full items-center justify-center">{displayedMarginSetting}</div>

@@ -1,12 +1,10 @@
 import React, {useContext, useState} from 'react';
 import OpenPositionItem from '../open_position_item/open_position_item';
-import PositionDetailsModal from '../position_details_modal/position_details_modal';
 import {UserContext} from '../../contexts/user_context';
 
 const OpenSubTab = () => {
-  const {getOpenedCFD} = useContext(UserContext);
-  const allOpenedCFDs = getOpenedCFD();
-  const displayedCFDs = allOpenedCFDs.map((cfd, index) => {
+  const {openCFDBriefs} = useContext(UserContext);
+  const openPositionList = openCFDBriefs.map(cfd => {
     return (
       <div key={cfd.id}>
         <OpenPositionItem
@@ -24,13 +22,13 @@ const OpenSubTab = () => {
       </div>
     );
   });
-  
+
   return (
     <>
       <div className="">
         <div className="">
           {/* 6 */}
-          {displayedCFDs}
+          {openPositionList}
         </div>
         {/* Divider */}
         <div className="my-auto h-px w-full rounded bg-white/50"></div>

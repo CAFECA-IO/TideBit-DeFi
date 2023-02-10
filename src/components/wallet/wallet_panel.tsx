@@ -405,10 +405,11 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
   };
 
   const withdrawModalClickHandler = () => {
+    globalCtx.visibleWithdrawalModalHandler();
     // setWithdrawModalVisible(!withdrawModalVisible);
-    globalCtx.dataTransferProcessModalHandler({transferType: 'withdraw'});
-    globalCtx.visibleTransferProcessModalHandler();
-    setWithdrawProcess('form');
+    // globalCtx.dataTransferProcessModalHandler({transferType: 'withdraw'});
+    // globalCtx.visibleTransferProcessModalHandler();
+    // setWithdrawProcess('form');
   };
 
   // TODO: To extract the certain possibility of transfer options from `ITransferOption`
@@ -485,35 +486,35 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
     }, 3000);
   };
 
-  const withdrawProcessModal = (
-    <TransferProcessModal
-      getTransferData={getWithdrawData}
-      // initialAmountInput={undefined}
-      submitHandler={withdrawSubmitHandler}
-      // transferOptions={availableTransferOptions}
-      getSubmissionState={getWithdrawSubmissionState}
-      transferType="withdraw"
-      transferStep={withdrawProcess}
-      // userAvailableBalance={user?.balance?.available ?? 0}
-      modalVisible={globalCtx.visibleTransferProcessModal}
-      modalClickHandler={globalCtx.visibleTransferProcessModalHandler}
-    />
-  );
+  // const withdrawProcessModal = (
+  //   <TransferProcessModal
+  //     getTransferData={getWithdrawData}
+  //     // initialAmountInput={undefined}
+  //     submitHandler={withdrawSubmitHandler}
+  //     // transferOptions={availableTransferOptions}
+  //     getSubmissionState={getWithdrawSubmissionState}
+  //     transferType="withdraw"
+  //     transferStep={withdrawProcess}
+  //     // userAvailableBalance={user?.balance?.available ?? 0}
+  //     modalVisible={globalCtx.visibleTransferProcessModal}
+  //     modalClickHandler={globalCtx.visibleTransferProcessModalHandler}
+  //   />
+  // );
 
-  const depositProcessModal = (
-    <TransferProcessModal
-      getTransferData={getDepositData}
-      // initialAmountInput={user?.walletBalance ?? 0}
-      submitHandler={depositSubmitHandler}
-      // transferOptions={availableTransferOptions}
-      getSubmissionState={getDepositSubmissionState}
-      transferType="deposit"
-      transferStep={depositProcess}
-      // userAvailableBalance={user?.walletBalance ?? 0}
-      modalVisible={depositModalVisible}
-      modalClickHandler={depositModalClickHandler}
-    />
-  );
+  // const depositProcessModal = (
+  //   <TransferProcessModal
+  //     getTransferData={getDepositData}
+  //     // initialAmountInput={user?.walletBalance ?? 0}
+  //     submitHandler={depositSubmitHandler}
+  //     // transferOptions={availableTransferOptions}
+  //     getSubmissionState={getDepositSubmissionState}
+  //     transferType="deposit"
+  //     transferStep={depositProcess}
+  //     // userAvailableBalance={user?.walletBalance ?? 0}
+  //     modalVisible={depositModalVisible}
+  //     modalClickHandler={depositModalClickHandler}
+  //   />
+  // );
 
   const connectingClickHandler = () => {
     setConnectingModalVisible(!connectingModalVisible);

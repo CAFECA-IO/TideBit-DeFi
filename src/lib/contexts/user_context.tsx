@@ -20,6 +20,11 @@ import {
   IClosedCFDDetails,
   dummyCloseCFDDetails,
 } from '../../interfaces/tidebit_defi_background/closed_cfd_details';
+import {
+  dummyResultFailed,
+  dummyResultSuccess,
+  IResult,
+} from '../../interfaces/tidebit_defi_background/result';
 
 function randomNumber(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1) + min);
@@ -92,8 +97,8 @@ export interface IUserContext {
   connect: () => Promise<boolean>;
   signServiceTerm: () => Promise<boolean>;
   disconnect: () => Promise<boolean>;
-  addFavorites: (props: string) => void;
-  removeFavorites: (props: string) => void;
+  addFavorites: (props: string) => IResult;
+  removeFavorites: (props: string) => IResult;
   listOpenCFDBriefs: () => Promise<IOpenCFDBrief[]>;
   listClosedCFDBriefs: () => Promise<IClosedCFDBrief[]>;
   // getOpendCFD: (props: string) => Promise<IOpenCFDDetails>;
@@ -116,8 +121,8 @@ export const UserContext = createContext<IUserContext>({
   connect: () => Promise.resolve(true),
   signServiceTerm: () => Promise.resolve(true),
   disconnect: () => Promise.resolve(true),
-  addFavorites: (props: string) => null,
-  removeFavorites: (props: string) => null,
+  addFavorites: (props: string) => dummyResultSuccess,
+  removeFavorites: (props: string) => dummyResultSuccess,
   listOpenCFDBriefs: () => Promise.resolve<IOpenCFDBrief[]>([dummyOpenCFDBrief]),
   listClosedCFDBriefs: () => Promise.resolve<IClosedCFDBrief[]>([dummyCloseCFDBrief]),
   // getOpendCFD: (props: string) => Promise.resolve<IOpenCFDDetails>(dummyOpenCFDDetails),
@@ -216,15 +221,19 @@ export const UserProvider = ({children}: IUserProvider) => {
   };
 
   const addFavorites = (newFavorite: string) => {
+    let result: IResult = dummyResultFailed;
     if (isConnected) {
       const updatedFavoriteTickers = [...favoriteTickers];
       updatedFavoriteTickers.push(newFavorite);
       setFavoriteTickers(updatedFavoriteTickers);
       console.log(`updatedFavoriteTickers`, updatedFavoriteTickers);
+      result = dummyResultSuccess;
     }
+    return result;
   };
 
   const removeFavorites = (previousFavorite: string) => {
+    let result: IResult = dummyResultFailed;
     if (isConnected) {
       const updatedFavoriteTickers = [...favoriteTickers];
       const index: number = updatedFavoriteTickers.findIndex(
@@ -233,7 +242,9 @@ export const UserProvider = ({children}: IUserProvider) => {
       if (index !== -1) updatedFavoriteTickers.splice(index, 1);
       setFavoriteTickers(updatedFavoriteTickers);
       console.log(`updatedFavoriteTickers`, updatedFavoriteTickers);
+      result = dummyResultSuccess;
     }
+    return result;
   };
 
   // const getOpendCFD = async (props: string) => {

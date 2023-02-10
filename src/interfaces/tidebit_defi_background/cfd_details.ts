@@ -1,5 +1,4 @@
 import {IPnL} from './pnl';
-import {ITickerLineGraph} from './ticker_line_graph';
 
 /** Extended by
  * @interface IOpenCFDDetails

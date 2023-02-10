@@ -1,11 +1,3 @@
-export interface ITransferOption {
-  label: string; // USDT
-  content: string; // Tether
-  // icon: string; // svg
-  fee: number;
-}
-
-// TODO: [Discussion] and rename `transfer_currency` afterward
 export interface ICryptocurrency {
   id: string;
   name: string; // Tether

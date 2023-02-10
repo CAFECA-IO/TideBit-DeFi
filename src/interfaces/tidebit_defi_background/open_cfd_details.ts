@@ -3,9 +3,7 @@ import {ITickerLineGraph} from './ticker_line_graph';
 
 export interface IOpenCFDDetails extends ICFDDetails {
   state: 'OPENING';
-
-  // TODO: [Discussion] merged from IOpenCFDBrief
-  // positionLineGraph: ITickerLineGraph;
+  positionLineGraph: ITickerLineGraph;
 }
 
 function randomIntFromInterval(min: number, max: number) {
@@ -37,4 +35,7 @@ export const dummyOpenCFDDetails: IOpenCFDDetails = {
   stopLoss: 25250,
   recommendedTp: 35412,
   recommendedSl: 19453,
+  positionLineGraph: {
+    dataArray: [90, 72, 60, 65, 42, 25, 32, 20, 15, 32, 90, 10],
+  },
 };

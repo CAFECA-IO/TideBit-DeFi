@@ -5,7 +5,7 @@ import {ITickerItem} from './ticker_item';
 import {ITickerLiveStatistics} from './ticker_live_statistics';
 import {ITideBitPromotion} from './tidebit_promotion';
 import {ITimeSpanUnion} from './time_span_union';
-import {ITransferOption} from './transfer_option';
+import {ICryptocurrency} from './cryptocurrency';
 import {ITicker} from './ticker';
 import {IBriefNewsItem} from './brief_news_item';
 import {ICryptoSummary} from './crypto_summary';
@@ -45,6 +45,6 @@ export interface IMarket {
 
   // getTicker: (id: number) => ITickerDetails; // 拿到現在這個交易對的資料
 
-  withdrawOptions: ITransferOption[]; // 可供出金的選項
-  depositOptions: ITransferOption[]; // 可供入金的選項
+  withdrawOptions: ICryptocurrency[]; // 可供出金的選項
+  depositOptions: ICryptocurrency[]; // 可供入金的選項
 }

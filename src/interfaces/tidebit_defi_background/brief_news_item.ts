@@ -1,4 +1,3 @@
-// TODO: [Discussion]
 export interface IBriefNewsItem {
   id: string;
   timestamp: number;

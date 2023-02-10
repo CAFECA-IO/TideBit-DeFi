@@ -502,11 +502,7 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
       getSubmissionState={getDepositSubmissionState}
       transferType="deposit"
       transferStep={depositProcess}
-      userAvailableBalance={
-        userCtx.walletBalance
-          ? userCtx.walletBalance.find(wb => wb.currency === 'USDT')?.balance || 0
-          : 0
-      }
+      userAvailableBalance={userCtx.getWalletBalance('USDT')?.balance || 0}
       modalVisible={depositModalVisible}
       modalClickHandler={depositModalClickHandler}
     />

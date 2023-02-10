@@ -3,7 +3,7 @@ import dynamic from 'next/dynamic';
 import ApexCharts, {ApexOptions} from 'apexcharts';
 import {TRADING_CHART_BORDER_COLOR, PROFIT_LOSS_COLOR_TYPE} from '../../constants/display';
 import {BsFillArrowDownCircleFill, BsFillArrowUpCircleFill} from 'react-icons/bs';
-import {MarketContext, MarketProvider} from '../../lib/contexts/market_context';
+import {MarketContext, MarketProvider} from '../../contexts/market_context';
 
 // import ReactApexChart from 'react-apexcharts';
 const Chart = dynamic(() => import('react-apexcharts'), {ssr: false});

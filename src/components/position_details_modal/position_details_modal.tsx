@@ -11,13 +11,13 @@ import {useRef, useState} from 'react';
 import TradingInput from '../trading_input/trading_input';
 import {AiOutlineQuestionCircle} from 'react-icons/ai';
 import RippleButton from '../ripple_button/ripple_button';
-import {useGlobal} from '../../lib/contexts/global_context';
-// import {ToastContainer, toast, ToastOptions, useToast} from 'react-toastify';
+import {useGlobal} from '../../contexts/global_context';
 
 interface IPositionDetailsModal {
   modalVisible: boolean;
-  modalClickHandler: () => void;
+  modalClickHandler: (bool?: boolean | any) => void;
   openCfdDetails: IOpenCFDDetails;
+  id?: string;
 }
 
 const timestampToString = (timestamp: number) => {
@@ -43,7 +43,10 @@ const PositionDetailsModal = ({
   modalVisible,
   modalClickHandler,
   openCfdDetails,
+  id,
+  ...otherProps
 }: IPositionDetailsModal) => {
+  // console.log('openCfdDetails in details modal: ', openCfdDetails.id);
   const globalContext = useGlobal();
 
   const initialTpToggle = openCfdDetails?.takeProfit ? true : false;
@@ -61,6 +64,8 @@ const PositionDetailsModal = ({
   const [guaranteedChecked, setGuaranteedChecked] = useState(openCfdDetails.guaranteedStop);
   const [slLowerLimit, setSlLowerLimit] = useState(0);
   const [slUpperLimit, setSlUpperLimit] = useState(Infinity);
+
+  const [submitDisabled, setSubmitDisabled] = useState(true);
 
   const getToggledTpSetting = (bool: boolean) => {
     setTakeProfitToggle(bool);
@@ -110,6 +115,7 @@ const PositionDetailsModal = ({
 
   const buttonClickHandler = () => {
     // console.log('btn clicked');
+    // setSubmitDisabled(false);
 
     let changedProperties = {};
 
@@ -147,13 +153,15 @@ const PositionDetailsModal = ({
       const stopLossAmount = stopLossValue !== openCfdDetails.stopLoss ? stopLossValue : undefined;
       changedProperties = {
         ...changedProperties,
-        guranteedStopChecked: guaranteedChecked,
+        guaranteedStopChecked: guaranteedChecked,
         stopLossAmount,
       };
     }
 
     // If there's no updates, do nothing
     if (Object.keys(changedProperties).length > 0) {
+      setSubmitDisabled(false);
+
       // TODO: send changedProperties to MetaMask for signature
       changedProperties = {orderId: openCfdDetails.id, ...changedProperties};
 
@@ -167,6 +175,15 @@ const PositionDetailsModal = ({
       // for (const [key, value] of Object.entries(changedProperties)) {
       //   console.log(`${key}: ${value}\n`);
       // }
+
+      // TODO: before waiting for metamask signature, block the button
+      setSubmitDisabled(true);
+
+      // setTimeout(() => {
+      //   globalContext.visiblePositionDetailsModalHandler(false);
+      //   // console.log('modal visible: ', modalVisible);
+      // }, 1000);
+
       return changedProperties;
     }
   };
@@ -211,6 +228,7 @@ const PositionDetailsModal = ({
       setStopLossToggle(true);
       setSlLowerLimit(0);
       setSlUpperLimit(Infinity);
+      setSubmitDisabled(false);
     } else {
       setSlLowerLimit(openCfdDetails?.stopLoss ?? openCfdDetails?.recommendedSl);
       setSlUpperLimit(openCfdDetails?.stopLoss ?? openCfdDetails?.recommendedSl);
@@ -260,7 +278,7 @@ const PositionDetailsModal = ({
   );
 
   const isDisplayedDetailedPositionModal = modalVisible ? (
-    <>
+    <div id={id} {...otherProps}>
       <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">
         <div className="relative my-6 mx-auto w-auto max-w-xl">
           {/*content & panel*/}
@@ -410,7 +428,7 @@ const PositionDetailsModal = ({
                 {guaranteedStopLoss}
 
                 <RippleButton
-                  // disabled
+                  disabled={submitDisabled}
                   onClick={buttonClickHandler}
                   buttonType="button"
                   className="mt-5 rounded border-0 bg-tidebitTheme px-32 py-2 text-base text-white transition-colors duration-300 hover:cursor-pointer hover:bg-cyan-600 focus:outline-none md:mt-0"
@@ -425,7 +443,7 @@ const PositionDetailsModal = ({
         </div>
       </div>
       <div className="fixed inset-0 z-40 bg-black opacity-25"></div>
-    </>
+    </div>
   ) : null;
 
   return <>{isDisplayedDetailedPositionModal}</>;

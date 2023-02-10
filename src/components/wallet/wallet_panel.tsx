@@ -4,7 +4,7 @@ import WalletOption from './wallet_option';
 import useOuterClick from '../../lib/hooks/use_outer_click';
 import TideButton from '../tide_button/tide_button';
 import {ethers, providers} from 'ethers';
-import Toast from '../toast/toast';
+import DevToast from '../dev_toast/dev_toast';
 import ConnectingModal from './connecting_modal';
 import SignatureProcessModal from './signature_process_modal';
 import QrcodeModal from './qrcode_modal';
@@ -28,10 +28,10 @@ import {VscAccount} from 'react-icons/vsc';
 // import {IoExitOutline} from 'react-icons/io';
 // import {RxExit} from 'react-icons/rx';
 import {ImExit} from 'react-icons/im';
-import TransferProcessModal from '../transfer_process_modal/transfer_process_modal';
-import {MarketContext} from '../../lib/contexts/market_context';
-
-import {UserContext} from '../../lib/contexts/user_context';
+// import TransferProcessModal from '../transfer_process_modal/transfer_process_modal';
+import {MarketContext} from '../../contexts/market_context';
+import {UserContext} from '../../contexts/user_context';
+import {useGlobal} from '../../contexts/global_context';
 
 // import Connector from '@walletconnect/core';
 
@@ -195,6 +195,8 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
   //   componentVisible: qrcodeModalVisible,
   //   setComponentVisible: setQrcodeModalVisible,
   // } = useOuterClick<HTMLDivElement>(false);
+
+  const globalCtx = useGlobal();
   const {availableTransferOptions} = useContext(MarketContext);
 
   const {t}: {t: TranslateFunction} = useTranslation('common');
@@ -396,13 +398,17 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
   };
 
   const depositModalClickHandler = () => {
-    setDepositModalVisible(!depositModalVisible);
-    setDepositProcess('form');
+    globalCtx.visibleDepositModalHandler();
+    // setDepositModalVisible(!depositModalVisible);
+    // setDepositProcess('form');
   };
 
   const withdrawModalClickHandler = () => {
-    setWithdrawModalVisible(!withdrawModalVisible);
-    setWithdrawProcess('form');
+    globalCtx.visibleWithdrawalModalHandler();
+    // setWithdrawModalVisible(!withdrawModalVisible);
+    // globalCtx.dataTransferProcessModalHandler({transferType: 'withdraw'});
+    // globalCtx.visibleTransferProcessModalHandler();
+    // setWithdrawProcess('form');
   };
 
   // TODO: To extract the certain possibility of transfer options from `ITransferOption`
@@ -479,38 +485,36 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
     }, 3000);
   };
 
-  const withdrawProcessModal = (
-    <TransferProcessModal
-      getTransferData={getWithdrawData}
-      // initialAmountInput={undefined}
-      submitHandler={withdrawSubmitHandler}
-      transferOptions={availableTransferOptions}
-      getSubmissionState={getWithdrawSubmissionState}
-      transferType="withdraw"
-      transferStep={withdrawProcess}
-      userAvailableBalance={userCtx.balance?.available ?? 0}
-      modalVisible={withdrawModalVisible}
-      modalClickHandler={withdrawModalClickHandler}
-    />
-  );
-  const depositProcessModal = (
-    <TransferProcessModal
-      getTransferData={getDepositData}
-      // initialAmountInput={userCtx.walletBalance ?? 0}
-      submitHandler={depositSubmitHandler}
-      transferOptions={availableTransferOptions}
-      getSubmissionState={getDepositSubmissionState}
-      transferType="deposit"
-      transferStep={depositProcess}
-      userAvailableBalance={
-        userCtx.walletBalance
-          ? userCtx.walletBalance.find(wb => wb.currency === 'USDT')?.balance || 0
-          : 0
-      }
-      modalVisible={depositModalVisible}
-      modalClickHandler={depositModalClickHandler}
-    />
-  );
+  // const withdrawProcessModal = (
+  //   <TransferProcessModal
+  //     getTransferData={getWithdrawData}
+  //     // initialAmountInput={undefined}
+  //     submitHandler={withdrawSubmitHandler}
+  //     // transferOptions={availableTransferOptions}
+  //     getSubmissionState={getWithdrawSubmissionState}
+  //     transferType="withdraw"
+  //     transferStep={withdrawProcess}
+  //     // userAvailableBalance={user?.balance?.available ?? 0}
+  //     modalVisible={globalCtx.visibleTransferProcessModal}
+  //     modalClickHandler={globalCtx.visibleTransferProcessModalHandler}
+  //   />
+  // );
+
+  // const depositProcessModal = (
+  //   <TransferProcessModal
+  //     getTransferData={getDepositData}
+  //     // initialAmountInput={user?.walletBalance ?? 0}
+  //     submitHandler={depositSubmitHandler}
+  //     // transferOptions={availableTransferOptions}
+  //     getSubmissionState={getDepositSubmissionState}
+  //     transferType="deposit"
+  //     transferStep={depositProcess}
+  //     // userAvailableBalance={user?.walletBalance ?? 0}
+  //     modalVisible={depositModalVisible}
+  //     modalClickHandler={depositModalClickHandler}
+  //   />
+  // );
+
   const connectingClickHandler = () => {
     setConnectingModalVisible(!connectingModalVisible);
   };
@@ -1609,7 +1613,7 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
   //   )
   // ) : null}
   const toastNotify = (
-    <Toast
+    <DevToast
       title="Dev Receipt"
       content={
         <>
@@ -1876,8 +1880,8 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
         processClickHandler={processClickHandler}
       />
 
-      {depositProcessModal}
-      {withdrawProcessModal}
+      {/* {depositProcessModal} */}
+      {/* {withdrawProcessModal} */}
 
       {/* TODO: Notes- the below is the same but `{toastNotify}` is easier to be changed and managed  */}
       {toastNotify}

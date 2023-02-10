@@ -1,11 +1,11 @@
 import {useState, useContext} from 'react';
 import TradingHeader from '../trading_header/trading_header';
 import TradingView from '../trading_view/trading_view';
-import {GlobalContext, useGlobal} from '../../lib/contexts/global_context';
+import {GlobalContext, useGlobal} from '../../contexts/global_context';
 import TradingViewMobile from '../trading_view_mobile/trading_view_mobile';
 import TradingHeaderMobile from '../trading_header_mobile/trading_header_mobile';
 import TradeStatistics from '../trade_statistics/trade_statistics';
-import {MarketContext} from '../../lib/contexts/market_context';
+import {MarketContext} from '../../contexts/market_context';
 import CryptoSummary from '../crypto_summary/crypto_summary';
 import CryptoNewsSection from '../crypto_news_section/crypto_news_section';
 import {ICryptoSummary} from '../../interfaces/depre_tidebit_defi_background';

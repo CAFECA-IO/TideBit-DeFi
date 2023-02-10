@@ -1,6 +1,7 @@
 export interface ICryptoSummary {
-  icon: string; // TODO: wrap it with Image component
-  label: string;
+  id: string;
+  icon: string;
+  name: string;
   introduction: string;
   whitePaperLink: string;
   websiteLink: string;

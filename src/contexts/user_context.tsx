@@ -1,36 +1,39 @@
 /* eslint-disable no-console */
 import Lunar from '@cafeca/lunar';
-import React, {useState, createContext} from 'react';
+import useState from 'react-usestateref';
+import React, {createContext} from 'react';
 import {providers} from 'ethers';
-import {ICardProps, ILineGraphProps} from '../../components/card/crypto_card';
-import {PROFIT_LOSS_COLOR_TYPE} from '../../constants/display';
+import {ICardProps, ILineGraphProps} from '../components/card/crypto_card';
+import {PROFIT_LOSS_COLOR_TYPE} from '../constants/display';
 import {
   dummyOpenCFDBrief,
+  dummyOpenCFDBriefs,
   IOpenCFDBrief,
-} from '../../interfaces/tidebit_defi_background/open_cfd_brief';
+} from '../interfaces/tidebit_defi_background/open_cfd_brief';
 import {
   IOpenCFDDetails,
   dummyOpenCFDDetails,
-} from '../../interfaces/tidebit_defi_background/open_cfd_details';
+} from '../interfaces/tidebit_defi_background/open_cfd_details';
 import {
-  dummyCloseCFDBrief,
+  dummyClosedCFDBrief,
+  dummyClosedCFDBriefs,
   IClosedCFDBrief,
-} from '../../interfaces/tidebit_defi_background/closed_cfd_brief';
+} from '../interfaces/tidebit_defi_background/closed_cfd_brief';
 import {
   IClosedCFDDetails,
   dummyCloseCFDDetails,
-} from '../../interfaces/tidebit_defi_background/closed_cfd_details';
+} from '../interfaces/tidebit_defi_background/closed_cfd_details';
 import {
   dummyResultFailed,
   dummyResultSuccess,
   IResult,
-} from '../../interfaces/tidebit_defi_background/result';
+} from '../interfaces/tidebit_defi_background/result';
 import {
   dummyWalletBalance_BTC,
   dummyWalletBalance_ETH,
   dummyWalletBalance_USDT,
   IWalletBalance,
-} from '../../interfaces/tidebit_defi_background/wallet_balance';
+} from '../interfaces/tidebit_defi_background/wallet_balance';
 
 function randomNumber(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1) + min);
@@ -129,8 +132,8 @@ export const UserContext = createContext<IUserContext>({
   disconnect: () => Promise.resolve(true),
   addFavorites: (props: string) => dummyResultSuccess,
   removeFavorites: (props: string) => dummyResultSuccess,
-  listOpenCFDBriefs: () => Promise.resolve<IOpenCFDBrief[]>([dummyOpenCFDBrief]),
-  listClosedCFDBriefs: () => Promise.resolve<IClosedCFDBrief[]>([dummyCloseCFDBrief]),
+  listOpenCFDBriefs: () => Promise.resolve<IOpenCFDBrief[]>(dummyOpenCFDBriefs),
+  listClosedCFDBriefs: () => Promise.resolve<IClosedCFDBrief[]>(dummyClosedCFDBriefs),
   // getOpendCFD: (props: string) => Promise.resolve<IOpenCFDDetails>(dummyOpenCFDDetails),
   // getClosedCFD: (props: string) => Promise.resolve<IClosedCFDDetails>(dummyCloseCFDDetails),
   getOpendCFD: (props: string) => dummyOpenCFDDetails,
@@ -145,34 +148,36 @@ export const UserProvider = ({children}: IUserProvider) => {
   const [walletBalance, setWalletBalance] = useState<IWalletBalance[] | null>(null);
   const [balance, setBalance] = useState<IUserBalance | null>(null);
   const [favoriteTickers, setFavoriteTickers] = useState<string[]>([]);
-  const [isConnected, setIsConnected] = useState<boolean>(false);
+  const [isConnected, setIsConnected, isConnectedRef] = useState<boolean>(false);
   const [enableServiceTerm, setEnableServiceTerm] = useState<boolean>(false);
   const [openCFDBriefs, setOpenedCFDBriefs] = useState<Array<IOpenCFDBrief>>([]);
   const [closedCFDBriefs, setClosedCFDBriefs] = useState<Array<IClosedCFDBrief>>([]);
 
   const lunar = new Lunar();
-  lunar.on('connected', () => {
+  lunar.on('connected', async () => {
     setIsConnected(true);
   });
   lunar.on('disconnected', () => {
     setDisconnected();
   });
-  lunar.on('accountsChanged', () => {
+  lunar.on('accountsChanged', async (data: any) => {
     setWallet(lunar.address);
+    setOpenedCFDBriefs(await listOpenCFDBriefs());
+    setClosedCFDBriefs(await listClosedCFDBriefs());
   });
 
   const listOpenCFDBriefs = async () => {
     let openCFDBriefs: IOpenCFDBrief[] = [];
-    if (isConnected) {
-      openCFDBriefs = await Promise.resolve<IOpenCFDBrief[]>([dummyOpenCFDBrief]);
+    if (isConnectedRef.current) {
+      openCFDBriefs = dummyOpenCFDBriefs;
     }
     return openCFDBriefs;
   };
 
   const listClosedCFDBriefs = async () => {
     let closedCFDBriefs: IClosedCFDBrief[] = [];
-    if (isConnected) {
-      closedCFDBriefs = await Promise.resolve<IClosedCFDBrief[]>([dummyCloseCFDBrief]);
+    if (isConnectedRef.current) {
+      closedCFDBriefs = dummyClosedCFDBriefs;
     }
     return closedCFDBriefs;
   };

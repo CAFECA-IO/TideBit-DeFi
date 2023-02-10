@@ -1,97 +1,51 @@
-import Lottie from 'lottie-react';
-import bigConnectingAnimation from '../../../public/animation/lf30_editor_qlduo5gq.json';
-import successfulAnimation from '../../../public/animation/processing-success.json';
-import canceledAnimation from '../../../public/animation/lf30_editor_frrs7znj.json';
-import failedAnimation from '../../../public/animation/Lottie_Main_Comp.json';
-import {ImCross} from 'react-icons/im';
-import useOuterClick from '../../lib/hooks/use_outer_click';
-import {useState, useContext} from 'react';
-import {MdKeyboardArrowDown, MdKeyboardArrowRight} from 'react-icons/md';
+import React, {useContext, useState} from 'react';
 import RippleButton from '../ripple_button/ripple_button';
-// import {TRANSFER_OPTIONS} from '../../constants/display';
-import {MarketContext} from '../../lib/contexts/market_context';
+import {MarketContext} from '../../contexts/market_context';
+import {MdKeyboardArrowDown} from 'react-icons/md';
+import {ImCross} from 'react-icons/im';
 
-interface ITransferProcessModal {
-  transferType: 'deposit' | 'withdraw';
-  userAvailableBalance: number;
-  transferStep: 'form' | 'loading' | 'success' | 'cancellation' | 'fail';
+interface IDepositModal {
+  // transferType: 'deposit' | 'withdraw';
+  // userAvailableBalance: number;
+  // transferStep: 'form' | 'loading' | 'success' | 'cancellation' | 'fail';
   modalVisible: boolean;
   modalClickHandler: () => void;
   getSubmissionState: (props: 'success' | 'cancellation' | 'fail') => void;
-  transferOptions: ITransferOptions[];
+  // transferOptions: ITransferOptions[];
   getTransferData: (props: {asset: string; amount: number}) => void;
   submitHandler: (props: {asset: string; amount: number}) => void;
-  // initialAmountInput: undefined | number;
-  // transferProcessStep: string;
-  // modalRef?: React.RefObject<HTMLDivElement>;
-  // modalVisible?: boolean;
-  // clickHandler?: () => void;
 }
 
-export interface ITransferOptions {
-  // [key: string]: {
-  label: string;
-  content: string;
-  // icon: string;
-  // fee: number;
-}
-
-export const TRANSFER_PROCESS_MODAL_STEP_CLASSES = {
-  form: 'form',
-  loading: 'loading',
-  success: 'success',
-  cancellation: 'cancellation',
-  fail: 'fail',
-};
-
-// export const TRANSFER_PROCESS_MODAL_STEP_CLASSES = {
-//   deposit: {
-//     form: 'deposit-form',
-//     loading: 'deposit-loading',
-//     success: 'deposit-success',
-//     cancellation: 'deposit-cancellation',
-//     fail: 'deposit-fail',
-//   },
-//   withdraw: {
-//     form: 'withdraw-form',
-//     loading: 'withdraw-loading',
-//     success: 'withdraw-success',
-//     cancellation: 'withdraw-cancellation',
-//     fail: 'withdraw-fail',
-//   },
-// };
-
-const TransferProcessModal = ({
-  transferType,
-  userAvailableBalance,
-  transferStep,
+// TODO: SVG icon from Context
+const DepositModal = ({
+  // transferType, // [to be removed]globalContext
+  // transferStep, // [to be removed]
   modalVisible,
   modalClickHandler,
-  getSubmissionState,
-  // initialAmountInput,
-  getTransferData,
-  submitHandler,
-  transferOptions: transferOptions,
+  getSubmissionState, // [process] to be removed
+  getTransferData, // pass data to parent component
+  submitHandler, // submit information from parent component
   ...otherProps
-}: ITransferProcessModal) => {
-  // const {transferOptions, TRANSFER_OPTIONS_MARKET} = useContext(MarketContext);
-  // console.log('test options in modal:', transferOptions);
+}: IDepositModal) => {
+  // TODO: [UserContext] deposit: userCtx.walletBalance, withdraw: userCtx.balance?.available
+  const userAvailableBalance = 1620;
+  const {availableTransferOptions} = useContext(MarketContext);
 
-  // const [modalVisible, setModalVisible] = useState(true);
+  // const {user} = useContext(UserContext);
+  // console.log('availableTransferOptions: ', availableTransferOptions);
 
   const [showCryptoMenu, setShowCryptoMenu] = useState(false);
-  const [selectedCrypto, setSelectedCrypto] = useState(transferOptions[0]);
+  const [selectedCrypto, setSelectedCrypto] = useState(availableTransferOptions[0]);
   const [amountInput, setAmountInput] = useState<number | undefined>();
   const [showWarning, setShowWarning] = useState(false);
+
+  // console.log('selectedCrypto: ', selectedCrypto);
 
   const regex = /^\d*\.?\d{0,2}$/;
 
   // const modalClickHandler = () => {
   //   setModalVisible(!modalVisible);
   // };
-
-  // TODO: i18n
-  const displayedModalTitle = transferType === 'deposit' ? 'Deposit' : 'Withdraw';
 
   const cryptoMenuClickHandler = () => {
     setShowCryptoMenu(!showCryptoMenu);
@@ -156,70 +110,32 @@ const TransferProcessModal = ({
 
   const showMenu = showCryptoMenu ? 'block' : 'invisible';
 
-  const formButton =
-    transferType === 'deposit' ? (
-      <p className="flex items-center space-x-3 text-center">
-        {displayedModalTitle}{' '}
-        <span className="ml-3">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="14.693"
-            height="15"
-            viewBox="0 0 14.693 15"
-          >
-            <g fill="#fff" data-name="Group 14962">
-              <path
-                d="M14.466 47.8h-1.4a.227.227 0 00-.227.227v1.993H1.856v-1.989a.227.227 0 00-.227-.227H.227a.227.227 0 00-.227.227v3.624a.227.227 0 00.227.227h14.239a.227.227 0 00.227-.227v-3.624a.227.227 0 00-.227-.227"
-                data-name="Path 1387"
-                transform="translate(0 -36.883)"
-              ></path>
-              <path
-                d="M26.035 1.725h-4.4a.265.265 0 01-.265-.265V.265A.265.265 0 0121.639 0h4.4a.265.265 0 01.261.265v1.2a.265.265 0 01-.265.265"
-                data-name="Path 1388"
-                transform="translate(-16.491)"
-              ></path>
-              <path
-                d="M16.177 15.645l-2.546 2.984a.673.673 0 01-.913 0l-2.546-2.984-2.546-2.985c-.2-.238.051-.536.457-.536h2.669V9.659a.227.227 0 01.227-.227h4.468a.227.227 0 01.227.227v2.465h2.593c.406 0 .66.3.457.536z"
-                data-name="Path 1389"
-                transform="translate(-5.828 -7.277)"
-              ></path>
-            </g>
-          </svg>
-        </span>
-      </p>
-    ) : (
-      <p className="flex items-center space-x-3 text-center">
-        {displayedModalTitle} {/* {transferProcessStep.} */}
-        <span className="ml-3">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="14.693"
-            height="15"
-            data-name="Group 14962"
-            viewBox="0 0 14.693 15"
-          >
+  const formButton = (
+    <p className="flex items-center space-x-3 text-center">
+      Deposit
+      <span className="ml-3">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14.693" height="15" viewBox="0 0 14.693 15">
+          <g fill="#fff" data-name="Group 14962">
             <path
-              fill="#fff"
               d="M14.466 47.8h-1.4a.227.227 0 00-.227.227v1.993H1.856v-1.989a.227.227 0 00-.227-.227H.227a.227.227 0 00-.227.227v3.624a.227.227 0 00.227.227h14.239a.227.227 0 00.227-.227v-3.624a.227.227 0 00-.227-.227"
               data-name="Path 1387"
               transform="translate(0 -36.883)"
             ></path>
             <path
-              fill="#fff"
-              d="M26.036 0h-4.4a.265.265 0 00-.265.265v1.2a.265.265 0 00.265.265h4.4a.265.265 0 00.264-.27V.265A.265.265 0 0026.036 0"
+              d="M26.035 1.725h-4.4a.265.265 0 01-.265-.265V.265A.265.265 0 0121.639 0h4.4a.265.265 0 01.261.265v1.2a.265.265 0 01-.265.265"
               data-name="Path 1388"
-              transform="translate(-16.491 9.805)"
+              transform="translate(-16.491)"
             ></path>
             <path
-              fill="#fff"
-              d="M16.178 12.595l-2.547-2.984a.673.673 0 00-.913 0l-2.546 2.984-2.546 2.984c-.2.238.051.536.457.536h2.67v2.465a.227.227 0 00.227.227h4.469a.227.227 0 00.227-.227v-2.465h2.593c.406 0 .66-.3.457-.536z"
+              d="M16.177 15.645l-2.546 2.984a.673.673 0 01-.913 0l-2.546-2.984-2.546-2.985c-.2-.238.051-.536.457-.536h2.669V9.659a.227.227 0 01.227-.227h4.468a.227.227 0 01.227.227v2.465h2.593c.406 0 .66.3.457.536z"
               data-name="Path 1389"
-              transform="translate(-5.828 -9.432)"
+              transform="translate(-5.828 -7.277)"
             ></path>
-          </svg>
-        </span>
-      </p>
-    );
+          </g>
+        </svg>
+      </span>
+    </p>
+  );
 
   const formStyle = showCryptoMenu ? 'ring-1 ring-tidebitTheme' : '';
 
@@ -229,7 +145,7 @@ const TransferProcessModal = ({
 
   const warningStyle = showWarning ? 'block' : 'invisible';
 
-  const avaliableCryptoMenu = transferOptions.map(item => {
+  const avaliableCryptoMenu = availableTransferOptions.map(item => {
     return (
       <li
         key={item.label}
@@ -238,7 +154,7 @@ const TransferProcessModal = ({
         }}
       >
         <p className="mx-3 my-1 block rounded px-5 py-2 text-base hover:cursor-pointer hover:bg-darkGray5">
-          {item.label}
+          {item.content}
         </p>
       </li>
     );
@@ -402,93 +318,6 @@ const TransferProcessModal = ({
     </div>
   );
 
-  const loadingContent = (
-    <div className="relative flex-auto pt-1">
-      <div className="text-lg leading-relaxed text-lightWhite">
-        <div className="flex-col justify-center text-center">
-          <Lottie className="ml-60px w-400px pt-5" animationData={bigConnectingAnimation} />
-          <div className="mt-3 text-lg">Confirm the transaction</div>
-        </div>
-      </div>
-    </div>
-  );
-
-  const successContent = (
-    <div className="relative flex-auto pt-1">
-      <div className="text-lg leading-relaxed text-lightWhite">
-        <div className="flex-col justify-center text-center">
-          <Lottie className="ml-120px w-200px pt-5 pb-5" animationData={successfulAnimation} />
-          <div className="mt-2 mb-2 text-base">
-            <p>Transaction succeeded</p>
-            <p>
-              It will take <span className="text-tidebitTheme">3 - 5</span> mins to finish all the
-              process
-            </p>
-          </div>
-          <div>
-            <RippleButton
-              buttonType="button"
-              className="mt-4 rounded border-0 bg-tidebitTheme py-2 px-24 text-base text-white transition-colors duration-300 hover:cursor-pointer hover:bg-cyan-600 focus:outline-none"
-            >
-              View on Etherscan
-            </RippleButton>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-
-  const cancellationContent = (
-    <div className="relative flex-auto pt-1">
-      <div className="text-lg leading-relaxed text-lightWhite">
-        <div className="flex-col justify-center text-center">
-          <Lottie className="ml-120px w-220px pt-10" animationData={canceledAnimation} />
-          <div className="mt-10 text-lg">Transaction canceled</div>
-        </div>
-      </div>
-    </div>
-  );
-
-  const failContent = (
-    <div className="relative flex-auto pt-1">
-      <div className="text-lg leading-relaxed text-lightWhite">
-        <div className="flex-col items-center justify-center text-center">
-          <Lottie className="ml-130px w-180px pt-10" animationData={failedAnimation} />
-          <div className="mx-16 mt-10 mb-3 bg-lightRed">
-            <p className="text-lg">Failed</p>
-
-            <p className="bg-darkGray1/50 py-4 px-2 text-start text-xs leading-4 tracking-wide">
-              Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
-              invidunt ut labore et
-            </p>
-          </div>
-          <div>
-            <RippleButton
-              buttonType="button"
-              className="mt-4 rounded border-0 bg-tidebitTheme py-2 px-24 text-base text-white transition-colors duration-300 hover:cursor-pointer hover:bg-cyan-600 focus:outline-none"
-            >
-              View on Etherscan
-            </RippleButton>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-
-  const displayedContent = formContent;
-
-  const contentHandler = (type: string) => {
-    return {
-      [TRANSFER_PROCESS_MODAL_STEP_CLASSES.form]: formContent,
-      [TRANSFER_PROCESS_MODAL_STEP_CLASSES.loading]: loadingContent,
-      [TRANSFER_PROCESS_MODAL_STEP_CLASSES.success]: successContent,
-      [TRANSFER_PROCESS_MODAL_STEP_CLASSES.cancellation]: cancellationContent,
-      [TRANSFER_PROCESS_MODAL_STEP_CLASSES.fail]: failContent,
-    }[type];
-  };
-
-  // console.log('content handler:', contentHandler(TRANSFER_PROCESS_MODAL_TYPE_CLASSES.deposit.form));
-
   const isDisplayedModal = modalVisible ? (
     <>
       {/*  <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">*/}
@@ -507,8 +336,7 @@ const TransferProcessModal = ({
             {/*header*/}
             <div className="flex items-start justify-between rounded-t pt-6">
               <h3 className="mt-2 w-full text-center text-4xl font-normal text-lightWhite">
-                {displayedModalTitle}
-                {/* {(transferProcessStep = 'deposit-' ? 'Deposit' : 'Withdraw')} */}
+                Deposit
               </h3>
               <button className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
                 <span className="absolute top-5 right-5 block outline-none focus:outline-none">
@@ -517,8 +345,7 @@ const TransferProcessModal = ({
               </button>
             </div>
             {/*body*/}
-            {/* {displayedContent} */}
-            {contentHandler(transferStep)}
+            {formContent}
             {/*footer*/}
             <div className="flex items-center justify-end rounded-b p-2"></div>
           </div>
@@ -531,4 +358,4 @@ const TransferProcessModal = ({
   return <div>{isDisplayedModal}</div>;
 };
 
-export default TransferProcessModal;
+export default DepositModal;

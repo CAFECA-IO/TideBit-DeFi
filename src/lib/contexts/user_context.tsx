@@ -40,6 +40,12 @@ import {
   dummyBalance_USDT,
   IBalance,
 } from '../../interfaces/tidebit_defi_background/balance';
+import {
+  dummyPublicCFDOrder,
+  dummyPublicDepositOrder,
+  dummyPublicWithdrawOrder,
+} from '../../interfaces/tidebit_defi_background/public_order';
+import {IOrderResult} from '../../interfaces/tidebit_defi_background/order_result';
 
 function randomNumber(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1) + min);
@@ -127,12 +133,13 @@ export interface IUserContext {
   isEnabledEmailNotification: boolean;
   isConnectedWithEmail: boolean;
   isConnectedWithTideBit: boolean;
+  getBalance: (props: string) => IBalance | null;
   getWalletBalance: (props: string) => IWalletBalance | null;
-  createOrder: (props: ICFDOrderCreatingRequest) => Promise<IResult>;
-  closeOrder: (props: {id: string}) => Promise<IResult>;
-  updateOrder: (props: ICFDOrderUpdateRequest) => Promise<IResult>;
-  deposit: (props: {asset: string; amount: number}) => Promise<IResult>;
-  withdraw: (props: {asset: string; amount: number}) => Promise<IResult>;
+  createOrder: (props: ICFDOrderCreatingRequest) => Promise<IOrderResult>;
+  closeOrder: (props: {id: string}) => Promise<IOrderResult>;
+  updateOrder: (props: ICFDOrderUpdateRequest) => Promise<IOrderResult>;
+  deposit: (props: {asset: string; amount: number}) => Promise<IOrderResult>;
+  withdraw: (props: {asset: string; amount: number}) => Promise<IOrderResult>;
 }
 
 export const UserContext = createContext<IUserContext>({
@@ -165,13 +172,16 @@ export const UserContext = createContext<IUserContext>({
   isEnabledEmailNotification: false,
   isConnectedWithEmail: false,
   isConnectedWithTideBit: false,
+  getBalance: (props: string) => null,
   getWalletBalance: (props: string) => null,
-  createOrder: (props: ICFDOrderCreatingRequest) => Promise.resolve<IResult>(dummyResultSuccess),
-  closeOrder: (props: {id: string}) => Promise.resolve<IResult>(dummyResultSuccess),
-  updateOrder: (props: ICFDOrderUpdateRequest) => Promise.resolve<IResult>(dummyResultSuccess),
-  deposit: (props: {asset: string; amount: number}) => Promise.resolve<IResult>(dummyResultSuccess),
+  createOrder: (props: ICFDOrderCreatingRequest) =>
+    Promise.resolve<IOrderResult>(dummyResultSuccess),
+  closeOrder: (props: {id: string}) => Promise.resolve<IOrderResult>(dummyResultSuccess),
+  updateOrder: (props: ICFDOrderUpdateRequest) => Promise.resolve<IOrderResult>(dummyResultSuccess),
+  deposit: (props: {asset: string; amount: number}) =>
+    Promise.resolve<IOrderResult>(dummyResultSuccess),
   withdraw: (props: {asset: string; amount: number}) =>
-    Promise.resolve<IResult>(dummyResultSuccess),
+    Promise.resolve<IOrderResult>(dummyResultSuccess),
 });
 
 export const UserProvider = ({children}: IUserProvider) => {
@@ -193,16 +203,42 @@ export const UserProvider = ({children}: IUserProvider) => {
   const [isConnectedWithEmail, setIsConnectedWithEmail] = useState<boolean>(false);
   const [isConnectedWithTideBit, setIsConnectedWithTideBit] = useState<boolean>(false);
 
+  const setPrivateDate = async (wallet: string) => {
+    // TODO getUser from backend by wallet
+    setId('002');
+    setUsername('Tidebit DeFi Test User');
+    setWallet(wallet);
+    setWalletBalances([dummyWalletBalance_BTC, dummyWalletBalance_ETH, dummyWalletBalance_USDT]);
+    setBalance({
+      available: 1296.47,
+      locked: 583.62,
+      PNL: 1956.84,
+    });
+    setBalances([dummyBalance_BTC, dummyBalance_ETH, dummyBalance_USDT]);
+  };
+
+  const clearPrivateDate = () => {
+    setIsConnected(false);
+    setEnableServiceTerm(false);
+    setId(null);
+    setUsername(null);
+    setWallet(null);
+    setWalletBalances(null);
+    setBalance(null);
+    setOpenedCFDBriefs([]);
+    setClosedCFDBriefs([]);
+  };
+
   const lunar = new Lunar();
   lunar.on('connected', () => {
     setIsConnected(true);
   });
   lunar.on('disconnected', () => {
-    setDisconnected();
+    clearPrivateDate();
   });
   lunar.on('accountsChanged', () => {
     setWallet(lunar.address);
-    setUser(lunar.address);
+    setPrivateDate(lunar.address);
   });
 
   const listOpenCFDBriefs = async () => {
@@ -221,27 +257,13 @@ export const UserProvider = ({children}: IUserProvider) => {
     return closedCFDBriefs;
   };
 
-  const setUser = async (wallet: string) => {
-    // TODO getUser from backend by wallet
-    setId('002');
-    setUsername('Tidebit DeFi Test User');
-    setWallet(wallet);
-    setWalletBalances([dummyWalletBalance_BTC, dummyWalletBalance_ETH, dummyWalletBalance_USDT]);
-    setBalance({
-      available: 1296.47,
-      locked: 583.62,
-      PNL: 1956.84,
-    });
-    setBalances([dummyBalance_BTC, dummyBalance_ETH, dummyBalance_USDT]);
-  };
-
   const connect = async () => {
     let success = false;
     try {
       const connect = await lunar.connect({});
       const address = lunar.address;
       if (connect) {
-        setUser(address);
+        setPrivateDate(address);
         const openedCFDs = await listOpenCFDBriefs();
         const closedCFDs = await listClosedCFDBriefs();
         setOpenedCFDBriefs(openedCFDs);
@@ -268,18 +290,6 @@ export const UserProvider = ({children}: IUserProvider) => {
       console.error(`userContext disconnect error`, error);
     }
     return success;
-  };
-
-  const setDisconnected = () => {
-    setIsConnected(false);
-    setEnableServiceTerm(false);
-    setId(null);
-    setUsername(null);
-    setWallet(null);
-    setWalletBalances(null);
-    setBalance(null);
-    setOpenedCFDBriefs([]);
-    setClosedCFDBriefs([]);
   };
 
   const addFavorites = (newFavorite: string) => {
@@ -336,55 +346,52 @@ export const UserProvider = ({children}: IUserProvider) => {
   };
 
   const createOrder = async (props: ICFDOrderCreatingRequest) => {
-    let result: IResult = dummyResultFailed;
+    let result: IOrderResult = dummyResultFailed;
     if (isConnected) {
-      const orderStatus: IOrderStatusUnion = 'processing';
       const balance: IBalance | null = getBalance(props.ticker); // TODO: ticker is not currency
       if (balance && balance.available > props.margin) {
         // TODO: balance.available > ?
         // TODO: OrderEngine create signable order data
         result = {
           success: true,
-          data: orderStatus,
+          data: dummyPublicCFDOrder,
         };
       }
     }
-    return await Promise.resolve<IResult>(result);
+    return await Promise.resolve<IOrderResult>(result);
   };
 
   const closeOrder = async (props: {id: string}) => {
-    let result: IResult = dummyResultFailed;
+    let result: IOrderResult = dummyResultFailed;
     if (isConnected) {
-      const orderStatus: IOrderStatusUnion = 'processing';
       // check order is exist
       // if(order is live)
       // TODO: OrderEngine create signable closeOrder data
       result = {
         success: true,
-        data: orderStatus,
+        data: dummyPublicCFDOrder,
       };
     }
-    return await Promise.resolve<IResult>(result);
+    return await Promise.resolve<IOrderResult>(result);
   };
+
   const updateOrder = async (props: ICFDOrderUpdateRequest) => {
-    let result: IResult = dummyResultFailed;
+    let result: IOrderResult = dummyResultFailed;
     if (isConnected) {
-      const orderStatus: IOrderStatusUnion = 'processing';
       // check order is exist
       // if(order is live)
       // TODO: OrderEngine create signable updateOrder data
       result = {
         success: true,
-        data: orderStatus,
+        data: dummyPublicCFDOrder,
       };
     }
-    return await Promise.resolve<IResult>(result);
+    return await Promise.resolve<IOrderResult>(result);
   };
 
   const deposit = async (props: {asset: string; amount: number}) => {
-    let result: IResult = dummyResultFailed;
+    let result: IOrderResult = dummyResultFailed;
     if (isConnected) {
-      const orderStatus: IOrderStatusUnion = 'processing';
       const walletBalance: IWalletBalance | null = getWalletBalance(props.asset);
       // if(balance is enough)
       if (walletBalance && walletBalance.balance > 0) {
@@ -392,27 +399,27 @@ export const UserProvider = ({children}: IUserProvider) => {
         // TODO: updateWalletBalances
         result = {
           success: true,
-          data: orderStatus, // new walletBalance
+          data: dummyPublicDepositOrder, // new walletBalance
         };
       }
     }
-    return await Promise.resolve<IResult>(result);
+    return await Promise.resolve<IOrderResult>(result);
   };
+
   const withdraw = async (props: {asset: string; amount: number}) => {
-    let result: IResult = dummyResultFailed;
+    let result: IOrderResult = dummyResultFailed;
     if (isConnected) {
-      const orderStatus: IOrderStatusUnion = 'processing';
       const balance: IBalance | null = getBalance(props.asset); // TODO: ticker is not currency
       if (balance && balance.available > props.amount) {
         // TODO: balance.available > ?
         // TODO: OrderEngine create withdraw order data
         result = {
           success: true,
-          data: orderStatus,
+          data: dummyPublicWithdrawOrder,
         };
       }
     }
-    return await Promise.resolve<IResult>(result);
+    return await Promise.resolve<IOrderResult>(result);
   };
 
   const defaultValue = {
@@ -441,6 +448,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     connect,
     signServiceTerm,
     disconnect,
+    getBalance,
     getWalletBalance,
     createOrder,
     closeOrder,

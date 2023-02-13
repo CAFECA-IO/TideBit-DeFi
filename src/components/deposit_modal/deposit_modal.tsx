@@ -3,6 +3,8 @@ import RippleButton from '../ripple_button/ripple_button';
 import {MarketContext} from '../../contexts/market_context';
 import {MdKeyboardArrowDown} from 'react-icons/md';
 import {ImCross} from 'react-icons/im';
+import {ICryptocurrency} from '../../interfaces/tidebit_defi_background/cryptocurrency';
+import Image from 'next/image';
 
 interface IDepositModal {
   // transferType: 'deposit' | 'withdraw';
@@ -28,7 +30,7 @@ const DepositModal = ({
   ...otherProps
 }: IDepositModal) => {
   // TODO: [UserContext] deposit: userCtx.walletBalance, withdraw: userCtx.balance?.available
-  const userAvailableBalance = 1620;
+  const userAvailableBalance = 92;
   const {availableTransferOptions} = useContext(MarketContext);
 
   // const {user} = useContext(UserContext);
@@ -53,7 +55,7 @@ const DepositModal = ({
 
   const maxClickHandler = () => {
     setAmountInput(userAvailableBalance);
-    getTransferData({asset: selectedCrypto.label, amount: userAvailableBalance});
+    getTransferData({asset: selectedCrypto.symbol, amount: userAvailableBalance});
   };
 
   const passSubmissionStateHandler = (props: 'success' | 'cancellation' | 'fail') => {
@@ -72,9 +74,9 @@ const DepositModal = ({
 
     setShowWarning(false);
 
-    submitHandler({asset: selectedCrypto.label, amount: amountInput});
+    submitHandler({asset: selectedCrypto.symbol, amount: amountInput});
 
-    // console.log('in modal, after clicking submit: ', selectedCrypto.label, amountInput);
+    // console.log('in modal, after clicking submit: ', selectedCrypto.symbol, amountInput);
 
     setAmountInput(undefined);
     // setTimeout(() => {
@@ -100,11 +102,13 @@ const DepositModal = ({
       // Upperlimit in withdraw modal
       if (Number(value) > userAvailableBalance) {
         setAmountInput(Number(userAvailableBalance));
+        getTransferData({asset: selectedCrypto.symbol, amount: Number(userAvailableBalance)});
+
         return;
       }
 
       setAmountInput(Number(value));
-      getTransferData({asset: selectedCrypto.label, amount: Number(value)});
+      getTransferData({asset: selectedCrypto.symbol, amount: Number(value)});
     }
   };
 
@@ -114,25 +118,7 @@ const DepositModal = ({
     <p className="flex items-center space-x-3 text-center">
       Deposit
       <span className="ml-3">
-        <svg xmlns="http://www.w3.org/2000/svg" width="14.693" height="15" viewBox="0 0 14.693 15">
-          <g fill="#fff" data-name="Group 14962">
-            <path
-              d="M14.466 47.8h-1.4a.227.227 0 00-.227.227v1.993H1.856v-1.989a.227.227 0 00-.227-.227H.227a.227.227 0 00-.227.227v3.624a.227.227 0 00.227.227h14.239a.227.227 0 00.227-.227v-3.624a.227.227 0 00-.227-.227"
-              data-name="Path 1387"
-              transform="translate(0 -36.883)"
-            ></path>
-            <path
-              d="M26.035 1.725h-4.4a.265.265 0 01-.265-.265V.265A.265.265 0 0121.639 0h4.4a.265.265 0 01.261.265v1.2a.265.265 0 01-.265.265"
-              data-name="Path 1388"
-              transform="translate(-16.491)"
-            ></path>
-            <path
-              d="M16.177 15.645l-2.546 2.984a.673.673 0 01-.913 0l-2.546-2.984-2.546-2.985c-.2-.238.051-.536.457-.536h2.669V9.659a.227.227 0 01.227-.227h4.468a.227.227 0 01.227.227v2.465h2.593c.406 0 .66.3.457.536z"
-              data-name="Path 1389"
-              transform="translate(-5.828 -7.277)"
-            ></path>
-          </g>
-        </svg>
+        <Image src="/elements/group_149621.svg" width={15} height={15} alt="withdraw icon" />
       </span>
     </p>
   );
@@ -148,26 +134,27 @@ const DepositModal = ({
   const avaliableCryptoMenu = availableTransferOptions.map(item => {
     return (
       <li
-        key={item.label}
+        key={item.symbol}
         onClick={() => {
           cryptoItemClickHandler(item);
         }}
       >
         <p className="mx-3 my-1 block rounded px-5 py-2 text-base hover:cursor-pointer hover:bg-darkGray5">
-          {item.content}
+          {item.name}
         </p>
       </li>
     );
   });
 
-  const cryptoItemClickHandler = (target: {label: string; content: string}) => {
-    // const {label} = target;
+  const cryptoItemClickHandler = (target: ICryptocurrency) => {
+    // const {symbol} = target;
     // console.log('target', {target});
-    // console.log('label', {label});
+    // console.log('symbol', {symbol});
+    setAmountInput(undefined);
     setSelectedCrypto(target);
     cryptoMenuClickHandler();
 
-    getTransferData({asset: target.label, amount: amountInput ?? 0});
+    getTransferData({asset: target.symbol, amount: amountInput ?? 0});
   };
 
   const formContent = (
@@ -180,26 +167,14 @@ const DepositModal = ({
             <div className="hover:cursor-pointer" onClick={cryptoMenuClickHandler}>
               <div className={`${formStyle} flex rounded-md bg-darkGray8`}>
                 <div className={`z-50 flex items-center space-x-2 pl-2`}>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="20"
-                    height="20"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fill="#53ae94"
-                      d="M10 0A10 10 0 110 10 10 10 0 0110 0"
-                      data-name="Path 285"
-                    ></path>
-                    <path
-                      fill="#fff"
-                      d="M400.4 495.094v-1.488h3.4v-2.266h-9.263v2.267h3.4v1.486c-2.765.127-4.844.675-4.844 1.331s2.08 1.2 4.844 1.331v4.765h2.46v-4.765c2.76-.127 4.835-.675 4.835-1.33s-2.075-1.2-4.835-1.33m0 2.256c-.069 0-.426.026-1.22.026-.635 0-1.081-.018-1.239-.026-2.443-.108-4.266-.534-4.266-1.043s1.824-.934 4.266-1.042v1.661c.16.011.618.038 1.249.038.759 0 1.14-.032 1.21-.038v-1.661c2.438.109 4.257.534 4.257 1.042s-1.82.933-4.257 1.042"
-                      data-name="Path 286"
-                      transform="translate(-389.169 -486.427)"
-                    ></path>
-                  </svg>
+                  {/* Targeted Crypto icon */}
+                  {selectedCrypto.icon === '' ? (
+                    <></>
+                  ) : (
+                    <Image src={selectedCrypto.icon} width={20} height={20} alt="crypto icon" />
+                  )}
 
-                  <p className="w-60px text-lg text-lightWhite">{selectedCrypto?.label}</p>
+                  <p className="w-60px text-lg text-lightWhite">{selectedCrypto?.symbol}</p>
                 </div>
                 {/* TODO: input search */}
                 <input
@@ -210,12 +185,12 @@ const DepositModal = ({
                   onFocus={() => {
                     // console.log('focusing');
                   }}
-                  value={selectedCrypto?.content}
+                  value={selectedCrypto?.name}
                 />
 
                 <button
                   type="button"
-                  className="animate-openMenu pl-2"
+                  className="absolute top-90px right-90px animate-openMenu"
                   onClick={cryptoMenuClickHandler}
                 >
                   <MdKeyboardArrowDown
@@ -265,7 +240,7 @@ const DepositModal = ({
                 className="w-250px rounded-md bg-darkGray8 py-2 pl-3 text-sm text-white focus:outline-none focus:ring-0"
                 type="number"
                 placeholder=""
-                value={amountInput}
+                value={amountInput === undefined ? '' : amountInput}
                 onChange={amountOnChangeHandler}
               />
 
@@ -273,7 +248,7 @@ const DepositModal = ({
                 type="button"
                 className="mx-1 mr-1 text-xs text-lightWhite hover:cursor-default"
               >
-                USDT
+                {selectedCrypto.symbol}
               </button>
               <button
                 type="button"
@@ -299,7 +274,9 @@ const DepositModal = ({
               </p>
 
               <p className="pt-3 text-end text-sm tracking-wide">
-                Available: <span className="text-tidebitTheme">{userAvailableBalance}</span> USDT
+                Available in MetaMask:{' '}
+                <span className="text-tidebitTheme">{userAvailableBalance}</span>{' '}
+                {selectedCrypto.symbol}
               </p>
             </div>
           </div>

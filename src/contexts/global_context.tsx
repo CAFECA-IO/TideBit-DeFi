@@ -129,6 +129,7 @@ export const GlobalContext = createContext<IGlobalContext>({
   colorMode: '' as ColorModeUnion,
   toggleColorMode: () => null,
   toast: () => null,
+
   visiblePositionDetailsModal: false,
   visiblePositionDetailsModalHandler: () => null,
   dataPositionDetailsModal: null,

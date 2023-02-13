@@ -15,6 +15,10 @@ import {
 import {ITickerLiveStatistics} from '../interfaces/tidebit_defi_background/ticker_live_statistics';
 import {ITickerStatic} from '../interfaces/tidebit_defi_background/ticker_static';
 import {UserContext} from './user_context';
+import {
+  ICryptocurrency,
+  dummyTransferCurrency,
+} from '../interfaces/tidebit_defi_background/cryptocurrency';
 
 export interface ITickerData {
   currency: string;
@@ -457,12 +461,11 @@ export interface IMarketProvider {
   children: React.ReactNode;
 }
 
-// TODO: Use `interfaces/` instead
-export interface ITransferOptions {
-  // [key: string]: {
-  label: string;
-  content: string;
-}
+// export interface ITransferOptions {
+//   // [key: string]: {
+//   label: string;
+//   content: string;
+// }
 
 export interface IMarketContext {
   availableTickers: ITickerData[];
@@ -472,7 +475,7 @@ export interface IMarketContext {
   positionInfoOnChart: ApexOptions | null;
   candlestickId: string;
   candlestickChartIdHandler: (id: string) => void;
-  availableTransferOptions: ITransferOptions[];
+  availableTransferOptions: ICryptocurrency[];
   liveStatstics: IPriceStatistics | null;
   bullAndBearIndex: number;
   // cryptoBriefNews: IBriefNewsItem[];
@@ -505,18 +508,25 @@ export const MarketContext = createContext<IMarketContext>({
 });
 
 const availableTransferOptions = [
-  {label: 'USDT', content: 'Tether'},
-  {label: 'ETH', content: 'ETH'},
-  {label: 'BTC', content: 'BTC'},
-  {label: 'USDC', content: 'USD Coin'},
-  {label: 'DAI', content: 'DAI'},
-  {label: 'BNB', content: 'BNB'},
-  {label: 'BCH', content: 'BCH'},
-  {label: 'LTC', content: 'LTC'},
-  {label: 'ETC', content: 'ETC'},
-  {label: 'USX', content: 'USX'},
-  {label: 'NEO', content: 'NEO'},
-  {label: 'EOS', content: 'EOS'},
+  {
+    id: 'USDT',
+    symbol: 'USDT',
+    name: 'Tether',
+    decimals: 6,
+    icon: '/elements/tether-seeklogo.com.svg',
+    fee: 0,
+  },
+  {id: 'ETH', symbol: 'ETH', name: 'ETH', decimals: 18, icon: '/elements/group_2371.svg', fee: 0},
+  {id: 'BTC', symbol: 'BTC', name: 'BTC', decimals: 18, icon: '', fee: 0},
+  {id: 'USDC', symbol: 'USDC', name: 'USD Coin', decimals: 18, icon: '', fee: 0},
+  {id: 'DAI', symbol: 'DAI', name: 'DAI', decimals: 18, icon: '', fee: 0},
+  {id: 'BNB', symbol: 'BNB', name: 'BNB', decimals: 18, icon: '', fee: 0},
+  {id: 'BCH', symbol: 'BCH', name: 'BCH', decimals: 18, icon: '', fee: 0},
+  {id: 'LTC', symbol: 'LTC', name: 'LTC', decimals: 18, icon: '', fee: 0},
+  {id: 'ETC', symbol: 'ETC', name: 'ETC', decimals: 18, icon: '', fee: 0},
+  {id: 'USX', symbol: 'USX', name: 'USX', decimals: 18, icon: '', fee: 0},
+  {id: 'NEO', symbol: 'NEO', name: 'NEO', decimals: 18, icon: '', fee: 0},
+  {id: 'EOS', symbol: 'EOS', name: 'EOS', decimals: 18, icon: '', fee: 0},
 ];
 
 const getCryptoSummary = (tickerId = 'ETH') => {
@@ -701,7 +711,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
   const [candlestickId, setCandlestickId] = useState<string>('');
 
   const [transferOptions, setTransferOptions] =
-    useState<ITransferOptions[]>(availableTransferOptions);
+    useState<ICryptocurrency[]>(availableTransferOptions);
 
   const [showPositionOnChart, setShowPositionOnChart] = useState<boolean>(
     INITIAL_POSITION_LABEL_DISPLAYED_STATE

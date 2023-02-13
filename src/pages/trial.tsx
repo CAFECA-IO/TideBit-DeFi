@@ -8,7 +8,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import {CRYPTO_CARD_COLORS} from '../constants/display';
 import {useContext, useEffect, useState} from 'react';
 import {MarketContext} from '../contexts/market_context';
-import CfdPositionModal from '../components/cfd_position_modal/cfd_position_modal';
+import PositionOpenModal from '../components/position_open_modal/position_open_modal';
 import PositionDetailsModal from '../components/position_details_modal/position_details_modal';
 import LoadingModal from '../components/loading_modal/loading_modal';
 import FailedModal from '../components/failed_modal/failed_modal';
@@ -17,6 +17,7 @@ import SuccessfulModal from '../components/successful_modal/successful_modal';
 import DepositModal from '../components/deposit_modal/deposit_modal';
 import WithdrawalModal from '../components/withdrawal_modal/withdrawal_modal';
 import {useGlobal} from '../contexts/global_context';
+import {dummyOpenCFDDetails} from '../interfaces/tidebit_defi_background/open_cfd_details';
 
 const Trial = () => {
   const globalCtx = useGlobal();
@@ -26,11 +27,31 @@ const Trial = () => {
     setComponentVisible: setTickerBoxVisible,
   } = useOuterClick<HTMLDivElement>(true);
 
+  const [mounted, setMounted] = useState(false);
+
   const [modalVisible, setModalVisible] = useState(true);
 
   useEffect(() => {
+    /**
+     * @dev `setMounted` to solve `Text content does not match server-rendered HTML.`
+     */
+    setMounted(true);
     // globalCtx.visibleWithdrawalModalHandler();
-    globalCtx.visibleDepositModalHandler();
+    // globalCtx.visibleDepositModalHandler();
+    // globalCtx.dataFailedModalHandler({
+    //   modalTitle: 'Deposit',
+    //   failedTitle: 'Transaction Failed',
+    //   failedMsg:
+    //     'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et',
+    //   btnMsg: 'Try again',
+    // });
+    // globalCtx.visibleFailedModalHandler();
+    // globalCtx.dataSuccessfulModalHandler({
+    //   modalTitle: 'Deposit',
+    //   // modalContent: 'Deposit Successful',
+    //   btnMsg: 'Go to Wallet',
+    // });
+    // globalCtx.visibleSuccessfulModalHandler();
   }, []);
 
   const modalClickHandler = () => {
@@ -86,7 +107,15 @@ const Trial = () => {
   return (
     <>
       {/* flex h-screen w-full items-center justify-center */}
-      <div className="w-full space-y-10 bg-cuteBlue">
+      <div className="w-full space-y-10 bg-transparent">
+        {mounted && (
+          <PositionOpenModal
+            openCfdDetails={dummyOpenCFDDetails}
+            modalVisible={modalVisible}
+            modalClickHandler={modalClickHandler}
+          />
+        )}
+
         {/* <LoadingModal
           modalTitle="Wallet Connect"
           modalContent="Connecting..."

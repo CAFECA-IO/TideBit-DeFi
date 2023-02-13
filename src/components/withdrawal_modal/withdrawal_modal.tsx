@@ -52,7 +52,7 @@ const WithdrawalModal = ({
     getSubmissionState(props);
   };
 
-  // TODO: send withdraw / deposit request
+  // TODO: send withdrawal request
   const submitClickHandler = () => {
     if (amountInput === 0 || amountInput === undefined) {
       setSubmitDisabled(true);
@@ -66,7 +66,7 @@ const WithdrawalModal = ({
     setTimeout(() => {
       // passSubmissionStateHandler('loading');
       setSubmitDisabled(true);
-    }, 500);
+    }, 800);
   };
 
   const amountOnChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {

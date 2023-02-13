@@ -46,19 +46,22 @@ const Toggle = ({
   //   // toggleClickHandler();
   // };
 
-  //TODO: bg-tidebitTheme [#29C1E1]
   const toggleSwitchStyle = lockedToOpen
     ? 'transform translate-x-full bg-lightGray shadow-lg shadow-black/80'
     : toggle
     ? 'transform translate-x-full bg-white'
     : 'bg-white';
-  const toggleBackgroundStyle = lockedToOpen ? 'bg-[#8B8E91]' : toggle ? 'bg-[#29C1E1]' : null;
+  const toggleBackgroundStyle = lockedToOpen
+    ? 'bg-lightGray'
+    : toggle
+    ? 'bg-tidebitTheme'
+    : 'bg-lightGray3';
 
   const tidebitToggle = (
     // Toggle background
     <div
       onClick={toggleClickHandler}
-      className={`${toggleBackgroundStyle} flex h-2 w-8 cursor-pointer items-center rounded-full bg-lightGray3 duration-300 ease-in-out`}
+      className={`${toggleBackgroundStyle} flex h-2 w-8 cursor-pointer items-center rounded-full duration-300 ease-in-out`}
     >
       {/* Switch */}
       <div

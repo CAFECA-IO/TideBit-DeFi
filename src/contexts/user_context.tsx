@@ -2,50 +2,50 @@
 import Lunar from '@cafeca/lunar';
 import React, {useState, createContext} from 'react';
 import {providers} from 'ethers';
-import {ICardProps, ILineGraphProps} from '../../components/card/crypto_card';
-import {PROFIT_LOSS_COLOR_TYPE} from '../../constants/display';
+import {ICardProps, ILineGraphProps} from '../components/card/crypto_card';
+import {PROFIT_LOSS_COLOR_TYPE} from '../constants/display';
 import {
-  dummyOpenCFDBrief,
+  dummyOpenCFDBriefs,
   IOpenCFDBrief,
-} from '../../interfaces/tidebit_defi_background/open_cfd_brief';
+} from '../interfaces/tidebit_defi_background/open_cfd_brief';
 import {
   IOpenCFDDetails,
   dummyOpenCFDDetails,
-} from '../../interfaces/tidebit_defi_background/open_cfd_details';
+} from '../interfaces/tidebit_defi_background/open_cfd_details';
 import {
-  dummyCloseCFDBrief,
+  dummyClosedCFDBriefs,
   IClosedCFDBrief,
-} from '../../interfaces/tidebit_defi_background/closed_cfd_brief';
+} from '../interfaces/tidebit_defi_background/closed_cfd_brief';
 import {
   IClosedCFDDetails,
   dummyCloseCFDDetails,
-} from '../../interfaces/tidebit_defi_background/closed_cfd_details';
+} from '../interfaces/tidebit_defi_background/closed_cfd_details';
 import {
   dummyResultFailed,
   dummyResultSuccess,
   IResult,
-} from '../../interfaces/tidebit_defi_background/result';
+} from '../interfaces/tidebit_defi_background/result';
 import {
   dummyWalletBalance_BTC,
   dummyWalletBalance_ETH,
   dummyWalletBalance_USDT,
   IWalletBalance,
-} from '../../interfaces/tidebit_defi_background/wallet_balance';
-import {ICFDOrderCreatingRequest} from '../../interfaces/tidebit_defi_background/cfd_order_request';
-import {IOrderStatusUnion} from '../../interfaces/depre_tidebit_defi_background';
-import {ICFDOrderUpdateRequest} from '../../interfaces/tidebit_defi_background/cfd_order_update';
+} from '../interfaces/tidebit_defi_background/wallet_balance';
+import {ICFDOrderCreatingProps} from '../interfaces/tidebit_defi_background/cfd_order_request';
+import {IOrderStatusUnion} from '../interfaces/depre_tidebit_defi_background';
+import {ICFDOrderUpdateRequest} from '../interfaces/tidebit_defi_background/cfd_order_update';
 import {
   dummyBalance_BTC,
   dummyBalance_ETH,
   dummyBalance_USDT,
   IBalance,
-} from '../../interfaces/tidebit_defi_background/balance';
+} from '../interfaces/tidebit_defi_background/balance';
 import {
   dummyPublicCFDOrder,
   dummyPublicDepositOrder,
   dummyPublicWithdrawOrder,
-} from '../../interfaces/tidebit_defi_background/public_order';
-import {IOrderResult} from '../../interfaces/tidebit_defi_background/order_result';
+} from '../interfaces/tidebit_defi_background/public_order';
+import {IOrderResult} from '../interfaces/tidebit_defi_background/order_result';
 
 function randomNumber(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1) + min);
@@ -135,7 +135,7 @@ export interface IUserContext {
   isConnectedWithTideBit: boolean;
   getBalance: (props: string) => IBalance | null;
   getWalletBalance: (props: string) => IWalletBalance | null;
-  createOrder: (props: ICFDOrderCreatingRequest) => Promise<IOrderResult>;
+  createOrder: (props: ICFDOrderCreatingProps) => Promise<IOrderResult>;
   closeOrder: (props: {id: string}) => Promise<IOrderResult>;
   updateOrder: (props: ICFDOrderUpdateRequest) => Promise<IOrderResult>;
   deposit: (props: {asset: string; amount: number}) => Promise<IOrderResult>;
@@ -158,8 +158,8 @@ export const UserContext = createContext<IUserContext>({
   disconnect: () => Promise.resolve(true),
   addFavorites: (props: string) => dummyResultSuccess,
   removeFavorites: (props: string) => dummyResultSuccess,
-  listOpenCFDBriefs: () => Promise.resolve<IOpenCFDBrief[]>([dummyOpenCFDBrief]),
-  listClosedCFDBriefs: () => Promise.resolve<IClosedCFDBrief[]>([dummyCloseCFDBrief]),
+  listOpenCFDBriefs: () => Promise.resolve<IOpenCFDBrief[]>([]),
+  listClosedCFDBriefs: () => Promise.resolve<IClosedCFDBrief[]>([]),
   // getOpendCFD: (props: string) => Promise.resolve<IOpenCFDDetails>(dummyOpenCFDDetails),
   // getClosedCFD: (props: string) => Promise.resolve<IClosedCFDDetails>(dummyCloseCFDDetails),
   getOpendCFD: (props: string) => dummyOpenCFDDetails,
@@ -174,8 +174,7 @@ export const UserContext = createContext<IUserContext>({
   isConnectedWithTideBit: false,
   getBalance: (props: string) => null,
   getWalletBalance: (props: string) => null,
-  createOrder: (props: ICFDOrderCreatingRequest) =>
-    Promise.resolve<IOrderResult>(dummyResultSuccess),
+  createOrder: (props: ICFDOrderCreatingProps) => Promise.resolve<IOrderResult>(dummyResultSuccess),
   closeOrder: (props: {id: string}) => Promise.resolve<IOrderResult>(dummyResultSuccess),
   updateOrder: (props: ICFDOrderUpdateRequest) => Promise.resolve<IOrderResult>(dummyResultSuccess),
   deposit: (props: {asset: string; amount: number}) =>
@@ -248,7 +247,7 @@ export const UserProvider = ({children}: IUserProvider) => {
   const listOpenCFDBriefs = async () => {
     let openCFDBriefs: IOpenCFDBrief[] = [];
     if (isConnected) {
-      openCFDBriefs = await Promise.resolve<IOpenCFDBrief[]>([dummyOpenCFDBrief]);
+      openCFDBriefs = await Promise.resolve<IOpenCFDBrief[]>(dummyOpenCFDBriefs);
     }
     return openCFDBriefs;
   };
@@ -256,7 +255,7 @@ export const UserProvider = ({children}: IUserProvider) => {
   const listClosedCFDBriefs = async () => {
     let closedCFDBriefs: IClosedCFDBrief[] = [];
     if (isConnected) {
-      closedCFDBriefs = await Promise.resolve<IClosedCFDBrief[]>([dummyCloseCFDBrief]);
+      closedCFDBriefs = await Promise.resolve<IClosedCFDBrief[]>(dummyClosedCFDBriefs);
     }
     return closedCFDBriefs;
   };
@@ -344,11 +343,11 @@ export const UserProvider = ({children}: IUserProvider) => {
     return balance;
   };
 
-  const createOrder = async (props: ICFDOrderCreatingRequest) => {
+  const createOrder = async (props: ICFDOrderCreatingProps) => {
     let result: IOrderResult = dummyResultFailed;
     if (isConnected) {
       const balance: IBalance | null = getBalance(props.ticker); // TODO: ticker is not currency
-      if (balance && balance.available >= props.margin) {
+      if (balance && balance.available >= props.positionValue) {
         // TODO: balance.available > ?
         // TODO: OrderEngine create signable order data
         result = {

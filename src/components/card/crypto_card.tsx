@@ -4,7 +4,7 @@ import {useContext, useState} from 'react';
 import dynamic from 'next/dynamic';
 import {ApexOptions} from 'apexcharts';
 import {PROFIT_LOSS_COLOR_TYPE} from '../../constants/display';
-import {UserContext, IUserContext} from '../../lib/contexts/user_context';
+import {UserContext, IUserContext} from '../../contexts/user_context';
 // import {FaEthereum} from 'react-icons/fa';
 // // import {ReactComponent as ethIcon} from '/public/elements/group_15143.svg';
 // // import {ReactComponent as Logo} from './logo.svg';

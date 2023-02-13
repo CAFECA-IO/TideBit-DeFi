@@ -1,20 +1,19 @@
-/* eslint-disable no-console */
-import React, {useState, createContext, useContext, useEffect} from 'react';
-import {ICardProps, ILineGraphProps} from '../../components/card/crypto_card';
+import React, {useState, useContext, createContext} from 'react';
+import {ICardProps, ILineGraphProps} from '../components/card/crypto_card';
 import {
   INITIAL_POSITION_LABEL_DISPLAYED_STATE,
   PROFIT_LOSS_COLOR_TYPE,
   TRADING_CHART_BORDER_COLOR,
-} from '../../constants/display';
+} from '../constants/display';
 import {ApexOptions} from 'apexcharts';
 import {
   IBriefNewsItem,
   ICryptoSummary,
   IPriceStatistics,
   ITickerDetails,
-} from '../../interfaces/depre_tidebit_defi_background';
-import {ITickerLiveStatistics} from '../../interfaces/tidebit_defi_background/ticker_live_statistics';
-import {ITickerStatic} from '../../interfaces/tidebit_defi_background/ticker_static';
+} from '../interfaces/depre_tidebit_defi_background';
+import {ITickerLiveStatistics} from '../interfaces/tidebit_defi_background/ticker_live_statistics';
+import {ITickerStatic} from '../interfaces/tidebit_defi_background/ticker_static';
 import {UserContext} from './user_context';
 
 export interface ITickerData {
@@ -458,6 +457,7 @@ export interface IMarketProvider {
   children: React.ReactNode;
 }
 
+// TODO: Use `interfaces/` instead
 export interface ITransferOptions {
   // [key: string]: {
   label: string;
@@ -563,9 +563,11 @@ const tickerStatic: ITickerStatic = {
   id: 'ETH',
   label: 'ETH',
   leverage: 5,
-  guranteedStopFee: 0.2,
+  guaranteedStopFee: 0.2,
   cryptoBriefNews: [
     {
+      id: 'NEWS20230210001',
+      timestamp: 1675299651,
       title: 'Add news title here',
       content:
         'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea',
@@ -573,12 +575,16 @@ const tickerStatic: ITickerStatic = {
       img: '/elements/rectangle_715@2x.png',
     },
     {
+      id: 'NEWS20230210002',
+      timestamp: 1675299651,
       title: 'Add news title here',
       content:
         'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea',
       img: '/elements/rectangle_716@2x.png',
     },
     {
+      id: 'NEWS20230210003',
+      timestamp: 1675299651,
       title: 'Add news title here',
       content:
         'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea',
@@ -586,8 +592,9 @@ const tickerStatic: ITickerStatic = {
     },
   ],
   cryptoSummary: {
-    icon: '',
-    label: 'Ethereum',
+    icon: '/elements/group_2371.svg', // TODO: Use icon of Context in CryptoSummary component instead of hardcode
+    id: 'ETH',
+    name: 'Ethereum',
     introduction: `Ethereum (ETH) was launched in 2015. Ethereum is a decentralized blockchain that supports smart contracts-essentially computer programs-that can automatically execute when certain conditions are met. The native cryptocurrency-essentially computer programs-of the platform is called ether or ethereum. Ethereum is divisible to 18 decimal places. There is currently no hard cap on the total supply
 of ETH.`,
     whitePaperLink: '#',
@@ -682,7 +689,6 @@ export const MarketProvider = ({children}: IMarketProvider) => {
         };
       });
     }
-    console.log(`updateTickers`, updateTickers);
     return updateTickers;
   };
   const [availableTickers, setAvailableTickers] = useState<ITickerData[]>(updateAvailableTickers());

@@ -8,7 +8,7 @@ export interface ITickerStatic {
   label: string; // 交易對名稱
   leverage: number;
 
-  guranteedStopFee: number; // 保證停損手續費
+  guaranteedStopFee: number; // 保證停損手續費
 
   // slippage: number; // 滑價
   cryptoBriefNews: IBriefNewsItem[]; // 相關新聞

@@ -1,5 +1,5 @@
 import React, {useState, useContext} from 'react';
-import {UserContext} from '../../lib/contexts/user_context';
+import {UserContext} from '../../contexts/user_context';
 //import {MarketContext} from '../../lib/contexts/market_context';
 import {ImCross} from 'react-icons/im';
 import Toggle from '../toggle/toggle';
@@ -23,7 +23,7 @@ const TradeTabMobile = () => {
   const LIQUIDATION_PRICE = 7548;
   const USER_BALANCE = 1000;
   const LEVERAGE = 5;
-  const guranteedStopFee = 0.97;
+  const guaranteedStopFee = 0.97;
   const longPrice = (MARKET_PRICE * 1.008).toFixed(2); // market price * (1+spread)
   const shortPrice = (MARKET_PRICE * 0.992).toFixed(2); // market price * (1-spread)
   const longRecommendedTp = Number((MARKET_PRICE * 1.15).toFixed(2)); // recommendedTp // MARKET_PRICE * 1.15
@@ -209,7 +209,7 @@ const TradeTabMobile = () => {
         />
         <label className="ml-2 flex text-sm font-medium text-lightGray">
           Guaranteed stop &nbsp;
-          <span className="text-lightWhite"> (Fee: {guranteedStopFee})</span>
+          <span className="text-lightWhite"> (Fee: {guaranteedStopFee})</span>
           {/* <span className="">
           <AiOutlineQuestionCircle size={20} />
         </span> */}

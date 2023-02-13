@@ -1,6 +1,6 @@
 import React, {useContext} from 'react';
 import CryptoNewsItem from '../crypto_news_item/crypto_news_item';
-import {MarketContext} from '../../lib/contexts/market_context';
+import {MarketContext} from '../../contexts/market_context';
 import {IBriefNewsItem} from '../../interfaces/depre_tidebit_defi_background';
 
 const CryptoNewsSection = () => {

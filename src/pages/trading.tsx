@@ -5,10 +5,10 @@ import NavBar from '../components/nav_bar/nav_bar';
 import {serverSideTranslations} from 'next-i18next/serverSideTranslations';
 import OrderSection from '../components/order_section/order_section';
 import TradePageBody from '../components/trade_page_body/trade_page_body';
-import {MarketContext, MarketProvider} from '../lib/contexts/market_context';
-import {UserContext, UserProvider} from '../lib/contexts/user_context';
+import {MarketContext, MarketProvider} from '../contexts/market_context';
+import {UserContext, UserProvider} from '../contexts/user_context';
 import {useContext} from 'react';
-import {GlobalContext, useGlobal} from '../lib/contexts/global_context';
+import {GlobalContext, useGlobal} from '../contexts/global_context';
 import NavBarMobile from '../components/nav_bar_mobile/nav_bar_mobile';
 
 const Trading = () => {
@@ -22,16 +22,16 @@ const Trading = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      {/* <MarketProvider>
-        <UserProvider> */}
+      {/* <MarketProvider> */}
+      {/* <UserProvider> */}
       {displayedNavBar}
       {/* <NavBar /> */}
 
       <main>
         <TradePageBody />
       </main>
-      {/* </UserProvider>
-      </MarketProvider> */}
+      {/* </UserProvider> */}
+      {/* </MarketProvider> */}
     </>
   );
 };

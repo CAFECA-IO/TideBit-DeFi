@@ -1,19 +1,13 @@
 /* eslint-disable no-console */
 import {ToastContainer, toast, ToastOptions, useToast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import {
-  CRYPTO_CARD_COLORS,
-  DEV_TOAST_CONFIG,
-  PROFIT_LOSS_COLOR_TYPE,
-  ICRYPTO_CARD_COLORS,
-} from '../../constants/display';
+import {CRYPTO_CARD_COLORS} from '../../constants/display';
 
-import {useContext, useEffect, useState, useMemo} from 'react';
+import {useContext, useEffect, useState} from 'react';
 import CryptoCard, {ILineGraphProps} from '../card/crypto_card';
 
-import {MarketContext, IMarketContext, ITickerData} from '../../lib/contexts/market_context';
-import {UserContext, IUserContext} from '../../lib/contexts/user_context';
-import {BiColorFill} from 'react-icons/bi';
+import {MarketContext, IMarketContext, ITickerData} from '../../contexts/market_context';
+import {UserContext, IUserContext} from '../../contexts/user_context';
 
 // TODO: useContext
 interface ITickerSelectorBox {
@@ -168,10 +162,8 @@ const TickerSelectorBox = ({
   useEffect(() => {
     const cryptoCardsData = convertTickersToCryptoCardsData(marketCtx.listAvailableTickers());
     setFilteredCards(cryptoCardsData);
-    console.log(`cryptoCardsData`, cryptoCardsData);
     const favoriteTabCardsData = cryptoCardsData.filter(cryptoCardData => cryptoCardData.starred);
     setFilteredFavorites(favoriteTabCardsData);
-    console.log(`favoriteTabCardsData`, favoriteTabCardsData);
   }, [userCtx.favoriteTickers]);
 
   // 搜尋完後關掉 ticker box 會顯示剛剛的搜尋結果但是input是空的 => input value={searches}

@@ -7,8 +7,8 @@ import {
   IMarketProvider,
   ITickerData,
   MarketProvider,
-} from '../../lib/contexts/market_context';
-import {UserContext, IUserContext} from '../../lib/contexts/user_context';
+} from '../../contexts/market_context';
+import {UserContext, IUserContext} from '../../contexts/user_context';
 import {CRYPTO_CARD_COLORS} from '../../constants/display';
 
 // TODO: import data from market context

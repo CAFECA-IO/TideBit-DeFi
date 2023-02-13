@@ -57,7 +57,7 @@ export interface ICFDOrderUpdate {
   id: string;
   takeProfit?: number;
   stopLoss?: number;
-  guranteedStop: boolean;
+  guaranteedStop: boolean;
 }
 
 // -----------Ignores below----------------
@@ -128,7 +128,7 @@ export interface ICFDDetails {
   openPrice: number; // Avg. Open Price 平均開倉價格
   takeProfit?: number;
   stopLoss?: number;
-  guranteedStop: boolean;
+  guaranteedStop: boolean;
   fee: number;
 
   openTimestamp: number;
@@ -159,7 +159,7 @@ export interface ICFDOrderRequest {
   margin: number;
   takeProfit?: number;
   stopLoss?: number;
-  guranteedStop: boolean;
+  guaranteedStop: boolean;
   estimatedFilledPrice: number; // estimated filled price / open price 預估成交價格
   fee: number;
   // value: number; // margin x leverage x price (USDT) = value (USDT) // TODO
@@ -250,7 +250,7 @@ export interface ITickerDetails {
 
   spread: number; // 點差 %
   fee: number; // 手續費
-  guranteedStopFee: number; // 保證停損手續費
+  guaranteedStopFee: number; // 保證停損手續費
   // slippage: number; // 滑價
   buyEstimatedFilledPrice: number; // price + spread = estimated filled price
   sellEstimatedFilledPrice: number; // price - spread = estimated filled price

@@ -5,14 +5,16 @@ import {AiOutlineQuestionCircle} from 'react-icons/ai';
 import RippleButton from '../ripple_button/ripple_button';
 import {UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
 import {MARGIN_LIMIT_DIGITS} from '../../constants/config';
+import {useGlobal} from '../../contexts/global_context';
 
 const TradeTab = () => {
+  const globalCtx = useGlobal();
   // TODO: Use Stop loss limit and other data from Market context
   const MARKET_PRICE = 6290.41;
   const LIQUIDATION_PRICE = 7548;
   const USER_BALANCE = 1000;
   const LEVERAGE = 5;
-  const guranteedStopFee = 0.97;
+  const guaranteedStopFee = 0.97;
   const buyEstimatedFilledPrice = (MARKET_PRICE * 1.008).toFixed(2); // market price * (1+spread)
   const sellEstimatedFilledPrice = (MARKET_PRICE * 0.992).toFixed(2); // market price * (1-spread)
   const longRecommendedTp = Number((MARKET_PRICE * 1.15).toFixed(2)); // recommendedTp // MARKET_PRICE * 1.15
@@ -141,6 +143,54 @@ const TradeTab = () => {
   const isDisplayedDividerSpacing =
     valueOfPositionLength > 10 || marginLength > 10 ? 'top-430px' : 'top-420px';
 
+  const longOrderSubmitHandler = () => {
+    // globalCtx.toast({type: 'success', message: 'Long order submitted'});
+    // globalCtx.dataLoadingModalHandler({
+    //   modalTitle: 'Long position',
+    //   modalContent: 'Please wait...',
+    // });
+    // globalCtx.visibleLoadingModalHandler();
+
+    // globalCtx.dataFailedModalHandler({
+    //   modalTitle: 'Open Position',
+    //   modalContent: 'Failed to submit long position',
+    //   failedMsg:
+    //     'Please try again later blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah',
+    //   btnMsg: 'Try again',
+    // });
+    // globalCtx.visibleFailedModalHandler();
+
+    // globalCtx.dataSuccessfulModalHandler({
+    //   modalTitle: 'Open Position',
+    //   modalContent: 'Transaction succeed',
+    //   btnMsg: 'View position',
+    // });
+    // globalCtx.visibleSuccessfulModalHandler();
+
+    // globalCtx.dataCanceledModalHandler({
+    //   modalTitle: 'Open Position',
+    //   modalContent: 'Transaction canceled',
+    //   // btnMsg: 'Try again',
+    // });
+    // globalCtx.visibleCanceledModalHandler();
+
+    globalCtx.dataFailedModalHandler({
+      modalTitle: 'Open Position',
+      modalContent: 'Failed to submit long position',
+      failedMsg: 'Please try again later blah blah blah blah blah blah blah blah blah blah blah',
+      btnMsg: 'Try again',
+    });
+    globalCtx.visibleFailedModalHandler();
+  };
+
+  const shortOrderSubmitHandler = () => {
+    globalCtx.dataLoadingModalHandler({
+      modalTitle: 'Open position',
+      modalContent: 'Please wait...',
+    });
+    globalCtx.visibleLoadingModalHandler();
+  };
+
   // ----------margin area----------
   const displayedMarginSetting = (
     <TradingInput
@@ -217,7 +267,7 @@ const TradeTab = () => {
       />
       <label className={`ml-2 flex text-sm font-medium text-lightGray`}>
         Guaranteed stop &nbsp;
-        <span className="text-lightWhite"> (Fee: {guranteedStopFee} USDT)</span>
+        <span className="text-lightWhite"> (Fee: {guaranteedStopFee} USDT)</span>
         {/* <span className="">
           <AiOutlineQuestionCircle size={20} />
         </span> */}
@@ -294,7 +344,7 @@ const TradeTab = () => {
         />
         <label className="ml-2 flex text-sm font-medium text-lightGray">
           Guaranteed stop &nbsp;
-          <span className="text-lightWhite"> (Fee: {guranteedStopFee} USDT)</span>
+          <span className="text-lightWhite"> (Fee: {guaranteedStopFee} USDT)</span>
           {/* <span className="">
           <AiOutlineQuestionCircle size={20} />
         </span> */}
@@ -402,6 +452,7 @@ const TradeTab = () => {
               <div className="mt-0 ml-14">
                 {/* focus:outline-none focus:ring-4 focus:ring-green-300 */}
                 <RippleButton
+                  onClick={longOrderSubmitHandler}
                   buttonType="button"
                   className="mr-2 mb-2 rounded-md bg-lightGreen5 px-7 py-1 text-sm font-medium tracking-wide text-white transition-colors duration-300 hover:bg-lightGreen5/80"
                 >
@@ -469,6 +520,7 @@ const TradeTab = () => {
                 {/* Short Button */}
                 <div className="mt-5 ml-14">
                   <RippleButton
+                    onClick={shortOrderSubmitHandler}
                     buttonType="button"
                     className="mr-2 mb-2 rounded-md bg-lightRed px-7 py-1 text-sm font-medium tracking-wide text-white transition-colors duration-300 hover:bg-lightRed/80"
                   >

@@ -36,10 +36,10 @@ const FailedModal = ({
           {/* <div className="text-base text-lightWhite">{modalContent}</div> */}
 
           <div className="h-130px">
-            <div className="mx-5 my-4 bg-lightRed">
+            <div className="mx-21px my-4 bg-lightRed">
               <p className="text-lg">{failedTitle ?? `Failed`}</p>
 
-              <p className="mt-1 bg-darkGray1/50 py-2 px-5px text-start text-xs leading-4 tracking-wide">
+              <p className="mt-1 bg-darkGray1/50 py-2 px-3 text-start text-xs leading-4 tracking-wide">
                 {failedMsg}
               </p>
             </div>
@@ -49,7 +49,7 @@ const FailedModal = ({
             {btnUrl && btnMsg ? (
               <a href={btnUrl} target="_blank">
                 <RippleButton
-                  className={`absolute bottom-0 mt-0 w-255px rounded border-0 bg-tidebitTheme py-2 text-base text-white transition-colors duration-300 hover:cursor-pointer hover:bg-cyan-600 focus:outline-none md:mt-0`}
+                  className={`absolute bottom-0 mt-0 w-254px rounded border-0 bg-tidebitTheme py-2 text-base text-white transition-colors duration-300 hover:cursor-pointer hover:bg-cyan-600 focus:outline-none md:mt-0`}
                   buttonType="button"
                   onClick={modalClickHandler}
                 >
@@ -58,7 +58,7 @@ const FailedModal = ({
               </a>
             ) : btnMsg ? (
               <RippleButton
-                className={`absolute bottom-0 mt-0 w-255px rounded border-0 bg-tidebitTheme py-2 text-base text-white transition-colors duration-300 hover:cursor-pointer hover:bg-cyan-600 focus:outline-none md:mt-0`}
+                className={`absolute bottom-0 mt-0 w-254px rounded border-0 bg-tidebitTheme py-2 text-base text-white transition-colors duration-300 hover:cursor-pointer hover:bg-cyan-600 focus:outline-none md:mt-0`}
                 buttonType="button"
                 onClick={modalClickHandler}
               >

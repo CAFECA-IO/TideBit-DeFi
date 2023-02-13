@@ -182,7 +182,7 @@ const PositionOpenModal = ({
           >
             {/*header*/}
             <div className="flex items-start justify-between rounded-t pt-9">
-              <h3 className="-mt-0 w-full text-center text-xl font-normal text-lightWhite">
+              <h3 className="-mt-2 w-full text-center text-xl font-normal text-lightWhite">
                 Open Position
               </h3>
               <button className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">

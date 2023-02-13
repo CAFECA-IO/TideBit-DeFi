@@ -86,6 +86,7 @@ const DepositModal = ({
       //   return;
       // }
 
+      // TODO: if input = 0, still disable submit button
       if (Number(value) === 0) {
         setSubmitDisabled(true);
       }
@@ -280,14 +281,24 @@ const DepositModal = ({
           </div>
 
           <div className={``}>
-            <RippleButton
-              disabled={submitDisabled}
-              onClick={submitClickHandler}
-              buttonType="button"
-              className={`${disabledStyle} absolute -bottom-14 mt-0 rounded border-0 bg-tidebitTheme py-2 px-10 text-base text-white transition-colors duration-300 hover:bg-cyan-600 focus:outline-none`}
-            >
-              {formButton}
-            </RippleButton>
+            {submitDisabled ? (
+              <RippleButton
+                disabled={true}
+                onClick={submitClickHandler}
+                buttonType="button"
+                className={`absolute -bottom-14 mt-0 rounded border-0 bg-lightGray py-2 px-10 text-base text-white transition-colors duration-300 focus:outline-none`}
+              >
+                {formButton}
+              </RippleButton>
+            ) : (
+              <RippleButton
+                onClick={submitClickHandler}
+                buttonType="button"
+                className={`absolute -bottom-14 mt-0 rounded border-0 bg-tidebitTheme py-2 px-10 text-base text-white transition-colors duration-300 hover:bg-cyan-600 focus:outline-none`}
+              >
+                {formButton}
+              </RippleButton>
+            )}
           </div>
         </div>
       </div>

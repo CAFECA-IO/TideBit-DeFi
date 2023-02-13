@@ -33,7 +33,7 @@ const WithdrawalModal = ({
   const [showCryptoMenu, setShowCryptoMenu] = useState(false);
   const [selectedCrypto, setSelectedCrypto] = useState(availableTransferOptions[0]);
   const [amountInput, setAmountInput] = useState<number | undefined>();
-  const [submitDisabled, setSubmitDisabled] = useState(false);
+  const [submitDisabled, setSubmitDisabled] = useState(true);
 
   const regex = /^\d*\.?\d{0,2}$/;
   // const regex = /^(?!0\.00)\d+(\.\d{2})?$/;
@@ -86,6 +86,7 @@ const WithdrawalModal = ({
       //   return;
       // }
 
+      // TODO: if input = 0, still disable submit button
       if (Number(value) === 0) {
         setSubmitDisabled(true);
       }
@@ -296,14 +297,24 @@ const WithdrawalModal = ({
           </div>
 
           <div className={``}>
-            <RippleButton
-              disabled={submitDisabled}
-              onClick={submitClickHandler}
-              buttonType="button"
-              className={`${disabledStyle} absolute -bottom-14 mt-0 rounded border-0 bg-tidebitTheme py-2 px-10 text-base text-white transition-colors duration-300 hover:bg-cyan-600 focus:outline-none`}
-            >
-              {formButton}
-            </RippleButton>
+            {submitDisabled ? (
+              <RippleButton
+                disabled={true}
+                onClick={submitClickHandler}
+                buttonType="button"
+                className={`absolute -bottom-14 mt-0 rounded border-0 bg-lightGray py-2 px-10 text-base text-white transition-colors duration-300 focus:outline-none`}
+              >
+                {formButton}
+              </RippleButton>
+            ) : (
+              <RippleButton
+                onClick={submitClickHandler}
+                buttonType="button"
+                className={`absolute -bottom-14 mt-0 rounded border-0 bg-tidebitTheme py-2 px-10 text-base text-white transition-colors duration-300 hover:bg-cyan-600 focus:outline-none`}
+              >
+                {formButton}
+              </RippleButton>
+            )}
           </div>
         </div>
       </div>

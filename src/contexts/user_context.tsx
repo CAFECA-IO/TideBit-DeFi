@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 import Lunar from '@cafeca/lunar';
-import React, {useState, createContext} from 'react';
+import React, {createContext} from 'react';
+import useState from 'react-usestateref';
 import {providers} from 'ethers';
 import {ICardProps, ILineGraphProps} from '../components/card/crypto_card';
 import {PROFIT_LOSS_COLOR_TYPE} from '../constants/display';
@@ -193,7 +194,7 @@ export const UserProvider = ({children}: IUserProvider) => {
   const [balance, setBalance] = useState<IUserBalance | null>(null);
   const [balances, setBalances] = useState<IBalance[] | null>(null);
   const [favoriteTickers, setFavoriteTickers] = useState<string[]>([]);
-  const [isConnected, setIsConnected] = useState<boolean>(false);
+  const [isConnected, setIsConnected, isConnectedRef] = useState<boolean>(false);
   const [enableServiceTerm, setEnableServiceTerm] = useState<boolean>(false);
   const [openCFDBriefs, setOpenedCFDBriefs] = useState<Array<IOpenCFDBrief>>([]);
   const [closedCFDBriefs, setClosedCFDBriefs] = useState<Array<IClosedCFDBrief>>([]);
@@ -246,7 +247,7 @@ export const UserProvider = ({children}: IUserProvider) => {
 
   const listOpenCFDBriefs = async () => {
     let openCFDBriefs: IOpenCFDBrief[] = [];
-    if (isConnected) {
+    if (isConnectedRef.current) {
       openCFDBriefs = await Promise.resolve<IOpenCFDBrief[]>(dummyOpenCFDBriefs);
     }
     return openCFDBriefs;
@@ -254,7 +255,7 @@ export const UserProvider = ({children}: IUserProvider) => {
 
   const listClosedCFDBriefs = async () => {
     let closedCFDBriefs: IClosedCFDBrief[] = [];
-    if (isConnected) {
+    if (isConnectedRef.current) {
       closedCFDBriefs = await Promise.resolve<IClosedCFDBrief[]>(dummyClosedCFDBriefs);
     }
     return closedCFDBriefs;
@@ -292,7 +293,7 @@ export const UserProvider = ({children}: IUserProvider) => {
 
   const addFavorites = (newFavorite: string) => {
     let result: IResult = dummyResultFailed;
-    if (isConnected) {
+    if (isConnectedRef.current) {
       const updatedFavoriteTickers = [...favoriteTickers];
       updatedFavoriteTickers.push(newFavorite);
       setFavoriteTickers(updatedFavoriteTickers);
@@ -304,7 +305,7 @@ export const UserProvider = ({children}: IUserProvider) => {
 
   const removeFavorites = (previousFavorite: string) => {
     let result: IResult = dummyResultFailed;
-    if (isConnected) {
+    if (isConnectedRef.current) {
       const updatedFavoriteTickers = [...favoriteTickers];
       const index: number = updatedFavoriteTickers.findIndex(
         currency => currency === previousFavorite
@@ -345,7 +346,7 @@ export const UserProvider = ({children}: IUserProvider) => {
 
   const createOrder = async (props: ICFDOrderCreatingProps) => {
     let result: IOrderResult = dummyResultFailed;
-    if (isConnected) {
+    if (isConnectedRef.current) {
       const balance: IBalance | null = getBalance(props.ticker); // TODO: ticker is not currency
       if (balance && balance.available >= props.positionValue) {
         // TODO: balance.available > ?
@@ -361,7 +362,7 @@ export const UserProvider = ({children}: IUserProvider) => {
 
   const closeOrder = async (props: {id: string}) => {
     let result: IOrderResult = dummyResultFailed;
-    if (isConnected) {
+    if (isConnectedRef.current) {
       // check order is exist
       // if(order is live)
       // TODO: OrderEngine create signable closeOrder data
@@ -375,7 +376,7 @@ export const UserProvider = ({children}: IUserProvider) => {
 
   const updateOrder = async (props: ICFDOrderUpdateRequest) => {
     let result: IOrderResult = dummyResultFailed;
-    if (isConnected) {
+    if (isConnectedRef.current) {
       // check order is exist
       // if(order is live)
       // TODO: OrderEngine create signable updateOrder data
@@ -389,7 +390,7 @@ export const UserProvider = ({children}: IUserProvider) => {
 
   const deposit = async (props: {asset: string; amount: number}) => {
     let result: IOrderResult = dummyResultFailed;
-    if (isConnected) {
+    if (isConnectedRef.current) {
       const walletBalance: IWalletBalance | null = getWalletBalance(props.asset);
       // if(balance is enough)
       if (walletBalance && walletBalance.balance >= props.amount) {
@@ -406,7 +407,7 @@ export const UserProvider = ({children}: IUserProvider) => {
 
   const withdraw = async (props: {asset: string; amount: number}) => {
     let result: IOrderResult = dummyResultFailed;
-    if (isConnected) {
+    if (isConnectedRef.current) {
       const balance: IBalance | null = getBalance(props.asset); // TODO: ticker is not currency
       if (balance && balance.available >= props.amount) {
         // TODO: balance.available > ?

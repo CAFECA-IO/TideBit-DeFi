@@ -6,17 +6,9 @@ import {providers} from 'ethers';
 import {ICardProps, ILineGraphProps} from '../components/card/crypto_card';
 import {PROFIT_LOSS_COLOR_TYPE} from '../constants/display';
 import {
-  dummyOpenCFDBriefs,
-  IOpenCFDBrief,
-} from '../interfaces/tidebit_defi_background/open_cfd_brief';
-import {
   IOpenCFDDetails,
   dummyOpenCFDDetails,
 } from '../interfaces/tidebit_defi_background/open_cfd_details';
-import {
-  dummyClosedCFDBriefs,
-  IClosedCFDBrief,
-} from '../interfaces/tidebit_defi_background/closed_cfd_brief';
 import {
   IClosedCFDDetails,
   dummyCloseCFDDetails,
@@ -47,6 +39,16 @@ import {
   dummyPublicWithdrawOrder,
 } from '../interfaces/tidebit_defi_background/public_order';
 import {IOrderResult} from '../interfaces/tidebit_defi_background/order_result';
+import {IOrder} from '../interfaces/tidebit_defi_background/order';
+import {
+  dummyDepositOrder,
+  IDepositOrder,
+} from '../interfaces/tidebit_defi_background/deposit_order';
+import {
+  dummyWithdrawalOrder,
+  IWithdrawalOrder,
+} from '../interfaces/tidebit_defi_background/withdrawal_order';
+import {IOpenCFDOrder} from '../interfaces/tidebit_defi_background/open_cfd_order';
 
 function randomNumber(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1) + min);
@@ -113,21 +115,22 @@ export interface IUserContext {
   favoriteTickers: string[];
   isConnected: boolean;
   enableServiceTerm: boolean;
-  openCFDBriefs: IOpenCFDBrief[];
-  closedCFDBriefs: IClosedCFDBrief[];
+  openCFDs: IOpenCFDDetails[];
+  closedCFDs: IClosedCFDDetails[];
   connect: () => Promise<boolean>;
   signServiceTerm: () => Promise<boolean>;
   disconnect: () => Promise<boolean>;
   addFavorites: (props: string) => IResult;
   removeFavorites: (props: string) => IResult;
-  listOpenCFDBriefs: () => Promise<IOpenCFDBrief[]>;
-  listClosedCFDBriefs: () => Promise<IClosedCFDBrief[]>;
+  listOpenCFDs: () => Promise<IOpenCFDDetails[]>;
+  listClosedCFDs: () => Promise<IClosedCFDDetails[]>;
   // getOpendCFD: (props: string) => Promise<IOpenCFDDetails>;
   // getClosedCFD: (props: string) => Promise<IClosedCFDDetails>;
   getOpendCFD: (props: string) => IOpenCFDDetails;
   getClosedCFD: (props: string) => IClosedCFDDetails;
 
   // TODO:
+  histories: IOrder[];
   balances: IBalance[] | null;
   email: string | null;
   isSubscibedNewsletters: boolean;
@@ -136,11 +139,18 @@ export interface IUserContext {
   isConnectedWithTideBit: boolean;
   getBalance: (props: string) => IBalance | null;
   getWalletBalance: (props: string) => IWalletBalance | null;
-  createOrder: (props: ICFDOrderCreatingProps) => Promise<IOrderResult>;
+  createOrder: (props: IOpenCFDOrder) => Promise<IOrderResult>;
   closeOrder: (props: {id: string}) => Promise<IOrderResult>;
   updateOrder: (props: ICFDOrderUpdateRequest) => Promise<IOrderResult>;
-  deposit: (props: {asset: string; amount: number}) => Promise<IOrderResult>;
-  withdraw: (props: {asset: string; amount: number}) => Promise<IOrderResult>;
+  deposit: (props: IDepositOrder) => Promise<IOrderResult>;
+  withdraw: (props: IWithdrawalOrder) => Promise<IOrderResult>;
+  listHistories: (props: string) => Promise<IOrder[]>;
+  sendEmailCode: (email: string) => Promise<number>;
+  connectEmail: (email: string, code: number) => Promise<boolean>;
+  toggleEmailNotification: (props: boolean) => Promise<boolean>;
+  subscribeNewsletters: (props: boolean) => Promise<boolean>;
+  connectTideBit: (email: string, password: string) => Promise<boolean>;
+  shareTradeRecord: (tradeId: string) => Promise<boolean>;
 }
 
 export const UserContext = createContext<IUserContext>({
@@ -152,21 +162,22 @@ export const UserContext = createContext<IUserContext>({
   favoriteTickers: [],
   isConnected: false,
   enableServiceTerm: false,
-  openCFDBriefs: [],
-  closedCFDBriefs: [],
+  openCFDs: [],
+  closedCFDs: [],
   connect: () => Promise.resolve(true),
   signServiceTerm: () => Promise.resolve(true),
   disconnect: () => Promise.resolve(true),
   addFavorites: (props: string) => dummyResultSuccess,
   removeFavorites: (props: string) => dummyResultSuccess,
-  listOpenCFDBriefs: () => Promise.resolve<IOpenCFDBrief[]>([]),
-  listClosedCFDBriefs: () => Promise.resolve<IClosedCFDBrief[]>([]),
+  listOpenCFDs: () => Promise.resolve<IOpenCFDDetails[]>([]),
+  listClosedCFDs: () => Promise.resolve<IClosedCFDDetails[]>([]),
   // getOpendCFD: (props: string) => Promise.resolve<IOpenCFDDetails>(dummyOpenCFDDetails),
   // getClosedCFD: (props: string) => Promise.resolve<IClosedCFDDetails>(dummyCloseCFDDetails),
   getOpendCFD: (props: string) => dummyOpenCFDDetails,
   getClosedCFD: (props: string) => dummyCloseCFDDetails,
 
   // TODO:
+  histories: [],
   balances: null,
   email: null,
   isSubscibedNewsletters: false,
@@ -175,13 +186,18 @@ export const UserContext = createContext<IUserContext>({
   isConnectedWithTideBit: false,
   getBalance: (props: string) => null,
   getWalletBalance: (props: string) => null,
-  createOrder: (props: ICFDOrderCreatingProps) => Promise.resolve<IOrderResult>(dummyResultSuccess),
+  createOrder: (props: IOpenCFDOrder) => Promise.resolve<IOrderResult>(dummyResultSuccess),
   closeOrder: (props: {id: string}) => Promise.resolve<IOrderResult>(dummyResultSuccess),
   updateOrder: (props: ICFDOrderUpdateRequest) => Promise.resolve<IOrderResult>(dummyResultSuccess),
-  deposit: (props: {asset: string; amount: number}) =>
-    Promise.resolve<IOrderResult>(dummyResultSuccess),
-  withdraw: (props: {asset: string; amount: number}) =>
-    Promise.resolve<IOrderResult>(dummyResultSuccess),
+  deposit: IDepositOrder => Promise.resolve<IOrderResult>(dummyResultSuccess),
+  withdraw: IWithdrawalOrder => Promise.resolve<IOrderResult>(dummyResultSuccess),
+  listHistories: () => Promise.resolve<IOrder[]>([]),
+  sendEmailCode: (email: string) => Promise.resolve<number>(359123),
+  connectEmail: (email: string, code: number) => Promise.resolve<boolean>(true),
+  toggleEmailNotification: (props: boolean) => Promise.resolve<boolean>(true),
+  subscribeNewsletters: (props: boolean) => Promise.resolve<boolean>(true),
+  connectTideBit: (email: string, password: string) => Promise.resolve<boolean>(true),
+  shareTradeRecord: (tradeId: string) => Promise.resolve<boolean>(true),
 });
 
 export const UserProvider = ({children}: IUserProvider) => {
@@ -196,8 +212,9 @@ export const UserProvider = ({children}: IUserProvider) => {
   const [favoriteTickers, setFavoriteTickers] = useState<string[]>([]);
   const [isConnected, setIsConnected, isConnectedRef] = useState<boolean>(false);
   const [enableServiceTerm, setEnableServiceTerm] = useState<boolean>(false);
-  const [openCFDBriefs, setOpenedCFDBriefs] = useState<Array<IOpenCFDBrief>>([]);
-  const [closedCFDBriefs, setClosedCFDBriefs] = useState<Array<IClosedCFDBrief>>([]);
+  const [histories, setHistories] = useState<IOrder[]>([]);
+  const [openCFDs, setOpenedCFDs] = useState<Array<IOpenCFDDetails>>([]);
+  const [closedCFDs, setClosedCFDs] = useState<Array<IClosedCFDDetails>>([]);
   const [isSubscibedNewsletters, setIsSubscibedNewsletters] = useState<boolean>(false);
   const [isEnabledEmailNotification, setIsEnabledEmailNotification] = useState<boolean>(false);
   const [isConnectedWithEmail, setIsConnectedWithEmail] = useState<boolean>(false);
@@ -215,10 +232,10 @@ export const UserProvider = ({children}: IUserProvider) => {
       PNL: 1956.84,
     });
     setBalances([dummyBalance_BTC, dummyBalance_ETH, dummyBalance_USDT]);
-    const openedCFDs = await listOpenCFDBriefs();
-    const closedCFDs = await listClosedCFDBriefs();
-    setOpenedCFDBriefs(openedCFDs);
-    setClosedCFDBriefs(closedCFDs);
+    const openedCFDs = await listOpenCFDs();
+    const closedCFDs = await listClosedCFDs();
+    setOpenedCFDs(openedCFDs);
+    setClosedCFDs(closedCFDs);
   };
 
   const clearPrivateData = () => {
@@ -228,8 +245,8 @@ export const UserProvider = ({children}: IUserProvider) => {
     setWallet(null);
     setWalletBalances(null);
     setBalance(null);
-    setOpenedCFDBriefs([]);
-    setClosedCFDBriefs([]);
+    setOpenedCFDs([]);
+    setClosedCFDs([]);
   };
 
   const lunar = new Lunar();
@@ -245,20 +262,20 @@ export const UserProvider = ({children}: IUserProvider) => {
     setPrivateData(lunar.address);
   });
 
-  const listOpenCFDBriefs = async () => {
-    let openCFDBriefs: IOpenCFDBrief[] = [];
+  const listOpenCFDs = async () => {
+    let openCFDs: IOpenCFDDetails[] = [];
     if (isConnectedRef.current) {
-      openCFDBriefs = await Promise.resolve<IOpenCFDBrief[]>(dummyOpenCFDBriefs);
+      openCFDs = await Promise.resolve<IOpenCFDDetails[]>([dummyOpenCFDDetails]);
     }
-    return openCFDBriefs;
+    return openCFDs;
   };
 
-  const listClosedCFDBriefs = async () => {
-    let closedCFDBriefs: IClosedCFDBrief[] = [];
+  const listClosedCFDs = async () => {
+    let closedCFDs: IClosedCFDDetails[] = [];
     if (isConnectedRef.current) {
-      closedCFDBriefs = await Promise.resolve<IClosedCFDBrief[]>(dummyClosedCFDBriefs);
+      closedCFDs = await Promise.resolve<IClosedCFDDetails[]>([dummyCloseCFDDetails]);
     }
-    return closedCFDBriefs;
+    return closedCFDs;
   };
 
   const connect = async () => {
@@ -344,7 +361,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     return balance;
   };
 
-  const createOrder = async (props: ICFDOrderCreatingProps) => {
+  const createOrder = async (props: IOpenCFDOrder) => {
     let result: IOrderResult = dummyResultFailed;
     if (isConnectedRef.current) {
       const balance: IBalance | null = getBalance(props.ticker); // TODO: ticker is not currency
@@ -388,12 +405,12 @@ export const UserProvider = ({children}: IUserProvider) => {
     return await Promise.resolve<IOrderResult>(result);
   };
 
-  const deposit = async (props: {asset: string; amount: number}) => {
+  const deposit = async (depositOrder: IDepositOrder) => {
     let result: IOrderResult = dummyResultFailed;
     if (isConnectedRef.current) {
-      const walletBalance: IWalletBalance | null = getWalletBalance(props.asset);
+      const walletBalance: IWalletBalance | null = getWalletBalance(depositOrder.targetAsset);
       // if(balance is enough)
-      if (walletBalance && walletBalance.balance >= props.amount) {
+      if (walletBalance && walletBalance.balance >= depositOrder.targetAmount) {
         // TODO: OrderEngine create signable deposit data
         // TODO: updateWalletBalances
         result = {
@@ -405,11 +422,11 @@ export const UserProvider = ({children}: IUserProvider) => {
     return await Promise.resolve<IOrderResult>(result);
   };
 
-  const withdraw = async (props: {asset: string; amount: number}) => {
+  const withdraw = async (witherOrder: IWithdrawalOrder) => {
     let result: IOrderResult = dummyResultFailed;
     if (isConnectedRef.current) {
-      const balance: IBalance | null = getBalance(props.asset); // TODO: ticker is not currency
-      if (balance && balance.available >= props.amount) {
+      const balance: IBalance | null = getBalance(witherOrder.targetAsset); // TODO: ticker is not currency
+      if (balance && balance.available >= witherOrder.targetAmount) {
         // TODO: balance.available > ?
         // TODO: OrderEngine create withdraw order data
         result = {
@@ -421,6 +438,23 @@ export const UserProvider = ({children}: IUserProvider) => {
     return await Promise.resolve<IOrderResult>(result);
   };
 
+  const listHistories = async () => {
+    let histories: IOrder[] = [];
+    if (isConnectedRef) {
+      // TODO: getHistories from backend
+      histories = [dummyDepositOrder, dummyWithdrawalOrder];
+      setHistories(histories);
+    }
+    return histories;
+  };
+
+  const sendEmailCode = async (email: string) => Promise.resolve<number>(359123);
+  const connectEmail = async (email: string, code: number) => Promise.resolve<boolean>(true);
+  const toggleEmailNotification = async (props: boolean) => Promise.resolve<boolean>(true);
+  const subscribeNewsletters = async (props: boolean) => Promise.resolve<boolean>(true);
+  const connectTideBit = async (email: string, password: string) => Promise.resolve<boolean>(true);
+  const shareTradeRecord = async (tradeId: string) => Promise.resolve<boolean>(true);
+
   const defaultValue = {
     id,
     username,
@@ -431,18 +465,19 @@ export const UserProvider = ({children}: IUserProvider) => {
     favoriteTickers,
     isConnected,
     enableServiceTerm,
-    openCFDBriefs,
-    closedCFDBriefs,
+    openCFDs,
+    closedCFDs,
     email,
     isSubscibedNewsletters,
     isEnabledEmailNotification,
     isConnectedWithEmail,
     isConnectedWithTideBit,
+    histories,
     addFavorites,
     removeFavorites,
-    listOpenCFDBriefs,
+    listOpenCFDs,
     getOpendCFD,
-    listClosedCFDBriefs,
+    listClosedCFDs,
     getClosedCFD,
     connect,
     signServiceTerm,
@@ -454,6 +489,13 @@ export const UserProvider = ({children}: IUserProvider) => {
     updateOrder,
     deposit,
     withdraw,
+    listHistories,
+    sendEmailCode,
+    connectEmail,
+    toggleEmailNotification,
+    subscribeNewsletters,
+    connectTideBit,
+    shareTradeRecord,
   };
 
   // FIXME: 'setUser' is missing in type '{ user: IUser[] | null; }'

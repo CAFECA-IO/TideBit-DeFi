@@ -15,6 +15,7 @@ import {
 import {ITickerLiveStatistics} from '../interfaces/tidebit_defi_background/ticker_live_statistics';
 import {ITickerStatic} from '../interfaces/tidebit_defi_background/ticker_static';
 import {UserContext} from './user_context';
+import {ICryptocurrency} from '../interfaces/tidebit_defi_background/cryptocurrency';
 
 export interface ITickerData {
   currency: string;
@@ -482,6 +483,8 @@ export interface IMarketContext {
   getCryptoSummary: (tickerId: string) => ICryptoSummary | null;
   getCryptoNews: (tickerId: string) => IBriefNewsItem[] | null;
   listAvailableTickers: () => ITickerData[];
+  listDepositCryptocurrencies: () => ICryptocurrency[];
+  listWithdrawCryptocurrencies: () => ICryptocurrency[];
 }
 // TODO: Note: _app.tsx 啟動的時候 => createContext
 export const MarketContext = createContext<IMarketContext>({
@@ -502,6 +505,8 @@ export const MarketContext = createContext<IMarketContext>({
   getCryptoSummary: () => null,
   getCryptoNews: () => null,
   listAvailableTickers: () => [],
+  listDepositCryptocurrencies: () => [],
+  listWithdrawCryptocurrencies: () => [],
 });
 
 const availableTransferOptions = [
@@ -724,6 +729,9 @@ export const MarketProvider = ({children}: IMarketProvider) => {
   // console.log('Whole array [addPropertyToArray]:', addPropertyToArray);
   // setAvailableTickers(addPropertyToArray); // infinite loop
 
+  const listDepositCryptocurrencies = () => [];
+  const listWithdrawCryptocurrencies = () => [];
+
   const defaultValue = {
     availableTickers,
     isCFDTradable,
@@ -743,6 +751,8 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     getCryptoSummary,
     getCryptoNews,
     listAvailableTickers,
+    listDepositCryptocurrencies,
+    listWithdrawCryptocurrencies,
   };
 
   return <MarketContext.Provider value={defaultValue}>{children}</MarketContext.Provider>;

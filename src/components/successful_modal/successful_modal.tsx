@@ -76,7 +76,7 @@ const SuccessfulModal = ({
           {' '}
           {/*content & panel*/}
           <div
-            id="transferProcessModal"
+            id="successfulModal"
             // ref={modalRef}
             className="relative flex h-420px w-296px flex-col rounded-3xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none"
           >

@@ -18,36 +18,25 @@ interface IWithdrawalModal {
   submitHandler: (props: {asset: string; amount: number}) => void;
 }
 
-// TODO: SVG icon from Context
 const WithdrawalModal = ({
-  // transferType, // [to be removed]globalContext
-  // transferStep, // [to be removed]
   modalVisible,
   modalClickHandler,
-  getSubmissionState, // [process] to be removed
+  getSubmissionState, // [process]
   getTransferData, // pass data to parent component
   submitHandler, // submit information from parent component
   ...otherProps
 }: IWithdrawalModal) => {
-  // TODO: [UserContext] deposit: userCtx.walletBalance, withdraw: userCtx.balance?.available
-  const userAvailableBalance = 397;
+  // TODO: [UserContext] withdraw: userCtx.balance?.available
+  const userAvailableBalance = 397.51;
   const {availableTransferOptions} = useContext(MarketContext);
-
-  // const {user} = useContext(UserContext);
-  // console.log('availableTransferOptions: ', availableTransferOptions);
 
   const [showCryptoMenu, setShowCryptoMenu] = useState(false);
   const [selectedCrypto, setSelectedCrypto] = useState(availableTransferOptions[0]);
   const [amountInput, setAmountInput] = useState<number | undefined>();
-  const [showWarning, setShowWarning] = useState(false);
-
-  // console.log('selectedCrypto: ', selectedCrypto);
+  const [submitDisabled, setSubmitDisabled] = useState(false);
 
   const regex = /^\d*\.?\d{0,2}$/;
-
-  // const modalClickHandler = () => {
-  //   setModalVisible(!modalVisible);
-  // };
+  // const regex = /^(?!0\.00)\d+(\.\d{2})?$/;
 
   const cryptoMenuClickHandler = () => {
     setShowCryptoMenu(!showCryptoMenu);
@@ -56,6 +45,7 @@ const WithdrawalModal = ({
   const maxClickHandler = () => {
     setAmountInput(userAvailableBalance);
     getTransferData({asset: selectedCrypto.symbol, amount: userAvailableBalance});
+    setSubmitDisabled(false);
   };
 
   const passSubmissionStateHandler = (props: 'success' | 'cancellation' | 'fail') => {
@@ -64,27 +54,24 @@ const WithdrawalModal = ({
 
   // TODO: send withdraw / deposit request
   const submitClickHandler = () => {
-    // console.log('select cwwypto:', selectedCrypto);
-    // console.log('amount:', amountInput);
-
     if (amountInput === 0 || amountInput === undefined) {
-      setShowWarning(true);
+      setSubmitDisabled(true);
       return;
     }
 
-    setShowWarning(false);
-
     submitHandler({asset: selectedCrypto.symbol, amount: amountInput});
 
-    // console.log('in modal, after clicking submit: ', selectedCrypto.label, amountInput);
-
     setAmountInput(undefined);
-    // setTimeout(() => {
-    //   passSubmissionStateHandler('loading');
-    // }, 500);
+
+    setTimeout(() => {
+      // passSubmissionStateHandler('loading');
+      setSubmitDisabled(true);
+    }, 500);
   };
 
   const amountOnChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
+    // setSubmitDisabled(true);
+
     const value = event.target.value;
 
     if (regex.test(value)) {
@@ -99,16 +86,26 @@ const WithdrawalModal = ({
       //   return;
       // }
 
+      if (Number(value) === 0) {
+        setSubmitDisabled(true);
+      }
+
       // Upperlimit in withdraw modal
       if (Number(value) > userAvailableBalance) {
         setAmountInput(Number(userAvailableBalance));
         getTransferData({asset: selectedCrypto.symbol, amount: Number(userAvailableBalance)});
+        setSubmitDisabled(false);
+
         return;
       }
 
       setAmountInput(Number(value));
       getTransferData({asset: selectedCrypto.symbol, amount: Number(value)});
+      setSubmitDisabled(false);
+      return;
     }
+
+    setSubmitDisabled(true);
   };
 
   const showMenu = showCryptoMenu ? 'block' : 'invisible';
@@ -147,7 +144,7 @@ const WithdrawalModal = ({
 
   const fadeStyle = showCryptoMenu ? 'opacity-100' : 'opacity-0';
 
-  const warningStyle = showWarning ? 'block' : 'invisible';
+  const disabledStyle = !submitDisabled ? ' hover:cursor-pointer' : ' cursor-not-allowed';
 
   const avaliableCryptoMenu = availableTransferOptions.map(item => {
     return (
@@ -176,11 +173,11 @@ const WithdrawalModal = ({
   };
 
   const formContent = (
-    <div className="relative flex-auto pt-1">
+    <div className="relative flex-auto pt-0">
       <div className="text-lg leading-relaxed text-lightWhite">
         <div className="flex-col justify-center text-center">
           {/* ----------Type input---------- */}
-          <div className="mx-20 pt-16 text-start">
+          <div className="mx-6 pt-8 text-start">
             <p className="text-sm text-lightGray4">Asset</p>
             <div className="hover:cursor-pointer" onClick={cryptoMenuClickHandler}>
               <div className={`${formStyle} flex rounded-md bg-darkGray8`}>
@@ -195,9 +192,9 @@ const WithdrawalModal = ({
                 </div>
                 {/* TODO: input search */}
                 <input
-                  className="w-150px bg-darkGray8 py-2 pl-3 text-sm text-lightGray hover:cursor-pointer focus:outline-none focus:ring-0"
+                  className="w-150px rounded-md bg-darkGray8 py-2 pl-0 text-sm text-lightGray hover:cursor-pointer focus:outline-none focus:ring-0"
                   type="text"
-                  placeholder="Tether"
+                  placeholder={selectedCrypto.name}
                   disabled
                   onFocus={() => {
                     // console.log('focusing');
@@ -207,7 +204,7 @@ const WithdrawalModal = ({
 
                 <button
                   type="button"
-                  className="absolute top-90px right-90px animate-openMenu"
+                  className="absolute right-36px top-55px animate-openMenu"
                   onClick={cryptoMenuClickHandler}
                 >
                   <MdKeyboardArrowDown
@@ -230,7 +227,7 @@ const WithdrawalModal = ({
           {/* ----------Crypto Menu---------- */}
           <div
             id="dropdownIcon"
-            className={`absolute top-125px right-20 z-10 ${showMenu} ${fadeStyle} w-290px divide-y divide-gray-600 rounded bg-darkGray8 shadow transition-all duration-100`}
+            className={`absolute top-90px right-6 z-10 ${showMenu} ${fadeStyle} w-250px divide-y divide-gray-600 rounded bg-darkGray8 shadow transition-all duration-100`}
           >
             <ul
               className="h-320px overflow-y-scroll py-1 text-start text-sm text-gray-200"
@@ -249,7 +246,7 @@ const WithdrawalModal = ({
           </div>
 
           {/* ----------Amount input---------- */}
-          <div className="mx-20 pt-12 text-start">
+          <div className="mx-6 pt-12 text-start">
             <p className="text-sm text-lightGray4">Amount</p>
             {/* <div className="max-w-xl bg-darkGray8">Tether</div> */}
             <div className="flex rounded-md bg-darkGray8">
@@ -285,12 +282,12 @@ const WithdrawalModal = ({
               )} */}
             </div>
 
-            <div className="flex justify-between">
-              <p className={`${warningStyle} pt-3 text-end text-sm tracking-wide text-lightRed`}>
+            <div className="flex justify-end">
+              {/* <p className={`${warningStyle} pt-3 text-end text-sm tracking-wide text-lightRed`}>
                 Invalid input
-              </p>
+              </p> */}
 
-              <p className="pt-3 text-end text-sm tracking-wide">
+              <p className="pt-3 text-end text-xs tracking-wide">
                 Available on Tidebit:{' '}
                 <span className="text-tidebitTheme">{userAvailableBalance}</span>{' '}
                 {selectedCrypto.symbol}
@@ -298,11 +295,12 @@ const WithdrawalModal = ({
             </div>
           </div>
 
-          <div>
+          <div className={``}>
             <RippleButton
+              disabled={submitDisabled}
               onClick={submitClickHandler}
               buttonType="button"
-              className="mt-16 rounded border-0 bg-tidebitTheme py-2 px-10 text-base text-white transition-colors duration-300 hover:cursor-pointer hover:bg-cyan-600 focus:outline-none"
+              className={`${disabledStyle} absolute -bottom-14 mt-0 rounded border-0 bg-tidebitTheme py-2 px-10 text-base text-white transition-colors duration-300 hover:bg-cyan-600 focus:outline-none`}
             >
               {formButton}
             </RippleButton>
@@ -323,13 +321,13 @@ const WithdrawalModal = ({
           {' '}
           {/*content & panel*/}
           <div
-            id="transferProcessModal"
+            id="withdrawalModal"
             // ref={modalRef}
-            className="relative flex h-480px w-450px flex-col rounded-3xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none"
+            className="relative flex h-420px w-296px flex-col rounded-3xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none"
           >
             {/*header*/}
-            <div className="flex items-start justify-between rounded-t pt-6">
-              <h3 className="mt-2 w-full text-center text-4xl font-normal text-lightWhite">
+            <div className="flex items-start justify-between rounded-t pt-9">
+              <h3 className="mt-2 w-full text-center text-xl font-normal text-lightWhite">
                 Withdraw
               </h3>
               <button className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">

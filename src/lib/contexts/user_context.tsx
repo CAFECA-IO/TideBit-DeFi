@@ -204,21 +204,24 @@ export const UserProvider = ({children}: IUserProvider) => {
   const [isConnectedWithTideBit, setIsConnectedWithTideBit] = useState<boolean>(false);
 
   const setPrivateData = async (wallet: string) => {
+    setWallet(wallet);
+    setWalletBalances([dummyWalletBalance_BTC, dummyWalletBalance_ETH, dummyWalletBalance_USDT]);
     // TODO getUser from backend by wallet
     setId('002');
     setUsername('Tidebit DeFi Test User');
-    setWallet(wallet);
-    setWalletBalances([dummyWalletBalance_BTC, dummyWalletBalance_ETH, dummyWalletBalance_USDT]);
     setBalance({
       available: 1296.47,
       locked: 583.62,
       PNL: 1956.84,
     });
     setBalances([dummyBalance_BTC, dummyBalance_ETH, dummyBalance_USDT]);
+    const openedCFDs = await listOpenCFDBriefs();
+    const closedCFDs = await listClosedCFDBriefs();
+    setOpenedCFDBriefs(openedCFDs);
+    setClosedCFDBriefs(closedCFDs);
   };
 
   const clearPrivateData = () => {
-    setIsConnected(false);
     setEnableServiceTerm(false);
     setId(null);
     setUsername(null);
@@ -232,12 +235,13 @@ export const UserProvider = ({children}: IUserProvider) => {
   const lunar = new Lunar();
   lunar.on('connected', () => {
     setIsConnected(true);
+    setPrivateData(lunar.address);
   });
   lunar.on('disconnected', () => {
+    setIsConnected(false);
     clearPrivateData();
   });
   lunar.on('accountsChanged', () => {
-    setWallet(lunar.address);
     setPrivateData(lunar.address);
   });
 
@@ -263,11 +267,6 @@ export const UserProvider = ({children}: IUserProvider) => {
       const connect = await lunar.connect({});
       const address = lunar.address;
       if (connect) {
-        setPrivateData(address);
-        const openedCFDs = await listOpenCFDBriefs();
-        const closedCFDs = await listClosedCFDBriefs();
-        setOpenedCFDBriefs(openedCFDs);
-        setClosedCFDBriefs(closedCFDs);
         success = true;
       }
     } catch (error) {

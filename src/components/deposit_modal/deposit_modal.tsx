@@ -106,7 +106,7 @@ const DepositModal = ({
       return;
     }
 
-    setSubmitDisabled(true);
+    // setSubmitDisabled(true);
   };
 
   const showMenu = showCryptoMenu ? 'block' : 'invisible';
@@ -126,7 +126,7 @@ const DepositModal = ({
 
   const fadeStyle = showCryptoMenu ? 'opacity-100' : 'opacity-0';
 
-  const disabledStyle = !submitDisabled ? ' hover:cursor-pointer' : ' cursor-not-allowed';
+  // const disabledStyle = !submitDisabled ? ' hover:cursor-pointer' : ' cursor-not-allowed';
 
   const avaliableCryptoMenu = availableTransferOptions.map(item => {
     return (

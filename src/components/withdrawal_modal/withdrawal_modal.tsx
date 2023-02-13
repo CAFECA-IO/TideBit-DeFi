@@ -106,7 +106,7 @@ const WithdrawalModal = ({
       return;
     }
 
-    setSubmitDisabled(true);
+    // setSubmitDisabled(true);
   };
 
   const showMenu = showCryptoMenu ? 'block' : 'invisible';
@@ -116,25 +116,6 @@ const WithdrawalModal = ({
       Withdraw
       <span className="ml-3">
         <Image src="/elements/group_14962.svg" width={15} height={15} alt="withdraw icon" />
-        {/* //   <svg xmlns="http://www.w3.org/2000/svg" width="14.693" height="15" viewBox="0 0 14.693 15">
-      //   <g fill="#fff" data-name="Group 14962">
-      //     <path
-      //       d="M14.466 47.8h-1.4a.227.227 0 00-.227.227v1.993H1.856v-1.989a.227.227 0 00-.227-.227H.227a.227.227 0 00-.227.227v3.624a.227.227 0 00.227.227h14.239a.227.227 0 00.227-.227v-3.624a.227.227 0 00-.227-.227"
-      //       data-name="Path 1387"
-      //       transform="translate(0 -36.883)"
-      //     ></path>
-      //     <path
-      //       d="M26.035 1.725h-4.4a.265.265 0 01-.265-.265V.265A.265.265 0 0121.639 0h4.4a.265.265 0 01.261.265v1.2a.265.265 0 01-.265.265"
-      //       data-name="Path 1388"
-      //       transform="translate(-16.491)"
-      //     ></path>
-      //     <path
-      //       d="M16.177 15.645l-2.546 2.984a.673.673 0 01-.913 0l-2.546-2.984-2.546-2.985c-.2-.238.051-.536.457-.536h2.669V9.659a.227.227 0 01.227-.227h4.468a.227.227 0 01.227.227v2.465h2.593c.406 0 .66.3.457.536z"
-      //       data-name="Path 1389"
-      //       transform="translate(-5.828 -7.277)"
-      //     ></path>
-      //   </g>
-      // </svg> */}
       </span>
     </p>
   );
@@ -145,7 +126,7 @@ const WithdrawalModal = ({
 
   const fadeStyle = showCryptoMenu ? 'opacity-100' : 'opacity-0';
 
-  const disabledStyle = !submitDisabled ? ' hover:cursor-pointer' : ' cursor-not-allowed';
+  // const disabledStyle = !submitDisabled ? ' hover:cursor-pointer' : ' cursor-not-allowed';
 
   const avaliableCryptoMenu = availableTransferOptions.map(item => {
     return (

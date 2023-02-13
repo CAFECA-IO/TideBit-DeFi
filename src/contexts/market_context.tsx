@@ -16,6 +16,7 @@ import {ITickerLiveStatistics} from '../interfaces/tidebit_defi_background/ticke
 import {ITickerStatic} from '../interfaces/tidebit_defi_background/ticker_static';
 import {UserContext} from './user_context';
 import {ICryptocurrency} from '../interfaces/tidebit_defi_background/cryptocurrency';
+import {dummyResultSuccess, IResult} from '../interfaces/tidebit_defi_background/result';
 
 export interface ITickerData {
   currency: string;
@@ -485,6 +486,7 @@ export interface IMarketContext {
   listAvailableTickers: () => ITickerData[];
   listDepositCryptocurrencies: () => ICryptocurrency[];
   listWithdrawCryptocurrencies: () => ICryptocurrency[];
+  selectTicker: (props: string) => IResult;
 }
 // TODO: Note: _app.tsx 啟動的時候 => createContext
 export const MarketContext = createContext<IMarketContext>({
@@ -507,6 +509,7 @@ export const MarketContext = createContext<IMarketContext>({
   listAvailableTickers: () => [],
   listDepositCryptocurrencies: () => [],
   listWithdrawCryptocurrencies: () => [],
+  selectTicker: (props: string) => dummyResultSuccess,
 });
 
 const availableTransferOptions = [
@@ -732,6 +735,18 @@ export const MarketProvider = ({children}: IMarketProvider) => {
   const listDepositCryptocurrencies = () => [];
   const listWithdrawCryptocurrencies = () => [];
 
+  const selectTicker = () => {
+    // TODO:
+    // 1.candlestickChartIdHandler
+    // 2.showPositionOnChartHandler
+    // 3.getCryptoSummary
+    // 4.cryptoBriefNews
+    // if is connected
+    // 5.userCtx.listOpenCFDs
+    // 6.userCtx.listClosedCFDs
+    return dummyResultSuccess;
+  };
+
   const defaultValue = {
     availableTickers,
     isCFDTradable,
@@ -753,6 +768,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     listAvailableTickers,
     listDepositCryptocurrencies,
     listWithdrawCryptocurrencies,
+    selectTicker,
   };
 
   return <MarketContext.Provider value={defaultValue}>{children}</MarketContext.Provider>;

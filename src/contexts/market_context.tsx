@@ -31,6 +31,11 @@ import {
   dummyTicker,
   getDummyTicker,
 } from '../interfaces/tidebit_defi_background/ticker_data';
+import {ITimeSpanUnion} from '../interfaces/tidebit_defi_background/time_span_union';
+import {
+  getDummyCandlestickChartData,
+  ICandlestickData,
+} from '../interfaces/tidebit_defi_background/candlestickData';
 
 const SAMPLE_TICKERS = [
   'ETH',
@@ -291,12 +296,17 @@ export interface IMarketContext {
   // cryptoSummary: ICryptoSummary | null;
   tickerStatic: ITickerStatic | null;
   tickerLiveStatistics: ITickerLiveStatistics | null;
+  candlestickChartData: ICandlestickData[];
   // getCryptoSummary: (tickerId: string) => ICryptoSummary | null;
   // getCryptoNews: (tickerId: string) => IBriefNewsItem[] | null;
   listAvailableTickers: () => ITickerData[];
   listDepositCryptocurrencies: () => ICryptocurrency[];
   listWithdrawCryptocurrencies: () => ICryptocurrency[];
   selectTickerHandler: (props: string) => IResult;
+  getCandlestickChartData: (props: {
+    tickerId: string;
+    timeSpan: ITimeSpanUnion;
+  }) => Promise<ICandlestickData[]>; // x 100
 }
 // TODO: Note: _app.tsx 啟動的時候 => createContext
 export const MarketContext = createContext<IMarketContext>({
@@ -309,6 +319,7 @@ export const MarketContext = createContext<IMarketContext>({
   candlestickId: '',
   candlestickChartIdHandler: () => null,
   availableTransferOptions: [],
+  candlestickChartData: [],
   // liveStatstics: null,
   // bullAndBearIndex: 0,
   // cryptoBriefNews: [],
@@ -321,6 +332,8 @@ export const MarketContext = createContext<IMarketContext>({
   listDepositCryptocurrencies: () => [],
   listWithdrawCryptocurrencies: () => [],
   selectTickerHandler: (props: string) => dummyResultSuccess,
+  getCandlestickChartData: (props: {tickerId: string; timeSpan: ITimeSpanUnion}) =>
+    Promise.resolve<ICandlestickData[]>([]),
 });
 
 const availableTransferOptions = [
@@ -444,6 +457,9 @@ export const MarketProvider = ({children}: IMarketProvider) => {
   const [tickerStatic, setTickerStatic] = useState<ITickerStatic>(dummyTickerStatic);
   const [tickerLiveStatistics, setTickerLiveStatistics] =
     useState<ITickerLiveStatistics>(dummyTickerLiveStatistics);
+  const [candlestickChartData, setCandlestickChartData] = useState<ICandlestickData[]>(
+    getDummyCandlestickChartData()
+  );
   const [availableTickers, setAvailableTickers] = useState<ITickerData[]>(updateAvailableTickers());
   const listAvailableTickers = () => {
     const updateTickers = updateAvailableTickers();
@@ -488,6 +504,8 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     setTickerStatic(tickerStatic);
     const tickerLiveStatistics: ITickerLiveStatistics = getDummyTickerLiveStatistics(currency);
     setTickerLiveStatistics(tickerLiveStatistics);
+    const candlestickChartData = getDummyCandlestickChartData();
+    setCandlestickChartData(candlestickChartData);
     // TODO:
     // 1.candlestickChartIdHandler
     // 2.showPositionOnChartHandler
@@ -501,6 +519,12 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     return dummyResultSuccess;
   };
 
+  const getCandlestickChartData = async (props: {tickerId: string; timeSpan: ITimeSpanUnion}) => {
+    let candlestickChartData: ICandlestickData[] = [];
+    candlestickChartData = await Promise.resolve(getDummyCandlestickChartData(50));
+    return candlestickChartData;
+  };
+
   const defaultValue = {
     selectedTicker,
     selectTickerHandler,
@@ -510,6 +534,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     showPositionOnChartHandler,
     positionInfoOnChart,
     candlestickId,
+    candlestickChartData,
     candlestickChartIdHandler,
     // transferOptions,
     availableTransferOptions: availableTransferOptions,
@@ -520,6 +545,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     listAvailableTickers,
     listDepositCryptocurrencies,
     listWithdrawCryptocurrencies,
+    getCandlestickChartData,
   };
 
   return <MarketContext.Provider value={defaultValue}>{children}</MarketContext.Provider>;

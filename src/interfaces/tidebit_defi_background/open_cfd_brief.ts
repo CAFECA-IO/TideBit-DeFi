@@ -1,4 +1,5 @@
 import PositionLineGraph from '../../components/position_line_graph/position_line_graph';
+import {PnLType} from '../../constants/pnl_type';
 import {ICFDBrief} from './cfd_brief';
 import {ITickerLineGraph} from './ticker_line_graph';
 
@@ -27,7 +28,7 @@ export const dummyOpenCFDBriefs: IOpenCFDBrief[] = [
     scheduledClosingTimestamp: 1675386051, // openTimestamp + 86400
     openValue: 74589658,
     pnl: {
-      type: 'PROFIT',
+      type: PnLType.PROFIT,
       // symbol: '+',
       value: 90752,
     },
@@ -56,7 +57,7 @@ export const dummyOpenCFDBriefs: IOpenCFDBrief[] = [
     scheduledClosingTimestamp: 1675386051, // openTimestamp + 86400
     openValue: 74589658,
     pnl: {
-      type: 'PROFIT',
+      type: PnLType.PROFIT,
       // symbol: '+',
       value: randomIntFromInterval(1000, 10000),
     },
@@ -85,7 +86,7 @@ export const dummyOpenCFDBriefs: IOpenCFDBrief[] = [
     scheduledClosingTimestamp: 1675386051, // openTimestamp + 86400
     openValue: 74589658,
     pnl: {
-      type: 'PROFIT',
+      type: PnLType.PROFIT,
       // symbol: '+',
       value: 9075200,
     },
@@ -114,7 +115,7 @@ export const dummyOpenCFDBriefs: IOpenCFDBrief[] = [
     scheduledClosingTimestamp: 1675386051, // openTimestamp + 86400
     openValue: 74589658,
     pnl: {
-      type: 'PROFIT',
+      type: PnLType.PROFIT,
       // symbol: '+',
       value: randomIntFromInterval(1000, 10000),
     },

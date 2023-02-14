@@ -1,3 +1,4 @@
+import {PnLType} from '../../constants/pnl_type';
 import {ICFDDetails} from './cfd_details';
 export interface IClosedCFDDetails extends ICFDDetails {
   closedType: 'SCHEDULE' | 'FORCED_LIQUIDATION' | 'STOP_LOSS' | 'TAKE_PROFIT' | 'BY_USER';
@@ -26,7 +27,7 @@ export const dummyCloseCFDDetails: IClosedCFDDetails = {
   scheduledClosingTimestamp: 1675386051, // openTimestamp + 86400
   openValue: 74589658,
   pnl: {
-    type: 'PROFIT',
+    type: PnLType.PROFIT,
     // symbol: '+',
     value: 90752,
   },

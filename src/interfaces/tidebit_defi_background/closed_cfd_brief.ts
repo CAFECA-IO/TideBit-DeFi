@@ -1,3 +1,4 @@
+import {PnLType} from '../../constants/pnl_type';
 import {ICFDBrief} from './cfd_brief';
 import {dummyCloseCFDDetails} from './closed_cfd_details';
 
@@ -14,7 +15,7 @@ export const dummyClosedCFDBriefs: IClosedCFDBrief[] = [
     openPrice: 24058,
     openValue: 74589658,
     pnl: {
-      type: 'EMPTY',
+      type: PnLType.EMPTY,
       // symbol?: string; // + or -
       value: 0,
     },
@@ -40,7 +41,7 @@ export const dummyClosedCFDBriefs: IClosedCFDBrief[] = [
     openPrice: 24058,
     openValue: 74589658,
     pnl: {
-      type: 'EMPTY',
+      type: PnLType.EMPTY,
       value: 0,
     },
     openTimestamp: 1675299651,
@@ -65,7 +66,7 @@ export const dummyClosedCFDBriefs: IClosedCFDBrief[] = [
     openPrice: 24058,
     openValue: 74589658,
     pnl: {
-      type: 'EMPTY',
+      type: PnLType.EMPTY,
       // symbol?: string; // + or -
       value: 0,
     },

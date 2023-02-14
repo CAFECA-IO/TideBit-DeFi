@@ -1,7 +1,9 @@
 export type IPnLType = 'PROFIT' | 'LOSS' | 'EMPTY';
 
 export type IPnLTypeConstant = {
-  [key: string]: IPnLType;
+  PROFIT: IPnLType;
+  LOSS: IPnLType;
+  EMPTY: IPnLType;
 };
 
 export const PnLType: IPnLTypeConstant = {

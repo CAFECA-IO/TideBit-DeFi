@@ -102,7 +102,7 @@ const PositionOpenModal = ({
             </div>
 
             <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">Avg. Fill Price</div>
+              <div className="text-lightGray">Price</div>
               <div className="">
                 $ {openCfdDetails?.openPrice?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0}
               </div>

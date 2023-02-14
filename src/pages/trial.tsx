@@ -120,7 +120,7 @@ const Trial = () => {
     <>
       {/* flex h-screen w-full items-center justify-center */}
       <div className="w-full space-y-10 bg-transparent">
-        {mounted && (
+        {/* {mounted && (
           // <PositionOpenModal
           //   openCfdDetails={dummyOpenCFDDetails}
           //   modalVisible={modalVisible}
@@ -136,12 +136,12 @@ const Trial = () => {
           //   modalVisible={modalVisible}
           //   modalClickHandler={modalClickHandler}
           // />
-          <HistoryPositionModal
-            openCfdDetails={dummyOpenCFDDetails}
-            modalVisible={modalVisible}
-            modalClickHandler={modalClickHandler}
-          />
-        )}
+          // <HistoryPositionModal
+          //   openCfdDetails={dummyOpenCFDDetails}
+          //   modalVisible={modalVisible}
+          //   modalClickHandler={modalClickHandler}
+          // />
+        )} */}
       </div>
     </>
   );

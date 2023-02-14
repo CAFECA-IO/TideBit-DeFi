@@ -102,7 +102,7 @@ const PositionClosedModal = ({
             </div>
 
             <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">Avg. Close Price</div>
+              <div className="text-lightGray">Price</div>
               <div className="">
                 Market Price ( ${' '}
                 {openCfdDetails?.openPrice?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0} )

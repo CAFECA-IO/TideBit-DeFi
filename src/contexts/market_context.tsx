@@ -1,5 +1,5 @@
+/* eslint-disable no-console */
 import React, {useState, useContext, createContext} from 'react';
-import {ICardProps, ILineGraphProps} from '../components/card/crypto_card';
 import {
   INITIAL_POSITION_LABEL_DISPLAYED_STATE,
   PROFIT_LOSS_COLOR_TYPE,
@@ -17,7 +17,12 @@ import {ITickerStatic} from '../interfaces/tidebit_defi_background/ticker_static
 import {UserContext} from './user_context';
 import {ICryptocurrency} from '../interfaces/tidebit_defi_background/cryptocurrency';
 import {dummyResultSuccess, IResult} from '../interfaces/tidebit_defi_background/result';
-import {ITickerData, dummyTickers} from '../interfaces/tidebit_defi_background/i_ticker_data';
+import {
+  ITickerData,
+  dummyTickers,
+  dummyTicker,
+  getDummyTicker,
+} from '../interfaces/tidebit_defi_background/ticker_data';
 
 const SAMPLE_TICKERS = [
   'ETH',
@@ -263,6 +268,7 @@ export interface ITransferOptions {
 }
 
 export interface IMarketContext {
+  selectedTicker: ITickerData;
   availableTickers: ITickerData[];
   isCFDTradable: boolean;
   showPositionOnChart: boolean;
@@ -282,10 +288,11 @@ export interface IMarketContext {
   listAvailableTickers: () => ITickerData[];
   listDepositCryptocurrencies: () => ICryptocurrency[];
   listWithdrawCryptocurrencies: () => ICryptocurrency[];
-  selectTicker: (props: string) => IResult;
+  selectTickerHandler: (props: string) => IResult;
 }
 // TODO: Note: _app.tsx 啟動的時候 => createContext
 export const MarketContext = createContext<IMarketContext>({
+  selectedTicker: dummyTicker,
   availableTickers: [],
   isCFDTradable: false,
   showPositionOnChart: false,
@@ -305,7 +312,7 @@ export const MarketContext = createContext<IMarketContext>({
   listAvailableTickers: () => [],
   listDepositCryptocurrencies: () => [],
   listWithdrawCryptocurrencies: () => [],
-  selectTicker: (props: string) => dummyResultSuccess,
+  selectTickerHandler: (props: string) => dummyResultSuccess,
 });
 
 const availableTransferOptions = [
@@ -495,6 +502,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     }
     return updateTickers;
   };
+  const [selectedTicker, setSelectedTicker] = useState<ITickerData>(dummyTicker);
   const [availableTickers, setAvailableTickers] = useState<ITickerData[]>(updateAvailableTickers());
   const listAvailableTickers = () => {
     const updateTickers = updateAvailableTickers();
@@ -531,7 +539,11 @@ export const MarketProvider = ({children}: IMarketProvider) => {
   const listDepositCryptocurrencies = () => [];
   const listWithdrawCryptocurrencies = () => [];
 
-  const selectTicker = () => {
+  const selectTickerHandler = (currency: string) => {
+    // console.log(`selectTickerHandler currency`, currency);
+    const ticker: ITickerData = getDummyTicker(currency);
+    console.log(`selectTickerHandler ticker`, ticker);
+    setSelectedTicker(ticker);
     // TODO:
     // 1.candlestickChartIdHandler
     // 2.showPositionOnChartHandler
@@ -544,6 +556,8 @@ export const MarketProvider = ({children}: IMarketProvider) => {
   };
 
   const defaultValue = {
+    selectedTicker,
+    selectTickerHandler,
     availableTickers,
     isCFDTradable,
     showPositionOnChart,
@@ -564,7 +578,6 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     listAvailableTickers,
     listDepositCryptocurrencies,
     listWithdrawCryptocurrencies,
-    selectTicker,
   };
 
   return <MarketContext.Provider value={defaultValue}>{children}</MarketContext.Provider>;

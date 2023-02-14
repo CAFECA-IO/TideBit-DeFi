@@ -1,8 +1,10 @@
-import {useState} from 'react';
+import {useContext, useState} from 'react';
 import TickerSelectorBox from '../ticker_selector_box/ticker_selector_box';
 import {CgArrowsExchange} from 'react-icons/cg';
 import useOuterClick from '../../lib/hooks/use_outer_click';
 import {UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
+import {MarketContext} from '../../contexts/market_context';
+import {UpOrDown} from '../../interfaces/tidebit_defi_background/ticker_data';
 
 interface ITradingHeaderProps {
   upOrDown: string;
@@ -10,7 +12,12 @@ interface ITradingHeaderProps {
 }
 
 const TradingHeader = ({upOrDown, tradingVolume}: ITradingHeaderProps) => {
-  if (upOrDown !== 'up' && upOrDown !== 'down') return <></>;
+  const marketCtx = useContext(MarketContext);
+  if (
+    marketCtx.selectedTicker.upOrDown !== UpOrDown.UP &&
+    marketCtx.selectedTicker.upOrDown !== UpOrDown.DOWN
+  )
+    return <></>;
 
   // const [ticker, setTicker] = useState('ETH/USDT');
   // const [showTickerSelector, setShowTickerSelector] = useState(false);
@@ -25,7 +32,8 @@ const TradingHeader = ({upOrDown, tradingVolume}: ITradingHeaderProps) => {
     // console.log('header clicked', !tickerBoxVisible);
   };
 
-  const priceShadowColor = upOrDown === 'up' ? 'priceUpShadow' : 'priceDownShadow';
+  const priceShadowColor =
+    marketCtx.selectedTicker.upOrDown === UpOrDown.UP ? 'priceUpShadow' : 'priceDownShadow';
 
   // const displayedTickerBox = showTickerSelector ? <TickerSelectorModal /> : null;
 
@@ -88,9 +96,7 @@ const TradingHeader = ({upOrDown, tradingVolume}: ITradingHeaderProps) => {
       </g>
     </svg>
   );
-  const ethTitle = <h1 className="text-3xl font-medium">ETH</h1>;
-
-  const dummyPrice = 6290.41;
+  const ethTitle = <h1 className="text-3xl font-medium">{marketCtx.selectedTicker.currency}</h1>;
 
   const ethHeader = (
     <>
@@ -102,12 +108,16 @@ const TradingHeader = ({upOrDown, tradingVolume}: ITradingHeaderProps) => {
             className="flex items-center space-x-3 text-center hover:cursor-pointer"
             onClick={tickerBoxClickHandler}
           >
-            {ethIcon}
+            <span className="relative h-40px w-40px">
+              <img
+                src={marketCtx.selectedTicker.tokenImg}
+                alt={marketCtx.selectedTicker.currency}
+              />
+            </span>
             {ethTitle}
           </button>
 
           <div className="pl-0 hover:cursor-pointer">
-            {' '}
             <CgArrowsExchange size={35} />
           </div>
         </div>
@@ -119,15 +129,21 @@ const TradingHeader = ({upOrDown, tradingVolume}: ITradingHeaderProps) => {
           className={`${priceShadowColor} flex w-200px flex-wrap items-start space-x-7 text-center lg:w-400px lg:items-end lg:text-start`}
         >
           <div className="text-3xl">
-            $ <span className="">{dummyPrice.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}</span>
+            <span className="">
+              {marketCtx.selectedTicker.price.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}
+            </span>
           </div>
-          <div className="text-lg">▴ $24.7 (+1.14%)</div>
+          <div className="text-lg">{`${
+            marketCtx.selectedTicker.upOrDown === UpOrDown.UP ? '▴' : '▾'
+          } $${marketCtx.selectedTicker.priceChange} (${
+            marketCtx.selectedTicker.upOrDown === UpOrDown.UP ? '+' : '-'
+          }${marketCtx.selectedTicker.fluctuating}%)`}</div>
         </div>
 
         {/* Trading volume */}
         <div className="relative">
           <div className="absolute -right-48 top-10 w-300px text-sm text-lightWhite/60 lg:left-0">
-            24h Volume {tradingVolume} USDT
+            24h Volume {marketCtx.selectedTicker.tradingVolume} USDT
           </div>
         </div>
       </div>

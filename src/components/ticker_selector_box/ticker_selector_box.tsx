@@ -8,7 +8,7 @@ import CryptoCard from '../card/crypto_card';
 
 import {MarketContext, IMarketContext} from '../../contexts/market_context';
 import {UserContext, IUserContext} from '../../contexts/user_context';
-import {ILineGraphProps, ITickerData} from '../../interfaces/tidebit_defi_background/i_ticker_data';
+import {ILineGraphProps, ITickerData} from '../../interfaces/tidebit_defi_background/ticker_data';
 
 // TODO: useContext
 interface ITickerSelectorBox {

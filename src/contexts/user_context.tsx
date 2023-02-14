@@ -24,8 +24,6 @@ import {
   dummyWalletBalance_USDT,
   IWalletBalance,
 } from '../interfaces/tidebit_defi_background/wallet_balance';
-import {ICFDOrderCreatingProps} from '../interfaces/tidebit_defi_background/cfd_order_request';
-import {IOrderStatusUnion} from '../interfaces/depre_tidebit_defi_background';
 import {ICFDOrderUpdateRequest} from '../interfaces/tidebit_defi_background/cfd_order_update';
 import {
   dummyBalance_BTC,

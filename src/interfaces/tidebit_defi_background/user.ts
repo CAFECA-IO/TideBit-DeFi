@@ -1,3 +1,4 @@
+import {IOrderStatusUnion} from '../../constants/order_status_union';
 import {ICFDBrief} from './cfd_brief';
 import {ICFDOrderCreatingProps} from './cfd_order_request';
 import {ICFDOrderUpdateRequest} from './cfd_order_update';
@@ -8,7 +9,7 @@ import {INotificationItem} from './notification_item';
 // import {IOpenCFDBrief} from './open_cfd_brief';
 import {IOpenCFDDetails, dummyOpenCFDDetails} from './open_cfd_details';
 import {IOpenCFDOrder} from './open_cfd_order';
-import {IOrderStatusUnion} from './order_status_union';
+
 import {ITickerItem} from './ticker_item';
 import {IUserBalance} from './user_balance';
 import {IWithdrawalOrder} from './withdrawal_order';

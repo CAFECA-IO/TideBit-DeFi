@@ -5,7 +5,7 @@ import {
   MarketContext,
   IMarketContext,
   IMarketProvider,
-  ITickerData,
+  // ITickerData,
   MarketProvider,
 } from '../../contexts/market_context';
 import {UserContext, IUserContext} from '../../contexts/user_context';

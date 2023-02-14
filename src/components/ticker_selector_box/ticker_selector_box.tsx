@@ -4,10 +4,11 @@ import 'react-toastify/dist/ReactToastify.css';
 import {CRYPTO_CARD_COLORS} from '../../constants/display';
 
 import {useContext, useEffect, useState} from 'react';
-import CryptoCard, {ILineGraphProps} from '../card/crypto_card';
+import CryptoCard from '../card/crypto_card';
 
-import {MarketContext, IMarketContext, ITickerData} from '../../contexts/market_context';
+import {MarketContext, IMarketContext} from '../../contexts/market_context';
 import {UserContext, IUserContext} from '../../contexts/user_context';
+import {ILineGraphProps, ITickerData} from '../../interfaces/tidebit_defi_background/i_ticker_data';
 
 // TODO: useContext
 interface ITickerSelectorBox {

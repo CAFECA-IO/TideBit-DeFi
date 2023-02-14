@@ -1,1 +1,1 @@
-export type IOrderStatusUnion = 'processing' | 'success' | 'cancellation' | 'fail';
+export type IOrderStatusUnion = 'PROCESSING' | 'SUCCESS' | 'CANCELDED' | 'FAILED';

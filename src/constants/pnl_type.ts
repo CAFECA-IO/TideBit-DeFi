@@ -1,5 +1,3 @@
-import {type} from 'os';
-
 export type IPnLType = 'PROFIT' | 'LOSS' | 'EMPTY';
 
 export type IPnLTypeConstant = {

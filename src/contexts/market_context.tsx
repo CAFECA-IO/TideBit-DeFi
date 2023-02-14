@@ -286,7 +286,7 @@ export interface IMarketContext {
   isCFDTradable: boolean;
   showPositionOnChart: boolean;
   showPositionOnChartHandler: (bool: boolean) => void;
-  positionInfoOnChart: ApexOptions | null;
+  positionInfoOnChart: ApexOptions | null; // TODO check 是否已經實作
   candlestickId: string;
   candlestickChartIdHandler: (id: string) => void;
   availableTransferOptions: ITransferOptions[];

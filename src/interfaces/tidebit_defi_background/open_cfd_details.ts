@@ -26,7 +26,6 @@ export const dummyOpenCFDDetails: IOpenCFDDetails = {
   openValue: 74589658,
   pnl: {
     type: 'PROFIT',
-    symbol: '+',
     value: 53723,
   },
   liquidationPrice: 19537,

@@ -41,7 +41,6 @@ export const dummyClosedCFDBriefs: IClosedCFDBrief[] = [
     openValue: 74589658,
     pnl: {
       type: 'EMPTY',
-      // symbol?: string; // + or -
       value: 0,
     },
     openTimestamp: 1675299651,

@@ -1,6 +1,6 @@
-import {IOrderStatusUnion} from './order_status_union';
-
-export type IOrderType = 'CFD' | 'DEPOSIT' | 'WITHDRAW' | 'SPOT';
+import {ITypeOfPosition, TypeOfPosition} from '../../constants/type_of_position';
+import {IOrderStatusUnion, OrderStatusUnion} from '../../constants/order_status_union';
+import {IOrderType, OrderType} from '../../constants/order_type';
 
 export interface IPublicOrder {
   id: string;
@@ -12,7 +12,7 @@ export interface IPublicCFDOrder extends IPublicOrder {
   ticker: string;
   price: number;
   triggerPrice: number;
-  typeOfPosition: 'BUY' | 'SELL';
+  typeOfPosition: ITypeOfPosition;
   leverage: number;
   margin: number;
   takeProfit?: number;
@@ -33,7 +33,7 @@ export interface IPublicSpotOrder extends IPublicOrder {
   amount: number;
   averageFilledPrice: number;
   filledAmount: number;
-  typeOfPosition: 'BUY' | 'SELL';
+  typeOfPosition: ITypeOfPosition;
   tradeCounts: number;
 }
 
@@ -53,12 +53,12 @@ export interface IPublicWithdrawOrder extends IPublicOrder {
 
 export const dummyPublicCFDOrder: IPublicCFDOrder = {
   id: '001',
-  orderType: 'CFD',
-  orderStatus: 'PROCESSING',
+  orderType: OrderType.CFD,
+  orderStatus: OrderStatusUnion.PROCESSING,
   ticker: 'ETH',
   price: 20193.1,
   triggerPrice: 20193.1,
-  typeOfPosition: 'SELL',
+  typeOfPosition: TypeOfPosition.SELL,
   leverage: 5,
   margin: 1,
   guranteedStop: true,
@@ -70,8 +70,8 @@ export const dummyPublicCFDOrder: IPublicCFDOrder = {
 
 export const dummyPublicDepositOrder: IPublicDepositOrder = {
   id: '001',
-  orderType: 'DEPOSIT',
-  orderStatus: 'SUCCESS',
+  orderType: OrderType.DEPOSIT,
+  orderStatus: OrderStatusUnion.SUCCESS,
   currency: 'ETH',
   amount: 7.91,
   from: '0x',
@@ -80,8 +80,8 @@ export const dummyPublicDepositOrder: IPublicDepositOrder = {
 
 export const dummyPublicWithdrawOrder: IPublicWithdrawOrder = {
   id: '001',
-  orderType: 'WITHDRAW',
-  orderStatus: 'FAILED',
+  orderType: OrderType.WITHDRAW,
+  orderStatus: OrderStatusUnion.FAILED,
   currency: 'ETH',
   amount: 1,
   from: '0x',

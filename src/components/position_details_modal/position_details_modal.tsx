@@ -96,6 +96,9 @@ const PositionDetailsModal = ({
   const displayedTypeOfPosition =
     openCfdDetails?.typeOfPosition === 'BUY' ? 'Up (Buy)' : 'Down (Sell)';
 
+  const displayedPositionColor =
+    openCfdDetails.typeOfPosition === 'BUY' ? PNL_COLOR_TYPE.profit : PNL_COLOR_TYPE.loss;
+
   const displayedPnLColor =
     openCfdDetails?.pnl.type === 'PROFIT'
       ? PNL_COLOR_TYPE.profit
@@ -317,7 +320,7 @@ const PositionDetailsModal = ({
                   <div className="mx-6 my-4 flex justify-between">
                     <div className="text-lightGray">Type</div>
                     {/* TODO: i18n */}
-                    <div className="">{displayedTypeOfPosition}</div>
+                    <div className={`${displayedPositionColor}`}>{displayedTypeOfPosition}</div>
                   </div>
 
                   <div className="mx-6 my-4 flex justify-between">

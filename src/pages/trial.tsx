@@ -126,21 +126,21 @@ const Trial = () => {
           //   modalVisible={modalVisible}
           //   modalClickHandler={modalClickHandler}
           // />
-          <PositionClosedModal
-            openCfdDetails={dummyOpenCFDDetails}
-            modalVisible={modalVisible}
-            modalClickHandler={modalClickHandler}
-          />
+          // <PositionClosedModal
+          //   openCfdDetails={dummyOpenCFDDetails}
+          //   modalVisible={modalVisible}
+          //   modalClickHandler={modalClickHandler}
+          // />
           // <PositionUpdatedModal
           //   openCfdDetails={dummyOpenCFDDetails}
           //   modalVisible={modalVisible}
           //   modalClickHandler={modalClickHandler}
           // />
-          // <HistoryPositionModal
-          //   openCfdDetails={dummyOpenCFDDetails}
-          //   modalVisible={modalVisible}
-          //   modalClickHandler={modalClickHandler}
-          // />
+          <HistoryPositionModal
+            openCfdDetails={dummyOpenCFDDetails}
+            modalVisible={modalVisible}
+            modalClickHandler={modalClickHandler}
+          />
         )}
       </div>
     </>

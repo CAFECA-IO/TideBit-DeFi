@@ -1,3 +1,4 @@
+import {PnLType} from '../../constants/pnl_type';
 import {ICFDDetails} from './cfd_details';
 import {ITickerLineGraph} from './ticker_line_graph';
 
@@ -25,12 +26,12 @@ export const dummyOpenCFDDetails: IOpenCFDDetails = {
   scheduledClosingTimestamp: 1675386051, // openTimestamp + 86400
   openValue: 74589658,
   pnl: {
-    type: 'PROFIT',
+    type: PnLType.PROFIT,
     value: 53723,
   },
   liquidationPrice: 19537,
   takeProfit: 74521,
-  stopLoss: 25250,
+  // stopLoss: 25250,
   recommendedTp: 35412,
   recommendedSl: 19453,
   positionLineGraph: {

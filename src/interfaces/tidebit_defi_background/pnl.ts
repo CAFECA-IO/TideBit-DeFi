@@ -5,6 +5,7 @@ export interface IPnL {
   value: number;
 }
 
+// FIXME: There should be type hint and check by ts
 const pnl: IPnL = {
   type: PnLType.PROFIT1,
   // symbol: '+',

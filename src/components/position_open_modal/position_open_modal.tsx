@@ -44,6 +44,8 @@ const PositionOpenModal = ({
     return;
   };
 
+  const displayedGuaranteedStopSetting = !!openCfdDetails.guaranteedStop ? 'Yes' : 'No';
+
   const displayedTypeOfPosition =
     openCfdDetails?.typeOfPosition === 'BUY' ? 'Up (Buy)' : 'Down (Sell)';
 
@@ -53,6 +55,9 @@ const PositionOpenModal = ({
       : openCfdDetails?.pnl.type === 'LOSS'
       ? PNL_COLOR_TYPE.loss
       : PNL_COLOR_TYPE.equal;
+
+  const displayedPositionColor =
+    openCfdDetails.typeOfPosition === 'BUY' ? PNL_COLOR_TYPE.profit : PNL_COLOR_TYPE.loss;
 
   const displayedBorderColor =
     openCfdDetails?.typeOfPosition === 'BUY' ? BORDER_COLOR_TYPE.long : BORDER_COLOR_TYPE.short;
@@ -76,7 +81,7 @@ const PositionOpenModal = ({
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">Type</div>
               {/* TODO: color variable */}
-              <div className={`text-lightGreen5`}>{displayedTypeOfPosition}</div>
+              <div className={`${displayedPositionColor}`}>{displayedTypeOfPosition}</div>
             </div>
 
             <div className={`${layoutInsideBorder}`}>
@@ -115,6 +120,11 @@ const PositionOpenModal = ({
               <div className="text-lightGray">Liquidation Price</div>
               <div className="">$ 9.23</div>
             </div>
+
+            <div className={`${layoutInsideBorder}`}>
+              <div className="text-lightGray">Guaranteed Stop</div>
+              <div className={``}>{displayedGuaranteedStopSetting}</div>
+            </div>
           </div>
         </div>
 
@@ -149,7 +159,7 @@ const PositionOpenModal = ({
           <div
             id="PositionOpenModal"
             // ref={modalRef}
-            className="relative flex h-500px w-296px flex-col rounded-3xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none"
+            className="relative flex h-540px w-296px flex-col rounded-3xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none"
           >
             {/*header*/}
             <div className="flex items-start justify-between rounded-t pt-9">

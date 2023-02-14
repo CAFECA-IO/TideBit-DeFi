@@ -45,8 +45,10 @@ const PositionUpdatedModal = ({
     return;
   };
 
-  const displayedPnLSymbol =
-    openCfdDetails.pnl.type === 'PROFIT' ? '+' : openCfdDetails.pnl.type === 'LOSS' ? '-' : '';
+  const displayedGuaranteedStopSetting = !!openCfdDetails.guaranteedStop ? 'Yes' : 'No';
+
+  // const displayedPnLSymbol =
+  //   openCfdDetails.pnl.type === 'PROFIT' ? '+' : openCfdDetails.pnl.type === 'LOSS' ? '-' : '';
 
   const displayedTypeOfPosition =
     openCfdDetails?.typeOfPosition === 'BUY' ? 'Up (Buy)' : 'Down (Sell)';
@@ -57,6 +59,9 @@ const PositionUpdatedModal = ({
       : openCfdDetails?.pnl.type === 'LOSS'
       ? PNL_COLOR_TYPE.loss
       : PNL_COLOR_TYPE.equal;
+
+  const displayedPositionColor =
+    openCfdDetails.typeOfPosition === 'BUY' ? PNL_COLOR_TYPE.profit : PNL_COLOR_TYPE.loss;
 
   const displayedBorderColor =
     openCfdDetails?.typeOfPosition === 'BUY' ? BORDER_COLOR_TYPE.long : BORDER_COLOR_TYPE.short;
@@ -80,7 +85,7 @@ const PositionUpdatedModal = ({
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">Type</div>
               {/* TODO: color variable */}
-              <div className={`text-lightGreen5`}>{displayedTypeOfPosition}</div>
+              <div className={`${displayedPositionColor}`}>{displayedTypeOfPosition}</div>
             </div>
 
             <div className={`${layoutInsideBorder}`}>
@@ -97,20 +102,25 @@ const PositionUpdatedModal = ({
             </div>
 
             <div className={`${layoutInsideBorder}`}>
+              <div className="text-lightGray">Limit/ Stop</div>
+              <div className="">$20/ $10.5</div>
+            </div>
+
+            {/* <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">Avg. Close Price</div>
               <div className="">
                 Market Price ( ${' '}
                 {openCfdDetails?.openPrice?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0} )
               </div>
-            </div>
+            </div> */}
 
-            <div className={`${layoutInsideBorder}`}>
+            {/* <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">PNL</div>
               <div className={`${displayedPnLColor}`}>
                 $ {displayedPnLSymbol}{' '}
                 {openCfdDetails.pnl.value.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}
               </div>
-            </div>
+            </div> */}
 
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">Open Time</div>
@@ -118,6 +128,11 @@ const PositionUpdatedModal = ({
                 {timestampToString(openCfdDetails?.openTimestamp ?? 0)[0]}{' '}
                 {timestampToString(openCfdDetails?.openTimestamp ?? 0)[1]}
               </div>
+            </div>
+
+            <div className={`${layoutInsideBorder}`}>
+              <div className="text-lightGray">Guaranteed Stop</div>
+              <div className={``}>{displayedGuaranteedStopSetting}</div>
             </div>
 
             {/* <div className={`${tableLayout}`}>

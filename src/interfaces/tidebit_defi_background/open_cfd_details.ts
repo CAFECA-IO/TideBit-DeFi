@@ -14,7 +14,7 @@ export const dummyOpenCFDDetails: IOpenCFDDetails = {
   ticker: 'ETH',
   amount: 1.8,
   state: 'OPENING',
-  typeOfPosition: 'BUY',
+  typeOfPosition: 'SELL',
   leverage: 5,
   margin: randomIntFromInterval(650, 10000),
   openPrice: randomIntFromInterval(10, 100),

@@ -3,8 +3,8 @@ import OpenPositionItem from '../open_position_item/open_position_item';
 import {UserContext} from '../../contexts/user_context';
 
 const OpenSubTab = () => {
-  const {openCFDBriefs} = useContext(UserContext);
-  const openPositionList = openCFDBriefs.map(cfd => {
+  const {openCFDs} = useContext(UserContext);
+  const openPositionList = openCFDs.map(cfd => {
     return (
       <div key={cfd.id}>
         <OpenPositionItem

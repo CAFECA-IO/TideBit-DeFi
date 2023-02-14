@@ -490,31 +490,29 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
   //     getTransferData={getWithdrawData}
   //     // initialAmountInput={undefined}
   //     submitHandler={withdrawSubmitHandler}
-  //     // transferOptions={availableTransferOptions}
+  //     transferOptions={availableTransferOptions}
   //     getSubmissionState={getWithdrawSubmissionState}
   //     transferType="withdraw"
   //     transferStep={withdrawProcess}
-  //     // userAvailableBalance={user?.balance?.available ?? 0}
-  //     modalVisible={globalCtx.visibleTransferProcessModal}
-  //     modalClickHandler={globalCtx.visibleTransferProcessModalHandler}
+  //     userAvailableBalance={userCtx.balance?.available ?? 0}
+  //     modalVisible={withdrawModalVisible}
+  //     modalClickHandler={withdrawModalClickHandler}
   //   />
   // );
-
   // const depositProcessModal = (
   //   <TransferProcessModal
   //     getTransferData={getDepositData}
-  //     // initialAmountInput={user?.walletBalance ?? 0}
+  //     // initialAmountInput={userCtx.walletBalance ?? 0}
   //     submitHandler={depositSubmitHandler}
-  //     // transferOptions={availableTransferOptions}
+  //     transferOptions={availableTransferOptions}
   //     getSubmissionState={getDepositSubmissionState}
   //     transferType="deposit"
   //     transferStep={depositProcess}
-  //     // userAvailableBalance={user?.walletBalance ?? 0}
+  //     userAvailableBalance={userCtx.getWalletBalance('USDT')?.balance || 0}
   //     modalVisible={depositModalVisible}
   //     modalClickHandler={depositModalClickHandler}
   //   />
   // );
-
   const connectingClickHandler = () => {
     setConnectingModalVisible(!connectingModalVisible);
   };

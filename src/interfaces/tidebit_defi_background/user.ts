@@ -1,14 +1,15 @@
+import {IOrderStatusUnion} from '../../constants/order_status_union';
 import {ICFDBrief} from './cfd_brief';
 import {ICFDOrderCreatingProps} from './cfd_order_request';
 import {ICFDOrderUpdateRequest} from './cfd_order_update';
-import {IClosedCFDBrief} from './closed_cfd_brief';
+// import {IClosedCFDBrief} from './closed_cfd_brief';
 import {IClosedCFDDetails} from './closed_cfd_details';
 import {IDepositOrder} from './deposit_order';
 import {INotificationItem} from './notification_item';
-import {IOpenCFDBrief} from './open_cfd_brief';
+// import {IOpenCFDBrief} from './open_cfd_brief';
 import {IOpenCFDDetails, dummyOpenCFDDetails} from './open_cfd_details';
 import {IOpenCFDOrder} from './open_cfd_order';
-import {IOrderStatusUnion} from './order_status_union';
+
 import {ITickerItem} from './ticker_item';
 import {IUserBalance} from './user_balance';
 import {IWithdrawalOrder} from './withdrawal_order';
@@ -46,8 +47,8 @@ export interface IUser {
 
   // attribute 在前端用 useState 或用 const 來寫
   // CFDDetails: ICFDDetails;
-  openCFDItems: IOpenCFDBrief[];
-  closedCFDItems: IClosedCFDBrief[];
+  // openCFDItems: IOpenCFDBrief[];
+  // closedCFDItems: IClosedCFDBrief[];
   positionsOnChart: ICFDBrief[];
 
   // 拿到所有 CFD 資料；function 用於不須及時更新的資料

@@ -1,6 +1,6 @@
 import {IOrderStatusUnion} from './order_status_union';
 
-export type IOrderType = 'cfd' | 'deposit' | 'withdraw' | 'spot';
+export type IOrderType = 'CFD' | 'DEPOSIT' | 'WITHDRAW' | 'SPOT';
 
 export interface IPublicOrder {
   id: string;
@@ -20,8 +20,9 @@ export interface IPublicCFDOrder extends IPublicOrder {
   guranteedStop: boolean;
   estimatedFilledPrice: number;
   fee: number;
-  fromCurrency: string;
-  toCurrency: string;
+  targetUnit: string;
+  chargeUnit: string;
+  remark?: string;
 }
 
 export interface IPublicSpotOrder extends IPublicOrder {
@@ -52,8 +53,8 @@ export interface IPublicWithdrawOrder extends IPublicOrder {
 
 export const dummyPublicCFDOrder: IPublicCFDOrder = {
   id: '001',
-  orderType: 'cfd',
-  orderStatus: 'processing',
+  orderType: 'CFD',
+  orderStatus: 'PROCESSING',
   ticker: 'ETH',
   price: 20193.1,
   triggerPrice: 20193.1,
@@ -63,14 +64,14 @@ export const dummyPublicCFDOrder: IPublicCFDOrder = {
   guranteedStop: true,
   estimatedFilledPrice: 1,
   fee: 0.0001,
-  fromCurrency: 'ETH',
-  toCurrency: 'USDT',
+  targetUnit: 'ETH',
+  chargeUnit: 'USDT',
 };
 
 export const dummyPublicDepositOrder: IPublicDepositOrder = {
   id: '001',
-  orderType: 'deposit',
-  orderStatus: 'success',
+  orderType: 'DEPOSIT',
+  orderStatus: 'SUCCESS',
   currency: 'ETH',
   amount: 7.91,
   from: '0x',
@@ -79,8 +80,8 @@ export const dummyPublicDepositOrder: IPublicDepositOrder = {
 
 export const dummyPublicWithdrawOrder: IPublicWithdrawOrder = {
   id: '001',
-  orderType: 'withdraw',
-  orderStatus: 'fail',
+  orderType: 'WITHDRAW',
+  orderStatus: 'FAILED',
   currency: 'ETH',
   amount: 1,
   from: '0x',

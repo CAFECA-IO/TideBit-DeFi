@@ -89,14 +89,17 @@ const PositionDetailsModal = ({
   //   slToggleFunction();
   // };
 
+  const displayedPnLSymbol =
+    openCfdDetails.pnl.type === 'PROFIT' ? '+' : openCfdDetails.pnl.type === 'LOSS' ? '-' : '';
+
   // TODO: i18n
   const displayedTypeOfPosition =
     openCfdDetails?.typeOfPosition === 'BUY' ? 'Up (Buy)' : 'Down (Sell)';
 
   const displayedPnLColor =
-    openCfdDetails?.pnl.type === 'UP'
+    openCfdDetails?.pnl.type === 'PROFIT'
       ? PNL_COLOR_TYPE.profit
-      : openCfdDetails?.pnl.type === 'DOWN'
+      : openCfdDetails?.pnl.type === 'LOSS'
       ? PNL_COLOR_TYPE.loss
       : PNL_COLOR_TYPE.equal;
 
@@ -327,7 +330,7 @@ const PositionDetailsModal = ({
                   <div className="mx-6 my-4 flex justify-between">
                     <div className="text-lightGray">PNL</div>
                     <div className={`${displayedPnLColor}`}>
-                      $ {openCfdDetails?.pnl?.symbol}{' '}
+                      $ {displayedPnLSymbol}{' '}
                       {openCfdDetails?.pnl.value?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}
                     </div>
                   </div>

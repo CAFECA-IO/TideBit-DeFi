@@ -18,6 +18,8 @@ import DepositModal from '../components/deposit_modal/deposit_modal';
 import WithdrawalModal from '../components/withdrawal_modal/withdrawal_modal';
 import {useGlobal} from '../contexts/global_context';
 import {dummyOpenCFDDetails} from '../interfaces/tidebit_defi_background/open_cfd_details';
+import PositionClosedModal from '../components/position_closed_modal/position_closed_modal';
+import PositionUpdatedModal from '../components/position_updated_modal/position_updated_modal';
 
 const Trial = () => {
   const globalCtx = useGlobal();
@@ -60,7 +62,7 @@ const Trial = () => {
     // globalCtx.visibleCanceledModalHandler();
 
     // globalCtx.visibleDepositModalHandler();
-    globalCtx.visibleWithdrawalModalHandler();
+    // globalCtx.visibleWithdrawalModalHandler();
   }, []);
 
   const modalClickHandler = () => {
@@ -117,44 +119,23 @@ const Trial = () => {
     <>
       {/* flex h-screen w-full items-center justify-center */}
       <div className="w-full space-y-10 bg-transparent">
-        {/* {mounted && (
-          <PositionOpenModal
+        {mounted && (
+          // <PositionOpenModal
+          //   openCfdDetails={dummyOpenCFDDetails}
+          //   modalVisible={modalVisible}
+          //   modalClickHandler={modalClickHandler}
+          // />
+          // <PositionClosedModal
+          //   openCfdDetails={dummyOpenCFDDetails}
+          //   modalVisible={modalVisible}
+          //   modalClickHandler={modalClickHandler}
+          // />
+          <PositionUpdatedModal
             openCfdDetails={dummyOpenCFDDetails}
             modalVisible={modalVisible}
             modalClickHandler={modalClickHandler}
           />
-        )} */}
-
-        {/* <LoadingModal
-          modalTitle="Wallet Connect"
-          modalContent="Connecting..."
-          modalVisible={modalVisible}
-          modalClickHandler={modalClickHandler}
-          // btnMsg="View on Etherscan"
-          // btnUrl="https://etherscan.io/"
-        /> */}
-        {/* <FailedModal
-          modalTitle="Deposit"
-          modalContent="Transaction failed"
-          modalVisible={modalVisible}
-          modalClickHandler={modalClickHandler}
-          btnMsg="View on Etherscan"
-          failedMsg="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et"
-        /> */}
-        {/* <CanceledModal
-          modalTitle="Withdraw"
-          modalContent="Transaction failed"
-          modalVisible={modalVisible}
-          modalClickHandler={modalClickHandler}
-          // btnMsg="View on Etherscan"
-        /> */}
-        {/* <SuccessfulModal
-          modalTitle="Withdraw"
-          // modalContent="Transaction succeeded"
-          modalVisible={modalVisible}
-          modalClickHandler={modalClickHandler}
-          btnMsg="Done"
-        /> */}
+        )}
       </div>
     </>
   );

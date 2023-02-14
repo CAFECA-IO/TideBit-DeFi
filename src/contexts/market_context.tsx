@@ -627,7 +627,7 @@ const tickerLiveStatistics: ITickerLiveStatistics = {
   fee: 0,
   volume: 92154731,
   price: 1580,
-  fluctuating: {type: 'UP', value: 23.3, percentage: 2.65},
+  fluctuating: {type: 'PROFIT', value: 23.3, percentage: 2.65},
   buyEstimatedFilledPrice: 1590,
   sellEstimatedFilledPrice: 1570,
   bullAndBearIndex: 39,

@@ -26,7 +26,7 @@ export const dummyCloseCFDDetails: IClosedCFDDetails = {
   scheduledClosingTimestamp: 1675386051, // openTimestamp + 86400
   openValue: 74589658,
   pnl: {
-    type: 'UP',
+    type: 'PROFIT',
     symbol: '+',
     value: 90752,
   },

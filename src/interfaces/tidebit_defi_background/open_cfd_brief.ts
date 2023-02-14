@@ -27,7 +27,7 @@ export const dummyOpenCFDBriefs: IOpenCFDBrief[] = [
     scheduledClosingTimestamp: 1675386051, // openTimestamp + 86400
     openValue: 74589658,
     pnl: {
-      type: 'UP',
+      type: 'PROFIT',
       symbol: '+',
       value: 90752,
     },
@@ -56,7 +56,7 @@ export const dummyOpenCFDBriefs: IOpenCFDBrief[] = [
     scheduledClosingTimestamp: 1675386051, // openTimestamp + 86400
     openValue: 74589658,
     pnl: {
-      type: 'UP',
+      type: 'PROFIT',
       symbol: '+',
       value: randomIntFromInterval(1000, 10000),
     },
@@ -85,7 +85,7 @@ export const dummyOpenCFDBriefs: IOpenCFDBrief[] = [
     scheduledClosingTimestamp: 1675386051, // openTimestamp + 86400
     openValue: 74589658,
     pnl: {
-      type: 'UP',
+      type: 'PROFIT',
       symbol: '+',
       value: 9075200,
     },
@@ -114,7 +114,7 @@ export const dummyOpenCFDBriefs: IOpenCFDBrief[] = [
     scheduledClosingTimestamp: 1675386051, // openTimestamp + 86400
     openValue: 74589658,
     pnl: {
-      type: 'UP',
+      type: 'PROFIT',
       symbol: '+',
       value: randomIntFromInterval(1000, 10000),
     },

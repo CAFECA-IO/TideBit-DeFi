@@ -14,7 +14,7 @@ export const dummyClosedCFDBriefs: IClosedCFDBrief[] = [
     openPrice: 24058,
     openValue: 74589658,
     pnl: {
-      type: 'EQUAL',
+      type: 'EMPTY',
       // symbol?: string; // + or -
       value: 0,
     },
@@ -40,7 +40,7 @@ export const dummyClosedCFDBriefs: IClosedCFDBrief[] = [
     openPrice: 24058,
     openValue: 74589658,
     pnl: {
-      type: 'EQUAL',
+      type: 'EMPTY',
       // symbol?: string; // + or -
       value: 0,
     },
@@ -66,7 +66,7 @@ export const dummyClosedCFDBriefs: IClosedCFDBrief[] = [
     openPrice: 24058,
     openValue: 74589658,
     pnl: {
-      type: 'EQUAL',
+      type: 'EMPTY',
       // symbol?: string; // + or -
       value: 0,
     },

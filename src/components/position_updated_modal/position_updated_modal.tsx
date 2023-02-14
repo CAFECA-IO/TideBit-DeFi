@@ -32,17 +32,21 @@ const timestampToString = (timestamp: number) => {
   return [dateString, timeString];
 };
 
-const PositionOpenModal = ({
+// TODO: replace all hardcode options with variables
+const PositionUpdatedModal = ({
   modalVisible,
   modalClickHandler,
   openCfdDetails,
   ...otherProps
 }: IPositionOpenModal) => {
-  // TODO: update order function
+  // TODO: create order function
   const submitClickHandler = () => {
     modalClickHandler();
     return;
   };
+
+  const displayedPnLSymbol =
+    openCfdDetails.pnl.type === 'PROFIT' ? '+' : openCfdDetails.pnl.type === 'LOSS' ? '-' : '';
 
   const displayedTypeOfPosition =
     openCfdDetails?.typeOfPosition === 'BUY' ? 'Up (Buy)' : 'Down (Sell)';
@@ -63,7 +67,7 @@ const PositionOpenModal = ({
     <div>
       <div className="mt-2 mb-2 flex items-center justify-center space-x-2 text-center">
         <Image src={`/elements/group_2371.svg`} width={30} height={30} alt="ticker icon" />
-        <div className="text-2xl">ETH</div>
+        <div className="text-2xl">{openCfdDetails.ticker}</div>
       </div>
 
       <div className="relative flex-auto pt-1">
@@ -82,7 +86,8 @@ const PositionOpenModal = ({
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">Amount</div>
               <div className="">
-                {openCfdDetails?.amount?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0}
+                {openCfdDetails?.amount?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0}{' '}
+                {openCfdDetails.ticker}
               </div>
             </div>
 
@@ -92,14 +97,18 @@ const PositionOpenModal = ({
             </div>
 
             <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">Limit/ Stop</div>
-              <div className="">$20/ $10.5</div>
+              <div className="text-lightGray">Avg. Close Price</div>
+              <div className="">
+                Market Price ( ${' '}
+                {openCfdDetails?.openPrice?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0} )
+              </div>
             </div>
 
             <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">Avg. Fill Price</div>
-              <div className="">
-                $ {openCfdDetails?.openPrice?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0}
+              <div className="text-lightGray">PNL</div>
+              <div className={`${displayedPnLColor}`}>
+                $ {displayedPnLSymbol}{' '}
+                {openCfdDetails.pnl.value.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}
               </div>
             </div>
 
@@ -111,14 +120,14 @@ const PositionOpenModal = ({
               </div>
             </div>
 
-            <div className={`${layoutInsideBorder}`}>
+            {/* <div className={`${tableLayout}`}>
               <div className="text-lightGray">Liquidation Price</div>
               <div className="">$ 9.23</div>
-            </div>
+            </div> */}
           </div>
         </div>
 
-        <div className="mx-6 my-2 text-xxs text-lightGray">
+        <div className="mx-6 my-3 text-xxs text-lightGray">
           Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
           invidunt ut labore et dolore magna
         </div>
@@ -147,14 +156,13 @@ const PositionOpenModal = ({
           {' '}
           {/*content & panel*/}
           <div
-            id="PositionOpenModal"
             // ref={modalRef}
-            className="relative flex h-500px w-296px flex-col rounded-3xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none"
+            className="relative flex h-475px w-296px flex-col rounded-3xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none"
           >
             {/*header*/}
             <div className="flex items-start justify-between rounded-t pt-9">
-              <h3 className="-mt-0 w-full text-center text-xl font-normal text-lightWhite">
-                Open Position
+              <h3 className="mt-0 w-full text-center text-xl font-normal text-lightWhite">
+                Update Position
               </h3>
               <button className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
                 <span className="absolute top-5 right-5 block outline-none focus:outline-none">
@@ -176,4 +184,4 @@ const PositionOpenModal = ({
   return <div>{isDisplayedModal}</div>;
 };
 
-export default PositionOpenModal;
+export default PositionUpdatedModal;

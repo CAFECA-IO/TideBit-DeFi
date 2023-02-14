@@ -297,13 +297,13 @@ export interface IPriceStatistics {
 }
 
 export interface IFluctuating {
-  type: 'UP' | 'DOWN' | 'EQUAL';
+  type: 'PROFIT' | 'LOSS' | 'EMPTY';
   value: number;
   percentage: number;
 }
 
 export interface IPnL {
-  type: 'UP' | 'DOWN' | 'EQUAL';
+  type: 'PROFIT' | 'LOSS' | 'EMPTY';
   value: number;
 }
 

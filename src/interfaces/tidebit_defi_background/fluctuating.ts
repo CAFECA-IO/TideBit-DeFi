@@ -1,5 +1,5 @@
 export interface IFluctuating {
-  type: 'UP' | 'DOWN' | 'EQUAL';
+  type: 'PROFIT' | 'LOSS' | 'EMPTY';
   value: number;
   percentage: number;
 }

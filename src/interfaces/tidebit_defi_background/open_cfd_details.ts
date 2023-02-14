@@ -25,9 +25,9 @@ export const dummyOpenCFDDetails: IOpenCFDDetails = {
   scheduledClosingTimestamp: 1675386051, // openTimestamp + 86400
   openValue: 74589658,
   pnl: {
-    type: 'UP',
+    type: 'PROFIT',
     symbol: '+',
-    value: 90752,
+    value: 53723,
   },
   liquidationPrice: 19537,
   takeProfit: 74521,

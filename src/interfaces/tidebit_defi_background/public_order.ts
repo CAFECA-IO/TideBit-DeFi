@@ -6,6 +6,7 @@ export interface IPublicOrder {
   id: string;
   orderType: IOrderType;
   orderStatus: IOrderStatusUnion;
+  createdTime?: number;
 }
 
 export interface IPublicCFDOrder extends IPublicOrder {
@@ -66,6 +67,7 @@ export const dummyPublicCFDOrder: IPublicCFDOrder = {
   fee: 0.0001,
   targetUnit: 'ETH',
   chargeUnit: 'USDT',
+  createdTime: 1676369333495,
 };
 
 export const dummyPublicDepositOrder: IPublicDepositOrder = {
@@ -76,6 +78,7 @@ export const dummyPublicDepositOrder: IPublicDepositOrder = {
   amount: 7.91,
   from: '0x',
   to: '0x',
+  createdTime: 1676369333495,
 };
 
 export const dummyPublicWithdrawOrder: IPublicWithdrawOrder = {
@@ -86,4 +89,5 @@ export const dummyPublicWithdrawOrder: IPublicWithdrawOrder = {
   amount: 1,
   from: '0x',
   to: '0x',
+  createdTime: 1676369333495,
 };

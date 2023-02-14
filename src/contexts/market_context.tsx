@@ -12,8 +12,16 @@ import {
   IPriceStatistics,
   ITickerDetails,
 } from '../interfaces/depre_tidebit_defi_background';
-import {ITickerLiveStatistics} from '../interfaces/tidebit_defi_background/ticker_live_statistics';
-import {ITickerStatic} from '../interfaces/tidebit_defi_background/ticker_static';
+import {
+  dummyTickerLiveStatistics,
+  getDummyTickerLiveStatistics,
+  ITickerLiveStatistics,
+} from '../interfaces/tidebit_defi_background/ticker_live_statistics';
+import {
+  dummyTickerStatic,
+  getDummyTickerStatic,
+  ITickerStatic,
+} from '../interfaces/tidebit_defi_background/ticker_static';
 import {UserContext} from './user_context';
 import {ICryptocurrency} from '../interfaces/tidebit_defi_background/cryptocurrency';
 import {dummyResultSuccess, IResult} from '../interfaces/tidebit_defi_background/result';
@@ -277,14 +285,14 @@ export interface IMarketContext {
   candlestickId: string;
   candlestickChartIdHandler: (id: string) => void;
   availableTransferOptions: ITransferOptions[];
-  liveStatstics: IPriceStatistics | null;
-  bullAndBearIndex: number;
+  // liveStatstics: IPriceStatistics | null;
+  // bullAndBearIndex: number;
   // cryptoBriefNews: IBriefNewsItem[];
   // cryptoSummary: ICryptoSummary | null;
   tickerStatic: ITickerStatic | null;
   tickerLiveStatistics: ITickerLiveStatistics | null;
-  getCryptoSummary: (tickerId: string) => ICryptoSummary | null;
-  getCryptoNews: (tickerId: string) => IBriefNewsItem[] | null;
+  // getCryptoSummary: (tickerId: string) => ICryptoSummary | null;
+  // getCryptoNews: (tickerId: string) => IBriefNewsItem[] | null;
   listAvailableTickers: () => ITickerData[];
   listDepositCryptocurrencies: () => ICryptocurrency[];
   listWithdrawCryptocurrencies: () => ICryptocurrency[];
@@ -301,14 +309,14 @@ export const MarketContext = createContext<IMarketContext>({
   candlestickId: '',
   candlestickChartIdHandler: () => null,
   availableTransferOptions: [],
-  liveStatstics: null,
-  bullAndBearIndex: 0,
+  // liveStatstics: null,
+  // bullAndBearIndex: 0,
   // cryptoBriefNews: [],
   // cryptoSummary: null,
   tickerStatic: null,
   tickerLiveStatistics: null,
-  getCryptoSummary: () => null,
-  getCryptoNews: () => null,
+  // getCryptoSummary: () => null,
+  // getCryptoNews: () => null,
   listAvailableTickers: () => [],
   listDepositCryptocurrencies: () => [],
   listWithdrawCryptocurrencies: () => [],
@@ -330,144 +338,74 @@ const availableTransferOptions = [
   {label: 'EOS', content: 'EOS'},
 ];
 
-const getCryptoSummary = (tickerId = 'ETH') => {
-  return {
-    icon: '',
-    label: 'Ethereum',
-    introduction: `Ethereum (ETH) was launched in 2015. Ethereum is a decentralized blockchain that supports smart contracts-essentially computer programs-that can automatically execute when certain conditions are met. The native cryptocurrency-essentially computer programs-of the platform is called ether or ethereum. Ethereum is divisible to 18 decimal places. There is currently no hard cap on the total supply
-  of ETH.`,
-    whitePaperLink: '#',
-    websiteLink: '#',
-    price: '39051 USDT',
-    rank: 1,
-    publishTime: '2008-11-01',
-    publishAmount: '21,000,000',
-    tradingValue: '576,461,120',
-    tradingVolume: '19,014,962',
-    totalValue: '820,071,000,000 USDT',
-  };
-};
+// const getCryptoSummary = (tickerId = 'ETH') => {
+//   return {
+//     icon: '',
+//     label: 'Ethereum',
+//     introduction: `Ethereum (ETH) was launched in 2015. Ethereum is a decentralized blockchain that supports smart contracts-essentially computer programs-that can automatically execute when certain conditions are met. The native cryptocurrency-essentially computer programs-of the platform is called ether or ethereum. Ethereum is divisible to 18 decimal places. There is currently no hard cap on the total supply
+//   of ETH.`,
+//     whitePaperLink: '#',
+//     websiteLink: '#',
+//     price: '39051 USDT',
+//     rank: 1,
+//     publishTime: '2008-11-01',
+//     publishAmount: '21,000,000',
+//     tradingValue: '576,461,120',
+//     tradingVolume: '19,014,962',
+//     totalValue: '820,071,000,000 USDT',
+//   };
+// };
+// const getCryptoNews = (tickerId = 'ETH') => [
+//   {
+//     title: 'Add news title here',
+//     content:
+//       'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea',
+//     // img: 'https://www.tidebit.com/wp-content/uploads/2020/09/20200915_1.jpg',
+//     img: '/elements/rectangle_715@2x.png',
+//   },
+//   {
+//     title: 'Add news title here',
+//     content:
+//       'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea',
+//     img: '/elements/rectangle_716@2x.png',
+//   },
+//   {
+//     title: 'Add news title here',
+//     content:
+//       'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea',
+//     img: '/elements/rectangle_717@2x.png',
+//   },
+// ];
 
-const getCryptoNews = (tickerId = 'ETH') => [
-  {
-    title: 'Add news title here',
-    content:
-      'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea',
-    // img: 'https://www.tidebit.com/wp-content/uploads/2020/09/20200915_1.jpg',
-    img: '/elements/rectangle_715@2x.png',
-  },
-  {
-    title: 'Add news title here',
-    content:
-      'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea',
-    img: '/elements/rectangle_716@2x.png',
-  },
-  {
-    title: 'Add news title here',
-    content:
-      'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea',
-    img: '/elements/rectangle_717@2x.png',
-  },
-];
+// const liveStatstics: IPriceStatistics = {
+//   fiveMin: {low: 1200, high: 1320, now: '80'},
+//   sixtyMin: {low: 1100, high: 1840, now: '27'},
+//   oneDay: {low: 1060, high: 2040, now: '39'},
+// };
 
-const tickerStatic: ITickerStatic = {
-  id: 'ETH',
-  label: 'ETH',
-  leverage: 5,
-  guaranteedStopFee: 0.2,
-  cryptoBriefNews: [
-    {
-      id: 'NEWS20230210001',
-      timestamp: 1675299651,
-      title: 'Add news title here',
-      content:
-        'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea',
-      // img: 'https://www.tidebit.com/wp-content/uploads/2020/09/20200915_1.jpg',
-      img: '/elements/rectangle_715@2x.png',
-    },
-    {
-      id: 'NEWS20230210002',
-      timestamp: 1675299651,
-      title: 'Add news title here',
-      content:
-        'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea',
-      img: '/elements/rectangle_716@2x.png',
-    },
-    {
-      id: 'NEWS20230210003',
-      timestamp: 1675299651,
-      title: 'Add news title here',
-      content:
-        'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea',
-      img: '/elements/rectangle_717@2x.png',
-    },
-  ],
-  cryptoSummary: {
-    icon: '/elements/group_2371.svg', // TODO: Use icon of Context in CryptoSummary component instead of hardcode
-    id: 'ETH',
-    name: 'Ethereum',
-    introduction: `Ethereum (ETH) was launched in 2015. Ethereum is a decentralized blockchain that supports smart contracts-essentially computer programs-that can automatically execute when certain conditions are met. The native cryptocurrency-essentially computer programs-of the platform is called ether or ethereum. Ethereum is divisible to 18 decimal places. There is currently no hard cap on the total supply
-of ETH.`,
-    whitePaperLink: '#',
-    websiteLink: '#',
-    price: '39051 USDT',
-    rank: 1,
-    publishTime: '2008-11-01',
-    publishAmount: '21,000,000',
-    tradingValue: '576,461,120',
-    tradingVolume: '19,014,962',
-    totalValue: '820,071,000,000 USDT',
-  },
-};
+// const bullAndBearIndex = 62;
 
-const tickerLiveStatistics: ITickerLiveStatistics = {
-  id: 'ETH',
-  longRecommendedSl: 5346.85,
-  longRecommendedTp: 7233.97,
-  spread: 0.1,
-  fee: 0,
-  volume: 92154731,
-  price: 1580,
-  fluctuating: {type: 'UP', value: 23.3, percentage: 2.65},
-  buyEstimatedFilledPrice: 1590,
-  sellEstimatedFilledPrice: 1570,
-  bullAndBearIndex: 39,
-  priceStatistics: {
-    fiveMin: {low: 1200, high: 1320, now: '82'},
-    sixtyMin: {low: 1100, high: 1840, now: '27'},
-    oneDay: {low: 1060, high: 2040, now: '39'},
-  },
-};
-
-const liveStatstics: IPriceStatistics = {
-  fiveMin: {low: 1200, high: 1320, now: '80'},
-  sixtyMin: {low: 1100, high: 1840, now: '27'},
-  oneDay: {low: 1060, high: 2040, now: '39'},
-};
-
-const bullAndBearIndex = 62;
-
-const cryptoBriefNews: IBriefNewsItem[] = [
-  {
-    title: 'Add news title here',
-    content:
-      'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea',
-    // img: 'https://www.tidebit.com/wp-content/uploads/2020/09/20200915_1.jpg',
-    img: '/elements/rectangle_715@2x.png',
-  },
-  {
-    title: 'Add news title here',
-    content:
-      'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea',
-    img: '/elements/rectangle_716@2x.png',
-  },
-  {
-    title: 'Add news title here',
-    content:
-      'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea',
-    img: '/elements/rectangle_717@2x.png',
-  },
-];
+// const cryptoBriefNews: IBriefNewsItem[] = [
+//   {
+//     title: 'Add news title here',
+//     content:
+//       'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea',
+//     // img: 'https://www.tidebit.com/wp-content/uploads/2020/09/20200915_1.jpg',
+//     img: '/elements/rectangle_715@2x.png',
+//   },
+//   {
+//     title: 'Add news title here',
+//     content:
+//       'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea',
+//     img: '/elements/rectangle_716@2x.png',
+//   },
+//   {
+//     title: 'Add news title here',
+//     content:
+//       'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea',
+//     img: '/elements/rectangle_717@2x.png',
+//   },
+// ];
 
 // // TODO: icon svg replaced by img src string
 // const cryptoSummary: ICryptoSummary = {
@@ -503,6 +441,9 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     return updateTickers;
   };
   const [selectedTicker, setSelectedTicker] = useState<ITickerData>(dummyTicker);
+  const [tickerStatic, setTickerStatic] = useState<ITickerStatic>(dummyTickerStatic);
+  const [tickerLiveStatistics, setTickerLiveStatistics] =
+    useState<ITickerLiveStatistics>(dummyTickerLiveStatistics);
   const [availableTickers, setAvailableTickers] = useState<ITickerData[]>(updateAvailableTickers());
   const listAvailableTickers = () => {
     const updateTickers = updateAvailableTickers();
@@ -535,7 +476,6 @@ export const MarketProvider = ({children}: IMarketProvider) => {
 
   // console.log('Whole array [addPropertyToArray]:', addPropertyToArray);
   // setAvailableTickers(addPropertyToArray); // infinite loop
-
   const listDepositCryptocurrencies = () => [];
   const listWithdrawCryptocurrencies = () => [];
 
@@ -544,14 +484,20 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     const ticker: ITickerData = getDummyTicker(currency);
     console.log(`selectTickerHandler ticker`, ticker);
     setSelectedTicker(ticker);
+    const tickerStatic: ITickerStatic = getDummyTickerStatic(currency);
+    setTickerStatic(tickerStatic);
+    const tickerLiveStatistics: ITickerLiveStatistics = getDummyTickerLiveStatistics(currency);
+    setTickerLiveStatistics(tickerLiveStatistics);
     // TODO:
     // 1.candlestickChartIdHandler
     // 2.showPositionOnChartHandler
-    // 3.getCryptoSummary
-    // 4.cryptoBriefNews
+    if (userCtx.isConnected) {
+      userCtx.listOpenCFDs(currency);
+      userCtx.listClosedCFDs(currency);
+    }
+
     // if is connected
-    // 5.userCtx.listOpenCFDs
-    // 6.userCtx.listClosedCFDs
+    // 5.c
     return dummyResultSuccess;
   };
 
@@ -567,14 +513,10 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     candlestickChartIdHandler,
     // transferOptions,
     availableTransferOptions: availableTransferOptions,
-    liveStatstics,
-    bullAndBearIndex,
-    // cryptoBriefNews,
-    // cryptoSummary,
+    // liveStatstics,
+    // bullAndBearIndex,
     tickerStatic,
     tickerLiveStatistics,
-    getCryptoSummary,
-    getCryptoNews,
     listAvailableTickers,
     listDepositCryptocurrencies,
     listWithdrawCryptocurrencies,

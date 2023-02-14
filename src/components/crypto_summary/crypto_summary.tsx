@@ -4,6 +4,7 @@ import {MarketContext} from '../../contexts/market_context';
 import {ICryptoSummary} from '../../interfaces/depre_tidebit_defi_background';
 
 const CryptoSummary = ({
+  icon,
   label,
   introduction,
   whitePaperLink,
@@ -78,7 +79,10 @@ const CryptoSummary = ({
               <div className="mb-0 border-b border-white/30 pb-10 lg:mb-0 lg:w-1/2 lg:border-r-2 lg:border-b-0 lg:py-0 lg:pr-12">
                 {/* Icon and name */}
                 <div className="flex items-center space-x-3 text-center">
-                  <div className="">{cryptoIcon}</div>
+                  {/* <div className="">{cryptoIcon}</div> */}
+                  <span className="relative h-40px w-40px">
+                    <img src={icon} alt={label} />
+                  </span>
                   <h1 className="text-lg font-medium text-white">{label}</h1>
                 </div>
 

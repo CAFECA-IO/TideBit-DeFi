@@ -1,4 +1,5 @@
 import React, {useContext, useState} from 'react';
+// import useState from 'react-usestateref';
 import RippleButton from '../ripple_button/ripple_button';
 import {MarketContext} from '../../contexts/market_context';
 import {MdKeyboardArrowDown} from 'react-icons/md';
@@ -73,6 +74,8 @@ const DepositModal = ({
     // setSubmitDisabled(true);
 
     const value = event.target.value;
+    // const value = amountInputRef?.current?.toString ?? '0';
+    // console.log('amountInputRef: ', amountInputRef.current);
 
     if (regex.test(value)) {
       // // TODO: 讓 input 不能變成 '01' 的條件式
@@ -105,8 +108,6 @@ const DepositModal = ({
       setSubmitDisabled(false);
       return;
     }
-
-    // setSubmitDisabled(true);
   };
 
   const showMenu = showCryptoMenu ? 'block' : 'invisible';
@@ -125,8 +126,6 @@ const DepositModal = ({
   const rotationStyle = showCryptoMenu ? ' -rotate-90' : 'rotate-0';
 
   const fadeStyle = showCryptoMenu ? 'opacity-100' : 'opacity-0';
-
-  // const disabledStyle = !submitDisabled ? ' hover:cursor-pointer' : ' cursor-not-allowed';
 
   const avaliableCryptoMenu = availableTransferOptions.map(item => {
     return (
@@ -281,7 +280,15 @@ const DepositModal = ({
           </div>
 
           <div className={``}>
-            {submitDisabled ? (
+            <RippleButton
+              disabled={amountInput === 0 || amountInput === undefined}
+              onClick={submitClickHandler}
+              buttonType="button"
+              className={`absolute -bottom-14 mt-0 rounded border-0 bg-tidebitTheme py-2 px-10 text-base text-white transition-colors duration-300 hover:bg-cyan-600 focus:outline-none disabled:bg-lightGray`}
+            >
+              {formButton}
+            </RippleButton>
+            {/* {amountInput === 0 || amountInput === undefined ? (
               <RippleButton
                 disabled={true}
                 onClick={submitClickHandler}
@@ -298,7 +305,7 @@ const DepositModal = ({
               >
                 {formButton}
               </RippleButton>
-            )}
+            )} */}
           </div>
         </div>
       </div>

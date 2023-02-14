@@ -8,7 +8,7 @@ export interface ICFDOrderCreatingProps {
   stopLoss?: number;
   guaranteedStop: boolean;
   guaranteedStopFee: number;
-  estimatedFilledPrice: number; // estimated filled price / open price 預估成交價格
+  price: number; // 點差包含市場滑價
   // fee: number;
   // value: number; // margin x leverage x price (USDT) = value (USDT)
 }

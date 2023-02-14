@@ -59,7 +59,8 @@ const Trial = () => {
     // });
     // globalCtx.visibleCanceledModalHandler();
 
-    globalCtx.visibleDepositModalHandler();
+    // globalCtx.visibleDepositModalHandler();
+    globalCtx.visibleWithdrawalModalHandler();
   }, []);
 
   const modalClickHandler = () => {

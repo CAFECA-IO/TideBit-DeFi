@@ -21,7 +21,7 @@ export default function Notification({
   // const sidebarOpenHandler = () => {
   //   setComponentVisible(!componentVisible);
   // };
-  // const notificationCtx = useContext(NotificationContext);
+  const notificationCtx = useContext(NotificationContext);
 
   const MAX_NOTIFICATION_WIDTH = 479;
 
@@ -62,34 +62,34 @@ export default function Notification({
       id: 'n8',
     },
   ];
-  // const NotificationList =
-  //   notificationCtx.unreadNotifications.length > 0 ? (
-  //     notificationCtx.unreadNotifications.map(v => {
-  //       return (
-  //         <div key={v.id}>
-  //           <NotificationItem
-  //             id={v.id}
-  //             title={v.title}
-  //             timestamp={v.timestamp}
-  //             duration={v.duration}
-  //             notificationLevel={v.notificationLevel}
-  //             isRead={v.isRead}
-  //             content={v.content}
-  //           />
-  //         </div>
-  //       );
-  //     })
-  //   ) : (
-  //     <></>
-  //   );
-
-  const NotificationList = DUMMY_DATA.map(v => {
-    return (
-      <div key={v.id}>
-        <NotificationItem />
-      </div>
+  const NotificationList =
+    notificationCtx.unreadNotifications.length > 0 ? (
+      notificationCtx.unreadNotifications.map(v => {
+        return (
+          <div key={v.id}>
+            <NotificationItem
+              id={v.id}
+              title={v.title}
+              timestamp={v.timestamp}
+              duration={v.duration}
+              notificationLevel={v.notificationLevel}
+              isRead={v.isRead}
+              content={v.content}
+            />
+          </div>
+        );
+      })
+    ) : (
+      <></>
     );
-  });
+
+  // const NotificationList = DUMMY_DATA.map(v => {
+  //   return (
+  //     <div key={v.id}>
+  //       <NotificationItem />
+  //     </div>
+  //   );
+  // });
 
   // Desktop notification drawer
   const isDisplayedNotificationSidebarSection = (
@@ -116,7 +116,7 @@ export default function Notification({
                 <h1 className="hidden pl-5 text-2xl font-bold sm:block">Notification</h1>
                 <div
                   className="ml-auto pr-30px text-sm text-tidebitTheme underline hover:cursor-pointer"
-                  // onClick={notificationCtx.readAll}
+                  onClick={notificationCtx.readAll}
                 >
                   Clear All
                 </div>

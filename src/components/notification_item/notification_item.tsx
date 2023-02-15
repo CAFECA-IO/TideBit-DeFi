@@ -6,25 +6,27 @@ import {INotificationItem} from '../../interfaces/tidebit_defi_background/notifi
 }
 
 export default function NotificationItem(
-  // notificationItem: INotificationItem,
-  {title = '', date = '', time = '', content = '', itemHeight = 'h-158px'}
+  notificationItem: INotificationItem,
+  // {title = '', date = '', time = '', content = '',
+  itemHeight = 'h-158px'
+  // }
 ) {
-  // const {title, content, timestamp} = notificationItem;
-  // const date = `${new Date(timestamp).getFullYear()}-${
-  //   new Date(timestamp).getMonth() + 1
-  // }-${new Date(timestamp).getDay()}`;
-  // const time = `${new Date(timestamp).getHours()}:${
-  //   new Date(timestamp).getMinutes() + 1
-  // }:${new Date(timestamp).getSeconds()}`;
-  title = title ? title : 'Happy Birthday to TideBit';
-  date = date ? date : '2022-10-05';
-  time = time ? time : '14:28:38';
-  content = content
-    ? content
-    : `Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
-  invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et
-  accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata
-  sanctus est Lorem`;
+  const {title, content, timestamp} = notificationItem;
+  const date = `${new Date(timestamp).getFullYear()}-${
+    new Date(timestamp).getMonth() + 1
+  }-${new Date(timestamp).getDay()}`;
+  const time = `${new Date(timestamp).getHours()}:${
+    new Date(timestamp).getMinutes() + 1
+  }:${new Date(timestamp).getSeconds()}`;
+  // title = title ? title : 'Happy Birthday to TideBit';
+  // date = date ? date : '2022-10-05';
+  // time = time ? time : '14:28:38';
+  // content = content
+  //   ? content
+  //   : `Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
+  // invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et
+  // accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata
+  // sanctus est Lorem`;
 
   return (
     <div className="relative">

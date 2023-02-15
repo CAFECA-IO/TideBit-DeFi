@@ -153,7 +153,7 @@ const NavBar = () => {
                   <button onClick={sidebarOpenHandler} className="relative hover:cursor-pointer">
                     <span className="absolute bottom-4 left-3 z-20 inline-block h-3 w-3 rounded-xl bg-tidebitTheme">
                       <p className="text-center text-3xs">
-                        {/* {notificationCtx.unreadNotifications.length} */}0
+                        {notificationCtx.unreadNotifications.length}
                       </p>
                     </span>
 
@@ -187,7 +187,7 @@ const NavBar = () => {
                 <button onClick={sidebarOpenHandler} className="relative hover:cursor-pointer">
                   <span className="absolute top-0 right-0 z-20 inline-block h-3 w-3 rounded-xl bg-tidebitTheme">
                     <p className="text-center text-3xs hover:text-white">
-                      {/* {notificationCtx.unreadNotifications.length} */}0
+                      {notificationCtx.unreadNotifications.length}
                     </p>
                   </span>
 

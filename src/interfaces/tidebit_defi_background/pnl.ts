@@ -1,5 +1,6 @@
+import {IProfitState} from '../../constants/profit_state';
+
 export interface IPnL {
-  type: 'UP' | 'DOWN' | 'EQUAL';
-  symbol?: string; // + or -
+  type: IProfitState;
   value: number;
 }

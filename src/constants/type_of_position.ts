@@ -1,7 +1,8 @@
 export type ITypeOfPosition = 'BUY' | 'SELL';
 
 export type ITypeOfPositionConstant = {
-  [key: string]: ITypeOfPosition;
+  BUY: ITypeOfPosition;
+  SELL: ITypeOfPosition;
 };
 
 export const TypeOfPosition: ITypeOfPositionConstant = {

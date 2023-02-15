@@ -12,18 +12,13 @@ import {ICryptoSummary} from '../../interfaces/depre_tidebit_defi_background';
 
 const MarketSection = () => {
   // const {layoutAssertion} = useContext(GlobalContext);
+  const marketCtx = useContext(MarketContext);
   const {layoutAssertion} = useGlobal();
-
-  const {liveStatstics, tickerStatic, tickerLiveStatistics, getCryptoSummary} =
-    useContext(MarketContext);
-
-  const {id, bullAndBearIndex, priceStatistics} = tickerLiveStatistics ?? {};
-  const {fiveMin, sixtyMin, oneDay} = priceStatistics ?? {};
 
   // const [cryptoSummary, setCryptoSummary] = useState<ICryptoSummary | undefined>(undefined);
   const {
     icon,
-    label,
+    name: label,
     introduction,
     whitePaperLink,
     websiteLink,
@@ -34,7 +29,8 @@ const MarketSection = () => {
     tradingVolume,
     totalValue,
     tradingValue,
-  } = getCryptoSummary('ETH') ?? {};
+  } = marketCtx.tickerStatic?.cryptoSummary ?? {};
+
   // console.log('getCryptoSummary', sth);
   // const {} = cryptoSummaryFunc ?? {};
 
@@ -121,16 +117,24 @@ const MarketSection = () => {
 
         <div className="mt-5 lg:mt-8 lg:pl-5">
           <TradeStatistics
-            fiveMin={{low: fiveMin?.low ?? 0, now: fiveMin?.now ?? '', high: fiveMin?.high ?? 0}}
-            sixtyMin={{
-              low: sixtyMin?.low ?? 0,
-              now: sixtyMin?.now ?? '',
-              high: sixtyMin?.high ?? 0,
+            fiveMin={{
+              low: marketCtx.tickerLiveStatistics?.priceStatistics?.fiveMin?.low ?? 0,
+              now: marketCtx.tickerLiveStatistics?.priceStatistics?.fiveMin?.now ?? '',
+              high: marketCtx.tickerLiveStatistics?.priceStatistics?.fiveMin?.high ?? 0,
             }}
-            oneDay={{low: oneDay?.low ?? 0, now: oneDay?.now ?? '', high: oneDay?.high ?? 0}}
-            bullAndBearIndex={bullAndBearIndex ?? 0}
-            long={bullAndBearIndex ?? 0}
-            short={100 - (bullAndBearIndex ?? 0)}
+            sixtyMin={{
+              low: marketCtx.tickerLiveStatistics?.priceStatistics?.sixtyMin?.low ?? 0,
+              now: marketCtx.tickerLiveStatistics?.priceStatistics?.sixtyMin?.now ?? '',
+              high: marketCtx.tickerLiveStatistics?.priceStatistics?.sixtyMin?.high ?? 0,
+            }}
+            oneDay={{
+              low: marketCtx.tickerLiveStatistics?.priceStatistics?.oneDay?.low ?? 0,
+              now: marketCtx.tickerLiveStatistics?.priceStatistics?.oneDay?.now ?? '',
+              high: marketCtx.tickerLiveStatistics?.priceStatistics?.oneDay?.high ?? 0,
+            }}
+            bullAndBearIndex={marketCtx.tickerLiveStatistics?.bullAndBearIndex ?? 0}
+            long={marketCtx.tickerLiveStatistics?.bullAndBearIndex ?? 0}
+            short={100 - (marketCtx.tickerLiveStatistics?.bullAndBearIndex ?? 0)}
           />
         </div>
 

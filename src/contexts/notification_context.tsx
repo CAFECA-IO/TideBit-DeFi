@@ -14,22 +14,27 @@ export interface INotificationProvider {
 export interface INotificationContext {
   notifications: INotificationItem[];
   unreadNotifications: INotificationItem[];
-  isRead: (id: string) => void; //Promise<void>;
-  readAll: () => void; //Promise<void>;
+  isRead: (id: string) => Promise<void>;
+  readAll: () => Promise<void>;
+  init: () => Promise<void>;
 }
 
 export const NotificationContext = createContext<INotificationContext>({
   notifications: [],
   unreadNotifications: [],
-  isRead: (id: string) => null, //Promise.resolve(),
-  readAll: () => null, //Promise.resolve(),
+  isRead: (id: string) => Promise.resolve(),
+  readAll: () => Promise.resolve(),
+  init: () => Promise.resolve(),
 });
 
 export const NotificationProvider = ({children}: INotificationProvider) => {
   const userCtx = useContext(UserContext);
   const marketCtx = useContext(MarketContext);
-  const [notifications, setNotifications] = useState<INotificationItem[]>([]);
-  const [unreadNotifications, setUnreadNotifications] = useState<INotificationItem[]>([]);
+  //   const [notifications, setNotifications] = useState<INotificationItem[]>([]);
+  //   const [unreadNotifications, setUnreadNotifications] = useState<INotificationItem[]>([]);
+  const [notifications, setNotifications] = useState<INotificationItem[]>(dummyNotifications);
+  const [unreadNotifications, setUnreadNotifications] =
+    useState<INotificationItem[]>(dummyUnReadNotifications);
 
   const isRead = async (id: string) => {
     const updateNotificaionts: INotificationItem[] = [...notifications];
@@ -48,7 +53,7 @@ export const NotificationProvider = ({children}: INotificationProvider) => {
     return;
   };
 
-  const readAll = () => {
+  const readAll = async () => {
     //async () => {
     const updateNotificaionts: INotificationItem[] = [...notifications].map(n => ({
       ...n,
@@ -57,12 +62,18 @@ export const NotificationProvider = ({children}: INotificationProvider) => {
     setNotifications(updateNotificaionts);
     setUnreadNotifications(updateNotificaionts.filter(n => !n.isRead));
     if (userCtx.isConnected) {
-      userCtx.readNotifications(updateNotificaionts);
+      await userCtx.readNotifications(updateNotificaionts);
     }
     return;
   };
 
-  const defaultValue = {notifications, unreadNotifications, isRead, readAll};
+  const init = async () => {
+    setNotifications(dummyNotifications);
+    setUnreadNotifications(dummyUnReadNotifications);
+    return;
+  };
+
+  const defaultValue = {notifications, unreadNotifications, isRead, readAll, init};
 
   return (
     <NotificationContext.Provider value={defaultValue}>{children}</NotificationContext.Provider>

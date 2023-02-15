@@ -150,7 +150,7 @@ export interface IUserContext {
   subscribeNewsletters: (props: boolean) => Promise<boolean>;
   connectTideBit: (email: string, password: string) => Promise<boolean>;
   shareTradeRecord: (tradeId: string) => Promise<boolean>;
-  readNotifications: (notifications: INotificationItem[]) => void; //Promise<void>;
+  readNotifications: (notifications: INotificationItem[]) => Promise<void>;
 }
 
 export const UserContext = createContext<IUserContext>({
@@ -198,7 +198,7 @@ export const UserContext = createContext<IUserContext>({
   subscribeNewsletters: (props: boolean) => Promise.resolve<boolean>(true),
   connectTideBit: (email: string, password: string) => Promise.resolve<boolean>(true),
   shareTradeRecord: (tradeId: string) => Promise.resolve<boolean>(true),
-  readNotifications: (notifications: INotificationItem[]) => null, // Promise.resolve(),
+  readNotifications: (notifications: INotificationItem[]) => Promise.resolve(),
 });
 
 export const UserProvider = ({children}: IUserProvider) => {
@@ -457,7 +457,7 @@ export const UserProvider = ({children}: IUserProvider) => {
   const subscribeNewsletters = async (props: boolean) => Promise.resolve<boolean>(true);
   const connectTideBit = async (email: string, password: string) => Promise.resolve<boolean>(true);
   const shareTradeRecord = async (tradeId: string) => Promise.resolve<boolean>(true);
-  const readNotifications = async (notifications: INotificationItem[]) => null; // Promise.resolve();
+  const readNotifications = async (notifications: INotificationItem[]) => Promise.resolve();
 
   const defaultValue = {
     id,

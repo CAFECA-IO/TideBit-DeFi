@@ -1,6 +1,6 @@
 import {CFDClosedType, ICFDClosedType} from '../../constants/cfd_closed_type';
 import {OrderState} from '../../constants/order_state';
-import {Trend} from '../../constants/trend';
+import {ProfitState} from '../../constants/profit_state';
 import {TypeOfPosition} from '../../constants/type_of_position';
 import {ICFDDetails} from './cfd_details';
 export interface IClosedCFDDetails extends ICFDDetails {
@@ -30,7 +30,7 @@ export const dummyCloseCFDDetails: IClosedCFDDetails = {
   scheduledClosingTimestamp: 1675386051, // openTimestamp + 86400
   openValue: 74589658,
   pnl: {
-    type: Trend.UP,
+    type: ProfitState.PROFIT,
     symbol: '+',
     value: 90752,
   },

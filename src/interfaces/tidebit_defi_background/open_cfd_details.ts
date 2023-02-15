@@ -1,5 +1,5 @@
 import {OrderState} from '../../constants/order_state';
-import {Trend} from '../../constants/trend';
+import {ProfitState} from '../../constants/profit_state';
 import {TypeOfPosition} from '../../constants/type_of_position';
 import {ICFDDetails} from './cfd_details';
 import {ITickerLineGraph} from './ticker_line_graph';
@@ -28,7 +28,7 @@ export const dummyOpenCFDDetails: IOpenCFDDetails = {
   scheduledClosingTimestamp: 1675386051, // openTimestamp + 86400
   openValue: 74589658,
   pnl: {
-    type: Trend.UP,
+    type: ProfitState.PROFIT,
     symbol: '+',
     value: 90752,
   },

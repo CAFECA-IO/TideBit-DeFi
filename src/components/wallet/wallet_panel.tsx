@@ -32,6 +32,7 @@ import {ImExit} from 'react-icons/im';
 import {MarketContext} from '../../contexts/market_context';
 import {UserContext} from '../../contexts/user_context';
 import {useGlobal} from '../../contexts/global_context';
+import User from '../user/user';
 
 // import Connector from '@walletconnect/core';
 
@@ -1828,16 +1829,18 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
       </div>
     ) : null;
 
-  // TODO: for .tsx: ${props?.className}
+  // TODO: Move to `Navbar` and `User`
   const isDisplayedUserAvatar = userCtx.enableServiceTerm ? (
     <>
-      <button
+      <User />
+      {/* Avatar */}
+      {/* <button
         onClick={avatarClickHandler}
         className="relative ml-3 inline-flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-tidebitTheme"
       >
         <span className="text-2xl font-bold text-lightWhite">{username}</span>
       </button>
-      {isDisplayedAvatarMenu}
+      {isDisplayedAvatarMenu} */}
     </>
   ) : (
     <TideButton

@@ -19,6 +19,7 @@ import I18n from '../i18n/i18n';
 import {IoIosArrowBack} from 'react-icons/io';
 import UserOverview from '../user_overview/user_overview';
 import {UserContext} from '../../contexts/user_context';
+import User from '../user/user';
 
 // interface INavBarProps {
 //   notifyRef: HTMLDivElement extends HTMLElement ? React.RefObject<HTMLDivElement> : null;
@@ -42,7 +43,7 @@ const NavBar = ({notificationNumber = 1}) => {
     setComponentVisible: setNotifyVisible,
   } = useOuterClick<HTMLDivElement>(false);
 
-  const clickHanlder = () => setNavOpen(!navOpen);
+  const navBarMobileClickHandler = () => setNavOpen(!navOpen);
 
   const sidebarOpenHandler = () => {
     // setSidebarOpen(!sidebarOpen);
@@ -52,6 +53,11 @@ const NavBar = ({notificationNumber = 1}) => {
 
   const getUserLoginHandler = (bool: boolean) => {
     setUserOverview(bool);
+  };
+
+  const wallectConnectBtnClickHandler = () => {
+    // TODO: pop up wallet panel
+    // return <WalletPanel />;
   };
 
   const displayedMobileNavBar = !navOpen ? (
@@ -73,13 +79,24 @@ const NavBar = ({notificationNumber = 1}) => {
     </div>
   );
 
-  const isDisplayedUserOverview = userCtx.enableServiceTerm ? (
-    <UserOverview
-      depositAvailable={userCtx.balance?.available ?? 0}
-      marginLocked={userCtx.balance?.locked ?? 0}
-      profitOrLossAmount={userCtx.balance?.PNL ?? 0}
-    />
-  ) : null;
+  const isDisplayedUser = userCtx.enableServiceTerm ? (
+    <>
+      {/* <User /> */}
+      <UserOverview
+        depositAvailable={userCtx.balance?.available ?? 0}
+        marginLocked={userCtx.balance?.locked ?? 0}
+        profitOrLossAmount={userCtx.balance?.PNL ?? 0}
+      />
+    </>
+  ) : // TODO: If not sign-in, show wallet connect button
+  null;
+  // <TideButton
+  //   onClick={wallectConnectBtnClickHandler} // show wallet panel
+  //   className={`mt-4 rounded border-0 bg-tidebitTheme py-2 px-5 text-base text-white transition-all hover:opacity-90 md:mt-0`}
+  // >
+  //   {/* Wallet Connect */}
+  //   {t('nav_bar.WalletConnect')}
+  // </TideButton>
 
   const userOverviewDividerDesktop = userCtx.enableServiceTerm ? (
     <span className="mx-2 inline-block h-10 w-px rounded bg-lightGray1/50"></span>
@@ -133,7 +150,7 @@ const NavBar = ({notificationNumber = 1}) => {
 
                     {/* User overview */}
                     {userOverviewDividerDesktop}
-                    {isDisplayedUserOverview}
+                    {isDisplayedUser}
 
                     {/* <div className="max-w-2xl mx-auto"></div> */}
                   </div>
@@ -171,7 +188,7 @@ const NavBar = ({notificationNumber = 1}) => {
               <div className="inline-flex items-end justify-center lg:hidden">
                 <div className="mr-0 mt-3 flex lg:hidden">
                   <button
-                    onClick={clickHanlder}
+                    onClick={navBarMobileClickHandler}
                     className="inline-flex items-center justify-center rounded-md p-2 hover:text-cyan-300 focus:outline-none"
                   >
                     {displayedMobileNavBar}
@@ -237,7 +254,7 @@ const NavBar = ({notificationNumber = 1}) => {
                 <WalletPanel className="ml-2" getUserLoginState={getUserLoginHandler} />
               </div>
 
-              {isDisplayedUserOverview}
+              {isDisplayedUser}
             </div>
           </div>
         </nav>

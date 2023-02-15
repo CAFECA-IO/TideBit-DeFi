@@ -1,7 +1,7 @@
-import {ITrend} from '../../constants/trend';
+import {IProfitState} from '../../constants/profit_state';
 
 export interface IPnL {
-  type: ITrend;
+  type: IProfitState;
   symbol?: string; // + or -
   value: number;
 }

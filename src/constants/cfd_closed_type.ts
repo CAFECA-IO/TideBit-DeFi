@@ -5,7 +5,11 @@ export type ICFDClosedType =
   | 'TAKE_PROFIT'
   | 'BY_USER';
 export interface ICFDClosedTypeConstant {
-  [key: string]: ICFDClosedType;
+  SCHEDULE: ICFDClosedType;
+  FORCED_LIQUIDATION: ICFDClosedType;
+  STOP_LOSS: ICFDClosedType;
+  TAKE_PROFIT: ICFDClosedType;
+  BY_USER: ICFDClosedType;
 }
 export const CFDClosedType: ICFDClosedTypeConstant = {
   SCHEDULE: 'SCHEDULE',

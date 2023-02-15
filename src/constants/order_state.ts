@@ -1,6 +1,7 @@
 export type IOrderState = 'OPENING' | 'CLOSED';
 export interface IOrderStateConstant {
-  [key: string]: IOrderState;
+  OPENING: IOrderState;
+  CLOSED: IOrderState;
 }
 export const OrderState: IOrderStateConstant = {
   OPENING: 'OPENING',

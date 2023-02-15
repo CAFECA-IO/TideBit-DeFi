@@ -1,7 +1,10 @@
 export type IOrderStatusUnion = 'PROCESSING' | 'SUCCESS' | 'CANCELDED' | 'FAILED';
 
 export type IOrderStatusUnionConstant = {
-  [key: string]: IOrderStatusUnion;
+  PROCESSING: IOrderStatusUnion;
+  SUCCESS: IOrderStatusUnion;
+  CANCELDED: IOrderStatusUnion;
+  FAILED: IOrderStatusUnion;
 };
 
 export const OrderStatusUnion: IOrderStatusUnionConstant = {

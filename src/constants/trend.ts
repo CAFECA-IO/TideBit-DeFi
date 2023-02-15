@@ -1,6 +1,8 @@
 export type ITrend = 'UP' | 'DOWN' | 'EQUAL';
 export interface ITrendConstant {
-  [key: string]: ITrend;
+  UP: ITrend;
+  DOWN: ITrend;
+  EQUAL: ITrend;
 }
 export const Trend: ITrendConstant = {
   UP: 'UP',

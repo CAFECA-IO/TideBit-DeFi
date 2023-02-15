@@ -162,7 +162,7 @@ type TranslateFunction = (s: string) => string;
 
 interface IWalletPanelProps {
   className?: string;
-  getUserLoginState: (props: boolean) => void;
+  getUserLoginState?: (props: boolean) => void;
   // getUserLoginState: (props: boolean) => Promise<void>;
   // getUserInfo: (address: string) => Promise<void>;
   // getUserSignatureWithSaltAndMessage: (
@@ -170,9 +170,16 @@ interface IWalletPanelProps {
   //   salt: string,
   //   message: string
   // ) => Promise<void>;
+  panelVisible: boolean;
+  panelClickHandler: () => void;
 }
 
-export default function WalletPanel({className, getUserLoginState}: IWalletPanelProps) {
+export default function WalletPanel({
+  className,
+  getUserLoginState,
+  panelVisible,
+  panelClickHandler,
+}: IWalletPanelProps) {
   // const {
   //   targetRef: panelRef,
   //   componentVisible: panelVisible,
@@ -202,7 +209,7 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
 
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
-  const [panelVisible, setPanelVisible] = useState(false);
+  // const [panelVisible, setPanelVisible] = useState(false);
   const [connectingModalVisible, setConnectingModalVisible] = useState(false);
   const [processModalVisible, setProcessModalVisible] = useState(false);
   const [qrcodeModalVisible, setQrcodeModalVisible] = useState(false);
@@ -282,7 +289,7 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
   // let waitingWalletConnect = false;
 
   const passUserLoginState = async (props: boolean) => {
-    getUserLoginState(props);
+    getUserLoginState && getUserLoginState(props);
   };
 
   const clearStateForMetamaskAccountChange = () => {
@@ -302,10 +309,11 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
     setSecondStepSuccess(false);
     setSecondStepError(false);
 
-    setPanelVisible(false);
+    panelClickHandler();
+    // setPanelVisible(false);
     setAvatarMenuVisible(false);
     setConnectingModalVisible(false);
-    setPanelVisible(false);
+    // setPanelVisible(false);
     setProcessModalVisible(false);
     setQrcodeModalVisible(false);
     setHelloModalVisible(false);
@@ -350,10 +358,11 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
     setSecondStepSuccess(false);
     setSecondStepError(false);
 
-    setPanelVisible(false);
+    panelClickHandler();
+    // setPanelVisible(false);
     setAvatarMenuVisible(false);
     setConnectingModalVisible(false);
-    setPanelVisible(false);
+    // setPanelVisible(false);
     setProcessModalVisible(false);
     setQrcodeModalVisible(false);
     setHelloModalVisible(false);
@@ -377,8 +386,7 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
   };
 
   const clickHandler = () => {
-    setPanelVisible(!panelVisible);
-
+    // setPanelVisible(!panelVisible);
     // TODO: wallet connect kill session part 1
     // if (connector) {
     //   killSession();
@@ -520,7 +528,8 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
 
   const qrcodeClickHandler = () => {
     // TODO: temparary solution, need to be fixed
-    setPanelVisible(false);
+    // setPanelVisible(false);
+    panelClickHandler();
 
     setQrcodeModalVisible(!qrcodeModalVisible);
     // console.log('wallet connect option clicked');
@@ -1265,7 +1274,8 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
 
           setHelloModalVisible(true);
           setErrorMessages('');
-          setPanelVisible(false);
+          // setPanelVisible(false);
+          panelClickHandler();
           setShowToast(true);
           setSignInStore(true);
           // console.log('sign in store, ', signInStore);
@@ -1445,7 +1455,8 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
         setTimeout(() => setProcessModalVisible(false), DELAYED_HIDDEN_SECONDS);
 
         setHelloModalVisible(true);
-        setPanelVisible(false);
+        // setPanelVisible(false);
+        panelClickHandler();
         setErrorMessages('');
         setShowToast(true);
         setSignInStore(true);
@@ -1495,7 +1506,8 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
   async function metamaskConnect() {
     // console.log('metamask connect func called');
     try {
-      setPanelVisible(!panelVisible);
+      // setPanelVisible(!panelVisible);
+      panelClickHandler();
       // setConnecting(true);
       setConnectingModalVisible(true);
 
@@ -1844,7 +1856,7 @@ export default function WalletPanel({className, getUserLoginState}: IWalletPanel
     </>
   ) : (
     <TideButton
-      onClick={clickHandler}
+      onClick={panelClickHandler}
       className={`mt-4 rounded border-0 bg-tidebitTheme py-2 px-5 text-base text-white transition-all hover:opacity-90 md:mt-0`}
     >
       {/* Wallet Connect */}

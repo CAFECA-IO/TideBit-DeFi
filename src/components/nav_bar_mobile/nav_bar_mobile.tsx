@@ -12,6 +12,8 @@ import UserMobile from '../user_mobile/user_mobile';
 type TranslateFunction = (s: string) => string;
 
 const NavBarMobile = ({notificationNumber = 1}) => {
+  const userCtx = useContext(UserContext);
+
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
   const [navOpen, setNavOpen] = useState(false);
@@ -30,6 +32,13 @@ const NavBarMobile = ({notificationNumber = 1}) => {
     componentVisible,
     setComponentVisible,
   } = useOuterClick<HTMLDivElement>(false);
+
+  // TODO: move to Global COntext
+  const [panelVisible, setPanelVisible] = useState(false);
+
+  const panelClickHandler = () => {
+    setPanelVisible(!panelVisible);
+  };
 
   const clickHanlder = () => {
     if (langIsOpen) {
@@ -77,8 +86,6 @@ const NavBarMobile = ({notificationNumber = 1}) => {
     </div>
   );
 
-  const userCtx = useContext(UserContext);
-
   const isDisplayedUserOverview = userCtx.isConnected ? <UserMobile /> : null;
 
   const userOverviewDividerDesktop = userCtx.isConnected ? (
@@ -122,7 +129,12 @@ const NavBarMobile = ({notificationNumber = 1}) => {
             </div>
 
             <div className="invisible ml-auto lg:visible">
-              <WalletPanel className="flex:auto" getUserLoginState={getUserLoginHandler} />
+              <WalletPanel
+                panelVisible={panelVisible}
+                panelClickHandler={panelClickHandler}
+                getUserLoginState={getUserLoginHandler}
+                className="flex:auto"
+              />
             </div>
           </div>
         </div>
@@ -157,28 +169,29 @@ const NavBarMobile = ({notificationNumber = 1}) => {
                   {t('nav_bar.Trading')}
                 </Link>
               </div>
-
               <div className="flex items-center justify-start px-3">
                 <Link href="#" className={menuItemStyles}>
                   {t('nav_bar.TideBitUniversity')}
                 </Link>
               </div>
-
               <div className="flex items-center justify-start px-3">
                 <Link href="#" className={menuItemStyles}>
                   {t('nav_bar.HelpCenter')}
                 </Link>
               </div>
-
               <div className="flex items-center justify-start px-3">
                 <div className="px-3 py-2">
                   <I18n langIsOpen={langIsOpen} setLangIsOpen={setLangIsOpen} />
                 </div>
                 {/* <TbMinusVertical size={30} className="" /> */}
               </div>
-
               <span className="inline-block h-px w-11/12 rounded bg-lightGray4"></span>
-              <WalletPanel className="ml-2" getUserLoginState={getUserLoginHandler} />
+              <WalletPanel
+                className="ml-2"
+                panelVisible={panelVisible}
+                panelClickHandler={panelClickHandler}
+                getUserLoginState={getUserLoginHandler}
+              />{' '}
             </div>
 
             {isDisplayedUserOverview}

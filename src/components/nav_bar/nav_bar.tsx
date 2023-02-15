@@ -55,6 +55,13 @@ const NavBar = ({notificationNumber = 1}) => {
     setUserOverview(bool);
   };
 
+  // TODO: move to Global COntext
+  const [panelVisible, setPanelVisible] = useState(false);
+
+  const panelClickHandler = () => {
+    setPanelVisible(!panelVisible);
+  };
+
   const wallectConnectBtnClickHandler = () => {
     // TODO: pop up wallet panel
     // return <WalletPanel />;
@@ -179,7 +186,11 @@ const NavBar = ({notificationNumber = 1}) => {
                   </button>
                 </div>
                 <div className="mr-5 inline-flex">
-                  <WalletPanel getUserLoginState={getUserLoginHandler} />
+                  <WalletPanel
+                    panelVisible={panelVisible}
+                    panelClickHandler={panelClickHandler}
+                    getUserLoginState={getUserLoginHandler}
+                  />
                 </div>
               </div>
 
@@ -251,7 +262,11 @@ const NavBar = ({notificationNumber = 1}) => {
               </div>
               <div className="mt-5">
                 {/* <ConnectButton className="ml-2" /> */}
-                <WalletPanel className="ml-2" getUserLoginState={getUserLoginHandler} />
+                <WalletPanel
+                  panelVisible={panelVisible}
+                  panelClickHandler={panelClickHandler}
+                  getUserLoginState={getUserLoginHandler}
+                />{' '}
               </div>
 
               {isDisplayedUser}

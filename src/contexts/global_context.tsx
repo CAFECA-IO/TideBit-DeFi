@@ -411,7 +411,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
         modalClickHandler={visiblePositionDetailsModalHandler}
       />
 
-      {/* One toast container avoids duplicating toast overlaying */}
+      {/* One toast container avoids duplicate toast overlaying */}
       <Toast />
       {children}
     </GlobalContext.Provider>

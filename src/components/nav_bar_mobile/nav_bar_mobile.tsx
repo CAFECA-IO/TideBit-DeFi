@@ -2,7 +2,7 @@ import React, {useContext, useState} from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import I18n from '../i18n/i18n';
-import WalletPanel from '../wallet/wallet_panel';
+import WalletPanel from '../wallet_panel/wallet_panel';
 import Notification from '../notification/notification';
 import useOuterClick from '../../lib/hooks/use_outer_click';
 import {UserContext} from '../../contexts/user_context';

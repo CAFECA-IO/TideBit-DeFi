@@ -10,7 +10,7 @@ import {TfiBell} from 'react-icons/tfi';
 // import TideLink from '../tide_link/tide_link';
 import Image from 'next/image';
 import version from '../../lib/version';
-import WalletPanel from '../wallet/wallet_panel';
+import WalletPanel from '../wallet_panel/wallet_panel';
 import useOuterClick from '../../lib/hooks/use_outer_click';
 import Notification from '../notification/notification';
 import NotificationItem from '../notification_item/notification_item';

@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import WalletPanel from '../wallet/wallet_panel';
+import WalletPanel from '../wallet_panel/wallet_panel';
 import TideButton from '../tide_button/tide_button';
 
 const TradeVisitorTab = () => {

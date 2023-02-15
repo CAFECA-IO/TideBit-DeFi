@@ -15,7 +15,7 @@ import {
   IOpenCFDDetails,
   dummyOpenCFDDetails,
 } from '../interfaces/tidebit_defi_background/open_cfd_details';
-import WalletPanel from '../components/wallet/wallet_panel';
+import WalletPanel from '../components/wallet_panel/wallet_panel';
 
 export interface IToastify {
   type: 'error' | 'warning' | 'info' | 'success';

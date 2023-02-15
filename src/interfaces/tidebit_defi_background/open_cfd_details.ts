@@ -33,7 +33,7 @@ export const dummyOpenCFDDetails: IOpenCFDDetails = {
   },
   liquidationPrice: 19537,
   takeProfit: 74521,
-  stopLoss: 25250,
+  // stopLoss: 25250,
   recommendedTp: 35412,
   recommendedSl: 19453,
   positionLineGraph: {

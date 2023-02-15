@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import React, {useState, useContext, createContext} from 'react';
 import {
   INITIAL_POSITION_LABEL_DISPLAYED_STATE,
@@ -273,11 +272,13 @@ export interface IMarketProvider {
   children: React.ReactNode;
 }
 
-// TODO: Use `interfaces/` instead
 export interface ITransferOptions {
-  // [key: string]: {
-  label: string;
-  content: string;
+  id: string;
+  symbol: string;
+  name: string;
+  decimals: number;
+  icon: string;
+  fee: number;
 }
 
 export interface IMarketContext {
@@ -290,15 +291,9 @@ export interface IMarketContext {
   candlestickId: string;
   candlestickChartIdHandler: (id: string) => void;
   availableTransferOptions: ITransferOptions[];
-  // liveStatstics: IPriceStatistics | null;
-  // bullAndBearIndex: number;
-  // cryptoBriefNews: IBriefNewsItem[];
-  // cryptoSummary: ICryptoSummary | null;
   tickerStatic: ITickerStatic | null;
   tickerLiveStatistics: ITickerLiveStatistics | null;
   candlestickChartData: ICandlestickData[];
-  // getCryptoSummary: (tickerId: string) => ICryptoSummary | null;
-  // getCryptoNews: (tickerId: string) => IBriefNewsItem[] | null;
   listAvailableTickers: () => ITickerData[];
   listDepositCryptocurrencies: () => ICryptocurrency[];
   listWithdrawCryptocurrencies: () => ICryptocurrency[];
@@ -337,105 +332,26 @@ export const MarketContext = createContext<IMarketContext>({
 });
 
 const availableTransferOptions = [
-  {label: 'USDT', content: 'Tether'},
-  {label: 'ETH', content: 'ETH'},
-  {label: 'BTC', content: 'BTC'},
-  {label: 'USDC', content: 'USD Coin'},
-  {label: 'DAI', content: 'DAI'},
-  {label: 'BNB', content: 'BNB'},
-  {label: 'BCH', content: 'BCH'},
-  {label: 'LTC', content: 'LTC'},
-  {label: 'ETC', content: 'ETC'},
-  {label: 'USX', content: 'USX'},
-  {label: 'NEO', content: 'NEO'},
-  {label: 'EOS', content: 'EOS'},
+  {
+    id: 'USDT',
+    symbol: 'USDT',
+    name: 'Tether',
+    decimals: 6,
+    icon: '/elements/tether-seeklogo.com.svg',
+    fee: 0,
+  },
+  {id: 'ETH', symbol: 'ETH', name: 'ETH', decimals: 18, icon: '/elements/group_2371.svg', fee: 0},
+  {id: 'BTC', symbol: 'BTC', name: 'BTC', decimals: 18, icon: '', fee: 0},
+  {id: 'USDC', symbol: 'USDC', name: 'USD Coin', decimals: 18, icon: '', fee: 0},
+  {id: 'DAI', symbol: 'DAI', name: 'DAI', decimals: 18, icon: '', fee: 0},
+  {id: 'BNB', symbol: 'BNB', name: 'BNB', decimals: 18, icon: '', fee: 0},
+  {id: 'BCH', symbol: 'BCH', name: 'BCH', decimals: 18, icon: '', fee: 0},
+  {id: 'LTC', symbol: 'LTC', name: 'LTC', decimals: 18, icon: '', fee: 0},
+  {id: 'ETC', symbol: 'ETC', name: 'ETC', decimals: 18, icon: '', fee: 0},
+  {id: 'USX', symbol: 'USX', name: 'USX', decimals: 18, icon: '', fee: 0},
+  {id: 'NEO', symbol: 'NEO', name: 'NEO', decimals: 18, icon: '', fee: 0},
+  {id: 'EOS', symbol: 'EOS', name: 'EOS', decimals: 18, icon: '', fee: 0},
 ];
-
-// const getCryptoSummary = (tickerId = 'ETH') => {
-//   return {
-//     icon: '',
-//     label: 'Ethereum',
-//     introduction: `Ethereum (ETH) was launched in 2015. Ethereum is a decentralized blockchain that supports smart contracts-essentially computer programs-that can automatically execute when certain conditions are met. The native cryptocurrency-essentially computer programs-of the platform is called ether or ethereum. Ethereum is divisible to 18 decimal places. There is currently no hard cap on the total supply
-//   of ETH.`,
-//     whitePaperLink: '#',
-//     websiteLink: '#',
-//     price: '39051 USDT',
-//     rank: 1,
-//     publishTime: '2008-11-01',
-//     publishAmount: '21,000,000',
-//     tradingValue: '576,461,120',
-//     tradingVolume: '19,014,962',
-//     totalValue: '820,071,000,000 USDT',
-//   };
-// };
-// const getCryptoNews = (tickerId = 'ETH') => [
-//   {
-//     title: 'Add news title here',
-//     content:
-//       'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea',
-//     // img: 'https://www.tidebit.com/wp-content/uploads/2020/09/20200915_1.jpg',
-//     img: '/elements/rectangle_715@2x.png',
-//   },
-//   {
-//     title: 'Add news title here',
-//     content:
-//       'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea',
-//     img: '/elements/rectangle_716@2x.png',
-//   },
-//   {
-//     title: 'Add news title here',
-//     content:
-//       'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea',
-//     img: '/elements/rectangle_717@2x.png',
-//   },
-// ];
-
-// const liveStatstics: IPriceStatistics = {
-//   fiveMin: {low: 1200, high: 1320, now: '80'},
-//   sixtyMin: {low: 1100, high: 1840, now: '27'},
-//   oneDay: {low: 1060, high: 2040, now: '39'},
-// };
-
-// const bullAndBearIndex = 62;
-
-// const cryptoBriefNews: IBriefNewsItem[] = [
-//   {
-//     title: 'Add news title here',
-//     content:
-//       'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea',
-//     // img: 'https://www.tidebit.com/wp-content/uploads/2020/09/20200915_1.jpg',
-//     img: '/elements/rectangle_715@2x.png',
-//   },
-//   {
-//     title: 'Add news title here',
-//     content:
-//       'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea',
-//     img: '/elements/rectangle_716@2x.png',
-//   },
-//   {
-//     title: 'Add news title here',
-//     content:
-//       'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea',
-//     img: '/elements/rectangle_717@2x.png',
-//   },
-// ];
-
-// // TODO: icon svg replaced by img src string
-// const cryptoSummary: ICryptoSummary = {
-//   icon: '',
-//   label: 'Ethereum',
-//   introduction: `Ethereum (ETH) was launched in 2015. Ethereum is a decentralized blockchain that supports smart contracts-essentially computer programs-that can automatically execute when certain conditions are met. The native cryptocurrency-essentially computer programs-of the platform is called ether or ethereum. Ethereum is divisible to 18 decimal places. There is currently no hard cap on the total supply
-// of ETH.`,
-//   whitePaperLink: '#',
-//   websiteLink: '#',
-//   price: '39051 USDT',
-//   rank: 1,
-//   publishTime: '2008-11-01',
-//   publishAmount: '21,000,000',
-//   tradingValue: '576,461,120',
-//   tradingVolume: '19,014,962',
-//   totalValue: '820,071,000,000 USDT',
-// };
 
 export const MarketProvider = ({children}: IMarketProvider) => {
   const userCtx = useContext(UserContext);
@@ -470,7 +386,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
   const [candlestickId, setCandlestickId] = useState<string>('');
 
   const [transferOptions, setTransferOptions] =
-    useState<ITransferOptions[]>(availableTransferOptions);
+    useState<ICryptocurrency[]>(availableTransferOptions);
 
   const [showPositionOnChart, setShowPositionOnChart] = useState<boolean>(
     INITIAL_POSITION_LABEL_DISPLAYED_STATE
@@ -498,7 +414,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
   const selectTickerHandler = (currency: string) => {
     // console.log(`selectTickerHandler currency`, currency);
     const ticker: ITickerData = getDummyTicker(currency);
-    console.log(`selectTickerHandler ticker`, ticker);
+    // console.log(`selectTickerHandler ticker`, ticker);
     setSelectedTicker(ticker);
     const tickerStatic: ITickerStatic = getDummyTickerStatic(currency);
     setTickerStatic(tickerStatic);
@@ -533,10 +449,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     candlestickId,
     candlestickChartData,
     candlestickChartIdHandler,
-    // transferOptions,
     availableTransferOptions: availableTransferOptions,
-    // liveStatstics,
-    // bullAndBearIndex,
     tickerStatic,
     tickerLiveStatistics,
     listAvailableTickers,

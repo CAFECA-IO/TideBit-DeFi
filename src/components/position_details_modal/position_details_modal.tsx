@@ -12,9 +12,8 @@ import TradingInput from '../trading_input/trading_input';
 import {AiOutlineQuestionCircle} from 'react-icons/ai';
 import RippleButton from '../ripple_button/ripple_button';
 import {useGlobal} from '../../contexts/global_context';
-import {Trend} from '../../constants/trend';
 import {TypeOfPosition} from '../../constants/type_of_position';
-import {IProfitState, ProfitState} from '../../constants/profit_state';
+import {ProfitState} from '../../constants/profit_state';
 
 interface IPositionDetailsModal {
   modalVisible: boolean;
@@ -92,14 +91,24 @@ const PositionDetailsModal = ({
   //   slToggleFunction();
   // };
 
+  const displayedPnLSymbol =
+    openCfdDetails.pnl.type === ProfitState.PROFIT
+      ? '+'
+      : openCfdDetails.pnl.type === ProfitState.LOSS
+      ? '-'
+      : '';
+
   // TODO: i18n
   const displayedTypeOfPosition =
     openCfdDetails?.typeOfPosition === TypeOfPosition.BUY ? 'Up (Buy)' : 'Down (Sell)';
 
+  const displayedPositionColor =
+    openCfdDetails.typeOfPosition === 'BUY' ? PNL_COLOR_TYPE.profit : PNL_COLOR_TYPE.loss;
+
   const displayedPnLColor =
-    openCfdDetails?.pnl.type === Trend.UP
+    openCfdDetails?.pnl.type === ProfitState.PROFIT
       ? PNL_COLOR_TYPE.profit
-      : openCfdDetails?.pnl.type === Trend.DOWN
+      : openCfdDetails?.pnl.type === ProfitState.LOSS
       ? PNL_COLOR_TYPE.loss
       : PNL_COLOR_TYPE.equal;
 
@@ -282,13 +291,6 @@ const PositionDetailsModal = ({
     </div>
   );
 
-  const cfdProfitSymbol =
-    openCfdDetails?.pnl?.type === ProfitState.PROFIT
-      ? '+'
-      : openCfdDetails?.pnl?.type === ProfitState.LOSS
-      ? '-'
-      : ' ';
-
   const isDisplayedDetailedPositionModal = modalVisible ? (
     <div id={id} {...otherProps}>
       <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">
@@ -326,7 +328,7 @@ const PositionDetailsModal = ({
                   <div className="mx-6 my-4 flex justify-between">
                     <div className="text-lightGray">Type</div>
                     {/* TODO: i18n */}
-                    <div className="">{displayedTypeOfPosition}</div>
+                    <div className={`${displayedPositionColor}`}>{displayedTypeOfPosition}</div>
                   </div>
 
                   <div className="mx-6 my-4 flex justify-between">
@@ -339,7 +341,7 @@ const PositionDetailsModal = ({
                   <div className="mx-6 my-4 flex justify-between">
                     <div className="text-lightGray">PNL</div>
                     <div className={`${displayedPnLColor}`}>
-                      {cfdProfitSymbol} ${' '}
+                      {displayedPnLSymbol} ${' '}
                       {openCfdDetails?.pnl.value?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}
                     </div>
                   </div>

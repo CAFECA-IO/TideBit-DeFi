@@ -144,43 +144,7 @@ const TradeTab = () => {
     valueOfPositionLength > 10 || marginLength > 10 ? 'top-430px' : 'top-420px';
 
   const longOrderSubmitHandler = () => {
-    // globalCtx.toast({type: 'success', message: 'Long order submitted'});
-    // globalCtx.dataLoadingModalHandler({
-    //   modalTitle: 'Long position',
-    //   modalContent: 'Please wait...',
-    // });
-    // globalCtx.visibleLoadingModalHandler();
-
-    // globalCtx.dataFailedModalHandler({
-    //   modalTitle: 'Open Position',
-    //   modalContent: 'Failed to submit long position',
-    //   failedMsg:
-    //     'Please try again later blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah',
-    //   btnMsg: 'Try again',
-    // });
-    // globalCtx.visibleFailedModalHandler();
-
-    // globalCtx.dataSuccessfulModalHandler({
-    //   modalTitle: 'Open Position',
-    //   modalContent: 'Transaction succeed',
-    //   btnMsg: 'View position',
-    // });
-    // globalCtx.visibleSuccessfulModalHandler();
-
-    // globalCtx.dataCanceledModalHandler({
-    //   modalTitle: 'Open Position',
-    //   modalContent: 'Transaction canceled',
-    //   // btnMsg: 'Try again',
-    // });
-    // globalCtx.visibleCanceledModalHandler();
-
-    globalCtx.dataFailedModalHandler({
-      modalTitle: 'Open Position',
-      modalContent: 'Failed to submit long position',
-      failedMsg: 'Please try again later blah blah blah blah blah blah blah blah blah blah blah',
-      btnMsg: 'Try again',
-    });
-    globalCtx.visibleFailedModalHandler();
+    return;
   };
 
   const shortOrderSubmitHandler = () => {

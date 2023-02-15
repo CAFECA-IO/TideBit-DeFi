@@ -12,6 +12,7 @@ export const dummyOpenCFDOrder: IOpenCFDOrder = {
   targetAsset: 'USDT',
   targetAmount: 15, // margin
   fee: 0,
+  remarks: 'sth',
 
   // ---input data from UI---
   ticker: 'ETH',
@@ -21,5 +22,5 @@ export const dummyOpenCFDOrder: IOpenCFDOrder = {
   stopLoss: 62,
   guaranteedStop: true,
   guaranteedStopFee: 0.77,
-  estimatedFilledPrice: 50, // estimated filled price / open price 預估成交價格
+  price: 50, // estimated filled price / open price 預估成交價格
 };

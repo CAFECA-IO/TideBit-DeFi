@@ -4,7 +4,7 @@ import RippleButton from '../ripple_button/ripple_button';
 import Image from 'next/image';
 import {ImCross} from 'react-icons/im';
 
-export interface IFailedModal {
+export interface ISuccessfulModal {
   modalRef?: React.RefObject<HTMLDivElement>;
   modalVisible: boolean;
   modalClickHandler: () => void;
@@ -23,13 +23,13 @@ const SuccessfulModal = ({
   btnMsg,
   btnUrl,
   ...otherProps
-}: IFailedModal) => {
+}: ISuccessfulModal) => {
   const successContent = (
     <div className="relative flex-auto pt-1">
       <div className="text-lg leading-relaxed text-lightWhite">
         <div className="flex-col justify-center text-center">
           <Lottie className="ml-70px w-150px pt-7 pb-5" animationData={successfulAnimation} />
-          <div className="mt-6 mb-2 text-base ">
+          <div className="mt-3 mb-0 h-55px text-base">
             {modalContent ? (
               modalContent
             ) : (
@@ -76,7 +76,7 @@ const SuccessfulModal = ({
           {' '}
           {/*content & panel*/}
           <div
-            id="transferProcessModal"
+            id="successfulModal"
             // ref={modalRef}
             className="relative flex h-420px w-296px flex-col rounded-3xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none"
           >

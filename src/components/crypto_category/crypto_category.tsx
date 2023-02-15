@@ -1,14 +1,7 @@
 import CryptoCard from '../card/crypto_card';
 import {useContext, useEffect, useState} from 'react';
 
-import {
-  MarketContext,
-  IMarketContext,
-  IMarketProvider,
-  // ITickerData,
-  MarketProvider,
-} from '../../contexts/market_context';
-import {UserContext, IUserContext} from '../../contexts/user_context';
+import {MarketContext, IMarketContext} from '../../contexts/market_context';
 import {CRYPTO_CARD_COLORS} from '../../constants/display';
 
 // TODO: import data from market context

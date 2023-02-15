@@ -2,8 +2,6 @@
 import Lunar from '@cafeca/lunar';
 import React, {createContext} from 'react';
 import useState from 'react-usestateref';
-import {providers} from 'ethers';
-import {ICardProps, ILineGraphProps} from '../components/card/crypto_card';
 import {PROFIT_LOSS_COLOR_TYPE} from '../constants/display';
 import {
   IOpenCFDDetails,

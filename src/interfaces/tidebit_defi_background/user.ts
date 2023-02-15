@@ -88,7 +88,6 @@ export const dummyOpenCfds: IOpenCFDDetails[] = [
     openValue: 74589658,
     pnl: {
       type: ProfitState.PROFIT,
-      symbol: '+',
       value: 90752,
     },
     liquidationPrice: 19537,
@@ -117,7 +116,6 @@ export const dummyOpenCfds: IOpenCFDDetails[] = [
     openValue: 74589658,
     pnl: {
       type: ProfitState.PROFIT,
-      symbol: '+',
       value: randomIntFromInterval(1000, 10000),
     },
     liquidationPrice: 19537,
@@ -146,7 +144,6 @@ export const dummyOpenCfds: IOpenCFDDetails[] = [
     openValue: 74589658,
     pnl: {
       type: ProfitState.PROFIT,
-      symbol: '+',
       value: 9075200,
     },
     liquidationPrice: 19537,
@@ -175,7 +172,6 @@ export const dummyOpenCfds: IOpenCFDDetails[] = [
     openValue: 74589658,
     pnl: {
       type: ProfitState.PROFIT,
-      symbol: '+',
       value: randomIntFromInterval(1000, 10000),
     },
     liquidationPrice: 19537,

@@ -14,6 +14,7 @@ import RippleButton from '../ripple_button/ripple_button';
 import {useGlobal} from '../../contexts/global_context';
 import {Trend} from '../../constants/trend';
 import {TypeOfPosition} from '../../constants/type_of_position';
+import {IProfitState, ProfitState} from '../../constants/profit_state';
 
 interface IPositionDetailsModal {
   modalVisible: boolean;
@@ -281,6 +282,13 @@ const PositionDetailsModal = ({
     </div>
   );
 
+  const cfdProfitSymbol =
+    openCfdDetails?.pnl?.type === ProfitState.PROFIT
+      ? '+'
+      : openCfdDetails?.pnl?.type === ProfitState.LOSS
+      ? '-'
+      : ' ';
+
   const isDisplayedDetailedPositionModal = modalVisible ? (
     <div id={id} {...otherProps}>
       <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">
@@ -331,7 +339,7 @@ const PositionDetailsModal = ({
                   <div className="mx-6 my-4 flex justify-between">
                     <div className="text-lightGray">PNL</div>
                     <div className={`${displayedPnLColor}`}>
-                      $ {openCfdDetails?.pnl?.symbol}{' '}
+                      {cfdProfitSymbol} ${' '}
                       {openCfdDetails?.pnl.value?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}
                     </div>
                   </div>

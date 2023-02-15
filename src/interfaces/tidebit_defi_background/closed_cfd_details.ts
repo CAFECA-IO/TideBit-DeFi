@@ -31,7 +31,6 @@ export const dummyCloseCFDDetails: IClosedCFDDetails = {
   openValue: 74589658,
   pnl: {
     type: ProfitState.PROFIT,
-    symbol: '+',
     value: 90752,
   },
   liquidationPrice: 19537,

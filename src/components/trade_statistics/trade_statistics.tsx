@@ -1,5 +1,4 @@
 import React from 'react';
-import {VscTriangleDown} from 'react-icons/vsc';
 
 interface ITradeStatistics {
   bullAndBearIndex: number;

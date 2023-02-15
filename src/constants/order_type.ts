@@ -1,7 +1,10 @@
 export type IOrderType = 'CFD' | 'DEPOSIT' | 'WITHDRAW' | 'SPOT';
 
 export type IOrderTypeConstant = {
-  [key: string]: IOrderType;
+  CFD: IOrderType;
+  DEPOSIT: IOrderType;
+  WITHDRAW: IOrderType;
+  SPOT: IOrderType;
 };
 
 export const OrderType: IOrderTypeConstant = {

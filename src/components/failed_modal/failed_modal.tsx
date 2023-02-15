@@ -9,10 +9,10 @@ export interface IFailedModal {
   modalVisible: boolean;
   modalClickHandler: () => void;
   modalTitle: string;
-  modalContent: string;
+  // modalContent: string;
   btnMsg?: string;
   btnUrl?: string;
-  failedTitle?: string;
+  failedTitle: string;
   failedMsg: string;
 }
 
@@ -21,7 +21,7 @@ const FailedModal = ({
   modalVisible: modalVisible,
   modalClickHandler: modalClickHandler,
   modalTitle,
-  modalContent,
+  // modalContent,
   btnMsg,
   btnUrl,
   failedTitle,
@@ -32,21 +32,24 @@ const FailedModal = ({
     <div className="relative flex-auto pt-1">
       <div className="text-lg leading-relaxed text-lightWhite">
         <div className="flex-col items-center justify-center text-center">
-          <Lottie className="ml-70px w-150px pt-5" animationData={failedAnimation} />
-          <div className="text-base text-lightWhite">{modalContent}</div>
+          <Lottie className="ml-70px w-150px pt-5 pb-2" animationData={failedAnimation} />
+          {/* <div className="text-base text-lightWhite">{modalContent}</div> */}
 
-          <div className="mx-2 my-4 bg-lightRed">
-            <p className="text-lg">{failedTitle ?? `Failed`}</p>
+          <div className="h-130px">
+            <div className="mx-21px my-4 bg-lightRed">
+              <p className="text-lg">{failedTitle ?? `Failed`}</p>
 
-            <p className="mt-1 bg-darkGray1/50 py-2 px-5px text-start text-xs leading-4 tracking-wide">
-              {failedMsg}
-            </p>
+              <p className="mt-1 bg-darkGray1/50 py-2 px-3 text-start text-xs leading-4 tracking-wide">
+                {failedMsg}
+              </p>
+            </div>
           </div>
-          <div>
+
+          <div className="relative">
             {btnUrl && btnMsg ? (
               <a href={btnUrl} target="_blank">
                 <RippleButton
-                  className={`mt-4 w-4/5 rounded border-0 bg-tidebitTheme py-2 text-base text-white transition-colors duration-300 hover:cursor-pointer hover:bg-cyan-600 focus:outline-none md:mt-0`}
+                  className={`absolute bottom-0 mt-0 w-254px rounded border-0 bg-tidebitTheme py-2 text-base text-white transition-colors duration-300 hover:cursor-pointer hover:bg-cyan-600 focus:outline-none md:mt-0`}
                   buttonType="button"
                   onClick={modalClickHandler}
                 >
@@ -55,7 +58,7 @@ const FailedModal = ({
               </a>
             ) : btnMsg ? (
               <RippleButton
-                className={`mt-4 w-4/5 rounded border-0 bg-tidebitTheme py-2 text-base text-white transition-colors duration-300 hover:cursor-pointer hover:bg-cyan-600 focus:outline-none md:mt-0`}
+                className={`absolute bottom-0 mt-0 w-254px rounded border-0 bg-tidebitTheme py-2 text-base text-white transition-colors duration-300 hover:cursor-pointer hover:bg-cyan-600 focus:outline-none md:mt-0`}
                 buttonType="button"
                 onClick={modalClickHandler}
               >
@@ -79,7 +82,7 @@ const FailedModal = ({
           {' '}
           {/*content & panel*/}
           <div
-            id="transferProcessModal"
+            id="failedModal"
             // ref={modalRef}
             className="relative flex h-420px w-296px flex-col rounded-3xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none"
           >

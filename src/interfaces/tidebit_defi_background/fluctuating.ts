@@ -1,5 +1,7 @@
+import {ITrend} from '../../constants/trend';
+
 export interface IFluctuating {
-  type: 'UP' | 'DOWN' | 'EQUAL';
+  type: ITrend;
   value: number;
   percentage: number;
 }

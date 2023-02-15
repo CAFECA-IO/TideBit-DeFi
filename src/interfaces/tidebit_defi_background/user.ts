@@ -1,4 +1,6 @@
 import {IOrderStatusUnion} from '../../constants/order_status_union';
+import {ProfitState} from '../../constants/profit_state';
+import {Trend} from '../../constants/trend';
 import {ICFDBrief} from './cfd_brief';
 import {ICFDOrderCreatingProps} from './cfd_order_request';
 import {ICFDOrderUpdateRequest} from './cfd_order_update';
@@ -85,8 +87,7 @@ export const dummyOpenCfds: IOpenCFDDetails[] = [
     scheduledClosingTimestamp: 1675386051, // openTimestamp + 86400
     openValue: 74589658,
     pnl: {
-      type: 'UP',
-      symbol: '+',
+      type: ProfitState.PROFIT,
       value: 90752,
     },
     liquidationPrice: 19537,
@@ -114,8 +115,7 @@ export const dummyOpenCfds: IOpenCFDDetails[] = [
     scheduledClosingTimestamp: 1675386051, // openTimestamp + 86400
     openValue: 74589658,
     pnl: {
-      type: 'UP',
-      symbol: '+',
+      type: ProfitState.PROFIT,
       value: randomIntFromInterval(1000, 10000),
     },
     liquidationPrice: 19537,
@@ -143,8 +143,7 @@ export const dummyOpenCfds: IOpenCFDDetails[] = [
     scheduledClosingTimestamp: 1675386051, // openTimestamp + 86400
     openValue: 74589658,
     pnl: {
-      type: 'UP',
-      symbol: '+',
+      type: ProfitState.PROFIT,
       value: 9075200,
     },
     liquidationPrice: 19537,
@@ -172,8 +171,7 @@ export const dummyOpenCfds: IOpenCFDDetails[] = [
     scheduledClosingTimestamp: 1675386051, // openTimestamp + 86400
     openValue: 74589658,
     pnl: {
-      type: 'UP',
-      symbol: '+',
+      type: ProfitState.PROFIT,
       value: randomIntFromInterval(1000, 10000),
     },
     liquidationPrice: 19537,

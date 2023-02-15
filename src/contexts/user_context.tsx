@@ -2,8 +2,6 @@
 import Lunar from '@cafeca/lunar';
 import React, {createContext} from 'react';
 import useState from 'react-usestateref';
-import {providers} from 'ethers';
-import {ICardProps, ILineGraphProps} from '../components/card/crypto_card';
 import {PROFIT_LOSS_COLOR_TYPE} from '../constants/display';
 import {
   IOpenCFDDetails,
@@ -120,8 +118,8 @@ export interface IUserContext {
   disconnect: () => Promise<boolean>;
   addFavorites: (props: string) => IResult;
   removeFavorites: (props: string) => IResult;
-  listOpenCFDs: () => Promise<IOpenCFDDetails[]>;
-  listClosedCFDs: () => Promise<IClosedCFDDetails[]>;
+  listOpenCFDs: (props: string) => Promise<IOpenCFDDetails[]>;
+  listClosedCFDs: (props: string) => Promise<IClosedCFDDetails[]>;
   // getOpendCFD: (props: string) => Promise<IOpenCFDDetails>;
   // getClosedCFD: (props: string) => Promise<IClosedCFDDetails>;
   getOpendCFD: (props: string) => IOpenCFDDetails;
@@ -167,8 +165,8 @@ export const UserContext = createContext<IUserContext>({
   disconnect: () => Promise.resolve(true),
   addFavorites: (props: string) => dummyResultSuccess,
   removeFavorites: (props: string) => dummyResultSuccess,
-  listOpenCFDs: () => Promise.resolve<IOpenCFDDetails[]>([]),
-  listClosedCFDs: () => Promise.resolve<IClosedCFDDetails[]>([]),
+  listOpenCFDs: (props: string) => Promise.resolve<IOpenCFDDetails[]>([]),
+  listClosedCFDs: (props: string) => Promise.resolve<IClosedCFDDetails[]>([]),
   // getOpendCFD: (props: string) => Promise.resolve<IOpenCFDDetails>(dummyOpenCFDDetails),
   // getClosedCFD: (props: string) => Promise.resolve<IClosedCFDDetails>(dummyCloseCFDDetails),
   getOpendCFD: (props: string) => dummyOpenCFDDetails,
@@ -230,10 +228,10 @@ export const UserProvider = ({children}: IUserProvider) => {
       PNL: 1956.84,
     });
     setBalances([dummyBalance_BTC, dummyBalance_ETH, dummyBalance_USDT]);
-    const openedCFDs = await listOpenCFDs();
-    const closedCFDs = await listClosedCFDs();
-    setOpenedCFDs(openedCFDs);
-    setClosedCFDs(closedCFDs);
+    const openedCFDs = await listOpenCFDs('ETH'); // ++ TODO get current selectedTicker
+    const closedCFDs = await listClosedCFDs('ETH'); // ++ TODO get current selectedTicker
+    // setOpenedCFDs(openedCFDs);
+    // setClosedCFDs(closedCFDs);
   };
 
   const clearPrivateData = () => {
@@ -260,19 +258,21 @@ export const UserProvider = ({children}: IUserProvider) => {
     setPrivateData(lunar.address);
   });
 
-  const listOpenCFDs = async () => {
+  const listOpenCFDs = async (props: string) => {
     let openCFDs: IOpenCFDDetails[] = [];
     if (isConnectedRef.current) {
       openCFDs = await Promise.resolve<IOpenCFDDetails[]>([dummyOpenCFDDetails]);
     }
+    setOpenedCFDs(openCFDs);
     return openCFDs;
   };
 
-  const listClosedCFDs = async () => {
+  const listClosedCFDs = async (props: string) => {
     let closedCFDs: IClosedCFDDetails[] = [];
     if (isConnectedRef.current) {
       closedCFDs = await Promise.resolve<IClosedCFDDetails[]>([dummyCloseCFDDetails]);
     }
+    setClosedCFDs(closedCFDs);
     return closedCFDs;
   };
 

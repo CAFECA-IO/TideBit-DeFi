@@ -12,6 +12,10 @@ interface IRippleButtonProps {
 // interface RefObject<T> {
 //   readonly current: T | null;
 // }
+/**
+ * @dev `disabledStyle` is regulated separate component, because the disabled state should be changed dynamically
+ * @dev const disabledStyle = submitDisabled ? 'cursor-not-allowed' : ' hover:cursor-pointer';
+ */
 const RippleButton = ({
   onClick,
   className,
@@ -22,6 +26,7 @@ const RippleButton = ({
   ...otherProps
 }: IRippleButtonProps) => {
   const buttonRef = useRef<HTMLButtonElement>(null);
+  // const disabledCursor = disabled ? ' cursor-not-allowed' : '';
 
   useEffect(() => {
     // // const box: Element | null

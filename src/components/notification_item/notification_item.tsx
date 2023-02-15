@@ -1,16 +1,21 @@
 import React from 'react';
 import Image from 'next/image';
+import {INotificationItem} from '../../interfaces/tidebit_defi_background/notification_item';
 {
   /* Notification item itself */
 }
 
-export default function NotificationItem({
-  title = '',
-  date = '',
-  time = '',
-  content = '',
-  itemHeight = 'h-158px',
-}) {
+export default function NotificationItem(
+  // notificationItem: INotificationItem,
+  {title = '', date = '', time = '', content = '', itemHeight = 'h-158px'}
+) {
+  // const {title, content, timestamp} = notificationItem;
+  // const date = `${new Date(timestamp).getFullYear()}-${
+  //   new Date(timestamp).getMonth() + 1
+  // }-${new Date(timestamp).getDay()}`;
+  // const time = `${new Date(timestamp).getHours()}:${
+  //   new Date(timestamp).getMinutes() + 1
+  // }:${new Date(timestamp).getSeconds()}`;
   title = title ? title : 'Happy Birthday to TideBit';
   date = date ? date : '2022-10-05';
   time = time ? time : '14:28:38';

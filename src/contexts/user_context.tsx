@@ -47,6 +47,7 @@ import {
   IWithdrawalOrder,
 } from '../interfaces/tidebit_defi_background/withdrawal_order';
 import {IOpenCFDOrder} from '../interfaces/tidebit_defi_background/open_cfd_order';
+import {INotificationItem} from '../interfaces/tidebit_defi_background/notification_item';
 
 function randomNumber(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1) + min);
@@ -149,6 +150,7 @@ export interface IUserContext {
   subscribeNewsletters: (props: boolean) => Promise<boolean>;
   connectTideBit: (email: string, password: string) => Promise<boolean>;
   shareTradeRecord: (tradeId: string) => Promise<boolean>;
+  readNotifications: (notifications: INotificationItem[]) => void; //Promise<void>;
 }
 
 export const UserContext = createContext<IUserContext>({
@@ -196,6 +198,7 @@ export const UserContext = createContext<IUserContext>({
   subscribeNewsletters: (props: boolean) => Promise.resolve<boolean>(true),
   connectTideBit: (email: string, password: string) => Promise.resolve<boolean>(true),
   shareTradeRecord: (tradeId: string) => Promise.resolve<boolean>(true),
+  readNotifications: (notifications: INotificationItem[]) => null, // Promise.resolve(),
 });
 
 export const UserProvider = ({children}: IUserProvider) => {
@@ -454,6 +457,7 @@ export const UserProvider = ({children}: IUserProvider) => {
   const subscribeNewsletters = async (props: boolean) => Promise.resolve<boolean>(true);
   const connectTideBit = async (email: string, password: string) => Promise.resolve<boolean>(true);
   const shareTradeRecord = async (tradeId: string) => Promise.resolve<boolean>(true);
+  const readNotifications = async (notifications: INotificationItem[]) => null; // Promise.resolve();
 
   const defaultValue = {
     id,
@@ -496,6 +500,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     subscribeNewsletters,
     connectTideBit,
     shareTradeRecord,
+    readNotifications,
   };
 
   // FIXME: 'setUser' is missing in type '{ user: IUser[] | null; }'

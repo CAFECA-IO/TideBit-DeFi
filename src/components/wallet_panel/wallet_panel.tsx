@@ -1454,6 +1454,8 @@ export default function WalletPanel({
 
         setTimeout(() => setProcessModalVisible(false), DELAYED_HIDDEN_SECONDS);
 
+        globalCtx.visibleHelloModalHandler();
+        globalCtx.visibleWalletPanelHandler();
         setHelloModalVisible(true);
         // setPanelVisible(false);
         panelClickHandler();
@@ -1881,7 +1883,7 @@ export default function WalletPanel({
         qrcodeClickHandler={qrcodeClickHandler}
       />
 
-      <HelloModal helloModalVisible={helloModalVisible} helloClickHandler={helloClickHandler} />
+      {/* <HelloModal helloModalVisible={helloModalVisible} helloClickHandler={helloClickHandler} /> */}
 
       <SignatureProcessModal
         requestSendingHandler={requestSendingHandler}

@@ -1,4 +1,5 @@
 import {PROFIT_LOSS_COLOR_TYPE} from '../../constants/display';
+import {ITrend, Trend} from '../../constants/trend';
 
 const TRADING_CRYPTO_DATA = [
   {
@@ -191,16 +192,6 @@ export interface ILineGraphProps {
   lineGraphWidth?: string;
   lineGraphWidthMobile?: string;
 }
-
-export type IUpOrDown = 'UP' | 'DOWN';
-export interface IUpOrDownConstant {
-  [key: string]: IUpOrDown;
-}
-export const UpOrDown: IUpOrDownConstant = {
-  UP: 'UP',
-  DOWN: 'DOWN',
-};
-
 export interface ITickerData {
   currency: string;
   chain: string;
@@ -209,7 +200,7 @@ export interface ITickerData {
   // starColor: string;
   // getStarredStateCallback: (bool: boolean) => void;
   price: number;
-  upOrDown: IUpOrDown;
+  upOrDown: ITrend;
   priceChange: number;
   fluctuating: number;
   tradingVolume: string;
@@ -226,7 +217,8 @@ export const dummyTickers: ITickerData[] = TRADING_CRYPTO_DATA.map(data => {
   const price = parseFloat((Math.random() * 1000).toFixed(2));
   const priceChange = parseFloat((Math.random() * 100).toFixed(2));
   const fluctuating = parseFloat((priceChange / (price + priceChange)).toFixed(2));
-  const upOrDown = Math.random() >= 0.5 ? UpOrDown.UP : UpOrDown.DOWN;
+  const upOrDown =
+    Math.random() >= 0.5 ? (Math.random() === 0.5 ? Trend.EQUAL : Trend.UP) : Trend.DOWN;
   const ticker: ITickerData = {
     ...data,
     price,

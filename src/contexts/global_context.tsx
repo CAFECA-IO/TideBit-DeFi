@@ -15,6 +15,7 @@ import {
   IOpenCFDDetails,
   dummyOpenCFDDetails,
 } from '../interfaces/tidebit_defi_background/open_cfd_details';
+import WalletPanel from '../components/wallet/wallet_panel';
 
 export interface IToastify {
   type: 'error' | 'warning' | 'info' | 'success';
@@ -114,6 +115,9 @@ export interface IGlobalContext {
   visibleSuccessfulModalHandler: () => void;
   dataSuccessfulModal: IProcessDataModal | null;
   dataSuccessfulModalHandler: (data: IProcessDataModal) => void;
+
+  visibleWalletPanel: boolean;
+  visibleWalletPanelHandler: () => void;
 }
 
 export const GlobalContext = createContext<IGlobalContext>({
@@ -155,6 +159,9 @@ export const GlobalContext = createContext<IGlobalContext>({
   visibleSuccessfulModalHandler: () => null,
   dataSuccessfulModal: null,
   dataSuccessfulModalHandler: () => null,
+
+  visibleWalletPanel: false,
+  visibleWalletPanelHandler: () => null,
 });
 
 const initialColorMode: ColorModeUnion = 'dark';
@@ -195,6 +202,8 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     modalContent: '',
   });
 
+  const [visibleWalletPanel, setVisibleWalletPanel] = useState(false);
+
   // ---------------TODO: To get the withdrawal / deposit result------------------
   const [depositProcess, setDepositProcess] = useState<
     'form' | 'loading' | 'success' | 'cancellation' | 'fail'
@@ -202,10 +211,10 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
   const [withdrawProcess, setWithdrawProcess] = useState<
     'form' | 'loading' | 'success' | 'cancellation' | 'fail'
   >('form');
-  // ---------------TODO: To get the withdrawal / deposit result------------------
 
   const [withdrawData, setWithdrawData] = useState<{asset: string; amount: number}>();
   const [depositData, setDepositData] = useState<{asset: string; amount: number}>();
+  // ---------------TODO: To get the withdrawal / deposit result------------------
 
   const windowSize = useWindowSize();
   const {width, height} = windowSize;
@@ -277,6 +286,10 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
 
   const dataCanceledModalHandler = (data: IProcessDataModal) => {
     setDataCanceledModal(data);
+  };
+
+  const visibleWalletPanelHandler = () => {
+    setVisibleWalletPanel(!visibleWalletPanel);
   };
 
   const getWithdrawSubmissionState = (state: 'success' | 'cancellation' | 'fail') => {
@@ -354,6 +367,9 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     visibleCanceledModalHandler,
     dataCanceledModal,
     dataCanceledModalHandler,
+
+    visibleWalletPanel,
+    visibleWalletPanelHandler,
   };
   return (
     <GlobalContext.Provider value={defaultValue}>
@@ -409,6 +425,10 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
         openCfdDetails={dataPositionDetailsModal.openCfdDetails}
         modalVisible={visiblePositionDetailsModal}
         modalClickHandler={visiblePositionDetailsModalHandler}
+      />
+      <WalletPanel
+        panelVisible={visibleWalletPanel}
+        panelClickHandler={visibleWalletPanelHandler}
       />
 
       {/* One toast container avoids duplicate toast overlaying */}

@@ -1665,7 +1665,7 @@ export default function WalletPanel({
 
   const isDisplayedWalletPanel = panelVisible ? (
     <>
-      <div className="fixed inset-0 z-40 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">
+      <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">
         <div className="relative my-6 mx-auto w-auto max-w-xl">
           {/*content & panel*/}
           <div
@@ -1679,7 +1679,7 @@ export default function WalletPanel({
               </h3>
               <button
                 className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none"
-                onClick={clickHandler}
+                onClick={panelClickHandler}
               >
                 <span className="absolute top-5 right-5 block outline-none focus:outline-none">
                   <ImCross />
@@ -1854,19 +1854,18 @@ export default function WalletPanel({
       </button>
       {isDisplayedAvatarMenu} */}
     </>
-  ) : (
-    <TideButton
-      onClick={panelClickHandler}
-      className={`mt-4 rounded border-0 bg-tidebitTheme py-2 px-5 text-base text-white transition-all hover:opacity-90 md:mt-0`}
-    >
-      {/* Wallet Connect */}
-      {t('nav_bar.WalletConnect')}
-    </TideButton>
-  );
+  ) : null;
+  // <TideButton
+  //   onClick={panelClickHandler}
+  //   className={`mt-4 rounded border-0 bg-tidebitTheme py-2 px-5 text-base text-white transition-all hover:opacity-90 md:mt-0`}
+  // >
+  //   {/* Wallet Connect */}
+  //   {t('nav_bar.WalletConnect')}
+  // </TideButton>
 
   return (
     <>
-      {isDisplayedUserAvatar}
+      {/* {isDisplayedUserAvatar} */}
 
       {isDisplayedWalletPanel}
 

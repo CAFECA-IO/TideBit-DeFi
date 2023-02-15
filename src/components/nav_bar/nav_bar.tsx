@@ -20,6 +20,7 @@ import {IoIosArrowBack} from 'react-icons/io';
 import UserOverview from '../user_overview/user_overview';
 import {UserContext} from '../../contexts/user_context';
 import User from '../user/user';
+import {useGlobal} from '../../contexts/global_context';
 
 // interface INavBarProps {
 //   notifyRef: HTMLDivElement extends HTMLElement ? React.RefObject<HTMLDivElement> : null;
@@ -29,6 +30,7 @@ type TranslateFunction = (s: string) => string;
 
 const NavBar = ({notificationNumber = 1}) => {
   const userCtx = useContext(UserContext);
+  const globalCtx = useGlobal();
 
   const {t}: {t: TranslateFunction} = useTranslation('common');
   // TODO: i18n
@@ -64,7 +66,7 @@ const NavBar = ({notificationNumber = 1}) => {
 
   const wallectConnectBtnClickHandler = () => {
     // TODO: pop up wallet panel
-    // return <WalletPanel />;
+    globalCtx.visibleWalletPanelHandler();
   };
 
   const displayedMobileNavBar = !navOpen ? (
@@ -86,24 +88,27 @@ const NavBar = ({notificationNumber = 1}) => {
     </div>
   );
 
-  const isDisplayedUser = userCtx.enableServiceTerm ? (
+  const isDisplayedUserOverview = userCtx.enableServiceTerm ? (
     <>
-      {/* <User /> */}
       <UserOverview
         depositAvailable={userCtx.balance?.available ?? 0}
         marginLocked={userCtx.balance?.locked ?? 0}
         profitOrLossAmount={userCtx.balance?.PNL ?? 0}
       />
     </>
-  ) : // TODO: If not sign-in, show wallet connect button
-  null;
-  // <TideButton
-  //   onClick={wallectConnectBtnClickHandler} // show wallet panel
-  //   className={`mt-4 rounded border-0 bg-tidebitTheme py-2 px-5 text-base text-white transition-all hover:opacity-90 md:mt-0`}
-  // >
-  //   {/* Wallet Connect */}
-  //   {t('nav_bar.WalletConnect')}
-  // </TideButton>
+  ) : null;
+
+  const isDisplayedUser = userCtx.enableServiceTerm ? (
+    <User />
+  ) : (
+    <TideButton
+      onClick={wallectConnectBtnClickHandler} // show wallet panel
+      className={`mt-4 rounded border-0 bg-tidebitTheme py-2 px-5 text-base text-white transition-all hover:opacity-90 md:mt-0`}
+    >
+      {/* Wallet Connect */}
+      {t('nav_bar.WalletConnect')}
+    </TideButton>
+  );
 
   const userOverviewDividerDesktop = userCtx.enableServiceTerm ? (
     <span className="mx-2 inline-block h-10 w-px rounded bg-lightGray1/50"></span>
@@ -157,7 +162,7 @@ const NavBar = ({notificationNumber = 1}) => {
 
                     {/* User overview */}
                     {userOverviewDividerDesktop}
-                    {isDisplayedUser}
+                    {isDisplayedUserOverview}
 
                     {/* <div className="max-w-2xl mx-auto"></div> */}
                   </div>
@@ -186,90 +191,14 @@ const NavBar = ({notificationNumber = 1}) => {
                   </button>
                 </div>
                 <div className="mr-5 inline-flex">
-                  <WalletPanel
+                  {isDisplayedUser}
+                  {/* <WalletPanel
                     panelVisible={panelVisible}
                     panelClickHandler={panelClickHandler}
                     // getUserLoginState={getUserLoginHandler}
-                  />
+                  /> */}
                 </div>
               </div>
-
-              {/* ---Mobile menu section--- */}
-              {/* Mobile menu toggle & notification */}
-              <div className="inline-flex items-end justify-center lg:hidden">
-                <div className="mr-0 mt-3 flex lg:hidden">
-                  <button
-                    onClick={navBarMobileClickHandler}
-                    className="inline-flex items-center justify-center rounded-md p-2 hover:text-cyan-300 focus:outline-none"
-                  >
-                    {displayedMobileNavBar}
-                  </button>
-                </div>
-
-                <span className="mx-2 inline-block h-10 w-px rounded bg-lightGray1"></span>
-                <button onClick={sidebarOpenHandler} className="relative hover:cursor-pointer">
-                  <span className="absolute top-0 right-0 z-20 inline-block h-3 w-3 rounded-xl bg-tidebitTheme">
-                    <p className="text-center text-3xs hover:text-white">{notificationNumber}</p>
-                  </span>
-
-                  <Image
-                    src="/elements/notifications_outline.svg"
-                    width={25}
-                    height={25}
-                    className="mb-2 hover:cursor-pointer hover:text-cyan-300"
-                    alt="icon"
-                  />
-                </button>
-              </div>
-            </div>
-          </div>
-          {/* Mobile menu */}
-          <div ref={notifyRef} className={`lg:hidden ${isDisplayedMobileNavBar}`}>
-            {/* Cover for mobile bell icon */}
-            {isDisplayedNotificationSidebarMobileCover}
-
-            {/* Mobile menu section */}
-            <div className="flex h-screen flex-col items-center justify-start px-2 pt-2 pb-3 text-base sm:px-3">
-              <div className="space-y-3">
-                <Link
-                  href="/trading"
-                  className="block rounded-md px-3 py-2 font-medium hover:cursor-pointer hover:text-tidebitTheme"
-                >
-                  {t('nav_bar.Trading')}
-                </Link>
-                <Link
-                  href="#"
-                  className="block rounded-md px-3 py-2 font-medium hover:cursor-pointer hover:text-tidebitTheme"
-                >
-                  {t('nav_bar.TideBitUniversity')}
-                </Link>{' '}
-                <Link
-                  href="#"
-                  className="block rounded-md px-3 py-2 font-medium hover:cursor-pointer hover:text-tidebitTheme"
-                >
-                  {' '}
-                  {t('nav_bar.HelpCenter')}
-                </Link>{' '}
-              </div>
-
-              <div className="pt-3">
-                <div className="flex items-center justify-start px-3">
-                  <div>
-                    <I18n />
-                  </div>
-                  {/* <TbMinusVertical size={30} className="" /> */}
-                </div>
-              </div>
-              <div className="mt-5">
-                {/* <ConnectButton className="ml-2" /> */}
-                <WalletPanel
-                  panelVisible={panelVisible}
-                  panelClickHandler={panelClickHandler}
-                  // getUserLoginState={getUserLoginHandler}
-                />{' '}
-              </div>
-
-              {isDisplayedUser}
             </div>
           </div>
         </nav>

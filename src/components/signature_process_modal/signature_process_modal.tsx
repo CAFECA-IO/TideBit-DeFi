@@ -39,6 +39,13 @@ const SignatureProcessModal = ({
 
   // const [loading, setLoading] = useState(false);
 
+  // // TODO: 用字串狀態來表示打勾、打叉、數字圖示
+  // const firstStepSuccess = userCtx.isConnected;
+  // const firstStepError = !userCtx.isConnected;
+
+  // const secondStepSuccess = userCtx.enableServiceTerm;
+  // const secondStepError = !userCtx.enableServiceTerm;
+
   // const [firstStepSuccess, setFirstStepSuccess] = useState(userCtx.isConnected);
   // const [firstStepError, setFirstStepError] = useState(!userCtx.isConnected);
   // const [secondStepSuccess, setSecondStepSuccess] = useState(userCtx.enableServiceTerm);

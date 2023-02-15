@@ -3,7 +3,6 @@ import useWindowSize from '../lib/hooks/use_window_size';
 import {LAYOUT_BREAKPOINT} from '../constants/display';
 import {ToastContainer, toast as toastify} from 'react-toastify';
 import PositionDetailsModal from '../components/position_details_modal/position_details_modal';
-// import TransferProcessModal from '../components/transfer_process_modal/transfer_process_modal';
 import {MarketContext} from './market_context';
 import Toast from '../components/toast/toast';
 import LoadingModal from '../components/loading_modal/loading_modal';
@@ -84,6 +83,7 @@ export interface IGlobalContext {
   colorMode: ColorModeUnion;
   toggleColorMode: () => void;
   toast: (props: IToastify) => void;
+
   visiblePositionDetailsModal: boolean;
   visiblePositionDetailsModalHandler: () => void;
   dataPositionDetailsModal: IDataPositionDetailsModal | null;
@@ -94,11 +94,6 @@ export interface IGlobalContext {
 
   visibleWithdrawalModal: boolean;
   visibleWithdrawalModalHandler: () => void;
-
-  // visibleTransferProcessModal: boolean;
-  // visibleTransferProcessModalHandler: () => void;
-  // dataTransferProcessModal: IDataTransferProcessModal | null;
-  // dataTransferProcessModalHandler: (data: IDataTransferProcessModal) => void;
 
   visibleLoadingModal: boolean;
   visibleLoadingModalHandler: () => void;
@@ -129,6 +124,7 @@ export const GlobalContext = createContext<IGlobalContext>({
   colorMode: '' as ColorModeUnion,
   toggleColorMode: () => null,
   toast: () => null,
+
   visiblePositionDetailsModal: false,
   visiblePositionDetailsModalHandler: () => null,
   dataPositionDetailsModal: null,
@@ -139,11 +135,6 @@ export const GlobalContext = createContext<IGlobalContext>({
 
   visibleWithdrawalModal: false,
   visibleWithdrawalModalHandler: () => null,
-
-  // visibleTransferProcessModal: false,
-  // visibleTransferProcessModalHandler: () => null,
-  // dataTransferProcessModal: null,
-  // dataTransferProcessModalHandler: () => null,
 
   visibleLoadingModal: false,
   visibleLoadingModalHandler: () => null,
@@ -175,11 +166,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
   const [dataPositionDetailsModal, setDataPositionDetailsModal] =
     useState<IDataPositionDetailsModal>({openCfdDetails: dummyOpenCFDDetails});
 
-  // TODO: transfer
   const [visibleWithdrawalModal, setVisibleWithdrawalModal] = useState(false);
-  const [dataTransferProcessModal, setDataTransferProcessModal] =
-    useState<IDataTransferProcessModal>({transferType: 'deposit'});
-
   const [visibleDepositModal, setVisibleDepositModal] = useState(false);
 
   const [visibleLoadingModal, setVisibleLoadingModal] = useState(false);
@@ -208,14 +195,14 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     modalContent: '',
   });
 
-  // ---------------TODO: To be removed------------------
+  // ---------------TODO: To get the withdrawal / deposit result------------------
   const [depositProcess, setDepositProcess] = useState<
     'form' | 'loading' | 'success' | 'cancellation' | 'fail'
   >('form');
   const [withdrawProcess, setWithdrawProcess] = useState<
     'form' | 'loading' | 'success' | 'cancellation' | 'fail'
   >('form');
-  // ---------------TODO: To be removed------------------
+  // ---------------TODO: To get the withdrawal / deposit result------------------
 
   const [withdrawData, setWithdrawData] = useState<{asset: string; amount: number}>();
   const [depositData, setDepositData] = useState<{asset: string; amount: number}>();
@@ -251,9 +238,6 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
 
   const visibleWithdrawalModalHandler = () => {
     setVisibleWithdrawalModal(!visibleWithdrawalModal);
-  };
-  const dataTransferProcessModalHandler = (data: IDataTransferProcessModal) => {
-    setDataTransferProcessModal(data);
   };
 
   const visibleLoadingModalHandler = () => {
@@ -331,14 +315,6 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     // }, 3000);
   };
 
-  // const positionDetailedModal = (
-  //   <PositionDetailsModal
-  //     openCfdDetails={openCfdDetails}
-  //     modalVisible={visiblePositionDetailsModal}
-  //     modalClickHandler={visiblePositionDetailsModalHandler}
-  //   />
-  // );
-
   const defaultValue = {
     width,
     height,
@@ -358,12 +334,6 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
 
     visibleWithdrawalModal,
     visibleWithdrawalModalHandler,
-
-    // TODO: to be removed
-    // visibleTransferProcessModal: visibleWithdrawalModal,
-    // visibleTransferProcessModalHandler: visibleWithdrawalModalHandler,
-    // dataTransferProcessModal,
-    // dataTransferProcessModalHandler,
 
     visibleLoadingModal,
     visibleLoadingModalHandler,
@@ -440,18 +410,6 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
         modalVisible={visiblePositionDetailsModal}
         modalClickHandler={visiblePositionDetailsModalHandler}
       />
-      {/* <TransferProcessModal
-        getTransferData={getWithdrawData}
-        // initialAmountInput={undefined}
-        submitHandler={withdrawSubmitHandler}
-        // transferOptions={availableTransferOptions}
-        getSubmissionState={getWithdrawSubmissionState}
-        transferType={dataTransferProcessModal.transferType}
-        transferStep={withdrawProcess}
-        // userAvailableBalance={123}
-        modalVisible={visibleWithdrawalModal}
-        modalClickHandler={visibleTransferProcessModalHandler}
-      /> */}
 
       {/* One toast container avoids duplicating toast overlaying */}
       <Toast />

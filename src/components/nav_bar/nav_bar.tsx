@@ -27,25 +27,26 @@ import {UserContext} from '../../contexts/user_context';
 type TranslateFunction = (s: string) => string;
 
 const NavBar = ({notificationNumber = 1}) => {
+  const userCtx = useContext(UserContext);
+
   const {t}: {t: TranslateFunction} = useTranslation('common');
   // TODO: i18n
   const {locale, locales, defaultLocale, asPath} = useRouter();
   const [navOpen, setNavOpen] = useState(false);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const [userOverview, setUserOverview] = useState(false);
 
   const {
     targetRef: notifyRef,
-    componentVisible,
-    setComponentVisible,
+    componentVisible: notifyVisible,
+    setComponentVisible: setNotifyVisible,
   } = useOuterClick<HTMLDivElement>(false);
 
   const clickHanlder = () => setNavOpen(!navOpen);
 
   const sidebarOpenHandler = () => {
     // setSidebarOpen(!sidebarOpen);
-    setComponentVisible(!componentVisible);
+    setNotifyVisible(!notifyVisible);
     // console.log('sidebarOpenHandler clicked, componentVisible: ', componentVisible);
   };
 
@@ -65,16 +66,14 @@ const NavBar = ({notificationNumber = 1}) => {
   const isDisplayedNotificationSidebarMobileCover = (
     <div
       className={`${
-        componentVisible ? 'visible' : 'invisible'
+        notifyVisible ? 'visible' : 'invisible'
       } fixed top-52 left-24 z-50 flex h-10 w-8 items-center justify-center overflow-x-hidden overflow-y-hidden bg-transparent outline-none hover:cursor-pointer focus:outline-none`}
     >
       {' '}
     </div>
   );
 
-  const userCtx = useContext(UserContext);
-
-  const isDisplayedUserOverview = userCtx.isConnected ? (
+  const isDisplayedUserOverview = userCtx.enableServiceTerm ? (
     <UserOverview
       depositAvailable={userCtx.balance?.available ?? 0}
       marginLocked={userCtx.balance?.locked ?? 0}
@@ -82,14 +81,14 @@ const NavBar = ({notificationNumber = 1}) => {
     />
   ) : null;
 
-  const userOverviewDividerDesktop = userCtx.isConnected ? (
+  const userOverviewDividerDesktop = userCtx.enableServiceTerm ? (
     <span className="mx-2 inline-block h-10 w-px rounded bg-lightGray1/50"></span>
   ) : null;
 
   return (
     <>
       <div className="w-full text-center lg:text-start">
-        {/* No bg blur in NavBar `backdrop-blur-sm` because wallet panel's limited to navbar when it show up */}
+        {/* No bg blur in NavBar `backdrop-blur-sm` because wallet panel's limited to navbar when it shows up */}
         <nav className="container fixed inset-x-0 z-40 mx-auto max-w-full bg-black/100 pb-1 text-white">
           <div className="mx-auto max-w-full px-5">
             <div className="flex h-16 items-center justify-between">
@@ -245,7 +244,7 @@ const NavBar = ({notificationNumber = 1}) => {
       </div>
 
       {/* Notification Sidebar */}
-      <Notification notifyRef={notifyRef} componentVisible={componentVisible} />
+      <Notification notifyRef={notifyRef} componentVisible={notifyVisible} />
     </>
   );
 };

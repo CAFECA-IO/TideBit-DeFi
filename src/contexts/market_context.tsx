@@ -286,7 +286,7 @@ export interface IMarketContext {
   isCFDTradable: boolean;
   showPositionOnChart: boolean;
   showPositionOnChartHandler: (bool: boolean) => void;
-  positionInfoOnChart: ApexOptions | null; // TODO check 是否已經實作
+  positionInfoOnChart: ApexOptions | null;
   candlestickId: string;
   candlestickChartIdHandler: (id: string) => void;
   availableTransferOptions: ITransferOptions[];
@@ -506,9 +506,6 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     setTickerLiveStatistics(tickerLiveStatistics);
     const candlestickChartData = getDummyCandlestickChartData();
     setCandlestickChartData(candlestickChartData);
-    // TODO:
-    // 1.candlestickChartIdHandler
-    // 2.showPositionOnChartHandler
     if (userCtx.isConnected) {
       userCtx.listOpenCFDs(currency);
       userCtx.listClosedCFDs(currency);

@@ -132,7 +132,7 @@ const NavBarMobile = ({notificationNumber = 1}) => {
               <WalletPanel
                 panelVisible={panelVisible}
                 panelClickHandler={panelClickHandler}
-                getUserLoginState={getUserLoginHandler}
+                // getUserLoginState={getUserLoginHandler}
                 className="flex:auto"
               />
             </div>
@@ -190,7 +190,7 @@ const NavBarMobile = ({notificationNumber = 1}) => {
                 className="ml-2"
                 panelVisible={panelVisible}
                 panelClickHandler={panelClickHandler}
-                getUserLoginState={getUserLoginHandler}
+                // getUserLoginState={getUserLoginHandler}
               />{' '}
             </div>
 

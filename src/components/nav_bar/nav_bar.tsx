@@ -35,7 +35,7 @@ const NavBar = ({notificationNumber = 1}) => {
   const {locale, locales, defaultLocale, asPath} = useRouter();
   const [navOpen, setNavOpen] = useState(false);
 
-  const [userOverview, setUserOverview] = useState(false);
+  // const [userOverview, setUserOverview] = useState(false);
 
   const {
     targetRef: notifyRef,
@@ -51,9 +51,9 @@ const NavBar = ({notificationNumber = 1}) => {
     // console.log('sidebarOpenHandler clicked, componentVisible: ', componentVisible);
   };
 
-  const getUserLoginHandler = (bool: boolean) => {
-    setUserOverview(bool);
-  };
+  // const getUserLoginHandler = (bool: boolean) => {
+  //   setUserOverview(bool);
+  // };
 
   // TODO: move to Global COntext
   const [panelVisible, setPanelVisible] = useState(false);
@@ -189,7 +189,7 @@ const NavBar = ({notificationNumber = 1}) => {
                   <WalletPanel
                     panelVisible={panelVisible}
                     panelClickHandler={panelClickHandler}
-                    getUserLoginState={getUserLoginHandler}
+                    // getUserLoginState={getUserLoginHandler}
                   />
                 </div>
               </div>
@@ -265,7 +265,7 @@ const NavBar = ({notificationNumber = 1}) => {
                 <WalletPanel
                   panelVisible={panelVisible}
                   panelClickHandler={panelClickHandler}
-                  getUserLoginState={getUserLoginHandler}
+                  // getUserLoginState={getUserLoginHandler}
                 />{' '}
               </div>
 

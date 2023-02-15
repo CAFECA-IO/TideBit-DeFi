@@ -5,6 +5,10 @@ import TideButton from '../../components/tide_button/tide_button';
 import smallConnectingAnimation from '../../../public/animation/lf30_editor_cnkxmhy3.json';
 import activeIconPulse from '../../../public/animation/lf30_editor_cyvxlluo.json';
 import Lottie from 'lottie-react';
+import {UserContext} from '../../contexts/user_context';
+import {useContext, useState} from 'react';
+import {toast} from 'react-toastify';
+import {useGlobal} from '../../contexts/global_context';
 
 interface ISignatureProcessModal {
   loading?: boolean;
@@ -13,8 +17,8 @@ interface ISignatureProcessModal {
   secondStepSuccess?: boolean;
   secondStepError?: boolean;
   processModalRef?: React.RefObject<HTMLDivElement>;
-  processModalVisible?: boolean;
-  processClickHandler?: () => void;
+  processModalVisible: boolean;
+  processClickHandler: () => void;
   requestSendingHandler?: () => void;
 }
 
@@ -24,12 +28,36 @@ const SignatureProcessModal = ({
   firstStepError = false,
   secondStepSuccess = false,
   secondStepError = false,
+  requestSendingHandler,
   processModalRef,
   processModalVisible = false,
   processClickHandler,
-  requestSendingHandler,
   ...otherProps
 }: ISignatureProcessModal) => {
+  const userCtx = useContext(UserContext);
+  const globalCtx = useGlobal();
+
+  // const [loading, setLoading] = useState(false);
+
+  // const [firstStepSuccess, setFirstStepSuccess] = useState(userCtx.isConnected);
+  // const [firstStepError, setFirstStepError] = useState(!userCtx.isConnected);
+  // const [secondStepSuccess, setSecondStepSuccess] = useState(userCtx.enableServiceTerm);
+  // const [secondStepError, setSecondStepError] = useState(!userCtx.enableServiceTerm);
+
+  // const requestSendingHandler = async () => {
+  //   try {
+  //     setLoading(true);
+  //     const signResult = await userCtx.signServiceTerm();
+  //     globalCtx.toast({type: 'success', message: `Success:  ${signResult}`});
+  //     console.log(signResult);
+  //   } catch (error) {
+  //     console.log(error);
+  //     globalCtx.toast({type: 'error', message: `Error:  ${error}`});
+  //   }
+
+  //   setLoading(false);
+  // };
+
   const controlSpace = firstStepError || secondStepError ? 'space-y-12' : 'space-y-12';
   const btnSpace = firstStepSuccess && !secondStepError && !secondStepSuccess ? 'mt-10' : 'mt-16';
 

@@ -16,6 +16,10 @@ import {
   dummyOpenCFDDetails,
 } from '../interfaces/tidebit_defi_background/open_cfd_details';
 import WalletPanel from '../components/wallet_panel/wallet_panel';
+import QrcodeModal from '../components/qrcode_modal/qrcode_modal';
+import HelloModal from '../components/hello_modal/hello_modal';
+import SignatureProcessModal from '../components/signature_process_modal/signature_process_modal';
+import {UserContext} from './user_context';
 
 export interface IToastify {
   type: 'error' | 'warning' | 'info' | 'success';
@@ -41,6 +45,15 @@ export interface IProcessDataModal {
 export interface IDataFailedModal extends IProcessDataModal {
   failedTitle?: string;
   failedMsg: string;
+}
+
+export interface IDataSignatrueProcessModal {
+  requestSendingHandler: () => void;
+  firstStepSuccess: boolean;
+  firstStepError: boolean;
+  secondStepSuccess: boolean;
+  secondStepError: boolean;
+  loading: boolean;
 }
 
 const toastHandler = ({type, message, toastId}: IToastify) => {
@@ -118,6 +131,12 @@ export interface IGlobalContext {
 
   visibleWalletPanel: boolean;
   visibleWalletPanelHandler: () => void;
+
+  visibleSignatureProcessModal: boolean;
+  visibleSignatureProcessModalHandler: () => void;
+
+  visibleHelloModal: boolean;
+  visibleHelloModalHandler: () => void;
 }
 
 export const GlobalContext = createContext<IGlobalContext>({
@@ -162,11 +181,18 @@ export const GlobalContext = createContext<IGlobalContext>({
 
   visibleWalletPanel: false,
   visibleWalletPanelHandler: () => null,
+
+  visibleSignatureProcessModal: false,
+  visibleSignatureProcessModalHandler: () => null,
+
+  visibleHelloModal: false,
+  visibleHelloModalHandler: () => null,
 });
 
 const initialColorMode: ColorModeUnion = 'dark';
 
 export const GlobalProvider = ({children}: IGlobalProvider) => {
+  const userCtx = useContext(UserContext);
   const [colorMode, setColorMode] = useState<ColorModeUnion>(initialColorMode);
 
   const [visiblePositionDetailsModal, setVisiblePositionDetailsModal] = useState(false);
@@ -203,6 +229,11 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
   });
 
   const [visibleWalletPanel, setVisibleWalletPanel] = useState(false);
+  const [visibleHelloModal, setVisibleHelloModal] = useState(false);
+
+  const [visibleSignatureProcessModal, setVisibleSignatureProcessModal] = useState(false);
+  const [dataSignatureProcessModal, setDataSignatureProcessModal] =
+    useState<IDataSignatrueProcessModal | null>();
 
   // ---------------TODO: To get the withdrawal / deposit result------------------
   const [depositProcess, setDepositProcess] = useState<
@@ -292,6 +323,29 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     setVisibleWalletPanel(!visibleWalletPanel);
   };
 
+  const visibleSignatureProcessModalHandler = () => {
+    setVisibleSignatureProcessModal(!visibleSignatureProcessModal);
+  };
+
+  // const dataSignatureProcessModalHandler = (data?: IDataSignatrueProcessModal) => {
+  //   if (data) {
+  //     setDataSignatureProcessModal(data);
+  //   } else {
+  //     setDataSignatureProcessModal({
+  //       requestSendingHandler,
+  //       firstStepSuccess: userCtx.isConnected,
+  // firstStepError: !userCtx.isConnected,
+  // secondStepSuccess: userCtx.enableServiceTerm,
+  // secondStepError: !userCtx.enableServiceTerm,
+  // loading: userCtx.signServiceTerm,
+  //     });
+  //   }
+  // };
+
+  const visibleHelloModalHandler = () => {
+    setVisibleHelloModal(!visibleHelloModal);
+  };
+
   const getWithdrawSubmissionState = (state: 'success' | 'cancellation' | 'fail') => {
     setWithdrawProcess(state);
   };
@@ -370,6 +424,12 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
 
     visibleWalletPanel,
     visibleWalletPanelHandler,
+
+    visibleSignatureProcessModal,
+    visibleSignatureProcessModalHandler,
+
+    visibleHelloModal,
+    visibleHelloModalHandler,
   };
   return (
     <GlobalContext.Provider value={defaultValue}>
@@ -429,6 +489,20 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
       <WalletPanel
         panelVisible={visibleWalletPanel}
         panelClickHandler={visibleWalletPanelHandler}
+      />
+      {/* <SignatureProcessModal
+        // requestSendingHandler={requestSendingHandler}
+        // firstStepSuccess={firstStepSuccess}
+        // firstStepError={firstStepError}
+        // secondStepSuccess={secondStepSuccess}
+        // secondStepError={secondStepError}
+        // loading={loading}
+        processModalVisible={visibleSignatureProcessModal}
+        processClickHandler={visibleSignatureProcessModalHandler}
+      /> */}
+      <HelloModal
+        helloModalVisible={visibleHelloModal}
+        helloClickHandler={visibleHelloModalHandler}
       />
 
       {/* One toast container avoids duplicate toast overlaying */}

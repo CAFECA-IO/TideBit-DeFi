@@ -6,9 +6,11 @@ import {FaDownload, FaUpload} from 'react-icons/fa';
 import {BiWallet} from 'react-icons/bi';
 import {accountTruncate} from '../../lib/common';
 import TideButton from '../tide_button/tide_button';
+import {useGlobal} from '../../contexts/global_context';
 
 const User = () => {
   const userCtx = useContext(UserContext);
+  const globalCtx = useGlobal();
 
   const [avatarMenuVisible, setAvatarMenuVisible] = useState(false);
 
@@ -50,7 +52,7 @@ const User = () => {
           <li
             onClick={() => {
               avatarClickHandler();
-              // depositModalClickHandler();
+              globalCtx.visibleDepositModalHandler();
             }}
             className="block py-2 pr-4 pl-3 hover:cursor-pointer hover:bg-darkGray5"
           >
@@ -62,7 +64,7 @@ const User = () => {
           <li
             onClick={() => {
               avatarClickHandler();
-              // withdrawModalClickHandler();
+              globalCtx.visibleWithdrawalModalHandler();
             }}
             className="block py-2 pr-4 pl-3 hover:cursor-pointer hover:bg-darkGray5"
           >

@@ -1533,11 +1533,13 @@ export default function WalletPanel({
       // console.log('user balance: ', balance);
       // console.log('connect to Metamask clicked, Account: ', address);
 
-      // TODO: NNNNNNNotes
       // console.log('connecting modal should be invisible: ', connectingModalVisible);
       setConnectingModalVisible(false);
       setConnecting(false);
 
+      // TODO: Separate signature process
+      // globalCtx.visibleSignatureProcessModalHandler();
+      // globalCtx.visibleWalletPanelHandler();
       setProcessModalVisible(true);
 
       // let signature = await signer.signMessage('TideBit DeFi test');

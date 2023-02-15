@@ -1,12 +1,11 @@
-import {IPnLType, PnLType} from '../../constants/pnl_type';
+import {IProfitState, ProfitState} from '../../constants/profit_state';
 
 export interface IPnL {
-  type: IPnLType;
+  type: IProfitState;
   value: number;
 }
 
 const pnl: IPnL = {
-  type: PnLType.PROFIT,
-  // symbol: '+',
+  type: ProfitState.PROFIT,
   value: 100,
 };

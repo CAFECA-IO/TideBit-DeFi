@@ -12,6 +12,8 @@ import TradingInput from '../trading_input/trading_input';
 import {AiOutlineQuestionCircle} from 'react-icons/ai';
 import RippleButton from '../ripple_button/ripple_button';
 import {useGlobal} from '../../contexts/global_context';
+import {TypeOfPosition} from '../../constants/type_of_position';
+import {ProfitState} from '../../constants/profit_state';
 
 interface IPositionDetailsModal {
   modalVisible: boolean;
@@ -90,24 +92,30 @@ const PositionDetailsModal = ({
   // };
 
   const displayedPnLSymbol =
-    openCfdDetails.pnl.type === 'PROFIT' ? '+' : openCfdDetails.pnl.type === 'LOSS' ? '-' : '';
+    openCfdDetails.pnl.type === ProfitState.PROFIT
+      ? '+'
+      : openCfdDetails.pnl.type === ProfitState.LOSS
+      ? '-'
+      : '';
 
   // TODO: i18n
   const displayedTypeOfPosition =
-    openCfdDetails?.typeOfPosition === 'BUY' ? 'Up (Buy)' : 'Down (Sell)';
+    openCfdDetails?.typeOfPosition === TypeOfPosition.BUY ? 'Up (Buy)' : 'Down (Sell)';
 
   const displayedPositionColor =
     openCfdDetails.typeOfPosition === 'BUY' ? PNL_COLOR_TYPE.profit : PNL_COLOR_TYPE.loss;
 
   const displayedPnLColor =
-    openCfdDetails?.pnl.type === 'PROFIT'
+    openCfdDetails?.pnl.type === ProfitState.PROFIT
       ? PNL_COLOR_TYPE.profit
-      : openCfdDetails?.pnl.type === 'LOSS'
+      : openCfdDetails?.pnl.type === ProfitState.LOSS
       ? PNL_COLOR_TYPE.loss
       : PNL_COLOR_TYPE.equal;
 
   const displayedBorderColor =
-    openCfdDetails?.typeOfPosition === 'BUY' ? BORDER_COLOR_TYPE.long : BORDER_COLOR_TYPE.short;
+    openCfdDetails?.typeOfPosition === TypeOfPosition.BUY
+      ? BORDER_COLOR_TYPE.long
+      : BORDER_COLOR_TYPE.short;
 
   const isDisplayedTakeProfitSetting = takeProfitToggle ? 'flex' : 'invisible';
   const isDisplayedStopLossSetting = stopLossToggle ? 'flex' : 'invisible';
@@ -333,7 +341,7 @@ const PositionDetailsModal = ({
                   <div className="mx-6 my-4 flex justify-between">
                     <div className="text-lightGray">PNL</div>
                     <div className={`${displayedPnLColor}`}>
-                      $ {displayedPnLSymbol}{' '}
+                      {displayedPnLSymbol} ${' '}
                       {openCfdDetails?.pnl.value?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}
                     </div>
                   </div>

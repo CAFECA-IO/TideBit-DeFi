@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic';
 import {ApexOptions} from 'apexcharts';
 import {PROFIT_LOSS_COLOR_TYPE} from '../../constants/display';
 import {UserContext, IUserContext} from '../../contexts/user_context';
+import {MarketContext} from '../../contexts/market_context';
 // import {FaEthereum} from 'react-icons/fa';
 // // import {ReactComponent as ethIcon} from '/public/elements/group_15143.svg';
 // // import {ReactComponent as Logo} from './logo.svg';
@@ -63,6 +64,7 @@ const CryptoCard = ({
   ...otherProps
 }: ICardProps): JSX.Element => {
   const userCtx = useContext(UserContext) as IUserContext;
+  const marketCtx = useContext(MarketContext);
   // FIXME: comment for `.tsx`
   // price = price > 0.001 ? price.toLocaleString() : price;
   fluctuating = Number(fluctuating);
@@ -271,6 +273,7 @@ const CryptoCard = ({
       {/* Desktop (width > 500px) version (Card 200x120) */}
       <div
         className={`${desktopVersionBreakpoint} ${otherProps?.className} relative m-0 hidden h-120px w-200px rounded-2xl border-0.5px p-0 ${gradientColor} bg-black bg-gradient-to-b opacity-90 shadow-lg`}
+        onClick={() => marketCtx.selectTickerHandler(currency)}
       >
         <div className="px-2 py-1">
           {/* token icon & chain & coin name */}

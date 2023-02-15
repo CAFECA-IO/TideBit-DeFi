@@ -1,5 +1,4 @@
 import React, {useState, useContext, createContext} from 'react';
-import {ICardProps, ILineGraphProps} from '../components/card/crypto_card';
 import {
   INITIAL_POSITION_LABEL_DISPLAYED_STATE,
   PROFIT_LOSS_COLOR_TYPE,
@@ -12,28 +11,30 @@ import {
   IPriceStatistics,
   ITickerDetails,
 } from '../interfaces/depre_tidebit_defi_background';
-import {ITickerLiveStatistics} from '../interfaces/tidebit_defi_background/ticker_live_statistics';
-import {ITickerStatic} from '../interfaces/tidebit_defi_background/ticker_static';
-import {UserContext} from './user_context';
 import {
-  ICryptocurrency,
-  dummyTransferCurrency,
-} from '../interfaces/tidebit_defi_background/cryptocurrency';
-
-export interface ITickerData {
-  currency: string;
-  chain: string;
-  star: boolean;
-  starred: boolean;
-  // starColor: string;
-  // getStarredStateCallback: (bool: boolean) => void;
-  price: number;
-  fluctuating: number;
-  // gradientColor: string;
-  tokenImg: string;
-
-  lineGraphProps: ILineGraphProps;
-}
+  dummyTickerLiveStatistics,
+  getDummyTickerLiveStatistics,
+  ITickerLiveStatistics,
+} from '../interfaces/tidebit_defi_background/ticker_live_statistics';
+import {
+  dummyTickerStatic,
+  getDummyTickerStatic,
+  ITickerStatic,
+} from '../interfaces/tidebit_defi_background/ticker_static';
+import {UserContext} from './user_context';
+import {ICryptocurrency} from '../interfaces/tidebit_defi_background/cryptocurrency';
+import {dummyResultSuccess, IResult} from '../interfaces/tidebit_defi_background/result';
+import {
+  ITickerData,
+  dummyTickers,
+  dummyTicker,
+  getDummyTicker,
+} from '../interfaces/tidebit_defi_background/ticker_data';
+import {ITimeSpanUnion} from '../interfaces/tidebit_defi_background/time_span_union';
+import {
+  getDummyCandlestickChartData,
+  ICandlestickData,
+} from '../interfaces/tidebit_defi_background/candlestickData';
 
 const SAMPLE_TICKERS = [
   'ETH',
@@ -53,196 +54,6 @@ const SAMPLE_TICKERS = [
   'UNI',
   'Flow',
 ];
-
-function randomNumber(min: number, max: number) {
-  return Math.floor(Math.random() * (max - min + 1) + min);
-}
-
-function randomArray(min: number, max: number, length: number) {
-  const arr = [];
-  for (let i = 0; i < length; i++) {
-    arr.push(randomNumber(min, max));
-  }
-  return arr;
-}
-
-// const sampleArray = randomArray(1100, 1200, 10);
-
-const strokeColorDisplayed = (sampleArray: number[]) => {
-  if (sampleArray[sampleArray.length - 1] > sampleArray[sampleArray.length - 2]) {
-    // priceColor = 'text-lightGreen';
-    return [PROFIT_LOSS_COLOR_TYPE.profit];
-  }
-
-  // priceColor = 'text-lightRed';
-  return [PROFIT_LOSS_COLOR_TYPE.loss];
-};
-
-const TRADING_CRYPTO_DATA = [
-  {
-    currency: 'ETH',
-    chain: 'Ethereum',
-    star: true,
-    starred: false,
-    price: 1288.4,
-    fluctuating: 1.14,
-    tokenImg: '/elements/group_2371.svg',
-  },
-  {
-    currency: 'BTC',
-    chain: 'Bitcoin',
-    star: true,
-    starred: false,
-    price: 1288.4,
-    fluctuating: 1.14,
-    tokenImg: '/elements/group_2372.svg',
-  },
-  {
-    currency: 'LTC',
-    chain: 'Litecoin',
-    star: true,
-    starred: false,
-    price: 1288.4,
-    fluctuating: 1.14,
-    tokenImg: '/elements/c5b7bda06ddfe2b3f59b37ed6bb65ab4.svg',
-  },
-  {
-    currency: 'MATIC',
-    chain: 'Polygon',
-    star: true,
-    starred: false,
-    price: 1288.4,
-    fluctuating: 1.14,
-    tokenImg: '/elements/9cc18b0cbe765b0a28791d253207f0c0.svg',
-  },
-  {
-    currency: 'BNB',
-    chain: 'BNB',
-    star: true,
-    starred: false,
-    price: 1288.4,
-    fluctuating: 1.14,
-    tokenImg: '/elements/group_2374.svg',
-  },
-  {
-    currency: 'SOL',
-    chain: 'Solana',
-    star: true,
-    starred: false,
-    price: 1288.4,
-    fluctuating: 1.14,
-    tokenImg: '/elements/group_2378.svg',
-  },
-  {
-    currency: 'SHIB',
-    chain: 'Shiba Inu',
-    star: true,
-    starred: false,
-    price: 1288.4,
-    fluctuating: 1.14,
-    tokenImg: '/elements/group_2381.svg',
-  },
-  {
-    currency: 'DOT',
-    chain: 'Polkadot',
-    star: true,
-    starred: false,
-    price: 1288.4,
-    fluctuating: 1.14,
-    tokenImg: '/elements/group_2385.svg',
-  },
-  {
-    currency: 'ADA',
-    chain: 'Cardano',
-    star: true,
-    starred: false,
-    price: 1288.4,
-    fluctuating: 1.14,
-    tokenImg: '/elements/group_2388.svg',
-  },
-  {
-    currency: 'AVAX',
-    chain: 'Avalanche',
-    star: true,
-    starred: false,
-    price: 1288.4,
-    fluctuating: 1.14,
-    tokenImg: '/elements/group_2391.svg',
-  },
-  {
-    currency: 'Dai',
-    chain: 'Dai',
-    star: true,
-    starred: false,
-    price: 1288.4,
-    fluctuating: 1.14,
-    tokenImg: '/elements/layer_x0020_1.svg',
-  },
-  {
-    currency: 'MKR',
-    chain: 'Maker',
-    star: true,
-    starred: false,
-    price: 1288.4,
-    fluctuating: 1.14,
-    tokenImg: '/elements/layer_2.svg',
-  },
-  {
-    currency: 'XRP',
-    chain: 'XRP',
-    star: true,
-    starred: false,
-    price: 1288.4,
-    fluctuating: 1.14,
-    tokenImg: '/elements/group_2406.svg',
-  },
-  {
-    currency: 'DOGE',
-    chain: 'Dogecoin',
-    star: true,
-    starred: false,
-    price: 1288.4,
-    fluctuating: 1.14,
-    tokenImg: '/elements/layer_2-1.svg',
-  },
-  {
-    currency: 'UNI',
-    chain: 'Uniswap',
-    star: true,
-    starred: false,
-    price: 1288.4,
-    fluctuating: 1.14,
-    tokenImg: '/elements/uniswap-uni-logo.svg',
-  },
-  {
-    currency: 'Flow',
-    chain: 'Flow',
-    star: true,
-    starred: false,
-    price: 1288.4,
-    fluctuating: 1.14,
-    tokenImg: '/elements/layer_2_1_.svg',
-  },
-];
-
-// Add line graph property to each object in array
-const addPropertyToArray: ITickerData[] = TRADING_CRYPTO_DATA.map(item => {
-  const dataArray = randomArray(1100, 1200, 10);
-  const strokeColor = strokeColorDisplayed(dataArray);
-  const newArray = {
-    ...item,
-    starred: false,
-    lineGraphProps: {
-      dataArray: dataArray,
-      strokeColor: strokeColor,
-      lineGraphWidth: '170',
-      lineGraphWidthMobile: '140',
-    },
-  };
-  // console.log('starColor:', item.starColor, 'gradientColor:', item.gradientColor);
-
-  return newArray;
-});
 
 // export interface IPositionInfoOnChart {}
 
@@ -461,13 +272,17 @@ export interface IMarketProvider {
   children: React.ReactNode;
 }
 
-// export interface ITransferOptions {
-//   // [key: string]: {
-//   label: string;
-//   content: string;
-// }
+export interface ITransferOptions {
+  id: string;
+  symbol: string;
+  name: string;
+  decimals: number;
+  icon: string;
+  fee: number;
+}
 
 export interface IMarketContext {
+  selectedTicker: ITickerData;
   availableTickers: ITickerData[];
   isCFDTradable: boolean;
   showPositionOnChart: boolean;
@@ -475,19 +290,22 @@ export interface IMarketContext {
   positionInfoOnChart: ApexOptions | null;
   candlestickId: string;
   candlestickChartIdHandler: (id: string) => void;
-  availableTransferOptions: ICryptocurrency[];
-  liveStatstics: IPriceStatistics | null;
-  bullAndBearIndex: number;
-  // cryptoBriefNews: IBriefNewsItem[];
-  // cryptoSummary: ICryptoSummary | null;
+  availableTransferOptions: ITransferOptions[];
   tickerStatic: ITickerStatic | null;
   tickerLiveStatistics: ITickerLiveStatistics | null;
-  getCryptoSummary: (tickerId: string) => ICryptoSummary | null;
-  getCryptoNews: (tickerId: string) => IBriefNewsItem[] | null;
+  candlestickChartData: ICandlestickData[];
   listAvailableTickers: () => ITickerData[];
+  listDepositCryptocurrencies: () => ICryptocurrency[];
+  listWithdrawCryptocurrencies: () => ICryptocurrency[];
+  selectTickerHandler: (props: string) => IResult;
+  getCandlestickChartData: (props: {
+    tickerId: string;
+    timeSpan: ITimeSpanUnion;
+  }) => Promise<ICandlestickData[]>; // x 100
 }
 // TODO: Note: _app.tsx 啟動的時候 => createContext
 export const MarketContext = createContext<IMarketContext>({
+  selectedTicker: dummyTicker,
   availableTickers: [],
   isCFDTradable: false,
   showPositionOnChart: false,
@@ -496,15 +314,21 @@ export const MarketContext = createContext<IMarketContext>({
   candlestickId: '',
   candlestickChartIdHandler: () => null,
   availableTransferOptions: [],
-  liveStatstics: null,
-  bullAndBearIndex: 0,
+  candlestickChartData: [],
+  // liveStatstics: null,
+  // bullAndBearIndex: 0,
   // cryptoBriefNews: [],
   // cryptoSummary: null,
   tickerStatic: null,
   tickerLiveStatistics: null,
-  getCryptoSummary: () => null,
-  getCryptoNews: () => null,
+  // getCryptoSummary: () => null,
+  // getCryptoNews: () => null,
   listAvailableTickers: () => [],
+  listDepositCryptocurrencies: () => [],
+  listWithdrawCryptocurrencies: () => [],
+  selectTickerHandler: (props: string) => dummyResultSuccess,
+  getCandlestickChartData: (props: {tickerId: string; timeSpan: ITimeSpanUnion}) =>
+    Promise.resolve<ICandlestickData[]>([]),
 });
 
 const availableTransferOptions = [
@@ -529,166 +353,10 @@ const availableTransferOptions = [
   {id: 'EOS', symbol: 'EOS', name: 'EOS', decimals: 18, icon: '', fee: 0},
 ];
 
-const getCryptoSummary = (tickerId = 'ETH') => {
-  return {
-    icon: '',
-    label: 'Ethereum',
-    introduction: `Ethereum (ETH) was launched in 2015. Ethereum is a decentralized blockchain that supports smart contracts-essentially computer programs-that can automatically execute when certain conditions are met. The native cryptocurrency-essentially computer programs-of the platform is called ether or ethereum. Ethereum is divisible to 18 decimal places. There is currently no hard cap on the total supply
-  of ETH.`,
-    whitePaperLink: '#',
-    websiteLink: '#',
-    price: '39051 USDT',
-    rank: 1,
-    publishTime: '2008-11-01',
-    publishAmount: '21,000,000',
-    tradingValue: '576,461,120',
-    tradingVolume: '19,014,962',
-    totalValue: '820,071,000,000 USDT',
-  };
-};
-
-const getCryptoNews = (tickerId = 'ETH') => [
-  {
-    title: 'Add news title here',
-    content:
-      'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea',
-    // img: 'https://www.tidebit.com/wp-content/uploads/2020/09/20200915_1.jpg',
-    img: '/elements/rectangle_715@2x.png',
-  },
-  {
-    title: 'Add news title here',
-    content:
-      'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea',
-    img: '/elements/rectangle_716@2x.png',
-  },
-  {
-    title: 'Add news title here',
-    content:
-      'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea',
-    img: '/elements/rectangle_717@2x.png',
-  },
-];
-
-const tickerStatic: ITickerStatic = {
-  id: 'ETH',
-  label: 'ETH',
-  leverage: 5,
-  guaranteedStopFee: 0.2,
-  cryptoBriefNews: [
-    {
-      id: 'NEWS20230210001',
-      timestamp: 1675299651,
-      title: 'Add news title here',
-      content:
-        'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea',
-      // img: 'https://www.tidebit.com/wp-content/uploads/2020/09/20200915_1.jpg',
-      img: '/elements/rectangle_715@2x.png',
-    },
-    {
-      id: 'NEWS20230210002',
-      timestamp: 1675299651,
-      title: 'Add news title here',
-      content:
-        'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea',
-      img: '/elements/rectangle_716@2x.png',
-    },
-    {
-      id: 'NEWS20230210003',
-      timestamp: 1675299651,
-      title: 'Add news title here',
-      content:
-        'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea',
-      img: '/elements/rectangle_717@2x.png',
-    },
-  ],
-  cryptoSummary: {
-    icon: '/elements/group_2371.svg', // TODO: Use icon of Context in CryptoSummary component instead of hardcode
-    id: 'ETH',
-    name: 'Ethereum',
-    introduction: `Ethereum (ETH) was launched in 2015. Ethereum is a decentralized blockchain that supports smart contracts-essentially computer programs-that can automatically execute when certain conditions are met. The native cryptocurrency-essentially computer programs-of the platform is called ether or ethereum. Ethereum is divisible to 18 decimal places. There is currently no hard cap on the total supply
-of ETH.`,
-    whitePaperLink: '#',
-    websiteLink: '#',
-    price: '39051 USDT',
-    rank: 1,
-    publishTime: '2008-11-01',
-    publishAmount: '21,000,000',
-    tradingValue: '576,461,120',
-    tradingVolume: '19,014,962',
-    totalValue: '820,071,000,000 USDT',
-  },
-};
-
-const tickerLiveStatistics: ITickerLiveStatistics = {
-  id: 'ETH',
-  longRecommendedSl: 5346.85,
-  longRecommendedTp: 7233.97,
-  spread: 0.1,
-  fee: 0,
-  volume: 92154731,
-  price: 1580,
-  fluctuating: {type: 'PROFIT', value: 23.3, percentage: 2.65},
-  buyEstimatedFilledPrice: 1590,
-  sellEstimatedFilledPrice: 1570,
-  bullAndBearIndex: 39,
-  priceStatistics: {
-    fiveMin: {low: 1200, high: 1320, now: '82'},
-    sixtyMin: {low: 1100, high: 1840, now: '27'},
-    oneDay: {low: 1060, high: 2040, now: '39'},
-  },
-};
-
-const liveStatstics: IPriceStatistics = {
-  fiveMin: {low: 1200, high: 1320, now: '80'},
-  sixtyMin: {low: 1100, high: 1840, now: '27'},
-  oneDay: {low: 1060, high: 2040, now: '39'},
-};
-
-const bullAndBearIndex = 62;
-
-const cryptoBriefNews: IBriefNewsItem[] = [
-  {
-    title: 'Add news title here',
-    content:
-      'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea',
-    // img: 'https://www.tidebit.com/wp-content/uploads/2020/09/20200915_1.jpg',
-    img: '/elements/rectangle_715@2x.png',
-  },
-  {
-    title: 'Add news title here',
-    content:
-      'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea',
-    img: '/elements/rectangle_716@2x.png',
-  },
-  {
-    title: 'Add news title here',
-    content:
-      'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea',
-    img: '/elements/rectangle_717@2x.png',
-  },
-];
-
-// // TODO: icon svg replaced by img src string
-// const cryptoSummary: ICryptoSummary = {
-//   icon: '',
-//   label: 'Ethereum',
-//   introduction: `Ethereum (ETH) was launched in 2015. Ethereum is a decentralized blockchain that supports smart contracts-essentially computer programs-that can automatically execute when certain conditions are met. The native cryptocurrency-essentially computer programs-of the platform is called ether or ethereum. Ethereum is divisible to 18 decimal places. There is currently no hard cap on the total supply
-// of ETH.`,
-//   whitePaperLink: '#',
-//   websiteLink: '#',
-//   price: '39051 USDT',
-//   rank: 1,
-//   publishTime: '2008-11-01',
-//   publishAmount: '21,000,000',
-//   tradingValue: '576,461,120',
-//   tradingVolume: '19,014,962',
-//   totalValue: '820,071,000,000 USDT',
-// };
-
 export const MarketProvider = ({children}: IMarketProvider) => {
   const userCtx = useContext(UserContext);
   const updateAvailableTickers = () => {
-    let updateTickers = [...addPropertyToArray];
+    let updateTickers = [...dummyTickers];
     if (userCtx.isConnected) {
       updateTickers = updateTickers.map(ticker => {
         return {
@@ -701,6 +369,13 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     }
     return updateTickers;
   };
+  const [selectedTicker, setSelectedTicker] = useState<ITickerData>(dummyTicker);
+  const [tickerStatic, setTickerStatic] = useState<ITickerStatic>(dummyTickerStatic);
+  const [tickerLiveStatistics, setTickerLiveStatistics] =
+    useState<ITickerLiveStatistics>(dummyTickerLiveStatistics);
+  const [candlestickChartData, setCandlestickChartData] = useState<ICandlestickData[]>(
+    getDummyCandlestickChartData()
+  );
   const [availableTickers, setAvailableTickers] = useState<ITickerData[]>(updateAvailableTickers());
   const listAvailableTickers = () => {
     const updateTickers = updateAvailableTickers();
@@ -733,26 +408,54 @@ export const MarketProvider = ({children}: IMarketProvider) => {
 
   // console.log('Whole array [addPropertyToArray]:', addPropertyToArray);
   // setAvailableTickers(addPropertyToArray); // infinite loop
+  const listDepositCryptocurrencies = () => [];
+  const listWithdrawCryptocurrencies = () => [];
+
+  const selectTickerHandler = (currency: string) => {
+    // console.log(`selectTickerHandler currency`, currency);
+    const ticker: ITickerData = getDummyTicker(currency);
+    // console.log(`selectTickerHandler ticker`, ticker);
+    setSelectedTicker(ticker);
+    const tickerStatic: ITickerStatic = getDummyTickerStatic(currency);
+    setTickerStatic(tickerStatic);
+    const tickerLiveStatistics: ITickerLiveStatistics = getDummyTickerLiveStatistics(currency);
+    setTickerLiveStatistics(tickerLiveStatistics);
+    const candlestickChartData = getDummyCandlestickChartData();
+    setCandlestickChartData(candlestickChartData);
+    if (userCtx.isConnected) {
+      userCtx.listOpenCFDs(currency);
+      userCtx.listClosedCFDs(currency);
+    }
+
+    // if is connected
+    // 5.c
+    return dummyResultSuccess;
+  };
+
+  const getCandlestickChartData = async (props: {tickerId: string; timeSpan: ITimeSpanUnion}) => {
+    let candlestickChartData: ICandlestickData[] = [];
+    candlestickChartData = await Promise.resolve(getDummyCandlestickChartData(50));
+    return candlestickChartData;
+  };
 
   const defaultValue = {
+    selectedTicker,
+    selectTickerHandler,
     availableTickers,
     isCFDTradable,
     showPositionOnChart,
     showPositionOnChartHandler,
     positionInfoOnChart,
     candlestickId,
+    candlestickChartData,
     candlestickChartIdHandler,
-    // transferOptions,
     availableTransferOptions: availableTransferOptions,
-    liveStatstics,
-    bullAndBearIndex,
-    // cryptoBriefNews,
-    // cryptoSummary,
     tickerStatic,
     tickerLiveStatistics,
-    getCryptoSummary,
-    getCryptoNews,
     listAvailableTickers,
+    listDepositCryptocurrencies,
+    listWithdrawCryptocurrencies,
+    getCandlestickChartData,
   };
 
   return <MarketContext.Provider value={defaultValue}>{children}</MarketContext.Provider>;

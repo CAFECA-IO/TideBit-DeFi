@@ -6,9 +6,9 @@ import {IBriefNewsItem} from '../../interfaces/depre_tidebit_defi_background';
 const CryptoNewsSection = () => {
   const overallWidth = 'w-full pr-5 lg:p-0 lg:w-2/3 xl:w-3/4';
   const dividerWidth = 'w-full lg:w-2/3 xl:w-3/4';
-  const {getCryptoNews} = useContext(MarketContext);
+  const marketCtx = useContext(MarketContext);
 
-  const cryptoBriefNews = getCryptoNews('ETH') ?? {};
+  const cryptoBriefNews = marketCtx.tickerStatic?.cryptoBriefNews ?? [];
 
   const displayedCryptoNews =
     cryptoBriefNews instanceof Array &&

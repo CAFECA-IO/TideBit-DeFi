@@ -1,4 +1,6 @@
-import {PnLType} from '../../constants/pnl_type';
+import {OrderState} from '../../constants/order_state';
+import {ProfitState} from '../../constants/profit_state';
+import {TypeOfPosition} from '../../constants/type_of_position';
 import {ICFDDetails} from './cfd_details';
 import {ITickerLineGraph} from './ticker_line_graph';
 
@@ -14,8 +16,8 @@ export const dummyOpenCFDDetails: IOpenCFDDetails = {
   id: 'TBD202302070000001',
   ticker: 'ETH',
   amount: 1.8,
-  state: 'OPENING',
-  typeOfPosition: 'SELL',
+  state: OrderState.OPENING,
+  typeOfPosition: TypeOfPosition.BUY,
   leverage: 5,
   margin: randomIntFromInterval(650, 10000),
   openPrice: randomIntFromInterval(10, 100),
@@ -26,8 +28,8 @@ export const dummyOpenCFDDetails: IOpenCFDDetails = {
   scheduledClosingTimestamp: 1675386051, // openTimestamp + 86400
   openValue: 74589658,
   pnl: {
-    type: PnLType.PROFIT,
-    value: 53723,
+    type: ProfitState.PROFIT,
+    value: 90752,
   },
   liquidationPrice: 19537,
   takeProfit: 74521,

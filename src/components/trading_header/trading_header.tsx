@@ -1,10 +1,10 @@
-import {useContext, useState} from 'react';
+import {useContext} from 'react';
 import TickerSelectorBox from '../ticker_selector_box/ticker_selector_box';
 import {CgArrowsExchange} from 'react-icons/cg';
 import useOuterClick from '../../lib/hooks/use_outer_click';
 import {UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
 import {MarketContext} from '../../contexts/market_context';
-import {UpOrDown} from '../../interfaces/tidebit_defi_background/ticker_data';
+import {Trend} from '../../constants/trend';
 
 interface ITradingHeaderProps {
   upOrDown: string;
@@ -14,8 +14,8 @@ interface ITradingHeaderProps {
 const TradingHeader = ({upOrDown, tradingVolume}: ITradingHeaderProps) => {
   const marketCtx = useContext(MarketContext);
   if (
-    marketCtx.selectedTicker.upOrDown !== UpOrDown.UP &&
-    marketCtx.selectedTicker.upOrDown !== UpOrDown.DOWN
+    marketCtx.selectedTicker.upOrDown !== Trend.UP &&
+    marketCtx.selectedTicker.upOrDown !== Trend.DOWN
   )
     return <></>;
 
@@ -33,7 +33,7 @@ const TradingHeader = ({upOrDown, tradingVolume}: ITradingHeaderProps) => {
   };
 
   const priceShadowColor =
-    marketCtx.selectedTicker.upOrDown === UpOrDown.UP ? 'priceUpShadow' : 'priceDownShadow';
+    marketCtx.selectedTicker.upOrDown === Trend.UP ? 'priceUpShadow' : 'priceDownShadow';
 
   // const displayedTickerBox = showTickerSelector ? <TickerSelectorModal /> : null;
 
@@ -134,9 +134,9 @@ const TradingHeader = ({upOrDown, tradingVolume}: ITradingHeaderProps) => {
             </span>
           </div>
           <div className="text-lg">{`${
-            marketCtx.selectedTicker.upOrDown === UpOrDown.UP ? '▴' : '▾'
+            marketCtx.selectedTicker.upOrDown === Trend.UP ? '▴' : '▾'
           } $${marketCtx.selectedTicker.priceChange} (${
-            marketCtx.selectedTicker.upOrDown === UpOrDown.UP ? '+' : '-'
+            marketCtx.selectedTicker.upOrDown === Trend.UP ? '+' : '-'
           }${marketCtx.selectedTicker.fluctuating}%)`}</div>
         </div>
 

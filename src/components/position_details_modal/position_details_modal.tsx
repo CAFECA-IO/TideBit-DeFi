@@ -12,6 +12,8 @@ import TradingInput from '../trading_input/trading_input';
 import {AiOutlineQuestionCircle} from 'react-icons/ai';
 import RippleButton from '../ripple_button/ripple_button';
 import {useGlobal} from '../../contexts/global_context';
+import {Trend} from '../../constants/trend';
+import {TypeOfPosition} from '../../constants/type_of_position';
 
 interface IPositionDetailsModal {
   modalVisible: boolean;
@@ -91,17 +93,19 @@ const PositionDetailsModal = ({
 
   // TODO: i18n
   const displayedTypeOfPosition =
-    openCfdDetails?.typeOfPosition === 'BUY' ? 'Up (Buy)' : 'Down (Sell)';
+    openCfdDetails?.typeOfPosition === TypeOfPosition.BUY ? 'Up (Buy)' : 'Down (Sell)';
 
   const displayedPnLColor =
-    openCfdDetails?.pnl.type === 'UP'
+    openCfdDetails?.pnl.type === Trend.UP
       ? PNL_COLOR_TYPE.profit
-      : openCfdDetails?.pnl.type === 'DOWN'
+      : openCfdDetails?.pnl.type === Trend.DOWN
       ? PNL_COLOR_TYPE.loss
       : PNL_COLOR_TYPE.equal;
 
   const displayedBorderColor =
-    openCfdDetails?.typeOfPosition === 'BUY' ? BORDER_COLOR_TYPE.long : BORDER_COLOR_TYPE.short;
+    openCfdDetails?.typeOfPosition === TypeOfPosition.BUY
+      ? BORDER_COLOR_TYPE.long
+      : BORDER_COLOR_TYPE.short;
 
   const isDisplayedTakeProfitSetting = takeProfitToggle ? 'flex' : 'invisible';
   const isDisplayedStopLossSetting = stopLossToggle ? 'flex' : 'invisible';

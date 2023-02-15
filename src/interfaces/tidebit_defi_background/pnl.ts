@@ -1,5 +1,7 @@
+import {ITrend} from '../../constants/trend';
+
 export interface IPnL {
-  type: 'UP' | 'DOWN' | 'EQUAL';
+  type: ITrend;
   symbol?: string; // + or -
   value: number;
 }

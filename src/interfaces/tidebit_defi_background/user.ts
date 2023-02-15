@@ -1,4 +1,5 @@
 import {IOrderStatusUnion} from '../../constants/order_status_union';
+import {Trend} from '../../constants/trend';
 import {ICFDBrief} from './cfd_brief';
 import {ICFDOrderCreatingProps} from './cfd_order_request';
 import {ICFDOrderUpdateRequest} from './cfd_order_update';
@@ -85,7 +86,7 @@ export const dummyOpenCfds: IOpenCFDDetails[] = [
     scheduledClosingTimestamp: 1675386051, // openTimestamp + 86400
     openValue: 74589658,
     pnl: {
-      type: 'UP',
+      type: Trend.UP,
       symbol: '+',
       value: 90752,
     },
@@ -114,7 +115,7 @@ export const dummyOpenCfds: IOpenCFDDetails[] = [
     scheduledClosingTimestamp: 1675386051, // openTimestamp + 86400
     openValue: 74589658,
     pnl: {
-      type: 'UP',
+      type: Trend.UP,
       symbol: '+',
       value: randomIntFromInterval(1000, 10000),
     },
@@ -143,7 +144,7 @@ export const dummyOpenCfds: IOpenCFDDetails[] = [
     scheduledClosingTimestamp: 1675386051, // openTimestamp + 86400
     openValue: 74589658,
     pnl: {
-      type: 'UP',
+      type: Trend.UP,
       symbol: '+',
       value: 9075200,
     },
@@ -172,7 +173,7 @@ export const dummyOpenCfds: IOpenCFDDetails[] = [
     scheduledClosingTimestamp: 1675386051, // openTimestamp + 86400
     openValue: 74589658,
     pnl: {
-      type: 'UP',
+      type: Trend.UP,
       symbol: '+',
       value: randomIntFromInterval(1000, 10000),
     },

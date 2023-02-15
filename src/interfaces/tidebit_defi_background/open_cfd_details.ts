@@ -1,3 +1,6 @@
+import {OrderState} from '../../constants/order_state';
+import {Trend} from '../../constants/trend';
+import {TypeOfPosition} from '../../constants/type_of_position';
 import {ICFDDetails} from './cfd_details';
 import {ITickerLineGraph} from './ticker_line_graph';
 
@@ -13,8 +16,8 @@ export const dummyOpenCFDDetails: IOpenCFDDetails = {
   id: 'TBD202302070000001',
   ticker: 'ETH',
   amount: 1.8,
-  state: 'OPENING',
-  typeOfPosition: 'BUY',
+  state: OrderState.OPENING,
+  typeOfPosition: TypeOfPosition.BUY,
   leverage: 5,
   margin: randomIntFromInterval(650, 10000),
   openPrice: randomIntFromInterval(10, 100),
@@ -25,7 +28,7 @@ export const dummyOpenCFDDetails: IOpenCFDDetails = {
   scheduledClosingTimestamp: 1675386051, // openTimestamp + 86400
   openValue: 74589658,
   pnl: {
-    type: 'UP',
+    type: Trend.UP,
     symbol: '+',
     value: 90752,
   },

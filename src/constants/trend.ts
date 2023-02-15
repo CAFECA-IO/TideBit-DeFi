@@ -5,4 +5,5 @@ export interface ITrendConstant {
 export const Trend: ITrendConstant = {
   UP: 'UP',
   DOWN: 'DOWN',
+  EQUAL: 'EQUAL',
 };

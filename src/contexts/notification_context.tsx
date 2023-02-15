@@ -17,6 +17,7 @@ export interface INotificationContext {
   isRead: (id: string) => Promise<void>;
   readAll: () => Promise<void>;
   init: () => Promise<void>;
+  reset: () => Promise<void>;
 }
 
 export const NotificationContext = createContext<INotificationContext>({
@@ -25,6 +26,7 @@ export const NotificationContext = createContext<INotificationContext>({
   isRead: (id: string) => Promise.resolve(),
   readAll: () => Promise.resolve(),
   init: () => Promise.resolve(),
+  reset: () => Promise.resolve(),
 });
 
 export const NotificationProvider = ({children}: INotificationProvider) => {
@@ -73,7 +75,13 @@ export const NotificationProvider = ({children}: INotificationProvider) => {
     return;
   };
 
-  const defaultValue = {notifications, unreadNotifications, isRead, readAll, init};
+  const reset = async () => {
+    setNotifications([]);
+    setUnreadNotifications([]);
+    return;
+  };
+
+  const defaultValue = {notifications, unreadNotifications, isRead, readAll, init, reset};
 
   return (
     <NotificationContext.Provider value={defaultValue}>{children}</NotificationContext.Provider>

@@ -42,6 +42,7 @@ export interface ICardProps {
   getStarredState?: (props: boolean) => void;
 
   className?: string;
+  cardClickHandler?: () => void;
   // lineGraphDataArray?: number[];
   // lineGraphStrokeColor?: string[];
   // lineGraphWidth?: string;
@@ -58,6 +59,7 @@ const CryptoCard = ({
   starred,
   starColor,
   lineGraphProps,
+  cardClickHandler,
   // lineGraphDataArray,
   // lineGraphStrokeColor,
   // lineGraphWidth,
@@ -275,7 +277,10 @@ const CryptoCard = ({
       <div
         // type="button"
         className={`${desktopVersionBreakpoint} ${otherProps?.className} relative m-0 hidden h-120px w-200px rounded-2xl border-0.5px p-0 hover:cursor-pointer ${gradientColor} bg-black bg-gradient-to-b opacity-90 shadow-lg`}
-        onClick={() => marketCtx.selectTickerHandler(currency)}
+        onClick={() => {
+          marketCtx.selectTickerHandler(currency);
+          cardClickHandler && cardClickHandler();
+        }}
       >
         <div className="px-2 py-1">
           {/* token icon & chain & coin name */}

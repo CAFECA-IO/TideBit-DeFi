@@ -204,6 +204,9 @@ const TickerSelectorBox = ({
         return (
           <CryptoCard
             key={cryptoCard.currency}
+            cardClickHandler={() => {
+              tickerSelectorBoxClickHandler();
+            }}
             className="mt-4 ml-4"
             lineGraphProps={cryptoCard.lineGraphProps}
             star={cryptoCard.star}
@@ -223,6 +226,9 @@ const TickerSelectorBox = ({
       return (
         <CryptoCard
           key={cryptoCard.currency}
+          cardClickHandler={() => {
+            tickerSelectorBoxClickHandler();
+          }}
           className="mt-0"
           lineGraphProps={cryptoCard.lineGraphProps}
           star={cryptoCard.star}
@@ -245,6 +251,9 @@ const TickerSelectorBox = ({
       return (
         <CryptoCard
           key={cryptoCard.currency}
+          cardClickHandler={() => {
+            tickerSelectorBoxClickHandler();
+          }}
           className="mt-4 ml-4"
           lineGraphProps={cryptoCard.lineGraphProps}
           star={cryptoCard.star}
@@ -264,6 +273,9 @@ const TickerSelectorBox = ({
     return (
       <CryptoCard
         key={cryptoCard.currency}
+        cardClickHandler={() => {
+          tickerSelectorBoxClickHandler();
+        }}
         className="mt-0"
         lineGraphProps={cryptoCard.lineGraphProps}
         star={cryptoCard.star}

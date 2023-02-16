@@ -46,6 +46,8 @@ import {
 } from '../interfaces/tidebit_defi_background/withdrawal_order';
 import {IOpenCFDOrder} from '../interfaces/tidebit_defi_background/open_cfd_order';
 import {INotificationItem} from '../interfaces/tidebit_defi_background/notification_item';
+import {EventEmitter} from 'events';
+import {Event} from '../constants/event';
 
 function randomNumber(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1) + min);
@@ -104,6 +106,7 @@ export interface IUserProvider {
 }
 
 export interface IUserContext {
+  emitter: EventEmitter;
   id: string | null;
   username: string | null;
   wallet: string | null;
@@ -152,6 +155,7 @@ export interface IUserContext {
 }
 
 export const UserContext = createContext<IUserContext>({
+  emitter: new EventEmitter(),
   id: null,
   username: null,
   wallet: null,
@@ -201,6 +205,7 @@ export const UserContext = createContext<IUserContext>({
 
 export const UserProvider = ({children}: IUserProvider) => {
   // TODO: get partial user type from `IUserContext`
+  const emitter = new EventEmitter();
   const [id, setId] = useState<string | null>(null);
   const [username, setUsername] = useState<string | null>(null);
   const [wallet, setWallet] = useState<string | null>(null);
@@ -231,10 +236,6 @@ export const UserProvider = ({children}: IUserProvider) => {
       PNL: 1956.84,
     });
     setBalances([dummyBalance_BTC, dummyBalance_ETH, dummyBalance_USDT]);
-    const openedCFDs = await listOpenCFDs('ETH'); // ++ TODO get current selectedTicker
-    const closedCFDs = await listClosedCFDs('ETH'); // ++ TODO get current selectedTicker
-    // setOpenedCFDs(openedCFDs);
-    // setClosedCFDs(closedCFDs);
   };
 
   const clearPrivateData = () => {
@@ -249,16 +250,23 @@ export const UserProvider = ({children}: IUserProvider) => {
   };
 
   const lunar = new Lunar();
-  lunar.on('connected', () => {
+  lunar.on('connected', (...args: any[]) => {
+    console.log(`UserProvider on CONNECTED`, args);
     setIsConnected(true);
     setPrivateData(lunar.address);
+    emitter.emit(Event.CONNECTED);
   });
-  lunar.on('disconnected', () => {
+  lunar.on('disconnected', (...args: any[]) => {
+    console.log(`UserProvider on DISCONNECTED`, args);
     setIsConnected(false);
     clearPrivateData();
+    emitter.emit(Event.DISCONNECTED);
   });
-  lunar.on('accountsChanged', () => {
+  lunar.on('accountsChanged', (...args: any[]) => {
+    console.log(`UserProvider on ACCOUNT_CHANGED`, args);
+    clearPrivateData();
     setPrivateData(lunar.address);
+    emitter.emit(Event.ACCOUNT_CHANGED);
   });
 
   const listOpenCFDs = async (props: string) => {
@@ -458,6 +466,7 @@ export const UserProvider = ({children}: IUserProvider) => {
   const readNotifications = async (notifications: INotificationItem[]) => Promise.resolve();
 
   const defaultValue = {
+    emitter,
     id,
     username,
     wallet,

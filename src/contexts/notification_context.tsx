@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import React, {useState, useContext, createContext} from 'react';
 import {UserContext} from './user_context';
 import {MarketContext} from './market_context';
@@ -6,6 +7,7 @@ import {
   dummyUnReadNotifications,
   INotificationItem,
 } from '../interfaces/tidebit_defi_background/notification_item';
+import {Event} from '../constants/event';
 
 export interface INotificationProvider {
   children: React.ReactNode;
@@ -31,9 +33,36 @@ export const NotificationContext = createContext<INotificationContext>({
 
 export const NotificationProvider = ({children}: INotificationProvider) => {
   const userCtx = useContext(UserContext);
+  const [wallet, setWallet] = useState<string | null>(userCtx.wallet);
+  userCtx.emitter.on(Event.DISCONNECTED, () => {
+    // TODO: clearPrivateNotifications
+    console.log(`NotificationProvider on DISCONNECTED => clearPrivateNotifications`);
+  });
+  userCtx.emitter.on(Event.ACCOUNT_CHANGED, () => {
+    // TODO: clearPrivateNotifications
+    // TODO: getPrivateNotifications
+    console.log(`NotificationProvider on ACCOUNT_CHANGED => resetPrivateNotifications`);
+  });
+  React.useEffect(() => {
+    console.log(
+      `NotificationProvider React.useEffect wallet:`,
+      wallet,
+      `userCtx.wallet:`,
+      userCtx.wallet,
+      userCtx.wallet === wallet
+    );
+    if (userCtx.wallet !== wallet) {
+      setWallet(userCtx.wallet);
+      if (userCtx.isConnected) {
+        console.log(`NotificationProvider on userCtx.isConnected => resetPrivateNotifications`);
+      } else {
+        console.log(
+          `NotificationProvider userCtx.isConnected = false => clearPrivateNotifications`
+        );
+      }
+    }
+  }, [userCtx.wallet]);
   const marketCtx = useContext(MarketContext);
-  //   const [notifications, setNotifications] = useState<INotificationItem[]>([]);
-  //   const [unreadNotifications, setUnreadNotifications] = useState<INotificationItem[]>([]);
   const [notifications, setNotifications] = useState<INotificationItem[]>(dummyNotifications);
   const [unreadNotifications, setUnreadNotifications] =
     useState<INotificationItem[]>(dummyUnReadNotifications);

@@ -1,4 +1,6 @@
-import React, {useState, useContext, createContext} from 'react';
+/* eslint-disable no-console */
+import React, {useContext, createContext} from 'react';
+import useState from 'react-usestateref';
 import {
   INITIAL_POSITION_LABEL_DISPLAYED_STATE,
   PROFIT_LOSS_COLOR_TYPE,
@@ -35,6 +37,7 @@ import {
   getDummyCandlestickChartData,
   ICandlestickData,
 } from '../interfaces/tidebit_defi_background/candlestickData';
+import {Event} from '../constants/event';
 
 const SAMPLE_TICKERS = [
   'ETH',
@@ -355,6 +358,35 @@ const availableTransferOptions = [
 
 export const MarketProvider = ({children}: IMarketProvider) => {
   const userCtx = useContext(UserContext);
+  const [wallet, setWallet] = useState<string | null>(userCtx.wallet);
+  // React.useMemo(
+  //   () =>
+  userCtx.emitter.on(Event.ACCOUNT_CHANGED, () => {
+    userCtx.listOpenCFDs(selectedTickerRef.current.currency);
+    userCtx.listClosedCFDs(selectedTickerRef.current.currency);
+    console.log(
+      `MarketProvider on ACCOUNT_CHANGED => listOpenCFDs and listClosedCFDs of currency:${selectedTickerRef.current.currency}`
+    );
+  });
+  //   []
+  // );
+  React.useEffect(() => {
+    console.log(
+      `MarketProvider React.useEffect wallet:`,
+      wallet,
+      `userCtx.wallet:`,
+      userCtx.wallet,
+      userCtx.wallet === wallet
+    );
+    if (userCtx.wallet !== wallet) {
+      setWallet(userCtx.wallet);
+      if (userCtx.isConnected) {
+        console.log(
+          `MarketProvider on userCtx.isConnected => listOpenCFDs and listClosedCFDs of currency:${selectedTickerRef.current.currency}`
+        );
+      }
+    }
+  }, [userCtx.wallet]);
   const updateAvailableTickers = () => {
     let updateTickers = [...dummyTickers];
     if (userCtx.isConnected) {
@@ -369,7 +401,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     }
     return updateTickers;
   };
-  const [selectedTicker, setSelectedTicker] = useState<ITickerData>(dummyTicker);
+  const [selectedTicker, setSelectedTicker, selectedTickerRef] = useState<ITickerData>(dummyTicker);
   const [tickerStatic, setTickerStatic] = useState<ITickerStatic>(dummyTickerStatic);
   const [tickerLiveStatistics, setTickerLiveStatistics] =
     useState<ITickerLiveStatistics>(dummyTickerLiveStatistics);
@@ -426,9 +458,6 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       userCtx.listOpenCFDs(currency);
       userCtx.listClosedCFDs(currency);
     }
-
-    // if is connected
-    // 5.c
     return dummyResultSuccess;
   };
 

@@ -385,115 +385,6 @@ export default function WalletPanel({
     setShowToast(!showToast);
   };
 
-  const clickHandler = () => {
-    // setPanelVisible(!panelVisible);
-    // TODO: wallet connect kill session part 1
-    // if (connector) {
-    //   killSession();
-    // }
-  };
-
-  // const {balance} = user;
-  // console.log('wallet panel user: ', user?.walletBalance);
-
-  const getDepositSubmissionState = (state: 'success' | 'cancellation' | 'fail') => {
-    // console.log('result boolean: ', state);
-    setDepositProcess(state);
-  };
-
-  const getWithdrawSubmissionState = (state: 'success' | 'cancellation' | 'fail') => {
-    // console.log('result boolean: ', state);
-    setWithdrawProcess(state);
-  };
-
-  const depositModalClickHandler = () => {
-    globalCtx.visibleDepositModalHandler();
-    // setDepositModalVisible(!depositModalVisible);
-    // setDepositProcess('form');
-  };
-
-  const withdrawModalClickHandler = () => {
-    globalCtx.visibleWithdrawalModalHandler();
-    // setWithdrawModalVisible(!withdrawModalVisible);
-    // globalCtx.dataTransferProcessModalHandler({transferType: 'withdraw'});
-    // globalCtx.visibleTransferProcessModalHandler();
-    // setWithdrawProcess('form');
-  };
-
-  // TODO: To extract the certain possibility of transfer options from `ITransferOption`
-  const getWithdrawData = (props: {asset: string; amount: number}) => {
-    // console.log('get withdraw data:', props);
-    setWithdrawData(props);
-    // withdrawData?.amount
-  };
-
-  const withdrawSubmitHandler = (props: {asset: string; amount: number}) => {
-    // setWithdrawData(props);
-    // withdraw(withdrawData)
-
-    setWithdrawProcess('loading');
-    // console.log('send withdraw request in wallet panel', withdrawData?.asset, withdrawData?.amount);
-
-    setTimeout(() => {
-      setWithdrawProcess('success');
-
-      setTimeout(() => {
-        setWithdrawProcess('cancellation');
-
-        setTimeout(() => {
-          setWithdrawProcess('fail');
-        }, 5000);
-      }, 5000);
-    }, 3000);
-    // withdraw(withdrawData?.asset, withdrawData?.amount)
-    //   .then((res) => {
-    //     console.log('withdraw res: ', res);
-    //     setWithdrawProcess('success');
-    //   })
-    //   .catch((err) => {
-    //     console.log('withdraw err: ', err);
-    //     setWithdrawProcess('fail');
-    //   });
-
-    // const withdraw = async () => {
-    //   try {
-    //     const res = await withdraw(withdrawData?.asset, withdrawData?.amount);
-    //     console.log('withdraw res: ', res);
-    //     setWithdrawProcess('success');
-    //   } catch (err) {
-    //     console.log('withdraw err: ', err);
-    //     setWithdrawProcess('fail');
-    //   }
-    // }
-  };
-
-  // TODO: To extract the certain possibility of transfer options from `ITransferOption`
-  const getDepositData = (props: {asset: string; amount: number}) => {
-    // console.log('get deposit data:', props);
-    setDepositData(props);
-  };
-
-  // TODO: to be continued
-  const depositSubmitHandler = (props: {asset: string; amount: number}) => {
-    // setDepositData(props);
-    // deposit(depositData)
-
-    setDepositProcess('loading');
-    // console.log('send deposit request in wallet panel', depositData?.asset, depositData?.amount);
-
-    setTimeout(() => {
-      setDepositProcess('success');
-
-      setTimeout(() => {
-        setDepositProcess('cancellation');
-
-        setTimeout(() => {
-          setDepositProcess('fail');
-        }, 5000);
-      }, 5000);
-    }, 3000);
-  };
-
   const connectingClickHandler = () => {
     setConnectingModalVisible(!connectingModalVisible);
   };
@@ -896,7 +787,8 @@ export default function WalletPanel({
         // if (accounts[0] !== defaultAccount) {
         //   funcSignTypedData();
         // }
-        funcSignTypedData();
+
+        // funcSignTypedData();
 
         //   console.log('before setSignInStore');
         setSignInStore(false);
@@ -963,7 +855,7 @@ export default function WalletPanel({
 
           // When accounts changed, it sends a request to sign typed data `accounts[0] !== defaultAccount`
           if (accounts[0] !== userCtx.wallet) {
-            funcSignTypedData();
+            // funcSignTypedData();
           }
 
           //   console.log('before setSignInStore');
@@ -1475,86 +1367,155 @@ export default function WalletPanel({
     }
   }
 
+  // TODO: Ongoing connecting process (loading modal->signature process modal)
   async function metamaskConnect() {
-    // console.log('metamask connect func called');
-    try {
-      // setPanelVisible(!panelVisible);
-      panelClickHandler();
-      // setConnecting(true);
-      setConnectingModalVisible(true);
+    globalCtx.visibleWalletPanelHandler();
 
-      // TODO: Notes: 追查呼叫這行code的function
-      // console.trace('123');
-      const metamaskConnectFirstTimeSuccessful = await userCtx.connect();
-      setMetamaskConnectFirstTimeSuccessful(metamaskConnectFirstTimeSuccessful);
+    if (!userCtx.isConnected) {
+      try {
+        // globalCtx.dataLoadingModalHandler({
+        //   modalTitle: 'Wallet Connect',
+        //   modalContent: 'Connecting...',
+        // });
+        // globalCtx.visibleLoadingModalHandler();
 
-      // pop up the metamask window
-      const address = await userCtx.wallet;
-      passUserLoginState(metamaskConnectFirstTimeSuccessful);
+        const connectWalletResult = await userCtx.connect();
 
-      const chainId = 1;
-      setChainId(chainId);
+        // console.log('connect wallet result', connectWalletResult);
+        // globalCtx.visibleLoadingModalHandler();
 
-      if (chainId !== 1) {
-        // console.log('Please switch to ETH mainnet');
-        setShowToast(true);
+        if (connectWalletResult) {
+          globalCtx.visibleSignatureProcessModalHandler();
+        } else {
+          globalCtx.visibleWalletPanelHandler();
+        }
+      } catch (error) {
+        // console.error(error);
       }
-
-      const available = userCtx.balance?.available.toString() || '';
-      setUserBalance(available);
-      // console.log('user balance: ', balance);
-      // console.log('connect to Metamask clicked, Account: ', address);
-
-      // console.log('connecting modal should be invisible: ', connectingModalVisible);
-      setConnectingModalVisible(false);
-      setConnecting(false);
-
-      // TODO: Separate signature process
-      // globalCtx.visibleSignatureProcessModalHandler();
-      // globalCtx.visibleWalletPanelHandler();
-      setProcessModalVisible(true);
-
-      // let signature = await signer.signMessage('TideBit DeFi test');
-      // console.log('Sign the message, get the signature is: ', signature);
-      funcSignTypedData();
-      // injectedDetecting();
-    } catch (error: any) {
-      // console.log(error);
-      // resetApp();
-      // return;
-
-      setErrorMessages(error.message);
-      setFirstStepError(true);
-      setProcessModalVisible(false);
-
-      setConnectingModalVisible(false);
-      setConnecting(false);
+    } else {
+      globalCtx.visibleSignatureProcessModalHandler();
     }
-    // if (window.ethereum) {
-    //   window.ethereum
-    //     .request({method: 'eth_requestAccounts'})
-    //     .then((accounts) => {
-    //       setDefaultAccount(accounts[0]);
-    //       setFirstStepSuccess(true);
-    //       setFirstStepError(false);
-    //     })
-    //     .catch((error) => {
-    //       if (error.code === 4001) {
-    //         // EIP-1193 userRejectedRequest error
-    //         // If this happens, the user rejected the connection request.
-    //         // console.log('Please connect to MetaMask.');
-    //         setErrorMessages('Please connect to MetaMask.');
-    //         setFirstStepError(true);
-    //       } else {
-    //         console.error(error);
-    //       }
-    //     });
+
+    // if (userCtx.isConnected) {
+    //   globalCtx.visibleSignatureProcessModalHandler();
     // } else {
-    //   console.log('Please install MetaMask!');
-    //   setErrorMessages('Please install MetaMask!');
-    //   setFirstStepError(true);
+    //   globalCtx.visibleWalletPanelHandler();
     // }
+
+    //   try {
+    //     if (!userCtx.isConnected) {
+    //       globalCtx.dataLoadingModalHandler({
+    //         modalTitle: 'Wallet Connect',
+    //         modalContent: 'Connecting...',
+    //       });
+    //       globalCtx.visibleLoadingModalHandler();
+
+    //       const connectWalletResult = await userCtx.connect();
+    //       globalCtx.visibleLoadingModalHandler();
+
+    //     }
+
+    //     if (userCtx.isConnected) {
+    //       globalCtx.visibleSignatureProcessModalHandler();
+    //     } else {
+    //       globalCtx.visibleWalletPanelHandler();
+    //     }
+
+    //     globalCtx.visibleLoadingModalHandler();
+    //   } catch (error) {
+    //     console.error(error);
+    //   }
   }
+
+  // async function metamaskConnect() {
+  //   // console.log('metamask connect func called');
+  //   try {
+  //     // setPanelVisible(!panelVisible);
+  //     panelClickHandler();
+  //     // setConnecting(true);
+  //     setConnectingModalVisible(true);
+
+  //     globalCtx.dataLoadingModalHandler({
+  //       modalTitle: 'Wallet Connect',
+  //       modalContent: 'Connecting...',
+  //     });
+  //     globalCtx.visibleLoadingModalHandler();
+
+  //     // TODO: Notes: 追查呼叫這行code的function
+  //     // console.trace('123');
+  //     const metamaskConnectFirstTimeSuccessful = await userCtx.connect();
+  //     setMetamaskConnectFirstTimeSuccessful(metamaskConnectFirstTimeSuccessful);
+
+  //     // pop up the metamask window
+  //     const address = await userCtx.wallet;
+  //     passUserLoginState(metamaskConnectFirstTimeSuccessful);
+
+  //     const chainId = 1;
+  //     setChainId(chainId);
+
+  //     if (chainId !== 1) {
+  //       // console.log('Please switch to ETH mainnet');
+  //       setShowToast(true);
+  //     }
+
+  //     const available = userCtx.balance?.available.toString() || '';
+  //     setUserBalance(available);
+  //     // console.log('user balance: ', balance);
+  //     // console.log('connect to Metamask clicked, Account: ', address);
+
+  //     // console.log('connecting modal should be invisible: ', connectingModalVisible);
+  //     globalCtx.visibleLoadingModalHandler();
+  //     setConnectingModalVisible(false);
+  //     setConnecting(false);
+
+  //     // TODO: Separate signature process
+  //     // globalCtx.visibleSignatureProcessModalHandler();
+  //     // globalCtx.visibleWalletPanelHandler();
+  //     globalCtx.visibleSignatureProcessModalHandler();
+  //     setProcessModalVisible(true);
+
+  //     // let signature = await signer.signMessage('TideBit DeFi test');
+  //     // console.log('Sign the message, get the signature is: ', signature);
+
+  //     funcSignTypedData();
+  //     // injectedDetecting();
+  //   } catch (error: any) {
+  //     // console.log(error);
+  //     // resetApp();
+  //     // return;
+
+  //     setErrorMessages(error.message);
+  //     setFirstStepError(true);
+  //     setProcessModalVisible(false);
+
+  //     setConnectingModalVisible(false);
+  //     setConnecting(false);
+  //   }
+  //   // if (window.ethereum) {
+  //   //   window.ethereum
+  //   //     .request({method: 'eth_requestAccounts'})
+  //   //     .then((accounts) => {
+  //   //       setDefaultAccount(accounts[0]);
+  //   //       setFirstStepSuccess(true);
+  //   //       setFirstStepError(false);
+  //   //     })
+  //   //     .catch((error) => {
+  //   //       if (error.code === 4001) {
+  //   //         // EIP-1193 userRejectedRequest error
+  //   //         // If this happens, the user rejected the connection request.
+  //   //         // console.log('Please connect to MetaMask.');
+  //   //         setErrorMessages('Please connect to MetaMask.');
+  //   //         setFirstStepError(true);
+  //   //       } else {
+  //   //         console.error(error);
+  //   //       }
+  //   //     });
+  //   // } else {
+  //   //   console.log('Please install MetaMask!');
+  //   //   setErrorMessages('Please install MetaMask!');
+  //   //   setFirstStepError(true);
+  //   // }
+  // }
 
   const walletconnectOptionClickHandler = async () => {
     // walletConnectSignClient();
@@ -1585,7 +1546,7 @@ export default function WalletPanel({
     metamaskConnect();
   };
 
-  // FIXME: nothing but taking notes
+  // taking notes
   // {!!chooseWalletConnect ? (
   //   connector ? (
   //     <div>
@@ -1736,106 +1697,106 @@ export default function WalletPanel({
 
   // TODO: wallet connect kill session part 2
 
-  function accountTruncate(text: string) {
-    return text?.substring(0, 6) + '...' + text?.substring(text.length - 5);
-  }
+  // function accountTruncate(text: string) {
+  //   return text?.substring(0, 6) + '...' + text?.substring(text.length - 5);
+  // }
 
-  const username = userCtx.wallet?.slice(-1).toUpperCase();
+  // const username = userCtx.wallet?.slice(-1).toUpperCase();
 
-  const isDisplayedAvatarMenu =
-    userCtx.wallet && avatarMenuVisible ? (
-      // Background
-      <div
-        id="userDropdown"
-        className="avatarMenuShadow absolute top-16 right-8 z-10 w-285px divide-y divide-lightGray rounded-none bg-darkGray shadow"
-      >
-        {/* Avatar Section */}
-        <div className="mx-3 items-center py-3 px-4 text-center text-sm text-lightGray">
-          {/* Avatar */}
-          <div className="relative ml-3 inline-flex h-28 w-28 items-center justify-center overflow-hidden rounded-full bg-tidebitTheme text-center">
-            <span className="text-5xl font-bold text-lightWhite">{username}</span>
-          </div>
-          {/* Account */}
-          <div className="ml-4 mt-2 truncate text-sm">{accountTruncate(userCtx.wallet)}</div>
-        </div>
+  // const isDisplayedAvatarMenu =
+  //   userCtx.wallet && avatarMenuVisible ? (
+  //     // Background
+  //     <div
+  //       id="userDropdown"
+  //       className="avatarMenuShadow absolute top-16 right-8 z-10 w-285px divide-y divide-lightGray rounded-none bg-darkGray shadow"
+  //     >
+  //       {/* Avatar Section */}
+  //       <div className="mx-3 items-center py-3 px-4 text-center text-sm text-lightGray">
+  //         {/* Avatar */}
+  //         <div className="relative ml-3 inline-flex h-28 w-28 items-center justify-center overflow-hidden rounded-full bg-tidebitTheme text-center">
+  //           <span className="text-5xl font-bold text-lightWhite">{username}</span>
+  //         </div>
+  //         {/* Account */}
+  //         <div className="ml-4 mt-2 truncate text-sm">{accountTruncate(userCtx.wallet)}</div>
+  //       </div>
 
-        <ul
-          className="mx-3 py-1 pb-3 text-base font-normal text-gray-200"
-          aria-labelledby="avatarButton"
-        >
-          <li>
-            <a href="#" className="block py-2 pr-4 pl-3 hover:bg-darkGray5">
-              <div className="flex flex-row items-center space-x-2">
-                <BiWallet />
-                <p>My Assets</p>
-              </div>
-            </a>
-          </li>
-          <li
-            onClick={() => {
-              avatarClickHandler();
-              depositModalClickHandler();
-            }}
-            className="block py-2 pr-4 pl-3 hover:cursor-pointer hover:bg-darkGray5"
-          >
-            <div className="flex flex-row items-center space-x-2">
-              <FaDownload />
-              <p>Deposit</p>
-            </div>
-          </li>
-          <li
-            onClick={() => {
-              avatarClickHandler();
-              withdrawModalClickHandler();
-            }}
-            className="block py-2 pr-4 pl-3 hover:cursor-pointer hover:bg-darkGray5"
-          >
-            <div className="flex flex-row items-center space-x-2">
-              <FaUpload />
-              <p>Withdraw</p>
-            </div>
-          </li>
-          <li>
-            <a href="#" className="block py-2 pr-4 pl-3 hover:bg-darkGray5">
-              <div className="flex flex-row items-center space-x-2">
-                <VscAccount />
-                <p>My Account</p>
-              </div>
-            </a>
-          </li>
-          <li>
-            <a onClick={disconnect} href="#" className="block py-2 pr-4 pl-3 hover:bg-darkGray5">
-              <div className="flex flex-row items-center space-x-2">
-                <ImExit />
-                <p>Disconnect</p>
-              </div>
-            </a>
-          </li>
-        </ul>
-      </div>
-    ) : null;
+  //       <ul
+  //         className="mx-3 py-1 pb-3 text-base font-normal text-gray-200"
+  //         aria-labelledby="avatarButton"
+  //       >
+  //         <li>
+  //           <a href="#" className="block py-2 pr-4 pl-3 hover:bg-darkGray5">
+  //             <div className="flex flex-row items-center space-x-2">
+  //               <BiWallet />
+  //               <p>My Assets</p>
+  //             </div>
+  //           </a>
+  //         </li>
+  //         <li
+  //           onClick={() => {
+  //             avatarClickHandler();
+  //             depositModalClickHandler();
+  //           }}
+  //           className="block py-2 pr-4 pl-3 hover:cursor-pointer hover:bg-darkGray5"
+  //         >
+  //           <div className="flex flex-row items-center space-x-2">
+  //             <FaDownload />
+  //             <p>Deposit</p>
+  //           </div>
+  //         </li>
+  //         <li
+  //           onClick={() => {
+  //             avatarClickHandler();
+  //             withdrawModalClickHandler();
+  //           }}
+  //           className="block py-2 pr-4 pl-3 hover:cursor-pointer hover:bg-darkGray5"
+  //         >
+  //           <div className="flex flex-row items-center space-x-2">
+  //             <FaUpload />
+  //             <p>Withdraw</p>
+  //           </div>
+  //         </li>
+  //         <li>
+  //           <a href="#" className="block py-2 pr-4 pl-3 hover:bg-darkGray5">
+  //             <div className="flex flex-row items-center space-x-2">
+  //               <VscAccount />
+  //               <p>My Account</p>
+  //             </div>
+  //           </a>
+  //         </li>
+  //         <li>
+  //           <a onClick={disconnect} href="#" className="block py-2 pr-4 pl-3 hover:bg-darkGray5">
+  //             <div className="flex flex-row items-center space-x-2">
+  //               <ImExit />
+  //               <p>Disconnect</p>
+  //             </div>
+  //           </a>
+  //         </li>
+  //       </ul>
+  //     </div>
+  //   ) : null;
 
-  // TODO: Move to `Navbar` and `User`
-  const isDisplayedUserAvatar = userCtx.enableServiceTerm ? (
-    <>
-      <User />
-      {/* Avatar */}
-      {/* <button
-        onClick={avatarClickHandler}
-        className="relative ml-3 inline-flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-tidebitTheme"
-      >
-        <span className="text-2xl font-bold text-lightWhite">{username}</span>
-      </button>
-      {isDisplayedAvatarMenu} */}
-    </>
-  ) : null;
-  // <TideButton
-  //   onClick={panelClickHandler}
-  //   className={`mt-4 rounded border-0 bg-tidebitTheme py-2 px-5 text-base text-white transition-all hover:opacity-90 md:mt-0`}
-  // >
-  //   {/* Wallet Connect */}
-  //   {t('nav_bar.WalletConnect')}
-  // </TideButton>
+  // // TODO: Move to `Navbar` and `User`
+  // const isDisplayedUserAvatar = userCtx.enableServiceTerm ? (
+  //   <>
+  //     <User />
+  //     {/* Avatar */}
+  //     {/* <button
+  //       onClick={avatarClickHandler}
+  //       className="relative ml-3 inline-flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-tidebitTheme"
+  //     >
+  //       <span className="text-2xl font-bold text-lightWhite">{username}</span>
+  //     </button>
+  //     {isDisplayedAvatarMenu} */}
+  //   </>
+  // ) : null;
+  // // <TideButton
+  // //   onClick={panelClickHandler}
+  // //   className={`mt-4 rounded border-0 bg-tidebitTheme py-2 px-5 text-base text-white transition-all hover:opacity-90 md:mt-0`}
+  // // >
+  // //   {/* Wallet Connect */}
+  // //   {t('nav_bar.WalletConnect')}
+  // // </TideButton>
 
   return (
     <>
@@ -1855,7 +1816,7 @@ export default function WalletPanel({
 
       {/* <HelloModal helloModalVisible={helloModalVisible} helloClickHandler={helloClickHandler} /> */}
 
-      <SignatureProcessModal
+      {/* <SignatureProcessModal
         requestSendingHandler={requestSendingHandler}
         firstStepSuccess={firstStepSuccess}
         firstStepError={firstStepError}
@@ -1864,7 +1825,7 @@ export default function WalletPanel({
         loading={loading}
         processModalVisible={processModalVisible}
         processClickHandler={processClickHandler}
-      />
+      /> */}
 
       {/* {depositProcessModal} */}
       {/* {withdrawProcessModal} */}

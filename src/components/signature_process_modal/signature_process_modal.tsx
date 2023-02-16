@@ -23,12 +23,12 @@ interface ISignatureProcessModal {
 }
 
 const SignatureProcessModal = ({
-  loading = false,
-  firstStepSuccess = false,
-  firstStepError = false,
-  secondStepSuccess = false,
-  secondStepError = false,
-  requestSendingHandler,
+  // loading = false,
+  // firstStepSuccess = false,
+  // firstStepError = false,
+  // secondStepSuccess = false,
+  // secondStepError = false,
+  // requestSendingHandler,
   processModalRef,
   processModalVisible = false,
   processClickHandler,
@@ -38,10 +38,27 @@ const SignatureProcessModal = ({
   const globalCtx = useGlobal();
 
   // // TODO: 從 UserContext 拿字串狀態來判斷，第二步應顯示'打勾、打叉、數字'哪一種圖示
-  type ISignInResult = 'EMPTY' | 'CONNECTING' | 'CONNECTED' | 'REJECTED';
-  // const secondStopResult: ISignInResult = userCtx.connectingProcess
+  type IConnectingProcessType = 'EMPTY' | 'CONNECTING' | 'CONNECTED' | 'REJECTED';
+  interface IConnectingProcessObject {
+    EMPTY: IConnectingProcessType;
+    CONNECTING: IConnectingProcessType;
+    CONNECTED: IConnectingProcessType;
+    REJECTED: IConnectingProcessType;
+  }
 
-  // const [signInResult, setSignInResult] = useState<ISignInResult>('EMPTY');
+  const ConnectingProcess: IConnectingProcessObject = {
+    EMPTY: 'EMPTY',
+    CONNECTING: 'CONNECTING',
+    CONNECTED: 'CONNECTED',
+    REJECTED: 'REJECTED',
+  };
+
+  const [connectingProcess, setConnectingProcess] = useState<IConnectingProcessType>(
+    ConnectingProcess.REJECTED
+  );
+
+  // const secondStopResult: ISignInResult = userCtx.connectingProcess
+  // const connectingProcess =
 
   // const firstStepSuccess = userCtx.isConnected;
   // const firstStepError = !userCtx.isConnected;
@@ -69,8 +86,12 @@ const SignatureProcessModal = ({
   //   setLoading(false);
   // };
 
-  const controlSpace = firstStepError || secondStepError ? 'space-y-12' : 'space-y-12';
-  const btnSpace = firstStepSuccess && !secondStepError && !secondStepSuccess ? 'mt-10' : 'mt-16';
+  const controlSpace =
+    !userCtx.isConnected || connectingProcess === 'REJECTED' ? 'space-y-12' : 'space-y-12';
+  const btnSpace =
+    userCtx.isConnected && connectingProcess !== 'REJECTED' && connectingProcess === 'CONNECTED'
+      ? 'mt-10'
+      : 'mt-16';
 
   // if (firstStepError && secondStepError) return
   // if (firstStepError && secondStepSuccess) return
@@ -119,17 +140,38 @@ const SignatureProcessModal = ({
     </div>
   );
 
+  const requestSendingHandler = async () => {
+    if (!userCtx.isConnected) {
+      // It's a cycle
+      const connectWalletResult = await userCtx.connect();
+    } else {
+      // setConnectingProcess(ConnectingProcess.CONNECTING);
+      const signResult = await userCtx.signServiceTerm();
+      if (signResult) {
+        setTimeout(() => {
+          globalCtx.visibleSignatureProcessModalHandler();
+        }, 1000);
+      }
+      // console.log(signResult);
+      // setConnectingProcess(ConnectingProcess.CONNECTED);
+    }
+
+    // console.log(connectWalletResult);
+    // console.log(await userCtx.wallet);
+  };
+
   // TODO: Replace with `userCtx.connectingProcess === 'CONNECTING'` Else if `userCtx.connectingProcess === 'EMPTY'`
-  const requestButtonHandler = loading ? (
-    <Lottie className="w-40px" animationData={smallConnectingAnimation} />
-  ) : (
-    <TideButton
-      onClick={requestSendingHandler}
-      className="rounded bg-tidebitTheme px-5 py-2 text-base transition-all hover:opacity-90"
-    >
-      Send Requests
-    </TideButton>
-  );
+  const requestButtonHandler =
+    connectingProcess === 'CONNECTING' || connectingProcess === 'CONNECTED' ? (
+      <Lottie className="w-40px" animationData={smallConnectingAnimation} />
+    ) : connectingProcess === 'EMPTY' || connectingProcess === 'REJECTED' ? (
+      <TideButton
+        onClick={requestSendingHandler}
+        className="rounded bg-tidebitTheme px-5 py-2 text-base transition-all hover:opacity-90"
+      >
+        Send Requests
+      </TideButton>
+    ) : null;
 
   const firstStepDefaultView = (
     <>

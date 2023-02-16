@@ -502,7 +502,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
         panelVisible={visibleWalletPanel}
         panelClickHandler={visibleWalletPanelHandler}
       />
-      {/* <SignatureProcessModal
+      <SignatureProcessModal
         // requestSendingHandler={requestSendingHandler}
         // firstStepSuccess={firstStepSuccess}
         // firstStepError={firstStepError}
@@ -511,7 +511,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
         // loading={loading}
         processModalVisible={visibleSignatureProcessModal}
         processClickHandler={visibleSignatureProcessModalHandler}
-      /> */}
+      />
       <HelloModal
         helloModalVisible={visibleHelloModal}
         helloClickHandler={visibleHelloModalHandler}

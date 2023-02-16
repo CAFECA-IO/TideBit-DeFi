@@ -149,11 +149,12 @@ const TradeTab = () => {
   };
 
   const shortOrderSubmitHandler = () => {
-    globalCtx.dataLoadingModalHandler({
-      modalTitle: 'Open position',
-      modalContent: 'Please wait...',
-    });
-    globalCtx.visibleLoadingModalHandler();
+    // globalCtx.dataLoadingModalHandler({
+    //   modalTitle: 'Open position',
+    //   modalContent: 'Please wait...',
+    // });
+    // globalCtx.visibleLoadingModalHandler();
+    return;
   };
 
   // ----------margin area----------

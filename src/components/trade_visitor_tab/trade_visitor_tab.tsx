@@ -1,8 +1,10 @@
 import {useState} from 'react';
 import WalletPanel from '../wallet_panel/wallet_panel';
 import TideButton from '../tide_button/tide_button';
+import {useGlobal} from '../../contexts/global_context';
 
 const TradeVisitorTab = () => {
+  const globalCtx = useGlobal();
   // const [userLoginState, setUserLoginState] = useState(false);
 
   // const getUserLoginHandler = (bool: boolean) => {
@@ -37,6 +39,7 @@ const TradeVisitorTab = () => {
                   <div className="space-y-2 pl-60px pt-10">
                     {/* <WalletPanel getUserLoginState={getUserLoginHandler} /> */}
                     <TideButton
+                      onClick={() => globalCtx.visibleSignatureProcessModalHandler()}
                       className={`mt-4 rounded border-0 bg-tidebitTheme py-2 px-5 text-base text-white transition-all hover:opacity-90 md:mt-0`}
                     >
                       Wallet Connect

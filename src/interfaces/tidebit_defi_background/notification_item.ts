@@ -5,7 +5,7 @@ export interface INotificationItem {
   timestamp: number;
   title: string;
   content: string;
-  duration: [Date, Date];
+  duration: [number, number];
   notificationLevel: INotificationLevel;
   isRead: boolean;
 }

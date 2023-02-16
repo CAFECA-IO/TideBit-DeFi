@@ -1,3 +1,8 @@
+/**
+ *
+ * @param timestamp is in seconds
+ * @returns string array of [date, time], for example: ['2023-02-10', '10:00:00']
+ */
 export const timestampToString = (timestamp: number) => {
   if (timestamp === 0) return ['-', '-'];
 

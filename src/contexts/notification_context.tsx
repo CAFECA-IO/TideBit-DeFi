@@ -3,6 +3,7 @@ import React, {useState, useContext, createContext} from 'react';
 import {UserContext} from './user_context';
 import {MarketContext} from './market_context';
 import {
+  createDummyPrivateNotificationItem,
   dummyNotifications,
   dummyUnReadNotifications,
   INotificationItem,
@@ -32,16 +33,36 @@ export const NotificationContext = createContext<INotificationContext>({
 });
 
 export const NotificationProvider = ({children}: INotificationProvider) => {
+  const marketCtx = useContext(MarketContext);
+  const [notifications, setNotifications] = useState<INotificationItem[]>(dummyNotifications);
+  const [unreadNotifications, setUnreadNotifications] =
+    useState<INotificationItem[]>(dummyUnReadNotifications);
   const userCtx = useContext(UserContext);
   const [wallet, setWallet] = useState<string | null>(userCtx.wallet);
-  userCtx.emitter.on(Event.DISCONNECTED, () => {
-    // TODO: clearPrivateNotifications
-    console.log(`NotificationProvider on DISCONNECTED => clearPrivateNotifications`);
-  });
   userCtx.emitter.on(Event.ACCOUNT_CHANGED, () => {
     // TODO: clearPrivateNotifications
     // TODO: getPrivateNotifications
     console.log(`NotificationProvider on ACCOUNT_CHANGED => resetPrivateNotifications`);
+    const updateNotifications: INotificationItem[] = [...notifications];
+    let updateUnreadNotifications: INotificationItem[] = [];
+    const dummyPrivateNotification = createDummyPrivateNotificationItem(
+      userCtx.id!,
+      `this is from EventEmitter`
+    );
+    updateNotifications.push(dummyPrivateNotification);
+    updateUnreadNotifications = updateNotifications.filter(n => !n.isRead);
+    setNotifications(updateNotifications);
+    setUnreadNotifications(updateUnreadNotifications);
+  });
+  userCtx.emitter.on(Event.DISCONNECTED, () => {
+    // TODO: clearPrivateNotifications
+    console.log(`NotificationProvider on DISCONNECTED => clearPrivateNotifications`);
+    let updateNotifications: INotificationItem[] = [...notifications];
+    let updateUnreadNotifications: INotificationItem[] = [];
+    updateNotifications = updateNotifications.filter(n => n.public);
+    updateUnreadNotifications = updateNotifications.filter(n => !n.isRead);
+    setNotifications(updateNotifications);
+    setUnreadNotifications(updateUnreadNotifications);
   });
   React.useEffect(() => {
     console.log(
@@ -53,46 +74,49 @@ export const NotificationProvider = ({children}: INotificationProvider) => {
     );
     if (userCtx.wallet !== wallet) {
       setWallet(userCtx.wallet);
+      let updateNotifications: INotificationItem[] = [...notifications];
+      let updateUnreadNotifications: INotificationItem[] = [];
       if (userCtx.isConnected) {
-        console.log(`NotificationProvider on userCtx.isConnected => resetPrivateNotifications`);
-      } else {
-        console.log(
-          `NotificationProvider userCtx.isConnected = false => clearPrivateNotifications`
+        const dummyPrivateNotification = createDummyPrivateNotificationItem(
+          userCtx.id!,
+          `this is from useEffect`
         );
+        updateNotifications.push(dummyPrivateNotification);
+        updateUnreadNotifications = updateNotifications.filter(n => !n.isRead);
+      } else {
+        updateNotifications = updateNotifications.filter(n => n.public);
+        updateUnreadNotifications = updateNotifications.filter(n => !n.isRead);
       }
+      setNotifications(updateNotifications);
+      setUnreadNotifications(updateUnreadNotifications);
     }
   }, [userCtx.wallet]);
-  const marketCtx = useContext(MarketContext);
-  const [notifications, setNotifications] = useState<INotificationItem[]>(dummyNotifications);
-  const [unreadNotifications, setUnreadNotifications] =
-    useState<INotificationItem[]>(dummyUnReadNotifications);
 
   const isRead = async (id: string) => {
-    const updateNotificaionts: INotificationItem[] = [...notifications];
-    const index = updateNotificaionts.findIndex(n => n.id === id);
-    if (index !== -1) {
-      updateNotificaionts[index] = {
-        ...updateNotificaionts[index],
-        isRead: true,
-      };
-    }
-    setNotifications(updateNotificaionts);
-    setUnreadNotifications(updateNotificaionts.filter(n => !n.isRead));
     if (userCtx.isConnected) {
+      const updateNotificaionts: INotificationItem[] = [...notifications];
+      const index = updateNotificaionts.findIndex(n => n.id === id);
+      if (index !== -1) {
+        updateNotificaionts[index] = {
+          ...updateNotificaionts[index],
+          isRead: true,
+        };
+      }
+      setNotifications(updateNotificaionts);
+      setUnreadNotifications(updateNotificaionts.filter(n => !n.isRead));
       await userCtx.readNotifications([updateNotificaionts[index]]);
     }
     return;
   };
 
   const readAll = async () => {
-    //async () => {
-    const updateNotificaionts: INotificationItem[] = [...notifications].map(n => ({
-      ...n,
-      isRead: true,
-    }));
-    setNotifications(updateNotificaionts);
-    setUnreadNotifications(updateNotificaionts.filter(n => !n.isRead));
     if (userCtx.isConnected) {
+      const updateNotificaionts: INotificationItem[] = [...notifications].map(n => ({
+        ...n,
+        isRead: true,
+      }));
+      setNotifications(updateNotificaionts);
+      setUnreadNotifications(updateNotificaionts.filter(n => !n.isRead));
       await userCtx.readNotifications(updateNotificaionts);
     }
     return;

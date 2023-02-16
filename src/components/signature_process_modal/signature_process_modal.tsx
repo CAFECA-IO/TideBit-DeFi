@@ -54,7 +54,7 @@ const SignatureProcessModal = ({
   };
 
   const [connectingProcess, setConnectingProcess] = useState<IConnectingProcessType>(
-    ConnectingProcess.REJECTED
+    ConnectingProcess.EMPTY
   );
 
   // const secondStopResult: ISignInResult = userCtx.connectingProcess
@@ -145,7 +145,7 @@ const SignatureProcessModal = ({
       // It's a cycle
       const connectWalletResult = await userCtx.connect();
     } else {
-      // setConnectingProcess(ConnectingProcess.CONNECTING);
+      setConnectingProcess(ConnectingProcess.CONNECTING);
       const signResult = await userCtx.signServiceTerm();
       if (signResult) {
         setTimeout(() => {
@@ -153,7 +153,7 @@ const SignatureProcessModal = ({
         }, 1000);
       }
       // console.log(signResult);
-      // setConnectingProcess(ConnectingProcess.CONNECTED);
+      setConnectingProcess(ConnectingProcess.CONNECTED);
     }
 
     // console.log(connectWalletResult);

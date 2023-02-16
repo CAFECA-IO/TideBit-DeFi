@@ -17,8 +17,11 @@ export const dummyNotificationItem: INotificationItem = {
   invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et
   accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata
   sanctus est Lorem`,
-  timestamp: Date.now(),
-  duration: [new Date('2023-01-01'), new Date('2023-03-31')],
+  timestamp: Math.floor(Date.now() / 1000),
+  duration: [
+    Math.floor(new Date('2023-01-01').getTime() / 1000),
+    Math.floor(new Date('2023-03-31').getTime() / 1000),
+  ],
   notificationLevel: NotificationLevel.INFO,
   isRead: false,
 };
@@ -33,8 +36,11 @@ export const getDummyNotifications = (numbers: number) => {
   invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et
   accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata
   sanctus est Lorem`,
-      timestamp: Date.now(),
-      duration: [new Date('2023-01-01'), new Date('2023-03-31')],
+      timestamp: Math.floor(Date.now() / 1000),
+      duration: [
+        Math.floor(new Date('2023-01-01').getTime() / 1000),
+        Math.floor(new Date('2023-03-31').getTime() / 1000),
+      ],
       notificationLevel: NotificationLevel.INFO,
       isRead: false,
     };

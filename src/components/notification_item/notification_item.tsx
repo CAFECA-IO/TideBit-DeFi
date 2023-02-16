@@ -12,12 +12,13 @@ export default function NotificationItem(
   // }
 ) {
   const {title, content, timestamp} = notificationItem;
-  const date = `${new Date(timestamp).getFullYear()}-${
-    new Date(timestamp).getMonth() + 1
-  }-${new Date(timestamp).getDay()}`;
-  const time = `${new Date(timestamp).getHours()}:${
-    new Date(timestamp).getMinutes() + 1
-  }:${new Date(timestamp).getSeconds()}`;
+  const unixTimestamp = timestamp * 1000;
+  const date = `${new Date(unixTimestamp).getFullYear()}-${
+    new Date(unixTimestamp).getMonth() + 1
+  }-${new Date(unixTimestamp).getDay()}`;
+  const time = `${new Date(unixTimestamp).getHours()}:${
+    new Date(unixTimestamp).getMinutes() + 1
+  }:${new Date(unixTimestamp).getSeconds()}`;
   // title = title ? title : 'Happy Birthday to TideBit';
   // date = date ? date : '2022-10-05';
   // time = time ? time : '14:28:38';

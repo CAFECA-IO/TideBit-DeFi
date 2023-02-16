@@ -3,6 +3,7 @@ import {useContext, useEffect, useState} from 'react';
 
 import {MarketContext, IMarketContext} from '../../contexts/market_context';
 import {CRYPTO_CARD_COLORS} from '../../constants/display';
+import Link from 'next/link';
 
 // TODO: import data from market context
 
@@ -24,9 +25,30 @@ const CryptoCategory = ({...otherProps}) => {
       // step 2: 把 json 放進 component
       if (i === 0) {
         return (
+          // TODO: Dynamic routes
+          <Link href={`/trade/cfd/cfd`}>
+            <CryptoCard
+              key={i}
+              // cardClickHandler={() => {
+              //   <Link href={`/trade/cfd/${cryptoCard.currency}`}></Link>;
+              // }}
+              className="mt-4 ml-4"
+              lineGraphProps={cryptoCard.lineGraphProps}
+              chain={cryptoCard.chain}
+              currency={cryptoCard.currency}
+              price={cryptoCard.price}
+              fluctuating={cryptoCard.fluctuating}
+              gradientColor={cryptoCard?.gradientColor ?? ''}
+              tokenImg={cryptoCard.tokenImg}
+            />
+          </Link>
+        );
+      }
+
+      return (
+        <Link href={`/trade/cfd/cfd`}>
           <CryptoCard
             key={i}
-            className="mt-4 ml-4"
             lineGraphProps={cryptoCard.lineGraphProps}
             chain={cryptoCard.chain}
             currency={cryptoCard.currency}
@@ -35,20 +57,7 @@ const CryptoCategory = ({...otherProps}) => {
             gradientColor={cryptoCard?.gradientColor ?? ''}
             tokenImg={cryptoCard.tokenImg}
           />
-        );
-      }
-
-      return (
-        <CryptoCard
-          key={i}
-          lineGraphProps={cryptoCard.lineGraphProps}
-          chain={cryptoCard.chain}
-          currency={cryptoCard.currency}
-          price={cryptoCard.price}
-          fluctuating={cryptoCard.fluctuating}
-          gradientColor={cryptoCard?.gradientColor ?? ''}
-          tokenImg={cryptoCard.tokenImg}
-        />
+        </Link>
       );
     });
 

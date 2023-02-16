@@ -494,40 +494,11 @@ export default function WalletPanel({
     }, 3000);
   };
 
-  // const withdrawProcessModal = (
-  //   <TransferProcessModal
-  //     getTransferData={getWithdrawData}
-  //     // initialAmountInput={undefined}
-  //     submitHandler={withdrawSubmitHandler}
-  //     transferOptions={availableTransferOptions}
-  //     getSubmissionState={getWithdrawSubmissionState}
-  //     transferType="withdraw"
-  //     transferStep={withdrawProcess}
-  //     userAvailableBalance={userCtx.balance?.available ?? 0}
-  //     modalVisible={withdrawModalVisible}
-  //     modalClickHandler={withdrawModalClickHandler}
-  //   />
-  // );
-  // const depositProcessModal = (
-  //   <TransferProcessModal
-  //     getTransferData={getDepositData}
-  //     // initialAmountInput={userCtx.walletBalance ?? 0}
-  //     submitHandler={depositSubmitHandler}
-  //     transferOptions={availableTransferOptions}
-  //     getSubmissionState={getDepositSubmissionState}
-  //     transferType="deposit"
-  //     transferStep={depositProcess}
-  //     userAvailableBalance={userCtx.getWalletBalance('USDT')?.balance || 0}
-  //     modalVisible={depositModalVisible}
-  //     modalClickHandler={depositModalClickHandler}
-  //   />
-  // );
   const connectingClickHandler = () => {
     setConnectingModalVisible(!connectingModalVisible);
   };
 
   const qrcodeClickHandler = () => {
-    // TODO: temparary solution, need to be fixed
     // setPanelVisible(false);
     panelClickHandler();
 
@@ -536,7 +507,6 @@ export default function WalletPanel({
   };
 
   const helloClickHandler = () => {
-    // TODO: temparary solution, need to be fixed
     // setPanelVisible(false);
 
     setHelloModalVisible(!helloModalVisible);

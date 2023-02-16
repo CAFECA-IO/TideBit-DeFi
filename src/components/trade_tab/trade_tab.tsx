@@ -144,6 +144,7 @@ const TradeTab = () => {
     valueOfPositionLength > 10 || marginLength > 10 ? 'top-430px' : 'top-420px';
 
   const longOrderSubmitHandler = () => {
+    // globalCtx.visibleWalletPanelHandler();
     return;
   };
 

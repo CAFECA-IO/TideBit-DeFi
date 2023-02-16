@@ -19,6 +19,7 @@ import I18n from '../i18n/i18n';
 import {IoIosArrowBack} from 'react-icons/io';
 import UserOverview from '../user_overview/user_overview';
 import {UserContext} from '../../contexts/user_context';
+import {NotificationContext} from '../../contexts/notification_context';
 
 // interface INavBarProps {
 //   notifyRef: HTMLDivElement extends HTMLElement ? React.RefObject<HTMLDivElement> : null;
@@ -26,7 +27,8 @@ import {UserContext} from '../../contexts/user_context';
 // }
 type TranslateFunction = (s: string) => string;
 
-const NavBar = ({notificationNumber = 1}) => {
+const NavBar = () => {
+  const notificationCtx = useContext(NotificationContext);
   const {t}: {t: TranslateFunction} = useTranslation('common');
   // TODO: i18n
   const {locale, locales, defaultLocale, asPath} = useRouter();
@@ -150,7 +152,9 @@ const NavBar = ({notificationNumber = 1}) => {
 
                   <button onClick={sidebarOpenHandler} className="relative hover:cursor-pointer">
                     <span className="absolute bottom-4 left-3 z-20 inline-block h-3 w-3 rounded-xl bg-tidebitTheme">
-                      <p className="text-center text-3xs">{notificationNumber}</p>
+                      <p className="text-center text-3xs">
+                        {notificationCtx.unreadNotifications.length}
+                      </p>
                     </span>
 
                     <Image
@@ -182,7 +186,9 @@ const NavBar = ({notificationNumber = 1}) => {
                 <span className="mx-2 inline-block h-10 w-px rounded bg-lightGray1"></span>
                 <button onClick={sidebarOpenHandler} className="relative hover:cursor-pointer">
                   <span className="absolute top-0 right-0 z-20 inline-block h-3 w-3 rounded-xl bg-tidebitTheme">
-                    <p className="text-center text-3xs hover:text-white">{notificationNumber}</p>
+                    <p className="text-center text-3xs hover:text-white">
+                      {notificationCtx.unreadNotifications.length}
+                    </p>
                   </span>
 
                   <Image

@@ -1,7 +1,9 @@
+/* eslint-disable no-console */
 import useOuterClick from '../../lib/hooks/use_outer_click';
 import Image from 'next/image';
-import {forwardRef} from 'react';
+import {forwardRef, useContext} from 'react';
 import NotificationItem from '../notification_item/notification_item';
+import {NotificationContext} from '../../contexts/notification_context';
 
 interface INotificationProps {
   notifyRef: HTMLDivElement extends HTMLElement ? React.RefObject<HTMLDivElement> : null;
@@ -19,6 +21,7 @@ export default function Notification({
   // const sidebarOpenHandler = () => {
   //   setComponentVisible(!componentVisible);
   // };
+  const notificationCtx = useContext(NotificationContext);
 
   const MAX_NOTIFICATION_WIDTH = 479;
 
@@ -59,14 +62,34 @@ export default function Notification({
       id: 'n8',
     },
   ];
-
-  const NotificationList = DUMMY_DATA.map(v => {
-    return (
-      <div key={v.id}>
-        <NotificationItem />
-      </div>
+  const NotificationList =
+    notificationCtx.unreadNotifications.length > 0 ? (
+      notificationCtx.unreadNotifications.map(v => {
+        return (
+          <div key={v.id}>
+            <NotificationItem
+              id={v.id}
+              title={v.title}
+              timestamp={v.timestamp}
+              duration={v.duration}
+              notificationLevel={v.notificationLevel}
+              isRead={v.isRead}
+              content={v.content}
+            />
+          </div>
+        );
+      })
+    ) : (
+      <></>
     );
-  });
+
+  // const NotificationList = DUMMY_DATA.map(v => {
+  //   return (
+  //     <div key={v.id}>
+  //       <NotificationItem />
+  //     </div>
+  //   );
+  // });
 
   // Desktop notification drawer
   const isDisplayedNotificationSidebarSection = (
@@ -91,7 +114,10 @@ export default function Notification({
             >
               <div className="mb-10 flex flex items-center">
                 <h1 className="hidden pl-5 text-2xl font-bold sm:block">Notification</h1>
-                <div className="ml-auto pr-30px text-sm text-tidebitTheme underline hover:cursor-pointer">
+                <div
+                  className="ml-auto pr-30px text-sm text-tidebitTheme underline hover:cursor-pointer"
+                  onClick={notificationCtx.readAll}
+                >
                   Clear All
                 </div>
               </div>

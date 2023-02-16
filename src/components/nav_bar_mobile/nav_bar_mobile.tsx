@@ -187,7 +187,7 @@ const NavBarMobile = ({notificationNumber = 1}) => {
                 </Link>
               </div>
               <div className="flex items-center justify-start px-3">
-                <Link href="/trading" className={menuItemStyles}>
+                <Link href="/trade/cfd/cfd" className={menuItemStyles}>
                   {t('nav_bar.Trade')}
                 </Link>
               </div>

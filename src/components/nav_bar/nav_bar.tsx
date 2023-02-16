@@ -65,7 +65,6 @@ const NavBar = ({notificationNumber = 1}) => {
   };
 
   const wallectConnectBtnClickHandler = () => {
-    // TODO: pop up wallet panel
     globalCtx.visibleWalletPanelHandler();
   };
 
@@ -143,11 +142,14 @@ const NavBar = ({notificationNumber = 1}) => {
                 {/* Desktop menu */}
                 <div className={`hidden pb-5 text-base text-lightGray1 lg:block`}>
                   <div className="ml-10 mt-5 flex flex-1 items-center space-x-4 xl:ml-10">
-                    <Link href="/trading" className="hover:cursor-pointer hover:text-tidebitTheme">
-                      {t('nav_bar.Trading')}
+                    <Link
+                      href="/trade/cfd"
+                      className="hover:cursor-pointer hover:text-tidebitTheme"
+                    >
+                      {t('nav_bar.Trade')}
                     </Link>
                     <Link href="#" className="mr-5 hover:cursor-pointer hover:text-tidebitTheme">
-                      {t('nav_bar.TideBitUniversity')}
+                      {t('nav_bar.Leaderboard')}
                     </Link>
                     {/* <Link
                       href={asPath}
@@ -157,7 +159,7 @@ const NavBar = ({notificationNumber = 1}) => {
                       Test
                     </Link> */}
                     <Link href="#" className="mr-5 hover:cursor-pointer hover:text-tidebitTheme">
-                      {t('nav_bar.HelpCenter')}
+                      {t('nav_bar.Support')}
                     </Link>
 
                     {/* User overview */}

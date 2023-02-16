@@ -3,8 +3,13 @@ import React from 'react';
 import TideButton from '../tide_button/tide_button';
 import TideLink from '../tide_link/tide_link';
 import RippleButton from '../ripple_button/ripple_button';
+import {useTranslation} from 'react-i18next';
+
+type TranslateFunction = (s: string) => string;
 
 const Footer = () => {
+  const {t}: {t: TranslateFunction} = useTranslation('common');
+
   const ICON_SIZE = 30;
   const socialMediaLinks = [
     {
@@ -43,9 +48,9 @@ const Footer = () => {
   ];
 
   const servicesLinks = [
-    {label: 'Trade', path: '/'},
-    {label: 'TideBit University', path: '/'},
-    {label: 'Help Center', path: '/'},
+    {label: t('nav_bar.Trade'), path: '/'},
+    {label: t('nav_bar.TideBitUniversity'), path: '/'},
+    {label: t('nav_bar.HelpCenter'), path: '/'},
   ];
 
   const tideBitLinks = [{label: 'Hiring', path: '/'}];

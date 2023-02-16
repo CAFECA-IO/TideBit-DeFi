@@ -45,9 +45,6 @@ const NavBarMobile = ({notificationNumber = 1}) => {
 
   const wallectConnectBtnClickHandler = () => {
     // setNavOpen(!navOpen);
-
-    // TODO: pop up wallet panel
-
     globalCtx.visibleWalletPanelHandler();
   };
 
@@ -191,17 +188,17 @@ const NavBarMobile = ({notificationNumber = 1}) => {
               </div>
               <div className="flex items-center justify-start px-3">
                 <Link href="/trading" className={menuItemStyles}>
-                  {t('nav_bar.Trading')}
+                  {t('nav_bar.Trade')}
                 </Link>
               </div>
               <div className="flex items-center justify-start px-3">
                 <Link href="#" className={menuItemStyles}>
-                  {t('nav_bar.TideBitUniversity')}
+                  {t('nav_bar.Leaderboard')}
                 </Link>
               </div>
               <div className="flex items-center justify-start px-3">
                 <Link href="#" className={menuItemStyles}>
-                  {t('nav_bar.HelpCenter')}
+                  {t('nav_bar.Support')}
                 </Link>
               </div>
               <div className="flex items-center justify-start px-3">

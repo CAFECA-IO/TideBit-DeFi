@@ -290,16 +290,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     return success;
   };
 
-  let n = 0;
-
   const signServiceTerm = async () => {
-    if (n === 0) {
-      setEnableServiceTerm(false);
-      n++;
-      console.log(n);
-      return false;
-    }
-
     setEnableServiceTerm(true);
     return true;
   };

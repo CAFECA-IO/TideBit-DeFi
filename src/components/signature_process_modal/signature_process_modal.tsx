@@ -87,11 +87,11 @@ const SignatureProcessModal = ({
   // };
 
   const controlSpace =
-    !userCtx.isConnected || connectingProcess === 'REJECTED' ? 'space-y-12' : 'space-y-12';
+    !userCtx.isConnected || connectingProcess === ConnectingProcess.REJECTED
+      ? 'space-y-12'
+      : 'space-y-12';
   const btnSpace =
-    userCtx.isConnected && connectingProcess !== 'REJECTED' && connectingProcess === 'CONNECTED'
-      ? 'mt-10'
-      : 'mt-16';
+    userCtx.isConnected && connectingProcess !== ConnectingProcess.REJECTED ? 'mt-10' : 'mt-16';
 
   // if (firstStepError && secondStepError) return
   // if (firstStepError && secondStepSuccess) return

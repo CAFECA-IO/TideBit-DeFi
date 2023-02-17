@@ -26,7 +26,7 @@ const CryptoCategory = ({...otherProps}) => {
       if (i === 0) {
         return (
           // TODO: Dynamic routes
-          <Link href={`/trade/cfd/cfd`}>
+          <Link href={`/trade/cfd/ethusdt`}>
             <CryptoCard
               key={i}
               // cardClickHandler={() => {
@@ -46,7 +46,7 @@ const CryptoCategory = ({...otherProps}) => {
       }
 
       return (
-        <Link href={`/trade/cfd/cfd`}>
+        <Link href={`/trade/cfd/ethusdt`}>
           <CryptoCard
             key={i}
             lineGraphProps={cryptoCard.lineGraphProps}

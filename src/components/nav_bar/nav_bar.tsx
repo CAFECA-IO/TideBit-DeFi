@@ -143,7 +143,7 @@ const NavBar = ({notificationNumber = 1}) => {
                 <div className={`hidden pb-5 text-base text-lightGray1 lg:block`}>
                   <div className="ml-10 mt-5 flex flex-1 items-center space-x-4 xl:ml-10">
                     <Link
-                      href="/trade/cfd/cfd"
+                      href="/trade/cfd/ethusdt"
                       className="hover:cursor-pointer hover:text-tidebitTheme"
                     >
                       {t('nav_bar.Trade')}

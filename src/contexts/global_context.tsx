@@ -108,6 +108,8 @@ export interface IGlobalContext {
   toggleColorMode: () => void;
   toast: (props: IToastify) => void;
 
+  eliminateAllModals: () => void;
+
   visiblePositionDetailsModal: boolean;
   visiblePositionDetailsModalHandler: () => void;
   dataPositionDetailsModal: IDataPositionDetailsModal | null;
@@ -121,6 +123,7 @@ export interface IGlobalContext {
 
   visibleLoadingModal: boolean;
   visibleLoadingModalHandler: () => void;
+  zoomOutLoadingModal: () => void;
   dataLoadingModal: IProcessDataModal | null;
   dataLoadingModalHandler: (data: IProcessDataModal) => void;
 
@@ -158,6 +161,8 @@ export const GlobalContext = createContext<IGlobalContext>({
   toggleColorMode: () => null,
   toast: () => null,
 
+  eliminateAllModals: () => null,
+
   visiblePositionDetailsModal: false,
   visiblePositionDetailsModalHandler: () => null,
   dataPositionDetailsModal: null,
@@ -171,6 +176,7 @@ export const GlobalContext = createContext<IGlobalContext>({
 
   visibleLoadingModal: false,
   visibleLoadingModalHandler: () => null,
+  zoomOutLoadingModal: () => null,
   dataLoadingModal: null,
   dataLoadingModalHandler: () => null,
 
@@ -277,6 +283,20 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     toastHandler({type: type, message: message, toastId: toastId});
   };
 
+  const eliminateAllModals = () => {
+    // console.log('eliminateAllModals');
+    setVisiblePositionDetailsModal(false);
+    setVisibleDepositModal(false);
+    setVisibleWithdrawalModal(false);
+    setVisibleLoadingModal(false);
+    setVisibleFailedModal(false);
+    setVisibleCanceledModal(false);
+    setVisibleSuccessfulModal(false);
+    setVisibleWalletPanel(false);
+    setVisibleHelloModal(false);
+    setVisibleSignatureProcessModal(false);
+  };
+
   const visiblePositionDetailsModalHandler = () => {
     setVisiblePositionDetailsModal(!visiblePositionDetailsModal);
   };
@@ -292,8 +312,9 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     setVisibleWithdrawalModal(!visibleWithdrawalModal);
   };
 
-  const visibleLoadingModalHandler = () => {
-    setVisibleLoadingModal(!visibleLoadingModal);
+  const zoomOutLoadingModal = () => {
+    visibleLoadingModalHandler();
+
     if (visibleLoadingModal) {
       toast({
         type: 'info',
@@ -303,6 +324,17 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
       });
     }
   };
+
+  const visibleLoadingModalHandler = () => {
+    // if (bool) {
+    //   console.log('in global context, visibileLoadingModalHandler: ', bool);
+    //   setVisibleLoadingModal(bool);
+    //   return;
+    // }
+
+    setVisibleLoadingModal(!visibleLoadingModal);
+  };
+
   const dataLoadingModalHandler = (data: IProcessDataModal) => {
     setDataLoadingModal(data);
   };
@@ -403,6 +435,8 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     toggleColorMode,
     toast,
 
+    eliminateAllModals,
+
     visiblePositionDetailsModal,
     visiblePositionDetailsModalHandler,
     dataPositionDetailsModal,
@@ -416,6 +450,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
 
     visibleLoadingModal,
     visibleLoadingModalHandler,
+    zoomOutLoadingModal,
     dataLoadingModal,
     dataLoadingModalHandler,
 
@@ -447,6 +482,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     <GlobalContext.Provider value={defaultValue}>
       <LoadingModal
         modalVisible={visibleLoadingModal}
+        // zoomOutLoadingModal
         modalClickHandler={visibleLoadingModalHandler}
         modalTitle={dataLoadingModal.modalTitle}
         modalContent={dataLoadingModal.modalContent}
@@ -530,5 +566,18 @@ export const useGlobal = () => {
   // if (context === undefined) {
   //   throw new Error('useGlobal must be used within a GlobalProvider');
   // }
+
+  // TODO: Debug tool
+  const g: any =
+    typeof globalThis === 'object'
+      ? globalThis
+      : typeof window === 'object'
+      ? window
+      : typeof global === 'object'
+      ? global
+      : null; // Causes an error on the next line
+
+  g.gc = context;
+
   return context;
 };

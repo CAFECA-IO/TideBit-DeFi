@@ -9,7 +9,7 @@ import {UserContext} from '../../contexts/user_context';
 import {useContext, useState} from 'react';
 import {toast} from 'react-toastify';
 import {useGlobal} from '../../contexts/global_context';
-import {wait} from '../../lib/common';
+import {locker, wait} from '../../lib/common';
 import {DELAYED_HIDDEN_SECONDS} from '../../constants/display';
 
 interface ISignatureProcessModal {
@@ -142,22 +142,33 @@ const SignatureProcessModal = ({
     </div>
   );
 
-  // TODO: test in `visitor trade tab` at the beginning of not connected
   const requestSendingHandler = async () => {
-    setConnectingProcess(ConnectingProcess.CONNECTING);
+    const [lock, unlock] = locker('signature_process_modal.RequestSendingHandler');
+
+    // TODO1
+    if (!lock()) return; // 沒有成功上鎖，所以不執行接下來的程式碼
+
+    // setConnectingProcess(ConnectingProcess.CONNECTING);
     // console.log('is connected: ', userCtx.isConnected);
 
     if (!userCtx.isConnected) {
       // It's a cycle
       const connectWalletResult = await userCtx.connect();
 
+      // TODO1
+      unlock();
+
       // if (connectWalletResult) {
       //   await wait(DELAYED_HIDDEN_SECONDS);
       //   // setConnectingProcess(ConnectingProcess.CONNECTED);
       // }
+
       setConnectingProcess(ConnectingProcess.EMPTY);
     } else {
       const signResult = await userCtx.signServiceTerm();
+
+      // TODO1
+      unlock();
 
       if (signResult) {
         setConnectingProcess(ConnectingProcess.CONNECTED);
@@ -173,11 +184,7 @@ const SignatureProcessModal = ({
 
       globalCtx.visibleSignatureProcessModalHandler();
       globalCtx.visibleHelloModalHandler();
-
-      // setConnectingProcess(ConnectingProcess.EMPTY);
     }
-
-    // globalCtx.visibleSignatureProcessModalHandler();
   };
 
   // TODO: Replace with `userCtx.connectingProcess === 'CONNECTING'` Else if `userCtx.connectingProcess === 'EMPTY'`

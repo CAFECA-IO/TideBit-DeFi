@@ -38,3 +38,45 @@ export const accountTruncate = (text: string) => {
 export const wait = (ms: number): Promise<void> => {
   return new Promise(resolve => setTimeout(resolve, ms));
 };
+
+interface IRoomOfLocker {
+  [key: string]: boolean;
+}
+
+type ILocker = [() => boolean, () => boolean, IRoomOfLocker];
+
+const room: IRoomOfLocker = {'common.Example': false};
+
+export const locker = (id: string): ILocker => {
+  // let locked = false;
+
+  const lock = () => {
+    if (room[id]) {
+      // room[id] === true 代表已經上鎖，某 function 正在執行中；
+      // 故 `lock` 回傳 false，代表不能執行某 function
+      return false;
+    } else {
+      // room[id] === false 代表沒有上鎖，代表該 function 可以執行；
+      // 故鎖上房門並讓 `lock` 回傳 true， 代表可以執行某 function
+      room[id] = true;
+      // locked = true;
+      return true;
+    }
+  };
+
+  const unlock = () => {
+    // room[id] 代表該 function 已經執行完畢，可以解鎖房門
+    if (room[id]) {
+      room[id] = false;
+      // locked = false;
+      return true;
+    } else {
+      // 重複解鎖，代表流程有問題，故拋出錯誤
+      throw new Error(
+        'Something is wrong with the procedure. Unlocking when not locked. (流程有問題)'
+      );
+    }
+  };
+
+  return [lock, unlock, room];
+};

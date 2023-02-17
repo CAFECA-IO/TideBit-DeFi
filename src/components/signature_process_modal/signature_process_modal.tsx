@@ -9,6 +9,7 @@ import {UserContext} from '../../contexts/user_context';
 import {useContext, useState} from 'react';
 import {toast} from 'react-toastify';
 import {useGlobal} from '../../contexts/global_context';
+import {wait} from '../../lib/common';
 
 interface ISignatureProcessModal {
   loading?: boolean;
@@ -153,18 +154,15 @@ const SignatureProcessModal = ({
       if (signResult) {
         setConnectingProcess(ConnectingProcess.CONNECTED);
 
-        setTimeout(() => {
-          globalCtx.visibleSignatureProcessModalHandler();
-          setConnectingProcess(ConnectingProcess.EMPTY);
-        }, 1000);
+        await wait(1000);
+        globalCtx.visibleSignatureProcessModalHandler();
+        setConnectingProcess(ConnectingProcess.EMPTY);
       } else {
-        setTimeout(() => {
-          // globalCtx.visibleSignatureProcessModalHandler();
-          setConnectingProcess(ConnectingProcess.REJECTED);
-        }, 1000);
-
-        // setConnectingProcess(ConnectingProcess.REJECTED);
+        await wait(1000);
+        setConnectingProcess(ConnectingProcess.REJECTED);
       }
+
+      // setConnectingProcess(ConnectingProcess.EMPTY);
     }
   };
 

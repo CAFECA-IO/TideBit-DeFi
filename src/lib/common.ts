@@ -29,3 +29,12 @@ export const timestampToString = (timestamp: number) => {
 export const accountTruncate = (text: string) => {
   return text?.substring(0, 6) + '...' + text?.substring(text.length - 5);
 };
+
+/**
+ *
+ * @param milleseconds
+ * @returns
+ */
+export const wait = (ms: number): Promise<void> => {
+  return new Promise(resolve => setTimeout(resolve, ms));
+};

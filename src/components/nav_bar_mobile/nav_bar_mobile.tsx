@@ -10,6 +10,7 @@ import {useTranslation} from 'next-i18next';
 import UserMobile from '../user_mobile/user_mobile';
 import {useGlobal} from '../../contexts/global_context';
 import TideButton from '../tide_button/tide_button';
+import User from '../user/user';
 
 type TranslateFunction = (s: string) => string;
 
@@ -106,6 +107,18 @@ const NavBarMobile = ({notificationNumber = 1}) => {
         {t('nav_bar.WalletConnect')}
       </TideButton>
     )
+  );
+
+  const isDisplayedUser = userCtx.enableServiceTerm ? (
+    <UserMobile />
+  ) : (
+    <TideButton
+      onClick={wallectConnectBtnClickHandler} // show wallet panel
+      className={`rounded border-0 bg-tidebitTheme py-2 px-3 text-sm text-white transition-all hover:opacity-90`}
+    >
+      {/* Wallet Connect */}
+      {t('nav_bar.WalletConnect')}
+    </TideButton>
   );
 
   const dividerInsideMobileNavBar = navOpen && `inline-block h-px w-11/12 rounded bg-lightGray`;
@@ -222,6 +235,7 @@ const NavBarMobile = ({notificationNumber = 1}) => {
               />{' '} */}
             </div>
           </div>
+          <div className="mb-2 flex w-full justify-end pr-10">{isDisplayedUser}</div>
         </div>
       </div>
 

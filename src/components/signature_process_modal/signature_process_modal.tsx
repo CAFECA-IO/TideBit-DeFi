@@ -10,6 +10,7 @@ import {useContext, useState} from 'react';
 import {toast} from 'react-toastify';
 import {useGlobal} from '../../contexts/global_context';
 import {wait} from '../../lib/common';
+import {DELAYED_HIDDEN_SECONDS} from '../../constants/display';
 
 interface ISignatureProcessModal {
   loading?: boolean;
@@ -154,11 +155,11 @@ const SignatureProcessModal = ({
       if (signResult) {
         setConnectingProcess(ConnectingProcess.CONNECTED);
 
-        await wait(1000);
+        await wait(DELAYED_HIDDEN_SECONDS);
         globalCtx.visibleSignatureProcessModalHandler();
         setConnectingProcess(ConnectingProcess.EMPTY);
       } else {
-        await wait(1000);
+        await wait(DELAYED_HIDDEN_SECONDS);
         setConnectingProcess(ConnectingProcess.REJECTED);
       }
 

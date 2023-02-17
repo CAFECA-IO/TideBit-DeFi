@@ -577,7 +577,7 @@ export const useGlobal = () => {
       ? global
       : null; // Causes an error on the next line
 
-  g.gc = context;
+  g.globalContext = context;
 
   return context;
 };

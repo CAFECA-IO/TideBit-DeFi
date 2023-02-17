@@ -22,21 +22,21 @@ const CryptoCategory = ({...otherProps}) => {
       };
 
       // step 2: 把 json 放進 component
-      // if (i === 0) {
-      //   return (
-      //     <CryptoCard
-      //       key={i}
-      //       className="mt-4 ml-4"
-      //       lineGraphProps={cryptoCard.lineGraphProps}
-      //       chain={cryptoCard.chain}
-      //       currency={cryptoCard.currency}
-      //       price={cryptoCard.price}
-      //       fluctuating={cryptoCard.fluctuating}
-      //       gradientColor={cryptoCard?.gradientColor ?? ''}
-      //       tokenImg={cryptoCard.tokenImg}
-      //     />
-      //   );
-      // }
+      if (i === 0) {
+        return (
+          <CryptoCard
+            key={i}
+            className="mt-4 ml-4"
+            lineGraphProps={cryptoCard.lineGraphProps}
+            chain={cryptoCard.chain}
+            currency={cryptoCard.currency}
+            price={cryptoCard.price}
+            fluctuating={cryptoCard.fluctuating}
+            gradientColor={cryptoCard?.gradientColor ?? ''}
+            tokenImg={cryptoCard.tokenImg}
+          />
+        );
+      }
 
       return (
         <CryptoCard

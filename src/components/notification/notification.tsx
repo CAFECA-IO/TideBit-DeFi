@@ -1,8 +1,7 @@
 /* eslint-disable no-console */
 import useOuterClick from '../../lib/hooks/use_outer_click';
 import Image from 'next/image';
-import {forwardRef, useContext, useEffect} from 'react';
-// import useState from 'react-usestateref';
+import {forwardRef, useContext} from 'react';
 import NotificationItem from '../notification_item/notification_item';
 import {NotificationContext} from '../../contexts/notification_context';
 // import {INotificationItem} from '../../interfaces/tidebit_defi_background/notification_item';
@@ -24,7 +23,6 @@ export default function Notification({
   //   setComponentVisible(!componentVisible);
   // };
   const notificationCtx = useContext(NotificationContext);
-  // const [isInit, setIsInit, isInitRef] = useState<boolean>(false);
 
   const MAX_NOTIFICATION_WIDTH = 479;
 
@@ -65,16 +63,6 @@ export default function Notification({
       id: 'n8',
     },
   ];
-
-  // useEffect(() => {
-  //   console.log(`Notification useEffect is triggered isInitRef.current`, isInitRef.current);
-  //   if (!isInitRef.current) {
-  //     console.log(`call notificationCtx.init`);
-  //     notificationCtx.init();
-  //     setIsInit(true);
-  //   }
-  // }, [notificationCtx.unreadNotifications]);
-
   const NotificationList = notificationCtx.unreadNotifications ? (
     notificationCtx.unreadNotifications.map(v => {
       return (

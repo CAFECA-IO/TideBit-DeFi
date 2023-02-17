@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import React, {useContext, useEffect, useState} from 'react';
 import OpenPositionItem from '../open_position_item/open_position_item';
 import {UserContext} from '../../contexts/user_context';

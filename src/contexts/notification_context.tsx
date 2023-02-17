@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import React, {useContext, createContext} from 'react';
 import useState from 'react-usestateref';
 import {UserContext} from './user_context';
@@ -84,13 +83,6 @@ export const NotificationProvider = ({children}: INotificationProvider) => {
   };
 
   React.useEffect(() => {
-    console.log(
-      `NotificationProvider React.useEffect walletRef.current:`,
-      walletRef.current,
-      `userCtx.wallet:`,
-      userCtx.wallet,
-      userCtx.wallet === walletRef.current
-    );
     if (userCtx.wallet !== walletRef.current) {
       setWallet(userCtx.wallet);
       let updateNotifications: INotificationItem[] = [...notifications];

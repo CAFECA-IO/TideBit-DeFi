@@ -16,84 +16,88 @@ export interface INotificationProvider {
 }
 
 export interface INotificationContext {
-  notifications: INotificationItem[];
-  unreadNotifications: INotificationItem[];
+  notifications: INotificationItem[] | null;
+  unreadNotifications: INotificationItem[] | null;
   isRead: (id: string) => Promise<void>;
   readAll: () => Promise<void>;
   init: () => Promise<void>;
-  reset: () => Promise<void>;
+  reset: () => void;
 }
 
 export const NotificationContext = createContext<INotificationContext>({
-  notifications: [],
-  unreadNotifications: [],
+  notifications: null,
+  unreadNotifications: null,
   isRead: (id: string) => Promise.resolve(),
   readAll: () => Promise.resolve(),
   init: () => Promise.resolve(),
-  reset: () => Promise.resolve(),
+  reset: () => null,
 });
 
 export const NotificationProvider = ({children}: INotificationProvider) => {
   const marketCtx = useContext(MarketContext);
-  const [notifications, setNotifications] = useState<INotificationItem[]>(dummyNotifications);
-  const [unreadNotifications, setUnreadNotifications] =
-    useState<INotificationItem[]>(dummyUnReadNotifications);
+  const [notifications, setNotifications, notificationsRef] = useState<INotificationItem[] | null>(
+    null
+  );
+  const [unreadNotifications, setUnreadNotifications, unreadNotificationsRef] = useState<
+    INotificationItem[] | null
+  >(null);
   const userCtx = useContext(UserContext);
   const [wallet, setWallet, walletRef] = useState<string | null>(userCtx.wallet);
 
   const isRead = async (id: string) => {
     if (userCtx.isConnected) {
-      const updateNotificaionts: INotificationItem[] = [...notifications];
-      const index = updateNotificaionts.findIndex(n => n.id === id);
+      const updateNotifications: INotificationItem[] = notificationsRef.current
+        ? [...notificationsRef.current]
+        : [];
+      const index = updateNotifications.findIndex(n => n.id === id);
       if (index !== -1) {
-        updateNotificaionts[index] = {
-          ...updateNotificaionts[index],
+        updateNotifications[index] = {
+          ...updateNotifications[index],
           isRead: true,
         };
       }
-      setNotifications(updateNotificaionts);
-      setUnreadNotifications(updateNotificaionts.filter(n => !n.isRead));
-      await userCtx.readNotifications([updateNotificaionts[index]]);
+      setNotifications(updateNotifications);
+      setUnreadNotifications(updateNotifications.filter(n => !n.isRead));
+      await userCtx.readNotifications([updateNotifications[index]]);
     }
     return;
   };
 
   const readAll = async () => {
     if (userCtx.isConnected) {
-      const updateNotificaionts: INotificationItem[] = [...notifications].map(n => ({
-        ...n,
-        isRead: true,
-      }));
-      setNotifications(updateNotificaionts);
-      setUnreadNotifications(updateNotificaionts.filter(n => !n.isRead));
-      await userCtx.readNotifications(updateNotificaionts);
+      const updateNotifications: INotificationItem[] = notificationsRef.current
+        ? notificationsRef.current.map(n => ({
+            ...n,
+            isRead: true,
+          }))
+        : [];
+      setNotifications(updateNotifications);
+      setUnreadNotifications(updateNotifications.filter(n => !n.isRead));
+      await userCtx.readNotifications(updateNotifications);
     }
     return;
   };
 
   const init = async () => {
+    console.log(`NotificationProvider init is called`);
     setNotifications(dummyNotifications);
     setUnreadNotifications(dummyUnReadNotifications);
-    return;
+    return await Promise.resolve();
   };
 
-  const reset = async () => {
+  const reset = () => {
     setNotifications([]);
     setUnreadNotifications([]);
     return;
   };
 
   React.useEffect(() => {
-    console.log(
-      `NotificationProvider React.useEffect walletRef.current:`,
-      walletRef.current,
-      `userCtx.wallet:`,
-      userCtx.wallet,
-      userCtx.wallet === walletRef.current
-    );
+    console.log(`NotificationProvider useEffect is triggered`);
     if (userCtx.wallet !== walletRef.current) {
       setWallet(userCtx.wallet);
-      let updateNotifications: INotificationItem[] = [...notifications];
+      let updateNotifications: INotificationItem[] = notificationsRef.current
+        ? [...notificationsRef.current]
+        : [];
       let updateUnreadNotifications: INotificationItem[] = [];
       // Event: Login
       if (userCtx.isConnected) {
@@ -108,12 +112,24 @@ export const NotificationProvider = ({children}: INotificationProvider) => {
         updateNotifications = updateNotifications.filter(n => n.public);
         updateUnreadNotifications = updateNotifications.filter(n => !n.isRead);
       }
+      console.log(
+        `NotificationContext useEffect call setNotifications`,
+        `userCtx.isConnected:${userCtx.isConnected}`,
+        updateNotifications
+      );
       setNotifications(updateNotifications);
       setUnreadNotifications(updateUnreadNotifications);
     }
   }, [userCtx.wallet]);
 
-  const defaultValue = {notifications, unreadNotifications, isRead, readAll, init, reset};
+  const defaultValue = {
+    notifications: notificationsRef.current,
+    unreadNotifications: unreadNotificationsRef.current,
+    isRead,
+    readAll,
+    init,
+    reset,
+  };
 
   return (
     <NotificationContext.Provider value={defaultValue}>{children}</NotificationContext.Provider>

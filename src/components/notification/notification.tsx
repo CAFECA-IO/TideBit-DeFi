@@ -1,9 +1,11 @@
 /* eslint-disable no-console */
 import useOuterClick from '../../lib/hooks/use_outer_click';
 import Image from 'next/image';
-import {forwardRef, useContext} from 'react';
+import {forwardRef, useContext, useEffect} from 'react';
+// import useState from 'react-usestateref';
 import NotificationItem from '../notification_item/notification_item';
 import {NotificationContext} from '../../contexts/notification_context';
+// import {INotificationItem} from '../../interfaces/tidebit_defi_background/notification_item';
 
 interface INotificationProps {
   notifyRef: HTMLDivElement extends HTMLElement ? React.RefObject<HTMLDivElement> : null;
@@ -22,6 +24,7 @@ export default function Notification({
   //   setComponentVisible(!componentVisible);
   // };
   const notificationCtx = useContext(NotificationContext);
+  // const [isInit, setIsInit, isInitRef] = useState<boolean>(false);
 
   const MAX_NOTIFICATION_WIDTH = 479;
 
@@ -62,27 +65,36 @@ export default function Notification({
       id: 'n8',
     },
   ];
-  const NotificationList =
-    notificationCtx.unreadNotifications.length > 0 ? (
-      notificationCtx.unreadNotifications.map(v => {
-        return (
-          <div key={v.id}>
-            <NotificationItem
-              id={v.id}
-              title={v.title}
-              timestamp={v.timestamp}
-              duration={v.duration}
-              notificationLevel={v.notificationLevel}
-              isRead={v.isRead}
-              content={v.content}
-              public={v.public}
-            />
-          </div>
-        );
-      })
-    ) : (
-      <></>
-    );
+
+  // useEffect(() => {
+  //   console.log(`Notification useEffect is triggered isInitRef.current`, isInitRef.current);
+  //   if (!isInitRef.current) {
+  //     console.log(`call notificationCtx.init`);
+  //     notificationCtx.init();
+  //     setIsInit(true);
+  //   }
+  // }, [notificationCtx.unreadNotifications]);
+
+  const NotificationList = notificationCtx.unreadNotifications ? (
+    notificationCtx.unreadNotifications.map(v => {
+      return (
+        <div key={v.id}>
+          <NotificationItem
+            id={v.id}
+            title={v.title}
+            timestamp={v.timestamp}
+            duration={v.duration}
+            notificationLevel={v.notificationLevel}
+            isRead={v.isRead}
+            content={v.content}
+            public={v.public}
+          />
+        </div>
+      );
+    })
+  ) : (
+    <></>
+  );
 
   // const NotificationList = DUMMY_DATA.map(v => {
   //   return (

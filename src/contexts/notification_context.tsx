@@ -79,7 +79,7 @@ export const NotificationProvider = ({children}: INotificationProvider) => {
   };
 
   const init = async () => {
-    console.log(`NotificationProvider init is called`);
+    // console.log(`NotificationProvider init is called`);
     setNotifications(dummyNotifications);
     setUnreadNotifications(dummyUnReadNotifications);
     return await Promise.resolve();
@@ -92,8 +92,8 @@ export const NotificationProvider = ({children}: INotificationProvider) => {
   };
 
   React.useEffect(() => {
-    console.log(`NotificationProvider useEffect is triggered`);
     if (userCtx.wallet !== walletRef.current) {
+      console.log(`NotificationProvider useEffect is triggered`);
       setWallet(userCtx.wallet);
       let updateNotifications: INotificationItem[] = notificationsRef.current
         ? [...notificationsRef.current]

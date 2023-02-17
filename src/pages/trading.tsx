@@ -21,7 +21,7 @@ const Trading = () => {
     if (!appCtx.isInit) {
       appCtx.init();
     }
-  }, [appCtx.isInit]);
+  }, []);
 
   return appCtx.isInit ? (
     <>
@@ -42,7 +42,7 @@ const Trading = () => {
       {/* </MarketProvider> */}
     </>
   ) : (
-    <></>
+    <div>Loading...</div>
   );
 };
 

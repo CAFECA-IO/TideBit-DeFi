@@ -464,7 +464,7 @@ export const UserProvider = ({children}: IUserProvider) => {
   const readNotifications = async (notifications: INotificationItem[]) => Promise.resolve();
 
   const init = async () => {
-    console.log(`UserProvider init is called`);
+    // console.log(`UserProvider init is called`);
     return await Promise.resolve();
   };
 

@@ -24,12 +24,15 @@ export const AppProvider = ({children}: IAppProvider) => {
   const marketCtx = useContext(MarketContext);
   const notificationCtx = useContext(NotificationContext);
   const [isInit, setIsInit, isInitRef] = useState<boolean>(false);
+
   const init = async () => {
-    console.log(`AppProvider init is called`);
-    await userCtx.init();
-    await marketCtx.init();
-    await notificationCtx.init();
-    setIsInit(true);
+    if (!isInitRef.current) {
+      setIsInit(true);
+      console.log(`AppProvider init is called`);
+      await userCtx.init();
+      await marketCtx.init();
+      await notificationCtx.init();
+    }
     return;
   };
 

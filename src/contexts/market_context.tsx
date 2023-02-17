@@ -440,8 +440,8 @@ export const MarketProvider = ({children}: IMarketProvider) => {
   };
 
   React.useEffect(() => {
-    console.log(`MarketProvider useEffect is triggered`);
     if (userCtx.wallet !== walletRef.current) {
+      console.log(`MarketProvider useEffect is triggered`);
       setWallet(userCtx.wallet);
       // Event: Login
       if (userCtx.isConnected && selectedTickerRef.current) {
@@ -455,6 +455,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
   }, [userCtx.wallet]);
 
   const init = async () => {
+    // console.log(`MarketProvider init is called`);
     setSelectedTicker(dummyTicker);
     setAvailableTickers([...dummyTickers]);
     setCandlestickChartData(getDummyCandlestickChartData());

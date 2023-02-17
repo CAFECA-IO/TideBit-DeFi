@@ -20,7 +20,7 @@ const Home = () => {
     if (!appCtx.isInit) {
       appCtx.init();
     }
-  }, [appCtx.isInit]);
+  }, []);
 
   return appCtx.isInit ? (
     <>
@@ -39,7 +39,7 @@ const Home = () => {
       {/* </MarketProvider> */}
     </>
   ) : (
-    <></>
+    <div>Loading...</div>
   );
 };
 

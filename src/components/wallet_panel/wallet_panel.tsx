@@ -906,60 +906,68 @@ export default function WalletPanel({
   async function metamaskConnect() {
     globalCtx.visibleWalletPanelHandler();
 
-    globalCtx.dataLoadingModalHandler({
-      modalTitle: 'Wallet Connect',
-      modalContent: 'Connecting...',
-    });
-    globalCtx.visibleLoadingModalHandler();
+    // // -----WII-----
+    // globalCtx.dataLoadingModalHandler({
+    //   modalTitle: 'Wallet Connect',
+    //   modalContent: 'Connecting...',
+    // });
+    // globalCtx.visibleLoadingModalHandler();
 
-    try {
-      const connectWalletResult = await userCtx.connect();
-      globalCtx.eliminateAllModals();
-      if (connectWalletResult) {
+    // try {
+    //   const connectWalletResult = await userCtx.connect();
+    //   globalCtx.eliminateAllModals();
+    //   // globalCtx.visibleLoadingModalHandler();
+
+    //   if (connectWalletResult) {
+    //     // globalCtx.visibleLoadingModalHandler();
+
+    //     globalCtx.visibleSignatureProcessModalHandler();
+    //   } else {
+    //     // globalCtx.visibleLoadingModalHandler();
+
+    //     globalCtx.visibleWalletPanelHandler();
+    //   }
+    // } catch (error) {
+    //   globalCtx.visibleWalletPanelHandler();
+    //   // console.error(error);
+    // }
+    // // -----WII-----
+
+    if (!userCtx.isConnected) {
+      try {
+        // globalCtx.dataSuccessfulModalHandler({
+        //   modalTitle: 'Wallet Connect',
+        //   modalContent: 'Welcome!',
+        // });
+        // globalCtx.visibleSuccessfulModalHandler();
+
+        globalCtx.dataLoadingModalHandler({
+          modalTitle: 'Wallet Connect',
+          modalContent: 'Connecting...',
+        });
+        globalCtx.visibleLoadingModalHandler();
+
+        const connectWalletResult = await userCtx.connect();
+
+        // TODO: [Zoom out the loading modal should be still in the connecting process and popup the afterward modals when it's proceeded to the next step]
+        globalCtx.eliminateAllModals();
+
+        // console.log('connect wallet result', connectWalletResult);
         // globalCtx.visibleLoadingModalHandler();
+        // globalCtx.visibleSuccessfulModalHandler();
 
-        globalCtx.visibleSignatureProcessModalHandler();
-      } else {
-        // globalCtx.visibleLoadingModalHandler();
-
+        if (connectWalletResult) {
+          globalCtx.visibleSignatureProcessModalHandler();
+        } else {
+          globalCtx.visibleWalletPanelHandler();
+        }
+      } catch (error) {
+        // console.error(error);
         globalCtx.visibleWalletPanelHandler();
       }
-    } catch (error) {
-      globalCtx.visibleWalletPanelHandler();
-      // console.error(error);
+    } else {
+      globalCtx.visibleSignatureProcessModalHandler();
     }
-
-    // if (!userCtx.isConnected) {
-    //   try {
-    //     // globalCtx.dataSuccessfulModalHandler({
-    //     //   modalTitle: 'Wallet Connect',
-    //     //   modalContent: 'Welcome!',
-    //     // });
-    //     // globalCtx.visibleSuccessfulModalHandler();
-
-    //     globalCtx.dataLoadingModalHandler({
-    //       modalTitle: 'Wallet Connect',
-    //       modalContent: 'Connecting...',
-    //     });
-    //     globalCtx.visibleLoadingModalHandler();
-
-    //     const connectWalletResult = await userCtx.connect();
-
-    //     // console.log('connect wallet result', connectWalletResult);
-    //     globalCtx.visibleLoadingModalHandler();
-    //     // globalCtx.visibleSuccessfulModalHandler();
-
-    //     if (connectWalletResult) {
-    //       globalCtx.visibleSignatureProcessModalHandler();
-    //     } else {
-    //       globalCtx.visibleWalletPanelHandler();
-    //     }
-    //   } catch (error) {
-    //     // console.error(error);
-    //   }
-    // } else {
-    //   globalCtx.visibleSignatureProcessModalHandler();
-    // }
 
     // if (userCtx.isConnected) {
     //   globalCtx.visibleSignatureProcessModalHandler();

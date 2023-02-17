@@ -37,7 +37,7 @@ const SignatureProcessModal = ({
   const userCtx = useContext(UserContext);
   const globalCtx = useGlobal();
 
-  // // TODO: 從 UserContext 拿字串狀態來判斷，第二步應顯示'打勾、打叉、數字'哪一種圖示
+  // TODO: 從 UserContext 拿字串狀態來判斷，取代`connectingProcess`跟`setConnectingProcess`，用來判斷第二步應顯示'打勾、打叉、數字'哪一種圖示
   type IConnectingProcessType = 'EMPTY' | 'CONNECTING' | 'CONNECTED' | 'REJECTED';
   interface IConnectingProcessObject {
     EMPTY: IConnectingProcessType;

@@ -10,6 +10,7 @@ import PositionDetailsModal from '../position_details_modal/position_details_mod
 import {IOpenCFDDetails} from '../../interfaces/tidebit_defi_background/open_cfd_details';
 import {toast} from 'react-toastify';
 import {useGlobal} from '../../contexts/global_context';
+import {ProfitState} from '../../constants/profit_state';
 // import HorizontalRelativeLineGraph from '../horizontal_relative_line_graph/horizontal_relative_line_graph';
 
 interface IOpenPositionItemProps {
@@ -39,7 +40,7 @@ const OpenPositionItem = ({
   ...otherProps
 }: IOpenPositionItemProps) => {
   if (longOrShort !== 'long' && longOrShort !== 'short') return <></>;
-  if (profitOrLoss !== 'profit' && profitOrLoss !== 'loss') return <></>;
+  // if (profitOrLoss !== 'profit' && profitOrLoss !== 'loss') return <></>; if (profitOrLoss !== 'profit' && profitOrLoss !== 'loss') return <></>;
   if (ticker !== 'ETH' && ticker !== 'BTC') return <></>;
   const {
     visiblePositionDetailsModal,
@@ -88,13 +89,16 @@ const OpenPositionItem = ({
 
   const displayedString = longOrShort === 'long' ? TRANSACTION_TYPE.long : TRANSACTION_TYPE.short;
   const displayedColorHex =
-    profitOrLoss === 'profit' ? PROFIT_LOSS_COLOR_TYPE.profit : PROFIT_LOSS_COLOR_TYPE.loss;
+    profitOrLoss === ProfitState.PROFIT
+      ? PROFIT_LOSS_COLOR_TYPE.profit
+      : PROFIT_LOSS_COLOR_TYPE.loss;
 
-  const displayedTextColor = profitOrLoss === 'profit' ? 'text-lightGreen5' : 'text-lightRed';
+  const displayedTextColor =
+    profitOrLoss === ProfitState.PROFIT ? 'text-lightGreen5' : 'text-lightRed';
   const displayedHoverPausedColor =
-    profitOrLoss === 'profit' ? 'hover:bg-lightGreen5' : 'hover:bg-lightRed';
+    profitOrLoss === ProfitState.PROFIT ? 'hover:bg-lightGreen5' : 'hover:bg-lightRed';
 
-  const displayedSymbol = profitOrLoss === 'profit' ? '+' : '-';
+  const displayedSymbol = profitOrLoss === ProfitState.PROFIT ? '+' : '-';
 
   return (
     <div className="">

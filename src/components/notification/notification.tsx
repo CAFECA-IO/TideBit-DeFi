@@ -75,6 +75,7 @@ export default function Notification({
               notificationLevel={v.notificationLevel}
               isRead={v.isRead}
               content={v.content}
+              public={v.public}
             />
           </div>
         );

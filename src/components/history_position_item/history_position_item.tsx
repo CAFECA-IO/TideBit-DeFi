@@ -1,5 +1,6 @@
 import React from 'react';
 import {PROFIT_LOSS_COLOR_TYPE, TRANSACTION_TYPE} from '../../constants/display';
+import {ProfitState} from '../../constants/profit_state';
 
 interface IHistoryPositionItemProps {
   profitOrLoss: string;
@@ -20,14 +21,14 @@ const HistoryPositionItem = ({
   ...otherProps
 }: IHistoryPositionItemProps) => {
   if (longOrShort !== 'long' && longOrShort !== 'short') return <></>;
-  if (profitOrLoss !== 'profit' && profitOrLoss !== 'loss') return <></>;
+  // if (profitOrLoss !== 'profit' && profitOrLoss !== 'loss') return <></>;
   if (ticker !== 'ETH' && ticker !== 'BTC') return <></>;
 
   const displayedString = longOrShort === 'long' ? TRANSACTION_TYPE.long : TRANSACTION_TYPE.short;
 
-  const displayedColor = profitOrLoss === 'profit' ? 'text-lightGreen' : 'text-lightRed';
+  const displayedColor = profitOrLoss === ProfitState.PROFIT ? 'text-lightGreen' : 'text-lightRed';
 
-  const displayedSymbol = profitOrLoss === 'profit' ? '+' : '-';
+  const displayedSymbol = profitOrLoss === ProfitState.PROFIT ? '+' : '-';
 
   return (
     <>

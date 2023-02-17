@@ -6,10 +6,12 @@ import {PROFIT_LOSS_COLOR_TYPE} from '../constants/display';
 import {
   IOpenCFDDetails,
   dummyOpenCFDDetails,
+  getDummyOpenCFDs,
 } from '../interfaces/tidebit_defi_background/open_cfd_details';
 import {
   IClosedCFDDetails,
   dummyCloseCFDDetails,
+  getDummyClosedCFDs,
 } from '../interfaces/tidebit_defi_background/closed_cfd_details';
 import {
   dummyResultFailed,
@@ -46,7 +48,6 @@ import {
 } from '../interfaces/tidebit_defi_background/withdrawal_order';
 import {IOpenCFDOrder} from '../interfaces/tidebit_defi_background/open_cfd_order';
 import {INotificationItem} from '../interfaces/tidebit_defi_background/notification_item';
-import {EventEmitter} from 'events';
 import {Event} from '../constants/event';
 
 function randomNumber(min: number, max: number) {
@@ -106,7 +107,6 @@ export interface IUserProvider {
 }
 
 export interface IUserContext {
-  emitter: EventEmitter;
   id: string | null;
   username: string | null;
   wallet: string | null;
@@ -155,7 +155,6 @@ export interface IUserContext {
 }
 
 export const UserContext = createContext<IUserContext>({
-  emitter: new EventEmitter(),
   id: null,
   username: null,
   wallet: null,
@@ -205,29 +204,34 @@ export const UserContext = createContext<IUserContext>({
 
 export const UserProvider = ({children}: IUserProvider) => {
   // TODO: get partial user type from `IUserContext`
-  const emitter = new EventEmitter();
-  const [id, setId] = useState<string | null>(null);
-  const [username, setUsername] = useState<string | null>(null);
-  const [wallet, setWallet] = useState<string | null>(null);
-  const [email, setEmail] = useState<string | null>(null);
-  const [walletBalances, setWalletBalances] = useState<IWalletBalance[] | null>(null);
-  const [balance, setBalance] = useState<IUserBalance | null>(null);
-  const [balances, setBalances] = useState<IBalance[] | null>(null);
-  const [favoriteTickers, setFavoriteTickers] = useState<string[]>([]);
+  const [id, setId, idRef] = useState<string | null>(null);
+  const [username, setUsername, usernameRef] = useState<string | null>(null);
+  const [wallet, setWallet, walletRef] = useState<string | null>(null);
+  const [email, setEmail, emailRef] = useState<string | null>(null);
+  const [walletBalances, setWalletBalances, walletBalancesRef] = useState<IWalletBalance[] | null>(
+    null
+  );
+  const [balance, setBalance, balanceRef] = useState<IUserBalance | null>(null);
+  const [balances, setBalances, balancesRef] = useState<IBalance[] | null>(null);
+  const [favoriteTickers, setFavoriteTickers, favoriteTickersRef] = useState<string[]>([]);
   const [isConnected, setIsConnected, isConnectedRef] = useState<boolean>(false);
-  const [enableServiceTerm, setEnableServiceTerm] = useState<boolean>(false);
-  const [histories, setHistories] = useState<IOrder[]>([]);
-  const [openCFDs, setOpenedCFDs] = useState<Array<IOpenCFDDetails>>([]);
-  const [closedCFDs, setClosedCFDs] = useState<Array<IClosedCFDDetails>>([]);
-  const [isSubscibedNewsletters, setIsSubscibedNewsletters] = useState<boolean>(false);
-  const [isEnabledEmailNotification, setIsEnabledEmailNotification] = useState<boolean>(false);
-  const [isConnectedWithEmail, setIsConnectedWithEmail] = useState<boolean>(false);
-  const [isConnectedWithTideBit, setIsConnectedWithTideBit] = useState<boolean>(false);
+  const [enableServiceTerm, setEnableServiceTerm, enableServiceTermRef] = useState<boolean>(false);
+  const [histories, setHistories, historiesRef] = useState<IOrder[]>([]);
+  const [openCFDs, setOpenedCFDs, openCFDsRef] = useState<Array<IOpenCFDDetails>>([]);
+  const [closedCFDs, setClosedCFDs, closedCFDsRef] = useState<Array<IClosedCFDDetails>>([]);
+  const [isSubscibedNewsletters, setIsSubscibedNewsletters, isSubscibedNewslettersRef] =
+    useState<boolean>(false);
+  const [isEnabledEmailNotification, setIsEnabledEmailNotification, isEnabledEmailNotificationRef] =
+    useState<boolean>(false);
+  const [isConnectedWithEmail, setIsConnectedWithEmail, isConnectedWithEmailRef] =
+    useState<boolean>(false);
+  const [isConnectedWithTideBit, setIsConnectedWithTideBit, isConnectedWithTideBitRef] =
+    useState<boolean>(false);
 
-  const setPrivateData = async (wallet: string) => {
-    setWallet(wallet);
+  const setPrivateData = async (walletAddress: string) => {
+    setWallet(walletAddress);
     setWalletBalances([dummyWalletBalance_BTC, dummyWalletBalance_ETH, dummyWalletBalance_USDT]);
-    // TODO getUser from backend by wallet
+    // TODO getUser from backend by walletAddress
     setId('002');
     setUsername('Tidebit DeFi Test User');
     setBalance({
@@ -250,29 +254,22 @@ export const UserProvider = ({children}: IUserProvider) => {
   };
 
   const lunar = new Lunar();
-  lunar.on('connected', (...args: any[]) => {
-    console.log(`UserProvider on CONNECTED`, args);
+  lunar.on('connected', () => {
     setIsConnected(true);
-    setPrivateData(lunar.address);
-    emitter.emit(Event.CONNECTED);
   });
-  lunar.on('disconnected', (...args: any[]) => {
-    console.log(`UserProvider on DISCONNECTED`, args);
+  lunar.on('disconnected', () => {
     setIsConnected(false);
     clearPrivateData();
-    emitter.emit(Event.DISCONNECTED);
   });
-  lunar.on('accountsChanged', (...args: any[]) => {
-    console.log(`UserProvider on ACCOUNT_CHANGED`, args);
+  lunar.on('accountsChanged', async (address: string) => {
     clearPrivateData();
-    setPrivateData(lunar.address);
-    emitter.emit(Event.ACCOUNT_CHANGED);
+    await setPrivateData(address);
   });
 
   const listOpenCFDs = async (props: string) => {
     let openCFDs: IOpenCFDDetails[] = [];
     if (isConnectedRef.current) {
-      openCFDs = await Promise.resolve<IOpenCFDDetails[]>([dummyOpenCFDDetails]);
+      openCFDs = await Promise.resolve<IOpenCFDDetails[]>(getDummyOpenCFDs(props));
     }
     setOpenedCFDs(openCFDs);
     return openCFDs;
@@ -281,7 +278,7 @@ export const UserProvider = ({children}: IUserProvider) => {
   const listClosedCFDs = async (props: string) => {
     let closedCFDs: IClosedCFDDetails[] = [];
     if (isConnectedRef.current) {
-      closedCFDs = await Promise.resolve<IClosedCFDDetails[]>([dummyCloseCFDDetails]);
+      closedCFDs = await Promise.resolve<IClosedCFDDetails[]>(getDummyClosedCFDs(props));
     }
     setClosedCFDs(closedCFDs);
     return closedCFDs;
@@ -291,7 +288,6 @@ export const UserProvider = ({children}: IUserProvider) => {
     let success = false;
     try {
       const connect = await lunar.connect({});
-      const address = lunar.address;
       if (connect) {
         success = true;
       }
@@ -323,7 +319,7 @@ export const UserProvider = ({children}: IUserProvider) => {
       const updatedFavoriteTickers = [...favoriteTickers];
       updatedFavoriteTickers.push(newFavorite);
       setFavoriteTickers(updatedFavoriteTickers);
-      console.log(`updatedFavoriteTickers`, updatedFavoriteTickers);
+      console.log(`userContext updatedFavoriteTickers`, updatedFavoriteTickers);
       result = dummyResultSuccess;
     }
     return result;
@@ -338,7 +334,7 @@ export const UserProvider = ({children}: IUserProvider) => {
       );
       if (index !== -1) updatedFavoriteTickers.splice(index, 1);
       setFavoriteTickers(updatedFavoriteTickers);
-      console.log(`updatedFavoriteTickers`, updatedFavoriteTickers);
+      console.log(`userContext updatedFavoriteTickers`, updatedFavoriteTickers);
       result = dummyResultSuccess;
     }
     return result;
@@ -354,18 +350,18 @@ export const UserProvider = ({children}: IUserProvider) => {
 
   const getWalletBalance = (props: string) => {
     let walletBalance: IWalletBalance | null = null;
-    if (walletBalances) {
-      const index: number = walletBalances.findIndex(wb => wb.currency === props);
-      if (index !== -1) walletBalance = walletBalances[index];
+    if (walletBalancesRef.current) {
+      const index: number = walletBalancesRef.current.findIndex(wb => wb.currency === props);
+      if (index !== -1) walletBalance = walletBalancesRef.current[index];
     }
     return walletBalance;
   };
 
   const getBalance = (props: string) => {
     let balance: IBalance | null = null;
-    if (balances) {
-      const index: number = balances.findIndex(wb => wb.currency === props);
-      if (index !== -1) balance = balances[index];
+    if (balancesRef.current) {
+      const index: number = balancesRef.current.findIndex(wb => wb.currency === props);
+      if (index !== -1) balance = balancesRef.current[index];
     }
     return balance;
   };
@@ -466,24 +462,23 @@ export const UserProvider = ({children}: IUserProvider) => {
   const readNotifications = async (notifications: INotificationItem[]) => Promise.resolve();
 
   const defaultValue = {
-    emitter,
-    id,
-    username,
-    wallet,
-    walletBalances,
-    balance,
-    balances,
-    favoriteTickers,
-    isConnected,
-    enableServiceTerm,
-    openCFDs,
-    closedCFDs,
-    email,
-    isSubscibedNewsletters,
-    isEnabledEmailNotification,
-    isConnectedWithEmail,
-    isConnectedWithTideBit,
-    histories,
+    id: idRef.current,
+    username: usernameRef.current,
+    wallet: walletRef.current,
+    walletBalances: walletBalancesRef.current,
+    balance: balanceRef.current,
+    balances: balancesRef.current,
+    favoriteTickers: favoriteTickersRef.current,
+    isConnected: isConnectedRef.current,
+    enableServiceTerm: enableServiceTermRef.current,
+    openCFDs: openCFDsRef.current,
+    closedCFDs: closedCFDsRef.current,
+    email: emailRef.current,
+    isSubscibedNewsletters: isSubscibedNewslettersRef.current,
+    isEnabledEmailNotification: isEnabledEmailNotificationRef.current,
+    isConnectedWithEmail: isConnectedWithEmailRef.current,
+    isConnectedWithTideBit: isConnectedWithTideBitRef.current,
+    histories: historiesRef.current,
     addFavorites,
     removeFavorites,
     listOpenCFDs,

@@ -28,7 +28,7 @@ export const dummyNotificationItem: INotificationItem = {
   public: true,
 };
 
-export const createDummyPrivateNotificationItem = (userId: string, greetings: string) => {
+export const createDummyPrivateNotificationItem = (userId: string | null, greetings: string) => {
   const dummyNotificationItem: INotificationItem = {
     id: (Math.random() * 100).toFixed(0),
     title: `Hi ${userId}, this is private notification`,

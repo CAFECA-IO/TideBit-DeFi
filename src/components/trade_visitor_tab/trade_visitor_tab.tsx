@@ -11,6 +11,11 @@ const TradeVisitorTab = () => {
   //   setUserLoginState(bool);
   // };
 
+  const btnClickHandler = () => {
+    // globalCtx.visibleSignatureProcessModalHandler();
+    globalCtx.visibleWalletPanelHandler();
+  };
+
   return (
     <div>
       {/* `overflow-y-scroll scroll-smooth` only show the scroll bar but no functionality */}
@@ -39,7 +44,7 @@ const TradeVisitorTab = () => {
                   <div className="space-y-2 pl-60px pt-10">
                     {/* <WalletPanel getUserLoginState={getUserLoginHandler} /> */}
                     <TideButton
-                      onClick={() => globalCtx.visibleSignatureProcessModalHandler()}
+                      onClick={btnClickHandler}
                       className={`mt-4 rounded border-0 bg-tidebitTheme py-2 px-5 text-base text-white transition-all hover:opacity-90 md:mt-0`}
                     >
                       Wallet Connect

@@ -142,13 +142,20 @@ const SignatureProcessModal = ({
     </div>
   );
 
+  // TODO: test in `visitor trade tab` at the beginning of not connected
   const requestSendingHandler = async () => {
     setConnectingProcess(ConnectingProcess.CONNECTING);
+    // console.log('is connected: ', userCtx.isConnected);
 
     if (!userCtx.isConnected) {
       // It's a cycle
       const connectWalletResult = await userCtx.connect();
-      setConnectingProcess(ConnectingProcess.CONNECTED);
+
+      // if (connectWalletResult) {
+      //   await wait(DELAYED_HIDDEN_SECONDS);
+      //   // setConnectingProcess(ConnectingProcess.CONNECTED);
+      // }
+      setConnectingProcess(ConnectingProcess.EMPTY);
     } else {
       const signResult = await userCtx.signServiceTerm();
 
@@ -156,15 +163,20 @@ const SignatureProcessModal = ({
         setConnectingProcess(ConnectingProcess.CONNECTED);
 
         await wait(DELAYED_HIDDEN_SECONDS);
-        globalCtx.visibleSignatureProcessModalHandler();
+        // globalCtx.visibleSignatureProcessModalHandler();
         setConnectingProcess(ConnectingProcess.EMPTY);
       } else {
         await wait(DELAYED_HIDDEN_SECONDS);
         setConnectingProcess(ConnectingProcess.REJECTED);
+        return;
       }
+
+      globalCtx.visibleSignatureProcessModalHandler();
 
       // setConnectingProcess(ConnectingProcess.EMPTY);
     }
+
+    // globalCtx.visibleSignatureProcessModalHandler();
   };
 
   // TODO: Replace with `userCtx.connectingProcess === 'CONNECTING'` Else if `userCtx.connectingProcess === 'EMPTY'`

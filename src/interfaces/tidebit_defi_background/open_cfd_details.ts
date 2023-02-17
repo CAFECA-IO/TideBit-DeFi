@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import {OrderState} from '../../constants/order_state';
 import {ProfitState} from '../../constants/profit_state';
 import {TypeOfPosition} from '../../constants/type_of_position';

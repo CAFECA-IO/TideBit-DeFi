@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import {INotificationLevel, NotificationLevel} from '../../constants/notification_level';
 export interface INotificationItem {
   id: string;

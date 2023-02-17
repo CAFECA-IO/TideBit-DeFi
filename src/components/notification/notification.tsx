@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import useOuterClick from '../../lib/hooks/use_outer_click';
 import Image from 'next/image';
 import {forwardRef, useContext} from 'react';

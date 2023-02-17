@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import React, {useContext, createContext} from 'react';
 import useState from 'react-usestateref';
 import {UserContext} from './user_context';
@@ -28,7 +27,6 @@ export const AppProvider = ({children}: IAppProvider) => {
   const init = async () => {
     if (!isInitRef.current) {
       setIsInit(true);
-      console.log(`AppProvider init is called`);
       await userCtx.init();
       await marketCtx.init();
       await notificationCtx.init();

@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import {ToastContainer, toast, ToastOptions, useToast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {CRYPTO_CARD_COLORS} from '../../constants/display';

@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import React, {useContext, createContext} from 'react';
 import useState from 'react-usestateref';
 import {
@@ -441,13 +440,9 @@ export const MarketProvider = ({children}: IMarketProvider) => {
 
   React.useEffect(() => {
     if (userCtx.wallet !== walletRef.current) {
-      console.log(`MarketProvider useEffect is triggered`);
       setWallet(userCtx.wallet);
       // Event: Login
       if (userCtx.isConnected && selectedTickerRef.current) {
-        console.log(
-          `MarketProvider on userCtx.isConnected => listOpenCFDs and listClosedCFDs of currency:${selectedTickerRef.current.currency}`
-        );
         userCtx.listOpenCFDs(selectedTickerRef.current.currency);
         userCtx.listClosedCFDs(selectedTickerRef.current.currency);
       }

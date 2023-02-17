@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import React, {useContext, createContext} from 'react';
 import useState from 'react-usestateref';
 import {UserContext} from './user_context';
@@ -93,7 +92,6 @@ export const NotificationProvider = ({children}: INotificationProvider) => {
 
   React.useEffect(() => {
     if (userCtx.wallet !== walletRef.current) {
-      console.log(`NotificationProvider useEffect is triggered`);
       setWallet(userCtx.wallet);
       let updateNotifications: INotificationItem[] = notificationsRef.current
         ? [...notificationsRef.current]
@@ -112,11 +110,6 @@ export const NotificationProvider = ({children}: INotificationProvider) => {
         updateNotifications = updateNotifications.filter(n => n.public);
         updateUnreadNotifications = updateNotifications.filter(n => !n.isRead);
       }
-      console.log(
-        `NotificationContext useEffect call setNotifications`,
-        `userCtx.isConnected:${userCtx.isConnected}`,
-        updateNotifications
-      );
       setNotifications(updateNotifications);
       setUnreadNotifications(updateUnreadNotifications);
     }

@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import Lunar from '@cafeca/lunar';
 import React, {createContext} from 'react';
 import useState from 'react-usestateref';
@@ -294,7 +293,7 @@ export const UserProvider = ({children}: IUserProvider) => {
         success = true;
       }
     } catch (error) {
-      console.error(`userContext connect error`, error);
+      // console.error(`userContext connect error`, error);
     }
     return success;
   };
@@ -310,7 +309,7 @@ export const UserProvider = ({children}: IUserProvider) => {
       await lunar.disconnect();
       success = true;
     } catch (error) {
-      console.error(`userContext disconnect error`, error);
+      // console.error(`userContext disconnect error`, error);
     }
     return success;
   };
@@ -321,7 +320,7 @@ export const UserProvider = ({children}: IUserProvider) => {
       const updatedFavoriteTickers = [...favoriteTickers];
       updatedFavoriteTickers.push(newFavorite);
       setFavoriteTickers(updatedFavoriteTickers);
-      console.log(`userContext updatedFavoriteTickers`, updatedFavoriteTickers);
+      // console.log(`userContext updatedFavoriteTickers`, updatedFavoriteTickers);
       result = dummyResultSuccess;
     }
     return result;
@@ -336,7 +335,7 @@ export const UserProvider = ({children}: IUserProvider) => {
       );
       if (index !== -1) updatedFavoriteTickers.splice(index, 1);
       setFavoriteTickers(updatedFavoriteTickers);
-      console.log(`userContext updatedFavoriteTickers`, updatedFavoriteTickers);
+      // console.log(`userContext updatedFavoriteTickers`, updatedFavoriteTickers);
       result = dummyResultSuccess;
     }
     return result;

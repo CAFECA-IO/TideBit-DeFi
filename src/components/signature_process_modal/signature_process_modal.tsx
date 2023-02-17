@@ -172,6 +172,7 @@ const SignatureProcessModal = ({
       }
 
       globalCtx.visibleSignatureProcessModalHandler();
+      globalCtx.visibleHelloModalHandler();
 
       // setConnectingProcess(ConnectingProcess.EMPTY);
     }

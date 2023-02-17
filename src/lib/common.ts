@@ -21,6 +21,11 @@ export const timestampToString = (timestamp: number) => {
   return [dateString, timeString];
 };
 
+/**
+ *
+ * @param address to be truncated
+ * @returns '0x1234...12345'
+ */
 export const accountTruncate = (text: string) => {
   return text?.substring(0, 6) + '...' + text?.substring(text.length - 5);
 };

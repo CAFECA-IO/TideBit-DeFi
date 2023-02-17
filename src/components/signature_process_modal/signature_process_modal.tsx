@@ -141,23 +141,31 @@ const SignatureProcessModal = ({
   );
 
   const requestSendingHandler = async () => {
+    setConnectingProcess(ConnectingProcess.CONNECTING);
+
     if (!userCtx.isConnected) {
       // It's a cycle
       const connectWalletResult = await userCtx.connect();
+      setConnectingProcess(ConnectingProcess.CONNECTED);
     } else {
-      setConnectingProcess(ConnectingProcess.CONNECTING);
       const signResult = await userCtx.signServiceTerm();
+
       if (signResult) {
+        setConnectingProcess(ConnectingProcess.CONNECTED);
+
         setTimeout(() => {
           globalCtx.visibleSignatureProcessModalHandler();
+          setConnectingProcess(ConnectingProcess.EMPTY);
         }, 1000);
-      }
-      // console.log(signResult);
-      setConnectingProcess(ConnectingProcess.CONNECTED);
-    }
+      } else {
+        setTimeout(() => {
+          // globalCtx.visibleSignatureProcessModalHandler();
+          setConnectingProcess(ConnectingProcess.REJECTED);
+        }, 1000);
 
-    // console.log(connectWalletResult);
-    // console.log(await userCtx.wallet);
+        // setConnectingProcess(ConnectingProcess.REJECTED);
+      }
+    }
   };
 
   // TODO: Replace with `userCtx.connectingProcess === 'CONNECTING'` Else if `userCtx.connectingProcess === 'EMPTY'`
@@ -278,20 +286,20 @@ const SignatureProcessModal = ({
   const secondStepSectionHandler = (
     <>
       {/* Temporary solution for no connecting process attribute */}
-      {userCtx.enableServiceTerm
+      {/* {userCtx.enableServiceTerm
         ? secondStepSuccessView
         : userCtx.isConnected
         ? secondStepActiveView
-        : secondStepDefaultView}
+        : secondStepDefaultView} */}
 
       {/* TODO: Solution with connecting process attribute */}
-      {/* {!userCtx.isConnected
+      {!userCtx.isConnected
         ? secondStepDefaultView
-        : userCtx.connectingProcess === 'connected'
+        : connectingProcess === ConnectingProcess.CONNECTED
         ? secondStepSuccessView
-        : userCtx.connectingProcess === 'rejected'
+        : connectingProcess === ConnectingProcess.REJECTED
         ? secondStepErrorView
-        : secondStepActiveView} */}
+        : secondStepActiveView}
 
       {/* {userCtx.isConnected && userCtx.connectingProcess === 'connected' && secondStepSuccessView}
       {userCtx.isConnected && userCtx.connectingProcess === 'rejected' && secondStepErrorView}

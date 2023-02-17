@@ -906,33 +906,6 @@ export default function WalletPanel({
   async function metamaskConnect() {
     globalCtx.visibleWalletPanelHandler();
 
-    // // -----WII-----
-    // globalCtx.dataLoadingModalHandler({
-    //   modalTitle: 'Wallet Connect',
-    //   modalContent: 'Connecting...',
-    // });
-    // globalCtx.visibleLoadingModalHandler();
-
-    // try {
-    //   const connectWalletResult = await userCtx.connect();
-    //   globalCtx.eliminateAllModals();
-    //   // globalCtx.visibleLoadingModalHandler();
-
-    //   if (connectWalletResult) {
-    //     // globalCtx.visibleLoadingModalHandler();
-
-    //     globalCtx.visibleSignatureProcessModalHandler();
-    //   } else {
-    //     // globalCtx.visibleLoadingModalHandler();
-
-    //     globalCtx.visibleWalletPanelHandler();
-    //   }
-    // } catch (error) {
-    //   globalCtx.visibleWalletPanelHandler();
-    //   // console.error(error);
-    // }
-    // // -----WII-----
-
     if (!userCtx.isConnected) {
       try {
         // globalCtx.dataSuccessfulModalHandler({
@@ -968,36 +941,6 @@ export default function WalletPanel({
     } else {
       globalCtx.visibleSignatureProcessModalHandler();
     }
-
-    // if (userCtx.isConnected) {
-    //   globalCtx.visibleSignatureProcessModalHandler();
-    // } else {
-    //   globalCtx.visibleWalletPanelHandler();
-    // }
-
-    //   try {
-    //     if (!userCtx.isConnected) {
-    //       globalCtx.dataLoadingModalHandler({
-    //         modalTitle: 'Wallet Connect',
-    //         modalContent: 'Connecting...',
-    //       });
-    //       globalCtx.visibleLoadingModalHandler();
-
-    //       const connectWalletResult = await userCtx.connect();
-    //       globalCtx.visibleLoadingModalHandler();
-
-    //     }
-
-    //     if (userCtx.isConnected) {
-    //       globalCtx.visibleSignatureProcessModalHandler();
-    //     } else {
-    //       globalCtx.visibleWalletPanelHandler();
-    //     }
-
-    //     globalCtx.visibleLoadingModalHandler();
-    //   } catch (error) {
-    //     console.error(error);
-    //   }
   }
 
   const walletconnectOptionClickHandler = async () => {

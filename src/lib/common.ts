@@ -72,9 +72,7 @@ export const locker = (id: string): ILocker => {
       return true;
     } else {
       // 重複解鎖，代表流程有問題，故拋出錯誤
-      throw new Error(
-        'Something is wrong with the procedure. Unlocking when not locked. (流程有問題)'
-      );
+      throw new Error('Something is wrong with the procedure. Unlocking when not locked.');
     }
   };
 

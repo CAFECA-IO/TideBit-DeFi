@@ -2,8 +2,8 @@ import Image from 'next/image';
 import {ImCross} from 'react-icons/im';
 import {IOpenCFDDetails} from '../../interfaces/tidebit_defi_background/open_cfd_details';
 import {
-  BORDER_COLOR_TYPE,
-  PNL_COLOR_TYPE,
+  TypeOfBorderColor,
+  TypeOfPnLColor,
   UNIVERSAL_NUMBER_FORMAT_LOCALE,
 } from '../../constants/display';
 import Toggle from '../toggle/toggle';
@@ -34,7 +34,7 @@ const HistoryPositionModal = ({
   const displayedGuaranteedStopSetting = !!openCfdDetails.guaranteedStop ? 'Yes' : 'No';
 
   const displayedPositionColor =
-    openCfdDetails.typeOfPosition === 'BUY' ? PNL_COLOR_TYPE.profit : PNL_COLOR_TYPE.loss;
+    openCfdDetails.typeOfPosition === 'BUY' ? TypeOfPnLColor.PROFIT : TypeOfPnLColor.LOSS;
 
   const layoutInsideBorder = 'mx-5 my-4 flex justify-between';
 
@@ -47,13 +47,13 @@ const HistoryPositionModal = ({
 
   const displayedPnLColor =
     openCfdDetails?.pnl.type === 'PROFIT'
-      ? PNL_COLOR_TYPE.profit
+      ? TypeOfPnLColor.PROFIT
       : openCfdDetails?.pnl.type === 'LOSS'
-      ? PNL_COLOR_TYPE.loss
-      : PNL_COLOR_TYPE.equal;
+      ? TypeOfPnLColor.LOSS
+      : TypeOfPnLColor.EQUAL;
 
   const displayedBorderColor =
-    openCfdDetails?.typeOfPosition === 'BUY' ? BORDER_COLOR_TYPE.long : BORDER_COLOR_TYPE.short;
+    openCfdDetails?.typeOfPosition === 'BUY' ? TypeOfBorderColor.LONG : TypeOfBorderColor.SHORT;
 
   const formContent = (
     <div className="relative flex-auto pt-0">

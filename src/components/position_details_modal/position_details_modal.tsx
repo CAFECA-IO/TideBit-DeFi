@@ -2,8 +2,8 @@ import Image from 'next/image';
 import {ImCross} from 'react-icons/im';
 import {IOpenCFDDetails} from '../../interfaces/tidebit_defi_background/open_cfd_details';
 import {
-  BORDER_COLOR_TYPE,
-  PNL_COLOR_TYPE,
+  TypeOfBorderColor,
+  TypeOfPnLColor,
   UNIVERSAL_NUMBER_FORMAT_LOCALE,
 } from '../../constants/display';
 import Toggle from '../toggle/toggle';
@@ -86,19 +86,19 @@ const PositionDetailsModal = ({
     openCfdDetails?.typeOfPosition === TypeOfPosition.BUY ? 'Up (Buy)' : 'Down (Sell)';
 
   const displayedPositionColor =
-    openCfdDetails.typeOfPosition === 'BUY' ? PNL_COLOR_TYPE.profit : PNL_COLOR_TYPE.loss;
+    openCfdDetails.typeOfPosition === 'BUY' ? TypeOfPnLColor.PROFIT : TypeOfPnLColor.LOSS;
 
   const displayedPnLColor =
     openCfdDetails?.pnl.type === ProfitState.PROFIT
-      ? PNL_COLOR_TYPE.profit
+      ? TypeOfPnLColor.PROFIT
       : openCfdDetails?.pnl.type === ProfitState.LOSS
-      ? PNL_COLOR_TYPE.loss
-      : PNL_COLOR_TYPE.equal;
+      ? TypeOfPnLColor.LOSS
+      : TypeOfPnLColor.EQUAL;
 
   const displayedBorderColor =
     openCfdDetails?.typeOfPosition === TypeOfPosition.BUY
-      ? BORDER_COLOR_TYPE.long
-      : BORDER_COLOR_TYPE.short;
+      ? TypeOfBorderColor.LONG
+      : TypeOfBorderColor.SHORT;
 
   const isDisplayedTakeProfitSetting = takeProfitToggle ? 'flex' : 'invisible';
   const isDisplayedStopLossSetting = stopLossToggle ? 'flex' : 'invisible';

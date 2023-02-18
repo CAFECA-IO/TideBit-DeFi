@@ -24,9 +24,6 @@ const OrderSection = () => {
     setActiveTab('Position');
   };
 
-  // TODO: position tab without login
-  // const displayedPositionTab = user ? <PositionTab /> : <>need to login</>;
-
   const currentTab =
     activeTab === 'Position' ? (
       userCtx.enableServiceTerm ? (

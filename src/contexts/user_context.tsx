@@ -1,7 +1,7 @@
 import Lunar from '@cafeca/lunar';
 import React, {createContext} from 'react';
 import useState from 'react-usestateref';
-import {PROFIT_LOSS_COLOR_TYPE} from '../constants/display';
+import {TypeOfPnLColorHex} from '../constants/display';
 import {
   IOpenCFDDetails,
   dummyOpenCFDDetails,
@@ -66,11 +66,11 @@ function randomArray(min: number, max: number, length: number) {
 const strokeColorDisplayed = (sampleArray: number[]) => {
   if (sampleArray[sampleArray.length - 1] > sampleArray[sampleArray.length - 2]) {
     // priceColor = 'text-lightGreen';
-    return [PROFIT_LOSS_COLOR_TYPE.profit];
+    return [TypeOfPnLColorHex.PROFIT];
   }
 
   // priceColor = 'text-lightRed';
-  return [PROFIT_LOSS_COLOR_TYPE.loss];
+  return [TypeOfPnLColorHex.LOSS];
 };
 
 export interface IUserBalance {

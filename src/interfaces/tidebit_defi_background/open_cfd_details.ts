@@ -57,7 +57,7 @@ export const getDummyOpenCFDs = (currency: string) => {
       fee: 0,
       guaranteedStop: false,
       guaranteedStopFee: 0.77,
-      openTimestamp: Date.now() / 1000 + i * 60 * 60,
+      openTimestamp: Date.now() / 1000 - 3600 * 20 + i * 60 * 60,
       scheduledClosingTimestamp: Date.now() / 1000 + i * 60 * 60 + 10 * 24 * 60 * 60, // openTimestamp + 86400
       openValue: 74589658,
       pnl: {

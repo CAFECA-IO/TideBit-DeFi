@@ -1,5 +1,5 @@
 import React from 'react';
-import {PROFIT_LOSS_COLOR_TYPE, TRANSACTION_TYPE} from '../../constants/display';
+import {TypeOfPnLColorHex, TypeOfTransaction} from '../../constants/display';
 import {ProfitState} from '../../constants/profit_state';
 import {timestampToString} from '../../lib/common';
 
@@ -25,7 +25,7 @@ const HistoryPositionItem = ({
   // if (profitOrLoss !== 'profit' && profitOrLoss !== 'loss') return <></>;
   if (ticker !== 'ETH' && ticker !== 'BTC') return <></>;
 
-  const displayedString = longOrShort === 'long' ? TRANSACTION_TYPE.long : TRANSACTION_TYPE.short;
+  const displayedString = longOrShort === 'long' ? TypeOfTransaction.LONG : TypeOfTransaction.SHORT;
 
   const displayedColor = profitOrLoss === ProfitState.PROFIT ? 'text-lightGreen' : 'text-lightRed';
 
@@ -45,8 +45,8 @@ const HistoryPositionItem = ({
           <div className="w-55px">
             <div>{ticker}</div>
             <div className="text-lightWhite">
-              {displayedString.title}{' '}
-              <span className="text-lightGray">{displayedString.subtitle}</span>
+              {displayedString.TITLE}{' '}
+              <span className="text-lightGray">{displayedString.SUBTITLE}</span>
             </div>
           </div>
 

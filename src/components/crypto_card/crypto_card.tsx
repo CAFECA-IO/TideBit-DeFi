@@ -3,7 +3,7 @@ import {BsStar, BsStarFill} from 'react-icons/bs';
 import React, {useContext, useState} from 'react';
 import dynamic from 'next/dynamic';
 import {ApexOptions} from 'apexcharts';
-import {PROFIT_LOSS_COLOR_TYPE, UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
+import {TypeOfPnLColorHex, UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
 import {UserContext, IUserContext} from '../../contexts/user_context';
 import {MarketContext} from '../../contexts/market_context';
 // import {FaEthereum} from 'react-icons/fa';
@@ -251,11 +251,11 @@ const CryptoCard = ({
   const fakeDataColor = () => {
     if (sampleArray[sampleArray.length - 1] > sampleArray[sampleArray.length - 2]) {
       // priceColor = 'text-lightGreen';
-      return [PROFIT_LOSS_COLOR_TYPE.profit];
+      return [TypeOfPnLColorHex.PROFIT];
     }
 
     // priceColor = 'text-lightRed';
-    return [PROFIT_LOSS_COLOR_TYPE.loss];
+    return [TypeOfPnLColorHex.LOSS];
   };
   const thisRandomColor = fakeDataColor();
 

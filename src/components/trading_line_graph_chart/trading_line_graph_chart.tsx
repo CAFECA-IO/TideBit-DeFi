@@ -3,9 +3,8 @@ import dynamic from 'next/dynamic';
 import {ApexOptions} from 'apexcharts';
 import {
   TRADING_CHART_BORDER_COLOR,
-  INVISIBLE_STROKE_COLOR,
   OPEN_POSITION_LINE_LABEL_POSITION,
-  PROFIT_LOSS_COLOR_TYPE,
+  TypeOfPnLColorHex,
 } from '../../constants/display';
 
 const Chart = dynamic(() => import('react-apexcharts'), {ssr: false});

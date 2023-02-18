@@ -4,6 +4,7 @@ import {ProfitState} from '../../constants/profit_state';
 import {timestampToString} from '../../lib/common';
 import {IClosedCFDDetails} from '../../interfaces/tidebit_defi_background/closed_cfd_details';
 import {TypeOfPosition} from '../../constants/type_of_position';
+import {useGlobal} from '../../contexts/global_context';
 
 interface IHistoryPositionItemProps {
   closedCfdDetails: IClosedCFDDetails;
@@ -13,6 +14,7 @@ const HistoryPositionItem = ({closedCfdDetails, ...otherProps}: IHistoryPosition
   // if (longOrShort !== 'long' && longOrShort !== 'short') return <></>;
   // if (profitOrLoss !== 'profit' && profitOrLoss !== 'loss') return <></>;
   // if (ticker !== 'ETH' && ticker !== 'BTC') return <></>;
+  const globalCtx = useGlobal();
 
   const displayedString =
     closedCfdDetails.typeOfPosition === TypeOfPosition.BUY
@@ -29,9 +31,14 @@ const HistoryPositionItem = ({closedCfdDetails, ...otherProps}: IHistoryPosition
       ? '-'
       : '';
 
+  const itemClickHandler = () => {
+    globalCtx.dataHistoryPositionModalHandler({closedCfdDetails});
+    globalCtx.visibleHistoryPositionModalHandler();
+  };
+
   return (
     <>
-      <div className="mt-3 text-xs hover:cursor-pointer">
+      <div className="mt-3 text-xs hover:cursor-pointer" onClick={itemClickHandler}>
         <div className="flex justify-center">
           <div className="w-48px">
             <div className="text-lightGray">

@@ -23,6 +23,11 @@ import {UserContext} from './user_context';
 import PositionOpenModal from '../components/position_open_modal/position_open_modal';
 import PositionClosedModal from '../components/position_closed_modal/position_closed_modal';
 import PositionUpdatedModal from '../components/position_updated_modal/position_updated_modal';
+import {
+  IClosedCFDDetails,
+  dummyCloseCFDDetails,
+} from '../interfaces/tidebit_defi_background/closed_cfd_details';
+import HistoryPositionModal from '../components/history_position_modal/history_position_modal';
 
 export interface IToastify {
   type: 'error' | 'warning' | 'info' | 'success';
@@ -32,6 +37,10 @@ export interface IToastify {
 
 export interface IDataPositionDetailsModal {
   openCfdDetails: IOpenCFDDetails;
+}
+
+export interface IDataHistoryPositionModal {
+  closedCfdDetails: IClosedCFDDetails;
 }
 
 export interface IDataTransferProcessModal {
@@ -153,6 +162,11 @@ export interface IGlobalContext {
 
   visibleHelloModal: boolean;
   visibleHelloModalHandler: () => void;
+
+  visibleHistoryPositionModal: boolean;
+  visibleHistoryPositionModalHandler: () => void;
+  dataHistoryPositionModal: IDataHistoryPositionModal | null;
+  dataHistoryPositionModalHandler: (data: IDataHistoryPositionModal) => void;
 }
 
 export const GlobalContext = createContext<IGlobalContext>({
@@ -206,6 +220,11 @@ export const GlobalContext = createContext<IGlobalContext>({
 
   visibleHelloModal: false,
   visibleHelloModalHandler: () => null,
+
+  visibleHistoryPositionModal: false,
+  visibleHistoryPositionModalHandler: () => null,
+  dataHistoryPositionModal: null,
+  dataHistoryPositionModalHandler: () => null,
 });
 
 const initialColorMode: ColorModeUnion = 'dark';
@@ -257,6 +276,9 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
   const [dataSignatureProcessModal, setDataSignatureProcessModal] =
     useState<IDataSignatrueProcessModal | null>();
 
+  const [visibleHistoryPositionModal, setVisibleHistoryPositionModal] = useState(false);
+  const [dataHistoryPositionModal, setDataHistoryPositionModal] =
+    useState<IDataHistoryPositionModal>({closedCfdDetails: dummyCloseCFDDetails});
   // const [visibleOpenPositionModal, setVisibleOpenPositionModal] = useState(false);
   // const [dataOpenPositionModal, setDataOpenPositionModal] =
   //   useState<IDataOpenPositionModal | null>();
@@ -406,6 +428,14 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     setVisibleHelloModal(!visibleHelloModal);
   };
 
+  const visibleHistoryPositionModalHandler = () => {
+    setVisibleHistoryPositionModal(!visibleHistoryPositionModal);
+  };
+
+  const dataHistoryPositionModalHandler = (data: IDataHistoryPositionModal) => {
+    setDataHistoryPositionModal(data);
+  };
+
   const getWithdrawSubmissionState = (state: 'success' | 'cancellation' | 'fail') => {
     setWithdrawProcess(state);
   };
@@ -493,6 +523,11 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
 
     visibleHelloModal,
     visibleHelloModalHandler,
+
+    visibleHistoryPositionModal,
+    visibleHistoryPositionModalHandler,
+    dataHistoryPositionModal,
+    dataHistoryPositionModalHandler,
   };
   return (
     <GlobalContext.Provider value={defaultValue}>
@@ -567,6 +602,11 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
       <HelloModal
         helloModalVisible={visibleHelloModal}
         helloClickHandler={visibleHelloModalHandler}
+      />
+      <HistoryPositionModal
+        modalVisible={visibleHistoryPositionModal}
+        modalClickHandler={visibleHistoryPositionModalHandler}
+        closedCfdDetails={dataHistoryPositionModal.closedCfdDetails}
       />
 
       {/* <PositionOpenModal />

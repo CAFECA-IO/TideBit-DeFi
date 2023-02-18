@@ -7,7 +7,7 @@ import {
   UNIVERSAL_NUMBER_FORMAT_LOCALE,
 } from '../../constants/display';
 import Toggle from '../toggle/toggle';
-import {useRef, useState} from 'react';
+import {useContext, useRef, useState} from 'react';
 import TradingInput from '../trading_input/trading_input';
 import {AiOutlineQuestionCircle} from 'react-icons/ai';
 import RippleButton from '../ripple_button/ripple_button';
@@ -15,6 +15,7 @@ import {useGlobal} from '../../contexts/global_context';
 import {TypeOfPosition} from '../../constants/type_of_position';
 import {ProfitState} from '../../constants/profit_state';
 import {timestampToString} from '../../lib/common';
+import {MarketContext} from '../../contexts/market_context';
 
 interface IPositionDetailsModal {
   modalVisible: boolean;
@@ -33,6 +34,7 @@ const PositionDetailsModal = ({
 }: IPositionDetailsModal) => {
   // console.log('openCfdDetails in details modal: ', openCfdDetails.id);
   const globalContext = useGlobal();
+  const marketCtx = useContext(MarketContext);
 
   const initialTpToggle = openCfdDetails?.takeProfit ? true : false;
   const initialSlToggle = openCfdDetails?.stopLoss ? true : false;
@@ -284,7 +286,12 @@ const PositionDetailsModal = ({
             <div className="flex items-start justify-between rounded-t pt-6">
               <div className="ml-10 mr-8 mt-6 flex w-450px justify-between">
                 <div className="flex items-center space-x-3 text-center text-4xl text-lightWhite">
-                  <Image src="/elements/group_2371.svg" width={40} height={40} alt="icon" />
+                  <Image
+                    src={marketCtx.selectedTicker?.tokenImg ?? ''}
+                    width={40}
+                    height={40}
+                    alt="icon"
+                  />
                   <h3 className="">{openCfdDetails?.ticker} </h3>
                 </div>
 

@@ -23,7 +23,7 @@ const OpenSubTab = () => {
           {openPositionList}
         </div>
         {/* Divider */}
-        <div className="my-auto h-px w-full rounded bg-white/50"></div>
+        {/* <div className="my-auto h-px w-full rounded bg-white/50"></div> */}
       </div>
     </>
   );

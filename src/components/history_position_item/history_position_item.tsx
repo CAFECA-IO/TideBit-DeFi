@@ -31,9 +31,9 @@ const HistoryPositionItem = ({closedCfdDetails, ...otherProps}: IHistoryPosition
 
   return (
     <>
-      <div className="mt-3 text-xs">
-        <div className="flex justify-between">
-          <div className="w-40px">
+      <div className="mt-3 text-xs hover:cursor-pointer">
+        <div className="flex justify-center">
+          <div className="w-48px">
             <div className="text-lightGray">
               {timestampToString(closedCfdDetails.closedTimestamp).day}{' '}
               {timestampToString(closedCfdDetails.closedTimestamp).abbreviatedMonth}{' '}
@@ -44,7 +44,7 @@ const HistoryPositionItem = ({closedCfdDetails, ...otherProps}: IHistoryPosition
             {/* Divider */}
           </div>
 
-          <div className="w-70px">
+          <div className="w-75px">
             <div>{closedCfdDetails.ticker}</div>
             <div className="text-lightWhite">
               {displayedString.TITLE}{' '}

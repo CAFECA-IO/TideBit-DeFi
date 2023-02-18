@@ -47,7 +47,7 @@ import {
 } from '../interfaces/tidebit_defi_background/withdrawal_order';
 import {IOpenCFDOrder} from '../interfaces/tidebit_defi_background/open_cfd_order';
 import {INotificationItem} from '../interfaces/tidebit_defi_background/notification_item';
-import {Event} from '../constants/event';
+import {TideBitEvent} from '../constants/tidebit_event';
 
 function randomNumber(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1) + min);

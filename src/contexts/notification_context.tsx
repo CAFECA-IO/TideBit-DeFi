@@ -8,7 +8,7 @@ import {
   dummyUnReadNotifications,
   INotificationItem,
 } from '../interfaces/tidebit_defi_background/notification_item';
-import {Event} from '../constants/event';
+import {TideBitEvent} from '../constants/tidebit_event';
 
 export interface INotificationProvider {
   children: React.ReactNode;

@@ -36,7 +36,7 @@ import {
   getDummyCandlestickChartData,
   ICandlestickData,
 } from '../interfaces/tidebit_defi_background/candlestickData';
-import {Event} from '../constants/event';
+import {TideBitEvent} from '../constants/tidebit_event';
 
 const SAMPLE_TICKERS = [
   'ETH',

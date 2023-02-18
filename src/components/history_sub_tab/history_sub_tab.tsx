@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext} from 'react';
 import HistoryPositionItem from '../history_position_item/history_position_item';
 import {UserContext} from '../../contexts/user_context';
 

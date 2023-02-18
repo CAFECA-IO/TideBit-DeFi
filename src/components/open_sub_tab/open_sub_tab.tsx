@@ -5,20 +5,6 @@ import {UserContext} from '../../contexts/user_context';
 
 const OpenSubTab = () => {
   const {openCFDs} = useContext(UserContext);
-  // const [openCFDs, setOpenCFDs] = useState<IOpenCFDDetails[]>([]);
-
-  // useEffect(() => {
-  //   console.log(
-  //     `OpenSubTab userCtx.openCFDs`,
-  //     userCtx.openCFDs,
-  //     `openCFDs`,
-  //     openCFDs,
-  //     openCFDs === userCtx.openCFDs
-  //   );
-  //   if (userCtx.openCFDs !== openCFDs) {
-  //     setOpenCFDs(openCFDs);
-  //   }
-  // }, userCtx.openCFDs);
 
   const openPositionList = openCFDs.map(cfd => {
     return (

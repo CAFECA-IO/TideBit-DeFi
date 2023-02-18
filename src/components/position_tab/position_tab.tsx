@@ -52,7 +52,7 @@ const PositionTab = () => {
           <div className={`relative`}>
             {/* sidebar self */}
             <div
-              className={`pointer-events-auto ${'w-300px'} h-screen bg-darkGray p-5 text-white transition-all duration-300`}
+              className={`pointer-events-auto ${'w-310px'} h-screen bg-darkGray p-5 text-white transition-all duration-300`}
             >
               {tabPart}
               {currentSubTab}

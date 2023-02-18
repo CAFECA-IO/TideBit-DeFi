@@ -51,10 +51,10 @@ const OrderSection = () => {
   const tabPart = (
     <>
       <div className="z-10 flex flex-wrap border-gray-200 text-center text-sm font-medium text-gray-500 dark:border-gray-700 dark:text-gray-400">
-        <div className="pr-1">
+        <div className="pr-3px">
           <button
             type="button"
-            className={`${activeTradeTabStyle} inline-block rounded-t-2xl px-53px py-2 hover:cursor-pointer`}
+            className={`${activeTradeTabStyle} inline-block rounded-t-2xl px-56px py-2 hover:cursor-pointer`}
             onClick={tradeTabClickHandler}
           >
             Trade
@@ -63,7 +63,7 @@ const OrderSection = () => {
         <div className="">
           <button
             type="button"
-            className={`${activePositionTabStyle} inline-block rounded-t-2xl px-53px py-2 hover:cursor-pointer`}
+            className={`${activePositionTabStyle} inline-block rounded-t-2xl px-55px py-2 hover:cursor-pointer`}
             onClick={positionTabClickHandler}
           >
             Position

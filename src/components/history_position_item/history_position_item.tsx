@@ -1,6 +1,7 @@
 import React from 'react';
 import {PROFIT_LOSS_COLOR_TYPE, TRANSACTION_TYPE} from '../../constants/display';
 import {ProfitState} from '../../constants/profit_state';
+import {timestampToString} from '../../lib/common';
 
 interface IHistoryPositionItemProps {
   profitOrLoss: string;
@@ -34,13 +35,14 @@ const HistoryPositionItem = ({
     <>
       <div className="mt-3 text-xs">
         <div className="flex justify-between">
-          <div>
+          <div className="w-40px">
+            {/* TODO: {timestampToString(historyCFD.openTime).day} {timestampToString(historyCFD.openTime).abbreviatedMonth} {timestampToString(historyCFD.openTime).abbreviatedTime} */}
             <div className="text-lightGray">11 Nov</div>
             <div className="text-lightGray">15:05</div>
             {/* Divider */}
           </div>
 
-          <div className="w-60px">
+          <div className="w-55px">
             <div>{ticker}</div>
             <div className="text-lightWhite">
               {displayedString.title}{' '}
@@ -48,7 +50,7 @@ const HistoryPositionItem = ({
             </div>
           </div>
 
-          <div>
+          <div className="w-150px">
             <div className="text-lightGray">Open / Close Value</div>
             <div className="">
               $ {openValue} / $ {closeValue}
@@ -60,7 +62,7 @@ const HistoryPositionItem = ({
             <div className=""></div>
           </div>
 
-          <div className="w-65px text-end">
+          <div className="w-60px text-end">
             <div>PNL</div>
             <div className={`${displayedColor}`}>
               <span className="">{displayedSymbol}</span> $ {pNL}

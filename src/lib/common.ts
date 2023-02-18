@@ -4,7 +4,8 @@
  * @returns object
  */
 export const timestampToString = (timestamp: number) => {
-  if (timestamp === 0) return {date: '-', time: '-', abbreviatedMonth: '-'};
+  if (timestamp === 0)
+    return {date: '-', time: '-', abbreviatedMonth: '-', day: '-', abbreviatedTime: '-'};
 
   const date = new Date(timestamp * 1000);
   // const date = new Date();
@@ -49,7 +50,13 @@ export const timestampToString = (timestamp: number) => {
   const timeString = `${hour}:${minute}:${second}`;
 
   // return [dateString, timeString];
-  return {date: dateString, time: timeString, abbreviatedMonth: monthName};
+  return {
+    date: dateString,
+    time: timeString,
+    abbreviatedMonth: monthName,
+    day: day,
+    abbreviatedTime: `${hour}:${minute}`,
+  };
 };
 
 /**

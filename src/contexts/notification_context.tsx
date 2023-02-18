@@ -1,11 +1,14 @@
-import React, {useState, useContext, createContext} from 'react';
+import React, {useContext, createContext} from 'react';
+import useState from 'react-usestateref';
 import {UserContext} from './user_context';
 import {MarketContext} from './market_context';
 import {
+  createDummyPrivateNotificationItem,
   dummyNotifications,
   dummyUnReadNotifications,
   INotificationItem,
 } from '../interfaces/tidebit_defi_background/notification_item';
+import {TideBitEvent} from '../constants/tidebit_event';
 
 export interface INotificationProvider {
   children: React.ReactNode;
@@ -30,41 +33,39 @@ export const NotificationContext = createContext<INotificationContext>({
 });
 
 export const NotificationProvider = ({children}: INotificationProvider) => {
-  const userCtx = useContext(UserContext);
   const marketCtx = useContext(MarketContext);
-  //   const [notifications, setNotifications] = useState<INotificationItem[]>([]);
-  //   const [unreadNotifications, setUnreadNotifications] = useState<INotificationItem[]>([]);
   const [notifications, setNotifications] = useState<INotificationItem[]>(dummyNotifications);
   const [unreadNotifications, setUnreadNotifications] =
     useState<INotificationItem[]>(dummyUnReadNotifications);
+  const userCtx = useContext(UserContext);
+  const [wallet, setWallet, walletRef] = useState<string | null>(userCtx.wallet);
 
   const isRead = async (id: string) => {
-    const updateNotificaionts: INotificationItem[] = [...notifications];
-    const index = updateNotificaionts.findIndex(n => n.id === id);
-    if (index !== -1) {
-      updateNotificaionts[index] = {
-        ...updateNotificaionts[index],
-        isRead: true,
-      };
-    }
-    setNotifications(updateNotificaionts);
-    setUnreadNotifications(updateNotificaionts.filter(n => !n.isRead));
-    if (userCtx.isConnected) {
-      await userCtx.readNotifications([updateNotificaionts[index]]);
+    if (userCtx.enableServiceTerm) {
+      const updateNotifications: INotificationItem[] = [...notifications];
+      const index = updateNotifications.findIndex(n => n.id === id);
+      if (index !== -1) {
+        updateNotifications[index] = {
+          ...updateNotifications[index],
+          isRead: true,
+        };
+      }
+      setNotifications(updateNotifications);
+      setUnreadNotifications(updateNotifications.filter(n => !n.isRead));
+      await userCtx.readNotifications([updateNotifications[index]]);
     }
     return;
   };
 
   const readAll = async () => {
-    //async () => {
-    const updateNotificaionts: INotificationItem[] = [...notifications].map(n => ({
-      ...n,
-      isRead: true,
-    }));
-    setNotifications(updateNotificaionts);
-    setUnreadNotifications(updateNotificaionts.filter(n => !n.isRead));
-    if (userCtx.isConnected) {
-      await userCtx.readNotifications(updateNotificaionts);
+    if (userCtx.enableServiceTerm) {
+      const updateNotifications: INotificationItem[] = [...notifications].map(n => ({
+        ...n,
+        isRead: true,
+      }));
+      setNotifications(updateNotifications);
+      setUnreadNotifications(updateNotifications.filter(n => !n.isRead));
+      await userCtx.readNotifications(updateNotifications);
     }
     return;
   };
@@ -80,6 +81,29 @@ export const NotificationProvider = ({children}: INotificationProvider) => {
     setUnreadNotifications([]);
     return;
   };
+
+  React.useEffect(() => {
+    if (userCtx.wallet !== walletRef.current) {
+      setWallet(userCtx.wallet);
+      let updateNotifications: INotificationItem[] = [...notifications];
+      let updateUnreadNotifications: INotificationItem[] = [];
+      // Event: Login
+      if (userCtx.enableServiceTerm) {
+        const dummyPrivateNotification = createDummyPrivateNotificationItem(
+          userCtx.wallet,
+          `this is from useEffect`
+        );
+        updateNotifications.push(dummyPrivateNotification);
+        updateUnreadNotifications = updateNotifications.filter(n => !n.isRead);
+      } else {
+        // Event: Logout
+        updateNotifications = updateNotifications.filter(n => n.public);
+        updateUnreadNotifications = updateNotifications.filter(n => !n.isRead);
+      }
+      setNotifications(updateNotifications);
+      setUnreadNotifications(updateUnreadNotifications);
+    }
+  }, [userCtx.wallet]);
 
   const defaultValue = {notifications, unreadNotifications, isRead, readAll, init, reset};
 

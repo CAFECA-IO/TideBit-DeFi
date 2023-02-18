@@ -43,3 +43,41 @@ export const dummyCloseCFDDetails: IClosedCFDDetails = {
   closedTimestamp: 5,
   closedValue: 73820133,
 };
+
+export const getDummyClosedCFDs = (currency: string) => {
+  const dummyClosedCFDs: IClosedCFDDetails[] = [];
+  for (let i = 0; i < 3; i++) {
+    const profit = Math.random() > 0.5 ? ProfitState.PROFIT : ProfitState.LOSS;
+    const dummyClosedCFD: IClosedCFDDetails = {
+      id: `TBD20230217000000${i}`,
+      ticker: currency,
+      amount: 1.8,
+      state: OrderState.OPENING,
+      typeOfPosition: Math.random() > 0.5 ? TypeOfPosition.BUY : TypeOfPosition.SELL,
+      leverage: 5,
+      margin: randomIntFromInterval(650, 10000),
+      openPrice: randomIntFromInterval(10, 100),
+      fee: 0,
+      guaranteedStop: false,
+      guaranteedStopFee: 0.77,
+      openTimestamp: Date.now() / 1000 - i * 60 * 60,
+      scheduledClosingTimestamp: Date.now() / 1000 - i * 60 * 60 + 10 * 24 * 60 * 60, // openTimestamp + 86400
+      openValue: 74589658,
+      pnl: {
+        type: profit,
+        value: parseInt((Math.random() * 10000).toFixed(0)),
+      },
+      liquidationPrice: 19537,
+      takeProfit: 74521,
+      stopLoss: 25250,
+      recommendedTp: 35412,
+      recommendedSl: 19453,
+      closedType: profit === ProfitState.LOSS ? CFDClosedType.STOP_LOSS : CFDClosedType.TAKE_PROFIT,
+      forcedClosed: profit === ProfitState.LOSS ? true : false,
+      closedTimestamp: 5,
+      closedValue: 73820133,
+    };
+    dummyClosedCFDs.push(dummyClosedCFD);
+  }
+  return dummyClosedCFDs;
+};

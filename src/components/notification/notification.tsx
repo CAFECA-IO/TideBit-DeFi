@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import useOuterClick from '../../lib/hooks/use_outer_click';
 import Image from 'next/image';
 import {forwardRef, useContext} from 'react';
@@ -75,6 +74,7 @@ export default function Notification({
               notificationLevel={v.notificationLevel}
               isRead={v.isRead}
               content={v.content}
+              public={v.public}
             />
           </div>
         );

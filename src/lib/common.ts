@@ -1,13 +1,14 @@
 /**
  *
  * @param timestamp is in seconds
- * @returns string array of [date, time], for example: ['2023-02-10', '10:00:00']
+ * @returns object
  */
 export const timestampToString = (timestamp: number) => {
-  if (timestamp === 0) return ['-', '-'];
+  if (timestamp === 0) return {date: '-', time: '-', abbreviatedMonth: '-'};
 
   const date = new Date(timestamp * 1000);
   // const date = new Date();
+
   const year = date.getFullYear();
   const month = (date.getMonth() + 1).toString().padStart(2, '0');
   const day = date.getDate().toString().padStart(2, '0');
@@ -15,10 +16,40 @@ export const timestampToString = (timestamp: number) => {
   const minute = date.getMinutes().toString().padStart(2, '0');
   const second = date.getSeconds().toString().padStart(2, '0');
 
+  const monthIndex = date.getMonth();
+  const monthNames = [
+    'Jan.',
+    'Feb.',
+    'Mar.',
+    'Apr.',
+    'May',
+    'Jun.',
+    'Jul.',
+    'Aug.',
+    'Sep.',
+    'Oct.',
+    'Nov.',
+    'Dec.',
+    // 'January',
+    // 'February',
+    // 'March',
+    // 'April',
+    // 'May',
+    // 'June',
+    // 'July',
+    // 'August',
+    // 'September',
+    // 'October',
+    // 'November',
+    // 'December',
+  ];
+  const monthName = monthNames[monthIndex];
+
   const dateString = `${year}-${month}-${day}`;
   const timeString = `${hour}:${minute}:${second}`;
 
-  return [dateString, timeString];
+  // return [dateString, timeString];
+  return {date: dateString, time: timeString, abbreviatedMonth: monthName};
 };
 
 /**

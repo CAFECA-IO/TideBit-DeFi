@@ -14,6 +14,7 @@ import RippleButton from '../ripple_button/ripple_button';
 import {useGlobal} from '../../contexts/global_context';
 import {TypeOfPosition} from '../../constants/type_of_position';
 import {ProfitState} from '../../constants/profit_state';
+import {timestampToString} from '../../lib/common';
 
 interface IPositionDetailsModal {
   modalVisible: boolean;
@@ -21,24 +22,6 @@ interface IPositionDetailsModal {
   openCfdDetails: IOpenCFDDetails;
   id?: string;
 }
-
-const timestampToString = (timestamp: number) => {
-  if (timestamp === 0) return ['-', '-'];
-
-  const date = new Date(timestamp * 1000);
-  // const date = new Date();
-  const year = date.getFullYear();
-  const month = (date.getMonth() + 1).toString().padStart(2, '0');
-  const day = date.getDate().toString().padStart(2, '0');
-  const hour = date.getHours().toString().padStart(2, '0');
-  const minute = date.getMinutes().toString().padStart(2, '0');
-  const second = date.getSeconds().toString().padStart(2, '0');
-
-  const dateString = `${year}-${month}-${day}`;
-  const timeString = `${hour}:${minute}:${second}`;
-
-  return [dateString, timeString];
-};
 
 const PositionDetailsModal = ({
   // openCfdDetails,
@@ -306,8 +289,8 @@ const PositionDetailsModal = ({
                 </div>
 
                 <div className="text-end text-base text-lightGray">
-                  <p className="">{timestampToString(openCfdDetails?.openTimestamp ?? 0)[0]}</p>
-                  <p className="">{timestampToString(openCfdDetails?.openTimestamp ?? 0)[1]}</p>
+                  <p className="">{timestampToString(openCfdDetails?.openTimestamp ?? 0).date}</p>
+                  <p className="">{timestampToString(openCfdDetails?.openTimestamp ?? 0).time}</p>
                 </div>
               </div>
 
@@ -367,8 +350,8 @@ const PositionDetailsModal = ({
                   <div className="mx-6 my-4 flex justify-between">
                     <div className="text-lightGray">Open Time</div>
                     <div className="">
-                      {timestampToString(openCfdDetails?.openTimestamp ?? 0)[0]}{' '}
-                      {timestampToString(openCfdDetails?.openTimestamp ?? 0)[1]}
+                      {timestampToString(openCfdDetails?.openTimestamp ?? 0).date}{' '}
+                      {timestampToString(openCfdDetails?.openTimestamp ?? 0).time}
                     </div>
                   </div>
 

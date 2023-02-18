@@ -32,9 +32,11 @@ const TradingHeader = () => {
 
   // const displayedTickerBox = showTickerSelector ? <TickerSelectorModal /> : null;
 
-  const ethTitle = <h1 className="text-3xl font-medium">{marketCtx.selectedTicker?.currency}</h1>;
+  const tickerTitle = (
+    <h1 className="text-3xl font-medium">{marketCtx.selectedTicker?.currency}</h1>
+  );
 
-  const ethHeader = (
+  const tickerHeader = (
     <>
       <div className="flex flex-col items-center justify-center space-y-5 text-start text-white lg:items-start lg:justify-start">
         {/* Ticker */}
@@ -50,7 +52,7 @@ const TradingHeader = () => {
                 alt={marketCtx.selectedTicker?.currency}
               />
             </span>
-            {ethTitle}
+            {tickerTitle}
           </button>
 
           <div className="pl-0 hover:cursor-pointer">
@@ -88,7 +90,7 @@ const TradingHeader = () => {
 
   return (
     <div>
-      {ethHeader}
+      {tickerHeader}
       <TickerSelectorBox
         tickerSelectorBoxRef={tickerBoxRef}
         tickerSelectorBoxVisible={tickerBoxVisible}

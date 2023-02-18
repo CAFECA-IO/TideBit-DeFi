@@ -142,8 +142,8 @@ const HistoryPositionModal = ({
           <div className={`${layoutInsideBorder}`}>
             <div className="text-lightGray">Close Time</div>
             <div className="">
-              {timestampToString(closedCfdDetails?.openTimestamp ?? 0).date}{' '}
-              {timestampToString(closedCfdDetails?.openTimestamp ?? 0).time}
+              {timestampToString(closedCfdDetails?.closedTimestamp ?? 0).date}{' '}
+              {timestampToString(closedCfdDetails?.closedTimestamp ?? 0).time}
             </div>
           </div>
 
@@ -232,8 +232,12 @@ const HistoryPositionModal = ({
                 </div>
 
                 <div className="flex-col space-y-2 text-end text-xs text-lightGray">
-                  <p className="">{timestampToString(closedCfdDetails?.openTimestamp ?? 0).date}</p>
-                  <p className="">{timestampToString(closedCfdDetails?.openTimestamp ?? 0).time}</p>
+                  <p className="">
+                    {timestampToString(closedCfdDetails?.closedTimestamp ?? 0).date}
+                  </p>
+                  <p className="">
+                    {timestampToString(closedCfdDetails?.closedTimestamp ?? 0).time}
+                  </p>
                 </div>
               </div>
 

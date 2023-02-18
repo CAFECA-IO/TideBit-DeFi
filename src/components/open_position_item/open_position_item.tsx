@@ -15,29 +15,10 @@ import {TypeOfPosition} from '../../constants/type_of_position';
 // import HorizontalRelativeLineGraph from '../horizontal_relative_line_graph/horizontal_relative_line_graph';
 
 interface IOpenPositionItemProps {
-  // profitOrLoss: string;
-  // longOrShort: string;
-  // ticker: string;
-  // passedHour: number;
-  // value: number;
-  // profitOrLossAmount: number;
-  // tickerTrendArray: number[];
   openCfdDetails: IOpenCFDDetails;
-  // circularClick?: () => void;
 }
 
-const OpenPositionItem = ({
-  // profitOrLoss,
-  // longOrShort,
-  // value,
-  // ticker,
-  // passedHour,
-  // profitOrLossAmount,
-  // tickerTrendArray,
-  openCfdDetails,
-  // circularClick: circularClick,
-  ...otherProps
-}: IOpenPositionItemProps) => {
+const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProps) => {
   // if (longOrShort !== 'long' && longOrShort !== 'short') return <></>;
   // if (profitOrLoss !== 'profit' && profitOrLoss !== 'loss') return <></>; if (profitOrLoss !== 'profit' && profitOrLoss !== 'loss') return <></>;
   // if (ticker !== 'ETH' && ticker !== 'BTC') return <></>;

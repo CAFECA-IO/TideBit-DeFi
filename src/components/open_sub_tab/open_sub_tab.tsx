@@ -32,7 +32,6 @@ const OpenSubTab = () => {
           passedHour={11}
           profitOrLossAmount={cfd.pnl.value}
           tickerTrendArray={cfd.positionLineGraph.dataArray}
-          horizontalValueLine={1230}
         />
         <div className="my-auto h-px w-full rounded bg-white/50"></div>
       </div>

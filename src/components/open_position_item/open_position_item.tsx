@@ -21,7 +21,6 @@ interface IOpenPositionItemProps {
   value: number;
   profitOrLossAmount: number;
   tickerTrendArray: number[];
-  horizontalValueLine: number;
   openCfdDetails: IOpenCFDDetails;
   // circularClick?: () => void;
 }
@@ -34,7 +33,6 @@ const OpenPositionItem = ({
   passedHour,
   profitOrLossAmount,
   tickerTrendArray,
-  horizontalValueLine,
   openCfdDetails,
   // circularClick: circularClick,
   ...otherProps

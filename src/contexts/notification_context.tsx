@@ -42,17 +42,17 @@ export const NotificationProvider = ({children}: INotificationProvider) => {
 
   const isRead = async (id: string) => {
     if (userCtx.isConnected) {
-      const updateNotificaionts: INotificationItem[] = [...notifications];
-      const index = updateNotificaionts.findIndex(n => n.id === id);
+      const updateNotificationts: INotificationItem[] = [...notifications];
+      const index = updateNotificationts.findIndex(n => n.id === id);
       if (index !== -1) {
-        updateNotificaionts[index] = {
-          ...updateNotificaionts[index],
+        updateNotificationts[index] = {
+          ...updateNotificationts[index],
           isRead: true,
         };
       }
-      setNotifications(updateNotificaionts);
-      setUnreadNotifications(updateNotificaionts.filter(n => !n.isRead));
-      await userCtx.readNotifications([updateNotificaionts[index]]);
+      setNotifications(updateNotificationts);
+      setUnreadNotifications(updateNotificationts.filter(n => !n.isRead));
+      await userCtx.readNotifications([updateNotificationts[index]]);
     }
     return;
   };

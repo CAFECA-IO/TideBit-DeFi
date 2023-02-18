@@ -2,7 +2,6 @@ import React, {useContext, useState} from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import I18n from '../i18n/i18n';
-import WalletPanel from '../wallet_panel/wallet_panel';
 import Notification from '../notification/notification';
 import useOuterClick from '../../lib/hooks/use_outer_click';
 import {UserContext} from '../../contexts/user_context';
@@ -10,7 +9,6 @@ import {useTranslation} from 'next-i18next';
 import UserMobile from '../user_mobile/user_mobile';
 import {useGlobal} from '../../contexts/global_context';
 import TideButton from '../tide_button/tide_button';
-import User from '../user/user';
 
 type TranslateFunction = (s: string) => string;
 
@@ -22,8 +20,6 @@ const NavBarMobile = ({notificationNumber = 1}) => {
 
   const [navOpen, setNavOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-
-  const [userOverview, setUserOverview] = useState(false);
 
   //lang sub menu
   const [langIsOpen, setLangIsOpen] = useState(false);
@@ -61,10 +57,6 @@ const NavBarMobile = ({notificationNumber = 1}) => {
     setSidebarOpen(!sidebarOpen);
     setComponentVisible(!componentVisible);
     //console.log('sidebarOpenHandler clicked, componentVisible: ', componentVisible);
-  };
-
-  const getUserLoginHandler = (bool: boolean) => {
-    setUserOverview(bool);
   };
 
   const hamburgerStyles =
@@ -122,10 +114,6 @@ const NavBarMobile = ({notificationNumber = 1}) => {
   );
 
   const dividerInsideMobileNavBar = navOpen && `inline-block h-px w-11/12 rounded bg-lightGray`;
-
-  const userOverviewDividerDesktop = userCtx.enableServiceTerm ? (
-    <span className="mx-2 inline-block h-10 w-px rounded bg-lightGray1/50"></span>
-  ) : null;
 
   return (
     <>

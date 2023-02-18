@@ -1,41 +1,22 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import HistoryPositionItem from '../history_position_item/history_position_item';
+import {UserContext} from '../../contexts/user_context';
 
 const HistorySubTab = () => {
-  return (
-    <>
-      <div>
-        <HistoryPositionItem
-          profitOrLoss="loss"
-          longOrShort="long"
-          openValue={639.9}
-          closeValue={638.3}
-          ticker="ETH"
-          profitOrLossAmount={34.9}
-        />
-      </div>
-      <div>
-        <HistoryPositionItem
-          profitOrLoss="profit"
-          longOrShort="long"
-          openValue={639.9}
-          closeValue={700.3}
-          ticker="BTC"
-          profitOrLossAmount={123456.9}
-        />
-      </div>
-      <div>
-        <HistoryPositionItem
-          profitOrLoss="profit"
-          longOrShort="short"
-          openValue={639.9}
-          closeValue={500}
-          ticker="ETH"
-          profitOrLossAmount={9452.3}
-        />
-      </div>
-    </>
-  );
+  const userCtx = useContext(UserContext);
+  const historyPositionList = userCtx.closedCFDs.map(cfd => (
+    <div key={cfd.id}>
+      <HistoryPositionItem
+        profitOrLoss={cfd.pnl.type}
+        longOrShort="long"
+        openValue={cfd.openValue}
+        closeValue={cfd.closedValue}
+        ticker={cfd.ticker}
+        profitOrLossAmount={cfd.pnl.value}
+      />
+    </div>
+  ));
+  return <>{historyPositionList}</>;
 };
 
 export default HistorySubTab;

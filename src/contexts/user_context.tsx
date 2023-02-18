@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import Lunar from '@cafeca/lunar';
 import React, {createContext} from 'react';
 import useState from 'react-usestateref';
@@ -6,10 +5,12 @@ import {PROFIT_LOSS_COLOR_TYPE} from '../constants/display';
 import {
   IOpenCFDDetails,
   dummyOpenCFDDetails,
+  getDummyOpenCFDs,
 } from '../interfaces/tidebit_defi_background/open_cfd_details';
 import {
   IClosedCFDDetails,
   dummyCloseCFDDetails,
+  getDummyClosedCFDs,
 } from '../interfaces/tidebit_defi_background/closed_cfd_details';
 import {
   dummyResultFailed,
@@ -45,6 +46,8 @@ import {
   IWithdrawalOrder,
 } from '../interfaces/tidebit_defi_background/withdrawal_order';
 import {IOpenCFDOrder} from '../interfaces/tidebit_defi_background/open_cfd_order';
+import {INotificationItem} from '../interfaces/tidebit_defi_background/notification_item';
+import {TideBitEvent} from '../constants/tidebit_event';
 
 function randomNumber(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1) + min);
@@ -147,6 +150,8 @@ export interface IUserContext {
   subscribeNewsletters: (props: boolean) => Promise<boolean>;
   connectTideBit: (email: string, password: string) => Promise<boolean>;
   shareTradeRecord: (tradeId: string) => Promise<boolean>;
+  readNotifications: (notifications: INotificationItem[]) => Promise<void>;
+  init: () => Promise<void>;
 }
 
 export const UserContext = createContext<IUserContext>({
@@ -194,32 +199,40 @@ export const UserContext = createContext<IUserContext>({
   subscribeNewsletters: (props: boolean) => Promise.resolve<boolean>(true),
   connectTideBit: (email: string, password: string) => Promise.resolve<boolean>(true),
   shareTradeRecord: (tradeId: string) => Promise.resolve<boolean>(true),
+  readNotifications: (notifications: INotificationItem[]) => Promise.resolve(),
+  init: () => Promise.resolve(),
 });
 
 export const UserProvider = ({children}: IUserProvider) => {
   // TODO: get partial user type from `IUserContext`
-  const [id, setId] = useState<string | null>(null);
-  const [username, setUsername] = useState<string | null>(null);
-  const [wallet, setWallet] = useState<string | null>(null);
-  const [email, setEmail] = useState<string | null>(null);
-  const [walletBalances, setWalletBalances] = useState<IWalletBalance[] | null>(null);
-  const [balance, setBalance] = useState<IUserBalance | null>(null);
-  const [balances, setBalances] = useState<IBalance[] | null>(null);
-  const [favoriteTickers, setFavoriteTickers] = useState<string[]>([]);
+  const [id, setId, idRef] = useState<string | null>(null);
+  const [username, setUsername, usernameRef] = useState<string | null>(null);
+  const [wallet, setWallet, walletRef] = useState<string | null>(null);
+  const [email, setEmail, emailRef] = useState<string | null>(null);
+  const [walletBalances, setWalletBalances, walletBalancesRef] = useState<IWalletBalance[] | null>(
+    null
+  );
+  const [balance, setBalance, balanceRef] = useState<IUserBalance | null>(null);
+  const [balances, setBalances, balancesRef] = useState<IBalance[] | null>(null);
+  const [favoriteTickers, setFavoriteTickers, favoriteTickersRef] = useState<string[]>([]);
   const [isConnected, setIsConnected, isConnectedRef] = useState<boolean>(false);
-  const [enableServiceTerm, setEnableServiceTerm] = useState<boolean>(false);
-  const [histories, setHistories] = useState<IOrder[]>([]);
-  const [openCFDs, setOpenedCFDs] = useState<Array<IOpenCFDDetails>>([]);
-  const [closedCFDs, setClosedCFDs] = useState<Array<IClosedCFDDetails>>([]);
-  const [isSubscibedNewsletters, setIsSubscibedNewsletters] = useState<boolean>(false);
-  const [isEnabledEmailNotification, setIsEnabledEmailNotification] = useState<boolean>(false);
-  const [isConnectedWithEmail, setIsConnectedWithEmail] = useState<boolean>(false);
-  const [isConnectedWithTideBit, setIsConnectedWithTideBit] = useState<boolean>(false);
+  const [enableServiceTerm, setEnableServiceTerm, enableServiceTermRef] = useState<boolean>(false);
+  const [histories, setHistories, historiesRef] = useState<IOrder[]>([]);
+  const [openCFDs, setOpenedCFDs, openCFDsRef] = useState<Array<IOpenCFDDetails>>([]);
+  const [closedCFDs, setClosedCFDs, closedCFDsRef] = useState<Array<IClosedCFDDetails>>([]);
+  const [isSubscibedNewsletters, setIsSubscibedNewsletters, isSubscibedNewslettersRef] =
+    useState<boolean>(false);
+  const [isEnabledEmailNotification, setIsEnabledEmailNotification, isEnabledEmailNotificationRef] =
+    useState<boolean>(false);
+  const [isConnectedWithEmail, setIsConnectedWithEmail, isConnectedWithEmailRef] =
+    useState<boolean>(false);
+  const [isConnectedWithTideBit, setIsConnectedWithTideBit, isConnectedWithTideBitRef] =
+    useState<boolean>(false);
 
-  const setPrivateData = async (wallet: string) => {
-    setWallet(wallet);
+  const setPrivateData = async (walletAddress: string) => {
+    setWallet(walletAddress);
     setWalletBalances([dummyWalletBalance_BTC, dummyWalletBalance_ETH, dummyWalletBalance_USDT]);
-    // TODO getUser from backend by wallet
+    // TODO getUser from backend by walletAddress
     setId('002');
     setUsername('Tidebit DeFi Test User');
     setBalance({
@@ -228,10 +241,6 @@ export const UserProvider = ({children}: IUserProvider) => {
       PNL: 1956.84,
     });
     setBalances([dummyBalance_BTC, dummyBalance_ETH, dummyBalance_USDT]);
-    const openedCFDs = await listOpenCFDs('ETH'); // ++ TODO get current selectedTicker
-    const closedCFDs = await listClosedCFDs('ETH'); // ++ TODO get current selectedTicker
-    // setOpenedCFDs(openedCFDs);
-    // setClosedCFDs(closedCFDs);
   };
 
   const clearPrivateData = () => {
@@ -248,20 +257,20 @@ export const UserProvider = ({children}: IUserProvider) => {
   const lunar = new Lunar();
   lunar.on('connected', () => {
     setIsConnected(true);
-    setPrivateData(lunar.address);
   });
   lunar.on('disconnected', () => {
     setIsConnected(false);
     clearPrivateData();
   });
-  lunar.on('accountsChanged', () => {
-    setPrivateData(lunar.address);
+  lunar.on('accountsChanged', async (address: string) => {
+    clearPrivateData();
+    await setPrivateData(address);
   });
 
   const listOpenCFDs = async (props: string) => {
     let openCFDs: IOpenCFDDetails[] = [];
     if (isConnectedRef.current) {
-      openCFDs = await Promise.resolve<IOpenCFDDetails[]>([dummyOpenCFDDetails]);
+      openCFDs = await Promise.resolve<IOpenCFDDetails[]>(getDummyOpenCFDs(props));
     }
     setOpenedCFDs(openCFDs);
     return openCFDs;
@@ -270,7 +279,7 @@ export const UserProvider = ({children}: IUserProvider) => {
   const listClosedCFDs = async (props: string) => {
     let closedCFDs: IClosedCFDDetails[] = [];
     if (isConnectedRef.current) {
-      closedCFDs = await Promise.resolve<IClosedCFDDetails[]>([dummyCloseCFDDetails]);
+      closedCFDs = await Promise.resolve<IClosedCFDDetails[]>(getDummyClosedCFDs(props));
     }
     setClosedCFDs(closedCFDs);
     return closedCFDs;
@@ -280,12 +289,11 @@ export const UserProvider = ({children}: IUserProvider) => {
     let success = false;
     try {
       const connect = await lunar.connect({});
-      const address = lunar.address;
       if (connect) {
         success = true;
       }
     } catch (error) {
-      console.error(`userContext connect error`, error);
+      // console.error(`userContext connect error`, error);
     }
     return success;
   };
@@ -301,7 +309,7 @@ export const UserProvider = ({children}: IUserProvider) => {
       await lunar.disconnect();
       success = true;
     } catch (error) {
-      console.error(`userContext disconnect error`, error);
+      // console.error(`userContext disconnect error`, error);
     }
     return success;
   };
@@ -312,7 +320,7 @@ export const UserProvider = ({children}: IUserProvider) => {
       const updatedFavoriteTickers = [...favoriteTickers];
       updatedFavoriteTickers.push(newFavorite);
       setFavoriteTickers(updatedFavoriteTickers);
-      console.log(`updatedFavoriteTickers`, updatedFavoriteTickers);
+      // console.log(`userContext updatedFavoriteTickers`, updatedFavoriteTickers);
       result = dummyResultSuccess;
     }
     return result;
@@ -327,7 +335,7 @@ export const UserProvider = ({children}: IUserProvider) => {
       );
       if (index !== -1) updatedFavoriteTickers.splice(index, 1);
       setFavoriteTickers(updatedFavoriteTickers);
-      console.log(`updatedFavoriteTickers`, updatedFavoriteTickers);
+      // console.log(`userContext updatedFavoriteTickers`, updatedFavoriteTickers);
       result = dummyResultSuccess;
     }
     return result;
@@ -343,18 +351,18 @@ export const UserProvider = ({children}: IUserProvider) => {
 
   const getWalletBalance = (props: string) => {
     let walletBalance: IWalletBalance | null = null;
-    if (walletBalances) {
-      const index: number = walletBalances.findIndex(wb => wb.currency === props);
-      if (index !== -1) walletBalance = walletBalances[index];
+    if (walletBalancesRef.current) {
+      const index: number = walletBalancesRef.current.findIndex(wb => wb.currency === props);
+      if (index !== -1) walletBalance = walletBalancesRef.current[index];
     }
     return walletBalance;
   };
 
   const getBalance = (props: string) => {
     let balance: IBalance | null = null;
-    if (balances) {
-      const index: number = balances.findIndex(wb => wb.currency === props);
-      if (index !== -1) balance = balances[index];
+    if (balancesRef.current) {
+      const index: number = balancesRef.current.findIndex(wb => wb.currency === props);
+      if (index !== -1) balance = balancesRef.current[index];
     }
     return balance;
   };
@@ -452,25 +460,32 @@ export const UserProvider = ({children}: IUserProvider) => {
   const subscribeNewsletters = async (props: boolean) => Promise.resolve<boolean>(true);
   const connectTideBit = async (email: string, password: string) => Promise.resolve<boolean>(true);
   const shareTradeRecord = async (tradeId: string) => Promise.resolve<boolean>(true);
+  const readNotifications = async (notifications: INotificationItem[]) => Promise.resolve();
+
+  const init = async () => {
+    // console.log(`UserProvider init is called`);
+    return await Promise.resolve();
+  };
 
   const defaultValue = {
-    id,
-    username,
-    wallet,
-    walletBalances,
-    balance,
-    balances,
-    favoriteTickers,
-    isConnected,
-    enableServiceTerm,
-    openCFDs,
-    closedCFDs,
-    email,
-    isSubscibedNewsletters,
-    isEnabledEmailNotification,
-    isConnectedWithEmail,
-    isConnectedWithTideBit,
-    histories,
+    init,
+    id: idRef.current,
+    username: usernameRef.current,
+    wallet: walletRef.current,
+    walletBalances: walletBalancesRef.current,
+    balance: balanceRef.current,
+    balances: balancesRef.current,
+    favoriteTickers: favoriteTickersRef.current,
+    isConnected: isConnectedRef.current,
+    enableServiceTerm: enableServiceTermRef.current,
+    openCFDs: openCFDsRef.current,
+    closedCFDs: closedCFDsRef.current,
+    email: emailRef.current,
+    isSubscibedNewsletters: isSubscibedNewslettersRef.current,
+    isEnabledEmailNotification: isEnabledEmailNotificationRef.current,
+    isConnectedWithEmail: isConnectedWithEmailRef.current,
+    isConnectedWithTideBit: isConnectedWithTideBitRef.current,
+    histories: historiesRef.current,
     addFavorites,
     removeFavorites,
     listOpenCFDs,
@@ -494,6 +509,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     subscribeNewsletters,
     connectTideBit,
     shareTradeRecord,
+    readNotifications,
   };
 
   // FIXME: 'setUser' is missing in type '{ user: IUser[] | null; }'

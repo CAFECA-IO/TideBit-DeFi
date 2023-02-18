@@ -1,10 +1,9 @@
-/* eslint-disable no-console */
 import {ToastContainer, toast, ToastOptions, useToast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {CRYPTO_CARD_COLORS} from '../../constants/display';
 
 import {useContext, useEffect, useState} from 'react';
-import CryptoCard from '../card/crypto_card';
+import CryptoCard from '../crypto_card/crypto_card';
 
 import {MarketContext, IMarketContext} from '../../contexts/market_context';
 import {UserContext, IUserContext} from '../../contexts/user_context';
@@ -320,7 +319,7 @@ const TickerSelectorBox = ({
             All
           </button>
         </div>
-        {userCtx.isConnected ? (
+        {userCtx.enableServiceTerm ? (
           <div className="">
             <button
               type="button"

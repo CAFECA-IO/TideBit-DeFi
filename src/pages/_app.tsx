@@ -6,6 +6,8 @@ import {appWithTranslation} from 'next-i18next';
 import {MarketProvider} from '../contexts/market_context';
 import {UserProvider} from '../contexts/user_context';
 import {GlobalProvider} from '../contexts/global_context';
+import {NotificationProvider} from '../contexts/notification_context';
+import {AppProvider} from '../contexts/app_context';
 
 function App({Component, pageProps}: AppProps) {
   return (
@@ -14,7 +16,11 @@ function App({Component, pageProps}: AppProps) {
         <UserProvider>
           <MarketProvider>
             <GlobalProvider>
-              <Component {...pageProps} />
+              <NotificationProvider>
+                <AppProvider>
+                  <Component {...pageProps} />
+                </AppProvider>
+              </NotificationProvider>
             </GlobalProvider>
           </MarketProvider>
         </UserProvider>

@@ -478,7 +478,7 @@ export default function CandlestickChart({
         series={[
           {
             name: 'series-1',
-            data: [...marketCtx.candlestickChartData],
+            data: marketCtx.candlestickChartData ? [...marketCtx.candlestickChartData] : [],
           },
         ]}
         type="candlestick"

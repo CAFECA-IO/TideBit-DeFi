@@ -2,18 +2,12 @@ import {useTranslation} from 'next-i18next';
 import Link from 'next/link';
 import TideButton from '../tide_button/tide_button';
 import {useContext, useState} from 'react';
-import {AiOutlineGlobal} from 'react-icons/ai';
-import {BsFillBellFill, BsBell} from 'react-icons/bs';
-import {TbMinusVertical} from 'react-icons/tb';
 import {FiMenu} from 'react-icons/fi';
-import {TfiBell} from 'react-icons/tfi';
 // import TideLink from '../tide_link/tide_link';
 import Image from 'next/image';
 import version from '../../lib/version';
-import WalletPanel from '../wallet_panel/wallet_panel';
 import useOuterClick from '../../lib/hooks/use_outer_click';
 import Notification from '../notification/notification';
-import NotificationItem from '../notification_item/notification_item';
 import {useRouter} from 'next/router';
 import I18n from '../i18n/i18n';
 import {IoIosArrowBack} from 'react-icons/io';
@@ -21,6 +15,7 @@ import UserOverview from '../user_overview/user_overview';
 import {UserContext} from '../../contexts/user_context';
 import User from '../user/user';
 import {useGlobal} from '../../contexts/global_context';
+import {NotificationContext} from '../../contexts/notification_context';
 
 // interface INavBarProps {
 //   notifyRef: HTMLDivElement extends HTMLElement ? React.RefObject<HTMLDivElement> : null;
@@ -28,8 +23,9 @@ import {useGlobal} from '../../contexts/global_context';
 // }
 type TranslateFunction = (s: string) => string;
 
-const NavBar = ({notificationNumber = 1}) => {
+const NavBar = () => {
   const userCtx = useContext(UserContext);
+  const notificationCtx = useContext(NotificationContext);
   const globalCtx = useGlobal();
 
   const {t}: {t: TranslateFunction} = useTranslation('common');
@@ -88,13 +84,11 @@ const NavBar = ({notificationNumber = 1}) => {
   );
 
   const isDisplayedUserOverview = userCtx.enableServiceTerm ? (
-    <>
-      <UserOverview
-        depositAvailable={userCtx.balance?.available ?? 0}
-        marginLocked={userCtx.balance?.locked ?? 0}
-        profitOrLossAmount={userCtx.balance?.PNL ?? 0}
-      />
-    </>
+    <UserOverview
+      depositAvailable={userCtx.balance?.available ?? 0}
+      marginLocked={userCtx.balance?.locked ?? 0}
+      profitOrLossAmount={userCtx.balance?.PNL ?? 0}
+    />
   ) : null;
 
   const isDisplayedUser = userCtx.enableServiceTerm ? (
@@ -180,7 +174,11 @@ const NavBar = ({notificationNumber = 1}) => {
 
                   <button onClick={sidebarOpenHandler} className="relative hover:cursor-pointer">
                     <span className="absolute bottom-4 left-3 z-20 inline-block h-3 w-3 rounded-xl bg-tidebitTheme">
-                      <p className="text-center text-3xs">{notificationNumber}</p>
+                      <p className="text-center text-3xs">
+                        {notificationCtx.unreadNotifications
+                          ? notificationCtx.unreadNotifications.length
+                          : 0}
+                      </p>
                     </span>
 
                     <Image

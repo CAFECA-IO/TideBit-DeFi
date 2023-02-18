@@ -1,4 +1,5 @@
-import React, {useState, useContext, createContext} from 'react';
+import React, {useContext, createContext} from 'react';
+import useState from 'react-usestateref';
 import {
   INITIAL_POSITION_LABEL_DISPLAYED_STATE,
   PROFIT_LOSS_COLOR_TYPE,
@@ -35,6 +36,7 @@ import {
   getDummyCandlestickChartData,
   ICandlestickData,
 } from '../interfaces/tidebit_defi_background/candlestickData';
+import {TideBitEvent} from '../constants/tidebit_event';
 
 const SAMPLE_TICKERS = [
   'ETH',
@@ -282,8 +284,8 @@ export interface ITransferOptions {
 }
 
 export interface IMarketContext {
-  selectedTicker: ITickerData;
-  availableTickers: ITickerData[];
+  selectedTicker: ITickerData | null;
+  availableTickers: ITickerData[] | null;
   isCFDTradable: boolean;
   showPositionOnChart: boolean;
   showPositionOnChartHandler: (bool: boolean) => void;
@@ -293,7 +295,7 @@ export interface IMarketContext {
   availableTransferOptions: ITransferOptions[];
   tickerStatic: ITickerStatic | null;
   tickerLiveStatistics: ITickerLiveStatistics | null;
-  candlestickChartData: ICandlestickData[];
+  candlestickChartData: ICandlestickData[] | null;
   listAvailableTickers: () => ITickerData[];
   listDepositCryptocurrencies: () => ICryptocurrency[];
   listWithdrawCryptocurrencies: () => ICryptocurrency[];
@@ -302,6 +304,7 @@ export interface IMarketContext {
     tickerId: string;
     timeSpan: ITimeSpanUnion;
   }) => Promise<ICandlestickData[]>; // x 100
+  init: () => Promise<void>;
 }
 // TODO: Note: _app.tsx 啟動的時候 => createContext
 export const MarketContext = createContext<IMarketContext>({
@@ -329,6 +332,7 @@ export const MarketContext = createContext<IMarketContext>({
   selectTickerHandler: (props: string) => dummyResultSuccess,
   getCandlestickChartData: (props: {tickerId: string; timeSpan: ITimeSpanUnion}) =>
     Promise.resolve<ICandlestickData[]>([]),
+  init: () => Promise.resolve(),
 });
 
 const availableTransferOptions = [
@@ -355,34 +359,15 @@ const availableTransferOptions = [
 
 export const MarketProvider = ({children}: IMarketProvider) => {
   const userCtx = useContext(UserContext);
-  const updateAvailableTickers = () => {
-    let updateTickers = [...dummyTickers];
-    if (userCtx.isConnected) {
-      updateTickers = updateTickers.map(ticker => {
-        return {
-          ...ticker,
-          starred: userCtx.isConnected
-            ? userCtx.favoriteTickers.some(currency => currency === ticker.currency)
-            : false,
-        };
-      });
-    }
-    return updateTickers;
-  };
-  const [selectedTicker, setSelectedTicker] = useState<ITickerData>(dummyTicker);
-  const [tickerStatic, setTickerStatic] = useState<ITickerStatic>(dummyTickerStatic);
-  const [tickerLiveStatistics, setTickerLiveStatistics] =
-    useState<ITickerLiveStatistics>(dummyTickerLiveStatistics);
-  const [candlestickChartData, setCandlestickChartData] = useState<ICandlestickData[]>(
-    getDummyCandlestickChartData()
+  const [wallet, setWallet, walletRef] = useState<string | null>(userCtx.wallet);
+  const [selectedTicker, setSelectedTicker, selectedTickerRef] = useState<ITickerData | null>(null);
+  const [tickerStatic, setTickerStatic] = useState<ITickerStatic | null>(null);
+  const [tickerLiveStatistics, setTickerLiveStatistics] = useState<ITickerLiveStatistics | null>(
+    null
   );
-  const [availableTickers, setAvailableTickers] = useState<ITickerData[]>(updateAvailableTickers());
-  const listAvailableTickers = () => {
-    const updateTickers = updateAvailableTickers();
-    setAvailableTickers(updateTickers);
-    return updateTickers;
-  };
-  const [isCFDTradable, setIsCFDTradable] = useState<boolean>(true);
+  const [candlestickChartData, setCandlestickChartData] = useState<ICandlestickData[] | null>(null);
+  const [availableTickers, setAvailableTickers] = useState<ITickerData[] | null>(null);
+  const [isCFDTradable, setIsCFDTradable] = useState<boolean>(false);
   const [candlestickId, setCandlestickId] = useState<string>('');
 
   const [transferOptions, setTransferOptions] =
@@ -404,11 +389,29 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     // console.log('in market context, candlestick id:', id);
   };
 
-  // console.log('market context:', transferOptions);
+  const updateAvailableTickers = () => {
+    let updateTickers = [...dummyTickers];
+    if (userCtx.enableServiceTerm) {
+      updateTickers = updateTickers.map(ticker => {
+        return {
+          ...ticker,
+          starred: userCtx.enableServiceTerm
+            ? userCtx.favoriteTickers.some(currency => currency === ticker.currency)
+            : false,
+        };
+      });
+    }
+    return updateTickers;
+  };
 
-  // console.log('Whole array [addPropertyToArray]:', addPropertyToArray);
-  // setAvailableTickers(addPropertyToArray); // infinite loop
+  const listAvailableTickers = () => {
+    const updateTickers = updateAvailableTickers();
+    setAvailableTickers(updateTickers);
+    return updateTickers;
+  };
+
   const listDepositCryptocurrencies = () => [];
+
   const listWithdrawCryptocurrencies = () => [];
 
   const selectTickerHandler = (currency: string) => {
@@ -422,13 +425,10 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     setTickerLiveStatistics(tickerLiveStatistics);
     const candlestickChartData = getDummyCandlestickChartData();
     setCandlestickChartData(candlestickChartData);
-    if (userCtx.isConnected) {
+    if (userCtx.enableServiceTerm) {
       userCtx.listOpenCFDs(currency);
       userCtx.listClosedCFDs(currency);
     }
-
-    // if is connected
-    // 5.c
     return dummyResultSuccess;
   };
 
@@ -436,6 +436,28 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     let candlestickChartData: ICandlestickData[] = [];
     candlestickChartData = await Promise.resolve(getDummyCandlestickChartData(50));
     return candlestickChartData;
+  };
+
+  React.useEffect(() => {
+    if (userCtx.wallet !== walletRef.current) {
+      setWallet(userCtx.wallet);
+      // Event: Login
+      if (userCtx.enableServiceTerm && selectedTickerRef.current) {
+        userCtx.listOpenCFDs(selectedTickerRef.current.currency);
+        userCtx.listClosedCFDs(selectedTickerRef.current.currency);
+      }
+    }
+  }, [userCtx.wallet]);
+
+  const init = async () => {
+    // console.log(`MarketProvider init is called`);
+    setSelectedTicker(dummyTicker);
+    setAvailableTickers([...dummyTickers]);
+    setCandlestickChartData(getDummyCandlestickChartData());
+    setTickerLiveStatistics(dummyTickerLiveStatistics);
+    setTickerStatic(dummyTickerStatic);
+    setIsCFDTradable(true);
+    return await Promise.resolve();
   };
 
   const defaultValue = {
@@ -456,6 +478,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     listDepositCryptocurrencies,
     listWithdrawCryptocurrencies,
     getCandlestickChartData,
+    init,
   };
 
   return <MarketContext.Provider value={defaultValue}>{children}</MarketContext.Provider>;

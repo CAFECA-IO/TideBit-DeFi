@@ -21,7 +21,6 @@ interface IOpenPositionItemProps {
   value: number;
   profitOrLossAmount: number;
   tickerTrendArray: number[];
-  horizontalValueLine: number;
   openCfdDetails: IOpenCFDDetails;
   // circularClick?: () => void;
 }
@@ -34,7 +33,6 @@ const OpenPositionItem = ({
   passedHour,
   profitOrLossAmount,
   tickerTrendArray,
-  horizontalValueLine,
   openCfdDetails,
   // circularClick: circularClick,
   ...otherProps
@@ -165,7 +163,7 @@ const OpenPositionItem = ({
           strokeColor={[`${displayedColorHex}`]}
           dataArray={tickerTrendArray}
           lineGraphWidth={OPEN_POSITION_LINE_GRAPH_WIDTH}
-          annotatedValue={horizontalValueLine}
+          annotatedValue={tickerTrendArray[0]}
         />
 
         {/* <div className="absolute -top-5">

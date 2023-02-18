@@ -8,7 +8,7 @@ import {
   dummyUnReadNotifications,
   INotificationItem,
 } from '../interfaces/tidebit_defi_background/notification_item';
-import {Event} from '../constants/event';
+import {TideBitEvent} from '../constants/tidebit_event';
 
 export interface INotificationProvider {
   children: React.ReactNode;
@@ -44,7 +44,7 @@ export const NotificationProvider = ({children}: INotificationProvider) => {
   const [wallet, setWallet, walletRef] = useState<string | null>(userCtx.wallet);
 
   const isRead = async (id: string) => {
-    if (userCtx.isConnected) {
+    if (userCtx.enableServiceTerm) {
       const updateNotifications: INotificationItem[] = notificationsRef.current
         ? [...notificationsRef.current]
         : [];
@@ -63,7 +63,7 @@ export const NotificationProvider = ({children}: INotificationProvider) => {
   };
 
   const readAll = async () => {
-    if (userCtx.isConnected) {
+    if (userCtx.enableServiceTerm) {
       const updateNotifications: INotificationItem[] = notificationsRef.current
         ? notificationsRef.current.map(n => ({
             ...n,
@@ -98,7 +98,7 @@ export const NotificationProvider = ({children}: INotificationProvider) => {
         : [];
       let updateUnreadNotifications: INotificationItem[] = [];
       // Event: Login
-      if (userCtx.isConnected) {
+      if (userCtx.enableServiceTerm) {
         const dummyPrivateNotification = createDummyPrivateNotificationItem(
           userCtx.wallet,
           `this is from useEffect`

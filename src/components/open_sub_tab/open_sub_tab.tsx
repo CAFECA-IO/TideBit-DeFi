@@ -5,20 +5,6 @@ import {UserContext} from '../../contexts/user_context';
 
 const OpenSubTab = () => {
   const {openCFDs} = useContext(UserContext);
-  // const [openCFDs, setOpenCFDs] = useState<IOpenCFDDetails[]>([]);
-
-  // useEffect(() => {
-  //   console.log(
-  //     `OpenSubTab userCtx.openCFDs`,
-  //     userCtx.openCFDs,
-  //     `openCFDs`,
-  //     openCFDs,
-  //     openCFDs === userCtx.openCFDs
-  //   );
-  //   if (userCtx.openCFDs !== openCFDs) {
-  //     setOpenCFDs(openCFDs);
-  //   }
-  // }, userCtx.openCFDs);
 
   const openPositionList = openCFDs.map(cfd => {
     return (
@@ -32,7 +18,6 @@ const OpenSubTab = () => {
           passedHour={11}
           profitOrLossAmount={cfd.pnl.value}
           tickerTrendArray={cfd.positionLineGraph.dataArray}
-          horizontalValueLine={1230}
         />
         <div className="my-auto h-px w-full rounded bg-white/50"></div>
       </div>

@@ -79,9 +79,9 @@ const NavBarMobile = ({notificationNumber = 1}) => {
 
   const userCtx = useContext(UserContext);
 
-  const isDisplayedUserOverview = userCtx.isConnected ? <UserMobile /> : null;
+  const isDisplayedUserOverview = userCtx.enableServiceTerm ? <UserMobile /> : null;
 
-  const userOverviewDividerDesktop = userCtx.isConnected ? (
+  const userOverviewDividerDesktop = userCtx.enableServiceTerm ? (
     <span className="mx-2 inline-block h-10 w-px rounded bg-lightGray1/50"></span>
   ) : null;
 

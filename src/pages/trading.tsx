@@ -7,15 +7,23 @@ import OrderSection from '../components/order_section/order_section';
 import TradePageBody from '../components/trade_page_body/trade_page_body';
 import {MarketContext, MarketProvider} from '../contexts/market_context';
 import {UserContext, UserProvider} from '../contexts/user_context';
-import {useContext} from 'react';
 import {GlobalContext, useGlobal} from '../contexts/global_context';
 import NavBarMobile from '../components/nav_bar_mobile/nav_bar_mobile';
+import {useContext, useEffect} from 'react';
+import {AppContext} from '../contexts/app_context';
 
 const Trading = () => {
   const {layoutAssertion} = useGlobal();
   const displayedNavBar = layoutAssertion === 'mobile' ? <NavBarMobile /> : <NavBar />;
+  const appCtx = useContext(AppContext);
 
-  return (
+  useEffect(() => {
+    if (!appCtx.isInit) {
+      appCtx.init();
+    }
+  }, []);
+
+  return appCtx.isInit ? (
     <>
       <Head>
         <title>Trading - TideBit DeFi</title>
@@ -33,6 +41,8 @@ const Trading = () => {
       {/* </UserProvider> */}
       {/* </MarketProvider> */}
     </>
+  ) : (
+    <div>Loading...</div>
   );
 };
 

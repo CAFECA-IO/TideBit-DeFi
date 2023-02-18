@@ -284,8 +284,8 @@ export interface ITransferOptions {
 }
 
 export interface IMarketContext {
-  selectedTicker: ITickerData;
-  availableTickers: ITickerData[];
+  selectedTicker: ITickerData | null;
+  availableTickers: ITickerData[] | null;
   isCFDTradable: boolean;
   showPositionOnChart: boolean;
   showPositionOnChartHandler: (bool: boolean) => void;
@@ -295,7 +295,7 @@ export interface IMarketContext {
   availableTransferOptions: ITransferOptions[];
   tickerStatic: ITickerStatic | null;
   tickerLiveStatistics: ITickerLiveStatistics | null;
-  candlestickChartData: ICandlestickData[];
+  candlestickChartData: ICandlestickData[] | null;
   listAvailableTickers: () => ITickerData[];
   listDepositCryptocurrencies: () => ICryptocurrency[];
   listWithdrawCryptocurrencies: () => ICryptocurrency[];
@@ -304,6 +304,7 @@ export interface IMarketContext {
     tickerId: string;
     timeSpan: ITimeSpanUnion;
   }) => Promise<ICandlestickData[]>; // x 100
+  init: () => Promise<void>;
 }
 // TODO: Note: _app.tsx 啟動的時候 => createContext
 export const MarketContext = createContext<IMarketContext>({
@@ -331,6 +332,7 @@ export const MarketContext = createContext<IMarketContext>({
   selectTickerHandler: (props: string) => dummyResultSuccess,
   getCandlestickChartData: (props: {tickerId: string; timeSpan: ITimeSpanUnion}) =>
     Promise.resolve<ICandlestickData[]>([]),
+  init: () => Promise.resolve(),
 });
 
 const availableTransferOptions = [
@@ -358,15 +360,14 @@ const availableTransferOptions = [
 export const MarketProvider = ({children}: IMarketProvider) => {
   const userCtx = useContext(UserContext);
   const [wallet, setWallet, walletRef] = useState<string | null>(userCtx.wallet);
-  const [selectedTicker, setSelectedTicker, selectedTickerRef] = useState<ITickerData>(dummyTicker);
-  const [tickerStatic, setTickerStatic] = useState<ITickerStatic>(dummyTickerStatic);
-  const [tickerLiveStatistics, setTickerLiveStatistics] =
-    useState<ITickerLiveStatistics>(dummyTickerLiveStatistics);
-  const [candlestickChartData, setCandlestickChartData] = useState<ICandlestickData[]>(
-    getDummyCandlestickChartData()
+  const [selectedTicker, setSelectedTicker, selectedTickerRef] = useState<ITickerData | null>(null);
+  const [tickerStatic, setTickerStatic] = useState<ITickerStatic | null>(null);
+  const [tickerLiveStatistics, setTickerLiveStatistics] = useState<ITickerLiveStatistics | null>(
+    null
   );
-  const [availableTickers, setAvailableTickers] = useState<ITickerData[]>([...dummyTickers]);
-  const [isCFDTradable, setIsCFDTradable] = useState<boolean>(true);
+  const [candlestickChartData, setCandlestickChartData] = useState<ICandlestickData[] | null>(null);
+  const [availableTickers, setAvailableTickers] = useState<ITickerData[] | null>(null);
+  const [isCFDTradable, setIsCFDTradable] = useState<boolean>(false);
   const [candlestickId, setCandlestickId] = useState<string>('');
 
   const [transferOptions, setTransferOptions] =
@@ -441,12 +442,23 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     if (userCtx.wallet !== walletRef.current) {
       setWallet(userCtx.wallet);
       // Event: Login
-      if (userCtx.enableServiceTerm) {
+      if (userCtx.enableServiceTerm && selectedTickerRef.current) {
         userCtx.listOpenCFDs(selectedTickerRef.current.currency);
         userCtx.listClosedCFDs(selectedTickerRef.current.currency);
       }
     }
   }, [userCtx.wallet]);
+
+  const init = async () => {
+    // console.log(`MarketProvider init is called`);
+    setSelectedTicker(dummyTicker);
+    setAvailableTickers([...dummyTickers]);
+    setCandlestickChartData(getDummyCandlestickChartData());
+    setTickerLiveStatistics(dummyTickerLiveStatistics);
+    setTickerStatic(dummyTickerStatic);
+    setIsCFDTradable(true);
+    return await Promise.resolve();
+  };
 
   const defaultValue = {
     selectedTicker,
@@ -466,6 +478,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     listDepositCryptocurrencies,
     listWithdrawCryptocurrencies,
     getCandlestickChartData,
+    init,
   };
 
   return <MarketContext.Provider value={defaultValue}>{children}</MarketContext.Provider>;

@@ -15,34 +15,39 @@ export interface INotificationProvider {
 }
 
 export interface INotificationContext {
-  notifications: INotificationItem[];
-  unreadNotifications: INotificationItem[];
+  notifications: INotificationItem[] | null;
+  unreadNotifications: INotificationItem[] | null;
   isRead: (id: string) => Promise<void>;
   readAll: () => Promise<void>;
   init: () => Promise<void>;
-  reset: () => Promise<void>;
+  reset: () => void;
 }
 
 export const NotificationContext = createContext<INotificationContext>({
-  notifications: [],
-  unreadNotifications: [],
+  notifications: null,
+  unreadNotifications: null,
   isRead: (id: string) => Promise.resolve(),
   readAll: () => Promise.resolve(),
   init: () => Promise.resolve(),
-  reset: () => Promise.resolve(),
+  reset: () => null,
 });
 
 export const NotificationProvider = ({children}: INotificationProvider) => {
   const marketCtx = useContext(MarketContext);
-  const [notifications, setNotifications] = useState<INotificationItem[]>(dummyNotifications);
-  const [unreadNotifications, setUnreadNotifications] =
-    useState<INotificationItem[]>(dummyUnReadNotifications);
+  const [notifications, setNotifications, notificationsRef] = useState<INotificationItem[] | null>(
+    null
+  );
+  const [unreadNotifications, setUnreadNotifications, unreadNotificationsRef] = useState<
+    INotificationItem[] | null
+  >(null);
   const userCtx = useContext(UserContext);
   const [wallet, setWallet, walletRef] = useState<string | null>(userCtx.wallet);
 
   const isRead = async (id: string) => {
     if (userCtx.enableServiceTerm) {
-      const updateNotifications: INotificationItem[] = [...notifications];
+      const updateNotifications: INotificationItem[] = notificationsRef.current
+        ? [...notificationsRef.current]
+        : [];
       const index = updateNotifications.findIndex(n => n.id === id);
       if (index !== -1) {
         updateNotifications[index] = {
@@ -59,10 +64,12 @@ export const NotificationProvider = ({children}: INotificationProvider) => {
 
   const readAll = async () => {
     if (userCtx.enableServiceTerm) {
-      const updateNotifications: INotificationItem[] = [...notifications].map(n => ({
-        ...n,
-        isRead: true,
-      }));
+      const updateNotifications: INotificationItem[] = notificationsRef.current
+        ? notificationsRef.current.map(n => ({
+            ...n,
+            isRead: true,
+          }))
+        : [];
       setNotifications(updateNotifications);
       setUnreadNotifications(updateNotifications.filter(n => !n.isRead));
       await userCtx.readNotifications(updateNotifications);
@@ -71,12 +78,13 @@ export const NotificationProvider = ({children}: INotificationProvider) => {
   };
 
   const init = async () => {
+    // console.log(`NotificationProvider init is called`);
     setNotifications(dummyNotifications);
     setUnreadNotifications(dummyUnReadNotifications);
-    return;
+    return await Promise.resolve();
   };
 
-  const reset = async () => {
+  const reset = () => {
     setNotifications([]);
     setUnreadNotifications([]);
     return;
@@ -85,7 +93,9 @@ export const NotificationProvider = ({children}: INotificationProvider) => {
   React.useEffect(() => {
     if (userCtx.wallet !== walletRef.current) {
       setWallet(userCtx.wallet);
-      let updateNotifications: INotificationItem[] = [...notifications];
+      let updateNotifications: INotificationItem[] = notificationsRef.current
+        ? [...notificationsRef.current]
+        : [];
       let updateUnreadNotifications: INotificationItem[] = [];
       // Event: Login
       if (userCtx.enableServiceTerm) {
@@ -105,7 +115,14 @@ export const NotificationProvider = ({children}: INotificationProvider) => {
     }
   }, [userCtx.wallet]);
 
-  const defaultValue = {notifications, unreadNotifications, isRead, readAll, init, reset};
+  const defaultValue = {
+    notifications: notificationsRef.current,
+    unreadNotifications: unreadNotificationsRef.current,
+    isRead,
+    readAll,
+    init,
+    reset,
+  };
 
   return (
     <NotificationContext.Provider value={defaultValue}>{children}</NotificationContext.Provider>

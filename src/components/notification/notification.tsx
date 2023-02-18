@@ -3,6 +3,7 @@ import Image from 'next/image';
 import {forwardRef, useContext} from 'react';
 import NotificationItem from '../notification_item/notification_item';
 import {NotificationContext} from '../../contexts/notification_context';
+// import {INotificationItem} from '../../interfaces/tidebit_defi_background/notification_item';
 
 interface INotificationProps {
   notifyRef: HTMLDivElement extends HTMLElement ? React.RefObject<HTMLDivElement> : null;
@@ -61,27 +62,26 @@ export default function Notification({
       id: 'n8',
     },
   ];
-  const NotificationList =
-    notificationCtx.unreadNotifications.length > 0 ? (
-      notificationCtx.unreadNotifications.map(v => {
-        return (
-          <div key={v.id}>
-            <NotificationItem
-              id={v.id}
-              title={v.title}
-              timestamp={v.timestamp}
-              duration={v.duration}
-              notificationLevel={v.notificationLevel}
-              isRead={v.isRead}
-              content={v.content}
-              public={v.public}
-            />
-          </div>
-        );
-      })
-    ) : (
-      <></>
-    );
+  const NotificationList = notificationCtx.unreadNotifications ? (
+    notificationCtx.unreadNotifications.map(v => {
+      return (
+        <div key={v.id}>
+          <NotificationItem
+            id={v.id}
+            title={v.title}
+            timestamp={v.timestamp}
+            duration={v.duration}
+            notificationLevel={v.notificationLevel}
+            isRead={v.isRead}
+            content={v.content}
+            public={v.public}
+          />
+        </div>
+      );
+    })
+  ) : (
+    <></>
+  );
 
   // const NotificationList = DUMMY_DATA.map(v => {
   //   return (

@@ -14,8 +14,8 @@ interface ITradingHeaderProps {
 const TradingHeader = ({upOrDown, tradingVolume}: ITradingHeaderProps) => {
   const marketCtx = useContext(MarketContext);
   if (
-    marketCtx.selectedTicker.upOrDown !== Trend.UP &&
-    marketCtx.selectedTicker.upOrDown !== Trend.DOWN
+    marketCtx.selectedTicker?.upOrDown !== Trend.UP &&
+    marketCtx.selectedTicker?.upOrDown !== Trend.DOWN
   )
     return <></>;
 
@@ -33,7 +33,7 @@ const TradingHeader = ({upOrDown, tradingVolume}: ITradingHeaderProps) => {
   };
 
   const priceShadowColor =
-    marketCtx.selectedTicker.upOrDown === Trend.UP ? 'priceUpShadow' : 'priceDownShadow';
+    marketCtx.selectedTicker?.upOrDown === Trend.UP ? 'priceUpShadow' : 'priceDownShadow';
 
   // const displayedTickerBox = showTickerSelector ? <TickerSelectorModal /> : null;
 
@@ -96,7 +96,7 @@ const TradingHeader = ({upOrDown, tradingVolume}: ITradingHeaderProps) => {
       </g>
     </svg>
   );
-  const ethTitle = <h1 className="text-3xl font-medium">{marketCtx.selectedTicker.currency}</h1>;
+  const ethTitle = <h1 className="text-3xl font-medium">{marketCtx.selectedTicker?.currency}</h1>;
 
   const ethHeader = (
     <>
@@ -110,8 +110,8 @@ const TradingHeader = ({upOrDown, tradingVolume}: ITradingHeaderProps) => {
           >
             <span className="relative h-40px w-40px">
               <img
-                src={marketCtx.selectedTicker.tokenImg}
-                alt={marketCtx.selectedTicker.currency}
+                src={marketCtx.selectedTicker?.tokenImg}
+                alt={marketCtx.selectedTicker?.currency}
               />
             </span>
             {ethTitle}
@@ -130,20 +130,20 @@ const TradingHeader = ({upOrDown, tradingVolume}: ITradingHeaderProps) => {
         >
           <div className="text-3xl">
             <span className="">
-              {marketCtx.selectedTicker.price.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}
+              {marketCtx.selectedTicker?.price.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}
             </span>
           </div>
           <div className="text-lg">{`${
-            marketCtx.selectedTicker.upOrDown === Trend.UP ? '▴' : '▾'
-          } $${marketCtx.selectedTicker.priceChange} (${
-            marketCtx.selectedTicker.upOrDown === Trend.UP ? '+' : '-'
-          }${marketCtx.selectedTicker.fluctuating}%)`}</div>
+            marketCtx.selectedTicker?.upOrDown === Trend.UP ? '▴' : '▾'
+          } $${marketCtx.selectedTicker?.priceChange} (${
+            marketCtx.selectedTicker?.upOrDown === Trend.UP ? '+' : '-'
+          }${marketCtx.selectedTicker?.fluctuating}%)`}</div>
         </div>
 
         {/* Trading volume */}
         <div className="relative">
           <div className="absolute -right-48 top-10 w-300px text-sm text-lightWhite/60 lg:left-0">
-            24h Volume {marketCtx.selectedTicker.tradingVolume} USDT
+            24h Volume {marketCtx.selectedTicker?.tradingVolume} USDT
           </div>
         </div>
       </div>

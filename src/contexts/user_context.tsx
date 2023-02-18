@@ -151,6 +151,7 @@ export interface IUserContext {
   connectTideBit: (email: string, password: string) => Promise<boolean>;
   shareTradeRecord: (tradeId: string) => Promise<boolean>;
   readNotifications: (notifications: INotificationItem[]) => Promise<void>;
+  init: () => Promise<void>;
 }
 
 export const UserContext = createContext<IUserContext>({
@@ -199,6 +200,7 @@ export const UserContext = createContext<IUserContext>({
   connectTideBit: (email: string, password: string) => Promise.resolve<boolean>(true),
   shareTradeRecord: (tradeId: string) => Promise.resolve<boolean>(true),
   readNotifications: (notifications: INotificationItem[]) => Promise.resolve(),
+  init: () => Promise.resolve(),
 });
 
 export const UserProvider = ({children}: IUserProvider) => {
@@ -460,7 +462,13 @@ export const UserProvider = ({children}: IUserProvider) => {
   const shareTradeRecord = async (tradeId: string) => Promise.resolve<boolean>(true);
   const readNotifications = async (notifications: INotificationItem[]) => Promise.resolve();
 
+  const init = async () => {
+    // console.log(`UserProvider init is called`);
+    return await Promise.resolve();
+  };
+
   const defaultValue = {
+    init,
     id: idRef.current,
     username: usernameRef.current,
     wallet: walletRef.current,

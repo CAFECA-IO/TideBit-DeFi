@@ -2,22 +2,24 @@ import React, {useContext, useState} from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import I18n from '../i18n/i18n';
-import WalletPanel from '../wallet/wallet_panel';
 import Notification from '../notification/notification';
 import useOuterClick from '../../lib/hooks/use_outer_click';
 import {UserContext} from '../../contexts/user_context';
 import {useTranslation} from 'next-i18next';
 import UserMobile from '../user_mobile/user_mobile';
+import {useGlobal} from '../../contexts/global_context';
+import TideButton from '../tide_button/tide_button';
 
 type TranslateFunction = (s: string) => string;
 
 const NavBarMobile = ({notificationNumber = 1}) => {
+  const userCtx = useContext(UserContext);
+  const globalCtx = useGlobal();
+
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
   const [navOpen, setNavOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-
-  const [userOverview, setUserOverview] = useState(false);
 
   //lang sub menu
   const [langIsOpen, setLangIsOpen] = useState(false);
@@ -31,6 +33,18 @@ const NavBarMobile = ({notificationNumber = 1}) => {
     setComponentVisible,
   } = useOuterClick<HTMLDivElement>(false);
 
+  // // TODO: move to Global COntext
+  // const [panelVisible, setPanelVisible] = useState(false);
+
+  // const panelClickHandler = () => {
+  //   setPanelVisible(!panelVisible);
+  // };
+
+  const wallectConnectBtnClickHandler = () => {
+    // setNavOpen(!navOpen);
+    globalCtx.visibleWalletPanelHandler();
+  };
+
   const clickHanlder = () => {
     if (langIsOpen) {
       setLangIsOpen(false);
@@ -43,10 +57,6 @@ const NavBarMobile = ({notificationNumber = 1}) => {
     setSidebarOpen(!sidebarOpen);
     setComponentVisible(!componentVisible);
     //console.log('sidebarOpenHandler clicked, componentVisible: ', componentVisible);
-  };
-
-  const getUserLoginHandler = (bool: boolean) => {
-    setUserOverview(bool);
   };
 
   const hamburgerStyles =
@@ -64,7 +74,7 @@ const NavBarMobile = ({notificationNumber = 1}) => {
     ? 'translate-y-3'
     : 'translate-y-0 origin-left w-3/4 rotate-35';
 
-  const isDisplayedMobileNavBar = navOpen ? 'top-16 min-h-screen inset-0 bg-darkGray/100' : '';
+  const isDisplayedMobileNavBar = navOpen ? 'top-14 min-h-screen inset-0 bg-darkGray/100' : '';
   // componentVisible ? 'animate-fadeIn' : 'animate-fadeOut';
 
   const isDisplayedNotificationSidebarMobileCover = (
@@ -77,13 +87,33 @@ const NavBarMobile = ({notificationNumber = 1}) => {
     </div>
   );
 
-  const userCtx = useContext(UserContext);
+  const isDisplayedUserOverview = userCtx.enableServiceTerm ? (
+    <UserMobile />
+  ) : (
+    navOpen && (
+      <TideButton
+        onClick={wallectConnectBtnClickHandler} // show wallet panel
+        className={`mt-4 rounded border-0 bg-tidebitTheme py-2 px-5 text-base text-white transition-all hover:opacity-90 md:mt-0`}
+      >
+        {/* Wallet Connect */}
+        {t('nav_bar.WalletConnect')}
+      </TideButton>
+    )
+  );
 
-  const isDisplayedUserOverview = userCtx.enableServiceTerm ? <UserMobile /> : null;
+  const isDisplayedUser = userCtx.enableServiceTerm ? (
+    <UserMobile />
+  ) : (
+    <TideButton
+      onClick={wallectConnectBtnClickHandler} // show wallet panel
+      className={`rounded border-0 bg-tidebitTheme py-2 px-3 text-sm text-white transition-all hover:opacity-90`}
+    >
+      {/* Wallet Connect */}
+      {t('nav_bar.WalletConnect')}
+    </TideButton>
+  );
 
-  const userOverviewDividerDesktop = userCtx.enableServiceTerm ? (
-    <span className="mx-2 inline-block h-10 w-px rounded bg-lightGray1/50"></span>
-  ) : null;
+  const dividerInsideMobileNavBar = navOpen && `inline-block h-px w-11/12 rounded bg-lightGray`;
 
   return (
     <>
@@ -122,7 +152,12 @@ const NavBarMobile = ({notificationNumber = 1}) => {
             </div>
 
             <div className="invisible ml-auto lg:visible">
-              <WalletPanel className="flex:auto" getUserLoginState={getUserLoginHandler} />
+              {/* <WalletPanel
+                panelVisible={panelVisible}
+                panelClickHandler={panelClickHandler}
+                // getUserLoginState={getUserLoginHandler}
+                className="flex:auto"
+              /> */}
             </div>
           </div>
         </div>
@@ -135,7 +170,7 @@ const NavBarMobile = ({notificationNumber = 1}) => {
           {isDisplayedNotificationSidebarMobileCover}
 
           {/* Mobile menu section */}
-          <div className="flex h-screen flex-col items-center justify-start px-2 pt-10 pb-3 text-base sm:px-3">
+          <div className="flex h-screen flex-col items-center justify-start px-2 pt-8 pb-24 text-base sm:px-3">
             <div className="flex h-full w-screen flex-col items-center justify-between">
               <div className="flex items-center justify-start px-3 pt-3">
                 <Link className="shrink-0" href="/">
@@ -153,36 +188,42 @@ const NavBarMobile = ({notificationNumber = 1}) => {
                 </Link>
               </div>
               <div className="flex items-center justify-start px-3">
-                <Link href="/trading" className={menuItemStyles}>
-                  {t('nav_bar.Trading')}
+                <Link href="/trade/cfd/ethusdt" className={menuItemStyles}>
+                  {t('nav_bar.Trade')}
                 </Link>
               </div>
-
               <div className="flex items-center justify-start px-3">
                 <Link href="#" className={menuItemStyles}>
-                  {t('nav_bar.TideBitUniversity')}
+                  {t('nav_bar.Leaderboard')}
                 </Link>
               </div>
-
               <div className="flex items-center justify-start px-3">
                 <Link href="#" className={menuItemStyles}>
-                  {t('nav_bar.HelpCenter')}
+                  {t('nav_bar.Support')}
                 </Link>
               </div>
-
               <div className="flex items-center justify-start px-3">
                 <div className="px-3 py-2">
                   <I18n langIsOpen={langIsOpen} setLangIsOpen={setLangIsOpen} />
                 </div>
+                <span className="inline-block h-px w-11/12 rounded bg-cuteBlue"></span>
                 {/* <TbMinusVertical size={30} className="" /> */}
               </div>
+              {/* <div className="border-b border-cuteBlue"></div> */}
+              <span className={`${dividerInsideMobileNavBar}`}></span>
+              <div className="flex items-center justify-start px-3 pb-3">
+                {isDisplayedUserOverview}
+              </div>
 
-              <span className="inline-block h-px w-11/12 rounded bg-lightGray4"></span>
-              <WalletPanel className="ml-2" getUserLoginState={getUserLoginHandler} />
+              {/* <WalletPanel
+                className="ml-2"
+                panelVisible={panelVisible}
+                panelClickHandler={panelClickHandler}
+                // getUserLoginState={getUserLoginHandler}
+              />{' '} */}
             </div>
-
-            {isDisplayedUserOverview}
           </div>
+          <div className="mb-2 flex w-full justify-end pr-10">{isDisplayedUser}</div>
         </div>
       </div>
 

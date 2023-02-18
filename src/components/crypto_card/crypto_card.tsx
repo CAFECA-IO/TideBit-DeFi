@@ -1,9 +1,9 @@
 // import LineGraph from '../line_graph/line_graph';
 import {BsStar, BsStarFill} from 'react-icons/bs';
-import {useContext, useState} from 'react';
+import React, {useContext, useState} from 'react';
 import dynamic from 'next/dynamic';
 import {ApexOptions} from 'apexcharts';
-import {PROFIT_LOSS_COLOR_TYPE} from '../../constants/display';
+import {PROFIT_LOSS_COLOR_TYPE, UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
 import {UserContext, IUserContext} from '../../contexts/user_context';
 import {MarketContext} from '../../contexts/market_context';
 // import {FaEthereum} from 'react-icons/fa';
@@ -42,6 +42,7 @@ export interface ICardProps {
   getStarredState?: (props: boolean) => void;
 
   className?: string;
+  cardClickHandler?: () => void;
   // lineGraphDataArray?: number[];
   // lineGraphStrokeColor?: string[];
   // lineGraphWidth?: string;
@@ -58,6 +59,7 @@ const CryptoCard = ({
   starred,
   starColor,
   lineGraphProps,
+  cardClickHandler,
   // lineGraphDataArray,
   // lineGraphStrokeColor,
   // lineGraphWidth,
@@ -70,7 +72,9 @@ const CryptoCard = ({
   fluctuating = Number(fluctuating);
   // console.log('fluctuating', fluctuating);
   const priceRise = fluctuating > 0 ? true : false;
-  const fluctuatingRate = priceRise ? `(+${fluctuating}%)▴` : `(${fluctuating}%)▾`;
+  const fluctuatingRate = priceRise
+    ? `(+${fluctuating.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}%)▴`
+    : `(${fluctuating.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}%)▾`;
   // TODO: input the data and price color change as props
   const priceColor = priceRise ? `text-lightGreen5` : `text-lightRed`;
   // let priceColor = '';
@@ -97,8 +101,11 @@ const CryptoCard = ({
   //   getStarredState(data);
   // };
 
-  const starClickHandler = () => {
+  const starClickHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation(); // Prevent the div click handler from firing
+
     // setStarFilled(!starFilled);
+
     if (!starred) {
       userCtx.addFavorites(currency);
     } else {
@@ -107,12 +114,8 @@ const CryptoCard = ({
   };
 
   const showStar = starred ? (
-    <button type="button" className="absolute top-2 right-3">
-      <BsStarFill
-        onClick={starClickHandler}
-        size={20}
-        className={`${starColor} hover:cursor-pointer`}
-      />
+    <button type="button" onClick={starClickHandler} className="absolute top-2 right-3">
+      <BsStarFill size={20} className={`${starColor} hover:cursor-pointer`} />
     </button>
   ) : star ? (
     <button
@@ -270,10 +273,14 @@ const CryptoCard = ({
 
   return (
     <>
-      {/* Desktop (width > 500px) version (Card 200x120) */}
+      {/* -----Desktop (width > 500px) version (Card 200x120)----- */}
       <div
-        className={`${desktopVersionBreakpoint} ${otherProps?.className} relative m-0 hidden h-120px w-200px rounded-2xl border-0.5px p-0 ${gradientColor} bg-black bg-gradient-to-b opacity-90 shadow-lg`}
-        onClick={() => marketCtx.selectTickerHandler(currency)}
+        // type="button"
+        className={`${desktopVersionBreakpoint} ${otherProps?.className} relative m-0 hidden h-120px w-200px rounded-2xl border-0.5px p-0 hover:cursor-pointer ${gradientColor} bg-black bg-gradient-to-b opacity-90 shadow-lg`}
+        onClick={() => {
+          marketCtx.selectTickerHandler(currency);
+          cardClickHandler && cardClickHandler();
+        }}
       >
         <div className="px-2 py-1">
           {/* token icon & chain & coin name */}
@@ -285,7 +292,15 @@ const CryptoCard = ({
               <p className="text-lg leading-6 text-lightWhite"> {chain}</p>
               <p className="text-sm text-lightWhite opacity-60">{currency}</p>
             </div>
-            <div className="">{showStar}</div>
+            <div
+              className=""
+              // No execution to the below function actually
+              // onClick={() => {
+              //   console.log('start clicked');
+              // }}
+            >
+              {showStar}
+            </div>
           </div>
 
           {/* line graph & price & fluctuating rate */}
@@ -319,7 +334,7 @@ const CryptoCard = ({
         </div>
       </div>
 
-      {/* Mobile (width < 500px) version (Card 134x81) */}
+      {/* -----Mobile (width < 500px) version (Card 134x81)----- */}
       <div
         className={`${mobileVersionBreakpoint} ${otherProps?.className} relative m-0 h-81px w-134px rounded-2xl border-0.5px p-0 ${gradientColor} bg-black bg-gradient-to-b opacity-90 shadow-lg`}
       >
@@ -357,7 +372,9 @@ const CryptoCard = ({
               <span
                 className={`flex items-center justify-between text-xs ${priceColor} mt-3 align-middle`}
               >
-                <p className="ml-0 mb-1 text-left text-xs font-normal tracking-wide">$ {price}</p>
+                <p className="ml-0 mb-1 text-left text-xs font-normal tracking-wide">
+                  $ {price.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}
+                </p>
                 <div className="absolute bottom-5px right-4 flex">
                   <span className="text-xxs"> {fluctuatingRate}</span>
                 </div>

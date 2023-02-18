@@ -3,7 +3,6 @@ import useWindowSize from '../lib/hooks/use_window_size';
 import {LAYOUT_BREAKPOINT} from '../constants/display';
 import {ToastContainer, toast as toastify} from 'react-toastify';
 import PositionDetailsModal from '../components/position_details_modal/position_details_modal';
-// import TransferProcessModal from '../components/transfer_process_modal/transfer_process_modal';
 import {MarketContext} from './market_context';
 import Toast from '../components/toast/toast';
 import LoadingModal from '../components/loading_modal/loading_modal';
@@ -16,6 +15,11 @@ import {
   IOpenCFDDetails,
   dummyOpenCFDDetails,
 } from '../interfaces/tidebit_defi_background/open_cfd_details';
+import WalletPanel from '../components/wallet_panel/wallet_panel';
+import QrcodeModal from '../components/qrcode_modal/qrcode_modal';
+import HelloModal from '../components/hello_modal/hello_modal';
+import SignatureProcessModal from '../components/signature_process_modal/signature_process_modal';
+import {UserContext} from './user_context';
 
 export interface IToastify {
   type: 'error' | 'warning' | 'info' | 'success';
@@ -51,6 +55,15 @@ export interface IDataFailedModal {
   btnUrl?: string;
   failedTitle: string;
   failedMsg: string;
+}
+
+export interface IDataSignatrueProcessModal {
+  requestSendingHandler: () => void;
+  firstStepSuccess: boolean;
+  firstStepError: boolean;
+  secondStepSuccess: boolean;
+  secondStepError: boolean;
+  loading: boolean;
 }
 
 const toastHandler = ({type, message, toastId}: IToastify) => {
@@ -94,6 +107,9 @@ export interface IGlobalContext {
   colorMode: ColorModeUnion;
   toggleColorMode: () => void;
   toast: (props: IToastify) => void;
+
+  eliminateAllModals: () => void;
+
   visiblePositionDetailsModal: boolean;
   visiblePositionDetailsModalHandler: () => void;
   dataPositionDetailsModal: IDataPositionDetailsModal | null;
@@ -107,6 +123,7 @@ export interface IGlobalContext {
 
   visibleLoadingModal: boolean;
   visibleLoadingModalHandler: () => void;
+  zoomOutLoadingModal: () => void;
   dataLoadingModal: IProcessDataModal | null;
   dataLoadingModalHandler: (data: IProcessDataModal) => void;
 
@@ -124,6 +141,15 @@ export interface IGlobalContext {
   visibleSuccessfulModalHandler: () => void;
   dataSuccessfulModal: IDataSuccessfulModal | null;
   dataSuccessfulModalHandler: (data: IDataSuccessfulModal) => void;
+
+  visibleWalletPanel: boolean;
+  visibleWalletPanelHandler: () => void;
+
+  visibleSignatureProcessModal: boolean;
+  visibleSignatureProcessModalHandler: () => void;
+
+  visibleHelloModal: boolean;
+  visibleHelloModalHandler: () => void;
 }
 
 export const GlobalContext = createContext<IGlobalContext>({
@@ -134,6 +160,8 @@ export const GlobalContext = createContext<IGlobalContext>({
   colorMode: '' as ColorModeUnion,
   toggleColorMode: () => null,
   toast: () => null,
+
+  eliminateAllModals: () => null,
 
   visiblePositionDetailsModal: false,
   visiblePositionDetailsModalHandler: () => null,
@@ -146,13 +174,9 @@ export const GlobalContext = createContext<IGlobalContext>({
   visibleWithdrawalModal: false,
   visibleWithdrawalModalHandler: () => null,
 
-  // visibleTransferProcessModal: false,
-  // visibleTransferProcessModalHandler: () => null,
-  // dataTransferProcessModal: null,
-  // dataTransferProcessModalHandler: () => null,
-
   visibleLoadingModal: false,
   visibleLoadingModalHandler: () => null,
+  zoomOutLoadingModal: () => null,
   dataLoadingModal: null,
   dataLoadingModalHandler: () => null,
 
@@ -170,11 +194,21 @@ export const GlobalContext = createContext<IGlobalContext>({
   visibleSuccessfulModalHandler: () => null,
   dataSuccessfulModal: null,
   dataSuccessfulModalHandler: () => null,
+
+  visibleWalletPanel: false,
+  visibleWalletPanelHandler: () => null,
+
+  visibleSignatureProcessModal: false,
+  visibleSignatureProcessModalHandler: () => null,
+
+  visibleHelloModal: false,
+  visibleHelloModalHandler: () => null,
 });
 
 const initialColorMode: ColorModeUnion = 'dark';
 
 export const GlobalProvider = ({children}: IGlobalProvider) => {
+  const userCtx = useContext(UserContext);
   const [colorMode, setColorMode] = useState<ColorModeUnion>(initialColorMode);
 
   const [visiblePositionDetailsModal, setVisiblePositionDetailsModal] = useState(false);
@@ -212,17 +246,24 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     modalContent: '',
   });
 
-  // ---------------TODO: To be removed------------------
+  const [visibleWalletPanel, setVisibleWalletPanel] = useState(false);
+  const [visibleHelloModal, setVisibleHelloModal] = useState(false);
+
+  const [visibleSignatureProcessModal, setVisibleSignatureProcessModal] = useState(false);
+  const [dataSignatureProcessModal, setDataSignatureProcessModal] =
+    useState<IDataSignatrueProcessModal | null>();
+
+  // ---------------TODO: To get the withdrawal / deposit result------------------
   const [depositProcess, setDepositProcess] = useState<
     'form' | 'loading' | 'success' | 'cancellation' | 'fail'
   >('form');
   const [withdrawProcess, setWithdrawProcess] = useState<
     'form' | 'loading' | 'success' | 'cancellation' | 'fail'
   >('form');
-  // ---------------TODO: To be removed------------------
 
   const [withdrawData, setWithdrawData] = useState<{asset: string; amount: number}>();
   const [depositData, setDepositData] = useState<{asset: string; amount: number}>();
+  // ---------------TODO: To get the withdrawal / deposit result------------------
 
   const windowSize = useWindowSize();
   const {width, height} = windowSize;
@@ -242,6 +283,20 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     toastHandler({type: type, message: message, toastId: toastId});
   };
 
+  const eliminateAllModals = () => {
+    // console.log('eliminateAllModals');
+    setVisiblePositionDetailsModal(false);
+    setVisibleDepositModal(false);
+    setVisibleWithdrawalModal(false);
+    setVisibleLoadingModal(false);
+    setVisibleFailedModal(false);
+    setVisibleCanceledModal(false);
+    setVisibleSuccessfulModal(false);
+    setVisibleWalletPanel(false);
+    setVisibleHelloModal(false);
+    setVisibleSignatureProcessModal(false);
+  };
+
   const visiblePositionDetailsModalHandler = () => {
     setVisiblePositionDetailsModal(!visiblePositionDetailsModal);
   };
@@ -257,8 +312,9 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     setVisibleWithdrawalModal(!visibleWithdrawalModal);
   };
 
-  const visibleLoadingModalHandler = () => {
-    setVisibleLoadingModal(!visibleLoadingModal);
+  const zoomOutLoadingModal = () => {
+    visibleLoadingModalHandler();
+
     if (visibleLoadingModal) {
       toast({
         type: 'info',
@@ -268,6 +324,17 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
       });
     }
   };
+
+  const visibleLoadingModalHandler = () => {
+    // if (bool) {
+    //   console.log('in global context, visibileLoadingModalHandler: ', bool);
+    //   setVisibleLoadingModal(bool);
+    //   return;
+    // }
+
+    setVisibleLoadingModal(!visibleLoadingModal);
+  };
+
   const dataLoadingModalHandler = (data: IProcessDataModal) => {
     setDataLoadingModal(data);
   };
@@ -294,6 +361,33 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
 
   const dataCanceledModalHandler = (data: IProcessDataModal) => {
     setDataCanceledModal(data);
+  };
+
+  const visibleWalletPanelHandler = () => {
+    setVisibleWalletPanel(!visibleWalletPanel);
+  };
+
+  const visibleSignatureProcessModalHandler = () => {
+    setVisibleSignatureProcessModal(!visibleSignatureProcessModal);
+  };
+
+  // const dataSignatureProcessModalHandler = (data?: IDataSignatrueProcessModal) => {
+  //   if (data) {
+  //     setDataSignatureProcessModal(data);
+  //   } else {
+  //     setDataSignatureProcessModal({
+  //       requestSendingHandler,
+  //       firstStepSuccess: userCtx.isConnected,
+  // firstStepError: !userCtx.isConnected,
+  // secondStepSuccess: userCtx.enableServiceTerm,
+  // secondStepError: !userCtx.enableServiceTerm,
+  // loading: userCtx.signServiceTerm,
+  //     });
+  //   }
+  // };
+
+  const visibleHelloModalHandler = () => {
+    setVisibleHelloModal(!visibleHelloModal);
   };
 
   const getWithdrawSubmissionState = (state: 'success' | 'cancellation' | 'fail') => {
@@ -332,14 +426,6 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     // }, 3000);
   };
 
-  // const positionDetailedModal = (
-  //   <PositionDetailsModal
-  //     openCfdDetails={openCfdDetails}
-  //     modalVisible={visiblePositionDetailsModal}
-  //     modalClickHandler={visiblePositionDetailsModalHandler}
-  //   />
-  // );
-
   const defaultValue = {
     width,
     height,
@@ -348,6 +434,8 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     colorMode,
     toggleColorMode,
     toast,
+
+    eliminateAllModals,
 
     visiblePositionDetailsModal,
     visiblePositionDetailsModalHandler,
@@ -362,6 +450,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
 
     visibleLoadingModal,
     visibleLoadingModalHandler,
+    zoomOutLoadingModal,
     dataLoadingModal,
     dataLoadingModalHandler,
 
@@ -379,11 +468,21 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     visibleCanceledModalHandler,
     dataCanceledModal,
     dataCanceledModalHandler,
+
+    visibleWalletPanel,
+    visibleWalletPanelHandler,
+
+    visibleSignatureProcessModal,
+    visibleSignatureProcessModalHandler,
+
+    visibleHelloModal,
+    visibleHelloModalHandler,
   };
   return (
     <GlobalContext.Provider value={defaultValue}>
       <LoadingModal
         modalVisible={visibleLoadingModal}
+        // zoomOutLoadingModal
         modalClickHandler={visibleLoadingModalHandler}
         modalTitle={dataLoadingModal.modalTitle}
         modalContent={dataLoadingModal.modalContent}
@@ -435,20 +534,26 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
         modalVisible={visiblePositionDetailsModal}
         modalClickHandler={visiblePositionDetailsModalHandler}
       />
-      {/* <TransferProcessModal
-        getTransferData={getWithdrawData}
-        // initialAmountInput={undefined}
-        submitHandler={withdrawSubmitHandler}
-        // transferOptions={availableTransferOptions}
-        getSubmissionState={getWithdrawSubmissionState}
-        transferType={dataTransferProcessModal.transferType}
-        transferStep={withdrawProcess}
-        // userAvailableBalance={123}
-        modalVisible={visibleWithdrawalModal}
-        modalClickHandler={visibleTransferProcessModalHandler}
-      /> */}
+      <WalletPanel
+        panelVisible={visibleWalletPanel}
+        panelClickHandler={visibleWalletPanelHandler}
+      />
+      <SignatureProcessModal
+        // requestSendingHandler={requestSendingHandler}
+        // firstStepSuccess={firstStepSuccess}
+        // firstStepError={firstStepError}
+        // secondStepSuccess={secondStepSuccess}
+        // secondStepError={secondStepError}
+        // loading={loading}
+        processModalVisible={visibleSignatureProcessModal}
+        processClickHandler={visibleSignatureProcessModalHandler}
+      />
+      <HelloModal
+        helloModalVisible={visibleHelloModal}
+        helloClickHandler={visibleHelloModalHandler}
+      />
 
-      {/* One toast container avoids duplicating toast overlaying */}
+      {/* One toast container avoids duplicate toast overlaying */}
       <Toast />
       {children}
     </GlobalContext.Provider>
@@ -461,5 +566,18 @@ export const useGlobal = () => {
   // if (context === undefined) {
   //   throw new Error('useGlobal must be used within a GlobalProvider');
   // }
+
+  // TODO: Debug tool
+  const g: any =
+    typeof globalThis === 'object'
+      ? globalThis
+      : typeof window === 'object'
+      ? window
+      : typeof global === 'object'
+      ? global
+      : null; // Causes an error on the next line
+
+  g.globalContext = context;
+
   return context;
 };

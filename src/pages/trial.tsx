@@ -1,21 +1,10 @@
 import useOuterClick from '../lib/hooks/use_outer_click';
 // import HorizontalRelativeLineGraph from '../components/horizontal_relative_line_graph/horizontal_relative_line_graph';
-import PositionLineGraph from '../components/position_line_graph/position_line_graph';
-import RippleButton from '../components/ripple_button/ripple_button';
-import TradingLineGraphChart from '../components/trading_line_graph_chart/trading_line_graph_chart';
 import {ToastContainer, toast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import {CRYPTO_CARD_COLORS} from '../constants/display';
+
 import {useContext, useEffect, useState} from 'react';
-import {MarketContext} from '../contexts/market_context';
-import PositionOpenModal from '../components/position_open_modal/position_open_modal';
-import PositionDetailsModal from '../components/position_details_modal/position_details_modal';
-import LoadingModal from '../components/loading_modal/loading_modal';
-import FailedModal from '../components/failed_modal/failed_modal';
-import CanceledModal from '../components/canceled_modal/canceled_modal';
-import SuccessfulModal from '../components/successful_modal/successful_modal';
-import DepositModal from '../components/deposit_modal/deposit_modal';
-import WithdrawalModal from '../components/withdrawal_modal/withdrawal_modal';
+
 import {useGlobal} from '../contexts/global_context';
 import {dummyOpenCFDDetails} from '../interfaces/tidebit_defi_background/open_cfd_details';
 import PositionClosedModal from '../components/position_closed_modal/position_closed_modal';

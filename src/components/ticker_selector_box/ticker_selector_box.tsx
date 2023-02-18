@@ -16,10 +16,6 @@ interface ITickerSelectorBox {
   tickerSelectorBoxClickHandler: () => void;
 }
 
-// type ICryptoCardData = {
-//   [key: string]: boolean | Horse;
-// };
-
 interface ICryptoCardData {
   currency: string;
   chain: string;
@@ -36,33 +32,11 @@ interface ICryptoCardData {
   gradientColor?: string;
 }
 
-interface ICryptoCardDataArray {
-  [index: number]: ICryptoCardData;
-}
-
-interface IToastType {
-  // type: 'info' | 'success' | 'warning' | 'error' | 'default';
-  message: string;
-}
-
 const TickerSelectorBox = ({
   tickerSelectorBoxRef: tickerSelectorBoxRef,
   tickerSelectorBoxVisible: tickerSelectorBoxVisible,
   tickerSelectorBoxClickHandler: tickerSelectorBoxClickHandler,
 }: ITickerSelectorBox) => {
-  const emitToast = ({message}: IToastType) => {
-    return toast.info(`${message}`, {
-      position: 'bottom-left',
-      autoClose: 3000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: false,
-      progress: undefined,
-      theme: 'dark',
-    });
-  };
-
   const marketCtx = useContext<IMarketContext>(MarketContext);
   const userCtx = useContext(UserContext) as IUserContext;
 
@@ -133,7 +107,7 @@ const TickerSelectorBox = ({
 
   // const favoriteTabCardsData = cryptoCardsData.filter(cryptoCardData => cryptoCardData.starred);
 
-  const [favoritesSearches, setFavoritesSearches] = useState<string>();
+  // const [favoritesSearches, setFavoritesSearches] = useState<string>();
 
   const [filteredFavorites, setFilteredFavorites] = useState<ICryptoCardData[] | undefined>(
     undefined
@@ -141,7 +115,6 @@ const TickerSelectorBox = ({
 
   const [searches, setSearches] = useState<string>();
 
-  // TODO: fix trial
   const [filteredCards, setFilteredCards] = useState<ICryptoCardData[]>([]);
 
   // const [filteredCards, setFilteredCards] = useState<ICryptoCardData[] | null>(cryptoCardsData);
@@ -166,7 +139,6 @@ const TickerSelectorBox = ({
     setFilteredFavorites(favoriteTabCardsData);
   }, [userCtx.favoriteTickers]);
 
-  // 搜尋完後關掉 ticker box 會顯示剛剛的搜尋結果但是input是空的 => input value={searches}
   useEffect(() => {
     const cryptoCardsData = convertTickersToCryptoCardsData(marketCtx.listAvailableTickers());
     if (activeTab === 'All') {
@@ -193,7 +165,6 @@ const TickerSelectorBox = ({
 
   const allTabClickHandler = () => {
     setActiveTab('All');
-    // emitToast({message: 'all tab clicked'});
   };
 
   const favoriteTabClickHandler = () => {
@@ -232,6 +203,9 @@ const TickerSelectorBox = ({
         return (
           <CryptoCard
             key={cryptoCard.currency}
+            cardClickHandler={() => {
+              tickerSelectorBoxClickHandler();
+            }}
             className="mt-4 ml-4"
             lineGraphProps={cryptoCard.lineGraphProps}
             star={cryptoCard.star}
@@ -251,6 +225,9 @@ const TickerSelectorBox = ({
       return (
         <CryptoCard
           key={cryptoCard.currency}
+          cardClickHandler={() => {
+            tickerSelectorBoxClickHandler();
+          }}
           className="mt-0"
           lineGraphProps={cryptoCard.lineGraphProps}
           star={cryptoCard.star}
@@ -273,6 +250,9 @@ const TickerSelectorBox = ({
       return (
         <CryptoCard
           key={cryptoCard.currency}
+          cardClickHandler={() => {
+            tickerSelectorBoxClickHandler();
+          }}
           className="mt-4 ml-4"
           lineGraphProps={cryptoCard.lineGraphProps}
           star={cryptoCard.star}
@@ -292,6 +272,9 @@ const TickerSelectorBox = ({
     return (
       <CryptoCard
         key={cryptoCard.currency}
+        cardClickHandler={() => {
+          tickerSelectorBoxClickHandler();
+        }}
         className="mt-0"
         lineGraphProps={cryptoCard.lineGraphProps}
         star={cryptoCard.star}
@@ -414,24 +397,7 @@ const TickerSelectorBox = ({
     </>
   ) : null;
 
-  return (
-    <div>
-      {isDisplayedTickerSelectorBox}
-      {/* <ToastContainer
-          position="bottom-left"
-          autoClose={3000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable={false}
-          pauseOnHover
-          theme="dark"
-          limit={10}
-        /> */}
-    </div>
-  );
+  return <div>{isDisplayedTickerSelectorBox}</div>;
 };
 
 export default TickerSelectorBox;

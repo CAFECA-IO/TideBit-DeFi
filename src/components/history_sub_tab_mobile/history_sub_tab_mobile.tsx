@@ -1,19 +1,21 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import HistoryPositionItem from '../history_position_item/history_position_item';
+import {UserContext} from '../../contexts/user_context';
 
 const HistorySubTabMobile = () => {
-  const historyPositionList = (
-    <div>
+  const userCtx = useContext(UserContext);
+  const historyPositionList = userCtx.closedCFDs.map(cfd => (
+    <div key={cfd.id}>
       <HistoryPositionItem
-        profitOrLoss="loss"
+        profitOrLoss={cfd.pnl.type}
         longOrShort="long"
-        openValue={639.9}
-        closeValue={638.3}
-        ticker="ETH"
-        profitOrLossAmount={34.9}
+        openValue={cfd.openValue}
+        closeValue={cfd.closedValue}
+        ticker={cfd.ticker}
+        profitOrLossAmount={cfd.pnl.value}
       />
     </div>
-  );
+  ));
 
   return (
     <>

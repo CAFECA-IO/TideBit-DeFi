@@ -7,6 +7,7 @@ import {MarketProvider} from '../contexts/market_context';
 import {UserProvider} from '../contexts/user_context';
 import {GlobalProvider} from '../contexts/global_context';
 import {NotificationProvider} from '../contexts/notification_context';
+import {AppProvider} from '../contexts/app_context';
 
 function App({Component, pageProps}: AppProps) {
   return (
@@ -16,7 +17,9 @@ function App({Component, pageProps}: AppProps) {
           <MarketProvider>
             <GlobalProvider>
               <NotificationProvider>
-                <Component {...pageProps} />
+                <AppProvider>
+                  <Component {...pageProps} />
+                </AppProvider>
               </NotificationProvider>
             </GlobalProvider>
           </MarketProvider>

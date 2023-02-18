@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import {INotificationLevel, NotificationLevel} from '../../constants/notification_level';
 export interface INotificationItem {
   id: string;
@@ -8,6 +7,7 @@ export interface INotificationItem {
   duration: [number, number];
   notificationLevel: INotificationLevel;
   isRead: boolean;
+  public: boolean;
 }
 
 export const dummyNotificationItem: INotificationItem = {
@@ -24,6 +24,24 @@ export const dummyNotificationItem: INotificationItem = {
   ],
   notificationLevel: NotificationLevel.INFO,
   isRead: false,
+  public: true,
+};
+
+export const createDummyPrivateNotificationItem = (userId: string | null, greetings: string) => {
+  const dummyNotificationItem: INotificationItem = {
+    id: (Math.random() * 100).toFixed(0),
+    title: `Hi ${userId}, this is private notification`,
+    content: `Good Day, ${greetings}`,
+    timestamp: Math.floor(Date.now() / 1000),
+    duration: [
+      Math.floor(new Date('2023-01-01').getTime() / 1000),
+      Math.floor(new Date('2023-03-31').getTime() / 1000),
+    ],
+    notificationLevel: NotificationLevel.INFO,
+    isRead: false,
+    public: false,
+  };
+  return dummyNotificationItem;
 };
 
 export const getDummyNotifications = (numbers: number) => {
@@ -43,6 +61,7 @@ export const getDummyNotifications = (numbers: number) => {
       ],
       notificationLevel: NotificationLevel.INFO,
       isRead: false,
+      public: true,
     };
     dummyNotificationItems.push(dummyNotificationItem);
   }
@@ -50,7 +69,7 @@ export const getDummyNotifications = (numbers: number) => {
   return dummyNotificationItems;
 };
 
-export const dummyNotifications: INotificationItem[] = getDummyNotifications(3);
+export const dummyNotifications: INotificationItem[] = getDummyNotifications(1);
 
 export const dummyUnReadNotifications: INotificationItem[] = dummyNotifications.filter(
   n => !n.isRead

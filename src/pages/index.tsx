@@ -5,15 +5,24 @@ import Head from 'next/head';
 import NavBar from '../components/nav_bar/nav_bar';
 import HeroDescription from '../components/hero_description/hero_description';
 import {MarketProvider} from '../contexts/market_context';
-import {useContext} from 'react';
+import {useContext, useEffect} from 'react';
 import {GlobalContext, GlobalProvider, useGlobal} from '../contexts/global_context';
 import NavBarMobile from '../components/nav_bar_mobile/nav_bar_mobile';
+import {AppContext} from '../contexts/app_context';
 
 const Home = () => {
   const {layoutAssertion} = useGlobal();
   const displayedNavBar = layoutAssertion === 'mobile' ? <NavBarMobile /> : <NavBar />;
 
-  return (
+  const appCtx = useContext(AppContext);
+
+  useEffect(() => {
+    if (!appCtx.isInit) {
+      appCtx.init();
+    }
+  }, []);
+
+  return appCtx.isInit ? (
     <>
       <Head>
         <title>TideBit DeFi</title>
@@ -29,6 +38,8 @@ const Home = () => {
       </main>
       {/* </MarketProvider> */}
     </>
+  ) : (
+    <div>Loading...</div>
   );
 };
 

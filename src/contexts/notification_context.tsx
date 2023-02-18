@@ -41,31 +41,31 @@ export const NotificationProvider = ({children}: INotificationProvider) => {
   const [wallet, setWallet, walletRef] = useState<string | null>(userCtx.wallet);
 
   const isRead = async (id: string) => {
-    if (userCtx.isConnected) {
-      const updateNotificationts: INotificationItem[] = [...notifications];
-      const index = updateNotificationts.findIndex(n => n.id === id);
+    if (userCtx.enableServiceTerm) {
+      const updateNotifications: INotificationItem[] = [...notifications];
+      const index = updateNotifications.findIndex(n => n.id === id);
       if (index !== -1) {
-        updateNotificationts[index] = {
-          ...updateNotificationts[index],
+        updateNotifications[index] = {
+          ...updateNotifications[index],
           isRead: true,
         };
       }
-      setNotifications(updateNotificationts);
-      setUnreadNotifications(updateNotificationts.filter(n => !n.isRead));
-      await userCtx.readNotifications([updateNotificationts[index]]);
+      setNotifications(updateNotifications);
+      setUnreadNotifications(updateNotifications.filter(n => !n.isRead));
+      await userCtx.readNotifications([updateNotifications[index]]);
     }
     return;
   };
 
   const readAll = async () => {
-    if (userCtx.isConnected) {
-      const updateNotificaionts: INotificationItem[] = [...notifications].map(n => ({
+    if (userCtx.enableServiceTerm) {
+      const updateNotifications: INotificationItem[] = [...notifications].map(n => ({
         ...n,
         isRead: true,
       }));
-      setNotifications(updateNotificaionts);
-      setUnreadNotifications(updateNotificaionts.filter(n => !n.isRead));
-      await userCtx.readNotifications(updateNotificaionts);
+      setNotifications(updateNotifications);
+      setUnreadNotifications(updateNotifications.filter(n => !n.isRead));
+      await userCtx.readNotifications(updateNotifications);
     }
     return;
   };
@@ -88,7 +88,7 @@ export const NotificationProvider = ({children}: INotificationProvider) => {
       let updateNotifications: INotificationItem[] = [...notifications];
       let updateUnreadNotifications: INotificationItem[] = [];
       // Event: Login
-      if (userCtx.isConnected) {
+      if (userCtx.enableServiceTerm) {
         const dummyPrivateNotification = createDummyPrivateNotificationItem(
           userCtx.wallet,
           `this is from useEffect`

@@ -390,11 +390,11 @@ export const MarketProvider = ({children}: IMarketProvider) => {
 
   const updateAvailableTickers = () => {
     let updateTickers = [...dummyTickers];
-    if (userCtx.isConnected) {
+    if (userCtx.enableServiceTerm) {
       updateTickers = updateTickers.map(ticker => {
         return {
           ...ticker,
-          starred: userCtx.isConnected
+          starred: userCtx.enableServiceTerm
             ? userCtx.favoriteTickers.some(currency => currency === ticker.currency)
             : false,
         };
@@ -424,7 +424,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     setTickerLiveStatistics(tickerLiveStatistics);
     const candlestickChartData = getDummyCandlestickChartData();
     setCandlestickChartData(candlestickChartData);
-    if (userCtx.isConnected) {
+    if (userCtx.enableServiceTerm) {
       userCtx.listOpenCFDs(currency);
       userCtx.listClosedCFDs(currency);
     }
@@ -441,7 +441,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     if (userCtx.wallet !== walletRef.current) {
       setWallet(userCtx.wallet);
       // Event: Login
-      if (userCtx.isConnected) {
+      if (userCtx.enableServiceTerm) {
         userCtx.listOpenCFDs(selectedTickerRef.current.currency);
         userCtx.listClosedCFDs(selectedTickerRef.current.currency);
       }

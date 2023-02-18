@@ -76,7 +76,7 @@ const NavBar = () => {
 
   const userCtx = useContext(UserContext);
 
-  const isDisplayedUserOverview = userCtx.isConnected ? (
+  const isDisplayedUserOverview = userCtx.enableServiceTerm ? (
     <UserOverview
       depositAvailable={userCtx.balance?.available ?? 0}
       marginLocked={userCtx.balance?.locked ?? 0}
@@ -84,7 +84,7 @@ const NavBar = () => {
     />
   ) : null;
 
-  const userOverviewDividerDesktop = userCtx.isConnected ? (
+  const userOverviewDividerDesktop = userCtx.enableServiceTerm ? (
     <span className="mx-2 inline-block h-10 w-px rounded bg-lightGray1/50"></span>
   ) : null;
 

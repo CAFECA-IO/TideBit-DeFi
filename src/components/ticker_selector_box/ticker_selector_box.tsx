@@ -336,7 +336,7 @@ const TickerSelectorBox = ({
             All
           </button>
         </div>
-        {userCtx.isConnected ? (
+        {userCtx.enableServiceTerm ? (
           <div className="">
             <button
               type="button"

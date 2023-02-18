@@ -20,6 +20,9 @@ import QrcodeModal from '../components/qrcode_modal/qrcode_modal';
 import HelloModal from '../components/hello_modal/hello_modal';
 import SignatureProcessModal from '../components/signature_process_modal/signature_process_modal';
 import {UserContext} from './user_context';
+import PositionOpenModal from '../components/position_open_modal/position_open_modal';
+import PositionClosedModal from '../components/position_closed_modal/position_closed_modal';
+import PositionUpdatedModal from '../components/position_updated_modal/position_updated_modal';
 
 export interface IToastify {
   type: 'error' | 'warning' | 'info' | 'success';
@@ -212,6 +215,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
   const [colorMode, setColorMode] = useState<ColorModeUnion>(initialColorMode);
 
   const [visiblePositionDetailsModal, setVisiblePositionDetailsModal] = useState(false);
+  // TODO: replace dummy data with standard example data
   const [dataPositionDetailsModal, setDataPositionDetailsModal] =
     useState<IDataPositionDetailsModal>({openCfdDetails: dummyOpenCFDDetails});
 
@@ -252,6 +256,18 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
   const [visibleSignatureProcessModal, setVisibleSignatureProcessModal] = useState(false);
   const [dataSignatureProcessModal, setDataSignatureProcessModal] =
     useState<IDataSignatrueProcessModal | null>();
+
+  // const [visibleOpenPositionModal, setVisibleOpenPositionModal] = useState(false);
+  // const [dataOpenPositionModal, setDataOpenPositionModal] =
+  //   useState<IDataOpenPositionModal | null>();
+
+  // const [visibleClosePositionModal, setVisibleClosePositionModal] = useState(false);
+  // const [dataClosePositionModal, setDataClosePositionModal] =
+  //   useState<IDataClosePositionModal | null>();
+
+  // const [visibleUpdatePositionModal, setVisibleUpdatePositionModal] = useState(false);
+  // const [dataUpdatePositionModal, setDataUpdatePositionModal] =
+  //   useState<IDataUpdatePositionModal | null>();
 
   // ---------------TODO: To get the withdrawal / deposit result------------------
   const [depositProcess, setDepositProcess] = useState<
@@ -553,6 +569,10 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
         helloClickHandler={visibleHelloModalHandler}
       />
 
+      {/* <PositionOpenModal />
+      <PositionClosedModal />
+      <PositionUpdatedModal /> */}
+
       {/* One toast container avoids duplicate toast overlaying */}
       <Toast />
       {children}
@@ -567,7 +587,7 @@ export const useGlobal = () => {
   //   throw new Error('useGlobal must be used within a GlobalProvider');
   // }
 
-  // TODO: Debug tool
+  // TODO: Debug tool [to be removed]
   const g: any =
     typeof globalThis === 'object'
       ? globalThis

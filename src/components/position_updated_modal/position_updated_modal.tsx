@@ -9,19 +9,21 @@ import RippleButton from '../ripple_button/ripple_button';
 import Image from 'next/image';
 import {timestampToString} from '../../lib/common';
 
-interface IPositionOpenModal {
+interface IPositionUpdatedModal {
   modalVisible: boolean;
   modalClickHandler: () => void;
-  openCfdDetails: IOpenCFDDetails;
+  updatedCfdDetails: IOpenCFDDetails;
+
+  // updatedProps
 }
 
 // TODO: replace all hardcode options with variables
 const PositionUpdatedModal = ({
   modalVisible,
   modalClickHandler,
-  openCfdDetails,
+  updatedCfdDetails: openCfdDetails,
   ...otherProps
-}: IPositionOpenModal) => {
+}: IPositionUpdatedModal) => {
   // TODO: create order function
   const submitClickHandler = () => {
     modalClickHandler();

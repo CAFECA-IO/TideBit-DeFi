@@ -21,7 +21,7 @@ interface IOpenPositionItemProps {
   value: number;
   profitOrLossAmount: number;
   tickerTrendArray: number[];
-  openCfdDetails: IOpenCFDDetails;
+  openCfdDetails: IOpenCFDDetails; // TODO: 代替其他 props
   // circularClick?: () => void;
 }
 

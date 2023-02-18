@@ -173,10 +173,10 @@ export const TypeOfTransaction = {
 };
 
 // Used to display dash line on `open position item` but failed
-export const INVISIBLE_STROKE_COLOR = {
-  dark: '#161719',
-  sample: '#A5C4F3',
-  transparent: '#A16171900',
+export const InvisibleStrokeColor = {
+  DARK: '#161719',
+  SAMPLE: '#A5C4F3',
+  TRANSPARENT: '#A16171900',
 };
 
 export const TRADING_CHART_SWITCH_BUTTON_SIZE = 30;

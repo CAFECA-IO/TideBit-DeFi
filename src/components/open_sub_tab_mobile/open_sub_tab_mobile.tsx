@@ -9,13 +9,13 @@ const OpenSubTabMobile = () => {
       <div key={cfd.id}>
         <OpenPositionItem
           openCfdDetails={cfd}
-          profitOrLoss={cfd.pnl.type}
-          longOrShort="long"
-          value={cfd.openValue}
-          ticker={cfd.ticker}
-          passedHour={11}
-          profitOrLossAmount={cfd.pnl.value}
-          tickerTrendArray={cfd.positionLineGraph.dataArray}
+          // profitOrLoss={cfd.pnl.type}
+          // longOrShort="long"
+          // value={cfd.openValue}
+          // ticker={cfd.ticker}
+          // passedHour={11}
+          // profitOrLossAmount={cfd.pnl.value}
+          // tickerTrendArray={cfd.positionLineGraph.dataArray}
         />
         <div className="my-auto h-px w-full rounded bg-white/50"></div>
       </div>

@@ -44,7 +44,7 @@ const HistoryPositionItem = ({closedCfdDetails, ...otherProps}: IHistoryPosition
             {/* Divider */}
           </div>
 
-          <div className="w-55px">
+          <div className="w-70px">
             <div>{closedCfdDetails.ticker}</div>
             <div className="text-lightWhite">
               {displayedString.TITLE}{' '}

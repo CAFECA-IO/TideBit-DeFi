@@ -5,6 +5,9 @@ import {useGlobal} from '../../contexts/global_context';
 
 const TradeVisitorTab = () => {
   const globalCtx = useGlobal();
+
+  const tabBodyWidth = 'w-320px';
+
   // const [userLoginState, setUserLoginState] = useState(false);
 
   // const getUserLoginHandler = (bool: boolean) => {
@@ -27,7 +30,7 @@ const TradeVisitorTab = () => {
           <div className={`relative`}>
             {/* ---sidebar self--- */}
             <div
-              className={`pointer-events-auto ${'w-310px'} h-screen bg-darkGray p-5 text-white transition-all duration-300`}
+              className={`pointer-events-auto ${tabBodyWidth} h-screen bg-darkGray p-5 text-white transition-all duration-300`}
             >
               {/* <h1 className="pl-5 text-2xl font-bold">Start to trade</h1> */}
 

@@ -51,7 +51,7 @@ const OrderSection = () => {
         <div className="pr-3px">
           <button
             type="button"
-            className={`${activeTradeTabStyle} inline-block rounded-t-2xl px-56px py-2 hover:cursor-pointer`}
+            className={`${activeTradeTabStyle} inline-block rounded-t-2xl px-59px py-2 hover:cursor-pointer`}
             onClick={tradeTabClickHandler}
           >
             Trade
@@ -60,7 +60,7 @@ const OrderSection = () => {
         <div className="">
           <button
             type="button"
-            className={`${activePositionTabStyle} inline-block rounded-t-2xl px-55px py-2 hover:cursor-pointer`}
+            className={`${activePositionTabStyle} inline-block rounded-t-2xl px-57px py-2 hover:cursor-pointer`}
             onClick={positionTabClickHandler}
           >
             Position

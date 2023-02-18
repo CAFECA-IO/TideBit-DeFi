@@ -5,6 +5,8 @@ import HistorySubTab from '../history_sub_tab/history_sub_tab';
 const PositionTab = () => {
   const [activeTab, setActiveTab] = useState('Open');
 
+  const tabBodyWidth = 'w-320px';
+
   const openTabClickHandler = () => {
     setActiveTab('Open');
   };
@@ -52,7 +54,7 @@ const PositionTab = () => {
           <div className={`relative`}>
             {/* sidebar self */}
             <div
-              className={`pointer-events-auto ${'w-310px'} h-screen bg-darkGray p-5 text-white transition-all duration-300`}
+              className={`pointer-events-auto ${tabBodyWidth} h-screen bg-darkGray p-5 text-white transition-all duration-300`}
             >
               {tabPart}
               {currentSubTab}

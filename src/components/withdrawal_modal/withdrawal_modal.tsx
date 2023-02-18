@@ -5,6 +5,7 @@ import {MdKeyboardArrowDown} from 'react-icons/md';
 import {ImCross} from 'react-icons/im';
 import Image from 'next/image';
 import {ICryptocurrency} from '../../interfaces/tidebit_defi_background/cryptocurrency';
+import {useGlobal} from '../../contexts/global_context';
 
 interface IWithdrawalModal {
   // transferType: 'deposit' | 'withdraw';
@@ -29,11 +30,11 @@ const WithdrawalModal = ({
   // TODO: [UserContext] withdraw: userCtx.balance?.available
   const userAvailableBalance = 397.51;
   const {availableTransferOptions} = useContext(MarketContext);
+  const globalCtx = useGlobal();
 
   const [showCryptoMenu, setShowCryptoMenu] = useState(false);
   const [selectedCrypto, setSelectedCrypto] = useState(availableTransferOptions[0]);
   const [amountInput, setAmountInput] = useState<number | undefined>();
-  const [submitDisabled, setSubmitDisabled] = useState(true);
 
   const regex = /^\d*\.?\d{0,2}$/;
   // const regex = /^(?!0\.00)\d+(\.\d{2})?$/;
@@ -45,7 +46,6 @@ const WithdrawalModal = ({
   const maxClickHandler = () => {
     setAmountInput(userAvailableBalance);
     getTransferData({asset: selectedCrypto.symbol, amount: userAvailableBalance});
-    setSubmitDisabled(false);
   };
 
   const passSubmissionStateHandler = (props: 'success' | 'cancellation' | 'fail') => {
@@ -55,7 +55,6 @@ const WithdrawalModal = ({
   // TODO: send withdrawal request
   const submitClickHandler = () => {
     if (amountInput === 0 || amountInput === undefined) {
-      setSubmitDisabled(true);
       return;
     }
 
@@ -65,13 +64,11 @@ const WithdrawalModal = ({
 
     setTimeout(() => {
       // passSubmissionStateHandler('loading');
-      setSubmitDisabled(true);
+      globalCtx.visibleWithdrawalModalHandler();
     }, 800);
   };
 
   const amountOnChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
-    // setSubmitDisabled(true);
-
     const value = event.target.value;
 
     if (regex.test(value)) {
@@ -86,23 +83,16 @@ const WithdrawalModal = ({
       //   return;
       // }
 
-      // TODO: if input = 0, still disable submit button
-      if (Number(value) === 0) {
-        setSubmitDisabled(true);
-      }
-
       // Upperlimit in withdraw modal
       if (Number(value) > userAvailableBalance) {
         setAmountInput(Number(userAvailableBalance));
         getTransferData({asset: selectedCrypto.symbol, amount: Number(userAvailableBalance)});
-        setSubmitDisabled(false);
 
         return;
       }
 
       setAmountInput(Number(value));
       getTransferData({asset: selectedCrypto.symbol, amount: Number(value)});
-      setSubmitDisabled(false);
       return;
     }
   };
@@ -140,9 +130,6 @@ const WithdrawalModal = ({
   });
 
   const cryptoItemClickHandler = (target: ICryptocurrency) => {
-    // const {label} = target;
-    // console.log('target', {target});
-    // console.log('label', {label});
     setAmountInput(undefined);
     setSelectedCrypto(target);
     cryptoMenuClickHandler();
@@ -249,15 +236,6 @@ const WithdrawalModal = ({
               >
                 MAX
               </button>
-              {/* {modalType === 'Withdraw' && (
-                <button
-                  type="button"
-                  onClick={maxClickHandler}
-                  className="my-1 mx-1 rounded-sm bg-lightGray3 px-2 text-xs text-white hover:bg-lightGray3/80"
-                >
-                  MAX
-                </button>
-              )} */}
             </div>
 
             <div className="flex justify-end">
@@ -282,24 +260,6 @@ const WithdrawalModal = ({
             >
               {formButton}
             </RippleButton>
-            {/* {amountInput === 0 || amountInput === undefined ? (
-              <RippleButton
-                disabled={true}
-                onClick={submitClickHandler}
-                buttonType="button"
-                className={`absolute -bottom-14 mt-0 rounded border-0 bg-lightGray py-2 px-10 text-base text-white transition-colors duration-300 focus:outline-none`}
-              >
-                {formButton}
-              </RippleButton>
-            ) : (
-              <RippleButton
-                onClick={submitClickHandler}
-                buttonType="button"
-                className={`absolute -bottom-14 mt-0 rounded border-0 bg-tidebitTheme py-2 px-10 text-base text-white transition-colors duration-300 hover:bg-cyan-600 focus:outline-none`}
-              >
-                {formButton}
-              </RippleButton>
-            )} */}
           </div>
         </div>
       </div>

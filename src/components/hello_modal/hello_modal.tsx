@@ -1,6 +1,6 @@
 import {ImCross} from 'react-icons/im';
 import Image from 'next/image';
-import TideButton from '../tide_button/tide_button';
+import TideButton from '../../components/tide_button/tide_button';
 import Link from 'next/link';
 
 interface IHelloModal {

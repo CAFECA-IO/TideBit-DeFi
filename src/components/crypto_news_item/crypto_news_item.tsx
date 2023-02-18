@@ -1,8 +1,16 @@
 import Image from 'next/image';
 import React from 'react';
-import {IBriefNewsItem} from '../../interfaces/depre_tidebit_defi_background';
+import {IBriefNewsItem} from '../../interfaces/tidebit_defi_background/brief_news_item';
+import {timestampToString} from '../../lib/common';
 
-const CryptoNewsItem = ({title: heading, content, img, ...otherProps}: IBriefNewsItem) => {
+const CryptoNewsItem = ({
+  id,
+  timestamp,
+  title: heading,
+  content,
+  img,
+  ...otherProps
+}: IBriefNewsItem) => {
   const overallWidth = 'w-full pr-5 lg:p-0 lg:w-2/3 xl:w-3/4';
 
   // const displayedHeading = highlight ? (
@@ -15,11 +23,7 @@ const CryptoNewsItem = ({title: heading, content, img, ...otherProps}: IBriefNew
 
   const displayedHeading = <div className="">{heading}</div>;
 
-  const displayedContent = content
-    ? content
-    : `Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
-    invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et
-    accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea`;
+  const displayedContent = content;
 
   const displayedImg = img ? (
     <Image src={img} alt="news" width={900} height={500} />
@@ -39,13 +43,17 @@ const CryptoNewsItem = ({title: heading, content, img, ...otherProps}: IBriefNew
             {displayedImg}
           </div>
           <div className="flex flex-col items-center text-center lg:grow lg:items-start lg:pl-7 lg:text-left">
-            <h1 className="mt-3 mb-3 text-lg text-lightWhite">
-              {displayedHeading}
-              {/* Add news title here */}
-              {/* <br className="hidden lg:inline-block" />
+            <div className="mt-3 mb-3 flex w-full items-center justify-between">
+              <h1 className="text-lg text-lightWhite">
+                {displayedHeading}
+                {/* Add news title here */}
+                {/* <br className="hidden lg:inline-block" />
               readymade gluten */}
-            </h1>
-            <p className="mb-12 text-xs leading-relaxed">
+              </h1>
+              <p className="mr-5 text-sm text-lightGray">{timestampToString(timestamp)[0]}</p>
+            </div>
+
+            <p className="mb-12 mr-5 text-xs leading-relaxed">
               {displayedContent}
               {/* Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
               invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et

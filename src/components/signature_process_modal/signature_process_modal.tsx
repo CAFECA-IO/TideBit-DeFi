@@ -1,10 +1,16 @@
 import {ImCross} from 'react-icons/im';
 import Image from 'next/image';
 import Link from 'next/link';
-import TideButton from '../tide_button/tide_button';
+import TideButton from '../../components/tide_button/tide_button';
 import smallConnectingAnimation from '../../../public/animation/lf30_editor_cnkxmhy3.json';
 import activeIconPulse from '../../../public/animation/lf30_editor_cyvxlluo.json';
 import Lottie from 'lottie-react';
+import {UserContext} from '../../contexts/user_context';
+import {useContext, useState} from 'react';
+import {toast} from 'react-toastify';
+import {useGlobal} from '../../contexts/global_context';
+import {locker, wait} from '../../lib/common';
+import {DELAYED_HIDDEN_SECONDS} from '../../constants/display';
 
 interface ISignatureProcessModal {
   loading?: boolean;
@@ -13,25 +19,81 @@ interface ISignatureProcessModal {
   secondStepSuccess?: boolean;
   secondStepError?: boolean;
   processModalRef?: React.RefObject<HTMLDivElement>;
-  processModalVisible?: boolean;
-  processClickHandler?: () => void;
+  processModalVisible: boolean;
+  processClickHandler: () => void;
   requestSendingHandler?: () => void;
 }
 
 const SignatureProcessModal = ({
-  loading = false,
-  firstStepSuccess = false,
-  firstStepError = false,
-  secondStepSuccess = false,
-  secondStepError = false,
+  // loading = false,
+  // firstStepSuccess = false,
+  // firstStepError = false,
+  // secondStepSuccess = false,
+  // secondStepError = false,
+  // requestSendingHandler,
   processModalRef,
   processModalVisible = false,
   processClickHandler,
-  requestSendingHandler,
   ...otherProps
 }: ISignatureProcessModal) => {
-  const controlSpace = firstStepError || secondStepError ? 'space-y-12' : 'space-y-12';
-  const btnSpace = firstStepSuccess && !secondStepError && !secondStepSuccess ? 'mt-10' : 'mt-16';
+  const userCtx = useContext(UserContext);
+  const globalCtx = useGlobal();
+
+  // TODO: 從 UserContext 拿字串狀態來判斷，取代`connectingProcess`跟`setConnectingProcess`，用來判斷第二步應顯示'打勾、打叉、數字'哪一種圖示
+  type IConnectingProcessType = 'EMPTY' | 'CONNECTING' | 'CONNECTED' | 'REJECTED';
+  interface IConnectingProcessObject {
+    EMPTY: IConnectingProcessType;
+    CONNECTING: IConnectingProcessType;
+    CONNECTED: IConnectingProcessType;
+    REJECTED: IConnectingProcessType;
+  }
+
+  const ConnectingProcess: IConnectingProcessObject = {
+    EMPTY: 'EMPTY',
+    CONNECTING: 'CONNECTING',
+    CONNECTED: 'CONNECTED',
+    REJECTED: 'REJECTED',
+  };
+
+  const [connectingProcess, setConnectingProcess] = useState<IConnectingProcessType>(
+    ConnectingProcess.EMPTY
+  );
+
+  // const secondStopResult: ISignInResult = userCtx.connectingProcess
+  // const connectingProcess =
+
+  // const firstStepSuccess = userCtx.isConnected;
+  // const firstStepError = !userCtx.isConnected;
+  // const secondStepSuccess = userCtx.enableServiceTerm;
+  // const secondStepError = !userCtx.enableServiceTerm;
+
+  // -----------------------------------
+  // const [firstStepSuccess, setFirstStepSuccess] = useState(userCtx.isConnected);
+  // const [firstStepError, setFirstStepError] = useState(!userCtx.isConnected);
+  // const [secondStepSuccess, setSecondStepSuccess] = useState(userCtx.enableServiceTerm);
+  // const [secondStepError, setSecondStepError] = useState(!userCtx.enableServiceTerm);
+  // -----------------------------------
+
+  // const requestSendingHandler = async () => {
+  //   try {
+  //     setLoading(true);
+  //     const signResult = await userCtx.signServiceTerm();
+  //     globalCtx.toast({type: 'success', message: `Success:  ${signResult}`});
+  //     console.log(signResult);
+  //   } catch (error) {
+  //     console.log(error);
+  //     globalCtx.toast({type: 'error', message: `Error:  ${error}`});
+  //   }
+
+  //   setLoading(false);
+  // };
+
+  const controlSpace =
+    !userCtx.isConnected || connectingProcess === ConnectingProcess.REJECTED
+      ? 'space-y-12'
+      : 'space-y-12';
+  const btnSpace =
+    userCtx.isConnected && connectingProcess !== ConnectingProcess.REJECTED ? 'mt-10' : 'mt-16';
 
   // if (firstStepError && secondStepError) return
   // if (firstStepError && secondStepSuccess) return
@@ -50,8 +112,6 @@ const SignatureProcessModal = ({
         alt="step 1 icon"
       />
     </div>
-
-    // <Image src="/elements/group_2415.svg" width={32} height={32} alt="step 1 icon" />
   );
 
   const successIcon = (
@@ -82,16 +142,63 @@ const SignatureProcessModal = ({
     </div>
   );
 
-  const requestButtonHandler = loading ? (
-    <Lottie className="w-40px" animationData={smallConnectingAnimation} />
-  ) : (
-    <TideButton
-      onClick={requestSendingHandler}
-      className="rounded bg-tidebitTheme px-5 py-2 text-base transition-all hover:opacity-90"
-    >
-      Send Requests
-    </TideButton>
-  );
+  const requestSendingHandler = async () => {
+    const [lock, unlock] = locker('signature_process_modal.RequestSendingHandler');
+
+    // TODO1
+    if (!lock()) return; // 沒有成功上鎖，所以不執行接下來的程式碼
+
+    // setConnectingProcess(ConnectingProcess.CONNECTING);
+    // console.log('is connected: ', userCtx.isConnected);
+
+    if (!userCtx.isConnected) {
+      // It's a cycle
+      const connectWalletResult = await userCtx.connect();
+
+      // TODO1
+      unlock();
+
+      // if (connectWalletResult) {
+      //   await wait(DELAYED_HIDDEN_SECONDS);
+      //   // setConnectingProcess(ConnectingProcess.CONNECTED);
+      // }
+
+      setConnectingProcess(ConnectingProcess.EMPTY);
+    } else {
+      const signResult = await userCtx.signServiceTerm();
+
+      // TODO1
+      unlock();
+
+      if (signResult) {
+        setConnectingProcess(ConnectingProcess.CONNECTED);
+
+        await wait(DELAYED_HIDDEN_SECONDS);
+        // globalCtx.visibleSignatureProcessModalHandler();
+        setConnectingProcess(ConnectingProcess.EMPTY);
+      } else {
+        await wait(DELAYED_HIDDEN_SECONDS);
+        setConnectingProcess(ConnectingProcess.REJECTED);
+        return;
+      }
+
+      globalCtx.visibleSignatureProcessModalHandler();
+      globalCtx.visibleHelloModalHandler();
+    }
+  };
+
+  // TODO: Replace with `userCtx.connectingProcess === 'CONNECTING'` Else if `userCtx.connectingProcess === 'EMPTY'`
+  const requestButtonHandler =
+    connectingProcess === 'CONNECTING' || connectingProcess === 'CONNECTED' ? (
+      <Lottie className="w-40px" animationData={smallConnectingAnimation} />
+    ) : connectingProcess === 'EMPTY' || connectingProcess === 'REJECTED' ? (
+      <TideButton
+        onClick={requestSendingHandler}
+        className="rounded bg-tidebitTheme px-5 py-2 text-base transition-all hover:opacity-90"
+      >
+        Send Requests
+      </TideButton>
+    ) : null;
 
   const firstStepDefaultView = (
     <>
@@ -133,11 +240,13 @@ const SignatureProcessModal = ({
   const firstStepSectionHandler = (
     // {firstStepSuccess ? 'success section' : firstStepError ? 'error section' : 'default section'}
     <>
-      {firstStepSuccess
+      {userCtx.isConnected ? firstStepSuccessView : firstStepDefaultView}
+      {/* TODO: [in storage] Stale solution */}
+      {/* {firstStepSuccess
         ? firstStepSuccessView
         : firstStepError
         ? firstStepErrorView
-        : firstStepDefaultView}
+        : firstStepDefaultView} */}
     </>
   );
 
@@ -193,87 +302,40 @@ const SignatureProcessModal = ({
     </>
   );
 
-  // TODO: Notes- object GOOD
   const secondStepSectionHandler = (
     <>
-      {secondStepSuccess
+      {/* Temporary solution for no connecting process attribute */}
+      {/* {userCtx.enableServiceTerm
+        ? secondStepSuccessView
+        : userCtx.isConnected
+        ? secondStepActiveView
+        : secondStepDefaultView} */}
+
+      {/* TODO: Solution with connecting process attribute */}
+      {!userCtx.isConnected
+        ? secondStepDefaultView
+        : connectingProcess === ConnectingProcess.CONNECTED
+        ? secondStepSuccessView
+        : connectingProcess === ConnectingProcess.REJECTED
+        ? secondStepErrorView
+        : secondStepActiveView}
+
+      {/* {userCtx.isConnected && userCtx.connectingProcess === 'connected' && secondStepSuccessView}
+      {userCtx.isConnected && userCtx.connectingProcess === 'rejected' && secondStepErrorView}
+      {userCtx.isConnected && userCtx.connectingProcess === 'connecting' && secondStepActiveView} //
+      btn
+      {userCtx.isConnected && userCtx.connectingProcess === 'empty' && secondStepDefaultView} // btn */}
+
+      {/* -----TODO: [in storage] Stale solution----- */}
+      {/* {secondStepSuccess
         ? secondStepSuccessView
         : secondStepError
         ? secondStepErrorView
         : firstStepSuccess
         ? secondStepActiveView
-        : secondStepDefaultView}
+        : secondStepDefaultView} */}
     </>
   );
-
-  // if (true) console.log('test')
-
-  //  TODO: Notes- function BAD
-  //   const secondStepSectionTestHandler = () =>
-  //     processModalVisible ? (
-  //       <>
-  //         <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none focus:outline-none">
-  //           <div className="relative my-6 mx-auto w-auto max-w-xl">
-  //             {/*content & panel*/}
-  //             <div
-  //               id="connectModal"
-  //               ref={processModalRef}
-  //               className="relative flex h-600px w-450px flex-col rounded-3xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none"
-  //             >
-  //               {/*header*/}
-  //               <div className="flex items-start justify-between rounded-t pt-6">
-  //                 <h3 className="ml-1/8 mt-2 w-20rem pl-1/8 text-4xl font-semibold text-lightWhite">
-  //                   Wallet Connect
-  //                 </h3>
-  //                 <button className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
-  //                   <span className="absolute top-5 right-5 block outline-none focus:outline-none">
-  //                     <ImCross onClick={processClickHandler} />
-  //                   </span>
-  //                 </button>
-  //               </div>
-  //               {/*body*/}
-
-  //               <div className="flex flex-auto flex-col items-center pt-5">
-  //                 <div className="text-lg leading-relaxed text-lightWhite">
-  //                   <div className="mx-auto flex flex-col items-center">
-  //                     <div className="mt-8 text-center text-lg text-lightGray">
-  //                       <div>You will receive two signature requests.</div>
-  //                       <div>
-  //                         {' '}
-  //                         Signing is{' '}
-  //                         <span className="text-tidebitTheme">
-  //                           <Link href="#">free</Link>
-  //                         </span>{' '}
-  //                         and will not send a transaction.
-  //                       </div>
-  //                     </div>
-
-  //                     {/* Activate First Step */}
-  //                     <div className={`${controlSpace} flex flex-col pt-16`}>
-  //                       <div className="flex items-center justify-center space-x-3">
-  //                         {firstStepSectionHandler}
-  //                       </div>
-
-  //                       {/* Second Step */}
-  //                       <div className="flex items-center justify-center space-x-3">
-  //                         {secondStepSectionHandler}
-  //                       </div>
-  //                     </div>
-
-  //                     <div className="mt-16">{requestButtonHandler}</div>
-  //                   </div>
-  //                 </div>
-  //               </div>
-  //               {/*footer*/}
-  //               <div className="flex items-center justify-end rounded-b p-2"></div>
-  //             </div>
-  //           </div>
-  //         </div>
-  //         <div className="fixed inset-0 z-40 bg-black opacity-25"></div>
-  //       </>
-  //     ) : null;
-
-  //   return <secondStepSectionTestHandler />;
 
   const isDisplayedProcessModal = processModalVisible ? (
     <>

@@ -1,6 +1,8 @@
 {
   "nav_bar": {
-    "Trading": "Trading",
+    "Trade": "Trade",
+    "Leaderboard": "Leaderboard",
+    "Support": "Support",
     "TideBitUniversity": "TideBit University",
     "HelpCenter": "Help Center",
     "WalletConnect": "Wallet Connect"

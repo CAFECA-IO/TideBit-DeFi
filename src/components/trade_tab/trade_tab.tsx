@@ -144,15 +144,17 @@ const TradeTab = () => {
     valueOfPositionLength > 10 || marginLength > 10 ? 'top-430px' : 'top-420px';
 
   const longOrderSubmitHandler = () => {
+    // globalCtx.visibleWalletPanelHandler();
     return;
   };
 
   const shortOrderSubmitHandler = () => {
-    globalCtx.dataLoadingModalHandler({
-      modalTitle: 'Open position',
-      modalContent: 'Please wait...',
-    });
-    globalCtx.visibleLoadingModalHandler();
+    // globalCtx.dataLoadingModalHandler({
+    //   modalTitle: 'Open position',
+    //   modalContent: 'Please wait...',
+    // });
+    // globalCtx.visibleLoadingModalHandler();
+    return;
   };
 
   // ----------margin area----------

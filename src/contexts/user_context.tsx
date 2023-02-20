@@ -264,7 +264,6 @@ export const UserProvider = ({children}: IUserProvider) => {
   });
   lunar.on('accountsChanged', async (address: string) => {
     clearPrivateData();
-    await setPrivateData(address);
   });
 
   const listOpenCFDs = async (props: string) => {
@@ -300,6 +299,7 @@ export const UserProvider = ({children}: IUserProvider) => {
 
   const signServiceTerm = async () => {
     setEnableServiceTerm(true);
+    await setPrivateData(lunar.address);
     return true;
   };
 

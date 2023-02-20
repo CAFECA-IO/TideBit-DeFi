@@ -1,5 +1,5 @@
 import Lunar from '@cafeca/lunar';
-import React, {createContext} from 'react';
+import React, {createContext, useContext} from 'react';
 import useState from 'react-usestateref';
 import {PROFIT_LOSS_COLOR_TYPE} from '../constants/display';
 import {
@@ -48,19 +48,8 @@ import {
 import {IOpenCFDOrder} from '../interfaces/tidebit_defi_background/open_cfd_order';
 import {INotificationItem} from '../interfaces/tidebit_defi_background/notification_item';
 import {TideBitEvent} from '../constants/tidebit_event';
-
-function randomNumber(min: number, max: number) {
-  return Math.floor(Math.random() * (max - min + 1) + min);
-}
-
-function randomArray(min: number, max: number, length: number) {
-  const arr = [];
-  for (let i = 0; i < length; i++) {
-    arr.push(randomNumber(min, max));
-  }
-  return arr;
-}
-
+import {NotificationContext} from './notification_context';
+import {ITickerData} from '../interfaces/tidebit_defi_background/ticker_data';
 // const sampleArray = randomArray(1100, 1200, 10);
 
 const strokeColorDisplayed = (sampleArray: number[]) => {
@@ -228,6 +217,9 @@ export const UserProvider = ({children}: IUserProvider) => {
     useState<boolean>(false);
   const [isConnectedWithTideBit, setIsConnectedWithTideBit, isConnectedWithTideBitRef] =
     useState<boolean>(false);
+  const [selectedTicker, setSelectedTicker, selectedTickerRef] = useState<ITickerData | null>(null);
+
+  const notificationCtx = useContext(NotificationContext);
 
   const setPrivateData = async (walletAddress: string) => {
     setWallet(walletAddress);
@@ -241,6 +233,11 @@ export const UserProvider = ({children}: IUserProvider) => {
       PNL: 1956.84,
     });
     setBalances([dummyBalance_BTC, dummyBalance_ETH, dummyBalance_USDT]);
+    if (selectedTickerRef.current) {
+      listOpenCFDs(selectedTickerRef.current.currency);
+      listClosedCFDs(selectedTickerRef.current.currency);
+    }
+    notificationCtx.emitter.emit(TideBitEvent.SERVICE_TERM_ENABLED, walletAddress);
   };
 
   const clearPrivateData = () => {
@@ -252,6 +249,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     setBalance(null);
     setOpenedCFDs([]);
     setClosedCFDs([]);
+    notificationCtx.emitter.emit(TideBitEvent.DISCONNECTED_WALLET);
   };
 
   const lunar = new Lunar();
@@ -264,7 +262,6 @@ export const UserProvider = ({children}: IUserProvider) => {
   });
   lunar.on('accountsChanged', async (address: string) => {
     clearPrivateData();
-    await setPrivateData(address);
   });
 
   const listOpenCFDs = async (props: string) => {
@@ -300,6 +297,7 @@ export const UserProvider = ({children}: IUserProvider) => {
 
   const signServiceTerm = async () => {
     setEnableServiceTerm(true);
+    setPrivateData(lunar.address);
     return true;
   };
 
@@ -454,13 +452,41 @@ export const UserProvider = ({children}: IUserProvider) => {
     return histories;
   };
 
+  // ++TODO
+  const updateCFD = () => {
+    return null;
+  };
+
   const sendEmailCode = async (email: string) => Promise.resolve<number>(359123);
   const connectEmail = async (email: string, code: number) => Promise.resolve<boolean>(true);
   const toggleEmailNotification = async (props: boolean) => Promise.resolve<boolean>(true);
   const subscribeNewsletters = async (props: boolean) => Promise.resolve<boolean>(true);
   const connectTideBit = async (email: string, password: string) => Promise.resolve<boolean>(true);
   const shareTradeRecord = async (tradeId: string) => Promise.resolve<boolean>(true);
-  const readNotifications = async (notifications: INotificationItem[]) => Promise.resolve();
+
+  const readNotifications = async (notifications: INotificationItem[]) => {
+    if (enableServiceTerm) {
+      notificationCtx.emitter.emit(TideBitEvent.UPDATE_READ_NOTIFICATIONS_RESULT, notifications);
+    }
+  };
+
+  React.useMemo(() => notificationCtx.emitter.on(TideBitEvent.CFD, updateCFD), []);
+  React.useMemo(
+    () => notificationCtx.emitter.on(TideBitEvent.UPDATE_READ_NOTIFICATIONS, readNotifications),
+    []
+  );
+  React.useMemo(
+    () =>
+      notificationCtx.emitter.on(TideBitEvent.TICKER_CHANGE, (ticker: ITickerData) => {
+        // ++ TODO: checked 為什麼 emit 一次 on 會收到兩次？
+        setSelectedTicker(ticker);
+        if (enableServiceTerm) {
+          listOpenCFDs(ticker.currency);
+          listClosedCFDs(ticker.currency);
+        }
+      }),
+    []
+  );
 
   const init = async () => {
     // console.log(`UserProvider init is called`);

@@ -37,6 +37,7 @@ import {
   ICandlestickData,
 } from '../interfaces/tidebit_defi_background/candlestickData';
 import {TideBitEvent} from '../constants/tidebit_event';
+import {NotificationContext} from './notification_context';
 
 const SAMPLE_TICKERS = [
   'ETH',
@@ -359,7 +360,8 @@ const availableTransferOptions = [
 
 export const MarketProvider = ({children}: IMarketProvider) => {
   const userCtx = useContext(UserContext);
-  const [wallet, setWallet, walletRef] = useState<string | null>(userCtx.wallet);
+  const notificationCtx = useContext(NotificationContext);
+  // const [wallet, setWallet, walletRef] = useState<string | null>(userCtx.wallet);
   const [selectedTicker, setSelectedTicker, selectedTickerRef] = useState<ITickerData | null>(null);
   const [tickerStatic, setTickerStatic] = useState<ITickerStatic | null>(null);
   const [tickerLiveStatistics, setTickerLiveStatistics] = useState<ITickerLiveStatistics | null>(
@@ -425,10 +427,11 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     setTickerLiveStatistics(tickerLiveStatistics);
     const candlestickChartData = getDummyCandlestickChartData();
     setCandlestickChartData(candlestickChartData);
-    if (userCtx.enableServiceTerm) {
-      userCtx.listOpenCFDs(currency);
-      userCtx.listClosedCFDs(currency);
-    }
+    // if (userCtx.enableServiceTerm) {
+    //   userCtx.listOpenCFDs(currency);
+    //   userCtx.listClosedCFDs(currency);
+    // }
+    notificationCtx.emitter.emit(TideBitEvent.TICKER_CHANGE, ticker);
     return dummyResultSuccess;
   };
 
@@ -438,25 +441,11 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     return candlestickChartData;
   };
 
-  React.useEffect(() => {
-    if (userCtx.wallet !== walletRef.current) {
-      setWallet(userCtx.wallet);
-      // Event: Login
-      if (userCtx.enableServiceTerm && selectedTickerRef.current) {
-        userCtx.listOpenCFDs(selectedTickerRef.current.currency);
-        userCtx.listClosedCFDs(selectedTickerRef.current.currency);
-      }
-    }
-  }, [userCtx.wallet]);
-
   const init = async () => {
     // console.log(`MarketProvider init is called`);
-    setSelectedTicker(dummyTicker);
-    setAvailableTickers([...dummyTickers]);
-    setCandlestickChartData(getDummyCandlestickChartData());
-    setTickerLiveStatistics(dummyTickerLiveStatistics);
-    setTickerStatic(dummyTickerStatic);
     setIsCFDTradable(true);
+    setAvailableTickers([...dummyTickers]);
+    selectTickerHandler(dummyTickers[0].currency);
     return await Promise.resolve();
   };
 

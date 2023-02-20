@@ -238,7 +238,27 @@ export const dummyTickers: ITickerData[] = TRADING_CRYPTO_DATA.map(data => {
 export const dummyTicker: ITickerData = dummyTickers[0];
 
 export const getDummyTicker = (currency: string) => {
-  const dummyTicker: ITickerData =
-    dummyTickers.find(ticker => ticker.currency === currency) || dummyTickers[0];
+  const data =
+    TRADING_CRYPTO_DATA.find(ticker => ticker.currency === currency) || TRADING_CRYPTO_DATA[0];
+  const dataArray = randomArray(1100, 1200, 10);
+  const strokeColor = strokeColorDisplayed(dataArray);
+  const price = parseFloat((Math.random() * 1000).toFixed(2));
+  const priceChange = parseFloat((Math.random() * 100).toFixed(2));
+  const fluctuating = parseFloat((priceChange / (price + priceChange)).toFixed(2));
+  const upOrDown =
+    Math.random() >= 0.5 ? (Math.random() === 0.5 ? Trend.EQUAL : Trend.UP) : Trend.DOWN;
+  const dummyTicker: ITickerData = {
+    ...data,
+    price,
+    priceChange,
+    fluctuating,
+    upOrDown,
+    lineGraphProps: {
+      dataArray: dataArray,
+      strokeColor: strokeColor,
+      lineGraphWidth: '170',
+      lineGraphWidthMobile: '140',
+    },
+  };
   return dummyTicker;
 };

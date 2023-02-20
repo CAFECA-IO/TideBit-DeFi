@@ -10,7 +10,9 @@ export type ITideBitEvent =
   | 'TICKER'
   | 'TICKER_STATISTIC'
   | 'TICKER_LIVE_STATISTIC'
-  | 'CFD'
+  | 'CANDLESTICK'
+  | 'OPEN_CFD'
+  | 'CLOSE_CFD'
   | 'DEPOSIT'
   | 'WITHDRAW';
 export interface ITideBitEventConstant {
@@ -25,7 +27,9 @@ export interface ITideBitEventConstant {
   TICKER_CHANGE: ITideBitEvent;
   TICKER_STATISTIC: ITideBitEvent;
   TICKER_LIVE_STATISTIC: ITideBitEvent;
-  CFD: ITideBitEvent;
+  CANDLESTICK: ITideBitEvent;
+  OPEN_CFD: ITideBitEvent;
+  CLOSE_CFD: ITideBitEvent;
   DEPOSIT: ITideBitEvent;
   WITHDRAW: ITideBitEvent;
 }
@@ -41,7 +45,9 @@ export const TideBitEvent: ITideBitEventConstant = {
   TICKER_CHANGE: 'TICKER_CHANGE',
   TICKER_STATISTIC: 'TICKER_STATISTIC',
   TICKER_LIVE_STATISTIC: 'TICKER_LIVE_STATISTIC',
-  CFD: 'CFD',
+  CANDLESTICK: 'CANDLESTICK',
+  OPEN_CFD: 'OPEN_CFD',
+  CLOSE_CFD: 'CLOSE_CFD',
   DEPOSIT: 'DEPOSIT',
   WITHDRAW: 'WITHDRAW',
 };

@@ -50,6 +50,8 @@ import {INotificationItem} from '../interfaces/tidebit_defi_background/notificat
 import {TideBitEvent} from '../constants/tidebit_event';
 import {NotificationContext} from './notification_context';
 import {ITickerData} from '../interfaces/tidebit_defi_background/ticker_data';
+import {ICFDDetails} from '../interfaces/tidebit_defi_background/cfd_details';
+import {OrderState} from '../constants/order_state';
 // const sampleArray = randomArray(1100, 1200, 10);
 
 const strokeColorDisplayed = (sampleArray: number[]) => {
@@ -453,8 +455,12 @@ export const UserProvider = ({children}: IUserProvider) => {
   };
 
   // ++TODO
-  const updateCFD = () => {
-    return null;
+  const updateOpenCFD = (CFDs: IOpenCFDDetails[]) => {
+    setOpenedCFDs(prev => [...prev, ...CFDs]);
+  };
+
+  const updateClosedCFD = (CFDs: IClosedCFDDetails[]) => {
+    setClosedCFDs(prev => [...prev, ...CFDs]);
   };
 
   const sendEmailCode = async (email: string) => Promise.resolve<number>(359123);
@@ -470,7 +476,16 @@ export const UserProvider = ({children}: IUserProvider) => {
     }
   };
 
-  React.useMemo(() => notificationCtx.emitter.on(TideBitEvent.CFD, updateCFD), []);
+  React.useMemo(
+    () =>
+      notificationCtx.emitter.on(TideBitEvent.BALANCE, (balance: IUserBalance) => {
+        setBalance(balance);
+      }),
+    []
+  );
+  // React.useMemo(() => notificationCtx.emitter.on(TideBitEvent.BALANCES, ()=>{}), []);
+  React.useMemo(() => notificationCtx.emitter.on(TideBitEvent.OPEN_CFD, updateOpenCFD), []);
+  React.useMemo(() => notificationCtx.emitter.on(TideBitEvent.CLOSE_CFD, updateClosedCFD), []);
   React.useMemo(
     () => notificationCtx.emitter.on(TideBitEvent.UPDATE_READ_NOTIFICATIONS, readNotifications),
     []

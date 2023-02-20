@@ -449,6 +449,44 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     return await Promise.resolve();
   };
 
+  React.useMemo(
+    () =>
+      notificationCtx.emitter.on(TideBitEvent.TICKER, (ticker: ITickerData) => {
+        setSelectedTicker(ticker);
+      }),
+    []
+  );
+
+  React.useMemo(
+    () =>
+      notificationCtx.emitter.on(TideBitEvent.TICKER_STATISTIC, (tickerStatic: ITickerStatic) => {
+        setTickerStatic(tickerStatic);
+      }),
+    []
+  );
+
+  React.useMemo(
+    () =>
+      notificationCtx.emitter.on(
+        TideBitEvent.TICKER_LIVE_STATISTIC,
+        (tickerLiveStatistics: ITickerLiveStatistics) => {
+          setTickerLiveStatistics(tickerLiveStatistics);
+        }
+      ),
+    []
+  );
+
+  React.useMemo(
+    () =>
+      notificationCtx.emitter.on(
+        TideBitEvent.CANDLESTICK,
+        (candlestickData: ICandlestickData[]) => {
+          setCandlestickChartData(candlestickData);
+        }
+      ),
+    []
+  );
+
   const defaultValue = {
     selectedTicker,
     selectTickerHandler,

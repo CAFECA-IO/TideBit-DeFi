@@ -41,12 +41,12 @@ export const dummyOpenCFDDetails: IOpenCFDDetails = {
   },
 };
 
-export const getDummyOpenCFDs = (currency: string) => {
+export const getDummyOpenCFDs = (currency: string, number = 3) => {
   const dummyOpenCFDs: IOpenCFDDetails[] = [];
-  for (let i = 0; i < 3; i++) {
+  for (let i = 0; i < number; i++) {
     const profit = Math.random() > 0.5 ? ProfitState.PROFIT : ProfitState.LOSS;
     const dummyOpenCFD: IOpenCFDDetails = {
-      id: `TBD20230217000000${i + 3}`,
+      id: `TBD20230217000${(Math.random() * 10000).toFixed(0)}}`,
       ticker: currency,
       amount: 1.8,
       state: OrderState.OPENING,

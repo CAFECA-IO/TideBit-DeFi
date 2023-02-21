@@ -259,34 +259,6 @@ const PositionDetailsModal = ({
     }
   };
 
-  useEffect(() => {
-    setSubmitDisabled(true);
-    if (tpToggleRef.current && tpValueRef.current !== openCfdDetails?.takeProfit) {
-      setSubmitDisabled(false);
-      // console.log('tpValueRef current', tpValueRef.current);
-    }
-
-    if (slToggleRef.current && slValueRef.current !== openCfdDetails?.stopLoss) {
-      setSubmitDisabled(false);
-      // console.log('slValueRef current', slValueRef.current);
-    }
-
-    if (tpToggleRef.current !== initialTpToggle) {
-      setSubmitDisabled(false);
-      // console.log('tpToggleRef current', tpToggleRef.current);
-    }
-
-    if (slToggleRef.current !== initialSlToggle) {
-      setSubmitDisabled(false);
-      // console.log('slToggleRef current', slToggleRef.current);
-    }
-
-    if (guaranteedStopCheckRef.current !== openCfdDetails.guaranteedStop) {
-      setSubmitDisabled(false);
-      // console.log('guaranteedStopCheckRef current', guaranteedStopCheckRef.current);
-    }
-  }, [tpValueRef.current, slValueRef.current, tpToggleRef.current, slToggleRef.current]);
-
   const displayedTakeProfitSetting = (
     <div className={`${isDisplayedTakeProfitSetting}`}>
       <TradingInput
@@ -362,6 +334,34 @@ const PositionDetailsModal = ({
       </div>
     </div>
   );
+
+  useEffect(() => {
+    setSubmitDisabled(true);
+    if (tpToggleRef.current && tpValueRef.current !== openCfdDetails?.takeProfit) {
+      setSubmitDisabled(false);
+      // console.log('tpValueRef current', tpValueRef.current);
+    }
+
+    if (slToggleRef.current && slValueRef.current !== openCfdDetails?.stopLoss) {
+      setSubmitDisabled(false);
+      // console.log('slValueRef current', slValueRef.current);
+    }
+
+    if (tpToggleRef.current !== initialTpToggle) {
+      setSubmitDisabled(false);
+      // console.log('tpToggleRef current', tpToggleRef.current);
+    }
+
+    if (slToggleRef.current !== initialSlToggle) {
+      setSubmitDisabled(false);
+      // console.log('slToggleRef current', slToggleRef.current);
+    }
+
+    if (guaranteedStopCheckRef.current !== openCfdDetails.guaranteedStop) {
+      setSubmitDisabled(false);
+      // console.log('guaranteedStopCheckRef current', guaranteedStopCheckRef.current);
+    }
+  }, [tpValueRef.current, slValueRef.current, tpToggleRef.current, slToggleRef.current]);
 
   const isDisplayedDetailedPositionModal = modalVisible ? (
     <div {...otherProps}>

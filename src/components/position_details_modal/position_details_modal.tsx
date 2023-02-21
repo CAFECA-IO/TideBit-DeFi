@@ -53,7 +53,7 @@ const PositionDetailsModal = ({
   const [slValue, setSlValue, slValueRef] = useState(initialSlInput);
   const [tpToggle, setTpToggle, tpToggleRef] = useState(initialTpToggle);
   const [slToggle, setSlToggle, slToggleRef] = useState(initialSlToggle);
-  const [guaranteedChecked, setGuaranteedChecked, guaranteedStopCheckRef] =
+  const [guaranteedChecked, setGuaranteedChecked, guaranteedpCheckedRef] =
     useState(initialGuaranteedChecked);
 
   const [guaranteedTooltipStatus, setGuaranteedTooltipStatus] = useState(0);
@@ -137,7 +137,7 @@ const PositionDetailsModal = ({
       setSlUpperLimit(openCfdDetails?.stopLoss ?? openCfdDetails?.recommendedSl);
       setSlValue(openCfdDetails?.stopLoss ?? openCfdDetails?.recommendedSl);
 
-      // setSubmitDisabled(true);s
+      // setSubmitDisabled(true);
 
       return;
     }
@@ -360,11 +360,18 @@ const PositionDetailsModal = ({
       // console.log('slToggleRef current', slToggleRef.current);
     }
 
-    if (guaranteedStopCheckRef.current !== openCfdDetails.guaranteedStop) {
+    if (guaranteedpCheckedRef.current !== openCfdDetails.guaranteedStop) {
       setSubmitDisabled(false);
-      // console.log('guaranteedStopCheckRef current', guaranteedStopCheckRef.current);
+      // console.log('guaranteedStopCheckRef current', guaranteedpCheckedRef.current);
+      // console.log('openCfdDetails.guaranteedStop', openCfdDetails.guaranteedStop);
     }
-  }, [tpValueRef.current, slValueRef.current, tpToggleRef.current, slToggleRef.current]);
+  }, [
+    tpValueRef.current,
+    slValueRef.current,
+    tpToggleRef.current,
+    slToggleRef.current,
+    guaranteedpCheckedRef.current,
+  ]);
 
   const isDisplayedDetailedPositionModal = modalVisible ? (
     <div {...otherProps}>

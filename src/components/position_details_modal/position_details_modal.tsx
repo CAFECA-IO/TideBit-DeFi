@@ -8,7 +8,6 @@ import {
 } from '../../constants/display';
 import Toggle from '../toggle/toggle';
 import {useContext, useEffect, useRef} from 'react';
-
 import TradingInput from '../trading_input/trading_input';
 import {AiOutlineQuestionCircle} from 'react-icons/ai';
 import RippleButton from '../ripple_button/ripple_button';
@@ -262,6 +261,7 @@ const PositionDetailsModal = ({
     }
   };
 
+  // FIXME: Inconsistent information between text and input
   const displayedTakeProfitSetting = (
     <div className={`${isDisplayedTakeProfitSetting}`}>
       <TradingInput
@@ -279,6 +279,7 @@ const PositionDetailsModal = ({
     </div>
   );
 
+  // FIXME: Inconsistent information between text and input
   const displayedStopLossSetting = (
     <div className={`${isDisplayedStopLossSetting}`}>
       <TradingInput
@@ -338,8 +339,7 @@ const PositionDetailsModal = ({
     </div>
   );
 
-  useEffect(() => {
-    setSubmitDisabled(true);
+  const changeComparison = () => {
     if (tpToggleRef.current && tpValueRef.current !== openCfdDetails?.takeProfit) {
       setSubmitDisabled(false);
       // console.log('tpValueRef current', tpValueRef.current);
@@ -365,6 +365,11 @@ const PositionDetailsModal = ({
       // console.log('guaranteedStopCheckRef current', guaranteedpCheckedRef.current);
       // console.log('openCfdDetails.guaranteedStop', openCfdDetails.guaranteedStop);
     }
+  };
+
+  useEffect(() => {
+    setSubmitDisabled(true);
+    changeComparison();
   }, [
     tpValueRef.current,
     slValueRef.current,

@@ -35,8 +35,8 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
   // dataPositionDetailsModal 拿到的是整個JSON
   // globalContext.dataPositionDetailsModalHandler(cfd.orderId);
   const openItemClickHandler = () => {
-    visiblePositionDetailsModalHandler();
     dataPositionDetailsModalHandler(openCfdDetails);
+    visiblePositionDetailsModalHandler();
   };
 
   const nowTimestamp = new Date().getTime() / 1000;

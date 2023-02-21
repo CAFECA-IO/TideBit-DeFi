@@ -23,7 +23,7 @@ interface IPositionDetailsModal {
   modalVisible: boolean;
   modalClickHandler: (bool?: boolean | any) => void;
   openCfdDetails: IOpenCFDDetails;
-  id?: string;
+  // id?: string;
 }
 
 const PositionDetailsModal = ({
@@ -31,7 +31,7 @@ const PositionDetailsModal = ({
   modalVisible,
   modalClickHandler,
   openCfdDetails,
-  id,
+  // id,
   ...otherProps
 }: IPositionDetailsModal) => {
   // console.log('openCfdDetails in details modal: ', openCfdDetails.id);
@@ -364,7 +364,7 @@ const PositionDetailsModal = ({
   );
 
   const isDisplayedDetailedPositionModal = modalVisible ? (
-    <div id={id} {...otherProps}>
+    <div {...otherProps}>
       <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">
         <div className="relative my-6 mx-auto w-auto max-w-xl">
           {/*content & panel*/}

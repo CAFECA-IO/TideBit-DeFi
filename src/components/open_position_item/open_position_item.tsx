@@ -160,7 +160,7 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
       {/* <div className="absolute top-200px my-auto h-px w-7/8 rounded bg-white/50"></div> */}
 
       <PositionDetailsModal
-        id={`TBD20230207001`}
+        // id={`TBD20230207001`}
         // openCfdDetails={dataFormat}
         openCfdDetails={openCfdDetails}
         modalVisible={visiblePositionDetailsModal}

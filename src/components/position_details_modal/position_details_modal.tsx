@@ -41,8 +41,11 @@ const PositionDetailsModal = ({
   const initialTpToggle = openCfdDetails?.takeProfit ? true : false;
   const initialSlToggle = openCfdDetails?.stopLoss ? true : false;
 
-  const initialSlInput = openCfdDetails?.stopLoss ?? openCfdDetails.recommendedSl;
-  const initialTpInput = openCfdDetails?.takeProfit ?? openCfdDetails.recommendedTp;
+  const cfdTp = openCfdDetails?.takeProfit;
+  const cfdSl = openCfdDetails?.stopLoss;
+
+  const initialTpInput = cfdTp ?? openCfdDetails.recommendedTp;
+  const initialSlInput = cfdSl ?? openCfdDetails.recommendedSl;
 
   const initialGuaranteedChecked = openCfdDetails.guaranteedStop;
 
@@ -452,14 +455,16 @@ const PositionDetailsModal = ({
                     <div className="text-lightGray">Limit/ Stop</div>
                     <div className="">
                       <span className={`text-lightWhite`}>
-                        {openCfdDetails?.takeProfit?.toLocaleString(
+                        {cfdTp?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? '-'}
+                        {/* {openCfdDetails?.takeProfit?.toLocaleString(
                           UNIVERSAL_NUMBER_FORMAT_LOCALE
-                        ) ?? '-'}
+                        ) ?? '-'} */}
                       </span>{' '}
                       /{' '}
                       <span className={`text-lightWhite`}>
-                        {openCfdDetails?.stopLoss?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ??
-                          '-'}
+                        {cfdSl?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? '-'}
+                        {/* {openCfdDetails?.stopLoss?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ??
+                          '-'} */}
                       </span>
                     </div>
                   </div>

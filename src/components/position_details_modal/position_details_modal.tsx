@@ -112,6 +112,8 @@ const PositionDetailsModal = ({
     ? openCfdDetails?.stopLoss ?? openCfdDetails.recommendedSl
     : slUpperLimit;
 
+  const displayedTime = timestampToString(openCfdDetails?.openTimestamp ?? 0);
+
   const buttonClickHandler = () => {
     // console.log('btn clicked');
     // setSubmitDisabled(false);
@@ -296,8 +298,8 @@ const PositionDetailsModal = ({
                 </div>
 
                 <div className="text-end text-base text-lightGray">
-                  <p className="">{timestampToString(openCfdDetails?.openTimestamp ?? 0).date}</p>
-                  <p className="">{timestampToString(openCfdDetails?.openTimestamp ?? 0).time}</p>
+                  <p className="">{displayedTime.date}</p>
+                  <p className="">{displayedTime.time}</p>
                 </div>
               </div>
 
@@ -357,8 +359,7 @@ const PositionDetailsModal = ({
                   <div className="mx-6 my-4 flex justify-between">
                     <div className="text-lightGray">Open Time</div>
                     <div className="">
-                      {timestampToString(openCfdDetails?.openTimestamp ?? 0).date}{' '}
-                      {timestampToString(openCfdDetails?.openTimestamp ?? 0).time}
+                      {displayedTime.date} {displayedTime.time}
                     </div>
                   </div>
 

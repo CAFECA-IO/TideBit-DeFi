@@ -116,28 +116,6 @@ export const CRYPTO_CARD_COLORS = [
 export const TIDEBIT_BUTTON_CONFIG =
   'rounded px-5 py-2 text-base transition-all hover:opacity-90 text-white bg-tidebitTheme';
 
-export interface IDevToastConfig {
-  position: string;
-  autoClose: number;
-  hideProgressBar: boolean;
-  closeOnClick: boolean;
-  pauseOnHover: boolean;
-  draggable: boolean;
-  progress: undefined;
-  theme: string;
-}
-
-export const DevToastConfig: IDevToastConfig = {
-  position: 'bottom-left',
-  autoClose: 3000,
-  hideProgressBar: false,
-  closeOnClick: true,
-  pauseOnHover: true,
-  draggable: false,
-  progress: undefined,
-  theme: 'dark',
-};
-
 export const DELAYED_HIDDEN_SECONDS = 1000;
 
 export const TRADING_INPUT_STEP = 0.01;

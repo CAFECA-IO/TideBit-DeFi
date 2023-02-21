@@ -53,6 +53,8 @@ const PositionUpdatedModal = ({
 
   const layoutInsideBorder = 'mx-5 my-4 flex justify-between';
 
+  const displayedTime = timestampToString(openCfdDetails?.openTimestamp ?? 0);
+
   const formContent = (
     <div>
       <div className="mt-2 mb-2 flex items-center justify-center space-x-2 text-center">
@@ -110,8 +112,7 @@ const PositionUpdatedModal = ({
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">Open Time</div>
               <div className="">
-                {timestampToString(openCfdDetails?.openTimestamp ?? 0).date}{' '}
-                {timestampToString(openCfdDetails?.openTimestamp ?? 0).time}
+                {displayedTime.date} {displayedTime.time}
               </div>
             </div>
 

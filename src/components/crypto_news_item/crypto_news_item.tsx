@@ -35,6 +35,8 @@ const CryptoNewsItem = ({
     />
   );
 
+  const displayedTime = timestampToString(timestamp);
+
   return (
     <>
       <section className={`${overallWidth}`}>
@@ -50,7 +52,7 @@ const CryptoNewsItem = ({
                 {/* <br className="hidden lg:inline-block" />
               readymade gluten */}
               </h1>
-              <p className="mr-5 text-sm text-lightGray">{timestampToString(timestamp).date}</p>
+              <p className="mr-5 text-sm text-lightGray">{displayedTime.date}</p>
             </div>
 
             <p className="mb-12 mr-5 text-xs leading-relaxed">

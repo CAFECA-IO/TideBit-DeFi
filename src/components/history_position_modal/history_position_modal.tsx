@@ -16,6 +16,7 @@ import {timestampToString} from '../../lib/common';
 import {IClosedCFDDetails} from '../../interfaces/tidebit_defi_background/closed_cfd_details';
 import {MarketContext} from '../../contexts/market_context';
 import {CFDClosedType} from '../../constants/cfd_closed_type';
+import {OrderState} from '../../constants/order_state';
 
 interface IHistoryPositionModal {
   modalVisible: boolean;
@@ -71,6 +72,13 @@ const HistoryPositionModal = ({
   const displayedBorderColor =
     closedCfdDetails?.typeOfPosition === 'BUY' ? TypeOfBorderColor.LONG : TypeOfBorderColor.SHORT;
 
+  const displayedPositionState = closedCfdDetails.state === OrderState.OPENING ? 'Open' : 'Closed';
+
+  const socialMediaStyle = 'hover:cursor-pointer hover:opacity-80';
+
+  const openTime = timestampToString(closedCfdDetails?.openTimestamp ?? 0);
+  const closedTime = timestampToString(closedCfdDetails?.closedTimestamp ?? 0);
+
   const formContent = (
     <div className="relative flex-auto pt-0">
       <div
@@ -108,7 +116,7 @@ const HistoryPositionModal = ({
           </div>
 
           <div className={`${layoutInsideBorder}`}>
-            <div className="text-lightGray">Close Value</div>
+            <div className="text-lightGray">Closed Value</div>
             <div className="">
               ${' '}
               {(closedCfdDetails?.openValue + closedCfdDetails.pnl.value)?.toLocaleString(
@@ -125,7 +133,7 @@ const HistoryPositionModal = ({
           </div>
 
           <div className={`${layoutInsideBorder}`}>
-            <div className="text-lightGray">Close Price</div>
+            <div className="text-lightGray">Closed Price</div>
             <div className="">
               $ {closedCfdDetails?.openPrice?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0}
             </div>
@@ -134,21 +142,19 @@ const HistoryPositionModal = ({
           <div className={`${layoutInsideBorder}`}>
             <div className="text-lightGray">Open Time</div>
             <div className="">
-              {timestampToString(closedCfdDetails?.openTimestamp ?? 0).date}{' '}
-              {timestampToString(closedCfdDetails?.openTimestamp ?? 0).time}
+              {openTime.date} {openTime.time}
             </div>
           </div>
 
           <div className={`${layoutInsideBorder}`}>
-            <div className="text-lightGray">Close Time</div>
+            <div className="text-lightGray">Closed Time</div>
             <div className="">
-              {timestampToString(closedCfdDetails?.closedTimestamp ?? 0).date}{' '}
-              {timestampToString(closedCfdDetails?.closedTimestamp ?? 0).time}
+              {closedTime.date} {closedTime.time}
             </div>
           </div>
 
           <div className={`${layoutInsideBorder}`}>
-            <div className="text-lightGray">Limit/ Stop</div>
+            <div className="text-lightGray">Take-Profit/ Stop-Loss</div>
             <div className="">
               <span className={`text-lightWhite`}>
                 {closedCfdDetails?.takeProfit?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ??
@@ -175,7 +181,7 @@ const HistoryPositionModal = ({
 
           <div className={`${layoutInsideBorder}`}>
             <div className="text-lightGray">State</div>
-            <div className="">Closed</div>
+            <div className="">{displayedPositionState}</div>
           </div>
 
           <div className={`${layoutInsideBorder}`}>
@@ -189,22 +195,22 @@ const HistoryPositionModal = ({
       >
         <div className={``}>Share:</div>
 
-        <div className={` hover:cursor-pointer hover:opacity-90`}>
+        <div className={`${socialMediaStyle}`}>
           {' '}
           <Image src="/elements/group_15237.svg" width={44} height={44} alt="Facebook" />
         </div>
 
-        <div className={` hover:cursor-pointer hover:opacity-90`}>
+        <div className={`${socialMediaStyle}`}>
           {' '}
           <Image src="/elements/group_15236.svg" width={44} height={44} alt="Instagram" />
         </div>
 
-        <div className={` hover:cursor-pointer hover:opacity-90`}>
+        <div className={`${socialMediaStyle}`}>
           {' '}
           <Image src="/elements/group_15235.svg" width={44} height={44} alt="Twitter" />
         </div>
 
-        <div className={` hover:cursor-pointer hover:opacity-90`}>
+        <div className={`${socialMediaStyle}`}>
           <Image src="/elements/group_15234.svg" width={44} height={44} alt="Reddit" />
         </div>
       </div>
@@ -219,26 +225,26 @@ const HistoryPositionModal = ({
           <div className="relative flex h-620px w-296px flex-col rounded-3xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none">
             {/*header*/}
             <div className="-mb-1 flex items-start justify-between rounded-t pt-6">
-              <div className="ml-7 mr-5 mt-5 flex w-450px justify-between">
-                <div className="flex items-center space-x-3 text-center text-2xl text-lightWhite">
-                  {/* TODO: {closedCfdDetails.id} "/elements/group_2371.svg" */}
+              <div className="ml-7 mr-5 mt-5 mb-3 flex w-450px justify-between">
+                <div className="flex w-full items-center justify-center space-x-2 text-center text-2xl text-lightWhite">
+                  {/* TODO: selected ticker should have default */}
                   <Image
                     src={marketCtx.selectedTicker?.tokenImg ?? ''}
                     width={30}
                     height={30}
                     alt="icon"
                   />
-                  <h3 className="">{closedCfdDetails?.ticker} </h3>
+                  <h3 className="">{closedCfdDetails.ticker} </h3>
                 </div>
 
-                <div className="flex-col space-y-2 text-end text-xs text-lightGray">
+                {/* <div className="flex-col space-y-2 text-end text-xs text-lightGray">
                   <p className="">
-                    {timestampToString(closedCfdDetails?.closedTimestamp ?? 0).date}
+                    {closedTime.date}
                   </p>
                   <p className="">
-                    {timestampToString(closedCfdDetails?.closedTimestamp ?? 0).time}
+                    {closedTime.time}
                   </p>
-                </div>
+                </div> */}
               </div>
 
               <button className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">

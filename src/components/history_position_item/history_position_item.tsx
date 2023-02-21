@@ -32,9 +32,11 @@ const HistoryPositionItem = ({closedCfdDetails, ...otherProps}: IHistoryPosition
       : '';
 
   const itemClickHandler = () => {
-    globalCtx.dataHistoryPositionModalHandler({closedCfdDetails});
+    globalCtx.dataHistoryPositionModalHandler(closedCfdDetails);
     globalCtx.visibleHistoryPositionModalHandler();
   };
+
+  const displayedTime = timestampToString(closedCfdDetails.closedTimestamp);
 
   return (
     <>
@@ -42,12 +44,9 @@ const HistoryPositionItem = ({closedCfdDetails, ...otherProps}: IHistoryPosition
         <div className="flex justify-center">
           <div className="w-48px">
             <div className="text-lightGray">
-              {timestampToString(closedCfdDetails.closedTimestamp).day}{' '}
-              {timestampToString(closedCfdDetails.closedTimestamp).abbreviatedMonth}{' '}
+              {displayedTime.day} {displayedTime.abbreviatedMonth}{' '}
             </div>
-            <div className="text-lightGray">
-              {timestampToString(closedCfdDetails.closedTimestamp).abbreviatedTime}
-            </div>
+            <div className="text-lightGray">{displayedTime.abbreviatedTime}</div>
             {/* Divider */}
           </div>
 

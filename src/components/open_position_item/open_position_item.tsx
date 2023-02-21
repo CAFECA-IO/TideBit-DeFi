@@ -38,7 +38,7 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
   const detailedModalClickHandler = () => {
     // setDetailedModalVisible(!detailedModalVisible);
     visiblePositionDetailsModalHandler();
-    dataPositionDetailsModalHandler({openCfdDetails});
+    dataPositionDetailsModalHandler(openCfdDetails);
     // passOrderIdHandler(openCfdDetails.id);
   };
 

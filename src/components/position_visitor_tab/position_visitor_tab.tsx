@@ -1,7 +1,17 @@
 import React from 'react';
 import TideButton from '../tide_button/tide_button';
+import {useGlobal} from '../../contexts/global_context';
 
 const PositionVisitorTab = () => {
+  const globalCtx = useGlobal();
+
+  const tabBodyWidth = 'w-320px';
+
+  const btnClickHandler = () => {
+    // globalCtx.visibleSignatureProcessModalHandler();
+    globalCtx.visibleWalletPanelHandler();
+  };
+
   return (
     <div>
       {/* `overflow-y-scroll scroll-smooth` only show the scroll bar but no functionality */}
@@ -13,7 +23,7 @@ const PositionVisitorTab = () => {
           <div className={`relative`}>
             {/* ---sidebar self--- */}
             <div
-              className={`pointer-events-auto ${'w-300px'} h-screen bg-darkGray p-5 text-white transition-all duration-300`}
+              className={`pointer-events-auto ${tabBodyWidth} h-screen bg-darkGray p-5 text-white transition-all duration-300`}
             >
               {/* <h1 className="pl-5 text-2xl font-bold">Start to trade</h1> */}
 
@@ -30,6 +40,7 @@ const PositionVisitorTab = () => {
                   <div className="space-y-2 pl-60px pt-10">
                     {/* <WalletPanel getUserLoginState={getUserLoginHandler} /> */}
                     <TideButton
+                      onClick={btnClickHandler}
                       className={`mt-4 rounded border-0 bg-tidebitTheme py-2 px-5 text-base text-white transition-all hover:opacity-90 md:mt-0`}
                     >
                       Wallet Connect

@@ -2,18 +2,20 @@ import Image from 'next/image';
 import {ImCross} from 'react-icons/im';
 import {IOpenCFDDetails} from '../../interfaces/tidebit_defi_background/open_cfd_details';
 import {
-  BORDER_COLOR_TYPE,
-  PNL_COLOR_TYPE,
+  TypeOfBorderColor,
+  TypeOfPnLColor,
   UNIVERSAL_NUMBER_FORMAT_LOCALE,
 } from '../../constants/display';
 import Toggle from '../toggle/toggle';
-import {useRef, useState} from 'react';
+import {useContext, useRef, useState} from 'react';
 import TradingInput from '../trading_input/trading_input';
 import {AiOutlineQuestionCircle} from 'react-icons/ai';
 import RippleButton from '../ripple_button/ripple_button';
 import {useGlobal} from '../../contexts/global_context';
 import {TypeOfPosition} from '../../constants/type_of_position';
 import {ProfitState} from '../../constants/profit_state';
+import {timestampToString} from '../../lib/common';
+import {MarketContext} from '../../contexts/market_context';
 
 interface IPositionDetailsModal {
   modalVisible: boolean;
@@ -21,24 +23,6 @@ interface IPositionDetailsModal {
   openCfdDetails: IOpenCFDDetails;
   id?: string;
 }
-
-const timestampToString = (timestamp: number) => {
-  if (timestamp === 0) return ['-', '-'];
-
-  const date = new Date(timestamp * 1000);
-  // const date = new Date();
-  const year = date.getFullYear();
-  const month = (date.getMonth() + 1).toString().padStart(2, '0');
-  const day = date.getDate().toString().padStart(2, '0');
-  const hour = date.getHours().toString().padStart(2, '0');
-  const minute = date.getMinutes().toString().padStart(2, '0');
-  const second = date.getSeconds().toString().padStart(2, '0');
-
-  const dateString = `${year}-${month}-${day}`;
-  const timeString = `${hour}:${minute}:${second}`;
-
-  return [dateString, timeString];
-};
 
 const PositionDetailsModal = ({
   // openCfdDetails,
@@ -50,6 +34,7 @@ const PositionDetailsModal = ({
 }: IPositionDetailsModal) => {
   // console.log('openCfdDetails in details modal: ', openCfdDetails.id);
   const globalContext = useGlobal();
+  const marketCtx = useContext(MarketContext);
 
   const initialTpToggle = openCfdDetails?.takeProfit ? true : false;
   const initialSlToggle = openCfdDetails?.stopLoss ? true : false;
@@ -103,19 +88,19 @@ const PositionDetailsModal = ({
     openCfdDetails?.typeOfPosition === TypeOfPosition.BUY ? 'Up (Buy)' : 'Down (Sell)';
 
   const displayedPositionColor =
-    openCfdDetails.typeOfPosition === 'BUY' ? PNL_COLOR_TYPE.profit : PNL_COLOR_TYPE.loss;
+    openCfdDetails.typeOfPosition === 'BUY' ? TypeOfPnLColor.PROFIT : TypeOfPnLColor.LOSS;
 
   const displayedPnLColor =
     openCfdDetails?.pnl.type === ProfitState.PROFIT
-      ? PNL_COLOR_TYPE.profit
+      ? TypeOfPnLColor.PROFIT
       : openCfdDetails?.pnl.type === ProfitState.LOSS
-      ? PNL_COLOR_TYPE.loss
-      : PNL_COLOR_TYPE.equal;
+      ? TypeOfPnLColor.LOSS
+      : TypeOfPnLColor.EQUAL;
 
   const displayedBorderColor =
     openCfdDetails?.typeOfPosition === TypeOfPosition.BUY
-      ? BORDER_COLOR_TYPE.long
-      : BORDER_COLOR_TYPE.short;
+      ? TypeOfBorderColor.LONG
+      : TypeOfBorderColor.SHORT;
 
   const isDisplayedTakeProfitSetting = takeProfitToggle ? 'flex' : 'invisible';
   const isDisplayedStopLossSetting = stopLossToggle ? 'flex' : 'invisible';
@@ -126,6 +111,8 @@ const PositionDetailsModal = ({
   const displayedSlUpperLimit = openCfdDetails?.guaranteedStop
     ? openCfdDetails?.stopLoss ?? openCfdDetails.recommendedSl
     : slUpperLimit;
+
+  const displayedTime = timestampToString(openCfdDetails?.openTimestamp ?? 0);
 
   const buttonClickHandler = () => {
     // console.log('btn clicked');
@@ -301,13 +288,18 @@ const PositionDetailsModal = ({
             <div className="flex items-start justify-between rounded-t pt-6">
               <div className="ml-10 mr-8 mt-6 flex w-450px justify-between">
                 <div className="flex items-center space-x-3 text-center text-4xl text-lightWhite">
-                  <Image src="/elements/group_2371.svg" width={40} height={40} alt="icon" />
+                  <Image
+                    src={marketCtx.selectedTicker?.tokenImg ?? ''}
+                    width={40}
+                    height={40}
+                    alt="icon"
+                  />
                   <h3 className="">{openCfdDetails?.ticker} </h3>
                 </div>
 
                 <div className="text-end text-base text-lightGray">
-                  <p className="">{timestampToString(openCfdDetails?.openTimestamp ?? 0)[0]}</p>
-                  <p className="">{timestampToString(openCfdDetails?.openTimestamp ?? 0)[1]}</p>
+                  <p className="">{displayedTime.date}</p>
+                  <p className="">{displayedTime.time}</p>
                 </div>
               </div>
 
@@ -367,8 +359,7 @@ const PositionDetailsModal = ({
                   <div className="mx-6 my-4 flex justify-between">
                     <div className="text-lightGray">Open Time</div>
                     <div className="">
-                      {timestampToString(openCfdDetails?.openTimestamp ?? 0)[0]}{' '}
-                      {timestampToString(openCfdDetails?.openTimestamp ?? 0)[1]}
+                      {displayedTime.date} {displayedTime.time}
                     </div>
                   </div>
 

@@ -1,44 +1,29 @@
 import {ImCross} from 'react-icons/im';
 import {IOpenCFDDetails} from '../../interfaces/tidebit_defi_background/open_cfd_details';
 import {
-  BORDER_COLOR_TYPE,
-  PNL_COLOR_TYPE,
+  TypeOfBorderColor,
+  TypeOfPnLColor,
   UNIVERSAL_NUMBER_FORMAT_LOCALE,
 } from '../../constants/display';
 import RippleButton from '../ripple_button/ripple_button';
 import Image from 'next/image';
+import {timestampToString} from '../../lib/common';
 
-interface IPositionOpenModal {
+interface IPositionUpdatedModal {
   modalVisible: boolean;
   modalClickHandler: () => void;
-  openCfdDetails: IOpenCFDDetails;
+  updatedCfdDetails: IOpenCFDDetails;
+
+  // updatedProps
 }
-
-const timestampToString = (timestamp: number) => {
-  if (timestamp === 0) return ['-', '-'];
-
-  const date = new Date(timestamp * 1000);
-  // const date = new Date();
-  const year = date.getFullYear();
-  const month = (date.getMonth() + 1).toString().padStart(2, '0');
-  const day = date.getDate().toString().padStart(2, '0');
-  const hour = date.getHours().toString().padStart(2, '0');
-  const minute = date.getMinutes().toString().padStart(2, '0');
-  const second = date.getSeconds().toString().padStart(2, '0');
-
-  const dateString = `${year}-${month}-${day}`;
-  const timeString = `${hour}:${minute}:${second}`;
-
-  return [dateString, timeString];
-};
 
 // TODO: replace all hardcode options with variables
 const PositionUpdatedModal = ({
   modalVisible,
   modalClickHandler,
-  openCfdDetails,
+  updatedCfdDetails: openCfdDetails,
   ...otherProps
-}: IPositionOpenModal) => {
+}: IPositionUpdatedModal) => {
   // TODO: create order function
   const submitClickHandler = () => {
     modalClickHandler();
@@ -55,18 +40,20 @@ const PositionUpdatedModal = ({
 
   const displayedPnLColor =
     openCfdDetails?.pnl.type === 'PROFIT'
-      ? PNL_COLOR_TYPE.profit
+      ? TypeOfPnLColor.PROFIT
       : openCfdDetails?.pnl.type === 'LOSS'
-      ? PNL_COLOR_TYPE.loss
-      : PNL_COLOR_TYPE.equal;
+      ? TypeOfPnLColor.LOSS
+      : TypeOfPnLColor.EQUAL;
 
   const displayedPositionColor =
-    openCfdDetails.typeOfPosition === 'BUY' ? PNL_COLOR_TYPE.profit : PNL_COLOR_TYPE.loss;
+    openCfdDetails.typeOfPosition === 'BUY' ? TypeOfPnLColor.PROFIT : TypeOfPnLColor.LOSS;
 
   const displayedBorderColor =
-    openCfdDetails?.typeOfPosition === 'BUY' ? BORDER_COLOR_TYPE.long : BORDER_COLOR_TYPE.short;
+    openCfdDetails?.typeOfPosition === 'BUY' ? TypeOfBorderColor.LONG : TypeOfBorderColor.SHORT;
 
   const layoutInsideBorder = 'mx-5 my-4 flex justify-between';
+
+  const displayedTime = timestampToString(openCfdDetails?.openTimestamp ?? 0);
 
   const formContent = (
     <div>
@@ -125,8 +112,7 @@ const PositionUpdatedModal = ({
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">Open Time</div>
               <div className="">
-                {timestampToString(openCfdDetails?.openTimestamp ?? 0)[0]}{' '}
-                {timestampToString(openCfdDetails?.openTimestamp ?? 0)[1]}
+                {displayedTime.date} {displayedTime.time}
               </div>
             </div>
 

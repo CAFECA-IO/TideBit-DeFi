@@ -2,75 +2,82 @@ import Image from 'next/image';
 import {ImCross} from 'react-icons/im';
 import {IOpenCFDDetails} from '../../interfaces/tidebit_defi_background/open_cfd_details';
 import {
-  BORDER_COLOR_TYPE,
-  PNL_COLOR_TYPE,
+  TypeOfBorderColor,
+  TypeOfPnLColor,
   UNIVERSAL_NUMBER_FORMAT_LOCALE,
 } from '../../constants/display';
 import Toggle from '../toggle/toggle';
-import {useRef, useState} from 'react';
+import {useContext, useRef, useState} from 'react';
 import TradingInput from '../trading_input/trading_input';
 import {AiOutlineQuestionCircle} from 'react-icons/ai';
 import RippleButton from '../ripple_button/ripple_button';
 import {useGlobal} from '../../contexts/global_context';
+import {timestampToString} from '../../lib/common';
+import {IClosedCFDDetails} from '../../interfaces/tidebit_defi_background/closed_cfd_details';
+import {MarketContext} from '../../contexts/market_context';
+import {CFDClosedType} from '../../constants/cfd_closed_type';
+import {OrderState} from '../../constants/order_state';
 
 interface IHistoryPositionModal {
   modalVisible: boolean;
   modalClickHandler: (bool?: boolean | any) => void;
-  openCfdDetails: IOpenCFDDetails;
+  closedCfdDetails: IClosedCFDDetails;
 }
 
-const timestampToString = (timestamp: number) => {
-  if (timestamp === 0) return ['-', '-'];
-
-  const date = new Date(timestamp * 1000);
-  // const date = new Date();
-  const year = date.getFullYear();
-  const month = (date.getMonth() + 1).toString().padStart(2, '0');
-  const day = date.getDate().toString().padStart(2, '0');
-  const hour = date.getHours().toString().padStart(2, '0');
-  const minute = date.getMinutes().toString().padStart(2, '0');
-  const second = date.getSeconds().toString().padStart(2, '0');
-
-  const dateString = `${year}-${month}-${day}`;
-  const timeString = `${hour}:${minute}:${second}`;
-
-  return [dateString, timeString];
-};
-
-// TODO: Replace hardcode data with variables
 const HistoryPositionModal = ({
   // openCfdDetails,
   modalVisible,
   modalClickHandler,
-  openCfdDetails,
+  closedCfdDetails: closedCfdDetails,
   ...otherProps
 }: IHistoryPositionModal) => {
   // console.log('openCfdDetails in details modal: ', openCfdDetails.id);
-  const globalContext = useGlobal();
+  // const globalCtx = useGlobal();
+  const marketCtx = useContext(MarketContext);
 
-  const displayedGuaranteedStopSetting = !!openCfdDetails.guaranteedStop ? 'Yes' : 'No';
+  const displayedClosedReason =
+    closedCfdDetails.closedType === CFDClosedType.SCHEDULE
+      ? 'Scheduled'
+      : closedCfdDetails.closedType === CFDClosedType.FORCED_LIQUIDATION
+      ? 'Forced Liquidation'
+      : closedCfdDetails.closedType === CFDClosedType.BY_USER
+      ? 'Manual'
+      : closedCfdDetails.closedType === CFDClosedType.TAKE_PROFIT
+      ? 'Take Profit'
+      : closedCfdDetails.closedType === CFDClosedType.STOP_LOSS
+      ? 'Stop Loss'
+      : '';
+
+  const displayedGuaranteedStopSetting = !!closedCfdDetails.guaranteedStop ? 'Yes' : 'No';
 
   const displayedPositionColor =
-    openCfdDetails.typeOfPosition === 'BUY' ? PNL_COLOR_TYPE.profit : PNL_COLOR_TYPE.loss;
+    closedCfdDetails.typeOfPosition === 'BUY' ? TypeOfPnLColor.PROFIT : TypeOfPnLColor.LOSS;
 
   const layoutInsideBorder = 'mx-5 my-4 flex justify-between';
 
   const displayedPnLSymbol =
-    openCfdDetails.pnl.type === 'PROFIT' ? '+' : openCfdDetails.pnl.type === 'LOSS' ? '-' : '';
+    closedCfdDetails.pnl.type === 'PROFIT' ? '+' : closedCfdDetails.pnl.type === 'LOSS' ? '-' : '';
 
   // TODO: i18n
   const displayedTypeOfPosition =
-    openCfdDetails?.typeOfPosition === 'BUY' ? 'Up (Buy)' : 'Down (Sell)';
+    closedCfdDetails?.typeOfPosition === 'BUY' ? 'Up (Buy)' : 'Down (Sell)';
 
   const displayedPnLColor =
-    openCfdDetails?.pnl.type === 'PROFIT'
-      ? PNL_COLOR_TYPE.profit
-      : openCfdDetails?.pnl.type === 'LOSS'
-      ? PNL_COLOR_TYPE.loss
-      : PNL_COLOR_TYPE.equal;
+    closedCfdDetails?.pnl.type === 'PROFIT'
+      ? TypeOfPnLColor.PROFIT
+      : closedCfdDetails?.pnl.type === 'LOSS'
+      ? TypeOfPnLColor.LOSS
+      : TypeOfPnLColor.EQUAL;
 
   const displayedBorderColor =
-    openCfdDetails?.typeOfPosition === 'BUY' ? BORDER_COLOR_TYPE.long : BORDER_COLOR_TYPE.short;
+    closedCfdDetails?.typeOfPosition === 'BUY' ? TypeOfBorderColor.LONG : TypeOfBorderColor.SHORT;
+
+  const displayedPositionState = closedCfdDetails.state === OrderState.OPENING ? 'Open' : 'Closed';
+
+  const socialMediaStyle = 'hover:cursor-pointer hover:opacity-80';
+
+  const openTime = timestampToString(closedCfdDetails?.openTimestamp ?? 0);
+  const closedTime = timestampToString(closedCfdDetails?.closedTimestamp ?? 0);
 
   const formContent = (
     <div className="relative flex-auto pt-0">
@@ -89,30 +96,30 @@ const HistoryPositionModal = ({
           <div className={`${layoutInsideBorder}`}>
             <div className="text-lightGray">Amount</div>
             <div className="">
-              {openCfdDetails?.amount?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0}
+              {closedCfdDetails?.amount?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0}
             </div>
           </div>
 
           <div className={`${layoutInsideBorder}`}>
             <div className="text-lightGray">PNL</div>
             <div className={`${displayedPnLColor}`}>
-              $ {displayedPnLSymbol}{' '}
-              {openCfdDetails?.pnl.value?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}
+              {displayedPnLSymbol} ${' '}
+              {closedCfdDetails?.pnl.value?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}
             </div>
           </div>
 
           <div className={`${layoutInsideBorder}`}>
             <div className="text-lightGray">Open Value</div>
             <div className="">
-              $ {openCfdDetails?.openValue?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0}
+              $ {closedCfdDetails?.openValue?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0}
             </div>
           </div>
 
           <div className={`${layoutInsideBorder}`}>
-            <div className="text-lightGray">Close Value</div>
+            <div className="text-lightGray">Closed Value</div>
             <div className="">
               ${' '}
-              {(openCfdDetails?.openValue + openCfdDetails.pnl.value)?.toLocaleString(
+              {(closedCfdDetails?.openValue + closedCfdDetails.pnl.value)?.toLocaleString(
                 UNIVERSAL_NUMBER_FORMAT_LOCALE
               ) ?? 0}
             </div>
@@ -121,42 +128,41 @@ const HistoryPositionModal = ({
           <div className={`${layoutInsideBorder}`}>
             <div className="text-lightGray">Open Price</div>
             <div className="">
-              $ {openCfdDetails?.openPrice?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0}
+              $ {closedCfdDetails?.openPrice?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0}
             </div>
           </div>
 
           <div className={`${layoutInsideBorder}`}>
-            <div className="text-lightGray">Close Price</div>
+            <div className="text-lightGray">Closed Price</div>
             <div className="">
-              $ {openCfdDetails?.openPrice?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0}
+              $ {closedCfdDetails?.openPrice?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0}
             </div>
           </div>
 
           <div className={`${layoutInsideBorder}`}>
             <div className="text-lightGray">Open Time</div>
             <div className="">
-              {timestampToString(openCfdDetails?.openTimestamp ?? 0)[0]}{' '}
-              {timestampToString(openCfdDetails?.openTimestamp ?? 0)[1]}
+              {openTime.date} {openTime.time}
             </div>
           </div>
 
           <div className={`${layoutInsideBorder}`}>
-            <div className="text-lightGray">Close Time</div>
+            <div className="text-lightGray">Closed Time</div>
             <div className="">
-              {timestampToString(openCfdDetails?.openTimestamp ?? 0)[0]}{' '}
-              {timestampToString(openCfdDetails?.openTimestamp ?? 0)[1]}
+              {closedTime.date} {closedTime.time}
             </div>
           </div>
 
           <div className={`${layoutInsideBorder}`}>
-            <div className="text-lightGray">Limit/ Stop</div>
+            <div className="text-lightGray">Take-Profit/ Stop-Loss</div>
             <div className="">
               <span className={`text-lightWhite`}>
-                {openCfdDetails?.takeProfit?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? '-'}
+                {closedCfdDetails?.takeProfit?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ??
+                  '-'}
               </span>{' '}
               /{' '}
               <span className={`text-lightWhite`}>
-                {openCfdDetails?.stopLoss?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? '-'}
+                {closedCfdDetails?.stopLoss?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? '-'}
               </span>
             </div>
           </div>
@@ -175,12 +181,12 @@ const HistoryPositionModal = ({
 
           <div className={`${layoutInsideBorder}`}>
             <div className="text-lightGray">State</div>
-            <div className="">Closed</div>
+            <div className="">{displayedPositionState}</div>
           </div>
 
           <div className={`${layoutInsideBorder}`}>
             <div className="text-lightGray">Close Reason</div>
-            <div className="">Take Profit</div>
+            <div className="">{displayedClosedReason}</div>
           </div>
         </div>
       </div>
@@ -189,22 +195,22 @@ const HistoryPositionModal = ({
       >
         <div className={``}>Share:</div>
 
-        <div className={` hover:cursor-pointer hover:opacity-90`}>
+        <div className={`${socialMediaStyle}`}>
           {' '}
           <Image src="/elements/group_15237.svg" width={44} height={44} alt="Facebook" />
         </div>
 
-        <div className={` hover:cursor-pointer hover:opacity-90`}>
+        <div className={`${socialMediaStyle}`}>
           {' '}
           <Image src="/elements/group_15236.svg" width={44} height={44} alt="Instagram" />
         </div>
 
-        <div className={` hover:cursor-pointer hover:opacity-90`}>
+        <div className={`${socialMediaStyle}`}>
           {' '}
           <Image src="/elements/group_15235.svg" width={44} height={44} alt="Twitter" />
         </div>
 
-        <div className={` hover:cursor-pointer hover:opacity-90`}>
+        <div className={`${socialMediaStyle}`}>
           <Image src="/elements/group_15234.svg" width={44} height={44} alt="Reddit" />
         </div>
       </div>
@@ -219,16 +225,26 @@ const HistoryPositionModal = ({
           <div className="relative flex h-620px w-296px flex-col rounded-3xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none">
             {/*header*/}
             <div className="-mb-1 flex items-start justify-between rounded-t pt-6">
-              <div className="ml-7 mr-5 mt-5 flex w-450px justify-between">
-                <div className="flex items-center space-x-3 text-center text-2xl text-lightWhite">
-                  <Image src="/elements/group_2371.svg" width={30} height={30} alt="icon" />
-                  <h3 className="">{openCfdDetails?.ticker} </h3>
+              <div className="ml-7 mr-5 mt-5 mb-3 flex w-450px justify-between">
+                <div className="flex w-full items-center justify-center space-x-2 text-center text-2xl text-lightWhite">
+                  {/* TODO: selected ticker should have default */}
+                  <Image
+                    src={marketCtx.selectedTicker?.tokenImg ?? ''}
+                    width={30}
+                    height={30}
+                    alt="icon"
+                  />
+                  <h3 className="">{closedCfdDetails.ticker} </h3>
                 </div>
 
-                <div className="flex-col space-y-2 text-end text-xs text-lightGray">
-                  <p className="">{timestampToString(openCfdDetails?.openTimestamp ?? 0)[0]}</p>
-                  <p className="">{timestampToString(openCfdDetails?.openTimestamp ?? 0)[1]}</p>
-                </div>
+                {/* <div className="flex-col space-y-2 text-end text-xs text-lightGray">
+                  <p className="">
+                    {closedTime.date}
+                  </p>
+                  <p className="">
+                    {closedTime.time}
+                  </p>
+                </div> */}
               </div>
 
               <button className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">

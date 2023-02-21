@@ -2,8 +2,8 @@ import {useState} from 'react';
 import CircularProgressBar from '../circular_progress_bar/circular_progress_bar';
 import {
   OPEN_POSITION_LINE_GRAPH_WIDTH,
-  PROFIT_LOSS_COLOR_TYPE,
-  TRANSACTION_TYPE,
+  TypeOfPnLColorHex,
+  TypeOfTransaction,
 } from '../../constants/display';
 import PositionLineGraph from '../position_line_graph/position_line_graph';
 import PositionDetailsModal from '../position_details_modal/position_details_modal';
@@ -11,35 +11,17 @@ import {IOpenCFDDetails} from '../../interfaces/tidebit_defi_background/open_cfd
 import {toast} from 'react-toastify';
 import {useGlobal} from '../../contexts/global_context';
 import {ProfitState} from '../../constants/profit_state';
+import {TypeOfPosition} from '../../constants/type_of_position';
 // import HorizontalRelativeLineGraph from '../horizontal_relative_line_graph/horizontal_relative_line_graph';
 
 interface IOpenPositionItemProps {
-  profitOrLoss: string;
-  longOrShort: string;
-  ticker: string;
-  passedHour: number;
-  value: number;
-  profitOrLossAmount: number;
-  tickerTrendArray: number[];
   openCfdDetails: IOpenCFDDetails;
-  // circularClick?: () => void;
 }
 
-const OpenPositionItem = ({
-  profitOrLoss,
-  longOrShort,
-  value,
-  ticker,
-  passedHour,
-  profitOrLossAmount,
-  tickerTrendArray,
-  openCfdDetails,
-  // circularClick: circularClick,
-  ...otherProps
-}: IOpenPositionItemProps) => {
-  if (longOrShort !== 'long' && longOrShort !== 'short') return <></>;
+const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProps) => {
+  // if (longOrShort !== 'long' && longOrShort !== 'short') return <></>;
   // if (profitOrLoss !== 'profit' && profitOrLoss !== 'loss') return <></>; if (profitOrLoss !== 'profit' && profitOrLoss !== 'loss') return <></>;
-  if (ticker !== 'ETH' && ticker !== 'BTC') return <></>;
+  // if (ticker !== 'ETH' && ticker !== 'BTC') return <></>;
   const {
     visiblePositionDetailsModal,
     visiblePositionDetailsModalHandler,
@@ -56,28 +38,15 @@ const OpenPositionItem = ({
   const detailedModalClickHandler = () => {
     // setDetailedModalVisible(!detailedModalVisible);
     visiblePositionDetailsModalHandler();
-    dataPositionDetailsModalHandler({openCfdDetails});
+    dataPositionDetailsModalHandler(openCfdDetails);
     // passOrderIdHandler(openCfdDetails.id);
   };
 
-  // // FIXME: Position Details Modal Data
-  // const passOrderIdHandler = (orderId: string) => {
-  //   positionDetailsModalDataHandler({orderIdPositionDetailsModal: orderId});
-  //   // toast({type: 'info', message: `pass OrderId Handler order id, ${orderId}`});
-  //   // toast({
-  //   //   type: 'info',
-  //   //   message: `position Details Modal Data from context, ${JSON.stringify(
-  //   //     positionDetailsModalData
-  //   //   )}`,
-  //   // });
-
-  //   // console.log('pass OrderId Handler `order id`', orderId);
-  //   // console.log('position Details Modal Data `from context`', positionDetailsModalData);
-  // };
-
-  // const progressPercentage = 50;
-  // const [progress, setProgress] = useState(0);
-  // const [label, setLabel] = useState('');
+  const nowTimestamp = new Date().getTime() / 1000;
+  // const yesterdayTimestamp = new Date().getTime() / 1000 - 3600 * 10 - 5;
+  // const passedHour = ((nowTimestamp - openCfdDetails.openTimestamp) / 3600).toFixed(0);
+  const passedHour = Math.round((nowTimestamp - openCfdDetails.openTimestamp) / 3600);
+  // console.log('passedHour', passedHour);
 
   const squareClickHandler = () => {
     // toast.error('test', {toastId: 'errorTest'});
@@ -85,18 +54,29 @@ const OpenPositionItem = ({
     // return;
   };
 
-  const displayedString = longOrShort === 'long' ? TRANSACTION_TYPE.long : TRANSACTION_TYPE.short;
+  const displayedString =
+    openCfdDetails.typeOfPosition === TypeOfPosition.BUY
+      ? TypeOfTransaction.LONG
+      : TypeOfTransaction.SHORT;
+
   const displayedColorHex =
-    profitOrLoss === ProfitState.PROFIT
-      ? PROFIT_LOSS_COLOR_TYPE.profit
-      : PROFIT_LOSS_COLOR_TYPE.loss;
+    openCfdDetails.pnl.type === ProfitState.PROFIT
+      ? TypeOfPnLColorHex.PROFIT
+      : openCfdDetails.pnl.type === ProfitState.LOSS
+      ? TypeOfPnLColorHex.LOSS
+      : TypeOfPnLColorHex.EQUAL;
 
   const displayedTextColor =
-    profitOrLoss === ProfitState.PROFIT ? 'text-lightGreen5' : 'text-lightRed';
+    openCfdDetails.pnl.type === ProfitState.PROFIT ? 'text-lightGreen5' : 'text-lightRed';
   const displayedHoverPausedColor =
-    profitOrLoss === ProfitState.PROFIT ? 'hover:bg-lightGreen5' : 'hover:bg-lightRed';
+    openCfdDetails.pnl.type === ProfitState.PROFIT ? 'hover:bg-lightGreen5' : 'hover:bg-lightRed';
 
-  const displayedSymbol = profitOrLoss === ProfitState.PROFIT ? '+' : '-';
+  const displayedSymbol =
+    openCfdDetails.pnl.type === ProfitState.PROFIT
+      ? '+'
+      : openCfdDetails.pnl.type === ProfitState.LOSS
+      ? '-'
+      : '';
 
   return (
     <div className="">
@@ -136,22 +116,22 @@ const OpenPositionItem = ({
           {/* TODO: switch the layout */}
           {/* {displayedTickerLayout} */}
           <div className="w-70px">
-            <div className="text-sm">{ticker}</div>
+            <div className="text-sm">{openCfdDetails.ticker}</div>
             <div className="text-sm text-lightWhite">
-              {displayedString.title}{' '}
-              <span className="text-xs text-lightGray">{displayedString.subtitle}</span>
+              {displayedString.TITLE}{' '}
+              <span className="text-xs text-lightGray">{displayedString.SUBTITLE}</span>
             </div>
           </div>
 
           <div className="mt-1 w-70px">
             <div className="text-xs text-lightGray">Value</div>
-            <div className="text-sm">$ {value}</div>
+            <div className="text-sm">$ {openCfdDetails.openValue}</div>
           </div>
 
           <div className="mt-1 w-60px">
             <div className="text-xs text-lightGray">PNL</div>
             <div className={`${displayedTextColor} text-sm`}>
-              <span className="">{displayedSymbol}</span> $ {profitOrLossAmount}
+              <span className="">{displayedSymbol}</span> $ {openCfdDetails.pnl.value}
             </div>
           </div>
         </div>
@@ -161,9 +141,9 @@ const OpenPositionItem = ({
       <div className="-mt-8 -ml-2 -mb-7">
         <PositionLineGraph
           strokeColor={[`${displayedColorHex}`]}
-          dataArray={tickerTrendArray}
+          dataArray={openCfdDetails.positionLineGraph.dataArray}
           lineGraphWidth={OPEN_POSITION_LINE_GRAPH_WIDTH}
-          annotatedValue={tickerTrendArray[0]}
+          annotatedValue={openCfdDetails.positionLineGraph.dataArray[0]}
         />
 
         {/* <div className="absolute -top-5">

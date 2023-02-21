@@ -14,6 +14,40 @@ interface ITradingChartSwitchProps {
   getDisplayedPositionLabel: (bool: boolean) => void;
 }
 
+const DEFAULT_CHART_WIDTH = 900;
+const DEFAULT_CHART_HEIGHT = 400;
+const MIN_SCREEN_WIDTH = 1024;
+const TRADE_TAB_WIDTH = 350;
+const SWITCH_HEIGHT = 40;
+
+const getChartSize = () => {
+  const windowSize = useWindowSize();
+  const defaultChartSize = {width: DEFAULT_CHART_WIDTH, height: DEFAULT_CHART_HEIGHT};
+  const chartWidth =
+    windowSize.width - TRADE_TAB_WIDTH > MIN_SCREEN_WIDTH - TRADE_TAB_WIDTH
+      ? windowSize.width - TRADE_TAB_WIDTH
+      : MIN_SCREEN_WIDTH - TRADE_TAB_WIDTH;
+  const chartSize = {
+    width: chartWidth.toString(),
+    height: ((defaultChartSize.height / defaultChartSize.width) * chartWidth).toString(),
+  };
+
+  return chartSize;
+};
+
+const getSwitchWidth = () => {
+  const windowSize = useWindowSize();
+  const switchWidth =
+    windowSize.width - TRADE_TAB_WIDTH > MIN_SCREEN_WIDTH - TRADE_TAB_WIDTH
+      ? windowSize.width - TRADE_TAB_WIDTH
+      : MIN_SCREEN_WIDTH - TRADE_TAB_WIDTH;
+  const switchSize = {
+    width: switchWidth.toString(),
+    height: SWITCH_HEIGHT.toString(),
+  };
+  return switchSize;
+};
+
 const TradingChartSwitch = ({
   getTradingViewType,
   getTradingViewInterval,
@@ -22,6 +56,9 @@ const TradingChartSwitch = ({
   const [activeButton, setActiveButton] = useState('live');
   const [activeChartType, setActiveChartType] = useState('candlestick');
   const {showPositionOnChartHandler} = useContext(MarketContext);
+
+  const chartSize = getChartSize();
+  const switchSize = getSwitchWidth();
 
   // Get toggle state and pass to `trading_view` component
   const getDisplayedPositionsState = (bool: boolean) => {
@@ -242,7 +279,10 @@ const TradingChartSwitch = ({
 
   return (
     <>
-      <div className="flex w-full items-center space-x-5">
+      <div
+        style={{width: `${Number(switchSize.width) - 100}px`}}
+        className="flex items-center pr-20 md:w-1/2 md:space-x-3 lg:space-x-5 xl:w-full"
+      >
         {/* Switch chart types */}
         <div className="flex space-x-2">
           {candlestickChartButton}
@@ -265,7 +305,7 @@ const TradingChartSwitch = ({
         <div
           className="flex rounded-sm bg-darkGray6 py-2 px-2"
           style={{
-            width: '100%',
+            width: '95%',
             justifyContent: 'space-between',
             whiteSpace: 'nowrap',
           }}

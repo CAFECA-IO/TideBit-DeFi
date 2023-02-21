@@ -59,7 +59,7 @@ const TradeStatistics = ({
 
   return (
     <>
-      <div className="flex-col justify-start">
+      <div style={{width: '97%'}} className="flex-col justify-start">
         <h1 className="text-start text-xl text-lightWhite">Live Statistics</h1>
         <span className={`${dividerWidth} mb-3 inline-block h-px rounded bg-white/30`}></span>
 

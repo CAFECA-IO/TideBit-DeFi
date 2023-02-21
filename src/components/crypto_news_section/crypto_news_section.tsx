@@ -36,7 +36,7 @@ const CryptoNewsSection = () => {
 
   return (
     <>
-      <div className="flex-col justify-start">
+      <div style={{width: '97%'}} className="flex-col justify-start">
         {' '}
         <h1 className="pr-12 text-start text-xl text-lightWhite">News</h1>
         <span className={`${dividerWidth} mb-3 inline-block h-px rounded bg-white/30`}></span>

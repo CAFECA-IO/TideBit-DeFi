@@ -116,66 +116,45 @@ export const CRYPTO_CARD_COLORS = [
 export const TIDEBIT_BUTTON_CONFIG =
   'rounded px-5 py-2 text-base transition-all hover:opacity-90 text-white bg-tidebitTheme';
 
-export interface IDEV_TOAST_CONFIG {
-  position: string;
-  autoClose: number;
-  hideProgressBar: boolean;
-  closeOnClick: boolean;
-  pauseOnHover: boolean;
-  draggable: boolean;
-  progress: undefined;
-  theme: string;
-}
-
-export const DEV_TOAST_CONFIG = {
-  position: 'bottom-left',
-  autoClose: 3000,
-  hideProgressBar: false,
-  closeOnClick: true,
-  pauseOnHover: true,
-  draggable: false,
-  progress: undefined,
-  theme: 'dark',
-};
-
 export const DELAYED_HIDDEN_SECONDS = 1000;
 
 export const TRADING_INPUT_STEP = 0.01;
 
-export const PROFIT_LOSS_COLOR_TYPE = {
-  profit: '#17BF88',
-  loss: '#E86D6D',
-  tidebitTheme: '#29C1E1',
+export const TypeOfPnLColorHex = {
+  PROFIT: '#17BF88',
+  LOSS: '#E86D6D',
+  TIDEBIT_THEME: '#29C1E1',
+  EQUAL: '#8B8E91',
 };
 
-export const PNL_COLOR_TYPE = {
-  profit: 'text-lightGreen5',
-  loss: 'text-lightRed',
-  equal: 'text-lightWhite',
+export const TypeOfPnLColor = {
+  PROFIT: 'text-lightGreen5',
+  LOSS: 'text-lightRed',
+  EQUAL: 'text-lightWhite',
 };
 
-export const BORDER_COLOR_TYPE = {
-  long: 'border-lightGreen5',
-  short: 'border-lightRed',
-  normal: 'border-lightWhite',
+export const TypeOfBorderColor = {
+  LONG: 'border-lightGreen5',
+  SHORT: 'border-lightRed',
+  NORMAL: 'border-lightWhite',
 };
 
-export const TRANSACTION_TYPE = {
-  long: {
-    title: 'Up',
-    subtitle: '(Buy)',
+export const TypeOfTransaction = {
+  LONG: {
+    TITLE: 'Up',
+    SUBTITLE: '(Buy)',
   },
-  short: {
-    title: 'Down',
-    subtitle: '(Sell)',
+  SHORT: {
+    TITLE: 'Down',
+    SUBTITLE: '(Sell)',
   },
 };
 
 // Used to display dash line on `open position item` but failed
-export const INVISIBLE_STROKE_COLOR = {
-  dark: '#161719',
-  sample: '#A5C4F3',
-  transparent: '#A16171900',
+export const InvisibleStrokeColor = {
+  DARK: '#161719',
+  SAMPLE: '#A5C4F3',
+  TRANSPARENT: '#A16171900',
 };
 
 export const TRADING_CHART_SWITCH_BUTTON_SIZE = 30;

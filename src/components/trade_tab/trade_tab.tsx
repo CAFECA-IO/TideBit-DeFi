@@ -9,6 +9,8 @@ import {useGlobal} from '../../contexts/global_context';
 
 const TradeTab = () => {
   const globalCtx = useGlobal();
+  const tabBodyWidth = 'w-320px';
+
   // TODO: Use Stop loss limit and other data from Market context
   const MARKET_PRICE = 6290.41;
   const LIQUIDATION_PRICE = 7548;
@@ -353,7 +355,7 @@ const TradeTab = () => {
           <div className={`relative`}>
             {/* ---sidebar self--- */}
             <div
-              className={`pointer-events-auto ${'w-300px'} h-screen bg-darkGray p-5 text-white transition-all duration-300`}
+              className={`pointer-events-auto ${tabBodyWidth} h-screen bg-darkGray p-5 text-white transition-all duration-300`}
             >
               {/* <h1 className="pl-5 text-2xl font-bold">Start to trade</h1> */}
 

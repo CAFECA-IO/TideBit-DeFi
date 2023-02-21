@@ -1,7 +1,7 @@
 import React, {useState, useContext, useEffect} from 'react';
 import dynamic from 'next/dynamic';
 import ApexCharts, {ApexOptions} from 'apexcharts';
-import {TRADING_CHART_BORDER_COLOR, PROFIT_LOSS_COLOR_TYPE} from '../../constants/display';
+import {TRADING_CHART_BORDER_COLOR, TypeOfPnLColorHex} from '../../constants/display';
 import {BsFillArrowDownCircleFill, BsFillArrowUpCircleFill} from 'react-icons/bs';
 import {MarketContext, MarketProvider} from '../../contexts/market_context';
 
@@ -147,8 +147,8 @@ export default function CandlestickChart({
     plotOptions: {
       candlestick: {
         colors: {
-          upward: PROFIT_LOSS_COLOR_TYPE.profit,
-          downward: PROFIT_LOSS_COLOR_TYPE.loss,
+          upward: TypeOfPnLColorHex.PROFIT,
+          downward: TypeOfPnLColorHex.LOSS,
         },
         wick: {
           useFillColor: true,
@@ -184,7 +184,7 @@ export default function CandlestickChart({
         {
           y: 1800,
           strokeDashArray: 3,
-          borderColor: PROFIT_LOSS_COLOR_TYPE.loss,
+          borderColor: TypeOfPnLColorHex.LOSS,
           width: '100%',
           fillColor: '#ffffff',
 
@@ -197,7 +197,7 @@ export default function CandlestickChart({
             style: {
               color: '#ffffff',
               fontSize: '12px',
-              background: PROFIT_LOSS_COLOR_TYPE.loss,
+              background: TypeOfPnLColorHex.LOSS,
               padding: {
                 right: 10,
               },
@@ -211,7 +211,7 @@ export default function CandlestickChart({
         {
           y: 3500,
           strokeDashArray: 3,
-          borderColor: PROFIT_LOSS_COLOR_TYPE.profit,
+          borderColor: TypeOfPnLColorHex.PROFIT,
           width: '100%',
           fillColor: '#ffffff',
 
@@ -224,7 +224,7 @@ export default function CandlestickChart({
             style: {
               color: '#ffffff',
               fontSize: '12px',
-              background: PROFIT_LOSS_COLOR_TYPE.profit,
+              background: TypeOfPnLColorHex.PROFIT,
               padding: {
                 right: 10,
               },
@@ -238,7 +238,7 @@ export default function CandlestickChart({
         {
           y: 3000,
           strokeDashArray: 0,
-          borderColor: PROFIT_LOSS_COLOR_TYPE.tidebitTheme,
+          borderColor: TypeOfPnLColorHex.TIDEBIT_THEME,
           width: '105%',
           fillColor: '#ffffff',
 
@@ -251,7 +251,7 @@ export default function CandlestickChart({
             style: {
               color: '#ffffff',
               fontSize: '12px',
-              background: PROFIT_LOSS_COLOR_TYPE.tidebitTheme,
+              background: TypeOfPnLColorHex.TIDEBIT_THEME,
               padding: {
                 left: -5,
                 right: 20,
@@ -358,8 +358,8 @@ export default function CandlestickChart({
     plotOptions: {
       candlestick: {
         colors: {
-          upward: PROFIT_LOSS_COLOR_TYPE.profit,
-          downward: PROFIT_LOSS_COLOR_TYPE.loss,
+          upward: TypeOfPnLColorHex.PROFIT,
+          downward: TypeOfPnLColorHex.LOSS,
         },
         wick: {
           useFillColor: true,
@@ -395,7 +395,7 @@ export default function CandlestickChart({
         {
           y: 3000,
           strokeDashArray: 0,
-          borderColor: PROFIT_LOSS_COLOR_TYPE.tidebitTheme,
+          borderColor: TypeOfPnLColorHex.TIDEBIT_THEME,
           width: '105%',
           fillColor: '#ffffff',
 
@@ -408,7 +408,7 @@ export default function CandlestickChart({
             style: {
               color: '#ffffff',
               fontSize: '12px',
-              background: PROFIT_LOSS_COLOR_TYPE.tidebitTheme,
+              background: TypeOfPnLColorHex.TIDEBIT_THEME,
               padding: {
                 left: -5,
                 right: 20,

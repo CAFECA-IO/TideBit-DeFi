@@ -20,6 +20,14 @@ import QrcodeModal from '../components/qrcode_modal/qrcode_modal';
 import HelloModal from '../components/hello_modal/hello_modal';
 import SignatureProcessModal from '../components/signature_process_modal/signature_process_modal';
 import {UserContext} from './user_context';
+import PositionOpenModal from '../components/position_open_modal/position_open_modal';
+import PositionClosedModal from '../components/position_closed_modal/position_closed_modal';
+import PositionUpdatedModal from '../components/position_updated_modal/position_updated_modal';
+import {
+  IClosedCFDDetails,
+  dummyCloseCFDDetails,
+} from '../interfaces/tidebit_defi_background/closed_cfd_details';
+import HistoryPositionModal from '../components/history_position_modal/history_position_modal';
 
 export interface IToastify {
   type: 'error' | 'warning' | 'info' | 'success';
@@ -27,9 +35,13 @@ export interface IToastify {
   toastId?: string | number; // Prevent duplicate toast
 }
 
-export interface IDataPositionDetailsModal {
-  openCfdDetails: IOpenCFDDetails;
-}
+// export interface IDataPositionDetailsModal {
+//   openCfdDetails: IOpenCFDDetails;
+// }
+
+// export interface IDataHistoryPositionModal {
+//   closedCfdDetails: IClosedCFDDetails;
+// }
 
 export interface IDataTransferProcessModal {
   transferType: 'deposit' | 'withdraw';
@@ -112,8 +124,8 @@ export interface IGlobalContext {
 
   visiblePositionDetailsModal: boolean;
   visiblePositionDetailsModalHandler: () => void;
-  dataPositionDetailsModal: IDataPositionDetailsModal | null;
-  dataPositionDetailsModalHandler: (data: IDataPositionDetailsModal) => void;
+  dataPositionDetailsModal: IOpenCFDDetails | null;
+  dataPositionDetailsModalHandler: (data: IOpenCFDDetails) => void;
 
   visibleDepositModal: boolean;
   visibleDepositModalHandler: () => void;
@@ -150,6 +162,11 @@ export interface IGlobalContext {
 
   visibleHelloModal: boolean;
   visibleHelloModalHandler: () => void;
+
+  visibleHistoryPositionModal: boolean;
+  visibleHistoryPositionModalHandler: () => void;
+  dataHistoryPositionModal: IClosedCFDDetails | null;
+  dataHistoryPositionModalHandler: (data: IClosedCFDDetails) => void;
 }
 
 export const GlobalContext = createContext<IGlobalContext>({
@@ -203,6 +220,11 @@ export const GlobalContext = createContext<IGlobalContext>({
 
   visibleHelloModal: false,
   visibleHelloModalHandler: () => null,
+
+  visibleHistoryPositionModal: false,
+  visibleHistoryPositionModalHandler: () => null,
+  dataHistoryPositionModal: null,
+  dataHistoryPositionModalHandler: () => null,
 });
 
 const initialColorMode: ColorModeUnion = 'dark';
@@ -212,8 +234,9 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
   const [colorMode, setColorMode] = useState<ColorModeUnion>(initialColorMode);
 
   const [visiblePositionDetailsModal, setVisiblePositionDetailsModal] = useState(false);
+  // TODO: replace dummy data with standard example data
   const [dataPositionDetailsModal, setDataPositionDetailsModal] =
-    useState<IDataPositionDetailsModal>({openCfdDetails: dummyOpenCFDDetails});
+    useState<IOpenCFDDetails>(dummyOpenCFDDetails);
 
   const [visibleWithdrawalModal, setVisibleWithdrawalModal] = useState(false);
 
@@ -252,6 +275,21 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
   const [visibleSignatureProcessModal, setVisibleSignatureProcessModal] = useState(false);
   const [dataSignatureProcessModal, setDataSignatureProcessModal] =
     useState<IDataSignatrueProcessModal | null>();
+
+  const [visibleHistoryPositionModal, setVisibleHistoryPositionModal] = useState(false);
+  const [dataHistoryPositionModal, setDataHistoryPositionModal] =
+    useState<IClosedCFDDetails>(dummyCloseCFDDetails);
+  // const [visibleOpenPositionModal, setVisibleOpenPositionModal] = useState(false);
+  // const [dataOpenPositionModal, setDataOpenPositionModal] =
+  //   useState<IDataOpenPositionModal | null>();
+
+  // const [visibleClosePositionModal, setVisibleClosePositionModal] = useState(false);
+  // const [dataClosePositionModal, setDataClosePositionModal] =
+  //   useState<IDataClosePositionModal | null>();
+
+  // const [visibleUpdatePositionModal, setVisibleUpdatePositionModal] = useState(false);
+  // const [dataUpdatePositionModal, setDataUpdatePositionModal] =
+  //   useState<IDataUpdatePositionModal | null>();
 
   // ---------------TODO: To get the withdrawal / deposit result------------------
   const [depositProcess, setDepositProcess] = useState<
@@ -300,7 +338,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
   const visiblePositionDetailsModalHandler = () => {
     setVisiblePositionDetailsModal(!visiblePositionDetailsModal);
   };
-  const dataPositionDetailsModalHandler = (data: IDataPositionDetailsModal) => {
+  const dataPositionDetailsModalHandler = (data: IOpenCFDDetails) => {
     setDataPositionDetailsModal(data);
   };
 
@@ -390,6 +428,14 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     setVisibleHelloModal(!visibleHelloModal);
   };
 
+  const visibleHistoryPositionModalHandler = () => {
+    setVisibleHistoryPositionModal(!visibleHistoryPositionModal);
+  };
+
+  const dataHistoryPositionModalHandler = (data: IClosedCFDDetails) => {
+    setDataHistoryPositionModal(data);
+  };
+
   const getWithdrawSubmissionState = (state: 'success' | 'cancellation' | 'fail') => {
     setWithdrawProcess(state);
   };
@@ -477,6 +523,11 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
 
     visibleHelloModal,
     visibleHelloModalHandler,
+
+    visibleHistoryPositionModal,
+    visibleHistoryPositionModalHandler,
+    dataHistoryPositionModal,
+    dataHistoryPositionModalHandler,
   };
   return (
     <GlobalContext.Provider value={defaultValue}>
@@ -529,22 +580,12 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
         modalVisible={visibleWithdrawalModal}
         modalClickHandler={visibleWithdrawalModalHandler}
       />
-      <PositionDetailsModal
-        openCfdDetails={dataPositionDetailsModal.openCfdDetails}
-        modalVisible={visiblePositionDetailsModal}
-        modalClickHandler={visiblePositionDetailsModalHandler}
-      />
+
       <WalletPanel
         panelVisible={visibleWalletPanel}
         panelClickHandler={visibleWalletPanelHandler}
       />
       <SignatureProcessModal
-        // requestSendingHandler={requestSendingHandler}
-        // firstStepSuccess={firstStepSuccess}
-        // firstStepError={firstStepError}
-        // secondStepSuccess={secondStepSuccess}
-        // secondStepError={secondStepError}
-        // loading={loading}
         processModalVisible={visibleSignatureProcessModal}
         processClickHandler={visibleSignatureProcessModalHandler}
       />
@@ -552,6 +593,21 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
         helloModalVisible={visibleHelloModal}
         helloClickHandler={visibleHelloModalHandler}
       />
+
+      <PositionDetailsModal
+        modalVisible={visiblePositionDetailsModal}
+        modalClickHandler={visiblePositionDetailsModalHandler}
+        openCfdDetails={dataPositionDetailsModal}
+      />
+      <HistoryPositionModal
+        modalVisible={visibleHistoryPositionModal}
+        modalClickHandler={visibleHistoryPositionModalHandler}
+        closedCfdDetails={dataHistoryPositionModal}
+      />
+
+      {/* <PositionOpenModal />
+      <PositionClosedModal />
+      <PositionUpdatedModal /> */}
 
       {/* One toast container avoids duplicate toast overlaying */}
       <Toast />
@@ -567,7 +623,7 @@ export const useGlobal = () => {
   //   throw new Error('useGlobal must be used within a GlobalProvider');
   // }
 
-  // TODO: Debug tool
+  // TODO: Debug tool [to be removed]
   const g: any =
     typeof globalThis === 'object'
       ? globalThis

@@ -167,6 +167,11 @@ export interface IGlobalContext {
   visibleHistoryPositionModalHandler: () => void;
   dataHistoryPositionModal: IClosedCFDDetails | null;
   dataHistoryPositionModalHandler: (data: IClosedCFDDetails) => void;
+
+  visiblePositionClosedModal: boolean;
+  visiblePositionClosedModalHandler: () => void;
+  dataPositionClosedModal: IOpenCFDDetails | null;
+  dataPositionClosedModalHandler: (data: IOpenCFDDetails) => void;
 }
 
 export const GlobalContext = createContext<IGlobalContext>({
@@ -225,6 +230,11 @@ export const GlobalContext = createContext<IGlobalContext>({
   visibleHistoryPositionModalHandler: () => null,
   dataHistoryPositionModal: null,
   dataHistoryPositionModalHandler: () => null,
+
+  visiblePositionClosedModal: false,
+  visiblePositionClosedModalHandler: () => null,
+  dataPositionClosedModal: null,
+  dataPositionClosedModalHandler: () => null,
 });
 
 const initialColorMode: ColorModeUnion = 'dark';
@@ -273,23 +283,16 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
   const [visibleHelloModal, setVisibleHelloModal] = useState(false);
 
   const [visibleSignatureProcessModal, setVisibleSignatureProcessModal] = useState(false);
-  const [dataSignatureProcessModal, setDataSignatureProcessModal] =
-    useState<IDataSignatrueProcessModal | null>();
+  // const [dataSignatureProcessModal, setDataSignatureProcessModal] =
+  //   useState<IDataSignatrueProcessModal | null>();
 
   const [visibleHistoryPositionModal, setVisibleHistoryPositionModal] = useState(false);
   const [dataHistoryPositionModal, setDataHistoryPositionModal] =
     useState<IClosedCFDDetails>(dummyCloseCFDDetails);
-  // const [visibleOpenPositionModal, setVisibleOpenPositionModal] = useState(false);
-  // const [dataOpenPositionModal, setDataOpenPositionModal] =
-  //   useState<IDataOpenPositionModal | null>();
 
-  // const [visibleClosePositionModal, setVisibleClosePositionModal] = useState(false);
-  // const [dataClosePositionModal, setDataClosePositionModal] =
-  //   useState<IDataClosePositionModal | null>();
-
-  // const [visibleUpdatePositionModal, setVisibleUpdatePositionModal] = useState(false);
-  // const [dataUpdatePositionModal, setDataUpdatePositionModal] =
-  //   useState<IDataUpdatePositionModal | null>();
+  const [visiblePositionClosedModal, setVisiblePositionClosedModal] = useState(false);
+  const [dataPositionClosedModal, setDataPositionClosedModal] =
+    useState<IOpenCFDDetails>(dummyOpenCFDDetails);
 
   // ---------------TODO: To get the withdrawal / deposit result------------------
   const [depositProcess, setDepositProcess] = useState<
@@ -436,6 +439,15 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     setDataHistoryPositionModal(data);
   };
 
+  const visiblePositionClosedModalHandler = () => {
+    setVisiblePositionClosedModal(!visiblePositionClosedModal);
+  };
+
+  const dataPositionClosedModalHandler = (data: IOpenCFDDetails) => {
+    setDataPositionClosedModal(data);
+  };
+
+  // ------------------------------------------ //
   const getWithdrawSubmissionState = (state: 'success' | 'cancellation' | 'fail') => {
     setWithdrawProcess(state);
   };
@@ -471,6 +483,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     //   }, 5000);
     // }, 3000);
   };
+  // ------------------------------------------ //
 
   const defaultValue = {
     width,
@@ -528,6 +541,11 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     visibleHistoryPositionModalHandler,
     dataHistoryPositionModal,
     dataHistoryPositionModalHandler,
+
+    visiblePositionClosedModal,
+    visiblePositionClosedModalHandler,
+    dataPositionClosedModal,
+    dataPositionClosedModalHandler,
   };
   return (
     <GlobalContext.Provider value={defaultValue}>
@@ -604,6 +622,21 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
         modalClickHandler={visibleHistoryPositionModalHandler}
         closedCfdDetails={dataHistoryPositionModal}
       />
+      <PositionClosedModal
+        modalVisible={visiblePositionClosedModal}
+        modalClickHandler={visiblePositionClosedModalHandler}
+        closedCfdDetails={dataPositionClosedModal}
+      />
+      {/* <PositionUpdatedModal
+        modalVisible={visiblePositionUpdatedModal}
+        modalClickHandler={visiblePositionUpdatedModalHandler}
+        updatedCfdDetails={dataPositionUpdatedModal}
+      />
+      <PositionOpenModal
+        modalVisible={visiblePositionOpenModal}
+        modalClickHandler={visiblePositionOpenModalHandler}
+        openCfdDetails={dataPositionOpenModal}
+      /> */}
 
       {/* <PositionOpenModal />
       <PositionClosedModal />

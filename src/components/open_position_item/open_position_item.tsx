@@ -23,11 +23,10 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
   // if (profitOrLoss !== 'profit' && profitOrLoss !== 'loss') return <></>; if (profitOrLoss !== 'profit' && profitOrLoss !== 'loss') return <></>;
   // if (ticker !== 'ETH' && ticker !== 'BTC') return <></>;
   const {
-    visiblePositionDetailsModal,
     visiblePositionDetailsModalHandler,
     dataPositionDetailsModalHandler,
-    dataPositionDetailsModal,
-    toast,
+    visiblePositionClosedModalHandler,
+    dataPositionClosedModalHandler,
   } = useGlobal();
 
   const [detailedModalVisible, setDetailedModalVisible] = useState(false);
@@ -35,11 +34,9 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
   // TODO: 先跟 user context 拿特定 order id 的資料，再呼叫 function 拿到單一筆 CFD 詳細資料 。 global context 設定 cfd id，再顯示 position details modal
   // dataPositionDetailsModal 拿到的是整個JSON
   // globalContext.dataPositionDetailsModalHandler(cfd.orderId);
-  const detailedModalClickHandler = () => {
-    // setDetailedModalVisible(!detailedModalVisible);
+  const openItemClickHandler = () => {
     visiblePositionDetailsModalHandler();
     dataPositionDetailsModalHandler(openCfdDetails);
-    // passOrderIdHandler(openCfdDetails.id);
   };
 
   const nowTimestamp = new Date().getTime() / 1000;
@@ -49,6 +46,8 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
   // console.log('passedHour', passedHour);
 
   const squareClickHandler = () => {
+    visiblePositionClosedModalHandler();
+    dataPositionClosedModalHandler(openCfdDetails);
     // toast.error('test', {toastId: 'errorTest'});
     // console.log('show the modal displaying transaction detail');
     // return;
@@ -86,7 +85,7 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
           <div className="relative -mt-4 -ml-2 w-50px">
             <div
               className="absolute top-3 z-10 h-110px w-280px bg-transparent hover:cursor-pointer"
-              onClick={detailedModalClickHandler}
+              onClick={openItemClickHandler}
             ></div>
 
             {/* Pause square cover
@@ -98,7 +97,7 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
             {/* -----Paused square----- */}
             <div
               className={`absolute left-14px top-26px z-30 h-6 w-6 hover:cursor-pointer ${displayedHoverPausedColor}`}
-              // onClick={squareClickHandler}
+              onClick={squareClickHandler}
             ></div>
 
             <div>
@@ -159,13 +158,13 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
       {/* Divider */}
       {/* <div className="absolute top-200px my-auto h-px w-7/8 rounded bg-white/50"></div> */}
 
-      <PositionDetailsModal
+      {/* <PositionDetailsModal
         // id={`TBD20230207001`}
         // openCfdDetails={dataFormat}
         openCfdDetails={openCfdDetails}
         modalVisible={visiblePositionDetailsModal}
         modalClickHandler={detailedModalClickHandler}
-      />
+      /> */}
     </div>
   );
 };

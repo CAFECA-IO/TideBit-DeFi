@@ -22,7 +22,7 @@ export const dummyOpenCFDDetails: IOpenCFDDetails = {
   margin: randomIntFromInterval(650, 10000),
   openPrice: randomIntFromInterval(10, 100),
   fee: 0,
-  guaranteedStop: false,
+  guaranteedStop: true,
   guaranteedStopFee: 0.77,
   openTimestamp: 1675299651,
   scheduledClosingTimestamp: 1675386051, // openTimestamp + 86400
@@ -33,7 +33,7 @@ export const dummyOpenCFDDetails: IOpenCFDDetails = {
   },
   liquidationPrice: 19537,
   takeProfit: 74521,
-  // stopLoss: 25250,
+  stopLoss: 25250,
   recommendedTp: 35412,
   recommendedSl: 19453,
   positionLineGraph: {
@@ -55,7 +55,7 @@ export const getDummyOpenCFDs = (currency: string) => {
       margin: randomIntFromInterval(650, 10000),
       openPrice: randomIntFromInterval(10, 100),
       fee: 0,
-      guaranteedStop: false,
+      guaranteedStop: true,
       guaranteedStopFee: 0.77,
       openTimestamp: Date.now() / 1000 - 3600 * 20 + i * 60 * 60,
       scheduledClosingTimestamp: Date.now() / 1000 + i * 60 * 60 + 10 * 24 * 60 * 60, // openTimestamp + 86400
@@ -66,7 +66,7 @@ export const getDummyOpenCFDs = (currency: string) => {
       },
       liquidationPrice: 19537,
       takeProfit: 74521,
-      // stopLoss: 25250,
+      stopLoss: 25250,
       recommendedTp: 35412,
       recommendedSl: 19453,
       positionLineGraph: {

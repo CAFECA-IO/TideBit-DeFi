@@ -263,6 +263,9 @@ export interface IGlobalContext {
   visibleEmailConnectingModal: boolean;
   visibleEmailConnectingModalHandler: () => void;
 
+  visibleTideBitConnectingModal: boolean;
+  visibleTideBitConnectingModalHandler: () => void;
+
   visibleBravoModal: boolean;
   visibleBravoModalHandler: () => void;
 
@@ -381,6 +384,9 @@ export const GlobalContext = createContext<IGlobalContext>({
   visibleEmailConnectingModal: false,
   visibleEmailConnectingModalHandler: () => null,
 
+  visibleTideBitConnectingModal: false,
+  visibleTideBitConnectingModalHandler: () => null,
+
   visibleBravoModal: false,
   visibleBravoModalHandler: () => null,
 
@@ -487,6 +493,8 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
   const [visibleMyAccountModal, setVisibleMyAccountModal] = useState(false);
 
   const [visibleEmailConnectingModal, setVisibleEmailConnectingModal] = useState(false);
+
+  const [visibleTideBitConnectingModal, setVisibleTideBitConnectingModal] = useState(false);
 
   const [visibleBravoModal, setVisibleBravoModal] = useState(false);
 
@@ -681,6 +689,10 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     setVisibleMyAccountModal(!visibleMyAccountModal);
   };
 
+  const visibleTideBitConnectingModalHandler = () => {
+    setVisibleTideBitConnectingModal(!visibleTideBitConnectingModal);
+  };
+
   const visibleEmailConnectingModalHandler = () => {
     setVisibleEmailConnectingModal(!visibleEmailConnectingModal);
   };
@@ -857,6 +869,9 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
 
     visibleMyAccountModal,
     visibleMyAccountModalHandler,
+
+    visibleTideBitConnectingModal,
+    visibleTideBitConnectingModalHandler,
 
     visibleEmailConnectingModal,
     visibleEmailConnectingModalHandler,

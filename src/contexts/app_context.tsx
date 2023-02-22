@@ -3,6 +3,7 @@ import useState from 'react-usestateref';
 import {UserContext} from './user_context';
 import {MarketContext} from './market_context';
 import {NotificationContext} from './notification_context';
+import {WorkerContext} from './worker_context';
 
 interface IAppProvider {
   children: React.ReactNode;
@@ -22,6 +23,7 @@ export const AppProvider = ({children}: IAppProvider) => {
   const userCtx = useContext(UserContext);
   const marketCtx = useContext(MarketContext);
   const notificationCtx = useContext(NotificationContext);
+  const workerCtx = useContext(WorkerContext);
   const [isInit, setIsInit, isInitRef] = useState<boolean>(false);
 
   const init = async () => {
@@ -30,6 +32,7 @@ export const AppProvider = ({children}: IAppProvider) => {
       await userCtx.init();
       await marketCtx.init();
       await notificationCtx.init();
+      workerCtx.init();
     }
     return;
   };

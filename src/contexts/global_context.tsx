@@ -71,36 +71,76 @@ export interface IFailedModal {
 
 // TODO: to be continued
 export interface IRecordSharingModal {
-  modalTitle: string;
+  orderIdRecordSharing: number;
 }
+
+export const dummyRecordSharingModal: IRecordSharingModal = {
+  orderIdRecordSharing: 0,
+};
 
 // TODO: to be continued
 export interface IWarningModal {
-  modalTitle: string;
+  title: string;
+  content: string;
+  numberOfButton: number;
+  reactionOfButton: string;
+  styleOfButton: 'style1' | 'style2';
 }
+
+export const dummyWarningModal: IWarningModal = {
+  title: '',
+  content: '',
+  numberOfButton: 0,
+  reactionOfButton: '',
+  styleOfButton: 'style1',
+};
 
 // TODO: to be continued
 export interface IAnnouncementModal {
-  modalTitle: string;
+  title: string;
+  content: string;
+  numberOfButton: number;
+  reactionOfButton: string;
+  styleOfButton: 'style1' | 'style2';
+  messageType: 'announcement' | 'notification';
 }
+
+export const dummyAnnouncementModal: IAnnouncementModal = {
+  title: '',
+  content: '',
+  numberOfButton: 0,
+  reactionOfButton: '',
+  styleOfButton: 'style1',
+  messageType: 'announcement',
+};
 
 // TODO: to be continued
 export interface IAchievementSharingModal {
-  modalTitle: string;
+  userId: string;
+  period: string;
 }
+
+export const dummyAchievementSharingModal: IAchievementSharingModal = {
+  userId: '202302220001234',
+  period: '002',
+};
 
 // TODO: to be continued
 export interface IBadgeModal {
-  modalTitle: string;
+  badgeId: string;
 }
+
+export const dummyBadgeModal: IBadgeModal = {
+  badgeId: 'TBDFUTURES2023FEB05',
+};
 
 // TODO: to be continued
 export interface IBadgeSharingModal {
-  modalTitle: string;
+  badgeId: string;
 }
 
-export const dummyModalData = {
-  modalTitle: '',
+export const dummyBadgeSharingModal: IBadgeSharingModal = {
+  badgeId: 'TBDFUTURES2023FEB05',
 };
 
 // export interface ISignatrueProcessModal {
@@ -454,27 +494,27 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
 
   const [visibleRecordSharingModal, setVisibleRecordSharingModal] = useState(false);
   const [dataRecordSharingModal, setDataRecordSharingModal] =
-    useState<IRecordSharingModal>(dummyModalData);
+    useState<IRecordSharingModal>(dummyRecordSharingModal);
 
   const [visibleWarningModal, setVisibleWarningModal] = useState(false);
-  const [dataWarningModal, setDataWarningModal] = useState<IWarningModal>(dummyModalData);
+  const [dataWarningModal, setDataWarningModal] = useState<IWarningModal>(dummyWarningModal);
 
   const [visibleAnnouncementModal, setVisibleAnnouncementModal] = useState(false);
   const [dataAnnouncementModal, setDataAnnouncementModal] =
-    useState<IAnnouncementModal>(dummyModalData);
+    useState<IAnnouncementModal>(dummyAnnouncementModal);
 
   const [visiblePersonalAchievementModal, setVisiblePersonalAchievementModal] = useState(false);
 
   const [visibleAchievementSharingModal, setVisibleAchievementSharingModal] = useState(false);
   const [dataAchievementSharingModal, setDataAchievementSharingModal] =
-    useState<IAchievementSharingModal>(dummyModalData);
+    useState<IAchievementSharingModal>(dummyAchievementSharingModal);
 
   const [visibleBadgeModal, setVisibleBadgeModal] = useState(false);
-  const [dataBadgeModal, setDataBadgeModal] = useState<IBadgeModal>(dummyModalData);
+  const [dataBadgeModal, setDataBadgeModal] = useState<IBadgeModal>(dummyBadgeModal);
 
   const [visibleBadgeSharingModal, setVisibleBadgeSharingModal] = useState(false);
   const [dataBadgeSharingModal, setDataBadgeSharingModal] =
-    useState<IBadgeSharingModal>(dummyModalData);
+    useState<IBadgeSharingModal>(dummyBadgeSharingModal);
 
   // ---------------TODO: To get the withdrawal / deposit result------------------
   const [depositProcess, setDepositProcess] = useState<

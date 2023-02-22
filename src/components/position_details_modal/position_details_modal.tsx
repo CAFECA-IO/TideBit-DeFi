@@ -256,6 +256,8 @@ const PositionDetailsModal = ({
       //   globalContext.visiblePositionDetailsModalHandler(false);
       //   // console.log('modal visible: ', modalVisible);
       // }, 1000);
+      globalCtx.dataPositionUpdatedModalHandler({...openCfdDetails, ...changedProperties});
+      globalCtx.visiblePositionUpdatedModalHandler();
 
       return changedProperties;
     }

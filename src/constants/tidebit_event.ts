@@ -11,10 +11,12 @@ export type ITideBitEvent =
   | 'TICKER_STATISTIC'
   | 'TICKER_LIVE_STATISTIC'
   | 'CANDLESTICK'
-  | 'OPEN_CFD'
-  | 'CLOSE_CFD'
-  | 'DEPOSIT'
-  | 'WITHDRAW';
+  // | 'OPEN_CFD'
+  // | 'CLOSE_CFD'
+  // | 'DEPOSIT'
+  // | 'WITHDRAW'
+  | 'ORDER'
+  | 'IS_CFD_TRADEBLE';
 export interface ITideBitEventConstant {
   CONNECTED_WALLET: ITideBitEvent;
   DISCONNECTED_WALLET: ITideBitEvent;
@@ -28,10 +30,12 @@ export interface ITideBitEventConstant {
   TICKER_STATISTIC: ITideBitEvent;
   TICKER_LIVE_STATISTIC: ITideBitEvent;
   CANDLESTICK: ITideBitEvent;
-  OPEN_CFD: ITideBitEvent;
-  CLOSE_CFD: ITideBitEvent;
-  DEPOSIT: ITideBitEvent;
-  WITHDRAW: ITideBitEvent;
+  // OPEN_CFD: ITideBitEvent;
+  // CLOSE_CFD: ITideBitEvent;
+  // DEPOSIT: ITideBitEvent;
+  // WITHDRAW: ITideBitEvent;
+  ORDER: ITideBitEvent;
+  IS_CFD_TRADEBLE: ITideBitEvent;
 }
 export const TideBitEvent: ITideBitEventConstant = {
   CONNECTED_WALLET: 'CONNECTED_WALLET',
@@ -46,8 +50,10 @@ export const TideBitEvent: ITideBitEventConstant = {
   TICKER_STATISTIC: 'TICKER_STATISTIC',
   TICKER_LIVE_STATISTIC: 'TICKER_LIVE_STATISTIC',
   CANDLESTICK: 'CANDLESTICK',
-  OPEN_CFD: 'OPEN_CFD',
-  CLOSE_CFD: 'CLOSE_CFD',
-  DEPOSIT: 'DEPOSIT',
-  WITHDRAW: 'WITHDRAW',
+  // OPEN_CFD: 'OPEN_CFD',
+  // CLOSE_CFD: 'CLOSE_CFD',
+  // DEPOSIT: 'DEPOSIT',
+  // WITHDRAW: 'WITHDRAW',
+  ORDER: 'ORDER',
+  IS_CFD_TRADEBLE: 'IS_CFD_TRADEBLE',
 };

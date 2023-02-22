@@ -1,10 +1,14 @@
 import EventEmitter from 'events';
 import React, {useContext, createContext} from 'react';
 import useState from 'react-usestateref';
+import {ModifyType} from '../constants/modify_type';
+import {OrderState} from '../constants/order_state';
+import {OrderType} from '../constants/order_type';
 import {TideBitEvent} from '../constants/tidebit_event';
 import {IBalance} from '../interfaces/tidebit_defi_background/balance';
 import {getDummyCandlestickChartData} from '../interfaces/tidebit_defi_background/candlestickData';
 import {getDummyClosedCFDs} from '../interfaces/tidebit_defi_background/closed_cfd_details';
+import {dummyDepositOrder} from '../interfaces/tidebit_defi_background/deposit_order';
 // import {UserContext} from './user_context';
 // import {MarketContext} from './market_context';
 import {
@@ -17,6 +21,7 @@ import {getDummyOpenCFDs} from '../interfaces/tidebit_defi_background/open_cfd_d
 import {getDummyTicker, ITickerData} from '../interfaces/tidebit_defi_background/ticker_data';
 import {getDummyTickerLiveStatistics} from '../interfaces/tidebit_defi_background/ticker_live_statistics';
 import {getDummyTickerStatic} from '../interfaces/tidebit_defi_background/ticker_static';
+import {dummyWithdrawalOrder} from '../interfaces/tidebit_defi_background/withdrawal_order';
 import {IUserBalance} from './user_context';
 
 export interface INotificationProvider {
@@ -33,9 +38,11 @@ export interface INotificationContext {
   reset: () => void;
 }
 
-let dummyTickerInterval;
-let dummyBalanceInterval;
-let dummyCFDsInterval;
+let dummyTickerInterval: NodeJS.Timeout | null = null;
+let dummyBalanceInterval: NodeJS.Timeout | null = null;
+let dummyCFDsInterval: NodeJS.Timeout | null = null;
+let dummyDepositInterval: NodeJS.Timeout | null = null;
+let dummyWithdrawInterval: NodeJS.Timeout | null = null;
 
 export const NotificationContext = createContext<INotificationContext>({
   emitter: new EventEmitter(),
@@ -122,12 +129,40 @@ export const NotificationProvider = ({children}: INotificationProvider) => {
     dummyCFDsInterval = setInterval(() => {
       if (selectedTickerRef.current) {
         const random = Math.random() > 0.5;
-        emitter.emit(
-          random ? TideBitEvent.OPEN_CFD : TideBitEvent.CLOSE_CFD,
-          random
+        emitter.emit(TideBitEvent.ORDER, {
+          orderType: OrderType.CFD,
+          orderState: random ? OrderState.OPENING : OrderState.CLOSED,
+          modifyType: ModifyType.Add,
+          orders: random
             ? getDummyOpenCFDs(selectedTickerRef.current.currency, 1)
-            : getDummyClosedCFDs(selectedTickerRef.current.currency, 1)
-        );
+            : getDummyClosedCFDs(selectedTickerRef.current.currency, 1),
+        });
+      }
+    }, 5000);
+  };
+
+  const dummyDepositUpdate = () => {
+    dummyDepositInterval = setInterval(() => {
+      if (selectedTickerRef.current) {
+        const random = Math.random() > 0.5;
+        emitter.emit(TideBitEvent.ORDER, {
+          orderType: OrderType.DEPOSIT,
+          modifyType: ModifyType.Add,
+          orders: [dummyDepositOrder],
+        });
+      }
+    }, 5000);
+  };
+
+  const dummyWithdrawUpdate = () => {
+    dummyWithdrawInterval = setInterval(() => {
+      if (selectedTickerRef.current) {
+        const random = Math.random() > 0.5;
+        emitter.emit(TideBitEvent.ORDER, {
+          orderType: OrderType.DEPOSIT,
+          modifyType: ModifyType.Add,
+          orders: [dummyWithdrawalOrder],
+        });
       }
     }, 5000);
   };
@@ -136,7 +171,7 @@ export const NotificationProvider = ({children}: INotificationProvider) => {
     // console.log(`NotificationProvider init is called`);
     setNotifications(dummyNotifications);
     setUnreadNotifications(dummyUnReadNotifications);
-    dummyTickerUpdate();
+    registerPublicNotification();
     return await Promise.resolve();
   };
 
@@ -145,7 +180,9 @@ export const NotificationProvider = ({children}: INotificationProvider) => {
     setUnreadNotifications([]);
     return;
   };
-
+  const registerPublicNotification = () => {
+    dummyTickerUpdate();
+  };
   // Event: Login
   const registerPrivateNotification = (address: string) => {
     // TODO: receive more than once
@@ -175,8 +212,8 @@ export const NotificationProvider = ({children}: INotificationProvider) => {
     updateUnreadNotifications = updateNotifications.filter(n => !n.isRead);
     setNotifications(updateNotifications);
     setUnreadNotifications(updateUnreadNotifications);
-    clearInterval(dummyBalanceInterval);
-    clearInterval(dummyCFDsInterval);
+    if (dummyBalanceInterval) clearInterval(dummyBalanceInterval);
+    if (dummyCFDsInterval) clearInterval(dummyCFDsInterval);
   };
 
   React.useMemo(

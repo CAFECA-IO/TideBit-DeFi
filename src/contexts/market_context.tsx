@@ -451,6 +451,14 @@ export const MarketProvider = ({children}: IMarketProvider) => {
 
   React.useMemo(
     () =>
+      notificationCtx.emitter.on(TideBitEvent.IS_CFD_TRADEBLE, (isCFDTradable: boolean) => {
+        setIsCFDTradable(isCFDTradable);
+      }),
+    []
+  );
+
+  React.useMemo(
+    () =>
       notificationCtx.emitter.on(TideBitEvent.TICKER, (ticker: ITickerData) => {
         setSelectedTicker(ticker);
       }),

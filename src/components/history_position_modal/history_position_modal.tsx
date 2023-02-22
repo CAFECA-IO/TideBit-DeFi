@@ -20,7 +20,7 @@ import {OrderState} from '../../constants/order_state';
 
 interface IHistoryPositionModal {
   modalVisible: boolean;
-  modalClickHandler: (bool?: boolean | any) => void;
+  modalClickHandler: () => void;
   closedCfdDetails: IClosedCFDDetails;
 }
 
@@ -35,6 +35,7 @@ const HistoryPositionModal = ({
   // const globalCtx = useGlobal();
   const marketCtx = useContext(MarketContext);
 
+  // TODO: i18n
   const displayedClosedReason =
     closedCfdDetails.closedType === CFDClosedType.SCHEDULE
       ? 'Scheduled'
@@ -154,7 +155,7 @@ const HistoryPositionModal = ({
           </div>
 
           <div className={`${layoutInsideBorder}`}>
-            <div className="text-lightGray">Take-Profit/ Stop-Loss</div>
+            <div className="text-lightGray">TP/ SL</div>
             <div className="">
               <span className={`text-lightWhite`}>
                 {closedCfdDetails?.takeProfit?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ??
@@ -185,7 +186,7 @@ const HistoryPositionModal = ({
           </div>
 
           <div className={`${layoutInsideBorder}`}>
-            <div className="text-lightGray">Close Reason</div>
+            <div className="text-lightGray">Closed Reason</div>
             <div className="">{displayedClosedReason}</div>
           </div>
         </div>

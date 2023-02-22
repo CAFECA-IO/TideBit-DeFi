@@ -8,6 +8,8 @@ import {
 import RippleButton from '../ripple_button/ripple_button';
 import Image from 'next/image';
 import {timestampToString} from '../../lib/common';
+import {useContext} from 'react';
+import {MarketContext} from '../../contexts/market_context';
 
 interface IPositionOpenModal {
   modalVisible: boolean;
@@ -21,6 +23,8 @@ const PositionOpenModal = ({
   openCfdDetails,
   ...otherProps
 }: IPositionOpenModal) => {
+  const marketCtx = useContext(MarketContext);
+
   // TODO: update order function
   const submitClickHandler = () => {
     modalClickHandler();
@@ -52,7 +56,12 @@ const PositionOpenModal = ({
   const formContent = (
     <div>
       <div className="mt-2 mb-2 flex items-center justify-center space-x-2 text-center">
-        <Image src={`/elements/group_2371.svg`} width={30} height={30} alt="ticker icon" />
+        <Image
+          src={marketCtx.selectedTicker?.tokenImg ?? ''}
+          width={30}
+          height={30}
+          alt="ticker icon"
+        />
         <div className="text-2xl">ETH</div>
       </div>
 

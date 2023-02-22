@@ -12,17 +12,18 @@ export interface IPublicOrder {
 export interface IPublicCFDOrder extends IPublicOrder {
   ticker: string;
   price: number;
-  triggerPrice: number;
+  amount: number;
+  liquidationPrice: number;
   typeOfPosition: ITypeOfPosition;
   leverage: number;
   margin: number;
   takeProfit?: number;
   stopLoss?: number;
-  guranteedStop: boolean;
-  estimatedFilledPrice: number;
+  guaranteedStop: boolean;
   fee: number;
   targetUnit: string;
   chargeUnit: string;
+  marginUnit: string;
   remark?: string;
 }
 
@@ -58,15 +59,16 @@ export const dummyPublicCFDOrder: IPublicCFDOrder = {
   orderStatus: OrderStatusUnion.PROCESSING,
   ticker: 'ETH',
   price: 20193.1,
-  triggerPrice: 20193.1,
+  amount: 7.91,
+  liquidationPrice: 20193.1,
   typeOfPosition: TypeOfPosition.SELL,
   leverage: 5,
   margin: 1,
-  guranteedStop: true,
-  estimatedFilledPrice: 1,
+  guaranteedStop: true,
   fee: 0.0001,
   targetUnit: 'ETH',
   chargeUnit: 'USDT',
+  marginUnit: 'USDT',
   createdTime: 1676369333495,
 };
 

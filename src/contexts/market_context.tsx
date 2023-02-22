@@ -38,6 +38,7 @@ import {
 } from '../interfaces/tidebit_defi_background/candlestickData';
 import {TideBitEvent} from '../constants/tidebit_event';
 import {NotificationContext} from './notification_context';
+import {WorkerContext} from './worker_context';
 
 const SAMPLE_TICKERS = [
   'ETH',
@@ -361,6 +362,7 @@ const availableTransferOptions = [
 export const MarketProvider = ({children}: IMarketProvider) => {
   const userCtx = useContext(UserContext);
   const notificationCtx = useContext(NotificationContext);
+  const workerCtx = useContext(WorkerContext);
   // const [wallet, setWallet, walletRef] = useState<string | null>(userCtx.wallet);
   const [selectedTicker, setSelectedTicker, selectedTickerRef] = useState<ITickerData | null>(null);
   const [tickerStatic, setTickerStatic] = useState<ITickerStatic | null>(null);
@@ -431,7 +433,8 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     //   userCtx.listOpenCFDs(currency);
     //   userCtx.listClosedCFDs(currency);
     // }
-    notificationCtx.emitter.emit(TideBitEvent.TICKER_CHANGE, ticker);
+    // notificationCtx.emitter.emit(TideBitEvent.TICKER_CHANGE, ticker);
+    workerCtx.registerTicker(currency);
     return dummyResultSuccess;
   };
 
@@ -461,6 +464,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     () =>
       notificationCtx.emitter.on(TideBitEvent.TICKER, (ticker: ITickerData) => {
         setSelectedTicker(ticker);
+        // ++ TODO: update availableTickers
       }),
     []
   );

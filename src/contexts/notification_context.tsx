@@ -23,6 +23,7 @@ import {getDummyTickerLiveStatistics} from '../interfaces/tidebit_defi_backgroun
 import {getDummyTickerStatic} from '../interfaces/tidebit_defi_background/ticker_static';
 import {dummyWithdrawalOrder} from '../interfaces/tidebit_defi_background/withdrawal_order';
 import {IUserBalance} from './user_context';
+import {WorkerContext} from './worker_context';
 
 export interface INotificationProvider {
   children: React.ReactNode;
@@ -56,7 +57,7 @@ export const NotificationContext = createContext<INotificationContext>({
 
 export const NotificationProvider = ({children}: INotificationProvider) => {
   // const marketCtx = useContext(MarketContext);
-  // const userCtx = useContext(UserContext);
+  const workerCtx = useContext(WorkerContext);
   const emitter = React.useMemo(() => new EventEmitter(), []);
   const [notifications, setNotifications, notificationsRef] = useState<INotificationItem[] | null>(
     null
@@ -169,9 +170,9 @@ export const NotificationProvider = ({children}: INotificationProvider) => {
 
   const init = async () => {
     // console.log(`NotificationProvider init is called`);
-    setNotifications(dummyNotifications);
-    setUnreadNotifications(dummyUnReadNotifications);
-    registerPublicNotification();
+    // setNotifications(dummyNotifications);
+    // setUnreadNotifications(dummyUnReadNotifications);
+    // registerPublicNotification();
     return await Promise.resolve();
   };
 
@@ -231,6 +232,34 @@ export const NotificationProvider = ({children}: INotificationProvider) => {
       emitter.on(TideBitEvent.TICKER_CHANGE, (ticker: ITickerData) => {
         setSelectedTicker(ticker);
       }),
+    []
+  );
+
+  React.useMemo(() => workerCtx.emitter.on(TideBitEvent.NOTIFICATIONS, updateNotifications), []);
+  React.useMemo(
+    () =>
+      workerCtx.emitter.on(TideBitEvent.TICKER, data => emitter.emit(TideBitEvent.TICKER, data)),
+    []
+  );
+  React.useMemo(
+    () =>
+      workerCtx.emitter.on(TideBitEvent.TICKER_STATISTIC, data =>
+        emitter.emit(TideBitEvent.TICKER_STATISTIC, data)
+      ),
+    []
+  );
+  React.useMemo(
+    () =>
+      workerCtx.emitter.on(TideBitEvent.TICKER_LIVE_STATISTIC, data =>
+        emitter.emit(TideBitEvent.TICKER_LIVE_STATISTIC, data)
+      ),
+    []
+  );
+  React.useMemo(
+    () =>
+      workerCtx.emitter.on(TideBitEvent.CANDLESTICK, data =>
+        emitter.emit(TideBitEvent.CANDLESTICK, data)
+      ),
     []
   );
 

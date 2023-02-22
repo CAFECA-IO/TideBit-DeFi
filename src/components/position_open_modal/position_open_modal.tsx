@@ -1,13 +1,14 @@
 import {ImCross} from 'react-icons/im';
 import {IOpenCFDDetails} from '../../interfaces/tidebit_defi_background/open_cfd_details';
 import {
+  DELAYED_HIDDEN_SECONDS,
   TypeOfBorderColor,
   TypeOfPnLColor,
   UNIVERSAL_NUMBER_FORMAT_LOCALE,
 } from '../../constants/display';
 import RippleButton from '../ripple_button/ripple_button';
 import Image from 'next/image';
-import {locker, timestampToString, wait} from '../../lib/common';
+import {locker, randomIntFromInterval, timestampToString, wait} from '../../lib/common';
 import {useContext, useEffect, useState} from 'react';
 import {MarketContext} from '../../contexts/market_context';
 import {IPublicCFDOrder} from '../../interfaces/tidebit_defi_background/public_order';
@@ -21,6 +22,9 @@ interface IPositionOpenModal {
   openCfdRequest: IPublicCFDOrder;
 }
 
+// TODO: seconds constant in display.ts or config.ts?
+const INIT_POSITION_REMAINING_SECONDS = 15;
+
 const PositionOpenModal = ({
   modalVisible,
   modalClickHandler,
@@ -32,12 +36,14 @@ const PositionOpenModal = ({
   const [lock, unlock] = locker('position_open_modal.UseEffect');
 
   // TODO: update order function
-  const submitClickHandler = () => {
+  const submitClickHandler = async () => {
+    await wait(DELAYED_HIDDEN_SECONDS / 5);
     modalClickHandler();
     return;
   };
 
-  const [secondsLeft, setSecondsLeft] = useState(15);
+  const [secondsLeft, setSecondsLeft] = useState(INIT_POSITION_REMAINING_SECONDS);
+  const [dataRenewedStyle, setDataRenewedStyle] = useState('text-lightWhite');
 
   // TODO: Typo `guaranteedStop`
   const displayedGuaranteedStopSetting = !!openCfdRequest.guranteedStop ? 'Yes' : 'No';
@@ -64,12 +70,31 @@ const PositionOpenModal = ({
 
   const layoutInsideBorder = 'mx-5 my-4 flex justify-between';
 
+  // let dataRenewedStyle = 'text-lightGray';
+
   // const displayedTime = timestampToString(openCfdRequest?.createdTime ?? 0);
+
+  const renewDataHandler = async () => {
+    setDataRenewedStyle('animate-flash text-lightYellow');
+    await wait(DELAYED_HIDDEN_SECONDS / 5);
+
+    globalCtx.dataPositionOpenModalHandler({
+      ...openCfdRequest,
+      price: randomIntFromInterval(openCfdRequest.price, openCfdRequest.price * 1.5),
+      margin: randomIntFromInterval(openCfdRequest.margin, openCfdRequest.margin * 1.5),
+    });
+
+    setDataRenewedStyle('text-lightYellow');
+    // await wait(DELAYED_HIDDEN_SECONDS * 3);
+    // setDataRenewedStyle('text-lightWhite');
+  };
 
   useEffect(() => {
     // if (!lock()) return;
+
     if (secondsLeft === 0) {
-      setSecondsLeft(15);
+      setSecondsLeft(INIT_POSITION_REMAINING_SECONDS);
+      renewDataHandler();
     }
     // async () => {
     //   if (secondsLeft === 0) {
@@ -78,9 +103,10 @@ const PositionOpenModal = ({
     //   }
     // };
 
-    // if (!globalCtx.visiblePositionOpenModal) {
-    //   setSecondsLeft(15);
-    // }
+    if (!globalCtx.visiblePositionOpenModal) {
+      setSecondsLeft(INIT_POSITION_REMAINING_SECONDS);
+      setDataRenewedStyle('text-lightWhite');
+    }
 
     const intervalId = setInterval(() => {
       setSecondsLeft(prevSeconds => prevSeconds - 1);
@@ -134,7 +160,7 @@ const PositionOpenModal = ({
 
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">Open Price</div>
-              <div className="">
+              <div className={`${dataRenewedStyle}`}>
                 {/* TODO: Hardcode USDT */}${' '}
                 {openCfdRequest?.price?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0} USDT
               </div>
@@ -143,8 +169,7 @@ const PositionOpenModal = ({
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">Amount</div>
               <div className="">
-                {/* TODO:                 {openCfdRequest?.amount?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0}
-                 */}
+                {/* TODO:{openCfdRequest?.amount?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0} */}
                 {222}
               </div>
             </div>
@@ -152,7 +177,9 @@ const PositionOpenModal = ({
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">Required Margin</div>
               {/* TODO: Hardcode USDT */}
-              <div className="">$ {((openCfdRequest?.margin * 1.8) / 5).toFixed(2)} USDT</div>
+              <div className={`${dataRenewedStyle}`}>
+                $ {(openCfdRequest?.margin).toFixed(2)} USDT
+              </div>
             </div>
 
             <div className={`${layoutInsideBorder}`}>

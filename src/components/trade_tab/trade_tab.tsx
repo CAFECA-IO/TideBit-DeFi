@@ -218,7 +218,10 @@ const TradeTab = () => {
 
   // TODO: Should haven't been undefined
   // TODO: 15秒後，在 PositionOpenModal 更新
+  // TODO: 保證金不足就不能下委託單；按鈕反灰
   const longOrderSubmitHandler = () => {
+    if (marginWarning) return;
+
     globalCtx.dataPositionOpenModalHandler({
       id: '202302221915',
       ticker: marketCtx.selectedTicker?.currency ?? '',
@@ -570,9 +573,10 @@ const TradeTab = () => {
               <div className="mt-0 ml-1/4">
                 {/* focus:outline-none focus:ring-4 focus:ring-green-300 */}
                 <RippleButton
+                  disabled={marginWarning}
                   onClick={longOrderSubmitHandler}
                   buttonType="button"
-                  className="mr-2 mb-2 rounded-md bg-lightGreen5 px-7 py-1 text-sm font-medium tracking-wide text-white transition-colors duration-300 hover:bg-lightGreen5/80"
+                  className="mr-2 mb-2 rounded-md bg-lightGreen5 px-7 py-1 text-sm font-medium tracking-wide text-white transition-colors duration-300 hover:bg-lightGreen5/80 disabled:bg-lightGray"
                 >
                   <b>UP</b> <br />
                   Above $ {buyPrice}

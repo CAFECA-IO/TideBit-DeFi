@@ -2,10 +2,13 @@ import EventEmitter from 'events';
 import React, {useContext, createContext} from 'react';
 import useState from 'react-usestateref';
 import {ModifyType} from '../constants/modify_type';
+import {OrderState} from '../constants/order_state';
+import {OrderType} from '../constants/order_type';
 import {TideBitEvent} from '../constants/tidebit_event';
 import {IBalance} from '../interfaces/tidebit_defi_background/balance';
 import {getDummyCandlestickChartData} from '../interfaces/tidebit_defi_background/candlestickData';
 import {getDummyClosedCFDs} from '../interfaces/tidebit_defi_background/closed_cfd_details';
+import {dummyDepositOrder} from '../interfaces/tidebit_defi_background/deposit_order';
 // import {UserContext} from './user_context';
 // import {MarketContext} from './market_context';
 import {
@@ -18,6 +21,7 @@ import {getDummyOpenCFDs} from '../interfaces/tidebit_defi_background/open_cfd_d
 import {getDummyTicker, ITickerData} from '../interfaces/tidebit_defi_background/ticker_data';
 import {getDummyTickerLiveStatistics} from '../interfaces/tidebit_defi_background/ticker_live_statistics';
 import {getDummyTickerStatic} from '../interfaces/tidebit_defi_background/ticker_static';
+import {dummyWithdrawalOrder} from '../interfaces/tidebit_defi_background/withdrawal_order';
 import {IUserBalance} from './user_context';
 
 export interface INotificationProvider {
@@ -37,6 +41,8 @@ export interface INotificationContext {
 let dummyTickerInterval;
 let dummyBalanceInterval;
 let dummyCFDsInterval;
+let dummyDepositInterval;
+let dummyWithdrawInterval;
 
 export const NotificationContext = createContext<INotificationContext>({
   emitter: new EventEmitter(),
@@ -123,11 +129,39 @@ export const NotificationProvider = ({children}: INotificationProvider) => {
     dummyCFDsInterval = setInterval(() => {
       if (selectedTickerRef.current) {
         const random = Math.random() > 0.5;
-        emitter.emit(random ? TideBitEvent.OPEN_CFD : TideBitEvent.CLOSE_CFD, {
+        emitter.emit(TideBitEvent.ORDER, {
+          orderType: OrderType.CFD,
+          orderState: random ? OrderState.OPENING : OrderState.CLOSED,
           modifyType: ModifyType.Add,
-          CFDs: random
+          orders: random
             ? getDummyOpenCFDs(selectedTickerRef.current.currency, 1)
             : getDummyClosedCFDs(selectedTickerRef.current.currency, 1),
+        });
+      }
+    }, 5000);
+  };
+
+  const dummyDepositUpdate = () => {
+    dummyDepositInterval = setInterval(() => {
+      if (selectedTickerRef.current) {
+        const random = Math.random() > 0.5;
+        emitter.emit(TideBitEvent.ORDER, {
+          orderType: OrderType.DEPOSIT,
+          modifyType: ModifyType.Add,
+          orders: [dummyDepositOrder],
+        });
+      }
+    }, 5000);
+  };
+
+  const dummyWithdrawUpdate = () => {
+    dummyWithdrawInterval = setInterval(() => {
+      if (selectedTickerRef.current) {
+        const random = Math.random() > 0.5;
+        emitter.emit(TideBitEvent.ORDER, {
+          orderType: OrderType.DEPOSIT,
+          modifyType: ModifyType.Add,
+          orders: [dummyWithdrawalOrder],
         });
       }
     }, 5000);

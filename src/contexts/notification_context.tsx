@@ -38,11 +38,11 @@ export interface INotificationContext {
   reset: () => void;
 }
 
-let dummyTickerInterval;
-let dummyBalanceInterval;
-let dummyCFDsInterval;
-let dummyDepositInterval;
-let dummyWithdrawInterval;
+let dummyTickerInterval: NodeJS.Timeout | null = null;
+let dummyBalanceInterval: NodeJS.Timeout | null = null;
+let dummyCFDsInterval: NodeJS.Timeout | null = null;
+let dummyDepositInterval: NodeJS.Timeout | null = null;
+let dummyWithdrawInterval: NodeJS.Timeout | null = null;
 
 export const NotificationContext = createContext<INotificationContext>({
   emitter: new EventEmitter(),
@@ -212,8 +212,8 @@ export const NotificationProvider = ({children}: INotificationProvider) => {
     updateUnreadNotifications = updateNotifications.filter(n => !n.isRead);
     setNotifications(updateNotifications);
     setUnreadNotifications(updateUnreadNotifications);
-    clearInterval(dummyBalanceInterval);
-    clearInterval(dummyCFDsInterval);
+    if (dummyBalanceInterval) clearInterval(dummyBalanceInterval);
+    if (dummyCFDsInterval) clearInterval(dummyCFDsInterval);
   };
 
   React.useMemo(

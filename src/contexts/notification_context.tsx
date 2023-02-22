@@ -1,6 +1,7 @@
 import EventEmitter from 'events';
 import React, {useContext, createContext} from 'react';
 import useState from 'react-usestateref';
+import {ModifyType} from '../constants/modify_type';
 import {TideBitEvent} from '../constants/tidebit_event';
 import {IBalance} from '../interfaces/tidebit_defi_background/balance';
 import {getDummyCandlestickChartData} from '../interfaces/tidebit_defi_background/candlestickData';
@@ -122,12 +123,12 @@ export const NotificationProvider = ({children}: INotificationProvider) => {
     dummyCFDsInterval = setInterval(() => {
       if (selectedTickerRef.current) {
         const random = Math.random() > 0.5;
-        emitter.emit(
-          random ? TideBitEvent.OPEN_CFD : TideBitEvent.CLOSE_CFD,
-          random
+        emitter.emit(random ? TideBitEvent.OPEN_CFD : TideBitEvent.CLOSE_CFD, {
+          modifyType: ModifyType.Add,
+          CFDs: random
             ? getDummyOpenCFDs(selectedTickerRef.current.currency, 1)
-            : getDummyClosedCFDs(selectedTickerRef.current.currency, 1)
-        );
+            : getDummyClosedCFDs(selectedTickerRef.current.currency, 1),
+        });
       }
     }, 5000);
   };
@@ -136,7 +137,7 @@ export const NotificationProvider = ({children}: INotificationProvider) => {
     // console.log(`NotificationProvider init is called`);
     setNotifications(dummyNotifications);
     setUnreadNotifications(dummyUnReadNotifications);
-    dummyTickerUpdate();
+    registerPublicNotification();
     return await Promise.resolve();
   };
 
@@ -145,7 +146,9 @@ export const NotificationProvider = ({children}: INotificationProvider) => {
     setUnreadNotifications([]);
     return;
   };
-
+  const registerPublicNotification = () => {
+    dummyTickerUpdate();
+  };
   // Event: Login
   const registerPrivateNotification = (address: string) => {
     // TODO: receive more than once

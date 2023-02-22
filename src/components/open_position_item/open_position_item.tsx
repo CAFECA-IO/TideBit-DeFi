@@ -39,7 +39,7 @@ const OpenPositionItem = ({
 }: IOpenPositionItemProps) => {
   if (longOrShort !== 'long' && longOrShort !== 'short') return <></>;
   // if (profitOrLoss !== 'profit' && profitOrLoss !== 'loss') return <></>; if (profitOrLoss !== 'profit' && profitOrLoss !== 'loss') return <></>;
-  if (ticker !== 'ETH' && ticker !== 'BTC') return <></>;
+  // if (ticker !== 'ETH' && ticker !== 'BTC') return <></>;
   const {
     visiblePositionDetailsModal,
     visiblePositionDetailsModalHandler,

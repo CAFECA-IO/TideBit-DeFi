@@ -49,7 +49,7 @@ export const getDummyClosedCFDs = (currency: string, number = 3) => {
   for (let i = 0; i < number; i++) {
     const profit = Math.random() > 0.5 ? ProfitState.PROFIT : ProfitState.LOSS;
     const dummyClosedCFD: IClosedCFDDetails = {
-      id: `TBD20230217000${(Math.random() * 10000).toFixed(0)}}`,
+      id: `TBD${Date.now()}${(Math.random() * 10000).toFixed(0)}`,
       ticker: currency,
       amount: 1.8,
       state: OrderState.OPENING,

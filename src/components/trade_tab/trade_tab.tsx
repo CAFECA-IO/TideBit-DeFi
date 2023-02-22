@@ -220,12 +220,6 @@ const TradeTab = () => {
 
   // TODO: Should haven't been undefined
   const longOrderSubmitHandler = () => {
-    globalCtx.visiblePositionOpenModalHandler();
-    // globalCtx.visibleWalletPanelHandler();
-    return;
-  };
-
-  useEffect(() => {
     globalCtx.dataPositionOpenModalHandler({
       id: '202302221915',
       ticker: marketCtx.selectedTicker?.currency ?? '',
@@ -248,7 +242,36 @@ const TradeTab = () => {
       targetUnit: marketCtx.selectedTicker?.currency ?? '',
       chargeUnit: 'USDT',
     });
-  }, [marginInputValue, marketCtx.selectedTicker]);
+    globalCtx.visiblePositionOpenModalHandler();
+    // globalCtx.visibleWalletPanelHandler();
+    return;
+  };
+
+  // FIXME: it won't renew when user check guaranteed-stop
+  // useEffect(() => {
+  //   globalCtx.dataPositionOpenModalHandler({
+  //     id: '202302221915',
+  //     ticker: marketCtx.selectedTicker?.currency ?? '',
+  //     typeOfPosition: TypeOfPosition.BUY,
+  //     orderType: OrderType.CFD,
+  //     orderStatus: OrderStatusUnion.PROCESSING,
+  //     price: Number(buyEstimatedFilledPrice) ?? 9999999999,
+  //     // price: marketCtx.tickerLiveStatistics?.buyEstimatedFilledPrice ?? 9999999999,
+  //     // price: marketCtx.selectedTicker?.price ?? 9999999999,
+  //     triggerPrice: marketCtx.selectedTicker?.price ?? 9999999999,
+  //     estimatedFilledPrice: marketCtx.selectedTicker?.price ?? 9999999999,
+  //     fee: marketCtx.tickerLiveStatistics?.fee ?? 9999999999,
+  //     leverage: marketCtx.tickerStatic?.leverage ?? 1,
+  //     // TODO: requiredMarginRef.current / requiredMargin
+  //     margin: requiredMarginRef.current,
+  //     guranteedStop: longSlToggle ? longGuaranteedStopChecked : false,
+  //     takeProfit: longTpToggle ? longTpValue : undefined,
+  //     stopLoss: longSlToggle ? longSlValue : undefined,
+  //     createdTime: 1676369333495,
+  //     targetUnit: marketCtx.selectedTicker?.currency ?? '',
+  //     chargeUnit: 'USDT',
+  //   });
+  // }, [marginInputValue, marketCtx.selectedTicker]);
 
   const shortOrderSubmitHandler = () => {
     // globalCtx.dataLoadingModalHandler({

@@ -8,11 +8,11 @@ import {Trend} from '../../constants/trend';
 
 const TradingHeader = () => {
   const marketCtx = useContext(MarketContext);
-  if (
-    marketCtx.selectedTicker?.upOrDown !== Trend.UP &&
-    marketCtx.selectedTicker?.upOrDown !== Trend.DOWN
-  )
-    return <></>;
+  // if (
+  //   marketCtx.selectedTicker?.upOrDown !== Trend.UP &&
+  //   marketCtx.selectedTicker?.upOrDown !== Trend.DOWN
+  // )
+  //   return <></>;
 
   // const [ticker, setTicker] = useState('ETH/USDT');
   // const [showTickerSelector, setShowTickerSelector] = useState(false);

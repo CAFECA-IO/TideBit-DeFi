@@ -28,6 +28,10 @@ import {
   dummyCloseCFDDetails,
 } from '../interfaces/tidebit_defi_background/closed_cfd_details';
 import HistoryPositionModal from '../components/history_position_modal/history_position_modal';
+import {
+  IPublicCFDOrder,
+  dummyPublicCFDOrder,
+} from '../interfaces/tidebit_defi_background/public_order';
 
 export interface IToastify {
   type: 'error' | 'warning' | 'info' | 'success';
@@ -249,8 +253,8 @@ export interface IGlobalContext {
 
   visiblePositionOpenModal: boolean;
   visiblePositionOpenModalHandler: () => void;
-  dataPositionOpenModal: IOpenCFDDetails | null;
-  dataPositionOpenModalHandler: (data: IOpenCFDDetails) => void;
+  dataPositionOpenModal: IPublicCFDOrder | null;
+  dataPositionOpenModalHandler: (data: IPublicCFDOrder) => void;
 
   visiblePositionUpdatedModal: boolean;
   visiblePositionUpdatedModalHandler: () => void;
@@ -484,7 +488,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
 
   const [visiblePositionOpenModal, setVisiblePositionOpenModal] = useState(false);
   const [dataPositionOpenModal, setDataPositionOpenModal] =
-    useState<IOpenCFDDetails>(dummyOpenCFDDetails); // TODO: Open position parameter
+    useState<IPublicCFDOrder>(dummyPublicCFDOrder); // TODO: Open position parameter
 
   const [visiblePositionUpdatedModal, setVisiblePositionUpdatedModal] = useState(false);
   const [dataPositionUpdatedModal, setDataPositionUpdatedModal] =
@@ -673,7 +677,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
   };
 
   // TODO: Open position parameter
-  const dataPositionOpenModalHandler = (data: IOpenCFDDetails) => {
+  const dataPositionOpenModalHandler = (data: IPublicCFDOrder) => {
     setDataPositionOpenModal(data);
   };
 
@@ -991,21 +995,21 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
         modalClickHandler={visibleHistoryPositionModalHandler}
         closedCfdDetails={dataHistoryPositionModal}
       />
+      <PositionOpenModal
+        modalVisible={visiblePositionOpenModal}
+        modalClickHandler={visiblePositionOpenModalHandler}
+        openCfdRequest={dataPositionOpenModal}
+      />
       <PositionClosedModal
         modalVisible={visiblePositionClosedModal}
         modalClickHandler={visiblePositionClosedModalHandler}
         closedCfdDetails={dataPositionClosedModal}
       />
-      {/* <PositionUpdatedModal
+      <PositionUpdatedModal
         modalVisible={visiblePositionUpdatedModal}
         modalClickHandler={visiblePositionUpdatedModalHandler}
         updatedCfdDetails={dataPositionUpdatedModal}
       />
-      <PositionOpenModal
-        modalVisible={visiblePositionOpenModal}
-        modalClickHandler={visiblePositionOpenModalHandler}
-        openCfdDetails={dataPositionOpenModal}
-      /> */}
 
       {/* <PositionOpenModal />
       <PositionClosedModal />

@@ -7,23 +7,29 @@ import {
 } from '../../constants/display';
 import RippleButton from '../ripple_button/ripple_button';
 import Image from 'next/image';
-import {timestampToString} from '../../lib/common';
-import {useContext} from 'react';
+import {locker, timestampToString, wait} from '../../lib/common';
+import {useContext, useEffect, useState} from 'react';
 import {MarketContext} from '../../contexts/market_context';
+import {IPublicCFDOrder} from '../../interfaces/tidebit_defi_background/public_order';
+import {BsClockHistory} from 'react-icons/bs';
+import {useGlobal} from '../../contexts/global_context';
+import {TypeOfPosition} from '../../constants/type_of_position';
 
 interface IPositionOpenModal {
   modalVisible: boolean;
   modalClickHandler: () => void;
-  openCfdDetails: IOpenCFDDetails;
+  openCfdRequest: IPublicCFDOrder;
 }
 
 const PositionOpenModal = ({
   modalVisible,
   modalClickHandler,
-  openCfdDetails,
+  openCfdRequest,
   ...otherProps
 }: IPositionOpenModal) => {
+  const globalCtx = useGlobal();
   const marketCtx = useContext(MarketContext);
+  const [lock, unlock] = locker('position_open_modal.UseEffect');
 
   // TODO: update order function
   const submitClickHandler = () => {
@@ -31,38 +37,86 @@ const PositionOpenModal = ({
     return;
   };
 
-  const displayedGuaranteedStopSetting = !!openCfdDetails.guaranteedStop ? 'Yes' : 'No';
+  const [secondsLeft, setSecondsLeft] = useState(15);
+
+  // TODO: Typo `guaranteedStop`
+  const displayedGuaranteedStopSetting = !!openCfdRequest.guranteedStop ? 'Yes' : 'No';
 
   const displayedTypeOfPosition =
-    openCfdDetails?.typeOfPosition === 'BUY' ? 'Up (Buy)' : 'Down (Sell)';
+    openCfdRequest?.typeOfPosition === TypeOfPosition.BUY ? 'Up (Buy)' : 'Down (Sell)';
 
-  const displayedPnLColor =
-    openCfdDetails?.pnl.type === 'PROFIT'
-      ? TypeOfPnLColor.PROFIT
-      : openCfdDetails?.pnl.type === 'LOSS'
-      ? TypeOfPnLColor.LOSS
-      : TypeOfPnLColor.EQUAL;
+  // const displayedPnLColor =
+  //   openCfdRequest?.pnl.type === 'PROFIT'
+  //     ? TypeOfPnLColor.PROFIT
+  //     : openCfdRequest?.pnl.type === 'LOSS'
+  //     ? TypeOfPnLColor.LOSS
+  //     : TypeOfPnLColor.EQUAL;
 
   const displayedPositionColor =
-    openCfdDetails.typeOfPosition === 'BUY' ? TypeOfPnLColor.PROFIT : TypeOfPnLColor.LOSS;
+    openCfdRequest.typeOfPosition === TypeOfPosition.BUY
+      ? TypeOfPnLColor.PROFIT
+      : TypeOfPnLColor.LOSS;
 
   const displayedBorderColor =
-    openCfdDetails?.typeOfPosition === 'BUY' ? TypeOfBorderColor.LONG : TypeOfBorderColor.SHORT;
+    openCfdRequest?.typeOfPosition === TypeOfPosition.BUY
+      ? TypeOfBorderColor.LONG
+      : TypeOfBorderColor.SHORT;
 
   const layoutInsideBorder = 'mx-5 my-4 flex justify-between';
 
-  const displayedTime = timestampToString(openCfdDetails?.openTimestamp ?? 0);
+  // const displayedTime = timestampToString(openCfdRequest?.createdTime ?? 0);
+
+  useEffect(() => {
+    // if (!lock()) return;
+    if (secondsLeft === 0) {
+      setSecondsLeft(15);
+    }
+    // async () => {
+    //   if (secondsLeft === 0) {
+    //     await wait(500);
+    //     setSecondsLeft(15);
+    //   }
+    // };
+
+    // if (!globalCtx.visiblePositionOpenModal) {
+    //   setSecondsLeft(15);
+    // }
+
+    const intervalId = setInterval(() => {
+      setSecondsLeft(prevSeconds => prevSeconds - 1);
+    }, 1000);
+
+    return () => {
+      clearInterval(intervalId);
+      // unlock();
+    };
+  }, [secondsLeft, globalCtx.visiblePositionOpenModal]);
+
+  // useEffect(() => {
+  //   if (globalCtx.visiblePositionOpenModal) {
+  //     setSecondsLeft(15);
+  //   }
+
+  //   // return () => {
+  //   //   second;
+  //   // };
+  // }, [globalCtx.visiblePositionOpenModal]);
 
   const formContent = (
     <div>
-      <div className="mt-2 mb-2 flex items-center justify-center space-x-2 text-center">
+      <div className="mt-8 mb-2 flex items-center justify-center space-x-2 text-center">
         <Image
           src={marketCtx.selectedTicker?.tokenImg ?? ''}
           width={30}
           height={30}
           alt="ticker icon"
         />
-        <div className="text-2xl">ETH</div>
+        <div className="text-2xl">{marketCtx.selectedTicker?.currency}</div>
+      </div>
+
+      <div className="absolute top-105px right-6 flex items-center space-x-1 text-center">
+        <BsClockHistory size={20} className="text-lightGray" />
+        <p className="w-8 text-xs">00:{secondsLeft.toString().padStart(2, '0')}</p>
       </div>
 
       <div className="relative flex-auto pt-1">
@@ -79,38 +133,46 @@ const PositionOpenModal = ({
             </div>
 
             <div className={`${layoutInsideBorder}`}>
+              <div className="text-lightGray">Open Price</div>
+              <div className="">
+                {/* TODO: Hardcode USDT */}${' '}
+                {openCfdRequest?.triggerPrice?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0}{' '}
+                USDT
+              </div>
+            </div>
+
+            <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">Amount</div>
               <div className="">
-                {openCfdDetails?.amount?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0}
+                {/* TODO:                 {openCfdRequest?.amount?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0}
+                 */}
+                {222}
               </div>
             </div>
 
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">Required Margin</div>
-              <div className="">$ {((openCfdDetails?.openPrice * 1.8) / 5).toFixed(2)} USDT</div>
+              {/* TODO: Hardcode USDT */}
+              <div className="">$ {((openCfdRequest?.margin * 1.8) / 5).toFixed(2)} USDT</div>
             </div>
 
             <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">Limit/ Stop</div>
-              <div className="">$20/ $10.5</div>
-            </div>
-
-            <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">Price</div>
+              <div className="text-lightGray">TP/ SL</div>
               <div className="">
-                $ {openCfdDetails?.openPrice?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0}
+                {openCfdRequest?.takeProfit ?? '-'} / {openCfdRequest?.stopLoss ?? '-'}
               </div>
             </div>
 
-            <div className={`${layoutInsideBorder}`}>
+            {/* <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">Open Time</div>
               <div className="">
                 {displayedTime.date} {displayedTime.time}
               </div>
-            </div>
+            </div> */}
 
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">Liquidation Price</div>
+              {/* TODO: Liquidation Price */}
               <div className="">$ 9.23</div>
             </div>
 

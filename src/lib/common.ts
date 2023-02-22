@@ -1,3 +1,41 @@
+// export const countdown = (seconds: number) => {
+
+//   // await wait(1000)
+
+//   const intervalId = setInterval(() => {
+//     seconds--;
+//     console.log(seconds);
+//     if (seconds <= 0) {
+//       clearInterval(intervalId);
+//       console.log("Countdown complete!");
+//     }
+//   }, 1000);
+
+//   // return seconds;
+
+//   // return new Promise((resolve) => {
+//   //   const interval = setInterval(() => {
+//   //     seconds -= 1;
+//   //     if (seconds <= 0) {
+//   //       clearInterval(interval);
+//   //       resolve(true);
+//   //     }
+//   //   }, 1000);
+//   // });
+// };
+
+// // let count = 15;
+
+// // const countdown = setInterval(() => {
+// //   if (count === 0) {
+// //     clearInterval(countdown);
+// //     console.log("Countdown complete!");
+// //   } else {
+// //     console.log(count);
+// //     count--;
+// //   }
+// // }, 1000);
+
 /**
  *
  * @param timestamp is in seconds

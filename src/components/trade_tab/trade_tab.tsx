@@ -94,9 +94,7 @@ const TradeTab = () => {
 
   // const marginInputRef = useRef<HTMLInputElement>(null);
 
-  const [marketPrice, SetMarketPrice, marketPriceRef] = useStateRef(
-    tickerLiveStatistics?.price ?? TEMP_PLACEHOLDER
-  );
+  const [marketPrice, SetMarketPrice, marketPriceRef] = useStateRef(tickerLiveStatistics!.price);
 
   const [longTooltipStatus, setLongTooltipStatus] = useState(0);
   const [shortTooltipStatus, setShortTooltipStatus] = useState(0);
@@ -158,7 +156,7 @@ const TradeTab = () => {
     const roundedValueOfPosition = roundToDecimalPlaces(newValueOfPosition, 2);
     setValueOfPosition(roundedValueOfPosition);
 
-    const margin = newValueOfPosition / 5;
+    const margin = newValueOfPosition / leverage;
     const roundedMargin = roundToDecimalPlaces(margin, 2);
     setRequiredMargin(roundedMargin);
 
@@ -220,7 +218,7 @@ const TradeTab = () => {
   // TODO: 15秒後，在 PositionOpenModal 更新
   // TODO: 保證金不足就不能下委託單；按鈕反灰
   const longOrderSubmitHandler = () => {
-    if (marginWarning) return;
+    // if (marginWarning) return;
 
     globalCtx.dataPositionOpenModalHandler({
       id: '202302221915',
@@ -228,6 +226,7 @@ const TradeTab = () => {
       typeOfPosition: TypeOfPosition.BUY,
       orderType: OrderType.CFD,
       orderStatus: OrderStatusUnion.PROCESSING,
+      margin: requiredMarginRef.current,
       price: Number(buyPrice) ?? 9999999999,
       // price: marketCtx.tickerLiveStatistics?.buyEstimatedFilledPrice ?? 9999999999,
       // price: marketCtx.selectedTicker?.price ?? 9999999999,
@@ -235,8 +234,6 @@ const TradeTab = () => {
       estimatedFilledPrice: marketCtx.selectedTicker?.price ?? 9999999999,
       fee: marketCtx.tickerLiveStatistics?.fee ?? 9999999999,
       leverage: marketCtx.tickerStatic?.leverage ?? 1,
-      // TODO: requiredMarginRef.current / requiredMargin
-      margin: requiredMarginRef.current,
       guranteedStop: longSlToggle ? longGuaranteedStopChecked : false,
       takeProfit: longTpToggle ? longTpValue : undefined,
       stopLoss: longSlToggle ? longSlValue : undefined,

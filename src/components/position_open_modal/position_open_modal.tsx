@@ -15,6 +15,7 @@ import {IPublicCFDOrder} from '../../interfaces/tidebit_defi_background/public_o
 import {BsClockHistory} from 'react-icons/bs';
 import {useGlobal} from '../../contexts/global_context';
 import {TypeOfPosition} from '../../constants/type_of_position';
+import {UserContext} from '../../contexts/user_context';
 
 interface IPositionOpenModal {
   modalVisible: boolean;
@@ -23,7 +24,7 @@ interface IPositionOpenModal {
 }
 
 // TODO: seconds constant in display.ts or config.ts?
-const INIT_POSITION_REMAINING_SECONDS = 15;
+const INIT_POSITION_REMAINING_SECONDS = 3;
 
 const PositionOpenModal = ({
   modalVisible,
@@ -33,12 +34,24 @@ const PositionOpenModal = ({
 }: IPositionOpenModal) => {
   const globalCtx = useGlobal();
   const marketCtx = useContext(MarketContext);
+  const userCtx = useContext(UserContext);
   const [lock, unlock] = locker('position_open_modal.UseEffect');
 
-  // TODO: update order function
   const submitClickHandler = async () => {
+    const [lock, unlock] = locker('position_open_modal.submitClickHandler');
+
+    if (!lock()) return;
+    // TODO: Signatures and create order
+    // userCtx.createOrder()
+
     await wait(DELAYED_HIDDEN_SECONDS / 5);
     modalClickHandler();
+
+    // TODO: pop up loading modal
+    // globalCtx.dataLoadingModalHandler({})
+    // globalCtx.visibleLoadingModalHandler()
+
+    unlock();
     return;
   };
 
@@ -78,15 +91,36 @@ const PositionOpenModal = ({
     setDataRenewedStyle('animate-flash text-lightYellow');
     await wait(DELAYED_HIDDEN_SECONDS / 5);
 
+    // TODO: get latest price from marketCtx and calculate required margin data
+    // FIXME: 應用 ?? 代替 !
     globalCtx.dataPositionOpenModalHandler({
       ...openCfdRequest,
-      price: randomIntFromInterval(openCfdRequest.price, openCfdRequest.price * 1.5),
-      margin: randomIntFromInterval(openCfdRequest.margin, openCfdRequest.margin * 1.5),
+      price:
+        openCfdRequest.typeOfPosition === TypeOfPosition.BUY
+          ? randomIntFromInterval(
+              marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice * 0.75,
+              marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice * 1.25
+            )
+          : openCfdRequest.typeOfPosition === TypeOfPosition.SELL
+          ? randomIntFromInterval(
+              marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice * 1.1,
+              marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice * 1.25
+            )
+          : 999999,
+      // TODO:
+      // margin:
+      //   openCfdRequest.typeOfPosition === TypeOfPosition.BUY
+      //     ? (openCfdRequest.amount * marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice) /
+      //       openCfdRequest.leverage
+      //     : (openCfdRequest.amount * marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice) /
+      //       openCfdRequest.leverage,
+
+      margin: randomIntFromInterval(openCfdRequest.margin * 0.9, openCfdRequest.margin * 1.5),
     });
 
     setDataRenewedStyle('text-lightYellow');
-    // await wait(DELAYED_HIDDEN_SECONDS * 3);
-    // setDataRenewedStyle('text-lightWhite');
+    await wait(DELAYED_HIDDEN_SECONDS / 2);
+    setDataRenewedStyle('text-lightWhite');
   };
 
   useEffect(() => {
@@ -216,9 +250,10 @@ const PositionOpenModal = ({
 
         <div className={`flex-col space-y-5 text-base leading-relaxed text-lightWhite`}>
           <RippleButton
+            // disabled={secondsLeft === INIT_POSITION_REMAINING_SECONDS}
             onClick={submitClickHandler}
             buttonType="button"
-            className={`mx-22px mt-0 rounded border-0 bg-tidebitTheme py-2 px-16 text-base text-white transition-colors duration-300 hover:bg-cyan-600 focus:outline-none`}
+            className={`mx-22px mt-0 rounded border-0 bg-tidebitTheme py-2 px-16 text-base text-white transition-colors duration-300 hover:bg-cyan-600 focus:outline-none disabled:bg-lightGray`}
           >
             Confirm the order
           </RippleButton>

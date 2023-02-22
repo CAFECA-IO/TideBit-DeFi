@@ -136,8 +136,7 @@ const PositionOpenModal = ({
               <div className="text-lightGray">Open Price</div>
               <div className="">
                 {/* TODO: Hardcode USDT */}${' '}
-                {openCfdRequest?.triggerPrice?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0}{' '}
-                USDT
+                {openCfdRequest?.price?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0} USDT
               </div>
             </div>
 

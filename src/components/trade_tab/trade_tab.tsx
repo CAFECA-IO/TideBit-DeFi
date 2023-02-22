@@ -72,9 +72,7 @@ const TradeTab = () => {
 
   // const marketPrice = tickerLiveStatistics?.price ?? TEMP_PLACEHOLDER;
 
-  const buyEstimatedFilledPrice = (
-    tickerLiveStatistics?.buyEstimatedFilledPrice ?? TEMP_PLACEHOLDER
-  ).toFixed(2); // market price * (1+spread)
+  const buyPrice = (tickerLiveStatistics?.buyEstimatedFilledPrice ?? TEMP_PLACEHOLDER).toFixed(2); // market price * (1+spread)
   const sellEstimatedFilledPrice = (
     tickerLiveStatistics?.sellEstimatedFilledPrice ?? TEMP_PLACEHOLDER
   ).toFixed(2); // market price * (1-spread)
@@ -219,6 +217,7 @@ const TradeTab = () => {
     valueOfPositionLength > 10 || marginLength > 10 ? 'top-430px' : 'top-420px';
 
   // TODO: Should haven't been undefined
+  // TODO: 15秒後，在 PositionOpenModal 更新
   const longOrderSubmitHandler = () => {
     globalCtx.dataPositionOpenModalHandler({
       id: '202302221915',
@@ -226,7 +225,7 @@ const TradeTab = () => {
       typeOfPosition: TypeOfPosition.BUY,
       orderType: OrderType.CFD,
       orderStatus: OrderStatusUnion.PROCESSING,
-      price: Number(buyEstimatedFilledPrice) ?? 9999999999,
+      price: Number(buyPrice) ?? 9999999999,
       // price: marketCtx.tickerLiveStatistics?.buyEstimatedFilledPrice ?? 9999999999,
       // price: marketCtx.selectedTicker?.price ?? 9999999999,
       triggerPrice: marketCtx.selectedTicker?.price ?? 9999999999,
@@ -576,7 +575,7 @@ const TradeTab = () => {
                   className="mr-2 mb-2 rounded-md bg-lightGreen5 px-7 py-1 text-sm font-medium tracking-wide text-white transition-colors duration-300 hover:bg-lightGreen5/80"
                 >
                   <b>UP</b> <br />
-                  Above $ {buyEstimatedFilledPrice}
+                  Above $ {buyPrice}
                 </RippleButton>
               </div>
               {/* Divider: border-bottom */}

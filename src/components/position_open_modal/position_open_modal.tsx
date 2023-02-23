@@ -35,6 +35,10 @@ const PositionOpenModal = ({
   const globalCtx = useGlobal();
   const marketCtx = useContext(MarketContext);
   const userCtx = useContext(UserContext);
+
+  const [secondsLeft, setSecondsLeft] = useState(INIT_POSITION_REMAINING_SECONDS);
+  const [dataRenewedStyle, setDataRenewedStyle] = useState('text-lightWhite');
+
   const [lock, unlock] = locker('position_open_modal.UseEffect');
 
   const submitClickHandler = async () => {
@@ -54,9 +58,6 @@ const PositionOpenModal = ({
     unlock();
     return;
   };
-
-  const [secondsLeft, setSecondsLeft] = useState(INIT_POSITION_REMAINING_SECONDS);
-  const [dataRenewedStyle, setDataRenewedStyle] = useState('text-lightWhite');
 
   // TODO: Typo `guaranteedStop`
   const displayedGuaranteedStopSetting = !!openCfdRequest.guranteedStop ? 'Yes' : 'No';
@@ -88,7 +89,7 @@ const PositionOpenModal = ({
   // const displayedTime = timestampToString(openCfdRequest?.createdTime ?? 0);
 
   const renewDataHandler = async () => {
-    setDataRenewedStyle('animate-flash text-lightYellow');
+    setDataRenewedStyle('animate-flash text-lightYellow2');
     await wait(DELAYED_HIDDEN_SECONDS / 5);
 
     // TODO: get latest price from marketCtx and calculate required margin data
@@ -118,7 +119,7 @@ const PositionOpenModal = ({
       margin: randomIntFromInterval(openCfdRequest.margin * 0.9, openCfdRequest.margin * 1.5),
     });
 
-    setDataRenewedStyle('text-lightYellow');
+    setDataRenewedStyle('text-lightYellow2');
     await wait(DELAYED_HIDDEN_SECONDS / 2);
     setDataRenewedStyle('text-lightWhite');
   };

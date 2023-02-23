@@ -8,13 +8,14 @@ import {
 import RippleButton from '../ripple_button/ripple_button';
 import Image from 'next/image';
 import {timestampToString} from '../../lib/common';
-import {useContext} from 'react';
+import {useContext, useState} from 'react';
 import {MarketContext} from '../../contexts/market_context';
+import {IPublicCFDOrder} from '../../interfaces/tidebit_defi_background/public_order';
 
 interface IPositionUpdatedModal {
   modalVisible: boolean;
   modalClickHandler: () => void;
-  updatedCfdDetails: IOpenCFDDetails;
+  openCfdDetails: IOpenCFDDetails;
 
   // updatedProps
 }
@@ -23,10 +24,12 @@ interface IPositionUpdatedModal {
 const PositionUpdatedModal = ({
   modalVisible,
   modalClickHandler,
-  updatedCfdDetails: openCfdDetails,
+  openCfdDetails: openCfdDetails,
   ...otherProps
 }: IPositionUpdatedModal) => {
   const marketCtx = useContext(MarketContext);
+
+  const [dataRenewedStyle, setDataRenewedStyle] = useState('text-lightWhite');
 
   // TODO: create order function
   const submitClickHandler = () => {
@@ -34,6 +37,7 @@ const PositionUpdatedModal = ({
     return;
   };
 
+  // TODO: typo `guaranteedStop`
   const displayedGuaranteedStopSetting = !!openCfdDetails.guaranteedStop ? 'Yes' : 'No';
 
   // const displayedPnLSymbol =
@@ -42,12 +46,12 @@ const PositionUpdatedModal = ({
   const displayedTypeOfPosition =
     openCfdDetails?.typeOfPosition === 'BUY' ? 'Up (Buy)' : 'Down (Sell)';
 
-  const displayedPnLColor =
-    openCfdDetails?.pnl.type === 'PROFIT'
-      ? TypeOfPnLColor.PROFIT
-      : openCfdDetails?.pnl.type === 'LOSS'
-      ? TypeOfPnLColor.LOSS
-      : TypeOfPnLColor.EQUAL;
+  // const displayedPnLColor =
+  //   updatedCfdRequest?.pnl.type === 'PROFIT'
+  //     ? TypeOfPnLColor.PROFIT
+  //     : updatedCfdRequest?.pnl.type === 'LOSS'
+  //     ? TypeOfPnLColor.LOSS
+  //     : TypeOfPnLColor.EQUAL;
 
   const displayedPositionColor =
     openCfdDetails.typeOfPosition === 'BUY' ? TypeOfPnLColor.PROFIT : TypeOfPnLColor.LOSS;
@@ -85,22 +89,35 @@ const PositionUpdatedModal = ({
             </div>
 
             <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">Amount</div>
-              <div className="">
+              <div className="text-lightGray">Open Price</div>
+              {/* <div className="">
                 {openCfdDetails?.amount?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0}{' '}
                 {openCfdDetails.ticker}
+              </div> */}
+              <div className={`${dataRenewedStyle}`}>
+                {/* TODO: Hardcode USDT */}${' '}
+                {openCfdDetails?.openPrice?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0}{' '}
+                USDT
+                {/* {openCfdDetails?.price?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0} USDT */}
               </div>
             </div>
 
             <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">Required Margin</div>
-              <div className="">$ {((openCfdDetails?.openPrice * 1.8) / 5).toFixed(2)} USDT</div>
+              <div className="text-lightGray">Open Time</div>
+              <div className="">
+                {displayedTime.date} {displayedTime.time}
+              </div>
             </div>
 
             <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">Limit/ Stop</div>
+              <div className="text-lightGray">TP/ SL</div>
               <div className="">$20/ $10.5</div>
             </div>
+
+            {/* <div className={`${layoutInsideBorder}`}>
+              <div className="text-lightGray">Required Margin</div>
+              <div className="">$ {openCfdDetails.margin.toFixed(2)} USDT</div>
+            </div> */}
 
             {/* <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">Avg. Close Price</div>
@@ -117,13 +134,6 @@ const PositionUpdatedModal = ({
                 {openCfdDetails.pnl.value.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}
               </div>
             </div> */}
-
-            <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">Open Time</div>
-              <div className="">
-                {displayedTime.date} {displayedTime.time}
-              </div>
-            </div>
 
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">Guaranteed Stop</div>

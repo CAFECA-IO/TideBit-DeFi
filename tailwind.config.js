@@ -335,6 +335,7 @@ module.exports = {
         lightGreen5: '#17BF88',
 
         lightGray5: '#D4D4D4',
+        lightYellow2: '#F8E71C',
       },
       fontFamily: {
         barlow: ['Barlow', 'sans-serif', 'ui-sans-serif', 'system-ui'],

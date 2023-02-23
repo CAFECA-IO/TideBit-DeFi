@@ -1008,7 +1008,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
       <PositionUpdatedModal
         modalVisible={visiblePositionUpdatedModal}
         modalClickHandler={visiblePositionUpdatedModalHandler}
-        updatedCfdDetails={dataPositionUpdatedModal}
+        openCfdDetails={dataPositionUpdatedModal}
       />
 
       {/* <PositionOpenModal />

@@ -12,6 +12,7 @@ import {useContext, useEffect, useState} from 'react';
 import {MarketContext} from '../../contexts/market_context';
 import {IPublicCFDOrder} from '../../interfaces/tidebit_defi_background/public_order';
 import {IUpdatedCFDProps, useGlobal} from '../../contexts/global_context';
+import {TypeOfPosition} from '../../constants/type_of_position';
 
 interface IPositionUpdatedModal {
   modalVisible: boolean;
@@ -136,8 +137,9 @@ const PositionUpdatedModal = ({
   // const displayedPnLSymbol =
   //   openCfdDetails.pnl.type === 'PROFIT' ? '+' : openCfdDetails.pnl.type === 'LOSS' ? '-' : '';
 
+  // TODO: i18n
   const displayedTypeOfPosition =
-    openCfdDetails?.typeOfPosition === 'BUY' ? 'Up (Buy)' : 'Down (Sell)';
+    openCfdDetails?.typeOfPosition === TypeOfPosition.BUY ? 'Up (Buy)' : 'Down (Sell)';
 
   // const displayedPnLColor =
   //   updatedCfdRequest?.pnl.type === 'PROFIT'
@@ -147,10 +149,14 @@ const PositionUpdatedModal = ({
   //     : TypeOfPnLColor.EQUAL;
 
   const displayedPositionColor =
-    openCfdDetails.typeOfPosition === 'BUY' ? TypeOfPnLColor.PROFIT : TypeOfPnLColor.LOSS;
+    openCfdDetails.typeOfPosition === TypeOfPosition.BUY
+      ? TypeOfPnLColor.PROFIT
+      : TypeOfPnLColor.LOSS;
 
   const displayedBorderColor =
-    openCfdDetails?.typeOfPosition === 'BUY' ? TypeOfBorderColor.LONG : TypeOfBorderColor.SHORT;
+    openCfdDetails?.typeOfPosition === TypeOfPosition.BUY
+      ? TypeOfBorderColor.LONG
+      : TypeOfBorderColor.SHORT;
 
   const layoutInsideBorder = 'mx-5 my-4 flex justify-between';
 

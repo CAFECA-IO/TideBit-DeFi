@@ -62,6 +62,7 @@ const PositionOpenModal = ({
   // TODO: Typo `guaranteedStop`
   const displayedGuaranteedStopSetting = !!openCfdRequest.guranteedStop ? 'Yes' : 'No';
 
+  // TODO: i18n
   const displayedTypeOfPosition =
     openCfdRequest?.typeOfPosition === TypeOfPosition.BUY ? 'Up (Buy)' : 'Down (Sell)';
 
@@ -81,6 +82,9 @@ const PositionOpenModal = ({
     openCfdRequest?.typeOfPosition === TypeOfPosition.BUY
       ? TypeOfBorderColor.LONG
       : TypeOfBorderColor.SHORT;
+
+  const displayedTakeProfit = openCfdRequest?.takeProfit ? `$ ${openCfdRequest.takeProfit}` : '-';
+  const displayedStopLoss = openCfdRequest?.stopLoss ? `$ ${openCfdRequest.stopLoss}` : '-';
 
   const layoutInsideBorder = 'mx-5 my-4 flex justify-between';
 
@@ -220,7 +224,7 @@ const PositionOpenModal = ({
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">TP/ SL</div>
               <div className="">
-                {openCfdRequest?.takeProfit ?? '-'} / {openCfdRequest?.stopLoss ?? '-'}
+                {displayedTakeProfit} / {displayedStopLoss}
               </div>
             </div>
 

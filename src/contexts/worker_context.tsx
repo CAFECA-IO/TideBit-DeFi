@@ -1,9 +1,9 @@
-/* eslint-disable no-console */
 import React, {useEffect, createContext, useRef, useContext} from 'react';
 import useState from 'react-usestateref';
 import io, {Socket} from 'socket.io-client';
 // import EventEmitter from 'events';
 import {TideBitEvent} from '../constants/tidebit_event';
+import {ITickerData} from '../interfaces/tidebit_defi_background/ticker_data';
 import {NotificationContext} from './notification_context';
 
 interface IWorkerProvider {
@@ -17,7 +17,7 @@ interface IWorkerContext {
   wsWorker: Socket | null;
   apiWorker: Worker | undefined;
   init: () => void;
-  tickerChangeHandler: (currency: string) => void;
+  tickerChangeHandler: (ticker: ITickerData) => void;
   registerUserHandler: (address: string) => void;
 }
 
@@ -28,7 +28,7 @@ export const WorkerContext = createContext<IWorkerContext>({
   wsWorker: null,
   apiWorker: undefined,
   init: () => null,
-  tickerChangeHandler: (currency: string) => null,
+  tickerChangeHandler: (ticker: ITickerData) => null,
   registerUserHandler: (address: string) => null,
 });
 
@@ -43,7 +43,6 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
   const jobQueue = useRef<((...args: []) => Promise<void>)[]>([]);
 
   const init = () => {
-    console.log('WorkerProvider init');
     apiWorkerRef.current = new Worker(new URL('../lib/workers/api.worker.ts', import.meta.url));
     apiWorkerRef.current.onmessage = event => {
       // eslint-disable-next-line no-console
@@ -53,7 +52,6 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
       const socket = io();
       setWsWorker(socket);
       socket.on('connect', () => {
-        console.log('connect');
         socket.emit(TideBitEvent.NOTIFICATIONS);
       });
 
@@ -85,12 +83,8 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
         notificationCtx.emitter.emit(TideBitEvent.ORDER, data);
       });
 
-      socket.on('a user connected', () => {
-        console.log('a user connected');
-      });
-
       socket.on('disconnect', () => {
-        console.log('disconnect');
+        // console.log('disconnect');
       });
     });
     worker();
@@ -121,15 +115,15 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
     jobQueue.current = [...jobQueue.current, job];
   };
 
-  const tickerChangeHandler = async (currency: string) => {
+  const tickerChangeHandler = async (ticker: ITickerData) => {
     if (wsWorkerRef.current) {
-      wsWorkerRef.current.emit(TideBitEvent.TICKER_CHANGE, currency);
-    } else createJob(() => tickerChangeHandler(currency));
+      notificationCtx.emitter.emit(TideBitEvent.TICKER_CHANGE, ticker);
+      wsWorkerRef.current.emit(TideBitEvent.TICKER_CHANGE, ticker.currency);
+    } else createJob(() => tickerChangeHandler(ticker));
   };
 
   const registerUserHandler = async (address: string) => {
     if (wsWorkerRef.current) {
-      console.log(`registerUserHandler address`, address);
       notificationCtx.emitter.emit(TideBitEvent.SERVICE_TERM_ENABLED, address);
       wsWorkerRef.current.emit(TideBitEvent.SERVICE_TERM_ENABLED, address);
     } else createJob(() => registerUserHandler(address));

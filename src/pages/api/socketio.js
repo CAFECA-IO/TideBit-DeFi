@@ -23,15 +23,6 @@ let dummyCFDsInterval = null;
 
 const dummyTickerUpdate = (currency, socket) => {
   try {
-    console.log(
-      `received dummyTickerUpdate`,
-      `publicUsers`,
-      publicUsers,
-      `socket.id`,
-      socket.id,
-      publicUsers[socket.id]?.currency,
-      currency
-    );
     if (!publicUsers[socket.id]) publicUsers[socket.id] = {};
     publicUsers[socket.id][`currency`] = currency;
     if (!currencies[currency]) currencies[currency] = {};
@@ -89,15 +80,6 @@ const unregisterPublicUser = socket => {
 
 const registerPrivateUser = (address, socket) => {
   try {
-    console.log(
-      `received registerPrivateUser`,
-      address,
-      `publicUsers`,
-      publicUsers,
-      `socket.id`,
-      socket.id,
-      publicUsers[socket.id]?.currency
-    );
     if (!publicUsers[socket.id]) publicUsers[socket.id] = {address: address};
     socket.emit(TideBitEvent.NOTIFICATIONS, [
       createDummyPrivateNotificationItem(address, `this is from websocket`),
@@ -124,7 +106,6 @@ const ioHandler = (req, res) => {
     const io = new Server(res.socket.server);
 
     io.on('connection', socket => {
-      socket.broadcast.emit('a user connected');
       socket.on(TideBitEvent.NOTIFICATIONS, _ => registerPublicUser(socket));
       socket.on(TideBitEvent.TICKER_CHANGE, currency => dummyTickerUpdate(currency, socket));
       socket.on(TideBitEvent.SERVICE_TERM_ENABLED, address => registerPrivateUser(address, socket));

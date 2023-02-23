@@ -23,7 +23,6 @@ import {getDummyTickerLiveStatistics} from '../interfaces/tidebit_defi_backgroun
 import {getDummyTickerStatic} from '../interfaces/tidebit_defi_background/ticker_static';
 import {dummyWithdrawalOrder} from '../interfaces/tidebit_defi_background/withdrawal_order';
 import {IUserBalance} from './user_context';
-import {WorkerContext} from './worker_context';
 
 export interface INotificationProvider {
   children: React.ReactNode;
@@ -31,24 +30,21 @@ export interface INotificationProvider {
 
 export interface INotificationContext {
   emitter: EventEmitter;
-  notifications: INotificationItem[] | null;
-  unreadNotifications: INotificationItem[] | null;
+  notifications: INotificationItem[];
+  unreadNotifications: INotificationItem[];
   isRead: (id: string) => Promise<void>;
   readAll: () => Promise<void>;
   init: () => Promise<void>;
   reset: () => void;
 }
 
-let dummyTickerInterval: NodeJS.Timeout | null = null;
-let dummyBalanceInterval: NodeJS.Timeout | null = null;
-let dummyCFDsInterval: NodeJS.Timeout | null = null;
 let dummyDepositInterval: NodeJS.Timeout | null = null;
 let dummyWithdrawInterval: NodeJS.Timeout | null = null;
 
 export const NotificationContext = createContext<INotificationContext>({
   emitter: new EventEmitter(),
-  notifications: null,
-  unreadNotifications: null,
+  notifications: [],
+  unreadNotifications: [],
   isRead: (id: string) => Promise.resolve(),
   readAll: () => Promise.resolve(),
   init: () => Promise.resolve(),
@@ -57,20 +53,15 @@ export const NotificationContext = createContext<INotificationContext>({
 
 export const NotificationProvider = ({children}: INotificationProvider) => {
   // const marketCtx = useContext(MarketContext);
-  const workerCtx = useContext(WorkerContext);
   const emitter = React.useMemo(() => new EventEmitter(), []);
-  const [notifications, setNotifications, notificationsRef] = useState<INotificationItem[] | null>(
-    null
-  );
+  const [notifications, setNotifications, notificationsRef] = useState<INotificationItem[]>([]);
   const [unreadNotifications, setUnreadNotifications, unreadNotificationsRef] = useState<
-    INotificationItem[] | null
-  >(null);
+    INotificationItem[]
+  >([]);
   const [selectedTicker, setSelectedTicker, selectedTickerRef] = useState<ITickerData | null>(null);
 
   const isRead = async (id: string) => {
-    const updatedNotifications: INotificationItem[] = notificationsRef.current
-      ? [...notificationsRef.current]
-      : [];
+    const updatedNotifications: INotificationItem[] = [...notificationsRef.current];
     const index = updatedNotifications.findIndex(n => n.id === id);
     if (index !== -1) {
       updatedNotifications[index] = {
@@ -94,52 +85,15 @@ export const NotificationProvider = ({children}: INotificationProvider) => {
   };
 
   const updateNotifications = (notifications: INotificationItem[]) => {
-    setNotifications(notifications);
-    setUnreadNotifications(notifications.filter(n => !n.isRead));
-  };
-
-  const dummyTickerUpdate = () => {
-    dummyTickerInterval = setInterval(() => {
-      if (selectedTickerRef.current) {
-        emitter.emit(TideBitEvent.TICKER, getDummyTicker(selectedTickerRef.current.currency));
-        emitter.emit(
-          TideBitEvent.TICKER_STATISTIC,
-          getDummyTickerStatic(selectedTickerRef.current.currency)
-        );
-        emitter.emit(
-          TideBitEvent.TICKER_LIVE_STATISTIC,
-          getDummyTickerLiveStatistics(selectedTickerRef.current.currency)
-        );
-        emitter.emit(TideBitEvent.CANDLESTICK, getDummyCandlestickChartData());
-      }
-    }, 1000);
-  };
-
-  const dummyUserBalanceUpdate = () => {
-    dummyBalanceInterval = setInterval(() => {
-      emitter.emit(TideBitEvent.BALANCE, {
-        available: parseInt((Math.random() * 1000).toFixed(2)),
-        locked: parseInt((Math.random() * 1000).toFixed(2)),
-        PNL: parseInt((Math.random() * 1000).toFixed(2)),
-      } as IUserBalance);
-      // emitter.emit(TideBitEvent.BALANCES);
-    }, 5000);
-  };
-
-  const dummyCFDsUpdate = () => {
-    dummyCFDsInterval = setInterval(() => {
-      if (selectedTickerRef.current) {
-        const random = Math.random() > 0.5;
-        emitter.emit(TideBitEvent.ORDER, {
-          orderType: OrderType.CFD,
-          orderState: random ? OrderState.OPENING : OrderState.CLOSED,
-          modifyType: ModifyType.Add,
-          orders: random
-            ? getDummyOpenCFDs(selectedTickerRef.current.currency, 1)
-            : getDummyClosedCFDs(selectedTickerRef.current.currency, 1),
-        });
-      }
-    }, 5000);
+    const updateNotifications: INotificationItem[] = [
+      ...notificationsRef.current,
+      ...notifications,
+    ];
+    // eslint-disable-next-line no-console
+    setNotifications(updateNotifications);
+    setUnreadNotifications(updateNotifications.filter(n => !n.isRead));
+    // setNotifications(notifications);
+    // setUnreadNotifications(notifications.filter(n => !n.isRead));
   };
 
   const dummyDepositUpdate = () => {
@@ -170,9 +124,6 @@ export const NotificationProvider = ({children}: INotificationProvider) => {
 
   const init = async () => {
     // console.log(`NotificationProvider init is called`);
-    // setNotifications(dummyNotifications);
-    // setUnreadNotifications(dummyUnReadNotifications);
-    // registerPublicNotification();
     return await Promise.resolve();
   };
 
@@ -180,27 +131,6 @@ export const NotificationProvider = ({children}: INotificationProvider) => {
     setNotifications([]);
     setUnreadNotifications([]);
     return;
-  };
-  const registerPublicNotification = () => {
-    dummyTickerUpdate();
-  };
-  // Event: Login
-  const registerPrivateNotification = (address: string) => {
-    // TODO: receive more than once
-    const updateNotifications: INotificationItem[] = notificationsRef.current
-      ? [...notificationsRef.current]
-      : [];
-    let updateUnreadNotifications: INotificationItem[] = [];
-    const dummyPrivateNotification = createDummyPrivateNotificationItem(
-      address,
-      `this is from userContext`
-    );
-    updateNotifications.push(dummyPrivateNotification);
-    updateUnreadNotifications = updateNotifications.filter(n => !n.isRead);
-    setNotifications(updateNotifications);
-    setUnreadNotifications(updateUnreadNotifications);
-    dummyUserBalanceUpdate();
-    dummyCFDsUpdate();
   };
 
   // Event: Logout
@@ -213,14 +143,8 @@ export const NotificationProvider = ({children}: INotificationProvider) => {
     updateUnreadNotifications = updateNotifications.filter(n => !n.isRead);
     setNotifications(updateNotifications);
     setUnreadNotifications(updateUnreadNotifications);
-    if (dummyBalanceInterval) clearInterval(dummyBalanceInterval);
-    if (dummyCFDsInterval) clearInterval(dummyCFDsInterval);
   };
 
-  React.useMemo(
-    () => emitter.on(TideBitEvent.SERVICE_TERM_ENABLED, registerPrivateNotification),
-    []
-  );
   React.useMemo(() => emitter.on(TideBitEvent.DISCONNECTED_WALLET, clearPrivateNotification), []);
   React.useMemo(
     () => emitter.on(TideBitEvent.UPDATE_READ_NOTIFICATIONS_RESULT, updateNotifications),
@@ -235,33 +159,7 @@ export const NotificationProvider = ({children}: INotificationProvider) => {
     []
   );
 
-  React.useMemo(() => workerCtx.emitter.on(TideBitEvent.NOTIFICATIONS, updateNotifications), []);
-  React.useMemo(
-    () =>
-      workerCtx.emitter.on(TideBitEvent.TICKER, data => emitter.emit(TideBitEvent.TICKER, data)),
-    []
-  );
-  React.useMemo(
-    () =>
-      workerCtx.emitter.on(TideBitEvent.TICKER_STATISTIC, data =>
-        emitter.emit(TideBitEvent.TICKER_STATISTIC, data)
-      ),
-    []
-  );
-  React.useMemo(
-    () =>
-      workerCtx.emitter.on(TideBitEvent.TICKER_LIVE_STATISTIC, data =>
-        emitter.emit(TideBitEvent.TICKER_LIVE_STATISTIC, data)
-      ),
-    []
-  );
-  React.useMemo(
-    () =>
-      workerCtx.emitter.on(TideBitEvent.CANDLESTICK, data =>
-        emitter.emit(TideBitEvent.CANDLESTICK, data)
-      ),
-    []
-  );
+  React.useMemo(() => emitter.on(TideBitEvent.NOTIFICATIONS, updateNotifications), []);
 
   const defaultValue = {
     emitter,

@@ -62,26 +62,22 @@ export default function Notification({
       id: 'n8',
     },
   ];
-  const NotificationList = notificationCtx.unreadNotifications ? (
-    notificationCtx.unreadNotifications.map(v => {
-      return (
-        <div key={v.id}>
-          <NotificationItem
-            id={v.id}
-            title={v.title}
-            timestamp={v.timestamp}
-            duration={v.duration}
-            notificationLevel={v.notificationLevel}
-            isRead={v.isRead}
-            content={v.content}
-            public={v.public}
-          />
-        </div>
-      );
-    })
-  ) : (
-    <></>
-  );
+  const NotificationList = notificationCtx.unreadNotifications.map((v, i) => {
+    return (
+      <div key={v.id}>
+        <NotificationItem
+          id={v.id}
+          title={v.title}
+          timestamp={v.timestamp}
+          duration={v.duration}
+          notificationLevel={v.notificationLevel}
+          isRead={v.isRead}
+          content={v.content}
+          public={v.public}
+        />
+      </div>
+    );
+  });
 
   // const NotificationList = DUMMY_DATA.map(v => {
   //   return (

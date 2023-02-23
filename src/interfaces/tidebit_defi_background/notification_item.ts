@@ -29,7 +29,7 @@ export const dummyNotificationItem: INotificationItem = {
 
 export const createDummyPrivateNotificationItem = (userId: string | null, greetings: string) => {
   const dummyNotificationItem: INotificationItem = {
-    id: (Math.random() * 100).toFixed(0),
+    id: `private-${userId}-${Date.now()}${(Math.random() * 1000).toFixed(0)}`,
     title: `Hi ${userId}, this is private notification`,
     content: `Good Day, ${greetings}`,
     timestamp: Math.floor(Date.now() / 1000),
@@ -48,7 +48,7 @@ export const getDummyNotifications = (numbers: number) => {
   const dummyNotificationItems: INotificationItem[] = [];
   for (let i = 0; i < numbers; i++) {
     const dummyNotificationItem: INotificationItem = {
-      id: `${i}`,
+      id: `public-${Date.now()}-${(Math.random() * (i + 1) * 1000).toFixed(0)}`,
       title: 'Happy Birthday to TideBit',
       content: `Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
   invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et

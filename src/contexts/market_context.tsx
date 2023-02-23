@@ -434,7 +434,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     //   userCtx.listClosedCFDs(currency);
     // }
     // notificationCtx.emitter.emit(TideBitEvent.TICKER_CHANGE, ticker);
-    workerCtx.registerTicker(currency);
+    workerCtx.tickerChangeHandler(currency);
     return dummyResultSuccess;
   };
 

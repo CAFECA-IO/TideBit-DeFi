@@ -15,8 +15,8 @@ function App({Component, pageProps}: AppProps) {
   return (
     <>
       <div className="custom-no-scrollbar selection:bg-tidebitTheme dark:selection:bg-tidebitTheme">
-        <WorkerProvider>
-          <NotificationProvider>
+        <NotificationProvider>
+          <WorkerProvider>
             <UserProvider>
               <MarketProvider>
                 <GlobalProvider>
@@ -26,8 +26,8 @@ function App({Component, pageProps}: AppProps) {
                 </GlobalProvider>
               </MarketProvider>
             </UserProvider>
-          </NotificationProvider>
-        </WorkerProvider>
+          </WorkerProvider>
+        </NotificationProvider>
       </div>
     </>
   );

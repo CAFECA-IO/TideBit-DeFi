@@ -49,6 +49,7 @@ import {ICFDDetails} from '../interfaces/tidebit_defi_background/cfd_details';
 import {IOrderState, OrderState} from '../constants/order_state';
 import {IModifyType, ModifyType} from '../constants/modify_type';
 import {IOrderType, OrderType} from '../constants/order_type';
+import {WorkerContext} from './worker_context';
 // const sampleArray = randomArray(1100, 1200, 10);
 
 const strokeColorDisplayed = (sampleArray: number[]) => {
@@ -193,6 +194,7 @@ export const UserContext = createContext<IUserContext>({
 
 export const UserProvider = ({children}: IUserProvider) => {
   // TODO: get partial user type from `IUserContext`
+  const workerCtx = useContext(WorkerContext);
   const [id, setId, idRef] = useState<string | null>(null);
   const [username, setUsername, usernameRef] = useState<string | null>(null);
   const [wallet, setWallet, walletRef] = useState<string | null>(null);
@@ -236,7 +238,7 @@ export const UserProvider = ({children}: IUserProvider) => {
       listOpenCFDs(selectedTickerRef.current.currency);
       listClosedCFDs(selectedTickerRef.current.currency);
     }
-    notificationCtx.emitter.emit(TideBitEvent.SERVICE_TERM_ENABLED, walletAddress);
+    workerCtx.registerUserHandler(walletAddress);
   };
 
   const clearPrivateData = () => {
@@ -486,6 +488,8 @@ export const UserProvider = ({children}: IUserProvider) => {
     orderState?: IOrderState;
     orders: [];
   }) => {
+    // eslint-disable-next-line no-console
+    console.log(`updateUserBehavior data`, data);
     if (data.orderType === OrderType.CFD) {
       if (data.orderState === OrderState.OPENING) {
         updateOpenCFD({

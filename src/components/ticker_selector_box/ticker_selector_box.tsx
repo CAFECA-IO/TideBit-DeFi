@@ -309,7 +309,7 @@ const TickerSelectorBox = ({
 
   const tabPart = (
     <>
-      <div className="z-10 hidden w-1200px flex-wrap border-gray-200 text-center text-sm font-medium text-gray-400 xl:flex">
+      <div className="z-10 hidden w-1200px flex-wrap border-gray-200 text-center text-sm font-medium text-gray-400 lg:flex">
         <div className="pr-1">
           <button
             type="button"
@@ -340,7 +340,7 @@ const TickerSelectorBox = ({
 
   const isDisplayedTickerSelectorBox = tickerSelectorBoxVisible ? (
     <>
-      <div className="fixed inset-0 z-50 hidden items-center justify-center overflow-x-auto overflow-y-auto outline-none backdrop-blur-sm focus:outline-none xl:flex">
+      <div className="fixed inset-0 z-50 hidden items-center justify-center overflow-x-auto overflow-y-auto outline-none backdrop-blur-sm focus:outline-none lg:flex">
         {/* The position of the box */}
         <div
           className="relative my-6 mx-auto min-w-fit"

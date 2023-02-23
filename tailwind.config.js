@@ -183,6 +183,7 @@ module.exports = {
         '660px': '660px',
         '700px': '700px',
         '726px': '726px',
+        '1000px': '1000px',
         '1200px': '1200px',
         '2rem': '2rem',
         '3rem': '3rem',

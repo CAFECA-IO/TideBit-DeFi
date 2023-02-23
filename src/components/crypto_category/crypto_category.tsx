@@ -26,9 +26,9 @@ const CryptoCategory = ({...otherProps}) => {
       if (i === 0) {
         return (
           // TODO: Dynamic routes
-          <Link href={`/trade/cfd/ethusdt`}>
+          <Link href={`/trade/cfd/ethusdt`} key={item.currency}>
             <CryptoCard
-              key={i}
+              // key={i}
               // cardClickHandler={() => {
               //   <Link href={`/trade/cfd/${cryptoCard.currency}`}></Link>;
               // }}

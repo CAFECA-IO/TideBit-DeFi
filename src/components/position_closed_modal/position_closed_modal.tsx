@@ -160,6 +160,8 @@ const PositionClosedModal = ({
 
   const displayedTime = timestampToString(openCfdDetails?.openTimestamp ?? 0);
 
+  // console.log('closed modal');
+
   const renewDataHandler = async () => {
     setDataRenewedStyle('animate-flash text-lightYellow2');
     setPnlDisplayedStyle({
@@ -280,9 +282,12 @@ const PositionClosedModal = ({
     //   }
     // };
 
+    // console.log('before setInterval'); // 每跳一秒就重設 interval
+
     const intervalId = setInterval(() => {
-      setSecondsLeft(prevSeconds => prevSeconds - 1);
-    }, 1000);
+      setSecondsLeft(prevSeconds => prevSeconds - 1); // 改成終點線-現在時間線
+      // console.log('prevSeconds: ', secondsLeft);
+    }, 1000); // 不確定是否真的一秒執行一次
 
     return () => {
       clearInterval(intervalId);

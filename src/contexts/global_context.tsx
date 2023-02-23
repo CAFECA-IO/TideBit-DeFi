@@ -20,6 +20,14 @@ import QrcodeModal from '../components/qrcode_modal/qrcode_modal';
 import HelloModal from '../components/hello_modal/hello_modal';
 import SignatureProcessModal from '../components/signature_process_modal/signature_process_modal';
 import {UserContext} from './user_context';
+import PositionOpenModal from '../components/position_open_modal/position_open_modal';
+import PositionClosedModal from '../components/position_closed_modal/position_closed_modal';
+import PositionUpdatedModal from '../components/position_updated_modal/position_updated_modal';
+import {
+  IClosedCFDDetails,
+  dummyCloseCFDDetails,
+} from '../interfaces/tidebit_defi_background/closed_cfd_details';
+import HistoryPositionModal from '../components/history_position_modal/history_position_modal';
 
 export interface IToastify {
   type: 'error' | 'warning' | 'info' | 'success';
@@ -27,15 +35,19 @@ export interface IToastify {
   toastId?: string | number; // Prevent duplicate toast
 }
 
-export interface IDataPositionDetailsModal {
-  openCfdDetails: IOpenCFDDetails;
-}
+// export interface IDataPositionDetailsModal {
+//   openCfdDetails: IOpenCFDDetails;
+// }
 
-export interface IDataTransferProcessModal {
-  transferType: 'deposit' | 'withdraw';
-}
+// export interface IDataHistoryPositionModal {
+//   closedCfdDetails: IClosedCFDDetails;
+// }
 
-export interface IDataSuccessfulModal {
+// export interface ITransferProcessModal {
+//   transferType: 'deposit' | 'withdraw';
+// }
+
+export interface ISuccessfulModal {
   modalTitle: string;
   modalContent?: string;
   btnMsg?: string;
@@ -49,7 +61,7 @@ export interface IProcessDataModal {
   btnUrl?: string;
 }
 
-export interface IDataFailedModal {
+export interface IFailedModal {
   modalTitle: string;
   btnMsg?: string;
   btnUrl?: string;
@@ -57,14 +69,88 @@ export interface IDataFailedModal {
   failedMsg: string;
 }
 
-export interface IDataSignatrueProcessModal {
-  requestSendingHandler: () => void;
-  firstStepSuccess: boolean;
-  firstStepError: boolean;
-  secondStepSuccess: boolean;
-  secondStepError: boolean;
-  loading: boolean;
+// TODO: to be continued
+export interface IRecordSharingModal {
+  orderIdRecordSharing: number;
 }
+
+export const dummyRecordSharingModal: IRecordSharingModal = {
+  orderIdRecordSharing: 0,
+};
+
+// TODO: to be continued
+export interface IWarningModal {
+  title: string;
+  content: string;
+  numberOfButton: number;
+  reactionOfButton: string;
+  styleOfButton: 'style1' | 'style2';
+}
+
+export const dummyWarningModal: IWarningModal = {
+  title: '',
+  content: '',
+  numberOfButton: 0,
+  reactionOfButton: '',
+  styleOfButton: 'style1',
+};
+
+// TODO: to be continued
+export interface IAnnouncementModal {
+  title: string;
+  content: string;
+  numberOfButton: number;
+  reactionOfButton: string;
+  styleOfButton: 'style1' | 'style2';
+  messageType: 'announcement' | 'notification';
+}
+
+export const dummyAnnouncementModal: IAnnouncementModal = {
+  title: '',
+  content: '',
+  numberOfButton: 0,
+  reactionOfButton: '',
+  styleOfButton: 'style1',
+  messageType: 'announcement',
+};
+
+// TODO: to be continued
+export interface IAchievementSharingModal {
+  userId: string;
+  period: string;
+}
+
+export const dummyAchievementSharingModal: IAchievementSharingModal = {
+  userId: '202302220001234',
+  period: '002',
+};
+
+// TODO: to be continued
+export interface IBadgeModal {
+  badgeId: string;
+}
+
+export const dummyBadgeModal: IBadgeModal = {
+  badgeId: 'TBDFUTURES2023FEB05',
+};
+
+// TODO: to be continued
+export interface IBadgeSharingModal {
+  badgeId: string;
+}
+
+export const dummyBadgeSharingModal: IBadgeSharingModal = {
+  badgeId: 'TBDFUTURES2023FEB05',
+};
+
+// export interface ISignatrueProcessModal {
+//   requestSendingHandler: () => void;
+//   firstStepSuccess: boolean;
+//   firstStepError: boolean;
+//   secondStepSuccess: boolean;
+//   secondStepError: boolean;
+//   loading: boolean;
+// }
 
 const toastHandler = ({type, message, toastId}: IToastify) => {
   // return {
@@ -112,8 +198,8 @@ export interface IGlobalContext {
 
   visiblePositionDetailsModal: boolean;
   visiblePositionDetailsModalHandler: () => void;
-  dataPositionDetailsModal: IDataPositionDetailsModal | null;
-  dataPositionDetailsModalHandler: (data: IDataPositionDetailsModal) => void;
+  dataPositionDetailsModal: IOpenCFDDetails | null;
+  dataPositionDetailsModalHandler: (data: IOpenCFDDetails) => void;
 
   visibleDepositModal: boolean;
   visibleDepositModalHandler: () => void;
@@ -129,8 +215,8 @@ export interface IGlobalContext {
 
   visibleFailedModal: boolean;
   visibleFailedModalHandler: () => void;
-  dataFailedModal: IDataFailedModal | null;
-  dataFailedModalHandler: (data: IDataFailedModal) => void;
+  dataFailedModal: IFailedModal | null;
+  dataFailedModalHandler: (data: IFailedModal) => void;
 
   visibleCanceledModal: boolean;
   visibleCanceledModalHandler: () => void;
@@ -139,8 +225,8 @@ export interface IGlobalContext {
 
   visibleSuccessfulModal: boolean;
   visibleSuccessfulModalHandler: () => void;
-  dataSuccessfulModal: IDataSuccessfulModal | null;
-  dataSuccessfulModalHandler: (data: IDataSuccessfulModal) => void;
+  dataSuccessfulModal: ISuccessfulModal | null;
+  dataSuccessfulModalHandler: (data: ISuccessfulModal) => void;
 
   visibleWalletPanel: boolean;
   visibleWalletPanelHandler: () => void;
@@ -150,6 +236,74 @@ export interface IGlobalContext {
 
   visibleHelloModal: boolean;
   visibleHelloModalHandler: () => void;
+
+  visibleHistoryPositionModal: boolean;
+  visibleHistoryPositionModalHandler: () => void;
+  dataHistoryPositionModal: IClosedCFDDetails | null;
+  dataHistoryPositionModalHandler: (data: IClosedCFDDetails) => void;
+
+  visiblePositionClosedModal: boolean;
+  visiblePositionClosedModalHandler: () => void;
+  dataPositionClosedModal: IOpenCFDDetails | null;
+  dataPositionClosedModalHandler: (data: IOpenCFDDetails) => void;
+
+  visiblePositionOpenModal: boolean;
+  visiblePositionOpenModalHandler: () => void;
+  dataPositionOpenModal: IOpenCFDDetails | null;
+  dataPositionOpenModalHandler: (data: IOpenCFDDetails) => void;
+
+  visiblePositionUpdatedModal: boolean;
+  visiblePositionUpdatedModalHandler: () => void;
+  dataPositionUpdatedModal: IOpenCFDDetails | null;
+  dataPositionUpdatedModalHandler: (data: IOpenCFDDetails) => void;
+
+  visibleMyAccountModal: boolean;
+  visibleMyAccountModalHandler: () => void;
+
+  visibleEmailConnectingModal: boolean;
+  visibleEmailConnectingModalHandler: () => void;
+
+  visibleTideBitConnectingModal: boolean;
+  visibleTideBitConnectingModalHandler: () => void;
+
+  visibleBravoModal: boolean;
+  visibleBravoModalHandler: () => void;
+
+  visibleProfileSettingModal: boolean;
+  visibleProfileSettingModalHandler: () => void;
+
+  visibleRecordSharingModal: boolean;
+  visibleRecordSharingModalHandler: () => void;
+
+  visibleWarningModal: boolean;
+  visibleWarningModalHandler: () => void;
+  dataWarningModal: IWarningModal | null;
+  dataWarningModalHandler: (data: IWarningModal) => void;
+
+  visibleAnnouncementModal: boolean;
+  visibleAnnouncementModalHandler: () => void;
+  dataAnnouncementModal: IAnnouncementModal | null;
+  dataAnnouncementModalHandler: (data: IAnnouncementModal) => void;
+
+  visiblePersonalAchievementModal: boolean;
+  visiblePersonalAchievementModalHandler: () => void;
+  // dataPersonalAchievementModal: IPersonalAchievementModal | null;
+  // dataPersonalAchievementModalHandler: (data: IPersonalAchievementModal) => void;
+
+  visibleAchievementSharingModal: boolean;
+  visibleAchievementSharingModalHandler: () => void;
+  dataAchievementSharingModal: IAchievementSharingModal | null;
+  dataAchievementSharingModalHandler: (data: IAchievementSharingModal) => void;
+
+  visibleBadgeModal: boolean;
+  visibleBadgeModalHandler: () => void;
+  dataBadgeModal: IBadgeModal | null;
+  dataBadgeModalHandler: (data: IBadgeModal) => void;
+
+  visibleBadgeSharingModal: boolean;
+  visibleBadgeSharingModalHandler: () => void;
+  dataBadgeSharingModal: IBadgeSharingModal | null;
+  dataBadgeSharingModalHandler: (data: IBadgeSharingModal) => void;
 }
 
 export const GlobalContext = createContext<IGlobalContext>({
@@ -203,6 +357,72 @@ export const GlobalContext = createContext<IGlobalContext>({
 
   visibleHelloModal: false,
   visibleHelloModalHandler: () => null,
+
+  visibleHistoryPositionModal: false,
+  visibleHistoryPositionModalHandler: () => null,
+  dataHistoryPositionModal: null,
+  dataHistoryPositionModalHandler: () => null,
+
+  visiblePositionClosedModal: false,
+  visiblePositionClosedModalHandler: () => null,
+  dataPositionClosedModal: null,
+  dataPositionClosedModalHandler: () => null,
+
+  visiblePositionOpenModal: false,
+  visiblePositionOpenModalHandler: () => null,
+  dataPositionOpenModal: null,
+  dataPositionOpenModalHandler: () => null,
+
+  visiblePositionUpdatedModal: false,
+  visiblePositionUpdatedModalHandler: () => null,
+  dataPositionUpdatedModal: null,
+  dataPositionUpdatedModalHandler: () => null,
+
+  visibleMyAccountModal: false,
+  visibleMyAccountModalHandler: () => null,
+
+  visibleEmailConnectingModal: false,
+  visibleEmailConnectingModalHandler: () => null,
+
+  visibleTideBitConnectingModal: false,
+  visibleTideBitConnectingModalHandler: () => null,
+
+  visibleBravoModal: false,
+  visibleBravoModalHandler: () => null,
+
+  visibleProfileSettingModal: false,
+  visibleProfileSettingModalHandler: () => null,
+
+  visibleRecordSharingModal: false,
+  visibleRecordSharingModalHandler: () => null,
+
+  visibleWarningModal: false,
+  visibleWarningModalHandler: () => null,
+  dataWarningModal: null,
+  dataWarningModalHandler: () => null,
+
+  visibleAnnouncementModal: false,
+  visibleAnnouncementModalHandler: () => null,
+  dataAnnouncementModal: null,
+  dataAnnouncementModalHandler: () => null,
+
+  visiblePersonalAchievementModal: false,
+  visiblePersonalAchievementModalHandler: () => null,
+
+  visibleAchievementSharingModal: false,
+  visibleAchievementSharingModalHandler: () => null,
+  dataAchievementSharingModal: null,
+  dataAchievementSharingModalHandler: () => null,
+
+  visibleBadgeModal: false,
+  visibleBadgeModalHandler: () => null,
+  dataBadgeModal: null,
+  dataBadgeModalHandler: () => null,
+
+  visibleBadgeSharingModal: false,
+  visibleBadgeSharingModalHandler: () => null,
+  dataBadgeSharingModal: null,
+  dataBadgeSharingModalHandler: () => null,
 });
 
 const initialColorMode: ColorModeUnion = 'dark';
@@ -212,8 +432,9 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
   const [colorMode, setColorMode] = useState<ColorModeUnion>(initialColorMode);
 
   const [visiblePositionDetailsModal, setVisiblePositionDetailsModal] = useState(false);
+  // TODO: replace dummy data with standard example data
   const [dataPositionDetailsModal, setDataPositionDetailsModal] =
-    useState<IDataPositionDetailsModal>({openCfdDetails: dummyOpenCFDDetails});
+    useState<IOpenCFDDetails>(dummyOpenCFDDetails);
 
   const [visibleWithdrawalModal, setVisibleWithdrawalModal] = useState(false);
 
@@ -226,7 +447,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
   });
 
   const [visibleFailedModal, setVisibleFailedModal] = useState(false);
-  const [dataFailedModal, setDataFailedModal] = useState<IDataFailedModal>({
+  const [dataFailedModal, setDataFailedModal] = useState<IFailedModal>({
     modalTitle: '',
     // modalContent: '',
     failedTitle: 'Failed',
@@ -235,7 +456,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
   });
 
   const [visibleSuccessfulModal, setVisibleSuccessfulModal] = useState(false);
-  const [dataSuccessfulModal, setDataSuccessfulModal] = useState<IDataSuccessfulModal>({
+  const [dataSuccessfulModal, setDataSuccessfulModal] = useState<ISuccessfulModal>({
     modalTitle: '',
     modalContent: '',
   });
@@ -250,8 +471,58 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
   const [visibleHelloModal, setVisibleHelloModal] = useState(false);
 
   const [visibleSignatureProcessModal, setVisibleSignatureProcessModal] = useState(false);
-  const [dataSignatureProcessModal, setDataSignatureProcessModal] =
-    useState<IDataSignatrueProcessModal | null>();
+  // const [dataSignatureProcessModal, setDataSignatureProcessModal] =
+  //   useState<IDataSignatrueProcessModal | null>();
+
+  const [visibleHistoryPositionModal, setVisibleHistoryPositionModal] = useState(false);
+  const [dataHistoryPositionModal, setDataHistoryPositionModal] =
+    useState<IClosedCFDDetails>(dummyCloseCFDDetails);
+
+  const [visiblePositionClosedModal, setVisiblePositionClosedModal] = useState(false);
+  const [dataPositionClosedModal, setDataPositionClosedModal] =
+    useState<IOpenCFDDetails>(dummyOpenCFDDetails);
+
+  const [visiblePositionOpenModal, setVisiblePositionOpenModal] = useState(false);
+  const [dataPositionOpenModal, setDataPositionOpenModal] =
+    useState<IOpenCFDDetails>(dummyOpenCFDDetails); // TODO: Open position parameter
+
+  const [visiblePositionUpdatedModal, setVisiblePositionUpdatedModal] = useState(false);
+  const [dataPositionUpdatedModal, setDataPositionUpdatedModal] =
+    useState<IOpenCFDDetails>(dummyOpenCFDDetails); // TODO: Update position parameter
+
+  const [visibleMyAccountModal, setVisibleMyAccountModal] = useState(false);
+
+  const [visibleEmailConnectingModal, setVisibleEmailConnectingModal] = useState(false);
+
+  const [visibleTideBitConnectingModal, setVisibleTideBitConnectingModal] = useState(false);
+
+  const [visibleBravoModal, setVisibleBravoModal] = useState(false);
+
+  const [visibleProfileSettingModal, setVisibleProfileSettingModal] = useState(false);
+
+  const [visibleRecordSharingModal, setVisibleRecordSharingModal] = useState(false);
+  const [dataRecordSharingModal, setDataRecordSharingModal] =
+    useState<IRecordSharingModal>(dummyRecordSharingModal);
+
+  const [visibleWarningModal, setVisibleWarningModal] = useState(false);
+  const [dataWarningModal, setDataWarningModal] = useState<IWarningModal>(dummyWarningModal);
+
+  const [visibleAnnouncementModal, setVisibleAnnouncementModal] = useState(false);
+  const [dataAnnouncementModal, setDataAnnouncementModal] =
+    useState<IAnnouncementModal>(dummyAnnouncementModal);
+
+  const [visiblePersonalAchievementModal, setVisiblePersonalAchievementModal] = useState(false);
+
+  const [visibleAchievementSharingModal, setVisibleAchievementSharingModal] = useState(false);
+  const [dataAchievementSharingModal, setDataAchievementSharingModal] =
+    useState<IAchievementSharingModal>(dummyAchievementSharingModal);
+
+  const [visibleBadgeModal, setVisibleBadgeModal] = useState(false);
+  const [dataBadgeModal, setDataBadgeModal] = useState<IBadgeModal>(dummyBadgeModal);
+
+  const [visibleBadgeSharingModal, setVisibleBadgeSharingModal] = useState(false);
+  const [dataBadgeSharingModal, setDataBadgeSharingModal] =
+    useState<IBadgeSharingModal>(dummyBadgeSharingModal);
 
   // ---------------TODO: To get the withdrawal / deposit result------------------
   const [depositProcess, setDepositProcess] = useState<
@@ -285,22 +556,28 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
 
   const eliminateAllModals = () => {
     // console.log('eliminateAllModals');
-    setVisiblePositionDetailsModal(false);
     setVisibleDepositModal(false);
     setVisibleWithdrawalModal(false);
+
     setVisibleLoadingModal(false);
     setVisibleFailedModal(false);
     setVisibleCanceledModal(false);
     setVisibleSuccessfulModal(false);
+
     setVisibleWalletPanel(false);
     setVisibleHelloModal(false);
     setVisibleSignatureProcessModal(false);
+
+    setVisiblePositionDetailsModal(false);
+    setVisibleHistoryPositionModal(false);
+
+    setVisiblePositionClosedModal(false);
   };
 
   const visiblePositionDetailsModalHandler = () => {
     setVisiblePositionDetailsModal(!visiblePositionDetailsModal);
   };
-  const dataPositionDetailsModalHandler = (data: IDataPositionDetailsModal) => {
+  const dataPositionDetailsModalHandler = (data: IOpenCFDDetails) => {
     setDataPositionDetailsModal(data);
   };
 
@@ -343,7 +620,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     setVisibleFailedModal(!visibleFailedModal);
   };
 
-  const dataFailedModalHandler = (data: IDataFailedModal) => {
+  const dataFailedModalHandler = (data: IFailedModal) => {
     setDataFailedModal(data);
   };
 
@@ -351,7 +628,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     setVisibleSuccessfulModal(!visibleSuccessfulModal);
   };
 
-  const dataSuccessfulModalHandler = (data: IDataSuccessfulModal) => {
+  const dataSuccessfulModalHandler = (data: ISuccessfulModal) => {
     setDataSuccessfulModal(data);
   };
 
@@ -371,25 +648,116 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     setVisibleSignatureProcessModal(!visibleSignatureProcessModal);
   };
 
-  // const dataSignatureProcessModalHandler = (data?: IDataSignatrueProcessModal) => {
-  //   if (data) {
-  //     setDataSignatureProcessModal(data);
-  //   } else {
-  //     setDataSignatureProcessModal({
-  //       requestSendingHandler,
-  //       firstStepSuccess: userCtx.isConnected,
-  // firstStepError: !userCtx.isConnected,
-  // secondStepSuccess: userCtx.enableServiceTerm,
-  // secondStepError: !userCtx.enableServiceTerm,
-  // loading: userCtx.signServiceTerm,
-  //     });
-  //   }
-  // };
-
   const visibleHelloModalHandler = () => {
     setVisibleHelloModal(!visibleHelloModal);
   };
 
+  const visibleHistoryPositionModalHandler = () => {
+    setVisibleHistoryPositionModal(!visibleHistoryPositionModal);
+  };
+
+  const dataHistoryPositionModalHandler = (data: IClosedCFDDetails) => {
+    setDataHistoryPositionModal(data);
+  };
+
+  const visiblePositionClosedModalHandler = () => {
+    setVisiblePositionClosedModal(!visiblePositionClosedModal);
+  };
+
+  const dataPositionClosedModalHandler = (data: IOpenCFDDetails) => {
+    setDataPositionClosedModal(data);
+  };
+
+  const visiblePositionOpenModalHandler = () => {
+    setVisiblePositionOpenModal(!visiblePositionOpenModal);
+  };
+
+  // TODO: Open position parameter
+  const dataPositionOpenModalHandler = (data: IOpenCFDDetails) => {
+    setDataPositionOpenModal(data);
+  };
+
+  const visiblePositionUpdatedModalHandler = () => {
+    setVisiblePositionUpdatedModal(!visiblePositionUpdatedModal);
+  };
+
+  const dataPositionUpdatedModalHandler = (data: IOpenCFDDetails) => {
+    setDataPositionUpdatedModal(data);
+  };
+
+  const visibleMyAccountModalHandler = () => {
+    setVisibleMyAccountModal(!visibleMyAccountModal);
+  };
+
+  const visibleTideBitConnectingModalHandler = () => {
+    setVisibleTideBitConnectingModal(!visibleTideBitConnectingModal);
+  };
+
+  const visibleEmailConnectingModalHandler = () => {
+    setVisibleEmailConnectingModal(!visibleEmailConnectingModal);
+  };
+
+  const visibleBravoModalHandler = () => {
+    setVisibleBravoModal(!visibleBravoModal);
+  };
+
+  const visibleProfileSettingModalHandler = () => {
+    setVisibleProfileSettingModal(!visibleProfileSettingModal);
+  };
+
+  const visibleRecordSharingModalHandler = () => {
+    setVisibleRecordSharingModal(!visibleRecordSharingModal);
+  };
+
+  const dataRecordSharingModalHandler = (data: IRecordSharingModal) => {
+    setDataRecordSharingModal(data);
+  };
+
+  const visibleWarningModalHandler = () => {
+    setVisibleWarningModal(!visibleWarningModal);
+  };
+
+  const dataWarningModalHandler = (data: IWarningModal) => {
+    setDataWarningModal(data);
+  };
+
+  const visibleAnnouncementModalHandler = () => {
+    setVisibleAnnouncementModal(!visibleAnnouncementModal);
+  };
+
+  const dataAnnouncementModalHandler = (data: IAnnouncementModal) => {
+    setDataAnnouncementModal(data);
+  };
+
+  const visiblePersonalAchievementModalHandler = () => {
+    setVisiblePersonalAchievementModal(!visiblePersonalAchievementModal);
+  };
+
+  const visibleAchievementSharingModalHandler = () => {
+    setVisibleAchievementSharingModal(!visibleAchievementSharingModal);
+  };
+
+  const dataAchievementSharingModalHandler = (data: IAchievementSharingModal) => {
+    setDataAchievementSharingModal(data);
+  };
+
+  const visibleBadgeModalHandler = () => {
+    setVisibleBadgeModal(!visibleBadgeModal);
+  };
+
+  const dataBadgeModalHandler = (data: IBadgeModal) => {
+    setDataBadgeModal(data);
+  };
+
+  const visibleBadgeSharingModalHandler = () => {
+    setVisibleBadgeSharingModal(!visibleBadgeSharingModal);
+  };
+
+  const dataBadgeSharingModalHandler = (data: IBadgeSharingModal) => {
+    setDataBadgeSharingModal(data);
+  };
+
+  // ------------------------------------------ //
   const getWithdrawSubmissionState = (state: 'success' | 'cancellation' | 'fail') => {
     setWithdrawProcess(state);
   };
@@ -425,6 +793,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     //   }, 5000);
     // }, 3000);
   };
+  // ------------------------------------------ //
 
   const defaultValue = {
     width,
@@ -477,6 +846,75 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
 
     visibleHelloModal,
     visibleHelloModalHandler,
+
+    visibleHistoryPositionModal,
+    visibleHistoryPositionModalHandler,
+    dataHistoryPositionModal,
+    dataHistoryPositionModalHandler,
+
+    visiblePositionClosedModal,
+    visiblePositionClosedModalHandler,
+    dataPositionClosedModal,
+    dataPositionClosedModalHandler,
+
+    visiblePositionOpenModal,
+    visiblePositionOpenModalHandler,
+    dataPositionOpenModal,
+    dataPositionOpenModalHandler,
+
+    visiblePositionUpdatedModal,
+    visiblePositionUpdatedModalHandler,
+    dataPositionUpdatedModal,
+    dataPositionUpdatedModalHandler,
+
+    visibleMyAccountModal,
+    visibleMyAccountModalHandler,
+
+    visibleTideBitConnectingModal,
+    visibleTideBitConnectingModalHandler,
+
+    visibleEmailConnectingModal,
+    visibleEmailConnectingModalHandler,
+
+    visibleBravoModal,
+    visibleBravoModalHandler,
+
+    visibleProfileSettingModal,
+    visibleProfileSettingModalHandler,
+
+    visibleRecordSharingModal,
+    visibleRecordSharingModalHandler,
+
+    dataRecordSharingModal,
+    dataRecordSharingModalHandler,
+
+    visibleWarningModal,
+    visibleWarningModalHandler,
+    dataWarningModal,
+    dataWarningModalHandler,
+
+    visibleAnnouncementModal,
+    visibleAnnouncementModalHandler,
+    dataAnnouncementModal,
+    dataAnnouncementModalHandler,
+
+    visiblePersonalAchievementModal,
+    visiblePersonalAchievementModalHandler,
+
+    visibleAchievementSharingModal,
+    visibleAchievementSharingModalHandler,
+    dataAchievementSharingModal,
+    dataAchievementSharingModalHandler,
+
+    visibleBadgeModal,
+    visibleBadgeModalHandler,
+    dataBadgeModal,
+    dataBadgeModalHandler,
+
+    visibleBadgeSharingModal,
+    visibleBadgeSharingModalHandler,
+    dataBadgeSharingModal,
+    dataBadgeSharingModalHandler,
   };
   return (
     <GlobalContext.Provider value={defaultValue}>
@@ -529,22 +967,12 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
         modalVisible={visibleWithdrawalModal}
         modalClickHandler={visibleWithdrawalModalHandler}
       />
-      <PositionDetailsModal
-        openCfdDetails={dataPositionDetailsModal.openCfdDetails}
-        modalVisible={visiblePositionDetailsModal}
-        modalClickHandler={visiblePositionDetailsModalHandler}
-      />
+
       <WalletPanel
         panelVisible={visibleWalletPanel}
         panelClickHandler={visibleWalletPanelHandler}
       />
       <SignatureProcessModal
-        // requestSendingHandler={requestSendingHandler}
-        // firstStepSuccess={firstStepSuccess}
-        // firstStepError={firstStepError}
-        // secondStepSuccess={secondStepSuccess}
-        // secondStepError={secondStepError}
-        // loading={loading}
         processModalVisible={visibleSignatureProcessModal}
         processClickHandler={visibleSignatureProcessModalHandler}
       />
@@ -552,6 +980,36 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
         helloModalVisible={visibleHelloModal}
         helloClickHandler={visibleHelloModalHandler}
       />
+
+      <PositionDetailsModal
+        modalVisible={visiblePositionDetailsModal}
+        modalClickHandler={visiblePositionDetailsModalHandler}
+        openCfdDetails={dataPositionDetailsModal}
+      />
+      <HistoryPositionModal
+        modalVisible={visibleHistoryPositionModal}
+        modalClickHandler={visibleHistoryPositionModalHandler}
+        closedCfdDetails={dataHistoryPositionModal}
+      />
+      <PositionClosedModal
+        modalVisible={visiblePositionClosedModal}
+        modalClickHandler={visiblePositionClosedModalHandler}
+        closedCfdDetails={dataPositionClosedModal}
+      />
+      {/* <PositionUpdatedModal
+        modalVisible={visiblePositionUpdatedModal}
+        modalClickHandler={visiblePositionUpdatedModalHandler}
+        updatedCfdDetails={dataPositionUpdatedModal}
+      />
+      <PositionOpenModal
+        modalVisible={visiblePositionOpenModal}
+        modalClickHandler={visiblePositionOpenModalHandler}
+        openCfdDetails={dataPositionOpenModal}
+      /> */}
+
+      {/* <PositionOpenModal />
+      <PositionClosedModal />
+      <PositionUpdatedModal /> */}
 
       {/* One toast container avoids duplicate toast overlaying */}
       <Toast />
@@ -567,7 +1025,7 @@ export const useGlobal = () => {
   //   throw new Error('useGlobal must be used within a GlobalProvider');
   // }
 
-  // TODO: Debug tool
+  // TODO: Debug tool [to be removed]
   const g: any =
     typeof globalThis === 'object'
       ? globalThis

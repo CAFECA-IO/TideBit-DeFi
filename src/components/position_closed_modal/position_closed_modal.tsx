@@ -1,78 +1,72 @@
 import {ImCross} from 'react-icons/im';
 import {IOpenCFDDetails} from '../../interfaces/tidebit_defi_background/open_cfd_details';
 import {
-  BORDER_COLOR_TYPE,
-  PNL_COLOR_TYPE,
+  TypeOfBorderColor,
+  TypeOfPnLColor,
   UNIVERSAL_NUMBER_FORMAT_LOCALE,
 } from '../../constants/display';
 import RippleButton from '../ripple_button/ripple_button';
 import Image from 'next/image';
+import {timestampToString} from '../../lib/common';
+import {useContext} from 'react';
+import {MarketContext} from '../../contexts/market_context';
 
-interface IPositionOpenModal {
+interface IPositionClosedModal {
   modalVisible: boolean;
   modalClickHandler: () => void;
-  openCfdDetails: IOpenCFDDetails;
+  closedCfdDetails: IOpenCFDDetails;
 }
-
-const timestampToString = (timestamp: number) => {
-  if (timestamp === 0) return ['-', '-'];
-
-  const date = new Date(timestamp * 1000);
-  // const date = new Date();
-  const year = date.getFullYear();
-  const month = (date.getMonth() + 1).toString().padStart(2, '0');
-  const day = date.getDate().toString().padStart(2, '0');
-  const hour = date.getHours().toString().padStart(2, '0');
-  const minute = date.getMinutes().toString().padStart(2, '0');
-  const second = date.getSeconds().toString().padStart(2, '0');
-
-  const dateString = `${year}-${month}-${day}`;
-  const timeString = `${hour}:${minute}:${second}`;
-
-  return [dateString, timeString];
-};
 
 // TODO: replace all hardcode options with variables
 const PositionClosedModal = ({
   modalVisible,
   modalClickHandler,
-  openCfdDetails,
+  closedCfdDetails: closedCfdDetails,
   ...otherProps
-}: IPositionOpenModal) => {
+}: IPositionClosedModal) => {
+  const marketCtx = useContext(MarketContext);
+
   // TODO: create order function
   const submitClickHandler = () => {
     modalClickHandler();
     return;
   };
 
-  const displayedGuaranteedStopSetting = !!openCfdDetails.guaranteedStop ? 'Yes' : 'No';
+  const displayedGuaranteedStopSetting = !!closedCfdDetails.guaranteedStop ? 'Yes' : 'No';
 
   const displayedPnLSymbol =
-    openCfdDetails.pnl.type === 'PROFIT' ? '+' : openCfdDetails.pnl.type === 'LOSS' ? '-' : '';
+    closedCfdDetails.pnl.type === 'PROFIT' ? '+' : closedCfdDetails.pnl.type === 'LOSS' ? '-' : '';
 
   const displayedTypeOfPosition =
-    openCfdDetails?.typeOfPosition === 'BUY' ? 'Up (Buy)' : 'Down (Sell)';
+    closedCfdDetails?.typeOfPosition === 'BUY' ? 'Up (Buy)' : 'Down (Sell)';
 
   const displayedPnLColor =
-    openCfdDetails?.pnl.type === 'PROFIT'
-      ? PNL_COLOR_TYPE.profit
-      : openCfdDetails?.pnl.type === 'LOSS'
-      ? PNL_COLOR_TYPE.loss
-      : PNL_COLOR_TYPE.equal;
+    closedCfdDetails?.pnl.type === 'PROFIT'
+      ? TypeOfPnLColor.PROFIT
+      : closedCfdDetails?.pnl.type === 'LOSS'
+      ? TypeOfPnLColor.LOSS
+      : TypeOfPnLColor.EQUAL;
 
   const displayedBorderColor =
-    openCfdDetails?.typeOfPosition === 'BUY' ? BORDER_COLOR_TYPE.long : BORDER_COLOR_TYPE.short;
+    closedCfdDetails?.typeOfPosition === 'BUY' ? TypeOfBorderColor.LONG : TypeOfBorderColor.SHORT;
 
   const displayedPositionColor =
-    openCfdDetails.typeOfPosition === 'BUY' ? PNL_COLOR_TYPE.profit : PNL_COLOR_TYPE.loss;
+    closedCfdDetails.typeOfPosition === 'BUY' ? TypeOfPnLColor.PROFIT : TypeOfPnLColor.LOSS;
 
   const layoutInsideBorder = 'mx-5 my-4 flex justify-between';
+
+  const displayedTime = timestampToString(closedCfdDetails?.openTimestamp ?? 0);
 
   const formContent = (
     <div>
       <div className="mt-2 mb-2 flex items-center justify-center space-x-2 text-center">
-        <Image src={`/elements/group_2371.svg`} width={30} height={30} alt="ticker icon" />
-        <div className="text-2xl">{openCfdDetails.ticker}</div>
+        <Image
+          src={marketCtx.selectedTicker?.tokenImg ?? ''}
+          width={30}
+          height={30}
+          alt="ticker icon"
+        />
+        <div className="text-2xl">{closedCfdDetails.ticker}</div>
       </div>
 
       <div className="relative flex-auto pt-1">
@@ -91,21 +85,21 @@ const PositionClosedModal = ({
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">Amount</div>
               <div className="">
-                {openCfdDetails?.amount?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0}{' '}
-                {openCfdDetails.ticker}
+                {closedCfdDetails?.amount?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0}{' '}
+                {closedCfdDetails.ticker}
               </div>
             </div>
 
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">Required Margin</div>
-              <div className="">$ {((openCfdDetails?.openPrice * 1.8) / 5).toFixed(2)} USDT</div>
+              <div className="">$ {((closedCfdDetails?.openPrice * 1.8) / 5).toFixed(2)} USDT</div>
             </div>
 
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">Price</div>
               <div className="">
                 Market Price ( ${' '}
-                {openCfdDetails?.openPrice?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0} )
+                {closedCfdDetails?.openPrice?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0} )
               </div>
             </div>
 
@@ -113,15 +107,14 @@ const PositionClosedModal = ({
               <div className="text-lightGray">PNL</div>
               <div className={`${displayedPnLColor}`}>
                 $ {displayedPnLSymbol}{' '}
-                {openCfdDetails.pnl.value.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}
+                {closedCfdDetails.pnl.value.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}
               </div>
             </div>
 
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">Open Time</div>
               <div className="">
-                {timestampToString(openCfdDetails?.openTimestamp ?? 0)[0]}{' '}
-                {timestampToString(openCfdDetails?.openTimestamp ?? 0)[1]}
+                {displayedTime.date} {displayedTime.time}
               </div>
             </div>
 

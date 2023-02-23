@@ -93,11 +93,7 @@ const MarketSection = () => {
   // } = cryptoSummary ?? {};
 
   const displayedTickerHeader =
-    layoutAssertion === 'mobile' ? (
-      <TradingHeaderMobile />
-    ) : (
-      <TradingHeader upOrDown="up" tradingVolume="217,268,645" />
-    );
+    layoutAssertion === 'mobile' ? <TradingHeaderMobile /> : <TradingHeader />;
 
   const displayedTradingView =
     layoutAssertion === 'mobile' ? <TradingViewMobile /> : <TradingView />;

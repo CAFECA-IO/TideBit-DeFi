@@ -87,7 +87,7 @@ export default function PositionLineGraph({
     },
     // Horizontal dash line
     annotations: {
-      position: 'front',
+      // position: 'front',
       yaxis: [
         {
           y: annotatedValue,

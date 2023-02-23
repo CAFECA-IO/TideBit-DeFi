@@ -26,13 +26,32 @@ const CryptoCategory = ({...otherProps}) => {
       if (i === 0) {
         return (
           // TODO: Dynamic routes
-          <Link href={`/trade/cfd/ethusdt`} key={item.currency}>
+          <div key={i}>
+            <Link href={`/trade/cfd/ethusdt`}>
+              <CryptoCard
+                // key={i}
+                // cardClickHandler={() => {
+                //   <Link href={`/trade/cfd/${cryptoCard.currency}`}></Link>;
+                // }}
+                className="mt-4 ml-4"
+                lineGraphProps={cryptoCard.lineGraphProps}
+                chain={cryptoCard.chain}
+                currency={cryptoCard.currency}
+                price={cryptoCard.price}
+                fluctuating={cryptoCard.fluctuating}
+                gradientColor={cryptoCard?.gradientColor ?? ''}
+                tokenImg={cryptoCard.tokenImg}
+              />
+            </Link>
+          </div>
+        );
+      }
+
+      return (
+        <div key={i}>
+          <Link href={`/trade/cfd/ethusdt`}>
             <CryptoCard
-              // key={i}
-              // cardClickHandler={() => {
-              //   <Link href={`/trade/cfd/${cryptoCard.currency}`}></Link>;
-              // }}
-              className="mt-4 ml-4"
+              key={i}
               lineGraphProps={cryptoCard.lineGraphProps}
               chain={cryptoCard.chain}
               currency={cryptoCard.currency}
@@ -42,22 +61,7 @@ const CryptoCategory = ({...otherProps}) => {
               tokenImg={cryptoCard.tokenImg}
             />
           </Link>
-        );
-      }
-
-      return (
-        <Link href={`/trade/cfd/ethusdt`}>
-          <CryptoCard
-            key={i}
-            lineGraphProps={cryptoCard.lineGraphProps}
-            chain={cryptoCard.chain}
-            currency={cryptoCard.currency}
-            price={cryptoCard.price}
-            fluctuating={cryptoCard.fluctuating}
-            gradientColor={cryptoCard?.gradientColor ?? ''}
-            tokenImg={cryptoCard.tokenImg}
-          />
-        </Link>
+        </div>
       );
     });
 

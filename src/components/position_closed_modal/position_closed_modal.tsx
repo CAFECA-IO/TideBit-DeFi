@@ -39,7 +39,7 @@ const PositionClosedModal = ({
 
   const [mounted, setMounted] = useState(false);
 
-  const [secondsLeft, setSecondsLeft] = useState(INIT_POSITION_REMAINING_SECONDS);
+  const [secondsLeft, setSecondsLeft] = useState(-2);
   const [dataRenewedStyle, setDataRenewedStyle] = useState('text-lightWhite');
   const [pnlDisplayedStyle, setPnlDisplayedStyle] = useState({
     color:
@@ -162,7 +162,7 @@ const PositionClosedModal = ({
 
   // console.log('closed modal');
 
-  const renewDataHandler = async () => {
+  const renewDataStyleHandler = async () => {
     setDataRenewedStyle('animate-flash text-lightYellow2');
     setPnlDisplayedStyle({
       symbol:
@@ -181,7 +181,7 @@ const PositionClosedModal = ({
       openCfdDetails: {
         ...openCfdDetails,
         pnl: {
-          type: randomIntFromInterval(0, 100) <= 60 ? ProfitState.PROFIT : ProfitState.LOSS,
+          type: randomIntFromInterval(0, 100) <= 20 ? ProfitState.PROFIT : ProfitState.LOSS,
           value: randomIntFromInterval(0, 1000),
         },
       },
@@ -240,9 +240,45 @@ const PositionClosedModal = ({
 
   useEffect(() => {
     // if (!lock()) return;
-    setMounted(true);
+    // setMounted(true);
 
-    if (!mounted) {
+    // if (!mounted) {
+    //   setPnlDisplayedStyle({
+    //     color:
+    //       openCfdDetails.pnl.type === ProfitState.PROFIT
+    //         ? TypeOfPnLColor.PROFIT
+    //         : openCfdDetails.pnl.type === ProfitState.LOSS
+    //         ? TypeOfPnLColor.LOSS
+    //         : TypeOfPnLColor.EQUAL,
+    //     symbol:
+    //       openCfdDetails.pnl.type === ProfitState.PROFIT
+    //         ? '+'
+    //         : openCfdDetails.pnl.type === ProfitState.LOSS
+    //         ? '-'
+    //         : '',
+    //   });
+    // }
+
+    // if (secondsLeft === -2) {
+    //   setPnlDisplayedStyle({
+    //     color:
+    //       openCfdDetails.pnl.type === ProfitState.PROFIT
+    //         ? TypeOfPnLColor.PROFIT
+    //         : openCfdDetails.pnl.type === ProfitState.LOSS
+    //         ? TypeOfPnLColor.LOSS
+    //         : TypeOfPnLColor.EQUAL,
+    //     symbol:
+    //       openCfdDetails.pnl.type === ProfitState.PROFIT
+    //         ? '+'
+    //         : openCfdDetails.pnl.type === ProfitState.LOSS
+    //         ? '-'
+    //         : '',
+    //   });
+    // }
+
+    if (!globalCtx.visiblePositionClosedModal) {
+      setSecondsLeft(INIT_POSITION_REMAINING_SECONDS);
+      setDataRenewedStyle('text-lightWhite');
       setPnlDisplayedStyle({
         color:
           openCfdDetails.pnl.type === ProfitState.PROFIT
@@ -257,11 +293,6 @@ const PositionClosedModal = ({
             ? '-'
             : '',
       });
-    }
-
-    if (!globalCtx.visiblePositionClosedModal) {
-      setSecondsLeft(INIT_POSITION_REMAINING_SECONDS);
-      setDataRenewedStyle('text-lightWhite');
 
       // console.log('open cfd PNL: ', openCfdDetails.pnl);
       // console.log('latest PNL: ', latestProps.latestPnL);
@@ -273,7 +304,7 @@ const PositionClosedModal = ({
 
     if (secondsLeft === 0) {
       setSecondsLeft(INIT_POSITION_REMAINING_SECONDS);
-      renewDataHandler();
+      renewDataStyleHandler();
     }
     // async () => {
     //   if (secondsLeft === 0) {

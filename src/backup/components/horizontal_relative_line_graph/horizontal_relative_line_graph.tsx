@@ -86,7 +86,7 @@ export default function HorizontalRelativeLineGraph({
       enabled: false,
     },
     annotations: {
-      position: 'front',
+      // position: 'front',
       yaxis: [
         {
           y: annotatedValue,

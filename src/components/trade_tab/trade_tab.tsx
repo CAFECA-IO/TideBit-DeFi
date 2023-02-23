@@ -73,9 +73,7 @@ const TradeTab = () => {
   // const marketPrice = tickerLiveStatistics?.price ?? TEMP_PLACEHOLDER;
 
   const buyPrice = (tickerLiveStatistics?.buyEstimatedFilledPrice ?? TEMP_PLACEHOLDER).toFixed(2); // market price * (1+spread)
-  const sellEstimatedFilledPrice = (
-    tickerLiveStatistics?.sellEstimatedFilledPrice ?? TEMP_PLACEHOLDER
-  ).toFixed(2); // market price * (1-spread)
+  const sellPrice = (tickerLiveStatistics?.sellEstimatedFilledPrice ?? TEMP_PLACEHOLDER).toFixed(2); // market price * (1-spread)
   const longRecommendedTp = Number(
     (tickerLiveStatistics?.longRecommendedTp ?? TEMP_PLACEHOLDER).toFixed(2)
   ); // recommendedTp // MARKET_PRICE * 1.15
@@ -274,11 +272,29 @@ const TradeTab = () => {
   // }, [marginInputValue, marketCtx.selectedTicker]);
 
   const shortOrderSubmitHandler = () => {
-    // globalCtx.dataLoadingModalHandler({
-    //   modalTitle: 'Open position',
-    //   modalContent: 'Please wait...',
-    // });
-    // globalCtx.visibleLoadingModalHandler();
+    globalCtx.dataPositionOpenModalHandler({
+      id: '202302221915',
+      ticker: marketCtx.selectedTicker?.currency ?? '',
+      typeOfPosition: TypeOfPosition.SELL,
+      orderType: OrderType.CFD,
+      orderStatus: OrderStatusUnion.PROCESSING,
+      margin: requiredMarginRef.current,
+      price: Number(sellPrice) ?? 9999999999,
+      // price: marketCtx.tickerLiveStatistics?.buyEstimatedFilledPrice ?? 9999999999,
+      // price: marketCtx.selectedTicker?.price ?? 9999999999,
+      triggerPrice: marketCtx.selectedTicker?.price ?? 9999999999,
+      estimatedFilledPrice: marketCtx.selectedTicker?.price ?? 9999999999,
+      fee: marketCtx.tickerLiveStatistics?.fee ?? 9999999999,
+      leverage: marketCtx.tickerStatic?.leverage ?? 1,
+      guranteedStop: shortSlToggle ? shortGuaranteedStopChecked : false,
+      takeProfit: shortTpToggle ? shortTpValue : undefined,
+      stopLoss: shortSlToggle ? shortSlValue : undefined,
+      createdTime: 1676369333495,
+      targetUnit: marketCtx.selectedTicker?.currency ?? '',
+      chargeUnit: 'USDT',
+    });
+    globalCtx.visiblePositionOpenModalHandler();
+    // globalCtx.visibleWalletPanelHandler();
     return;
   };
 
@@ -640,12 +656,13 @@ const TradeTab = () => {
                 {/* Short Button */}
                 <div className="mt-5 ml-1/4">
                   <RippleButton
+                    disabled={marginWarning}
                     onClick={shortOrderSubmitHandler}
                     buttonType="button"
-                    className="mr-2 mb-2 rounded-md bg-lightRed px-7 py-1 text-sm font-medium tracking-wide text-white transition-colors duration-300 hover:bg-lightRed/80"
+                    className="mr-2 mb-2 rounded-md bg-lightRed px-7 py-1 text-sm font-medium tracking-wide text-white transition-colors duration-300 hover:bg-lightRed/80 disabled:bg-lightGray"
                   >
                     <b>Down</b> <br />
-                    Below $ {sellEstimatedFilledPrice}
+                    Below $ {sellPrice}
                   </RippleButton>
                 </div>
               </div>

@@ -41,20 +41,52 @@ const PositionClosedModal = ({
 
   const [secondsLeft, setSecondsLeft] = useState(-2);
   const [dataRenewedStyle, setDataRenewedStyle] = useState('text-lightWhite');
-  const [pnlDisplayedStyle, setPnlDisplayedStyle] = useState({
-    color:
-      openCfdDetails.pnl.type === ProfitState.PROFIT
-        ? TypeOfPnLColor.PROFIT
-        : openCfdDetails.pnl.type === ProfitState.LOSS
-        ? TypeOfPnLColor.LOSS
-        : TypeOfPnLColor.EQUAL,
-    symbol:
-      openCfdDetails.pnl.type === ProfitState.PROFIT
-        ? '+'
-        : openCfdDetails.pnl.type === ProfitState.LOSS
-        ? '-'
-        : '',
-  });
+  const [pnlRenewedStyle, setPnlRenewedStyle] = useState('');
+  // const [pnlDisplayedStyle, setPnlDisplayedStyle] = useState({
+  //   color:
+  //     openCfdDetails.pnl.type === ProfitState.PROFIT
+  //       ? TypeOfPnLColor.PROFIT
+  //       : openCfdDetails.pnl.type === ProfitState.LOSS
+  //       ? TypeOfPnLColor.LOSS
+  //       : TypeOfPnLColor.EQUAL,
+  //   symbol:
+  //     openCfdDetails.pnl.type === ProfitState.PROFIT
+  //       ? '+'
+  //       : openCfdDetails.pnl.type === ProfitState.LOSS
+  //       ? '-'
+  //       : '',
+  // });
+
+  const displayedGuaranteedStopSetting = !!openCfdDetails.guaranteedStop ? 'Yes' : 'No';
+
+  const displayedPnLSymbol =
+    openCfdDetails.pnl.type === ProfitState.PROFIT
+      ? '+'
+      : openCfdDetails.pnl.type === ProfitState.LOSS
+      ? '-'
+      : '';
+
+  const displayedTypeOfPosition =
+    openCfdDetails?.typeOfPosition === 'BUY' ? 'Up (Buy)' : 'Down (Sell)';
+
+  const displayedPnLColor =
+    openCfdDetails?.pnl.type === ProfitState.PROFIT
+      ? TypeOfPnLColor.PROFIT
+      : openCfdDetails?.pnl.type === ProfitState.LOSS
+      ? TypeOfPnLColor.LOSS
+      : TypeOfPnLColor.EQUAL;
+
+  const displayedBorderColor =
+    openCfdDetails?.typeOfPosition === 'BUY' ? TypeOfBorderColor.LONG : TypeOfBorderColor.SHORT;
+
+  const displayedPositionColor =
+    openCfdDetails.typeOfPosition === 'BUY' ? TypeOfPnLColor.PROFIT : TypeOfPnLColor.LOSS;
+
+  const layoutInsideBorder = 'mx-5 my-4 flex justify-between';
+
+  const displayedTime = timestampToString(openCfdDetails?.openTimestamp ?? 0);
+
+  // console.log('closed modal');
 
   /** TODO: 
     // loading modal -> UserContext.function (負責簽名) ->
@@ -131,48 +163,18 @@ const PositionClosedModal = ({
     return;
   };
 
-  const displayedGuaranteedStopSetting = !!openCfdDetails.guaranteedStop ? 'Yes' : 'No';
-
-  const displayedPnLSymbol =
-    openCfdDetails.pnl.type === ProfitState.PROFIT
-      ? '+'
-      : openCfdDetails.pnl.type === ProfitState.LOSS
-      ? '-'
-      : '';
-
-  const displayedTypeOfPosition =
-    openCfdDetails?.typeOfPosition === 'BUY' ? 'Up (Buy)' : 'Down (Sell)';
-
-  const displayedPnLColor =
-    openCfdDetails?.pnl.type === ProfitState.PROFIT
-      ? TypeOfPnLColor.PROFIT
-      : openCfdDetails?.pnl.type === ProfitState.LOSS
-      ? TypeOfPnLColor.LOSS
-      : TypeOfPnLColor.EQUAL;
-
-  const displayedBorderColor =
-    openCfdDetails?.typeOfPosition === 'BUY' ? TypeOfBorderColor.LONG : TypeOfBorderColor.SHORT;
-
-  const displayedPositionColor =
-    openCfdDetails.typeOfPosition === 'BUY' ? TypeOfPnLColor.PROFIT : TypeOfPnLColor.LOSS;
-
-  const layoutInsideBorder = 'mx-5 my-4 flex justify-between';
-
-  const displayedTime = timestampToString(openCfdDetails?.openTimestamp ?? 0);
-
-  // console.log('closed modal');
-
   const renewDataStyleHandler = async () => {
     setDataRenewedStyle('animate-flash text-lightYellow2');
-    setPnlDisplayedStyle({
-      symbol:
-        openCfdDetails.pnl.type === ProfitState.PROFIT
-          ? '+'
-          : openCfdDetails.pnl.type === ProfitState.LOSS
-          ? '-'
-          : '',
-      color: 'animate-flash text-lightYellow2',
-    });
+    setPnlRenewedStyle('animate-flash text-lightYellow2');
+    // setPnlDisplayedStyle({
+    //   symbol:
+    //     openCfdDetails.pnl.type === ProfitState.PROFIT
+    //       ? '+'
+    //       : openCfdDetails.pnl.type === ProfitState.LOSS
+    //       ? '-'
+    //       : '',
+    //   color: 'animate-flash text-lightYellow2',
+    // });
 
     // TODO: get latest price from marketCtx and calculate required margin data
     // FIXME: 應用 ?? 代替 !
@@ -181,7 +183,7 @@ const PositionClosedModal = ({
       openCfdDetails: {
         ...openCfdDetails,
         pnl: {
-          type: randomIntFromInterval(0, 100) <= 20 ? ProfitState.PROFIT : ProfitState.LOSS,
+          type: randomIntFromInterval(0, 100) <= 50 ? ProfitState.PROFIT : ProfitState.LOSS,
           value: randomIntFromInterval(0, 1000),
         },
       },
@@ -208,34 +210,36 @@ const PositionClosedModal = ({
     await wait(DELAYED_HIDDEN_SECONDS / 5);
 
     setDataRenewedStyle('text-lightYellow2');
+    setPnlRenewedStyle('text-lightYellow2');
 
-    setPnlDisplayedStyle({
-      color: 'text-lightYellow2',
-      symbol:
-        openCfdDetails.pnl.type === ProfitState.PROFIT
-          ? '+'
-          : openCfdDetails.pnl.type === ProfitState.LOSS
-          ? '-'
-          : '',
-    });
+    // setPnlDisplayedStyle({
+    //   color: 'text-lightYellow2',
+    //   symbol:
+    //     openCfdDetails.pnl.type === ProfitState.PROFIT
+    //       ? '+'
+    //       : openCfdDetails.pnl.type === ProfitState.LOSS
+    //       ? '-'
+    //       : '',
+    // });
 
     await wait(DELAYED_HIDDEN_SECONDS / 2);
     setDataRenewedStyle('text-lightWhite');
+    setPnlRenewedStyle('');
 
-    setPnlDisplayedStyle({
-      color:
-        openCfdDetails.pnl.type === ProfitState.PROFIT
-          ? TypeOfPnLColor.PROFIT
-          : openCfdDetails.pnl.type === ProfitState.LOSS
-          ? TypeOfPnLColor.LOSS
-          : TypeOfPnLColor.EQUAL,
-      symbol:
-        openCfdDetails.pnl.type === ProfitState.PROFIT
-          ? '+'
-          : openCfdDetails.pnl.type === ProfitState.LOSS
-          ? '-'
-          : '',
-    });
+    // setPnlDisplayedStyle({
+    //   color:
+    //     openCfdDetails.pnl.type === ProfitState.PROFIT
+    //       ? TypeOfPnLColor.PROFIT
+    //       : openCfdDetails.pnl.type === ProfitState.LOSS
+    //       ? TypeOfPnLColor.LOSS
+    //       : TypeOfPnLColor.EQUAL,
+    //   symbol:
+    //     openCfdDetails.pnl.type === ProfitState.PROFIT
+    //       ? '+'
+    //       : openCfdDetails.pnl.type === ProfitState.LOSS
+    //       ? '-'
+    //       : '',
+    // });
   };
 
   useEffect(() => {
@@ -279,20 +283,20 @@ const PositionClosedModal = ({
     if (!globalCtx.visiblePositionClosedModal) {
       setSecondsLeft(INIT_POSITION_REMAINING_SECONDS);
       setDataRenewedStyle('text-lightWhite');
-      setPnlDisplayedStyle({
-        color:
-          openCfdDetails.pnl.type === ProfitState.PROFIT
-            ? TypeOfPnLColor.PROFIT
-            : openCfdDetails.pnl.type === ProfitState.LOSS
-            ? TypeOfPnLColor.LOSS
-            : TypeOfPnLColor.EQUAL,
-        symbol:
-          openCfdDetails.pnl.type === ProfitState.PROFIT
-            ? '+'
-            : openCfdDetails.pnl.type === ProfitState.LOSS
-            ? '-'
-            : '',
-      });
+      // setPnlDisplayedStyle({
+      //   color:
+      //     openCfdDetails.pnl.type === ProfitState.PROFIT
+      //       ? TypeOfPnLColor.PROFIT
+      //       : openCfdDetails.pnl.type === ProfitState.LOSS
+      //       ? TypeOfPnLColor.LOSS
+      //       : TypeOfPnLColor.EQUAL,
+      //   symbol:
+      //     openCfdDetails.pnl.type === ProfitState.PROFIT
+      //       ? '+'
+      //       : openCfdDetails.pnl.type === ProfitState.LOSS
+      //       ? '-'
+      //       : '',
+      // });
 
       // console.log('open cfd PNL: ', openCfdDetails.pnl);
       // console.log('latest PNL: ', latestProps.latestPnL);
@@ -390,8 +394,8 @@ const PositionClosedModal = ({
 
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">PNL</div>
-              <div className={`${pnlDisplayedStyle.color}`}>
-                {pnlDisplayedStyle.symbol} ${' '}
+              <div className={`${pnlRenewedStyle} ${displayedPnLColor}`}>
+                {displayedPnLSymbol} ${' '}
                 {openCfdDetails.pnl.value.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)} USDT
               </div>
             </div>

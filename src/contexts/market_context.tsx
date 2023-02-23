@@ -185,7 +185,7 @@ export const PositionInfoOnChart: ApexOptions = {
   //   dashArray: 2,
   // },
   annotations: {
-    position: 'back',
+    // position: 'back',
     yaxis: [
       {
         y: 1800,

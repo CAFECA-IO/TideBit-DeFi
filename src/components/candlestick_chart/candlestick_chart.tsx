@@ -179,7 +179,7 @@ export default function CandlestickChart({
     //   dashArray: 2,
     // },
     annotations: {
-      position: 'back',
+      // position: 'back',
       yaxis: [
         {
           y: 1800,
@@ -390,7 +390,7 @@ export default function CandlestickChart({
     //   dashArray: 2,
     // },
     annotations: {
-      position: 'back',
+      // position: 'back',
       yaxis: [
         {
           y: 3000,

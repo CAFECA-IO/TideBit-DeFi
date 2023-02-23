@@ -2,7 +2,7 @@ import React, {useContext, createContext} from 'react';
 import useState from 'react-usestateref';
 import {
   INITIAL_POSITION_LABEL_DISPLAYED_STATE,
-  PROFIT_LOSS_COLOR_TYPE,
+  TypeOfPnLColorHex,
   TRADING_CHART_BORDER_COLOR,
 } from '../constants/display';
 import {ApexOptions} from 'apexcharts';
@@ -152,8 +152,8 @@ export const PositionInfoOnChart: ApexOptions = {
   plotOptions: {
     candlestick: {
       colors: {
-        upward: PROFIT_LOSS_COLOR_TYPE.profit,
-        downward: PROFIT_LOSS_COLOR_TYPE.loss,
+        upward: TypeOfPnLColorHex.PROFIT,
+        downward: TypeOfPnLColorHex.LOSS,
       },
       wick: {
         useFillColor: true,
@@ -189,7 +189,7 @@ export const PositionInfoOnChart: ApexOptions = {
       {
         y: 1800,
         strokeDashArray: 3,
-        borderColor: PROFIT_LOSS_COLOR_TYPE.loss,
+        borderColor: TypeOfPnLColorHex.LOSS,
         width: '100%',
         fillColor: '#ffffff',
 
@@ -202,7 +202,7 @@ export const PositionInfoOnChart: ApexOptions = {
           style: {
             color: '#ffffff',
             fontSize: '12px',
-            background: PROFIT_LOSS_COLOR_TYPE.loss,
+            background: TypeOfPnLColorHex.LOSS,
             padding: {
               right: 10,
             },
@@ -216,7 +216,7 @@ export const PositionInfoOnChart: ApexOptions = {
       {
         y: 3500,
         strokeDashArray: 3,
-        borderColor: PROFIT_LOSS_COLOR_TYPE.profit,
+        borderColor: TypeOfPnLColorHex.PROFIT,
         width: '100%',
         fillColor: '#ffffff',
 
@@ -229,7 +229,7 @@ export const PositionInfoOnChart: ApexOptions = {
           style: {
             color: '#ffffff',
             fontSize: '12px',
-            background: PROFIT_LOSS_COLOR_TYPE.profit,
+            background: TypeOfPnLColorHex.PROFIT,
             padding: {
               right: 10,
             },
@@ -243,7 +243,7 @@ export const PositionInfoOnChart: ApexOptions = {
       {
         y: 3000,
         strokeDashArray: 0,
-        borderColor: PROFIT_LOSS_COLOR_TYPE.tidebitTheme,
+        borderColor: TypeOfPnLColorHex.TIDEBIT_THEME,
         width: '105%',
         fillColor: '#ffffff',
 
@@ -256,7 +256,7 @@ export const PositionInfoOnChart: ApexOptions = {
           style: {
             color: '#ffffff',
             fontSize: '12px',
-            background: PROFIT_LOSS_COLOR_TYPE.tidebitTheme,
+            background: TypeOfPnLColorHex.TIDEBIT_THEME,
             padding: {
               left: -5,
               right: 20,

@@ -5,6 +5,9 @@ import {useGlobal} from '../../contexts/global_context';
 
 const TradeVisitorTab = () => {
   const globalCtx = useGlobal();
+
+  const tabBodyWidth = 'w-320px';
+
   // const [userLoginState, setUserLoginState] = useState(false);
 
   // const getUserLoginHandler = (bool: boolean) => {
@@ -27,20 +30,19 @@ const TradeVisitorTab = () => {
           <div className={`relative`}>
             {/* ---sidebar self--- */}
             <div
-              className={`pointer-events-auto ${'w-300px'} h-screen bg-darkGray p-5 text-white transition-all duration-300`}
+              className={`pointer-events-auto ${tabBodyWidth} h-screen bg-darkGray p-5 text-white transition-all duration-300`}
             >
               {/* <h1 className="pl-5 text-2xl font-bold">Start to trade</h1> */}
 
               <div className="h-full w-full flex-col justify-center pt-4/5">
-                <div className="">
+                <div className="ml-5">
+                  {' '}
                   {/* <div className="px-1/3">Lest</div> */}
-
                   <div className="">
                     <p className="text-center text-sm text-lightGray">
                       Connect your wallet to start trading
                     </p>
                   </div>
-
                   <div className="space-y-2 pl-60px pt-10">
                     {/* <WalletPanel getUserLoginState={getUserLoginHandler} /> */}
                     <TideButton

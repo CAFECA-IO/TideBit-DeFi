@@ -1,7 +1,7 @@
 import Lunar from '@cafeca/lunar';
 import React, {createContext, useCallback, useContext} from 'react';
 import useState from 'react-usestateref';
-import {PROFIT_LOSS_COLOR_TYPE} from '../constants/display';
+import {TypeOfPnLColorHex} from '../constants/display';
 import {
   IOpenCFDDetails,
   dummyOpenCFDDetails,
@@ -54,11 +54,11 @@ import {IOrderType, OrderType} from '../constants/order_type';
 const strokeColorDisplayed = (sampleArray: number[]) => {
   if (sampleArray[sampleArray.length - 1] > sampleArray[sampleArray.length - 2]) {
     // priceColor = 'text-lightGreen';
-    return [PROFIT_LOSS_COLOR_TYPE.profit];
+    return [TypeOfPnLColorHex.PROFIT];
   }
 
   // priceColor = 'text-lightRed';
-  return [PROFIT_LOSS_COLOR_TYPE.loss];
+  return [TypeOfPnLColorHex.LOSS];
 };
 
 export interface IUserBalance {
@@ -296,7 +296,7 @@ export const UserProvider = ({children}: IUserProvider) => {
 
   const signServiceTerm = async () => {
     setEnableServiceTerm(true);
-    setPrivateData(lunar.address);
+    await setPrivateData(lunar.address);
     return true;
   };
 

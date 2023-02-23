@@ -6,14 +6,7 @@ const HistorySubTabMobile = () => {
   const userCtx = useContext(UserContext);
   const historyPositionList = userCtx.closedCFDs.map(cfd => (
     <div key={cfd.id}>
-      <HistoryPositionItem
-        profitOrLoss={cfd.pnl.type}
-        longOrShort="long"
-        openValue={cfd.openValue}
-        closeValue={cfd.closedValue}
-        ticker={cfd.ticker}
-        profitOrLossAmount={cfd.pnl.value}
-      />
+      <HistoryPositionItem closedCfdDetails={cfd} />
     </div>
   ));
 

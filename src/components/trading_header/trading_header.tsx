@@ -6,12 +6,7 @@ import {UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
 import {MarketContext} from '../../contexts/market_context';
 import {Trend} from '../../constants/trend';
 
-interface ITradingHeaderProps {
-  upOrDown: string;
-  tradingVolume: string | number;
-}
-
-const TradingHeader = ({upOrDown, tradingVolume}: ITradingHeaderProps) => {
+const TradingHeader = () => {
   const marketCtx = useContext(MarketContext);
   if (
     marketCtx.selectedTicker?.upOrDown !== Trend.UP &&
@@ -37,68 +32,11 @@ const TradingHeader = ({upOrDown, tradingVolume}: ITradingHeaderProps) => {
 
   // const displayedTickerBox = showTickerSelector ? <TickerSelectorModal /> : null;
 
-  const ethIcon = (
-    <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" viewBox="0 0 43 43">
-      <g id="Group_2330" data-name="Group 2330" transform="translate(0)">
-        <circle
-          id="Ellipse_12"
-          data-name="Ellipse 12"
-          cx="21.5"
-          cy="21.5"
-          r="21.5"
-          transform="translate(0 0)"
-          fill="#627eea"
-        />
-        <g id="Group_2325" data-name="Group 2325" transform="translate(12.198 5.422)">
-          <path
-            id="Path_25757"
-            data-name="Path 25757"
-            d="M226.9,67.826V79.847l10.161,4.541Z"
-            transform="translate(-216.741 -67.826)"
-            fill="rgba(255,255,255,0.6)"
-          />
-          <path
-            id="Path_25758"
-            data-name="Path 25758"
-            d="M219.81,67.826,209.648,84.388l10.162-4.541Z"
-            transform="translate(-209.648 -67.826)"
-            fill="#fff"
-          />
-          <path
-            id="Path_25759"
-            data-name="Path 25759"
-            d="M226.9,105.059v8.169L237.071,99.16Z"
-            transform="translate(-216.741 -80.706)"
-            fill="rgba(255,255,255,0.6)"
-          />
-          <path
-            id="Path_25760"
-            data-name="Path 25760"
-            d="M219.81,113.227v-8.17l-10.162-5.9Z"
-            transform="translate(-209.648 -80.706)"
-            fill="#fff"
-          />
-          <path
-            id="Path_25761"
-            data-name="Path 25761"
-            d="M226.9,98.68l10.161-5.9L226.9,88.243Z"
-            transform="translate(-216.741 -76.219)"
-            fill="rgba(255,255,255,0.2)"
-          />
-          <path
-            id="Path_25762"
-            data-name="Path 25762"
-            d="M209.648,92.781l10.162,5.9V88.243Z"
-            transform="translate(-209.648 -76.219)"
-            fill="rgba(255,255,255,0.6)"
-          />
-        </g>
-      </g>
-    </svg>
+  const tickerTitle = (
+    <h1 className="text-3xl font-medium">{marketCtx.selectedTicker?.currency}</h1>
   );
-  const ethTitle = <h1 className="text-3xl font-medium">{marketCtx.selectedTicker?.currency}</h1>;
 
-  const ethHeader = (
+  const tickerHeader = (
     <>
       <div className="flex flex-col items-center justify-center space-y-5 text-start text-white lg:items-start lg:justify-start">
         {/* Ticker */}
@@ -114,7 +52,7 @@ const TradingHeader = ({upOrDown, tradingVolume}: ITradingHeaderProps) => {
                 alt={marketCtx.selectedTicker?.currency}
               />
             </span>
-            {ethTitle}
+            {tickerTitle}
           </button>
 
           <div className="pl-0 hover:cursor-pointer">
@@ -152,7 +90,7 @@ const TradingHeader = ({upOrDown, tradingVolume}: ITradingHeaderProps) => {
 
   return (
     <div>
-      {ethHeader}
+      {tickerHeader}
       <TickerSelectorBox
         tickerSelectorBoxRef={tickerBoxRef}
         tickerSelectorBoxVisible={tickerBoxVisible}

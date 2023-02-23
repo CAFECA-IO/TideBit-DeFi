@@ -52,7 +52,7 @@ export const getDummyClosedCFDs = (currency: string, number = 3) => {
       id: `TBD${Date.now()}${(Math.random() * 10000).toFixed(0)}`,
       ticker: currency,
       amount: 1.8,
-      state: OrderState.OPENING,
+      state: OrderState.CLOSED,
       typeOfPosition: Math.random() > 0.5 ? TypeOfPosition.BUY : TypeOfPosition.SELL,
       leverage: 5,
       margin: randomIntFromInterval(650, 10000),

@@ -32,8 +32,8 @@ export const dummyOpenCFDDetails: IOpenCFDDetails = {
     value: 90752,
   },
   liquidationPrice: 19537,
-  takeProfit: 74521,
-  // stopLoss: 25250,
+  takeProfit: 222,
+  stopLoss: 25250,
   recommendedTp: 35412,
   recommendedSl: 19453,
   positionLineGraph: {
@@ -57,7 +57,7 @@ export const getDummyOpenCFDs = (currency: string, number = 3) => {
       fee: 0,
       guaranteedStop: false,
       guaranteedStopFee: 0.77,
-      openTimestamp: Date.now() / 1000 + i * 60 * 60,
+      openTimestamp: Date.now() / 1000 - 3600 * 20 + i * 60 * 60,
       scheduledClosingTimestamp: Date.now() / 1000 + i * 60 * 60 + 10 * 24 * 60 * 60, // openTimestamp + 86400
       openValue: 74589658,
       pnl: {
@@ -65,8 +65,8 @@ export const getDummyOpenCFDs = (currency: string, number = 3) => {
         value: parseInt((Math.random() * 1000).toFixed(0)),
       },
       liquidationPrice: 19537,
-      takeProfit: 74521,
-      // stopLoss: 25250,
+      takeProfit: i + 100,
+      stopLoss: i + 100,
       recommendedTp: 35412,
       recommendedSl: 19453,
       positionLineGraph: {

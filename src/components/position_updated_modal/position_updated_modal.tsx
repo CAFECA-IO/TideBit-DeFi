@@ -8,16 +8,16 @@ import {
 import RippleButton from '../ripple_button/ripple_button';
 import Image from 'next/image';
 import {timestampToString} from '../../lib/common';
-import {useContext, useState} from 'react';
+import {useContext, useEffect, useState} from 'react';
 import {MarketContext} from '../../contexts/market_context';
 import {IPublicCFDOrder} from '../../interfaces/tidebit_defi_background/public_order';
+import {IUpdatedCFDProps, useGlobal} from '../../contexts/global_context';
 
 interface IPositionUpdatedModal {
   modalVisible: boolean;
   modalClickHandler: () => void;
   openCfdDetails: IOpenCFDDetails;
-
-  // updatedProps
+  updatedProps?: IUpdatedCFDProps;
 }
 
 // TODO: replace all hardcode options with variables
@@ -25,11 +25,20 @@ const PositionUpdatedModal = ({
   modalVisible,
   modalClickHandler,
   openCfdDetails: openCfdDetails,
+  updatedProps,
   ...otherProps
 }: IPositionUpdatedModal) => {
   const marketCtx = useContext(MarketContext);
+  const globalCtx = useGlobal();
 
-  const [dataRenewedStyle, setDataRenewedStyle] = useState('text-lightWhite');
+  // const [dataRenewedStyle, setDataRenewedStyle] = useState('text-lightWhite');
+  const [tpTextStyle, setTpTextStyle] = useState('text-lightWhite');
+  const [slTextStyle, setSlTextStyle] = useState('text-lightWhite');
+  const [gtslTextStyle, setGtslTextStyle] = useState('text-lightWhite');
+
+  // let tpTextStyle = 'text-lightWhite';
+  // let slTextStyle = 'text-lightWhite';
+  // let gtslTextStyle = 'text-lightWhite';
 
   // TODO: create order function
   const submitClickHandler = () => {
@@ -37,8 +46,92 @@ const PositionUpdatedModal = ({
     return;
   };
 
+  // Double check if the value is updated
+  const renewDataStyle = () => {
+    if (updatedProps === undefined) return;
+
+    updatedProps.guaranteedStopLoss &&
+    updatedProps.guaranteedStopLoss !== openCfdDetails.guaranteedStop
+      ? setGtslTextStyle('text-lightYellow2')
+      : setGtslTextStyle('text-lightWhite');
+
+    //  && updatedProps.takeProfit !== openCfdDetails.takeProfit
+    updatedProps.takeProfit !== undefined && updatedProps.takeProfit !== openCfdDetails.takeProfit
+      ? setTpTextStyle('text-lightYellow2')
+      : setTpTextStyle('text-lightWhite');
+
+    // && updatedProps.stopLoss !== openCfdDetails.stopLoss
+    updatedProps.stopLoss !== undefined && updatedProps.stopLoss !== openCfdDetails.stopLoss
+      ? setSlTextStyle('text-lightYellow2')
+      : setSlTextStyle('text-lightWhite');
+  };
+
+  useEffect(() => {
+    renewDataStyle();
+
+    // console.log('updatedProps ', updatedProps);
+    // console.log('openCfdDetails ', openCfdDetails);
+    // console.log('text style', tpTextStyle, slTextStyle, gtslTextStyle);
+  }, [globalCtx.visiblePositionUpdatedModal]);
+
   // TODO: typo `guaranteedStop`
-  const displayedGuaranteedStopSetting = !!openCfdDetails.guaranteedStop ? 'Yes' : 'No';
+  const displayedGuaranteedStopSetting = updatedProps?.guaranteedStopLoss
+    ? 'Yes'
+    : openCfdDetails.guaranteedStop
+    ? 'Yes'
+    : 'No';
+
+  // if (updatedProps.takeProfit !== openCfdDetails.takeProfit) {
+  //   if (updatedProps.takeProfit === 0) {
+  //     return '-';
+  //   } else if (updatedProps.takeProfit !== 0) {
+  //     return updatedProps.takeProfit;
+  //   }
+  // } else if (openCfdDetails.takeProfit) {
+  //   return openCfdDetails.takeProfit;
+  // } else {
+  //   return '-';
+  // }
+
+  const displayedTakeProfit =
+    updatedProps?.takeProfit !== undefined
+      ? updatedProps.takeProfit === 0
+        ? '-'
+        : updatedProps.takeProfit !== 0
+        ? `$ ${updatedProps.takeProfit}`
+        : undefined
+      : openCfdDetails.takeProfit
+      ? `$ ${openCfdDetails.takeProfit}`
+      : '-';
+
+  // const displayedTakeProfit =
+  //   updatedProps.takeProfit === 0
+  //     ? '-'
+  //     : updatedProps.takeProfit !== 0
+  //     ? updatedProps.takeProfit
+  //     : openCfdDetails.takeProfit
+  //     ? openCfdDetails.takeProfit
+  //     : '-';
+
+  const displayedStopLoss =
+    updatedProps?.stopLoss !== undefined
+      ? updatedProps.stopLoss === 0
+        ? '-'
+        : updatedProps.stopLoss !== 0
+        ? `$ ${updatedProps.stopLoss}`
+        : undefined
+      : openCfdDetails.stopLoss
+      ? `$ ${openCfdDetails.stopLoss}`
+      : '-';
+
+  // const displayedStopLoss =
+  //   updatedProps.stopLoss === 0
+  //     ? '-'
+  //     : updatedProps.stopLoss !== 0
+  //     ? updatedProps.stopLoss
+  //     : openCfdDetails.stopLoss
+  //     ? openCfdDetails.stopLoss
+  //     : '-';
 
   // const displayedPnLSymbol =
   //   openCfdDetails.pnl.type === 'PROFIT' ? '+' : openCfdDetails.pnl.type === 'LOSS' ? '-' : '';
@@ -65,7 +158,7 @@ const PositionUpdatedModal = ({
 
   const formContent = (
     <div>
-      <div className="mt-2 mb-2 flex items-center justify-center space-x-2 text-center">
+      <div className="mt-8 mb-2 flex items-center justify-center space-x-2 text-center">
         <Image
           src={marketCtx.selectedTicker?.tokenImg ?? ''}
           width={30}
@@ -94,7 +187,7 @@ const PositionUpdatedModal = ({
                 {openCfdDetails?.amount?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0}{' '}
                 {openCfdDetails.ticker}
               </div> */}
-              <div className={`${dataRenewedStyle}`}>
+              <div className={``}>
                 {/* TODO: Hardcode USDT */}${' '}
                 {openCfdDetails?.openPrice?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0}{' '}
                 USDT
@@ -108,10 +201,12 @@ const PositionUpdatedModal = ({
                 {displayedTime.date} {displayedTime.time}
               </div>
             </div>
-
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">TP/ SL</div>
-              <div className="">$20/ $10.5</div>
+              <div className="">
+                <span className={`${tpTextStyle}`}>{displayedTakeProfit}</span> /{' '}
+                <span className={`${slTextStyle}`}>{displayedStopLoss}</span>
+              </div>
             </div>
 
             {/* <div className={`${layoutInsideBorder}`}>
@@ -137,7 +232,7 @@ const PositionUpdatedModal = ({
 
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">Guaranteed Stop</div>
-              <div className={``}>{displayedGuaranteedStopSetting}</div>
+              <div className={`${gtslTextStyle}`}>{displayedGuaranteedStopSetting}</div>
             </div>
 
             {/* <div className={`${tableLayout}`}>

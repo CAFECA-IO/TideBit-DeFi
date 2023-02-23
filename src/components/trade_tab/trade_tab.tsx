@@ -101,6 +101,7 @@ const TradeTab = () => {
 
   const [marginInputValue, setMarginInputValue] = useState(0.02);
 
+  // FIXME: SL setting should have a lower limit and an upper limit depending on its position type
   const [longTpValue, setLongTpValue] = useState(longRecommendedTp);
   const [longSlValue, setLongSlValue] = useState(longRecommendedSl);
   const [longTpToggle, setLongTpToggle] = useState(false);

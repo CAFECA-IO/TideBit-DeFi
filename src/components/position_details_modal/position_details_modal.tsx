@@ -57,6 +57,7 @@ const PositionDetailsModal = ({
 
   const [guaranteedTooltipStatus, setGuaranteedTooltipStatus] = useState(0);
 
+  // FIXME: SL setting should have a lower limit and an upper limit depending on its position type
   const [slLowerLimit, setSlLowerLimit] = useState(0);
   const [slUpperLimit, setSlUpperLimit] = useState(Infinity);
 
@@ -196,20 +197,20 @@ const PositionDetailsModal = ({
     if (tpToggle && tpValue !== openCfdDetails.takeProfit) {
       changedProperties = {
         ...changedProperties,
-        takeProfitAmount: tpValue,
+        takeProfit: tpValue,
       };
     }
 
     // Detect if spValue has changed
     if (slToggle && slValue !== openCfdDetails.stopLoss) {
-      changedProperties = {...changedProperties, stopLossAmount: slValue};
+      changedProperties = {...changedProperties, stopLoss: slValue};
     }
 
     // Detect if tpToggle has changed
     if (initialTpToggle !== tpToggle) {
       changedProperties = {
         ...changedProperties,
-        takeProfitAmount: tpToggle ? tpValue : 0,
+        takeProfit: tpToggle ? tpValue : 0,
       };
     }
 
@@ -217,17 +218,17 @@ const PositionDetailsModal = ({
     if (initialSlToggle !== slToggle) {
       changedProperties = {
         ...changedProperties,
-        stopLossAmount: slToggle ? slValue : 0,
+        stopLoss: slToggle ? slValue : 0,
       };
     }
 
     // Detect if guaranteedStop has changed
     if (guaranteedChecked !== openCfdDetails.guaranteedStop) {
-      const stopLossAmount = slValue !== openCfdDetails.stopLoss ? slValue : undefined;
+      const stopLoss = slValue !== openCfdDetails.stopLoss ? slValue : undefined;
       changedProperties = {
         ...changedProperties,
-        guaranteedStopChecked: guaranteedChecked,
-        stopLossAmount,
+        guaranteedStopLoss: guaranteedChecked,
+        stopLoss: stopLoss,
       };
     }
 
@@ -256,7 +257,10 @@ const PositionDetailsModal = ({
       //   globalContext.visiblePositionDetailsModalHandler(false);
       //   // console.log('modal visible: ', modalVisible);
       // }, 1000);
-      globalCtx.dataPositionUpdatedModalHandler({...openCfdDetails, ...changedProperties});
+      globalCtx.dataPositionUpdatedModalHandler({
+        openCfdDetails: {...openCfdDetails},
+        updatedProps: {...changedProperties},
+      });
       globalCtx.visiblePositionUpdatedModalHandler();
 
       return changedProperties;

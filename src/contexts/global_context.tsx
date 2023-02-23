@@ -51,6 +51,26 @@ export interface IToastify {
 //   transferType: 'deposit' | 'withdraw';
 // }
 
+export interface IUpdatedCFDProps {
+  takeProfit?: number;
+  stopLoss?: number;
+  guaranteedStopLoss?: boolean;
+}
+
+export interface IDataPositionUpdatedModal {
+  openCfdDetails: IOpenCFDDetails;
+  updatedProps?: IUpdatedCFDProps;
+}
+
+export const dummyDataPositionUpdatedModal: IDataPositionUpdatedModal = {
+  openCfdDetails: dummyOpenCFDDetails,
+  updatedProps: {
+    takeProfit: 0,
+    stopLoss: 0,
+    guaranteedStopLoss: false,
+  },
+};
+
 export interface ISuccessfulModal {
   modalTitle: string;
   modalContent?: string;
@@ -258,8 +278,8 @@ export interface IGlobalContext {
 
   visiblePositionUpdatedModal: boolean;
   visiblePositionUpdatedModalHandler: () => void;
-  dataPositionUpdatedModal: IOpenCFDDetails | null;
-  dataPositionUpdatedModalHandler: (data: IOpenCFDDetails) => void;
+  dataPositionUpdatedModal: IDataPositionUpdatedModal | null;
+  dataPositionUpdatedModalHandler: (data: IDataPositionUpdatedModal) => void;
 
   visibleMyAccountModal: boolean;
   visibleMyAccountModalHandler: () => void;
@@ -492,7 +512,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
 
   const [visiblePositionUpdatedModal, setVisiblePositionUpdatedModal] = useState(false);
   const [dataPositionUpdatedModal, setDataPositionUpdatedModal] =
-    useState<IOpenCFDDetails>(dummyOpenCFDDetails); // TODO: Update position parameter
+    useState<IDataPositionUpdatedModal>(dummyDataPositionUpdatedModal); // TODO: Update position parameter
 
   const [visibleMyAccountModal, setVisibleMyAccountModal] = useState(false);
 
@@ -685,7 +705,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     setVisiblePositionUpdatedModal(!visiblePositionUpdatedModal);
   };
 
-  const dataPositionUpdatedModalHandler = (data: IOpenCFDDetails) => {
+  const dataPositionUpdatedModalHandler = (data: IDataPositionUpdatedModal) => {
     setDataPositionUpdatedModal(data);
   };
 
@@ -1008,7 +1028,8 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
       <PositionUpdatedModal
         modalVisible={visiblePositionUpdatedModal}
         modalClickHandler={visiblePositionUpdatedModalHandler}
-        openCfdDetails={dataPositionUpdatedModal}
+        openCfdDetails={dataPositionUpdatedModal.openCfdDetails}
+        updatedProps={dataPositionUpdatedModal.updatedProps}
       />
 
       {/* <PositionOpenModal />

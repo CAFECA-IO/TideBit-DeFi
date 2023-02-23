@@ -8,7 +8,7 @@ import {
 } from '../../constants/display';
 import RippleButton from '../ripple_button/ripple_button';
 import Image from 'next/image';
-import {randomIntFromInterval, timestampToString, wait} from '../../lib/common';
+import {locker, randomIntFromInterval, timestampToString, wait} from '../../lib/common';
 import {useContext, useEffect, useState} from 'react';
 import {MarketContext} from '../../contexts/market_context';
 import {INIT_POSITION_REMAINING_SECONDS} from '../../constants/config';
@@ -16,6 +16,7 @@ import {TypeOfPosition} from '../../constants/type_of_position';
 import {IClosedCFDInfoProps, useGlobal} from '../../contexts/global_context';
 import {BsClockHistory} from 'react-icons/bs';
 import {ProfitState} from '../../constants/profit_state';
+import {UserContext} from '../../contexts/user_context';
 
 interface IPositionClosedModal {
   modalVisible: boolean;
@@ -34,6 +35,7 @@ const PositionClosedModal = ({
 }: IPositionClosedModal) => {
   const marketCtx = useContext(MarketContext);
   const globalCtx = useGlobal();
+  const userCtx = useContext(UserContext);
 
   const [mounted, setMounted] = useState(false);
 
@@ -61,8 +63,53 @@ const PositionClosedModal = ({
     // 用戶沒簽名才是顯示 canceled modal
     // 用戶簽名成功，就會顯示 successful modal
    */
-  const submitClickHandler = () => {
+  const submitClickHandler = async () => {
+    const [lock, unlock] = locker('position_closed_modal.submitClickHandler');
+    if (!lock()) return;
+    await wait(DELAYED_HIDDEN_SECONDS / 5);
     modalClickHandler();
+
+    globalCtx.dataLoadingModalHandler({modalTitle: 'Close Position', modalContent: 'Loading...'});
+    globalCtx.visibleLoadingModalHandler();
+
+    const result = await userCtx.closeOrder({id: openCfdDetails.id});
+    // console.log('result from userCtx in position_closed_modal.tsx: ', result);
+
+    // TODO: temporary waiting
+    await wait(DELAYED_HIDDEN_SECONDS);
+
+    // Close loading modal
+    globalCtx.eliminateAllModals();
+
+    // TODO: Revise the `result.reason` to constant by using enum or object
+    // TODO: the button URL
+    if (result.success) {
+      globalCtx.dataSuccessfulModalHandler({
+        modalTitle: 'Close Position',
+        modalContent: 'Transaction succeed',
+        btnMsg: 'View on Etherscan',
+        btnUrl: '#',
+      });
+
+      globalCtx.visibleSuccessfulModalHandler();
+    } else if (result.reason === 'CANCELED') {
+      globalCtx.dataCanceledModalHandler({
+        modalTitle: 'Close Position',
+        modalContent: 'Transaction canceled',
+      });
+
+      globalCtx.visibleCanceledModalHandler();
+    } else if (result.reason === 'FAILED') {
+      globalCtx.dataFailedModalHandler({
+        modalTitle: 'Close Position',
+        failedTitle: 'Failed',
+        failedMsg: 'Failed to close position',
+      });
+
+      globalCtx.visibleFailedModalHandler();
+    }
+
+    unlock();
     return;
   };
 

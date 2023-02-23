@@ -14,6 +14,7 @@ import {ProfitState} from '../../constants/profit_state';
 import {TypeOfPosition} from '../../constants/type_of_position';
 import {randomIntFromInterval} from '../../lib/common';
 import {MarketContext} from '../../contexts/market_context';
+import {UserContext} from '../../contexts/user_context';
 // import HorizontalRelativeLineGraph from '../horizontal_relative_line_graph/horizontal_relative_line_graph';
 
 interface IOpenPositionItemProps {
@@ -25,6 +26,7 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
   // if (profitOrLoss !== 'profit' && profitOrLoss !== 'loss') return <></>; if (profitOrLoss !== 'profit' && profitOrLoss !== 'loss') return <></>;
   // if (ticker !== 'ETH' && ticker !== 'BTC') return <></>;
   const marketCtx = useContext(MarketContext);
+  const userCtx = useContext(UserContext);
   const {
     visiblePositionDetailsModalHandler,
     dataPositionDetailsModalHandler,

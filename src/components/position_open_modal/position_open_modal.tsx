@@ -55,12 +55,24 @@ const PositionOpenModal = ({
     await wait(DELAYED_HIDDEN_SECONDS / 5);
     modalClickHandler();
 
-    globalCtx.dataLoadingModalHandler({modalTitle: 'Open Position', modalContent: 'Loading...'});
+    globalCtx.dataLoadingModalHandler({
+      modalTitle: 'Open Position',
+      modalContent: 'Confirm the transaction',
+    });
     globalCtx.visibleLoadingModalHandler();
 
     // FIXME: Use the real and correct data after the param is confirmed
     const result = await userCtx.createOrder({...dummyOpenCFDOrder});
     // console.log('result from userCtx in position_closed_modal.tsx: ', result);
+
+    // TODO: temporary waiting
+    await wait(DELAYED_HIDDEN_SECONDS);
+    globalCtx.dataLoadingModalHandler({
+      modalTitle: 'Open Position',
+      modalContent: 'Transaction broadcast',
+      btnMsg: 'View on Etherscan',
+      btnUrl: '#',
+    });
 
     // TODO: temporary waiting
     await wait(DELAYED_HIDDEN_SECONDS);

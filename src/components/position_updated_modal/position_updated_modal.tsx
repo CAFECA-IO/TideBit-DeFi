@@ -57,7 +57,10 @@ const PositionUpdatedModal = ({
     modalClickHandler();
     // console.log('updated modal clicked');
 
-    globalCtx.dataLoadingModalHandler({modalTitle: 'Update Position', modalContent: 'Loading...'});
+    globalCtx.dataLoadingModalHandler({
+      modalTitle: 'Update Position',
+      modalContent: 'Confirm the transaction',
+    });
     globalCtx.visibleLoadingModalHandler();
 
     // FIXME: the guaranteedStop should be removed
@@ -65,6 +68,15 @@ const PositionUpdatedModal = ({
       id: openCfdDetails.id,
       ...updatedProps,
       guaranteedStop: updatedProps?.guaranteedStopLoss ?? false,
+    });
+
+    // TODO: temporary waiting
+    await wait(DELAYED_HIDDEN_SECONDS);
+    globalCtx.dataLoadingModalHandler({
+      modalTitle: 'Update Position',
+      modalContent: 'Transaction broadcast',
+      btnMsg: 'View on Etherscan',
+      btnUrl: '#',
     });
 
     // console.log('result from userCtx in position_closed_modal.tsx: ', result);

@@ -68,11 +68,23 @@ const PositionClosedModal = ({
     await wait(DELAYED_HIDDEN_SECONDS / 5);
     modalClickHandler();
 
-    globalCtx.dataLoadingModalHandler({modalTitle: 'Close Position', modalContent: 'Loading...'});
+    globalCtx.dataLoadingModalHandler({
+      modalTitle: 'Close Position',
+      modalContent: 'Confirm the transaction',
+    });
     globalCtx.visibleLoadingModalHandler();
 
     const result = await userCtx.closeOrder({id: openCfdDetails.id});
     // console.log('result from userCtx in position_closed_modal.tsx: ', result);
+
+    // TODO: temporary waiting
+    await wait(DELAYED_HIDDEN_SECONDS);
+    globalCtx.dataLoadingModalHandler({
+      modalTitle: 'Close Position',
+      modalContent: 'Transaction broadcast',
+      btnMsg: 'View on Etherscan',
+      btnUrl: '#',
+    });
 
     // TODO: temporary waiting
     await wait(DELAYED_HIDDEN_SECONDS);

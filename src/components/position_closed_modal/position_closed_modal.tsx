@@ -91,7 +91,14 @@ const PositionClosedModal = ({
         btnUrl: '#',
       });
 
+      globalCtx.dataHistoryPositionModalHandler(userCtx.getClosedCFD(openCfdDetails.id));
+
       globalCtx.visibleSuccessfulModalHandler();
+      await wait(DELAYED_HIDDEN_SECONDS);
+
+      globalCtx.eliminateAllModals();
+
+      globalCtx.visibleHistoryPositionModalHandler();
     } else if (result.reason === 'CANCELED') {
       globalCtx.dataCanceledModalHandler({
         modalTitle: 'Close Position',

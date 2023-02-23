@@ -39,15 +39,15 @@ const PositionClosedModal = ({
   const [dataRenewedStyle, setDataRenewedStyle] = useState('text-lightWhite');
   const [pnlDisplayedStyle, setPnlDisplayedStyle] = useState({
     color:
-      latestProps.latestPnL.type === ProfitState.PROFIT
+      openCfdDetails.pnl.type === ProfitState.PROFIT
         ? TypeOfPnLColor.PROFIT
-        : latestProps.latestPnL.type === ProfitState.LOSS
+        : openCfdDetails.pnl.type === ProfitState.LOSS
         ? TypeOfPnLColor.LOSS
         : TypeOfPnLColor.EQUAL,
     symbol:
-      latestProps.latestPnL.type === ProfitState.PROFIT
+      openCfdDetails.pnl.type === ProfitState.PROFIT
         ? '+'
-        : latestProps.latestPnL.type === ProfitState.LOSS
+        : openCfdDetails.pnl.type === ProfitState.LOSS
         ? '-'
         : '',
   });
@@ -91,13 +91,34 @@ const PositionClosedModal = ({
 
   const renewDataHandler = async () => {
     setDataRenewedStyle('animate-flash text-lightYellow2');
+    setPnlDisplayedStyle({
+      color:
+        openCfdDetails.pnl.type === ProfitState.PROFIT
+          ? TypeOfPnLColor.PROFIT
+          : openCfdDetails.pnl.type === ProfitState.LOSS
+          ? TypeOfPnLColor.LOSS
+          : TypeOfPnLColor.EQUAL,
+      symbol:
+        openCfdDetails.pnl.type === ProfitState.PROFIT
+          ? '+'
+          : openCfdDetails.pnl.type === ProfitState.LOSS
+          ? '-'
+          : '',
+    });
+
     await wait(DELAYED_HIDDEN_SECONDS / 5);
 
     // TODO: get latest price from marketCtx and calculate required margin data
     // FIXME: 應用 ?? 代替 !
     // FIXME: closedCfdDetails 的關倉價格
     globalCtx.dataPositionClosedModalHandler({
-      openCfdDetails: {...openCfdDetails},
+      openCfdDetails: {
+        ...openCfdDetails,
+        pnl: {
+          type: randomIntFromInterval(0, 100) <= 60 ? ProfitState.PROFIT : ProfitState.LOSS,
+          value: randomIntFromInterval(0, 1000),
+        },
+      },
       latestProps: {
         latestClosedPrice:
           openCfdDetails.typeOfPosition === TypeOfPosition.BUY
@@ -111,10 +132,10 @@ const PositionClosedModal = ({
                 marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice * 1.25
               )
             : 99999,
-        latestPnL: {
-          type: randomIntFromInterval(0, 100) <= 2 ? ProfitState.PROFIT : ProfitState.LOSS,
-          value: randomIntFromInterval(0, 1000),
-        },
+        // latestPnL: {
+        //   type: randomIntFromInterval(0, 100) <= 2 ? ProfitState.PROFIT : ProfitState.LOSS,
+        //   value: randomIntFromInterval(0, 1000),
+        // },
       },
     });
 
@@ -130,11 +151,28 @@ const PositionClosedModal = ({
       setSecondsLeft(INIT_POSITION_REMAINING_SECONDS);
       setDataRenewedStyle('text-lightWhite');
 
+      setPnlDisplayedStyle({
+        color:
+          openCfdDetails.pnl.type === ProfitState.PROFIT
+            ? TypeOfPnLColor.PROFIT
+            : openCfdDetails.pnl.type === ProfitState.LOSS
+            ? TypeOfPnLColor.LOSS
+            : TypeOfPnLColor.EQUAL,
+        symbol:
+          openCfdDetails.pnl.type === ProfitState.PROFIT
+            ? '+'
+            : openCfdDetails.pnl.type === ProfitState.LOSS
+            ? '-'
+            : '',
+      });
+
       // console.log('open cfd PNL: ', openCfdDetails.pnl);
       // console.log('latest PNL: ', latestProps.latestPnL);
 
       return;
     }
+
+    // console.log('openCfd pnl: ', openCfdDetails.pnl);
 
     if (secondsLeft === 0) {
       setSecondsLeft(INIT_POSITION_REMAINING_SECONDS);
@@ -223,7 +261,7 @@ const PositionClosedModal = ({
               <div className="text-lightGray">PNL</div>
               <div className={`${pnlDisplayedStyle.color}`}>
                 {pnlDisplayedStyle.symbol} ${' '}
-                {latestProps.latestPnL.value.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)} USDT
+                {openCfdDetails.pnl.value.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)} USDT
               </div>
             </div>
 

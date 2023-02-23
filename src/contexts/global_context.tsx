@@ -66,7 +66,7 @@ export interface IDataPositionUpdatedModal {
 
 export interface IClosedCFDInfoProps {
   latestClosedPrice: number;
-  latestPnL: IPnL;
+  // latestPnL: IPnL;
 }
 
 export interface IDataPositionClosedModal {
@@ -78,10 +78,10 @@ export const dummyDataPositionClosedModal: IDataPositionClosedModal = {
   openCfdDetails: dummyOpenCFDDetails,
   latestProps: {
     latestClosedPrice: 45,
-    latestPnL: {
-      value: 99,
-      type: ProfitState.PROFIT,
-    },
+    // latestPnL: {
+    //   value: 99,
+    //   type: ProfitState.PROFIT,
+    // },
   },
 };
 

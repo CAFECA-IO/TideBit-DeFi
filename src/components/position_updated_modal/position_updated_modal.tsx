@@ -11,14 +11,14 @@ import {timestampToString} from '../../lib/common';
 import {useContext, useEffect, useState} from 'react';
 import {MarketContext} from '../../contexts/market_context';
 import {IPublicCFDOrder} from '../../interfaces/tidebit_defi_background/public_order';
-import {IUpdatedCFDProps, useGlobal} from '../../contexts/global_context';
+import {IUpdatedCFDInputProps, useGlobal} from '../../contexts/global_context';
 import {TypeOfPosition} from '../../constants/type_of_position';
 
 interface IPositionUpdatedModal {
   modalVisible: boolean;
   modalClickHandler: () => void;
   openCfdDetails: IOpenCFDDetails;
-  updatedProps?: IUpdatedCFDProps;
+  updatedProps?: IUpdatedCFDInputProps;
 }
 
 // TODO: replace all hardcode options with variables

@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useContext, useState} from 'react';
 import CircularProgressBar from '../circular_progress_bar/circular_progress_bar';
 import {
   OPEN_POSITION_LINE_GRAPH_WIDTH,
@@ -12,6 +12,8 @@ import {toast} from 'react-toastify';
 import {useGlobal} from '../../contexts/global_context';
 import {ProfitState} from '../../constants/profit_state';
 import {TypeOfPosition} from '../../constants/type_of_position';
+import {randomIntFromInterval} from '../../lib/common';
+import {MarketContext} from '../../contexts/market_context';
 // import HorizontalRelativeLineGraph from '../horizontal_relative_line_graph/horizontal_relative_line_graph';
 
 interface IOpenPositionItemProps {
@@ -22,6 +24,7 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
   // if (longOrShort !== 'long' && longOrShort !== 'short') return <></>;
   // if (profitOrLoss !== 'profit' && profitOrLoss !== 'loss') return <></>; if (profitOrLoss !== 'profit' && profitOrLoss !== 'loss') return <></>;
   // if (ticker !== 'ETH' && ticker !== 'BTC') return <></>;
+  const marketCtx = useContext(MarketContext);
   const {
     visiblePositionDetailsModalHandler,
     dataPositionDetailsModalHandler,
@@ -47,7 +50,27 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
 
   const squareClickHandler = () => {
     visiblePositionClosedModalHandler();
-    dataPositionClosedModalHandler(openCfdDetails);
+    dataPositionClosedModalHandler({
+      openCfdDetails: openCfdDetails,
+      latestProps: {
+        latestClosedPrice:
+          openCfdDetails.typeOfPosition === TypeOfPosition.BUY
+            ? randomIntFromInterval(
+                marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice * 0.75,
+                marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice * 1.25
+              )
+            : openCfdDetails.typeOfPosition === TypeOfPosition.SELL
+            ? randomIntFromInterval(
+                marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice * 1.1,
+                marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice * 1.25
+              )
+            : 99999,
+        latestPnL: {
+          type: randomIntFromInterval(0, 100) <= 2 ? ProfitState.PROFIT : ProfitState.LOSS,
+          value: randomIntFromInterval(0, 1000),
+        },
+      },
+    });
     // toast.error('test', {toastId: 'errorTest'});
     // console.log('show the modal displaying transaction detail');
     // return;

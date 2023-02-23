@@ -16,6 +16,7 @@ import {BsClockHistory} from 'react-icons/bs';
 import {useGlobal} from '../../contexts/global_context';
 import {TypeOfPosition} from '../../constants/type_of_position';
 import {UserContext} from '../../contexts/user_context';
+import {INIT_POSITION_REMAINING_SECONDS} from '../../constants/config';
 
 interface IPositionOpenModal {
   modalVisible: boolean;
@@ -24,7 +25,6 @@ interface IPositionOpenModal {
 }
 
 // TODO: seconds constant in display.ts or config.ts?
-const INIT_POSITION_REMAINING_SECONDS = 3;
 
 const PositionOpenModal = ({
   modalVisible,
@@ -131,6 +131,13 @@ const PositionOpenModal = ({
   useEffect(() => {
     // if (!lock()) return;
 
+    if (!globalCtx.visiblePositionOpenModal) {
+      setSecondsLeft(INIT_POSITION_REMAINING_SECONDS);
+      setDataRenewedStyle('text-lightWhite');
+
+      return;
+    }
+
     if (secondsLeft === 0) {
       setSecondsLeft(INIT_POSITION_REMAINING_SECONDS);
       renewDataHandler();
@@ -141,11 +148,6 @@ const PositionOpenModal = ({
     //     setSecondsLeft(15);
     //   }
     // };
-
-    if (!globalCtx.visiblePositionOpenModal) {
-      setSecondsLeft(INIT_POSITION_REMAINING_SECONDS);
-      setDataRenewedStyle('text-lightWhite');
-    }
 
     const intervalId = setInterval(() => {
       setSecondsLeft(prevSeconds => prevSeconds - 1);

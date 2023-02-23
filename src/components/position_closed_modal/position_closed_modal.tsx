@@ -1,20 +1,27 @@
 import {ImCross} from 'react-icons/im';
 import {IOpenCFDDetails} from '../../interfaces/tidebit_defi_background/open_cfd_details';
 import {
+  DELAYED_HIDDEN_SECONDS,
   TypeOfBorderColor,
   TypeOfPnLColor,
   UNIVERSAL_NUMBER_FORMAT_LOCALE,
 } from '../../constants/display';
 import RippleButton from '../ripple_button/ripple_button';
 import Image from 'next/image';
-import {timestampToString} from '../../lib/common';
-import {useContext} from 'react';
+import {randomIntFromInterval, timestampToString, wait} from '../../lib/common';
+import {useContext, useEffect, useState} from 'react';
 import {MarketContext} from '../../contexts/market_context';
+import {INIT_POSITION_REMAINING_SECONDS} from '../../constants/config';
+import {TypeOfPosition} from '../../constants/type_of_position';
+import {IClosedCFDInfoProps, useGlobal} from '../../contexts/global_context';
+import {BsClockHistory} from 'react-icons/bs';
+import {ProfitState} from '../../constants/profit_state';
 
 interface IPositionClosedModal {
   modalVisible: boolean;
   modalClickHandler: () => void;
   openCfdDetails: IOpenCFDDetails;
+  latestProps: IClosedCFDInfoProps;
 }
 
 // TODO: replace all hardcode options with variables
@@ -22,11 +29,36 @@ const PositionClosedModal = ({
   modalVisible,
   modalClickHandler,
   openCfdDetails: openCfdDetails,
+  latestProps: latestProps,
   ...otherProps
 }: IPositionClosedModal) => {
   const marketCtx = useContext(MarketContext);
+  const globalCtx = useGlobal();
+
+  const [secondsLeft, setSecondsLeft] = useState(INIT_POSITION_REMAINING_SECONDS);
+  const [dataRenewedStyle, setDataRenewedStyle] = useState('text-lightWhite');
+  const [pnlDisplayedStyle, setPnlDisplayedStyle] = useState({
+    color:
+      latestProps.latestPnL.type === ProfitState.PROFIT
+        ? TypeOfPnLColor.PROFIT
+        : latestProps.latestPnL.type === ProfitState.LOSS
+        ? TypeOfPnLColor.LOSS
+        : TypeOfPnLColor.EQUAL,
+    symbol:
+      latestProps.latestPnL.type === ProfitState.PROFIT
+        ? '+'
+        : latestProps.latestPnL.type === ProfitState.LOSS
+        ? '-'
+        : '',
+  });
 
   // TODO: create order function
+  /**
+    // loading modal -> UserContext.function (負責簽名) ->
+    // 猶豫太久的話，單子會過期，就會顯示 failed modal，
+    // 用戶沒簽名才是顯示 canceled modal
+    // 用戶簽名成功，就會顯示 successful modal
+   */
   const submitClickHandler = () => {
     modalClickHandler();
     return;
@@ -40,12 +72,12 @@ const PositionClosedModal = ({
   const displayedTypeOfPosition =
     openCfdDetails?.typeOfPosition === 'BUY' ? 'Up (Buy)' : 'Down (Sell)';
 
-  const displayedPnLColor =
-    openCfdDetails?.pnl.type === 'PROFIT'
-      ? TypeOfPnLColor.PROFIT
-      : openCfdDetails?.pnl.type === 'LOSS'
-      ? TypeOfPnLColor.LOSS
-      : TypeOfPnLColor.EQUAL;
+  // const displayedPnLColor =
+  //   openCfdDetails?.pnl.type === 'PROFIT'
+  //     ? TypeOfPnLColor.PROFIT
+  //     : openCfdDetails?.pnl.type === 'LOSS'
+  //     ? TypeOfPnLColor.LOSS
+  //     : TypeOfPnLColor.EQUAL;
 
   const displayedBorderColor =
     openCfdDetails?.typeOfPosition === 'BUY' ? TypeOfBorderColor.LONG : TypeOfBorderColor.SHORT;
@@ -57,6 +89,74 @@ const PositionClosedModal = ({
 
   const displayedTime = timestampToString(openCfdDetails?.openTimestamp ?? 0);
 
+  const renewDataHandler = async () => {
+    setDataRenewedStyle('animate-flash text-lightYellow2');
+    await wait(DELAYED_HIDDEN_SECONDS / 5);
+
+    // TODO: get latest price from marketCtx and calculate required margin data
+    // FIXME: 應用 ?? 代替 !
+    // FIXME: closedCfdDetails 的關倉價格
+    globalCtx.dataPositionClosedModalHandler({
+      openCfdDetails: {...openCfdDetails},
+      latestProps: {
+        latestClosedPrice:
+          openCfdDetails.typeOfPosition === TypeOfPosition.BUY
+            ? randomIntFromInterval(
+                marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice * 0.75,
+                marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice * 1.25
+              )
+            : openCfdDetails.typeOfPosition === TypeOfPosition.SELL
+            ? randomIntFromInterval(
+                marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice * 1.1,
+                marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice * 1.25
+              )
+            : 99999,
+        latestPnL: {
+          type: randomIntFromInterval(0, 100) <= 2 ? ProfitState.PROFIT : ProfitState.LOSS,
+          value: randomIntFromInterval(0, 1000),
+        },
+      },
+    });
+
+    setDataRenewedStyle('text-lightYellow2');
+    await wait(DELAYED_HIDDEN_SECONDS / 2);
+    setDataRenewedStyle('text-lightWhite');
+  };
+
+  useEffect(() => {
+    // if (!lock()) return;
+
+    if (!globalCtx.visiblePositionClosedModal) {
+      setSecondsLeft(INIT_POSITION_REMAINING_SECONDS);
+      setDataRenewedStyle('text-lightWhite');
+
+      // console.log('open cfd PNL: ', openCfdDetails.pnl);
+      // console.log('latest PNL: ', latestProps.latestPnL);
+
+      return;
+    }
+
+    if (secondsLeft === 0) {
+      setSecondsLeft(INIT_POSITION_REMAINING_SECONDS);
+      renewDataHandler();
+    }
+    // async () => {
+    //   if (secondsLeft === 0) {
+    //     await wait(500);
+    //     setSecondsLeft(15);
+    //   }
+    // };
+
+    const intervalId = setInterval(() => {
+      setSecondsLeft(prevSeconds => prevSeconds - 1);
+    }, 1000);
+
+    return () => {
+      clearInterval(intervalId);
+      // unlock();
+    };
+  }, [secondsLeft, globalCtx.visiblePositionClosedModal]);
+
   const formContent = (
     <div>
       <div className="mt-2 mb-2 flex items-center justify-center space-x-2 text-center">
@@ -67,6 +167,11 @@ const PositionClosedModal = ({
           alt="ticker icon"
         />
         <div className="text-2xl">{openCfdDetails.ticker}</div>
+      </div>
+
+      <div className="absolute top-105px right-6 flex items-center space-x-1 text-center">
+        <BsClockHistory size={20} className="text-lightGray" />
+        <p className="w-8 text-xs">00:{secondsLeft.toString().padStart(2, '0')}</p>
       </div>
 
       <div className="relative flex-auto pt-1">
@@ -83,6 +188,15 @@ const PositionClosedModal = ({
             </div>
 
             <div className={`${layoutInsideBorder}`}>
+              <div className="text-lightGray">Open Price</div>
+              <div className="">
+                {/* TODO: Hardcode USDT */}${' '}
+                {openCfdDetails?.openPrice?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0}{' '}
+                USDT
+              </div>
+            </div>
+
+            <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">Amount</div>
               <div className="">
                 {openCfdDetails?.amount?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0}{' '}
@@ -90,24 +204,26 @@ const PositionClosedModal = ({
               </div>
             </div>
 
+            {/* FIXME: close price from market price DEPENDING ON sell or buy */}
             <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">Required Margin</div>
-              <div className="">$ {((openCfdDetails?.openPrice * 1.8) / 5).toFixed(2)} USDT</div>
-            </div>
-
-            <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">Price</div>
-              <div className="">
-                Market Price ( ${' '}
-                {openCfdDetails?.openPrice?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0} )
+              <div className="text-lightGray">Closed Price</div>
+              <div className={`${dataRenewedStyle}`}>
+                {/* TODO: Hardcode USDT */}${' '}
+                {latestProps.latestClosedPrice.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0}{' '}
+                USDT
               </div>
             </div>
 
+            {/* <div className={`${layoutInsideBorder}`}>
+              <div className="text-lightGray">Required Margin</div>
+              <div className="">$ {((openCfdDetails?.openPrice * 1.8) / 5).toFixed(2)} USDT</div>
+            </div> */}
+
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">PNL</div>
-              <div className={`${displayedPnLColor}`}>
-                $ {displayedPnLSymbol}{' '}
-                {openCfdDetails.pnl.value.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}
+              <div className={`${pnlDisplayedStyle.color}`}>
+                {pnlDisplayedStyle.symbol} ${' '}
+                {latestProps.latestPnL.value.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)} USDT
               </div>
             </div>
 

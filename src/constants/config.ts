@@ -1,5 +1,7 @@
 // `const` which can be changed later
 
+export const INIT_POSITION_REMAINING_SECONDS = 3;
+
 // 10 ** 9 - 0.01
 export const MARGIN_LIMIT_DIGITS = 10 ** 9 - 0.01;
 

@@ -17,6 +17,7 @@ import {useGlobal} from '../../contexts/global_context';
 import {TypeOfPosition} from '../../constants/type_of_position';
 import {UserContext} from '../../contexts/user_context';
 import {INIT_POSITION_REMAINING_SECONDS} from '../../constants/config';
+import {dummyOpenCFDOrder} from '../../interfaces/tidebit_defi_background/open_cfd_order';
 
 interface IPositionOpenModal {
   modalVisible: boolean;
@@ -45,15 +46,56 @@ const PositionOpenModal = ({
     const [lock, unlock] = locker('position_open_modal.submitClickHandler');
 
     if (!lock()) return;
-    // TODO: Signatures and create order
-    // userCtx.createOrder()
-
     await wait(DELAYED_HIDDEN_SECONDS / 5);
     modalClickHandler();
 
-    // TODO: pop up loading modal
-    // globalCtx.dataLoadingModalHandler({})
-    // globalCtx.visibleLoadingModalHandler()
+    globalCtx.dataLoadingModalHandler({modalTitle: 'Open Position', modalContent: 'Loading...'});
+    globalCtx.visibleLoadingModalHandler();
+
+    // FIXME: Use the real and correct data after the param is confirmed
+    const result = await userCtx.createOrder({...dummyOpenCFDOrder});
+    // console.log('result from userCtx in position_closed_modal.tsx: ', result);
+
+    // TODO: temporary waiting
+    await wait(DELAYED_HIDDEN_SECONDS);
+
+    // Close loading modal
+    globalCtx.eliminateAllModals();
+
+    // TODO: Revise the `result.reason` to constant by using enum or object
+    // TODO: the button URL
+    if (result.success) {
+      globalCtx.dataSuccessfulModalHandler({
+        modalTitle: 'Open Position',
+        modalContent: 'Transaction succeed',
+        btnMsg: 'View on Etherscan',
+        btnUrl: '#',
+      });
+
+      // globalCtx.dataHistoryPositionModalHandler(userCtx.getClosedCFD(openCfdDetails.id));
+
+      globalCtx.visibleSuccessfulModalHandler();
+      await wait(DELAYED_HIDDEN_SECONDS);
+
+      // globalCtx.eliminateAllModals();
+
+      // globalCtx.visibleHistoryPositionModalHandler();
+    } else if (result.reason === 'CANCELED') {
+      globalCtx.dataCanceledModalHandler({
+        modalTitle: 'Open Position',
+        modalContent: 'Transaction canceled',
+      });
+
+      globalCtx.visibleCanceledModalHandler();
+    } else if (result.reason === 'FAILED') {
+      globalCtx.dataFailedModalHandler({
+        modalTitle: 'Open Position',
+        failedTitle: 'Failed',
+        failedMsg: 'Failed to open Position',
+      });
+
+      globalCtx.visibleFailedModalHandler();
+    }
 
     unlock();
     return;

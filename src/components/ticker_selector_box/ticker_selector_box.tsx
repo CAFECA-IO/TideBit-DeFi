@@ -8,6 +8,7 @@ import CryptoCard from '../crypto_card/crypto_card';
 import {MarketContext, IMarketContext} from '../../contexts/market_context';
 import {UserContext, IUserContext} from '../../contexts/user_context';
 import {ILineGraphProps, ITickerData} from '../../interfaces/tidebit_defi_background/ticker_data';
+import {useRouter} from 'next/router';
 
 // TODO: useContext
 interface ITickerSelectorBox {
@@ -40,6 +41,8 @@ const TickerSelectorBox = ({
   const marketCtx = useContext<IMarketContext>(MarketContext);
   const userCtx = useContext(UserContext) as IUserContext;
 
+  const router = useRouter();
+
   const [activeTab, setActiveTab] = useState('All');
 
   // const cryptoCards = useMemo(() => {
@@ -49,6 +52,12 @@ const TickerSelectorBox = ({
   //     return favorites;
   //   }
   // }, [activeTab, allCards, favorites]);
+
+  const routing = (currency: string) => {
+    const base = currency.toLocaleLowerCase();
+    router.push(`/trade/cfd/${base}usdt`);
+    // console.log(`/trade/cfd/${base}usdt`);
+  };
 
   const convertTickersToCryptoCardsData = (availableTickers: ITickerData[]) => {
     const cryptoCardsData: ICryptoCardData[] = availableTickers?.map((each, index) => {
@@ -205,6 +214,7 @@ const TickerSelectorBox = ({
             key={cryptoCard.currency}
             cardClickHandler={() => {
               tickerSelectorBoxClickHandler();
+              routing(cryptoCard.currency);
             }}
             className="mt-4 ml-4"
             lineGraphProps={cryptoCard.lineGraphProps}
@@ -227,6 +237,7 @@ const TickerSelectorBox = ({
           key={cryptoCard.currency}
           cardClickHandler={() => {
             tickerSelectorBoxClickHandler();
+            routing(cryptoCard.currency);
           }}
           className="mt-0"
           lineGraphProps={cryptoCard.lineGraphProps}
@@ -252,6 +263,7 @@ const TickerSelectorBox = ({
           key={cryptoCard.currency}
           cardClickHandler={() => {
             tickerSelectorBoxClickHandler();
+            routing(cryptoCard.currency);
           }}
           className="mt-4 ml-4"
           lineGraphProps={cryptoCard.lineGraphProps}
@@ -274,6 +286,7 @@ const TickerSelectorBox = ({
         key={cryptoCard.currency}
         cardClickHandler={() => {
           tickerSelectorBoxClickHandler();
+          routing(cryptoCard.currency);
         }}
         className="mt-0"
         lineGraphProps={cryptoCard.lineGraphProps}

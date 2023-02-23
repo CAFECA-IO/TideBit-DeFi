@@ -11,6 +11,17 @@ import {MarketContext, MarketProvider} from '../../../contexts/market_context';
 import {UserContext, UserProvider} from '../../../contexts/user_context';
 import {GlobalContext, useGlobal} from '../../../contexts/global_context';
 import NavBarMobile from '../../../components/nav_bar_mobile/nav_bar_mobile';
+import {GetStaticPaths, GetStaticProps} from 'next';
+
+interface ILocale {
+  // locale: string;
+  locale: any;
+}
+
+interface IPageProps {
+  tickerId: string;
+  locale: ILocale;
+}
 
 const Trading = () => {
   const {layoutAssertion} = useGlobal();
@@ -46,11 +57,57 @@ const Trading = () => {
   );
 };
 
-const getStaticPropsFunction = async ({locale}: {locale: any}) => ({
-  props: {
-    ...(await serverSideTranslations(locale, ['common', 'footer'])),
-  },
-});
-export const getStaticProps = getStaticPropsFunction;
+// const getStaticPropsFunction = async ({locale}: {locale: any}) => ({
+//   props: {
+//     ...(await serverSideTranslations(locale, ['common', 'footer'])),
+//   },
+// });
+// export const getStaticProps = getStaticPropsFunction;
+
+export const getStaticProps: GetStaticProps = async parameter => {
+  const {locale: any, params} = parameter;
+  // const {locale: locale1}= {locale}
+
+  const tickerData = {
+    tickerId: params?.tickerId as string,
+  };
+
+  // ...(await serverSideTranslations(locale, ['common', 'footer']))
+  return {
+    props: {tickerData},
+  };
+};
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const tickerIds = [
+    'ethusdt',
+    'btcusdt',
+    'ltcusdt',
+    'maticusdt',
+    'bnbusdt',
+    'solusdt',
+    'shibusdt',
+    'dotusdt',
+    'adausdt',
+    'avaxusdt',
+    'daiusdt',
+    'mkrusdt',
+    'xrpusdt',
+    'dogeusdt',
+    'uniusdt',
+    'flowusdt',
+  ];
+
+  const paths = tickerIds.map(id => ({
+    params: {tickerId: id},
+    // params: {tickerId: 'ethusdt'},
+  }));
+
+  return {
+    // paths: [],
+    paths,
+    fallback: false,
+  };
+};
 
 export default Trading;

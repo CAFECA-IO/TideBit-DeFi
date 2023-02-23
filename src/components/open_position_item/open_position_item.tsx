@@ -65,10 +65,10 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
                 marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice * 1.25
               )
             : 99999,
-        latestPnL: {
-          type: randomIntFromInterval(0, 100) <= 2 ? ProfitState.PROFIT : ProfitState.LOSS,
-          value: randomIntFromInterval(0, 1000),
-        },
+        // latestPnL: {
+        //   type: randomIntFromInterval(0, 100) <= 2 ? ProfitState.PROFIT : ProfitState.LOSS,
+        //   value: randomIntFromInterval(0, 1000),
+        // },
       },
     });
     // toast.error('test', {toastId: 'errorTest'});

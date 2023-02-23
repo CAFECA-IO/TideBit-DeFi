@@ -35,6 +35,8 @@ const PositionClosedModal = ({
   const marketCtx = useContext(MarketContext);
   const globalCtx = useGlobal();
 
+  const [mounted, setMounted] = useState(false);
+
   const [secondsLeft, setSecondsLeft] = useState(INIT_POSITION_REMAINING_SECONDS);
   const [dataRenewedStyle, setDataRenewedStyle] = useState('text-lightWhite');
   const [pnlDisplayedStyle, setPnlDisplayedStyle] = useState({
@@ -67,17 +69,21 @@ const PositionClosedModal = ({
   const displayedGuaranteedStopSetting = !!openCfdDetails.guaranteedStop ? 'Yes' : 'No';
 
   const displayedPnLSymbol =
-    openCfdDetails.pnl.type === 'PROFIT' ? '+' : openCfdDetails.pnl.type === 'LOSS' ? '-' : '';
+    openCfdDetails.pnl.type === ProfitState.PROFIT
+      ? '+'
+      : openCfdDetails.pnl.type === ProfitState.LOSS
+      ? '-'
+      : '';
 
   const displayedTypeOfPosition =
     openCfdDetails?.typeOfPosition === 'BUY' ? 'Up (Buy)' : 'Down (Sell)';
 
-  // const displayedPnLColor =
-  //   openCfdDetails?.pnl.type === 'PROFIT'
-  //     ? TypeOfPnLColor.PROFIT
-  //     : openCfdDetails?.pnl.type === 'LOSS'
-  //     ? TypeOfPnLColor.LOSS
-  //     : TypeOfPnLColor.EQUAL;
+  const displayedPnLColor =
+    openCfdDetails?.pnl.type === ProfitState.PROFIT
+      ? TypeOfPnLColor.PROFIT
+      : openCfdDetails?.pnl.type === ProfitState.LOSS
+      ? TypeOfPnLColor.LOSS
+      : TypeOfPnLColor.EQUAL;
 
   const displayedBorderColor =
     openCfdDetails?.typeOfPosition === 'BUY' ? TypeOfBorderColor.LONG : TypeOfBorderColor.SHORT;
@@ -92,21 +98,14 @@ const PositionClosedModal = ({
   const renewDataHandler = async () => {
     setDataRenewedStyle('animate-flash text-lightYellow2');
     setPnlDisplayedStyle({
-      color:
-        openCfdDetails.pnl.type === ProfitState.PROFIT
-          ? TypeOfPnLColor.PROFIT
-          : openCfdDetails.pnl.type === ProfitState.LOSS
-          ? TypeOfPnLColor.LOSS
-          : TypeOfPnLColor.EQUAL,
       symbol:
         openCfdDetails.pnl.type === ProfitState.PROFIT
           ? '+'
           : openCfdDetails.pnl.type === ProfitState.LOSS
           ? '-'
           : '',
+      color: 'animate-flash text-lightYellow2',
     });
-
-    await wait(DELAYED_HIDDEN_SECONDS / 5);
 
     // TODO: get latest price from marketCtx and calculate required margin data
     // FIXME: 應用 ?? 代替 !
@@ -139,18 +138,44 @@ const PositionClosedModal = ({
       },
     });
 
+    await wait(DELAYED_HIDDEN_SECONDS / 5);
+
     setDataRenewedStyle('text-lightYellow2');
+
+    setPnlDisplayedStyle({
+      color: 'text-lightYellow2',
+      symbol:
+        openCfdDetails.pnl.type === ProfitState.PROFIT
+          ? '+'
+          : openCfdDetails.pnl.type === ProfitState.LOSS
+          ? '-'
+          : '',
+    });
+
     await wait(DELAYED_HIDDEN_SECONDS / 2);
     setDataRenewedStyle('text-lightWhite');
+
+    setPnlDisplayedStyle({
+      color:
+        openCfdDetails.pnl.type === ProfitState.PROFIT
+          ? TypeOfPnLColor.PROFIT
+          : openCfdDetails.pnl.type === ProfitState.LOSS
+          ? TypeOfPnLColor.LOSS
+          : TypeOfPnLColor.EQUAL,
+      symbol:
+        openCfdDetails.pnl.type === ProfitState.PROFIT
+          ? '+'
+          : openCfdDetails.pnl.type === ProfitState.LOSS
+          ? '-'
+          : '',
+    });
   };
 
   useEffect(() => {
     // if (!lock()) return;
+    setMounted(true);
 
-    if (!globalCtx.visiblePositionClosedModal) {
-      setSecondsLeft(INIT_POSITION_REMAINING_SECONDS);
-      setDataRenewedStyle('text-lightWhite');
-
+    if (!mounted) {
       setPnlDisplayedStyle({
         color:
           openCfdDetails.pnl.type === ProfitState.PROFIT
@@ -165,6 +190,11 @@ const PositionClosedModal = ({
             ? '-'
             : '',
       });
+    }
+
+    if (!globalCtx.visiblePositionClosedModal) {
+      setSecondsLeft(INIT_POSITION_REMAINING_SECONDS);
+      setDataRenewedStyle('text-lightWhite');
 
       // console.log('open cfd PNL: ', openCfdDetails.pnl);
       // console.log('latest PNL: ', latestProps.latestPnL);
@@ -197,7 +227,7 @@ const PositionClosedModal = ({
 
   const formContent = (
     <div>
-      <div className="mt-2 mb-2 flex items-center justify-center space-x-2 text-center">
+      <div className="mt-8 mb-2 flex items-center justify-center space-x-2 text-center">
         <Image
           src={marketCtx.selectedTicker?.tokenImg ?? ''}
           width={30}
@@ -314,7 +344,7 @@ const PositionClosedModal = ({
           {/*content & panel*/}
           <div
             // ref={modalRef}
-            className="relative flex h-510px w-296px flex-col rounded-3xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none"
+            className="relative flex h-540px w-296px flex-col rounded-3xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none"
           >
             {/*header*/}
             <div className="flex items-start justify-between rounded-t pt-9">

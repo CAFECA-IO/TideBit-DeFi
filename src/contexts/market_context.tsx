@@ -460,7 +460,6 @@ export const MarketProvider = ({children}: IMarketProvider) => {
         selectTickerHandler(tickers[0].currency);
       },
     });
-
     return await Promise.resolve();
   };
 

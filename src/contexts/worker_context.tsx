@@ -142,8 +142,6 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
     if (apiWorkerRef.current) {
       apiWorkerRef.current.postMessage(request.request);
       requests.current[request.name] = request;
-      // eslint-disable-next-line no-console
-      console.log(`requests.current`, requests.current);
     } else {
       createJob(() => requestHandler(request));
     }

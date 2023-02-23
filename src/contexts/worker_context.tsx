@@ -1,6 +1,7 @@
 import React, {useEffect, createContext, useRef, useContext} from 'react';
 import useState from 'react-usestateref';
 import io, {Socket} from 'socket.io-client';
+import {IAPIRequest} from '../constants/api_request';
 // import EventEmitter from 'events';
 import {TideBitEvent} from '../constants/tidebit_event';
 import {ITickerData} from '../interfaces/tidebit_defi_background/ticker_data';
@@ -9,14 +10,32 @@ import {NotificationContext} from './notification_context';
 interface IWorkerProvider {
   children: React.ReactNode;
 }
+type TypeRequest = {
+  name: IAPIRequest;
+  request: {
+    name: IAPIRequest;
+    method: string;
+    url: string;
+    body?: object;
+    options?: {
+      headers?: object;
+    };
+  };
+  callback: (...args: any[]) => void;
+};
+
+interface IRequest {
+  [name: string]: TypeRequest;
+}
 
 interface IWorkerContext {
   // emitter: EventEmitter;
-  jobQueue: ((...args: []) => Promise<void>)[];
+  jobQueue: ((...args: any[]) => Promise<void>)[];
   // isInit: boolean;
   wsWorker: Socket | null;
-  apiWorker: Worker | undefined;
+  apiWorker: Worker | null;
   init: () => void;
+  requestHandler: (request: TypeRequest) => void;
   tickerChangeHandler: (ticker: ITickerData) => void;
   registerUserHandler: (address: string) => void;
 }
@@ -26,8 +45,9 @@ export const WorkerContext = createContext<IWorkerContext>({
   jobQueue: [],
   // isInit: false,
   wsWorker: null,
-  apiWorker: undefined,
+  apiWorker: null,
   init: () => null,
+  requestHandler: request => null,
   tickerChangeHandler: (ticker: ITickerData) => null,
   registerUserHandler: (address: string) => null,
 });
@@ -39,14 +59,17 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
   const notificationCtx = useContext(NotificationContext);
   // const [isInit, setIsInit, isInitRef] = useState<boolean>(false);
   const [wsWorker, setWsWorker, wsWorkerRef] = useState<Socket | null>(null);
-  const apiWorkerRef = useRef<Worker>();
+  const [apiWorker, setAPIWorker, apiWorkerRef] = useState<Worker | null>(null);
   const jobQueue = useRef<((...args: []) => Promise<void>)[]>([]);
+  const requests = useRef<IRequest>({});
 
   const init = () => {
-    apiWorkerRef.current = new Worker(new URL('../lib/workers/api.worker.ts', import.meta.url));
-    apiWorkerRef.current.onmessage = event => {
-      // eslint-disable-next-line no-console
-      console.log(`apiWorkerRef.current event`, event);
+    const apiWorker = new Worker(new URL('../lib/workers/api.worker.ts', import.meta.url));
+    setAPIWorker(apiWorker);
+    apiWorkerRef.current!.onmessage = event => {
+      const {name, result} = event.data;
+      requests.current[name]?.callback(result);
+      delete requests.current[name];
     };
     fetch('/api/socketio').finally(() => {
       const socket = io();
@@ -115,6 +138,17 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
     jobQueue.current = [...jobQueue.current, job];
   };
 
+  const requestHandler = async (request: TypeRequest) => {
+    if (apiWorkerRef.current) {
+      apiWorkerRef.current.postMessage(request.request);
+      requests.current[request.name] = request;
+      // eslint-disable-next-line no-console
+      console.log(`requests.current`, requests.current);
+    } else {
+      createJob(() => requestHandler(request));
+    }
+  };
+
   const tickerChangeHandler = async (ticker: ITickerData) => {
     if (wsWorkerRef.current) {
       notificationCtx.emitter.emit(TideBitEvent.TICKER_CHANGE, ticker);
@@ -136,6 +170,7 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
     apiWorker: apiWorkerRef.current,
     wsWorker,
     init,
+    requestHandler,
     tickerChangeHandler,
     registerUserHandler,
   };

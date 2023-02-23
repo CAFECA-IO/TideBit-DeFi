@@ -39,6 +39,7 @@ import {
 import {TideBitEvent} from '../constants/tidebit_event';
 import {NotificationContext} from './notification_context';
 import {WorkerContext} from './worker_context';
+import {APIRequest, Method} from '../constants/api_request';
 
 const SAMPLE_TICKERS = [
   'ETH',
@@ -447,8 +448,19 @@ export const MarketProvider = ({children}: IMarketProvider) => {
   const init = async () => {
     // console.log(`MarketProvider init is called`);
     setIsCFDTradable(true);
-    setAvailableTickers([...dummyTickers]);
-    selectTickerHandler(dummyTickers[0].currency);
+    workerCtx.requestHandler({
+      name: APIRequest.LIST_TICKERS,
+      request: {
+        name: APIRequest.LIST_TICKERS,
+        method: Method.GET,
+        url: 'http://localhost:3000/api/tickers',
+      },
+      callback: (tickers: ITickerData[]) => {
+        setAvailableTickers([...tickers]);
+        selectTickerHandler(tickers[0].currency);
+      },
+    });
+
     return await Promise.resolve();
   };
 

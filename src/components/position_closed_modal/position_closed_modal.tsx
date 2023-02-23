@@ -56,8 +56,7 @@ const PositionClosedModal = ({
         : '',
   });
 
-  // TODO: create order function
-  /**
+  /** TODO: 
     // loading modal -> UserContext.function (負責簽名) ->
     // 猶豫太久的話，單子會過期，就會顯示 failed modal，
     // 用戶沒簽名才是顯示 canceled modal

@@ -42,6 +42,12 @@ const PositionOpenModal = ({
 
   const [lock, unlock] = locker('position_open_modal.UseEffect');
 
+  /** TODO: 
+    // loading modal -> UserContext.function (負責簽名) ->
+    // 猶豫太久的話，單子會過期，就會顯示 failed modal，
+    // 用戶沒簽名才是顯示 canceled modal
+    // 用戶簽名成功，就會顯示 successful modal
+   */
   const submitClickHandler = async () => {
     const [lock, unlock] = locker('position_open_modal.submitClickHandler');
 
@@ -75,7 +81,7 @@ const PositionOpenModal = ({
       // globalCtx.dataHistoryPositionModalHandler(userCtx.getClosedCFD(openCfdDetails.id));
 
       globalCtx.visibleSuccessfulModalHandler();
-      await wait(DELAYED_HIDDEN_SECONDS);
+      // await wait(DELAYED_HIDDEN_SECONDS);
 
       // globalCtx.eliminateAllModals();
 

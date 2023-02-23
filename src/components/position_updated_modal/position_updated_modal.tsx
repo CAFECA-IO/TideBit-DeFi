@@ -1,13 +1,14 @@
 import {ImCross} from 'react-icons/im';
 import {IOpenCFDDetails} from '../../interfaces/tidebit_defi_background/open_cfd_details';
 import {
+  DELAYED_HIDDEN_SECONDS,
   TypeOfBorderColor,
   TypeOfPnLColor,
   UNIVERSAL_NUMBER_FORMAT_LOCALE,
 } from '../../constants/display';
 import RippleButton from '../ripple_button/ripple_button';
 import Image from 'next/image';
-import {timestampToString} from '../../lib/common';
+import {locker, timestampToString, wait} from '../../lib/common';
 import {useContext, useEffect, useState} from 'react';
 import {MarketContext} from '../../contexts/market_context';
 import {IPublicCFDOrder} from '../../interfaces/tidebit_defi_background/public_order';
@@ -43,9 +44,74 @@ const PositionUpdatedModal = ({
   // let slTextStyle = 'text-lightWhite';
   // let gtslTextStyle = 'text-lightWhite';
 
-  // TODO: create order function
-  const submitClickHandler = () => {
+  /** TODO: 
+    // loading modal -> UserContext.function (負責簽名) ->
+    // 猶豫太久的話，單子會過期，就會顯示 failed modal，
+    // 用戶沒簽名才是顯示 canceled modal
+    // 用戶簽名成功，就會顯示 successful modal
+   */
+  const submitClickHandler = async () => {
+    const [lock, unlock] = locker('position_updated_modal.submitClickHandler');
+    if (!lock()) return;
+    await wait(DELAYED_HIDDEN_SECONDS / 5);
     modalClickHandler();
+    // console.log('updated modal clicked');
+
+    globalCtx.dataLoadingModalHandler({modalTitle: 'Update Position', modalContent: 'Loading...'});
+    globalCtx.visibleLoadingModalHandler();
+
+    // FIXME: the guaranteedStop should be removed
+    const result = await userCtx.updateOrder({
+      id: openCfdDetails.id,
+      ...updatedProps,
+      guaranteedStop: updatedProps?.guaranteedStopLoss ?? false,
+    });
+
+    // console.log('result from userCtx in position_closed_modal.tsx: ', result);
+
+    // TODO: temporary waiting
+    await wait(DELAYED_HIDDEN_SECONDS);
+
+    // Close loading modal
+    globalCtx.eliminateAllModals();
+
+    // TODO: Revise the `result.reason` to constant by using enum or object
+    // TODO: the button URL
+    if (result.success) {
+      globalCtx.dataSuccessfulModalHandler({
+        modalTitle: 'Update Position',
+        modalContent: 'Transaction succeed',
+        btnMsg: 'View on Etherscan',
+        btnUrl: '#',
+      });
+
+      globalCtx.dataPositionDetailsModalHandler(userCtx.getOpendCFD(openCfdDetails.id));
+
+      globalCtx.visibleSuccessfulModalHandler();
+      await wait(DELAYED_HIDDEN_SECONDS);
+
+      globalCtx.eliminateAllModals();
+
+      globalCtx.visiblePositionDetailsModalHandler();
+    } else if (result.reason === 'CANCELED') {
+      globalCtx.dataCanceledModalHandler({
+        modalTitle: 'Update Position',
+        modalContent: 'Transaction canceled',
+      });
+
+      globalCtx.visibleCanceledModalHandler();
+    } else if (result.reason === 'FAILED') {
+      globalCtx.dataFailedModalHandler({
+        modalTitle: 'Update Position',
+        failedTitle: 'Failed',
+        failedMsg: 'Failed to update position',
+      });
+
+      globalCtx.visibleFailedModalHandler();
+    }
+
+    unlock();
+
     return;
   };
 

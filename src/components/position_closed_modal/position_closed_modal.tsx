@@ -14,14 +14,14 @@ import {MarketContext} from '../../contexts/market_context';
 interface IPositionClosedModal {
   modalVisible: boolean;
   modalClickHandler: () => void;
-  closedCfdDetails: IOpenCFDDetails;
+  openCfdDetails: IOpenCFDDetails;
 }
 
 // TODO: replace all hardcode options with variables
 const PositionClosedModal = ({
   modalVisible,
   modalClickHandler,
-  closedCfdDetails: closedCfdDetails,
+  openCfdDetails: openCfdDetails,
   ...otherProps
 }: IPositionClosedModal) => {
   const marketCtx = useContext(MarketContext);
@@ -32,30 +32,30 @@ const PositionClosedModal = ({
     return;
   };
 
-  const displayedGuaranteedStopSetting = !!closedCfdDetails.guaranteedStop ? 'Yes' : 'No';
+  const displayedGuaranteedStopSetting = !!openCfdDetails.guaranteedStop ? 'Yes' : 'No';
 
   const displayedPnLSymbol =
-    closedCfdDetails.pnl.type === 'PROFIT' ? '+' : closedCfdDetails.pnl.type === 'LOSS' ? '-' : '';
+    openCfdDetails.pnl.type === 'PROFIT' ? '+' : openCfdDetails.pnl.type === 'LOSS' ? '-' : '';
 
   const displayedTypeOfPosition =
-    closedCfdDetails?.typeOfPosition === 'BUY' ? 'Up (Buy)' : 'Down (Sell)';
+    openCfdDetails?.typeOfPosition === 'BUY' ? 'Up (Buy)' : 'Down (Sell)';
 
   const displayedPnLColor =
-    closedCfdDetails?.pnl.type === 'PROFIT'
+    openCfdDetails?.pnl.type === 'PROFIT'
       ? TypeOfPnLColor.PROFIT
-      : closedCfdDetails?.pnl.type === 'LOSS'
+      : openCfdDetails?.pnl.type === 'LOSS'
       ? TypeOfPnLColor.LOSS
       : TypeOfPnLColor.EQUAL;
 
   const displayedBorderColor =
-    closedCfdDetails?.typeOfPosition === 'BUY' ? TypeOfBorderColor.LONG : TypeOfBorderColor.SHORT;
+    openCfdDetails?.typeOfPosition === 'BUY' ? TypeOfBorderColor.LONG : TypeOfBorderColor.SHORT;
 
   const displayedPositionColor =
-    closedCfdDetails.typeOfPosition === 'BUY' ? TypeOfPnLColor.PROFIT : TypeOfPnLColor.LOSS;
+    openCfdDetails.typeOfPosition === 'BUY' ? TypeOfPnLColor.PROFIT : TypeOfPnLColor.LOSS;
 
   const layoutInsideBorder = 'mx-5 my-4 flex justify-between';
 
-  const displayedTime = timestampToString(closedCfdDetails?.openTimestamp ?? 0);
+  const displayedTime = timestampToString(openCfdDetails?.openTimestamp ?? 0);
 
   const formContent = (
     <div>
@@ -66,7 +66,7 @@ const PositionClosedModal = ({
           height={30}
           alt="ticker icon"
         />
-        <div className="text-2xl">{closedCfdDetails.ticker}</div>
+        <div className="text-2xl">{openCfdDetails.ticker}</div>
       </div>
 
       <div className="relative flex-auto pt-1">
@@ -85,21 +85,21 @@ const PositionClosedModal = ({
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">Amount</div>
               <div className="">
-                {closedCfdDetails?.amount?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0}{' '}
-                {closedCfdDetails.ticker}
+                {openCfdDetails?.amount?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0}{' '}
+                {openCfdDetails.ticker}
               </div>
             </div>
 
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">Required Margin</div>
-              <div className="">$ {((closedCfdDetails?.openPrice * 1.8) / 5).toFixed(2)} USDT</div>
+              <div className="">$ {((openCfdDetails?.openPrice * 1.8) / 5).toFixed(2)} USDT</div>
             </div>
 
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">Price</div>
               <div className="">
                 Market Price ( ${' '}
-                {closedCfdDetails?.openPrice?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0} )
+                {openCfdDetails?.openPrice?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0} )
               </div>
             </div>
 
@@ -107,7 +107,7 @@ const PositionClosedModal = ({
               <div className="text-lightGray">PNL</div>
               <div className={`${displayedPnLColor}`}>
                 $ {displayedPnLSymbol}{' '}
-                {closedCfdDetails.pnl.value.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}
+                {openCfdDetails.pnl.value.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}
               </div>
             </div>
 

@@ -37,25 +37,9 @@ const PositionClosedModal = ({
   const globalCtx = useGlobal();
   const userCtx = useContext(UserContext);
 
-  const [mounted, setMounted] = useState(false);
-
   const [secondsLeft, setSecondsLeft] = useState(-2);
   const [dataRenewedStyle, setDataRenewedStyle] = useState('text-lightWhite');
   const [pnlRenewedStyle, setPnlRenewedStyle] = useState('');
-  // const [pnlDisplayedStyle, setPnlDisplayedStyle] = useState({
-  //   color:
-  //     openCfdDetails.pnl.type === ProfitState.PROFIT
-  //       ? TypeOfPnLColor.PROFIT
-  //       : openCfdDetails.pnl.type === ProfitState.LOSS
-  //       ? TypeOfPnLColor.LOSS
-  //       : TypeOfPnLColor.EQUAL,
-  //   symbol:
-  //     openCfdDetails.pnl.type === ProfitState.PROFIT
-  //       ? '+'
-  //       : openCfdDetails.pnl.type === ProfitState.LOSS
-  //       ? '-'
-  //       : '',
-  // });
 
   const displayedGuaranteedStopSetting = !!openCfdDetails.guaranteedStop ? 'Yes' : 'No';
 
@@ -170,15 +154,6 @@ const PositionClosedModal = ({
   const renewDataStyleHandler = async () => {
     setDataRenewedStyle('animate-flash text-lightYellow2');
     setPnlRenewedStyle('animate-flash text-lightYellow2');
-    // setPnlDisplayedStyle({
-    //   symbol:
-    //     openCfdDetails.pnl.type === ProfitState.PROFIT
-    //       ? '+'
-    //       : openCfdDetails.pnl.type === ProfitState.LOSS
-    //       ? '-'
-    //       : '',
-    //   color: 'animate-flash text-lightYellow2',
-    // });
 
     // TODO: get latest price from marketCtx and calculate required margin data
     // FIXME: 應用 ?? 代替 !
@@ -216,91 +191,15 @@ const PositionClosedModal = ({
     setDataRenewedStyle('text-lightYellow2');
     setPnlRenewedStyle('text-lightYellow2');
 
-    // setPnlDisplayedStyle({
-    //   color: 'text-lightYellow2',
-    //   symbol:
-    //     openCfdDetails.pnl.type === ProfitState.PROFIT
-    //       ? '+'
-    //       : openCfdDetails.pnl.type === ProfitState.LOSS
-    //       ? '-'
-    //       : '',
-    // });
-
     await wait(DELAYED_HIDDEN_SECONDS / 2);
     setDataRenewedStyle('text-lightWhite');
     setPnlRenewedStyle('');
-
-    // setPnlDisplayedStyle({
-    //   color:
-    //     openCfdDetails.pnl.type === ProfitState.PROFIT
-    //       ? TypeOfPnLColor.PROFIT
-    //       : openCfdDetails.pnl.type === ProfitState.LOSS
-    //       ? TypeOfPnLColor.LOSS
-    //       : TypeOfPnLColor.EQUAL,
-    //   symbol:
-    //     openCfdDetails.pnl.type === ProfitState.PROFIT
-    //       ? '+'
-    //       : openCfdDetails.pnl.type === ProfitState.LOSS
-    //       ? '-'
-    //       : '',
-    // });
   };
 
   useEffect(() => {
-    // if (!lock()) return;
-    // setMounted(true);
-
-    // if (!mounted) {
-    //   setPnlDisplayedStyle({
-    //     color:
-    //       openCfdDetails.pnl.type === ProfitState.PROFIT
-    //         ? TypeOfPnLColor.PROFIT
-    //         : openCfdDetails.pnl.type === ProfitState.LOSS
-    //         ? TypeOfPnLColor.LOSS
-    //         : TypeOfPnLColor.EQUAL,
-    //     symbol:
-    //       openCfdDetails.pnl.type === ProfitState.PROFIT
-    //         ? '+'
-    //         : openCfdDetails.pnl.type === ProfitState.LOSS
-    //         ? '-'
-    //         : '',
-    //   });
-    // }
-
-    // if (secondsLeft === -2) {
-    //   setPnlDisplayedStyle({
-    //     color:
-    //       openCfdDetails.pnl.type === ProfitState.PROFIT
-    //         ? TypeOfPnLColor.PROFIT
-    //         : openCfdDetails.pnl.type === ProfitState.LOSS
-    //         ? TypeOfPnLColor.LOSS
-    //         : TypeOfPnLColor.EQUAL,
-    //     symbol:
-    //       openCfdDetails.pnl.type === ProfitState.PROFIT
-    //         ? '+'
-    //         : openCfdDetails.pnl.type === ProfitState.LOSS
-    //         ? '-'
-    //         : '',
-    //   });
-    // }
-
     if (!globalCtx.visiblePositionClosedModal) {
       setSecondsLeft(INIT_POSITION_REMAINING_SECONDS);
       setDataRenewedStyle('text-lightWhite');
-      // setPnlDisplayedStyle({
-      //   color:
-      //     openCfdDetails.pnl.type === ProfitState.PROFIT
-      //       ? TypeOfPnLColor.PROFIT
-      //       : openCfdDetails.pnl.type === ProfitState.LOSS
-      //       ? TypeOfPnLColor.LOSS
-      //       : TypeOfPnLColor.EQUAL,
-      //   symbol:
-      //     openCfdDetails.pnl.type === ProfitState.PROFIT
-      //       ? '+'
-      //       : openCfdDetails.pnl.type === ProfitState.LOSS
-      //       ? '-'
-      //       : '',
-      // });
 
       // console.log('open cfd PNL: ', openCfdDetails.pnl);
       // console.log('latest PNL: ', latestProps.latestPnL);

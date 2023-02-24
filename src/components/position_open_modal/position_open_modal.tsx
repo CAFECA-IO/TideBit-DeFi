@@ -16,7 +16,7 @@ import {BsClockHistory} from 'react-icons/bs';
 import {useGlobal} from '../../contexts/global_context';
 import {TypeOfPosition} from '../../constants/type_of_position';
 import {UserContext} from '../../contexts/user_context';
-import {SECONDS_INTERVAL_UNTIL_RENEWAL} from '../../constants/config';
+import {POSITION_PRICE_RENEWAL_INTERVAL_SECONDS} from '../../constants/config';
 import {dummyOpenCFDOrder} from '../../interfaces/tidebit_defi_background/open_cfd_order';
 
 interface IPositionOpenModal {
@@ -37,7 +37,7 @@ const PositionOpenModal = ({
   const marketCtx = useContext(MarketContext);
   const userCtx = useContext(UserContext);
 
-  const [secondsLeft, setSecondsLeft] = useState(SECONDS_INTERVAL_UNTIL_RENEWAL);
+  const [secondsLeft, setSecondsLeft] = useState(POSITION_PRICE_RENEWAL_INTERVAL_SECONDS);
   const [dataRenewedStyle, setDataRenewedStyle] = useState('text-lightWhite');
 
   const [lock, unlock] = locker('position_open_modal.UseEffect');
@@ -192,14 +192,14 @@ const PositionOpenModal = ({
     // if (!lock()) return;
 
     if (!globalCtx.visiblePositionOpenModal) {
-      setSecondsLeft(SECONDS_INTERVAL_UNTIL_RENEWAL);
+      setSecondsLeft(POSITION_PRICE_RENEWAL_INTERVAL_SECONDS);
       setDataRenewedStyle('text-lightWhite');
 
       return;
     }
 
     if (secondsLeft === 0) {
-      setSecondsLeft(SECONDS_INTERVAL_UNTIL_RENEWAL);
+      setSecondsLeft(POSITION_PRICE_RENEWAL_INTERVAL_SECONDS);
       renewDataHandler();
     }
     // async () => {

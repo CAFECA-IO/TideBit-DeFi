@@ -1,3 +1,4 @@
+/*eslint-disable no-console */
 import {ImCross} from 'react-icons/im';
 import {IOpenCFDDetails} from '../../interfaces/tidebit_defi_background/open_cfd_details';
 import {
@@ -11,12 +12,13 @@ import Image from 'next/image';
 import {locker, randomIntFromInterval, timestampToString, wait} from '../../lib/common';
 import {useContext, useEffect, useState} from 'react';
 import {MarketContext} from '../../contexts/market_context';
-import {SECONDS_INTERVAL_UNTIL_RENEWAL} from '../../constants/config';
+import {POSITION_PRICE_RENEWAL_INTERVAL_SECONDS} from '../../constants/config';
 import {TypeOfPosition} from '../../constants/type_of_position';
 import {IClosedCFDInfoProps, useGlobal} from '../../contexts/global_context';
 import {BsClockHistory} from 'react-icons/bs';
 import {ProfitState} from '../../constants/profit_state';
 import {UserContext} from '../../contexts/user_context';
+import {useCountdown} from '../../lib/hooks/use_countdown';
 
 interface IPositionClosedModal {
   modalVisible: boolean;
@@ -37,7 +39,22 @@ const PositionClosedModal = ({
   const globalCtx = useGlobal();
   const userCtx = useContext(UserContext);
 
-  const [secondsLeft, setSecondsLeft] = useState(-2);
+  // 1677229200
+  // new Date('2023-02-25T17:00:00').getTime() / 1000
+  // const {hours, minutes, seconds, timestamp} = useCountdown(latestProps.renewalDeadline);
+
+  // console.log('renewalDeadline: ', latestProps.renewalDeadline);
+  // console.log('use Countdown: ', hours, minutes, seconds);
+  // console.log('use Countdown seconds left: ', seconds);
+
+  // const tickingSec = latestProps.renewalDeadline - Date.now() / 1000;
+
+  // tickingSec > 0 ? Math.round(tickingSec) : 0
+  const [secondsLeft, setSecondsLeft] = useState(POSITION_PRICE_RENEWAL_INTERVAL_SECONDS);
+  // console.log('outside useEffect tickingSec: ', tickingSec);
+
+  // Math.max(0, Math.round((latestProps.renewalDeadline - Date.now()) / 1000))
+
   const [dataRenewedStyle, setDataRenewedStyle] = useState('text-lightWhite');
   const [pnlRenewedStyle, setPnlRenewedStyle] = useState('');
 
@@ -152,12 +169,18 @@ const PositionClosedModal = ({
   };
 
   const renewDataStyleHandler = async () => {
+    // setSecondsLeft(latestProps.renewalDeadline - Date.now() / 1000);
     setDataRenewedStyle('animate-flash text-lightYellow2');
     setPnlRenewedStyle('animate-flash text-lightYellow2');
 
     // TODO: get latest price from marketCtx and calculate required margin data
     // FIXME: 應用 ?? 代替 !
     // FIXME: closedCfdDetails 的關倉價格
+    // globalCtx.visiblePositionClosedModalHandler();
+
+    const newTimestamp = new Date().getTime() / 1000 + POSITION_PRICE_RENEWAL_INTERVAL_SECONDS;
+    setSecondsLeft(newTimestamp - Date.now() / 1000);
+
     globalCtx.dataPositionClosedModalHandler({
       openCfdDetails: {
         ...openCfdDetails,
@@ -167,6 +190,8 @@ const PositionClosedModal = ({
         },
       },
       latestProps: {
+        // renewalDeadline: Date.now() / 1000 + POSITION_PRICE_RENEWAL_INTERVAL_SECONDS,
+        renewalDeadline: newTimestamp,
         latestClosedPrice:
           openCfdDetails.typeOfPosition === TypeOfPosition.BUY
             ? randomIntFromInterval(
@@ -186,6 +211,11 @@ const PositionClosedModal = ({
       },
     });
 
+    // globalCtx.visiblePositionClosedModalHandler();
+
+    console.log('in renewDataHandler, deadline: ', latestProps.renewalDeadline);
+    console.log('in renewDataHandler, newTimestamp: ', newTimestamp);
+
     await wait(DELAYED_HIDDEN_SECONDS / 5);
 
     setDataRenewedStyle('text-lightYellow2');
@@ -196,10 +226,25 @@ const PositionClosedModal = ({
     setPnlRenewedStyle('');
   };
 
+  // function countdown(deadlineMs: number, callback: () => void) {
+  //   const interval = setInterval(() => {
+  //     const nowMs = Date.now();
+  //     const remaining = deadlineMs - nowMs;
+  //     console.log('remaining seconds: ', remaining / 1000);
+  //     if (remaining <= 0) {
+  //       clearInterval(interval);
+  //       callback();
+  //     }
+  //   }, 1000);
+  // }
+
   useEffect(() => {
     if (!globalCtx.visiblePositionClosedModal) {
-      setSecondsLeft(SECONDS_INTERVAL_UNTIL_RENEWAL);
+      setSecondsLeft(POSITION_PRICE_RENEWAL_INTERVAL_SECONDS);
       setDataRenewedStyle('text-lightWhite');
+
+      // now = Date.now();
+      // deadline = now + RENEWAL_INTERVAL_SECONDS * 1000;
 
       // let now = Date.now()
       // let deadline = now + secondsLeft * 1000
@@ -209,13 +254,24 @@ const PositionClosedModal = ({
 
       return;
     }
-
+    // const deadline = Date.now() + secondsLeft * 1000;
     // console.log('openCfd pnl: ', openCfdDetails.pnl);
 
-    if (secondsLeft === 0) {
-      setSecondsLeft(SECONDS_INTERVAL_UNTIL_RENEWAL);
+    // 原本有用的 code 在改成用 deadline - now 的方式之後就被直接在 useEffect 裡的 setInterval 寫 if (secondsLeft === 0) 就 renewData，並且在 renewData 裡面重新設定 secondsLeft 取代了
+    // 但還能讓 countdown 的數字跑到 1 就更新，不會跑到 0
+    if (Math.floor(secondsLeft) === 0) {
       renewDataStyleHandler();
+
+      console.log('should renew the deadline: ', latestProps.renewalDeadline);
+
+      // const tickingSec = latestProps.renewalDeadline - Date.now() / 1000;
+      // // console.log('inside useEffect: ', tickingSec);
+      // setSecondsLeft(tickingSec > 0 ? Math.round(tickingSec) : 0);
+
+      // setSecondsLeft(POSITION_PRICE_RENEWAL_INTERVAL_SECONDS);
+      // setSecondsLeft(latestProps.renewalDeadline - Date.now() / 1000);
     }
+
     // async () => {
     //   if (secondsLeft === 0) {
     //     await wait(500);
@@ -226,29 +282,78 @@ const PositionClosedModal = ({
     // console.log('before setInterval'); // 每跳一秒就重設 interval
     // const now = new Date().getTime();
     // TODO: --------timestamp in milliseconds-----------
-    const now = Date.now();
-    const deadline = now + secondsLeft * 1000;
-    const options = {hour12: false};
+    // const now = Date.now();
+    // // const deadline = now + secondsLeft * 1000;
+    // const deadline = now + SECONDS_INTERVAL_UNTIL_RENEWAL * 1000;
 
-    const nowString = new Date(now).toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, options);
-    const deadlineString = new Date(deadline).toLocaleString(
-      UNIVERSAL_NUMBER_FORMAT_LOCALE,
-      options
-    );
+    // const options = {hour12: false};
+
+    // const nowString = new Date(now).toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, options);
+    // const deadlineString = new Date(deadline).toLocaleString(
+    //   UNIVERSAL_NUMBER_FORMAT_LOCALE,
+    //   options
+    // );
 
     // console.log('NOW: ', now, nowString);
     // console.log('DEADLINE: ', deadline, deadlineString);
 
+    // const deadline = Date.now() + SECONDS_INTERVAL_UNTIL_RENEWAL * 1000;
+    // countdown(deadline, () => {
+    //   console.log('countdown finished');
+    // });
+
+    // // FIXME: 用 globalCtx 傳 deadline
     const intervalId = setInterval(() => {
-      setSecondsLeft(prevSeconds => prevSeconds - 1); // 改成終點線-現在時間線
+      // setSecondsLeft(Math.max(0, Math.round((latestProps.renewalDeadline - Date.now()) / 1000)));
+
+      console.log('deadline before ticking: ', latestProps.renewalDeadline);
+
+      const base = latestProps.renewalDeadline;
+
+      const tickingSec = base - Date.now() / 1000;
+      // const tickingSec = latestProps.renewalDeadline - Date.now() / 1000 > 0 ? Math.round(latestProps.renewalDeadline - Date.now() / 1000) : Math.round();
+
+      console.log('inside useEffect: ', tickingSec);
+
+      // setSecondsLeft()
+
+      setSecondsLeft(tickingSec > 0 ? Math.round(tickingSec) : 0);
+      console.log('in setInterval, secondsLeft: ', secondsLeft);
+      // setSecondsLeft(Math.round(tickingSec > 0 ? tickingSec : 0));
+      // setSecondsLeft(Math.max(0, Math.round(tickingSec)));
+      // setSecondsLeft(Math.round(latestProps.renewalDeadline - Date.now() / 1000));
+      // const tickingNow = Date.now();
+      // const remainingTime = deadline - tickingNow;
+      // setSecondsLeft(remainingTime); // 改成終點線-現在時間線
+      // console.log('remainingTime: ', remainingTime / 1000);
+      // console.log('tickingNow: ', new Date(tickingNow).toLocaleString());
+      // console.log('deadline: ', new Date(deadline).toLocaleString());
+
+      // setSecondsLeft(prevSeconds => prevSeconds - 1); // 改成終點線-現在時間線
       // console.log('prevSeconds: ', secondsLeft);
+      if (secondsLeft === 0) {
+        // base = new Date().getTime() / 1000 + POSITION_PRICE_RENEWAL_INTERVAL_SECONDS;
+
+        renewDataStyleHandler();
+
+        // setSecondsLeft(POSITION_PRICE_RENEWAL_INTERVAL_SECONDS);
+        // setSecondsLeft(latestProps.renewalDeadline - Date.now() / 1000);
+      }
     }, 1000); // 不確定是否真的一秒執行一次
 
     return () => {
       clearInterval(intervalId);
       // unlock();
     };
-  }, [secondsLeft, globalCtx.visiblePositionClosedModal]);
+    // const remainingTime = latestProps.renewalDeadline - Date.now() / 1000;
+    // const {seconds: remainingTime} = useCountdown(latestProps.renewalDeadline);
+
+    // setSecondsLeft(remainingTime);
+  }, [
+    secondsLeft,
+    globalCtx.visiblePositionClosedModal,
+    // globalCtx.dataPositionClosedModal?.latestProps.renewalDeadline,
+  ]);
 
   const formContent = (
     <div>

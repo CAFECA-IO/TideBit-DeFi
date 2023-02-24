@@ -65,6 +65,7 @@ export interface IDataPositionUpdatedModal {
 }
 
 export interface IClosedCFDInfoProps {
+  renewalDeadline: number;
   latestClosedPrice: number;
   // latestPnL: IPnL;
 }
@@ -77,6 +78,7 @@ export interface IDataPositionClosedModal {
 export const dummyDataPositionClosedModal: IDataPositionClosedModal = {
   openCfdDetails: dummyOpenCFDDetails,
   latestProps: {
+    renewalDeadline: new Date('2023-02-24T17:00:00').getTime(),
     latestClosedPrice: 45,
     // latestPnL: {
     //   value: 99,

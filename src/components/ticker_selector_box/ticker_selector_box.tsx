@@ -143,10 +143,15 @@ const TickerSelectorBox = ({
 
   useEffect(() => {
     const cryptoCardsData = convertTickersToCryptoCardsData(marketCtx.listAvailableTickers());
-    setFilteredCards(cryptoCardsData);
+    // const updatedCard = {...cryptoCardsData, starred: false};
+    // NOTES: Log in and log out will clear the star
+    const allCardsData = userCtx.enableServiceTerm
+      ? cryptoCardsData
+      : cryptoCardsData.map(card => ({...card, starred: false}));
+    setFilteredCards(allCardsData);
     const favoriteTabCardsData = cryptoCardsData.filter(cryptoCardData => cryptoCardData.starred);
     setFilteredFavorites(favoriteTabCardsData);
-  }, [userCtx.favoriteTickers]);
+  }, [userCtx.favoriteTickers, userCtx.enableServiceTerm]);
 
   useEffect(() => {
     const cryptoCardsData = convertTickersToCryptoCardsData(marketCtx.listAvailableTickers());
@@ -208,6 +213,57 @@ const TickerSelectorBox = ({
     //   // }
     // })
     ?.map((cryptoCard, i) => {
+      // NOTES: Couldn't solve the star not clear problem, only filter the favorite tickers showing on all tab
+      // if (!userCtx.enableServiceTerm && i === 0) {
+      //   console.log('not log in yet [0]');
+
+      //   return (
+      //     <CryptoCard
+      //       key={cryptoCard.currency}
+      //       cardClickHandler={() => {
+      //         tickerSelectorBoxClickHandler();
+      //         routing(cryptoCard.currency);
+      //       }}
+      //       className="mt-4 ml-4"
+      //       lineGraphProps={cryptoCard.lineGraphProps}
+      //       star={cryptoCard.star}
+      //       starColor={cryptoCard.starColor}
+      //       starred={false}
+      //       // getStarredState={cryptoCard.getStarredStateCallback}
+      //       chain={cryptoCard.chain}
+      //       currency={cryptoCard.currency}
+      //       price={cryptoCard.price}
+      //       fluctuating={cryptoCard.fluctuating}
+      //       gradientColor={cryptoCard?.gradientColor ?? ''}
+      //       tokenImg={cryptoCard.tokenImg}
+      //     />
+      //   );
+      // }
+      // if (!userCtx.enableServiceTerm) {
+      //   console.log('not log in yet');
+      //   return (
+      //     <CryptoCard
+      //       key={cryptoCard.currency}
+      //       cardClickHandler={() => {
+      //         tickerSelectorBoxClickHandler();
+      //         routing(cryptoCard.currency);
+      //       }}
+      //       className="mt-0"
+      //       lineGraphProps={cryptoCard.lineGraphProps}
+      //       star={cryptoCard.star}
+      //       starColor={cryptoCard.starColor}
+      //       starred={false}
+      //       // getStarredState={cryptoCard.getStarredStateCallback}
+      //       chain={cryptoCard.chain}
+      //       currency={cryptoCard.currency}
+      //       price={cryptoCard.price}
+      //       fluctuating={cryptoCard.fluctuating}
+      //       gradientColor={cryptoCard?.gradientColor ?? ''}
+      //       tokenImg={cryptoCard.tokenImg}
+      //     />
+      //   );
+      // }
+
       if (i === 0) {
         return (
           <CryptoCard

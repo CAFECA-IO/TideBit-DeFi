@@ -23,6 +23,7 @@ interface IPositionOpenModal {
   modalVisible: boolean;
   modalClickHandler: () => void;
   openCfdRequest: IPublicCFDOrder;
+  renewalDeadline: number;
 }
 
 // TODO: seconds constant in display.ts or config.ts?
@@ -31,6 +32,7 @@ const PositionOpenModal = ({
   modalVisible,
   modalClickHandler,
   openCfdRequest,
+  renewalDeadline,
   ...otherProps
 }: IPositionOpenModal) => {
   const globalCtx = useGlobal();
@@ -156,31 +158,37 @@ const PositionOpenModal = ({
     setDataRenewedStyle('animate-flash text-lightYellow2');
     await wait(DELAYED_HIDDEN_SECONDS / 5);
 
+    const newTimestamp = new Date().getTime() / 1000 + POSITION_PRICE_RENEWAL_INTERVAL_SECONDS;
+    setSecondsLeft(newTimestamp - Date.now() / 1000);
+
     // TODO: get latest price from marketCtx and calculate required margin data
     // FIXME: 應用 ?? 代替 !
     globalCtx.dataPositionOpenModalHandler({
-      ...openCfdRequest,
-      price:
-        openCfdRequest.typeOfPosition === TypeOfPosition.BUY
-          ? randomIntFromInterval(
-              marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice * 0.75,
-              marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice * 1.25
-            )
-          : openCfdRequest.typeOfPosition === TypeOfPosition.SELL
-          ? randomIntFromInterval(
-              marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice * 1.1,
-              marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice * 1.25
-            )
-          : 999999,
-      // TODO:
-      // margin:
-      //   openCfdRequest.typeOfPosition === TypeOfPosition.BUY
-      //     ? (openCfdRequest.amount * marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice) /
-      //       openCfdRequest.leverage
-      //     : (openCfdRequest.amount * marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice) /
-      //       openCfdRequest.leverage,
+      openCfdRequest: {
+        ...openCfdRequest,
+        price:
+          openCfdRequest.typeOfPosition === TypeOfPosition.BUY
+            ? randomIntFromInterval(
+                marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice * 0.75,
+                marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice * 1.25
+              )
+            : openCfdRequest.typeOfPosition === TypeOfPosition.SELL
+            ? randomIntFromInterval(
+                marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice * 1.1,
+                marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice * 1.25
+              )
+            : 999999,
+        // TODO:
+        // margin:
+        //   openCfdRequest.typeOfPosition === TypeOfPosition.BUY
+        //     ? (openCfdRequest.amount * marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice) /
+        //       openCfdRequest.leverage
+        //     : (openCfdRequest.amount * marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice) /
+        //       openCfdRequest.leverage,
 
-      margin: randomIntFromInterval(openCfdRequest.margin * 0.9, openCfdRequest.margin * 1.5),
+        margin: randomIntFromInterval(openCfdRequest.margin * 0.9, openCfdRequest.margin * 1.5),
+      },
+      renewalDeadline: newTimestamp,
     });
 
     setDataRenewedStyle('text-lightYellow2');
@@ -198,10 +206,11 @@ const PositionOpenModal = ({
       return;
     }
 
-    if (secondsLeft === 0) {
-      setSecondsLeft(POSITION_PRICE_RENEWAL_INTERVAL_SECONDS);
-      renewDataHandler();
-    }
+    // if (secondsLeft === 0) {
+    //   setSecondsLeft(POSITION_PRICE_RENEWAL_INTERVAL_SECONDS);
+    //   renewDataHandler();
+    // }
+
     // async () => {
     //   if (secondsLeft === 0) {
     //     await wait(500);
@@ -209,8 +218,19 @@ const PositionOpenModal = ({
     //   }
     // };
 
+    // it will start from 2 second
+    // const newTimestamp = new Date().getTime() / 1000 + POSITION_PRICE_RENEWAL_INTERVAL_SECONDS;
+
     const intervalId = setInterval(() => {
-      setSecondsLeft(prevSeconds => prevSeconds - 1);
+      // setSecondsLeft(prevSeconds => prevSeconds - 1);
+
+      const base = renewalDeadline;
+      const tickingSec = base - Date.now() / 1000;
+      setSecondsLeft(tickingSec > 0 ? Math.round(tickingSec) : 0);
+
+      if (secondsLeft === 0) {
+        renewDataHandler();
+      }
     }, 1000);
 
     return () => {

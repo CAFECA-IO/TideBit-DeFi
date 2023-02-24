@@ -34,6 +34,9 @@ import {
 } from '../interfaces/tidebit_defi_background/public_order';
 import {IPnL} from '../interfaces/tidebit_defi_background/pnl';
 import {ProfitState} from '../constants/profit_state';
+import {OrderType} from '../constants/order_type';
+import {OrderStatusUnion} from '../constants/order_status_union';
+import {TypeOfPosition} from '../constants/type_of_position';
 
 export interface IToastify {
   type: 'error' | 'warning' | 'info' | 'success';
@@ -74,6 +77,32 @@ export interface IDataPositionClosedModal {
   openCfdDetails: IOpenCFDDetails;
   latestProps: IClosedCFDInfoProps;
 }
+
+export interface IDataPositionOpenModal {
+  openCfdRequest: IPublicCFDOrder;
+  renewalDeadline: number;
+}
+
+export const dummyDataPositionOpenModal: IDataPositionOpenModal = {
+  openCfdRequest: {
+    id: '001',
+    orderType: OrderType.CFD,
+    orderStatus: OrderStatusUnion.PROCESSING,
+    ticker: 'ETH',
+    price: 20193.1,
+    triggerPrice: 20193.1,
+    typeOfPosition: TypeOfPosition.SELL,
+    leverage: 5,
+    margin: 1,
+    guranteedStop: true,
+    estimatedFilledPrice: 1,
+    fee: 0.0001,
+    targetUnit: 'ETH',
+    chargeUnit: 'USDT',
+    createdTime: 1676369333495,
+  },
+  renewalDeadline: new Date('2023-02-24T17:00:00').getTime(),
+};
 
 export const dummyDataPositionClosedModal: IDataPositionClosedModal = {
   openCfdDetails: dummyOpenCFDDetails,
@@ -298,8 +327,8 @@ export interface IGlobalContext {
 
   visiblePositionOpenModal: boolean;
   visiblePositionOpenModalHandler: () => void;
-  dataPositionOpenModal: IPublicCFDOrder | null;
-  dataPositionOpenModalHandler: (data: IPublicCFDOrder) => void;
+  dataPositionOpenModal: IDataPositionOpenModal | null;
+  dataPositionOpenModalHandler: (data: IDataPositionOpenModal) => void;
 
   visiblePositionUpdatedModal: boolean;
   visiblePositionUpdatedModalHandler: () => void;
@@ -533,8 +562,9 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
   );
 
   const [visiblePositionOpenModal, setVisiblePositionOpenModal] = useState(false);
-  const [dataPositionOpenModal, setDataPositionOpenModal] =
-    useState<IPublicCFDOrder>(dummyPublicCFDOrder); // TODO: Open position parameter
+  const [dataPositionOpenModal, setDataPositionOpenModal] = useState<IDataPositionOpenModal>(
+    dummyDataPositionOpenModal
+  ); // TODO: Open position parameter
 
   const [visiblePositionUpdatedModal, setVisiblePositionUpdatedModal] = useState(false);
   const [dataPositionUpdatedModal, setDataPositionUpdatedModal] =
@@ -723,7 +753,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
   };
 
   // TODO: Open position parameter
-  const dataPositionOpenModalHandler = (data: IPublicCFDOrder) => {
+  const dataPositionOpenModalHandler = (data: IDataPositionOpenModal) => {
     setDataPositionOpenModal(data);
   };
 
@@ -1044,7 +1074,8 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
       <PositionOpenModal
         modalVisible={visiblePositionOpenModal}
         modalClickHandler={visiblePositionOpenModalHandler}
-        openCfdRequest={dataPositionOpenModal}
+        openCfdRequest={dataPositionOpenModal.openCfdRequest}
+        renewalDeadline={dataPositionOpenModal.renewalDeadline}
       />
       <PositionClosedModal
         modalVisible={visiblePositionClosedModal}

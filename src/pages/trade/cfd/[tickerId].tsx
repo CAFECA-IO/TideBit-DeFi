@@ -31,8 +31,8 @@ interface IPageProps {
 // props: IPageProps
 const Trading = (props: IPageProps) => {
   const marketCtx = useContext(MarketContext);
-
   const router = useRouter();
+
   const {layoutAssertion} = useGlobal();
   const displayedNavBar = layoutAssertion === 'mobile' ? <NavBarMobile /> : <NavBar />;
   const appCtx = useContext(AppContext);

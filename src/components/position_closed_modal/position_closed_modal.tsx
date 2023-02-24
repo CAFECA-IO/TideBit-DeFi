@@ -67,7 +67,7 @@ const PositionClosedModal = ({
       : '';
 
   const displayedTypeOfPosition =
-    openCfdDetails?.typeOfPosition === 'BUY' ? 'Up (Buy)' : 'Down (Sell)';
+    openCfdDetails?.typeOfPosition === TypeOfPosition.BUY ? 'Up (Buy)' : 'Down (Sell)';
 
   const displayedPnLColor =
     openCfdDetails?.pnl.type === ProfitState.PROFIT
@@ -77,10 +77,14 @@ const PositionClosedModal = ({
       : TypeOfPnLColor.EQUAL;
 
   const displayedBorderColor =
-    openCfdDetails?.typeOfPosition === 'BUY' ? TypeOfBorderColor.LONG : TypeOfBorderColor.SHORT;
+    openCfdDetails?.typeOfPosition === TypeOfPosition.BUY
+      ? TypeOfBorderColor.LONG
+      : TypeOfBorderColor.SHORT;
 
   const displayedPositionColor =
-    openCfdDetails.typeOfPosition === 'BUY' ? TypeOfPnLColor.PROFIT : TypeOfPnLColor.LOSS;
+    openCfdDetails.typeOfPosition === TypeOfPosition.BUY
+      ? TypeOfPnLColor.PROFIT
+      : TypeOfPnLColor.LOSS;
 
   const layoutInsideBorder = 'mx-5 my-4 flex justify-between';
 

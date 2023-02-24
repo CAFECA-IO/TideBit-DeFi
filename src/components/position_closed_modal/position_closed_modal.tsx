@@ -1,4 +1,3 @@
-/*eslint-disable no-console */
 import {ImCross} from 'react-icons/im';
 import {IOpenCFDDetails} from '../../interfaces/tidebit_defi_background/open_cfd_details';
 import {
@@ -213,8 +212,8 @@ const PositionClosedModal = ({
 
     // globalCtx.visiblePositionClosedModalHandler();
 
-    console.log('in renewDataHandler, deadline: ', latestProps.renewalDeadline);
-    console.log('in renewDataHandler, newTimestamp: ', newTimestamp);
+    // console.log('in renewDataHandler, deadline: ', latestProps.renewalDeadline);
+    // console.log('in renewDataHandler, newTimestamp: ', newTimestamp);
 
     await wait(DELAYED_HIDDEN_SECONDS / 5);
 
@@ -242,35 +241,15 @@ const PositionClosedModal = ({
     if (!globalCtx.visiblePositionClosedModal) {
       setSecondsLeft(POSITION_PRICE_RENEWAL_INTERVAL_SECONDS);
       setDataRenewedStyle('text-lightWhite');
-
-      // now = Date.now();
-      // deadline = now + RENEWAL_INTERVAL_SECONDS * 1000;
-
-      // let now = Date.now()
-      // let deadline = now + secondsLeft * 1000
-
-      // console.log('open cfd PNL: ', openCfdDetails.pnl);
-      // console.log('latest PNL: ', latestProps.latestPnL);
-
       return;
     }
-    // const deadline = Date.now() + secondsLeft * 1000;
-    // console.log('openCfd pnl: ', openCfdDetails.pnl);
 
-    // 原本有用的 code 在改成用 deadline - now 的方式之後就被直接在 useEffect 裡的 setInterval 寫 if (secondsLeft === 0) 就 renewData，並且在 renewData 裡面重新設定 secondsLeft 取代了
-    // 但還能讓 countdown 的數字跑到 1 就更新，不會跑到 0
-    if (Math.floor(secondsLeft) === 0) {
-      renewDataStyleHandler();
-
-      console.log('should renew the deadline: ', latestProps.renewalDeadline);
-
-      // const tickingSec = latestProps.renewalDeadline - Date.now() / 1000;
-      // // console.log('inside useEffect: ', tickingSec);
-      // setSecondsLeft(tickingSec > 0 ? Math.round(tickingSec) : 0);
-
-      // setSecondsLeft(POSITION_PRICE_RENEWAL_INTERVAL_SECONDS);
-      // setSecondsLeft(latestProps.renewalDeadline - Date.now() / 1000);
-    }
+    // // 原本有用的 code 在改成用 deadline - now 的方式之後就被直接在 useEffect 裡的 setInterval 寫 if (secondsLeft === 0) 就 renewData，並且在 renewData 裡面重新設定 secondsLeft 取代了
+    // // 但還能讓 countdown 的數字跑到 1 就更新，不會跑到 0
+    // if (Math.floor(secondsLeft) === 0) {
+    //   renewDataStyleHandler();
+    //   // console.log('should renew the deadline: ', latestProps.renewalDeadline);
+    // }
 
     // async () => {
     //   if (secondsLeft === 0) {
@@ -306,19 +285,20 @@ const PositionClosedModal = ({
     const intervalId = setInterval(() => {
       // setSecondsLeft(Math.max(0, Math.round((latestProps.renewalDeadline - Date.now()) / 1000)));
 
-      console.log('deadline before ticking: ', latestProps.renewalDeadline);
+      // console.log('deadline before ticking: ', latestProps.renewalDeadline);
 
       const base = latestProps.renewalDeadline;
 
       const tickingSec = base - Date.now() / 1000;
       // const tickingSec = latestProps.renewalDeadline - Date.now() / 1000 > 0 ? Math.round(latestProps.renewalDeadline - Date.now() / 1000) : Math.round();
 
-      console.log('inside useEffect: ', tickingSec);
+      // console.log('inside useEffect: ', tickingSec);
 
       // setSecondsLeft()
 
       setSecondsLeft(tickingSec > 0 ? Math.round(tickingSec) : 0);
-      console.log('in setInterval, secondsLeft: ', secondsLeft);
+      // console.log('in setInterval, secondsLeft: ', secondsLeft);
+
       // setSecondsLeft(Math.round(tickingSec > 0 ? tickingSec : 0));
       // setSecondsLeft(Math.max(0, Math.round(tickingSec)));
       // setSecondsLeft(Math.round(latestProps.renewalDeadline - Date.now() / 1000));

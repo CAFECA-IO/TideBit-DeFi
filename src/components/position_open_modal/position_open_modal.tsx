@@ -1,3 +1,4 @@
+/*eslint-disable no-console */
 import {ImCross} from 'react-icons/im';
 import {IOpenCFDDetails} from '../../interfaces/tidebit_defi_background/open_cfd_details';
 import {
@@ -227,6 +228,16 @@ const PositionOpenModal = ({
       const base = renewalDeadline;
       const tickingSec = base - Date.now() / 1000;
       setSecondsLeft(tickingSec > 0 ? Math.round(tickingSec) : 0);
+
+      //
+      console.log(
+        'in setInterval, base: ',
+        base,
+        ', tickingSec: ',
+        tickingSec,
+        ', secondsLeft: ',
+        secondsLeft
+      );
 
       if (secondsLeft === 0) {
         renewDataHandler();

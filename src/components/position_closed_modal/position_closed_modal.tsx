@@ -11,7 +11,7 @@ import Image from 'next/image';
 import {locker, randomIntFromInterval, timestampToString, wait} from '../../lib/common';
 import {useContext, useEffect, useState} from 'react';
 import {MarketContext} from '../../contexts/market_context';
-import {INIT_POSITION_REMAINING_SECONDS} from '../../constants/config';
+import {SECONDS_INTERVAL_UNTIL_RENEWAL} from '../../constants/config';
 import {TypeOfPosition} from '../../constants/type_of_position';
 import {IClosedCFDInfoProps, useGlobal} from '../../contexts/global_context';
 import {BsClockHistory} from 'react-icons/bs';
@@ -198,8 +198,11 @@ const PositionClosedModal = ({
 
   useEffect(() => {
     if (!globalCtx.visiblePositionClosedModal) {
-      setSecondsLeft(INIT_POSITION_REMAINING_SECONDS);
+      setSecondsLeft(SECONDS_INTERVAL_UNTIL_RENEWAL);
       setDataRenewedStyle('text-lightWhite');
+
+      // let now = Date.now()
+      // let deadline = now + secondsLeft * 1000
 
       // console.log('open cfd PNL: ', openCfdDetails.pnl);
       // console.log('latest PNL: ', latestProps.latestPnL);
@@ -210,7 +213,7 @@ const PositionClosedModal = ({
     // console.log('openCfd pnl: ', openCfdDetails.pnl);
 
     if (secondsLeft === 0) {
-      setSecondsLeft(INIT_POSITION_REMAINING_SECONDS);
+      setSecondsLeft(SECONDS_INTERVAL_UNTIL_RENEWAL);
       renewDataStyleHandler();
     }
     // async () => {
@@ -221,6 +224,20 @@ const PositionClosedModal = ({
     // };
 
     // console.log('before setInterval'); // 每跳一秒就重設 interval
+    // const now = new Date().getTime();
+    // TODO: --------timestamp in milliseconds-----------
+    const now = Date.now();
+    const deadline = now + secondsLeft * 1000;
+    const options = {hour12: false};
+
+    const nowString = new Date(now).toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, options);
+    const deadlineString = new Date(deadline).toLocaleString(
+      UNIVERSAL_NUMBER_FORMAT_LOCALE,
+      options
+    );
+
+    // console.log('NOW: ', now, nowString);
+    // console.log('DEADLINE: ', deadline, deadlineString);
 
     const intervalId = setInterval(() => {
       setSecondsLeft(prevSeconds => prevSeconds - 1); // 改成終點線-現在時間線

@@ -4,6 +4,7 @@ import {
   OPEN_POSITION_LINE_GRAPH_WIDTH,
   TypeOfPnLColorHex,
   TypeOfTransaction,
+  UNIVERSAL_NUMBER_FORMAT_LOCALE,
 } from '../../constants/display';
 import PositionLineGraph from '../position_line_graph/position_line_graph';
 import PositionDetailsModal from '../position_details_modal/position_details_modal';
@@ -49,6 +50,16 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
   // const passedHour = ((nowTimestamp - openCfdDetails.openTimestamp) / 3600).toFixed(0);
   const passedHour = Math.round((nowTimestamp - openCfdDetails.openTimestamp) / 3600);
   // console.log('passedHour', passedHour);
+
+  // const now = Date.now();
+  // const deadline = now + 15 * 1000;
+  // const options = {hour12: false};
+
+  // const nowString = new Date(now).toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, options);
+  // const deadlineString = new Date(deadline).toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, options);
+
+  // console.log('NOW: ', now, nowString);
+  // console.log('DEADLINE: ', deadline, deadlineString);
 
   const squareClickHandler = () => {
     visiblePositionClosedModalHandler();

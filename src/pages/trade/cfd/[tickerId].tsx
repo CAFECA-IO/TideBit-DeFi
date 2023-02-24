@@ -30,6 +30,8 @@ interface IPageProps {
 // {tickerId}
 // props: IPageProps
 const Trading = (props: IPageProps) => {
+  const marketCtx = useContext(MarketContext);
+
   const router = useRouter();
   const {layoutAssertion} = useGlobal();
   const displayedNavBar = layoutAssertion === 'mobile' ? <NavBarMobile /> : <NavBar />;
@@ -131,6 +133,8 @@ export const getStaticPaths: GetStaticPaths = async () => {
   // TODO: Get available tickerIds from API
   // const res = marketCtx.availableTickers;
   // console.log(res);
+
+  // TODO: 收到路徑之後切換 ticker
 
   const tickerIds = [
     'ethusdt',

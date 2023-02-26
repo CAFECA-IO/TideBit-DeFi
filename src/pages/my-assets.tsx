@@ -32,17 +32,12 @@ const MyAssets = () => {
         {displayedNavBar}
 
         <main>
-          <div className="flex min-h-screen flex-col items-center justify-center overflow-hidden pt-0">
-            <AssetsPageBody />
-            {/* <div className="">~AssetsPageBody~</div>
+          <AssetsPageBody />
+          {/* <div className="">~AssetsPageBody~</div>
           <div className="">Balance / Withdraw / Deposit</div>
           <div className="">PnL Section</div>
           <div className="">Interest Section</div>
           <div className="">Receipt Section</div> */}
-          </div>
-          <div className="">
-            <Footer />
-          </div>
         </main>
       </div>
     </>

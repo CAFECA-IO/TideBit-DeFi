@@ -9,6 +9,7 @@ import RippleButton from '../ripple_button/ripple_button';
 const BalanceSection = () => {
   const globalCtx = useGlobal();
   const userCtx = useContext(UserContext);
+  const {layoutAssertion} = globalCtx;
 
   // TODO: userBalance from userContext
   // TODO: fixed to two decimal places

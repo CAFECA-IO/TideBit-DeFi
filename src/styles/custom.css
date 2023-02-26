@@ -7,16 +7,16 @@
 }
 
 /* Container holding the image and the text */
-.imgContainer {
+.balanceImgContainer {
   position: relative;
   text-align: center;
   /* color: white; */
 }
 
 /* Centered text */
-.textCentered {
+.balanceTextCentered {
   position: absolute;
-  top: 50%;
+  top: 45%;
   left: 50%;
   transform: translate(-50%, -50%);
 }

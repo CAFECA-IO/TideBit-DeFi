@@ -6,6 +6,7 @@ import {useGlobal} from '../contexts/global_context';
 import NavBarMobile from '../components/nav_bar_mobile/nav_bar_mobile';
 import Footer from '../components/footer/footer';
 import AssetsPageBody from '../components/assets_page_body/assets_page_body';
+import Head from 'next/head';
 
 // TODO: layoutAssertion is constants objects
 const MyAssets = () => {
@@ -21,23 +22,30 @@ const MyAssets = () => {
   }, []);
 
   return (
-    <div>
-      {displayedNavBar}
+    <>
+      <Head>
+        <title>My Assets - TideBit DeFi</title>
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
 
-      <main>
-        <div className="flex min-h-screen flex-col items-center justify-center overflow-hidden pt-0">
-          <AssetsPageBody />
-          {/* <div className="">~AssetsPageBody~</div>
+      <div>
+        {displayedNavBar}
+
+        <main>
+          <div className="flex min-h-screen flex-col items-center justify-center overflow-hidden pt-0">
+            <AssetsPageBody />
+            {/* <div className="">~AssetsPageBody~</div>
           <div className="">Balance / Withdraw / Deposit</div>
           <div className="">PnL Section</div>
           <div className="">Interest Section</div>
           <div className="">Receipt Section</div> */}
-        </div>
-        <div className="">
-          <Footer />
-        </div>
-      </main>
-    </div>
+          </div>
+          <div className="">
+            <Footer />
+          </div>
+        </main>
+      </div>
+    </>
   );
 };
 

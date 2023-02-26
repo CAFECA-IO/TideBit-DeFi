@@ -10,13 +10,10 @@ const BalanceSection = () => {
   const circleSize = '380';
   const eyeIconSize = 30;
 
-  // TODO: 用 image container 來置中圖片上的文字
-  // flex w-full justify-center text-center
   return (
     <div className="">
-      {/* absolute top-52 left-1/2 w-300px bg-cuteBlue */}
       <div className="">
-        <div className="relative">
+        <div className="imgContainer">
           <CircularProgressBar
             progressBarColor={['#29C1E1']}
             numerator={avblBalance}
@@ -26,7 +23,7 @@ const BalanceSection = () => {
           />
         </div>
 
-        <div className="absolute top-52 left-1/2 w-300px bg-cuteBlue">
+        <div className="textCentered dark:bg-cuteBlue">
           <div className="flex items-center space-x-2">
             <p>Total Balance</p>{' '}
             <button type="button" className="hover:cursor-pointer">
@@ -34,7 +31,14 @@ const BalanceSection = () => {
                 src="/elements/group_15205.svg"
                 width={eyeIconSize}
                 height={eyeIconSize}
-                alt="eye icon"
+                alt="eye open icon"
+              />
+
+              <Image
+                src="/elements/group_152051.svg"
+                width={eyeIconSize}
+                height={eyeIconSize}
+                alt="eye close icon"
               />
             </button>
           </div>

@@ -1,8 +1,15 @@
-import React, {useState} from 'react';
+import React, {useContext, useState} from 'react';
 import CircularProgressBar from '../circular_progress_bar/circular_progress_bar';
 import Image from 'next/image';
+import TideButton from '../tide_button/tide_button';
+import {useGlobal} from '../../contexts/global_context';
+import {UserContext} from '../../contexts/user_context';
+import RippleButton from '../ripple_button/ripple_button';
 
 const BalanceSection = () => {
+  const globalCtx = useGlobal();
+  const userCtx = useContext(UserContext);
+
   // TODO: userBalance from userContext
   // TODO: fixed to two decimal places
   const totalBalance = Number((200.8489).toFixed(2));
@@ -13,6 +20,28 @@ const BalanceSection = () => {
 
   const circleSize = '380';
   const eyeIconSize = 30;
+  const depositBtnStyle =
+    'mt-4 rounded border-0 bg-tidebitTheme py-2 px-30px lg:px-40px text-base text-white transition-all duration-300 hover:bg-cyan-600 md:mt-0';
+  const withdrawBtnStyle =
+    'mt-4 rounded border-0 bg-tidebitTheme py-2 px-25px lg:px-33px text-base text-white transition-all duration-300 hover:bg-cyan-600 md:mt-0';
+
+  const depositBtn = (
+    <p className="flex items-center space-x-3 text-center">
+      Deposit
+      <span className="ml-3">
+        <Image src="/elements/group_149621.svg" width={15} height={15} alt="deposit icon" />
+      </span>
+    </p>
+  );
+
+  const withdrawBtn = (
+    <p className="flex items-center space-x-3 text-center">
+      Withdraw
+      <span className="ml-3">
+        <Image src="/elements/group_14962.svg" width={15} height={15} alt="withdraw icon" />
+      </span>
+    </p>
+  );
 
   const hiddenClickHandler = () => {
     setHidden(!hidden);
@@ -39,6 +68,14 @@ const BalanceSection = () => {
   const displayedAvblBalance = hidden ? '*****' : avblBalance;
 
   const displayedLockedBalance = hidden ? '*****' : lockedBalance;
+
+  const depositClickHandler = () => {
+    globalCtx.visibleDepositModalHandler();
+  };
+
+  const withdrawClickHandler = () => {
+    globalCtx.visibleWithdrawalModalHandler();
+  };
 
   return (
     <div className="">
@@ -70,8 +107,25 @@ const BalanceSection = () => {
               Avbl: <span className="text-base text-lightWhite">{displayedAvblBalance}</span> /
               Locked: <span className="text-base text-lightWhite">{displayedLockedBalance}</span>
             </div>
-            <div className=""></div>
           </div>
+        </div>
+
+        <div className="flex justify-center space-x-5">
+          <RippleButton
+            className={`${depositBtnStyle}`}
+            onClick={depositClickHandler}
+            buttonType="button"
+          >
+            {depositBtn}
+          </RippleButton>
+
+          <RippleButton
+            className={`${withdrawBtnStyle}`}
+            onClick={withdrawClickHandler}
+            buttonType="button"
+          >
+            {withdrawBtn}
+          </RippleButton>
         </div>
       </div>
     </div>

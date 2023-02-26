@@ -16,10 +16,16 @@
 /* Centered text */
 .balanceTextCentered {
   position: absolute;
-  top: 45%;
+  top: 42%;
   left: 50%;
   transform: translate(-50%, -50%);
 }
+
+/* @media (max-width: 480px) {
+  .balanceTextCentered {
+    top: 20%;
+  }
+} */
 
 /* .thousands-separator:lang(en):before,
 .thousands-separator:lang(zh):before {

@@ -8,7 +8,8 @@ import Footer from '../footer/footer';
 const AssetsPageBody = () => {
   return (
     <div>
-      <div className="flex min-h-screen flex-col items-center justify-center overflow-hidden pt-0">
+      <div>
+        {' '}
         <div className="">
           <BalanceSection />{' '}
         </div>

@@ -29,7 +29,7 @@ const PnlSection = () => {
     ({title, content, remarks, textColor}, index) => (
       <div
         key={title}
-        style={{height: '150px', marginTop: '10px'}}
+        style={{height: '', marginTop: '10px'}}
         className="mx-20 mb-6 flex w-screen justify-center border-b border-lightGray/50 p-4 lg:mx-0 lg:mb-0 lg:w-1/3 lg:border-b-0 lg:border-r"
       >
         <div className="h-full space-y-3 text-center lg:text-start">

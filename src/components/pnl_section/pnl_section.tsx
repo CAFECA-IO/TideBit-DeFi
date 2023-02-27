@@ -34,7 +34,7 @@ const PnlSection = () => {
       >
         <div className="h-full space-y-3 text-center lg:text-start">
           <h1 className={`text-lg leading-relaxed xl:text-xl`}>{title}</h1>
-          <h2 className={`text-3xl font-medium text-white xl:text-4xl ${textColor}`}>{content}</h2>
+          <h2 className={`text-3xl font-medium xl:text-4xl ${textColor}`}>{content}</h2>
           <p className={`text-lg leading-relaxed xl:text-xl ${textColor}`}>{remarks}</p>
         </div>
 

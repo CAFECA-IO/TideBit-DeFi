@@ -16,7 +16,7 @@ const AssetsPageBody = () => {
         <div className="">
           <PnlSection />{' '}
         </div>
-        <div className="">
+        <div className="mt-5 mb-5">
           <InterestSection />{' '}
         </div>
         <div className="">

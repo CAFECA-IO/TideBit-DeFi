@@ -21,34 +21,42 @@ const MyAssets = () => {
     }
   }, []);
 
-  return (
+  const initUI = (
     <>
-      <Head>
-        <title>My Assets - TideBit DeFi</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+      {appCtx.isInit ? (
+        <>
+          <Head>
+            <title>My Assets - TideBit DeFi</title>
+            <link rel="icon" href="/favicon.ico" />
+          </Head>
 
-      <div>
-        {displayedNavBar}
+          <div>
+            {displayedNavBar}
 
-        <main>
-          {/*  min-h-screen */}
-          <div className="flex flex-col items-center justify-center overflow-hidden">
-            {' '}
-            <AssetsPageBody />
-            {/* <div className="">~AssetsPageBody~</div>
+            <main>
+              {/*  min-h-screen */}
+              <div className="">
+                {' '}
+                <AssetsPageBody />
+                {/* <div className="">~AssetsPageBody~</div>
           <div className="">Balance / Withdraw / Deposit</div>
           <div className="">PnL Section</div>
           <div className="">Interest Section</div>
           <div className="">Receipt Section</div> */}
-          </div>
-        </main>
-        {/* <div className="">
+              </div>
+            </main>
+            {/* <div className="">
           <Footer />
         </div> */}
-      </div>
+          </div>
+        </>
+      ) : (
+        <div>Loading...</div>
+      )}
     </>
   );
+
+  return <>{initUI}</>;
 };
 
 const getStaticPropsFunction = async ({locale}: {locale: any}) => ({

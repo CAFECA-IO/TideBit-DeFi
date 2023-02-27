@@ -81,7 +81,8 @@ const BalanceSection = () => {
   return (
     <div className="">
       <div className="">
-        <div className="balanceImgContainer">
+        {/* balanceImgContainer */}
+        <div className="relative text-center">
           <CircularProgressBar
             progressBarColor={['#29C1E1']}
             numerator={avblBalance}
@@ -91,7 +92,9 @@ const BalanceSection = () => {
           />
         </div>
 
-        <div className="balanceTextCentered space-y-6 dark:bg-black">
+        {/* balanceTextCentered */}
+        {/*  xl:top-[28%] */}
+        <div className="absolute left-1/2 top-1/4 -translate-x-1/2 -translate-y-3/5 space-y-6 dark:bg-black">
           <div className="flex items-center justify-center space-x-2 text-center">
             <p className="text-base text-lightGray">Total Balance</p>{' '}
             <button onClick={hiddenClickHandler} type="button" className="hover:cursor-pointer">

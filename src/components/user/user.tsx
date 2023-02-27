@@ -74,7 +74,7 @@ const User = () => {
             </div>
           </li>
           <li>
-            <a href="#" className="block py-2 pr-4 pl-3 hover:bg-darkGray5">
+            <a href="/my-assets" className="block py-2 pr-4 pl-3 hover:bg-darkGray5">
               <div className="flex flex-row items-center space-x-2">
                 <VscAccount />
                 <p>My Account</p>

@@ -8,7 +8,7 @@ import Footer from '../footer/footer';
 const AssetsPageBody = () => {
   return (
     <div>
-      <div className="pt-20">
+      <div className="pt-10">
         {' '}
         <div className="">
           <BalanceSection />{' '}

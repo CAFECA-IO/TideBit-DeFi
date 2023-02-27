@@ -43,6 +43,9 @@ const MyAssets = () => {
           <div className="">Receipt Section</div> */}
           </div>
         </main>
+        {/* <div className="">
+          <Footer />
+        </div> */}
       </div>
     </>
   );

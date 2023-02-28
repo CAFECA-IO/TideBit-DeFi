@@ -9,6 +9,7 @@ import AssetsPageBody from '../components/assets_page_body/assets_page_body';
 import Head from 'next/head';
 
 // TODO: layoutAssertion is constants objects
+// TODO: is no user, show the wallet connect button
 const MyAssets = () => {
   const {layoutAssertion} = useGlobal();
   const displayedNavBar = layoutAssertion === 'mobile' ? <NavBarMobile /> : <NavBar />;

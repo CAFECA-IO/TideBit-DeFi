@@ -145,7 +145,7 @@ export const NotificationProvider = ({children}: INotificationProvider) => {
     setUnreadNotifications(updateUnreadNotifications);
   };
 
-  React.useMemo(() => emitter.on(TideBitEvent.DISCONNECTED_WALLET, clearPrivateNotification), []);
+  React.useMemo(() => emitter.on(TideBitEvent.DISCONNECTED, clearPrivateNotification), []);
   React.useMemo(
     () => emitter.on(TideBitEvent.UPDATE_READ_NOTIFICATIONS_RESULT, updateNotifications),
     []

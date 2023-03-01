@@ -250,7 +250,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     setBalance(null);
     setOpenedCFDs([]);
     setClosedCFDs([]);
-    notificationCtx.emitter.emit(TideBitEvent.DISCONNECTED_WALLET);
+    notificationCtx.emitter.emit(TideBitEvent.DISCONNECTED);
   };
 
   const lunar = new Lunar();

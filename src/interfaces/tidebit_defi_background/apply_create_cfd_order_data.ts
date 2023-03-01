@@ -19,4 +19,6 @@ export interface IApplyCreateCFDOrderData {
   guaranteedStop?: boolean;
   guaranteedStopFee?: number;
   liquidationPrice: number; // 強制平倉價格
+  liquidationTime: number;
+  remark: string;
 }

@@ -1,31 +1,50 @@
+import EventEmitter from 'events';
 import React, {useContext, createContext} from 'react';
 import useState from 'react-usestateref';
-import {UserContext} from './user_context';
-import {MarketContext} from './market_context';
+import {ModifyType} from '../constants/modify_type';
+import {OrderState} from '../constants/order_state';
+import {OrderType} from '../constants/order_type';
+import {TideBitEvent} from '../constants/tidebit_event';
+import {IBalance} from '../interfaces/tidebit_defi_background/balance';
+import {getDummyCandlestickChartData} from '../interfaces/tidebit_defi_background/candlestickData';
+import {getDummyClosedCFDs} from '../interfaces/tidebit_defi_background/closed_cfd_details';
+import {dummyDepositOrder} from '../interfaces/tidebit_defi_background/deposit_order';
+// import {UserContext} from './user_context';
+// import {MarketContext} from './market_context';
 import {
   createDummyPrivateNotificationItem,
   dummyNotifications,
   dummyUnReadNotifications,
   INotificationItem,
 } from '../interfaces/tidebit_defi_background/notification_item';
-import {TideBitEvent} from '../constants/tidebit_event';
+import {getDummyOpenCFDs} from '../interfaces/tidebit_defi_background/open_cfd_details';
+import {getDummyTicker, ITickerData} from '../interfaces/tidebit_defi_background/ticker_data';
+import {getDummyTickerLiveStatistics} from '../interfaces/tidebit_defi_background/ticker_live_statistics';
+import {getDummyTickerStatic} from '../interfaces/tidebit_defi_background/ticker_static';
+import {dummyWithdrawalOrder} from '../interfaces/tidebit_defi_background/withdrawal_order';
+import {IUserBalance} from './user_context';
 
 export interface INotificationProvider {
   children: React.ReactNode;
 }
 
 export interface INotificationContext {
-  notifications: INotificationItem[] | null;
-  unreadNotifications: INotificationItem[] | null;
+  emitter: EventEmitter;
+  notifications: INotificationItem[];
+  unreadNotifications: INotificationItem[];
   isRead: (id: string) => Promise<void>;
   readAll: () => Promise<void>;
   init: () => Promise<void>;
   reset: () => void;
 }
 
+let dummyDepositInterval: NodeJS.Timeout | null = null;
+let dummyWithdrawInterval: NodeJS.Timeout | null = null;
+
 export const NotificationContext = createContext<INotificationContext>({
-  notifications: null,
-  unreadNotifications: null,
+  emitter: new EventEmitter(),
+  notifications: [],
+  unreadNotifications: [],
   isRead: (id: string) => Promise.resolve(),
   readAll: () => Promise.resolve(),
   init: () => Promise.resolve(),
@@ -33,54 +52,78 @@ export const NotificationContext = createContext<INotificationContext>({
 });
 
 export const NotificationProvider = ({children}: INotificationProvider) => {
-  const marketCtx = useContext(MarketContext);
-  const [notifications, setNotifications, notificationsRef] = useState<INotificationItem[] | null>(
-    null
-  );
+  // const marketCtx = useContext(MarketContext);
+  const emitter = React.useMemo(() => new EventEmitter(), []);
+  const [notifications, setNotifications, notificationsRef] = useState<INotificationItem[]>([]);
   const [unreadNotifications, setUnreadNotifications, unreadNotificationsRef] = useState<
-    INotificationItem[] | null
-  >(null);
-  const userCtx = useContext(UserContext);
-  const [wallet, setWallet, walletRef] = useState<string | null>(userCtx.wallet);
+    INotificationItem[]
+  >([]);
+  const [selectedTicker, setSelectedTicker, selectedTickerRef] = useState<ITickerData | null>(null);
 
   const isRead = async (id: string) => {
-    if (userCtx.enableServiceTerm) {
-      const updateNotifications: INotificationItem[] = notificationsRef.current
-        ? [...notificationsRef.current]
-        : [];
-      const index = updateNotifications.findIndex(n => n.id === id);
-      if (index !== -1) {
-        updateNotifications[index] = {
-          ...updateNotifications[index],
-          isRead: true,
-        };
-      }
-      setNotifications(updateNotifications);
-      setUnreadNotifications(updateNotifications.filter(n => !n.isRead));
-      await userCtx.readNotifications([updateNotifications[index]]);
+    const updatedNotifications: INotificationItem[] = [...notificationsRef.current];
+    const index = updatedNotifications.findIndex(n => n.id === id);
+    if (index !== -1) {
+      updatedNotifications[index] = {
+        ...updatedNotifications[index],
+        isRead: true,
+      };
     }
+    emitter.emit(TideBitEvent.UPDATE_READ_NOTIFICATIONS, updatedNotifications);
     return;
   };
 
   const readAll = async () => {
-    if (userCtx.enableServiceTerm) {
-      const updateNotifications: INotificationItem[] = notificationsRef.current
-        ? notificationsRef.current.map(n => ({
-            ...n,
-            isRead: true,
-          }))
-        : [];
-      setNotifications(updateNotifications);
-      setUnreadNotifications(updateNotifications.filter(n => !n.isRead));
-      await userCtx.readNotifications(updateNotifications);
-    }
+    const updatedNotifications: INotificationItem[] = notificationsRef.current
+      ? notificationsRef.current.map(n => ({
+          ...n,
+          isRead: true,
+        }))
+      : [];
+    emitter.emit(TideBitEvent.UPDATE_READ_NOTIFICATIONS, updatedNotifications);
     return;
+  };
+
+  const updateNotifications = (notifications: INotificationItem[]) => {
+    const updateNotifications: INotificationItem[] = [
+      ...notificationsRef.current,
+      ...notifications,
+    ];
+    // eslint-disable-next-line no-console
+    setNotifications(updateNotifications);
+    setUnreadNotifications(updateNotifications.filter(n => !n.isRead));
+    // setNotifications(notifications);
+    // setUnreadNotifications(notifications.filter(n => !n.isRead));
+  };
+
+  const dummyDepositUpdate = () => {
+    dummyDepositInterval = setInterval(() => {
+      if (selectedTickerRef.current) {
+        const random = Math.random() > 0.5;
+        emitter.emit(TideBitEvent.ORDER, {
+          orderType: OrderType.DEPOSIT,
+          modifyType: ModifyType.Add,
+          orders: [dummyDepositOrder],
+        });
+      }
+    }, 5000);
+  };
+
+  const dummyWithdrawUpdate = () => {
+    dummyWithdrawInterval = setInterval(() => {
+      if (selectedTickerRef.current) {
+        const random = Math.random() > 0.5;
+        emitter.emit(TideBitEvent.ORDER, {
+          orderType: OrderType.DEPOSIT,
+          modifyType: ModifyType.Add,
+          orders: [dummyWithdrawalOrder],
+        });
+      }
+    }, 5000);
   };
 
   const init = async () => {
     // console.log(`NotificationProvider init is called`);
-    setNotifications(dummyNotifications);
-    setUnreadNotifications(dummyUnReadNotifications);
     return await Promise.resolve();
   };
 
@@ -90,32 +133,36 @@ export const NotificationProvider = ({children}: INotificationProvider) => {
     return;
   };
 
-  React.useEffect(() => {
-    if (userCtx.wallet !== walletRef.current) {
-      setWallet(userCtx.wallet);
-      let updateNotifications: INotificationItem[] = notificationsRef.current
-        ? [...notificationsRef.current]
-        : [];
-      let updateUnreadNotifications: INotificationItem[] = [];
-      // Event: Login
-      if (userCtx.enableServiceTerm) {
-        const dummyPrivateNotification = createDummyPrivateNotificationItem(
-          userCtx.wallet,
-          `this is from useEffect`
-        );
-        updateNotifications.push(dummyPrivateNotification);
-        updateUnreadNotifications = updateNotifications.filter(n => !n.isRead);
-      } else {
-        // Event: Logout
-        updateNotifications = updateNotifications.filter(n => n.public);
-        updateUnreadNotifications = updateNotifications.filter(n => !n.isRead);
-      }
-      setNotifications(updateNotifications);
-      setUnreadNotifications(updateUnreadNotifications);
-    }
-  }, [userCtx.wallet]);
+  // Event: Logout
+  const clearPrivateNotification = () => {
+    let updateNotifications: INotificationItem[] = notificationsRef.current
+      ? [...notificationsRef.current]
+      : [];
+    let updateUnreadNotifications: INotificationItem[] = [];
+    updateNotifications = updateNotifications.filter(n => n.public);
+    updateUnreadNotifications = updateNotifications.filter(n => !n.isRead);
+    setNotifications(updateNotifications);
+    setUnreadNotifications(updateUnreadNotifications);
+  };
+
+  React.useMemo(() => emitter.on(TideBitEvent.DISCONNECTED, clearPrivateNotification), []);
+  React.useMemo(
+    () => emitter.on(TideBitEvent.UPDATE_READ_NOTIFICATIONS_RESULT, updateNotifications),
+    []
+  );
+
+  React.useMemo(
+    () =>
+      emitter.on(TideBitEvent.TICKER_CHANGE, (ticker: ITickerData) => {
+        setSelectedTicker(ticker);
+      }),
+    []
+  );
+
+  React.useMemo(() => emitter.on(TideBitEvent.NOTIFICATIONS, updateNotifications), []);
 
   const defaultValue = {
+    emitter,
     notifications: notificationsRef.current,
     unreadNotifications: unreadNotificationsRef.current,
     isRead,

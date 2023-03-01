@@ -37,6 +37,9 @@ import {
   ICandlestickData,
 } from '../interfaces/tidebit_defi_background/candlestickData';
 import {TideBitEvent} from '../constants/tidebit_event';
+import {NotificationContext} from './notification_context';
+import {WorkerContext} from './worker_context';
+import {APIRequest, Method} from '../constants/api_request';
 
 const SAMPLE_TICKERS = [
   'ETH',
@@ -72,6 +75,7 @@ export interface ITransferOptions {
 
 export interface IMarketContext {
   selectedTicker: ITickerData | null;
+  selectedTickerRef: React.MutableRefObject<ITickerData | null>;
   availableTickers: ITickerData[] | null;
   isCFDTradable: boolean;
   showPositionOnChart: boolean;
@@ -95,6 +99,7 @@ export interface IMarketContext {
 // TODO: Note: _app.tsx 啟動的時候 => createContext
 export const MarketContext = createContext<IMarketContext>({
   selectedTicker: dummyTicker,
+  selectedTickerRef: React.createRef<ITickerData>(),
   availableTickers: [],
   isCFDTradable: false,
   showPositionOnChart: false,
@@ -144,7 +149,9 @@ const availableTransferOptions = [
 
 export const MarketProvider = ({children}: IMarketProvider) => {
   const userCtx = useContext(UserContext);
-  const [wallet, setWallet, walletRef] = useState<string | null>(userCtx.wallet);
+  const notificationCtx = useContext(NotificationContext);
+  const workerCtx = useContext(WorkerContext);
+  // const [wallet, setWallet, walletRef] = useState<string | null>(userCtx.wallet);
   const [selectedTicker, setSelectedTicker, selectedTickerRef] = useState<ITickerData | null>(null);
   const [tickerStatic, setTickerStatic] = useState<ITickerStatic | null>(null);
   const [tickerLiveStatistics, setTickerLiveStatistics] = useState<ITickerLiveStatistics | null>(
@@ -208,10 +215,12 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     setTickerLiveStatistics(tickerLiveStatistics);
     const candlestickChartData = getDummyCandlestickChartData();
     setCandlestickChartData(candlestickChartData);
-    if (userCtx.enableServiceTerm) {
-      userCtx.listOpenCFDs(currency);
-      userCtx.listClosedCFDs(currency);
-    }
+    // if (userCtx.enableServiceTerm) {
+    //   userCtx.listOpenCFDs(currency);
+    //   userCtx.listClosedCFDs(currency);
+    // }
+    // notificationCtx.emitter.emit(TideBitEvent.TICKER_CHANGE, ticker);
+    workerCtx.tickerChangeHandler(ticker);
     return dummyResultSuccess;
   };
 
@@ -221,30 +230,74 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     return candlestickChartData;
   };
 
-  React.useEffect(() => {
-    if (userCtx.wallet !== walletRef.current) {
-      setWallet(userCtx.wallet);
-      // Event: Login
-      if (userCtx.enableServiceTerm && selectedTickerRef.current) {
-        userCtx.listOpenCFDs(selectedTickerRef.current.currency);
-        userCtx.listClosedCFDs(selectedTickerRef.current.currency);
-      }
-    }
-  }, [userCtx.wallet]);
-
   const init = async () => {
     // console.log(`MarketProvider init is called`);
-    setSelectedTicker(dummyTicker);
-    setAvailableTickers([...dummyTickers]);
-    setCandlestickChartData(getDummyCandlestickChartData());
-    setTickerLiveStatistics(dummyTickerLiveStatistics);
-    setTickerStatic(dummyTickerStatic);
     setIsCFDTradable(true);
+    workerCtx.requestHandler({
+      name: APIRequest.LIST_TICKERS,
+      request: {
+        name: APIRequest.LIST_TICKERS,
+        method: Method.GET,
+        url: 'http://localhost:3000/api/tickers',
+      },
+      callback: (tickers: ITickerData[]) => {
+        setAvailableTickers([...tickers]);
+        selectTickerHandler(tickers[0].currency);
+      },
+    });
     return await Promise.resolve();
   };
 
+  React.useMemo(
+    () =>
+      notificationCtx.emitter.on(TideBitEvent.IS_CFD_TRADEBLE, (isCFDTradable: boolean) => {
+        setIsCFDTradable(isCFDTradable);
+      }),
+    []
+  );
+
+  React.useMemo(
+    () =>
+      notificationCtx.emitter.on(TideBitEvent.TICKER, (ticker: ITickerData) => {
+        setSelectedTicker(ticker);
+        // ++ TODO: update availableTickers
+      }),
+    []
+  );
+
+  React.useMemo(
+    () =>
+      notificationCtx.emitter.on(TideBitEvent.TICKER_STATISTIC, (tickerStatic: ITickerStatic) => {
+        setTickerStatic(tickerStatic);
+      }),
+    []
+  );
+
+  React.useMemo(
+    () =>
+      notificationCtx.emitter.on(
+        TideBitEvent.TICKER_LIVE_STATISTIC,
+        (tickerLiveStatistics: ITickerLiveStatistics) => {
+          setTickerLiveStatistics(tickerLiveStatistics);
+        }
+      ),
+    []
+  );
+
+  React.useMemo(
+    () =>
+      notificationCtx.emitter.on(
+        TideBitEvent.CANDLESTICK,
+        (candlestickData: ICandlestickData[]) => {
+          setCandlestickChartData(candlestickData);
+        }
+      ),
+    []
+  );
+
   const defaultValue = {
     selectedTicker,
+    selectedTickerRef,
     selectTickerHandler,
     availableTickers,
     isCFDTradable,

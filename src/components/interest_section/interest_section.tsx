@@ -17,7 +17,13 @@ const InterestSection = () => {
   const interestContentJsx = Object.entries(interestInfo).map(([key, value]) => (
     <div className="mb-6 hidden w-full justify-center p-4 text-lightGray lg:mx-0 lg:mb-0 lg:flex lg:w-1/4 lg:grow">
       <div className="h-full w-full space-y-8 text-center lg:text-start">
-        <h1 className={`text-lg leading-relaxed xl:text-xl`}>{key}</h1>
+        <h1 className={`text-lg leading-relaxed xl:text-xl`}>
+          {key === 'interest30Days'
+            ? 'Interest you earn in 30 days'
+            : key === 'cumulativeInterest'
+            ? 'Cumulative Interest'
+            : key}
+        </h1>
         {/* <h2 className={`text-3xl font-medium text-white xl:text-4xl`}>content</h2> */}
         <p
           className={`leading-relaxed text-lightWhite xl:text-xl ${
@@ -32,9 +38,15 @@ const InterestSection = () => {
   ));
 
   const interestContentJsxMobile = Object.entries(interestInfo).map(([key, value]) => (
-    <div className="flex w-full justify-center lg:hidden">
-      <div className="h-full w-full space-y-8 text-center lg:text-start">
-        <h1 className={`text-lg leading-relaxed xl:text-xl`}>{key}</h1>
+    <div className="mt-14 flex w-full justify-center text-lightGray lg:hidden">
+      <div className="h-full w-full space-y-5 text-center lg:text-start">
+        <h1 className={`text-lg leading-relaxed xl:text-xl`}>
+          {key === 'interest30Days'
+            ? 'Interest you earn in 30 days'
+            : key === 'cumulativeInterest'
+            ? 'Cumulative Interest'
+            : key}
+        </h1>
         {/* <h2 className={`text-3xl font-medium text-white xl:text-4xl`}>content</h2> */}
         <p
           className={`leading-relaxed text-lightWhite xl:text-xl ${

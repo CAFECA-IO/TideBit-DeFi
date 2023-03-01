@@ -298,19 +298,29 @@ export const UserProvider = ({children}: IUserProvider) => {
     return success;
   };
 
-  const signServiceTerm = async () => {
-    const term = ServiceTerm;
-    term.message.from = lunar.address;
-    const reult = await lunar.signTypedData(term);
-    // const verifyR = await lunar.verify(lunar.address, reult, term);
-    // if (verifyR) {
-    setEnableServiceTerm(true);
-    await setPrivateData(lunar.address);
-    // } else {
-    //   // ++TODO
-    // }
-    // return verifyR;
-    return true;
+  const signServiceTerm = async (): Promise<boolean> => {
+    let signedResult: string;
+    // eslint-disable-next-line no-console
+    // console.log(`signServiceTerm lunar.isConnected`, lunar.isConnected);
+    // eslint-disable-next-line no-console
+    // console.log(`signServiceTerm lunar.address`, lunar.address);
+    if (lunar.isConnected) {
+      signedResult = await lunar.signTypedData(ServiceTerm);
+      //   const verifyR = await lunar.verify(lunar.address, signedResult, ServiceTerm);
+      // if (verifyR) {
+      // eslint-disable-next-line no-console
+      // console.log(`signServiceTerm signedResult`, signedResult);
+      setEnableServiceTerm(true);
+      await setPrivateData(lunar.address);
+      // } else {
+      //   // ++TODO
+      // }
+      // return verifyR;
+      return true;
+    } else {
+      await connect();
+      return signServiceTerm();
+    }
   };
 
   const disconnect = async () => {

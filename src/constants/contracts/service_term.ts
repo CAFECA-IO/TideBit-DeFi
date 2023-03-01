@@ -34,22 +34,12 @@ const ServiceTerm: IEIP712Data = {
       {name: 'chainId', type: 'string'},
       {name: 'verifyingContract', type: 'address'},
     ],
-    // Not an EIP712Domain definition
-    Group: [
-      {name: 'name', type: 'string'},
-      {name: 'members', type: 'Person[]'},
-    ],
     // Refer to PrimaryType
     ServiceTerm: [
       {name: 'title', type: 'string'},
       {name: 'content', type: 'string'},
       {name: 'from', type: 'string'},
       {name: 'to', type: 'string'},
-    ],
-    // Not an EIP712Domain definition
-    Person: [
-      {name: 'name', type: 'string'},
-      {name: 'wallets', type: 'address[]'},
     ],
   },
 };

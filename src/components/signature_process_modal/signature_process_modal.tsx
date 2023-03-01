@@ -173,11 +173,11 @@ const SignatureProcessModal = ({
       if (signResult) {
         setConnectingProcess(ConnectingProcess.CONNECTED);
 
-        await wait(DELAYED_HIDDEN_SECONDS);
+        await wait(DELAYED_HIDDEN_SECONDS / 5);
         // globalCtx.visibleSignatureProcessModalHandler();
         setConnectingProcess(ConnectingProcess.EMPTY);
       } else {
-        await wait(DELAYED_HIDDEN_SECONDS);
+        await wait(DELAYED_HIDDEN_SECONDS / 5);
         setConnectingProcess(ConnectingProcess.REJECTED);
         return;
       }

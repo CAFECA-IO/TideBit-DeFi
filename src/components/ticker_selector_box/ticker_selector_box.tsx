@@ -8,6 +8,8 @@ import CryptoCard from '../crypto_card/crypto_card';
 import {MarketContext, IMarketContext} from '../../contexts/market_context';
 import {UserContext, IUserContext} from '../../contexts/user_context';
 import {ILineGraphProps, ITickerData} from '../../interfaces/tidebit_defi_background/ticker_data';
+import {useRouter} from 'next/router';
+import eventEmitter, {ClickEvent} from '../../constants/tidebit_event';
 
 // TODO: useContext
 interface ITickerSelectorBox {
@@ -40,6 +42,8 @@ const TickerSelectorBox = ({
   const marketCtx = useContext<IMarketContext>(MarketContext);
   const userCtx = useContext(UserContext) as IUserContext;
 
+  const router = useRouter();
+
   const [activeTab, setActiveTab] = useState('All');
 
   // const cryptoCards = useMemo(() => {
@@ -49,6 +53,22 @@ const TickerSelectorBox = ({
   //     return favorites;
   //   }
   // }, [activeTab, allCards, favorites]);
+
+  const cardClickHandler = (route: string) => {
+    tickerSelectorBoxClickHandler();
+    routing(route);
+
+    eventEmitter.emit(ClickEvent.TICKER_CHANGED, () => {
+      // console.log('event emitted');
+      return;
+    });
+  };
+
+  const routing = (currency: string) => {
+    const base = currency.toLocaleLowerCase();
+    router.push(`/trade/cfd/${base}usdt`);
+    // console.log(`/trade/cfd/${base}usdt`);
+  };
 
   const convertTickersToCryptoCardsData = (availableTickers: ITickerData[]) => {
     const cryptoCardsData: ICryptoCardData[] = availableTickers?.map((each, index) => {
@@ -134,10 +154,15 @@ const TickerSelectorBox = ({
 
   useEffect(() => {
     const cryptoCardsData = convertTickersToCryptoCardsData(marketCtx.listAvailableTickers());
-    setFilteredCards(cryptoCardsData);
+    // const updatedCard = {...cryptoCardsData, starred: false};
+    // Log in and log out will clear the star
+    const allCardsData = userCtx.enableServiceTerm
+      ? cryptoCardsData
+      : cryptoCardsData.map(card => ({...card, starred: false}));
+    setFilteredCards(allCardsData);
     const favoriteTabCardsData = cryptoCardsData.filter(cryptoCardData => cryptoCardData.starred);
     setFilteredFavorites(favoriteTabCardsData);
-  }, [userCtx.favoriteTickers]);
+  }, [userCtx.favoriteTickers, userCtx.enableServiceTerm]);
 
   useEffect(() => {
     const cryptoCardsData = convertTickersToCryptoCardsData(marketCtx.listAvailableTickers());
@@ -203,9 +228,7 @@ const TickerSelectorBox = ({
         return (
           <CryptoCard
             key={cryptoCard.currency}
-            cardClickHandler={() => {
-              tickerSelectorBoxClickHandler();
-            }}
+            cardClickHandler={() => cardClickHandler(cryptoCard.currency)}
             className="mt-4 ml-4"
             lineGraphProps={cryptoCard.lineGraphProps}
             star={cryptoCard.star}
@@ -225,9 +248,11 @@ const TickerSelectorBox = ({
       return (
         <CryptoCard
           key={cryptoCard.currency}
-          cardClickHandler={() => {
-            tickerSelectorBoxClickHandler();
-          }}
+          // cardClickHandler={() => {
+          //   tickerSelectorBoxClickHandler();
+          //   routing(cryptoCard.currency);
+          // }}
+          cardClickHandler={() => cardClickHandler(cryptoCard.currency)}
           className="mt-0"
           lineGraphProps={cryptoCard.lineGraphProps}
           star={cryptoCard.star}
@@ -250,9 +275,11 @@ const TickerSelectorBox = ({
       return (
         <CryptoCard
           key={cryptoCard.currency}
-          cardClickHandler={() => {
-            tickerSelectorBoxClickHandler();
-          }}
+          // cardClickHandler={() => {
+          //   tickerSelectorBoxClickHandler();
+          //   routing(cryptoCard.currency);
+          // }}
+          cardClickHandler={() => cardClickHandler(cryptoCard.currency)}
           className="mt-4 ml-4"
           lineGraphProps={cryptoCard.lineGraphProps}
           star={cryptoCard.star}
@@ -272,9 +299,11 @@ const TickerSelectorBox = ({
     return (
       <CryptoCard
         key={cryptoCard.currency}
-        cardClickHandler={() => {
-          tickerSelectorBoxClickHandler();
-        }}
+        cardClickHandler={() => cardClickHandler(cryptoCard.currency)}
+        // cardClickHandler={() => {
+        //   tickerSelectorBoxClickHandler();
+        //   routing(cryptoCard.currency);
+        // }}
         className="mt-0"
         lineGraphProps={cryptoCard.lineGraphProps}
         star={cryptoCard.star}
@@ -309,7 +338,7 @@ const TickerSelectorBox = ({
 
   const tabPart = (
     <>
-      <div className="z-10 hidden w-1200px flex-wrap border-gray-200 text-center text-sm font-medium text-gray-400 xl:flex">
+      <div className="z-10 hidden w-1200px flex-wrap border-gray-200 text-center text-sm font-medium text-gray-400 lg:flex">
         <div className="pr-1">
           <button
             type="button"
@@ -340,7 +369,7 @@ const TickerSelectorBox = ({
 
   const isDisplayedTickerSelectorBox = tickerSelectorBoxVisible ? (
     <>
-      <div className="fixed inset-0 z-50 hidden items-center justify-center overflow-x-auto overflow-y-auto outline-none backdrop-blur-sm focus:outline-none xl:flex">
+      <div className="fixed inset-0 z-50 hidden items-center justify-center overflow-x-auto overflow-y-auto outline-none backdrop-blur-sm focus:outline-none lg:flex">
         {/* The position of the box */}
         <div
           className="relative my-6 mx-auto min-w-fit"

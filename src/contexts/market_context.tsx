@@ -57,219 +57,6 @@ const SAMPLE_TICKERS = [
   'Flow',
 ];
 
-// export interface IPositionInfoOnChart {}
-
-export const PositionInfoOnChart: ApexOptions = {
-  chart: {
-    type: 'candlestick',
-    height: 0,
-
-    toolbar: {
-      show: false,
-      tools: {
-        zoom: false,
-        zoomin: false,
-        zoomout: false,
-        pan: false,
-      },
-    },
-
-    // dropShadow: {
-    //   enabled: true,
-    //   top: 0,
-    //   left: 0,
-    //   blur: 3,
-    //   opacity: 0.5,
-    // },
-  },
-  responsive: [
-    {
-      breakpoint: 500,
-      options: {
-        candlestick: {
-          width: '1000',
-        },
-      },
-    },
-  ],
-  title: {
-    text: '',
-    align: 'left',
-  },
-  xaxis: {
-    type: 'datetime',
-    labels: {
-      style: {
-        colors: TRADING_CHART_BORDER_COLOR,
-      },
-    },
-    axisTicks: {
-      show: false,
-    },
-  },
-  grid: {
-    show: false,
-    // show: true,
-    // yaxis: {
-    //   lines: {show: false},
-    // },
-    // xaxis: {
-    //   lines: {show: false},
-    // },
-    // padding: {
-    //   right: 300,
-    // },
-  },
-
-  yaxis: {
-    tooltip: {
-      enabled: true,
-    },
-    labels: {
-      show: true,
-      align: 'center',
-      style: {
-        colors: TRADING_CHART_BORDER_COLOR,
-      },
-    },
-    opposite: true,
-    axisBorder: {
-      show: true,
-      color: TRADING_CHART_BORDER_COLOR,
-    },
-    axisTicks: {
-      show: false,
-    },
-  },
-  tooltip: {
-    enabled: true,
-    fillSeriesColor: false,
-    theme: 'dark',
-  },
-
-  plotOptions: {
-    candlestick: {
-      colors: {
-        upward: TypeOfPnLColorHex.PROFIT,
-        downward: TypeOfPnLColorHex.LOSS,
-      },
-      wick: {
-        useFillColor: true,
-      },
-    },
-  },
-
-  // markers: {
-  //   discrete: [
-  //     {
-  //       seriesIndex: 0,
-  //       dataPointIndex: dataArray.length - 1,
-  //       size: 1,
-  //       strokeColor: strokeColor[0],
-  //       shape: 'circle',
-  //     },
-  //   ],
-  // },
-  // grid: {
-  //   show: true,
-  //   borderColor: strokeColor[0],
-  //   strokeDashArray: 5,
-  //   position: 'back',
-  // },
-  // forecastDataPoints: {
-  //   count: 2,
-  //   fillOpacity: 0.5,
-  //   dashArray: 2,
-  // },
-  annotations: {
-    // position: 'back',
-    yaxis: [
-      {
-        y: 1800,
-        strokeDashArray: 3,
-        borderColor: TypeOfPnLColorHex.LOSS,
-        width: '100%',
-        fillColor: '#ffffff',
-
-        label: {
-          position: 'right',
-          borderColor: 'transparent',
-          textAnchor: 'end',
-          offsetY: 10,
-          offsetX: 2,
-          style: {
-            color: '#ffffff',
-            fontSize: '12px',
-            background: TypeOfPnLColorHex.LOSS,
-            padding: {
-              right: 10,
-            },
-          },
-          text: `Position $1800 Close`,
-          borderWidth: 20,
-        },
-
-        offsetX: 0,
-      },
-      {
-        y: 3500,
-        strokeDashArray: 3,
-        borderColor: TypeOfPnLColorHex.PROFIT,
-        width: '100%',
-        fillColor: '#ffffff',
-
-        label: {
-          position: 'right',
-          borderColor: 'transparent',
-          textAnchor: 'end',
-          offsetY: 10,
-          offsetX: 2,
-          style: {
-            color: '#ffffff',
-            fontSize: '12px',
-            background: TypeOfPnLColorHex.PROFIT,
-            padding: {
-              right: 10,
-            },
-          },
-          text: `Position $3500 Close`,
-          borderWidth: 20,
-        },
-
-        offsetX: 0,
-      },
-      {
-        y: 3000,
-        strokeDashArray: 0,
-        borderColor: TypeOfPnLColorHex.TIDEBIT_THEME,
-        width: '105%',
-        fillColor: '#ffffff',
-
-        label: {
-          position: 'right',
-          borderColor: 'transparent',
-          textAnchor: 'end',
-          offsetY: 10,
-          offsetX: 42,
-          style: {
-            color: '#ffffff',
-            fontSize: '12px',
-            background: TypeOfPnLColorHex.TIDEBIT_THEME,
-            padding: {
-              left: -5,
-              right: 20,
-            },
-          },
-          text: `$3000`,
-          borderWidth: 20,
-        },
-
-        offsetX: 0,
-      },
-    ],
-  },
-};
-
 export interface IMarketProvider {
   children: React.ReactNode;
 }
@@ -285,11 +72,11 @@ export interface ITransferOptions {
 
 export interface IMarketContext {
   selectedTicker: ITickerData | null;
+  selectedTickerRef: React.MutableRefObject<ITickerData | null>;
   availableTickers: ITickerData[] | null;
   isCFDTradable: boolean;
   showPositionOnChart: boolean;
   showPositionOnChartHandler: (bool: boolean) => void;
-  positionInfoOnChart: ApexOptions | null;
   candlestickId: string;
   candlestickChartIdHandler: (id: string) => void;
   availableTransferOptions: ITransferOptions[];
@@ -309,11 +96,11 @@ export interface IMarketContext {
 // TODO: Note: _app.tsx 啟動的時候 => createContext
 export const MarketContext = createContext<IMarketContext>({
   selectedTicker: dummyTicker,
+  selectedTickerRef: React.createRef<ITickerData>(),
   availableTickers: [],
   isCFDTradable: false,
   showPositionOnChart: false,
   showPositionOnChartHandler: () => null,
-  positionInfoOnChart: null,
   candlestickId: '',
   candlestickChartIdHandler: () => null,
   availableTransferOptions: [],
@@ -376,8 +163,6 @@ export const MarketProvider = ({children}: IMarketProvider) => {
   const [showPositionOnChart, setShowPositionOnChart] = useState<boolean>(
     INITIAL_POSITION_LABEL_DISPLAYED_STATE
   );
-
-  const [positionInfoOnChart, setPositionInfoOnChart] = useState<ApexOptions>(PositionInfoOnChart);
 
   const showPositionOnChartHandler = (bool: boolean) => {
     setShowPositionOnChart(bool);
@@ -462,12 +247,12 @@ export const MarketProvider = ({children}: IMarketProvider) => {
 
   const defaultValue = {
     selectedTicker,
+    selectedTickerRef,
     selectTickerHandler,
     availableTickers,
     isCFDTradable,
     showPositionOnChart,
     showPositionOnChartHandler,
-    positionInfoOnChart,
     candlestickId,
     candlestickChartData,
     candlestickChartIdHandler,

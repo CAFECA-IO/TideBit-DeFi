@@ -289,6 +289,11 @@ export const UserProvider = ({children}: IUserProvider) => {
     let success = false;
     try {
       const connect = await lunar.connect({});
+      // eslint-disable-next-line no-console
+      // console.log(`connect connect`, connect);
+      // eslint-disable-next-line no-console
+      // console.log(`connect lunar.isConnected`, lunar.isConnected);
+
       if (connect) {
         success = true;
       }

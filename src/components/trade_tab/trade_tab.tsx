@@ -13,6 +13,7 @@ import EventEmitter from 'events';
 import {TypeOfPosition} from '../../constants/type_of_position';
 import {OrderType} from '../../constants/order_type';
 import {OrderStatusUnion} from '../../constants/order_status_union';
+import eventEmitter from '../../constants/ticker_event';
 
 const TradeTab = () => {
   const globalCtx = useGlobal();
@@ -23,6 +24,25 @@ const TradeTab = () => {
   //   setMarginInputValue(0);
   //   console.log(new Date());
   // };
+
+  useEffect(() => {
+    eventEmitter.once('TICKER_CHANGED', () => {
+      // console.log('event received in trade tab');
+      // console.log('selectedTicker: ', marketCtx.selectedTicker);
+      // console.log('selectedTicker Ref: ', marketCtx.selectedTickerRef.current);
+
+      marketPrice = tickerLiveStatistics?.price ?? TEMP_PLACEHOLDER;
+      // marginDetection(1);
+      // getMarginInputValue(marginInputValue);
+      renewValueOfPosition();
+
+      // console.log('marketPrice: ', marketPrice);
+    });
+
+    return () => {
+      eventEmitter.removeAllListeners('TICKER_CHANGED');
+    };
+  }, [marketCtx.selectedTicker]);
 
   // Emitter.on('TICKER_CHANGED', aFunc);
 
@@ -64,13 +84,13 @@ const TradeTab = () => {
   const TEMP_PLACEHOLDER = MARGIN_LIMIT_DIGITS;
 
   const ticker = marketCtx.selectedTicker?.currency ?? '';
-  const LIQUIDATION_PRICE = 7548; // TODO: tickerLiveStatistics
+  // const LIQUIDATION_PRICE = 7548; // TODO: tickerLiveStatistics
   const USER_BALANCE = userCtx.balance?.available ?? 0;
 
   const leverage = tickerStaticStatistics?.leverage ?? 1;
   const guaranteedStopFee = tickerStaticStatistics?.guaranteedStopFee;
 
-  // const marketPrice = tickerLiveStatistics?.price ?? TEMP_PLACEHOLDER;
+  let marketPrice = tickerLiveStatistics?.price ?? TEMP_PLACEHOLDER;
 
   const buyPrice = (tickerLiveStatistics?.buyEstimatedFilledPrice ?? TEMP_PLACEHOLDER).toFixed(2); // market price * (1+spread)
   const sellPrice = (tickerLiveStatistics?.sellEstimatedFilledPrice ?? TEMP_PLACEHOLDER).toFixed(2); // market price * (1-spread)
@@ -92,12 +112,12 @@ const TradeTab = () => {
 
   // const marginInputRef = useRef<HTMLInputElement>(null);
 
-  const [marketPrice, SetMarketPrice, marketPriceRef] = useStateRef(tickerLiveStatistics!.price);
+  // const [marketPrice, SetMarketPrice, marketPriceRef] = useStateRef(tickerLiveStatistics!.price);
 
   const [longTooltipStatus, setLongTooltipStatus] = useState(0);
   const [shortTooltipStatus, setShortTooltipStatus] = useState(0);
 
-  const [marginInputValue, setMarginInputValue] = useState(0.02);
+  const [marginInputValue, setMarginInputValue, marginInputValueRef] = useStateRef(0.02);
 
   // FIXME: SL setting should have a lower limit and an upper limit depending on its position type
   const [longTpValue, setLongTpValue] = useState(longRecommendedTp);
@@ -114,19 +134,18 @@ const TradeTab = () => {
   const [shortGuaranteedStopChecked, setShortGuaranteedStopChecked] = useState(false);
 
   const [requiredMargin, setRequiredMargin, requiredMarginRef] = useStateRef(
-    roundToDecimalPlaces((marginInputValue * marketPriceRef.current) / leverage, 2)
+    roundToDecimalPlaces((marginInputValue * marketPrice) / leverage, 2)
   );
-  const [valueOfPosition, setValueOfPosition] = useState(
-    roundToDecimalPlaces(marginInputValue * marketPriceRef.current, 2)
+  const [valueOfPosition, setValueOfPosition, valueOfPositionRef] = useStateRef(
+    roundToDecimalPlaces(marginInputValue * marketPrice, 2)
   );
   const [marginWarning, setMarginWarning] = useState(false);
 
   const [marginLength, setMarginLength] = useState(
-    roundToDecimalPlaces((marginInputValue * marketPriceRef.current) / leverage, 2).toString()
-      .length
+    roundToDecimalPlaces((marginInputValue * marketPrice) / leverage, 2).toString().length
   );
   const [valueOfPositionLength, setValueOfPositionLength] = useState(
-    roundToDecimalPlaces(marginInputValue * marketPriceRef.current, 2).toString().length
+    roundToDecimalPlaces(marginInputValue * marketPrice, 2).toString().length
   );
 
   const getMarginInputValue = (value: number) => {
@@ -150,8 +169,8 @@ const TradeTab = () => {
     setShortSlValue(value);
   };
 
-  const marginDetection = (value: number) => {
-    const newValueOfPosition = value * marketPriceRef.current;
+  const renewValueOfPosition = (value?: number) => {
+    const newValueOfPosition = marginInputValueRef.current * marketPrice;
     const roundedValueOfPosition = roundToDecimalPlaces(newValueOfPosition, 2);
     setValueOfPosition(roundedValueOfPosition);
 
@@ -163,6 +182,23 @@ const TradeTab = () => {
 
     setMarginLength(roundedMargin.toString().length);
     setValueOfPositionLength(roundedValueOfPosition.toString().length);
+  };
+
+  const marginDetection = (value: number) => {
+    renewValueOfPosition();
+
+    // const newValueOfPosition = value * marketPrice;
+    // const roundedValueOfPosition = roundToDecimalPlaces(newValueOfPosition, 2);
+    // setValueOfPosition(roundedValueOfPosition);
+
+    // const margin = newValueOfPosition / leverage;
+    // const roundedMargin = roundToDecimalPlaces(margin, 2);
+    // setRequiredMargin(roundedMargin);
+
+    // setMarginWarning(margin > USER_BALANCE);
+
+    // setMarginLength(roundedMargin.toString().length);
+    // setValueOfPositionLength(roundedValueOfPosition.toString().length);
   };
 
   const getToggledLongTpSetting = (bool: boolean) => {
@@ -181,22 +217,6 @@ const TradeTab = () => {
     // console.log('getToggledShortSlSetting', bool);
     setShortSlToggle(bool);
   };
-
-  // const longTpToggleClickHandler = () => {
-  //   setLongTpToggle(!longTpToggle);
-  // };
-
-  // const longSlToggleClickHandler = () => {
-  //   setLongSlToggle(!longSlToggle);
-  // };
-
-  // const shortTpToggleClickHandler = () => {
-  //   setShortTpToggle(!shortTpToggle);
-  // };
-
-  // const shortSlToggleClickHandler = () => {
-  //   setShortSlToggle(!shortSlToggle);
-  // };
 
   // `block` `flex`
   const isDisplayedLongSlSetting = longSlToggle ? 'flex' : 'invisible';
@@ -310,8 +330,8 @@ const TradeTab = () => {
       lowerLimit={0}
       upperLimit={MARGIN_LIMIT_DIGITS}
       getInputValue={getMarginInputValue}
-      inputInitialValue={marginInputValue}
-      inputValueFromParent={marginInputValue}
+      inputInitialValue={marginInputValueRef.current}
+      inputValueFromParent={marginInputValueRef.current}
       setInputValueFromParent={setMarginInputValue}
       inputPlaceholder="margin input"
       inputName="marginInput"
@@ -325,7 +345,7 @@ const TradeTab = () => {
     <>
       {/* <div className="mt-1 text-base text-lightWhite">$ 13.14 USDT</div> */}
       <div className={`${isDisplayedMarginStyle} ${isDisplayedMarginSize} mt-1 text-base`}>
-        $ {requiredMargin?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)} USDT
+        $ {requiredMarginRef.current?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)} USDT
       </div>
       <div className={`${isDisplayedMarginWarning} ml-3 text-xs text-lightRed`}>
         * Not enough margin
@@ -500,15 +520,15 @@ const TradeTab = () => {
 
   // useEffect(() => {
   //   // setRequiredMargin(
-  //   //   roundToDecimalPlaces((marginInputValue * marketPriceRef.current) / leverage, 2)
+  //   //   roundToDecimalPlaces((marginInputValue * marketPrice) / leverage, 2)
   //   // );
-  //   // setValueOfPosition(roundToDecimalPlaces(marginInputValue * marketPriceRef.current, 2));
+  //   // setValueOfPosition(roundToDecimalPlaces(marginInputValue * marketPrice, 2));
   //   // setMarginLength(
-  //   //   roundToDecimalPlaces((marginInputValue * marketPriceRef.current) / leverage, 2).toString()
+  //   //   roundToDecimalPlaces((marginInputValue * marketPrice) / leverage, 2).toString()
   //   //     .length
   //   // );
   //   // setValueOfPositionLength(
-  //   //   roundToDecimalPlaces(marginInputValue * marketPriceRef.current, 2).toString().length
+  //   //   roundToDecimalPlaces(marginInputValue * marketPrice, 2).toString().length
   //   // );
   //   console.log('selected ticker', marketCtx.selectedTicker);
   //   console.log('live price', tickerLiveStatistics?.price);
@@ -562,7 +582,8 @@ const TradeTab = () => {
                 <div className="ml-0 w-1/2 space-y-1">
                   <div className="text-sm text-lightGray">Value</div>
                   <div className={`text-base text-lightWhite ${isDisplayedValueSize}`}>
-                    $ {valueOfPosition?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)} USDT
+                    $ {valueOfPositionRef.current?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}{' '}
+                    USDT
                   </div>
                 </div>
               </div>
@@ -629,7 +650,8 @@ const TradeTab = () => {
                   <div className="w-1/2 space-y-1">
                     <div className="text-sm text-lightGray">Value</div>
                     <div className={`text-base text-lightWhite ${isDisplayedValueSize}`}>
-                      $ {valueOfPosition?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)} USDT
+                      $ {valueOfPositionRef.current?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}{' '}
+                      USDT
                     </div>
                   </div>
                 </div>

@@ -1,3 +1,4 @@
 export interface ICFDSuggestion {
-  closePrice: number;
+  stopLoss: number;
+  takeProfit: number;
 }

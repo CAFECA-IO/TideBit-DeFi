@@ -31,10 +31,8 @@ const TradeTab = () => {
       // console.log('selectedTicker: ', marketCtx.selectedTicker);
       // console.log('selectedTicker Ref: ', marketCtx.selectedTickerRef.current);
 
-      marketPrice = tickerLiveStatistics?.price ?? TEMP_PLACEHOLDER;
-      // marginDetection(1);
-      // getMarginInputValue(marginInputValue);
-      renewValueOfPosition();
+      marketPrice = marketCtx.selectedTickerRef.current?.price ?? TEMP_PLACEHOLDER;
+      renewValueOfPosition(marketPrice);
 
       // console.log('marketPrice: ', marketPrice);
     });
@@ -42,7 +40,18 @@ const TradeTab = () => {
     return () => {
       eventEmitter.removeAllListeners('TICKER_CHANGED');
     };
-  }, [marketCtx.selectedTicker]);
+  }, [marketCtx.selectedTickerRef.current]);
+
+  // eventEmitter.once('TICKER_CHANGED', () => {
+  //   console.log('[no useEffect] event received in trade tab');
+  //   // console.log('selectedTicker: ', marketCtx.selectedTicker);
+  //   // console.log('selectedTicker Ref: ', marketCtx.selectedTickerRef.current);
+
+  //   marketPrice = marketCtx.selectedTickerRef.current?.price ?? TEMP_PLACEHOLDER;
+  //   renewValueOfPosition(marketPrice);
+
+  //   // console.log('marketPrice: ', marketPrice);
+  // });
 
   // Emitter.on('TICKER_CHANGED', aFunc);
 
@@ -90,7 +99,8 @@ const TradeTab = () => {
   const leverage = tickerStaticStatistics?.leverage ?? 1;
   const guaranteedStopFee = tickerStaticStatistics?.guaranteedStopFee;
 
-  let marketPrice = tickerLiveStatistics?.price ?? TEMP_PLACEHOLDER;
+  // let marketPrice = tickerLiveStatistics?.price ?? TEMP_PLACEHOLDER;
+  let marketPrice = marketCtx.selectedTicker?.price ?? TEMP_PLACEHOLDER;
 
   const buyPrice = (tickerLiveStatistics?.buyEstimatedFilledPrice ?? TEMP_PLACEHOLDER).toFixed(2); // market price * (1+spread)
   const sellPrice = (tickerLiveStatistics?.sellEstimatedFilledPrice ?? TEMP_PLACEHOLDER).toFixed(2); // market price * (1-spread)
@@ -169,8 +179,12 @@ const TradeTab = () => {
     setShortSlValue(value);
   };
 
-  const renewValueOfPosition = (value?: number) => {
-    const newValueOfPosition = marginInputValueRef.current * marketPrice;
+  const renewValueOfPosition = (price?: number) => {
+    // console.log('marginInputValueRef.current', marginInputValueRef.current);
+    const newValueOfPosition = price
+      ? marginInputValueRef.current * price
+      : marginInputValueRef.current * marketPrice;
+
     const roundedValueOfPosition = roundToDecimalPlaces(newValueOfPosition, 2);
     setValueOfPosition(roundedValueOfPosition);
 
@@ -184,7 +198,7 @@ const TradeTab = () => {
     setValueOfPositionLength(roundedValueOfPosition.toString().length);
   };
 
-  const marginDetection = (value: number) => {
+  const marginDetection = (value?: number) => {
     renewValueOfPosition();
 
     // const newValueOfPosition = value * marketPrice;

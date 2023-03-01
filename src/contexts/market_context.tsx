@@ -72,6 +72,7 @@ export interface ITransferOptions {
 
 export interface IMarketContext {
   selectedTicker: ITickerData | null;
+  selectedTickerRef: React.MutableRefObject<ITickerData | null>;
   availableTickers: ITickerData[] | null;
   isCFDTradable: boolean;
   showPositionOnChart: boolean;
@@ -95,6 +96,7 @@ export interface IMarketContext {
 // TODO: Note: _app.tsx 啟動的時候 => createContext
 export const MarketContext = createContext<IMarketContext>({
   selectedTicker: dummyTicker,
+  selectedTickerRef: React.createRef<ITickerData>(),
   availableTickers: [],
   isCFDTradable: false,
   showPositionOnChart: false,
@@ -245,6 +247,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
 
   const defaultValue = {
     selectedTicker,
+    selectedTickerRef,
     selectTickerHandler,
     availableTickers,
     isCFDTradable,

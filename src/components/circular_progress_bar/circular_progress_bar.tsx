@@ -13,6 +13,7 @@ interface ICircularProgressBarProps {
   hollowSize: string;
   circularBarSize: string;
   clickHandler?: () => void;
+  className?: string;
 }
 
 const CircularProgressBar = ({
@@ -22,6 +23,7 @@ const CircularProgressBar = ({
   hollowSize,
   circularBarSize,
   clickHandler,
+  className,
 }: ICircularProgressBarProps) => {
   const percentage = [(numerator / denominator) * 100];
   const label = [`${numerator} H`];
@@ -88,7 +90,7 @@ const CircularProgressBar = ({
 
   return (
     <>
-      <div onClick={clickHandler}>
+      <div onClick={clickHandler} className={className}>
         <Chart
           options={chartOptions}
           height={circularBarSize}

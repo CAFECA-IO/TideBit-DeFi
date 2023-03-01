@@ -36,7 +36,11 @@ const Cta = () => {
                 href="/trade/cfd/ethusdt"
                 className="px-2 py-1 font-normal xxs:text-xxs sm:py-2 sm:px-5 sm:text-base xl:py-3 xl:px-5 xl:text-lg"
               >
-                <TideButton>{t('home_page.Cta_Button')}</TideButton>
+                <TideButton
+                  className={`mt-4 rounded border-0 bg-tidebitTheme py-2 px-5 text-base text-white transition-all duration-300 hover:bg-cyan-600 md:mt-0`}
+                >
+                  {t('home_page.Cta_Button')}
+                </TideButton>
               </a>
             </div>
           </div>
@@ -66,7 +70,11 @@ const Cta = () => {
                 href="/trading"
                 className="px-2 py-1 font-normal xxs:text-xxs sm:py-2 sm:px-5 sm:text-base xl:py-3 xl:px-5 xl:text-lg"
               >
-                <TideButton>{t('home_page.Cta_Button')}</TideButton>
+                <TideButton
+                  className={`mt-4 rounded border-0 bg-tidebitTheme py-2 px-5 text-base text-white transition-all duration-300 hover:bg-cyan-600 md:mt-0`}
+                >
+                  {t('home_page.Cta_Button')}
+                </TideButton>
               </a>
             </div>
           </div>

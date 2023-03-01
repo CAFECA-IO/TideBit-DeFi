@@ -122,7 +122,7 @@ const PositionOpenModal = ({
   };
 
   // TODO: Typo `guaranteedStop`
-  const displayedGuaranteedStopSetting = !!openCfdRequest.guranteedStop ? 'Yes' : 'No';
+  const displayedGuaranteedStopSetting = !!openCfdRequest.guaranteedStop ? 'Yes' : 'No';
 
   // TODO: i18n
   const displayedTypeOfPosition =

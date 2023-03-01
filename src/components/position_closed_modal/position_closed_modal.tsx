@@ -183,6 +183,7 @@ const PositionClosedModal = ({
     globalCtx.dataPositionClosedModalHandler({
       openCfdDetails: {
         ...openCfdDetails,
+        // TODO: 跟 userCtx 拿 getOpenCFD(id) 或自己算 PNL
         pnl: {
           type: randomIntFromInterval(0, 100) <= 50 ? ProfitState.PROFIT : ProfitState.LOSS,
           value: randomIntFromInterval(0, 1000),
@@ -194,13 +195,13 @@ const PositionClosedModal = ({
         latestClosedPrice:
           openCfdDetails.typeOfPosition === TypeOfPosition.BUY
             ? randomIntFromInterval(
-                marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice * 0.75,
-                marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice * 1.25
+                marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice * 0.75,
+                marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice * 1.25
               )
             : openCfdDetails.typeOfPosition === TypeOfPosition.SELL
             ? randomIntFromInterval(
-                marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice * 1.1,
-                marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice * 1.25
+                marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice * 1.1,
+                marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice * 1.25
               )
             : 99999,
         // latestPnL: {

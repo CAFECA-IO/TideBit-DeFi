@@ -1,11 +1,11 @@
 import React from 'react';
-import {TypeOfPnLColor} from '../../constants/display';
+import {TypeOfPnLColor, UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
 
 const PnlSection = () => {
   // TODO: pnl from userContext
   const pnlToday = {amount: -128.29, percentage: -1.5};
   const pnl30Days = {amount: 61545218.83, percentage: 10.36};
-  const cumulativePnl = {amount: 7692.47, percentage: 22.75};
+  const cumulativePnl = {amount: -57692.47, percentage: -22.75};
 
   // const displayedTextColor =
 
@@ -14,12 +14,15 @@ const PnlSection = () => {
     {title: 'PNL in 30 days', ...pnl30Days},
     {title: 'Cumulative PNL', ...cumulativePnl},
   ].map(({amount, percentage, ...rest}) => ({
-    content: amount > 0 ? `+ ${amount.toString()} USDT` : `${amount.toString()} USDT`,
+    content:
+      amount > 0
+        ? `+ ${amount.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)} USDT`
+        : `${amount.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)} USDT`,
     remarks: percentage > 0 ? `▴ + ${percentage.toString()} %` : `▾ ${percentage.toString()} %`,
     textColor:
-      percentage > 0
+      percentage > 0 && amount > 0
         ? TypeOfPnLColor.PROFIT
-        : percentage < 0
+        : percentage < 0 && amount < 0
         ? TypeOfPnLColor.LOSS
         : TypeOfPnLColor.EQUAL,
     ...rest,

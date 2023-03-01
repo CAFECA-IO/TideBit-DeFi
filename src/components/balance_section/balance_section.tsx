@@ -5,6 +5,7 @@ import TideButton from '../tide_button/tide_button';
 import {useGlobal} from '../../contexts/global_context';
 import {UserContext} from '../../contexts/user_context';
 import RippleButton from '../ripple_button/ripple_button';
+import {UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
 
 const BalanceSection = () => {
   const globalCtx = useGlobal();
@@ -13,9 +14,9 @@ const BalanceSection = () => {
 
   // TODO: userBalance from userContext
   // TODO: fixed to two decimal places
-  const totalBalance = Number((200.8489).toFixed(2));
-  const avblBalance = Number((80.5233).toFixed(2));
-  const lockedBalance = Number((120.3256).toFixed(2));
+  const totalBalance = Number((200005429.8489).toFixed(2));
+  const avblBalance = Number((80004531.5233).toFixed(2));
+  const lockedBalance = Number((120000058.3256).toFixed(2));
 
   const [hidden, setHidden] = useState(false);
 
@@ -64,11 +65,17 @@ const BalanceSection = () => {
     />
   );
 
-  const displayedBalance = hidden ? '********' : totalBalance;
+  const displayedBalance = hidden
+    ? '********'
+    : totalBalance.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE);
 
-  const displayedAvblBalance = hidden ? '*****' : avblBalance;
+  const displayedAvblBalance = hidden
+    ? '*****'
+    : avblBalance.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE);
 
-  const displayedLockedBalance = hidden ? '*****' : lockedBalance;
+  const displayedLockedBalance = hidden
+    ? '*****'
+    : lockedBalance.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE);
 
   const depositClickHandler = () => {
     globalCtx.visibleDepositModalHandler();
@@ -94,7 +101,7 @@ const BalanceSection = () => {
 
         {/* balanceTextCentered */}
         {/*  xl:top-[28%] */}
-        <div className="absolute left-1/2 top-300px -translate-x-1/2 -translate-y-3/5 space-y-6 dark:bg-black">
+        <div className="absolute left-1/2 top-300px -translate-x-1/2 -translate-y-3/5 space-y-6 dark:bg-transparent">
           <div className="flex items-center justify-center space-x-2 text-center">
             <p className="text-base text-lightGray">Total Balance</p>{' '}
             <button onClick={hiddenClickHandler} type="button" className="hover:cursor-pointer">

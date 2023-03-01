@@ -13,7 +13,7 @@ import EventEmitter from 'events';
 import {TypeOfPosition} from '../../constants/type_of_position';
 import {OrderType} from '../../constants/order_type';
 import {OrderStatusUnion} from '../../constants/order_status_union';
-import eventEmitter from '../../constants/ticker_event';
+import eventEmitter, {ClickEvent} from '../../constants/tidebit_event';
 
 const TradeTab = () => {
   const globalCtx = useGlobal();
@@ -26,7 +26,7 @@ const TradeTab = () => {
   // };
 
   useEffect(() => {
-    eventEmitter.once('TICKER_CHANGED', () => {
+    eventEmitter.once(ClickEvent.TICKER_CHANGED, () => {
       // console.log('event received in trade tab');
       // console.log('selectedTicker: ', marketCtx.selectedTicker);
       // console.log('selectedTicker Ref: ', marketCtx.selectedTickerRef.current);
@@ -38,7 +38,7 @@ const TradeTab = () => {
     });
 
     return () => {
-      eventEmitter.removeAllListeners('TICKER_CHANGED');
+      eventEmitter.removeAllListeners(ClickEvent.TICKER_CHANGED);
     };
   }, [marketCtx.selectedTickerRef.current]);
 

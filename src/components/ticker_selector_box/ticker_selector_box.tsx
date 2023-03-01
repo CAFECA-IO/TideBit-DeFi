@@ -9,7 +9,7 @@ import {MarketContext, IMarketContext} from '../../contexts/market_context';
 import {UserContext, IUserContext} from '../../contexts/user_context';
 import {ILineGraphProps, ITickerData} from '../../interfaces/tidebit_defi_background/ticker_data';
 import {useRouter} from 'next/router';
-import eventEmitter from '../../constants/ticker_event';
+import eventEmitter, {ClickEvent} from '../../constants/tidebit_event';
 
 // TODO: useContext
 interface ITickerSelectorBox {
@@ -58,7 +58,7 @@ const TickerSelectorBox = ({
     tickerSelectorBoxClickHandler();
     routing(route);
 
-    eventEmitter.emit('TICKER_CHANGED', () => {
+    eventEmitter.emit(ClickEvent.TICKER_CHANGED, () => {
       // console.log('event emitted');
       return;
     });

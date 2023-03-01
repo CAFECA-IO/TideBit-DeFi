@@ -48,6 +48,7 @@ import {
 import {IOpenCFDOrder} from '../interfaces/tidebit_defi_background/open_cfd_order';
 import {INotificationItem} from '../interfaces/tidebit_defi_background/notification_item';
 import {TideBitEvent} from '../constants/tidebit_event';
+import ServiceTerm from '../constants/contracts/service_term';
 
 function randomNumber(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1) + min);
@@ -298,8 +299,17 @@ export const UserProvider = ({children}: IUserProvider) => {
   };
 
   const signServiceTerm = async () => {
+    const term = ServiceTerm;
+    term.message.from = lunar.address;
+    const reult = await lunar.signTypedData(term);
+    // const verifyR = await lunar.verify(lunar.address, reult, term);
+    // if (verifyR) {
     setEnableServiceTerm(true);
     await setPrivateData(lunar.address);
+    // } else {
+    //   // ++TODO
+    // }
+    // return verifyR;
     return true;
   };
 

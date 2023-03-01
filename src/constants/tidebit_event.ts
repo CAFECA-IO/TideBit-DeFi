@@ -1,6 +1,8 @@
+import EventEmitter from 'events';
 export type ITideBitEvent =
-  | 'CONNECTED_WALLET'
-  | 'DISCONNECTED_WALLET'
+  | 'CONNECTED'
+  | 'DISCONNECTED'
+  | 'ACCOUNT_CHANGED'
   | 'SERVICE_TERM_ENABLED'
   | 'NOTIFICATIONS'
   | 'UPDATE_READ_NOTIFICATIONS'
@@ -19,8 +21,9 @@ export type ITideBitEvent =
   | 'ORDER'
   | 'IS_CFD_TRADEBLE';
 export interface ITideBitEventConstant {
-  CONNECTED_WALLET: ITideBitEvent;
-  DISCONNECTED_WALLET: ITideBitEvent;
+  CONNECTED: ITideBitEvent;
+  DISCONNECTED: ITideBitEvent;
+  ACCOUNT_CHANGED: ITideBitEvent;
   SERVICE_TERM_ENABLED: ITideBitEvent;
   NOTIFICATIONS: ITideBitEvent;
   UPDATE_READ_NOTIFICATIONS: ITideBitEvent;
@@ -40,8 +43,9 @@ export interface ITideBitEventConstant {
   IS_CFD_TRADEBLE: ITideBitEvent;
 }
 export const TideBitEvent: ITideBitEventConstant = {
-  CONNECTED_WALLET: 'CONNECTED_WALLET',
-  DISCONNECTED_WALLET: 'DISCONNECTED_WALLET',
+  CONNECTED: 'CONNECTED',
+  DISCONNECTED: 'DISCONNECTED',
+  ACCOUNT_CHANGED: 'ACCOUNT_CHANGED',
   SERVICE_TERM_ENABLED: 'SERVICE_TERM_ENABLED',
   NOTIFICATIONS: 'NOTIFICATIONS',
   UPDATE_READ_NOTIFICATIONS: 'UPDATE_READ_NOTIFICATIONS',
@@ -60,3 +64,17 @@ export const TideBitEvent: ITideBitEventConstant = {
   ORDER: 'ORDER',
   IS_CFD_TRADEBLE: 'IS_CFD_TRADEBLE',
 };
+
+export type IClickEvent = 'TICKER_CHANGED';
+
+export interface IClickEventConstant {
+  TICKER_CHANGED: IClickEvent;
+}
+
+export const ClickEvent: IClickEventConstant = {
+  TICKER_CHANGED: 'TICKER_CHANGED',
+};
+
+const eventEmitter = new EventEmitter();
+
+export default eventEmitter;

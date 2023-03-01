@@ -71,7 +71,7 @@ const Trial = () => {
     // console.log('result boolean: ', state);
   };
 
-  // const tickerBoxClickHandler = () => {
+  // const TICKER_CHANGEDHandler = () => {
   //   setTickerBoxVisible(!tickerBoxVisible);
   // };
 

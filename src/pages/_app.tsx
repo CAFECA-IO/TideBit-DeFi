@@ -14,7 +14,7 @@ import React from 'react';
 function App({Component, pageProps}: AppProps) {
   return (
     <>
-      <div className="custom-no-scrollbar selection:bg-tidebitTheme dark:selection:bg-tidebitTheme">
+      <div className="selection:bg-tidebitTheme dark:selection:bg-tidebitTheme">
         <NotificationProvider>
           <WorkerProvider>
             <UserProvider>

@@ -6,6 +6,7 @@ import {ApexOptions} from 'apexcharts';
 import {TypeOfPnLColorHex, UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
 import {UserContext, IUserContext} from '../../contexts/user_context';
 import {MarketContext} from '../../contexts/market_context';
+import {useGlobal} from '../../contexts/global_context';
 // import {FaEthereum} from 'react-icons/fa';
 // // import {ReactComponent as ethIcon} from '/public/elements/group_15143.svg';
 // // import {ReactComponent as Logo} from './logo.svg';
@@ -100,8 +101,13 @@ const CryptoCard = ({
 
   //   getStarredState(data);
   // };
+  const globalCtx = useGlobal();
 
   const starClickHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
+    if (!userCtx.enableServiceTerm) {
+      globalCtx.toast({type: 'error', message: 'Please login to add to favorites'});
+    }
+
     event.stopPropagation(); // Prevent the div click handler from firing
 
     // setStarFilled(!starFilled);

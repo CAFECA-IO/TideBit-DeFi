@@ -217,6 +217,22 @@ const PositionOpenModal = ({
 
     const newDummyData = getDummyDisplayApplyCreateCFDOrder(marketCtx.selectedTicker!.currency);
 
+    // TODO: #WI----------------
+    const checkedData = newDummyData.data as IApplyCreateCFDOrderData;
+    console.log(checkedData.guaranteedStop);
+
+    // TODO: #WII----------------
+    function isCreateCFDOrderData(obj: any): obj is IApplyCreateCFDOrderData {
+      return obj && obj.ticker !== undefined && obj.typeOfPosition !== undefined;
+    }
+
+    if (isCreateCFDOrderData(newDummyData.data)) {
+      console.log('isCreateCFDOrderData: ', newDummyData.data.ticker);
+    }
+
+    isCreateCFDOrderData(newDummyData.data) &&
+      console.log('isCreateCFDOrderData: ', newDummyData.data.ticker);
+
     // // FIXME: how to use nested type union in typescript
     // console.log('dummy data: ', newDummyData.data.takeProfit);
     // console.log(
@@ -233,6 +249,7 @@ const PositionOpenModal = ({
       //   return newDummyData.data.ticker;
       // }
 
+      // TODO: #WIII----------------
       if ('ticker' in newDummyData['data']) {
         console.log('first if: ', newDummyData.data.amount);
         return newDummyData.data.ticker;

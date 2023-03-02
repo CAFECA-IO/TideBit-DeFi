@@ -37,8 +37,8 @@ const PnlSection = () => {
       >
         <div className="h-full space-y-3 text-center lg:text-start">
           <h1 className={`text-lg leading-relaxed xl:text-xl`}>{title}</h1>
-          <h2 className={`text-3xl font-medium xl:text-4xl ${textColor}`}>{content}</h2>
-          <p className={`text-lg leading-relaxed xl:text-xl ${textColor}`}>{remarks}</p>
+          <h2 className={`text-2xl font-medium lg:text-3xl xl:text-4xl ${textColor}`}>{content}</h2>
+          <p className={`text-lg leading-relaxed lg:text-lg xl:text-xl ${textColor}`}>{remarks}</p>
         </div>
 
         {/* How to position it to w-1/3 */}

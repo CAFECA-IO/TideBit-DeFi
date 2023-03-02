@@ -4,7 +4,7 @@ import {TypeOfPnLColor, UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/di
 const PnlSection = () => {
   // TODO: pnl from userContext
   const pnlToday = {amount: -128.29, percentage: -1.5};
-  const pnl30Days = {amount: 61545218.83, percentage: 10.36};
+  const pnl30Days = {amount: 98124532.83, percentage: 10.36};
   const cumulativePnl = {amount: -57692.47, percentage: -22.75};
 
   // const displayedTextColor =
@@ -33,7 +33,7 @@ const PnlSection = () => {
       <div
         key={title}
         style={{height: '', marginTop: '10px'}}
-        className="mx-20 mb-6 flex w-screen justify-center border-b border-lightGray/50 p-4 lg:mx-0 lg:mb-0 lg:w-1/3 lg:border-b-0 lg:border-r"
+        className="mx-0 mb-6 flex w-screen justify-center border-b border-lightGray/50 p-4 lg:mx-0 lg:mb-0 lg:w-1/3 lg:border-b-0 lg:border-r"
       >
         <div className="h-full space-y-3 text-center lg:text-start">
           <h1 className={`text-lg leading-relaxed xl:text-xl`}>{title}</h1>

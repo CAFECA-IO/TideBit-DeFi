@@ -37,6 +37,11 @@ import {ProfitState} from '../constants/profit_state';
 import {OrderType} from '../constants/order_type';
 import {OrderStatusUnion} from '../constants/order_status_union';
 import {TypeOfPosition} from '../constants/type_of_position';
+import {
+  IDisplayApplyCFDOrder,
+  getDummyDisplayApplyCreateCFDOrder,
+} from '../interfaces/tidebit_defi_background/display_apply_cfd_order';
+import {getDummyApplyCreateCFDOrderData} from '../interfaces/tidebit_defi_background/apply_create_cfd_order_data';
 
 export interface IToastify {
   type: 'error' | 'warning' | 'info' | 'success';
@@ -81,6 +86,7 @@ export interface IDataPositionClosedModal {
 export interface IDataPositionOpenModal {
   openCfdRequest: IPublicCFDOrder;
   renewalDeadline: number;
+  displayApplyCFDOrder: IDisplayApplyCFDOrder;
 }
 
 export const dummyDataPositionOpenModal: IDataPositionOpenModal = {
@@ -105,6 +111,7 @@ export const dummyDataPositionOpenModal: IDataPositionOpenModal = {
     createdTime: 1676369333495,
   },
   renewalDeadline: new Date('2023-02-24T17:00:00').getTime(),
+  displayApplyCFDOrder: getDummyDisplayApplyCreateCFDOrder('BTC'),
 };
 
 export const dummyDataPositionClosedModal: IDataPositionClosedModal = {
@@ -510,6 +517,8 @@ const initialColorMode: ColorModeUnion = 'dark';
 
 export const GlobalProvider = ({children}: IGlobalProvider) => {
   const userCtx = useContext(UserContext);
+  const marketCtx = useContext(MarketContext);
+
   const [colorMode, setColorMode] = useState<ColorModeUnion>(initialColorMode);
 
   const [visiblePositionDetailsModal, setVisiblePositionDetailsModal] = useState(false);
@@ -565,6 +574,9 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
   );
 
   const [visiblePositionOpenModal, setVisiblePositionOpenModal] = useState(false);
+  // const [dataPositionOpenModal, setDataPositionOpenModal] = useState<IDisplayApplyCFDOrder>(
+  //   getDummyDisplayApplyCreateCFDOrder(marketCtx.selectedTickerRef.current!.currency)
+  // ); // TODO: Open position parameter
   const [dataPositionOpenModal, setDataPositionOpenModal] = useState<IDataPositionOpenModal>(
     dummyDataPositionOpenModal
   ); // TODO: Open position parameter
@@ -1077,6 +1089,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
       <PositionOpenModal
         modalVisible={visiblePositionOpenModal}
         modalClickHandler={visiblePositionOpenModalHandler}
+        displayApplyCreateCFD={dataPositionOpenModal.displayApplyCFDOrder}
         openCfdRequest={dataPositionOpenModal.openCfdRequest}
         renewalDeadline={dataPositionOpenModal.renewalDeadline}
       />

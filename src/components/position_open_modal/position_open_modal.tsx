@@ -18,10 +18,19 @@ import {TypeOfPosition} from '../../constants/type_of_position';
 import {UserContext} from '../../contexts/user_context';
 import {POSITION_PRICE_RENEWAL_INTERVAL_SECONDS} from '../../constants/config';
 import {dummyOpenCFDOrder} from '../../interfaces/tidebit_defi_background/open_cfd_order';
+import {
+  IDisplayApplyCFDOrder,
+  getDummyDisplayApplyCreateCFDOrder,
+  getTestDummyApplyCreateCFDOrder,
+} from '../../interfaces/tidebit_defi_background/display_apply_cfd_order';
+import {CFDOrderType} from '../../constants/cfd_order_type';
+import {getDummyApplyCreateCFDOrderData} from '../../interfaces/tidebit_defi_background/apply_create_cfd_order_data';
+import {ProfitState} from '../../constants/profit_state';
 
 interface IPositionOpenModal {
   modalVisible: boolean;
   modalClickHandler: () => void;
+  displayApplyCreateCFD: IDisplayApplyCFDOrder;
   openCfdRequest: IPublicCFDOrder;
   renewalDeadline: number;
 }
@@ -31,6 +40,7 @@ interface IPositionOpenModal {
 const PositionOpenModal = ({
   modalVisible,
   modalClickHandler,
+  displayApplyCreateCFD,
   openCfdRequest,
   renewalDeadline,
   ...otherProps
@@ -123,6 +133,45 @@ const PositionOpenModal = ({
 
   // TODO: Typo `guaranteedStop`
   const displayedGuaranteedStopSetting = !!openCfdRequest.guaranteedStop ? 'Yes' : 'No';
+  // const displayedGuaranteedStopSetting = displayApplyCreateCFD.data.ticker;
+
+  const test: IDisplayApplyCFDOrder = {
+    type: CFDOrderType.CREATE,
+    // data: getDummyDisplayApplyCreateCFDOrder(marketCtx.selectedTicker!.currency),
+    data: {
+      ticker: 'BTC',
+      amount: 1.8, // User input
+      typeOfPosition: TypeOfPosition.BUY, // User input
+      leverage: 5,
+      price: randomIntFromInterval(1000, 10000),
+      targetAsset: 'USDT',
+      uniAsset: 'USDT',
+      margin: {asset: 'BTC', amount: randomIntFromInterval(650, 10000)}, // User input
+      takeProfit: 74521, // User input
+      stopLoss: 25250, // User input
+      guaranteedStop: true, // User input
+      guaranteedStopFee: 1.8 * 10000 * 0.7,
+      fee: 0,
+      quotation: {
+        ticker: 'BTC',
+        targetAsset: 'USDT',
+        uniAsset: 'USDT',
+        price: randomIntFromInterval(1000, 10000),
+        deadline: Date.now() / 1000 + 15,
+        signature: '0x',
+      }, // 報價單 定時從後端拿
+
+      liquidationPrice: randomIntFromInterval(1000, 10000),
+      liquidationTime: Date.now() / 1000 + 86400, // openTimestamp + 86400
+    },
+    signature: '0x',
+    pnl: {
+      type: ProfitState.PROFIT,
+      value: 50,
+    },
+  };
+
+  // const displayedGuaranteedStopSetting = !!displayedApplyCreateCFD.data.amount ? 'Yes' : 'No';
 
   // TODO: i18n
   const displayedTypeOfPosition =
@@ -161,6 +210,15 @@ const PositionOpenModal = ({
     const newTimestamp = new Date().getTime() / 1000 + POSITION_PRICE_RENEWAL_INTERVAL_SECONDS;
     setSecondsLeft(newTimestamp - Date.now() / 1000);
 
+    const newDummyData = getDummyDisplayApplyCreateCFDOrder(marketCtx.selectedTicker!.currency);
+
+    // FIXME: how to use nested type union in typescript
+    // console.log('dummy data: ', newDummyData.data.takeProfit);
+
+    const testDummyData = getTestDummyApplyCreateCFDOrder(marketCtx.selectedTicker!.currency);
+
+    // console.log('testDummyData: ', testDummyData.data.amount);
+
     // TODO: get latest price from marketCtx and calculate required margin data
     // FIXME: 應用 ?? 代替 !
     globalCtx.dataPositionOpenModalHandler({
@@ -189,6 +247,7 @@ const PositionOpenModal = ({
         margin: randomIntFromInterval(openCfdRequest.margin * 0.9, openCfdRequest.margin * 1.5),
       },
       renewalDeadline: newTimestamp,
+      displayApplyCFDOrder: newDummyData,
     });
 
     setDataRenewedStyle('text-lightYellow2');

@@ -55,3 +55,5 @@ export const getDummyApplyCreateCFDOrderData = (currency: string) => {
   };
   return dummyApplyCreateCFDOrderData;
 };
+
+const sth = getDummyApplyCreateCFDOrderData('BTC').amount;

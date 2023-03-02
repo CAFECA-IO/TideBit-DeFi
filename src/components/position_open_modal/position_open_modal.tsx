@@ -1,3 +1,4 @@
+/*eslint-disable no-console */
 import {ImCross} from 'react-icons/im';
 import {IOpenCFDDetails} from '../../interfaces/tidebit_defi_background/open_cfd_details';
 import {
@@ -63,6 +64,7 @@ const PositionOpenModal = ({
     // 用戶沒簽名才是顯示 canceled modal
     // 用戶簽名成功，就會顯示 successful modal
    */
+
   const submitClickHandler = async () => {
     const [lock, unlock] = locker('position_open_modal.submitClickHandler');
 
@@ -221,6 +223,23 @@ const PositionOpenModal = ({
     //   'dummy data: ',
     //   (newDummyData['data'] as IApplyCreateCFDOrderData) && newDummyData.data.ticker
     // );
+    // console.log(
+    //   'dummy data: ',
+    //   (newDummyData['data'] typeof IApplyCreateCFDOrderData) && newDummyData.data.ticker
+    // );
+
+    function getProperty() {
+      // if (newDummyData['data'] as IApplyCreateCFDOrderData) {
+      //   return newDummyData.data.ticker;
+      // }
+
+      if ('ticker' in newDummyData['data']) {
+        console.log('first if: ', newDummyData.data.amount);
+        return newDummyData.data.ticker;
+      }
+    }
+
+    console.log('getProperty: ', getProperty());
 
     const testDummyData = getTestDummyApplyCreateCFDOrder(marketCtx.selectedTicker!.currency);
 

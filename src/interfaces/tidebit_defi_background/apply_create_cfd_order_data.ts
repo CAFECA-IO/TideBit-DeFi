@@ -4,15 +4,14 @@ import {IQuotation} from './quotation';
 
 export interface IApplyCreateCFDOrderData {
   ticker: string;
+  quotation: IQuotation; // 報價單
   typeOfPosition: ITypeOfPosition;
   price: number;
-  quotation: IQuotation; // 報價單
   amount: number;
   targetAsset: string;
   uniAsset: string; // 計價單位
-  createTimestamp?: number;
-  leverage: number;
   margin: IMargin;
+  leverage: number;
   takeProfit?: number;
   stopLoss?: number;
   fee?: number;
@@ -20,6 +19,7 @@ export interface IApplyCreateCFDOrderData {
   guaranteedStopFee?: number;
   liquidationPrice: number; // 強制平倉價格
   liquidationTime: number;
+  createTimestamp?: number;
   remark?: string;
 }
 
@@ -49,7 +49,6 @@ export const getDummyApplyCreateCFDOrderData = (currency: string) => {
       deadline: Date.now() / 1000 + 15,
       signature: '0x',
     }, // 報價單
-
     liquidationPrice: randomIntFromInterval(1000, 10000),
     liquidationTime: Date.now() / 1000 + 86400, // openTimestamp + 86400
   };

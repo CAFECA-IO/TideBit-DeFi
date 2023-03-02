@@ -23,8 +23,7 @@ export interface IApplyCFDOrder {
   signature: string;
 }
 
-export const getDummyApplyCreateCFDOrder = (currency: string, id?: string) => {
-  const date = new Date();
+export const getDummyApplyCreateCFDOrder = (currency: string) => {
   const dummyApplyCreateCFDOrder: IApplyCFDOrder = {
     type: CFDOrderType.CREATE,
     data: getDummyApplyCreateCFDOrderData(currency),
@@ -34,7 +33,6 @@ export const getDummyApplyCreateCFDOrder = (currency: string, id?: string) => {
 };
 
 export const getDummyApplyUpdateCFDOrder = (currency: string, id?: string) => {
-  const date = new Date();
   const dummyApplyUpdateCFDOrder: IApplyCFDOrder = {
     type: CFDOrderType.UPDATE,
     data: getDummyApplyUpdateCFDOrderData(currency, id),
@@ -44,7 +42,6 @@ export const getDummyApplyUpdateCFDOrder = (currency: string, id?: string) => {
 };
 
 export const getDummyApplyCloseCFDOrder = (currency: string, id?: string) => {
-  const date = new Date();
   const dummyApplyCloseCFDOrder: IApplyCFDOrder = {
     type: CFDOrderType.CLOSE,
     data: getDummyApplyCloseCFDOrderData(currency, id),

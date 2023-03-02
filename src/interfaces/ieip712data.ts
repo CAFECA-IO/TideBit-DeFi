@@ -54,7 +54,7 @@ const sample: IEIP712Data = {
 
 interface IEIP712Data {
   domain: IDomain;
-  message: IMessage;
+  message: any;
   primaryType: string;
   types: ITypes;
 }

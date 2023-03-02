@@ -1,6 +1,6 @@
 import IEIP712Data from '../../interfaces/ieip712data';
 
-const CFDOrderUpdate: IEIP712Data = {
+const Withdraw: IEIP712Data = {
   domain: {
     // Defining the chain aka Rinkeby testnet or Ethereum Main Net
     chainId: '0x1',
@@ -12,7 +12,7 @@ const CFDOrderUpdate: IEIP712Data = {
     version: 'v1.0.0',
   },
   // Refers to the keys of the *types* object below.
-  primaryType: 'UpdateCFDOrderData',
+  primaryType: 'Withdraw',
   types: {
     // TODO: Clarify if EIP712Domain refers to the domain the contract is hosted on
     EIP712Domain: [
@@ -21,13 +21,11 @@ const CFDOrderUpdate: IEIP712Data = {
       {name: 'chainId', type: 'string'},
       {name: 'verifyingContract', type: 'address'},
     ],
-    // Refer to PrimaryType
-    UpdateCFDOrderData: [
-      {name: 'orderId', type: 'string'},
-      {name: 'takeProfit', type: 'uint256'},
-      {name: 'stopLoss', type: 'uint256'},
-      {name: 'guaranteedStop', type: 'bool'},
-      {name: 'guaranteedStopFee', type: 'uint256'},
+    Withdraw: [
+      {name: 'currency', type: 'string'},
+      {name: 'amount', type: 'uint256'},
+      {name: 'from', type: 'string'},
+      {name: 'to', type: 'string'},
     ],
   },
   // Defining the message signing data content.
@@ -38,12 +36,11 @@ const CFDOrderUpdate: IEIP712Data = {
     - This is DApp Specific
     - Be as explicit as possible when building out the message schema.
     */
-    orderId: `TB202303020001ETH`,
-    takeProfit: 71232,
-    stopLoss: 10992,
-    guaranteedStop: true,
-    guaranteedStopFee: 81,
+    currency: `ETH`,
+    amount: 1,
+    from: '0x',
+    to: '0x',
   },
 };
 
-export default CFDOrderUpdate;
+export default Withdraw;

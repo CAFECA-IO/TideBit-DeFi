@@ -1,10 +1,12 @@
 import {CFDClosedType, ICFDClosedType} from '../../constants/cfd_closed_type';
 import {IOrderState, OrderState} from '../../constants/order_state';
+import {OrderStatusUnion} from '../../constants/order_status_union';
+import {OrderType} from '../../constants/order_type';
 import {ITypeOfPosition, TypeOfPosition} from '../../constants/type_of_position';
+import {IAcceptedOrder} from './accepted_order';
 import {IMargin} from './margin';
 
-export interface IAcceptedCFDOrder {
-  id: string;
+export interface IAcceptedCFDOrder extends IAcceptedOrder {
   ticker: string;
   state: IOrderState;
   typeOfPosition: ITypeOfPosition;
@@ -12,7 +14,6 @@ export interface IAcceptedCFDOrder {
   uniAsset: string;
   openPrice: number;
   amount: number;
-  createTimestamp?: number;
   leverage: number;
   margin: IMargin;
   takeProfit?: number;
@@ -41,6 +42,8 @@ export const getDummyAcceptedCFDOrder = (currency: string) => {
       date.getMonth() + 1
     }${date.getDate()}${date.getSeconds()}${currency}`,
     ticker: currency,
+    orderStatus: Math.random() > 0.5 ? OrderStatusUnion.PROCESSING : OrderStatusUnion.SUCCESS,
+    orderType: OrderType.CFD,
     state:
       Math.random() > 0.5
         ? OrderState.CLOSED
@@ -78,6 +81,8 @@ export const getDummyAcceptedCFDs = (currency: string) => {
     const dummyAcceptedCFDOrder: IAcceptedCFDOrder = {
       id: 'TBD202302070000001',
       ticker: currency,
+      orderStatus: Math.random() > 0.5 ? OrderStatusUnion.PROCESSING : OrderStatusUnion.SUCCESS,
+      orderType: OrderType.CFD,
       state:
         Math.random() > 0.5
           ? OrderState.CLOSED
@@ -89,7 +94,7 @@ export const getDummyAcceptedCFDs = (currency: string) => {
       uniAsset: typeOfPosition === TypeOfPosition.BUY ? 'USDT' : currency,
       openPrice: randomIntFromInterval(1000, 10000),
       amount: 1.8,
-      createTimestamp: Date.now() / 1000,
+      createTimestamp: Math.ceil(Date.now() / 1000),
       leverage: 5,
       margin: {asset: 'BTC', amount: randomIntFromInterval(650, 10000)},
       takeProfit: randomIntFromInterval(7000, 70000),
@@ -98,9 +103,9 @@ export const getDummyAcceptedCFDs = (currency: string) => {
       guaranteedStop: false,
       guaranteedStopFee: 0.77,
       liquidationPrice: randomIntFromInterval(1000, 10000),
-      liquidationTime: Date.now() / 1000 + 86400,
+      liquidationTime: Math.ceil(Date.now() / 1000) + 86400,
       closePrice: randomIntFromInterval(1000, 10000),
-      closeTimestamp: Date.now() / 1000 + 86400,
+      closeTimestamp: Math.ceil(Date.now() / 1000) + 86400,
       closedType: CFDClosedType.SCHEDULE,
       forcedClose: true,
       remark: 'str',

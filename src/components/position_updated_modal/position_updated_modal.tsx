@@ -64,8 +64,8 @@ const PositionUpdatedModal = ({
     globalCtx.visibleLoadingModalHandler();
 
     // FIXME: the guaranteedStop should be removed
-    const result = await userCtx.updateOrder({
-      id: openCfdDetails.id,
+    const result = await userCtx.updateCFDOrder({
+      orderId: openCfdDetails.id,
       ...updatedProps,
       guaranteedStop: updatedProps?.guaranteedStopLoss ?? false,
     });

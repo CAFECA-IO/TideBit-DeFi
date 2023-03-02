@@ -107,7 +107,7 @@ const ioHandler = (req, res) => {
 
     io.on('connection', socket => {
       socket.on(TideBitEvent.NOTIFICATIONS, _ => registerPublicUser(socket));
-      socket.on(TideBitEvent.TICKER_CHANGE, currency => dummyTickerUpdate(currency, socket));
+      // socket.on(TideBitEvent.TICKER_CHANGE, currency => dummyTickerUpdate(currency, socket));
       socket.on(TideBitEvent.SERVICE_TERM_ENABLED, address => registerPrivateUser(address, socket));
       socket.on(TideBitEvent.DISCONNECTED_WALLET, address =>
         unregisterPrivateUser(address, socket)

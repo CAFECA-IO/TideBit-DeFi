@@ -80,6 +80,7 @@ interface ITypes {
 interface IType {
   name: string;
   type: string;
+  optional?: boolean;
 }
 
 export default IEIP712Data;

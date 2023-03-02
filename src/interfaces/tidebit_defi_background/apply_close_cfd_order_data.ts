@@ -27,10 +27,10 @@ export const getDummyApplyCloseCFDOrderData = (currency: string, id?: string) =>
       targetAsset: typeOfPosition === TypeOfPosition.BUY ? currency : 'USDT',
       uniAsset: typeOfPosition === TypeOfPosition.BUY ? 'USDT' : currency,
       price: randomIntFromInterval(1000, 10000),
-      deadline: Date.now() / 1000 + 15,
+      deadline: Math.ceil(Date.now() / 1000) + 15,
       signature: '0x',
     }, // 報價單
-    closeTimestamp: Date.now() / 1000 + 86400, // openTimestamp + 86400
+    closeTimestamp: Math.ceil(Date.now() / 1000) + 86400, // openTimestamp + 86400
   };
   return dummyApplyCloseCFDOrderData;
 };

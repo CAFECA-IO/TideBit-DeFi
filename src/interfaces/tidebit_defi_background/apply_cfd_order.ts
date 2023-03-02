@@ -7,6 +7,7 @@ import {
   getDummyApplyCreateCFDOrderData,
   IApplyCreateCFDOrderData,
 } from './apply_create_cfd_order_data';
+import {IApplyOrder} from './apply_order';
 import {
   getDummyApplyUpdateCFDOrderData,
   IApplyUpdateCFDOrderData,
@@ -17,11 +18,25 @@ export type ApplyCFDOrderData =
   | IApplyUpdateCFDOrderData
   | IApplyCloseCFDOrderData;
 
-export interface IApplyCFDOrder {
+export interface IApplyCFDOrder extends IApplyOrder {
   type: ICFDOrderType;
   data: ApplyCFDOrderData;
-  signature: string;
 }
+
+// export interface IApplyCreateCFDOrder extends IApplyOrder {
+//   type: ICFDOrderType;
+//   data: IApplyCreateCFDOrderData;
+// }
+
+// export interface IApplyUpdateCFDOrder extends IApplyOrder {
+//   type: ICFDOrderType;
+//   data: IApplyUpdateCFDOrderData;
+// }
+
+// export interface IApplyCloseCFDOrder extends IApplyOrder {
+//   type: ICFDOrderType;
+//   data: IApplyCloseCFDOrderData;
+// }
 
 export const getDummyApplyCreateCFDOrder = (currency: string) => {
   const dummyApplyCreateCFDOrder: IApplyCFDOrder = {

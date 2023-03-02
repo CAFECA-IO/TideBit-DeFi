@@ -21,19 +21,19 @@ const CFDOrderClose: IEIP712Data = {
       {name: 'chainId', type: 'string'},
       {name: 'verifyingContract', type: 'address'},
     ],
+    CloseCFDOrderData: [
+      {name: 'orderId', type: 'string'},
+      {name: 'quotation', type: 'Quotation'},
+      {name: 'closePrice', type: 'uint256'},
+      {name: 'closeTimestamp', type: 'uint256'},
+    ],
     Quotation: [
       {name: 'ticker', type: 'string'},
       {name: 'targetAsset', type: 'string'},
       {name: 'uniAsset', type: 'string'},
-      {name: 'price', type: 'number'},
-      {name: 'deadline', type: 'number'},
+      {name: 'price', type: 'uint256'},
+      {name: 'deadline', type: 'uint256'},
       {name: 'signature', type: 'string'},
-    ],
-    CloseCFDOrderData: [
-      {name: 'orderId', type: 'string'},
-      {name: 'quotation', type: 'Quotation'},
-      {name: 'closePrice', type: 'number'},
-      {name: 'closeTimestamp', type: 'number'},
     ],
   },
   // Defining the message signing data content.
@@ -44,19 +44,18 @@ const CFDOrderClose: IEIP712Data = {
     - This is DApp Specific
     - Be as explicit as possible when building out the message schema.
     */
-    orderId: `TB${new Date().getFullYear()}${
-      new Date().getMonth() + 1
-    }${new Date().getDate()}${new Date().getSeconds()}ETH`,
+    orderId: `TB202303020001ETH`,
     quotation: {
       ticker: 'ETH',
       targetAsset: 'ETH',
       uniAsset: 'USDT',
       price: 21023,
-      deadline: Date.now() / 1000 + 15,
+      deadline: Math.ceil(Date.now() / 1000) + 15,
       signature: '0x',
     },
     closePrice: 71232,
-    guaranteedStopFee: Date.now() / 1000 + 86400,
+    closeTimestamp: Math.ceil(Date.now() / 1000) + 86400,
+    guaranteedStopFee: Math.ceil(Date.now() / 1000) + 86400,
   },
 };
 

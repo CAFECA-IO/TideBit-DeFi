@@ -24,7 +24,10 @@ import {
   getTestDummyApplyCreateCFDOrder,
 } from '../../interfaces/tidebit_defi_background/display_apply_cfd_order';
 import {CFDOrderType} from '../../constants/cfd_order_type';
-import {getDummyApplyCreateCFDOrderData} from '../../interfaces/tidebit_defi_background/apply_create_cfd_order_data';
+import {
+  IApplyCreateCFDOrderData,
+  getDummyApplyCreateCFDOrderData,
+} from '../../interfaces/tidebit_defi_background/apply_create_cfd_order_data';
 import {ProfitState} from '../../constants/profit_state';
 
 interface IPositionOpenModal {
@@ -212,8 +215,12 @@ const PositionOpenModal = ({
 
     const newDummyData = getDummyDisplayApplyCreateCFDOrder(marketCtx.selectedTicker!.currency);
 
-    // FIXME: how to use nested type union in typescript
+    // // FIXME: how to use nested type union in typescript
     // console.log('dummy data: ', newDummyData.data.takeProfit);
+    // console.log(
+    //   'dummy data: ',
+    //   (newDummyData['data'] as IApplyCreateCFDOrderData) && newDummyData.data.ticker
+    // );
 
     const testDummyData = getTestDummyApplyCreateCFDOrder(marketCtx.selectedTicker!.currency);
 

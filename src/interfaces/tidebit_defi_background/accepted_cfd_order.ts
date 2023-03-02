@@ -5,7 +5,6 @@ import {IMargin} from './margin';
 
 export interface IAcceptedCFDOrder {
   id: string;
-  // type: ICFDOrderType; -- ?
   ticker: string;
   state: IOrderState;
   typeOfPosition: ITypeOfPosition;

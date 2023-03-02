@@ -14,6 +14,7 @@ import {TypeOfPosition} from '../../constants/type_of_position';
 import {OrderType} from '../../constants/order_type';
 import {OrderStatusUnion} from '../../constants/order_status_union';
 import eventEmitter, {ClickEvent} from '../../constants/tidebit_event';
+import {getDummyDisplayApplyCreateCFDOrder} from '../../interfaces/tidebit_defi_background/display_apply_cfd_order';
 
 const TradeTab = () => {
   const globalCtx = useGlobal();
@@ -279,6 +280,7 @@ const TradeTab = () => {
         chargeUnit: 'USDT',
       },
       renewalDeadline: new Date().getTime() / 1000 + POSITION_PRICE_RENEWAL_INTERVAL_SECONDS,
+      displayApplyCFDOrder: getDummyDisplayApplyCreateCFDOrder(marketCtx.selectedTicker!.currency),
     });
     globalCtx.visiblePositionOpenModalHandler();
     // globalCtx.visibleWalletPanelHandler();
@@ -338,6 +340,7 @@ const TradeTab = () => {
         chargeUnit: 'USDT',
       },
       renewalDeadline: new Date().getTime() / 1000 + POSITION_PRICE_RENEWAL_INTERVAL_SECONDS,
+      displayApplyCFDOrder: getDummyDisplayApplyCreateCFDOrder(marketCtx.selectedTicker!.currency),
     });
     globalCtx.visiblePositionOpenModalHandler();
     // globalCtx.visibleWalletPanelHandler();

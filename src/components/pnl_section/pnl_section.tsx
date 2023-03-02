@@ -3,6 +3,7 @@ import {TypeOfPnLColor, UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/di
 
 const PnlSection = () => {
   // TODO: pnl from userContext
+  // TODO: i18n
   const pnlToday = {amount: -128.29, percentage: -1.5};
   const pnl30Days = {amount: 98124532.83, percentage: 10.36};
   const cumulativePnl = {amount: -57692.47, percentage: -22.75};

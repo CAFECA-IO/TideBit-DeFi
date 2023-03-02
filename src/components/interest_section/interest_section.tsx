@@ -4,8 +4,11 @@ import Lottie from 'lottie-react';
 import runningDog from '../../../public/animation/70560-puli-dog-run.json';
 import {useGlobal} from '../../contexts/global_context';
 
+// TODO: i18n
 const InterestSection = () => {
   const {layoutAssertion} = useGlobal();
+
+  // TODO: interestInfo should be fetched from context
   const interestInfo = {
     APY: 1,
     interest30Days: 20,

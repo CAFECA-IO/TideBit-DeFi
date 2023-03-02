@@ -96,7 +96,7 @@ const NavBar = () => {
   ) : (
     <TideButton
       onClick={wallectConnectBtnClickHandler} // show wallet panel
-      className={`mt-4 rounded border-0 bg-tidebitTheme py-2 px-5 text-base text-white transition-all hover:opacity-90 md:mt-0`}
+      className={`mt-4 rounded border-0 bg-tidebitTheme py-2 px-5 text-base text-white transition-all duration-300 hover:bg-cyan-600 md:mt-0`}
     >
       {/* Wallet Connect */}
       {t('nav_bar.WalletConnect')}
@@ -175,9 +175,7 @@ const NavBar = () => {
                   <button onClick={sidebarOpenHandler} className="relative hover:cursor-pointer">
                     <span className="absolute bottom-4 left-3 z-20 inline-block h-3 w-3 rounded-xl bg-tidebitTheme">
                       <p className="text-center text-3xs">
-                        {notificationCtx.unreadNotifications
-                          ? notificationCtx.unreadNotifications.length
-                          : 0}
+                        {notificationCtx.unreadNotifications.length}
                       </p>
                     </span>
 

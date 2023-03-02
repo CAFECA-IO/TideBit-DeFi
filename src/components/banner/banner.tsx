@@ -32,7 +32,7 @@ const Banner = () => {
                   <div className="flex flex-col items-start justify-start space-y-2 text-start font-bold sm:space-y-4 lg:space-y-8">
                     <div className="text-white">New Wallet available</div>
                     <div className="text-tidebitTheme">iSunOne</div>
-                    <TideButton className="rounded bg-tidebitTheme px-5 py-2 font-normal text-white xxs:text-xxs sm:py-2 sm:px-5 sm:text-base xl:py-3 xl:px-5 xl:text-lg">
+                    <TideButton className="rounded bg-tidebitTheme px-5 py-2 font-normal text-white transition-all duration-300 hover:bg-cyan-600 xxs:text-xxs sm:py-2 sm:px-5 sm:text-base xl:py-3 xl:px-5 xl:text-lg">
                       TRY IT NOW
                     </TideButton>
                   </div>

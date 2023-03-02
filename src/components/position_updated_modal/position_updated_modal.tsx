@@ -1,59 +1,242 @@
 import {ImCross} from 'react-icons/im';
 import {IOpenCFDDetails} from '../../interfaces/tidebit_defi_background/open_cfd_details';
 import {
+  DELAYED_HIDDEN_SECONDS,
   TypeOfBorderColor,
   TypeOfPnLColor,
   UNIVERSAL_NUMBER_FORMAT_LOCALE,
 } from '../../constants/display';
 import RippleButton from '../ripple_button/ripple_button';
 import Image from 'next/image';
-import {timestampToString} from '../../lib/common';
-import {useContext} from 'react';
+import {locker, timestampToString, wait} from '../../lib/common';
+import {useContext, useEffect, useState} from 'react';
 import {MarketContext} from '../../contexts/market_context';
+import {IPublicCFDOrder} from '../../interfaces/tidebit_defi_background/public_order';
+import {IUpdatedCFDInputProps, useGlobal} from '../../contexts/global_context';
+import {TypeOfPosition} from '../../constants/type_of_position';
+import {UserContext} from '../../contexts/user_context';
 
 interface IPositionUpdatedModal {
   modalVisible: boolean;
   modalClickHandler: () => void;
-  updatedCfdDetails: IOpenCFDDetails;
-
-  // updatedProps
+  openCfdDetails: IOpenCFDDetails;
+  updatedProps?: IUpdatedCFDInputProps;
 }
 
 // TODO: replace all hardcode options with variables
 const PositionUpdatedModal = ({
   modalVisible,
   modalClickHandler,
-  updatedCfdDetails: openCfdDetails,
+  openCfdDetails: openCfdDetails,
+  updatedProps,
   ...otherProps
 }: IPositionUpdatedModal) => {
+  const userCtx = useContext(UserContext);
   const marketCtx = useContext(MarketContext);
+  const globalCtx = useGlobal();
 
-  // TODO: create order function
-  const submitClickHandler = () => {
+  // const [dataRenewedStyle, setDataRenewedStyle] = useState('text-lightWhite');
+  const [tpTextStyle, setTpTextStyle] = useState('text-lightWhite');
+  const [slTextStyle, setSlTextStyle] = useState('text-lightWhite');
+  const [gtslTextStyle, setGtslTextStyle] = useState('text-lightWhite');
+
+  // let tpTextStyle = 'text-lightWhite';
+  // let slTextStyle = 'text-lightWhite';
+  // let gtslTextStyle = 'text-lightWhite';
+
+  /** TODO: 
+    // loading modal -> UserContext.function (負責簽名) ->
+    // 猶豫太久的話，單子會過期，就會顯示 failed modal，
+    // 用戶沒簽名才是顯示 canceled modal
+    // 用戶簽名成功，就會顯示 successful modal
+   */
+  const submitClickHandler = async () => {
+    const [lock, unlock] = locker('position_updated_modal.submitClickHandler');
+    if (!lock()) return;
+    await wait(DELAYED_HIDDEN_SECONDS / 5);
     modalClickHandler();
+    // console.log('updated modal clicked');
+
+    globalCtx.dataLoadingModalHandler({
+      modalTitle: 'Update Position',
+      modalContent: 'Confirm the transaction',
+    });
+    globalCtx.visibleLoadingModalHandler();
+
+    // FIXME: the guaranteedStop should be removed
+    const result = await userCtx.updateOrder({
+      id: openCfdDetails.id,
+      ...updatedProps,
+      guaranteedStop: updatedProps?.guaranteedStopLoss ?? false,
+    });
+
+    // TODO: temporary waiting
+    await wait(DELAYED_HIDDEN_SECONDS);
+    globalCtx.dataLoadingModalHandler({
+      modalTitle: 'Update Position',
+      modalContent: 'Transaction broadcast',
+      btnMsg: 'View on Etherscan',
+      btnUrl: '#',
+    });
+
+    // console.log('result from userCtx in position_closed_modal.tsx: ', result);
+
+    // TODO: temporary waiting
+    await wait(DELAYED_HIDDEN_SECONDS);
+
+    // Close loading modal
+    globalCtx.eliminateAllModals();
+
+    // TODO: Revise the `result.reason` to constant by using enum or object
+    // TODO: the button URL
+    if (result.success) {
+      globalCtx.dataSuccessfulModalHandler({
+        modalTitle: 'Update Position',
+        modalContent: 'Transaction succeed',
+        btnMsg: 'View on Etherscan',
+        btnUrl: '#',
+      });
+
+      globalCtx.dataPositionDetailsModalHandler(userCtx.getOpendCFD(openCfdDetails.id));
+
+      globalCtx.visibleSuccessfulModalHandler();
+      await wait(DELAYED_HIDDEN_SECONDS);
+
+      globalCtx.eliminateAllModals();
+
+      globalCtx.visiblePositionDetailsModalHandler();
+    } else if (result.reason === 'CANCELED') {
+      globalCtx.dataCanceledModalHandler({
+        modalTitle: 'Update Position',
+        modalContent: 'Transaction canceled',
+      });
+
+      globalCtx.visibleCanceledModalHandler();
+    } else if (result.reason === 'FAILED') {
+      globalCtx.dataFailedModalHandler({
+        modalTitle: 'Update Position',
+        failedTitle: 'Failed',
+        failedMsg: 'Failed to update position',
+      });
+
+      globalCtx.visibleFailedModalHandler();
+    }
+
+    unlock();
+
     return;
   };
 
-  const displayedGuaranteedStopSetting = !!openCfdDetails.guaranteedStop ? 'Yes' : 'No';
+  // Double check if the value is updated
+  const renewDataStyle = () => {
+    if (updatedProps === undefined) return;
+
+    updatedProps.guaranteedStopLoss &&
+    updatedProps.guaranteedStopLoss !== openCfdDetails.guaranteedStop
+      ? setGtslTextStyle('text-lightYellow2')
+      : setGtslTextStyle('text-lightWhite');
+
+    //  && updatedProps.takeProfit !== openCfdDetails.takeProfit
+    updatedProps.takeProfit !== undefined && updatedProps.takeProfit !== openCfdDetails.takeProfit
+      ? setTpTextStyle('text-lightYellow2')
+      : setTpTextStyle('text-lightWhite');
+
+    // && updatedProps.stopLoss !== openCfdDetails.stopLoss
+    updatedProps.stopLoss !== undefined && updatedProps.stopLoss !== openCfdDetails.stopLoss
+      ? setSlTextStyle('text-lightYellow2')
+      : setSlTextStyle('text-lightWhite');
+  };
+
+  useEffect(() => {
+    renewDataStyle();
+
+    // console.log('updatedProps ', updatedProps);
+    // console.log('openCfdDetails ', openCfdDetails);
+    // console.log('text style', tpTextStyle, slTextStyle, gtslTextStyle);
+  }, [globalCtx.visiblePositionUpdatedModal]);
+
+  // TODO: typo `guaranteedStop`
+  const displayedGuaranteedStopSetting = updatedProps?.guaranteedStopLoss
+    ? 'Yes'
+    : openCfdDetails.guaranteedStop
+    ? 'Yes'
+    : 'No';
+
+  // if (updatedProps.takeProfit !== openCfdDetails.takeProfit) {
+  //   if (updatedProps.takeProfit === 0) {
+  //     return '-';
+  //   } else if (updatedProps.takeProfit !== 0) {
+  //     return updatedProps.takeProfit;
+  //   }
+  // } else if (openCfdDetails.takeProfit) {
+  //   return openCfdDetails.takeProfit;
+  // } else {
+  //   return '-';
+  // }
+
+  const displayedTakeProfit =
+    updatedProps?.takeProfit !== undefined
+      ? updatedProps.takeProfit === 0
+        ? '-'
+        : updatedProps.takeProfit !== 0
+        ? `$ ${updatedProps.takeProfit}`
+        : undefined
+      : openCfdDetails.takeProfit
+      ? `$ ${openCfdDetails.takeProfit}`
+      : '-';
+
+  // const displayedTakeProfit =
+  //   updatedProps.takeProfit === 0
+  //     ? '-'
+  //     : updatedProps.takeProfit !== 0
+  //     ? updatedProps.takeProfit
+  //     : openCfdDetails.takeProfit
+  //     ? openCfdDetails.takeProfit
+  //     : '-';
+
+  const displayedStopLoss =
+    updatedProps?.stopLoss !== undefined
+      ? updatedProps.stopLoss === 0
+        ? '-'
+        : updatedProps.stopLoss !== 0
+        ? `$ ${updatedProps.stopLoss}`
+        : undefined
+      : openCfdDetails.stopLoss
+      ? `$ ${openCfdDetails.stopLoss}`
+      : '-';
+
+  // const displayedStopLoss =
+  //   updatedProps.stopLoss === 0
+  //     ? '-'
+  //     : updatedProps.stopLoss !== 0
+  //     ? updatedProps.stopLoss
+  //     : openCfdDetails.stopLoss
+  //     ? openCfdDetails.stopLoss
+  //     : '-';
 
   // const displayedPnLSymbol =
   //   openCfdDetails.pnl.type === 'PROFIT' ? '+' : openCfdDetails.pnl.type === 'LOSS' ? '-' : '';
 
+  // TODO: i18n
   const displayedTypeOfPosition =
-    openCfdDetails?.typeOfPosition === 'BUY' ? 'Up (Buy)' : 'Down (Sell)';
+    openCfdDetails?.typeOfPosition === TypeOfPosition.BUY ? 'Up (Buy)' : 'Down (Sell)';
 
-  const displayedPnLColor =
-    openCfdDetails?.pnl.type === 'PROFIT'
-      ? TypeOfPnLColor.PROFIT
-      : openCfdDetails?.pnl.type === 'LOSS'
-      ? TypeOfPnLColor.LOSS
-      : TypeOfPnLColor.EQUAL;
+  // const displayedPnLColor =
+  //   updatedCfdRequest?.pnl.type === 'PROFIT'
+  //     ? TypeOfPnLColor.PROFIT
+  //     : updatedCfdRequest?.pnl.type === 'LOSS'
+  //     ? TypeOfPnLColor.LOSS
+  //     : TypeOfPnLColor.EQUAL;
 
   const displayedPositionColor =
-    openCfdDetails.typeOfPosition === 'BUY' ? TypeOfPnLColor.PROFIT : TypeOfPnLColor.LOSS;
+    openCfdDetails.typeOfPosition === TypeOfPosition.BUY
+      ? TypeOfPnLColor.PROFIT
+      : TypeOfPnLColor.LOSS;
 
   const displayedBorderColor =
-    openCfdDetails?.typeOfPosition === 'BUY' ? TypeOfBorderColor.LONG : TypeOfBorderColor.SHORT;
+    openCfdDetails?.typeOfPosition === TypeOfPosition.BUY
+      ? TypeOfBorderColor.LONG
+      : TypeOfBorderColor.SHORT;
 
   const layoutInsideBorder = 'mx-5 my-4 flex justify-between';
 
@@ -61,7 +244,7 @@ const PositionUpdatedModal = ({
 
   const formContent = (
     <div>
-      <div className="mt-2 mb-2 flex items-center justify-center space-x-2 text-center">
+      <div className="mt-8 mb-2 flex items-center justify-center space-x-2 text-center">
         <Image
           src={marketCtx.selectedTicker?.tokenImg ?? ''}
           width={30}
@@ -85,22 +268,37 @@ const PositionUpdatedModal = ({
             </div>
 
             <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">Amount</div>
-              <div className="">
+              <div className="text-lightGray">Open Price</div>
+              {/* <div className="">
                 {openCfdDetails?.amount?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0}{' '}
                 {openCfdDetails.ticker}
+              </div> */}
+              <div className={``}>
+                {/* TODO: Hardcode USDT */}${' '}
+                {openCfdDetails?.openPrice?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0}{' '}
+                USDT
+                {/* {openCfdDetails?.price?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0} USDT */}
               </div>
             </div>
 
             <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">Required Margin</div>
-              <div className="">$ {((openCfdDetails?.openPrice * 1.8) / 5).toFixed(2)} USDT</div>
+              <div className="text-lightGray">Open Time</div>
+              <div className="">
+                {displayedTime.date} {displayedTime.time}
+              </div>
+            </div>
+            <div className={`${layoutInsideBorder}`}>
+              <div className="text-lightGray">TP/ SL</div>
+              <div className="">
+                <span className={`${tpTextStyle}`}>{displayedTakeProfit}</span> /{' '}
+                <span className={`${slTextStyle}`}>{displayedStopLoss}</span>
+              </div>
             </div>
 
-            <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">Limit/ Stop</div>
-              <div className="">$20/ $10.5</div>
-            </div>
+            {/* <div className={`${layoutInsideBorder}`}>
+              <div className="text-lightGray">Required Margin</div>
+              <div className="">$ {openCfdDetails.margin.toFixed(2)} USDT</div>
+            </div> */}
 
             {/* <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">Avg. Close Price</div>
@@ -119,15 +317,8 @@ const PositionUpdatedModal = ({
             </div> */}
 
             <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">Open Time</div>
-              <div className="">
-                {displayedTime.date} {displayedTime.time}
-              </div>
-            </div>
-
-            <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">Guaranteed Stop</div>
-              <div className={``}>{displayedGuaranteedStopSetting}</div>
+              <div className={`${gtslTextStyle}`}>{displayedGuaranteedStopSetting}</div>
             </div>
 
             {/* <div className={`${tableLayout}`}>

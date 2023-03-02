@@ -5,14 +5,15 @@ import useOuterClick from '../../lib/hooks/use_outer_click';
 import {UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
 import {MarketContext} from '../../contexts/market_context';
 import {Trend} from '../../constants/trend';
+import eventEmitter from '../../constants/tidebit_event';
 
 const TradingHeader = () => {
   const marketCtx = useContext(MarketContext);
-  if (
-    marketCtx.selectedTicker?.upOrDown !== Trend.UP &&
-    marketCtx.selectedTicker?.upOrDown !== Trend.DOWN
-  )
-    return <></>;
+  // if (
+  //   marketCtx.selectedTicker?.upOrDown !== Trend.UP &&
+  //   marketCtx.selectedTicker?.upOrDown !== Trend.DOWN
+  // )
+  //   return <></>;
 
   // const [ticker, setTicker] = useState('ETH/USDT');
   // const [showTickerSelector, setShowTickerSelector] = useState(false);
@@ -24,6 +25,7 @@ const TradingHeader = () => {
 
   const tickerBoxClickHandler = () => {
     setTickerBoxVisible(!tickerBoxVisible);
+
     // console.log('header clicked', !tickerBoxVisible);
   };
 

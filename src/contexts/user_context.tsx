@@ -1,5 +1,5 @@
 import Lunar from '@cafeca/lunar';
-import React, {createContext} from 'react';
+import React, {createContext, useCallback, useContext} from 'react';
 import useState from 'react-usestateref';
 import {TypeOfPnLColorHex} from '../constants/display';
 import {
@@ -24,12 +24,7 @@ import {
   IWalletBalance,
 } from '../interfaces/tidebit_defi_background/wallet_balance';
 import {ICFDOrderUpdateRequest} from '../interfaces/tidebit_defi_background/cfd_order_update';
-import {
-  dummyBalance_BTC,
-  dummyBalance_ETH,
-  dummyBalance_USDT,
-  IBalance,
-} from '../interfaces/tidebit_defi_background/balance';
+import {getDummyBalances, IBalance} from '../interfaces/tidebit_defi_background/balance';
 import {
   dummyPublicCFDOrder,
   dummyPublicDepositOrder,
@@ -48,19 +43,13 @@ import {
 import {IOpenCFDOrder} from '../interfaces/tidebit_defi_background/open_cfd_order';
 import {INotificationItem} from '../interfaces/tidebit_defi_background/notification_item';
 import {TideBitEvent} from '../constants/tidebit_event';
-
-function randomNumber(min: number, max: number) {
-  return Math.floor(Math.random() * (max - min + 1) + min);
-}
-
-function randomArray(min: number, max: number, length: number) {
-  const arr = [];
-  for (let i = 0; i < length; i++) {
-    arr.push(randomNumber(min, max));
-  }
-  return arr;
-}
-
+import {NotificationContext} from './notification_context';
+import {ITickerData} from '../interfaces/tidebit_defi_background/ticker_data';
+import {ICFDDetails} from '../interfaces/tidebit_defi_background/cfd_details';
+import {IOrderState, OrderState} from '../constants/order_state';
+import {IModifyType, ModifyType} from '../constants/modify_type';
+import {IOrderType, OrderType} from '../constants/order_type';
+import {WorkerContext} from './worker_context';
 // const sampleArray = randomArray(1100, 1200, 10);
 
 const strokeColorDisplayed = (sampleArray: number[]) => {
@@ -205,6 +194,7 @@ export const UserContext = createContext<IUserContext>({
 
 export const UserProvider = ({children}: IUserProvider) => {
   // TODO: get partial user type from `IUserContext`
+  const workerCtx = useContext(WorkerContext);
   const [id, setId, idRef] = useState<string | null>(null);
   const [username, setUsername, usernameRef] = useState<string | null>(null);
   const [wallet, setWallet, walletRef] = useState<string | null>(null);
@@ -228,6 +218,9 @@ export const UserProvider = ({children}: IUserProvider) => {
     useState<boolean>(false);
   const [isConnectedWithTideBit, setIsConnectedWithTideBit, isConnectedWithTideBitRef] =
     useState<boolean>(false);
+  const [selectedTicker, setSelectedTicker, selectedTickerRef] = useState<ITickerData | null>(null);
+
+  const notificationCtx = useContext(NotificationContext);
 
   const setPrivateData = async (walletAddress: string) => {
     setWallet(walletAddress);
@@ -240,7 +233,12 @@ export const UserProvider = ({children}: IUserProvider) => {
       locked: 583.62,
       PNL: 1956.84,
     });
-    setBalances([dummyBalance_BTC, dummyBalance_ETH, dummyBalance_USDT]);
+    setBalances(getDummyBalances());
+    if (selectedTickerRef.current) {
+      listOpenCFDs(selectedTickerRef.current.currency);
+      listClosedCFDs(selectedTickerRef.current.currency);
+    }
+    workerCtx.registerUserHandler(walletAddress);
   };
 
   const clearPrivateData = () => {
@@ -252,6 +250,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     setBalance(null);
     setOpenedCFDs([]);
     setClosedCFDs([]);
+    notificationCtx.emitter.emit(TideBitEvent.DISCONNECTED);
   };
 
   const lunar = new Lunar();
@@ -266,18 +265,18 @@ export const UserProvider = ({children}: IUserProvider) => {
     clearPrivateData();
   });
 
-  const listOpenCFDs = async (props: string) => {
-    let openCFDs: IOpenCFDDetails[] = [];
-    if (isConnectedRef.current) {
-      openCFDs = await Promise.resolve<IOpenCFDDetails[]>(getDummyOpenCFDs(props));
+  const listOpenCFDs = useCallback(async (props: string) => {
+    let updateOpenCFDs: IOpenCFDDetails[] = [];
+    if (enableServiceTermRef.current) {
+      updateOpenCFDs = await Promise.resolve<IOpenCFDDetails[]>(getDummyOpenCFDs(props));
     }
-    setOpenedCFDs(openCFDs);
-    return openCFDs;
-  };
+    setOpenedCFDs(updateOpenCFDs);
+    return updateOpenCFDs;
+  }, []);
 
   const listClosedCFDs = async (props: string) => {
     let closedCFDs: IClosedCFDDetails[] = [];
-    if (isConnectedRef.current) {
+    if (enableServiceTermRef.current) {
       closedCFDs = await Promise.resolve<IClosedCFDDetails[]>(getDummyClosedCFDs(props));
     }
     setClosedCFDs(closedCFDs);
@@ -454,13 +453,115 @@ export const UserProvider = ({children}: IUserProvider) => {
     return histories;
   };
 
+  // ++TODO: ModifyType.REMOVE and ModifyType.UPDATE
+  const updateOpenCFD = (data: {modifyType: IModifyType; CFDs: IOpenCFDDetails[]}) => {
+    switch (data.modifyType) {
+      case ModifyType.Add:
+        setOpenedCFDs(prev => [...prev, ...data.CFDs]);
+        break;
+      case ModifyType.REMOVE:
+        break;
+      case ModifyType.UPDATE:
+        break;
+      default:
+        break;
+    }
+  };
+
+  const updateClosedCFD = (data: {modifyType: IModifyType; CFDs: IClosedCFDDetails[]}) => {
+    switch (data.modifyType) {
+      case ModifyType.Add:
+        setClosedCFDs(prev => [...prev, ...data.CFDs]);
+        break;
+      case ModifyType.REMOVE:
+        break;
+      case ModifyType.UPDATE:
+        break;
+      default:
+        break;
+    }
+  };
+
+  const updateUserBehavior = (data: {
+    modifyType: IModifyType;
+    orderType: IOrderType;
+    orderState?: IOrderState;
+    orders: [];
+  }) => {
+    // eslint-disable-next-line no-console
+    console.log(`updateUserBehavior data`, data);
+    if (data.orderType === OrderType.CFD) {
+      if (data.orderState === OrderState.OPENING) {
+        updateOpenCFD({
+          modifyType: data.modifyType,
+          CFDs: data.orders as IOpenCFDDetails[],
+        });
+      }
+      if (data.orderState === OrderState.CLOSED) {
+        updateClosedCFD({
+          modifyType: data.modifyType,
+          CFDs: data.orders as IClosedCFDDetails[],
+        });
+      }
+    } else {
+      // ++ TODO: WITHDRAW and DEPOSIT, UPDATE Histories
+    }
+  };
+
   const sendEmailCode = async (email: string) => Promise.resolve<number>(359123);
   const connectEmail = async (email: string, code: number) => Promise.resolve<boolean>(true);
   const toggleEmailNotification = async (props: boolean) => Promise.resolve<boolean>(true);
   const subscribeNewsletters = async (props: boolean) => Promise.resolve<boolean>(true);
   const connectTideBit = async (email: string, password: string) => Promise.resolve<boolean>(true);
   const shareTradeRecord = async (tradeId: string) => Promise.resolve<boolean>(true);
-  const readNotifications = async (notifications: INotificationItem[]) => Promise.resolve();
+
+  const readNotifications = async (notifications: INotificationItem[]) => {
+    if (enableServiceTermRef.current) {
+      notificationCtx.emitter.emit(TideBitEvent.UPDATE_READ_NOTIFICATIONS_RESULT, notifications);
+    }
+  };
+
+  const updateBalances = (balance: IBalance) => {
+    if (balancesRef.current) {
+      const updateBalances = [...balancesRef.current];
+      const index = balancesRef.current.findIndex(
+        _balance => _balance.currency === balance.currency
+      );
+      if (index !== -1) {
+        updateBalances[index] = balance;
+      } else updateBalances.push(balance);
+    } else {
+      setBalances([balance]);
+    }
+  };
+
+  React.useMemo(
+    () =>
+      notificationCtx.emitter.on(TideBitEvent.BALANCE, (balance: IUserBalance) => {
+        setBalance(balance);
+      }),
+    []
+  );
+  React.useMemo(() => notificationCtx.emitter.on(TideBitEvent.BALANCES, updateBalances), []);
+  // React.useMemo(() => notificationCtx.emitter.on(TideBitEvent.BALANCES, ()=>{}), []);
+  // React.useMemo(() => notificationCtx.emitter.on(TideBitEvent.DEPOSIT, updateUserBehavior), []);
+  // React.useMemo(() => notificationCtx.emitter.on(TideBitEvent.WITHDRAW, updateUserBehavior), []);
+  // React.useMemo(() => notificationCtx.emitter.on(TideBitEvent.OPEN_CFD, updateOpenCFD), []);
+  // React.useMemo(() => notificationCtx.emitter.on(TideBitEvent.CLOSE_CFD, updateClosedCFD), []);
+  React.useMemo(() => notificationCtx.emitter.on(TideBitEvent.ORDER, updateUserBehavior), []);
+  React.useMemo(
+    () => notificationCtx.emitter.on(TideBitEvent.UPDATE_READ_NOTIFICATIONS, readNotifications),
+    []
+  );
+  React.useMemo(
+    () =>
+      notificationCtx.emitter.on(TideBitEvent.TICKER_CHANGE, (ticker: ITickerData) => {
+        setSelectedTicker(ticker);
+        listOpenCFDs(ticker.currency);
+        listClosedCFDs(ticker.currency);
+      }),
+    []
+  );
 
   const init = async () => {
     // console.log(`UserProvider init is called`);

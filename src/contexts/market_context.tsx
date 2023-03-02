@@ -37,6 +37,9 @@ import {
   ICandlestickData,
 } from '../interfaces/tidebit_defi_background/candlestickData';
 import {TideBitEvent} from '../constants/tidebit_event';
+import {NotificationContext} from './notification_context';
+import {WorkerContext} from './worker_context';
+import {APIRequest, Method} from '../constants/api_request';
 
 const SAMPLE_TICKERS = [
   'ETH',
@@ -57,219 +60,6 @@ const SAMPLE_TICKERS = [
   'Flow',
 ];
 
-// export interface IPositionInfoOnChart {}
-
-export const PositionInfoOnChart: ApexOptions = {
-  chart: {
-    type: 'candlestick',
-    height: 0,
-
-    toolbar: {
-      show: false,
-      tools: {
-        zoom: false,
-        zoomin: false,
-        zoomout: false,
-        pan: false,
-      },
-    },
-
-    // dropShadow: {
-    //   enabled: true,
-    //   top: 0,
-    //   left: 0,
-    //   blur: 3,
-    //   opacity: 0.5,
-    // },
-  },
-  responsive: [
-    {
-      breakpoint: 500,
-      options: {
-        candlestick: {
-          width: '1000',
-        },
-      },
-    },
-  ],
-  title: {
-    text: '',
-    align: 'left',
-  },
-  xaxis: {
-    type: 'datetime',
-    labels: {
-      style: {
-        colors: TRADING_CHART_BORDER_COLOR,
-      },
-    },
-    axisTicks: {
-      show: false,
-    },
-  },
-  grid: {
-    show: false,
-    // show: true,
-    // yaxis: {
-    //   lines: {show: false},
-    // },
-    // xaxis: {
-    //   lines: {show: false},
-    // },
-    // padding: {
-    //   right: 300,
-    // },
-  },
-
-  yaxis: {
-    tooltip: {
-      enabled: true,
-    },
-    labels: {
-      show: true,
-      align: 'center',
-      style: {
-        colors: TRADING_CHART_BORDER_COLOR,
-      },
-    },
-    opposite: true,
-    axisBorder: {
-      show: true,
-      color: TRADING_CHART_BORDER_COLOR,
-    },
-    axisTicks: {
-      show: false,
-    },
-  },
-  tooltip: {
-    enabled: true,
-    fillSeriesColor: false,
-    theme: 'dark',
-  },
-
-  plotOptions: {
-    candlestick: {
-      colors: {
-        upward: TypeOfPnLColorHex.PROFIT,
-        downward: TypeOfPnLColorHex.LOSS,
-      },
-      wick: {
-        useFillColor: true,
-      },
-    },
-  },
-
-  // markers: {
-  //   discrete: [
-  //     {
-  //       seriesIndex: 0,
-  //       dataPointIndex: dataArray.length - 1,
-  //       size: 1,
-  //       strokeColor: strokeColor[0],
-  //       shape: 'circle',
-  //     },
-  //   ],
-  // },
-  // grid: {
-  //   show: true,
-  //   borderColor: strokeColor[0],
-  //   strokeDashArray: 5,
-  //   position: 'back',
-  // },
-  // forecastDataPoints: {
-  //   count: 2,
-  //   fillOpacity: 0.5,
-  //   dashArray: 2,
-  // },
-  annotations: {
-    // position: 'back',
-    yaxis: [
-      {
-        y: 1800,
-        strokeDashArray: 3,
-        borderColor: TypeOfPnLColorHex.LOSS,
-        width: '100%',
-        fillColor: '#ffffff',
-
-        label: {
-          position: 'right',
-          borderColor: 'transparent',
-          textAnchor: 'end',
-          offsetY: 10,
-          offsetX: 2,
-          style: {
-            color: '#ffffff',
-            fontSize: '12px',
-            background: TypeOfPnLColorHex.LOSS,
-            padding: {
-              right: 10,
-            },
-          },
-          text: `Position $1800 Close`,
-          borderWidth: 20,
-        },
-
-        offsetX: 0,
-      },
-      {
-        y: 3500,
-        strokeDashArray: 3,
-        borderColor: TypeOfPnLColorHex.PROFIT,
-        width: '100%',
-        fillColor: '#ffffff',
-
-        label: {
-          position: 'right',
-          borderColor: 'transparent',
-          textAnchor: 'end',
-          offsetY: 10,
-          offsetX: 2,
-          style: {
-            color: '#ffffff',
-            fontSize: '12px',
-            background: TypeOfPnLColorHex.PROFIT,
-            padding: {
-              right: 10,
-            },
-          },
-          text: `Position $3500 Close`,
-          borderWidth: 20,
-        },
-
-        offsetX: 0,
-      },
-      {
-        y: 3000,
-        strokeDashArray: 0,
-        borderColor: TypeOfPnLColorHex.TIDEBIT_THEME,
-        width: '105%',
-        fillColor: '#ffffff',
-
-        label: {
-          position: 'right',
-          borderColor: 'transparent',
-          textAnchor: 'end',
-          offsetY: 10,
-          offsetX: 42,
-          style: {
-            color: '#ffffff',
-            fontSize: '12px',
-            background: TypeOfPnLColorHex.TIDEBIT_THEME,
-            padding: {
-              left: -5,
-              right: 20,
-            },
-          },
-          text: `$3000`,
-          borderWidth: 20,
-        },
-
-        offsetX: 0,
-      },
-    ],
-  },
-};
-
 export interface IMarketProvider {
   children: React.ReactNode;
 }
@@ -285,11 +75,11 @@ export interface ITransferOptions {
 
 export interface IMarketContext {
   selectedTicker: ITickerData | null;
+  selectedTickerRef: React.MutableRefObject<ITickerData | null>;
   availableTickers: ITickerData[] | null;
   isCFDTradable: boolean;
   showPositionOnChart: boolean;
   showPositionOnChartHandler: (bool: boolean) => void;
-  positionInfoOnChart: ApexOptions | null;
   candlestickId: string;
   candlestickChartIdHandler: (id: string) => void;
   availableTransferOptions: ITransferOptions[];
@@ -309,11 +99,11 @@ export interface IMarketContext {
 // TODO: Note: _app.tsx 啟動的時候 => createContext
 export const MarketContext = createContext<IMarketContext>({
   selectedTicker: dummyTicker,
+  selectedTickerRef: React.createRef<ITickerData>(),
   availableTickers: [],
   isCFDTradable: false,
   showPositionOnChart: false,
   showPositionOnChartHandler: () => null,
-  positionInfoOnChart: null,
   candlestickId: '',
   candlestickChartIdHandler: () => null,
   availableTransferOptions: [],
@@ -359,7 +149,9 @@ const availableTransferOptions = [
 
 export const MarketProvider = ({children}: IMarketProvider) => {
   const userCtx = useContext(UserContext);
-  const [wallet, setWallet, walletRef] = useState<string | null>(userCtx.wallet);
+  const notificationCtx = useContext(NotificationContext);
+  const workerCtx = useContext(WorkerContext);
+  // const [wallet, setWallet, walletRef] = useState<string | null>(userCtx.wallet);
   const [selectedTicker, setSelectedTicker, selectedTickerRef] = useState<ITickerData | null>(null);
   const [tickerStatic, setTickerStatic] = useState<ITickerStatic | null>(null);
   const [tickerLiveStatistics, setTickerLiveStatistics] = useState<ITickerLiveStatistics | null>(
@@ -376,8 +168,6 @@ export const MarketProvider = ({children}: IMarketProvider) => {
   const [showPositionOnChart, setShowPositionOnChart] = useState<boolean>(
     INITIAL_POSITION_LABEL_DISPLAYED_STATE
   );
-
-  const [positionInfoOnChart, setPositionInfoOnChart] = useState<ApexOptions>(PositionInfoOnChart);
 
   const showPositionOnChartHandler = (bool: boolean) => {
     setShowPositionOnChart(bool);
@@ -425,10 +215,12 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     setTickerLiveStatistics(tickerLiveStatistics);
     const candlestickChartData = getDummyCandlestickChartData();
     setCandlestickChartData(candlestickChartData);
-    if (userCtx.enableServiceTerm) {
-      userCtx.listOpenCFDs(currency);
-      userCtx.listClosedCFDs(currency);
-    }
+    // if (userCtx.enableServiceTerm) {
+    //   userCtx.listOpenCFDs(currency);
+    //   userCtx.listClosedCFDs(currency);
+    // }
+    // notificationCtx.emitter.emit(TideBitEvent.TICKER_CHANGE, ticker);
+    workerCtx.tickerChangeHandler(ticker);
     return dummyResultSuccess;
   };
 
@@ -438,36 +230,79 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     return candlestickChartData;
   };
 
-  React.useEffect(() => {
-    if (userCtx.wallet !== walletRef.current) {
-      setWallet(userCtx.wallet);
-      // Event: Login
-      if (userCtx.enableServiceTerm && selectedTickerRef.current) {
-        userCtx.listOpenCFDs(selectedTickerRef.current.currency);
-        userCtx.listClosedCFDs(selectedTickerRef.current.currency);
-      }
-    }
-  }, [userCtx.wallet]);
-
   const init = async () => {
     // console.log(`MarketProvider init is called`);
-    setSelectedTicker(dummyTicker);
-    setAvailableTickers([...dummyTickers]);
-    setCandlestickChartData(getDummyCandlestickChartData());
-    setTickerLiveStatistics(dummyTickerLiveStatistics);
-    setTickerStatic(dummyTickerStatic);
     setIsCFDTradable(true);
+    workerCtx.requestHandler({
+      name: APIRequest.LIST_TICKERS,
+      request: {
+        name: APIRequest.LIST_TICKERS,
+        method: Method.GET,
+        url: 'http://localhost:3000/api/tickers',
+      },
+      callback: (tickers: ITickerData[]) => {
+        setAvailableTickers([...tickers]);
+        selectTickerHandler(tickers[0].currency);
+      },
+    });
     return await Promise.resolve();
   };
 
+  React.useMemo(
+    () =>
+      notificationCtx.emitter.on(TideBitEvent.IS_CFD_TRADEBLE, (isCFDTradable: boolean) => {
+        setIsCFDTradable(isCFDTradable);
+      }),
+    []
+  );
+
+  React.useMemo(
+    () =>
+      notificationCtx.emitter.on(TideBitEvent.TICKER, (ticker: ITickerData) => {
+        setSelectedTicker(ticker);
+        // ++ TODO: update availableTickers
+      }),
+    []
+  );
+
+  React.useMemo(
+    () =>
+      notificationCtx.emitter.on(TideBitEvent.TICKER_STATISTIC, (tickerStatic: ITickerStatic) => {
+        setTickerStatic(tickerStatic);
+      }),
+    []
+  );
+
+  React.useMemo(
+    () =>
+      notificationCtx.emitter.on(
+        TideBitEvent.TICKER_LIVE_STATISTIC,
+        (tickerLiveStatistics: ITickerLiveStatistics) => {
+          setTickerLiveStatistics(tickerLiveStatistics);
+        }
+      ),
+    []
+  );
+
+  React.useMemo(
+    () =>
+      notificationCtx.emitter.on(
+        TideBitEvent.CANDLESTICK,
+        (candlestickData: ICandlestickData[]) => {
+          setCandlestickChartData(candlestickData);
+        }
+      ),
+    []
+  );
+
   const defaultValue = {
     selectedTicker,
+    selectedTickerRef,
     selectTickerHandler,
     availableTickers,
     isCFDTradable,
     showPositionOnChart,
     showPositionOnChartHandler,
-    positionInfoOnChart,
     candlestickId,
     candlestickChartData,
     candlestickChartIdHandler,

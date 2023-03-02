@@ -45,11 +45,24 @@ import {INotificationItem} from '../interfaces/tidebit_defi_background/notificat
 import {TideBitEvent} from '../constants/tidebit_event';
 import {NotificationContext} from './notification_context';
 import {ITickerData} from '../interfaces/tidebit_defi_background/ticker_data';
-import {ICFDDetails} from '../interfaces/tidebit_defi_background/cfd_details';
 import {IOrderState, OrderState} from '../constants/order_state';
 import {IModifyType, ModifyType} from '../constants/modify_type';
 import {IOrderType, OrderType} from '../constants/order_type';
 import {WorkerContext} from './worker_context';
+import ServiceTerm from '../constants/contracts/service_term';
+
+function randomNumber(min: number, max: number) {
+  return Math.floor(Math.random() * (max - min + 1) + min);
+}
+
+function randomArray(min: number, max: number, length: number) {
+  const arr = [];
+  for (let i = 0; i < length; i++) {
+    arr.push(randomNumber(min, max));
+  }
+  return arr;
+}
+
 // const sampleArray = randomArray(1100, 1200, 10);
 
 const strokeColorDisplayed = (sampleArray: number[]) => {
@@ -287,6 +300,11 @@ export const UserProvider = ({children}: IUserProvider) => {
     let success = false;
     try {
       const connect = await lunar.connect({});
+      // eslint-disable-next-line no-console
+      // console.log(`connect connect`, connect);
+      // eslint-disable-next-line no-console
+      // console.log(`connect lunar.isConnected`, lunar.isConnected);
+
       if (connect) {
         success = true;
       }
@@ -296,10 +314,29 @@ export const UserProvider = ({children}: IUserProvider) => {
     return success;
   };
 
-  const signServiceTerm = async () => {
-    setEnableServiceTerm(true);
-    await setPrivateData(lunar.address);
-    return true;
+  const signServiceTerm = async (): Promise<boolean> => {
+    let signedResult: string;
+    // eslint-disable-next-line no-console
+    // console.log(`signServiceTerm lunar.isConnected`, lunar.isConnected);
+    // eslint-disable-next-line no-console
+    // console.log(`signServiceTerm lunar.address`, lunar.address);
+    if (lunar.isConnected) {
+      signedResult = await lunar.signTypedData(ServiceTerm);
+      //   const verifyR = await lunar.verify(lunar.address, signedResult, ServiceTerm);
+      // if (verifyR) {
+      // eslint-disable-next-line no-console
+      // console.log(`signServiceTerm signedResult`, signedResult);
+      setEnableServiceTerm(true);
+      await setPrivateData(lunar.address);
+      // } else {
+      //   // ++TODO
+      // }
+      // return verifyR;
+      return true;
+    } else {
+      await connect();
+      return signServiceTerm();
+    }
   };
 
   const disconnect = async () => {

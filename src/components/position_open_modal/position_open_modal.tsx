@@ -237,6 +237,9 @@ const PositionOpenModal = ({
         console.log('first if: ', newDummyData.data.amount);
         return newDummyData.data.ticker;
       }
+
+      // Error: Property 'amount' does not exist on type 'IApplyUpdateCFDOrderData & Record<"ticker", unknown>'.
+      // return 'ticker' in newDummyData['data'] && console.log('second if: ', newDummyData.data.amount);
     }
 
     console.log('getProperty: ', getProperty());

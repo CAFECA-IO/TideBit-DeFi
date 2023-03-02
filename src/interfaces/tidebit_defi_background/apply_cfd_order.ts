@@ -17,9 +17,10 @@ export type ApplyCFDOrderData =
   | IApplyUpdateCFDOrderData
   | IApplyCloseCFDOrderData;
 
+// TODO: IApplyCFDOrder['data'] is `any` type
 export interface IApplyCFDOrder {
   type: ICFDOrderType;
-  data: ApplyCFDOrderData;
+  data: ApplyCFDOrderData; // TODO: separate to 3 types
   signature: string;
 }
 

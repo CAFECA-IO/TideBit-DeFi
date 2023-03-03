@@ -32,8 +32,14 @@ import {IApplyCloseCFDOrderData} from '../../interfaces/tidebit_defi_background/
 interface IPositionClosedModal {
   modalVisible: boolean;
   modalClickHandler: () => void;
+  // 顯示 accepted
   displayAcceptedCloseCFD: IDisplayAcceptedCFDOrder;
   displayApplyCloseCFD: IDisplayApplyCFDOrder;
+
+  // 送出時要 `displayApplyCloseCFD: IApplyCFDOrder;`
+  // TODO: 從 marketCtx 拿報價
+  // TODO: 自己算 PnL
+
   openCfdDetails: IOpenCFDDetails;
   latestProps: IClosedCFDInfoProps;
 }

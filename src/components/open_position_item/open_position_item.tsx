@@ -18,7 +18,11 @@ import {MarketContext} from '../../contexts/market_context';
 import {UserContext} from '../../contexts/user_context';
 import {RENEW_QUOTATION_INTERVAL_SECONDS} from '../../constants/config';
 import {getDummyDisplayAcceptedCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
-import {getDummyDisplayApplyCloseCFDOrder} from '../../interfaces/tidebit_defi_background/display_apply_cfd_order';
+import {
+  IDisplayApplyCFDOrder,
+  getDummyDisplayApplyCloseCFDOrder,
+} from '../../interfaces/tidebit_defi_background/display_apply_cfd_order';
+import {CFDOrderType} from '../../constants/cfd_order_type';
 // import HorizontalRelativeLineGraph from '../horizontal_relative_line_graph/horizontal_relative_line_graph';
 
 interface IOpenPositionItemProps {
@@ -40,11 +44,62 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
 
   const [detailedModalVisible, setDetailedModalVisible] = useState(false);
 
+  // 傳param進來的地方要改正確的 dummy data
+  // TODO: toApplyUpdatedCFD function
+  // TODO: toApplyClosedCFD function
+  // TODO: 改 UpdateFormModal 名字
+
+  const toApplyUpdatedCFD = () => {
+    const dummyData = {};
+    return dummyData;
+  };
+
+  // from param or from user context
+  const toApplyClosedCFD = (): IDisplayApplyCFDOrder => {
+    const dummyData = {
+      type: CFDOrderType.CREATE,
+      // data: getDummyDisplayApplyCreateCFDOrder(marketCtx.selectedTicker!.currency),
+      data: {
+        ticker: 'BTC',
+        amount: 1.8, // User input
+        typeOfPosition: TypeOfPosition.BUY, // User input
+        leverage: 5,
+        price: randomIntFromInterval(1000, 10000),
+        targetAsset: 'USDT',
+        uniAsset: 'USDT',
+        margin: {asset: 'BTC', amount: randomIntFromInterval(650, 10000)}, // User input
+        takeProfit: 74521, // User input
+        stopLoss: 25250, // User input
+        guaranteedStop: true, // User input
+        guaranteedStopFee: 1.8 * 10000 * 0.7,
+        fee: 0,
+        quotation: {
+          ticker: 'BTC',
+          targetAsset: 'USDT',
+          uniAsset: 'USDT',
+          price: randomIntFromInterval(1000, 10000),
+          deadline: Date.now() / 1000 + RENEW_QUOTATION_INTERVAL_SECONDS,
+          signature: '0x',
+        }, // 報價單 定時從後端拿
+
+        liquidationPrice: randomIntFromInterval(1000, 10000),
+        liquidationTime: Date.now() / 1000 + 86400, // openTimestamp + 86400
+      },
+      signature: '0x',
+      pnl: {
+        type: ProfitState.PROFIT,
+        value: 50,
+      },
+    };
+    return dummyData;
+  };
+
   // TODO: 先跟 user context 拿特定 order id 的資料，再呼叫 function 拿到單一筆 CFD 詳細資料 。 global context 設定 cfd id，再顯示 position details modal
   // dataPositionDetailsModal 拿到的是整個JSON
   // globalContext.dataPositionDetailsModalHandler(cfd.orderId);
   const openItemClickHandler = () => {
-    dataPositionDetailsModalHandler(openCfdDetails);
+    // const sth = toApplyUpdatedCFD()
+    dataPositionDetailsModalHandler(openCfdDetails); // sth
     visiblePositionDetailsModalHandler();
   };
 

@@ -22,7 +22,7 @@ export interface IAcceptedCFDOrder {
   guaranteedStopFee?: number;
   liquidationPrice: number;
   liquidationTime: number;
-  closePrice?: number; // TODO: discussion
+  closePrice?: number;
   closeTimestamp?: number;
   closedType?: ICFDClosedType;
   forcedClose?: boolean;

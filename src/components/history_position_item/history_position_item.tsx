@@ -5,9 +5,10 @@ import {timestampToString} from '../../lib/common';
 import {IClosedCFDDetails} from '../../interfaces/tidebit_defi_background/closed_cfd_details';
 import {TypeOfPosition} from '../../constants/type_of_position';
 import {useGlobal} from '../../contexts/global_context';
+import {IDisplayAcceptedCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
 
 interface IHistoryPositionItemProps {
-  closedCfdDetails: IClosedCFDDetails;
+  closedCfdDetails: IDisplayAcceptedCFDOrder;
 }
 
 const HistoryPositionItem = ({closedCfdDetails, ...otherProps}: IHistoryPositionItemProps) => {
@@ -36,7 +37,7 @@ const HistoryPositionItem = ({closedCfdDetails, ...otherProps}: IHistoryPosition
     globalCtx.visibleHistoryPositionModalHandler();
   };
 
-  const displayedTime = timestampToString(closedCfdDetails.closedTimestamp);
+  const displayedTime = timestampToString(closedCfdDetails?.closeTimestamp ?? 0);
 
   return (
     <>
@@ -61,7 +62,7 @@ const HistoryPositionItem = ({closedCfdDetails, ...otherProps}: IHistoryPosition
           <div className="w-150px">
             <div className="text-lightGray">Open / Close Value</div>
             <div className="">
-              $ {closedCfdDetails.openValue} / $ {closedCfdDetails.closedValue}
+              $ {closedCfdDetails.openValue} / $ {closedCfdDetails?.closeValue ?? 0}
             </div>
           </div>
 

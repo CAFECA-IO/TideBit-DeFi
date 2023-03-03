@@ -17,11 +17,13 @@ import {IClosedCFDDetails} from '../../interfaces/tidebit_defi_background/closed
 import {MarketContext} from '../../contexts/market_context';
 import {CFDClosedType} from '../../constants/cfd_closed_type';
 import {OrderState} from '../../constants/order_state';
+import {IDisplayAcceptedCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
 
 interface IHistoryPositionModal {
   modalVisible: boolean;
   modalClickHandler: () => void;
-  closedCfdDetails: IClosedCFDDetails;
+  closedCfdDetails: IDisplayAcceptedCFDOrder;
+  // closedCfdDetails: IClosedCFDDetails;
 }
 
 const HistoryPositionModal = ({
@@ -77,8 +79,8 @@ const HistoryPositionModal = ({
 
   const socialMediaStyle = 'hover:cursor-pointer hover:opacity-80';
 
-  const openTime = timestampToString(closedCfdDetails?.openTimestamp ?? 0);
-  const closedTime = timestampToString(closedCfdDetails?.closedTimestamp ?? 0);
+  const openTime = timestampToString(closedCfdDetails.createTimestamp ?? 0);
+  const closedTime = timestampToString(closedCfdDetails?.closeTimestamp ?? 0);
 
   const formContent = (
     <div className="relative flex-auto pt-0">

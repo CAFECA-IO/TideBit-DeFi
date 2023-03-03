@@ -335,8 +335,8 @@ export interface IGlobalContext {
 
   visibleHistoryPositionModal: boolean;
   visibleHistoryPositionModalHandler: () => void;
-  dataHistoryPositionModal: IClosedCFDDetails | null;
-  dataHistoryPositionModalHandler: (data: IClosedCFDDetails) => void;
+  dataHistoryPositionModal: IDisplayAcceptedCFDOrder | null;
+  dataHistoryPositionModalHandler: (data: IDisplayAcceptedCFDOrder) => void;
 
   visiblePositionClosedModal: boolean;
   visiblePositionClosedModalHandler: () => void;
@@ -574,7 +574,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
 
   const [visibleHistoryPositionModal, setVisibleHistoryPositionModal] = useState(false);
   const [dataHistoryPositionModal, setDataHistoryPositionModal] =
-    useState<IClosedCFDDetails>(dummyCloseCFDDetails);
+    useState<IDisplayAcceptedCFDOrder>(getDummyDisplayAcceptedCFDOrder('BTC'));
 
   const [visiblePositionClosedModal, setVisiblePositionClosedModal] = useState(false);
   const [dataPositionClosedModal, setDataPositionClosedModal] = useState<IDataPositionClosedModal>(
@@ -760,7 +760,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     setVisibleHistoryPositionModal(!visibleHistoryPositionModal);
   };
 
-  const dataHistoryPositionModalHandler = (data: IClosedCFDDetails) => {
+  const dataHistoryPositionModalHandler = (data: IDisplayAcceptedCFDOrder) => {
     setDataHistoryPositionModal(data);
   };
 

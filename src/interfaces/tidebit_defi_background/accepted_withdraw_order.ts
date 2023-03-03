@@ -3,9 +3,12 @@ import {OrderType} from '../../constants/order_type';
 import {IAcceptedOrder} from './accepted_order';
 
 export interface IAcceptedWithdrawOrder extends IAcceptedOrder {
-  currency: string;
-  amount: number;
+  targetAsset: string;
+  targetAmount: number;
+  decimals: number;
   to: string;
+  remark?: string;
+  fee: number;
 }
 
 export const dummyAcceptedWithdrawOrder: IAcceptedWithdrawOrder = {
@@ -13,7 +16,9 @@ export const dummyAcceptedWithdrawOrder: IAcceptedWithdrawOrder = {
   orderType: OrderType.WITHDRAW,
   createTimestamp: Math.ceil(Date.now() / 1000),
   orderStatus: OrderStatusUnion.SUCCESS,
-  currency: 'ETH',
-  amount: 7.91,
+  targetAsset: 'ETH',
+  targetAmount: 7.91,
   to: '0x',
+  decimals: 18,
+  fee: 0,
 };

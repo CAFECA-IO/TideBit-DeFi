@@ -23,7 +23,6 @@ import {
   dummyWalletBalance_USDT,
   IWalletBalance,
 } from '../interfaces/tidebit_defi_background/wallet_balance';
-import {ICFDOrderUpdateRequest} from '../interfaces/tidebit_defi_background/cfd_order_update';
 import {getDummyBalances, IBalance} from '../interfaces/tidebit_defi_background/balance';
 import {IOrder} from '../interfaces/tidebit_defi_background/order';
 import {
@@ -34,7 +33,6 @@ import {
   dummyWithdrawalOrder,
   IWithdrawalOrder,
 } from '../interfaces/tidebit_defi_background/withdrawal_order';
-import {IOpenCFDOrder} from '../interfaces/tidebit_defi_background/open_cfd_order';
 import {INotificationItem} from '../interfaces/tidebit_defi_background/notification_item';
 import {TideBitEvent} from '../constants/tidebit_event';
 import {NotificationContext} from './notification_context';
@@ -44,14 +42,9 @@ import {IModifyType, ModifyType} from '../constants/modify_type';
 import {IOrderType, OrderType} from '../constants/order_type';
 import {WorkerContext} from './worker_context';
 import ServiceTerm from '../constants/contracts/service_term';
-import {
-  getDummyApplyCreateCFDOrderData,
-  IApplyCreateCFDOrderData,
-} from '../interfaces/tidebit_defi_background/apply_create_cfd_order_data';
+import {IApplyCreateCFDOrderData} from '../interfaces/tidebit_defi_background/apply_create_cfd_order_data';
 import {IApplyCloseCFDOrderData} from '../interfaces/tidebit_defi_background/apply_close_cfd_order_data';
 import {IApplyUpdateCFDOrderData} from '../interfaces/tidebit_defi_background/apply_update_cfd_order_data';
-import {TypeOfPosition} from '../constants/type_of_position';
-import {unitAsset} from '../constants/unit_asset';
 import TransactionEngineInstance from '../classes/transaction_engine';
 import {CFDOrderType} from '../constants/cfd_order_type';
 import {IApplyCFDOrder} from '../interfaces/tidebit_defi_background/apply_cfd_order';

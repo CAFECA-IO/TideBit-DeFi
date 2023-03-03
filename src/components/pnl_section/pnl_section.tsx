@@ -1,11 +1,12 @@
 import React from 'react';
-import {TypeOfPnLColor} from '../../constants/display';
+import {TypeOfPnLColor, UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
 
 const PnlSection = () => {
   // TODO: pnl from userContext
+  // TODO: i18n
   const pnlToday = {amount: -128.29, percentage: -1.5};
-  const pnl30Days = {amount: 61545218.83, percentage: 10.36};
-  const cumulativePnl = {amount: 7692.47, percentage: 22.75};
+  const pnl30Days = {amount: 98124532.83, percentage: 10.36};
+  const cumulativePnl = {amount: -57692.47, percentage: -22.75};
 
   // const displayedTextColor =
 
@@ -14,12 +15,15 @@ const PnlSection = () => {
     {title: 'PNL in 30 days', ...pnl30Days},
     {title: 'Cumulative PNL', ...cumulativePnl},
   ].map(({amount, percentage, ...rest}) => ({
-    content: amount > 0 ? `+ ${amount.toString()} USDT` : `${amount.toString()} USDT`,
+    content:
+      amount > 0
+        ? `+ ${amount.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)} USDT`
+        : `${amount.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)} USDT`,
     remarks: percentage > 0 ? `▴ + ${percentage.toString()} %` : `▾ ${percentage.toString()} %`,
     textColor:
-      percentage > 0
+      percentage > 0 && amount > 0
         ? TypeOfPnLColor.PROFIT
-        : percentage < 0
+        : percentage < 0 && amount < 0
         ? TypeOfPnLColor.LOSS
         : TypeOfPnLColor.EQUAL,
     ...rest,
@@ -30,12 +34,12 @@ const PnlSection = () => {
       <div
         key={title}
         style={{height: '', marginTop: '10px'}}
-        className="mx-20 mb-6 flex w-screen justify-center border-b border-lightGray/50 p-4 lg:mx-0 lg:mb-0 lg:w-1/3 lg:border-b-0 lg:border-r"
+        className="mx-0 mb-6 flex w-screen justify-center border-b border-lightGray/50 p-4 lg:mx-0 lg:mb-0 lg:w-1/3 lg:border-b-0 lg:border-r"
       >
         <div className="h-full space-y-3 text-center lg:text-start">
           <h1 className={`text-lg leading-relaxed xl:text-xl`}>{title}</h1>
-          <h2 className={`text-3xl font-medium xl:text-4xl ${textColor}`}>{content}</h2>
-          <p className={`text-lg leading-relaxed xl:text-xl ${textColor}`}>{remarks}</p>
+          <h2 className={`text-2xl font-medium lg:text-3xl xl:text-4xl ${textColor}`}>{content}</h2>
+          <p className={`text-lg leading-relaxed lg:text-lg xl:text-xl ${textColor}`}>{remarks}</p>
         </div>
 
         {/* How to position it to w-1/3 */}

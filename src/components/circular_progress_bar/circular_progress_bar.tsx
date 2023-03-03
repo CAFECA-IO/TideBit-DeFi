@@ -57,7 +57,7 @@ const CircularProgressBar = ({
           background: '#404A55',
         },
         dataLabels: {
-          show: true,
+          show: false,
           name: {
             show: true,
             fontSize: '12px',

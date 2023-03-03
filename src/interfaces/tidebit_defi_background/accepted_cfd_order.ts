@@ -19,7 +19,7 @@ export interface IAcceptedCFDOrder extends IAcceptedOrder {
   takeProfit?: number;
   stopLoss?: number;
   fee: number;
-  guaranteedStop?: boolean;
+  guaranteedStop: boolean;
   guaranteedStopFee?: number;
   liquidationPrice: number;
   liquidationTime: number;

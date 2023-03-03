@@ -14,26 +14,6 @@ export interface IDisplayApplyCFDOrder extends IApplyCFDOrder {
   pnl?: IPnL;
 }
 
-// ----------------Trial----------------
-
-export interface ITestApplyCFDOrder {
-  type: ICFDOrderType;
-  data: IApplyCreateCFDOrderData;
-  signature: string;
-}
-
-export const getTestDummyApplyCreateCFDOrder = (currency: string, id?: string) => {
-  const date = new Date();
-  const dummyApplyCreateCFDOrder: ITestApplyCFDOrder = {
-    type: CFDOrderType.CREATE,
-    data: getDummyApplyCreateCFDOrderData(currency),
-    signature: '0x',
-  };
-  return dummyApplyCreateCFDOrder;
-};
-
-// ----------------Trial----------------
-
 export const getDummyDisplayApplyCreateCFDOrder = (currency: string, id?: string) => {
   const date = new Date();
   const dummyApplyCreateCFDOrder: IDisplayApplyCFDOrder = {

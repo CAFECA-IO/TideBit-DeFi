@@ -260,6 +260,28 @@ const TradeTab = () => {
     const creatingData = newData.data as IApplyCreateCFDOrderData;
 
     globalCtx.dataPositionOpenModalHandler({
+      // TODO: [UI] targetAsset, uniAsset, margin asset choice
+      displayApplyCreateCFD: {
+        ...newData,
+        // type: CFDOrderType.CREATE,
+        data: {
+          ...creatingData,
+          ticker: marketCtx.selectedTicker?.currency ?? '',
+          price: Number(buyPrice) ?? 9999999999,
+
+          typeOfPosition: TypeOfPosition.BUY,
+
+          amount: targetedAmountInputValueRef.current,
+          margin: {asset: 'USDT', amount: requiredMarginRef.current},
+          takeProfit: longTpToggle ? longTpValue : undefined,
+          stopLoss: longSlToggle ? longSlValue : undefined,
+          guaranteedStop: longSlToggle ? longGuaranteedStopChecked : undefined,
+          targetAsset: 'USDT',
+          uniAsset: 'USDT',
+          // guaranteedStopFee: longSlToggle && longGuaranteedStopChecked ? targetedAmountInputValueRef.current * (long price) * 0.7 : undefined,
+        },
+      },
+
       openCfdRequest: {
         id: '202302221915',
         ticker: marketCtx.selectedTicker?.currency ?? '',
@@ -285,28 +307,6 @@ const TradeTab = () => {
         chargeUnit: 'USDT',
       },
       renewalDeadline: new Date().getTime() / 1000 + RENEW_QUOTATION_INTERVAL_SECONDS,
-
-      // TODO: [UI] targetAsset, uniAsset, margin asset choice
-      displayApplyCreateCFD: {
-        ...newData,
-        // type: CFDOrderType.CREATE,
-        data: {
-          ...creatingData,
-          ticker: marketCtx.selectedTicker?.currency ?? '',
-          price: Number(buyPrice) ?? 9999999999,
-
-          typeOfPosition: TypeOfPosition.BUY,
-
-          amount: targetedAmountInputValueRef.current,
-          margin: {asset: 'USDT', amount: requiredMarginRef.current},
-          takeProfit: longTpToggle ? longTpValue : undefined,
-          stopLoss: longSlToggle ? longSlValue : undefined,
-          guaranteedStop: longSlToggle ? longGuaranteedStopChecked : undefined,
-          targetAsset: 'USDT',
-          uniAsset: 'USDT',
-          // guaranteedStopFee: longSlToggle && longGuaranteedStopChecked ? targetedAmountInputValueRef.current * (long price) * 0.7 : undefined,
-        },
-      },
     });
     globalCtx.visiblePositionOpenModalHandler();
     // globalCtx.visibleWalletPanelHandler();
@@ -344,6 +344,27 @@ const TradeTab = () => {
     const creatingData = newData.data as IApplyCreateCFDOrderData;
 
     globalCtx.dataPositionOpenModalHandler({
+      // TODO: [UI] targetAsset, uniAsset, margin asset choice
+      displayApplyCreateCFD: {
+        ...newData,
+        data: {
+          ...creatingData,
+          ticker: marketCtx.selectedTicker?.currency ?? '',
+          price: Number(sellPrice) ?? 9999999999,
+
+          typeOfPosition: TypeOfPosition.SELL,
+
+          amount: targetedAmountInputValueRef.current,
+          margin: {asset: 'USDT', amount: requiredMarginRef.current},
+          takeProfit: shortTpToggle ? shortTpValue : undefined,
+          stopLoss: shortSlToggle ? shortSlValue : undefined,
+          guaranteedStop: shortSlToggle ? shortGuaranteedStopChecked : undefined,
+          targetAsset: 'USDT',
+          uniAsset: 'USDT',
+          // guaranteedStopFee: shortSlToggle && shortGuaranteedStopChecked ? targetedAmountInputValueRef.current * (long price) * 0.7 : undefined,
+        },
+      },
+
       openCfdRequest: {
         id: '202302221915',
         ticker: marketCtx.selectedTicker?.currency ?? '',
@@ -369,25 +390,6 @@ const TradeTab = () => {
         chargeUnit: 'USDT',
       },
       renewalDeadline: new Date().getTime() / 1000 + RENEW_QUOTATION_INTERVAL_SECONDS,
-      displayApplyCreateCFD: {
-        ...newData,
-        data: {
-          ...creatingData,
-          ticker: marketCtx.selectedTicker?.currency ?? '',
-          price: Number(sellPrice) ?? 9999999999,
-
-          typeOfPosition: TypeOfPosition.SELL,
-
-          amount: targetedAmountInputValueRef.current,
-          margin: {asset: 'USDT', amount: requiredMarginRef.current},
-          takeProfit: shortTpToggle ? shortTpValue : undefined,
-          stopLoss: shortSlToggle ? shortSlValue : undefined,
-          guaranteedStop: shortSlToggle ? shortGuaranteedStopChecked : undefined,
-          targetAsset: 'USDT',
-          uniAsset: 'USDT',
-          // guaranteedStopFee: shortSlToggle && shortGuaranteedStopChecked ? targetedAmountInputValueRef.current * (long price) * 0.7 : undefined,
-        },
-      },
     });
     globalCtx.visiblePositionOpenModalHandler();
     // globalCtx.visibleWalletPanelHandler();

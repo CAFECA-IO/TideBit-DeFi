@@ -22,7 +22,6 @@ import {dummyOpenCFDOrder} from '../../interfaces/tidebit_defi_background/open_c
 import {
   IDisplayApplyCFDOrder,
   getDummyDisplayApplyCreateCFDOrder,
-  getTestDummyApplyCreateCFDOrder,
 } from '../../interfaces/tidebit_defi_background/display_apply_cfd_order';
 import {CFDOrderType} from '../../constants/cfd_order_type';
 import {

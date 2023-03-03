@@ -4,22 +4,22 @@ import {IQuotation} from './quotation';
 
 export interface IApplyCreateCFDOrderData {
   ticker: string;
+  quotation: IQuotation; // 報價單
   typeOfPosition: ITypeOfPosition;
   price: number;
-  quotation: IQuotation; // 報價單
   amount: number;
   targetAsset: string;
-  uniAsset: string; // 計價單位
-  createTimestamp?: number;
-  leverage: number;
+  uniAsset: string; // 計價單位(++TODO 有拼錯嗎？)
   margin: IMargin;
-  takeProfit?: number;
-  stopLoss?: number;
-  fee?: number;
-  guaranteedStop?: boolean;
-  guaranteedStopFee?: number;
+  leverage: number;
   liquidationPrice: number; // 強制平倉價格
   liquidationTime: number;
+  guaranteedStop?: boolean;
+  guaranteedStopFee?: number;
+  createTimestamp?: number;
+  takeProfit?: number;
+  stopLoss?: number;
+  fee: number;
   remark?: string;
 }
 
@@ -37,7 +37,7 @@ export const getDummyApplyCreateCFDOrderData = (currency: string) => {
     price: randomIntFromInterval(1000, 10000),
     targetAsset: typeOfPosition === TypeOfPosition.BUY ? currency : 'USDT',
     uniAsset: typeOfPosition === TypeOfPosition.BUY ? 'USDT' : currency,
-    margin: {asset: 'BTC', amount: randomIntFromInterval(650, 10000)},
+    margin: {asset: 'BTC', amount: randomIntFromInterval(10, 100)},
     takeProfit: 74521,
     stopLoss: 25250,
     fee: 0,
@@ -46,12 +46,11 @@ export const getDummyApplyCreateCFDOrderData = (currency: string) => {
       targetAsset: typeOfPosition === TypeOfPosition.BUY ? currency : 'USDT',
       uniAsset: typeOfPosition === TypeOfPosition.BUY ? 'USDT' : currency,
       price: randomIntFromInterval(1000, 10000),
-      deadline: Date.now() / 1000 + 15,
+      deadline: Math.ceil(Date.now() / 1000) + 15,
       signature: '0x',
     }, // 報價單
-
     liquidationPrice: randomIntFromInterval(1000, 10000),
-    liquidationTime: Date.now() / 1000 + 86400, // openTimestamp + 86400
+    liquidationTime: Math.ceil(Date.now() / 1000) + 86400, // openTimestamp + 86400
   };
   return dummyApplyCreateCFDOrderData;
 };

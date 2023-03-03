@@ -54,7 +54,7 @@ const sample: IEIP712Data = {
 
 interface IEIP712Data {
   domain: IDomain;
-  message: IMessage;
+  message: any; // ++ TODO: recursive type
   primaryType: string;
   types: ITypes;
 }
@@ -80,6 +80,7 @@ interface ITypes {
 interface IType {
   name: string;
   type: string;
+  optional?: boolean;
 }
 
 export default IEIP712Data;

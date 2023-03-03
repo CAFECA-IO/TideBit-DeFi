@@ -37,6 +37,22 @@ import {ProfitState} from '../constants/profit_state';
 import {OrderType} from '../constants/order_type';
 import {OrderStatusUnion} from '../constants/order_status_union';
 import {TypeOfPosition} from '../constants/type_of_position';
+import {
+  getDummyApplyCreateCFDOrderData,
+  IApplyCreateCFDOrderData,
+} from '../interfaces/tidebit_defi_background/apply_create_cfd_order_data';
+import {
+  getDummyApplyCloseCFDOrderData,
+  IApplyCloseCFDOrderData,
+} from '../interfaces/tidebit_defi_background/apply_close_cfd_order_data';
+import {
+  getDummyApplyUpdateCFDOrderData,
+  IApplyUpdateCFDOrderData,
+} from '../interfaces/tidebit_defi_background/apply_update_cfd_order_data';
+import {
+  getDummyDisplayAcceptedCFDOrder,
+  IDisplayAcceptedCFDOrder,
+} from '../interfaces/tidebit_defi_background/display_accepted_cfd_order';
 
 export interface IToastify {
   type: 'error' | 'warning' | 'info' | 'success';
@@ -65,6 +81,8 @@ export interface IUpdatedCFDInputProps {
 export interface IDataPositionUpdatedModal {
   openCfdDetails: IOpenCFDDetails;
   updatedProps?: IUpdatedCFDInputProps;
+  // openCfdDetails: IDisplayAcceptedCFDOrder;
+  // updatedProps?: IApplyUpdateCFDOrderData;
 }
 
 export interface IClosedCFDInfoProps {
@@ -76,34 +94,18 @@ export interface IClosedCFDInfoProps {
 export interface IDataPositionClosedModal {
   openCfdDetails: IOpenCFDDetails;
   latestProps: IClosedCFDInfoProps;
+  // openCfdDetails: IDisplayAcceptedCFDOrder;
+  // latestProps: IApplyCloseCFDOrderData;
+  // renewalDeadline: number;
 }
 
 export interface IDataPositionOpenModal {
-  openCfdRequest: IPublicCFDOrder;
+  openCfdRequest: IApplyCreateCFDOrderData;
   renewalDeadline: number;
 }
 
 export const dummyDataPositionOpenModal: IDataPositionOpenModal = {
-  openCfdRequest: {
-    id: '001',
-    orderType: OrderType.CFD,
-    orderStatus: OrderStatusUnion.PROCESSING,
-    ticker: 'ETH',
-    price: 20193.1,
-    liquidationPrice: 16332.5,
-    amount: 27,
-    // triggerPrice: 20193.1,
-    typeOfPosition: TypeOfPosition.SELL,
-    leverage: 5,
-    margin: 35766,
-    marginUnit: 'USDT',
-    guaranteedStop: true,
-    // estimatedFilledPrice: 1,
-    fee: 0.0001,
-    targetUnit: 'ETH',
-    chargeUnit: 'USDT',
-    createdTime: 1676369333495,
-  },
+  openCfdRequest: getDummyApplyCreateCFDOrderData('ETH'),
   renewalDeadline: new Date('2023-02-24T17:00:00').getTime(),
 };
 
@@ -117,6 +119,9 @@ export const dummyDataPositionClosedModal: IDataPositionClosedModal = {
     //   type: ProfitState.PROFIT,
     // },
   },
+  // openCfdDetails: getDummyDisplayAcceptedCFDOrder('ETH'),
+  // renewalDeadline: new Date('2023-02-24T17:00:00').getTime(),
+  // latestProps: getDummyApplyCloseCFDOrderData('ETH'),
 };
 
 export const dummyDataPositionUpdatedModal: IDataPositionUpdatedModal = {
@@ -126,6 +131,8 @@ export const dummyDataPositionUpdatedModal: IDataPositionUpdatedModal = {
     stopLoss: 0,
     guaranteedStopLoss: false,
   },
+  // openCfdDetails: getDummyDisplayAcceptedCFDOrder('ETH'),
+  // updatedProps: getDummyApplyUpdateCFDOrderData('ETH'),
 };
 
 export interface ISuccessfulModal {
@@ -281,6 +288,9 @@ export interface IGlobalContext {
   visiblePositionDetailsModalHandler: () => void;
   dataPositionDetailsModal: IOpenCFDDetails | null;
   dataPositionDetailsModalHandler: (data: IOpenCFDDetails) => void;
+
+  // dataPositionDetailsModal: IDisplayAcceptedCFDOrder | null;
+  // dataPositionDetailsModalHandler: (data: IDisplayAcceptedCFDOrder) => void;
 
   visibleDepositModal: boolean;
   visibleDepositModalHandler: () => void;
@@ -514,6 +524,8 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
 
   const [visiblePositionDetailsModal, setVisiblePositionDetailsModal] = useState(false);
   // TODO: replace dummy data with standard example data
+  // const [dataPositionDetailsModal, setDataPositionDetailsModal] =
+  //   useState<IDisplayAcceptedCFDOrder>(getDummyDisplayAcceptedCFDOrder('ETH'));
   const [dataPositionDetailsModal, setDataPositionDetailsModal] =
     useState<IOpenCFDDetails>(dummyOpenCFDDetails);
 
@@ -661,6 +673,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     setVisiblePositionDetailsModal(!visiblePositionDetailsModal);
   };
   const dataPositionDetailsModalHandler = (data: IOpenCFDDetails) => {
+    //(data: IDisplayAcceptedCFDOrder) => {
     setDataPositionDetailsModal(data);
   };
 
@@ -859,11 +872,33 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
 
   const depositSubmitHandler = (props: {asset: string; amount: number}) => {
     setDepositProcess('loading');
+    userCtx
+      .deposit({
+        orderType: OrderType.DEPOSIT,
+        createTimestamp: Math.ceil(Date.now() / 1000),
+        targetAsset: props.asset,
+        targetAmount: props.amount,
+        decimals: 18,
+        to: '0x',
+        remark: '',
+        fee: 0,
+      })
+      .then(_ => setDepositProcess('success'));
   };
 
   const withdrawSubmitHandler = (props: {asset: string; amount: number}) => {
     setWithdrawProcess('loading');
-
+    userCtx
+      .withdraw({
+        orderType: OrderType.WITHDRAW,
+        createTimestamp: Math.ceil(Date.now() / 1000),
+        targetAsset: props.asset,
+        targetAmount: props.amount,
+        to: '0x',
+        remark: '',
+        fee: 0,
+      })
+      .then(_ => setDepositProcess('success'));
     // setTimeout(() => {
     //   setWithdrawProcess('success');
 
@@ -1085,6 +1120,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
         modalClickHandler={visiblePositionClosedModalHandler}
         openCfdDetails={dataPositionClosedModal.openCfdDetails}
         latestProps={dataPositionClosedModal.latestProps}
+        // renewalDeadline={dataPositionClosedModal.renewalDeadline}
       />
       <PositionUpdatedModal
         modalVisible={visiblePositionUpdatedModal}

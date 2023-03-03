@@ -18,11 +18,15 @@ import {TypeOfPosition} from '../../constants/type_of_position';
 import {UserContext} from '../../contexts/user_context';
 import {POSITION_PRICE_RENEWAL_INTERVAL_SECONDS} from '../../constants/config';
 import {dummyOpenCFDOrder} from '../../interfaces/tidebit_defi_background/open_cfd_order';
+import {
+  getDummyApplyCreateCFDOrderData,
+  IApplyCreateCFDOrderData,
+} from '../../interfaces/tidebit_defi_background/apply_create_cfd_order_data';
 
 interface IPositionOpenModal {
   modalVisible: boolean;
   modalClickHandler: () => void;
-  openCfdRequest: IPublicCFDOrder;
+  openCfdRequest: IApplyCreateCFDOrderData;
   renewalDeadline: number;
 }
 
@@ -64,7 +68,12 @@ const PositionOpenModal = ({
     globalCtx.visibleLoadingModalHandler();
 
     // FIXME: Use the real and correct data after the param is confirmed
-    const result = await userCtx.createOrder({...dummyOpenCFDOrder});
+    // const dummyCFDOrder: IApplyCreateCFDOrderData = getDummyApplyCreateCFDOrderData(
+    //   marketCtx.selectedTicker?.currency || 'ETH'
+    // );
+    // eslint-disable-next-line no-console
+    // console.log(`position_open_modal dummyCFDOrder`, dummyCFDOrder);
+    const result = await userCtx.createCFDOrder(globalCtx.dataPositionOpenModal?.openCfdRequest);
     // console.log('result from userCtx in position_closed_modal.tsx: ', result);
 
     // TODO: temporary waiting
@@ -126,7 +135,7 @@ const PositionOpenModal = ({
 
   // TODO: i18n
   const displayedTypeOfPosition =
-    openCfdRequest?.typeOfPosition === TypeOfPosition.BUY ? 'Up (Buy)' : 'Down (Sell)';
+    openCfdRequest.typeOfPosition === TypeOfPosition.BUY ? 'Up (Buy)' : 'Down (Sell)';
 
   // const displayedPnLColor =
   //   openCfdRequest?.pnl.type === 'PROFIT'
@@ -141,12 +150,12 @@ const PositionOpenModal = ({
       : TypeOfPnLColor.LOSS;
 
   const displayedBorderColor =
-    openCfdRequest?.typeOfPosition === TypeOfPosition.BUY
+    openCfdRequest.typeOfPosition === TypeOfPosition.BUY
       ? TypeOfBorderColor.LONG
       : TypeOfBorderColor.SHORT;
 
-  const displayedTakeProfit = openCfdRequest?.takeProfit ? `$ ${openCfdRequest.takeProfit}` : '-';
-  const displayedStopLoss = openCfdRequest?.stopLoss ? `$ ${openCfdRequest.stopLoss}` : '-';
+  const displayedTakeProfit = openCfdRequest.takeProfit ? `$ ${openCfdRequest.takeProfit}` : '-';
+  const displayedStopLoss = openCfdRequest.stopLoss ? `$ ${openCfdRequest.stopLoss}` : '-';
 
   const layoutInsideBorder = 'mx-5 my-4 flex justify-between';
 
@@ -158,7 +167,8 @@ const PositionOpenModal = ({
     setDataRenewedStyle('animate-flash text-lightYellow2');
     await wait(DELAYED_HIDDEN_SECONDS / 5);
 
-    const newTimestamp = new Date().getTime() / 1000 + POSITION_PRICE_RENEWAL_INTERVAL_SECONDS;
+    const newTimestamp =
+      Math.ceil(new Date().getTime() / 1000) + POSITION_PRICE_RENEWAL_INTERVAL_SECONDS;
     setSecondsLeft(newTimestamp - Date.now() / 1000);
 
     // TODO: get latest price from marketCtx and calculate required margin data
@@ -178,6 +188,13 @@ const PositionOpenModal = ({
                 marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice * 1.25
               )
             : 999999,
+        margin: {
+          ...openCfdRequest.margin,
+          amount: randomIntFromInterval(
+            openCfdRequest.margin.amount * 0.9,
+            openCfdRequest.margin.amount * 1.5
+          ),
+        },
         // TODO:
         // margin:
         //   openCfdRequest.typeOfPosition === TypeOfPosition.BUY
@@ -185,8 +202,6 @@ const PositionOpenModal = ({
         //       openCfdRequest.leverage
         //     : (openCfdRequest.amount * marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice) /
         //       openCfdRequest.leverage,
-
-        margin: randomIntFromInterval(openCfdRequest.margin * 0.9, openCfdRequest.margin * 1.5),
       },
       renewalDeadline: newTimestamp,
     });
@@ -293,7 +308,7 @@ const PositionOpenModal = ({
               <div className="text-lightGray">Open Price</div>
               <div className={`${dataRenewedStyle}`}>
                 {/* TODO: Hardcode USDT */}${' '}
-                {openCfdRequest?.price?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0} USDT
+                {openCfdRequest.price?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0} USDT
               </div>
             </div>
 
@@ -301,7 +316,7 @@ const PositionOpenModal = ({
               <div className="text-lightGray">Amount</div>
               <div className="">
                 {/* TODO:{openCfdRequest?.amount?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0} */}
-                {222}
+                {openCfdRequest.amount}
               </div>
             </div>
 
@@ -309,7 +324,7 @@ const PositionOpenModal = ({
               <div className="text-lightGray">Required Margin</div>
               {/* TODO: Hardcode USDT */}
               <div className={`${dataRenewedStyle}`}>
-                $ {(openCfdRequest?.margin).toFixed(2)} USDT
+                $ {openCfdRequest.margin.amount.toFixed(2)} USDT
               </div>
             </div>
 

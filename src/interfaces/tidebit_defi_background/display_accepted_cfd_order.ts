@@ -43,7 +43,7 @@ export const getDummyDisplayAcceptedCFDOrder = (currency: string) => {
     guaranteedStop: false,
     guaranteedStopFee: 0.77,
     liquidationPrice: 19537,
-    liquidationTime: 1675386051, // openTimestamp + 86400
+    liquidationTime: 1675386051,
     closePrice: 19537,
     closeTimestamp: 1675386051,
     closedType: CFDClosedType.SCHEDULE,
@@ -57,6 +57,8 @@ export const getDummyDisplayAcceptedCFDOrder = (currency: string) => {
     closeValue: 19537 * 1.8,
     positionLineGraph: [90, 72, 60, 65, 42, 25, 32, 20, 15, 32, 90, 10],
     suggestion: {takeProfit: 74521, stopLoss: 25250},
+    orderType: 'CFD',
+    orderStatus: 'FAILED',
   };
   return dummyDisplayAcceptedCFDOrder;
 };
@@ -87,7 +89,7 @@ export const getDummyDisplayAcceptedCFDs = (currency: string) => {
       guaranteedStop: false,
       guaranteedStopFee: 0.77,
       liquidationPrice: randomIntFromInterval(1000, 10000),
-      liquidationTime: 1675386051, // openTimestamp + 86400
+      liquidationTime: 1675386051,
       closePrice: randomIntFromInterval(1000, 10000),
       closeTimestamp: 1675386051,
       closedType: CFDClosedType.SCHEDULE,
@@ -101,6 +103,8 @@ export const getDummyDisplayAcceptedCFDs = (currency: string) => {
       closeValue: 19537 * 1.8,
       positionLineGraph: [90, 72, 60, 65, 42, 25, 32, 20, 15, 32, 90, 10],
       suggestion: {takeProfit: 74521, stopLoss: 25250},
+      orderType: 'CFD',
+      orderStatus: 'FAILED',
     };
     dummyDisplayAcceptedCFDs.push(dummyDisplayAcceptedCFDOrder);
   }

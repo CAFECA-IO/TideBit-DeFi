@@ -23,14 +23,7 @@ import {
   dummyWalletBalance_USDT,
   IWalletBalance,
 } from '../interfaces/tidebit_defi_background/wallet_balance';
-import {ICFDOrderUpdateRequest} from '../interfaces/tidebit_defi_background/cfd_order_update';
 import {getDummyBalances, IBalance} from '../interfaces/tidebit_defi_background/balance';
-import {
-  dummyPublicCFDOrder,
-  dummyPublicDepositOrder,
-  dummyPublicWithdrawOrder,
-} from '../interfaces/tidebit_defi_background/public_order';
-import {IOrderResult} from '../interfaces/tidebit_defi_background/order_result';
 import {IOrder} from '../interfaces/tidebit_defi_background/order';
 import {
   dummyDepositOrder,
@@ -40,16 +33,40 @@ import {
   dummyWithdrawalOrder,
   IWithdrawalOrder,
 } from '../interfaces/tidebit_defi_background/withdrawal_order';
-import {IOpenCFDOrder} from '../interfaces/tidebit_defi_background/open_cfd_order';
 import {INotificationItem} from '../interfaces/tidebit_defi_background/notification_item';
 import {TideBitEvent} from '../constants/tidebit_event';
 import {NotificationContext} from './notification_context';
 import {ITickerData} from '../interfaces/tidebit_defi_background/ticker_data';
-import {ICFDDetails} from '../interfaces/tidebit_defi_background/cfd_details';
 import {IOrderState, OrderState} from '../constants/order_state';
 import {IModifyType, ModifyType} from '../constants/modify_type';
 import {IOrderType, OrderType} from '../constants/order_type';
 import {WorkerContext} from './worker_context';
+import ServiceTerm from '../constants/contracts/service_term';
+import {IApplyCreateCFDOrderData} from '../interfaces/tidebit_defi_background/apply_create_cfd_order_data';
+import {IApplyCloseCFDOrderData} from '../interfaces/tidebit_defi_background/apply_close_cfd_order_data';
+import {IApplyUpdateCFDOrderData} from '../interfaces/tidebit_defi_background/apply_update_cfd_order_data';
+import TransactionEngineInstance from '../classes/transaction_engine';
+import {CFDOrderType} from '../constants/cfd_order_type';
+import {IApplyCFDOrder} from '../interfaces/tidebit_defi_background/apply_cfd_order';
+import {getDummyAcceptedCFDOrder} from '../interfaces/tidebit_defi_background/accepted_cfd_order';
+import {IOrderResult} from '../interfaces/tidebit_defi_background/order_result';
+import {dummyAcceptedDepositOrder} from '../interfaces/tidebit_defi_background/accepted_deposit_order';
+import {dummyAcceptedWithdrawOrder} from '../interfaces/tidebit_defi_background/accepted_withdraw_order';
+import {IApplyDepositOrder} from '../interfaces/tidebit_defi_background/apply_deposit_order';
+import {IApplyWithdrawOrder} from '../interfaces/tidebit_defi_background/apply_withdraw_order';
+
+function randomNumber(min: number, max: number) {
+  return Math.floor(Math.random() * (max - min + 1) + min);
+}
+
+function randomArray(min: number, max: number, length: number) {
+  const arr = [];
+  for (let i = 0; i < length; i++) {
+    arr.push(randomNumber(min, max));
+  }
+  return arr;
+}
+
 // const sampleArray = randomArray(1100, 1200, 10);
 
 const strokeColorDisplayed = (sampleArray: number[]) => {
@@ -127,11 +144,11 @@ export interface IUserContext {
   isConnectedWithTideBit: boolean;
   getBalance: (props: string) => IBalance | null;
   getWalletBalance: (props: string) => IWalletBalance | null;
-  createOrder: (props: IOpenCFDOrder) => Promise<IOrderResult>;
-  closeOrder: (props: {id: string}) => Promise<IOrderResult>;
-  updateOrder: (props: ICFDOrderUpdateRequest) => Promise<IOrderResult>;
-  deposit: (props: IDepositOrder) => Promise<IOrderResult>;
-  withdraw: (props: IWithdrawalOrder) => Promise<IOrderResult>;
+  createCFDOrder: (props: IApplyCreateCFDOrderData | undefined) => Promise<IResult>;
+  closeCFDOrder: (props: IApplyCloseCFDOrderData | undefined) => Promise<IResult>;
+  updateCFDOrder: (props: IApplyUpdateCFDOrderData | undefined) => Promise<IResult>;
+  deposit: (props: IApplyDepositOrder) => Promise<IResult>;
+  withdraw: (props: IApplyWithdrawOrder) => Promise<IResult>;
   listHistories: (props: string) => Promise<IOrder[]>;
   sendEmailCode: (email: string) => Promise<number>;
   connectEmail: (email: string, code: number) => Promise<boolean>;
@@ -176,11 +193,14 @@ export const UserContext = createContext<IUserContext>({
   isConnectedWithTideBit: false,
   getBalance: (props: string) => null,
   getWalletBalance: (props: string) => null,
-  createOrder: (props: IOpenCFDOrder) => Promise.resolve<IOrderResult>(dummyResultSuccess),
-  closeOrder: (props: {id: string}) => Promise.resolve<IOrderResult>(dummyResultSuccess),
-  updateOrder: (props: ICFDOrderUpdateRequest) => Promise.resolve<IOrderResult>(dummyResultSuccess),
-  deposit: IDepositOrder => Promise.resolve<IOrderResult>(dummyResultSuccess),
-  withdraw: IWithdrawalOrder => Promise.resolve<IOrderResult>(dummyResultSuccess),
+  createCFDOrder: (props: IApplyCreateCFDOrderData | undefined) =>
+    Promise.resolve<IResult>(dummyResultSuccess),
+  closeCFDOrder: (props: IApplyCloseCFDOrderData | undefined) =>
+    Promise.resolve<IResult>(dummyResultSuccess),
+  updateCFDOrder: (props: IApplyUpdateCFDOrderData | undefined) =>
+    Promise.resolve<IResult>(dummyResultSuccess),
+  deposit: IApplyDepositOrder => Promise.resolve<IResult>(dummyResultSuccess),
+  withdraw: IApplyWithdrawOrder => Promise.resolve<IResult>(dummyResultSuccess),
   listHistories: () => Promise.resolve<IOrder[]>([]),
   sendEmailCode: (email: string) => Promise.resolve<number>(359123),
   connectEmail: (email: string, code: number) => Promise.resolve<boolean>(true),
@@ -194,6 +214,7 @@ export const UserContext = createContext<IUserContext>({
 
 export const UserProvider = ({children}: IUserProvider) => {
   // TODO: get partial user type from `IUserContext`
+  const transactionEngine = React.useMemo(() => TransactionEngineInstance, []);
   const workerCtx = useContext(WorkerContext);
   const [id, setId, idRef] = useState<string | null>(null);
   const [username, setUsername, usernameRef] = useState<string | null>(null);
@@ -253,7 +274,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     notificationCtx.emitter.emit(TideBitEvent.DISCONNECTED);
   };
 
-  const lunar = new Lunar();
+  const lunar = Lunar.getInstance();
   lunar.on('connected', () => {
     setIsConnected(true);
   });
@@ -287,6 +308,11 @@ export const UserProvider = ({children}: IUserProvider) => {
     let success = false;
     try {
       const connect = await lunar.connect({});
+      // eslint-disable-next-line no-console
+      // console.log(`connect connect`, connect);
+      // eslint-disable-next-line no-console
+      // console.log(`connect lunar.isConnected`, lunar.isConnected);
+
       if (connect) {
         success = true;
       }
@@ -296,10 +322,29 @@ export const UserProvider = ({children}: IUserProvider) => {
     return success;
   };
 
-  const signServiceTerm = async () => {
-    setEnableServiceTerm(true);
-    await setPrivateData(lunar.address);
-    return true;
+  const signServiceTerm = async (): Promise<boolean> => {
+    let signedResult: string;
+    // eslint-disable-next-line no-console
+    // console.log(`signServiceTerm lunar.isConnected`, lunar.isConnected);
+    // eslint-disable-next-line no-console
+    // console.log(`signServiceTerm lunar.address`, lunar.address);
+    if (lunar.isConnected) {
+      signedResult = await lunar.signTypedData(ServiceTerm);
+      //   const verifyR = await lunar.verify(lunar.address, signedResult, ServiceTerm);
+      // if (verifyR) {
+      // eslint-disable-next-line no-console
+      // console.log(`signServiceTerm signedResult`, signedResult);
+      setEnableServiceTerm(true);
+      await setPrivateData(lunar.address);
+      // } else {
+      //   // ++TODO
+      // }
+      // return verifyR;
+      return true;
+    } else {
+      await connect();
+      return signServiceTerm();
+    }
   };
 
   const disconnect = async () => {
@@ -366,81 +411,134 @@ export const UserProvider = ({children}: IUserProvider) => {
     return balance;
   };
 
-  const createOrder = async (props: IOpenCFDOrder) => {
-    let result: IOrderResult = dummyResultFailed;
-    if (isConnectedRef.current) {
-      const balance: IBalance | null = getBalance(props.ticker); // TODO: ticker is not currency
-      if (balance && balance.available >= props.positionValue) {
-        // TODO: balance.available > ?
-        // TODO: OrderEngine create signable order data
-        result = {
-          success: true,
-          data: dummyPublicCFDOrder,
-        };
+  const createCFDOrder = async (props: IApplyCreateCFDOrderData | undefined): Promise<IResult> => {
+    if (lunar.isConnected) {
+      let result: IOrderResult = dummyResultFailed;
+      if (props) {
+        const balance: IBalance | null = getBalance(props.margin.asset);
+        if (balance && balance.available >= props.margin.amount) {
+          const CFDOrder: IApplyCFDOrder = {
+            type: CFDOrderType.CREATE,
+            data: props,
+          };
+          const transferR = transactionEngine.transferCFDOrderToTransaction(CFDOrder);
+          if (transferR.success) {
+            const signature: string = await lunar.signTypedData(transferR.data);
+            CFDOrder.signature = signature;
+            // ++ API send transaction
+            result = {
+              success: true,
+              data: getDummyAcceptedCFDOrder(props.ticker),
+            };
+          }
+        }
       }
+      return await Promise.resolve<IOrderResult>(result);
+    } else {
+      await connect();
+      return createCFDOrder(props);
     }
-    return await Promise.resolve<IOrderResult>(result);
   };
 
-  const closeOrder = async (props: {id: string}) => {
-    let result: IOrderResult = dummyResultFailed;
-    if (isConnectedRef.current) {
-      // check order is exist
-      // if(order is live)
-      // TODO: OrderEngine create signable closeOrder data
-      result = {
-        success: true,
-        data: dummyPublicCFDOrder,
-      };
+  const closeCFDOrder = async (
+    props: IApplyCloseCFDOrderData | undefined
+  ): Promise<IOrderResult> => {
+    if (lunar.isConnected) {
+      let result: IOrderResult = dummyResultFailed;
+      if (props) {
+        const CFDOrder: IApplyCFDOrder = {type: CFDOrderType.CLOSE, data: props};
+        const transferR = transactionEngine.transferCFDOrderToTransaction(CFDOrder);
+        if (transferR.success) {
+          const ticker: string | undefined = openCFDs.find(o => o.id === props.orderId)?.ticker;
+          // ++  if(order is live)
+          const signature: string = await lunar.signTypedData(transferR.data);
+          CFDOrder.signature = signature;
+          // ++ API send transaction
+          result = {
+            success: true,
+            data: getDummyAcceptedCFDOrder(ticker || 'ETH'), // ++ TODO remove dummy ticker
+          };
+        }
+      }
+      return await Promise.resolve<IOrderResult>(result);
+    } else {
+      await connect();
+      return closeCFDOrder(props);
     }
-    return await Promise.resolve<IOrderResult>(result);
   };
 
-  const updateOrder = async (props: ICFDOrderUpdateRequest) => {
-    let result: IOrderResult = dummyResultFailed;
-    if (isConnectedRef.current) {
-      // check order is exist
-      // if(order is live)
-      // TODO: OrderEngine create signable updateOrder data
-      result = {
-        success: true,
-        data: dummyPublicCFDOrder,
-      };
+  const updateCFDOrder = async (
+    props: IApplyUpdateCFDOrderData | undefined
+  ): Promise<IOrderResult> => {
+    if (lunar.isConnected) {
+      let result: IOrderResult = dummyResultFailed;
+      if (props) {
+        const CFDOrder: IApplyCFDOrder = {type: CFDOrderType.UPDATE, data: props};
+        const transferR = transactionEngine.transferCFDOrderToTransaction(CFDOrder);
+        if (transferR.success) {
+          const ticker: string | undefined = openCFDs.find(o => o.id === props.orderId)?.ticker;
+          // ++  if(order is live)
+          const signature: string = await lunar.signTypedData(transferR.data);
+          CFDOrder.signature = signature;
+          // ++ API send transaction
+          result = {
+            success: true,
+            data: getDummyAcceptedCFDOrder(ticker || 'ETH'), // ++ TODO remove dummy ticker
+          };
+        }
+      }
+      return await Promise.resolve<IOrderResult>(result);
+    } else {
+      await connect();
+      return updateCFDOrder(props);
     }
-    return await Promise.resolve<IOrderResult>(result);
   };
 
-  const deposit = async (depositOrder: IDepositOrder) => {
+  const deposit = async (depositOrder: IApplyDepositOrder): Promise<IOrderResult> => {
     let result: IOrderResult = dummyResultFailed;
-    if (isConnectedRef.current) {
+    if (lunar.isConnected) {
       const walletBalance: IWalletBalance | null = getWalletBalance(depositOrder.targetAsset);
-      // if(balance is enough)
-      if (walletBalance && walletBalance.balance >= depositOrder.targetAmount) {
-        // TODO: OrderEngine create signable deposit data
-        // TODO: updateWalletBalances
-        result = {
-          success: true,
-          data: dummyPublicDepositOrder, // new walletBalance
-        };
-      }
+      // if (walletBalance && walletBalance.balance >= depositOrder.targetAmount) { // ++ TODO verify
+      const transaction: {to: string; amount: number; data: string} =
+        transactionEngine.transferDepositOrderToTransaction(depositOrder);
+      const sendR = await lunar.send(transaction);
+      // TODO: updateWalletBalances
+      result = {
+        success: true,
+        data: dummyAcceptedDepositOrder, // new walletBalance
+      };
+      // }
+      return await Promise.resolve<IOrderResult>(result);
+    } else {
+      await connect();
+      return deposit(depositOrder);
     }
-    return await Promise.resolve<IOrderResult>(result);
   };
 
-  const withdraw = async (witherOrder: IWithdrawalOrder) => {
+  const withdraw = async (witherOrder: IApplyWithdrawOrder): Promise<IOrderResult> => {
     let result: IOrderResult = dummyResultFailed;
-    if (isConnectedRef.current) {
+    if (lunar.isConnected) {
       const balance: IBalance | null = getBalance(witherOrder.targetAsset); // TODO: ticker is not currency
       if (balance && balance.available >= witherOrder.targetAmount) {
         // TODO: balance.available > ?
         // TODO: OrderEngine create withdraw order data
-        result = {
-          success: true,
-          data: dummyPublicWithdrawOrder,
-        };
+        const transferR = transactionEngine.transferWithdrawOrderToTransaction(witherOrder);
+        if (transferR.success) {
+          // ++  if(order is live)
+          const signature: string = await lunar.signTypedData(transferR.data);
+          witherOrder.signature = signature;
+          // ++ API send transaction
+          result = {
+            success: true,
+            data: dummyAcceptedWithdrawOrder, // ++ TODO remove dummy ticker
+          };
+        }
       }
+      return await Promise.resolve<IOrderResult>(result);
+    } else {
+      await connect();
+      return withdraw(witherOrder);
     }
-    return await Promise.resolve<IOrderResult>(result);
   };
 
   const listHistories = async () => {
@@ -488,8 +586,6 @@ export const UserProvider = ({children}: IUserProvider) => {
     orderState?: IOrderState;
     orders: [];
   }) => {
-    // eslint-disable-next-line no-console
-    console.log(`updateUserBehavior data`, data);
     if (data.orderType === OrderType.CFD) {
       if (data.orderState === OrderState.OPENING) {
         updateOpenCFD({
@@ -598,9 +694,9 @@ export const UserProvider = ({children}: IUserProvider) => {
     disconnect,
     getBalance,
     getWalletBalance,
-    createOrder,
-    closeOrder,
-    updateOrder,
+    createCFDOrder,
+    closeCFDOrder,
+    updateCFDOrder,
     deposit,
     withdraw,
     listHistories,

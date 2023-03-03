@@ -18,6 +18,7 @@ import {BsClockHistory} from 'react-icons/bs';
 import {ProfitState} from '../../constants/profit_state';
 import {UserContext} from '../../contexts/user_context';
 import {useCountdown} from '../../lib/hooks/use_countdown';
+import {getDummyApplyCloseCFDOrderData} from '../../interfaces/tidebit_defi_background/apply_close_cfd_order_data';
 
 interface IPositionClosedModal {
   modalVisible: boolean;
@@ -110,7 +111,9 @@ const PositionClosedModal = ({
     });
     globalCtx.visibleLoadingModalHandler();
 
-    const result = await userCtx.closeOrder({id: openCfdDetails.id});
+    const result = await userCtx.closeCFDOrder(
+      getDummyApplyCloseCFDOrderData(marketCtx.selectedTicker?.currency ?? '')
+    );
     // console.log('result from userCtx in position_closed_modal.tsx: ', result);
 
     // TODO: temporary waiting

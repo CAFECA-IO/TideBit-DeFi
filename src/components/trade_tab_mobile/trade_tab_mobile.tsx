@@ -40,7 +40,7 @@ const TradeTabMobile = () => {
   const [longTooltipStatus, setLongTooltipStatus] = useState(0);
   const [shortTooltipStatus, setShortTooltipStatus] = useState(0);
 
-  const [margingInputValue, setMarginInputValue] = useState(0.02);
+  const [marginInputValue, setMarginInputValue] = useState(0.02);
 
   const [longTpValue, setLongTpValue] = useState(longRecommendedTp);
   const [longSlValue, setLongSlValue] = useState(longRecommendedSl);
@@ -56,18 +56,18 @@ const TradeTabMobile = () => {
   const [openSubMenu, setOpenSubMenu] = useState(false);
 
   const [requiredMargin, setRequiredMargin] = useState(
-    roundToDecimalPlaces((margingInputValue * MARKET_PRICE) / LEVERAGE, 2)
+    roundToDecimalPlaces((marginInputValue * MARKET_PRICE) / LEVERAGE, 2)
   );
   const [valueOfPosition, setValueOfPosition] = useState(
-    roundToDecimalPlaces(margingInputValue * MARKET_PRICE, 2)
+    roundToDecimalPlaces(marginInputValue * MARKET_PRICE, 2)
   );
   const [marginWarning, setMarginWarning] = useState(false);
 
   const [marginLength, setMarginLength] = useState(
-    roundToDecimalPlaces((margingInputValue * MARKET_PRICE) / LEVERAGE, 2).toString().length
+    roundToDecimalPlaces((marginInputValue * MARKET_PRICE) / LEVERAGE, 2).toString().length
   );
   const [valueOfPositionLength, setValueOfPositionLength] = useState(
-    roundToDecimalPlaces(margingInputValue * MARKET_PRICE, 2).toString().length
+    roundToDecimalPlaces(marginInputValue * MARKET_PRICE, 2).toString().length
   );
 
   const getMarginInputValue = (value: number) => {
@@ -140,8 +140,8 @@ const TradeTabMobile = () => {
       lowerLimit={0}
       upperLimit={MARGIN_LIMIT_DIGITS}
       getInputValue={getMarginInputValue}
-      inputInitialValue={margingInputValue}
-      inputValueFromParent={margingInputValue}
+      inputInitialValue={marginInputValue}
+      inputValueFromParent={marginInputValue}
       setInputValueFromParent={setMarginInputValue}
       inputPlaceholder="margin input"
       inputName="marginInput"

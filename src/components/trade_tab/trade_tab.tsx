@@ -15,6 +15,8 @@ import {OrderType} from '../../constants/order_type';
 import {OrderStatusUnion} from '../../constants/order_status_union';
 import eventEmitter, {ClickEvent} from '../../constants/tidebit_event';
 import {getDummyDisplayApplyCreateCFDOrder} from '../../interfaces/tidebit_defi_background/display_apply_cfd_order';
+import {IApplyCreateCFDOrderData} from '../../interfaces/tidebit_defi_background/apply_create_cfd_order_data';
+import {CFDOrderType} from '../../constants/cfd_order_type';
 
 const TradeTab = () => {
   const globalCtx = useGlobal();
@@ -128,7 +130,8 @@ const TradeTab = () => {
   const [longTooltipStatus, setLongTooltipStatus] = useState(0);
   const [shortTooltipStatus, setShortTooltipStatus] = useState(0);
 
-  const [marginInputValue, setMarginInputValue, marginInputValueRef] = useStateRef(0.02);
+  const [targetedAmountInputValue, setTargetedAmountInputValue, targetedAmountInputValueRef] =
+    useStateRef(0.02);
 
   // FIXME: SL setting should have a lower limit and an upper limit depending on its position type
   const [longTpValue, setLongTpValue] = useState(longRecommendedTp);
@@ -145,22 +148,22 @@ const TradeTab = () => {
   const [shortGuaranteedStopChecked, setShortGuaranteedStopChecked] = useState(false);
 
   const [requiredMargin, setRequiredMargin, requiredMarginRef] = useStateRef(
-    roundToDecimalPlaces((marginInputValue * marketPrice) / leverage, 2)
+    roundToDecimalPlaces((targetedAmountInputValue * marketPrice) / leverage, 2)
   );
   const [valueOfPosition, setValueOfPosition, valueOfPositionRef] = useStateRef(
-    roundToDecimalPlaces(marginInputValue * marketPrice, 2)
+    roundToDecimalPlaces(targetedAmountInputValue * marketPrice, 2)
   );
   const [marginWarning, setMarginWarning] = useState(false);
 
   const [marginLength, setMarginLength] = useState(
-    roundToDecimalPlaces((marginInputValue * marketPrice) / leverage, 2).toString().length
+    roundToDecimalPlaces((targetedAmountInputValue * marketPrice) / leverage, 2).toString().length
   );
   const [valueOfPositionLength, setValueOfPositionLength] = useState(
-    roundToDecimalPlaces(marginInputValue * marketPrice, 2).toString().length
+    roundToDecimalPlaces(targetedAmountInputValue * marketPrice, 2).toString().length
   );
 
   const getMarginInputValue = (value: number) => {
-    setMarginInputValue(value);
+    setTargetedAmountInputValue(value);
     marginDetection(value);
     // console.log('getMarginInputValue', value);
   };
@@ -183,8 +186,8 @@ const TradeTab = () => {
   const renewValueOfPosition = (price?: number) => {
     // console.log('marginInputValueRef.current', marginInputValueRef.current);
     const newValueOfPosition = price
-      ? marginInputValueRef.current * price
-      : marginInputValueRef.current * marketPrice;
+      ? targetedAmountInputValueRef.current * price
+      : targetedAmountInputValueRef.current * marketPrice;
 
     const roundedValueOfPosition = roundToDecimalPlaces(newValueOfPosition, 2);
     setValueOfPosition(roundedValueOfPosition);
@@ -253,6 +256,8 @@ const TradeTab = () => {
   // TODO: 保證金不足就不能下委託單；按鈕反灰
   const longOrderSubmitHandler = () => {
     // if (marginWarning) return;
+    const newData = getDummyDisplayApplyCreateCFDOrder(marketCtx.selectedTicker!.currency);
+    const creatingData = newData.data as IApplyCreateCFDOrderData;
 
     globalCtx.dataPositionOpenModalHandler({
       openCfdRequest: {
@@ -280,7 +285,28 @@ const TradeTab = () => {
         chargeUnit: 'USDT',
       },
       renewalDeadline: new Date().getTime() / 1000 + RENEW_QUOTATION_INTERVAL_SECONDS,
-      displayApplyCFDOrder: getDummyDisplayApplyCreateCFDOrder(marketCtx.selectedTicker!.currency),
+
+      // TODO: [UI] targetAsset, uniAsset, margin asset choice
+      displayApplyCreateCFD: {
+        ...newData,
+        // type: CFDOrderType.CREATE,
+        data: {
+          ...creatingData,
+          ticker: marketCtx.selectedTicker?.currency ?? '',
+          price: Number(buyPrice) ?? 9999999999,
+
+          typeOfPosition: TypeOfPosition.BUY,
+
+          amount: targetedAmountInputValueRef.current,
+          margin: {asset: 'USDT', amount: requiredMarginRef.current},
+          takeProfit: longTpToggle ? longTpValue : undefined,
+          stopLoss: longSlToggle ? longSlValue : undefined,
+          guaranteedStop: longSlToggle ? longGuaranteedStopChecked : undefined,
+          targetAsset: 'USDT',
+          uniAsset: 'USDT',
+          // guaranteedStopFee: longSlToggle && longGuaranteedStopChecked ? targetedAmountInputValueRef.current * (long price) * 0.7 : undefined,
+        },
+      },
     });
     globalCtx.visiblePositionOpenModalHandler();
     // globalCtx.visibleWalletPanelHandler();
@@ -314,6 +340,9 @@ const TradeTab = () => {
   // }, [marginInputValue, marketCtx.selectedTicker]);
 
   const shortOrderSubmitHandler = () => {
+    const newData = getDummyDisplayApplyCreateCFDOrder(marketCtx.selectedTicker!.currency);
+    const creatingData = newData.data as IApplyCreateCFDOrderData;
+
     globalCtx.dataPositionOpenModalHandler({
       openCfdRequest: {
         id: '202302221915',
@@ -340,7 +369,25 @@ const TradeTab = () => {
         chargeUnit: 'USDT',
       },
       renewalDeadline: new Date().getTime() / 1000 + RENEW_QUOTATION_INTERVAL_SECONDS,
-      displayApplyCFDOrder: getDummyDisplayApplyCreateCFDOrder(marketCtx.selectedTicker!.currency),
+      displayApplyCreateCFD: {
+        ...newData,
+        data: {
+          ...creatingData,
+          ticker: marketCtx.selectedTicker?.currency ?? '',
+          price: Number(sellPrice) ?? 9999999999,
+
+          typeOfPosition: TypeOfPosition.SELL,
+
+          amount: targetedAmountInputValueRef.current,
+          margin: {asset: 'USDT', amount: requiredMarginRef.current},
+          takeProfit: shortTpToggle ? shortTpValue : undefined,
+          stopLoss: shortSlToggle ? shortSlValue : undefined,
+          guaranteedStop: shortSlToggle ? shortGuaranteedStopChecked : undefined,
+          targetAsset: 'USDT',
+          uniAsset: 'USDT',
+          // guaranteedStopFee: shortSlToggle && shortGuaranteedStopChecked ? targetedAmountInputValueRef.current * (long price) * 0.7 : undefined,
+        },
+      },
     });
     globalCtx.visiblePositionOpenModalHandler();
     // globalCtx.visibleWalletPanelHandler();
@@ -353,9 +400,9 @@ const TradeTab = () => {
       lowerLimit={0}
       upperLimit={MARGIN_LIMIT_DIGITS}
       getInputValue={getMarginInputValue}
-      inputInitialValue={marginInputValueRef.current}
-      inputValueFromParent={marginInputValueRef.current}
-      setInputValueFromParent={setMarginInputValue}
+      inputInitialValue={targetedAmountInputValueRef.current}
+      inputValueFromParent={targetedAmountInputValueRef.current}
+      setInputValueFromParent={setTargetedAmountInputValue}
       inputPlaceholder="margin input"
       inputName="marginInput"
       inputSize="h-44px w-160px text-xl"

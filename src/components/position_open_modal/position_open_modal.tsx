@@ -58,6 +58,8 @@ const PositionOpenModal = ({
 
   const [lock, unlock] = locker('position_open_modal.UseEffect');
 
+  const displayedApplyCreateCfdData = displayApplyCreateCFD.data as IApplyCreateCFDOrderData;
+
   /** TODO: 
     // loading modal -> UserContext.function (負責簽名) ->
     // 猶豫太久的話，單子會過期，就會顯示 failed modal，
@@ -136,9 +138,9 @@ const PositionOpenModal = ({
     return;
   };
 
-  // TODO: Typo `guaranteedStop`
-  const displayedGuaranteedStopSetting = !!openCfdRequest.guaranteedStop ? 'Yes' : 'No';
-  // const displayedGuaranteedStopSetting = displayApplyCreateCFD.data.ticker;
+  // const displayedGuaranteedStopSetting = !!openCfdRequest.guaranteedStop ? 'Yes' : 'No';
+  const displayedGuaranteedStopSetting =
+    displayedApplyCreateCfdData.guaranteedStop === true ? 'Yes' : 'No';
 
   const test: IDisplayApplyCFDOrder = {
     type: CFDOrderType.CREATE,
@@ -179,8 +181,10 @@ const PositionOpenModal = ({
   // const displayedGuaranteedStopSetting = !!displayedApplyCreateCFD.data.amount ? 'Yes' : 'No';
 
   // TODO: i18n
+  // const displayedTypeOfPosition =
+  //   openCfdRequest?.typeOfPosition === TypeOfPosition.BUY ? 'Up (Buy)' : 'Down (Sell)';
   const displayedTypeOfPosition =
-    openCfdRequest?.typeOfPosition === TypeOfPosition.BUY ? 'Up (Buy)' : 'Down (Sell)';
+    displayedApplyCreateCfdData.typeOfPosition === TypeOfPosition.BUY ? 'Up (Buy)' : 'Down (Sell)';
 
   // const displayedPnLColor =
   //   openCfdRequest?.pnl.type === 'PROFIT'
@@ -190,17 +194,22 @@ const PositionOpenModal = ({
   //     : TypeOfPnLColor.EQUAL;
 
   const displayedPositionColor =
-    openCfdRequest.typeOfPosition === TypeOfPosition.BUY
+    displayedApplyCreateCfdData.typeOfPosition === TypeOfPosition.BUY
       ? TypeOfPnLColor.PROFIT
       : TypeOfPnLColor.LOSS;
 
   const displayedBorderColor =
-    openCfdRequest?.typeOfPosition === TypeOfPosition.BUY
+    displayedApplyCreateCfdData?.typeOfPosition === TypeOfPosition.BUY
       ? TypeOfBorderColor.LONG
       : TypeOfBorderColor.SHORT;
 
-  const displayedTakeProfit = openCfdRequest?.takeProfit ? `$ ${openCfdRequest.takeProfit}` : '-';
-  const displayedStopLoss = openCfdRequest?.stopLoss ? `$ ${openCfdRequest.stopLoss}` : '-';
+  const displayedTakeProfit = displayedApplyCreateCfdData?.takeProfit
+    ? `$ ${displayedApplyCreateCfdData.takeProfit}`
+    : '-';
+
+  const displayedStopLoss = displayedApplyCreateCfdData?.stopLoss
+    ? `$ ${displayedApplyCreateCfdData.stopLoss}`
+    : '-';
 
   const layoutInsideBorder = 'mx-5 my-4 flex justify-between';
 
@@ -210,16 +219,14 @@ const PositionOpenModal = ({
 
   const renewDataHandler = async () => {
     const dataRenewal = getDummyDisplayApplyCreateCFDOrder(marketCtx.selectedTicker!.currency);
-    const cfdCreatingData = dataRenewal.data as IApplyCreateCFDOrderData;
-    // console.log(cfdCreatingData.guaranteedStop);
-    // const {ticker, targetAsset, typeOfPosition, amount} = cfdCreatingData;
+    const creatCfdData = dataRenewal.data as IApplyCreateCFDOrderData;
 
     setDataRenewedStyle('animate-flash text-lightYellow2');
     await wait(DELAYED_HIDDEN_SECONDS / 5);
 
     // const newTimestamp = new Date().getTime() / 1000 + RENEW_QUOTATION_INTERVAL_SECONDS;
     // setSecondsLeft(newTimestamp - Date.now() / 1000);
-    setSecondsLeft(Math.round(cfdCreatingData.quotation.deadline - Date.now() / 1000));
+    setSecondsLeft(Math.round(creatCfdData.quotation.deadline - Date.now() / 1000));
 
     // // FIXME: how to use nested type union in typescript
     // console.log('dummy data: ', newDummyData.data.takeProfit);
@@ -263,9 +270,9 @@ const PositionOpenModal = ({
 
         margin: randomIntFromInterval(openCfdRequest.margin * 0.9, openCfdRequest.margin * 1.5),
       },
-      renewalDeadline: cfdCreatingData.quotation.deadline,
+      renewalDeadline: creatCfdData.quotation.deadline,
       // renewalDeadline: newTimestamp,
-      displayApplyCFDOrder: dataRenewal,
+      displayApplyCreateCFD: dataRenewal,
     });
 
     setDataRenewedStyle('text-lightYellow2');
@@ -370,7 +377,10 @@ const PositionOpenModal = ({
               <div className="text-lightGray">Open Price</div>
               <div className={`${dataRenewedStyle}`}>
                 {/* TODO: Hardcode USDT */}${' '}
-                {openCfdRequest?.price?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0} USDT
+                {displayedApplyCreateCfdData?.price?.toLocaleString(
+                  UNIVERSAL_NUMBER_FORMAT_LOCALE
+                ) ?? 0}{' '}
+                USDT
               </div>
             </div>
 
@@ -378,7 +388,7 @@ const PositionOpenModal = ({
               <div className="text-lightGray">Amount</div>
               <div className="">
                 {/* TODO:{openCfdRequest?.amount?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0} */}
-                {222}
+                {displayedApplyCreateCfdData.amount.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}{' '}
               </div>
             </div>
 
@@ -386,7 +396,8 @@ const PositionOpenModal = ({
               <div className="text-lightGray">Required Margin</div>
               {/* TODO: Hardcode USDT */}
               <div className={`${dataRenewedStyle}`}>
-                $ {(openCfdRequest?.margin).toFixed(2)} USDT
+                $ {displayedApplyCreateCfdData.margin.amount.toFixed(2)}{' '}
+                {displayedApplyCreateCfdData.margin.asset}
               </div>
             </div>
 
@@ -407,7 +418,7 @@ const PositionOpenModal = ({
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">Liquidation Price</div>
               {/* TODO: Liquidation Price */}
-              <div className="">$ 9.23</div>
+              <div className="">$ {displayedApplyCreateCfdData.liquidationPrice}</div>
             </div>
 
             <div className={`${layoutInsideBorder}`}>

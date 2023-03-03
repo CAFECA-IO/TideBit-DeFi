@@ -86,7 +86,7 @@ export interface IDataPositionClosedModal {
 export interface IDataPositionOpenModal {
   openCfdRequest: IPublicCFDOrder;
   renewalDeadline: number;
-  displayApplyCFDOrder: IDisplayApplyCFDOrder;
+  displayApplyCreateCFD: IDisplayApplyCFDOrder;
 }
 
 export const dummyDataPositionOpenModal: IDataPositionOpenModal = {
@@ -111,7 +111,7 @@ export const dummyDataPositionOpenModal: IDataPositionOpenModal = {
     createdTime: 1676369333495,
   },
   renewalDeadline: new Date('2023-02-24T17:00:00').getTime(),
-  displayApplyCFDOrder: getDummyDisplayApplyCreateCFDOrder('BTC'),
+  displayApplyCreateCFD: getDummyDisplayApplyCreateCFDOrder('BTC'),
 };
 
 export const dummyDataPositionClosedModal: IDataPositionClosedModal = {
@@ -1089,7 +1089,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
       <PositionOpenModal
         modalVisible={visiblePositionOpenModal}
         modalClickHandler={visiblePositionOpenModalHandler}
-        displayApplyCreateCFD={dataPositionOpenModal.displayApplyCFDOrder}
+        displayApplyCreateCFD={dataPositionOpenModal.displayApplyCreateCFD}
         openCfdRequest={dataPositionOpenModal.openCfdRequest}
         renewalDeadline={dataPositionOpenModal.renewalDeadline}
       />

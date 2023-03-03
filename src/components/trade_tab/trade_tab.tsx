@@ -4,7 +4,7 @@ import TradingInput, {TRADING_INPUT_HANDLER_TYPE_CLASSES} from '../trading_input
 import {AiOutlineQuestionCircle} from 'react-icons/ai';
 import RippleButton from '../ripple_button/ripple_button';
 import {UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
-import {MARGIN_LIMIT_DIGITS, POSITION_PRICE_RENEWAL_INTERVAL_SECONDS} from '../../constants/config';
+import {MARGIN_LIMIT_DIGITS, RENEW_QUOTATION_INTERVAL_SECONDS} from '../../constants/config';
 import {useGlobal} from '../../contexts/global_context';
 import {MarketContext} from '../../contexts/market_context';
 import {UserContext} from '../../contexts/user_context';
@@ -279,7 +279,7 @@ const TradeTab = () => {
         targetUnit: marketCtx.selectedTicker?.currency ?? '',
         chargeUnit: 'USDT',
       },
-      renewalDeadline: new Date().getTime() / 1000 + POSITION_PRICE_RENEWAL_INTERVAL_SECONDS,
+      renewalDeadline: new Date().getTime() / 1000 + RENEW_QUOTATION_INTERVAL_SECONDS,
       displayApplyCFDOrder: getDummyDisplayApplyCreateCFDOrder(marketCtx.selectedTicker!.currency),
     });
     globalCtx.visiblePositionOpenModalHandler();
@@ -339,7 +339,7 @@ const TradeTab = () => {
         targetUnit: marketCtx.selectedTicker?.currency ?? '',
         chargeUnit: 'USDT',
       },
-      renewalDeadline: new Date().getTime() / 1000 + POSITION_PRICE_RENEWAL_INTERVAL_SECONDS,
+      renewalDeadline: new Date().getTime() / 1000 + RENEW_QUOTATION_INTERVAL_SECONDS,
       displayApplyCFDOrder: getDummyDisplayApplyCreateCFDOrder(marketCtx.selectedTicker!.currency),
     });
     globalCtx.visiblePositionOpenModalHandler();

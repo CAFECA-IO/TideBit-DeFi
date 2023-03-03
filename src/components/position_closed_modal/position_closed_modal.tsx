@@ -11,7 +11,7 @@ import Image from 'next/image';
 import {locker, randomIntFromInterval, timestampToString, wait} from '../../lib/common';
 import {useContext, useEffect, useState} from 'react';
 import {MarketContext} from '../../contexts/market_context';
-import {POSITION_PRICE_RENEWAL_INTERVAL_SECONDS} from '../../constants/config';
+import {RENEW_QUOTATION_INTERVAL_SECONDS} from '../../constants/config';
 import {TypeOfPosition} from '../../constants/type_of_position';
 import {IClosedCFDInfoProps, useGlobal} from '../../contexts/global_context';
 import {BsClockHistory} from 'react-icons/bs';
@@ -49,7 +49,7 @@ const PositionClosedModal = ({
   // const tickingSec = latestProps.renewalDeadline - Date.now() / 1000;
 
   // tickingSec > 0 ? Math.round(tickingSec) : 0
-  const [secondsLeft, setSecondsLeft] = useState(POSITION_PRICE_RENEWAL_INTERVAL_SECONDS);
+  const [secondsLeft, setSecondsLeft] = useState(RENEW_QUOTATION_INTERVAL_SECONDS);
   // console.log('outside useEffect tickingSec: ', tickingSec);
 
   // Math.max(0, Math.round((latestProps.renewalDeadline - Date.now()) / 1000))
@@ -177,7 +177,7 @@ const PositionClosedModal = ({
     // FIXME: closedCfdDetails 的關倉價格
     // globalCtx.visiblePositionClosedModalHandler();
 
-    const newTimestamp = new Date().getTime() / 1000 + POSITION_PRICE_RENEWAL_INTERVAL_SECONDS;
+    const newTimestamp = new Date().getTime() / 1000 + RENEW_QUOTATION_INTERVAL_SECONDS;
     setSecondsLeft(newTimestamp - Date.now() / 1000);
 
     globalCtx.dataPositionClosedModalHandler({
@@ -240,7 +240,7 @@ const PositionClosedModal = ({
 
   useEffect(() => {
     if (!globalCtx.visiblePositionClosedModal) {
-      setSecondsLeft(POSITION_PRICE_RENEWAL_INTERVAL_SECONDS);
+      setSecondsLeft(RENEW_QUOTATION_INTERVAL_SECONDS);
       setDataRenewedStyle('text-lightWhite');
       return;
     }

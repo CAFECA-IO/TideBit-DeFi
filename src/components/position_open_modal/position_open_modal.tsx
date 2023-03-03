@@ -17,7 +17,7 @@ import {BsClockHistory} from 'react-icons/bs';
 import {useGlobal} from '../../contexts/global_context';
 import {TypeOfPosition} from '../../constants/type_of_position';
 import {UserContext} from '../../contexts/user_context';
-import {POSITION_PRICE_RENEWAL_INTERVAL_SECONDS} from '../../constants/config';
+import {RENEW_QUOTATION_INTERVAL_SECONDS} from '../../constants/config';
 import {dummyOpenCFDOrder} from '../../interfaces/tidebit_defi_background/open_cfd_order';
 import {
   IDisplayApplyCFDOrder,
@@ -53,7 +53,7 @@ const PositionOpenModal = ({
   const marketCtx = useContext(MarketContext);
   const userCtx = useContext(UserContext);
 
-  const [secondsLeft, setSecondsLeft] = useState(POSITION_PRICE_RENEWAL_INTERVAL_SECONDS);
+  const [secondsLeft, setSecondsLeft] = useState(RENEW_QUOTATION_INTERVAL_SECONDS);
   const [dataRenewedStyle, setDataRenewedStyle] = useState('text-lightWhite');
 
   const [lock, unlock] = locker('position_open_modal.UseEffect');
@@ -209,29 +209,17 @@ const PositionOpenModal = ({
   // const displayedTime = timestampToString(openCfdRequest?.createdTime ?? 0);
 
   const renewDataHandler = async () => {
+    const dataRenewal = getDummyDisplayApplyCreateCFDOrder(marketCtx.selectedTicker!.currency);
+    const cfdCreatingData = dataRenewal.data as IApplyCreateCFDOrderData;
+    // console.log(cfdCreatingData.guaranteedStop);
+    // const {ticker, targetAsset, typeOfPosition, amount} = cfdCreatingData;
+
     setDataRenewedStyle('animate-flash text-lightYellow2');
     await wait(DELAYED_HIDDEN_SECONDS / 5);
 
-    const newTimestamp = new Date().getTime() / 1000 + POSITION_PRICE_RENEWAL_INTERVAL_SECONDS;
-    setSecondsLeft(newTimestamp - Date.now() / 1000);
-
-    const newDummyData = getDummyDisplayApplyCreateCFDOrder(marketCtx.selectedTicker!.currency);
-
-    // TODO: #WI----------------
-    const checkedData = newDummyData.data as IApplyCreateCFDOrderData;
-    console.log(checkedData.guaranteedStop);
-
-    // TODO: #WII----------------
-    function isCreateCFDOrderData(obj: any): obj is IApplyCreateCFDOrderData {
-      return obj && obj.ticker !== undefined && obj.typeOfPosition !== undefined;
-    }
-
-    if (isCreateCFDOrderData(newDummyData.data)) {
-      console.log('isCreateCFDOrderData: ', newDummyData.data.ticker);
-    }
-
-    isCreateCFDOrderData(newDummyData.data) &&
-      console.log('isCreateCFDOrderData: ', newDummyData.data.ticker);
+    // const newTimestamp = new Date().getTime() / 1000 + RENEW_QUOTATION_INTERVAL_SECONDS;
+    // setSecondsLeft(newTimestamp - Date.now() / 1000);
+    setSecondsLeft(Math.round(cfdCreatingData.quotation.deadline - Date.now() / 1000));
 
     // // FIXME: how to use nested type union in typescript
     // console.log('dummy data: ', newDummyData.data.takeProfit);
@@ -244,24 +232,7 @@ const PositionOpenModal = ({
     //   (newDummyData['data'] typeof IApplyCreateCFDOrderData) && newDummyData.data.ticker
     // );
 
-    function getProperty() {
-      // if (newDummyData['data'] as IApplyCreateCFDOrderData) {
-      //   return newDummyData.data.ticker;
-      // }
-
-      // TODO: #WIII----------------
-      if ('ticker' in newDummyData['data']) {
-        console.log('first if: ', newDummyData.data.amount);
-        return newDummyData.data.ticker;
-      }
-
-      // Error: Property 'amount' does not exist on type 'IApplyUpdateCFDOrderData & Record<"ticker", unknown>'.
-      // return 'ticker' in newDummyData['data'] && console.log('second if: ', newDummyData.data.amount);
-    }
-
-    console.log('getProperty: ', getProperty());
-
-    const testDummyData = getTestDummyApplyCreateCFDOrder(marketCtx.selectedTicker!.currency);
+    // const testDummyData = getTestDummyApplyCreateCFDOrder(marketCtx.selectedTicker!.currency);
 
     // console.log('testDummyData: ', testDummyData.data.amount);
 
@@ -292,8 +263,9 @@ const PositionOpenModal = ({
 
         margin: randomIntFromInterval(openCfdRequest.margin * 0.9, openCfdRequest.margin * 1.5),
       },
-      renewalDeadline: newTimestamp,
-      displayApplyCFDOrder: newDummyData,
+      renewalDeadline: cfdCreatingData.quotation.deadline,
+      // renewalDeadline: newTimestamp,
+      displayApplyCFDOrder: dataRenewal,
     });
 
     setDataRenewedStyle('text-lightYellow2');
@@ -305,7 +277,7 @@ const PositionOpenModal = ({
     // if (!lock()) return;
 
     if (!globalCtx.visiblePositionOpenModal) {
-      setSecondsLeft(POSITION_PRICE_RENEWAL_INTERVAL_SECONDS);
+      setSecondsLeft(RENEW_QUOTATION_INTERVAL_SECONDS);
       setDataRenewedStyle('text-lightWhite');
 
       return;

@@ -1,3 +1,4 @@
+import {RENEW_QUOTATION_INTERVAL_SECONDS} from '../../constants/config';
 import {ITypeOfPosition, TypeOfPosition} from '../../constants/type_of_position';
 import {IMargin} from './margin';
 import {IQuotation} from './quotation';
@@ -46,7 +47,7 @@ export const getDummyApplyCreateCFDOrderData = (currency: string) => {
       targetAsset: typeOfPosition === TypeOfPosition.BUY ? currency : 'USDT',
       uniAsset: typeOfPosition === TypeOfPosition.BUY ? 'USDT' : currency,
       price: randomIntFromInterval(1000, 10000),
-      deadline: Date.now() / 1000 + 15,
+      deadline: Date.now() / 1000 + RENEW_QUOTATION_INTERVAL_SECONDS,
       signature: '0x',
     }, // 報價單
 

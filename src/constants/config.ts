@@ -1,6 +1,6 @@
 // `const` which can be changed later
 
-export const POSITION_PRICE_RENEWAL_INTERVAL_SECONDS = 3;
+export const RENEW_QUOTATION_INTERVAL_SECONDS = 15;
 
 // 10 ** 9 - 0.01
 export const MARGIN_LIMIT_DIGITS = 10 ** 9 - 0.01;

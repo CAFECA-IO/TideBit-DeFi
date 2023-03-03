@@ -16,7 +16,7 @@ import {TypeOfPosition} from '../../constants/type_of_position';
 import {randomIntFromInterval} from '../../lib/common';
 import {MarketContext} from '../../contexts/market_context';
 import {UserContext} from '../../contexts/user_context';
-import {POSITION_PRICE_RENEWAL_INTERVAL_SECONDS} from '../../constants/config';
+import {RENEW_QUOTATION_INTERVAL_SECONDS} from '../../constants/config';
 // import HorizontalRelativeLineGraph from '../horizontal_relative_line_graph/horizontal_relative_line_graph';
 
 interface IOpenPositionItemProps {
@@ -67,7 +67,7 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
     dataPositionClosedModalHandler({
       openCfdDetails: openCfdDetails,
       latestProps: {
-        renewalDeadline: new Date().getTime() / 1000 + POSITION_PRICE_RENEWAL_INTERVAL_SECONDS,
+        renewalDeadline: new Date().getTime() / 1000 + RENEW_QUOTATION_INTERVAL_SECONDS,
         latestClosedPrice:
           openCfdDetails.typeOfPosition === TypeOfPosition.BUY
             ? randomIntFromInterval(

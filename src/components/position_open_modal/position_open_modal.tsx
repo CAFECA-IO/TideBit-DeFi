@@ -38,8 +38,6 @@ interface IPositionOpenModal {
   renewalDeadline: number;
 }
 
-// TODO: seconds constant in display.ts or config.ts?
-
 const PositionOpenModal = ({
   modalVisible,
   modalClickHandler,
@@ -218,6 +216,7 @@ const PositionOpenModal = ({
   // const displayedTime = timestampToString(openCfdRequest?.createdTime ?? 0);
 
   const renewDataHandler = async () => {
+    // TODO: organize the renew data and not change the data some property, like type of position
     const dataRenewal = getDummyDisplayApplyCreateCFDOrder(marketCtx.selectedTicker!.currency);
     const creatCfdData = dataRenewal.data as IApplyCreateCFDOrderData;
 
@@ -308,7 +307,7 @@ const PositionOpenModal = ({
     const intervalId = setInterval(() => {
       // setSecondsLeft(prevSeconds => prevSeconds - 1);
 
-      const base = renewalDeadline;
+      const base = displayedApplyCreateCfdData.quotation.deadline;
       const tickingSec = base - Date.now() / 1000;
       setSecondsLeft(tickingSec > 0 ? Math.round(tickingSec) : 0);
 

@@ -4,7 +4,11 @@ import TradingInput, {TRADING_INPUT_HANDLER_TYPE_CLASSES} from '../trading_input
 import {AiOutlineQuestionCircle} from 'react-icons/ai';
 import RippleButton from '../ripple_button/ripple_button';
 import {UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
-import {MARGIN_LIMIT_DIGITS, POSITION_PRICE_RENEWAL_INTERVAL_SECONDS} from '../../constants/config';
+import {
+  MARGIN_LIMIT_DIGITS,
+  POSITION_PRICE_RENEWAL_INTERVAL_SECONDS,
+  unitAsset,
+} from '../../constants/config';
 import {useGlobal} from '../../contexts/global_context';
 import {MarketContext} from '../../contexts/market_context';
 import {UserContext} from '../../contexts/user_context';
@@ -14,7 +18,6 @@ import {TypeOfPosition} from '../../constants/type_of_position';
 import {OrderType} from '../../constants/order_type';
 import {OrderStatusUnion} from '../../constants/order_status_union';
 import eventEmitter, {ClickEvent} from '../../constants/tidebit_event';
-import {unitAsset} from '../../constants/unit_asset';
 
 const TradeTab = () => {
   const globalCtx = useGlobal();

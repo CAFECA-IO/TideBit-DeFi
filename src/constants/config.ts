@@ -25,3 +25,5 @@ export const SUPPORTED_NETWORKS = [
     },
   },
 ];
+
+export const unitAsset = 'USDT';

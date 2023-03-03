@@ -3,9 +3,12 @@ import {OrderType} from '../../constants/order_type';
 import {IAcceptedOrder} from './accepted_order';
 
 export interface IAcceptedDepositOrder extends IAcceptedOrder {
-  currency: string;
-  amount: number;
-  from: string;
+  targetAsset: string;
+  targetAmount: number;
+  decimals: number;
+  to: string;
+  remark?: string;
+  fee: number;
 }
 
 export const dummyAcceptedDepositOrder: IAcceptedDepositOrder = {
@@ -13,7 +16,9 @@ export const dummyAcceptedDepositOrder: IAcceptedDepositOrder = {
   orderType: OrderType.DEPOSIT,
   createTimestamp: Math.ceil(Date.now() / 1000),
   orderStatus: OrderStatusUnion.SUCCESS,
-  currency: 'ETH',
-  amount: 7.91,
-  from: '0x',
+  targetAsset: 'ETH',
+  decimals: 18,
+  targetAmount: 7.91,
+  to: '0x',
+  fee: 0,
 };

@@ -71,8 +71,14 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
       requests.current[name]?.callback(result);
       delete requests.current[name];
     };
-    try {
-      fetch('/api/socketio').finally(() => {
+
+    fetch('/api/socketio')
+      .catch(error => {
+        // ++TODO
+        // eslint-disable-next-line no-console
+        console.error(`fetch('/api/socketio') error`, error);
+      })
+      .finally(() => {
         const socket = io();
         setWsWorker(socket);
         socket.on('connect', () => {
@@ -111,11 +117,7 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
           // console.log('disconnect');
         });
       });
-    } catch (error) {
-      // ++TODO
-      // eslint-disable-next-line no-console
-      console.error(`fetch('/api/socketio') error`, error);
-    }
+
     worker();
   };
 

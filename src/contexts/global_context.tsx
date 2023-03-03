@@ -42,6 +42,10 @@ import {
   getDummyDisplayApplyCreateCFDOrder,
 } from '../interfaces/tidebit_defi_background/display_apply_cfd_order';
 import {getDummyApplyCreateCFDOrderData} from '../interfaces/tidebit_defi_background/apply_create_cfd_order_data';
+import {
+  IDisplayAcceptedCFDOrder,
+  getDummyDisplayAcceptedCFDOrder,
+} from '../interfaces/tidebit_defi_background/display_accepted_cfd_order';
 
 export interface IToastify {
   type: 'error' | 'warning' | 'info' | 'success';
@@ -79,6 +83,8 @@ export interface IClosedCFDInfoProps {
 }
 
 export interface IDataPositionClosedModal {
+  displayAcceptedCloseCFD: IDisplayAcceptedCFDOrder;
+  displayApplyCloseCFD: IDisplayApplyCFDOrder;
   openCfdDetails: IOpenCFDDetails;
   latestProps: IClosedCFDInfoProps;
 }
@@ -88,8 +94,6 @@ export interface IDataPositionOpenModal {
   // renewalDeadline: number;
   displayApplyCreateCFD: IDisplayApplyCFDOrder;
 }
-
-const data = getDummyDisplayApplyCreateCFDOrder('BTC');
 
 export const dummyDataPositionOpenModal: IDataPositionOpenModal = {
   // openCfdRequest: {
@@ -126,6 +130,8 @@ export const dummyDataPositionClosedModal: IDataPositionClosedModal = {
     //   type: ProfitState.PROFIT,
     // },
   },
+  displayAcceptedCloseCFD: getDummyDisplayAcceptedCFDOrder('BTC'),
+  displayApplyCloseCFD: getDummyDisplayApplyCreateCFDOrder('BTC'),
 };
 
 export const dummyDataPositionUpdatedModal: IDataPositionUpdatedModal = {
@@ -1101,6 +1107,8 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
       <PositionClosedModal
         modalVisible={visiblePositionClosedModal}
         modalClickHandler={visiblePositionClosedModalHandler}
+        displayAcceptedCloseCFD={dataPositionClosedModal.displayAcceptedCloseCFD}
+        displayApplyCloseCFD={dataPositionClosedModal.displayApplyCloseCFD}
         openCfdDetails={dataPositionClosedModal.openCfdDetails}
         latestProps={dataPositionClosedModal.latestProps}
       />

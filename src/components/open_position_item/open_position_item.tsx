@@ -17,6 +17,8 @@ import {randomIntFromInterval} from '../../lib/common';
 import {MarketContext} from '../../contexts/market_context';
 import {UserContext} from '../../contexts/user_context';
 import {RENEW_QUOTATION_INTERVAL_SECONDS} from '../../constants/config';
+import {getDummyDisplayAcceptedCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
+import {getDummyDisplayApplyCloseCFDOrder} from '../../interfaces/tidebit_defi_background/display_apply_cfd_order';
 // import HorizontalRelativeLineGraph from '../horizontal_relative_line_graph/horizontal_relative_line_graph';
 
 interface IOpenPositionItemProps {
@@ -85,6 +87,12 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
         //   value: randomIntFromInterval(0, 1000),
         // },
       },
+      displayAcceptedCloseCFD: getDummyDisplayAcceptedCFDOrder(
+        marketCtx.selectedTickerRef.current?.currency ?? 'BTC'
+      ),
+      displayApplyCloseCFD: getDummyDisplayApplyCloseCFDOrder(
+        marketCtx.selectedTickerRef.current?.currency ?? 'BTC'
+      ),
     });
     // toast.error('test', {toastId: 'errorTest'});
     // console.log('show the modal displaying transaction detail');

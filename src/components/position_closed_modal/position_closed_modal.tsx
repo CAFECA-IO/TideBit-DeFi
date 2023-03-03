@@ -18,10 +18,22 @@ import {BsClockHistory} from 'react-icons/bs';
 import {ProfitState} from '../../constants/profit_state';
 import {UserContext} from '../../contexts/user_context';
 import {useCountdown} from '../../lib/hooks/use_countdown';
+import {
+  IDisplayAcceptedCFDOrder,
+  getDummyDisplayAcceptedCFDOrder,
+} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
+import {getDummyAcceptedCFDOrder} from '../../interfaces/tidebit_defi_background/accepted_cfd_order';
+import {
+  IDisplayApplyCFDOrder,
+  getDummyDisplayApplyCloseCFDOrder,
+} from '../../interfaces/tidebit_defi_background/display_apply_cfd_order';
+import {IApplyCloseCFDOrderData} from '../../interfaces/tidebit_defi_background/apply_close_cfd_order_data';
 
 interface IPositionClosedModal {
   modalVisible: boolean;
   modalClickHandler: () => void;
+  displayAcceptedCloseCFD: IDisplayAcceptedCFDOrder;
+  displayApplyCloseCFD: IDisplayApplyCFDOrder;
   openCfdDetails: IOpenCFDDetails;
   latestProps: IClosedCFDInfoProps;
 }
@@ -31,6 +43,8 @@ const PositionClosedModal = ({
   modalVisible,
   modalClickHandler,
   openCfdDetails: openCfdDetails,
+  displayAcceptedCloseCFD,
+  displayApplyCloseCFD,
   latestProps: latestProps,
   ...otherProps
 }: IPositionClosedModal) => {
@@ -38,24 +52,14 @@ const PositionClosedModal = ({
   const globalCtx = useGlobal();
   const userCtx = useContext(UserContext);
 
-  // 1677229200
-  // new Date('2023-02-25T17:00:00').getTime() / 1000
-  // const {hours, minutes, seconds, timestamp} = useCountdown(latestProps.renewalDeadline);
-
-  // console.log('renewalDeadline: ', latestProps.renewalDeadline);
-  // console.log('use Countdown: ', hours, minutes, seconds);
-  // console.log('use Countdown seconds left: ', seconds);
-
-  // const tickingSec = latestProps.renewalDeadline - Date.now() / 1000;
-
-  // tickingSec > 0 ? Math.round(tickingSec) : 0
   const [secondsLeft, setSecondsLeft] = useState(RENEW_QUOTATION_INTERVAL_SECONDS);
-  // console.log('outside useEffect tickingSec: ', tickingSec);
-
-  // Math.max(0, Math.round((latestProps.renewalDeadline - Date.now()) / 1000))
 
   const [dataRenewedStyle, setDataRenewedStyle] = useState('text-lightWhite');
   const [pnlRenewedStyle, setPnlRenewedStyle] = useState('');
+
+  const displayedApplyCloseCfdData = displayApplyCloseCFD.data as IApplyCloseCFDOrderData;
+
+  // const closePrice = displayedApplyCloseCfdData.quotation.price
 
   const displayedGuaranteedStopSetting = !!openCfdDetails.guaranteedStop ? 'Yes' : 'No';
 
@@ -167,6 +171,59 @@ const PositionClosedModal = ({
     return;
   };
 
+  const organizeApplyOrder = () => {
+    // const newData = getDummyDisplayAcceptedCFDOrder(marketCtx.selectedTicker!.currency);
+    // const creatingData = newData;
+
+    const applyData: IDisplayAcceptedCFDOrder = {
+      ...displayAcceptedCloseCFD,
+      ...displayedApplyCloseCfdData,
+
+      closePrice:
+        displayAcceptedCloseCFD.typeOfPosition === TypeOfPosition.BUY
+          ? randomIntFromInterval(
+              marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice * 0.75,
+              marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice * 1.25
+            )
+          : displayAcceptedCloseCFD.typeOfPosition === TypeOfPosition.SELL
+          ? randomIntFromInterval(
+              marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice * 1.1,
+              marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice * 1.25
+            )
+          : 99999,
+      pnl: {
+        type: randomIntFromInterval(0, 100) <= 50 ? ProfitState.PROFIT : ProfitState.LOSS,
+        value: randomIntFromInterval(0, 1000),
+      },
+    };
+
+    // const userInput = ['ticker', 'typeOfPosition', 'amount', 'targetAsset', 'uniAsset', 'leverage'];
+
+    // const {
+    //   ticker,
+    //   typeOfPosition,
+    //   amount,
+    //   margin,
+    //   takeProfit,
+    //   stopLoss,
+    //   guaranteedStop,
+    //   targetAsset,
+    //   uniAsset,
+    //   leverage,
+    //   ...dataRenewedWithoutExcludedProperties
+    // } = creatingData;
+
+    // const applyData = {
+    //   ...displayApplyCreateCFD,
+    //   data: {
+    //     ...displayApplyCreateCFD.data,
+    //     ...dataRenewedWithoutExcludedProperties,
+    //   },
+    // };
+
+    return applyData;
+  };
+
   const renewDataStyleHandler = async () => {
     // setSecondsLeft(latestProps.renewalDeadline - Date.now() / 1000);
     setDataRenewedStyle('animate-flash text-lightYellow2');
@@ -176,6 +233,8 @@ const PositionClosedModal = ({
     // FIXME: 應用 ?? 代替 !
     // FIXME: closedCfdDetails 的關倉價格
     // globalCtx.visiblePositionClosedModalHandler();
+
+    const data = organizeApplyOrder();
 
     const newTimestamp = new Date().getTime() / 1000 + RENEW_QUOTATION_INTERVAL_SECONDS;
     setSecondsLeft(newTimestamp - Date.now() / 1000);
@@ -209,6 +268,9 @@ const PositionClosedModal = ({
         //   value: randomIntFromInterval(0, 1000),
         // },
       },
+      // displayAcceptedCloseCFD: getDummyDisplayAcceptedCFDOrder('BTC'),
+      displayAcceptedCloseCFD: data,
+      displayApplyCloseCFD: getDummyDisplayApplyCloseCFDOrder('BTC'),
     });
 
     // globalCtx.visiblePositionClosedModalHandler();
@@ -370,7 +432,9 @@ const PositionClosedModal = ({
               <div className="text-lightGray">Open Price</div>
               <div className="">
                 {/* TODO: Hardcode USDT */}${' '}
-                {openCfdDetails?.openPrice?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0}{' '}
+                {displayAcceptedCloseCFD?.openPrice?.toLocaleString(
+                  UNIVERSAL_NUMBER_FORMAT_LOCALE
+                ) ?? 0}{' '}
                 USDT
               </div>
             </div>
@@ -378,8 +442,9 @@ const PositionClosedModal = ({
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">Amount</div>
               <div className="">
-                {openCfdDetails?.amount?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0}{' '}
-                {openCfdDetails.ticker}
+                {displayAcceptedCloseCFD?.amount?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ??
+                  0}{' '}
+                {displayAcceptedCloseCFD.ticker}
               </div>
             </div>
 
@@ -388,7 +453,9 @@ const PositionClosedModal = ({
               <div className="text-lightGray">Closed Price</div>
               <div className={`${dataRenewedStyle}`}>
                 {/* TODO: Hardcode USDT */}${' '}
-                {latestProps.latestClosedPrice.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0}{' '}
+                {displayedApplyCloseCfdData.quotation.price.toLocaleString(
+                  UNIVERSAL_NUMBER_FORMAT_LOCALE
+                ) ?? 0}{' '}
                 USDT
               </div>
             </div>

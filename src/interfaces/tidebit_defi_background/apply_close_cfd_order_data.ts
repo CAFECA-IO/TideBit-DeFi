@@ -4,7 +4,7 @@ import {IQuotation} from './quotation';
 
 export interface IApplyCloseCFDOrderData {
   orderId: string;
-  closePrice: number;
+  closePrice?: number; // TODO: discussion
   quotation: IQuotation;
   closeTimestamp?: number;
 }

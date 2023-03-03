@@ -17,7 +17,7 @@ import {BsClockHistory} from 'react-icons/bs';
 import {useGlobal} from '../../contexts/global_context';
 import {TypeOfPosition} from '../../constants/type_of_position';
 import {UserContext} from '../../contexts/user_context';
-import {RENEW_QUOTATION_INTERVAL_SECONDS} from '../../constants/config';
+import {RENEW_QUOTATION_INTERVAL_SECONDS, UNIT_ASSET} from '../../constants/config';
 import {dummyOpenCFDOrder} from '../../interfaces/tidebit_defi_background/open_cfd_order';
 import {
   IDisplayApplyCFDOrder,
@@ -240,6 +240,21 @@ const PositionOpenModal = ({
       data: {
         ...displayApplyCreateCFD.data,
         ...dataRenewedWithoutExcludedProperties,
+
+        // quotation: {
+        //   ticker: marketCtx.selectedTicker?.currency ?? '',
+        //   targetAsset: UNIT_ASSET,
+        //   uniAsset: marketCtx.selectedTicker?.currency ?? '',
+        //   price:
+        //     displayedApplyCreateCfdData.typeOfPosition === TypeOfPosition.BUY
+        //       ? Number(marketCtx.tickerLiveStatistics?.buyEstimatedFilledPrice) ?? 9999999999
+        //       : displayedApplyCreateCfdData.typeOfPosition === TypeOfPosition.SELL
+        //       ? Number(marketCtx.tickerLiveStatistics?.sellEstimatedFilledPrice) ?? 9999999999
+        //       : 9999999999,
+
+        //   deadline: Math.ceil(Date.now() / 1000) + RENEW_QUOTATION_INTERVAL_SECONDS,
+        //   signature: '0x',
+        // },
       },
     };
 

@@ -84,33 +84,35 @@ export interface IDataPositionClosedModal {
 }
 
 export interface IDataPositionOpenModal {
-  openCfdRequest: IPublicCFDOrder;
-  renewalDeadline: number;
+  // openCfdRequest: IPublicCFDOrder;
+  // renewalDeadline: number;
   displayApplyCreateCFD: IDisplayApplyCFDOrder;
 }
 
+const data = getDummyDisplayApplyCreateCFDOrder('BTC');
+
 export const dummyDataPositionOpenModal: IDataPositionOpenModal = {
-  openCfdRequest: {
-    id: '001',
-    orderType: OrderType.CFD,
-    orderStatus: OrderStatusUnion.PROCESSING,
-    ticker: 'ETH',
-    price: 20193.1,
-    liquidationPrice: 16332.5,
-    amount: 27,
-    // triggerPrice: 20193.1,
-    typeOfPosition: TypeOfPosition.SELL,
-    leverage: 5,
-    margin: 35766,
-    marginUnit: 'USDT',
-    guaranteedStop: true,
-    // estimatedFilledPrice: 1,
-    fee: 0.0001,
-    targetUnit: 'ETH',
-    chargeUnit: 'USDT',
-    createdTime: 1676369333495,
-  },
-  renewalDeadline: new Date('2023-02-24T17:00:00').getTime(),
+  // openCfdRequest: {
+  //   id: '001',
+  //   orderType: OrderType.CFD,
+  //   orderStatus: OrderStatusUnion.PROCESSING,
+  //   ticker: 'ETH',
+  //   price: 20193.1,
+  //   liquidationPrice: 16332.5,
+  //   amount: 27,
+  //   // triggerPrice: 20193.1,
+  //   typeOfPosition: TypeOfPosition.SELL,
+  //   leverage: 5,
+  //   margin: 35766,
+  //   marginUnit: 'USDT',
+  //   guaranteedStop: true,
+  //   // estimatedFilledPrice: 1,
+  //   fee: 0.0001,
+  //   targetUnit: 'ETH',
+  //   chargeUnit: 'USDT',
+  //   createdTime: 1676369333495,
+  // },
+  // renewalDeadline: new Date('2023-02-24T17:00:00').getTime(),
   displayApplyCreateCFD: getDummyDisplayApplyCreateCFDOrder('BTC'),
 };
 
@@ -579,6 +581,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
   // ); // TODO: Open position parameter
   const [dataPositionOpenModal, setDataPositionOpenModal] = useState<IDataPositionOpenModal>(
     dummyDataPositionOpenModal
+    // getDummyDisplayApplyCreateCFDOrder('ETH')
   ); // TODO: Open position parameter
 
   const [visiblePositionUpdatedModal, setVisiblePositionUpdatedModal] = useState(false);
@@ -1092,8 +1095,8 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
         modalVisible={visiblePositionOpenModal}
         modalClickHandler={visiblePositionOpenModalHandler}
         displayApplyCreateCFD={dataPositionOpenModal.displayApplyCreateCFD}
-        openCfdRequest={dataPositionOpenModal.openCfdRequest}
-        renewalDeadline={dataPositionOpenModal.renewalDeadline}
+        // openCfdRequest={dataPositionOpenModal.openCfdRequest}
+        // renewalDeadline={dataPositionOpenModal.renewalDeadline}
       />
       <PositionClosedModal
         modalVisible={visiblePositionClosedModal}

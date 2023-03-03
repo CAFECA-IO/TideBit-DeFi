@@ -34,16 +34,16 @@ interface IPositionOpenModal {
   modalVisible: boolean;
   modalClickHandler: () => void;
   displayApplyCreateCFD: IDisplayApplyCFDOrder;
-  openCfdRequest: IPublicCFDOrder;
-  renewalDeadline: number;
+  // openCfdRequest: IPublicCFDOrder;
+  // renewalDeadline: number;
 }
 
 const PositionOpenModal = ({
   modalVisible,
   modalClickHandler,
   displayApplyCreateCFD,
-  openCfdRequest,
-  renewalDeadline,
+  // openCfdRequest,
+  // renewalDeadline,
   ...otherProps
 }: IPositionOpenModal) => {
   const globalCtx = useGlobal();
@@ -245,31 +245,31 @@ const PositionOpenModal = ({
     // TODO: get latest price from marketCtx and calculate required margin data
     // FIXME: 應用 ?? 代替 !
     globalCtx.dataPositionOpenModalHandler({
-      openCfdRequest: {
-        ...openCfdRequest,
-        price:
-          openCfdRequest.typeOfPosition === TypeOfPosition.BUY
-            ? randomIntFromInterval(
-                marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice * 0.75,
-                marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice * 1.25
-              )
-            : openCfdRequest.typeOfPosition === TypeOfPosition.SELL
-            ? randomIntFromInterval(
-                marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice * 1.1,
-                marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice * 1.25
-              )
-            : 999999,
-        // TODO:
-        // margin:
-        //   openCfdRequest.typeOfPosition === TypeOfPosition.BUY
-        //     ? (openCfdRequest.amount * marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice) /
-        //       openCfdRequest.leverage
-        //     : (openCfdRequest.amount * marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice) /
-        //       openCfdRequest.leverage,
+      // openCfdRequest: {
+      //   ...openCfdRequest,
+      //   price:
+      //     openCfdRequest.typeOfPosition === TypeOfPosition.BUY
+      //       ? randomIntFromInterval(
+      //           marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice * 0.75,
+      //           marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice * 1.25
+      //         )
+      //       : openCfdRequest.typeOfPosition === TypeOfPosition.SELL
+      //       ? randomIntFromInterval(
+      //           marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice * 1.1,
+      //           marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice * 1.25
+      //         )
+      //       : 999999,
+      //   // TODO:
+      //   // margin:
+      //   //   openCfdRequest.typeOfPosition === TypeOfPosition.BUY
+      //   //     ? (openCfdRequest.amount * marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice) /
+      //   //       openCfdRequest.leverage
+      //   //     : (openCfdRequest.amount * marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice) /
+      //   //       openCfdRequest.leverage,
 
-        margin: randomIntFromInterval(openCfdRequest.margin * 0.9, openCfdRequest.margin * 1.5),
-      },
-      renewalDeadline: creatCfdData.quotation.deadline,
+      //   margin: randomIntFromInterval(openCfdRequest.margin * 0.9, openCfdRequest.margin * 1.5),
+      // },
+      // renewalDeadline: creatCfdData.quotation.deadline,
       // renewalDeadline: newTimestamp,
       displayApplyCreateCFD: dataRenewal,
     });

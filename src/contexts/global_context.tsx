@@ -869,19 +869,21 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     setDepositProcess(state);
   };
 
+  // TODO: send deposit request
   const depositSubmitHandler = (props: {asset: string; amount: number}) => {
-    setDepositProcess('loading');
+    // setDepositProcess('loading');
+    // console.log('deposit handler:', props);
+    // toast({type: 'info', message: JSON.stringify(props)});
   };
 
+  // TODO: send withdrawal request
   const withdrawSubmitHandler = (props: {asset: string; amount: number}) => {
-    setWithdrawProcess('loading');
-
+    // console.log('withdraw handler:', props);
+    // setWithdrawProcess('loading');
     // setTimeout(() => {
     //   setWithdrawProcess('success');
-
     //   setTimeout(() => {
     //     setWithdrawProcess('cancellation');
-
     //     setTimeout(() => {
     //       setWithdrawProcess('fail');
     //     }, 5000);

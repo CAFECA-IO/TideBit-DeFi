@@ -274,7 +274,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     notificationCtx.emitter.emit(TideBitEvent.DISCONNECTED);
   };
 
-  const lunar = new Lunar();
+  const lunar = Lunar.getInstance();
   lunar.on('connected', () => {
     setIsConnected(true);
   });

@@ -162,7 +162,7 @@ const PositionOpenModal = ({
         targetAsset: 'USDT',
         uniAsset: 'USDT',
         price: randomIntFromInterval(1000, 10000),
-        deadline: Date.now() / 1000 + 15,
+        deadline: Date.now() / 1000 + RENEW_QUOTATION_INTERVAL_SECONDS,
         signature: '0x',
       }, // 報價單 定時從後端拿
 
@@ -215,63 +215,69 @@ const PositionOpenModal = ({
 
   // const displayedTime = timestampToString(openCfdRequest?.createdTime ?? 0);
 
+  const organizeApplyOrder = () => {
+    const newData = getDummyDisplayApplyCreateCFDOrder(marketCtx.selectedTicker!.currency);
+    const creatingData = newData.data as IApplyCreateCFDOrderData;
+
+    // const userInput = ['ticker', 'typeOfPosition', 'amount', 'targetAsset', 'uniAsset', 'leverage'];
+
+    const {
+      ticker,
+      typeOfPosition,
+      amount,
+      margin,
+      takeProfit,
+      stopLoss,
+      guaranteedStop,
+      targetAsset,
+      uniAsset,
+      leverage,
+      ...dataRenewedWithoutExcludedProperties
+    } = creatingData;
+
+    const applyData = {
+      ...displayApplyCreateCFD,
+      data: {
+        ...displayApplyCreateCFD.data,
+        ...dataRenewedWithoutExcludedProperties,
+      },
+    };
+
+    return applyData;
+  };
+
   const renewDataHandler = async () => {
-    // TODO: organize the renew data and not change the data some property, like type of position
-    const dataRenewal = getDummyDisplayApplyCreateCFDOrder(marketCtx.selectedTicker!.currency);
-    const creatCfdData = dataRenewal.data as IApplyCreateCFDOrderData;
+    const applyData = organizeApplyOrder();
+
+    // const excludedProperties = ['margin', 'takeProfit', 'stopLoss'];
+
+    // const creatingDataWithoutExcludedProperties = Object.keys(createCfdData)
+    //   .filter(key => !excludedProperties.includes(key))
+    //   .reduce((obj, key) => {
+    //     return {
+    //       ...obj,
+    //       [key]: createCfdData[key],
+    //     };
+    //   }, {});
 
     setDataRenewedStyle('animate-flash text-lightYellow2');
     await wait(DELAYED_HIDDEN_SECONDS / 5);
 
     // const newTimestamp = new Date().getTime() / 1000 + RENEW_QUOTATION_INTERVAL_SECONDS;
     // setSecondsLeft(newTimestamp - Date.now() / 1000);
-    setSecondsLeft(Math.round(creatCfdData.quotation.deadline - Date.now() / 1000));
-
-    // // FIXME: how to use nested type union in typescript
-    // console.log('dummy data: ', newDummyData.data.takeProfit);
-    // console.log(
-    //   'dummy data: ',
-    //   (newDummyData['data'] as IApplyCreateCFDOrderData) && newDummyData.data.ticker
-    // );
-    // console.log(
-    //   'dummy data: ',
-    //   (newDummyData['data'] typeof IApplyCreateCFDOrderData) && newDummyData.data.ticker
-    // );
-
-    // const testDummyData = getTestDummyApplyCreateCFDOrder(marketCtx.selectedTicker!.currency);
-
-    // console.log('testDummyData: ', testDummyData.data.amount);
+    // setSecondsLeft(Math.round(creatingData.quotation.deadline - Date.now() / 1000));
+    setSecondsLeft(Math.round(applyData.data.quotation.deadline - Date.now() / 1000));
 
     // TODO: get latest price from marketCtx and calculate required margin data
     // FIXME: 應用 ?? 代替 !
     globalCtx.dataPositionOpenModalHandler({
-      // openCfdRequest: {
-      //   ...openCfdRequest,
-      //   price:
-      //     openCfdRequest.typeOfPosition === TypeOfPosition.BUY
-      //       ? randomIntFromInterval(
-      //           marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice * 0.75,
-      //           marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice * 1.25
-      //         )
-      //       : openCfdRequest.typeOfPosition === TypeOfPosition.SELL
-      //       ? randomIntFromInterval(
-      //           marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice * 1.1,
-      //           marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice * 1.25
-      //         )
-      //       : 999999,
-      //   // TODO:
-      //   // margin:
-      //   //   openCfdRequest.typeOfPosition === TypeOfPosition.BUY
-      //   //     ? (openCfdRequest.amount * marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice) /
-      //   //       openCfdRequest.leverage
-      //   //     : (openCfdRequest.amount * marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice) /
-      //   //       openCfdRequest.leverage,
-
-      //   margin: randomIntFromInterval(openCfdRequest.margin * 0.9, openCfdRequest.margin * 1.5),
-      // },
-      // renewalDeadline: creatCfdData.quotation.deadline,
-      // renewalDeadline: newTimestamp,
-      displayApplyCreateCFD: dataRenewal,
+      displayApplyCreateCFD: {
+        ...applyData,
+        // data: {
+        //   ...displayApplyCreateCFD.data,
+        //   ...dataRenewedWithoutExcludedProperties,
+        // },
+      },
     });
 
     setDataRenewedStyle('text-lightYellow2');

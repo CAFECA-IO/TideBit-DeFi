@@ -1,13 +1,17 @@
-import {CFDOrderType} from '../constants/cfd_order_type';
+import keccak256 from 'keccak256';
+import SafeMath from '../lib/safe_math';
 import CFDOrderClose from '../constants/contracts/cfd_close';
 import CFDOrderCreate from '../constants/contracts/cfd_create';
 import CFDOrderUpdate from '../constants/contracts/cfd_update';
+import Withdraw from '../constants/contracts/withdraw';
+import {CFDOrderType} from '../constants/cfd_order_type';
 import {IApplyCFDOrder} from '../interfaces/tidebit_defi_background/apply_cfd_order';
 import {IApplyCloseCFDOrderData} from '../interfaces/tidebit_defi_background/apply_close_cfd_order_data';
-import {IApplyCreateCFDOrderData} from '../interfaces/tidebit_defi_background/apply_create_cfd_order_data';
 import {IApplyUpdateCFDOrderData} from '../interfaces/tidebit_defi_background/apply_update_cfd_order_data';
+import {IApplyCreateCFDOrderData} from '../interfaces/tidebit_defi_background/apply_create_cfd_order_data';
+import {IApplyDepositOrder} from '../interfaces/tidebit_defi_background/apply_deposit_order';
+import {IApplyWithdrawOrder} from '../interfaces/tidebit_defi_background/apply_withdraw_order';
 import {IResult} from '../interfaces/tidebit_defi_background/result';
-import SafeMath from '../lib/safe_math';
 
 class TransactionEngine {
   isApplyCreateCFDOrderData(obj: object): obj is IApplyCreateCFDOrderData {
@@ -40,11 +44,6 @@ class TransactionEngine {
       amount: SafeMath.toSmallestUnit(data.amount, 10),
       leverage: SafeMath.toSmallestUnit(data.leverage, 10),
       liquidationPrice: SafeMath.toSmallestUnit(data.liquidationPrice, 10),
-      guaranteedStopFee: data.guaranteedStopFee
-        ? SafeMath.toSmallestUnit(data.guaranteedStopFee, 10)
-        : undefined,
-      takeProfit: data.takeProfit ? SafeMath.toSmallestUnit(data.takeProfit, 10) : undefined,
-      stopLoss: data.stopLoss ? SafeMath.toSmallestUnit(data.stopLoss, 10) : undefined,
       margin: {
         ...data.margin,
         amount: SafeMath.toSmallestUnit(data.margin.amount, 10),
@@ -54,6 +53,13 @@ class TransactionEngine {
         price: SafeMath.toSmallestUnit(data.quotation.price, 10),
       },
       createTimestamp: Math.ceil(Date.now() / 1000),
+      takeProfit: data.takeProfit ? SafeMath.toSmallestUnit(data.takeProfit, 10) : 0,
+      stopLoss: data.stopLoss ? SafeMath.toSmallestUnit(data.stopLoss, 10) : 0,
+      guaranteedStop: data.guaranteedStop ? data.guaranteedStop : false,
+      guaranteedStopFee: data.guaranteedStopFee
+        ? SafeMath.toSmallestUnit(data.guaranteedStopFee, 10)
+        : 0,
+      remark: data.remark ? data.remark : ``,
     };
     return convertedCreateCFDOrderData;
   }
@@ -61,11 +67,12 @@ class TransactionEngine {
   convertUpdateCFDOrderData(data: IApplyUpdateCFDOrderData) {
     const convertedUpdateCFDOrderData = {
       ...data,
+      guaranteedStop: data.guaranteedStop ? data.guaranteedStop : false,
       guaranteedStopFee: data.guaranteedStopFee
         ? SafeMath.toSmallestUnit(data.guaranteedStopFee, 10)
-        : undefined,
-      takeProfit: data.takeProfit ? SafeMath.toSmallestUnit(data.takeProfit, 10) : undefined,
-      stopLoss: data.stopLoss ? SafeMath.toSmallestUnit(data.stopLoss, 10) : undefined,
+        : 0,
+      takeProfit: data.takeProfit ? SafeMath.toSmallestUnit(data.takeProfit, 10) : 0,
+      stopLoss: data.stopLoss ? SafeMath.toSmallestUnit(data.stopLoss, 10) : 0,
     };
     return convertedUpdateCFDOrderData;
   }
@@ -78,17 +85,27 @@ class TransactionEngine {
         ...data.quotation,
         price: SafeMath.toSmallestUnit(data.quotation.price, 10),
       },
+      closeTimestamp: data.closeTimestamp ? data.closeTimestamp : Math.ceil(Date.now() / 1000),
     };
     return convertedCloseCFDOrderData;
   }
 
-  tranferCFDOrderToTransacion(order: IApplyCFDOrder) {
+  convertWithdrawOrderData(data: IApplyWithdrawOrder) {
+    const convertedCloseCFDOrderData = {
+      ...data,
+      targetAmount: SafeMath.toSmallestUnit(data.targetAmount, 10),
+      fee: SafeMath.toSmallestUnit(data.fee, 10),
+      createTimestamp: data.createTimestamp ? data.createTimestamp : Math.ceil(Date.now() / 1000),
+      remark: data.remark ? data.remark : ``,
+    };
+    return convertedCloseCFDOrderData;
+  }
+
+  transferCFDOrderToTransaction(order: IApplyCFDOrder) {
     let result: IResult = {
       success: false,
       reason: 'data and type is not match',
     };
-    // eslint-disable-next-line no-console
-    console.log(`tranferCFDOrderToTransacion order`, order);
     switch (order.type) {
       case CFDOrderType.CREATE:
         if (this.isApplyCreateCFDOrderData(order.data)) {
@@ -96,7 +113,7 @@ class TransactionEngine {
           const typeData = CFDOrderCreate;
           typeData.message = this.convertCreateCFDOrderData(order.data);
           // eslint-disable-next-line no-console
-          console.log(`tranferCFDOrderToTransacion convertCreateCFDOrderData`, typeData.message);
+          // console.log(`transferCFDOrderToTransaction convertCreateCFDOrderData`, typeData.message);
           result = {
             success: true,
             data: typeData,
@@ -128,6 +145,34 @@ class TransactionEngine {
       default:
         break;
     }
+    return result;
+  }
+
+  transferDepositOrderToTransaction(depositOrder: IApplyDepositOrder) {
+    const funcName = 'deposit(uint256)';
+    const funcNameHex = `0x${keccak256(funcName).toString('hex').slice(0, 8)}`;
+    const amountData = SafeMath.toSmallestUnitHex(depositOrder.targetAmount, depositOrder.decimals)
+      .split('.')[0]
+      .padStart(64, '0');
+    const data = funcNameHex + amountData;
+
+    const value = 0;
+
+    const transaction = {
+      to: depositOrder.to,
+      amount: value,
+      data,
+    };
+    return transaction;
+  }
+
+  transferWithdrawOrderToTransaction(withdrawOrder: IApplyWithdrawOrder) {
+    const typeData = Withdraw;
+    typeData.message = this.convertWithdrawOrderData(withdrawOrder);
+    const result: IResult = {
+      success: true,
+      data: typeData,
+    };
     return result;
   }
 }

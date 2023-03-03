@@ -14,13 +14,6 @@ const CFDOrderCreate: IEIP712Data = {
   // Refers to the keys of the *types* object below.
   primaryType: 'CreateCFDOrderData',
   types: {
-    // TODO: Clarify if EIP712Domain refers to the domain the contract is hosted on
-    EIP712Domain: [
-      {name: 'name', type: 'string'},
-      {name: 'version', type: 'string'},
-      {name: 'chainId', type: 'string'},
-      {name: 'verifyingContract', type: 'address'},
-    ],
     CreateCFDOrderData: [
       {name: 'ticker', type: 'string'},
       {name: 'quotation', type: 'Quotation'},
@@ -35,11 +28,11 @@ const CFDOrderCreate: IEIP712Data = {
       {name: 'liquidationTime', type: 'uint256'},
       {name: 'fee', type: 'uint256'},
       {name: 'createTimestamp', type: 'uint256'},
-      //   {name: 'takeProfit', type: 'uint256', optional: true},
-      //   {name: 'stopLoss', type: 'uint256', optional: true},
-      //   {name: 'guaranteedStop', type: 'bool', optional: true},
-      //   {name: 'guaranteedStopFee', type: 'uint256', optional: true},
-      //   {name: 'remark', type: 'string', optional: true},
+      {name: 'takeProfit', type: 'uint256'},
+      {name: 'stopLoss', type: 'uint256'},
+      {name: 'guaranteedStop', type: 'bool'},
+      {name: 'guaranteedStopFee', type: 'uint256'},
+      {name: 'remark', type: 'string'},
     ],
     Margin: [
       {name: 'asset', type: 'string'},

@@ -770,8 +770,6 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
 
   // TODO: Open position parameter
   const dataPositionOpenModalHandler = (data: IDataPositionOpenModal) => {
-    // eslint-disable-next-line no-console
-    console.log(`dataPositionOpenModalHandler data`, data);
     setDataPositionOpenModal(data);
   };
 
@@ -874,11 +872,33 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
 
   const depositSubmitHandler = (props: {asset: string; amount: number}) => {
     setDepositProcess('loading');
+    userCtx
+      .deposit({
+        orderType: OrderType.DEPOSIT,
+        createTimestamp: Math.ceil(Date.now() / 1000),
+        targetAsset: props.asset,
+        targetAmount: props.amount,
+        decimals: 18,
+        to: '0x',
+        remark: '',
+        fee: 0,
+      })
+      .then(_ => setDepositProcess('success'));
   };
 
   const withdrawSubmitHandler = (props: {asset: string; amount: number}) => {
     setWithdrawProcess('loading');
-
+    userCtx
+      .withdraw({
+        orderType: OrderType.WITHDRAW,
+        createTimestamp: Math.ceil(Date.now() / 1000),
+        targetAsset: props.asset,
+        targetAmount: props.amount,
+        to: '0x',
+        remark: '',
+        fee: 0,
+      })
+      .then(_ => setDepositProcess('success'));
     // setTimeout(() => {
     //   setWithdrawProcess('success');
 

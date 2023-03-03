@@ -15,12 +15,6 @@ const CFDOrderClose: IEIP712Data = {
   primaryType: 'CloseCFDOrderData',
   types: {
     // TODO: Clarify if EIP712Domain refers to the domain the contract is hosted on
-    EIP712Domain: [
-      {name: 'name', type: 'string'},
-      {name: 'version', type: 'string'},
-      {name: 'chainId', type: 'string'},
-      {name: 'verifyingContract', type: 'address'},
-    ],
     CloseCFDOrderData: [
       {name: 'orderId', type: 'string'},
       {name: 'quotation', type: 'Quotation'},

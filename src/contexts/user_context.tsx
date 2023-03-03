@@ -59,6 +59,8 @@ import {getDummyAcceptedCFDOrder} from '../interfaces/tidebit_defi_background/ac
 import {IOrderResult} from '../interfaces/tidebit_defi_background/order_result';
 import {dummyAcceptedDepositOrder} from '../interfaces/tidebit_defi_background/accepted_deposit_order';
 import {dummyAcceptedWithdrawOrder} from '../interfaces/tidebit_defi_background/accepted_withdraw_order';
+import {IApplyDepositOrder} from '../interfaces/tidebit_defi_background/apply_deposit_order';
+import {IApplyWithdrawOrder} from '../interfaces/tidebit_defi_background/apply_withdraw_order';
 
 function randomNumber(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1) + min);
@@ -152,8 +154,8 @@ export interface IUserContext {
   createCFDOrder: (props: IApplyCreateCFDOrderData | undefined) => Promise<IResult>;
   closeCFDOrder: (props: IApplyCloseCFDOrderData | undefined) => Promise<IResult>;
   updateCFDOrder: (props: IApplyUpdateCFDOrderData | undefined) => Promise<IResult>;
-  deposit: (props: IDepositOrder) => Promise<IResult>;
-  withdraw: (props: IWithdrawalOrder) => Promise<IResult>;
+  deposit: (props: IApplyDepositOrder) => Promise<IResult>;
+  withdraw: (props: IApplyWithdrawOrder) => Promise<IResult>;
   listHistories: (props: string) => Promise<IOrder[]>;
   sendEmailCode: (email: string) => Promise<number>;
   connectEmail: (email: string, code: number) => Promise<boolean>;
@@ -204,8 +206,8 @@ export const UserContext = createContext<IUserContext>({
     Promise.resolve<IResult>(dummyResultSuccess),
   updateCFDOrder: (props: IApplyUpdateCFDOrderData | undefined) =>
     Promise.resolve<IResult>(dummyResultSuccess),
-  deposit: IDepositOrder => Promise.resolve<IResult>(dummyResultSuccess),
-  withdraw: IWithdrawalOrder => Promise.resolve<IResult>(dummyResultSuccess),
+  deposit: IApplyDepositOrder => Promise.resolve<IResult>(dummyResultSuccess),
+  withdraw: IApplyWithdrawOrder => Promise.resolve<IResult>(dummyResultSuccess),
   listHistories: () => Promise.resolve<IOrder[]>([]),
   sendEmailCode: (email: string) => Promise.resolve<number>(359123),
   connectEmail: (email: string, code: number) => Promise.resolve<boolean>(true),
@@ -426,7 +428,7 @@ export const UserProvider = ({children}: IUserProvider) => {
             type: CFDOrderType.CREATE,
             data: props,
           };
-          const transferR = transactionEngine.tranferCFDOrderToTransacion(CFDOrder);
+          const transferR = transactionEngine.transferCFDOrderToTransaction(CFDOrder);
           if (transferR.success) {
             const signature: string = await lunar.signTypedData(transferR.data);
             CFDOrder.signature = signature;
@@ -452,7 +454,7 @@ export const UserProvider = ({children}: IUserProvider) => {
       let result: IOrderResult = dummyResultFailed;
       if (props) {
         const CFDOrder: IApplyCFDOrder = {type: CFDOrderType.CLOSE, data: props};
-        const transferR = transactionEngine.tranferCFDOrderToTransacion(CFDOrder);
+        const transferR = transactionEngine.transferCFDOrderToTransaction(CFDOrder);
         if (transferR.success) {
           const ticker: string | undefined = openCFDs.find(o => o.id === props.orderId)?.ticker;
           // ++  if(order is live)
@@ -479,7 +481,7 @@ export const UserProvider = ({children}: IUserProvider) => {
       let result: IOrderResult = dummyResultFailed;
       if (props) {
         const CFDOrder: IApplyCFDOrder = {type: CFDOrderType.UPDATE, data: props};
-        const transferR = transactionEngine.tranferCFDOrderToTransacion(CFDOrder);
+        const transferR = transactionEngine.transferCFDOrderToTransaction(CFDOrder);
         if (transferR.success) {
           const ticker: string | undefined = openCFDs.find(o => o.id === props.orderId)?.ticker;
           // ++  if(order is live)
@@ -499,37 +501,51 @@ export const UserProvider = ({children}: IUserProvider) => {
     }
   };
 
-  const deposit = async (depositOrder: IDepositOrder) => {
+  const deposit = async (depositOrder: IApplyDepositOrder): Promise<IOrderResult> => {
     let result: IOrderResult = dummyResultFailed;
     if (lunar.isConnected) {
       const walletBalance: IWalletBalance | null = getWalletBalance(depositOrder.targetAsset);
-      // if(balance is enough)
-      if (walletBalance && walletBalance.balance >= depositOrder.targetAmount) {
-        // TODO: OrderEngine create signable deposit data
-        // TODO: updateWalletBalances
-        result = {
-          success: true,
-          data: dummyAcceptedDepositOrder, // new walletBalance
-        };
-      }
+      // if (walletBalance && walletBalance.balance >= depositOrder.targetAmount) { // ++ TODO verify
+      const transaction: {to: string; amount: number; data: string} =
+        transactionEngine.transferDepositOrderToTransaction(depositOrder);
+      const sendR = await lunar.send(transaction);
+      // TODO: updateWalletBalances
+      result = {
+        success: true,
+        data: dummyAcceptedDepositOrder, // new walletBalance
+      };
+      // }
+      return await Promise.resolve<IOrderResult>(result);
+    } else {
+      await connect();
+      return deposit(depositOrder);
     }
-    return await Promise.resolve<IOrderResult>(result);
   };
 
-  const withdraw = async (witherOrder: IWithdrawalOrder) => {
+  const withdraw = async (witherOrder: IApplyWithdrawOrder): Promise<IOrderResult> => {
     let result: IOrderResult = dummyResultFailed;
     if (lunar.isConnected) {
       const balance: IBalance | null = getBalance(witherOrder.targetAsset); // TODO: ticker is not currency
       if (balance && balance.available >= witherOrder.targetAmount) {
         // TODO: balance.available > ?
         // TODO: OrderEngine create withdraw order data
-        result = {
-          success: true,
-          data: dummyAcceptedWithdrawOrder,
-        };
+        const transferR = transactionEngine.transferWithdrawOrderToTransaction(witherOrder);
+        if (transferR.success) {
+          // ++  if(order is live)
+          const signature: string = await lunar.signTypedData(transferR.data);
+          witherOrder.signature = signature;
+          // ++ API send transaction
+          result = {
+            success: true,
+            data: dummyAcceptedWithdrawOrder, // ++ TODO remove dummy ticker
+          };
+        }
       }
+      return await Promise.resolve<IOrderResult>(result);
+    } else {
+      await connect();
+      return withdraw(witherOrder);
     }
-    return await Promise.resolve<IOrderResult>(result);
   };
 
   const listHistories = async () => {

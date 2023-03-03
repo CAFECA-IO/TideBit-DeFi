@@ -14,18 +14,13 @@ const Withdraw: IEIP712Data = {
   // Refers to the keys of the *types* object below.
   primaryType: 'Withdraw',
   types: {
-    // TODO: Clarify if EIP712Domain refers to the domain the contract is hosted on
-    EIP712Domain: [
-      {name: 'name', type: 'string'},
-      {name: 'version', type: 'string'},
-      {name: 'chainId', type: 'string'},
-      {name: 'verifyingContract', type: 'address'},
-    ],
     Withdraw: [
-      {name: 'currency', type: 'string'},
-      {name: 'amount', type: 'uint256'},
+      {name: 'createTimestamp', type: 'uint256'},
+      {name: 'targetAsset', type: 'string'},
+      {name: 'targetAmount', type: 'uint256'},
       {name: 'from', type: 'string'},
-      {name: 'to', type: 'string'},
+      {name: 'remark', type: 'string'},
+      {name: 'fee', type: 'uint256'},
     ],
   },
   // Defining the message signing data content.
@@ -36,10 +31,12 @@ const Withdraw: IEIP712Data = {
     - This is DApp Specific
     - Be as explicit as possible when building out the message schema.
     */
-    currency: `ETH`,
-    amount: 1,
-    from: '0x',
+    createTimestamp: Math.ceil(Date.now() / 1000),
+    targetAsset: 'USDT',
+    targetAmount: 1,
     to: '0x',
+    remark: '',
+    fee: 0,
   },
 };
 

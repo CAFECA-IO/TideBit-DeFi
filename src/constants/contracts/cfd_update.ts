@@ -14,13 +14,6 @@ const CFDOrderUpdate: IEIP712Data = {
   // Refers to the keys of the *types* object below.
   primaryType: 'UpdateCFDOrderData',
   types: {
-    // TODO: Clarify if EIP712Domain refers to the domain the contract is hosted on
-    EIP712Domain: [
-      {name: 'name', type: 'string'},
-      {name: 'version', type: 'string'},
-      {name: 'chainId', type: 'string'},
-      {name: 'verifyingContract', type: 'address'},
-    ],
     // Refer to PrimaryType
     UpdateCFDOrderData: [
       {name: 'orderId', type: 'string'},

@@ -324,8 +324,8 @@ const TradeTab = () => {
     globalCtx.dataPositionOpenModalHandler({
       openCfdRequest: {
         ticker: marketCtx.selectedTicker?.currency ?? '',
-        targetAsset: marketCtx.selectedTicker?.currency ?? '',
-        uniAsset: unitAsset,
+        targetAsset: unitAsset,
+        uniAsset: marketCtx.selectedTicker?.currency ?? '',
         typeOfPosition: TypeOfPosition.SELL,
         margin: {
           asset: marketCtx.selectedTicker?.currency ?? '',
@@ -333,8 +333,8 @@ const TradeTab = () => {
         },
         quotation: {
           ticker: marketCtx.selectedTicker?.currency ?? '',
-          targetAsset: marketCtx.selectedTicker?.currency ?? '',
-          uniAsset: unitAsset,
+          targetAsset: unitAsset,
+          uniAsset: marketCtx.selectedTicker?.currency ?? '',
           price: Number(sellPrice) ?? 9999999999,
           deadline: Math.ceil(Date.now() / 1000) + 15,
           signature: '0x',

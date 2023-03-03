@@ -13,6 +13,7 @@
     "validate": "npm run test && npm run check-format && npm run lint"
   },
   "dependencies": {
+    "@cafeca/keccak": "^0.8.8",
     "@cafeca/lunar": "^0.4.5",
     "@types/node": "^18.11.10",
     "@types/react": "^18.0.26",
@@ -24,7 +25,6 @@
     "bignumber.js": "^9.1.1",
     "ethers": "^5.7.2",
     "i18next": "^22.4.5",
-    "keccak256": "^1.0.6",
     "lottie-react": "^2.3.1",
     "next": "13.0.2",
     "next-i18next": "^13.0.1",

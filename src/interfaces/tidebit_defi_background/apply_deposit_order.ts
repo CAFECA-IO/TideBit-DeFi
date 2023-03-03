@@ -18,7 +18,7 @@ export const dummyDepositOrder: IApplyDepositOrder = {
   targetAsset: 'ETH',
   targetAmount: 2,
   decimals: 18,
-  to: '0x',
+  to: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
   remark: '',
   fee: 0,
 };

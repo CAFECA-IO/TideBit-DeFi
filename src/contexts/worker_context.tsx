@@ -71,51 +71,45 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
       requests.current[name]?.callback(result);
       delete requests.current[name];
     };
-    try {
-      fetch('/api/socketio').finally(() => {
-        const socket = io();
-        setWsWorker(socket);
-        socket.on('connect', () => {
-          socket.emit(TideBitEvent.NOTIFICATIONS);
-        });
-
-        socket.on(TideBitEvent.NOTIFICATIONS, data => {
-          notificationCtx.emitter.emit(TideBitEvent.NOTIFICATIONS, data);
-        });
-
-        socket.on(TideBitEvent.TICKER, data => {
-          notificationCtx.emitter.emit(TideBitEvent.TICKER, data);
-        });
-
-        socket.on(TideBitEvent.TICKER_STATISTIC, data => {
-          notificationCtx.emitter.emit(TideBitEvent.TICKER_STATISTIC, data);
-        });
-
-        socket.on(TideBitEvent.TICKER_STATISTIC, data => {
-          notificationCtx.emitter.emit(TideBitEvent.TICKER_STATISTIC, data);
-        });
-
-        socket.on(TideBitEvent.CANDLESTICK, data => {
-          notificationCtx.emitter.emit(TideBitEvent.CANDLESTICK, data);
-        });
-
-        socket.on(TideBitEvent.BALANCE, data => {
-          notificationCtx.emitter.emit(TideBitEvent.BALANCE, data);
-        });
-
-        socket.on(TideBitEvent.ORDER, data => {
-          notificationCtx.emitter.emit(TideBitEvent.ORDER, data);
-        });
-
-        socket.on('disconnect', () => {
-          // console.log('disconnect');
-        });
+    fetch('/api/socketio').finally(() => {
+      const socket = io();
+      setWsWorker(socket);
+      socket.on('connect', () => {
+        socket.emit(TideBitEvent.NOTIFICATIONS);
       });
-    } catch (error) {
-      // ++TODO
-      // eslint-disable-next-line no-console
-      console.error(`fetch('/api/socketio') error`, error);
-    }
+
+      socket.on(TideBitEvent.NOTIFICATIONS, data => {
+        notificationCtx.emitter.emit(TideBitEvent.NOTIFICATIONS, data);
+      });
+
+      socket.on(TideBitEvent.TICKER, data => {
+        notificationCtx.emitter.emit(TideBitEvent.TICKER, data);
+      });
+
+      socket.on(TideBitEvent.TICKER_STATISTIC, data => {
+        notificationCtx.emitter.emit(TideBitEvent.TICKER_STATISTIC, data);
+      });
+
+      socket.on(TideBitEvent.TICKER_STATISTIC, data => {
+        notificationCtx.emitter.emit(TideBitEvent.TICKER_STATISTIC, data);
+      });
+
+      socket.on(TideBitEvent.CANDLESTICK, data => {
+        notificationCtx.emitter.emit(TideBitEvent.CANDLESTICK, data);
+      });
+
+      socket.on(TideBitEvent.BALANCE, data => {
+        notificationCtx.emitter.emit(TideBitEvent.BALANCE, data);
+      });
+
+      socket.on(TideBitEvent.ORDER, data => {
+        notificationCtx.emitter.emit(TideBitEvent.ORDER, data);
+      });
+
+      socket.on('disconnect', () => {
+        // console.log('disconnect');
+      });
+    });
     worker();
   };
 

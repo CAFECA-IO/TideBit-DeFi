@@ -5,35 +5,42 @@ import {MarketContext, IMarketContext} from '../../contexts/market_context';
 import {CRYPTO_CARD_COLORS} from '../../constants/display';
 import Link from 'next/link';
 
-// TODO: import data from market context
-
 const CryptoCategory = ({...otherProps}) => {
-  const customClassName = otherProps?.className;
+  const marketCtx = useContext<IMarketContext>(MarketContext);
+  const [tickers, setTickers] = useState<any>([]);
 
-  const {availableTickers} = useContext<IMarketContext>(MarketContext);
+  useEffect(() => {
+    setTickers(
+      marketCtx.availableTickers?.map((item, i) => {
+        const color = CRYPTO_CARD_COLORS.find(i => i.label === item.currency);
+        const cryptoCard = {
+          ...item,
+          gradientColor: color?.gradientColor,
+        };
 
-  const displayedAllTickers = availableTickers
-    // ?.filter(item => CRYPTO_CARD_COLORS.some(i => i.label === item.currency))
-    ?.map((item, i) => {
-      // step 1: 放顏色
-      const color = CRYPTO_CARD_COLORS.find(i => i.label === item.currency);
-      const cryptoCard = {
-        ...item,
-        gradientColor: color?.gradientColor,
-      };
+        if (i === 0) {
+          return (
+            <div key={i}>
+              <Link href={`/trade/cfd/${cryptoCard.currency?.toLowerCase()}usdt`}>
+                <CryptoCard
+                  className="mt-4 ml-4"
+                  lineGraphProps={cryptoCard.lineGraphProps}
+                  chain={cryptoCard.chain}
+                  currency={cryptoCard.currency}
+                  price={cryptoCard.price}
+                  fluctuating={cryptoCard.fluctuating}
+                  gradientColor={cryptoCard?.gradientColor ?? ''}
+                  tokenImg={cryptoCard.tokenImg}
+                />
+              </Link>
+            </div>
+          );
+        }
 
-      // step 2: 把 json 放進 component
-      if (i === 0) {
         return (
-          // TODO: Dynamic routes
           <div key={i}>
-            <Link href={`/trade/cfd/ethusdt`}>
+            <Link href={`/trade/cfd/${cryptoCard.currency?.toLowerCase()}usdt`}>
               <CryptoCard
-                // key={i}
-                // cardClickHandler={() => {
-                //   <Link href={`/trade/cfd/${cryptoCard.currency}`}></Link>;
-                // }}
-                className="mt-4 ml-4"
                 lineGraphProps={cryptoCard.lineGraphProps}
                 chain={cryptoCard.chain}
                 currency={cryptoCard.currency}
@@ -45,32 +52,14 @@ const CryptoCategory = ({...otherProps}) => {
             </Link>
           </div>
         );
-      }
+      })
+    );
 
-      return (
-        <div key={i}>
-          <Link href={`/trade/cfd/ethusdt`}>
-            <CryptoCard
-              key={i}
-              lineGraphProps={cryptoCard.lineGraphProps}
-              chain={cryptoCard.chain}
-              currency={cryptoCard.currency}
-              price={cryptoCard.price}
-              fluctuating={cryptoCard.fluctuating}
-              gradientColor={cryptoCard?.gradientColor ?? ''}
-              tokenImg={cryptoCard.tokenImg}
-            />
-          </Link>
-        </div>
-      );
-    });
+    // console.log('ticker', {tickers});
+  }, [marketCtx.availableTickers, marketCtx.init]);
 
   return (
-    // <MarketContext.Provider value={{availableTickers}}>
-    // <MarketProvider>
-    <div
-      className={`${customClassName} container mx-auto flex shrink-0 flex-wrap justify-center space-y-1`}
-    >
+    <div className="container mx-auto flex shrink-0 flex-wrap justify-center space-y-1">
       <div className="mb-10 flex w-full flex-col text-center xl:mb-20">
         <div className="mb-0 items-center text-2xl font-medium text-white xs:text-3xl sm:text-4xl">
           <div className="flex items-center justify-center">
@@ -83,41 +72,9 @@ const CryptoCategory = ({...otherProps}) => {
         </div>
       </div>
       <div className="flex w-full items-center justify-center">
-        <div className="mb-5 grid grid-cols-2 space-y-4 space-x-4 lg:grid-cols-5">
-          {displayedAllTickers}
-
-          {/* <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">
-          
-        </div>
-        <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">
-         
-        </div>
-        <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">
-          
-        </div>
-        <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">
-         
-        </div>
-        <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">
-          
-        </div>
-        <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">
-          
-        </div>
-        <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">
-          
-        </div>
-        <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">
-          
-        </div>
-        <div className="my-5 flex flex-wrap justify-center lg:w-1/4 xl:w-1/5">
-          
-        </div> */}
-        </div>
+        <div className="mb-5 grid grid-cols-2 space-y-4 space-x-4 lg:grid-cols-5">{tickers}</div>
       </div>
     </div>
-    // </MarketProvider>
-    // </MarketContext.Provider>
   );
 };
 

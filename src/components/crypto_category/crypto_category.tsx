@@ -9,9 +9,22 @@ const CryptoCategory = ({...otherProps}) => {
   const marketCtx = useContext<IMarketContext>(MarketContext);
   const [tickers, setTickers] = useState<any>([]);
 
+  const [mounted, setMounted] = useState(false);
+
   useEffect(() => {
+    if (mounted) return;
+
+    // console.log('mounted effect');
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (mounted) return;
+
+    // console.log('ticker render effect');
+
     setTickers(
-      marketCtx.availableTickers!.map((item, i) => {
+      marketCtx.listAvailableTickers().map((item, i) => {
         const color = CRYPTO_CARD_COLORS.find(i => i.label === item.currency);
         const cryptoCard = {
           ...item,
@@ -56,7 +69,7 @@ const CryptoCategory = ({...otherProps}) => {
     );
 
     // console.log('ticker', {tickers});
-  }, [marketCtx.availableTickers, marketCtx.init]);
+  }, []);
 
   return (
     <div className="container mx-auto flex shrink-0 flex-wrap justify-center space-y-1">

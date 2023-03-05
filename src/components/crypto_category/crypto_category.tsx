@@ -7,20 +7,14 @@ import Link from 'next/link';
 
 const CryptoCategory = ({...otherProps}) => {
   const marketCtx = useContext<IMarketContext>(MarketContext);
-  const [tickers, setTickers] = useState<any>([]);
+  const [tickers, setTickers] = useState<JSX.Element[]>();
 
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     if (mounted) return;
 
-    // console.log('mounted effect');
     setMounted(true);
-  }, []);
-
-  useEffect(() => {
-    if (mounted) return;
-
     // console.log('ticker render effect');
 
     setTickers(
@@ -68,7 +62,7 @@ const CryptoCategory = ({...otherProps}) => {
       })
     );
 
-    // console.log('ticker', {tickers});
+    // console.log('ticker', tickers);
   }, []);
 
   return (

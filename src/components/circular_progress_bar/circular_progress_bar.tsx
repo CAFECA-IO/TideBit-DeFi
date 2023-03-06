@@ -5,6 +5,7 @@ import {ApexOptions} from 'apexcharts';
 const Chart = dynamic(() => import('react-apexcharts'), {ssr: false});
 
 interface ICircularProgressBarProps {
+  showLabel?: boolean;
   // percentage?: number[];
   progressBarColor: string[];
   // label?: string[];
@@ -17,6 +18,7 @@ interface ICircularProgressBarProps {
 }
 
 const CircularProgressBar = ({
+  showLabel,
   numerator,
   denominator,
   progressBarColor,
@@ -57,7 +59,7 @@ const CircularProgressBar = ({
           background: '#404A55',
         },
         dataLabels: {
-          show: false,
+          show: showLabel,
           name: {
             show: true,
             fontSize: '12px',

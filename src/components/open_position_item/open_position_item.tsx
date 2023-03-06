@@ -140,6 +140,7 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
 
             <div>
               <CircularProgressBar
+                showLabel={true}
                 numerator={passedHour}
                 denominator={24}
                 progressBarColor={[displayedColorHex]}

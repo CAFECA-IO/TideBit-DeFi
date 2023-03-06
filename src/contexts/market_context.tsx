@@ -238,7 +238,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       request: {
         name: APIRequest.LIST_TICKERS,
         method: Method.GET,
-        url: 'http://localhost:3000/api/tickers',
+        url: '/api/tickers',
       },
       callback: (tickers: ITickerData[]) => {
         setAvailableTickers([...tickers]);

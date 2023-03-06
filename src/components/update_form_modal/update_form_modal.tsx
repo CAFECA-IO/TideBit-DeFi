@@ -188,6 +188,8 @@ const UpdatedFormModal = ({
 
   const displayedTime = timestampToString(openCfdDetails?.openTimestamp ?? 0);
 
+  const layoutInsideBorder = 'mx-5 my-3 flex justify-between';
+
   const buttonClickHandler = () => {
     // console.log('btn clicked');
     // setSubmitDisabled(false);
@@ -270,7 +272,7 @@ const UpdatedFormModal = ({
 
   // FIXME: Inconsistent information between text and input
   const displayedTakeProfitSetting = (
-    <div className={`${isDisplayedTakeProfitSetting}`}>
+    <div className={`mr-8 ${isDisplayedTakeProfitSetting}`}>
       <TradingInput
         getInputValue={getTpValue}
         lowerLimit={0}
@@ -288,7 +290,7 @@ const UpdatedFormModal = ({
 
   // FIXME: Inconsistent information between text and input
   const displayedStopLossSetting = (
-    <div className={`${isDisplayedStopLossSetting}`}>
+    <div className={`mr-8 ${isDisplayedStopLossSetting}`}>
       <TradingInput
         getInputValue={getSlValue}
         lowerLimit={displayedSlLowerLimit}
@@ -307,7 +309,7 @@ const UpdatedFormModal = ({
 
   const guaranteedStopLoss = (
     <div className="">
-      <div className="flex">
+      <div className="flex items-center text-center">
         <input
           type="checkbox"
           value=""
@@ -315,18 +317,18 @@ const UpdatedFormModal = ({
           onChange={guaranteedCheckedChangeHandler}
           className="h-5 w-5 rounded text-lightWhite accent-lightGray4"
         />
-        <label className="ml-2 flex text-sm font-medium text-lightGray">
+        <label className="ml-2 flex text-xs font-medium text-lightGray">
           Guaranteed stop &nbsp;
           <span className="text-lightWhite"> (Fee: {openCfdDetails?.guaranteedStopFee} USDT)</span>
           {/* tooltip */}
-          <div className="ml-1">
+          <div className="ml-3">
             <div
               className="relative"
               onMouseEnter={() => setGuaranteedTooltipStatus(3)}
               onMouseLeave={() => setGuaranteedTooltipStatus(0)}
             >
-              <div className="cursor-pointer">
-                <AiOutlineQuestionCircle size={20} />
+              <div className="">
+                <AiOutlineQuestionCircle size={16} />
               </div>
               {guaranteedTooltipStatus == 3 && (
                 <div
@@ -390,24 +392,24 @@ const UpdatedFormModal = ({
       <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">
         <div className="relative my-6 mx-auto w-auto max-w-xl">
           {/*content & panel*/}
-          <div className="relative flex h-726px w-450px flex-col rounded-3xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none">
+          <div className="relative flex h-580px w-296px flex-col rounded-3xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none">
             {/*header*/}
             <div className="flex items-start justify-between rounded-t pt-6">
-              <div className="ml-10 mr-8 mt-6 flex w-450px justify-between">
-                <div className="flex items-center space-x-3 text-center text-4xl text-lightWhite">
+              <div className="ml-10 mr-8 mt-5 mb-1 flex w-450px justify-between">
+                <div className="mx-auto flex items-center space-x-3 text-center text-lightWhite">
                   <Image
                     src={marketCtx.selectedTicker?.tokenImg ?? ''}
-                    width={40}
-                    height={40}
+                    width={30}
+                    height={30}
                     alt="icon"
                   />
-                  <h3 className="">{openCfdDetails?.ticker} </h3>
+                  <h3 className="text-2xl">{openCfdDetails?.ticker} </h3>
                 </div>
 
-                <div className="text-end text-base text-lightGray">
+                {/* <div className="text-end text-base text-lightGray">
                   <p className="">{displayedTime.date}</p>
                   <p className="">{displayedTime.time}</p>
-                </div>
+                </div> */}
               </div>
 
               <button className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
@@ -419,25 +421,25 @@ const UpdatedFormModal = ({
             {/*body*/}
             <div className="relative flex-auto pt-1">
               <div
-                className={`${displayedBorderColor} mx-10 mt-3 border-1px text-base leading-relaxed text-lightWhite`}
+                className={`${displayedBorderColor} mx-6 mt-0 border-1px text-xs leading-relaxed text-lightWhite`}
               >
                 <div className="flex-col justify-center text-center">
                   {/* {displayedDataFormat()} */}
 
-                  <div className="mx-6 my-4 flex justify-between">
+                  <div className={`${layoutInsideBorder}`}>
                     <div className="text-lightGray">Type</div>
                     {/* TODO: i18n */}
                     <div className={`${displayedPositionColor}`}>{displayedTypeOfPosition}</div>
                   </div>
 
-                  <div className="mx-6 my-4 flex justify-between">
+                  <div className={`${layoutInsideBorder}`}>
                     <div className="text-lightGray">Amount</div>
                     <div className="">
                       {openCfdDetails?.amount?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0}
                     </div>
                   </div>
 
-                  <div className="mx-6 my-4 flex justify-between">
+                  <div className={`${layoutInsideBorder}`}>
                     <div className="text-lightGray">PNL</div>
                     <div className={`${displayedPnLColor}`}>
                       {displayedPnLSymbol} ${' '}
@@ -445,7 +447,7 @@ const UpdatedFormModal = ({
                     </div>
                   </div>
 
-                  <div className="mx-6 my-4 flex justify-between">
+                  <div className={`${layoutInsideBorder}`}>
                     <div className="text-lightGray">Open Value</div>
                     <div className="">
                       ${' '}
@@ -454,7 +456,7 @@ const UpdatedFormModal = ({
                     </div>
                   </div>
 
-                  <div className="mx-6 my-4 flex justify-between">
+                  <div className={`${layoutInsideBorder}`}>
                     <div className="text-lightGray">Open Price</div>
                     <div className="">
                       ${' '}
@@ -463,15 +465,15 @@ const UpdatedFormModal = ({
                     </div>
                   </div>
 
-                  <div className="mx-6 my-4 flex justify-between">
+                  <div className={`${layoutInsideBorder}`}>
                     <div className="text-lightGray">Open Time</div>
                     <div className="">
                       {displayedTime.date} {displayedTime.time}
                     </div>
                   </div>
 
-                  <div className="mx-6 my-4 flex justify-between">
-                    <div className="text-lightGray">Limit/ Stop</div>
+                  <div className={`${layoutInsideBorder}`}>
+                    <div className="text-lightGray">TP/ SL</div>
                     <div className="">
                       <span className={`text-lightWhite`}>
                         {cfdTp?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? '-'}
@@ -488,7 +490,7 @@ const UpdatedFormModal = ({
                     </div>
                   </div>
 
-                  <div className="mx-6 my-4 flex justify-between">
+                  <div className={`${layoutInsideBorder}`}>
                     <div className="text-lightGray">Liquidation Price</div>
                     <div className="">
                       ${' '}
@@ -498,23 +500,23 @@ const UpdatedFormModal = ({
                     </div>
                   </div>
 
-                  <div className="mx-6 my-4 flex justify-between">
+                  <div className={`${layoutInsideBorder}`}>
                     <div className="text-lightGray">State</div>
                     <div className="">
                       Open
-                      <button
+                      {/* <button
                         type="button"
                         className="ml-2 text-tidebitTheme underline underline-offset-2"
                       >
                         Close
-                      </button>
+                      </button> */}
                     </div>
                   </div>
                 </div>
               </div>
 
               <div
-                className={`mx-10 mt-3 flex-col space-y-5 text-base leading-relaxed text-lightWhite`}
+                className={`mx-6 mt-3 flex-col space-y-5 text-xs leading-relaxed text-lightWhite`}
               >
                 <div className="flex items-center justify-between">
                   <div className="text-lightGray">Close at profit</div>
@@ -546,7 +548,7 @@ const UpdatedFormModal = ({
                   disabled={submitDisabled}
                   onClick={buttonClickHandler}
                   buttonType="button"
-                  className="mt-5 rounded border-0 bg-tidebitTheme px-32 py-2 text-base text-white transition-colors duration-300 hover:cursor-pointer hover:bg-cyan-600 focus:outline-none disabled:bg-lightGray md:mt-0"
+                  className="-mt-0 rounded border-0 bg-tidebitTheme px-75px py-2 text-sm text-white transition-colors duration-300 hover:cursor-pointer hover:bg-cyan-600 focus:outline-none disabled:bg-lightGray md:mt-0"
                 >
                   Update Position
                 </RippleButton>

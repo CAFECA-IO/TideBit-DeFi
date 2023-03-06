@@ -17,7 +17,9 @@ const CryptoCategory = ({...otherProps}) => {
     if (mounted) return;
 
     setMounted(true);
-    // console.log('ticker render effect');
+
+    /*eslint-disable no-console */
+    console.log('ticker render effect');
 
     setTickers(marketCtx.listAvailableTickers());
 

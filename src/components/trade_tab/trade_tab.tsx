@@ -5,7 +5,7 @@ import {AiOutlineQuestionCircle} from 'react-icons/ai';
 import RippleButton from '../ripple_button/ripple_button';
 import {UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
 import {
-  MARGIN_LIMIT_DIGITS,
+  TARGET_LIMIT_DIGITS,
   POSITION_PRICE_RENEWAL_INTERVAL_SECONDS,
   unitAsset,
 } from '../../constants/config';
@@ -54,7 +54,7 @@ const TradeTab = () => {
   const tickerStaticStatistics = marketCtx.tickerStatic;
 
   // FIXME: It should have the default value of `tickerLiveStatistics`
-  const TEMP_PLACEHOLDER = MARGIN_LIMIT_DIGITS;
+  const TEMP_PLACEHOLDER = TARGET_LIMIT_DIGITS;
 
   const ticker = marketCtx.selectedTicker?.currency ?? '';
   // const LIQUIDATION_PRICE = 7548; // TODO: tickerLiveStatistics
@@ -84,14 +84,10 @@ const TradeTab = () => {
     return roundedNumber;
   };
 
-  // const marginInputRef = useRef<HTMLInputElement>(null);
-
-  // const [marketPrice, SetMarketPrice, marketPriceRef] = useStateRef(tickerLiveStatistics!.price);
-
   const [longTooltipStatus, setLongTooltipStatus] = useState(0);
   const [shortTooltipStatus, setShortTooltipStatus] = useState(0);
 
-  const [marginInputValue, setMarginInputValue, marginInputValueRef] = useStateRef(0.02);
+  const [targetInputValue, setTargetInputValue, targetInputValueRef] = useStateRef(0.02);
 
   // FIXME: SL setting should have a lower limit and an upper limit depending on its position type
   const [longTpValue, setLongTpValue] = useState(longRecommendedTp);
@@ -105,44 +101,44 @@ const TradeTab = () => {
   const [shortSlToggle, setShortSlToggle] = useState(false);
 
   const [expectedLongProfitValue, setExpectedLongProfitValue, expectedLongProfitValueRef] =
-    useStateRef((longTpValue - Number(buyPrice)) * marginInputValueRef.current);
+    useStateRef((longTpValue - Number(buyPrice)) * targetInputValueRef.current);
 
   const [expectedLongLossValue, setExpectedLongLossValue, expectedLongLossValueRef] = useStateRef(
-    (Number(buyPrice) - longSlValue) * marginInputValueRef.current
+    (Number(buyPrice) - longSlValue) * targetInputValueRef.current
   );
 
   const [expectedShortProfitValue, setExpectedShortProfitValue, expectedShortProfitValueRef] =
-    useStateRef((Number(sellPrice) - shortTpValue) * marginInputValueRef.current);
+    useStateRef((Number(sellPrice) - shortTpValue) * targetInputValueRef.current);
 
   const [expectedShortLossValue, setExpectedShortLossValue, expectedShortLossValueRef] =
-    useStateRef((shortSlValue - Number(sellPrice)) * marginInputValueRef.current);
+    useStateRef((shortSlValue - Number(sellPrice)) * targetInputValueRef.current);
 
   const [longGuaranteedStopChecked, setLongGuaranteedStopChecked] = useState(false);
   const [shortGuaranteedStopChecked, setShortGuaranteedStopChecked] = useState(false);
 
   const [requiredMargin, setRequiredMargin, requiredMarginRef] = useStateRef(
-    roundToDecimalPlaces((marginInputValue * marketPrice) / leverage, 2)
+    roundToDecimalPlaces((targetInputValue * marketPrice) / leverage, 2)
   );
   const [valueOfPosition, setValueOfPosition, valueOfPositionRef] = useStateRef(
-    roundToDecimalPlaces(marginInputValue * marketPrice, 2)
+    roundToDecimalPlaces(targetInputValue * marketPrice, 2)
   );
   const [marginWarning, setMarginWarning] = useState(false);
 
-  const [marginLength, setMarginLength] = useState(
-    roundToDecimalPlaces((marginInputValue * marketPrice) / leverage, 2).toString().length
+  const [targetLength, setTargetLength] = useState(
+    roundToDecimalPlaces((targetInputValue * marketPrice) / leverage, 2).toString().length
   );
   const [valueOfPositionLength, setValueOfPositionLength] = useState(
-    roundToDecimalPlaces(marginInputValue * marketPrice, 2).toString().length
+    roundToDecimalPlaces(targetInputValue * marketPrice, 2).toString().length
   );
 
-  const getMarginInputValue = (value: number) => {
-    setMarginInputValue(value);
-    marginDetection(value);
+  const getTargetInputValue = (value: number) => {
+    setTargetInputValue(value);
+    targetAmountDetection(value);
 
-    setExpectedLongProfitValue((longTpValue - Number(buyPrice)) * marginInputValueRef.current);
-    setExpectedLongLossValue((Number(buyPrice) - longSlValue) * marginInputValueRef.current);
-    setExpectedShortProfitValue((Number(sellPrice) - shortTpValue) * marginInputValueRef.current);
-    setExpectedShortLossValue((shortSlValue - Number(sellPrice)) * marginInputValueRef.current);
+    setExpectedLongProfitValue((longTpValue - Number(buyPrice)) * targetInputValueRef.current);
+    setExpectedLongLossValue((Number(buyPrice) - longSlValue) * targetInputValueRef.current);
+    setExpectedShortProfitValue((Number(sellPrice) - shortTpValue) * targetInputValueRef.current);
+    setExpectedShortLossValue((shortSlValue - Number(sellPrice)) * targetInputValueRef.current);
 
     // console.log('getMarginInputValue', value);
   };
@@ -153,21 +149,21 @@ const TradeTab = () => {
     // console.log('buyPrice', buyPrice);
     // console.log('marginInputValueRef.current', marginInputValueRef.current);
 
-    setExpectedLongProfitValue((longTpValue - Number(buyPrice)) * marginInputValueRef.current);
+    setExpectedLongProfitValue((longTpValue - Number(buyPrice)) * targetInputValueRef.current);
   };
 
   const getLongSlValue = (value: number) => {
     setLongSlValue(value);
     // console.log('buyPrice', buyPrice);
 
-    setExpectedLongLossValue((Number(buyPrice) - longSlValue) * marginInputValueRef.current);
+    setExpectedLongLossValue((Number(buyPrice) - longSlValue) * targetInputValueRef.current);
   };
 
   const getShortTpValue = (value: number) => {
     setShortTpValue(value);
     // console.log('sellPrice', sellPrice);
 
-    setExpectedShortProfitValue((Number(sellPrice) - shortTpValue) * marginInputValueRef.current);
+    setExpectedShortProfitValue((Number(sellPrice) - shortTpValue) * targetInputValueRef.current);
   };
 
   const getShortSlValue = (value: number) => {
@@ -175,14 +171,14 @@ const TradeTab = () => {
 
     // console.log('sellPrice', sellPrice);
 
-    setExpectedShortLossValue((shortSlValue - Number(sellPrice)) * marginInputValueRef.current);
+    setExpectedShortLossValue((shortSlValue - Number(sellPrice)) * targetInputValueRef.current);
   };
 
   const renewValueOfPosition = (price?: number) => {
     // console.log('marginInputValueRef.current', marginInputValueRef.current);
     const newValueOfPosition = price
-      ? marginInputValueRef.current * price
-      : marginInputValueRef.current * marketPrice;
+      ? targetInputValueRef.current * price
+      : targetInputValueRef.current * marketPrice;
 
     const roundedValueOfPosition = roundToDecimalPlaces(newValueOfPosition, 2);
     setValueOfPosition(roundedValueOfPosition);
@@ -193,11 +189,11 @@ const TradeTab = () => {
 
     setMarginWarning(margin > USER_BALANCE);
 
-    setMarginLength(roundedMargin.toString().length);
+    setTargetLength(roundedMargin.toString().length);
     setValueOfPositionLength(roundedValueOfPosition.toString().length);
   };
 
-  const marginDetection = (value?: number) => {
+  const targetAmountDetection = (value?: number) => {
     renewValueOfPosition();
   };
 
@@ -224,26 +220,26 @@ const TradeTab = () => {
   const getToggledLongTpSetting = (bool: boolean) => {
     setLongTpToggle(bool);
 
-    setExpectedLongProfitValue((longTpValue - Number(buyPrice)) * marginInputValueRef.current);
+    setExpectedLongProfitValue((longTpValue - Number(buyPrice)) * targetInputValueRef.current);
   };
 
   const getToggledLongSlSetting = (bool: boolean) => {
     setLongSlToggle(bool);
 
-    setExpectedLongLossValue((Number(buyPrice) - longSlValue) * marginInputValueRef.current);
+    setExpectedLongLossValue((Number(buyPrice) - longSlValue) * targetInputValueRef.current);
   };
 
   const getToggledShortTpSetting = (bool: boolean) => {
     setShortTpToggle(bool);
 
-    setExpectedShortProfitValue((Number(sellPrice) - shortTpValue) * marginInputValueRef.current);
+    setExpectedShortProfitValue((Number(sellPrice) - shortTpValue) * targetInputValueRef.current);
   };
 
   const getToggledShortSlSetting = (bool: boolean) => {
     // console.log('getToggledShortSlSetting', bool);
     setShortSlToggle(bool);
 
-    setExpectedShortLossValue((shortSlValue - Number(sellPrice)) * marginInputValueRef.current);
+    setExpectedShortLossValue((shortSlValue - Number(sellPrice)) * targetInputValueRef.current);
   };
 
   // `block` `flex`
@@ -256,10 +252,10 @@ const TradeTab = () => {
 
   const isDisplayedMarginStyle = marginWarning ? 'text-lightGray' : 'text-lightWhite';
   const isDisplayedMarginWarning = marginWarning ? 'flex' : 'invisible';
-  const isDisplayedMarginSize = marginLength > 7 ? 'text-sm' : 'text-base';
+  const isDisplayedMarginSize = targetLength > 7 ? 'text-sm' : 'text-base';
   const isDisplayedValueSize = valueOfPositionLength > 7 ? 'text-sm' : 'text-base';
   const isDisplayedDividerSpacing =
-    valueOfPositionLength > 10 || marginLength > 10 ? 'top-430px' : 'top-420px';
+    valueOfPositionLength > 10 || targetLength > 10 ? 'top-430px' : 'top-420px';
 
   // TODO: Should haven't been undefined
   // TODO: 15秒後，在 PositionOpenModal 更新
@@ -273,7 +269,7 @@ const TradeTab = () => {
         targetAsset: marketCtx.selectedTicker?.currency ?? '',
         uniAsset: unitAsset,
         price: Number(buyPrice) ?? 9999999999,
-        amount: marginInputValueRef.current,
+        amount: targetInputValueRef.current,
         typeOfPosition: TypeOfPosition.BUY,
         leverage: marketCtx.tickerStatic?.leverage ?? 1,
         margin: {
@@ -353,7 +349,7 @@ const TradeTab = () => {
           signature: '0x',
         },
         price: Number(sellPrice) ?? 9999999999,
-        amount: marginInputValueRef.current,
+        amount: targetInputValueRef.current,
         liquidationPrice: 1000,
         liquidationTime: Math.ceil(Date.now() / 1000) + 86400, // openTimestamp + 86400
         // price: marketCtx.tickerLiveStatistics?.buyEstimatedFilledPrice ?? 9999999999,
@@ -374,17 +370,17 @@ const TradeTab = () => {
     return;
   };
 
-  // ----------margin area----------
-  const displayedMarginSetting = (
+  // ----------Target area----------
+  const displayedTargetAmountSetting = (
     <TradingInput
       lowerLimit={0}
-      upperLimit={MARGIN_LIMIT_DIGITS}
-      getInputValue={getMarginInputValue}
-      inputInitialValue={marginInputValueRef.current}
-      inputValueFromParent={marginInputValueRef.current}
-      setInputValueFromParent={setMarginInputValue}
-      inputPlaceholder="margin input"
-      inputName="marginInput"
+      upperLimit={TARGET_LIMIT_DIGITS}
+      getInputValue={getTargetInputValue}
+      inputInitialValue={targetInputValueRef.current}
+      inputValueFromParent={targetInputValueRef.current}
+      setInputValueFromParent={setTargetInputValue}
+      inputPlaceholder="target amount input"
+      inputName="targetInput"
       inputSize="h-44px w-160px text-xl"
       decrementBtnSize="44"
       incrementBtnSize="44"
@@ -656,8 +652,8 @@ const TradeTab = () => {
             >
               {/* <h1 className="pl-5 text-2xl font-bold">Start to trade</h1> */}
 
-              {/* ---margin input area--- */}
-              {displayedMarginSetting}
+              {/* ---target input area--- */}
+              {displayedTargetAmountSetting}
 
               {/* ---universal trading info area--- */}
               <div className="mt-2 text-lightGray">

@@ -7,7 +7,7 @@ import NavBarMobile from '../components/nav_bar_mobile/nav_bar_mobile';
 import Footer from '../components/footer/footer';
 import AssetsPageBody from '../components/assets_page_body/assets_page_body';
 import Head from 'next/head';
-import {ILocale} from '../interfaces/tidebit_defi_background/json';
+import {ILocale} from '../interfaces/tidebit_defi_background/locale';
 
 // TODO: layoutAssertion is constants objects
 // TODO: is no user, show the wallet connect button

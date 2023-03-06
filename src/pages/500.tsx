@@ -4,7 +4,7 @@ import errorAnimation from '../../public/animation/oops.json';
 import NavBar from '../components/nav_bar/nav_bar';
 import {serverSideTranslations} from 'next-i18next/serverSideTranslations';
 import {AppContext} from '../contexts/app_context';
-import {ILocale} from '../interfaces/tidebit_defi_background/json';
+import {ILocale} from '../interfaces/tidebit_defi_background/locale';
 
 // function Error({statusCode}: any) {
 //   return (

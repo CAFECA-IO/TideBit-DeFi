@@ -24,56 +24,16 @@ const TradeTab = () => {
   const marketCtx = useContext(MarketContext);
   const userCtx = useContext(UserContext);
 
-  // const aFunc = () => {
-  //   setMarginInputValue(0);
-  //   console.log(new Date());
-  // };
-
   useEffect(() => {
     eventEmitter.once(ClickEvent.TICKER_CHANGED, () => {
-      // console.log('event received in trade tab');
-      // console.log('selectedTicker: ', marketCtx.selectedTicker);
-      // console.log('selectedTicker Ref: ', marketCtx.selectedTickerRef.current);
-
       marketPrice = marketCtx.selectedTickerRef.current?.price ?? TEMP_PLACEHOLDER;
       renewValueOfPosition(marketPrice);
-
-      // console.log('marketPrice: ', marketPrice);
     });
 
     return () => {
       eventEmitter.removeAllListeners(ClickEvent.TICKER_CHANGED);
     };
   }, [marketCtx.selectedTickerRef.current]);
-
-  // eventEmitter.once('TICKER_CHANGED', () => {
-  //   console.log('[no useEffect] event received in trade tab');
-  //   // console.log('selectedTicker: ', marketCtx.selectedTicker);
-  //   // console.log('selectedTicker Ref: ', marketCtx.selectedTickerRef.current);
-
-  //   marketPrice = marketCtx.selectedTickerRef.current?.price ?? TEMP_PLACEHOLDER;
-  //   renewValueOfPosition(marketPrice);
-
-  //   // console.log('marketPrice: ', marketPrice);
-  // });
-
-  // Emitter.on('TICKER_CHANGED', aFunc);
-
-  // // Emitter.off('TICKER_CHANGED', aFunc);
-
-  // const test = () => {
-  //   const eventEmitter = new EventEmitter();
-
-  //   const Emitter = {
-  //     on: (event: string, fn: (...args: any[]) => void) => eventEmitter.on(event, fn),
-  //     once: (event: string, fn: (...args: any[]) => void) => eventEmitter.once(event, fn),
-  //     off: (event: string, fn: (...args: any[]) => void) => eventEmitter.off(event, fn),
-  //     emit: (event: string, payload: any) => eventEmitter.emit(event, payload),
-  //   };
-
-  //   const func = () => {
-  //     return;
-  //   };
 
   //   // TODO: 第二個參數可以是現在被選擇的交易對；payload 是發生的事情的補充資料
   //   /**
@@ -144,6 +104,19 @@ const TradeTab = () => {
   const [shortTpToggle, setShortTpToggle] = useState(false);
   const [shortSlToggle, setShortSlToggle] = useState(false);
 
+  const [expectedLongProfitValue, setExpectedLongProfitValue, expectedLongProfitValueRef] =
+    useStateRef((longTpValue - Number(buyPrice)) * marginInputValueRef.current);
+
+  const [expectedLongLossValue, setExpectedLongLossValue, expectedLongLossValueRef] = useStateRef(
+    (Number(buyPrice) - longSlValue) * marginInputValueRef.current
+  );
+
+  const [expectedShortProfitValue, setExpectedShortProfitValue, expectedShortProfitValueRef] =
+    useStateRef((Number(sellPrice) - shortTpValue) * marginInputValueRef.current);
+
+  const [expectedShortLossValue, setExpectedShortLossValue, expectedShortLossValueRef] =
+    useStateRef((shortSlValue - Number(sellPrice)) * marginInputValueRef.current);
+
   const [longGuaranteedStopChecked, setLongGuaranteedStopChecked] = useState(false);
   const [shortGuaranteedStopChecked, setShortGuaranteedStopChecked] = useState(false);
 
@@ -169,18 +142,34 @@ const TradeTab = () => {
   };
   const getLongTpValue = (value: number) => {
     setLongTpValue(value);
+
+    // console.log('longTpValue', longTpValue);
+    // console.log('buyPrice', buyPrice);
+    // console.log('marginInputValueRef.current', marginInputValueRef.current);
+
+    setExpectedLongProfitValue((longTpValue - Number(buyPrice)) * marginInputValueRef.current);
   };
 
   const getLongSlValue = (value: number) => {
     setLongSlValue(value);
+    // console.log('buyPrice', buyPrice);
+
+    setExpectedLongLossValue((Number(buyPrice) - longSlValue) * marginInputValueRef.current);
   };
 
   const getShortTpValue = (value: number) => {
     setShortTpValue(value);
+    // console.log('sellPrice', sellPrice);
+
+    setExpectedShortProfitValue((Number(sellPrice) - shortTpValue) * marginInputValueRef.current);
   };
 
   const getShortSlValue = (value: number) => {
     setShortSlValue(value);
+
+    // console.log('sellPrice', sellPrice);
+
+    setExpectedShortLossValue((shortSlValue - Number(sellPrice)) * marginInputValueRef.current);
   };
 
   const renewValueOfPosition = (price?: number) => {
@@ -219,21 +208,49 @@ const TradeTab = () => {
     // setValueOfPositionLength(roundedValueOfPosition.toString().length);
   };
 
+  const longProfitSymbol =
+    expectedLongProfitValueRef.current > 0
+      ? '+'
+      : expectedLongProfitValueRef.current < 0
+      ? '-'
+      : '';
+
+  const longLossSymbol =
+    expectedLongLossValueRef.current > 0 ? '+' : expectedLongLossValueRef.current < 0 ? '-' : '';
+
+  const shortProfitSymbol =
+    expectedShortProfitValueRef.current > 0
+      ? '+'
+      : expectedShortProfitValueRef.current < 0
+      ? '-'
+      : '';
+
+  const shortLossSymbol =
+    expectedShortLossValueRef.current > 0 ? '+' : expectedShortLossValueRef.current < 0 ? '-' : '';
+
   const getToggledLongTpSetting = (bool: boolean) => {
     setLongTpToggle(bool);
+
+    setExpectedLongProfitValue((longTpValue - Number(buyPrice)) * marginInputValueRef.current);
   };
 
   const getToggledLongSlSetting = (bool: boolean) => {
     setLongSlToggle(bool);
+
+    setExpectedLongLossValue((Number(buyPrice) - longSlValue) * marginInputValueRef.current);
   };
 
   const getToggledShortTpSetting = (bool: boolean) => {
     setShortTpToggle(bool);
+
+    setExpectedShortProfitValue((Number(sellPrice) - shortTpValue) * marginInputValueRef.current);
   };
 
   const getToggledShortSlSetting = (bool: boolean) => {
     // console.log('getToggledShortSlSetting', bool);
     setShortSlToggle(bool);
+
+    setExpectedShortLossValue((shortSlValue - Number(sellPrice)) * marginInputValueRef.current);
   };
 
   // `block` `flex`
@@ -401,7 +418,7 @@ const TradeTab = () => {
   };
 
   const displayedLongTpSetting = (
-    <div className={isDisplayedLongTpSetting}>
+    <div className={`${isDisplayedLongTpSetting}`}>
       <TradingInput
         lowerLimit={0}
         inputInitialValue={longTpValue}
@@ -414,6 +431,30 @@ const TradeTab = () => {
         decrementBtnSize="25"
         incrementBtnSize="25"
       />
+    </div>
+  );
+
+  const displayedExpectedLongProfit = (
+    // longTpToggle ? (
+    //   <div className={`${`translate-y-2`} -mt-0 items-center transition-all duration-500`}>
+    //     <div className="text-sm text-lightWhite">
+    //       {expectedLongProfitValue.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}
+    //     </div>
+    //   </div>
+    // ) : null;
+
+    <div
+      className={`${
+        longTpToggle ? `mb-5 translate-y-2` : `invisible translate-y-0`
+      } -mt-5 items-center transition-all`}
+    >
+      <div className="text-xs text-lightWhite">
+        * Expected profit: {longProfitSymbol} ${' '}
+        {roundToDecimalPlaces(Math.abs(expectedLongProfitValueRef.current), 2).toLocaleString(
+          UNIVERSAL_NUMBER_FORMAT_LOCALE
+        )}{' '}
+        {unitAsset}
+      </div>
     </div>
   );
 
@@ -431,6 +472,22 @@ const TradeTab = () => {
         decrementBtnSize="25"
         incrementBtnSize="25"
       />
+    </div>
+  );
+
+  const displayedExpectedLongLoss = (
+    <div
+      className={`${
+        longSlToggle ? `mb-0 translate-y-2` : `invisible translate-y-0`
+      } -mt-0 items-center transition-all`}
+    >
+      <div className="text-xs text-lightWhite">
+        * Expected loss: {longLossSymbol} ${' '}
+        {roundToDecimalPlaces(Math.abs(expectedLongLossValueRef.current), 2).toLocaleString(
+          UNIVERSAL_NUMBER_FORMAT_LOCALE
+        )}{' '}
+        {unitAsset}
+      </div>
     </div>
   );
 
@@ -498,6 +555,22 @@ const TradeTab = () => {
     </div>
   );
 
+  const displayedExpectedShortProfit = (
+    <div
+      className={`${
+        shortTpToggle ? `mb-5 translate-y-2` : `invisible translate-y-0`
+      } -mt-5 items-center transition-all`}
+    >
+      <div className="text-xs text-lightWhite">
+        * Expected loss: {shortProfitSymbol} ${' '}
+        {roundToDecimalPlaces(Math.abs(expectedShortProfitValueRef.current), 2).toLocaleString(
+          UNIVERSAL_NUMBER_FORMAT_LOCALE
+        )}{' '}
+        {unitAsset}
+      </div>
+    </div>
+  );
+
   const displayedShortSlSetting = (
     <div className={isDisplayedShortSlSetting}>
       <TradingInput
@@ -512,6 +585,22 @@ const TradeTab = () => {
         decrementBtnSize="25"
         incrementBtnSize="25"
       />
+    </div>
+  );
+
+  const displayedExpectedShortLoss = (
+    <div
+      className={`${
+        shortSlToggle ? `mb-0 translate-y-2` : `invisible translate-y-0`
+      } -mt-0 items-center transition-all`}
+    >
+      <div className="text-xs text-lightWhite">
+        * Expected loss: {shortLossSymbol} ${' '}
+        {roundToDecimalPlaces(Math.abs(expectedShortLossValueRef.current), 2).toLocaleString(
+          UNIVERSAL_NUMBER_FORMAT_LOCALE
+        )}{' '}
+        {unitAsset}
+      </div>
     </div>
   );
 
@@ -547,7 +636,8 @@ const TradeTab = () => {
                 >
                   <p className="pb-1 text-sm font-medium text-white">
                     Guaranteed stop will force the position to close at your chosen rate (price)
-                    even if the market price surpasses it.
+                    even if the market price surpasses it. at your chosen rate (price) even if the
+                    market price surpasses it.
                   </p>
                 </div>
               )}
@@ -630,10 +720,14 @@ const TradeTab = () => {
 
               {/* ---Long Section--- */}
               {/* Take Profit Setting */}
-              <div className="mt-3 mb-5 flex h-25px items-center justify-between">
-                <div className="text-sm text-lightGray">Close at profit</div>
-                {displayedLongTpSetting}
-                <Toggle getToggledState={getToggledLongTpSetting} />
+              <div>
+                <div className="mt-3 mb-5 flex h-25px items-center justify-between">
+                  <div className="text-sm text-lightGray">Close at profit</div>
+                  {displayedLongTpSetting}
+                  <Toggle getToggledState={getToggledLongTpSetting} />
+                </div>
+
+                {displayedExpectedLongProfit}
               </div>
 
               {/* Stop Loss Setting */}
@@ -643,6 +737,8 @@ const TradeTab = () => {
                   <div className="w-105px">{displayedLongSlSetting}</div>
                   <Toggle getToggledState={getToggledLongSlSetting} />
                 </div>
+
+                {displayedExpectedLongLoss}
                 {/* Guaranteed stop */}
                 {longGuaranteedStop}
               </div>
@@ -698,13 +794,17 @@ const TradeTab = () => {
 
                 <div className="">
                   {/* Take Profit Setting */}
-                  <div className="mt-3 mb-5 flex h-25px items-center justify-between">
-                    <div className="text-sm text-lightGray">Close at profit</div>
-                    {displayedShortTpSetting}
-                    <div className="">
-                      {' '}
-                      <Toggle getToggledState={getToggledShortTpSetting} />
+                  <div>
+                    <div className="mt-3 mb-5 flex h-25px items-center justify-between">
+                      <div className="text-sm text-lightGray">Close at profit</div>
+                      {displayedShortTpSetting}
+                      <div className="">
+                        {' '}
+                        <Toggle getToggledState={getToggledShortTpSetting} />
+                      </div>
                     </div>
+
+                    {displayedExpectedShortProfit}
                   </div>
 
                   {/* Stop Loss Setting */}
@@ -716,6 +816,8 @@ const TradeTab = () => {
                         <Toggle getToggledState={getToggledShortSlSetting} />
                       </div>
                     </div>
+
+                    {displayedExpectedShortLoss}
                     {/* Guaranteed stop */}
                     {shortGuaranteedStop}
                   </div>

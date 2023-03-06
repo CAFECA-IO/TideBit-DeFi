@@ -181,7 +181,7 @@ export default function WalletPanel({
   panelClickHandler,
 }: IWalletPanelProps) {
   const globalCtx = useGlobal();
-  const {availableTransferOptions} = useContext(MarketContext);
+  // const {availableTransferOptions} = useContext(MarketContext);
 
   const {t}: {t: TranslateFunction} = useTranslation('common');
 

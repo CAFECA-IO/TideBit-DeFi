@@ -228,15 +228,15 @@ const PositionUpdatedModal = ({
   //     ? TypeOfPnLColor.LOSS
   //     : TypeOfPnLColor.EQUAL;
 
-  const displayedPositionColor =
-    openCfdDetails.typeOfPosition === TypeOfPosition.BUY
-      ? TypeOfPnLColor.PROFIT
-      : TypeOfPnLColor.LOSS;
+  const displayedPositionColor = 'text-lightWhite';
+  // openCfdDetails.typeOfPosition === TypeOfPosition.BUY
+  //   ? TypeOfPnLColor.PROFIT
+  //   : TypeOfPnLColor.LOSS;
 
-  const displayedBorderColor =
-    openCfdDetails?.typeOfPosition === TypeOfPosition.BUY
-      ? TypeOfBorderColor.LONG
-      : TypeOfBorderColor.SHORT;
+  const displayedBorderColor = TypeOfBorderColor.NORMAL;
+  // openCfdDetails?.typeOfPosition === TypeOfPosition.BUY
+  //   ? TypeOfBorderColor.LONG
+  //   : TypeOfBorderColor.SHORT;
 
   const layoutInsideBorder = 'mx-5 my-4 flex justify-between';
 

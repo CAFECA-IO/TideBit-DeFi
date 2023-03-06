@@ -160,8 +160,7 @@ const PositionDetailsModal = ({
   const displayedTypeOfPosition =
     openCfdDetails?.typeOfPosition === TypeOfPosition.BUY ? 'Up (Buy)' : 'Down (Sell)';
 
-  const displayedPositionColor =
-    openCfdDetails.typeOfPosition === 'BUY' ? TypeOfPnLColor.PROFIT : TypeOfPnLColor.LOSS;
+  const displayedPositionColor = 'text-tidebitTheme';
 
   const displayedPnLColor =
     openCfdDetails?.pnl.type === ProfitState.PROFIT
@@ -171,9 +170,11 @@ const PositionDetailsModal = ({
       : TypeOfPnLColor.EQUAL;
 
   const displayedBorderColor =
-    openCfdDetails?.typeOfPosition === TypeOfPosition.BUY
+    openCfdDetails?.pnl.type === ProfitState.PROFIT
       ? TypeOfBorderColor.LONG
-      : TypeOfBorderColor.SHORT;
+      : openCfdDetails?.pnl.type === ProfitState.LOSS
+      ? TypeOfBorderColor.SHORT
+      : TypeOfBorderColor.NORMAL;
 
   const isDisplayedTakeProfitSetting = tpToggle ? 'flex' : 'invisible';
   const isDisplayedStopLossSetting = slToggle ? 'flex' : 'invisible';

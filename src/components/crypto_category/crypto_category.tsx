@@ -8,9 +8,8 @@ import {ITickerData} from '../../interfaces/tidebit_defi_background/ticker_data'
 
 const CryptoCategory = ({...otherProps}) => {
   const marketCtx = useContext<IMarketContext>(MarketContext);
-  // const [tickers, setTickers] = useState<JSX.Element[]>();
-  const [tickers, setTickers] = useState<ITickerData[] | null>();
 
+  const [tickers, setTickers] = useState<ITickerData[] | null>();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -18,12 +17,7 @@ const CryptoCategory = ({...otherProps}) => {
 
     setMounted(true);
 
-    /*eslint-disable no-console */
-    console.log('ticker render effect');
-
     setTickers(marketCtx.listAvailableTickers());
-
-    // console.log('ticker', tickers);
   }, []);
 
   const renderCryptoCard = tickers?.map((item, i) => {

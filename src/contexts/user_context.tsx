@@ -327,35 +327,14 @@ export const UserProvider = ({children}: IUserProvider) => {
     let eip712signature: string,
       result = false;
     if (lunar.isConnected) {
-      const wallet = new ethers.Wallet(
-        `1778aec5031e4cead7dfeb35a30d720e9e3576d201aa525c6aa4dc75f20d709e`
-      );
-      eip712signature = await wallet._signTypedData(
-        ServiceTerm.domain,
-        ServiceTerm.types,
-        ServiceTerm.message
-      );
-      // const eip712signature_lunar = await lunar.signTypedData(ServiceTerm);
-      // eslint-disable-next-line no-console
-      // console.log(
-      //   `eip712signature: ${eip712signature}, eip712signature_lunar: ${eip712signature_lunar}`
-      // );
-      // const verifyR = await lunar.verify(ServiceTerm, eip712signature);
-      const recoveredAddress = ethers.utils.verifyTypedData(
-        ServiceTerm.domain,
-        ServiceTerm.types,
-        ServiceTerm.message,
-        eip712signature
-      );
-      // if (verifyR) {
-      // ++ TODO to checksum address
-      if (lunar.address === recoveredAddress.toLocaleLowerCase()) {
+      eip712signature = await lunar.signTypedData(ServiceTerm);
+      const verifyR: boolean = lunar.verifyTypedData(ServiceTerm, eip712signature);
+      if (verifyR) {
+        // ++ TODO to checksum address
         setEnableServiceTerm(true);
         await setPrivateData(lunar.address);
         result = true;
-      } // } else {
-      //   // ++TODO
-      // }
+      }
       return result;
     } else {
       await connect();

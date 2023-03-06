@@ -63,7 +63,7 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
   const jobQueue = useRef<((...args: []) => Promise<void>)[]>([]);
   const requests = useRef<IRequest>({});
 
-  const init = () => {
+  const apiInit = () => {
     const apiWorker = new Worker(new URL('../lib/workers/api.worker.ts', import.meta.url));
     setAPIWorker(apiWorker);
     apiWorkerRef.current!.onmessage = event => {
@@ -71,54 +71,58 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
       requests.current[name]?.callback(result);
       delete requests.current[name];
     };
+  };
+  const wsInit = async () => {
+    try {
+      await fetch('/api/socketio');
+    } catch (error) {
+      // ++TODO
+      // eslint-disable-next-line no-console
+      console.error(`fetch('/api/socketio') error`, error);
+    }
+    const socket = io();
+    setWsWorker(socket);
+    socket.on('connect', () => {
+      socket.emit(TideBitEvent.NOTIFICATIONS);
+    });
 
-    fetch('/api/socketio')
-      .catch(error => {
-        // ++TODO
-        // eslint-disable-next-line no-console
-        console.error(`fetch('/api/socketio') error`, error);
-      })
-      .finally(() => {
-        const socket = io();
-        setWsWorker(socket);
-        socket.on('connect', () => {
-          socket.emit(TideBitEvent.NOTIFICATIONS);
-        });
+    socket.on(TideBitEvent.NOTIFICATIONS, data => {
+      notificationCtx.emitter.emit(TideBitEvent.NOTIFICATIONS, data);
+    });
 
-        socket.on(TideBitEvent.NOTIFICATIONS, data => {
-          notificationCtx.emitter.emit(TideBitEvent.NOTIFICATIONS, data);
-        });
+    socket.on(TideBitEvent.TICKER, data => {
+      notificationCtx.emitter.emit(TideBitEvent.TICKER, data);
+    });
 
-        socket.on(TideBitEvent.TICKER, data => {
-          notificationCtx.emitter.emit(TideBitEvent.TICKER, data);
-        });
+    socket.on(TideBitEvent.TICKER_STATISTIC, data => {
+      notificationCtx.emitter.emit(TideBitEvent.TICKER_STATISTIC, data);
+    });
 
-        socket.on(TideBitEvent.TICKER_STATISTIC, data => {
-          notificationCtx.emitter.emit(TideBitEvent.TICKER_STATISTIC, data);
-        });
+    socket.on(TideBitEvent.TICKER_STATISTIC, data => {
+      notificationCtx.emitter.emit(TideBitEvent.TICKER_STATISTIC, data);
+    });
 
-        socket.on(TideBitEvent.TICKER_STATISTIC, data => {
-          notificationCtx.emitter.emit(TideBitEvent.TICKER_STATISTIC, data);
-        });
+    socket.on(TideBitEvent.CANDLESTICK, data => {
+      notificationCtx.emitter.emit(TideBitEvent.CANDLESTICK, data);
+    });
 
-        socket.on(TideBitEvent.CANDLESTICK, data => {
-          notificationCtx.emitter.emit(TideBitEvent.CANDLESTICK, data);
-        });
+    socket.on(TideBitEvent.BALANCE, data => {
+      notificationCtx.emitter.emit(TideBitEvent.BALANCE, data);
+    });
 
-        socket.on(TideBitEvent.BALANCE, data => {
-          notificationCtx.emitter.emit(TideBitEvent.BALANCE, data);
-        });
+    socket.on(TideBitEvent.ORDER, data => {
+      notificationCtx.emitter.emit(TideBitEvent.ORDER, data);
+    });
 
-        socket.on(TideBitEvent.ORDER, data => {
-          notificationCtx.emitter.emit(TideBitEvent.ORDER, data);
-        });
+    socket.on('disconnect', () => {
+      // console.log('disconnect');
+    });
+  };
 
-        socket.on('disconnect', () => {
-          // console.log('disconnect');
-        });
-      });
-
-    worker();
+  const init = async () => {
+    apiInit();
+    await wsInit();
+    await worker();
   };
 
   const worker = async () => {

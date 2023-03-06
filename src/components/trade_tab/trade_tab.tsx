@@ -486,7 +486,7 @@ const TradeTab = () => {
     <div
       className={`${
         longSlToggle ? `translate-y-5` : `invisible translate-y-0`
-      } mt-0 mb-8 flex items-center transition-all`}
+      } mt-0 mb-10 flex items-center transition-all`}
     >
       <input
         type="checkbox"
@@ -524,13 +524,6 @@ const TradeTab = () => {
           </div>
         </div>
       </label>
-    </div>
-  );
-
-  const displayedLongStopLossBlock = (
-    <div>
-      {displayedExpectedLongLoss}
-      {longGuaranteedStop}
     </div>
   );
 
@@ -610,7 +603,7 @@ const TradeTab = () => {
     <div
       className={`${
         shortSlToggle ? `translate-y-5` : `invisible translate-y-0`
-      } mt-0 mb-8 items-center transition-all`}
+      } mt-0 mb-10 items-center transition-all`}
     >
       <div className="mt-0 flex items-center">
         <input
@@ -651,13 +644,6 @@ const TradeTab = () => {
           </div>
         </label>
       </div>
-    </div>
-  );
-
-  const displayedShortStopLossBlock = (
-    <div>
-      {displayedExpectedShortLoss}
-      {shortGuaranteedStop}
     </div>
   );
 
@@ -732,12 +718,10 @@ const TradeTab = () => {
                   <Toggle getToggledState={getToggledLongSlSetting} />
                 </div>
 
+                {displayedExpectedLongLoss}
+
                 {/* Guaranteed stop */}
-                {/* {longGuaranteedStop}
-
-                {displayedExpectedLongLoss} */}
-
-                {displayedLongStopLossBlock}
+                {longGuaranteedStop}
               </div>
 
               {/* Below Use absolute for layout */}

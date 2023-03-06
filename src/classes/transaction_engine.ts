@@ -1,4 +1,4 @@
-import keccak256 from 'keccak256';
+import keccak from '@cafeca/keccak';
 import SafeMath from '../lib/safe_math';
 import CFDOrderClose from '../constants/contracts/cfd_close';
 import CFDOrderCreate from '../constants/contracts/cfd_create';
@@ -149,12 +149,14 @@ class TransactionEngine {
   }
 
   transferDepositOrderToTransaction(depositOrder: IApplyDepositOrder) {
-    const funcName = 'deposit(uint256)';
-    const funcNameHex = `0x${keccak256(funcName).toString('hex').slice(0, 8)}`;
+    const funcName = 'transfer(address,uint256)';
+    const funcNameHex = `0x${keccak.keccak256(funcName).slice(0, 8)}`;
+    // ++ ToDo: fill Cross-Chain-Channel contract address into addressData
+    const addressData = ''.padStart(64, '0');
     const amountData = SafeMath.toSmallestUnitHex(depositOrder.targetAmount, depositOrder.decimals)
       .split('.')[0]
       .padStart(64, '0');
-    const data = funcNameHex + amountData;
+    const data = funcNameHex + addressData + amountData;
 
     const value = 0;
 

@@ -78,13 +78,9 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
   };
   const wsInit = async () => {
     try {
-      const result = await fetch('/api/socketio');
-      // eslint-disable-next-line no-console
-      console.log(`fetch('/api/socketio') result`, result);
+      await fetch('/api/socketio');
     } catch (error) {
       // ++TODO
-      // eslint-disable-next-line no-console
-      console.error(`fetch('/api/socketio') error`, error);
     }
     wsWorker = io();
     wsWorker.on('connect', () => {

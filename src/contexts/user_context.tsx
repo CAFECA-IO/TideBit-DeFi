@@ -1,4 +1,5 @@
 import Lunar from '@cafeca/lunar';
+import {ethers} from 'ethers';
 import React, {createContext, useCallback, useContext} from 'react';
 import useState from 'react-usestateref';
 import {TypeOfPnLColorHex} from '../constants/display';
@@ -323,24 +324,39 @@ export const UserProvider = ({children}: IUserProvider) => {
   };
 
   const signServiceTerm = async (): Promise<boolean> => {
-    let signedResult: string;
-    // eslint-disable-next-line no-console
-    // console.log(`signServiceTerm lunar.isConnected`, lunar.isConnected);
-    // eslint-disable-next-line no-console
-    // console.log(`signServiceTerm lunar.address`, lunar.address);
+    let eip712signature: string,
+      result = false;
     if (lunar.isConnected) {
-      signedResult = await lunar.signTypedData(ServiceTerm);
-      //   const verifyR = await lunar.verify(lunar.address, signedResult, ServiceTerm);
-      // if (verifyR) {
+      const wallet = new ethers.Wallet(
+        `1778aec5031e4cead7dfeb35a30d720e9e3576d201aa525c6aa4dc75f20d709e`
+      );
+      eip712signature = await wallet._signTypedData(
+        ServiceTerm.domain,
+        ServiceTerm.types,
+        ServiceTerm.message
+      );
+      // const eip712signature_lunar = await lunar.signTypedData(ServiceTerm);
       // eslint-disable-next-line no-console
-      // console.log(`signServiceTerm signedResult`, signedResult);
-      setEnableServiceTerm(true);
-      await setPrivateData(lunar.address);
-      // } else {
+      // console.log(
+      //   `eip712signature: ${eip712signature}, eip712signature_lunar: ${eip712signature_lunar}`
+      // );
+      // const verifyR = await lunar.verify(ServiceTerm, eip712signature);
+      const recoveredAddress = ethers.utils.verifyTypedData(
+        ServiceTerm.domain,
+        ServiceTerm.types,
+        ServiceTerm.message,
+        eip712signature
+      );
+      // if (verifyR) {
+      // ++ TODO to checksum address
+      if (lunar.address === recoveredAddress.toLocaleLowerCase()) {
+        setEnableServiceTerm(true);
+        await setPrivateData(lunar.address);
+        result = true;
+      } // } else {
       //   // ++TODO
       // }
-      // return verifyR;
-      return true;
+      return result;
     } else {
       await connect();
       return signServiceTerm();

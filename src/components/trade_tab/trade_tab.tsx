@@ -456,7 +456,7 @@ const TradeTab = () => {
             onMouseEnter={() => setLongTooltipStatus(3)}
             onMouseLeave={() => setLongTooltipStatus(0)}
           >
-            <div className="cursor-pointer">
+            <div className="">
               <AiOutlineQuestionCircle size={20} />
             </div>
             {longTooltipStatus == 3 && (
@@ -537,7 +537,7 @@ const TradeTab = () => {
               onMouseEnter={() => setShortTooltipStatus(3)}
               onMouseLeave={() => setShortTooltipStatus(0)}
             >
-              <div className="cursor-pointer">
+              <div className="">
                 <AiOutlineQuestionCircle size={20} />
               </div>
               {shortTooltipStatus == 3 && (

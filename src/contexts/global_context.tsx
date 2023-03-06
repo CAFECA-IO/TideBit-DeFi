@@ -53,6 +53,7 @@ import {
   getDummyDisplayAcceptedCFDOrder,
   IDisplayAcceptedCFDOrder,
 } from '../interfaces/tidebit_defi_background/display_accepted_cfd_order';
+import {ICryptocurrency} from '../interfaces/tidebit_defi_background/cryptocurrency';
 
 export interface IToastify {
   type: 'error' | 'warning' | 'info' | 'success';
@@ -870,31 +871,31 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     setDepositProcess(state);
   };
 
-  const depositSubmitHandler = (props: {asset: string; amount: number}) => {
+  const depositSubmitHandler = (props: {asset: ICryptocurrency; amount: number}) => {
     setDepositProcess('loading');
     userCtx
       .deposit({
         orderType: OrderType.DEPOSIT,
         createTimestamp: Math.ceil(Date.now() / 1000),
-        targetAsset: props.asset,
+        targetAsset: props.asset.symbol,
+        decimals: props.asset.decimals,
+        to: props.asset.contract,
         targetAmount: props.amount,
-        decimals: 18,
-        to: '0x',
         remark: '',
         fee: 0,
       })
       .then(_ => setDepositProcess('success'));
   };
 
-  const withdrawSubmitHandler = (props: {asset: string; amount: number}) => {
+  const withdrawSubmitHandler = (props: {asset: ICryptocurrency; amount: number}) => {
     setWithdrawProcess('loading');
     userCtx
       .withdraw({
         orderType: OrderType.WITHDRAW,
         createTimestamp: Math.ceil(Date.now() / 1000),
-        targetAsset: props.asset,
+        targetAsset: props.asset.symbol,
+        to: props.asset.contract,
         targetAmount: props.amount,
-        to: '0x',
         remark: '',
         fee: 0,
       })

@@ -1,4 +1,5 @@
 import Lunar from '@cafeca/lunar';
+import {ethers} from 'ethers';
 import React, {createContext, useCallback, useContext} from 'react';
 import useState from 'react-usestateref';
 import {TypeOfPnLColorHex} from '../constants/display';
@@ -323,24 +324,18 @@ export const UserProvider = ({children}: IUserProvider) => {
   };
 
   const signServiceTerm = async (): Promise<boolean> => {
-    let signedResult: string;
-    // eslint-disable-next-line no-console
-    // console.log(`signServiceTerm lunar.isConnected`, lunar.isConnected);
-    // eslint-disable-next-line no-console
-    // console.log(`signServiceTerm lunar.address`, lunar.address);
+    let eip712signature: string,
+      result = false;
     if (lunar.isConnected) {
-      signedResult = await lunar.signTypedData(ServiceTerm);
-      //   const verifyR = await lunar.verify(lunar.address, signedResult, ServiceTerm);
-      // if (verifyR) {
-      // eslint-disable-next-line no-console
-      // console.log(`signServiceTerm signedResult`, signedResult);
-      setEnableServiceTerm(true);
-      await setPrivateData(lunar.address);
-      // } else {
-      //   // ++TODO
-      // }
-      // return verifyR;
-      return true;
+      eip712signature = await lunar.signTypedData(ServiceTerm);
+      const verifyR: boolean = lunar.verifyTypedData(ServiceTerm, eip712signature);
+      if (verifyR) {
+        // ++ TODO to checksum address
+        setEnableServiceTerm(true);
+        await setPrivateData(lunar.address);
+        result = true;
+      }
+      return result;
     } else {
       await connect();
       return signServiceTerm();

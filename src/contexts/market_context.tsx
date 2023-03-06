@@ -1,29 +1,19 @@
 import React, {useContext, createContext} from 'react';
 import useState from 'react-usestateref';
+import {INITIAL_POSITION_LABEL_DISPLAYED_STATE} from '../constants/display';
 import {
-  INITIAL_POSITION_LABEL_DISPLAYED_STATE,
-  TypeOfPnLColorHex,
-  TRADING_CHART_BORDER_COLOR,
-} from '../constants/display';
-import {ApexOptions} from 'apexcharts';
-import {
-  IBriefNewsItem,
-  ICryptoSummary,
-  IPriceStatistics,
-  ITickerDetails,
-} from '../interfaces/depre_tidebit_defi_background';
-import {
-  dummyTickerLiveStatistics,
   getDummyTickerLiveStatistics,
   ITickerLiveStatistics,
 } from '../interfaces/tidebit_defi_background/ticker_live_statistics';
 import {
-  dummyTickerStatic,
   getDummyTickerStatic,
   ITickerStatic,
 } from '../interfaces/tidebit_defi_background/ticker_static';
 import {UserContext} from './user_context';
-import {ICryptocurrency} from '../interfaces/tidebit_defi_background/cryptocurrency';
+import {
+  dummyCryptocurrencies,
+  ICryptocurrency,
+} from '../interfaces/tidebit_defi_background/cryptocurrency';
 import {dummyResultSuccess, IResult} from '../interfaces/tidebit_defi_background/result';
 import {
   ITickerData,
@@ -41,36 +31,8 @@ import {NotificationContext} from './notification_context';
 import {WorkerContext} from './worker_context';
 import {APIRequest, Method} from '../constants/api_request';
 
-const SAMPLE_TICKERS = [
-  'ETH',
-  'BTC',
-  'LTC',
-  'MATIC',
-  'BNB',
-  'SOL',
-  'SHIB',
-  'DOT',
-  'ADA',
-  'AVAX',
-  'Dai',
-  'MKR',
-  'XRP',
-  'DOGE',
-  'UNI',
-  'Flow',
-];
-
 export interface IMarketProvider {
   children: React.ReactNode;
-}
-
-export interface ITransferOptions {
-  id: string;
-  symbol: string;
-  name: string;
-  decimals: number;
-  icon: string;
-  fee: number;
 }
 
 export interface IMarketContext {
@@ -82,13 +44,12 @@ export interface IMarketContext {
   showPositionOnChartHandler: (bool: boolean) => void;
   candlestickId: string;
   candlestickChartIdHandler: (id: string) => void;
-  availableTransferOptions: ITransferOptions[];
   tickerStatic: ITickerStatic | null;
   tickerLiveStatistics: ITickerLiveStatistics | null;
   candlestickChartData: ICandlestickData[] | null;
   listAvailableTickers: () => ITickerData[];
-  listDepositCryptocurrencies: () => ICryptocurrency[];
-  listWithdrawCryptocurrencies: () => ICryptocurrency[];
+  depositCryptocurrencies: ICryptocurrency[]; // () => ICryptocurrency[];
+  withdrawCryptocurrencies: ICryptocurrency[]; //  () => ICryptocurrency[];
   selectTickerHandler: (props: string) => IResult;
   getCandlestickChartData: (props: {
     tickerId: string;
@@ -106,7 +67,6 @@ export const MarketContext = createContext<IMarketContext>({
   showPositionOnChartHandler: () => null,
   candlestickId: '',
   candlestickChartIdHandler: () => null,
-  availableTransferOptions: [],
   candlestickChartData: [],
   // liveStatstics: null,
   // bullAndBearIndex: 0,
@@ -117,35 +77,13 @@ export const MarketContext = createContext<IMarketContext>({
   // getCryptoSummary: () => null,
   // getCryptoNews: () => null,
   listAvailableTickers: () => [],
-  listDepositCryptocurrencies: () => [],
-  listWithdrawCryptocurrencies: () => [],
+  depositCryptocurrencies: [], // () => [],
+  withdrawCryptocurrencies: [], // () => [],
   selectTickerHandler: (props: string) => dummyResultSuccess,
   getCandlestickChartData: (props: {tickerId: string; timeSpan: ITimeSpanUnion}) =>
     Promise.resolve<ICandlestickData[]>([]),
   init: () => Promise.resolve(),
 });
-
-const availableTransferOptions = [
-  {
-    id: 'USDT',
-    symbol: 'USDT',
-    name: 'Tether',
-    decimals: 6,
-    icon: '/elements/tether-seeklogo.com.svg',
-    fee: 0,
-  },
-  {id: 'ETH', symbol: 'ETH', name: 'ETH', decimals: 18, icon: '/elements/group_2371.svg', fee: 0},
-  {id: 'BTC', symbol: 'BTC', name: 'BTC', decimals: 18, icon: '', fee: 0},
-  {id: 'USDC', symbol: 'USDC', name: 'USD Coin', decimals: 18, icon: '', fee: 0},
-  {id: 'DAI', symbol: 'DAI', name: 'DAI', decimals: 18, icon: '', fee: 0},
-  {id: 'BNB', symbol: 'BNB', name: 'BNB', decimals: 18, icon: '', fee: 0},
-  {id: 'BCH', symbol: 'BCH', name: 'BCH', decimals: 18, icon: '', fee: 0},
-  {id: 'LTC', symbol: 'LTC', name: 'LTC', decimals: 18, icon: '', fee: 0},
-  {id: 'ETC', symbol: 'ETC', name: 'ETC', decimals: 18, icon: '', fee: 0},
-  {id: 'USX', symbol: 'USX', name: 'USX', decimals: 18, icon: '', fee: 0},
-  {id: 'NEO', symbol: 'NEO', name: 'NEO', decimals: 18, icon: '', fee: 0},
-  {id: 'EOS', symbol: 'EOS', name: 'EOS', decimals: 18, icon: '', fee: 0},
-];
 
 export const MarketProvider = ({children}: IMarketProvider) => {
   const userCtx = useContext(UserContext);
@@ -153,6 +91,10 @@ export const MarketProvider = ({children}: IMarketProvider) => {
   const workerCtx = useContext(WorkerContext);
   // const [wallet, setWallet, walletRef] = useState<string | null>(userCtx.wallet);
   const [selectedTicker, setSelectedTicker, selectedTickerRef] = useState<ITickerData | null>(null);
+  const [depositCryptocurrencies, setDepositCryptocurrencies, depositCryptocurrenciesRef] =
+    useState<ICryptocurrency[]>([...dummyCryptocurrencies]);
+  const [withdrawCryptocurrencies, setWithdrawCryptocurrencies, withdrawCryptocurrenciesRef] =
+    useState<ICryptocurrency[]>([...dummyCryptocurrencies]);
   const [tickerStatic, setTickerStatic] = useState<ITickerStatic | null>(null);
   const [tickerLiveStatistics, setTickerLiveStatistics] = useState<ITickerLiveStatistics | null>(
     null
@@ -161,9 +103,6 @@ export const MarketProvider = ({children}: IMarketProvider) => {
   const [availableTickers, setAvailableTickers] = useState<ITickerData[] | null>(null);
   const [isCFDTradable, setIsCFDTradable] = useState<boolean>(false);
   const [candlestickId, setCandlestickId] = useState<string>('');
-
-  const [transferOptions, setTransferOptions] =
-    useState<ICryptocurrency[]>(availableTransferOptions);
 
   const [showPositionOnChart, setShowPositionOnChart] = useState<boolean>(
     INITIAL_POSITION_LABEL_DISPLAYED_STATE
@@ -200,9 +139,9 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     return updateTickers;
   };
 
-  const listDepositCryptocurrencies = () => [];
+  // const listDepositCryptocurrencies = () => depositCryptocurrenciesRef.current;
 
-  const listWithdrawCryptocurrencies = () => [];
+  // const listWithdrawCryptocurrencies = () => withdrawCryptocurrenciesRef.current;
 
   const selectTickerHandler = (currency: string) => {
     // console.log(`selectTickerHandler currency`, currency);
@@ -238,13 +177,37 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       request: {
         name: APIRequest.LIST_TICKERS,
         method: Method.GET,
-        url: 'http://localhost:3000/api/tickers',
+        url: '/api/tickers',
       },
       callback: (tickers: ITickerData[]) => {
         setAvailableTickers([...tickers]);
         selectTickerHandler(tickers[0].currency);
       },
     });
+    // workerCtx.requestHandler({
+    //   name: APIRequest.LIST_DEPOSIT_CRYPTO_CURRENCIES,
+    //   request: {
+    //     name: APIRequest.LIST_DEPOSIT_CRYPTO_CURRENCIES,
+    //     method: Method.GET,
+    //     url: '/api/deposits',
+    //   },
+    //   callback: (cryptocurrencies: ICryptocurrency[]) => {
+    //     // eslint-disable-next-line no-console
+    //     console.log(`maket init depositcurrencies`, cryptocurrencies);
+    //     setDepositCryptocurrencies([...cryptocurrencies]);
+    //   },
+    // });
+    // workerCtx.requestHandler({
+    //   name: APIRequest.LIST_WITHDRAW_CRYPTO_CURRENCIES,
+    //   request: {
+    //     name: APIRequest.LIST_WITHDRAW_CRYPTO_CURRENCIES,
+    //     method: Method.GET,
+    //     url: '/api/withdraws',
+    //   },
+    //   callback: (cryptocurrencies: ICryptocurrency[]) => {
+    //     setWithdrawCryptocurrencies([...cryptocurrencies]);
+    //   },
+    // });
     return await Promise.resolve();
   };
 
@@ -306,12 +269,11 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     candlestickId,
     candlestickChartData,
     candlestickChartIdHandler,
-    availableTransferOptions: availableTransferOptions,
     tickerStatic,
     tickerLiveStatistics,
     listAvailableTickers,
-    listDepositCryptocurrencies,
-    listWithdrawCryptocurrencies,
+    depositCryptocurrencies: depositCryptocurrenciesRef.current,
+    withdrawCryptocurrencies: withdrawCryptocurrenciesRef.current,
     getCandlestickChartData,
     init,
   };

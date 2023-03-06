@@ -28,12 +28,12 @@ const ServiceTerm: IEIP712Data = {
   primaryType: 'ServiceTerm',
   types: {
     // TODO: Clarify if EIP712Domain refers to the domain the contract is hosted on
-    EIP712Domain: [
-      {name: 'name', type: 'string'},
-      {name: 'version', type: 'string'},
-      {name: 'chainId', type: 'string'},
-      {name: 'verifyingContract', type: 'address'},
-    ],
+    // EIP712Domain: [
+    //   {name: 'name', type: 'string'},
+    //   {name: 'version', type: 'string'},
+    //   {name: 'chainId', type: 'string'},
+    //   {name: 'verifyingContract', type: 'address'},
+    // ],
     // Refer to PrimaryType
     ServiceTerm: [
       {name: 'title', type: 'string'},

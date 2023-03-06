@@ -1,6 +1,7 @@
-export type IOrderStatusUnion = 'PROCESSING' | 'SUCCESS' | 'CANCELDED' | 'FAILED';
+export type IOrderStatusUnion = 'WAITING' | 'PROCESSING' | 'SUCCESS' | 'CANCELDED' | 'FAILED';
 
 export type IOrderStatusUnionConstant = {
+  WAITING: IOrderStatusUnion;
   PROCESSING: IOrderStatusUnion;
   SUCCESS: IOrderStatusUnion;
   CANCELDED: IOrderStatusUnion;
@@ -8,6 +9,7 @@ export type IOrderStatusUnionConstant = {
 };
 
 export const OrderStatusUnion: IOrderStatusUnionConstant = {
+  WAITING: 'WAITING',
   PROCESSING: 'PROCESSING',
   SUCCESS: 'SUCCESS',
   CANCELDED: 'CANCELDED',

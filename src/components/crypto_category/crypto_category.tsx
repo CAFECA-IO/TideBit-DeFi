@@ -4,10 +4,12 @@ import {useContext, useEffect, useState} from 'react';
 import {MarketContext, IMarketContext} from '../../contexts/market_context';
 import {CRYPTO_CARD_COLORS} from '../../constants/display';
 import Link from 'next/link';
+import {ITickerData} from '../../interfaces/tidebit_defi_background/ticker_data';
 
 const CryptoCategory = ({...otherProps}) => {
   const marketCtx = useContext<IMarketContext>(MarketContext);
-  const [tickers, setTickers] = useState<JSX.Element[]>();
+  // const [tickers, setTickers] = useState<JSX.Element[]>();
+  const [tickers, setTickers] = useState<ITickerData[] | null>();
 
   const [mounted, setMounted] = useState(false);
 
@@ -17,53 +19,53 @@ const CryptoCategory = ({...otherProps}) => {
     setMounted(true);
     // console.log('ticker render effect');
 
-    setTickers(
-      marketCtx.listAvailableTickers().map((item, i) => {
-        const color = CRYPTO_CARD_COLORS.find(i => i.label === item.currency);
-        const cryptoCard = {
-          ...item,
-          gradientColor: color?.gradientColor,
-        };
-
-        if (i === 0) {
-          return (
-            <div key={i}>
-              <Link href={`/trade/cfd/${cryptoCard.currency?.toLowerCase()}usdt`}>
-                <CryptoCard
-                  className="mt-4 ml-4"
-                  lineGraphProps={cryptoCard.lineGraphProps}
-                  chain={cryptoCard.chain}
-                  currency={cryptoCard.currency}
-                  price={cryptoCard.price}
-                  fluctuating={cryptoCard.fluctuating}
-                  gradientColor={cryptoCard?.gradientColor ?? ''}
-                  tokenImg={cryptoCard.tokenImg}
-                />
-              </Link>
-            </div>
-          );
-        }
-
-        return (
-          <div key={i}>
-            <Link href={`/trade/cfd/${cryptoCard.currency?.toLowerCase()}usdt`}>
-              <CryptoCard
-                lineGraphProps={cryptoCard.lineGraphProps}
-                chain={cryptoCard.chain}
-                currency={cryptoCard.currency}
-                price={cryptoCard.price}
-                fluctuating={cryptoCard.fluctuating}
-                gradientColor={cryptoCard?.gradientColor ?? ''}
-                tokenImg={cryptoCard.tokenImg}
-              />
-            </Link>
-          </div>
-        );
-      })
-    );
+    setTickers(marketCtx.listAvailableTickers());
 
     // console.log('ticker', tickers);
   }, []);
+
+  const renderCryptoCard = tickers?.map((item, i) => {
+    const color = CRYPTO_CARD_COLORS.find(i => i.label === item.currency);
+    const cryptoCard = {
+      ...item,
+      gradientColor: color?.gradientColor,
+    };
+
+    if (i === 0) {
+      return (
+        <div key={i}>
+          <Link href={`/trade/cfd/${cryptoCard.currency?.toLowerCase()}usdt`}>
+            <CryptoCard
+              className="mt-4 ml-4"
+              lineGraphProps={cryptoCard.lineGraphProps}
+              chain={cryptoCard.chain}
+              currency={cryptoCard.currency}
+              price={cryptoCard.price}
+              fluctuating={cryptoCard.fluctuating}
+              gradientColor={cryptoCard?.gradientColor ?? ''}
+              tokenImg={cryptoCard.tokenImg}
+            />
+          </Link>
+        </div>
+      );
+    }
+
+    return (
+      <div key={i}>
+        <Link href={`/trade/cfd/${cryptoCard.currency?.toLowerCase()}usdt`}>
+          <CryptoCard
+            lineGraphProps={cryptoCard.lineGraphProps}
+            chain={cryptoCard.chain}
+            currency={cryptoCard.currency}
+            price={cryptoCard.price}
+            fluctuating={cryptoCard.fluctuating}
+            gradientColor={cryptoCard?.gradientColor ?? ''}
+            tokenImg={cryptoCard.tokenImg}
+          />
+        </Link>
+      </div>
+    );
+  });
 
   return (
     <div className="container mx-auto flex shrink-0 flex-wrap justify-center space-y-1">
@@ -79,7 +81,9 @@ const CryptoCategory = ({...otherProps}) => {
         </div>
       </div>
       <div className="flex w-full items-center justify-center">
-        <div className="mb-5 grid grid-cols-2 space-y-4 space-x-4 lg:grid-cols-5">{tickers}</div>
+        <div className="mb-5 grid grid-cols-2 space-y-4 space-x-4 lg:grid-cols-5">
+          {renderCryptoCard}
+        </div>
       </div>
     </div>
   );

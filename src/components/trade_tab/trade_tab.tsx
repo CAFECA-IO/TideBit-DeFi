@@ -138,6 +138,12 @@ const TradeTab = () => {
   const getMarginInputValue = (value: number) => {
     setMarginInputValue(value);
     marginDetection(value);
+
+    setExpectedLongProfitValue((longTpValue - Number(buyPrice)) * marginInputValueRef.current);
+    setExpectedLongLossValue((Number(buyPrice) - longSlValue) * marginInputValueRef.current);
+    setExpectedShortProfitValue((Number(sellPrice) - shortTpValue) * marginInputValueRef.current);
+    setExpectedShortLossValue((shortSlValue - Number(sellPrice)) * marginInputValueRef.current);
+
     // console.log('getMarginInputValue', value);
   };
   const getLongTpValue = (value: number) => {
@@ -193,19 +199,6 @@ const TradeTab = () => {
 
   const marginDetection = (value?: number) => {
     renewValueOfPosition();
-
-    // const newValueOfPosition = value * marketPrice;
-    // const roundedValueOfPosition = roundToDecimalPlaces(newValueOfPosition, 2);
-    // setValueOfPosition(roundedValueOfPosition);
-
-    // const margin = newValueOfPosition / leverage;
-    // const roundedMargin = roundToDecimalPlaces(margin, 2);
-    // setRequiredMargin(roundedMargin);
-
-    // setMarginWarning(margin > USER_BALANCE);
-
-    // setMarginLength(roundedMargin.toString().length);
-    // setValueOfPositionLength(roundedValueOfPosition.toString().length);
   };
 
   const longProfitSymbol =
@@ -562,7 +555,7 @@ const TradeTab = () => {
       } -mt-5 items-center transition-all`}
     >
       <div className="text-xs text-lightWhite">
-        * Expected loss: {shortProfitSymbol} ${' '}
+        * Expected profit: {shortProfitSymbol} ${' '}
         {roundToDecimalPlaces(Math.abs(expectedShortProfitValueRef.current), 2).toLocaleString(
           UNIVERSAL_NUMBER_FORMAT_LOCALE
         )}{' '}
@@ -647,25 +640,6 @@ const TradeTab = () => {
       </div>
     </div>
   );
-
-  // useEffect(() => {
-  //   // setRequiredMargin(
-  //   //   roundToDecimalPlaces((marginInputValue * marketPrice) / leverage, 2)
-  //   // );
-  //   // setValueOfPosition(roundToDecimalPlaces(marginInputValue * marketPrice, 2));
-  //   // setMarginLength(
-  //   //   roundToDecimalPlaces((marginInputValue * marketPrice) / leverage, 2).toString()
-  //   //     .length
-  //   // );
-  //   // setValueOfPositionLength(
-  //   //   roundToDecimalPlaces(marginInputValue * marketPrice, 2).toString().length
-  //   // );
-  //   console.log('selected ticker', marketCtx.selectedTicker);
-  //   console.log('live price', tickerLiveStatistics?.price);
-
-  //   SetMarketPrice(tickerLiveStatistics?.price ?? TEMP_PLACEHOLDER);
-  //   // marketPrice = tickerLiveStatistics?.price ?? TEMP_PLACEHOLDER;
-  // }, [marketCtx.selectedTicker]);
 
   return (
     <div>

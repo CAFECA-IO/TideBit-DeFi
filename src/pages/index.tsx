@@ -9,6 +9,8 @@ import {useContext, useEffect} from 'react';
 import {GlobalContext, GlobalProvider, useGlobal} from '../contexts/global_context';
 import NavBarMobile from '../components/nav_bar_mobile/nav_bar_mobile';
 import {AppContext} from '../contexts/app_context';
+import {GetStaticProps} from 'next';
+import {ILocale} from '../interfaces/tidebit_defi_background/json';
 
 const Home = () => {
   const {layoutAssertion} = useGlobal();
@@ -43,7 +45,7 @@ const Home = () => {
   );
 };
 
-const getStaticPropsFunction = async ({locale}: {locale: any}) => ({
+const getStaticPropsFunction = async ({locale}: ILocale) => ({
   props: {
     ...(await serverSideTranslations(locale, ['common', 'footer'])),
   },

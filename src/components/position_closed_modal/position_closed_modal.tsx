@@ -78,14 +78,13 @@ const PositionClosedModal = ({
       : TypeOfPnLColor.EQUAL;
 
   const displayedBorderColor =
-    openCfdDetails?.typeOfPosition === TypeOfPosition.BUY
+    openCfdDetails?.pnl.type === ProfitState.PROFIT
       ? TypeOfBorderColor.LONG
-      : TypeOfBorderColor.SHORT;
+      : openCfdDetails?.pnl.type === ProfitState.LOSS
+      ? TypeOfBorderColor.SHORT
+      : TypeOfBorderColor.NORMAL;
 
-  const displayedPositionColor =
-    openCfdDetails.typeOfPosition === TypeOfPosition.BUY
-      ? TypeOfPnLColor.PROFIT
-      : TypeOfPnLColor.LOSS;
+  const displayedPositionColor = 'text-tidebitTheme';
 
   const layoutInsideBorder = 'mx-5 my-4 flex justify-between';
 

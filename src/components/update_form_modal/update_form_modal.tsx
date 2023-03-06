@@ -4,6 +4,7 @@ import {IOpenCFDDetails} from '../../interfaces/tidebit_defi_background/open_cfd
 import {
   TypeOfBorderColor,
   TypeOfPnLColor,
+  TypeOfPnLColorHex,
   UNIVERSAL_NUMBER_FORMAT_LOCALE,
 } from '../../constants/display';
 import Toggle from '../toggle/toggle';
@@ -14,25 +15,28 @@ import RippleButton from '../ripple_button/ripple_button';
 import {useGlobal} from '../../contexts/global_context';
 import {TypeOfPosition} from '../../constants/type_of_position';
 import {ProfitState} from '../../constants/profit_state';
-import {timestampToString} from '../../lib/common';
+import {randomIntFromInterval, roundToDecimalPlaces, timestampToString} from '../../lib/common';
 import {MarketContext} from '../../contexts/market_context';
 import useState from 'react-usestateref';
+import CircularProgressBar from '../circular_progress_bar/circular_progress_bar';
+import {POSITION_PRICE_RENEWAL_INTERVAL_SECONDS, unitAsset} from '../../constants/config';
+import useStateRef from 'react-usestateref';
 
-interface IPositionDetailsModal {
+interface IUpdatedFormModal {
   modalVisible: boolean;
   modalClickHandler: (bool?: boolean | any) => void;
   openCfdDetails: IOpenCFDDetails;
   // id?: string;
 }
 
-const PositionDetailsModal = ({
+const UpdatedFormModal = ({
   // openCfdDetails,
   modalVisible,
   modalClickHandler,
   openCfdDetails,
   // id,
   ...otherProps
-}: IPositionDetailsModal) => {
+}: IUpdatedFormModal) => {
   // console.log('openCfdDetails in details modal: ', openCfdDetails.id);
   const globalCtx = useGlobal();
   const marketCtx = useContext(MarketContext);
@@ -63,17 +67,26 @@ const PositionDetailsModal = ({
 
   const [submitDisabled, setSubmitDisabled] = useState(true);
 
-  const disabledButton =
-    initialSlToggle === slToggle ||
-    initialTpToggle === tpToggle ||
-    (initialSlToggle && initialSlInput === slValue) ||
-    (initialTpToggle && initialTpInput === tpValue) ||
-    initialGuaranteedChecked === guaranteedChecked;
+  const [expectedProfitValue, setExpectedProfitValue, expectedProfitValueRef] = useStateRef(0);
+  const [expectedLossValue, setExpectedLossValue, expectedLossValueRef] = useStateRef(0);
 
   const getToggledTpSetting = (bool: boolean) => {
     // setSubmitDisabled(true);
 
     setTpToggle(bool);
+
+    const profit =
+      openCfdDetails?.typeOfPosition === TypeOfPosition.BUY
+        ? roundToDecimalPlaces(
+            (tpValueRef.current - openCfdDetails?.openPrice) * openCfdDetails.amount,
+            2
+          )
+        : roundToDecimalPlaces(
+            (openCfdDetails?.openPrice - tpValueRef.current) * openCfdDetails.amount,
+            2
+          );
+
+    setExpectedProfitValue(profit);
 
     // if (bool !== initialTpToggle) {
     //   setSubmitDisabled(false);
@@ -88,12 +101,37 @@ const PositionDetailsModal = ({
     // if (bool !== initialTpToggle) {
     //   setSubmitDisabled(false);
     // }
+    const loss =
+      openCfdDetails?.typeOfPosition === TypeOfPosition.BUY
+        ? roundToDecimalPlaces(
+            (openCfdDetails?.openPrice - slValueRef.current) * openCfdDetails.amount,
+            2
+          )
+        : roundToDecimalPlaces(
+            (slValueRef.current - openCfdDetails?.openPrice) * openCfdDetails.amount,
+            2
+          );
+
+    setExpectedLossValue(loss);
   };
 
   const getTpValue = (value: number) => {
     // setSubmitDisabled(true);
 
     setTpValue(value);
+
+    const profit =
+      openCfdDetails?.typeOfPosition === TypeOfPosition.BUY
+        ? roundToDecimalPlaces(
+            (tpValueRef.current - openCfdDetails?.openPrice) * openCfdDetails.amount,
+            2
+          )
+        : roundToDecimalPlaces(
+            (openCfdDetails?.openPrice - tpValueRef.current) * openCfdDetails.amount,
+            2
+          );
+
+    setExpectedProfitValue(profit);
 
     // if (value !== initialTpInput) {
     //   setSubmitDisabled(false);
@@ -110,7 +148,60 @@ const PositionDetailsModal = ({
     //   setSubmitDisabled(false);
     // }
     // console.log('sl value from Trading Input:', value);
+
+    const loss =
+      openCfdDetails?.typeOfPosition === TypeOfPosition.BUY
+        ? roundToDecimalPlaces(
+            (openCfdDetails?.openPrice - slValueRef.current) * openCfdDetails.amount,
+            2
+          )
+        : roundToDecimalPlaces(
+            (slValueRef.current - openCfdDetails?.openPrice) * openCfdDetails.amount,
+            2
+          );
+
+    setExpectedLossValue(loss);
   };
+
+  const displayedExpectedProfit = (
+    // longTpToggle ? (
+    //   <div className={`${`translate-y-2`} -mt-0 items-center transition-all duration-500`}>
+    //     <div className="text-sm text-lightWhite">
+    //       {expectedLongProfitValue.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}
+    //     </div>
+    //   </div>
+    // ) : null;
+
+    <div
+      className={`${
+        tpToggle ? `mb-3 translate-y-1` : `invisible translate-y-0`
+      } -mt-0 items-center transition-all`}
+    >
+      <div className="text-xs text-lightWhite">
+        * Expected profit: + ${' '}
+        {roundToDecimalPlaces(Math.abs(expectedProfitValueRef.current), 2).toLocaleString(
+          UNIVERSAL_NUMBER_FORMAT_LOCALE
+        )}{' '}
+        {unitAsset}
+      </div>
+    </div>
+  );
+
+  const displayedExpectedLoss = (
+    <div
+      className={`${
+        slToggle ? `mb-3 translate-y-1` : `invisible translate-y-0`
+      } -mt-1 items-center transition-all`}
+    >
+      <div className="text-xs text-lightWhite">
+        *{guaranteedpCheckedRef.current ? 'Close at loss' : 'Expected loss'}: - ${' '}
+        {roundToDecimalPlaces(Math.abs(expectedLossValueRef.current), 2).toLocaleString(
+          UNIVERSAL_NUMBER_FORMAT_LOCALE
+        )}{' '}
+        {unitAsset}
+      </div>
+    </div>
+  );
 
   const guaranteedCheckedChangeHandler = () => {
     // If position is not guaranteed, then set the stop loss to the recommended value
@@ -160,8 +251,7 @@ const PositionDetailsModal = ({
   const displayedTypeOfPosition =
     openCfdDetails?.typeOfPosition === TypeOfPosition.BUY ? 'Up (Buy)' : 'Down (Sell)';
 
-  const displayedPositionColor =
-    openCfdDetails.typeOfPosition === 'BUY' ? TypeOfPnLColor.PROFIT : TypeOfPnLColor.LOSS;
+  const displayedPositionColor = 'text-tidebitTheme';
 
   const displayedPnLColor =
     openCfdDetails?.pnl.type === ProfitState.PROFIT
@@ -171,9 +261,20 @@ const PositionDetailsModal = ({
       : TypeOfPnLColor.EQUAL;
 
   const displayedBorderColor =
-    openCfdDetails?.typeOfPosition === TypeOfPosition.BUY
+    openCfdDetails?.pnl.type === ProfitState.PROFIT
       ? TypeOfBorderColor.LONG
-      : TypeOfBorderColor.SHORT;
+      : openCfdDetails?.pnl.type === ProfitState.LOSS
+      ? TypeOfBorderColor.SHORT
+      : TypeOfBorderColor.NORMAL;
+
+  const displayedColorHex =
+    openCfdDetails.pnl.type === ProfitState.PROFIT
+      ? TypeOfPnLColorHex.PROFIT
+      : openCfdDetails.pnl.type === ProfitState.LOSS
+      ? TypeOfPnLColorHex.LOSS
+      : TypeOfPnLColorHex.EQUAL;
+  const displayedHoverPausedColor =
+    openCfdDetails.pnl.type === ProfitState.PROFIT ? 'hover:bg-lightGreen5' : 'hover:bg-lightRed';
 
   const isDisplayedTakeProfitSetting = tpToggle ? 'flex' : 'invisible';
   const isDisplayedStopLossSetting = slToggle ? 'flex' : 'invisible';
@@ -186,6 +287,8 @@ const PositionDetailsModal = ({
     : slUpperLimit;
 
   const displayedTime = timestampToString(openCfdDetails?.openTimestamp ?? 0);
+
+  const layoutInsideBorder = 'mx-5 my-3 flex justify-between';
 
   const buttonClickHandler = () => {
     // console.log('btn clicked');
@@ -269,7 +372,7 @@ const PositionDetailsModal = ({
 
   // FIXME: Inconsistent information between text and input
   const displayedTakeProfitSetting = (
-    <div className={`${isDisplayedTakeProfitSetting}`}>
+    <div className={`mr-8 ${isDisplayedTakeProfitSetting}`}>
       <TradingInput
         getInputValue={getTpValue}
         lowerLimit={0}
@@ -287,7 +390,7 @@ const PositionDetailsModal = ({
 
   // FIXME: Inconsistent information between text and input
   const displayedStopLossSetting = (
-    <div className={`${isDisplayedStopLossSetting}`}>
+    <div className={`mr-8 ${isDisplayedStopLossSetting}`}>
       <TradingInput
         getInputValue={getSlValue}
         lowerLimit={displayedSlLowerLimit}
@@ -306,7 +409,7 @@ const PositionDetailsModal = ({
 
   const guaranteedStopLoss = (
     <div className="">
-      <div className="flex">
+      <div className="flex items-center text-center">
         <input
           type="checkbox"
           value=""
@@ -314,18 +417,18 @@ const PositionDetailsModal = ({
           onChange={guaranteedCheckedChangeHandler}
           className="h-5 w-5 rounded text-lightWhite accent-lightGray4"
         />
-        <label className="ml-2 flex text-sm font-medium text-lightGray">
+        <label className="ml-2 flex text-xs font-medium text-lightGray">
           Guaranteed stop &nbsp;
           <span className="text-lightWhite"> (Fee: {openCfdDetails?.guaranteedStopFee} USDT)</span>
           {/* tooltip */}
-          <div className="ml-1">
+          <div className="ml-3">
             <div
               className="relative"
               onMouseEnter={() => setGuaranteedTooltipStatus(3)}
               onMouseLeave={() => setGuaranteedTooltipStatus(0)}
             >
-              <div className="cursor-pointer">
-                <AiOutlineQuestionCircle size={20} />
+              <div className="">
+                <AiOutlineQuestionCircle size={16} />
               </div>
               {guaranteedTooltipStatus == 3 && (
                 <div
@@ -373,6 +476,42 @@ const PositionDetailsModal = ({
     }
   };
 
+  const nowTimestamp = new Date().getTime() / 1000;
+  // const yesterdayTimestamp = new Date().getTime() / 1000 - 3600 * 10 - 5;
+  // const passedHour = ((nowTimestamp - openCfdDetails.openTimestamp) / 3600).toFixed(0);
+  const passedHour = Math.round((nowTimestamp - openCfdDetails.openTimestamp) / 3600);
+
+  const squareClickHandler = () => {
+    globalCtx.visiblePositionDetailsModalHandler();
+
+    globalCtx.visiblePositionClosedModalHandler();
+    globalCtx.dataPositionClosedModalHandler({
+      openCfdDetails: openCfdDetails,
+      latestProps: {
+        renewalDeadline: new Date().getTime() / 1000 + POSITION_PRICE_RENEWAL_INTERVAL_SECONDS,
+        latestClosedPrice:
+          openCfdDetails.typeOfPosition === TypeOfPosition.BUY
+            ? randomIntFromInterval(
+                marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice * 0.75,
+                marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice * 1.25
+              )
+            : openCfdDetails.typeOfPosition === TypeOfPosition.SELL
+            ? randomIntFromInterval(
+                marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice * 1.1,
+                marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice * 1.25
+              )
+            : 99999,
+        // latestPnL: {
+        //   type: randomIntFromInterval(0, 100) <= 2 ? ProfitState.PROFIT : ProfitState.LOSS,
+        //   value: randomIntFromInterval(0, 1000),
+        // },
+      },
+    });
+    // toast.error('test', {toastId: 'errorTest'});
+    // console.log('show the modal displaying transaction detail');
+    // return;  };
+  };
+
   useEffect(() => {
     setSubmitDisabled(true);
     changeComparison();
@@ -389,23 +528,35 @@ const PositionDetailsModal = ({
       <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">
         <div className="relative my-6 mx-auto w-auto max-w-xl">
           {/*content & panel*/}
-          <div className="relative flex h-726px w-450px flex-col rounded-3xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none">
+          <div className="relative flex h-600px w-296px flex-col rounded-3xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none">
             {/*header*/}
             <div className="flex items-start justify-between rounded-t pt-6">
-              <div className="ml-10 mr-8 mt-6 flex w-450px justify-between">
-                <div className="flex items-center space-x-3 text-center text-4xl text-lightWhite">
+              <div className="ml-10 mr-8 mt-8 mb-1 flex w-450px justify-between">
+                <div className="mx-auto flex items-center space-x-3 text-center text-lightWhite">
                   <Image
                     src={marketCtx.selectedTicker?.tokenImg ?? ''}
-                    width={40}
-                    height={40}
+                    width={30}
+                    height={30}
                     alt="icon"
                   />
-                  <h3 className="">{openCfdDetails?.ticker} </h3>
+                  <h3 className="text-2xl">{openCfdDetails?.ticker} </h3>
                 </div>
 
-                <div className="text-end text-base text-lightGray">
-                  <p className="">{displayedTime.date}</p>
-                  <p className="">{displayedTime.time}</p>
+                <div
+                  className={`absolute right-40px top-55px z-30 h-6 w-6 hover:cursor-pointer ${displayedHoverPausedColor}`}
+                  onClick={squareClickHandler}
+                ></div>
+
+                <div className="absolute top-30px left-190px flex items-center space-x-1 text-center">
+                  <CircularProgressBar
+                    showLabel={true}
+                    numerator={passedHour}
+                    denominator={24}
+                    progressBarColor={[displayedColorHex]}
+                    hollowSize="40%"
+                    circularBarSize="100"
+                    // clickHandler={circularClick}
+                  />
                 </div>
               </div>
 
@@ -418,25 +569,25 @@ const PositionDetailsModal = ({
             {/*body*/}
             <div className="relative flex-auto pt-1">
               <div
-                className={`${displayedBorderColor} mx-10 mt-3 border-1px text-base leading-relaxed text-lightWhite`}
+                className={`${displayedBorderColor} mx-6 mt-0 border-1px text-xs leading-relaxed text-lightWhite`}
               >
                 <div className="flex-col justify-center text-center">
                   {/* {displayedDataFormat()} */}
 
-                  <div className="mx-6 my-4 flex justify-between">
+                  <div className={`${layoutInsideBorder}`}>
                     <div className="text-lightGray">Type</div>
                     {/* TODO: i18n */}
                     <div className={`${displayedPositionColor}`}>{displayedTypeOfPosition}</div>
                   </div>
 
-                  <div className="mx-6 my-4 flex justify-between">
+                  <div className={`${layoutInsideBorder}`}>
                     <div className="text-lightGray">Amount</div>
                     <div className="">
                       {openCfdDetails?.amount?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0}
                     </div>
                   </div>
 
-                  <div className="mx-6 my-4 flex justify-between">
+                  <div className={`${layoutInsideBorder}`}>
                     <div className="text-lightGray">PNL</div>
                     <div className={`${displayedPnLColor}`}>
                       {displayedPnLSymbol} ${' '}
@@ -444,7 +595,7 @@ const PositionDetailsModal = ({
                     </div>
                   </div>
 
-                  <div className="mx-6 my-4 flex justify-between">
+                  <div className={`${layoutInsideBorder}`}>
                     <div className="text-lightGray">Open Value</div>
                     <div className="">
                       ${' '}
@@ -453,7 +604,7 @@ const PositionDetailsModal = ({
                     </div>
                   </div>
 
-                  <div className="mx-6 my-4 flex justify-between">
+                  <div className={`${layoutInsideBorder}`}>
                     <div className="text-lightGray">Open Price</div>
                     <div className="">
                       ${' '}
@@ -462,15 +613,15 @@ const PositionDetailsModal = ({
                     </div>
                   </div>
 
-                  <div className="mx-6 my-4 flex justify-between">
+                  <div className={`${layoutInsideBorder}`}>
                     <div className="text-lightGray">Open Time</div>
                     <div className="">
                       {displayedTime.date} {displayedTime.time}
                     </div>
                   </div>
 
-                  <div className="mx-6 my-4 flex justify-between">
-                    <div className="text-lightGray">Limit/ Stop</div>
+                  <div className={`${layoutInsideBorder}`}>
+                    <div className="text-lightGray">TP/ SL</div>
                     <div className="">
                       <span className={`text-lightWhite`}>
                         {cfdTp?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? '-'}
@@ -487,7 +638,7 @@ const PositionDetailsModal = ({
                     </div>
                   </div>
 
-                  <div className="mx-6 my-4 flex justify-between">
+                  <div className={`${layoutInsideBorder}`}>
                     <div className="text-lightGray">Liquidation Price</div>
                     <div className="">
                       ${' '}
@@ -497,55 +648,59 @@ const PositionDetailsModal = ({
                     </div>
                   </div>
 
-                  <div className="mx-6 my-4 flex justify-between">
+                  <div className={`${layoutInsideBorder}`}>
                     <div className="text-lightGray">State</div>
                     <div className="">
                       Open
-                      <button
+                      {/* <button
                         type="button"
                         className="ml-2 text-tidebitTheme underline underline-offset-2"
                       >
                         Close
-                      </button>
+                      </button> */}
                     </div>
                   </div>
                 </div>
               </div>
 
-              <div
-                className={`mx-10 mt-3 flex-col space-y-5 text-base leading-relaxed text-lightWhite`}
-              >
-                <div className="flex items-center justify-between">
-                  <div className="text-lightGray">Close at profit</div>
-                  <div className="-mr-10">{displayedTakeProfitSetting}</div>
-                  <Toggle
-                    setToggleStateFromParent={setTpToggle}
-                    toggleStateFromParent={tpToggle}
-                    getToggledState={getToggledTpSetting}
-                  />
+              <div className={`mx-6 mt-3 flex-col text-xs leading-relaxed text-lightWhite`}>
+                <div className="mb-0">
+                  <div className="flex items-center justify-between">
+                    <div className="text-lightGray">Close at profit</div>
+                    <div className="-mr-10">{displayedTakeProfitSetting}</div>
+                    <Toggle
+                      setToggleStateFromParent={setTpToggle}
+                      toggleStateFromParent={tpToggle}
+                      getToggledState={getToggledTpSetting}
+                    />
+                  </div>
+
+                  {displayedExpectedProfit}
                 </div>
 
-                <div className="flex items-center justify-between">
-                  <div className="text-lightGray">Close at loss</div>
-                  <div className="-mr-50px">{displayedStopLossSetting}</div>
-                  <Toggle
-                    getToggledState={getToggledSlSetting}
-                    lockedToOpen={guaranteedChecked}
-                    initialToggleState={guaranteedChecked}
-                    toggleStateFromParent={slToggle}
-                    setToggleStateFromParent={setSlToggle}
-                    // getToggleFunction={getSlToggleFunction}
-                  />
+                <div className="mb-5">
+                  <div className="mb-1 flex items-center justify-between">
+                    <div className="text-lightGray">Close at loss</div>
+                    <div className="-mr-50px">{displayedStopLossSetting}</div>
+                    <Toggle
+                      getToggledState={getToggledSlSetting}
+                      lockedToOpen={guaranteedChecked}
+                      initialToggleState={guaranteedChecked}
+                      toggleStateFromParent={slToggle}
+                      setToggleStateFromParent={setSlToggle}
+                      // getToggleFunction={getSlToggleFunction}
+                    />
+                  </div>
+                  {displayedExpectedLoss}
+                  {guaranteedStopLoss}
                 </div>
-
-                {guaranteedStopLoss}
 
                 {/* TODO: T/P value changed, S/L value changed, guaranteed-stop check changed, T/P toggle changed, S/L toggle changed */}
                 <RippleButton
                   disabled={submitDisabled}
                   onClick={buttonClickHandler}
                   buttonType="button"
-                  className="mt-5 rounded border-0 bg-tidebitTheme px-32 py-2 text-base text-white transition-colors duration-300 hover:cursor-pointer hover:bg-cyan-600 focus:outline-none disabled:bg-lightGray md:mt-0"
+                  className="-mt-0 rounded border-0 bg-tidebitTheme px-75px py-2 text-sm text-white transition-colors duration-300 hover:cursor-pointer hover:bg-cyan-600 focus:outline-none disabled:bg-lightGray md:mt-0"
                 >
                   Update Position
                 </RippleButton>
@@ -563,4 +718,4 @@ const PositionDetailsModal = ({
   return <>{isDisplayedDetailedPositionModal}</>;
 };
 
-export default PositionDetailsModal;
+export default UpdatedFormModal;

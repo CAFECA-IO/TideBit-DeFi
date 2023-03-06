@@ -4,6 +4,7 @@ import errorAnimation from '../../public/animation/oops.json';
 import NavBar from '../components/nav_bar/nav_bar';
 import {serverSideTranslations} from 'next-i18next/serverSideTranslations';
 import {AppContext} from '../contexts/app_context';
+import {ILocale} from '../interfaces/tidebit_defi_background/json';
 
 // function Error({statusCode}: any) {
 //   return (
@@ -40,7 +41,7 @@ const Custom500 = () => {
   );
 };
 
-const getStaticPropsFunction = async ({locale}: {locale: any}) => ({
+const getStaticPropsFunction = async ({locale}: ILocale) => ({
   props: {
     ...(await serverSideTranslations(locale, ['common', 'footer'])),
   },

@@ -18,21 +18,21 @@ import {timestampToString} from '../../lib/common';
 import {MarketContext} from '../../contexts/market_context';
 import useState from 'react-usestateref';
 
-interface IPositionDetailsModal {
+interface IUpdatedFormModal {
   modalVisible: boolean;
   modalClickHandler: (bool?: boolean | any) => void;
   openCfdDetails: IOpenCFDDetails;
   // id?: string;
 }
 
-const PositionDetailsModal = ({
+const UpdatedFormModal = ({
   // openCfdDetails,
   modalVisible,
   modalClickHandler,
   openCfdDetails,
   // id,
   ...otherProps
-}: IPositionDetailsModal) => {
+}: IUpdatedFormModal) => {
   // console.log('openCfdDetails in details modal: ', openCfdDetails.id);
   const globalCtx = useGlobal();
   const marketCtx = useContext(MarketContext);
@@ -564,4 +564,4 @@ const PositionDetailsModal = ({
   return <>{isDisplayedDetailedPositionModal}</>;
 };
 
-export default PositionDetailsModal;
+export default UpdatedFormModal;

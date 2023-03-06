@@ -189,7 +189,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     //   request: {
     //     name: APIRequest.LIST_DEPOSIT_CRYPTO_CURRENCIES,
     //     method: Method.GET,
-    //     url: 'http://localhost:3000/api/deposits',
+    //     url: '/api/deposits',
     //   },
     //   callback: (cryptocurrencies: ICryptocurrency[]) => {
     //     // eslint-disable-next-line no-console
@@ -202,7 +202,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     //   request: {
     //     name: APIRequest.LIST_WITHDRAW_CRYPTO_CURRENCIES,
     //     method: Method.GET,
-    //     url: 'http://localhost:3000/api/withdraws',
+    //     url: '/api/withdraws',
     //   },
     //   callback: (cryptocurrencies: ICryptocurrency[]) => {
     //     setWithdrawCryptocurrencies([...cryptocurrencies]);

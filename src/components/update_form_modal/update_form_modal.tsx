@@ -4,6 +4,7 @@ import {IOpenCFDDetails} from '../../interfaces/tidebit_defi_background/open_cfd
 import {
   TypeOfBorderColor,
   TypeOfPnLColor,
+  TypeOfPnLColorHex,
   UNIVERSAL_NUMBER_FORMAT_LOCALE,
 } from '../../constants/display';
 import Toggle from '../toggle/toggle';
@@ -14,9 +15,11 @@ import RippleButton from '../ripple_button/ripple_button';
 import {useGlobal} from '../../contexts/global_context';
 import {TypeOfPosition} from '../../constants/type_of_position';
 import {ProfitState} from '../../constants/profit_state';
-import {timestampToString} from '../../lib/common';
+import {randomIntFromInterval, timestampToString} from '../../lib/common';
 import {MarketContext} from '../../contexts/market_context';
 import useState from 'react-usestateref';
+import CircularProgressBar from '../circular_progress_bar/circular_progress_bar';
+import {POSITION_PRICE_RENEWAL_INTERVAL_SECONDS} from '../../constants/config';
 
 interface IUpdatedFormModal {
   modalVisible: boolean;
@@ -175,6 +178,15 @@ const UpdatedFormModal = ({
       : openCfdDetails?.pnl.type === ProfitState.LOSS
       ? TypeOfBorderColor.SHORT
       : TypeOfBorderColor.NORMAL;
+
+  const displayedColorHex =
+    openCfdDetails.pnl.type === ProfitState.PROFIT
+      ? TypeOfPnLColorHex.PROFIT
+      : openCfdDetails.pnl.type === ProfitState.LOSS
+      ? TypeOfPnLColorHex.LOSS
+      : TypeOfPnLColorHex.EQUAL;
+  const displayedHoverPausedColor =
+    openCfdDetails.pnl.type === ProfitState.PROFIT ? 'hover:bg-lightGreen5' : 'hover:bg-lightRed';
 
   const isDisplayedTakeProfitSetting = tpToggle ? 'flex' : 'invisible';
   const isDisplayedStopLossSetting = slToggle ? 'flex' : 'invisible';
@@ -376,6 +388,42 @@ const UpdatedFormModal = ({
     }
   };
 
+  const nowTimestamp = new Date().getTime() / 1000;
+  // const yesterdayTimestamp = new Date().getTime() / 1000 - 3600 * 10 - 5;
+  // const passedHour = ((nowTimestamp - openCfdDetails.openTimestamp) / 3600).toFixed(0);
+  const passedHour = Math.round((nowTimestamp - openCfdDetails.openTimestamp) / 3600);
+
+  const squareClickHandler = () => {
+    globalCtx.visiblePositionDetailsModalHandler();
+
+    globalCtx.visiblePositionClosedModalHandler();
+    globalCtx.dataPositionClosedModalHandler({
+      openCfdDetails: openCfdDetails,
+      latestProps: {
+        renewalDeadline: new Date().getTime() / 1000 + POSITION_PRICE_RENEWAL_INTERVAL_SECONDS,
+        latestClosedPrice:
+          openCfdDetails.typeOfPosition === TypeOfPosition.BUY
+            ? randomIntFromInterval(
+                marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice * 0.75,
+                marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice * 1.25
+              )
+            : openCfdDetails.typeOfPosition === TypeOfPosition.SELL
+            ? randomIntFromInterval(
+                marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice * 1.1,
+                marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice * 1.25
+              )
+            : 99999,
+        // latestPnL: {
+        //   type: randomIntFromInterval(0, 100) <= 2 ? ProfitState.PROFIT : ProfitState.LOSS,
+        //   value: randomIntFromInterval(0, 1000),
+        // },
+      },
+    });
+    // toast.error('test', {toastId: 'errorTest'});
+    // console.log('show the modal displaying transaction detail');
+    // return;  };
+  };
+
   useEffect(() => {
     setSubmitDisabled(true);
     changeComparison();
@@ -392,10 +440,10 @@ const UpdatedFormModal = ({
       <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">
         <div className="relative my-6 mx-auto w-auto max-w-xl">
           {/*content & panel*/}
-          <div className="relative flex h-580px w-296px flex-col rounded-3xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none">
+          <div className="relative flex h-600px w-296px flex-col rounded-3xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none">
             {/*header*/}
             <div className="flex items-start justify-between rounded-t pt-6">
-              <div className="ml-10 mr-8 mt-5 mb-1 flex w-450px justify-between">
+              <div className="ml-10 mr-8 mt-8 mb-1 flex w-450px justify-between">
                 <div className="mx-auto flex items-center space-x-3 text-center text-lightWhite">
                   <Image
                     src={marketCtx.selectedTicker?.tokenImg ?? ''}
@@ -406,10 +454,22 @@ const UpdatedFormModal = ({
                   <h3 className="text-2xl">{openCfdDetails?.ticker} </h3>
                 </div>
 
-                {/* <div className="text-end text-base text-lightGray">
-                  <p className="">{displayedTime.date}</p>
-                  <p className="">{displayedTime.time}</p>
-                </div> */}
+                <div
+                  className={`absolute right-40px top-55px z-30 h-6 w-6 hover:cursor-pointer ${displayedHoverPausedColor}`}
+                  onClick={squareClickHandler}
+                ></div>
+
+                <div className="absolute top-30px left-190px flex items-center space-x-1 text-center">
+                  <CircularProgressBar
+                    showLabel={true}
+                    numerator={passedHour}
+                    denominator={24}
+                    progressBarColor={[displayedColorHex]}
+                    hollowSize="40%"
+                    circularBarSize="100"
+                    // clickHandler={circularClick}
+                  />
+                </div>
               </div>
 
               <button className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">

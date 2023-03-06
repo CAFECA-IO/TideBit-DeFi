@@ -15,11 +15,12 @@ import RippleButton from '../ripple_button/ripple_button';
 import {useGlobal} from '../../contexts/global_context';
 import {TypeOfPosition} from '../../constants/type_of_position';
 import {ProfitState} from '../../constants/profit_state';
-import {randomIntFromInterval, timestampToString} from '../../lib/common';
+import {randomIntFromInterval, roundToDecimalPlaces, timestampToString} from '../../lib/common';
 import {MarketContext} from '../../contexts/market_context';
 import useState from 'react-usestateref';
 import CircularProgressBar from '../circular_progress_bar/circular_progress_bar';
-import {POSITION_PRICE_RENEWAL_INTERVAL_SECONDS} from '../../constants/config';
+import {POSITION_PRICE_RENEWAL_INTERVAL_SECONDS, unitAsset} from '../../constants/config';
+import useStateRef from 'react-usestateref';
 
 interface IUpdatedFormModal {
   modalVisible: boolean;
@@ -66,17 +67,26 @@ const UpdatedFormModal = ({
 
   const [submitDisabled, setSubmitDisabled] = useState(true);
 
-  const disabledButton =
-    initialSlToggle === slToggle ||
-    initialTpToggle === tpToggle ||
-    (initialSlToggle && initialSlInput === slValue) ||
-    (initialTpToggle && initialTpInput === tpValue) ||
-    initialGuaranteedChecked === guaranteedChecked;
+  const [expectedProfitValue, setExpectedProfitValue, expectedProfitValueRef] = useStateRef(0);
+  const [expectedLossValue, setExpectedLossValue, expectedLossValueRef] = useStateRef(0);
 
   const getToggledTpSetting = (bool: boolean) => {
     // setSubmitDisabled(true);
 
     setTpToggle(bool);
+
+    const profit =
+      openCfdDetails?.typeOfPosition === TypeOfPosition.BUY
+        ? roundToDecimalPlaces(
+            (tpValueRef.current - openCfdDetails?.openPrice) * openCfdDetails.amount,
+            2
+          )
+        : roundToDecimalPlaces(
+            (openCfdDetails?.openPrice - tpValueRef.current) * openCfdDetails.amount,
+            2
+          );
+
+    setExpectedProfitValue(profit);
 
     // if (bool !== initialTpToggle) {
     //   setSubmitDisabled(false);
@@ -91,12 +101,37 @@ const UpdatedFormModal = ({
     // if (bool !== initialTpToggle) {
     //   setSubmitDisabled(false);
     // }
+    const loss =
+      openCfdDetails?.typeOfPosition === TypeOfPosition.BUY
+        ? roundToDecimalPlaces(
+            (openCfdDetails?.openPrice - slValueRef.current) * openCfdDetails.amount,
+            2
+          )
+        : roundToDecimalPlaces(
+            (slValueRef.current - openCfdDetails?.openPrice) * openCfdDetails.amount,
+            2
+          );
+
+    setExpectedLossValue(loss);
   };
 
   const getTpValue = (value: number) => {
     // setSubmitDisabled(true);
 
     setTpValue(value);
+
+    const profit =
+      openCfdDetails?.typeOfPosition === TypeOfPosition.BUY
+        ? roundToDecimalPlaces(
+            (tpValueRef.current - openCfdDetails?.openPrice) * openCfdDetails.amount,
+            2
+          )
+        : roundToDecimalPlaces(
+            (openCfdDetails?.openPrice - tpValueRef.current) * openCfdDetails.amount,
+            2
+          );
+
+    setExpectedProfitValue(profit);
 
     // if (value !== initialTpInput) {
     //   setSubmitDisabled(false);
@@ -113,7 +148,60 @@ const UpdatedFormModal = ({
     //   setSubmitDisabled(false);
     // }
     // console.log('sl value from Trading Input:', value);
+
+    const loss =
+      openCfdDetails?.typeOfPosition === TypeOfPosition.BUY
+        ? roundToDecimalPlaces(
+            (openCfdDetails?.openPrice - slValueRef.current) * openCfdDetails.amount,
+            2
+          )
+        : roundToDecimalPlaces(
+            (slValueRef.current - openCfdDetails?.openPrice) * openCfdDetails.amount,
+            2
+          );
+
+    setExpectedLossValue(loss);
   };
+
+  const displayedExpectedProfit = (
+    // longTpToggle ? (
+    //   <div className={`${`translate-y-2`} -mt-0 items-center transition-all duration-500`}>
+    //     <div className="text-sm text-lightWhite">
+    //       {expectedLongProfitValue.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}
+    //     </div>
+    //   </div>
+    // ) : null;
+
+    <div
+      className={`${
+        tpToggle ? `mb-3 translate-y-1` : `invisible translate-y-0`
+      } -mt-0 items-center transition-all`}
+    >
+      <div className="text-xs text-lightWhite">
+        * Expected profit: + ${' '}
+        {roundToDecimalPlaces(Math.abs(expectedProfitValueRef.current), 2).toLocaleString(
+          UNIVERSAL_NUMBER_FORMAT_LOCALE
+        )}{' '}
+        {unitAsset}
+      </div>
+    </div>
+  );
+
+  const displayedExpectedLoss = (
+    <div
+      className={`${
+        slToggle ? `mb-3 translate-y-1` : `invisible translate-y-0`
+      } -mt-1 items-center transition-all`}
+    >
+      <div className="text-xs text-lightWhite">
+        *{guaranteedpCheckedRef.current ? 'Close at loss' : 'Expected loss'}: - ${' '}
+        {roundToDecimalPlaces(Math.abs(expectedLossValueRef.current), 2).toLocaleString(
+          UNIVERSAL_NUMBER_FORMAT_LOCALE
+        )}{' '}
+        {unitAsset}
+      </div>
+    </div>
+  );
 
   const guaranteedCheckedChangeHandler = () => {
     // If position is not guaranteed, then set the stop loss to the recommended value
@@ -575,33 +663,37 @@ const UpdatedFormModal = ({
                 </div>
               </div>
 
-              <div
-                className={`mx-6 mt-3 flex-col space-y-5 text-xs leading-relaxed text-lightWhite`}
-              >
-                <div className="flex items-center justify-between">
-                  <div className="text-lightGray">Close at profit</div>
-                  <div className="-mr-10">{displayedTakeProfitSetting}</div>
-                  <Toggle
-                    setToggleStateFromParent={setTpToggle}
-                    toggleStateFromParent={tpToggle}
-                    getToggledState={getToggledTpSetting}
-                  />
+              <div className={`mx-6 mt-3 flex-col text-xs leading-relaxed text-lightWhite`}>
+                <div className="mb-0">
+                  <div className="flex items-center justify-between">
+                    <div className="text-lightGray">Close at profit</div>
+                    <div className="-mr-10">{displayedTakeProfitSetting}</div>
+                    <Toggle
+                      setToggleStateFromParent={setTpToggle}
+                      toggleStateFromParent={tpToggle}
+                      getToggledState={getToggledTpSetting}
+                    />
+                  </div>
+
+                  {displayedExpectedProfit}
                 </div>
 
-                <div className="flex items-center justify-between">
-                  <div className="text-lightGray">Close at loss</div>
-                  <div className="-mr-50px">{displayedStopLossSetting}</div>
-                  <Toggle
-                    getToggledState={getToggledSlSetting}
-                    lockedToOpen={guaranteedChecked}
-                    initialToggleState={guaranteedChecked}
-                    toggleStateFromParent={slToggle}
-                    setToggleStateFromParent={setSlToggle}
-                    // getToggleFunction={getSlToggleFunction}
-                  />
+                <div className="mb-5">
+                  <div className="mb-1 flex items-center justify-between">
+                    <div className="text-lightGray">Close at loss</div>
+                    <div className="-mr-50px">{displayedStopLossSetting}</div>
+                    <Toggle
+                      getToggledState={getToggledSlSetting}
+                      lockedToOpen={guaranteedChecked}
+                      initialToggleState={guaranteedChecked}
+                      toggleStateFromParent={slToggle}
+                      setToggleStateFromParent={setSlToggle}
+                      // getToggleFunction={getSlToggleFunction}
+                    />
+                  </div>
+                  {displayedExpectedLoss}
+                  {guaranteedStopLoss}
                 </div>
-
-                {guaranteedStopLoss}
 
                 {/* TODO: T/P value changed, S/L value changed, guaranteed-stop check changed, T/P toggle changed, S/L toggle changed */}
                 <RippleButton

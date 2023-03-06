@@ -18,6 +18,7 @@ import {TypeOfPosition} from '../../constants/type_of_position';
 import {OrderType} from '../../constants/order_type';
 import {OrderStatusUnion} from '../../constants/order_status_union';
 import eventEmitter, {ClickEvent} from '../../constants/tidebit_event';
+import {roundToDecimalPlaces} from '../../lib/common';
 
 const TradeTab = () => {
   const globalCtx = useGlobal();
@@ -79,10 +80,6 @@ const TradeTab = () => {
 
   // TODO: `val: number | () => number`
   // TODO: difference between `number` and `() => number`
-  const roundToDecimalPlaces = (val: number, precision: number): number => {
-    const roundedNumber = Number(val.toFixed(precision));
-    return roundedNumber;
-  };
 
   const [longTooltipStatus, setLongTooltipStatus] = useState(0);
   const [shortTooltipStatus, setShortTooltipStatus] = useState(0);

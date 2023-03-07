@@ -184,6 +184,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
         selectTickerHandler(tickers[0].currency);
       },
     });
+    // ++ TODO： 用 api 取得的話會遇到 #300 的問題
     // workerCtx.requestHandler({
     //   name: APIRequest.LIST_DEPOSIT_CRYPTO_CURRENCIES,
     //   request: {

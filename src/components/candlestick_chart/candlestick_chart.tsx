@@ -1,3 +1,4 @@
+/*eslint-disable no-console */
 import React, {useState, useContext, useEffect} from 'react';
 import dynamic from 'next/dynamic';
 import ApexCharts, {ApexOptions} from 'apexcharts';
@@ -109,9 +110,9 @@ export default function CandlestickChart({
 
   // const {showPositionOnChart, positionInfoOnChart, candlestickChartIdHandler} =
   //   useContext(MarketContext);
-  // console.log('market candlestick data', marketCtx.candlestickChartData);
+  console.log('market candlestick data', marketCtx.candlestickChartData);
   // console.log('stringify', JSON.stringify(marketCtx.candlestickChartData));
-  // console.log('line data from candlestick chart', lineDataFetchedFromContext);
+  console.log('line data from candlestick chart', lineDataFetchedFromContext);
   // console.log('line data', dummyLineData);
 
   // console.log('position context info in candlestick chart', positionInfoOnChart);
@@ -161,8 +162,11 @@ export default function CandlestickChart({
     //     // ],
     //   },
     // ],
+
     chart: {
       // id: candlestickChartIdHandler(id),
+      background: '#FFFFFF',
+
       id: 'candles',
       type: 'candlestick',
       height: 0,
@@ -231,7 +235,11 @@ export default function CandlestickChart({
       // },
     },
 
+    // TODO: min and max in yaxis
     yaxis: {
+      // min(min) {
+      //   return min - 0.1;
+      // },
       tooltip: {
         enabled: true,
       },
@@ -383,6 +391,7 @@ export default function CandlestickChart({
   const lineChartOptions: ApexOptions = {
     chart: {
       // id: candlestickChartIdHandler(id),
+      background: EXAMPLE_BLUE_COLOR,
       id: 'lineGraph',
       type: 'line',
       height: 0,
@@ -449,7 +458,7 @@ export default function CandlestickChart({
     xaxis: {
       type: 'datetime',
       labels: {
-        show: false, // TODO: show xaxis labels
+        show: true, // TODO: show xaxis labels
         style: {
           colors: TRADING_CHART_BORDER_COLOR,
         },
@@ -472,12 +481,13 @@ export default function CandlestickChart({
       // },
     },
 
+    // TODO: min and max in yaxis
     yaxis: {
       tooltip: {
         enabled: false,
       },
       labels: {
-        show: false, // TODO: show yaxis labels
+        show: true, // TODO: show yaxis labels
         align: 'center',
         style: {
           colors: EXAMPLE_BLUE_COLOR,
@@ -485,7 +495,7 @@ export default function CandlestickChart({
       },
       opposite: true,
       axisBorder: {
-        show: false,
+        show: true,
         color: TRADING_CHART_BORDER_COLOR,
       },
       axisTicks: {
@@ -887,7 +897,7 @@ export default function CandlestickChart({
         )} */}
       </div>
 
-      <div className="pointer-events-none absolute top-0">
+      <div className="pointer-events-none absolute top-0 ml-0">
         {/* ----------Line chart---------- */}
         {lineGraphOn && (
           <Chart
@@ -908,8 +918,8 @@ export default function CandlestickChart({
               // },
             ]}
             type="line"
-            width={Number(candlestickChartWidth) / 1.05} // `/1.05` === `*0.95`
-            height={Number(candlestickChartHeight) / 1.05}
+            width={Number(candlestickChartWidth)} // `/1.05` === `*0.95`
+            height={Number(candlestickChartHeight)}
             // width={candlestickChartWidth}
             // height={candlestickChartHeight}
           />

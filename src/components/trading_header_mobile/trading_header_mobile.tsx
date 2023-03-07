@@ -79,11 +79,11 @@ const TradingHeaderMobile = () => {
         </div>
 
         {/* Trading volume */}
-        <div className="relative">
+        {/*         <div className="relative">
           <div className="absolute -right-48 top-10 w-300px text-sm text-lightWhite/60">
             24h Volume {marketCtx.selectedTicker?.tradingVolume} USDT
           </div>
-        </div>
+        </div> */}
       </div>
     </>
   );

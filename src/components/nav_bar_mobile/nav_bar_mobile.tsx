@@ -59,19 +59,18 @@ const NavBarMobile = ({notificationNumber = 1}) => {
     //console.log('sidebarOpenHandler clicked, componentVisible: ', componentVisible);
   };
 
-  const hamburgerStyles =
-    'block bg-lightWhite h-3px rounded-12px opacity-100 left-0 w-full rotate-0 ease-in duration-300';
+  const hamburgerStyles = 'block bg-lightWhite h-3px rounded-12px w-full ease-in duration-300';
 
   const menuItemStyles =
     'block rounded-md px-3 py-2 font-medium hover:cursor-pointer hover:text-tidebitTheme';
 
   // hamburger animation
   const displayedMobileNavBarLine1 = !navOpen
-    ? 'translate-y-0'
+    ? 'translate-y-0 rotate-0'
     : 'translate-y-1.5 origin-left w-3/4 -rotate-35';
   const displayedMobileNavBarLine2 = !navOpen ? 'translate-y-1.5' : 'w-0 opacity-0';
   const displayedMobileNavBarLine3 = !navOpen
-    ? 'translate-y-3'
+    ? 'translate-y-3 rotate-0'
     : 'translate-y-0 origin-left w-3/4 rotate-35';
 
   const isDisplayedMobileNavBar = navOpen ? 'top-14 min-h-screen inset-0 bg-darkGray/100' : '';
@@ -126,9 +125,13 @@ const NavBarMobile = ({notificationNumber = 1}) => {
                 className="z-50 inline-flex items-center justify-center rounded-md p-2"
               >
                 <div className="relative h-20px w-30px cursor-pointer">
-                  <span className={`${hamburgerStyles} ${displayedMobileNavBarLine1}`}></span>
+                  <span
+                    className={`${hamburgerStyles} ${displayedMobileNavBarLine1} opacity-100`}
+                  ></span>
                   <span className={`${hamburgerStyles} ${displayedMobileNavBarLine2}`}></span>
-                  <span className={`${hamburgerStyles} ${displayedMobileNavBarLine3}`}></span>
+                  <span
+                    className={`${hamburgerStyles} ${displayedMobileNavBarLine3} opacity-100`}
+                  ></span>
                 </div>
               </button>
             </div>

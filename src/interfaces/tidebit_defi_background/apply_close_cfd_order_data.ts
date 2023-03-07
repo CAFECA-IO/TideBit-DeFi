@@ -1,4 +1,5 @@
 import {TypeOfPosition} from '../../constants/type_of_position';
+import {getTimestamp} from '../../lib/common';
 import {IQuotation} from './quotation';
 
 export interface IApplyCloseCFDOrderData {
@@ -27,10 +28,10 @@ export const getDummyApplyCloseCFDOrderData = (currency: string, id?: string) =>
       targetAsset: typeOfPosition === TypeOfPosition.BUY ? currency : 'USDT',
       uniAsset: typeOfPosition === TypeOfPosition.BUY ? 'USDT' : currency,
       price: randomIntFromInterval(1000, 10000),
-      deadline: Math.ceil(Date.now() / 1000) + 15,
+      deadline: getTimestamp() + 15,
       signature: '0x',
     }, // 報價單
-    closeTimestamp: Math.ceil(Date.now() / 1000) + 86400, // openTimestamp + 86400
+    closeTimestamp: getTimestamp() + 86400, // openTimestamp + 86400
   };
   return dummyApplyCloseCFDOrderData;
 };

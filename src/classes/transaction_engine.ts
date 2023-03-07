@@ -12,6 +12,7 @@ import {IApplyCreateCFDOrderData} from '../interfaces/tidebit_defi_background/ap
 import {IApplyDepositOrder} from '../interfaces/tidebit_defi_background/apply_deposit_order';
 import {IApplyWithdrawOrder} from '../interfaces/tidebit_defi_background/apply_withdraw_order';
 import {IResult} from '../interfaces/tidebit_defi_background/result';
+import {getTimestamp} from '../lib/common';
 
 class TransactionEngine {
   isApplyCreateCFDOrderData(obj: object): obj is IApplyCreateCFDOrderData {
@@ -52,7 +53,7 @@ class TransactionEngine {
         ...data.quotation,
         price: SafeMath.toSmallestUnit(data.quotation.price, 10),
       },
-      createTimestamp: Math.ceil(Date.now() / 1000),
+      createTimestamp: getTimestamp(),
       takeProfit: data.takeProfit ? SafeMath.toSmallestUnit(data.takeProfit, 10) : 0,
       stopLoss: data.stopLoss ? SafeMath.toSmallestUnit(data.stopLoss, 10) : 0,
       guaranteedStop: data.guaranteedStop ? data.guaranteedStop : false,
@@ -85,7 +86,7 @@ class TransactionEngine {
         ...data.quotation,
         price: SafeMath.toSmallestUnit(data.quotation.price, 10),
       },
-      closeTimestamp: data.closeTimestamp ? data.closeTimestamp : Math.ceil(Date.now() / 1000),
+      closeTimestamp: data.closeTimestamp ? data.closeTimestamp : getTimestamp(),
     };
     return convertedCloseCFDOrderData;
   }
@@ -95,7 +96,7 @@ class TransactionEngine {
       ...data,
       targetAmount: SafeMath.toSmallestUnit(data.targetAmount, 10),
       fee: SafeMath.toSmallestUnit(data.fee, 10),
-      createTimestamp: data.createTimestamp ? data.createTimestamp : Math.ceil(Date.now() / 1000),
+      createTimestamp: data.createTimestamp ? data.createTimestamp : getTimestamp(),
       remark: data.remark ? data.remark : ``,
     };
     return convertedCloseCFDOrderData;

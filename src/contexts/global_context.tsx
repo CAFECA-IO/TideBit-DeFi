@@ -54,6 +54,7 @@ import {
   IDisplayAcceptedCFDOrder,
 } from '../interfaces/tidebit_defi_background/display_accepted_cfd_order';
 import {ICryptocurrency} from '../interfaces/tidebit_defi_background/cryptocurrency';
+import {getTimestamp} from '../lib/common';
 
 export interface IToastify {
   type: 'error' | 'warning' | 'info' | 'success';
@@ -876,7 +877,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     userCtx
       .deposit({
         orderType: OrderType.DEPOSIT,
-        createTimestamp: Math.ceil(Date.now() / 1000),
+        createTimestamp: getTimestamp(),
         targetAsset: props.asset.symbol,
         decimals: props.asset.decimals,
         to: props.asset.contract,
@@ -892,7 +893,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     userCtx
       .withdraw({
         orderType: OrderType.WITHDRAW,
-        createTimestamp: Math.ceil(Date.now() / 1000),
+        createTimestamp: getTimestamp(),
         targetAsset: props.asset.symbol,
         to: props.asset.contract,
         targetAmount: props.amount,

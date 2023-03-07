@@ -144,15 +144,15 @@ const PositionOpenModal = ({
   //     ? TypeOfPnLColor.LOSS
   //     : TypeOfPnLColor.EQUAL;
 
-  const displayedPositionColor =
-    openCfdRequest.typeOfPosition === TypeOfPosition.BUY
-      ? TypeOfPnLColor.PROFIT
-      : TypeOfPnLColor.LOSS;
+  const displayedPositionColor = 'text-tidebitTheme';
+  // openCfdRequest.typeOfPosition === TypeOfPosition.BUY
+  //   ? TypeOfPnLColor.PROFIT
+  //   : TypeOfPnLColor.LOSS;
 
-  const displayedBorderColor =
-    openCfdRequest.typeOfPosition === TypeOfPosition.BUY
-      ? TypeOfBorderColor.LONG
-      : TypeOfBorderColor.SHORT;
+  const displayedBorderColor = TypeOfBorderColor.NORMAL;
+  // openCfdRequest.typeOfPosition === TypeOfPosition.BUY
+  //   ? TypeOfBorderColor.LONG
+  //   : TypeOfBorderColor.SHORT;
 
   const displayedTakeProfit = openCfdRequest.takeProfit ? `$ ${openCfdRequest.takeProfit}` : '-';
   const displayedStopLoss = openCfdRequest.stopLoss ? `$ ${openCfdRequest.stopLoss}` : '-';

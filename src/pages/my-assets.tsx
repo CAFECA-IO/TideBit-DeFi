@@ -7,6 +7,7 @@ import NavBarMobile from '../components/nav_bar_mobile/nav_bar_mobile';
 import Footer from '../components/footer/footer';
 import AssetsPageBody from '../components/assets_page_body/assets_page_body';
 import Head from 'next/head';
+import {ILocale} from '../interfaces/tidebit_defi_background/json';
 
 // TODO: layoutAssertion is constants objects
 // TODO: is no user, show the wallet connect button
@@ -60,7 +61,7 @@ const MyAssets = () => {
   return <>{initUI}</>;
 };
 
-const getStaticPropsFunction = async ({locale}: {locale: any}) => ({
+const getStaticPropsFunction = async ({locale}: ILocale) => ({
   props: {
     ...(await serverSideTranslations(locale, ['common', 'footer'])),
   },

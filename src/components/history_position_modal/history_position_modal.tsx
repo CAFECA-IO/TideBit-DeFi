@@ -51,8 +51,7 @@ const HistoryPositionModal = ({
 
   const displayedGuaranteedStopSetting = !!closedCfdDetails.guaranteedStop ? 'Yes' : 'No';
 
-  const displayedPositionColor =
-    closedCfdDetails.typeOfPosition === 'BUY' ? TypeOfPnLColor.PROFIT : TypeOfPnLColor.LOSS;
+  const displayedPositionColor = 'text-tidebitTheme';
 
   const layoutInsideBorder = 'mx-5 my-4 flex justify-between';
 
@@ -71,7 +70,11 @@ const HistoryPositionModal = ({
       : TypeOfPnLColor.EQUAL;
 
   const displayedBorderColor =
-    closedCfdDetails?.typeOfPosition === 'BUY' ? TypeOfBorderColor.LONG : TypeOfBorderColor.SHORT;
+    closedCfdDetails?.pnl.type === 'PROFIT'
+      ? TypeOfBorderColor.LONG
+      : closedCfdDetails?.pnl.type === 'LOSS'
+      ? TypeOfBorderColor.SHORT
+      : TypeOfBorderColor.NORMAL;
 
   const displayedPositionState = closedCfdDetails.state === OrderState.OPENING ? 'Open' : 'Closed';
 

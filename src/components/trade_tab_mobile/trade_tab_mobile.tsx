@@ -8,7 +8,7 @@ import UserOverview from '../user_overview/user_overview';
 import {AiOutlineQuestionCircle} from 'react-icons/ai';
 import RippleButton from '../ripple_button/ripple_button';
 import {UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
-import {MARGIN_LIMIT_DIGITS} from '../../constants/config';
+import {TARGET_LIMIT_DIGITS} from '../../constants/config';
 
 // 1388.4 * 0.82
 const LONG_RESTRICTION_SL = 1138.48;
@@ -138,7 +138,7 @@ const TradeTabMobile = () => {
   const displayedMarginSetting = (
     <TradingInput
       lowerLimit={0}
-      upperLimit={MARGIN_LIMIT_DIGITS}
+      upperLimit={TARGET_LIMIT_DIGITS}
       getInputValue={getMarginInputValue}
       inputInitialValue={marginInputValue}
       inputValueFromParent={marginInputValue}

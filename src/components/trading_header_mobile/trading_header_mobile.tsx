@@ -40,7 +40,7 @@ const TradingHeaderMobile = () => {
 
   const tickerHeader = (
     <>
-      <div className="flex flex-col items-center justify-center space-y-5 text-start text-white lg:items-start lg:justify-start">
+      <div className="flex w-9/10 flex-col items-center justify-center space-y-5 text-start text-white">
         {/* Ticker */}
         <div className="flex items-center space-x-3 text-center">
           <button

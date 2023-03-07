@@ -22,6 +22,29 @@ const chartBlank = 1.68;
 const dummyDataSize = 80;
 const unitOfLive = 1000;
 
+export interface ILineChartData {
+  x: Date;
+  y: number;
+}
+
+export const getDummyLineData = (n: number) => {
+  const now = new Date().getTime();
+  const nowSecond = now - (now % 1000);
+
+  const data: ILineChartData[] = new Array(n).fill(0).map((v, i) => {
+    const y = Math.random() * 100;
+    const result: ILineChartData = {
+      x: new Date(nowSecond - (n - i) * 1000),
+      y,
+    };
+    return result;
+  });
+
+  return data;
+};
+
+const dummyLineData = getDummyLineData(50);
+
 /**
  *
  * @param
@@ -36,6 +59,8 @@ export default function CandlestickChart({
 }: ILineGraphProps): JSX.Element {
   // const {showPositionOnChart, positionInfoOnChart, candlestickChartIdHandler} =
   //   useContext(MarketContext);
+
+  // console.log('line data', dummyLineData);
   const marketCtx = useContext(MarketContext);
 
   // console.log('position context info in candlestick chart', positionInfoOnChart);
@@ -268,6 +293,7 @@ export default function CandlestickChart({
   };
 
   const chartOptionsWithoutPositionLabel: ApexOptions = {
+    // series
     chart: {
       type: 'candlestick',
       height: 0,
@@ -440,10 +466,14 @@ export default function CandlestickChart({
       enabled: false,
     },
     series: [
-      {
-        name: 'series-1',
-        data: [],
-      },
+      // {
+      //   name: 'series-1',
+      //   data: [],
+      // },
+      // {
+      //   name: 'series-1',
+      //   data: marketCtx.candlestickChartData ? [...marketCtx.candlestickChartData] : [],
+      // },
     ],
   });
 
@@ -475,10 +505,34 @@ export default function CandlestickChart({
     <div>
       <Chart
         options={dataSample.options}
+        // series={dataSample.series}
         series={[
           {
-            name: 'series-1',
+            name: 'candles',
             data: marketCtx.candlestickChartData ? [...marketCtx.candlestickChartData] : [],
+          },
+          {
+            name: 'line',
+            type: 'line',
+            data: dummyLineData,
+            // [
+            //   {
+            //     x: new Date().getTime() - 1000,
+            //     y: 5500,
+            //   },
+            //   {
+            //     x: new Date().getTime() - 500,
+            //     y: 4602,
+            //   },
+            //   {
+            //     x: new Date().getTime() - 200,
+            //     y: 7607,
+            //   },
+            //   {
+            //     x: new Date().getTime() - 100,
+            //     y: 4920,
+            //   },
+            // ],
           },
         ]}
         type="candlestick"

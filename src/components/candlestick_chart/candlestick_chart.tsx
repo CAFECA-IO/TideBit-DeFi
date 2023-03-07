@@ -11,17 +11,18 @@ import {
 } from '../../constants/display';
 import {BsFillArrowDownCircleFill, BsFillArrowUpCircleFill} from 'react-icons/bs';
 import {MarketContext, MarketProvider} from '../../contexts/market_context';
-import {randomFloatFromInterval, randomIntFromInterval} from '../../lib/common';
-import {
-  VictoryLabel,
-  VictoryTooltip,
-  VictoryTheme,
-  VictoryLine,
-  VictoryPie,
-  VictoryChart,
-  VictoryAxis,
-  VictoryCandlestick,
-} from 'victory';
+import {randomFloatFromInterval, randomIntFromInterval, timestampToString} from '../../lib/common';
+import * as V from 'victory';
+// import {
+//   VictoryLabel,
+//   VictoryTooltip,
+//   VictoryTheme,
+//   VictoryLine,
+//   VictoryPie,
+//   VictoryChart,
+//   VictoryAxis,
+//   VictoryCandlestick,
+// } from 'victory';
 
 // import ReactApexChart from 'react-apexcharts';
 const Chart = dynamic(() => import('react-apexcharts'), {ssr: false});
@@ -118,12 +119,14 @@ export default function CandlestickChart({
     y: data.y[0],
   }));
 
+  // TODO: Make sure the OHLC order is correct
   const transformedCandlestickData = marketCtx.candlestickChartData?.map(data => ({
     x: data.x,
     open: data.y[0],
     high: data.y[1],
     low: data.y[2],
     close: data.y[3],
+    // label: JSON.stringify({open: data.y[0], high: data.y[1], low: data.y[2], close: data.y[3]}),
   }));
 
   // VictoryThemeDefinition
@@ -160,6 +163,25 @@ export default function CandlestickChart({
   // console.log('in candlestick chart, showPositionOnChart:', showPositionOnChart);
 
   const anotherSampleData = [1230, 1272, 1120, 1265, 1342, 1299];
+
+  // TODO: measure the biggest number to decide the y-axis
+  // const dataSample = marketCtx.candlestickChartData?.map(data =>
+  //   data.y.every(v => v === null) ? null : data
+  // );
+
+  // const largestNumber = dataSample.reduce((acc, curr) => {
+  //   const largestInRow = curr.y.reduce((rowAcc, rowCurr) => {
+  //     if (rowCurr && rowCurr > rowAcc) {
+  //       return rowCurr;
+  //     }
+  //     return rowAcc;
+  //   }, 0);
+
+  //   if (largestInRow > acc) {
+  //     return largestInRow;
+  //   }
+  //   return acc;
+  // }, 0);
 
   // const candlestickData = dummyChartData(dummyDataSize);
   // console.log('data length', candlestickData.length);
@@ -924,15 +946,25 @@ export default function CandlestickChart({
           data={sampleDataDates}
           // data={marketCtx.candlestickChartData ? [...marketCtx.candlestickChartData] : []}
         /> */}
-        <VictoryChart
+        <V.VictoryChart
           // chartTheme
           theme={chartTheme}
+          // maxDomain={{y: 1000000}}   // TODO: measure the biggest number to decide the y-axis
           // domainPadding={{x: 1}}
           scale={{x: 'time'}}
           width={Number(candlestickChartWidth)}
           height={Number(candlestickChartHeight)}
+          // containerComponent={
+          //   <V.VictoryVoronoiContainer
+          //     voronoiDimension="x"
+          //     labels={({datum}) =>
+          //       `open: ${datum.open} high: ${datum.high} low: ${datum.low} close: ${datum.close}`
+          //     }
+          //     labelComponent={<V.VictoryTooltip cornerRadius={2} flyoutStyle={{fill: 'black'}} />}
+          //   />
+          // }
         >
-          <VictoryAxis
+          <V.VictoryAxis
             // width={Number(candlestickChartWidth)}
             style={
               {
@@ -941,17 +973,17 @@ export default function CandlestickChart({
                 // tickLabels: {fontColor: 'white'},
               }
             }
-            tickFormat={
-              // t => `${t.toLocaleTimeString().split(' ')[0]}`
-              t =>
-                `${t.getYear()}/${t.getDate()}/${t.getMonth()} ${t.getHours()}:${t.getMinutes()}:${t.getSeconds()}`
+            tickFormat={t =>
+              `${timestampToString(t / 1000).date} ${timestampToString(t / 1000).time}`
             }
           />
-          <VictoryAxis
+          <V.VictoryAxis
+            // axisLabelComponent={<V.VictoryLabel dy={-20} />}
             dependentAxis
-            tickLabelComponent={<VictoryLabel verticalAnchor="start" textAnchor="start" x={0} />}
+            // tickLabelComponent={<V.VictoryLabel verticalAnchor="start" textAnchor="start" x={0} />}
           />
-          <VictoryCandlestick
+
+          <V.VictoryCandlestick
             style={{
               data: {
                 // fill: '#c43a31',
@@ -975,35 +1007,68 @@ export default function CandlestickChart({
             }}
             candleColors={{positive: TypeOfPnLColorHex.PROFIT, negative: TypeOfPnLColorHex.LOSS}}
             data={transformedCandlestickData}
-            // labels={({datum}) => `open: ${datum.open}`}
-            // lowLabels
-            // lowLabelComponent={<VictoryTooltip pointerLength={0} />}
-            // highLabels
-            // highLabelComponenet={<VictoryTooltip pointerLength={0} />}
-            openLabels
-            openLabelComponent={<VictoryTooltip pointerLength={0} />}
-            // closeLabels
-            closeLabelComponent={<VictoryTooltip pointerLength={0} />}
-            events={[
-              {
-                target: 'data',
-                eventHandlers: {
-                  onMouseOver: () => ({
-                    // target: ['lowLabels', 'highLabels', 'openLabels', 'closeLabels'],
-                    target: 'openLabels',
-                    mutation: () => ({active: true}),
-                  }),
-                  onMouseOut: () => ({
-                    // target: ['lowLabels', 'highLabels', 'openLabels', 'closeLabels'],
-                    target: 'openLabels',
-                    mutation: () => ({active: false}),
-                  }),
-                },
-              },
-            ]}
+            // openLabels
+            // openLabelComponent={<V.VictoryTooltip pointerLength={10} />}
+
+            labels={({datum}) =>
+              `open: ${datum.open}\nhigh: ${datum.high}\nlow: ${datum.low}\nclose: ${datum.close}`
+            }
+            labelComponent={
+              <V.VictoryTooltip
+                style={{
+                  fontFamily: 'barlow',
+                  fontSize: 12,
+                  // fontWeight: 500,
+                  // stroke: 'black',
+                  // backgroundColor: EXAMPLE_BLUE_COLOR,
+                  // borderBlockColor: EXAMPLE_BLUE_COLOR,
+                  // borderColor: EXAMPLE_BLUE_COLOR,
+
+                  fill: (d: any) =>
+                    d.datum.close > d.datum.open
+                      ? TypeOfPnLColorHex.PROFIT
+                      : TypeOfPnLColorHex.LOSS,
+                  padding: 8,
+                  letterSpacing: 0.5,
+                }}
+                // text={'white'}
+                // theme={chartTheme}
+                // pointerWidth={50}
+                pointerLength={10}
+                // pointerOrientation={'top'}
+              />
+            }
+
+            // containerComponent={
+            //   <V.VictoryVoronoiContainer
+            //     voronoiDimension="x"
+            //     labels={({datum}) =>
+            //       `open: ${datum.open} high: ${datum.high} low: ${datum.low} close: ${datum.close}`
+            //     }
+            //     labelComponent={<V.VictoryTooltip cornerRadius={2} flyoutStyle={{fill: 'black'}} />}
+            //   />
+            // }
+
+            // events={[
+            //   {
+            //     target: 'data',
+            //     eventHandlers: {
+            //       onMouseOver: () => ({
+            //         // target: ['lowLabels', 'highLabels', 'openLabels', 'closeLabels'],
+            //         target: 'openLabels',
+            //         mutation: () => ({active: true}),
+            //       }),
+            //       onMouseOut: () => ({
+            //         // target: ['lowLabels', 'highLabels', 'openLabels', 'closeLabels'],
+            //         target: 'openLabels',
+            //         mutation: () => ({active: false}),
+            //       }),
+            //     },
+            //   },
+            // ]}
           />
           {lineGraphOn && (
-            <VictoryLine
+            <V.VictoryLine
               style={{
                 data: {stroke: LINE_GRAPH_STROKE_COLOR.DEFAULT, strokeWidth: 1},
                 // parent: {border: '1px solid #ccc'},
@@ -1034,7 +1099,7 @@ export default function CandlestickChart({
               data={lineDataFetchedFromContext ? [...lineDataFetchedFromContext] : []}
             />
           )}
-        </VictoryChart>{' '}
+        </V.VictoryChart>{' '}
         {/* ----------Candlestick chart---------- */}
         {/* TODO: draw three svg in total to separate the functionality */}
         {/* <Chart

@@ -1,9 +1,16 @@
 import React, {useState, useContext, useEffect} from 'react';
 import dynamic from 'next/dynamic';
 import ApexCharts, {ApexOptions} from 'apexcharts';
-import {TRADING_CHART_BORDER_COLOR, TypeOfPnLColorHex} from '../../constants/display';
+import {
+  EXAMPLE_BLUE_COLOR,
+  LIGHT_GRAY_COLOR,
+  LINE_GRAPH_STROKE_COLOR,
+  TRADING_CHART_BORDER_COLOR,
+  TypeOfPnLColorHex,
+} from '../../constants/display';
 import {BsFillArrowDownCircleFill, BsFillArrowUpCircleFill} from 'react-icons/bs';
 import {MarketContext, MarketProvider} from '../../contexts/market_context';
+import {randomFloatFromInterval, randomIntFromInterval} from '../../lib/common';
 
 // import ReactApexChart from 'react-apexcharts';
 const Chart = dynamic(() => import('react-apexcharts'), {ssr: false});
@@ -24,7 +31,7 @@ const unitOfLive = 1000;
 
 export interface ILineChartData {
   x: Date;
-  y: number;
+  y: number | null;
 }
 
 export const getDummyLineData = (n: number) => {
@@ -32,7 +39,8 @@ export const getDummyLineData = (n: number) => {
   const nowSecond = now - (now % 1000);
 
   const data: ILineChartData[] = new Array(n).fill(0).map((v, i) => {
-    const y = Math.random() * 100;
+    // const y = Math.random() * 100;
+    const y = randomFloatFromInterval(100, 6000, 2);
     const result: ILineChartData = {
       x: new Date(nowSecond - (n - i) * 1000),
       y,
@@ -40,10 +48,41 @@ export const getDummyLineData = (n: number) => {
     return result;
   });
 
+  // add null data
+  const nullDataCount = Math.ceil(n / 1000);
+  for (let i = 0; i < nullDataCount; i++) {
+    // const randomIndex = randomIntFromInterval(0, n - 1);
+    data.push({
+      x: new Date(nowSecond + (n - i) * 1000),
+      y: null,
+    });
+  }
+
+  return data;
+};
+
+export const getDummyHorizontalLineData = (n: number) => {
+  const now = new Date().getTime();
+  const nowSecond = now - (now % 1000);
+
+  const data: ILineChartData[] = new Array(n).fill(0).map((v, i) => ({
+    x: new Date(nowSecond - (n - i) * 1000),
+    y: 5500,
+  }));
+
+  // // add null data
+  // const nullDataCount = Math.ceil((y / 14) * 5);
+  // for (let i = 0; i < nullDataCount; i++) {
+  //   const randomIndex = randomIntFromInterval(0, y - 1);
+  //   data[randomIndex].y = null;
+  // }
+
   return data;
 };
 
 const dummyLineData = getDummyLineData(50);
+
+const dummyHorizontalLineData = getDummyHorizontalLineData(80);
 
 /**
  *
@@ -57,11 +96,19 @@ export default function CandlestickChart({
   candlestickChartHeight,
   ...otherProps
 }: ILineGraphProps): JSX.Element {
+  const marketCtx = useContext(MarketContext);
+
+  const lineDataFetchedFromContext = marketCtx.candlestickChartData?.map((data, i) => ({
+    x: data.x,
+    y: data.y[0],
+  }));
+
   // const {showPositionOnChart, positionInfoOnChart, candlestickChartIdHandler} =
   //   useContext(MarketContext);
-
+  // console.log('market candlestick data', marketCtx.candlestickChartData);
+  // console.log('stringify', JSON.stringify(marketCtx.candlestickChartData));
+  // console.log('line data from candlestick chart', lineDataFetchedFromContext);
   // console.log('line data', dummyLineData);
-  const marketCtx = useContext(MarketContext);
 
   // console.log('position context info in candlestick chart', positionInfoOnChart);
 
@@ -80,6 +127,36 @@ export default function CandlestickChart({
   // let data = '';
 
   const chartOptionsWithPositionLabel: ApexOptions = {
+    // series: [
+    //   {
+    //     name: 'candles',
+    //     type: 'candlestick',
+    //     data: marketCtx.candlestickChartData ? [...marketCtx.candlestickChartData] : [],
+    //   },
+    //   {
+    //     name: 'line',
+    //     type: 'line',
+    //     data: dummyLineData,
+    //     // [
+    //     //   {
+    //     //     x: new Date().getTime() - 1000,
+    //     //     y: 5500,
+    //     //   },
+    //     //   {
+    //     //     x: new Date().getTime() - 500,
+    //     //     y: 4602,
+    //     //   },
+    //     //   {
+    //     //     x: new Date().getTime() - 200,
+    //     //     y: 7607,
+    //     //   },
+    //     //   {
+    //     //     x: new Date().getTime() - 100,
+    //     //     y: 4920,
+    //     //   },
+    //     // ],
+    //   },
+    // ],
     chart: {
       // id: candlestickChartIdHandler(id),
       id: 'candles',
@@ -114,10 +191,17 @@ export default function CandlestickChart({
         },
       },
     ],
-    title: {
-      text: '',
-      align: 'left',
-    },
+    // title: {
+    //   // Candlestick chart 24 hr volume TODO: it works but needs to adjust the position (to be exact, the width of the chart)
+    //   text: `24h Volume ${marketCtx.selectedTicker?.tradingVolume ?? 999} USDT`,
+    //   align: 'left',
+    //   style: {
+    //     fontSize: '14px',
+    //     fontWeight: 'bold',
+    //     fontFamily: 'barlow',
+    //     color: LIGHT_GRAY_COLOR,
+    //   },
+    // },
     xaxis: {
       type: 'datetime',
       labels: {
@@ -292,10 +376,11 @@ export default function CandlestickChart({
     },
   };
 
-  const chartOptionsWithoutPositionLabel: ApexOptions = {
-    // series
+  const lineChartOptions: ApexOptions = {
     chart: {
-      type: 'candlestick',
+      // id: candlestickChartIdHandler(id),
+      id: 'lineGraph',
+      type: 'line',
       height: 0,
 
       toolbar: {
@@ -308,6 +393,15 @@ export default function CandlestickChart({
         },
       },
 
+      // // TODO: realtime updated chart needs `useEffect` to renew the data series
+      // animations: {
+      //   enabled: true,
+      //   easing: 'linear',
+      //   dynamicAnimation: {
+      //     speed: 1000,
+      //   },
+      // },
+
       // dropShadow: {
       //   enabled: true,
       //   top: 0,
@@ -316,23 +410,39 @@ export default function CandlestickChart({
       //   opacity: 0.5,
       // },
     },
+
+    stroke: {
+      show: true,
+      curve: 'straight',
+      lineCap: 'butt',
+      colors: [LINE_GRAPH_STROKE_COLOR.DEFAULT],
+      width: 1.5,
+      dashArray: 0,
+    },
     responsive: [
       {
         breakpoint: 500,
         options: {
-          candlestick: {
-            width: '1000',
-          },
+          // candlestick: {
+          //   width: '1000',
+          // },
         },
       },
     ],
-    title: {
-      text: '',
-      align: 'left',
-    },
+    // title: {
+    //   text: 'Line graph 24 hr volume',
+    //   align: 'left',
+    //   style: {
+    //     fontSize: '14px',
+    //     fontWeight: 'bold',
+    //     fontFamily: 'barlow',
+    //     color: LINE_GRAPH_STROKE_COLOR.DEFAULT,
+    //   },
+    // },
     xaxis: {
       type: 'datetime',
       labels: {
+        show: false, // TODO: show xaxis labels
         style: {
           colors: TRADING_CHART_BORDER_COLOR,
         },
@@ -357,18 +467,18 @@ export default function CandlestickChart({
 
     yaxis: {
       tooltip: {
-        enabled: true,
+        enabled: false,
       },
       labels: {
-        show: true,
+        show: false, // TODO: show yaxis labels
         align: 'center',
         style: {
-          colors: TRADING_CHART_BORDER_COLOR,
+          colors: EXAMPLE_BLUE_COLOR,
         },
       },
       opposite: true,
       axisBorder: {
-        show: true,
+        show: false,
         color: TRADING_CHART_BORDER_COLOR,
       },
       axisTicks: {
@@ -376,21 +486,9 @@ export default function CandlestickChart({
       },
     },
     tooltip: {
-      enabled: true,
+      enabled: false,
       fillSeriesColor: false,
       theme: 'dark',
-    },
-
-    plotOptions: {
-      candlestick: {
-        colors: {
-          upward: TypeOfPnLColorHex.PROFIT,
-          downward: TypeOfPnLColorHex.LOSS,
-        },
-        wick: {
-          useFillColor: true,
-        },
-      },
     },
 
     // markers: {
@@ -415,40 +513,252 @@ export default function CandlestickChart({
     //   fillOpacity: 0.5,
     //   dashArray: 2,
     // },
-    annotations: {
-      // position: 'back',
-      yaxis: [
-        {
-          y: 3000,
-          strokeDashArray: 0,
-          borderColor: TypeOfPnLColorHex.TIDEBIT_THEME,
-          width: '105%',
-          fillColor: '#ffffff',
+    // annotations: {
+    //   // position: 'back',
+    //   yaxis: [
+    //     {
+    //       y: 1800,
+    //       strokeDashArray: 3,
+    //       borderColor: TypeOfPnLColorHex.LOSS,
+    //       width: '100%',
+    //       fillColor: '#ffffff',
 
-          label: {
-            position: 'right',
-            borderColor: 'transparent',
-            textAnchor: 'end',
-            offsetY: 10,
-            offsetX: 42,
-            style: {
-              color: '#ffffff',
-              fontSize: '12px',
-              background: TypeOfPnLColorHex.TIDEBIT_THEME,
-              padding: {
-                left: -5,
-                right: 20,
-              },
-            },
-            text: `$3000`,
-            borderWidth: 20,
-          },
+    //       label: {
+    //         position: 'right',
+    //         borderColor: 'transparent',
+    //         textAnchor: 'end',
+    //         offsetY: 10,
+    //         offsetX: 2,
+    //         style: {
+    //           color: '#ffffff',
+    //           fontSize: '12px',
+    //           background: TypeOfPnLColorHex.LOSS,
+    //           padding: {
+    //             right: 10,
+    //           },
+    //         },
+    //         text: `Position $1800 Close`,
+    //         borderWidth: 20,
+    //       },
 
-          offsetX: 0,
-        },
-      ],
-    },
+    //       offsetX: 0,
+    //     },
+    //     {
+    //       y: 3500,
+    //       strokeDashArray: 3,
+    //       borderColor: TypeOfPnLColorHex.PROFIT,
+    //       width: '100%',
+    //       fillColor: '#ffffff',
+
+    //       label: {
+    //         position: 'right',
+    //         borderColor: 'transparent',
+    //         textAnchor: 'end',
+    //         offsetY: 10,
+    //         offsetX: 2,
+    //         style: {
+    //           color: '#ffffff',
+    //           fontSize: '12px',
+    //           background: TypeOfPnLColorHex.PROFIT,
+    //           padding: {
+    //             right: 10,
+    //           },
+    //         },
+    //         text: `Position $3500 Close`,
+    //         borderWidth: 20,
+    //       },
+
+    //       offsetX: 0,
+    //     },
+    //     {
+    //       y: 3000,
+    //       strokeDashArray: 0,
+    //       borderColor: TypeOfPnLColorHex.TIDEBIT_THEME,
+    //       width: '105%',
+    //       fillColor: '#ffffff',
+
+    //       label: {
+    //         position: 'right',
+    //         borderColor: 'transparent',
+    //         textAnchor: 'end',
+    //         offsetY: 10,
+    //         offsetX: 42,
+    //         style: {
+    //           color: '#ffffff',
+    //           fontSize: '12px',
+    //           background: TypeOfPnLColorHex.TIDEBIT_THEME,
+    //           padding: {
+    //             left: -5,
+    //             right: 20,
+    //           },
+    //         },
+    //         text: `$3000`,
+    //         borderWidth: 20,
+    //       },
+
+    //       offsetX: 0,
+    //     },
+    //   ],
+    // },
   };
+
+  // const chartOptionsWithoutPositionLabel: ApexOptions = {
+  //   // series
+  //   chart: {
+  //     type: 'candlestick',
+  //     height: 0,
+
+  //     toolbar: {
+  //       show: false,
+  //       tools: {
+  //         zoom: false,
+  //         zoomin: false,
+  //         zoomout: false,
+  //         pan: false,
+  //       },
+  //     },
+
+  //     // dropShadow: {
+  //     //   enabled: true,
+  //     //   top: 0,
+  //     //   left: 0,
+  //     //   blur: 3,
+  //     //   opacity: 0.5,
+  //     // },
+  //   },
+  //   responsive: [
+  //     {
+  //       breakpoint: 500,
+  //       options: {
+  //         candlestick: {
+  //           width: '1000',
+  //         },
+  //       },
+  //     },
+  //   ],
+  //   title: {
+  //     text: '',
+  //     align: 'left',
+  //   },
+  //   xaxis: {
+  //     type: 'datetime',
+  //     labels: {
+  //       style: {
+  //         colors: TRADING_CHART_BORDER_COLOR,
+  //       },
+  //     },
+  //     axisTicks: {
+  //       show: false,
+  //     },
+  //   },
+  //   grid: {
+  //     show: false,
+  //     // show: true,
+  //     // yaxis: {
+  //     //   lines: {show: false},
+  //     // },
+  //     // xaxis: {
+  //     //   lines: {show: false},
+  //     // },
+  //     // padding: {
+  //     //   right: 300,
+  //     // },
+  //   },
+
+  //   yaxis: {
+  //     tooltip: {
+  //       enabled: true,
+  //     },
+  //     labels: {
+  //       show: true,
+  //       align: 'center',
+  //       style: {
+  //         colors: TRADING_CHART_BORDER_COLOR,
+  //       },
+  //     },
+  //     opposite: true,
+  //     axisBorder: {
+  //       show: true,
+  //       color: TRADING_CHART_BORDER_COLOR,
+  //     },
+  //     axisTicks: {
+  //       show: false,
+  //     },
+  //   },
+  //   tooltip: {
+  //     enabled: true,
+  //     fillSeriesColor: false,
+  //     theme: 'dark',
+  //   },
+
+  //   plotOptions: {
+  //     candlestick: {
+  //       colors: {
+  //         upward: TypeOfPnLColorHex.PROFIT,
+  //         downward: TypeOfPnLColorHex.LOSS,
+  //       },
+  //       wick: {
+  //         useFillColor: true,
+  //       },
+  //     },
+  //   },
+
+  //   // markers: {
+  //   //   discrete: [
+  //   //     {
+  //   //       seriesIndex: 0,
+  //   //       dataPointIndex: dataArray.length - 1,
+  //   //       size: 1,
+  //   //       strokeColor: strokeColor[0],
+  //   //       shape: 'circle',
+  //   //     },
+  //   //   ],
+  //   // },
+  //   // grid: {
+  //   //   show: true,
+  //   //   borderColor: strokeColor[0],
+  //   //   strokeDashArray: 5,
+  //   //   position: 'back',
+  //   // },
+  //   // forecastDataPoints: {
+  //   //   count: 2,
+  //   //   fillOpacity: 0.5,
+  //   //   dashArray: 2,
+  //   // },
+  //   annotations: {
+  //     // position: 'back',
+  //     yaxis: [
+  //       {
+  //         y: 3000,
+  //         strokeDashArray: 0,
+  //         borderColor: TypeOfPnLColorHex.TIDEBIT_THEME,
+  //         width: '105%',
+  //         fillColor: '#ffffff',
+
+  //         label: {
+  //           position: 'right',
+  //           borderColor: 'transparent',
+  //           textAnchor: 'end',
+  //           offsetY: 10,
+  //           offsetX: 42,
+  //           style: {
+  //             color: '#ffffff',
+  //             fontSize: '12px',
+  //             background: TypeOfPnLColorHex.TIDEBIT_THEME,
+  //             padding: {
+  //               left: -5,
+  //               right: 20,
+  //             },
+  //           },
+  //           text: `$3000`,
+  //           borderWidth: 20,
+  //         },
+
+  //         offsetX: 0,
+  //       },
+  //     ],
+  //   },
+  // };
 
   // const displayedPosition = chartOptionsWithPositionLabel;
 
@@ -459,22 +769,54 @@ export default function CandlestickChart({
   // console.log('showPosition state:', showPositionOnChart);
   // console.log('display option:', displayedPosition.annotations.yaxis[0].label.text);
 
-  const [dataSample, setDataSample] = useState({
+  const [lineChart, setLineChart] = useState({
+    options: lineChartOptions,
+  });
+
+  const [candleChart, setCandleChart] = useState({
     options: chartOptionsWithPositionLabel,
     toolbar: {
       show: false,
       enabled: false,
     },
-    series: [
-      // {
-      //   name: 'series-1',
-      //   data: [],
-      // },
-      // {
-      //   name: 'series-1',
-      //   data: marketCtx.candlestickChartData ? [...marketCtx.candlestickChartData] : [],
-      // },
-    ],
+    // series: [
+    //   {
+    //     name: 'candles',
+    //     type: 'candlestick',
+    //     data: marketCtx.candlestickChartData ? [...marketCtx.candlestickChartData] : [],
+    //   },
+    //   {
+    //     name: 'line',
+    //     type: 'line',
+    //     data: dummyLineData,
+    //     // [
+    //     //   {
+    //     //     x: new Date().getTime() - 1000,
+    //     //     y: 5500,
+    //     //   },
+    //     //   {
+    //     //     x: new Date().getTime() - 500,
+    //     //     y: 4602,
+    //     //   },
+    //     //   {
+    //     //     x: new Date().getTime() - 200,
+    //     //     y: 7607,
+    //     //   },
+    //     //   {
+    //     //     x: new Date().getTime() - 100,
+    //     //     y: 4920,
+    //     //   },
+    //     // ],
+    //   },
+    // ],
+    // {
+    //   name: 'series-1',
+    //   data: [],
+    // },
+    // {
+    //   name: 'series-1',
+    //   data: marketCtx.candlestickChartData ? [...marketCtx.candlestickChartData] : [],
+    // },
   });
 
   // useEffect(() => {
@@ -502,43 +844,52 @@ export default function CandlestickChart({
   // const displayedChart = showPositionOnChart ? () : ()
 
   return (
-    <div>
-      <Chart
-        options={dataSample.options}
-        // series={dataSample.series}
-        series={[
-          {
-            name: 'candles',
-            data: marketCtx.candlestickChartData ? [...marketCtx.candlestickChartData] : [],
-          },
-          {
-            name: 'line',
-            type: 'line',
-            data: dummyLineData,
-            // [
-            //   {
-            //     x: new Date().getTime() - 1000,
-            //     y: 5500,
-            //   },
-            //   {
-            //     x: new Date().getTime() - 500,
-            //     y: 4602,
-            //   },
-            //   {
-            //     x: new Date().getTime() - 200,
-            //     y: 7607,
-            //   },
-            //   {
-            //     x: new Date().getTime() - 100,
-            //     y: 4920,
-            //   },
-            // ],
-          },
-        ]}
-        type="candlestick"
-        width={candlestickChartWidth}
-        height={candlestickChartHeight}
-      />
+    <div className="">
+      <div className="">
+        {/* ----------Candlestick chart---------- */}
+        <Chart
+          options={candleChart.options}
+          // series={apexData.series}
+          series={[
+            {
+              name: 'candles',
+              type: 'candlestick',
+              data: marketCtx.candlestickChartData ? [...marketCtx.candlestickChartData] : [],
+            },
+          ]}
+          type="candlestick"
+          width={candlestickChartWidth}
+          height={candlestickChartHeight}
+        />
+      </div>
+
+      <div className="pointer-events-none absolute top-0">
+        {/* ----------Line chart---------- */}
+        <Chart
+          options={lineChart.options}
+          series={[
+            {
+              name: 'line',
+              type: 'line',
+              data: lineDataFetchedFromContext ? [...lineDataFetchedFromContext] : [],
+
+              // data: dummyLineData,
+            },
+            // {
+            //   name: 'horizontal line',
+            //   type: 'line',
+            //   data: dummyHorizontalLineData,
+            //   // data: [{x: new Date().getTime() - 1000, y: 5500}],
+            // },
+          ]}
+          type="line"
+          width={Number(candlestickChartWidth) / 1.05} // `/1.05` === `*0.95`
+          height={Number(candlestickChartHeight) / 1.05}
+          // width={candlestickChartWidth}
+          // height={candlestickChartHeight}
+        />
+      </div>
+
       {/* <MarketContext.Consumer>
         {({showPositionOnChart}) => {
           console.log('showPositionOnChart in chart rendering: ', showPositionOnChart);

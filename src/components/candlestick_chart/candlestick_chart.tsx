@@ -16,8 +16,10 @@ import {randomFloatFromInterval, randomIntFromInterval} from '../../lib/common';
 const Chart = dynamic(() => import('react-apexcharts'), {ssr: false});
 // const Chart = dynamic(() => import('apexcharts'), {ssr: false});
 
-interface ILineGraphProps {
+interface ITradingChartGraphProps {
   strokeColor: string[];
+  candlestickOn: boolean;
+  lineGraphOn: boolean;
   // dataArray: number[];
   candlestickChartWidth: string;
   // annotatedValue: number;
@@ -92,10 +94,12 @@ const dummyHorizontalLineData = getDummyHorizontalLineData(80);
 
 export default function CandlestickChart({
   strokeColor,
+  candlestickOn,
+  lineGraphOn,
   candlestickChartWidth,
   candlestickChartHeight,
   ...otherProps
-}: ILineGraphProps): JSX.Element {
+}: ITradingChartGraphProps): JSX.Element {
   const marketCtx = useContext(MarketContext);
 
   const lineDataFetchedFromContext = marketCtx.candlestickChartData?.map((data, i) => ({
@@ -391,6 +395,9 @@ export default function CandlestickChart({
           zoomout: false,
           pan: false,
         },
+      },
+      animations: {
+        enabled: false,
       },
 
       // // TODO: realtime updated chart needs `useEffect` to renew the data series
@@ -844,9 +851,10 @@ export default function CandlestickChart({
   // const displayedChart = showPositionOnChart ? () : ()
 
   return (
-    <div className="">
+    <div className="relative">
       <div className="">
         {/* ----------Candlestick chart---------- */}
+        {/* TODO: draw three svg in total to separate the functionality */}
         <Chart
           options={candleChart.options}
           // series={apexData.series}
@@ -861,33 +869,51 @@ export default function CandlestickChart({
           width={candlestickChartWidth}
           height={candlestickChartHeight}
         />
+        {/* {candlestickOn && (
+          <Chart
+            options={candleChart.options}
+            // series={apexData.series}
+            series={[
+              {
+                name: 'candles',
+                type: 'candlestick',
+                data: marketCtx.candlestickChartData ? [...marketCtx.candlestickChartData] : [],
+              },
+            ]}
+            type="candlestick"
+            width={candlestickChartWidth}
+            height={candlestickChartHeight}
+          />
+        )} */}
       </div>
 
       <div className="pointer-events-none absolute top-0">
         {/* ----------Line chart---------- */}
-        <Chart
-          options={lineChart.options}
-          series={[
-            {
-              name: 'line',
-              type: 'line',
-              data: lineDataFetchedFromContext ? [...lineDataFetchedFromContext] : [],
+        {lineGraphOn && (
+          <Chart
+            options={lineChart.options}
+            series={[
+              {
+                name: 'line',
+                type: 'line',
+                data: lineDataFetchedFromContext ? [...lineDataFetchedFromContext] : [],
 
-              // data: dummyLineData,
-            },
-            // {
-            //   name: 'horizontal line',
-            //   type: 'line',
-            //   data: dummyHorizontalLineData,
-            //   // data: [{x: new Date().getTime() - 1000, y: 5500}],
-            // },
-          ]}
-          type="line"
-          width={Number(candlestickChartWidth) / 1.05} // `/1.05` === `*0.95`
-          height={Number(candlestickChartHeight) / 1.05}
-          // width={candlestickChartWidth}
-          // height={candlestickChartHeight}
-        />
+                // data: dummyLineData,
+              },
+              // {
+              //   name: 'horizontal line',
+              //   type: 'line',
+              //   data: dummyHorizontalLineData,
+              //   // data: [{x: new Date().getTime() - 1000, y: 5500}],
+              // },
+            ]}
+            type="line"
+            width={Number(candlestickChartWidth) / 1.05} // `/1.05` === `*0.95`
+            height={Number(candlestickChartHeight) / 1.05}
+            // width={candlestickChartWidth}
+            // height={candlestickChartHeight}
+          />
+        )}
       </div>
 
       {/* <MarketContext.Consumer>

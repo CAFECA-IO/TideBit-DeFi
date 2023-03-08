@@ -122,17 +122,24 @@ export const updateDummyCandlestickChartData = (data: ICandlestickData[]): ICand
   };
 
   // Add new data and remove the first element
-  newData.pop(); // remove null data
+  const withoutFirst = newData.slice(1); // remove the first element
+  const withoutLast = withoutFirst.slice(0, withoutFirst.length - 1); // remove the last element
+  const withNewData = withoutLast.concat(newCandlestickData); // add new data to end
+  const withNullData = withNewData.concat({x: new Date(), y: [null, null, null, null]}); // add null data to end
 
-  newData.shift();
+  return withNullData;
 
-  newData.push(newCandlestickData);
-  newData.push({
-    x: new Date(),
-    y: [null, null, null, null],
-  }); // add null data back
+  // newData.pop(); // remove null data
 
-  return newData;
+  // newData.shift();
+
+  // newData.push(newCandlestickData);
+  // newData.push({
+  //   x: new Date(),
+  //   y: [null, null, null, null],
+  // }); // add null data back
+
+  // return newData;
 };
 
 /**
@@ -170,6 +177,8 @@ export default function CandlestickChart({
         close: number | null;
       }[]
     >([]);
+  // console.log('after declaration of toCandlestickChartData', toCandlestickChartDataRef.current);
+
   // () =>
   // candlestickChartDataFromCtx?.map(data => ({
   //   x: data.x,
@@ -201,6 +210,8 @@ export default function CandlestickChart({
   >();
 
   useEffect(() => {
+    if (marketCtx.candlestickChartData === null) return;
+
     console.log('update candlestick chart data');
 
     // TODO: BUt it won't update the chart data
@@ -237,7 +248,7 @@ export default function CandlestickChart({
       }));
 
       setToLatestPriceLineData(toLatestPriceLineData);
-    }, 1000 * 1);
+    }, 1000 * 10);
 
     return () => {
       clearInterval(setStateInterval);
@@ -302,13 +313,13 @@ export default function CandlestickChart({
 
   // const {candlestickChartData} = marketCtx;
 
-  // console.log('candleData', candlestickChartDataFromCtx);
+  console.log('candleData from market ctx', candlestickChartDataFromCtx);
 
   const updatedCandleData = !isCandlestickDataEmpty
     ? updateDummyCandlestickChartData(candlestickChartDataFromCtx)
     : [];
 
-  // console.log('updatedCandleData', updatedCandleData);
+  console.log('updatedCandleData', updatedCandleData);
 
   // const toLineChartData = candlestickChartDataFromCtx.map((data, i) => ({
   //   x: data.x,
@@ -1145,27 +1156,6 @@ export default function CandlestickChart({
     // },
   });
 
-  // const sampleDataDates = [
-  //   {x: new Date(2016, 6, 1), open: 5, close: 10, high: 15, low: 0},
-  //   {x: new Date(2016, 6, 2), open: 10, close: 15, high: 20, low: 5},
-  //   {x: new Date(2016, 6, 3), open: 15, close: 20, high: 22, low: 10},
-  //   {x: new Date(2016, 6, 4), open: 20, close: 10, high: 25, low: 7},
-  //   {x: new Date(2016, 6, 5), open: 20, close: 10, high: 25, low: 7},
-  //   {x: new Date(2016, 6, 6), open: 20, close: 10, high: 25, low: 7},
-  //   {x: new Date(2016, 6, 7), open: 20, close: 10, high: 25, low: 7},
-  //   {x: new Date(2016, 6, 8), open: 20, close: 10, high: 25, low: 7},
-  //   {x: new Date(2016, 6, 9), open: 20, close: 10, high: 25, low: 7},
-  //   {x: new Date(2016, 6, 10), open: 20, close: 10, high: 25, low: 7},
-  //   {x: new Date(2016, 6, 11), open: 20, close: 10, high: 25, low: 7},
-  //   {x: new Date(2016, 6, 5), open: 10, close: 8, high: 15, low: 5},
-  // ];
-
-  // useEffect(() => {
-  //   if (marketCtx.candlestickChartData === null) {
-  //     <p>Loading</p>;
-  //   }
-  // }, [marketCtx.candlestickChartData]);
-
   return (
     <>
       {/* w-2/3 xl:w-4/5 */}
@@ -1176,7 +1166,7 @@ export default function CandlestickChart({
           data={sampleDataDates}
           // data={marketCtx.candlestickChartData ? [...marketCtx.candlestickChartData] : []}
         /> */}
-        {!isCandlestickDataEmpty ? (
+        {!marketCtx.candlestickChartData !== null ? (
           <V.VictoryChart
             // animate={{duration: 300}}
             // chartTheme
@@ -1184,7 +1174,6 @@ export default function CandlestickChart({
             minDomain={{y: minNumber !== null ? minNumber * 0.95 : undefined}}
             maxDomain={{y: maxNumber !== null ? maxNumber * 1.05 : undefined}} // TODO: measure the biggest number to decide the y-axis
             // domainPadding={{x: 1}}
-            scale={{x: 'time'}}
             width={Number(candlestickChartWidth)}
             height={Number(candlestickChartHeight)}
             // containerComponent={
@@ -1199,6 +1188,8 @@ export default function CandlestickChart({
           >
             <V.VictoryAxis
               // width={Number(candlestickChartWidth)}
+              // scale={{x: 'auto'}}
+              // scale={{x: 'linear', y: 'log'}}
               style={
                 {
                   // ticks: {color: 'white'},
@@ -1254,7 +1245,7 @@ export default function CandlestickChart({
                   positive: TypeOfPnLColorHex.PROFIT,
                   negative: TypeOfPnLColorHex.LOSS,
                 }}
-                data={toCandlestickChartDataRef.current}
+                data={toCandlestickChartDataRef.current ?? []}
                 // openLabels
                 // openLabelComponent={<V.VictoryTooltip pointerLength={10} />}
 
@@ -1354,7 +1345,7 @@ export default function CandlestickChart({
                 //     },
                 //   },
                 // ]}
-                data={toLineChartDataRef.current}
+                data={toLineChartDataRef.current ?? []}
                 // data={toLineChartData ? [...toLineChartData] : []}
               />
             )}
@@ -1382,7 +1373,7 @@ export default function CandlestickChart({
                 data: {stroke: LINE_GRAPH_STROKE_COLOR.TIDEBIT_THEME, strokeWidth: 1},
                 // parent: {border: '1px solid #ccc'},
               }}
-              data={toLatestPriceLineDataRef.current}
+              data={toLatestPriceLineDataRef.current ?? []}
             />
           </V.VictoryChart>
         ) : (

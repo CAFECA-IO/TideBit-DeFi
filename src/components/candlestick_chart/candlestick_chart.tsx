@@ -1,4 +1,3 @@
-/*eslint-disable no-console */
 import React, {useState, useContext, useEffect} from 'react';
 import dynamic from 'next/dynamic';
 import ApexCharts, {ApexOptions} from 'apexcharts';
@@ -313,13 +312,13 @@ export default function CandlestickChart({
 
   // const {candlestickChartData} = marketCtx;
 
-  console.log('candleData from market ctx', candlestickChartDataFromCtx);
+  // console.log('candleData from market ctx', candlestickChartDataFromCtx);
 
   const updatedCandleData = !isCandlestickDataEmpty
     ? updateDummyCandlestickChartData(candlestickChartDataFromCtx)
     : [];
 
-  console.log('updatedCandleData', updatedCandleData);
+  // console.log('updatedCandleData', updatedCandleData);
 
   const toLineChartData = candlestickChartDataFromCtx.map((data, i) => ({
     x: data.x,

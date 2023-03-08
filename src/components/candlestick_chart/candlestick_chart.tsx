@@ -1184,7 +1184,7 @@ export default function CandlestickChart({
             minDomain={{y: minNumber !== null ? minNumber * 0.95 : undefined}}
             maxDomain={{y: maxNumber !== null ? maxNumber * 1.05 : undefined}} // TODO: measure the biggest number to decide the y-axis
             // domainPadding={{x: 1}}
-            // scale={{x: 'time'}}
+            scale={{x: 'time'}}
             width={Number(candlestickChartWidth)}
             height={Number(candlestickChartHeight)}
             // containerComponent={

@@ -1,7 +1,7 @@
 import React, {createContext, useRef, useContext} from 'react';
 import useState from 'react-usestateref';
-import io, {Socket} from 'socket.io-client';
 import {IAPIRequest} from '../constants/api_request';
+import {Events} from '../constants/events';
 import {TideBitEvent} from '../constants/tidebit_event';
 import {ITickerData} from '../interfaces/tidebit_defi_background/ticker_data';
 import {NotificationContext} from './notification_context';
@@ -39,7 +39,7 @@ interface IRequest {
 }
 
 interface IWorkerContext {
-  wsWorker: Socket | null;
+  wsWorker: WebSocket | null;
   apiWorker: Worker | null;
   init: () => void;
   requestHandler: (request: TypeRequest) => void;
@@ -57,11 +57,10 @@ export const WorkerContext = createContext<IWorkerContext>({
 });
 
 let jobTimer: NodeJS.Timeout | null = null;
-let wsWorker: Socket | null;
+let wsWorker: WebSocket | null;
 
 export const WorkerProvider = ({children}: IWorkerProvider) => {
   const notificationCtx = useContext(NotificationContext);
-  const [wsIsConnected, setWSIsConnected] = useState<boolean>(false);
   const [apiWorker, setAPIWorker, apiWorkerRef] = useState<Worker | null>(null);
   const jobQueueOfWS = useRef<((...args: []) => Promise<void>)[]>([]);
   const jobQueueOfAPI = useRef<((...args: []) => Promise<void>)[]>([]);
@@ -76,52 +75,36 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
       delete requests.current[name];
     };
   };
+
   const wsInit = async () => {
-    try {
-      await fetch('/api/socketio');
-    } catch (error) {
-      // ++TODO
+    wsWorker = new WebSocket(`wss://new.tidebit.com/ws`);
+    if (wsWorker) {
+      wsWorker.onmessage = msg => {
+        const metaData = JSON.parse(msg.data);
+        switch (metaData.type) {
+          case Events.TICKERS:
+            // notificationCtx.emitter.emit(TideBitEvent.TICKER, metaData.data);
+            break;
+          case Events.UPDATE:
+            break;
+          case Events.TRADES:
+            break;
+          case Events.PUBILC_TRADES:
+            break;
+          case Events.ACCOUNT:
+            break;
+          case Events.ORDER:
+            break;
+          case Events.TRADE:
+            break;
+          case Events.CANDLE_ON_UPDATE:
+            // notificationCtx.emitter.emit(TideBitEvent.CANDLESTICK, metaData.data);
+            break;
+          default:
+            break;
+        }
+      };
     }
-    wsWorker = io();
-    wsWorker.on('connect', () => {
-      if (wsWorker) {
-        wsWorker.emit(TideBitEvent.NOTIFICATIONS);
-        setWSIsConnected(true);
-      }
-    });
-
-    wsWorker.on(TideBitEvent.NOTIFICATIONS, data => {
-      notificationCtx.emitter.emit(TideBitEvent.NOTIFICATIONS, data);
-    });
-
-    wsWorker.on(TideBitEvent.TICKER, data => {
-      notificationCtx.emitter.emit(TideBitEvent.TICKER, data);
-    });
-
-    wsWorker.on(TideBitEvent.TICKER_STATISTIC, data => {
-      notificationCtx.emitter.emit(TideBitEvent.TICKER_STATISTIC, data);
-    });
-
-    wsWorker.on(TideBitEvent.TICKER_STATISTIC, data => {
-      notificationCtx.emitter.emit(TideBitEvent.TICKER_STATISTIC, data);
-    });
-
-    wsWorker.on(TideBitEvent.CANDLESTICK, data => {
-      notificationCtx.emitter.emit(TideBitEvent.CANDLESTICK, data);
-    });
-
-    wsWorker.on(TideBitEvent.BALANCE, data => {
-      notificationCtx.emitter.emit(TideBitEvent.BALANCE, data);
-    });
-
-    wsWorker.on(TideBitEvent.ORDER, data => {
-      notificationCtx.emitter.emit(TideBitEvent.ORDER, data);
-    });
-
-    wsWorker.on('disconnect', () => {
-      // console.log('disconnect');
-      setWSIsConnected(false);
-    });
   };
 
   const init = async () => {
@@ -143,7 +126,7 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
   };
 
   const _wsWorker = async () => {
-    if (wsIsConnected) {
+    if (wsWorker?.readyState === 1) {
       const job = jobQueueOfWS.current.shift();
       if (job) {
         await job();
@@ -192,8 +175,17 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
 
   const tickerChangeHandler = async (ticker: ITickerData) => {
     notificationCtx.emitter.emit(TideBitEvent.TICKER_CHANGE, ticker);
-    if (wsIsConnected && wsWorker) {
-      wsWorker.emit(TideBitEvent.TICKER_CHANGE, ticker.currency);
+    // eslint-disable-next-line no-console
+    // console.log(`tickerChangeHandler wsWorker?.readyState`, wsWorker?.readyState, ticker)
+    if (wsWorker?.readyState === 1) {
+      wsWorker.send(
+        JSON.stringify({
+          op: 'registerMarket',
+          args: {
+            market: ticker.currency,
+          },
+        })
+      );
     } else {
       createJob(JobType.WS, () => tickerChangeHandler(ticker));
     }
@@ -201,8 +193,15 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
 
   const registerUserHandler = async (address: string) => {
     notificationCtx.emitter.emit(TideBitEvent.SERVICE_TERM_ENABLED, address);
-    if (wsIsConnected && wsWorker) {
-      wsWorker.emit(TideBitEvent.SERVICE_TERM_ENABLED, address);
+    if (wsWorker?.readyState === 1) {
+      wsWorker.send(
+        JSON.stringify({
+          op: 'userStatusUpdate',
+          args: {
+            address: address,
+          },
+        })
+      );
     } else {
       createJob(JobType.WS, () => registerUserHandler(address));
     }

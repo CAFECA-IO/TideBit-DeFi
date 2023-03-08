@@ -135,12 +135,13 @@ export default function CandlestickChart({
       style: {
         tickLabels: {
           // this changed the color of my numbers to white
-          fill: 'white',
-          fontSize: 10,
+          fill: LIGHT_GRAY_COLOR,
+          fontSize: 12,
+          fontFamily: 'barlow',
           padding: 5,
         },
         axis: {
-          stroke: 'white',
+          stroke: LIGHT_GRAY_COLOR,
           y: {
             stroke: 'white',
             position: 'right',
@@ -940,7 +941,8 @@ export default function CandlestickChart({
   return (
     <>
       {/* w-2/3 xl:w-4/5 */}
-      <div className="">
+      {/* TODO: Temporary adjustment of chart size */}
+      <div className="" style={{width: '85%'}}>
         {/* <VictoryCandlestick
           // candleWidth={55}
           data={sampleDataDates}
@@ -973,9 +975,7 @@ export default function CandlestickChart({
                 // tickLabels: {fontColor: 'white'},
               }
             }
-            tickFormat={t =>
-              `${timestampToString(t / 1000).date} ${timestampToString(t / 1000).time}`
-            }
+            tickFormat={t => ` ${timestampToString(t / 1000).time}`}
           />
           <V.VictoryAxis
             // axisLabelComponent={<V.VictoryLabel dy={-20} />}

@@ -170,53 +170,137 @@ export default function CandlestickChart({
         close: number | null;
       }[]
     >([]);
+  // () =>
+  // candlestickChartDataFromCtx?.map(data => ({
+  //   x: data.x,
+  //   open: data.y[0],
+  //   high: data.y[1],
+  //   low: data.y[2],
+  //   close: data.y[3],
+  //   // label: JSON.stringify({open: data.y[0], high: data.y[1], low: data.y[2], close: data.y[3]}),
+  // }))
 
   const [toLineChartData, setToLineChartData, toLineChartDataRef] = useStateRef<
     {
       x: Date;
       y: number | null;
     }[]
-  >();
+  >(() =>
+    candlestickChartDataFromCtx.map((data, i) => ({
+      x: data.x,
+      y: data.y[3],
+    }))
+  );
 
   const [toLatestPriceLineData, setToLatestPriceLineData, toLatestPriceLineDataRef] = useStateRef<
-    {
-      x: Date;
-      y: number | null;
-    }[]
+    | {
+        x: Date;
+        y: number | null;
+      }[]
+    | undefined
   >();
 
   useEffect(() => {
-    const toCandlestickChartData = candlestickChartDataFromCtx?.map(data => ({
-      x: data.x,
-      open: data.y[0],
-      high: data.y[1],
-      low: data.y[2],
-      close: data.y[3],
-      // label: JSON.stringify({open: data.y[0], high: data.y[1], low: data.y[2], close: data.y[3]}),
-    }));
-    setToCandlestickChartData(toCandlestickChartData);
+    console.log('update candlestick chart data');
 
-    const toLineChartData = candlestickChartDataFromCtx.map((data, i) => ({
-      x: data.x,
-      y: data.y[3],
-    }));
-    setToLineChartData(toLineChartData);
+    // TODO: BUt it won't update the chart data
+    const setStateInterval = setInterval(() => {
+      // setCandlestickChartData(updateDummyCandlestickChartData(candlestickChartDataRef.current));
+      const updatedCandlestickChartData = updateDummyCandlestickChartData(
+        candlestickChartDataRef.current
+      );
+      const toCandlestickChartData = updatedCandlestickChartData?.map(data => ({
+        x: data.x,
+        open: data.y[0],
+        high: data.y[1],
+        low: data.y[2],
+        close: data.y[3],
+        // label: JSON.stringify({open: data.y[0], high: data.y[1], low: data.y[2], close: data.y[3]}),
+      }));
+      // setToCandlestickChartData(toCandlestickChartDataTemp);
+      setToCandlestickChartData(toCandlestickChartData);
 
-    const latestPrice = toLineChartData?.[toLineChartData.length - 2]?.y;
-    const toLastestPriceHorizontalLineData = toLineChartData?.map(data => ({
-      x: data?.x,
-      y: latestPrice,
-    }));
-    setToLatestPriceLineData(toLastestPriceHorizontalLineData);
+      const toLineChartData = updatedCandlestickChartData.map((data, i) => ({
+        x: data.x,
+        y: data.y[3],
+      }));
+      setToLineChartData(toLineChartData);
 
-    console.log('useEffect');
-  }, [marketCtx.candlestickChartData]);
+      const latestPrice = toLineChartData?.[toLineChartData.length - 2]?.y;
+      const toLatestPriceLineData = toLineChartData?.map(data => ({
+        x: data?.x,
+        y: latestPrice,
+      }));
+
+      setToLatestPriceLineData(toLatestPriceLineData);
+    }, 1000 * 1);
+
+    return () => {
+      clearInterval(setStateInterval);
+    };
+  }, []);
+
+  // TODO: to be continued
+  // useEffect(() => {
+  //   // const toCandlestickChartData = candlestickChartDataFromCtx?.map(data => ({
+  //   //   x: data.x,
+  //   //   open: data.y[0],
+  //   //   high: data.y[1],
+  //   //   low: data.y[2],
+  //   //   close: data.y[3],
+  //   //   // label: JSON.stringify({open: data.y[0], high: data.y[1], low: data.y[2], close: data.y[3]}),
+  //   // }));
+  //   // setToCandlestickChartData(toCandlestickChartData);
+
+  //   // const toLineChartData = candlestickChartDataFromCtx.map((data, i) => ({
+  //   //   x: data.x,
+  //   //   y: data.y[3],
+  //   // }));
+  //   // setToLineChartData(toLineChartData);
+
+  //   // const latestPrice = toLineChartData?.[toLineChartData.length - 2]?.y;
+  //   // const toLastestPriceHorizontalLineData = toLineChartData?.map(data => ({
+  //   //   x: data?.x,
+  //   //   y: latestPrice,
+  //   // }));
+  //   // setToLatestPriceLineData(toLastestPriceHorizontalLineData);
+
+  //   setCandlestickChartData(
+  //     marketCtx.candlestickChartData !== null ? marketCtx.candlestickChartData : []
+  //   );
+
+  //   console.log('useEffect');
+  // }, [marketCtx.candlestickChartData]);
+
+  // const toCandlestickChartData = candlestickChartDataFromCtx?.map(data => ({
+  //   x: data.x,
+  //   open: data.y[0],
+  //   high: data.y[1],
+  //   low: data.y[2],
+  //   close: data.y[3],
+  //   // label: JSON.stringify({open: data.y[0], high: data.y[1], low: data.y[2], close: data.y[3]}),
+  // }));
+  // // setToCandlestickChartData(toCandlestickChartDataTemp);
+
+  // const toLineChartData = candlestickChartDataFromCtx.map((data, i) => ({
+  //   x: data.x,
+  //   y: data.y[3],
+  // }));
+  // // setToLineChartData(toLineChartDataTemp);
+
+  // const latestPrice = toLineChartData?.[toLineChartData.length - 2]?.y;
+  // const toLatestPriceLineData = toLineChartData?.map(data => ({
+  //   x: data?.x,
+  //   y: latestPrice,
+  // }));
+
+  // // setToLatestPriceLineData(toLatestPriceLineDataTemp);
 
   // const {candlestickChartData} = marketCtx;
 
   // console.log('candleData', candlestickChartDataFromCtx);
 
-  const updatedCandleData = isCandlestickDataEmpty
+  const updatedCandleData = !isCandlestickDataEmpty
     ? updateDummyCandlestickChartData(candlestickChartDataFromCtx)
     : [];
 
@@ -1057,30 +1141,6 @@ export default function CandlestickChart({
     // },
   });
 
-  // useEffect(() => {
-  //   // let chart = new ApexCharts(el, options);
-  //   ApexCharts.exec('candles', 'updateOptions', displayedPosition);
-  // }, [showPositionOnChart]);
-
-  // useEffect(() => {
-  //   setDataSample({
-  //     options: displayedPosition,
-  //     toolbar: {show: false, enabled: false},
-  //     series: [
-  //       {
-  //         name: 'series-1',
-  //         data: [...candlestickData],
-  //       },
-  //     ],
-  //   });
-  // }, []);
-
-  // setDataSample({
-  //   options: displayedPosition,
-  // });
-
-  // const displayedChart = showPositionOnChart ? () : ()
-
   // const sampleDataDates = [
   //   {x: new Date(2016, 6, 1), open: 5, close: 10, high: 15, low: 0},
   //   {x: new Date(2016, 6, 2), open: 10, close: 15, high: 20, low: 5},
@@ -1190,7 +1250,7 @@ export default function CandlestickChart({
                   positive: TypeOfPnLColorHex.PROFIT,
                   negative: TypeOfPnLColorHex.LOSS,
                 }}
-                data={toCandlestickChartData}
+                data={toCandlestickChartDataRef.current}
                 // openLabels
                 // openLabelComponent={<V.VictoryTooltip pointerLength={10} />}
 
@@ -1290,7 +1350,8 @@ export default function CandlestickChart({
                 //     },
                 //   },
                 // ]}
-                data={toLineChartData ? [...toLineChartData] : []}
+                data={toLineChartDataRef.current}
+                // data={toLineChartData ? [...toLineChartData] : []}
               />
             )}
 
@@ -1317,7 +1378,7 @@ export default function CandlestickChart({
                 data: {stroke: LINE_GRAPH_STROKE_COLOR.TIDEBIT_THEME, strokeWidth: 1},
                 // parent: {border: '1px solid #ccc'},
               }}
-              data={toLatestPriceLineData}
+              data={toLatestPriceLineDataRef.current}
             />
           </V.VictoryChart>
         ) : (

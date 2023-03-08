@@ -25,6 +25,9 @@
     "ReserveRatioBlock_Card_2": "Blockchain",
     "ReserveRatioBlock_Description": "TideBit user asset holdings",
     "ReserveRatioBlock_Description_2": "TideBit wallet assets"
+  },
+  "trade_page": {
+    "TickerSelectorTab_All": "All",
+    "TickerSelectorTab_Favorite": "Favorite"
   }
-
 }

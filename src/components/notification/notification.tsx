@@ -25,8 +25,7 @@ export default function Notification({
 
   const MAX_NOTIFICATION_WIDTH = 479;
 
-  const hamburgerStyles =
-    'block bg-lightWhite h-3px rounded-12px opacity-100 w-full ease-in duration-300';
+  const hamburgerStyles = 'block bg-lightWhite h-3px rounded-12px w-full ease-in duration-300';
   // hamburger animation
   const displayedMobileNavBarLine1 = !componentVisible
     ? 'translate-y-0 rotate-0'
@@ -96,7 +95,7 @@ export default function Notification({
           componentVisible ? 'z-30' : 'z-30'
         } flex overflow-x-hidden overflow-y-hidden outline-none focus:outline-none`}
       >
-        <div className="relative my-6 mx-auto w-auto max-w-xl">
+        <div className="relative my-3 mx-auto w-auto max-w-xl">
           {' '}
           <div className={`relative`}>
             {/* sidebar self */}
@@ -167,9 +166,13 @@ export default function Notification({
             className="z-50 inline-flex items-center justify-center rounded-md p-2"
           >
             <div className="relative h-20px w-30px cursor-pointer">
-              <span className={`${hamburgerStyles} ${displayedMobileNavBarLine1}`}></span>
+              <span
+                className={`${hamburgerStyles} ${displayedMobileNavBarLine1} opacity-100`}
+              ></span>
               <span className={`${hamburgerStyles} ${displayedMobileNavBarLine2}`}></span>
-              <span className={`${hamburgerStyles} ${displayedMobileNavBarLine3}`}></span>
+              <span
+                className={`${hamburgerStyles} ${displayedMobileNavBarLine3} opacity-100`}
+              ></span>
             </div>
           </button>
         </div>

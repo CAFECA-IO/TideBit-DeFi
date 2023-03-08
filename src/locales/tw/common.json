@@ -25,5 +25,9 @@
     "ReserveRatioBlock_Card_2": "區塊鏈",
     "ReserveRatioBlock_Description": "TideBit 用戶資產持有量",
     "ReserveRatioBlock_Description_2": "TideBit 錢包資產"
+  },
+  "trade_page": {
+    "TickerSelectorTab_All": "全部",
+    "TickerSelectorTab_Favorite": "我的最愛"
   }
 }

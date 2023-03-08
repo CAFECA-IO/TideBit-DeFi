@@ -162,6 +162,15 @@ export default function CandlestickChart({
     y: data.y[3],
   }));
 
+  const latestPrice = lineDataFetchedFromContext?.[lineDataFetchedFromContext.length - 2].y;
+
+  const lastestPriceHorizontalLineData = lineDataFetchedFromContext?.map(data => ({
+    x: data.x,
+    y: latestPrice,
+  }));
+
+  console.log('latest horizontal line data', lastestPriceHorizontalLineData);
+
   // TODO: Make sure the OHLC order is correct
   const transformedCandlestickData = marketCtx.candlestickChartData?.map(data => ({
     x: data.x,
@@ -232,6 +241,7 @@ export default function CandlestickChart({
   // }, 0);
 
   const maxNumber = ys.length > 0 ? Math.max(...ys) : null;
+  const minNumber = ys.length > 0 ? Math.min(...ys) : null;
 
   // const largestY = ys && ys.length > 0 ? Math.max(...ys) : undefined;
   // const largestY = ys && ys.reduce((acc, val) => val > acc ? val : acc, -Infinity);
@@ -243,6 +253,7 @@ export default function CandlestickChart({
   // console.log(largestY);
 
   // console.log('max number', maxNumber);
+  console.log('min number', minNumber);
 
   // console.log('position context info in candlestick chart', positionInfoOnChart);
 
@@ -1027,7 +1038,7 @@ export default function CandlestickChart({
     <>
       {/* w-2/3 xl:w-4/5 */}
       {/* TODO: Temporary adjustment of chart size */}
-      <div className="" style={{width: '70%'}}>
+      <div className="-ml-5" style={{width: '70%'}}>
         {/* <VictoryCandlestick
           // candleWidth={55}
           data={sampleDataDates}
@@ -1036,6 +1047,7 @@ export default function CandlestickChart({
         <V.VictoryChart
           // chartTheme
           theme={chartTheme}
+          minDomain={{y: minNumber !== null ? minNumber * 0.95 : undefined}}
           maxDomain={{y: maxNumber !== null ? maxNumber * 1.05 : undefined}} // TODO: measure the biggest number to decide the y-axis
           // domainPadding={{x: 1}}
           scale={{x: 'time'}}
@@ -1065,7 +1077,7 @@ export default function CandlestickChart({
           <V.VictoryAxis
             // axisLabelComponent={<V.VictoryLabel dy={-20} />}
             // offsetX={600}
-            offsetX={Number(candlestickChartWidth) / 1.05}
+            offsetX={Number(candlestickChartWidth) / 1.08}
             dependentAxis
             // tickLabelComponent={<V.VictoryLabel verticalAnchor="start" textAnchor="start" x={0} />}
           />
@@ -1192,6 +1204,24 @@ export default function CandlestickChart({
               data={lineDataFetchedFromContext ? [...lineDataFetchedFromContext] : []}
             />
           )}
+
+          {/* {!candlestickOn && !lineGraphOn && (
+            <V.VictoryLine
+              style={{
+                data: {stroke: LINE_GRAPH_STROKE_COLOR.DEFAULT, strokeWidth: 1},
+                // parent: {border: '1px solid #ccc'},
+              }}
+              data={lastestPriceHorizontalLineData}
+            />
+          )} */}
+
+          <V.VictoryLine
+            style={{
+              data: {stroke: LINE_GRAPH_STROKE_COLOR.TIDEBIT_THEME, strokeWidth: 1},
+              // parent: {border: '1px solid #ccc'},
+            }}
+            data={lastestPriceHorizontalLineData}
+          />
         </V.VictoryChart>{' '}
         {/* ----------Candlestick chart---------- */}
         {/* TODO: draw three svg in total to separate the functionality */}

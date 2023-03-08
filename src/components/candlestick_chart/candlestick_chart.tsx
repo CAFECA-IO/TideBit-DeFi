@@ -116,7 +116,7 @@ export default function CandlestickChart({
 
   const lineDataFetchedFromContext = marketCtx.candlestickChartData?.map((data, i) => ({
     x: data.x,
-    y: data.y[0],
+    y: data.y[3],
   }));
 
   // TODO: Make sure the OHLC order is correct
@@ -986,7 +986,7 @@ export default function CandlestickChart({
     <>
       {/* w-2/3 xl:w-4/5 */}
       {/* TODO: Temporary adjustment of chart size */}
-      <div className="" style={{width: '100%'}}>
+      <div className="" style={{width: '70%'}}>
         {/* <VictoryCandlestick
           // candleWidth={55}
           data={sampleDataDates}
@@ -1023,6 +1023,8 @@ export default function CandlestickChart({
           />
           <V.VictoryAxis
             // axisLabelComponent={<V.VictoryLabel dy={-20} />}
+            // offsetX={600}
+            offsetX={Number(candlestickChartWidth) / 1.05}
             dependentAxis
             // tickLabelComponent={<V.VictoryLabel verticalAnchor="start" textAnchor="start" x={0} />}
           />

@@ -1029,93 +1029,96 @@ export default function CandlestickChart({
             // tickLabelComponent={<V.VictoryLabel verticalAnchor="start" textAnchor="start" x={0} />}
           />
 
-          <V.VictoryCandlestick
-            style={{
-              data: {
-                // fill: '#c43a31',
-                // fill: 'none',
-                fillOpacity: 1,
-                // stroke: '#c43a31',
-                // VictoryCandlestickStyleInterface["data"]
-                stroke: (d: any) =>
-                  d.close > d.open ? TypeOfPnLColorHex.LOSS : TypeOfPnLColorHex.PROFIT,
-                strokeWidth: 1,
-                strokeOpacity: 0.5,
-                textDecorationColor: 'white',
-              },
-            }}
-            // style={{close: {stroke: 'black'}, open: {stroke: 'black'}}}
-            // labelOrientation={{
-            //   close: 'right',
-            //   open: 'right',
-            //   high: 'top',
-            //   low: 'bottom',
-            // }}
-            // padding={{top: 0, bottom: 0, left: 20, right: 0}}
-            // candleWidth={10}
-            candleRatio={0.5}
-            candleColors={{positive: TypeOfPnLColorHex.PROFIT, negative: TypeOfPnLColorHex.LOSS}}
-            data={transformedCandlestickData}
-            // openLabels
-            // openLabelComponent={<V.VictoryTooltip pointerLength={10} />}
+          {candlestickOn && (
+            <V.VictoryCandlestick
+              style={{
+                data: {
+                  // fill: '#c43a31',
+                  // fill: 'none',
+                  fillOpacity: 1,
+                  // stroke: '#c43a31',
+                  // VictoryCandlestickStyleInterface["data"]
+                  stroke: (d: any) =>
+                    d.close > d.open ? TypeOfPnLColorHex.LOSS : TypeOfPnLColorHex.PROFIT,
+                  strokeWidth: 1,
+                  strokeOpacity: 0.5,
+                  textDecorationColor: 'white',
+                },
+              }}
+              // style={{close: {stroke: 'black'}, open: {stroke: 'black'}}}
+              // labelOrientation={{
+              //   close: 'right',
+              //   open: 'right',
+              //   high: 'top',
+              //   low: 'bottom',
+              // }}
+              // padding={{top: 0, bottom: 0, left: 20, right: 0}}
+              // candleWidth={10}
+              candleRatio={0.5}
+              candleColors={{positive: TypeOfPnLColorHex.PROFIT, negative: TypeOfPnLColorHex.LOSS}}
+              data={transformedCandlestickData}
+              // openLabels
+              // openLabelComponent={<V.VictoryTooltip pointerLength={10} />}
 
-            labels={({datum}) =>
-              `open: ${datum.open}\nhigh: ${datum.high}\nlow: ${datum.low}\nclose: ${datum.close}`
-            }
-            labelComponent={
-              <V.VictoryTooltip
-                style={{
-                  fontFamily: 'barlow',
-                  fontSize: 12,
-                  // fontWeight: 500,
-                  // stroke: 'black',
-                  // backgroundColor: EXAMPLE_BLUE_COLOR,
-                  // borderBlockColor: EXAMPLE_BLUE_COLOR,
-                  // borderColor: EXAMPLE_BLUE_COLOR,
+              labels={({datum}) =>
+                `open: ${datum.open}\nhigh: ${datum.high}\nlow: ${datum.low}\nclose: ${datum.close}`
+              }
+              labelComponent={
+                <V.VictoryTooltip
+                  style={{
+                    fontFamily: 'barlow',
+                    fontSize: 12,
+                    // fontWeight: 500,
+                    // stroke: 'black',
+                    // backgroundColor: EXAMPLE_BLUE_COLOR,
+                    // borderBlockColor: EXAMPLE_BLUE_COLOR,
+                    // borderColor: EXAMPLE_BLUE_COLOR,
 
-                  fill: (d: any) =>
-                    d.datum.close > d.datum.open
-                      ? TypeOfPnLColorHex.PROFIT
-                      : TypeOfPnLColorHex.LOSS,
-                  padding: 8,
-                  letterSpacing: 0.5,
-                }}
-                // text={'white'}
-                // theme={chartTheme}
-                // pointerWidth={50}
-                pointerLength={10}
-                // pointerOrientation={'top'}
-              />
-            }
+                    fill: (d: any) =>
+                      d.datum.close > d.datum.open
+                        ? TypeOfPnLColorHex.PROFIT
+                        : TypeOfPnLColorHex.LOSS,
+                    padding: 8,
+                    letterSpacing: 0.5,
+                  }}
+                  // text={'white'}
+                  // theme={chartTheme}
+                  // pointerWidth={50}
+                  pointerLength={10}
+                  // pointerOrientation={'top'}
+                />
+              }
 
-            // containerComponent={
-            //   <V.VictoryVoronoiContainer
-            //     voronoiDimension="x"
-            //     labels={({datum}) =>
-            //       `open: ${datum.open} high: ${datum.high} low: ${datum.low} close: ${datum.close}`
-            //     }
-            //     labelComponent={<V.VictoryTooltip cornerRadius={2} flyoutStyle={{fill: 'black'}} />}
-            //   />
-            // }
+              // containerComponent={
+              //   <V.VictoryVoronoiContainer
+              //     voronoiDimension="x"
+              //     labels={({datum}) =>
+              //       `open: ${datum.open} high: ${datum.high} low: ${datum.low} close: ${datum.close}`
+              //     }
+              //     labelComponent={<V.VictoryTooltip cornerRadius={2} flyoutStyle={{fill: 'black'}} />}
+              //   />
+              // }
 
-            // events={[
-            //   {
-            //     target: 'data',
-            //     eventHandlers: {
-            //       onMouseOver: () => ({
-            //         // target: ['lowLabels', 'highLabels', 'openLabels', 'closeLabels'],
-            //         target: 'openLabels',
-            //         mutation: () => ({active: true}),
-            //       }),
-            //       onMouseOut: () => ({
-            //         // target: ['lowLabels', 'highLabels', 'openLabels', 'closeLabels'],
-            //         target: 'openLabels',
-            //         mutation: () => ({active: false}),
-            //       }),
-            //     },
-            //   },
-            // ]}
-          />
+              // events={[
+              //   {
+              //     target: 'data',
+              //     eventHandlers: {
+              //       onMouseOver: () => ({
+              //         // target: ['lowLabels', 'highLabels', 'openLabels', 'closeLabels'],
+              //         target: 'openLabels',
+              //         mutation: () => ({active: true}),
+              //       }),
+              //       onMouseOut: () => ({
+              //         // target: ['lowLabels', 'highLabels', 'openLabels', 'closeLabels'],
+              //         target: 'openLabels',
+              //         mutation: () => ({active: false}),
+              //       }),
+              //     },
+              //   },
+              // ]}
+            />
+          )}
+
           {lineGraphOn && (
             <V.VictoryLine
               style={{

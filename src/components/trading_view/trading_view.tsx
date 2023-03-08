@@ -119,13 +119,16 @@ const TradingView = () => {
   // console.log('randomArray', randomArray);
 
   const displayedTradingView = (
-    <CandlestickChart
-      candlestickOn={candlestickOnRef.current}
-      lineGraphOn={lineGraphOnRef.current}
-      strokeColor={[`#17BF88`]}
-      candlestickChartWidth={chartSize.width}
-      candlestickChartHeight={chartSize.height}
-    />
+    <>
+      <Lottie className="absolute left-505px top-400px w-50px" animationData={spotAnimation} />
+      <CandlestickChart
+        candlestickOn={candlestickOnRef.current}
+        lineGraphOn={lineGraphOnRef.current}
+        strokeColor={[`#17BF88`]}
+        candlestickChartWidth={chartSize.width}
+        candlestickChartHeight={chartSize.height}
+      />
+    </>
   );
   // selectedChartType === 'candlestick' ? (
   //   <div className="relative">

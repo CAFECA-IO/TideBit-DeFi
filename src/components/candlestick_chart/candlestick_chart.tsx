@@ -14,6 +14,7 @@ import {randomFloatFromInterval, randomIntFromInterval, timestampToString} from 
 import * as V from 'victory';
 import {ICandlestickData} from '../../interfaces/tidebit_defi_background/candlestickData';
 import useStateRef from 'react-usestateref';
+import * as Vtype from 'victory-core';
 // import {
 //   VictoryLabel,
 //   VictoryTooltip,
@@ -342,7 +343,7 @@ export default function CandlestickChart({
   }));
 
   // VictoryThemeDefinition
-  const chartTheme = {
+  const chartTheme: Vtype.VictoryThemeDefinition = {
     axis: {
       style: {
         tickLabels: {
@@ -354,11 +355,9 @@ export default function CandlestickChart({
         },
         axis: {
           stroke: LIGHT_GRAY_COLOR,
-          y: {
-            stroke: 'white',
-            position: 'right',
-          },
-          position: 'right',
+        },
+        grid: {
+          stroke: 'none',
         },
       },
     },

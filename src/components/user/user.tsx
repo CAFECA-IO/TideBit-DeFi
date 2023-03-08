@@ -1,4 +1,5 @@
 import React, {useContext, useState} from 'react';
+import Link from 'next/link';
 import {UserContext} from '../../contexts/user_context';
 import {ImExit} from 'react-icons/im';
 import {VscAccount} from 'react-icons/vsc';
@@ -42,12 +43,12 @@ const User = () => {
           aria-labelledby="avatarButton"
         >
           <li>
-            <a href="/my-assets" className="block py-2 pr-4 pl-3 hover:bg-darkGray5">
+            <Link href="/my-assets" className="block py-2 pr-4 pl-3 hover:bg-darkGray5">
               <div className="flex flex-row items-center space-x-2">
                 <BiWallet />
                 <p>My Assets</p>
               </div>
-            </a>
+            </Link>
           </li>
           <li
             onClick={() => {
@@ -74,15 +75,15 @@ const User = () => {
             </div>
           </li>
           <li>
-            <a href="#" className="block py-2 pr-4 pl-3 hover:bg-darkGray5">
+            <Link href="#" className="block py-2 pr-4 pl-3 hover:bg-darkGray5">
               <div className="flex flex-row items-center space-x-2">
                 <VscAccount />
                 <p>My Account</p>
               </div>
-            </a>
+            </Link>
           </li>
           <li>
-            <a
+            <Link
               onClick={userCtx.disconnect}
               href="#"
               className="block py-2 pr-4 pl-3 hover:bg-darkGray5"
@@ -91,7 +92,7 @@ const User = () => {
                 <ImExit />
                 <p>Disconnect</p>
               </div>
-            </a>
+            </Link>
           </li>
         </ul>
       </div>

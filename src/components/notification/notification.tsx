@@ -25,14 +25,14 @@ export default function Notification({
 
   const MAX_NOTIFICATION_WIDTH = 479;
 
-  const hamburgerStyles = 'block bg-lightWhite h-3px rounded-12px w-full ease-in duration-300';
+  const hamburgerStyles = 'block bg-lightWhite h-3px rounded-12px ease-in duration-300';
   // hamburger animation
   const displayedMobileNavBarLine1 = !componentVisible
-    ? 'translate-y-0 rotate-0'
+    ? 'translate-y-0 rotate-0 w-full'
     : 'translate-y-1.5 origin-left w-3/4 -rotate-35';
-  const displayedMobileNavBarLine2 = !componentVisible ? 'translate-y-1.5' : 'w-0 opacity-0';
+  const displayedMobileNavBarLine2 = !componentVisible ? 'translate-y-1.5 w-full' : 'w-0 opacity-0';
   const displayedMobileNavBarLine3 = !componentVisible
-    ? 'translate-y-3 rotate-0'
+    ? 'translate-y-3 rotate-0 w-full'
     : 'translate-y-0 origin-left w-3/4 rotate-35';
 
   const DUMMY_DATA = [
@@ -157,10 +157,10 @@ export default function Notification({
     <div
       className={`sm:hidden ${
         componentVisible ? 'visible opacity-100' : 'invisible opacity-0'
-      } fixed z-50 flex h-16 w-screen items-center justify-center overflow-x-hidden overflow-y-hidden bg-black/100 px-5 outline-none transition-all delay-150 duration-300 hover:cursor-pointer focus:outline-none`}
+      } fixed z-50 flex h-14 w-screen items-center justify-center overflow-x-hidden overflow-y-hidden bg-black/100 px-5 pt-1 outline-none transition-all delay-150 duration-300 hover:cursor-pointer focus:outline-none`}
     >
       <div className="flex basis-full items-end">
-        <div className="mr-0 mt-3 flex lg:hidden">
+        <div className="mr-0 flex border-r border-lightGray1 lg:hidden">
           <button
             //onClick={clickHanlder}
             className="z-50 inline-flex items-center justify-center rounded-md p-2"
@@ -177,9 +177,7 @@ export default function Notification({
           </button>
         </div>
 
-        <span className="z-50 mx-2 inline-block h-10 w-px rounded bg-lightGray1"></span>
-
-        <p className="self-center pl-3">Notification</p>
+        <p className="self-center pl-5">Notification</p>
       </div>
     </div>
   );

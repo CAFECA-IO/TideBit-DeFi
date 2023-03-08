@@ -217,6 +217,10 @@ export default function CandlestickChart({
         close: data.y[3],
         // label: JSON.stringify({open: data.y[0], high: data.y[1], low: data.y[2], close: data.y[3]}),
       }));
+      console.log(
+        'to candlestick chart data',
+        toCandlestickChartData[toCandlestickChartData.length - 2]
+      );
       // setToCandlestickChartData(toCandlestickChartDataTemp);
       setToCandlestickChartData(toCandlestickChartData);
 

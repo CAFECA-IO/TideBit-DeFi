@@ -20,7 +20,9 @@ const CryptoCategory = ({...otherProps}) => {
     setTickers(marketCtx.listAvailableTickers());
   }, []);
 
-  const renderCryptoCard = tickers?.map((item, i) => {
+  const renderCryptoCard = (
+    marketCtx.availableTickers ? Object.values(marketCtx.availableTickers) : []
+  ).map((item, i) => {
     const color = CRYPTO_CARD_COLORS.find(i => i.label === item.currency);
     const cryptoCard = {
       ...item,

@@ -38,7 +38,7 @@ export interface IMarketProvider {
 export interface IMarketContext {
   selectedTicker: ITickerData | null;
   selectedTickerRef: React.MutableRefObject<ITickerData | null>;
-  availableTickers: ITickerData[] | null;
+  availableTickers: {[currency: string]: ITickerData} | null;
   isCFDTradable: boolean;
   showPositionOnChart: boolean;
   showPositionOnChartHandler: (bool: boolean) => void;
@@ -61,7 +61,7 @@ export interface IMarketContext {
 export const MarketContext = createContext<IMarketContext>({
   selectedTicker: dummyTicker,
   selectedTickerRef: React.createRef<ITickerData>(),
-  availableTickers: [],
+  availableTickers: {},
   isCFDTradable: false,
   showPositionOnChart: false,
   showPositionOnChartHandler: () => null,
@@ -100,7 +100,9 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     null
   );
   const [candlestickChartData, setCandlestickChartData] = useState<ICandlestickData[] | null>(null);
-  const [availableTickers, setAvailableTickers] = useState<ITickerData[] | null>(null);
+  const [availableTickers, setAvailableTickers, availableTickersRef] = useState<{
+    [currency: string]: ITickerData;
+  } | null>(null);
   const [isCFDTradable, setIsCFDTradable] = useState<boolean>(false);
   const [candlestickId, setCandlestickId] = useState<string>('');
 
@@ -119,7 +121,11 @@ export const MarketProvider = ({children}: IMarketProvider) => {
   };
 
   const updateAvailableTickers = () => {
-    let updateTickers = [...dummyTickers];
+    let updateTickers: ITickerData[] = [...dummyTickers];
+    // eslint-disable-next-line no-console
+    console.log(availableTickersRef.current);
+    // if (availableTickersRef.current) {
+    // updateTickers = [...Object.values(availableTickersRef.current)];
     if (userCtx.enableServiceTerm) {
       updateTickers = updateTickers.map(ticker => {
         return {
@@ -130,12 +136,29 @@ export const MarketProvider = ({children}: IMarketProvider) => {
         };
       });
     }
+    // } else {
+    //   workerCtx.requestHandler({
+    //     name: APIRequest.LIST_TICKERS,
+    //     request: {
+    //       name: APIRequest.LIST_TICKERS,
+    //       method: Method.GET,
+    //       url: '/api/tickers',
+    //     },
+    //     callback: (tickers: ITickerData[]) => {
+    //       let availableTickers: {[currency: string]: ITickerData} = {};
+    //       availableTickers = [...tickers].reduce((prev, curr) => {
+    //         if (!prev[curr.currency]) prev[curr.currency] = curr;
+    //         return prev;
+    //       }, availableTickers);
+    //       setAvailableTickers(availableTickers);
+    //     },
+    //   });
+    // }
     return updateTickers;
   };
 
   const listAvailableTickers = () => {
     const updateTickers = updateAvailableTickers();
-    setAvailableTickers(updateTickers);
     return updateTickers;
   };
 
@@ -180,7 +203,12 @@ export const MarketProvider = ({children}: IMarketProvider) => {
         url: '/api/tickers',
       },
       callback: (tickers: ITickerData[]) => {
-        setAvailableTickers([...tickers]);
+        let availableTickers: {[currency: string]: ITickerData} = {};
+        availableTickers = [...tickers].reduce((prev, curr) => {
+          if (!prev[curr.currency]) prev[curr.currency] = curr;
+          return prev;
+        }, availableTickers);
+        setAvailableTickers(availableTickers);
         selectTickerHandler(tickers[0].currency);
       },
     });
@@ -222,8 +250,10 @@ export const MarketProvider = ({children}: IMarketProvider) => {
   React.useMemo(
     () =>
       notificationCtx.emitter.on(TideBitEvent.TICKER, (ticker: ITickerData) => {
-        setSelectedTicker(ticker);
-        // ++ TODO: update availableTickers
+        if (ticker.currency === selectedTickerRef.current?.currency) setSelectedTicker(ticker);
+        const availableTickers = {...availableTickersRef.current};
+        availableTickers[ticker.currency] = {...ticker};
+        setAvailableTickers(availableTickers);
       }),
     []
   );

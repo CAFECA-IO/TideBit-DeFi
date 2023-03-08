@@ -1,4 +1,4 @@
-import React, {Dispatch, SetStateAction, useContext, useState} from 'react';
+import React, {useContext, useState} from 'react';
 import Link from 'next/link';
 import {UserContext} from '../../contexts/user_context';
 import {ImExit} from 'react-icons/im';

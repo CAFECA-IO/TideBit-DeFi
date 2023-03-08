@@ -157,7 +157,7 @@ const PositionOpenModal = ({
   const displayedTakeProfit = openCfdRequest.takeProfit ? `$ ${openCfdRequest.takeProfit}` : '-';
   const displayedStopLoss = openCfdRequest.stopLoss ? `$ ${openCfdRequest.stopLoss}` : '-';
 
-  const layoutInsideBorder = 'mx-5 my-4 flex justify-between';
+  const layoutInsideBorder = 'mx-5 my-2 flex justify-between';
 
   // let dataRenewedStyle = 'text-lightGray';
 
@@ -275,8 +275,8 @@ const PositionOpenModal = ({
   // }, [globalCtx.visiblePositionOpenModal]);
 
   const formContent = (
-    <div>
-      <div className="mt-8 mb-2 flex items-center justify-center space-x-2 text-center">
+    <div className="mt-8 flex flex-col px-6 pb-2">
+      <div className="flex items-center justify-center space-x-2 text-center">
         <Image
           src={marketCtx.selectedTicker?.tokenImg ?? ''}
           width={30}
@@ -293,9 +293,9 @@ const PositionOpenModal = ({
 
       <div className="relative flex-auto pt-1">
         <div
-          className={`${displayedBorderColor} mx-6 mt-1 border-1px text-xs leading-relaxed text-lightWhite`}
+          className={`${displayedBorderColor} mt-1 border-1px py-4 text-xs leading-relaxed text-lightWhite`}
         >
-          <div className="flex-col justify-center text-center">
+          <div className="flex flex-col justify-center text-center">
             {/* {displayedDataFormat()} */}
 
             <div className={`${layoutInsideBorder}`}>
@@ -320,7 +320,7 @@ const PositionOpenModal = ({
               </div>
             </div>
 
-            <div className={`${layoutInsideBorder}`}>
+            <div className={`${layoutInsideBorder} whitespace-nowrap`}>
               <div className="text-lightGray">Required Margin</div>
               {/* TODO: Hardcode USDT */}
               <div className={`${dataRenewedStyle}`}>
@@ -332,6 +332,27 @@ const PositionOpenModal = ({
               <div className="text-lightGray">TP/ SL</div>
               <div className="">
                 {displayedTakeProfit} / {displayedStopLoss}
+              </div>
+            </div>
+
+            <div className={`${layoutInsideBorder}`}>
+              <div className="text-lightGray">Guaranteed Stop</div>
+              <div className={`relative flex items-center`}>
+                {displayedGuaranteedStopSetting}
+
+                <div className="group">
+                  <div className="invisible absolute bottom-6 right-0 w-180px bg-darkGray8 p-2 text-left text-xxs text-lightWhite opacity-0 shadow-lg shadow-black/80 transition-all duration-200 group-hover:visible group-hover:opacity-100">
+                    Guaranteed stop will force the position to close at your chosen rate (price)
+                    even if the market price surpasses it.
+                  </div>
+                  <Image
+                    className="ml-2"
+                    src="/elements/question.svg"
+                    alt="question icon"
+                    width={12}
+                    height={12}
+                  />
+                </div>
               </div>
             </div>
 
@@ -347,29 +368,22 @@ const PositionOpenModal = ({
               {/* TODO: Liquidation Price */}
               <div className="">$ 9.23</div>
             </div>
-
-            <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">Guaranteed Stop</div>
-              <div className={``}>{displayedGuaranteedStopSetting}</div>
-            </div>
           </div>
         </div>
 
-        <div className="mx-6 my-2 text-xxs text-lightGray">
+        <div className="my-4 text-xxs text-lightGray">
           Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
           invidunt ut labore et dolore magna
         </div>
 
-        <div className={`flex-col space-y-5 text-base leading-relaxed text-lightWhite`}>
-          <RippleButton
-            // disabled={secondsLeft === INIT_POSITION_REMAINING_SECONDS}
-            onClick={submitClickHandler}
-            buttonType="button"
-            className={`mx-22px mt-0 rounded border-0 bg-tidebitTheme py-2 px-16 text-base text-white transition-colors duration-300 hover:bg-cyan-600 focus:outline-none disabled:bg-lightGray`}
-          >
-            Confirm the order
-          </RippleButton>
-        </div>
+        <RippleButton
+          // disabled={secondsLeft === INIT_POSITION_REMAINING_SECONDS}
+          onClick={submitClickHandler}
+          buttonType="button"
+          className={`mt-0 whitespace-nowrap rounded border-0 bg-tidebitTheme py-2 px-16 text-base text-white transition-colors duration-300 hover:bg-cyan-600 focus:outline-none disabled:bg-lightGray`}
+        >
+          Confirm the order
+        </RippleButton>
       </div>
     </div>
   );
@@ -387,7 +401,7 @@ const PositionOpenModal = ({
           <div
             id="PositionOpenModal"
             // ref={modalRef}
-            className="relative flex h-540px w-296px flex-col rounded-3xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none"
+            className="relative flex h-auto w-300px flex-col rounded-xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none"
           >
             {/*header*/}
             <div className="flex items-start justify-between rounded-t pt-9">

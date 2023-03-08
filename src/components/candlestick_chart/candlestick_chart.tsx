@@ -14,6 +14,7 @@ import {MarketContext, MarketProvider} from '../../contexts/market_context';
 import {randomFloatFromInterval, randomIntFromInterval, timestampToString} from '../../lib/common';
 import * as V from 'victory';
 import {ICandlestickData} from '../../interfaces/tidebit_defi_background/candlestickData';
+import useStateRef from 'react-usestateref';
 // import {
 //   VictoryLabel,
 //   VictoryTooltip,
@@ -103,7 +104,7 @@ export const updateDummyCandlestickChartData = (data: ICandlestickData[]): ICand
   const newData = [...data];
 
   // Generate new data
-  const newPoint = newData[newData.length - 2].y[3] as number;
+  const newPoint = newData[newData.length - 2]?.y[3] as number;
   // console.log('new point in update func', newPoint);
 
   const newYs: (number | null)[] = new Array(4).fill(0).map(v => {
@@ -150,36 +151,97 @@ export default function CandlestickChart({
 }: ITradingChartGraphProps): JSX.Element {
   const marketCtx = useContext(MarketContext);
   // const candlestickChartRef = useRef<HTMLDivElement>(null);
-  const candleData = marketCtx.candlestickChartData !== null ? marketCtx.candlestickChartData : [];
-  console.log('candleData', candleData);
+  const candlestickChartDataFromCtx =
+    marketCtx.candlestickChartData !== null ? marketCtx.candlestickChartData : [];
 
-  const updatedCandleData =
-    candleData.length > 0 ? updateDummyCandlestickChartData(candleData) : [];
-  console.log('updatedCandleData', updatedCandleData);
+  const isCandlestickDataEmpty = candlestickChartDataFromCtx.length === 0;
 
-  const lineDataFetchedFromContext = marketCtx.candlestickChartData?.map((data, i) => ({
-    x: data.x,
-    y: data.y[3],
-  }));
+  const [candlestickChartData, setCandlestickChartData, candlestickChartDataRef] = useStateRef<
+    ICandlestickData[] | []
+  >(candlestickChartDataFromCtx);
 
-  const latestPrice = lineDataFetchedFromContext?.[lineDataFetchedFromContext.length - 2].y;
+  const [toCandlestickChartData, setToCandlestickChartData, toCandlestickChartDataRef] =
+    useStateRef<
+      {
+        x: Date;
+        open: number | null;
+        high: number | null;
+        low: number | null;
+        close: number | null;
+      }[]
+    >([]);
 
-  const lastestPriceHorizontalLineData = lineDataFetchedFromContext?.map(data => ({
-    x: data.x,
-    y: latestPrice,
-  }));
+  const [toLineChartData, setToLineChartData, toLineChartDataRef] = useStateRef<
+    {
+      x: Date;
+      y: number | null;
+    }[]
+  >();
 
-  console.log('latest horizontal line data', lastestPriceHorizontalLineData);
+  const [toLatestPriceLineData, setToLatestPriceLineData, toLatestPriceLineDataRef] = useStateRef<
+    {
+      x: Date;
+      y: number | null;
+    }[]
+  >();
 
-  // TODO: Make sure the OHLC order is correct
-  const transformedCandlestickData = marketCtx.candlestickChartData?.map(data => ({
-    x: data.x,
-    open: data.y[0],
-    high: data.y[1],
-    low: data.y[2],
-    close: data.y[3],
-    // label: JSON.stringify({open: data.y[0], high: data.y[1], low: data.y[2], close: data.y[3]}),
-  }));
+  useEffect(() => {
+    const toCandlestickChartData = candlestickChartDataFromCtx?.map(data => ({
+      x: data.x,
+      open: data.y[0],
+      high: data.y[1],
+      low: data.y[2],
+      close: data.y[3],
+      // label: JSON.stringify({open: data.y[0], high: data.y[1], low: data.y[2], close: data.y[3]}),
+    }));
+    setToCandlestickChartData(toCandlestickChartData);
+
+    const toLineChartData = candlestickChartDataFromCtx.map((data, i) => ({
+      x: data.x,
+      y: data.y[3],
+    }));
+    setToLineChartData(toLineChartData);
+
+    const latestPrice = toLineChartData?.[toLineChartData.length - 2]?.y;
+    const toLastestPriceHorizontalLineData = toLineChartData?.map(data => ({
+      x: data?.x,
+      y: latestPrice,
+    }));
+    setToLatestPriceLineData(toLastestPriceHorizontalLineData);
+
+    console.log('useEffect');
+  }, [marketCtx.candlestickChartData]);
+
+  // const {candlestickChartData} = marketCtx;
+
+  // console.log('candleData', candlestickChartDataFromCtx);
+
+  const updatedCandleData = isCandlestickDataEmpty
+    ? updateDummyCandlestickChartData(candlestickChartDataFromCtx)
+    : [];
+
+  // console.log('updatedCandleData', updatedCandleData);
+
+  // const toLineChartData = candlestickChartDataFromCtx.map((data, i) => ({
+  //   x: data.x,
+  //   y: data.y[3],
+  // }));
+
+  // const latestPrice = toLineChartData?.[toLineChartData.length - 2]?.y;
+  // const toLastestPriceHorizontalLineData = toLineChartData?.map(data => ({
+  //   x: data?.x,
+  //   y: latestPrice,
+  // }));
+
+  // // TODO: Make sure the OHLC order is correct
+  // const toCandlestickChartData = candlestickChartDataFromCtx?.map(data => ({
+  //   x: data.x,
+  //   open: data.y[0],
+  //   high: data.y[1],
+  //   low: data.y[2],
+  //   close: data.y[3],
+  //   // label: JSON.stringify({open: data.y[0], high: data.y[1], low: data.y[2], close: data.y[3]}),
+  // }));
 
   // VictoryThemeDefinition
   const chartTheme = {
@@ -204,9 +266,9 @@ export default function CandlestickChart({
     },
   };
 
-  console.log('market candlestick data', marketCtx.candlestickChartData);
+  // console.log('market candlestick data', marketCtx.candlestickChartData);
   // console.log('stringify', JSON.stringify(marketCtx.candlestickChartData));
-  console.log('line data from candlestick chart', lineDataFetchedFromContext);
+  // console.log('line data from candlestick chart', toLineChartData);
 
   // TODO: #WI find the max number in the data array
   // const maxNumber = lineDataFetchedFromContext?.reduce((acc, curr) => {
@@ -253,7 +315,7 @@ export default function CandlestickChart({
   // console.log(largestY);
 
   // console.log('max number', maxNumber);
-  console.log('min number', minNumber);
+  // console.log('min number', minNumber);
 
   // console.log('position context info in candlestick chart', positionInfoOnChart);
 
@@ -1050,14 +1112,15 @@ export default function CandlestickChart({
           data={sampleDataDates}
           // data={marketCtx.candlestickChartData ? [...marketCtx.candlestickChartData] : []}
         /> */}
-        {marketCtx.candlestickChartData ? (
+        {!isCandlestickDataEmpty ? (
           <V.VictoryChart
+            // animate={{duration: 300}}
             // chartTheme
             theme={chartTheme}
             minDomain={{y: minNumber !== null ? minNumber * 0.95 : undefined}}
             maxDomain={{y: maxNumber !== null ? maxNumber * 1.05 : undefined}} // TODO: measure the biggest number to decide the y-axis
             // domainPadding={{x: 1}}
-            scale={{x: 'time'}}
+            // scale={{x: 'time'}}
             width={Number(candlestickChartWidth)}
             height={Number(candlestickChartHeight)}
             // containerComponent={
@@ -1091,6 +1154,14 @@ export default function CandlestickChart({
 
             {candlestickOn && (
               <V.VictoryCandlestick
+                animate={{
+                  onExit: {
+                    duration: 300,
+                    before(datum, index, data) {
+                      return {y: datum._y1, _y1: datum._y0};
+                    },
+                  },
+                }}
                 style={{
                   data: {
                     // fill: '#c43a31',
@@ -1119,7 +1190,7 @@ export default function CandlestickChart({
                   positive: TypeOfPnLColorHex.PROFIT,
                   negative: TypeOfPnLColorHex.LOSS,
                 }}
-                data={transformedCandlestickData}
+                data={toCandlestickChartData}
                 // openLabels
                 // openLabelComponent={<V.VictoryTooltip pointerLength={10} />}
 
@@ -1184,6 +1255,14 @@ export default function CandlestickChart({
 
             {lineGraphOn && (
               <V.VictoryLine
+                animate={{
+                  onEnter: {
+                    duration: 300,
+                    before(datum, index, data) {
+                      return {y: datum._y1, _y1: datum._y0};
+                    },
+                  },
+                }}
                 style={{
                   data: {stroke: LINE_GRAPH_STROKE_COLOR.DEFAULT, strokeWidth: 1},
                   // parent: {border: '1px solid #ccc'},
@@ -1192,26 +1271,26 @@ export default function CandlestickChart({
                 //   () => {console.log('hi')}
                 //   // onClick: (evt) => alert(`(${evt.clientX}, ${evt.clientY})`)
                 // }}
-                events={[
-                  {
-                    target: 'data',
-                    eventHandlers: {
-                      // onClick: () => {
-                      //   console.log('line graph');
-                      // },
-                      // NOT working in line graph
-                      // onMouseOver: () => ({
-                      //   target: 'data',
-                      //   mutation: () => ({active: true}),
-                      // }),
-                      // onMouseOut: () => ({
-                      //   target: 'data',
-                      //   mutation: () => ({active: false}),
-                      // }),
-                    },
-                  },
-                ]}
-                data={lineDataFetchedFromContext ? [...lineDataFetchedFromContext] : []}
+                // events={[
+                //   {
+                //     target: 'data',
+                //     eventHandlers: {
+                //       // onClick: () => {
+                //       //   console.log('line graph');
+                //       // },
+                //       // NOT working in line graph
+                //       // onMouseOver: () => ({
+                //       //   target: 'data',
+                //       //   mutation: () => ({active: true}),
+                //       // }),
+                //       // onMouseOut: () => ({
+                //       //   target: 'data',
+                //       //   mutation: () => ({active: false}),
+                //       // }),
+                //     },
+                //   },
+                // ]}
+                data={toLineChartData ? [...toLineChartData] : []}
               />
             )}
 
@@ -1226,11 +1305,19 @@ export default function CandlestickChart({
           )} */}
 
             <V.VictoryLine
+              animate={{
+                onExit: {
+                  duration: 300,
+                  before(datum, index, data) {
+                    return {y: datum._y1, _y1: datum._y0};
+                  },
+                },
+              }}
               style={{
                 data: {stroke: LINE_GRAPH_STROKE_COLOR.TIDEBIT_THEME, strokeWidth: 1},
                 // parent: {border: '1px solid #ccc'},
               }}
-              data={lastestPriceHorizontalLineData}
+              data={toLatestPriceLineData}
             />
           </V.VictoryChart>
         ) : (

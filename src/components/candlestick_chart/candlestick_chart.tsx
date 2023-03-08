@@ -48,55 +48,55 @@ export interface ILineChartData {
   y: number | null;
 }
 
-export const getDummyLineData = (n: number) => {
-  const now = new Date().getTime();
-  const nowSecond = now - (now % 1000);
+// export const getDummyLineData = (n: number) => {
+//   const now = new Date().getTime();
+//   const nowSecond = now - (now % 1000);
 
-  const data: ILineChartData[] = new Array(n).fill(0).map((v, i) => {
-    // const y = Math.random() * 100;
-    const y = randomFloatFromInterval(100, 6000, 2);
-    const result: ILineChartData = {
-      x: new Date(nowSecond - (n - i) * 1000),
-      y,
-    };
-    return result;
-  });
+//   const data: ILineChartData[] = new Array(n).fill(0).map((v, i) => {
+//     // const y = Math.random() * 100;
+//     const y = randomFloatFromInterval(100, 6000, 2);
+//     const result: ILineChartData = {
+//       x: new Date(nowSecond - (n - i) * 1000),
+//       y,
+//     };
+//     return result;
+//   });
 
-  // add null data
-  const nullDataCount = Math.ceil(n / 1000);
-  for (let i = 0; i < nullDataCount; i++) {
-    // const randomIndex = randomIntFromInterval(0, n - 1);
-    data.push({
-      x: new Date(nowSecond + (n - i) * 1000),
-      y: null,
-    });
-  }
+//   // add null data
+//   const nullDataCount = Math.ceil(n / 1000);
+//   for (let i = 0; i < nullDataCount; i++) {
+//     // const randomIndex = randomIntFromInterval(0, n - 1);
+//     data.push({
+//       x: new Date(nowSecond + (n - i) * 1000),
+//       y: null,
+//     });
+//   }
 
-  return data;
-};
+//   return data;
+// };
 
-export const getDummyHorizontalLineData = (n: number) => {
-  const now = new Date().getTime();
-  const nowSecond = now - (now % 1000);
+// export const getDummyHorizontalLineData = (n: number) => {
+//   const now = new Date().getTime();
+//   const nowSecond = now - (now % 1000);
 
-  const data: ILineChartData[] = new Array(n).fill(0).map((v, i) => ({
-    x: new Date(nowSecond - (n - i) * 1000),
-    y: 5500,
-  }));
+//   const data: ILineChartData[] = new Array(n).fill(0).map((v, i) => ({
+//     x: new Date(nowSecond - (n - i) * 1000),
+//     y: 5500,
+//   }));
 
-  // // add null data
-  // const nullDataCount = Math.ceil((y / 14) * 5);
-  // for (let i = 0; i < nullDataCount; i++) {
-  //   const randomIndex = randomIntFromInterval(0, y - 1);
-  //   data[randomIndex].y = null;
-  // }
+//   // // add null data
+//   // const nullDataCount = Math.ceil((y / 14) * 5);
+//   // for (let i = 0; i < nullDataCount; i++) {
+//   //   const randomIndex = randomIntFromInterval(0, y - 1);
+//   //   data[randomIndex].y = null;
+//   // }
 
-  return data;
-};
+//   return data;
+// };
 
-const dummyLineData = getDummyLineData(50);
+// const dummyLineData = getDummyLineData(50);
 
-const dummyHorizontalLineData = getDummyHorizontalLineData(80);
+// const dummyHorizontalLineData = getDummyHorizontalLineData(80);
 
 /**
  *
@@ -136,7 +136,7 @@ export default function CandlestickChart({
         tickLabels: {
           // this changed the color of my numbers to white
           fill: LIGHT_GRAY_COLOR,
-          fontSize: 12,
+          fontSize: 10,
           fontFamily: 'barlow',
           padding: 5,
         },
@@ -155,9 +155,53 @@ export default function CandlestickChart({
   // const {showPositionOnChart, positionInfoOnChart, candlestickChartIdHandler} =
   //   useContext(MarketContext);
   console.log('market candlestick data', marketCtx.candlestickChartData);
-  // console.log('stringify', JSON.stringify(marketCtx.candlestickChartData));
+  console.log('stringify', JSON.stringify(marketCtx.candlestickChartData));
   console.log('line data from candlestick chart', lineDataFetchedFromContext);
   // console.log('line data', dummyLineData);
+
+  // TODO: #WI find the max number in the data array
+  // const maxNumber = lineDataFetchedFromContext?.reduce((acc, curr) => {
+  //   if (curr.y && curr.y > acc) {
+  //     return curr.y;
+  //   }
+  //   return acc;
+  // }, 0);
+
+  // TODO: #WII find the max number in the data array
+  // const candlestickData = marketCtx.candlestickChartData;
+  // const maxNumber = candlestickData?.reduce((max, item) => {
+  //   const maxInY = item.y.reduce((maxY, number) => {
+  //     return number > maxY ? number : maxY;
+  //   }, 0);
+  //   return maxInY > max ? maxInY : max;
+  // }, 0);
+
+  const data = marketCtx.candlestickChartData !== null ? marketCtx.candlestickChartData : [];
+
+  const ys = data.flatMap(d => d.y.filter(y => y !== null)) as number[];
+
+  console.log('ys', ys);
+
+  // const maxNumber = ys.reduce((acc, curr) => {
+  //   if (curr.y && curr.y > acc) {
+  //     return curr.y;
+  //   }
+
+  //   return acc;
+  // }, 0);
+
+  const maxNumber = ys.length > 0 ? Math.max(...ys) : null;
+
+  // const largestY = ys && ys.length > 0 ? Math.max(...ys) : undefined;
+  // const largestY = ys && ys.reduce((acc, val) => val > acc ? val : acc, -Infinity);
+
+  // const largestY = data.reduce((maxY, candlestick) => {
+  //   const currentMaxY = Math.max(...candlestick.y);
+  //   return currentMaxY > maxY ? currentMaxY : maxY;
+  // }, -Infinity);
+  // console.log(largestY);
+
+  console.log('max number', maxNumber);
 
   // console.log('position context info in candlestick chart', positionInfoOnChart);
 
@@ -942,7 +986,7 @@ export default function CandlestickChart({
     <>
       {/* w-2/3 xl:w-4/5 */}
       {/* TODO: Temporary adjustment of chart size */}
-      <div className="" style={{width: '85%'}}>
+      <div className="" style={{width: '100%'}}>
         {/* <VictoryCandlestick
           // candleWidth={55}
           data={sampleDataDates}
@@ -951,7 +995,7 @@ export default function CandlestickChart({
         <V.VictoryChart
           // chartTheme
           theme={chartTheme}
-          // maxDomain={{y: 1000000}}   // TODO: measure the biggest number to decide the y-axis
+          maxDomain={{y: maxNumber !== null ? maxNumber * 1.05 : undefined}} // TODO: measure the biggest number to decide the y-axis
           // domainPadding={{x: 1}}
           scale={{x: 'time'}}
           width={Number(candlestickChartWidth)}
@@ -999,12 +1043,15 @@ export default function CandlestickChart({
               },
             }}
             // style={{close: {stroke: 'black'}, open: {stroke: 'black'}}}
-            labelOrientation={{
-              close: 'right',
-              open: 'right',
-              high: 'top',
-              low: 'bottom',
-            }}
+            // labelOrientation={{
+            //   close: 'right',
+            //   open: 'right',
+            //   high: 'top',
+            //   low: 'bottom',
+            // }}
+            // padding={{top: 0, bottom: 0, left: 20, right: 0}}
+            // candleWidth={10}
+            candleRatio={0.5}
             candleColors={{positive: TypeOfPnLColorHex.PROFIT, negative: TypeOfPnLColorHex.LOSS}}
             data={transformedCandlestickData}
             // openLabels

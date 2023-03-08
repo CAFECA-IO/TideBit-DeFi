@@ -13,6 +13,7 @@ import {BsFillArrowDownCircleFill, BsFillArrowUpCircleFill} from 'react-icons/bs
 import {MarketContext, MarketProvider} from '../../contexts/market_context';
 import {randomFloatFromInterval, randomIntFromInterval, timestampToString} from '../../lib/common';
 import * as V from 'victory';
+import {ICandlestickData} from '../../interfaces/tidebit_defi_background/candlestickData';
 // import {
 //   VictoryLabel,
 //   VictoryTooltip,
@@ -98,6 +99,41 @@ export interface ILineChartData {
 
 // const dummyHorizontalLineData = getDummyHorizontalLineData(80);
 
+export const updateDummyCandlestickChartData = (data: ICandlestickData[]): ICandlestickData[] => {
+  const newData = [...data];
+
+  // Generate new data
+  const newPoint = newData[newData.length - 2].y[3] as number;
+  // console.log('new point in update func', newPoint);
+
+  const newYs: (number | null)[] = new Array(4).fill(0).map(v => {
+    const rnd = Math.random() / 1.2;
+    const ts = rnd > 0.25 ? 1 + rnd ** 5 : 1 - rnd;
+    const price = newPoint * ts;
+
+    const prettyPrice = Math.trunc(price * 100) / 100;
+    return prettyPrice;
+  });
+
+  const newCandlestickData: ICandlestickData = {
+    x: new Date(),
+    y: newYs,
+  };
+
+  // Add new data and remove the first element
+  newData.pop(); // remove null data
+
+  newData.shift();
+
+  newData.push(newCandlestickData);
+  newData.push({
+    x: new Date(),
+    y: [null, null, null, null],
+  }); // add null data back
+
+  return newData;
+};
+
 /**
  *
  * @param
@@ -113,6 +149,13 @@ export default function CandlestickChart({
   ...otherProps
 }: ITradingChartGraphProps): JSX.Element {
   const marketCtx = useContext(MarketContext);
+  // const candlestickChartRef = useRef<HTMLDivElement>(null);
+  const candleData = marketCtx.candlestickChartData !== null ? marketCtx.candlestickChartData : [];
+  console.log('candleData', candleData);
+
+  const updatedCandleData =
+    candleData.length > 0 ? updateDummyCandlestickChartData(candleData) : [];
+  console.log('updatedCandleData', updatedCandleData);
 
   const lineDataFetchedFromContext = marketCtx.candlestickChartData?.map((data, i) => ({
     x: data.x,
@@ -152,12 +195,9 @@ export default function CandlestickChart({
     },
   };
 
-  // const {showPositionOnChart, positionInfoOnChart, candlestickChartIdHandler} =
-  //   useContext(MarketContext);
   console.log('market candlestick data', marketCtx.candlestickChartData);
-  console.log('stringify', JSON.stringify(marketCtx.candlestickChartData));
+  // console.log('stringify', JSON.stringify(marketCtx.candlestickChartData));
   console.log('line data from candlestick chart', lineDataFetchedFromContext);
-  // console.log('line data', dummyLineData);
 
   // TODO: #WI find the max number in the data array
   // const maxNumber = lineDataFetchedFromContext?.reduce((acc, curr) => {
@@ -176,11 +216,12 @@ export default function CandlestickChart({
   //   return maxInY > max ? maxInY : max;
   // }, 0);
 
-  const data = marketCtx.candlestickChartData !== null ? marketCtx.candlestickChartData : [];
+  const rawCandleData =
+    marketCtx.candlestickChartData !== null ? marketCtx.candlestickChartData : [];
 
-  const ys = data.flatMap(d => d.y.filter(y => y !== null)) as number[];
+  const ys = rawCandleData.flatMap(d => d.y.filter(y => y !== null)) as number[];
 
-  console.log('ys', ys);
+  // console.log('ys', ys);
 
   // const maxNumber = ys.reduce((acc, curr) => {
   //   if (curr.y && curr.y > acc) {
@@ -201,7 +242,7 @@ export default function CandlestickChart({
   // }, -Infinity);
   // console.log(largestY);
 
-  console.log('max number', maxNumber);
+  // console.log('max number', maxNumber);
 
   // console.log('position context info in candlestick chart', positionInfoOnChart);
 

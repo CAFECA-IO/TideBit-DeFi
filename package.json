@@ -1,6 +1,6 @@
 {
   "name": "src",
-  "version": "0.1.0+62.1",
+  "version": "0.1.0+62.1.15",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -37,7 +37,8 @@
     "react-toastify": "^9.1.1",
     "react-usestateref": "^1.0.8",
     "socket.io": "^4.6.1",
-    "socket.io-client": "^4.6.1"
+    "socket.io-client": "^4.6.1",
+    "victory": "^36.6.8"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.19.1",

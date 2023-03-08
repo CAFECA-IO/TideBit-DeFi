@@ -214,8 +214,8 @@ const TradingChartSwitch = ({
         {lineGraphOn ? (
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            width="31.403"
-            height="30.697"
+            width={TRADING_CHART_SWITCH_BUTTON_SIZE}
+            height={TRADING_CHART_SWITCH_BUTTON_SIZE}
             viewBox="0 0 31.403 30.697"
           >
             <defs>

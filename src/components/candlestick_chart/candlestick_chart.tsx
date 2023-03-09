@@ -119,7 +119,7 @@ export const updateDummyCandlestickChartData = (data: ICandlestickData[]): ICand
 
   // Generate new data
   // const newTime = lastTime + unitOfLive;
-  const newTime = now - (now % unitOfLive);
+  const nowSecond = now - (now % unitOfLive);
 
   // console.log('new point in update func', newPoint);
 
@@ -133,7 +133,7 @@ export const updateDummyCandlestickChartData = (data: ICandlestickData[]): ICand
   });
 
   const newCandlestickData: ICandlestickData = {
-    x: new Date(newTime),
+    x: new Date(nowSecond - 1 * unitOfLive),
     y: newYs,
   };
 
@@ -144,7 +144,7 @@ export const updateDummyCandlestickChartData = (data: ICandlestickData[]): ICand
   const withoutLast = originalData.slice(0, originalData.length - 1); // remove the last element
   const withNewData = withoutLast.concat(newCandlestickData); // add new data to end
   const withNullData = withNewData.concat({
-    x: new Date(newTime + addition * unitOfLive),
+    x: new Date(nowSecond + addition * unitOfLive),
     y: [null, null, null, null],
   }); // add null data to end
   // const withNullData = withNewData.concat({

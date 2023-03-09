@@ -1,6 +1,6 @@
 import React, {useState, useContext, useEffect} from 'react';
-import dynamic from 'next/dynamic';
-import ApexCharts, {ApexOptions} from 'apexcharts';
+// import dynamic from 'next/dynamic';
+// import ApexCharts, {ApexOptions} from 'apexcharts';
 import {
   EXAMPLE_BLUE_COLOR,
   LIGHT_GRAY_COLOR,
@@ -452,10 +452,21 @@ export default function CandlestickChart({
                   background: '#000',
                   backgroundColor: '#000',
                 }}
+                // backgroundComponent={
+                //   <rect
+                //     style={{
+                //       fill: '#fff',
+                //       stroke: '#fff',
+                //       strokeWidth: 1,
+                //       fillOpacity: 0.5,
+                //       strokeOpacity: 0.5,
+                //     }}
+                //   />
+                // }
               />
               // </VictoryGroup>
             }
-            cursorLabel={({datum}) => `${timestampToString(datum.x / 1000).time}, ${datum.y}`}
+            cursorLabel={({datum}) => `(${timestampToString(datum.x / 1000).time}, ${datum.y})`}
             // cursorLabel={({datum}) =>
             //   `${timestampToString(datum.x / 1000).time}, ${Math.round(datum.y)}`
             // }

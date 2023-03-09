@@ -3,7 +3,10 @@ import Image from 'next/image';
 import {forwardRef, useContext} from 'react';
 import NotificationItem from '../notification_item/notification_item';
 import {NotificationContext} from '../../contexts/notification_context';
+import {useTranslation} from 'next-i18next';
 // import {INotificationItem} from '../../interfaces/tidebit_defi_background/notification_item';
+
+type TranslateFunction = (s: string) => string;
 
 interface INotificationProps {
   notifyRef: HTMLDivElement extends HTMLElement ? React.RefObject<HTMLDivElement> : null;
@@ -21,6 +24,8 @@ export default function Notification({
   // const sidebarOpenHandler = () => {
   //   setComponentVisible(!componentVisible);
   // };
+  const {t}: {t: TranslateFunction} = useTranslation('common');
+
   const notificationCtx = useContext(NotificationContext);
 
   const MAX_NOTIFICATION_WIDTH = 479;
@@ -108,7 +113,9 @@ export default function Notification({
               } flex flex-col bg-darkGray/90 pt-8 pb-20 text-white transition-all duration-300 sm:p-5`}
             >
               <div className="mb-10 flex flex items-center">
-                <h1 className="hidden pl-5 text-2xl font-bold sm:block">Notification</h1>
+                <h1 className="hidden pl-5 text-2xl font-bold sm:block">
+                  {t('nav_bar.Notification')}
+                </h1>
                 <div
                   className="ml-auto pr-30px text-sm text-tidebitTheme underline hover:cursor-pointer"
                   onClick={notificationCtx.readAll}
@@ -177,7 +184,7 @@ export default function Notification({
           </button>
         </div>
 
-        <p className="self-center pl-5">Notification</p>
+        <p className="self-center pl-5">{t('nav_bar.Notification')}</p>
       </div>
     </div>
   );

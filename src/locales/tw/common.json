@@ -7,7 +7,8 @@
     "HelpCenter": "幫助中心",
     "WalletConnect": "連接錢包",
     "Language": "語言",
-    "Menu": "選單"
+    "Menu": "選單",
+    "Notification": "通知"
   },
   "user": {
     "PersonalSetting": "用戶設定",

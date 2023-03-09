@@ -592,8 +592,8 @@ export default function CandlestickChart({
         // />
         // }
         theme={chartTheme}
-        minDomain={{y: minNumber !== null ? minNumber * 0.95 : undefined}}
-        maxDomain={{y: maxNumber !== null ? maxNumber * 1.05 : undefined}} // TODO: measure the biggest number to decide the y-axis
+        minDomain={{y: minNumber !== null ? minNumber * 0.9 : undefined}}
+        maxDomain={{y: maxNumber !== null ? maxNumber * 1.1 : undefined}} // TODO: measure the biggest number to decide the y-axis
         // domainPadding={{x: 1}}
         width={Number(candlestickChartWidth)}
         height={Number(candlestickChartHeight)}
@@ -629,7 +629,7 @@ export default function CandlestickChart({
         <VictoryAxis
           // axisLabelComponent={<VictoryLabel dy={-20} />}
           // offsetX={600}
-          offsetX={Number(candlestickChartWidth) / 1.08}
+          offsetX={Number(candlestickChartWidth) - 50}
           dependentAxis
           // tickLabelComponent={<VictoryLabel verticalAnchor="start" textAnchor="start" x={0} />}
         />

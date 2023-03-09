@@ -5,6 +5,10 @@ import {WS_URL} from '../constants/config';
 import {Events} from '../constants/events';
 import {TideBitEvent} from '../constants/tidebit_event';
 import {
+  getDummyPrices,
+  ICandlestickData,
+} from '../interfaces/tidebit_defi_background/candlestickData';
+import {
   convertDataToTicker,
   ITBETicker,
   ITickerData,
@@ -88,9 +92,23 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
         switch (metaData.type) {
           case Events.TICKERS:
             if (metaData.data) {
-              const data = Object.values(metaData.data).shift();
-              const ticker: ITickerData | null = convertDataToTicker(data as ITBETicker);
-              if (ticker) notificationCtx.emitter.emit(TideBitEvent.TICKER, ticker);
+              const data = Object.values(metaData.data).shift() as ITBETicker;
+              const ticker: ITickerData | null = convertDataToTicker(data);
+              if (ticker) {
+                notificationCtx.emitter.emit(TideBitEvent.TICKER, ticker);
+              }
+              // -- TODO: remove dummy
+              if (data) {
+                const candlestickData: ICandlestickData = {
+                  x: new Date(data.at * 1000),
+                  y: getDummyPrices(parseFloat(data.last)),
+                };
+                notificationCtx.emitter.emit(
+                  TideBitEvent.CANDLESTICK,
+                  ticker?.currency,
+                  candlestickData
+                );
+              }
             }
             break;
           case Events.UPDATE:

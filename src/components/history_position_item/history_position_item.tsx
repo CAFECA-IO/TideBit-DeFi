@@ -1,5 +1,10 @@
 import React from 'react';
-import {TypeOfPnLColorHex, TypeOfTransaction} from '../../constants/display';
+import Image from 'next/image';
+import {
+  TypeOfPnLColorHex,
+  TypeOfTransaction,
+  UNIVERSAL_NUMBER_FORMAT_LOCALE,
+} from '../../constants/display';
 import {ProfitState} from '../../constants/profit_state';
 import {timestampToString} from '../../lib/common';
 import {IClosedCFDDetails} from '../../interfaces/tidebit_defi_background/closed_cfd_details';
@@ -51,7 +56,11 @@ const HistoryPositionItem = ({closedCfdDetails, ...otherProps}: IHistoryPosition
           </div>
 
           <div className="w-75px">
-            <div>{closedCfdDetails.ticker}</div>
+            <div>
+              {/* TODO: currency icon */}
+              {/* <Image src={closedCfdDetails.ticker} width={15} height={15} alt="ticker icon" /> */}
+              {closedCfdDetails.ticker}
+            </div>
             <div className="text-lightWhite">
               {displayedString.TITLE}{' '}
               <span className="text-lightGray">{displayedString.SUBTITLE}</span>
@@ -61,17 +70,19 @@ const HistoryPositionItem = ({closedCfdDetails, ...otherProps}: IHistoryPosition
           <div className="w-150px">
             <div className="text-lightGray">Open / Close Value</div>
             <div className="">
-              $ {closedCfdDetails.openValue} / $ {closedCfdDetails.closedValue}
+              ${' '}
+              {closedCfdDetails.openValue.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+                minimumFractionDigits: 2,
+              })}{' '}
+              / ${' '}
+              {closedCfdDetails.closedValue.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+                minimumFractionDigits: 2,
+              })}
             </div>
           </div>
 
-          <div>
-            <div className=""></div>
-            <div className=""></div>
-          </div>
-
           <div className="w-60px text-end">
-            <div>PNL</div>
+            <div className="text-lightGray">PNL</div>
             <div className={`${displayedTextColor}`}>
               <span className="">{displayedSymbol}</span> $ {closedCfdDetails.pnl.value}
             </div>

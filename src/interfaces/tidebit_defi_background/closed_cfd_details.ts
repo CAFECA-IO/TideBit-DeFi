@@ -28,7 +28,7 @@ export const dummyCloseCFDDetails: IClosedCFDDetails = {
   guaranteedStopFee: 0.77,
   openTimestamp: 1675299651,
   scheduledClosingTimestamp: 1675386051, // openTimestamp + 86400
-  openValue: 74589658,
+  openValue: 74658,
   pnl: {
     type: ProfitState.PROFIT,
     value: 90752,
@@ -41,7 +41,7 @@ export const dummyCloseCFDDetails: IClosedCFDDetails = {
   closedType: CFDClosedType.SCHEDULE,
   forcedClosed: false,
   closedTimestamp: 5,
-  closedValue: 73820133,
+  closedValue: 73833,
 };
 
 export const getDummyClosedCFDs = (currency: string, number = 3) => {
@@ -62,7 +62,7 @@ export const getDummyClosedCFDs = (currency: string, number = 3) => {
       guaranteedStopFee: 0.77,
       openTimestamp: Date.now() / 1000 - i * 60 * 60,
       scheduledClosingTimestamp: Date.now() / 1000 - i * 60 * 60 + 10 * 24 * 60 * 60, // openTimestamp + 86400
-      openValue: 74589658,
+      openValue: 745.58,
       pnl: {
         type: profit,
         value: parseInt((Math.random() * 10000).toFixed(0)),
@@ -75,7 +75,7 @@ export const getDummyClosedCFDs = (currency: string, number = 3) => {
       closedType: profit === ProfitState.LOSS ? CFDClosedType.STOP_LOSS : CFDClosedType.TAKE_PROFIT,
       forcedClosed: profit === ProfitState.LOSS ? true : false,
       closedTimestamp: 5,
-      closedValue: 73820133,
+      closedValue: 733.75,
     };
     dummyClosedCFDs.push(dummyClosedCFD);
   }

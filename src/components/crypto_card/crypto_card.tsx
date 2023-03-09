@@ -343,6 +343,10 @@ const CryptoCard = ({
       {/* -----Mobile (width < 500px) version (Card 134x81)----- */}
       <div
         className={`${mobileVersionBreakpoint} ${otherProps?.className} relative m-0 h-81px w-134px rounded-2xl border-0.5px p-0 ${gradientColor} bg-black bg-gradient-to-b opacity-90 shadow-lg`}
+        onClick={() => {
+          marketCtx.selectTickerHandler(currency);
+          cardClickHandler && cardClickHandler();
+        }}
       >
         <div className="px-2 py-1">
           {/* token icon & chain & coin name */}

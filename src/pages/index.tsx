@@ -10,7 +10,7 @@ import {GlobalContext, GlobalProvider, useGlobal} from '../contexts/global_conte
 import NavBarMobile from '../components/nav_bar_mobile/nav_bar_mobile';
 import {AppContext} from '../contexts/app_context';
 import {GetStaticProps} from 'next';
-import {ILocale} from '../interfaces/tidebit_defi_background/json';
+import {ILocale} from '../interfaces/tidebit_defi_background/locale';
 
 const Home = () => {
   const {layoutAssertion} = useGlobal();

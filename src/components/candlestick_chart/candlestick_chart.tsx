@@ -547,51 +547,50 @@ export default function CandlestickChart({
   const isDisplayedCharts =
     !marketCtx.candlestickChartData !== null ? (
       <VictoryChart
-        containerComponent={
-          // <VictoryZoomContainer />
-          // <VictoryVoronoiContainer
-          //   labels={({datum}) =>
-          //     `${timestampToString(datum.x / 1000).time}, ${Math.round(datum.y)}`
-          //   }
-          // />
-
-          // TODO: useful tool
-          <VictoryCursorContainer
-            // style={{stopColor: '#fff', grid: '#fff', stroke: '#fff', fill: '#fff'}}
-            cursorLabelComponent={
-              // <VictoryGroup color="#fff">
-              //   <Line style={{fill: '#fff'}} />
-              <VictoryLabel
-                style={{
-                  fill: LIGHT_GRAY_COLOR,
-                  // cursor: LIGHT_GRAY_COLOR,
-                  stopOpacity: 0.5,
-                  stopColor: LIGHT_GRAY_COLOR,
-                  strokeOpacity: 0.5,
-                  fontSize: 12,
-                  background: '#000',
-                  backgroundColor: '#000',
-                }}
-                // backgroundComponent={
-                //   <rect
-                //     style={{
-                //       fill: '#fff',
-                //       stroke: '#fff',
-                //       strokeWidth: 1,
-                //       fillOpacity: 0.5,
-                //       strokeOpacity: 0.5,
-                //     }}
-                //   />
-                // }
-              />
-              // </VictoryGroup>
-            }
-            cursorLabel={({datum}) => `(${timestampToString(datum.x / 1000).time}, ${datum.y})`}
-            // cursorLabel={({datum}) =>
-            //   `${timestampToString(datum.x / 1000).time}, ${Math.round(datum.y)}`
-            // }
-          />
-        }
+        // containerComponent={
+        // <VictoryZoomContainer />
+        // <VictoryVoronoiContainer
+        //   labels={({datum}) =>
+        //     `${timestampToString(datum.x / 1000).time}, ${Math.round(datum.y)}`
+        //   }
+        // />
+        // // TODO: useful tool
+        // <VictoryCursorContainer
+        //   // style={{stopColor: '#fff', grid: '#fff', stroke: '#fff', fill: '#fff'}}
+        //   cursorLabelComponent={
+        //     // <VictoryGroup color="#fff">
+        //     //   <Line style={{fill: '#fff'}} />
+        //     <VictoryLabel
+        //       style={{
+        //         fill: LIGHT_GRAY_COLOR,
+        //         // cursor: LIGHT_GRAY_COLOR,
+        //         stopOpacity: 0.5,
+        //         stopColor: LIGHT_GRAY_COLOR,
+        //         strokeOpacity: 0.5,
+        //         fontSize: 12,
+        //         background: '#000',
+        //         backgroundColor: '#000',
+        //       }}
+        //       // backgroundComponent={
+        //       //   <rect
+        //       //     style={{
+        //       //       fill: '#fff',
+        //       //       stroke: '#fff',
+        //       //       strokeWidth: 1,
+        //       //       fillOpacity: 0.5,
+        //       //       strokeOpacity: 0.5,
+        //       //     }}
+        //       //   />
+        //       // }
+        //     />
+        //     // </VictoryGroup>
+        //   }
+        //   cursorLabel={({datum}) => `(${timestampToString(datum.x / 1000).time}, ${datum.y})`}
+        //   // cursorLabel={({datum}) =>
+        //   //   `${timestampToString(datum.x / 1000).time}, ${Math.round(datum.y)}`
+        //   // }
+        // />
+        // }
         theme={chartTheme}
         minDomain={{y: minNumber !== null ? minNumber * 0.95 : undefined}}
         maxDomain={{y: maxNumber !== null ? maxNumber * 1.05 : undefined}} // TODO: measure the biggest number to decide the y-axis

@@ -823,13 +823,12 @@ export default function CandlestickChart({
       {/* TODO: Temporary adjustment of chart size */}
       <div className="-ml-5" style={{width: '70%'}}>
         {/* <div ref={lottieContainerRef} /> */}
-        <div ref={lottieContainerRef} className="z-50 w-50px text-cuteBlue1">
+        {/* <div ref={lottieContainerRef} className="z-50 w-50px text-cuteBlue1">
           <p>lottie</p>
           {View}
-          {/* <Lottie animationData={spotAnimation} /> */}
-        </div>{' '}
+        </div>{' '} */}
         {isDisplayedCharts}
-        <svg ref={svgRef} />
+        {/* <svg ref={svgRef} /> */}
         {/* <svg ref={svgRef} width={800} height={30} fill="#c43a31">
           <rect width={800} height={30} fill="#c43a31" />
         </svg> */}

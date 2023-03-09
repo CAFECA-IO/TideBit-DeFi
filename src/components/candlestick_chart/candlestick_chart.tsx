@@ -364,13 +364,16 @@ export default function CandlestickChart({
         },
       },
     },
+    line: {
+      style: {
+        data: {
+          stroke: LIGHT_GRAY_COLOR,
+          strokeWidth: 1,
+        },
+      },
+    },
     // area: {
     //   style: {
-    //     labels: {
-    //       fontSize: 50,
-    //       fontFamily: 'barlow',
-    //       fill: LIGHT_GRAY_COLOR,
-    //     },
     //   },
     // },
   };
@@ -1177,28 +1180,53 @@ export default function CandlestickChart({
           data={sampleDataDates}
           // data={marketCtx.candlestickChartData ? [...marketCtx.candlestickChartData] : []}
         /> */}
+        {/* <svg>
+          <defs>
+            <linearGradient id="radial_gradient" gradientTransform="rotate(90)">
+              <stop offset="0%" stop-color="#190b28" />
+              <stop offset="25%" stop-color="#190b28" />
+              <stop offset="25%" stop-color="#434238" />
+              <stop offset="50%" stop-color="#434238" />
+              <stop offset="50%" stop-color="#334110" />
+              <stop offset="75%" stop-color="#334110" />
+              <stop offset="75%" stop-color="#524800" />
+              <stop offset="100%" stop-color="#524800" />
+            </linearGradient>
+          </defs>
+        </svg> */}
         {!marketCtx.candlestickChartData !== null ? (
           <V.VictoryChart
-            // containerComponent={
-            //   // <V.VictoryZoomContainer />
-            //   // <V.VictoryVoronoiContainer
-            //   //   labels={({datum}) =>
-            //   //     `${timestampToString(datum.x / 1000).time}, ${Math.round(datum.y)}`
-            //   //   }
-            //   // />
+            containerComponent={
+              // <V.VictoryZoomContainer />
+              // <V.VictoryVoronoiContainer
+              //   labels={({datum}) =>
+              //     `${timestampToString(datum.x / 1000).time}, ${Math.round(datum.y)}`
+              //   }
+              // />
 
-            //   // TODO: useful tool
-            //   // <V.VictoryCursorContainer
-            //   //   style={{stroke: 'transparent'}}
-            //   //   cursorLabel={({datum}) => `${timestampToString(datum.x / 1000).time}, ${datum.y}`}
-            //   //   // cursorLabel={({datum}) =>
-            //   //   //   `${timestampToString(datum.x / 1000).time}, ${Math.round(datum.y)}`
-            //   //   // }
-            //   // />
-            // }
-            // animate={{duration: 300}}
-            // chartTheme
-
+              // TODO: useful tool
+              <V.VictoryCursorContainer
+                // style={{stopColor: '#fff', grid: '#fff', stroke: '#fff', fill: '#fff'}}
+                cursorLabelComponent={
+                  <V.VictoryLabel
+                    style={{
+                      fill: LIGHT_GRAY_COLOR,
+                      // cursor: LIGHT_GRAY_COLOR,
+                      stopOpacity: 0.5,
+                      stopColor: LIGHT_GRAY_COLOR,
+                      strokeOpacity: 0.5,
+                      fontSize: 12,
+                      background: '#000',
+                      backgroundColor: '#000',
+                    }}
+                  />
+                }
+                cursorLabel={({datum}) => `${timestampToString(datum.x / 1000).time}, ${datum.y}`}
+                // cursorLabel={({datum}) =>
+                //   `${timestampToString(datum.x / 1000).time}, ${Math.round(datum.y)}`
+                // }
+              />
+            }
             theme={chartTheme}
             minDomain={{y: minNumber !== null ? minNumber * 0.95 : undefined}}
             maxDomain={{y: maxNumber !== null ? maxNumber * 1.05 : undefined}} // TODO: measure the biggest number to decide the y-axis
@@ -1254,13 +1282,6 @@ export default function CandlestickChart({
                   },
                 }}
                 style={{
-                  labels: {
-                    fill: EXAMPLE_BLUE_COLOR,
-                    // stroke: '#666666',
-                    // fontSize: 10,
-                  },
-                  // parent: {border: '1px solid #b30e0e'},
-
                   data: {
                     // fill: '#c43a31',
                     // fill: 'none',
@@ -1299,24 +1320,22 @@ export default function CandlestickChart({
                 }
                 labelComponent={
                   <V.VictoryTooltip
+                    // backgroundStyle={{fill: '#000000'}}
                     cornerRadius={0}
                     // center={{x: 50, y: 0}}
-                    x={30}
+                    x={26}
                     y={-10}
+                    flyoutStyle={{
+                      stroke: 'none',
+                      fill: '#000000',
+                    }}
                     style={{
-                      // opacity: 0.2,
                       padding: 0,
-                      backgroundColor: '#b30e0e',
-                      background: '#b30e0e',
-                      // border: '1px solid white',
-                      // backgroundColor: EXAMPLE_BLUE_COLOR,
-                      // fill: EXAMPLE_BLUE_COLOR,
+                      backgroundColor: '#000000',
+                      background: '#000000',
                       fill: LIGHT_GRAY_COLOR,
-                      // stroke: LIGHT_GRAY_COLOR,
-                      // strokeWidth: 0.2,
                       fontFamily: 'barlow',
                       fontSize: 14,
-                      // offset: 300,
 
                       // it works but it's not as designed
                       // fill: (d: any) =>
@@ -1327,13 +1346,7 @@ export default function CandlestickChart({
                       // letterSpacing: 0.5,
                     }}
                     pointerLength={0}
-                    // labelComponent={<V.VictoryLabel style={{fontFamily: 'barlow'}} />}
-
-                    // text={'white'}
-                    // theme={chartTheme}
                     pointerWidth={0}
-
-                    // pointerOrientation={'top'}
                   />
                 }
 

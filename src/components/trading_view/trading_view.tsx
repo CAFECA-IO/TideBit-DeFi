@@ -120,8 +120,6 @@ const TradingView = () => {
 
   const displayedTradingView = (
     <>
-      {/* absolute left-505px top-400px w-50px */}
-      <Lottie className="latestPrice" animationData={spotAnimation} />
       <CandlestickChart
         candlestickOn={candlestickOnRef.current}
         lineGraphOn={lineGraphOnRef.current}

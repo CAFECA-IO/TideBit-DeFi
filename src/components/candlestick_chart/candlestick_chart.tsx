@@ -885,6 +885,9 @@ export default function CandlestickChart({
     <>
       {/* w-2/3 xl:w-4/5 */}
       {/* TODO: Temporary adjustment of chart size */}
+      {/* absolute left-505px top-400px w-50px */}
+      <Lottie className="latestPrice" animationData={spotAnimation} />
+
       <div className="-ml-5" style={{width: '70%'}}>
         {/* <div ref={lottieContainerRef} /> */}
         {/* <div ref={lottieContainerRef} className="z-50 w-50px text-cuteBlue1">

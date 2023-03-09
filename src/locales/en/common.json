@@ -5,7 +5,17 @@
     "Support": "Support",
     "TideBitUniversity": "TideBit University",
     "HelpCenter": "Help Center",
-    "WalletConnect": "Wallet Connect"
+    "WalletConnect": "Wallet Connect",
+    "Language": "Language",
+    "Menu": "Menu"
+  },
+  "user": {
+    "PersonalSetting": "Personal Setting",
+    "Assets": "My Assets",
+    "Deposit": "Deposit",
+    "Withdraw": "Withdraw",
+    "Account": "My Account",
+    "Disconnect": "Disconnect"
   },
   "home_page": {
     "Cta_HighlightTitle": "Trusted",
@@ -27,7 +37,23 @@
     "ReserveRatioBlock_Description_2": "TideBit wallet assets"
   },
   "trade_page": {
+    "WalletConnect_Button": "Wallet Connect",
+    "WalletConnect_Description": "Connect your wallet to start trading",
     "TickerSelectorTab_All": "All",
     "TickerSelectorTab_Favorite": "Favorite"
+  },
+  "open_position": {
+    "OpenPosition": "Open Position",
+    "Type": "Type",
+    "OpenPrice": "Open Price",
+    "Amount": "Amount",
+    "RequiredMargin": "Required Margin",
+    "TPSL": "TP/ SL",
+    "GuaranteedStop": "Guaranteed Stop",
+    "GuaranteedStopHint": "Guaranteed stop will force the position to close at your chosen rate (price) even if the market price surpasses it.",
+    "Expiration": "Expiration Time",
+    "Liquidation": "Liquidation Price",
+    "CFDContent": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna",
+    "Confirm_Button": "Confirm the order"
   }
 }

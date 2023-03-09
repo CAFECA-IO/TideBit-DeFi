@@ -27,10 +27,8 @@ const NavBarMobile = () => {
   //lang sub menu
   const [langIsOpen, setLangIsOpen] = useState(false);
 
-  const [userMenuIsOpen, setUserMenuIsOpen] = useState(false);
-
   //menu text
-  const menuText = langIsOpen ? 'Language' : 'Menu';
+  const menuText = langIsOpen ? t('nav_bar.Language') : t('nav_bar.Menu');
 
   const {
     targetRef: notifyRef,
@@ -210,7 +208,7 @@ const NavBarMobile = () => {
                 <div className="px-3 py-5">
                   <I18n langIsOpen={langIsOpen} setLangIsOpen={setLangIsOpen} />
                 </div>
-                <span className="inline-block h-px w-11/12 rounded bg-cuteBlue"></span>
+
                 {/* <TbMinusVertical size={30} className="" /> */}
               </div>
               {/* <div className="border-b border-cuteBlue"></div> */}

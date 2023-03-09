@@ -8,8 +8,13 @@ import {BiWallet} from 'react-icons/bi';
 import {accountTruncate} from '../../lib/common';
 import TideButton from '../tide_button/tide_button';
 import {useGlobal} from '../../contexts/global_context';
+import {useTranslation} from 'next-i18next';
+
+type TranslateFunction = (s: string) => string;
 
 const UserMobile = () => {
+  const {t}: {t: TranslateFunction} = useTranslation('common');
+
   const userCtx = useContext(UserContext);
   const globalCtx = useGlobal();
 
@@ -31,6 +36,14 @@ const UserMobile = () => {
 
   const avatarClickHandler = () => {
     setAvatarMenuVisible(!avatarMenuVisible);
+  };
+
+  const depositClickHandler = () => {
+    globalCtx.visibleDepositModalHandler();
+  };
+
+  const withdrawClickHandler = () => {
+    globalCtx.visibleWithdrawalModalHandler();
   };
 
   const isDisplayedNavbarCover = userCtx.wallet ? (
@@ -57,7 +70,7 @@ const UserMobile = () => {
           </button>
         </div>
 
-        <p className="self-center pl-5">Personal Setting</p>
+        <p className="self-center pl-5">{t('user.PersonalSetting')}</p>
       </div>
     </div>
   ) : null;
@@ -88,37 +101,33 @@ const UserMobile = () => {
             <Link href="/my-assets" className="block py-4 pr-4 pl-3 hover:bg-darkGray5">
               <div className="flex flex-row items-center space-x-2">
                 <BiWallet />
-                <p>My Assets</p>
+                <p>{t('user.Assets')}</p>
               </div>
             </Link>
           </li>
           <li
-            onClick={() => {
-              globalCtx.visibleDepositModalHandler();
-            }}
+            onClick={depositClickHandler}
             className="block py-4 pr-4 pl-3 hover:cursor-pointer hover:bg-darkGray5"
           >
             <div className="flex flex-row items-center space-x-2">
               <FaDownload />
-              <p>Deposit</p>
+              <p>{t('user.Deposit')}</p>
             </div>
           </li>
           <li
-            onClick={() => {
-              globalCtx.visibleWithdrawalModalHandler();
-            }}
+            onClick={withdrawClickHandler}
             className="block py-4 pr-4 pl-3 hover:cursor-pointer hover:bg-darkGray5"
           >
             <div className="flex flex-row items-center space-x-2">
               <FaUpload />
-              <p>Withdraw</p>
+              <p>{t('user.Withdraw')}</p>
             </div>
           </li>
           <li>
             <Link href="#" className="block py-4 pr-4 pl-3 hover:bg-darkGray5">
               <div className="flex flex-row items-center space-x-2">
                 <VscAccount />
-                <p>My Account</p>
+                <p>{t('user.Account')}</p>
               </div>
             </Link>
           </li>
@@ -130,7 +139,7 @@ const UserMobile = () => {
             >
               <div className="flex flex-row items-center space-x-2">
                 <ImExit />
-                <p>Disconnect</p>
+                <p>{t('user.Disconnect')}</p>
               </div>
             </Link>
           </li>
@@ -139,7 +148,6 @@ const UserMobile = () => {
     </div>
   ) : null;
 
-  // TODO: Move to `Navbar` and `User`
   const isDisplayedUserAvatar = userCtx.enableServiceTerm ? (
     <>
       <button

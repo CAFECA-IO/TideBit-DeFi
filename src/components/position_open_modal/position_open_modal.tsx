@@ -22,7 +22,9 @@ import {
   getDummyApplyCreateCFDOrderData,
   IApplyCreateCFDOrderData,
 } from '../../interfaces/tidebit_defi_background/apply_create_cfd_order_data';
+import {useTranslation} from 'react-i18next';
 
+type TranslateFunction = (s: string) => string;
 interface IPositionOpenModal {
   modalVisible: boolean;
   modalClickHandler: () => void;
@@ -39,6 +41,8 @@ const PositionOpenModal = ({
   renewalDeadline,
   ...otherProps
 }: IPositionOpenModal) => {
+  const {t}: {t: TranslateFunction} = useTranslation('common');
+
   const globalCtx = useGlobal();
   const marketCtx = useContext(MarketContext);
   const userCtx = useContext(UserContext);
@@ -299,13 +303,13 @@ const PositionOpenModal = ({
             {/* {displayedDataFormat()} */}
 
             <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">Type</div>
+              <div className="text-lightGray">{t('open_position.Type')}</div>
               {/* TODO: color variable */}
               <div className={`${displayedPositionColor}`}>{displayedTypeOfPosition}</div>
             </div>
 
             <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">Open Price</div>
+              <div className="text-lightGray">{t('open_position.OpenPrice')}</div>
               <div className={`${dataRenewedStyle}`}>
                 {/* TODO: Hardcode USDT */}${' '}
                 {openCfdRequest.price?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0} USDT
@@ -313,7 +317,7 @@ const PositionOpenModal = ({
             </div>
 
             <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">Amount</div>
+              <div className="text-lightGray">{t('open_position.Amount')}</div>
               <div className="">
                 {/* TODO:{openCfdRequest?.amount?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0} */}
                 {openCfdRequest.amount}
@@ -321,7 +325,7 @@ const PositionOpenModal = ({
             </div>
 
             <div className={`${layoutInsideBorder} whitespace-nowrap`}>
-              <div className="text-lightGray">Required Margin</div>
+              <div className="text-lightGray">{t('open_position.RequiredMargin')}</div>
               {/* TODO: Hardcode USDT */}
               <div className={`${dataRenewedStyle}`}>
                 $ {openCfdRequest.margin.amount.toFixed(2)} USDT
@@ -329,21 +333,20 @@ const PositionOpenModal = ({
             </div>
 
             <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">TP/ SL</div>
+              <div className="text-lightGray">{t('open_position.TPSL')}</div>
               <div className="">
                 {displayedTakeProfit} / {displayedStopLoss}
               </div>
             </div>
 
             <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">Guaranteed Stop</div>
+              <div className="text-lightGray">{t('open_position.GuaranteedStop')}</div>
               <div className={`relative flex items-center`}>
                 {displayedGuaranteedStopSetting}
 
                 <div className="group">
                   <div className="invisible absolute bottom-6 right-0 w-180px bg-darkGray8 p-2 text-left text-xxs text-lightWhite opacity-0 shadow-lg shadow-black/80 transition-all duration-200 group-hover:visible group-hover:opacity-100">
-                    Guaranteed stop will force the position to close at your chosen rate (price)
-                    even if the market price surpasses it.
+                    {t('open_position.GuaranteedStopHint')}
                   </div>
                   <Image
                     className="ml-2"
@@ -364,17 +367,14 @@ const PositionOpenModal = ({
             </div> */}
 
             <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">Liquidation Price</div>
+              <div className="text-lightGray">{t('open_position.Liquidation')}</div>
               {/* TODO: Liquidation Price */}
               <div className="">$ 9.23</div>
             </div>
           </div>
         </div>
 
-        <div className="my-4 text-xxs text-lightGray">
-          Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
-          invidunt ut labore et dolore magna
-        </div>
+        <div className="my-4 text-xxs text-lightGray">{t('open_position.CFDContent')}</div>
 
         <RippleButton
           // disabled={secondsLeft === INIT_POSITION_REMAINING_SECONDS}
@@ -382,7 +382,7 @@ const PositionOpenModal = ({
           buttonType="button"
           className={`mt-0 whitespace-nowrap rounded border-0 bg-tidebitTheme py-2 px-16 text-base text-white transition-colors duration-300 hover:bg-cyan-600 focus:outline-none disabled:bg-lightGray`}
         >
-          Confirm the order
+          {t('open_position.Confirm_Button')}
         </RippleButton>
       </div>
     </div>
@@ -406,7 +406,7 @@ const PositionOpenModal = ({
             {/*header*/}
             <div className="flex items-start justify-between rounded-t pt-9">
               <h3 className="-mt-0 w-full text-center text-xl font-normal text-lightWhite">
-                Open Position
+                {t('open_position.OpenPosition')}
               </h3>
               <button className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
                 <span className="absolute top-5 right-5 block outline-none focus:outline-none">

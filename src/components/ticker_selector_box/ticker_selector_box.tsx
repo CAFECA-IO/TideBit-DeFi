@@ -4,12 +4,14 @@ import {CRYPTO_CARD_COLORS} from '../../constants/display';
 
 import {useContext, useEffect, useState} from 'react';
 import CryptoCard from '../crypto_card/crypto_card';
-
+import {useTranslation} from 'next-i18next';
 import {MarketContext, IMarketContext} from '../../contexts/market_context';
 import {UserContext, IUserContext} from '../../contexts/user_context';
 import {ILineGraphProps, ITickerData} from '../../interfaces/tidebit_defi_background/ticker_data';
 import {useRouter} from 'next/router';
 import eventEmitter, {ClickEvent} from '../../constants/tidebit_event';
+
+type TranslateFunction = (s: string) => string;
 
 // TODO: useContext
 interface ITickerSelectorBox {
@@ -41,6 +43,8 @@ const TickerSelectorBox = ({
 }: ITickerSelectorBox) => {
   const marketCtx = useContext<IMarketContext>(MarketContext);
   const userCtx = useContext(UserContext) as IUserContext;
+
+  const {t}: {t: TranslateFunction} = useTranslation('common');
 
   const router = useRouter();
 
@@ -345,7 +349,7 @@ const TickerSelectorBox = ({
             className={`${activeAllTabStyle} inline-block rounded-t-lg px-38px py-2 hover:cursor-pointer`}
             onClick={allTabClickHandler}
           >
-            All
+            {t('trade_page.TickerSelectorTab_All')}
           </button>
         </div>
         {userCtx.enableServiceTerm ? (
@@ -355,7 +359,7 @@ const TickerSelectorBox = ({
               onClick={favoriteTabClickHandler}
               className={`${activeFavoriteTabStyle} inline-block rounded-t-lg px-38px py-2 hover:cursor-pointer`}
             >
-              Favorite
+              {t('trade_page.TickerSelectorTab_Favorite')}
             </button>
           </div>
         ) : (

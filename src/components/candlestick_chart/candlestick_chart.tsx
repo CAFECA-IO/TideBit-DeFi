@@ -821,14 +821,14 @@ export default function CandlestickChart({
           //   />
           // }
         />
-        <VictoryLabel
+        {/* <VictoryLabel
           textAnchor="end"
           // text={datum => `${datum.y}`}
           text={toLastestPriceHorizontalLineData[0]?.y ?? 0}
           x={Number(candlestickChartWidth)}
           y={Number(candlestickChartHeight) - 100}
           style={{fill: '#fff', strokeWidth: 0.01}}
-        />
+        /> */}
         <VictoryScatter
           data={toLastestPriceHorizontalLineData}
           style={{

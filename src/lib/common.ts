@@ -7,6 +7,10 @@ export function randomIntFromInterval(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
+export function randomFloatFromInterval(min: number, max: number, decimalPlaces: number) {
+  return Number((Math.random() * (max - min) + min).toFixed(decimalPlaces));
+}
+
 /**
  *
  * @param timestamp is in seconds

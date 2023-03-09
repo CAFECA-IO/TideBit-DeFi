@@ -10,6 +10,9 @@ import {useGlobal} from '../../contexts/global_context';
 
 interface ITradingChartSwitchProps {
   getTradingViewType: (tradingViewState: string) => void;
+  getCandlestickOn: (bool: boolean) => void;
+  getLineGraphOn: (bool: boolean) => void;
+
   getTradingViewInterval: (tradingViewInterval: string) => void;
   getDisplayedPositionLabel: (bool: boolean) => void;
 }
@@ -50,11 +53,17 @@ const getSwitchWidth = () => {
 
 const TradingChartSwitch = ({
   getTradingViewType,
+  getCandlestickOn,
+  getLineGraphOn,
+
   getTradingViewInterval,
   getDisplayedPositionLabel,
 }: ITradingChartSwitchProps) => {
   const [activeButton, setActiveButton] = useState('live');
-  const [activeChartType, setActiveChartType] = useState('candlestick');
+  const [candlestickOn, setCandlestickOn] = useState(true);
+  const [lineGraphOn, setLineGraphOn] = useState(false);
+
+  // const [activeChartType, setActiveChartType] = useState('candlestick');
   const {showPositionOnChartHandler} = useContext(MarketContext);
 
   const chartSize = getChartSize();
@@ -90,12 +99,16 @@ const TradingChartSwitch = ({
     activeButton === '1d' ? timeIntervalButtonClickedStyle : timeIntervalButtonStyle;
 
   const candlestickClickHandler = () => {
-    setActiveChartType('candlestick');
+    setCandlestickOn(!candlestickOn);
+    getCandlestickOn(!candlestickOn);
+    // setActiveChartType('candlestick');
     getTradingViewType('candlestick');
   };
 
   const lineClickHandler = () => {
-    setActiveChartType('line');
+    setLineGraphOn(!lineGraphOn);
+    getLineGraphOn(!lineGraphOn);
+    // setActiveChartType('line');
     getTradingViewType('line');
   };
 
@@ -146,7 +159,7 @@ const TradingChartSwitch = ({
         type="button"
         className="rounded-sm bg-darkGray5 p-1 hover:opacity-90"
       >
-        {activeChartType === 'candlestick' ? (
+        {candlestickOn ? (
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width={TRADING_CHART_SWITCH_BUTTON_SIZE}
@@ -169,8 +182,8 @@ const TradingChartSwitch = ({
         ) : (
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            width="22.703"
-            height="30"
+            width={TRADING_CHART_SWITCH_BUTTON_SIZE}
+            height={TRADING_CHART_SWITCH_BUTTON_SIZE}
             data-name="Group 2293"
             viewBox="0 0 22.703 30"
           >
@@ -198,11 +211,11 @@ const TradingChartSwitch = ({
         type="button"
         className="rounded-sm bg-darkGray5 p-1 hover:opacity-90"
       >
-        {activeChartType === 'line' ? (
+        {lineGraphOn ? (
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            width="31.403"
-            height="30.697"
+            width={TRADING_CHART_SWITCH_BUTTON_SIZE}
+            height={TRADING_CHART_SWITCH_BUTTON_SIZE}
             viewBox="0 0 31.403 30.697"
           >
             <defs>

@@ -1,6 +1,6 @@
 import React, {useState, useContext, useEffect} from 'react';
-import dynamic from 'next/dynamic';
-import ApexCharts, {ApexOptions} from 'apexcharts';
+// import dynamic from 'next/dynamic';
+// import ApexCharts, {ApexOptions} from 'apexcharts';
 import {
   EXAMPLE_BLUE_COLOR,
   LIGHT_GRAY_COLOR,
@@ -11,24 +11,22 @@ import {
 import {BsFillArrowDownCircleFill, BsFillArrowUpCircleFill} from 'react-icons/bs';
 import {MarketContext, MarketProvider} from '../../contexts/market_context';
 import {randomFloatFromInterval, randomIntFromInterval, timestampToString} from '../../lib/common';
-import * as V from 'victory';
 import {ICandlestickData} from '../../interfaces/tidebit_defi_background/candlestickData';
 import useStateRef from 'react-usestateref';
-import * as Vtype from 'victory-core';
-// import {
-//   VictoryLabel,
-//   VictoryTooltip,
-//   VictoryTheme,
-//   VictoryLine,
-//   VictoryPie,
-//   VictoryChart,
-//   VictoryAxis,
-//   VictoryCandlestick,
-// } from 'victory';
+import {VictoryThemeDefinition} from 'victory-core/lib/victory-theme/types';
+import {
+  VictoryLabel,
+  VictoryTooltip,
+  VictoryTheme,
+  VictoryLine,
+  VictoryPie,
+  VictoryChart,
+  VictoryAxis,
+  VictoryCandlestick,
+  VictoryCursorContainer,
+} from 'victory';
 
-// import ReactApexChart from 'react-apexcharts';
-const Chart = dynamic(() => import('react-apexcharts'), {ssr: false});
-// const Chart = dynamic(() => import('apexcharts'), {ssr: false});
+// const Chart = dynamic(() => import('react-apexcharts'), {ssr: false});
 
 interface ITradingChartGraphProps {
   strokeColor: string[];
@@ -40,10 +38,6 @@ interface ITradingChartGraphProps {
   candlestickChartHeight: string;
   // positionDisplayingState: boolean;
 }
-
-const chartBlank = 1.68;
-const dummyDataSize = 80;
-const unitOfLive = 1000;
 
 export interface ILineChartData {
   x: Date;
@@ -101,16 +95,23 @@ export interface ILineChartData {
 // const dummyHorizontalLineData = getDummyHorizontalLineData(80);
 
 export const updateDummyCandlestickChartData = (data: ICandlestickData[]): ICandlestickData[] => {
-  const newData = [...data];
+  const chartBlank = 1.68;
+  const dummyDataSize = 80;
+  const unitOfLive = 1000;
+
+  const originalData = [...data];
+  const lastTime = originalData[originalData.length - 2]?.x.getTime() as number;
+  const lastPoint = originalData[originalData.length - 2]?.y[3] as number;
 
   // Generate new data
-  const newPoint = newData[newData.length - 2]?.y[3] as number;
+  const newTime = lastTime + unitOfLive;
+
   // console.log('new point in update func', newPoint);
 
   const newYs: (number | null)[] = new Array(4).fill(0).map(v => {
     const rnd = Math.random() / 1.2;
     const ts = rnd > 0.25 ? 1 + rnd ** 5 : 1 - rnd;
-    const price = newPoint * ts;
+    const price = lastPoint * ts;
 
     const prettyPrice = Math.trunc(price * 100) / 100;
     return prettyPrice;
@@ -122,7 +123,7 @@ export const updateDummyCandlestickChartData = (data: ICandlestickData[]): ICand
   };
 
   // Add new data and remove the first element
-  const withoutFirst = newData.slice(1); // remove the first element
+  const withoutFirst = originalData.slice(1); // remove the first element
   const withoutLast = withoutFirst.slice(0, withoutFirst.length - 1); // remove the last element
   const withNewData = withoutLast.concat(newCandlestickData); // add new data to end
   const withNullData = withNewData.concat({x: new Date(), y: [null, null, null, null]}); // add null data to end
@@ -342,8 +343,8 @@ export default function CandlestickChart({
     // label: JSON.stringify({open: data.y[0], high: data.y[1], low: data.y[2], close: data.y[3]}),
   }));
 
-  // VictoryThemeDefinition
-  const chartTheme: Vtype.VictoryThemeDefinition = {
+  // FIXME:VictoryThemeDefinition
+  const chartTheme: VictoryThemeDefinition = {
     axis: {
       style: {
         tickLabels: {
@@ -361,11 +362,19 @@ export default function CandlestickChart({
         },
       },
     },
+    line: {
+      style: {
+        data: {
+          stroke: LIGHT_GRAY_COLOR,
+          strokeWidth: 1,
+        },
+      },
+    },
+    // area: {
+    //   style: {
+    //   },
+    // },
   };
-
-  // console.log('market candlestick data', marketCtx.candlestickChartData);
-  // console.log('stringify', JSON.stringify(marketCtx.candlestickChartData));
-  // console.log('line data from candlestick chart', toLineChartData);
 
   // TODO: #WI find the max number in the data array
   // const maxNumber = lineDataFetchedFromContext?.reduce((acc, curr) => {
@@ -415,1184 +424,301 @@ export default function CandlestickChart({
   // console.log('max number', maxNumber);
   // console.log('min number', minNumber);
 
-  // console.log('position context info in candlestick chart', positionInfoOnChart);
+  const isDisplayedCharts =
+    !marketCtx.candlestickChartData !== null ? (
+      <VictoryChart
+        containerComponent={
+          // <VictoryZoomContainer />
+          // <VictoryVoronoiContainer
+          //   labels={({datum}) =>
+          //     `${timestampToString(datum.x / 1000).time}, ${Math.round(datum.y)}`
+          //   }
+          // />
 
-  // console.log('in candlestick chart, showPositionOnChart:', showPositionOnChart);
+          // TODO: useful tool
+          <VictoryCursorContainer
+            // style={{stopColor: '#fff', grid: '#fff', stroke: '#fff', fill: '#fff'}}
+            cursorLabelComponent={
+              // <VictoryGroup color="#fff">
+              //   <Line style={{fill: '#fff'}} />
+              <VictoryLabel
+                style={{
+                  fill: LIGHT_GRAY_COLOR,
+                  // cursor: LIGHT_GRAY_COLOR,
+                  stopOpacity: 0.5,
+                  stopColor: LIGHT_GRAY_COLOR,
+                  strokeOpacity: 0.5,
+                  fontSize: 12,
+                  background: '#000',
+                  backgroundColor: '#000',
+                }}
+                // backgroundComponent={
+                //   <rect
+                //     style={{
+                //       fill: '#fff',
+                //       stroke: '#fff',
+                //       strokeWidth: 1,
+                //       fillOpacity: 0.5,
+                //       strokeOpacity: 0.5,
+                //     }}
+                //   />
+                // }
+              />
+              // </VictoryGroup>
+            }
+            cursorLabel={({datum}) => `(${timestampToString(datum.x / 1000).time}, ${datum.y})`}
+            // cursorLabel={({datum}) =>
+            //   `${timestampToString(datum.x / 1000).time}, ${Math.round(datum.y)}`
+            // }
+          />
+        }
+        theme={chartTheme}
+        minDomain={{y: minNumber !== null ? minNumber * 0.95 : undefined}}
+        maxDomain={{y: maxNumber !== null ? maxNumber * 1.05 : undefined}} // TODO: measure the biggest number to decide the y-axis
+        // domainPadding={{x: 1}}
+        width={Number(candlestickChartWidth)}
+        height={Number(candlestickChartHeight)}
+        // containerComponent={
+        //   <VictoryVoronoiContainer
+        //     voronoiDimension="x"
+        //     labels={({datum}) =>
+        //       `open: ${datum.open} high: ${datum.high} low: ${datum.low} close: ${datum.close}`
+        //     }
+        //     labelComponent={<VictoryTooltip cornerRadius={2} flyoutStyle={{fill: 'black'}} />}
+        //   />
+        // }
+      >
+        {/* <VictoryLabel
+        x={25}
+        y={24}
+        style={{stroke: EXAMPLE_BLUE_COLOR}}
+        text={`${(d: any) => d.datum}`}
+      /> */}
+        <VictoryAxis
+          // width={Number(candlestickChartWidth)}
+          // scale={{x: 'auto'}}
+          // scale={{x: 'linear', y: 'log'}}
+          style={
+            {
+              // ticks: {color: 'white'},
+              // axisLabel: {fontColor: 'white'},
+              // tickLabels: {fontColor: 'white'},
+            }
+          }
+          tickFormat={t => ` ${timestampToString(t / 1000).time}`}
+        />
+        <VictoryAxis
+          // axisLabelComponent={<VictoryLabel dy={-20} />}
+          // offsetX={600}
+          offsetX={Number(candlestickChartWidth) / 1.08}
+          dependentAxis
+          // tickLabelComponent={<VictoryLabel verticalAnchor="start" textAnchor="start" x={0} />}
+        />
+        {/* <rect cx={10} cy={20} width={20} height={10} fill="#c43a31" /> */}
 
-  const anotherSampleData = [1230, 1272, 1120, 1265, 1342, 1299];
+        {candlestickOn && (
+          <VictoryCandlestick
+            animate={{
+              onExit: {
+                duration: 300,
+                before(datum, index, data) {
+                  return {y: datum._y1, _y1: datum._y0};
+                },
+              },
+            }}
+            style={{
+              data: {
+                // fill: '#c43a31',
+                // fill: 'none',
+                fillOpacity: 1,
+                // stroke: '#c43a31',
+                // VictoryCandlestickStyleInterface["data"]
+                stroke: (d: any) =>
+                  d.close > d.open ? TypeOfPnLColorHex.LOSS : TypeOfPnLColorHex.PROFIT,
 
-  // TODO: measure the biggest number to decide the y-axis
-  // const dataSample = marketCtx.candlestickChartData?.map(data =>
-  //   data.y.every(v => v === null) ? null : data
-  // );
+                strokeWidth: 1,
+                strokeOpacity: 0.5,
+                textDecorationColor: 'white',
+              },
+            }}
+            // style={{close: {stroke: 'black'}, open: {stroke: 'black'}}}
+            // labelOrientation={{
+            //   close: 'right',
+            //   open: 'right',
+            //   high: 'top',
+            //   low: 'bottom',
+            // }}
+            // padding={{top: 0, bottom: 0, left: 20, right: 0}}
+            // candleWidth={10}
+            candleRatio={0.5}
+            candleColors={{
+              positive: TypeOfPnLColorHex.PROFIT,
+              negative: TypeOfPnLColorHex.LOSS,
+            }}
+            data={marketCtx.candlestickChartData ? toCandlestickChartData : []}
+            // data={toCandlestickChartDataRef.current ?? []}
+            // openLabels
+            // openLabelComponent={<VictoryTooltip pointerLength={10} />}
 
-  // const largestNumber = dataSample.reduce((acc, curr) => {
-  //   const largestInRow = curr.y.reduce((rowAcc, rowCurr) => {
-  //     if (rowCurr && rowCurr > rowAcc) {
-  //       return rowCurr;
-  //     }
-  //     return rowAcc;
-  //   }, 0);
+            labels={({datum}) =>
+              `O: ${datum.open} H: ${datum.high} L: ${datum.low} C: ${datum.close}`
+            }
+            labelComponent={
+              <VictoryTooltip
+                // backgroundStyle={{fill: '#000000'}}
+                cornerRadius={0}
+                // center={{x: 50, y: 0}}
+                x={26}
+                y={-10}
+                flyoutStyle={{
+                  stroke: 'none',
+                  fill: '#000000',
+                }}
+                style={{
+                  padding: 0,
+                  backgroundColor: '#000000',
+                  background: '#000000',
+                  fill: LIGHT_GRAY_COLOR,
+                  fontFamily: 'barlow',
+                  fontSize: 14,
 
-  //   if (largestInRow > acc) {
-  //     return largestInRow;
-  //   }
-  //   return acc;
-  // }, 0);
+                  // it works but it's not as designed
+                  // fill: (d: any) =>
+                  //   d.datum.close > d.datum.open
+                  //     ? TypeOfPnLColorHex.PROFIT
+                  //     : TypeOfPnLColorHex.LOSS,
+                  // padding: 8,
+                  // letterSpacing: 0.5,
+                }}
+                pointerLength={0}
+                pointerWidth={0}
+              />
+            }
 
-  // const candlestickData = dummyChartData(dummyDataSize);
-  // console.log('data length', candlestickData.length);
+            // containerComponent={
+            //   <VictoryVoronoiContainer
+            //     voronoiDimension="x"
+            //     labels={({datum}) =>
+            //       `open: ${datum.open} high: ${datum.high} low: ${datum.low} close: ${datum.close}`
+            //     }
+            //     labelComponent={<VictoryTooltip cornerRadius={2} flyoutStyle={{fill: 'black'}} />}
+            //   />
+            // }
 
-  // console.log('positionDisplayingState', positionDisplayingState);
-  // const [showPosition, setShowPosition] = useState<boolean>(positionDisplayingState);
+            // events={[
+            //   {
+            //     target: 'data',
+            //     eventHandlers: {
+            //       onMouseOver: () => ({
+            //         // target: ['lowLabels', 'highLabels', 'openLabels', 'closeLabels'],
+            //         target: 'openLabels',
+            //         mutation: () => ({active: true}),
+            //       }),
+            //       onMouseOut: () => ({
+            //         // target: ['lowLabels', 'highLabels', 'openLabels', 'closeLabels'],
+            //         target: 'openLabels',
+            //         mutation: () => ({active: false}),
+            //       }),
+            //     },
+            //   },
+            // ]}
+          />
+        )}
 
-  // console.log('showPositionOnChart in chart component', showPositionOnChart);
+        {lineGraphOn && (
+          <VictoryLine
+            animate={{
+              onEnter: {
+                duration: 300,
+                before(datum, index, data) {
+                  return {y: datum._y1, _y1: datum._y0};
+                },
+              },
+            }}
+            style={{
+              data: {stroke: LINE_GRAPH_STROKE_COLOR.DEFAULT, strokeWidth: 1},
+              // parent: {border: '1px solid #ccc'},
+            }}
+            // events={{
+            //   () => {console.log('hi')}
+            //   // onClick: (evt) => alert(`(${evt.clientX}, ${evt.clientY})`)
+            // }}
+            // events={[
+            //   {
+            //     target: 'data',
+            //     eventHandlers: {
+            //       // onClick: () => {
+            //       //   console.log('line graph');
+            //       // },
+            //       // NOT working in line graph
+            //       // onMouseOver: () => ({
+            //       //   target: 'data',
+            //       //   mutation: () => ({active: true}),
+            //       // }),
+            //       // onMouseOut: () => ({
+            //       //   target: 'data',
+            //       //   mutation: () => ({active: false}),
+            //       // }),
+            //     },
+            //   },
+            // ]}
+            // data={toLineChartDataRef.current ?? []}
+            data={toLineChartData ? [...toLineChartData] : []}
+          />
+        )}
 
-  // let data = '';
+        {/* {!candlestickOn && !lineGraphOn && (
+      <VictoryLine
+        style={{
+          data: {stroke: LINE_GRAPH_STROKE_COLOR.DEFAULT, strokeWidth: 1},
+          // parent: {border: '1px solid #ccc'},
+        }}
+        data={lastestPriceHorizontalLineData}
+      />
+    )} */}
 
-  const chartOptionsWithPositionLabel: ApexOptions = {
-    // series: [
-    //   {
-    //     name: 'candles',
-    //     type: 'candlestick',
-    //     data: marketCtx.candlestickChartData ? [...marketCtx.candlestickChartData] : [],
-    //   },
-    //   {
-    //     name: 'line',
-    //     type: 'line',
-    //     data: dummyLineData,
-    //     // [
-    //     //   {
-    //     //     x: new Date().getTime() - 1000,
-    //     //     y: 5500,
-    //     //   },
-    //     //   {
-    //     //     x: new Date().getTime() - 500,
-    //     //     y: 4602,
-    //     //   },
-    //     //   {
-    //     //     x: new Date().getTime() - 200,
-    //     //     y: 7607,
-    //     //   },
-    //     //   {
-    //     //     x: new Date().getTime() - 100,
-    //     //     y: 4920,
-    //     //   },
-    //     // ],
-    //   },
-    // ],
-
-    chart: {
-      // id: candlestickChartIdHandler(id),
-      background: '#FFFFFF',
-
-      id: 'candles',
-      type: 'candlestick',
-      height: 0,
-
-      toolbar: {
-        show: false,
-        tools: {
-          zoom: false,
-          zoomin: false,
-          zoomout: false,
-          pan: false,
-        },
-      },
-
-      // dropShadow: {
-      //   enabled: true,
-      //   top: 0,
-      //   left: 0,
-      //   blur: 3,
-      //   opacity: 0.5,
-      // },
-    },
-    responsive: [
-      {
-        breakpoint: 500,
-        options: {
-          candlestick: {
-            width: '1000',
-          },
-        },
-      },
-    ],
-    // title: {
-    //   // Candlestick chart 24 hr volume TODO: it works but needs to adjust the position (to be exact, the width of the chart)
-    //   text: `24h Volume ${marketCtx.selectedTicker?.tradingVolume ?? 999} USDT`,
-    //   align: 'left',
-    //   style: {
-    //     fontSize: '14px',
-    //     fontWeight: 'bold',
-    //     fontFamily: 'barlow',
-    //     color: LIGHT_GRAY_COLOR,
-    //   },
-    // },
-    xaxis: {
-      type: 'datetime',
-      labels: {
-        style: {
-          colors: TRADING_CHART_BORDER_COLOR,
-        },
-      },
-      axisTicks: {
-        show: false,
-      },
-    },
-    grid: {
-      show: false,
-      // show: true,
-      // yaxis: {
-      //   lines: {show: false},
-      // },
-      // xaxis: {
-      //   lines: {show: false},
-      // },
-      // padding: {
-      //   right: 300,
-      // },
-    },
-
-    // TODO: min and max in yaxis
-    yaxis: {
-      // min(min) {
-      //   return min - 0.1;
-      // },
-      tooltip: {
-        enabled: true,
-      },
-      labels: {
-        show: true,
-        align: 'center',
-        style: {
-          colors: TRADING_CHART_BORDER_COLOR,
-        },
-      },
-      opposite: true,
-      axisBorder: {
-        show: true,
-        color: TRADING_CHART_BORDER_COLOR,
-      },
-      axisTicks: {
-        show: false,
-      },
-    },
-    tooltip: {
-      enabled: true,
-      fillSeriesColor: false,
-      theme: 'dark',
-    },
-
-    plotOptions: {
-      candlestick: {
-        colors: {
-          upward: TypeOfPnLColorHex.PROFIT,
-          downward: TypeOfPnLColorHex.LOSS,
-        },
-        wick: {
-          useFillColor: true,
-        },
-      },
-    },
-
-    // markers: {
-    //   discrete: [
-    //     {
-    //       seriesIndex: 0,
-    //       dataPointIndex: dataArray.length - 1,
-    //       size: 1,
-    //       strokeColor: strokeColor[0],
-    //       shape: 'circle',
-    //     },
-    //   ],
-    // },
-    // grid: {
-    //   show: true,
-    //   borderColor: strokeColor[0],
-    //   strokeDashArray: 5,
-    //   position: 'back',
-    // },
-    // forecastDataPoints: {
-    //   count: 2,
-    //   fillOpacity: 0.5,
-    //   dashArray: 2,
-    // },
-    annotations: {
-      // position: 'back',
-      yaxis: [
-        {
-          y: 1800,
-          strokeDashArray: 3,
-          borderColor: TypeOfPnLColorHex.LOSS,
-          width: '100%',
-          fillColor: '#ffffff',
-
-          label: {
-            position: 'right',
-            borderColor: 'transparent',
-            textAnchor: 'end',
-            offsetY: 10,
-            offsetX: 2,
-            style: {
-              color: '#ffffff',
-              fontSize: '12px',
-              background: TypeOfPnLColorHex.LOSS,
-              padding: {
-                right: 10,
+        <VictoryLine
+          animate={{
+            onExit: {
+              duration: 300,
+              before(datum, index, data) {
+                return {y: datum._y1, _y1: datum._y0};
               },
             },
-            text: `Position $1800 Close`,
-            borderWidth: 20,
-          },
-
-          offsetX: 0,
-        },
-        {
-          y: 3500,
-          strokeDashArray: 3,
-          borderColor: TypeOfPnLColorHex.PROFIT,
-          width: '100%',
-          fillColor: '#ffffff',
-
-          label: {
-            position: 'right',
-            borderColor: 'transparent',
-            textAnchor: 'end',
-            offsetY: 10,
-            offsetX: 2,
-            style: {
-              color: '#ffffff',
-              fontSize: '12px',
-              background: TypeOfPnLColorHex.PROFIT,
-              padding: {
-                right: 10,
-              },
-            },
-            text: `Position $3500 Close`,
-            borderWidth: 20,
-          },
-
-          offsetX: 0,
-        },
-        {
-          y: 3000,
-          strokeDashArray: 0,
-          borderColor: TypeOfPnLColorHex.TIDEBIT_THEME,
-          width: '105%',
-          fillColor: '#ffffff',
-
-          label: {
-            position: 'right',
-            borderColor: 'transparent',
-            textAnchor: 'end',
-            offsetY: 10,
-            offsetX: 42,
-            style: {
-              color: '#ffffff',
-              fontSize: '12px',
-              background: TypeOfPnLColorHex.TIDEBIT_THEME,
-              padding: {
-                left: -5,
-                right: 20,
-              },
-            },
-            text: `$3000`,
-            borderWidth: 20,
-          },
-
-          offsetX: 0,
-        },
-      ],
-    },
-  };
-
-  const lineChartOptions: ApexOptions = {
-    chart: {
-      // id: candlestickChartIdHandler(id),
-      background: EXAMPLE_BLUE_COLOR,
-      id: 'lineGraph',
-      type: 'line',
-      height: 0,
-
-      toolbar: {
-        show: false,
-        tools: {
-          zoom: false,
-          zoomin: false,
-          zoomout: false,
-          pan: false,
-        },
-      },
-      animations: {
-        enabled: false,
-      },
-
-      // // TODO: realtime updated chart needs `useEffect` to renew the data series
-      // animations: {
-      //   enabled: true,
-      //   easing: 'linear',
-      //   dynamicAnimation: {
-      //     speed: 1000,
-      //   },
-      // },
-
-      // dropShadow: {
-      //   enabled: true,
-      //   top: 0,
-      //   left: 0,
-      //   blur: 3,
-      //   opacity: 0.5,
-      // },
-    },
-
-    stroke: {
-      show: true,
-      curve: 'straight',
-      lineCap: 'butt',
-      colors: [LINE_GRAPH_STROKE_COLOR.DEFAULT],
-      width: 1.5,
-      dashArray: 0,
-    },
-    responsive: [
-      {
-        breakpoint: 500,
-        options: {
-          // candlestick: {
-          //   width: '1000',
-          // },
-        },
-      },
-    ],
-    // title: {
-    //   text: 'Line graph 24 hr volume',
-    //   align: 'left',
-    //   style: {
-    //     fontSize: '14px',
-    //     fontWeight: 'bold',
-    //     fontFamily: 'barlow',
-    //     color: LINE_GRAPH_STROKE_COLOR.DEFAULT,
-    //   },
-    // },
-    xaxis: {
-      type: 'datetime',
-      labels: {
-        show: true, // TODO: show xaxis labels
-        style: {
-          colors: TRADING_CHART_BORDER_COLOR,
-        },
-      },
-      axisTicks: {
-        show: false,
-      },
-    },
-    grid: {
-      show: false,
-      // show: true,
-      // yaxis: {
-      //   lines: {show: false},
-      // },
-      // xaxis: {
-      //   lines: {show: false},
-      // },
-      // padding: {
-      //   right: 300,
-      // },
-    },
-
-    // TODO: min and max in yaxis
-    yaxis: {
-      tooltip: {
-        enabled: false,
-      },
-      labels: {
-        show: true, // TODO: show yaxis labels
-        align: 'center',
-        style: {
-          colors: EXAMPLE_BLUE_COLOR,
-        },
-      },
-      opposite: true,
-      axisBorder: {
-        show: true,
-        color: TRADING_CHART_BORDER_COLOR,
-      },
-      axisTicks: {
-        show: false,
-      },
-    },
-    tooltip: {
-      enabled: false,
-      fillSeriesColor: false,
-      theme: 'dark',
-    },
-
-    // markers: {
-    //   discrete: [
-    //     {
-    //       seriesIndex: 0,
-    //       dataPointIndex: dataArray.length - 1,
-    //       size: 1,
-    //       strokeColor: strokeColor[0],
-    //       shape: 'circle',
-    //     },
-    //   ],
-    // },
-    // grid: {
-    //   show: true,
-    //   borderColor: strokeColor[0],
-    //   strokeDashArray: 5,
-    //   position: 'back',
-    // },
-    // forecastDataPoints: {
-    //   count: 2,
-    //   fillOpacity: 0.5,
-    //   dashArray: 2,
-    // },
-    // annotations: {
-    //   // position: 'back',
-    //   yaxis: [
-    //     {
-    //       y: 1800,
-    //       strokeDashArray: 3,
-    //       borderColor: TypeOfPnLColorHex.LOSS,
-    //       width: '100%',
-    //       fillColor: '#ffffff',
-
-    //       label: {
-    //         position: 'right',
-    //         borderColor: 'transparent',
-    //         textAnchor: 'end',
-    //         offsetY: 10,
-    //         offsetX: 2,
-    //         style: {
-    //           color: '#ffffff',
-    //           fontSize: '12px',
-    //           background: TypeOfPnLColorHex.LOSS,
-    //           padding: {
-    //             right: 10,
-    //           },
-    //         },
-    //         text: `Position $1800 Close`,
-    //         borderWidth: 20,
-    //       },
-
-    //       offsetX: 0,
-    //     },
-    //     {
-    //       y: 3500,
-    //       strokeDashArray: 3,
-    //       borderColor: TypeOfPnLColorHex.PROFIT,
-    //       width: '100%',
-    //       fillColor: '#ffffff',
-
-    //       label: {
-    //         position: 'right',
-    //         borderColor: 'transparent',
-    //         textAnchor: 'end',
-    //         offsetY: 10,
-    //         offsetX: 2,
-    //         style: {
-    //           color: '#ffffff',
-    //           fontSize: '12px',
-    //           background: TypeOfPnLColorHex.PROFIT,
-    //           padding: {
-    //             right: 10,
-    //           },
-    //         },
-    //         text: `Position $3500 Close`,
-    //         borderWidth: 20,
-    //       },
-
-    //       offsetX: 0,
-    //     },
-    //     {
-    //       y: 3000,
-    //       strokeDashArray: 0,
-    //       borderColor: TypeOfPnLColorHex.TIDEBIT_THEME,
-    //       width: '105%',
-    //       fillColor: '#ffffff',
-
-    //       label: {
-    //         position: 'right',
-    //         borderColor: 'transparent',
-    //         textAnchor: 'end',
-    //         offsetY: 10,
-    //         offsetX: 42,
-    //         style: {
-    //           color: '#ffffff',
-    //           fontSize: '12px',
-    //           background: TypeOfPnLColorHex.TIDEBIT_THEME,
-    //           padding: {
-    //             left: -5,
-    //             right: 20,
-    //           },
-    //         },
-    //         text: `$3000`,
-    //         borderWidth: 20,
-    //       },
-
-    //       offsetX: 0,
-    //     },
-    //   ],
-    // },
-  };
-
-  // const chartOptionsWithoutPositionLabel: ApexOptions = {
-  //   // series
-  //   chart: {
-  //     type: 'candlestick',
-  //     height: 0,
-
-  //     toolbar: {
-  //       show: false,
-  //       tools: {
-  //         zoom: false,
-  //         zoomin: false,
-  //         zoomout: false,
-  //         pan: false,
-  //       },
-  //     },
-
-  //     // dropShadow: {
-  //     //   enabled: true,
-  //     //   top: 0,
-  //     //   left: 0,
-  //     //   blur: 3,
-  //     //   opacity: 0.5,
-  //     // },
-  //   },
-  //   responsive: [
-  //     {
-  //       breakpoint: 500,
-  //       options: {
-  //         candlestick: {
-  //           width: '1000',
-  //         },
-  //       },
-  //     },
-  //   ],
-  //   title: {
-  //     text: '',
-  //     align: 'left',
-  //   },
-  //   xaxis: {
-  //     type: 'datetime',
-  //     labels: {
-  //       style: {
-  //         colors: TRADING_CHART_BORDER_COLOR,
-  //       },
-  //     },
-  //     axisTicks: {
-  //       show: false,
-  //     },
-  //   },
-  //   grid: {
-  //     show: false,
-  //     // show: true,
-  //     // yaxis: {
-  //     //   lines: {show: false},
-  //     // },
-  //     // xaxis: {
-  //     //   lines: {show: false},
-  //     // },
-  //     // padding: {
-  //     //   right: 300,
-  //     // },
-  //   },
-
-  //   yaxis: {
-  //     tooltip: {
-  //       enabled: true,
-  //     },
-  //     labels: {
-  //       show: true,
-  //       align: 'center',
-  //       style: {
-  //         colors: TRADING_CHART_BORDER_COLOR,
-  //       },
-  //     },
-  //     opposite: true,
-  //     axisBorder: {
-  //       show: true,
-  //       color: TRADING_CHART_BORDER_COLOR,
-  //     },
-  //     axisTicks: {
-  //       show: false,
-  //     },
-  //   },
-  //   tooltip: {
-  //     enabled: true,
-  //     fillSeriesColor: false,
-  //     theme: 'dark',
-  //   },
-
-  //   plotOptions: {
-  //     candlestick: {
-  //       colors: {
-  //         upward: TypeOfPnLColorHex.PROFIT,
-  //         downward: TypeOfPnLColorHex.LOSS,
-  //       },
-  //       wick: {
-  //         useFillColor: true,
-  //       },
-  //     },
-  //   },
-
-  //   // markers: {
-  //   //   discrete: [
-  //   //     {
-  //   //       seriesIndex: 0,
-  //   //       dataPointIndex: dataArray.length - 1,
-  //   //       size: 1,
-  //   //       strokeColor: strokeColor[0],
-  //   //       shape: 'circle',
-  //   //     },
-  //   //   ],
-  //   // },
-  //   // grid: {
-  //   //   show: true,
-  //   //   borderColor: strokeColor[0],
-  //   //   strokeDashArray: 5,
-  //   //   position: 'back',
-  //   // },
-  //   // forecastDataPoints: {
-  //   //   count: 2,
-  //   //   fillOpacity: 0.5,
-  //   //   dashArray: 2,
-  //   // },
-  //   annotations: {
-  //     // position: 'back',
-  //     yaxis: [
-  //       {
-  //         y: 3000,
-  //         strokeDashArray: 0,
-  //         borderColor: TypeOfPnLColorHex.TIDEBIT_THEME,
-  //         width: '105%',
-  //         fillColor: '#ffffff',
-
-  //         label: {
-  //           position: 'right',
-  //           borderColor: 'transparent',
-  //           textAnchor: 'end',
-  //           offsetY: 10,
-  //           offsetX: 42,
-  //           style: {
-  //             color: '#ffffff',
-  //             fontSize: '12px',
-  //             background: TypeOfPnLColorHex.TIDEBIT_THEME,
-  //             padding: {
-  //               left: -5,
-  //               right: 20,
-  //             },
-  //           },
-  //           text: `$3000`,
-  //           borderWidth: 20,
-  //         },
-
-  //         offsetX: 0,
-  //       },
-  //     ],
-  //   },
-  // };
-
-  // const displayedPosition = chartOptionsWithPositionLabel;
-
-  // const displayedPosition = showPositionOnChart
-  //   ? chartOptionsWithPositionLabel
-  //   : chartOptionsWithoutPositionLabel;
-
-  // console.log('showPosition state:', showPositionOnChart);
-  // console.log('display option:', displayedPosition.annotations.yaxis[0].label.text);
-
-  const [lineChart, setLineChart] = useState({
-    options: lineChartOptions,
-  });
-
-  const [candleChart, setCandleChart] = useState({
-    options: chartOptionsWithPositionLabel,
-    toolbar: {
-      show: false,
-      enabled: false,
-    },
-    // series: [
-    //   {
-    //     name: 'candles',
-    //     type: 'candlestick',
-    //     data: marketCtx.candlestickChartData ? [...marketCtx.candlestickChartData] : [],
-    //   },
-    //   {
-    //     name: 'line',
-    //     type: 'line',
-    //     data: dummyLineData,
-    //     // [
-    //     //   {
-    //     //     x: new Date().getTime() - 1000,
-    //     //     y: 5500,
-    //     //   },
-    //     //   {
-    //     //     x: new Date().getTime() - 500,
-    //     //     y: 4602,
-    //     //   },
-    //     //   {
-    //     //     x: new Date().getTime() - 200,
-    //     //     y: 7607,
-    //     //   },
-    //     //   {
-    //     //     x: new Date().getTime() - 100,
-    //     //     y: 4920,
-    //     //   },
-    //     // ],
-    //   },
-    // ],
-    // {
-    //   name: 'series-1',
-    //   data: [],
-    // },
-    // {
-    //   name: 'series-1',
-    //   data: marketCtx.candlestickChartData ? [...marketCtx.candlestickChartData] : [],
-    // },
-  });
+          }}
+          style={{
+            data: {stroke: LINE_GRAPH_STROKE_COLOR.TIDEBIT_THEME, strokeWidth: 1},
+            // parent: {border: '1px solid #ccc'},
+          }}
+          data={toLastestPriceHorizontalLineData}
+          // data={toLatestPriceLineDataRef.current ?? []}
+        />
+      </VictoryChart>
+    ) : (
+      <p>Loading</p>
+    );
 
   return (
     <>
       {/* w-2/3 xl:w-4/5 */}
       {/* TODO: Temporary adjustment of chart size */}
       <div className="-ml-5" style={{width: '70%'}}>
-        {/* <VictoryCandlestick
-          // candleWidth={55}
-          data={sampleDataDates}
-          // data={marketCtx.candlestickChartData ? [...marketCtx.candlestickChartData] : []}
-        /> */}
-        {!marketCtx.candlestickChartData !== null ? (
-          <V.VictoryChart
-            // animate={{duration: 300}}
-            // chartTheme
-            theme={chartTheme}
-            minDomain={{y: minNumber !== null ? minNumber * 0.95 : undefined}}
-            maxDomain={{y: maxNumber !== null ? maxNumber * 1.05 : undefined}} // TODO: measure the biggest number to decide the y-axis
-            // domainPadding={{x: 1}}
-            width={Number(candlestickChartWidth)}
-            height={Number(candlestickChartHeight)}
-            // containerComponent={
-            //   <V.VictoryVoronoiContainer
-            //     voronoiDimension="x"
-            //     labels={({datum}) =>
-            //       `open: ${datum.open} high: ${datum.high} low: ${datum.low} close: ${datum.close}`
-            //     }
-            //     labelComponent={<V.VictoryTooltip cornerRadius={2} flyoutStyle={{fill: 'black'}} />}
-            //   />
-            // }
-          >
-            <V.VictoryAxis
-              // width={Number(candlestickChartWidth)}
-              // scale={{x: 'auto'}}
-              // scale={{x: 'linear', y: 'log'}}
-              style={
-                {
-                  // ticks: {color: 'white'},
-                  // axisLabel: {fontColor: 'white'},
-                  // tickLabels: {fontColor: 'white'},
-                }
-              }
-              tickFormat={t => ` ${timestampToString(t / 1000).time}`}
-            />
-            <V.VictoryAxis
-              // axisLabelComponent={<V.VictoryLabel dy={-20} />}
-              // offsetX={600}
-              offsetX={Number(candlestickChartWidth) / 1.08}
-              dependentAxis
-              // tickLabelComponent={<V.VictoryLabel verticalAnchor="start" textAnchor="start" x={0} />}
-            />
+        {isDisplayedCharts}
 
-            {candlestickOn && (
-              <V.VictoryCandlestick
-                animate={{
-                  onExit: {
-                    duration: 300,
-                    before(datum, index, data) {
-                      return {y: datum._y1, _y1: datum._y0};
-                    },
-                  },
-                }}
-                style={{
-                  data: {
-                    // fill: '#c43a31',
-                    // fill: 'none',
-                    fillOpacity: 1,
-                    // stroke: '#c43a31',
-                    // VictoryCandlestickStyleInterface["data"]
-                    stroke: (d: any) =>
-                      d.close > d.open ? TypeOfPnLColorHex.LOSS : TypeOfPnLColorHex.PROFIT,
-                    strokeWidth: 1,
-                    strokeOpacity: 0.5,
-                    textDecorationColor: 'white',
-                  },
-                }}
-                // style={{close: {stroke: 'black'}, open: {stroke: 'black'}}}
-                // labelOrientation={{
-                //   close: 'right',
-                //   open: 'right',
-                //   high: 'top',
-                //   low: 'bottom',
-                // }}
-                // padding={{top: 0, bottom: 0, left: 20, right: 0}}
-                // candleWidth={10}
-                candleRatio={0.5}
-                candleColors={{
-                  positive: TypeOfPnLColorHex.PROFIT,
-                  negative: TypeOfPnLColorHex.LOSS,
-                }}
-                data={marketCtx.candlestickChartData ? toCandlestickChartData : []}
-                // data={toCandlestickChartDataRef.current ?? []}
-                // openLabels
-                // openLabelComponent={<V.VictoryTooltip pointerLength={10} />}
-
-                labels={({datum}) =>
-                  `open: ${datum.open}\nhigh: ${datum.high}\nlow: ${datum.low}\nclose: ${datum.close}`
-                }
-                labelComponent={
-                  <V.VictoryTooltip
-                    style={{
-                      fontFamily: 'barlow',
-                      fontSize: 12,
-                      // fontWeight: 500,
-                      // stroke: 'black',
-                      // backgroundColor: EXAMPLE_BLUE_COLOR,
-                      // borderBlockColor: EXAMPLE_BLUE_COLOR,
-                      // borderColor: EXAMPLE_BLUE_COLOR,
-
-                      fill: (d: any) =>
-                        d.datum.close > d.datum.open
-                          ? TypeOfPnLColorHex.PROFIT
-                          : TypeOfPnLColorHex.LOSS,
-                      padding: 8,
-                      letterSpacing: 0.5,
-                    }}
-                    // text={'white'}
-                    // theme={chartTheme}
-                    // pointerWidth={50}
-                    pointerLength={10}
-                    // pointerOrientation={'top'}
-                  />
-                }
-
-                // containerComponent={
-                //   <V.VictoryVoronoiContainer
-                //     voronoiDimension="x"
-                //     labels={({datum}) =>
-                //       `open: ${datum.open} high: ${datum.high} low: ${datum.low} close: ${datum.close}`
-                //     }
-                //     labelComponent={<V.VictoryTooltip cornerRadius={2} flyoutStyle={{fill: 'black'}} />}
-                //   />
-                // }
-
-                // events={[
-                //   {
-                //     target: 'data',
-                //     eventHandlers: {
-                //       onMouseOver: () => ({
-                //         // target: ['lowLabels', 'highLabels', 'openLabels', 'closeLabels'],
-                //         target: 'openLabels',
-                //         mutation: () => ({active: true}),
-                //       }),
-                //       onMouseOut: () => ({
-                //         // target: ['lowLabels', 'highLabels', 'openLabels', 'closeLabels'],
-                //         target: 'openLabels',
-                //         mutation: () => ({active: false}),
-                //       }),
-                //     },
-                //   },
-                // ]}
-              />
-            )}
-
-            {lineGraphOn && (
-              <V.VictoryLine
-                animate={{
-                  onEnter: {
-                    duration: 300,
-                    before(datum, index, data) {
-                      return {y: datum._y1, _y1: datum._y0};
-                    },
-                  },
-                }}
-                style={{
-                  data: {stroke: LINE_GRAPH_STROKE_COLOR.DEFAULT, strokeWidth: 1},
-                  // parent: {border: '1px solid #ccc'},
-                }}
-                // events={{
-                //   () => {console.log('hi')}
-                //   // onClick: (evt) => alert(`(${evt.clientX}, ${evt.clientY})`)
-                // }}
-                // events={[
-                //   {
-                //     target: 'data',
-                //     eventHandlers: {
-                //       // onClick: () => {
-                //       //   console.log('line graph');
-                //       // },
-                //       // NOT working in line graph
-                //       // onMouseOver: () => ({
-                //       //   target: 'data',
-                //       //   mutation: () => ({active: true}),
-                //       // }),
-                //       // onMouseOut: () => ({
-                //       //   target: 'data',
-                //       //   mutation: () => ({active: false}),
-                //       // }),
-                //     },
-                //   },
-                // ]}
-                // data={toLineChartDataRef.current ?? []}
-                data={toLineChartData ? [...toLineChartData] : []}
-              />
-            )}
-
-            {/* {!candlestickOn && !lineGraphOn && (
-            <V.VictoryLine
-              style={{
-                data: {stroke: LINE_GRAPH_STROKE_COLOR.DEFAULT, strokeWidth: 1},
-                // parent: {border: '1px solid #ccc'},
-              }}
-              data={lastestPriceHorizontalLineData}
-            />
-          )} */}
-
-            <V.VictoryLine
-              animate={{
-                onExit: {
-                  duration: 300,
-                  before(datum, index, data) {
-                    return {y: datum._y1, _y1: datum._y0};
-                  },
-                },
-              }}
-              style={{
-                data: {stroke: LINE_GRAPH_STROKE_COLOR.TIDEBIT_THEME, strokeWidth: 1},
-                // parent: {border: '1px solid #ccc'},
-              }}
-              data={toLastestPriceHorizontalLineData}
-              // data={toLatestPriceLineDataRef.current ?? []}
-            />
-          </V.VictoryChart>
-        ) : (
-          <p>Loading</p>
-        )}
-
-        {/* ----------Candlestick chart---------- */}
-        {/* TODO: draw three svg in total to separate the functionality */}
-        {/* <Chart
-          options={candleChart.options}
-          // series={apexData.series}
-          series={[
-            {
-              name: 'candles',
-              type: 'candlestick',
-              data: marketCtx.candlestickChartData ? [...marketCtx.candlestickChartData] : [],
-            },
-          ]}
-          type="candlestick"
-          width={candlestickChartWidth}
-          height={candlestickChartHeight}
-        /> */}
-        {/* {candlestickOn && (
-          <Chart
-            options={candleChart.options}
-            // series={apexData.series}
-            series={[
-              {
-                name: 'candles',
-                type: 'candlestick',
-                data: marketCtx.candlestickChartData ? [...marketCtx.candlestickChartData] : [],
-              },
-            ]}
-            type="candlestick"
-            width={candlestickChartWidth}
-            height={candlestickChartHeight}
-          />
-        )} */}
-      </div>
-
-      <div className="relative">
-        <div className="">
-          {/* <VictoryCandlestick
-          // candleWidth={55}
-          data={sampleDataDates}
-          // data={marketCtx.candlestickChartData ? [...marketCtx.candlestickChartData] : []}
-        /> */}
-          {/* <VictoryChart
-            // theme={VictoryTheme.material}
-            // domainPadding={{x: 1}}
-            scale={{x: 'time'}}
-            width={Number(candlestickChartWidth) / 2}
-            height={Number(candlestickChartHeight) / 2}
-          >
-            <VictoryAxis
-              // width={Number(candlestickChartWidth)}
-              style={{axisLabel: {fontColor: 'white'}}}
-              tickFormat={
-                // t => `${t.toLocaleTimeString().split(' ')[0]}`
-                t =>
-                  `${t.getYear()}/${t.getDate()}/${t.getMonth()} ${t.getHours()}:${t.getMinutes()}:${t.getSeconds()}`
-              }
-            />
-            <VictoryAxis dependentAxis />
-            <VictoryCandlestick
-              style={{
-                data: {
-                  // fill: '#c43a31',
-                  // fill: 'none',
-                  fillOpacity: 1,
-                  // stroke: '#c43a31',
-                  // VictoryCandlestickStyleInterface["data"]
-                  stroke: (d: any) =>
-                    d.close > d.open ? TypeOfPnLColorHex.LOSS : TypeOfPnLColorHex.PROFIT,
-                  strokeWidth: 1,
-                  strokeOpacity: 0.5,
-                },
-              }}
-              // style={{close: {stroke: 'black'}, open: {stroke: 'black'}}}
-
-              candleColors={{positive: TypeOfPnLColorHex.PROFIT, negative: TypeOfPnLColorHex.LOSS}}
-              data={transformedCandlestickData}
-              // lowLabels
-              // lowLabelComponent={<VictoryTooltip pointerLength={0} />}
-              // highLabels
-              // highLabelComponenet={<VictoryTooltip pointerLength={0} />}
-              openLabels
-              openLabelComponent={<VictoryTooltip pointerLength={0} />}
-              // closeLabels
-              closeLabelComponent={<VictoryTooltip pointerLength={0} />}
-              events={[
-                {
-                  target: 'data',
-                  eventHandlers: {
-                    onMouseOver: () => ({
-                      // target: ['lowLabels', 'highLabels', 'openLabels', 'closeLabels'],
-                      target: 'openLabels',
-                      mutation: () => ({active: true}),
-                    }),
-                    onMouseOut: () => ({
-                      // target: ['lowLabels', 'highLabels', 'openLabels', 'closeLabels'],
-                      target: 'openLabels',
-                      mutation: () => ({active: false}),
-                    }),
-                  },
-                },
-              ]}
-            />
-            {lineGraphOn && (
-              <VictoryLine
-                style={{
-                  data: {stroke: LINE_GRAPH_STROKE_COLOR.DEFAULT, strokeWidth: 1},
-                  // parent: {border: '1px solid #ccc'},
-                }}
-                // events={{
-                //   () => {console.log('hi')}
-                //   // onClick: (evt) => alert(`(${evt.clientX}, ${evt.clientY})`)
-                // }}
-                events={[
-                  {
-                    target: 'data',
-                    eventHandlers: {
-                      // onClick: () => {
-                      //   console.log('line graph');
-                      // },
-                      // NOT working in line graph
-                      // onMouseOver: () => ({
-                      //   target: 'data',
-                      //   mutation: () => ({active: true}),
-                      // }),
-                      // onMouseOut: () => ({
-                      //   target: 'data',
-                      //   mutation: () => ({active: false}),
-                      // }),
-                    },
-                  },
-                ]}
-                data={lineDataFetchedFromContext ? [...lineDataFetchedFromContext] : []}
-              />
-            )}
-          </VictoryChart>{' '} */}
-          {/* ----------Candlestick chart---------- */}
-          {/* TODO: draw three svg in total to separate the functionality */}
-          {/* <Chart
-          options={candleChart.options}
-          // series={apexData.series}
-          series={[
-            {
-              name: 'candles',
-              type: 'candlestick',
-              data: marketCtx.candlestickChartData ? [...marketCtx.candlestickChartData] : [],
-            },
-          ]}
-          type="candlestick"
-          width={candlestickChartWidth}
-          height={candlestickChartHeight}
-        /> */}
-          {/* {candlestickOn && (
-          <Chart
-            options={candleChart.options}
-            // series={apexData.series}
-            series={[
-              {
-                name: 'candles',
-                type: 'candlestick',
-                data: marketCtx.candlestickChartData ? [...marketCtx.candlestickChartData] : [],
-              },
-            ]}
-            type="candlestick"
-            width={candlestickChartWidth}
-            height={candlestickChartHeight}
-          />
-        )} */}
-        </div>
-
-        {/* <div className="pointer-events-none absolute top-0 ml-0"> */}
-        {/* ----------Line chart---------- */}
-        {/* {lineGraphOn && (
-          <Chart
-            options={lineChart.options}
-            series={[
-              {
-                name: 'line',
-                type: 'line',
-                data: lineDataFetchedFromContext ? [...lineDataFetchedFromContext] : [],
-
-                // data: dummyLineData,
-              },
-              // {
-              //   name: 'horizontal line',
-              //   type: 'line',
-              //   data: dummyHorizontalLineData,
-              //   // data: [{x: new Date().getTime() - 1000, y: 5500}],
-              // },
-            ]}
-            type="line"
-            width={Number(candlestickChartWidth)} // `/1.05` === `*0.95`
-            height={Number(candlestickChartHeight)}
-            // width={candlestickChartWidth}
-            // height={candlestickChartHeight}
-          />
-        )}
-      </div> */}
-
-        {/* <MarketContext.Consumer>
-        {({showPositionOnChart}) => {
-          console.log('showPositionOnChart in chart rendering: ', showPositionOnChart);
-          return (
-            <Chart
-              options={dataSample.options}
-              series={dataSample.series}
-              type="candlestick"
-              width={candlestickChartWidth}
-              height={candlestickChartHeight}
-            />
-          );
-        }}
-      </MarketContext.Consumer> */}
+        {/* <svg>
+          <defs>
+            <linearGradient id="radial_gradient" gradientTransform="rotate(90)">
+              <stop offset="0%" stop-color="#190b28" />
+              <stop offset="25%" stop-color="#190b28" />
+              <stop offset="25%" stop-color="#434238" />
+              <stop offset="50%" stop-color="#434238" />
+              <stop offset="50%" stop-color="#334110" />
+              <stop offset="75%" stop-color="#334110" />
+              <stop offset="75%" stop-color="#524800" />
+              <stop offset="100%" stop-color="#524800" />
+            </linearGradient>
+          </defs>
+        </svg> */}
       </div>
     </>
   );

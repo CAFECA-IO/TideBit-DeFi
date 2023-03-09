@@ -159,14 +159,14 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       : [];
     const lastestData = candlestickDatas[candlestickDatas.length - 1];
     // eslint-disable-next-line no-console
-    console.log(`lastestData`, lastestData, lastestData.x.getTime());
+    // console.log(`lastestData`, lastestData, lastestData.x.getTime());
     // eslint-disable-next-line no-console
-    console.log(
-      `candlestickData`,
-      candlestickData,
-      candlestickData.x.getTime(),
-      candlestickData.x.getTime() - lastestData.x.getTime() >= getTime(timeSpanRef.current)
-    );
+    // console.log(
+    //   `candlestickData`,
+    //   candlestickData,
+    //   candlestickData.x.getTime(),
+    //   candlestickData.x.getTime() - lastestData.x.getTime() >= getTime(timeSpanRef.current)
+    // );
     if (lastestData) {
       if (candlestickData.x.getTime() - lastestData.x.getTime() >= getTime(timeSpanRef.current)) {
         candlestickDatas = candlestickDatas.concat([candlestickData]);
@@ -177,7 +177,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       candlestickDatas = [candlestickData];
     }
     // eslint-disable-next-line no-console
-    console.log(`candlestickDatas[${candlestickDatas.length}]`, candlestickDatas);
+    // console.log(`candlestickDatas[${candlestickDatas.length}]`, candlestickDatas);
     setCandlestickChartData(candlestickDatas);
   };
 
@@ -285,8 +285,8 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       notificationCtx.emitter.on(
         TideBitEvent.CANDLESTICK,
         (ticker: string, candlestickData: ICandlestickData) => {
-          // eslint-disable-next-line no-console
-          console.log(`ticker`, ticker, ticker === selectedTickerRef.current?.currency);
+          // // eslint-disable-next-line no-console
+          // console.log(`ticker`, ticker, ticker === selectedTickerRef.current?.currency);
           if (ticker === selectedTickerRef.current?.currency)
             updateCandlestickData(candlestickData);
         }

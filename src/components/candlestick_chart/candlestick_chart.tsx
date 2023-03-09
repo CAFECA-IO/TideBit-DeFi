@@ -629,7 +629,9 @@ export default function CandlestickChart({
         <VictoryAxis
           // axisLabelComponent={<VictoryLabel dy={-20} />}
           // offsetX={600}
+
           offsetX={Number(candlestickChartWidth) - 50}
+          // axisLabelComponent={<VictoryLabel dx={200} />}
           dependentAxis
           // tickLabelComponent={<VictoryLabel verticalAnchor="start" textAnchor="start" x={0} />}
         />
@@ -809,17 +811,22 @@ export default function CandlestickChart({
             data: {stroke: LINE_GRAPH_STROKE_COLOR.TIDEBIT_THEME, strokeWidth: 1},
           }}
           data={toLastestPriceHorizontalLineData}
-          // data={toLatestPriceLineDataRef.current ?? []}
-          // labels={({datum}) => `${datum.y}`}
+          // labels={({datum}) =>
+          //   datum.x ===
+          //   toLastestPriceHorizontalLineData[toLastestPriceHorizontalLineData.length - 1].x
+          //     ? `${datum.y}`
+          //     : ``
+          // }
           // // labels={`${toLastestPriceHorizontalLineData[0]?.y ?? 0}`} // It's deprecated
           // labelComponent={
           //   <VictoryLabel
           //     x={Number(candlestickChartWidth) - 50}
-          //     y={Number(candlestickChartHeight) - 100}
+          //     // y={Number(candlestickChartHeight) - 100}
           //     // datum={{x: new Date()}}
-          //     style={{fill: '#fff', strokeWidth: 1}}
+          //     style={{fill: LINE_GRAPH_STROKE_COLOR.TIDEBIT_THEME, fontSize: 12}}
           //   />
           // }
+          // data={toLatestPriceLineDataRef.current ?? []}
         />
         {/* <VictoryLabel
           textAnchor="end"
@@ -850,10 +857,15 @@ export default function CandlestickChart({
           // labels={`${toLastestPriceHorizontalLineData[0]?.y ?? 0}`} // It's deprecated
           labelComponent={
             <VictoryLabel
-              x={Number(candlestickChartWidth) - 25}
+              x={Number(candlestickChartWidth) - 28}
               // y={Number(candlestickChartHeight) - 100}
               // datum={{x: new Date()}}
-              style={{fill: LINE_GRAPH_STROKE_COLOR.TIDEBIT_THEME, fontSize: 12}}
+              style={{
+                fill: LINE_GRAPH_STROKE_COLOR.DEFAULT,
+                fontSize: 10,
+              }}
+              backgroundStyle={{fill: LINE_GRAPH_STROKE_COLOR.TIDEBIT_THEME}} // sets the background style
+              backgroundPadding={{top: 8, bottom: 5, left: 5, right: 5}} // sets the background padding
             />
           }
 

@@ -1,6 +1,7 @@
 import React, {createContext, useRef, useContext} from 'react';
 import useState from 'react-usestateref';
 import {IAPIRequest} from '../constants/api_request';
+import {WS_URL} from '../constants/config';
 import {Events} from '../constants/events';
 import {TideBitEvent} from '../constants/tidebit_event';
 import {
@@ -80,7 +81,7 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
     };
   };
   const wsInit = async () => {
-    wsWorker = new WebSocket(`wss://new.tidebit.com/ws`);
+    wsWorker = new WebSocket(WS_URL);
     if (wsWorker) {
       wsWorker.onmessage = msg => {
         const metaData = JSON.parse(msg.data);

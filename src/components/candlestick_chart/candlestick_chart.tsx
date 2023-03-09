@@ -11,11 +11,8 @@ import {
 import {BsFillArrowDownCircleFill, BsFillArrowUpCircleFill} from 'react-icons/bs';
 import {MarketContext, MarketProvider} from '../../contexts/market_context';
 import {randomFloatFromInterval, randomIntFromInterval, timestampToString} from '../../lib/common';
-// import * as V from 'victory';
 import {ICandlestickData} from '../../interfaces/tidebit_defi_background/candlestickData';
 import useStateRef from 'react-usestateref';
-// import * as Vtype from 'victory-core';
-// import {VictoryThemeDefinition} from '../../../node_modules/victory-core/lib/victory-theme/types';
 import {VictoryThemeDefinition} from 'victory-core/lib/victory-theme/types';
 import {
   VictoryLabel,
@@ -29,9 +26,7 @@ import {
   VictoryCursorContainer,
 } from 'victory';
 
-// import ReactApexChart from 'react-apexcharts';
-const Chart = dynamic(() => import('react-apexcharts'), {ssr: false});
-// const Chart = dynamic(() => import('apexcharts'), {ssr: false});
+// const Chart = dynamic(() => import('react-apexcharts'), {ssr: false});
 
 interface ITradingChartGraphProps {
   strokeColor: string[];
@@ -697,11 +692,8 @@ export default function CandlestickChart({
       {/* w-2/3 xl:w-4/5 */}
       {/* TODO: Temporary adjustment of chart size */}
       <div className="-ml-5" style={{width: '70%'}}>
-        {/* <VictoryCandlestick
-          // candleWidth={55}
-          data={sampleDataDates}
-          // data={marketCtx.candlestickChartData ? [...marketCtx.candlestickChartData] : []}
-        /> */}
+        {isDisplayedCharts}
+
         {/* <svg>
           <defs>
             <linearGradient id="radial_gradient" gradientTransform="rotate(90)">
@@ -716,219 +708,6 @@ export default function CandlestickChart({
             </linearGradient>
           </defs>
         </svg> */}
-        {isDisplayedCharts}
-        {/* ----------Candlestick chart---------- */}
-        {/* TODO: draw three svg in total to separate the functionality */}
-        {/* <Chart
-          options={candleChart.options}
-          // series={apexData.series}
-          series={[
-            {
-              name: 'candles',
-              type: 'candlestick',
-              data: marketCtx.candlestickChartData ? [...marketCtx.candlestickChartData] : [],
-            },
-          ]}
-          type="candlestick"
-          width={candlestickChartWidth}
-          height={candlestickChartHeight}
-        /> */}
-        {/* {candlestickOn && (
-          <Chart
-            options={candleChart.options}
-            // series={apexData.series}
-            series={[
-              {
-                name: 'candles',
-                type: 'candlestick',
-                data: marketCtx.candlestickChartData ? [...marketCtx.candlestickChartData] : [],
-              },
-            ]}
-            type="candlestick"
-            width={candlestickChartWidth}
-            height={candlestickChartHeight}
-          />
-        )} */}
-      </div>
-
-      <div className="relative">
-        <div className="">
-          {/* <VictoryCandlestick
-          // candleWidth={55}
-          data={sampleDataDates}
-          // data={marketCtx.candlestickChartData ? [...marketCtx.candlestickChartData] : []}
-        /> */}
-          {/* <VictoryChart
-            // theme={VictoryTheme.material}
-            // domainPadding={{x: 1}}
-            scale={{x: 'time'}}
-            width={Number(candlestickChartWidth) / 2}
-            height={Number(candlestickChartHeight) / 2}
-          >
-            <VictoryAxis
-              // width={Number(candlestickChartWidth)}
-              style={{axisLabel: {fontColor: 'white'}}}
-              tickFormat={
-                // t => `${t.toLocaleTimeString().split(' ')[0]}`
-                t =>
-                  `${t.getYear()}/${t.getDate()}/${t.getMonth()} ${t.getHours()}:${t.getMinutes()}:${t.getSeconds()}`
-              }
-            />
-            <VictoryAxis dependentAxis />
-            <VictoryCandlestick
-              style={{
-                data: {
-                  // fill: '#c43a31',
-                  // fill: 'none',
-                  fillOpacity: 1,
-                  // stroke: '#c43a31',
-                  // VictoryCandlestickStyleInterface["data"]
-                  stroke: (d: any) =>
-                    d.close > d.open ? TypeOfPnLColorHex.LOSS : TypeOfPnLColorHex.PROFIT,
-                  strokeWidth: 1,
-                  strokeOpacity: 0.5,
-                },
-              }}
-              // style={{close: {stroke: 'black'}, open: {stroke: 'black'}}}
-
-              candleColors={{positive: TypeOfPnLColorHex.PROFIT, negative: TypeOfPnLColorHex.LOSS}}
-              data={transformedCandlestickData}
-              // lowLabels
-              // lowLabelComponent={<VictoryTooltip pointerLength={0} />}
-              // highLabels
-              // highLabelComponenet={<VictoryTooltip pointerLength={0} />}
-              openLabels
-              openLabelComponent={<VictoryTooltip pointerLength={0} />}
-              // closeLabels
-              closeLabelComponent={<VictoryTooltip pointerLength={0} />}
-              events={[
-                {
-                  target: 'data',
-                  eventHandlers: {
-                    onMouseOver: () => ({
-                      // target: ['lowLabels', 'highLabels', 'openLabels', 'closeLabels'],
-                      target: 'openLabels',
-                      mutation: () => ({active: true}),
-                    }),
-                    onMouseOut: () => ({
-                      // target: ['lowLabels', 'highLabels', 'openLabels', 'closeLabels'],
-                      target: 'openLabels',
-                      mutation: () => ({active: false}),
-                    }),
-                  },
-                },
-              ]}
-            />
-            {lineGraphOn && (
-              <VictoryLine
-                style={{
-                  data: {stroke: LINE_GRAPH_STROKE_COLOR.DEFAULT, strokeWidth: 1},
-                  // parent: {border: '1px solid #ccc'},
-                }}
-                // events={{
-                //   () => {console.log('hi')}
-                //   // onClick: (evt) => alert(`(${evt.clientX}, ${evt.clientY})`)
-                // }}
-                events={[
-                  {
-                    target: 'data',
-                    eventHandlers: {
-                      // onClick: () => {
-                      //   console.log('line graph');
-                      // },
-                      // NOT working in line graph
-                      // onMouseOver: () => ({
-                      //   target: 'data',
-                      //   mutation: () => ({active: true}),
-                      // }),
-                      // onMouseOut: () => ({
-                      //   target: 'data',
-                      //   mutation: () => ({active: false}),
-                      // }),
-                    },
-                  },
-                ]}
-                data={lineDataFetchedFromContext ? [...lineDataFetchedFromContext] : []}
-              />
-            )}
-          </VictoryChart>{' '} */}
-          {/* ----------Candlestick chart---------- */}
-          {/* TODO: draw three svg in total to separate the functionality */}
-          {/* <Chart
-          options={candleChart.options}
-          // series={apexData.series}
-          series={[
-            {
-              name: 'candles',
-              type: 'candlestick',
-              data: marketCtx.candlestickChartData ? [...marketCtx.candlestickChartData] : [],
-            },
-          ]}
-          type="candlestick"
-          width={candlestickChartWidth}
-          height={candlestickChartHeight}
-        /> */}
-          {/* {candlestickOn && (
-          <Chart
-            options={candleChart.options}
-            // series={apexData.series}
-            series={[
-              {
-                name: 'candles',
-                type: 'candlestick',
-                data: marketCtx.candlestickChartData ? [...marketCtx.candlestickChartData] : [],
-              },
-            ]}
-            type="candlestick"
-            width={candlestickChartWidth}
-            height={candlestickChartHeight}
-          />
-        )} */}
-        </div>
-
-        {/* <div className="pointer-events-none absolute top-0 ml-0"> */}
-        {/* ----------Line chart---------- */}
-        {/* {lineGraphOn && (
-          <Chart
-            options={lineChart.options}
-            series={[
-              {
-                name: 'line',
-                type: 'line',
-                data: lineDataFetchedFromContext ? [...lineDataFetchedFromContext] : [],
-
-                // data: dummyLineData,
-              },
-              // {
-              //   name: 'horizontal line',
-              //   type: 'line',
-              //   data: dummyHorizontalLineData,
-              //   // data: [{x: new Date().getTime() - 1000, y: 5500}],
-              // },
-            ]}
-            type="line"
-            width={Number(candlestickChartWidth)} // `/1.05` === `*0.95`
-            height={Number(candlestickChartHeight)}
-            // width={candlestickChartWidth}
-            // height={candlestickChartHeight}
-          />
-        )}
-      </div> */}
-
-        {/* <MarketContext.Consumer>
-        {({showPositionOnChart}) => {
-          console.log('showPositionOnChart in chart rendering: ', showPositionOnChart);
-          return (
-            <Chart
-              options={dataSample.options}
-              series={dataSample.series}
-              type="candlestick"
-              width={candlestickChartWidth}
-              height={candlestickChartHeight}
-            />
-          );
-        }}
-      </MarketContext.Consumer> */}
       </div>
     </>
   );

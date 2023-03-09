@@ -11,20 +11,23 @@ import {
 import {BsFillArrowDownCircleFill, BsFillArrowUpCircleFill} from 'react-icons/bs';
 import {MarketContext, MarketProvider} from '../../contexts/market_context';
 import {randomFloatFromInterval, randomIntFromInterval, timestampToString} from '../../lib/common';
-import * as V from 'victory';
+// import * as V from 'victory';
 import {ICandlestickData} from '../../interfaces/tidebit_defi_background/candlestickData';
 import useStateRef from 'react-usestateref';
-import * as Vtype from 'victory-core';
-// import {
-//   VictoryLabel,
-//   VictoryTooltip,
-//   VictoryTheme,
-//   VictoryLine,
-//   VictoryPie,
-//   VictoryChart,
-//   VictoryAxis,
-//   VictoryCandlestick,
-// } from 'victory';
+// import * as Vtype from 'victory-core';
+// import {VictoryThemeDefinition} from '../../../node_modules/victory-core/lib/victory-theme/types';
+import {VictoryThemeDefinition} from 'victory-core/lib/victory-theme/types';
+import {
+  VictoryLabel,
+  VictoryTooltip,
+  VictoryTheme,
+  VictoryLine,
+  VictoryPie,
+  VictoryChart,
+  VictoryAxis,
+  VictoryCandlestick,
+  VictoryCursorContainer,
+} from 'victory';
 
 // import ReactApexChart from 'react-apexcharts';
 const Chart = dynamic(() => import('react-apexcharts'), {ssr: false});
@@ -345,8 +348,8 @@ export default function CandlestickChart({
     // label: JSON.stringify({open: data.y[0], high: data.y[1], low: data.y[2], close: data.y[3]}),
   }));
 
-  // VictoryThemeDefinition
-  const chartTheme: Vtype.VictoryThemeDefinition = {
+  // FIXME:VictoryThemeDefinition
+  const chartTheme: VictoryThemeDefinition = {
     axis: {
       style: {
         tickLabels: {
@@ -428,22 +431,22 @@ export default function CandlestickChart({
 
   const isDisplayedCharts =
     !marketCtx.candlestickChartData !== null ? (
-      <V.VictoryChart
+      <VictoryChart
         containerComponent={
-          // <V.VictoryZoomContainer />
-          // <V.VictoryVoronoiContainer
+          // <VictoryZoomContainer />
+          // <VictoryVoronoiContainer
           //   labels={({datum}) =>
           //     `${timestampToString(datum.x / 1000).time}, ${Math.round(datum.y)}`
           //   }
           // />
 
           // TODO: useful tool
-          <V.VictoryCursorContainer
+          <VictoryCursorContainer
             // style={{stopColor: '#fff', grid: '#fff', stroke: '#fff', fill: '#fff'}}
             cursorLabelComponent={
-              // <V.VictoryGroup color="#fff">
-              //   <V.Line style={{fill: '#fff'}} />
-              <V.VictoryLabel
+              // <VictoryGroup color="#fff">
+              //   <Line style={{fill: '#fff'}} />
+              <VictoryLabel
                 style={{
                   fill: LIGHT_GRAY_COLOR,
                   // cursor: LIGHT_GRAY_COLOR,
@@ -455,7 +458,7 @@ export default function CandlestickChart({
                   backgroundColor: '#000',
                 }}
               />
-              // </V.VictoryGroup>
+              // </VictoryGroup>
             }
             cursorLabel={({datum}) => `${timestampToString(datum.x / 1000).time}, ${datum.y}`}
             // cursorLabel={({datum}) =>
@@ -470,22 +473,22 @@ export default function CandlestickChart({
         width={Number(candlestickChartWidth)}
         height={Number(candlestickChartHeight)}
         // containerComponent={
-        //   <V.VictoryVoronoiContainer
+        //   <VictoryVoronoiContainer
         //     voronoiDimension="x"
         //     labels={({datum}) =>
         //       `open: ${datum.open} high: ${datum.high} low: ${datum.low} close: ${datum.close}`
         //     }
-        //     labelComponent={<V.VictoryTooltip cornerRadius={2} flyoutStyle={{fill: 'black'}} />}
+        //     labelComponent={<VictoryTooltip cornerRadius={2} flyoutStyle={{fill: 'black'}} />}
         //   />
         // }
       >
-        {/* <V.VictoryLabel
+        {/* <VictoryLabel
         x={25}
         y={24}
         style={{stroke: EXAMPLE_BLUE_COLOR}}
         text={`${(d: any) => d.datum}`}
       /> */}
-        <V.VictoryAxis
+        <VictoryAxis
           // width={Number(candlestickChartWidth)}
           // scale={{x: 'auto'}}
           // scale={{x: 'linear', y: 'log'}}
@@ -498,17 +501,17 @@ export default function CandlestickChart({
           }
           tickFormat={t => ` ${timestampToString(t / 1000).time}`}
         />
-        <V.VictoryAxis
-          // axisLabelComponent={<V.VictoryLabel dy={-20} />}
+        <VictoryAxis
+          // axisLabelComponent={<VictoryLabel dy={-20} />}
           // offsetX={600}
           offsetX={Number(candlestickChartWidth) / 1.08}
           dependentAxis
-          // tickLabelComponent={<V.VictoryLabel verticalAnchor="start" textAnchor="start" x={0} />}
+          // tickLabelComponent={<VictoryLabel verticalAnchor="start" textAnchor="start" x={0} />}
         />
         {/* <rect cx={10} cy={20} width={20} height={10} fill="#c43a31" /> */}
 
         {candlestickOn && (
-          <V.VictoryCandlestick
+          <VictoryCandlestick
             animate={{
               onExit: {
                 duration: 300,
@@ -549,13 +552,13 @@ export default function CandlestickChart({
             data={marketCtx.candlestickChartData ? toCandlestickChartData : []}
             // data={toCandlestickChartDataRef.current ?? []}
             // openLabels
-            // openLabelComponent={<V.VictoryTooltip pointerLength={10} />}
+            // openLabelComponent={<VictoryTooltip pointerLength={10} />}
 
             labels={({datum}) =>
               `O: ${datum.open} H: ${datum.high} L: ${datum.low} C: ${datum.close}`
             }
             labelComponent={
-              <V.VictoryTooltip
+              <VictoryTooltip
                 // backgroundStyle={{fill: '#000000'}}
                 cornerRadius={0}
                 // center={{x: 50, y: 0}}
@@ -587,12 +590,12 @@ export default function CandlestickChart({
             }
 
             // containerComponent={
-            //   <V.VictoryVoronoiContainer
+            //   <VictoryVoronoiContainer
             //     voronoiDimension="x"
             //     labels={({datum}) =>
             //       `open: ${datum.open} high: ${datum.high} low: ${datum.low} close: ${datum.close}`
             //     }
-            //     labelComponent={<V.VictoryTooltip cornerRadius={2} flyoutStyle={{fill: 'black'}} />}
+            //     labelComponent={<VictoryTooltip cornerRadius={2} flyoutStyle={{fill: 'black'}} />}
             //   />
             // }
 
@@ -617,7 +620,7 @@ export default function CandlestickChart({
         )}
 
         {lineGraphOn && (
-          <V.VictoryLine
+          <VictoryLine
             animate={{
               onEnter: {
                 duration: 300,
@@ -659,7 +662,7 @@ export default function CandlestickChart({
         )}
 
         {/* {!candlestickOn && !lineGraphOn && (
-      <V.VictoryLine
+      <VictoryLine
         style={{
           data: {stroke: LINE_GRAPH_STROKE_COLOR.DEFAULT, strokeWidth: 1},
           // parent: {border: '1px solid #ccc'},
@@ -668,7 +671,7 @@ export default function CandlestickChart({
       />
     )} */}
 
-        <V.VictoryLine
+        <VictoryLine
           animate={{
             onExit: {
               duration: 300,
@@ -684,7 +687,7 @@ export default function CandlestickChart({
           data={toLastestPriceHorizontalLineData}
           // data={toLatestPriceLineDataRef.current ?? []}
         />
-      </V.VictoryChart>
+      </VictoryChart>
     ) : (
       <p>Loading</p>
     );

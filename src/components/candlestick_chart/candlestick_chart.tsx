@@ -19,6 +19,7 @@ import {ICandlestickData} from '../../interfaces/tidebit_defi_background/candles
 import useStateRef from 'react-usestateref';
 import {VictoryThemeDefinition} from 'victory-core/lib/victory-theme/types';
 import {
+  VictoryScatter,
   VictoryLabel,
   VictoryTooltip,
   VictoryTheme,
@@ -349,7 +350,6 @@ export default function CandlestickChart({
     // label: JSON.stringify({open: data.y[0], high: data.y[1], low: data.y[2], close: data.y[3]}),
   }));
 
-  // FIXME:VictoryThemeDefinition
   const chartTheme: VictoryThemeDefinition = {
     axis: {
       style: {
@@ -542,7 +542,7 @@ export default function CandlestickChart({
 
   // console.log('options', options);
 
-  const {View} = useLottie(options);
+  // const {View} = useLottie(options);
 
   const isDisplayedCharts =
     !marketCtx.candlestickChartData !== null ? (
@@ -617,13 +617,13 @@ export default function CandlestickChart({
           // width={Number(candlestickChartWidth)}
           // scale={{x: 'auto'}}
           // scale={{x: 'linear', y: 'log'}}
-          style={
-            {
-              // ticks: {color: 'white'},
-              // axisLabel: {fontColor: 'white'},
-              // tickLabels: {fontColor: 'white'},
-            }
-          }
+          scale={{x: 'time'}}
+          style={{
+            axis: {stroke: 'none'},
+            // ticks: {color: 'white'},
+            // axisLabel: {fontColor: 'white'},
+            // tickLabels: {fontColor: 'white'},
+          }}
           tickFormat={t => ` ${timestampToString(t / 1000).time}`}
         />
         <VictoryAxis
@@ -807,10 +807,62 @@ export default function CandlestickChart({
           }}
           style={{
             data: {stroke: LINE_GRAPH_STROKE_COLOR.TIDEBIT_THEME, strokeWidth: 1},
-            // parent: {border: '1px solid #ccc'},
           }}
           data={toLastestPriceHorizontalLineData}
           // data={toLatestPriceLineDataRef.current ?? []}
+          // labels={({datum}) => `${datum.y}`}
+          // // labels={`${toLastestPriceHorizontalLineData[0]?.y ?? 0}`} // It's deprecated
+          // labelComponent={
+          //   <VictoryLabel
+          //     x={Number(candlestickChartWidth) - 50}
+          //     y={Number(candlestickChartHeight) - 100}
+          //     // datum={{x: new Date()}}
+          //     style={{fill: '#fff', strokeWidth: 1}}
+          //   />
+          // }
+        />
+        <VictoryLabel
+          textAnchor="end"
+          // text={datum => `${datum.y}`}
+          text={toLastestPriceHorizontalLineData[0]?.y ?? 0}
+          x={Number(candlestickChartWidth)}
+          y={Number(candlestickChartHeight) - 100}
+          style={{fill: '#fff', strokeWidth: 0.01}}
+        />
+        <VictoryScatter
+          data={toLastestPriceHorizontalLineData}
+          style={{
+            data: {
+              fill: ({datum}) =>
+                datum.x ===
+                toLastestPriceHorizontalLineData[toLastestPriceHorizontalLineData.length - 1].x
+                  ? 'transparent'
+                  : 'transparent',
+              // stroke: (d: any) => (d.y > 0 ? 'green' : 'red'),
+            },
+          }}
+          labels={({datum}) =>
+            datum.x ===
+            toLastestPriceHorizontalLineData[toLastestPriceHorizontalLineData.length - 1].x
+              ? `${datum.y}`
+              : ``
+          }
+          // labels={`${toLastestPriceHorizontalLineData[0]?.y ?? 0}`} // It's deprecated
+          labelComponent={
+            <VictoryLabel
+              x={Number(candlestickChartWidth) - 25}
+              // y={Number(candlestickChartHeight) - 100}
+              // datum={{x: new Date()}}
+              style={{fill: LINE_GRAPH_STROKE_COLOR.TIDEBIT_THEME, fontSize: 12}}
+            />
+          }
+
+          // data={{
+          //   // x: toCandlestickChartData[toCandlestickChartData.length - 1].x,
+          //   // x: 'Thu Mar 09 2023 21:02:29 GMT+0800 (Taipei Standard Time)',
+          //   x: 500,
+          //   y: toLastestPriceHorizontalLineData[0]?.y ?? 0,
+          // }}
         />
       </VictoryChart>
     ) : (

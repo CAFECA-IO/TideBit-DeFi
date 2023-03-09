@@ -137,9 +137,15 @@ const PositionOpenModal = ({
   // TODO: Typo `guaranteedStop`
   const displayedGuaranteedStopSetting = !!openCfdRequest.guaranteedStop ? 'Yes' : 'No';
 
-  // TODO: i18n
   const displayedTypeOfPosition =
-    openCfdRequest.typeOfPosition === TypeOfPosition.BUY ? 'Up (Buy)' : 'Down (Sell)';
+    openCfdRequest.typeOfPosition === TypeOfPosition.BUY
+      ? t('open_position.CFD_Type_Up')
+      : t('open_position.CFD_Type_Down');
+
+  const displayedBuyOrSell =
+    openCfdRequest.typeOfPosition === TypeOfPosition.BUY
+      ? t('open_position.CFD_Type_Buy')
+      : t('open_position.CFD_Type_Sell');
 
   // const displayedPnLColor =
   //   openCfdRequest?.pnl.type === 'PROFIT'
@@ -161,11 +167,13 @@ const PositionOpenModal = ({
   const displayedTakeProfit = openCfdRequest.takeProfit ? `$ ${openCfdRequest.takeProfit}` : '-';
   const displayedStopLoss = openCfdRequest.stopLoss ? `$ ${openCfdRequest.stopLoss}` : '-';
 
+  //const displayedExpirationTime = timestampToString(openCfdRequest?.quotation.deadline ?? 0);
+
   const layoutInsideBorder = 'mx-5 my-2 flex justify-between';
 
   // let dataRenewedStyle = 'text-lightGray';
 
-  // const displayedTime = timestampToString(openCfdRequest?.createdTime ?? 0);
+  // const displayedTime = timestampToString(openCfdRequest?.createTimestamp ?? 0);
 
   const renewDataHandler = async () => {
     setDataRenewedStyle('animate-flash text-lightYellow2');
@@ -303,9 +311,11 @@ const PositionOpenModal = ({
             {/* {displayedDataFormat()} */}
 
             <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">{t('open_position.Type')}</div>
-              {/* TODO: color variable */}
-              <div className={`${displayedPositionColor}`}>{displayedTypeOfPosition}</div>
+              <div className="text-lightGray">{t('open_position.CFD_Type')}</div>
+              <div className="inline-flex">
+                <div className={`${displayedPositionColor}`}>{displayedTypeOfPosition}</div>
+                <div className="ml-1 text-lightGray">{displayedBuyOrSell}</div>
+              </div>
             </div>
 
             <div className={`${layoutInsideBorder}`}>
@@ -318,9 +328,10 @@ const PositionOpenModal = ({
 
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">{t('open_position.Amount')}</div>
-              <div className="">
+              <div className="inline-flex">
                 {/* TODO:{openCfdRequest?.amount?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0} */}
-                {openCfdRequest.amount}
+                <div className="">{openCfdRequest.amount}</div>
+                <div className="ml-1 text-lightGray">{openCfdRequest.ticker}</div>
               </div>
             </div>
 
@@ -356,6 +367,15 @@ const PositionOpenModal = ({
                     height={12}
                   />
                 </div>
+              </div>
+            </div>
+
+            <div className={`${layoutInsideBorder}`}>
+              <div className="text-lightGray">{t('open_position.Expiration')}</div>
+              <div className="">
+                {/* TODO: Expiration Time */}
+                2023-03-09 15:20:13
+                {/* {displayedExpirationTime.date} {displayedExpirationTime.time} */}
               </div>
             </div>
 
@@ -406,7 +426,7 @@ const PositionOpenModal = ({
             {/*header*/}
             <div className="flex items-start justify-between rounded-t pt-9">
               <h3 className="-mt-0 w-full text-center text-xl font-normal text-lightWhite">
-                {t('open_position.OpenPosition')}
+                {t('open_position.CFD_Title')}
               </h3>
               <button className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
                 <span className="absolute top-5 right-5 block outline-none focus:outline-none">

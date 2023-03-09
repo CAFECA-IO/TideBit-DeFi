@@ -43,8 +43,12 @@
     "TickerSelectorTab_Favorite": "Favorite"
   },
   "open_position": {
-    "OpenPosition": "Open Position",
-    "Type": "Type",
+    "CFD_Title": "Open Position",
+    "CFD_Type": "Type",
+    "CFD_Type_Up": "Up",
+    "CFD_Type_Buy": "(Buy)",
+    "CFD_Type_Down": "Down",
+    "CFD_Type_Sell": "(Sell)",
     "OpenPrice": "Open Price",
     "Amount": "Amount",
     "RequiredMargin": "Required Margin",

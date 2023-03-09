@@ -41,10 +41,6 @@ interface ITradingChartGraphProps {
   // positionDisplayingState: boolean;
 }
 
-const chartBlank = 1.68;
-const dummyDataSize = 80;
-const unitOfLive = 1000;
-
 export interface ILineChartData {
   x: Date;
   y: number | null;
@@ -101,16 +97,23 @@ export interface ILineChartData {
 // const dummyHorizontalLineData = getDummyHorizontalLineData(80);
 
 export const updateDummyCandlestickChartData = (data: ICandlestickData[]): ICandlestickData[] => {
-  const newData = [...data];
+  const chartBlank = 1.68;
+  const dummyDataSize = 80;
+  const unitOfLive = 1000;
+
+  const originalData = [...data];
+  const lastTime = originalData[originalData.length - 2]?.x.getTime() as number;
+  const lastPoint = originalData[originalData.length - 2]?.y[3] as number;
 
   // Generate new data
-  const newPoint = newData[newData.length - 2]?.y[3] as number;
+  const newTime = lastTime + unitOfLive;
+
   // console.log('new point in update func', newPoint);
 
   const newYs: (number | null)[] = new Array(4).fill(0).map(v => {
     const rnd = Math.random() / 1.2;
     const ts = rnd > 0.25 ? 1 + rnd ** 5 : 1 - rnd;
-    const price = newPoint * ts;
+    const price = lastPoint * ts;
 
     const prettyPrice = Math.trunc(price * 100) / 100;
     return prettyPrice;
@@ -122,7 +125,7 @@ export const updateDummyCandlestickChartData = (data: ICandlestickData[]): ICand
   };
 
   // Add new data and remove the first element
-  const withoutFirst = newData.slice(1); // remove the first element
+  const withoutFirst = originalData.slice(1); // remove the first element
   const withoutLast = withoutFirst.slice(0, withoutFirst.length - 1); // remove the last element
   const withNewData = withoutLast.concat(newCandlestickData); // add new data to end
   const withNullData = withNewData.concat({x: new Date(), y: [null, null, null, null]}); // add null data to end
@@ -361,6 +364,15 @@ export default function CandlestickChart({
         },
       },
     },
+    // area: {
+    //   style: {
+    //     labels: {
+    //       fontSize: 50,
+    //       fontFamily: 'barlow',
+    //       fill: LIGHT_GRAY_COLOR,
+    //     },
+    //   },
+    // },
   };
 
   // console.log('market candlestick data', marketCtx.candlestickChartData);
@@ -1167,8 +1179,26 @@ export default function CandlestickChart({
         /> */}
         {!marketCtx.candlestickChartData !== null ? (
           <V.VictoryChart
+            // containerComponent={
+            //   // <V.VictoryZoomContainer />
+            //   // <V.VictoryVoronoiContainer
+            //   //   labels={({datum}) =>
+            //   //     `${timestampToString(datum.x / 1000).time}, ${Math.round(datum.y)}`
+            //   //   }
+            //   // />
+
+            //   // TODO: useful tool
+            //   // <V.VictoryCursorContainer
+            //   //   style={{stroke: 'transparent'}}
+            //   //   cursorLabel={({datum}) => `${timestampToString(datum.x / 1000).time}, ${datum.y}`}
+            //   //   // cursorLabel={({datum}) =>
+            //   //   //   `${timestampToString(datum.x / 1000).time}, ${Math.round(datum.y)}`
+            //   //   // }
+            //   // />
+            // }
             // animate={{duration: 300}}
             // chartTheme
+
             theme={chartTheme}
             minDomain={{y: minNumber !== null ? minNumber * 0.95 : undefined}}
             maxDomain={{y: maxNumber !== null ? maxNumber * 1.05 : undefined}} // TODO: measure the biggest number to decide the y-axis
@@ -1185,6 +1215,12 @@ export default function CandlestickChart({
             //   />
             // }
           >
+            {/* <V.VictoryLabel
+              x={25}
+              y={24}
+              style={{stroke: EXAMPLE_BLUE_COLOR}}
+              text={`${(d: any) => d.datum}`}
+            /> */}
             <V.VictoryAxis
               // width={Number(candlestickChartWidth)}
               // scale={{x: 'auto'}}
@@ -1205,6 +1241,7 @@ export default function CandlestickChart({
               dependentAxis
               // tickLabelComponent={<V.VictoryLabel verticalAnchor="start" textAnchor="start" x={0} />}
             />
+            {/* <rect cx={10} cy={20} width={20} height={10} fill="#c43a31" /> */}
 
             {candlestickOn && (
               <V.VictoryCandlestick
@@ -1217,6 +1254,13 @@ export default function CandlestickChart({
                   },
                 }}
                 style={{
+                  labels: {
+                    fill: EXAMPLE_BLUE_COLOR,
+                    // stroke: '#666666',
+                    // fontSize: 10,
+                  },
+                  // parent: {border: '1px solid #b30e0e'},
+
                   data: {
                     // fill: '#c43a31',
                     // fill: 'none',
@@ -1225,6 +1269,7 @@ export default function CandlestickChart({
                     // VictoryCandlestickStyleInterface["data"]
                     stroke: (d: any) =>
                       d.close > d.open ? TypeOfPnLColorHex.LOSS : TypeOfPnLColorHex.PROFIT,
+
                     strokeWidth: 1,
                     strokeOpacity: 0.5,
                     textDecorationColor: 'white',
@@ -1250,30 +1295,44 @@ export default function CandlestickChart({
                 // openLabelComponent={<V.VictoryTooltip pointerLength={10} />}
 
                 labels={({datum}) =>
-                  `open: ${datum.open}\nhigh: ${datum.high}\nlow: ${datum.low}\nclose: ${datum.close}`
+                  `O: ${datum.open} H: ${datum.high} L: ${datum.low} C: ${datum.close}`
                 }
                 labelComponent={
                   <V.VictoryTooltip
+                    cornerRadius={0}
+                    // center={{x: 50, y: 0}}
+                    x={30}
+                    y={-10}
                     style={{
-                      fontFamily: 'barlow',
-                      fontSize: 12,
-                      // fontWeight: 500,
-                      // stroke: 'black',
+                      // opacity: 0.2,
+                      padding: 0,
+                      backgroundColor: '#b30e0e',
+                      background: '#b30e0e',
+                      // border: '1px solid white',
                       // backgroundColor: EXAMPLE_BLUE_COLOR,
-                      // borderBlockColor: EXAMPLE_BLUE_COLOR,
-                      // borderColor: EXAMPLE_BLUE_COLOR,
+                      // fill: EXAMPLE_BLUE_COLOR,
+                      fill: LIGHT_GRAY_COLOR,
+                      // stroke: LIGHT_GRAY_COLOR,
+                      // strokeWidth: 0.2,
+                      fontFamily: 'barlow',
+                      fontSize: 14,
+                      // offset: 300,
 
-                      fill: (d: any) =>
-                        d.datum.close > d.datum.open
-                          ? TypeOfPnLColorHex.PROFIT
-                          : TypeOfPnLColorHex.LOSS,
-                      padding: 8,
-                      letterSpacing: 0.5,
+                      // it works but it's not as designed
+                      // fill: (d: any) =>
+                      //   d.datum.close > d.datum.open
+                      //     ? TypeOfPnLColorHex.PROFIT
+                      //     : TypeOfPnLColorHex.LOSS,
+                      // padding: 8,
+                      // letterSpacing: 0.5,
                     }}
+                    pointerLength={0}
+                    // labelComponent={<V.VictoryLabel style={{fontFamily: 'barlow'}} />}
+
                     // text={'white'}
                     // theme={chartTheme}
-                    // pointerWidth={50}
-                    pointerLength={10}
+                    pointerWidth={0}
+
                     // pointerOrientation={'top'}
                   />
                 }

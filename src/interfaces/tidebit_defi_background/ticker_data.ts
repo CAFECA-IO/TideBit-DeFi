@@ -1,3 +1,4 @@
+import {unitAsset} from '../../constants/config';
 import {TypeOfPnLColorHex} from '../../constants/display';
 import {ITrend, Trend} from '../../constants/trend';
 
@@ -261,4 +262,69 @@ export const getDummyTicker = (currency: string) => {
     },
   };
   return dummyTicker;
+};
+
+interface ITBEFee {
+  fee: number;
+  heroFee: number;
+  vipFee: number;
+  currency: string;
+  fixed: number;
+}
+export interface ITBETicker {
+  id: string;
+  instId: string;
+  ask: ITBEFee;
+  bid: ITBEFee;
+  at: number;
+  baseUnit: string;
+  quoteUnit: string;
+  tickSz: string;
+  lotSz: string;
+  minSz: string;
+  buy: string; // buy price
+  sell: string; // sell price
+  high: string; // high price
+  low: string; // low price
+  open: string; // open price
+  close: string; // close price
+  last: string; // last price
+  volume: string;
+  change: string;
+  changePct: string;
+  code: number;
+  visible: boolean;
+}
+
+export const convertDataToTicker = (data: ITBETicker) => {
+  let ticker: ITickerData | null = null;
+  if (data.quoteUnit.toUpperCase() === unitAsset) {
+    const tickerData = TRADING_CRYPTO_DATA.find(
+      ticker => ticker.currency === data.baseUnit.toUpperCase()
+    );
+    const dataArray = randomArray(1100, 1200, 10);
+    const strokeColor = strokeColorDisplayed(dataArray);
+    if (tickerData) {
+      ticker = {
+        ...tickerData,
+        tradingVolume: data.volume,
+        price: parseFloat(data.last),
+        upOrDown:
+          +data.changePct === 0
+            ? Trend.EQUAL
+            : data.changePct.includes('-')
+            ? Trend.DOWN
+            : Trend.UP,
+        priceChange: parseFloat(data.change),
+        fluctuating: parseFloat((parseFloat(data.changePct) * 100).toFixed(2)),
+        lineGraphProps: {
+          dataArray: dataArray, // ++ TODO
+          strokeColor: strokeColor,
+          lineGraphWidth: '170',
+          lineGraphWidthMobile: '140',
+        },
+      };
+    }
+  }
+  return ticker;
 };

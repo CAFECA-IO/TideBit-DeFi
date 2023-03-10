@@ -146,7 +146,7 @@ export const updateDummyCandlestickChartData = (data: ICandlestickData[]): ICand
   const withoutLast = originalData.slice(0, originalData.length - 1); // remove the last element
   const withNewData = withoutLast.concat(newCandlestickData); // add new data to end
   const withNullData = withNewData.concat({
-    x: new Date(nowSecond + addition * unitOfLive * 1.5),
+    x: new Date(nowSecond + addition * unitOfLive),
     y: [null, null, null, null],
   }); // add null data to end
   // const withNullData = withNewData.concat({
@@ -154,13 +154,13 @@ export const updateDummyCandlestickChartData = (data: ICandlestickData[]): ICand
   //   y: [null, null, null, null],
   // }); // add null data to end
 
-  console.log(
-    'new data 0, 1, 最後一個, 倒數第二個',
-    withNullData[0],
-    withNullData[1],
-    withNullData[withNewData.length - 2],
-    withNullData[withNewData.length - 1]
-  );
+  // console.log(
+  //   'new data 0, 1, 最後一個, 倒數第二個',
+  //   withNullData[0],
+  //   withNullData[1],
+  //   withNullData[withNewData.length - 2],
+  //   withNullData[withNewData.length - 1]
+  // );
 
   return withNullData;
 
@@ -192,17 +192,17 @@ export const trimCandlestickData = ({
   const requiredAmount = 30;
 
   const latestData = data.slice(-requiredAmount);
-  console.log('trim, latestData', latestData);
+  // console.log('trim, latestData', latestData);
   if (latestData === undefined || latestData.length === 0) return;
 
-  console.log('latestData', latestData[0], latestData[latestData.length - 1], latestData);
+  // console.log('latestData', latestData[0], latestData[latestData.length - 1], latestData);
 
   const lastOne = latestData[latestData.length - 1].y.includes(null);
   // const lastOne = latestData[latestData.length - 1].y.find(v => v === null); // will get `undefined` or the targeted value
   const lastSecond = latestData[latestData.length - 2].y.includes(NaN); // will get `undefined` or the targeted value
 
-  console.log('lastSecond', lastSecond, latestData[latestData.length - 2]);
-  console.log('lastOne', lastOne);
+  // console.log('lastSecond', lastSecond, latestData[latestData.length - 2]);
+  // console.log('lastOne', lastOne);
 
   const trimmedData = latestData;
   return trimmedData;
@@ -239,8 +239,8 @@ export default function CandlestickChart({
     })
   );
 
-  // FIXME: 網頁剛開起來，會給
-  console.log('beginning', candlestickChartDataRef.current);
+  // // FIXME: 網頁剛開起來，會給
+  // console.log('beginning', candlestickChartDataRef.current);
 
   // 用來整理成 chart 需要的資料
   const [toCandlestickChartData, setToCandlestickChartData, toCandlestickChartDataRef] =
@@ -324,7 +324,7 @@ export default function CandlestickChart({
       nullTimestamp: 0,
     });
 
-    console.log('testTrim', testTrim);
+    // console.log('testTrim', testTrim);
 
     // toCandlestickChartData[0]?.close === null
     if (!toCandlestickChartDataRef.current) {
@@ -341,13 +341,33 @@ export default function CandlestickChart({
           close: data.y[3],
         }))
       );
+
+      /**
+        candlestickChartData?.map(data => ({
+          x: data.x,
+          open: data.y[0],
+          high: data.y[1],
+          low: data.y[2],
+          close: data.y[3],
+        }))
+       */
+
+      /**
+       marketCtx.candlestickChartData?.map(data => ({
+          x: data.x,
+          open: data.y[0],
+          high: data.y[1],
+          low: data.y[2],
+          close: data.y[3],
+        }))
+       */
     }
     // if (candlestickChartDataRef.current.length === 0) return;
 
     // console.log('market Ctx', marketCtx.candlestickChartData);
     // console.log('market Ctx', JSON.stringify(marketCtx.candlestickChartData));
 
-    console.log('update candlestick chart data');
+    // console.log('update candlestick chart data');
 
     // // FIXME: It will update the chart data, but sometimes get NaN
     const setStateInterval = setInterval(() => {
@@ -371,11 +391,8 @@ export default function CandlestickChart({
         // label: JSON.stringify({open: data.y[0], high: data.y[1], low: data.y[2], close: data.y[3]}),
       }));
 
-      console.log(
-        'to candlestick chart data',
-        toCandlestickChartData[0],
-        toCandlestickChartData[toCandlestickChartData.length - 2]
-      );
+      console.log('data put into chart', toCandlestickChartDataRef.current);
+      // console.log('to candlestick chart data', toCandlestickChartDataRef.current);
       // setToCandlestickChartData(toCandlestickChartDataTemp);
       setToCandlestickChartData(toCandlestickChartData);
 
@@ -392,7 +409,7 @@ export default function CandlestickChart({
       }));
 
       setToLatestPriceLineData(toLatestPriceLineData);
-    }, 1000 * 3);
+    }, 1000 * 1);
 
     return () => {
       clearInterval(setStateInterval);
@@ -566,7 +583,7 @@ export default function CandlestickChart({
     const svgElement = svgRef.current;
     // const lottieContainerElement = lottieContainerRef.current;
 
-    console.log('toCandlestickChartData', toCandlestickChartData);
+    // console.log('toCandlestickChartData', toCandlestickChartData);
 
     // Check if the SVG element (THE candlestick chart) exists
     if (svgElement) {
@@ -658,14 +675,14 @@ export default function CandlestickChart({
   // console.log('options', options);
 
   // const {View} = useLottie(options);
-  console.log('before `isDisplayedCharts`, candle Ref:', candlestickChartDataRef.current); // undefined
-  console.log('before `isDisplayedCharts` , market Ctx:', marketCtx.candlestickChartData); // null
-  console.log(
-    'before `isDisplayedCharts` , trimmed market Ctx:',
-    trimCandlestickData({data: marketCtx?.candlestickChartData ?? [], nullTimestamp: 0})
-  );
+  // console.log('before `isDisplayedCharts`, candle Ref:', candlestickChartDataRef.current); // undefined
+  // console.log('before `isDisplayedCharts` , market Ctx:', marketCtx.candlestickChartData); // null
+  // console.log(
+  //   'before `isDisplayedCharts` , trimmed market Ctx:',
+  //   trimCandlestickData({data: marketCtx?.candlestickChartData ?? [], nullTimestamp: 0})
+  // );
 
-  console.log('candlestickChartDataRef length', candlestickChartDataRef.current?.length);
+  // console.log('candlestickChartDataRef length', candlestickChartDataRef.current?.length);
 
   const isDisplayedCharts =
     // marketCtx.candlestickChartData !== null && appCtx.isInit ? (
@@ -716,8 +733,8 @@ export default function CandlestickChart({
         // />
         // }
         theme={chartTheme}
-        minDomain={{y: minNumber !== null ? minNumber * 0.9 : undefined}}
-        maxDomain={{y: maxNumber !== null ? maxNumber * 1.1 : undefined}} // TODO: measure the biggest number to decide the y-axis
+        minDomain={{y: minNumber !== null ? minNumber * 0.7 : undefined}}
+        maxDomain={{y: maxNumber !== null ? maxNumber * 1.3 : undefined}} // TODO: measure the biggest number to decide the y-axis
         // domainPadding={{x: 1}}
         width={Number(candlestickChartWidth)}
         height={Number(candlestickChartHeight)}
@@ -764,8 +781,9 @@ export default function CandlestickChart({
         {candlestickOn && (
           <VictoryCandlestick
             animate={{
+              duration: 0,
               onExit: {
-                duration: 100,
+                duration: 0,
                 before(datum, index, data) {
                   return {y: datum._y1, _y1: datum._y0};
                 },
@@ -885,17 +903,18 @@ export default function CandlestickChart({
           />
         )} */}
 
-        <VictoryLine
+        {/* <VictoryLine
           style={{
             data: {stroke: EXAMPLE_BLUE_COLOR, strokeWidth: 1},
             // parent: {border: '1px solid #ccc'},
           }}
           data={userOpenPriceLine}
-        />
+        /> */}
 
         {lineGraphOn && (
           <VictoryLine
             animate={{
+              duration: 0,
               onEnter: {
                 duration: 100,
                 before(datum, index, data) {
@@ -1078,7 +1097,7 @@ export default function CandlestickChart({
       {/* w-2/3 xl:w-4/5 */}
       {/* TODO: Temporary adjustment of chart size */}
       {/* absolute left-505px top-400px w-50px */}
-      <Lottie className="latestPrice" animationData={spotAnimation} />
+      {/* <Lottie className="latestPrice" animationData={spotAnimation} /> */}
 
       <div className="-ml-5" style={{width: '70%'}}>
         {/* <div ref={lottieContainerRef} /> */}

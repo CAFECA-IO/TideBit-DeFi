@@ -144,7 +144,7 @@ export const updateDummyCandlestickChartData = (data: ICandlestickData[]): ICand
   const withoutLast = originalData.slice(0, originalData.length - 1); // remove the last element
   const withNewData = withoutLast.concat(newCandlestickData); // add new data to end
   const withNullData = withNewData.concat({
-    x: new Date(nowSecond + addition * unitOfLive * 2),
+    x: new Date(nowSecond + addition * unitOfLive * 1.5),
     y: [null, null, null, null],
   }); // add null data to end
   // const withNullData = withNewData.concat({
@@ -177,20 +177,30 @@ export const updateDummyCandlestickChartData = (data: ICandlestickData[]): ICand
 
 export interface ITrimCandlestickData {
   data: ICandlestickData[];
-  requiredAmount: number;
+  // requiredAmount: number;
   nullTimestamp: number;
 }
 
 // TODO: trim data to 1. 80 / 60 data points 2. the timestamp of null data points
 export const trimCandlestickData = ({
   data,
-  requiredAmount,
+  // requiredAmount,
   nullTimestamp: nullTimestamp,
 }: ITrimCandlestickData) => {
+  const requiredAmount = 30;
+
   const latestData = data.slice(-requiredAmount);
+  console.log('trim, latestData', latestData);
+  if (latestData === undefined || latestData.length === 0) return;
 
   console.log('latestData', latestData[0], latestData[latestData.length - 1], latestData);
-  console.log('sth');
+
+  const lastOne = latestData[latestData.length - 1].y.includes(null);
+  // const lastOne = latestData[latestData.length - 1].y.find(v => v === null); // will get `undefined` or the targeted value
+  const lastSecond = latestData[latestData.length - 2].y.includes(NaN); // will get `undefined` or the targeted value
+
+  console.log('lastSecond', lastSecond, latestData[latestData.length - 2]);
+  console.log('lastOne', lastOne);
 
   const trimmedData = latestData;
   return trimmedData;
@@ -219,11 +229,10 @@ export default function CandlestickChart({
 
   // 用來記錄從 market ctx 拿到的資料
   const [candlestickChartData, setCandlestickChartData, candlestickChartDataRef] = useStateRef<
-    ICandlestickData[] | []
+    ICandlestickData[] | undefined
   >(() =>
     trimCandlestickData({
       data: marketCtx?.candlestickChartData ?? [],
-      requiredAmount: 60,
       nullTimestamp: 0,
     })
   );
@@ -234,17 +243,17 @@ export default function CandlestickChart({
   // 用來整理成 chart 需要的資料
   const [toCandlestickChartData, setToCandlestickChartData, toCandlestickChartDataRef] =
     useStateRef<
-      {
-        x: Date;
-        open: number | null;
-        high: number | null;
-        low: number | null;
-        close: number | null;
-      }[]
+      | {
+          x: Date;
+          open: number | null;
+          high: number | null;
+          low: number | null;
+          close: number | null;
+        }[]
+      | undefined
     >(() => {
       const trimmedData = trimCandlestickData({
         data: candlestickChartDataFromCtx,
-        requiredAmount: 60,
         nullTimestamp: 0,
       });
       return trimmedData?.map(data => ({
@@ -298,7 +307,6 @@ export default function CandlestickChart({
 
     const testTrim = trimCandlestickData({
       data: marketCtx.candlestickChartData,
-      requiredAmount: 60,
       nullTimestamp: 0,
     });
 
@@ -306,7 +314,10 @@ export default function CandlestickChart({
 
     // toCandlestickChartData[0]?.close === null
     if (!toCandlestickChartDataRef.current) {
-      setCandlestickChartData(marketCtx.candlestickChartData?.map(data => ({...data})));
+      setCandlestickChartData(() =>
+        trimCandlestickData({data: marketCtx?.candlestickChartData ?? [], nullTimestamp: 0})
+      );
+      // setCandlestickChartData(marketCtx.candlestickChartData?.map(data => ({...data})));
       setToCandlestickChartData(
         marketCtx.candlestickChartData?.map(data => ({
           x: data.x,
@@ -327,8 +338,10 @@ export default function CandlestickChart({
     // // FIXME: It will update the chart data, but sometimes get NaN
     const setStateInterval = setInterval(() => {
       // setCandlestickChartData(updateDummyCandlestickChartData(candlestickChartDataRef.current));
+      if (!candlestickChartDataRef?.current) return;
+
       const updatedCandlestickChartData = updateDummyCandlestickChartData(
-        candlestickChartDataRef.current
+        candlestickChartDataRef?.current
       );
 
       setCandlestickChartData(updatedCandlestickChartData);
@@ -535,7 +548,10 @@ export default function CandlestickChart({
   });
 
   useEffect(() => {
-    if (toCandlestickChartData.length === 0) return;
+    // !toCandlestickChartDataRef.current &&
+    // toCandlestickChartDataRef.current?.length === 0
+    // [important to fix bug] Check if the candlestick chart data is empty
+    if (!toCandlestickChartDataRef.current) return;
 
     // Use the useRef hooks to access the current values of the SVG element and the Lottie container element
     const svgElement = svgRef.current;
@@ -546,7 +562,8 @@ export default function CandlestickChart({
     // Check if the SVG element (THE candlestick chart) exists
     if (svgElement) {
       // Get the data for the latest candlestick
-      const latestCandle = toCandlestickChartData[toCandlestickChartData.length - 2];
+      const latestCandle =
+        toCandlestickChartDataRef.current[toCandlestickChartDataRef.current.length - 2];
       const {x, high, low} = latestCandle;
       if (high === null || low === null) {
         console.log('high or low is null', {high, low});
@@ -568,7 +585,7 @@ export default function CandlestickChart({
       console.log('last g in candlestick chart', lastGElement);
 
       // Calculate the x and y coordinates of the top of the latest candlestick relative to the SVG element
-      const xCoord = rect.x + ((xTime - 1) / toCandlestickChartData.length) * rect.width; // calculate the x coordinate of the latest candle
+      const xCoord = rect.x + ((xTime - 1) / toCandlestickChartDataRef.current.length) * rect.width; // calculate the x coordinate of the latest candle
       const yCoord = rect.y + (1 - high / (rect.height - rect.y)) * rect.height; // calculate the y coordinate of the top of the latest candle
 
       console.log('x, y coordiante', xCoord, yCoord);
@@ -632,12 +649,18 @@ export default function CandlestickChart({
   // console.log('options', options);
 
   // const {View} = useLottie(options);
-  console.log('before displaying, candle Ref:', candlestickChartDataRef.current);
-  console.log('before displaying , market Ctx:', marketCtx.candlestickChartData);
+  console.log('before `isDisplayedCharts`, candle Ref:', candlestickChartDataRef.current); // undefined
+  console.log('before `isDisplayedCharts` , market Ctx:', marketCtx.candlestickChartData); // null
+  console.log(
+    'before `isDisplayedCharts` , trimmed market Ctx:',
+    trimCandlestickData({data: marketCtx?.candlestickChartData ?? [], nullTimestamp: 0})
+  );
+
+  console.log('candlestickChartDataRef length', candlestickChartDataRef.current?.length);
 
   const isDisplayedCharts =
     // marketCtx.candlestickChartData !== null && appCtx.isInit ? (
-    candlestickChartDataRef.current.length > 0 ? (
+    candlestickChartDataRef.current && candlestickChartDataRef.current?.length > 0 ? (
       <VictoryChart
         // containerComponent={
         // <VictoryZoomContainer />
@@ -768,8 +791,8 @@ export default function CandlestickChart({
             //   low: 'bottom',
             // }}
             // padding={{top: 0, bottom: 0, left: 20, right: 0}}
-            // candleWidth={10}
-            candleRatio={0.5}
+            candleWidth={3}
+            // candleRatio={0.2}
             candleColors={{
               positive: TypeOfPnLColorHex.PROFIT,
               negative: TypeOfPnLColorHex.LOSS,

@@ -333,7 +333,7 @@ export default function CandlestickChart({
       );
       // setCandlestickChartData(marketCtx.candlestickChartData?.map(data => ({...data})));
       setToCandlestickChartData(
-        marketCtx.candlestickChartData?.map(data => ({
+        candlestickChartData?.map(data => ({
           x: data.x,
           open: data.y[0],
           high: data.y[1],

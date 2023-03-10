@@ -33,7 +33,7 @@ interface IPositionOpenModal {
   renewalDeadline: number;
 }
 
-// TODO: seconds constant in display.ts or config.ts?
+// ToDo: seconds constant in display.ts or config.ts?
 
 const PositionOpenModal = ({
   modalVisible,
@@ -53,7 +53,7 @@ const PositionOpenModal = ({
 
   const [lock, unlock] = locker('position_open_modal.UseEffect');
 
-  /** TODO: 
+  /** ToDo: 
     // loading modal -> UserContext.function (負責簽名) ->
     // 猶豫太久的話，單子會過期，就會顯示 failed modal，
     // 用戶沒簽名才是顯示 canceled modal
@@ -81,7 +81,7 @@ const PositionOpenModal = ({
     const result = await userCtx.createCFDOrder(globalCtx.dataPositionOpenModal?.openCfdRequest);
     // console.log('result from userCtx in position_closed_modal.tsx: ', result);
 
-    // TODO: temporary waiting
+    // ToDo: temporary waiting
     await wait(DELAYED_HIDDEN_SECONDS);
     globalCtx.dataLoadingModalHandler({
       modalTitle: 'Open Position',
@@ -90,14 +90,14 @@ const PositionOpenModal = ({
       btnUrl: '#',
     });
 
-    // TODO: temporary waiting
+    // ToDo: temporary waiting
     await wait(DELAYED_HIDDEN_SECONDS);
 
     // Close loading modal
     globalCtx.eliminateAllModals();
 
-    // TODO: Revise the `result.reason` to constant by using enum or object
-    // TODO: the button URL
+    // ToDo: Revise the `result.reason` to constant by using enum or object
+    // ToDo: the button URL
     if (result.success) {
       globalCtx.dataSuccessfulModalHandler({
         modalTitle: 'Open Position',
@@ -135,18 +135,18 @@ const PositionOpenModal = ({
     return;
   };
 
-  // TODO: Typo `guaranteedStop`
+  // ToDo: Typo `guaranteedStop`
   const displayedGuaranteedStopSetting = !!openCfdRequest.guaranteedStop ? 'Yes' : 'No';
 
   const displayedTypeOfPosition =
     openCfdRequest.typeOfPosition === TypeOfPosition.BUY
-      ? t('PositionModal.TypeUp')
-      : t('PositionModal.TypeDown');
+      ? t('POSITION_MODAL.TYPE_UP')
+      : t('POSITION_MODAL.TYPE_DOWN');
 
   const displayedBuyOrSell =
     openCfdRequest.typeOfPosition === TypeOfPosition.BUY
-      ? t('PositionModal.TypeBuy')
-      : t('PositionModal.TypeSell');
+      ? t('POSITION_MODAL.TYPE_BUY')
+      : t('POSITION_MODAL.TYPE_SELL');
 
   // const displayedPnLColor =
   //   openCfdRequest?.pnl.type === 'PROFIT'
@@ -184,7 +184,7 @@ const PositionOpenModal = ({
       Math.ceil(new Date().getTime() / 1000) + POSITION_PRICE_RENEWAL_INTERVAL_SECONDS;
     setSecondsLeft(newTimestamp - Date.now() / 1000);
 
-    // TODO: get latest price from marketCtx and calculate required margin data
+    // ToDo: get latest price from marketCtx and calculate required margin data
     // FIXME: 應用 ?? 代替 !
     globalCtx.dataPositionOpenModalHandler({
       openCfdRequest: {
@@ -208,7 +208,7 @@ const PositionOpenModal = ({
             openCfdRequest.margin.amount * 1.5
           ),
         },
-        // TODO:
+        // ToDo:
         // margin:
         //   openCfdRequest.typeOfPosition === TypeOfPosition.BUY
         //     ? (openCfdRequest.amount * marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice) /
@@ -312,67 +312,61 @@ const PositionOpenModal = ({
             {/* {displayedDataFormat()} */}
 
             <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">{t('PositionModal.Type')}</div>
-              <div className="inline-flex items-baseline">
-                <div className={`${displayedPositionColor}`}>{displayedTypeOfPosition}</div>
-                <div className="ml-1 text-lightGray">{displayedBuyOrSell}</div>
+              <div className="text-lightGray">{t('POSITION_MODAL.TYPE')}</div>
+              <div className={`${displayedPositionColor}`}>
+                {displayedTypeOfPosition}
+                <span className="ml-1 text-lightGray">{displayedBuyOrSell}</span>
               </div>
             </div>
 
             <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">{t('PositionModal.OpenPrice')}</div>
-              <div className="inline-flex items-baseline">
-                <div className={`${dataRenewedStyle}`}>
-                  ${' '}
-                  {openCfdRequest.price?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
-                    minimumFractionDigits: 2,
-                  }) ?? 0}
-                </div>
-                {/* TODO: Hardcode USDT */}
-                <div className="ml-1 text-lightGray">USDT</div>
+              <div className="text-lightGray">{t('POSITION_MODAL.OPEN_PRICE')}</div>
+              <div className={`${dataRenewedStyle}`}>
+                ${' '}
+                {openCfdRequest.price?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+                  minimumFractionDigits: 2,
+                }) ?? 0}
+                {/* ToDo: Hardcode USDT */}
+                <span className="ml-1 text-lightGray">USDT</span>
               </div>
             </div>
 
             <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">{t('PositionModal.Amount')}</div>
-              <div className="inline-flex items-baseline">
-                {/* TODO:{openCfdRequest?.amount?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0} */}
-                <div className="">{openCfdRequest.amount.toFixed(2)}</div>
-                {/* TODO: Hardcode ETH */}
-                <div className="ml-1 text-lightGray">ETH</div>
+              <div className="text-lightGray">{t('POSITION_MODAL.AMOUNT')}</div>
+              {/* ToDo:{openCfdRequest?.amount?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0} */}
+              <div className="">
+                {openCfdRequest.amount.toFixed(2)}
+                {/* ToDo: Hardcode ETH */}
+                <span className="ml-1 text-lightGray">ETH</span>
               </div>
             </div>
 
             <div className={`${layoutInsideBorder} whitespace-nowrap`}>
-              <div className="text-lightGray">{t('PositionModal.RequiredMargin')}</div>
-              <div className="inline-flex items-baseline">
-                <div className={`${dataRenewedStyle}`}>
-                  $ {openCfdRequest.margin.amount.toFixed(2)}
-                </div>
-                {/* TODO: Hardcode USDT */}
-                <div className="ml-1 text-lightGray">USDT</div>
+              <div className="text-lightGray">{t('POSITION_MODAL.REQUIRED_MARGIN')}</div>
+              <div className={`${dataRenewedStyle}`}>
+                $ {openCfdRequest.margin.amount.toFixed(2)}
+                {/* ToDo: Hardcode USDT */}
+                <span className="ml-1 text-lightGray">USDT</span>
               </div>
             </div>
 
             <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">{t('PositionModal.LimitAndStop')}</div>
-              <div className="inline-flex items-baseline">
-                <div className="">
-                  {displayedTakeProfit} / {displayedStopLoss}
-                </div>
-                {/* TODO: Hardcode USDT */}
-                <div className="ml-1 text-lightGray">USDT</div>
+              <div className="text-lightGray">{t('POSITION_MODAL.LIMIT_AND_STOP')}</div>
+              <div className="">
+                {displayedTakeProfit} / {displayedStopLoss}
+                {/* ToDo: Hardcode USDT */}
+                <span className="ml-1 text-lightGray">USDT</span>
               </div>
             </div>
 
             <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">{t('PositionModal.GuaranteedStop')}</div>
+              <div className="text-lightGray">{t('POSITION_MODAL.GUARANTEED_STOP')}</div>
               <div className={`relative flex items-center`}>
                 {displayedGuaranteedStopSetting}
 
                 <div className="group">
                   <div className="invisible absolute bottom-6 right-0 w-180px bg-darkGray8 p-2 text-left text-xxs text-lightWhite opacity-0 shadow-lg shadow-black/80 transition-all duration-200 group-hover:visible group-hover:opacity-100">
-                    {t('PositionModal.GuaranteedStopHint')}
+                    {t('POSITION_MODAL.GUARANTEED_STOP_HINT')}
                   </div>
                   <Image
                     className="ml-2"
@@ -386,9 +380,9 @@ const PositionOpenModal = ({
             </div>
 
             <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">{t('PositionModal.ExpirationTime')}</div>
+              <div className="text-lightGray">{t('POSITION_MODAL.EXPIRATION_TIME')}</div>
               <div className="">
-                {/* TODO: Expiration Time */}
+                {/* ToDo: Expiration Time */}
                 2023-03-09 15:20:13
                 {/* {displayedExpirationTime.date} {displayedExpirationTime.time} */}
               </div>
@@ -402,18 +396,19 @@ const PositionOpenModal = ({
             </div> */}
 
             <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">{t('PositionModal.LiquidationPrice')}</div>
-              {/* TODO: Liquidation Price */}
-              <div className="inline-flex items-baseline">
-                <div className="">$ 9.23</div>
-                {/* TODO: Hardcode USDT */}
-                <div className="ml-1 text-lightGray">USDT</div>
+              <div className="text-lightGray">{t('POSITION_MODAL.LIQUIDATION_PRICE')}</div>
+              {/* ToDo: Liquidation Price */}
+
+              <div className="">
+                $ 9.23
+                {/* ToDo: Hardcode USDT */}
+                <span className="ml-1 text-lightGray">USDT</span>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="my-4 text-xxs text-lightGray">{t('PositionModal.CFDContent')}</div>
+        <div className="my-4 text-xxs text-lightGray">{t('POSITION_MODAL.CFD_CONTENT')}</div>
 
         <RippleButton
           // disabled={secondsLeft === INIT_POSITION_REMAINING_SECONDS}
@@ -421,7 +416,7 @@ const PositionOpenModal = ({
           buttonType="button"
           className={`mt-0 whitespace-nowrap rounded border-0 bg-tidebitTheme py-2 px-16 text-base text-white transition-colors duration-300 hover:bg-cyan-600 focus:outline-none disabled:bg-lightGray`}
         >
-          {t('PositionModal.ConfirmButton')}
+          {t('POSITION_MODAL.CONFIRM_BUTTON')}
         </RippleButton>
       </div>
     </div>
@@ -444,8 +439,8 @@ const PositionOpenModal = ({
           >
             {/*header*/}
             <div className="flex items-start justify-between rounded-t pt-9">
-              <h3 className="-mt-0 w-full text-center text-xl font-normal text-lightWhite">
-                {t('PositionModal.OpenPositionTitle')}
+              <h3 className="w-full text-center text-xl font-normal text-lightWhite">
+                {t('POSITION_MODAL.OPEN_POSITION_TITLE')}
               </h3>
               <button className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
                 <span className="absolute top-5 right-5 block outline-none focus:outline-none">

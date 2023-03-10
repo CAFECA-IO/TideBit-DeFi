@@ -99,7 +99,7 @@ const NavBar = () => {
       className={`mt-4 rounded border-0 bg-tidebitTheme py-2 px-5 text-base text-white transition-all duration-300 hover:bg-cyan-600 md:mt-0`}
     >
       {/* Wallet Connect */}
-      {t('Navbar.WalletConnect')}
+      {t('NAV_BAR.WALLET_CONNECT')}
     </TideButton>
   );
 
@@ -140,10 +140,10 @@ const NavBar = () => {
                       href="/trade/cfd/ethusdt"
                       className="hover:cursor-pointer hover:text-tidebitTheme"
                     >
-                      {t('Navbar.Trade')}
+                      {t('NAV_BAR.TRADE')}
                     </Link>
                     <Link href="#" className="mr-5 hover:cursor-pointer hover:text-tidebitTheme">
-                      {t('Navbar.Leaderboard')}
+                      {t('NAV_BAR.LEADERBOARD')}
                     </Link>
                     {/* <Link
                       href={asPath}
@@ -153,7 +153,7 @@ const NavBar = () => {
                       Test
                     </Link> */}
                     <Link href="#" className="mr-5 hover:cursor-pointer hover:text-tidebitTheme">
-                      {t('Navbar.Support')}
+                      {t('NAV_BAR.SUPPORT')}
                     </Link>
 
                     {/* User overview */}

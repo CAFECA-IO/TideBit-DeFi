@@ -330,8 +330,8 @@ const TickerSelectorBoxMobile = ({
 
   const dropdownMenuText =
     activeTab === 'All'
-      ? t('TradePage.TickerSelectorTabAll')
-      : t('TradePage.TickerSelectorTabFavorite');
+      ? t('TRADE_PAGE.TICKER_SELECTOR_TAB_ALL')
+      : t('TRADE_PAGE.TICKER_SELECTOR_TAB_FAVORITE');
 
   const tabPart = (
     <>
@@ -359,7 +359,7 @@ const TickerSelectorBoxMobile = ({
             className={`inline-block px-5 py-3 text-left hover:cursor-pointer`}
             onClick={allTabClickHandler}
           >
-            {t('TradePage.TickerSelectorTabAll')}
+            {t('TRADE_PAGE.TICKER_SELECTOR_TAB_ALL')}
           </button>
 
           {userCtx.enableServiceTerm ? (
@@ -368,7 +368,7 @@ const TickerSelectorBoxMobile = ({
               onClick={favoriteTabClickHandler}
               className={`inline-block px-5 py-3 text-left hover:cursor-pointer`}
             >
-              {t('TradePage.TickerSelectorTabFavorite')}
+              {t('TRADE_PAGE.TICKER_SELECTOR_TAB_FAVORITE')}
             </button>
           ) : (
             <></>

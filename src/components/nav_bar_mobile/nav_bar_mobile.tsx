@@ -28,7 +28,7 @@ const NavBarMobile = () => {
   const [langIsOpen, setLangIsOpen] = useState(false);
 
   //menu text
-  const menuText = langIsOpen ? t('Navbar.Language') : t('Navbar.Menu');
+  const menuText = langIsOpen ? t('NAV_BAR.LANGUAGE') : t('NAV_BAR.MENU');
 
   const {
     targetRef: notifyRef,
@@ -105,7 +105,7 @@ const NavBarMobile = () => {
       className={`rounded border-0 bg-tidebitTheme py-2 px-3 text-sm text-white transition-all duration-300 hover:bg-cyan-600`}
     >
       {/* Wallet Connect */}
-      {t('Navbar.WalletConnect')}
+      {t('NAV_BAR.WALLET_CONNECT')}
     </TideButton>
   );
 
@@ -191,17 +191,17 @@ const NavBarMobile = () => {
               </div>
               <div className="flex items-center justify-start px-3">
                 <Link href="/trade/cfd/ethusdt" className={menuItemStyles}>
-                  {t('Navbar.Trade')}
+                  {t('NAV_BAR.TRADE')}
                 </Link>
               </div>
               <div className="flex items-center justify-start px-3">
                 <Link href="#" className={menuItemStyles}>
-                  {t('Navbar.Leaderboard')}
+                  {t('NAV_BAR.LEADERBOARD')}
                 </Link>
               </div>
               <div className="flex items-center justify-start px-3">
                 <Link href="#" className={menuItemStyles}>
-                  {t('Navbar.Support')}
+                  {t('NAV_BAR.SUPPORT')}
                 </Link>
               </div>
               <div className="flex items-center justify-start px-3">

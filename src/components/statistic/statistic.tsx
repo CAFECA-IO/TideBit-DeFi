@@ -13,16 +13,16 @@ const StatisticBlock = () => {
   // ];
   const statisticContent = [
     {
-      heading: t('HomePage.StatisticBlockTitle1'),
-      content: t('HomePage.StatisticBlockDescription1'),
+      heading: t('HOME_PAGE.STATISTIC_BLOCK_TITLE_1'),
+      content: t('HOME_PAGE.STATISTIC_BLOCK_DESCRIPTION_1'),
     },
     {
-      heading: t('HomePage.StatisticBlockTitle2'),
-      content: t('HomePage.StatisticBlockDescription2'),
+      heading: t('HOME_PAGE.STATISTIC_BLOCK_TITLE_2'),
+      content: t('HOME_PAGE.STATISTIC_BLOCK_DESCRIPTION_2'),
     },
     {
-      heading: t('HomePage.StatisticBlockTitle_3'),
-      content: t('HomePage.StatisticBlockDescription3'),
+      heading: t('HOME_PAGE.STATISTIC_BLOCK_TITLE_3'),
+      content: t('HOME_PAGE.STATISTIC_BLOCK_DESCRIPTION_3'),
     },
   ];
 

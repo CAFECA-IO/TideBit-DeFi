@@ -62,18 +62,18 @@ const NavBarMobile = () => {
     //console.log('sidebarOpenHandler clicked, componentVisible: ', componentVisible);
   };
 
-  const hamburgerStyles = 'block bg-lightWhite h-3px rounded-12px ease-in duration-300';
+  const hamburgerStyles = 'block bg-lightWhite h-3px rounded-12px w-full ease-in duration-300';
 
   const menuItemStyles =
     'block rounded-md px-3 py-5 font-medium hover:cursor-pointer hover:text-tidebitTheme';
 
   // hamburger animation
   const displayedMobileNavBarLine1 = !navOpen
-    ? 'translate-y-0 rotate-0 w-full'
+    ? 'translate-y-0 rotate-0'
     : 'translate-y-1.5 origin-left w-3/4 -rotate-35';
   const displayedMobileNavBarLine2 = !navOpen ? 'translate-y-1.5 w-full' : 'w-0 opacity-0';
   const displayedMobileNavBarLine3 = !navOpen
-    ? 'translate-y-3 rotate-0 w-full'
+    ? 'translate-y-3 rotate-0'
     : 'translate-y-0 origin-left w-3/4 rotate-35';
 
   const isDisplayedMobileNavBar = navOpen ? 'top-14 min-h-screen inset-0 bg-darkGray/100' : '';

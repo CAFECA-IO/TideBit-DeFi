@@ -157,40 +157,30 @@ const TickerSelectorBox = ({
   // const testResult =
 
   useEffect(() => {
-    const cryptoCardsData = convertTickersToCryptoCardsData(marketCtx.listAvailableTickers());
-    // const updatedCard = {...cryptoCardsData, starred: false};
-    // Log in and log out will clear the star
-    const allCardsData = userCtx.enableServiceTerm
-      ? cryptoCardsData
-      : cryptoCardsData.map(card => ({...card, starred: false}));
-    setFilteredCards(allCardsData);
-    const favoriteTabCardsData = cryptoCardsData.filter(cryptoCardData => cryptoCardData.starred);
-    setFilteredFavorites(favoriteTabCardsData);
-  }, [userCtx.favoriteTickers, userCtx.enableServiceTerm]);
+    if (tickerSelectorBoxVisible) {
+      const cryptoCardsData = convertTickersToCryptoCardsData(marketCtx.listAvailableTickers());
+      if (activeTab === 'All') {
+        const newSearchResult = cryptoCardsData.filter(each => {
+          const result =
+            each.chain.toLocaleLowerCase().includes(searches || '') ||
+            each.currency.toLocaleLowerCase().includes(searches || '');
+          return result;
+        });
 
-  useEffect(() => {
-    const cryptoCardsData = convertTickersToCryptoCardsData(marketCtx.listAvailableTickers());
-    if (activeTab === 'All') {
-      const newSearchResult = cryptoCardsData.filter(each => {
-        const result =
-          each.chain.toLocaleLowerCase().includes(searches || '') ||
-          each.currency.toLocaleLowerCase().includes(searches || '');
-        return result;
-      });
+        setFilteredCards(newSearchResult);
+      } else if (activeTab === 'Favorite') {
+        const newSearchResult = cryptoCardsData?.filter(each => {
+          const result =
+            each.starred &&
+            (each.chain.toLocaleLowerCase().includes(searches || '') ||
+              each.currency.toLocaleLowerCase().includes(searches || ''));
+          return result;
+        });
 
-      setFilteredCards(newSearchResult);
-    } else if (activeTab === 'Favorite') {
-      const newSearchResult = cryptoCardsData?.filter(each => {
-        const result =
-          each.starred &&
-          (each.chain.toLocaleLowerCase().includes(searches || '') ||
-            each.currency.toLocaleLowerCase().includes(searches || ''));
-        return result;
-      });
-
-      setFilteredFavorites(newSearchResult);
+        setFilteredFavorites(newSearchResult);
+      }
     }
-  }, [searches, activeTab]);
+  }, [tickerSelectorBoxVisible, searches, activeTab, marketCtx.availableTickers]);
 
   const allTabClickHandler = () => {
     setActiveTab('All');

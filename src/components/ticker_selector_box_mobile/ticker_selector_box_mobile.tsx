@@ -6,9 +6,12 @@ import {useContext, useEffect, useState} from 'react';
 import CryptoCard from '../crypto_card/crypto_card';
 import {MarketContext, IMarketContext} from '../../contexts/market_context';
 import {UserContext, IUserContext} from '../../contexts/user_context';
+import {useTranslation} from 'next-i18next';
 import {ILineGraphProps, ITickerData} from '../../interfaces/tidebit_defi_background/ticker_data';
 import {useRouter} from 'next/router';
 import eventEmitter, {ClickEvent} from '../../constants/tidebit_event';
+
+type TranslateFunction = (s: string) => string;
 
 // TODO: useContext
 interface ITickerSelectorBox {
@@ -40,6 +43,8 @@ const TickerSelectorBoxMobile = ({
 }: ITickerSelectorBox) => {
   const marketCtx = useContext<IMarketContext>(MarketContext);
   const userCtx = useContext(UserContext) as IUserContext;
+
+  const {t}: {t: TranslateFunction} = useTranslation('common');
 
   const router = useRouter();
 
@@ -200,6 +205,8 @@ const TickerSelectorBoxMobile = ({
     setActiveTab('Favorite');
   };
 
+  const dropdownMenuClickHandler = () => setMenuOpen(!menuOpen);
+
   const displayedAllCryptoCards = filteredCards
     // .filter(each => {
     //   if (!availableTickers) return;
@@ -334,14 +341,19 @@ const TickerSelectorBoxMobile = ({
     </svg>
   );
 
+  const dropdownMenuText =
+    activeTab === 'All'
+      ? t('trade_page.TickerSelectorTab_All')
+      : t('trade_page.TickerSelectorTab_Favorite');
+
   const tabPart = (
     <>
       <div className="mt-10 flex h-48px flex-col rounded-lg bg-darkGray8 text-base font-medium text-lightWhite">
         <button
           className="flex w-full items-center justify-between px-5 py-3 text-left"
-          onClick={() => setMenuOpen(!menuOpen)}
+          onClick={dropdownMenuClickHandler}
         >
-          {activeTab}
+          {dropdownMenuText}
 
           <div
             className={`h-10px w-10px border-b-2 border-r-2 border-lightWhite transition-all duration-200 ${
@@ -360,7 +372,7 @@ const TickerSelectorBoxMobile = ({
             className={`inline-block px-5 py-3 text-left hover:cursor-pointer`}
             onClick={allTabClickHandler}
           >
-            All
+            {t('trade_page.TickerSelectorTab_All')}
           </button>
 
           {userCtx.enableServiceTerm ? (
@@ -369,7 +381,7 @@ const TickerSelectorBoxMobile = ({
               onClick={favoriteTabClickHandler}
               className={`inline-block px-5 py-3 text-left hover:cursor-pointer`}
             >
-              Favorite
+              {t('trade_page.TickerSelectorTab_Favorite')}
             </button>
           ) : (
             <></>

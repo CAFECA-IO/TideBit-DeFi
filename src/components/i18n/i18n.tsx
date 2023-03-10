@@ -3,18 +3,22 @@ import {Dispatch, SetStateAction, useState} from 'react';
 import {useRouter} from 'next/router';
 import Link from 'next/link';
 import useOuterClick from '../../lib/hooks/use_outer_click';
+import {useTranslation} from 'next-i18next';
+
 // import {i18n} from 'next-i18next';
 // import {initReactI18next} from 'react-i18next';
 
 // export const testi18n = async () =>
 //   await i18n?.use(initReactI18next).init({fallbackLng: 'en', debug: true});
 
+type TranslateFunction = (s: string) => string;
 interface II18nParams {
   langIsOpen?: boolean;
   setLangIsOpen?: Dispatch<SetStateAction<boolean>>;
 }
 
 const I18n = ({langIsOpen, setLangIsOpen}: II18nParams) => {
+  const {t}: {t: TranslateFunction} = useTranslation('common');
   // const [locale, setLocale] = useState('en');
   const [openMenu, setOpenMenu] =
     typeof setLangIsOpen !== 'function' ? useState(false) : [langIsOpen, setLangIsOpen];
@@ -115,7 +119,7 @@ const I18n = ({langIsOpen, setLangIsOpen}: II18nParams) => {
         type="button"
         className="inline-flex hover:text-tidebitTheme lg:hidden"
       >
-        Language
+        {t('nav_bar.Language')}
       </button>
     </>
   );

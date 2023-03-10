@@ -144,7 +144,7 @@ export const updateDummyCandlestickChartData = (data: ICandlestickData[]): ICand
   const withoutLast = originalData.slice(0, originalData.length - 1); // remove the last element
   const withNewData = withoutLast.concat(newCandlestickData); // add new data to end
   const withNullData = withNewData.concat({
-    x: new Date(nowSecond + addition * unitOfLive),
+    x: new Date(nowSecond + addition * unitOfLive * 2),
     y: [null, null, null, null],
   }); // add null data to end
   // const withNullData = withNewData.concat({

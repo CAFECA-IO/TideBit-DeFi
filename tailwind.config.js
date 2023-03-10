@@ -40,6 +40,8 @@ module.exports = {
       '3xl': '1600px',
     },
     extend: {
+      opacity: ['group-hover'],
+      visible: ['group-hover'],
       backgroundImage: {
         'reserve': "url('./public/elements/group_15244.svg')",
       },

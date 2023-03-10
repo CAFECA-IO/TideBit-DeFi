@@ -1,4 +1,5 @@
 import React, {useContext, useState} from 'react';
+import Link from 'next/link';
 import {UserContext} from '../../contexts/user_context';
 import {ImExit} from 'react-icons/im';
 import {VscAccount} from 'react-icons/vsc';
@@ -7,8 +8,13 @@ import {BiWallet} from 'react-icons/bi';
 import {accountTruncate} from '../../lib/common';
 import TideButton from '../tide_button/tide_button';
 import {useGlobal} from '../../contexts/global_context';
+import {useTranslation} from 'next-i18next';
+
+type TranslateFunction = (s: string) => string;
 
 const User = () => {
+  const {t}: {t: TranslateFunction} = useTranslation('common');
+
   const userCtx = useContext(UserContext);
   const globalCtx = useGlobal();
 
@@ -18,6 +24,14 @@ const User = () => {
 
   const avatarClickHandler = () => {
     setAvatarMenuVisible(!avatarMenuVisible);
+  };
+
+  const depositClickHandler = () => {
+    globalCtx.visibleDepositModalHandler();
+  };
+
+  const withdrawClickHandler = () => {
+    globalCtx.visibleWithdrawalModalHandler();
   };
 
   const isDisplayedAvatarMenu =
@@ -42,56 +56,50 @@ const User = () => {
           aria-labelledby="avatarButton"
         >
           <li>
-            <a href="/my-assets" className="block py-2 pr-4 pl-3 hover:bg-darkGray5">
+            <Link href="/my-assets" className="block py-2 pr-4 pl-3 hover:bg-darkGray5">
               <div className="flex flex-row items-center space-x-2">
                 <BiWallet />
-                <p>My Assets</p>
+                <p>{t('user.Assets')}</p>
               </div>
-            </a>
+            </Link>
           </li>
           <li
-            onClick={() => {
-              avatarClickHandler();
-              globalCtx.visibleDepositModalHandler();
-            }}
+            onClick={depositClickHandler}
             className="block py-2 pr-4 pl-3 hover:cursor-pointer hover:bg-darkGray5"
           >
             <div className="flex flex-row items-center space-x-2">
               <FaDownload />
-              <p>Deposit</p>
+              <p>{t('user.Deposit')}</p>
             </div>
           </li>
           <li
-            onClick={() => {
-              avatarClickHandler();
-              globalCtx.visibleWithdrawalModalHandler();
-            }}
+            onClick={withdrawClickHandler}
             className="block py-2 pr-4 pl-3 hover:cursor-pointer hover:bg-darkGray5"
           >
             <div className="flex flex-row items-center space-x-2">
               <FaUpload />
-              <p>Withdraw</p>
+              <p>{t('user.Withdraw')}</p>
             </div>
           </li>
           <li>
-            <a href="#" className="block py-2 pr-4 pl-3 hover:bg-darkGray5">
+            <Link href="#" className="block py-2 pr-4 pl-3 hover:bg-darkGray5">
               <div className="flex flex-row items-center space-x-2">
                 <VscAccount />
-                <p>My Account</p>
+                <p>{t('user.Account')}</p>
               </div>
-            </a>
+            </Link>
           </li>
           <li>
-            <a
+            <Link
               onClick={userCtx.disconnect}
               href="#"
               className="block py-2 pr-4 pl-3 hover:bg-darkGray5"
             >
               <div className="flex flex-row items-center space-x-2">
                 <ImExit />
-                <p>Disconnect</p>
+                <p>{t('user.Disconnect')}</p>
               </div>
-            </a>
+            </Link>
           </li>
         </ul>
       </div>

@@ -5,7 +5,18 @@
     "Support": "支援",
     "TideBitUniversity": "TideBit 大學",
     "HelpCenter": "幫助中心",
-    "WalletConnect": "連接錢包"
+    "WalletConnect": "連接錢包",
+    "Language": "語言",
+    "Menu": "選單",
+    "Notification": "通知"
+  },
+  "user": {
+    "PersonalSetting": "用戶設定",
+    "Assets": "我的資產",
+    "Deposit": "入金",
+    "Withdraw": "出金",
+    "Account": "我的帳戶",
+    "Disconnect": "中斷錢包連接"
   },
   "home_page": {
     "Cta_HighlightTitle": "值得信賴的",
@@ -25,5 +36,11 @@
     "ReserveRatioBlock_Card_2": "區塊鏈",
     "ReserveRatioBlock_Description": "TideBit 用戶資產持有量",
     "ReserveRatioBlock_Description_2": "TideBit 錢包資產"
+  },
+  "trade_page": {
+    "WalletConnect_Button": "連接錢包",
+    "WalletConnect_Description": "Connect your wallet to start trading",
+    "TickerSelectorTab_All": "全部",
+    "TickerSelectorTab_Favorite": "我的最愛"
   }
 }

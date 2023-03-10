@@ -44,20 +44,20 @@ const UserOverview = ({
       <div className="mt-5">
         {/* <div className="my-auto h-px w-full rounded bg-white/50"></div> */}
 
-        <div className="flex space-x-10 text-center lg:hidden">
+        <div className="flex justify-center space-x-10 text-center lg:hidden">
           <div className="">
-            <div className="whitespace-nowrap p-2 text-sm text-lightGray4">Available</div>
-            <div className="whitespace-nowrap p-2 text-xs">{depositAvailable} USDT</div>
+            <div className="whitespace-nowrap p-1 text-sm text-lightGray4">Available</div>
+            <div className="whitespace-nowrap p-1 text-xs">{depositAvailable} USDT</div>
           </div>
 
           <div className="">
-            <div className="whitespace-nowrap p-2 text-sm text-lightGray4">M. Margin</div>
-            <div className="whitespace-nowrap p-2 text-xs">{marginLocked} USDT</div>
+            <div className="whitespace-nowrap p-1 text-sm text-lightGray4">M. Margin</div>
+            <div className="whitespace-nowrap p-1 text-xs">{marginLocked} USDT</div>
           </div>
 
           <div className="">
-            <div className="whitespace-nowrap p-2 text-sm text-lightGray4">PNL</div>
-            <div className="whitespace-nowrap p-2 text-xs">{profitOrLossAmount} USDT</div>
+            <div className="whitespace-nowrap p-1 text-sm text-lightGray4">PNL</div>
+            <div className="whitespace-nowrap p-1 text-xs">{profitOrLossAmount} USDT</div>
           </div>
         </div>
       </div>

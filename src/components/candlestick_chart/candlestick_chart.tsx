@@ -1,10 +1,6 @@
-/*eslint-disable no-console */
 import React, {useState, useContext, useEffect, useRef} from 'react';
 import Lottie, {useLottie} from 'lottie-react';
 import spotAnimation from '../../../public/animation/circle.json';
-
-// import dynamic from 'next/dynamic';
-// import ApexCharts, {ApexOptions} from 'apexcharts';
 import {
   EXAMPLE_BLUE_COLOR,
   LIGHT_GRAY_COLOR,
@@ -36,8 +32,6 @@ import {
 } from 'victory';
 import {AppContext} from '../../contexts/app_context';
 import OpenPriceLine from '../open_price_line/open_price_line';
-
-// const Chart = dynamic(() => import('react-apexcharts'), {ssr: false});
 
 interface ITradingChartGraphProps {
   strokeColor: string[];
@@ -90,7 +84,6 @@ export const updateDummyCandlestickChartData = (data: ICandlestickData[]): ICand
 
   const addition = n / chartBlank;
 
-  // Add new data and remove the first element
   const nullNum = 10;
 
   const withNullData = [
@@ -101,8 +94,6 @@ export const updateDummyCandlestickChartData = (data: ICandlestickData[]): ICand
       y: [null, null, null, null],
     })),
   ];
-
-  // console.log(`${nullNum} null arrays`, withNullData);
 
   return withNullData;
 };
@@ -147,12 +138,9 @@ export function processCandlestickData({data, requiredDataNum}: IProcessCandlest
 export interface ITrimCandlestickData {
   data: ICandlestickData[];
   requiredDataNum: number;
-  // nullTimestamp: number;
 }
 
 export function trimCandlestickData({data, requiredDataNum}: ITrimCandlestickData) {
-  // const requiredDataNum = 30;
-
   const latestData = data.slice(-requiredDataNum);
   if (latestData === undefined || latestData.length === 0) return;
 
@@ -167,24 +155,16 @@ export default function CandlestickChart({
   lineGraphOn,
   candlestickChartWidth,
   candlestickChartHeight,
-  // ref
   ...otherProps
 }: ITradingChartGraphProps) {
   const marketCtx = useContext(MarketContext);
   const appCtx = useContext(AppContext);
-  // const candlestickChartRef = useRef<HTMLDivElement>(null);
 
   const candlestickChartDataFromCtx =
     marketCtx.candlestickChartData !== null ? marketCtx.candlestickChartData : [];
 
   const NULL_ARRAY_NUM = 10;
 
-  // TODO: replace with real data
-  // const candlestickChartDataFromCtx = getDummyCandlestickChartData(80);
-
-  // const isCandlestickDataEmpty = candlestickChartDataFromCtx.length === 0;
-
-  // 用來記錄從 market ctx 拿到的資料
   const [candlestickChartData, setCandlestickChartData, candlestickChartDataRef] = useStateRef<
     ICandlestickData[] | undefined
   >(() =>
@@ -194,10 +174,6 @@ export default function CandlestickChart({
     })
   );
 
-  // // FIXME: 網頁剛開起來，會給
-  // console.log('beginning', candlestickChartDataRef.current);
-
-  // 用來整理成 chart 需要的資料
   const [toCandlestickChartData, setToCandlestickChartData, toCandlestickChartDataRef] =
     useStateRef<
       | {
@@ -219,20 +195,8 @@ export default function CandlestickChart({
         high: data.y[1],
         low: data.y[2],
         close: data.y[3],
-        // label: JSON.stringify({open: data.y[0], high: data.y[1], low: data.y[2], close: data.y[3]}),
       }));
     });
-  // // console.log('after declaration of toCandlestickChartData', toCandlestickChartDataRef.current);
-
-  // () =>
-  // candlestickChartDataFromCtx?.map(data => ({
-  //   x: data.x,
-  //   open: data.y[0],
-  //   high: data.y[1],
-  //   low: data.y[2],
-  //   close: data.y[3],
-  //   // label: JSON.stringify({open: data.y[0], high: data.y[1], low: data.y[2], close: data.y[3]}),
-  // }))
 
   const [toLineChartData, setToLineChartData, toLineChartDataRef] = useStateRef<
     {
@@ -291,7 +255,6 @@ export default function CandlestickChart({
     }
 
     const setStateInterval = setInterval(() => {
-      // setCandlestickChartData(updateDummyCandlestickChartData(candlestickChartDataRef.current));
       if (!candlestickChartDataRef?.current) return;
 
       const updatedCandlestickChartData = updateDummyCandlestickChartData(
@@ -299,8 +262,6 @@ export default function CandlestickChart({
       );
 
       setCandlestickChartData(updatedCandlestickChartData);
-
-      // console.log('updated data', JSON.stringify(updatedCandlestickChartData));
 
       const toCandlestickChartData = updatedCandlestickChartData?.map(data => ({
         x: data.x,
@@ -310,7 +271,8 @@ export default function CandlestickChart({
         close: data.y[3],
       }));
 
-      console.log('data put into chart', toCandlestickChartDataRef.current);
+      // TODO: Sometimes, the candlestick overlays with another candlestick (20230310 - Shirley)
+      // console.log('data put into chart', toCandlestickChartDataRef.current);
 
       setToCandlestickChartData(toCandlestickChartData);
 
@@ -334,12 +296,11 @@ export default function CandlestickChart({
     };
   }, [marketCtx.candlestickChartData]);
 
-  // TODO: (20230310 - Shirley) VictoryThemeDefinition to get the type
+  // TODO: VictoryThemeDefinition to get the type (20230310 - Shirley)
   const chartTheme = {
     axis: {
       style: {
         tickLabels: {
-          // this changed the color of my numbers to white
           fill: LIGHT_GRAY_COLOR,
           fontSize: 10,
           fontFamily: 'barlow',
@@ -367,7 +328,7 @@ export default function CandlestickChart({
     // },
   };
 
-  // TODO: (20230310 - Shirley) to finish the lottie animation on charts
+  // TODO: (20230310 - Shirley) finish the lottie animation on charts
   // // Use useRef to reference the SVG element, the Lottie container element, and the Lottie animation object
   // const svgRef = useRef<SVGSVGElement>(null);
   // const lottieContainerRef = useRef<HTMLDivElement>(null);
@@ -550,12 +511,10 @@ export default function CandlestickChart({
               },
             }}
             candleWidth={6}
-            // candleRatio={0.2}
             candleColors={{
               positive: TypeOfPnLColorHex.PROFIT,
               negative: TypeOfPnLColorHex.LOSS,
             }}
-            // data={marketCtx.candlestickChartData ? toCandlestickChartData : []}
             data={toCandlestickChartDataRef.current ?? []}
             labels={({datum}) =>
               `O: ${datum.open} H: ${datum.high} L: ${datum.low} C: ${datum.close}`
@@ -591,7 +550,7 @@ export default function CandlestickChart({
                 pointerWidth={0}
               />
             }
-
+            // Till: (20230324 - Shirley)
             // containerComponent={
             //   <VictoryVoronoiContainer
             //     voronoiDimension="x"
@@ -601,7 +560,6 @@ export default function CandlestickChart({
             //     labelComponent={<VictoryTooltip cornerRadius={2} flyoutStyle={{fill: 'black'}} />}
             //   />
             // }
-
             // events={[
             //   {
             //     target: 'data',
@@ -622,7 +580,7 @@ export default function CandlestickChart({
           />
         )}
 
-        {/* TODO: User open position line on charts */}
+        {/* TODO: User open position line on charts (20230310 - Shirley) */}
         {/* Not working and some errors */}
         {/* {toLatestPriceLineDataRef.current && (
           <OpenPriceLine
@@ -632,6 +590,7 @@ export default function CandlestickChart({
           />
         )} */}
 
+        {/* TODO: User open position line on charts (20230310 - Shirley) */}
         {/* <VictoryLine
           style={{
             data: {stroke: EXAMPLE_BLUE_COLOR, strokeWidth: 1},
@@ -653,62 +612,23 @@ export default function CandlestickChart({
             }}
             style={{
               data: {stroke: LINE_GRAPH_STROKE_COLOR.DEFAULT, strokeWidth: 1},
-              // parent: {border: '1px solid #ccc'},
             }}
-            // events={{
-            //   () => {console.log('hi')}
-            //   // onClick: (evt) => alert(`(${evt.clientX}, ${evt.clientY})`)
-            // }}
-            // events={[
-            //   {
-            //     target: 'data',
-            //     eventHandlers: {
-            //       // onClick: () => {
-            //       //   console.log('line graph');
-            //       // },
-            //       // NOT working in line graph
-            //       // onMouseOver: () => ({
-            //       //   target: 'data',
-            //       //   mutation: () => ({active: true}),
-            //       // }),
-            //       // onMouseOut: () => ({
-            //       //   target: 'data',
-            //       //   mutation: () => ({active: false}),
-            //       // }),
-            //     },
-            //   },
-            // ]}
             data={toLineChartDataRef.current ?? []}
-            // data={toLineChartData ? [...toLineChartData] : []}
           />
         )}
 
         <VictoryLine
           animate={{
             duration: 300,
-            // onExit: {
-            //   duration: 100,
-            //   before(datum, index, data) {
-            //     return {y: datum._y1, _y1: datum._y0};
-            //   },
-            // },
           }}
           style={{
             data: {stroke: LINE_GRAPH_STROKE_COLOR.TIDEBIT_THEME, strokeWidth: 1},
           }}
           data={toLatestPriceLineDataRef.current ?? []}
         />
-        {/* <VictoryLabel
-          textAnchor="end"
-          // text={datum => `${datum.y}`}
-          text={toLastestPriceHorizontalLineData[0]?.y ?? 0}
-          x={Number(candlestickChartWidth)}
-          y={Number(candlestickChartHeight) - 100}
-          style={{fill: '#fff', strokeWidth: 0.01}}
-        /> */}
+
         <VictoryScatter
           data={toLatestPriceLineDataRef.current ?? []}
-          // data={toLastestPriceHorizontalLineData}
           style={{
             data: {
               fill: ({datum}) =>
@@ -716,7 +636,6 @@ export default function CandlestickChart({
                 toLatestPriceLineDataRef?.current[toLatestPriceLineDataRef?.current?.length - 1].x
                   ? 'transparent'
                   : 'transparent',
-              // stroke: (d: any) => (d.y > 0 ? 'green' : 'red'),
             },
           }}
           labels={({datum}) =>
@@ -725,13 +644,9 @@ export default function CandlestickChart({
               ? `${datum.y}`
               : ``
           }
-          // labels={`${toLastestPriceHorizontalLineData[0]?.y ?? 0}`} // It's deprecated
           labelComponent={
             <VictoryLabel
               x={Number(candlestickChartWidth) - 28}
-              // y={Number(candlestickChartHeight) - 100}
-              // datum={{x: new Date()}}
-
               style={{
                 fill: LINE_GRAPH_STROKE_COLOR.DEFAULT,
                 fontSize: 10,
@@ -740,13 +655,6 @@ export default function CandlestickChart({
               backgroundPadding={{top: 8, bottom: 5, left: 5, right: 5}} // sets the background padding
             />
           }
-
-          // data={{
-          //   // x: toCandlestickChartData[toCandlestickChartData.length - 1].x,
-          //   // x: 'Thu Mar 09 2023 21:02:29 GMT+0800 (Taipei Standard Time)',
-          //   x: 500,
-          //   y: toLastestPriceHorizontalLineData[0]?.y ?? 0,
-          // }}
         />
       </VictoryChart>
     ) : (
@@ -756,16 +664,18 @@ export default function CandlestickChart({
   return (
     <>
       {/* w-2/3 xl:w-4/5 */}
-      {/* TODO: Temporary adjustment of chart size */}
       {/* absolute left-505px top-400px w-50px */}
       {/* <Lottie className="latestPrice" animationData={spotAnimation} /> */}
 
       <div className="-ml-5" style={{width: '70%'}}>
+        {/* TODO: (20230310 - Shirley) SVG */}
+
         {/* <div ref={lottieContainerRef} /> */}
         {/* <div ref={lottieContainerRef} className="z-50 w-50px text-cuteBlue1">
           <p>lottie</p>
           {View}
         </div>{' '} */}
+
         {isDisplayedCharts}
         {/* <svg ref={svgRef} /> */}
         {/* <svg ref={svgRef} width={800} height={30} fill="#c43a31">

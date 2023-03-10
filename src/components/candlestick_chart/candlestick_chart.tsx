@@ -34,6 +34,7 @@ import {
   VictoryCursorContainer,
 } from 'victory';
 import {AppContext} from '../../contexts/app_context';
+import OpenPriceLine from '../open_price_line/open_price_line';
 
 // const Chart = dynamic(() => import('react-apexcharts'), {ssr: false});
 
@@ -301,6 +302,18 @@ export default function CandlestickChart({
     }))
   );
 
+  // the max and min shouldn't be responsive to the candlestick data
+  const ys = candlestickChartDataFromCtx.flatMap(d => d.y.filter(y => y !== null)) as number[];
+
+  const maxNumber = ys.length > 0 ? Math.max(...ys) : null;
+  const minNumber = ys.length > 0 ? Math.min(...ys) : null;
+
+  const userOpenPrice = randomIntFromInterval(minNumber ?? 100, maxNumber ?? 1000);
+  const userOpenPriceLine = toLatestPriceLineData?.map(data => ({
+    x: data?.x,
+    y: userOpenPrice,
+  }));
+
   useEffect(() => {
     if (!appCtx.isInit) return;
     if (marketCtx.candlestickChartData === null) return;
@@ -525,12 +538,6 @@ export default function CandlestickChart({
 
   // const rawCandleData =
   //   marketCtx.candlestickChartData !== null ? marketCtx.candlestickChartData : [];
-
-  // the max and min shouldn't be responsive to the candlestick data
-  const ys = candlestickChartDataFromCtx.flatMap(d => d.y.filter(y => y !== null)) as number[];
-
-  const maxNumber = ys.length > 0 ? Math.max(...ys) : null;
-  const minNumber = ys.length > 0 ? Math.min(...ys) : null;
 
   // Use useRef to reference the SVG element, the Lottie container element, and the Lottie animation object
   const svgRef = useRef<SVGSVGElement>(null);
@@ -866,6 +873,23 @@ export default function CandlestickChart({
             // ]}
           />
         )}
+
+        {/* Not working and some errors */}
+        {/* {toLatestPriceLineDataRef.current && (
+          <OpenPriceLine
+            horizontalData={
+              toLatestPriceLineDataRef.current ? toLatestPriceLineDataRef.current : []
+            }
+          />
+        )} */}
+
+        <VictoryLine
+          style={{
+            data: {stroke: EXAMPLE_BLUE_COLOR, strokeWidth: 1},
+            // parent: {border: '1px solid #ccc'},
+          }}
+          data={userOpenPriceLine}
+        />
 
         {lineGraphOn && (
           <VictoryLine

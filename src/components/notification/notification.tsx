@@ -1,6 +1,4 @@
-import useOuterClick from '../../lib/hooks/use_outer_click';
-import Image from 'next/image';
-import {forwardRef, useContext} from 'react';
+import {useContext} from 'react';
 import NotificationItem from '../notification_item/notification_item';
 import {NotificationContext} from '../../contexts/notification_context';
 import {useTranslation} from 'next-i18next';
@@ -11,24 +9,13 @@ interface INotificationProps {
   notifyRef: HTMLDivElement extends HTMLElement ? React.RefObject<HTMLDivElement> : null;
   componentVisible: boolean;
 }
-// <HTMLDivElement extends HTMLElement>
+
 export default function Notification({
   notifyRef,
   componentVisible,
 }: INotificationProps): JSX.Element {
   const {t}: {t: TranslateFunction} = useTranslation('common');
-  // const {notifyRef, componentVisible} = props;
-  // const refP = forwardRef(props?.forwardedRef);
-  // const {componentVisible, setComponentVisible} = useOuterClick(false, refP);
-
-  // const sidebarOpenHandler = () => {
-  //   setComponentVisible(!componentVisible);
-  // };
-  const {t}: {t: TranslateFunction} = useTranslation('common');
-
   const notificationCtx = useContext(NotificationContext);
-
-  const MAX_NOTIFICATION_WIDTH = 479;
 
   const hamburgerStyles = 'block bg-lightWhite h-3px rounded-12px ease-in duration-300';
   // hamburger animation
@@ -40,33 +27,7 @@ export default function Notification({
     ? 'translate-y-3 rotate-0 w-full'
     : 'translate-y-0 origin-left w-3/4 rotate-35';
 
-  const DUMMY_DATA = [
-    {
-      id: 'n1',
-    },
-    {
-      id: 'n2',
-    },
-    {
-      id: 'n3',
-    },
-    {
-      id: 'n4',
-    },
-    {
-      id: 'n5',
-    },
-    {
-      id: 'n6',
-    },
-    {
-      id: 'n7',
-    },
-    {
-      id: 'n8',
-    },
-  ];
-  const NotificationList = notificationCtx.unreadNotifications.map((v, i) => {
+  const NotificationList = notificationCtx.unreadNotifications.map(v => {
     return (
       <div key={v.id}>
         <NotificationItem

@@ -45,7 +45,9 @@
     "WALLET_CONNECT_BUTTON": "Wallet Connect",
     "WALLET_CONNECT_DESCRIPTION": "Connect your wallet to start trading",
     "TICKER_SELECTOR_TAB_ALL": "All",
-    "TICKER_SELECTOR_TAB_FAVORITE": "Favorite"
+    "TICKER_SELECTOR_TAB_FAVORITE": "Favorite",
+    "HISTORY_POSITION_ITEM_VALUE": "Open / Close Value",
+    "HISTORY_POSITION_ITEM_PNL": "PNL"
   },
   "POSITION_MODAL": {
     "OPEN_POSITION_TITLE": "Open Position",
@@ -57,11 +59,11 @@
     "TYPE_DOWN": "Down",
     "TYPE_SELL": "(Sell)",
     "OPEN_VALUE": "Open Value",
-    "CLOSE_VALUE": "Close Value",
+    "CLOSED_VALUE": "Closed Value",
     "OPEN_PRICE": "Open Price",
-    "CLOSE_PRICE": "Close Price",
+    "CLOSED_PRICE": "Closed Price",
     "OPEN_TIME": "Open Time",
-    "CLOSE_TIME": "Close Time",
+    "CLOSED_TIME": "Closed Time",
     "AMOUNT": "Amount",
     "REQUIRED_MARGIN": "Required Margin",
     "LIMIT_AND_STOP": "Limit/ Stop",
@@ -74,7 +76,8 @@
     "CONFIRM_BUTTON": "Confirm the order",
     "STATE": "State",
     "STATE_CLOSED": "closed",
-    "CLOSE_REASON": "Close Reason",
-    "CLOSE_REASON_MARKET_CLOSED": "Market closed"
+    "CLOSED_REASON": "Closed Reason",
+    "CLOSED_REASON_MARKET_CLOSED": "Market closed",
+    "SHARE": "Share:"
   }
 }

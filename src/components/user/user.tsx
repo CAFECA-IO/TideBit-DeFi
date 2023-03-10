@@ -59,7 +59,7 @@ const User = () => {
             <Link href="/my-assets" className="block py-2 pr-4 pl-3 hover:bg-darkGray5">
               <div className="flex flex-row items-center space-x-2">
                 <BiWallet />
-                <p>{t('user.Assets')}</p>
+                <p>{t('User.Assets')}</p>
               </div>
             </Link>
           </li>
@@ -69,7 +69,7 @@ const User = () => {
           >
             <div className="flex flex-row items-center space-x-2">
               <FaDownload />
-              <p>{t('user.Deposit')}</p>
+              <p>{t('User.Deposit')}</p>
             </div>
           </li>
           <li
@@ -78,14 +78,14 @@ const User = () => {
           >
             <div className="flex flex-row items-center space-x-2">
               <FaUpload />
-              <p>{t('user.Withdraw')}</p>
+              <p>{t('User.Withdraw')}</p>
             </div>
           </li>
           <li>
             <Link href="#" className="block py-2 pr-4 pl-3 hover:bg-darkGray5">
               <div className="flex flex-row items-center space-x-2">
                 <VscAccount />
-                <p>{t('user.Account')}</p>
+                <p>{t('User.Account')}</p>
               </div>
             </Link>
           </li>
@@ -97,7 +97,7 @@ const User = () => {
             >
               <div className="flex flex-row items-center space-x-2">
                 <ImExit />
-                <p>{t('user.Disconnect')}</p>
+                <p>{t('User.Disconnect')}</p>
               </div>
             </Link>
           </li>

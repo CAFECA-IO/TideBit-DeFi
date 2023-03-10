@@ -339,7 +339,7 @@ const TickerSelectorBox = ({
             className={`${activeAllTabStyle} inline-block rounded-t-lg px-38px py-2 hover:cursor-pointer`}
             onClick={allTabClickHandler}
           >
-            {t('trade_page.TickerSelectorTab_All')}
+            {t('TradePage.TickerSelectorTabAll')}
           </button>
         </div>
         {userCtx.enableServiceTerm ? (
@@ -349,7 +349,7 @@ const TickerSelectorBox = ({
               onClick={favoriteTabClickHandler}
               className={`${activeFavoriteTabStyle} inline-block rounded-t-lg px-38px py-2 hover:cursor-pointer`}
             >
-              {t('trade_page.TickerSelectorTab_Favorite')}
+              {t('TradePage.TickerSelectorTabFavorite')}
             </button>
           </div>
         ) : (

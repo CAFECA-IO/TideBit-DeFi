@@ -4,8 +4,6 @@ import {forwardRef, useContext} from 'react';
 import NotificationItem from '../notification_item/notification_item';
 import {NotificationContext} from '../../contexts/notification_context';
 import {useTranslation} from 'next-i18next';
-// import {INotificationItem} from '../../interfaces/tidebit_defi_background/notification_item';
-import {useTranslation} from 'next-i18next';
 
 type TranslateFunction = (s: string) => string;
 

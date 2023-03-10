@@ -24,12 +24,12 @@ const ReserveRatio = () => {
           <div className="flex items-center justify-center">
             <span className="my-auto h-px w-1/11 rounded bg-white/50 xs:inline-block xs:w-1/10 lg:w-1/5 xl:mx-2"></span>
             <h1 className="mx-1 text-center">
-              {t('HomePage.ReserveRatioBlockTitle')}
+              {t('HOME_PAGE.RESERVE_RATIO_BLOCK_TITLE')}
               <span className="text-tidebitTheme">
                 {' '}
-                {t('HomePage.ReserveRatioBlockTitleHighlight')}
+                {t('HOME_PAGE.RESERVE_RATIO_BLOCK_TITLE_HIGHLIGHT')}
               </span>{' '}
-              {t('HomePage.ReserveRatioBlockTitle2')}
+              {t('HOME_PAGE.RESERVE_RATIO_BLOCK_TITLE_2')}
             </h1>
             <span className="my-auto h-px w-1/11 rounded bg-white/50 xs:inline-block xs:w-1/10 lg:w-1/5 xl:mx-2"></span>
           </div>
@@ -81,7 +81,10 @@ const ReserveRatio = () => {
                   </div>
                   <div className="flex flex-col">
                     <h2 className="text-3xl font-medium text-lightGreen2">USDT</h2>
-                    <p className="-my-1 mb-1 text-white"> {t('HomePage.ReserveRatioBlockCard')}</p>
+                    <p className="-my-1 mb-1 text-white">
+                      {' '}
+                      {t('HOME_PAGE.RESERVE_RATIO_BLOCK_CARD')}
+                    </p>
                   </div>
                 </div>
 
@@ -93,7 +96,7 @@ const ReserveRatio = () => {
                   <div
                     className={`${cardForTwDesktop} flex flex-row items-center rounded-full bg-lightGray3 px-3 py-1 text-sm text-lightWhite`}
                   >
-                    <p> {t('HomePage.ReserveRatioBlockCard2')}</p>
+                    <p> {t('HOME_PAGE.RESERVE_RATIO_BLOCK_CARD_2')}</p>
                     <div className="pl-2">
                       <BiLinkAlt size={20} />
                     </div>
@@ -117,14 +120,14 @@ const ReserveRatio = () => {
                   <div className="mb-5 flex flex-col space-y-2">
                     <div className="text-base text-lightGray">
                       {' '}
-                      {t('HomePage.ReserveRatioBlock_Description')}
+                      {t('HOME_PAGE.RESERVE_RATIO_BLOCK_DESCRIPTION')}
                     </div>
                     <div>3,016,827,845</div>
                   </div>
                   <div className="flex flex-col space-y-2">
                     <div className="text-base text-lightGray">
                       {' '}
-                      {t('HomePage.ReserveRatioBlock_Description2')}
+                      {t('HOME_PAGE.RESERVE_RATIO_BLOCK_DESCRIPTION_2')}
                     </div>
                     <div>3,061,068,937</div>
                   </div>
@@ -159,7 +162,7 @@ const ReserveRatio = () => {
                   </div>
                   <div className="flex flex-col">
                     <h2 className="text-3xl font-medium text-lightGreen2">USDT</h2>
-                    <p className="-my-1 mb-1"> {t('HomePage.ReserveRatioBlockCard')}</p>
+                    <p className="-my-1 mb-1"> {t('HOME_PAGE.RESERVE_RATIO_BLOCK_CARD')}</p>
                   </div>
                 </div>
 
@@ -171,7 +174,7 @@ const ReserveRatio = () => {
                   <div
                     className={`${cardForTwMobile} flex flex-row items-center rounded-full bg-lightGray3 px-3 py-1 text-sm text-lightWhite`}
                   >
-                    <p> {t('HomePage.ReserveRatioBlockCard2')}</p>
+                    <p> {t('HOME_PAGE.RESERVE_RATIO_BLOCK_CARD_2')}</p>
                     <div className="pl-2">
                       <BiLinkAlt size={20} />
                     </div>
@@ -195,14 +198,14 @@ const ReserveRatio = () => {
                   <div className="mb-5 flex flex-col space-y-2">
                     <div className="text-base text-lightGray">
                       {' '}
-                      {t('HomePage.ReserveRatioBlock_Description')}
+                      {t('HOME_PAGE.RESERVE_RATIO_BLOCK_DESCRIPTION')}
                     </div>
                     <div>3,016,827,845</div>
                   </div>
                   <div className="flex flex-col space-y-2">
                     <div className="text-base text-lightGray">
                       {' '}
-                      {t('HomePage.ReserveRatioBlock_Description2')}
+                      {t('HOME_PAGE.RESERVE_RATIO_BLOCK_DESCRIPTION_2')}
                     </div>
                     <div>3,061,068,937</div>
                   </div>

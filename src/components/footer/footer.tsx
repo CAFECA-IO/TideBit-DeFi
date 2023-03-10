@@ -48,9 +48,9 @@ const Footer = () => {
   ];
 
   const servicesLinks = [
-    {label: t('Navbar.Trade'), path: '/trade/cfd/ethusdt'},
-    {label: t('Navbar.TideBitUniversity'), path: '/'},
-    {label: t('Navbar.HelpCenter'), path: '/'},
+    {label: t('NAV_BAR.TRADE'), path: '/trade/cfd/ethusdt'},
+    {label: t('NAV_BAR.TIDEBIT_UNIVERSITY'), path: '/'},
+    {label: t('NAV_BAR.HELP_CENTER'), path: '/'},
   ];
 
   const tideBitLinks = [{label: 'Hiring', path: '/'}];

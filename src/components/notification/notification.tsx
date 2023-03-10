@@ -76,13 +76,13 @@ export default function Notification({
             >
               <div className="mb-10 flex flex items-center">
                 <h1 className="hidden pl-5 text-2xl font-bold sm:block">
-                  {t('Navbar.NotificationTitle')}
+                  {t('NAV_BAR.NOTIFICATION_TITLE')}
                 </h1>
                 <div
                   className="ml-auto pr-30px text-sm text-tidebitTheme underline hover:cursor-pointer"
                   onClick={notificationCtx.readAll}
                 >
-                  {t('Navbar.NotificationReadAll')}
+                  {t('NAV_BAR.NOTIFICATION_READ_ALL')}
                 </div>
               </div>
 

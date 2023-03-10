@@ -38,7 +38,7 @@ const PositionVisitorTab = () => {
                   {/* <div className="px-1/3">Lest</div> */}
                   <div className="">
                     <p className="text-center text-sm text-lightGray">
-                      {t('TradePage.WalletConnectDescription')}
+                      {t('TRADE_PAGE.WALLET_CONNECT_DESCRIPTION')}
                     </p>
                   </div>
                   <div className="mt-10">
@@ -47,7 +47,7 @@ const PositionVisitorTab = () => {
                       onClick={btnClickHandler}
                       className={`mt-4 rounded border-0 bg-tidebitTheme py-2 px-5 text-base text-white transition-all hover:opacity-90 md:mt-0`}
                     >
-                      {t('TradePage.WalletConnectButton')}
+                      {t('TRADE_PAGE.WALLET_CONNECT_BUTTON')}
                     </TideButton>
                   </div>
                 </div>

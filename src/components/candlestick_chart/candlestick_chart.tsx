@@ -20,7 +20,8 @@ import {
   getDummyCandlestickChartData,
 } from '../../interfaces/tidebit_defi_background/candlestickData';
 import useStateRef from 'react-usestateref';
-import {VictoryThemeDefinition} from 'victory-core/lib/victory-theme/types';
+// import {VictoryThemeDefinition} from '../../interfaces/victory/lib/victory-theme/types';
+// import {VictoryThemeDefinition} from 'victory-core/lib/victory-theme/types';
 import {
   VictoryScatter,
   VictoryLabel,
@@ -487,7 +488,8 @@ export default function CandlestickChart({
   //   // label: JSON.stringify({open: data.y[0], high: data.y[1], low: data.y[2], close: data.y[3]}),
   // }));
 
-  const chartTheme: VictoryThemeDefinition = {
+  // Till: (20230324 - Shirley) VictoryThemeDefinition to get the type
+  const chartTheme = {
     axis: {
       style: {
         tickLabels: {

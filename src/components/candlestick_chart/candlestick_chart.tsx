@@ -175,11 +175,17 @@ export const updateDummyCandlestickChartData = (data: ICandlestickData[]): ICand
   // return newData;
 };
 
-/**
- *
- * @param
- * @returns `candlestickData`- dataObject:nullObject = 9:5
- */
+export interface ITrimCandlestickData {
+  data: ICandlestickData[];
+  targetNumber: number;
+  nullSec: number;
+}
+
+// TODO: trim data to 1. 80 data points 2. the timestamp of null data points
+export const trimCandlestickData = ({data, targetNumber, nullSec}: ITrimCandlestickData) => {
+  console.log('sth');
+  return;
+};
 
 export default function CandlestickChart({
   strokeColor,

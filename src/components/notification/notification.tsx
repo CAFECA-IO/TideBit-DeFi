@@ -3,10 +3,12 @@ import Image from 'next/image';
 import {forwardRef, useContext} from 'react';
 import NotificationItem from '../notification_item/notification_item';
 import {NotificationContext} from '../../contexts/notification_context';
+import {useTranslation} from 'next-i18next';
 // import {INotificationItem} from '../../interfaces/tidebit_defi_background/notification_item';
 import {useTranslation} from 'next-i18next';
 
 type TranslateFunction = (s: string) => string;
+
 interface INotificationProps {
   notifyRef: HTMLDivElement extends HTMLElement ? React.RefObject<HTMLDivElement> : null;
   componentVisible: boolean;
@@ -24,6 +26,8 @@ export default function Notification({
   // const sidebarOpenHandler = () => {
   //   setComponentVisible(!componentVisible);
   // };
+  const {t}: {t: TranslateFunction} = useTranslation('common');
+
   const notificationCtx = useContext(NotificationContext);
 
   const MAX_NOTIFICATION_WIDTH = 479;
@@ -182,7 +186,7 @@ export default function Notification({
           </button>
         </div>
 
-        <p className="self-center pl-5">Notification</p>
+        <p className="self-center pl-5">{t('nav_bar.Notification')}</p>
       </div>
     </div>
   );

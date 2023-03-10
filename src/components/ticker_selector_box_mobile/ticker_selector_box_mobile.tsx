@@ -205,6 +205,8 @@ const TickerSelectorBoxMobile = ({
     setActiveTab('Favorite');
   };
 
+  const dropdownMenuClickHandler = () => setMenuOpen(!menuOpen);
+
   const displayedAllCryptoCards = filteredCards
     // .filter(each => {
     //   if (!availableTickers) return;
@@ -349,7 +351,7 @@ const TickerSelectorBoxMobile = ({
       <div className="mt-10 flex h-48px flex-col rounded-lg bg-darkGray8 text-base font-medium text-lightWhite">
         <button
           className="flex w-full items-center justify-between px-5 py-3 text-left"
-          onClick={() => setMenuOpen(!menuOpen)}
+          onClick={dropdownMenuClickHandler}
         >
           {dropdownMenuText}
 

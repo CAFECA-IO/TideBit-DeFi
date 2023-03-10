@@ -27,3 +27,5 @@ export const SUPPORTED_NETWORKS = [
 ];
 
 export const unitAsset = 'USDT';
+
+export const WS_URL = 'wss://new.tidebit.com/ws';

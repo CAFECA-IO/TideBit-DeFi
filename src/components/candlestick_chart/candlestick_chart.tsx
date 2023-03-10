@@ -177,14 +177,23 @@ export const updateDummyCandlestickChartData = (data: ICandlestickData[]): ICand
 
 export interface ITrimCandlestickData {
   data: ICandlestickData[];
-  targetNumber: number;
-  nullSec: number;
+  requiredAmount: number;
+  nullTimestamp: number;
 }
 
-// TODO: trim data to 1. 80 data points 2. the timestamp of null data points
-export const trimCandlestickData = ({data, targetNumber, nullSec}: ITrimCandlestickData) => {
+// TODO: trim data to 1. 80 / 60 data points 2. the timestamp of null data points
+export const trimCandlestickData = ({
+  data,
+  requiredAmount,
+  nullTimestamp: nullTimestamp,
+}: ITrimCandlestickData) => {
+  const latestData = data.slice(-requiredAmount);
+
+  console.log('latestData', latestData[0], latestData[latestData.length - 1], latestData);
   console.log('sth');
-  return;
+
+  const trimmedData = latestData;
+  return trimmedData;
 };
 
 export default function CandlestickChart({
@@ -208,10 +217,21 @@ export default function CandlestickChart({
 
   // const isCandlestickDataEmpty = candlestickChartDataFromCtx.length === 0;
 
+  // 用來記錄從 market ctx 拿到的資料
   const [candlestickChartData, setCandlestickChartData, candlestickChartDataRef] = useStateRef<
     ICandlestickData[] | []
-  >(candlestickChartDataFromCtx);
+  >(() =>
+    trimCandlestickData({
+      data: marketCtx?.candlestickChartData ?? [],
+      requiredAmount: 60,
+      nullTimestamp: 0,
+    })
+  );
 
+  // FIXME: 網頁剛開起來，會給
+  console.log('beginning', candlestickChartDataRef.current);
+
+  // 用來整理成 chart 需要的資料
   const [toCandlestickChartData, setToCandlestickChartData, toCandlestickChartDataRef] =
     useStateRef<
       {
@@ -221,16 +241,21 @@ export default function CandlestickChart({
         low: number | null;
         close: number | null;
       }[]
-    >(() =>
-      candlestickChartDataFromCtx?.map(data => ({
+    >(() => {
+      const trimmedData = trimCandlestickData({
+        data: candlestickChartDataFromCtx,
+        requiredAmount: 60,
+        nullTimestamp: 0,
+      });
+      return trimmedData?.map(data => ({
         x: data.x,
         open: data.y[0],
         high: data.y[1],
         low: data.y[2],
         close: data.y[3],
         // label: JSON.stringify({open: data.y[0], high: data.y[1], low: data.y[2], close: data.y[3]}),
-      }))
-    );
+      }));
+    });
   // // console.log('after declaration of toCandlestickChartData', toCandlestickChartDataRef.current);
 
   // () =>
@@ -270,6 +295,14 @@ export default function CandlestickChart({
   useEffect(() => {
     if (!appCtx.isInit) return;
     if (marketCtx.candlestickChartData === null) return;
+
+    const testTrim = trimCandlestickData({
+      data: marketCtx.candlestickChartData,
+      requiredAmount: 60,
+      nullTimestamp: 0,
+    });
+
+    console.log('testTrim', testTrim);
 
     // toCandlestickChartData[0]?.close === null
     if (!toCandlestickChartDataRef.current) {

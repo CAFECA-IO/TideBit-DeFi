@@ -1,5 +1,5 @@
 {
-  "nav_bar": {
+  "Navbar": {
     "Trade": "Trade",
     "Leaderboard": "Leaderboard",
     "Support": "Support",
@@ -7,50 +7,55 @@
     "HelpCenter": "Help Center",
     "WalletConnect": "Wallet Connect",
     "Language": "Language",
-    "Menu": "Menu"
+    "Menu": "Menu",
+    "NotificationTitle": "Notification",
+    "NotificationReadAll": "Read All"
   },
-  "user": {
+  "User": {
     "PersonalSetting": "Personal Setting",
     "Assets": "My Assets",
     "Deposit": "Deposit",
     "Withdraw": "Withdraw",
     "Account": "My Account",
-    "Disconnect": "Disconnect"
+    "Disconnect": "Disconnect",
+    "OverViewAvailable": "Available",
+    "OverViewMMargin": "M. Margin",
+    "OverViewPnl": "PNL"
   },
-  "home_page": {
-    "Cta_HighlightTitle": "Trusted",
-    "Cta_RestTitle": "platform for Crypto investment",
-    "Cta_Description": "Start investing now. On TideBit you can learn, buy and sell cryptocurrency assets with the best quality.",
-    "Cta_Button": "GET STARTED",
-    "StatisticBlock_Title_1": "24h volume on TideBit",
-    "StatisticBlock_Description_1": "365 Billion",
-    "StatisticBlock_Title_2": "Users on TideBit",
-    "StatisticBlock_Description_2": "30 Billion+",
-    "StatisticBlock_Title_3": "Lowest Fee",
-    "StatisticBlock_Description_3": "<0.10 %",
-    "ReserveRatioBlock_Title": "Latest",
-    "ReserveRatioBlock_TitleHighlight": "reserve ratio",
-    "ReserveRatioBlock_Title_2": "of TideBit holdings",
-    "ReserveRatioBlock_Card": "reserve ratio",
-    "ReserveRatioBlock_Card_2": "Blockchain",
-    "ReserveRatioBlock_Description": "TideBit user asset holdings",
-    "ReserveRatioBlock_Description_2": "TideBit wallet assets"
+  "HomePage": {
+    "CtaHighlightTitle": "Trusted",
+    "CtaRestTitle": "platform for Crypto investment",
+    "CtaDescription": "Start investing now. On TideBit you can learn, buy and sell cryptocurrency assets with the best quality.",
+    "CtaButton": "GET STARTED",
+    "StatisticBlockTitle1": "24h volume on TideBit",
+    "StatisticBlockDescription1": "365 Billion",
+    "StatisticBlockTitle2": "Users on TideBit",
+    "StatisticBlockDescription2": "30 Billion+",
+    "StatisticBlockTitle3": "Lowest Fee",
+    "StatisticBlockDescription3": "<0.10 %",
+    "ReserveRatioBlockTitle": "Latest",
+    "ReserveRatioBlockTitleHighlight": "reserve ratio",
+    "ReserveRatioBlockTitle2": "of TideBit holdings",
+    "ReserveRatioBlockCard": "reserve ratio",
+    "ReserveRatioBlockCard_2": "Blockchain",
+    "ReserveRatioBlockDescription": "TideBit user asset holdings",
+    "ReserveRatioBlockDescription2": "TideBit wallet assets"
   },
-  "trade_page": {
-    "WalletConnect_Button": "Wallet Connect",
-    "WalletConnect_Description": "Connect your wallet to start trading",
-    "TickerSelectorTab_All": "All",
-    "TickerSelectorTab_Favorite": "Favorite"
+  "TradePage": {
+    "WalletConnectButton": "Wallet Connect",
+    "WalletConnectDescription": "Connect your wallet to start trading",
+    "TickerSelectorTabAll": "All",
+    "TickerSelectorTabFavorite": "Favorite"
   },
-  "position_modal": {
-    "OpenPosition_Title": "Open Position",
-    "ClosePosition_Title": "Close Position",
-    "UpdatePosition_Title": "Update Position",
+  "PositionModal": {
+    "OpenPositionTitle": "Open Position",
+    "ClosePositionTitle": "Close Position",
+    "UpdatePositionTitle": "Update Position",
     "Type": "Type",
-    "Type_Up": "Up",
-    "Type_Buy": "(Buy)",
-    "Type_Down": "Down",
-    "Type_Sell": "(Sell)",
+    "TypeUp": "Up",
+    "TypeBuy": "(Buy)",
+    "TypeDown": "Down",
+    "TypeSell": "(Sell)",
     "OpenValue": "Open Value",
     "CloseValue": "Close Value",
     "OpenPrice": "Open Price",
@@ -66,10 +71,10 @@
     "LiquidationPrice": "Liquidation Price",
     "Pnl": "PNL",
     "CFDContent": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna",
-    "Confirm_Button": "Confirm the order",
+    "ConfirmButton": "Confirm the order",
     "State": "State",
-    "State_Closed": "closed",
+    "StateClosed": "closed",
     "CloseReason": "Close Reason",
-    "CloseReason_MarketClosed": "Market closed"
+    "CloseReasonMarketClosed": "Market closed"
   }
 }

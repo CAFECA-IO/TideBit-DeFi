@@ -140,13 +140,13 @@ const PositionOpenModal = ({
 
   const displayedTypeOfPosition =
     openCfdRequest.typeOfPosition === TypeOfPosition.BUY
-      ? t('position_modal.Type_Up')
-      : t('position_modal.Type_Down');
+      ? t('PositionModal.TypeUp')
+      : t('PositionModal.TypeDown');
 
   const displayedBuyOrSell =
     openCfdRequest.typeOfPosition === TypeOfPosition.BUY
-      ? t('position_modal.Type_Buy')
-      : t('position_modal.Type_Sell');
+      ? t('PositionModal.TypeBuy')
+      : t('PositionModal.TypeSell');
 
   // const displayedPnLColor =
   //   openCfdRequest?.pnl.type === 'PROFIT'
@@ -312,7 +312,7 @@ const PositionOpenModal = ({
             {/* {displayedDataFormat()} */}
 
             <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">{t('position_modal.Type')}</div>
+              <div className="text-lightGray">{t('PositionModal.Type')}</div>
               <div className="inline-flex items-baseline">
                 <div className={`${displayedPositionColor}`}>{displayedTypeOfPosition}</div>
                 <div className="ml-1 text-lightGray">{displayedBuyOrSell}</div>
@@ -320,7 +320,7 @@ const PositionOpenModal = ({
             </div>
 
             <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">{t('position_modal.OpenPrice')}</div>
+              <div className="text-lightGray">{t('PositionModal.OpenPrice')}</div>
               <div className="inline-flex items-baseline">
                 <div className={`${dataRenewedStyle}`}>
                   ${' '}
@@ -334,7 +334,7 @@ const PositionOpenModal = ({
             </div>
 
             <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">{t('position_modal.Amount')}</div>
+              <div className="text-lightGray">{t('PositionModal.Amount')}</div>
               <div className="inline-flex items-baseline">
                 {/* TODO:{openCfdRequest?.amount?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0} */}
                 <div className="">{openCfdRequest.amount.toFixed(2)}</div>
@@ -344,7 +344,7 @@ const PositionOpenModal = ({
             </div>
 
             <div className={`${layoutInsideBorder} whitespace-nowrap`}>
-              <div className="text-lightGray">{t('position_modal.RequiredMargin')}</div>
+              <div className="text-lightGray">{t('PositionModal.RequiredMargin')}</div>
               <div className="inline-flex items-baseline">
                 <div className={`${dataRenewedStyle}`}>
                   $ {openCfdRequest.margin.amount.toFixed(2)}
@@ -355,7 +355,7 @@ const PositionOpenModal = ({
             </div>
 
             <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">{t('position_modal.LimitAndStop')}</div>
+              <div className="text-lightGray">{t('PositionModal.LimitAndStop')}</div>
               <div className="inline-flex items-baseline">
                 <div className="">
                   {displayedTakeProfit} / {displayedStopLoss}
@@ -366,13 +366,13 @@ const PositionOpenModal = ({
             </div>
 
             <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">{t('position_modal.GuaranteedStop')}</div>
+              <div className="text-lightGray">{t('PositionModal.GuaranteedStop')}</div>
               <div className={`relative flex items-center`}>
                 {displayedGuaranteedStopSetting}
 
                 <div className="group">
                   <div className="invisible absolute bottom-6 right-0 w-180px bg-darkGray8 p-2 text-left text-xxs text-lightWhite opacity-0 shadow-lg shadow-black/80 transition-all duration-200 group-hover:visible group-hover:opacity-100">
-                    {t('position_modal.GuaranteedStopHint')}
+                    {t('PositionModal.GuaranteedStopHint')}
                   </div>
                   <Image
                     className="ml-2"
@@ -386,7 +386,7 @@ const PositionOpenModal = ({
             </div>
 
             <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">{t('position_modal.ExpirationTime')}</div>
+              <div className="text-lightGray">{t('PositionModal.ExpirationTime')}</div>
               <div className="">
                 {/* TODO: Expiration Time */}
                 2023-03-09 15:20:13
@@ -402,7 +402,7 @@ const PositionOpenModal = ({
             </div> */}
 
             <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">{t('position_modal.LiquidationPrice')}</div>
+              <div className="text-lightGray">{t('PositionModal.LiquidationPrice')}</div>
               {/* TODO: Liquidation Price */}
               <div className="inline-flex items-baseline">
                 <div className="">$ 9.23</div>
@@ -413,7 +413,7 @@ const PositionOpenModal = ({
           </div>
         </div>
 
-        <div className="my-4 text-xxs text-lightGray">{t('position_modal.CFDContent')}</div>
+        <div className="my-4 text-xxs text-lightGray">{t('PositionModal.CFDContent')}</div>
 
         <RippleButton
           // disabled={secondsLeft === INIT_POSITION_REMAINING_SECONDS}
@@ -421,7 +421,7 @@ const PositionOpenModal = ({
           buttonType="button"
           className={`mt-0 whitespace-nowrap rounded border-0 bg-tidebitTheme py-2 px-16 text-base text-white transition-colors duration-300 hover:bg-cyan-600 focus:outline-none disabled:bg-lightGray`}
         >
-          {t('position_modal.Confirm_Button')}
+          {t('PositionModal.ConfirmButton')}
         </RippleButton>
       </div>
     </div>
@@ -445,7 +445,7 @@ const PositionOpenModal = ({
             {/*header*/}
             <div className="flex items-start justify-between rounded-t pt-9">
               <h3 className="-mt-0 w-full text-center text-xl font-normal text-lightWhite">
-                {t('position_modal.OpenPosition_Title')}
+                {t('PositionModal.OpenPositionTitle')}
               </h3>
               <button className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
                 <span className="absolute top-5 right-5 block outline-none focus:outline-none">

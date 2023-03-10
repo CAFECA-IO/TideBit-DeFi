@@ -33,21 +33,21 @@ const PositionVisitorTab = () => {
               {/* <h1 className="pl-5 text-2xl font-bold">Start to trade</h1> */}
 
               <div className="h-full w-full flex-col justify-center pt-4/5">
-                <div className="ml-5">
+                <div className="ml-5 flex flex-col items-center">
                   {' '}
                   {/* <div className="px-1/3">Lest</div> */}
                   <div className="">
                     <p className="text-center text-sm text-lightGray">
-                      {t('trade_page.WalletConnect_Description')}
+                      {t('TradePage.WalletConnectDescription')}
                     </p>
                   </div>
-                  <div className="space-y-2 pl-60px pt-10">
+                  <div className="mt-10">
                     {/* <WalletPanel getUserLoginState={getUserLoginHandler} /> */}
                     <TideButton
                       onClick={btnClickHandler}
                       className={`mt-4 rounded border-0 bg-tidebitTheme py-2 px-5 text-base text-white transition-all hover:opacity-90 md:mt-0`}
                     >
-                      {t('trade_page.WalletConnect_Button')}
+                      {t('TradePage.WalletConnectButton')}
                     </TideButton>
                   </div>
                 </div>

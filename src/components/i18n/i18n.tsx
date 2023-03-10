@@ -119,7 +119,7 @@ const I18n = ({langIsOpen, setLangIsOpen}: II18nParams) => {
         type="button"
         className="inline-flex hover:text-tidebitTheme lg:hidden"
       >
-        {t('nav_bar.Language')}
+        {t('Navbar.Language')}
       </button>
     </>
   );

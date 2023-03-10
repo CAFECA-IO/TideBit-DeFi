@@ -25,11 +25,11 @@ const Cta = () => {
         <div className="absolute top-3rem left-2rem flex flex-col justify-start xxs:top-4rem xxs:left-4rem xs:left-5rem xs:top-5rem sm:left-6rem sm:top-7rem md:left-5rem md:top-9rem lg:top-11rem xl:top-13rem 2xl:top-15rem 3xl:top-20rem 3xl:left-8rem">
           <div className="max-w-200px text-lg font-bold tracking-wide text-white xs:text-2xl sm:max-w-350px sm:text-3xl md:max-w-sm md:text-4xl lg:max-w-lg lg:text-5xl xl:max-w-xl xl:text-6xl 2xl:max-w-2xl 2xl:text-7xl">
             <span className="leading-normal text-tidebitTheme">
-              {t('home_page.Cta_HighlightTitle')}
+              {t('HomePage.CtaHighlightTitle')}
             </span>{' '}
-            {t('home_page.Cta_RestTitle')}
+            {t('HomePage.CtaRestTitle')}
             <div className="mt-10 max-w-160px text-xxs font-normal leading-loose tracking-0.02rem text-lightGray xs:max-w-250px sm:max-w-200px sm:text-xs md:max-w-md md:text-sm lg:mt-14 lg:w-3/5 xl:text-lg 2xl:text-xl">
-              {t('home_page.Cta_Description')}
+              {t('HomePage.CtaDescription')}
             </div>
             <div className="pt-2 md:pt-8 xl:pt-5">
               <a
@@ -39,7 +39,7 @@ const Cta = () => {
                 <TideButton
                   className={`mt-4 rounded border-0 bg-tidebitTheme py-2 px-5 text-base text-white transition-all duration-300 hover:bg-cyan-600 md:mt-0`}
                 >
-                  {t('home_page.Cta_Button')}
+                  {t('HomePage.CtaButton')}
                 </TideButton>
               </a>
             </div>
@@ -59,11 +59,11 @@ const Cta = () => {
         <div className="flex justify-center text-center">
           <div className="mx-1/10 w-fit text-2xl font-bold tracking-wide text-white xxs:mx-1/5 xxs:text-3xl xs:w-4/5 xs:text-4xl md:text-5xl">
             <span className="leading-normal text-tidebitTheme">
-              {t('home_page.Cta_HighlightTitle')}
+              {t('HomePage.CtaHighlightTitle')}
             </span>{' '}
-            {t('home_page.Cta_RestTitle')}
+            {t('HomePage.CtaRestTitle')}
             <div className="mx-1/10 mt-10 max-w-md text-sm font-normal tracking-0.02rem text-lightGray md:text-xl">
-              {t('home_page.Cta_Description')}
+              {t('HomePage.CtaDescription')}
             </div>
             <div className="mx-auto pt-2 md:pt-8">
               <a
@@ -73,7 +73,7 @@ const Cta = () => {
                 <TideButton
                   className={`mt-4 rounded border-0 bg-tidebitTheme py-2 px-5 text-base text-white transition-all duration-300 hover:bg-cyan-600 md:mt-0`}
                 >
-                  {t('home_page.Cta_Button')}
+                  {t('HomePage.CtaButton')}
                 </TideButton>
               </a>
             </div>

@@ -4,7 +4,9 @@ import {forwardRef, useContext} from 'react';
 import NotificationItem from '../notification_item/notification_item';
 import {NotificationContext} from '../../contexts/notification_context';
 // import {INotificationItem} from '../../interfaces/tidebit_defi_background/notification_item';
+import {useTranslation} from 'next-i18next';
 
+type TranslateFunction = (s: string) => string;
 interface INotificationProps {
   notifyRef: HTMLDivElement extends HTMLElement ? React.RefObject<HTMLDivElement> : null;
   componentVisible: boolean;
@@ -14,6 +16,7 @@ export default function Notification({
   notifyRef,
   componentVisible,
 }: INotificationProps): JSX.Element {
+  const {t}: {t: TranslateFunction} = useTranslation('common');
   // const {notifyRef, componentVisible} = props;
   // const refP = forwardRef(props?.forwardedRef);
   // const {componentVisible, setComponentVisible} = useOuterClick(false, refP);
@@ -108,12 +111,14 @@ export default function Notification({
               } flex flex-col bg-darkGray/90 pt-8 pb-20 text-white transition-all duration-300 sm:p-5`}
             >
               <div className="mb-10 flex flex items-center">
-                <h1 className="hidden pl-5 text-2xl font-bold sm:block">Notification</h1>
+                <h1 className="hidden pl-5 text-2xl font-bold sm:block">
+                  {t('Navbar.NotificationTitle')}
+                </h1>
                 <div
                   className="ml-auto pr-30px text-sm text-tidebitTheme underline hover:cursor-pointer"
                   onClick={notificationCtx.readAll}
                 >
-                  Clear All
+                  {t('Navbar.NotificationReadAll')}
                 </div>
               </div>
 

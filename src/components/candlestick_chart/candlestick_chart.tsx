@@ -618,9 +618,9 @@ export default function CandlestickChart({
         )}
 
         <VictoryLine
-          animate={{
-            duration: 300,
-          }}
+          // animate={{
+          //   duration: 1000,
+          // }}
           style={{
             data: {stroke: LINE_GRAPH_STROKE_COLOR.TIDEBIT_THEME, strokeWidth: 1},
           }}

@@ -510,7 +510,8 @@ export default function CandlestickChart({
                 textDecorationColor: 'white',
               },
             }}
-            candleWidth={6}
+            candleRatio={0.7}
+            // candleWidth={8}
             candleColors={{
               positive: TypeOfPnLColorHex.PROFIT,
               negative: TypeOfPnLColorHex.LOSS,

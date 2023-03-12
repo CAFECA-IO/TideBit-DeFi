@@ -6,9 +6,12 @@ import {useContext, useEffect, useState} from 'react';
 import CryptoCard from '../crypto_card/crypto_card';
 import {MarketContext, IMarketContext} from '../../contexts/market_context';
 import {UserContext, IUserContext} from '../../contexts/user_context';
+import {useTranslation} from 'next-i18next';
 import {ILineGraphProps, ITickerData} from '../../interfaces/tidebit_defi_background/ticker_data';
 import {useRouter} from 'next/router';
 import eventEmitter, {ClickEvent} from '../../constants/tidebit_event';
+
+type TranslateFunction = (s: string) => string;
 
 // TODO: useContext
 interface ITickerSelectorBox {
@@ -40,9 +43,8 @@ const TickerSelectorBoxMobile = ({
 }: ITickerSelectorBox) => {
   const marketCtx = useContext<IMarketContext>(MarketContext);
   const userCtx = useContext(UserContext) as IUserContext;
-
+  const {t}: {t: TranslateFunction} = useTranslation('common');
   const router = useRouter();
-
   const [activeTab, setActiveTab] = useState('All');
 
   // const cryptoCards = useMemo(() => {
@@ -155,40 +157,30 @@ const TickerSelectorBoxMobile = ({
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
-    const cryptoCardsData = convertTickersToCryptoCardsData(marketCtx.listAvailableTickers());
-    // const updatedCard = {...cryptoCardsData, starred: false};
-    // Log in and log out will clear the star
-    const allCardsData = userCtx.enableServiceTerm
-      ? cryptoCardsData
-      : cryptoCardsData.map(card => ({...card, starred: false}));
-    setFilteredCards(allCardsData);
-    const favoriteTabCardsData = cryptoCardsData.filter(cryptoCardData => cryptoCardData.starred);
-    setFilteredFavorites(favoriteTabCardsData);
-  }, [userCtx.favoriteTickers, userCtx.enableServiceTerm]);
+    if (tickerSelectorBoxVisible) {
+      const cryptoCardsData = convertTickersToCryptoCardsData(marketCtx.listAvailableTickers());
+      if (activeTab === 'All') {
+        const newSearchResult = cryptoCardsData.filter(each => {
+          const result =
+            each.chain.toLocaleLowerCase().includes(searches || '') ||
+            each.currency.toLocaleLowerCase().includes(searches || '');
+          return result;
+        });
 
-  useEffect(() => {
-    const cryptoCardsData = convertTickersToCryptoCardsData(marketCtx.listAvailableTickers());
-    if (activeTab === 'All') {
-      const newSearchResult = cryptoCardsData.filter(each => {
-        const result =
-          each.chain.toLocaleLowerCase().includes(searches || '') ||
-          each.currency.toLocaleLowerCase().includes(searches || '');
-        return result;
-      });
+        setFilteredCards(newSearchResult);
+      } else if (activeTab === 'Favorite') {
+        const newSearchResult = cryptoCardsData?.filter(each => {
+          const result =
+            each.starred &&
+            (each.chain.toLocaleLowerCase().includes(searches || '') ||
+              each.currency.toLocaleLowerCase().includes(searches || ''));
+          return result;
+        });
 
-      setFilteredCards(newSearchResult);
-    } else if (activeTab === 'Favorite') {
-      const newSearchResult = cryptoCardsData?.filter(each => {
-        const result =
-          each.starred &&
-          (each.chain.toLocaleLowerCase().includes(searches || '') ||
-            each.currency.toLocaleLowerCase().includes(searches || ''));
-        return result;
-      });
-
-      setFilteredFavorites(newSearchResult);
+        setFilteredFavorites(newSearchResult);
+      }
     }
-  }, [searches, activeTab]);
+  }, [tickerSelectorBoxVisible, searches, activeTab, marketCtx.availableTickers]);
 
   const allTabClickHandler = () => {
     setMenuOpen(false);
@@ -199,6 +191,8 @@ const TickerSelectorBoxMobile = ({
     setMenuOpen(false);
     setActiveTab('Favorite');
   };
+
+  const dropdownMenuClickHandler = () => setMenuOpen(!menuOpen);
 
   const displayedAllCryptoCards = filteredCards
     // .filter(each => {
@@ -334,14 +328,19 @@ const TickerSelectorBoxMobile = ({
     </svg>
   );
 
+  const dropdownMenuText =
+    activeTab === 'All'
+      ? t('TRADE_PAGE.TICKER_SELECTOR_TAB_ALL')
+      : t('TRADE_PAGE.TICKER_SELECTOR_TAB_FAVORITE');
+
   const tabPart = (
     <>
       <div className="mt-10 flex h-48px flex-col rounded-lg bg-darkGray8 text-base font-medium text-lightWhite">
         <button
           className="flex w-full items-center justify-between px-5 py-3 text-left"
-          onClick={() => setMenuOpen(!menuOpen)}
+          onClick={dropdownMenuClickHandler}
         >
-          {activeTab}
+          {dropdownMenuText}
 
           <div
             className={`h-10px w-10px border-b-2 border-r-2 border-lightWhite transition-all duration-200 ${
@@ -360,7 +359,7 @@ const TickerSelectorBoxMobile = ({
             className={`inline-block px-5 py-3 text-left hover:cursor-pointer`}
             onClick={allTabClickHandler}
           >
-            All
+            {t('TRADE_PAGE.TICKER_SELECTOR_TAB_ALL')}
           </button>
 
           {userCtx.enableServiceTerm ? (
@@ -369,7 +368,7 @@ const TickerSelectorBoxMobile = ({
               onClick={favoriteTabClickHandler}
               className={`inline-block px-5 py-3 text-left hover:cursor-pointer`}
             >
-              Favorite
+              {t('TRADE_PAGE.TICKER_SELECTOR_TAB_FAVORITE')}
             </button>
           ) : (
             <></>

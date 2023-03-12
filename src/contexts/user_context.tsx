@@ -260,6 +260,8 @@ export const UserProvider = ({children}: IUserProvider) => {
       listOpenCFDs(selectedTickerRef.current.currency);
       listClosedCFDs(selectedTickerRef.current.currency);
     }
+    // ++ TODO fetch user favorite tickers
+    setFavoriteTickers(['ETH', 'BTC']);
     workerCtx.registerUserHandler(walletAddress);
   };
 
@@ -272,6 +274,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     setBalance(null);
     setOpenedCFDs([]);
     setClosedCFDs([]);
+    setFavoriteTickers([]);
     notificationCtx.emitter.emit(TideBitEvent.DISCONNECTED);
   };
 

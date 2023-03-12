@@ -1,4 +1,4 @@
-import React, {useContext, createContext} from 'react';
+import React, {useContext, createContext, useCallback} from 'react';
 import useState from 'react-usestateref';
 import {INITIAL_POSITION_LABEL_DISPLAYED_STATE} from '../constants/display';
 import {
@@ -38,7 +38,7 @@ export interface IMarketProvider {
 export interface IMarketContext {
   selectedTicker: ITickerData | null;
   selectedTickerRef: React.MutableRefObject<ITickerData | null>;
-  availableTickers: {[currency: string]: ITickerData} | null;
+  availableTickers: {[currency: string]: ITickerData};
   isCFDTradable: boolean;
   showPositionOnChart: boolean;
   showPositionOnChartHandler: (bool: boolean) => void;
@@ -102,7 +102,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
   const [candlestickChartData, setCandlestickChartData] = useState<ICandlestickData[] | null>(null);
   const [availableTickers, setAvailableTickers, availableTickersRef] = useState<{
     [currency: string]: ITickerData;
-  } | null>(null);
+  }>({});
   const [isCFDTradable, setIsCFDTradable] = useState<boolean>(false);
   const [candlestickId, setCandlestickId] = useState<string>('');
 
@@ -120,47 +120,19 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     // console.log('in market context, candlestick id:', id);
   };
 
-  const updateAvailableTickers = () => {
-    let updateTickers: ITickerData[] = [...dummyTickers];
-    // eslint-disable-next-line no-console
-    console.log(availableTickersRef.current);
-    // if (availableTickersRef.current) {
-    // updateTickers = [...Object.values(availableTickersRef.current)];
+  const listAvailableTickers = useCallback(() => {
+    const availableTickers: {[currency: string]: ITickerData} = {...availableTickersRef.current};
     if (userCtx.enableServiceTerm) {
-      updateTickers = updateTickers.map(ticker => {
-        return {
-          ...ticker,
-          starred: userCtx.enableServiceTerm
-            ? userCtx.favoriteTickers.some(currency => currency === ticker.currency)
-            : false,
-        };
-      });
+      for (const favoriteTicker of userCtx.favoriteTickers) {
+        if (availableTickers[favoriteTicker])
+          availableTickers[favoriteTicker] = {
+            ...availableTickers[favoriteTicker],
+            starred: true,
+          };
+      }
     }
-    // } else {
-    //   workerCtx.requestHandler({
-    //     name: APIRequest.LIST_TICKERS,
-    //     request: {
-    //       name: APIRequest.LIST_TICKERS,
-    //       method: Method.GET,
-    //       url: '/api/tickers',
-    //     },
-    //     callback: (tickers: ITickerData[]) => {
-    //       let availableTickers: {[currency: string]: ITickerData} = {};
-    //       availableTickers = [...tickers].reduce((prev, curr) => {
-    //         if (!prev[curr.currency]) prev[curr.currency] = curr;
-    //         return prev;
-    //       }, availableTickers);
-    //       setAvailableTickers(availableTickers);
-    //     },
-    //   });
-    // }
-    return updateTickers;
-  };
-
-  const listAvailableTickers = () => {
-    const updateTickers = updateAvailableTickers();
-    return updateTickers;
-  };
+    return Object.values(availableTickers);
+  }, [userCtx.favoriteTickers, availableTickersRef.current]);
 
   // const listDepositCryptocurrencies = () => depositCryptocurrenciesRef.current;
 
@@ -168,7 +140,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
 
   const selectTickerHandler = (currency: string) => {
     // console.log(`selectTickerHandler currency`, currency);
-    const ticker: ITickerData = getDummyTicker(currency);
+    const ticker: ITickerData = availableTickersRef.current[currency];
     // console.log(`selectTickerHandler ticker`, ticker);
     setSelectedTicker(ticker);
     const tickerStatic: ITickerStatic = getDummyTickerStatic(currency);
@@ -193,7 +165,6 @@ export const MarketProvider = ({children}: IMarketProvider) => {
   };
 
   const init = async () => {
-    // console.log(`MarketProvider init is called`);
     setIsCFDTradable(true);
     workerCtx.requestHandler({
       name: APIRequest.LIST_TICKERS,
@@ -210,6 +181,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
         }, availableTickers);
         setAvailableTickers(availableTickers);
         selectTickerHandler(tickers[0].currency);
+        // console.log(`market init availableTickers`, availableTickers);
       },
     });
     // workerCtx.requestHandler({
@@ -220,7 +192,6 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     //     url: '/api/deposits',
     //   },
     //   callback: (cryptocurrencies: ICryptocurrency[]) => {
-    //     // eslint-disable-next-line no-console
     //     console.log(`maket init depositcurrencies`, cryptocurrencies);
     //     setDepositCryptocurrencies([...cryptocurrencies]);
     //   },

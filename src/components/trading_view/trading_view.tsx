@@ -52,15 +52,15 @@ const TradingView = () => {
 
   const [selectedChartType, setSelectedChartType] = useState('candlestick');
   const [selectedChartInterval, setSelectedChartInterval] = useState('live');
-  // const [showPositionLabel, setShowPositionLabel] = useState(
-  //   INITIAL_POSITION_LABEL_DISPLAYED_STATE
-  // );
+  const [showPositionLabel, setShowPositionLabel, showPositionLabelRef] = useStateRef(
+    INITIAL_POSITION_LABEL_DISPLAYED_STATE
+  );
 
   // Get toggle state from `trading_chart_switch`, which gets it from `toggle`
   // and pass to `candlestick_chart` component
   const getDisplayedPositionLabelState = (bool: boolean) => {
     // console.log('bool in trading_view', bool);
-    // setShowPositionLabel(bool);
+    setShowPositionLabel(bool);
     // return bool;
   };
   const chartSize = getChartSize();
@@ -121,6 +121,7 @@ const TradingView = () => {
   const displayedTradingView = (
     <>
       <CandlestickChart
+        showPositionLabel={showPositionLabelRef.current}
         candlestickOn={candlestickOnRef.current}
         lineGraphOn={lineGraphOnRef.current}
         strokeColor={[`#17BF88`]}

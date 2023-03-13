@@ -180,7 +180,8 @@ const PositionClosedModal = ({
     // globalCtx.visiblePositionClosedModalHandler();
 
     const newTimestamp = new Date().getTime() / 1000 + POSITION_PRICE_RENEWAL_INTERVAL_SECONDS;
-    setSecondsLeft(newTimestamp - Date.now() / 1000);
+
+    setSecondsLeft(Math.round(newTimestamp - Date.now() / 1000));
 
     globalCtx.dataPositionClosedModalHandler({
       openCfdDetails: {

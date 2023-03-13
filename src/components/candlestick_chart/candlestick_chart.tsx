@@ -55,14 +55,14 @@ export const updateDummyCandlestickChartData = (data: ICandlestickData[]): ICand
 
   const count = countNullArrays(origin);
 
-  // Till: (20230327 - Shirley)
-  // const originWithoutNull = originalData.slice(0, -count);
+  /* Till: (20230327 - Shirley)
+   const originWithoutNull = originalData.slice(0, -count);
+   */
   const originWithoutNull = origin.filter(obj => !obj.y.includes(null));
 
   const lastTime = originWithoutNull[originWithoutNull.length - 1]?.x.getTime() as number;
   const lastPoint = originWithoutNull[originWithoutNull.length - 1]?.y[3] as number;
 
-  // Inform: Generate new data
   const nowSecond = now - (now % unitOfLive);
 
   const newYs: (number | null)[] = new Array(4).fill(0).map(v => {

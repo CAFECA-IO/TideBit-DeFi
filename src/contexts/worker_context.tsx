@@ -97,7 +97,7 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
               if (ticker) {
                 notificationCtx.emitter.emit(TideBitEvent.TICKER, ticker);
               }
-              // till: remove dummy candlestick data 20230327 - Tzuhan
+              // Till: remove dummy candlestick data (20230327 - Tzuhan)
               // if (data) {
               //   const candlestickData: ICandlestickData = {
               //     x: new Date(data.at * 1000),

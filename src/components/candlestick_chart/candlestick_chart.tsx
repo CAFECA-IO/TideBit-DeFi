@@ -580,24 +580,23 @@ export default function CandlestickChart({
           />
         )}
 
-        {/* TODO: User open position line on charts (20230310 - Shirley) 
+        {/* TODO: User open position line on charts (20230310 - Shirley)  */}
         <VictoryLine
           style={{
-            data: {stroke: EXAMPLE_BLUE_COLOR, strokeWidth: 1},
+            data: {stroke: EXAMPLE_BLUE_COLOR, strokeWidth: 1, strokeDasharray: '2,2'},
             // parent: {border: '1px solid #ccc'},
           }}
-          // data={userOpenPriceLine}
-          data={new Array(30)
-            .fill(0)
-            .map((v, index) => {
-              return {
-                x: new Date(new Date().getTime() - index * 1000),
-                y: 10000,
-              };
-            })
-            .reverse()}
+          data={userOpenPriceLine}
+          // data={new Array(30)
+          //   .fill(0)
+          //   .map((v, index) => {
+          //     return {
+          //       x: new Date(new Date().getTime() - index * 1000),
+          //       y: 10000,
+          //     };
+          //   })
+          //   .reverse()}
         />
-        */}
 
         {lineGraphOn && (
           <VictoryLine

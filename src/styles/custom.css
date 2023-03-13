@@ -6,6 +6,16 @@
   --toastify-color-progress-info: var(--toastify-color-info); */
 }
 
+.latestPrice {
+  width: 50px;
+  position: absolute;
+  /* Till: (20230327 - Shirley)  
+    transform: translate(160%, 60%); 
+    x replacement - width / 2 
+  */
+  transform: translate(537.5270039010129px, 223.527587387623px);
+}
+
 /* Container holding the image and the text */
 .balanceImgContainer {
   position: relative;

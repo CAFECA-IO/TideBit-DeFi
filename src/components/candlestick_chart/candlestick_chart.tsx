@@ -460,15 +460,15 @@ export default function CandlestickChart({
         width={Number(candlestickChartWidth)}
         height={Number(candlestickChartHeight)}
         /* Till: (20230327 - Shirley)
-        // containerComponent={
-        //   <VictoryVoronoiContainer
-        //     voronoiDimension="x"
-        //     labels={({datum}) =>
-        //       `open: ${datum.open} high: ${datum.high} low: ${datum.low} close: ${datum.close}`
-        //     }
-        //     labelComponent={<VictoryTooltip cornerRadius={2} flyoutStyle={{fill: 'black'}} />}
-        //   />
-        // }
+          containerComponent={
+            <VictoryVoronoiContainer
+              voronoiDimension="x"
+              labels={({datum}) =>
+                `open: ${datum.open} high: ${datum.high} low: ${datum.low} close: ${datum.close}`
+              }
+              labelComponent={<VictoryTooltip cornerRadius={2} flyoutStyle={{fill: 'black'}} />}
+            />
+          }
         */
       >
         {/* Till: (20230327 - Shirley) 
@@ -550,32 +550,32 @@ export default function CandlestickChart({
               />
             }
             /* Till: (20230327 - Shirley)
-             containerComponent={
-               <VictoryVoronoiContainer
-                 voronoiDimension="x"
-                 labels={({datum}) =>
-                   `open: ${datum.open} high: ${datum.high} low: ${datum.low} close: ${datum.close}`
-                 }
-                 labelComponent={<VictoryTooltip cornerRadius={2} flyoutStyle={{fill: 'black'}} />}
-               />
-             }
-             events={[
-               {
-                 target: 'data',
-                 eventHandlers: {
-                   onMouseOver: () => ({
+              containerComponent={
+                <VictoryVoronoiContainer
+                  voronoiDimension="x"
+                  labels={({datum}) =>
+                    `open: ${datum.open} high: ${datum.high} low: ${datum.low} close: ${datum.close}`
+                  }
+                  labelComponent={<VictoryTooltip cornerRadius={2} flyoutStyle={{fill: 'black'}} />}
+                />
+              }
+              events={[
+                {
+                  target: 'data',
+                  eventHandlers: {
+                    onMouseOver: () => ({
                      // target: ['lowLabels', 'highLabels', 'openLabels', 'closeLabels'],
-                     target: 'openLabels',
-                     mutation: () => ({active: true}),
-                   }),
-                   onMouseOut: () => ({
+                      target: 'openLabels',
+                      mutation: () => ({active: true}),
+                    }),
+                    onMouseOut: () => ({
                      // target: ['lowLabels', 'highLabels', 'openLabels', 'closeLabels'],
-                     target: 'openLabels',
-                     mutation: () => ({active: false}),
-                   }),
-                 },
-               },
-             ]}
+                      target: 'openLabels',
+                      mutation: () => ({active: false}),
+                    }),
+                  },
+                },
+              ]}
             */
           />
         )}

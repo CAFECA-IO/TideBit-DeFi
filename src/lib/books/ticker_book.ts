@@ -55,32 +55,33 @@ class TickerBook {
         return prev;
       }, sortTrades);
       if (sortTrades.length > 0) {
-        // eslint-disable-next-line no-console
-        console.log(`updateCandlestick this.timeSpan${this.timeSpan}:timeSpan[${timeSpan}]`);
-        // eslint-disable-next-line no-console
-        console.log(`updateCandlestick this.candlesticks[${ticker}]: `, this.candlesticks[ticker]);
-        // eslint-disable-next-line no-console
-        console.log(
-          `updateCandlestick filterTrades[${filterTrades.length}]: ${ticker}`,
-          filterTrades.map(trade => ({...trade, date: new Date(+trade.date)}))
-        );
-        // eslint-disable-next-line no-console
-        console.log(
-          `updateCandlestick +filterTrades[0].ts${+filterTrades[0]
-            .ts} - lastestBarTime[${lastestBarTime}]: `,
-          +filterTrades[0].ts - lastestBarTime
-        );
-        // eslint-disable-next-line no-console
-        console.log(
-          `updateCandlestick +filterTrades[filterTrades.length-1].ts${+filterTrades[
-            filterTrades.length - 1
-          ].ts} - lastestBarTime[${lastestBarTime}]: `,
-          +filterTrades[0].ts - lastestBarTime
-        );
-        // eslint-disable-next-line no-console
+        // Till: test log (20230407 - Tzuhan)
+        // // eslint-disable-next-line no-console
+        // console.log(`updateCandlestick this.timeSpan${this.timeSpan}:timeSpan[${timeSpan}]`);
+        // // eslint-disable-next-line no-console
+        // console.log(`updateCandlestick this.candlesticks[${ticker}]: `, this.candlesticks[ticker]);
+        // // eslint-disable-next-line no-console
+        // console.log(
+        //   `updateCandlestick filterTrades[${filterTrades.length}]: ${ticker}`,
+        //   filterTrades.map(trade => ({...trade, date: new Date(+trade.date)}))
+        // );
+        // // eslint-disable-next-line no-console
+        // console.log(
+        //   `updateCandlestick +filterTrades[0].ts${+filterTrades[0]
+        //     .ts} - lastestBarTime[${lastestBarTime}]: `,
+        //   +filterTrades[0].ts - lastestBarTime
+        // );
+        // // eslint-disable-next-line no-console
+        // console.log(
+        //   `updateCandlestick +filterTrades[filterTrades.length-1].ts${+filterTrades[
+        //     filterTrades.length - 1
+        //   ].ts} - lastestBarTime[${lastestBarTime}]: `,
+        //   +filterTrades[0].ts - lastestBarTime
+        // );
+        // // eslint-disable-next-line no-console
 
-        // eslint-disable-next-line no-console
-        console.log(`updateCandlestick sortTrades[${sortTrades.length}]: ${ticker}`, sortTrades);
+        // // eslint-disable-next-line no-console
+        // console.log(`updateCandlestick sortTrades[${sortTrades.length}]: ${ticker}`, sortTrades);
         for (const sortTrade of sortTrades) {
           const open = sortTrade[0];
           const high = Math.max(...sortTrade);

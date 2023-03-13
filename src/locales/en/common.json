@@ -66,7 +66,7 @@
     "CLOSED_TIME": "Closed Time",
     "AMOUNT": "Amount",
     "REQUIRED_MARGIN": "Required Margin",
-    "LIMIT_AND_STOP": "Limit/ Stop",
+    "TP_AND_SL": "TP/ SL",
     "GUARANTEED_STOP": "Guaranteed Stop",
     "GUARANTEED_STOP_HINT": "Guaranteed stop will force the position to close at your chosen rate (price) even if the market price surpasses it.",
     "EXPIRATION_TIME": "Expiration Time",

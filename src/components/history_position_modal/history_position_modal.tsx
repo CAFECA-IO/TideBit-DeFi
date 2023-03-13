@@ -186,7 +186,7 @@ const HistoryPositionModal = ({
           </div>
 
           <div className={`${layoutInsideBorder}`}>
-            <div className="text-lightGray">{t('POSITION_MODAL.LIMIT_AND_STOP')}</div>
+            <div className="text-lightGray">{t('POSITION_MODAL.TP_AND_SL')}</div>
             <div className="">
               <span className={`text-lightWhite`}>
                 {closedCfdDetails?.takeProfit?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {

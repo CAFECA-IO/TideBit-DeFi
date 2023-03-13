@@ -311,7 +311,7 @@ const PositionUpdatedModal = ({
               </div>
             </div>
             <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">{t('POSITION_MODAL.LIMIT_AND_STOP')}</div>
+              <div className="text-lightGray">{t('POSITION_MODAL.TP_AND_SL')}</div>
               <div className="">
                 <span className={`${tpTextStyle}`}>{displayedTakeProfit}</span> /{' '}
                 <span className={`${slTextStyle}`}>{displayedStopLoss}</span>

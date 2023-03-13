@@ -58,14 +58,14 @@ export const updateDummyCandlestickChartData = (data: ICandlestickData[]): ICand
 
   const count = countNullArrays(origin);
 
-  // Till: (20230327 - Shirley)
-  // const originWithoutNull = originalData.slice(0, -count);
+  /* Till: (20230327 - Shirley)
+   const originWithoutNull = originalData.slice(0, -count);
+   */
   const originWithoutNull = origin.filter(obj => !obj.y.includes(null));
 
   const lastTime = originWithoutNull[originWithoutNull.length - 1]?.x.getTime() as number;
   const lastPoint = originWithoutNull[originWithoutNull.length - 1]?.y[3] as number;
 
-  // Inform: Generate new data
   const nowSecond = now - (now % unitOfLive);
 
   const newYs: (number | null)[] = new Array(4).fill(0).map(v => {
@@ -198,23 +198,16 @@ export default function CandlestickChart({
       }));
     });
 
-  const [toLineChartData, setToLineChartData, toLineChartDataRef] = useStateRef<
-    {
-      x: Date;
-      y: number | null;
-    }[]
-  >(() =>
-    candlestickChartDataFromCtx.map((data, i) => ({
-      x: data.x,
-      y: data.y[3],
-    }))
+  const [toLineChartData, setToLineChartData, toLineChartDataRef] = useStateRef<ILineChartData[]>(
+    () =>
+      candlestickChartDataFromCtx.map((data, i) => ({
+        x: data.x,
+        y: data.y[3],
+      }))
   );
 
   const [toLatestPriceLineData, setToLatestPriceLineData, toLatestPriceLineDataRef] = useStateRef<
-    {
-      x: Date;
-      y: number | null;
-    }[]
+    ILineChartData[]
   >(
     toLineChartData?.map(data => ({
       x: data?.x,
@@ -523,8 +516,8 @@ export default function CandlestickChart({
                 fontSize: 10,
                 // opacity: 0.5,
               }}
-              backgroundStyle={{fill: LINE_GRAPH_STROKE_COLOR.TIDEBIT_THEME}} // Info: sets the background style
-              backgroundPadding={{top: 8, bottom: 5, left: 5, right: 5}} // Info: sets the background padding
+              backgroundStyle={{fill: LINE_GRAPH_STROKE_COLOR.TIDEBIT_THEME}}
+              backgroundPadding={{top: 8, bottom: 5, left: 5, right: 5}}
             />
           }
         />

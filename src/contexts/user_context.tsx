@@ -1,5 +1,5 @@
 import Lunar from '@cafeca/lunar';
-import {ethers} from 'ethers';
+// import {ethers} from 'ethers';
 import React, {createContext, useCallback, useContext} from 'react';
 import useState from 'react-usestateref';
 import {TypeOfPnLColorHex} from '../constants/display';
@@ -46,7 +46,7 @@ import ServiceTerm from '../constants/contracts/service_term';
 import {IApplyCreateCFDOrderData} from '../interfaces/tidebit_defi_background/apply_create_cfd_order_data';
 import {IApplyCloseCFDOrderData} from '../interfaces/tidebit_defi_background/apply_close_cfd_order_data';
 import {IApplyUpdateCFDOrderData} from '../interfaces/tidebit_defi_background/apply_update_cfd_order_data';
-import TransactionEngineInstance from '../classes/transaction_engine';
+import TransactionEngineInstance from '../lib/engines/transaction_engine';
 import {CFDOrderType} from '../constants/cfd_order_type';
 import {IApplyCFDOrder} from '../interfaces/tidebit_defi_background/apply_cfd_order';
 import {getDummyAcceptedCFDOrder} from '../interfaces/tidebit_defi_background/accepted_cfd_order';

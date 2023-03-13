@@ -97,18 +97,18 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
               if (ticker) {
                 notificationCtx.emitter.emit(TideBitEvent.TICKER, ticker);
               }
-              // -- TODO: remove dummy
-              if (data) {
-                const candlestickData: ICandlestickData = {
-                  x: new Date(data.at * 1000),
-                  y: getDummyPrices(parseFloat(data.last)),
-                };
-                notificationCtx.emitter.emit(
-                  TideBitEvent.CANDLESTICK,
-                  ticker?.currency,
-                  candlestickData
-                );
-              }
+              // till: remove dummy candlestick data 20230327 - Tzuhan
+              // if (data) {
+              //   const candlestickData: ICandlestickData = {
+              //     x: new Date(data.at * 1000),
+              //     y: getDummyPrices(parseFloat(data.last)),
+              //   };
+              //   notificationCtx.emitter.emit(
+              //     TideBitEvent.CANDLESTICK,
+              //     ticker?.currency,
+              //     candlestickData
+              //   );
+              // }
             }
             break;
           case Events.UPDATE:
@@ -116,6 +116,11 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
           case Events.TRADES:
             break;
           case Events.PUBILC_TRADES:
+            notificationCtx.emitter.emit(
+              TideBitEvent.CANDLESTICK,
+              metaData.data.market,
+              metaData.data.trades
+            );
             break;
           case Events.ACCOUNT:
             break;
@@ -206,7 +211,7 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
         JSON.stringify({
           op: 'registerMarket',
           args: {
-            market: ticker.currency,
+            market: `${ticker.currency.toLowerCase()}usdt`,
           },
         })
       );

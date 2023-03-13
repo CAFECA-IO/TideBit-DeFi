@@ -28,4 +28,10 @@ export const SUPPORTED_NETWORKS = [
 
 export const unitAsset = 'USDT';
 
-export const WS_URL = 'wss://new.tidebit.com/ws';
+export const WS_URL = 'wss://staging-001.tidebit.network/ws';
+
+// Deprecated: dummy url settings (20230407 - Tzuhan)
+export const TBE_URL = 'https://staging-001.tidebit.network';
+export const API_VERSION = '/api/v1';
+export const AVAILABLE_TICKERS = ['ETH', 'BTC'];
+// Deprecated: dummy url settings (20230407 - Tzuhan)

@@ -296,6 +296,20 @@ export interface ITBETicker {
   visible: boolean;
 }
 
+export interface ITBETrade {
+  id: string;
+  tid: string;
+  market: string;
+  price: string;
+  amount: string;
+  volume: string;
+  type: string;
+  side: string;
+  at: number;
+  ts: string;
+  date: string;
+}
+
 export const convertDataToTicker = (data: ITBETicker) => {
   let ticker: ITickerData | null = null;
   if (data.quoteUnit.toUpperCase() === unitAsset) {

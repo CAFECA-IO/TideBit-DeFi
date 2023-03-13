@@ -129,3 +129,5 @@ export const locker = (id: string): ILocker => {
 
   return [lock, unlock, room];
 };
+
+export const getTimestamp = () => Math.ceil(Date.now() / 1000);

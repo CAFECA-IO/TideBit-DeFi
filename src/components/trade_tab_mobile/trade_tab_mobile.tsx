@@ -372,12 +372,26 @@ const TradeTabMobile = () => {
 
   const longSectionClickHandler = () => {
     setActiveTab('Long');
-    setOpenSubMenu(true);
+
+    if (!openSubMenu) {
+      setOpenSubMenu(true);
+    } else {
+      {
+        /* ToDo: 接 PositionOpenModal (20230313 - Julian) */
+      }
+    }
   };
 
   const shortSectionClickHandler = () => {
     setActiveTab('Short');
-    setOpenSubMenu(true);
+
+    if (!openSubMenu) {
+      setOpenSubMenu(true);
+    } else {
+      {
+        /* ToDo: 接 PositionOpenModal (20230313 - Julian) */
+      }
+    }
   };
 
   const longButtonStyles =

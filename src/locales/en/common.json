@@ -84,6 +84,11 @@
     "CLOSED_REASON_BY_USER": "Manual",
     "CLOSED_REASON_TAKE_PROFIT": "Take Profit",
     "CLOSED_REASON_STOP_LOSS": "Stop Loss",
-    "SHARE": "Share:"
+    "SHARE": "Share:",
+    "CLOSE_AT_PROFIT": "Close at profit",
+    "EXPECTED_PROFIT": "Expected profit",
+    "CLOSE_AT_LOSS": "Close at loss",
+    "EXPECTED_LOSS": "Expected loss",
+    "FEE": "Fee"
   }
 }

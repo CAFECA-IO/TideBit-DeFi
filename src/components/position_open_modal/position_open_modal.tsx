@@ -9,6 +9,7 @@ import {
 } from '../../constants/display';
 import RippleButton from '../ripple_button/ripple_button';
 import Image from 'next/image';
+import {AiOutlineQuestionCircle} from 'react-icons/ai';
 import {locker, randomIntFromInterval, timestampToString, wait} from '../../lib/common';
 import {useContext, useEffect, useState} from 'react';
 import {MarketContext} from '../../contexts/market_context';
@@ -147,6 +148,8 @@ const PositionOpenModal = ({
     openCfdRequest.typeOfPosition === TypeOfPosition.BUY
       ? t('POSITION_MODAL.TYPE_BUY')
       : t('POSITION_MODAL.TYPE_SELL');
+
+  const [guaranteedTooltipStatus, setGuaranteedTooltipStatus] = useState(0);
 
   // const displayedPnLColor =
   //   openCfdRequest?.pnl.type === 'PROFIT'
@@ -363,17 +366,24 @@ const PositionOpenModal = ({
               <div className={`relative flex items-center`}>
                 {displayedGuaranteedStopSetting}
 
-                <div className="group">
-                  <div className="invisible absolute bottom-6 right-0 w-180px bg-darkGray8 p-2 text-left text-xxs text-lightWhite opacity-0 shadow-lg shadow-black/80 transition-all duration-200 group-hover:visible group-hover:opacity-100">
-                    {t('POSITION_MODAL.GUARANTEED_STOP_HINT')}
+                <div
+                  className="relative ml-1"
+                  onMouseEnter={() => setGuaranteedTooltipStatus(3)}
+                  onMouseLeave={() => setGuaranteedTooltipStatus(0)}
+                >
+                  <div className="opacity-70">
+                    <AiOutlineQuestionCircle size={16} />
                   </div>
-                  <Image
-                    className="ml-2"
-                    src="/elements/question.svg"
-                    alt="question icon"
-                    width={12}
-                    height={12}
-                  />
+                  {guaranteedTooltipStatus == 3 && (
+                    <div
+                      role="tooltip"
+                      className="absolute -top-120px -left-52 z-20 mr-8 w-56 rounded bg-darkGray8 p-4 shadow-lg shadow-black/80 transition duration-150 ease-in-out"
+                    >
+                      <p className="pb-0 text-sm font-medium text-white">
+                        {t('POSITION_MODAL.GUARANTEED_STOP_HINT')}
+                      </p>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

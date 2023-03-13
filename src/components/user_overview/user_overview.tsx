@@ -1,4 +1,7 @@
 import React from 'react';
+import {useTranslation} from 'next-i18next';
+
+type TranslateFunction = (s: string) => string;
 
 interface IUserOverviewProps {
   depositAvailable: number;
@@ -13,6 +16,8 @@ const UserOverview = ({
   // profitOrLoss,
   profitOrLossAmount,
 }: IUserOverviewProps) => {
+  const {t}: {t: TranslateFunction} = useTranslation('common');
+
   // if (profitOrLoss !== 'profit' && profitOrLoss !== 'loss') return <></>;
 
   // const displayedSymbol = profitOrLoss === 'profit' ? '+' : '-';
@@ -23,17 +28,17 @@ const UserOverview = ({
       <div className="">
         <div className="hidden space-x-5 lg:flex xl:space-x-20">
           <div className="">
-            <div className="text-sm text-lightGray4">Available</div>
+            <div className="text-sm text-lightGray4">{t('USER.OVERVIEW_AVAILABLE')}</div>
             <div className="text-sm xl:text-base">{depositAvailable} USDT</div>
           </div>
 
           <div className="">
-            <div className="text-sm text-lightGray4">M. Margin</div>
+            <div className="text-sm text-lightGray4">{t('USER.OVERVIEW_M_MARGIN')}</div>
             <div className="text-sm xl:text-base">{marginLocked} USDT</div>
           </div>
 
           <div className="">
-            <div className="text-sm text-lightGray4">PNL</div>
+            <div className="text-sm text-lightGray4">{t('USER.OVERVIEW_PNL')}</div>
             <div className="text-sm xl:text-base">{profitOrLossAmount} USDT</div>
           </div>
         </div>
@@ -44,20 +49,26 @@ const UserOverview = ({
       <div className="mt-5">
         {/* <div className="my-auto h-px w-full rounded bg-white/50"></div> */}
 
-        <div className="flex space-x-10 text-center lg:hidden">
+        <div className="flex justify-center space-x-10 text-center lg:hidden">
           <div className="">
-            <div className="whitespace-nowrap p-2 text-sm text-lightGray4">Available</div>
-            <div className="whitespace-nowrap p-2 text-xs">{depositAvailable} USDT</div>
+            <div className="whitespace-nowrap p-1 text-sm text-lightGray4">
+              {t('USER.OVERVIEW_AVAILABLE')}
+            </div>
+            <div className="whitespace-nowrap p-1 text-xs">{depositAvailable} USDT</div>
           </div>
 
           <div className="">
-            <div className="whitespace-nowrap p-2 text-sm text-lightGray4">M. Margin</div>
-            <div className="whitespace-nowrap p-2 text-xs">{marginLocked} USDT</div>
+            <div className="whitespace-nowrap p-1 text-sm text-lightGray4">
+              {t('USER.OVERVIEW_M_MARGIN')}
+            </div>
+            <div className="whitespace-nowrap p-1 text-xs">{marginLocked} USDT</div>
           </div>
 
           <div className="">
-            <div className="whitespace-nowrap p-2 text-sm text-lightGray4">PNL</div>
-            <div className="whitespace-nowrap p-2 text-xs">{profitOrLossAmount} USDT</div>
+            <div className="whitespace-nowrap p-1 text-sm text-lightGray4">
+              {t('USER.OVERVIEW_PNL')}
+            </div>
+            <div className="whitespace-nowrap p-1 text-xs">{profitOrLossAmount} USDT</div>
           </div>
         </div>
       </div>

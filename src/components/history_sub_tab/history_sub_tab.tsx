@@ -4,6 +4,7 @@ import {UserContext} from '../../contexts/user_context';
 
 const HistorySubTab = () => {
   const userCtx = useContext(UserContext);
+
   const historyPositionList = userCtx.closedCFDs.map(cfd => (
     <div key={cfd.id}>
       <HistoryPositionItem closedCfdDetails={cfd} />

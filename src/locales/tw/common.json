@@ -1,29 +1,50 @@
 {
-  "nav_bar": {
-    "Trade": "交易",
-    "Leaderboard": "排行榜",
-    "Support": "支援",
-    "TideBitUniversity": "TideBit 大學",
-    "HelpCenter": "幫助中心",
-    "WalletConnect": "連接錢包"
+  "NAV_BAR": {
+    "TRADE": "交易",
+    "LEADERBOARD": "排行榜",
+    "SUPPORT": "支援",
+    "TIDEBIT_UNIVERSITY": "TideBit 大學",
+    "HELP_CENTER": "幫助中心",
+    "WALLET_CONNECT": "連接錢包",
+    "LANGUAGE": "語言",
+    "MENU": "選單",
+    "NOTIFICATION_TITLE": "通知",
+    "NOTIFICATION_READ_ALL": "全部已讀"
   },
-  "home_page": {
-    "Cta_HighlightTitle": "值得信賴的",
-    "Cta_RestTitle": "加密貨幣投資平台",
-    "Cta_Description": "現在就開始投資。 在 TideBit ，您可以免費學習以及買賣最優質的加密貨幣資產。",
-    "Cta_Button": "開始交易",
-    "StatisticBlock_Title_1": "TideBit 的 24h 交易量",
-    "StatisticBlock_Description_1": "3650億",
-    "StatisticBlock_Title_2": "TideBit 的用戶",
-    "StatisticBlock_Description_2": "300億+",
-    "StatisticBlock_Title_3": "最低手續費",
-    "StatisticBlock_Description_3": "<0.10 %",
-    "ReserveRatioBlock_Title": "最新的 TideBit ",
-    "ReserveRatioBlock_TitleHighlight": "儲備金比例",
-    "ReserveRatioBlock_Title_2": "",
-    "ReserveRatioBlock_Card": "儲備金比例",
-    "ReserveRatioBlock_Card_2": "區塊鏈",
-    "ReserveRatioBlock_Description": "TideBit 用戶資產持有量",
-    "ReserveRatioBlock_Description_2": "TideBit 錢包資產"
+  "USER": {
+    "PERSONAL_SETTING": "用戶設定",
+    "ASSETS": "我的資產",
+    "DEPOSIT": "入金",
+    "WITHDRAW": "出金",
+    "ACCOUNT": "我的帳戶",
+    "DISCONNECT": "中斷錢包連接",
+    "OVERVIEW_AVAILABLE": "可用餘額",
+    "OVERVIEW_M_MARGIN": "維持保證金",
+    "OVERVIEW_PNL": "盈虧"
+  },
+  "HOME_PAGE": {
+    "CTA_HIGHLIGHT_TITLE": "值得信賴的",
+    "CTA_REST_TITLE": "加密貨幣投資平台",
+    "CTA_DESCRIPTION": "現在就開始投資。 在 TideBit ，您可以免費學習以及買賣最優質的加密貨幣資產。",
+    "CTA_BUTTON": "開始交易",
+    "STATISTIC_BLOCK_TITLE_1": "TideBit 的 24h 交易量",
+    "STATISTIC_BLOCK_DESCRIPTION_1": "3650億",
+    "STATISTIC_BLOCK_TITLE_2": "TideBit 的用戶",
+    "STATISTIC_BLOCK_DESCRIPTION_2": "300億+",
+    "STATISTIC_BLOCK_TITLE_3": "最低手續費",
+    "STATISTIC_BLOCK_DESCRIPTION_3": "<0.10 %",
+    "RESERVE_RATIO_BLOCK_TITLE": "最新的 TideBit ",
+    "RESERVE_RATIO_BLOCK_TITLE_HIGHLIGHT": "儲備金比例",
+    "RESERVE_RATIO_BLOCK_TITLE_2": "",
+    "RESERVE_RATIO_BLOCK_CARD": "儲備金比例",
+    "RESERVE_RATIO_BLOCK_CARD_2": "區塊鏈",
+    "RESERVE_RATIO_BLOCK_DESCRIPTION": "TideBit 用戶資產持有量",
+    "RESERVE_RATIO_BLOCK_DESCRIPTION_2": "TideBit 錢包資產"
+  },
+  "TRADE_PAGE": {
+    "WALLET_CONNECT_BUTTON": "連接錢包",
+    "WALLET_CONNECT_DESCRIPTION": "連接錢包以開始交易",
+    "TICKER_SELECTOR_TAB_ALL": "全部",
+    "TICKER_SELECTOR_TAB_FAVORITE": "我的最愛"
   }
 }

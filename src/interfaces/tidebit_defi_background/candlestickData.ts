@@ -1,3 +1,5 @@
+import {ITimeSpanUnion, TimeSpanUnion} from './time_span_union';
+
 const chartBlank = 1.68;
 const dummyDataSize = 80;
 const unitOfLive = 1000;
@@ -7,12 +9,59 @@ export interface ICandlestickData {
   y: [...(number | null)[]];
 }
 
-export const getDummyCandlestickChartData = (n = dummyDataSize) => {
+export const getTime = (timeSpan: ITimeSpanUnion) => {
+  let time = 1000;
+  switch (timeSpan) {
+    case TimeSpanUnion._1s:
+      time = 1 * 1000;
+      break;
+    case TimeSpanUnion._15s:
+      time = 15 * 1000;
+      break;
+    case TimeSpanUnion._5m:
+      time = 5 * 1 * 60 * 1000;
+      break;
+    case TimeSpanUnion._15m:
+      time = 15 * 1 * 60 * 1000;
+      break;
+    case TimeSpanUnion._1h:
+      time = 1 * 60 * 60 * 1000;
+      break;
+    case TimeSpanUnion._4h:
+      time = 4 * 60 * 60 * 1000;
+      break;
+    case TimeSpanUnion._12h:
+      time = 12 * 60 * 60 * 1000;
+      break;
+    case TimeSpanUnion._1d:
+      time = 24 * 60 * 60 * 1000;
+      break;
+    default:
+      break;
+  }
+  return time;
+};
+
+export const getDummyPrices = (point: number) => {
+  const prices: [...(number | null)[]] = new Array(4).fill(0).map(v => {
+    const rnd = Math.random() / 1.2;
+    const ts = rnd > 0.25 ? 1 + rnd ** 5 : 1 - rnd;
+    const price = point * ts;
+    const prettyPrice = Math.trunc(price * 100) / 100;
+    return prettyPrice;
+  });
+  return prices;
+};
+
+export const getDummyCandlestickChartData = (
+  dataSize = dummyDataSize,
+  timeSpan: ITimeSpanUnion
+) => {
   const now = new Date().getTime();
-  const nowSecond = now - (now % unitOfLive);
+  const nowSecond = now - (now % getTime(timeSpan));
   let point = 1288.4;
   let lastPrice = 0;
-  const data = new Array(n).fill(0).map((v, i) => {
+  const data = new Array(dataSize).fill(0).map((v, i) => {
     const y: [...(number | null)[]] = new Array(4).fill(0).map(v => {
       const rnd = Math.random() / 1.2;
       const ts = rnd > 0.25 ? 1 + rnd ** 5 : 1 - rnd;
@@ -25,16 +74,16 @@ export const getDummyCandlestickChartData = (n = dummyDataSize) => {
     point = lastPrice;
 
     const result: ICandlestickData = {
-      x: new Date(nowSecond - (n - i) * unitOfLive),
+      x: new Date(nowSecond - (dataSize - i) * getTime(timeSpan)),
       y,
     };
     return result;
   });
-  const addition = n / chartBlank;
+  const addition = dataSize / chartBlank;
 
   // null data
   data.push({
-    x: new Date(nowSecond + addition * unitOfLive),
+    x: new Date(nowSecond + addition * getTime(timeSpan)),
     y: [null, null, null, null],
   });
 

@@ -4,12 +4,14 @@ import {CRYPTO_CARD_COLORS} from '../../constants/display';
 
 import {useContext, useEffect, useState} from 'react';
 import CryptoCard from '../crypto_card/crypto_card';
-
+import {useTranslation} from 'next-i18next';
 import {MarketContext, IMarketContext} from '../../contexts/market_context';
 import {UserContext, IUserContext} from '../../contexts/user_context';
 import {ILineGraphProps, ITickerData} from '../../interfaces/tidebit_defi_background/ticker_data';
 import {useRouter} from 'next/router';
 import eventEmitter, {ClickEvent} from '../../constants/tidebit_event';
+
+type TranslateFunction = (s: string) => string;
 
 // TODO: useContext
 interface ITickerSelectorBox {
@@ -41,6 +43,8 @@ const TickerSelectorBox = ({
 }: ITickerSelectorBox) => {
   const marketCtx = useContext<IMarketContext>(MarketContext);
   const userCtx = useContext(UserContext) as IUserContext;
+
+  const {t}: {t: TranslateFunction} = useTranslation('common');
 
   const router = useRouter();
 
@@ -328,14 +332,14 @@ const TickerSelectorBox = ({
 
   const tabPart = (
     <>
-      <div className="z-10 hidden w-1200px flex-wrap border-gray-200 text-center text-sm font-medium text-gray-400 lg:flex">
+      <div className="z-10 hidden w-90vw max-w-1200px flex-wrap border-gray-200 text-center text-sm font-medium text-gray-400 lg:flex">
         <div className="pr-1">
           <button
             type="button"
             className={`${activeAllTabStyle} inline-block rounded-t-lg px-38px py-2 hover:cursor-pointer`}
             onClick={allTabClickHandler}
           >
-            All
+            {t('TRADE_PAGE.TICKER_SELECTOR_TAB_ALL')}
           </button>
         </div>
         {userCtx.enableServiceTerm ? (
@@ -345,7 +349,7 @@ const TickerSelectorBox = ({
               onClick={favoriteTabClickHandler}
               className={`${activeFavoriteTabStyle} inline-block rounded-t-lg px-38px py-2 hover:cursor-pointer`}
             >
-              Favorite
+              {t('TRADE_PAGE.TICKER_SELECTOR_TAB_FAVORITE')}
             </button>
           </div>
         ) : (
@@ -370,7 +374,7 @@ const TickerSelectorBox = ({
           <div className="">{tabPart}</div>
 
           {/* ticker cards section */}
-          <div className="flex h-640px w-1200px flex-col rounded rounded-t-none border-0 bg-darkGray shadow-lg shadow-black/80 outline-none focus:outline-none">
+          <div className="mx-auto flex h-640px w-90vw max-w-1200px flex-col rounded rounded-t-none border-0 bg-darkGray shadow-lg shadow-black/80 outline-none focus:outline-none">
             {/*header*/}
 
             {/* ----- body ----- */}
@@ -400,7 +404,7 @@ const TickerSelectorBox = ({
                 <div className="mx-auto flex flex-col items-center">
                   <div className="flex w-full items-center justify-center">
                     {/* 多出來的高度不會出現y卷軸 */}
-                    <div className="mb-5 grid grid-cols-5 space-y-4 space-x-4 overflow-x-hidden overflow-y-clip">
+                    <div className="mb-5 grid grid-cols-4 space-y-4 space-x-4 overflow-x-hidden overflow-y-clip xl:grid-cols-5">
                       {displayedCryptoCards}
                     </div>
                   </div>

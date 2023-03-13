@@ -10,14 +10,16 @@ import Toggle from '../toggle/toggle';
 import {useContext, useRef, useState} from 'react';
 import TradingInput from '../trading_input/trading_input';
 import {AiOutlineQuestionCircle} from 'react-icons/ai';
-import RippleButton from '../ripple_button/ripple_button';
+//import RippleButton from '../ripple_button/ripple_button';
 import {useGlobal} from '../../contexts/global_context';
 import {timestampToString} from '../../lib/common';
 import {IClosedCFDDetails} from '../../interfaces/tidebit_defi_background/closed_cfd_details';
 import {MarketContext} from '../../contexts/market_context';
 import {CFDClosedType} from '../../constants/cfd_closed_type';
 import {OrderState} from '../../constants/order_state';
+import {useTranslation} from 'react-i18next';
 
+type TranslateFunction = (s: string) => string;
 interface IHistoryPositionModal {
   modalVisible: boolean;
   modalClickHandler: () => void;
@@ -31,6 +33,7 @@ const HistoryPositionModal = ({
   closedCfdDetails: closedCfdDetails,
   ...otherProps
 }: IHistoryPositionModal) => {
+  const {t}: {t: TranslateFunction} = useTranslation('common');
   // console.log('openCfdDetails in details modal: ', openCfdDetails.id);
   // const globalCtx = useGlobal();
   const marketCtx = useContext(MarketContext);
@@ -58,9 +61,15 @@ const HistoryPositionModal = ({
   const displayedPnLSymbol =
     closedCfdDetails.pnl.type === 'PROFIT' ? '+' : closedCfdDetails.pnl.type === 'LOSS' ? '-' : '';
 
-  // TODO: i18n
   const displayedTypeOfPosition =
-    closedCfdDetails?.typeOfPosition === 'BUY' ? 'Up (Buy)' : 'Down (Sell)';
+    closedCfdDetails?.typeOfPosition === 'BUY'
+      ? t('POSITION_MODAL.TYPE_UP')
+      : t('POSITION_MODAL.TYPE_DOWN');
+
+  const displayedBuyOrSell =
+    closedCfdDetails?.typeOfPosition === 'BUY'
+      ? t('POSITION_MODAL.TYPE_BUY')
+      : t('POSITION_MODAL.TYPE_SELL');
 
   const displayedPnLColor =
     closedCfdDetails?.pnl.type === 'PROFIT'
@@ -84,7 +93,7 @@ const HistoryPositionModal = ({
   const closedTime = timestampToString(closedCfdDetails?.closedTimestamp ?? 0);
 
   const formContent = (
-    <div className="relative flex-auto pt-0">
+    <div className="relative flex w-full flex-auto flex-col pt-0">
       <div
         className={`${displayedBorderColor} mx-7 mt-3 border-1px text-base leading-relaxed text-lightWhite`}
       >
@@ -92,20 +101,23 @@ const HistoryPositionModal = ({
           {/* {displayedDataFormat()} */}
 
           <div className={`${layoutInsideBorder}`}>
-            <div className="text-lightGray">Type</div>
-            {/* TODO: i18n */}
-            <div className={`${displayedPositionColor}`}>{displayedTypeOfPosition}</div>
-          </div>
-
-          <div className={`${layoutInsideBorder}`}>
-            <div className="text-lightGray">Amount</div>
-            <div className="">
-              {closedCfdDetails?.amount?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0}
+            <div className="text-lightGray">{t('POSITION_MODAL.TYPE')}</div>
+            <div className={`${displayedPositionColor}`}>
+              {displayedTypeOfPosition}
+              <span className="ml-1 text-lightGray">{displayedBuyOrSell}</span>
             </div>
           </div>
 
           <div className={`${layoutInsideBorder}`}>
-            <div className="text-lightGray">PNL</div>
+            <div className="text-lightGray">{t('POSITION_MODAL.AMOUNT')}</div>
+            <div className="">
+              {closedCfdDetails?.amount?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0}
+              <span className="ml-1 text-lightGray">{closedCfdDetails.ticker}</span>
+            </div>
+          </div>
+
+          <div className={`${layoutInsideBorder}`}>
+            <div className="text-lightGray">{t('POSITION_MODAL.PNL')}</div>
             <div className={`${displayedPnLColor}`}>
               {displayedPnLSymbol} ${' '}
               {closedCfdDetails?.pnl.value?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}
@@ -113,14 +125,14 @@ const HistoryPositionModal = ({
           </div>
 
           <div className={`${layoutInsideBorder}`}>
-            <div className="text-lightGray">Open Value</div>
+            <div className="text-lightGray">{t('POSITION_MODAL.OPEN_VALUE')}</div>
             <div className="">
               $ {closedCfdDetails?.openValue?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0}
             </div>
           </div>
 
           <div className={`${layoutInsideBorder}`}>
-            <div className="text-lightGray">Closed Value</div>
+            <div className="text-lightGray">{t('POSITION_MODAL.CLOSED_VALUE')}</div>
             <div className="">
               ${' '}
               {(closedCfdDetails?.openValue + closedCfdDetails.pnl.value)?.toLocaleString(
@@ -130,35 +142,35 @@ const HistoryPositionModal = ({
           </div>
 
           <div className={`${layoutInsideBorder}`}>
-            <div className="text-lightGray">Open Price</div>
+            <div className="text-lightGray">{t('POSITION_MODAL.OPEN_PRICE')}</div>
             <div className="">
               $ {closedCfdDetails?.openPrice?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0}
             </div>
           </div>
 
           <div className={`${layoutInsideBorder}`}>
-            <div className="text-lightGray">Closed Price</div>
+            <div className="text-lightGray">{t('POSITION_MODAL.CLOSED_VALUE')}</div>
             <div className="">
               $ {closedCfdDetails?.openPrice?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0}
             </div>
           </div>
 
           <div className={`${layoutInsideBorder}`}>
-            <div className="text-lightGray">Open Time</div>
+            <div className="text-lightGray">{t('POSITION_MODAL.OPEN_TIME')}</div>
             <div className="">
               {openTime.date} {openTime.time}
             </div>
           </div>
 
           <div className={`${layoutInsideBorder}`}>
-            <div className="text-lightGray">Closed Time</div>
+            <div className="text-lightGray">{t('POSITION_MODAL.CLOSED_TIME')}</div>
             <div className="">
               {closedTime.date} {closedTime.time}
             </div>
           </div>
 
           <div className={`${layoutInsideBorder}`}>
-            <div className="text-lightGray">TP/ SL</div>
+            <div className="text-lightGray">{t('POSITION_MODAL.LIMIT_AND_STOP')}</div>
             <div className="">
               <span className={`text-lightWhite`}>
                 {closedCfdDetails?.takeProfit?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ??
@@ -172,7 +184,7 @@ const HistoryPositionModal = ({
           </div>
 
           <div className={`${layoutInsideBorder}`}>
-            <div className="text-lightGray">Guaranteed Stop</div>
+            <div className="text-lightGray">{t('POSITION_MODAL.GUARANTEED_STOP')}</div>
             <div className={``}>{displayedGuaranteedStopSetting}</div>
           </div>
 
@@ -184,38 +196,36 @@ const HistoryPositionModal = ({
           </div> */}
 
           <div className={`${layoutInsideBorder}`}>
-            <div className="text-lightGray">State</div>
+            <div className="text-lightGray">{t('POSITION_MODAL.STATE')}</div>
             <div className="">{displayedPositionState}</div>
           </div>
 
           <div className={`${layoutInsideBorder}`}>
-            <div className="text-lightGray">Closed Reason</div>
+            <div className="text-lightGray">{t('POSITION_MODAL.CLOSED_REASON')}</div>
             <div className="">{displayedClosedReason}</div>
           </div>
         </div>
       </div>
       <div
-        className={`mx-7 mt-5 flex items-center justify-between text-base leading-relaxed text-lightGray`}
+        className={`mx-7 mt-2 flex items-center justify-end pb-3 text-base leading-relaxed text-lightGray`}
       >
-        <div className={``}>Share:</div>
+        <div className="text-sm">{t('POSITION_MODAL.SHARE')}</div>
+        <div className="flex items-center justify-between">
+          <div className={`${socialMediaStyle}`}>
+            <Image src="/elements/group_15237.svg" width={44} height={44} alt="Facebook" />
+          </div>
 
-        <div className={`${socialMediaStyle}`}>
-          {' '}
-          <Image src="/elements/group_15237.svg" width={44} height={44} alt="Facebook" />
-        </div>
+          <div className={`${socialMediaStyle}`}>
+            <Image src="/elements/group_15236.svg" width={44} height={44} alt="Instagram" />
+          </div>
 
-        <div className={`${socialMediaStyle}`}>
-          {' '}
-          <Image src="/elements/group_15236.svg" width={44} height={44} alt="Instagram" />
-        </div>
+          <div className={`${socialMediaStyle}`}>
+            <Image src="/elements/group_15235.svg" width={44} height={44} alt="Twitter" />
+          </div>
 
-        <div className={`${socialMediaStyle}`}>
-          {' '}
-          <Image src="/elements/group_15235.svg" width={44} height={44} alt="Twitter" />
-        </div>
-
-        <div className={`${socialMediaStyle}`}>
-          <Image src="/elements/group_15234.svg" width={44} height={44} alt="Reddit" />
+          <div className={`${socialMediaStyle}`}>
+            <Image src="/elements/group_15234.svg" width={44} height={44} alt="Reddit" />
+          </div>
         </div>
       </div>
     </div>
@@ -226,17 +236,17 @@ const HistoryPositionModal = ({
       <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">
         <div className="relative my-6 mx-auto w-auto max-w-xl">
           {/*content & panel*/}
-          <div className="relative flex h-620px w-296px flex-col rounded-3xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none">
+          <div className="relative flex h-auto w-300px flex-col rounded-xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none">
             {/*header*/}
-            <div className="-mb-1 flex items-start justify-between rounded-t pt-6">
-              <div className="ml-7 mr-5 mt-5 mb-3 flex w-450px justify-between">
+            <div className="flex items-start justify-between rounded-t pt-6">
+              <div className="mx-7 mb-1 mt-5 flex w-full justify-between">
                 <div className="flex w-full items-center justify-center space-x-2 text-center text-2xl text-lightWhite">
-                  {/* TODO: selected ticker should have default */}
+                  {/* ToDo: default currency icon (20230310 - Julian) issue #338 */}
                   <Image
                     src={marketCtx.selectedTicker?.tokenImg ?? ''}
+                    alt="currency icon"
                     width={30}
                     height={30}
-                    alt="icon"
                   />
                   <h3 className="">{closedCfdDetails.ticker} </h3>
                 </div>

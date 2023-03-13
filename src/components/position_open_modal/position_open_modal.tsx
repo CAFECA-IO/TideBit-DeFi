@@ -4,6 +4,7 @@ import {
   DELAYED_HIDDEN_SECONDS,
   TypeOfBorderColor,
   TypeOfPnLColor,
+  TypeOfTransaction,
   UNIVERSAL_NUMBER_FORMAT_LOCALE,
 } from '../../constants/display';
 import RippleButton from '../ripple_button/ripple_button';
@@ -22,7 +23,9 @@ import {
   getDummyApplyCreateCFDOrderData,
   IApplyCreateCFDOrderData,
 } from '../../interfaces/tidebit_defi_background/apply_create_cfd_order_data';
+import {useTranslation} from 'react-i18next';
 
+type TranslateFunction = (s: string) => string;
 interface IPositionOpenModal {
   modalVisible: boolean;
   modalClickHandler: () => void;
@@ -30,7 +33,7 @@ interface IPositionOpenModal {
   renewalDeadline: number;
 }
 
-// TODO: seconds constant in display.ts or config.ts?
+// ToDo: seconds constant in display.ts or config.ts?
 
 const PositionOpenModal = ({
   modalVisible,
@@ -39,6 +42,8 @@ const PositionOpenModal = ({
   renewalDeadline,
   ...otherProps
 }: IPositionOpenModal) => {
+  const {t}: {t: TranslateFunction} = useTranslation('common');
+
   const globalCtx = useGlobal();
   const marketCtx = useContext(MarketContext);
   const userCtx = useContext(UserContext);
@@ -48,7 +53,7 @@ const PositionOpenModal = ({
 
   const [lock, unlock] = locker('position_open_modal.UseEffect');
 
-  /** TODO: 
+  /** ToDo: 
     // loading modal -> UserContext.function (負責簽名) ->
     // 猶豫太久的話，單子會過期，就會顯示 failed modal，
     // 用戶沒簽名才是顯示 canceled modal
@@ -76,7 +81,7 @@ const PositionOpenModal = ({
     const result = await userCtx.createCFDOrder(globalCtx.dataPositionOpenModal?.openCfdRequest);
     // console.log('result from userCtx in position_closed_modal.tsx: ', result);
 
-    // TODO: temporary waiting
+    // ToDo: temporary waiting
     await wait(DELAYED_HIDDEN_SECONDS);
     globalCtx.dataLoadingModalHandler({
       modalTitle: 'Open Position',
@@ -85,14 +90,14 @@ const PositionOpenModal = ({
       btnUrl: '#',
     });
 
-    // TODO: temporary waiting
+    // ToDo: temporary waiting
     await wait(DELAYED_HIDDEN_SECONDS);
 
     // Close loading modal
     globalCtx.eliminateAllModals();
 
-    // TODO: Revise the `result.reason` to constant by using enum or object
-    // TODO: the button URL
+    // ToDo: Revise the `result.reason` to constant by using enum or object
+    // ToDo: the button URL
     if (result.success) {
       globalCtx.dataSuccessfulModalHandler({
         modalTitle: 'Open Position',
@@ -130,12 +135,18 @@ const PositionOpenModal = ({
     return;
   };
 
-  // TODO: Typo `guaranteedStop`
+  // ToDo: Typo `guaranteedStop`
   const displayedGuaranteedStopSetting = !!openCfdRequest.guaranteedStop ? 'Yes' : 'No';
 
-  // TODO: i18n
   const displayedTypeOfPosition =
-    openCfdRequest.typeOfPosition === TypeOfPosition.BUY ? 'Up (Buy)' : 'Down (Sell)';
+    openCfdRequest.typeOfPosition === TypeOfPosition.BUY
+      ? t('POSITION_MODAL.TYPE_UP')
+      : t('POSITION_MODAL.TYPE_DOWN');
+
+  const displayedBuyOrSell =
+    openCfdRequest.typeOfPosition === TypeOfPosition.BUY
+      ? t('POSITION_MODAL.TYPE_BUY')
+      : t('POSITION_MODAL.TYPE_SELL');
 
   // const displayedPnLColor =
   //   openCfdRequest?.pnl.type === 'PROFIT'
@@ -157,11 +168,13 @@ const PositionOpenModal = ({
   const displayedTakeProfit = openCfdRequest.takeProfit ? `$ ${openCfdRequest.takeProfit}` : '-';
   const displayedStopLoss = openCfdRequest.stopLoss ? `$ ${openCfdRequest.stopLoss}` : '-';
 
-  const layoutInsideBorder = 'mx-5 my-4 flex justify-between';
+  //const displayedExpirationTime = timestampToString(openCfdRequest?.quotation.deadline ?? 0);
+
+  const layoutInsideBorder = 'mx-5 my-2 flex justify-between';
 
   // let dataRenewedStyle = 'text-lightGray';
 
-  // const displayedTime = timestampToString(openCfdRequest?.createdTime ?? 0);
+  // const displayedTime = timestampToString(openCfdRequest?.createTimestamp ?? 0);
 
   const renewDataHandler = async () => {
     setDataRenewedStyle('animate-flash text-lightYellow2');
@@ -171,7 +184,7 @@ const PositionOpenModal = ({
       Math.ceil(new Date().getTime() / 1000) + POSITION_PRICE_RENEWAL_INTERVAL_SECONDS;
     setSecondsLeft(newTimestamp - Date.now() / 1000);
 
-    // TODO: get latest price from marketCtx and calculate required margin data
+    // ToDo: get latest price from marketCtx and calculate required margin data
     // FIXME: 應用 ?? 代替 !
     globalCtx.dataPositionOpenModalHandler({
       openCfdRequest: {
@@ -195,7 +208,7 @@ const PositionOpenModal = ({
             openCfdRequest.margin.amount * 1.5
           ),
         },
-        // TODO:
+        // ToDo:
         // margin:
         //   openCfdRequest.typeOfPosition === TypeOfPosition.BUY
         //     ? (openCfdRequest.amount * marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice) /
@@ -275,8 +288,8 @@ const PositionOpenModal = ({
   // }, [globalCtx.visiblePositionOpenModal]);
 
   const formContent = (
-    <div>
-      <div className="mt-8 mb-2 flex items-center justify-center space-x-2 text-center">
+    <div className="mt-8 flex flex-col px-6 pb-2">
+      <div className="flex items-center justify-center space-x-2 text-center">
         <Image
           src={marketCtx.selectedTicker?.tokenImg ?? ''}
           width={30}
@@ -293,45 +306,85 @@ const PositionOpenModal = ({
 
       <div className="relative flex-auto pt-1">
         <div
-          className={`${displayedBorderColor} mx-6 mt-1 border-1px text-xs leading-relaxed text-lightWhite`}
+          className={`${displayedBorderColor} mt-1 border-1px py-4 text-xs leading-relaxed text-lightWhite`}
         >
-          <div className="flex-col justify-center text-center">
+          <div className="flex flex-col justify-center text-center">
             {/* {displayedDataFormat()} */}
 
             <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">Type</div>
-              {/* TODO: color variable */}
-              <div className={`${displayedPositionColor}`}>{displayedTypeOfPosition}</div>
-            </div>
-
-            <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">Open Price</div>
-              <div className={`${dataRenewedStyle}`}>
-                {/* TODO: Hardcode USDT */}${' '}
-                {openCfdRequest.price?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0} USDT
+              <div className="text-lightGray">{t('POSITION_MODAL.TYPE')}</div>
+              <div className={`${displayedPositionColor}`}>
+                {displayedTypeOfPosition}
+                <span className="ml-1 text-lightGray">{displayedBuyOrSell}</span>
               </div>
             </div>
 
             <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">Amount</div>
+              <div className="text-lightGray">{t('POSITION_MODAL.OPEN_PRICE')}</div>
+              <div className={`${dataRenewedStyle}`}>
+                ${' '}
+                {openCfdRequest.price?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+                  minimumFractionDigits: 2,
+                }) ?? 0}
+                {/* ToDo: Hardcode USDT */}
+                <span className="ml-1 text-lightGray">USDT</span>
+              </div>
+            </div>
+
+            <div className={`${layoutInsideBorder}`}>
+              <div className="text-lightGray">{t('POSITION_MODAL.AMOUNT')}</div>
+              {/* ToDo:{openCfdRequest?.amount?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0} */}
               <div className="">
-                {/* TODO:{openCfdRequest?.amount?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0} */}
-                {openCfdRequest.amount}
+                {openCfdRequest.amount.toFixed(2)}
+                {/* ToDo: Hardcode ETH */}
+                <span className="ml-1 text-lightGray">ETH</span>
               </div>
             </div>
 
-            <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">Required Margin</div>
-              {/* TODO: Hardcode USDT */}
+            <div className={`${layoutInsideBorder} whitespace-nowrap`}>
+              <div className="text-lightGray">{t('POSITION_MODAL.REQUIRED_MARGIN')}</div>
               <div className={`${dataRenewedStyle}`}>
-                $ {openCfdRequest.margin.amount.toFixed(2)} USDT
+                $ {openCfdRequest.margin.amount.toFixed(2)}
+                {/* ToDo: Hardcode USDT */}
+                <span className="ml-1 text-lightGray">USDT</span>
               </div>
             </div>
 
             <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">TP/ SL</div>
+              <div className="text-lightGray">{t('POSITION_MODAL.LIMIT_AND_STOP')}</div>
               <div className="">
                 {displayedTakeProfit} / {displayedStopLoss}
+                {/* ToDo: Hardcode USDT */}
+                <span className="ml-1 text-lightGray">USDT</span>
+              </div>
+            </div>
+
+            <div className={`${layoutInsideBorder}`}>
+              <div className="text-lightGray">{t('POSITION_MODAL.GUARANTEED_STOP')}</div>
+              <div className={`relative flex items-center`}>
+                {displayedGuaranteedStopSetting}
+
+                <div className="group">
+                  <div className="invisible absolute bottom-6 right-0 w-180px bg-darkGray8 p-2 text-left text-xxs text-lightWhite opacity-0 shadow-lg shadow-black/80 transition-all duration-200 group-hover:visible group-hover:opacity-100">
+                    {t('POSITION_MODAL.GUARANTEED_STOP_HINT')}
+                  </div>
+                  <Image
+                    className="ml-2"
+                    src="/elements/question.svg"
+                    alt="question icon"
+                    width={12}
+                    height={12}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className={`${layoutInsideBorder}`}>
+              <div className="text-lightGray">{t('POSITION_MODAL.EXPIRATION_TIME')}</div>
+              <div className="">
+                {/* ToDo: Expiration Time */}
+                2023-03-09 15:20:13
+                {/* {displayedExpirationTime.date} {displayedExpirationTime.time} */}
               </div>
             </div>
 
@@ -343,33 +396,28 @@ const PositionOpenModal = ({
             </div> */}
 
             <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">Liquidation Price</div>
-              {/* TODO: Liquidation Price */}
-              <div className="">$ 9.23</div>
-            </div>
+              <div className="text-lightGray">{t('POSITION_MODAL.LIQUIDATION_PRICE')}</div>
+              {/* ToDo: Liquidation Price */}
 
-            <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">Guaranteed Stop</div>
-              <div className={``}>{displayedGuaranteedStopSetting}</div>
+              <div className="">
+                $ 9.23
+                {/* ToDo: Hardcode USDT */}
+                <span className="ml-1 text-lightGray">USDT</span>
+              </div>
             </div>
           </div>
         </div>
 
-        <div className="mx-6 my-2 text-xxs text-lightGray">
-          Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
-          invidunt ut labore et dolore magna
-        </div>
+        <div className="my-4 text-xxs text-lightGray">{t('POSITION_MODAL.CFD_CONTENT')}</div>
 
-        <div className={`flex-col space-y-5 text-base leading-relaxed text-lightWhite`}>
-          <RippleButton
-            // disabled={secondsLeft === INIT_POSITION_REMAINING_SECONDS}
-            onClick={submitClickHandler}
-            buttonType="button"
-            className={`mx-22px mt-0 rounded border-0 bg-tidebitTheme py-2 px-16 text-base text-white transition-colors duration-300 hover:bg-cyan-600 focus:outline-none disabled:bg-lightGray`}
-          >
-            Confirm the order
-          </RippleButton>
-        </div>
+        <RippleButton
+          // disabled={secondsLeft === INIT_POSITION_REMAINING_SECONDS}
+          onClick={submitClickHandler}
+          buttonType="button"
+          className={`mt-0 whitespace-nowrap rounded border-0 bg-tidebitTheme py-2 px-16 text-base text-white transition-colors duration-300 hover:bg-cyan-600 focus:outline-none disabled:bg-lightGray`}
+        >
+          {t('POSITION_MODAL.CONFIRM_BUTTON')}
+        </RippleButton>
       </div>
     </div>
   );
@@ -387,12 +435,12 @@ const PositionOpenModal = ({
           <div
             id="PositionOpenModal"
             // ref={modalRef}
-            className="relative flex h-540px w-296px flex-col rounded-3xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none"
+            className="relative flex h-auto w-300px flex-col rounded-xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none"
           >
             {/*header*/}
             <div className="flex items-start justify-between rounded-t pt-9">
-              <h3 className="-mt-0 w-full text-center text-xl font-normal text-lightWhite">
-                Open Position
+              <h3 className="w-full text-center text-xl font-normal text-lightWhite">
+                {t('POSITION_MODAL.OPEN_POSITION_TITLE')}
               </h3>
               <button className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
                 <span className="absolute top-5 right-5 block outline-none focus:outline-none">

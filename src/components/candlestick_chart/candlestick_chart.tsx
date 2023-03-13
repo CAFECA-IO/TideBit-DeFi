@@ -16,8 +16,6 @@ import {
   getDummyCandlestickChartData,
 } from '../../interfaces/tidebit_defi_background/candlestickData';
 import useStateRef from 'react-usestateref';
-// import {VictoryThemeDefinition} from '../../interfaces/victory/lib/victory-theme/types';
-// import {VictoryThemeDefinition} from 'victory-core/lib/victory-theme/types';
 import {
   VictoryScatter,
   VictoryLabel,
@@ -57,19 +55,19 @@ export const updateDummyCandlestickChartData = (data: ICandlestickData[]): ICand
 
   const count = countNullArrays(origin);
 
+  // Till: (20230327 - Shirley)
   // const originWithoutNull = originalData.slice(0, -count);
   const originWithoutNull = origin.filter(obj => !obj.y.includes(null));
 
   const lastTime = originWithoutNull[originWithoutNull.length - 1]?.x.getTime() as number;
   const lastPoint = originWithoutNull[originWithoutNull.length - 1]?.y[3] as number;
 
+  // Till: (20230327 - Shirley)
   // Generate new data
   // const nowSecond = lastTime + unitOfLive;
   const nowSecond = now - (now % unitOfLive);
 
   const newYs: (number | null)[] = new Array(4).fill(0).map(v => {
-    const rnd = Math.random() / 1.2;
-    // const ts = rnd > 0.25 ? 1 + rnd ** 5 : 1 - rnd;
     const price = lastPoint * randomFloatFromInterval(0.95, 1.05, 2);
 
     const prettyPrice = Math.trunc(price * 100) / 100;
@@ -90,7 +88,6 @@ export const updateDummyCandlestickChartData = (data: ICandlestickData[]): ICand
     ...originWithoutNull,
     newCandlestickData,
     ...Array.from({length: nullNum}, (_, i) => ({
-      // x: new Date(nowSecond + unitOfLive * (i + 1)),
       x: new Date(nowSecond + unitOfLive * nullTime),
       y: [null, null, null, null],
     })),
@@ -114,7 +111,7 @@ export interface IProcessCandlestickData {
   requiredDataNum: number;
 }
 
-// TODO: after getting the complete data from Context, process it to the required format
+// TODO: (20230313 - Shirley) after getting the complete data from Context, process it to the required format
 export function processCandlestickData({data, requiredDataNum}: IProcessCandlestickData) {
   const origin = [...data];
   const nullNum = countNullArrays(origin);
@@ -272,6 +269,7 @@ export default function CandlestickChart({
         close: data.y[3],
       }));
 
+      // Till: (20230327 - Shirley)
       // TODO: Sometimes, the candlestick overlays with another candlestick (20230310 - Shirley)
       // console.log('data put into chart', toCandlestickChartDataRef.current);
       // console.log('market Ctx', marketCtx.candlestickChartData);
@@ -466,6 +464,7 @@ export default function CandlestickChart({
         // domainPadding={{x: 1}}
         width={Number(candlestickChartWidth)}
         height={Number(candlestickChartHeight)}
+        // Till: (20230327 - Shirley)
         // containerComponent={
         //   <VictoryVoronoiContainer
         //     voronoiDimension="x"
@@ -513,7 +512,7 @@ export default function CandlestickChart({
               },
             }}
             candleRatio={0.5}
-            // candleWidth={8}
+            // candleWidth={8} // Till: (20230327 - Shirley)
             candleColors={{
               positive: TypeOfPnLColorHex.PROFIT,
               negative: TypeOfPnLColorHex.LOSS,
@@ -524,9 +523,8 @@ export default function CandlestickChart({
             }
             labelComponent={
               <VictoryTooltip
-                // backgroundStyle={{fill: '#000000'}}
                 cornerRadius={0}
-                // center={{x: 170, y: -10}}
+                // center={{x: 170, y: -10}} // Till: (20230327 - Shirley)
                 x={26}
                 y={-10}
                 flyoutStyle={{
@@ -541,7 +539,7 @@ export default function CandlestickChart({
                   fontFamily: 'barlow',
                   fontSize: 14,
 
-                  // it works but it's not as designed
+                  // it works but it's not as designed // Till: (20230327 - Shirley)
                   // fill: (d: any) =>
                   //   d.datum.close > d.datum.open
                   //     ? TypeOfPnLColorHex.PROFIT
@@ -553,7 +551,7 @@ export default function CandlestickChart({
                 pointerWidth={0}
               />
             }
-            // Till: (20230324 - Shirley)
+            // Till: (20230327 - Shirley)
             // containerComponent={
             //   <VictoryVoronoiContainer
             //     voronoiDimension="x"
@@ -620,6 +618,7 @@ export default function CandlestickChart({
         )}
 
         <VictoryLine
+          // Till: (20230327 - Shirley)
           // animate={{
           //   duration: 1000,
           // }}
@@ -665,13 +664,10 @@ export default function CandlestickChart({
 
   return (
     <>
-      {/* w-2/3 xl:w-4/5 */}
-      {/* absolute left-505px top-400px w-50px */}
       {/* <Lottie className="latestPrice" animationData={spotAnimation} /> */}
 
       <div className="-ml-5" style={{width: '70%'}}>
-        {/* TODO: (20230310 - Shirley) SVG */}
-
+        {/* TODO: (20230310 - Shirley) SVG location */}
         {/* <div ref={lottieContainerRef} /> */}
         {/* <div ref={lottieContainerRef} className="z-50 w-50px text-cuteBlue1">
           <p>lottie</p>
@@ -679,6 +675,7 @@ export default function CandlestickChart({
         </div>{' '} */}
 
         {isDisplayedCharts}
+        {/* TODO: (20230310 - Shirley) SVG location */}
         {/* <svg ref={svgRef} /> */}
         {/* <svg ref={svgRef} width={800} height={30} fill="#c43a31">
           <rect width={800} height={30} fill="#c43a31" />

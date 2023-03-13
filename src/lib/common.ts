@@ -1,40 +1,7 @@
-// export const countdown = (seconds: number) => {
-
-//   // await wait(1000)
-
-//   const intervalId = setInterval(() => {
-//     seconds--;
-//     console.log(seconds);
-//     if (seconds <= 0) {
-//       clearInterval(intervalId);
-//       console.log("Countdown complete!");
-//     }
-//   }, 1000);
-
-//   // return seconds;
-
-//   // return new Promise((resolve) => {
-//   //   const interval = setInterval(() => {
-//   //     seconds -= 1;
-//   //     if (seconds <= 0) {
-//   //       clearInterval(interval);
-//   //       resolve(true);
-//   //     }
-//   //   }, 1000);
-//   // });
-// };
-
-// // let count = 15;
-
-// // const countdown = setInterval(() => {
-// //   if (count === 0) {
-// //     clearInterval(countdown);
-// //     console.log("Countdown complete!");
-// //   } else {
-// //     console.log(count);
-// //     count--;
-// //   }
-// // }, 1000);
+export const roundToDecimalPlaces = (val: number, precision: number): number => {
+  const roundedNumber = Number(val.toFixed(precision));
+  return roundedNumber;
+};
 
 export function randomIntFromInterval(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1) + min);
@@ -158,3 +125,5 @@ export const locker = (id: string): ILocker => {
 
   return [lock, unlock, room];
 };
+
+export const getTimestamp = () => Math.ceil(Date.now() / 1000);

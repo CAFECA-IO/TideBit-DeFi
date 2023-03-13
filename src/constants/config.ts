@@ -5,7 +5,7 @@ export const RENEW_QUOTATION_INTERVAL_SECONDS = 3;
 export const UNIT_ASSET = 'USDT';
 
 // 10 ** 9 - 0.01
-export const MARGIN_LIMIT_DIGITS = 10 ** 9 - 0.01;
+export const TARGET_LIMIT_DIGITS = 10 ** 9 - 0.01;
 
 export const WALLET_CONNECT_BRIDGE_URL = 'https://bridge.walletconnect.org';
 
@@ -27,3 +27,5 @@ export const SUPPORTED_NETWORKS = [
     },
   },
 ];
+
+export const unitAsset = 'USDT';

@@ -16,7 +16,7 @@ interface IWithdrawalModal {
   getSubmissionState: (props: 'success' | 'cancellation' | 'fail') => void;
   // transferOptions: ITransferOptions[];
   getTransferData: (props: {asset: string; amount: number}) => void;
-  submitHandler: (props: {asset: string; amount: number}) => void;
+  submitHandler: (props: {asset: ICryptocurrency; amount: number}) => void;
 }
 
 const WithdrawalModal = ({
@@ -29,11 +29,11 @@ const WithdrawalModal = ({
 }: IWithdrawalModal) => {
   // TODO: [UserContext] withdraw: userCtx.balance?.available
   const userAvailableBalance = 397.51;
-  const {availableTransferOptions} = useContext(MarketContext);
+  const {withdrawCryptocurrencies} = useContext(MarketContext);
   const globalCtx = useGlobal();
 
   const [showCryptoMenu, setShowCryptoMenu] = useState(false);
-  const [selectedCrypto, setSelectedCrypto] = useState(availableTransferOptions[0]);
+  const [selectedCrypto, setSelectedCrypto] = useState(withdrawCryptocurrencies[0]);
   const [amountInput, setAmountInput] = useState<number | undefined>();
 
   const regex = /^\d*\.?\d{0,2}$/;
@@ -58,7 +58,7 @@ const WithdrawalModal = ({
       return;
     }
 
-    submitHandler({asset: selectedCrypto.symbol, amount: amountInput});
+    submitHandler({asset: selectedCrypto, amount: amountInput});
 
     setAmountInput(undefined);
 
@@ -114,7 +114,7 @@ const WithdrawalModal = ({
 
   const fadeStyle = showCryptoMenu ? 'opacity-100' : 'opacity-0';
 
-  const avaliableCryptoMenu = availableTransferOptions.map(item => {
+  const avaliableCryptoMenu = withdrawCryptocurrencies.map(item => {
     return (
       <li
         key={item.symbol}

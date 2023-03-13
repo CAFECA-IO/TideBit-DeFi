@@ -1,10 +1,13 @@
 import {CFDClosedType, ICFDClosedType} from '../../constants/cfd_closed_type';
 import {IOrderState, OrderState} from '../../constants/order_state';
+import {OrderStatusUnion} from '../../constants/order_status_union';
+import {OrderType} from '../../constants/order_type';
 import {ITypeOfPosition, TypeOfPosition} from '../../constants/type_of_position';
+import {getTimestamp} from '../../lib/common';
+import {IAcceptedOrder} from './accepted_order';
 import {IMargin} from './margin';
 
-export interface IAcceptedCFDOrder {
-  id: string;
+export interface IAcceptedCFDOrder extends IAcceptedOrder {
   ticker: string;
   state: IOrderState;
   typeOfPosition: ITypeOfPosition;
@@ -12,7 +15,6 @@ export interface IAcceptedCFDOrder {
   uniAsset: string;
   openPrice: number;
   amount: number;
-  createTimestamp?: number;
   leverage: number;
   margin: IMargin;
   takeProfit?: number;
@@ -33,20 +35,24 @@ function randomIntFromInterval(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
-export const getDummyAcceptedCFDOrder = (currency: string) => {
-  const typeOfPosition = Math.random() > 0.5 ? TypeOfPosition.BUY : TypeOfPosition.SELL;
+export const getDummyAcceptedCFDOrder = (currency = 'ETH', state?: IOrderState) => {
+  const random = Math.random();
+  const typeOfPosition = random > 0.5 ? TypeOfPosition.BUY : TypeOfPosition.SELL;
   const date = new Date();
   const dummyAcceptedCFDOrder: IAcceptedCFDOrder = {
-    id: `TBAccepted${date.getFullYear()}${
+    id: `TBAcceptedCFD${date.getFullYear()}${
       date.getMonth() + 1
     }${date.getDate()}${date.getSeconds()}${currency}`,
     ticker: currency,
-    state:
-      Math.random() > 0.5
-        ? OrderState.CLOSED
-        : Math.random() === 0.5
-        ? OrderState.FREEZED
-        : OrderState.OPENING,
+    orderStatus: random > 0.5 ? OrderStatusUnion.PROCESSING : OrderStatusUnion.SUCCESS,
+    orderType: OrderType.CFD,
+    state: state
+      ? state
+      : random > 0.5
+      ? OrderState.CLOSED
+      : random === 0.5
+      ? OrderState.FREEZED
+      : OrderState.OPENING,
     typeOfPosition: typeOfPosition,
     targetAsset: typeOfPosition === TypeOfPosition.BUY ? currency : 'USDT',
     uniAsset: typeOfPosition === TypeOfPosition.BUY ? 'USDT' : currency,
@@ -71,25 +77,34 @@ export const getDummyAcceptedCFDOrder = (currency: string) => {
   return dummyAcceptedCFDOrder;
 };
 
-export const getDummyAcceptedCFDs = (currency: string) => {
+export const getDummyAcceptedCFDs = (currency: string, state?: IOrderState, id?: string) => {
+  const date = new Date();
   const dummyAcceptedCFDs: IAcceptedCFDOrder[] = [];
   for (let i = 0; i < 3; i++) {
-    const typeOfPosition = Math.random() > 0.5 ? TypeOfPosition.BUY : TypeOfPosition.SELL;
+    const random = Math.random();
+    const typeOfPosition = random > 0.5 ? TypeOfPosition.BUY : TypeOfPosition.SELL;
     const dummyAcceptedCFDOrder: IAcceptedCFDOrder = {
-      id: 'TBD202302070000001',
+      id: id
+        ? id
+        : `TBAcceptedCFD${date.getFullYear()}${
+            date.getMonth() + 1
+          }${date.getDate()}${date.getSeconds()}${currency}-${i}`,
       ticker: currency,
-      state:
-        Math.random() > 0.5
-          ? OrderState.CLOSED
-          : Math.random() === 0.5
-          ? OrderState.FREEZED
-          : OrderState.OPENING,
+      orderStatus: random > 0.5 ? OrderStatusUnion.SUCCESS : OrderStatusUnion.PROCESSING,
+      orderType: OrderType.CFD,
+      state: state
+        ? state
+        : random > 0.5
+        ? OrderState.CLOSED
+        : random === 0.5
+        ? OrderState.FREEZED
+        : OrderState.OPENING,
       typeOfPosition: typeOfPosition,
       targetAsset: typeOfPosition === TypeOfPosition.BUY ? currency : 'USDT',
       uniAsset: typeOfPosition === TypeOfPosition.BUY ? 'USDT' : currency,
       openPrice: randomIntFromInterval(1000, 10000),
       amount: 1.8,
-      createTimestamp: Date.now() / 1000,
+      createTimestamp: getTimestamp(),
       leverage: 5,
       margin: {asset: 'BTC', amount: randomIntFromInterval(650, 10000)},
       takeProfit: randomIntFromInterval(7000, 70000),
@@ -98,10 +113,15 @@ export const getDummyAcceptedCFDs = (currency: string) => {
       guaranteedStop: false,
       guaranteedStopFee: 0.77,
       liquidationPrice: randomIntFromInterval(1000, 10000),
-      liquidationTime: Date.now() / 1000 + 86400,
+      liquidationTime: getTimestamp() + 86400,
       closePrice: randomIntFromInterval(1000, 10000),
-      closeTimestamp: Date.now() / 1000 + 86400,
-      closedType: CFDClosedType.SCHEDULE,
+      closeTimestamp: random > 0.5 ? getTimestamp() + 86400 : undefined,
+      closedType:
+        random > 0.5
+          ? Math.random() > 0.5
+            ? CFDClosedType.FORCED_LIQUIDATION
+            : CFDClosedType.SCHEDULE
+          : undefined,
       forcedClose: true,
       remark: 'str',
     };

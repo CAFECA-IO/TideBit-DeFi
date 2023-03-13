@@ -7,7 +7,7 @@ import {
   UNIVERSAL_NUMBER_FORMAT_LOCALE,
 } from '../../constants/display';
 import PositionLineGraph from '../position_line_graph/position_line_graph';
-import PositionDetailsModal from '../position_details_modal/position_details_modal';
+import UpdatedFormModal from '../update_form_modal/update_form_modal';
 import {IOpenCFDDetails} from '../../interfaces/tidebit_defi_background/open_cfd_details';
 import {toast} from 'react-toastify';
 import {useGlobal} from '../../contexts/global_context';
@@ -203,6 +203,7 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
 
             <div>
               <CircularProgressBar
+                showLabel={true}
                 numerator={passedHour}
                 denominator={24}
                 progressBarColor={[displayedColorHex]}

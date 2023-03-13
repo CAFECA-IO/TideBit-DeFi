@@ -8,7 +8,7 @@ import UserOverview from '../user_overview/user_overview';
 import {AiOutlineQuestionCircle} from 'react-icons/ai';
 import RippleButton from '../ripple_button/ripple_button';
 import {UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
-import {MARGIN_LIMIT_DIGITS} from '../../constants/config';
+import {TARGET_LIMIT_DIGITS} from '../../constants/config';
 
 // 1388.4 * 0.82
 const LONG_RESTRICTION_SL = 1138.48;
@@ -40,7 +40,7 @@ const TradeTabMobile = () => {
   const [longTooltipStatus, setLongTooltipStatus] = useState(0);
   const [shortTooltipStatus, setShortTooltipStatus] = useState(0);
 
-  const [margingInputValue, setMarginInputValue] = useState(0.02);
+  const [marginInputValue, setMarginInputValue] = useState(0.02);
 
   const [longTpValue, setLongTpValue] = useState(longRecommendedTp);
   const [longSlValue, setLongSlValue] = useState(longRecommendedSl);
@@ -56,18 +56,18 @@ const TradeTabMobile = () => {
   const [openSubMenu, setOpenSubMenu] = useState(false);
 
   const [requiredMargin, setRequiredMargin] = useState(
-    roundToDecimalPlaces((margingInputValue * MARKET_PRICE) / LEVERAGE, 2)
+    roundToDecimalPlaces((marginInputValue * MARKET_PRICE) / LEVERAGE, 2)
   );
   const [valueOfPosition, setValueOfPosition] = useState(
-    roundToDecimalPlaces(margingInputValue * MARKET_PRICE, 2)
+    roundToDecimalPlaces(marginInputValue * MARKET_PRICE, 2)
   );
   const [marginWarning, setMarginWarning] = useState(false);
 
   const [marginLength, setMarginLength] = useState(
-    roundToDecimalPlaces((margingInputValue * MARKET_PRICE) / LEVERAGE, 2).toString().length
+    roundToDecimalPlaces((marginInputValue * MARKET_PRICE) / LEVERAGE, 2).toString().length
   );
   const [valueOfPositionLength, setValueOfPositionLength] = useState(
-    roundToDecimalPlaces(margingInputValue * MARKET_PRICE, 2).toString().length
+    roundToDecimalPlaces(marginInputValue * MARKET_PRICE, 2).toString().length
   );
 
   const getMarginInputValue = (value: number) => {
@@ -138,10 +138,10 @@ const TradeTabMobile = () => {
   const displayedMarginSetting = (
     <TradingInput
       lowerLimit={0}
-      upperLimit={MARGIN_LIMIT_DIGITS}
+      upperLimit={TARGET_LIMIT_DIGITS}
       getInputValue={getMarginInputValue}
-      inputInitialValue={margingInputValue}
-      inputValueFromParent={margingInputValue}
+      inputInitialValue={marginInputValue}
+      inputValueFromParent={marginInputValue}
       setInputValueFromParent={setMarginInputValue}
       inputPlaceholder="margin input"
       inputName="marginInput"

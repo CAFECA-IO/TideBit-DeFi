@@ -18,7 +18,7 @@ interface IDepositModal {
   getSubmissionState: (props: 'success' | 'cancellation' | 'fail') => void;
   // transferOptions: ITransferOptions[];
   getTransferData: (props: {asset: string; amount: number}) => void;
-  submitHandler: (props: {asset: string; amount: number}) => void;
+  submitHandler: (props: {asset: ICryptocurrency; amount: number}) => void;
 }
 
 const DepositModal = ({
@@ -31,11 +31,11 @@ const DepositModal = ({
 }: IDepositModal) => {
   // TODO: [UserContext] deposit: userCtx.walletBalance
   const userAvailableBalance = 4568735165.11;
-  const {availableTransferOptions} = useContext(MarketContext);
+  const {depositCryptocurrencies} = useContext(MarketContext);
   const globalCtx = useGlobal();
 
   const [showCryptoMenu, setShowCryptoMenu] = useState(false);
-  const [selectedCrypto, setSelectedCrypto] = useState(availableTransferOptions[0]);
+  const [selectedCrypto, setSelectedCrypto] = useState(depositCryptocurrencies[0]);
   const [amountInput, setAmountInput] = useState<number | undefined>();
 
   const regex = /^\d*\.?\d{0,2}$/;
@@ -59,7 +59,7 @@ const DepositModal = ({
       return;
     }
 
-    submitHandler({asset: selectedCrypto.symbol, amount: amountInput});
+    submitHandler({asset: selectedCrypto, amount: amountInput});
 
     setAmountInput(undefined);
 
@@ -115,7 +115,7 @@ const DepositModal = ({
 
   const fadeStyle = showCryptoMenu ? 'opacity-100' : 'opacity-0';
 
-  const avaliableCryptoMenu = availableTransferOptions.map(item => {
+  const avaliableCryptoMenu = depositCryptocurrencies.map(item => {
     return (
       <li
         key={item.symbol}

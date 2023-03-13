@@ -1,5 +1,6 @@
 import {RENEW_QUOTATION_INTERVAL_SECONDS} from '../../constants/config';
 import {TypeOfPosition} from '../../constants/type_of_position';
+import {getTimestamp} from '../../lib/common';
 import {IQuotation} from './quotation';
 
 export interface IApplyCloseCFDOrderData {
@@ -28,10 +29,10 @@ export const getDummyApplyCloseCFDOrderData = (currency: string, id?: string) =>
       targetAsset: typeOfPosition === TypeOfPosition.BUY ? currency : 'USDT',
       uniAsset: typeOfPosition === TypeOfPosition.BUY ? 'USDT' : currency,
       price: randomIntFromInterval(1000, 10000),
-      deadline: Date.now() / 1000 + RENEW_QUOTATION_INTERVAL_SECONDS,
+      deadline: getTimestamp() + 15,
       signature: '0x',
     }, // 報價單
-    closeTimestamp: Date.now() / 1000 + 86400, // openTimestamp + 86400
+    closeTimestamp: getTimestamp() + 86400, // openTimestamp + 86400
   };
   return dummyApplyCloseCFDOrderData;
 };

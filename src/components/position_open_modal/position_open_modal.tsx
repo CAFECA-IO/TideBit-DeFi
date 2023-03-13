@@ -33,17 +33,16 @@ import {ProfitState} from '../../constants/profit_state';
 interface IPositionOpenModal {
   modalVisible: boolean;
   modalClickHandler: () => void;
-  displayApplyCreateCFD: IDisplayApplyCFDOrder;
-  // openCfdRequest: IPublicCFDOrder;
-  // renewalDeadline: number;
+  openCfdRequest: IApplyCreateCFDOrderData;
+  renewalDeadline: number;
 }
 
 const PositionOpenModal = ({
   modalVisible,
   modalClickHandler,
-  displayApplyCreateCFD,
-  // openCfdRequest,
-  // renewalDeadline,
+  // displayApplyCreateCFD,
+  openCfdRequest,
+  renewalDeadline,
   ...otherProps
 }: IPositionOpenModal) => {
   const globalCtx = useGlobal();
@@ -55,7 +54,7 @@ const PositionOpenModal = ({
 
   const [lock, unlock] = locker('position_open_modal.UseEffect');
 
-  const displayedApplyCreateCfdData = displayApplyCreateCFD.data as IApplyCreateCFDOrderData;
+  // const displayedApplyCreateCfdData = displayApplyCreateCFD.data as IApplyCreateCFDOrderData;
 
   /** TODO: 
     // loading modal -> UserContext.function (負責簽名) ->
@@ -79,7 +78,12 @@ const PositionOpenModal = ({
     globalCtx.visibleLoadingModalHandler();
 
     // FIXME: Use the real and correct data after the param is confirmed
-    const result = await userCtx.createOrder({...dummyOpenCFDOrder});
+    // const dummyCFDOrder: IApplyCreateCFDOrderData = getDummyApplyCreateCFDOrderData(
+    //   marketCtx.selectedTicker?.currency || 'ETH'
+    // );
+    // eslint-disable-next-line no-console
+    // console.log(`position_open_modal dummyCFDOrder`, dummyCFDOrder);
+    const result = await userCtx.createCFDOrder(globalCtx.dataPositionOpenModal?.openCfdRequest);
     // console.log('result from userCtx in position_closed_modal.tsx: ', result);
 
     // TODO: temporary waiting
@@ -136,9 +140,9 @@ const PositionOpenModal = ({
     return;
   };
 
-  // const displayedGuaranteedStopSetting = !!openCfdRequest.guaranteedStop ? 'Yes' : 'No';
-  const displayedGuaranteedStopSetting =
-    displayedApplyCreateCfdData.guaranteedStop === true ? 'Yes' : 'No';
+  const displayedGuaranteedStopSetting = !!openCfdRequest.guaranteedStop ? 'Yes' : 'No';
+  // const displayedGuaranteedStopSetting =
+  //   displayedApplyCreateCfdData.guaranteedStop === true ? 'Yes' : 'No';
 
   const test: IDisplayApplyCFDOrder = {
     type: CFDOrderType.CREATE,
@@ -182,7 +186,7 @@ const PositionOpenModal = ({
   // const displayedTypeOfPosition =
   //   openCfdRequest?.typeOfPosition === TypeOfPosition.BUY ? 'Up (Buy)' : 'Down (Sell)';
   const displayedTypeOfPosition =
-    displayedApplyCreateCfdData.typeOfPosition === TypeOfPosition.BUY ? 'Up (Buy)' : 'Down (Sell)';
+    openCfdRequest.typeOfPosition === TypeOfPosition.BUY ? 'Up (Buy)' : 'Down (Sell)';
 
   // const displayedPnLColor =
   //   openCfdRequest?.pnl.type === 'PROFIT'
@@ -191,23 +195,18 @@ const PositionOpenModal = ({
   //     ? TypeOfPnLColor.LOSS
   //     : TypeOfPnLColor.EQUAL;
 
-  const displayedPositionColor =
-    displayedApplyCreateCfdData.typeOfPosition === TypeOfPosition.BUY
-      ? TypeOfPnLColor.PROFIT
-      : TypeOfPnLColor.LOSS;
+  const displayedPositionColor = 'text-tidebitTheme';
+  // openCfdRequest.typeOfPosition === TypeOfPosition.BUY
+  //   ? TypeOfPnLColor.PROFIT
+  //   : TypeOfPnLColor.LOSS;
 
-  const displayedBorderColor =
-    displayedApplyCreateCfdData?.typeOfPosition === TypeOfPosition.BUY
-      ? TypeOfBorderColor.LONG
-      : TypeOfBorderColor.SHORT;
+  const displayedBorderColor = TypeOfBorderColor.NORMAL;
+  // openCfdRequest.typeOfPosition === TypeOfPosition.BUY
+  //   ? TypeOfBorderColor.LONG
+  //   : TypeOfBorderColor.SHORT;
 
-  const displayedTakeProfit = displayedApplyCreateCfdData?.takeProfit
-    ? `$ ${displayedApplyCreateCfdData.takeProfit}`
-    : '-';
-
-  const displayedStopLoss = displayedApplyCreateCfdData?.stopLoss
-    ? `$ ${displayedApplyCreateCfdData.stopLoss}`
-    : '-';
+  const displayedTakeProfit = openCfdRequest.takeProfit ? `$ ${openCfdRequest.takeProfit}` : '-';
+  const displayedStopLoss = openCfdRequest.stopLoss ? `$ ${openCfdRequest.stopLoss}` : '-';
 
   const layoutInsideBorder = 'mx-5 my-4 flex justify-between';
 
@@ -235,30 +234,30 @@ const PositionOpenModal = ({
       ...dataRenewedWithoutExcludedProperties
     } = creatingData;
 
-    const applyData = {
-      ...displayApplyCreateCFD,
-      data: {
-        ...displayApplyCreateCFD.data,
-        ...dataRenewedWithoutExcludedProperties,
+    // const applyData = {
+    //   ...displayApplyCreateCFD,
+    //   data: {
+    //     ...displayApplyCreateCFD.data,
+    //     ...dataRenewedWithoutExcludedProperties,
 
-        // quotation: {
-        //   ticker: marketCtx.selectedTicker?.currency ?? '',
-        //   targetAsset: UNIT_ASSET,
-        //   uniAsset: marketCtx.selectedTicker?.currency ?? '',
-        //   price:
-        //     displayedApplyCreateCfdData.typeOfPosition === TypeOfPosition.BUY
-        //       ? Number(marketCtx.tickerLiveStatistics?.buyEstimatedFilledPrice) ?? 9999999999
-        //       : displayedApplyCreateCfdData.typeOfPosition === TypeOfPosition.SELL
-        //       ? Number(marketCtx.tickerLiveStatistics?.sellEstimatedFilledPrice) ?? 9999999999
-        //       : 9999999999,
+    //     // quotation: {
+    //     //   ticker: marketCtx.selectedTicker?.currency ?? '',
+    //     //   targetAsset: UNIT_ASSET,
+    //     //   uniAsset: marketCtx.selectedTicker?.currency ?? '',
+    //     //   price:
+    //     //     displayedApplyCreateCfdData.typeOfPosition === TypeOfPosition.BUY
+    //     //       ? Number(marketCtx.tickerLiveStatistics?.buyEstimatedFilledPrice) ?? 9999999999
+    //     //       : displayedApplyCreateCfdData.typeOfPosition === TypeOfPosition.SELL
+    //     //       ? Number(marketCtx.tickerLiveStatistics?.sellEstimatedFilledPrice) ?? 9999999999
+    //     //       : 9999999999,
 
-        //   deadline: Math.ceil(Date.now() / 1000) + RENEW_QUOTATION_INTERVAL_SECONDS,
-        //   signature: '0x',
-        // },
-      },
-    };
+    //     //   deadline: Math.ceil(Date.now() / 1000) + RENEW_QUOTATION_INTERVAL_SECONDS,
+    //     //   signature: '0x',
+    //     // },
+    //   },
+    // };
 
-    return applyData;
+    // return applyData;
   };
 
   const renewDataHandler = async () => {
@@ -278,21 +277,42 @@ const PositionOpenModal = ({
     setDataRenewedStyle('animate-flash text-lightYellow2');
     await wait(DELAYED_HIDDEN_SECONDS / 5);
 
-    // const newTimestamp = new Date().getTime() / 1000 + RENEW_QUOTATION_INTERVAL_SECONDS;
-    // setSecondsLeft(newTimestamp - Date.now() / 1000);
-    // setSecondsLeft(Math.round(creatingData.quotation.deadline - Date.now() / 1000));
-    setSecondsLeft(Math.round(applyData.data.quotation.deadline - Date.now() / 1000));
+    const newTimestamp = Math.ceil(new Date().getTime() / 1000) + RENEW_QUOTATION_INTERVAL_SECONDS;
+    setSecondsLeft(newTimestamp - Date.now() / 1000);
 
     // TODO: get latest price from marketCtx and calculate required margin data
     // FIXME: 應用 ?? 代替 !
     globalCtx.dataPositionOpenModalHandler({
-      displayApplyCreateCFD: {
-        ...applyData,
-        // data: {
-        //   ...displayApplyCreateCFD.data,
-        //   ...dataRenewedWithoutExcludedProperties,
-        // },
+      openCfdRequest: {
+        ...openCfdRequest,
+        price:
+          openCfdRequest.typeOfPosition === TypeOfPosition.BUY
+            ? randomIntFromInterval(
+                marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice * 0.75,
+                marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice * 1.25
+              )
+            : openCfdRequest.typeOfPosition === TypeOfPosition.SELL
+            ? randomIntFromInterval(
+                marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice * 1.1,
+                marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice * 1.25
+              )
+            : 999999,
+        margin: {
+          ...openCfdRequest.margin,
+          amount: randomIntFromInterval(
+            openCfdRequest.margin.amount * 0.9,
+            openCfdRequest.margin.amount * 1.5
+          ),
+        },
+        // TODO:
+        // margin:
+        //   openCfdRequest.typeOfPosition === TypeOfPosition.BUY
+        //     ? (openCfdRequest.amount * marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice) /
+        //       openCfdRequest.leverage
+        //     : (openCfdRequest.amount * marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice) /
+        //       openCfdRequest.leverage,
       },
+      renewalDeadline: newTimestamp,
     });
 
     setDataRenewedStyle('text-lightYellow2');
@@ -328,7 +348,7 @@ const PositionOpenModal = ({
     const intervalId = setInterval(() => {
       // setSecondsLeft(prevSeconds => prevSeconds - 1);
 
-      const base = displayedApplyCreateCfdData.quotation.deadline;
+      const base = openCfdRequest.quotation.deadline;
       const tickingSec = base - Date.now() / 1000;
       setSecondsLeft(tickingSec > 0 ? Math.round(tickingSec) : 0);
 
@@ -397,10 +417,7 @@ const PositionOpenModal = ({
               <div className="text-lightGray">Open Price</div>
               <div className={`${dataRenewedStyle}`}>
                 {/* TODO: Hardcode USDT */}${' '}
-                {displayedApplyCreateCfdData?.price?.toLocaleString(
-                  UNIVERSAL_NUMBER_FORMAT_LOCALE
-                ) ?? 0}{' '}
-                USDT
+                {openCfdRequest.price?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0} USDT
               </div>
             </div>
 
@@ -408,7 +425,7 @@ const PositionOpenModal = ({
               <div className="text-lightGray">Amount</div>
               <div className="">
                 {/* TODO:{openCfdRequest?.amount?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0} */}
-                {displayedApplyCreateCfdData.amount.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}{' '}
+                {openCfdRequest.amount}
               </div>
             </div>
 
@@ -416,8 +433,7 @@ const PositionOpenModal = ({
               <div className="text-lightGray">Required Margin</div>
               {/* TODO: Hardcode USDT */}
               <div className={`${dataRenewedStyle}`}>
-                $ {displayedApplyCreateCfdData.margin.amount.toFixed(2)}{' '}
-                {displayedApplyCreateCfdData.margin.asset}
+                $ {openCfdRequest.margin.amount.toFixed(2)} USDT
               </div>
             </div>
 
@@ -438,7 +454,7 @@ const PositionOpenModal = ({
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">Liquidation Price</div>
               {/* TODO: Liquidation Price */}
-              <div className="">$ {displayedApplyCreateCfdData.liquidationPrice}</div>
+              <div className="">$ {openCfdRequest.liquidationPrice}</div>
             </div>
 
             <div className={`${layoutInsideBorder}`}>

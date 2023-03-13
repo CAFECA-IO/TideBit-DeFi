@@ -64,8 +64,8 @@ const PositionUpdatedModal = ({
     globalCtx.visibleLoadingModalHandler();
 
     // FIXME: the guaranteedStop should be removed
-    const result = await userCtx.updateOrder({
-      id: openCfdDetails.id,
+    const result = await userCtx.updateCFDOrder({
+      orderId: openCfdDetails.id,
       ...updatedProps,
       guaranteedStop: updatedProps?.guaranteedStopLoss ?? false,
     });
@@ -97,7 +97,7 @@ const PositionUpdatedModal = ({
         btnUrl: '#',
       });
 
-      globalCtx.dataPositionDetailsModalHandler(userCtx.getOpendCFD(openCfdDetails.id));
+      // globalCtx.dataPositionDetailsModalHandler(userCtx.getOpendCFD(openCfdDetails.id));
 
       globalCtx.visibleSuccessfulModalHandler();
       await wait(DELAYED_HIDDEN_SECONDS);
@@ -228,15 +228,15 @@ const PositionUpdatedModal = ({
   //     ? TypeOfPnLColor.LOSS
   //     : TypeOfPnLColor.EQUAL;
 
-  const displayedPositionColor =
-    openCfdDetails.typeOfPosition === TypeOfPosition.BUY
-      ? TypeOfPnLColor.PROFIT
-      : TypeOfPnLColor.LOSS;
+  const displayedPositionColor = 'text-lightWhite';
+  // openCfdDetails.typeOfPosition === TypeOfPosition.BUY
+  //   ? TypeOfPnLColor.PROFIT
+  //   : TypeOfPnLColor.LOSS;
 
-  const displayedBorderColor =
-    openCfdDetails?.typeOfPosition === TypeOfPosition.BUY
-      ? TypeOfBorderColor.LONG
-      : TypeOfBorderColor.SHORT;
+  const displayedBorderColor = TypeOfBorderColor.NORMAL;
+  // openCfdDetails?.typeOfPosition === TypeOfPosition.BUY
+  //   ? TypeOfBorderColor.LONG
+  //   : TypeOfBorderColor.SHORT;
 
   const layoutInsideBorder = 'mx-5 my-4 flex justify-between';
 

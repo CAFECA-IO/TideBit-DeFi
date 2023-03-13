@@ -5,6 +5,7 @@ import NavBar from '../components/nav_bar/nav_bar';
 import {serverSideTranslations} from 'next-i18next/serverSideTranslations';
 import Footer from '../components/footer/footer';
 import {AppContext} from '../contexts/app_context';
+import {ILocale} from '../interfaces/tidebit_defi_background/json';
 
 // TODO: layoutAssertion
 // TODO: AppInit
@@ -26,7 +27,7 @@ const Custom404 = () => {
   );
 };
 
-const getStaticPropsFunction = async ({locale}: {locale: any}) => ({
+const getStaticPropsFunction = async ({locale}: ILocale) => ({
   props: {
     ...(await serverSideTranslations(locale, ['common', 'footer'])),
   },

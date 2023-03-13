@@ -22,6 +22,7 @@ let dummyBalanceInterval = null;
 let dummyCFDsInterval = null;
 
 const dummyTickerUpdate = (currency, socket) => {
+  // TODO: remove interval dummy data push
   try {
     if (!publicUsers[socket.id]) publicUsers[socket.id] = {};
     publicUsers[socket.id][`currency`] = currency;
@@ -33,36 +34,38 @@ const dummyTickerUpdate = (currency, socket) => {
       socket.emit(TideBitEvent.TICKER_STATISTIC, getDummyTickerStatic(currency));
       socket.emit(TideBitEvent.TICKER_LIVE_STATISTIC, getDummyTickerLiveStatistics(currency));
       socket.emit(TideBitEvent.CANDLESTICK, getDummyCandlestickChartData()); // ++ 會導致 waring of [Violation] 'message' handler took
-    }, 1000);
+    }, 1000 * 60 * 60);
   } catch (error) {
     console.error(`received dummyTickerUpdate error`, error);
   }
 };
 
 const dummyUserBalanceUpdate = socket => {
+  // TODO: remove interval dummy data push
   dummyBalanceInterval = setInterval(() => {
     socket.emit(TideBitEvent.BALANCE, {
       available: parseInt((Math.random() * 1000).toFixed(2)),
       locked: parseInt((Math.random() * 1000).toFixed(2)),
       PNL: parseInt((Math.random() * 1000).toFixed(2)),
     });
-  }, 5000);
+  }, 1000 * 60 * 60);
 };
 
 const dummyCFDsUpdate = socket => {
-  dummyCFDsInterval = setInterval(() => {
-    if (publicUsers[socket.id].currency) {
-      const random = Math.random() > 0.5;
-      socket.emit(TideBitEvent.ORDER, {
-        orderType: OrderType.CFD,
-        orderState: random ? OrderState.OPENING : OrderState.CLOSED,
-        modifyType: ModifyType.Add,
-        orders: random
-          ? getDummyOpenCFDs(publicUsers[socket.id].currency, 1)
-          : getDummyClosedCFDs(publicUsers[socket.id].currency, 1),
-      });
-    }
-  }, 5000);
+  // TODO: remove dummy data push
+  // dummyCFDsInterval = setInterval(() => {
+  if (publicUsers[socket.id].currency) {
+    const random = Math.random() > 0.5;
+    socket.emit(TideBitEvent.ORDER, {
+      orderType: OrderType.CFD,
+      orderState: random ? OrderState.OPENING : OrderState.CLOSED,
+      modifyType: ModifyType.Add,
+      orders: random
+        ? getDummyOpenCFDs(publicUsers[socket.id].currency, 1)
+        : getDummyClosedCFDs(publicUsers[socket.id].currency, 1),
+    });
+  }
+  // }, 5000);
 };
 
 const registerPublicUser = socket => {
@@ -119,12 +122,6 @@ const ioHandler = (req, res) => {
     console.log('socket.io already running');
   }
   res.end();
-};
-
-export const config = {
-  api: {
-    bodyParser: false,
-  },
 };
 
 export default ioHandler;

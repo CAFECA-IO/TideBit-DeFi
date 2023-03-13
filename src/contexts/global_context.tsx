@@ -2,7 +2,7 @@ import {createContext, useState, useEffect, useContext, Dispatch, SetStateAction
 import useWindowSize from '../lib/hooks/use_window_size';
 import {LAYOUT_BREAKPOINT} from '../constants/display';
 import {ToastContainer, toast as toastify} from 'react-toastify';
-import PositionDetailsModal from '../components/position_details_modal/position_details_modal';
+import UpdatedFormModal from '../components/update_form_modal/update_form_modal';
 import {MarketContext} from './market_context';
 import Toast from '../components/toast/toast';
 import LoadingModal from '../components/loading_modal/loading_modal';
@@ -37,15 +37,20 @@ import {ProfitState} from '../constants/profit_state';
 import {OrderType} from '../constants/order_type';
 import {OrderStatusUnion} from '../constants/order_status_union';
 import {TypeOfPosition} from '../constants/type_of_position';
-import {
-  IDisplayApplyCFDOrder,
-  getDummyDisplayApplyCreateCFDOrder,
-} from '../interfaces/tidebit_defi_background/display_apply_cfd_order';
-import {getDummyApplyCreateCFDOrderData} from '../interfaces/tidebit_defi_background/apply_create_cfd_order_data';
+import {ICryptocurrency} from '../interfaces/tidebit_defi_background/cryptocurrency';
+import {getTimestamp} from '../lib/common';
 import {
   IDisplayAcceptedCFDOrder,
   getDummyDisplayAcceptedCFDOrder,
 } from '../interfaces/tidebit_defi_background/display_accepted_cfd_order';
+import {
+  IDisplayApplyCFDOrder,
+  getDummyDisplayApplyCreateCFDOrder,
+} from '../interfaces/tidebit_defi_background/display_apply_cfd_order';
+import {
+  IApplyCreateCFDOrderData,
+  getDummyApplyCreateCFDOrderData,
+} from '../interfaces/tidebit_defi_background/apply_create_cfd_order_data';
 
 export interface IToastify {
   type: 'error' | 'warning' | 'info' | 'success';
@@ -74,6 +79,8 @@ export interface IUpdatedCFDInputProps {
 export interface IDataPositionUpdatedModal {
   openCfdDetails: IOpenCFDDetails;
   updatedProps?: IUpdatedCFDInputProps;
+  // openCfdDetails: IDisplayAcceptedCFDOrder;
+  // updatedProps?: IApplyUpdateCFDOrderData;
 }
 
 export interface IClosedCFDInfoProps {
@@ -87,37 +94,19 @@ export interface IDataPositionClosedModal {
   displayApplyCloseCFD: IDisplayApplyCFDOrder;
   openCfdDetails: IOpenCFDDetails;
   latestProps: IClosedCFDInfoProps;
+  // openCfdDetails: IDisplayAcceptedCFDOrder;
+  // latestProps: IApplyCloseCFDOrderData;
+  // renewalDeadline: number;
 }
 
 export interface IDataPositionOpenModal {
-  // openCfdRequest: IPublicCFDOrder;
-  // renewalDeadline: number;
-  displayApplyCreateCFD: IDisplayApplyCFDOrder;
+  openCfdRequest: IApplyCreateCFDOrderData;
+  renewalDeadline: number;
 }
 
 export const dummyDataPositionOpenModal: IDataPositionOpenModal = {
-  // openCfdRequest: {
-  //   id: '001',
-  //   orderType: OrderType.CFD,
-  //   orderStatus: OrderStatusUnion.PROCESSING,
-  //   ticker: 'ETH',
-  //   price: 20193.1,
-  //   liquidationPrice: 16332.5,
-  //   amount: 27,
-  //   // triggerPrice: 20193.1,
-  //   typeOfPosition: TypeOfPosition.SELL,
-  //   leverage: 5,
-  //   margin: 35766,
-  //   marginUnit: 'USDT',
-  //   guaranteedStop: true,
-  //   // estimatedFilledPrice: 1,
-  //   fee: 0.0001,
-  //   targetUnit: 'ETH',
-  //   chargeUnit: 'USDT',
-  //   createdTime: 1676369333495,
-  // },
-  // renewalDeadline: new Date('2023-02-24T17:00:00').getTime(),
-  displayApplyCreateCFD: getDummyDisplayApplyCreateCFDOrder('BTC'),
+  openCfdRequest: getDummyApplyCreateCFDOrderData('ETH'),
+  renewalDeadline: new Date('2023-02-24T17:00:00').getTime(),
 };
 
 export const dummyDataPositionClosedModal: IDataPositionClosedModal = {
@@ -141,6 +130,8 @@ export const dummyDataPositionUpdatedModal: IDataPositionUpdatedModal = {
     stopLoss: 0,
     guaranteedStopLoss: false,
   },
+  // openCfdDetails: getDummyDisplayAcceptedCFDOrder('ETH'),
+  // updatedProps: getDummyApplyUpdateCFDOrderData('ETH'),
 };
 
 export interface ISuccessfulModal {
@@ -296,6 +287,9 @@ export interface IGlobalContext {
   visiblePositionDetailsModalHandler: () => void;
   dataPositionDetailsModal: IOpenCFDDetails | null;
   dataPositionDetailsModalHandler: (data: IOpenCFDDetails) => void;
+
+  // dataPositionDetailsModal: IDisplayAcceptedCFDOrder | null;
+  // dataPositionDetailsModalHandler: (data: IDisplayAcceptedCFDOrder) => void;
 
   visibleDepositModal: boolean;
   visibleDepositModalHandler: () => void;
@@ -531,6 +525,8 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
 
   const [visiblePositionDetailsModal, setVisiblePositionDetailsModal] = useState(false);
   // TODO: replace dummy data with standard example data
+  // const [dataPositionDetailsModal, setDataPositionDetailsModal] =
+  //   useState<IDisplayAcceptedCFDOrder>(getDummyDisplayAcceptedCFDOrder('ETH'));
   const [dataPositionDetailsModal, setDataPositionDetailsModal] =
     useState<IOpenCFDDetails>(dummyOpenCFDDetails);
 
@@ -682,6 +678,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     setVisiblePositionDetailsModal(!visiblePositionDetailsModal);
   };
   const dataPositionDetailsModalHandler = (data: IOpenCFDDetails) => {
+    //(data: IDisplayAcceptedCFDOrder) => {
     setDataPositionDetailsModal(data);
   };
 
@@ -878,17 +875,35 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     setDepositProcess(state);
   };
 
-  // TODO: send deposit request
-  const depositSubmitHandler = (props: {asset: string; amount: number}) => {
-    // setDepositProcess('loading');
-    // console.log('deposit handler:', props);
-    // toast({type: 'info', message: JSON.stringify(props)});
+  const depositSubmitHandler = (props: {asset: ICryptocurrency; amount: number}) => {
+    setDepositProcess('loading');
+    userCtx
+      .deposit({
+        orderType: OrderType.DEPOSIT,
+        createTimestamp: getTimestamp(),
+        targetAsset: props.asset.symbol,
+        decimals: props.asset.decimals,
+        to: props.asset.contract,
+        targetAmount: props.amount,
+        remark: '',
+        fee: 0,
+      })
+      .then(_ => setDepositProcess('success'));
   };
 
-  // TODO: send withdrawal request
-  const withdrawSubmitHandler = (props: {asset: string; amount: number}) => {
-    // console.log('withdraw handler:', props);
-    // setWithdrawProcess('loading');
+  const withdrawSubmitHandler = (props: {asset: ICryptocurrency; amount: number}) => {
+    setWithdrawProcess('loading');
+    userCtx
+      .withdraw({
+        orderType: OrderType.WITHDRAW,
+        createTimestamp: getTimestamp(),
+        targetAsset: props.asset.symbol,
+        to: props.asset.contract,
+        targetAmount: props.amount,
+        remark: '',
+        fee: 0,
+      })
+      .then(_ => setDepositProcess('success'));
     // setTimeout(() => {
     //   setWithdrawProcess('success');
     //   setTimeout(() => {
@@ -1087,7 +1102,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
         helloClickHandler={visibleHelloModalHandler}
       />
 
-      <PositionDetailsModal
+      <UpdatedFormModal
         modalVisible={visiblePositionDetailsModal}
         modalClickHandler={visiblePositionDetailsModalHandler}
         openCfdDetails={dataPositionDetailsModal}
@@ -1100,9 +1115,9 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
       <PositionOpenModal
         modalVisible={visiblePositionOpenModal}
         modalClickHandler={visiblePositionOpenModalHandler}
-        displayApplyCreateCFD={dataPositionOpenModal.displayApplyCreateCFD}
-        // openCfdRequest={dataPositionOpenModal.openCfdRequest}
-        // renewalDeadline={dataPositionOpenModal.renewalDeadline}
+        // displayApplyCreateCFD={dataPositionOpenModal.displayApplyCreateCFD}
+        openCfdRequest={dataPositionOpenModal.openCfdRequest}
+        renewalDeadline={dataPositionOpenModal.renewalDeadline}
       />
       <PositionClosedModal
         modalVisible={visiblePositionClosedModal}
@@ -1111,6 +1126,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
         displayApplyCloseCFD={dataPositionClosedModal.displayApplyCloseCFD}
         openCfdDetails={dataPositionClosedModal.openCfdDetails}
         latestProps={dataPositionClosedModal.latestProps}
+        // renewalDeadline={dataPositionClosedModal.renewalDeadline}
       />
       <PositionUpdatedModal
         modalVisible={visiblePositionUpdatedModal}

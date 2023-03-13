@@ -1,3 +1,5 @@
+import IJSON from './ijson';
+
 const sample: IEIP712Data = {
   domain: {
     // Defining the chain aka Rinkeby testnet or Ethereum Main Net
@@ -54,7 +56,7 @@ const sample: IEIP712Data = {
 
 interface IEIP712Data {
   domain: IDomain;
-  message: IMessage;
+  message: IJSON;
   primaryType: string;
   types: ITypes;
 }
@@ -80,6 +82,7 @@ interface ITypes {
 interface IType {
   name: string;
   type: string;
+  optional?: boolean;
 }
 
 export default IEIP712Data;

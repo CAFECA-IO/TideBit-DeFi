@@ -5,9 +5,7 @@ import {UserContext} from '../../contexts/user_context';
 const HistorySubTabMobile = () => {
   const userCtx = useContext(UserContext);
   const historyPositionList = userCtx.closedCFDs.map(cfd => (
-    <div key={cfd.id}>
-      <HistoryPositionItem closedCfdDetails={cfd} />
-    </div>
+    <div key={cfd.id}>{/* <HistoryPositionItem closedCfdDetails={cfd} /> */}</div>
   ));
 
   return (

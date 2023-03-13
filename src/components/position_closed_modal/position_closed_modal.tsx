@@ -27,7 +27,10 @@ import {
   IDisplayApplyCFDOrder,
   getDummyDisplayApplyCloseCFDOrder,
 } from '../../interfaces/tidebit_defi_background/display_apply_cfd_order';
-import {IApplyCloseCFDOrderData} from '../../interfaces/tidebit_defi_background/apply_close_cfd_order_data';
+import {
+  IApplyCloseCFDOrderData,
+  getDummyApplyCloseCFDOrderData,
+} from '../../interfaces/tidebit_defi_background/apply_close_cfd_order_data';
 
 interface IPositionClosedModal {
   modalVisible: boolean;
@@ -87,14 +90,13 @@ const PositionClosedModal = ({
       : TypeOfPnLColor.EQUAL;
 
   const displayedBorderColor =
-    openCfdDetails?.typeOfPosition === TypeOfPosition.BUY
+    openCfdDetails?.pnl.type === ProfitState.PROFIT
       ? TypeOfBorderColor.LONG
-      : TypeOfBorderColor.SHORT;
+      : openCfdDetails?.pnl.type === ProfitState.LOSS
+      ? TypeOfBorderColor.SHORT
+      : TypeOfBorderColor.NORMAL;
 
-  const displayedPositionColor =
-    openCfdDetails.typeOfPosition === TypeOfPosition.BUY
-      ? TypeOfPnLColor.PROFIT
-      : TypeOfPnLColor.LOSS;
+  const displayedPositionColor = 'text-tidebitTheme';
 
   const layoutInsideBorder = 'mx-5 my-4 flex justify-between';
 
@@ -120,7 +122,9 @@ const PositionClosedModal = ({
     });
     globalCtx.visibleLoadingModalHandler();
 
-    const result = await userCtx.closeOrder({id: openCfdDetails.id});
+    const result = await userCtx.closeCFDOrder(
+      getDummyApplyCloseCFDOrderData(marketCtx.selectedTicker?.currency ?? '')
+    );
     // console.log('result from userCtx in position_closed_modal.tsx: ', result);
 
     // TODO: temporary waiting
@@ -148,7 +152,7 @@ const PositionClosedModal = ({
         btnUrl: '#',
       });
 
-      globalCtx.dataHistoryPositionModalHandler(userCtx.getClosedCFD(openCfdDetails.id));
+      // globalCtx.dataHistoryPositionModalHandler(userCtx.getClosedCFD(openCfdDetails.id));
 
       globalCtx.visibleSuccessfulModalHandler();
       await wait(DELAYED_HIDDEN_SECONDS);

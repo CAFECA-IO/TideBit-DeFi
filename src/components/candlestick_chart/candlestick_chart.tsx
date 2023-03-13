@@ -87,7 +87,6 @@ export const updateDummyCandlestickChartData = (data: ICandlestickData[]): ICand
   const nullNum = 1;
   const nullTime = 10;
 
-  // TODO: 加一筆 null data 就好
   const withNullData = [
     ...originWithoutNull,
     newCandlestickData,
@@ -528,9 +527,9 @@ export default function CandlestickChart({
               <VictoryTooltip
                 // backgroundStyle={{fill: '#000000'}}
                 cornerRadius={0}
-                center={{x: 170, y: -10}}
-                // x={26}
-                // y={-10}
+                // center={{x: 170, y: -10}}
+                x={26}
+                y={-10}
                 flyoutStyle={{
                   stroke: 'none',
                   fill: '#000000',
@@ -589,11 +588,14 @@ export default function CandlestickChart({
         {/* Not working and some errors */}
         {/* {toLatestPriceLineDataRef.current && (
           <OpenPriceLine
-            horizontalData={
-              toLatestPriceLineDataRef.current ? toLatestPriceLineDataRef.current : []
-            }
+            horizontalData={userOpenPriceLine}
+            // horizontalData={
+            //   toLatestPriceLineDataRef.current ? toLatestPriceLineDataRef.current : []
+            // }
           />
         )} */}
+
+        {/* <OpenPriceLine horizontalData={userOpenPriceLine} /> */}
 
         {/* TODO: User open position line on charts (20230310 - Shirley) */}
         {/* <VictoryLine

@@ -322,134 +322,6 @@ export default function CandlestickChart({
     },
   };
 
-  /* TODO: (20230310 - Shirley) finish the lottie animation on charts
-  // Info: Use useRef to reference the SVG element, the Lottie container element, and the Lottie animation object
-  const svgRef = useRef<SVGSVGElement>(null);
-  const lottieContainerRef = useRef<HTMLDivElement>(null);
-  const lottieAnimationRef = useRef<Animation>();
-  const [options, setOptions] = useState<any>({
-    container: lottieContainerRef.current as Element,
-    // renderer: svgRef.current as SVGElement,
-    loop: true,
-    autoplay: true,
-    // import spotAnimation from '../../../public/animation/circle.json';
-
-     // animationData: spotAnimation,
-     animationData: require('../../../public/animation/circle.json'),
-   })
-
-   useEffect(() => {
-     // !toCandlestickChartDataRef.current &&
-     // toCandlestickChartDataRef.current?.length === 0
-     // [important to fix bug] Check if the candlestick chart data is empty
-     if (!toCandlestickChartDataRef.current) return;
-
-     // Use the useRef hooks to access the current values of the SVG element and the Lottie container element
-     const svgElement = svgRef.current;
-     // const lottieContainerElement = lottieContainerRef.current;
-
-     // console.log('toCandlestickChartData', toCandlestickChartData);
-
-     // Check if the SVG element (THE candlestick chart) exists
-     if (svgElement) {
-       // Get the data for the latest candlestick
-       const latestCandle =
-         toCandlestickChartDataRef.current[toCandlestickChartDataRef.current.length - 2];
-       const {x, high, low} = latestCandle;
-       if (high === null || low === null) {
-         console.log('high or low is null', {high, low});
-         return;
-       }
-
-       console.log('last candle', latestCandle);
-
-       const xTime = x.getTime();
-
-       // Calculate the x and y coordinates of the top of the latest candlestick relative to the SVG element
-       const rect = svgElement?.getBoundingClientRect();
-       console.log('rect', rect);
-       if (!rect) return;
-
-       const gElements = svgElement.querySelectorAll('g'); // select all <g> elements within the SVG
-       const lastGElement = gElements[gElements.length - 2]; // select the last <g> element
-       console.log('g in candlestick chart', gElements);
-       console.log('last g in candlestick chart', lastGElement);
-
-       // Calculate the x and y coordinates of the top of the latest candlestick relative to the SVG element
-       const xCoord = rect.x + ((xTime - 1) / toCandlestickChartDataRef.current.length) * rect.width; // calculate the x coordinate of the latest candle
-       const yCoord = rect.y + (1 - high / (rect.height - rect.y)) * rect.height; // calculate the y coordinate of the top of the latest candle
-
-       console.log('x, y coordiante', xCoord, yCoord);
-
-       // If the Lottie container element exists, set its position to the calculated x and y coordinates
-       const lottieContainerElement = lottieContainerRef.current;
-       if (lottieContainerElement) {
-         lottieContainerElement.style.position = 'absolute';
-         lottieContainerElement.style.left = `${xCoord}px`;
-         lottieContainerElement.style.top = `${yCoord}px`;
-       }
-
-       console.log(
-         'lottie coord',
-         lottieContainerElement?.style.left,
-         lottieContainerElement?.style.top
-       );
-     }
-
-     // const options = {
-     //   container: lottieContainerRef.current as Element,
-     //   // renderer: svgRef.current as SVGElement,
-     //   loop: true,
-     //   autoplay: true,
-     //   // import spotAnimation from '../../../public/animation/circle.json';
-
-     //   animationData: spotAnimation,
-     // };
-
-     // const {View} = useLottie(options);
-
-     // lottieAnimationRef.current = View
-
-     // lottie.loadAnimation({
-     //   container: lottieContainerElement as Element,
-     //   renderer: 'svg',
-     //   loop: true,
-     //   autoplay: true,
-     //   animationData: require('./path/to/lottie/animation.json')
-     // });
-
-     // Use a cleanup function to destroy the Lottie animation object when the component unmounts
-     // return () => {
-     //   if (lottieAnimationRef.current) {
-     //     lottieAnimationRef.current.destroy();
-     //   }
-     // };
-   }, [marketCtx.candlestickChartData]);
-
-   const options = {
-     container: lottieContainerRef.current as Element,
-     // renderer: svgRef.current as SVGElement,
-     loop: true,
-     autoplay: true,
-     // import spotAnimation from '../../../public/animation/circle.json';
-
-     // animationData: spotAnimation,
-     animationData: require('../../../public/animation/circle.json'),
-   };
-
-   console.log('options', options);
-
-   const {View} = useLottie(options);
-   console.log('before `isDisplayedCharts`, candle Ref:', candlestickChartDataRef.current); // undefined
-   console.log('before `isDisplayedCharts` , market Ctx:', marketCtx.candlestickChartData); // null
-   console.log(
-     'before `isDisplayedCharts` , trimmed market Ctx:',
-     trimCandlestickData({data: marketCtx?.candlestickChartData ?? [], requiredDataNum: 30})
-   );
-
-   console.log('candlestickChartDataRef length', candlestickChartDataRef.current?.length);
-*/
-
   const isDisplayedCharts =
     candlestickChartDataRef.current && candlestickChartDataRef.current?.length > 0 ? (
       <VictoryChart
@@ -619,9 +491,9 @@ export default function CandlestickChart({
 
         <VictoryLine
           /* Till: (20230327 - Shirley)
-          // animate={{
-          //   duration: 1000,
-          // }}
+            animate={{
+              duration: 1000,
+            }}
           */
           style={{
             data: {stroke: LINE_GRAPH_STROKE_COLOR.TIDEBIT_THEME, strokeWidth: 1},
@@ -674,26 +546,6 @@ export default function CandlestickChart({
         </div>{' '} */}
 
         {isDisplayedCharts}
-        {/* TODO: (20230310 - Shirley) SVG location 
-         <svg ref={svgRef} /> 
-         <svg ref={svgRef} width={800} height={30} fill="#c43a31">
-          <rect width={800} height={30} fill="#c43a31" />
-        </svg> 
-         <svg>
-          <defs>
-            <linearGradient id="radial_gradient" gradientTransform="rotate(90)">
-              <stop offset="0%" stop-color="#190b28" />
-              <stop offset="25%" stop-color="#190b28" />
-              <stop offset="25%" stop-color="#434238" />
-              <stop offset="50%" stop-color="#434238" />
-              <stop offset="50%" stop-color="#334110" />
-              <stop offset="75%" stop-color="#334110" />
-              <stop offset="75%" stop-color="#524800" />
-              <stop offset="100%" stop-color="#524800" />
-            </linearGradient>
-          </defs>
-        </svg> 
-        */}
       </div>
     </>
   );

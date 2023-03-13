@@ -7,6 +7,7 @@ import {
   LINE_GRAPH_STROKE_COLOR,
   TRADING_CHART_BORDER_COLOR,
   TypeOfPnLColorHex,
+  UNIVERSAL_NUMBER_FORMAT_LOCALE,
 } from '../../constants/display';
 import {BsFillArrowDownCircleFill, BsFillArrowUpCircleFill} from 'react-icons/bs';
 import {MarketContext, MarketProvider} from '../../contexts/market_context';
@@ -29,6 +30,8 @@ import {
   VictoryCursorContainer,
 } from 'victory';
 import {AppContext} from '../../contexts/app_context';
+import OpenPriceLabel from '../open_price_label/open_price_label';
+import Image from 'next/image';
 
 interface ITradingChartGraphProps {
   strokeColor: string[];
@@ -450,6 +453,10 @@ export default function CandlestickChart({
    console.log('candlestickChartDataRef length', candlestickChartDataRef.current?.length);
 */
 
+  const PriceLabel = ({x, y}: {x: number; y: number}) => (
+    <rect x={x - 5} y={y} width={10} height={10} />
+  );
+
   const isDisplayedCharts =
     candlestickChartDataRef.current && candlestickChartDataRef.current?.length > 0 ? (
       <VictoryChart
@@ -485,7 +492,13 @@ export default function CandlestickChart({
           }}
           tickFormat={t => ` ${timestampToString(t / 1000).time}`}
         />
-        <VictoryAxis offsetX={Number(candlestickChartWidth) - 50} dependentAxis />
+        <VictoryAxis
+          tickLabelComponent={<VictoryLabel dx={45} />}
+          offsetX={Number(candlestickChartWidth) - 50}
+          dependentAxis
+          // tickValues={[minNumber, maxNumber]}
+          // tickLabelComponent={<OpenPriceLabel x={1000} />}
+        />
 
         {candlestickOn && (
           <VictoryCandlestick
@@ -580,24 +593,6 @@ export default function CandlestickChart({
           />
         )}
 
-        {/* TODO: User open position line on charts (20230310 - Shirley)  */}
-        <VictoryLine
-          style={{
-            data: {stroke: EXAMPLE_BLUE_COLOR, strokeWidth: 1, strokeDasharray: '2,2'},
-            // parent: {border: '1px solid #ccc'},
-          }}
-          data={userOpenPriceLine}
-          // data={new Array(30)
-          //   .fill(0)
-          //   .map((v, index) => {
-          //     return {
-          //       x: new Date(new Date().getTime() - index * 1000),
-          //       y: 10000,
-          //     };
-          //   })
-          //   .reverse()}
-        />
-
         {lineGraphOn && (
           <VictoryLine
             animate={{
@@ -637,6 +632,12 @@ export default function CandlestickChart({
                 toLatestPriceLineDataRef?.current[toLatestPriceLineDataRef?.current?.length - 1].x
                   ? 'transparent'
                   : 'transparent',
+              // opacity: 0.5,
+            },
+            labels: {
+              opacity: 0.5,
+              fill: 'transparent',
+              // fillOpacity: 0.5,
             },
           }}
           labels={({datum}) =>
@@ -651,9 +652,66 @@ export default function CandlestickChart({
               style={{
                 fill: LINE_GRAPH_STROKE_COLOR.DEFAULT,
                 fontSize: 10,
+                // opacity: 0.5,
               }}
               backgroundStyle={{fill: LINE_GRAPH_STROKE_COLOR.TIDEBIT_THEME}} // Info: sets the background style
               backgroundPadding={{top: 8, bottom: 5, left: 5, right: 5}} // Info: sets the background padding
+            />
+          }
+        />
+
+        {/* TODO: User open position line on charts (20230310 - Shirley)  */}
+        <VictoryLine
+          style={{
+            data: {stroke: EXAMPLE_BLUE_COLOR, strokeWidth: 1, strokeDasharray: '2,2'},
+            // parent: {border: '1px solid #ccc'},
+          }}
+          data={userOpenPriceLine}
+          // data={new Array(30)
+          //   .fill(0)
+          //   .map((v, index) => {
+          //     return {
+          //       x: new Date(new Date().getTime() - index * 1000),
+          //       y: 10000,
+          //     };
+          //   })
+          //   .reverse()}
+        />
+
+        <VictoryScatter
+          style={{data: {fill: 'transparent'}, labels: {background: 'transparent'}}}
+          data={userOpenPriceLine}
+          // `⬆️⬆&#xf436; ${datum.y}`
+          labels={({datum}) =>
+            datum.x === userOpenPriceLine[userOpenPriceLine.length - 1].x
+              ? `Position $${datum.y.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}`
+              : ``
+          }
+          // dataComponent={<OpenPriceLabel x={Number(candlestickChartWidth) - 68} />}
+          labelComponent={
+            // <OpenPriceLabel x={Number(candlestickChartWidth) - 68} />
+            <VictoryLabel
+              // backgroundComponent={
+              //   // <Image src="/elements/tether-seeklogo.com.svg" width={12} height={12} alt="icon" />
+              // }
+              backgroundComponent={
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="-3 0 32 32">
+                  <path d="M26.221 16c0-7.243-5.871-13.113-13.113-13.113S-.005 8.757-.005 16c0 7.242 5.871 13.113 13.113 13.113S26.221 23.242 26.221 16zM1.045 16c0-6.652 5.412-12.064 12.064-12.064S25.173 9.348 25.173 16s-5.411 12.064-12.064 12.064C6.457 28.064 1.045 22.652 1.045 16z"></path>
+                  <path d="M18.746 15.204l.742-.742-6.379-6.379-6.378 6.379.742.742 5.112-5.112v12.727h1.049V10.092z"></path>
+                </svg>
+                // <rect x={5} y={5} width={10} height={10} />
+                // <img src="/elements/tether-seeklogo.com.svg" width={12} height={12} alt="icon" />
+              }
+              x={Number(candlestickChartWidth) - 90}
+              style={{
+                fill: LINE_GRAPH_STROKE_COLOR.DEFAULT,
+                fontSize: 14,
+                // backgroundImage: 'linear-gradient(90deg, #000000 0%, #000000 100%)',
+                // opacity: 0.5,
+              }}
+              backgroundStyle={{position: 'sticky', fill: EXAMPLE_BLUE_COLOR}} // Info: sets the background style
+              // backgroundStyle={{fill: LINE_GRAPH_STROKE_COLOR.LONG}} // Info: sets the background style
+              // backgroundPadding={{top: 8, bottom: 5, left: 5, right: 5}} // Info: sets the background padding
             />
           }
         />

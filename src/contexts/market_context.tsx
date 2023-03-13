@@ -15,15 +15,11 @@ import {
   ICryptocurrency,
 } from '../interfaces/tidebit_defi_background/cryptocurrency';
 import {dummyResultSuccess, IResult} from '../interfaces/tidebit_defi_background/result';
-import {
-  ITickerData,
-  dummyTickers,
-  dummyTicker,
-  getDummyTicker,
-} from '../interfaces/tidebit_defi_background/ticker_data';
-import {ITimeSpanUnion} from '../interfaces/tidebit_defi_background/time_span_union';
+import {ITickerData, dummyTicker} from '../interfaces/tidebit_defi_background/ticker_data';
+import {ITimeSpanUnion, TimeSpanUnion} from '../interfaces/tidebit_defi_background/time_span_union';
 import {
   getDummyCandlestickChartData,
+  getTime,
   ICandlestickData,
 } from '../interfaces/tidebit_defi_background/candlestickData';
 import {TideBitEvent} from '../constants/tidebit_event';
@@ -46,15 +42,14 @@ export interface IMarketContext {
   candlestickChartIdHandler: (id: string) => void;
   tickerStatic: ITickerStatic | null;
   tickerLiveStatistics: ITickerLiveStatistics | null;
+  timeSpan: ITimeSpanUnion;
   candlestickChartData: ICandlestickData[] | null;
   listAvailableTickers: () => ITickerData[];
   depositCryptocurrencies: ICryptocurrency[]; // () => ICryptocurrency[];
   withdrawCryptocurrencies: ICryptocurrency[]; //  () => ICryptocurrency[];
   selectTickerHandler: (props: string) => IResult;
-  getCandlestickChartData: (props: {
-    tickerId: string;
-    timeSpan: ITimeSpanUnion;
-  }) => Promise<ICandlestickData[]>; // x 100
+  selectTimeSpanHandler: (props: ITimeSpanUnion) => void;
+  getCandlestickChartData: (tickerId: string) => Promise<void>; // x 100
   init: () => Promise<void>;
 }
 // TODO: Note: _app.tsx 啟動的時候 => createContext
@@ -68,6 +63,8 @@ export const MarketContext = createContext<IMarketContext>({
   candlestickId: '',
   candlestickChartIdHandler: () => null,
   candlestickChartData: [],
+  timeSpan: TimeSpanUnion._1s,
+  selectTimeSpanHandler: () => null,
   // liveStatstics: null,
   // bullAndBearIndex: 0,
   // cryptoBriefNews: [],
@@ -79,9 +76,8 @@ export const MarketContext = createContext<IMarketContext>({
   listAvailableTickers: () => [],
   depositCryptocurrencies: [], // () => [],
   withdrawCryptocurrencies: [], // () => [],
-  selectTickerHandler: (props: string) => dummyResultSuccess,
-  getCandlestickChartData: (props: {tickerId: string; timeSpan: ITimeSpanUnion}) =>
-    Promise.resolve<ICandlestickData[]>([]),
+  selectTickerHandler: () => dummyResultSuccess,
+  getCandlestickChartData: () => Promise.resolve(),
   init: () => Promise.resolve(),
 });
 
@@ -99,7 +95,10 @@ export const MarketProvider = ({children}: IMarketProvider) => {
   const [tickerLiveStatistics, setTickerLiveStatistics] = useState<ITickerLiveStatistics | null>(
     null
   );
-  const [candlestickChartData, setCandlestickChartData] = useState<ICandlestickData[] | null>(null);
+  const [candlestickChartData, setCandlestickChartData, candlestickChartDataRef] = useState<
+    ICandlestickData[] | null
+  >(null);
+  const [timeSpan, setTimeSpan, timeSpanRef] = useState<ITimeSpanUnion>(TimeSpanUnion._1s);
   const [availableTickers, setAvailableTickers, availableTickersRef] = useState<{
     [currency: string]: ITickerData;
   }>({});
@@ -137,31 +136,63 @@ export const MarketProvider = ({children}: IMarketProvider) => {
   // const listDepositCryptocurrencies = () => depositCryptocurrenciesRef.current;
 
   // const listWithdrawCryptocurrencies = () => withdrawCryptocurrenciesRef.current;
-
-  const selectTickerHandler = (currency: string) => {
-    // console.log(`selectTickerHandler currency`, currency);
-    const ticker: ITickerData = availableTickersRef.current[currency];
-    // console.log(`selectTickerHandler ticker`, ticker);
+  const selectTimeSpanHandler = (timeSpan: ITimeSpanUnion) => {
+    setTimeSpan(timeSpan);
+  };
+  const selectTickerHandler = (tickerId: string) => {
+    const ticker: ITickerData = availableTickersRef.current[tickerId];
     setSelectedTicker(ticker);
-    const tickerStatic: ITickerStatic = getDummyTickerStatic(currency);
+    // ++ TODO: get from api
+    const tickerStatic: ITickerStatic = getDummyTickerStatic(tickerId);
     setTickerStatic(tickerStatic);
-    const tickerLiveStatistics: ITickerLiveStatistics = getDummyTickerLiveStatistics(currency);
+    const tickerLiveStatistics: ITickerLiveStatistics = getDummyTickerLiveStatistics(tickerId);
     setTickerLiveStatistics(tickerLiveStatistics);
-    const candlestickChartData = getDummyCandlestickChartData();
-    setCandlestickChartData(candlestickChartData);
-    // if (userCtx.enableServiceTerm) {
-    //   userCtx.listOpenCFDs(currency);
-    //   userCtx.listClosedCFDs(currency);
-    // }
-    // notificationCtx.emitter.emit(TideBitEvent.TICKER_CHANGE, ticker);
+
+    getCandlestickChartData(tickerId);
     workerCtx.tickerChangeHandler(ticker);
     return dummyResultSuccess;
   };
 
-  const getCandlestickChartData = async (props: {tickerId: string; timeSpan: ITimeSpanUnion}) => {
-    let candlestickChartData: ICandlestickData[] = [];
-    candlestickChartData = await Promise.resolve(getDummyCandlestickChartData(50));
-    return candlestickChartData;
+  const updateCandlestickData = (candlestickData: ICandlestickData) => {
+    let candlestickDatas = candlestickChartDataRef.current
+      ? [...candlestickChartDataRef.current]
+      : [];
+    const lastestData = candlestickDatas[candlestickDatas.length - 1];
+    // eslint-disable-next-line no-console
+    // console.log(`lastestData`, lastestData, lastestData.x.getTime());
+    // eslint-disable-next-line no-console
+    // console.log(
+    //   `candlestickData`,
+    //   candlestickData,
+    //   candlestickData.x.getTime(),
+    //   candlestickData.x.getTime() - lastestData.x.getTime() >= getTime(timeSpanRef.current)
+    // );
+    if (lastestData) {
+      if (candlestickData.x.getTime() - lastestData.x.getTime() >= getTime(timeSpanRef.current)) {
+        candlestickDatas = candlestickDatas.concat([candlestickData]);
+      } else {
+        candlestickDatas[candlestickDatas.length - 1].y = candlestickData.y;
+      }
+    } else {
+      candlestickDatas = [candlestickData];
+    }
+    // eslint-disable-next-line no-console
+    // console.log(`candlestickDatas[${candlestickDatas.length}]`, candlestickDatas);
+    setCandlestickChartData(candlestickDatas);
+  };
+
+  const getCandlestickChartData = async (tickerId: string) => {
+    workerCtx.requestHandler({
+      name: APIRequest.GET_CANDLESTICK_DATA,
+      request: {
+        name: APIRequest.GET_CANDLESTICK_DATA,
+        method: Method.GET,
+        url: `/api/candlesticks/${tickerId}?timespan=${timeSpan}`,
+      },
+      callback: (candlestickChartData: ICandlestickData[]) => {
+        setCandlestickChartData(candlestickChartData.map(data => ({...data, x: new Date(data.x)})));
+      },
+    });
   };
 
   const init = async () => {
@@ -180,8 +211,9 @@ export const MarketProvider = ({children}: IMarketProvider) => {
           return prev;
         }, availableTickers);
         setAvailableTickers(availableTickers);
+        // // eslint-disable-next-line no-console
+        // console.log(`market init tickers[0].currency`, tickers[0].currency);
         selectTickerHandler(tickers[0].currency);
-        // console.log(`market init availableTickers`, availableTickers);
       },
     });
     // workerCtx.requestHandler({
@@ -252,8 +284,11 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     () =>
       notificationCtx.emitter.on(
         TideBitEvent.CANDLESTICK,
-        (candlestickData: ICandlestickData[]) => {
-          setCandlestickChartData(candlestickData);
+        (ticker: string, candlestickData: ICandlestickData) => {
+          // // eslint-disable-next-line no-console
+          // console.log(`ticker`, ticker, ticker === selectedTickerRef.current?.currency);
+          if (ticker === selectedTickerRef.current?.currency)
+            updateCandlestickData(candlestickData);
         }
       ),
     []
@@ -263,12 +298,14 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     selectedTicker,
     selectedTickerRef,
     selectTickerHandler,
+    selectTimeSpanHandler,
     availableTickers,
     isCFDTradable,
     showPositionOnChart,
     showPositionOnChartHandler,
     candlestickId,
     candlestickChartData,
+    timeSpan,
     candlestickChartIdHandler,
     tickerStatic,
     tickerLiveStatistics,

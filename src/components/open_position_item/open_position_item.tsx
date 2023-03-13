@@ -1,4 +1,5 @@
 import {useContext, useState} from 'react';
+import Image from 'next/image';
 import CircularProgressBar from '../circular_progress_bar/circular_progress_bar';
 import {
   OPEN_POSITION_LINE_GRAPH_WIDTH,
@@ -105,8 +106,13 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
 
   const displayedTextColor =
     openCfdDetails.pnl.type === ProfitState.PROFIT ? 'text-lightGreen5' : 'text-lightRed';
-  const displayedHoverPausedColor =
-    openCfdDetails.pnl.type === ProfitState.PROFIT ? 'hover:bg-lightGreen5' : 'hover:bg-lightRed';
+
+  const displayedCrossColor =
+    openCfdDetails.pnl.type === ProfitState.PROFIT
+      ? 'hover:before:bg-lightGreen5 hover:after:bg-lightGreen5'
+      : 'hover:before:bg-lightRed hover:after:bg-lightRed';
+  const displayedCrossStyle =
+    'before:absolute before:-left-2px before:top-10px before:z-40 before:block before:h-1 before:w-7 before:rotate-45 before:rounded-md after:absolute after:-left-2px after:top-10px after:z-40 after:block after:h-1 after:w-7 after:-rotate-45 after:rounded-md';
 
   const displayedSymbol =
     openCfdDetails.pnl.type === ProfitState.PROFIT
@@ -116,67 +122,76 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
       : '';
 
   return (
-    <div className="">
+    <div className="relative">
+      <div
+        className="absolute z-10 h-120px w-280px bg-transparent hover:cursor-pointer"
+        onClick={openItemClickHandler}
+      ></div>
       {/* brief of this open position */}
-      <div className="">
-        <div className="mt-5 flex justify-between">
-          <div className="relative -mt-4 -ml-2 w-50px">
-            <div
-              className="absolute top-3 z-10 h-110px w-280px bg-transparent hover:cursor-pointer"
-              onClick={openItemClickHandler}
-            ></div>
-
-            {/* Pause square cover
-            <div
-              className={`absolute left-14px top-26px z-20 h-6 w-6 hover:cursor-pointer hover:bg-darkGray`}
-              onClick={clickHandler}
-            ></div> */}
-
-            {/* -----Paused square----- */}
-            <div
-              className={`absolute left-14px top-26px z-30 h-6 w-6 hover:cursor-pointer ${displayedHoverPausedColor}`}
-              onClick={squareClickHandler}
-            ></div>
-
-            <div>
-              <CircularProgressBar
-                showLabel={true}
-                numerator={passedHour}
-                denominator={24}
-                progressBarColor={[displayedColorHex]}
-                hollowSize="40%"
-                circularBarSize="100"
-                // clickHandler={circularClick}
-              />
-            </div>
+      <div className="mt-5 flex justify-between">
+        {/* TODO: switch the layout */}
+        {/* {displayedTickerLayout} */}
+        <div className="">
+          <div className="inline-flex items-center text-sm">
+            {/* ToDo: default currency icon (20230310 - Julian) issue #338 */}
+            <Image
+              src={marketCtx.selectedTicker?.tokenImg ?? ''}
+              alt="currency icon"
+              width={15}
+              height={15}
+            />
+            <p className="ml-1">{openCfdDetails.ticker}</p>
           </div>
-
-          {/* TODO: switch the layout */}
-          {/* {displayedTickerLayout} */}
-          <div className="w-70px">
-            <div className="text-sm">{openCfdDetails.ticker}</div>
-            <div className="text-sm text-lightWhite">
-              {displayedString.TITLE}{' '}
-              <span className="text-xs text-lightGray">{displayedString.SUBTITLE}</span>
-            </div>
+          <div className="text-sm text-lightWhite">
+            {displayedString.TITLE}{' '}
+            <span className="text-xs text-lightGray">{displayedString.SUBTITLE}</span>
           </div>
+        </div>
 
-          <div className="mt-1 w-70px">
-            <div className="text-xs text-lightGray">Value</div>
-            <div className="text-sm">$ {openCfdDetails.openValue}</div>
+        <div className="mt-1">
+          <div className="text-xs text-lightGray">Value</div>
+          <div className="text-sm">
+            ${' '}
+            {openCfdDetails.openValue.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+              minimumFractionDigits: 2,
+            })}
           </div>
+        </div>
 
-          <div className="mt-1 w-60px">
-            <div className="text-xs text-lightGray">PNL</div>
-            <div className={`${displayedTextColor} text-sm`}>
-              <span className="">{displayedSymbol}</span> $ {openCfdDetails.pnl.value}
-            </div>
+        <div className="mt-1">
+          <div className="text-xs text-lightGray">PNL</div>
+          <div className={`${displayedTextColor} text-sm`}>
+            <span className="">{displayedSymbol}</span> ${' '}
+            {openCfdDetails.pnl.value.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+              minimumFractionDigits: 2,
+            })}
+          </div>
+        </div>
+
+        <div className="relative -mt-4 -ml-2 w-50px">
+          {/* -----Paused square----- */}
+          <div
+            className={`absolute left-14px top-26px z-30 h-6 w-6 hover:cursor-pointer hover:bg-black
+              ${displayedCrossColor} ${displayedCrossStyle} transition-all duration-150`}
+            onClick={squareClickHandler}
+          ></div>
+
+          <div>
+            <CircularProgressBar
+              showLabel={true}
+              numerator={passedHour}
+              denominator={24}
+              progressBarColor={[displayedColorHex]}
+              hollowSize="40%"
+              circularBarSize="100"
+              // clickHandler={circularClick}
+            />
           </div>
         </div>
       </div>
 
       {/* Line graph */}
-      <div className="-mt-8 -ml-2 -mb-7">
+      <div className="-mt-8 -mb-7 -ml-4">
         <PositionLineGraph
           strokeColor={[`${displayedColorHex}`]}
           dataArray={openCfdDetails.positionLineGraph.dataArray}

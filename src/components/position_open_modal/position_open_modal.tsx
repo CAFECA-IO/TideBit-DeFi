@@ -336,8 +336,7 @@ const PositionOpenModal = ({
               {/* ToDo:{openCfdRequest?.amount?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0} */}
               <div className="">
                 {openCfdRequest.amount.toFixed(2)}
-                {/* ToDo: Hardcode ETH */}
-                <span className="ml-1 text-lightGray">ETH</span>
+                <span className="ml-1 text-lightGray">{marketCtx.selectedTicker?.currency}</span>
               </div>
             </div>
 

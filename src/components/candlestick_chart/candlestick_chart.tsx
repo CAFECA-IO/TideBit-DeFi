@@ -257,7 +257,7 @@ export default function CandlestickChart({
   console.log('open cfd', userCtx.openCFDs);
   */
 
-  /* TODO: (20230313 - Shirley) 
+  /* TODO: (20230313 - Shirley) */
   const userLines = Array.from({length: 1}, (_, index) => (
     <VictoryLine
       key={index}
@@ -269,15 +269,29 @@ export default function CandlestickChart({
     />
   ));
 
-  // const userLine = (
-  //   <VictoryLine
-  //     style={{
-  //       data: {stroke: EXAMPLE_BLUE_COLOR, strokeWidth: 1, strokeDasharray: '2,2'},
-  //     }}
-  //     data={userOpenPriceLine}
-  //   />
-  // );
+  // TODO: map the open price line
+  const priceline = userCtx.openCFDs.map((cfd, index) => (
+    <VictoryLine
+      key={index}
+      style={{
+        data: {stroke: EXAMPLE_BLUE_COLOR, strokeWidth: 1, strokeDasharray: '2,2'},
+      }}
+      data={toLatestPriceLineData?.map(data => ({
+        x: data?.x,
+        y: cfd.openPrice + 5000,
+      }))}
+    />
+  ));
 
+  const userLine = (
+    <VictoryLine
+      style={{
+        data: {stroke: EXAMPLE_BLUE_COLOR, strokeWidth: 1, strokeDasharray: '2,2'},
+      }}
+      data={userOpenPriceLine}
+    />
+  );
+  /* 
   const userPricePoint = (
     <VictoryScatter
       style={{data: {fill: 'transparent'}, labels: {background: 'transparent'}}}
@@ -294,7 +308,7 @@ export default function CandlestickChart({
           events={{
             onClick: e => {
               //  TODO: (20230313 - Shirley) Open closed modal
-                globalCtx.dataPositionClosedModalHandler({
+              globalCtx.dataPositionClosedModalHandler({
                 openCfdDetails: openCfdDetails,
                 latestProps: {
                   renewalDeadline:
@@ -317,8 +331,7 @@ export default function CandlestickChart({
                   // },
                 },
               });
-                
-               
+
               globalCtx.visiblePositionClosedModalHandler();
             },
           }}

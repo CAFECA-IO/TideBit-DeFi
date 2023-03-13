@@ -1,4 +1,3 @@
-/* Till: (20230327 - Shirley)  */
 :root {
   --color1: #404a55;
   --colorLoss: #e86d6d;
@@ -10,8 +9,10 @@
 .latestPrice {
   width: 50px;
   position: absolute;
-  /* transform: translate(160%, 60%); */
-  /* x replacement - width / 2 */
+  /* Till: (20230327 - Shirley)  
+    transform: translate(160%, 60%); 
+    x replacement - width / 2 
+  */
   transform: translate(537.5270039010129px, 223.527587387623px);
 }
 

@@ -194,23 +194,16 @@ export default function CandlestickChart({
       }));
     });
 
-  const [toLineChartData, setToLineChartData, toLineChartDataRef] = useStateRef<
-    {
-      x: Date;
-      y: number | null;
-    }[]
-  >(() =>
-    candlestickChartDataFromCtx.map((data, i) => ({
-      x: data.x,
-      y: data.y[3],
-    }))
+  const [toLineChartData, setToLineChartData, toLineChartDataRef] = useStateRef<ILineChartData[]>(
+    () =>
+      candlestickChartDataFromCtx.map((data, i) => ({
+        x: data.x,
+        y: data.y[3],
+      }))
   );
 
   const [toLatestPriceLineData, setToLatestPriceLineData, toLatestPriceLineDataRef] = useStateRef<
-    {
-      x: Date;
-      y: number | null;
-    }[]
+    ILineChartData[]
   >(
     toLineChartData?.map(data => ({
       x: data?.x,
@@ -525,8 +518,8 @@ export default function CandlestickChart({
                 fill: LINE_GRAPH_STROKE_COLOR.DEFAULT,
                 fontSize: 10,
               }}
-              backgroundStyle={{fill: LINE_GRAPH_STROKE_COLOR.TIDEBIT_THEME}} // Info: sets the background style
-              backgroundPadding={{top: 8, bottom: 5, left: 5, right: 5}} // Info: sets the background padding
+              backgroundStyle={{fill: LINE_GRAPH_STROKE_COLOR.TIDEBIT_THEME}}
+              backgroundPadding={{top: 8, bottom: 5, left: 5, right: 5}}
             />
           }
         />

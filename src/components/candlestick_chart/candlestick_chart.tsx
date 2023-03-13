@@ -30,8 +30,8 @@ import {
   VictoryCursorContainer,
 } from 'victory';
 import {AppContext} from '../../contexts/app_context';
-import OpenPriceLabel from '../open_price_label/open_price_label';
 import Image from 'next/image';
+import {GlobalContext} from '../../contexts/global_context';
 
 interface ITradingChartGraphProps {
   strokeColor: string[];
@@ -158,6 +158,7 @@ export default function CandlestickChart({
 }: ITradingChartGraphProps) {
   const marketCtx = useContext(MarketContext);
   const appCtx = useContext(AppContext);
+  const globalCtx = useContext(GlobalContext);
 
   const candlestickChartDataFromCtx =
     marketCtx.candlestickChartData !== null ? marketCtx.candlestickChartData : [];
@@ -230,7 +231,7 @@ export default function CandlestickChart({
   const userOpenPrice = randomIntFromInterval(minNumber ?? 100, maxNumber ?? 1000);
   const userOpenPriceLine = toLatestPriceLineData?.map(data => ({
     x: data?.x,
-    y: userOpenPrice + 10,
+    y: 10000,
   }));
 
   useEffect(() => {
@@ -552,7 +553,7 @@ export default function CandlestickChart({
           // `⬆️⬆&#xf436; ${datum.y}`
           labels={({datum}) =>
             datum.x === userOpenPriceLine[userOpenPriceLine.length - 1].x
-              ? `Position $${datum.y.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}`
+              ? `Position $${datum.y.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}　Close`
               : ``
           }
           // dataComponent={<OpenPriceLabel x={Number(candlestickChartWidth) - 68} />}
@@ -562,24 +563,65 @@ export default function CandlestickChart({
               // backgroundComponent={
               //   // <Image src="/elements/tether-seeklogo.com.svg" width={12} height={12} alt="icon" />
               // }
-              backgroundComponent={
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="-3 0 32 32">
-                  <path d="M26.221 16c0-7.243-5.871-13.113-13.113-13.113S-.005 8.757-.005 16c0 7.242 5.871 13.113 13.113 13.113S26.221 23.242 26.221 16zM1.045 16c0-6.652 5.412-12.064 12.064-12.064S25.173 9.348 25.173 16s-5.411 12.064-12.064 12.064C6.457 28.064 1.045 22.652 1.045 16z"></path>
-                  <path d="M18.746 15.204l.742-.742-6.379-6.379-6.378 6.379.742.742 5.112-5.112v12.727h1.049V10.092z"></path>
-                </svg>
-                // <rect x={5} y={5} width={10} height={10} />
-                // <img src="/elements/tether-seeklogo.com.svg" width={12} height={12} alt="icon" />
-              }
-              x={Number(candlestickChartWidth) - 90}
+              // style={{backgroundImage: 'url(/elements/tether-seeklogo.com.svg)'}}
+              // children={''}
+              // bg-[url('/elements/tether-seeklogo.com.svg')]
+              className="hover:cursor-pointer hover:opacity-80"
+              // img={''}
+              events={{
+                onClick: e => {
+                  // console.log(e.clientX, e.clientY);
+                  globalCtx.visiblePositionClosedModalHandler();
+                },
+              }}
+              // backgroundComponent={<OpenPriceLabel x={123456} />}
+              // backgroundComponent={
+              //   <svg
+              //     xmlns="http://www.w3.org/2000/svg"
+              //     width="30"
+              //     height="30"
+              //     fillRule="evenodd"
+              //     clipRule="evenodd"
+              //     imageRendering="optimizeQuality"
+              //     shapeRendering="geometricPrecision"
+              //     textRendering="geometricPrecision"
+              //     viewBox="0 0 512 512"
+              //   >
+              //     <path
+              //       fillRule="nonzero"
+              //       d="M484.7 256c0-63.16-25.6-120.35-66.97-161.73C376.34 52.9 319.15 27.29 256 27.29c-63.16 0-120.35 25.61-161.73 66.98C52.9 135.66 27.29 192.84 27.29 256S52.9 376.35 94.27 417.73C135.65 459.1 192.84 484.7 256 484.7c63.15 0 120.34-25.6 161.73-66.97C459.1 376.35 484.7 319.16 484.7 256zm-129.33-.38l-65.44.02v-86.06h-67.86v86.06h-65.45c-1.07 0-1.9.32-2.43.8-.35.33-.68.8-.91 1.34-.2.45-.31 1.03-.31 1.66 0 .82.29 1.67.92 2.36l100.45 102.73c.7.58 1.52.89 2.28.89.86 0 1.74-.29 2.46-.87 32.17-29.2 68.11-70.68 99.06-102.82.65-.76.96-1.55.96-2.21 0-.55-.14-1.14-.39-1.69-.22-.47-.59-.96-1.07-1.38-.58-.53-1.4-.87-2.27-.83zm-38.15-27.27h38.15c7.93.06 14.86 2.96 20.12 7.53 3.38 2.9 6.08 6.58 7.95 10.66 1.84 4.01 2.84 8.46 2.84 12.98-.01 7-2.35 14.11-7.58 20.1l-99.11 102.89a32.053 32.053 0 01-3.06 2.96c-5.83 4.83-13.01 7.19-20.12 7.13-7.2-.07-14.38-2.62-20.06-7.63-34.04-34.9-68.06-70.29-102.51-104.74-5.63-6.14-8.17-13.55-8.17-20.79 0-4.27.93-8.57 2.67-12.54 1.71-3.91 4.26-7.52 7.52-10.51 5.35-4.9 12.48-8.04 20.76-8.04h38.16v-59.79c0-7.22 2.97-13.81 7.72-18.56 4.81-4.75 11.37-7.72 18.56-7.72h69.88c7.17 0 13.74 2.97 18.51 7.73 4.8 4.82 7.77 11.38 7.77 18.55v59.79zM437.01 74.99C483.34 121.31 512 185.32 512 256c0 70.68-28.66 134.69-74.99 181.01C390.68 483.34 326.67 512 256 512c-70.68 0-134.69-28.66-181.01-74.99C28.66 390.69 0 326.68 0 256c0-70.67 28.66-134.68 74.99-181.01C121.31 28.66 185.32 0 256 0c70.67 0 134.68 28.66 181.01 74.99z"
+              //     ></path>
+              //   </svg>
+              //   // <svg
+              //   //   xmlns="http://www.w3.org/2000/svg"
+              //   //   data-name="Layer 1"
+              //   //   viewBox="0 0 115.4 122.88"
+              //   // >
+              //   //   <path d="M24.94 67.88A14.66 14.66 0 014.38 47L47.83 4.21a14.66 14.66 0 0120.56 0L111 46.15a14.66 14.66 0 01-20.54 20.91l-18-17.69-.29 59.17c-.1 19.28-29.42 19-29.33-.25l.3-58.29-18.2 17.88z"></path>
+              //   // </svg>
+
+              //   // <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="-3 0 32 32">
+              //   //   <path d="M26.221 16c0-7.243-5.871-13.113-13.113-13.113S-.005 8.757-.005 16c0 7.242 5.871 13.113 13.113 13.113S26.221 23.242 26.221 16zM1.045 16c0-6.652 5.412-12.064 12.064-12.064S25.173 9.348 25.173 16s-5.411 12.064-12.064 12.064C6.457 28.064 1.045 22.652 1.045 16z"></path>
+              //   //   <path d="M18.746 15.204l.742-.742-6.379-6.379-6.378 6.379.742.742 5.112-5.112v12.727h1.049V10.092z"></path>
+              //   // </svg>
+              //   // <rect x={5} y={5} width={10} height={10} />
+              //   // <img src="/elements/tether-seeklogo.com.svg" width={12} height={12} alt="icon" />
+              // }
+              x={Number(candlestickChartWidth) - 120}
               style={{
                 fill: LINE_GRAPH_STROKE_COLOR.DEFAULT,
-                fontSize: 14,
+                fontSize: 12,
+                fontFamily: 'barlow',
+
                 // backgroundImage: 'linear-gradient(90deg, #000000 0%, #000000 100%)',
                 // opacity: 0.5,
               }}
-              backgroundStyle={{position: 'sticky', fill: EXAMPLE_BLUE_COLOR}} // Info: sets the background style
+              backgroundStyle={{
+                fill: LINE_GRAPH_STROKE_COLOR.LONG,
+              }} // Info: sets the background style
               // backgroundStyle={{fill: LINE_GRAPH_STROKE_COLOR.LONG}} // Info: sets the background style
-              // backgroundPadding={{top: 8, bottom: 5, left: 5, right: 5}} // Info: sets the background padding
+              backgroundPadding={{top: 8, bottom: 5, left: 5, right: 5}} // Info: sets the background padding
+              // backgroundPadding={30}
             />
           }
         />

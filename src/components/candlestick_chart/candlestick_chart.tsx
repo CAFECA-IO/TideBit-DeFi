@@ -31,7 +31,6 @@ import {
   VictoryCursorContainer,
 } from 'victory';
 import {AppContext} from '../../contexts/app_context';
-import OpenPriceLine from '../open_price_line/open_price_line';
 
 interface ITradingChartGraphProps {
   strokeColor: string[];
@@ -233,7 +232,7 @@ export default function CandlestickChart({
   const userOpenPrice = randomIntFromInterval(minNumber ?? 100, maxNumber ?? 1000);
   const userOpenPriceLine = toLatestPriceLineData?.map(data => ({
     x: data?.x,
-    y: userOpenPrice,
+    y: userOpenPrice + 10,
   }));
 
   useEffect(() => {
@@ -585,25 +584,21 @@ export default function CandlestickChart({
         )}
 
         {/* TODO: User open position line on charts (20230310 - Shirley) */}
-        {/* Not working and some errors */}
-        {/* {toLatestPriceLineDataRef.current && (
-          <OpenPriceLine
-            horizontalData={userOpenPriceLine}
-            // horizontalData={
-            //   toLatestPriceLineDataRef.current ? toLatestPriceLineDataRef.current : []
-            // }
-          />
-        )} */}
-
-        {/* <OpenPriceLine horizontalData={userOpenPriceLine} /> */}
-
-        {/* TODO: User open position line on charts (20230310 - Shirley) */}
         {/* <VictoryLine
           style={{
             data: {stroke: EXAMPLE_BLUE_COLOR, strokeWidth: 1},
             // parent: {border: '1px solid #ccc'},
           }}
-          data={userOpenPriceLine}
+          // data={userOpenPriceLine}
+          data={new Array(30)
+            .fill(0)
+            .map((v, index) => {
+              return {
+                x: new Date(new Date().getTime() - index * 1000),
+                y: 10000,
+              };
+            })
+            .reverse()}
         /> */}
 
         {lineGraphOn && (

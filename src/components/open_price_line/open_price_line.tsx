@@ -21,7 +21,6 @@ const OpenPriceLine = ({
   horizontalData,
 }: IOpenPriceLineProps): JSX.Element => {
   // if (positionState !== OrderState.OPENING) return <></>;
-  // console.log('horizontalData', horizontalData);
 
   // const isDisplayedPositionLine =
   //   horizontalData && horizontalData.length > 0 ? (
@@ -33,12 +32,7 @@ const OpenPriceLine = ({
   //     <></>
   //   );
 
-  const isDisplayedPositionLine = (
-    <VictoryLine
-      style={{data: {stroke: LINE_GRAPH_STROKE_COLOR.DEFAULT, strokeWidth: 1}}}
-      data={horizontalData}
-    />
-  );
+  // console.log('openPriceLine', horizontalData);
 
   return (
     <VictoryLine

@@ -62,9 +62,7 @@ export const updateDummyCandlestickChartData = (data: ICandlestickData[]): ICand
   const lastTime = originWithoutNull[originWithoutNull.length - 1]?.x.getTime() as number;
   const lastPoint = originWithoutNull[originWithoutNull.length - 1]?.y[3] as number;
 
-  // Till: (20230327 - Shirley)
-  // Generate new data
-  // const nowSecond = lastTime + unitOfLive;
+  // Inform: Generate new data
   const nowSecond = now - (now % unitOfLive);
 
   const newYs: (number | null)[] = new Array(4).fill(0).map(v => {
@@ -269,10 +267,10 @@ export default function CandlestickChart({
         close: data.y[3],
       }));
 
-      // Till: (20230327 - Shirley)
-      // TODO: Sometimes, the candlestick overlays with another candlestick (20230310 - Shirley)
-      // console.log('data put into chart', toCandlestickChartDataRef.current);
-      // console.log('market Ctx', marketCtx.candlestickChartData);
+      /* TODO: (20230313 - Shirley) Sometimes, the candlestick overlays with another candlestick (20230310 - Shirley)
+       console.log('data put into chart', toCandlestickChartDataRef.current);
+       console.log('market Ctx', marketCtx.candlestickChartData);
+      */
 
       setToCandlestickChartData(toCandlestickChartData);
 
@@ -322,138 +320,135 @@ export default function CandlestickChart({
         },
       },
     },
-    // area: {
-    //   style: {
-    //   },
-    // },
   };
 
-  // TODO: (20230310 - Shirley) finish the lottie animation on charts
-  // // Use useRef to reference the SVG element, the Lottie container element, and the Lottie animation object
-  // const svgRef = useRef<SVGSVGElement>(null);
-  // const lottieContainerRef = useRef<HTMLDivElement>(null);
-  // const lottieAnimationRef = useRef<Animation>();
-  // const [options, setOptions] = useState<any>({
-  //   container: lottieContainerRef.current as Element,
-  //   // renderer: svgRef.current as SVGElement,
-  //   loop: true,
-  //   autoplay: true,
-  //   // import spotAnimation from '../../../public/animation/circle.json';
+  /* TODO: (20230310 - Shirley) finish the lottie animation on charts
+  // Info: Use useRef to reference the SVG element, the Lottie container element, and the Lottie animation object
+  const svgRef = useRef<SVGSVGElement>(null);
+  const lottieContainerRef = useRef<HTMLDivElement>(null);
+  const lottieAnimationRef = useRef<Animation>();
+  const [options, setOptions] = useState<any>({
+    container: lottieContainerRef.current as Element,
+    // renderer: svgRef.current as SVGElement,
+    loop: true,
+    autoplay: true,
+    // import spotAnimation from '../../../public/animation/circle.json';
 
-  //   // animationData: spotAnimation,
-  //   animationData: require('../../../public/animation/circle.json'),
-  // });
+     // animationData: spotAnimation,
+     animationData: require('../../../public/animation/circle.json'),
+   })
 
-  // useEffect(() => {
-  //   // !toCandlestickChartDataRef.current &&
-  //   // toCandlestickChartDataRef.current?.length === 0
-  //   // [important to fix bug] Check if the candlestick chart data is empty
-  //   if (!toCandlestickChartDataRef.current) return;
+   useEffect(() => {
+     // !toCandlestickChartDataRef.current &&
+     // toCandlestickChartDataRef.current?.length === 0
+     // [important to fix bug] Check if the candlestick chart data is empty
+     if (!toCandlestickChartDataRef.current) return;
 
-  //   // Use the useRef hooks to access the current values of the SVG element and the Lottie container element
-  //   const svgElement = svgRef.current;
-  //   // const lottieContainerElement = lottieContainerRef.current;
+     // Use the useRef hooks to access the current values of the SVG element and the Lottie container element
+     const svgElement = svgRef.current;
+     // const lottieContainerElement = lottieContainerRef.current;
 
-  //   // console.log('toCandlestickChartData', toCandlestickChartData);
+     // console.log('toCandlestickChartData', toCandlestickChartData);
 
-  //   // Check if the SVG element (THE candlestick chart) exists
-  //   if (svgElement) {
-  //     // Get the data for the latest candlestick
-  //     const latestCandle =
-  //       toCandlestickChartDataRef.current[toCandlestickChartDataRef.current.length - 2];
-  //     const {x, high, low} = latestCandle;
-  //     if (high === null || low === null) {
-  //       console.log('high or low is null', {high, low});
-  //       return;
-  //     }
+     // Check if the SVG element (THE candlestick chart) exists
+     if (svgElement) {
+       // Get the data for the latest candlestick
+       const latestCandle =
+         toCandlestickChartDataRef.current[toCandlestickChartDataRef.current.length - 2];
+       const {x, high, low} = latestCandle;
+       if (high === null || low === null) {
+         console.log('high or low is null', {high, low});
+         return;
+       }
 
-  //     console.log('last candle', latestCandle);
+       console.log('last candle', latestCandle);
 
-  //     const xTime = x.getTime();
+       const xTime = x.getTime();
 
-  //     // Calculate the x and y coordinates of the top of the latest candlestick relative to the SVG element
-  //     const rect = svgElement?.getBoundingClientRect();
-  //     console.log('rect', rect);
-  //     if (!rect) return;
+       // Calculate the x and y coordinates of the top of the latest candlestick relative to the SVG element
+       const rect = svgElement?.getBoundingClientRect();
+       console.log('rect', rect);
+       if (!rect) return;
 
-  //     const gElements = svgElement.querySelectorAll('g'); // select all <g> elements within the SVG
-  //     const lastGElement = gElements[gElements.length - 2]; // select the last <g> element
-  //     console.log('g in candlestick chart', gElements);
-  //     console.log('last g in candlestick chart', lastGElement);
+       const gElements = svgElement.querySelectorAll('g'); // select all <g> elements within the SVG
+       const lastGElement = gElements[gElements.length - 2]; // select the last <g> element
+       console.log('g in candlestick chart', gElements);
+       console.log('last g in candlestick chart', lastGElement);
 
-  //     // Calculate the x and y coordinates of the top of the latest candlestick relative to the SVG element
-  //     const xCoord = rect.x + ((xTime - 1) / toCandlestickChartDataRef.current.length) * rect.width; // calculate the x coordinate of the latest candle
-  //     const yCoord = rect.y + (1 - high / (rect.height - rect.y)) * rect.height; // calculate the y coordinate of the top of the latest candle
+       // Calculate the x and y coordinates of the top of the latest candlestick relative to the SVG element
+       const xCoord = rect.x + ((xTime - 1) / toCandlestickChartDataRef.current.length) * rect.width; // calculate the x coordinate of the latest candle
+       const yCoord = rect.y + (1 - high / (rect.height - rect.y)) * rect.height; // calculate the y coordinate of the top of the latest candle
 
-  //     console.log('x, y coordiante', xCoord, yCoord);
+       console.log('x, y coordiante', xCoord, yCoord);
 
-  //     // If the Lottie container element exists, set its position to the calculated x and y coordinates
-  //     const lottieContainerElement = lottieContainerRef.current;
-  //     if (lottieContainerElement) {
-  //       lottieContainerElement.style.position = 'absolute';
-  //       lottieContainerElement.style.left = `${xCoord}px`;
-  //       lottieContainerElement.style.top = `${yCoord}px`;
-  //     }
+       // If the Lottie container element exists, set its position to the calculated x and y coordinates
+       const lottieContainerElement = lottieContainerRef.current;
+       if (lottieContainerElement) {
+         lottieContainerElement.style.position = 'absolute';
+         lottieContainerElement.style.left = `${xCoord}px`;
+         lottieContainerElement.style.top = `${yCoord}px`;
+       }
 
-  //     console.log(
-  //       'lottie coord',
-  //       lottieContainerElement?.style.left,
-  //       lottieContainerElement?.style.top
-  //     );
-  //   }
+       console.log(
+         'lottie coord',
+         lottieContainerElement?.style.left,
+         lottieContainerElement?.style.top
+       );
+     }
 
-  //   // const options = {
-  //   //   container: lottieContainerRef.current as Element,
-  //   //   // renderer: svgRef.current as SVGElement,
-  //   //   loop: true,
-  //   //   autoplay: true,
-  //   //   // import spotAnimation from '../../../public/animation/circle.json';
+     // const options = {
+     //   container: lottieContainerRef.current as Element,
+     //   // renderer: svgRef.current as SVGElement,
+     //   loop: true,
+     //   autoplay: true,
+     //   // import spotAnimation from '../../../public/animation/circle.json';
 
-  //   //   animationData: spotAnimation,
-  //   // };
+     //   animationData: spotAnimation,
+     // };
 
-  //   // const {View} = useLottie(options);
+     // const {View} = useLottie(options);
 
-  //   // lottieAnimationRef.current = View
+     // lottieAnimationRef.current = View
 
-  //   // lottie.loadAnimation({
-  //   //   container: lottieContainerElement as Element,
-  //   //   renderer: 'svg',
-  //   //   loop: true,
-  //   //   autoplay: true,
-  //   //   animationData: require('./path/to/lottie/animation.json')
-  //   // });
+     // lottie.loadAnimation({
+     //   container: lottieContainerElement as Element,
+     //   renderer: 'svg',
+     //   loop: true,
+     //   autoplay: true,
+     //   animationData: require('./path/to/lottie/animation.json')
+     // });
 
-  //   // Use a cleanup function to destroy the Lottie animation object when the component unmounts
-  //   // return () => {
-  //   //   if (lottieAnimationRef.current) {
-  //   //     lottieAnimationRef.current.destroy();
-  //   //   }
-  //   // };
-  // }, [marketCtx.candlestickChartData]);
+     // Use a cleanup function to destroy the Lottie animation object when the component unmounts
+     // return () => {
+     //   if (lottieAnimationRef.current) {
+     //     lottieAnimationRef.current.destroy();
+     //   }
+     // };
+   }, [marketCtx.candlestickChartData]);
 
-  // const options = {
-  //   container: lottieContainerRef.current as Element,
-  //   // renderer: svgRef.current as SVGElement,
-  //   loop: true,
-  //   autoplay: true,
-  //   // import spotAnimation from '../../../public/animation/circle.json';
+   const options = {
+     container: lottieContainerRef.current as Element,
+     // renderer: svgRef.current as SVGElement,
+     loop: true,
+     autoplay: true,
+     // import spotAnimation from '../../../public/animation/circle.json';
 
-  //   // animationData: spotAnimation,
-  //   animationData: require('../../../public/animation/circle.json'),
-  // };
+     // animationData: spotAnimation,
+     animationData: require('../../../public/animation/circle.json'),
+   };
 
-  // console.log('options', options);
+   console.log('options', options);
 
-  // const {View} = useLottie(options);
-  // console.log('before `isDisplayedCharts`, candle Ref:', candlestickChartDataRef.current); // undefined
-  // console.log('before `isDisplayedCharts` , market Ctx:', marketCtx.candlestickChartData); // null
-  // console.log(
-  //   'before `isDisplayedCharts` , trimmed market Ctx:',
-  //   trimCandlestickData({data: marketCtx?.candlestickChartData ?? [], requiredDataNum: 30})
-  // );
+   const {View} = useLottie(options);
+   console.log('before `isDisplayedCharts`, candle Ref:', candlestickChartDataRef.current); // undefined
+   console.log('before `isDisplayedCharts` , market Ctx:', marketCtx.candlestickChartData); // null
+   console.log(
+     'before `isDisplayedCharts` , trimmed market Ctx:',
+     trimCandlestickData({data: marketCtx?.candlestickChartData ?? [], requiredDataNum: 30})
+   );
 
-  // console.log('candlestickChartDataRef length', candlestickChartDataRef.current?.length);
+   console.log('candlestickChartDataRef length', candlestickChartDataRef.current?.length);
+*/
 
   const isDisplayedCharts =
     candlestickChartDataRef.current && candlestickChartDataRef.current?.length > 0 ? (
@@ -461,10 +456,10 @@ export default function CandlestickChart({
         theme={chartTheme}
         minDomain={{y: minNumber !== null ? minNumber * 0.7 : undefined}}
         maxDomain={{y: maxNumber !== null ? maxNumber * 1.3 : undefined}} // TODO: measure the biggest number to decide the y-axis
-        // domainPadding={{x: 1}}
+        // Till: (20230327 - Shirley)  // domainPadding={{x: 1}}
         width={Number(candlestickChartWidth)}
         height={Number(candlestickChartHeight)}
-        // Till: (20230327 - Shirley)
+        /* Till: (20230327 - Shirley)
         // containerComponent={
         //   <VictoryVoronoiContainer
         //     voronoiDimension="x"
@@ -474,15 +469,17 @@ export default function CandlestickChart({
         //     labelComponent={<VictoryTooltip cornerRadius={2} flyoutStyle={{fill: 'black'}} />}
         //   />
         // }
+        */
       >
-        {/* <VictoryLabel
+        {/* Till: (20230327 - Shirley) 
+        <VictoryLabel
         x={25}
         y={24}
         style={{stroke: EXAMPLE_BLUE_COLOR}}
         text={`${(d: any) => d.datum}`}
       /> */}
         <VictoryAxis
-          // scale={{x: 'time'}}
+          // Till: (20230327 - Shirley) // scale={{x: 'time'}}
           style={{
             axis: {stroke: 'none'},
           }}
@@ -512,7 +509,7 @@ export default function CandlestickChart({
               },
             }}
             candleRatio={0.5}
-            // candleWidth={8} // Till: (20230327 - Shirley)
+            // Till: (20230327 - Shirley) // candleWidth={8}
             candleColors={{
               positive: TypeOfPnLColorHex.PROFIT,
               negative: TypeOfPnLColorHex.LOSS,
@@ -524,7 +521,7 @@ export default function CandlestickChart({
             labelComponent={
               <VictoryTooltip
                 cornerRadius={0}
-                // center={{x: 170, y: -10}} // Till: (20230327 - Shirley)
+                // Till: (20230327 - Shirley) // center={{x: 170, y: -10}}
                 x={26}
                 y={-10}
                 flyoutStyle={{
@@ -539,50 +536,52 @@ export default function CandlestickChart({
                   fontFamily: 'barlow',
                   fontSize: 14,
 
-                  // it works but it's not as designed // Till: (20230327 - Shirley)
-                  // fill: (d: any) =>
-                  //   d.datum.close > d.datum.open
-                  //     ? TypeOfPnLColorHex.PROFIT
-                  //     : TypeOfPnLColorHex.LOSS,
-                  // padding: 8,
-                  // letterSpacing: 0.5,
+                  /*  Till: (20230327 - Shirley) it works but it's not as designed 
+                  fill: (d: any) =>
+                    d.datum.close > d.datum.open
+                      ? TypeOfPnLColorHex.PROFIT
+                      : TypeOfPnLColorHex.LOSS,
+                  padding: 8,
+                  letterSpacing: 0.5,
+                  */
                 }}
                 pointerLength={0}
                 pointerWidth={0}
               />
             }
-            // Till: (20230327 - Shirley)
-            // containerComponent={
-            //   <VictoryVoronoiContainer
-            //     voronoiDimension="x"
-            //     labels={({datum}) =>
-            //       `open: ${datum.open} high: ${datum.high} low: ${datum.low} close: ${datum.close}`
-            //     }
-            //     labelComponent={<VictoryTooltip cornerRadius={2} flyoutStyle={{fill: 'black'}} />}
-            //   />
-            // }
-            // events={[
-            //   {
-            //     target: 'data',
-            //     eventHandlers: {
-            //       onMouseOver: () => ({
-            //         // target: ['lowLabels', 'highLabels', 'openLabels', 'closeLabels'],
-            //         target: 'openLabels',
-            //         mutation: () => ({active: true}),
-            //       }),
-            //       onMouseOut: () => ({
-            //         // target: ['lowLabels', 'highLabels', 'openLabels', 'closeLabels'],
-            //         target: 'openLabels',
-            //         mutation: () => ({active: false}),
-            //       }),
-            //     },
-            //   },
-            // ]}
+            /* Till: (20230327 - Shirley)
+             containerComponent={
+               <VictoryVoronoiContainer
+                 voronoiDimension="x"
+                 labels={({datum}) =>
+                   `open: ${datum.open} high: ${datum.high} low: ${datum.low} close: ${datum.close}`
+                 }
+                 labelComponent={<VictoryTooltip cornerRadius={2} flyoutStyle={{fill: 'black'}} />}
+               />
+             }
+             events={[
+               {
+                 target: 'data',
+                 eventHandlers: {
+                   onMouseOver: () => ({
+                     // target: ['lowLabels', 'highLabels', 'openLabels', 'closeLabels'],
+                     target: 'openLabels',
+                     mutation: () => ({active: true}),
+                   }),
+                   onMouseOut: () => ({
+                     // target: ['lowLabels', 'highLabels', 'openLabels', 'closeLabels'],
+                     target: 'openLabels',
+                     mutation: () => ({active: false}),
+                   }),
+                 },
+               },
+             ]}
+            */
           />
         )}
 
-        {/* TODO: User open position line on charts (20230310 - Shirley) */}
-        {/* <VictoryLine
+        {/* TODO: User open position line on charts (20230310 - Shirley) 
+        <VictoryLine
           style={{
             data: {stroke: EXAMPLE_BLUE_COLOR, strokeWidth: 1},
             // parent: {border: '1px solid #ccc'},
@@ -597,7 +596,8 @@ export default function CandlestickChart({
               };
             })
             .reverse()}
-        /> */}
+        />
+        */}
 
         {lineGraphOn && (
           <VictoryLine
@@ -618,10 +618,11 @@ export default function CandlestickChart({
         )}
 
         <VictoryLine
-          // Till: (20230327 - Shirley)
+          /* Till: (20230327 - Shirley)
           // animate={{
           //   duration: 1000,
           // }}
+          */
           style={{
             data: {stroke: LINE_GRAPH_STROKE_COLOR.TIDEBIT_THEME, strokeWidth: 1},
           }}
@@ -652,8 +653,8 @@ export default function CandlestickChart({
                 fill: LINE_GRAPH_STROKE_COLOR.DEFAULT,
                 fontSize: 10,
               }}
-              backgroundStyle={{fill: LINE_GRAPH_STROKE_COLOR.TIDEBIT_THEME}} // sets the background style
-              backgroundPadding={{top: 8, bottom: 5, left: 5, right: 5}} // sets the background padding
+              backgroundStyle={{fill: LINE_GRAPH_STROKE_COLOR.TIDEBIT_THEME}} // Info: sets the background style
+              backgroundPadding={{top: 8, bottom: 5, left: 5, right: 5}} // Info: sets the background padding
             />
           }
         />
@@ -664,23 +665,21 @@ export default function CandlestickChart({
 
   return (
     <>
-      {/* <Lottie className="latestPrice" animationData={spotAnimation} /> */}
-
       <div className="-ml-5" style={{width: '70%'}}>
-        {/* TODO: (20230310 - Shirley) SVG location */}
-        {/* <div ref={lottieContainerRef} /> */}
-        {/* <div ref={lottieContainerRef} className="z-50 w-50px text-cuteBlue1">
+        {/* TODO: (20230310 - Shirley) SVG location 
+          <Lottie className="latestPrice" animationData={spotAnimation} /> 
+          <div ref={lottieContainerRef} className="z-50 w-50px text-cuteBlue1">
           <p>lottie</p>
           {View}
         </div>{' '} */}
 
         {isDisplayedCharts}
-        {/* TODO: (20230310 - Shirley) SVG location */}
-        {/* <svg ref={svgRef} /> */}
-        {/* <svg ref={svgRef} width={800} height={30} fill="#c43a31">
+        {/* TODO: (20230310 - Shirley) SVG location 
+         <svg ref={svgRef} /> 
+         <svg ref={svgRef} width={800} height={30} fill="#c43a31">
           <rect width={800} height={30} fill="#c43a31" />
-        </svg> */}
-        {/* <svg>
+        </svg> 
+         <svg>
           <defs>
             <linearGradient id="radial_gradient" gradientTransform="rotate(90)">
               <stop offset="0%" stop-color="#190b28" />
@@ -693,7 +692,8 @@ export default function CandlestickChart({
               <stop offset="100%" stop-color="#524800" />
             </linearGradient>
           </defs>
-        </svg> */}
+        </svg> 
+        */}
       </div>
     </>
   );

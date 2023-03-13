@@ -183,10 +183,14 @@ const PositionUpdatedModal = ({
       ? updatedProps.takeProfit === 0
         ? '-'
         : updatedProps.takeProfit !== 0
-        ? `$ ${updatedProps.takeProfit}`
+        ? `$ ${updatedProps.takeProfit.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+            minimumFractionDigits: 2,
+          })}`
         : undefined
       : openCfdDetails.takeProfit
-      ? `$ ${openCfdDetails.takeProfit}`
+      ? `$ ${openCfdDetails.takeProfit.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+          minimumFractionDigits: 2,
+        })}`
       : '-';
 
   // const displayedTakeProfit =
@@ -203,10 +207,14 @@ const PositionUpdatedModal = ({
       ? updatedProps.stopLoss === 0
         ? '-'
         : updatedProps.stopLoss !== 0
-        ? `$ ${updatedProps.stopLoss}`
+        ? `$ ${updatedProps.stopLoss.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+            minimumFractionDigits: 2,
+          })}`
         : undefined
       : openCfdDetails.stopLoss
-      ? `$ ${openCfdDetails.stopLoss}`
+      ? `$ ${openCfdDetails.stopLoss.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+          minimumFractionDigits: 2,
+        })}`
       : '-';
 
   // const displayedStopLoss =
@@ -287,11 +295,11 @@ const PositionUpdatedModal = ({
                 {openCfdDetails.ticker}
               </div> */}
               <div className={``}>
-                {/* TODO: Hardcode USDT */}${' '}
+                {/* TODO: Hardcode USDT */}
                 {openCfdDetails?.openPrice?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
                   minimumFractionDigits: 2,
                 }) ?? 0}{' '}
-                USDT
+                <span className="ml-1 text-lightGray">USDT</span>
                 {/* {openCfdDetails?.price?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0} USDT */}
               </div>
             </div>

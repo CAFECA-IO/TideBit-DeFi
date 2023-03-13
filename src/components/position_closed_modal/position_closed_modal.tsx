@@ -19,7 +19,9 @@ import {ProfitState} from '../../constants/profit_state';
 import {UserContext} from '../../contexts/user_context';
 import {useCountdown} from '../../lib/hooks/use_countdown';
 import {getDummyApplyCloseCFDOrderData} from '../../interfaces/tidebit_defi_background/apply_close_cfd_order_data';
+import {useTranslation} from 'react-i18next';
 
+type TranslateFunction = (s: string) => string;
 interface IPositionClosedModal {
   modalVisible: boolean;
   modalClickHandler: () => void;
@@ -35,6 +37,8 @@ const PositionClosedModal = ({
   latestProps: latestProps,
   ...otherProps
 }: IPositionClosedModal) => {
+  const {t}: {t: TranslateFunction} = useTranslation('common');
+
   const marketCtx = useContext(MarketContext);
   const globalCtx = useGlobal();
   const userCtx = useContext(UserContext);
@@ -68,7 +72,14 @@ const PositionClosedModal = ({
       : '';
 
   const displayedTypeOfPosition =
-    openCfdDetails?.typeOfPosition === TypeOfPosition.BUY ? 'Up (Buy)' : 'Down (Sell)';
+    openCfdDetails?.typeOfPosition === TypeOfPosition.BUY
+      ? t('POSITION_MODAL.TYPE_UP')
+      : t('POSITION_MODAL.TYPE_DOWN');
+
+  const displayedBuyOrSell =
+    openCfdDetails?.typeOfPosition === TypeOfPosition.BUY
+      ? t('POSITION_MODAL.TYPE_BUY')
+      : t('POSITION_MODAL.TYPE_SELL');
 
   const displayedPnLColor =
     openCfdDetails?.pnl.type === ProfitState.PROFIT
@@ -86,7 +97,7 @@ const PositionClosedModal = ({
 
   const displayedPositionColor = 'text-tidebitTheme';
 
-  const layoutInsideBorder = 'mx-5 my-4 flex justify-between';
+  const layoutInsideBorder = 'mx-5 my-2 flex justify-between';
 
   const displayedTime = timestampToString(openCfdDetails?.openTimestamp ?? 0);
 
@@ -339,8 +350,8 @@ const PositionClosedModal = ({
   ]);
 
   const formContent = (
-    <div>
-      <div className="mt-8 mb-2 flex items-center justify-center space-x-2 text-center">
+    <div className="mt-8 flex flex-col px-6 pb-2">
+      <div className="flex items-center justify-center space-x-2 text-center">
         <Image
           src={marketCtx.selectedTicker?.tokenImg ?? ''}
           width={30}
@@ -357,41 +368,50 @@ const PositionClosedModal = ({
 
       <div className="relative flex-auto pt-1">
         <div
-          className={`${displayedBorderColor} mx-6 mt-1 border-1px text-xs leading-relaxed text-lightWhite`}
+          className={`${displayedBorderColor} mt-1 border-1px py-4 text-xs leading-relaxed text-lightWhite`}
         >
-          <div className="flex-col justify-center text-center">
+          <div className="flex flex-col justify-center text-center">
             {/* {displayedDataFormat()} */}
 
             <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">Type</div>
+              <div className="text-lightGray">{t('POSITION_MODAL.TYPE')}</div>
               {/* TODO: color variable */}
-              <div className={`${displayedPositionColor}`}>{displayedTypeOfPosition}</div>
-            </div>
-
-            <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">Open Price</div>
-              <div className="">
-                {/* TODO: Hardcode USDT */}${' '}
-                {openCfdDetails?.openPrice?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0}{' '}
-                USDT
+              <div className={`${displayedPositionColor}`}>
+                {displayedTypeOfPosition}
+                <span className="ml-1 text-lightGray">{displayedBuyOrSell}</span>
               </div>
             </div>
 
             <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">Amount</div>
+              <div className="text-lightGray">{t('POSITION_MODAL.OPEN_PRICE')}</div>
               <div className="">
-                {openCfdDetails?.amount?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0}{' '}
-                {openCfdDetails.ticker}
+                {/* TODO: Hardcode USDT */}
+                {openCfdDetails?.openPrice?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+                  minimumFractionDigits: 2,
+                }) ?? 0}{' '}
+                <span className="ml-1 text-lightGray">USDT</span>
+              </div>
+            </div>
+
+            <div className={`${layoutInsideBorder}`}>
+              <div className="text-lightGray">{t('POSITION_MODAL.AMOUNT')}</div>
+              <div className="">
+                {openCfdDetails?.amount?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+                  minimumFractionDigits: 2,
+                }) ?? 0}{' '}
+                <span className="ml-1 text-lightGray">{openCfdDetails.ticker}</span>
               </div>
             </div>
 
             {/* FIXME: close price from market price DEPENDING ON sell or buy */}
             <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">Closed Price</div>
+              <div className="text-lightGray">{t('POSITION_MODAL.CLOSED_PRICE')}</div>
               <div className={`${dataRenewedStyle}`}>
-                {/* TODO: Hardcode USDT */}${' '}
-                {latestProps.latestClosedPrice.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0}{' '}
-                USDT
+                {/* TODO: Hardcode USDT */}
+                {latestProps.latestClosedPrice.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+                  minimumFractionDigits: 2,
+                }) ?? 0}{' '}
+                <span className="ml-1 text-lightGray">USDT</span>
               </div>
             </div>
 
@@ -401,22 +421,24 @@ const PositionClosedModal = ({
             </div> */}
 
             <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">PNL</div>
+              <div className="text-lightGray">{t('POSITION_MODAL.PNL')}</div>
               <div className={`${pnlRenewedStyle} ${displayedPnLColor}`}>
                 {displayedPnLSymbol} ${' '}
-                {openCfdDetails.pnl.value.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)} USDT
+                {openCfdDetails.pnl.value.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+                  minimumFractionDigits: 2,
+                })}
               </div>
             </div>
 
             <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">Open Time</div>
+              <div className="text-lightGray">{t('POSITION_MODAL.OPEN_TIME')}</div>
               <div className="">
                 {displayedTime.date} {displayedTime.time}
               </div>
             </div>
 
             <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">Guaranteed Stop</div>
+              <div className="text-lightGray">{t('POSITION_MODAL.GUARANTEED_STOP')}</div>
               <div className={``}>{displayedGuaranteedStopSetting}</div>
             </div>
 
@@ -427,20 +449,15 @@ const PositionClosedModal = ({
           </div>
         </div>
 
-        <div className="mx-6 my-3 text-xxs text-lightGray">
-          Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
-          invidunt ut labore et dolore magna
-        </div>
+        <div className="my-3 text-xxs text-lightGray">{t('POSITION_MODAL.CFD_CONTENT')}</div>
 
-        <div className={`flex-col space-y-5 text-base leading-relaxed text-lightWhite`}>
-          <RippleButton
-            onClick={submitClickHandler}
-            buttonType="button"
-            className={`mx-22px mt-0 rounded border-0 bg-tidebitTheme py-2 px-16 text-base text-white transition-colors duration-300 hover:bg-cyan-600 focus:outline-none`}
-          >
-            Confirm the order
-          </RippleButton>
-        </div>
+        <RippleButton
+          onClick={submitClickHandler}
+          buttonType="button"
+          className={`mt-0 whitespace-nowrap rounded border-0 bg-tidebitTheme py-2 px-16 text-base text-white transition-colors duration-300 hover:bg-cyan-600 focus:outline-none`}
+        >
+          {t('POSITION_MODAL.CONFIRM_BUTTON')}
+        </RippleButton>
       </div>
     </div>
   );
@@ -457,12 +474,12 @@ const PositionClosedModal = ({
           {/*content & panel*/}
           <div
             // ref={modalRef}
-            className="relative flex h-540px w-296px flex-col rounded-3xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none"
+            className="relative flex h-auto w-300px flex-col rounded-xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none"
           >
             {/*header*/}
             <div className="flex items-start justify-between rounded-t pt-9">
-              <h3 className="mt-0 w-full text-center text-xl font-normal text-lightWhite">
-                Close Position
+              <h3 className="w-full text-center text-xl font-normal text-lightWhite">
+                {t('POSITION_MODAL.CLOSE_POSITION_TITLE')}
               </h3>
               <button className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
                 <span className="absolute top-5 right-5 block outline-none focus:outline-none">

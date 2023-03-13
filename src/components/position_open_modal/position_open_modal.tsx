@@ -183,8 +183,7 @@ const PositionOpenModal = ({
     setDataRenewedStyle('animate-flash text-lightYellow2');
     await wait(DELAYED_HIDDEN_SECONDS / 5);
 
-    const newTimestamp =
-      Math.ceil(new Date().getTime() / 1000) + POSITION_PRICE_RENEWAL_INTERVAL_SECONDS;
+    const newTimestamp = new Date().getTime() / 1000 + POSITION_PRICE_RENEWAL_INTERVAL_SECONDS;
     setSecondsLeft(newTimestamp - Date.now() / 1000);
 
     // ToDo: get latest price from marketCtx and calculate required margin data
@@ -325,7 +324,6 @@ const PositionOpenModal = ({
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">{t('POSITION_MODAL.OPEN_PRICE')}</div>
               <div className={`${dataRenewedStyle}`}>
-                ${' '}
                 {openCfdRequest.price?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
                   minimumFractionDigits: 2,
                 }) ?? 0}
@@ -346,7 +344,7 @@ const PositionOpenModal = ({
             <div className={`${layoutInsideBorder} whitespace-nowrap`}>
               <div className="text-lightGray">{t('POSITION_MODAL.REQUIRED_MARGIN')}</div>
               <div className={`${dataRenewedStyle}`}>
-                $ {openCfdRequest.margin.amount.toFixed(2)}
+                {openCfdRequest.margin.amount.toFixed(2)}
                 {/* ToDo: Hardcode USDT */}
                 <span className="ml-1 text-lightGray">USDT</span>
               </div>

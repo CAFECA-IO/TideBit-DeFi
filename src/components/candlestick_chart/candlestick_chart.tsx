@@ -84,13 +84,16 @@ export const updateDummyCandlestickChartData = (data: ICandlestickData[]): ICand
 
   const addition = n / chartBlank;
 
-  const nullNum = 10;
+  const nullNum = 1;
+  const nullTime = 10;
 
+  // TODO: 加一筆 null data 就好
   const withNullData = [
     ...originWithoutNull,
     newCandlestickData,
     ...Array.from({length: nullNum}, (_, i) => ({
-      x: new Date(nowSecond + unitOfLive * (i + 1)),
+      // x: new Date(nowSecond + unitOfLive * (i + 1)),
+      x: new Date(nowSecond + unitOfLive * nullTime),
       y: [null, null, null, null],
     })),
   ];
@@ -163,7 +166,7 @@ export default function CandlestickChart({
   const candlestickChartDataFromCtx =
     marketCtx.candlestickChartData !== null ? marketCtx.candlestickChartData : [];
 
-  const NULL_ARRAY_NUM = 10;
+  const NULL_ARRAY_NUM = 1;
 
   const [candlestickChartData, setCandlestickChartData, candlestickChartDataRef] = useStateRef<
     ICandlestickData[] | undefined
@@ -273,6 +276,7 @@ export default function CandlestickChart({
 
       // TODO: Sometimes, the candlestick overlays with another candlestick (20230310 - Shirley)
       // console.log('data put into chart', toCandlestickChartDataRef.current);
+      // console.log('market Ctx', marketCtx.candlestickChartData);
 
       setToCandlestickChartData(toCandlestickChartData);
 
@@ -510,7 +514,7 @@ export default function CandlestickChart({
                 textDecorationColor: 'white',
               },
             }}
-            candleRatio={0.7}
+            candleRatio={0.5}
             // candleWidth={8}
             candleColors={{
               positive: TypeOfPnLColorHex.PROFIT,
@@ -518,15 +522,15 @@ export default function CandlestickChart({
             }}
             data={toCandlestickChartDataRef.current ?? []}
             labels={({datum}) =>
-              `O: ${datum.open} H: ${datum.high} L: ${datum.low} C: ${datum.close}`
+              `O:${datum.open} 　H:${datum.high}　 L:${datum.low}　 C:${datum.close}`
             }
             labelComponent={
               <VictoryTooltip
                 // backgroundStyle={{fill: '#000000'}}
                 cornerRadius={0}
-                // center={{x: 50, y: 0}}
-                x={26}
-                y={-10}
+                center={{x: 170, y: -10}}
+                // x={26}
+                // y={-10}
                 flyoutStyle={{
                   stroke: 'none',
                   fill: '#000000',

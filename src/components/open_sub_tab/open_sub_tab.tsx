@@ -7,25 +7,53 @@ import {ICFDSuggestion} from '../../interfaces/tidebit_defi_background/cfd_sugge
 import {IDisplayAcceptedCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
 import {IPnL} from '../../interfaces/tidebit_defi_background/pnl';
 import {ProfitState} from '../../constants/profit_state';
+import {TypeOfPosition} from '../../constants/type_of_position';
+import {MarketContext} from '../../contexts/market_context';
 // import {IOpenCFDDetails} from '../../interfaces/tidebit_defi_background/open_cfd_details';
 
 const OpenSubTab = () => {
   const {openCFDs} = useContext(UserContext);
+  const marketCtx = useContext(MarketContext);
 
   const toOpenPositionItem = (cfd: IAcceptedCFDOrder[]): IDisplayAcceptedCFDOrder[] => {
     const displayedOpenPositionList = cfd.map(cfd => {
+      const rTp =
+        cfd.typeOfPosition === TypeOfPosition.BUY
+          ? twoDecimal(cfd.openPrice * (1 + 0.2 / cfd.leverage))
+          : twoDecimal(cfd.openPrice * (1 - 0.2 / cfd.leverage));
+      const rSl =
+        cfd.typeOfPosition === TypeOfPosition.BUY
+          ? twoDecimal(cfd.openPrice * (1 - 0.1 / cfd.leverage))
+          : twoDecimal(cfd.openPrice * (1 + 0.1 / cfd.leverage));
+
+      // TODO: (20230314 - Shirley) get price point from `marketCtx`
+      const positionLineGraph = [50, 72, 60, 65, 42, 25, 100, 32, 20, 15, 32, 90, 10];
+
+      // TODO: (20230314 - Shirley) get the very last price point from `marketCtx`
+      const marketPrice =
+        cfd.typeOfPosition === TypeOfPosition.BUY
+          ? marketCtx.tickerLiveStatistics?.sellEstimatedFilledPrice ?? 0
+          : marketCtx.tickerLiveStatistics?.buyEstimatedFilledPrice ?? 999999999;
+
+      const marketValue = twoDecimal(marketPrice * cfd.amount);
+
       const openValue = twoDecimal(cfd.openPrice * cfd.amount);
-      const positionLineGraph = [100, 100];
+
+      const pnlSoFar =
+        cfd.typeOfPosition === TypeOfPosition.BUY
+          ? marketValue - openValue
+          : openValue - marketValue;
+
       const suggestion: ICFDSuggestion = {
-        takeProfit: 100,
-        stopLoss: 100,
+        takeProfit: rTp,
+        stopLoss: rSl,
       };
 
       // TODO: (20230314 - Shirley) Caculate with `positionLineGraph[n-1]` buy/sell price
       // const pnl
       const pnl: IPnL = {
-        type: ProfitState.LOSS,
-        value: 200,
+        type: pnlSoFar < 0 ? ProfitState.LOSS : ProfitState.PROFIT,
+        value: Math.abs(pnlSoFar),
       };
 
       return {...cfd, openValue, positionLineGraph, suggestion, pnl};

@@ -9,7 +9,6 @@ import {
 import PositionLineGraph from '../position_line_graph/position_line_graph';
 import UpdateFormModal from '../update_form_modal/update_form_modal';
 import {IOpenCFDDetails} from '../../interfaces/tidebit_defi_background/open_cfd_details';
-import {toast} from 'react-toastify';
 import {useGlobal} from '../../contexts/global_context';
 import {ProfitState} from '../../constants/profit_state';
 import {TypeOfPosition} from '../../constants/type_of_position';
@@ -44,6 +43,7 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
     dataUpdateFormModalHandler,
     visiblePositionClosedModalHandler,
     dataPositionClosedModalHandler,
+    toast,
   } = useGlobal();
 
   const [detailedModalVisible, setDetailedModalVisible] = useState(false);
@@ -105,6 +105,15 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
     // const sth = toApplyUpdatedCFD()
     dataUpdateFormModalHandler(openCfdDetails); // sth
     visibleUpdateFormModalHandler();
+
+    toast({
+      message: `marketPrice: ${
+        openCfdDetails.typeOfPosition === TypeOfPosition.BUY
+          ? marketCtx.tickerLiveStatistics?.sellEstimatedFilledPrice ?? 0
+          : marketCtx.tickerLiveStatistics?.buyEstimatedFilledPrice ?? 999999999
+      }\nsuggestion: ${JSON.stringify(openCfdDetails.suggestion)}`,
+      type: 'info',
+    });
   };
 
   const nowTimestamp = new Date().getTime() / 1000;

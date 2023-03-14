@@ -543,9 +543,9 @@ const UpdateFormModal = ({
     //   displayAcceptedCloseCFD: getDummyDisplayAcceptedCFDOrder('BTC'),
     //   displayApplyCloseCFD: getDummyDisplayApplyCloseCFDOrder('BTC'),
     // });
+
     // toast.error('test', {toastId: 'errorTest'});
     // console.log('show the modal displaying transaction detail');
-    // return;  };
   };
 
   useEffect(() => {

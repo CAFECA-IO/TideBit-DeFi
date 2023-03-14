@@ -36,6 +36,7 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
   // if (longOrShort !== 'long' && longOrShort !== 'short') return <></>;
   // if (profitOrLoss !== 'profit' && profitOrLoss !== 'loss') return <></>; if (profitOrLoss !== 'profit' && profitOrLoss !== 'loss') return <></>;
   // if (ticker !== 'ETH' && ticker !== 'BTC') return <></>;
+  // console.log('openCfdDetails', openCfdDetails);
   const marketCtx = useContext(MarketContext);
   const userCtx = useContext(UserContext);
   const {
@@ -107,20 +108,23 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
   };
 
   const nowTimestamp = new Date().getTime() / 1000;
-  // const yesterdayTimestamp = new Date().getTime() / 1000 - 3600 * 10 - 5;
-  // const passedHour = ((nowTimestamp - openCfdDetails.openTimestamp) / 3600).toFixed(0);
-  const passedHour = Math.round((nowTimestamp - openCfdDetails.createTimestamp) / 3600);
-  // console.log('passedHour', passedHour);
+  const remainSecs = openCfdDetails.liquidationTime - nowTimestamp;
 
-  // const now = Date.now();
-  // const deadline = now + 15 * 1000;
-  // const options = {hour12: false};
+  const remainTime =
+    remainSecs < 60
+      ? Math.round(remainSecs)
+      : remainSecs < 3600
+      ? Math.round(remainSecs / 60)
+      : Math.round(remainSecs / 3600);
 
-  // const nowString = new Date(now).toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, options);
-  // const deadlineString = new Date(deadline).toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, options);
+  const label =
+    remainSecs < 60
+      ? [`${Math.round(remainSecs)} S`]
+      : remainSecs < 3600
+      ? [`${Math.round(remainSecs / 60)} M`]
+      : [`${Math.round(remainSecs / 3600)} H`];
 
-  // console.log('NOW: ', now, nowString);
-  // console.log('DEADLINE: ', deadline, deadlineString);
+  const denominator = remainSecs < 60 ? 60 : remainSecs < 3600 ? 60 : 24;
 
   const squareClickHandler = () => {
     visiblePositionClosedModalHandler();
@@ -207,9 +211,10 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
 
             <div>
               <CircularProgressBar
+                label={label}
                 showLabel={true}
-                numerator={passedHour}
-                denominator={24}
+                numerator={remainTime}
+                denominator={denominator}
                 progressBarColor={[displayedColorHex]}
                 hollowSize="40%"
                 circularBarSize="100"

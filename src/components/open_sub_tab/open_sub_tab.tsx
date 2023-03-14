@@ -34,10 +34,10 @@ const OpenSubTab = () => {
     return displayedOpenPositionList;
   };
 
-  const openPositionList = openCFDs.map(cfd => {
+  const openPositionList = toOpenPositionItem(openCFDs).map(cfd => {
     return (
       <div key={cfd.id}>
-        {/* <OpenPositionItem openCfdDetails={cfd} /> */}
+        <OpenPositionItem openCfdDetails={cfd} />
         <div className="my-auto h-px w-full rounded bg-white/50"></div>
       </div>
     );

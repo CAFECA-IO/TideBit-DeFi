@@ -22,16 +22,19 @@ import CircularProgressBar from '../circular_progress_bar/circular_progress_bar'
 import {RENEW_QUOTATION_INTERVAL_SECONDS, unitAsset} from '../../constants/config';
 import useStateRef from 'react-usestateref';
 import {getDummyDisplayApplyCloseCFDOrder} from '../../interfaces/tidebit_defi_background/display_apply_cfd_order';
-import {getDummyDisplayAcceptedCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
+import {
+  IDisplayAcceptedCFDOrder,
+  getDummyDisplayAcceptedCFDOrder,
+} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
 
 interface IUpdatedFormModal {
   modalVisible: boolean;
   modalClickHandler: (bool?: boolean | any) => void;
-  openCfdDetails: IOpenCFDDetails;
+  openCfdDetails: IDisplayAcceptedCFDOrder;
   // id?: string;
 }
 
-const UpdatedFormModal = ({
+const UpdateFormModal = ({
   // openCfdDetails,
   modalVisible,
   modalClickHandler,
@@ -49,8 +52,15 @@ const UpdatedFormModal = ({
   const cfdTp = openCfdDetails?.takeProfit;
   const cfdSl = openCfdDetails?.stopLoss;
 
-  const initialTpInput = cfdTp ?? openCfdDetails.recommendedTp;
-  const initialSlInput = cfdSl ?? openCfdDetails.recommendedSl;
+  // FIXME: check the suggestion tp/sl if I need to check the type of position
+  const initialTpInput =
+    cfdTp ?? openCfdDetails.typeOfPosition === TypeOfPosition.BUY
+      ? openCfdDetails.suggestion.takeProfit
+      : openCfdDetails.suggestion.stopLoss;
+  const initialSlInput =
+    cfdSl ?? openCfdDetails.typeOfPosition === TypeOfPosition.BUY
+      ? openCfdDetails.suggestion.stopLoss
+      : openCfdDetails.suggestion.takeProfit;
 
   const initialGuaranteedChecked = openCfdDetails.guaranteedStop;
 
@@ -226,9 +236,10 @@ const UpdatedFormModal = ({
 
       return;
     } else {
-      setSlLowerLimit(openCfdDetails?.stopLoss ?? openCfdDetails?.recommendedSl);
-      setSlUpperLimit(openCfdDetails?.stopLoss ?? openCfdDetails?.recommendedSl);
-      setSlValue(openCfdDetails?.stopLoss ?? openCfdDetails?.recommendedSl);
+      // FIXME: check the suggestion tp/sl if I need to check the type of position
+      setSlLowerLimit(openCfdDetails?.stopLoss ?? openCfdDetails.suggestion.stopLoss);
+      setSlUpperLimit(openCfdDetails?.stopLoss ?? openCfdDetails.suggestion.stopLoss);
+      setSlValue(openCfdDetails?.stopLoss ?? openCfdDetails.suggestion.stopLoss);
 
       // setSubmitDisabled(true);
 
@@ -281,14 +292,15 @@ const UpdatedFormModal = ({
   const isDisplayedTakeProfitSetting = tpToggle ? 'flex' : 'invisible';
   const isDisplayedStopLossSetting = slToggle ? 'flex' : 'invisible';
 
+  // FIXME: check the suggestion tp/sl if I need to check the type of position
   const displayedSlLowerLimit = openCfdDetails?.guaranteedStop
-    ? openCfdDetails?.stopLoss ?? openCfdDetails.recommendedSl
+    ? openCfdDetails?.stopLoss ?? openCfdDetails.suggestion.stopLoss
     : slLowerLimit;
   const displayedSlUpperLimit = openCfdDetails?.guaranteedStop
-    ? openCfdDetails?.stopLoss ?? openCfdDetails.recommendedSl
+    ? openCfdDetails?.stopLoss ?? openCfdDetails.suggestion.stopLoss
     : slUpperLimit;
 
-  const displayedTime = timestampToString(openCfdDetails?.openTimestamp ?? 0);
+  const displayedTime = timestampToString(openCfdDetails?.createTimestamp ?? 0);
 
   const layoutInsideBorder = 'mx-5 my-3 flex justify-between';
 
@@ -362,10 +374,11 @@ const UpdatedFormModal = ({
       //   globalContext.visiblePositionDetailsModalHandler(false);
       //   // console.log('modal visible: ', modalVisible);
       // }, 1000);
-      globalCtx.dataPositionUpdatedModalHandler({
-        openCfdDetails: {...openCfdDetails},
-        updatedProps: {...changedProperties},
-      });
+      // // FIXME: update modal
+      // globalCtx.dataPositionUpdatedModalHandler({
+      //   openCfdDetails: {...openCfdDetails},
+      //   updatedProps: {...changedProperties},
+      // });
       globalCtx.visiblePositionUpdatedModalHandler();
 
       return changedProperties;
@@ -481,36 +494,37 @@ const UpdatedFormModal = ({
   const nowTimestamp = new Date().getTime() / 1000;
   // const yesterdayTimestamp = new Date().getTime() / 1000 - 3600 * 10 - 5;
   // const passedHour = ((nowTimestamp - openCfdDetails.openTimestamp) / 3600).toFixed(0);
-  const passedHour = Math.round((nowTimestamp - openCfdDetails.openTimestamp) / 3600);
+  const passedHour = Math.round((nowTimestamp - openCfdDetails.createTimestamp) / 3600);
 
   const squareClickHandler = () => {
     globalCtx.visiblePositionDetailsModalHandler();
 
     globalCtx.visiblePositionClosedModalHandler();
-    globalCtx.dataPositionClosedModalHandler({
-      openCfdDetails: openCfdDetails,
-      latestProps: {
-        renewalDeadline: new Date().getTime() / 1000 + RENEW_QUOTATION_INTERVAL_SECONDS,
-        latestClosedPrice:
-          openCfdDetails.typeOfPosition === TypeOfPosition.BUY
-            ? randomIntFromInterval(
-                marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice * 0.75,
-                marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice * 1.25
-              )
-            : openCfdDetails.typeOfPosition === TypeOfPosition.SELL
-            ? randomIntFromInterval(
-                marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice * 1.1,
-                marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice * 1.25
-              )
-            : 99999,
-        // latestPnL: {
-        //   type: randomIntFromInterval(0, 100) <= 2 ? ProfitState.PROFIT : ProfitState.LOSS,
-        //   value: randomIntFromInterval(0, 1000),
-        // },
-      },
-      displayAcceptedCloseCFD: getDummyDisplayAcceptedCFDOrder('BTC'),
-      displayApplyCloseCFD: getDummyDisplayApplyCloseCFDOrder('BTC'),
-    });
+    // FIXME: close modal
+    // globalCtx.dataPositionClosedModalHandler({
+    //   openCfdDetails: openCfdDetails,
+    //   latestProps: {
+    //     renewalDeadline: new Date().getTime() / 1000 + RENEW_QUOTATION_INTERVAL_SECONDS,
+    //     latestClosedPrice:
+    //       openCfdDetails.typeOfPosition === TypeOfPosition.BUY
+    //         ? randomIntFromInterval(
+    //             marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice * 0.75,
+    //             marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice * 1.25
+    //           )
+    //         : openCfdDetails.typeOfPosition === TypeOfPosition.SELL
+    //         ? randomIntFromInterval(
+    //             marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice * 1.1,
+    //             marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice * 1.25
+    //           )
+    //         : 99999,
+    //     // latestPnL: {
+    //     //   type: randomIntFromInterval(0, 100) <= 2 ? ProfitState.PROFIT : ProfitState.LOSS,
+    //     //   value: randomIntFromInterval(0, 1000),
+    //     // },
+    //   },
+    //   displayAcceptedCloseCFD: getDummyDisplayAcceptedCFDOrder('BTC'),
+    //   displayApplyCloseCFD: getDummyDisplayApplyCloseCFDOrder('BTC'),
+    // });
     // toast.error('test', {toastId: 'errorTest'});
     // console.log('show the modal displaying transaction detail');
     // return;  };
@@ -722,4 +736,4 @@ const UpdatedFormModal = ({
   return <>{isDisplayedDetailedPositionModal}</>;
 };
 
-export default UpdatedFormModal;
+export default UpdateFormModal;

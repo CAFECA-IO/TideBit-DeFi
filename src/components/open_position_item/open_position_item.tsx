@@ -7,7 +7,7 @@ import {
   UNIVERSAL_NUMBER_FORMAT_LOCALE,
 } from '../../constants/display';
 import PositionLineGraph from '../position_line_graph/position_line_graph';
-import UpdatedFormModal from '../update_form_modal/update_form_modal';
+import UpdateFormModal from '../update_form_modal/update_form_modal';
 import {IOpenCFDDetails} from '../../interfaces/tidebit_defi_background/open_cfd_details';
 import {toast} from 'react-toastify';
 import {useGlobal} from '../../contexts/global_context';
@@ -17,7 +17,10 @@ import {randomIntFromInterval} from '../../lib/common';
 import {MarketContext} from '../../contexts/market_context';
 import {UserContext} from '../../contexts/user_context';
 import {RENEW_QUOTATION_INTERVAL_SECONDS} from '../../constants/config';
-import {getDummyDisplayAcceptedCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
+import {
+  IDisplayAcceptedCFDOrder,
+  getDummyDisplayAcceptedCFDOrder,
+} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
 import {
   IDisplayApplyCFDOrder,
   getDummyDisplayApplyCloseCFDOrder,
@@ -26,7 +29,7 @@ import {CFDOrderType} from '../../constants/cfd_order_type';
 // import HorizontalRelativeLineGraph from '../horizontal_relative_line_graph/horizontal_relative_line_graph';
 
 interface IOpenPositionItemProps {
-  openCfdDetails: IOpenCFDDetails;
+  openCfdDetails: IDisplayAcceptedCFDOrder;
 }
 
 const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProps) => {
@@ -106,7 +109,7 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
   const nowTimestamp = new Date().getTime() / 1000;
   // const yesterdayTimestamp = new Date().getTime() / 1000 - 3600 * 10 - 5;
   // const passedHour = ((nowTimestamp - openCfdDetails.openTimestamp) / 3600).toFixed(0);
-  const passedHour = Math.round((nowTimestamp - openCfdDetails.openTimestamp) / 3600);
+  const passedHour = Math.round((nowTimestamp - openCfdDetails.createTimestamp) / 3600);
   // console.log('passedHour', passedHour);
 
   // const now = Date.now();
@@ -121,34 +124,35 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
 
   const squareClickHandler = () => {
     visiblePositionClosedModalHandler();
-    dataPositionClosedModalHandler({
-      openCfdDetails: openCfdDetails,
-      latestProps: {
-        renewalDeadline: new Date().getTime() / 1000 + RENEW_QUOTATION_INTERVAL_SECONDS,
-        latestClosedPrice:
-          openCfdDetails.typeOfPosition === TypeOfPosition.BUY
-            ? randomIntFromInterval(
-                marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice * 0.75,
-                marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice * 1.25
-              )
-            : openCfdDetails.typeOfPosition === TypeOfPosition.SELL
-            ? randomIntFromInterval(
-                marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice * 1.1,
-                marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice * 1.25
-              )
-            : 99999,
-        // latestPnL: {
-        //   type: randomIntFromInterval(0, 100) <= 2 ? ProfitState.PROFIT : ProfitState.LOSS,
-        //   value: randomIntFromInterval(0, 1000),
-        // },
-      },
-      displayAcceptedCloseCFD: getDummyDisplayAcceptedCFDOrder(
-        marketCtx.selectedTickerRef.current?.currency ?? 'BTC'
-      ),
-      displayApplyCloseCFD: getDummyDisplayApplyCloseCFDOrder(
-        marketCtx.selectedTickerRef.current?.currency ?? 'BTC'
-      ),
-    });
+    // FIXME: close modal
+    // dataPositionClosedModalHandler({
+    //   openCfdDetails: openCfdDetails,
+    //   latestProps: {
+    //     renewalDeadline: new Date().getTime() / 1000 + RENEW_QUOTATION_INTERVAL_SECONDS,
+    //     latestClosedPrice:
+    //       openCfdDetails.typeOfPosition === TypeOfPosition.BUY
+    //         ? randomIntFromInterval(
+    //             marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice * 0.75,
+    //             marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice * 1.25
+    //           )
+    //         : openCfdDetails.typeOfPosition === TypeOfPosition.SELL
+    //         ? randomIntFromInterval(
+    //             marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice * 1.1,
+    //             marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice * 1.25
+    //           )
+    //         : 99999,
+    //     // latestPnL: {
+    //     //   type: randomIntFromInterval(0, 100) <= 2 ? ProfitState.PROFIT : ProfitState.LOSS,
+    //     //   value: randomIntFromInterval(0, 1000),
+    //     // },
+    //   },
+    //   displayAcceptedCloseCFD: getDummyDisplayAcceptedCFDOrder(
+    //     marketCtx.selectedTickerRef.current?.currency ?? 'BTC'
+    //   ),
+    //   displayApplyCloseCFD: getDummyDisplayApplyCloseCFDOrder(
+    //     marketCtx.selectedTickerRef.current?.currency ?? 'BTC'
+    //   ),
+    // });
     // toast.error('test', {toastId: 'errorTest'});
     // console.log('show the modal displaying transaction detail');
     // return;
@@ -242,9 +246,9 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
       <div className="-mt-8 -ml-2 -mb-7">
         <PositionLineGraph
           strokeColor={[`${displayedColorHex}`]}
-          dataArray={openCfdDetails.positionLineGraph.dataArray}
+          dataArray={openCfdDetails.positionLineGraph}
           lineGraphWidth={OPEN_POSITION_LINE_GRAPH_WIDTH}
-          annotatedValue={openCfdDetails.positionLineGraph.dataArray[0]}
+          annotatedValue={openCfdDetails.positionLineGraph[0]}
         />
 
         {/* <div className="absolute -top-5">

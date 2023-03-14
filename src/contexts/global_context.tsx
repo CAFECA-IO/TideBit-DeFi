@@ -2,7 +2,7 @@ import {createContext, useState, useEffect, useContext, Dispatch, SetStateAction
 import useWindowSize from '../lib/hooks/use_window_size';
 import {LAYOUT_BREAKPOINT} from '../constants/display';
 import {ToastContainer, toast as toastify} from 'react-toastify';
-import UpdatedFormModal from '../components/update_form_modal/update_form_modal';
+import UpdateFormModal from '../components/update_form_modal/update_form_modal';
 import {MarketContext} from './market_context';
 import Toast from '../components/toast/toast';
 import LoadingModal from '../components/loading_modal/loading_modal';
@@ -51,6 +51,7 @@ import {
   IApplyCreateCFDOrderData,
   getDummyApplyCreateCFDOrderData,
 } from '../interfaces/tidebit_defi_background/apply_create_cfd_order_data';
+import {OrderState} from '../constants/order_state';
 
 export interface IToastify {
   type: 'error' | 'warning' | 'info' | 'success';
@@ -108,6 +109,12 @@ export const dummyDataPositionOpenModal: IDataPositionOpenModal = {
   openCfdRequest: getDummyApplyCreateCFDOrderData('ETH'),
   renewalDeadline: new Date('2023-02-24T17:00:00').getTime(),
 };
+
+const acceptedCFDOrders: IDisplayAcceptedCFDOrder[] = Array.from({length: 10}, () => {
+  return getDummyDisplayAcceptedCFDOrder('ETH');
+});
+
+const dummyOpenCFD = acceptedCFDOrders.filter(order => order.state === OrderState.OPENING)[0];
 
 export const dummyDataPositionClosedModal: IDataPositionClosedModal = {
   openCfdDetails: dummyOpenCFDDetails,
@@ -285,8 +292,8 @@ export interface IGlobalContext {
 
   visiblePositionDetailsModal: boolean;
   visiblePositionDetailsModalHandler: () => void;
-  dataPositionDetailsModal: IOpenCFDDetails | null;
-  dataPositionDetailsModalHandler: (data: IOpenCFDDetails) => void;
+  dataPositionDetailsModal: IDisplayAcceptedCFDOrder | null;
+  dataPositionDetailsModalHandler: (data: IDisplayAcceptedCFDOrder) => void;
 
   // dataPositionDetailsModal: IDisplayAcceptedCFDOrder | null;
   // dataPositionDetailsModalHandler: (data: IDisplayAcceptedCFDOrder) => void;
@@ -528,7 +535,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
   // const [dataPositionDetailsModal, setDataPositionDetailsModal] =
   //   useState<IDisplayAcceptedCFDOrder>(getDummyDisplayAcceptedCFDOrder('ETH'));
   const [dataPositionDetailsModal, setDataPositionDetailsModal] =
-    useState<IOpenCFDDetails>(dummyOpenCFDDetails);
+    useState<IDisplayAcceptedCFDOrder>(dummyOpenCFD);
 
   const [visibleWithdrawalModal, setVisibleWithdrawalModal] = useState(false);
 
@@ -677,7 +684,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
   const visiblePositionDetailsModalHandler = () => {
     setVisiblePositionDetailsModal(!visiblePositionDetailsModal);
   };
-  const dataPositionDetailsModalHandler = (data: IOpenCFDDetails) => {
+  const dataPositionDetailsModalHandler = (data: IDisplayAcceptedCFDOrder) => {
     //(data: IDisplayAcceptedCFDOrder) => {
     setDataPositionDetailsModal(data);
   };
@@ -1102,7 +1109,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
         helloClickHandler={visibleHelloModalHandler}
       />
 
-      <UpdatedFormModal
+      <UpdateFormModal
         modalVisible={visiblePositionDetailsModal}
         modalClickHandler={visiblePositionDetailsModalHandler}
         openCfdDetails={dataPositionDetailsModal}

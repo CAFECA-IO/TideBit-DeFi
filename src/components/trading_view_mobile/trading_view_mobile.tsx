@@ -4,6 +4,7 @@ import TradingChartSwitch from '../trading_chart_switch/trading_chart_switch';
 import useWindowSize from '../../lib/hooks/use_window_size';
 import {MarketContext} from '../../contexts/market_context';
 import useStateRef from 'react-usestateref';
+import {INITIAL_POSITION_LABEL_DISPLAYED_STATE} from '../../constants/display';
 
 const DEFAULT_CHART_WIDTH = 300;
 const DEFAULT_CHART_HEIGHT = 250;
@@ -41,13 +42,16 @@ const TradingViewMobile = () => {
 
   const [selectedChartType, setSelectedChartType] = useState('candlestick');
   const [selectedChartInterval, setSelectedChartInterval] = useState('live');
+  const [showPositionLabel, setShowPositionLabel, showPositionLabelRef] = useStateRef(
+    INITIAL_POSITION_LABEL_DISPLAYED_STATE
+  );
 
   const chartSize = getChartSize();
   const switchSize = getSwitchWidth();
 
   const getDisplayedPositionLabelState = (bool: boolean) => {
     // console.log('bool in trading_view', bool);
-    // setShowPositionLabel(bool);
+    setShowPositionLabel(bool);
     // return bool;
   };
 
@@ -78,7 +82,7 @@ const TradingViewMobile = () => {
       return;
     setSelectedChartInterval(props);
   };
-  /* 
+
   const displayedTradingView = (
     <>
       <CandlestickChart
@@ -89,19 +93,16 @@ const TradingViewMobile = () => {
         candlestickChartHeight={chartSize.height}
       />
     </>
-  ); */
+  );
 
   return (
     <div className="relative">
-      TradingViewMobile
       {/* Trading volume */}
-      {/* ToDo: Fix chart & switch size (20230314 - Julian)       
+      {/* ToDo: Fix chart & switch size (20230314 - Julian) */}
       <div className="absolute top-10 text-sm text-lightWhite/60">
         24h Volume {marketCtx.selectedTicker?.tradingVolume} USDT
       </div>
-
       <div className="">{displayedTradingView}</div>
-
       <div
         className="pt-5 pb-16"
         style={{width: `${switchSize.width}px`, height: `${switchSize.height}px`}}
@@ -113,7 +114,7 @@ const TradingViewMobile = () => {
           getTradingViewInterval={getTradingViewIntervaleSelected}
           getDisplayedPositionLabel={getDisplayedPositionLabelState}
         />
-      </div> */}
+      </div>
     </div>
   );
 };

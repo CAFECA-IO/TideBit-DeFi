@@ -121,6 +121,12 @@ const TradeTabMobile = () => {
     setShortSlToggle(bool);
   };
 
+  const longToolMouseEnterHandler = () => setLongTooltipStatus(3);
+  const longToolMouseLeaveHandler = () => setLongTooltipStatus(0);
+
+  const shortToolMouseEnterHandler = () => setShortTooltipStatus(3);
+  const shortToolMouseLeaveHandler = () => setShortTooltipStatus(0);
+
   const isDisplayedLongSlSetting = longSlToggle ? 'flex' : 'invisible';
   const isDisplayedShortSlSetting = shortSlToggle ? 'flex' : 'invisible';
 
@@ -217,8 +223,8 @@ const TradeTabMobile = () => {
           <div className="ml-2">
             <div
               className="relative"
-              onMouseEnter={() => setLongTooltipStatus(3)}
-              onMouseLeave={() => setLongTooltipStatus(0)}
+              onMouseEnter={longToolMouseEnterHandler}
+              onMouseLeave={longToolMouseLeaveHandler}
             >
               <div className="cursor-pointer">
                 <AiOutlineQuestionCircle size={20} />
@@ -320,8 +326,8 @@ const TradeTabMobile = () => {
           <div className="ml-2">
             <div
               className="relative"
-              onMouseEnter={() => setShortTooltipStatus(3)}
-              onMouseLeave={() => setShortTooltipStatus(0)}
+              onMouseEnter={shortToolMouseEnterHandler}
+              onMouseLeave={shortToolMouseLeaveHandler}
             >
               <div className="cursor-pointer">
                 <AiOutlineQuestionCircle size={20} />
@@ -372,12 +378,26 @@ const TradeTabMobile = () => {
 
   const longSectionClickHandler = () => {
     setActiveTab('Long');
-    setOpenSubMenu(true);
+
+    if (!openSubMenu) {
+      setOpenSubMenu(true);
+    } else {
+      {
+        /* ToDo: 接 PositionOpenModal (20230313 - Julian) */
+      }
+    }
   };
 
   const shortSectionClickHandler = () => {
     setActiveTab('Short');
-    setOpenSubMenu(true);
+
+    if (!openSubMenu) {
+      setOpenSubMenu(true);
+    } else {
+      {
+        /* ToDo: 接 PositionOpenModal (20230313 - Julian) */
+      }
+    }
   };
 
   const longButtonStyles =

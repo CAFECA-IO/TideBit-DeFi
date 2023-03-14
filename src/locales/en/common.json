@@ -66,7 +66,7 @@
     "CLOSED_TIME": "Closed Time",
     "AMOUNT": "Amount",
     "REQUIRED_MARGIN": "Required Margin",
-    "LIMIT_AND_STOP": "Limit/ Stop",
+    "TP_AND_SL": "TP/ SL",
     "GUARANTEED_STOP": "Guaranteed Stop",
     "GUARANTEED_STOP_HINT": "Guaranteed stop will force the position to close at your chosen rate (price) even if the market price surpasses it.",
     "EXPIRATION_TIME": "Expiration Time",
@@ -75,9 +75,20 @@
     "CFD_CONTENT": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna",
     "CONFIRM_BUTTON": "Confirm the order",
     "STATE": "State",
-    "STATE_CLOSED": "closed",
+    "STATE_OPEN": "Open",
+    "STATE_CLOSED": "Closed",
     "CLOSED_REASON": "Closed Reason",
     "CLOSED_REASON_MARKET_CLOSED": "Market closed",
-    "SHARE": "Share:"
+    "CLOSED_REASON_SCHEDULE": "Scheduled",
+    "CLOSED_REASON_FORCED_LIQUIDATION": "Forced Liquidation",
+    "CLOSED_REASON_BY_USER": "Manual",
+    "CLOSED_REASON_TAKE_PROFIT": "Take Profit",
+    "CLOSED_REASON_STOP_LOSS": "Stop Loss",
+    "SHARE": "Share:",
+    "CLOSE_AT_PROFIT": "Close at profit",
+    "EXPECTED_PROFIT": "Expected profit",
+    "CLOSE_AT_LOSS": "Close at loss",
+    "EXPECTED_LOSS": "Expected loss",
+    "FEE": "Fee"
   }
 }

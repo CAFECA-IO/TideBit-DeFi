@@ -159,7 +159,7 @@ export const InvisibleStrokeColor = {
 
 export const TRADING_CHART_SWITCH_BUTTON_SIZE = 30;
 
-export const OPEN_POSITION_LINE_GRAPH_WIDTH = '150';
+export const OPEN_POSITION_LINE_GRAPH_WIDTH = '180';
 export const OPEN_POSITION_LINE_LABEL_POSITION = 100;
 
 export const TRADING_CHART_BORDER_COLOR = '#8B8E91';

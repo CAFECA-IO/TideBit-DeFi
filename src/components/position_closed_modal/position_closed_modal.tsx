@@ -35,15 +35,11 @@ import {
 interface IPositionClosedModal {
   modalVisible: boolean;
   modalClickHandler: () => void;
-  // 顯示 accepted
-  displayAcceptedCloseCFD: IDisplayAcceptedCFDOrder;
-  displayApplyCloseCFD: IDisplayApplyCFDOrder;
-
   // 送出時要 `displayApplyCloseCFD: IApplyCFDOrder;`
   // TODO: 從 marketCtx 拿報價
   // TODO: 自己算 PnL
 
-  openCfdDetails: IOpenCFDDetails;
+  openCfdDetails: IDisplayAcceptedCFDOrder;
   latestProps: IClosedCFDInfoProps;
 }
 
@@ -52,8 +48,6 @@ const PositionClosedModal = ({
   modalVisible,
   modalClickHandler,
   openCfdDetails: openCfdDetails,
-  displayAcceptedCloseCFD,
-  displayApplyCloseCFD,
   latestProps: latestProps,
   ...otherProps
 }: IPositionClosedModal) => {
@@ -66,7 +60,7 @@ const PositionClosedModal = ({
   const [dataRenewedStyle, setDataRenewedStyle] = useState('text-lightWhite');
   const [pnlRenewedStyle, setPnlRenewedStyle] = useState('');
 
-  const displayedApplyCloseCfdData = displayApplyCloseCFD.data as IApplyCloseCFDOrderData;
+  // const displayedApplyCloseCfdData = displayApplyCloseCFD.data as IApplyCloseCFDOrderData;
 
   // const closePrice = displayedApplyCloseCfdData.quotation.price
 
@@ -100,11 +94,9 @@ const PositionClosedModal = ({
 
   const layoutInsideBorder = 'mx-5 my-4 flex justify-between';
 
-  const displayedTime = timestampToString(openCfdDetails?.openTimestamp ?? 0);
+  const displayedTime = timestampToString(openCfdDetails?.createTimestamp ?? 0);
 
-  // console.log('closed modal');
-
-  /** TODO: 
+  /** TODO: (20230314 - Shirley)
     // loading modal -> UserContext.function (負責簽名) ->
     // 猶豫太久的話，單子會過期，就會顯示 failed modal，
     // 用戶沒簽名才是顯示 canceled modal
@@ -186,16 +178,17 @@ const PositionClosedModal = ({
     // const creatingData = newData;
 
     const applyData: IDisplayAcceptedCFDOrder = {
-      ...displayAcceptedCloseCFD,
-      ...displayedApplyCloseCfdData,
+      // ...displayAcceptedCloseCFD,
+      // ...displayedApplyCloseCfdData,
+      ...openCfdDetails,
 
       closePrice:
-        displayAcceptedCloseCFD.typeOfPosition === TypeOfPosition.BUY
+        openCfdDetails.typeOfPosition === TypeOfPosition.BUY
           ? randomIntFromInterval(
               marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice * 0.75,
               marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice * 1.25
             )
-          : displayAcceptedCloseCFD.typeOfPosition === TypeOfPosition.SELL
+          : openCfdDetails.typeOfPosition === TypeOfPosition.SELL
           ? randomIntFromInterval(
               marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice * 1.1,
               marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice * 1.25
@@ -279,14 +272,9 @@ const PositionClosedModal = ({
         // },
       },
       // displayAcceptedCloseCFD: getDummyDisplayAcceptedCFDOrder('BTC'),
-      displayAcceptedCloseCFD: data,
-      displayApplyCloseCFD: getDummyDisplayApplyCloseCFDOrder('BTC'),
+      // displayAcceptedCloseCFD: data,
+      // displayApplyCloseCFD: getDummyDisplayApplyCloseCFDOrder('BTC'),
     });
-
-    // globalCtx.visiblePositionClosedModalHandler();
-
-    // console.log('in renewDataHandler, deadline: ', latestProps.renewalDeadline);
-    // console.log('in renewDataHandler, newTimestamp: ', newTimestamp);
 
     await wait(DELAYED_HIDDEN_SECONDS / 5);
 
@@ -298,61 +286,12 @@ const PositionClosedModal = ({
     setPnlRenewedStyle('');
   };
 
-  // function countdown(deadlineMs: number, callback: () => void) {
-  //   const interval = setInterval(() => {
-  //     const nowMs = Date.now();
-  //     const remaining = deadlineMs - nowMs;
-  //     console.log('remaining seconds: ', remaining / 1000);
-  //     if (remaining <= 0) {
-  //       clearInterval(interval);
-  //       callback();
-  //     }
-  //   }, 1000);
-  // }
-
   useEffect(() => {
     if (!globalCtx.visiblePositionClosedModal) {
       setSecondsLeft(RENEW_QUOTATION_INTERVAL_SECONDS);
       setDataRenewedStyle('text-lightWhite');
       return;
     }
-
-    // // 原本有用的 code 在改成用 deadline - now 的方式之後就被直接在 useEffect 裡的 setInterval 寫 if (secondsLeft === 0) 就 renewData，並且在 renewData 裡面重新設定 secondsLeft 取代了
-    // // 但還能讓 countdown 的數字跑到 1 就更新，不會跑到 0
-    // if (Math.floor(secondsLeft) === 0) {
-    //   renewDataStyleHandler();
-    //   // console.log('should renew the deadline: ', latestProps.renewalDeadline);
-    // }
-
-    // async () => {
-    //   if (secondsLeft === 0) {
-    //     await wait(500);
-    //     setSecondsLeft(15);
-    //   }
-    // };
-
-    // console.log('before setInterval'); // 每跳一秒就重設 interval
-    // const now = new Date().getTime();
-    // TODO: --------timestamp in milliseconds-----------
-    // const now = Date.now();
-    // // const deadline = now + secondsLeft * 1000;
-    // const deadline = now + SECONDS_INTERVAL_UNTIL_RENEWAL * 1000;
-
-    // const options = {hour12: false};
-
-    // const nowString = new Date(now).toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, options);
-    // const deadlineString = new Date(deadline).toLocaleString(
-    //   UNIVERSAL_NUMBER_FORMAT_LOCALE,
-    //   options
-    // );
-
-    // console.log('NOW: ', now, nowString);
-    // console.log('DEADLINE: ', deadline, deadlineString);
-
-    // const deadline = Date.now() + SECONDS_INTERVAL_UNTIL_RENEWAL * 1000;
-    // countdown(deadline, () => {
-    //   console.log('countdown finished');
-    // });
 
     // // FIXME: 用 globalCtx 傳 deadline
     const intervalId = setInterval(() => {
@@ -370,27 +309,8 @@ const PositionClosedModal = ({
       // setSecondsLeft()
 
       setSecondsLeft(tickingSec > 0 ? Math.round(tickingSec) : 0);
-      // console.log('in setInterval, secondsLeft: ', secondsLeft);
-
-      // setSecondsLeft(Math.round(tickingSec > 0 ? tickingSec : 0));
-      // setSecondsLeft(Math.max(0, Math.round(tickingSec)));
-      // setSecondsLeft(Math.round(latestProps.renewalDeadline - Date.now() / 1000));
-      // const tickingNow = Date.now();
-      // const remainingTime = deadline - tickingNow;
-      // setSecondsLeft(remainingTime); // 改成終點線-現在時間線
-      // console.log('remainingTime: ', remainingTime / 1000);
-      // console.log('tickingNow: ', new Date(tickingNow).toLocaleString());
-      // console.log('deadline: ', new Date(deadline).toLocaleString());
-
-      // setSecondsLeft(prevSeconds => prevSeconds - 1); // 改成終點線-現在時間線
-      // console.log('prevSeconds: ', secondsLeft);
       if (secondsLeft === 0) {
-        // base = new Date().getTime() / 1000 + POSITION_PRICE_RENEWAL_INTERVAL_SECONDS;
-
         renewDataStyleHandler();
-
-        // setSecondsLeft(POSITION_PRICE_RENEWAL_INTERVAL_SECONDS);
-        // setSecondsLeft(latestProps.renewalDeadline - Date.now() / 1000);
       }
     }, 1000); // 不確定是否真的一秒執行一次
 
@@ -442,9 +362,7 @@ const PositionClosedModal = ({
               <div className="text-lightGray">Open Price</div>
               <div className="">
                 {/* TODO: Hardcode USDT */}${' '}
-                {displayAcceptedCloseCFD?.openPrice?.toLocaleString(
-                  UNIVERSAL_NUMBER_FORMAT_LOCALE
-                ) ?? 0}{' '}
+                {openCfdDetails?.openPrice?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0}{' '}
                 USDT
               </div>
             </div>
@@ -452,9 +370,8 @@ const PositionClosedModal = ({
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">Amount</div>
               <div className="">
-                {displayAcceptedCloseCFD?.amount?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ??
-                  0}{' '}
-                {displayAcceptedCloseCFD.ticker}
+                {openCfdDetails?.amount?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0}{' '}
+                {openCfdDetails.ticker}
               </div>
             </div>
 
@@ -462,10 +379,8 @@ const PositionClosedModal = ({
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">Closed Price</div>
               <div className={`${dataRenewedStyle}`}>
-                {/* TODO: Hardcode USDT */}${' '}
-                {displayedApplyCloseCfdData.quotation.price.toLocaleString(
-                  UNIVERSAL_NUMBER_FORMAT_LOCALE
-                ) ?? 0}{' '}
+                ${' '}
+                {latestProps.latestClosedPrice.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0}{' '}
                 USDT
               </div>
             </div>

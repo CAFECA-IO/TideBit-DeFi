@@ -92,9 +92,7 @@ export interface IClosedCFDInfoProps {
 }
 
 export interface IDataPositionClosedModal {
-  displayAcceptedCloseCFD: IDisplayAcceptedCFDOrder;
-  displayApplyCloseCFD: IDisplayApplyCFDOrder;
-  openCfdDetails: IOpenCFDDetails;
+  openCfdDetails: IDisplayAcceptedCFDOrder;
   latestProps: IClosedCFDInfoProps;
   // openCfdDetails: IDisplayAcceptedCFDOrder;
   // latestProps: IApplyCloseCFDOrderData;
@@ -118,7 +116,7 @@ const acceptedCFDOrders: IDisplayAcceptedCFDOrder[] = Array.from({length: 10}, (
 const dummyOpenCFD = acceptedCFDOrders.filter(order => order.state === OrderState.OPENING)[0];
 
 export const dummyDataPositionClosedModal: IDataPositionClosedModal = {
-  openCfdDetails: dummyOpenCFDDetails,
+  openCfdDetails: acceptedCFDOrders[0],
   latestProps: {
     renewalDeadline: new Date('2023-02-24T17:00:00').getTime(),
     latestClosedPrice: 45,
@@ -127,8 +125,8 @@ export const dummyDataPositionClosedModal: IDataPositionClosedModal = {
     //   type: ProfitState.PROFIT,
     // },
   },
-  displayAcceptedCloseCFD: getDummyDisplayAcceptedCFDOrder('BTC'),
-  displayApplyCloseCFD: getDummyDisplayApplyCreateCFDOrder('BTC'),
+  // displayAcceptedCloseCFD: getDummyDisplayAcceptedCFDOrder('BTC'),
+  // displayApplyCloseCFD: getDummyDisplayApplyCreateCFDOrder('BTC'),
 };
 
 export const dummyDataPositionUpdatedModal: IDataPositionUpdatedModal = {
@@ -1129,8 +1127,8 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
       <PositionClosedModal
         modalVisible={visiblePositionClosedModal}
         modalClickHandler={visiblePositionClosedModalHandler}
-        displayAcceptedCloseCFD={dataPositionClosedModal.displayAcceptedCloseCFD}
-        displayApplyCloseCFD={dataPositionClosedModal.displayApplyCloseCFD}
+        // displayAcceptedCloseCFD={dataPositionClosedModal.displayAcceptedCloseCFD}
+        // displayApplyCloseCFD={dataPositionClosedModal.displayApplyCloseCFD}
         openCfdDetails={dataPositionClosedModal.openCfdDetails}
         latestProps={dataPositionClosedModal.latestProps}
         // renewalDeadline={dataPositionClosedModal.renewalDeadline}

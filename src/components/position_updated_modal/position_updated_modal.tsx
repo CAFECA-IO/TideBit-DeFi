@@ -38,18 +38,13 @@ const PositionUpdatedModal = ({
   const marketCtx = useContext(MarketContext);
   const globalCtx = useGlobal();
 
-  // const data = openCfdDetails.data as IApplyUpdateCFDOrderData
+  // const data = openCfdDetails.data as IApplyUpdateCFDOrderData // Till: (20230314 - Shirley)
 
-  // const [dataRenewedStyle, setDataRenewedStyle] = useState('text-lightWhite');
   const [tpTextStyle, setTpTextStyle] = useState('text-lightWhite');
   const [slTextStyle, setSlTextStyle] = useState('text-lightWhite');
   const [gtslTextStyle, setGtslTextStyle] = useState('text-lightWhite');
 
-  // let tpTextStyle = 'text-lightWhite';
-  // let slTextStyle = 'text-lightWhite';
-  // let gtslTextStyle = 'text-lightWhite';
-
-  /** TODO: 
+  /** TODO: (20230314 - Shirley)
     // loading modal -> UserContext.function (負責簽名) ->
     // 猶豫太久的話，單子會過期，就會顯示 failed modal，
     // 用戶沒簽名才是顯示 canceled modal

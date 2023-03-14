@@ -15,8 +15,8 @@ const OpenSubTab = () => {
   const {openCFDs} = useContext(UserContext);
   const marketCtx = useContext(MarketContext);
 
-  const toOpenPositionItem = (cfd: IAcceptedCFDOrder[]): IDisplayAcceptedCFDOrder[] => {
-    const displayedOpenPositionList = cfd.map(cfd => {
+  const toOpenPositionItem = (cfds: IAcceptedCFDOrder[]): IDisplayAcceptedCFDOrder[] => {
+    const displayedOpenPositionList = cfds.map(cfd => {
       const rTp =
         cfd.typeOfPosition === TypeOfPosition.BUY
           ? twoDecimal(cfd.openPrice * (1 + 0.2 / cfd.leverage))

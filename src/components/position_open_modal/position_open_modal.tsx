@@ -1,4 +1,3 @@
-/*eslint-disable no-console */
 import {ImCross} from 'react-icons/im';
 import {IOpenCFDDetails} from '../../interfaces/tidebit_defi_background/open_cfd_details';
 import {
@@ -56,7 +55,7 @@ const PositionOpenModal = ({
 
   // const displayedApplyCreateCfdData = displayApplyCreateCFD.data as IApplyCreateCFDOrderData;
 
-  /** TODO: 
+  /** TODO: (20230314 - Shirley)
     // loading modal -> UserContext.function (負責簽名) ->
     // 猶豫太久的話，單子會過期，就會顯示 failed modal，
     // 用戶沒簽名才是顯示 canceled modal

@@ -46,12 +46,9 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
     toast,
   } = useGlobal();
 
-  const [detailedModalVisible, setDetailedModalVisible] = useState(false);
-
   // 傳param進來的地方要改正確的 dummy data
   // TODO: toApplyUpdatedCFD function
   // TODO: toApplyClosedCFD function
-  // TODO: 改 UpdateFormModal 名字
 
   const toApplyUpdatedCFD = () => {
     const dummyData = {};
@@ -98,12 +95,8 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
     return dummyData;
   };
 
-  // TODO: 先跟 user context 拿特定 order id 的資料，再呼叫 function 拿到單一筆 CFD 詳細資料 。 global context 設定 cfd id，再顯示 position details modal
-  // dataPositionDetailsModal 拿到的是整個JSON
-  // globalContext.dataPositionDetailsModalHandler(cfd.orderId);
   const openItemClickHandler = () => {
-    // const sth = toApplyUpdatedCFD()
-    dataUpdateFormModalHandler(openCfdDetails); // sth
+    dataUpdateFormModalHandler(openCfdDetails);
     visibleUpdateFormModalHandler();
 
     toast({
@@ -137,38 +130,24 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
 
   const squareClickHandler = () => {
     visiblePositionClosedModalHandler();
-    // FIXME: close modal
-    // dataPositionClosedModalHandler({
-    //   openCfdDetails: openCfdDetails,
-    //   latestProps: {
-    //     renewalDeadline: new Date().getTime() / 1000 + RENEW_QUOTATION_INTERVAL_SECONDS,
-    //     latestClosedPrice:
-    //       openCfdDetails.typeOfPosition === TypeOfPosition.BUY
-    //         ? randomIntFromInterval(
-    //             marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice * 0.75,
-    //             marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice * 1.25
-    //           )
-    //         : openCfdDetails.typeOfPosition === TypeOfPosition.SELL
-    //         ? randomIntFromInterval(
-    //             marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice * 1.1,
-    //             marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice * 1.25
-    //           )
-    //         : 99999,
-    //     // latestPnL: {
-    //     //   type: randomIntFromInterval(0, 100) <= 2 ? ProfitState.PROFIT : ProfitState.LOSS,
-    //     //   value: randomIntFromInterval(0, 1000),
-    //     // },
-    //   },
-    //   displayAcceptedCloseCFD: getDummyDisplayAcceptedCFDOrder(
-    //     marketCtx.selectedTickerRef.current?.currency ?? 'BTC'
-    //   ),
-    //   displayApplyCloseCFD: getDummyDisplayApplyCloseCFDOrder(
-    //     marketCtx.selectedTickerRef.current?.currency ?? 'BTC'
-    //   ),
-    // });
-    // toast.error('test', {toastId: 'errorTest'});
-    // console.log('show the modal displaying transaction detail');
-    // return;
+    dataPositionClosedModalHandler({
+      openCfdDetails: openCfdDetails,
+      latestProps: {
+        renewalDeadline: new Date().getTime() / 1000 + RENEW_QUOTATION_INTERVAL_SECONDS,
+        latestClosedPrice:
+          openCfdDetails.typeOfPosition === TypeOfPosition.BUY
+            ? randomIntFromInterval(
+                marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice * 0.75,
+                marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice * 1.25
+              )
+            : openCfdDetails.typeOfPosition === TypeOfPosition.SELL
+            ? randomIntFromInterval(
+                marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice * 1.1,
+                marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice * 1.25
+              )
+            : 99999,
+      },
+    });
   };
 
   const displayedString =
@@ -244,13 +223,16 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
 
           <div className="mt-1 w-70px">
             <div className="text-xs text-lightGray">Value</div>
-            <div className="text-sm">$ {openCfdDetails.openValue}</div>
+            <div className="text-sm">
+              $ {openCfdDetails.openValue.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}
+            </div>
           </div>
 
           <div className="mt-1 w-60px">
             <div className="text-xs text-lightGray">PNL</div>
             <div className={`${displayedTextColor} text-sm`}>
-              <span className="">{displayedSymbol}</span> $ {openCfdDetails.pnl.value}
+              <span className="">{displayedSymbol}</span> ${' '}
+              {openCfdDetails.pnl.value.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}
             </div>
           </div>
         </div>

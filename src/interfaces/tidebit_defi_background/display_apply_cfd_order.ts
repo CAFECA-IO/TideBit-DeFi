@@ -10,6 +10,7 @@ import {
 import {getDummyApplyUpdateCFDOrderData} from './apply_update_cfd_order_data';
 import {IPnL} from './pnl';
 
+// Deprecated: (20230314 - Shirley) To be removed
 export interface IDisplayApplyCFDOrder extends IApplyCFDOrder {
   pnl?: IPnL;
 }

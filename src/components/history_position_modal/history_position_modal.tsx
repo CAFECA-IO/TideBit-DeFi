@@ -124,10 +124,7 @@ const HistoryPositionModal = ({
           <div className={`${layoutInsideBorder}`}>
             <div className="text-lightGray">Closed Value</div>
             <div className="">
-              ${' '}
-              {(closedCfdDetails?.openValue + closedCfdDetails.pnl.value)?.toLocaleString(
-                UNIVERSAL_NUMBER_FORMAT_LOCALE
-              ) ?? 0}
+              $ {closedCfdDetails?.closeValue?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0}
             </div>
           </div>
 

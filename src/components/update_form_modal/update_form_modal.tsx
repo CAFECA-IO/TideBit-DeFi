@@ -26,6 +26,8 @@ import {
   IDisplayAcceptedCFDOrder,
   getDummyDisplayAcceptedCFDOrder,
 } from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
+import {OrderState} from '../../constants/order_state';
+import {IApplyUpdateCFDOrderData} from '../../interfaces/tidebit_defi_background/apply_update_cfd_order_data';
 
 interface IUpdatedFormModal {
   modalVisible: boolean;
@@ -42,7 +44,7 @@ const UpdateFormModal = ({
   // id,
   ...otherProps
 }: IUpdatedFormModal) => {
-  // console.log('openCfdDetails in details modal: ', openCfdDetails.id);
+  // console.log('openCfdDetails in details modal: ', openCfdDetails); // Info: (20230314 - Shirley) `openCFDs` data from `display_accepted_cfd_order`
   const globalCtx = useGlobal();
   const marketCtx = useContext(MarketContext);
 
@@ -52,15 +54,9 @@ const UpdateFormModal = ({
   const cfdTp = openCfdDetails?.takeProfit;
   const cfdSl = openCfdDetails?.stopLoss;
 
-  // FIXME: check the suggestion tp/sl if I need to check the type of position
-  const initialTpInput =
-    cfdTp ?? openCfdDetails.typeOfPosition === TypeOfPosition.BUY
-      ? openCfdDetails.suggestion.takeProfit
-      : openCfdDetails.suggestion.stopLoss;
-  const initialSlInput =
-    cfdSl ?? openCfdDetails.typeOfPosition === TypeOfPosition.BUY
-      ? openCfdDetails.suggestion.stopLoss
-      : openCfdDetails.suggestion.takeProfit;
+  const initialTpInput = cfdTp ?? openCfdDetails.suggestion.takeProfit;
+
+  const initialSlInput = cfdSl ?? openCfdDetails.suggestion.takeProfit;
 
   const initialGuaranteedChecked = openCfdDetails.guaranteedStop;
 
@@ -81,6 +77,15 @@ const UpdateFormModal = ({
 
   const [expectedProfitValue, setExpectedProfitValue, expectedProfitValueRef] = useStateRef(0);
   const [expectedLossValue, setExpectedLossValue, expectedLossValueRef] = useStateRef(0);
+
+  const displayedState =
+    openCfdDetails.state === OrderState.OPENING
+      ? 'Open'
+      : openCfdDetails.state === OrderState.CLOSED
+      ? 'Close'
+      : openCfdDetails.state === OrderState.FREEZED
+      ? 'Freezed'
+      : '';
 
   const getToggledTpSetting = (bool: boolean) => {
     // setSubmitDisabled(true);
@@ -236,7 +241,6 @@ const UpdateFormModal = ({
 
       return;
     } else {
-      // FIXME: check the suggestion tp/sl if I need to check the type of position
       setSlLowerLimit(openCfdDetails?.stopLoss ?? openCfdDetails.suggestion.stopLoss);
       setSlUpperLimit(openCfdDetails?.stopLoss ?? openCfdDetails.suggestion.stopLoss);
       setSlValue(openCfdDetails?.stopLoss ?? openCfdDetails.suggestion.stopLoss);
@@ -292,7 +296,6 @@ const UpdateFormModal = ({
   const isDisplayedTakeProfitSetting = tpToggle ? 'flex' : 'invisible';
   const isDisplayedStopLossSetting = slToggle ? 'flex' : 'invisible';
 
-  // FIXME: check the suggestion tp/sl if I need to check the type of position
   const displayedSlLowerLimit = openCfdDetails?.guaranteedStop
     ? openCfdDetails?.stopLoss ?? openCfdDetails.suggestion.stopLoss
     : slLowerLimit;
@@ -304,11 +307,8 @@ const UpdateFormModal = ({
 
   const layoutInsideBorder = 'mx-5 my-3 flex justify-between';
 
-  const buttonClickHandler = () => {
-    // console.log('btn clicked');
-    // setSubmitDisabled(false);
-
-    let changedProperties = {};
+  const toPositionUpdatedModal = () => {
+    let changedProperties: IApplyUpdateCFDOrderData = {orderId: openCfdDetails.id};
 
     // Detect if tpValue has changed
     if (tpToggle && tpValue !== openCfdDetails.takeProfit) {
@@ -342,47 +342,51 @@ const UpdateFormModal = ({
     // Detect if guaranteedStop has changed
     if (guaranteedChecked !== openCfdDetails.guaranteedStop) {
       const stopLoss = slValue !== openCfdDetails.stopLoss ? slValue : undefined;
+      const guaranteedStopFee = Number(
+        (openCfdDetails.openValue * (marketCtx?.tickerStatic?.guaranteedStopFee ?? 99)).toFixed(2)
+      );
+
       changedProperties = {
         ...changedProperties,
-        guaranteedStopLoss: guaranteedChecked,
+        guaranteedStop: guaranteedChecked,
+        guaranteedStopFee: guaranteedStopFee,
         stopLoss: stopLoss,
       };
     }
 
     // If there's no updates, do nothing
-    if (Object.keys(changedProperties).length > 0) {
-      globalCtx.visiblePositionDetailsModalHandler();
-
+    if (Object.keys(changedProperties).filter(key => key !== 'orderId').length > 0) {
       // TODO: send changedProperties to MetaMask for signature
-      changedProperties = {orderId: openCfdDetails.id, ...changedProperties};
+      changedProperties = {...changedProperties};
 
       globalCtx.toast({
         type: 'info',
         message: 'Changes: \n' + JSON.stringify(changedProperties),
         toastId: JSON.stringify(changedProperties),
       });
-
-      // console.log(changedProperties);
-      // for (const [key, value] of Object.entries(changedProperties)) {
-      //   console.log(`${key}: ${value}\n`);
-      // }
-
-      // TODO: before waiting for metamask signature, block the button
-      setSubmitDisabled(true);
-
-      // setTimeout(() => {
-      //   globalContext.visiblePositionDetailsModalHandler(false);
-      //   // console.log('modal visible: ', modalVisible);
-      // }, 1000);
-      // // FIXME: update modal
-      // globalCtx.dataPositionUpdatedModalHandler({
-      //   openCfdDetails: {...openCfdDetails},
-      //   updatedProps: {...changedProperties},
-      // });
-      globalCtx.visiblePositionUpdatedModalHandler();
-
-      return changedProperties;
     }
+
+    return changedProperties;
+  };
+
+  const buttonClickHandler = () => {
+    // console.log('btn clicked');
+    // setSubmitDisabled(false);
+
+    const changedProperties: IApplyUpdateCFDOrderData = toPositionUpdatedModal();
+
+    if (Object.keys(changedProperties).filter(key => key !== 'orderId').length === 0) return;
+
+    setSubmitDisabled(true);
+
+    globalCtx.visibleUpdateFormModalHandler();
+
+    // // FIXME: update modal
+    globalCtx.dataPositionUpdatedModalHandler({
+      openCfdDetails: {...openCfdDetails},
+      updatedProps: {...changedProperties},
+    });
+    globalCtx.visiblePositionUpdatedModalHandler();
   };
 
   // FIXME: Inconsistent information between text and input
@@ -492,12 +496,26 @@ const UpdateFormModal = ({
   };
 
   const nowTimestamp = new Date().getTime() / 1000;
-  // const yesterdayTimestamp = new Date().getTime() / 1000 - 3600 * 10 - 5;
-  // const passedHour = ((nowTimestamp - openCfdDetails.openTimestamp) / 3600).toFixed(0);
-  const passedHour = Math.round((nowTimestamp - openCfdDetails.createTimestamp) / 3600);
+  const remainSecs = openCfdDetails.liquidationTime - nowTimestamp;
+
+  const remainTime =
+    remainSecs < 60
+      ? Math.round(remainSecs)
+      : remainSecs < 3600
+      ? Math.round(remainSecs / 60)
+      : Math.round(remainSecs / 3600);
+
+  const label =
+    remainSecs < 60
+      ? [`${Math.round(remainSecs)} S`]
+      : remainSecs < 3600
+      ? [`${Math.round(remainSecs / 60)} M`]
+      : [`${Math.round(remainSecs / 3600)} H`];
+
+  const denominator = remainSecs < 60 ? 60 : remainSecs < 3600 ? 60 : 24;
 
   const squareClickHandler = () => {
-    globalCtx.visiblePositionDetailsModalHandler();
+    globalCtx.visibleUpdateFormModalHandler();
 
     globalCtx.visiblePositionClosedModalHandler();
     // FIXME: close modal
@@ -567,13 +585,13 @@ const UpdateFormModal = ({
 
                 <div className="absolute top-30px left-190px flex items-center space-x-1 text-center">
                   <CircularProgressBar
+                    label={label}
                     showLabel={true}
-                    numerator={passedHour}
-                    denominator={24}
+                    numerator={remainTime}
+                    denominator={denominator}
                     progressBarColor={[displayedColorHex]}
                     hollowSize="40%"
                     circularBarSize="100"
-                    // clickHandler={circularClick}
                   />
                 </div>
               </div>
@@ -590,11 +608,8 @@ const UpdateFormModal = ({
                 className={`${displayedBorderColor} mx-6 mt-0 border-1px text-xs leading-relaxed text-lightWhite`}
               >
                 <div className="flex-col justify-center text-center">
-                  {/* {displayedDataFormat()} */}
-
                   <div className={`${layoutInsideBorder}`}>
                     <div className="text-lightGray">Type</div>
-                    {/* TODO: i18n */}
                     <div className={`${displayedPositionColor}`}>{displayedTypeOfPosition}</div>
                   </div>
 
@@ -643,15 +658,10 @@ const UpdateFormModal = ({
                     <div className="">
                       <span className={`text-lightWhite`}>
                         {cfdTp?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? '-'}
-                        {/* {openCfdDetails?.takeProfit?.toLocaleString(
-                          UNIVERSAL_NUMBER_FORMAT_LOCALE
-                        ) ?? '-'} */}
                       </span>{' '}
                       /{' '}
                       <span className={`text-lightWhite`}>
                         {cfdSl?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? '-'}
-                        {/* {openCfdDetails?.stopLoss?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ??
-                          '-'} */}
                       </span>
                     </div>
                   </div>
@@ -668,15 +678,7 @@ const UpdateFormModal = ({
 
                   <div className={`${layoutInsideBorder}`}>
                     <div className="text-lightGray">State</div>
-                    <div className="">
-                      Open
-                      {/* <button
-                        type="button"
-                        className="ml-2 text-tidebitTheme underline underline-offset-2"
-                      >
-                        Close
-                      </button> */}
-                    </div>
+                    <div className="">{displayedState}</div>
                   </div>
                 </div>
               </div>
@@ -713,7 +715,6 @@ const UpdateFormModal = ({
                   {guaranteedStopLoss}
                 </div>
 
-                {/* TODO: T/P value changed, S/L value changed, guaranteed-stop check changed, T/P toggle changed, S/L toggle changed */}
                 <RippleButton
                   disabled={submitDisabled}
                   onClick={buttonClickHandler}

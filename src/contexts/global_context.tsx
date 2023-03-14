@@ -52,6 +52,7 @@ import {
   getDummyApplyCreateCFDOrderData,
 } from '../interfaces/tidebit_defi_background/apply_create_cfd_order_data';
 import {OrderState} from '../constants/order_state';
+import {IApplyUpdateCFDOrderData} from '../interfaces/tidebit_defi_background/apply_update_cfd_order_data';
 
 export interface IToastify {
   type: 'error' | 'warning' | 'info' | 'success';
@@ -59,7 +60,7 @@ export interface IToastify {
   toastId?: string | number; // Prevent duplicate toast
 }
 
-// export interface IDataPositionDetailsModal {
+// export interface IDataUpdateFormModal {
 //   openCfdDetails: IOpenCFDDetails;
 // }
 
@@ -78,10 +79,10 @@ export interface IUpdatedCFDInputProps {
 }
 
 export interface IDataPositionUpdatedModal {
-  openCfdDetails: IOpenCFDDetails;
-  updatedProps?: IUpdatedCFDInputProps;
+  openCfdDetails: IDisplayAcceptedCFDOrder;
+  // updatedProps?: IUpdatedCFDInputProps;
   // openCfdDetails: IDisplayAcceptedCFDOrder;
-  // updatedProps?: IApplyUpdateCFDOrderData;
+  updatedProps: IApplyUpdateCFDOrderData;
 }
 
 export interface IClosedCFDInfoProps {
@@ -131,11 +132,13 @@ export const dummyDataPositionClosedModal: IDataPositionClosedModal = {
 };
 
 export const dummyDataPositionUpdatedModal: IDataPositionUpdatedModal = {
-  openCfdDetails: dummyOpenCFDDetails,
+  openCfdDetails: acceptedCFDOrders[0],
+  // openCfdDetails: getDummyDisplayApplyCreateCFDOrder('ETH'),
   updatedProps: {
+    orderId: 'DUMMY_DATA_GLOBAL_CTX_20230314_1',
     takeProfit: 0,
     stopLoss: 0,
-    guaranteedStopLoss: false,
+    guaranteedStop: false,
   },
   // openCfdDetails: getDummyDisplayAcceptedCFDOrder('ETH'),
   // updatedProps: getDummyApplyUpdateCFDOrderData('ETH'),
@@ -290,13 +293,10 @@ export interface IGlobalContext {
 
   eliminateAllModals: () => void;
 
-  visiblePositionDetailsModal: boolean;
-  visiblePositionDetailsModalHandler: () => void;
-  dataPositionDetailsModal: IDisplayAcceptedCFDOrder | null;
-  dataPositionDetailsModalHandler: (data: IDisplayAcceptedCFDOrder) => void;
-
-  // dataPositionDetailsModal: IDisplayAcceptedCFDOrder | null;
-  // dataPositionDetailsModalHandler: (data: IDisplayAcceptedCFDOrder) => void;
+  visibleUpdateFormModal: boolean;
+  visibleUpdateFormModalHandler: () => void;
+  dataUpdateFormModal: IDisplayAcceptedCFDOrder | null;
+  dataUpdateFormModalHandler: (data: IDisplayAcceptedCFDOrder) => void;
 
   visibleDepositModal: boolean;
   visibleDepositModalHandler: () => void;
@@ -414,10 +414,10 @@ export const GlobalContext = createContext<IGlobalContext>({
 
   eliminateAllModals: () => null,
 
-  visiblePositionDetailsModal: false,
-  visiblePositionDetailsModalHandler: () => null,
-  dataPositionDetailsModal: null,
-  dataPositionDetailsModalHandler: () => null,
+  visibleUpdateFormModal: false,
+  visibleUpdateFormModalHandler: () => null,
+  dataUpdateFormModal: null,
+  dataUpdateFormModalHandler: () => null,
 
   visibleDepositModal: false,
   visibleDepositModalHandler: () => null,
@@ -530,11 +530,11 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
 
   const [colorMode, setColorMode] = useState<ColorModeUnion>(initialColorMode);
 
-  const [visiblePositionDetailsModal, setVisiblePositionDetailsModal] = useState(false);
+  const [visibleUpdateFormModal, setVisibleUpdateFormModal] = useState(false);
   // TODO: replace dummy data with standard example data
-  // const [dataPositionDetailsModal, setDataPositionDetailsModal] =
+  // const [dataUpdateFormModal, setDataUpdateFormModal] =
   //   useState<IDisplayAcceptedCFDOrder>(getDummyDisplayAcceptedCFDOrder('ETH'));
-  const [dataPositionDetailsModal, setDataPositionDetailsModal] =
+  const [dataUpdateFormModal, setDataUpdateFormModal] =
     useState<IDisplayAcceptedCFDOrder>(dummyOpenCFD);
 
   const [visibleWithdrawalModal, setVisibleWithdrawalModal] = useState(false);
@@ -675,18 +675,18 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     setVisibleHelloModal(false);
     setVisibleSignatureProcessModal(false);
 
-    setVisiblePositionDetailsModal(false);
+    setVisibleUpdateFormModal(false);
     setVisibleHistoryPositionModal(false);
 
     setVisiblePositionClosedModal(false);
   };
 
-  const visiblePositionDetailsModalHandler = () => {
-    setVisiblePositionDetailsModal(!visiblePositionDetailsModal);
+  const visibleUpdateFormModalHandler = () => {
+    setVisibleUpdateFormModal(!visibleUpdateFormModal);
   };
-  const dataPositionDetailsModalHandler = (data: IDisplayAcceptedCFDOrder) => {
+  const dataUpdateFormModalHandler = (data: IDisplayAcceptedCFDOrder) => {
     //(data: IDisplayAcceptedCFDOrder) => {
-    setDataPositionDetailsModal(data);
+    setDataUpdateFormModal(data);
   };
 
   const visibleDepositModalHandler = () => {
@@ -934,10 +934,10 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
 
     eliminateAllModals,
 
-    visiblePositionDetailsModal,
-    visiblePositionDetailsModalHandler,
-    dataPositionDetailsModal,
-    dataPositionDetailsModalHandler,
+    visibleUpdateFormModal,
+    visibleUpdateFormModalHandler,
+    dataUpdateFormModal,
+    dataUpdateFormModalHandler,
 
     visibleDepositModal,
     visibleDepositModalHandler,
@@ -1110,9 +1110,9 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
       />
 
       <UpdateFormModal
-        modalVisible={visiblePositionDetailsModal}
-        modalClickHandler={visiblePositionDetailsModalHandler}
-        openCfdDetails={dataPositionDetailsModal}
+        modalVisible={visibleUpdateFormModal}
+        modalClickHandler={visibleUpdateFormModalHandler}
+        openCfdDetails={dataUpdateFormModal}
       />
       <HistoryPositionModal
         modalVisible={visibleHistoryPositionModal}

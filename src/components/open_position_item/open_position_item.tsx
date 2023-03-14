@@ -40,8 +40,8 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
   const marketCtx = useContext(MarketContext);
   const userCtx = useContext(UserContext);
   const {
-    visiblePositionDetailsModalHandler,
-    dataPositionDetailsModalHandler,
+    visibleUpdateFormModalHandler,
+    dataUpdateFormModalHandler,
     visiblePositionClosedModalHandler,
     dataPositionClosedModalHandler,
   } = useGlobal();
@@ -103,8 +103,8 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
   // globalContext.dataPositionDetailsModalHandler(cfd.orderId);
   const openItemClickHandler = () => {
     // const sth = toApplyUpdatedCFD()
-    dataPositionDetailsModalHandler(openCfdDetails); // sth
-    visiblePositionDetailsModalHandler();
+    dataUpdateFormModalHandler(openCfdDetails); // sth
+    visibleUpdateFormModalHandler();
   };
 
   const nowTimestamp = new Date().getTime() / 1000;

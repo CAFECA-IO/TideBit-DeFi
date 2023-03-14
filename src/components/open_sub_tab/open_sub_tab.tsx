@@ -34,6 +34,7 @@ const OpenSubTab = () => {
     return displayedOpenPositionList;
   };
 
+  // console.log(toOpenPositionItem(openCFDs)); // Info: (20230314 - Shirley) `openCFDs` data from `display_accepted_cfd_order`
   const openPositionList = toOpenPositionItem(openCFDs).map(cfd => {
     return (
       <div key={cfd.id}>

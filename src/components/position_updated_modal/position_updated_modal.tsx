@@ -15,25 +15,30 @@ import {IPublicCFDOrder} from '../../interfaces/tidebit_defi_background/public_o
 import {IUpdatedCFDInputProps, useGlobal} from '../../contexts/global_context';
 import {TypeOfPosition} from '../../constants/type_of_position';
 import {UserContext} from '../../contexts/user_context';
+import {IDisplayApplyCFDOrder} from '../../interfaces/tidebit_defi_background/display_apply_cfd_order';
+import {IApplyUpdateCFDOrderData} from '../../interfaces/tidebit_defi_background/apply_update_cfd_order_data';
+import {IDisplayAcceptedCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
 
 interface IPositionUpdatedModal {
   modalVisible: boolean;
   modalClickHandler: () => void;
-  openCfdDetails: IOpenCFDDetails;
-  updatedProps?: IUpdatedCFDInputProps;
+  openCfdDetails: IDisplayAcceptedCFDOrder;
+  updatedProps?: IApplyUpdateCFDOrderData;
 }
 
 // TODO: replace all hardcode options with variables
 const PositionUpdatedModal = ({
   modalVisible,
   modalClickHandler,
-  openCfdDetails: openCfdDetails,
+  openCfdDetails,
   updatedProps,
   ...otherProps
 }: IPositionUpdatedModal) => {
   const userCtx = useContext(UserContext);
   const marketCtx = useContext(MarketContext);
   const globalCtx = useGlobal();
+
+  // const data = openCfdDetails.data as IApplyUpdateCFDOrderData
 
   // const [dataRenewedStyle, setDataRenewedStyle] = useState('text-lightWhite');
   const [tpTextStyle, setTpTextStyle] = useState('text-lightWhite');
@@ -67,7 +72,7 @@ const PositionUpdatedModal = ({
     const result = await userCtx.updateCFDOrder({
       orderId: openCfdDetails.id,
       ...updatedProps,
-      guaranteedStop: updatedProps?.guaranteedStopLoss ?? false,
+      guaranteedStop: updatedProps?.guaranteedStop ?? false,
     });
 
     // TODO: temporary waiting
@@ -104,7 +109,7 @@ const PositionUpdatedModal = ({
 
       globalCtx.eliminateAllModals();
 
-      globalCtx.visiblePositionDetailsModalHandler();
+      globalCtx.visibleUpdateFormModalHandler();
     } else if (result.reason === 'CANCELED') {
       globalCtx.dataCanceledModalHandler({
         modalTitle: 'Update Position',
@@ -131,8 +136,7 @@ const PositionUpdatedModal = ({
   const renewDataStyle = () => {
     if (updatedProps === undefined) return;
 
-    updatedProps.guaranteedStopLoss &&
-    updatedProps.guaranteedStopLoss !== openCfdDetails.guaranteedStop
+    updatedProps.guaranteedStop && updatedProps.guaranteedStop !== openCfdDetails.guaranteedStop
       ? setGtslTextStyle('text-lightYellow2')
       : setGtslTextStyle('text-lightWhite');
 
@@ -156,7 +160,7 @@ const PositionUpdatedModal = ({
   }, [globalCtx.visiblePositionUpdatedModal]);
 
   // TODO: typo `guaranteedStop`
-  const displayedGuaranteedStopSetting = updatedProps?.guaranteedStopLoss
+  const displayedGuaranteedStopSetting = updatedProps?.guaranteedStop
     ? 'Yes'
     : openCfdDetails.guaranteedStop
     ? 'Yes'
@@ -240,7 +244,7 @@ const PositionUpdatedModal = ({
 
   const layoutInsideBorder = 'mx-5 my-4 flex justify-between';
 
-  const displayedTime = timestampToString(openCfdDetails?.openTimestamp ?? 0);
+  const displayedTime = timestampToString(openCfdDetails?.createTimestamp ?? 0);
 
   const formContent = (
     <div>

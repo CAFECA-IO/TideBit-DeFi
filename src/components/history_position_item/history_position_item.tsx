@@ -1,5 +1,9 @@
 import React from 'react';
-import {TypeOfPnLColorHex, TypeOfTransaction} from '../../constants/display';
+import {
+  TypeOfPnLColorHex,
+  TypeOfTransaction,
+  UNIVERSAL_NUMBER_FORMAT_LOCALE,
+} from '../../constants/display';
 import {ProfitState} from '../../constants/profit_state';
 import {timestampToString} from '../../lib/common';
 import {IClosedCFDDetails} from '../../interfaces/tidebit_defi_background/closed_cfd_details';
@@ -63,7 +67,8 @@ const HistoryPositionItem = ({closedCfdDetails, ...otherProps}: IHistoryPosition
           <div className="w-150px">
             <div className="text-lightGray">Open / Close Value</div>
             <div className="">
-              $ {closedCfdDetails.openValue} / $ {closedCfdDetails?.closeValue ?? 0}
+              $ {closedCfdDetails.openValue.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)} / ${' '}
+              {closedCfdDetails?.closeValue?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0}
             </div>
           </div>
 
@@ -75,7 +80,8 @@ const HistoryPositionItem = ({closedCfdDetails, ...otherProps}: IHistoryPosition
           <div className="w-60px text-end">
             <div>PNL</div>
             <div className={`${displayedTextColor}`}>
-              <span className="">{displayedSymbol}</span> $ {closedCfdDetails.pnl.value}
+              <span className="">{displayedSymbol}</span> ${' '}
+              {closedCfdDetails.pnl.value?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}
             </div>
           </div>
         </div>

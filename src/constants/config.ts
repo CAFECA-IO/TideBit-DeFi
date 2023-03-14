@@ -32,6 +32,7 @@ export const WS_URL = 'wss://staging-001.tidebit.network/ws';
 
 // Deprecated: dummy url settings (20230407 - Tzuhan)
 export const TBE_URL = 'https://staging-001.tidebit.network';
-export const API_VERSION = '/api/v1';
-export const AVAILABLE_TICKERS = ['ETH', 'BTC'];
 // Deprecated: dummy url settings (20230407 - Tzuhan)
+export const API_VERSION = '/api/v1';
+// Deprecated: dummy url settings (20230407 - Tzuhan)
+export const AVAILABLE_TICKERS = ['ETH', 'BTC'];

@@ -19,6 +19,7 @@ import {
   ITickerData,
   dummyTicker,
   ITBETrade,
+  ITickerMarket,
 } from '../interfaces/tidebit_defi_background/ticker_data';
 import {ITimeSpanUnion, TimeSpanUnion} from '../interfaces/tidebit_defi_background/time_span_union';
 import {getTime, ICandlestickData} from '../interfaces/tidebit_defi_background/candlestickData';
@@ -156,6 +157,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     return dummyResultSuccess;
   };
 
+  /* Deprecated: updateCandlestickData with ICandlestickData 可能會有派上用場的時候 (20230407 - Tzuhan)
   const updateCandlestickData = (candlestickData: ICandlestickData) => {
     let candlestickDatas = candlestickChartDataRef.current
       ? [...candlestickChartDataRef.current]
@@ -183,6 +185,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     // console.log(`candlestickDatas[${candlestickDatas.length}]`, candlestickDatas);
     setCandlestickChartData(candlestickDatas);
   };
+  */
 
   const getCandlestickChartData = async (tickerId: string) => {
     workerCtx.requestHandler({
@@ -214,7 +217,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       },
       callback: (tickers: ITickerData[]) => {
         tickerBook.updateTickers(tickers);
-        setAvailableTickers(tickerBook.tickers);
+        setAvailableTickers({...tickerBook.tickers});
         selectTickerHandler(tickers[0].currency);
       },
     });
@@ -246,10 +249,11 @@ export const MarketProvider = ({children}: IMarketProvider) => {
 
   React.useMemo(
     () =>
-      notificationCtx.emitter.on(TideBitEvent.TICKER, (ticker: ITickerData) => {
-        if (ticker.currency === selectedTickerRef.current?.currency) setSelectedTicker(ticker);
-        tickerBook.updateTicker(ticker);
-        setAvailableTickers(tickerBook.tickers);
+      notificationCtx.emitter.on(TideBitEvent.TICKER, (tickerMarketData: ITickerMarket) => {
+        tickerBook.updateTicker(tickerMarketData);
+        setAvailableTickers({...tickerBook.tickers});
+        if (tickerMarketData.currency === selectedTickerRef.current?.currency)
+          setSelectedTicker(tickerBook.tickers[tickerMarketData.currency]);
       }),
     []
   );
@@ -279,7 +283,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
         TideBitEvent.CANDLESTICK,
         (ticker: string, trades: ITBETrade[]) => {
           tickerBook.updateCandlestickByTrade(ticker, trades);
-          setAvailableTickers(tickerBook.tickers);
+          setAvailableTickers({...tickerBook.tickers});
           if (selectedTickerRef.current?.currency === ticker)
             setCandlestickChartData(tickerBook.candlesticks[ticker]);
         }

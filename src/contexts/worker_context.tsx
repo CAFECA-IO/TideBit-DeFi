@@ -6,9 +6,10 @@ import {WS_URL} from '../constants/config';
 import {Events} from '../constants/events';
 import {TideBitEvent} from '../constants/tidebit_event';
 import {
-  convertDataToTicker,
+  convertToTickerMartketData,
   ITBETicker,
   ITickerData,
+  ITickerMarket,
 } from '../interfaces/tidebit_defi_background/ticker_data';
 import {NotificationContext} from './notification_context';
 
@@ -85,22 +86,22 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
           case Events.TICKERS:
             if (metaData.data) {
               const data = Object.values(metaData.data).shift() as ITBETicker;
-              const ticker: ITickerData | null = convertDataToTicker(data);
-              if (ticker) {
-                notificationCtx.emitter.emit(TideBitEvent.TICKER, ticker);
+              const tickerMarketData: ITickerMarket | null = convertToTickerMartketData(data);
+              if (tickerMarketData) {
+                notificationCtx.emitter.emit(TideBitEvent.TICKER, tickerMarketData);
               }
-              // Till: remove dummy candlestick data (20230327 - Tzuhan)
-              // if (data) {
-              //   const candlestickData: ICandlestickData = {
-              //     x: new Date(data.at * 1000),
-              //     y: getDummyPrices(parseFloat(data.last)),
-              //   };
-              //   notificationCtx.emitter.emit(
-              //     TideBitEvent.CANDLESTICK,
-              //     ticker?.currency,
-              //     candlestickData
-              //   );
-              // }
+              /* Till: remove dummy candlestick data (20230327 - Tzuhan)
+              if (data) {
+                const candlestickData: ICandlestickData = {
+                  x: new Date(data.at * 1000),
+                  y: getDummyPrices(parseFloat(data.last)),
+                };
+                notificationCtx.emitter.emit(
+                  TideBitEvent.CANDLESTICK,
+                  ticker?.currency,
+                  candlestickData
+                );
+              }*/
             }
             break;
           case Events.UPDATE:

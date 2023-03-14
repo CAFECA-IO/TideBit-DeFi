@@ -7,6 +7,7 @@ import {
   dummyTickers,
   ITBETrade,
   ITickerData,
+  ITickerMarket,
 } from '../../interfaces/tidebit_defi_background/ticker_data';
 import {
   ITimeSpanUnion,
@@ -55,33 +56,34 @@ class TickerBook {
         return prev;
       }, sortTrades);
       if (sortTrades.length > 0) {
-        // Till: test log (20230407 - Tzuhan)
-        // // eslint-disable-next-line no-console
-        // console.log(`updateCandlestick this.timeSpan${this.timeSpan}:timeSpan[${timeSpan}]`);
-        // // eslint-disable-next-line no-console
-        // console.log(`updateCandlestick this.candlesticks[${ticker}]: `, this.candlesticks[ticker]);
-        // // eslint-disable-next-line no-console
-        // console.log(
-        //   `updateCandlestick filterTrades[${filterTrades.length}]: ${ticker}`,
-        //   filterTrades.map(trade => ({...trade, date: new Date(+trade.date)}))
-        // );
-        // // eslint-disable-next-line no-console
-        // console.log(
-        //   `updateCandlestick +filterTrades[0].ts${+filterTrades[0]
-        //     .ts} - lastestBarTime[${lastestBarTime}]: `,
-        //   +filterTrades[0].ts - lastestBarTime
-        // );
-        // // eslint-disable-next-line no-console
-        // console.log(
-        //   `updateCandlestick +filterTrades[filterTrades.length-1].ts${+filterTrades[
-        //     filterTrades.length - 1
-        //   ].ts} - lastestBarTime[${lastestBarTime}]: `,
-        //   +filterTrades[0].ts - lastestBarTime
-        // );
-        // // eslint-disable-next-line no-console
+        /*  Till: test log (20230327 - Tzuhan)
+        // eslint-disable-next-line no-console
+        console.log(`updateCandlestick this.timeSpan${this.timeSpan}:timeSpan[${timeSpan}]`);
+        // eslint-disable-next-line no-console
+        console.log(`updateCandlestick this.candlesticks[${ticker}]: `, this.candlesticks[ticker]);
+        // eslint-disable-next-line no-console
+        console.log(
+          `updateCandlestick filterTrades[${filterTrades.length}]: ${ticker}`,
+          filterTrades.map(trade => ({...trade, date: new Date(+trade.date)}))
+        );
+        // eslint-disable-next-line no-console
+        console.log(
+          `updateCandlestick +filterTrades[0].ts${+filterTrades[0]
+            .ts} - lastestBarTime[${lastestBarTime}]: `,
+          +filterTrades[0].ts - lastestBarTime
+        );
+        // eslint-disable-next-line no-console
+        console.log(
+          `updateCandlestick +filterTrades[filterTrades.length-1].ts${+filterTrades[
+            filterTrades.length - 1
+          ].ts} - lastestBarTime[${lastestBarTime}]: `,
+          +filterTrades[0].ts - lastestBarTime
+        );
+        // eslint-disable-next-line no-console
 
-        // // eslint-disable-next-line no-console
-        // console.log(`updateCandlestick sortTrades[${sortTrades.length}]: ${ticker}`, sortTrades);
+        // eslint-disable-next-line no-console
+        console.log(`updateCandlestick sortTrades[${sortTrades.length}]: ${ticker}`, sortTrades);
+        */
         for (const sortTrade of sortTrades) {
           const open = sortTrade[0];
           const high = Math.max(...sortTrade);
@@ -93,6 +95,8 @@ class TickerBook {
           });
           this._tickers[ticker].lineGraphProps.dataArray =
             this._tickers[ticker].lineGraphProps.dataArray?.concat(open);
+          // eslint-disable-next-line no-console
+          console.log(`this.tickers`, this.tickers, this.tickers[ticker]);
         }
       }
     }
@@ -102,9 +106,16 @@ class TickerBook {
     this._candlesticks[ticker] = value;
   }
 
-  updateTicker(value: ITickerData) {
+  updateTicker(value: ITickerMarket) {
     const tickers: {[currency: string]: ITickerData} = {...this.tickers};
-    tickers[value.currency] = {...value};
+    tickers[value.currency] = {
+      ...tickers[value.currency],
+      price: value.price,
+      upOrDown: value.upOrDown,
+      priceChange: value.priceChange,
+      fluctuating: value.fluctuating,
+      tradingVolume: value.tradingVolume,
+    };
     this.tickers = tickers;
     return tickers;
   }

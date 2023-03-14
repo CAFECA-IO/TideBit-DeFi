@@ -127,3 +127,14 @@ export const locker = (id: string): ILocker => {
 };
 
 export const getTimestamp = () => Math.ceil(Date.now() / 1000);
+
+export const twoDecimal = (num: number, mul?: number): number => {
+  const roundedNum = Math.round(num * 100) / 100;
+  const str = roundedNum.toFixed(2).replace(/\.?0+$/, '');
+  const dec = str.split('.');
+  const numDec = dec.length === 2 ? dec[1].length : 0;
+
+  return mul
+    ? Number((num * mul).toFixed(numDec).replace(/\.?0+$/, ''))
+    : Number(num.toFixed(numDec).replace(/\.?0+$/, ''));
+};

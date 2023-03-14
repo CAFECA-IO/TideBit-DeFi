@@ -25,7 +25,7 @@ import {getTime, ICandlestickData} from '../interfaces/tidebit_defi_background/c
 import {TideBitEvent} from '../constants/tidebit_event';
 import {NotificationContext} from './notification_context';
 import {WorkerContext} from './worker_context';
-import {APIRequest, Method} from '../constants/api_request';
+import {APIName, Method} from '../constants/api_request';
 import TickerBookInstance from '../lib/books/ticker_book';
 
 export interface IMarketProvider {
@@ -186,13 +186,12 @@ export const MarketProvider = ({children}: IMarketProvider) => {
 
   const getCandlestickChartData = async (tickerId: string) => {
     workerCtx.requestHandler({
-      name: APIRequest.GET_CANDLESTICK_DATA,
-      request: {
-        name: APIRequest.GET_CANDLESTICK_DATA,
-        method: Method.GET,
-        url: `/api/candlesticks/${tickerId.toLowerCase()}?limit=${
-          tickerBook.limit
-        }&timespan=${timeSpan}`,
+      name: APIName.GET_CANDLESTICK_DATA,
+      method: Method.GET,
+      ticker: selectedTickerRef.current?.currency,
+      params: {
+        limit: tickerBook.limit,
+        timespan: timeSpan,
       },
       callback: (candlestickChartData: ICandlestickData[]) => {
         tickerBook.updateCandlestick(
@@ -207,43 +206,33 @@ export const MarketProvider = ({children}: IMarketProvider) => {
   const init = async () => {
     setIsCFDTradable(true);
     workerCtx.requestHandler({
-      name: APIRequest.LIST_TICKERS,
-      request: {
-        name: APIRequest.LIST_TICKERS,
-        method: Method.GET,
-        url: `/api/tickers?limit=${tickerBook.limit}&timespan=${timeSpan}`,
+      name: APIName.LIST_TICKERS,
+      method: Method.GET,
+      params: {
+        limit: tickerBook.limit,
+        timespan: timeSpan,
       },
       callback: (tickers: ITickerData[]) => {
         tickerBook.updateTickers(tickers);
         setAvailableTickers(tickerBook.tickers);
-        // // eslint-disable-next-line no-console
-        // console.log(`market init tickers[0].currency`, tickers[0].currency);
         selectTickerHandler(tickers[0].currency);
       },
     });
-    // workerCtx.requestHandler({
-    //   name: APIRequest.LIST_DEPOSIT_CRYPTO_CURRENCIES,
-    //   request: {
-    //     name: APIRequest.LIST_DEPOSIT_CRYPTO_CURRENCIES,
-    //     method: Method.GET,
-    //     url: '/api/deposits',
-    //   },
-    //   callback: (cryptocurrencies: ICryptocurrency[]) => {
-    //     console.log(`maket init depositcurrencies`, cryptocurrencies);
-    //     setDepositCryptocurrencies([...cryptocurrencies]);
-    //   },
-    // });
-    // workerCtx.requestHandler({
-    //   name: APIRequest.LIST_WITHDRAW_CRYPTO_CURRENCIES,
-    //   request: {
-    //     name: APIRequest.LIST_WITHDRAW_CRYPTO_CURRENCIES,
-    //     method: Method.GET,
-    //     url: '/api/withdraws',
-    //   },
-    //   callback: (cryptocurrencies: ICryptocurrency[]) => {
-    //     setWithdrawCryptocurrencies([...cryptocurrencies]);
-    //   },
-    // });
+    workerCtx.requestHandler({
+      name: APIName.LIST_DEPOSIT_CRYPTO_CURRENCIES,
+      method: Method.GET,
+      callback: (cryptocurrencies: ICryptocurrency[]) => {
+        // console.log(`maket init depositcurrencies`, cryptocurrencies);
+        setDepositCryptocurrencies([...cryptocurrencies]);
+      },
+    });
+    workerCtx.requestHandler({
+      name: APIName.LIST_WITHDRAW_CRYPTO_CURRENCIES,
+      method: Method.GET,
+      callback: (cryptocurrencies: ICryptocurrency[]) => {
+        setWithdrawCryptocurrencies([...cryptocurrencies]);
+      },
+    });
     return await Promise.resolve();
   };
 

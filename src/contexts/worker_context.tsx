@@ -1,13 +1,10 @@
 import React, {createContext, useRef, useContext} from 'react';
 import useState from 'react-usestateref';
-import {IAPIRequest} from '../constants/api_request';
+import {APIRequest, IAPIName, IMethodConstant, TypeRequest} from '../constants/api_request';
+
 import {WS_URL} from '../constants/config';
 import {Events} from '../constants/events';
 import {TideBitEvent} from '../constants/tidebit_event';
-import {
-  getDummyPrices,
-  ICandlestickData,
-} from '../interfaces/tidebit_defi_background/candlestickData';
 import {
   convertDataToTicker,
   ITBETicker,
@@ -29,19 +26,6 @@ export const JobType: IJobTypeConstant = {
 interface IWorkerProvider {
   children: React.ReactNode;
 }
-type TypeRequest = {
-  name: IAPIRequest;
-  request: {
-    name: IAPIRequest;
-    method: string;
-    url: string;
-    body?: object;
-    options?: {
-      headers?: object;
-    };
-  };
-  callback: (...args: any[]) => void;
-};
 
 interface IRequest {
   [name: string]: TypeRequest;
@@ -51,7 +35,15 @@ interface IWorkerContext {
   wsWorker: WebSocket | null;
   apiWorker: Worker | null;
   init: () => void;
-  requestHandler: (request: TypeRequest) => void;
+  requestHandler: (data: {
+    name: IAPIName;
+    ticker?: string;
+    method: IMethodConstant;
+    params?: {[key: string]: string | number | boolean};
+    body?: object;
+    headers?: object;
+    callback?: (...args: any[]) => void;
+  }) => void;
   tickerChangeHandler: (ticker: ITickerData) => void;
   registerUserHandler: (address: string) => void;
 }
@@ -195,12 +187,21 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
     }
   };
 
-  const requestHandler = async (request: TypeRequest) => {
+  const requestHandler = async (data: {
+    name: IAPIName;
+    ticker?: string;
+    method: IMethodConstant;
+    params?: {[key: string]: string | number | boolean};
+    body?: object;
+    headers?: object;
+    callback?: (...args: any[]) => void;
+  }) => {
     if (apiWorkerRef.current) {
+      const request: TypeRequest = APIRequest(data);
       apiWorkerRef.current.postMessage(request.request);
       requests.current[request.name] = request;
     } else {
-      createJob(JobType.API, () => requestHandler(request));
+      createJob(JobType.API, () => requestHandler(data));
     }
   };
 

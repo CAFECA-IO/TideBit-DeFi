@@ -202,7 +202,7 @@ const UpdatedFormModal = ({
       <div className="text-xs text-lightWhite">
         *
         {guaranteedpCheckedRef.current
-          ? t('POSITION_MODAL.CLOSE_AT_LOSS')
+          ? t('POSITION_MODAL.SL_SETTING')
           : t('POSITION_MODAL.EXPECTED_LOSS')}
         : - ${' '}
         {roundToDecimalPlaces(Math.abs(expectedLossValueRef.current), 2).toLocaleString(
@@ -712,7 +712,7 @@ const UpdatedFormModal = ({
               <div className={`mx-10 mt-3 flex-col text-xs leading-relaxed text-lightWhite`}>
                 <div className="mb-2 h-50px">
                   <div className="flex items-center justify-between">
-                    <div className="text-lightGray">{t('POSITION_MODAL.CLOSE_AT_PROFIT')}</div>
+                    <div className="text-lightGray">{t('POSITION_MODAL.TP_SETTING')}</div>
                     <div className="-mr-10">{displayedTakeProfitSetting}</div>
                     <Toggle
                       setToggleStateFromParent={setTpToggle}
@@ -726,7 +726,7 @@ const UpdatedFormModal = ({
 
                 <div className="mb-5 h-70px">
                   <div className="flex items-center justify-between">
-                    <div className="text-lightGray">{t('POSITION_MODAL.CLOSE_AT_LOSS')}</div>
+                    <div className="text-lightGray">{t('POSITION_MODAL.SL_SETTING')}</div>
                     <div className="-mr-50px">{displayedStopLossSetting}</div>
                     <Toggle
                       getToggledState={getToggledSlSetting}

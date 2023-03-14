@@ -15,7 +15,9 @@ import {IPublicCFDOrder} from '../../interfaces/tidebit_defi_background/public_o
 import {IUpdatedCFDInputProps, useGlobal} from '../../contexts/global_context';
 import {TypeOfPosition} from '../../constants/type_of_position';
 import {UserContext} from '../../contexts/user_context';
+import {useTranslation} from 'react-i18next';
 
+type TranslateFunction = (s: string) => string;
 interface IPositionUpdatedModal {
   modalVisible: boolean;
   modalClickHandler: () => void;
@@ -31,6 +33,8 @@ const PositionUpdatedModal = ({
   updatedProps,
   ...otherProps
 }: IPositionUpdatedModal) => {
+  const {t}: {t: TranslateFunction} = useTranslation('common');
+
   const userCtx = useContext(UserContext);
   const marketCtx = useContext(MarketContext);
   const globalCtx = useGlobal();
@@ -179,10 +183,14 @@ const PositionUpdatedModal = ({
       ? updatedProps.takeProfit === 0
         ? '-'
         : updatedProps.takeProfit !== 0
-        ? `$ ${updatedProps.takeProfit}`
+        ? `$ ${updatedProps.takeProfit.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+            minimumFractionDigits: 2,
+          })}`
         : undefined
       : openCfdDetails.takeProfit
-      ? `$ ${openCfdDetails.takeProfit}`
+      ? `$ ${openCfdDetails.takeProfit.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+          minimumFractionDigits: 2,
+        })}`
       : '-';
 
   // const displayedTakeProfit =
@@ -199,10 +207,14 @@ const PositionUpdatedModal = ({
       ? updatedProps.stopLoss === 0
         ? '-'
         : updatedProps.stopLoss !== 0
-        ? `$ ${updatedProps.stopLoss}`
+        ? `$ ${updatedProps.stopLoss.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+            minimumFractionDigits: 2,
+          })}`
         : undefined
       : openCfdDetails.stopLoss
-      ? `$ ${openCfdDetails.stopLoss}`
+      ? `$ ${openCfdDetails.stopLoss.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+          minimumFractionDigits: 2,
+        })}`
       : '-';
 
   // const displayedStopLoss =
@@ -217,9 +229,15 @@ const PositionUpdatedModal = ({
   // const displayedPnLSymbol =
   //   openCfdDetails.pnl.type === 'PROFIT' ? '+' : openCfdDetails.pnl.type === 'LOSS' ? '-' : '';
 
-  // TODO: i18n
   const displayedTypeOfPosition =
-    openCfdDetails?.typeOfPosition === TypeOfPosition.BUY ? 'Up (Buy)' : 'Down (Sell)';
+    openCfdDetails?.typeOfPosition === TypeOfPosition.BUY
+      ? t('POSITION_MODAL.TYPE_UP')
+      : t('POSITION_MODAL.TYPE_DOWN');
+
+  const displayedBuyOrSell =
+    openCfdDetails?.typeOfPosition === TypeOfPosition.BUY
+      ? t('POSITION_MODAL.TYPE_BUY')
+      : t('POSITION_MODAL.TYPE_SELL');
 
   // const displayedPnLColor =
   //   updatedCfdRequest?.pnl.type === 'PROFIT'
@@ -228,7 +246,7 @@ const PositionUpdatedModal = ({
   //     ? TypeOfPnLColor.LOSS
   //     : TypeOfPnLColor.EQUAL;
 
-  const displayedPositionColor = 'text-lightWhite';
+  const displayedPositionColor = 'text-tidebitTheme';
   // openCfdDetails.typeOfPosition === TypeOfPosition.BUY
   //   ? TypeOfPnLColor.PROFIT
   //   : TypeOfPnLColor.LOSS;
@@ -238,13 +256,13 @@ const PositionUpdatedModal = ({
   //   ? TypeOfBorderColor.LONG
   //   : TypeOfBorderColor.SHORT;
 
-  const layoutInsideBorder = 'mx-5 my-4 flex justify-between';
+  const layoutInsideBorder = 'mx-5 my-2 flex justify-between';
 
   const displayedTime = timestampToString(openCfdDetails?.openTimestamp ?? 0);
 
   const formContent = (
-    <div>
-      <div className="mt-8 mb-2 flex items-center justify-center space-x-2 text-center">
+    <div className="mt-8 flex flex-col px-6 pb-2">
+      <div className="flex items-center justify-center space-x-2 text-center">
         <Image
           src={marketCtx.selectedTicker?.tokenImg ?? ''}
           width={30}
@@ -256,39 +274,44 @@ const PositionUpdatedModal = ({
 
       <div className="relative flex-auto pt-1">
         <div
-          className={`${displayedBorderColor} mx-6 mt-1 border-1px text-xs leading-relaxed text-lightWhite`}
+          className={`${displayedBorderColor} mt-1 border-1px py-4 text-xs leading-relaxed text-lightWhite`}
         >
-          <div className="flex-col justify-center text-center">
+          <div className="flex flex-col justify-center text-center">
             {/* {displayedDataFormat()} */}
 
             <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">Type</div>
+              <div className="text-lightGray">{t('POSITION_MODAL.TYPE')}</div>
               {/* TODO: color variable */}
-              <div className={`${displayedPositionColor}`}>{displayedTypeOfPosition}</div>
+              <div className={`${displayedPositionColor}`}>
+                {displayedTypeOfPosition}
+                <span className="ml-1 text-lightGray">{displayedBuyOrSell}</span>
+              </div>
             </div>
 
             <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">Open Price</div>
+              <div className="text-lightGray">{t('POSITION_MODAL.OPEN_PRICE')}</div>
               {/* <div className="">
                 {openCfdDetails?.amount?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0}{' '}
                 {openCfdDetails.ticker}
               </div> */}
               <div className={``}>
-                {/* TODO: Hardcode USDT */}${' '}
-                {openCfdDetails?.openPrice?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0}{' '}
-                USDT
+                {/* TODO: Hardcode USDT */}
+                {openCfdDetails?.openPrice?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+                  minimumFractionDigits: 2,
+                }) ?? 0}{' '}
+                <span className="ml-1 text-lightGray">USDT</span>
                 {/* {openCfdDetails?.price?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0} USDT */}
               </div>
             </div>
 
             <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">Open Time</div>
+              <div className="text-lightGray">{t('POSITION_MODAL.OPEN_TIME')}</div>
               <div className="">
                 {displayedTime.date} {displayedTime.time}
               </div>
             </div>
             <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">TP/ SL</div>
+              <div className="text-lightGray">{t('POSITION_MODAL.TP_AND_SL')}</div>
               <div className="">
                 <span className={`${tpTextStyle}`}>{displayedTakeProfit}</span> /{' '}
                 <span className={`${slTextStyle}`}>{displayedStopLoss}</span>
@@ -317,7 +340,7 @@ const PositionUpdatedModal = ({
             </div> */}
 
             <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">Guaranteed Stop</div>
+              <div className="text-lightGray">{t('POSITION_MODAL.GUARANTEED_STOP')}</div>
               <div className={`${gtslTextStyle}`}>{displayedGuaranteedStopSetting}</div>
             </div>
 
@@ -328,20 +351,15 @@ const PositionUpdatedModal = ({
           </div>
         </div>
 
-        <div className="mx-6 my-3 text-xxs text-lightGray">
-          Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
-          invidunt ut labore et dolore magna
-        </div>
+        <div className="my-4 text-xxs text-lightGray">{t('POSITION_MODAL.CFD_CONTENT')}</div>
 
-        <div className={`flex-col space-y-5 text-base leading-relaxed text-lightWhite`}>
-          <RippleButton
-            onClick={submitClickHandler}
-            buttonType="button"
-            className={`mx-22px mt-0 rounded border-0 bg-tidebitTheme py-2 px-16 text-base text-white transition-colors duration-300 hover:bg-cyan-600 focus:outline-none`}
-          >
-            Confirm the order
-          </RippleButton>
-        </div>
+        <RippleButton
+          onClick={submitClickHandler}
+          buttonType="button"
+          className={`mt-0 whitespace-nowrap rounded border-0 bg-tidebitTheme py-2 px-16 text-base text-white transition-colors duration-300 hover:bg-cyan-600 focus:outline-none`}
+        >
+          {t('POSITION_MODAL.CONFIRM_BUTTON')}
+        </RippleButton>
       </div>
     </div>
   );
@@ -358,12 +376,12 @@ const PositionUpdatedModal = ({
           {/*content & panel*/}
           <div
             // ref={modalRef}
-            className="relative flex h-475px w-296px flex-col rounded-3xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none"
+            className="relative flex h-auto w-300px flex-col rounded-xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none"
           >
             {/*header*/}
             <div className="flex items-start justify-between rounded-t pt-9">
-              <h3 className="mt-0 w-full text-center text-xl font-normal text-lightWhite">
-                Update Position
+              <h3 className="w-full text-center text-xl font-normal text-lightWhite">
+                {t('POSITION_MODAL.UPDATE_POSITION_TITLE')}
               </h3>
               <button className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
                 <span className="absolute top-5 right-5 block outline-none focus:outline-none">

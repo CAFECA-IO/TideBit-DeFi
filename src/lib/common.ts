@@ -11,6 +11,10 @@ export function randomFloatFromInterval(min: number, max: number, decimalPlaces:
   return Number((Math.random() * (max - min) + min).toFixed(decimalPlaces));
 }
 
+export function getDeadline(deadline: number) {
+  return new Date().getTime() / 1000 + deadline;
+}
+
 /**
  *
  * @param timestamp is in seconds

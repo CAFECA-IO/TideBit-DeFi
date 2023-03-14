@@ -420,6 +420,12 @@ const TradeTab = () => {
     </div>
   );
 
+  const longToolMouseEnterHandler = () => setLongTooltipStatus(3);
+  const longToolMouseLeaveHandler = () => setLongTooltipStatus(0);
+
+  const shortToolMouseEnterHandler = () => setShortTooltipStatus(3);
+  const shortToolMouseLeaveHandler = () => setShortTooltipStatus(0);
+
   const displayedExpectedLongProfit = (
     // longTpToggle ? (
     //   <div className={`${`translate-y-2`} -mt-0 items-center transition-all duration-500`}>
@@ -501,8 +507,8 @@ const TradeTab = () => {
         <div className="ml-1">
           <div
             className="relative"
-            onMouseEnter={() => setLongTooltipStatus(3)}
-            onMouseLeave={() => setLongTooltipStatus(0)}
+            onMouseEnter={longToolMouseEnterHandler}
+            onMouseLeave={longToolMouseLeaveHandler}
           >
             <div className="">
               <AiOutlineQuestionCircle size={20} />
@@ -619,8 +625,8 @@ const TradeTab = () => {
           <div className="ml-1">
             <div
               className="relative"
-              onMouseEnter={() => setShortTooltipStatus(3)}
-              onMouseLeave={() => setShortTooltipStatus(0)}
+              onMouseEnter={shortToolMouseEnterHandler}
+              onMouseLeave={shortToolMouseLeaveHandler}
             >
               <div className="">
                 <AiOutlineQuestionCircle size={20} />

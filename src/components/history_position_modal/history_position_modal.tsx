@@ -1,6 +1,5 @@
 import Image from 'next/image';
 import {ImCross} from 'react-icons/im';
-import {IOpenCFDDetails} from '../../interfaces/tidebit_defi_background/open_cfd_details';
 import {
   TypeOfBorderColor,
   TypeOfPnLColor,
@@ -10,7 +9,6 @@ import Toggle from '../toggle/toggle';
 import {useContext, useRef, useState} from 'react';
 import TradingInput from '../trading_input/trading_input';
 import {AiOutlineQuestionCircle} from 'react-icons/ai';
-//import RippleButton from '../ripple_button/ripple_button';
 import {useGlobal} from '../../contexts/global_context';
 import {timestampToString} from '../../lib/common';
 import {IClosedCFDDetails} from '../../interfaces/tidebit_defi_background/closed_cfd_details';
@@ -38,18 +36,17 @@ const HistoryPositionModal = ({
   // const globalCtx = useGlobal();
   const marketCtx = useContext(MarketContext);
 
-  // TODO: i18n
   const displayedClosedReason =
     closedCfdDetails.closedType === CFDClosedType.SCHEDULE
-      ? 'Scheduled'
+      ? t('POSITION_MODAL.CLOSED_REASON_SCHEDULE')
       : closedCfdDetails.closedType === CFDClosedType.FORCED_LIQUIDATION
-      ? 'Forced Liquidation'
+      ? t('POSITION_MODAL.CLOSED_REASON_FORCED_LIQUIDATION')
       : closedCfdDetails.closedType === CFDClosedType.BY_USER
-      ? 'Manual'
+      ? t('POSITION_MODAL.CLOSED_REASON_BY_USER')
       : closedCfdDetails.closedType === CFDClosedType.TAKE_PROFIT
-      ? 'Take Profit'
+      ? t('POSITION_MODAL.CLOSED_REASON_TAKE_PROFIT')
       : closedCfdDetails.closedType === CFDClosedType.STOP_LOSS
-      ? 'Stop Loss'
+      ? t('POSITION_MODAL.CLOSED_REASON_STOP_LOSS')
       : '';
 
   const displayedGuaranteedStopSetting = !!closedCfdDetails.guaranteedStop ? 'Yes' : 'No';
@@ -85,7 +82,10 @@ const HistoryPositionModal = ({
       ? TypeOfBorderColor.SHORT
       : TypeOfBorderColor.NORMAL;
 
-  const displayedPositionState = closedCfdDetails.state === OrderState.OPENING ? 'Open' : 'Closed';
+  const displayedPositionState =
+    closedCfdDetails.state === OrderState.OPENING
+      ? t('POSITION_MODAL.STATE_OPEN')
+      : t('POSITION_MODAL.STATE_CLOSED');
 
   const socialMediaStyle = 'hover:cursor-pointer hover:opacity-80';
 
@@ -111,7 +111,9 @@ const HistoryPositionModal = ({
           <div className={`${layoutInsideBorder}`}>
             <div className="text-lightGray">{t('POSITION_MODAL.AMOUNT')}</div>
             <div className="">
-              {closedCfdDetails?.amount?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0}
+              {closedCfdDetails?.amount?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+                minimumFractionDigits: 2,
+              }) ?? 0}
               <span className="ml-1 text-lightGray">{closedCfdDetails.ticker}</span>
             </div>
           </div>
@@ -120,14 +122,19 @@ const HistoryPositionModal = ({
             <div className="text-lightGray">{t('POSITION_MODAL.PNL')}</div>
             <div className={`${displayedPnLColor}`}>
               {displayedPnLSymbol} ${' '}
-              {closedCfdDetails?.pnl.value?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}
+              {closedCfdDetails?.pnl.value?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+                minimumFractionDigits: 2,
+              })}
             </div>
           </div>
 
           <div className={`${layoutInsideBorder}`}>
             <div className="text-lightGray">{t('POSITION_MODAL.OPEN_VALUE')}</div>
             <div className="">
-              $ {closedCfdDetails?.openValue?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0}
+              ${' '}
+              {closedCfdDetails?.openValue?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+                minimumFractionDigits: 2,
+              }) ?? 0}
             </div>
           </div>
 
@@ -136,7 +143,10 @@ const HistoryPositionModal = ({
             <div className="">
               ${' '}
               {(closedCfdDetails?.openValue + closedCfdDetails.pnl.value)?.toLocaleString(
-                UNIVERSAL_NUMBER_FORMAT_LOCALE
+                UNIVERSAL_NUMBER_FORMAT_LOCALE,
+                {
+                  minimumFractionDigits: 2,
+                }
               ) ?? 0}
             </div>
           </div>
@@ -144,14 +154,20 @@ const HistoryPositionModal = ({
           <div className={`${layoutInsideBorder}`}>
             <div className="text-lightGray">{t('POSITION_MODAL.OPEN_PRICE')}</div>
             <div className="">
-              $ {closedCfdDetails?.openPrice?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0}
+              {closedCfdDetails?.openPrice?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+                minimumFractionDigits: 2,
+              }) ?? 0}
+              <span className="ml-1 text-lightGray">USDT</span>
             </div>
           </div>
 
           <div className={`${layoutInsideBorder}`}>
             <div className="text-lightGray">{t('POSITION_MODAL.CLOSED_VALUE')}</div>
             <div className="">
-              $ {closedCfdDetails?.openPrice?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0}
+              {closedCfdDetails?.openPrice?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+                minimumFractionDigits: 2,
+              }) ?? 0}
+              <span className="ml-1 text-lightGray">USDT</span>
             </div>
           </div>
 
@@ -170,15 +186,18 @@ const HistoryPositionModal = ({
           </div>
 
           <div className={`${layoutInsideBorder}`}>
-            <div className="text-lightGray">{t('POSITION_MODAL.LIMIT_AND_STOP')}</div>
+            <div className="text-lightGray">{t('POSITION_MODAL.TP_AND_SL')}</div>
             <div className="">
               <span className={`text-lightWhite`}>
-                {closedCfdDetails?.takeProfit?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ??
-                  '-'}
+                {closedCfdDetails?.takeProfit?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+                  minimumFractionDigits: 2,
+                }) ?? '-'}
               </span>{' '}
               /{' '}
               <span className={`text-lightWhite`}>
-                {closedCfdDetails?.stopLoss?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? '-'}
+                {closedCfdDetails?.stopLoss?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+                  minimumFractionDigits: 2,
+                }) ?? '-'}
               </span>
             </div>
           </div>
@@ -250,15 +269,6 @@ const HistoryPositionModal = ({
                   />
                   <h3 className="">{closedCfdDetails.ticker} </h3>
                 </div>
-
-                {/* <div className="flex-col space-y-2 text-end text-xs text-lightGray">
-                  <p className="">
-                    {closedTime.date}
-                  </p>
-                  <p className="">
-                    {closedTime.time}
-                  </p>
-                </div> */}
               </div>
 
               <button className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">

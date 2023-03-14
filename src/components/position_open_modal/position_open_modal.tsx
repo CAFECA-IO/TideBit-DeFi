@@ -9,7 +9,14 @@ import {
 } from '../../constants/display';
 import RippleButton from '../ripple_button/ripple_button';
 import Image from 'next/image';
-import {locker, randomIntFromInterval, timestampToString, wait} from '../../lib/common';
+import {AiOutlineQuestionCircle} from 'react-icons/ai';
+import {
+  locker,
+  randomIntFromInterval,
+  timestampToString,
+  wait,
+  getDeadline,
+} from '../../lib/common';
 import {useContext, useEffect, useState} from 'react';
 import {MarketContext} from '../../contexts/market_context';
 import {IPublicCFDOrder} from '../../interfaces/tidebit_defi_background/public_order';
@@ -148,6 +155,8 @@ const PositionOpenModal = ({
       ? t('POSITION_MODAL.TYPE_BUY')
       : t('POSITION_MODAL.TYPE_SELL');
 
+  const [guaranteedTooltipStatus, setGuaranteedTooltipStatus] = useState(0);
+
   // const displayedPnLColor =
   //   openCfdRequest?.pnl.type === 'PROFIT'
   //     ? TypeOfPnLColor.PROFIT
@@ -180,9 +189,8 @@ const PositionOpenModal = ({
     setDataRenewedStyle('animate-flash text-lightYellow2');
     await wait(DELAYED_HIDDEN_SECONDS / 5);
 
-    const newTimestamp =
-      Math.ceil(new Date().getTime() / 1000) + POSITION_PRICE_RENEWAL_INTERVAL_SECONDS;
-    setSecondsLeft(newTimestamp - Date.now() / 1000);
+    const deadline = getDeadline(POSITION_PRICE_RENEWAL_INTERVAL_SECONDS);
+    setSecondsLeft(deadline - Date.now() / 1000);
 
     // ToDo: get latest price from marketCtx and calculate required margin data
     // FIXME: 應用 ?? 代替 !
@@ -216,13 +224,16 @@ const PositionOpenModal = ({
         //     : (openCfdRequest.amount * marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice) /
         //       openCfdRequest.leverage,
       },
-      renewalDeadline: newTimestamp,
+      renewalDeadline: deadline,
     });
 
     setDataRenewedStyle('text-lightYellow2');
     await wait(DELAYED_HIDDEN_SECONDS / 2);
     setDataRenewedStyle('text-lightWhite');
   };
+
+  const mouseEnterHandler = () => setGuaranteedTooltipStatus(3);
+  const mouseLeaveHandler = () => setGuaranteedTooltipStatus(0);
 
   useEffect(() => {
     // if (!lock()) return;
@@ -322,7 +333,6 @@ const PositionOpenModal = ({
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">{t('POSITION_MODAL.OPEN_PRICE')}</div>
               <div className={`${dataRenewedStyle}`}>
-                ${' '}
                 {openCfdRequest.price?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
                   minimumFractionDigits: 2,
                 }) ?? 0}
@@ -336,22 +346,21 @@ const PositionOpenModal = ({
               {/* ToDo:{openCfdRequest?.amount?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0} */}
               <div className="">
                 {openCfdRequest.amount.toFixed(2)}
-                {/* ToDo: Hardcode ETH */}
-                <span className="ml-1 text-lightGray">ETH</span>
+                <span className="ml-1 text-lightGray">{marketCtx.selectedTicker?.currency}</span>
               </div>
             </div>
 
             <div className={`${layoutInsideBorder} whitespace-nowrap`}>
               <div className="text-lightGray">{t('POSITION_MODAL.REQUIRED_MARGIN')}</div>
               <div className={`${dataRenewedStyle}`}>
-                $ {openCfdRequest.margin.amount.toFixed(2)}
+                {openCfdRequest.margin.amount.toFixed(2)}
                 {/* ToDo: Hardcode USDT */}
                 <span className="ml-1 text-lightGray">USDT</span>
               </div>
             </div>
 
             <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">{t('POSITION_MODAL.LIMIT_AND_STOP')}</div>
+              <div className="text-lightGray">{t('POSITION_MODAL.TP_AND_SL')}</div>
               <div className="">
                 {displayedTakeProfit} / {displayedStopLoss}
                 {/* ToDo: Hardcode USDT */}
@@ -364,17 +373,24 @@ const PositionOpenModal = ({
               <div className={`relative flex items-center`}>
                 {displayedGuaranteedStopSetting}
 
-                <div className="group">
-                  <div className="invisible absolute bottom-6 right-0 w-180px bg-darkGray8 p-2 text-left text-xxs text-lightWhite opacity-0 shadow-lg shadow-black/80 transition-all duration-200 group-hover:visible group-hover:opacity-100">
-                    {t('POSITION_MODAL.GUARANTEED_STOP_HINT')}
+                <div
+                  className="relative ml-1"
+                  onMouseEnter={mouseEnterHandler}
+                  onMouseLeave={mouseLeaveHandler}
+                >
+                  <div className="opacity-70">
+                    <AiOutlineQuestionCircle size={16} />
                   </div>
-                  <Image
-                    className="ml-2"
-                    src="/elements/question.svg"
-                    alt="question icon"
-                    width={12}
-                    height={12}
-                  />
+                  {guaranteedTooltipStatus == 3 && (
+                    <div
+                      role="tooltip"
+                      className="absolute -top-120px -left-52 z-20 mr-8 w-56 rounded bg-darkGray8 p-4 shadow-lg shadow-black/80 transition duration-150 ease-in-out"
+                    >
+                      <p className="pb-0 text-sm font-medium text-white">
+                        {t('POSITION_MODAL.GUARANTEED_STOP_HINT')}
+                      </p>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

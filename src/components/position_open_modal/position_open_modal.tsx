@@ -10,7 +10,13 @@ import {
 import RippleButton from '../ripple_button/ripple_button';
 import Image from 'next/image';
 import {AiOutlineQuestionCircle} from 'react-icons/ai';
-import {locker, randomIntFromInterval, timestampToString, wait} from '../../lib/common';
+import {
+  locker,
+  randomIntFromInterval,
+  timestampToString,
+  wait,
+  getDeadline,
+} from '../../lib/common';
 import {useContext, useEffect, useState} from 'react';
 import {MarketContext} from '../../contexts/market_context';
 import {IPublicCFDOrder} from '../../interfaces/tidebit_defi_background/public_order';
@@ -183,8 +189,8 @@ const PositionOpenModal = ({
     setDataRenewedStyle('animate-flash text-lightYellow2');
     await wait(DELAYED_HIDDEN_SECONDS / 5);
 
-    const newTimestamp = new Date().getTime() / 1000 + POSITION_PRICE_RENEWAL_INTERVAL_SECONDS;
-    setSecondsLeft(newTimestamp - Date.now() / 1000);
+    const deadline = getDeadline(POSITION_PRICE_RENEWAL_INTERVAL_SECONDS);
+    setSecondsLeft(deadline - Date.now() / 1000);
 
     // ToDo: get latest price from marketCtx and calculate required margin data
     // FIXME: 應用 ?? 代替 !
@@ -218,13 +224,16 @@ const PositionOpenModal = ({
         //     : (openCfdRequest.amount * marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice) /
         //       openCfdRequest.leverage,
       },
-      renewalDeadline: newTimestamp,
+      renewalDeadline: deadline,
     });
 
     setDataRenewedStyle('text-lightYellow2');
     await wait(DELAYED_HIDDEN_SECONDS / 2);
     setDataRenewedStyle('text-lightWhite');
   };
+
+  const mouseEnterHandler = () => setGuaranteedTooltipStatus(3);
+  const mouseLeaveHandler = () => setGuaranteedTooltipStatus(0);
 
   useEffect(() => {
     // if (!lock()) return;
@@ -366,8 +375,8 @@ const PositionOpenModal = ({
 
                 <div
                   className="relative ml-1"
-                  onMouseEnter={() => setGuaranteedTooltipStatus(3)}
-                  onMouseLeave={() => setGuaranteedTooltipStatus(0)}
+                  onMouseEnter={mouseEnterHandler}
+                  onMouseLeave={mouseLeaveHandler}
                 >
                   <div className="opacity-70">
                     <AiOutlineQuestionCircle size={16} />

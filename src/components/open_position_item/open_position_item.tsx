@@ -171,7 +171,7 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
         <div className="relative -mt-4 -ml-2 w-50px">
           {/* -----Paused square----- */}
           <div
-            className={`absolute left-14px top-26px z-30 h-6 w-6 hover:cursor-pointer hover:bg-black
+            className={`absolute left-14px top-26px z-30 h-6 w-6 hover:cursor-pointer hover:bg-darkGray
               ${displayedCrossColor} ${displayedCrossStyle} transition-all duration-150`}
             onClick={squareClickHandler}
           ></div>

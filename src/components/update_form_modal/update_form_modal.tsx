@@ -166,6 +166,9 @@ const UpdatedFormModal = ({
     setExpectedLossValue(loss);
   };
 
+  const mouseEnterHandler = () => setGuaranteedTooltipStatus(3);
+  const mouseLeaveHandler = () => setGuaranteedTooltipStatus(0);
+
   const displayedExpectedProfit = (
     // longTpToggle ? (
     //   <div className={`${`translate-y-2`} -mt-0 items-center transition-all duration-500`}>
@@ -292,7 +295,7 @@ const UpdatedFormModal = ({
       ? 'hover:before:bg-lightGreen5 hover:after:bg-lightGreen5'
       : 'hover:before:bg-lightRed hover:after:bg-lightRed';
   const displayedCrossStyle =
-    'before:absolute before:-left-2px before:top-10px before:z-40 before:block before:h-1 before:w-7 before:rotate-45 before:rounded-md after:absolute after:-left-2px after:top-10px after:z-40 after:block after:h-1 after:w-7 after:-rotate-45 after:rounded-md';
+    'before:absolute before:top-12px before:z-40 before:block before:h-1 before:w-7 before:rotate-45 before:rounded-md after:absolute after:top-12px after:z-40 after:block after:h-1 after:w-7 after:-rotate-45 after:rounded-md';
 
   const isDisplayedTakeProfitSetting = tpToggle ? 'flex' : 'invisible';
   const isDisplayedStopLossSetting = slToggle ? 'flex' : 'invisible';
@@ -444,8 +447,8 @@ const UpdatedFormModal = ({
           <div className="ml-3">
             <div
               className="relative"
-              onMouseEnter={() => setGuaranteedTooltipStatus(3)}
-              onMouseLeave={() => setGuaranteedTooltipStatus(0)}
+              onMouseEnter={mouseEnterHandler}
+              onMouseLeave={mouseLeaveHandler}
             >
               <div className="opacity-70">
                 <AiOutlineQuestionCircle size={16} />
@@ -565,7 +568,7 @@ const UpdatedFormModal = ({
                   <div className="mr-1 text-lightGray">{t('POSITION_MODAL.EXPIRATION_TIME')}</div>
                   <div className="relative flex h-50px w-50px items-center">
                     <div
-                      className={`absolute top-10px left-14px z-30 h-6 w-6 hover:cursor-pointer hover:bg-darkGray1 
+                      className={`absolute top-10px left-12px z-30 h-7 w-7 rounded-full hover:cursor-pointer hover:bg-darkGray1 
                       ${displayedCrossColor} ${displayedCrossStyle} transition-all duration-150`}
                       onClick={squareClickHandler}
                     ></div>

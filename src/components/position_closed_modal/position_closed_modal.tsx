@@ -8,7 +8,13 @@ import {
 } from '../../constants/display';
 import RippleButton from '../ripple_button/ripple_button';
 import Image from 'next/image';
-import {locker, randomIntFromInterval, timestampToString, wait} from '../../lib/common';
+import {
+  locker,
+  randomIntFromInterval,
+  timestampToString,
+  wait,
+  getDeadline,
+} from '../../lib/common';
 import {useContext, useEffect, useState} from 'react';
 import {MarketContext} from '../../contexts/market_context';
 import {POSITION_PRICE_RENEWAL_INTERVAL_SECONDS} from '../../constants/config';
@@ -190,8 +196,8 @@ const PositionClosedModal = ({
     // FIXME: closedCfdDetails 的關倉價格
     // globalCtx.visiblePositionClosedModalHandler();
 
-    const newTimestamp = new Date().getTime() / 1000 + POSITION_PRICE_RENEWAL_INTERVAL_SECONDS;
-    setSecondsLeft(newTimestamp - Date.now() / 1000);
+    const deadline = getDeadline(POSITION_PRICE_RENEWAL_INTERVAL_SECONDS);
+    setSecondsLeft(deadline - Date.now() / 1000);
 
     globalCtx.dataPositionClosedModalHandler({
       openCfdDetails: {
@@ -204,7 +210,7 @@ const PositionClosedModal = ({
       },
       latestProps: {
         // renewalDeadline: Date.now() / 1000 + POSITION_PRICE_RENEWAL_INTERVAL_SECONDS,
-        renewalDeadline: newTimestamp,
+        renewalDeadline: deadline,
         latestClosedPrice:
           openCfdDetails.typeOfPosition === TypeOfPosition.BUY
             ? randomIntFromInterval(

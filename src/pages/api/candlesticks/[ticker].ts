@@ -8,8 +8,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (req.method === 'GET') {
       if (AVAILABLE_TICKERS.find(ticker => ticker.toLowerCase() === req.query.ticker)) {
         const url = `${TBE_URL}${API_VERSION}/tradingview/history?symbol=${req.query.ticker}usdt&resolution=${req.query.timespan}&limit=${req.query.limit}`;
-        // eslint-disable-next-line no-console
-        console.log(`url`, url);
         const response = await fetch(url);
         const result = await response.json();
         if (result.success) {
@@ -34,8 +32,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       } else res.status(500).json({error: 'Internal Server Error'});
     } else res.status(500).json({error: 'Internal Server Error'});
   } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error(error);
     res.status(500).json({error: 'Internal Server Error'});
   }
 }

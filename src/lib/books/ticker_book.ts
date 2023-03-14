@@ -95,8 +95,6 @@ class TickerBook {
           });
           this._tickers[ticker].lineGraphProps.dataArray =
             this._tickers[ticker].lineGraphProps.dataArray?.concat(open);
-          // eslint-disable-next-line no-console
-          console.log(`this.tickers`, this.tickers, this.tickers[ticker]);
         }
       }
     }

@@ -1,5 +1,4 @@
 import Lunar from '@cafeca/lunar';
-// import {ethers} from 'ethers';
 import React, {createContext, useCallback, useContext} from 'react';
 import useState from 'react-usestateref';
 import {TypeOfPnLColorHex} from '../constants/display';
@@ -312,16 +311,11 @@ export const UserProvider = ({children}: IUserProvider) => {
     let success = false;
     try {
       const connect = await lunar.connect({});
-      // eslint-disable-next-line no-console
-      // console.log(`connect connect`, connect);
-      // eslint-disable-next-line no-console
-      // console.log(`connect lunar.isConnected`, lunar.isConnected);
-
       if (connect) {
         success = true;
       }
     } catch (error) {
-      // console.error(`userContext connect error`, error);
+      // TODO: error handle (20230314 - Tzuhan)
     }
     return success;
   };

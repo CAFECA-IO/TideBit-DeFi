@@ -112,8 +112,6 @@ class TransactionEngine {
           // ++ TODO createCFDOrderContract
           const typeData = CFDOrderCreate;
           typeData.message = this.convertCreateCFDOrderData(order.data);
-          // eslint-disable-next-line no-console
-          // console.log(`transferCFDOrderToTransaction convertCreateCFDOrderData`, typeData.message);
           result = {
             success: true,
             data: typeData,

@@ -66,7 +66,6 @@ const PositionOpenModal = ({
     // 用戶簽名成功，就會顯示 successful modal
    */
 
-  // TODO: submit reqest
   const submitClickHandler = async () => {
     const [lock, unlock] = locker('position_open_modal.submitClickHandler');
 
@@ -80,14 +79,9 @@ const PositionOpenModal = ({
     });
     globalCtx.visibleLoadingModalHandler();
 
-    // FIXME: Use the real and correct data after the param is confirmed
-    // const dummyCFDOrder: IApplyCreateCFDOrderData = getDummyApplyCreateCFDOrderData(
-    //   marketCtx.selectedTicker?.currency || 'ETH'
-    // );
-    // eslint-disable-next-line no-console
-    // console.log(`position_open_modal dummyCFDOrder`, dummyCFDOrder);
-    const result = await userCtx.createCFDOrder(globalCtx.dataPositionOpenModal?.openCfdRequest);
-    // console.log('result from userCtx in position_closed_modal.tsx: ', result);
+    // TODO: (20230315 - Shirley) Use the real and correct data after the param is confirmed
+    const result = await userCtx.createCFDOrder(openCfdRequest);
+    // const result = await userCtx.createCFDOrder(globalCtx.dataPositionOpenModal?.openCfdRequest);
 
     // TODO: temporary waiting
     await wait(DELAYED_HIDDEN_SECONDS);
@@ -248,19 +242,6 @@ const PositionOpenModal = ({
   };
 
   const renewDataHandler = async () => {
-    // const applyData = toApplyCreateOrder();
-
-    // const excludedProperties = ['margin', 'takeProfit', 'stopLoss'];
-
-    // const creatingDataWithoutExcludedProperties = Object.keys(createCfdData)
-    //   .filter(key => !excludedProperties.includes(key))
-    //   .reduce((obj, key) => {
-    //     return {
-    //       ...obj,
-    //       [key]: createCfdData[key],
-    //     };
-    //   }, {});
-
     setDataRenewedStyle('animate-flash text-lightYellow2');
     await wait(DELAYED_HIDDEN_SECONDS / 5);
 
@@ -288,37 +269,10 @@ const PositionOpenModal = ({
       return;
     }
 
-    // if (secondsLeft === 0) {
-    //   setSecondsLeft(POSITION_PRICE_RENEWAL_INTERVAL_SECONDS);
-    //   renewDataHandler();
-    // }
-
-    // async () => {
-    //   if (secondsLeft === 0) {
-    //     await wait(500);
-    //     setSecondsLeft(15);
-    //   }
-    // };
-
-    // it will start from 2 second
-    // const newTimestamp = new Date().getTime() / 1000 + POSITION_PRICE_RENEWAL_INTERVAL_SECONDS;
-
     const intervalId = setInterval(() => {
-      // setSecondsLeft(prevSeconds => prevSeconds - 1);
-
       const base = openCfdRequest.quotation.deadline;
       const tickingSec = base - getNowSeconds();
       setSecondsLeft(tickingSec > 0 ? Math.round(tickingSec) : 0);
-
-      //
-      // console.log(
-      //   'in setInterval, base: ',
-      //   base,
-      //   ', tickingSec: ',
-      //   tickingSec,
-      //   ', secondsLeft: ',
-      //   secondsLeft
-      // );
 
       if (secondsLeft === 0) {
         renewDataHandler();
@@ -327,19 +281,8 @@ const PositionOpenModal = ({
 
     return () => {
       clearInterval(intervalId);
-      // unlock();
     };
   }, [secondsLeft, globalCtx.visiblePositionOpenModal]);
-
-  // useEffect(() => {
-  //   if (globalCtx.visiblePositionOpenModal) {
-  //     setSecondsLeft(15);
-  //   }
-
-  //   // return () => {
-  //   //   second;
-  //   // };
-  // }, [globalCtx.visiblePositionOpenModal]);
 
   const formContent = (
     <div>
@@ -367,14 +310,12 @@ const PositionOpenModal = ({
 
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">Type</div>
-              {/* TODO: color variable */}
               <div className={`${displayedPositionColor}`}>{displayedTypeOfPosition}</div>
             </div>
 
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">Open Price</div>
               <div className={`${dataRenewedStyle}`}>
-                {/* TODO: Hardcode USDT */}${' '}
                 {openCfdRequest.price?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0}{' '}
                 {openCfdRequest.margin.asset}
               </div>
@@ -383,14 +324,12 @@ const PositionOpenModal = ({
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">Amount</div>
               <div className="">
-                {/* TODO:{openCfdRequest?.amount?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0} */}
-                {openCfdRequest.amount}
+                {openCfdRequest.amount.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}
               </div>
             </div>
 
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">Required Margin</div>
-              {/* TODO: Hardcode USDT */}
               <div className={`${dataRenewedStyle}`}>
                 $ {openCfdRequest.margin.amount.toFixed(2)} {openCfdRequest.margin.asset}
               </div>
@@ -402,13 +341,6 @@ const PositionOpenModal = ({
                 {displayedTakeProfit} / {displayedStopLoss}
               </div>
             </div>
-
-            {/* <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">Open Time</div>
-              <div className="">
-                {displayedTime.date} {displayedTime.time}
-              </div>
-            </div> */}
 
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">Liquidation Price</div>
@@ -430,7 +362,6 @@ const PositionOpenModal = ({
 
         <div className={`flex-col space-y-5 text-base leading-relaxed text-lightWhite`}>
           <RippleButton
-            // disabled={secondsLeft === INIT_POSITION_REMAINING_SECONDS}
             onClick={submitClickHandler}
             buttonType="button"
             className={`mx-22px mt-0 rounded border-0 bg-tidebitTheme py-2 px-16 text-base text-white transition-colors duration-300 hover:bg-cyan-600 focus:outline-none disabled:bg-lightGray`}
@@ -444,9 +375,6 @@ const PositionOpenModal = ({
 
   const isDisplayedModal = modalVisible ? (
     <>
-      {/*  <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">*/}
-      {/*  overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none */}
-      {/* position: relative; top: 50%; left: 50%; transform: translate(-50%, -50%) */}
       <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">
         {/* The position of the modal */}
         <div className="relative my-6 mx-auto w-auto max-w-xl">

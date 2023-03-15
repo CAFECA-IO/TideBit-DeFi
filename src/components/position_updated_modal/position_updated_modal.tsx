@@ -55,7 +55,6 @@ const PositionUpdatedModal = ({
     if (!lock()) return;
     await wait(DELAYED_HIDDEN_SECONDS / 5);
     modalClickHandler();
-    // console.log('updated modal clicked');
 
     globalCtx.dataLoadingModalHandler({
       modalTitle: 'Update Position',
@@ -63,7 +62,7 @@ const PositionUpdatedModal = ({
     });
     globalCtx.visibleLoadingModalHandler();
 
-    // FIXME: the guaranteedStop should be removed
+    // TODO: (20230315 - Shirley) the guaranteedStop should be removed
     const result = await userCtx.updateCFDOrder({
       orderId: openCfdDetails.id,
       ...updatedProps,

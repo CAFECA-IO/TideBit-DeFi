@@ -283,6 +283,8 @@ const TradeTab = () => {
       liquidationTime: Math.ceil(Date.now() / 1000) + 86400,
       fee: marketCtx.tickerLiveStatistics?.fee ?? 9999999999,
       guaranteedStop: longSlToggle ? longGuaranteedStopChecked : false,
+      // TODO: (20230315 - SHirley) cal guaranteedStopFee (percent from Ctx)
+      guaranteedStopFee: longSlToggle && longGuaranteedStopChecked ? 22 : 0,
       takeProfit: longTpToggle ? longTpValue : undefined,
       stopLoss: longSlToggle ? longSlValue : undefined,
     };
@@ -311,6 +313,8 @@ const TradeTab = () => {
       fee: marketCtx.tickerLiveStatistics?.fee ?? 9999999999,
       leverage: marketCtx.tickerStatic?.leverage ?? 1,
       guaranteedStop: shortSlToggle ? shortGuaranteedStopChecked : false,
+      // TODO: (20230315 - SHirley) cal guaranteedStopFee (percent from Ctx)
+      guaranteedStopFee: shortSlToggle && shortGuaranteedStopChecked ? 22 : 0,
       takeProfit: shortTpToggle ? shortTpValue : undefined,
       stopLoss: shortSlToggle ? shortSlValue : undefined,
     };

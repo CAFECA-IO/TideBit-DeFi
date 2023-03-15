@@ -43,9 +43,46 @@ interface ITradingChartGraphProps {
   candlestickChartHeight: string;
 }
 
+interface VictoryThemeDefinition {
+  axis: {
+    style: {
+      tickLabels: {
+        fill: string;
+        fontSize: number;
+        fontFamily: string;
+        padding: number;
+      };
+      axis: {
+        stroke: string;
+      };
+      grid: {
+        stroke: string;
+      };
+    };
+  };
+  line: {
+    style: {
+      data: {
+        stroke: string;
+        strokeWidth: number;
+      };
+    };
+  };
+}
+
 export interface ILineChartData {
   x: Date;
   y: number | null;
+}
+
+export interface IProcessCandlestickData {
+  data: ICandlestickData[];
+  requiredDataNum: number;
+}
+
+export interface ITrimCandlestickData {
+  data: ICandlestickData[];
+  requiredDataNum: number;
 }
 
 export const updateDummyCandlestickChartData = (data: ICandlestickData[]): ICandlestickData[] => {
@@ -109,11 +146,6 @@ function countNullArrays(arr: {y: any[]}[]): number {
   return count;
 }
 
-export interface IProcessCandlestickData {
-  data: ICandlestickData[];
-  requiredDataNum: number;
-}
-
 // TODO: (20230313 - Shirley) after getting the complete data from Context, process it to the required format
 export function processCandlestickData({data, requiredDataNum}: IProcessCandlestickData) {
   const origin = [...data];
@@ -134,11 +166,6 @@ export function processCandlestickData({data, requiredDataNum}: IProcessCandlest
   ];
 
   return toCandlestickData;
-}
-
-export interface ITrimCandlestickData {
-  data: ICandlestickData[];
-  requiredDataNum: number;
 }
 
 export function trimCandlestickData({data, requiredDataNum}: ITrimCandlestickData) {
@@ -228,7 +255,7 @@ export default function CandlestickChart({
   const userOpenPrice = randomIntFromInterval(minNumber ?? 100, maxNumber ?? 1000);
   const userOpenPriceLine = toLatestPriceLineData?.map(data => ({
     x: data?.x,
-    y: 10000,
+    y: 2000,
   }));
   /**TODO: (20230313 - Shirley) Open price line 
   const userOpenPriceLine1 =
@@ -415,8 +442,7 @@ export default function CandlestickChart({
     };
   }, [marketCtx.candlestickChartData]);
 
-  // TODO: VictoryThemeDefinition to get the type (20230310 - Shirley)
-  const chartTheme = {
+  const chartTheme: VictoryThemeDefinition = {
     axis: {
       style: {
         tickLabels: {

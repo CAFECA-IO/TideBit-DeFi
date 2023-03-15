@@ -8,7 +8,13 @@ import {
 } from '../../constants/display';
 import RippleButton from '../ripple_button/ripple_button';
 import Image from 'next/image';
-import {locker, randomIntFromInterval, timestampToString, wait} from '../../lib/common';
+import {
+  getNowSeconds,
+  locker,
+  randomIntFromInterval,
+  timestampToString,
+  wait,
+} from '../../lib/common';
 import {useContext, useEffect, useState} from 'react';
 import {MarketContext} from '../../contexts/market_context';
 import {RENEW_QUOTATION_INTERVAL_SECONDS} from '../../constants/config';
@@ -60,10 +66,6 @@ const PositionClosedModal = ({
   const [dataRenewedStyle, setDataRenewedStyle] = useState('text-lightWhite');
   const [pnlRenewedStyle, setPnlRenewedStyle] = useState('');
 
-  // const displayedApplyCloseCfdData = displayApplyCloseCFD.data as IApplyCloseCFDOrderData;
-
-  // const closePrice = displayedApplyCloseCfdData.quotation.price
-
   const displayedGuaranteedStopSetting = !!openCfdDetails.guaranteedStop ? 'Yes' : 'No';
 
   const displayedPnLSymbol =
@@ -102,6 +104,25 @@ const PositionClosedModal = ({
     // 用戶沒簽名才是顯示 canceled modal
     // 用戶簽名成功，就會顯示 successful modal
    */
+
+  const toApplyCloseOrder = (cfd: IDisplayAcceptedCFDOrder): IApplyCloseCFDOrderData => {
+    const request: IApplyCloseCFDOrderData = {
+      orderId: cfd.id,
+      closePrice: 22, // TODO: (20230315 - Shirley) get from marketCtx
+      quotation: {
+        ticker: cfd.ticker,
+        price: 22, // TODO: (20230315 - Shirley) get from marketCtx
+        targetAsset: cfd.uniAsset, // TODO: (20230315 - Shirley) opposite of the begining of the order
+        uniAsset: cfd.targetAsset, // TODO: (20230315 - Shirley) opposite of the begining of the order
+        deadline: getNowSeconds() + RENEW_QUOTATION_INTERVAL_SECONDS, // TODO: (20230315 - Shirley) get from marketCtx
+        signature: '0x', // TODO: (20230315 - Shirley) get from marketCtx
+      },
+      closeTimestamp: getNowSeconds(),
+    };
+
+    return request;
+  };
+
   const submitClickHandler = async () => {
     const [lock, unlock] = locker('position_closed_modal.submitClickHandler');
     if (!lock()) return;
@@ -114,10 +135,9 @@ const PositionClosedModal = ({
     });
     globalCtx.visibleLoadingModalHandler();
 
-    const result = await userCtx.closeCFDOrder(
-      getDummyApplyCloseCFDOrderData(marketCtx.selectedTicker?.currency ?? '')
-    );
-    // console.log('result from userCtx in position_closed_modal.tsx: ', result);
+    /* Info: (20230315 - Shirley) use dummy data will fail
+    // getDummyApplyCloseCFDOrderData(marketCtx.selectedTicker?.currency ?? '') */
+    const result = await userCtx.closeCFDOrder(toApplyCloseOrder(openCfdDetails));
 
     // TODO: temporary waiting
     await wait(DELAYED_HIDDEN_SECONDS);
@@ -173,60 +193,6 @@ const PositionClosedModal = ({
     return;
   };
 
-  const organizeApplyOrder = () => {
-    // const newData = getDummyDisplayAcceptedCFDOrder(marketCtx.selectedTicker!.currency);
-    // const creatingData = newData;
-
-    const applyData: IDisplayAcceptedCFDOrder = {
-      // ...displayAcceptedCloseCFD,
-      // ...displayedApplyCloseCfdData,
-      ...openCfdDetails,
-
-      closePrice:
-        openCfdDetails.typeOfPosition === TypeOfPosition.BUY
-          ? randomIntFromInterval(
-              marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice * 0.75,
-              marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice * 1.25
-            )
-          : openCfdDetails.typeOfPosition === TypeOfPosition.SELL
-          ? randomIntFromInterval(
-              marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice * 1.1,
-              marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice * 1.25
-            )
-          : 99999,
-      pnl: {
-        type: randomIntFromInterval(0, 100) <= 50 ? ProfitState.PROFIT : ProfitState.LOSS,
-        value: randomIntFromInterval(0, 1000),
-      },
-    };
-
-    // const userInput = ['ticker', 'typeOfPosition', 'amount', 'targetAsset', 'uniAsset', 'leverage'];
-
-    // const {
-    //   ticker,
-    //   typeOfPosition,
-    //   amount,
-    //   margin,
-    //   takeProfit,
-    //   stopLoss,
-    //   guaranteedStop,
-    //   targetAsset,
-    //   uniAsset,
-    //   leverage,
-    //   ...dataRenewedWithoutExcludedProperties
-    // } = creatingData;
-
-    // const applyData = {
-    //   ...displayApplyCreateCFD,
-    //   data: {
-    //     ...displayApplyCreateCFD.data,
-    //     ...dataRenewedWithoutExcludedProperties,
-    //   },
-    // };
-
-    return applyData;
-  };
-
   const renewDataStyleHandler = async () => {
     // setSecondsLeft(latestProps.renewalDeadline - Date.now() / 1000);
     setDataRenewedStyle('animate-flash text-lightYellow2');
@@ -237,15 +203,13 @@ const PositionClosedModal = ({
     // FIXME: closedCfdDetails 的關倉價格
     // globalCtx.visiblePositionClosedModalHandler();
 
-    const data = organizeApplyOrder();
-
-    const newTimestamp = new Date().getTime() / 1000 + RENEW_QUOTATION_INTERVAL_SECONDS;
-    setSecondsLeft(newTimestamp - Date.now() / 1000);
+    const newTimestamp = getNowSeconds() + RENEW_QUOTATION_INTERVAL_SECONDS;
+    setSecondsLeft(Math.round(newTimestamp - getNowSeconds()));
 
     globalCtx.dataPositionClosedModalHandler({
       openCfdDetails: {
         ...openCfdDetails,
-        // TODO: 跟 userCtx 拿 getOpenCFD(id) 或自己算 PNL
+        // TODO: 自己算 PNL
         pnl: {
           type: randomIntFromInterval(0, 100) <= 50 ? ProfitState.PROFIT : ProfitState.LOSS,
           value: randomIntFromInterval(0, 1000),
@@ -266,14 +230,7 @@ const PositionClosedModal = ({
                 marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice * 1.25
               )
             : 99999,
-        // latestPnL: {
-        //   type: randomIntFromInterval(0, 100) <= 2 ? ProfitState.PROFIT : ProfitState.LOSS,
-        //   value: randomIntFromInterval(0, 1000),
-        // },
       },
-      // displayAcceptedCloseCFD: getDummyDisplayAcceptedCFDOrder('BTC'),
-      // displayAcceptedCloseCFD: data,
-      // displayApplyCloseCFD: getDummyDisplayApplyCloseCFDOrder('BTC'),
     });
 
     await wait(DELAYED_HIDDEN_SECONDS / 5);
@@ -301,7 +258,7 @@ const PositionClosedModal = ({
 
       const base = latestProps.renewalDeadline;
 
-      const tickingSec = base - Date.now() / 1000;
+      const tickingSec = base - getNowSeconds();
       // const tickingSec = latestProps.renewalDeadline - Date.now() / 1000 > 0 ? Math.round(latestProps.renewalDeadline - Date.now() / 1000) : Math.round();
 
       // console.log('inside useEffect: ', tickingSec);

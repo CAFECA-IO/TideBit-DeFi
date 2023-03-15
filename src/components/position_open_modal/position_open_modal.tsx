@@ -138,44 +138,6 @@ const PositionOpenModal = ({
   };
 
   const displayedGuaranteedStopSetting = !!openCfdRequest.guaranteedStop ? 'Yes' : 'No';
-  // const displayedGuaranteedStopSetting =
-  //   displayedApplyCreateCfdData.guaranteedStop === true ? 'Yes' : 'No';
-
-  const test: IDisplayApplyCFDOrder = {
-    type: CFDOrderType.CREATE,
-    // data: getDummyDisplayApplyCreateCFDOrder(marketCtx.selectedTicker!.currency),
-    data: {
-      ticker: 'BTC',
-      amount: 1.8, // User input
-      typeOfPosition: TypeOfPosition.BUY, // User input
-      leverage: 5,
-      price: randomIntFromInterval(1000, 10000),
-      targetAsset: 'USDT',
-      uniAsset: 'USDT',
-      margin: {asset: 'BTC', amount: randomIntFromInterval(650, 10000)}, // User input
-      takeProfit: 74521, // User input
-      stopLoss: 25250, // User input
-      guaranteedStop: true, // User input
-      guaranteedStopFee: 1.8 * 10000 * 0.7,
-      fee: 0,
-      quotation: {
-        ticker: 'BTC',
-        targetAsset: 'USDT',
-        uniAsset: 'USDT',
-        price: randomIntFromInterval(1000, 10000),
-        deadline: Date.now() / 1000 + RENEW_QUOTATION_INTERVAL_SECONDS,
-        signature: '0x',
-      }, // 報價單 定時從後端拿
-
-      liquidationPrice: randomIntFromInterval(1000, 10000),
-      liquidationTime: Date.now() / 1000 + 86400, // openTimestamp + 86400
-    },
-    signature: '0x',
-    pnl: {
-      type: ProfitState.PROFIT,
-      value: 50,
-    },
-  };
 
   const displayedTypeOfPosition =
     openCfdRequest.typeOfPosition === TypeOfPosition.BUY ? 'Up (Buy)' : 'Down (Sell)';

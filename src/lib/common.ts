@@ -138,3 +138,7 @@ export const twoDecimal = (num: number, mul?: number): number => {
     ? Number((num * mul).toFixed(numDec).replace(/\.?0+$/, ''))
     : Number(num.toFixed(numDec).replace(/\.?0+$/, ''));
 };
+
+export const getNowSeconds = () => {
+  return Math.ceil(new Date().getTime() / 1000);
+};

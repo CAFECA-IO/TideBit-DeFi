@@ -101,12 +101,10 @@ export interface IDataPositionClosedModal {
 
 export interface IDataPositionOpenModal {
   openCfdRequest: IApplyCreateCFDOrderData;
-  renewalDeadline: number;
 }
 
 export const dummyDataPositionOpenModal: IDataPositionOpenModal = {
   openCfdRequest: getDummyApplyCreateCFDOrderData('ETH'),
-  renewalDeadline: new Date('2023-02-24T17:00:00').getTime(),
 };
 
 const acceptedCFDOrders: IDisplayAcceptedCFDOrder[] = Array.from({length: 10}, () => {
@@ -1122,7 +1120,6 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
         modalClickHandler={visiblePositionOpenModalHandler}
         // displayApplyCreateCFD={dataPositionOpenModal.displayApplyCreateCFD}
         openCfdRequest={dataPositionOpenModal.openCfdRequest}
-        renewalDeadline={dataPositionOpenModal.renewalDeadline}
       />
       <PositionClosedModal
         modalVisible={visiblePositionClosedModal}

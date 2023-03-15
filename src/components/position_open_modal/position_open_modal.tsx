@@ -8,7 +8,13 @@ import {
 } from '../../constants/display';
 import RippleButton from '../ripple_button/ripple_button';
 import Image from 'next/image';
-import {locker, randomIntFromInterval, timestampToString, wait} from '../../lib/common';
+import {
+  getNowSeconds,
+  locker,
+  randomIntFromInterval,
+  timestampToString,
+  wait,
+} from '../../lib/common';
 import {useContext, useEffect, useState} from 'react';
 import {MarketContext} from '../../contexts/market_context';
 import {IPublicCFDOrder} from '../../interfaces/tidebit_defi_background/public_order';
@@ -33,7 +39,6 @@ interface IPositionOpenModal {
   modalVisible: boolean;
   modalClickHandler: () => void;
   openCfdRequest: IApplyCreateCFDOrderData;
-  renewalDeadline: number;
 }
 
 const PositionOpenModal = ({
@@ -41,7 +46,6 @@ const PositionOpenModal = ({
   modalClickHandler,
   // displayApplyCreateCFD,
   openCfdRequest,
-  renewalDeadline,
   ...otherProps
 }: IPositionOpenModal) => {
   const globalCtx = useGlobal();
@@ -277,14 +281,22 @@ const PositionOpenModal = ({
     await wait(DELAYED_HIDDEN_SECONDS / 5);
 
     const newTimestamp = Math.ceil(new Date().getTime() / 1000) + RENEW_QUOTATION_INTERVAL_SECONDS;
-    setSecondsLeft(newTimestamp - Date.now() / 1000);
+    setSecondsLeft(Math.round(newTimestamp - getNowSeconds()));
 
-    // TODO: get latest price from marketCtx and calculate required margin data
-    // FIXME: 應用 ?? 代替 !
+    // TODO: (20230315 - Shirley) get latest price from marketCtx and calculate required margin data
+    // TODO: (20230315 - Shirley) 應用 ?? 代替 !
     globalCtx.dataPositionOpenModalHandler({
       openCfdRequest: {
         ...openCfdRequest,
+        quotation: {
+          ...openCfdRequest.quotation,
+          // TODO: (20230315 - Shirley) get data from Ctx
+          price: randomIntFromInterval(50, 40000),
+          deadline: getNowSeconds() + RENEW_QUOTATION_INTERVAL_SECONDS,
+          signature: '0x',
+        },
         price:
+          // TODO: (20230315 - Shirley) get data from Ctx
           openCfdRequest.typeOfPosition === TypeOfPosition.BUY
             ? randomIntFromInterval(
                 marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice * 0.75,
@@ -296,6 +308,7 @@ const PositionOpenModal = ({
                 marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice * 1.25
               )
             : 999999,
+        // TODO: (20230315 - Shirley) get data from Ctx
         margin: {
           ...openCfdRequest.margin,
           amount: randomIntFromInterval(
@@ -303,15 +316,18 @@ const PositionOpenModal = ({
             openCfdRequest.margin.amount * 1.5
           ),
         },
-        // TODO:
+        // TODO: (20230315 - Shirley) get data from Ctx
         // margin:
-        //   openCfdRequest.typeOfPosition === TypeOfPosition.BUY
-        //     ? (openCfdRequest.amount * marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice) /
-        //       openCfdRequest.leverage
-        //     : (openCfdRequest.amount * marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice) /
-        //       openCfdRequest.leverage,
+        // openCfdRequest.typeOfPosition === TypeOfPosition.BUY
+        //   ? (openCfdRequest.amount * marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice) /
+        //     openCfdRequest.leverage
+        //   : (openCfdRequest.amount * marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice) /
+        //     openCfdRequest.leverage,
+        /**
+         *           amount: openCfdRequest.amount * (openCfdRequest.typeOfPosition === TypeOfPosition.BUY ? marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice ? marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice) / openCfdRequest.leverage,
+
+         */
       },
-      renewalDeadline: newTimestamp,
     });
 
     setDataRenewedStyle('text-lightYellow2');
@@ -348,7 +364,7 @@ const PositionOpenModal = ({
       // setSecondsLeft(prevSeconds => prevSeconds - 1);
 
       const base = openCfdRequest.quotation.deadline;
-      const tickingSec = base - Date.now() / 1000;
+      const tickingSec = base - getNowSeconds();
       setSecondsLeft(tickingSec > 0 ? Math.round(tickingSec) : 0);
 
       //
@@ -432,7 +448,7 @@ const PositionOpenModal = ({
               <div className="text-lightGray">Required Margin</div>
               {/* TODO: Hardcode USDT */}
               <div className={`${dataRenewedStyle}`}>
-                $ {openCfdRequest.margin.amount.toFixed(2)} USDT
+                $ {openCfdRequest.margin.amount.toFixed(2)} {openCfdRequest.margin.asset}
               </div>
             </div>
 

@@ -21,7 +21,7 @@ import eventEmitter, {ClickEvent} from '../../constants/tidebit_event';
 import {getDummyDisplayApplyCreateCFDOrder} from '../../interfaces/tidebit_defi_background/display_apply_cfd_order';
 import {IApplyCreateCFDOrderData} from '../../interfaces/tidebit_defi_background/apply_create_cfd_order_data';
 import {CFDOrderType} from '../../constants/cfd_order_type';
-import {roundToDecimalPlaces} from '../../lib/common';
+import {getNowSeconds, roundToDecimalPlaces} from '../../lib/common';
 
 const TradeTab = () => {
   const globalCtx = useGlobal();
@@ -286,7 +286,7 @@ const TradeTab = () => {
         typeOfPosition: TypeOfPosition.BUY,
         leverage: marketCtx.tickerStatic?.leverage ?? 1,
         margin: {
-          asset: marketCtx.selectedTicker?.currency ?? '',
+          asset: unitAsset,
           amount: requiredMarginRef.current,
         },
         quotation: {
@@ -311,7 +311,6 @@ const TradeTab = () => {
         // targetAsset: marketCtx.selectedTicker?.currency ?? '',
         // uniAsset: 'USDT',
       },
-      renewalDeadline: Math.ceil(new Date().getTime() / 1000) + RENEW_QUOTATION_INTERVAL_SECONDS,
     });
     globalCtx.visiblePositionOpenModalHandler();
     // globalCtx.visibleWalletPanelHandler();
@@ -331,7 +330,7 @@ const TradeTab = () => {
         typeOfPosition: TypeOfPosition.BUY,
         leverage: marketCtx.tickerStatic?.leverage ?? 1,
         margin: {
-          asset: marketCtx.selectedTicker?.currency ?? '',
+          asset: unitAsset,
           amount: requiredMarginRef.current,
         },
         quotation: {
@@ -339,7 +338,7 @@ const TradeTab = () => {
           targetAsset: marketCtx.selectedTicker?.currency ?? '',
           uniAsset: unitAsset,
           price: Number(buyPrice) ?? 9999999999,
-          deadline: Math.ceil(Date.now() / 1000) + 15,
+          deadline: getNowSeconds() + RENEW_QUOTATION_INTERVAL_SECONDS,
           signature: '0x',
         },
         liquidationPrice: 1000,
@@ -353,10 +352,8 @@ const TradeTab = () => {
         takeProfit: longTpToggle ? longTpValue : undefined,
         stopLoss: longSlToggle ? longSlValue : undefined,
       },
-      renewalDeadline: Math.ceil(new Date().getTime() / 1000) + RENEW_QUOTATION_INTERVAL_SECONDS,
     });
     globalCtx.visiblePositionOpenModalHandler();
-    // globalCtx.visibleWalletPanelHandler();
     return;
   };
 
@@ -372,7 +369,7 @@ const TradeTab = () => {
         uniAsset: marketCtx.selectedTicker?.currency ?? '',
         typeOfPosition: TypeOfPosition.SELL,
         margin: {
-          asset: marketCtx.selectedTicker?.currency ?? '',
+          asset: unitAsset,
           amount: requiredMarginRef.current,
         },
         quotation: {
@@ -397,10 +394,8 @@ const TradeTab = () => {
         takeProfit: shortTpToggle ? shortTpValue : undefined,
         stopLoss: shortSlToggle ? shortSlValue : undefined,
       },
-      renewalDeadline: Math.ceil(new Date().getTime() / 1000) + RENEW_QUOTATION_INTERVAL_SECONDS,
     });
     globalCtx.visiblePositionOpenModalHandler();
-    // globalCtx.visibleWalletPanelHandler();
     return;
   };
 
@@ -423,7 +418,6 @@ const TradeTab = () => {
 
   const displayedRequiredMarginStyle = (
     <>
-      {/* <div className="mt-1 text-base text-lightWhite">$ 13.14 USDT</div> */}
       <div className={`${isDisplayedMarginStyle} ${isDisplayedMarginSize} mt-1 text-base`}>
         $ {requiredMarginRef.current?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)} USDT
       </div>
@@ -432,8 +426,6 @@ const TradeTab = () => {
       </div>
     </>
   );
-
-  // const displayedValueofPosition =
 
   // ----------long area----------
   const longGuaranteedStopChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -458,6 +450,7 @@ const TradeTab = () => {
   );
 
   const displayedExpectedLongProfit = (
+    // todo: (20230329 - Shirley)
     // longTpToggle ? (
     //   <div className={`${`translate-y-2`} -mt-0 items-center transition-all duration-500`}>
     //     <div className="text-sm text-lightWhite">

@@ -1,7 +1,7 @@
 import {CFDOrderType, ICFDOrderType} from '../../constants/cfd_order_type';
 import {OrderState} from '../../constants/order_state';
 import {OrderStatusUnion} from '../../constants/order_status_union';
-import {OrderType} from '../../constants/order_type';
+import {IOrderType, OrderType} from '../../constants/order_type';
 import {getTimestamp} from '../../lib/common';
 import {IAcceptedCFDOrder} from './accepted_cfd_order';
 import {
@@ -24,6 +24,7 @@ export type ApplyCFDOrderData =
   | IApplyCloseCFDOrderData;
 
 export interface IApplyCFDOrder extends IApplyOrder {
+  orderType: IOrderType;
   type: ICFDOrderType;
   data: ApplyCFDOrderData;
 }
@@ -45,6 +46,7 @@ export interface IApplyCFDOrder extends IApplyOrder {
 
 export const getDummyApplyCreateCFDOrder = (currency: string) => {
   const dummyApplyCreateCFDOrder: IApplyCFDOrder = {
+    orderType: OrderType.CFD,
     type: CFDOrderType.CREATE,
     data: getDummyApplyCreateCFDOrderData(currency),
     signature: '0x',
@@ -54,6 +56,7 @@ export const getDummyApplyCreateCFDOrder = (currency: string) => {
 
 export const getDummyApplyUpdateCFDOrder = (currency: string, id?: string) => {
   const dummyApplyUpdateCFDOrder: IApplyCFDOrder = {
+    orderType: OrderType.CFD,
     type: CFDOrderType.UPDATE,
     data: getDummyApplyUpdateCFDOrderData(currency, id),
     signature: '0x',
@@ -63,6 +66,7 @@ export const getDummyApplyUpdateCFDOrder = (currency: string, id?: string) => {
 
 export const getDummyApplyCloseCFDOrder = (currency: string, id?: string) => {
   const dummyApplyCloseCFDOrder: IApplyCFDOrder = {
+    orderType: OrderType.CFD,
     type: CFDOrderType.CLOSE,
     data: getDummyApplyCloseCFDOrderData(currency, id),
     signature: '0x',

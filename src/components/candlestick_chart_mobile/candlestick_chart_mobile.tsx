@@ -224,7 +224,7 @@ export default function CandlestickChartMobile({
   const userOpenPrice = randomIntFromInterval(minNumber ?? 100, maxNumber ?? 1000);
   const userOpenPriceLine = toLatestPriceLineData?.map(data => ({
     x: data?.x,
-    y: 10000,
+    y: 1200,
   }));
   /**TODO: (20230313 - Shirley) Open price line 
     const userOpenPriceLine1 =

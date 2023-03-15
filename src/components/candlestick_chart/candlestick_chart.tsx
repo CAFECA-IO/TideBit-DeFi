@@ -245,13 +245,21 @@ export default function CandlestickChart({
       }))
   );
 
+  // TODO: 應該有三個點
   const [toLatestPriceLineData, setToLatestPriceLineData, toLatestPriceLineDataRef] = useStateRef<
     ILineChartData[]
   >(
-    toLineChartData?.map(data => ({
-      x: data?.x,
-      y: toLineChartData?.[toLineChartData.length - NULL_ARRAY_NUM - 1]?.y,
-    }))
+    [
+      {x: candlestickChartDataFromCtx[0]?.x, y: candlestickChartDataFromCtx[0]?.y[0]}, // Starting time and price
+      {
+        x: candlestickChartDataFromCtx[candlestickChartDataFromCtx.length - 1]?.x,
+        y: candlestickChartDataFromCtx[candlestickChartDataFromCtx.length - 2]?.y[3],
+      }, // Ending time and price
+    ]
+    // toLineChartData?.map(data => ({
+    //   x: data?.x,
+    //   y: toLineChartData?.[toLineChartData.length - NULL_ARRAY_NUM - 1]?.y,
+    // }))
   );
 
   // // TODO: generate the horizontal line data with two points
@@ -263,6 +271,19 @@ export default function CandlestickChart({
   //     {x: new Date(data.x.getTime() + 60000), y: data.y[3]}, // Ending time and price
   //   ])
   // );
+
+  // TODO: another trial
+  // const [toLineChartData1, setToLineChartData1, toLineChartDataRef1] = useStateRef<
+  //   ILineChartData[]
+  // >(() => [
+  //   {x: candlestickChartDataFromCtx[0].x, y: candlestickChartDataFromCtx[0].y[0]}, // Starting time and price
+  //   {
+  //     x: new Date(
+  //       candlestickChartDataFromCtx[candlestickChartDataFromCtx.length - 1].x.getTime() + 60000
+  //     ),
+  //     y: candlestickChartDataFromCtx[candlestickChartDataFromCtx.length - 1].y[3],
+  //   }, // Ending time and price
+  // ]);
 
   // Info: (20230315 - Shirley) the max and min shouldn't be responsive to the candlestick data
   const ys = candlestickChartDataFromCtx.flatMap(d => d.y.filter(y => y !== null)) as number[];
@@ -422,12 +443,21 @@ export default function CandlestickChart({
       setToLineChartData(toLineChartData);
 
       const latestPrice = toLineChartData?.[toLineChartData.length - NULL_ARRAY_NUM - 1]?.y;
-      const toLatestPriceLineData = toLineChartData?.map(data => ({
-        x: data?.x,
-        y: latestPrice,
-      }));
+      // const toLatestPriceLineData = toLineChartData?.map(data => ({
+      //   x: data?.x,
+      //   y: latestPrice,
+      // }));
+      const toLatestPriceLineData = [
+        {x: updatedCandlestickChartData[0]?.x, y: latestPrice}, // Starting time and price
+        {
+          x: updatedCandlestickChartData[candlestickChartDataFromCtx.length - 1]?.x,
+          y: latestPrice,
+        }, // Ending time and price
+      ];
 
       setToLatestPriceLineData(toLatestPriceLineData);
+
+      console.log('useEffect price line data', toLatestPriceLineDataRef.current);
     }, 1000 * 1);
 
     return () => {

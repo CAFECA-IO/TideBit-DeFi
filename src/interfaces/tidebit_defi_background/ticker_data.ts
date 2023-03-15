@@ -211,6 +211,16 @@ export interface ITickerData {
   lineGraphProps: ILineGraphProps;
 }
 
+export interface ITickerMarket {
+  currency: string;
+  chain: string;
+  price: number;
+  upOrDown: ITrend;
+  priceChange: number;
+  fluctuating: number;
+  tradingVolume: string;
+}
+
 // Add line graph property to each object in array
 export const dummyTickers: ITickerData[] = TRADING_CRYPTO_DATA.map(data => {
   const dataArray = randomArray(1100, 1200, 10);
@@ -296,17 +306,30 @@ export interface ITBETicker {
   visible: boolean;
 }
 
-export const convertDataToTicker = (data: ITBETicker) => {
-  let ticker: ITickerData | null = null;
+export interface ITBETrade {
+  id: string;
+  tid: string;
+  market: string;
+  price: string;
+  amount: string;
+  volume: string;
+  type: string;
+  side: string;
+  at: number;
+  ts: string;
+  date: string;
+}
+
+export const convertToTickerMartketData = (data: ITBETicker) => {
+  let ticker: ITickerMarket | null = null;
   if (data.quoteUnit.toUpperCase() === unitAsset) {
     const tickerData = TRADING_CRYPTO_DATA.find(
       ticker => ticker.currency === data.baseUnit.toUpperCase()
     );
-    const dataArray = randomArray(1100, 1200, 10);
-    const strokeColor = strokeColorDisplayed(dataArray);
     if (tickerData) {
       ticker = {
-        ...tickerData,
+        currency: tickerData.currency,
+        chain: tickerData.chain,
         tradingVolume: data.volume,
         price: parseFloat(data.last),
         upOrDown:
@@ -317,12 +340,6 @@ export const convertDataToTicker = (data: ITBETicker) => {
             : Trend.UP,
         priceChange: parseFloat(data.change),
         fluctuating: parseFloat((parseFloat(data.changePct) * 100).toFixed(2)),
-        lineGraphProps: {
-          dataArray: dataArray, // ++ TODO
-          strokeColor: strokeColor,
-          lineGraphWidth: '170',
-          lineGraphWidthMobile: '140',
-        },
       };
     }
   }

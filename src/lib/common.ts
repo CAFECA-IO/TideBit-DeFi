@@ -134,6 +134,17 @@ export const locker = (id: string): ILocker => {
   return [lock, unlock, room];
 };
 
+export const getTimestamp = () => Math.ceil(Date.now() / 1000);
+
+export const toQuery = (params: {[key: string]: string | number | boolean} | undefined) => {
+  const query: string = params
+    ? `?${Object.keys(params)
+        .map(key => `${key}=${params![key]}`)
+        .join('&')}`
+    : ``;
+  return query;
+};
+
 export const getNowSeconds = () => {
   return new Date().getTime() / 1000;
 };

@@ -1,17 +1,15 @@
 import React, {createContext, useRef, useContext} from 'react';
 import useState from 'react-usestateref';
-import {IAPIRequest} from '../constants/api_request';
+import {APIRequest, IAPIName, IMethodConstant, TypeRequest} from '../constants/api_request';
+
 import {WS_URL} from '../constants/config';
 import {Events} from '../constants/events';
 import {TideBitEvent} from '../constants/tidebit_event';
 import {
-  getDummyPrices,
-  ICandlestickData,
-} from '../interfaces/tidebit_defi_background/candlestickData';
-import {
-  convertDataToTicker,
+  convertToTickerMartketData,
   ITBETicker,
   ITickerData,
+  ITickerMarket,
 } from '../interfaces/tidebit_defi_background/ticker_data';
 import {NotificationContext} from './notification_context';
 
@@ -29,19 +27,6 @@ export const JobType: IJobTypeConstant = {
 interface IWorkerProvider {
   children: React.ReactNode;
 }
-type TypeRequest = {
-  name: IAPIRequest;
-  request: {
-    name: IAPIRequest;
-    method: string;
-    url: string;
-    body?: object;
-    options?: {
-      headers?: object;
-    };
-  };
-  callback: (...args: any[]) => void;
-};
 
 interface IRequest {
   [name: string]: TypeRequest;
@@ -51,7 +36,15 @@ interface IWorkerContext {
   wsWorker: WebSocket | null;
   apiWorker: Worker | null;
   init: () => void;
-  requestHandler: (request: TypeRequest) => void;
+  requestHandler: (data: {
+    name: IAPIName;
+    ticker?: string;
+    method: IMethodConstant;
+    params?: {[key: string]: string | number | boolean};
+    body?: object;
+    headers?: object;
+    callback?: (...args: any[]) => void;
+  }) => void;
   tickerChangeHandler: (ticker: ITickerData) => void;
   registerUserHandler: (address: string) => void;
 }
@@ -93,11 +86,11 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
           case Events.TICKERS:
             if (metaData.data) {
               const data = Object.values(metaData.data).shift() as ITBETicker;
-              const ticker: ITickerData | null = convertDataToTicker(data);
-              if (ticker) {
-                notificationCtx.emitter.emit(TideBitEvent.TICKER, ticker);
+              const tickerMarketData: ITickerMarket | null = convertToTickerMartketData(data);
+              if (tickerMarketData) {
+                notificationCtx.emitter.emit(TideBitEvent.TICKER, tickerMarketData);
               }
-              // -- TODO: remove dummy
+              /* Till: remove dummy candlestick data (20230327 - Tzuhan)
               if (data) {
                 const candlestickData: ICandlestickData = {
                   x: new Date(data.at * 1000),
@@ -108,7 +101,7 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
                   ticker?.currency,
                   candlestickData
                 );
-              }
+              }*/
             }
             break;
           case Events.UPDATE:
@@ -116,6 +109,11 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
           case Events.TRADES:
             break;
           case Events.PUBILC_TRADES:
+            notificationCtx.emitter.emit(
+              TideBitEvent.CANDLESTICK,
+              metaData.data.market,
+              metaData.data.trades
+            );
             break;
           case Events.ACCOUNT:
             break;
@@ -190,12 +188,21 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
     }
   };
 
-  const requestHandler = async (request: TypeRequest) => {
+  const requestHandler = async (data: {
+    name: IAPIName;
+    ticker?: string;
+    method: IMethodConstant;
+    params?: {[key: string]: string | number | boolean};
+    body?: object;
+    headers?: object;
+    callback?: (...args: any[]) => void;
+  }) => {
     if (apiWorkerRef.current) {
+      const request: TypeRequest = APIRequest(data);
       apiWorkerRef.current.postMessage(request.request);
       requests.current[request.name] = request;
     } else {
-      createJob(JobType.API, () => requestHandler(request));
+      createJob(JobType.API, () => requestHandler(data));
     }
   };
 
@@ -206,7 +213,7 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
         JSON.stringify({
           op: 'registerMarket',
           args: {
-            market: ticker.currency,
+            market: `${ticker.currency.toLowerCase()}usdt`,
           },
         })
       );

@@ -1,8 +1,11 @@
 import React, {useState} from 'react';
 import OpenSubTab from '../open_sub_tab/open_sub_tab';
 import HistorySubTab from '../history_sub_tab/history_sub_tab';
+import {useTranslation} from 'next-i18next';
 
+type TranslateFunction = (s: string) => string;
 const PositionTab = () => {
+  const {t}: {t: TranslateFunction} = useTranslation('common');
   const [activeTab, setActiveTab] = useState('Open');
 
   const tabBodyWidth = 'w-320px';
@@ -30,7 +33,7 @@ const PositionTab = () => {
             onClick={openTabClickHandler}
             className={`${activeOpenTabStyle} inline-block py-1 px-11`}
           >
-            Open
+            {t('TRADE_PAGE.POSITION_TAB_OPEN')}
           </button>
         </li>
         <li className="">
@@ -38,7 +41,7 @@ const PositionTab = () => {
             onClick={historyTabClickHandler}
             className={`${activeHistoryTabStyle} inline-block py-1 px-11`}
           >
-            History
+            {t('TRADE_PAGE.POSITION_TAB_HISTORY')}
           </button>
         </li>
       </ul>

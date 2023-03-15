@@ -1,5 +1,8 @@
+import {toQuery} from '../lib/common';
+
 export type IAPIName =
   | 'LIST_TICKERS'
+  | 'LIST_TRADES'
   | 'SEND_EMAIL_CODE'
   | 'CONNECT_TIDEBIT'
   | 'CONNECT_EMAIL'
@@ -19,6 +22,7 @@ export type IAPIName =
   | 'REPORT_ISSUE';
 export interface IAPINameConstant {
   LIST_TICKERS: IAPIName;
+  LIST_TRADES: IAPIName;
   SEND_EMAIL_CODE: IAPIName;
   CONNECT_TIDEBIT: IAPIName;
   CONNECT_EMAIL: IAPIName;
@@ -39,6 +43,7 @@ export interface IAPINameConstant {
 }
 export const APIName: IAPINameConstant = {
   LIST_TICKERS: 'LIST_TICKERS',
+  LIST_TRADES: 'LIST_TRADES',
   SEND_EMAIL_CODE: 'SEND_EMAIL_CODE',
   CONNECT_TIDEBIT: 'CONNECT_TIDEBIT',
   CONNECT_EMAIL: 'CONNECT_EMAIL',
@@ -60,6 +65,7 @@ export const APIName: IAPINameConstant = {
 
 export const APIURL = {
   LIST_TICKERS: '/api/tickers',
+  LIST_TRADES: '/api/trades',
   SEND_EMAIL_CODE: '/api/user/email',
   CONNECT_TIDEBIT: '/api/tidebit',
   CONNECT_EMAIL: '/api/user/email',
@@ -79,6 +85,28 @@ export const APIURL = {
   REPORT_ISSUE: '/api/issues',
 };
 
+export const TBEURL = {
+  // LIST_TICKERS: '/api/tickers',
+  LIST_TRADES: '/market/trades', // ++ TODO: ticker => `${ticker}usdt` (20230315 - tzuhan)
+  // SEND_EMAIL_CODE: '/api/user/email',
+  // CONNECT_TIDEBIT: '/api/tidebit',
+  // CONNECT_EMAIL: '/api/user/email',
+  // UPDATE_USER_ICON: '/api/user/icon',
+  // SUBSCRIBE_NEWS_LETTERS: '/api/newsletters',
+  // LIST_FAVORITE_TICKERS: '/api/tickers',
+  GET_CANDLESTICK_DATA: '/tradingview/history',
+  // GET_PNL: '/api/pnl',
+  // LIST_HISTORIES: '/api/histories',
+  // LIST_DEPOSIT_CRYPTO_CURRENCIES: '/api/deposits',
+  // LIST_WITHDRAW_CRYPTO_CURRENCIES: '/api/withdraws',
+  // LIST_NEWS: '/api/',
+  // LIST_COURSES: '/api/',
+  // LIST_FAQS: '/api/faqs',
+  // LIST_JOBS: '/api/jobs',
+  // APPLY_JOB: '/api/jobs',
+  // REPORT_ISSUE: '/api/issues',
+};
+
 export type TypeRequest = {
   name: IAPIName;
   request: {
@@ -96,23 +124,17 @@ export type TypeRequest = {
 export const APIRequest = (data: {
   name: IAPIName;
   method: IMethodConstant;
-  ticker?: string;
   params?: {[key: string]: string | number | boolean};
   body?: object;
   headers?: object;
   callback?: (...args: any[]) => void;
 }) => {
-  const query: string = data.params
-    ? Object.keys(data.params)
-        .map(key => `${key}=${data.params![key]}`)
-        .join('&')
-    : ``;
   const request: TypeRequest = {
     name: data.name,
     request: {
       name: data.name,
       method: Method[data.method],
-      url: `${APIURL[data.name]}${data.ticker ? `/${data.ticker.toLowerCase()}` : ``}?${query}`,
+      url: `${APIURL[data.name]}${toQuery(data.params)}`,
       body: data.body ? data.body : undefined,
       options: data.headers
         ? {

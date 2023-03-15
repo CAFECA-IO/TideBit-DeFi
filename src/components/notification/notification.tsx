@@ -17,7 +17,7 @@ export default function Notification({
   const {t}: {t: TranslateFunction} = useTranslation('common');
   const notificationCtx = useContext(NotificationContext);
   const hamburgerStyles =
-    'block bg-lightWhite h-3px opacity-100 rounded-12px opacity-100 w-full ease-in duration-300';
+    'block bg-lightWhite h-3px opacity-100 rounded-12px opacity-100 ease-in duration-300';
 
   // hamburger animation
   const displayedMobileNavBarLine1 = !componentVisible

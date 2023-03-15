@@ -62,8 +62,7 @@ const NavBarMobile = () => {
     //console.log('sidebarOpenHandler clicked, componentVisible: ', componentVisible);
   };
 
-  const hamburgerStyles =
-    'opacity-100 block bg-lightWhite h-3px rounded-12px w-full ease-in duration-300';
+  const hamburgerStyles = 'opacity-100 block bg-lightWhite h-3px rounded-12px ease-in duration-300';
 
   const menuItemStyles =
     'block rounded-md px-3 py-5 font-medium hover:cursor-pointer hover:text-tidebitTheme';

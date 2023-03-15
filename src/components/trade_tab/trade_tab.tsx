@@ -300,6 +300,12 @@ const TradeTab = () => {
     return;
   };
 
+  const longToolMouseEnterHandler = () => setLongTooltipStatus(3);
+  const longToolMouseLeaveHandler = () => setLongTooltipStatus(0);
+
+  const shortToolMouseEnterHandler = () => setShortTooltipStatus(3);
+  const shortToolMouseLeaveHandler = () => setShortTooltipStatus(0);
+
   // FIXME: it won't renew when user check guaranteed-stop
   // useEffect(() => {
   //   globalCtx.dataPositionOpenModalHandler({
@@ -419,12 +425,6 @@ const TradeTab = () => {
       />
     </div>
   );
-
-  const longToolMouseEnterHandler = () => setLongTooltipStatus(3);
-  const longToolMouseLeaveHandler = () => setLongTooltipStatus(0);
-
-  const shortToolMouseEnterHandler = () => setShortTooltipStatus(3);
-  const shortToolMouseLeaveHandler = () => setShortTooltipStatus(0);
 
   const displayedExpectedLongProfit = (
     // longTpToggle ? (

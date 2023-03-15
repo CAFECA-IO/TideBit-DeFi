@@ -6,7 +6,6 @@ import {
 import Toggle from '../toggle/toggle';
 import {MarketContext} from '../../contexts/market_context';
 import useWindowSize from '../../lib/hooks/use_window_size';
-import {useGlobal} from '../../contexts/global_context';
 
 interface ITradingChartSwitchProps {
   getTradingViewType: (tradingViewState: string) => void;
@@ -17,43 +16,7 @@ interface ITradingChartSwitchProps {
   getDisplayedPositionLabel: (bool: boolean) => void;
 }
 
-const DEFAULT_CHART_WIDTH = 900;
-const DEFAULT_CHART_HEIGHT = 400;
-const MIN_SCREEN_WIDTH = 1024;
-const TRADE_TAB_WIDTH = 350;
-const SWITCH_HEIGHT = 40;
-
-const getChartSize = () => {
-  const windowSize = useWindowSize();
-  const defaultChartSize = {
-    width: DEFAULT_CHART_WIDTH,
-    height: DEFAULT_CHART_HEIGHT,
-  };
-  const chartWidth =
-    windowSize.width - TRADE_TAB_WIDTH > MIN_SCREEN_WIDTH - TRADE_TAB_WIDTH
-      ? windowSize.width - TRADE_TAB_WIDTH
-      : MIN_SCREEN_WIDTH - TRADE_TAB_WIDTH;
-  const chartSize = {
-    width: chartWidth.toString(),
-    height: ((defaultChartSize.height / defaultChartSize.width) * chartWidth).toString(),
-  };
-
-  return chartSize;
-};
-
-const getSwitchWidth = () => {
-  const windowSize = useWindowSize();
-  const switchWidth =
-    windowSize.width > MIN_SCREEN_WIDTH ? windowSize.width - TRADE_TAB_WIDTH : windowSize.width;
-
-  const switchSize = {
-    width: switchWidth.toString(),
-    height: SWITCH_HEIGHT.toString(),
-  };
-  return switchSize;
-};
-
-const TradingChartSwitch = ({
+const TradingChartSwitchMobile = ({
   getTradingViewType,
   getCandlestickOn,
   getLineGraphOn,
@@ -62,18 +25,12 @@ const TradingChartSwitch = ({
   getDisplayedPositionLabel,
 }: ITradingChartSwitchProps) => {
   const [activeButton, setActiveButton] = useState('live');
-  const [candlestickOn, setCandlestickOn] = useState(true);
-  const [lineGraphOn, setLineGraphOn] = useState(false);
 
-  // const [activeChartType, setActiveChartType] = useState('candlestick');
+  const [activeChartType, setActiveChartType] = useState('candlestick');
   const {showPositionOnChartHandler} = useContext(MarketContext);
 
-  const chartSize = getChartSize();
-  const switchSize = getSwitchWidth();
-
-  // Get toggle state and pass to `trading_view` component
+  // Info: Get toggle state and pass to `trading_view` component
   const getDisplayedPositionsState = (bool: boolean) => {
-    // console.log('bool:', bool);
     getDisplayedPositionLabel(bool);
     showPositionOnChartHandler(bool);
   };
@@ -90,29 +47,25 @@ const TradingChartSwitch = ({
     activeButton === '5m' ? timeIntervalButtonClickedStyle : timeIntervalButtonStyle;
   const fifteenMinButtonStyle =
     activeButton === '15m' ? timeIntervalButtonClickedStyle : timeIntervalButtonStyle;
-  const thirtyMinButtonStyle =
-    activeButton === '30m' ? timeIntervalButtonClickedStyle : timeIntervalButtonStyle;
   const oneHrButtonStyle =
     activeButton === '1h' ? timeIntervalButtonClickedStyle : timeIntervalButtonStyle;
-  const fourHrButtonStyle =
-    activeButton === '4h' ? timeIntervalButtonClickedStyle : timeIntervalButtonStyle;
   const twelveHrButtonStyle =
     activeButton === '12h' ? timeIntervalButtonClickedStyle : timeIntervalButtonStyle;
   const oneDayButtonStyle =
     activeButton === '1d' ? timeIntervalButtonClickedStyle : timeIntervalButtonStyle;
 
-  const candlestickClickHandler = () => {
-    setCandlestickOn(!candlestickOn);
-    getCandlestickOn(!candlestickOn);
-    // setActiveChartType('candlestick');
-    getTradingViewType('candlestick');
-  };
-
-  const lineClickHandler = () => {
-    setLineGraphOn(!lineGraphOn);
-    getLineGraphOn(!lineGraphOn);
-    // setActiveChartType('line');
-    getTradingViewType('line');
+  const stickSwitchHandler = () => {
+    if (activeChartType === 'candlestick') {
+      setActiveChartType('line');
+      getLineGraphOn(true);
+      getCandlestickOn(false);
+      getTradingViewType('line');
+    } else {
+      setActiveChartType('candlestick');
+      getCandlestickOn(true);
+      getLineGraphOn(false);
+      getTradingViewType('candlestick');
+    }
   };
 
   const liveButtonClickHandler = () => {
@@ -130,19 +83,9 @@ const TradingChartSwitch = ({
     getTradingViewInterval('15m');
   };
 
-  const thirtyMinButtonClickHandler = () => {
-    setActiveButton('30m');
-    getTradingViewInterval('30m');
-  };
-
   const oneHrButtonClickHandler = () => {
     setActiveButton('1h');
     getTradingViewInterval('1h');
-  };
-
-  const fourHrButtonClickHandler = () => {
-    setActiveButton('4h');
-    getTradingViewInterval('4h');
   };
 
   const twelveHrButtonClickHandler = () => {
@@ -155,14 +98,14 @@ const TradingChartSwitch = ({
     getTradingViewInterval('1d');
   };
 
-  const candlestickChartButton = (
+  const stickSwitchButton = (
     <div>
       <button
-        onClick={candlestickClickHandler}
+        onClick={stickSwitchHandler}
         type="button"
         className="rounded-sm bg-darkGray5 p-1 hover:opacity-90"
       >
-        {candlestickOn ? (
+        {activeChartType === 'candlestick' ? (
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width={TRADING_CHART_SWITCH_BUTTON_SIZE}
@@ -183,38 +126,6 @@ const TradingChartSwitch = ({
             ></path>
           </svg>
         ) : (
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width={TRADING_CHART_SWITCH_BUTTON_SIZE}
-            height={TRADING_CHART_SWITCH_BUTTON_SIZE}
-            data-name="Group 2293"
-            viewBox="0 0 22.703 30"
-          >
-            <path
-              fill="#8b8e91"
-              d="M3.243 25.135V21.08H0V6.486h3.243V.811a.811.811 0 111.621 0v5.675h3.245V21.08H4.864v4.054a.811.811 0 11-1.621 0z"
-              data-name="Union 35"
-            ></path>
-            <path
-              fill="#8b8e91"
-              d="M3.243 25.135V20.27H0V5.676h3.243V.811a.811.811 0 111.621 0v4.865h3.245V20.27H4.864v4.864a.811.811 0 11-1.621 0z"
-              data-name="Union 36"
-              transform="translate(14.594 4.054)"
-            ></path>
-          </svg>
-        )}
-      </button>
-    </div>
-  );
-
-  const lineGraphChartButton = (
-    <div className="hidden md:block">
-      <button
-        onClick={lineClickHandler}
-        type="button"
-        className="rounded-sm bg-darkGray5 p-1 hover:opacity-90"
-      >
-        {lineGraphOn ? (
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width={TRADING_CHART_SWITCH_BUTTON_SIZE}
@@ -251,43 +162,6 @@ const TradingChartSwitch = ({
               ></path>
             </g>
           </svg>
-        ) : (
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width={TRADING_CHART_SWITCH_BUTTON_SIZE}
-            height={TRADING_CHART_SWITCH_BUTTON_SIZE}
-            viewBox="0 0 31.403 30.697"
-          >
-            <defs>
-              <linearGradient
-                id="linear-gradient"
-                x1="0.5"
-                x2="0.5"
-                y1="0.019"
-                y2="1"
-                gradientUnits="objectBoundingBox"
-              >
-                <stop offset="0" stopColor="#8b8e91"></stop>
-                <stop offset="1" stopColor="#121214" stopOpacity="0"></stop>
-              </linearGradient>
-            </defs>
-            <g data-name="Group 15162" transform="translate(-41.294 -205.625)">
-              <path
-                fill="url(#linear-gradient)"
-                d="M-3222 349.957v-5.068l10.292-10.759 11 5.374 8.71-13.075v29.808h-30z"
-                data-name="Path 26342"
-                transform="translate(3264 -119.915)"
-              ></path>
-              <path
-                fill="none"
-                stroke="#8b8e91"
-                strokeLinecap="round"
-                strokeWidth="1"
-                d="M42 225.516l10.038-11.212 10.828 4.934L72 206.322"
-                data-name="Path 503"
-              ></path>
-            </g>
-          </svg>
         )}
       </button>
     </div>
@@ -295,15 +169,9 @@ const TradingChartSwitch = ({
 
   return (
     <>
-      <div
-        style={{width: `${Number(switchSize.width) - 100}px`}}
-        className="flex items-center space-x-1 md:space-x-5 xl:w-full"
-      >
+      <div className="flex w-full items-center justify-between space-x-1 md:space-x-5">
         {/* Switch chart types */}
-        <div className="flex space-x-2">
-          {candlestickChartButton}
-          {lineGraphChartButton}
-        </div>
+        <div className="flex space-x-2">{stickSwitchButton}</div>
 
         {/* Diplaying position info toggle */}
         <div className="hidden items-center space-x-5 md:flex">
@@ -318,14 +186,7 @@ const TradingChartSwitch = ({
         </div>
 
         {/* Switch time interval */}
-        <div
-          className="flex rounded-sm bg-darkGray6 py-2 px-2"
-          style={{
-            width: '95%',
-            justifyContent: 'space-between',
-            whiteSpace: 'nowrap',
-          }}
-        >
+        <div className="flex w-full justify-between whitespace-nowrap rounded-sm bg-darkGray6 py-2 px-2">
           <button type="button" className={`${liveButtonStyle}`} onClick={liveButtonClickHandler}>
             Live
           </button>
@@ -343,22 +204,8 @@ const TradingChartSwitch = ({
           >
             15 m
           </button>
-          <button
-            type="button"
-            className={`${thirtyMinButtonStyle}`}
-            onClick={thirtyMinButtonClickHandler}
-          >
-            30 m
-          </button>
           <button type="button" className={`${oneHrButtonStyle}`} onClick={oneHrButtonClickHandler}>
             1 h
-          </button>
-          <button
-            type="button"
-            className={`${fourHrButtonStyle}`}
-            onClick={fourHrButtonClickHandler}
-          >
-            4 h
           </button>
           <button
             type="button"
@@ -380,4 +227,4 @@ const TradingChartSwitch = ({
   );
 };
 
-export default TradingChartSwitch;
+export default TradingChartSwitchMobile;

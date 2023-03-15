@@ -3,8 +3,12 @@ import Image from 'next/image';
 import {ImCross} from 'react-icons/im';
 import OpenSubTabMobile from '../open_sub_tab_mobile/open_sub_tab_mobile';
 import HistorySubTabMobile from '../history_sub_tab_mobile/history_sub_tab_mobile';
+import {useTranslation} from 'next-i18next';
 
+type TranslateFunction = (s: string) => string;
 const PositionTabMobile = () => {
+  const {t}: {t: TranslateFunction} = useTranslation('common');
+
   const [activeTab, setActiveTab] = useState('Open');
   const [openSubMenu, setOpenSubMenu] = useState(false);
 
@@ -39,7 +43,7 @@ const PositionTabMobile = () => {
             onClick={openTabClickHandler}
             className={`${activeOpenTabStyle} inline-block w-full rounded-md py-3 px-7`}
           >
-            Open
+            {t('TRADE_PAGE.POSITION_TAB_OPEN')}
           </button>
         </li>
         <li className="ml-1 w-full">
@@ -47,7 +51,7 @@ const PositionTabMobile = () => {
             onClick={historyTabClickHandler}
             className={`${activeHistoryTabStyle} inline-block w-full rounded-md py-3 px-7`}
           >
-            History
+            {t('TRADE_PAGE.POSITION_TAB_HISTORY')}
           </button>
         </li>
       </ul>

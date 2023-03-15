@@ -517,32 +517,32 @@ const UpdateFormModal = ({
   const squareClickHandler = () => {
     globalCtx.visibleUpdateFormModalHandler();
 
-    globalCtx.visiblePositionClosedModalHandler();
     // FIXME: close modal
-    // globalCtx.dataPositionClosedModalHandler({
-    //   openCfdDetails: openCfdDetails,
-    //   latestProps: {
-    //     renewalDeadline: new Date().getTime() / 1000 + RENEW_QUOTATION_INTERVAL_SECONDS,
-    //     latestClosedPrice:
-    //       openCfdDetails.typeOfPosition === TypeOfPosition.BUY
-    //         ? randomIntFromInterval(
-    //             marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice * 0.75,
-    //             marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice * 1.25
-    //           )
-    //         : openCfdDetails.typeOfPosition === TypeOfPosition.SELL
-    //         ? randomIntFromInterval(
-    //             marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice * 1.1,
-    //             marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice * 1.25
-    //           )
-    //         : 99999,
-    //     // latestPnL: {
-    //     //   type: randomIntFromInterval(0, 100) <= 2 ? ProfitState.PROFIT : ProfitState.LOSS,
-    //     //   value: randomIntFromInterval(0, 1000),
-    //     // },
-    //   },
-    //   displayAcceptedCloseCFD: getDummyDisplayAcceptedCFDOrder('BTC'),
-    //   displayApplyCloseCFD: getDummyDisplayApplyCloseCFDOrder('BTC'),
-    // });
+    globalCtx.dataPositionClosedModalHandler({
+      openCfdDetails: openCfdDetails,
+      latestProps: {
+        renewalDeadline: new Date().getTime() / 1000 + RENEW_QUOTATION_INTERVAL_SECONDS,
+        latestClosedPrice:
+          openCfdDetails.typeOfPosition === TypeOfPosition.BUY
+            ? randomIntFromInterval(
+                marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice * 0.75,
+                marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice * 1.25
+              )
+            : openCfdDetails.typeOfPosition === TypeOfPosition.SELL
+            ? randomIntFromInterval(
+                marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice * 1.1,
+                marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice * 1.25
+              )
+            : 99999,
+        // latestPnL: {
+        //   type: randomIntFromInterval(0, 100) <= 2 ? ProfitState.PROFIT : ProfitState.LOSS,
+        //   value: randomIntFromInterval(0, 1000),
+        // },
+      },
+      // displayAcceptedCloseCFD: getDummyDisplayAcceptedCFDOrder('BTC'),
+      // displayApplyCloseCFD: getDummyDisplayApplyCloseCFDOrder('BTC'),
+    });
+    globalCtx.visiblePositionClosedModalHandler();
 
     // toast.error('test', {toastId: 'errorTest'});
     // console.log('show the modal displaying transaction detail');

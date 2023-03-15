@@ -112,8 +112,8 @@ const PositionClosedModal = ({
       quotation: {
         ticker: cfd.ticker,
         price: 22, // TODO: (20230315 - Shirley) get from marketCtx
-        targetAsset: cfd.uniAsset, // TODO: (20230315 - Shirley) opposite of the begining of the order
-        uniAsset: cfd.targetAsset, // TODO: (20230315 - Shirley) opposite of the begining of the order
+        targetAsset: cfd.targetAsset, // TODO: (20230315 - Shirley) opposite of the begining of the order
+        uniAsset: cfd.uniAsset, // TODO: (20230315 - Shirley) opposite of the begining of the order
         deadline: getNowSeconds() + RENEW_QUOTATION_INTERVAL_SECONDS, // TODO: (20230315 - Shirley) get from marketCtx
         signature: '0x', // TODO: (20230315 - Shirley) get from marketCtx
       },

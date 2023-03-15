@@ -291,8 +291,8 @@ const TradeTab = () => {
 
     const shortOrder: IApplyCreateCFDOrderData = {
       ticker: marketCtx.selectedTicker?.currency ?? '',
-      targetAsset: unitAsset,
-      uniAsset: marketCtx.selectedTicker?.currency ?? '',
+      targetAsset: marketCtx.selectedTicker?.currency ?? '',
+      uniAsset: unitAsset,
       typeOfPosition: TypeOfPosition.SELL,
       margin: {
         asset: unitAsset,
@@ -300,8 +300,8 @@ const TradeTab = () => {
       },
       quotation: {
         ticker: marketCtx.selectedTicker?.currency ?? '',
-        targetAsset: unitAsset,
-        uniAsset: marketCtx.selectedTicker?.currency ?? '',
+        targetAsset: marketCtx.selectedTicker?.currency ?? '',
+        uniAsset: unitAsset,
         price: Number(sellPrice) ?? 9999999999,
         deadline: getNowSeconds() + RENEW_QUOTATION_INTERVAL_SECONDS,
         signature: '0x',

@@ -81,7 +81,6 @@ const PositionOpenModal = ({
 
     // TODO: (20230315 - Shirley) Use the real and correct data after the param is confirmed
     const result = await userCtx.createCFDOrder(openCfdRequest);
-    // const result = await userCtx.createCFDOrder(globalCtx.dataPositionOpenModal?.openCfdRequest);
 
     // TODO: temporary waiting
     await wait(DELAYED_HIDDEN_SECONDS);

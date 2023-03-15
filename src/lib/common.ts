@@ -133,3 +133,8 @@ export const locker = (id: string): ILocker => {
 
   return [lock, unlock, room];
 };
+
+export const getNowSeconds = () => {
+  return new Date().getTime() / 1000;
+  // return Math.floor(Date.now() / 1000);
+};

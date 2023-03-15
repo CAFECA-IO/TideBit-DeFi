@@ -28,7 +28,7 @@ const UserMobile = () => {
     ? 'translate-y-0 rotate-0 w-full'
     : 'translate-y-1.5 origin-left w-3/4 -rotate-35';
   const displayedMobileNavBarLine2 = !avatarMenuVisible
-    ? 'translate-y-1.5 w-full'
+    ? 'translate-y-1.5 w-full opacity-100'
     : 'w-0 opacity-0';
   const displayedMobileNavBarLine3 = !avatarMenuVisible
     ? 'translate-y-3 rotate-0 w-full'

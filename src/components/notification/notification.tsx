@@ -23,7 +23,9 @@ export default function Notification({
   const displayedMobileNavBarLine1 = !componentVisible
     ? 'translate-y-0 rotate-0'
     : 'translate-y-1.5 origin-left w-3/4 -rotate-35';
-  const displayedMobileNavBarLine2 = !componentVisible ? 'translate-y-1.5 w-full' : 'w-0 opacity-0';
+  const displayedMobileNavBarLine2 = !componentVisible
+    ? 'translate-y-1.5 w-full opacity-100'
+    : 'w-0 opacity-0';
   const displayedMobileNavBarLine3 = !componentVisible
     ? 'translate-y-3 rotate-0'
     : 'translate-y-0 origin-left w-3/4 rotate-35';

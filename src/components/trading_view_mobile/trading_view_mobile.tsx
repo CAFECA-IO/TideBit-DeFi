@@ -1,5 +1,5 @@
 import {useState, useContext} from 'react';
-import CandlestickChartMobile from '../candlestick_chart_mobile/candlestick_chart_mobile';
+import CandlestickChart from '../candlestick_chart/candlestick_chart';
 import TradingChartSwitchMobile from '../trading_chart_switch_mobile/trading_chart_switch_mobile';
 import useWindowSize from '../../lib/hooks/use_window_size';
 import {MarketContext} from '../../contexts/market_context';
@@ -86,7 +86,7 @@ const TradingViewMobile = () => {
 
   const displayedTradingView = (
     <>
-      <CandlestickChartMobile
+      <CandlestickChart
         strokeColor={[`#17BF88`]}
         showPositionLabel={showPositionLabelRef.current}
         candlestickOn={candlestickOnRef.current}

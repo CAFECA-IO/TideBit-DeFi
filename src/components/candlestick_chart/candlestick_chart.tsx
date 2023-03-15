@@ -716,7 +716,7 @@ export default function CandlestickChart({
 
   return (
     <>
-      <div className="-ml-5" style={{width: '70%'}}>
+      <div className="-ml-5 w-full lg:w-7/10">
         {/* TODO: (20230310 - Shirley) SVG location 
           <Lottie className="latestPrice" animationData={spotAnimation} /> 
           <div ref={lottieContainerRef} className="z-50 w-50px text-cuteBlue1">

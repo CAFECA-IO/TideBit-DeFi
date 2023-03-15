@@ -170,7 +170,7 @@ export const LIGHT_GRAY_COLOR = '#8B8E91';
 
 export const LINE_GRAPH_STROKE_COLOR = {
   DEFAULT: '#FFFFFF',
-  LONG: '#17BF88',
-  SHORT: '#E86D6D',
+  PROFIT: '#17BF88',
+  LOSS: '#E86D6D',
   TIDEBIT_THEME: '#29C1E1',
 };

@@ -1,3 +1,4 @@
+/*eslint-disable no-console */
 import React, {useState, useContext, useEffect, useRef} from 'react';
 import Lottie, {useLottie} from 'lottie-react';
 import spotAnimation from '../../../public/animation/circle.json';
@@ -33,6 +34,8 @@ import {AppContext} from '../../contexts/app_context';
 import Image from 'next/image';
 import {GlobalContext} from '../../contexts/global_context';
 import {UserContext} from '../../contexts/user_context';
+import {ProfitState} from '../../constants/profit_state';
+import {TypeOfPosition} from '../../constants/type_of_position';
 
 interface ITradingChartGraphProps {
   strokeColor: string[];
@@ -73,6 +76,11 @@ interface VictoryThemeDefinition {
 export interface ILineChartData {
   x: Date;
   y: number | null;
+}
+
+export interface IHorizontalLineData {
+  x: Date;
+  y: number;
 }
 
 export interface IProcessCandlestickData {
@@ -252,11 +260,6 @@ export default function CandlestickChart({
   const maxNumber = ys.length > 0 ? Math.max(...ys) : null;
   const minNumber = ys.length > 0 ? Math.min(...ys) : null;
 
-  const userOpenPrice = randomIntFromInterval(minNumber ?? 100, maxNumber ?? 1000);
-  const userOpenPriceLine = toLatestPriceLineData?.map(data => ({
-    x: data?.x,
-    y: 2000,
-  }));
   /**TODO: (20230313 - Shirley) Open price line 
   const userOpenPriceLine1 =
     userCtx.openCFDs.length > 0
@@ -284,6 +287,109 @@ export default function CandlestickChart({
   console.log('open cfd', userCtx.openCFDs);
   */
 
+  const userOpenPrice = randomIntFromInterval(minNumber ?? 100, maxNumber ?? 1000);
+  const userOpenPriceLine = toLatestPriceLineData?.map(data => ({
+    x: data?.x,
+    y: 2000,
+  }));
+
+  const userExampleLine = showPositionLabel ? (
+    <VictoryLine
+      style={{
+        data: {
+          stroke: LINE_GRAPH_STROKE_COLOR.PROFIT,
+          strokeWidth: 1,
+          strokeDasharray: '2,2',
+        },
+      }}
+      data={userOpenPriceLine}
+    />
+  ) : null;
+
+  const toOpenPriceLineData = (
+    dateLine: ILineChartData[],
+    openPrice: number
+  ): IHorizontalLineData[] => {
+    return dateLine.map(data => ({
+      x: data?.x,
+      y: openPrice,
+    }));
+  };
+
+  // TODO: (20230313 - Shirley) map the open price line
+  const openPriceLine: null | JSX.Element[] = showPositionLabel
+    ? userCtx.openCFDs.map((cfd, index) => (
+        <VictoryLine
+          key={index}
+          style={{
+            data: {
+              stroke:
+                cfd.pnl.type === ProfitState.PROFIT
+                  ? LINE_GRAPH_STROKE_COLOR.PROFIT
+                  : LINE_GRAPH_STROKE_COLOR.LOSS,
+              strokeWidth: 1,
+              strokeDasharray: '2,2',
+            },
+          }}
+          data={
+            // TODO: (20230315 - Shirley) revise the param
+            toOpenPriceLineData(toLatestPriceLineData, cfd.openPrice * 60)
+            //   toLatestPriceLineData?.map(data => ({
+            //   x: data?.x,
+            //   y: cfd.openPrice, // + 5000
+            // }))
+          }
+        />
+      ))
+    : null;
+
+  const openPriceScatter = showPositionLabel
+    ? userCtx.openCFDs.map((cfd, index) => {
+        const symbol = cfd.typeOfPosition === TypeOfPosition.BUY ? '⤊' : '⤋';
+        return (
+          <VictoryScatter
+            style={{data: {fill: 'transparent'}, labels: {background: 'transparent'}}}
+            // data={userOpenPriceLine}
+            data={toOpenPriceLineData(toLatestPriceLineData, cfd.openPrice * 60)}
+            labels={({datum}) =>
+              datum.x === userOpenPriceLine[userOpenPriceLine.length - 1].x
+                ? ` ${symbol} Position $${datum.y.toLocaleString(
+                    UNIVERSAL_NUMBER_FORMAT_LOCALE
+                  )}　Close`
+                : ``
+            }
+            labelComponent={
+              <VictoryLabel
+                className="hover:cursor-pointer hover:opacity-80"
+                events={{
+                  onClick: e => {
+                    // Till: (20230327 - Shirley)  // console.log(e.clientX, e.clientY);
+                    globalCtx.visiblePositionClosedModalHandler();
+                  },
+                }}
+                x={Number(candlestickChartWidth) - 110}
+                style={{
+                  fill: LINE_GRAPH_STROKE_COLOR.DEFAULT,
+                  fontSize: 10,
+                  fontFamily: 'barlow',
+                }}
+                backgroundStyle={{
+                  fill:
+                    cfd.pnl.type === ProfitState.PROFIT
+                      ? LINE_GRAPH_STROKE_COLOR.PROFIT
+                      : LINE_GRAPH_STROKE_COLOR.LOSS,
+                }}
+                backgroundPadding={{top: 8, bottom: 5, left: 5, right: 5}}
+              />
+            }
+          />
+        );
+      })
+    : null;
+
+  console.log('price line number', openPriceLine?.length);
+  console.log('price scatter number', openPriceScatter?.length);
+
   /* TODO: (20230313 - Shirley) 
   const userLines = Array.from({length: 1}, (_, index) => (
     <VictoryLine
@@ -296,19 +402,6 @@ export default function CandlestickChart({
     />
   ));
 
-  // TODO: (20230313 - Shirley) map the open price line
-  const priceline = userCtx.openCFDs.map((cfd, index) => (
-    <VictoryLine
-      key={index}
-      style={{
-        data: {stroke: EXAMPLE_BLUE_COLOR, strokeWidth: 1, strokeDasharray: '2,2'},
-      }}
-      data={toLatestPriceLineData?.map(data => ({
-        x: data?.x,
-        y: cfd.openPrice + 5000,
-      }))}
-    />
-  ));
 
   const userLine = (
     <VictoryLine
@@ -413,12 +506,11 @@ export default function CandlestickChart({
         close: data.y[3],
       }));
 
-      /* TODO: (20230313 - Shirley) Sometimes, the candlestick overlays with another candlestick (20230310 - Shirley)/
-      // console.log('data put into chart', toCandlestickChartDataRef.current);
-      // console.log('market Ctx', marketCtx.candlestickChartData);
+      // TODO: (20230313 - Shirley) Sometimes, the candlestick overlays with another candlestick (20230310 - Shirley)/
+      console.log('data put into chart', toCandlestickChartDataRef.current);
+      console.log('market Ctx', marketCtx.candlestickChartData);
       // console.log('market Ctx sliced', marketCtx.candlestickChartData?.slice(-30));
       // console.log('market Ctx stringified', JSON.stringify(marketCtx.candlestickChartData));
-*/
 
       setToCandlestickChartData(toCandlestickChartData);
 
@@ -473,8 +565,8 @@ export default function CandlestickChart({
     candlestickChartDataRef.current && candlestickChartDataRef.current?.length > 0 ? (
       <VictoryChart
         theme={chartTheme}
-        minDomain={{y: minNumber !== null ? minNumber * 0.7 : undefined}}
-        maxDomain={{y: maxNumber !== null ? maxNumber * 1.3 : undefined}} // TODO: measure the biggest number to decide the y-axis
+        minDomain={{y: minNumber !== null ? minNumber * 0.85 : undefined}}
+        maxDomain={{y: maxNumber !== null ? maxNumber * 1.15 : undefined}} // TODO: measure the biggest number to decide the y-axis
         // Till: (20230327 - Shirley)  // domainPadding={{x: 1}}
         width={Number(candlestickChartWidth)}
         height={Number(candlestickChartHeight)}
@@ -689,21 +781,14 @@ export default function CandlestickChart({
           //   .reverse()}
         /> 
         */}
+        {openPriceLine}
         {/* TODO: User open position line on charts (20230310 - Shirley)  */}
-        {userCtx.enableServiceTerm && userCtx.openCFDs.length > 0 && showPositionLabel ? (
-          <VictoryLine
-            style={{
-              data: {
-                stroke: LINE_GRAPH_STROKE_COLOR.LONG,
-                strokeWidth: 1,
-                strokeDasharray: '2,2',
-              },
-            }}
-            data={userOpenPriceLine}
-          />
-        ) : null}
+        {/* {userCtx.enableServiceTerm && userCtx.openCFDs.length > 0 && showPositionLabel
+          ? {userExampleLine}
+          : null} */}
+        {openPriceScatter}
 
-        {userCtx.enableServiceTerm && userCtx.openCFDs.length > 0 && showPositionLabel ? (
+        {/* {userCtx.enableServiceTerm && userCtx.openCFDs.length > 0 && showPositionLabel ? (
           <VictoryScatter
             style={{data: {fill: 'transparent'}, labels: {background: 'transparent'}}}
             data={userOpenPriceLine}
@@ -734,7 +819,7 @@ export default function CandlestickChart({
               />
             }
           />
-        ) : null}
+        ) : null} */}
       </VictoryChart>
     ) : (
       <p>Loading</p>

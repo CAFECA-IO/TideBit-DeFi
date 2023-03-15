@@ -6,17 +6,19 @@ import {toQuery} from '../../../lib/common';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'GET') {
-    const query = req.query as {[key: string]: string} | undefined;
+    const params = req.query as {[key: string]: string} | undefined;
     let tickers: {[currency: string]: ITickerData} = {};
     tickers = dummyTickers.reduce((prev, curr) => {
       if (!prev[curr.currency]) prev[curr.currency] = curr;
       return prev;
     }, tickers);
     for (const ticker of AVAILABLE_TICKERS) {
-      const _query = query
-        ? {...query, symbol: `${ticker.toLowerCase()}${unitAsset.toLowerCase()}`}
-        : undefined;
-      const url = `${BASE_URL}${API_VERSION}${TBEURL.GET_CANDLESTICK_DATA}${toQuery(_query)}`;
+      const query = toQuery(
+        params
+          ? {...params, symbol: `${ticker.toLowerCase()}${unitAsset.toLowerCase()}`}
+          : undefined
+      );
+      const url = `${BASE_URL}${API_VERSION}${TBEURL.GET_CANDLESTICK_DATA}${query}`;
       const response = await fetch(url);
       const result = await response.json();
       if (result.success) {

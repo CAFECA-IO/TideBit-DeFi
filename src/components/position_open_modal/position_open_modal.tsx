@@ -183,88 +183,72 @@ const PositionOpenModal = ({
     },
   };
 
-  // const displayedGuaranteedStopSetting = !!displayedApplyCreateCFD.data.amount ? 'Yes' : 'No';
-
-  // TODO: i18n
-  // const displayedTypeOfPosition =
-  //   openCfdRequest?.typeOfPosition === TypeOfPosition.BUY ? 'Up (Buy)' : 'Down (Sell)';
   const displayedTypeOfPosition =
     openCfdRequest.typeOfPosition === TypeOfPosition.BUY ? 'Up (Buy)' : 'Down (Sell)';
 
-  // const displayedPnLColor =
-  //   openCfdRequest?.pnl.type === 'PROFIT'
-  //     ? TypeOfPnLColor.PROFIT
-  //     : openCfdRequest?.pnl.type === 'LOSS'
-  //     ? TypeOfPnLColor.LOSS
-  //     : TypeOfPnLColor.EQUAL;
-
   const displayedPositionColor = 'text-tidebitTheme';
-  // openCfdRequest.typeOfPosition === TypeOfPosition.BUY
-  //   ? TypeOfPnLColor.PROFIT
-  //   : TypeOfPnLColor.LOSS;
 
   const displayedBorderColor = TypeOfBorderColor.NORMAL;
-  // openCfdRequest.typeOfPosition === TypeOfPosition.BUY
-  //   ? TypeOfBorderColor.LONG
-  //   : TypeOfBorderColor.SHORT;
 
   const displayedTakeProfit = openCfdRequest.takeProfit ? `$ ${openCfdRequest.takeProfit}` : '-';
   const displayedStopLoss = openCfdRequest.stopLoss ? `$ ${openCfdRequest.stopLoss}` : '-';
 
   const layoutInsideBorder = 'mx-5 my-4 flex justify-between';
 
-  // let dataRenewedStyle = 'text-lightGray';
+  const toApplyCreateOrder = (
+    openCfdRequest: IApplyCreateCFDOrderData
+  ): IApplyCreateCFDOrderData => {
+    const order: IApplyCreateCFDOrderData = {
+      ...openCfdRequest,
+      quotation: {
+        ...openCfdRequest.quotation,
+        // TODO: (20230315 - Shirley) get data from Ctx
+        price: randomIntFromInterval(50, 40000),
+        deadline: getNowSeconds() + RENEW_QUOTATION_INTERVAL_SECONDS,
+        signature: '0x',
+      },
+      price:
+        // TODO: (20230315 - Shirley) get data from Ctx
+        openCfdRequest.typeOfPosition === TypeOfPosition.BUY
+          ? randomIntFromInterval(
+              marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice * 0.75,
+              marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice * 1.25
+            )
+          : openCfdRequest.typeOfPosition === TypeOfPosition.SELL
+          ? randomIntFromInterval(
+              marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice * 1.1,
+              marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice * 1.25
+            )
+          : 999999,
+      // TODO: (20230315 - Shirley) calculate liquidationPrice
+      liquidationPrice: randomIntFromInterval(1000, 10000),
+      liquidationTime: getNowSeconds() + 86400, // openTimestamp + 86400
+      // TODO: (20230315 - Shirley) calculate margin
+      margin: {
+        ...openCfdRequest.margin,
+        amount: randomIntFromInterval(
+          openCfdRequest.margin.amount * 0.9,
+          openCfdRequest.margin.amount * 1.5
+        ),
+      },
+      // TODO: (20230315 - Shirley) get data from Ctx
+      // margin:
+      // openCfdRequest.typeOfPosition === TypeOfPosition.BUY
+      //   ? (openCfdRequest.amount * marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice) /
+      //     openCfdRequest.leverage
+      //   : (openCfdRequest.amount * marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice) /
+      //     openCfdRequest.leverage,
+      /**
+       *           amount: openCfdRequest.amount * (openCfdRequest.typeOfPosition === TypeOfPosition.BUY ? marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice ? marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice) / openCfdRequest.leverage,
 
-  // const displayedTime = timestampToString(openCfdRequest?.createdTime ?? 0);
+       */
+    };
 
-  const organizeApplyOrder = () => {
-    const newData = getDummyDisplayApplyCreateCFDOrder(marketCtx.selectedTicker!.currency);
-    const creatingData = newData.data as IApplyCreateCFDOrderData;
-
-    // const userInput = ['ticker', 'typeOfPosition', 'amount', 'targetAsset', 'uniAsset', 'leverage'];
-
-    const {
-      ticker,
-      typeOfPosition,
-      amount,
-      margin,
-      takeProfit,
-      stopLoss,
-      guaranteedStop,
-      targetAsset,
-      uniAsset,
-      leverage,
-      ...dataRenewedWithoutExcludedProperties
-    } = creatingData;
-
-    // const applyData = {
-    //   ...displayApplyCreateCFD,
-    //   data: {
-    //     ...displayApplyCreateCFD.data,
-    //     ...dataRenewedWithoutExcludedProperties,
-
-    //     // quotation: {
-    //     //   ticker: marketCtx.selectedTicker?.currency ?? '',
-    //     //   targetAsset: UNIT_ASSET,
-    //     //   uniAsset: marketCtx.selectedTicker?.currency ?? '',
-    //     //   price:
-    //     //     displayedApplyCreateCfdData.typeOfPosition === TypeOfPosition.BUY
-    //     //       ? Number(marketCtx.tickerLiveStatistics?.buyEstimatedFilledPrice) ?? 9999999999
-    //     //       : displayedApplyCreateCfdData.typeOfPosition === TypeOfPosition.SELL
-    //     //       ? Number(marketCtx.tickerLiveStatistics?.sellEstimatedFilledPrice) ?? 9999999999
-    //     //       : 9999999999,
-
-    //     //   deadline: Math.ceil(Date.now() / 1000) + RENEW_QUOTATION_INTERVAL_SECONDS,
-    //     //   signature: '0x',
-    //     // },
-    //   },
-    // };
-
-    // return applyData;
+    return order;
   };
 
   const renewDataHandler = async () => {
-    const applyData = organizeApplyOrder();
+    // const applyData = toApplyCreateOrder();
 
     // const excludedProperties = ['margin', 'takeProfit', 'stopLoss'];
 
@@ -286,48 +270,7 @@ const PositionOpenModal = ({
     // TODO: (20230315 - Shirley) get latest price from marketCtx and calculate required margin data
     // TODO: (20230315 - Shirley) 應用 ?? 代替 !
     globalCtx.dataPositionOpenModalHandler({
-      openCfdRequest: {
-        ...openCfdRequest,
-        quotation: {
-          ...openCfdRequest.quotation,
-          // TODO: (20230315 - Shirley) get data from Ctx
-          price: randomIntFromInterval(50, 40000),
-          deadline: getNowSeconds() + RENEW_QUOTATION_INTERVAL_SECONDS,
-          signature: '0x',
-        },
-        price:
-          // TODO: (20230315 - Shirley) get data from Ctx
-          openCfdRequest.typeOfPosition === TypeOfPosition.BUY
-            ? randomIntFromInterval(
-                marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice * 0.75,
-                marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice * 1.25
-              )
-            : openCfdRequest.typeOfPosition === TypeOfPosition.SELL
-            ? randomIntFromInterval(
-                marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice * 1.1,
-                marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice * 1.25
-              )
-            : 999999,
-        // TODO: (20230315 - Shirley) get data from Ctx
-        margin: {
-          ...openCfdRequest.margin,
-          amount: randomIntFromInterval(
-            openCfdRequest.margin.amount * 0.9,
-            openCfdRequest.margin.amount * 1.5
-          ),
-        },
-        // TODO: (20230315 - Shirley) get data from Ctx
-        // margin:
-        // openCfdRequest.typeOfPosition === TypeOfPosition.BUY
-        //   ? (openCfdRequest.amount * marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice) /
-        //     openCfdRequest.leverage
-        //   : (openCfdRequest.amount * marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice) /
-        //     openCfdRequest.leverage,
-        /**
-         *           amount: openCfdRequest.amount * (openCfdRequest.typeOfPosition === TypeOfPosition.BUY ? marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice ? marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice) / openCfdRequest.leverage,
-
-         */
-      },
+      openCfdRequest: toApplyCreateOrder(openCfdRequest),
     });
 
     setDataRenewedStyle('text-lightYellow2');
@@ -432,7 +375,8 @@ const PositionOpenModal = ({
               <div className="text-lightGray">Open Price</div>
               <div className={`${dataRenewedStyle}`}>
                 {/* TODO: Hardcode USDT */}${' '}
-                {openCfdRequest.price?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0} USDT
+                {openCfdRequest.price?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0}{' '}
+                {openCfdRequest.margin.asset}
               </div>
             </div>
 

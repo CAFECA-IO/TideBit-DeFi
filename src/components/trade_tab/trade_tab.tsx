@@ -258,144 +258,85 @@ const TradeTab = () => {
     valueOfPositionLength > 10 || targetLength > 10 ? 'top-430px' : 'top-420px';
 
   // TODO: not finished yet
-  const organizeApplyOrder = () => {
-    const newData = getDummyDisplayApplyCreateCFDOrder(marketCtx.selectedTicker!.currency);
-    const creatingData = newData.data as IApplyCreateCFDOrderData;
-
-    // const longOrderData = {
-    //   ticker: marketCtx.selectedTicker?.currency ?? '',
-    //   price: Number(buyPrice) ?? 9999999999,
-    //   typeOfPosition: TypeOfPosition.BUY,
-    //   amount: targetedAmountInputValueRef.current,
-    // };
-
-    // const shortOrderData = {
-    //   ticker: marketCtx.selectedTicker?.currency ?? '',
-    //   price: Number(sellPrice) ?? 9999999999,
-    //   typeOfPosition: TypeOfPosition.SELL,
-    //   amount: targetedAmountInputValueRef.current,
-    // };
-
-    globalCtx.dataPositionOpenModalHandler({
-      openCfdRequest: {
+  const toApplyCreateOrder = () => {
+    const longOrder: IApplyCreateCFDOrderData = {
+      ticker: marketCtx.selectedTicker?.currency ?? '',
+      targetAsset: marketCtx.selectedTicker?.currency ?? '',
+      uniAsset: unitAsset,
+      price: Number(buyPrice) ?? 9999999999,
+      amount: targetInputValueRef.current,
+      typeOfPosition: TypeOfPosition.BUY,
+      leverage: marketCtx.tickerStatic?.leverage ?? 1,
+      margin: {
+        asset: unitAsset,
+        amount: requiredMarginRef.current,
+      },
+      quotation: {
         ticker: marketCtx.selectedTicker?.currency ?? '',
         targetAsset: marketCtx.selectedTicker?.currency ?? '',
         uniAsset: unitAsset,
         price: Number(buyPrice) ?? 9999999999,
-        amount: targetInputValueRef.current,
-        typeOfPosition: TypeOfPosition.BUY,
-        leverage: marketCtx.tickerStatic?.leverage ?? 1,
-        margin: {
-          asset: unitAsset,
-          amount: requiredMarginRef.current,
-        },
-        quotation: {
-          ticker: marketCtx.selectedTicker?.currency ?? '',
-          targetAsset: marketCtx.selectedTicker?.currency ?? '',
-          uniAsset: unitAsset,
-          price: Number(buyPrice) ?? 9999999999,
-          deadline: Math.ceil(Date.now() / 1000) + 15,
-          signature: '0x',
-        },
-        liquidationPrice: 1000,
-        liquidationTime: Math.ceil(Date.now() / 1000) + 86400, // openTimestamp + 86400
-        // price: marketCtx.tickerLiveStatistics?.buyEstimatedFilledPrice ?? 9999999999,
-        // price: marketCtx.selectedTicker?.price ?? 9999999999,
-        // triggerPrice: marketCtx.selectedTicker?.price ?? 9999999999,
-        // estimatedFilledPrice: marketCtx.selectedTicker?.price ?? 9999999999,
-        fee: marketCtx.tickerLiveStatistics?.fee ?? 9999999999,
-        guaranteedStop: longSlToggle ? longGuaranteedStopChecked : false,
-        takeProfit: longTpToggle ? longTpValue : undefined,
-        stopLoss: longSlToggle ? longSlValue : undefined,
-        createTimestamp: 1676369333495,
-        // targetAsset: marketCtx.selectedTicker?.currency ?? '',
-        // uniAsset: 'USDT',
+        deadline: getNowSeconds() + RENEW_QUOTATION_INTERVAL_SECONDS,
+        signature: '0x',
       },
-    });
-    globalCtx.visiblePositionOpenModalHandler();
-    // globalCtx.visibleWalletPanelHandler();
-    return;
+      liquidationPrice: 1000,
+      liquidationTime: Math.ceil(Date.now() / 1000) + 86400,
+      fee: marketCtx.tickerLiveStatistics?.fee ?? 9999999999,
+      guaranteedStop: longSlToggle ? longGuaranteedStopChecked : false,
+      takeProfit: longTpToggle ? longTpValue : undefined,
+      stopLoss: longSlToggle ? longSlValue : undefined,
+    };
+
+    const shortOrder: IApplyCreateCFDOrderData = {
+      ticker: marketCtx.selectedTicker?.currency ?? '',
+      targetAsset: unitAsset,
+      uniAsset: marketCtx.selectedTicker?.currency ?? '',
+      typeOfPosition: TypeOfPosition.SELL,
+      margin: {
+        asset: unitAsset,
+        amount: requiredMarginRef.current,
+      },
+      quotation: {
+        ticker: marketCtx.selectedTicker?.currency ?? '',
+        targetAsset: unitAsset,
+        uniAsset: marketCtx.selectedTicker?.currency ?? '',
+        price: Number(sellPrice) ?? 9999999999,
+        deadline: getNowSeconds() + RENEW_QUOTATION_INTERVAL_SECONDS,
+        signature: '0x',
+      },
+      price: Number(sellPrice) ?? 9999999999,
+      amount: targetInputValueRef.current,
+      liquidationPrice: 1000,
+      liquidationTime: getNowSeconds() + 86400,
+      fee: marketCtx.tickerLiveStatistics?.fee ?? 9999999999,
+      leverage: marketCtx.tickerStatic?.leverage ?? 1,
+      guaranteedStop: shortSlToggle ? shortGuaranteedStopChecked : false,
+      takeProfit: shortTpToggle ? shortTpValue : undefined,
+      stopLoss: shortSlToggle ? shortSlValue : undefined,
+    };
+
+    return {longOrder, shortOrder};
   };
 
   const longOrderSubmitHandler = () => {
-    // if (marginWarning) return;
+    const {longOrder} = toApplyCreateOrder();
 
     globalCtx.dataPositionOpenModalHandler({
-      openCfdRequest: {
-        ticker: marketCtx.selectedTicker?.currency ?? '',
-        targetAsset: marketCtx.selectedTicker?.currency ?? '',
-        uniAsset: unitAsset,
-        price: Number(buyPrice) ?? 9999999999,
-        amount: targetInputValueRef.current,
-        typeOfPosition: TypeOfPosition.BUY,
-        leverage: marketCtx.tickerStatic?.leverage ?? 1,
-        margin: {
-          asset: unitAsset,
-          amount: requiredMarginRef.current,
-        },
-        quotation: {
-          ticker: marketCtx.selectedTicker?.currency ?? '',
-          targetAsset: marketCtx.selectedTicker?.currency ?? '',
-          uniAsset: unitAsset,
-          price: Number(buyPrice) ?? 9999999999,
-          deadline: getNowSeconds() + RENEW_QUOTATION_INTERVAL_SECONDS,
-          signature: '0x',
-        },
-        liquidationPrice: 1000,
-        liquidationTime: Math.ceil(Date.now() / 1000) + 86400, // openTimestamp + 86400
-        // price: marketCtx.tickerLiveStatistics?.buyEstimatedFilledPrice ?? 9999999999,
-        // price: marketCtx.selectedTicker?.price ?? 9999999999,
-        // triggerPrice: marketCtx.selectedTicker?.price ?? 9999999999,
-        // estimatedFilledPrice: marketCtx.selectedTicker?.price ?? 9999999999,
-        fee: marketCtx.tickerLiveStatistics?.fee ?? 9999999999,
-        guaranteedStop: longSlToggle ? longGuaranteedStopChecked : false,
-        takeProfit: longTpToggle ? longTpValue : undefined,
-        stopLoss: longSlToggle ? longSlValue : undefined,
-      },
+      openCfdRequest: longOrder,
     });
     globalCtx.visiblePositionOpenModalHandler();
+
     return;
   };
 
   const shortOrderSubmitHandler = () => {
-    // const newData = getDummyDisplayApplyCreateCFDOrder(marketCtx.selectedTicker!.currency);
-    // const creatingData = newData.data as IApplyCreateCFDOrderData;
-    // const newData = organizeApplyOrder().shortOrderData;
+    const {shortOrder} = toApplyCreateOrder();
 
     globalCtx.dataPositionOpenModalHandler({
-      openCfdRequest: {
-        ticker: marketCtx.selectedTicker?.currency ?? '',
-        targetAsset: unitAsset,
-        uniAsset: marketCtx.selectedTicker?.currency ?? '',
-        typeOfPosition: TypeOfPosition.SELL,
-        margin: {
-          asset: unitAsset,
-          amount: requiredMarginRef.current,
-        },
-        quotation: {
-          ticker: marketCtx.selectedTicker?.currency ?? '',
-          targetAsset: unitAsset,
-          uniAsset: marketCtx.selectedTicker?.currency ?? '',
-          price: Number(sellPrice) ?? 9999999999,
-          deadline: Math.ceil(Date.now() / 1000) + 15,
-          signature: '0x',
-        },
-        price: Number(sellPrice) ?? 9999999999,
-        amount: targetInputValueRef.current,
-        liquidationPrice: 1000,
-        liquidationTime: Math.ceil(Date.now() / 1000) + 86400, // openTimestamp + 86400
-        // price: marketCtx.tickerLiveStatistics?.buyEstimatedFilledPrice ?? 9999999999,
-        // price: marketCtx.selectedTicker?.price ?? 9999999999,
-        // triggerPrice: marketCtx.selectedTicker?.price ?? 9999999999,
-        // estimatedFilledPrice: marketCtx.selectedTicker?.price ?? 9999999999,
-        fee: marketCtx.tickerLiveStatistics?.fee ?? 9999999999,
-        leverage: marketCtx.tickerStatic?.leverage ?? 1,
-        guaranteedStop: shortSlToggle ? shortGuaranteedStopChecked : false,
-        takeProfit: shortTpToggle ? shortTpValue : undefined,
-        stopLoss: shortSlToggle ? shortSlValue : undefined,
-      },
+      openCfdRequest: shortOrder,
     });
     globalCtx.visiblePositionOpenModalHandler();
+
     return;
   };
 

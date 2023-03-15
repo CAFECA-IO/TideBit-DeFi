@@ -1,10 +1,13 @@
 import {useState, useContext} from 'react';
-import CandlestickChart from '../candlestick_chart/candlestick_chart';
-import TradingChartSwitch from '../trading_chart_switch/trading_chart_switch';
+import CandlestickChartMobile from '../candlestick_chart_mobile/candlestick_chart_mobile';
+import TradingChartSwitchMobile from '../trading_chart_switch_mobile/trading_chart_switch_mobile';
 import useWindowSize from '../../lib/hooks/use_window_size';
 import {MarketContext} from '../../contexts/market_context';
 import useStateRef from 'react-usestateref';
 import {INITIAL_POSITION_LABEL_DISPLAYED_STATE} from '../../constants/display';
+import {useTranslation} from 'next-i18next';
+
+type TranslateFunction = (s: string) => string;
 
 const DEFAULT_CHART_WIDTH = 300;
 const DEFAULT_CHART_HEIGHT = 250;
@@ -24,7 +27,7 @@ const getChartSize = () => {
 
 const getSwitchWidth = () => {
   const windowSize = useWindowSize();
-  const switchWidth = windowSize.width;
+  const switchWidth = windowSize.width - 40;
   const switchSize = {
     width: switchWidth.toString(),
     height: SWITCH_HEIGHT.toString(),
@@ -33,9 +36,9 @@ const getSwitchWidth = () => {
 };
 
 const TradingViewMobile = () => {
-  const marketCtx = useContext(MarketContext);
+  const {t}: {t: TranslateFunction} = useTranslation('common');
 
-  const {showPositionOnChart} = useContext(MarketContext);
+  const marketCtx = useContext(MarketContext);
 
   const [candlestickOn, setCandlestickOn, candlestickOnRef] = useStateRef(true);
   const [lineGraphOn, setLineGraphOn, lineGraphOnRef] = useStateRef(false);
@@ -50,9 +53,7 @@ const TradingViewMobile = () => {
   const switchSize = getSwitchWidth();
 
   const getDisplayedPositionLabelState = (bool: boolean) => {
-    // console.log('bool in trading_view', bool);
     setShowPositionLabel(bool);
-    // return bool;
   };
 
   const getCandlestickOn = (bool: boolean) => {
@@ -85,7 +86,7 @@ const TradingViewMobile = () => {
 
   const displayedTradingView = (
     <>
-      <CandlestickChart
+      <CandlestickChartMobile
         strokeColor={[`#17BF88`]}
         showPositionLabel={showPositionLabelRef.current}
         candlestickOn={candlestickOnRef.current}
@@ -98,17 +99,15 @@ const TradingViewMobile = () => {
 
   return (
     <div className="relative">
-      {/* Trading volume */}
-      {/* ToDo: Fix chart & switch size (20230314 - Julian) */}
       <div className="absolute top-10 text-sm text-lightWhite/60">
-        24h Volume {marketCtx.selectedTicker?.tradingVolume} USDT
+        {t('TRADE_PAGE.TRADING_VIEW_24H_VOLUME')} {marketCtx.selectedTicker?.tradingVolume} USDT
       </div>
       <div className="">{displayedTradingView}</div>
       <div
         className="pt-5 pb-16"
         style={{width: `${switchSize.width}px`, height: `${switchSize.height}px`}}
       >
-        <TradingChartSwitch
+        <TradingChartSwitchMobile
           getCandlestickOn={getCandlestickOn}
           getLineGraphOn={getLineGraphOn}
           getTradingViewType={getTradingViewSelected}

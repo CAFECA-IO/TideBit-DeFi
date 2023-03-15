@@ -6,8 +6,13 @@ import {UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
 import {MarketContext} from '../../contexts/market_context';
 import {Trend} from '../../constants/trend';
 import eventEmitter from '../../constants/tidebit_event';
+import {useTranslation} from 'next-i18next';
+
+type TranslateFunction = (s: string) => string;
 
 const TradingHeader = () => {
+  const {t}: {t: TranslateFunction} = useTranslation('common');
+
   const marketCtx = useContext(MarketContext);
   // if (
   //   marketCtx.selectedTicker?.upOrDown !== Trend.UP &&
@@ -83,7 +88,7 @@ const TradingHeader = () => {
         {/* Trading volume */}
         <div className="relative">
           <div className="absolute -right-48 top-10 w-300px text-sm text-lightWhite/60 lg:left-0">
-            24h Volume {marketCtx.selectedTicker?.tradingVolume} USDT
+            {t('TRADE_PAGE.TRADING_VIEW_24H_VOLUME')} {marketCtx.selectedTicker?.tradingVolume} USDT
           </div>
         </div>
       </div>

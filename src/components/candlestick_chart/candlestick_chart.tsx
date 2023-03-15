@@ -48,7 +48,12 @@ export interface ILineChartData {
   y: number | null;
 }
 
-export const updateDummyCandlestickChartData = (data: ICandlestickData[]): ICandlestickData[] => {
+export const updateDummyCandlestickChartData = (
+  data: {
+    x: Date;
+    y: [...(number | null)[]];
+  }[]
+): {x: Date; y: (number | null)[]}[] => {
   const n = 80;
   const chartBlank = 1.68;
   const dummyDataSize = 80;
@@ -77,7 +82,7 @@ export const updateDummyCandlestickChartData = (data: ICandlestickData[]): ICand
     return prettyPrice;
   });
 
-  const newCandlestickData: ICandlestickData = {
+  const newCandlestickData: {x: Date; y: (number | null)[]} = {
     x: new Date(nowSecond - 1 * unitOfLive),
     y: newYs,
   };
@@ -116,7 +121,15 @@ export interface IProcessCandlestickData {
 
 // TODO: (20230313 - Shirley) after getting the complete data from Context, process it to the required format
 export function processCandlestickData({data, requiredDataNum}: IProcessCandlestickData) {
-  const origin = [...data];
+  const origin = [...data].map(d => ({
+    x: d.x,
+    y: [
+      d.open ? d.open : null,
+      d.high ? d.high : null,
+      d.low ? d.low : null,
+      d.close ? d.close : null,
+    ],
+  }));
   const nullNum = countNullArrays(origin);
 
   const unitOfLive = 1000;
@@ -137,7 +150,10 @@ export function processCandlestickData({data, requiredDataNum}: IProcessCandlest
 }
 
 export interface ITrimCandlestickData {
-  data: ICandlestickData[];
+  data: {
+    x: Date;
+    y: [...(number | null)[]];
+  }[];
   requiredDataNum: number;
 }
 
@@ -165,15 +181,38 @@ export default function CandlestickChart({
   const userCtx = useContext(UserContext);
 
   const candlestickChartDataFromCtx =
-    marketCtx.candlestickChartData !== null ? marketCtx.candlestickChartData : [];
+    marketCtx.candlestickChartData !== null
+      ? marketCtx.candlestickChartData?.map(d => ({
+          x: d.x,
+          y: [
+            d.open ? d.open : null,
+            d.high ? d.high : null,
+            d.low ? d.low : null,
+            d.close ? d.close : null,
+          ],
+        }))
+      : [];
 
   const NULL_ARRAY_NUM = 1;
 
   const [candlestickChartData, setCandlestickChartData, candlestickChartDataRef] = useStateRef<
-    ICandlestickData[] | undefined
+    | {
+        x: Date;
+        y: [...(number | null)[]];
+      }[]
+    | undefined
   >(() =>
     trimCandlestickData({
-      data: marketCtx?.candlestickChartData ?? [],
+      data:
+        marketCtx.candlestickChartData?.map(d => ({
+          x: d.x,
+          y: [
+            d.open ? d.open : null,
+            d.high ? d.high : null,
+            d.low ? d.low : null,
+            d.close ? d.close : null,
+          ],
+        })) ?? [],
       requiredDataNum: 30,
     })
   );
@@ -355,11 +394,23 @@ export default function CandlestickChart({
 
     if (!toCandlestickChartDataRef.current) {
       setCandlestickChartData(() =>
-        trimCandlestickData({data: marketCtx?.candlestickChartData ?? [], requiredDataNum: 30})
+        trimCandlestickData({
+          data:
+            marketCtx?.candlestickChartData?.map(d => ({
+              x: d.x,
+              y: [
+                d.open ? d.open : null,
+                d.high ? d.high : null,
+                d.low ? d.low : null,
+                d.close ? d.close : null,
+              ],
+            })) ?? [],
+          requiredDataNum: 30,
+        })
       );
 
       setToCandlestickChartData(
-        candlestickChartData?.map(data => ({
+        candlestickChartDataRef.current?.map(data => ({
           x: data.x,
           open: data.y[0],
           high: data.y[1],

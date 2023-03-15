@@ -22,7 +22,7 @@ import {
   ITickerMarket,
 } from '../interfaces/tidebit_defi_background/ticker_data';
 import {ITimeSpanUnion, TimeSpanUnion} from '../interfaces/tidebit_defi_background/time_span_union';
-import {getTime, ICandlestickData} from '../interfaces/tidebit_defi_background/candlestickData';
+import {ICandlestickData} from '../interfaces/tidebit_defi_background/candlestickData';
 import {TideBitEvent} from '../constants/tidebit_event';
 import {NotificationContext} from './notification_context';
 import {WorkerContext} from './worker_context';
@@ -65,7 +65,7 @@ export const MarketContext = createContext<IMarketContext>({
   candlestickId: '',
   candlestickChartIdHandler: () => null,
   candlestickChartData: [],
-  timeSpan: TimeSpanUnion._1m,
+  timeSpan: TimeSpanUnion._1d,
   selectTimeSpanHandler: () => null,
   // liveStatstics: null,
   // bullAndBearIndex: 0,

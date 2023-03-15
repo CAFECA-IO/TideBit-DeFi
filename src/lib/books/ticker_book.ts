@@ -91,7 +91,10 @@ class TickerBook {
           const close = sortTrade[sortTrade.length - 1];
           this._candlesticks[ticker] = this._candlesticks[ticker].concat({
             x: new Date(lastestBarTime + timeSpan),
-            y: [open, high, low, close],
+            open,
+            high,
+            low,
+            close,
           });
           this._tickers[ticker].lineGraphProps.dataArray =
             this._tickers[ticker].lineGraphProps.dataArray?.concat(open);

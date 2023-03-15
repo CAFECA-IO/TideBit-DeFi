@@ -1,6 +1,9 @@
 import {NextApiRequest, NextApiResponse} from 'next';
 import {API_VERSION, AVAILABLE_TICKERS, TBE_URL} from '../../../constants/config';
-import {getDummyCandlestickChartData} from '../../../interfaces/tidebit_defi_background/candlestickData';
+import {
+  getDummyCandlestickChartData,
+  ICandlestickData,
+} from '../../../interfaces/tidebit_defi_background/candlestickData';
 import {ITimeSpanUnion} from '../../../interfaces/tidebit_defi_background/time_span_union';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -11,7 +14,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const response = await fetch(url);
         const result = await response.json();
         if (result.success) {
-          const data = result.payload.map(
+          const data: ICandlestickData[] = result.payload.map(
             (d: {
               time: number;
               open: number;
@@ -19,17 +22,24 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
               low: number;
               close: number;
               volume: number;
-            }) => ({x: new Date(d.time), y: [d.open, d.high, d.low, d.close]})
+            }) =>
+              ({
+                x: new Date(d.time),
+                open: d.open,
+                high: d.high,
+                low: d.low,
+                close: d.close,
+              } as ICandlestickData)
           );
           res.status(200).json(data);
-        } else {
-          const candlestickChartData = getDummyCandlestickChartData(
-            50,
-            req.query.timespan as ITimeSpanUnion
-          );
-          res.status(200).json([...candlestickChartData]);
-        }
-      } else res.status(500).json({error: 'Internal Server Error'});
+        } else res.status(500).json({error: 'Internal Server Error'});
+      } else {
+        const candlestickChartData = getDummyCandlestickChartData(
+          50,
+          req.query.timespan as ITimeSpanUnion
+        );
+        res.status(200).json([...candlestickChartData]);
+      }
     } else res.status(500).json({error: 'Internal Server Error'});
   } catch (error) {
     res.status(500).json({error: 'Internal Server Error'});

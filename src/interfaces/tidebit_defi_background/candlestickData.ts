@@ -6,7 +6,10 @@ const unitOfLive = 1000;
 
 export interface ICandlestickData {
   x: Date;
-  y: [...(number | null)[]];
+  open: number;
+  high: number;
+  low: number;
+  close: number;
 }
 
 export const getTime = (timeSpan: ITimeSpanUnion) => {
@@ -42,6 +45,7 @@ export const getTime = (timeSpan: ITimeSpanUnion) => {
   return time;
 };
 
+/* Till: remove generate dummy price data (20230327 - Tzuhan)
 export const getDummyPrices = (point: number) => {
   const prices: [...(number | null)[]] = new Array(4).fill(0).map(v => {
     const rnd = Math.random() / 1.2;
@@ -52,6 +56,7 @@ export const getDummyPrices = (point: number) => {
   });
   return prices;
 };
+*/
 
 export const getDummyCandlestickChartData = (
   dataSize = dummyDataSize,
@@ -62,7 +67,7 @@ export const getDummyCandlestickChartData = (
   let point = 1288.4;
   let lastPrice = 0;
   const data = new Array(dataSize).fill(0).map((v, i) => {
-    const y: [...(number | null)[]] = new Array(4).fill(0).map(v => {
+    const y: [...number[]] = new Array(4).fill(0).map(v => {
       const rnd = Math.random() / 1.2;
       const ts = rnd > 0.25 ? 1 + rnd ** 5 : 1 - rnd;
       const price = point * ts;
@@ -75,17 +80,20 @@ export const getDummyCandlestickChartData = (
 
     const result: ICandlestickData = {
       x: new Date(nowSecond - (dataSize - i) * getTime(timeSpan)),
-      y,
+      open: y[0],
+      high: y[1],
+      low: y[2],
+      close: y[3],
     };
     return result;
   });
-  const addition = dataSize / chartBlank;
+  // const addition = dataSize / chartBlank;
 
   // null data
-  data.push({
-    x: new Date(nowSecond + addition * getTime(timeSpan)),
-    y: [null, null, null, null],
-  });
+  // data.push({
+  //   x: new Date(nowSecond + addition * getTime(timeSpan)),
+  //   y: [null, null, null, null],
+  // });
 
   return data;
 };

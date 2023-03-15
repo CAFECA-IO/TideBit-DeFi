@@ -191,8 +191,8 @@ export function trimData({data, requiredDataNum}: ITrimDataProps) {
   return trimmedData;
 }
 
+// TODO: (20230315 - Shirley) FIXME: Dangerous workaround when the Ctx data isn't fetched, but the VictoryLabel needs the data
 const TEMP_BASELINE = 2000;
-const TEMP_MULTIPLIER = 40;
 
 export default function CandlestickChart({
   strokeColor,
@@ -318,7 +318,7 @@ export default function CandlestickChart({
           }}
           data={
             // TODO: (20230315 - Shirley) remove the `TEMP`
-            toOpenPriceLineData(toLatestPriceLineData, cfd.openPrice * TEMP_MULTIPLIER)
+            toOpenPriceLineData(toLatestPriceLineData, cfd.openPrice)
           }
         />
       ))
@@ -332,7 +332,7 @@ export default function CandlestickChart({
             key={cfd.id}
             style={{data: {fill: 'transparent'}, labels: {background: 'transparent'}}}
             // TODO: (20230315 - Shirley) remove the `TEMP`
-            data={toOpenPriceLineData(toLatestPriceLineData, cfd.openPrice * TEMP_MULTIPLIER)}
+            data={toOpenPriceLineData(toLatestPriceLineData, cfd.openPrice)}
             labels={({datum}) =>
               datum.x === toLatestPriceLineData[toLatestPriceLineData.length - 1].x
                 ? ` ${symbol} Position $${datum.y.toLocaleString(

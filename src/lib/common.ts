@@ -135,3 +135,12 @@ export const locker = (id: string): ILocker => {
 };
 
 export const getTimestamp = () => Math.ceil(Date.now() / 1000);
+
+export const toQuery = (params: {[key: string]: string | number | boolean} | undefined) => {
+  const query: string = params
+    ? `?${Object.keys(params)
+        .map(key => `${key}=${params![key]}`)
+        .join('&')}`
+    : ``;
+  return query;
+};

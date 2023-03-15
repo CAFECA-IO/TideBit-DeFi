@@ -22,7 +22,7 @@ import {
   ITickerMarket,
 } from '../interfaces/tidebit_defi_background/ticker_data';
 import {ITimeSpanUnion, TimeSpanUnion} from '../interfaces/tidebit_defi_background/time_span_union';
-import {getTime, ICandlestickData} from '../interfaces/tidebit_defi_background/candlestickData';
+import {ICandlestickData} from '../interfaces/tidebit_defi_background/candlestickData';
 import {TideBitEvent} from '../constants/tidebit_event';
 import {NotificationContext} from './notification_context';
 import {WorkerContext} from './worker_context';
@@ -39,20 +39,20 @@ export interface IMarketContext {
   availableTickers: {[currency: string]: ITickerData};
   isCFDTradable: boolean;
   showPositionOnChart: boolean;
-  showPositionOnChartHandler: (bool: boolean) => void;
   candlestickId: string;
-  candlestickChartIdHandler: (id: string) => void;
   tickerStatic: ITickerStatic | null;
   tickerLiveStatistics: ITickerLiveStatistics | null;
   timeSpan: ITimeSpanUnion;
   candlestickChartData: ICandlestickData[] | null;
-  listAvailableTickers: () => ITickerData[];
   depositCryptocurrencies: ICryptocurrency[]; // () => ICryptocurrency[];
   withdrawCryptocurrencies: ICryptocurrency[]; //  () => ICryptocurrency[];
+  init: () => Promise<void>;
+  showPositionOnChartHandler: (bool: boolean) => void;
+  candlestickChartIdHandler: (id: string) => void;
+  listAvailableTickers: () => ITickerData[];
   selectTickerHandler: (props: string) => IResult;
   selectTimeSpanHandler: (props: ITimeSpanUnion) => void;
   getCandlestickChartData: (tickerId: string) => Promise<void>; // x 100
-  init: () => Promise<void>;
 }
 // TODO: Note: _app.tsx 啟動的時候 => createContext
 export const MarketContext = createContext<IMarketContext>({
@@ -191,8 +191,8 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     workerCtx.requestHandler({
       name: APIName.GET_CANDLESTICK_DATA,
       method: Method.GET,
-      ticker: selectedTickerRef.current?.currency,
       params: {
+        symbol: tickerId,
         limit: tickerBook.limit,
         timespan: timeSpan,
       },

@@ -31,7 +31,7 @@ export const unitAsset = 'USDT';
 export const WS_URL = 'wss://staging-001.tidebit.network/ws';
 
 // Deprecated: dummy url settings (20230407 - Tzuhan)
-export const TBE_URL = 'https://staging-001.tidebit.network';
+export const BASE_URL = 'https://staging-001.tidebit.network';
 // Deprecated: dummy url settings (20230407 - Tzuhan)
 export const API_VERSION = '/api/v1';
 // Deprecated: dummy url settings (20230407 - Tzuhan)

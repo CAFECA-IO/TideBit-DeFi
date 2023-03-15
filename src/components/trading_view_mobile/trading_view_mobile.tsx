@@ -104,7 +104,7 @@ const TradingViewMobile = () => {
       </div>
       <div className="">{displayedTradingView}</div>
       <div
-        className="pt-5 pb-16"
+        className="pb-16"
         style={{width: `${switchSize.width}px`, height: `${switchSize.height}px`}}
       >
         <TradingChartSwitchMobile

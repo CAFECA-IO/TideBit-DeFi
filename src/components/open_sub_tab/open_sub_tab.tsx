@@ -9,22 +9,23 @@ import {IPnL} from '../../interfaces/tidebit_defi_background/pnl';
 import {ProfitState} from '../../constants/profit_state';
 import {TypeOfPosition} from '../../constants/type_of_position';
 import {MarketContext} from '../../contexts/market_context';
+import {SUGGEST_SL, SUGGEST_TP} from '../../constants/config';
 // import {IOpenCFDDetails} from '../../interfaces/tidebit_defi_background/open_cfd_details';
 
 const OpenSubTab = () => {
   const {openCFDs} = useContext(UserContext);
   const marketCtx = useContext(MarketContext);
 
-  const toOpenPositionItem = (cfds: IAcceptedCFDOrder[]): IDisplayAcceptedCFDOrder[] => {
+  const toOpenPositionItems = (cfds: IAcceptedCFDOrder[]): IDisplayAcceptedCFDOrder[] => {
     const displayedOpenPositionList = cfds.map(cfd => {
       const rTp =
         cfd.typeOfPosition === TypeOfPosition.BUY
-          ? twoDecimal(cfd.openPrice * (1 + 0.2 / cfd.leverage))
-          : twoDecimal(cfd.openPrice * (1 - 0.2 / cfd.leverage));
+          ? twoDecimal(cfd.openPrice * (1 + SUGGEST_TP / cfd.leverage))
+          : twoDecimal(cfd.openPrice * (1 - SUGGEST_TP / cfd.leverage));
       const rSl =
         cfd.typeOfPosition === TypeOfPosition.BUY
-          ? twoDecimal(cfd.openPrice * (1 - 0.1 / cfd.leverage))
-          : twoDecimal(cfd.openPrice * (1 + 0.1 / cfd.leverage));
+          ? twoDecimal(cfd.openPrice * (1 - SUGGEST_SL / cfd.leverage))
+          : twoDecimal(cfd.openPrice * (1 + SUGGEST_SL / cfd.leverage));
 
       // TODO: (20230314 - Shirley) get price point from `marketCtx`
       const positionLineGraph = [50, 72, 60, 65, 42, 25, 100, 32, 20, 15, 32, 90, 10];
@@ -63,7 +64,7 @@ const OpenSubTab = () => {
   };
 
   // console.log(toOpenPositionItem(openCFDs)); // Info: (20230314 - Shirley) `openCFDs` data from `display_accepted_cfd_order`
-  const openPositionList = toOpenPositionItem(openCFDs).map(cfd => {
+  const openPositionList = toOpenPositionItems(openCFDs).map(cfd => {
     return (
       <div key={cfd.id}>
         <OpenPositionItem openCfdDetails={cfd} />

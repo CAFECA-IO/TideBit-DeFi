@@ -29,3 +29,6 @@ export const SUPPORTED_NETWORKS = [
 ];
 
 export const unitAsset = 'USDT';
+
+export const SUGGEST_TP = 0.2;
+export const SUGGEST_SL = 0.1;

@@ -435,6 +435,7 @@ export const UserProvider = ({children}: IUserProvider) => {
         const balance: IBalance | null = getBalance(props.margin.asset);
         if (balance && balance.available >= props.margin.amount) {
           const CFDOrder: IApplyCFDOrder = {
+            orderType: OrderType.CFD,
             type: CFDOrderType.CREATE,
             data: props,
           };
@@ -492,7 +493,11 @@ export const UserProvider = ({children}: IUserProvider) => {
       if (props) {
         const openCFD = openCFDs.find(o => o.id === props.orderId);
         if (openCFD && openCFD.state === OrderState.OPENING) {
-          const CFDOrder: IApplyCFDOrder = {type: CFDOrderType.CLOSE, data: props};
+          const CFDOrder: IApplyCFDOrder = {
+            orderType: OrderType.CFD,
+            type: CFDOrderType.CLOSE,
+            data: props,
+          };
           const transferR = transactionEngine.transferCFDOrderToTransaction(CFDOrder);
           if (transferR.success) {
             const signature: string = await lunar.signTypedData(transferR.data);
@@ -545,7 +550,11 @@ export const UserProvider = ({children}: IUserProvider) => {
       if (props) {
         const openCFD = openCFDs.find(o => o.id === props.orderId);
         if (openCFD && openCFD.state === OrderState.OPENING) {
-          const CFDOrder: IApplyCFDOrder = {type: CFDOrderType.UPDATE, data: props};
+          const CFDOrder: IApplyCFDOrder = {
+            orderType: OrderType.CFD,
+            type: CFDOrderType.UPDATE,
+            data: props,
+          };
           const transferR = transactionEngine.transferCFDOrderToTransaction(CFDOrder);
           if (transferR.success) {
             const signature: string = await lunar.signTypedData(transferR.data);

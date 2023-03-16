@@ -80,10 +80,10 @@ const PositionOpenModal = ({
     globalCtx.visibleLoadingModalHandler();
 
     // TODO: (20230315 - Shirley) Use the real and correct data after the param is confirmed
+    // INFO: try-catch when it's related to user behavior, normally speaking (20230316 - Shirley)
+
     const result = await userCtx.createCFDOrder(openCfdRequest);
 
-    // TODO: temporary waiting
-    await wait(DELAYED_HIDDEN_SECONDS);
     globalCtx.dataLoadingModalHandler({
       modalTitle: 'Open Position',
       modalContent: 'Transaction broadcast',
@@ -91,12 +91,11 @@ const PositionOpenModal = ({
       btnUrl: '#',
     });
 
-    // TODO: temporary waiting
+    // INFO: for UX
     await wait(DELAYED_HIDDEN_SECONDS);
 
     globalCtx.eliminateAllModals();
 
-    // TODO: Revise the `result.reason` to constant by using enum or object
     // TODO: the button URL
     if (result.success) {
       globalCtx.dataSuccessfulModalHandler({
@@ -107,6 +106,7 @@ const PositionOpenModal = ({
       });
 
       globalCtx.visibleSuccessfulModalHandler();
+      // TODO: `result.code` (20230316 - Shirley)
     } else if (result.reason === 'CANCELED') {
       globalCtx.dataCanceledModalHandler({
         modalTitle: 'Open Position',

@@ -12,7 +12,7 @@ import {useContext, useEffect, useRef} from 'react';
 import TradingInput from '../trading_input/trading_input';
 import {AiOutlineQuestionCircle} from 'react-icons/ai';
 import RippleButton from '../ripple_button/ripple_button';
-import {useGlobal} from '../../contexts/global_context';
+import {IDataPositionClosedModal, useGlobal} from '../../contexts/global_context';
 import {TypeOfPosition} from '../../constants/type_of_position';
 import {ProfitState} from '../../constants/profit_state';
 import {
@@ -265,6 +265,14 @@ const UpdateFormModal = ({
 
   const layoutInsideBorder = 'mx-5 my-3 flex justify-between';
 
+  // TODO: 改成 IDisplayAcceptedCFDOrder
+  const toDisplayCloseOrder = (cfd: IDisplayAcceptedCFDOrder): IDisplayAcceptedCFDOrder => {
+    const order = {
+      ...cfd,
+    };
+    return order;
+  };
+
   const toApplyUpdateOrder = () => {
     let changedProperties: IApplyUpdateCFDOrderData = {orderId: openCfdDetails.id};
 
@@ -460,39 +468,10 @@ const UpdateFormModal = ({
 
   const denominator = remainSecs < 60 ? 60 : remainSecs < 3600 ? 60 : 24;
 
-  const toApplyCloseOrder = (order: IDisplayAcceptedCFDOrder) => {
-    return;
-  };
-
   const squareClickHandler = () => {
     globalCtx.visibleUpdateFormModalHandler();
-    const newDeadline = getNowSeconds() + RENEW_QUOTATION_INTERVAL_SECONDS;
 
-    globalCtx.dataPositionClosedModalHandler({
-      openCfdDetails: {
-        ...openCfdDetails,
-        // TODO: 自己算 PNL
-        pnl: {
-          type: randomIntFromInterval(0, 100) <= 50 ? ProfitState.PROFIT : ProfitState.LOSS,
-          value: randomIntFromInterval(0, 1000),
-        },
-      },
-      latestProps: {
-        renewalDeadline: newDeadline,
-        latestClosedPrice:
-          openCfdDetails.typeOfPosition === TypeOfPosition.BUY
-            ? randomIntFromInterval(
-                marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice * 0.75,
-                marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice * 1.25
-              )
-            : openCfdDetails.typeOfPosition === TypeOfPosition.SELL
-            ? randomIntFromInterval(
-                marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice * 1.1,
-                marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice * 1.25
-              )
-            : 99999,
-      },
-    });
+    globalCtx.dataPositionClosedModalHandler(toDisplayCloseOrder(openCfdDetails));
     globalCtx.visiblePositionClosedModalHandler();
   };
 

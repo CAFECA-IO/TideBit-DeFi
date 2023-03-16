@@ -1,4 +1,11 @@
-import {createContext, useState, useEffect, useContext, Dispatch, SetStateAction} from 'react';
+import React, {
+  createContext,
+  useState,
+  useEffect,
+  useContext,
+  Dispatch,
+  SetStateAction,
+} from 'react';
 import useWindowSize from '../lib/hooks/use_window_size';
 import {DELAYED_HIDDEN_SECONDS, LAYOUT_BREAKPOINT} from '../constants/display';
 import {ToastContainer, toast as toastify} from 'react-toastify';
@@ -53,6 +60,7 @@ import {
 } from '../interfaces/tidebit_defi_background/apply_create_cfd_order_data';
 import {OrderState} from '../constants/order_state';
 import {IApplyUpdateCFDOrderData} from '../interfaces/tidebit_defi_background/apply_update_cfd_order_data';
+import useStateRef from 'react-usestateref';
 
 export interface IToastify {
   type: 'error' | 'warning' | 'info' | 'success';
@@ -78,7 +86,6 @@ export interface IClosedCFDInfoProps {
 
 export interface IDataPositionClosedModal {
   openCfdDetails: IDisplayAcceptedCFDOrder;
-  latestProps: IClosedCFDInfoProps;
 }
 
 export interface IDataPositionOpenModal {
@@ -97,10 +104,6 @@ const dummyOpenCFD = acceptedCFDOrders.filter(order => order.state === OrderStat
 
 export const dummyDataPositionClosedModal: IDataPositionClosedModal = {
   openCfdDetails: acceptedCFDOrders[0],
-  latestProps: {
-    renewalDeadline: new Date('2023-02-24T17:00:00').getTime(),
-    latestClosedPrice: 45,
-  },
 };
 
 export const dummyDataPositionUpdatedModal: IDataPositionUpdatedModal = {
@@ -300,9 +303,10 @@ export interface IGlobalContext {
   dataHistoryPositionModalHandler: (data: IDisplayAcceptedCFDOrder) => void;
 
   visiblePositionClosedModal: boolean;
+  // TODO: (20230317 - Shirley) countdown // visiblePositionClosedModalRef: React.MutableRefObject<boolean>;
   visiblePositionClosedModalHandler: () => void;
-  dataPositionClosedModal: IDataPositionClosedModal | null;
-  dataPositionClosedModalHandler: (data: IDataPositionClosedModal) => void;
+  dataPositionClosedModal: IDisplayAcceptedCFDOrder | null;
+  dataPositionClosedModalHandler: (data: IDisplayAcceptedCFDOrder) => void;
 
   visiblePositionOpenModal: boolean;
   visiblePositionOpenModalHandler: () => void;
@@ -419,6 +423,7 @@ export const GlobalContext = createContext<IGlobalContext>({
   dataHistoryPositionModalHandler: () => null,
 
   visiblePositionClosedModal: false,
+  // TODO: (20230317 - Shirley) countdown // visiblePositionClosedModalRef: React.createRef<boolean>(),
   visiblePositionClosedModalHandler: () => null,
   dataPositionClosedModal: null,
   dataPositionClosedModalHandler: () => null,
@@ -534,10 +539,10 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
   const [dataHistoryPositionModal, setDataHistoryPositionModal] =
     useState<IDisplayAcceptedCFDOrder>(getDummyDisplayAcceptedCFDOrder('BTC'));
 
-  const [visiblePositionClosedModal, setVisiblePositionClosedModal] = useState(false);
-  const [dataPositionClosedModal, setDataPositionClosedModal] = useState<IDataPositionClosedModal>(
-    dummyDataPositionClosedModal
-  );
+  const [visiblePositionClosedModal, setVisiblePositionClosedModal, visiblePositionClosedModalRef] =
+    useStateRef<boolean>(false);
+  const [dataPositionClosedModal, setDataPositionClosedModal] =
+    useState<IDisplayAcceptedCFDOrder>(dummyOpenCFD);
 
   const [visiblePositionOpenModal, setVisiblePositionOpenModal] = useState(false);
   // const [dataPositionOpenModal, setDataPositionOpenModal] = useState<IDisplayApplyCFDOrder>(
@@ -720,7 +725,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     setVisiblePositionClosedModal(!visiblePositionClosedModal);
   };
 
-  const dataPositionClosedModalHandler = (data: IDataPositionClosedModal) => {
+  const dataPositionClosedModalHandler = (data: IDisplayAcceptedCFDOrder) => {
     setDataPositionClosedModal(data);
   };
 
@@ -991,6 +996,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     dataHistoryPositionModalHandler,
 
     visiblePositionClosedModal,
+    visiblePositionClosedModalRef,
     visiblePositionClosedModalHandler,
     dataPositionClosedModal,
     dataPositionClosedModalHandler,
@@ -1137,8 +1143,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
       <PositionClosedModal
         modalVisible={visiblePositionClosedModal}
         modalClickHandler={visiblePositionClosedModalHandler}
-        openCfdDetails={dataPositionClosedModal.openCfdDetails}
-        latestProps={dataPositionClosedModal.latestProps}
+        openCfdDetails={dataPositionClosedModal}
       />
       <PositionUpdatedModal
         modalVisible={visiblePositionUpdatedModal}

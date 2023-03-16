@@ -80,26 +80,11 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
 
   const denominator = remainSecs < 60 ? 60 : remainSecs < 3600 ? 60 : 24;
 
-  const toDisplayCloseOrder = (cfd: IDisplayAcceptedCFDOrder): IDataPositionClosedModal => {
-    const request = {
-      openCfdDetails: cfd,
-      latestProps: {
-        renewalDeadline: getNowSeconds() + RENEW_QUOTATION_INTERVAL_SECONDS,
-        latestClosedPrice:
-          openCfdDetails.typeOfPosition === TypeOfPosition.BUY
-            ? randomIntFromInterval(
-                marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice * 0.75,
-                marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice * 1.25
-              )
-            : openCfdDetails.typeOfPosition === TypeOfPosition.SELL
-            ? randomIntFromInterval(
-                marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice * 1.1,
-                marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice * 1.25
-              )
-            : 99999,
-      },
+  const toDisplayCloseOrder = (cfd: IDisplayAcceptedCFDOrder): IDisplayAcceptedCFDOrder => {
+    const order = {
+      ...cfd,
     };
-    return request;
+    return order;
   };
 
   const squareClickHandler = () => {

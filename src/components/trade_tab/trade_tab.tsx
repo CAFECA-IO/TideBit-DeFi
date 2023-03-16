@@ -257,8 +257,10 @@ const TradeTab = () => {
   const isDisplayedDividerSpacing =
     valueOfPositionLength > 10 || targetLength > 10 ? 'top-430px' : 'top-420px';
 
-  // TODO: not finished yet
-  const toApplyCreateOrder = () => {
+  const toApplyCreateOrder = (): {
+    longOrder: IApplyCreateCFDOrderData;
+    shortOrder: IApplyCreateCFDOrderData;
+  } => {
     const longOrder: IApplyCreateCFDOrderData = {
       ticker: marketCtx.selectedTicker?.currency ?? '',
       targetAsset: marketCtx.selectedTicker?.currency ?? '',

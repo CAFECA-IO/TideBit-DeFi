@@ -12,6 +12,7 @@ import {IApplyCreateCFDOrderData} from '../../interfaces/tidebit_defi_background
 import {IApplyDepositOrder} from '../../interfaces/tidebit_defi_background/apply_deposit_order';
 import {IApplyWithdrawOrder} from '../../interfaces/tidebit_defi_background/apply_withdraw_order';
 import {IResult} from '../../interfaces/tidebit_defi_background/result';
+import {Code} from '../../constants/code';
 
 class TransactionEngine {
   isApplyCreateCFDOrderData(obj: object): obj is IApplyCreateCFDOrderData {
@@ -104,6 +105,7 @@ class TransactionEngine {
   transferCFDOrderToTransaction(order: IApplyCFDOrder) {
     let result: IResult = {
       success: false,
+      code: Code.INVAILD_INPUTS,
       reason: 'data and type is not match',
     };
     switch (order.type) {
@@ -114,7 +116,8 @@ class TransactionEngine {
           typeData.message = this.convertCreateCFDOrderData(order.data);
           result = {
             success: true,
-            data: typeData,
+            code: Code.SUCCESS,
+            data: JSON.parse(JSON.stringify(typeData)),
           };
         }
         break;
@@ -125,7 +128,8 @@ class TransactionEngine {
           typeData.message = this.convertUpdateCFDOrderData(order.data);
           result = {
             success: true,
-            data: typeData,
+            code: Code.SUCCESS,
+            data: JSON.parse(JSON.stringify(typeData)),
           };
         }
         break;
@@ -136,7 +140,8 @@ class TransactionEngine {
           typeData.message = this.convertCloseCFDOrderData(order.data);
           result = {
             success: true,
-            data: typeData,
+            code: Code.SUCCESS,
+            data: JSON.parse(JSON.stringify(typeData)),
           };
         }
         break;
@@ -171,7 +176,8 @@ class TransactionEngine {
     typeData.message = this.convertWithdrawOrderData(withdrawOrder);
     const result: IResult = {
       success: true,
-      data: typeData,
+      code: Code.SUCCESS,
+      data: JSON.parse(JSON.stringify(typeData)),
     };
     return result;
   }

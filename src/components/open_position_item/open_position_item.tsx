@@ -25,17 +25,12 @@ import {
   getDummyDisplayApplyCloseCFDOrder,
 } from '../../interfaces/tidebit_defi_background/display_apply_cfd_order';
 import {CFDOrderType} from '../../constants/cfd_order_type';
-// import HorizontalRelativeLineGraph from '../horizontal_relative_line_graph/horizontal_relative_line_graph';
 
 interface IOpenPositionItemProps {
   openCfdDetails: IDisplayAcceptedCFDOrder;
 }
 
 const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProps) => {
-  // if (longOrShort !== 'long' && longOrShort !== 'short') return <></>;
-  // if (profitOrLoss !== 'profit' && profitOrLoss !== 'loss') return <></>; if (profitOrLoss !== 'profit' && profitOrLoss !== 'loss') return <></>;
-  // if (ticker !== 'ETH' && ticker !== 'BTC') return <></>;
-  // console.log('openCfdDetails', openCfdDetails);
   const marketCtx = useContext(MarketContext);
   const userCtx = useContext(UserContext);
   const {
@@ -45,55 +40,6 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
     dataPositionClosedModalHandler,
     toast,
   } = useGlobal();
-
-  // 傳param進來的地方要改正確的 dummy data
-  // TODO: toApplyUpdatedCFD function
-  // TODO: toApplyClosedCFD function
-
-  const toApplyUpdatedCFD = () => {
-    const dummyData = {};
-    return dummyData;
-  };
-
-  // from param or from user context
-  const toApplyClosedCFD = (): IDisplayApplyCFDOrder => {
-    const dummyData = {
-      type: CFDOrderType.CREATE,
-      // data: getDummyDisplayApplyCreateCFDOrder(marketCtx.selectedTicker!.currency),
-      data: {
-        ticker: 'BTC',
-        amount: 1.8, // User input
-        typeOfPosition: TypeOfPosition.BUY, // User input
-        leverage: 5,
-        price: randomIntFromInterval(1000, 10000),
-        targetAsset: 'USDT',
-        uniAsset: 'USDT',
-        margin: {asset: 'BTC', amount: randomIntFromInterval(650, 10000)}, // User input
-        takeProfit: 74521, // User input
-        stopLoss: 25250, // User input
-        guaranteedStop: true, // User input
-        guaranteedStopFee: 1.8 * 10000 * 0.7,
-        fee: 0,
-        quotation: {
-          ticker: 'BTC',
-          targetAsset: 'USDT',
-          uniAsset: 'USDT',
-          price: randomIntFromInterval(1000, 10000),
-          deadline: Date.now() / 1000 + RENEW_QUOTATION_INTERVAL_SECONDS,
-          signature: '0x',
-        }, // 報價單 定時從後端拿
-
-        liquidationPrice: randomIntFromInterval(1000, 10000),
-        liquidationTime: Date.now() / 1000 + 86400, // openTimestamp + 86400
-      },
-      signature: '0x',
-      pnl: {
-        type: ProfitState.PROFIT,
-        value: 50,
-      },
-    };
-    return dummyData;
-  };
 
   const openItemClickHandler = () => {
     dataUpdateFormModalHandler(openCfdDetails);
@@ -206,7 +152,6 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
                 progressBarColor={[displayedColorHex]}
                 hollowSize="40%"
                 circularBarSize="100"
-                // clickHandler={circularClick}
               />
             </div>
           </div>
@@ -244,29 +189,9 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
           strokeColor={[`${displayedColorHex}`]}
           dataArray={openCfdDetails.positionLineGraph}
           lineGraphWidth={OPEN_POSITION_LINE_GRAPH_WIDTH}
-          annotatedValue={openCfdDetails.positionLineGraph[0]}
+          annotatedValue={openCfdDetails.openPrice}
         />
-
-        {/* <div className="absolute -top-5">
-          <HorizontalRelativeLineGraph
-            strokeColor={[`#A5C4F3`]}
-            dataArray={tickerTrendArray}
-            lineGraphWidth="250"
-            annotatedValue={horizontalValueLine}
-          />
-        </div> */}
       </div>
-
-      {/* Divider */}
-      {/* <div className="absolute top-200px my-auto h-px w-7/8 rounded bg-white/50"></div> */}
-
-      {/* <PositionDetailsModal
-        // id={`TBD20230207001`}
-        // openCfdDetails={dataFormat}
-        openCfdDetails={openCfdDetails}
-        modalVisible={visiblePositionDetailsModal}
-        modalClickHandler={detailedModalClickHandler}
-      /> */}
     </div>
   );
 };

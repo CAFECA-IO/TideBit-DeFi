@@ -84,12 +84,9 @@ const PositionUpdatedModal = ({
       btnUrl: '#',
     });
 
-    // console.log('result from userCtx in position_closed_modal.tsx: ', result);
-
     // TODO: temporary waiting
     await wait(DELAYED_HIDDEN_SECONDS);
 
-    // Close loading modal
     globalCtx.eliminateAllModals();
 
     // TODO: Revise the `result.reason` to constant by using enum or object
@@ -101,8 +98,6 @@ const PositionUpdatedModal = ({
         btnMsg: 'View on Etherscan',
         btnUrl: '#',
       });
-
-      // globalCtx.dataPositionDetailsModalHandler(userCtx.getOpendCFD(openCfdDetails.id));
 
       globalCtx.visibleSuccessfulModalHandler();
       await wait(DELAYED_HIDDEN_SECONDS);

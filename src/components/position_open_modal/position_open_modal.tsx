@@ -94,7 +94,6 @@ const PositionOpenModal = ({
     // TODO: temporary waiting
     await wait(DELAYED_HIDDEN_SECONDS);
 
-    // Close loading modal
     globalCtx.eliminateAllModals();
 
     // TODO: Revise the `result.reason` to constant by using enum or object
@@ -107,14 +106,7 @@ const PositionOpenModal = ({
         btnUrl: '#',
       });
 
-      // globalCtx.dataHistoryPositionModalHandler(userCtx.getClosedCFD(openCfdDetails.id));
-
       globalCtx.visibleSuccessfulModalHandler();
-      // await wait(DELAYED_HIDDEN_SECONDS);
-
-      // globalCtx.eliminateAllModals();
-
-      // globalCtx.visibleHistoryPositionModalHandler();
     } else if (result.reason === 'CANCELED') {
       globalCtx.dataCanceledModalHandler({
         modalTitle: 'Open Position',
@@ -195,7 +187,6 @@ const PositionOpenModal = ({
       //     openCfdRequest.leverage,
       /**
        *           amount: openCfdRequest.amount * (openCfdRequest.typeOfPosition === TypeOfPosition.BUY ? marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice ? marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice) / openCfdRequest.leverage,
-
        */
     };
 
@@ -209,8 +200,6 @@ const PositionOpenModal = ({
     const newTimestamp = Math.ceil(new Date().getTime() / 1000) + RENEW_QUOTATION_INTERVAL_SECONDS;
     setSecondsLeft(Math.round(newTimestamp - getNowSeconds()));
 
-    // TODO: (20230315 - Shirley) get latest price from marketCtx and calculate required margin data
-    // TODO: (20230315 - Shirley) 應用 ?? 代替 !
     globalCtx.dataPositionOpenModalHandler({
       openCfdRequest: toApplyCreateOrder(openCfdRequest),
     });
@@ -221,8 +210,6 @@ const PositionOpenModal = ({
   };
 
   useEffect(() => {
-    // if (!lock()) return;
-
     if (!globalCtx.visiblePositionOpenModal) {
       setSecondsLeft(RENEW_QUOTATION_INTERVAL_SECONDS);
       setDataRenewedStyle('text-lightWhite');

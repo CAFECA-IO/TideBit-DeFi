@@ -164,12 +164,27 @@ const PositionClosedModal = ({
         btnUrl: '#',
       });
 
-      // globalCtx.dataHistoryPositionModalHandler(userCtx.getClosedCFD(openCfdDetails.id));
-
       globalCtx.visibleSuccessfulModalHandler();
       await wait(DELAYED_HIDDEN_SECONDS);
 
       globalCtx.eliminateAllModals();
+
+      // TODO: (20230315 - Shirley) organize the data before history modal
+      const historyData: IDisplayAcceptedCFDOrder = {
+        ...userCtx.getClosedCFD(openCfdDetails.id),
+        pnl: {
+          type: ProfitState.PROFIT,
+          value: 0.0001,
+        },
+        openValue: 1000,
+        positionLineGraph: [50, 9, 123, 7, 5, 66, 11, 42],
+        suggestion: {
+          takeProfit: 5,
+          stopLoss: 10,
+        },
+      };
+
+      globalCtx.dataHistoryPositionModalHandler(historyData);
 
       globalCtx.visibleHistoryPositionModalHandler();
     } else if (result.reason === 'CANCELED') {
@@ -194,17 +209,11 @@ const PositionClosedModal = ({
   };
 
   const renewDataStyleHandler = async () => {
-    // setSecondsLeft(latestProps.renewalDeadline - Date.now() / 1000);
     setDataRenewedStyle('animate-flash text-lightYellow2');
     setPnlRenewedStyle('animate-flash text-lightYellow2');
 
-    // TODO: get latest price from marketCtx and calculate required margin data
-    // FIXME: 應用 ?? 代替 !
-    // FIXME: closedCfdDetails 的關倉價格
-    // globalCtx.visiblePositionClosedModalHandler();
-
-    const newTimestamp = getNowSeconds() + RENEW_QUOTATION_INTERVAL_SECONDS;
-    setSecondsLeft(Math.round(newTimestamp - getNowSeconds()));
+    const newDeadline = getNowSeconds() + RENEW_QUOTATION_INTERVAL_SECONDS;
+    setSecondsLeft(Math.round(newDeadline - getNowSeconds()));
 
     globalCtx.dataPositionClosedModalHandler({
       openCfdDetails: {
@@ -216,8 +225,7 @@ const PositionClosedModal = ({
         },
       },
       latestProps: {
-        // renewalDeadline: Date.now() / 1000 + POSITION_PRICE_RENEWAL_INTERVAL_SECONDS,
-        renewalDeadline: newTimestamp,
+        renewalDeadline: newDeadline,
         latestClosedPrice:
           openCfdDetails.typeOfPosition === TypeOfPosition.BUY
             ? randomIntFromInterval(
@@ -250,40 +258,21 @@ const PositionClosedModal = ({
       return;
     }
 
-    // // FIXME: 用 globalCtx 傳 deadline
     const intervalId = setInterval(() => {
-      // setSecondsLeft(Math.max(0, Math.round((latestProps.renewalDeadline - Date.now()) / 1000)));
-
-      // console.log('deadline before ticking: ', latestProps.renewalDeadline);
-
       const base = latestProps.renewalDeadline;
 
       const tickingSec = base - getNowSeconds();
-      // const tickingSec = latestProps.renewalDeadline - Date.now() / 1000 > 0 ? Math.round(latestProps.renewalDeadline - Date.now() / 1000) : Math.round();
-
-      // console.log('inside useEffect: ', tickingSec);
-
-      // setSecondsLeft()
 
       setSecondsLeft(tickingSec > 0 ? Math.round(tickingSec) : 0);
       if (secondsLeft === 0) {
         renewDataStyleHandler();
       }
-    }, 1000); // 不確定是否真的一秒執行一次
+    }, 1000);
 
     return () => {
       clearInterval(intervalId);
-      // unlock();
     };
-    // const remainingTime = latestProps.renewalDeadline - Date.now() / 1000;
-    // const {seconds: remainingTime} = useCountdown(latestProps.renewalDeadline);
-
-    // setSecondsLeft(remainingTime);
-  }, [
-    secondsLeft,
-    globalCtx.visiblePositionClosedModal,
-    // globalCtx.dataPositionClosedModal?.latestProps.renewalDeadline,
-  ]);
+  }, [secondsLeft, globalCtx.visiblePositionClosedModal]);
 
   const formContent = (
     <div>
@@ -320,7 +309,7 @@ const PositionClosedModal = ({
               <div className="">
                 {/* TODO: Hardcode USDT */}${' '}
                 {openCfdDetails?.openPrice?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0}{' '}
-                USDT
+                {openCfdDetails.margin.asset}
               </div>
             </div>
 
@@ -341,11 +330,6 @@ const PositionClosedModal = ({
                 USDT
               </div>
             </div>
-
-            {/* <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">Required Margin</div>
-              <div className="">$ {((openCfdDetails?.openPrice * 1.8) / 5).toFixed(2)} USDT</div>
-            </div> */}
 
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">PNL</div>

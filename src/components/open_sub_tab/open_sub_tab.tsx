@@ -10,7 +10,6 @@ import {ProfitState} from '../../constants/profit_state';
 import {TypeOfPosition} from '../../constants/type_of_position';
 import {MarketContext} from '../../contexts/market_context';
 import {SUGGEST_SL, SUGGEST_TP} from '../../constants/config';
-// import {IOpenCFDDetails} from '../../interfaces/tidebit_defi_background/open_cfd_details';
 
 const OpenSubTab = () => {
   const {openCFDs} = useContext(UserContext);
@@ -28,7 +27,9 @@ const OpenSubTab = () => {
           : twoDecimal(cfd.openPrice * (1 + SUGGEST_SL / cfd.leverage));
 
       // TODO: (20230314 - Shirley) get price point from `marketCtx`
-      const positionLineGraph = [50, 72, 60, 65, 42, 25, 100, 32, 20, 15, 32, 90, 10];
+      const positionLineGraph = [
+        10050, 9972, 1060, 2065, 3042, 825, 40000, 7100, 4532, 720, 815, 632, 90, 10,
+      ];
 
       // TODO: (20230314 - Shirley) get the very last price point from `marketCtx`
       const marketPrice =
@@ -40,6 +41,7 @@ const OpenSubTab = () => {
 
       const openValue = twoDecimal(cfd.openPrice * cfd.amount);
 
+      // TODO: (20230314 - Shirley) Calculate with `positionLineGraph[n-1]` buy/sell price
       const pnlSoFar =
         cfd.typeOfPosition === TypeOfPosition.BUY
           ? marketValue - openValue
@@ -50,8 +52,6 @@ const OpenSubTab = () => {
         stopLoss: rSl,
       };
 
-      // TODO: (20230314 - Shirley) Caculate with `positionLineGraph[n-1]` buy/sell price
-      // const pnl
       const pnl: IPnL = {
         type: pnlSoFar < 0 ? ProfitState.LOSS : ProfitState.PROFIT,
         value: Math.abs(pnlSoFar),
@@ -63,7 +63,6 @@ const OpenSubTab = () => {
     return displayedOpenPositionList;
   };
 
-  // console.log(toOpenPositionItem(openCFDs)); // Info: (20230314 - Shirley) `openCFDs` data from `display_accepted_cfd_order`
   const openPositionList = toOpenPositionItems(openCFDs).map(cfd => {
     return (
       <div key={cfd.id}>
@@ -76,12 +75,7 @@ const OpenSubTab = () => {
   return (
     <>
       <div className="">
-        <div className="">
-          {/* 6 */}
-          {openPositionList}
-        </div>
-        {/* Divider */}
-        {/* <div className="my-auto h-px w-full rounded bg-white/50"></div> */}
+        <div className="">{openPositionList}</div>
       </div>
     </>
   );

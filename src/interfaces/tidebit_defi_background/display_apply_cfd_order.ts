@@ -1,4 +1,5 @@
 import {CFDOrderType, ICFDOrderType} from '../../constants/cfd_order_type';
+import {OrderType} from '../../constants/order_type';
 import {ProfitState} from '../../constants/profit_state';
 import {randomIntFromInterval} from '../../lib/common';
 import {ApplyCFDOrderData, IApplyCFDOrder} from './apply_cfd_order';
@@ -18,6 +19,7 @@ export interface IDisplayApplyCFDOrder extends IApplyCFDOrder {
 export const getDummyDisplayApplyCreateCFDOrder = (currency: string, id?: string) => {
   const date = new Date();
   const dummyApplyCreateCFDOrder: IDisplayApplyCFDOrder = {
+    orderType: OrderType.CFD,
     type: CFDOrderType.CREATE,
     data: getDummyApplyCreateCFDOrderData(currency),
     signature: '0x',
@@ -28,6 +30,7 @@ export const getDummyDisplayApplyCreateCFDOrder = (currency: string, id?: string
 export const getDummyDisplayApplyUpdateCFDOrder = (currency: string, id?: string) => {
   const date = new Date();
   const dummyApplyUpdateCFDOrder: IDisplayApplyCFDOrder = {
+    orderType: OrderType.CFD,
     type: CFDOrderType.UPDATE,
     data: getDummyApplyUpdateCFDOrderData(currency, id),
     signature: '0x',
@@ -42,6 +45,7 @@ export const getDummyDisplayApplyUpdateCFDOrder = (currency: string, id?: string
 export const getDummyDisplayApplyCloseCFDOrder = (currency: string, id?: string) => {
   const date = new Date();
   const dummyApplyCloseCFDOrder: IDisplayApplyCFDOrder = {
+    orderType: OrderType.CFD,
     type: CFDOrderType.CLOSE,
     data: getDummyApplyCloseCFDOrderData(currency, id),
     signature: '0x',

@@ -280,11 +280,6 @@ export default function CandlestickChart({
   //   y: latestPrice,
   // }));
 
-  // Info: (20230315 - Shirley) the max and min shouldn't be responsive to the candlestick data
-  const ys = candlestickChartDataFromCtx.flatMap(d => d.y.filter(y => y !== null)) as number[];
-  const maxNumber = ys.length > 0 ? Math.max(...ys) : null;
-  const minNumber = ys.length > 0 ? Math.min(...ys) : null;
-
   // Till: (20230315 - Shirley) the user open price example line
   // const userOpenPrice = randomIntFromInterval(minNumber ?? 100, maxNumber ?? 1000);
   // const userOpenPriceLine = toLatestPriceLineData?.map(data => ({
@@ -378,6 +373,13 @@ export default function CandlestickChart({
         );
       })
     : null;
+
+  // Info: (20230315 - Shirley) the max and min shouldn't be responsive to the candlestick data
+  const candles = candlestickChartDataFromCtx.flatMap(d => d.y.filter(y => y !== null)) as number[];
+  const positions = userCtx.openCFDs.map(cfd => cfd.openPrice);
+  const ys = [...candles, ...positions];
+  const maxNumber = ys.length > 0 ? Math.max(...ys) : null;
+  const minNumber = ys.length > 0 ? Math.min(...ys) : null;
 
   useEffect(() => {
     if (!appCtx.isInit) return;
@@ -503,8 +505,8 @@ export default function CandlestickChart({
     candlestickChartDataRef.current && candlestickChartDataRef.current?.length > 0 ? (
       <VictoryChart
         theme={chartTheme}
-        minDomain={{y: minNumber !== null ? minNumber * 0.8 : undefined}} // Info: it's NOT `undefined` because there's context data before it renders (20230315 - Shirley)
-        maxDomain={{y: maxNumber !== null ? maxNumber * 1.2 : undefined}} // TODO: (20230315 - Shirley)  measure the biggest number to decide the y-axis
+        minDomain={{y: minNumber !== null ? minNumber * 0.7 : undefined}} // Info: it's NOT `undefined` because there's context data before it renders (20230315 - Shirley)
+        maxDomain={{y: maxNumber !== null ? maxNumber * 1.3 : undefined}} // TODO: (20230315 - Shirley)  measure the biggest number to decide the y-axis
         // Till: (20230329 - Shirley)  // domainPadding={{x: 1}}
         width={Number(candlestickChartWidth)}
         height={Number(candlestickChartHeight)}

@@ -6,6 +6,7 @@ import {ImCross} from 'react-icons/im';
 import Image from 'next/image';
 import {ICryptocurrency} from '../../interfaces/tidebit_defi_background/cryptocurrency';
 import {useGlobal} from '../../contexts/global_context';
+import useStateRef from 'react-usestateref';
 
 interface IWithdrawalModal {
   // transferType: 'deposit' | 'withdraw';
@@ -32,9 +33,11 @@ const WithdrawalModal = ({
   const {withdrawCryptocurrencies} = useContext(MarketContext);
   const globalCtx = useGlobal();
 
-  const [showCryptoMenu, setShowCryptoMenu] = useState(false);
-  const [selectedCrypto, setSelectedCrypto] = useState(withdrawCryptocurrencies[0]);
-  const [amountInput, setAmountInput] = useState<number | undefined>();
+  const [showCryptoMenu, setShowCryptoMenu, showCryptoMenuRef] = useStateRef(false);
+  const [selectedCrypto, setSelectedCrypto, selectedCryptoRef] = useStateRef(
+    withdrawCryptocurrencies[0]
+  );
+  const [amountInput, setAmountInput, amountInputRef] = useStateRef<number | undefined>();
 
   const regex = /^\d*\.?\d{0,2}$/;
   // const regex = /^(?!0\.00)\d+(\.\d{2})?$/;

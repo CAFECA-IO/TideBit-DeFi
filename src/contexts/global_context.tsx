@@ -892,8 +892,8 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     // INFO: for UX
     await wait(DELAYED_HIDDEN_SECONDS);
 
-    // eliminateAllModals();
-    visibleLoadingModalHandler();
+    eliminateAllModals();
+    // visibleLoadingModalHandler();
 
     // TODO: the button URL
     if (result.success) {

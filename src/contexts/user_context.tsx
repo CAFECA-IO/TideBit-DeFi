@@ -536,7 +536,7 @@ export const UserProvider = ({children}: IUserProvider) => {
   const listHistories = async () => {
     let histories: IOrder[] = [];
     if (isConnectedRef) {
-      // TODO: getHistories from backend
+      // ToDo: (20230316 - Julian) getHistories from backend, need Avbl & Detail & targetAsset 應有負數
       histories = [dummyDepositOrder, dummyWithdrawalOrder];
       setHistories(histories);
     }

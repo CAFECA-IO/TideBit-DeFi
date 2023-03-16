@@ -12,6 +12,7 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
 
   const receiptDate = timestampToString(histories.histories.timestamp ?? 0);
 
+  /* button 的顏色由賺賠決定 */
   const displayedButtonColor =
     TradingType === 'DEPOSIT' || TradingType === 'CLOSE_CFD' ? 'bg-lightGreen5' : 'bg-lightRed';
 

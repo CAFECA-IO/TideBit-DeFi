@@ -1,6 +1,6 @@
 import {createContext, useState, useEffect, useContext, Dispatch, SetStateAction} from 'react';
 import useWindowSize from '../lib/hooks/use_window_size';
-import {LAYOUT_BREAKPOINT} from '../constants/display';
+import {DELAYED_HIDDEN_SECONDS, LAYOUT_BREAKPOINT} from '../constants/display';
 import {ToastContainer, toast as toastify} from 'react-toastify';
 import UpdateFormModal from '../components/update_form_modal/update_form_modal';
 import {MarketContext} from './market_context';
@@ -38,7 +38,7 @@ import {OrderType} from '../constants/order_type';
 import {OrderStatusUnion} from '../constants/order_status_union';
 import {TypeOfPosition} from '../constants/type_of_position';
 import {ICryptocurrency} from '../interfaces/tidebit_defi_background/cryptocurrency';
-import {getTimestamp} from '../lib/common';
+import {getTimestamp, locker, wait} from '../lib/common';
 import {
   IDisplayAcceptedCFDOrder,
   getDummyDisplayAcceptedCFDOrder,
@@ -845,30 +845,88 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
       .then(_ => setDepositProcess('success'));
   };
 
-  const withdrawSubmitHandler = (props: {asset: ICryptocurrency; amount: number}) => {
+  const withdrawSubmitHandler = async (props: {asset: ICryptocurrency; amount: number}) => {
     setWithdrawProcess('loading');
     // TODO: (20230316 - Shirley) withdraw / deposit process (loading / success / fail)
-    // setTimeout(() => {
-    //   setWithdrawProcess('success');
-    //   setTimeout(() => {
-    //     setWithdrawProcess('cancellation');
-    //     setTimeout(() => {
-    //       setWithdrawProcess('fail');
-    //     }, 5000);
-    //   }, 5000);
-    // }, 3000);
-    userCtx
-      .withdraw({
-        orderType: OrderType.WITHDRAW,
-        createTimestamp: getTimestamp(),
-        targetAsset: props.asset.symbol,
-        to: props.asset.contract,
-        targetAmount: props.amount,
-        remark: '',
-        fee: 0,
-      })
-      .then(_ => setDepositProcess('success'));
+    const [lock, unlock] = locker('global_context.withdrawSubmitHandler');
+
+    // userCtx
+    //   .withdraw({
+    //     orderType: OrderType.WITHDRAW,
+    //     createTimestamp: getTimestamp(),
+    // targetAsset: props.asset.symbol,
+    // to: props.asset.contract,
+    // targetAmount: props.amount,
+    //     remark: '',
+    //     fee: 0,
+    //   })
+    //   .then(_ => setDepositProcess('success'));
+    if (!lock()) return;
+
+    await wait(DELAYED_HIDDEN_SECONDS / 2);
+    visibleWithdrawalModalHandler();
+
+    dataLoadingModalHandler({
+      modalTitle: 'Withdraw',
+      modalContent: 'Confirm the transaction',
+    });
+    visibleLoadingModalHandler();
+
+    const result = await userCtx.withdraw({
+      orderType: OrderType.WITHDRAW,
+      createTimestamp: getTimestamp(),
+      targetAsset: props.asset.symbol,
+      to: props.asset.contract,
+      targetAmount: props.amount,
+      remark: '',
+      fee: 0,
+    });
+
+    dataLoadingModalHandler({
+      modalTitle: 'Open Position',
+      modalContent: 'Transaction broadcast',
+      btnMsg: 'View on Etherscan',
+      btnUrl: '#',
+    });
+
+    // INFO: for UX
+    await wait(DELAYED_HIDDEN_SECONDS);
+
+    // eliminateAllModals();
+    visibleLoadingModalHandler();
+
+    // TODO: the button URL
+    if (result.success) {
+      dataSuccessfulModalHandler({
+        modalTitle: 'Open Position',
+        modalContent: 'Transaction succeed',
+        btnMsg: 'View on Etherscan',
+        btnUrl: '#',
+      });
+
+      visibleSuccessfulModalHandler();
+      // TODO: `result.code` (20230316 - Shirley)
+    } else if (result.reason === 'CANCELED') {
+      dataCanceledModalHandler({
+        modalTitle: 'Open Position',
+        modalContent: 'Transaction canceled',
+      });
+
+      visibleCanceledModalHandler();
+    } else if (result.reason === 'FAILED') {
+      dataFailedModalHandler({
+        modalTitle: 'Open Position',
+        failedTitle: 'Failed',
+        failedMsg: 'Failed to open Position',
+      });
+
+      visibleFailedModalHandler();
+    }
+
+    unlock();
+    return;
   };
+
   // ------------------------------------------ //
 
   const defaultValue = {

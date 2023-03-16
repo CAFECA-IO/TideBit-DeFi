@@ -850,18 +850,20 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     // TODO: (20230316 - Shirley) withdraw / deposit process (loading / success / fail)
     const [lock, unlock] = locker('global_context.withdrawSubmitHandler');
 
-    // userCtx
-    //   .withdraw({
-    //     orderType: OrderType.WITHDRAW,
-    //     createTimestamp: getTimestamp(),
-    // targetAsset: props.asset.symbol,
-    // to: props.asset.contract,
-    // targetAmount: props.amount,
-    //     remark: '',
-    //     fee: 0,
-    //   })
-    //   .then(_ => setDepositProcess('success'));
-    if (!lock()) return;
+    userCtx
+      .withdraw({
+        orderType: OrderType.WITHDRAW,
+        createTimestamp: getTimestamp(),
+        targetAsset: props.asset.symbol,
+        to: props.asset.contract,
+        targetAmount: props.amount,
+        remark: '',
+        fee: 0,
+      })
+      .then(_ => setDepositProcess('success'));
+
+    /**TODO: (20230316 - Shirley) withdraw process
+     * if (!lock()) return;
 
     await wait(DELAYED_HIDDEN_SECONDS / 2);
     visibleWithdrawalModalHandler();
@@ -925,6 +927,8 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
 
     unlock();
     return;
+     * 
+     */
   };
 
   // ------------------------------------------ //

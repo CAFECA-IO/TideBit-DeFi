@@ -109,5 +109,12 @@
     "CLOSED_REASON_TAKE_PROFIT": "Take Profit",
     "CLOSED_REASON_STOP_LOSS": "Stop Loss",
     "SHARE": "Share:"
+  },
+  "MY_ASSETS_PAGE": {
+    "BALANCE_SECTION_DEPOSIT": "Deposit",
+    "BALANCE_SECTION_WITHDRAW": "Withdraw",
+    "BALANCE_SECTION_TOTAL_BALANCE": "Total Balance",
+    "BALANCE_SECTION_AVAILABLE": "Avbl:",
+    "BALANCE_SECTION_LOCKED": "Locked:"
   }
 }

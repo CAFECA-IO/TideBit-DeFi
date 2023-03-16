@@ -86,11 +86,16 @@
     "AMOUNT": "Amount",
     "REQUIRED_MARGIN": "Required Margin",
     "TP_AND_SL": "停利/ 停損",
+    "TP_SETTING": "Close at profit",
+    "SL_SETTING": "Close at loss",
+    "EXPECTED_PROFIT": "Expected profit:",
+    "EXPECTED_LOSS": "Expected loss:",
     "GUARANTEED_STOP": "Guaranteed Stop",
     "GUARANTEED_STOP_HINT": "Guaranteed stop will force the position to close at your chosen rate (price) even if the market price surpasses it.",
     "EXPIRATION_TIME": "Expiration Time",
     "LIQUIDATION_PRICE": "Liquidation Price",
     "PNL": "損益",
+    "FEE": "Fee",
     "CFD_CONTENT": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna",
     "CONFIRM_BUTTON": "Confirm the order",
     "STATE": "State",
@@ -103,11 +108,13 @@
     "CLOSED_REASON_BY_USER": "Manual",
     "CLOSED_REASON_TAKE_PROFIT": "Take Profit",
     "CLOSED_REASON_STOP_LOSS": "Stop Loss",
-    "SHARE": "分享至:",
-    "CLOSE_AT_PROFIT": "Close at profit",
-    "EXPECTED_PROFIT": "Expected profit",
-    "CLOSE_AT_LOSS": "Close at loss",
-    "EXPECTED_LOSS": "Expected loss",
-    "FEE": "Fee"
+    "SHARE": "分享至:"
+  },
+  "MY_ASSETS_PAGE": {
+    "BALANCE_SECTION_DEPOSIT": "入金",
+    "BALANCE_SECTION_WITHDRAW": "出金",
+    "BALANCE_SECTION_TOTAL_BALANCE": "總餘額",
+    "BALANCE_SECTION_AVAILABLE": "可用:",
+    "BALANCE_SECTION_LOCKED": "鎖定:"
   }
 }

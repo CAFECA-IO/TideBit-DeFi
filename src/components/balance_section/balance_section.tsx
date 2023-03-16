@@ -6,9 +6,13 @@ import {useGlobal} from '../../contexts/global_context';
 import {UserContext} from '../../contexts/user_context';
 import RippleButton from '../ripple_button/ripple_button';
 import {UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
+import {useTranslation} from 'next-i18next';
 
-// TODO: i18n
+type TranslateFunction = (s: string) => string;
+
 const BalanceSection = () => {
+  const {t}: {t: TranslateFunction} = useTranslation('common');
+
   const globalCtx = useGlobal();
   const userCtx = useContext(UserContext);
   const {layoutAssertion} = globalCtx;
@@ -33,7 +37,7 @@ const BalanceSection = () => {
 
   const depositBtn = (
     <p className="flex items-center space-x-3 text-center">
-      Deposit
+      {t('MY_ASSETS_PAGE.BALANCE_SECTION_DEPOSIT')}
       <span className="ml-3">
         <Image src="/elements/group_149621.svg" width={15} height={15} alt="deposit icon" />
       </span>
@@ -42,7 +46,7 @@ const BalanceSection = () => {
 
   const withdrawBtn = (
     <p className="flex items-center space-x-3 text-center">
-      Withdraw
+      {t('MY_ASSETS_PAGE.BALANCE_SECTION_WITHDRAW')}
       <span className="ml-3">
         <Image src="/elements/group_14962.svg" width={15} height={15} alt="withdraw icon" />
       </span>
@@ -108,7 +112,9 @@ const BalanceSection = () => {
         {/*  xl:top-[28%] */}
         <div className="absolute left-1/2 top-300px -translate-x-1/2 -translate-y-3/5 space-y-6 dark:bg-transparent">
           <div className="flex items-center justify-center space-x-2 text-center">
-            <p className="text-base text-lightGray">Total Balance</p>{' '}
+            <p className="text-base text-lightGray">
+              {t('MY_ASSETS_PAGE.BALANCE_SECTION_TOTAL_BALANCE')}
+            </p>{' '}
             <button onClick={hiddenClickHandler} type="button" className="hover:cursor-pointer">
               {displayedIcon}
             </button>
@@ -120,8 +126,10 @@ const BalanceSection = () => {
 
           <div className="">
             <div className="text-xs text-lightGray">
-              Avbl: <span className="text-base text-lightWhite">{displayedAvblBalance}</span> /
-              Locked: <span className="text-base text-lightWhite">{displayedLockedBalance}</span>
+              {t('MY_ASSETS_PAGE.BALANCE_SECTION_AVAILABLE')}{' '}
+              <span className="text-base text-lightWhite">{displayedAvblBalance}</span> /
+              {t('MY_ASSETS_PAGE.BALANCE_SECTION_LOCKED')}{' '}
+              <span className="text-base text-lightWhite">{displayedLockedBalance}</span>
             </div>
           </div>
         </div>

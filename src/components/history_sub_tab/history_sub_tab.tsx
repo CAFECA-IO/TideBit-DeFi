@@ -33,7 +33,7 @@ const HistorySubTab = () => {
 
       const pnl: IPnL = {
         type: value > 0 ? ProfitState.PROFIT : value < 0 ? ProfitState.LOSS : ProfitState.EQUAL,
-        value: cfd.closePrice ? Math.abs(cfd.closePrice - cfd.openPrice) * cfd.amount : 0,
+        value: Math.abs(value),
       };
 
       return {...cfd, pnl, openValue, closeValue, positionLineGraph, suggestion};

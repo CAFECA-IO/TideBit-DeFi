@@ -41,8 +41,14 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
     toast,
   } = useGlobal();
 
+  const toUpdateFormModalData = (
+    openCfdDetails: IDisplayAcceptedCFDOrder
+  ): IDisplayAcceptedCFDOrder => {
+    return openCfdDetails;
+  };
+
   const openItemClickHandler = () => {
-    dataUpdateFormModalHandler(openCfdDetails);
+    dataUpdateFormModalHandler(toUpdateFormModalData(openCfdDetails));
     visibleUpdateFormModalHandler();
 
     toast({
@@ -73,6 +79,8 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
       : [`${Math.round(remainSecs / 3600)} H`];
 
   const denominator = remainSecs < 60 ? 60 : remainSecs < 3600 ? 60 : 24;
+
+  // const toClose
 
   const squareClickHandler = () => {
     visiblePositionClosedModalHandler();

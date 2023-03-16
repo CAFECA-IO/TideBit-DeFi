@@ -13,6 +13,7 @@ import {
   locker,
   randomIntFromInterval,
   timestampToString,
+  twoDecimal,
   wait,
 } from '../../lib/common';
 import {useContext, useEffect, useState} from 'react';
@@ -28,7 +29,10 @@ import {
   IDisplayAcceptedCFDOrder,
   getDummyDisplayAcceptedCFDOrder,
 } from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
-import {getDummyAcceptedCFDOrder} from '../../interfaces/tidebit_defi_background/accepted_cfd_order';
+import {
+  IAcceptedCFDOrder,
+  getDummyAcceptedCFDOrder,
+} from '../../interfaces/tidebit_defi_background/accepted_cfd_order';
 import {
   IDisplayApplyCFDOrder,
   getDummyDisplayApplyCloseCFDOrder,
@@ -37,6 +41,8 @@ import {
   IApplyCloseCFDOrderData,
   getDummyApplyCloseCFDOrderData,
 } from '../../interfaces/tidebit_defi_background/apply_close_cfd_order_data';
+import {IPnL} from '../../interfaces/tidebit_defi_background/pnl';
+import {ICFDSuggestion} from '../../interfaces/tidebit_defi_background/cfd_suggestion';
 
 interface IPositionClosedModal {
   modalVisible: boolean;
@@ -108,10 +114,10 @@ const PositionClosedModal = ({
   const toApplyCloseOrder = (cfd: IDisplayAcceptedCFDOrder): IApplyCloseCFDOrderData => {
     const request: IApplyCloseCFDOrderData = {
       orderId: cfd.id,
-      closePrice: 22, // TODO: (20230315 - Shirley) get from marketCtx
+      closePrice: latestProps.latestClosedPrice, // TODO: (20230315 - Shirley) get from marketCtx
       quotation: {
         ticker: cfd.ticker,
-        price: 22, // TODO: (20230315 - Shirley) get from marketCtx
+        price: latestProps.latestClosedPrice, // TODO: (20230315 - Shirley) get from marketCtx
         targetAsset: cfd.targetAsset, // TODO: (20230315 - Shirley) opposite of the begining of the order
         uniAsset: cfd.uniAsset, // TODO: (20230315 - Shirley) opposite of the begining of the order
         deadline: getNowSeconds() + RENEW_QUOTATION_INTERVAL_SECONDS, // TODO: (20230315 - Shirley) get from marketCtx
@@ -121,6 +127,40 @@ const PositionClosedModal = ({
     };
 
     return request;
+  };
+
+  // TODO: (20230315 - Shirley) organize the data before history modal
+  const toHistoryModal = (cfd: IAcceptedCFDOrder): IDisplayAcceptedCFDOrder | undefined => {
+    if (!cfd.closePrice) return;
+    const openValue = twoDecimal(cfd.openPrice * cfd.amount);
+    const closeValue = twoDecimal(cfd.closePrice * cfd.amount);
+
+    const pnlValue =
+      cfd.typeOfPosition === TypeOfPosition.BUY
+        ? twoDecimal(closeValue - openValue)
+        : twoDecimal(openValue - closeValue);
+    const pnl: IPnL = {
+      type: pnlValue > 0 ? ProfitState.PROFIT : pnlValue < 0 ? ProfitState.LOSS : ProfitState.EQUAL,
+      value: Math.abs(pnlValue),
+    };
+
+    const positionLineGraph = [100, 100]; // TODO: (20230316 - Shirley) from `marketCtx`
+    const suggestion: ICFDSuggestion = {
+      // TODO: (20230316 - Shirley) calculate
+      takeProfit: 100,
+      stopLoss: 100,
+    };
+
+    const historyCfd: IDisplayAcceptedCFDOrder = {
+      ...cfd,
+      pnl: pnl,
+      openValue: openValue,
+      closeValue: closeValue,
+      positionLineGraph: positionLineGraph,
+      suggestion: suggestion,
+    };
+
+    return historyCfd;
   };
 
   const submitClickHandler = async () => {
@@ -169,24 +209,17 @@ const PositionClosedModal = ({
 
       globalCtx.eliminateAllModals();
 
-      // TODO: (20230315 - Shirley) organize the data before history modal
-      const historyData: IDisplayAcceptedCFDOrder = {
-        ...userCtx.getClosedCFD(openCfdDetails.id),
-        pnl: {
-          type: ProfitState.PROFIT,
-          value: 0.0001,
-        },
-        openValue: 1000,
-        positionLineGraph: [50, 9, 123, 7, 5, 66, 11, 42],
-        suggestion: {
-          takeProfit: 5,
-          stopLoss: 10,
-        },
-      };
+      const closedCFD: IAcceptedCFDOrder = userCtx.getClosedCFD(openCfdDetails.id);
+
+      const historyData = toHistoryModal(closedCFD);
+
+      if (!historyData) return;
 
       globalCtx.dataHistoryPositionModalHandler(historyData);
 
       globalCtx.visibleHistoryPositionModalHandler();
+
+      // TODO: `result.code` (20230316 - Shirley)
     } else if (result.reason === 'CANCELED') {
       globalCtx.dataCanceledModalHandler({
         modalTitle: 'Close Position',
@@ -194,6 +227,8 @@ const PositionClosedModal = ({
       });
 
       globalCtx.visibleCanceledModalHandler();
+
+      // TODO: `result.code` (20230316 - Shirley)
     } else if (result.reason === 'FAILED') {
       globalCtx.dataFailedModalHandler({
         modalTitle: 'Close Position',

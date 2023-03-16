@@ -144,3 +144,7 @@ export const toQuery = (params: {[key: string]: string | number | boolean} | und
     : ``;
   return query;
 };
+
+export const getNowSeconds = () => {
+  return new Date().getTime() / 1000;
+};

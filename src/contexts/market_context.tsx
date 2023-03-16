@@ -28,6 +28,11 @@ import {NotificationContext} from './notification_context';
 import {WorkerContext} from './worker_context';
 import {APIName, Method} from '../constants/api_request';
 import TickerBookInstance from '../lib/books/ticker_book';
+import {getDummyQuotation, IQuotation} from '../interfaces/tidebit_defi_background/quotation';
+import {
+  getDummyTickerHistoryData,
+  ITickerHistoryData,
+} from '../interfaces/tidebit_defi_background/ticker_history_data';
 
 export interface IMarketProvider {
   children: React.ReactNode;
@@ -53,6 +58,12 @@ export interface IMarketContext {
   selectTickerHandler: (props: string) => IResult;
   selectTimeSpanHandler: (props: ITimeSpanUnion) => void;
   getCandlestickChartData: (tickerId: string) => Promise<void>; // x 100
+  getCFDQuotation: (tickerId: string) => Promise<IQuotation>;
+  getTickerHistory: (
+    tickerId: string,
+    timespan: ITimeSpanUnion,
+    limit: number
+  ) => Promise<ITickerHistoryData[]>;
 }
 // TODO: Note: _app.tsx 啟動的時候 => createContext
 export const MarketContext = createContext<IMarketContext>({
@@ -81,6 +92,8 @@ export const MarketContext = createContext<IMarketContext>({
   selectTickerHandler: () => dummyResultSuccess,
   getCandlestickChartData: () => Promise.resolve(),
   init: () => Promise.resolve(),
+  getCFDQuotation: () => Promise.resolve(getDummyQuotation('ETH')),
+  getTickerHistory: () => Promise.resolve([]),
 });
 
 export const MarketProvider = ({children}: IMarketProvider) => {
@@ -206,6 +219,19 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     });
   };
 
+  const getCFDQuotation = async (tickerId: string) => {
+    const quotation: IQuotation = getDummyQuotation(tickerId);
+    return quotation;
+  };
+  const getTickerHistory = async (tickerId: string, timespan: ITimeSpanUnion, limit: number) => {
+    const tickerHistory: ITickerHistoryData[] = getDummyTickerHistoryData(
+      tickerId,
+      timespan,
+      limit
+    );
+    return tickerHistory;
+  };
+
   const init = async () => {
     setIsCFDTradable(true);
     workerCtx.requestHandler({
@@ -310,6 +336,8 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     depositCryptocurrencies: depositCryptocurrenciesRef.current,
     withdrawCryptocurrencies: withdrawCryptocurrenciesRef.current,
     getCandlestickChartData,
+    getCFDQuotation,
+    getTickerHistory,
     init,
   };
 

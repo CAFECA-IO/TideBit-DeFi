@@ -9,10 +9,10 @@ import {
 import PositionLineGraph from '../position_line_graph/position_line_graph';
 import UpdateFormModal from '../update_form_modal/update_form_modal';
 import {IOpenCFDDetails} from '../../interfaces/tidebit_defi_background/open_cfd_details';
-import {useGlobal} from '../../contexts/global_context';
+import {IDataPositionClosedModal, useGlobal} from '../../contexts/global_context';
 import {ProfitState} from '../../constants/profit_state';
 import {TypeOfPosition} from '../../constants/type_of_position';
-import {randomIntFromInterval} from '../../lib/common';
+import {getNowSeconds, randomIntFromInterval} from '../../lib/common';
 import {MarketContext} from '../../contexts/market_context';
 import {UserContext} from '../../contexts/user_context';
 import {RENEW_QUOTATION_INTERVAL_SECONDS} from '../../constants/config';
@@ -41,14 +41,14 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
     toast,
   } = useGlobal();
 
-  const toUpdateFormModalData = (
+  const toDisplayUpdateOrder = (
     openCfdDetails: IDisplayAcceptedCFDOrder
   ): IDisplayAcceptedCFDOrder => {
     return openCfdDetails;
   };
 
   const openItemClickHandler = () => {
-    dataUpdateFormModalHandler(toUpdateFormModalData(openCfdDetails));
+    dataUpdateFormModalHandler(toDisplayUpdateOrder(openCfdDetails));
     visibleUpdateFormModalHandler();
 
     toast({
@@ -80,14 +80,11 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
 
   const denominator = remainSecs < 60 ? 60 : remainSecs < 3600 ? 60 : 24;
 
-  // const toClose
-
-  const squareClickHandler = () => {
-    visiblePositionClosedModalHandler();
-    dataPositionClosedModalHandler({
-      openCfdDetails: openCfdDetails,
+  const toDisplayCloseOrder = (cfd: IDisplayAcceptedCFDOrder): IDataPositionClosedModal => {
+    const request = {
+      openCfdDetails: cfd,
       latestProps: {
-        renewalDeadline: new Date().getTime() / 1000 + RENEW_QUOTATION_INTERVAL_SECONDS,
+        renewalDeadline: getNowSeconds() + RENEW_QUOTATION_INTERVAL_SECONDS,
         latestClosedPrice:
           openCfdDetails.typeOfPosition === TypeOfPosition.BUY
             ? randomIntFromInterval(
@@ -101,7 +98,13 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
               )
             : 99999,
       },
-    });
+    };
+    return request;
+  };
+
+  const squareClickHandler = () => {
+    visiblePositionClosedModalHandler();
+    dataPositionClosedModalHandler(toDisplayCloseOrder(openCfdDetails));
   };
 
   const displayedString =

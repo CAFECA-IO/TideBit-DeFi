@@ -33,8 +33,6 @@ const HistoryPositionModal = ({
   closedCfdDetails: closedCfdDetails,
   ...otherProps
 }: IHistoryPositionModal) => {
-  // console.log('openCfdDetails in details modal: ', openCfdDetails.id);
-  // const globalCtx = useGlobal();
   const marketCtx = useContext(MarketContext);
 
   // TODO: i18n
@@ -174,13 +172,6 @@ const HistoryPositionModal = ({
             <div className="text-lightGray">Guaranteed Stop</div>
             <div className={``}>{displayedGuaranteedStopSetting}</div>
           </div>
-
-          {/* <div className={`${layoutInsideBorder}`}>
-            <div className="text-lightGray">Liquidation Price</div>
-            <div className="">
-              $ {openCfdDetails?.liquidationPrice?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}
-            </div>
-          </div> */}
 
           <div className={`${layoutInsideBorder}`}>
             <div className="text-lightGray">State</div>

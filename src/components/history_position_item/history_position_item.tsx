@@ -17,9 +17,6 @@ interface IHistoryPositionItemProps {
 }
 
 const HistoryPositionItem = ({closedCfdDetails, ...otherProps}: IHistoryPositionItemProps) => {
-  // if (longOrShort !== 'long' && longOrShort !== 'short') return <></>;
-  // if (profitOrLoss !== 'profit' && profitOrLoss !== 'loss') return <></>;
-  // if (ticker !== 'ETH' && ticker !== 'BTC') return <></>;
   const globalCtx = useGlobal();
 
   const displayedString =

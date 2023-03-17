@@ -61,12 +61,21 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
       ? 'Failed'
       : '-';
 
-  const displayedReceiptFeeText = histories.histories.fee.toLocaleString(
+  const displayedReceiptFeeText =
+    histories.histories.fee === 0
+      ? histories.histories.fee
+      : histories.histories.fee.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+          minimumFractionDigits: 2,
+        });
+
+  /* ToDo: (20230317 - Julian) if state === 'PROCESSING', avbl loading anim */
+  const displayedReceiptAvailableText = histories.histories.available?.toLocaleString(
     UNIVERSAL_NUMBER_FORMAT_LOCALE,
     {
       minimumFractionDigits: 2,
     }
   );
+
   const displayedReceiptTime = (
     <div className="flex w-60px flex-col items-center justify-center bg-darkGray7 py-4 sm:w-70px">
       <p>{receiptDate.day}</p>
@@ -102,7 +111,6 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
     </div>
   );
 
-  /* ToDo: (20230317 - Julian) Fix Fee */
   const displayedReceiptFee = (
     <div className="hidden flex-col sm:flex sm:w-32">
       <span className="text-lightGray">Fee</span>
@@ -110,11 +118,10 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
     </div>
   );
 
-  /* ToDo: (20230316 - Julian) figure out available balance */
   const displayedReceiptAvailable = (
     <div className="hidden flex-col items-center sm:flex sm:w-32">
       <span className="text-lightGray">Available</span>
-      21.60
+      {displayedReceiptAvailableText ?? '-'}
     </div>
   );
 

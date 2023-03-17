@@ -22,7 +22,6 @@ const ReceiptList = () => {
       remarks: 'sth',
       fee: 0,
 
-      available: 11.02,
       detail: {
         state: 'PROCESSING',
       },
@@ -61,6 +60,12 @@ const ReceiptList = () => {
       targetAmount: 0,
       remarks: 'sth',
       fee: 0,
+
+      available: 23.02,
+      detail: {
+        txId: '0x1234567890abcdee',
+        state: 'DONE',
+      },
     },
   ];
 

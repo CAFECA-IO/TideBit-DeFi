@@ -44,6 +44,7 @@ import {IPnL} from '../../interfaces/tidebit_defi_background/pnl';
 import {ICFDSuggestion} from '../../interfaces/tidebit_defi_background/cfd_suggestion';
 import {IQuotation} from '../../interfaces/tidebit_defi_background/quotation';
 import useStateRef from 'react-usestateref';
+import {OrderState} from '../../constants/order_state';
 
 interface IPositionClosedModal {
   modalVisible: boolean;
@@ -77,8 +78,11 @@ const PositionClosedModal = ({
     pnl: {type: ProfitState.PROFIT, value: 1000}, // TODO: (20230317 - Shirley)  自己算 PNL
   };
 
-  const [secondsLeft, setSecondsLeft] = useState(RENEW_QUOTATION_INTERVAL_SECONDS);
+  const [secondsLeft, setSecondsLeft, secondsLeftRef] = useStateRef<number>(
+    RENEW_QUOTATION_INTERVAL_SECONDS
+  );
 
+  // INFO: #WI: 用 let 來記 #WII: 用 useRef (20230317 - Shirley)
   const [gQuotation, setGQuotation, gQuotationRef] = useStateRef<IQuotation>(quotation);
 
   const [cfd, setCfd, cfdRef] = useStateRef<IDisplayAcceptedCFDOrder>(cfdDetails);
@@ -135,7 +139,8 @@ const PositionClosedModal = ({
   const toApplyCloseOrder = (
     order: IDisplayAcceptedCFDOrder,
     quotation: IQuotation
-  ): IApplyCloseCFDOrderData => {
+  ): IApplyCloseCFDOrderData | undefined => {
+    if (order.state !== OrderState.OPENING) return;
     const request: IApplyCloseCFDOrderData = {
       orderId: order.id,
       closePrice: quotation.price, // TODO: (20230315 - Shirley) get from marketCtx
@@ -195,10 +200,10 @@ const PositionClosedModal = ({
     /* Info: (20230315 - Shirley) use dummy data will fail
     // getDummyApplyCloseCFDOrderData(marketCtx.selectedTicker?.currency ?? '') */
     const quotation = {
-      ticker: cfd.ticker,
+      ticker: openCfdDetails.ticker,
       price: 202303, // TODO: (20230315 - Shirley) get from marketCtx
-      targetAsset: cfd.targetAsset,
-      uniAsset: cfd.uniAsset,
+      targetAsset: openCfdDetails.targetAsset,
+      uniAsset: openCfdDetails.uniAsset,
       deadline: getTimestamp() + RENEW_QUOTATION_INTERVAL_SECONDS, // TODO: (20230315 - Shirley) get from marketCtx
       signature: '0x', // TODO: (20230315 - Shirley) get from marketCtx
     };
@@ -425,9 +430,10 @@ const PositionClosedModal = ({
 
         <div className={`flex-col space-y-5 text-base leading-relaxed text-lightWhite`}>
           <RippleButton
+            disabled={secondsLeft < 1}
             onClick={submitClickHandler}
             buttonType="button"
-            className={`mx-22px mt-0 rounded border-0 bg-tidebitTheme py-2 px-16 text-base text-white transition-colors duration-300 hover:bg-cyan-600 focus:outline-none`}
+            className={`mx-22px mt-0 rounded border-0 bg-tidebitTheme py-2 px-16 text-base text-white transition-colors duration-300 hover:bg-cyan-600 focus:outline-none disabled:bg-lightGray`}
           >
             Confirm the order
           </RippleButton>

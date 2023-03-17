@@ -304,6 +304,7 @@ const PositionOpenModal = ({
 
         <div className={`flex-col space-y-5 text-base leading-relaxed text-lightWhite`}>
           <RippleButton
+            disabled={secondsLeft < 1}
             onClick={submitClickHandler}
             buttonType="button"
             className={`mx-22px mt-0 rounded border-0 bg-tidebitTheme py-2 px-16 text-base text-white transition-colors duration-300 hover:bg-cyan-600 focus:outline-none disabled:bg-lightGray`}

@@ -103,13 +103,6 @@ const PositionClosedModal = ({
 
   const displayedTime = timestampToString(openCfdDetails?.createTimestamp ?? 0);
 
-  /** TODO: (20230314 - Shirley)
-    // loading modal -> UserContext.function (負責簽名) ->
-    // 猶豫太久的話，單子會過期，就會顯示 failed modal，
-    // 用戶沒簽名才是顯示 canceled modal
-    // 用戶簽名成功，就會顯示 successful modal
-   */
-
   const toDisplayCloseOrder = (
     cfd: IDisplayAcceptedCFDOrder,
     quotation: IQuotation
@@ -196,8 +189,6 @@ const PositionClosedModal = ({
     // getDummyApplyCloseCFDOrderData(marketCtx.selectedTicker?.currency ?? '') */
     const result = await userCtx.closeCFDOrder(toApplyCloseOrder(openCfdDetails));
 
-    // TODO: temporary waiting
-    await wait(DELAYED_HIDDEN_SECONDS);
     globalCtx.dataLoadingModalHandler({
       modalTitle: 'Close Position',
       modalContent: 'Transaction broadcast',
@@ -205,7 +196,6 @@ const PositionClosedModal = ({
       btnUrl: '#',
     });
 
-    // TODO: temporary waiting
     await wait(DELAYED_HIDDEN_SECONDS);
 
     // Close loading modal
@@ -233,16 +223,13 @@ const PositionClosedModal = ({
       if (!historyData) return;
 
       globalCtx.dataHistoryPositionModalHandler(historyData);
-
       globalCtx.visibleHistoryPositionModalHandler();
-
       // TODO: `result.code` (20230316 - Shirley)
     } else if (result.reason === 'CANCELED') {
       globalCtx.dataCanceledModalHandler({
         modalTitle: 'Close Position',
         modalContent: 'Transaction canceled',
       });
-
       globalCtx.visibleCanceledModalHandler();
 
       // TODO: `result.code` (20230316 - Shirley)
@@ -252,7 +239,6 @@ const PositionClosedModal = ({
         failedTitle: 'Failed',
         failedMsg: 'Failed to close position',
       });
-
       globalCtx.visibleFailedModalHandler();
     }
 
@@ -359,14 +345,12 @@ const PositionClosedModal = ({
 
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">Type</div>
-              {/* TODO: color variable */}
               <div className={`${displayedPositionColor}`}>{displayedTypeOfPosition}</div>
             </div>
 
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">Open Price</div>
               <div className="">
-                {/* TODO: Hardcode USDT */}${' '}
                 {openCfdDetails?.openPrice?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0}{' '}
                 {openCfdDetails.margin.asset}
               </div>
@@ -380,7 +364,6 @@ const PositionClosedModal = ({
               </div>
             </div>
 
-            {/* FIXME: close price from market price DEPENDING ON sell or buy */}
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">Closed Price</div>
               <div className={`${dataRenewedStyle}`}>
@@ -436,9 +419,6 @@ const PositionClosedModal = ({
 
   const isDisplayedModal = modalVisible ? (
     <>
-      {/*  <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">*/}
-      {/*  overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none */}
-      {/* position: relative; top: 50%; left: 50%; transform: translate(-50%, -50%) */}
       <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">
         {/* The position of the modal */}
         <div className="relative my-6 mx-auto w-auto max-w-xl">

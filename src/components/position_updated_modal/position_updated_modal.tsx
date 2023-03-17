@@ -54,12 +54,6 @@ const PositionUpdatedModal = ({
     return request;
   };
 
-  /** TODO: (20230314 - Shirley)
-    // loading modal -> UserContext.function (負責簽名) ->
-    // 猶豫太久的話，單子會過期，就會顯示 failed modal，
-    // 用戶沒簽名才是顯示 canceled modal
-    // 用戶簽名成功，就會顯示 successful modal
-   */
   const submitClickHandler = async () => {
     const [lock, unlock] = locker('position_updated_modal.submitClickHandler');
     if (!lock()) return;
@@ -75,8 +69,6 @@ const PositionUpdatedModal = ({
     // TODO: (20230315 - Shirley) the guaranteedStop should be removed
     const result = await userCtx.updateCFDOrder(toApplyUpdateOrder(openCfdDetails));
 
-    // TODO: temporary waiting
-    await wait(DELAYED_HIDDEN_SECONDS);
     globalCtx.dataLoadingModalHandler({
       modalTitle: 'Update Position',
       modalContent: 'Transaction broadcast',
@@ -104,6 +96,7 @@ const PositionUpdatedModal = ({
 
       globalCtx.eliminateAllModals();
 
+      globalCtx.dataUpdateFormModalHandler(openCfdDetails);
       globalCtx.visibleUpdateFormModalHandler();
     } else if (result.reason === 'CANCELED') {
       globalCtx.dataCanceledModalHandler({

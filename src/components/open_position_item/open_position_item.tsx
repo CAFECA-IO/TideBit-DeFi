@@ -127,6 +127,7 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
               onClick={openItemClickHandler}
             ></div>
 
+            {/* Till: (20230330 - Shirley) */}
             {/* Pause square cover
             <div
               className={`absolute left-14px top-26px z-20 h-6 w-6 hover:cursor-pointer hover:bg-darkGray`}

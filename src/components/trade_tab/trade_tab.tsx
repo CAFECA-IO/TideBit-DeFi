@@ -39,18 +39,6 @@ const TradeTab = () => {
     };
   }, [marketCtx.selectedTickerRef.current]);
 
-  //   // TODO: 第二個參數可以是現在被選擇的交易對；payload 是發生的事情的補充資料
-  //   /**
-  //    * 在交易頁面，當使用者切換交易對時，會觸發 `TICKER_CHANGED` 事件
-  //    *
-  //    * 告訴其他人，我要做的事情，用 .emit
-  //    * 我要接收這個資訊，用 .on
-  //    */
-  //   const btnClickHandler = () => {
-  //     Emitter.emit('TICKER_CHANGED', func);
-  //   };
-  // };
-
   const tabBodyWidth = 'w-320px';
 
   // TODO: switch to the certain ticker's statistics
@@ -67,22 +55,16 @@ const TradeTab = () => {
   const leverage = tickerStaticStatistics?.leverage ?? 1;
   const guaranteedStopFee = tickerStaticStatistics?.guaranteedStopFee;
 
-  // let marketPrice = tickerLiveStatistics?.price ?? TEMP_PLACEHOLDER;
   let marketPrice = marketCtx.selectedTicker?.price ?? TEMP_PLACEHOLDER;
 
   const buyPrice = (tickerLiveStatistics?.buyEstimatedFilledPrice ?? TEMP_PLACEHOLDER).toFixed(2); // market price * (1+spread)
   const sellPrice = (tickerLiveStatistics?.sellEstimatedFilledPrice ?? TEMP_PLACEHOLDER).toFixed(2); // market price * (1-spread)
   const longRecommendedTp = Number(
     (tickerLiveStatistics?.longRecommendedTp ?? TEMP_PLACEHOLDER).toFixed(2)
-  ); // recommendedTp // MARKET_PRICE * 1.15
+  );
   const longRecommendedSl = Number(
     (tickerLiveStatistics?.longRecommendedSl ?? TEMP_PLACEHOLDER).toFixed(2)
-  ); // recommendedSl // MARKET_PRICE * 0.85
-  // const shortRecommendedTp = Number((MARKET_PRICE * 0.85).toFixed(2));
-  // const shortRecommendedSl = Number((MARKET_PRICE * 1.15).toFixed(2));
-
-  // TODO: `val: number | () => number`
-  // TODO: difference between `number` and `() => number`
+  );
 
   const [longTooltipStatus, setLongTooltipStatus] = useState(0);
   const [shortTooltipStatus, setShortTooltipStatus] = useState(0);
@@ -139,12 +121,11 @@ const TradeTab = () => {
     setExpectedLongLossValue((Number(buyPrice) - longSlValue) * targetInputValueRef.current);
     setExpectedShortProfitValue((Number(sellPrice) - shortTpValue) * targetInputValueRef.current);
     setExpectedShortLossValue((shortSlValue - Number(sellPrice)) * targetInputValueRef.current);
-
-    // console.log('getMarginInputValue', value);
   };
   const getLongTpValue = (value: number) => {
     setLongTpValue(value);
 
+    // TODO: (20230317 - Shirley)
     // console.log('longTpValue', longTpValue);
     // console.log('buyPrice', buyPrice);
     // console.log('marginInputValueRef.current', marginInputValueRef.current);
@@ -154,14 +135,12 @@ const TradeTab = () => {
 
   const getLongSlValue = (value: number) => {
     setLongSlValue(value);
-    // console.log('buyPrice', buyPrice);
 
     setExpectedLongLossValue((Number(buyPrice) - longSlValue) * targetInputValueRef.current);
   };
 
   const getShortTpValue = (value: number) => {
     setShortTpValue(value);
-    // console.log('sellPrice', sellPrice);
 
     setExpectedShortProfitValue((Number(sellPrice) - shortTpValue) * targetInputValueRef.current);
   };
@@ -169,13 +148,10 @@ const TradeTab = () => {
   const getShortSlValue = (value: number) => {
     setShortSlValue(value);
 
-    // console.log('sellPrice', sellPrice);
-
     setExpectedShortLossValue((shortSlValue - Number(sellPrice)) * targetInputValueRef.current);
   };
 
   const renewValueOfPosition = (price?: number) => {
-    // console.log('marginInputValueRef.current', marginInputValueRef.current);
     const newValueOfPosition = price
       ? targetInputValueRef.current * price
       : targetInputValueRef.current * marketPrice;
@@ -236,7 +212,6 @@ const TradeTab = () => {
   };
 
   const getToggledShortSlSetting = (bool: boolean) => {
-    // console.log('getToggledShortSlSetting', bool);
     setShortSlToggle(bool);
 
     setExpectedShortLossValue((shortSlValue - Number(sellPrice)) * targetInputValueRef.current);
@@ -471,9 +446,6 @@ const TradeTab = () => {
       <label className={`ml-2 flex text-sm font-medium text-lightGray`}>
         Guaranteed stop &nbsp;
         <span className="text-lightWhite"> (Fee: {guaranteedStopFee} USDT)</span>
-        {/* <span className="">
-          <AiOutlineQuestionCircle size={20} />
-        </span> */}
         {/* tooltip */}
         <div className="ml-1">
           <div
@@ -589,9 +561,6 @@ const TradeTab = () => {
         <label className="ml-2 flex text-sm font-medium text-lightGray">
           Guaranteed stop &nbsp;
           <span className="text-lightWhite"> (Fee: {guaranteedStopFee} USDT)</span>
-          {/* <span className="">
-          <AiOutlineQuestionCircle size={20} />
-        </span> */}
           {/* tooltip */}
           <div className="ml-1">
             <div

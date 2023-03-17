@@ -44,7 +44,6 @@ interface IPositionOpenModal {
 const PositionOpenModal = ({
   modalVisible,
   modalClickHandler,
-  // displayApplyCreateCFD,
   openCfdRequest,
   ...otherProps
 }: IPositionOpenModal) => {
@@ -57,14 +56,7 @@ const PositionOpenModal = ({
 
   const [lock, unlock] = locker('position_open_modal.UseEffect');
 
-  // const displayedApplyCreateCfdData = displayApplyCreateCFD.data as IApplyCreateCFDOrderData;
-
-  /** TODO: (20230314 - Shirley)
-    // loading modal -> UserContext.function (負責簽名) ->
-    // 猶豫太久的話，單子會過期，就會顯示 failed modal，
-    // 用戶沒簽名才是顯示 canceled modal
-    // 用戶簽名成功，就會顯示 successful modal
-   */
+  // Till: (20230330 - Shirley) // const displayedApplyCreateCfdData = displayApplyCreateCFD.data as IApplyCreateCFDOrderData;
 
   const submitClickHandler = async () => {
     const [lock, unlock] = locker('position_open_modal.submitClickHandler');

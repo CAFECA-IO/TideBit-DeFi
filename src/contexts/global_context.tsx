@@ -851,6 +851,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
   };
 
   const withdrawSubmitHandler = async (props: {asset: ICryptocurrency; amount: number}) => {
+    /*
     // INFO: Set the process in modal component. `eliminateAllModals` won't work here (20230317 - Shirley)
     // setWithdrawProcess('loading');
     // userCtx
@@ -864,6 +865,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     //   fee: 0,
     // })
     // .then(_ => setDepositProcess('success'));
+    */
   };
 
   // ------------------------------------------ //

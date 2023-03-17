@@ -41,7 +41,6 @@ interface IUpdatedFormModal {
 }
 
 const UpdateFormModal = ({
-  // openCfdDetails,
   modalVisible,
   modalClickHandler,
   openCfdDetails,

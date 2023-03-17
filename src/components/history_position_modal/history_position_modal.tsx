@@ -23,11 +23,9 @@ interface IHistoryPositionModal {
   modalVisible: boolean;
   modalClickHandler: () => void;
   closedCfdDetails: IDisplayAcceptedCFDOrder;
-  // closedCfdDetails: IClosedCFDDetails;
 }
 
 const HistoryPositionModal = ({
-  // openCfdDetails,
   modalVisible,
   modalClickHandler,
   closedCfdDetails: closedCfdDetails,
@@ -230,15 +228,6 @@ const HistoryPositionModal = ({
                   />
                   <h3 className="">{closedCfdDetails.ticker} </h3>
                 </div>
-
-                {/* <div className="flex-col space-y-2 text-end text-xs text-lightGray">
-                  <p className="">
-                    {closedTime.date}
-                  </p>
-                  <p className="">
-                    {closedTime.time}
-                  </p>
-                </div> */}
               </div>
 
               <button className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">

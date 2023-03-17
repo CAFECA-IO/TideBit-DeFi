@@ -1,3 +1,4 @@
+/*eslint-disable no-console */
 import React, {useState, useContext, useEffect, useRef} from 'react';
 import Lottie, {useLottie} from 'lottie-react';
 import spotAnimation from '../../../public/animation/circle.json';
@@ -150,10 +151,7 @@ export function processCandlestickData({data, requiredDataNum}: IProcessCandlest
 }
 
 export interface ITrimCandlestickData {
-  data: {
-    x: Date;
-    y: [...(number | null)[]];
-  }[];
+  data: ICandlestickData[];
   requiredDataNum: number;
 }
 
@@ -181,71 +179,31 @@ export default function CandlestickChart({
   const userCtx = useContext(UserContext);
 
   const candlestickChartDataFromCtx =
-    marketCtx.candlestickChartData !== null
-      ? marketCtx.candlestickChartData?.map(d => ({
-          x: d.x,
-          y: [
-            d.open ? d.open : null,
-            d.high ? d.high : null,
-            d.low ? d.low : null,
-            d.close ? d.close : null,
-          ],
-        }))
-      : [];
+    marketCtx.candlestickChartData !== null ? marketCtx.candlestickChartData : [];
 
   const NULL_ARRAY_NUM = 1;
 
   const [candlestickChartData, setCandlestickChartData, candlestickChartDataRef] = useStateRef<
     | {
         x: Date;
-        y: [...(number | null)[]];
+        open: number | null;
+        high: number | null;
+        low: number | null;
+        close: number | null;
       }[]
     | undefined
   >(() =>
     trimCandlestickData({
-      data:
-        marketCtx.candlestickChartData?.map(d => ({
-          x: d.x,
-          y: [
-            d.open ? d.open : null,
-            d.high ? d.high : null,
-            d.low ? d.low : null,
-            d.close ? d.close : null,
-          ],
-        })) ?? [],
+      data: marketCtx?.candlestickChartData ?? [],
       requiredDataNum: 30,
     })
   );
-
-  const [toCandlestickChartData, setToCandlestickChartData, toCandlestickChartDataRef] =
-    useStateRef<
-      | {
-          x: Date;
-          open: number | null;
-          high: number | null;
-          low: number | null;
-          close: number | null;
-        }[]
-      | undefined
-    >(() => {
-      const trimmedData = trimCandlestickData({
-        data: candlestickChartDataFromCtx,
-        requiredDataNum: 30,
-      });
-      return trimmedData?.map(data => ({
-        x: data.x,
-        open: data.y[0],
-        high: data.y[1],
-        low: data.y[2],
-        close: data.y[3],
-      }));
-    });
 
   const [toLineChartData, setToLineChartData, toLineChartDataRef] = useStateRef<ILineChartData[]>(
     () =>
       candlestickChartDataFromCtx.map((data, i) => ({
         x: data.x,
-        y: data.y[3],
+        y: data.close,
       }))
   );
 
@@ -259,7 +217,14 @@ export default function CandlestickChart({
   );
 
   // the max and min shouldn't be responsive to the candlestick data
-  const ys = candlestickChartDataFromCtx.flatMap(d => d.y.filter(y => y !== null)) as number[];
+  const ys: number[] = candlestickChartDataFromCtx.flatMap(candle => [
+    candle.open,
+    candle.high,
+    candle.low,
+    candle.close,
+  ]);
+
+  // const ys = candlestickChartDataFromCtx.flatMap(d => d.y.filter(y => y !== null)) as number[];
 
   const maxNumber = ys.length > 0 ? Math.max(...ys) : null;
   const minNumber = ys.length > 0 ? Math.min(...ys) : null;
@@ -392,63 +357,31 @@ export default function CandlestickChart({
     if (!appCtx.isInit) return;
     if (marketCtx.candlestickChartData === null) return;
 
-    if (!toCandlestickChartDataRef.current) {
+    if (!candlestickChartDataRef.current) {
       setCandlestickChartData(() =>
         trimCandlestickData({
-          data:
-            marketCtx?.candlestickChartData?.map(d => ({
-              x: d.x,
-              y: [
-                d.open ? d.open : null,
-                d.high ? d.high : null,
-                d.low ? d.low : null,
-                d.close ? d.close : null,
-              ],
-            })) ?? [],
+          data: marketCtx?.candlestickChartData ?? [],
           requiredDataNum: 30,
         })
-      );
-
-      setToCandlestickChartData(
-        candlestickChartDataRef.current?.map(data => ({
-          x: data.x,
-          open: data.y[0],
-          high: data.y[1],
-          low: data.y[2],
-          close: data.y[3],
-        }))
       );
     }
 
     const setStateInterval = setInterval(() => {
       if (!candlestickChartDataRef?.current) return;
 
-      const updatedCandlestickChartData = updateDummyCandlestickChartData(
-        candlestickChartDataRef?.current
-      );
+      const updatedCandlestickChartData = candlestickChartDataRef?.current;
 
       setCandlestickChartData(updatedCandlestickChartData);
 
-      const toCandlestickChartData = updatedCandlestickChartData?.map(data => ({
-        x: data.x,
-        open: data.y[0],
-        high: data.y[1],
-        low: data.y[2],
-        close: data.y[3],
-      }));
-
-      /* TODO: (20230313 - Shirley) Sometimes, the candlestick overlays with another candlestick (20230310 - Shirley)/
-      // console.log('data put into chart', toCandlestickChartDataRef.current);
-      // console.log('market Ctx', marketCtx.candlestickChartData);
+      // TODO: (20230313 - Shirley) Sometimes, the candlestick overlays with another candlestick (20230310 - Shirley)/
+      console.log('data put into chart', candlestickChartDataRef.current);
+      console.log('market Ctx', marketCtx.candlestickChartData);
       // console.log('market Ctx sliced', marketCtx.candlestickChartData?.slice(-30));
       // console.log('market Ctx stringified', JSON.stringify(marketCtx.candlestickChartData));
-*/
-
-      setToCandlestickChartData(toCandlestickChartData);
 
       const toLineChartData = updatedCandlestickChartData.map((data, i) => ({
         x: data.x,
-        y: data.y[3],
+        y: data.close,
       }));
       setToLineChartData(toLineChartData);
 
@@ -563,7 +496,7 @@ export default function CandlestickChart({
               positive: TypeOfPnLColorHex.PROFIT,
               negative: TypeOfPnLColorHex.LOSS,
             }}
-            data={toCandlestickChartDataRef.current ?? []}
+            data={candlestickChartDataRef.current ?? []}
             labels={({datum}) =>
               `O:${datum.open} 　H:${datum.high}　 L:${datum.low}　 C:${datum.close}`
             }

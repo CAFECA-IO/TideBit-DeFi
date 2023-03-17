@@ -1,5 +1,4 @@
 import {ImCross} from 'react-icons/im';
-import {IOpenCFDDetails} from '../../interfaces/tidebit_defi_background/open_cfd_details';
 import {
   DELAYED_HIDDEN_SECONDS,
   TypeOfBorderColor,
@@ -20,7 +19,7 @@ import {useContext, useEffect, useState} from 'react';
 import {MarketContext} from '../../contexts/market_context';
 import {RENEW_QUOTATION_INTERVAL_SECONDS} from '../../constants/config';
 import {TypeOfPosition} from '../../constants/type_of_position';
-import {IClosedCFDInfoProps, useGlobal} from '../../contexts/global_context';
+import {useGlobal} from '../../contexts/global_context';
 import {BsClockHistory} from 'react-icons/bs';
 import {ProfitState} from '../../constants/profit_state';
 import {UserContext} from '../../contexts/user_context';

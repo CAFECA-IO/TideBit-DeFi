@@ -8,7 +8,6 @@ import {
 } from '../../constants/display';
 import PositionLineGraph from '../position_line_graph/position_line_graph';
 import UpdateFormModal from '../update_form_modal/update_form_modal';
-import {IOpenCFDDetails} from '../../interfaces/tidebit_defi_background/open_cfd_details';
 import {IDataPositionClosedModal, useGlobal} from '../../contexts/global_context';
 import {ProfitState} from '../../constants/profit_state';
 import {TypeOfPosition} from '../../constants/type_of_position';

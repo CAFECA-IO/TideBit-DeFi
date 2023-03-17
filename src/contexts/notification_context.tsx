@@ -17,7 +17,6 @@ import {
   dummyUnReadNotifications,
   INotificationItem,
 } from '../interfaces/tidebit_defi_background/notification_item';
-import {getDummyOpenCFDs} from '../interfaces/tidebit_defi_background/open_cfd_details';
 import {getDummyTicker, ITickerData} from '../interfaces/tidebit_defi_background/ticker_data';
 import {getDummyTickerLiveStatistics} from '../interfaces/tidebit_defi_background/ticker_live_statistics';
 import {getDummyTickerStatic} from '../interfaces/tidebit_defi_background/ticker_static';

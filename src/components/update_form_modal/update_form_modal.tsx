@@ -1,6 +1,5 @@
 import Image from 'next/image';
 import {ImCross} from 'react-icons/im';
-import {IOpenCFDDetails} from '../../interfaces/tidebit_defi_background/open_cfd_details';
 import {
   TypeOfBorderColor,
   TypeOfPnLColor,

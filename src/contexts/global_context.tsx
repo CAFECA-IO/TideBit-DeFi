@@ -18,10 +18,6 @@ import CanceledModal from '../components/canceled_modal/canceled_modal';
 import SuccessfulModal from '../components/successful_modal/successful_modal';
 import DepositModal from '../components/deposit_modal/deposit_modal';
 import WithdrawalModal from '../components/withdrawal_modal/withdrawal_modal';
-import {
-  IOpenCFDDetails,
-  dummyOpenCFDDetails,
-} from '../interfaces/tidebit_defi_background/open_cfd_details';
 import WalletPanel from '../components/wallet_panel/wallet_panel';
 import QrcodeModal from '../components/qrcode_modal/qrcode_modal';
 import HelloModal from '../components/hello_modal/hello_modal';

@@ -7,6 +7,10 @@ import Image from 'next/image';
 import {ICryptocurrency} from '../../interfaces/tidebit_defi_background/cryptocurrency';
 import {useGlobal} from '../../contexts/global_context';
 import useStateRef from 'react-usestateref';
+import {getTimestamp, locker, wait} from '../../lib/common';
+import {DELAYED_HIDDEN_SECONDS} from '../../constants/display';
+import {UserContext} from '../../contexts/user_context';
+import {OrderType} from '../../constants/order_type';
 
 interface IWithdrawalModal {
   // transferType: 'deposit' | 'withdraw';
@@ -29,6 +33,7 @@ const WithdrawalModal = ({
   ...otherProps
 }: IWithdrawalModal) => {
   // TODO: [UserContext] withdraw: userCtx.balance?.available
+  const userCtx = useContext(UserContext);
   const userAvailableBalance = 397.51;
   const {withdrawCryptocurrencies} = useContext(MarketContext);
   const globalCtx = useGlobal();
@@ -56,19 +61,83 @@ const WithdrawalModal = ({
   };
 
   // TODO: send withdrawal request
-  const submitClickHandler = () => {
+  const submitClickHandler = async () => {
     if (amountInput === 0 || amountInput === undefined) {
       return;
     }
 
     submitHandler({asset: selectedCrypto, amount: amountInput});
+    const [lock, unlock] = locker('withdrawal_modal.submitClickHandler');
+
+    if (!lock()) return;
+
+    await wait(DELAYED_HIDDEN_SECONDS / 5);
+    globalCtx.visibleWithdrawalModalHandler();
+
+    globalCtx.dataLoadingModalHandler({
+      modalTitle: 'Withdraw',
+      modalContent: 'Confirm the transaction',
+    });
+    globalCtx.visibleLoadingModalHandler();
+
+    const result = await userCtx.withdraw({
+      orderType: OrderType.WITHDRAW,
+      createTimestamp: getTimestamp(),
+      targetAsset: selectedCrypto.symbol,
+      to: selectedCrypto.contract,
+      targetAmount: amountInput,
+      remark: '',
+      fee: 0,
+    });
+
+    // TODO: for debug
+    globalCtx.toast({message: 'withdraw result: ' + JSON.stringify(result), type: 'info'});
+
+    globalCtx.dataLoadingModalHandler({
+      modalTitle: 'Withdraw',
+      modalContent: 'Transaction broadcast',
+      btnMsg: 'View on Etherscan',
+      btnUrl: '#',
+    });
+
+    // INFO: for UX
+    await wait(DELAYED_HIDDEN_SECONDS);
+
+    globalCtx.eliminateAllModals();
+
+    // TODO: the button URL
+    if (result.success) {
+      globalCtx.dataSuccessfulModalHandler({
+        modalTitle: 'Withdraw',
+        modalContent: 'Transaction succeed',
+        btnMsg: 'View on Etherscan',
+        btnUrl: '#',
+      });
+
+      globalCtx.visibleSuccessfulModalHandler();
+      // TODO: `result.code` (20230316 - Shirley)
+    } else if (result.reason === 'CANCELED') {
+      globalCtx.dataCanceledModalHandler({
+        modalTitle: 'Withdraw',
+        modalContent: 'Transaction canceled',
+      });
+
+      globalCtx.visibleCanceledModalHandler();
+    } else if (result.reason === 'FAILED') {
+      globalCtx.dataFailedModalHandler({
+        modalTitle: 'Withdraw',
+        failedTitle: 'Failed',
+        failedMsg: 'Failed to withdraw',
+      });
+
+      globalCtx.visibleFailedModalHandler();
+    }
+
+    unlock();
 
     setAmountInput(undefined);
 
-    setTimeout(() => {
-      // passSubmissionStateHandler('loading');
-      globalCtx.visibleWithdrawalModalHandler();
-    }, 800);
+    return;
   };
 
   const amountOnChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {

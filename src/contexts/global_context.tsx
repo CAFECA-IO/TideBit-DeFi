@@ -834,7 +834,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
   };
 
   const depositSubmitHandler = (props: {asset: ICryptocurrency; amount: number}) => {
-    setDepositProcess('loading');
+    // setDepositProcess('loading');
     // TODO: (20230316 - Shirley) withdraw / deposit process (loading / success / fail)
     userCtx
       .deposit({
@@ -851,89 +851,19 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
   };
 
   const withdrawSubmitHandler = async (props: {asset: ICryptocurrency; amount: number}) => {
-    setWithdrawProcess('loading');
-    // TODO: (20230316 - Shirley) withdraw / deposit process (loading / success / fail)
-    const [lock, unlock] = locker('global_context.withdrawSubmitHandler');
-
-    userCtx
-      .withdraw({
-        orderType: OrderType.WITHDRAW,
-        createTimestamp: getTimestamp(),
-        targetAsset: props.asset.symbol,
-        to: props.asset.contract,
-        targetAmount: props.amount,
-        remark: '',
-        fee: 0,
-      })
-      .then(_ => setDepositProcess('success'));
-
-    /**TODO: (20230316 - Shirley) withdraw process
-     * if (!lock()) return;
-
-    await wait(DELAYED_HIDDEN_SECONDS / 2);
-    visibleWithdrawalModalHandler();
-
-    dataLoadingModalHandler({
-      modalTitle: 'Withdraw',
-      modalContent: 'Confirm the transaction',
-    });
-    visibleLoadingModalHandler();
-
-    const result = await userCtx.withdraw({
-      orderType: OrderType.WITHDRAW,
-      createTimestamp: getTimestamp(),
-      targetAsset: props.asset.symbol,
-      to: props.asset.contract,
-      targetAmount: props.amount,
-      remark: '',
-      fee: 0,
-    });
-
-    dataLoadingModalHandler({
-      modalTitle: 'Open Position',
-      modalContent: 'Transaction broadcast',
-      btnMsg: 'View on Etherscan',
-      btnUrl: '#',
-    });
-
-    // INFO: for UX
-    await wait(DELAYED_HIDDEN_SECONDS);
-
-    eliminateAllModals();
-    // visibleLoadingModalHandler();
-
-    // TODO: the button URL
-    if (result.success) {
-      dataSuccessfulModalHandler({
-        modalTitle: 'Open Position',
-        modalContent: 'Transaction succeed',
-        btnMsg: 'View on Etherscan',
-        btnUrl: '#',
-      });
-
-      visibleSuccessfulModalHandler();
-      // TODO: `result.code` (20230316 - Shirley)
-    } else if (result.reason === 'CANCELED') {
-      dataCanceledModalHandler({
-        modalTitle: 'Open Position',
-        modalContent: 'Transaction canceled',
-      });
-
-      visibleCanceledModalHandler();
-    } else if (result.reason === 'FAILED') {
-      dataFailedModalHandler({
-        modalTitle: 'Open Position',
-        failedTitle: 'Failed',
-        failedMsg: 'Failed to open Position',
-      });
-
-      visibleFailedModalHandler();
-    }
-
-    unlock();
-    return;
-     * 
-     */
+    // INFO: Set the process in modal component. `eliminateAllModals` won't work here (20230317 - Shirley)
+    // setWithdrawProcess('loading');
+    // userCtx
+    // .withdraw({
+    //   orderType: OrderType.WITHDRAW,
+    //   createTimestamp: getTimestamp(),
+    //   targetAsset: props.asset.symbol,
+    //   to: props.asset.contract,
+    //   targetAmount: props.amount,
+    //   remark: '',
+    //   fee: 0,
+    // })
+    // .then(_ => setDepositProcess('success'));
   };
 
   // ------------------------------------------ //

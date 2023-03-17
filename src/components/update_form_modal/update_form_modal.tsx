@@ -265,7 +265,6 @@ const UpdateFormModal = ({
 
   const layoutInsideBorder = 'mx-5 my-3 flex justify-between';
 
-  // TODO: 改成 IDisplayAcceptedCFDOrder
   const toDisplayCloseOrder = (cfd: IDisplayAcceptedCFDOrder): IDisplayAcceptedCFDOrder => {
     const order = {
       ...cfd,

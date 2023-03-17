@@ -84,6 +84,9 @@ const PositionOpenModal = ({
 
     const result = await userCtx.createCFDOrder(openCfdRequest);
 
+    // TODO: for debug
+    globalCtx.toast({message: 'open-position result: ' + JSON.stringify(result), type: 'info'});
+
     globalCtx.dataLoadingModalHandler({
       modalTitle: 'Open Position',
       modalContent: 'Transaction broadcast',
@@ -118,7 +121,7 @@ const PositionOpenModal = ({
       globalCtx.dataFailedModalHandler({
         modalTitle: 'Open Position',
         failedTitle: 'Failed',
-        failedMsg: 'Failed to open Position',
+        failedMsg: 'Failed to open position',
       });
 
       globalCtx.visibleFailedModalHandler();

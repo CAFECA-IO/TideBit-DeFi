@@ -13,6 +13,7 @@ import {IApplyDepositOrder} from '../../interfaces/tidebit_defi_background/apply
 import {IApplyWithdrawOrder} from '../../interfaces/tidebit_defi_background/apply_withdraw_order';
 import {IResult} from '../../interfaces/tidebit_defi_background/result';
 import {Code} from '../../constants/code';
+import {toIJSON} from '../common';
 
 class TransactionEngine {
   isApplyCreateCFDOrderData(obj: object): obj is IApplyCreateCFDOrderData {
@@ -117,7 +118,7 @@ class TransactionEngine {
           result = {
             success: true,
             code: Code.SUCCESS,
-            data: JSON.parse(JSON.stringify(typeData)),
+            data: toIJSON(typeData),
           };
         }
         break;
@@ -129,7 +130,7 @@ class TransactionEngine {
           result = {
             success: true,
             code: Code.SUCCESS,
-            data: JSON.parse(JSON.stringify(typeData)),
+            data: toIJSON(typeData),
           };
         }
         break;
@@ -141,7 +142,7 @@ class TransactionEngine {
           result = {
             success: true,
             code: Code.SUCCESS,
-            data: JSON.parse(JSON.stringify(typeData)),
+            data: toIJSON(typeData),
           };
         }
         break;
@@ -177,7 +178,7 @@ class TransactionEngine {
     const result: IResult = {
       success: true,
       code: Code.SUCCESS,
-      data: JSON.parse(JSON.stringify(typeData)),
+      data: toIJSON(typeData),
     };
     return result;
   }

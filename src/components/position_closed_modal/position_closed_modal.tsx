@@ -187,6 +187,9 @@ const PositionClosedModal = ({
     // getDummyApplyCloseCFDOrderData(marketCtx.selectedTicker?.currency ?? '') */
     const result = await userCtx.closeCFDOrder(toApplyCloseOrder(openCfdDetails));
 
+    // TODO:  (20230317 - Shirley) for debug
+    globalCtx.toast({message: 'close-position result: ' + JSON.stringify(result), type: 'info'});
+
     globalCtx.dataLoadingModalHandler({
       modalTitle: 'Close Position',
       modalContent: 'Transaction broadcast',

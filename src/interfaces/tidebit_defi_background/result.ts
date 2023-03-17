@@ -1,9 +1,12 @@
-import {Code, ICode} from '../../constants/code';
-import IJSON from '../ijson';
+import {Code, ICode, Reason} from '../../constants/code';
+import {IAcceptedOrder} from './accepted_order';
+import {IOrder} from './order';
+import {IQuotation} from './quotation';
+import {ITickerHistoryData} from './ticker_history_data';
 
 export interface IResult {
   success: boolean;
-  data?: IJSON;
+  data?: IOrder[] | IAcceptedOrder | IQuotation | ITickerHistoryData[] | null;
   code: ICode;
   reason?: string;
 }
@@ -17,5 +20,5 @@ export const dummyResultSuccess: IResult = {
 export const dummyResultFailed: IResult = {
   success: false,
   code: Code.INTERNAL_SERVER_ERROR,
-  reason: 'Internal Server Error',
+  reason: Reason[Code.INTERNAL_SERVER_ERROR],
 };

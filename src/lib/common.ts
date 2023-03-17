@@ -1,3 +1,5 @@
+import IEIP712Data from '../interfaces/ieip712data';
+
 export const roundToDecimalPlaces = (val: number, precision: number): number => {
   const roundedNumber = Number(val.toFixed(precision));
   return roundedNumber;
@@ -147,4 +149,8 @@ export const toQuery = (params: {[key: string]: string | number | boolean} | und
 
 export const getNowSeconds = () => {
   return new Date().getTime() / 1000;
+};
+
+export const toIJSON = (typeData: IEIP712Data) => {
+  return JSON.parse(JSON.stringify(typeData));
 };

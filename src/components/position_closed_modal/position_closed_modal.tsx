@@ -45,6 +45,7 @@ import {ICFDSuggestion} from '../../interfaces/tidebit_defi_background/cfd_sugge
 import {IQuotation} from '../../interfaces/tidebit_defi_background/quotation';
 import useStateRef from 'react-usestateref';
 import {OrderState} from '../../constants/order_state';
+import {ApplyCFDOrderData} from '../../interfaces/tidebit_defi_background/apply_cfd_order';
 
 interface IPositionClosedModal {
   modalVisible: boolean;
@@ -139,8 +140,12 @@ const PositionClosedModal = ({
   const toApplyCloseOrder = (
     order: IDisplayAcceptedCFDOrder,
     quotation: IQuotation
-  ): IApplyCloseCFDOrderData | undefined => {
-    if (order.state !== OrderState.OPENING) return;
+  ): IApplyCloseCFDOrderData => {
+    if (order.state !== OrderState.OPENING) {
+      const error = new Error('Order is not opening');
+      throw error;
+    }
+
     const request: IApplyCloseCFDOrderData = {
       orderId: order.id,
       closePrice: quotation.price, // TODO: (20230315 - Shirley) get from marketCtx
@@ -207,7 +212,8 @@ const PositionClosedModal = ({
       deadline: getTimestamp() + RENEW_QUOTATION_INTERVAL_SECONDS, // TODO: (20230315 - Shirley) get from marketCtx
       signature: '0x', // TODO: (20230315 - Shirley) get from marketCtx
     };
-    const result = await userCtx.closeCFDOrder(toApplyCloseOrder(openCfdDetails, quotation));
+    const applyCloseOrder: IApplyCloseCFDOrderData = toApplyCloseOrder(openCfdDetails, quotation);
+    const result = await userCtx.closeCFDOrder(applyCloseOrder);
 
     // TODO:  (20230317 - Shirley) for debug
     globalCtx.toast({message: 'close-position result: ' + JSON.stringify(result), type: 'info'});

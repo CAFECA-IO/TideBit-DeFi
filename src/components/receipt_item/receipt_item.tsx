@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import Image from 'next/image';
 import {timestampToString} from '../../lib/common';
 import {IOrder} from '../../interfaces/tidebit_defi_background/order';
+import {UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
 
 interface IReceiptItemProps {
   histories: IOrder;
@@ -12,9 +13,12 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
 
   const receiptDate = timestampToString(histories.histories.timestamp ?? 0);
 
-  /* button 的顏色由賺賠決定 */
   const displayedButtonColor =
-    TradingType === 'DEPOSIT' || TradingType === 'CLOSE_CFD' ? 'bg-lightGreen5' : 'bg-lightRed';
+    histories.histories.targetAmount == 0
+      ? 'bg-lightGray'
+      : histories.histories.targetAmount > 0
+      ? 'bg-lightGreen5'
+      : 'bg-lightRed';
 
   const displayedButtonText =
     TradingType === 'DEPOSIT'
@@ -33,10 +37,36 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
       : '/elements/group_14962.svg';
 
   const displayedReceiptAmount =
-    TradingType === 'DEPOSIT' || TradingType === 'CLOSE_CFD'
-      ? `+${histories.histories.targetAmount}`
-      : `-${histories.histories.targetAmount}`;
+    histories.histories.targetAmount >= 0
+      ? '+' + histories.histories.targetAmount
+      : histories.histories.targetAmount;
 
+  const displayedReceiptTxId = histories.histories.detail?.txId;
+
+  const displayedReceiptStateColor =
+    histories.histories.detail?.state === 'DONE'
+      ? 'text-tidebitTheme'
+      : histories.histories.detail?.state === 'PROCESSING'
+      ? 'text-lightGreen5'
+      : histories.histories.detail?.state === 'FAILED'
+      ? 'text-lightRed'
+      : 'text-lightGray';
+
+  const displayedReceiptState =
+    histories.histories.detail?.state === 'DONE'
+      ? displayedReceiptTxId
+      : histories.histories.detail?.state === 'PROCESSING'
+      ? 'Processing'
+      : histories.histories.detail?.state === 'FAILED'
+      ? 'Failed'
+      : '-';
+
+  const displayedReceiptFeeText = histories.histories.fee.toLocaleString(
+    UNIVERSAL_NUMBER_FORMAT_LOCALE,
+    {
+      minimumFractionDigits: 2,
+    }
+  );
   const displayedReceiptTime = (
     <div className="flex w-60px flex-col items-center justify-center bg-darkGray7 py-4 sm:w-70px">
       <p>{receiptDate.day}</p>
@@ -61,18 +91,22 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
     </div>
   );
 
-  /* ToDo: (20230316 - Julian) get detail data */
+  /* ToDo: (20230317 - Julian) 
+  1. icon
+  2. 串接 modal
+   */
   const displayedReceiptDetail = (
     <div className="hidden flex-auto flex-col sm:flex sm:w-64">
       <span className="text-lightGray">Detail</span>
-      Failed
+      <p className={`${displayedReceiptStateColor}`}>{displayedReceiptState}</p>
     </div>
   );
 
+  /* ToDo: (20230317 - Julian) Fix Fee */
   const displayedReceiptFee = (
     <div className="hidden flex-col sm:flex sm:w-32">
       <span className="text-lightGray">Fee</span>
-      {histories.histories.fee}
+      {displayedReceiptFeeText}
     </div>
   );
 

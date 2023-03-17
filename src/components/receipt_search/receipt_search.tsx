@@ -43,6 +43,7 @@ const ReceiptSearch = () => {
     setTradingTypeMenuOpen(false);
   };
 
+  /* ToDo: (20230316 - Julian) 錢包地址、金額，開票 */
   const displayedFilterBar = (
     <div className="hidden space-x-10 text-lightWhite sm:flex">
       {/* Info: (20230316 - Julian) Trading Type Dropdown Menu */}

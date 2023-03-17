@@ -12,4 +12,10 @@ export interface IOrder {
   targetAmount: number;
   fee: number; // 手續費
   remarks?: string; // 備註
+
+  available?: number; // 可用餘額
+  detail?: {
+    txId?: string; // 交易ID
+    state: 'PROCESSING' | 'FAILED' | 'DONE'; // 訂單狀態
+  };
 }

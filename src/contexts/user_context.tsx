@@ -54,6 +54,7 @@ import {dummyAcceptedDepositOrder} from '../interfaces/tidebit_defi_background/a
 import {dummyAcceptedWithdrawOrder} from '../interfaces/tidebit_defi_background/accepted_withdraw_order';
 import {IApplyDepositOrder} from '../interfaces/tidebit_defi_background/apply_deposit_order';
 import {IApplyWithdrawOrder} from '../interfaces/tidebit_defi_background/apply_withdraw_order';
+import {dummyOpenCFDOrder} from '../interfaces/tidebit_defi_background/open_cfd_order';
 
 function randomNumber(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1) + min);
@@ -536,8 +537,8 @@ export const UserProvider = ({children}: IUserProvider) => {
   const listHistories = async () => {
     let histories: IOrder[] = [];
     if (isConnectedRef) {
-      // ToDo: (20230316 - Julian) getHistories from backend, need Avbl & Detail & targetAsset 應有負數
-      histories = [dummyDepositOrder, dummyWithdrawalOrder];
+      // ToDo: getHistories from backend
+      histories = [dummyDepositOrder, dummyWithdrawalOrder, dummyOpenCFDOrder];
       setHistories(histories);
     }
     return histories;

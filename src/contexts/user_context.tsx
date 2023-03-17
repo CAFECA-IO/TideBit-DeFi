@@ -53,7 +53,7 @@ import {dummyAcceptedDepositOrder} from '../interfaces/tidebit_defi_background/a
 import {dummyAcceptedWithdrawOrder} from '../interfaces/tidebit_defi_background/accepted_withdraw_order';
 import {IApplyDepositOrder} from '../interfaces/tidebit_defi_background/apply_deposit_order';
 import {IApplyWithdrawOrder} from '../interfaces/tidebit_defi_background/apply_withdraw_order';
-import {Code} from '../constants/code';
+import {Code, Reason} from '../constants/code';
 
 function randomNumber(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1) + min);
@@ -122,11 +122,11 @@ export interface IUserContext {
   enableServiceTerm: boolean;
   openCFDs: IOpenCFDDetails[];
   closedCFDs: IClosedCFDDetails[];
-  connect: () => Promise<boolean>;
-  signServiceTerm: () => Promise<boolean>;
-  disconnect: () => Promise<boolean>;
-  addFavorites: (props: string) => IResult;
-  removeFavorites: (props: string) => IResult;
+  connect: () => Promise<IResult>;
+  signServiceTerm: () => Promise<IResult>;
+  disconnect: () => Promise<IResult>;
+  addFavorites: (props: string) => Promise<IResult>;
+  removeFavorites: (props: string) => Promise<IResult>;
   listOpenCFDs: (props: string) => Promise<IOpenCFDDetails[]>;
   listClosedCFDs: (props: string) => Promise<IClosedCFDDetails[]>;
   // getOpendCFD: (props: string) => Promise<IOpenCFDDetails>;
@@ -149,14 +149,14 @@ export interface IUserContext {
   updateCFDOrder: (props: IApplyUpdateCFDOrderData | undefined) => Promise<IResult>;
   deposit: (props: IApplyDepositOrder) => Promise<IResult>;
   withdraw: (props: IApplyWithdrawOrder) => Promise<IResult>;
-  listHistories: (props: string) => Promise<IOrder[]>;
-  sendEmailCode: (email: string) => Promise<number>;
-  connectEmail: (email: string, code: number) => Promise<boolean>;
-  toggleEmailNotification: (props: boolean) => Promise<boolean>;
-  subscribeNewsletters: (props: boolean) => Promise<boolean>;
-  connectTideBit: (email: string, password: string) => Promise<boolean>;
-  shareTradeRecord: (tradeId: string) => Promise<boolean>;
-  readNotifications: (notifications: INotificationItem[]) => Promise<void>;
+  listHistories: (props: string) => Promise<IResult>;
+  sendEmailCode: (email: string, hashCash: string) => Promise<IResult>;
+  connectEmail: (email: string, code: number) => Promise<IResult>;
+  toggleEmailNotification: (props: boolean) => Promise<IResult>;
+  subscribeNewsletters: (props: boolean) => Promise<IResult>;
+  connectTideBit: (email: string, password: string) => Promise<IResult>;
+  shareTradeRecord: (tradeId: string) => Promise<IResult>;
+  readNotifications: (notifications: INotificationItem[]) => Promise<IResult>;
   init: () => Promise<void>;
 }
 
@@ -171,17 +171,17 @@ export const UserContext = createContext<IUserContext>({
   enableServiceTerm: false,
   openCFDs: [],
   closedCFDs: [],
-  connect: () => Promise.resolve(true),
-  signServiceTerm: () => Promise.resolve(true),
-  disconnect: () => Promise.resolve(true),
-  addFavorites: (props: string) => dummyResultSuccess,
-  removeFavorites: (props: string) => dummyResultSuccess,
-  listOpenCFDs: (props: string) => Promise.resolve<IOpenCFDDetails[]>([]),
-  listClosedCFDs: (props: string) => Promise.resolve<IClosedCFDDetails[]>([]),
+  connect: () => Promise.resolve(dummyResultSuccess),
+  signServiceTerm: () => Promise.resolve(dummyResultSuccess),
+  disconnect: () => Promise.resolve(dummyResultSuccess),
+  addFavorites: () => Promise.resolve(dummyResultSuccess),
+  removeFavorites: () => Promise.resolve(dummyResultSuccess),
+  listOpenCFDs: () => Promise.resolve<IOpenCFDDetails[]>([]),
+  listClosedCFDs: () => Promise.resolve<IClosedCFDDetails[]>([]),
   // getOpendCFD: (props: string) => Promise.resolve<IOpenCFDDetails>(dummyOpenCFDDetails),
   // getClosedCFD: (props: string) => Promise.resolve<IClosedCFDDetails>(dummyCloseCFDDetails),
-  getOpendCFD: (props: string) => dummyOpenCFDDetails,
-  getClosedCFD: (props: string) => dummyCloseCFDDetails,
+  getOpendCFD: () => dummyOpenCFDDetails,
+  getClosedCFD: () => dummyCloseCFDDetails,
 
   // TODO:
   histories: [],
@@ -191,24 +191,21 @@ export const UserContext = createContext<IUserContext>({
   isEnabledEmailNotification: false,
   isConnectedWithEmail: false,
   isConnectedWithTideBit: false,
-  getBalance: (props: string) => null,
-  getWalletBalance: (props: string) => null,
-  createCFDOrder: (props: IApplyCreateCFDOrderData | undefined) =>
-    Promise.resolve<IResult>(dummyResultSuccess),
-  closeCFDOrder: (props: IApplyCloseCFDOrderData | undefined) =>
-    Promise.resolve<IResult>(dummyResultSuccess),
-  updateCFDOrder: (props: IApplyUpdateCFDOrderData | undefined) =>
-    Promise.resolve<IResult>(dummyResultSuccess),
-  deposit: IApplyDepositOrder => Promise.resolve<IResult>(dummyResultSuccess),
-  withdraw: IApplyWithdrawOrder => Promise.resolve<IResult>(dummyResultSuccess),
-  listHistories: () => Promise.resolve<IOrder[]>([]),
-  sendEmailCode: (email: string) => Promise.resolve<number>(359123),
-  connectEmail: (email: string, code: number) => Promise.resolve<boolean>(true),
-  toggleEmailNotification: (props: boolean) => Promise.resolve<boolean>(true),
-  subscribeNewsletters: (props: boolean) => Promise.resolve<boolean>(true),
-  connectTideBit: (email: string, password: string) => Promise.resolve<boolean>(true),
-  shareTradeRecord: (tradeId: string) => Promise.resolve<boolean>(true),
-  readNotifications: (notifications: INotificationItem[]) => Promise.resolve(),
+  getBalance: () => null,
+  getWalletBalance: () => null,
+  createCFDOrder: () => Promise.resolve<IResult>(dummyResultSuccess),
+  closeCFDOrder: () => Promise.resolve<IResult>(dummyResultSuccess),
+  updateCFDOrder: () => Promise.resolve<IResult>(dummyResultSuccess),
+  deposit: () => Promise.resolve<IResult>(dummyResultSuccess),
+  withdraw: () => Promise.resolve<IResult>(dummyResultSuccess),
+  listHistories: () => Promise.resolve(dummyResultSuccess),
+  sendEmailCode: () => Promise.resolve(dummyResultSuccess),
+  connectEmail: () => Promise.resolve(dummyResultSuccess),
+  toggleEmailNotification: () => Promise.resolve(dummyResultSuccess),
+  subscribeNewsletters: () => Promise.resolve(dummyResultSuccess),
+  connectTideBit: () => Promise.resolve(dummyResultSuccess),
+  shareTradeRecord: () => Promise.resolve(dummyResultSuccess),
+  readNotifications: () => Promise.resolve(dummyResultSuccess),
   init: () => Promise.resolve(),
 });
 
@@ -308,21 +305,26 @@ export const UserProvider = ({children}: IUserProvider) => {
   };
 
   const connect = async () => {
-    let success = false;
+    let result: IResult = dummyResultFailed;
+    result.code = Code.WALLET_IS_NOT_CONNECT;
+    result.reason = Reason[result.code];
     try {
       const connect = await lunar.connect({});
-      if (connect) {
-        success = true;
+      if (connect && lunar.isConnected) {
+        result = {
+          success: true,
+          code: Code.SUCCESS,
+        };
       }
     } catch (error) {
-      // TODO: error handle (20230314 - Tzuhan)
+      result = dummyResultFailed;
     }
-    return success;
+    return result;
   };
 
-  const signServiceTerm = async (): Promise<boolean> => {
+  const signServiceTerm = async (): Promise<IResult> => {
     let eip712signature: string,
-      result = false;
+      result: IResult = dummyResultFailed;
     if (lunar.isConnected) {
       eip712signature = await lunar.signTypedData(ServiceTerm);
       const verifyR: boolean = lunar.verifyTypedData(ServiceTerm, eip712signature);
@@ -330,27 +332,38 @@ export const UserProvider = ({children}: IUserProvider) => {
         // ++ TODO to checksum address
         setEnableServiceTerm(true);
         await setPrivateData(lunar.address);
-        result = true;
+        result = {
+          success: true,
+          code: Code.SUCCESS,
+        };
       }
       return result;
     } else {
-      await connect();
-      return signServiceTerm();
+      const isConnected = await connect();
+      if (isConnected) return signServiceTerm();
+      else {
+        result.code = Code.WALLET_IS_NOT_CONNECT;
+        result.reason = Reason[result.code];
+        return result;
+      }
     }
   };
 
   const disconnect = async () => {
-    let success = false;
+    let result: IResult = dummyResultFailed;
     try {
       await lunar.disconnect();
-      success = true;
-    } catch (error) {
-      // console.error(`userContext disconnect error`, error);
-    }
-    return success;
+      if (!lunar.isConnected) {
+        result = {
+          success: true,
+          code: Code.SUCCESS,
+        };
+      }
+    } catch (error) {}
+    return result;
   };
 
-  const addFavorites = (newFavorite: string) => {
+  const addFavorites = async (newFavorite: string) => {
     let result: IResult = dummyResultFailed;
     if (isConnectedRef.current) {
       const updatedFavoriteTickers = [...favoriteTickers];
@@ -362,7 +375,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     return result;
   };
 
-  const removeFavorites = (previousFavorite: string) => {
+  const removeFavorites = async (previousFavorite: string) => {
     let result: IResult = dummyResultFailed;
     if (isConnectedRef.current) {
       const updatedFavoriteTickers = [...favoriteTickers];
@@ -421,7 +434,7 @@ export const UserProvider = ({children}: IUserProvider) => {
             result = {
               success: true,
               code: Code.SUCCESS,
-              data: JSON.parse(JSON.stringify(getDummyAcceptedCFDOrder(props.ticker))),
+              data: getDummyAcceptedCFDOrder(props.ticker),
             };
           }
         }
@@ -449,11 +462,12 @@ export const UserProvider = ({children}: IUserProvider) => {
           const signature: string = await lunar.signTypedData(transferR.data);
           CFDOrder.signature = signature;
           // ++ API send transaction
-          result = {
-            success: true,
-            code: Code.SUCCESS,
-            data: JSON.parse(JSON.stringify(getDummyAcceptedCFDOrder(ticker || 'ETH'))), // ++ TODO remove dummy ticker
-          };
+          if (ticker)
+            result = {
+              success: true,
+              code: Code.SUCCESS,
+              data: getDummyAcceptedCFDOrder(ticker),
+            };
         }
       }
       return await Promise.resolve<IResult>(result);
@@ -479,11 +493,12 @@ export const UserProvider = ({children}: IUserProvider) => {
           const signature: string = await lunar.signTypedData(transferR.data);
           CFDOrder.signature = signature;
           // ++ API send transaction
-          result = {
-            success: true,
-            code: Code.SUCCESS,
-            data: JSON.parse(JSON.stringify(getDummyAcceptedCFDOrder(ticker || 'ETH'))), // ++ TODO remove dummy ticker
-          };
+          if (ticker)
+            result = {
+              success: true,
+              code: Code.SUCCESS,
+              data: getDummyAcceptedCFDOrder(ticker),
+            };
         }
       }
       return await Promise.resolve<IResult>(result);
@@ -509,7 +524,7 @@ export const UserProvider = ({children}: IUserProvider) => {
       result = {
         success: true,
         code: Code.SUCCESS,
-        data: JSON.parse(JSON.stringify(dummyAcceptedDepositOrder)), // new walletBalance
+        data: dummyAcceptedDepositOrder,
       };
       // }
       return await Promise.resolve<IResult>(result);
@@ -539,7 +554,7 @@ export const UserProvider = ({children}: IUserProvider) => {
           result = {
             success: true,
             code: Code.SUCCESS,
-            data: JSON.parse(JSON.stringify(dummyAcceptedWithdrawOrder)), // ++ TODO remove dummy ticker
+            data: dummyAcceptedWithdrawOrder,
           };
         }
       }
@@ -555,13 +570,18 @@ export const UserProvider = ({children}: IUserProvider) => {
   };
 
   const listHistories = async () => {
-    let histories: IOrder[] = [];
-    if (isConnectedRef) {
+    let histories: IOrder[] = [],
+      result: IResult = dummyResultFailed;
+    result.code = Code.SERVICE_TERM_DISABLE;
+    result.reason = Reason[result.code];
+    if (enableServiceTermRef.current) {
       // TODO: getHistories from backend
       histories = [dummyDepositOrder, dummyWithdrawalOrder];
       setHistories(histories);
+      result = dummyResultSuccess;
+      result.data = histories;
     }
-    return histories;
+    return result;
   };
 
   // ++TODO: ModifyType.REMOVE and ModifyType.UPDATE
@@ -617,17 +637,78 @@ export const UserProvider = ({children}: IUserProvider) => {
     }
   };
 
-  const sendEmailCode = async (email: string) => Promise.resolve<number>(359123);
-  const connectEmail = async (email: string, code: number) => Promise.resolve<boolean>(true);
-  const toggleEmailNotification = async (props: boolean) => Promise.resolve<boolean>(true);
-  const subscribeNewsletters = async (props: boolean) => Promise.resolve<boolean>(true);
-  const connectTideBit = async (email: string, password: string) => Promise.resolve<boolean>(true);
-  const shareTradeRecord = async (tradeId: string) => Promise.resolve<boolean>(true);
+  const sendEmailCode = async (email: string, hashCash: string) => {
+    let result: IResult = dummyResultFailed;
+    try {
+      // TODO: post request (Tzuhan - 20230317)
+      result = dummyResultSuccess;
+    } catch (error) {
+      result = dummyResultFailed;
+    }
+    return result;
+  };
+  const connectEmail = async (email: string, code: number) => {
+    let result: IResult = dummyResultFailed;
+    try {
+      // TODO: post request (Tzuhan - 20230317)
+      result = dummyResultSuccess;
+    } catch (error) {
+      result = dummyResultFailed;
+    }
+    return result;
+  };
+  const toggleEmailNotification = async (props: boolean) => {
+    let result: IResult = dummyResultFailed;
+    try {
+      // TODO: put request (Tzuhan - 20230317)
+    } catch (error) {
+      result = dummyResultFailed;
+    }
+    return result;
+  };
+  const subscribeNewsletters = async (props: boolean) => {
+    let result: IResult = dummyResultFailed;
+    try {
+      // TODO: put request (Tzuhan - 20230317)
+    } catch (error) {
+      result = dummyResultFailed;
+    }
+    return result;
+  };
+  const connectTideBit = async (email: string, password: string) => {
+    let result: IResult = dummyResultFailed;
+    try {
+      // TODO: post request (Tzuhan - 20230317)
+      result = dummyResultSuccess;
+    } catch (error) {
+      result = dummyResultFailed;
+    }
+    return result;
+  };
+  const shareTradeRecord = async (tradeId: string) => {
+    let result: IResult = dummyResultFailed;
+    try {
+      // TODO: call 3rd party api (Tzuhan - 20230317)
+      result = dummyResultSuccess;
+    } catch (error) {
+      result = dummyResultFailed;
+    }
+    return result;
+  };
 
   const readNotifications = async (notifications: INotificationItem[]) => {
+    let result: IResult = dummyResultFailed;
     if (enableServiceTermRef.current) {
-      notificationCtx.emitter.emit(TideBitEvent.UPDATE_READ_NOTIFICATIONS_RESULT, notifications);
+      try {
+        // TODO: post request (Tzuhan - 20230317)
+        result = dummyResultSuccess;
+        notificationCtx.emitter.emit(TideBitEvent.UPDATE_READ_NOTIFICATIONS_RESULT, notifications);
+      } catch (error) {
+        result = dummyResultFailed;
+      }
     }
+
+    return result;
   };
 
   const updateBalances = (balance: IBalance) => {

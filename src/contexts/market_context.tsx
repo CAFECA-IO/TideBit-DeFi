@@ -14,7 +14,11 @@ import {
   dummyCryptocurrencies,
   ICryptocurrency,
 } from '../interfaces/tidebit_defi_background/cryptocurrency';
-import {dummyResultSuccess, IResult} from '../interfaces/tidebit_defi_background/result';
+import {
+  dummyResultFailed,
+  dummyResultSuccess,
+  IResult,
+} from '../interfaces/tidebit_defi_background/result';
 import {
   ITickerData,
   dummyTicker,
@@ -58,12 +62,8 @@ export interface IMarketContext {
   selectTickerHandler: (props: string) => IResult;
   selectTimeSpanHandler: (props: ITimeSpanUnion) => void;
   getCandlestickChartData: (tickerId: string) => Promise<void>; // x 100
-  getCFDQuotation: (tickerId: string) => Promise<IQuotation>;
-  getTickerHistory: (
-    tickerId: string,
-    timespan: ITimeSpanUnion,
-    limit: number
-  ) => Promise<ITickerHistoryData[]>;
+  getCFDQuotation: (tickerId: string) => Promise<IResult>;
+  getTickerHistory: (tickerId: string, timespan: ITimeSpanUnion, limit: number) => Promise<IResult>;
 }
 // TODO: Note: _app.tsx 啟動的時候 => createContext
 export const MarketContext = createContext<IMarketContext>({
@@ -92,8 +92,8 @@ export const MarketContext = createContext<IMarketContext>({
   selectTickerHandler: () => dummyResultSuccess,
   getCandlestickChartData: () => Promise.resolve(),
   init: () => Promise.resolve(),
-  getCFDQuotation: () => Promise.resolve(getDummyQuotation('ETH')),
-  getTickerHistory: () => Promise.resolve([]),
+  getCFDQuotation: () => Promise.resolve(dummyResultSuccess),
+  getTickerHistory: () => Promise.resolve(dummyResultSuccess),
 });
 
 export const MarketProvider = ({children}: IMarketProvider) => {
@@ -220,16 +220,33 @@ export const MarketProvider = ({children}: IMarketProvider) => {
   };
 
   const getCFDQuotation = async (tickerId: string) => {
-    const quotation: IQuotation = getDummyQuotation(tickerId);
-    return quotation;
+    let result: IResult = dummyResultFailed;
+    try {
+      // TODO: send request (Tzuhan - 20230317)
+      const quotation: IQuotation = getDummyQuotation(tickerId);
+      result = dummyResultSuccess;
+      result.data = quotation;
+    } catch (error) {
+      result = dummyResultFailed;
+    }
+    return result;
   };
+
   const getTickerHistory = async (tickerId: string, timespan: ITimeSpanUnion, limit: number) => {
-    const tickerHistory: ITickerHistoryData[] = getDummyTickerHistoryData(
-      tickerId,
-      timespan,
-      limit
-    );
-    return tickerHistory;
+    let result: IResult = dummyResultFailed;
+    try {
+      // TODO: send request (Tzuhan - 20230317)
+      const tickerHistory: ITickerHistoryData[] = getDummyTickerHistoryData(
+        tickerId,
+        timespan,
+        limit
+      );
+      result = dummyResultSuccess;
+      result.data = tickerHistory;
+    } catch (error) {
+      result = dummyResultFailed;
+    }
+    return result;
   };
 
   const init = async () => {

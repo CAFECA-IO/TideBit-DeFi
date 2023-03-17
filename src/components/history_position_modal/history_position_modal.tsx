@@ -87,8 +87,6 @@ const HistoryPositionModal = ({
         className={`${displayedBorderColor} mx-7 mt-3 border-1px text-base leading-relaxed text-lightWhite`}
       >
         <div className="flex-col justify-center text-center text-xs">
-          {/* {displayedDataFormat()} */}
-
           <div className={`${layoutInsideBorder}`}>
             <div className="text-lightGray">Type</div>
             {/* TODO: (20230317 - Shirley) i18n */}

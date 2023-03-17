@@ -197,7 +197,6 @@ const PositionClosedModal = ({
 
     await wait(DELAYED_HIDDEN_SECONDS);
 
-    // Close loading modal
     globalCtx.eliminateAllModals();
 
     // TODO: (20230317 - Shirley)  Revise the `result.reason` to constant by using enum or object

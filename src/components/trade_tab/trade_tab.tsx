@@ -589,6 +589,7 @@ const TradeTab = () => {
 
   return (
     <div>
+      {/* TODO: (20230317 - Shirley) order section scroll */}
       {/* `overflow-y-scroll scroll-smooth` only show the scroll bar but no functionality */}
       <div
         className={`pointer-events-none fixed top-82px right-0 z-10 flex overflow-x-hidden overflow-y-hidden outline-none focus:outline-none`}
@@ -624,10 +625,7 @@ const TradeTab = () => {
                 {/* Left Divider */}
                 <div className="mx-2 h-14 justify-center border-r-1px border-lightGray"></div>
 
-                <div>
-                  {/* ml-1 mr-5  */}
-                  {/* <span className="mx-1 inline-block h-11 w-px rounded bg-lightGray/50"></span> */}
-                </div>
+                <div></div>
 
                 <div className="ml-0 w-1/2 space-y-1">
                   <div className="text-sm text-lightGray">Value</div>
@@ -667,9 +665,7 @@ const TradeTab = () => {
               {/* Below Use absolute for layout */}
 
               {/* Long Button */}
-              {/* absolute top-350px left-20 */}
               <div className="mt-0 ml-1/4">
-                {/* focus:outline-none focus:ring-4 focus:ring-green-300 */}
                 <RippleButton
                   disabled={marginWarning}
                   onClick={longOrderSubmitHandler}
@@ -680,13 +676,7 @@ const TradeTab = () => {
                   Above $ {buyPrice}
                 </RippleButton>
               </div>
-              {/* Divider: border-bottom */}
               <div className="mt-3 border-b-1px border-lightGray"></div>
-
-              {/* Divider between long and short */}
-              {/* <span
-                className={`${isDisplayedDividerSpacing} absolute top-420px my-auto h-px w-7/8 rounded bg-white/50`}
-              ></span> */}
 
               {/* ---Short Section--- */}
               <div className="">
@@ -699,10 +689,7 @@ const TradeTab = () => {
                   {/* Left Divider */}
                   <div className="mx-2 h-14 justify-center border-r-1px border-lightGray"></div>
 
-                  <div>
-                    {/* ml-1 mr-5  */}
-                    {/* <span className="mx-1 inline-block h-11 w-px rounded bg-lightGray/50"></span> */}
-                  </div>
+                  <div></div>
 
                   <div className="w-1/2 space-y-1">
                     <div className="text-sm text-lightGray">Value</div>

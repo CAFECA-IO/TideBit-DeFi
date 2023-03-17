@@ -8,12 +8,12 @@ const PositionVisitorTab = () => {
   const tabBodyWidth = 'w-320px';
 
   const btnClickHandler = () => {
-    // globalCtx.visibleSignatureProcessModalHandler();
     globalCtx.visibleWalletPanelHandler();
   };
 
   return (
     <div>
+      {/* TODO: (20230317 - Shirley) order section scroll */}
       {/* `overflow-y-scroll scroll-smooth` only show the scroll bar but no functionality */}
       <div
         className={`pointer-events-none fixed top-82px right-0 z-10 flex overflow-x-hidden overflow-y-hidden outline-none focus:outline-none`}

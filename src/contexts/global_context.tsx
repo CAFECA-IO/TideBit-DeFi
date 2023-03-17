@@ -26,10 +26,6 @@ import {UserContext} from './user_context';
 import PositionOpenModal from '../components/position_open_modal/position_open_modal';
 import PositionClosedModal from '../components/position_closed_modal/position_closed_modal';
 import PositionUpdatedModal from '../components/position_updated_modal/position_updated_modal';
-import {
-  IClosedCFDDetails,
-  dummyCloseCFDDetails,
-} from '../interfaces/tidebit_defi_background/closed_cfd_details';
 import HistoryPositionModal from '../components/history_position_modal/history_position_modal';
 import {
   IPublicCFDOrder,

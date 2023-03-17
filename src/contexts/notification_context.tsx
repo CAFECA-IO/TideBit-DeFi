@@ -7,7 +7,6 @@ import {OrderType} from '../constants/order_type';
 import {TideBitEvent} from '../constants/tidebit_event';
 import {IBalance} from '../interfaces/tidebit_defi_background/balance';
 import {getDummyCandlestickChartData} from '../interfaces/tidebit_defi_background/candlestickData';
-import {getDummyClosedCFDs} from '../interfaces/tidebit_defi_background/closed_cfd_details';
 import {dummyDepositOrder} from '../interfaces/tidebit_defi_background/deposit_order';
 // import {UserContext} from './user_context';
 // import {MarketContext} from './market_context';

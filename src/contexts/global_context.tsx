@@ -138,7 +138,7 @@ export interface IFailedModal {
   failedMsg: string;
 }
 
-// TODO: to be continued
+// TODO:(20230317 - Shirley) to be continued
 export interface IRecordSharingModal {
   orderIdRecordSharing: number;
 }
@@ -147,7 +147,7 @@ export const dummyRecordSharingModal: IRecordSharingModal = {
   orderIdRecordSharing: 0,
 };
 
-// TODO: to be continued
+// TODO:(20230317 - Shirley) to be continued
 export interface IWarningModal {
   title: string;
   content: string;
@@ -164,7 +164,7 @@ export const dummyWarningModal: IWarningModal = {
   styleOfButton: 'style1',
 };
 
-// TODO: to be continued
+// TODO:(20230317 - Shirley) to be continued
 export interface IAnnouncementModal {
   title: string;
   content: string;
@@ -183,7 +183,7 @@ export const dummyAnnouncementModal: IAnnouncementModal = {
   messageType: 'announcement',
 };
 
-// TODO: to be continued
+// TODO:(20230317 - Shirley) to be continued
 export interface IAchievementSharingModal {
   userId: string;
   period: string;
@@ -194,7 +194,7 @@ export const dummyAchievementSharingModal: IAchievementSharingModal = {
   period: '002',
 };
 
-// TODO: to be continued
+// TODO:(20230317 - Shirley) to be continued
 export interface IBadgeModal {
   badgeId: string;
 }
@@ -203,7 +203,7 @@ export const dummyBadgeModal: IBadgeModal = {
   badgeId: 'TBDFUTURES2023FEB05',
 };
 
-// TODO: to be continued
+// TODO:(20230317 - Shirley) to be continued
 export interface IBadgeSharingModal {
   badgeId: string;
 }
@@ -547,15 +547,15 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
   const [visiblePositionOpenModal, setVisiblePositionOpenModal] = useState(false);
   // const [dataPositionOpenModal, setDataPositionOpenModal] = useState<IDisplayApplyCFDOrder>(
   //   getDummyDisplayApplyCreateCFDOrder(marketCtx.selectedTickerRef.current!.currency)
-  // ); // TODO: Open position parameter
+  // ); // TODO:(20230317 - Shirley) Open position parameter
   const [dataPositionOpenModal, setDataPositionOpenModal] = useState<IDataPositionOpenModal>(
     dummyDataPositionOpenModal
     // getDummyDisplayApplyCreateCFDOrder('ETH')
-  ); // TODO: Open position parameter
+  ); // TODO:(20230317 - Shirley) Open position parameter
 
   const [visiblePositionUpdatedModal, setVisiblePositionUpdatedModal] = useState(false);
   const [dataPositionUpdatedModal, setDataPositionUpdatedModal] =
-    useState<IDataPositionUpdatedModal>(dummyDataPositionUpdatedModal); // TODO: Update position parameter
+    useState<IDataPositionUpdatedModal>(dummyDataPositionUpdatedModal);
 
   const [visibleMyAccountModal, setVisibleMyAccountModal] = useState(false);
 
@@ -663,7 +663,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
   };
 
   const visibleLoadingModalHandler = () => {
-    // TODO: (20230330 - Shirley) loading toast
+    // TODO: (20230317 - Shirley) loading toast
     // if (bool) {
     //   console.log('in global context, visibileLoadingModalHandler: ', bool);
     //   setVisibleLoadingModal(bool);
@@ -1098,7 +1098,7 @@ export const useGlobal = () => {
   //   throw new Error('useGlobal must be used within a GlobalProvider');
   // }
 
-  // TODO: Debug tool [to be removed]
+  // TODO: Debug tool [to be removed](20230317 - Shirley)
   const g: any =
     typeof globalThis === 'object'
       ? globalThis

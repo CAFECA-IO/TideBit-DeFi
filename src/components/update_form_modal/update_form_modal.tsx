@@ -221,7 +221,7 @@ const UpdateFormModal = ({
       ? '-'
       : '';
 
-  // TODO: i18n
+  // TODO: (20230317 - Shirley) i18n
   const displayedTypeOfPosition =
     openCfdDetails?.typeOfPosition === TypeOfPosition.BUY ? 'Up (Buy)' : 'Down (Sell)';
 

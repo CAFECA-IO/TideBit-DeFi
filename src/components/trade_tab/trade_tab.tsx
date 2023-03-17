@@ -41,15 +41,15 @@ const TradeTab = () => {
 
   const tabBodyWidth = 'w-320px';
 
-  // TODO: switch to the certain ticker's statistics
+  // TODO: (20230317 - Shirley) switch to the certain ticker's statistics
   const tickerLiveStatistics = marketCtx.tickerLiveStatistics;
   const tickerStaticStatistics = marketCtx.tickerStatic;
 
-  // FIXME: It should have the default value of `tickerLiveStatistics`
+  // TODO: (20230317 - Shirley) It should have the default value of `tickerLiveStatistics`
   const TEMP_PLACEHOLDER = TARGET_LIMIT_DIGITS;
 
   const ticker = marketCtx.selectedTicker?.currency ?? '';
-  // const LIQUIDATION_PRICE = 7548; // TODO: tickerLiveStatistics
+  // const LIQUIDATION_PRICE = 7548; // TODO: (20230317 - Shirley) calculate it
   const USER_BALANCE = userCtx.balance?.available ?? 0;
 
   const leverage = tickerStaticStatistics?.leverage ?? 1;
@@ -71,7 +71,7 @@ const TradeTab = () => {
 
   const [targetInputValue, setTargetInputValue, targetInputValueRef] = useStateRef(0.02);
 
-  // FIXME: SL setting should have a lower limit and an upper limit depending on its position type
+  // TODO: (20230317 - Shirley) FIXME: SL setting should have a lower limit and an upper limit depending on its position type
   const [longTpValue, setLongTpValue] = useState(longRecommendedTp);
   const [longSlValue, setLongSlValue] = useState(longRecommendedSl);
   const [longTpToggle, setLongTpToggle] = useState(false);
@@ -429,9 +429,7 @@ const TradeTab = () => {
     </div>
   );
 
-  // TODO:　Guranteed stop Layout
   const longGuaranteedStop = (
-    // <div className={`${isDisplayedLongSlSetting} mt-0 h-14 items-center`}>
     <div
       className={`${
         longSlToggle ? `translate-y-5` : `invisible translate-y-0`
@@ -545,7 +543,6 @@ const TradeTab = () => {
   );
 
   const shortGuaranteedStop = (
-    // <div className={isDisplayedShortSlSetting}>
     <div
       className={`${
         shortSlToggle ? `translate-y-5` : `invisible translate-y-0`

@@ -26,7 +26,6 @@ interface IPositionUpdatedModal {
   updatedProps?: IApplyUpdateCFDOrderData;
 }
 
-// TODO: replace all hardcode options with variables
 const PositionUpdatedModal = ({
   modalVisible,
   modalClickHandler,
@@ -37,8 +36,6 @@ const PositionUpdatedModal = ({
   const userCtx = useContext(UserContext);
   const marketCtx = useContext(MarketContext);
   const globalCtx = useGlobal();
-
-  // const data = openCfdDetails.data as IApplyUpdateCFDOrderData // Till: (20230314 - Shirley)
 
   const [tpTextStyle, setTpTextStyle] = useState('text-lightWhite');
   const [slTextStyle, setSlTextStyle] = useState('text-lightWhite');
@@ -76,13 +73,13 @@ const PositionUpdatedModal = ({
       btnUrl: '#',
     });
 
-    // TODO: temporary waiting
+    // TODO: (20230317 - Shirley) temporary waiting
     await wait(DELAYED_HIDDEN_SECONDS);
 
     globalCtx.eliminateAllModals();
 
-    // TODO: Revise the `result.reason` to constant by using enum or object
-    // TODO: the button URL
+    // TODO: (20230317 - Shirley) Revise the `result.reason` to constant by using enum or object
+    // TODO: (20230317 - Shirley) the button URL
     if (result.success) {
       globalCtx.dataSuccessfulModalHandler({
         modalTitle: 'Update Position',
@@ -141,30 +138,13 @@ const PositionUpdatedModal = ({
 
   useEffect(() => {
     renewDataStyle();
-
-    // console.log('updatedProps ', updatedProps);
-    // console.log('openCfdDetails ', openCfdDetails);
-    // console.log('text style', tpTextStyle, slTextStyle, gtslTextStyle);
   }, [globalCtx.visiblePositionUpdatedModal]);
 
-  // TODO: typo `guaranteedStop`
   const displayedGuaranteedStopSetting = updatedProps?.guaranteedStop
     ? 'Yes'
     : openCfdDetails.guaranteedStop
     ? 'Yes'
     : 'No';
-
-  // if (updatedProps.takeProfit !== openCfdDetails.takeProfit) {
-  //   if (updatedProps.takeProfit === 0) {
-  //     return '-';
-  //   } else if (updatedProps.takeProfit !== 0) {
-  //     return updatedProps.takeProfit;
-  //   }
-  // } else if (openCfdDetails.takeProfit) {
-  //   return openCfdDetails.takeProfit;
-  // } else {
-  //   return '-';
-  // }
 
   const displayedTakeProfit =
     updatedProps?.takeProfit !== undefined
@@ -177,15 +157,6 @@ const PositionUpdatedModal = ({
       ? `$ ${openCfdDetails.takeProfit}`
       : '-';
 
-  // const displayedTakeProfit =
-  //   updatedProps.takeProfit === 0
-  //     ? '-'
-  //     : updatedProps.takeProfit !== 0
-  //     ? updatedProps.takeProfit
-  //     : openCfdDetails.takeProfit
-  //     ? openCfdDetails.takeProfit
-  //     : '-';
-
   const displayedStopLoss =
     updatedProps?.stopLoss !== undefined
       ? updatedProps.stopLoss === 0
@@ -197,38 +168,13 @@ const PositionUpdatedModal = ({
       ? `$ ${openCfdDetails.stopLoss}`
       : '-';
 
-  // const displayedStopLoss =
-  //   updatedProps.stopLoss === 0
-  //     ? '-'
-  //     : updatedProps.stopLoss !== 0
-  //     ? updatedProps.stopLoss
-  //     : openCfdDetails.stopLoss
-  //     ? openCfdDetails.stopLoss
-  //     : '-';
-
-  // const displayedPnLSymbol =
-  //   openCfdDetails.pnl.type === 'PROFIT' ? '+' : openCfdDetails.pnl.type === 'LOSS' ? '-' : '';
-
-  // TODO: i18n
+  // TODO: (20230317 - Shirley) i18n
   const displayedTypeOfPosition =
     openCfdDetails?.typeOfPosition === TypeOfPosition.BUY ? 'Up (Buy)' : 'Down (Sell)';
 
-  // const displayedPnLColor =
-  //   updatedCfdRequest?.pnl.type === 'PROFIT'
-  //     ? TypeOfPnLColor.PROFIT
-  //     : updatedCfdRequest?.pnl.type === 'LOSS'
-  //     ? TypeOfPnLColor.LOSS
-  //     : TypeOfPnLColor.EQUAL;
-
   const displayedPositionColor = 'text-lightWhite';
-  // openCfdDetails.typeOfPosition === TypeOfPosition.BUY
-  //   ? TypeOfPnLColor.PROFIT
-  //   : TypeOfPnLColor.LOSS;
 
   const displayedBorderColor = TypeOfBorderColor.NORMAL;
-  // openCfdDetails?.typeOfPosition === TypeOfPosition.BUY
-  //   ? TypeOfBorderColor.LONG
-  //   : TypeOfBorderColor.SHORT;
 
   const layoutInsideBorder = 'mx-5 my-4 flex justify-between';
 
@@ -251,25 +197,17 @@ const PositionUpdatedModal = ({
           className={`${displayedBorderColor} mx-6 mt-1 border-1px text-xs leading-relaxed text-lightWhite`}
         >
           <div className="flex-col justify-center text-center">
-            {/* {displayedDataFormat()} */}
-
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">Type</div>
-              {/* TODO: color variable */}
               <div className={`${displayedPositionColor}`}>{displayedTypeOfPosition}</div>
             </div>
 
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">Open Price</div>
-              {/* <div className="">
-                {openCfdDetails?.amount?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0}{' '}
-                {openCfdDetails.ticker}
-              </div> */}
+
               <div className={``}>
-                {/* TODO: Hardcode USDT */}${' '}
                 {openCfdDetails?.openPrice?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0}{' '}
-                USDT
-                {/* {openCfdDetails?.price?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0} USDT */}
+                {openCfdDetails.margin.asset}
               </div>
             </div>
 
@@ -287,36 +225,10 @@ const PositionUpdatedModal = ({
               </div>
             </div>
 
-            {/* <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">Required Margin</div>
-              <div className="">$ {openCfdDetails.margin.toFixed(2)} USDT</div>
-            </div> */}
-
-            {/* <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">Avg. Close Price</div>
-              <div className="">
-                Market Price ( ${' '}
-                {openCfdDetails?.openPrice?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0} )
-              </div>
-            </div> */}
-
-            {/* <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">PNL</div>
-              <div className={`${displayedPnLColor}`}>
-                $ {displayedPnLSymbol}{' '}
-                {openCfdDetails.pnl.value.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}
-              </div>
-            </div> */}
-
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">Guaranteed Stop</div>
               <div className={`${gtslTextStyle}`}>{displayedGuaranteedStopSetting}</div>
             </div>
-
-            {/* <div className={`${tableLayout}`}>
-              <div className="text-lightGray">Liquidation Price</div>
-              <div className="">$ 9.23</div>
-            </div> */}
           </div>
         </div>
 
@@ -340,9 +252,6 @@ const PositionUpdatedModal = ({
 
   const isDisplayedModal = modalVisible ? (
     <>
-      {/*  <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">*/}
-      {/*  overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none */}
-      {/* position: relative; top: 50%; left: 50%; transform: translate(-50%, -50%) */}
       <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">
         {/* The position of the modal */}
         <div className="relative my-6 mx-auto w-auto max-w-xl">

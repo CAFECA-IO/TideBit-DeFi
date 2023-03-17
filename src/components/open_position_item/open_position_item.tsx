@@ -153,8 +153,6 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
             </div>
           </div>
 
-          {/* TODO: switch the layout */}
-          {/* {displayedTickerLayout} */}
           <div className="w-70px">
             <div className="text-sm">{openCfdDetails.ticker}</div>
             <div className="text-sm text-lightWhite">

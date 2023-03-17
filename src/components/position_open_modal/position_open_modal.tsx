@@ -76,7 +76,7 @@ const PositionOpenModal = ({
 
     const result = await userCtx.createCFDOrder(openCfdRequest);
 
-    // TODO: for debug
+    // TODO:  (20230317 - Shirley) for debug
     globalCtx.toast({message: 'open-position result: ' + JSON.stringify(result), type: 'info'});
 
     globalCtx.dataLoadingModalHandler({
@@ -86,12 +86,12 @@ const PositionOpenModal = ({
       btnUrl: '#',
     });
 
-    // INFO: for UX
+    // INFO:  (20230317 - Shirley) for UX
     await wait(DELAYED_HIDDEN_SECONDS);
 
     globalCtx.eliminateAllModals();
 
-    // TODO: the button URL
+    // TODO: (20230317 - Shirley)  the button URL
     if (result.success) {
       globalCtx.dataSuccessfulModalHandler({
         modalTitle: 'Open Position',
@@ -101,7 +101,7 @@ const PositionOpenModal = ({
       });
 
       globalCtx.visibleSuccessfulModalHandler();
-      // TODO: `result.code` (20230316 - Shirley)
+      // TODO: (20230317 - Shirley)  `result.code` (20230316 - Shirley)
     } else if (result.reason === 'CANCELED') {
       globalCtx.dataCanceledModalHandler({
         modalTitle: 'Open Position',

@@ -52,7 +52,6 @@ interface IPositionClosedModal {
   openCfdDetails: IDisplayAcceptedCFDOrder;
 }
 
-// TODO: replace all hardcode options with variables
 const PositionClosedModal = ({
   modalVisible,
   modalClickHandler,
@@ -109,8 +108,8 @@ const PositionClosedModal = ({
   ): IDisplayAcceptedCFDOrder => {
     return {
       ...cfd,
-      closePrice: quotation.price, // TODO: 自己算 closePrice
-      // TODO: 自己算 PNL
+      closePrice: quotation.price, // TODO: (20230317 - Shirley)  自己算 closePrice
+      // TODO: (20230317 - Shirley)  自己算 PNL
       pnl: {
         type: randomIntFromInterval(0, 100) <= 50 ? ProfitState.PROFIT : ProfitState.LOSS,
         value: randomIntFromInterval(0, 1000),
@@ -201,8 +200,8 @@ const PositionClosedModal = ({
     // Close loading modal
     globalCtx.eliminateAllModals();
 
-    // TODO: Revise the `result.reason` to constant by using enum or object
-    // TODO: the button URL
+    // TODO: (20230317 - Shirley)  Revise the `result.reason` to constant by using enum or object
+    // TODO: (20230317 - Shirley)  the button URL
     if (result.success) {
       globalCtx.dataSuccessfulModalHandler({
         modalTitle: 'Close Position',
@@ -224,7 +223,7 @@ const PositionClosedModal = ({
 
       globalCtx.dataHistoryPositionModalHandler(historyData);
       globalCtx.visibleHistoryPositionModalHandler();
-      // TODO: `result.code` (20230316 - Shirley)
+      // TODO: (20230317 - Shirley)  `result.code` (20230316 - Shirley)
     } else if (result.reason === 'CANCELED') {
       globalCtx.dataCanceledModalHandler({
         modalTitle: 'Close Position',
@@ -232,7 +231,7 @@ const PositionClosedModal = ({
       });
       globalCtx.visibleCanceledModalHandler();
 
-      // TODO: `result.code` (20230316 - Shirley)
+      // TODO: (20230317 - Shirley)  `result.code` (20230316 - Shirley)
     } else if (result.reason === 'FAILED') {
       globalCtx.dataFailedModalHandler({
         modalTitle: 'Close Position',
@@ -341,8 +340,6 @@ const PositionClosedModal = ({
           className={`${displayedBorderColor} mx-6 mt-1 border-1px text-xs leading-relaxed text-lightWhite`}
         >
           <div className="flex-col justify-center text-center">
-            {/* {displayedDataFormat()} */}
-
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">Type</div>
               <div className={`${displayedPositionColor}`}>{displayedTypeOfPosition}</div>

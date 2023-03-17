@@ -33,7 +33,7 @@ const HistoryPositionModal = ({
 }: IHistoryPositionModal) => {
   const marketCtx = useContext(MarketContext);
 
-  // TODO: i18n
+  // TODO: (20230317 - Shirley) i18n
   const displayedClosedReason =
     closedCfdDetails.closedType === CFDClosedType.SCHEDULE
       ? 'Scheduled'
@@ -56,7 +56,7 @@ const HistoryPositionModal = ({
   const displayedPnLSymbol =
     closedCfdDetails.pnl.type === 'PROFIT' ? '+' : closedCfdDetails.pnl.type === 'LOSS' ? '-' : '';
 
-  // TODO: i18n
+  // TODO: (20230317 - Shirley) i18n
   const displayedTypeOfPosition =
     closedCfdDetails?.typeOfPosition === 'BUY' ? 'Up (Buy)' : 'Down (Sell)';
 
@@ -91,7 +91,7 @@ const HistoryPositionModal = ({
 
           <div className={`${layoutInsideBorder}`}>
             <div className="text-lightGray">Type</div>
-            {/* TODO: i18n */}
+            {/* TODO: (20230317 - Shirley) i18n */}
             <div className={`${displayedPositionColor}`}>{displayedTypeOfPosition}</div>
           </div>
 

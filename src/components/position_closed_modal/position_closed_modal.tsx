@@ -8,7 +8,7 @@ import {
 import RippleButton from '../ripple_button/ripple_button';
 import Image from 'next/image';
 import {
-  getNowSeconds as getTimestamp,
+  getTimestamp,
   locker,
   randomIntFromInterval,
   timestampToString,
@@ -91,29 +91,29 @@ const PositionClosedModal = ({
   const [dataRenewedStyle, setDataRenewedStyle] = useState('text-lightWhite');
   const [pnlRenewedStyle, setPnlRenewedStyle] = useState('');
 
-  const displayedGuaranteedStopSetting = !!cfdRef.current.guaranteedStop ? 'Yes' : 'No';
+  const displayedGuaranteedStopSetting = !!openCfdDetails.guaranteedStop ? 'Yes' : 'No';
 
   const displayedPnLSymbol =
-    cfdRef.current.pnl.type === ProfitState.PROFIT
+    openCfdDetails.pnl.type === ProfitState.PROFIT
       ? '+'
-      : cfdRef.current.pnl.type === ProfitState.LOSS
+      : openCfdDetails.pnl.type === ProfitState.LOSS
       ? '-'
       : '';
 
   const displayedTypeOfPosition =
-    cfdRef.current?.typeOfPosition === TypeOfPosition.BUY ? 'Up (Buy)' : 'Down (Sell)';
+    openCfdDetails?.typeOfPosition === TypeOfPosition.BUY ? 'Up (Buy)' : 'Down (Sell)';
 
   const displayedPnLColor =
-    cfdRef.current?.pnl.type === ProfitState.PROFIT
+    openCfdDetails?.pnl.type === ProfitState.PROFIT
       ? TypeOfPnLColor.PROFIT
-      : cfdRef.current?.pnl.type === ProfitState.LOSS
+      : openCfdDetails?.pnl.type === ProfitState.LOSS
       ? TypeOfPnLColor.LOSS
       : TypeOfPnLColor.EQUAL;
 
   const displayedBorderColor =
-    cfdRef.current?.pnl.type === ProfitState.PROFIT
+    openCfdDetails?.pnl.type === ProfitState.PROFIT
       ? TypeOfBorderColor.LONG
-      : cfdRef.current?.pnl.type === ProfitState.LOSS
+      : openCfdDetails?.pnl.type === ProfitState.LOSS
       ? TypeOfBorderColor.SHORT
       : TypeOfBorderColor.NORMAL;
 
@@ -121,7 +121,7 @@ const PositionClosedModal = ({
 
   const layoutInsideBorder = 'mx-5 my-4 flex justify-between';
 
-  const displayedTime = timestampToString(cfdRef.current?.createTimestamp ?? 0);
+  const displayedTime = timestampToString(openCfdDetails?.createTimestamp ?? 0);
 
   const toDisplayCloseOrder = (
     cfd: IDisplayAcceptedCFDOrder,
@@ -281,7 +281,7 @@ const PositionClosedModal = ({
     const newDeadline = gQuotationRef.current.deadline;
     setSecondsLeft(Math.round(newDeadline - getTimestamp()));
 
-    globalCtx.dataPositionClosedModalHandler(toDisplayCloseOrder(cfdRef.current, quotation));
+    globalCtx.dataPositionClosedModalHandler(toDisplayCloseOrder(openCfdDetails, quotation));
 
     await wait(DELAYED_HIDDEN_SECONDS / 5);
 
@@ -296,17 +296,17 @@ const PositionClosedModal = ({
   useEffect(() => {
     // TODO: (20230317 - Shirley) from marketCtx
     const quotation: IQuotation = {
-      ticker: cfdRef.current.ticker,
+      ticker: openCfdDetails.ticker,
       price: randomIntFromInterval(2, 500),
-      targetAsset: cfdRef.current.targetAsset,
-      uniAsset: cfdRef.current.uniAsset,
+      targetAsset: openCfdDetails.targetAsset,
+      uniAsset: openCfdDetails.uniAsset,
       deadline: getTimestamp() + RENEW_QUOTATION_INTERVAL_SECONDS,
       signature: '0x',
     };
 
     // TODO: (20230317 - Shirley) PnL, close price
     // setDeadline(quotation.deadline);
-    setCfd(toDisplayCloseOrder(cfdRef.current, quotation));
+    // setCfd(toDisplayCloseOrder(openCfdDetails, quotation));
     setGQuotation(quotation);
   }, [globalCtx.visiblePositionClosedModal]);
 
@@ -331,15 +331,15 @@ const PositionClosedModal = ({
       if (secondsLeft === 0) {
         // TODO: (20230317 - Shirley) get quotation from marketCtx
         const quotation: IQuotation = {
-          ticker: cfdRef.current.ticker,
+          ticker: openCfdDetails.ticker,
           price: randomIntFromInterval(10, 1000),
-          targetAsset: cfdRef.current.targetAsset,
-          uniAsset: cfdRef.current.uniAsset,
+          targetAsset: openCfdDetails.targetAsset,
+          uniAsset: openCfdDetails.uniAsset,
           deadline: getTimestamp() + RENEW_QUOTATION_INTERVAL_SECONDS,
           signature: '0x',
         };
 
-        setCfd(toDisplayCloseOrder(cfdRef.current, quotation));
+        // setCfd(toDisplayCloseOrder(openCfdDetails, quotation));
 
         setGQuotation(quotation);
         renewDataStyleHandler(quotation);
@@ -360,7 +360,7 @@ const PositionClosedModal = ({
           height={30}
           alt="ticker icon"
         />
-        <div className="text-2xl">{cfdRef.current.ticker}</div>
+        <div className="text-2xl">{openCfdDetails.ticker}</div>
       </div>
 
       <div className="absolute top-105px right-6 flex items-center space-x-1 text-center">
@@ -381,23 +381,24 @@ const PositionClosedModal = ({
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">Open Price</div>
               <div className="">
-                {cfdRef.current?.openPrice?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0}{' '}
-                {cfdRef.current.margin.asset}
+                {openCfdDetails?.openPrice?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0}{' '}
+                {openCfdDetails.margin.asset}
               </div>
             </div>
 
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">Amount</div>
               <div className="">
-                {cfdRef.current?.amount?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0}{' '}
-                {cfdRef.current.ticker}
+                {openCfdDetails?.amount?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0}{' '}
+                {openCfdDetails.ticker}
               </div>
             </div>
 
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">Closed Price</div>
               <div className={`${dataRenewedStyle}`}>
-                $ {cfdRef.current?.closePrice?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0}{' '}
+                ${' '}
+                {gQuotationRef.current?.price?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0}{' '}
                 USDT
               </div>
             </div>
@@ -406,7 +407,7 @@ const PositionClosedModal = ({
               <div className="text-lightGray">PNL</div>
               <div className={`${pnlRenewedStyle} ${displayedPnLColor}`}>
                 {displayedPnLSymbol} ${' '}
-                {cfdRef.current.pnl.value.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)} USDT
+                {openCfdDetails.pnl.value.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)} USDT
               </div>
             </div>
 

@@ -32,7 +32,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
               low: number;
               close: number;
               volume: number;
-            }) => ({x: new Date(d.time), y: [d.open, d.high, d.low, d.close]})
+            }) => ({x: new Date(d.time), open: d.open, high: d.high, low: d.low, close: d.close})
           );
           res.status(200).json(data);
         } else res.status(500).json({error: 'Internal Server Error'});

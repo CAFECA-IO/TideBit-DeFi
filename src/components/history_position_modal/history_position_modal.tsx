@@ -1,6 +1,5 @@
 import Image from 'next/image';
 import {ImCross} from 'react-icons/im';
-import {IOpenCFDDetails} from '../../interfaces/tidebit_defi_background/open_cfd_details';
 import {
   TypeOfBorderColor,
   TypeOfPnLColor,
@@ -13,29 +12,26 @@ import {AiOutlineQuestionCircle} from 'react-icons/ai';
 import RippleButton from '../ripple_button/ripple_button';
 import {useGlobal} from '../../contexts/global_context';
 import {timestampToString} from '../../lib/common';
-import {IClosedCFDDetails} from '../../interfaces/tidebit_defi_background/closed_cfd_details';
 import {MarketContext} from '../../contexts/market_context';
 import {CFDClosedType} from '../../constants/cfd_closed_type';
 import {OrderState} from '../../constants/order_state';
+import {IDisplayAcceptedCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
 
 interface IHistoryPositionModal {
   modalVisible: boolean;
   modalClickHandler: () => void;
-  closedCfdDetails: IClosedCFDDetails;
+  closedCfdDetails: IDisplayAcceptedCFDOrder;
 }
 
 const HistoryPositionModal = ({
-  // openCfdDetails,
   modalVisible,
   modalClickHandler,
   closedCfdDetails: closedCfdDetails,
   ...otherProps
 }: IHistoryPositionModal) => {
-  // console.log('openCfdDetails in details modal: ', openCfdDetails.id);
-  // const globalCtx = useGlobal();
   const marketCtx = useContext(MarketContext);
 
-  // TODO: i18n
+  // TODO: (20230317 - Shirley) i18n
   const displayedClosedReason =
     closedCfdDetails.closedType === CFDClosedType.SCHEDULE
       ? 'Scheduled'
@@ -58,7 +54,7 @@ const HistoryPositionModal = ({
   const displayedPnLSymbol =
     closedCfdDetails.pnl.type === 'PROFIT' ? '+' : closedCfdDetails.pnl.type === 'LOSS' ? '-' : '';
 
-  // TODO: i18n
+  // TODO: (20230317 - Shirley) i18n
   const displayedTypeOfPosition =
     closedCfdDetails?.typeOfPosition === 'BUY' ? 'Up (Buy)' : 'Down (Sell)';
 
@@ -80,8 +76,8 @@ const HistoryPositionModal = ({
 
   const socialMediaStyle = 'hover:cursor-pointer hover:opacity-80';
 
-  const openTime = timestampToString(closedCfdDetails?.openTimestamp ?? 0);
-  const closedTime = timestampToString(closedCfdDetails?.closedTimestamp ?? 0);
+  const openTime = timestampToString(closedCfdDetails.createTimestamp ?? 0);
+  const closedTime = timestampToString(closedCfdDetails?.closeTimestamp ?? 0);
 
   const formContent = (
     <div className="relative flex-auto pt-0">
@@ -89,11 +85,9 @@ const HistoryPositionModal = ({
         className={`${displayedBorderColor} mx-7 mt-3 border-1px text-base leading-relaxed text-lightWhite`}
       >
         <div className="flex-col justify-center text-center text-xs">
-          {/* {displayedDataFormat()} */}
-
           <div className={`${layoutInsideBorder}`}>
             <div className="text-lightGray">Type</div>
-            {/* TODO: i18n */}
+            {/* TODO: (20230317 - Shirley) i18n */}
             <div className={`${displayedPositionColor}`}>{displayedTypeOfPosition}</div>
           </div>
 
@@ -122,10 +116,7 @@ const HistoryPositionModal = ({
           <div className={`${layoutInsideBorder}`}>
             <div className="text-lightGray">Closed Value</div>
             <div className="">
-              ${' '}
-              {(closedCfdDetails?.openValue + closedCfdDetails.pnl.value)?.toLocaleString(
-                UNIVERSAL_NUMBER_FORMAT_LOCALE
-              ) ?? 0}
+              $ {closedCfdDetails?.closeValue?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0}
             </div>
           </div>
 
@@ -175,13 +166,6 @@ const HistoryPositionModal = ({
             <div className="text-lightGray">Guaranteed Stop</div>
             <div className={``}>{displayedGuaranteedStopSetting}</div>
           </div>
-
-          {/* <div className={`${layoutInsideBorder}`}>
-            <div className="text-lightGray">Liquidation Price</div>
-            <div className="">
-              $ {openCfdDetails?.liquidationPrice?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}
-            </div>
-          </div> */}
 
           <div className={`${layoutInsideBorder}`}>
             <div className="text-lightGray">State</div>
@@ -240,15 +224,6 @@ const HistoryPositionModal = ({
                   />
                   <h3 className="">{closedCfdDetails.ticker} </h3>
                 </div>
-
-                {/* <div className="flex-col space-y-2 text-end text-xs text-lightGray">
-                  <p className="">
-                    {closedTime.date}
-                  </p>
-                  <p className="">
-                    {closedTime.time}
-                  </p>
-                </div> */}
               </div>
 
               <button className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">

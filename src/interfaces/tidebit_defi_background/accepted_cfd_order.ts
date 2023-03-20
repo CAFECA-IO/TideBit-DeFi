@@ -24,7 +24,7 @@ export interface IAcceptedCFDOrder extends IAcceptedOrder {
   guaranteedStopFee?: number;
   liquidationPrice: number;
   liquidationTime: number;
-  closePrice: number;
+  closePrice?: number;
   closeTimestamp?: number;
   closedType?: ICFDClosedType;
   forcedClose?: boolean;

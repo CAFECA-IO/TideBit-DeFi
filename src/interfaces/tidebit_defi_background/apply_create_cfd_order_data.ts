@@ -1,3 +1,4 @@
+import {RENEW_QUOTATION_INTERVAL_SECONDS} from '../../constants/config';
 import {ITypeOfPosition, TypeOfPosition} from '../../constants/type_of_position';
 import {getTimestamp} from '../../lib/common';
 import {IMargin} from './margin';
@@ -56,3 +57,5 @@ export const getDummyApplyCreateCFDOrderData = (currency: string) => {
   };
   return dummyApplyCreateCFDOrderData;
 };
+
+const sth = getDummyApplyCreateCFDOrderData('BTC').amount;

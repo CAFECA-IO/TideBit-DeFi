@@ -1,8 +1,15 @@
-import {createContext, useState, useEffect, useContext, Dispatch, SetStateAction} from 'react';
+import React, {
+  createContext,
+  useState,
+  useEffect,
+  useContext,
+  Dispatch,
+  SetStateAction,
+} from 'react';
 import useWindowSize from '../lib/hooks/use_window_size';
-import {LAYOUT_BREAKPOINT} from '../constants/display';
+import {DELAYED_HIDDEN_SECONDS, LAYOUT_BREAKPOINT} from '../constants/display';
 import {ToastContainer, toast as toastify} from 'react-toastify';
-import UpdatedFormModal from '../components/update_form_modal/update_form_modal';
+import UpdateFormModal from '../components/update_form_modal/update_form_modal';
 import {MarketContext} from './market_context';
 import Toast from '../components/toast/toast';
 import LoadingModal from '../components/loading_modal/loading_modal';
@@ -11,10 +18,6 @@ import CanceledModal from '../components/canceled_modal/canceled_modal';
 import SuccessfulModal from '../components/successful_modal/successful_modal';
 import DepositModal from '../components/deposit_modal/deposit_modal';
 import WithdrawalModal from '../components/withdrawal_modal/withdrawal_modal';
-import {
-  IOpenCFDDetails,
-  dummyOpenCFDDetails,
-} from '../interfaces/tidebit_defi_background/open_cfd_details';
 import WalletPanel from '../components/wallet_panel/wallet_panel';
 import QrcodeModal from '../components/qrcode_modal/qrcode_modal';
 import HelloModal from '../components/hello_modal/hello_modal';
@@ -23,10 +26,6 @@ import {UserContext} from './user_context';
 import PositionOpenModal from '../components/position_open_modal/position_open_modal';
 import PositionClosedModal from '../components/position_closed_modal/position_closed_modal';
 import PositionUpdatedModal from '../components/position_updated_modal/position_updated_modal';
-import {
-  IClosedCFDDetails,
-  dummyCloseCFDDetails,
-} from '../interfaces/tidebit_defi_background/closed_cfd_details';
 import HistoryPositionModal from '../components/history_position_modal/history_position_modal';
 import {
   IPublicCFDOrder,
@@ -37,42 +36,29 @@ import {ProfitState} from '../constants/profit_state';
 import {OrderType} from '../constants/order_type';
 import {OrderStatusUnion} from '../constants/order_status_union';
 import {TypeOfPosition} from '../constants/type_of_position';
-import {
-  getDummyApplyCreateCFDOrderData,
-  IApplyCreateCFDOrderData,
-} from '../interfaces/tidebit_defi_background/apply_create_cfd_order_data';
-import {
-  getDummyApplyCloseCFDOrderData,
-  IApplyCloseCFDOrderData,
-} from '../interfaces/tidebit_defi_background/apply_close_cfd_order_data';
-import {
-  getDummyApplyUpdateCFDOrderData,
-  IApplyUpdateCFDOrderData,
-} from '../interfaces/tidebit_defi_background/apply_update_cfd_order_data';
-import {
-  getDummyDisplayAcceptedCFDOrder,
-  IDisplayAcceptedCFDOrder,
-} from '../interfaces/tidebit_defi_background/display_accepted_cfd_order';
 import {ICryptocurrency} from '../interfaces/tidebit_defi_background/cryptocurrency';
-import {getTimestamp} from '../lib/common';
+import {getTimestamp, locker, wait} from '../lib/common';
+import {
+  IDisplayAcceptedCFDOrder,
+  getDummyDisplayAcceptedCFDOrder,
+} from '../interfaces/tidebit_defi_background/display_accepted_cfd_order';
+import {
+  IDisplayApplyCFDOrder,
+  getDummyDisplayApplyCreateCFDOrder,
+} from '../interfaces/tidebit_defi_background/display_apply_cfd_order';
+import {
+  IApplyCreateCFDOrderData,
+  getDummyApplyCreateCFDOrderData,
+} from '../interfaces/tidebit_defi_background/apply_create_cfd_order_data';
+import {OrderState} from '../constants/order_state';
+import {IApplyUpdateCFDOrderData} from '../interfaces/tidebit_defi_background/apply_update_cfd_order_data';
+import useStateRef from 'react-usestateref';
 
 export interface IToastify {
   type: 'error' | 'warning' | 'info' | 'success';
   message: string;
   toastId?: string | number; // Prevent duplicate toast
 }
-
-// export interface IDataPositionDetailsModal {
-//   openCfdDetails: IOpenCFDDetails;
-// }
-
-// export interface IDataHistoryPositionModal {
-//   closedCfdDetails: IClosedCFDDetails;
-// }
-
-// export interface ITransferProcessModal {
-//   transferType: 'deposit' | 'withdraw';
-// }
 
 export interface IUpdatedCFDInputProps {
   takeProfit?: number;
@@ -81,60 +67,45 @@ export interface IUpdatedCFDInputProps {
 }
 
 export interface IDataPositionUpdatedModal {
-  openCfdDetails: IOpenCFDDetails;
-  updatedProps?: IUpdatedCFDInputProps;
-  // openCfdDetails: IDisplayAcceptedCFDOrder;
-  // updatedProps?: IApplyUpdateCFDOrderData;
+  openCfdDetails: IDisplayAcceptedCFDOrder;
+  updatedProps: IApplyUpdateCFDOrderData;
 }
 
 export interface IClosedCFDInfoProps {
   renewalDeadline: number;
   latestClosedPrice: number;
-  // latestPnL: IPnL;
 }
 
 export interface IDataPositionClosedModal {
-  openCfdDetails: IOpenCFDDetails;
-  latestProps: IClosedCFDInfoProps;
-  // openCfdDetails: IDisplayAcceptedCFDOrder;
-  // latestProps: IApplyCloseCFDOrderData;
-  // renewalDeadline: number;
+  openCfdDetails: IDisplayAcceptedCFDOrder;
 }
 
 export interface IDataPositionOpenModal {
   openCfdRequest: IApplyCreateCFDOrderData;
-  renewalDeadline: number;
 }
 
 export const dummyDataPositionOpenModal: IDataPositionOpenModal = {
   openCfdRequest: getDummyApplyCreateCFDOrderData('ETH'),
-  renewalDeadline: new Date('2023-02-24T17:00:00').getTime(),
 };
 
+const acceptedCFDOrders: IDisplayAcceptedCFDOrder[] = Array.from({length: 10}, () => {
+  return getDummyDisplayAcceptedCFDOrder('ETH');
+});
+
+const dummyOpenCFD = acceptedCFDOrders.filter(order => order.state === OrderState.OPENING)[0];
+
 export const dummyDataPositionClosedModal: IDataPositionClosedModal = {
-  openCfdDetails: dummyOpenCFDDetails,
-  latestProps: {
-    renewalDeadline: new Date('2023-02-24T17:00:00').getTime(),
-    latestClosedPrice: 45,
-    // latestPnL: {
-    //   value: 99,
-    //   type: ProfitState.PROFIT,
-    // },
-  },
-  // openCfdDetails: getDummyDisplayAcceptedCFDOrder('ETH'),
-  // renewalDeadline: new Date('2023-02-24T17:00:00').getTime(),
-  // latestProps: getDummyApplyCloseCFDOrderData('ETH'),
+  openCfdDetails: acceptedCFDOrders[0],
 };
 
 export const dummyDataPositionUpdatedModal: IDataPositionUpdatedModal = {
-  openCfdDetails: dummyOpenCFDDetails,
+  openCfdDetails: acceptedCFDOrders[0],
   updatedProps: {
+    orderId: 'DUMMY_DATA_GLOBAL_CTX_20230314_1',
     takeProfit: 0,
     stopLoss: 0,
-    guaranteedStopLoss: false,
+    guaranteedStop: false,
   },
-  // openCfdDetails: getDummyDisplayAcceptedCFDOrder('ETH'),
-  // updatedProps: getDummyApplyUpdateCFDOrderData('ETH'),
 };
 
 export interface ISuccessfulModal {
@@ -159,7 +130,7 @@ export interface IFailedModal {
   failedMsg: string;
 }
 
-// TODO: to be continued
+// TODO:(20230317 - Shirley) to be continued
 export interface IRecordSharingModal {
   orderIdRecordSharing: number;
 }
@@ -168,7 +139,7 @@ export const dummyRecordSharingModal: IRecordSharingModal = {
   orderIdRecordSharing: 0,
 };
 
-// TODO: to be continued
+// TODO:(20230317 - Shirley) to be continued
 export interface IWarningModal {
   title: string;
   content: string;
@@ -185,7 +156,7 @@ export const dummyWarningModal: IWarningModal = {
   styleOfButton: 'style1',
 };
 
-// TODO: to be continued
+// TODO:(20230317 - Shirley) to be continued
 export interface IAnnouncementModal {
   title: string;
   content: string;
@@ -204,7 +175,7 @@ export const dummyAnnouncementModal: IAnnouncementModal = {
   messageType: 'announcement',
 };
 
-// TODO: to be continued
+// TODO:(20230317 - Shirley) to be continued
 export interface IAchievementSharingModal {
   userId: string;
   period: string;
@@ -215,7 +186,7 @@ export const dummyAchievementSharingModal: IAchievementSharingModal = {
   period: '002',
 };
 
-// TODO: to be continued
+// TODO:(20230317 - Shirley) to be continued
 export interface IBadgeModal {
   badgeId: string;
 }
@@ -224,7 +195,7 @@ export const dummyBadgeModal: IBadgeModal = {
   badgeId: 'TBDFUTURES2023FEB05',
 };
 
-// TODO: to be continued
+// TODO:(20230317 - Shirley) to be continued
 export interface IBadgeSharingModal {
   badgeId: string;
 }
@@ -233,23 +204,14 @@ export const dummyBadgeSharingModal: IBadgeSharingModal = {
   badgeId: 'TBDFUTURES2023FEB05',
 };
 
-// export interface ISignatrueProcessModal {
-//   requestSendingHandler: () => void;
-//   firstStepSuccess: boolean;
-//   firstStepError: boolean;
-//   secondStepSuccess: boolean;
-//   secondStepError: boolean;
-//   loading: boolean;
-// }
-
 const toastHandler = ({type, message, toastId}: IToastify) => {
+  // Till: (20230330 - Shirley)
   // return {
   //   [TOAST_CLASSES_TYPE.error]: toastify.error(message),
   //   [TOAST_CLASSES_TYPE.warning]: toastify.warning(message),
   //   [TOAST_CLASSES_TYPE.info]: toastify.info(message),
   // }[type];
 
-  // const present = Date.now(); // Make sure toastId is unique (no worries about the same content of toast) but produce duplicate toast
   switch (type) {
     case 'error':
       toastify.error(message, {toastId: type + message + toastId});
@@ -286,13 +248,10 @@ export interface IGlobalContext {
 
   eliminateAllModals: () => void;
 
-  visiblePositionDetailsModal: boolean;
-  visiblePositionDetailsModalHandler: () => void;
-  dataPositionDetailsModal: IOpenCFDDetails | null;
-  dataPositionDetailsModalHandler: (data: IOpenCFDDetails) => void;
-
-  // dataPositionDetailsModal: IDisplayAcceptedCFDOrder | null;
-  // dataPositionDetailsModalHandler: (data: IDisplayAcceptedCFDOrder) => void;
+  visibleUpdateFormModal: boolean;
+  visibleUpdateFormModalHandler: () => void;
+  dataUpdateFormModal: IDisplayAcceptedCFDOrder | null;
+  dataUpdateFormModalHandler: (data: IDisplayAcceptedCFDOrder) => void;
 
   visibleDepositModal: boolean;
   visibleDepositModalHandler: () => void;
@@ -332,13 +291,14 @@ export interface IGlobalContext {
 
   visibleHistoryPositionModal: boolean;
   visibleHistoryPositionModalHandler: () => void;
-  dataHistoryPositionModal: IClosedCFDDetails | null;
-  dataHistoryPositionModalHandler: (data: IClosedCFDDetails) => void;
+  dataHistoryPositionModal: IDisplayAcceptedCFDOrder | null;
+  dataHistoryPositionModalHandler: (data: IDisplayAcceptedCFDOrder) => void;
 
   visiblePositionClosedModal: boolean;
+  // TODO: (20230317 - Shirley) countdown // visiblePositionClosedModalRef: React.MutableRefObject<boolean>;
   visiblePositionClosedModalHandler: () => void;
-  dataPositionClosedModal: IDataPositionClosedModal | null;
-  dataPositionClosedModalHandler: (data: IDataPositionClosedModal) => void;
+  dataPositionClosedModal: IDisplayAcceptedCFDOrder | null;
+  dataPositionClosedModalHandler: (data: IDisplayAcceptedCFDOrder) => void;
 
   visiblePositionOpenModal: boolean;
   visiblePositionOpenModalHandler: () => void;
@@ -380,8 +340,6 @@ export interface IGlobalContext {
 
   visiblePersonalAchievementModal: boolean;
   visiblePersonalAchievementModalHandler: () => void;
-  // dataPersonalAchievementModal: IPersonalAchievementModal | null;
-  // dataPersonalAchievementModalHandler: (data: IPersonalAchievementModal) => void;
 
   visibleAchievementSharingModal: boolean;
   visibleAchievementSharingModalHandler: () => void;
@@ -410,10 +368,10 @@ export const GlobalContext = createContext<IGlobalContext>({
 
   eliminateAllModals: () => null,
 
-  visiblePositionDetailsModal: false,
-  visiblePositionDetailsModalHandler: () => null,
-  dataPositionDetailsModal: null,
-  dataPositionDetailsModalHandler: () => null,
+  visibleUpdateFormModal: false,
+  visibleUpdateFormModalHandler: () => null,
+  dataUpdateFormModal: null,
+  dataUpdateFormModalHandler: () => null,
 
   visibleDepositModal: false,
   visibleDepositModalHandler: () => null,
@@ -457,6 +415,7 @@ export const GlobalContext = createContext<IGlobalContext>({
   dataHistoryPositionModalHandler: () => null,
 
   visiblePositionClosedModal: false,
+  // TODO: (20230317 - Shirley) countdown // visiblePositionClosedModalRef: React.createRef<boolean>(),
   visiblePositionClosedModalHandler: () => null,
   dataPositionClosedModal: null,
   dataPositionClosedModalHandler: () => null,
@@ -522,14 +481,14 @@ const initialColorMode: ColorModeUnion = 'dark';
 
 export const GlobalProvider = ({children}: IGlobalProvider) => {
   const userCtx = useContext(UserContext);
+  const marketCtx = useContext(MarketContext);
+
   const [colorMode, setColorMode] = useState<ColorModeUnion>(initialColorMode);
 
-  const [visiblePositionDetailsModal, setVisiblePositionDetailsModal] = useState(false);
-  // TODO: replace dummy data with standard example data
-  // const [dataPositionDetailsModal, setDataPositionDetailsModal] =
-  //   useState<IDisplayAcceptedCFDOrder>(getDummyDisplayAcceptedCFDOrder('ETH'));
-  const [dataPositionDetailsModal, setDataPositionDetailsModal] =
-    useState<IOpenCFDDetails>(dummyOpenCFDDetails);
+  const [visibleUpdateFormModal, setVisibleUpdateFormModal] = useState(false);
+  // TODO: (20230316 - Shirley) replace dummy data with standard example data
+  const [dataUpdateFormModal, setDataUpdateFormModal] =
+    useState<IDisplayAcceptedCFDOrder>(dummyOpenCFD);
 
   const [visibleWithdrawalModal, setVisibleWithdrawalModal] = useState(false);
 
@@ -544,7 +503,6 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
   const [visibleFailedModal, setVisibleFailedModal] = useState(false);
   const [dataFailedModal, setDataFailedModal] = useState<IFailedModal>({
     modalTitle: '',
-    // modalContent: '',
     failedTitle: 'Failed',
     failedMsg:
       'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et',
@@ -571,21 +529,25 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
 
   const [visibleHistoryPositionModal, setVisibleHistoryPositionModal] = useState(false);
   const [dataHistoryPositionModal, setDataHistoryPositionModal] =
-    useState<IClosedCFDDetails>(dummyCloseCFDDetails);
+    useState<IDisplayAcceptedCFDOrder>(getDummyDisplayAcceptedCFDOrder('BTC'));
 
-  const [visiblePositionClosedModal, setVisiblePositionClosedModal] = useState(false);
-  const [dataPositionClosedModal, setDataPositionClosedModal] = useState<IDataPositionClosedModal>(
-    dummyDataPositionClosedModal
-  );
+  const [visiblePositionClosedModal, setVisiblePositionClosedModal, visiblePositionClosedModalRef] =
+    useStateRef<boolean>(false);
+  const [dataPositionClosedModal, setDataPositionClosedModal] =
+    useState<IDisplayAcceptedCFDOrder>(dummyOpenCFD);
 
   const [visiblePositionOpenModal, setVisiblePositionOpenModal] = useState(false);
+  // const [dataPositionOpenModal, setDataPositionOpenModal] = useState<IDisplayApplyCFDOrder>(
+  //   getDummyDisplayApplyCreateCFDOrder(marketCtx.selectedTickerRef.current!.currency)
+  // ); // TODO:(20230317 - Shirley) Open position parameter
   const [dataPositionOpenModal, setDataPositionOpenModal] = useState<IDataPositionOpenModal>(
     dummyDataPositionOpenModal
-  ); // TODO: Open position parameter
+    // getDummyDisplayApplyCreateCFDOrder('ETH')
+  ); // TODO:(20230317 - Shirley) Open position parameter
 
   const [visiblePositionUpdatedModal, setVisiblePositionUpdatedModal] = useState(false);
   const [dataPositionUpdatedModal, setDataPositionUpdatedModal] =
-    useState<IDataPositionUpdatedModal>(dummyDataPositionUpdatedModal); // TODO: Update position parameter
+    useState<IDataPositionUpdatedModal>(dummyDataPositionUpdatedModal);
 
   const [visibleMyAccountModal, setVisibleMyAccountModal] = useState(false);
 
@@ -621,7 +583,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
   const [dataBadgeSharingModal, setDataBadgeSharingModal] =
     useState<IBadgeSharingModal>(dummyBadgeSharingModal);
 
-  // ---------------TODO: To get the withdrawal / deposit result------------------
+  // TODO: (20230316 - Shirley) To get the withdrawal / deposit result
   const [depositProcess, setDepositProcess] = useState<
     'form' | 'loading' | 'success' | 'cancellation' | 'fail'
   >('form');
@@ -631,7 +593,6 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
 
   const [withdrawData, setWithdrawData] = useState<{asset: string; amount: number}>();
   const [depositData, setDepositData] = useState<{asset: string; amount: number}>();
-  // ---------------TODO: To get the withdrawal / deposit result------------------
 
   const windowSize = useWindowSize();
   const {width, height} = windowSize;
@@ -642,17 +603,11 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     setColorMode(colorMode === 'light' ? 'dark' : 'light');
   };
 
-  // const [mounted, setMounted] = useState(false);
-  // useEffect(() => {
-  //   setMounted(true);
-  // }, []);
-
   const toast = ({type, message, toastId}: IToastify) => {
     toastHandler({type: type, message: message, toastId: toastId});
   };
 
   const eliminateAllModals = () => {
-    // console.log('eliminateAllModals');
     setVisibleDepositModal(false);
     setVisibleWithdrawalModal(false);
 
@@ -665,18 +620,17 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     setVisibleHelloModal(false);
     setVisibleSignatureProcessModal(false);
 
-    setVisiblePositionDetailsModal(false);
+    setVisibleUpdateFormModal(false);
     setVisibleHistoryPositionModal(false);
 
     setVisiblePositionClosedModal(false);
   };
 
-  const visiblePositionDetailsModalHandler = () => {
-    setVisiblePositionDetailsModal(!visiblePositionDetailsModal);
+  const visibleUpdateFormModalHandler = () => {
+    setVisibleUpdateFormModal(!visibleUpdateFormModal);
   };
-  const dataPositionDetailsModalHandler = (data: IOpenCFDDetails) => {
-    //(data: IDisplayAcceptedCFDOrder) => {
-    setDataPositionDetailsModal(data);
+  const dataUpdateFormModalHandler = (data: IDisplayAcceptedCFDOrder) => {
+    setDataUpdateFormModal(data);
   };
 
   const visibleDepositModalHandler = () => {
@@ -701,6 +655,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
   };
 
   const visibleLoadingModalHandler = () => {
+    // TODO: (20230317 - Shirley) loading toast
     // if (bool) {
     //   console.log('in global context, visibileLoadingModalHandler: ', bool);
     //   setVisibleLoadingModal(bool);
@@ -754,7 +709,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     setVisibleHistoryPositionModal(!visibleHistoryPositionModal);
   };
 
-  const dataHistoryPositionModalHandler = (data: IClosedCFDDetails) => {
+  const dataHistoryPositionModalHandler = (data: IDisplayAcceptedCFDOrder) => {
     setDataHistoryPositionModal(data);
   };
 
@@ -762,7 +717,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     setVisiblePositionClosedModal(!visiblePositionClosedModal);
   };
 
-  const dataPositionClosedModalHandler = (data: IDataPositionClosedModal) => {
+  const dataPositionClosedModalHandler = (data: IDisplayAcceptedCFDOrder) => {
     setDataPositionClosedModal(data);
   };
 
@@ -770,7 +725,6 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     setVisiblePositionOpenModal(!visiblePositionOpenModal);
   };
 
-  // TODO: Open position parameter
   const dataPositionOpenModalHandler = (data: IDataPositionOpenModal) => {
     setDataPositionOpenModal(data);
   };
@@ -855,7 +809,6 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     setDataBadgeSharingModal(data);
   };
 
-  // ------------------------------------------ //
   const getWithdrawSubmissionState = (state: 'success' | 'cancellation' | 'fail') => {
     setWithdrawProcess(state);
   };
@@ -873,7 +826,8 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
   };
 
   const depositSubmitHandler = (props: {asset: ICryptocurrency; amount: number}) => {
-    setDepositProcess('loading');
+    // setDepositProcess('loading');
+    // TODO: (20230316 - Shirley) withdraw / deposit process (loading / success / fail)
     userCtx
       .deposit({
         orderType: OrderType.DEPOSIT,
@@ -888,31 +842,24 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
       .then(_ => setDepositProcess('success'));
   };
 
-  const withdrawSubmitHandler = (props: {asset: ICryptocurrency; amount: number}) => {
-    setWithdrawProcess('loading');
-    userCtx
-      .withdraw({
-        orderType: OrderType.WITHDRAW,
-        createTimestamp: getTimestamp(),
-        targetAsset: props.asset.symbol,
-        to: props.asset.contract,
-        targetAmount: props.amount,
-        remark: '',
-        fee: 0,
-      })
-      .then(_ => setDepositProcess('success'));
-    // setTimeout(() => {
-    //   setWithdrawProcess('success');
-
-    //   setTimeout(() => {
-    //     setWithdrawProcess('cancellation');
-
-    //     setTimeout(() => {
-    //       setWithdrawProcess('fail');
-    //     }, 5000);
-    //   }, 5000);
-    // }, 3000);
+  const withdrawSubmitHandler = async (props: {asset: ICryptocurrency; amount: number}) => {
+    /*
+    // INFO: Set the process in modal component. `eliminateAllModals` won't work here (20230317 - Shirley)
+    // setWithdrawProcess('loading');
+    // userCtx
+    // .withdraw({
+    //   orderType: OrderType.WITHDRAW,
+    //   createTimestamp: getTimestamp(),
+    //   targetAsset: props.asset.symbol,
+    //   to: props.asset.contract,
+    //   targetAmount: props.amount,
+    //   remark: '',
+    //   fee: 0,
+    // })
+    // .then(_ => setDepositProcess('success'));
+    */
   };
+
   // ------------------------------------------ //
 
   const defaultValue = {
@@ -926,10 +873,10 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
 
     eliminateAllModals,
 
-    visiblePositionDetailsModal,
-    visiblePositionDetailsModalHandler,
-    dataPositionDetailsModal,
-    dataPositionDetailsModalHandler,
+    visibleUpdateFormModal,
+    visibleUpdateFormModalHandler,
+    dataUpdateFormModal,
+    dataUpdateFormModalHandler,
 
     visibleDepositModal,
     visibleDepositModalHandler,
@@ -973,6 +920,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     dataHistoryPositionModalHandler,
 
     visiblePositionClosedModal,
+    visiblePositionClosedModalRef,
     visiblePositionClosedModalHandler,
     dataPositionClosedModal,
     dataPositionClosedModalHandler,
@@ -1101,10 +1049,10 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
         helloClickHandler={visibleHelloModalHandler}
       />
 
-      <UpdatedFormModal
-        modalVisible={visiblePositionDetailsModal}
-        modalClickHandler={visiblePositionDetailsModalHandler}
-        openCfdDetails={dataPositionDetailsModal}
+      <UpdateFormModal
+        modalVisible={visibleUpdateFormModal}
+        modalClickHandler={visibleUpdateFormModalHandler}
+        openCfdDetails={dataUpdateFormModal}
       />
       <HistoryPositionModal
         modalVisible={visibleHistoryPositionModal}
@@ -1115,14 +1063,11 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
         modalVisible={visiblePositionOpenModal}
         modalClickHandler={visiblePositionOpenModalHandler}
         openCfdRequest={dataPositionOpenModal.openCfdRequest}
-        renewalDeadline={dataPositionOpenModal.renewalDeadline}
       />
       <PositionClosedModal
         modalVisible={visiblePositionClosedModal}
         modalClickHandler={visiblePositionClosedModalHandler}
-        openCfdDetails={dataPositionClosedModal.openCfdDetails}
-        latestProps={dataPositionClosedModal.latestProps}
-        // renewalDeadline={dataPositionClosedModal.renewalDeadline}
+        openCfdDetails={dataPositionClosedModal}
       />
       <PositionUpdatedModal
         modalVisible={visiblePositionUpdatedModal}
@@ -1131,11 +1076,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
         updatedProps={dataPositionUpdatedModal.updatedProps}
       />
 
-      {/* <PositionOpenModal />
-      <PositionClosedModal />
-      <PositionUpdatedModal /> */}
-
-      {/* One toast container avoids duplicate toast overlaying */}
+      {/* Info: One toast container avoids duplicate toast overlaying */}
       <Toast />
       {children}
     </GlobalContext.Provider>
@@ -1144,12 +1085,12 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
 
 export const useGlobal = () => {
   const context = useContext(GlobalContext);
-  // If not in a provider, it still reveals `createContext<IGlobalContext>` data, meaning it'll never be falsy.
+  // Info: If not in a provider, it still reveals `createContext<IGlobalContext>` data, meaning it'll never be falsy.
   // if (context === undefined) {
   //   throw new Error('useGlobal must be used within a GlobalProvider');
   // }
 
-  // TODO: Debug tool [to be removed]
+  // TODO: Debug tool [to be removed](20230317 - Shirley)
   const g: any =
     typeof globalThis === 'object'
       ? globalThis
@@ -1157,7 +1098,7 @@ export const useGlobal = () => {
       ? window
       : typeof global === 'object'
       ? global
-      : null; // Causes an error on the next line
+      : null; // Info: Causes an error on the next line
 
   g.globalContext = context;
 

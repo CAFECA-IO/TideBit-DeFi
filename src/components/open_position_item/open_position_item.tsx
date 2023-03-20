@@ -7,88 +7,88 @@ import {
   UNIVERSAL_NUMBER_FORMAT_LOCALE,
 } from '../../constants/display';
 import PositionLineGraph from '../position_line_graph/position_line_graph';
-import UpdatedFormModal from '../update_form_modal/update_form_modal';
-import {IOpenCFDDetails} from '../../interfaces/tidebit_defi_background/open_cfd_details';
-import {toast} from 'react-toastify';
-import {useGlobal} from '../../contexts/global_context';
+import UpdateFormModal from '../update_form_modal/update_form_modal';
+import {IDataPositionClosedModal, useGlobal} from '../../contexts/global_context';
 import {ProfitState} from '../../constants/profit_state';
 import {TypeOfPosition} from '../../constants/type_of_position';
-import {randomIntFromInterval} from '../../lib/common';
+import {getNowSeconds, randomIntFromInterval} from '../../lib/common';
 import {MarketContext} from '../../contexts/market_context';
 import {UserContext} from '../../contexts/user_context';
-import {POSITION_PRICE_RENEWAL_INTERVAL_SECONDS} from '../../constants/config';
-// import HorizontalRelativeLineGraph from '../horizontal_relative_line_graph/horizontal_relative_line_graph';
+import {RENEW_QUOTATION_INTERVAL_SECONDS} from '../../constants/config';
+import {
+  IDisplayAcceptedCFDOrder,
+  getDummyDisplayAcceptedCFDOrder,
+} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
+import {
+  IDisplayApplyCFDOrder,
+  getDummyDisplayApplyCloseCFDOrder,
+} from '../../interfaces/tidebit_defi_background/display_apply_cfd_order';
+import {CFDOrderType} from '../../constants/cfd_order_type';
 
 interface IOpenPositionItemProps {
-  openCfdDetails: IOpenCFDDetails;
+  openCfdDetails: IDisplayAcceptedCFDOrder;
 }
 
 const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProps) => {
-  // if (longOrShort !== 'long' && longOrShort !== 'short') return <></>;
-  // if (profitOrLoss !== 'profit' && profitOrLoss !== 'loss') return <></>; if (profitOrLoss !== 'profit' && profitOrLoss !== 'loss') return <></>;
-  // if (ticker !== 'ETH' && ticker !== 'BTC') return <></>;
   const marketCtx = useContext(MarketContext);
   const userCtx = useContext(UserContext);
   const {
-    visiblePositionDetailsModalHandler,
-    dataPositionDetailsModalHandler,
+    visibleUpdateFormModalHandler,
+    dataUpdateFormModalHandler,
     visiblePositionClosedModalHandler,
     dataPositionClosedModalHandler,
+    toast,
   } = useGlobal();
 
-  const [detailedModalVisible, setDetailedModalVisible] = useState(false);
+  const toDisplayUpdateOrder = (
+    openCfdDetails: IDisplayAcceptedCFDOrder
+  ): IDisplayAcceptedCFDOrder => {
+    return openCfdDetails;
+  };
 
-  // TODO: 先跟 user context 拿特定 order id 的資料，再呼叫 function 拿到單一筆 CFD 詳細資料 。 global context 設定 cfd id，再顯示 position details modal
-  // dataPositionDetailsModal 拿到的是整個JSON
-  // globalContext.dataPositionDetailsModalHandler(cfd.orderId);
   const openItemClickHandler = () => {
-    dataPositionDetailsModalHandler(openCfdDetails);
-    visiblePositionDetailsModalHandler();
+    dataUpdateFormModalHandler(toDisplayUpdateOrder(openCfdDetails));
+    visibleUpdateFormModalHandler();
+
+    toast({
+      message: `marketPrice: ${
+        openCfdDetails.typeOfPosition === TypeOfPosition.BUY
+          ? marketCtx.tickerLiveStatistics?.sellEstimatedFilledPrice ?? 0
+          : marketCtx.tickerLiveStatistics?.buyEstimatedFilledPrice ?? 999999999
+      }\nsuggestion: ${JSON.stringify(openCfdDetails.suggestion)}`,
+      type: 'info',
+    });
   };
 
   const nowTimestamp = new Date().getTime() / 1000;
-  // const yesterdayTimestamp = new Date().getTime() / 1000 - 3600 * 10 - 5;
-  // const passedHour = ((nowTimestamp - openCfdDetails.openTimestamp) / 3600).toFixed(0);
-  const passedHour = Math.round((nowTimestamp - openCfdDetails.openTimestamp) / 3600);
-  // console.log('passedHour', passedHour);
+  const remainSecs = openCfdDetails.liquidationTime - nowTimestamp;
 
-  // const now = Date.now();
-  // const deadline = now + 15 * 1000;
-  // const options = {hour12: false};
+  const remainTime =
+    remainSecs < 60
+      ? Math.round(remainSecs)
+      : remainSecs < 3600
+      ? Math.round(remainSecs / 60)
+      : Math.round(remainSecs / 3600);
 
-  // const nowString = new Date(now).toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, options);
-  // const deadlineString = new Date(deadline).toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, options);
+  const label =
+    remainSecs < 60
+      ? [`${Math.round(remainSecs)} S`]
+      : remainSecs < 3600
+      ? [`${Math.round(remainSecs / 60)} M`]
+      : [`${Math.round(remainSecs / 3600)} H`];
 
-  // console.log('NOW: ', now, nowString);
-  // console.log('DEADLINE: ', deadline, deadlineString);
+  const denominator = remainSecs < 60 ? 60 : remainSecs < 3600 ? 60 : 24;
+
+  const toDisplayCloseOrder = (cfd: IDisplayAcceptedCFDOrder): IDisplayAcceptedCFDOrder => {
+    const order = {
+      ...cfd,
+    };
+    return order;
+  };
 
   const squareClickHandler = () => {
     visiblePositionClosedModalHandler();
-    dataPositionClosedModalHandler({
-      openCfdDetails: openCfdDetails,
-      latestProps: {
-        renewalDeadline: new Date().getTime() / 1000 + POSITION_PRICE_RENEWAL_INTERVAL_SECONDS,
-        latestClosedPrice:
-          openCfdDetails.typeOfPosition === TypeOfPosition.BUY
-            ? randomIntFromInterval(
-                marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice * 0.75,
-                marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice * 1.25
-              )
-            : openCfdDetails.typeOfPosition === TypeOfPosition.SELL
-            ? randomIntFromInterval(
-                marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice * 1.1,
-                marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice * 1.25
-              )
-            : 99999,
-        // latestPnL: {
-        //   type: randomIntFromInterval(0, 100) <= 2 ? ProfitState.PROFIT : ProfitState.LOSS,
-        //   value: randomIntFromInterval(0, 1000),
-        // },
-      },
-    });
-    // toast.error('test', {toastId: 'errorTest'});
-    // console.log('show the modal displaying transaction detail');
-    // return;
+    dataPositionClosedModalHandler(toDisplayCloseOrder(openCfdDetails));
   };
 
   const displayedString =
@@ -126,6 +126,7 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
               onClick={openItemClickHandler}
             ></div>
 
+            {/* Till: (20230330 - Shirley) */}
             {/* Pause square cover
             <div
               className={`absolute left-14px top-26px z-20 h-6 w-6 hover:cursor-pointer hover:bg-darkGray`}
@@ -140,19 +141,17 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
 
             <div>
               <CircularProgressBar
+                label={label}
                 showLabel={true}
-                numerator={passedHour}
-                denominator={24}
+                numerator={remainTime}
+                denominator={denominator}
                 progressBarColor={[displayedColorHex]}
                 hollowSize="40%"
                 circularBarSize="100"
-                // clickHandler={circularClick}
               />
             </div>
           </div>
 
-          {/* TODO: switch the layout */}
-          {/* {displayedTickerLayout} */}
           <div className="w-70px">
             <div className="text-sm">{openCfdDetails.ticker}</div>
             <div className="text-sm text-lightWhite">
@@ -163,13 +162,16 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
 
           <div className="mt-1 w-70px">
             <div className="text-xs text-lightGray">Value</div>
-            <div className="text-sm">$ {openCfdDetails.openValue}</div>
+            <div className="text-sm">
+              $ {openCfdDetails.openValue.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}
+            </div>
           </div>
 
           <div className="mt-1 w-60px">
             <div className="text-xs text-lightGray">PNL</div>
             <div className={`${displayedTextColor} text-sm`}>
-              <span className="">{displayedSymbol}</span> $ {openCfdDetails.pnl.value}
+              <span className="">{displayedSymbol}</span> ${' '}
+              {openCfdDetails.pnl.value.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}
             </div>
           </div>
         </div>
@@ -179,31 +181,11 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
       <div className="-mt-8 -ml-2 -mb-7">
         <PositionLineGraph
           strokeColor={[`${displayedColorHex}`]}
-          dataArray={openCfdDetails.positionLineGraph.dataArray}
+          dataArray={openCfdDetails.positionLineGraph}
           lineGraphWidth={OPEN_POSITION_LINE_GRAPH_WIDTH}
-          annotatedValue={openCfdDetails.positionLineGraph.dataArray[0]}
+          annotatedValue={openCfdDetails.openPrice}
         />
-
-        {/* <div className="absolute -top-5">
-          <HorizontalRelativeLineGraph
-            strokeColor={[`#A5C4F3`]}
-            dataArray={tickerTrendArray}
-            lineGraphWidth="250"
-            annotatedValue={horizontalValueLine}
-          />
-        </div> */}
       </div>
-
-      {/* Divider */}
-      {/* <div className="absolute top-200px my-auto h-px w-7/8 rounded bg-white/50"></div> */}
-
-      {/* <PositionDetailsModal
-        // id={`TBD20230207001`}
-        // openCfdDetails={dataFormat}
-        openCfdDetails={openCfdDetails}
-        modalVisible={visiblePositionDetailsModal}
-        modalClickHandler={detailedModalClickHandler}
-      /> */}
     </div>
   );
 };

@@ -1,19 +1,20 @@
 import React from 'react';
-import {TypeOfPnLColorHex, TypeOfTransaction} from '../../constants/display';
+import {
+  TypeOfPnLColorHex,
+  TypeOfTransaction,
+  UNIVERSAL_NUMBER_FORMAT_LOCALE,
+} from '../../constants/display';
 import {ProfitState} from '../../constants/profit_state';
 import {timestampToString} from '../../lib/common';
-import {IClosedCFDDetails} from '../../interfaces/tidebit_defi_background/closed_cfd_details';
 import {TypeOfPosition} from '../../constants/type_of_position';
 import {useGlobal} from '../../contexts/global_context';
+import {IDisplayAcceptedCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
 
 interface IHistoryPositionItemProps {
-  closedCfdDetails: IClosedCFDDetails;
+  closedCfdDetails: IDisplayAcceptedCFDOrder;
 }
 
 const HistoryPositionItem = ({closedCfdDetails, ...otherProps}: IHistoryPositionItemProps) => {
-  // if (longOrShort !== 'long' && longOrShort !== 'short') return <></>;
-  // if (profitOrLoss !== 'profit' && profitOrLoss !== 'loss') return <></>;
-  // if (ticker !== 'ETH' && ticker !== 'BTC') return <></>;
   const globalCtx = useGlobal();
 
   const displayedString =
@@ -36,7 +37,7 @@ const HistoryPositionItem = ({closedCfdDetails, ...otherProps}: IHistoryPosition
     globalCtx.visibleHistoryPositionModalHandler();
   };
 
-  const displayedTime = timestampToString(closedCfdDetails.closedTimestamp);
+  const displayedTime = timestampToString(closedCfdDetails?.closeTimestamp ?? 0);
 
   return (
     <>
@@ -61,7 +62,8 @@ const HistoryPositionItem = ({closedCfdDetails, ...otherProps}: IHistoryPosition
           <div className="w-150px">
             <div className="text-lightGray">Open / Close Value</div>
             <div className="">
-              $ {closedCfdDetails.openValue} / $ {closedCfdDetails.closedValue}
+              $ {closedCfdDetails.openValue.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)} / ${' '}
+              {closedCfdDetails?.closeValue?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0}
             </div>
           </div>
 
@@ -73,7 +75,8 @@ const HistoryPositionItem = ({closedCfdDetails, ...otherProps}: IHistoryPosition
           <div className="w-60px text-end">
             <div>PNL</div>
             <div className={`${displayedTextColor}`}>
-              <span className="">{displayedSymbol}</span> $ {closedCfdDetails.pnl.value}
+              <span className="">{displayedSymbol}</span> ${' '}
+              {closedCfdDetails.pnl.value?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}
             </div>
           </div>
         </div>

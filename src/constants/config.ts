@@ -1,6 +1,8 @@
 // `const` which can be changed later
 
-export const POSITION_PRICE_RENEWAL_INTERVAL_SECONDS = 3;
+export const RENEW_QUOTATION_INTERVAL_SECONDS = 3;
+
+export const UNIT_ASSET = 'USDT';
 
 // 10 ** 9 - 0.01
 export const TARGET_LIMIT_DIGITS = 10 ** 9 - 0.01;
@@ -27,3 +29,6 @@ export const SUPPORTED_NETWORKS = [
 ];
 
 export const unitAsset = 'USDT';
+
+export const SUGGEST_TP = 0.2;
+export const SUGGEST_SL = 0.1;

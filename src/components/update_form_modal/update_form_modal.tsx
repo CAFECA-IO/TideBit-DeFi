@@ -1,6 +1,5 @@
 import Image from 'next/image';
 import {ImCross} from 'react-icons/im';
-import {IOpenCFDDetails} from '../../interfaces/tidebit_defi_background/open_cfd_details';
 import {
   TypeOfBorderColor,
   TypeOfPnLColor,
@@ -12,32 +11,41 @@ import {useContext, useEffect, useRef} from 'react';
 import TradingInput from '../trading_input/trading_input';
 import {AiOutlineQuestionCircle} from 'react-icons/ai';
 import RippleButton from '../ripple_button/ripple_button';
-import {useGlobal} from '../../contexts/global_context';
+import {IDataPositionClosedModal, useGlobal} from '../../contexts/global_context';
 import {TypeOfPosition} from '../../constants/type_of_position';
 import {ProfitState} from '../../constants/profit_state';
-import {randomIntFromInterval, roundToDecimalPlaces, timestampToString} from '../../lib/common';
+import {
+  getNowSeconds,
+  randomIntFromInterval,
+  roundToDecimalPlaces,
+  timestampToString,
+} from '../../lib/common';
 import {MarketContext} from '../../contexts/market_context';
 import useState from 'react-usestateref';
 import CircularProgressBar from '../circular_progress_bar/circular_progress_bar';
-import {POSITION_PRICE_RENEWAL_INTERVAL_SECONDS, unitAsset} from '../../constants/config';
+import {RENEW_QUOTATION_INTERVAL_SECONDS, unitAsset} from '../../constants/config';
 import useStateRef from 'react-usestateref';
+import {getDummyDisplayApplyCloseCFDOrder} from '../../interfaces/tidebit_defi_background/display_apply_cfd_order';
+import {
+  IDisplayAcceptedCFDOrder,
+  getDummyDisplayAcceptedCFDOrder,
+} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
+import {OrderState} from '../../constants/order_state';
+import {IApplyUpdateCFDOrderData} from '../../interfaces/tidebit_defi_background/apply_update_cfd_order_data';
 
 interface IUpdatedFormModal {
   modalVisible: boolean;
   modalClickHandler: (bool?: boolean | any) => void;
-  openCfdDetails: IOpenCFDDetails;
-  // id?: string;
+  openCfdDetails: IDisplayAcceptedCFDOrder;
 }
 
-const UpdatedFormModal = ({
-  // openCfdDetails,
+const UpdateFormModal = ({
   modalVisible,
   modalClickHandler,
   openCfdDetails,
-  // id,
   ...otherProps
 }: IUpdatedFormModal) => {
-  // console.log('openCfdDetails in details modal: ', openCfdDetails.id);
+  // console.log('openCfdDetails in details modal: ', openCfdDetails); // Info: (20230314 - Shirley) `openCFDs` data from `display_accepted_cfd_order`
   const globalCtx = useGlobal();
   const marketCtx = useContext(MarketContext);
 
@@ -47,8 +55,9 @@ const UpdatedFormModal = ({
   const cfdTp = openCfdDetails?.takeProfit;
   const cfdSl = openCfdDetails?.stopLoss;
 
-  const initialTpInput = cfdTp ?? openCfdDetails.recommendedTp;
-  const initialSlInput = cfdSl ?? openCfdDetails.recommendedSl;
+  const initialTpInput = cfdTp ?? openCfdDetails.suggestion.takeProfit;
+
+  const initialSlInput = cfdSl ?? openCfdDetails.suggestion.takeProfit;
 
   const initialGuaranteedChecked = openCfdDetails.guaranteedStop;
 
@@ -70,9 +79,16 @@ const UpdatedFormModal = ({
   const [expectedProfitValue, setExpectedProfitValue, expectedProfitValueRef] = useStateRef(0);
   const [expectedLossValue, setExpectedLossValue, expectedLossValueRef] = useStateRef(0);
 
-  const getToggledTpSetting = (bool: boolean) => {
-    // setSubmitDisabled(true);
+  const displayedState =
+    openCfdDetails.state === OrderState.OPENING
+      ? 'Open'
+      : openCfdDetails.state === OrderState.CLOSED
+      ? 'Close'
+      : openCfdDetails.state === OrderState.FREEZED
+      ? 'Freezed'
+      : '';
 
+  const getToggledTpSetting = (bool: boolean) => {
     setTpToggle(bool);
 
     const profit =
@@ -87,20 +103,11 @@ const UpdatedFormModal = ({
           );
 
     setExpectedProfitValue(profit);
-
-    // if (bool !== initialTpToggle) {
-    //   setSubmitDisabled(false);
-    // }
   };
 
   const getToggledSlSetting = (bool: boolean) => {
-    // setSubmitDisabled(true);
-
     setSlToggle(bool);
 
-    // if (bool !== initialTpToggle) {
-    //   setSubmitDisabled(false);
-    // }
     const loss =
       openCfdDetails?.typeOfPosition === TypeOfPosition.BUY
         ? roundToDecimalPlaces(
@@ -116,8 +123,6 @@ const UpdatedFormModal = ({
   };
 
   const getTpValue = (value: number) => {
-    // setSubmitDisabled(true);
-
     setTpValue(value);
 
     const profit =
@@ -132,22 +137,10 @@ const UpdatedFormModal = ({
           );
 
     setExpectedProfitValue(profit);
-
-    // if (value !== initialTpInput) {
-    //   setSubmitDisabled(false);
-    // }
-    // console.log('tp value from Trading Input:', value);
   };
 
   const getSlValue = (value: number) => {
-    // setSubmitDisabled(true);
-
     setSlValue(value);
-
-    // if (value !== initialSlInput) {
-    //   setSubmitDisabled(false);
-    // }
-    // console.log('sl value from Trading Input:', value);
 
     const loss =
       openCfdDetails?.typeOfPosition === TypeOfPosition.BUY
@@ -164,6 +157,7 @@ const UpdatedFormModal = ({
   };
 
   const displayedExpectedProfit = (
+    // Till: (20230330 - Shirley)
     // longTpToggle ? (
     //   <div className={`${`translate-y-2`} -mt-0 items-center transition-all duration-500`}>
     //     <div className="text-sm text-lightWhite">
@@ -204,41 +198,20 @@ const UpdatedFormModal = ({
   );
 
   const guaranteedCheckedChangeHandler = () => {
-    // If position is not guaranteed, then set the stop loss to the recommended value
-    // setSubmitDisabled(true);
-
-    // console.log('guaranteedChecked: ', guaranteedStopCheckRef.current);
-
     if (!openCfdDetails?.guaranteedStop) {
-      // if (openCfdDetails.guaranteedStop) {
-      //   setSubmitDisabled(true);
-      //   return;
-      // }
-
       setGuaranteedChecked(!guaranteedChecked);
       setSlToggle(true);
       setSlLowerLimit(0);
       setSlUpperLimit(Infinity);
 
-      // setSubmitDisabled(false);
-
       return;
     } else {
-      setSlLowerLimit(openCfdDetails?.stopLoss ?? openCfdDetails?.recommendedSl);
-      setSlUpperLimit(openCfdDetails?.stopLoss ?? openCfdDetails?.recommendedSl);
-      setSlValue(openCfdDetails?.stopLoss ?? openCfdDetails?.recommendedSl);
-
-      // setSubmitDisabled(true);
-
+      setSlLowerLimit(openCfdDetails?.stopLoss ?? openCfdDetails.suggestion.stopLoss);
+      setSlUpperLimit(openCfdDetails?.stopLoss ?? openCfdDetails.suggestion.stopLoss);
+      setSlValue(openCfdDetails?.stopLoss ?? openCfdDetails.suggestion.stopLoss);
       return;
     }
-
-    // if (openCfdDetails)
   };
-
-  // const getSlToggleFunction = (slToggleFunction: () => void) => {
-  //   slToggleFunction();
-  // };
 
   const displayedPnLSymbol =
     openCfdDetails.pnl.type === ProfitState.PROFIT
@@ -247,7 +220,7 @@ const UpdatedFormModal = ({
       ? '-'
       : '';
 
-  // TODO: i18n
+  // TODO: (20230317 - Shirley) i18n
   const displayedTypeOfPosition =
     openCfdDetails?.typeOfPosition === TypeOfPosition.BUY ? 'Up (Buy)' : 'Down (Sell)';
 
@@ -280,21 +253,25 @@ const UpdatedFormModal = ({
   const isDisplayedStopLossSetting = slToggle ? 'flex' : 'invisible';
 
   const displayedSlLowerLimit = openCfdDetails?.guaranteedStop
-    ? openCfdDetails?.stopLoss ?? openCfdDetails.recommendedSl
+    ? openCfdDetails?.stopLoss ?? openCfdDetails.suggestion.stopLoss
     : slLowerLimit;
   const displayedSlUpperLimit = openCfdDetails?.guaranteedStop
-    ? openCfdDetails?.stopLoss ?? openCfdDetails.recommendedSl
+    ? openCfdDetails?.stopLoss ?? openCfdDetails.suggestion.stopLoss
     : slUpperLimit;
 
-  const displayedTime = timestampToString(openCfdDetails?.openTimestamp ?? 0);
+  const displayedTime = timestampToString(openCfdDetails?.createTimestamp ?? 0);
 
   const layoutInsideBorder = 'mx-5 my-3 flex justify-between';
 
-  const buttonClickHandler = () => {
-    // console.log('btn clicked');
-    // setSubmitDisabled(false);
+  const toDisplayCloseOrder = (cfd: IDisplayAcceptedCFDOrder): IDisplayAcceptedCFDOrder => {
+    const order = {
+      ...cfd,
+    };
+    return order;
+  };
 
-    let changedProperties = {};
+  const toApplyUpdateOrder = () => {
+    let changedProperties: IApplyUpdateCFDOrderData = {orderId: openCfdDetails.id};
 
     // Detect if tpValue has changed
     if (tpToggle && tpValue !== openCfdDetails.takeProfit) {
@@ -328,46 +305,45 @@ const UpdatedFormModal = ({
     // Detect if guaranteedStop has changed
     if (guaranteedChecked !== openCfdDetails.guaranteedStop) {
       const stopLoss = slValue !== openCfdDetails.stopLoss ? slValue : undefined;
+      const guaranteedStopFee = Number(
+        (openCfdDetails.openValue * (marketCtx?.tickerStatic?.guaranteedStopFee ?? 99)).toFixed(2)
+      );
+
       changedProperties = {
         ...changedProperties,
-        guaranteedStopLoss: guaranteedChecked,
+        guaranteedStop: guaranteedChecked,
+        guaranteedStopFee: guaranteedStopFee,
         stopLoss: stopLoss,
       };
     }
 
-    // If there's no updates, do nothing
-    if (Object.keys(changedProperties).length > 0) {
-      globalCtx.visiblePositionDetailsModalHandler();
-
-      // TODO: send changedProperties to MetaMask for signature
-      changedProperties = {orderId: openCfdDetails.id, ...changedProperties};
+    if (Object.keys(changedProperties).filter(key => key !== 'orderId').length > 0) {
+      changedProperties = {...changedProperties};
 
       globalCtx.toast({
         type: 'info',
         message: 'Changes: \n' + JSON.stringify(changedProperties),
         toastId: JSON.stringify(changedProperties),
       });
-
-      // console.log(changedProperties);
-      // for (const [key, value] of Object.entries(changedProperties)) {
-      //   console.log(`${key}: ${value}\n`);
-      // }
-
-      // TODO: before waiting for metamask signature, block the button
-      setSubmitDisabled(true);
-
-      // setTimeout(() => {
-      //   globalContext.visiblePositionDetailsModalHandler(false);
-      //   // console.log('modal visible: ', modalVisible);
-      // }, 1000);
-      globalCtx.dataPositionUpdatedModalHandler({
-        openCfdDetails: {...openCfdDetails},
-        updatedProps: {...changedProperties},
-      });
-      globalCtx.visiblePositionUpdatedModalHandler();
-
-      return changedProperties;
     }
+
+    return changedProperties;
+  };
+
+  const buttonClickHandler = () => {
+    const changedProperties: IApplyUpdateCFDOrderData = toApplyUpdateOrder();
+
+    if (Object.keys(changedProperties).filter(key => key !== 'orderId').length === 0) return;
+
+    setSubmitDisabled(true);
+
+    globalCtx.visibleUpdateFormModalHandler();
+
+    globalCtx.dataPositionUpdatedModalHandler({
+      openCfdDetails: {...openCfdDetails},
+      updatedProps: {...changedProperties},
+    });
+    globalCtx.visiblePositionUpdatedModalHandler();
   };
 
   // FIXME: Inconsistent information between text and input
@@ -451,65 +427,49 @@ const UpdatedFormModal = ({
   const changeComparison = () => {
     if (tpToggleRef.current && tpValueRef.current !== openCfdDetails?.takeProfit) {
       setSubmitDisabled(false);
-      // console.log('tpValueRef current', tpValueRef.current);
     }
 
     if (slToggleRef.current && slValueRef.current !== openCfdDetails?.stopLoss) {
       setSubmitDisabled(false);
-      // console.log('slValueRef current', slValueRef.current);
     }
 
     if (tpToggleRef.current !== initialTpToggle) {
       setSubmitDisabled(false);
-      // console.log('tpToggleRef current', tpToggleRef.current);
     }
 
     if (slToggleRef.current !== initialSlToggle) {
       setSubmitDisabled(false);
-      // console.log('slToggleRef current', slToggleRef.current);
     }
 
     if (guaranteedpCheckedRef.current !== openCfdDetails.guaranteedStop) {
       setSubmitDisabled(false);
-      // console.log('guaranteedStopCheckRef current', guaranteedpCheckedRef.current);
-      // console.log('openCfdDetails.guaranteedStop', openCfdDetails.guaranteedStop);
     }
   };
 
   const nowTimestamp = new Date().getTime() / 1000;
-  // const yesterdayTimestamp = new Date().getTime() / 1000 - 3600 * 10 - 5;
-  // const passedHour = ((nowTimestamp - openCfdDetails.openTimestamp) / 3600).toFixed(0);
-  const passedHour = Math.round((nowTimestamp - openCfdDetails.openTimestamp) / 3600);
+  const remainSecs = openCfdDetails.liquidationTime - nowTimestamp;
+
+  const remainTime =
+    remainSecs < 60
+      ? Math.round(remainSecs)
+      : remainSecs < 3600
+      ? Math.round(remainSecs / 60)
+      : Math.round(remainSecs / 3600);
+
+  const label =
+    remainSecs < 60
+      ? [`${Math.round(remainSecs)} S`]
+      : remainSecs < 3600
+      ? [`${Math.round(remainSecs / 60)} M`]
+      : [`${Math.round(remainSecs / 3600)} H`];
+
+  const denominator = remainSecs < 60 ? 60 : remainSecs < 3600 ? 60 : 24;
 
   const squareClickHandler = () => {
-    globalCtx.visiblePositionDetailsModalHandler();
+    globalCtx.visibleUpdateFormModalHandler();
 
+    globalCtx.dataPositionClosedModalHandler(toDisplayCloseOrder(openCfdDetails));
     globalCtx.visiblePositionClosedModalHandler();
-    globalCtx.dataPositionClosedModalHandler({
-      openCfdDetails: openCfdDetails,
-      latestProps: {
-        renewalDeadline: new Date().getTime() / 1000 + POSITION_PRICE_RENEWAL_INTERVAL_SECONDS,
-        latestClosedPrice:
-          openCfdDetails.typeOfPosition === TypeOfPosition.BUY
-            ? randomIntFromInterval(
-                marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice * 0.75,
-                marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice * 1.25
-              )
-            : openCfdDetails.typeOfPosition === TypeOfPosition.SELL
-            ? randomIntFromInterval(
-                marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice * 1.1,
-                marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice * 1.25
-              )
-            : 99999,
-        // latestPnL: {
-        //   type: randomIntFromInterval(0, 100) <= 2 ? ProfitState.PROFIT : ProfitState.LOSS,
-        //   value: randomIntFromInterval(0, 1000),
-        // },
-      },
-    });
-    // toast.error('test', {toastId: 'errorTest'});
-    // console.log('show the modal displaying transaction detail');
-    // return;  };
   };
 
   useEffect(() => {
@@ -549,13 +509,13 @@ const UpdatedFormModal = ({
 
                 <div className="absolute top-30px left-190px flex items-center space-x-1 text-center">
                   <CircularProgressBar
+                    label={label}
                     showLabel={true}
-                    numerator={passedHour}
-                    denominator={24}
+                    numerator={remainTime}
+                    denominator={denominator}
                     progressBarColor={[displayedColorHex]}
                     hollowSize="40%"
                     circularBarSize="100"
-                    // clickHandler={circularClick}
                   />
                 </div>
               </div>
@@ -572,11 +532,8 @@ const UpdatedFormModal = ({
                 className={`${displayedBorderColor} mx-6 mt-0 border-1px text-xs leading-relaxed text-lightWhite`}
               >
                 <div className="flex-col justify-center text-center">
-                  {/* {displayedDataFormat()} */}
-
                   <div className={`${layoutInsideBorder}`}>
                     <div className="text-lightGray">Type</div>
-                    {/* TODO: i18n */}
                     <div className={`${displayedPositionColor}`}>{displayedTypeOfPosition}</div>
                   </div>
 
@@ -625,15 +582,10 @@ const UpdatedFormModal = ({
                     <div className="">
                       <span className={`text-lightWhite`}>
                         {cfdTp?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? '-'}
-                        {/* {openCfdDetails?.takeProfit?.toLocaleString(
-                          UNIVERSAL_NUMBER_FORMAT_LOCALE
-                        ) ?? '-'} */}
                       </span>{' '}
                       /{' '}
                       <span className={`text-lightWhite`}>
                         {cfdSl?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? '-'}
-                        {/* {openCfdDetails?.stopLoss?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ??
-                          '-'} */}
                       </span>
                     </div>
                   </div>
@@ -650,15 +602,7 @@ const UpdatedFormModal = ({
 
                   <div className={`${layoutInsideBorder}`}>
                     <div className="text-lightGray">State</div>
-                    <div className="">
-                      Open
-                      {/* <button
-                        type="button"
-                        className="ml-2 text-tidebitTheme underline underline-offset-2"
-                      >
-                        Close
-                      </button> */}
-                    </div>
+                    <div className="">{displayedState}</div>
                   </div>
                 </div>
               </div>
@@ -695,7 +639,6 @@ const UpdatedFormModal = ({
                   {guaranteedStopLoss}
                 </div>
 
-                {/* TODO: T/P value changed, S/L value changed, guaranteed-stop check changed, T/P toggle changed, S/L toggle changed */}
                 <RippleButton
                   disabled={submitDisabled}
                   onClick={buttonClickHandler}
@@ -718,4 +661,4 @@ const UpdatedFormModal = ({
   return <>{isDisplayedDetailedPositionModal}</>;
 };
 
-export default UpdatedFormModal;
+export default UpdateFormModal;

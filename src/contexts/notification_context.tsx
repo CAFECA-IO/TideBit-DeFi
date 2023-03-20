@@ -7,7 +7,6 @@ import {OrderType} from '../constants/order_type';
 import {TideBitEvent} from '../constants/tidebit_event';
 import {IBalance} from '../interfaces/tidebit_defi_background/balance';
 import {getDummyCandlestickChartData} from '../interfaces/tidebit_defi_background/candlestickData';
-import {getDummyClosedCFDs} from '../interfaces/tidebit_defi_background/closed_cfd_details';
 import {dummyDepositOrder} from '../interfaces/tidebit_defi_background/deposit_order';
 // import {UserContext} from './user_context';
 // import {MarketContext} from './market_context';
@@ -17,7 +16,6 @@ import {
   dummyUnReadNotifications,
   INotificationItem,
 } from '../interfaces/tidebit_defi_background/notification_item';
-import {getDummyOpenCFDs} from '../interfaces/tidebit_defi_background/open_cfd_details';
 import {getDummyTicker, ITickerData} from '../interfaces/tidebit_defi_background/ticker_data';
 import {getDummyTickerLiveStatistics} from '../interfaces/tidebit_defi_background/ticker_live_statistics';
 import {getDummyTickerStatic} from '../interfaces/tidebit_defi_background/ticker_static';

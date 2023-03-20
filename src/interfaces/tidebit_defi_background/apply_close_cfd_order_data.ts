@@ -1,3 +1,4 @@
+import {RENEW_QUOTATION_INTERVAL_SECONDS} from '../../constants/config';
 import {TypeOfPosition} from '../../constants/type_of_position';
 import {getTimestamp} from '../../lib/common';
 import {IQuotation} from './quotation';

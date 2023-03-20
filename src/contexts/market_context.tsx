@@ -37,6 +37,7 @@ import {
   getDummyTickerHistoryData,
   ITickerHistoryData,
 } from '../interfaces/tidebit_defi_background/ticker_history_data';
+import {ITypeOfPosition} from '../constants/type_of_position';
 
 export interface IMarketProvider {
   children: React.ReactNode;
@@ -62,7 +63,7 @@ export interface IMarketContext {
   selectTickerHandler: (props: string) => IResult;
   selectTimeSpanHandler: (props: ITimeSpanUnion) => void;
   getCandlestickChartData: (tickerId: string) => Promise<void>; // x 100
-  getCFDQuotation: (tickerId: string) => Promise<IResult>;
+  getCFDQuotation: (tickerId: string, typeOfPosition: ITypeOfPosition) => Promise<IResult>;
   getTickerHistory: (tickerId: string, timespan: ITimeSpanUnion, limit: number) => Promise<IResult>;
 }
 // TODO: Note: _app.tsx 啟動的時候 => createContext
@@ -219,11 +220,11 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     });
   };
 
-  const getCFDQuotation = async (tickerId: string) => {
+  const getCFDQuotation = async (tickerId: string, typeOfPosition: ITypeOfPosition) => {
     let result: IResult = dummyResultFailed;
     try {
       // TODO: send request (Tzuhan - 20230317)
-      const quotation: IQuotation = getDummyQuotation(tickerId);
+      const quotation: IQuotation = getDummyQuotation(tickerId, typeOfPosition);
       result = dummyResultSuccess;
       result.data = quotation;
     } catch (error) {

@@ -25,7 +25,7 @@ class TransactionEngine {
       'price' in obj &&
       'amount' in obj &&
       'targetAsset' in obj &&
-      'uniAsset' in obj &&
+      'unitAsset' in obj &&
       'margin' in obj &&
       'leverage' in obj &&
       'liquidationPrice' in obj &&

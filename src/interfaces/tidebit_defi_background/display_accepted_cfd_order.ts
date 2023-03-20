@@ -5,6 +5,7 @@ import {CFDClosedType} from '../../constants/cfd_closed_type';
 import {OrderState} from '../../constants/order_state';
 import {ProfitState} from '../../constants/profit_state';
 import {TypeOfPosition} from '../../constants/type_of_position';
+import {unitAsset} from '../../constants/config';
 
 export interface IDisplayAcceptedCFDOrder extends IAcceptedCFDOrder {
   pnl: IPnL;
@@ -30,8 +31,8 @@ export const getDummyDisplayAcceptedCFDOrder = (currency: string) => {
         ? OrderState.FREEZED
         : OrderState.OPENING,
     typeOfPosition: typeOfPosition,
-    targetAsset: typeOfPosition === TypeOfPosition.BUY ? currency : 'USDT',
-    uniAsset: typeOfPosition === TypeOfPosition.BUY ? 'USDT' : currency,
+    targetAsset: currency,
+    unitAsset: unitAsset,
     openPrice: 24058,
     amount: 1.8,
     createTimestamp: 1675299651,
@@ -76,8 +77,8 @@ export const getDummyDisplayAcceptedCFDs = (currency: string) => {
       ticker: currency,
       state: OrderState.CLOSED,
       typeOfPosition: typeOfPosition,
-      targetAsset: typeOfPosition === TypeOfPosition.BUY ? currency : 'USDT',
-      uniAsset: typeOfPosition === TypeOfPosition.BUY ? 'USDT' : currency,
+      targetAsset: currency,
+      unitAsset: unitAsset,
       openPrice: randomIntFromInterval(1000, 10000),
       amount: 1.8,
       createTimestamp: 1675299651,

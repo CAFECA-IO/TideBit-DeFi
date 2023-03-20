@@ -195,7 +195,7 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
     headers?: object;
     callback?: (...args: any[]) => void;
   }) => {
-    // TODO: error handle (20230320)
+    // TODO: error handle (20230320 - tzuhan)
     if (apiWorkerRef.current) {
       const request: TypeRequest = APIRequest(data);
       apiWorkerRef.current.postMessage(request.request);

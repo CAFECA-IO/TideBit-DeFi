@@ -91,7 +91,7 @@ export const dummyClosedCFDOrder: IOrder = {
   timestamp: 1675299651,
   type: OrderType.CFD,
   targetAsset: 'ETH',
-  targetAmount: -1,
+  targetAmount: 0,
   remarks: '',
   balanceSnapshot: {
     currency: 'USDT',

@@ -15,7 +15,6 @@ export interface IOrder {
   type: IOrderType;
   targetAsset: string;
   targetAmount: number;
-  fee: number; // 手續費
   remarks?: string; // 備註,
   balanceSnapshot: IBalance;
   orderSnapshot: {
@@ -24,6 +23,7 @@ export interface IOrder {
     status: IOrderStatusUnion;
     state?: IOrderState;
     detail: string;
+    fee: number; // 手續費
   };
 }
 
@@ -33,7 +33,6 @@ export const dummyDepositOrder: IOrder = {
   targetAsset: 'USDT',
   targetAmount: 2000,
   remarks: '',
-  fee: 0,
   balanceSnapshot: {
     currency: 'USDT',
     available: 2000,
@@ -44,6 +43,7 @@ export const dummyDepositOrder: IOrder = {
     txid: '0x',
     status: OrderStatusUnion.PROCESSING,
     detail: '',
+    fee: 0,
   },
 };
 export const dummyWithdrawalOrder: IOrder = {
@@ -51,7 +51,6 @@ export const dummyWithdrawalOrder: IOrder = {
   type: OrderType.WITHDRAW,
   targetAsset: 'USDT',
   targetAmount: 15,
-  fee: 0,
   balanceSnapshot: {
     currency: 'USDT',
     available: 1985,
@@ -62,6 +61,7 @@ export const dummyWithdrawalOrder: IOrder = {
     txid: '0x',
     status: OrderStatusUnion.PROCESSING,
     detail: '',
+    fee: 0,
   },
 };
 
@@ -72,7 +72,6 @@ export const dummyOpenCFDOrder: IOrder = {
   targetAsset: 'ETH',
   targetAmount: 1,
   remarks: '',
-  fee: 0,
   balanceSnapshot: {
     currency: 'ETH',
     available: 19.2,
@@ -84,6 +83,7 @@ export const dummyOpenCFDOrder: IOrder = {
     status: OrderStatusUnion.SUCCESS,
     state: OrderState.OPENING,
     detail: '',
+    fee: 0,
   },
 };
 
@@ -93,7 +93,6 @@ export const dummyClosedCFDOrder: IOrder = {
   targetAsset: 'ETH',
   targetAmount: 1,
   remarks: '',
-  fee: 0,
   balanceSnapshot: {
     currency: 'ETH',
     available: 19.2,
@@ -105,5 +104,6 @@ export const dummyClosedCFDOrder: IOrder = {
     status: OrderStatusUnion.SUCCESS,
     state: OrderState.CLOSED,
     detail: '',
+    fee: 0,
   },
 };

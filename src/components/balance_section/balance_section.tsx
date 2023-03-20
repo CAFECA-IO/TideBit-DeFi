@@ -30,10 +30,8 @@ const BalanceSection = () => {
 
   const circleSize = '380';
   const eyeIconSize = 30;
-  const depositBtnStyle =
+  const btnStyle =
     'mt-4 rounded border-0 bg-tidebitTheme py-2 px-30px lg:px-40px text-base text-white transition-all duration-300 hover:bg-cyan-600 md:mt-0';
-  const withdrawBtnStyle =
-    'mt-4 rounded border-0 bg-tidebitTheme py-2 px-25px lg:px-33px text-base text-white transition-all duration-300 hover:bg-cyan-600 md:mt-0';
 
   const depositBtn = (
     <p className="flex items-center space-x-3 text-center">
@@ -135,16 +133,12 @@ const BalanceSection = () => {
         </div>
 
         <div className="flex justify-center space-x-5">
-          <RippleButton
-            className={`${depositBtnStyle}`}
-            onClick={depositClickHandler}
-            buttonType="button"
-          >
+          <RippleButton className={`${btnStyle}`} onClick={depositClickHandler} buttonType="button">
             {depositBtn}
           </RippleButton>
 
           <RippleButton
-            className={`${withdrawBtnStyle}`}
+            className={`${btnStyle}`}
             onClick={withdrawClickHandler}
             buttonType="button"
           >

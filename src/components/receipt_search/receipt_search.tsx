@@ -1,5 +1,6 @@
-import {useState} from 'react';
+import {useState, useCallback} from 'react';
 import Image from 'next/image';
+import DatePicker from '../date_picker/date_picker';
 
 /* ToDo: (20230316 - Julian) i18n */
 const ReceiptSearch = () => {
@@ -43,7 +44,6 @@ const ReceiptSearch = () => {
     setTradingTypeMenuOpen(false);
   };
 
-  /* ToDo: (20230316 - Julian) 錢包地址、金額，開票 */
   const displayedFilterBar = (
     <div className="hidden space-x-10 text-lightWhite sm:flex">
       {/* Info: (20230316 - Julian) Trading Type Dropdown Menu */}
@@ -91,7 +91,7 @@ const ReceiptSearch = () => {
         Date
         {/* ToDo: (20230316 - Julian) DatePicker */}
         <div className="mt-2 flex items-center space-x-2">
-          <label>DatePicker</label>
+          <DatePicker date={new Date(1)} maxDate={new Date(2)} />
           <p>TO</p>
           <label>DatePicker</label>
         </div>

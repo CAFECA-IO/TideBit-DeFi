@@ -64,7 +64,15 @@ export interface IMarketContext {
   selectTimeSpanHandler: (props: ITimeSpanUnion) => void;
   getCandlestickChartData: (tickerId: string) => Promise<void>; // x 100
   getCFDQuotation: (tickerId: string, typeOfPosition: ITypeOfPosition) => Promise<IResult>;
-  getTickerHistory: (tickerId: string, timespan: ITimeSpanUnion, limit: number) => Promise<IResult>;
+  getTickerHistory: (
+    tickerId: string,
+    options: {
+      timespan?: ITimeSpanUnion;
+      begin?: number;
+      end?: number;
+      limit?: number;
+    }
+  ) => Promise<IResult>;
 }
 // TODO: Note: _app.tsx 啟動的時候 => createContext
 export const MarketContext = createContext<IMarketContext>({
@@ -233,15 +241,19 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     return result;
   };
 
-  const getTickerHistory = async (tickerId: string, timespan: ITimeSpanUnion, limit: number) => {
+  const getTickerHistory = async (
+    tickerId: string,
+    options: {
+      timespan?: ITimeSpanUnion;
+      begin?: number;
+      end?: number;
+      limit?: number;
+    }
+  ) => {
     let result: IResult = dummyResultFailed;
     try {
       // TODO: send request (Tzuhan - 20230317)
-      const tickerHistory: ITickerHistoryData[] = getDummyTickerHistoryData(
-        tickerId,
-        timespan,
-        limit
-      );
+      const tickerHistory: ITickerHistoryData[] = getDummyTickerHistoryData(tickerId, options);
       result = dummyResultSuccess;
       result.data = tickerHistory;
     } catch (error) {

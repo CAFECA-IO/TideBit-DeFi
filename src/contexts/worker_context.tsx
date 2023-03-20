@@ -38,7 +38,6 @@ interface IWorkerContext {
   init: () => void;
   requestHandler: (data: {
     name: IAPIName;
-    ticker?: string;
     method: IMethodConstant;
     params?: {[key: string]: string | number | boolean};
     body?: object;
@@ -190,13 +189,13 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
 
   const requestHandler = async (data: {
     name: IAPIName;
-    ticker?: string;
     method: IMethodConstant;
     params?: {[key: string]: string | number | boolean};
     body?: object;
     headers?: object;
     callback?: (...args: any[]) => void;
   }) => {
+    // TODO: error handle (20230320)
     if (apiWorkerRef.current) {
       const request: TypeRequest = APIRequest(data);
       apiWorkerRef.current.postMessage(request.request);

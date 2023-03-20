@@ -50,7 +50,7 @@ export const dummyWithdrawalOrder: IOrder = {
   timestamp: 1675299651,
   type: OrderType.WITHDRAW,
   targetAsset: 'USDT',
-  targetAmount: 15,
+  targetAmount: -15,
   balanceSnapshot: {
     currency: 'USDT',
     available: 1985,
@@ -70,11 +70,11 @@ export const dummyOpenCFDOrder: IOrder = {
   timestamp: 1675299651,
   type: OrderType.CFD,
   targetAsset: 'ETH',
-  targetAmount: 1,
+  targetAmount: -1,
   remarks: '',
   balanceSnapshot: {
-    currency: 'ETH',
-    available: 19.2,
+    currency: 'USDT',
+    available: 1999,
     locked: 1,
   },
   orderSnapshot: {
@@ -91,11 +91,11 @@ export const dummyClosedCFDOrder: IOrder = {
   timestamp: 1675299651,
   type: OrderType.CFD,
   targetAsset: 'ETH',
-  targetAmount: 1,
+  targetAmount: -1,
   remarks: '',
   balanceSnapshot: {
-    currency: 'ETH',
-    available: 19.2,
+    currency: 'USDT',
+    available: 1998,
     locked: 1,
   },
   orderSnapshot: {

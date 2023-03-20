@@ -68,6 +68,26 @@
     "HISTORY_POSITION_ITEM_VALUE": "Open / Close Value",
     "HISTORY_POSITION_ITEM_PNL": "PNL"
   },
+  "WALLET_PANEL": {
+    "TITLE": "Wallet Connect",
+    "CONNECTING": "Connecting...",
+    "QR_CODE_DESCRIPTION_PART1": "Please open your",
+    "QR_CODE_DESCRIPTION_HIGHLIGHT": "wallet",
+    "QR_CODE_DESCRIPTION_PART2": "to scan the QR code.",
+    "SIGNATURE_DESCRIPTION_LINE1": "You will receive two signature requests.",
+    "SIGNATURE_DESCRIPTION_LINE2_PART1": "Signing is",
+    "SIGNATURE_DESCRIPTION_LINE2_HIGHLIGHT": "free",
+    "SIGNATURE_DESCRIPTION_LINE2_PART2": "and will not send a transaction.",
+    "SIGNATURE_STEP1_TITLE": "Verify ownership",
+    "SIGNATURE_STEP1_DESCRIPTION": "Confirm you are the owner of this wallet",
+    "SIGNATURE_STEP2_TITLE": "Enable trading",
+    "SIGNATURE_STEP2_DESCRIPTION": "Enable secure access to our API for lightning quick trading.",
+    "ERROR_MESSAGE": "Something went wrong, please try again",
+    "SEND_REQUESTS_BUTTON": "Send Requests",
+    "HELLO_DESCRIPTION": "You can start using TideBit now.",
+    "HELLO_CONNECT_LINK": "Connect my TideBit",
+    "DONE_BUTTON": "Done"
+  },
   "POSITION_MODAL": {
     "OPEN_POSITION_TITLE": "Open Position",
     "CLOSE_POSITION_TITLE": "Close Position",

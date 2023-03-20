@@ -68,6 +68,26 @@
     "HISTORY_POSITION_ITEM_VALUE": "Open / Close Value",
     "HISTORY_POSITION_ITEM_PNL": "損益"
   },
+  "WALLET_PANEL": {
+    "TITLE": "連接錢包",
+    "CONNECTING": "連接中...",
+    "QR_CODE_DESCRIPTION_PART1": "請開啟您的",
+    "QR_CODE_DESCRIPTION_HIGHLIGHT": "錢包",
+    "QR_CODE_DESCRIPTION_PART2": "並掃描 QR 碼",
+    "SIGNATURE_DESCRIPTION_LINE1": "您將收到兩項簽名請求",
+    "SIGNATURE_DESCRIPTION_LINE2_PART1": "簽名是",
+    "SIGNATURE_DESCRIPTION_LINE2_HIGHLIGHT": "免費",
+    "SIGNATURE_DESCRIPTION_LINE2_PART2": "的，並不會發送任何交易",
+    "SIGNATURE_STEP1_TITLE": "驗證所有權",
+    "SIGNATURE_STEP1_DESCRIPTION": "確認您為這個錢包的所有人",
+    "SIGNATURE_STEP2_TITLE": "啟用交易",
+    "SIGNATURE_STEP2_DESCRIPTION": "啟用對本網站 API 的安全訪問，以實現閃電般的快速交易",
+    "ERROR_MESSAGE": "發生錯誤，請再試一次",
+    "SEND_REQUESTS_BUTTON": "發送請求",
+    "HELLO_DESCRIPTION": "現在您可以開始使用 TideBit",
+    "HELLO_CONNECT_LINK": "連接 TideBit",
+    "DONE_BUTTON": "完成"
+  },
   "POSITION_MODAL": {
     "OPEN_POSITION_TITLE": "Open Position",
     "CLOSE_POSITION_TITLE": "Close Position",

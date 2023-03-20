@@ -24,15 +24,14 @@ import {
   IWalletBalance,
 } from '../interfaces/tidebit_defi_background/wallet_balance';
 import {getDummyBalances, IBalance} from '../interfaces/tidebit_defi_background/balance';
-import {IOrder} from '../interfaces/tidebit_defi_background/order';
 import {
+  dummyClosedCFDOrder,
   dummyDepositOrder,
-  IDepositOrder,
-} from '../interfaces/tidebit_defi_background/deposit_order';
-import {
+  dummyOpenCFDOrder,
   dummyWithdrawalOrder,
-  IWithdrawalOrder,
-} from '../interfaces/tidebit_defi_background/withdrawal_order';
+  IOrder,
+} from '../interfaces/tidebit_defi_background/order';
+
 import {INotificationItem} from '../interfaces/tidebit_defi_background/notification_item';
 import {TideBitEvent} from '../constants/tidebit_event';
 import {NotificationContext} from './notification_context';
@@ -258,6 +257,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     }
     // ++ TODO fetch user favorite tickers
     setFavoriteTickers(['ETH', 'BTC']);
+    await listHistories();
     workerCtx.registerUserHandler(walletAddress);
   };
 
@@ -576,7 +576,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     result.reason = Reason[result.code];
     if (enableServiceTermRef.current) {
       // TODO: getHistories from backend
-      histories = [dummyDepositOrder, dummyWithdrawalOrder];
+      histories = [dummyDepositOrder, dummyClosedCFDOrder, dummyOpenCFDOrder, dummyWithdrawalOrder];
       setHistories(histories);
       result = dummyResultSuccess;
       result.data = histories;

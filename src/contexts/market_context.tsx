@@ -65,7 +65,7 @@ export const MarketContext = createContext<IMarketContext>({
   candlestickId: '',
   candlestickChartIdHandler: () => null,
   candlestickChartData: [],
-  timeSpan: TimeSpanUnion._1d,
+  timeSpan: TimeSpanUnion._1s,
   selectTimeSpanHandler: () => null,
   // liveStatstics: null,
   // bullAndBearIndex: 0,

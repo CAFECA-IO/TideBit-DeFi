@@ -9,7 +9,21 @@ interface IReceiptSearchProps {
 
 /* ToDo: (20230316 - Julian) i18n */
 const ReceiptSearch = ({filteredTradingType, setFilteredTradingType}: IReceiptSearchProps) => {
+  const currentDate = new Date();
+
   const [tradingTypeMenuOpen, setTradingTypeMenuOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [page, setPage] = useState(1);
+  const [dateStart, setDateStart] = useState(
+    new Date(
+      `${currentDate.getFullYear()}-${currentDate.getMonth() + 1}-${currentDate.getDate()} 08:00:00`
+    )
+  );
+  const [dateEnd, setDateEnd] = useState(
+    new Date(
+      `${currentDate.getFullYear()}-${currentDate.getMonth() + 1}-${currentDate.getDate()} 08:00:00`
+    )
+  );
 
   const tradingTypeMenuText =
     filteredTradingType === 'DEPOSIT'
@@ -52,6 +66,19 @@ const ReceiptSearch = ({filteredTradingType, setFilteredTradingType}: IReceiptSe
     setFilteredTradingType('');
     setTradingTypeMenuOpen(false);
   };
+
+  /* Todo: (20230316 - Julian) dateUpdateHandler #289
+  const dateStartUpdateHandler = useCallback(
+    async (date: Date) => {
+      const newPage = 1;
+      setPage(newPage);
+      setIsLoading(true);
+      setDateStart(date);
+      const end = dateEnd.toISOString().substring(0, 10);
+      const start = date.toISOString().substring(0, 10);
+      let tradingType = filteredTradingType;
+
+}, [dateStart]) */
 
   const displayedFilterBar = (
     <div className="hidden space-x-10 text-lightWhite sm:flex">
@@ -103,7 +130,7 @@ const ReceiptSearch = ({filteredTradingType, setFilteredTradingType}: IReceiptSe
         Date
         {/* ToDo: (20230316 - Julian) DatePicker */}
         <div className="mt-2 flex items-center space-x-2">
-          <DatePicker date={new Date(1)} maxDate={new Date(2)} />
+          <DatePicker minDate={new Date(1)} maxDate={new Date(10)} />
           <p>TO</p>
           <label>DatePicker</label>
         </div>

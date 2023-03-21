@@ -391,35 +391,34 @@ export default function CandlestickChart({
   useEffect(() => {
     if (!appCtx.isInit) return;
     if (marketCtx.candlestickChartData === null) return;
-    // eslint-disable-next-line no-console
-    console.log(`Component CandlestickChart`, marketCtx.candlestickChartData);
-    // if (!toCandlestickChartDataRef.current) {
-    setCandlestickChartData(() =>
-      trimCandlestickData({
-        data:
-          marketCtx?.candlestickChartData?.map(d => ({
-            x: d.x,
-            y: [
-              d.open ? d.open : null,
-              d.high ? d.high : null,
-              d.low ? d.low : null,
-              d.close ? d.close : null,
-            ],
-          })) ?? [],
-        requiredDataNum: 30,
-      })
-    );
 
-    setToCandlestickChartData(
-      candlestickChartDataRef.current?.map(data => ({
-        x: data.x,
-        open: data.y[0],
-        high: data.y[1],
-        low: data.y[2],
-        close: data.y[3],
-      }))
-    );
-    // }
+    if (!toCandlestickChartDataRef.current) {
+      setCandlestickChartData(() =>
+        trimCandlestickData({
+          data:
+            marketCtx?.candlestickChartData?.map(d => ({
+              x: d.x,
+              y: [
+                d.open ? d.open : null,
+                d.high ? d.high : null,
+                d.low ? d.low : null,
+                d.close ? d.close : null,
+              ],
+            })) ?? [],
+          requiredDataNum: 30,
+        })
+      );
+
+      setToCandlestickChartData(
+        candlestickChartDataRef.current?.map(data => ({
+          x: data.x,
+          open: data.y[0],
+          high: data.y[1],
+          low: data.y[2],
+          close: data.y[3],
+        }))
+      );
+    }
 
     //     const setStateInterval = setInterval(() => {
     //       if (!candlestickChartDataRef?.current) return;

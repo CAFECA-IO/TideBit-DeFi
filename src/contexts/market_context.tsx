@@ -28,6 +28,7 @@ import {NotificationContext} from './notification_context';
 import {WorkerContext} from './worker_context';
 import {APIName, Method} from '../constants/api_request';
 import TickerBookInstance from '../lib/books/ticker_book';
+import {unitAsset} from '../constants/config';
 
 export interface IMarketProvider {
   children: React.ReactNode;
@@ -281,7 +282,8 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     () =>
       notificationCtx.emitter.on(
         TideBitEvent.CANDLESTICK,
-        (ticker: string, trades: ITBETrade[]) => {
+        (market: string, trades: ITBETrade[]) => {
+          const ticker = market.toUpperCase().replace(unitAsset, ``);
           tickerBook.updateCandlestickByTrade(ticker, trades);
           setAvailableTickers({...tickerBook.tickers});
           if (selectedTickerRef.current?.currency === ticker)

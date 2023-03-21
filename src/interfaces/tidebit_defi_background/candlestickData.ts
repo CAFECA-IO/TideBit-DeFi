@@ -6,10 +6,10 @@ const unitOfLive = 1000;
 
 export interface ICandlestickData {
   x: Date;
-  open: number;
-  high: number;
-  low: number;
-  close: number;
+  open: number | null;
+  high: number | null;
+  low: number | null;
+  close: number | null;
 }
 
 export const getTime = (timeSpan: ITimeSpanUnion) => {

@@ -1,6 +1,5 @@
 import {
   getDummyCandlestickChartData,
-  getTime,
   ICandlestickData,
 } from '../../interfaces/tidebit_defi_background/candlestickData';
 import {
@@ -16,7 +15,6 @@ import {
 import {convertTradesToCandlestickData} from '../common';
 
 class TickerBook {
-  count = 1;
   private _timeSpan: ITimeSpanUnion = TimeSpanUnion._1s;
   private _limit = 50;
   private _tickers: {[currency: string]: ITickerData} = {};
@@ -37,22 +35,29 @@ class TickerBook {
   }
 
   updateCandlestickByTrade(market: string, trades: ITBETrade[]) {
-    if (this.count > 0) {
-      const ticker = market.replace(`usdt`, ``).toUpperCase();
-      const lastestBarTime =
-        this.candlesticks[ticker][this.candlesticks[ticker].length - 1].x.getTime();
-      const filterTrades = trades.filter(trade => trade.at * 1000 >= lastestBarTime);
-      const candlestickChartData: ICandlestickData[] = convertTradesToCandlestickData(
-        filterTrades,
-        this.timeSpan,
-        lastestBarTime
+    const ticker = market.replace(`usdt`, ``).toUpperCase();
+    const lastestBarTime =
+      this.candlesticks[ticker][this.candlesticks[ticker].length - 1].x.getTime();
+    const filterTrades = trades.filter(trade => trade.at * 1000 >= lastestBarTime);
+    const candlestickChartData: ICandlestickData[] = convertTradesToCandlestickData(
+      filterTrades,
+      this.timeSpan,
+      lastestBarTime
+    );
+    if (candlestickChartData.length > 0) {
+      this._candlesticks[ticker] = this._candlesticks[ticker].concat(candlestickChartData);
+      /*
+      //  TODO: trim data (20230321 - tzuhan)
+      this._candlesticks[ticker] = this._candlesticks[ticker].slice(
+        this._candlesticks[ticker].length - 500,
+        this._candlesticks[ticker].length
       );
-      if (candlestickChartData.length > 0) {
-        this._candlesticks[ticker] = this._candlesticks[ticker].concat(candlestickChartData);
-        this._tickers[ticker].lineGraphProps.dataArray = this._tickers[
-          ticker
-        ].lineGraphProps.dataArray?.concat(candlestickChartData.map(d => d.open));
-      }
+      */
+      this._tickers[ticker].lineGraphProps.dataArray = this._tickers[
+        ticker
+      ].lineGraphProps.dataArray?.concat(
+        candlestickChartData.filter(d => !!d.open).map(d => d.open!)
+      );
     }
   }
 

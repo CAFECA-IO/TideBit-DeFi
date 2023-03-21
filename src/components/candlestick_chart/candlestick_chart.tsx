@@ -391,7 +391,6 @@ export default function CandlestickChart({
   useEffect(() => {
     if (!appCtx.isInit) return;
     if (marketCtx.candlestickChartData === null) return;
-
     if (!toCandlestickChartDataRef.current) {
       setCandlestickChartData(() =>
         trimCandlestickData({

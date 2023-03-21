@@ -1,10 +1,14 @@
-import {useState, useCallback} from 'react';
+import {useState, Dispatch, SetStateAction, useCallback} from 'react';
 import Image from 'next/image';
 import DatePicker from '../date_picker/date_picker';
 
+interface IReceiptSearchProps {
+  filteredTradingType: string;
+  setFilteredTradingType: Dispatch<SetStateAction<string>>;
+}
+
 /* ToDo: (20230316 - Julian) i18n */
-const ReceiptSearch = () => {
-  const [filteredTradingType, setFilteredTradingType] = useState('');
+const ReceiptSearch = ({filteredTradingType, setFilteredTradingType}: IReceiptSearchProps) => {
   const [tradingTypeMenuOpen, setTradingTypeMenuOpen] = useState(false);
 
   const tradingTypeMenuText =
@@ -44,6 +48,11 @@ const ReceiptSearch = () => {
     setTradingTypeMenuOpen(false);
   };
 
+  const allButtonClickHandler = () => {
+    setFilteredTradingType('');
+    setTradingTypeMenuOpen(false);
+  };
+
   const displayedFilterBar = (
     <div className="hidden space-x-10 text-lightWhite sm:flex">
       {/* Info: (20230316 - Julian) Trading Type Dropdown Menu */}
@@ -70,6 +79,9 @@ const ReceiptSearch = () => {
               tradingTypeMenuOpen ? 'flex opacity-100' : 'hidden opacity-0'
             }`}
           >
+            <button className={`${dropMenuItemStyle}`} onClick={allButtonClickHandler}>
+              All
+            </button>
             <button className={`${dropMenuItemStyle}`} onClick={depositButtonClickHandler}>
               Deposit
             </button>

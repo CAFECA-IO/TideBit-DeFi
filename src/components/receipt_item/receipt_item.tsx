@@ -88,7 +88,7 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
     <div className="flex items-center sm:w-48">
       <button className={`inline-flex items-center rounded-full px-3 py-1 ${displayedButtonColor}`}>
         <Image src={displayedButtonImage} width={15} height={15} alt="deposit icon" />
-        <p className="ml-2">{displayedButtonText}</p>
+        <p className="ml-2 whitespace-nowrap">{displayedButtonText}</p>
       </button>
     </div>
   );

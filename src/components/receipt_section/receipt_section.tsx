@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React, {useState, useContext, useEffect} from 'react';
 import ReceiptList from '../receipt_list/receipt_list';
 import ReceiptSearch from '../receipt_search/receipt_search';
 import {UserContext} from '../../contexts/user_context';
@@ -71,7 +71,24 @@ const ReceiptSection = () => {
     },
   ];
 
-  const dataMonthList = dummyHistoryList.map(history => {
+  const [filteredTradingType, setFilteredTradingType] = useState('');
+  const [filteredReceipts, setFilteredReceipts] = useState<IOrder[]>([]);
+
+  useEffect(() => {
+    if (filteredTradingType === '') {
+      setFilteredReceipts(dummyHistoryList);
+    } else if (filteredTradingType === 'DEPOSIT') {
+      setFilteredReceipts(dummyHistoryList.filter(v => v.type === 'DEPOSIT'));
+    } else if (filteredTradingType === 'WITHDRAW') {
+      setFilteredReceipts(dummyHistoryList.filter(v => v.type === 'WITHDRAW'));
+    } else if (filteredTradingType === 'OPEN_CFD') {
+      setFilteredReceipts(dummyHistoryList.filter(v => v.type === 'OPEN_CFD'));
+    } else if (filteredTradingType === 'CLOSE_CFD') {
+      setFilteredReceipts(dummyHistoryList.filter(v => v.type === 'CLOSE_CFD'));
+    }
+  }, [filteredTradingType]);
+
+  const dataMonthList = filteredReceipts.map(history => {
     return timestampToString(history.timestamp).monthAndYear;
   });
 
@@ -86,14 +103,17 @@ const ReceiptSection = () => {
   const listCluster = monthList.map(v => {
     return (
       <div>
-        <ReceiptList monthData={v} />
+        <ReceiptList monthData={v} filteredReceipts={filteredReceipts} />
       </div>
     );
   });
 
   return (
     <div className="p-4 sm:p-16">
-      <ReceiptSearch />
+      <ReceiptSearch
+        filteredTradingType={filteredTradingType}
+        setFilteredTradingType={setFilteredTradingType}
+      />
       <div>{listCluster}</div>
     </div>
   );

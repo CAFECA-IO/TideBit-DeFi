@@ -527,7 +527,10 @@ export default function CandlestickChart({
       }));
       setToLineChartData(toLineChartData);
 
-      const latestPrice = toLineChartData?.[toLineChartData.length - NULL_ARRAY_NUM - 1]?.y;
+      const latestPrice =
+        toLineChartData.length > 0
+          ? toLineChartData?.[toLineChartData.length - NULL_ARRAY_NUM - 1]?.y
+          : toLineChartData?.[0]?.y;
       const toLatestPriceLineData = toLineChartData?.map(data => ({
         x: data?.x,
         y: latestPrice,
@@ -728,12 +731,8 @@ export default function CandlestickChart({
           />
         )}
 
+        {/* TODO: price line (20230321 - Shirley) */}
         <VictoryLine
-          /* Till: (20230327 - Shirley)
-            animate={{
-              duration: 1000,
-            }}
-          */
           style={{
             data: {stroke: LINE_GRAPH_STROKE_COLOR.TIDEBIT_THEME, strokeWidth: 1},
           }}
@@ -745,8 +744,13 @@ export default function CandlestickChart({
           style={{
             data: {
               fill: ({datum}) =>
-                datum.x ===
-                toLatestPriceLineDataRef?.current[toLatestPriceLineDataRef?.current?.length - 1].x
+                toLatestPriceLineDataRef.current.length > 0
+                  ? datum.x ===
+                    toLatestPriceLineDataRef?.current[toLatestPriceLineDataRef?.current?.length - 1]
+                      .x
+                    ? 'transparent'
+                    : 'transparent'
+                  : datum.x === toLatestPriceLineDataRef?.current[0].x
                   ? 'transparent'
                   : 'transparent',
             },
@@ -756,8 +760,11 @@ export default function CandlestickChart({
             },
           }}
           labels={({datum}) =>
-            datum.x ===
-            toLatestPriceLineDataRef?.current[toLatestPriceLineDataRef?.current?.length - 1].x
+            datum.x === toLatestPriceLineDataRef.current.length > 0
+              ? toLatestPriceLineDataRef?.current[toLatestPriceLineDataRef?.current?.length - 1].x
+                ? `${datum.y}`
+                : ``
+              : toLatestPriceLineDataRef?.current[0].x
               ? `${datum.y}`
               : ``
           }

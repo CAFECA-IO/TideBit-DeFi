@@ -503,9 +503,16 @@ export default function CandlestickChart({
       //   })
       // );
 
-      setCandlestickChartData(processed);
+      // setCandlestickChartData(processed);
 
-      console.log('added null array', processed);
+      setCandlestickChartData(() =>
+        trimCandlestickData({
+          data: marketCtx?.candlestickChartData ?? [],
+          requiredDataNum: 30,
+        })
+      );
+
+      // console.log('added null array', processed);
 
       // TODO: (20230313 - Shirley) Sometimes, the candlestick overlays with another candlestick (20230310 - Shirley)/
       console.log('data put into chart', candlestickChartDataRef.current);

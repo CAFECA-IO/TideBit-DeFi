@@ -221,12 +221,17 @@ export const MarketProvider = ({children}: IMarketProvider) => {
         limit: tickerBook.limit,
         timespan: timeSpan,
       },
-      callback: (candlestickChartData: ICandlestickData[]) => {
-        tickerBook.updateCandlestick(
-          tickerId,
-          candlestickChartData.map(data => ({...data, x: new Date(data.x)}))
-        );
-        setCandlestickChartData(tickerBook.candlesticks[tickerId]);
+      callback: (result: ICandlestickData[], error: Error) => {
+        if (error) {
+          // TODO: error handle (Tzuhan - 20230321)
+        } else {
+          const candlestickChartData = result.map(data => ({
+            ...data,
+            x: new Date(data.x),
+          }));
+          tickerBook.updateCandlestick(tickerId, candlestickChartData);
+          setCandlestickChartData(tickerBook.candlesticks[tickerId]);
+        }
       },
     });
   };
@@ -269,8 +274,12 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     workerCtx.requestHandler({
       name: APIName.GET_GUARANTEED_STOP_FEE_PERCENTAGE,
       method: Method.GET,
-      callback: (guaranteedStopFeePercentage: number) => {
-        setGuaranteedStopFeePercentage(guaranteedStopFeePercentage);
+      callback: (result: number, error: Error) => {
+        if (error) {
+          // TODO: error handle (Tzuhan - 20230321)
+        } else {
+          setGuaranteedStopFeePercentage(result);
+        }
       },
     });
   };
@@ -283,10 +292,14 @@ export const MarketProvider = ({children}: IMarketProvider) => {
         limit: tickerBook.limit,
         timespan: timeSpan,
       },
-      callback: (tickers: ITickerData[]) => {
-        tickerBook.updateTickers(tickers);
-        setAvailableTickers({...tickerBook.tickers});
-        selectTickerHandler(tickers[0].currency);
+      callback: (tickers: ITickerData[], error: Error) => {
+        if (error) {
+          // TODO: error handle (Tzuhan - 20230321)
+        } else {
+          tickerBook.updateTickers(tickers);
+          setAvailableTickers({...tickerBook.tickers});
+          selectTickerHandler(tickers[0].currency);
+        }
       },
     });
   };
@@ -295,9 +308,12 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     workerCtx.requestHandler({
       name: APIName.LIST_DEPOSIT_CRYPTO_CURRENCIES,
       method: Method.GET,
-      callback: (cryptocurrencies: ICryptocurrency[]) => {
-        // console.log(`maket init depositcurrencies`, cryptocurrencies);
-        setDepositCryptocurrencies([...cryptocurrencies]);
+      callback: (cryptocurrencies: ICryptocurrency[], error: Error) => {
+        if (error) {
+          // TODO: error handle (Tzuhan - 20230321)
+        } else {
+          setDepositCryptocurrencies([...cryptocurrencies]);
+        }
       },
     });
   };
@@ -306,8 +322,12 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     workerCtx.requestHandler({
       name: APIName.LIST_WITHDRAW_CRYPTO_CURRENCIES,
       method: Method.GET,
-      callback: (cryptocurrencies: ICryptocurrency[]) => {
-        setWithdrawCryptocurrencies([...cryptocurrencies]);
+      callback: (cryptocurrencies: ICryptocurrency[], error: Error) => {
+        if (error) {
+          // TODO: error handle (Tzuhan - 20230321)
+        } else {
+          setWithdrawCryptocurrencies([...cryptocurrencies]);
+        }
       },
     });
   };

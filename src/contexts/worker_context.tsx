@@ -1,6 +1,6 @@
 import React, {createContext, useRef, useContext} from 'react';
 import useState from 'react-usestateref';
-import {APIRequest, IAPIName, IMethodConstant, TypeRequest} from '../constants/api_request';
+import {formatAPIRequest, IAPIName, IMethodConstant, TypeRequest} from '../constants/api_request';
 
 import {WS_URL} from '../constants/config';
 import {Events} from '../constants/events';
@@ -42,7 +42,7 @@ interface IWorkerContext {
     params?: {[key: string]: string | number | boolean};
     body?: object;
     headers?: object;
-    callback?: (...args: any[]) => void;
+    callback?: (result: any, error: Error) => void;
   }) => void;
   tickerChangeHandler: (ticker: ITickerData) => void;
   registerUserHandler: (address: string) => void;
@@ -71,11 +71,12 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
     const apiWorker = new Worker(new URL('../lib/workers/api.worker.ts', import.meta.url));
     setAPIWorker(apiWorker);
     apiWorker.onmessage = event => {
-      const {name, result} = event.data;
-      requests.current[name]?.callback(result);
+      const {name, result, error} = event.data;
+      requests.current[name]?.callback(result, error);
       delete requests.current[name];
     };
   };
+
   const wsInit = async () => {
     wsWorker = new WebSocket(WS_URL);
     if (wsWorker) {
@@ -193,11 +194,11 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
     params?: {[key: string]: string | number | boolean};
     body?: object;
     headers?: object;
-    callback?: (...args: any[]) => void;
+    callback?: (result: any, error: Error) => void;
   }) => {
     // TODO: error handle (20230320 - tzuhan)
     if (apiWorkerRef.current) {
-      const request: TypeRequest = APIRequest(data);
+      const request: TypeRequest = formatAPIRequest(data);
       apiWorkerRef.current.postMessage(request.request);
       requests.current[request.name] = request;
     } else {

@@ -122,16 +122,16 @@ export type TypeRequest = {
       headers?: object;
     };
   };
-  callback: (...args: any[]) => void;
+  callback: (result: any, error: Error) => void;
 };
 
-export const APIRequest = (data: {
+export const formatAPIRequest = (data: {
   name: IAPIName;
   method: IMethodConstant;
   params?: {[key: string]: string | number | boolean};
   body?: object;
   headers?: object;
-  callback?: (...args: any[]) => void;
+  callback?: (result: any, error: Error) => void;
 }) => {
   const request: TypeRequest = {
     name: data.name,

@@ -91,7 +91,7 @@ export const APIURL = {
 
 export const TBEURL = {
   // LIST_TICKERS: '/api/tickers',
-  LIST_TRADES: '/market/trades', // ++ TODO: ticker => `${ticker}usdt` (20230315 - tzuhan)
+  LIST_TRADES: '/market/trades', // ++ TODO: ticker => `${ticker}usdt` (20230315 - Tzuhan)
   // SEND_EMAIL_CODE: '/api/user/email',
   // CONNECT_TIDEBIT: '/api/tidebit',
   // CONNECT_EMAIL: '/api/user/email',
@@ -113,6 +113,17 @@ export const TBEURL = {
 
 export type TypeRequest = {
   name: IAPIName;
+  method: IMethodConstant;
+  params?: {[key: string]: string | number | boolean};
+  body?: object;
+  headers?: object;
+  /* Deprecated: callback in requestHandler (Tzuhan - 20230420)
+  callback: (result: any, error: Error) => void;
+  */
+};
+
+export type FormatedTypeRequest = {
+  name: IAPIName;
   request: {
     name: IAPIName;
     method: string;
@@ -122,18 +133,13 @@ export type TypeRequest = {
       headers?: object;
     };
   };
+  /* Deprecated: callback in requestHandler (Tzuhan - 20230420)
   callback: (result: any, error: Error) => void;
+  */
 };
 
-export const formatAPIRequest = (data: {
-  name: IAPIName;
-  method: IMethodConstant;
-  params?: {[key: string]: string | number | boolean};
-  body?: object;
-  headers?: object;
-  callback?: (result: any, error: Error) => void;
-}) => {
-  const request: TypeRequest = {
+export const formatAPIRequest = (data: TypeRequest) => {
+  const request: FormatedTypeRequest = {
     name: data.name,
     request: {
       name: data.name,
@@ -146,7 +152,9 @@ export const formatAPIRequest = (data: {
           }
         : undefined,
     },
-    callback: data.callback ? data.callback : () => null,
+    /* Deprecated: callback in requestHandler (Tzuhan - 20230420)
+    callback: (result: any, error: Error) => void;
+    */
   };
   return request;
 };

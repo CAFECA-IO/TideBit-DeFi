@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 self.onmessage = async function (event) {
   const {name, method, url, body, options} = event.data;
   try {
@@ -14,8 +13,8 @@ self.onmessage = async function (event) {
     if (response?.ok) {
       const result = await response.json();
       self.postMessage({name, result});
-      console.log('Use the response here!');
     } else {
+      // eslint-disable-next-line no-console
       console.log(`HTTP Response Code: ${response?.status}`, response);
       self.postMessage({name, error: new Error(response?.statusText)});
     }

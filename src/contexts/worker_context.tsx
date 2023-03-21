@@ -1,6 +1,6 @@
 import React, {createContext, useRef, useContext} from 'react';
 import useState from 'react-usestateref';
-import {formatAPIRequest, IAPIName, IMethodConstant, TypeRequest} from '../constants/api_request';
+import {formatAPIRequest, FormatedTypeRequest, TypeRequest} from '../constants/api_request';
 
 import {WS_URL} from '../constants/config';
 import {Events} from '../constants/events';
@@ -27,23 +27,17 @@ export const JobType: IJobTypeConstant = {
 interface IWorkerProvider {
   children: React.ReactNode;
 }
-
+/* Deprecated: callback in requestHandler (Tzuhan - 20230420)
 interface IRequest {
-  [name: string]: TypeRequest;
+  [name: string]: FormatedTypeRequest;
 }
+*/
 
 interface IWorkerContext {
   wsWorker: WebSocket | null;
   apiWorker: Worker | null;
   init: () => void;
-  requestHandler: (data: {
-    name: IAPIName;
-    method: IMethodConstant;
-    params?: {[key: string]: string | number | boolean};
-    body?: object;
-    headers?: object;
-    callback?: (result: any, error: Error) => void;
-  }) => void;
+  requestHandler: (data: TypeRequest) => Promise<unknown>;
   tickerChangeHandler: (ticker: ITickerData) => void;
   registerUserHandler: (address: string) => void;
 }
@@ -52,7 +46,7 @@ export const WorkerContext = createContext<IWorkerContext>({
   wsWorker: null,
   apiWorker: null,
   init: () => null,
-  requestHandler: () => null,
+  requestHandler: () => Promise.resolve(),
   tickerChangeHandler: () => null,
   registerUserHandler: () => null,
 });
@@ -65,16 +59,20 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
   const [apiWorker, setAPIWorker, apiWorkerRef] = useState<Worker | null>(null);
   const jobQueueOfWS = useRef<((...args: []) => Promise<void>)[]>([]);
   const jobQueueOfAPI = useRef<((...args: []) => Promise<void>)[]>([]);
+  /* Deprecated: callback in requestHandler (Tzuhan - 20230420)
   const requests = useRef<IRequest>({});
+  */
 
   const apiInit = () => {
     const apiWorker = new Worker(new URL('../lib/workers/api.worker.ts', import.meta.url));
     setAPIWorker(apiWorker);
+    /* Deprecated: callback in requestHandler (Tzuhan - 20230420)
     apiWorker.onmessage = event => {
       const {name, result, error} = event.data;
       requests.current[name]?.callback(result, error);
       delete requests.current[name];
     };
+    */
   };
 
   const wsInit = async () => {
@@ -90,18 +88,6 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
               if (tickerMarketData) {
                 notificationCtx.emitter.emit(TideBitEvent.TICKER, tickerMarketData);
               }
-              /* Till: remove dummy candlestick data (20230327 - Tzuhan)
-              if (data) {
-                const candlestickData: ICandlestickData = {
-                  x: new Date(data.at * 1000),
-                  y: getDummyPrices(parseFloat(data.last)),
-                };
-                notificationCtx.emitter.emit(
-                  TideBitEvent.CANDLESTICK,
-                  ticker?.currency,
-                  candlestickData
-                );
-              }*/
             }
             break;
           case Events.UPDATE:
@@ -122,7 +108,6 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
           case Events.TRADE:
             break;
           case Events.CANDLE_ON_UPDATE:
-            // notificationCtx.emitter.emit(TideBitEvent.CANDLESTICK, metaData.data);
             break;
           default:
             break;
@@ -165,7 +150,7 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
     }
   };
 
-  const createJob = (type: IJobType, callback: (...args: []) => Promise<void>) => {
+  const createJob = (type: IJobType, callback: () => Promise<unknown>) => {
     const job = () => {
       return new Promise<void>(async (resolve, reject) => {
         try {
@@ -188,19 +173,25 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
     }
   };
 
-  const requestHandler = async (data: {
-    name: IAPIName;
-    method: IMethodConstant;
-    params?: {[key: string]: string | number | boolean};
-    body?: object;
-    headers?: object;
-    callback?: (result: any, error: Error) => void;
-  }) => {
-    // TODO: error handle (20230320 - tzuhan)
+  const requestHandler = async (data: TypeRequest) => {
     if (apiWorkerRef.current) {
+      /* Deprecated: callback in requestHandler (Tzuhan - 20230420)
       const request: TypeRequest = formatAPIRequest(data);
       apiWorkerRef.current.postMessage(request.request);
       requests.current[request.name] = request;
+      */
+      const request: FormatedTypeRequest = formatAPIRequest(data);
+      const promise = new Promise((resolve, reject) => {
+        apiWorkerRef.current!.onmessage = event => {
+          const {name, result, error} = event.data;
+          if (name === request.name) {
+            if (error) reject(error);
+            else resolve(result);
+          }
+        };
+      });
+      apiWorkerRef.current.postMessage(request.request);
+      return promise;
     } else {
       createJob(JobType.API, () => requestHandler(data));
     }

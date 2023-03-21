@@ -13,8 +13,8 @@ import {
   getDummyClosedCFDs,
 } from '../interfaces/tidebit_defi_background/closed_cfd_details';
 import {
-  dummyResultFailed,
-  dummyResultSuccess,
+  defaultResultFailed,
+  defaultResultSuccess,
   IResult,
 } from '../interfaces/tidebit_defi_background/result';
 import {
@@ -170,11 +170,11 @@ export const UserContext = createContext<IUserContext>({
   enableServiceTerm: false,
   openCFDs: [],
   closedCFDs: [],
-  connect: () => Promise.resolve(dummyResultSuccess),
-  signServiceTerm: () => Promise.resolve(dummyResultSuccess),
-  disconnect: () => Promise.resolve(dummyResultSuccess),
-  addFavorites: () => Promise.resolve(dummyResultSuccess),
-  removeFavorites: () => Promise.resolve(dummyResultSuccess),
+  connect: () => Promise.resolve(defaultResultSuccess),
+  signServiceTerm: () => Promise.resolve(defaultResultSuccess),
+  disconnect: () => Promise.resolve(defaultResultSuccess),
+  addFavorites: () => Promise.resolve(defaultResultSuccess),
+  removeFavorites: () => Promise.resolve(defaultResultSuccess),
   listOpenCFDs: () => Promise.resolve<IOpenCFDDetails[]>([]),
   listClosedCFDs: () => Promise.resolve<IClosedCFDDetails[]>([]),
   // getOpendCFD: (props: string) => Promise.resolve<IOpenCFDDetails>(dummyOpenCFDDetails),
@@ -192,19 +192,19 @@ export const UserContext = createContext<IUserContext>({
   isConnectedWithTideBit: false,
   getBalance: () => null,
   getWalletBalance: () => null,
-  createCFDOrder: () => Promise.resolve<IResult>(dummyResultSuccess),
-  closeCFDOrder: () => Promise.resolve<IResult>(dummyResultSuccess),
-  updateCFDOrder: () => Promise.resolve<IResult>(dummyResultSuccess),
-  deposit: () => Promise.resolve<IResult>(dummyResultSuccess),
-  withdraw: () => Promise.resolve<IResult>(dummyResultSuccess),
-  listHistories: () => Promise.resolve(dummyResultSuccess),
-  sendEmailCode: () => Promise.resolve(dummyResultSuccess),
-  connectEmail: () => Promise.resolve(dummyResultSuccess),
-  toggleEmailNotification: () => Promise.resolve(dummyResultSuccess),
-  subscribeNewsletters: () => Promise.resolve(dummyResultSuccess),
-  connectTideBit: () => Promise.resolve(dummyResultSuccess),
-  shareTradeRecord: () => Promise.resolve(dummyResultSuccess),
-  readNotifications: () => Promise.resolve(dummyResultSuccess),
+  createCFDOrder: () => Promise.resolve<IResult>(defaultResultSuccess),
+  closeCFDOrder: () => Promise.resolve<IResult>(defaultResultSuccess),
+  updateCFDOrder: () => Promise.resolve<IResult>(defaultResultSuccess),
+  deposit: () => Promise.resolve<IResult>(defaultResultSuccess),
+  withdraw: () => Promise.resolve<IResult>(defaultResultSuccess),
+  listHistories: () => Promise.resolve(defaultResultSuccess),
+  sendEmailCode: () => Promise.resolve(defaultResultSuccess),
+  connectEmail: () => Promise.resolve(defaultResultSuccess),
+  toggleEmailNotification: () => Promise.resolve(defaultResultSuccess),
+  subscribeNewsletters: () => Promise.resolve(defaultResultSuccess),
+  connectTideBit: () => Promise.resolve(defaultResultSuccess),
+  shareTradeRecord: () => Promise.resolve(defaultResultSuccess),
+  readNotifications: () => Promise.resolve(defaultResultSuccess),
   init: () => Promise.resolve(),
 });
 
@@ -305,7 +305,7 @@ export const UserProvider = ({children}: IUserProvider) => {
   };
 
   const connect = async () => {
-    let result: IResult = dummyResultFailed;
+    let result: IResult = defaultResultFailed;
     result.code = Code.WALLET_IS_NOT_CONNECT;
     result.reason = Reason[result.code];
     try {
@@ -317,14 +317,14 @@ export const UserProvider = ({children}: IUserProvider) => {
         };
       }
     } catch (error) {
-      result = dummyResultFailed;
+      result = defaultResultFailed;
     }
     return result;
   };
 
   const signServiceTerm = async (): Promise<IResult> => {
     let eip712signature: string,
-      result: IResult = dummyResultFailed;
+      result: IResult = defaultResultFailed;
     if (lunar.isConnected) {
       eip712signature = await lunar.signTypedData(ServiceTerm);
       const verifyR: boolean = lunar.verifyTypedData(ServiceTerm, eip712signature);
@@ -350,7 +350,7 @@ export const UserProvider = ({children}: IUserProvider) => {
   };
 
   const disconnect = async () => {
-    let result: IResult = dummyResultFailed;
+    let result: IResult = defaultResultFailed;
     try {
       await lunar.disconnect();
       if (!lunar.isConnected) {
@@ -364,19 +364,19 @@ export const UserProvider = ({children}: IUserProvider) => {
   };
 
   const addFavorites = async (newFavorite: string) => {
-    let result: IResult = dummyResultFailed;
+    let result: IResult = defaultResultFailed;
     if (isConnectedRef.current) {
       const updatedFavoriteTickers = [...favoriteTickers];
       updatedFavoriteTickers.push(newFavorite);
       setFavoriteTickers(updatedFavoriteTickers);
       // console.log(`userContext updatedFavoriteTickers`, updatedFavoriteTickers);
-      result = dummyResultSuccess;
+      result = defaultResultSuccess;
     }
     return result;
   };
 
   const removeFavorites = async (previousFavorite: string) => {
-    let result: IResult = dummyResultFailed;
+    let result: IResult = defaultResultFailed;
     if (isConnectedRef.current) {
       const updatedFavoriteTickers = [...favoriteTickers];
       const index: number = updatedFavoriteTickers.findIndex(
@@ -385,7 +385,7 @@ export const UserProvider = ({children}: IUserProvider) => {
       if (index !== -1) updatedFavoriteTickers.splice(index, 1);
       setFavoriteTickers(updatedFavoriteTickers);
       // console.log(`userContext updatedFavoriteTickers`, updatedFavoriteTickers);
-      result = dummyResultSuccess;
+      result = defaultResultSuccess;
     }
     return result;
   };
@@ -417,7 +417,7 @@ export const UserProvider = ({children}: IUserProvider) => {
   };
 
   const createCFDOrder = async (props: IApplyCreateCFDOrderData | undefined): Promise<IResult> => {
-    let result: IResult = dummyResultFailed;
+    let result: IResult = defaultResultFailed;
     if (lunar.isConnected) {
       if (props) {
         const balance: IBalance | null = getBalance(props.margin.asset);
@@ -451,7 +451,7 @@ export const UserProvider = ({children}: IUserProvider) => {
   };
 
   const closeCFDOrder = async (props: IApplyCloseCFDOrderData | undefined): Promise<IResult> => {
-    let result: IResult = dummyResultFailed;
+    let result: IResult = defaultResultFailed;
     if (lunar.isConnected) {
       if (props) {
         const CFDOrder: IApplyCFDOrder = {type: CFDOrderType.CLOSE, data: props};
@@ -482,7 +482,7 @@ export const UserProvider = ({children}: IUserProvider) => {
   };
 
   const updateCFDOrder = async (props: IApplyUpdateCFDOrderData | undefined): Promise<IResult> => {
-    let result: IResult = dummyResultFailed;
+    let result: IResult = defaultResultFailed;
     if (lunar.isConnected) {
       if (props) {
         const CFDOrder: IApplyCFDOrder = {type: CFDOrderType.UPDATE, data: props};
@@ -513,7 +513,7 @@ export const UserProvider = ({children}: IUserProvider) => {
   };
 
   const deposit = async (depositOrder: IApplyDepositOrder): Promise<IResult> => {
-    let result: IResult = dummyResultFailed;
+    let result: IResult = defaultResultFailed;
     if (lunar.isConnected) {
       const walletBalance: IWalletBalance | null = getWalletBalance(depositOrder.targetAsset);
       // if (walletBalance && walletBalance.balance >= depositOrder.targetAmount) { // ++ TODO verify
@@ -539,7 +539,7 @@ export const UserProvider = ({children}: IUserProvider) => {
   };
 
   const withdraw = async (witherOrder: IApplyWithdrawOrder): Promise<IResult> => {
-    let result: IResult = dummyResultFailed;
+    let result: IResult = defaultResultFailed;
     if (lunar.isConnected) {
       const balance: IBalance | null = getBalance(witherOrder.targetAsset); // TODO: ticker is not currency
       if (balance && balance.available >= witherOrder.targetAmount) {
@@ -571,14 +571,14 @@ export const UserProvider = ({children}: IUserProvider) => {
 
   const listHistories = async () => {
     let histories: IOrder[] = [],
-      result: IResult = dummyResultFailed;
+      result: IResult = defaultResultFailed;
     result.code = Code.SERVICE_TERM_DISABLE;
     result.reason = Reason[result.code];
     if (enableServiceTermRef.current) {
       // TODO: getHistories from backend
       histories = [dummyDepositOrder, dummyClosedCFDOrder, dummyOpenCFDOrder, dummyWithdrawalOrder];
       setHistories(histories);
-      result = dummyResultSuccess;
+      result = defaultResultSuccess;
       result.data = histories;
     }
     return result;
@@ -638,73 +638,73 @@ export const UserProvider = ({children}: IUserProvider) => {
   };
 
   const sendEmailCode = async (email: string, hashCash: string) => {
-    let result: IResult = dummyResultFailed;
+    let result: IResult = defaultResultFailed;
     try {
       // TODO: post request (Tzuhan - 20230317)
-      result = dummyResultSuccess;
+      result = defaultResultSuccess;
     } catch (error) {
-      result = dummyResultFailed;
+      result = defaultResultFailed;
     }
     return result;
   };
   const connectEmail = async (email: string, code: number) => {
-    let result: IResult = dummyResultFailed;
+    let result: IResult = defaultResultFailed;
     try {
       // TODO: post request (Tzuhan - 20230317)
-      result = dummyResultSuccess;
+      result = defaultResultSuccess;
     } catch (error) {
-      result = dummyResultFailed;
+      result = defaultResultFailed;
     }
     return result;
   };
   const toggleEmailNotification = async (props: boolean) => {
-    let result: IResult = dummyResultFailed;
+    let result: IResult = defaultResultFailed;
     try {
       // TODO: put request (Tzuhan - 20230317)
     } catch (error) {
-      result = dummyResultFailed;
+      result = defaultResultFailed;
     }
     return result;
   };
   const subscribeNewsletters = async (props: boolean) => {
-    let result: IResult = dummyResultFailed;
+    let result: IResult = defaultResultFailed;
     try {
       // TODO: put request (Tzuhan - 20230317)
     } catch (error) {
-      result = dummyResultFailed;
+      result = defaultResultFailed;
     }
     return result;
   };
   const connectTideBit = async (email: string, password: string) => {
-    let result: IResult = dummyResultFailed;
+    let result: IResult = defaultResultFailed;
     try {
       // TODO: post request (Tzuhan - 20230317)
-      result = dummyResultSuccess;
+      result = defaultResultSuccess;
     } catch (error) {
-      result = dummyResultFailed;
+      result = defaultResultFailed;
     }
     return result;
   };
   const shareTradeRecord = async (tradeId: string) => {
-    let result: IResult = dummyResultFailed;
+    let result: IResult = defaultResultFailed;
     try {
       // TODO: call 3rd party api (Tzuhan - 20230317)
-      result = dummyResultSuccess;
+      result = defaultResultSuccess;
     } catch (error) {
-      result = dummyResultFailed;
+      result = defaultResultFailed;
     }
     return result;
   };
 
   const readNotifications = async (notifications: INotificationItem[]) => {
-    let result: IResult = dummyResultFailed;
+    let result: IResult = defaultResultFailed;
     if (enableServiceTermRef.current) {
       try {
         // TODO: post request (Tzuhan - 20230317)
-        result = dummyResultSuccess;
+        result = defaultResultSuccess;
         notificationCtx.emitter.emit(TideBitEvent.UPDATE_READ_NOTIFICATIONS_RESULT, notifications);
       } catch (error) {
-        result = dummyResultFailed;
+        result = defaultResultFailed;
       }
     }
 

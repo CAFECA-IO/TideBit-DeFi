@@ -176,7 +176,7 @@ export const convertTradesToCandlestickData = (
       const low = Math.min(...sortTrades[index]);
       const close = sortTrades[index][sortTrades[index].length - 1];
       candlestickData = candlestickData.concat({
-        x: new Date(_lastestBarTime + time * index),
+        x: new Date(_lastestBarTime + time * (index + 1)),
         open,
         high,
         low,

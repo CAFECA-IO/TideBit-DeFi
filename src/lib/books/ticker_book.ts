@@ -29,15 +29,16 @@ class TickerBook {
       return prev;
     }, this._tickers);
     this._candlesticks = dummyTickers.reduce((prev, curr) => {
-      if (!prev[curr.currency])
-        prev[curr.currency] = getDummyCandlestickChartData(80, this.timeSpan);
+      if (!prev[curr.currency]) prev[curr.currency] = [];
       return prev;
     }, this._candlesticks);
   }
 
   updateCandlestickByTrade(ticker: string, trades: ITBETrade[]) {
     const lastestBarTime =
-      this.candlesticks[ticker][this.candlesticks[ticker].length - 1].x.getTime();
+      this.candlesticks[ticker].length > 0
+        ? this.candlesticks[ticker][this.candlesticks[ticker].length - 1].x.getTime()
+        : 0;
     const filterTrades = trades.filter(trade => trade.at * 1000 >= lastestBarTime);
     const candlestickChartData: ICandlestickData[] = convertTradesToCandlestickData(
       filterTrades,

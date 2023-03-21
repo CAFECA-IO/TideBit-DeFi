@@ -158,36 +158,6 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     return dummyResultSuccess;
   };
 
-  /* Deprecated: updateCandlestickData with ICandlestickData 可能會有派上用場的時候 (20230407 - Tzuhan)
-  const updateCandlestickData = (candlestickData: ICandlestickData) => {
-    let candlestickDatas = candlestickChartDataRef.current
-      ? [...candlestickChartDataRef.current]
-      : [];
-    const lastestData = candlestickDatas[candlestickDatas.length - 1];
-    // eslint-disable-next-line no-console
-    // console.log(`lastestData`, lastestData, lastestData.x.getTime());
-    // eslint-disable-next-line no-console
-    // console.log(
-    //   `candlestickData`,
-    //   candlestickData,
-    //   candlestickData.x.getTime(),
-    //   candlestickData.x.getTime() - lastestData.x.getTime() >= getTime(timeSpanRef.current)
-    // );
-    if (lastestData) {
-      if (candlestickData.x.getTime() - lastestData.x.getTime() >= getTime(timeSpanRef.current)) {
-        candlestickDatas = candlestickDatas.concat([candlestickData]);
-      } else {
-        candlestickDatas[candlestickDatas.length - 1].y = candlestickData.y;
-      }
-    } else {
-      candlestickDatas = [candlestickData];
-    }
-    // eslint-disable-next-line no-console
-    // console.log(`candlestickDatas[${candlestickDatas.length}]`, candlestickDatas);
-    setCandlestickChartData(candlestickDatas);
-  };
-  */
-
   const getCandlestickChartData = async (tickerId: string) => {
     workerCtx.requestHandler({
       name: APIName.GET_CANDLESTICK_DATA,

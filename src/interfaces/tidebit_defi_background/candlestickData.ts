@@ -15,6 +15,9 @@ export interface ICandlestickData {
 export const getTime = (timeSpan: ITimeSpanUnion) => {
   let time = 1000;
   switch (timeSpan) {
+    case TimeSpanUnion._1s:
+      time = 1 * 1000;
+      break;
     case TimeSpanUnion._1m:
       time = 1 * 60 * 1000;
       break;

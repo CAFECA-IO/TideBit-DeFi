@@ -1,3 +1,7 @@
+import {getTime, ICandlestickData} from '../interfaces/tidebit_defi_background/candlestickData';
+import {ITBETrade} from '../interfaces/tidebit_defi_background/ticker_data';
+import {ITimeSpanUnion} from '../interfaces/tidebit_defi_background/time_span_union';
+
 export const roundToDecimalPlaces = (val: number, precision: number): number => {
   const roundedNumber = Number(val.toFixed(precision));
   return roundedNumber;
@@ -143,4 +147,42 @@ export const toQuery = (params: {[key: string]: string | number | boolean} | und
         .join('&')}`
     : ``;
   return query;
+};
+
+export const convertTradesToCandlestickData = (
+  trades: ITBETrade[],
+  timeSpan: ITimeSpanUnion,
+  lastestBarTime?: number
+) => {
+  const _trades = [...trades].sort((a, b) => +a.ts - +b.ts);
+  const _lastestBarTime = lastestBarTime || +_trades[0]?.ts;
+  const time = getTime(timeSpan);
+  let sortTrades: number[][] = [];
+  let candlestickData: ICandlestickData[] = [];
+  sortTrades = _trades.reduce((prev, curr, index) => {
+    if (+curr.ts - _lastestBarTime > (index + 1) * time) {
+      prev = [...prev, [+curr.price]];
+    } else {
+      let tmp: number[] = prev.pop() || [];
+      tmp = [...tmp, +curr.price];
+      prev = [...prev, tmp];
+    }
+    return prev;
+  }, sortTrades);
+  if (sortTrades.length > 0) {
+    for (let index = 0; index < sortTrades.length; index++) {
+      const open = sortTrades[index][0];
+      const high = Math.max(...sortTrades[index]);
+      const low = Math.min(...sortTrades[index]);
+      const close = sortTrades[index][sortTrades[index].length - 1];
+      candlestickData = candlestickData.concat({
+        x: new Date(_lastestBarTime + time * index),
+        open,
+        high,
+        low,
+        close,
+      });
+    }
+  }
+  return candlestickData;
 };

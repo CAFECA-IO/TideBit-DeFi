@@ -24,7 +24,14 @@ export function getDeadline(deadline: number) {
  */
 export const timestampToString = (timestamp: number) => {
   if (timestamp === 0)
-    return {date: '-', time: '-', abbreviatedMonth: '-', day: '-', abbreviatedTime: '-'};
+    return {
+      date: '-',
+      time: '-',
+      abbreviatedMonth: '-',
+      monthAndYear: '-',
+      day: '-',
+      abbreviatedTime: '-',
+    };
 
   const date = new Date(timestamp * 1000);
   // const date = new Date();
@@ -50,20 +57,25 @@ export const timestampToString = (timestamp: number) => {
     'Oct',
     'Nov',
     'Dec',
-    // 'January',
-    // 'February',
-    // 'March',
-    // 'April',
-    // 'May',
-    // 'June',
-    // 'July',
-    // 'August',
-    // 'September',
-    // 'October',
-    // 'November',
-    // 'December',
   ];
+
+  const monthFullNames = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
+  ];
+
   const monthName = monthNames[monthIndex];
+  const monthFullName = monthFullNames[monthIndex];
 
   const dateString = `${year}-${month}-${day}`;
   const timeString = `${hour}:${minute}:${second}`;
@@ -73,6 +85,7 @@ export const timestampToString = (timestamp: number) => {
     date: dateString,
     time: timeString,
     abbreviatedMonth: monthName,
+    monthAndYear: `${monthFullName} ${year}`,
     day: day,
     abbreviatedTime: `${hour}:${minute}`,
   };

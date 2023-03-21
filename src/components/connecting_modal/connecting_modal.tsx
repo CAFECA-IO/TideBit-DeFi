@@ -1,7 +1,9 @@
 import Lottie from 'lottie-react';
 import bigConnectingAnimation from '../../../public/animation/lf30_editor_qlduo5gq.json';
 import {ImCross} from 'react-icons/im';
+import {useTranslation} from 'next-i18next';
 
+type TranslateFunction = (s: string) => string;
 interface IConnectingModal {
   connectingModalRef?: React.RefObject<HTMLDivElement>;
   connectingModalVisible?: boolean;
@@ -14,6 +16,7 @@ const ConnectingModal = ({
   connectingClickHandler,
   ...otherProps
 }: IConnectingModal) => {
+  const {t}: {t: TranslateFunction} = useTranslation('common');
   // const {isShowing} = props;
 
   // const {
@@ -34,12 +37,12 @@ const ConnectingModal = ({
           <div
             id="connectModal"
             ref={connectingModalRef}
-            className="relative flex h-600px w-450px flex-col rounded-3xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none"
+            className="relative flex h-600px w-450px flex-col rounded-xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none"
           >
             {/*header*/}
             <div className="flex items-start justify-between rounded-t pt-6">
               <h3 className="mx-auto mt-2 w-20rem pl-1/8 text-4xl font-semibold text-lightWhite">
-                Wallet Connect
+                {t('WALLET_PANEL.TITLE')}
               </h3>
               <button className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
                 <span className="absolute top-5 right-5 block outline-none focus:outline-none">
@@ -52,7 +55,7 @@ const ConnectingModal = ({
               <div className="text-lg leading-relaxed text-lightWhite">
                 <div className="flex-col justify-center text-center">
                   <Lottie className="ml-7 w-full pt-12" animationData={bigConnectingAnimation} />
-                  <div className="mt-10 text-xl">Connecting...</div>
+                  <div className="mt-10 text-xl">{t('WALLET_PANEL.CONNECTING')}</div>
                 </div>
               </div>
             </div>

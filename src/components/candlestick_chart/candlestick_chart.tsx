@@ -425,6 +425,9 @@ export default function CandlestickChart({
       }))
     );
 
+    // eslint-disable-next-line no-console
+    console.log('data put into chart', toCandlestickChartDataRef.current);
+
     const toLineChartData =
       candlestickChartDataRef.current?.map((data, i) => ({
         x: data.x,

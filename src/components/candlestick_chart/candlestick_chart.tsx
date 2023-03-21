@@ -490,6 +490,7 @@ export default function CandlestickChart({
       if (!candlestickChartDataRef?.current) return;
 
       const updatedCandlestickChartData = candlestickChartDataRef?.current;
+      const marketData = marketCtx?.candlestickChartData;
 
       const processed = processCandlestickData({
         data: marketCtx?.candlestickChartData ?? [],
@@ -516,7 +517,7 @@ export default function CandlestickChart({
 
       // TODO: (20230313 - Shirley) Sometimes, the candlestick overlays with another candlestick (20230310 - Shirley)/
       console.log('data put into chart', candlestickChartDataRef.current);
-      console.log('market Ctx', marketCtx.candlestickChartData);
+      console.log('market Ctx', marketData);
       // console.log('market Ctx sliced', marketCtx.candlestickChartData?.slice(-30));
       // console.log('market Ctx stringified', JSON.stringify(marketCtx.candlestickChartData));
 

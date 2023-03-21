@@ -33,6 +33,10 @@ import {AppContext} from '../../contexts/app_context';
 import Image from 'next/image';
 import {GlobalContext} from '../../contexts/global_context';
 import {UserContext} from '../../contexts/user_context';
+import {
+  MAX_PRICE_TRADING_CHART_ONE_SEC,
+  MIN_PRICE_TRADING_CHART_ONE_SEC,
+} from '../../constants/config';
 
 interface ITradingChartGraphProps {
   strokeColor: string[];
@@ -393,7 +397,7 @@ export default function CandlestickChart({
     if (marketCtx.candlestickChartData === null) return;
     // eslint-disable-next-line no-console
     console.log(`Component CandlestickChart`, marketCtx.candlestickChartData);
-    // if (!toCandlestickChartDataRef.current) {
+    // if (!candlestickChartDataRef.current) {
     setCandlestickChartData(() =>
       trimCandlestickData({
         data:
@@ -409,6 +413,7 @@ export default function CandlestickChart({
         requiredDataNum: 30,
       })
     );
+    // }
 
     setToCandlestickChartData(
       candlestickChartDataRef.current?.map(data => ({
@@ -419,6 +424,21 @@ export default function CandlestickChart({
         close: data.y[3],
       }))
     );
+
+    const toLineChartData =
+      candlestickChartDataRef.current?.map((data, i) => ({
+        x: data.x,
+        y: data.y[3],
+      })) ?? [];
+    setToLineChartData(toLineChartData);
+
+    const latestPrice = toLineChartData?.[toLineChartData.length - NULL_ARRAY_NUM - 1]?.y;
+    const toLatestPriceLineData = toLineChartData?.map(data => ({
+      x: data?.x,
+      y: latestPrice,
+    }));
+
+    setToLatestPriceLineData(toLatestPriceLineData);
     // }
 
     //     const setStateInterval = setInterval(() => {
@@ -447,19 +467,19 @@ export default function CandlestickChart({
 
     //       setToCandlestickChartData(toCandlestickChartData);
 
-    //       const toLineChartData = updatedCandlestickChartData.map((data, i) => ({
-    //         x: data.x,
-    //         y: data.y[3],
-    //       }));
-    //       setToLineChartData(toLineChartData);
+    // const toLineChartData = updatedCandlestickChartData.map((data, i) => ({
+    //   x: data.x,
+    //   y: data.y[3],
+    // }));
+    // setToLineChartData(toLineChartData);
 
-    //       const latestPrice = toLineChartData?.[toLineChartData.length - NULL_ARRAY_NUM - 1]?.y;
-    //       const toLatestPriceLineData = toLineChartData?.map(data => ({
-    //         x: data?.x,
-    //         y: latestPrice,
-    //       }));
+    // const latestPrice = toLineChartData?.[toLineChartData.length - NULL_ARRAY_NUM - 1]?.y;
+    // const toLatestPriceLineData = toLineChartData?.map(data => ({
+    //   x: data?.x,
+    //   y: latestPrice,
+    // }));
 
-    //       setToLatestPriceLineData(toLatestPriceLineData);
+    // setToLatestPriceLineData(toLatestPriceLineData);
     //     }, 1000 * 1);
 
     return () => {
@@ -499,8 +519,12 @@ export default function CandlestickChart({
     candlestickChartDataRef.current && candlestickChartDataRef.current?.length > 0 ? (
       <VictoryChart
         theme={chartTheme}
-        minDomain={{y: minNumber !== null ? minNumber * 0.7 : undefined}}
-        maxDomain={{y: maxNumber !== null ? maxNumber * 1.3 : undefined}} // TODO: measure the biggest number to decide the y-axis
+        minDomain={{
+          y: minNumber !== null ? minNumber * MIN_PRICE_TRADING_CHART_ONE_SEC : undefined,
+        }}
+        maxDomain={{
+          y: maxNumber !== null ? maxNumber * MAX_PRICE_TRADING_CHART_ONE_SEC : undefined,
+        }} // TODO: measure the biggest number to decide the y-axis
         // Till: (20230327 - Shirley)  // domainPadding={{x: 1}}
         width={Number(candlestickChartWidth)}
         height={Number(candlestickChartHeight)}
@@ -551,6 +575,7 @@ export default function CandlestickChart({
             style={{
               data: {
                 fillOpacity: 1,
+
                 stroke: (d: any) =>
                   d.close > d.open ? TypeOfPnLColorHex.LOSS : TypeOfPnLColorHex.PROFIT,
                 strokeWidth: 1,

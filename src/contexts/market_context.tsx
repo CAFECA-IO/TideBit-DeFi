@@ -14,7 +14,11 @@ import {
   dummyCryptocurrencies,
   ICryptocurrency,
 } from '../interfaces/tidebit_defi_background/cryptocurrency';
-import {dummyResultSuccess, IResult} from '../interfaces/tidebit_defi_background/result';
+import {
+  dummyResultFailed,
+  dummyResultSuccess,
+  IResult,
+} from '../interfaces/tidebit_defi_background/result';
 import {
   ITickerData,
   dummyTicker,
@@ -28,6 +32,11 @@ import {NotificationContext} from './notification_context';
 import {WorkerContext} from './worker_context';
 import {APIName, Method} from '../constants/api_request';
 import TickerBookInstance from '../lib/books/ticker_book';
+import {getDummyQuotation, IQuotation} from '../interfaces/tidebit_defi_background/quotation';
+import {
+  getDummyTickerHistoryData,
+  ITickerHistoryData,
+} from '../interfaces/tidebit_defi_background/ticker_history_data';
 
 export interface IMarketProvider {
   children: React.ReactNode;
@@ -53,6 +62,8 @@ export interface IMarketContext {
   selectTickerHandler: (props: string) => IResult;
   selectTimeSpanHandler: (props: ITimeSpanUnion) => void;
   getCandlestickChartData: (tickerId: string) => Promise<void>; // x 100
+  getCFDQuotation: (tickerId: string) => Promise<IResult>;
+  getTickerHistory: (tickerId: string, timespan: ITimeSpanUnion, limit: number) => Promise<IResult>;
 }
 // TODO: Note: _app.tsx 啟動的時候 => createContext
 export const MarketContext = createContext<IMarketContext>({
@@ -81,6 +92,8 @@ export const MarketContext = createContext<IMarketContext>({
   selectTickerHandler: () => dummyResultSuccess,
   getCandlestickChartData: () => Promise.resolve(),
   init: () => Promise.resolve(),
+  getCFDQuotation: () => Promise.resolve(dummyResultSuccess),
+  getTickerHistory: () => Promise.resolve(dummyResultSuccess),
 });
 
 export const MarketProvider = ({children}: IMarketProvider) => {
@@ -206,6 +219,36 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     });
   };
 
+  const getCFDQuotation = async (tickerId: string) => {
+    let result: IResult = dummyResultFailed;
+    try {
+      // TODO: send request (Tzuhan - 20230317)
+      const quotation: IQuotation = getDummyQuotation(tickerId);
+      result = dummyResultSuccess;
+      result.data = quotation;
+    } catch (error) {
+      result = dummyResultFailed;
+    }
+    return result;
+  };
+
+  const getTickerHistory = async (tickerId: string, timespan: ITimeSpanUnion, limit: number) => {
+    let result: IResult = dummyResultFailed;
+    try {
+      // TODO: send request (Tzuhan - 20230317)
+      const tickerHistory: ITickerHistoryData[] = getDummyTickerHistoryData(
+        tickerId,
+        timespan,
+        limit
+      );
+      result = dummyResultSuccess;
+      result.data = tickerHistory;
+    } catch (error) {
+      result = dummyResultFailed;
+    }
+    return result;
+  };
+
   const init = async () => {
     setIsCFDTradable(true);
     workerCtx.requestHandler({
@@ -310,6 +353,8 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     depositCryptocurrencies: depositCryptocurrenciesRef.current,
     withdrawCryptocurrencies: withdrawCryptocurrenciesRef.current,
     getCandlestickChartData,
+    getCFDQuotation,
+    getTickerHistory,
     init,
   };
 

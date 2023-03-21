@@ -14,6 +14,7 @@ self.onmessage = async function (event) {
       const result = await response.json();
       self.postMessage({name, result});
     } else {
+      // Deprecated: remove console.log (20230321 - tzuhan)
       // eslint-disable-next-line no-console
       console.log(`HTTP Response Code: ${response?.status}`, response);
       self.postMessage({name, error: new Error(response?.statusText)});

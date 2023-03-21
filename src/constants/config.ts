@@ -37,6 +37,6 @@ export const API_VERSION = '/api/v1';
 // Deprecated: dummy url settings (20230407 - Tzuhan)
 export const AVAILABLE_TICKERS = ['ETH', 'BTC'];
 
-export const MAX_PRICE_TRADING_CHART_ONE_SEC = 0.98;
+export const MAX_PRICE_TRADING_CHART_ONE_SEC = 1.015;
 
-export const MIN_PRICE_TRADING_CHART_ONE_SEC = 1.02;
+export const MIN_PRICE_TRADING_CHART_ONE_SEC = 0.985;

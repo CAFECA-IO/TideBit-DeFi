@@ -109,6 +109,104 @@ export const updateDummyCandlestickChartData = (
   return withNullData;
 };
 
+interface INewCandlestick {
+  x: Date;
+  open: number | null;
+  high: number | null;
+  low: number | null;
+  close: number | null;
+}
+
+const timespan = 1000;
+const dataSize = 30;
+
+const getLastTime = () => {
+  const now = new Date().getTime();
+  return now - (now % timespan);
+};
+
+const createBaseArray = () => {
+  const base = new Array(dataSize).fill(0).map((v, i) => {
+    const eachTime = new Date(getLastTime() - (dataSize - i) * timespan);
+    const eachTimestamp = eachTime.getTime() / 1000;
+
+    return {
+      // i,
+      // timestamp: eachTimestamp,
+      x: eachTime,
+      open: null,
+      high: null,
+      low: null,
+      close: null,
+    };
+  });
+  return base;
+};
+
+const updateCandlestickData = (data: ICandlestickData[], baseArray: ICandlestickData[]) => {
+  let previousClose = null;
+
+  for (let i = 0; i < baseArray.length; i++) {
+    const index = data.findIndex(c => c.x.getTime() === baseArray[i].x.getTime());
+    if (index >= 0) {
+      previousClose = data[index].close;
+      baseArray[i].open = data[index].open;
+      baseArray[i].high = data[index].high;
+      baseArray[i].low = data[index].low;
+      baseArray[i].close = data[index].close;
+    } else {
+      if (previousClose !== null) {
+        baseArray[i].open = previousClose;
+        baseArray[i].high = previousClose;
+        baseArray[i].low = previousClose;
+        baseArray[i].close = previousClose;
+      }
+    }
+  }
+
+  const result = [...baseArray];
+  // const bool = result === baseArray
+  // console.log('result vs baseArray', bool)
+  return result;
+};
+
+const processedCandlestickData = (data: INewCandlestick[]) => {
+  const baseArray = createBaseArray();
+  const updatedData = updateCandlestickData(data, baseArray);
+  return updatedData;
+};
+
+// const fakeData = [
+//   {
+//     x: new Date(getLastTime() - (dataSize - 0) * timespan),
+//     open: 33,
+//     high: 33,
+//     low: 33,
+//     close: 33,
+//   },
+//   {
+//     x: new Date(getLastTime() - (dataSize - 2) * timespan),
+//     open: 33,
+//     high: 15,
+//     low: 14,
+//     close: 21,
+//   },
+//   {
+//     x: new Date(getLastTime() - (dataSize - 10) * timespan),
+//     open: 1,
+//     high: 1,
+//     low: 1,
+//     close: 99,
+//   },
+//   {
+//     x: new Date(getLastTime() - (dataSize - 29) * timespan),
+//     open: 22,
+//     high: 22,
+//     low: 22,
+//     close: 22,
+//   },
+// ];
+
 function countNullArrays(arr: {y: any[]}[]): number {
   let count = 0;
   for (let i = 0; i < arr.length; i++) {
@@ -124,8 +222,16 @@ export interface IProcessCandlestickData {
   requiredDataNum: number;
 }
 
+// export function noNullArray(data: ICandlestickData[]) {
+//   return data.filter(
+//     ({open, high, low, close}) =>
+//       !(open === null && high === null && low === null && close === null)
+//   );
+// }
+
 // TODO: (20230313 - Shirley) after getting the complete data from Context, process it to the required format
 export function processCandlestickData({data, requiredDataNum}: IProcessCandlestickData) {
+  // const origin = [...data];
   const origin = [...data].map(d => ({
     x: d.x,
     y: [
@@ -135,7 +241,7 @@ export function processCandlestickData({data, requiredDataNum}: IProcessCandlest
       d.close ? d.close : null,
     ],
   }));
-  const nullNum = countNullArrays(origin);
+  const nullNum = 1;
 
   const unitOfLive = 1000;
   const now = new Date().getTime();
@@ -143,11 +249,22 @@ export function processCandlestickData({data, requiredDataNum}: IProcessCandlest
 
   const originWithoutNull = origin.filter(obj => !obj.y.includes(null));
   const latestData = originWithoutNull.slice(-requiredDataNum);
+  const candles = latestData.map(d => ({
+    x: d.x,
+    open: d.y[0],
+    high: d.y[1],
+    low: d.y[2],
+    close: d.y[3],
+  }));
   const toCandlestickData = [
-    ...latestData,
+    ...candles,
     ...Array.from({length: nullNum}, (_, i) => ({
       x: new Date(nowSecond + unitOfLive * (i + 1)),
-      y: [null, null, null, null],
+      open: null,
+      high: null,
+      low: null,
+      close: null,
+      // y: [null, null, null, null],
     })),
   ];
 
@@ -221,12 +338,11 @@ export default function CandlestickChart({
   );
 
   // the max and min shouldn't be responsive to the candlestick data
-  const ys: number[] = candlestickChartDataFromCtx.flatMap(candle => [
-    candle.open,
-    candle.high,
-    candle.low,
-    candle.close,
-  ]);
+  const ys: number[] = candlestickChartDataFromCtx
+    .flatMap(candle => [candle.open, candle.high, candle.low, candle.close])
+    .filter(y => y !== null) as number[];
+
+  // const noNull = noNullArray(candlestickChartDataFromCtx);
 
   // const ys = candlestickChartDataFromCtx.flatMap(d => d.y.filter(y => y !== null)) as number[];
 
@@ -375,7 +491,21 @@ export default function CandlestickChart({
 
       const updatedCandlestickChartData = candlestickChartDataRef?.current;
 
-      setCandlestickChartData(updatedCandlestickChartData);
+      const processed = processCandlestickData({
+        data: marketCtx?.candlestickChartData ?? [],
+        requiredDataNum: 30,
+      });
+
+      // setCandlestickChartData(() =>
+      //   trimCandlestickData({
+      //     data: marketCtx?.candlestickChartData ?? [],
+      //     requiredDataNum: 30,
+      //   })
+      // );
+
+      setCandlestickChartData(processed);
+
+      console.log('added null array', processed);
 
       // TODO: (20230313 - Shirley) Sometimes, the candlestick overlays with another candlestick (20230310 - Shirley)/
       console.log('data put into chart', candlestickChartDataRef.current);

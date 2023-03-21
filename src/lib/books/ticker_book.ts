@@ -54,16 +54,29 @@ class TickerBook {
             this._candlesticks[ticker].length
           );
         } catch (error) {
+          // TODO: error handle (20230321 - tzuhan)
           // eslint-disable-next-line no-console
           console.error(`this._candlesticks[ticker].slice error`, error);
         }
       }
-
+      if (!this._tickers[ticker].lineGraphProps.dataArray)
+        this._tickers[ticker].lineGraphProps.dataArray = [];
       this._tickers[ticker].lineGraphProps.dataArray = this._tickers[
         ticker
       ].lineGraphProps.dataArray?.concat(
         candlestickChartData.filter(d => !!d.open).map(d => d.open!)
       );
+      if (this._tickers[ticker].lineGraphProps.dataArray?.length || 0 > this._dataLength) {
+        try {
+          let array: number[] = [...this._tickers[ticker].lineGraphProps.dataArray!];
+          array = array.slice(array.length - this._dataLength, array.length);
+          this._tickers[ticker].lineGraphProps.dataArray = array;
+        } catch (error) {
+          // TODO: error handle (20230321 - tzuhan)
+          // eslint-disable-next-line no-console
+          console.error(`this._tickers[ticker].lineGraphProps.slice error`, error);
+        }
+      }
     }
   }
 

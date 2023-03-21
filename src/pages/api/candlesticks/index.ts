@@ -37,8 +37,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
               : undefined
           );
           const url = `${BASE_URL}${API_VERSION}${TBEURL.LIST_TRADES}${query}`;
-          // eslint-disable-next-line no-console
-          console.log(`url`, url);
           const response = await fetch(url);
           const result = await response.json();
           if (result.success) {

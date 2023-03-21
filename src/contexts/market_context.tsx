@@ -201,7 +201,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
           tickerId,
           candlestickChartData.map(data => ({...data, x: new Date(data.x)}))
         );
-        setCandlestickChartData(tickerBook.candlesticks[tickerId]);
+        setCandlestickChartData([...tickerBook.candlesticks[tickerId]]);
       },
     });
   };
@@ -285,7 +285,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
           tickerBook.updateCandlestickByTrade(ticker, trades);
           setAvailableTickers({...tickerBook.tickers});
           if (selectedTickerRef.current?.currency === ticker)
-            setCandlestickChartData(tickerBook.candlesticks[ticker]);
+            setCandlestickChartData([...tickerBook.candlesticks[ticker]]);
         }
       ),
     []

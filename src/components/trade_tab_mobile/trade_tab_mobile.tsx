@@ -19,6 +19,7 @@ import {
 import eventEmitter, {ClickEvent} from '../../constants/tidebit_event';
 import {useTranslation} from 'next-i18next';
 import {roundToDecimalPlaces} from '../../lib/common';
+import {getDummyQuotation} from '../../interfaces/tidebit_defi_background/quotation';
 
 type TranslateFunction = (s: string) => string;
 
@@ -210,7 +211,7 @@ const TradeTabMobile = () => {
           openCfdRequest: {
             ticker: marketCtx.selectedTicker?.currency ?? '',
             targetAsset: marketCtx.selectedTicker?.currency ?? '',
-            uniAsset: unitAsset,
+            unitAsset: unitAsset,
             price: Number(buyPrice) ?? 9999999999,
             amount: targetInputValueRef.current,
             typeOfPosition: TypeOfPosition.BUY,
@@ -219,14 +220,10 @@ const TradeTabMobile = () => {
               asset: marketCtx.selectedTicker?.currency ?? '',
               amount: requiredMarginRef.current,
             },
-            quotation: {
-              ticker: marketCtx.selectedTicker?.currency ?? '',
-              targetAsset: marketCtx.selectedTicker?.currency ?? '',
-              uniAsset: unitAsset,
-              price: Number(buyPrice) ?? 9999999999,
-              deadline: Math.ceil(Date.now() / 1000) + 15,
-              signature: '0x',
-            },
+            quotation: getDummyQuotation(
+              marketCtx.selectedTicker?.currency ?? '',
+              TypeOfPosition.BUY
+            ),
             liquidationPrice: 1000,
             liquidationTime: Math.ceil(Date.now() / 1000) + 86400,
             fee: marketCtx.tickerLiveStatistics?.fee ?? 9999999999,
@@ -255,20 +252,16 @@ const TradeTabMobile = () => {
           openCfdRequest: {
             ticker: marketCtx.selectedTicker?.currency ?? '',
             targetAsset: unitAsset,
-            uniAsset: marketCtx.selectedTicker?.currency ?? '',
+            unitAsset: marketCtx.selectedTicker?.currency ?? '',
             typeOfPosition: TypeOfPosition.SELL,
             margin: {
               asset: marketCtx.selectedTicker?.currency ?? '',
               amount: requiredMarginRef.current,
             },
-            quotation: {
-              ticker: marketCtx.selectedTicker?.currency ?? '',
-              targetAsset: unitAsset,
-              uniAsset: marketCtx.selectedTicker?.currency ?? '',
-              price: Number(sellPrice) ?? 9999999999,
-              deadline: Math.ceil(Date.now() / 1000) + 15,
-              signature: '0x',
-            },
+            quotation: getDummyQuotation(
+              marketCtx.selectedTicker?.currency ?? '',
+              TypeOfPosition.SELL
+            ),
             price: Number(sellPrice) ?? 9999999999,
             amount: targetInputValueRef.current,
             liquidationPrice: 1000,

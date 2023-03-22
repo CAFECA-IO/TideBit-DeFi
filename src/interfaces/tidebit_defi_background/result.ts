@@ -6,7 +6,7 @@ import {ITickerHistoryData} from './ticker_history_data';
 
 export interface IResult {
   success: boolean;
-  data?: IOrder[] | IAcceptedOrder | IQuotation | ITickerHistoryData[] | null;
+  data?: number | IOrder[] | IAcceptedOrder | IQuotation | ITickerHistoryData[] | null;
   code: ICode;
   reason?: string;
 }

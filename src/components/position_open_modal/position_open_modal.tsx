@@ -25,7 +25,6 @@ import {useGlobal} from '../../contexts/global_context';
 import {TypeOfPosition} from '../../constants/type_of_position';
 import {UserContext} from '../../contexts/user_context';
 import {POSITION_PRICE_RENEWAL_INTERVAL_SECONDS} from '../../constants/config';
-import {dummyOpenCFDOrder} from '../../interfaces/tidebit_defi_background/open_cfd_order';
 import {
   getDummyApplyCreateCFDOrderData,
   IApplyCreateCFDOrderData,

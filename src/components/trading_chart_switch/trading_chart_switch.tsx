@@ -61,7 +61,7 @@ const TradingChartSwitch = ({
 }: ITradingChartSwitchProps) => {
   const [activeButton, setActiveButton] = useState('live');
   const [candlestickOn, setCandlestickOn] = useState(true);
-  const [lineGraphOn, setLineGraphOn] = useState(false);
+  const [lineGraphOn, setLineGraphOn] = useState(true);
 
   // const [activeChartType, setActiveChartType] = useState('candlestick');
   const {showPositionOnChartHandler} = useContext(MarketContext);

@@ -274,6 +274,7 @@ export default function CandlestickChart({
     }))
   );
 
+  // TODO: (20230322 - Shirley) revise the base of ys
   const ys = candlestickChartDataFromCtx.flatMap(d => d.y.filter(y => y !== null)) as number[];
 
   const max = ys.length > 0 ? Math.max(...ys) : null;
@@ -281,6 +282,14 @@ export default function CandlestickChart({
 
   const maxNumber = max && min ? TRADING_CHART_PRICE_LIMIT_ONE_SEC * (max - min) + max : 100;
   const minNumber = max && min ? min - TRADING_CHART_PRICE_LIMIT_ONE_SEC * (max - min) : 0;
+
+  /*Deprecated: (20230322 - Shirley) before merging into develop */
+  /*eslint-disable no-console */
+  console.log('max:', max);
+  console.log('maxNumber:', maxNumber);
+
+  console.log('min:', min);
+  console.log('minNumber:', minNumber);
 
   /* Deprecated: (20230322 - Shirley) it's done in other branch
   const userOpenPrice = randomIntFromInterval(minNumber ?? 100, maxNumber ?? 1000);

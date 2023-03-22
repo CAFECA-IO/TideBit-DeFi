@@ -36,6 +36,7 @@ import {UserContext} from '../../contexts/user_context';
 import {
   MAX_PRICE_TRADING_CHART_ONE_SEC,
   MIN_PRICE_TRADING_CHART_ONE_SEC,
+  TRADING_CHART_PRICE_LIMIT_ONE_SEC,
 } from '../../constants/config';
 
 interface ITradingChartGraphProps {
@@ -170,9 +171,11 @@ export function trimCandlestickData({data, requiredDataNum}: ITrimCandlestickDat
 
   if (latestData === undefined || latestData.length === 0) return;
 
-  // new Date()
+  const nullTime = 10;
+  const unitOfLive = 1000;
+
   const trimmedData = latestData.concat({
-    x: new Date(latestData[latestData.length - 1].x.getTime() + 1000 * 1),
+    x: new Date(latestData[latestData.length - 1].x.getTime() + unitOfLive * nullTime),
     y: [null, null, null, null],
   });
 
@@ -274,8 +277,11 @@ export default function CandlestickChart({
   // the max and min shouldn't be responsive to the candlestick data
   const ys = candlestickChartDataFromCtx.flatMap(d => d.y.filter(y => y !== null)) as number[];
 
-  const maxNumber = ys.length > 0 ? Math.max(...ys) : null;
-  const minNumber = ys.length > 0 ? Math.min(...ys) : null;
+  const max = ys.length > 0 ? Math.max(...ys) : null;
+  const min = ys.length > 0 ? Math.min(...ys) : null;
+
+  const maxNumber = max && min ? TRADING_CHART_PRICE_LIMIT_ONE_SEC * (max - min) + max : 100;
+  const minNumber = max && min ? min - TRADING_CHART_PRICE_LIMIT_ONE_SEC * (max - min) : 0;
 
   const userOpenPrice = randomIntFromInterval(minNumber ?? 100, maxNumber ?? 1000);
   const userOpenPriceLine = toLatestPriceLineData?.map(data => ({
@@ -533,10 +539,10 @@ export default function CandlestickChart({
       <VictoryChart
         theme={chartTheme}
         minDomain={{
-          y: minNumber !== null ? minNumber * MIN_PRICE_TRADING_CHART_ONE_SEC : undefined,
+          y: minNumber !== null ? minNumber : undefined,
         }}
         maxDomain={{
-          y: maxNumber !== null ? maxNumber * MAX_PRICE_TRADING_CHART_ONE_SEC : undefined,
+          y: maxNumber !== null ? maxNumber : undefined,
         }} // TODO: measure the biggest number to decide the y-axis
         // Till: (20230327 - Shirley)  // domainPadding={{x: 1}}
         width={Number(candlestickChartWidth)}
@@ -754,7 +760,7 @@ export default function CandlestickChart({
         /> 
         */}
         {/* TODO: User open position line on charts (20230310 - Shirley)  */}
-        {userCtx.enableServiceTerm && userCtx.openCFDs.length > 0 && showPositionLabel ? (
+        {/* {userCtx.enableServiceTerm && userCtx.openCFDs.length > 0 && showPositionLabel ? (
           <VictoryLine
             style={{
               data: {
@@ -765,7 +771,7 @@ export default function CandlestickChart({
             }}
             data={userOpenPriceLine}
           />
-        ) : null}
+        ) : null} */}
 
         {/* {userCtx.enableServiceTerm && userCtx.openCFDs.length > 0 && showPositionLabel ? (
           <VictoryScatter

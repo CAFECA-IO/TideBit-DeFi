@@ -1028,12 +1028,12 @@ export default function WalletPanel({
           {/*content & panel*/}
           <div
             id="connectModal"
-            className="relative flex w-full flex-col rounded-3xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none"
+            className="relative flex w-full flex-col rounded-xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none"
           >
             {/*header*/}
-            <div className="flex items-start justify-between rounded-t pt-6">
-              <h3 className="my-4 mx-auto pl-1/5 text-xl font-semibold text-lightWhite md:mt-2 md:pl-1/8 md:text-4xl">
-                Wallet Connect
+            <div className="mx-auto flex items-start rounded-t pt-6">
+              <h3 className="my-4 mx-auto text-xl font-semibold text-lightWhite md:mt-2 md:text-4xl">
+                {t('WALLET_PANEL.TITLE')}
               </h3>
               <button
                 className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none"

@@ -11,7 +11,9 @@ import {toast} from 'react-toastify';
 import {useGlobal} from '../../contexts/global_context';
 import {locker, wait} from '../../lib/common';
 import {DELAYED_HIDDEN_SECONDS} from '../../constants/display';
+import {useTranslation} from 'next-i18next';
 
+type TranslateFunction = (s: string) => string;
 interface ISignatureProcessModal {
   loading?: boolean;
   firstStepSuccess?: boolean;
@@ -36,6 +38,8 @@ const SignatureProcessModal = ({
   processClickHandler,
   ...otherProps
 }: ISignatureProcessModal) => {
+  const {t}: {t: TranslateFunction} = useTranslation('common');
+
   const userCtx = useContext(UserContext);
   const globalCtx = useGlobal();
 
@@ -196,7 +200,7 @@ const SignatureProcessModal = ({
         onClick={requestSendingHandler}
         className="rounded bg-tidebitTheme px-5 py-2 text-base transition-all hover:opacity-90"
       >
-        Send Requests
+        {t('WALLET_PANEL.SEND_REQUESTS_BUTTON')}
       </TideButton>
     ) : null;
 
@@ -209,8 +213,8 @@ const SignatureProcessModal = ({
           {/* <Image src="/elements/group_2418(1).svg" width={32} height={32} alt="step 2 icon" /> */}
         </div>
         <div className="-ml-7 w-271px space-y-1 pt-7 text-lightWhite">
-          <div className="text-lg">Verify ownership</div>
-          <div className="text-sm">Confirm you are the owner of this wallet</div>
+          <div className="text-lg">{t('WALLET_PANEL.SIGNATURE_STEP1_TITLE')}</div>
+          <div className="text-sm">{t('WALLET_PANEL.SIGNATURE_STEP1_DESCRIPTION')}</div>
         </div>
       </div>
     </>
@@ -220,8 +224,8 @@ const SignatureProcessModal = ({
     <>
       <div className="mr-6 mt-1">{successIcon}</div>
       <div className="mt-1 w-271px space-y-1 text-lightWhite">
-        <div className="text-lg">Verify ownership</div>
-        <div className="text-sm">Confirm you are the owner of this wallet</div>
+        <div className="text-lg">{t('WALLET_PANEL.SIGNATURE_STEP1_TITLE')}</div>
+        <div className="text-sm">{t('WALLET_PANEL.SIGNATURE_STEP1_DESCRIPTION')}</div>
       </div>
     </>
   );
@@ -230,9 +234,9 @@ const SignatureProcessModal = ({
     <>
       <div className="mr-6 mt-0">{errorIcon}</div>
       <div className="w-271px space-y-1 text-lightWhite">
-        <div className="text-lg">Verify ownership</div>
-        <div className="text-sm">Confirm you are the owner of this wallet</div>
-        <div className="text-sm text-lightRed3">Something went wrong, please try again</div>
+        <div className="text-lg">{t('WALLET_PANEL.SIGNATURE_STEP1_TITLE')}</div>
+        <div className="text-sm">{t('WALLET_PANEL.SIGNATURE_STEP1_DESCRIPTION')}</div>
+        <div className="text-sm text-lightRed3">{t('WALLET_PANEL.ERROR_MESSAGE')}</div>
       </div>
     </>
   );
@@ -255,10 +259,8 @@ const SignatureProcessModal = ({
       <div className="mt-2 mb-1 flex items-center justify-center">
         <div className="mr-6">{secondStepDefaultIcon}</div>
         <div className="w-271px space-y-1 text-lightGray">
-          <div className="text-lg">Enable trading</div>
-          <div className="text-sm">
-            Enable secure access to our API for lightning quick trading.
-          </div>
+          <div className="text-lg">{t('WALLET_PANEL.SIGNATURE_STEP2_TITLE')}</div>
+          <div className="text-sm">{t('WALLET_PANEL.SIGNATURE_STEP2_DESCRIPTION')}</div>
         </div>
       </div>
     </>
@@ -272,10 +274,8 @@ const SignatureProcessModal = ({
           {/* <Image src="/elements/group_2418(1).svg" width={32} height={32} alt="step 2 icon" /> */}
         </div>
         <div className="-ml-7 w-271px space-y-1 pt-7 text-lightWhite">
-          <div className="text-lg">Enable trading</div>
-          <div className="text-sm">
-            Enable secure access to our API for lightning quick trading.
-          </div>
+          <div className="text-lg">{t('WALLET_PANEL.SIGNATURE_STEP2_TITLE')}</div>
+          <div className="text-sm">{t('WALLET_PANEL.SIGNATURE_STEP2_DESCRIPTION')}</div>
         </div>
       </div>
     </>
@@ -285,8 +285,8 @@ const SignatureProcessModal = ({
     <>
       <div className="mr-6 mt-7 mb-1">{successIcon}</div>
       <div className="mt-7 mb-1 w-271px space-y-1 text-lightWhite">
-        <div className="text-lg">Enable trading</div>
-        <div className="text-sm">Enable secure access to our API for lightning quick trading.</div>
+        <div className="text-lg">{t('WALLET_PANEL.SIGNATURE_STEP2_TITLE')}</div>
+        <div className="text-sm">{t('WALLET_PANEL.SIGNATURE_STEP2_DESCRIPTION')}</div>
       </div>
     </>
   );
@@ -295,9 +295,9 @@ const SignatureProcessModal = ({
     <>
       <div className="mr-6 mt-7 -mb-5">{errorIcon}</div>
       <div className="mt-7 -mb-5 w-271px space-y-1 text-lightWhite">
-        <div className="text-lg">Enable trading</div>
-        <div className="text-sm">Enable secure access to our API for lightning quick trading.</div>
-        <div className="text-sm text-lightRed3">Something went wrong, please try again</div>
+        <div className="text-lg">{t('WALLET_PANEL.SIGNATURE_STEP2_TITLE')}</div>
+        <div className="text-sm">{t('WALLET_PANEL.SIGNATURE_STEP2_DESCRIPTION')}</div>
+        <div className="text-sm text-lightRed3">{t('WALLET_PANEL.ERROR_MESSAGE')}</div>
       </div>
     </>
   );
@@ -345,12 +345,12 @@ const SignatureProcessModal = ({
           <div
             id="connectModal"
             ref={processModalRef}
-            className="relative flex h-600px w-450px flex-col rounded-3xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none"
+            className="relative flex h-auto w-full flex-col rounded-xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none md:w-450px"
           >
             {/*header*/}
-            <div className="flex items-start justify-between rounded-t pt-6">
-              <h3 className="ml-1/8 mt-2 w-20rem pl-1/8 text-4xl font-semibold text-lightWhite">
-                Wallet Connect
+            <div className="mx-auto flex items-start justify-between rounded-t pt-6">
+              <h3 className="mx-auto mt-2 text-xl font-semibold text-lightWhite md:text-4xl">
+                {t('WALLET_PANEL.TITLE')}
               </h3>
               <button className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
                 <span className="absolute top-5 right-5 block outline-none focus:outline-none">
@@ -360,23 +360,25 @@ const SignatureProcessModal = ({
             </div>
             {/*body*/}
 
-            <div className="flex flex-auto flex-col items-center pt-5">
+            <div className="flex flex-auto flex-col items-center py-5">
               <div className="text-lg leading-relaxed text-lightWhite">
                 <div className="mx-auto flex flex-col items-center">
-                  <div className="mt-8 text-center text-lg text-lightGray">
-                    <div>You will receive two signature requests.</div>
+                  <div className="text-center text-sm text-lightGray md:mt-4 md:text-lg">
+                    <div>{t('WALLET_PANEL.SIGNATURE_DESCRIPTION_LINE1')}</div>
                     <div>
                       {' '}
-                      Signing is{' '}
+                      {t('WALLET_PANEL.SIGNATURE_DESCRIPTION_LINE2_PART1')}{' '}
                       <span className="text-tidebitTheme">
-                        <Link href="#">free</Link>
+                        <Link href="#">
+                          {t('WALLET_PANEL.SIGNATURE_DESCRIPTION_LINE2_HIGHLIGHT')}
+                        </Link>
                       </span>{' '}
-                      and will not send a transaction.
+                      {t('WALLET_PANEL.SIGNATURE_DESCRIPTION_LINE2_PART2')}
                     </div>
                   </div>
 
                   {/* Activate First Step */}
-                  <div className={`${controlSpace} flex flex-col pt-16`}>
+                  <div className={`${controlSpace} flex flex-col px-4 pt-16`}>
                     <div className="flex items-center justify-center">
                       {firstStepSectionHandler}
                     </div>

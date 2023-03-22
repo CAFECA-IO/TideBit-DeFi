@@ -142,7 +142,7 @@ export default function Notification({
           </button>
         </div>
 
-        <p className="self-center pl-5">{t('nav_bar.Notification')}</p>
+        <p className="self-center pl-5">{t('NAV_BAR.NOTIFICATION_TITLE')}</p>
       </div>
     </div>
   );

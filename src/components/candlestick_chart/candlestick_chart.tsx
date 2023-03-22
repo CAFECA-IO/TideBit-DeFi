@@ -274,7 +274,6 @@ export default function CandlestickChart({
     }))
   );
 
-  // the max and min shouldn't be responsive to the candlestick data
   const ys = candlestickChartDataFromCtx.flatMap(d => d.y.filter(y => y !== null)) as number[];
 
   const max = ys.length > 0 ? Math.max(...ys) : null;
@@ -283,12 +282,13 @@ export default function CandlestickChart({
   const maxNumber = max && min ? TRADING_CHART_PRICE_LIMIT_ONE_SEC * (max - min) + max : 100;
   const minNumber = max && min ? min - TRADING_CHART_PRICE_LIMIT_ONE_SEC * (max - min) : 0;
 
+  /* Deprecated: (20230322 - Shirley) it's done in other branch
   const userOpenPrice = randomIntFromInterval(minNumber ?? 100, maxNumber ?? 1000);
   const userOpenPriceLine = toLatestPriceLineData?.map(data => ({
     x: data?.x,
     y: 10000,
-  }));
-  /**TODO: (20230313 - Shirley) Open price line 
+  })); */
+  /**Deprecated: (20230322 - Shirley) it's done in other branch
   const userOpenPriceLine1 =
     userCtx.openCFDs.length > 0
       ? toLatestPriceLineData?.map(data => ({
@@ -315,7 +315,7 @@ export default function CandlestickChart({
   console.log('open cfd', userCtx.openCFDs);
   */
 
-  /* TODO: (20230313 - Shirley) 
+  /* Deprecated: (20230322 - Shirley) it's done in other branch
   const userLines = Array.from({length: 1}, (_, index) => (
     <VictoryLine
       key={index}
@@ -327,7 +327,7 @@ export default function CandlestickChart({
     />
   ));
 
-  // TODO: (20230313 - Shirley) map the open price line
+  // Deprecated: (20230322 - Shirley) it's done in other branch
   const priceline = userCtx.openCFDs.map((cfd, index) => (
     <VictoryLine
       key={index}
@@ -411,8 +411,7 @@ export default function CandlestickChart({
     if (!appCtx.isInit) return;
     if (marketCtx.candlestickChartData === null) return;
     // Deprecated: before merge into develop (tzuhan 20230322)
-    // eslint-disable-next-line no-console
-    console.log(`Component CandlestickChart`, marketCtx.candlestickChartData);
+    // console.log(`Component CandlestickChart`, marketCtx.candlestickChartData);
     // if (!candlestickChartDataRef.current) {
     setCandlestickChartData(() =>
       trimCandlestickData({
@@ -441,8 +440,8 @@ export default function CandlestickChart({
       }))
     );
 
-    // eslint-disable-next-line no-console
-    console.log('data put into chart', toCandlestickChartDataRef.current);
+    // Till: (20230410 - Shirley)
+    // console.log('data put into chart', toCandlestickChartDataRef.current);
 
     const toLineChartData =
       candlestickChartDataRef.current?.map((data, i) => ({
@@ -458,6 +457,8 @@ export default function CandlestickChart({
     }));
 
     setToLatestPriceLineData(toLatestPriceLineData);
+    /*  Deprecated: (20230322 - Shirley) delete it before merging into develop
+
     // }
 
     //     const setStateInterval = setInterval(() => {
@@ -482,7 +483,7 @@ export default function CandlestickChart({
     //       // console.log('market Ctx', marketCtx.candlestickChartData);
     //       // console.log('market Ctx sliced', marketCtx.candlestickChartData?.slice(-30));
     //       // console.log('market Ctx stringified', JSON.stringify(marketCtx.candlestickChartData));
-    // */
+    // 
 
     //       setToCandlestickChartData(toCandlestickChartData);
 
@@ -500,9 +501,11 @@ export default function CandlestickChart({
 
     // setToLatestPriceLineData(toLatestPriceLineData);
     //     }, 1000 * 1);
+    */
 
     return () => {
-      // clearInterval(setStateInterval);
+      /*  Deprecated: (20230322 - Shirley) delete it before merging into develop
+      // clearInterval(setStateInterval);*/
     };
   }, [marketCtx.candlestickChartData]);
 
@@ -543,7 +546,7 @@ export default function CandlestickChart({
         }}
         maxDomain={{
           y: maxNumber !== null ? maxNumber : undefined,
-        }} // TODO: measure the biggest number to decide the y-axis
+        }} // INFO: measure the biggest number to decide the y-axis (20230322 - Shirley)
         // Till: (20230327 - Shirley)  // domainPadding={{x: 1}}
         width={Number(candlestickChartWidth)}
         height={Number(candlestickChartHeight)}
@@ -577,7 +580,7 @@ export default function CandlestickChart({
           tickLabelComponent={<VictoryLabel dx={45} />}
           offsetX={Number(candlestickChartWidth) - 50}
           dependentAxis
-          // TODO: (20230327 - Shirley) // tickValues={[minNumber, maxNumber]}
+          // Till: (20230409 - Shirley) // tickValues={[minNumber, maxNumber]}
         />
 
         {candlestickOn && (

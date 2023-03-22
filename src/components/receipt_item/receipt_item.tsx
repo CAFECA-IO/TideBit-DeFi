@@ -1,6 +1,9 @@
 import React, {useState} from 'react';
 import Image from 'next/image';
 import {timestampToString} from '../../lib/common';
+import {OrderType} from '../../constants/order_type';
+import {OrderState} from '../../constants/order_state';
+import {OrderStatusUnion} from '../../constants/order_status_union';
 import {IOrder} from '../../interfaces/tidebit_defi_background/order';
 import {UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
 
@@ -9,67 +12,63 @@ interface IReceiptItemProps {
 }
 
 const ReceiptItem = (histories: IReceiptItemProps) => {
-  const TradingType = histories.histories.type;
+  const {timestamp, type, orderSnapshot, targetAmount, targetAsset, balanceSnapshot} =
+    histories.histories;
 
-  const receiptDate = timestampToString(histories.histories.timestamp ?? 0);
+  const receiptDate = timestampToString(timestamp ?? 0);
 
   const displayedButtonColor =
-    histories.histories.targetAmount == 0
-      ? 'bg-lightGray'
-      : histories.histories.targetAmount > 0
-      ? 'bg-lightGreen5'
-      : 'bg-lightRed';
+    targetAmount == 0 ? 'bg-lightGray' : targetAmount > 0 ? 'bg-lightGreen5' : 'bg-lightRed';
 
   const displayedButtonText =
-    TradingType === 'DEPOSIT'
+    type === OrderType.DEPOSIT
       ? 'Deposit'
-      : TradingType === 'WITHDRAW'
+      : type === OrderType.WITHDRAW
       ? 'Withdraw'
-      : TradingType === 'OPEN_CFD'
-      ? 'Open Position'
-      : TradingType === 'CLOSE_CFD'
-      ? 'Close Position'
+      : type === 'CFD'
+      ? orderSnapshot.state === OrderState.OPENING
+        ? 'Open Position'
+        : orderSnapshot.state === OrderState.CLOSED
+        ? 'Close Position'
+        : 'Open Position'
       : 'Trading Type';
 
   const displayedButtonImage =
-    TradingType === 'DEPOSIT' || TradingType === 'CLOSE_CFD'
+    type === OrderType.DEPOSIT || orderSnapshot.state === OrderState.CLOSED
       ? '/elements/group_149621.svg'
       : '/elements/group_14962.svg';
 
-  const displayedReceiptAmount =
-    histories.histories.targetAmount >= 0
-      ? '+' + histories.histories.targetAmount
-      : histories.histories.targetAmount;
+  const displayedReceiptAmount = targetAmount >= 0 ? '+' + targetAmount : targetAmount;
 
-  const displayedReceiptTxId = histories.histories.detail?.txId;
+  const displayedReceiptTxId = orderSnapshot.txid;
 
   const displayedReceiptStateColor =
-    histories.histories.detail?.state === 'DONE'
+    orderSnapshot.status === OrderStatusUnion.SUCCESS
       ? 'text-tidebitTheme'
-      : histories.histories.detail?.state === 'PROCESSING'
+      : orderSnapshot.status === OrderStatusUnion.PROCESSING
       ? 'text-lightGreen5'
-      : histories.histories.detail?.state === 'FAILED'
+      : orderSnapshot.status === OrderStatusUnion.FAILED
       ? 'text-lightRed'
       : 'text-lightGray';
 
   const displayedReceiptState =
-    histories.histories.detail?.state === 'DONE'
+    orderSnapshot.status === OrderStatusUnion.SUCCESS
       ? displayedReceiptTxId
-      : histories.histories.detail?.state === 'PROCESSING'
+      : orderSnapshot.status === OrderStatusUnion.PROCESSING
       ? 'Processing'
-      : histories.histories.detail?.state === 'FAILED'
+      : orderSnapshot.status === OrderStatusUnion.FAILED
       ? 'Failed'
       : '-';
 
   const displayedReceiptFeeText =
-    histories.histories.fee === 0
-      ? histories.histories.fee
-      : histories.histories.fee.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+    orderSnapshot.fee === 0
+      ? orderSnapshot.fee
+      : orderSnapshot.fee.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
           minimumFractionDigits: 2,
         });
 
   /* ToDo: (20230317 - Julian) if state === 'PROCESSING', avbl loading anim */
-  const displayedReceiptAvailableText = histories.histories.available?.toLocaleString(
+  const displayedReceiptAvailableText = balanceSnapshot.available.toLocaleString(
     UNIVERSAL_NUMBER_FORMAT_LOCALE,
     {
       minimumFractionDigits: 2,
@@ -96,7 +95,7 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
   const displayedReceiptIncome = (
     <div className="flex items-end sm:w-48">
       <div className="text-2xl">{displayedReceiptAmount}</div>
-      <span className="ml-1 text-sm text-lightGray">{histories.histories.targetAsset}</span>
+      <span className="ml-1 text-sm text-lightGray">{targetAsset}</span>
     </div>
   );
 

@@ -395,6 +395,7 @@ export default function CandlestickChart({
   useEffect(() => {
     if (!appCtx.isInit) return;
     if (marketCtx.candlestickChartData === null) return;
+    // Deprecated: before merge into develop (tzuhan 20230322)
     // eslint-disable-next-line no-console
     console.log(`Component CandlestickChart`, marketCtx.candlestickChartData);
     // if (!candlestickChartDataRef.current) {

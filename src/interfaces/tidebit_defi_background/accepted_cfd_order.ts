@@ -19,7 +19,6 @@ export interface IAcceptedCFDOrder extends IAcceptedOrder {
   margin: IMargin;
   takeProfit?: number;
   stopLoss?: number;
-  fee: number;
   guaranteedStop: boolean;
   guaranteedStopFee?: number;
   liquidationPrice: number;
@@ -28,7 +27,6 @@ export interface IAcceptedCFDOrder extends IAcceptedOrder {
   closeTimestamp?: number;
   closedType?: ICFDClosedType;
   forcedClose?: boolean;
-  remark?: string;
 }
 
 function randomIntFromInterval(min: number, max: number) {
@@ -42,6 +40,7 @@ export const getDummyAcceptedCFDOrder = (currency: string) => {
     id: `TBAccepted${date.getFullYear()}${
       date.getMonth() + 1
     }${date.getDate()}${date.getSeconds()}${currency}`,
+    txid: '0x',
     ticker: currency,
     orderStatus: Math.random() > 0.5 ? OrderStatusUnion.PROCESSING : OrderStatusUnion.SUCCESS,
     orderType: OrderType.CFD,
@@ -81,6 +80,7 @@ export const getDummyAcceptedCFDs = (currency: string) => {
     const typeOfPosition = Math.random() > 0.5 ? TypeOfPosition.BUY : TypeOfPosition.SELL;
     const dummyAcceptedCFDOrder: IAcceptedCFDOrder = {
       id: 'TBD202302070000001',
+      txid: '0x',
       ticker: currency,
       orderStatus: Math.random() > 0.5 ? OrderStatusUnion.PROCESSING : OrderStatusUnion.SUCCESS,
       orderType: OrderType.CFD,

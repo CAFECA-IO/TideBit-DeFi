@@ -7,12 +7,11 @@ export interface IAcceptedDepositOrder extends IAcceptedOrder {
   targetAmount: number;
   decimals: number;
   to: string;
-  remark?: string;
-  fee: number;
 }
 
 export const dummyAcceptedDepositOrder: IAcceptedDepositOrder = {
   id: '001',
+  txid: '0x',
   orderType: OrderType.DEPOSIT,
   createTimestamp: Math.ceil(Date.now() / 1000),
   orderStatus: OrderStatusUnion.SUCCESS,

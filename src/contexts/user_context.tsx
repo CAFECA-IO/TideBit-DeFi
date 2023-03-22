@@ -436,6 +436,7 @@ export const UserProvider = ({children}: IUserProvider) => {
               code: Code.SUCCESS,
               data: getDummyAcceptedCFDOrder(props.ticker),
             };
+            // ++ TODO: acceptedOrderToOrder (20230322 - tzuhan)
           }
         }
       }
@@ -462,12 +463,13 @@ export const UserProvider = ({children}: IUserProvider) => {
           const signature: string = await lunar.signTypedData(transferR.data);
           CFDOrder.signature = signature;
           // ++ API send transaction
-          if (ticker)
+          if (ticker) {
             result = {
               success: true,
               code: Code.SUCCESS,
               data: getDummyAcceptedCFDOrder(ticker),
-            };
+            }; // ++ TODO: acceptedOrderToOrder (20230322 - tzuhan)
+          }
         }
       }
       return await Promise.resolve<IResult>(result);
@@ -493,12 +495,14 @@ export const UserProvider = ({children}: IUserProvider) => {
           const signature: string = await lunar.signTypedData(transferR.data);
           CFDOrder.signature = signature;
           // ++ API send transaction
-          if (ticker)
+          if (ticker) {
             result = {
               success: true,
               code: Code.SUCCESS,
               data: getDummyAcceptedCFDOrder(ticker),
             };
+            // ++ TODO: acceptedOrderToOrder (20230322 - tzuhan)
+          }
         }
       }
       return await Promise.resolve<IResult>(result);
@@ -575,7 +579,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     result.code = Code.SERVICE_TERM_DISABLE;
     result.reason = Reason[result.code];
     if (enableServiceTermRef.current) {
-      // TODO: getHistories from backend
+      // TODO: getHistories from backend (tzuhan - 20230323)
       histories = [dummyDepositOrder, dummyClosedCFDOrder, dummyOpenCFDOrder, dummyWithdrawalOrder];
       setHistories(histories);
       result = dummyResultSuccess;

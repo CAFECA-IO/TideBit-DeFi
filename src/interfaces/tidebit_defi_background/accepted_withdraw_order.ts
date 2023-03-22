@@ -7,12 +7,11 @@ export interface IAcceptedWithdrawOrder extends IAcceptedOrder {
   targetAmount: number;
   decimals: number;
   to: string;
-  remark?: string;
-  fee: number;
 }
 
 export const dummyAcceptedWithdrawOrder: IAcceptedWithdrawOrder = {
   id: '001',
+  txid: '0x',
   orderType: OrderType.WITHDRAW,
   createTimestamp: Math.ceil(Date.now() / 1000),
   orderStatus: OrderStatusUnion.SUCCESS,

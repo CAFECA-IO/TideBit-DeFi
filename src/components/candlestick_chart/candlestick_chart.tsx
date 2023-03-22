@@ -134,7 +134,9 @@ export function processCandlestickData({data, requiredDataNum}: IProcessCandlest
       d.close ? d.close : null,
     ],
   }));
-  const nullNum = countNullArrays(origin);
+  // const nullNum = countNullArrays(origin);
+  const nullNum = 1;
+  const nullTime = 10;
 
   const unitOfLive = 1000;
   const now = new Date().getTime();
@@ -145,7 +147,8 @@ export function processCandlestickData({data, requiredDataNum}: IProcessCandlest
   const toCandlestickData = [
     ...latestData,
     ...Array.from({length: nullNum}, (_, i) => ({
-      x: new Date(nowSecond + unitOfLive * (i + 1)),
+      // x: new Date(nowSecond + unitOfLive * (i + 1)),
+      x: new Date(nowSecond + unitOfLive * nullTime),
       y: [null, null, null, null],
     })),
   ];
@@ -162,10 +165,16 @@ export interface ITrimCandlestickData {
 }
 
 export function trimCandlestickData({data, requiredDataNum}: ITrimCandlestickData) {
-  const latestData = data.slice(-requiredDataNum);
+  const dataWithoutNull = data.filter(obj => !obj.y.includes(null));
+  const latestData = dataWithoutNull.slice(-requiredDataNum);
+
   if (latestData === undefined || latestData.length === 0) return;
 
-  const trimmedData = latestData;
+  // new Date()
+  const trimmedData = latestData.concat({
+    x: new Date(latestData[latestData.length - 1].x.getTime() + 1000 * 1),
+    y: [null, null, null, null],
+  });
 
   return trimmedData;
 }
@@ -758,7 +767,7 @@ export default function CandlestickChart({
           />
         ) : null}
 
-        {userCtx.enableServiceTerm && userCtx.openCFDs.length > 0 && showPositionLabel ? (
+        {/* {userCtx.enableServiceTerm && userCtx.openCFDs.length > 0 && showPositionLabel ? (
           <VictoryScatter
             style={{data: {fill: 'transparent'}, labels: {background: 'transparent'}}}
             data={userOpenPriceLine}
@@ -789,7 +798,7 @@ export default function CandlestickChart({
               />
             }
           />
-        ) : null}
+        ) : null} */}
       </VictoryChart>
     ) : (
       <p>Loading</p>

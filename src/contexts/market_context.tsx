@@ -62,7 +62,7 @@ export interface IMarketContext {
   showPositionOnChartHandler: (bool: boolean) => void;
   candlestickChartIdHandler: (id: string) => void;
   listAvailableTickers: () => ITickerData[];
-  selectTickerHandler: (props: string) => IResult;
+  selectTickerHandler: (props: string) => Promise<IResult>;
   selectTimeSpanHandler: (props: ITimeSpanUnion) => void;
   getCandlestickChartData: (tickerId: string) => Promise<IResult>; // x 100
   getCFDQuotation: (tickerId: string, typeOfPosition: ITypeOfPosition) => Promise<IResult>;
@@ -97,7 +97,7 @@ export const MarketContext = createContext<IMarketContext>({
   candlestickChartIdHandler: () => null,
   selectTimeSpanHandler: () => null,
   listAvailableTickers: () => [],
-  selectTickerHandler: () => defaultResultSuccess,
+  selectTickerHandler: () => Promise.resolve(defaultResultSuccess),
   getCandlestickChartData: () => Promise.resolve(defaultResultSuccess),
   getCFDQuotation: () => Promise.resolve(defaultResultSuccess),
   getTickerHistory: () => Promise.resolve(defaultResultSuccess),
@@ -168,7 +168,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     tickerBook.timeSpan = timeSpan;
     setTimeSpan(tickerBook.timeSpan);
   };
-  const selectTickerHandler = (tickerId: string) => {
+  const selectTickerHandler = async (tickerId: string) => {
     const ticker: ITickerData = availableTickersRef.current[tickerId];
     setSelectedTicker(ticker);
     // ++ TODO: get from api
@@ -177,7 +177,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     const tickerLiveStatistics: ITickerLiveStatistics = getDummyTickerLiveStatistics(tickerId);
     setTickerLiveStatistics(tickerLiveStatistics);
 
-    getCandlestickChartData(tickerId);
+    await getCandlestickChartData(tickerId);
     workerCtx.tickerChangeHandler(ticker);
     return defaultResultSuccess;
   };
@@ -340,7 +340,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       })) as ITickerData[];
       tickerBook.updateTickers(tickers);
       setAvailableTickers({...tickerBook.tickers});
-      selectTickerHandler(tickers[0].currency);
+      await selectTickerHandler(tickers[0].currency);
       result = defaultResultSuccess;
       result.data = tickers;
     } catch (error) {

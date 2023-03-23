@@ -1,3 +1,5 @@
+/*Deprecated: (20230322 - Shirley) before merging into develop */
+/*eslint-disable no-console */
 import React, {useState, useContext, useEffect, useRef} from 'react';
 import Lottie, {useLottie} from 'lottie-react';
 import spotAnimation from '../../../public/animation/circle.json';
@@ -33,6 +35,11 @@ import {AppContext} from '../../contexts/app_context';
 import Image from 'next/image';
 import {GlobalContext} from '../../contexts/global_context';
 import {UserContext} from '../../contexts/user_context';
+import {
+  MAX_PRICE_TRADING_CHART_ONE_SEC,
+  MIN_PRICE_TRADING_CHART_ONE_SEC,
+  TRADING_CHART_PRICE_LIMIT_ONE_SEC,
+} from '../../constants/config';
 
 interface ITradingChartGraphProps {
   strokeColor: string[];
@@ -48,11 +55,13 @@ export interface ILineChartData {
   y: number | null;
 }
 
+export interface IStaleCandlestickChartData {
+  x: Date;
+  y: [...(number | null)[]];
+}
+
 export const updateDummyCandlestickChartData = (
-  data: {
-    x: Date;
-    y: [...(number | null)[]];
-  }[]
+  data: IStaleCandlestickChartData[]
 ): {x: Date; y: (number | null)[]}[] => {
   const n = 80;
   const chartBlank = 1.68;
@@ -130,7 +139,9 @@ export function processCandlestickData({data, requiredDataNum}: IProcessCandlest
       d.close ? d.close : null,
     ],
   }));
-  const nullNum = countNullArrays(origin);
+  // const nullNum = countNullArrays(origin);
+  const nullNum = 1;
+  const nullTime = 10;
 
   const unitOfLive = 1000;
   const now = new Date().getTime();
@@ -141,7 +152,7 @@ export function processCandlestickData({data, requiredDataNum}: IProcessCandlest
   const toCandlestickData = [
     ...latestData,
     ...Array.from({length: nullNum}, (_, i) => ({
-      x: new Date(nowSecond + unitOfLive * (i + 1)),
+      x: new Date(nowSecond + unitOfLive * nullTime),
       y: [null, null, null, null],
     })),
   ];
@@ -150,20 +161,104 @@ export function processCandlestickData({data, requiredDataNum}: IProcessCandlest
 }
 
 export interface ITrimCandlestickData {
-  data: {
-    x: Date;
-    y: [...(number | null)[]];
-  }[];
-  requiredDataNum: number;
+  data: ICandlestickData[];
+  dataSize: number;
+  timespan: number;
 }
 
-export function trimCandlestickData({data, requiredDataNum}: ITrimCandlestickData) {
-  const latestData = data.slice(-requiredDataNum);
-  if (latestData === undefined || latestData.length === 0) return;
+export function parseCandlestickData({data, dataSize, timespan}: ITrimCandlestickData) {
+  const createBaseArray = () => {
+    const getLastTime = () => {
+      const now = new Date().getTime();
+      return now - (now % (timespan * 1000));
+    };
 
-  const trimmedData = latestData;
+    // Till: (20230410 - Shirley)
+    // const getLastTime = () => {
+    //   return data[data.length - 1]?.x.getTime() as number;
+    // };
 
-  return trimmedData;
+    const base = new Array(dataSize).fill(0).map((v, i) => {
+      const eachTime = new Date(getLastTime() - (dataSize - i) * timespan * 1000);
+      const eachTimestamp = eachTime.getTime() / 1000;
+
+      return {
+        x: eachTime,
+        open: null,
+        high: null,
+        low: null,
+        close: null,
+      };
+    });
+
+    return base;
+  };
+
+  const filterCandlestickData = (data: ICandlestickData[], baseArray: ICandlestickData[]) => {
+    let previousClose = 0;
+
+    for (let i = 0; i < baseArray.length; i++) {
+      const index = data.findIndex(d => {
+        const baseTime = baseArray[i]?.x.getTime();
+        const dataTime = d.x.getTime();
+        return baseTime === dataTime;
+      });
+      if (index >= 0) {
+        baseArray[i].open = data[index].open;
+        baseArray[i].high = data[index].high;
+        baseArray[i].low = data[index].low;
+        baseArray[i].close = data[index].close;
+
+        previousClose = data[index].close || previousClose;
+      } else if (previousClose !== null) {
+        baseArray[i].open = previousClose;
+        baseArray[i].high = previousClose;
+        baseArray[i].low = previousClose;
+        baseArray[i].close = previousClose;
+      }
+    }
+
+    const result = [...baseArray];
+
+    return result;
+  };
+
+  const processCandlestickData = (candles: ICandlestickData[]) => {
+    const nullTime = 10;
+
+    const baseArray = createBaseArray();
+    const filteredData = filterCandlestickData(candles, baseArray);
+    const latestData = filteredData.concat({
+      x: new Date(filteredData[filteredData.length - 1].x.getTime() + timespan * nullTime * 1000),
+      open: null,
+      high: null,
+      low: null,
+      close: null,
+    });
+
+    return latestData;
+  };
+
+  const processedData = processCandlestickData(data.slice(-dataSize));
+
+  return processedData;
+
+  /* Till: (20230410 - Shirley)
+  // const dataWithoutNull = data.filter(obj => !obj.y.includes(null));
+  // const latestData = dataWithoutNull.slice(-dataSize);
+
+  // if (latestData === undefined || latestData.length === 0) return;
+
+  // const nullTime = 10;
+  // const unitOfLive = 1000;
+
+  // const trimmedData = latestData.concat({
+  //   x: new Date(latestData[latestData.length - 1].x.getTime() + unitOfLive * nullTime),
+  //   y: [null, null, null, null],
+  // });
+
+  // return trimmedData;
+  */
 }
 
 export default function CandlestickChart({
@@ -180,42 +275,38 @@ export default function CandlestickChart({
   const globalCtx = useContext(GlobalContext);
   const userCtx = useContext(UserContext);
 
+  // Deprecated: before merging into develop (20230323 - Shirley)
+  // const candlestickChartDataFromCtx =
+  //   marketCtx.candlestickChartData !== null
+  //     ? marketCtx.candlestickChartData?.map(d => ({
+  //         x: d.x,
+  //         y: [
+  //           d.open ? d.open : null,
+  //           d.high ? d.high : null,
+  //           d.low ? d.low : null,
+  //           d.close ? d.close : null,
+  //         ],
+  //       }))
+  //     : [];
   const candlestickChartDataFromCtx =
-    marketCtx.candlestickChartData !== null
-      ? marketCtx.candlestickChartData?.map(d => ({
-          x: d.x,
-          y: [
-            d.open ? d.open : null,
-            d.high ? d.high : null,
-            d.low ? d.low : null,
-            d.close ? d.close : null,
-          ],
-        }))
-      : [];
+    marketCtx.candlestickChartData !== null ? marketCtx.candlestickChartData : [];
 
   const NULL_ARRAY_NUM = 1;
 
-  const [candlestickChartData, setCandlestickChartData, candlestickChartDataRef] = useStateRef<
-    | {
-        x: Date;
-        y: [...(number | null)[]];
-      }[]
-    | undefined
-  >(() =>
-    trimCandlestickData({
-      data:
-        marketCtx.candlestickChartData?.map(d => ({
-          x: d.x,
-          y: [
-            d.open ? d.open : null,
-            d.high ? d.high : null,
-            d.low ? d.low : null,
-            d.close ? d.close : null,
-          ],
-        })) ?? [],
-      requiredDataNum: 30,
-    })
-  );
+  const trimmedData = parseCandlestickData({
+    data: candlestickChartDataFromCtx,
+    dataSize: 30,
+    timespan: 1,
+  });
+
+  // Deprecated: before merging into develop (20230323 - Shirley)
+  // const [candlestickChartData, setCandlestickChartData, candlestickChartDataRef] = useStateRef<
+  //   | {
+  //       x: Date;
+  //       y: [...(number | null)[]];
+  //     }[]
+  //   | undefined
+  // >(trimmedData);
 
   const [toCandlestickChartData, setToCandlestickChartData, toCandlestickChartDataRef] =
     useStateRef<
@@ -227,25 +318,13 @@ export default function CandlestickChart({
           close: number | null;
         }[]
       | undefined
-    >(() => {
-      const trimmedData = trimCandlestickData({
-        data: candlestickChartDataFromCtx,
-        requiredDataNum: 30,
-      });
-      return trimmedData?.map(data => ({
-        x: data.x,
-        open: data.y[0],
-        high: data.y[1],
-        low: data.y[2],
-        close: data.y[3],
-      }));
-    });
+    >(trimmedData);
 
   const [toLineChartData, setToLineChartData, toLineChartDataRef] = useStateRef<ILineChartData[]>(
     () =>
       candlestickChartDataFromCtx.map((data, i) => ({
         x: data.x,
-        y: data.y[3],
+        y: data.close,
       }))
   );
 
@@ -258,18 +337,42 @@ export default function CandlestickChart({
     }))
   );
 
-  // the max and min shouldn't be responsive to the candlestick data
-  const ys = candlestickChartDataFromCtx.flatMap(d => d.y.filter(y => y !== null)) as number[];
+  // Deprecated: after mergin into develop (20230323 - Shirley)
+  // const ys: number[] = trimmedData
+  //   ? trimmedData.reduce(
+  //       (acc: number[], curr) => {
+  //         if (curr.open === null || curr.high === null || curr.low === null || curr.close === null)
+  //           return;
 
-  const maxNumber = ys.length > 0 ? Math.max(...ys) : null;
-  const minNumber = ys.length > 0 ? Math.min(...ys) : null;
+  //         acc.push(curr.open, curr.high, curr.low, curr.close);
+  //         return acc;
+  //       },
+  //       []
+  //     )
+  //   : [];
+  const ys = trimmedData
+    ? (trimmedData
+        .filter(
+          (data: ICandlestickData) =>
+            data.open !== null && data.high !== null && data.low !== null && data.close !== null
+        )
+        .map((data: ICandlestickData) => [data.open, data.high, data.low, data.close])
+        .flat() as number[])
+    : [];
 
+  const max = ys.length > 0 ? Math.max(...ys) : null;
+  const min = ys.length > 0 ? Math.min(...ys) : null;
+
+  const maxNumber = max && min ? TRADING_CHART_PRICE_LIMIT_ONE_SEC * (max - min) + max : 100;
+  const minNumber = max && min ? min - TRADING_CHART_PRICE_LIMIT_ONE_SEC * (max - min) : 0;
+
+  /* Deprecated: (20230322 - Shirley) it's done in other branch
   const userOpenPrice = randomIntFromInterval(minNumber ?? 100, maxNumber ?? 1000);
   const userOpenPriceLine = toLatestPriceLineData?.map(data => ({
     x: data?.x,
     y: 10000,
-  }));
-  /**TODO: (20230313 - Shirley) Open price line 
+  })); */
+  /**Deprecated: (20230322 - Shirley) it's done in other branch
   const userOpenPriceLine1 =
     userCtx.openCFDs.length > 0
       ? toLatestPriceLineData?.map(data => ({
@@ -296,7 +399,7 @@ export default function CandlestickChart({
   console.log('open cfd', userCtx.openCFDs);
   */
 
-  /* TODO: (20230313 - Shirley) 
+  /* Deprecated: (20230322 - Shirley) it's done in other branch
   const userLines = Array.from({length: 1}, (_, index) => (
     <VictoryLine
       key={index}
@@ -308,7 +411,7 @@ export default function CandlestickChart({
     />
   ));
 
-  // TODO: (20230313 - Shirley) map the open price line
+  // Deprecated: (20230322 - Shirley) it's done in other branch
   const priceline = userCtx.openCFDs.map((cfd, index) => (
     <VictoryLine
       key={index}
@@ -391,79 +494,72 @@ export default function CandlestickChart({
   useEffect(() => {
     if (!appCtx.isInit) return;
     if (marketCtx.candlestickChartData === null) return;
+    // Deprecated: before merge into develop (tzuhan 20230322)
+    console.log(`Component CandlestickChart from marketCtx`, marketCtx.candlestickChartData);
 
-    if (!toCandlestickChartDataRef.current) {
-      setCandlestickChartData(() =>
-        trimCandlestickData({
-          data:
-            marketCtx?.candlestickChartData?.map(d => ({
-              x: d.x,
-              y: [
-                d.open ? d.open : null,
-                d.high ? d.high : null,
-                d.low ? d.low : null,
-                d.close ? d.close : null,
-              ],
-            })) ?? [],
-          requiredDataNum: 30,
-        })
-      );
+    const trimmedData = parseCandlestickData({
+      data: marketCtx?.candlestickChartData ?? [],
+      dataSize: 30,
+      timespan: 1,
+    });
 
-      setToCandlestickChartData(
-        candlestickChartDataRef.current?.map(data => ({
-          x: data.x,
-          open: data.y[0],
-          high: data.y[1],
-          low: data.y[2],
-          close: data.y[3],
-        }))
-      );
-    }
+    setToCandlestickChartData(trimmedData);
+    console.log('display data', toCandlestickChartDataRef.current);
 
-    //     const setStateInterval = setInterval(() => {
-    //       if (!candlestickChartDataRef?.current) return;
+    // Till: (20230410 - Shirley)
+    // console.log('data put into chart', toCandlestickChartDataRef.current);
 
-    //       const updatedCandlestickChartData = updateDummyCandlestickChartData(
-    //         candlestickChartDataRef?.current
-    //       );
+    const toLineChartData =
+      toCandlestickChartDataRef.current?.map((data, i) => ({
+        x: data.x,
+        y: data.close,
+      })) ?? [];
+    setToLineChartData(toLineChartData);
 
-    //       setCandlestickChartData(updatedCandlestickChartData);
+    const latestPrice = toLineChartData?.[toLineChartData.length - NULL_ARRAY_NUM - 1]?.y;
+    const toLatestPriceLineData = toLineChartData?.map(data => ({
+      x: data?.x,
+      y: latestPrice,
+    }));
 
-    //       const toCandlestickChartData = updatedCandlestickChartData?.map(data => ({
-    //         x: data.x,
-    //         open: data.y[0],
-    //         high: data.y[1],
-    //         low: data.y[2],
-    //         close: data.y[3],
-    //       }));
+    setToLatestPriceLineData(toLatestPriceLineData);
 
-    //       /* TODO: (20230313 - Shirley) Sometimes, the candlestick overlays with another candlestick (20230310 - Shirley)/
-    //       // console.log('data put into chart', toCandlestickChartDataRef.current);
-    //       // console.log('market Ctx', marketCtx.candlestickChartData);
-    //       // console.log('market Ctx sliced', marketCtx.candlestickChartData?.slice(-30));
-    //       // console.log('market Ctx stringified', JSON.stringify(marketCtx.candlestickChartData));
-    // */
+    /*  Till: (20230410 - Shirley) */
+    // const setStateInterval = setInterval(() => {
+    //   console.log(`Component CandlestickChart from marketCtx`, marketCtx.candlestickChartData);
 
-    //       setToCandlestickChartData(toCandlestickChartData);
+    //   const trimmedData = parseCandlestickData({
+    //     data: marketCtx?.candlestickChartData ?? [],
+    //     dataSize: 30,
+    //     timespan: 1,
+    //   });
 
-    //       const toLineChartData = updatedCandlestickChartData.map((data, i) => ({
-    //         x: data.x,
-    //         y: data.y[3],
-    //       }));
-    //       setToLineChartData(toLineChartData);
+    //   setToCandlestickChartData(trimmedData);
+    //   console.log('display data', toCandlestickChartDataRef.current);
 
-    //       const latestPrice = toLineChartData?.[toLineChartData.length - NULL_ARRAY_NUM - 1]?.y;
-    //       const toLatestPriceLineData = toLineChartData?.map(data => ({
-    //         x: data?.x,
-    //         y: latestPrice,
-    //       }));
+    //   // Till: (20230410 - Shirley)
+    //   // console.log('data put into chart', toCandlestickChartDataRef.current);
 
-    //       setToLatestPriceLineData(toLatestPriceLineData);
-    //     }, 1000 * 1);
+    //   const toLineChartData =
+    //     toCandlestickChartDataRef.current?.map((data, i) => ({
+    //       x: data.x,
+    //       y: data.close,
+    //     })) ?? [];
+    //   setToLineChartData(toLineChartData);
 
-    return () => {
-      // clearInterval(setStateInterval);
-    };
+    //   const latestPrice = toLineChartData?.[toLineChartData.length - NULL_ARRAY_NUM - 1]?.y;
+    //   const toLatestPriceLineData = toLineChartData?.map(data => ({
+    //     x: data?.x,
+    //     y: latestPrice,
+    //   }));
+
+    //   setToLatestPriceLineData(toLatestPriceLineData);
+    // }, 1000);
+
+    // return () => {
+    //   /*  Till: (20230410 - Shirley) */
+    //   clearInterval(setStateInterval);
+    // };
   }, [marketCtx.candlestickChartData]);
 
   // TODO: VictoryThemeDefinition to get the type (20230310 - Shirley)
@@ -495,11 +591,15 @@ export default function CandlestickChart({
   };
 
   const isDisplayedCharts =
-    candlestickChartDataRef.current && candlestickChartDataRef.current?.length > 0 ? (
+    toCandlestickChartDataRef.current && toCandlestickChartDataRef.current?.length > 0 ? (
       <VictoryChart
         theme={chartTheme}
-        minDomain={{y: minNumber !== null ? minNumber * 0.7 : undefined}}
-        maxDomain={{y: maxNumber !== null ? maxNumber * 1.3 : undefined}} // TODO: measure the biggest number to decide the y-axis
+        minDomain={{
+          y: minNumber !== null ? minNumber : undefined,
+        }}
+        maxDomain={{
+          y: maxNumber !== null ? maxNumber : undefined,
+        }} // INFO: measure the biggest number to decide the y-axis (20230322 - Shirley)
         // Till: (20230327 - Shirley)  // domainPadding={{x: 1}}
         width={Number(candlestickChartWidth)}
         height={Number(candlestickChartHeight)}
@@ -533,7 +633,7 @@ export default function CandlestickChart({
           tickLabelComponent={<VictoryLabel dx={45} />}
           offsetX={Number(candlestickChartWidth) - 50}
           dependentAxis
-          // TODO: (20230327 - Shirley) // tickValues={[minNumber, maxNumber]}
+          // Till: (20230409 - Shirley) // tickValues={[minNumber, maxNumber]}
         />
 
         {candlestickOn && (
@@ -550,6 +650,7 @@ export default function CandlestickChart({
             style={{
               data: {
                 fillOpacity: 1,
+
                 stroke: (d: any) =>
                   d.close > d.open ? TypeOfPnLColorHex.LOSS : TypeOfPnLColorHex.PROFIT,
                 strokeWidth: 1,
@@ -715,7 +816,7 @@ export default function CandlestickChart({
         /> 
         */}
         {/* TODO: User open position line on charts (20230310 - Shirley)  */}
-        {userCtx.enableServiceTerm && userCtx.openCFDs.length > 0 && showPositionLabel ? (
+        {/* {userCtx.enableServiceTerm && userCtx.openCFDs.length > 0 && showPositionLabel ? (
           <VictoryLine
             style={{
               data: {
@@ -726,9 +827,9 @@ export default function CandlestickChart({
             }}
             data={userOpenPriceLine}
           />
-        ) : null}
+        ) : null} */}
 
-        {userCtx.enableServiceTerm && userCtx.openCFDs.length > 0 && showPositionLabel ? (
+        {/* {userCtx.enableServiceTerm && userCtx.openCFDs.length > 0 && showPositionLabel ? (
           <VictoryScatter
             style={{data: {fill: 'transparent'}, labels: {background: 'transparent'}}}
             data={userOpenPriceLine}
@@ -759,7 +860,7 @@ export default function CandlestickChart({
               />
             }
           />
-        ) : null}
+        ) : null} */}
       </VictoryChart>
     ) : (
       <p>Loading</p>

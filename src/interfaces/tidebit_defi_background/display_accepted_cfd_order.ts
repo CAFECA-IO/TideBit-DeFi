@@ -5,6 +5,7 @@ import {CFDClosedType} from '../../constants/cfd_closed_type';
 import {OrderState} from '../../constants/order_state';
 import {ProfitState} from '../../constants/profit_state';
 import {TypeOfPosition} from '../../constants/type_of_position';
+import {unitAsset} from '../../constants/config';
 
 export interface IDisplayAcceptedCFDOrder extends IAcceptedCFDOrder {
   pnl: IPnL;
@@ -14,6 +15,29 @@ export interface IDisplayAcceptedCFDOrder extends IAcceptedCFDOrder {
   suggestion: ICFDSuggestion;
 }
 
+export const toDisplayAcceptedCFDOrder = (acceptedCFDOrder: IAcceptedCFDOrder) => {
+  // TODO: calculate pnl (20230323 - tzuhan)
+  const pnlValue = 0;
+  // TODO: get positionLineGraph (20230323 - tzuhan)
+  const positionLineGraph = [90, 72, 60, 65, 42, 25, 32, 20, 15, 32, 90, 10];
+  // TODO: get suggestion (20230323 - tzuhan)
+  const suggestion = {takeProfit: 74521, stopLoss: 25250};
+  const displayAcceptedCFDOrder: IDisplayAcceptedCFDOrder = {
+    ...acceptedCFDOrder,
+    pnl: {
+      type: ProfitState.PROFIT,
+      value: pnlValue,
+    },
+    openValue: acceptedCFDOrder.openPrice * acceptedCFDOrder.amount,
+    closeValue: acceptedCFDOrder.closePrice
+      ? acceptedCFDOrder.closePrice * acceptedCFDOrder.amount
+      : undefined,
+    positionLineGraph,
+    suggestion,
+  };
+  return displayAcceptedCFDOrder;
+};
+
 function randomIntFromInterval(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
@@ -22,6 +46,7 @@ export const getDummyDisplayAcceptedCFDOrder = (currency: string) => {
   const typeOfPosition = Math.random() > 0.5 ? TypeOfPosition.BUY : TypeOfPosition.SELL;
   const dummyDisplayAcceptedCFDOrder: IDisplayAcceptedCFDOrder = {
     id: 'TBD202302070000001',
+    txid: '0x',
     ticker: currency,
     state:
       Math.random() > 0.5
@@ -30,8 +55,8 @@ export const getDummyDisplayAcceptedCFDOrder = (currency: string) => {
         ? OrderState.FREEZED
         : OrderState.OPENING,
     typeOfPosition: typeOfPosition,
-    targetAsset: typeOfPosition === TypeOfPosition.BUY ? currency : 'USDT',
-    uniAsset: typeOfPosition === TypeOfPosition.BUY ? 'USDT' : currency,
+    targetAsset: currency,
+    unitAsset: unitAsset,
     openPrice: 24058,
     amount: 1.8,
     createTimestamp: 1675299651,
@@ -73,11 +98,12 @@ export const getDummyDisplayAcceptedCFDs = (currency: string) => {
       id: `TBDisplay${date.getFullYear()}${
         date.getMonth() + 1
       }${date.getDate()}${date.getSeconds()}${currency}`,
+      txid: '0x',
       ticker: currency,
       state: OrderState.CLOSED,
       typeOfPosition: typeOfPosition,
-      targetAsset: typeOfPosition === TypeOfPosition.BUY ? currency : 'USDT',
-      uniAsset: typeOfPosition === TypeOfPosition.BUY ? 'USDT' : currency,
+      targetAsset: currency,
+      unitAsset: unitAsset,
       openPrice: randomIntFromInterval(1000, 10000),
       amount: 1.8,
       createTimestamp: 1675299651,

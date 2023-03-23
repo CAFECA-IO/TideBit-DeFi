@@ -17,13 +17,13 @@ export default function Notification({
   const {t}: {t: TranslateFunction} = useTranslation('common');
   const notificationCtx = useContext(NotificationContext);
   const hamburgerStyles =
-    'block bg-lightWhite h-3px rounded-12px opacity-100 w-full ease-in duration-300';
+    'block bg-lightWhite h-3px opacity-100 rounded-12px opacity-100 ease-in duration-300';
 
   // hamburger animation
   const displayedMobileNavBarLine1 = !componentVisible
     ? 'translate-y-0 rotate-0'
     : 'translate-y-1.5 origin-left w-3/4 -rotate-35';
-  const displayedMobileNavBarLine2 = !componentVisible ? 'translate-y-1.5 w-full' : 'w-0 opacity-0';
+  const displayedMobileNavBarLine2 = !componentVisible ? 'translate-y-1.5 w-full' : 'w-0';
   const displayedMobileNavBarLine3 = !componentVisible
     ? 'translate-y-3 rotate-0'
     : 'translate-y-0 origin-left w-3/4 rotate-35';
@@ -135,18 +135,14 @@ export default function Notification({
             className="z-50 inline-flex items-center justify-center rounded-md p-2"
           >
             <div className="relative h-20px w-30px cursor-pointer">
-              <span
-                className={`${hamburgerStyles} ${displayedMobileNavBarLine1} opacity-100`}
-              ></span>
+              <span className={`${hamburgerStyles} ${displayedMobileNavBarLine1}`}></span>
               <span className={`${hamburgerStyles} ${displayedMobileNavBarLine2}`}></span>
-              <span
-                className={`${hamburgerStyles} ${displayedMobileNavBarLine3} opacity-100`}
-              ></span>
+              <span className={`${hamburgerStyles} ${displayedMobileNavBarLine3}`}></span>
             </div>
           </button>
         </div>
 
-        <p className="self-center pl-5">{t('nav_bar.Notification')}</p>
+        <p className="self-center pl-5">{t('NAV_BAR.NOTIFICATION_TITLE')}</p>
       </div>
     </div>
   );

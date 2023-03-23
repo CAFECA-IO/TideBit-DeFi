@@ -2,6 +2,9 @@ import {ImCross} from 'react-icons/im';
 import Image from 'next/image';
 import TideButton from '../../components/tide_button/tide_button';
 import Link from 'next/link';
+import {useTranslation} from 'next-i18next';
+
+type TranslateFunction = (s: string) => string;
 
 interface IHelloModal {
   helloModalRef?: React.RefObject<HTMLDivElement>;
@@ -15,6 +18,8 @@ const HelloModal = ({
   helloClickHandler,
   ...otherProps
 }: IHelloModal) => {
+  const {t}: {t: TranslateFunction} = useTranslation('common');
+
   const isDisplayedHelloModal = helloModalVisible ? (
     <>
       <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">
@@ -23,10 +28,10 @@ const HelloModal = ({
           <div
             id="connectModal"
             ref={helloModalRef}
-            className="relative flex h-600px w-450px flex-col rounded-3xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none"
+            className="relative flex h-auto w-full flex-col rounded-xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none md:w-450px"
           >
             {/*header*/}
-            <div className="flex items-start justify-between rounded-t pt-6">
+            <div className="mx-auto flex items-start justify-between rounded-t pt-6">
               <button className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
                 <span className="absolute top-5 right-5 block outline-none focus:outline-none">
                   <ImCross onClick={helloClickHandler} />
@@ -34,9 +39,9 @@ const HelloModal = ({
               </button>
             </div>
             {/*body*/}
-            <div className="flex flex-auto flex-col items-center pt-32">
+            <div className="flex flex-auto flex-col items-center pt-32 pb-5">
               <div className="text-lg leading-relaxed text-lightWhite">
-                <div className="mx-auto flex flex-col items-center">
+                <div className="flex flex-col items-center px-10">
                   <Image
                     className="mt-10 w-100px"
                     src="/elements/path_25939.svg"
@@ -45,20 +50,20 @@ const HelloModal = ({
                     alt="Hello"
                   />
                   <div className="mt-8 mb-40 text-xl text-lightGray">
-                    You can start using TideBit now.
+                    {t('WALLET_PANEL.HELLO_DESCRIPTION')}
                   </div>
 
                   <TideButton
                     className="rounded bg-tidebitTheme px-12 py-2 font-normal transition-all hover:opacity-90"
                     onClick={helloClickHandler}
                   >
-                    Done
+                    {t('WALLET_PANEL.DONE_BUTTON')}
                   </TideButton>
                   <Link
                     className="mt-3 text-base text-tidebitTheme underline underline-offset-4"
                     href="#"
                   >
-                    Connect my TideBit
+                    {t('WALLET_PANEL.HELLO_CONNECT_LINK')}
                   </Link>
                 </div>
               </div>

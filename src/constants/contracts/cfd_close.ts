@@ -1,4 +1,5 @@
 import IEIP712Data from '../../interfaces/ieip712data';
+import {getTimestamp} from '../../lib/common';
 
 const CFDOrderClose: IEIP712Data = {
   domain: {
@@ -24,7 +25,7 @@ const CFDOrderClose: IEIP712Data = {
     Quotation: [
       {name: 'ticker', type: 'string'},
       {name: 'targetAsset', type: 'string'},
-      {name: 'uniAsset', type: 'string'},
+      {name: 'unitAsset', type: 'string'},
       {name: 'price', type: 'uint256'},
       {name: 'deadline', type: 'uint256'},
       {name: 'signature', type: 'string'},
@@ -42,14 +43,14 @@ const CFDOrderClose: IEIP712Data = {
     quotation: {
       ticker: 'ETH',
       targetAsset: 'ETH',
-      uniAsset: 'USDT',
+      unitAsset: 'USDT',
       price: 21023,
-      deadline: Math.ceil(Date.now() / 1000) + 15,
+      deadline: getTimestamp() + 15,
       signature: '0x',
     },
     closePrice: 71232,
-    closeTimestamp: Math.ceil(Date.now() / 1000) + 86400,
-    guaranteedStopFee: Math.ceil(Date.now() / 1000) + 86400,
+    closeTimestamp: getTimestamp() + 86400,
+    guaranteedStopFee: getTimestamp() + 86400,
   },
 };
 

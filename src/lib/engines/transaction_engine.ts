@@ -12,6 +12,8 @@ import {IApplyCreateCFDOrderData} from '../../interfaces/tidebit_defi_background
 import {IApplyDepositOrder} from '../../interfaces/tidebit_defi_background/apply_deposit_order';
 import {IApplyWithdrawOrder} from '../../interfaces/tidebit_defi_background/apply_withdraw_order';
 import {IResult} from '../../interfaces/tidebit_defi_background/result';
+import {Code} from '../../constants/code';
+import {getTimestamp, toIJSON} from '../common';
 
 class TransactionEngine {
   isApplyCreateCFDOrderData(obj: object): obj is IApplyCreateCFDOrderData {
@@ -23,7 +25,7 @@ class TransactionEngine {
       'price' in obj &&
       'amount' in obj &&
       'targetAsset' in obj &&
-      'uniAsset' in obj &&
+      'unitAsset' in obj &&
       'margin' in obj &&
       'leverage' in obj &&
       'liquidationPrice' in obj &&
@@ -52,7 +54,7 @@ class TransactionEngine {
         ...data.quotation,
         price: SafeMath.toSmallestUnit(data.quotation.price, 10),
       },
-      createTimestamp: Math.ceil(Date.now() / 1000),
+      createTimestamp: getTimestamp(),
       takeProfit: data.takeProfit ? SafeMath.toSmallestUnit(data.takeProfit, 10) : 0,
       stopLoss: data.stopLoss ? SafeMath.toSmallestUnit(data.stopLoss, 10) : 0,
       guaranteedStop: data.guaranteedStop ? data.guaranteedStop : false,
@@ -85,7 +87,7 @@ class TransactionEngine {
         ...data.quotation,
         price: SafeMath.toSmallestUnit(data.quotation.price, 10),
       },
-      closeTimestamp: data.closeTimestamp ? data.closeTimestamp : Math.ceil(Date.now() / 1000),
+      closeTimestamp: data.closeTimestamp ? data.closeTimestamp : getTimestamp(),
     };
     return convertedCloseCFDOrderData;
   }
@@ -95,7 +97,7 @@ class TransactionEngine {
       ...data,
       targetAmount: SafeMath.toSmallestUnit(data.targetAmount, 10),
       fee: SafeMath.toSmallestUnit(data.fee, 10),
-      createTimestamp: data.createTimestamp ? data.createTimestamp : Math.ceil(Date.now() / 1000),
+      createTimestamp: data.createTimestamp ? data.createTimestamp : getTimestamp(),
       remark: data.remark ? data.remark : ``,
     };
     return convertedCloseCFDOrderData;
@@ -104,39 +106,40 @@ class TransactionEngine {
   transferCFDOrderToTransaction(order: IApplyCFDOrder) {
     let result: IResult = {
       success: false,
+      code: Code.INVAILD_INPUTS,
       reason: 'data and type is not match',
     };
     switch (order.type) {
       case CFDOrderType.CREATE:
         if (this.isApplyCreateCFDOrderData(order.data)) {
-          // ++ TODO createCFDOrderContract
           const typeData = CFDOrderCreate;
           typeData.message = this.convertCreateCFDOrderData(order.data);
           result = {
             success: true,
-            data: typeData,
+            code: Code.SUCCESS,
+            data: toIJSON(typeData),
           };
         }
         break;
       case CFDOrderType.UPDATE:
         if (this.isApplyUpdateCFDOrderData(order.data)) {
-          // ++ TODO updateCFDOrderContract
           const typeData = CFDOrderUpdate;
           typeData.message = this.convertUpdateCFDOrderData(order.data);
           result = {
             success: true,
-            data: typeData,
+            code: Code.SUCCESS,
+            data: toIJSON(typeData),
           };
         }
         break;
       case CFDOrderType.CLOSE:
         if (this.isApplyCloseCFDOrderData(order.data)) {
-          // ++ TODO closeCFDOrderContract
           const typeData = CFDOrderClose;
           typeData.message = this.convertCloseCFDOrderData(order.data);
           result = {
             success: true,
-            data: typeData,
+            code: Code.SUCCESS,
+            data: toIJSON(typeData),
           };
         }
         break;
@@ -171,7 +174,8 @@ class TransactionEngine {
     typeData.message = this.convertWithdrawOrderData(withdrawOrder);
     const result: IResult = {
       success: true,
-      data: typeData,
+      code: Code.SUCCESS,
+      data: toIJSON(typeData),
     };
     return result;
   }

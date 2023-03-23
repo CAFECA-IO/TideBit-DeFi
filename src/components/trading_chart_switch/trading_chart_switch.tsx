@@ -25,7 +25,10 @@ const SWITCH_HEIGHT = 40;
 
 const getChartSize = () => {
   const windowSize = useWindowSize();
-  const defaultChartSize = {width: DEFAULT_CHART_WIDTH, height: DEFAULT_CHART_HEIGHT};
+  const defaultChartSize = {
+    width: DEFAULT_CHART_WIDTH,
+    height: DEFAULT_CHART_HEIGHT,
+  };
   const chartWidth =
     windowSize.width - TRADE_TAB_WIDTH > MIN_SCREEN_WIDTH - TRADE_TAB_WIDTH
       ? windowSize.width - TRADE_TAB_WIDTH
@@ -41,9 +44,8 @@ const getChartSize = () => {
 const getSwitchWidth = () => {
   const windowSize = useWindowSize();
   const switchWidth =
-    windowSize.width - TRADE_TAB_WIDTH > MIN_SCREEN_WIDTH - TRADE_TAB_WIDTH
-      ? windowSize.width - TRADE_TAB_WIDTH
-      : MIN_SCREEN_WIDTH - TRADE_TAB_WIDTH;
+    windowSize.width > MIN_SCREEN_WIDTH ? windowSize.width - TRADE_TAB_WIDTH : windowSize.width;
+
   const switchSize = {
     width: switchWidth.toString(),
     height: SWITCH_HEIGHT.toString(),
@@ -76,7 +78,8 @@ const TradingChartSwitch = ({
     showPositionOnChartHandler(bool);
   };
 
-  const timeIntervalButtonStyle = 'mr-1 rounded-sm px-6 transition-all duration-300 text-white';
+  const timeIntervalButtonStyle =
+    'mr-1 rounded-sm px-2 md:px-6 transition-all duration-300 text-white';
 
   const timeIntervalButtonClickedStyle = `text-white bg-tidebitTheme hover:bg-tidebitTheme ${timeIntervalButtonStyle}`;
 
@@ -205,7 +208,7 @@ const TradingChartSwitch = ({
   );
 
   const lineGraphChartButton = (
-    <div>
+    <div className="hidden md:block">
       <button
         onClick={lineClickHandler}
         type="button"
@@ -294,7 +297,7 @@ const TradingChartSwitch = ({
     <>
       <div
         style={{width: `${Number(switchSize.width) - 100}px`}}
-        className="flex items-center pr-20 md:w-1/2 md:space-x-3 lg:space-x-5 xl:w-full"
+        className="flex items-center space-x-1 md:space-x-5 xl:w-full"
       >
         {/* Switch chart types */}
         <div className="flex space-x-2">
@@ -303,7 +306,7 @@ const TradingChartSwitch = ({
         </div>
 
         {/* Diplaying position info toggle */}
-        <div className="flex items-center space-x-5">
+        <div className="hidden items-center space-x-5 md:flex">
           <p className="text-lightGray">Positions</p>
           <div className="pt-1">
             {' '}

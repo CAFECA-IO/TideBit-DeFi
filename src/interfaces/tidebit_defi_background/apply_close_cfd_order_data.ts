@@ -1,5 +1,5 @@
 import {TypeOfPosition} from '../../constants/type_of_position';
-import {IQuotation} from './quotation';
+import {getDummyQuotation, IQuotation} from './quotation';
 
 export interface IApplyCloseCFDOrderData {
   orderId: string;
@@ -22,14 +22,7 @@ export const getDummyApplyCloseCFDOrderData = (currency: string, id?: string) =>
           date.getMonth() + 1
         }${date.getDate()}${date.getSeconds()}${currency}`,
     closePrice: randomIntFromInterval(1000, 10000),
-    quotation: {
-      ticker: currency,
-      targetAsset: typeOfPosition === TypeOfPosition.BUY ? currency : 'USDT',
-      uniAsset: typeOfPosition === TypeOfPosition.BUY ? 'USDT' : currency,
-      price: randomIntFromInterval(1000, 10000),
-      deadline: Math.ceil(Date.now() / 1000) + 15,
-      signature: '0x',
-    }, // 報價單
+    quotation: getDummyQuotation(currency, typeOfPosition),
     closeTimestamp: Math.ceil(Date.now() / 1000) + 86400, // openTimestamp + 86400
   };
   return dummyApplyCloseCFDOrderData;

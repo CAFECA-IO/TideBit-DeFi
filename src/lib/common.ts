@@ -1,6 +1,16 @@
 import {getTime, ICandlestickData} from '../interfaces/tidebit_defi_background/candlestickData';
 import {ITBETrade} from '../interfaces/tidebit_defi_background/ticker_data';
 import {ITimeSpanUnion} from '../interfaces/tidebit_defi_background/time_span_union';
+import {OrderState} from '../constants/order_state';
+import {OrderStatusUnion} from '../constants/order_status_union';
+import {OrderType} from '../constants/order_type';
+import IEIP712Data from '../interfaces/ieip712data';
+import {IAcceptedCFDOrder} from '../interfaces/tidebit_defi_background/accepted_cfd_order';
+import {IAcceptedDepositOrder} from '../interfaces/tidebit_defi_background/accepted_deposit_order';
+import {IAcceptedOrder} from '../interfaces/tidebit_defi_background/accepted_order';
+import {IAcceptedWithdrawOrder} from '../interfaces/tidebit_defi_background/accepted_withdraw_order';
+import {IBalance} from '../interfaces/tidebit_defi_background/balance';
+import {IOrder} from '../interfaces/tidebit_defi_background/order';
 
 export const roundToDecimalPlaces = (val: number, precision: number): number => {
   const roundedNumber = Number(val.toFixed(precision));
@@ -26,7 +36,14 @@ export function getDeadline(deadline: number) {
  */
 export const timestampToString = (timestamp: number) => {
   if (timestamp === 0)
-    return {date: '-', time: '-', abbreviatedMonth: '-', day: '-', abbreviatedTime: '-'};
+    return {
+      date: '-',
+      time: '-',
+      abbreviatedMonth: '-',
+      monthAndYear: '-',
+      day: '-',
+      abbreviatedTime: '-',
+    };
 
   const date = new Date(timestamp * 1000);
   // const date = new Date();
@@ -52,20 +69,25 @@ export const timestampToString = (timestamp: number) => {
     'Oct',
     'Nov',
     'Dec',
-    // 'January',
-    // 'February',
-    // 'March',
-    // 'April',
-    // 'May',
-    // 'June',
-    // 'July',
-    // 'August',
-    // 'September',
-    // 'October',
-    // 'November',
-    // 'December',
   ];
+
+  const monthFullNames = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
+  ];
+
   const monthName = monthNames[monthIndex];
+  const monthFullName = monthFullNames[monthIndex];
 
   const dateString = `${year}-${month}-${day}`;
   const timeString = `${hour}:${minute}:${second}`;
@@ -75,6 +97,7 @@ export const timestampToString = (timestamp: number) => {
     date: dateString,
     time: timeString,
     abbreviatedMonth: monthName,
+    monthAndYear: `${monthFullName} ${year}`,
     day: day,
     abbreviatedTime: `${hour}:${minute}`,
   };
@@ -140,6 +163,21 @@ export const locker = (id: string): ILocker => {
 
 export const getTimestamp = () => Math.ceil(Date.now() / 1000);
 
+export const twoDecimal = (num: number, mul?: number): number => {
+  const roundedNum = Math.round(num * 100) / 100;
+  const str = roundedNum.toFixed(2).replace(/\.?0+$/, '');
+  const dec = str.split('.');
+  const numDec = dec.length === 2 ? dec[1].length : 0;
+
+  return mul
+    ? Number((num * mul).toFixed(numDec).replace(/\.?0+$/, ''))
+    : Number(num.toFixed(numDec).replace(/\.?0+$/, ''));
+};
+
+export const getNowSeconds = () => {
+  return Math.ceil(new Date().getTime() / 1000);
+};
+
 export const toQuery = (params: {[key: string]: string | number | boolean} | undefined) => {
   const query: string = params
     ? `?${Object.keys(params)
@@ -185,4 +223,74 @@ export const convertTradesToCandlestickData = (
     }
   }
   return candlestickData;
+}
+
+export const toIJSON = (typeData: IEIP712Data) => {
+  return JSON.parse(JSON.stringify(typeData));
+};
+
+export const acceptedOrderToOrder = (acceptedOrder: IAcceptedOrder, balance: IBalance) => {
+  const order: IOrder = {
+    timestamp: acceptedOrder.createTimestamp,
+    type: acceptedOrder.orderType,
+    targetAsset: '',
+    targetAmount: 0,
+    balanceSnapshot: {
+      ...balance,
+    },
+    detail: '',
+    orderSnapshot: {
+      id: acceptedOrder.id,
+      txid: acceptedOrder.txid,
+      status: acceptedOrder.orderStatus,
+      state: undefined,
+      remarks: acceptedOrder.remark,
+      fee: acceptedOrder.fee,
+    },
+  };
+  if (
+    order.orderSnapshot.status === OrderStatusUnion.SUCCESS ||
+    order.orderSnapshot.status === OrderStatusUnion.CANCELDED
+  ) {
+    order.detail = 'TxID/TxHash';
+  } else if (order.orderSnapshot.status === OrderStatusUnion.PROCESSING) {
+    order.detail = 'Processing';
+  } else if (order.orderSnapshot.status === OrderStatusUnion.FAILED) {
+    order.detail = 'Failed';
+  }
+  switch (acceptedOrder.orderType) {
+    case OrderType.CFD:
+      order.targetAsset = (acceptedOrder as IAcceptedCFDOrder).targetAsset;
+      order.targetAmount = (acceptedOrder as IAcceptedCFDOrder).amount;
+      order.orderSnapshot.state = (acceptedOrder as IAcceptedCFDOrder).state;
+      if (order.orderSnapshot.state === OrderState.OPENING) {
+        order.detail = `Open position of ${order.targetAsset}`;
+      }
+      if (order.orderSnapshot.state === OrderState.CLOSED) {
+        order.detail = `Close position of ${order.targetAsset}`;
+      }
+      break;
+    case OrderType.DEPOSIT:
+      order.targetAsset = (acceptedOrder as IAcceptedDepositOrder).targetAsset;
+      order.targetAmount = (acceptedOrder as IAcceptedDepositOrder).targetAmount;
+      break;
+    case OrderType.WITHDRAW:
+      order.targetAsset = (acceptedOrder as IAcceptedWithdrawOrder).targetAsset;
+      order.targetAmount = (acceptedOrder as IAcceptedWithdrawOrder).targetAmount;
+      break;
+  }
+  order.balanceSnapshot = {
+    ...order.balanceSnapshot,
+    available: balance.available - order.targetAmount,
+    locked: balance.locked + order.targetAmount,
+  };
+};
+
+export const randomHex = (length: number) => {
+  return (
+    '0x' +
+    Math.random()
+      .toString(16)
+      .substring(2, length + 2)
+  );
 };

@@ -211,27 +211,18 @@ export default function CandlestickChart({
 
   const NULL_ARRAY_NUM = 1;
 
+  const trimmedData = trimCandlestickData({
+    data: candlestickChartDataFromCtx,
+    requiredDataNum: 30,
+  });
+
   const [candlestickChartData, setCandlestickChartData, candlestickChartDataRef] = useStateRef<
     | {
         x: Date;
         y: [...(number | null)[]];
       }[]
     | undefined
-  >(() =>
-    trimCandlestickData({
-      data:
-        marketCtx.candlestickChartData?.map(d => ({
-          x: d.x,
-          y: [
-            d.open ? d.open : null,
-            d.high ? d.high : null,
-            d.low ? d.low : null,
-            d.close ? d.close : null,
-          ],
-        })) ?? [],
-      requiredDataNum: 30,
-    })
-  );
+  >(trimmedData);
 
   const [toCandlestickChartData, setToCandlestickChartData, toCandlestickChartDataRef] =
     useStateRef<
@@ -244,10 +235,6 @@ export default function CandlestickChart({
         }[]
       | undefined
     >(() => {
-      const trimmedData = trimCandlestickData({
-        data: candlestickChartDataFromCtx,
-        requiredDataNum: 30,
-      });
       return trimmedData?.map(data => ({
         x: data.x,
         open: data.y[0],
@@ -275,7 +262,8 @@ export default function CandlestickChart({
   );
 
   // TODO: (20230322 - Shirley) revise the base of ys
-  const ys = candlestickChartDataFromCtx.flatMap(d => d.y.filter(y => y !== null)) as number[];
+
+  const ys = trimmedData ? (trimmedData.flatMap(d => d.y.filter(y => y !== null)) as number[]) : [];
 
   const max = ys.length > 0 ? Math.max(...ys) : null;
   const min = ys.length > 0 ? Math.min(...ys) : null;

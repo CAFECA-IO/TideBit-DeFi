@@ -10,7 +10,11 @@ const HistorySubTab = () => {
       <HistoryPositionItem closedCfdDetails={cfd} />
     </div>
   ));
-  return <>{historyPositionList}</>;
+  return (
+    <>
+      <div className="h-full overflow-y-auto overflow-x-hidden pb-40">{historyPositionList}</div>
+    </>
+  );
 };
 
 export default HistorySubTab;

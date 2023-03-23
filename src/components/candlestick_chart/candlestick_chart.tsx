@@ -1,3 +1,5 @@
+/*Deprecated: (20230322 - Shirley) before merging into develop */
+/*eslint-disable no-console */
 import React, {useState, useContext, useEffect, useRef} from 'react';
 import Lottie, {useLottie} from 'lottie-react';
 import spotAnimation from '../../../public/animation/circle.json';
@@ -53,11 +55,13 @@ export interface ILineChartData {
   y: number | null;
 }
 
+export interface IStaleCandlestickChartData {
+  x: Date;
+  y: [...(number | null)[]];
+}
+
 export const updateDummyCandlestickChartData = (
-  data: {
-    x: Date;
-    y: [...(number | null)[]];
-  }[]
+  data: IStaleCandlestickChartData[]
 ): {x: Date; y: (number | null)[]}[] => {
   const n = 80;
   const chartBlank = 1.68;
@@ -158,28 +162,127 @@ export function processCandlestickData({data, requiredDataNum}: IProcessCandlest
 }
 
 export interface ITrimCandlestickData {
-  data: {
-    x: Date;
-    y: [...(number | null)[]];
-  }[];
-  requiredDataNum: number;
+  // data: IStaleCandlestickChartData[];
+  data: ICandlestickData[];
+  dataSize: number;
+  timespan: number;
 }
 
-export function trimCandlestickData({data, requiredDataNum}: ITrimCandlestickData) {
-  const dataWithoutNull = data.filter(obj => !obj.y.includes(null));
-  const latestData = dataWithoutNull.slice(-requiredDataNum);
+export function trimCandlestickData({data, dataSize, timespan}: ITrimCandlestickData) {
+  // const timespan = 1000;
+  // const dataSize = 30;
 
-  if (latestData === undefined || latestData.length === 0) return;
+  const createBaseArray = () => {
+    // const getLastTime = () => {
+    //   const now = new Date().getTime();
+    //   return now - (now % timespan);
+    // };
 
-  const nullTime = 10;
-  const unitOfLive = 1000;
+    const getLastTime = () => {
+      return data[data.length - 1]?.x.getTime() as number;
+    };
 
-  const trimmedData = latestData.concat({
-    x: new Date(latestData[latestData.length - 1].x.getTime() + unitOfLive * nullTime),
-    y: [null, null, null, null],
-  });
+    // const getLastTime = new Date(data[0].x).getTime();
+    // const getLastTime = data[0]?.x.getTime();
 
-  return trimmedData;
+    const base = new Array(dataSize).fill(0).map((v, i) => {
+      const eachTime = new Date(getLastTime() - (dataSize - i) * timespan);
+      const eachTimestamp = eachTime.getTime() / 1000;
+
+      return {
+        // i,
+        // timestamp: eachTimestamp,
+        x: eachTime,
+        open: null,
+        high: null,
+        low: null,
+        close: null,
+      };
+    });
+    return base;
+  };
+
+  const filterCandlestickData = (data: ICandlestickData[], baseArray: ICandlestickData[]) => {
+    let previousClose = 0;
+    // let previousCandle:ICandlestickData = {x: baseArray[0].x, open: 0, high: 0, low: 0, close: 0}
+    console.log('data from input', data);
+
+    for (let i = 0; i < baseArray.length; i++) {
+      const index = data.findIndex(d => {
+        const baseTime = baseArray[i].x.getTime();
+        const dataTime = d.x.getTime();
+        // console.log('baseTime: ', baseTime);
+        // console.log('dataTime: ', dataTime);
+        return baseTime === dataTime;
+      });
+      // console.log('index: ', index);
+      if (index >= 0) {
+        // data[index].close !== null ? (previousClose = data[index].close) : previousClose;
+
+        baseArray[i].open = data[index].open;
+        baseArray[i].high = data[index].high;
+        baseArray[i].low = data[index].low;
+        baseArray[i].close = data[index].close;
+
+        previousClose = data[index].close || previousClose;
+
+        // previousCandle = baseArray[i]
+      } else if (previousClose !== null) {
+        baseArray[i].open = previousClose;
+        baseArray[i].high = previousClose;
+        baseArray[i].low = previousClose;
+        baseArray[i].close = previousClose;
+      }
+    }
+
+    const result = [...baseArray];
+    console.log('result: ', result);
+
+    return result;
+  };
+
+  const processCandlestickData = (candles: ICandlestickData[]) => {
+    const nullTime = 10;
+
+    const baseArray = createBaseArray();
+    const filteredData = filterCandlestickData(candles, baseArray);
+    const latestData = filteredData.concat({
+      x: new Date(filteredData[filteredData.length - 1].x.getTime() + timespan * nullTime),
+      open: null,
+      high: null,
+      low: null,
+      close: null,
+    });
+
+    // console.log('base time array: ', baseArray);
+    // console.log('filtered data: ', filteredData);
+
+    return latestData;
+  };
+
+  const processedData = processCandlestickData(
+    // data.slice(-50).map(d => ({x: d.x, open: d.y[0], high: d.y[1], low: d.y[2], close: d.y[3]}))
+    data.slice(-50).map(d => ({x: d.x, open: d.open, high: d.high, low: d.low, close: d.close}))
+  );
+
+  // console.log('processed data: ', processedData);
+
+  return processedData;
+
+  // const dataWithoutNull = data.filter(obj => !obj.y.includes(null));
+  // const latestData = dataWithoutNull.slice(-dataSize);
+
+  // if (latestData === undefined || latestData.length === 0) return;
+
+  // const nullTime = 10;
+  // const unitOfLive = 1000;
+
+  // const trimmedData = latestData.concat({
+  //   x: new Date(latestData[latestData.length - 1].x.getTime() + unitOfLive * nullTime),
+  //   y: [null, null, null, null],
+  // });
+
+  // return trimmedData;
 }
 
 export default function CandlestickChart({
@@ -196,33 +299,36 @@ export default function CandlestickChart({
   const globalCtx = useContext(GlobalContext);
   const userCtx = useContext(UserContext);
 
+  // const candlestickChartDataFromCtx =
+  //   marketCtx.candlestickChartData !== null
+  //     ? marketCtx.candlestickChartData?.map(d => ({
+  //         x: d.x,
+  //         y: [
+  //           d.open ? d.open : null,
+  //           d.high ? d.high : null,
+  //           d.low ? d.low : null,
+  //           d.close ? d.close : null,
+  //         ],
+  //       }))
+  //     : [];
   const candlestickChartDataFromCtx =
-    marketCtx.candlestickChartData !== null
-      ? marketCtx.candlestickChartData?.map(d => ({
-          x: d.x,
-          y: [
-            d.open ? d.open : null,
-            d.high ? d.high : null,
-            d.low ? d.low : null,
-            d.close ? d.close : null,
-          ],
-        }))
-      : [];
+    marketCtx.candlestickChartData !== null ? marketCtx.candlestickChartData : [];
 
   const NULL_ARRAY_NUM = 1;
 
   const trimmedData = trimCandlestickData({
     data: candlestickChartDataFromCtx,
-    requiredDataNum: 30,
+    dataSize: 30,
+    timespan: 1000,
   });
 
-  const [candlestickChartData, setCandlestickChartData, candlestickChartDataRef] = useStateRef<
-    | {
-        x: Date;
-        y: [...(number | null)[]];
-      }[]
-    | undefined
-  >(trimmedData);
+  // const [candlestickChartData, setCandlestickChartData, candlestickChartDataRef] = useStateRef<
+  //   | {
+  //       x: Date;
+  //       y: [...(number | null)[]];
+  //     }[]
+  //   | undefined
+  // >(trimmedData);
 
   const [toCandlestickChartData, setToCandlestickChartData, toCandlestickChartDataRef] =
     useStateRef<
@@ -234,21 +340,13 @@ export default function CandlestickChart({
           close: number | null;
         }[]
       | undefined
-    >(() => {
-      return trimmedData?.map(data => ({
-        x: data.x,
-        open: data.y[0],
-        high: data.y[1],
-        low: data.y[2],
-        close: data.y[3],
-      }));
-    });
+    >(trimmedData);
 
   const [toLineChartData, setToLineChartData, toLineChartDataRef] = useStateRef<ILineChartData[]>(
     () =>
       candlestickChartDataFromCtx.map((data, i) => ({
         x: data.x,
-        y: data.y[3],
+        y: data.close,
       }))
   );
 
@@ -261,23 +359,35 @@ export default function CandlestickChart({
     }))
   );
 
-  // TODO: (20230322 - Shirley) revise the base of ys
+  // const ys: number[] = trimmedData
+  //   ? trimmedData.reduce(
+  //       (acc: number[], curr) => {
+  //         if (curr.open === null || curr.high === null || curr.low === null || curr.close === null)
+  //           return;
 
-  const ys = trimmedData ? (trimmedData.flatMap(d => d.y.filter(y => y !== null)) as number[]) : [];
+  //         acc.push(curr.open, curr.high, curr.low, curr.close);
+  //         return acc;
+  //       },
+  //       []
+  //     )
+  //   : [];
+  const ys = trimmedData
+    ? (trimmedData
+        .filter(
+          (data: ICandlestickData) =>
+            data.open !== null && data.high !== null && data.low !== null && data.close !== null
+        )
+        .map((data: ICandlestickData) => [data.open, data.high, data.low, data.close])
+        .flat() as number[])
+    : [];
+
+  // const ys = trimmedData ? (trimmedData.flatMap(d => d.y.filter(y => y !== null)) as number[]) : [];
 
   const max = ys.length > 0 ? Math.max(...ys) : null;
   const min = ys.length > 0 ? Math.min(...ys) : null;
 
   const maxNumber = max && min ? TRADING_CHART_PRICE_LIMIT_ONE_SEC * (max - min) + max : 100;
   const minNumber = max && min ? min - TRADING_CHART_PRICE_LIMIT_ONE_SEC * (max - min) : 0;
-
-  /*Deprecated: (20230322 - Shirley) before merging into develop */
-  /*eslint-disable no-console */
-  console.log('max:', max);
-  console.log('maxNumber:', maxNumber);
-
-  console.log('min:', min);
-  console.log('minNumber:', minNumber);
 
   /* Deprecated: (20230322 - Shirley) it's done in other branch
   const userOpenPrice = randomIntFromInterval(minNumber ?? 100, maxNumber ?? 1000);
@@ -408,42 +518,52 @@ export default function CandlestickChart({
     if (!appCtx.isInit) return;
     if (marketCtx.candlestickChartData === null) return;
     // Deprecated: before merge into develop (tzuhan 20230322)
-    // console.log(`Component CandlestickChart`, marketCtx.candlestickChartData);
+    console.log(`Component CandlestickChart from marketCtx`, marketCtx.candlestickChartData);
     // if (!candlestickChartDataRef.current) {
-    setCandlestickChartData(() =>
-      trimCandlestickData({
-        data:
-          marketCtx?.candlestickChartData?.map(d => ({
-            x: d.x,
-            y: [
-              d.open ? d.open : null,
-              d.high ? d.high : null,
-              d.low ? d.low : null,
-              d.close ? d.close : null,
-            ],
-          })) ?? [],
-        requiredDataNum: 30,
-      })
-    );
+    // setCandlestickChartData(() =>
+    //   trimCandlestickData({
+    //     data:
+    //       marketCtx?.candlestickChartData?.map(d => ({
+    //         x: d.x,
+    //         y: [
+    //           d.open ? d.open : null,
+    //           d.high ? d.high : null,
+    //           d.low ? d.low : null,
+    //           d.close ? d.close : null,
+    //         ],
+    //       })) ?? [],
+    //     dataSize: 30,
+    //     timespan: 1000,
+    //   })
+    // );
     // }
 
+    const trimmedData = trimCandlestickData({
+      data: marketCtx?.candlestickChartData ?? [],
+      dataSize: 30,
+      timespan: 1000,
+    });
+
     setToCandlestickChartData(
-      candlestickChartDataRef.current?.map(data => ({
-        x: data.x,
-        open: data.y[0],
-        high: data.y[1],
-        low: data.y[2],
-        close: data.y[3],
-      }))
+      trimmedData
+      // candlestickChartDataRef.current?.map(data => ({
+      //   x: data.x,
+      //   open: data.y[0],
+      //   high: data.y[1],
+      //   low: data.y[2],
+      //   close: data.y[3],
+      // }))
     );
+    console.log('display data', toCandlestickChartDataRef.current);
 
     // Till: (20230410 - Shirley)
     // console.log('data put into chart', toCandlestickChartDataRef.current);
 
     const toLineChartData =
-      candlestickChartDataRef.current?.map((data, i) => ({
+      // candlestickChartDataRef.current?.map((data, i) => ({
+      toCandlestickChartDataRef.current?.map((data, i) => ({
         x: data.x,
-        y: data.y[3],
+        y: data.close,
       })) ?? [];
     setToLineChartData(toLineChartData);
 
@@ -535,7 +655,7 @@ export default function CandlestickChart({
   };
 
   const isDisplayedCharts =
-    candlestickChartDataRef.current && candlestickChartDataRef.current?.length > 0 ? (
+    toCandlestickChartDataRef.current && toCandlestickChartDataRef.current?.length > 0 ? (
       <VictoryChart
         theme={chartTheme}
         minDomain={{

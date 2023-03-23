@@ -1,6 +1,6 @@
 import {OrderStatusUnion} from '../../constants/order_status_union';
 import {IOrderType, OrderType} from '../../constants/order_type';
-import {getTimestamp} from '../../lib/common';
+import {getTimestamp, randomHex} from '../../lib/common';
 import {IAcceptedWithdrawOrder} from './accepted_withdraw_order';
 import {IApplyOrder} from './apply_order';
 
@@ -33,9 +33,11 @@ export const convertApplyWithdrawOrderToAcceptedWithdrawOrder = (
   const id = `CFD${date.getTime()}${applyWithdrawOrder.targetAsset}${Math.ceil(
     Math.random() * 1000000000
   )}`;
+  const txid = randomHex(32);
   const accpetedWithdrawOrder: IAcceptedWithdrawOrder = {
     ...applyWithdrawOrder,
     id,
+    txid,
     orderStatus: OrderStatusUnion.WAITING,
     createTimestamp: applyWithdrawOrder.createTimestamp
       ? applyWithdrawOrder.createTimestamp

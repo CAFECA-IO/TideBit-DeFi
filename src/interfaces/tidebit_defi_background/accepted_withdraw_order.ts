@@ -1,6 +1,6 @@
 import {OrderStatusUnion} from '../../constants/order_status_union';
 import {OrderType} from '../../constants/order_type';
-import {getTimestamp} from '../../lib/common';
+import {getTimestamp, randomHex} from '../../lib/common';
 import {IAcceptedOrder} from './accepted_order';
 
 export interface IAcceptedWithdrawOrder extends IAcceptedOrder {
@@ -9,7 +9,6 @@ export interface IAcceptedWithdrawOrder extends IAcceptedOrder {
   // decimals: number;
   to: string;
 }
-
 
 export const dummyAcceptedWithdrawOrder: IAcceptedWithdrawOrder = {
   id: '001',
@@ -20,9 +19,9 @@ export const dummyAcceptedWithdrawOrder: IAcceptedWithdrawOrder = {
   targetAsset: 'ETH',
   targetAmount: 7.91,
   to: '0x',
-  decimals: 18,
-  fee: 0
-}
+  // decimals: 18,
+  fee: 0,
+};
 
 export const getDummyAcceptedWithdrawOrder = (currency = 'ETH'): IAcceptedWithdrawOrder => {
   const date = new Date();
@@ -30,6 +29,7 @@ export const getDummyAcceptedWithdrawOrder = (currency = 'ETH'): IAcceptedWithdr
     id: `TBAcceptedWithdraw${date.getFullYear()}${
       date.getMonth() + 1
     }${date.getDate()}${date.getSeconds()}${currency}`,
+    txid: randomHex(32),
     orderType: OrderType.WITHDRAW,
     createTimestamp: getTimestamp(),
     orderStatus: OrderStatusUnion.SUCCESS,

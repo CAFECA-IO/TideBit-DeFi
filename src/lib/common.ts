@@ -244,3 +244,12 @@ export const acceptedOrderToOrder = (acceptedOrder: IAcceptedOrder, balance: IBa
     locked: balance.locked + order.targetAmount,
   };
 };
+
+export const randomHex = (length: number) => {
+  return (
+    '0x' +
+    Math.random()
+      .toString(16)
+      .substring(2, length + 2)
+  );
+};

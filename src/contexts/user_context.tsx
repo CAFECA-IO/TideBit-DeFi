@@ -69,6 +69,7 @@ import {Code, Reason} from '../constants/code';
 import {
   getDummyDisplayAcceptedCFDOrder,
   IDisplayAcceptedCFDOrder,
+  toDisplayAcceptedCFDOrder,
 } from '../interfaces/tidebit_defi_background/display_accepted_cfd_order';
 
 function randomNumber(min: number, max: number) {
@@ -342,7 +343,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     clearPrivateData();
   });
 
-  const listCFDs = useCallback(async (props: string) => {
+  const listCFDs = useCallback(async (ticker: string) => {
     let result: IResult = defaultResultFailed;
     result.code = Code.SERVICE_TERM_DISABLE;
     result.reason = Reason[result.code];
@@ -351,6 +352,9 @@ export const UserProvider = ({children}: IUserProvider) => {
         const CFDs = (await workerCtx.requestHandler({
           name: APIName.LIST_CFD_TRADES,
           method: Method.GET,
+          params: {
+            ticker,
+          },
           /* Deprecated: callback in requestHandler (Tzuhan - 20230420)
           callback: (CFDs: IAcceptedCFDOrder[]) => {
             let openCFDs: IAcceptedCFDOrder[] = [];
@@ -371,22 +375,24 @@ export const UserProvider = ({children}: IUserProvider) => {
           },
           */
         })) as IAcceptedCFDOrder[];
-        // TODO: add convert IAcceptedCFDOrder to IDisplayAcceptedCFDOrder (20230323 - tzuhan)
-        let openCFDs: IAcceptedCFDOrder[] = [];
-        let closedCFDs: IAcceptedCFDOrder[] = [];
+        let openCFDs: IDisplayAcceptedCFDOrder[] = [];
+        let closedCFDs: IDisplayAcceptedCFDOrder[] = [];
         for (const order of CFDs) {
           switch (order.state) {
             case OrderState.OPENING:
             case OrderState.FREEZED:
-              openCFDs = openCFDs.concat(order);
+              openCFDs = openCFDs.concat(toDisplayAcceptedCFDOrder(order));
               break;
             case OrderState.CLOSED:
-              closedCFDs = closedCFDs.concat(order);
+              closedCFDs = closedCFDs.concat(toDisplayAcceptedCFDOrder(order));
               break;
             default:
               break;
           }
         }
+        setOpenedCFDs(openCFDs);
+        setClosedCFDs(closedCFDs);
+        result = defaultResultSuccess;
       } catch (error) {
         // TODO: error handle (Tzuhan - 20230321)
         // eslint-disable-next-line no-console
@@ -394,9 +400,6 @@ export const UserProvider = ({children}: IUserProvider) => {
         result.code = Code.INTERNAL_SERVER_ERROR;
         result.reason = (error as Error).message;
       }
-      // setOpenedCFDs(openCFDs);
-      // setClosedCFDs(closedCFDs);
-      result = defaultResultSuccess;
     }
     return result;
   }, []);

@@ -101,7 +101,6 @@ export const MarketContext = createContext<IMarketContext>({
   // getGuaranteedStopFeePercentage: () => Promise.resolve(defaultResultSuccess),
   showPositionOnChartHandler: () => null,
   candlestickChartIdHandler: () => null,
-  selectTimeSpanHandler: () => null,
   listAvailableTickers: () => [],
   selectTickerHandler: () => Promise.resolve(defaultResultSuccess),
   getCandlestickChartData: () => Promise.resolve(defaultResultSuccess),

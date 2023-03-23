@@ -44,7 +44,7 @@ import {
   MAX_PRICE_TRADING_CHART_ONE_SEC,
   MIN_PRICE_TRADING_CHART_ONE_SEC,
   TRADING_CHART_PRICE_LIMIT_ONE_SEC,
-  POSITION_PRICE_RENEWAL_INTERVAL_SECONDS
+  POSITION_PRICE_RENEWAL_INTERVAL_SECONDS,
 } from '../../constants/config';
 import {ProfitState} from '../../constants/profit_state';
 import {TypeOfPosition} from '../../constants/type_of_position';
@@ -121,10 +121,10 @@ export const updateDummyCandlestickChartData = (data: ICandlestickData[]): ICand
   /* Till: (20230329 - Shirley)
    const originWithoutNull = originalData.slice(0, -count);
    */
-  const originWithoutNull = origin.filter(obj => !obj.y.includes(null));
+  const originWithoutNull = origin.filter(obj => !Object.values(obj.y).includes(null));
 
   const lastTime = originWithoutNull[originWithoutNull.length - 1]?.x.getTime() as number;
-  const lastPoint = originWithoutNull[originWithoutNull.length - 1]?.y[3] as number;
+  const lastPoint = originWithoutNull[originWithoutNull.length - 1]?.y.close as number;
 
   const nowSecond = now - (now % unitOfLive);
 
@@ -135,9 +135,14 @@ export const updateDummyCandlestickChartData = (data: ICandlestickData[]): ICand
     return prettyPrice;
   });
 
-  const newCandlestickData: {x: Date; y: (number | null)[]} = {
+  const newCandlestickData: ICandlestickData = {
     x: new Date(nowSecond - 1 * unitOfLive),
-    y: newYs,
+    y: {
+      open: newYs[0],
+      high: newYs[1],
+      low: newYs[2],
+      close: newYs[3],
+    },
   };
 
   const addition = n / chartBlank;
@@ -150,20 +155,25 @@ export const updateDummyCandlestickChartData = (data: ICandlestickData[]): ICand
     newCandlestickData,
     ...Array.from({length: nullNum}, (_, i) => ({
       x: new Date(nowSecond + unitOfLive * nullTime),
-      y: [null, null, null, null],
+      y: {
+        open: null,
+        high: null,
+        low: null,
+        close: null,
+      },
     })),
   ];
 
   return withNullData;
 };
 
-function countNullArrays(arr: {y: any[]}[]): number {
-  let count = 0;
-  for (let i = 0; i < arr.length; i++) {
-    if (Array.isArray(arr[i].y) && arr[i].y.every(v => v === null)) {
-      count++;
+function countNullArrays(arr: ICandlestickData[]): number {
+  const count = arr.reduce((acc, cur) => {
+    if (Object.values(cur.y).every(v => v === null)) {
+      acc++;
     }
-  }
+    return acc;
+  }, 0);
   return count;
 }
 
@@ -171,12 +181,12 @@ function countNullArrays(arr: {y: any[]}[]): number {
 export function processCandlestickData({data, requiredDataNum}: IProcessCandlestickData) {
   const origin = [...data].map(d => ({
     x: d.x,
-    y: [
-      d.open ? d.open : null,
-      d.high ? d.high : null,
-      d.low ? d.low : null,
-      d.close ? d.close : null,
-    ],
+    y: {
+      open: d.y.open,
+      high: d.y.high,
+      low: d.y.low,
+      close: d.y.close,
+    },
   }));
   // const nullNum = countNullArrays(origin);
   const nullNum = 1;
@@ -186,7 +196,7 @@ export function processCandlestickData({data, requiredDataNum}: IProcessCandlest
   const now = new Date().getTime();
   const nowSecond = now - (now % unitOfLive);
 
-  const originWithoutNull = origin.filter(obj => !obj.y.includes(null));
+  const originWithoutNull = origin.filter(obj => !Object.values(obj.y).includes(null));
   const latestData = originWithoutNull.slice(-requiredDataNum);
   const toCandlestickData = [
     ...latestData,
@@ -223,10 +233,12 @@ export function parseCandlestickData({data, dataSize, timespan}: ITrimCandlestic
 
       return {
         x: eachTime,
-        open: null,
-        high: null,
-        low: null,
-        close: null,
+        y: {
+          open: null,
+          high: null,
+          low: null,
+          close: null,
+        },
       };
     });
 
@@ -243,17 +255,17 @@ export function parseCandlestickData({data, dataSize, timespan}: ITrimCandlestic
         return baseTime === dataTime;
       });
       if (index >= 0) {
-        baseArray[i].open = data[index].open;
-        baseArray[i].high = data[index].high;
-        baseArray[i].low = data[index].low;
-        baseArray[i].close = data[index].close;
+        baseArray[i].y.open = data[index].y.open;
+        baseArray[i].y.high = data[index].y.high;
+        baseArray[i].y.low = data[index].y.low;
+        baseArray[i].y.close = data[index].y.close;
 
-        previousClose = data[index].close || previousClose;
+        previousClose = data[index].y.close || previousClose;
       } else if (previousClose !== null) {
-        baseArray[i].open = previousClose;
-        baseArray[i].high = previousClose;
-        baseArray[i].low = previousClose;
-        baseArray[i].close = previousClose;
+        baseArray[i].y.open = previousClose;
+        baseArray[i].y.high = previousClose;
+        baseArray[i].y.low = previousClose;
+        baseArray[i].y.close = previousClose;
       }
     }
 
@@ -269,10 +281,12 @@ export function parseCandlestickData({data, dataSize, timespan}: ITrimCandlestic
     const filteredData = filterCandlestickData(candles, baseArray);
     const latestData = filteredData.concat({
       x: new Date(filteredData[filteredData.length - 1].x.getTime() + timespan * nullTime * 1000),
-      open: null,
-      high: null,
-      low: null,
-      close: null,
+      y: {
+        open: null,
+        high: null,
+        low: null,
+        close: null,
+      },
     });
 
     return latestData;
@@ -300,7 +314,7 @@ export function parseCandlestickData({data, dataSize, timespan}: ITrimCandlestic
 }
 
 // TODO: (20230315 - Shirley) FIXME: Dangerous workaround when the Ctx data isn't fetched, but the VictoryLabel needs the data
-const TEMP_BASELINE = 2000;
+const TEMP_BASELINE = 50;
 
 export default function CandlestickChart({
   strokeColor,
@@ -346,16 +360,13 @@ export default function CandlestickChart({
   // >(trimmedData);
 
   const [toCandlestickChartData, setToCandlestickChartData, toCandlestickChartDataRef] =
-    useStateRef<
-      | ICandlestickData[]
-      | undefined
-    >(trimmedData);
+    useStateRef<ICandlestickData[] | undefined>(trimmedData);
 
   const [toLineChartData, setToLineChartData, toLineChartDataRef] = useStateRef<ILineChartData[]>(
     () =>
       candlestickChartDataFromCtx.map((data, i) => ({
         x: data.x,
-        y: data.close,
+        y: data.y.close,
       }))
   );
 
@@ -366,11 +377,11 @@ export default function CandlestickChart({
       ? [
           {
             x: candlestickChartDataFromCtx[0]?.x,
-            y: candlestickChartDataFromCtx[candlestickChartDataFromCtx.length - 2]?.y[3],
+            y: candlestickChartDataFromCtx[candlestickChartDataFromCtx.length - 2]?.y.close,
           }, // Starting time and price
           {
             x: candlestickChartDataFromCtx[candlestickChartDataFromCtx.length - 1]?.x,
-            y: candlestickChartDataFromCtx[candlestickChartDataFromCtx.length - 2]?.y[3],
+            y: candlestickChartDataFromCtx[candlestickChartDataFromCtx.length - 2]?.y.close,
           }, // Ending time and price
         ]
       : [
@@ -394,18 +405,15 @@ export default function CandlestickChart({
   //   : [];
   const ys = trimmedData
     ? (trimmedData
-        .filter(
-          (data: ICandlestickData) =>
-            data.open !== null && data.high !== null && data.low !== null && data.close !== null
-        )
-        .map((data: ICandlestickData) => [data.open, data.high, data.low, data.close])
+        .filter((data: ICandlestickData) => Object.values(data.y).includes(null) === false)
+        .map((data: ICandlestickData) => [data.y.open, data.y.high, data.y.low, data.y.close])
         .flat() as number[])
     : [];
 
   const max = ys.length > 0 ? Math.max(...ys) : null;
   const min = ys.length > 0 ? Math.min(...ys) : null;
 
-  const maxNumber = max && min ? TRADING_CHART_PRICE_LIMIT_ONE_SEC * (max - min) + max : 100;
+  const maxNumber = max && min ? TRADING_CHART_PRICE_LIMIT_ONE_SEC * (max - min) + max : 10000;
   const minNumber = max && min ? min - TRADING_CHART_PRICE_LIMIT_ONE_SEC * (max - min) : 0;
 
   /* Deprecated: (20230322 - Shirley) it's done in other branch
@@ -631,42 +639,42 @@ export default function CandlestickChart({
     setToLatestPriceLineData(toLatestPriceLineData);
 
     /*  Till: (20230410 - Shirley) */
-    // const setStateInterval = setInterval(() => {
-    //   console.log(`Component CandlestickChart from marketCtx`, marketCtx.candlestickChartData);
+  // const setStateInterval = setInterval(() => {
+  //   console.log(`Component CandlestickChart from marketCtx`, marketCtx.candlestickChartData);
 
-    //   const trimmedData = parseCandlestickData({
-    //     data: marketCtx?.candlestickChartData ?? [],
-    //     dataSize: 30,
-    //     timespan: 1,
-    //   });
+  //   const trimmedData = parseCandlestickData({
+  //     data: marketCtx?.candlestickChartData ?? [],
+  //     dataSize: 30,
+  //     timespan: 1,
+  //   });
 
-    //   setToCandlestickChartData(trimmedData);
-    //   console.log('display data', toCandlestickChartDataRef.current);
+  //   setToCandlestickChartData(trimmedData);
+  //   console.log('display data', toCandlestickChartDataRef.current);
 
-    //   // Till: (20230410 - Shirley)
-    //   // console.log('data put into chart', toCandlestickChartDataRef.current);
+  //   // Till: (20230410 - Shirley)
+  //   // console.log('data put into chart', toCandlestickChartDataRef.current);
 
-    //   const toLineChartData =
-    //     toCandlestickChartDataRef.current?.map((data, i) => ({
-    //       x: data.x,
-    //       y: data.close,
-    //     })) ?? [];
-    //   setToLineChartData(toLineChartData);
+  //   const toLineChartData =
+  //     toCandlestickChartDataRef.current?.map((data, i) => ({
+  //       x: data.x,
+  //       y: data.close,
+  //     })) ?? [];
+  //   setToLineChartData(toLineChartData);
 
-    //   const latestPrice = toLineChartData?.[toLineChartData.length - NULL_ARRAY_NUM - 1]?.y;
-    //   const toLatestPriceLineData = toLineChartData?.map(data => ({
-    //     x: data?.x,
-    //     y: latestPrice,
-    //   }));
+  //   const latestPrice = toLineChartData?.[toLineChartData.length - NULL_ARRAY_NUM - 1]?.y;
+  //   const toLatestPriceLineData = toLineChartData?.map(data => ({
+  //     x: data?.x,
+  //     y: latestPrice,
+  //   }));
 
-    //   setToLatestPriceLineData(toLatestPriceLineData);
-    // }, 1000);
+  //   setToLatestPriceLineData(toLatestPriceLineData);
+  // }, 1000);
 
-    // return () => {
-    //   /*  Till: (20230410 - Shirley) */
-    //   clearInterval(setStateInterval);
-    // };
-  }, [marketCtx.candlestickChartData]);
+  // return () => {
+  //   /*  Till: (20230410 - Shirley) */
+  //   clearInterval(setStateInterval);
+  // };
+  // }, [marketCtx.candlestickChartData]);
 
   const chartTheme: VictoryThemeDefinition = {
     axis: {
@@ -976,16 +984,7 @@ export default function CandlestickChart({
 
   return (
     <>
-      <div className="-ml-5 w-full lg:w-7/10">
-        {/* TODO: (20230310 - Shirley) SVG location 
-          <Lottie className="latestPrice" animationData={spotAnimation} /> 
-          <div ref={lottieContainerRef} className="z-50 w-50px text-cuteBlue1">
-          <p>lottie</p>
-          {View}
-        </div>{' '} */}
-
-        {isDisplayedCharts}
-      </div>
+      <div className="-ml-5 w-full lg:w-7/10">Candlestick Chart with D3.js</div>
     </>
   );
 }

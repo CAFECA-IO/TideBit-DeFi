@@ -65,7 +65,7 @@ class TickerBook {
       this._tickers[ticker].lineGraphProps.dataArray = this._tickers[
         ticker
       ].lineGraphProps.dataArray?.concat(
-        candlestickChartData.filter(d => !!d.open).map(d => d.open!)
+        candlestickChartData.filter(d => !!d.y.open).map(d => d.y.open!)
       );
       if (this._tickers[ticker].lineGraphProps.dataArray?.length || 0 > this._dataLength) {
         try {

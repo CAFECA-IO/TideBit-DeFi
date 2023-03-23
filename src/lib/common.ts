@@ -215,15 +215,17 @@ export const convertTradesToCandlestickData = (
       const close = sortTrades[index][sortTrades[index].length - 1];
       candlestickData = candlestickData.concat({
         x: new Date(_lastestBarTime + time * (index + 1)),
-        open,
-        high,
-        low,
-        close,
+        y: {
+          open,
+          high,
+          low,
+          close,
+        },
       });
     }
   }
   return candlestickData;
-}
+};
 
 export const toIJSON = (typeData: IEIP712Data) => {
   return JSON.parse(JSON.stringify(typeData));

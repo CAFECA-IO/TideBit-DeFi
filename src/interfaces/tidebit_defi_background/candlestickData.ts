@@ -4,12 +4,16 @@ const chartBlank = 1.68;
 const dummyDataSize = 80;
 const unitOfLive = 1000;
 
-export interface ICandlestickData {
-  x: Date;
+export interface ICandle {
   open: number | null;
   high: number | null;
   low: number | null;
   close: number | null;
+}
+
+export interface ICandlestickData {
+  x: Date;
+  y: ICandle;
 }
 
 export const getTime = (timeSpan: ITimeSpanUnion) => {
@@ -83,10 +87,12 @@ export const getDummyCandlestickChartData = (
 
     const result: ICandlestickData = {
       x: new Date(nowSecond - (dataSize - i) * getTime(timeSpan)),
-      open: y[0],
-      high: y[1],
-      low: y[2],
-      close: y[3],
+      y: {
+        open: y[0],
+        high: y[1],
+        low: y[2],
+        close: y[3],
+      },
     };
     return result;
   });

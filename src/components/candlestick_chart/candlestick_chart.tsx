@@ -197,19 +197,8 @@ export function parseCandlestickData({data, dataSize, timespan}: ITrimCandlestic
   const filterCandlestickData = (data: ICandlestickData[], baseArray: ICandlestickData[]) => {
     let previousClose = 0;
 
-    const dataWithBaseX = data.slice(-dataSize).map((d, i) => {
-      return {
-        x: baseArray[i]?.x,
-        open: d.open,
-        high: d.high,
-        low: d.low,
-        close: d.close,
-      };
-    });
-
     for (let i = 0; i < baseArray.length; i++) {
-      // const index = data.findIndex(d => {
-      const index = dataWithBaseX.findIndex(d => {
+      const index = data.findIndex(d => {
         const baseTime = baseArray[i]?.x.getTime();
         const dataTime = d.x.getTime();
         return baseTime === dataTime;

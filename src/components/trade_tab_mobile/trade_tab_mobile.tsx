@@ -630,7 +630,7 @@ const TradeTabMobile = () => {
 
   const subMenu = (
     <div
-      className={`flex h-screen w-screen flex-col items-center overflow-y-auto bg-darkGray ${
+      className={`flex h-screen w-screen flex-col items-center overflow-x-hidden overflow-y-hidden bg-darkGray ${
         openSubMenu ? 'visible translate-y-0 opacity-100' : 'invisible translate-y-full opacity-0'
       } absolute left-0 ${'bottom-76px'} overflow-hidden pt-40 transition-all duration-150`}
     >
@@ -639,7 +639,7 @@ const TradeTabMobile = () => {
       </div>
 
       {/* ---------- margin setting ---------- */}
-      <div className="w-screen px-8 sm:w-1/2">
+      <div className="w-screen overflow-y-auto overflow-x-hidden px-8 sm:w-1/2">
         <div className="flex flex-col items-center justify-between space-y-7">
           <div className="flex w-full items-center justify-center">
             <UserOverview

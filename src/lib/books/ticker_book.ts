@@ -1,6 +1,5 @@
 import {
   getDummyCandlestickChartData,
-  getTime,
   ICandlestickData,
 } from '../../interfaces/tidebit_defi_background/candlestickData';
 import {
@@ -13,10 +12,11 @@ import {
   ITimeSpanUnion,
   TimeSpanUnion,
 } from '../../interfaces/tidebit_defi_background/time_span_union';
+import {convertTradesToCandlestickData} from '../common';
 
 class TickerBook {
-  count = 1;
-  private _timeSpan: ITimeSpanUnion = TimeSpanUnion._1m;
+  private _dataLength = 100;
+  private _timeSpan: ITimeSpanUnion = TimeSpanUnion._1s;
   private _limit = 50;
   private _tickers: {[currency: string]: ITickerData} = {};
   private _candlesticks: {[currency: string]: ICandlestickData[]} = {};
@@ -29,72 +29,53 @@ class TickerBook {
       return prev;
     }, this._tickers);
     this._candlesticks = dummyTickers.reduce((prev, curr) => {
-      if (!prev[curr.currency])
-        prev[curr.currency] = getDummyCandlestickChartData(80, this.timeSpan);
+      if (!prev[curr.currency]) prev[curr.currency] = [];
       return prev;
     }, this._candlesticks);
   }
 
-  updateCandlestickByTrade(market: string, trades: ITBETrade[]) {
-    if (this.count > 0) {
-      const ticker = market.replace(`usdt`, ``).toUpperCase();
-      const lastestBarTime =
-        this.candlesticks[ticker][this.candlesticks[ticker].length - 1].x.getTime();
-      const filterTrades = trades
-        .filter(trade => trade.at * 1000 >= lastestBarTime)
-        .sort((a, b) => a.at - b.at);
-      const timeSpan = getTime(this.timeSpan);
-      let sortTrades: number[][] = [];
-      sortTrades = filterTrades.reduce((prev, curr, index) => {
-        if (+curr.ts - lastestBarTime > (index + 1) * timeSpan) {
-          prev = [...prev, [+curr.price]];
-        } else {
-          let tmp: number[] = prev.pop() || [];
-          tmp = [...tmp, +curr.price];
-          prev = [...prev, tmp];
-        }
-        return prev;
-      }, sortTrades);
-      if (sortTrades.length > 0) {
-        /*  Till: test log (20230327 - Tzuhan)
-        // eslint-disable-next-line no-console
-        console.log(`updateCandlestick this.timeSpan${this.timeSpan}:timeSpan[${timeSpan}]`);
-        // eslint-disable-next-line no-console
-        console.log(`updateCandlestick this.candlesticks[${ticker}]: `, this.candlesticks[ticker]);
-        // eslint-disable-next-line no-console
-        console.log(
-          `updateCandlestick filterTrades[${filterTrades.length}]: ${ticker}`,
-          filterTrades.map(trade => ({...trade, date: new Date(+trade.date)}))
-        );
-        // eslint-disable-next-line no-console
-        console.log(
-          `updateCandlestick +filterTrades[0].ts${+filterTrades[0]
-            .ts} - lastestBarTime[${lastestBarTime}]: `,
-          +filterTrades[0].ts - lastestBarTime
-        );
-        // eslint-disable-next-line no-console
-        console.log(
-          `updateCandlestick +filterTrades[filterTrades.length-1].ts${+filterTrades[
-            filterTrades.length - 1
-          ].ts} - lastestBarTime[${lastestBarTime}]: `,
-          +filterTrades[0].ts - lastestBarTime
-        );
-        // eslint-disable-next-line no-console
+  updateCandlestickByTrade(ticker: string, trades: ITBETrade[]) {
+    const lastestBarTime =
+      this.candlesticks[ticker].length > 0
+        ? this.candlesticks[ticker][this.candlesticks[ticker].length - 1].x.getTime()
+        : 0;
+    const filterTrades = trades.filter(trade => trade.at * 1000 >= lastestBarTime);
+    const candlestickChartData: ICandlestickData[] = convertTradesToCandlestickData(
+      filterTrades,
+      this.timeSpan,
+      lastestBarTime
+    );
+    if (candlestickChartData.length > 0) {
+      this._candlesticks[ticker] = this._candlesticks[ticker].concat(candlestickChartData);
 
-        // eslint-disable-next-line no-console
-        console.log(`updateCandlestick sortTrades[${sortTrades.length}]: ${ticker}`, sortTrades);
-        */
-        for (const sortTrade of sortTrades) {
-          const open = sortTrade[0];
-          const high = Math.max(...sortTrade);
-          const low = Math.min(...sortTrade);
-          const close = sortTrade[sortTrade.length - 1];
-          this._candlesticks[ticker] = this._candlesticks[ticker].concat({
-            x: new Date(lastestBarTime + timeSpan),
-            y: [open, high, low, close],
-          });
-          this._tickers[ticker].lineGraphProps.dataArray =
-            this._tickers[ticker].lineGraphProps.dataArray?.concat(open);
+      if (this._candlesticks[ticker].length > this._dataLength) {
+        try {
+          this._candlesticks[ticker] = this._candlesticks[ticker].slice(
+            this._candlesticks[ticker].length - this._dataLength,
+            this._candlesticks[ticker].length
+          );
+        } catch (error) {
+          // TODO: error handle (20230321 - tzuhan)
+          // eslint-disable-next-line no-console
+          console.error(`this._candlesticks[ticker].slice error`, error);
+        }
+      }
+      if (!this._tickers[ticker].lineGraphProps.dataArray)
+        this._tickers[ticker].lineGraphProps.dataArray = [];
+      this._tickers[ticker].lineGraphProps.dataArray = this._tickers[
+        ticker
+      ].lineGraphProps.dataArray?.concat(
+        candlestickChartData.filter(d => !!d.y.open).map(d => d.y.open!)
+      );
+      if (this._tickers[ticker].lineGraphProps.dataArray?.length || 0 > this._dataLength) {
+        try {
+          let array: number[] = [...this._tickers[ticker].lineGraphProps.dataArray!];
+          array = array.slice(array.length - this._dataLength, array.length);
+          this._tickers[ticker].lineGraphProps.dataArray = array;
+        } catch (error) {
+          // TODO: error handle (20230321 - tzuhan)
+          // eslint-disable-next-line no-console
+          console.error(`this._tickers[ticker].lineGraphProps.slice error`, error);
         }
       }
     }

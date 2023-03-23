@@ -48,7 +48,7 @@ const TradingView = () => {
   // console.log('showPositionOnChart in Trading view', showPositionOnChart);
 
   const [candlestickOn, setCandlestickOn, candlestickOnRef] = useStateRef(true);
-  const [lineGraphOn, setLineGraphOn, lineGraphOnRef] = useStateRef(false);
+  const [lineGraphOn, setLineGraphOn, lineGraphOnRef] = useStateRef(true);
 
   const [selectedChartType, setSelectedChartType] = useState('candlestick');
   const [selectedChartInterval, setSelectedChartInterval] = useState('live');

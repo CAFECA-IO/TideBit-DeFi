@@ -168,7 +168,7 @@ export interface ITrimCandlestickData {
   timespan: number;
 }
 
-export function trimCandlestickData({data, dataSize, timespan}: ITrimCandlestickData) {
+export function parseCandlestickData({data, dataSize, timespan}: ITrimCandlestickData) {
   // const timespan = 1000;
   // const dataSize = 30;
 
@@ -199,6 +199,8 @@ export function trimCandlestickData({data, dataSize, timespan}: ITrimCandlestick
         close: null,
       };
     });
+    // FIXME: It'll not be `null`
+    console.log('base array in baseArray', base);
     return base;
   };
 
@@ -207,9 +209,34 @@ export function trimCandlestickData({data, dataSize, timespan}: ITrimCandlestick
     // let previousCandle:ICandlestickData = {x: baseArray[0].x, open: 0, high: 0, low: 0, close: 0}
     console.log('data from input', data);
 
+    const dataWithBaseX = data.slice(-30).map((d, i) => {
+      return {
+        x: baseArray[i]?.x,
+        open: d.open,
+        high: d.high,
+        low: d.low,
+        close: d.close,
+      };
+      // const baseTime = baseArray[i]?.x.getTime();
+      // const dataTime = d.x.getTime();
+      // if (baseTime !== dataTime) {
+      // return {
+      //   x: baseArray[i]?.x,
+      //   open: d.open,
+      //   high: d.high,
+      //   low: d.low,
+      //   close: d.close,
+      // };
+      // }
+      // return d;
+    });
+
+    console.log('data with x', dataWithBaseX);
+
     for (let i = 0; i < baseArray.length; i++) {
-      const index = data.findIndex(d => {
-        const baseTime = baseArray[i].x.getTime();
+      // const index = data.findIndex(d => {
+      const index = dataWithBaseX.findIndex(d => {
+        const baseTime = baseArray[i]?.x.getTime();
         const dataTime = d.x.getTime();
         // console.log('baseTime: ', baseTime);
         // console.log('dataTime: ', dataTime);
@@ -316,7 +343,7 @@ export default function CandlestickChart({
 
   const NULL_ARRAY_NUM = 1;
 
-  const trimmedData = trimCandlestickData({
+  const trimmedData = parseCandlestickData({
     data: candlestickChartDataFromCtx,
     dataSize: 30,
     timespan: 1000,
@@ -538,7 +565,7 @@ export default function CandlestickChart({
     // );
     // }
 
-    const trimmedData = trimCandlestickData({
+    const trimmedData = parseCandlestickData({
       data: marketCtx?.candlestickChartData ?? [],
       dataSize: 30,
       timespan: 1000,

@@ -10,7 +10,6 @@ import Image from 'next/image';
 import {locker, timestampToString, wait} from '../../lib/common';
 import {useContext, useEffect, useState} from 'react';
 import {MarketContext} from '../../contexts/market_context';
-import {IPublicCFDOrder} from '../../interfaces/tidebit_defi_background/public_order';
 import {IUpdatedCFDInputProps, useGlobal} from '../../contexts/global_context';
 import {TypeOfPosition} from '../../constants/type_of_position';
 import {UserContext} from '../../contexts/user_context';

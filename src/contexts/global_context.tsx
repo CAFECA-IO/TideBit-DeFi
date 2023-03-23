@@ -27,10 +27,6 @@ import PositionOpenModal from '../components/position_open_modal/position_open_m
 import PositionClosedModal from '../components/position_closed_modal/position_closed_modal';
 import PositionUpdatedModal from '../components/position_updated_modal/position_updated_modal';
 import HistoryPositionModal from '../components/history_position_modal/history_position_modal';
-import {
-  IPublicCFDOrder,
-  dummyPublicCFDOrder,
-} from '../interfaces/tidebit_defi_background/public_order';
 import {IPnL} from '../interfaces/tidebit_defi_background/pnl';
 import {ProfitState} from '../constants/profit_state';
 import {OrderType} from '../constants/order_type';

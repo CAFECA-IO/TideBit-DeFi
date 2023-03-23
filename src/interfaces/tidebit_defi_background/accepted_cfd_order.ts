@@ -4,7 +4,7 @@ import {IOrderState, OrderState} from '../../constants/order_state';
 import {OrderStatusUnion} from '../../constants/order_status_union';
 import {OrderType} from '../../constants/order_type';
 import {ITypeOfPosition, TypeOfPosition} from '../../constants/type_of_position';
-import {getTimestamp} from '../../lib/common';
+import {getTimestamp, randomHex} from '../../lib/common';
 import {IAcceptedOrder} from './accepted_order';
 import {IMargin} from './margin';
 
@@ -20,7 +20,6 @@ export interface IAcceptedCFDOrder extends IAcceptedOrder {
   margin: IMargin;
   takeProfit?: number;
   stopLoss?: number;
-  fee: number;
   guaranteedStop: boolean;
   guaranteedStopFee?: number;
   liquidationPrice: number;
@@ -29,7 +28,6 @@ export interface IAcceptedCFDOrder extends IAcceptedOrder {
   closeTimestamp?: number;
   closedType?: ICFDClosedType;
   forcedClose?: boolean;
-  remark?: string;
 }
 
 function randomIntFromInterval(min: number, max: number) {
@@ -44,6 +42,7 @@ export const getDummyAcceptedCFDOrder = (currency = 'ETH', state?: IOrderState) 
     id: `TBAcceptedCFD${date.getFullYear()}${
       date.getMonth() + 1
     }${date.getDate()}${date.getSeconds()}${currency}`,
+    txid: '0x',
     ticker: currency,
     orderStatus: random > 0.5 ? OrderStatusUnion.PROCESSING : OrderStatusUnion.SUCCESS,
     orderType: OrderType.CFD,
@@ -90,6 +89,7 @@ export const getDummyAcceptedCFDs = (currency: string, state?: IOrderState, id?:
         : `TBAcceptedCFD${date.getFullYear()}${
             date.getMonth() + 1
           }${date.getDate()}${date.getSeconds()}${currency}-${i}`,
+      txid: randomHex(32),
       ticker: currency,
       orderStatus: random > 0.5 ? OrderStatusUnion.SUCCESS : OrderStatusUnion.PROCESSING,
       orderType: OrderType.CFD,

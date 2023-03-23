@@ -1,4 +1,13 @@
+import {OrderState} from '../constants/order_state';
+import {OrderStatusUnion} from '../constants/order_status_union';
+import {OrderType} from '../constants/order_type';
 import IEIP712Data from '../interfaces/ieip712data';
+import {IAcceptedCFDOrder} from '../interfaces/tidebit_defi_background/accepted_cfd_order';
+import {IAcceptedDepositOrder} from '../interfaces/tidebit_defi_background/accepted_deposit_order';
+import {IAcceptedOrder} from '../interfaces/tidebit_defi_background/accepted_order';
+import {IAcceptedWithdrawOrder} from '../interfaces/tidebit_defi_background/accepted_withdraw_order';
+import {IBalance} from '../interfaces/tidebit_defi_background/balance';
+import {IOrder} from '../interfaces/tidebit_defi_background/order';
 
 export const roundToDecimalPlaces = (val: number, precision: number): number => {
   const roundedNumber = Number(val.toFixed(precision));
@@ -177,4 +186,70 @@ export const toQuery = (params: {[key: string]: string | number | boolean} | und
 
 export const toIJSON = (typeData: IEIP712Data) => {
   return JSON.parse(JSON.stringify(typeData));
+};
+
+export const acceptedOrderToOrder = (acceptedOrder: IAcceptedOrder, balance: IBalance) => {
+  const order: IOrder = {
+    timestamp: acceptedOrder.createTimestamp,
+    type: acceptedOrder.orderType,
+    targetAsset: '',
+    targetAmount: 0,
+    balanceSnapshot: {
+      ...balance,
+    },
+    detail: '',
+    orderSnapshot: {
+      id: acceptedOrder.id,
+      txid: acceptedOrder.txid,
+      status: acceptedOrder.orderStatus,
+      state: undefined,
+      remarks: acceptedOrder.remark,
+      fee: acceptedOrder.fee,
+    },
+  };
+  if (
+    order.orderSnapshot.status === OrderStatusUnion.SUCCESS ||
+    order.orderSnapshot.status === OrderStatusUnion.CANCELDED
+  ) {
+    order.detail = 'TxID/TxHash';
+  } else if (order.orderSnapshot.status === OrderStatusUnion.PROCESSING) {
+    order.detail = 'Processing';
+  } else if (order.orderSnapshot.status === OrderStatusUnion.FAILED) {
+    order.detail = 'Failed';
+  }
+  switch (acceptedOrder.orderType) {
+    case OrderType.CFD:
+      order.targetAsset = (acceptedOrder as IAcceptedCFDOrder).targetAsset;
+      order.targetAmount = (acceptedOrder as IAcceptedCFDOrder).amount;
+      order.orderSnapshot.state = (acceptedOrder as IAcceptedCFDOrder).state;
+      if (order.orderSnapshot.state === OrderState.OPENING) {
+        order.detail = `Open position of ${order.targetAsset}`;
+      }
+      if (order.orderSnapshot.state === OrderState.CLOSED) {
+        order.detail = `Close position of ${order.targetAsset}`;
+      }
+      break;
+    case OrderType.DEPOSIT:
+      order.targetAsset = (acceptedOrder as IAcceptedDepositOrder).targetAsset;
+      order.targetAmount = (acceptedOrder as IAcceptedDepositOrder).targetAmount;
+      break;
+    case OrderType.WITHDRAW:
+      order.targetAsset = (acceptedOrder as IAcceptedWithdrawOrder).targetAsset;
+      order.targetAmount = (acceptedOrder as IAcceptedWithdrawOrder).targetAmount;
+      break;
+  }
+  order.balanceSnapshot = {
+    ...order.balanceSnapshot,
+    available: balance.available - order.targetAmount,
+    locked: balance.locked + order.targetAmount,
+  };
+};
+
+export const randomHex = (length: number) => {
+  return (
+    '0x' +
+    Math.random()
+      .toString(16)
+      .substring(2, length + 2)
+  );
 };

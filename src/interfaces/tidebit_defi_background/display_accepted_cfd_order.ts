@@ -46,6 +46,7 @@ export const getDummyDisplayAcceptedCFDOrder = (currency: string) => {
   const typeOfPosition = Math.random() > 0.5 ? TypeOfPosition.BUY : TypeOfPosition.SELL;
   const dummyDisplayAcceptedCFDOrder: IDisplayAcceptedCFDOrder = {
     id: 'TBD202302070000001',
+    txid: '0x',
     ticker: currency,
     state:
       Math.random() > 0.5
@@ -97,6 +98,7 @@ export const getDummyDisplayAcceptedCFDs = (currency: string) => {
       id: `TBDisplay${date.getFullYear()}${
         date.getMonth() + 1
       }${date.getDate()}${date.getSeconds()}${currency}`,
+      txid: '0x',
       ticker: currency,
       state: OrderState.CLOSED,
       typeOfPosition: typeOfPosition,

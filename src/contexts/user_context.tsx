@@ -567,6 +567,7 @@ export const UserProvider = ({children}: IUserProvider) => {
               code: Code.SUCCESS,
               data: convertApplyCreateCFDToAcceptedCFD(applyCreateCFDOrderData),
             };
+            // ++ TODO: acceptedOrderToOrder (20230322 - tzuhan)
           }
         }
       }
@@ -603,7 +604,7 @@ export const UserProvider = ({children}: IUserProvider) => {
               success: true,
               code: Code.SUCCESS,
               data: convertApplyCloseCFDToAcceptedCFD(applyCloseCFDOrderData, openCFD),
-            };
+            }; // ++ TODO: acceptedOrderToOrder (20230322 - tzuhan)
           }
         }
       }
@@ -641,6 +642,7 @@ export const UserProvider = ({children}: IUserProvider) => {
               code: Code.SUCCESS,
               data: convertApplyUpdateCFDToAcceptedCFD(applyUpdateCFDOrderData, openCFD),
             };
+            // ++ TODO: acceptedOrderToOrder (20230322 - tzuhan)
           }
         }
       }
@@ -711,8 +713,8 @@ export const UserProvider = ({children}: IUserProvider) => {
     result.code = Code.SERVICE_TERM_DISABLE;
     result.reason = Reason[result.code];
     if (enableServiceTermRef.current) {
-      // TODO: getHistories from backend
-      histories = [dummyDepositOrder, dummyOpenCFDOrder, dummyClosedCFDOrder, dummyWithdrawalOrder];
+      // TODO: getHistories from backend (tzuhan - 20230323)
+      histories = [dummyDepositOrder, dummyClosedCFDOrder, dummyOpenCFDOrder, dummyWithdrawalOrder];
       setHistories(histories);
       result = defaultResultSuccess;
       result.data = histories;

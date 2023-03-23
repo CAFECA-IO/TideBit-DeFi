@@ -2,7 +2,7 @@ import {CFDOrderType, ICFDOrderType} from '../../constants/cfd_order_type';
 import {OrderState} from '../../constants/order_state';
 import {OrderStatusUnion} from '../../constants/order_status_union';
 import {IOrderType, OrderType} from '../../constants/order_type';
-import {getTimestamp} from '../../lib/common';
+import {getTimestamp, randomHex} from '../../lib/common';
 import {IAcceptedCFDOrder} from './accepted_cfd_order';
 import {
   getDummyApplyCloseCFDOrderData,
@@ -78,8 +78,10 @@ export const getDummyApplyCloseCFDOrder = (currency: string, id?: string) => {
 export const convertApplyCreateCFDToAcceptedCFD = (applyCFDData: IApplyCreateCFDOrderData) => {
   const date = new Date();
   const id = `CFD${date.getTime()}${applyCFDData.ticker}${Math.ceil(Math.random() * 1000000000)}`;
+  const txid = randomHex(32);
   const accpetedCFDOrder: IAcceptedCFDOrder = {
     id,
+    txid,
     ...applyCFDData,
     orderStatus: OrderStatusUnion.WAITING,
     state: OrderState.OPENING,

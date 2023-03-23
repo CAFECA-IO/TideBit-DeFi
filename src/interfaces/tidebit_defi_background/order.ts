@@ -15,15 +15,15 @@ export interface IOrder {
   type: IOrderType;
   targetAsset: string;
   targetAmount: number;
-  remarks?: string; // 備註,
+  detail: string;
   balanceSnapshot: IBalance;
   orderSnapshot: {
     id: string;
-    txid?: string;
+    txid: string;
     status: IOrderStatusUnion;
     state?: IOrderState;
-    detail: string;
     fee: number; // 手續費
+    remarks?: string; // 備註,
   };
 }
 
@@ -32,7 +32,7 @@ export const dummyDepositOrder: IOrder = {
   type: OrderType.DEPOSIT,
   targetAsset: 'USDT',
   targetAmount: 2000,
-  remarks: '',
+  detail: '',
   balanceSnapshot: {
     currency: 'USDT',
     available: 2000,
@@ -42,7 +42,7 @@ export const dummyDepositOrder: IOrder = {
     id: 'TBDDeposit20230320_001',
     txid: '0x',
     status: OrderStatusUnion.PROCESSING,
-    detail: '',
+    remarks: '',
     fee: 0,
   },
 };
@@ -56,22 +56,22 @@ export const dummyWithdrawalOrder: IOrder = {
     available: 1985,
     locked: 0,
   },
+  detail: '',
   orderSnapshot: {
     id: 'TBDWithdraw20230320_001',
     txid: '0x',
     status: OrderStatusUnion.PROCESSING,
-    detail: '',
+    remarks: '',
     fee: 0,
   },
 };
 
-// TODO: convert IAcceptedCFDOrder to IOrder after PR#324 is merged (20230320 - tzuhan)
 export const dummyOpenCFDOrder: IOrder = {
   timestamp: 1675299651,
   type: OrderType.CFD,
   targetAsset: 'ETH',
   targetAmount: -1,
-  remarks: '',
+  detail: '',
   balanceSnapshot: {
     currency: 'USDT',
     available: 1999,
@@ -82,7 +82,7 @@ export const dummyOpenCFDOrder: IOrder = {
     txid: '0x',
     status: OrderStatusUnion.SUCCESS,
     state: OrderState.OPENING,
-    detail: '',
+    remarks: '',
     fee: 0,
   },
 };
@@ -92,7 +92,7 @@ export const dummyClosedCFDOrder: IOrder = {
   type: OrderType.CFD,
   targetAsset: 'ETH',
   targetAmount: 0,
-  remarks: '',
+  detail: '',
   balanceSnapshot: {
     currency: 'USDT',
     available: 1998,
@@ -103,7 +103,7 @@ export const dummyClosedCFDOrder: IOrder = {
     txid: '0x',
     status: OrderStatusUnion.SUCCESS,
     state: OrderState.CLOSED,
-    detail: '',
+    remarks: '',
     fee: 0,
   },
 };

@@ -9,11 +9,14 @@ import {useTranslation} from 'next-i18next';
 import UserMobile from '../user_mobile/user_mobile';
 import {useGlobal} from '../../contexts/global_context';
 import TideButton from '../tide_button/tide_button';
+import UserOverview from '../user_overview/user_overview';
+import {NotificationContext} from '../../contexts/notification_context';
 
 type TranslateFunction = (s: string) => string;
 
-const NavBarMobile = ({notificationNumber = 1}) => {
+const NavBarMobile = () => {
   const userCtx = useContext(UserContext);
+  const notificationCtx = useContext(NotificationContext);
   const globalCtx = useGlobal();
 
   const {t}: {t: TranslateFunction} = useTranslation('common');
@@ -25,7 +28,7 @@ const NavBarMobile = ({notificationNumber = 1}) => {
   const [langIsOpen, setLangIsOpen] = useState(false);
 
   //menu text
-  const MENU_TEXT = langIsOpen ? 'Language' : 'Menu';
+  const menuText = langIsOpen ? t('NAV_BAR.LANGUAGE') : t('NAV_BAR.MENU');
 
   const {
     targetRef: notifyRef,
@@ -59,19 +62,18 @@ const NavBarMobile = ({notificationNumber = 1}) => {
     //console.log('sidebarOpenHandler clicked, componentVisible: ', componentVisible);
   };
 
-  const hamburgerStyles =
-    'block bg-lightWhite h-3px rounded-12px opacity-100 left-0 w-full rotate-0 ease-in duration-300';
+  const hamburgerStyles = 'opacity-100 block bg-lightWhite h-3px rounded-12px ease-in duration-300';
 
   const menuItemStyles =
-    'block rounded-md px-3 py-2 font-medium hover:cursor-pointer hover:text-tidebitTheme';
+    'block rounded-md px-3 py-5 font-medium hover:cursor-pointer hover:text-tidebitTheme';
 
   // hamburger animation
   const displayedMobileNavBarLine1 = !navOpen
-    ? 'translate-y-0'
+    ? 'translate-y-0 rotate-0'
     : 'translate-y-1.5 origin-left w-3/4 -rotate-35';
-  const displayedMobileNavBarLine2 = !navOpen ? 'translate-y-1.5' : 'w-0 opacity-0';
+  const displayedMobileNavBarLine2 = !navOpen ? 'translate-y-1.5 w-full' : 'w-0';
   const displayedMobileNavBarLine3 = !navOpen
-    ? 'translate-y-3'
+    ? 'translate-y-3 rotate-0'
     : 'translate-y-0 origin-left w-3/4 rotate-35';
 
   const isDisplayedMobileNavBar = navOpen ? 'top-14 min-h-screen inset-0 bg-darkGray/100' : '';
@@ -81,25 +83,19 @@ const NavBarMobile = ({notificationNumber = 1}) => {
     <div
       className={`${
         navOpen ? 'visible opacity-100' : 'invisible opacity-0'
-      } fixed top-3 left-20 z-50 flex h-10 w-250px items-center overflow-x-hidden overflow-y-hidden bg-black/100 outline-none`}
+      } fixed top-0 left-20 z-50 flex h-14 w-screen items-center overflow-x-hidden overflow-y-hidden bg-black/100 outline-none`}
     >
-      <p className="pl-5">{MENU_TEXT}</p>
+      <p className="pl-5">{menuText}</p>
     </div>
   );
 
   const isDisplayedUserOverview = userCtx.enableServiceTerm ? (
-    <UserMobile />
-  ) : (
-    navOpen && (
-      <TideButton
-        onClick={wallectConnectBtnClickHandler} // show wallet panel
-        className={`mt-4 rounded border-0 bg-tidebitTheme py-2 px-5 text-base text-white transition-all duration-300 hover:bg-cyan-600 md:mt-0`}
-      >
-        {/* Wallet Connect */}
-        {t('nav_bar.WalletConnect')}
-      </TideButton>
-    )
-  );
+    <UserOverview
+      depositAvailable={userCtx.balance?.available ?? 0}
+      marginLocked={userCtx.balance?.locked ?? 0}
+      profitOrLossAmount={userCtx.balance?.PNL ?? 0}
+    />
+  ) : null;
 
   const isDisplayedUser = userCtx.enableServiceTerm ? (
     <UserMobile />
@@ -109,7 +105,7 @@ const NavBarMobile = ({notificationNumber = 1}) => {
       className={`rounded border-0 bg-tidebitTheme py-2 px-3 text-sm text-white transition-all duration-300 hover:bg-cyan-600`}
     >
       {/* Wallet Connect */}
-      {t('nav_bar.WalletConnect')}
+      {t('NAV_BAR.WALLET_CONNECT')}
     </TideButton>
   );
 
@@ -119,8 +115,8 @@ const NavBarMobile = ({notificationNumber = 1}) => {
     <>
       <div className="container fixed inset-x-0 z-40 mx-auto inline-flex max-w-full items-end justify-center bg-black/100 pb-1 text-white lg:hidden">
         <div className="flex w-full items-center justify-between px-5 pb-2">
-          <div className="flex basis-full items-end">
-            <div className="mr-0 mt-3 flex lg:hidden">
+          <div className="flex basis-full items-baseline">
+            <div className="mr-0 mt-3 flex border-r border-lightGray1 lg:hidden">
               <button
                 onClick={clickHanlder}
                 className="z-50 inline-flex items-center justify-center rounded-md p-2"
@@ -133,23 +129,25 @@ const NavBarMobile = ({notificationNumber = 1}) => {
               </button>
             </div>
 
-            <span className="z-50 mx-2 inline-block h-10 w-px rounded bg-lightGray1"></span>
-
-            <div className="flex">
+            <div className="z-50 ml-4 flex">
               <button onClick={sidebarOpenHandler} className="relative hover:cursor-pointer">
                 <span className="absolute top-0 right-0 z-20 inline-block h-3 w-3 rounded-xl bg-tidebitTheme">
-                  <p className="text-center text-3xs hover:text-white">{notificationNumber}</p>
+                  <p className="text-center text-3xs hover:text-white">
+                    {notificationCtx.unreadNotifications.length}
+                  </p>
                 </span>
 
                 <Image
                   src="/elements/notifications_outline.svg"
                   width={25}
                   height={25}
-                  className="mb-1 hover:cursor-pointer hover:text-cyan-300"
+                  className="hover:cursor-pointer hover:text-cyan-300"
                   alt="icon"
                 />
               </button>
             </div>
+
+            <div className="z-50 flex grow justify-end">{isDisplayedUser}</div>
 
             <div className="invisible ml-auto lg:visible">
               {/* <WalletPanel
@@ -171,7 +169,7 @@ const NavBarMobile = ({notificationNumber = 1}) => {
 
           {/* Mobile menu section */}
           <div className="flex h-screen flex-col items-center justify-start px-2 pt-8 pb-24 text-base sm:px-3">
-            <div className="flex h-full w-screen flex-col items-center justify-between">
+            <div className="flex h-full w-screen flex-col items-center justify-start">
               <div className="flex items-center justify-start px-3 pt-3">
                 <Link className="shrink-0" href="/">
                   <div className="inline-flex items-center hover:cursor-pointer hover:text-cyan-300 hover:opacity-100">
@@ -189,32 +187,29 @@ const NavBarMobile = ({notificationNumber = 1}) => {
               </div>
               <div className="flex items-center justify-start px-3">
                 <Link href="/trade/cfd/ethusdt" className={menuItemStyles}>
-                  {t('nav_bar.Trade')}
+                  {t('NAV_BAR.TRADE')}
                 </Link>
               </div>
               <div className="flex items-center justify-start px-3">
                 <Link href="#" className={menuItemStyles}>
-                  {t('nav_bar.Leaderboard')}
+                  {t('NAV_BAR.LEADERBOARD')}
                 </Link>
               </div>
               <div className="flex items-center justify-start px-3">
                 <Link href="#" className={menuItemStyles}>
-                  {t('nav_bar.Support')}
+                  {t('NAV_BAR.SUPPORT')}
                 </Link>
               </div>
               <div className="flex items-center justify-start px-3">
-                <div className="px-3 py-2">
+                <div className="px-3 py-5">
                   <I18n langIsOpen={langIsOpen} setLangIsOpen={setLangIsOpen} />
                 </div>
-                <span className="inline-block h-px w-11/12 rounded bg-cuteBlue"></span>
+
                 {/* <TbMinusVertical size={30} className="" /> */}
               </div>
               {/* <div className="border-b border-cuteBlue"></div> */}
               <span className={`${dividerInsideMobileNavBar}`}></span>
-              <div className="flex items-center justify-start px-3 pb-3">
-                {isDisplayedUserOverview}
-              </div>
-
+              {isDisplayedUserOverview}
               {/* <WalletPanel
                 className="ml-2"
                 panelVisible={panelVisible}
@@ -223,7 +218,7 @@ const NavBarMobile = ({notificationNumber = 1}) => {
               />{' '} */}
             </div>
           </div>
-          <div className="mb-2 flex w-full justify-end pr-10">{isDisplayedUser}</div>
+          {/* <div className="mb-2 flex w-full justify-end pr-10">{isDisplayedUser}</div> */}
         </div>
       </div>
 

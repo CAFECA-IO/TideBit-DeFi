@@ -10,6 +10,9 @@ import {useGlobal} from '../../contexts/global_context';
 
 interface ITradingChartSwitchProps {
   getTradingViewType: (tradingViewState: string) => void;
+  getCandlestickOn: (bool: boolean) => void;
+  getLineGraphOn: (bool: boolean) => void;
+
   getTradingViewInterval: (tradingViewInterval: string) => void;
   getDisplayedPositionLabel: (bool: boolean) => void;
 }
@@ -22,7 +25,10 @@ const SWITCH_HEIGHT = 40;
 
 const getChartSize = () => {
   const windowSize = useWindowSize();
-  const defaultChartSize = {width: DEFAULT_CHART_WIDTH, height: DEFAULT_CHART_HEIGHT};
+  const defaultChartSize = {
+    width: DEFAULT_CHART_WIDTH,
+    height: DEFAULT_CHART_HEIGHT,
+  };
   const chartWidth =
     windowSize.width - TRADE_TAB_WIDTH > MIN_SCREEN_WIDTH - TRADE_TAB_WIDTH
       ? windowSize.width - TRADE_TAB_WIDTH
@@ -38,9 +44,8 @@ const getChartSize = () => {
 const getSwitchWidth = () => {
   const windowSize = useWindowSize();
   const switchWidth =
-    windowSize.width - TRADE_TAB_WIDTH > MIN_SCREEN_WIDTH - TRADE_TAB_WIDTH
-      ? windowSize.width - TRADE_TAB_WIDTH
-      : MIN_SCREEN_WIDTH - TRADE_TAB_WIDTH;
+    windowSize.width > MIN_SCREEN_WIDTH ? windowSize.width - TRADE_TAB_WIDTH : windowSize.width;
+
   const switchSize = {
     width: switchWidth.toString(),
     height: SWITCH_HEIGHT.toString(),
@@ -50,11 +55,17 @@ const getSwitchWidth = () => {
 
 const TradingChartSwitch = ({
   getTradingViewType,
+  getCandlestickOn,
+  getLineGraphOn,
+
   getTradingViewInterval,
   getDisplayedPositionLabel,
 }: ITradingChartSwitchProps) => {
   const [activeButton, setActiveButton] = useState('live');
-  const [activeChartType, setActiveChartType] = useState('candlestick');
+  const [candlestickOn, setCandlestickOn] = useState(true);
+  const [lineGraphOn, setLineGraphOn] = useState(false);
+
+  // const [activeChartType, setActiveChartType] = useState('candlestick');
   const {showPositionOnChartHandler} = useContext(MarketContext);
 
   const chartSize = getChartSize();
@@ -67,7 +78,8 @@ const TradingChartSwitch = ({
     showPositionOnChartHandler(bool);
   };
 
-  const timeIntervalButtonStyle = 'mr-1 rounded-sm px-6 transition-all duration-300 text-white';
+  const timeIntervalButtonStyle =
+    'mr-1 rounded-sm px-2 md:px-6 transition-all duration-300 text-white';
 
   const timeIntervalButtonClickedStyle = `text-white bg-tidebitTheme hover:bg-tidebitTheme ${timeIntervalButtonStyle}`;
 
@@ -90,12 +102,16 @@ const TradingChartSwitch = ({
     activeButton === '1d' ? timeIntervalButtonClickedStyle : timeIntervalButtonStyle;
 
   const candlestickClickHandler = () => {
-    setActiveChartType('candlestick');
+    setCandlestickOn(!candlestickOn);
+    getCandlestickOn(!candlestickOn);
+    // setActiveChartType('candlestick');
     getTradingViewType('candlestick');
   };
 
   const lineClickHandler = () => {
-    setActiveChartType('line');
+    setLineGraphOn(!lineGraphOn);
+    getLineGraphOn(!lineGraphOn);
+    // setActiveChartType('line');
     getTradingViewType('line');
   };
 
@@ -146,7 +162,7 @@ const TradingChartSwitch = ({
         type="button"
         className="rounded-sm bg-darkGray5 p-1 hover:opacity-90"
       >
-        {activeChartType === 'candlestick' ? (
+        {candlestickOn ? (
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width={TRADING_CHART_SWITCH_BUTTON_SIZE}
@@ -169,8 +185,8 @@ const TradingChartSwitch = ({
         ) : (
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            width="22.703"
-            height="30"
+            width={TRADING_CHART_SWITCH_BUTTON_SIZE}
+            height={TRADING_CHART_SWITCH_BUTTON_SIZE}
             data-name="Group 2293"
             viewBox="0 0 22.703 30"
           >
@@ -192,17 +208,17 @@ const TradingChartSwitch = ({
   );
 
   const lineGraphChartButton = (
-    <div>
+    <div className="hidden md:block">
       <button
         onClick={lineClickHandler}
         type="button"
         className="rounded-sm bg-darkGray5 p-1 hover:opacity-90"
       >
-        {activeChartType === 'line' ? (
+        {lineGraphOn ? (
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            width="31.403"
-            height="30.697"
+            width={TRADING_CHART_SWITCH_BUTTON_SIZE}
+            height={TRADING_CHART_SWITCH_BUTTON_SIZE}
             viewBox="0 0 31.403 30.697"
           >
             <defs>
@@ -281,7 +297,7 @@ const TradingChartSwitch = ({
     <>
       <div
         style={{width: `${Number(switchSize.width) - 100}px`}}
-        className="flex items-center pr-20 md:w-1/2 md:space-x-3 lg:space-x-5 xl:w-full"
+        className="flex items-center space-x-1 md:space-x-5 xl:w-full"
       >
         {/* Switch chart types */}
         <div className="flex space-x-2">
@@ -290,7 +306,7 @@ const TradingChartSwitch = ({
         </div>
 
         {/* Diplaying position info toggle */}
-        <div className="flex items-center space-x-5">
+        <div className="hidden items-center space-x-5 md:flex">
           <p className="text-lightGray">Positions</p>
           <div className="pt-1">
             {' '}

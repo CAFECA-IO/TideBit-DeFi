@@ -22,7 +22,7 @@ const CFDOrderCreate: IEIP712Data = {
       {name: 'price', type: 'uint256'},
       {name: 'amount', type: 'string'},
       {name: 'targetAsset', type: 'string'},
-      {name: 'uniAsset', type: 'string'},
+      {name: 'unitAsset', type: 'string'},
       {name: 'margin', type: 'Margin'},
       {name: 'leverage', type: 'uint256'},
       {name: 'liquidationPrice', type: 'uint256'},
@@ -42,7 +42,7 @@ const CFDOrderCreate: IEIP712Data = {
     Quotation: [
       {name: 'ticker', type: 'string'},
       {name: 'targetAsset', type: 'string'},
-      {name: 'uniAsset', type: 'string'},
+      {name: 'unitAsset', type: 'string'},
       {name: 'price', type: 'uint256'},
       {name: 'deadline', type: 'uint256'},
       {name: 'signature', type: 'string'},
@@ -61,7 +61,7 @@ const CFDOrderCreate: IEIP712Data = {
     price: 21023,
     amount: 2,
     targetAsset: 'ETH',
-    uniAsset: 'USDT',
+    unitAsset: 'USDT',
     leverage: 5,
     margin: {
       asset: 'BTC',
@@ -76,7 +76,7 @@ const CFDOrderCreate: IEIP712Data = {
     quotation: {
       ticker: 'ETH',
       targetAsset: 'ETH',
-      uniAsset: 'USDT',
+      unitAsset: 'USDT',
       price: 21023,
       deadline: getTimestamp() + 15,
       signature: '0x',

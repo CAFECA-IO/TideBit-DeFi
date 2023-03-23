@@ -13,12 +13,12 @@ const CryptoCategory = ({...otherProps}) => {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    if (mounted) return;
+    // if (mounted) return;
 
     setMounted(true);
 
     setTickers(marketCtx.listAvailableTickers());
-  }, []);
+  }, [marketCtx.availableTickers]);
 
   const renderCryptoCard = tickers?.map((item, i) => {
     const color = CRYPTO_CARD_COLORS.find(i => i.label === item.currency);

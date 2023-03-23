@@ -1,18 +1,19 @@
 import keccak from '@cafeca/keccak';
-import SafeMath from '../lib/safe_math';
-import CFDOrderClose from '../constants/contracts/cfd_close';
-import CFDOrderCreate from '../constants/contracts/cfd_create';
-import CFDOrderUpdate from '../constants/contracts/cfd_update';
-import Withdraw from '../constants/contracts/withdraw';
-import {CFDOrderType} from '../constants/cfd_order_type';
-import {IApplyCFDOrder} from '../interfaces/tidebit_defi_background/apply_cfd_order';
-import {IApplyCloseCFDOrderData} from '../interfaces/tidebit_defi_background/apply_close_cfd_order_data';
-import {IApplyUpdateCFDOrderData} from '../interfaces/tidebit_defi_background/apply_update_cfd_order_data';
-import {IApplyCreateCFDOrderData} from '../interfaces/tidebit_defi_background/apply_create_cfd_order_data';
-import {IApplyDepositOrder} from '../interfaces/tidebit_defi_background/apply_deposit_order';
-import {IApplyWithdrawOrder} from '../interfaces/tidebit_defi_background/apply_withdraw_order';
-import {IResult} from '../interfaces/tidebit_defi_background/result';
-import {getTimestamp} from '../lib/common';
+import SafeMath from '../safe_math';
+import CFDOrderClose from '../../constants/contracts/cfd_close';
+import CFDOrderCreate from '../../constants/contracts/cfd_create';
+import CFDOrderUpdate from '../../constants/contracts/cfd_update';
+import Withdraw from '../../constants/contracts/withdraw';
+import {CFDOrderType} from '../../constants/cfd_order_type';
+import {IApplyCFDOrder} from '../../interfaces/tidebit_defi_background/apply_cfd_order';
+import {IApplyCloseCFDOrderData} from '../../interfaces/tidebit_defi_background/apply_close_cfd_order_data';
+import {IApplyUpdateCFDOrderData} from '../../interfaces/tidebit_defi_background/apply_update_cfd_order_data';
+import {IApplyCreateCFDOrderData} from '../../interfaces/tidebit_defi_background/apply_create_cfd_order_data';
+import {IApplyDepositOrder} from '../../interfaces/tidebit_defi_background/apply_deposit_order';
+import {IApplyWithdrawOrder} from '../../interfaces/tidebit_defi_background/apply_withdraw_order';
+import {IResult} from '../../interfaces/tidebit_defi_background/result';
+import {Code} from '../../constants/code';
+import {getTimestamp, toIJSON} from '../common';
 
 class TransactionEngine {
   isApplyCreateCFDOrderData(obj: object): obj is IApplyCreateCFDOrderData {
@@ -24,7 +25,7 @@ class TransactionEngine {
       'price' in obj &&
       'amount' in obj &&
       'targetAsset' in obj &&
-      'uniAsset' in obj &&
+      'unitAsset' in obj &&
       'margin' in obj &&
       'leverage' in obj &&
       'liquidationPrice' in obj &&
@@ -105,6 +106,7 @@ class TransactionEngine {
   transferCFDOrderToTransaction(order: IApplyCFDOrder) {
     let result: IResult = {
       success: false,
+      code: Code.INVAILD_INPUTS,
       reason: 'data and type is not match',
     };
     switch (order.type) {
@@ -113,11 +115,10 @@ class TransactionEngine {
           // ++ TODO createCFDOrderContract
           const typeData = CFDOrderCreate;
           typeData.message = this.convertCreateCFDOrderData(order.data);
-          // eslint-disable-next-line no-console
-          // console.log(`transferCFDOrderToTransaction convertCreateCFDOrderData`, typeData.message);
           result = {
             success: true,
-            data: typeData,
+            code: Code.SUCCESS,
+            data: toIJSON(typeData),
           };
         }
         break;
@@ -128,7 +129,8 @@ class TransactionEngine {
           typeData.message = this.convertUpdateCFDOrderData(order.data);
           result = {
             success: true,
-            data: typeData,
+            code: Code.SUCCESS,
+            data: toIJSON(typeData),
           };
         }
         break;
@@ -139,7 +141,8 @@ class TransactionEngine {
           typeData.message = this.convertCloseCFDOrderData(order.data);
           result = {
             success: true,
-            data: typeData,
+            code: Code.SUCCESS,
+            data: toIJSON(typeData),
           };
         }
         break;
@@ -174,7 +177,8 @@ class TransactionEngine {
     typeData.message = this.convertWithdrawOrderData(withdrawOrder);
     const result: IResult = {
       success: true,
-      data: typeData,
+      code: Code.SUCCESS,
+      data: toIJSON(typeData),
     };
     return result;
   }

@@ -1,7 +1,9 @@
 import {ImCross} from 'react-icons/im';
 import Image from 'next/image';
 import Link from 'next/link';
+import {useTranslation} from 'next-i18next';
 
+type TranslateFunction = (s: string) => string;
 interface IQrcodeModal {
   qrcodeModalRef?: React.RefObject<HTMLDivElement>;
   qrcodeModalVisible?: boolean;
@@ -13,6 +15,8 @@ const QrcodeModal = ({
   qrcodeModalVisible = false,
   qrcodeClickHandler,
 }: IQrcodeModal) => {
+  const {t}: {t: TranslateFunction} = useTranslation('common');
+
   const isDisaplayedQrcodeModal = qrcodeModalVisible ? (
     <>
       <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">
@@ -26,7 +30,7 @@ const QrcodeModal = ({
             {/*header*/}
             <div className="flex items-start justify-between rounded-t pt-6">
               <h3 className="ml-1/8 mt-2 w-20rem pl-1/8 text-4xl font-semibold text-lightWhite">
-                Wallet Connect
+                {t('WALLET_PANEL.TITLE')}
               </h3>
               <button className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
                 <span className="absolute top-5 right-5 block outline-none focus:outline-none">
@@ -46,11 +50,11 @@ const QrcodeModal = ({
                     height={340}
                   />{' '}
                   <div className="mt-10 text-lg">
-                    Please open your{' '}
+                    {t('WALLET_PANEL.QR_CODE_DESCRIPTION_PART1')}{' '}
                     <span className="text-tidebitTheme">
-                      <Link href="#">wallet</Link>
+                      <Link href="#">{t('WALLET_PANEL.QR_CODE_DESCRIPTION_HIGHLIGHT')}</Link>
                     </span>{' '}
-                    to scan the QR code.
+                    {t('WALLET_PANEL.QR_CODE_DESCRIPTION_PART2')}
                   </div>
                 </div>
               </div>

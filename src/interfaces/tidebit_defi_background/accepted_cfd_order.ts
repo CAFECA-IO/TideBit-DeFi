@@ -1,4 +1,5 @@
 import {CFDClosedType, ICFDClosedType} from '../../constants/cfd_closed_type';
+import {unitAsset} from '../../constants/config';
 import {IOrderState, OrderState} from '../../constants/order_state';
 import {OrderStatusUnion} from '../../constants/order_status_union';
 import {OrderType} from '../../constants/order_type';
@@ -12,7 +13,7 @@ export interface IAcceptedCFDOrder extends IAcceptedOrder {
   state: IOrderState;
   typeOfPosition: ITypeOfPosition;
   targetAsset: string;
-  uniAsset: string;
+  unitAsset: string;
   openPrice: number;
   amount: number;
   leverage: number;
@@ -54,8 +55,8 @@ export const getDummyAcceptedCFDOrder = (currency = 'ETH', state?: IOrderState) 
       ? OrderState.FREEZED
       : OrderState.OPENING,
     typeOfPosition: typeOfPosition,
-    targetAsset: typeOfPosition === TypeOfPosition.BUY ? currency : 'USDT',
-    uniAsset: typeOfPosition === TypeOfPosition.BUY ? 'USDT' : currency,
+    targetAsset: currency,
+    unitAsset: unitAsset,
     openPrice: 24058,
     amount: 1.8,
     createTimestamp: 1675299651,
@@ -100,8 +101,8 @@ export const getDummyAcceptedCFDs = (currency: string, state?: IOrderState, id?:
         ? OrderState.FREEZED
         : OrderState.OPENING,
       typeOfPosition: typeOfPosition,
-      targetAsset: typeOfPosition === TypeOfPosition.BUY ? currency : 'USDT',
-      uniAsset: typeOfPosition === TypeOfPosition.BUY ? 'USDT' : currency,
+      targetAsset: currency,
+      unitAsset: unitAsset,
       openPrice: randomIntFromInterval(1000, 10000),
       amount: 1.8,
       createTimestamp: getTimestamp(),

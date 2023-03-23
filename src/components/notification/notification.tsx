@@ -1,68 +1,34 @@
-import useOuterClick from '../../lib/hooks/use_outer_click';
-import Image from 'next/image';
-import {forwardRef, useContext} from 'react';
+import {useContext} from 'react';
 import NotificationItem from '../notification_item/notification_item';
 import {NotificationContext} from '../../contexts/notification_context';
-// import {INotificationItem} from '../../interfaces/tidebit_defi_background/notification_item';
+import {useTranslation} from 'next-i18next';
+
+type TranslateFunction = (s: string) => string;
 
 interface INotificationProps {
   notifyRef: HTMLDivElement extends HTMLElement ? React.RefObject<HTMLDivElement> : null;
   componentVisible: boolean;
 }
-// <HTMLDivElement extends HTMLElement>
+
 export default function Notification({
   notifyRef,
   componentVisible,
 }: INotificationProps): JSX.Element {
-  // const {notifyRef, componentVisible} = props;
-  // const refP = forwardRef(props?.forwardedRef);
-  // const {componentVisible, setComponentVisible} = useOuterClick(false, refP);
-
-  // const sidebarOpenHandler = () => {
-  //   setComponentVisible(!componentVisible);
-  // };
+  const {t}: {t: TranslateFunction} = useTranslation('common');
   const notificationCtx = useContext(NotificationContext);
-
-  const MAX_NOTIFICATION_WIDTH = 479;
-
   const hamburgerStyles =
-    'block bg-lightWhite h-3px rounded-12px opacity-100 left-0 w-full rotate-0 ease-in duration-300';
+    'block bg-lightWhite h-3px opacity-100 rounded-12px opacity-100 ease-in duration-300';
+
   // hamburger animation
   const displayedMobileNavBarLine1 = !componentVisible
-    ? 'translate-y-0'
+    ? 'translate-y-0 rotate-0'
     : 'translate-y-1.5 origin-left w-3/4 -rotate-35';
-  const displayedMobileNavBarLine2 = !componentVisible ? 'translate-y-1.5' : 'w-0 opacity-0';
+  const displayedMobileNavBarLine2 = !componentVisible ? 'translate-y-1.5 w-full' : 'w-0';
   const displayedMobileNavBarLine3 = !componentVisible
-    ? 'translate-y-3'
+    ? 'translate-y-3 rotate-0'
     : 'translate-y-0 origin-left w-3/4 rotate-35';
 
-  const DUMMY_DATA = [
-    {
-      id: 'n1',
-    },
-    {
-      id: 'n2',
-    },
-    {
-      id: 'n3',
-    },
-    {
-      id: 'n4',
-    },
-    {
-      id: 'n5',
-    },
-    {
-      id: 'n6',
-    },
-    {
-      id: 'n7',
-    },
-    {
-      id: 'n8',
-    },
-  ];
-  const NotificationList = notificationCtx.unreadNotifications.map((v, i) => {
+  const NotificationList = notificationCtx.unreadNotifications.map(v => {
     return (
       <div key={v.id}>
         <NotificationItem
@@ -96,7 +62,7 @@ export default function Notification({
           componentVisible ? 'z-30' : 'z-30'
         } flex overflow-x-hidden overflow-y-hidden outline-none focus:outline-none`}
       >
-        <div className="relative my-6 mx-auto w-auto max-w-xl">
+        <div className="relative my-3 mx-auto w-auto max-w-xl">
           {' '}
           <div className={`relative`}>
             {/* sidebar self */}
@@ -109,12 +75,14 @@ export default function Notification({
               } flex flex-col bg-darkGray/90 pt-8 pb-20 text-white transition-all duration-300 sm:p-5`}
             >
               <div className="mb-10 flex flex items-center">
-                <h1 className="hidden pl-5 text-2xl font-bold sm:block">Notification</h1>
+                <h1 className="hidden pl-5 text-2xl font-bold sm:block">
+                  {t('NAV_BAR.NOTIFICATION_TITLE')}
+                </h1>
                 <div
                   className="ml-auto pr-30px text-sm text-tidebitTheme underline hover:cursor-pointer"
                   onClick={notificationCtx.readAll}
                 >
-                  Clear All
+                  {t('NAV_BAR.NOTIFICATION_READ_ALL')}
                 </div>
               </div>
 
@@ -158,10 +126,10 @@ export default function Notification({
     <div
       className={`sm:hidden ${
         componentVisible ? 'visible opacity-100' : 'invisible opacity-0'
-      } fixed z-50 flex h-16 w-screen items-center justify-center overflow-x-hidden overflow-y-hidden bg-black/100 px-5 outline-none transition-all delay-150 duration-300 hover:cursor-pointer focus:outline-none`}
+      } fixed z-50 flex h-14 w-screen items-center justify-center overflow-x-hidden overflow-y-hidden bg-black/100 px-5 pt-1 outline-none transition-all delay-150 duration-300 hover:cursor-pointer focus:outline-none`}
     >
       <div className="flex basis-full items-end">
-        <div className="mr-0 mt-3 flex lg:hidden">
+        <div className="mr-0 flex border-r border-lightGray1 lg:hidden">
           <button
             //onClick={clickHanlder}
             className="z-50 inline-flex items-center justify-center rounded-md p-2"
@@ -174,9 +142,7 @@ export default function Notification({
           </button>
         </div>
 
-        <span className="z-50 mx-2 inline-block h-10 w-px rounded bg-lightGray1"></span>
-
-        <p className="self-center pl-3">Notification</p>
+        <p className="self-center pl-5">{t('NAV_BAR.NOTIFICATION_TITLE')}</p>
       </div>
     </div>
   );

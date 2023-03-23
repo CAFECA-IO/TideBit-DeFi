@@ -1,9 +1,16 @@
 import React, {createContext, useRef, useContext} from 'react';
 import useState from 'react-usestateref';
-import io, {Socket} from 'socket.io-client';
-import {IAPIRequest} from '../constants/api_request';
+import {APIRequest, IAPIName, IMethodConstant, TypeRequest} from '../constants/api_request';
+
+import {WS_URL} from '../constants/config';
+import {Events} from '../constants/events';
 import {TideBitEvent} from '../constants/tidebit_event';
-import {ITickerData} from '../interfaces/tidebit_defi_background/ticker_data';
+import {
+  convertToTickerMartketData,
+  ITBETicker,
+  ITickerData,
+  ITickerMarket,
+} from '../interfaces/tidebit_defi_background/ticker_data';
 import {NotificationContext} from './notification_context';
 
 type IJobType = 'API' | 'WS';
@@ -20,29 +27,23 @@ export const JobType: IJobTypeConstant = {
 interface IWorkerProvider {
   children: React.ReactNode;
 }
-type TypeRequest = {
-  name: IAPIRequest;
-  request: {
-    name: IAPIRequest;
-    method: string;
-    url: string;
-    body?: object;
-    options?: {
-      headers?: object;
-    };
-  };
-  callback: (...args: any[]) => void;
-};
 
 interface IRequest {
   [name: string]: TypeRequest;
 }
 
 interface IWorkerContext {
-  wsWorker: Socket | null;
+  wsWorker: WebSocket | null;
   apiWorker: Worker | null;
   init: () => void;
-  requestHandler: (request: TypeRequest) => void;
+  requestHandler: (data: {
+    name: IAPIName;
+    method: IMethodConstant;
+    params?: {[key: string]: string | number | boolean};
+    body?: object;
+    headers?: object;
+    callback?: (...args: any[]) => void;
+  }) => void;
   tickerChangeHandler: (ticker: ITickerData) => void;
   registerUserHandler: (address: string) => void;
 }
@@ -57,11 +58,10 @@ export const WorkerContext = createContext<IWorkerContext>({
 });
 
 let jobTimer: NodeJS.Timeout | null = null;
-let wsWorker: Socket | null;
+let wsWorker: WebSocket | null;
 
 export const WorkerProvider = ({children}: IWorkerProvider) => {
   const notificationCtx = useContext(NotificationContext);
-  const [wsIsConnected, setWSIsConnected] = useState<boolean>(false);
   const [apiWorker, setAPIWorker, apiWorkerRef] = useState<Worker | null>(null);
   const jobQueueOfWS = useRef<((...args: []) => Promise<void>)[]>([]);
   const jobQueueOfAPI = useRef<((...args: []) => Promise<void>)[]>([]);
@@ -77,51 +77,57 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
     };
   };
   const wsInit = async () => {
-    try {
-      await fetch('/api/socketio');
-    } catch (error) {
-      // ++TODO
+    wsWorker = new WebSocket(WS_URL);
+    if (wsWorker) {
+      wsWorker.onmessage = msg => {
+        const metaData = JSON.parse(msg.data);
+        switch (metaData.type) {
+          case Events.TICKERS:
+            if (metaData.data) {
+              const data = Object.values(metaData.data).shift() as ITBETicker;
+              const tickerMarketData: ITickerMarket | null = convertToTickerMartketData(data);
+              if (tickerMarketData) {
+                notificationCtx.emitter.emit(TideBitEvent.TICKER, tickerMarketData);
+              }
+              /* Till: remove dummy candlestick data (20230327 - Tzuhan)
+              if (data) {
+                const candlestickData: ICandlestickData = {
+                  x: new Date(data.at * 1000),
+                  y: getDummyPrices(parseFloat(data.last)),
+                };
+                notificationCtx.emitter.emit(
+                  TideBitEvent.CANDLESTICK,
+                  ticker?.currency,
+                  candlestickData
+                );
+              }*/
+            }
+            break;
+          case Events.UPDATE:
+            break;
+          case Events.TRADES:
+            break;
+          case Events.PUBILC_TRADES:
+            notificationCtx.emitter.emit(
+              TideBitEvent.CANDLESTICK,
+              metaData.data.market,
+              metaData.data.trades
+            );
+            break;
+          case Events.ACCOUNT:
+            break;
+          case Events.ORDER:
+            break;
+          case Events.TRADE:
+            break;
+          case Events.CANDLE_ON_UPDATE:
+            // notificationCtx.emitter.emit(TideBitEvent.CANDLESTICK, metaData.data);
+            break;
+          default:
+            break;
+        }
+      };
     }
-    wsWorker = io();
-    wsWorker.on('connect', () => {
-      if (wsWorker) {
-        wsWorker.emit(TideBitEvent.NOTIFICATIONS);
-        setWSIsConnected(true);
-      }
-    });
-
-    wsWorker.on(TideBitEvent.NOTIFICATIONS, data => {
-      notificationCtx.emitter.emit(TideBitEvent.NOTIFICATIONS, data);
-    });
-
-    wsWorker.on(TideBitEvent.TICKER, data => {
-      notificationCtx.emitter.emit(TideBitEvent.TICKER, data);
-    });
-
-    wsWorker.on(TideBitEvent.TICKER_STATISTIC, data => {
-      notificationCtx.emitter.emit(TideBitEvent.TICKER_STATISTIC, data);
-    });
-
-    wsWorker.on(TideBitEvent.TICKER_STATISTIC, data => {
-      notificationCtx.emitter.emit(TideBitEvent.TICKER_STATISTIC, data);
-    });
-
-    wsWorker.on(TideBitEvent.CANDLESTICK, data => {
-      notificationCtx.emitter.emit(TideBitEvent.CANDLESTICK, data);
-    });
-
-    wsWorker.on(TideBitEvent.BALANCE, data => {
-      notificationCtx.emitter.emit(TideBitEvent.BALANCE, data);
-    });
-
-    wsWorker.on(TideBitEvent.ORDER, data => {
-      notificationCtx.emitter.emit(TideBitEvent.ORDER, data);
-    });
-
-    wsWorker.on('disconnect', () => {
-      // console.log('disconnect');
-      setWSIsConnected(false);
-    });
   };
 
   const init = async () => {
@@ -143,7 +149,7 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
   };
 
   const _wsWorker = async () => {
-    if (wsIsConnected) {
+    if (wsWorker?.readyState === 1) {
       const job = jobQueueOfWS.current.shift();
       if (job) {
         await job();
@@ -181,19 +187,35 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
     }
   };
 
-  const requestHandler = async (request: TypeRequest) => {
+  const requestHandler = async (data: {
+    name: IAPIName;
+    method: IMethodConstant;
+    params?: {[key: string]: string | number | boolean};
+    body?: object;
+    headers?: object;
+    callback?: (...args: any[]) => void;
+  }) => {
+    // TODO: error handle (20230320 - tzuhan)
     if (apiWorkerRef.current) {
+      const request: TypeRequest = APIRequest(data);
       apiWorkerRef.current.postMessage(request.request);
       requests.current[request.name] = request;
     } else {
-      createJob(JobType.API, () => requestHandler(request));
+      createJob(JobType.API, () => requestHandler(data));
     }
   };
 
   const tickerChangeHandler = async (ticker: ITickerData) => {
     notificationCtx.emitter.emit(TideBitEvent.TICKER_CHANGE, ticker);
-    if (wsIsConnected && wsWorker) {
-      wsWorker.emit(TideBitEvent.TICKER_CHANGE, ticker.currency);
+    if (wsWorker?.readyState === 1) {
+      wsWorker.send(
+        JSON.stringify({
+          op: 'registerMarket',
+          args: {
+            market: `${ticker.currency.toLowerCase()}usdt`,
+          },
+        })
+      );
     } else {
       createJob(JobType.WS, () => tickerChangeHandler(ticker));
     }
@@ -201,8 +223,15 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
 
   const registerUserHandler = async (address: string) => {
     notificationCtx.emitter.emit(TideBitEvent.SERVICE_TERM_ENABLED, address);
-    if (wsIsConnected && wsWorker) {
-      wsWorker.emit(TideBitEvent.SERVICE_TERM_ENABLED, address);
+    if (wsWorker?.readyState === 1) {
+      wsWorker.send(
+        JSON.stringify({
+          op: 'userStatusUpdate',
+          args: {
+            address: address,
+          },
+        })
+      );
     } else {
       createJob(JobType.WS, () => registerUserHandler(address));
     }

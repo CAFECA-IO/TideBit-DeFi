@@ -37,7 +37,7 @@ import {OrderType} from '../constants/order_type';
 import {OrderStatusUnion} from '../constants/order_status_union';
 import {TypeOfPosition} from '../constants/type_of_position';
 import {ICryptocurrency} from '../interfaces/tidebit_defi_background/cryptocurrency';
-import {getTimestamp, locker, wait} from '../lib/common';
+import {getDeadline, getTimestamp, locker, wait} from '../lib/common';
 import {
   IDisplayAcceptedCFDOrder,
   getDummyDisplayAcceptedCFDOrder,
@@ -53,13 +53,13 @@ import {
 import {OrderState} from '../constants/order_state';
 import {IApplyUpdateCFDOrderData} from '../interfaces/tidebit_defi_background/apply_update_cfd_order_data';
 import useStateRef from 'react-usestateref';
+import {POSITION_PRICE_RENEWAL_INTERVAL_SECONDS} from '../constants/config';
 
 export interface IToastify {
   type: 'error' | 'warning' | 'info' | 'success';
   message: string;
   toastId?: string | number; // Prevent duplicate toast
 }
-
 export interface IUpdatedCFDInputProps {
   takeProfit?: number;
   stopLoss?: number;

@@ -12,44 +12,11 @@ import {IDisplayAcceptedCFDOrder} from '../../interfaces/tidebit_defi_background
 const HistorySubTab = () => {
   const userCtx = useContext(UserContext);
 
-  const toHistoryPositionItems = (cfds: IAcceptedCFDOrder[]) => {
-    const displayedHistoryPositionList: (IDisplayAcceptedCFDOrder | undefined)[] = cfds.map(cfd => {
-      if (!cfd.closePrice) return;
-
-      const openValue = twoDecimal(cfd.openPrice * cfd.amount);
-      const closeValue = twoDecimal(cfd.closePrice * cfd.amount);
-
-      const positionLineGraph = [100, 100]; // TODO: (20230316 - Shirley) from `marketCtx`
-      const suggestion: ICFDSuggestion = {
-        // TODO: (20230316 - Shirley) calculate
-        takeProfit: 100,
-        stopLoss: 100,
-      };
-
-      const value =
-        cfd.typeOfPosition === TypeOfPosition.BUY
-          ? twoDecimal(closeValue - openValue)
-          : twoDecimal(openValue - closeValue);
-
-      const pnl: IPnL = {
-        type: value > 0 ? ProfitState.PROFIT : value < 0 ? ProfitState.LOSS : ProfitState.EQUAL,
-        value: Math.abs(value),
-      };
-
-      return {...cfd, pnl, openValue, closeValue, positionLineGraph, suggestion};
-    });
-
-    return displayedHistoryPositionList;
-  };
-
-  const historyPositionList = toHistoryPositionItems(userCtx.closedCFDs).map(cfd =>
-    cfd ? (
-      <div key={cfd.id}>
-        <HistoryPositionItem closedCfdDetails={cfd} />
-      </div>
-    ) : null
-  );
-
+  const historyPositionList = userCtx.closedCFDs.map(cfd => (
+    <div key={cfd.id}>
+      <HistoryPositionItem closedCfdDetails={cfd} />
+    </div>
+  ));
   return <>{historyPositionList}</>;
 };
 

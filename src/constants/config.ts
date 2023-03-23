@@ -1,8 +1,6 @@
 // `const` which can be changed later
 
-export const RENEW_QUOTATION_INTERVAL_SECONDS = 3;
-
-export const UNIT_ASSET = 'USDT';
+export const POSITION_PRICE_RENEWAL_INTERVAL_SECONDS = 3;
 
 // 10 ** 9 - 0.01
 export const TARGET_LIMIT_DIGITS = 10 ** 9 - 0.01;
@@ -30,5 +28,11 @@ export const SUPPORTED_NETWORKS = [
 
 export const unitAsset = 'USDT';
 
-export const SUGGEST_TP = 0.2;
-export const SUGGEST_SL = 0.1;
+export const WS_URL = 'wss://staging-001.tidebit.network/ws';
+
+// Deprecated: dummy url settings (20230407 - Tzuhan)
+export const BASE_URL = 'https://staging-001.tidebit.network';
+// Deprecated: dummy url settings (20230407 - Tzuhan)
+export const API_VERSION = '/api/v1';
+// Deprecated: dummy url settings (20230407 - Tzuhan)
+export const AVAILABLE_TICKERS = ['ETH', 'BTC'];

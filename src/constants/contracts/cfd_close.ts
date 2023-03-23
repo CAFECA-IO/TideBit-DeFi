@@ -25,7 +25,7 @@ const CFDOrderClose: IEIP712Data = {
     Quotation: [
       {name: 'ticker', type: 'string'},
       {name: 'targetAsset', type: 'string'},
-      {name: 'uniAsset', type: 'string'},
+      {name: 'unitAsset', type: 'string'},
       {name: 'price', type: 'uint256'},
       {name: 'deadline', type: 'uint256'},
       {name: 'signature', type: 'string'},
@@ -43,7 +43,7 @@ const CFDOrderClose: IEIP712Data = {
     quotation: {
       ticker: 'ETH',
       targetAsset: 'ETH',
-      uniAsset: 'USDT',
+      unitAsset: 'USDT',
       price: 21023,
       deadline: getTimestamp() + 15,
       signature: '0x',

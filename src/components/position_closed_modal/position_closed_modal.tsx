@@ -146,7 +146,7 @@ const PositionClosedModal = ({
     globalCtx.visibleLoadingModalHandler();
 
     const result = await userCtx.closeCFDOrder(
-      getDummyApplyCloseCFDOrderData(marketCtx.selectedTicker?.currency ?? '')
+      getDummyApplyCloseCFDOrderData(marketCtx.selectedTicker?.currency ?? '', openCfdDetails.id)
     );
     // console.log('result from userCtx in position_closed_modal.tsx: ', result);
 
@@ -175,14 +175,17 @@ const PositionClosedModal = ({
         btnUrl: '#',
       });
 
-      globalCtx.dataHistoryPositionModalHandler(userCtx.getCFD(openCfdDetails.id));
+      const cfd = userCtx.getCFD(openCfdDetails.id);
+      if (cfd) {
+        globalCtx.dataHistoryPositionModalHandler(cfd);
 
-      globalCtx.visibleSuccessfulModalHandler();
-      await wait(DELAYED_HIDDEN_SECONDS);
+        globalCtx.visibleSuccessfulModalHandler();
+        await wait(DELAYED_HIDDEN_SECONDS);
 
-      globalCtx.eliminateAllModals();
+        globalCtx.eliminateAllModals();
 
-      globalCtx.visibleHistoryPositionModalHandler();
+        globalCtx.visibleHistoryPositionModalHandler();
+      }
     } else if (result.reason === 'CANCELED') {
       globalCtx.dataCanceledModalHandler({
         modalTitle: 'Close Position',

@@ -112,7 +112,6 @@ class TransactionEngine {
     switch (order.type) {
       case CFDOrderType.CREATE:
         if (this.isApplyCreateCFDOrderData(order.data)) {
-          // ++ TODO createCFDOrderContract
           const typeData = CFDOrderCreate;
           typeData.message = this.convertCreateCFDOrderData(order.data);
           result = {
@@ -124,7 +123,6 @@ class TransactionEngine {
         break;
       case CFDOrderType.UPDATE:
         if (this.isApplyUpdateCFDOrderData(order.data)) {
-          // ++ TODO updateCFDOrderContract
           const typeData = CFDOrderUpdate;
           typeData.message = this.convertUpdateCFDOrderData(order.data);
           result = {
@@ -136,7 +134,6 @@ class TransactionEngine {
         break;
       case CFDOrderType.CLOSE:
         if (this.isApplyCloseCFDOrderData(order.data)) {
-          // ++ TODO closeCFDOrderContract
           const typeData = CFDOrderClose;
           typeData.message = this.convertCloseCFDOrderData(order.data);
           result = {

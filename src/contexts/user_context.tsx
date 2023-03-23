@@ -3,9 +3,9 @@ import React, {createContext, useCallback, useContext} from 'react';
 import useState from 'react-usestateref';
 import {TypeOfPnLColorHex} from '../constants/display';
 import {
-  dummyResultFailed,
+  defaultResultFailed,
   IResult,
-  dummyResultSuccess,
+  defaultResultSuccess,
 } from '../interfaces/tidebit_defi_background/result';
 import {
   dummyWalletBalance_BTC,
@@ -62,7 +62,7 @@ import {
   getDummyAcceptedDepositOrder,
   IAcceptedDepositOrder,
 } from '../interfaces/tidebit_defi_background/accepted_deposit_order';
-import {APIName, APIRequest, Method} from '../constants/api_request';
+import {APIName, Method} from '../constants/api_request';
 import SafeMath from '../lib/safe_math';
 import {OrderStatusUnion} from '../constants/order_status_union';
 import {Code, Reason} from '../constants/code';
@@ -343,69 +343,120 @@ export const UserProvider = ({children}: IUserProvider) => {
   });
 
   const listCFDs = useCallback(async (props: string) => {
-    let result: IResult = dummyResultFailed;
+    let result: IResult = defaultResultFailed;
+    result.code = Code.SERVICE_TERM_DISABLE;
+    result.reason = Reason[result.code];
     if (enableServiceTermRef.current) {
-      workerCtx.requestHandler({
-        name: APIName.LIST_CFD_TRADES,
-        method: Method.GET,
-        callback: (CFDs: IAcceptedCFDOrder[]) => {
-          let openCFDs: IAcceptedCFDOrder[] = [];
-          let closedCFDs: IAcceptedCFDOrder[] = [];
-          for (const order of CFDs) {
-            switch (order.state) {
-              case OrderState.OPENING:
-              case OrderState.FREEZED:
-                openCFDs = openCFDs.concat(order);
-                break;
-              case OrderState.CLOSED:
-                closedCFDs = closedCFDs.concat(order);
-                break;
-              default:
-                break;
+      try {
+        const CFDs = (await workerCtx.requestHandler({
+          name: APIName.LIST_CFD_TRADES,
+          method: Method.GET,
+          /* Deprecated: callback in requestHandler (Tzuhan - 20230420)
+          callback: (CFDs: IAcceptedCFDOrder[]) => {
+            let openCFDs: IAcceptedCFDOrder[] = [];
+            let closedCFDs: IAcceptedCFDOrder[] = [];
+            for (const order of CFDs) {
+              switch (order.state) {
+                case OrderState.OPENING:
+                case OrderState.FREEZED:
+                  openCFDs = openCFDs.concat(order);
+                  break;
+                case OrderState.CLOSED:
+                  closedCFDs = closedCFDs.concat(order);
+                  break;
+                default:
+                  break;
+              }
             }
+          },
+          */
+        })) as IAcceptedCFDOrder[];
+        // TODO: add convert IAcceptedCFDOrder to IDisplayAcceptedCFDOrder (20230323 - tzuhan)
+        let openCFDs: IAcceptedCFDOrder[] = [];
+        let closedCFDs: IAcceptedCFDOrder[] = [];
+        for (const order of CFDs) {
+          switch (order.state) {
+            case OrderState.OPENING:
+            case OrderState.FREEZED:
+              openCFDs = openCFDs.concat(order);
+              break;
+            case OrderState.CLOSED:
+              closedCFDs = closedCFDs.concat(order);
+              break;
+            default:
+              break;
           }
-          // TODO: add convert IAcceptedCFDOrder to IDisplayAcceptedCFDOrder (20230323 - tzuhan)
-          // setOpenedCFDs(openCFDs);
-          // setClosedCFDs(closedCFDs);
-        },
-      });
-      result = dummyResultSuccess;
+        }
+      } catch (error) {
+        // TODO: error handle (Tzuhan - 20230321)
+        // eslint-disable-next-line no-console
+        console.error(`listCFDs error`, error);
+        result.code = Code.INTERNAL_SERVER_ERROR;
+        result.reason = (error as Error).message;
+      }
+      // setOpenedCFDs(openCFDs);
+      // setClosedCFDs(closedCFDs);
+      result = defaultResultSuccess;
     }
     return result;
   }, []);
 
   const listDeposits = useCallback(async (props: string) => {
-    let result: IResult = dummyResultFailed;
+    let result: IResult = defaultResultFailed;
+    result.code = Code.SERVICE_TERM_DISABLE;
+    result.reason = Reason[result.code];
     if (enableServiceTermRef.current) {
-      workerCtx.requestHandler({
-        name: APIName.LIST_DEPOSIT_TRADES,
-        method: Method.GET,
-        callback: (deposits: IAcceptedDepositOrder[]) => {
-          setDeposits(deposits);
-        },
-      });
-      result = dummyResultSuccess;
+      try {
+        const deposits = (await workerCtx.requestHandler({
+          name: APIName.LIST_DEPOSIT_TRADES,
+          method: Method.GET,
+          /* Deprecated: callback in requestHandler (Tzuhan - 20230420)
+          callback: (deposits: IAcceptedDepositOrder[]) => {
+            setDeposits(deposits);
+          },
+          */
+        })) as IAcceptedDepositOrder[];
+        setDeposits(deposits);
+        result = defaultResultSuccess;
+      } catch (error) {
+        // TODO: error handle (Tzuhan - 20230321)
+        // eslint-disable-next-line no-console
+        console.error(`listDeposits error`, error);
+        result.code = Code.INTERNAL_SERVER_ERROR;
+        result.reason = (error as Error).message;
+      }
     }
     return result;
   }, []);
 
   const listWithdraws = useCallback(async (props: string) => {
-    let result: IResult = dummyResultFailed;
+    let result: IResult = defaultResultFailed;
     if (enableServiceTermRef.current) {
-      workerCtx.requestHandler({
-        name: APIName.LIST_DEPOSIT_TRADES,
-        method: Method.GET,
+      try {
+        const withdraws = (await workerCtx.requestHandler({
+          name: APIName.LIST_DEPOSIT_TRADES,
+          method: Method.GET,
+          /* Deprecated: callback in requestHandler (Tzuhan - 20230420)
         callback: (withdraws: IAcceptedWithdrawOrder[]) => {
           setWithdraws(withdraws);
         },
-      });
-      result = dummyResultSuccess;
+        */
+        })) as IAcceptedWithdrawOrder[];
+        setWithdraws(withdraws);
+        result = defaultResultSuccess;
+      } catch (error) {
+        // TODO: error handle (Tzuhan - 20230321)
+        // eslint-disable-next-line no-console
+        console.error(`listWithdraws error`, error);
+        result.code = Code.INTERNAL_SERVER_ERROR;
+        result.reason = (error as Error).message;
+      }
     }
     return result;
   }, []);
 
   const connect = async () => {
-    let result: IResult = dummyResultFailed;
+    let result: IResult = defaultResultFailed;
     result.code = Code.WALLET_IS_NOT_CONNECT;
     result.reason = Reason[result.code];
     try {
@@ -417,14 +468,14 @@ export const UserProvider = ({children}: IUserProvider) => {
         };
       }
     } catch (error) {
-      result = dummyResultFailed;
+      result = defaultResultFailed;
     }
     return result;
   };
 
   const signServiceTerm = async (): Promise<IResult> => {
     let eip712signature: string,
-      result: IResult = dummyResultFailed;
+      result: IResult = defaultResultFailed;
     if (lunar.isConnected) {
       eip712signature = await lunar.signTypedData(ServiceTerm);
       const verifyR: boolean = lunar.verifyTypedData(ServiceTerm, eip712signature);
@@ -450,7 +501,7 @@ export const UserProvider = ({children}: IUserProvider) => {
   };
 
   const disconnect = async () => {
-    let result: IResult = dummyResultFailed;
+    let result: IResult = defaultResultFailed;
     try {
       await lunar.disconnect();
       if (!lunar.isConnected) {
@@ -464,19 +515,19 @@ export const UserProvider = ({children}: IUserProvider) => {
   };
 
   const addFavorites = async (newFavorite: string) => {
-    let result: IResult = dummyResultFailed;
+    let result: IResult = defaultResultFailed;
     if (isConnectedRef.current) {
       const updatedFavoriteTickers = [...favoriteTickers];
       updatedFavoriteTickers.push(newFavorite);
       setFavoriteTickers(updatedFavoriteTickers);
       // console.log(`userContext updatedFavoriteTickers`, updatedFavoriteTickers);
-      result = dummyResultSuccess;
+      result = defaultResultSuccess;
     }
     return result;
   };
 
   const removeFavorites = async (previousFavorite: string) => {
-    let result: IResult = dummyResultFailed;
+    let result: IResult = defaultResultFailed;
     if (isConnectedRef.current) {
       const updatedFavoriteTickers = [...favoriteTickers];
       const index: number = updatedFavoriteTickers.findIndex(
@@ -485,7 +536,7 @@ export const UserProvider = ({children}: IUserProvider) => {
       if (index !== -1) updatedFavoriteTickers.splice(index, 1);
       setFavoriteTickers(updatedFavoriteTickers);
       // console.log(`userContext updatedFavoriteTickers`, updatedFavoriteTickers);
-      result = dummyResultSuccess;
+      result = defaultResultSuccess;
     }
     return result;
   };
@@ -530,7 +581,7 @@ export const UserProvider = ({children}: IUserProvider) => {
   };
 
   const createCFDOrder = async (props: IApplyCreateCFDOrderData | undefined): Promise<IResult> => {
-    let result: IResult = dummyResultFailed;
+    let result: IResult = defaultResultFailed;
     if (lunar.isConnected) {
       if (props) {
         const balance: IBalance | null = getBalance(props.margin.asset);
@@ -565,7 +616,7 @@ export const UserProvider = ({children}: IUserProvider) => {
   };
 
   const closeCFDOrder = async (props: IApplyCloseCFDOrderData | undefined): Promise<IResult> => {
-    let result: IResult = dummyResultFailed;
+    let result: IResult = defaultResultFailed;
     if (lunar.isConnected) {
       if (props) {
         const CFDOrder: IApplyCFDOrder = {
@@ -599,7 +650,7 @@ export const UserProvider = ({children}: IUserProvider) => {
   };
 
   const updateCFDOrder = async (props: IApplyUpdateCFDOrderData | undefined): Promise<IResult> => {
-    let result: IResult = dummyResultFailed;
+    let result: IResult = defaultResultFailed;
     if (lunar.isConnected) {
       if (props) {
         const CFDOrder: IApplyCFDOrder = {
@@ -633,7 +684,7 @@ export const UserProvider = ({children}: IUserProvider) => {
   };
 
   const deposit = async (depositOrder: IApplyDepositOrder): Promise<IResult> => {
-    let result: IResult = dummyResultFailed;
+    let result: IResult = defaultResultFailed;
     if (lunar.isConnected) {
       const walletBalance: IWalletBalance | null = getWalletBalance(depositOrder.targetAsset);
       // if (walletBalance && walletBalance.balance >= depositOrder.targetAmount) { // ++ TODO verify
@@ -659,7 +710,7 @@ export const UserProvider = ({children}: IUserProvider) => {
   };
 
   const withdraw = async (withdrawOrder: IApplyWithdrawOrder): Promise<IResult> => {
-    let result: IResult = dummyResultFailed;
+    let result: IResult = defaultResultFailed;
     if (lunar.isConnected) {
       const balance: IBalance | null = getBalance(withdrawOrder.targetAsset); // TODO: ticker is not currency
       if (balance && balance.available >= withdrawOrder.targetAmount) {
@@ -684,12 +735,14 @@ export const UserProvider = ({children}: IUserProvider) => {
 
   const listHistories = async () => {
     let histories: IOrder[] = [],
-      result: IResult = dummyResultFailed;
-    if (isConnectedRef) {
+      result: IResult = defaultResultFailed;
+    result.code = Code.SERVICE_TERM_DISABLE;
+    result.reason = Reason[result.code];
+    if (enableServiceTermRef.current) {
       // TODO: getHistories from backend
       histories = [dummyDepositOrder, dummyOpenCFDOrder, dummyClosedCFDOrder, dummyWithdrawalOrder];
       setHistories(histories);
-      result = dummyResultSuccess;
+      result = defaultResultSuccess;
       result.data = histories;
     }
     return result;
@@ -764,73 +817,73 @@ export const UserProvider = ({children}: IUserProvider) => {
   // };
 
   const sendEmailCode = async (email: string, hashCash: string) => {
-    let result: IResult = dummyResultFailed;
+    let result: IResult = defaultResultFailed;
     try {
       // TODO: post request (Tzuhan - 20230317)
-      result = dummyResultSuccess;
+      result = defaultResultSuccess;
     } catch (error) {
-      result = dummyResultFailed;
+      result = defaultResultFailed;
     }
     return result;
   };
   const connectEmail = async (email: string, code: number) => {
-    let result: IResult = dummyResultFailed;
+    let result: IResult = defaultResultFailed;
     try {
       // TODO: post request (Tzuhan - 20230317)
-      result = dummyResultSuccess;
+      result = defaultResultSuccess;
     } catch (error) {
-      result = dummyResultFailed;
+      result = defaultResultFailed;
     }
     return result;
   };
   const toggleEmailNotification = async (props: boolean) => {
-    let result: IResult = dummyResultFailed;
+    let result: IResult = defaultResultFailed;
     try {
       // TODO: put request (Tzuhan - 20230317)
     } catch (error) {
-      result = dummyResultFailed;
+      result = defaultResultFailed;
     }
     return result;
   };
   const subscribeNewsletters = async (props: boolean) => {
-    let result: IResult = dummyResultFailed;
+    let result: IResult = defaultResultFailed;
     try {
       // TODO: put request (Tzuhan - 20230317)
     } catch (error) {
-      result = dummyResultFailed;
+      result = defaultResultFailed;
     }
     return result;
   };
   const connectTideBit = async (email: string, password: string) => {
-    let result: IResult = dummyResultFailed;
+    let result: IResult = defaultResultFailed;
     try {
       // TODO: post request (Tzuhan - 20230317)
-      result = dummyResultSuccess;
+      result = defaultResultSuccess;
     } catch (error) {
-      result = dummyResultFailed;
+      result = defaultResultFailed;
     }
     return result;
   };
   const shareTradeRecord = async (tradeId: string) => {
-    let result: IResult = dummyResultFailed;
+    let result: IResult = defaultResultFailed;
     try {
       // TODO: call 3rd party api (Tzuhan - 20230317)
-      result = dummyResultSuccess;
+      result = defaultResultSuccess;
     } catch (error) {
-      result = dummyResultFailed;
+      result = defaultResultFailed;
     }
     return result;
   };
 
   const readNotifications = async (notifications: INotificationItem[]) => {
-    let result: IResult = dummyResultFailed;
+    let result: IResult = defaultResultFailed;
     if (enableServiceTermRef.current) {
       try {
         // TODO: post request (Tzuhan - 20230317)
-        result = dummyResultSuccess;
+        result = defaultResultSuccess;
         notificationCtx.emitter.emit(TideBitEvent.UPDATE_READ_NOTIFICATIONS_RESULT, notifications);
       } catch (error) {
-        result = dummyResultFailed;
+        result = defaultResultFailed;
       }
     }
 

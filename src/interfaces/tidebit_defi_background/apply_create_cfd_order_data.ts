@@ -1,5 +1,6 @@
 import {unitAsset} from '../../constants/config';
 import {ITypeOfPosition, TypeOfPosition} from '../../constants/type_of_position';
+import {getTimestamp} from '../../lib/common';
 import {IMargin} from './margin';
 import {getDummyQuotation, IQuotation} from './quotation';
 
@@ -10,12 +11,12 @@ export interface IApplyCreateCFDOrderData {
   price: number;
   amount: number;
   targetAsset: string;
-  unitAsset: string; // 計價單位(++TODO 有拼錯嗎？)
+  unitAsset: string;
   margin: IMargin;
   leverage: number;
   liquidationPrice: number; // 強制平倉價格
   liquidationTime: number;
-  guaranteedStop?: boolean;
+  guaranteedStop: boolean;
   guaranteedStopFee?: number;
   createTimestamp?: number;
   takeProfit?: number;
@@ -44,7 +45,8 @@ export const getDummyApplyCreateCFDOrderData = (currency: string) => {
     fee: 0,
     quotation: getDummyQuotation(currency, typeOfPosition), // 報價單
     liquidationPrice: randomIntFromInterval(1000, 10000),
-    liquidationTime: Math.ceil(Date.now() / 1000) + 86400, // openTimestamp + 86400
+    liquidationTime: getTimestamp() + 86400, // openTimestamp + 86400
+    guaranteedStop: false,
   };
   return dummyApplyCreateCFDOrderData;
 };

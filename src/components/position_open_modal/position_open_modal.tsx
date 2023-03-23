@@ -1,5 +1,4 @@
 import {ImCross} from 'react-icons/im';
-import {IOpenCFDDetails} from '../../interfaces/tidebit_defi_background/open_cfd_details';
 import {
   DELAYED_HIDDEN_SECONDS,
   TypeOfBorderColor,
@@ -19,7 +18,6 @@ import {
 } from '../../lib/common';
 import {useContext, useEffect, useState} from 'react';
 import {MarketContext} from '../../contexts/market_context';
-import {IPublicCFDOrder} from '../../interfaces/tidebit_defi_background/public_order';
 import {BsClockHistory} from 'react-icons/bs';
 import {useGlobal} from '../../contexts/global_context';
 import {TypeOfPosition} from '../../constants/type_of_position';
@@ -36,7 +34,6 @@ interface IPositionOpenModal {
   modalVisible: boolean;
   modalClickHandler: () => void;
   openCfdRequest: IApplyCreateCFDOrderData;
-  renewalDeadline: number;
 }
 
 // ToDo: seconds constant in display.ts or config.ts?
@@ -45,7 +42,6 @@ const PositionOpenModal = ({
   modalVisible,
   modalClickHandler,
   openCfdRequest,
-  renewalDeadline,
   ...otherProps
 }: IPositionOpenModal) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
@@ -223,7 +219,7 @@ const PositionOpenModal = ({
         //     : (openCfdRequest.amount * marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice) /
         //       openCfdRequest.leverage,
       },
-      renewalDeadline: deadline,
+      // renewalDeadline: deadline,
     });
 
     setDataRenewedStyle('text-lightYellow2');
@@ -262,7 +258,7 @@ const PositionOpenModal = ({
     const intervalId = setInterval(() => {
       // setSecondsLeft(prevSeconds => prevSeconds - 1);
 
-      const base = renewalDeadline;
+      const base = openCfdRequest.quotation.deadline;
       const tickingSec = base - Date.now() / 1000;
       setSecondsLeft(tickingSec > 0 ? Math.round(tickingSec) : 0);
 

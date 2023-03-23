@@ -1,7 +1,22 @@
 import React, {useContext} from 'react';
 import {BiLinkAlt} from 'react-icons/bi';
 import {MarketContext} from '../../contexts/market_context';
-import {ICryptoSummary} from '../../interfaces/depre_tidebit_defi_background';
+
+interface ICryptoSummary {
+  icon: string;
+  label: string;
+  introduction: string;
+  whitePaperLink: string;
+  websiteLink: string;
+
+  price: string;
+  rank: number;
+  publishTime: string;
+  publishAmount: string;
+  tradingVolume: string;
+  totalValue: string;
+  tradingValue: string;
+}
 
 const CryptoSummary = ({
   icon,

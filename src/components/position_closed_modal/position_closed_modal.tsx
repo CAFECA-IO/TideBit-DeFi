@@ -1,5 +1,4 @@
 import {ImCross} from 'react-icons/im';
-import {IOpenCFDDetails} from '../../interfaces/tidebit_defi_background/open_cfd_details';
 import {
   DELAYED_HIDDEN_SECONDS,
   TypeOfBorderColor,
@@ -24,15 +23,35 @@ import {BsClockHistory} from 'react-icons/bs';
 import {ProfitState} from '../../constants/profit_state';
 import {UserContext} from '../../contexts/user_context';
 import {useCountdown} from '../../lib/hooks/use_countdown';
-import {getDummyApplyCloseCFDOrderData} from '../../interfaces/tidebit_defi_background/apply_close_cfd_order_data';
 import {useTranslation} from 'react-i18next';
+import {
+  IDisplayAcceptedCFDOrder,
+  getDummyDisplayAcceptedCFDOrder,
+} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
+import {
+  IAcceptedCFDOrder,
+  getDummyAcceptedCFDOrder,
+} from '../../interfaces/tidebit_defi_background/accepted_cfd_order';
+import {
+  IDisplayApplyCFDOrder,
+  getDummyDisplayApplyCloseCFDOrder,
+} from '../../interfaces/tidebit_defi_background/display_apply_cfd_order';
+import {
+  IApplyCloseCFDOrderData,
+  getDummyApplyCloseCFDOrderData,
+} from '../../interfaces/tidebit_defi_background/apply_close_cfd_order_data';
+import {IPnL} from '../../interfaces/tidebit_defi_background/pnl';
+import {ICFDSuggestion} from '../../interfaces/tidebit_defi_background/cfd_suggestion';
+import {IQuotation} from '../../interfaces/tidebit_defi_background/quotation';
+import useStateRef from 'react-usestateref';
+import {OrderState} from '../../constants/order_state';
+import {ApplyCFDOrderData} from '../../interfaces/tidebit_defi_background/apply_cfd_order';
 
 type TranslateFunction = (s: string) => string;
 interface IPositionClosedModal {
   modalVisible: boolean;
   modalClickHandler: () => void;
-  openCfdDetails: IOpenCFDDetails;
-  latestProps: IClosedCFDInfoProps;
+  openCfdDetails: IDisplayAcceptedCFDOrder;
 }
 
 // TODO: replace all hardcode options with variables
@@ -40,7 +59,6 @@ const PositionClosedModal = ({
   modalVisible,
   modalClickHandler,
   openCfdDetails: openCfdDetails,
-  latestProps: latestProps,
   ...otherProps
 }: IPositionClosedModal) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
@@ -105,7 +123,7 @@ const PositionClosedModal = ({
 
   const layoutInsideBorder = 'mx-5 my-2 flex justify-between';
 
-  const displayedTime = timestampToString(openCfdDetails?.openTimestamp ?? 0);
+  const displayedTime = timestampToString(openCfdDetails?.createTimestamp ?? 0);
 
   // console.log('closed modal');
 
@@ -128,7 +146,7 @@ const PositionClosedModal = ({
     globalCtx.visibleLoadingModalHandler();
 
     const result = await userCtx.closeCFDOrder(
-      getDummyApplyCloseCFDOrderData(marketCtx.selectedTicker?.currency ?? '')
+      getDummyApplyCloseCFDOrderData(marketCtx.selectedTicker?.currency ?? '', openCfdDetails.id)
     );
     // console.log('result from userCtx in position_closed_modal.tsx: ', result);
 
@@ -157,14 +175,17 @@ const PositionClosedModal = ({
         btnUrl: '#',
       });
 
-      globalCtx.dataHistoryPositionModalHandler(userCtx.getClosedCFD(openCfdDetails.id));
+      const cfd = userCtx.getCFD(openCfdDetails.id);
+      if (cfd) {
+        globalCtx.dataHistoryPositionModalHandler(cfd);
 
-      globalCtx.visibleSuccessfulModalHandler();
-      await wait(DELAYED_HIDDEN_SECONDS);
+        globalCtx.visibleSuccessfulModalHandler();
+        await wait(DELAYED_HIDDEN_SECONDS);
 
-      globalCtx.eliminateAllModals();
+        globalCtx.eliminateAllModals();
 
-      globalCtx.visibleHistoryPositionModalHandler();
+        globalCtx.visibleHistoryPositionModalHandler();
+      }
     } else if (result.reason === 'CANCELED') {
       globalCtx.dataCanceledModalHandler({
         modalTitle: 'Close Position',
@@ -199,36 +220,7 @@ const PositionClosedModal = ({
     const deadline = getDeadline(POSITION_PRICE_RENEWAL_INTERVAL_SECONDS);
     setSecondsLeft(deadline - Date.now() / 1000);
 
-    globalCtx.dataPositionClosedModalHandler({
-      openCfdDetails: {
-        ...openCfdDetails,
-        // TODO: 跟 userCtx 拿 getOpenCFD(id) 或自己算 PNL
-        pnl: {
-          type: randomIntFromInterval(0, 100) <= 50 ? ProfitState.PROFIT : ProfitState.LOSS,
-          value: randomIntFromInterval(0, 1000),
-        },
-      },
-      latestProps: {
-        // renewalDeadline: Date.now() / 1000 + POSITION_PRICE_RENEWAL_INTERVAL_SECONDS,
-        renewalDeadline: deadline,
-        latestClosedPrice:
-          openCfdDetails.typeOfPosition === TypeOfPosition.BUY
-            ? randomIntFromInterval(
-                marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice * 0.75,
-                marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice * 1.25
-              )
-            : openCfdDetails.typeOfPosition === TypeOfPosition.SELL
-            ? randomIntFromInterval(
-                marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice * 1.1,
-                marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice * 1.25
-              )
-            : 99999,
-        // latestPnL: {
-        //   type: randomIntFromInterval(0, 100) <= 2 ? ProfitState.PROFIT : ProfitState.LOSS,
-        //   value: randomIntFromInterval(0, 1000),
-        // },
-      },
-    });
+    globalCtx.dataPositionClosedModalHandler(openCfdDetails);
 
     // globalCtx.visiblePositionClosedModalHandler();
 
@@ -307,7 +299,7 @@ const PositionClosedModal = ({
 
       // console.log('deadline before ticking: ', latestProps.renewalDeadline);
 
-      const base = latestProps.renewalDeadline;
+      const base = secondsLeft;
 
       const tickingSec = base - Date.now() / 1000;
       // const tickingSec = latestProps.renewalDeadline - Date.now() / 1000 > 0 ? Math.round(latestProps.renewalDeadline - Date.now() / 1000) : Math.round();
@@ -414,7 +406,7 @@ const PositionClosedModal = ({
               <div className="text-lightGray">{t('POSITION_MODAL.CLOSED_PRICE')}</div>
               <div className={`${dataRenewedStyle}`}>
                 {/* TODO: Hardcode USDT */}
-                {latestProps.latestClosedPrice.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+                {openCfdDetails.closePrice?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
                   minimumFractionDigits: 2,
                 }) ?? 0}{' '}
                 <span className="ml-1 text-lightGray">USDT</span>

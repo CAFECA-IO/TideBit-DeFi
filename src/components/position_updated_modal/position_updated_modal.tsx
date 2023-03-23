@@ -1,5 +1,4 @@
 import {ImCross} from 'react-icons/im';
-import {IOpenCFDDetails} from '../../interfaces/tidebit_defi_background/open_cfd_details';
 import {
   DELAYED_HIDDEN_SECONDS,
   TypeOfBorderColor,
@@ -11,25 +10,26 @@ import Image from 'next/image';
 import {locker, timestampToString, wait} from '../../lib/common';
 import {useContext, useEffect, useState} from 'react';
 import {MarketContext} from '../../contexts/market_context';
-import {IPublicCFDOrder} from '../../interfaces/tidebit_defi_background/public_order';
 import {IUpdatedCFDInputProps, useGlobal} from '../../contexts/global_context';
 import {TypeOfPosition} from '../../constants/type_of_position';
 import {UserContext} from '../../contexts/user_context';
 import {useTranslation} from 'react-i18next';
+import {IDisplayApplyCFDOrder} from '../../interfaces/tidebit_defi_background/display_apply_cfd_order';
+import {IApplyUpdateCFDOrderData} from '../../interfaces/tidebit_defi_background/apply_update_cfd_order_data';
+import {IDisplayAcceptedCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
 
 type TranslateFunction = (s: string) => string;
 interface IPositionUpdatedModal {
   modalVisible: boolean;
   modalClickHandler: () => void;
-  openCfdDetails: IOpenCFDDetails;
-  updatedProps?: IUpdatedCFDInputProps;
+  openCfdDetails: IDisplayAcceptedCFDOrder;
+  updatedProps?: IApplyUpdateCFDOrderData;
 }
 
-// TODO: replace all hardcode options with variables
 const PositionUpdatedModal = ({
   modalVisible,
   modalClickHandler,
-  openCfdDetails: openCfdDetails,
+  openCfdDetails,
   updatedProps,
   ...otherProps
 }: IPositionUpdatedModal) => {
@@ -39,27 +39,25 @@ const PositionUpdatedModal = ({
   const marketCtx = useContext(MarketContext);
   const globalCtx = useGlobal();
 
-  // const [dataRenewedStyle, setDataRenewedStyle] = useState('text-lightWhite');
   const [tpTextStyle, setTpTextStyle] = useState('text-lightWhite');
   const [slTextStyle, setSlTextStyle] = useState('text-lightWhite');
   const [gtslTextStyle, setGtslTextStyle] = useState('text-lightWhite');
 
-  // let tpTextStyle = 'text-lightWhite';
-  // let slTextStyle = 'text-lightWhite';
-  // let gtslTextStyle = 'text-lightWhite';
+  const toApplyUpdateOrder = (position: IDisplayAcceptedCFDOrder): IApplyUpdateCFDOrderData => {
+    const request = {
+      orderId: position.id,
+      ...updatedProps,
+      guaranteedStop: updatedProps?.guaranteedStop ?? false,
+    };
 
-  /** TODO: 
-    // loading modal -> UserContext.function (負責簽名) ->
-    // 猶豫太久的話，單子會過期，就會顯示 failed modal，
-    // 用戶沒簽名才是顯示 canceled modal
-    // 用戶簽名成功，就會顯示 successful modal
-   */
+    return request;
+  };
+
   const submitClickHandler = async () => {
     const [lock, unlock] = locker('position_updated_modal.submitClickHandler');
     if (!lock()) return;
     await wait(DELAYED_HIDDEN_SECONDS / 5);
     modalClickHandler();
-    // console.log('updated modal clicked');
 
     globalCtx.dataLoadingModalHandler({
       modalTitle: 'Update Position',
@@ -67,15 +65,12 @@ const PositionUpdatedModal = ({
     });
     globalCtx.visibleLoadingModalHandler();
 
-    // FIXME: the guaranteedStop should be removed
-    const result = await userCtx.updateCFDOrder({
-      orderId: openCfdDetails.id,
-      ...updatedProps,
-      guaranteedStop: updatedProps?.guaranteedStopLoss ?? false,
-    });
+    // TODO: (20230315 - Shirley) the guaranteedStop should be removed
+    const result = await userCtx.updateCFDOrder(toApplyUpdateOrder(openCfdDetails));
 
-    // TODO: temporary waiting
-    await wait(DELAYED_HIDDEN_SECONDS);
+    // TODO:  (20230317 - Shirley) for debug
+    globalCtx.toast({message: 'update-position result: ' + JSON.stringify(result), type: 'info'});
+
     globalCtx.dataLoadingModalHandler({
       modalTitle: 'Update Position',
       modalContent: 'Transaction broadcast',
@@ -83,16 +78,13 @@ const PositionUpdatedModal = ({
       btnUrl: '#',
     });
 
-    // console.log('result from userCtx in position_closed_modal.tsx: ', result);
-
-    // TODO: temporary waiting
+    // TODO: (20230317 - Shirley) temporary waiting
     await wait(DELAYED_HIDDEN_SECONDS);
 
-    // Close loading modal
     globalCtx.eliminateAllModals();
 
-    // TODO: Revise the `result.reason` to constant by using enum or object
-    // TODO: the button URL
+    // TODO: (20230317 - Shirley) Revise the `result.reason` to constant by using enum or object
+    // TODO: (20230317 - Shirley) the button URL
     if (result.success) {
       globalCtx.dataSuccessfulModalHandler({
         modalTitle: 'Update Position',
@@ -101,14 +93,13 @@ const PositionUpdatedModal = ({
         btnUrl: '#',
       });
 
-      globalCtx.dataPositionDetailsModalHandler(userCtx.getOpendCFD(openCfdDetails.id));
-
       globalCtx.visibleSuccessfulModalHandler();
       await wait(DELAYED_HIDDEN_SECONDS);
 
       globalCtx.eliminateAllModals();
 
-      globalCtx.visiblePositionDetailsModalHandler();
+      globalCtx.dataUpdateFormModalHandler(openCfdDetails);
+      globalCtx.visibleUpdateFormModalHandler();
     } else if (result.reason === 'CANCELED') {
       globalCtx.dataCanceledModalHandler({
         modalTitle: 'Update Position',
@@ -135,8 +126,7 @@ const PositionUpdatedModal = ({
   const renewDataStyle = () => {
     if (updatedProps === undefined) return;
 
-    updatedProps.guaranteedStopLoss &&
-    updatedProps.guaranteedStopLoss !== openCfdDetails.guaranteedStop
+    updatedProps.guaranteedStop && updatedProps.guaranteedStop !== openCfdDetails.guaranteedStop
       ? setGtslTextStyle('text-lightYellow2')
       : setGtslTextStyle('text-lightWhite');
 
@@ -153,30 +143,13 @@ const PositionUpdatedModal = ({
 
   useEffect(() => {
     renewDataStyle();
-
-    // console.log('updatedProps ', updatedProps);
-    // console.log('openCfdDetails ', openCfdDetails);
-    // console.log('text style', tpTextStyle, slTextStyle, gtslTextStyle);
   }, [globalCtx.visiblePositionUpdatedModal]);
 
-  // TODO: typo `guaranteedStop`
-  const displayedGuaranteedStopSetting = updatedProps?.guaranteedStopLoss
+  const displayedGuaranteedStopSetting = updatedProps?.guaranteedStop
     ? 'Yes'
     : openCfdDetails.guaranteedStop
     ? 'Yes'
     : 'No';
-
-  // if (updatedProps.takeProfit !== openCfdDetails.takeProfit) {
-  //   if (updatedProps.takeProfit === 0) {
-  //     return '-';
-  //   } else if (updatedProps.takeProfit !== 0) {
-  //     return updatedProps.takeProfit;
-  //   }
-  // } else if (openCfdDetails.takeProfit) {
-  //   return openCfdDetails.takeProfit;
-  // } else {
-  //   return '-';
-  // }
 
   const displayedTakeProfit =
     updatedProps?.takeProfit !== undefined
@@ -192,15 +165,6 @@ const PositionUpdatedModal = ({
           minimumFractionDigits: 2,
         })}`
       : '-';
-
-  // const displayedTakeProfit =
-  //   updatedProps.takeProfit === 0
-  //     ? '-'
-  //     : updatedProps.takeProfit !== 0
-  //     ? updatedProps.takeProfit
-  //     : openCfdDetails.takeProfit
-  //     ? openCfdDetails.takeProfit
-  //     : '-';
 
   const displayedStopLoss =
     updatedProps?.stopLoss !== undefined
@@ -252,13 +216,10 @@ const PositionUpdatedModal = ({
   //   : TypeOfPnLColor.LOSS;
 
   const displayedBorderColor = TypeOfBorderColor.NORMAL;
-  // openCfdDetails?.typeOfPosition === TypeOfPosition.BUY
-  //   ? TypeOfBorderColor.LONG
-  //   : TypeOfBorderColor.SHORT;
 
   const layoutInsideBorder = 'mx-5 my-2 flex justify-between';
 
-  const displayedTime = timestampToString(openCfdDetails?.openTimestamp ?? 0);
+  const displayedTime = timestampToString(openCfdDetails?.createTimestamp ?? 0);
 
   const formContent = (
     <div className="mt-8 flex flex-col px-6 pb-2">
@@ -318,36 +279,10 @@ const PositionUpdatedModal = ({
               </div>
             </div>
 
-            {/* <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">Required Margin</div>
-              <div className="">$ {openCfdDetails.margin.toFixed(2)} USDT</div>
-            </div> */}
-
-            {/* <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">Avg. Close Price</div>
-              <div className="">
-                Market Price ( ${' '}
-                {openCfdDetails?.openPrice?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0} )
-              </div>
-            </div> */}
-
-            {/* <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">PNL</div>
-              <div className={`${displayedPnLColor}`}>
-                $ {displayedPnLSymbol}{' '}
-                {openCfdDetails.pnl.value.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}
-              </div>
-            </div> */}
-
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">{t('POSITION_MODAL.GUARANTEED_STOP')}</div>
               <div className={`${gtslTextStyle}`}>{displayedGuaranteedStopSetting}</div>
             </div>
-
-            {/* <div className={`${tableLayout}`}>
-              <div className="text-lightGray">Liquidation Price</div>
-              <div className="">$ 9.23</div>
-            </div> */}
           </div>
         </div>
 
@@ -366,9 +301,6 @@ const PositionUpdatedModal = ({
 
   const isDisplayedModal = modalVisible ? (
     <>
-      {/*  <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">*/}
-      {/*  overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none */}
-      {/* position: relative; top: 50%; left: 50%; transform: translate(-50%, -50%) */}
       <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">
         {/* The position of the modal */}
         <div className="relative my-6 mx-auto w-auto max-w-xl">

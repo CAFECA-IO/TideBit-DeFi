@@ -1,21 +1,17 @@
 import React, {useContext} from 'react';
 import Image from 'next/image';
-import {
-  TypeOfPnLColorHex,
-  TypeOfTransaction,
-  UNIVERSAL_NUMBER_FORMAT_LOCALE,
-} from '../../constants/display';
+import {TypeOfTransaction, UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
 import {ProfitState} from '../../constants/profit_state';
 import {timestampToString} from '../../lib/common';
-import {IClosedCFDDetails} from '../../interfaces/tidebit_defi_background/closed_cfd_details';
 import {TypeOfPosition} from '../../constants/type_of_position';
 import {useGlobal} from '../../contexts/global_context';
+import {IDisplayAcceptedCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
 import {useTranslation} from 'react-i18next';
 import {MarketContext} from '../../contexts/market_context';
 
 type TranslateFunction = (s: string) => string;
 interface IHistoryPositionItemProps {
-  closedCfdDetails: IClosedCFDDetails;
+  closedCfdDetails: IDisplayAcceptedCFDOrder;
 }
 
 const HistoryPositionItem = ({closedCfdDetails, ...otherProps}: IHistoryPositionItemProps) => {
@@ -46,7 +42,7 @@ const HistoryPositionItem = ({closedCfdDetails, ...otherProps}: IHistoryPosition
     globalCtx.visibleHistoryPositionModalHandler();
   };
 
-  const displayedTime = timestampToString(closedCfdDetails.closedTimestamp);
+  const displayedTime = timestampToString(closedCfdDetails?.closeTimestamp ?? 0);
 
   return (
     <>
@@ -54,7 +50,7 @@ const HistoryPositionItem = ({closedCfdDetails, ...otherProps}: IHistoryPosition
         <div className="flex justify-center">
           <div className="w-48px">
             <div className="text-lightGray">
-              {displayedTime.day} {displayedTime.abbreviatedMonth}{' '}
+              {displayedTime.day} {displayedTime.abbreviatedMonth}
             </div>
             <div className="text-lightGray">{displayedTime.abbreviatedTime}</div>
             {/* Divider */}
@@ -72,7 +68,7 @@ const HistoryPositionItem = ({closedCfdDetails, ...otherProps}: IHistoryPosition
               <p className="ml-1">{closedCfdDetails.ticker}</p>
             </div>
             <div className="text-lightWhite">
-              {displayedString.TITLE}{' '}
+              {displayedString.TITLE}
               <span className="text-lightGray">{displayedString.SUBTITLE}</span>
             </div>
           </div>
@@ -80,12 +76,12 @@ const HistoryPositionItem = ({closedCfdDetails, ...otherProps}: IHistoryPosition
           <div className="w-120px">
             <div className="text-lightGray">{t('TRADE_PAGE.HISTORY_POSITION_ITEM_VALUE')}</div>
             <div className="">
-              ${' '}
+              $
               {closedCfdDetails.openValue.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
                 minimumFractionDigits: 2,
-              })}{' '}
-              / ${' '}
-              {closedCfdDetails.closedValue.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+              })}
+              / $
+              {(closedCfdDetails.closeValue || 0).toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
                 minimumFractionDigits: 2,
               })}
             </div>
@@ -94,7 +90,8 @@ const HistoryPositionItem = ({closedCfdDetails, ...otherProps}: IHistoryPosition
           <div className="w-60px text-end">
             <div className="text-lightGray">{t('TRADE_PAGE.HISTORY_POSITION_ITEM_PNL')}</div>
             <div className={`${displayedTextColor}`}>
-              <span className="">{displayedSymbol}</span> $ {closedCfdDetails.pnl.value}
+              <span className="">{displayedSymbol}</span> $
+              {closedCfdDetails.pnl.value?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}
             </div>
           </div>
         </div>

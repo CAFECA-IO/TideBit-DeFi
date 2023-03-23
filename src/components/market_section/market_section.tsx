@@ -8,14 +8,11 @@ import TradeStatistics from '../trade_statistics/trade_statistics';
 import {MarketContext} from '../../contexts/market_context';
 import CryptoSummary from '../crypto_summary/crypto_summary';
 import CryptoNewsSection from '../crypto_news_section/crypto_news_section';
-import {ICryptoSummary} from '../../interfaces/depre_tidebit_defi_background';
 
 const MarketSection = () => {
-  // const {layoutAssertion} = useContext(GlobalContext);
   const marketCtx = useContext(MarketContext);
   const {layoutAssertion} = useGlobal();
 
-  // const [cryptoSummary, setCryptoSummary] = useState<ICryptoSummary | undefined>(undefined);
   const {
     icon,
     name: label,

@@ -151,6 +151,21 @@ export const locker = (id: string): ILocker => {
 
 export const getTimestamp = () => Math.ceil(Date.now() / 1000);
 
+export const twoDecimal = (num: number, mul?: number): number => {
+  const roundedNum = Math.round(num * 100) / 100;
+  const str = roundedNum.toFixed(2).replace(/\.?0+$/, '');
+  const dec = str.split('.');
+  const numDec = dec.length === 2 ? dec[1].length : 0;
+
+  return mul
+    ? Number((num * mul).toFixed(numDec).replace(/\.?0+$/, ''))
+    : Number(num.toFixed(numDec).replace(/\.?0+$/, ''));
+};
+
+export const getNowSeconds = () => {
+  return Math.ceil(new Date().getTime() / 1000);
+};
+
 export const toQuery = (params: {[key: string]: string | number | boolean} | undefined) => {
   const query: string = params
     ? `?${Object.keys(params)
@@ -158,10 +173,6 @@ export const toQuery = (params: {[key: string]: string | number | boolean} | und
         .join('&')}`
     : ``;
   return query;
-};
-
-export const getNowSeconds = () => {
-  return new Date().getTime() / 1000;
 };
 
 export const toIJSON = (typeData: IEIP712Data) => {

@@ -36,7 +36,7 @@ const ReceiptSearch = ({filteredTradingType, setFilteredTradingType}: IReceiptSe
       ? 'Close Position'
       : 'Trading Type';
 
-  const dropMenuItemStyle = 'inline-block px-5 py-3 text-left hover:cursor-pointer';
+  const dropMenuItemStyle = 'inline-block px-5 py-3 w-full text-left hover:cursor-pointer';
 
   const tradingTypeMenuClickHandler = () => {
     setTradingTypeMenuOpen(!tradingTypeMenuOpen);

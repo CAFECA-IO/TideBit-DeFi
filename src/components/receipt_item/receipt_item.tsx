@@ -1,4 +1,6 @@
-import React, {useState} from 'react';
+import React from 'react';
+import Lottie from 'lottie-react';
+import smallConnectingAnimation from '../../../public/animation/lf30_editor_cnkxmhy3.json';
 import Image from 'next/image';
 import {timestampToString} from '../../lib/common';
 import {OrderType} from '../../constants/order_type';
@@ -20,18 +22,20 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
   const displayedButtonColor =
     targetAmount == 0 ? 'bg-lightGray' : targetAmount > 0 ? 'bg-lightGreen5' : 'bg-lightRed';
 
-  const displayedButtonText =
+  const displayedReceiptType =
     type === OrderType.DEPOSIT
       ? 'Deposit'
       : type === OrderType.WITHDRAW
       ? 'Withdraw'
-      : type === 'CFD'
+      : type === OrderType.CFD
       ? orderSnapshot.state === OrderState.OPENING
         ? 'Open Position'
         : orderSnapshot.state === OrderState.CLOSED
         ? 'Close Position'
         : 'Open Position'
       : 'Trading Type';
+
+  const displayedButtonText = displayedReceiptType;
 
   const displayedButtonImage =
     type === OrderType.DEPOSIT || orderSnapshot.state === OrderState.CLOSED
@@ -44,7 +48,9 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
 
   const displayedReceiptStateColor =
     orderSnapshot.status === OrderStatusUnion.SUCCESS
-      ? 'text-tidebitTheme'
+      ? type === OrderType.CFD
+        ? 'text-lightWhite'
+        : 'text-tidebitTheme'
       : orderSnapshot.status === OrderStatusUnion.PROCESSING
       ? 'text-lightGreen5'
       : orderSnapshot.status === OrderStatusUnion.FAILED
@@ -53,12 +59,48 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
 
   const displayedReceiptState =
     orderSnapshot.status === OrderStatusUnion.SUCCESS
-      ? displayedReceiptTxId
+      ? type === OrderType.CFD
+        ? `${displayedReceiptType} of ETH`
+        : displayedReceiptTxId
       : orderSnapshot.status === OrderStatusUnion.PROCESSING
       ? 'Processing'
       : orderSnapshot.status === OrderStatusUnion.FAILED
       ? 'Failed'
       : '-';
+
+  const detailIcon = (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="19.989"
+      height="19.989"
+      viewBox="0 0 19.989 19.989"
+    >
+      <g id="Group_785" data-name="Group 785" transform="translate(-896 -505)">
+        <path
+          id="Path_76"
+          data-name="Path 76"
+          d="M21.082,24.294H11.088a3.213,3.213,0,0,1-3.213-3.213V11.088a3.213,3.213,0,0,1,3.213-3.213h9.994a3.213,3.213,0,0,1,3.213,3.213v9.994a3.213,3.213,0,0,1-3.213,3.213Z"
+          transform="translate(891.694 500.694)"
+          fill="#f2f2f2"
+        />
+        <path
+          id="Path_77"
+          data-name="Path 77"
+          d="M7.961,4.392H18.485A3.218,3.218,0,0,0,15.457,2.25H5.463A3.213,3.213,0,0,0,2.25,5.463v9.994a3.218,3.218,0,0,0,2.142,3.029V7.961A3.569,3.569,0,0,1,7.961,4.392Z"
+          transform="translate(893.75 502.75)"
+          fill="#f2f2f2"
+        />
+      </g>
+    </svg>
+  );
+
+  /* Todo: (20230316 - Julian) Fix icon */
+  const displayedReceiptStateIcon =
+    orderSnapshot.status === OrderStatusUnion.PROCESSING ? null : type === OrderType.CFD ? (
+      <Image src="/elements/position_tab_icon.svg" alt="position_icon" width={25} height={25} />
+    ) : (
+      detailIcon
+    );
 
   const displayedReceiptFeeText =
     orderSnapshot.fee === 0
@@ -67,13 +109,14 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
           minimumFractionDigits: 2,
         });
 
-  /* ToDo: (20230317 - Julian) if state === 'PROCESSING', avbl loading anim */
-  const displayedReceiptAvailableText = balanceSnapshot.available.toLocaleString(
-    UNIVERSAL_NUMBER_FORMAT_LOCALE,
-    {
-      minimumFractionDigits: 2,
-    }
-  );
+  const displayedReceiptAvailableText =
+    orderSnapshot.status === OrderStatusUnion.PROCESSING ? (
+      <Lottie className="w-20px" animationData={smallConnectingAnimation} />
+    ) : (
+      balanceSnapshot.available.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+        minimumFractionDigits: 2,
+      })
+    );
 
   const displayedReceiptTime = (
     <div className="flex w-60px flex-col items-center justify-center bg-darkGray7 py-4 sm:w-70px">
@@ -82,7 +125,9 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
     </div>
   );
 
-  /* ToDo: (20230316 - Julian) button click handler */
+  /* ToDo: (20230316 - Julian) button click handler
+          txid -> get detail from userCtx -> globalCtx
+   */
   const displayedReceiptButton = (
     <div className="flex items-center sm:w-48">
       <button className={`inline-flex items-center rounded-full px-3 py-1 ${displayedButtonColor}`}>
@@ -99,14 +144,13 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
     </div>
   );
 
-  /* ToDo: (20230317 - Julian) 
-  1. icon
-  2. 串接 modal
-   */
   const displayedReceiptDetail = (
     <div className="hidden flex-auto flex-col sm:flex sm:w-64">
       <span className="text-lightGray">Detail</span>
-      <p className={`${displayedReceiptStateColor}`}>{displayedReceiptState}</p>
+      <div className="inline-flex items-center">
+        <p className={`${displayedReceiptStateColor} mr-2`}>{displayedReceiptState}</p>
+        {displayedReceiptStateIcon}
+      </div>
     </div>
   );
 

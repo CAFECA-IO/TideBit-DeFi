@@ -22,6 +22,46 @@ const ReceiptSection = () => {
     dummyWithdrawalOrder,
     dummyOpenCFDOrder,
     dummyClosedCFDOrder,
+    {
+      timestamp: 1673299651,
+      type: OrderType.CFD,
+      targetAsset: 'ETH',
+      targetAmount: -5,
+      remarks: '',
+      balanceSnapshot: {
+        currency: 'USDT',
+        available: 1999,
+        locked: 1,
+      },
+      orderSnapshot: {
+        id: 'TBDCFD20230320_001',
+        txid: '0x',
+        status: 'FAILED',
+        state: OrderState.OPENING,
+        detail: '',
+        fee: 0,
+      },
+    },
+    {
+      timestamp: 1679999651,
+      type: OrderType.CFD,
+      targetAsset: 'ETH',
+      targetAmount: +30,
+      remarks: '',
+      balanceSnapshot: {
+        currency: 'USDT',
+        available: 1998,
+        locked: 1,
+      },
+      orderSnapshot: {
+        id: 'TBDCFD20230320_002',
+        txid: '0x',
+        status: 'SUCCESS',
+        state: OrderState.CLOSED,
+        detail: '',
+        fee: 0,
+      },
+    },
   ];
 
   const [filteredTradingType, setFilteredTradingType] = useState('');
@@ -45,11 +85,13 @@ const ReceiptSection = () => {
     }
   }, [filteredTradingType]);
 
-  const dataMonthList = filteredReceipts.map(history => {
-    return timestampToString(history.timestamp).monthAndYear;
-  });
+  const dataMonthList = filteredReceipts
+    .sort((a, b) => b.timestamp - a.timestamp) /* Info: (20230322 - Julian) sort by desc */
+    .map(history => {
+      return timestampToString(history.timestamp).monthAndYear;
+    });
 
-  const monthList = dataMonthList.sort().reduce((prev: string[], curr) => {
+  const monthList = dataMonthList.reduce((prev: string[], curr) => {
     if (!prev.includes(curr)) {
       prev.push(curr);
     }
@@ -59,7 +101,7 @@ const ReceiptSection = () => {
 
   const listCluster = monthList.map(v => {
     return (
-      <div>
+      <div key={v}>
         <ReceiptList monthData={v} filteredReceipts={filteredReceipts} />
       </div>
     );

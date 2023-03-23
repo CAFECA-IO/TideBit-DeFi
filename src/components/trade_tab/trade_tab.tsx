@@ -286,8 +286,8 @@ const TradeTab = () => {
         takeProfit: longTpToggle ? longTpValue : undefined,
         stopLoss: longSlToggle ? longSlValue : undefined,
       },
-      renewalDeadline:
-        Math.ceil(new Date().getTime() / 1000) + POSITION_PRICE_RENEWAL_INTERVAL_SECONDS,
+      // renewalDeadline:
+      //   Math.ceil(new Date().getTime() / 1000) + POSITION_PRICE_RENEWAL_INTERVAL_SECONDS,
     });
     globalCtx.visiblePositionOpenModalHandler();
     // globalCtx.visibleWalletPanelHandler();
@@ -352,8 +352,8 @@ const TradeTab = () => {
         takeProfit: shortTpToggle ? shortTpValue : undefined,
         stopLoss: shortSlToggle ? shortSlValue : undefined,
       },
-      renewalDeadline:
-        Math.ceil(new Date().getTime() / 1000) + POSITION_PRICE_RENEWAL_INTERVAL_SECONDS,
+      // renewalDeadline:
+      //   Math.ceil(new Date().getTime() / 1000) + POSITION_PRICE_RENEWAL_INTERVAL_SECONDS,
     });
     globalCtx.visiblePositionOpenModalHandler();
     // globalCtx.visibleWalletPanelHandler();

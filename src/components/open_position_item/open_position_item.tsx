@@ -88,7 +88,7 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
 
   const squareClickHandler = () => {
     visiblePositionClosedModalHandler();
-    dataPositionClosedModalHandler(toDisplayCloseOrder(openCfdDetails));
+    dataPositionClosedModalHandler(openCfdDetails);
   };
 
   const displayedString =

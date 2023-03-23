@@ -486,7 +486,7 @@ const UpdateFormModal = ({
   const squareClickHandler = () => {
     globalCtx.visibleUpdateFormModalHandler();
 
-    globalCtx.dataPositionClosedModalHandler(toDisplayCloseOrder(openCfdDetails));
+    globalCtx.dataPositionClosedModalHandler(openCfdDetails);
     globalCtx.visiblePositionClosedModalHandler();
   };
 

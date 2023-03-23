@@ -341,16 +341,7 @@ export default function CandlestickChart({
                 events={{
                   onClick: e => {
                     // Till: (20230329 - Shirley)  // console.log(e.clientX, e.clientY);
-                    globalCtx.dataPositionClosedModalHandler({
-                      openCfdDetails: cfd,
-                      latestProps: {
-                        renewalDeadline: getNowSeconds() + POSITION_PRICE_RENEWAL_INTERVAL_SECONDS,
-                        latestClosedPrice:
-                          cfd.typeOfPosition === TypeOfPosition.BUY
-                            ? marketCtx.tickerLiveStatistics?.sellEstimatedFilledPrice ?? 0
-                            : marketCtx.tickerLiveStatistics?.buyEstimatedFilledPrice ?? 9999999,
-                      },
-                    });
+                    globalCtx.dataPositionClosedModalHandler(cfd);
                     globalCtx.visiblePositionClosedModalHandler();
                   },
                 }}

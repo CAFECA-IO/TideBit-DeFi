@@ -80,7 +80,7 @@ const TradingHeader = () => {
           </div>
           <div className="text-lg">{`${
             marketCtx.selectedTicker?.upOrDown === Trend.UP ? '▴' : '▾'
-          } $${marketCtx.selectedTicker?.priceChange} (${
+          } ₮ ${marketCtx.selectedTicker?.priceChange} (${
             marketCtx.selectedTicker?.upOrDown === Trend.UP ? '+' : '-'
           }${marketCtx.selectedTicker?.fluctuating}%)`}</div>
         </div>

@@ -698,7 +698,7 @@ const TradeTabMobile = () => {
           >
             <b>{t('TRADE_PAGE.TRADE_TAB_LONG_BUTTON')}</b> <br />
             <p className="text-xs">
-              {t('TRADE_PAGE.TRADE_TAB_LONG_BUTTON_SUBTITLE')} $ {buyPrice}
+              {t('TRADE_PAGE.TRADE_TAB_LONG_BUTTON_SUBTITLE')} ₮ {buyPrice}
             </p>
           </RippleButton>
         </div>
@@ -714,7 +714,7 @@ const TradeTabMobile = () => {
           >
             <b>{t('TRADE_PAGE.TRADE_TAB_SHORT_BUTTON')}</b> <br />
             <p className="text-xs">
-              {t('TRADE_PAGE.TRADE_TAB_SHORT_BUTTON_SUBTITLE')} $ {sellPrice}
+              {t('TRADE_PAGE.TRADE_TAB_SHORT_BUTTON_SUBTITLE')} ₮ {sellPrice}
             </p>
           </RippleButton>
         </div>

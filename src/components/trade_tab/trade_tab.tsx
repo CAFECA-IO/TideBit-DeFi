@@ -386,7 +386,7 @@ const TradeTab = () => {
     <>
       {/* <div className="mt-1 text-base text-lightWhite">$ 13.14 USDT</div> */}
       <div className={`${isDisplayedMarginStyle} ${isDisplayedMarginSize} mt-1 text-base`}>
-        $ {requiredMarginRef.current?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)} USDT
+        {requiredMarginRef.current?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)} USDT
       </div>
       <div className={`${isDisplayedMarginWarning} ml-3 text-xs text-lightRed`}>
         * {t('TRADE_PAGE.TRADE_TAB_NOT_ENOUGH_MARGIN')}
@@ -690,7 +690,7 @@ const TradeTab = () => {
                   <div className="w-1/2 space-y-1">
                     <div className="text-sm text-lightGray">{t('TRADE_PAGE.TRADE_TAB_VALUE')}</div>
                     <div className={`text-base text-lightWhite ${isDisplayedValueSize}`}>
-                      $ {valueOfPositionRef.current?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}{' '}
+                      {valueOfPositionRef.current?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}{' '}
                       USDT
                     </div>
                   </div>
@@ -736,7 +736,7 @@ const TradeTab = () => {
                     className="mr-2 mb-2 rounded-md bg-lightGreen5 px-7 py-1 text-sm font-medium tracking-wide text-white transition-colors duration-300 hover:bg-lightGreen5/80 disabled:bg-lightGray"
                   >
                     <b>{t('TRADE_PAGE.TRADE_TAB_LONG_BUTTON')}</b> <br />
-                    {t('TRADE_PAGE.TRADE_TAB_LONG_BUTTON_SUBTITLE')} $ {buyPrice}
+                    {t('TRADE_PAGE.TRADE_TAB_LONG_BUTTON_SUBTITLE')} ₮ {buyPrice}
                   </RippleButton>
                 </div>
               </div>
@@ -765,7 +765,7 @@ const TradeTab = () => {
                   <div className="w-1/2 space-y-1">
                     <div className="text-sm text-lightGray">{t('TRADE_PAGE.TRADE_TAB_VALUE')}</div>
                     <div className={`text-base text-lightWhite ${isDisplayedValueSize}`}>
-                      $ {valueOfPositionRef.current?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}{' '}
+                      {valueOfPositionRef.current?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}{' '}
                       USDT
                     </div>
                   </div>
@@ -812,7 +812,7 @@ const TradeTab = () => {
                     className="mr-2 mb-2 rounded-md bg-lightRed px-7 py-1 text-sm font-medium tracking-wide text-white transition-colors duration-300 hover:bg-lightRed/80 disabled:bg-lightGray"
                   >
                     <b>{t('TRADE_PAGE.TRADE_TAB_SHORT_BUTTON')}</b> <br />
-                    {t('TRADE_PAGE.TRADE_TAB_SHORT_BUTTON_SUBTITLE')} $ {sellPrice}
+                    {t('TRADE_PAGE.TRADE_TAB_SHORT_BUTTON_SUBTITLE')} ₮ {sellPrice}
                   </RippleButton>
                 </div>
               </div>

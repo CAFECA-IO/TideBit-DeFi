@@ -330,7 +330,7 @@ const CryptoCard = ({
               <span
                 className={`flex items-center justify-between text-sm ${priceColor} mt-3 align-middle`}
               >
-                <p className="mx-1 text-left text-xl font-normal tracking-wide">$ {price}</p>
+                <p className="mx-1 text-left text-xl font-normal tracking-wide">₮ {price}</p>
                 <div className="absolute right-4 flex">
                   <span className="text-sm"> {fluctuatingRate}</span>
                 </div>
@@ -383,7 +383,7 @@ const CryptoCard = ({
                 className={`flex items-center justify-between text-xs ${priceColor} mt-3 align-middle`}
               >
                 <p className="ml-0 mb-1 text-left text-xs font-normal tracking-wide">
-                  $ {price.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}
+                  ₮ {price.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}
                 </p>
                 <div className="absolute bottom-5px right-4 flex">
                   <span className="text-xxs"> {fluctuatingRate}</span>

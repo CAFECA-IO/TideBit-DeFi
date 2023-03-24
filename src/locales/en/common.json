@@ -56,7 +56,7 @@
     "TRADE_TAB_SL_SETTING": "Close at loss",
     "TRADE_TAB_GUARANTEED_STOP": "Guaranteed Stop",
     "TRADE_TAB_GUARANTEED_STOP_HINT": "Guaranteed stop will force the position to close at your chosen rate (price) even if the market price surpasses it.",
-    "TRADE_TAB_FEE": "Fee:",
+    "TRADE_TAB_FEE": "Fee",
     "TRADE_TAB_LEVERAGE": "Leverage",
     "TRADE_TAB_REQUIRED_MARGIN": "Required Margin",
     "TRADE_TAB_VALUE": "Value",
@@ -110,7 +110,7 @@
     "TP_AND_SL": "TP/ SL",
     "TP_SETTING": "Close at profit",
     "SL_SETTING": "Close at loss",
-    "EXPECTED_PROFIT": "Expected profit:",
+    "EXPECTED_PROFIT": "Expected profit",
     "EXPECTED_LOSS": "Expected loss:",
     "GUARANTEED_STOP": "Guaranteed Stop",
     "GUARANTEED_STOP_HINT": "Guaranteed stop will force the position to close at your chosen rate (price) even if the market price surpasses it.",
@@ -130,7 +130,7 @@
     "CLOSED_REASON_BY_USER": "Manual",
     "CLOSED_REASON_TAKE_PROFIT": "Take Profit",
     "CLOSED_REASON_STOP_LOSS": "Stop Loss",
-    "SHARE": "Share:"
+    "SHARE": "Share"
   },
   "MY_ASSETS_PAGE": {
     "BALANCE_SECTION_DEPOSIT": "Deposit",

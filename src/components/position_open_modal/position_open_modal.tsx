@@ -415,7 +415,7 @@ const PositionOpenModal = ({
               {/* ToDo: Liquidation Price */}
 
               <div className="">
-                $ 9.23
+                9.23
                 {/* ToDo: Hardcode USDT */}
                 <span className="ml-1 text-lightGray">USDT</span>
               </div>

@@ -228,7 +228,7 @@ const HistoryPositionModal = ({
       <div
         className={`mx-7 mt-2 flex items-center justify-end pb-3 text-base leading-relaxed text-lightGray`}
       >
-        <div className="text-sm">{t('POSITION_MODAL.SHARE')}</div>
+        <div className="text-sm">{t('POSITION_MODAL.SHARE')}:</div>
         <div className="flex items-center justify-between">
           <div className={`${socialMediaStyle}`}>
             <Image src="/elements/group_15237.svg" width={44} height={44} alt="Facebook" />

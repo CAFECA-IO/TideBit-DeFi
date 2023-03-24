@@ -24,7 +24,7 @@ import {BsClockHistory} from 'react-icons/bs';
 import {useGlobal} from '../../contexts/global_context';
 import {TypeOfPosition} from '../../constants/type_of_position';
 import {UserContext} from '../../contexts/user_context';
-import {POSITION_PRICE_RENEWAL_INTERVAL_SECONDS} from '../../constants/config';
+import {POSITION_PRICE_RENEWAL_INTERVAL_SECONDS, unitAsset} from '../../constants/config';
 import {
   getDummyApplyCreateCFDOrderData,
   IApplyCreateCFDOrderData,
@@ -80,53 +80,15 @@ const PositionOpenModal = ({
 
   const layoutInsideBorder = 'mx-5 my-2 flex justify-between';
 
+  const displayedExpirationTime = timestampToString(openCfdRequest.liquidationTime);
+
   const toApplyCreateOrder = (
     openCfdRequest: IApplyCreateCFDOrderData
   ): IApplyCreateCFDOrderData => {
     const order: IApplyCreateCFDOrderData = {
       ...openCfdRequest,
-      // quotation: {
-      //   ...openCfdRequest.quotation,
-      //   // TODO: (20230315 - Shirley) get data from Ctx
-      //   price: randomIntFromInterval(50, 40000),
-      //   deadline: getDeadline(POSITION_PRICE_RENEWAL_INTERVAL_SECONDS),
-      //   signature: '0x',
-      // },
-      // price:
-      //   // TODO: (20230315 - Shirley) get data from Ctx
-      //   openCfdRequest.typeOfPosition === TypeOfPosition.BUY
-      //     ? randomIntFromInterval(
-      //         marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice * 0.75,
-      //         marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice * 1.25
-      //       )
-      //     : openCfdRequest.typeOfPosition === TypeOfPosition.SELL
-      //     ? randomIntFromInterval(
-      //         marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice * 1.1,
-      //         marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice * 1.25
-      //       )
-      //     : 999999,
-      // // TODO: (20230315 - Shirley) calculate liquidationPrice
-      // liquidationPrice: randomIntFromInterval(1000, 10000),
       createTimestamp: getTimestamp(),
-      liquidationTime: getTimestamp() + 86400, // openTimestamp + 86400
-      // // TODO: (20230315 - Shirley) calculate margin
-      // margin: {
-      //   ...openCfdRequest.margin,
-      //   amount: randomIntFromInterval(
-      //     openCfdRequest.margin.amount * 0.9,
-      //     openCfdRequest.margin.amount * 1.5
-      //   ),
-      // },
-      // TODO: (20230315 - Shirley) get data from Ctx
-      // margin:
-      // openCfdRequest.typeOfPosition === TypeOfPosition.BUY
-      //   ? (openCfdRequest.amount * marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice) /
-      //     openCfdRequest.leverage
-      //   : (openCfdRequest.amount * marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice) /
-      //     openCfdRequest.leverage,
-      /**
-       *           amount: openCfdRequest.amount * (openCfdRequest.typeOfPosition === TypeOfPosition.BUY ? marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice ? marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice) / openCfdRequest.leverage,
-       */
+      liquidationTime: getTimestamp() + 86400,
     };
 
     return order;
@@ -151,14 +113,10 @@ const PositionOpenModal = ({
     });
     globalCtx.visibleLoadingModalHandler();
 
-    // FIXME: Use the real and correct data after the param is confirmed
-    // const dummyCFDOrder: IApplyCreateCFDOrderData = getDummyApplyCreateCFDOrderData(
-    //   marketCtx.selectedTicker?.currency || 'ETH'
-    // );
+    const applyCreateOrder: IApplyCreateCFDOrderData = toApplyCreateOrder(openCfdRequest);
+    const result = await userCtx.createCFDOrder(applyCreateOrder);
     // eslint-disable-next-line no-console
-    // console.log(`position_open_modal dummyCFDOrder`, dummyCFDOrder);
-    const result = await userCtx.createCFDOrder(toApplyCreateOrder(openCfdRequest));
-    // console.log('result from userCtx in position_closed_modal.tsx: ', result);
+    console.log('open result', result);
 
     // ToDo: temporary waiting
     await wait(DELAYED_HIDDEN_SECONDS);
@@ -172,7 +130,6 @@ const PositionOpenModal = ({
     // ToDo: temporary waiting
     await wait(DELAYED_HIDDEN_SECONDS);
 
-    // Close loading modal
     globalCtx.eliminateAllModals();
 
     // ToDo: Revise the `result.reason` to constant by using enum or object
@@ -185,14 +142,7 @@ const PositionOpenModal = ({
         btnUrl: '#',
       });
 
-      // globalCtx.dataHistoryPositionModalHandler(userCtx.getClosedCFD(openCfdDetails.id));
-
       globalCtx.visibleSuccessfulModalHandler();
-      // await wait(DELAYED_HIDDEN_SECONDS);
-
-      // globalCtx.eliminateAllModals();
-
-      // globalCtx.visibleHistoryPositionModalHandler();
     } else if (result.reason === 'CANCELED') {
       globalCtx.dataCanceledModalHandler({
         modalTitle: 'Open Position',
@@ -235,8 +185,7 @@ const PositionOpenModal = ({
         : 999999;
     const newMargin = randomIntFromInterval(100, 500);
 
-    // ToDo: get latest price from marketCtx and calculate required margin data
-    // FIXME: 應用 ?? 代替 !
+    // TODO: (20230324 - Shirley) renew price, liquidation time, liquidation price
     globalCtx.dataPositionOpenModalHandler({
       openCfdRequest: {
         ...openCfdRequest,
@@ -251,15 +200,7 @@ const PositionOpenModal = ({
           ...openCfdRequest.margin,
           amount: newMargin,
         },
-        // ToDo:
-        // margin:
-        //   openCfdRequest.typeOfPosition === TypeOfPosition.BUY
-        //     ? (openCfdRequest.amount * marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice) /
-        //       openCfdRequest.leverage
-        //     : (openCfdRequest.amount * marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice) /
-        //       openCfdRequest.leverage,
       },
-      // renewalDeadline: deadline,
     });
 
     setDataRenewedStyle('text-lightYellow2');
@@ -296,16 +237,6 @@ const PositionOpenModal = ({
       // unlock();
     };
   }, [secondsLeft, globalCtx.visiblePositionOpenModal]);
-
-  // useEffect(() => {
-  //   if (globalCtx.visiblePositionOpenModal) {
-  //     setSecondsLeft(15);
-  //   }
-
-  //   // return () => {
-  //   //   second;
-  //   // };
-  // }, [globalCtx.visiblePositionOpenModal]);
 
   const formContent = (
     <div className="mt-8 flex flex-col px-6 pb-2">
@@ -407,27 +338,21 @@ const PositionOpenModal = ({
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">{t('POSITION_MODAL.EXPIRATION_TIME')}</div>
               <div className="">
-                {/* ToDo: Expiration Time */}
-                2023-03-09 15:20:13
-                {/* {displayedExpirationTime.date} {displayedExpirationTime.time} */}
+                {displayedExpirationTime.date} {displayedExpirationTime.time}
               </div>
             </div>
-
-            {/* <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">Open Time</div>
-              <div className="">
-                {displayedTime.date} {displayedTime.time}
-              </div>
-            </div> */}
 
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">{t('POSITION_MODAL.LIQUIDATION_PRICE')}</div>
               {/* ToDo: Liquidation Price */}
 
               <div className="">
-                $ 9.23
+                ${' '}
+                {openCfdRequest.liquidationPrice?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+                  minimumFractionDigits: 2,
+                })}
                 {/* ToDo: Hardcode USDT */}
-                <span className="ml-1 text-lightGray">USDT</span>
+                <span className="ml-1 text-lightGray">{unitAsset}</span>
               </div>
             </div>
           </div>

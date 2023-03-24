@@ -218,7 +218,6 @@ const TradeTab = () => {
   };
 
   const getToggledShortSlSetting = (bool: boolean) => {
-    // console.log('getToggledShortSlSetting', bool);
     setShortSlToggle(bool);
 
     setExpectedShortLossValue((shortSlValue - Number(sellPrice)) * targetInputValueRef.current);
@@ -239,42 +238,31 @@ const TradeTab = () => {
   const isDisplayedDividerSpacing =
     valueOfPositionLength > 10 || targetLength > 10 ? 'top-430px' : 'top-420px';
 
-  // TODO: Should haven't been undefined
-  // TODO: 15秒後，在 PositionOpenModal 更新
-  // TODO: 保證金不足就不能下委託單；按鈕反灰
   const longOrderSubmitHandler = () => {
-    // if (marginWarning) return;
-
     globalCtx.dataPositionOpenModalHandler({
       openCfdRequest: {
         ticker: marketCtx.selectedTicker?.currency ?? '',
         targetAsset: marketCtx.selectedTicker?.currency ?? '',
         unitAsset: unitAsset,
-        price: Number(buyPrice) ?? 9999999999,
+        price: Number(buyPrice) ?? 9999999999, // TODO: Renew as quotation (20230324 - Shirley)
         amount: targetInputValueRef.current,
         typeOfPosition: TypeOfPosition.BUY,
         leverage: marketCtx.tickerStatic?.leverage ?? 1,
         margin: {
           asset: marketCtx.selectedTicker?.currency ?? '',
-          amount: requiredMarginRef.current,
+          amount: requiredMarginRef.current, // TODO: Renew as quotation (20230324 - Shirley)
         },
         quotation: getDummyQuotation(marketCtx.selectedTicker?.currency ?? '', TypeOfPosition.BUY),
-        liquidationPrice: 1000,
-        liquidationTime: Math.ceil(Date.now() / 1000) + 86400, // openTimestamp + 86400
-        // price: marketCtx.tickerLiveStatistics?.buyEstimatedFilledPrice ?? 9999999999,
-        // price: marketCtx.selectedTicker?.price ?? 9999999999,
-        // triggerPrice: marketCtx.selectedTicker?.price ?? 9999999999,
-        // estimatedFilledPrice: marketCtx.selectedTicker?.price ?? 9999999999,
+        liquidationPrice: 1000, // TODO: Renew as quotation (20230324 - Shirley)
+        liquidationTime: Math.ceil(Date.now() / 1000) + 86400,
         fee: marketCtx.tickerLiveStatistics?.fee ?? 9999999999,
         guaranteedStop: longSlToggle ? longGuaranteedStopChecked : false,
+        guaranteedStopFee: longSlToggle && longGuaranteedStopChecked ? 2023 : 0, // TODO: Renew as quotation (20230324 - Shirley)
         takeProfit: longTpToggle ? longTpValue : undefined,
         stopLoss: longSlToggle ? longSlValue : undefined,
       },
-      // renewalDeadline:
-      //   Math.ceil(new Date().getTime() / 1000) + POSITION_PRICE_RENEWAL_INTERVAL_SECONDS,
     });
     globalCtx.visiblePositionOpenModalHandler();
-    // globalCtx.visibleWalletPanelHandler();
     return;
   };
 
@@ -284,6 +272,7 @@ const TradeTab = () => {
   const shortToolMouseEnterHandler = () => setShortTooltipStatus(3);
   const shortToolMouseLeaveHandler = () => setShortTooltipStatus(0);
 
+  /* Till: (20230409 - Shirley)
   // FIXME: it won't renew when user check guaranteed-stop
   // useEffect(() => {
   //   globalCtx.dataPositionOpenModalHandler({
@@ -309,6 +298,7 @@ const TradeTab = () => {
   //     chargeUnit: 'USDT',
   //   });
   // }, [marginInputValue, marketCtx.selectedTicker]);
+  */
 
   const shortOrderSubmitHandler = () => {
     globalCtx.dataPositionOpenModalHandler({
@@ -319,28 +309,22 @@ const TradeTab = () => {
         typeOfPosition: TypeOfPosition.SELL,
         margin: {
           asset: marketCtx.selectedTicker?.currency ?? '',
-          amount: requiredMarginRef.current,
+          amount: requiredMarginRef.current, // TODO: Renew as quotation (20230324 - Shirley)
         },
         quotation: getDummyQuotation(marketCtx.selectedTicker?.currency ?? '', TypeOfPosition.SELL),
-        price: Number(sellPrice) ?? 9999999999,
+        price: Number(sellPrice) ?? 9999999999, // TODO: Renew as quotation (20230324 - Shirley)
         amount: targetInputValueRef.current,
-        liquidationPrice: 1000,
-        liquidationTime: Math.ceil(Date.now() / 1000) + 86400, // openTimestamp + 86400
-        // price: marketCtx.tickerLiveStatistics?.buyEstimatedFilledPrice ?? 9999999999,
-        // price: marketCtx.selectedTicker?.price ?? 9999999999,
-        // triggerPrice: marketCtx.selectedTicker?.price ?? 9999999999,
-        // estimatedFilledPrice: marketCtx.selectedTicker?.price ?? 9999999999,
+        liquidationPrice: 1000, // TODO: Renew as quotation (20230324 - Shirley)
+        liquidationTime: Math.ceil(Date.now() / 1000) + 86400,
         fee: marketCtx.tickerLiveStatistics?.fee ?? 9999999999,
         leverage: marketCtx.tickerStatic?.leverage ?? 1,
         guaranteedStop: shortSlToggle ? shortGuaranteedStopChecked : false,
+        guaranteedStopFee: shortSlToggle && shortGuaranteedStopChecked ? 2023 : 0, // TODO: Renew as quotation (20230324 - Shirley)
         takeProfit: shortTpToggle ? shortTpValue : undefined,
         stopLoss: shortSlToggle ? shortSlValue : undefined,
       },
-      // renewalDeadline:
-      //   Math.ceil(new Date().getTime() / 1000) + POSITION_PRICE_RENEWAL_INTERVAL_SECONDS,
     });
     globalCtx.visiblePositionOpenModalHandler();
-    // globalCtx.visibleWalletPanelHandler();
     return;
   };
 
@@ -372,8 +356,6 @@ const TradeTab = () => {
       </div>
     </>
   );
-
-  // const displayedValueofPosition =
 
   // ----------long area----------
   const longGuaranteedStopChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {

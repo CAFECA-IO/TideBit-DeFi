@@ -18,7 +18,7 @@ import {
 } from '../../lib/common';
 import {useContext, useEffect, useState} from 'react';
 import {MarketContext} from '../../contexts/market_context';
-import {POSITION_PRICE_RENEWAL_INTERVAL_SECONDS} from '../../constants/config';
+import {POSITION_PRICE_RENEWAL_INTERVAL_SECONDS, unitAsset} from '../../constants/config';
 import {TypeOfPosition} from '../../constants/type_of_position';
 import {IClosedCFDInfoProps, useGlobal} from '../../contexts/global_context';
 import {BsClockHistory} from 'react-icons/bs';
@@ -87,8 +87,6 @@ const PositionClosedModal = ({
   };
 
   const [gQuotation, setGQuotation, gQuotationRef] = useStateRef<IQuotation>(quotation);
-
-  // const [cfd, setCfd, cfdRef] = useStateRef<IDisplayAcceptedCFDOrder>(cfdDetails);
 
   const [secondsLeft, setSecondsLeft] = useState(POSITION_PRICE_RENEWAL_INTERVAL_SECONDS);
 
@@ -242,7 +240,8 @@ const PositionClosedModal = ({
       );
 
       const result = await userCtx.closeCFDOrder(applyCloseOrder);
-      // console.log('result from userCtx in position_closed_modal.tsx: ', result);
+      // eslint-disable-next-line no-console
+      console.log('close result', result);
 
       // TODO: temporary waiting
       await wait(DELAYED_HIDDEN_SECONDS);
@@ -271,6 +270,7 @@ const PositionClosedModal = ({
 
         const cfd = userCtx.getCFD(openCfdDetails.id);
 
+        // TODO: get the closed cfd and calculate the PNL and sth (20230324 - Shirley)
         // const closedCFD: IAcceptedCFDOrder = userCtx.getClosedCFD(openCfdDetails.id);
         // const historyData = toHistoryModal(closedCFD);
 
@@ -345,18 +345,6 @@ const PositionClosedModal = ({
     setPnlRenewedStyle('');
   };
 
-  // function countdown(deadlineMs: number, callback: () => void) {
-  //   const interval = setInterval(() => {
-  //     const nowMs = Date.now();
-  //     const remaining = deadlineMs - nowMs;
-  //     console.log('remaining seconds: ', remaining / 1000);
-  //     if (remaining <= 0) {
-  //       clearInterval(interval);
-  //       callback();
-  //     }
-  //   }, 1000);
-  // }
-
   useEffect(() => {
     // TODO: (20230317 - Shirley) from marketCtx
     const quotation: IQuotation = {
@@ -369,13 +357,10 @@ const PositionClosedModal = ({
       signature: '0x',
     };
 
+    // TODO: (20230317 - Shirley) PnL, close price
     const displayedCloseOrder = toDisplayCloseOrder(openCfdDetails, quotation);
-
     globalCtx.dataPositionClosedModalHandler(displayedCloseOrder);
 
-    // TODO: (20230317 - Shirley) PnL, close price
-    // setDeadline(quotation.deadline);
-    // setCfd(toDisplayCloseOrder(cfdRef.current, quotation));
     setGQuotation(quotation);
   }, [globalCtx.visiblePositionClosedModal]);
 
@@ -390,43 +375,6 @@ const PositionClosedModal = ({
 
       return;
     }
-
-    // // 原本有用的 code 在改成用 deadline - now 的方式之後就被直接在 useEffect 裡的 setInterval 寫 if (secondsLeft === 0) 就 renewData，並且在 renewData 裡面重新設定 secondsLeft 取代了
-    // // 但還能讓 countdown 的數字跑到 1 就更新，不會跑到 0
-    // if (Math.floor(secondsLeft) === 0) {
-    //   renewDataStyleHandler();
-    //   // console.log('should renew the deadline: ', latestProps.renewalDeadline);
-    // }
-
-    // async () => {
-    //   if (secondsLeft === 0) {
-    //     await wait(500);
-    //     setSecondsLeft(15);
-    //   }
-    // };
-
-    // console.log('before setInterval'); // 每跳一秒就重設 interval
-    // const now = new Date().getTime();
-    // TODO: --------timestamp in milliseconds-----------
-    // const now = Date.now();
-    // // const deadline = now + secondsLeft * 1000;
-    // const deadline = now + SECONDS_INTERVAL_UNTIL_RENEWAL * 1000;
-
-    // const options = {hour12: false};
-
-    // const nowString = new Date(now).toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, options);
-    // const deadlineString = new Date(deadline).toLocaleString(
-    //   UNIVERSAL_NUMBER_FORMAT_LOCALE,
-    //   options
-    // );
-
-    // console.log('NOW: ', now, nowString);
-    // console.log('DEADLINE: ', deadline, deadlineString);
-
-    // const deadline = Date.now() + SECONDS_INTERVAL_UNTIL_RENEWAL * 1000;
-    // countdown(deadline, () => {
-    //   console.log('countdown finished');
-    // });
 
     const intervalId = setInterval(() => {
       const base = gQuotationRef.current.deadline;
@@ -447,8 +395,6 @@ const PositionClosedModal = ({
           signature: '0x',
         };
 
-        // setCfd(toDisplayCloseOrder(cfdRef.current, quotation));
-
         setGQuotation(quotation);
         renewDataStyleHandler(quotation);
       }
@@ -456,17 +402,8 @@ const PositionClosedModal = ({
 
     return () => {
       clearInterval(intervalId);
-      // unlock();
     };
-    // const remainingTime = latestProps.renewalDeadline - Date.now() / 1000;
-    // const {seconds: remainingTime} = useCountdown(latestProps.renewalDeadline);
-
-    // setSecondsLeft(remainingTime);
-  }, [
-    secondsLeft,
-    globalCtx.visiblePositionClosedModal,
-    // globalCtx.dataPositionClosedModal?.latestProps.renewalDeadline,
-  ]);
+  }, [secondsLeft, globalCtx.visiblePositionClosedModal]);
 
   const formContent = (
     <div className="mt-8 flex flex-col px-6 pb-2">
@@ -505,19 +442,19 @@ const PositionClosedModal = ({
               <div className="text-lightGray">{t('POSITION_MODAL.OPEN_PRICE')}</div>
               <div className="">
                 {/* TODO: Hardcode USDT */}
-                {openCfdDetails?.openPrice?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+                {openCfdDetails.openPrice.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
                   minimumFractionDigits: 2,
-                }) ?? 0}{' '}
-                <span className="ml-1 text-lightGray">USDT</span>
+                })}{' '}
+                <span className="ml-1 text-lightGray">{unitAsset}</span>
               </div>
             </div>
 
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">{t('POSITION_MODAL.AMOUNT')}</div>
               <div className="">
-                {openCfdDetails?.amount?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+                {openCfdDetails.amount.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
                   minimumFractionDigits: 2,
-                }) ?? 0}{' '}
+                })}{' '}
                 <span className="ml-1 text-lightGray">{openCfdDetails.ticker}</span>
               </div>
             </div>
@@ -530,14 +467,9 @@ const PositionClosedModal = ({
                 {gQuotationRef.current.price?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
                   minimumFractionDigits: 2,
                 }) ?? 0}{' '}
-                <span className="ml-1 text-lightGray">USDT</span>
+                <span className="ml-1 text-lightGray">{unitAsset}</span>
               </div>
             </div>
-
-            {/* <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">Required Margin</div>
-              <div className="">$ {((openCfdDetails?.openPrice * 1.8) / 5).toFixed(2)} USDT</div>
-            </div> */}
 
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">{t('POSITION_MODAL.PNL')}</div>
@@ -560,11 +492,6 @@ const PositionClosedModal = ({
               <div className="text-lightGray">{t('POSITION_MODAL.GUARANTEED_STOP')}</div>
               <div className={``}>{displayedGuaranteedStopSetting}</div>
             </div>
-
-            {/* <div className={`${tableLayout}`}>
-              <div className="text-lightGray">Liquidation Price</div>
-              <div className="">$ 9.23</div>
-            </div> */}
           </div>
         </div>
 

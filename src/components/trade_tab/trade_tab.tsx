@@ -35,7 +35,7 @@ const TradeTab = () => {
     return () => {
       eventEmitter.removeAllListeners(ClickEvent.TICKER_CHANGED);
     };
-  }, [marketCtx.selectedTickerRef.current]);
+  }, [marketCtx.selectedTicker]);
 
   //   // TODO: 第二個參數可以是現在被選擇的交易對；payload 是發生的事情的補充資料
   //   /**

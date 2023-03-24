@@ -39,7 +39,7 @@ const TradeTabMobile = () => {
     return () => {
       eventEmitter.removeAllListeners(ClickEvent.TICKER_CHANGED);
     };
-  }, [marketCtx.selectedTickerRef.current]);
+  }, [marketCtx.selectedTicker]);
 
   const tickerLiveStatistics = marketCtx.tickerLiveStatistics;
   const tickerStaticStatistics = marketCtx.tickerStatic;

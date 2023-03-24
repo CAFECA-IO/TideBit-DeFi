@@ -57,6 +57,81 @@ const PositionOpenModal = ({
 
   const [lock, unlock] = locker('position_open_modal.UseEffect');
 
+  const displayedGuaranteedStopSetting = !!openCfdRequest.guaranteedStop ? 'Yes' : 'No';
+
+  const displayedTypeOfPosition =
+    openCfdRequest.typeOfPosition === TypeOfPosition.BUY
+      ? t('POSITION_MODAL.TYPE_UP')
+      : t('POSITION_MODAL.TYPE_DOWN');
+
+  const displayedBuyOrSell =
+    openCfdRequest.typeOfPosition === TypeOfPosition.BUY
+      ? t('POSITION_MODAL.TYPE_BUY')
+      : t('POSITION_MODAL.TYPE_SELL');
+
+  const [guaranteedTooltipStatus, setGuaranteedTooltipStatus] = useState(0);
+
+  const displayedPositionColor = 'text-tidebitTheme';
+
+  const displayedBorderColor = TypeOfBorderColor.NORMAL;
+
+  const displayedTakeProfit = openCfdRequest.takeProfit ? `$ ${openCfdRequest.takeProfit}` : '-';
+  const displayedStopLoss = openCfdRequest.stopLoss ? `$ ${openCfdRequest.stopLoss}` : '-';
+
+  const layoutInsideBorder = 'mx-5 my-2 flex justify-between';
+
+  const toApplyCreateOrder = (
+    openCfdRequest: IApplyCreateCFDOrderData
+  ): IApplyCreateCFDOrderData => {
+    const order: IApplyCreateCFDOrderData = {
+      ...openCfdRequest,
+      // quotation: {
+      //   ...openCfdRequest.quotation,
+      //   // TODO: (20230315 - Shirley) get data from Ctx
+      //   price: randomIntFromInterval(50, 40000),
+      //   deadline: getDeadline(POSITION_PRICE_RENEWAL_INTERVAL_SECONDS),
+      //   signature: '0x',
+      // },
+      // price:
+      //   // TODO: (20230315 - Shirley) get data from Ctx
+      //   openCfdRequest.typeOfPosition === TypeOfPosition.BUY
+      //     ? randomIntFromInterval(
+      //         marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice * 0.75,
+      //         marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice * 1.25
+      //       )
+      //     : openCfdRequest.typeOfPosition === TypeOfPosition.SELL
+      //     ? randomIntFromInterval(
+      //         marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice * 1.1,
+      //         marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice * 1.25
+      //       )
+      //     : 999999,
+      // // TODO: (20230315 - Shirley) calculate liquidationPrice
+      // liquidationPrice: randomIntFromInterval(1000, 10000),
+      createTimestamp: getTimestamp(),
+      liquidationTime: getTimestamp() + 86400, // openTimestamp + 86400
+      // // TODO: (20230315 - Shirley) calculate margin
+      // margin: {
+      //   ...openCfdRequest.margin,
+      //   amount: randomIntFromInterval(
+      //     openCfdRequest.margin.amount * 0.9,
+      //     openCfdRequest.margin.amount * 1.5
+      //   ),
+      // },
+      // TODO: (20230315 - Shirley) get data from Ctx
+      // margin:
+      // openCfdRequest.typeOfPosition === TypeOfPosition.BUY
+      //   ? (openCfdRequest.amount * marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice) /
+      //     openCfdRequest.leverage
+      //   : (openCfdRequest.amount * marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice) /
+      //     openCfdRequest.leverage,
+      /**
+       *           amount: openCfdRequest.amount * (openCfdRequest.typeOfPosition === TypeOfPosition.BUY ? marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice ? marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice) / openCfdRequest.leverage,
+       */
+    };
+
+    return order;
+  };
+
   /** ToDo: (20230324 - Shirley)
     // loading modal -> UserContext.function (負責簽名) ->
     // 猶豫太久的話，單子會過期，就會顯示 failed modal，
@@ -82,7 +157,7 @@ const PositionOpenModal = ({
     // );
     // eslint-disable-next-line no-console
     // console.log(`position_open_modal dummyCFDOrder`, dummyCFDOrder);
-    const result = await userCtx.createCFDOrder(globalCtx.dataPositionOpenModal?.openCfdRequest);
+    const result = await userCtx.createCFDOrder(toApplyCreateOrder(openCfdRequest));
     // console.log('result from userCtx in position_closed_modal.tsx: ', result);
 
     // ToDo: temporary waiting
@@ -138,48 +213,6 @@ const PositionOpenModal = ({
     unlock();
     return;
   };
-
-  const displayedGuaranteedStopSetting = !!openCfdRequest.guaranteedStop ? 'Yes' : 'No';
-
-  const displayedTypeOfPosition =
-    openCfdRequest.typeOfPosition === TypeOfPosition.BUY
-      ? t('POSITION_MODAL.TYPE_UP')
-      : t('POSITION_MODAL.TYPE_DOWN');
-
-  const displayedBuyOrSell =
-    openCfdRequest.typeOfPosition === TypeOfPosition.BUY
-      ? t('POSITION_MODAL.TYPE_BUY')
-      : t('POSITION_MODAL.TYPE_SELL');
-
-  const [guaranteedTooltipStatus, setGuaranteedTooltipStatus] = useState(0);
-
-  // const displayedPnLColor =
-  //   openCfdRequest?.pnl.type === 'PROFIT'
-  //     ? TypeOfPnLColor.PROFIT
-  //     : openCfdRequest?.pnl.type === 'LOSS'
-  //     ? TypeOfPnLColor.LOSS
-  //     : TypeOfPnLColor.EQUAL;
-
-  const displayedPositionColor = 'text-tidebitTheme';
-  // openCfdRequest.typeOfPosition === TypeOfPosition.BUY
-  //   ? TypeOfPnLColor.PROFIT
-  //   : TypeOfPnLColor.LOSS;
-
-  const displayedBorderColor = TypeOfBorderColor.NORMAL;
-  // openCfdRequest.typeOfPosition === TypeOfPosition.BUY
-  //   ? TypeOfBorderColor.LONG
-  //   : TypeOfBorderColor.SHORT;
-
-  const displayedTakeProfit = openCfdRequest.takeProfit ? `$ ${openCfdRequest.takeProfit}` : '-';
-  const displayedStopLoss = openCfdRequest.stopLoss ? `$ ${openCfdRequest.stopLoss}` : '-';
-
-  //const displayedExpirationTime = timestampToString(openCfdRequest?.quotation.deadline ?? 0);
-
-  const layoutInsideBorder = 'mx-5 my-2 flex justify-between';
-
-  // let dataRenewedStyle = 'text-lightGray';
-
-  // const displayedTime = timestampToString(openCfdRequest?.createTimestamp ?? 0);
 
   const renewDataHandler = async () => {
     setDataRenewedStyle('animate-flash text-lightYellow2');
@@ -253,9 +286,6 @@ const PositionOpenModal = ({
     const intervalId = setInterval(() => {
       const base = openCfdRequest.quotation.deadline;
       const tickingSec = base - getTimestamp();
-      // Deprecated: before merging into develop (20230324 - Shirley)
-      // eslint-disable-next-line no-console
-      console.log('base: ', base, ', tickingSec: ', tickingSec, ', secondsLeft: ', secondsLeft);
 
       setSecondsLeft(tickingSec > 0 ? Math.round(tickingSec) : 0);
 

@@ -13,6 +13,8 @@ import {
   timestampToString,
   wait,
   getDeadline,
+  getTimestamp,
+  twoDecimal,
 } from '../../lib/common';
 import {useContext, useEffect, useState} from 'react';
 import {MarketContext} from '../../contexts/market_context';
@@ -67,21 +69,28 @@ const PositionClosedModal = ({
   const globalCtx = useGlobal();
   const userCtx = useContext(UserContext);
 
-  // 1677229200
-  // new Date('2023-02-25T17:00:00').getTime() / 1000
-  // const {hours, minutes, seconds, timestamp} = useCountdown(latestProps.renewalDeadline);
+  // TODO: (20230317 - Shirley) get from marketCtx
+  const quotation: IQuotation = {
+    ticker: openCfdDetails.ticker,
+    typeOfPosition: openCfdDetails.typeOfPosition,
+    price: randomIntFromInterval(2, 500),
+    targetAsset: openCfdDetails.targetAsset,
+    unitAsset: openCfdDetails.unitAsset,
+    deadline: getDeadline(POSITION_PRICE_RENEWAL_INTERVAL_SECONDS),
+    signature: '0x',
+  };
 
-  // console.log('renewalDeadline: ', latestProps.renewalDeadline);
-  // console.log('use Countdown: ', hours, minutes, seconds);
-  // console.log('use Countdown seconds left: ', seconds);
+  const cfdDetails: IDisplayAcceptedCFDOrder = {
+    ...openCfdDetails,
+    closePrice: quotation.price,
+    pnl: {type: ProfitState.PROFIT, value: 1000}, // TODO: (20230317 - Shirley)  自己算 PNL
+  };
 
-  // const tickingSec = latestProps.renewalDeadline - Date.now() / 1000;
+  const [gQuotation, setGQuotation, gQuotationRef] = useStateRef<IQuotation>(quotation);
 
-  // tickingSec > 0 ? Math.round(tickingSec) : 0
+  // const [cfd, setCfd, cfdRef] = useStateRef<IDisplayAcceptedCFDOrder>(cfdDetails);
+
   const [secondsLeft, setSecondsLeft] = useState(POSITION_PRICE_RENEWAL_INTERVAL_SECONDS);
-  // console.log('outside useEffect tickingSec: ', tickingSec);
-
-  // Math.max(0, Math.round((latestProps.renewalDeadline - Date.now()) / 1000))
 
   const [dataRenewedStyle, setDataRenewedStyle] = useState('text-lightWhite');
   const [pnlRenewedStyle, setPnlRenewedStyle] = useState('');
@@ -125,7 +134,77 @@ const PositionClosedModal = ({
 
   const displayedTime = timestampToString(openCfdDetails?.createTimestamp ?? 0);
 
-  // console.log('closed modal');
+  const toDisplayCloseOrder = (
+    cfd: IDisplayAcceptedCFDOrder,
+    quotation: IQuotation
+  ): IDisplayAcceptedCFDOrder => {
+    return {
+      ...cfd,
+      closePrice: quotation.price, // TODO: (20230317 - Shirley)  自己算 closePrice
+      // TODO: (20230317 - Shirley)  自己算 PNL
+      pnl: {
+        type: randomIntFromInterval(0, 100) <= 50 ? ProfitState.PROFIT : ProfitState.LOSS,
+        value: randomIntFromInterval(0, 1000),
+      },
+    };
+  };
+
+  const toApplyCloseOrder = (
+    order: IDisplayAcceptedCFDOrder,
+    quotation: IQuotation
+  ): IApplyCloseCFDOrderData => {
+    if (order.state !== OrderState.OPENING) {
+      const error = new Error('Order is not opening');
+      throw error;
+    }
+
+    const request: IApplyCloseCFDOrderData = {
+      orderId: order.id,
+      closePrice: quotation.price, // TODO: (20230315 - Shirley) get from marketCtx
+      quotation: quotation,
+      closeTimestamp: getTimestamp(),
+    };
+
+    return request;
+  };
+
+  // TODO: (20230315 - Shirley) organize the data before history modal
+  const toHistoryModal = (cfd: IAcceptedCFDOrder): IDisplayAcceptedCFDOrder => {
+    if (cfd.state !== OrderState.CLOSED || !cfd.closePrice) {
+      const error = new Error('Order is not closed');
+      throw error;
+    }
+
+    const openValue = twoDecimal(cfd.openPrice * cfd.amount);
+    const closeValue = twoDecimal(cfd.closePrice * cfd.amount);
+
+    const pnlValue =
+      cfd.typeOfPosition === TypeOfPosition.BUY
+        ? twoDecimal(closeValue - openValue)
+        : twoDecimal(openValue - closeValue);
+    const pnl: IPnL = {
+      type: pnlValue > 0 ? ProfitState.PROFIT : pnlValue < 0 ? ProfitState.LOSS : ProfitState.EQUAL,
+      value: Math.abs(pnlValue),
+    };
+
+    const positionLineGraph = [100, 100]; // TODO: (20230316 - Shirley) from `marketCtx`
+    const suggestion: ICFDSuggestion = {
+      // TODO: (20230316 - Shirley) calculate
+      takeProfit: 100,
+      stopLoss: 100,
+    };
+
+    const historyCfd: IDisplayAcceptedCFDOrder = {
+      ...cfd,
+      pnl: pnl,
+      openValue: openValue,
+      closeValue: closeValue,
+      positionLineGraph: positionLineGraph,
+      suggestion: suggestion,
+    };
+
+    return historyCfd;
+  };
 
   /** TODO: 
     // loading modal -> UserContext.function (負責簽名) ->
@@ -145,9 +224,23 @@ const PositionClosedModal = ({
     });
     globalCtx.visibleLoadingModalHandler();
 
-    const result = await userCtx.closeCFDOrder(
-      getDummyApplyCloseCFDOrderData(marketCtx.selectedTicker?.currency ?? '', openCfdDetails.id)
+    /*// Till: (20230409 - Shirley)
+    // const quotation = {
+    //   ticker: openCfdDetails.ticker,
+    //   price: 202303, // TODO: (20230315 - Shirley) get from marketCtx
+    //   targetAsset: openCfdDetails.targetAsset,
+    //   uniAsset: openCfdDetails.uniAsset,
+    //   deadline: getTimestamp() + RENEW_QUOTATION_INTERVAL_SECONDS, // TODO: (20230315 - Shirley) get from marketCtx
+    //   signature: '0x', // TODO: (20230315 - Shirley) get from marketCtx
+    // };
+    */
+
+    const applyCloseOrder: IApplyCloseCFDOrderData = toApplyCloseOrder(
+      openCfdDetails,
+      gQuotationRef.current
     );
+
+    const result = await userCtx.closeCFDOrder(applyCloseOrder);
     // console.log('result from userCtx in position_closed_modal.tsx: ', result);
 
     // TODO: temporary waiting
@@ -176,14 +269,18 @@ const PositionClosedModal = ({
       });
 
       const cfd = userCtx.getCFD(openCfdDetails.id);
+
+      // const closedCFD: IAcceptedCFDOrder = userCtx.getClosedCFD(openCfdDetails.id);
+      // const historyData = toHistoryModal(closedCFD);
+
       if (cfd) {
-        globalCtx.dataHistoryPositionModalHandler(cfd);
+        const historyData = toHistoryModal(cfd);
 
         globalCtx.visibleSuccessfulModalHandler();
         await wait(DELAYED_HIDDEN_SECONDS);
-
         globalCtx.eliminateAllModals();
 
+        globalCtx.dataHistoryPositionModalHandler(historyData);
         globalCtx.visibleHistoryPositionModalHandler();
       }
     } else if (result.reason === 'CANCELED') {
@@ -207,25 +304,16 @@ const PositionClosedModal = ({
     return;
   };
 
-  const renewDataStyleHandler = async () => {
-    // setSecondsLeft(latestProps.renewalDeadline - Date.now() / 1000);
+  const renewDataStyleHandler = async (quotation: IQuotation) => {
     setDataRenewedStyle('animate-flash text-lightYellow2');
     setPnlRenewedStyle('animate-flash text-lightYellow2');
 
-    // TODO: get latest price from marketCtx and calculate required margin data
-    // FIXME: 應用 ?? 代替 !
-    // FIXME: closedCfdDetails 的關倉價格
-    // globalCtx.visiblePositionClosedModalHandler();
+    const newDeadline = gQuotationRef.current.deadline;
+    setSecondsLeft(Math.round(newDeadline - getTimestamp()));
 
-    const deadline = getDeadline(POSITION_PRICE_RENEWAL_INTERVAL_SECONDS);
-    setSecondsLeft(deadline - Date.now() / 1000);
+    const displayedCloseOrder = toDisplayCloseOrder(openCfdDetails, quotation);
 
-    globalCtx.dataPositionClosedModalHandler(openCfdDetails);
-
-    // globalCtx.visiblePositionClosedModalHandler();
-
-    // console.log('in renewDataHandler, deadline: ', latestProps.renewalDeadline);
-    // console.log('in renewDataHandler, newTimestamp: ', newTimestamp);
+    globalCtx.dataPositionClosedModalHandler(displayedCloseOrder);
 
     await wait(DELAYED_HIDDEN_SECONDS / 5);
 
@@ -250,9 +338,36 @@ const PositionClosedModal = ({
   // }
 
   useEffect(() => {
+    // TODO: (20230317 - Shirley) from marketCtx
+    const quotation: IQuotation = {
+      ticker: openCfdDetails.ticker,
+      typeOfPosition: openCfdDetails.typeOfPosition,
+      price: randomIntFromInterval(2, 500),
+      targetAsset: openCfdDetails.targetAsset,
+      unitAsset: openCfdDetails.unitAsset,
+      deadline: getTimestamp() + POSITION_PRICE_RENEWAL_INTERVAL_SECONDS,
+      signature: '0x',
+    };
+
+    const displayedCloseOrder = toDisplayCloseOrder(openCfdDetails, quotation);
+
+    globalCtx.dataPositionClosedModalHandler(displayedCloseOrder);
+
+    // TODO: (20230317 - Shirley) PnL, close price
+    // setDeadline(quotation.deadline);
+    // setCfd(toDisplayCloseOrder(cfdRef.current, quotation));
+    setGQuotation(quotation);
+  }, [globalCtx.visiblePositionClosedModal]);
+
+  useEffect(() => {
     if (!globalCtx.visiblePositionClosedModal) {
       setSecondsLeft(POSITION_PRICE_RENEWAL_INTERVAL_SECONDS);
       setDataRenewedStyle('text-lightWhite');
+
+      const base = gQuotationRef.current.deadline;
+      const tickingSec = base - getTimestamp();
+      setSecondsLeft(tickingSec > 0 ? Math.round(tickingSec) : 0);
+
       return;
     }
 
@@ -293,45 +408,31 @@ const PositionClosedModal = ({
     //   console.log('countdown finished');
     // });
 
-    // // FIXME: 用 globalCtx 傳 deadline
     const intervalId = setInterval(() => {
-      // setSecondsLeft(Math.max(0, Math.round((latestProps.renewalDeadline - Date.now()) / 1000)));
+      const base = gQuotationRef.current.deadline;
 
-      // console.log('deadline before ticking: ', latestProps.renewalDeadline);
-
-      const base = secondsLeft;
-
-      const tickingSec = base - Date.now() / 1000;
-      // const tickingSec = latestProps.renewalDeadline - Date.now() / 1000 > 0 ? Math.round(latestProps.renewalDeadline - Date.now() / 1000) : Math.round();
-
-      // console.log('inside useEffect: ', tickingSec);
-
-      // setSecondsLeft()
+      const tickingSec = base - getTimestamp();
 
       setSecondsLeft(tickingSec > 0 ? Math.round(tickingSec) : 0);
-      // console.log('in setInterval, secondsLeft: ', secondsLeft);
 
-      // setSecondsLeft(Math.round(tickingSec > 0 ? tickingSec : 0));
-      // setSecondsLeft(Math.max(0, Math.round(tickingSec)));
-      // setSecondsLeft(Math.round(latestProps.renewalDeadline - Date.now() / 1000));
-      // const tickingNow = Date.now();
-      // const remainingTime = deadline - tickingNow;
-      // setSecondsLeft(remainingTime); // 改成終點線-現在時間線
-      // console.log('remainingTime: ', remainingTime / 1000);
-      // console.log('tickingNow: ', new Date(tickingNow).toLocaleString());
-      // console.log('deadline: ', new Date(deadline).toLocaleString());
-
-      // setSecondsLeft(prevSeconds => prevSeconds - 1); // 改成終點線-現在時間線
-      // console.log('prevSeconds: ', secondsLeft);
       if (secondsLeft === 0) {
-        // base = new Date().getTime() / 1000 + POSITION_PRICE_RENEWAL_INTERVAL_SECONDS;
+        // TODO: (20230317 - Shirley) get quotation from marketCtx
+        const quotation: IQuotation = {
+          ticker: openCfdDetails.ticker,
+          typeOfPosition: openCfdDetails.typeOfPosition,
+          price: randomIntFromInterval(10, 1000),
+          targetAsset: openCfdDetails.targetAsset,
+          unitAsset: openCfdDetails.unitAsset,
+          deadline: getTimestamp() + POSITION_PRICE_RENEWAL_INTERVAL_SECONDS,
+          signature: '0x',
+        };
 
-        renewDataStyleHandler();
+        // setCfd(toDisplayCloseOrder(cfdRef.current, quotation));
 
-        // setSecondsLeft(POSITION_PRICE_RENEWAL_INTERVAL_SECONDS);
-        // setSecondsLeft(latestProps.renewalDeadline - Date.now() / 1000);
+        setGQuotation(quotation);
+        renewDataStyleHandler(quotation);
       }
-    }, 1000); // 不確定是否真的一秒執行一次
+    }, 1000);
 
     return () => {
       clearInterval(intervalId);
@@ -406,7 +507,7 @@ const PositionClosedModal = ({
               <div className="text-lightGray">{t('POSITION_MODAL.CLOSED_PRICE')}</div>
               <div className={`${dataRenewedStyle}`}>
                 {/* TODO: Hardcode USDT */}
-                {openCfdDetails.closePrice?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+                {gQuotationRef.current.price?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
                   minimumFractionDigits: 2,
                 }) ?? 0}{' '}
                 <span className="ml-1 text-lightGray">USDT</span>
@@ -450,9 +551,10 @@ const PositionClosedModal = ({
         <div className="my-3 text-xxs text-lightGray">{t('POSITION_MODAL.CFD_CONTENT')}</div>
 
         <RippleButton
+          disabled={secondsLeft < 1}
           onClick={submitClickHandler}
           buttonType="button"
-          className={`mt-0 whitespace-nowrap rounded border-0 bg-tidebitTheme py-2 px-16 text-base text-white transition-colors duration-300 hover:bg-cyan-600 focus:outline-none`}
+          className={`mt-0 whitespace-nowrap rounded border-0 bg-tidebitTheme py-2 px-16 text-base text-white transition-colors duration-300 hover:bg-cyan-600 focus:outline-none disabled:bg-lightGray`}
         >
           {t('POSITION_MODAL.CONFIRM_BUTTON')}
         </RippleButton>

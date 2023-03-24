@@ -233,10 +233,7 @@ const PositionOpenModal = ({
             marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice * 1.25
           )
         : 999999;
-    const newMargin = randomIntFromInterval(
-      openCfdRequest.margin.amount * 0.9,
-      openCfdRequest.margin.amount * 1.5
-    );
+    const newMargin = randomIntFromInterval(100, 500);
 
     // ToDo: get latest price from marketCtx and calculate required margin data
     // FIXME: 應用 ?? 代替 !

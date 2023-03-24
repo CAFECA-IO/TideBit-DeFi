@@ -281,11 +281,7 @@ export const acceptedOrderToOrder = (acceptedOrder: IAcceptedOrder, balance: IBa
       order.targetAmount = (acceptedOrder as IAcceptedWithdrawOrder).targetAmount;
       break;
   }
-  order.balanceSnapshot = {
-    ...order.balanceSnapshot,
-    available: balance.available - order.targetAmount,
-    locked: balance.locked + order.targetAmount,
-  };
+  return order;
 };
 
 export const randomHex = (length: number) => {

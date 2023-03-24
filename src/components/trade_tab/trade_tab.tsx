@@ -13,41 +13,30 @@ import {useGlobal} from '../../contexts/global_context';
 import {MarketContext} from '../../contexts/market_context';
 import {UserContext} from '../../contexts/user_context';
 import useStateRef from 'react-usestateref';
-import EventEmitter from 'events';
 import {TypeOfPosition} from '../../constants/type_of_position';
 import {OrderType} from '../../constants/order_type';
 import {OrderStatusUnion} from '../../constants/order_status_union';
-import eventEmitter, {ClickEvent} from '../../constants/tidebit_event';
+import {ClickEvent} from '../../constants/tidebit_event';
 import {roundToDecimalPlaces} from '../../lib/common';
 import {getDummyQuotation} from '../../interfaces/tidebit_defi_background/quotation';
+import {NotificationContext} from '../../contexts/notification_context';
 
 const TradeTab = () => {
   const globalCtx = useGlobal();
   const marketCtx = useContext(MarketContext);
   const userCtx = useContext(UserContext);
+  const notificationCtx = useContext(NotificationContext);
 
   useEffect(() => {
-    eventEmitter.once(ClickEvent.TICKER_CHANGED, () => {
+    notificationCtx.emitter.once(ClickEvent.TICKER_CHANGED, () => {
       marketPrice = marketCtx.selectedTickerRef.current?.price ?? TEMP_PLACEHOLDER;
       renewValueOfPosition(marketPrice);
     });
 
     return () => {
-      eventEmitter.removeAllListeners(ClickEvent.TICKER_CHANGED);
+      notificationCtx.emitter.removeAllListeners(ClickEvent.TICKER_CHANGED);
     };
   }, [marketCtx.selectedTicker]);
-
-  //   // TODO: 第二個參數可以是現在被選擇的交易對；payload 是發生的事情的補充資料
-  //   /**
-  //    * 在交易頁面，當使用者切換交易對時，會觸發 `TICKER_CHANGED` 事件
-  //    *
-  //    * 告訴其他人，我要做的事情，用 .emit
-  //    * 我要接收這個資訊，用 .on
-  //    */
-  //   const btnClickHandler = () => {
-  //     Emitter.emit('TICKER_CHANGED', func);
-  //   };
-  // };
 
   const tabBodyWidth = 'w-320px';
 
@@ -76,11 +65,6 @@ const TradeTab = () => {
   const longRecommendedSl = Number(
     (tickerLiveStatistics?.longRecommendedSl ?? TEMP_PLACEHOLDER).toFixed(2)
   ); // recommendedSl // MARKET_PRICE * 0.85
-  // const shortRecommendedTp = Number((MARKET_PRICE * 0.85).toFixed(2));
-  // const shortRecommendedSl = Number((MARKET_PRICE * 1.15).toFixed(2));
-
-  // TODO: `val: number | () => number`
-  // TODO: difference between `number` and `() => number`
 
   const [longTooltipStatus, setLongTooltipStatus] = useState(0);
   const [shortTooltipStatus, setShortTooltipStatus] = useState(0);

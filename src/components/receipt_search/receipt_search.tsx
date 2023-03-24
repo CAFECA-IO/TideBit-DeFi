@@ -1,14 +1,19 @@
 import {useState, Dispatch, SetStateAction, useCallback} from 'react';
+import {OrderType} from '../../constants/order_type';
+import {OrderState} from '../../constants/order_state';
 import Image from 'next/image';
 import DatePicker from '../date_picker/date_picker';
+import {useTranslation} from 'next-i18next';
 
+type TranslateFunction = (s: string) => string;
 interface IReceiptSearchProps {
   filteredTradingType: string;
   setFilteredTradingType: Dispatch<SetStateAction<string>>;
 }
 
-/* ToDo: (20230316 - Julian) i18n */
 const ReceiptSearch = ({filteredTradingType, setFilteredTradingType}: IReceiptSearchProps) => {
+  const {t}: {t: TranslateFunction} = useTranslation('common');
+
   const currentDate = new Date();
 
   const [tradingTypeMenuOpen, setTradingTypeMenuOpen] = useState(false);
@@ -26,15 +31,15 @@ const ReceiptSearch = ({filteredTradingType, setFilteredTradingType}: IReceiptSe
   );
 
   const tradingTypeMenuText =
-    filteredTradingType === 'DEPOSIT'
-      ? 'Deposit'
-      : filteredTradingType === 'WITHDRAW'
-      ? 'Withdraw'
-      : filteredTradingType === 'OPEN_CFD'
-      ? 'Open Position'
-      : filteredTradingType === 'CLOSE_CFD'
-      ? 'Close Position'
-      : 'Trading Type';
+    filteredTradingType === OrderType.DEPOSIT
+      ? t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_DEPOSIT')
+      : filteredTradingType === OrderType.WITHDRAW
+      ? t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_WITHDRAW')
+      : filteredTradingType === OrderState.OPENING
+      ? t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_CFD_OPEN')
+      : filteredTradingType === OrderState.CLOSED
+      ? t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_CFD_CLOSE')
+      : t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_TITLE');
 
   const dropMenuItemStyle = 'inline-block px-5 py-3 w-full text-left hover:cursor-pointer';
 
@@ -43,22 +48,22 @@ const ReceiptSearch = ({filteredTradingType, setFilteredTradingType}: IReceiptSe
   };
 
   const depositButtonClickHandler = () => {
-    setFilteredTradingType('DEPOSIT');
+    setFilteredTradingType(OrderType.DEPOSIT);
     setTradingTypeMenuOpen(false);
   };
 
   const withdrawButtonClickHandler = () => {
-    setFilteredTradingType('WITHDRAW');
+    setFilteredTradingType(OrderType.WITHDRAW);
     setTradingTypeMenuOpen(false);
   };
 
   const openPositionButtonClickHandler = () => {
-    setFilteredTradingType('OPEN_CFD');
+    setFilteredTradingType(OrderState.OPENING);
     setTradingTypeMenuOpen(false);
   };
 
   const closePositionButtonClickHandler = () => {
-    setFilteredTradingType('CLOSE_CFD');
+    setFilteredTradingType(OrderState.CLOSED);
     setTradingTypeMenuOpen(false);
   };
 
@@ -84,7 +89,7 @@ const ReceiptSearch = ({filteredTradingType, setFilteredTradingType}: IReceiptSe
     <div className="hidden space-x-10 text-lightWhite sm:flex">
       {/* Info: (20230316 - Julian) Trading Type Dropdown Menu */}
       <div className="flex flex-col items-start">
-        Trading Type
+        {t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_TITLE')}
         <div className="relative mt-2 w-160px">
           <button
             className={`flex w-full items-center justify-between px-5 py-3 text-left text-lightGray4 transition-all duration-200 ease-in-out hover:cursor-pointer ${
@@ -107,19 +112,19 @@ const ReceiptSearch = ({filteredTradingType, setFilteredTradingType}: IReceiptSe
             }`}
           >
             <button className={`${dropMenuItemStyle}`} onClick={allButtonClickHandler}>
-              All
+              {t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_ALL')}
             </button>
             <button className={`${dropMenuItemStyle}`} onClick={depositButtonClickHandler}>
-              Deposit
+              {t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_DEPOSIT')}
             </button>
             <button className={`${dropMenuItemStyle}`} onClick={withdrawButtonClickHandler}>
-              Withdraw
+              {t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_WITHDRAW')}
             </button>
             <button className={`${dropMenuItemStyle}`} onClick={openPositionButtonClickHandler}>
-              Open Position
+              {t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_CFD_OPEN')}
             </button>
             <button className={`${dropMenuItemStyle}`} onClick={closePositionButtonClickHandler}>
-              Close Position
+              {t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_CFD_CLOSE')}
             </button>
           </div>
         </div>
@@ -127,11 +132,11 @@ const ReceiptSearch = ({filteredTradingType, setFilteredTradingType}: IReceiptSe
 
       {/* Info: (20230316 - Julian) Date Picker */}
       <div className="flex flex-col items-start">
-        Date
+        {t('MY_ASSETS_PAGE.RECEIPT_SECTION_DATE_TITLE')}
         {/* ToDo: (20230316 - Julian) DatePicker */}
         <div className="mt-2 flex items-center space-x-2">
           <DatePicker minDate={new Date(1)} maxDate={new Date(10)} />
-          <p>TO</p>
+          <p>{t('MY_ASSETS_PAGE.RECEIPT_SECTION_DATE_TO')}</p>
           <label>DatePicker</label>
         </div>
       </div>

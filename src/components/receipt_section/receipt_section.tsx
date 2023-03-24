@@ -17,11 +17,50 @@ const ReceiptSection = () => {
   const userCtx = useContext(UserContext);
 
   /* ToDo: (20230316 - Julian) get data from userCtx */
+  /* Till: (20230331 - Julian) dummy data for test */
   const dummyHistoryList: IOrder[] = [
     dummyDepositOrder,
     dummyWithdrawalOrder,
     dummyOpenCFDOrder,
     dummyClosedCFDOrder,
+    {
+      timestamp: 1679587700,
+      type: OrderType.DEPOSIT,
+      targetAsset: 'ETH',
+      targetAmount: 80,
+      remarks: '',
+      balanceSnapshot: {
+        currency: 'USDT',
+        available: 2308,
+        locked: 1,
+      },
+      orderSnapshot: {
+        id: 'TBDDeposit20230320_002',
+        txid: '0x',
+        status: 'SUCCESS',
+        detail: '',
+        fee: 0,
+      },
+    },
+    {
+      timestamp: 1679587200,
+      type: OrderType.WITHDRAW,
+      targetAsset: 'ETH',
+      targetAmount: -10,
+      remarks: '',
+      balanceSnapshot: {
+        currency: 'USDT',
+        available: 1979,
+        locked: 1,
+      },
+      orderSnapshot: {
+        id: 'TBDWithdraw20230320_002',
+        txid: '0x',
+        status: 'SUCCESS',
+        detail: '',
+        fee: -0.05,
+      },
+    },
     {
       timestamp: 1673299651,
       type: OrderType.CFD,
@@ -63,6 +102,7 @@ const ReceiptSection = () => {
       },
     },
   ];
+  /* Till: (20230331 - Julian) dummy data for test */
 
   const [filteredTradingType, setFilteredTradingType] = useState('');
   const [filteredReceipts, setFilteredReceipts] = useState<IOrder[]>([]);
@@ -70,15 +110,15 @@ const ReceiptSection = () => {
   useEffect(() => {
     if (filteredTradingType === '') {
       setFilteredReceipts(dummyHistoryList);
-    } else if (filteredTradingType === 'DEPOSIT') {
+    } else if (filteredTradingType === OrderType.DEPOSIT) {
       setFilteredReceipts(dummyHistoryList.filter(v => v.type === OrderType.DEPOSIT));
-    } else if (filteredTradingType === 'WITHDRAW') {
+    } else if (filteredTradingType === OrderType.WITHDRAW) {
       setFilteredReceipts(dummyHistoryList.filter(v => v.type === OrderType.WITHDRAW));
-    } else if (filteredTradingType === 'OPEN_CFD') {
+    } else if (filteredTradingType === OrderState.OPENING) {
       setFilteredReceipts(
         dummyHistoryList.filter(v => v.orderSnapshot.state === OrderState.OPENING)
       );
-    } else if (filteredTradingType === 'CLOSE_CFD') {
+    } else if (filteredTradingType === OrderState.CLOSED) {
       setFilteredReceipts(
         dummyHistoryList.filter(v => v.orderSnapshot.state === OrderState.CLOSED)
       );

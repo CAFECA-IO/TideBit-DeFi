@@ -32,6 +32,7 @@ import {NotificationContext} from './notification_context';
 import {WorkerContext} from './worker_context';
 import {APIName, Method} from '../constants/api_request';
 import TickerBookInstance from '../lib/books/ticker_book';
+import {unitAsset} from '../constants/config';
 import {getDummyQuotation, IQuotation} from '../interfaces/tidebit_defi_background/quotation';
 import {
   getDummyTickerHistoryData,
@@ -86,7 +87,12 @@ export const MarketContext = createContext<IMarketContext>({
   showPositionOnChart: false,
   candlestickId: '',
   candlestickChartData: [],
-  timeSpan: TimeSpanUnion._1m,
+  timeSpan: TimeSpanUnion._1s,
+  selectTimeSpanHandler: () => null,
+  // liveStatstics: null,
+  // bullAndBearIndex: 0,
+  // cryptoBriefNews: [],
+  // cryptoSummary: null,
   tickerStatic: null,
   tickerLiveStatistics: null,
   depositCryptocurrencies: [], // () => [],
@@ -95,7 +101,6 @@ export const MarketContext = createContext<IMarketContext>({
   // getGuaranteedStopFeePercentage: () => Promise.resolve(defaultResultSuccess),
   showPositionOnChartHandler: () => null,
   candlestickChartIdHandler: () => null,
-  selectTimeSpanHandler: () => null,
   listAvailableTickers: () => [],
   selectTickerHandler: () => Promise.resolve(defaultResultSuccess),
   getCandlestickChartData: () => Promise.resolve(defaultResultSuccess),
@@ -181,36 +186,6 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     workerCtx.tickerChangeHandler(ticker);
     return defaultResultSuccess;
   };
-
-  /* Deprecated: updateCandlestickData with ICandlestickData 可能會有派上用場的時候 (20230407 - Tzuhan)
-  const updateCandlestickData = (candlestickData: ICandlestickData) => {
-    let candlestickDatas = candlestickChartDataRef.current
-      ? [...candlestickChartDataRef.current]
-      : [];
-    const lastestData = candlestickDatas[candlestickDatas.length - 1];
-    // eslint-disable-next-line no-console
-    // console.log(`lastestData`, lastestData, lastestData.x.getTime());
-    // eslint-disable-next-line no-console
-    // console.log(
-    //   `candlestickData`,
-    //   candlestickData,
-    //   candlestickData.x.getTime(),
-    //   candlestickData.x.getTime() - lastestData.x.getTime() >= getTime(timeSpanRef.current)
-    // );
-    if (lastestData) {
-      if (candlestickData.x.getTime() - lastestData.x.getTime() >= getTime(timeSpanRef.current)) {
-        candlestickDatas = candlestickDatas.concat([candlestickData]);
-      } else {
-        candlestickDatas[candlestickDatas.length - 1].y = candlestickData.y;
-      }
-    } else {
-      candlestickDatas = [candlestickData];
-    }
-    // eslint-disable-next-line no-console
-    // console.log(`candlestickDatas[${candlestickDatas.length}]`, candlestickDatas);
-    setCandlestickChartData(candlestickDatas);
-  };
-  */
 
   const getCandlestickChartData = async (tickerId: string) => {
     let result: IResult = defaultResultFailed;
@@ -459,11 +434,12 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     () =>
       notificationCtx.emitter.on(
         TideBitEvent.CANDLESTICK,
-        (ticker: string, trades: ITBETrade[]) => {
+        (market: string, trades: ITBETrade[]) => {
+          const ticker = market.toUpperCase().replace(unitAsset, ``);
           tickerBook.updateCandlestickByTrade(ticker, trades);
           setAvailableTickers({...tickerBook.tickers});
           if (selectedTickerRef.current?.currency === ticker)
-            setCandlestickChartData(tickerBook.candlesticks[ticker]);
+            setCandlestickChartData([...tickerBook.candlesticks[ticker]]);
         }
       ),
     []

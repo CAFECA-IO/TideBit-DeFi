@@ -235,66 +235,86 @@ const PositionClosedModal = ({
     // };
     */
 
-    const applyCloseOrder: IApplyCloseCFDOrderData = toApplyCloseOrder(
-      openCfdDetails,
-      gQuotationRef.current
-    );
+    try {
+      const applyCloseOrder: IApplyCloseCFDOrderData = toApplyCloseOrder(
+        openCfdDetails,
+        gQuotationRef.current
+      );
 
-    const result = await userCtx.closeCFDOrder(applyCloseOrder);
-    // console.log('result from userCtx in position_closed_modal.tsx: ', result);
+      const result = await userCtx.closeCFDOrder(applyCloseOrder);
+      // console.log('result from userCtx in position_closed_modal.tsx: ', result);
 
-    // TODO: temporary waiting
-    await wait(DELAYED_HIDDEN_SECONDS);
-    globalCtx.dataLoadingModalHandler({
-      modalTitle: 'Close Position',
-      modalContent: 'Transaction broadcast',
-      btnMsg: 'View on Etherscan',
-      btnUrl: '#',
-    });
-
-    // TODO: temporary waiting
-    await wait(DELAYED_HIDDEN_SECONDS);
-
-    // Close loading modal
-    globalCtx.eliminateAllModals();
-
-    // TODO: Revise the `result.reason` to constant by using enum or object
-    // TODO: the button URL
-    if (result.success) {
-      globalCtx.dataSuccessfulModalHandler({
+      // TODO: temporary waiting
+      await wait(DELAYED_HIDDEN_SECONDS);
+      globalCtx.dataLoadingModalHandler({
         modalTitle: 'Close Position',
-        modalContent: 'Transaction succeed',
+        modalContent: 'Transaction broadcast',
         btnMsg: 'View on Etherscan',
         btnUrl: '#',
       });
 
-      const cfd = userCtx.getCFD(openCfdDetails.id);
+      // TODO: temporary waiting
+      await wait(DELAYED_HIDDEN_SECONDS);
 
-      // const closedCFD: IAcceptedCFDOrder = userCtx.getClosedCFD(openCfdDetails.id);
-      // const historyData = toHistoryModal(closedCFD);
+      // Close loading modal
+      globalCtx.eliminateAllModals();
 
-      if (cfd) {
-        const historyData = toHistoryModal(cfd);
+      // TODO: Revise the `result.reason` to constant by using enum or object
+      // TODO: the button URL
+      if (result.success) {
+        globalCtx.dataSuccessfulModalHandler({
+          modalTitle: 'Close Position',
+          modalContent: 'Transaction succeed',
+          btnMsg: 'View on Etherscan',
+          btnUrl: '#',
+        });
 
-        globalCtx.visibleSuccessfulModalHandler();
-        await wait(DELAYED_HIDDEN_SECONDS);
-        globalCtx.eliminateAllModals();
+        const cfd = userCtx.getCFD(openCfdDetails.id);
 
-        globalCtx.dataHistoryPositionModalHandler(historyData);
-        globalCtx.visibleHistoryPositionModalHandler();
+        // const closedCFD: IAcceptedCFDOrder = userCtx.getClosedCFD(openCfdDetails.id);
+        // const historyData = toHistoryModal(closedCFD);
+
+        if (cfd) {
+          try {
+            const historyData = toHistoryModal(cfd);
+
+            globalCtx.visibleSuccessfulModalHandler();
+            await wait(DELAYED_HIDDEN_SECONDS);
+            globalCtx.eliminateAllModals();
+
+            globalCtx.dataHistoryPositionModalHandler(historyData);
+            globalCtx.visibleHistoryPositionModalHandler();
+          } catch (error) {
+            globalCtx.dataFailedModalHandler({
+              modalTitle: 'Close Position',
+              failedTitle: 'Failed',
+              failedMsg: 'Order is not closed',
+            });
+
+            globalCtx.visibleFailedModalHandler();
+          }
+        }
+      } else if (result.reason === 'CANCELED') {
+        globalCtx.dataCanceledModalHandler({
+          modalTitle: 'Close Position',
+          modalContent: 'Transaction canceled',
+        });
+
+        globalCtx.visibleCanceledModalHandler();
+      } else if (result.reason === 'FAILED') {
+        globalCtx.dataFailedModalHandler({
+          modalTitle: 'Close Position',
+          failedTitle: 'Failed',
+          failedMsg: 'Failed to close position',
+        });
+
+        globalCtx.visibleFailedModalHandler();
       }
-    } else if (result.reason === 'CANCELED') {
-      globalCtx.dataCanceledModalHandler({
-        modalTitle: 'Close Position',
-        modalContent: 'Transaction canceled',
-      });
-
-      globalCtx.visibleCanceledModalHandler();
-    } else if (result.reason === 'FAILED') {
+    } catch (error) {
       globalCtx.dataFailedModalHandler({
         modalTitle: 'Close Position',
         failedTitle: 'Failed',
-        failedMsg: 'Failed to close position',
+        failedMsg: 'Order is not opening',
       });
 
       globalCtx.visibleFailedModalHandler();

@@ -240,6 +240,7 @@ const PositionClosedModal = ({
       );
 
       const result = await userCtx.closeCFDOrder(applyCloseOrder);
+      // Deprecated: before merging into develop (20230330 - Shirley)
       // eslint-disable-next-line no-console
       console.log('close result', result);
 
@@ -269,6 +270,9 @@ const PositionClosedModal = ({
         });
 
         const cfd = userCtx.getCFD(openCfdDetails.id);
+        // Deprecated: before merging into develop (20230330 - Shirley)
+        // eslint-disable-next-line no-console
+        console.log('CFD gotten', cfd);
 
         // TODO: get the closed cfd and calculate the PNL and sth (20230324 - Shirley)
         // const closedCFD: IAcceptedCFDOrder = userCtx.getClosedCFD(openCfdDetails.id);

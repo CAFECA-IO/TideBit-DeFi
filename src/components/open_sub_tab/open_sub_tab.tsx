@@ -44,8 +44,8 @@ const OpenSubTab = () => {
       // TODO: (20230314 - Shirley) Calculate with `positionLineGraph[n-1]` buy/sell price
       const pnlSoFar =
         cfd.typeOfPosition === TypeOfPosition.BUY
-          ? marketValue - openValue
-          : openValue - marketValue;
+          ? twoDecimal(marketValue - openValue)
+          : twoDecimal(openValue - marketValue);
 
       const suggestion: ICFDSuggestion = {
         takeProfit: rTp,

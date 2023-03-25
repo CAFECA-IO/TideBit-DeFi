@@ -75,12 +75,12 @@ const TradingHeader = () => {
         >
           <div className="text-3xl">
             <span className="">
-              {marketCtx.selectedTicker?.price.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}
+              ₮ {marketCtx.selectedTicker?.price.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}
             </span>
           </div>
           <div className="text-lg">{`${
             marketCtx.selectedTicker?.upOrDown === Trend.UP ? '▴' : '▾'
-          } ₮ ${marketCtx.selectedTicker?.priceChange} (${
+          }${marketCtx.selectedTicker?.priceChange} (${
             marketCtx.selectedTicker?.upOrDown === Trend.UP ? '+' : '-'
           }${marketCtx.selectedTicker?.fluctuating}%)`}</div>
         </div>

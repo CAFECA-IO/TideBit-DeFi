@@ -176,7 +176,7 @@ const PositionOpenModal = ({
   const displayedTakeProfit = openCfdRequest.takeProfit ? `$ ${openCfdRequest.takeProfit}` : '-';
   const displayedStopLoss = openCfdRequest.stopLoss ? `$ ${openCfdRequest.stopLoss}` : '-';
 
-  //const displayedExpirationTime = timestampToString(openCfdRequest?.quotation.deadline ?? 0);
+  const displayedExpirationTime = timestampToString(openCfdRequest?.quotation.deadline ?? 0);
 
   const layoutInsideBorder = 'mx-5 my-2 flex justify-between';
 
@@ -397,25 +397,16 @@ const PositionOpenModal = ({
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">{t('POSITION_MODAL.EXPIRATION_TIME')}</div>
               <div className="">
-                {/* ToDo: Expiration Time */}
-                2023-03-09 15:20:13
-                {/* {displayedExpirationTime.date} {displayedExpirationTime.time} */}
+                {displayedExpirationTime.date} {displayedExpirationTime.time}
               </div>
             </div>
 
-            {/* <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">Open Time</div>
-              <div className="">
-                {displayedTime.date} {displayedTime.time}
-              </div>
-            </div> */}
-
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">{t('POSITION_MODAL.LIQUIDATION_PRICE')}</div>
-              {/* ToDo: Liquidation Price */}
-
               <div className="">
-                9.23
+                {openCfdRequest.liquidationPrice?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+                  minimumFractionDigits: 2,
+                }) ?? 0}
                 {/* ToDo: Hardcode USDT */}
                 <span className="ml-1 text-lightGray">USDT</span>
               </div>

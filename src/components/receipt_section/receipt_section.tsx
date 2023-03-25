@@ -35,7 +35,7 @@ const ReceiptSection = () => {
         locked: 1,
       },
       orderSnapshot: {
-        id: 'TBDDeposit20230320_002',
+        id: 'TBDDeposit20230324_002',
         txid: '0x',
         status: 'SUCCESS',
         detail: '',
@@ -54,7 +54,7 @@ const ReceiptSection = () => {
         locked: 1,
       },
       orderSnapshot: {
-        id: 'TBDWithdraw20230320_002',
+        id: 'TBDWithdraw20230324_002',
         txid: '0x',
         status: 'SUCCESS',
         detail: '',
@@ -73,7 +73,7 @@ const ReceiptSection = () => {
         locked: 1,
       },
       orderSnapshot: {
-        id: 'TBDCFD20230320_001',
+        id: 'TBD202303240000001',
         txid: '0x',
         status: 'FAILED',
         state: OrderState.OPENING,
@@ -93,7 +93,7 @@ const ReceiptSection = () => {
         locked: 1,
       },
       orderSnapshot: {
-        id: 'TBDCFD20230320_002',
+        id: 'TBD202303240000001',
         txid: '0x',
         status: 'SUCCESS',
         state: OrderState.CLOSED,

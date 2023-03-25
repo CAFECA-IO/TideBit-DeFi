@@ -73,9 +73,10 @@ const CryptoCard = ({
   fluctuating = Number(fluctuating);
   // console.log('fluctuating', fluctuating);
   const priceRise = fluctuating > 0 ? true : false;
+  const fluctuatingAbs = Math.abs(fluctuating);
   const fluctuatingRate = priceRise
-    ? `(+${fluctuating.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}%)▴`
-    : `(${fluctuating.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}%)▾`;
+    ? `▴ ${fluctuatingAbs.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}%`
+    : `▾ ${fluctuatingAbs.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}%`;
   // TODO: input the data and price color change as props
   const priceColor = priceRise ? `text-lightGreen5` : `text-lightRed`;
   // let priceColor = '';

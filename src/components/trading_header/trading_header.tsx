@@ -37,6 +37,10 @@ const TradingHeader = () => {
   const priceShadowColor =
     marketCtx.selectedTicker?.upOrDown === Trend.UP ? 'priceUpShadow' : 'priceDownShadow';
 
+  const priceChange = Math.abs(marketCtx.selectedTicker?.priceChange ?? 0);
+
+  const priceChangePercentage = Math.abs(marketCtx.selectedTicker?.fluctuating ?? 0);
+
   // const displayedTickerBox = showTickerSelector ? <TickerSelectorModal /> : null;
 
   const tickerTitle = (
@@ -80,9 +84,7 @@ const TradingHeader = () => {
           </div>
           <div className="text-lg">{`${
             marketCtx.selectedTicker?.upOrDown === Trend.UP ? '▴' : '▾'
-          }${marketCtx.selectedTicker?.priceChange} (${
-            marketCtx.selectedTicker?.upOrDown === Trend.UP ? '+' : '-'
-          }${marketCtx.selectedTicker?.fluctuating}%)`}</div>
+          } ${priceChange} (${priceChangePercentage}%)`}</div>
         </div>
 
         {/* Trading volume */}

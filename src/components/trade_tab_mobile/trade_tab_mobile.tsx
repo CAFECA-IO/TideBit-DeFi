@@ -16,10 +16,11 @@ import {
   POSITION_PRICE_RENEWAL_INTERVAL_SECONDS,
   unitAsset,
 } from '../../constants/config';
-import eventEmitter, {ClickEvent} from '../../constants/tidebit_event';
+import {ClickEvent} from '../../constants/tidebit_event';
 import {useTranslation} from 'next-i18next';
 import {roundToDecimalPlaces} from '../../lib/common';
 import {getDummyQuotation} from '../../interfaces/tidebit_defi_background/quotation';
+import {NotificationContext} from '../../contexts/notification_context';
 
 type TranslateFunction = (s: string) => string;
 
@@ -29,17 +30,18 @@ const TradeTabMobile = () => {
   const globalCtx = useGlobal();
   const marketCtx = useContext(MarketContext);
   const userCtx = useContext(UserContext);
+  const notificationCtx = useContext(NotificationContext);
 
   useEffect(() => {
-    eventEmitter.once(ClickEvent.TICKER_CHANGED, () => {
+    notificationCtx.emitter.once(ClickEvent.TICKER_CHANGED, () => {
       marketPrice = marketCtx.selectedTickerRef.current?.price ?? TEMP_PLACEHOLDER;
       renewValueOfPosition(marketPrice);
     });
 
     return () => {
-      eventEmitter.removeAllListeners(ClickEvent.TICKER_CHANGED);
+      notificationCtx.emitter.removeAllListeners(ClickEvent.TICKER_CHANGED);
     };
-  }, [marketCtx.selectedTickerRef.current]);
+  }, [marketCtx.selectedTicker]);
 
   const tickerLiveStatistics = marketCtx.tickerLiveStatistics;
   const tickerStaticStatistics = marketCtx.tickerStatic;

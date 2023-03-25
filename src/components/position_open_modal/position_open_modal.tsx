@@ -15,6 +15,8 @@ import {
   timestampToString,
   wait,
   getDeadline,
+  getNowSeconds,
+  getTimestamp,
 } from '../../lib/common';
 import {useContext, useEffect, useState} from 'react';
 import {MarketContext} from '../../contexts/market_context';
@@ -22,7 +24,7 @@ import {BsClockHistory} from 'react-icons/bs';
 import {useGlobal} from '../../contexts/global_context';
 import {TypeOfPosition} from '../../constants/type_of_position';
 import {UserContext} from '../../contexts/user_context';
-import {POSITION_PRICE_RENEWAL_INTERVAL_SECONDS} from '../../constants/config';
+import {POSITION_PRICE_RENEWAL_INTERVAL_SECONDS, unitAsset} from '../../constants/config';
 import {
   getDummyApplyCreateCFDOrderData,
   IApplyCreateCFDOrderData,
@@ -55,7 +57,44 @@ const PositionOpenModal = ({
 
   const [lock, unlock] = locker('position_open_modal.UseEffect');
 
-  /** ToDo: 
+  const displayedGuaranteedStopSetting = !!openCfdRequest.guaranteedStop ? 'Yes' : 'No';
+
+  const displayedTypeOfPosition =
+    openCfdRequest.typeOfPosition === TypeOfPosition.BUY
+      ? t('POSITION_MODAL.TYPE_UP')
+      : t('POSITION_MODAL.TYPE_DOWN');
+
+  const displayedBuyOrSell =
+    openCfdRequest.typeOfPosition === TypeOfPosition.BUY
+      ? t('POSITION_MODAL.TYPE_BUY')
+      : t('POSITION_MODAL.TYPE_SELL');
+
+  const [guaranteedTooltipStatus, setGuaranteedTooltipStatus] = useState(0);
+
+  const displayedPositionColor = 'text-tidebitTheme';
+
+  const displayedBorderColor = TypeOfBorderColor.NORMAL;
+
+  const displayedTakeProfit = openCfdRequest.takeProfit ? `$ ${openCfdRequest.takeProfit}` : '-';
+  const displayedStopLoss = openCfdRequest.stopLoss ? `$ ${openCfdRequest.stopLoss}` : '-';
+
+  const layoutInsideBorder = 'mx-5 my-2 flex justify-between';
+
+  const displayedExpirationTime = timestampToString(openCfdRequest.liquidationTime);
+
+  const toApplyCreateOrder = (
+    openCfdRequest: IApplyCreateCFDOrderData
+  ): IApplyCreateCFDOrderData => {
+    const order: IApplyCreateCFDOrderData = {
+      ...openCfdRequest,
+      createTimestamp: getTimestamp(),
+      liquidationTime: getTimestamp() + 86400,
+    };
+
+    return order;
+  };
+
+  /** ToDo: (20230324 - Shirley)
     // loading modal -> UserContext.function (負責簽名) ->
     // 猶豫太久的話，單子會過期，就會顯示 failed modal，
     // 用戶沒簽名才是顯示 canceled modal
@@ -74,14 +113,10 @@ const PositionOpenModal = ({
     });
     globalCtx.visibleLoadingModalHandler();
 
-    // FIXME: Use the real and correct data after the param is confirmed
-    // const dummyCFDOrder: IApplyCreateCFDOrderData = getDummyApplyCreateCFDOrderData(
-    //   marketCtx.selectedTicker?.currency || 'ETH'
-    // );
+    const applyCreateOrder: IApplyCreateCFDOrderData = toApplyCreateOrder(openCfdRequest);
+    const result = await userCtx.createCFDOrder(applyCreateOrder);
     // eslint-disable-next-line no-console
-    // console.log(`position_open_modal dummyCFDOrder`, dummyCFDOrder);
-    const result = await userCtx.createCFDOrder(globalCtx.dataPositionOpenModal?.openCfdRequest);
-    // console.log('result from userCtx in position_closed_modal.tsx: ', result);
+    console.log('open result', result);
 
     // ToDo: temporary waiting
     await wait(DELAYED_HIDDEN_SECONDS);
@@ -95,7 +130,6 @@ const PositionOpenModal = ({
     // ToDo: temporary waiting
     await wait(DELAYED_HIDDEN_SECONDS);
 
-    // Close loading modal
     globalCtx.eliminateAllModals();
 
     // ToDo: Revise the `result.reason` to constant by using enum or object
@@ -108,14 +142,7 @@ const PositionOpenModal = ({
         btnUrl: '#',
       });
 
-      // globalCtx.dataHistoryPositionModalHandler(userCtx.getClosedCFD(openCfdDetails.id));
-
       globalCtx.visibleSuccessfulModalHandler();
-      // await wait(DELAYED_HIDDEN_SECONDS);
-
-      // globalCtx.eliminateAllModals();
-
-      // globalCtx.visibleHistoryPositionModalHandler();
     } else if (result.reason === 'CANCELED') {
       globalCtx.dataCanceledModalHandler({
         modalTitle: 'Open Position',
@@ -137,89 +164,43 @@ const PositionOpenModal = ({
     return;
   };
 
-  // ToDo: Typo `guaranteedStop`
-  const displayedGuaranteedStopSetting = !!openCfdRequest.guaranteedStop ? 'Yes' : 'No';
-
-  const displayedTypeOfPosition =
-    openCfdRequest.typeOfPosition === TypeOfPosition.BUY
-      ? t('POSITION_MODAL.TYPE_UP')
-      : t('POSITION_MODAL.TYPE_DOWN');
-
-  const displayedBuyOrSell =
-    openCfdRequest.typeOfPosition === TypeOfPosition.BUY
-      ? t('POSITION_MODAL.TYPE_BUY')
-      : t('POSITION_MODAL.TYPE_SELL');
-
-  const [guaranteedTooltipStatus, setGuaranteedTooltipStatus] = useState(0);
-
-  // const displayedPnLColor =
-  //   openCfdRequest?.pnl.type === 'PROFIT'
-  //     ? TypeOfPnLColor.PROFIT
-  //     : openCfdRequest?.pnl.type === 'LOSS'
-  //     ? TypeOfPnLColor.LOSS
-  //     : TypeOfPnLColor.EQUAL;
-
-  const displayedPositionColor = 'text-tidebitTheme';
-  // openCfdRequest.typeOfPosition === TypeOfPosition.BUY
-  //   ? TypeOfPnLColor.PROFIT
-  //   : TypeOfPnLColor.LOSS;
-
-  const displayedBorderColor = TypeOfBorderColor.NORMAL;
-  // openCfdRequest.typeOfPosition === TypeOfPosition.BUY
-  //   ? TypeOfBorderColor.LONG
-  //   : TypeOfBorderColor.SHORT;
-
-  const displayedTakeProfit = openCfdRequest.takeProfit ? `$ ${openCfdRequest.takeProfit}` : '-';
-  const displayedStopLoss = openCfdRequest.stopLoss ? `$ ${openCfdRequest.stopLoss}` : '-';
-
-  //const displayedExpirationTime = timestampToString(openCfdRequest?.quotation.deadline ?? 0);
-
-  const layoutInsideBorder = 'mx-5 my-2 flex justify-between';
-
-  // let dataRenewedStyle = 'text-lightGray';
-
-  // const displayedTime = timestampToString(openCfdRequest?.createTimestamp ?? 0);
-
   const renewDataHandler = async () => {
     setDataRenewedStyle('animate-flash text-lightYellow2');
     await wait(DELAYED_HIDDEN_SECONDS / 5);
 
     const deadline = getDeadline(POSITION_PRICE_RENEWAL_INTERVAL_SECONDS);
-    setSecondsLeft(deadline - Date.now() / 1000);
+    setSecondsLeft(deadline - getTimestamp());
 
-    // ToDo: get latest price from marketCtx and calculate required margin data
-    // FIXME: 應用 ?? 代替 !
+    const newPrice =
+      openCfdRequest.typeOfPosition === TypeOfPosition.BUY
+        ? randomIntFromInterval(
+            marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice * 0.75,
+            marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice * 1.25
+          )
+        : openCfdRequest.typeOfPosition === TypeOfPosition.SELL
+        ? randomIntFromInterval(
+            marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice * 1.1,
+            marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice * 1.25
+          )
+        : 999999;
+    const newMargin = randomIntFromInterval(100, 500);
+
+    // TODO: (20230324 - Shirley) renew price, liquidation time, liquidation price
     globalCtx.dataPositionOpenModalHandler({
       openCfdRequest: {
         ...openCfdRequest,
-        price:
-          openCfdRequest.typeOfPosition === TypeOfPosition.BUY
-            ? randomIntFromInterval(
-                marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice * 0.75,
-                marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice * 1.25
-              )
-            : openCfdRequest.typeOfPosition === TypeOfPosition.SELL
-            ? randomIntFromInterval(
-                marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice * 1.1,
-                marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice * 1.25
-              )
-            : 999999,
+        quotation: {
+          ...openCfdRequest.quotation,
+          deadline: deadline,
+          price: newPrice,
+          signature: '0x',
+        },
+        price: newPrice,
         margin: {
           ...openCfdRequest.margin,
-          amount: randomIntFromInterval(
-            openCfdRequest.margin.amount * 0.9,
-            openCfdRequest.margin.amount * 1.5
-          ),
+          amount: newMargin,
         },
-        // ToDo:
-        // margin:
-        //   openCfdRequest.typeOfPosition === TypeOfPosition.BUY
-        //     ? (openCfdRequest.amount * marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice) /
-        //       openCfdRequest.leverage
-        //     : (openCfdRequest.amount * marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice) /
-        //       openCfdRequest.leverage,
       },
-      // renewalDeadline: deadline,
     });
 
     setDataRenewedStyle('text-lightYellow2');
@@ -240,37 +221,11 @@ const PositionOpenModal = ({
       return;
     }
 
-    // if (secondsLeft === 0) {
-    //   setSecondsLeft(POSITION_PRICE_RENEWAL_INTERVAL_SECONDS);
-    //   renewDataHandler();
-    // }
-
-    // async () => {
-    //   if (secondsLeft === 0) {
-    //     await wait(500);
-    //     setSecondsLeft(15);
-    //   }
-    // };
-
-    // it will start from 2 second
-    // const newTimestamp = new Date().getTime() / 1000 + POSITION_PRICE_RENEWAL_INTERVAL_SECONDS;
-
     const intervalId = setInterval(() => {
-      // setSecondsLeft(prevSeconds => prevSeconds - 1);
-
       const base = openCfdRequest.quotation.deadline;
-      const tickingSec = base - Date.now() / 1000;
-      setSecondsLeft(tickingSec > 0 ? Math.round(tickingSec) : 0);
+      const tickingSec = base - getTimestamp();
 
-      //
-      // console.log(
-      //   'in setInterval, base: ',
-      //   base,
-      //   ', tickingSec: ',
-      //   tickingSec,
-      //   ', secondsLeft: ',
-      //   secondsLeft
-      // );
+      setSecondsLeft(tickingSec > 0 ? Math.round(tickingSec) : 0);
 
       if (secondsLeft === 0) {
         renewDataHandler();
@@ -282,16 +237,6 @@ const PositionOpenModal = ({
       // unlock();
     };
   }, [secondsLeft, globalCtx.visiblePositionOpenModal]);
-
-  // useEffect(() => {
-  //   if (globalCtx.visiblePositionOpenModal) {
-  //     setSecondsLeft(15);
-  //   }
-
-  //   // return () => {
-  //   //   second;
-  //   // };
-  // }, [globalCtx.visiblePositionOpenModal]);
 
   const formContent = (
     <div className="mt-8 flex flex-col px-6 pb-2">
@@ -393,27 +338,21 @@ const PositionOpenModal = ({
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">{t('POSITION_MODAL.EXPIRATION_TIME')}</div>
               <div className="">
-                {/* ToDo: Expiration Time */}
-                2023-03-09 15:20:13
-                {/* {displayedExpirationTime.date} {displayedExpirationTime.time} */}
+                {displayedExpirationTime.date} {displayedExpirationTime.time}
               </div>
             </div>
-
-            {/* <div className={`${layoutInsideBorder}`}>
-              <div className="text-lightGray">Open Time</div>
-              <div className="">
-                {displayedTime.date} {displayedTime.time}
-              </div>
-            </div> */}
 
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">{t('POSITION_MODAL.LIQUIDATION_PRICE')}</div>
               {/* ToDo: Liquidation Price */}
 
               <div className="">
-                $ 9.23
+                ${' '}
+                {openCfdRequest.liquidationPrice?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+                  minimumFractionDigits: 2,
+                })}
                 {/* ToDo: Hardcode USDT */}
-                <span className="ml-1 text-lightGray">USDT</span>
+                <span className="ml-1 text-lightGray">{unitAsset}</span>
               </div>
             </div>
           </div>
@@ -422,7 +361,7 @@ const PositionOpenModal = ({
         <div className="my-4 text-xxs text-lightGray">{t('POSITION_MODAL.CFD_CONTENT')}</div>
 
         <RippleButton
-          // disabled={secondsLeft === INIT_POSITION_REMAINING_SECONDS}
+          disabled={secondsLeft < 1}
           onClick={submitClickHandler}
           buttonType="button"
           className={`mt-0 whitespace-nowrap rounded border-0 bg-tidebitTheme py-2 px-16 text-base text-white transition-colors duration-300 hover:bg-cyan-600 focus:outline-none disabled:bg-lightGray`}

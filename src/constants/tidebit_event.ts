@@ -1,4 +1,3 @@
-import EventEmitter from 'events';
 export type ITideBitEvent =
   | 'CONNECTED'
   | 'DISCONNECTED'
@@ -74,7 +73,3 @@ export interface IClickEventConstant {
 export const ClickEvent: IClickEventConstant = {
   TICKER_CHANGED: 'TICKER_CHANGED',
 };
-
-const eventEmitter = new EventEmitter();
-
-export default eventEmitter;

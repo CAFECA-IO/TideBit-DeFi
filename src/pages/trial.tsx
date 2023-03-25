@@ -6,7 +6,6 @@ import 'react-toastify/dist/ReactToastify.css';
 import {useContext, useEffect, useState} from 'react';
 
 import {useGlobal} from '../contexts/global_context';
-import {dummyOpenCFDDetails} from '../interfaces/tidebit_defi_background/open_cfd_details';
 import PositionClosedModal from '../components/position_closed_modal/position_closed_modal';
 import PositionUpdatedModal from '../components/position_updated_modal/position_updated_modal';
 import HistoryPositionModal from '../components/history_position_modal/history_position_modal';

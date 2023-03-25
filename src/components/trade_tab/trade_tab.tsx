@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useRef, useState} from 'react';
 import Toggle from '../toggle/toggle';
-import TradingInput, {TRADING_INPUT_HANDLER_TYPE_CLASSES} from '../trading_input/trading_input';
+import TradingInput from '../trading_input/trading_input';
 import {AiOutlineQuestionCircle} from 'react-icons/ai';
 import RippleButton from '../ripple_button/ripple_button';
 import {UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
@@ -13,13 +13,13 @@ import {useGlobal} from '../../contexts/global_context';
 import {MarketContext} from '../../contexts/market_context';
 import {UserContext} from '../../contexts/user_context';
 import useStateRef from 'react-usestateref';
-import EventEmitter from 'events';
 import {TypeOfPosition} from '../../constants/type_of_position';
 import {OrderType} from '../../constants/order_type';
 import {OrderStatusUnion} from '../../constants/order_status_union';
-import eventEmitter, {ClickEvent} from '../../constants/tidebit_event';
+import {ClickEvent} from '../../constants/tidebit_event';
 import {roundToDecimalPlaces} from '../../lib/common';
 import {getDummyQuotation} from '../../interfaces/tidebit_defi_background/quotation';
+import {NotificationContext} from '../../contexts/notification_context';
 import {useTranslation} from 'next-i18next';
 
 type TranslateFunction = (s: string) => string;
@@ -30,29 +30,18 @@ const TradeTab = () => {
   const globalCtx = useGlobal();
   const marketCtx = useContext(MarketContext);
   const userCtx = useContext(UserContext);
+  const notificationCtx = useContext(NotificationContext);
 
   useEffect(() => {
-    eventEmitter.once(ClickEvent.TICKER_CHANGED, () => {
+    notificationCtx.emitter.once(ClickEvent.TICKER_CHANGED, () => {
       marketPrice = marketCtx.selectedTickerRef.current?.price ?? TEMP_PLACEHOLDER;
       renewValueOfPosition(marketPrice);
     });
 
     return () => {
-      eventEmitter.removeAllListeners(ClickEvent.TICKER_CHANGED);
+      notificationCtx.emitter.removeAllListeners(ClickEvent.TICKER_CHANGED);
     };
-  }, [marketCtx.selectedTickerRef.current]);
-
-  //   // TODO: 第二個參數可以是現在被選擇的交易對；payload 是發生的事情的補充資料
-  //   /**
-  //    * 在交易頁面，當使用者切換交易對時，會觸發 `TICKER_CHANGED` 事件
-  //    *
-  //    * 告訴其他人，我要做的事情，用 .emit
-  //    * 我要接收這個資訊，用 .on
-  //    */
-  //   const btnClickHandler = () => {
-  //     Emitter.emit('TICKER_CHANGED', func);
-  //   };
-  // };
+  }, [marketCtx.selectedTicker]);
 
   const tabBodyWidth = 'w-320px';
 
@@ -81,11 +70,6 @@ const TradeTab = () => {
   const longRecommendedSl = Number(
     (tickerLiveStatistics?.longRecommendedSl ?? TEMP_PLACEHOLDER).toFixed(2)
   ); // recommendedSl // MARKET_PRICE * 0.85
-  // const shortRecommendedTp = Number((MARKET_PRICE * 0.85).toFixed(2));
-  // const shortRecommendedSl = Number((MARKET_PRICE * 1.15).toFixed(2));
-
-  // TODO: `val: number | () => number`
-  // TODO: difference between `number` and `() => number`
 
   const [longTooltipStatus, setLongTooltipStatus] = useState(0);
   const [shortTooltipStatus, setShortTooltipStatus] = useState(0);
@@ -239,7 +223,6 @@ const TradeTab = () => {
   };
 
   const getToggledShortSlSetting = (bool: boolean) => {
-    // console.log('getToggledShortSlSetting', bool);
     setShortSlToggle(bool);
 
     setExpectedShortLossValue((shortSlValue - Number(sellPrice)) * targetInputValueRef.current);
@@ -260,42 +243,31 @@ const TradeTab = () => {
   const isDisplayedDividerSpacing =
     valueOfPositionLength > 10 || targetLength > 10 ? 'top-430px' : 'top-420px';
 
-  // TODO: Should haven't been undefined
-  // TODO: 15秒後，在 PositionOpenModal 更新
-  // TODO: 保證金不足就不能下委託單；按鈕反灰
   const longOrderSubmitHandler = () => {
-    // if (marginWarning) return;
-
     globalCtx.dataPositionOpenModalHandler({
       openCfdRequest: {
         ticker: marketCtx.selectedTicker?.currency ?? '',
         targetAsset: marketCtx.selectedTicker?.currency ?? '',
         unitAsset: unitAsset,
-        price: Number(buyPrice) ?? 9999999999,
+        price: Number(buyPrice) ?? 9999999999, // TODO: Renew as quotation (20230324 - Shirley)
         amount: targetInputValueRef.current,
         typeOfPosition: TypeOfPosition.BUY,
         leverage: marketCtx.tickerStatic?.leverage ?? 1,
         margin: {
           asset: marketCtx.selectedTicker?.currency ?? '',
-          amount: requiredMarginRef.current,
+          amount: requiredMarginRef.current, // TODO: Renew as quotation (20230324 - Shirley)
         },
         quotation: getDummyQuotation(marketCtx.selectedTicker?.currency ?? '', TypeOfPosition.BUY),
-        liquidationPrice: 1000,
-        liquidationTime: Math.ceil(Date.now() / 1000) + 86400, // openTimestamp + 86400
-        // price: marketCtx.tickerLiveStatistics?.buyEstimatedFilledPrice ?? 9999999999,
-        // price: marketCtx.selectedTicker?.price ?? 9999999999,
-        // triggerPrice: marketCtx.selectedTicker?.price ?? 9999999999,
-        // estimatedFilledPrice: marketCtx.selectedTicker?.price ?? 9999999999,
+        liquidationPrice: 1000, // TODO: Renew as quotation (20230324 - Shirley)
+        liquidationTime: Math.ceil(Date.now() / 1000) + 86400,
         fee: marketCtx.tickerLiveStatistics?.fee ?? 9999999999,
         guaranteedStop: longSlToggle ? longGuaranteedStopChecked : false,
+        guaranteedStopFee: longSlToggle && longGuaranteedStopChecked ? 2023 : 0, // TODO: Renew as quotation (20230324 - Shirley)
         takeProfit: longTpToggle ? longTpValue : undefined,
         stopLoss: longSlToggle ? longSlValue : undefined,
       },
-      renewalDeadline:
-        Math.ceil(new Date().getTime() / 1000) + POSITION_PRICE_RENEWAL_INTERVAL_SECONDS,
     });
     globalCtx.visiblePositionOpenModalHandler();
-    // globalCtx.visibleWalletPanelHandler();
     return;
   };
 
@@ -305,6 +277,7 @@ const TradeTab = () => {
   const shortToolMouseEnterHandler = () => setShortTooltipStatus(3);
   const shortToolMouseLeaveHandler = () => setShortTooltipStatus(0);
 
+  /* Till: (20230409 - Shirley)
   // FIXME: it won't renew when user check guaranteed-stop
   // useEffect(() => {
   //   globalCtx.dataPositionOpenModalHandler({
@@ -330,6 +303,7 @@ const TradeTab = () => {
   //     chargeUnit: 'USDT',
   //   });
   // }, [marginInputValue, marketCtx.selectedTicker]);
+  */
 
   const shortOrderSubmitHandler = () => {
     globalCtx.dataPositionOpenModalHandler({
@@ -340,28 +314,22 @@ const TradeTab = () => {
         typeOfPosition: TypeOfPosition.SELL,
         margin: {
           asset: marketCtx.selectedTicker?.currency ?? '',
-          amount: requiredMarginRef.current,
+          amount: requiredMarginRef.current, // TODO: Renew as quotation (20230324 - Shirley)
         },
         quotation: getDummyQuotation(marketCtx.selectedTicker?.currency ?? '', TypeOfPosition.SELL),
-        price: Number(sellPrice) ?? 9999999999,
+        price: Number(sellPrice) ?? 9999999999, // TODO: Renew as quotation (20230324 - Shirley)
         amount: targetInputValueRef.current,
-        liquidationPrice: 1000,
-        liquidationTime: Math.ceil(Date.now() / 1000) + 86400, // openTimestamp + 86400
-        // price: marketCtx.tickerLiveStatistics?.buyEstimatedFilledPrice ?? 9999999999,
-        // price: marketCtx.selectedTicker?.price ?? 9999999999,
-        // triggerPrice: marketCtx.selectedTicker?.price ?? 9999999999,
-        // estimatedFilledPrice: marketCtx.selectedTicker?.price ?? 9999999999,
+        liquidationPrice: 1000, // TODO: Renew as quotation (20230324 - Shirley)
+        liquidationTime: Math.ceil(Date.now() / 1000) + 86400,
         fee: marketCtx.tickerLiveStatistics?.fee ?? 9999999999,
         leverage: marketCtx.tickerStatic?.leverage ?? 1,
         guaranteedStop: shortSlToggle ? shortGuaranteedStopChecked : false,
+        guaranteedStopFee: shortSlToggle && shortGuaranteedStopChecked ? 2023 : 0, // TODO: Renew as quotation (20230324 - Shirley)
         takeProfit: shortTpToggle ? shortTpValue : undefined,
         stopLoss: shortSlToggle ? shortSlValue : undefined,
       },
-      renewalDeadline:
-        Math.ceil(new Date().getTime() / 1000) + POSITION_PRICE_RENEWAL_INTERVAL_SECONDS,
     });
     globalCtx.visiblePositionOpenModalHandler();
-    // globalCtx.visibleWalletPanelHandler();
     return;
   };
 
@@ -393,8 +361,6 @@ const TradeTab = () => {
       </div>
     </>
   );
-
-  // const displayedValueofPosition =
 
   // ----------long area----------
   const longGuaranteedStopChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {

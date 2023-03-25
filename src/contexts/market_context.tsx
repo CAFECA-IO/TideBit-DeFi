@@ -15,8 +15,8 @@ import {
   ICryptocurrency,
 } from '../interfaces/tidebit_defi_background/cryptocurrency';
 import {
-  dummyResultFailed,
-  dummyResultSuccess,
+  defaultResultFailed,
+  defaultResultSuccess,
   IResult,
 } from '../interfaces/tidebit_defi_background/result';
 import {
@@ -32,6 +32,7 @@ import {NotificationContext} from './notification_context';
 import {WorkerContext} from './worker_context';
 import {APIName, Method} from '../constants/api_request';
 import TickerBookInstance from '../lib/books/ticker_book';
+import {unitAsset} from '../constants/config';
 import {getDummyQuotation, IQuotation} from '../interfaces/tidebit_defi_background/quotation';
 import {
   getDummyTickerHistoryData,
@@ -62,9 +63,9 @@ export interface IMarketContext {
   showPositionOnChartHandler: (bool: boolean) => void;
   candlestickChartIdHandler: (id: string) => void;
   listAvailableTickers: () => ITickerData[];
-  selectTickerHandler: (props: string) => IResult;
+  selectTickerHandler: (props: string) => Promise<IResult>;
   selectTimeSpanHandler: (props: ITimeSpanUnion) => void;
-  getCandlestickChartData: (tickerId: string) => Promise<void>; // x 100
+  getCandlestickChartData: (tickerId: string) => Promise<IResult>; // x 100
   getCFDQuotation: (tickerId: string, typeOfPosition: ITypeOfPosition) => Promise<IResult>;
   getTickerHistory: (
     tickerId: string,
@@ -86,21 +87,25 @@ export const MarketContext = createContext<IMarketContext>({
   showPositionOnChart: false,
   candlestickId: '',
   candlestickChartData: [],
-  timeSpan: TimeSpanUnion._1m,
+  timeSpan: TimeSpanUnion._1s,
+  selectTimeSpanHandler: () => null,
+  // liveStatstics: null,
+  // bullAndBearIndex: 0,
+  // cryptoBriefNews: [],
+  // cryptoSummary: null,
   tickerStatic: null,
   tickerLiveStatistics: null,
   depositCryptocurrencies: [], // () => [],
   withdrawCryptocurrencies: [], // () => [],
   init: () => Promise.resolve(),
-  // getGuaranteedStopFeePercentage: () => Promise.resolve(dummyResultSuccess),
+  // getGuaranteedStopFeePercentage: () => Promise.resolve(defaultResultSuccess),
   showPositionOnChartHandler: () => null,
   candlestickChartIdHandler: () => null,
-  selectTimeSpanHandler: () => null,
   listAvailableTickers: () => [],
-  selectTickerHandler: () => dummyResultSuccess,
-  getCandlestickChartData: () => Promise.resolve(),
-  getCFDQuotation: () => Promise.resolve(dummyResultSuccess),
-  getTickerHistory: () => Promise.resolve(dummyResultSuccess),
+  selectTickerHandler: () => Promise.resolve(defaultResultSuccess),
+  getCandlestickChartData: () => Promise.resolve(defaultResultSuccess),
+  getCFDQuotation: () => Promise.resolve(defaultResultSuccess),
+  getTickerHistory: () => Promise.resolve(defaultResultSuccess),
 });
 
 export const MarketProvider = ({children}: IMarketProvider) => {
@@ -168,7 +173,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     tickerBook.timeSpan = timeSpan;
     setTimeSpan(tickerBook.timeSpan);
   };
-  const selectTickerHandler = (tickerId: string) => {
+  const selectTickerHandler = async (tickerId: string) => {
     const ticker: ITickerData = availableTickersRef.current[tickerId];
     setSelectedTicker(ticker);
     // ++ TODO: get from api
@@ -177,69 +182,62 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     const tickerLiveStatistics: ITickerLiveStatistics = getDummyTickerLiveStatistics(tickerId);
     setTickerLiveStatistics(tickerLiveStatistics);
 
-    getCandlestickChartData(tickerId);
+    await getCandlestickChartData(tickerId);
     workerCtx.tickerChangeHandler(ticker);
-    return dummyResultSuccess;
+    return defaultResultSuccess;
   };
-
-  /* Deprecated: updateCandlestickData with ICandlestickData 可能會有派上用場的時候 (20230407 - Tzuhan)
-  const updateCandlestickData = (candlestickData: ICandlestickData) => {
-    let candlestickDatas = candlestickChartDataRef.current
-      ? [...candlestickChartDataRef.current]
-      : [];
-    const lastestData = candlestickDatas[candlestickDatas.length - 1];
-    // eslint-disable-next-line no-console
-    // console.log(`lastestData`, lastestData, lastestData.x.getTime());
-    // eslint-disable-next-line no-console
-    // console.log(
-    //   `candlestickData`,
-    //   candlestickData,
-    //   candlestickData.x.getTime(),
-    //   candlestickData.x.getTime() - lastestData.x.getTime() >= getTime(timeSpanRef.current)
-    // );
-    if (lastestData) {
-      if (candlestickData.x.getTime() - lastestData.x.getTime() >= getTime(timeSpanRef.current)) {
-        candlestickDatas = candlestickDatas.concat([candlestickData]);
-      } else {
-        candlestickDatas[candlestickDatas.length - 1].y = candlestickData.y;
-      }
-    } else {
-      candlestickDatas = [candlestickData];
-    }
-    // eslint-disable-next-line no-console
-    // console.log(`candlestickDatas[${candlestickDatas.length}]`, candlestickDatas);
-    setCandlestickChartData(candlestickDatas);
-  };
-  */
 
   const getCandlestickChartData = async (tickerId: string) => {
-    workerCtx.requestHandler({
-      name: APIName.GET_CANDLESTICK_DATA,
-      method: Method.GET,
-      params: {
-        symbol: tickerId,
-        limit: tickerBook.limit,
-        timespan: timeSpan,
-      },
-      callback: (candlestickChartData: ICandlestickData[]) => {
-        tickerBook.updateCandlestick(
-          tickerId,
-          candlestickChartData.map(data => ({...data, x: new Date(data.x)}))
-        );
-        setCandlestickChartData(tickerBook.candlesticks[tickerId]);
-      },
-    });
+    let result: IResult = defaultResultFailed;
+    try {
+      const apiResult = (await workerCtx.requestHandler({
+        name: APIName.GET_CANDLESTICK_DATA,
+        method: Method.GET,
+        params: {
+          symbol: tickerId,
+          limit: tickerBook.limit,
+          timespan: timeSpan,
+        },
+        /* Deprecated: callback in requestHandler (Tzuhan - 20230420)
+        callback: (result: ICandlestickData[], error: Error) => {
+          if (error) {
+            // TODO: error handle (Tzuhan - 20230321)
+          } else {
+            const candlestickChartData = result.map(data => ({
+              ...data,
+              x: new Date(data.x),
+            }));
+            tickerBook.updateCandlestick(tickerId, candlestickChartData);
+            setCandlestickChartData(tickerBook.candlesticks[tickerId]);
+          }
+        },
+        */
+      })) as ICandlestickData[];
+      const candlestickChartData = apiResult.map(data => ({
+        ...data,
+        x: new Date(data.x),
+      }));
+      tickerBook.updateCandlestick(tickerId, candlestickChartData);
+      setCandlestickChartData(tickerBook.candlesticks[tickerId]);
+      result = defaultResultSuccess;
+    } catch (error) {
+      // TODO: error handle (Tzuhan - 20230321)
+      // eslint-disable-next-line no-console
+      console.error(`getCandlestickChartData error`, error);
+      result.reason = (error as Error).message;
+    }
+    return result;
   };
 
   const getCFDQuotation = async (tickerId: string, typeOfPosition: ITypeOfPosition) => {
-    let result: IResult = dummyResultFailed;
+    let result: IResult = defaultResultFailed;
     try {
       // TODO: send request (Tzuhan - 20230317)
       const quotation: IQuotation = getDummyQuotation(tickerId, typeOfPosition);
-      result = dummyResultSuccess;
+      result = defaultResultSuccess;
       result.data = quotation;
     } catch (error) {
-      result = dummyResultFailed;
+      result = defaultResultFailed;
     }
     return result;
   };
@@ -253,71 +251,144 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       limit?: number;
     }
   ) => {
-    let result: IResult = dummyResultFailed;
+    let result: IResult = defaultResultFailed;
     try {
       // TODO: send request (Tzuhan - 20230317)
       const tickerHistory: ITickerHistoryData[] = getDummyTickerHistoryData(tickerId, options);
-      result = dummyResultSuccess;
+      result = defaultResultSuccess;
       result.data = tickerHistory;
     } catch (error) {
-      result = dummyResultFailed;
+      result = defaultResultFailed;
     }
     return result;
   };
 
   const getGuaranteedStopFeePercentage = async () => {
-    workerCtx.requestHandler({
-      name: APIName.GET_GUARANTEED_STOP_FEE_PERCENTAGE,
-      method: Method.GET,
-      callback: (guaranteedStopFeePercentage: number) => {
-        setGuaranteedStopFeePercentage(guaranteedStopFeePercentage);
-      },
-    });
+    let result: IResult = defaultResultFailed;
+    try {
+      const guaranteedStopFeePercentage = (await workerCtx.requestHandler({
+        name: APIName.GET_GUARANTEED_STOP_FEE_PERCENTAGE,
+        method: Method.GET,
+        /* Deprecated: callback in requestHandler (Tzuhan - 20230420)
+        callback: (result: number, error: Error) => {
+          if (error) {
+            // TODO: error handle (Tzuhan - 20230321)
+          } else {
+            setGuaranteedStopFeePercentage(result);
+          }
+        },
+        */
+      })) as number;
+      setGuaranteedStopFeePercentage(guaranteedStopFeePercentage);
+      result = defaultResultSuccess;
+      result.data = guaranteedStopFeePercentage;
+    } catch (error) {
+      // TODO: error handle (Tzuhan - 20230321)
+      // eslint-disable-next-line no-console
+      console.error(`getGuaranteedStopFeePercentage error`, error);
+      result.reason = (error as Error).message;
+    }
+    return result;
   };
 
   const listTickers = async () => {
-    workerCtx.requestHandler({
-      name: APIName.LIST_TICKERS,
-      method: Method.GET,
-      params: {
-        limit: tickerBook.limit,
-        timespan: timeSpan,
-      },
-      callback: (tickers: ITickerData[]) => {
-        tickerBook.updateTickers(tickers);
-        setAvailableTickers({...tickerBook.tickers});
-        selectTickerHandler(tickers[0].currency);
-      },
-    });
+    let result: IResult = defaultResultFailed;
+    try {
+      const tickers = (await workerCtx.requestHandler({
+        name: APIName.LIST_TICKERS,
+        method: Method.GET,
+        params: {
+          limit: tickerBook.limit,
+          timespan: timeSpan,
+        },
+        /* Deprecated: callback in requestHandler (Tzuhan - 20230420)
+        callback: (tickers: ITickerData[], error: Error) => {
+          if (error) {
+            // TODO: error handle (Tzuhan - 20230321)
+          } else {
+            tickerBook.updateTickers(tickers);
+            setAvailableTickers({...tickerBook.tickers});
+            selectTickerHandler(tickers[0].currency);
+          }
+        },
+        */
+      })) as ITickerData[];
+      tickerBook.updateTickers(tickers);
+      setAvailableTickers({...tickerBook.tickers});
+      await selectTickerHandler(tickers[0].currency);
+      result = defaultResultSuccess;
+      result.data = tickers;
+    } catch (error) {
+      // TODO: error handle (Tzuhan - 20230321)
+      // eslint-disable-next-line no-console
+      console.error(`listTickers error`, error);
+      result.reason = (error as Error).message;
+    }
+    return result;
   };
 
   const listDepositCryptocurrencies = async () => {
-    workerCtx.requestHandler({
-      name: APIName.LIST_DEPOSIT_CRYPTO_CURRENCIES,
-      method: Method.GET,
-      callback: (cryptocurrencies: ICryptocurrency[]) => {
-        // console.log(`maket init depositcurrencies`, cryptocurrencies);
-        setDepositCryptocurrencies([...cryptocurrencies]);
-      },
-    });
+    let result: IResult = defaultResultFailed;
+    try {
+      const cryptocurrencies = (await workerCtx.requestHandler({
+        name: APIName.LIST_DEPOSIT_CRYPTO_CURRENCIES,
+        method: Method.GET,
+        /* Deprecated: callback in requestHandler (Tzuhan - 20230420)
+        callback: (cryptocurrencies: ICryptocurrency[], error: Error) => {
+          if (error) {
+            // TODO: error handle (Tzuhan - 20230321)
+          } else {
+            setDepositCryptocurrencies([...cryptocurrencies]);
+          }
+        },
+        */
+      })) as ICryptocurrency[];
+      setDepositCryptocurrencies([...cryptocurrencies]);
+      result = defaultResultSuccess;
+      result.data = cryptocurrencies;
+    } catch (error) {
+      // TODO: error handle (Tzuhan - 20230321)
+      // eslint-disable-next-line no-console
+      console.error(`listDepositCryptocurrencies error`, error);
+      result.reason = (error as Error).message;
+    }
+    return result;
   };
 
   const lisWithdrawCryptocurrencies = async () => {
-    workerCtx.requestHandler({
-      name: APIName.LIST_WITHDRAW_CRYPTO_CURRENCIES,
-      method: Method.GET,
-      callback: (cryptocurrencies: ICryptocurrency[]) => {
-        setWithdrawCryptocurrencies([...cryptocurrencies]);
-      },
-    });
+    let result: IResult = defaultResultFailed;
+    try {
+      const cryptocurrencies = (await workerCtx.requestHandler({
+        name: APIName.LIST_WITHDRAW_CRYPTO_CURRENCIES,
+        method: Method.GET,
+        /* Deprecated: callback in requestHandler (Tzuhan - 20230420)
+        callback: (cryptocurrencies: ICryptocurrency[], error: Error) => {
+          if (error) {
+            // TODO: error handle (Tzuhan - 20230321)
+          } else {
+            setWithdrawCryptocurrencies([...cryptocurrencies]);
+          }
+        },
+        */
+      })) as ICryptocurrency[];
+      setWithdrawCryptocurrencies([...cryptocurrencies]);
+      result = defaultResultSuccess;
+      result.data = cryptocurrencies;
+    } catch (error) {
+      // TODO: error handle (Tzuhan - 20230321)
+      // eslint-disable-next-line no-console
+      console.error(`lisWithdrawCryptocurrencies error`, error);
+      result.reason = (error as Error).message;
+    }
+    return result;
   };
 
   const init = async () => {
     setIsCFDTradable(true);
-    getGuaranteedStopFeePercentage();
-    listTickers();
-    listDepositCryptocurrencies();
-    lisWithdrawCryptocurrencies();
+    await getGuaranteedStopFeePercentage();
+    await listTickers();
+    await listDepositCryptocurrencies();
+    await lisWithdrawCryptocurrencies();
     return await Promise.resolve();
   };
 
@@ -363,11 +434,12 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     () =>
       notificationCtx.emitter.on(
         TideBitEvent.CANDLESTICK,
-        (ticker: string, trades: ITBETrade[]) => {
+        (market: string, trades: ITBETrade[]) => {
+          const ticker = market.toUpperCase().replace(unitAsset, ``);
           tickerBook.updateCandlestickByTrade(ticker, trades);
           setAvailableTickers({...tickerBook.tickers});
           if (selectedTickerRef.current?.currency === ticker)
-            setCandlestickChartData(tickerBook.candlesticks[ticker]);
+            setCandlestickChartData([...tickerBook.candlesticks[ticker]]);
         }
       ),
     []

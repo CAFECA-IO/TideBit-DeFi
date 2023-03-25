@@ -13,7 +13,7 @@ import {IApplyDepositOrder} from '../../interfaces/tidebit_defi_background/apply
 import {IApplyWithdrawOrder} from '../../interfaces/tidebit_defi_background/apply_withdraw_order';
 import {IResult} from '../../interfaces/tidebit_defi_background/result';
 import {Code} from '../../constants/code';
-import {toIJSON} from '../common';
+import {getTimestamp, toIJSON} from '../common';
 
 class TransactionEngine {
   isApplyCreateCFDOrderData(obj: object): obj is IApplyCreateCFDOrderData {
@@ -54,7 +54,7 @@ class TransactionEngine {
         ...data.quotation,
         price: SafeMath.toSmallestUnit(data.quotation.price, 10),
       },
-      createTimestamp: Math.ceil(Date.now() / 1000),
+      createTimestamp: getTimestamp(),
       takeProfit: data.takeProfit ? SafeMath.toSmallestUnit(data.takeProfit, 10) : 0,
       stopLoss: data.stopLoss ? SafeMath.toSmallestUnit(data.stopLoss, 10) : 0,
       guaranteedStop: data.guaranteedStop ? data.guaranteedStop : false,
@@ -87,7 +87,7 @@ class TransactionEngine {
         ...data.quotation,
         price: SafeMath.toSmallestUnit(data.quotation.price, 10),
       },
-      closeTimestamp: data.closeTimestamp ? data.closeTimestamp : Math.ceil(Date.now() / 1000),
+      closeTimestamp: data.closeTimestamp ? data.closeTimestamp : getTimestamp(),
     };
     return convertedCloseCFDOrderData;
   }
@@ -97,7 +97,7 @@ class TransactionEngine {
       ...data,
       targetAmount: SafeMath.toSmallestUnit(data.targetAmount, 10),
       fee: SafeMath.toSmallestUnit(data.fee, 10),
-      createTimestamp: data.createTimestamp ? data.createTimestamp : Math.ceil(Date.now() / 1000),
+      createTimestamp: data.createTimestamp ? data.createTimestamp : getTimestamp(),
       remark: data.remark ? data.remark : ``,
     };
     return convertedCloseCFDOrderData;
@@ -112,7 +112,6 @@ class TransactionEngine {
     switch (order.type) {
       case CFDOrderType.CREATE:
         if (this.isApplyCreateCFDOrderData(order.data)) {
-          // ++ TODO createCFDOrderContract
           const typeData = CFDOrderCreate;
           typeData.message = this.convertCreateCFDOrderData(order.data);
           result = {
@@ -124,7 +123,6 @@ class TransactionEngine {
         break;
       case CFDOrderType.UPDATE:
         if (this.isApplyUpdateCFDOrderData(order.data)) {
-          // ++ TODO updateCFDOrderContract
           const typeData = CFDOrderUpdate;
           typeData.message = this.convertUpdateCFDOrderData(order.data);
           result = {
@@ -136,7 +134,6 @@ class TransactionEngine {
         break;
       case CFDOrderType.CLOSE:
         if (this.isApplyCloseCFDOrderData(order.data)) {
-          // ++ TODO closeCFDOrderContract
           const typeData = CFDOrderClose;
           typeData.message = this.convertCloseCFDOrderData(order.data);
           result = {

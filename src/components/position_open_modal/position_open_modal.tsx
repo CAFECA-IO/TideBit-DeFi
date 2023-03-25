@@ -1,5 +1,4 @@
 import {ImCross} from 'react-icons/im';
-import {IOpenCFDDetails} from '../../interfaces/tidebit_defi_background/open_cfd_details';
 import {
   DELAYED_HIDDEN_SECONDS,
   TypeOfBorderColor,
@@ -16,10 +15,11 @@ import {
   timestampToString,
   wait,
   getDeadline,
+  getNowSeconds,
+  getTimestamp,
 } from '../../lib/common';
 import {useContext, useEffect, useState} from 'react';
 import {MarketContext} from '../../contexts/market_context';
-import {IPublicCFDOrder} from '../../interfaces/tidebit_defi_background/public_order';
 import {BsClockHistory} from 'react-icons/bs';
 import {useGlobal} from '../../contexts/global_context';
 import {TypeOfPosition} from '../../constants/type_of_position';
@@ -36,7 +36,6 @@ interface IPositionOpenModal {
   modalVisible: boolean;
   modalClickHandler: () => void;
   openCfdRequest: IApplyCreateCFDOrderData;
-  renewalDeadline: number;
 }
 
 // ToDo: seconds constant in display.ts or config.ts?
@@ -45,7 +44,6 @@ const PositionOpenModal = ({
   modalVisible,
   modalClickHandler,
   openCfdRequest,
-  renewalDeadline,
   ...otherProps
 }: IPositionOpenModal) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
@@ -76,14 +74,8 @@ const PositionOpenModal = ({
     });
     globalCtx.visibleLoadingModalHandler();
 
-    // FIXME: Use the real and correct data after the param is confirmed
-    // const dummyCFDOrder: IApplyCreateCFDOrderData = getDummyApplyCreateCFDOrderData(
-    //   marketCtx.selectedTicker?.currency || 'ETH'
-    // );
-    // eslint-disable-next-line no-console
-    // console.log(`position_open_modal dummyCFDOrder`, dummyCFDOrder);
-    const result = await userCtx.createCFDOrder(globalCtx.dataPositionOpenModal?.openCfdRequest);
-    // console.log('result from userCtx in position_closed_modal.tsx: ', result);
+    const applyCreateOrder: IApplyCreateCFDOrderData = toApplyCreateOrder(openCfdRequest);
+    const result = await userCtx.createCFDOrder(applyCreateOrder);
 
     // ToDo: temporary waiting
     await wait(DELAYED_HIDDEN_SECONDS);
@@ -97,7 +89,6 @@ const PositionOpenModal = ({
     // ToDo: temporary waiting
     await wait(DELAYED_HIDDEN_SECONDS);
 
-    // Close loading modal
     globalCtx.eliminateAllModals();
 
     // ToDo: Revise the `result.reason` to constant by using enum or object
@@ -110,14 +101,7 @@ const PositionOpenModal = ({
         btnUrl: '#',
       });
 
-      // globalCtx.dataHistoryPositionModalHandler(userCtx.getClosedCFD(openCfdDetails.id));
-
       globalCtx.visibleSuccessfulModalHandler();
-      // await wait(DELAYED_HIDDEN_SECONDS);
-
-      // globalCtx.eliminateAllModals();
-
-      // globalCtx.visibleHistoryPositionModalHandler();
     } else if (result.reason === 'CANCELED') {
       globalCtx.dataCanceledModalHandler({
         modalTitle: 'Open Position',
@@ -187,41 +171,38 @@ const PositionOpenModal = ({
     await wait(DELAYED_HIDDEN_SECONDS / 5);
 
     const deadline = getDeadline(POSITION_PRICE_RENEWAL_INTERVAL_SECONDS);
-    setSecondsLeft(deadline - Date.now() / 1000);
+    setSecondsLeft(deadline - getTimestamp());
 
-    // ToDo: get latest price from marketCtx and calculate required margin data
-    // FIXME: 應用 ?? 代替 !
+    const newPrice =
+      openCfdRequest.typeOfPosition === TypeOfPosition.BUY
+        ? randomIntFromInterval(
+            marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice * 0.75,
+            marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice * 1.25
+          )
+        : openCfdRequest.typeOfPosition === TypeOfPosition.SELL
+        ? randomIntFromInterval(
+            marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice * 1.1,
+            marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice * 1.25
+          )
+        : 999999;
+    const newMargin = randomIntFromInterval(100, 500);
+
+    // TODO: (20230324 - Shirley) renew price, liquidation time, liquidation price
     globalCtx.dataPositionOpenModalHandler({
       openCfdRequest: {
         ...openCfdRequest,
-        price:
-          openCfdRequest.typeOfPosition === TypeOfPosition.BUY
-            ? randomIntFromInterval(
-                marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice * 0.75,
-                marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice * 1.25
-              )
-            : openCfdRequest.typeOfPosition === TypeOfPosition.SELL
-            ? randomIntFromInterval(
-                marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice * 1.1,
-                marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice * 1.25
-              )
-            : 999999,
+        quotation: {
+          ...openCfdRequest.quotation,
+          deadline: deadline,
+          price: newPrice,
+          signature: '0x',
+        },
+        price: newPrice,
         margin: {
           ...openCfdRequest.margin,
-          amount: randomIntFromInterval(
-            openCfdRequest.margin.amount * 0.9,
-            openCfdRequest.margin.amount * 1.5
-          ),
+          amount: newMargin,
         },
-        // ToDo:
-        // margin:
-        //   openCfdRequest.typeOfPosition === TypeOfPosition.BUY
-        //     ? (openCfdRequest.amount * marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice) /
-        //       openCfdRequest.leverage
-        //     : (openCfdRequest.amount * marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice) /
-        //       openCfdRequest.leverage,
       },
-      renewalDeadline: deadline,
     });
 
     setDataRenewedStyle('text-lightYellow2');
@@ -242,37 +223,11 @@ const PositionOpenModal = ({
       return;
     }
 
-    // if (secondsLeft === 0) {
-    //   setSecondsLeft(POSITION_PRICE_RENEWAL_INTERVAL_SECONDS);
-    //   renewDataHandler();
-    // }
-
-    // async () => {
-    //   if (secondsLeft === 0) {
-    //     await wait(500);
-    //     setSecondsLeft(15);
-    //   }
-    // };
-
-    // it will start from 2 second
-    // const newTimestamp = new Date().getTime() / 1000 + POSITION_PRICE_RENEWAL_INTERVAL_SECONDS;
-
     const intervalId = setInterval(() => {
-      // setSecondsLeft(prevSeconds => prevSeconds - 1);
+      const base = openCfdRequest.quotation.deadline;
+      const tickingSec = base - getTimestamp();
 
-      const base = renewalDeadline;
-      const tickingSec = base - Date.now() / 1000;
       setSecondsLeft(tickingSec > 0 ? Math.round(tickingSec) : 0);
-
-      //
-      // console.log(
-      //   'in setInterval, base: ',
-      //   base,
-      //   ', tickingSec: ',
-      //   tickingSec,
-      //   ', secondsLeft: ',
-      //   secondsLeft
-      // );
 
       if (secondsLeft === 0) {
         renewDataHandler();
@@ -284,16 +239,6 @@ const PositionOpenModal = ({
       // unlock();
     };
   }, [secondsLeft, globalCtx.visiblePositionOpenModal]);
-
-  // useEffect(() => {
-  //   if (globalCtx.visiblePositionOpenModal) {
-  //     setSecondsLeft(15);
-  //   }
-
-  //   // return () => {
-  //   //   second;
-  //   // };
-  // }, [globalCtx.visiblePositionOpenModal]);
 
   const formContent = (
     <div className="mt-8 flex flex-col px-6 pb-2">
@@ -415,7 +360,7 @@ const PositionOpenModal = ({
         <div className="my-4 text-xxs text-lightGray">{t('POSITION_MODAL.CFD_CONTENT')}</div>
 
         <RippleButton
-          // disabled={secondsLeft === INIT_POSITION_REMAINING_SECONDS}
+          disabled={secondsLeft < 1}
           onClick={submitClickHandler}
           buttonType="button"
           className={`mt-0 whitespace-nowrap rounded border-0 bg-tidebitTheme py-2 px-16 text-base text-white transition-colors duration-300 hover:bg-cyan-600 focus:outline-none disabled:bg-lightGray`}

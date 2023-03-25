@@ -5,7 +5,6 @@ import useOuterClick from '../../lib/hooks/use_outer_click';
 import {UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
 import {MarketContext} from '../../contexts/market_context';
 import {Trend} from '../../constants/trend';
-import eventEmitter from '../../constants/tidebit_event';
 import {useTranslation} from 'next-i18next';
 import {unitAsset} from '../../constants/config';
 

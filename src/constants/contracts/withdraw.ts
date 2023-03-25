@@ -1,4 +1,5 @@
 import IEIP712Data from '../../interfaces/ieip712data';
+import {getTimestamp} from '../../lib/common';
 
 const Withdraw: IEIP712Data = {
   domain: {
@@ -31,7 +32,7 @@ const Withdraw: IEIP712Data = {
     - This is DApp Specific
     - Be as explicit as possible when building out the message schema.
     */
-    createTimestamp: Math.ceil(Date.now() / 1000),
+    createTimestamp: getTimestamp(),
     targetAsset: 'USDT',
     targetAmount: 1,
     to: '0x',

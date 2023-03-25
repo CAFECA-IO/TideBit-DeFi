@@ -6,6 +6,7 @@ import {UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
 import {MarketContext} from '../../contexts/market_context';
 import {Trend} from '../../constants/trend';
 import {useTranslation} from 'next-i18next';
+import {unitAsset} from '../../constants/config';
 
 type TranslateFunction = (s: string) => string;
 
@@ -35,6 +36,10 @@ const TradingHeader = () => {
 
   const priceShadowColor =
     marketCtx.selectedTicker?.upOrDown === Trend.UP ? 'priceUpShadow' : 'priceDownShadow';
+
+  const priceChange = Math.abs(marketCtx.selectedTicker?.priceChange ?? 0);
+
+  const priceChangePercentage = Math.abs(marketCtx.selectedTicker?.fluctuating ?? 0);
 
   // const displayedTickerBox = showTickerSelector ? <TickerSelectorModal /> : null;
 
@@ -74,20 +79,19 @@ const TradingHeader = () => {
         >
           <div className="text-3xl">
             <span className="">
-              {marketCtx.selectedTicker?.price.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}
+              ₮ {marketCtx.selectedTicker?.price.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}
             </span>
           </div>
           <div className="text-lg">{`${
             marketCtx.selectedTicker?.upOrDown === Trend.UP ? '▴' : '▾'
-          } $${marketCtx.selectedTicker?.priceChange} (${
-            marketCtx.selectedTicker?.upOrDown === Trend.UP ? '+' : '-'
-          }${marketCtx.selectedTicker?.fluctuating}%)`}</div>
+          } ${priceChange} (${priceChangePercentage}%)`}</div>
         </div>
 
         {/* Trading volume */}
         <div className="relative">
           <div className="absolute -right-48 top-10 w-300px text-sm text-lightWhite/60 lg:left-0">
-            {t('TRADE_PAGE.TRADING_VIEW_24H_VOLUME')} {marketCtx.selectedTicker?.tradingVolume} USDT
+            {t('TRADE_PAGE.TRADING_VIEW_24H_VOLUME')} {marketCtx.selectedTicker?.tradingVolume}{' '}
+            {unitAsset}
           </div>
         </div>
       </div>

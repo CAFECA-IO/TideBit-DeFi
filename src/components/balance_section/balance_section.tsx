@@ -6,6 +6,7 @@ import {useGlobal} from '../../contexts/global_context';
 import {UserContext} from '../../contexts/user_context';
 import RippleButton from '../ripple_button/ripple_button';
 import {UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
+import {unitAsset} from '../../constants/config';
 import {useTranslation} from 'next-i18next';
 
 type TranslateFunction = (s: string) => string;
@@ -119,7 +120,7 @@ const BalanceSection = () => {
           </div>
 
           <div className="flex justify-center text-3xl font-extrabold">
-            {displayedBalance}&nbsp;&nbsp;USDT
+            {displayedBalance}&nbsp;&nbsp;{unitAsset}
           </div>
 
           <div className="">

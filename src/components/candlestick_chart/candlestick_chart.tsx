@@ -566,7 +566,7 @@ export default function CandlestickChart({
             data={toOpenPriceLineData(toLatestPriceLineData, cfd.openPrice)}
             labels={({datum}) =>
               datum.x === toLatestPriceLineData[toLatestPriceLineData.length - 1].x
-                ? ` ${symbol} Position $${datum.y.toLocaleString(
+                ? ` ${symbol} Position ₮ ${datum.y.toLocaleString(
                     UNIVERSAL_NUMBER_FORMAT_LOCALE
                   )}　Close`
                 : ``

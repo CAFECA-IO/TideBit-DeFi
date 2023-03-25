@@ -531,9 +531,10 @@ const UpdateFormModal = ({
 
                     <div className="">
                       <CircularProgressBar
+                        label={label}
                         showLabel={true}
                         numerator={remainTime}
-                        denominator={24}
+                        denominator={denominator}
                         progressBarColor={[displayedColorHex]}
                         hollowSize="40%"
                         circularBarSize="100"

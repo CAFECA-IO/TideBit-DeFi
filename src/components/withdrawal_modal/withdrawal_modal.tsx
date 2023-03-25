@@ -144,7 +144,7 @@ const WithdrawalModal = ({
     const value = event.target.value;
 
     if (regex.test(value)) {
-      // // TODO: 讓 input 不能變成 '01' 的條件式
+      /* // Till: 讓 input 不能變成 '01' 的條件式 (20230410 - Shirley)
       // if (Number(value) >= userAvailableBalance || Number(value) <= 0) {
       //   return;
       // }
@@ -154,7 +154,7 @@ const WithdrawalModal = ({
       //   setAmountInput(Number(value));
       //   return;
       // }
-
+*/
       // Upperlimit in withdraw modal
       if (Number(value) > userAvailableBalance) {
         setAmountInput(Number(userAvailableBalance));

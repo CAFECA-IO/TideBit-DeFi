@@ -140,12 +140,9 @@ const HistoryPositionModal = ({
             <div className="text-lightGray">{t('POSITION_MODAL.CLOSED_VALUE')}</div>
             <div className="">
               ${' '}
-              {(closedCfdDetails?.openValue + closedCfdDetails.pnl.value)?.toLocaleString(
-                UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                {
-                  minimumFractionDigits: 2,
-                }
-              ) ?? 0}
+              {(closedCfdDetails?.closeValue ?? 0)?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+                minimumFractionDigits: 2,
+              }) ?? 0}
             </div>
           </div>
 
@@ -160,9 +157,9 @@ const HistoryPositionModal = ({
           </div>
 
           <div className={`${layoutInsideBorder}`}>
-            <div className="text-lightGray">{t('POSITION_MODAL.CLOSED_VALUE')}</div>
+            <div className="text-lightGray">{t('POSITION_MODAL.CLOSED_PRICE')}</div>
             <div className="">
-              {closedCfdDetails?.openPrice?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+              {closedCfdDetails?.closePrice?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
                 minimumFractionDigits: 2,
               }) ?? 0}
               <span className="ml-1 text-lightGray">{unitAsset}</span>

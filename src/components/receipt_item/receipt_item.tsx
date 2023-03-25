@@ -81,11 +81,15 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
     type === OrderType.CFD
       ? orderSnapshot.state === OrderState.OPENING
         ? () => {
-            globalCtx.dataPositionDetailsModalHandler(userCtx.getOpendCFD(orderSnapshot.id));
-            globalCtx.visiblePositionDetailsModalHandler();
+            /* ToDo: convert IAceptedOrder to IDisplayedAcceptedOrder in order to use getCFD (20230324 - Luphia)
+            globalCtx.dataPositionUpdatedModalHandler(userCtx.getCFD(orderSnapshot.id));
+             */
+            globalCtx.visiblePositionUpdatedModalHandler();
           }
         : () => {
-            globalCtx.dataHistoryPositionModalHandler(userCtx.getClosedCFD(orderSnapshot.id));
+            /* ToDo: convert IAceptedOrder to IDisplayedAcceptedOrder in order to use getCFD (20230324 - Luphia)
+            globalCtx.dataHistoryPositionModalHandler(userCtx.getCFD(orderSnapshot.id));
+             */
             globalCtx.visibleHistoryPositionModalHandler();
           }
       : type === OrderType.DEPOSIT

@@ -24,7 +24,7 @@ import {BsClockHistory} from 'react-icons/bs';
 import {useGlobal} from '../../contexts/global_context';
 import {TypeOfPosition} from '../../constants/type_of_position';
 import {UserContext} from '../../contexts/user_context';
-import {POSITION_PRICE_RENEWAL_INTERVAL_SECONDS} from '../../constants/config';
+import {POSITION_PRICE_RENEWAL_INTERVAL_SECONDS, unitAsset} from '../../constants/config';
 import {
   getDummyApplyCreateCFDOrderData,
   IApplyCreateCFDOrderData,
@@ -334,7 +334,7 @@ const PositionOpenModal = ({
                   minimumFractionDigits: 2,
                 }) ?? 0}
                 {/* ToDo: Hardcode USDT */}
-                <span className="ml-1 text-lightGray">USDT</span>
+                <span className="ml-1 text-lightGray">{unitAsset}</span>
               </div>
             </div>
 
@@ -352,7 +352,7 @@ const PositionOpenModal = ({
               <div className={`${dataRenewedStyle}`}>
                 {openCfdRequest.margin.amount.toFixed(2)}
                 {/* ToDo: Hardcode USDT */}
-                <span className="ml-1 text-lightGray">USDT</span>
+                <span className="ml-1 text-lightGray">{unitAsset}</span>
               </div>
             </div>
 
@@ -361,7 +361,7 @@ const PositionOpenModal = ({
               <div className="">
                 {displayedTakeProfit} / {displayedStopLoss}
                 {/* ToDo: Hardcode USDT */}
-                <span className="ml-1 text-lightGray">USDT</span>
+                <span className="ml-1 text-lightGray">{unitAsset}</span>
               </div>
             </div>
 
@@ -406,7 +406,7 @@ const PositionOpenModal = ({
                   minimumFractionDigits: 2,
                 }) ?? 0}
                 {/* ToDo: Hardcode USDT */}
-                <span className="ml-1 text-lightGray">USDT</span>
+                <span className="ml-1 text-lightGray">{unitAsset}</span>
               </div>
             </div>
           </div>

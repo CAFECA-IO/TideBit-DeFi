@@ -1,5 +1,6 @@
 import React from 'react';
 import {TypeOfPnLColor, UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
+import {unitAsset} from '../../constants/config';
 
 const PnlSection = () => {
   // TODO: pnl from userContext
@@ -14,20 +15,25 @@ const PnlSection = () => {
     {title: 'PNL in today', ...pnlToday},
     {title: 'PNL in 30 days', ...pnl30Days},
     {title: 'Cumulative PNL', ...cumulativePnl},
-  ].map(({amount, percentage, ...rest}) => ({
-    content:
-      amount > 0
-        ? `+ ${amount.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)} USDT`
-        : `${amount.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)} USDT`,
-    remarks: percentage > 0 ? `▴ + ${percentage.toString()} %` : `▾ ${percentage.toString()} %`,
-    textColor:
-      percentage > 0 && amount > 0
-        ? TypeOfPnLColor.PROFIT
-        : percentage < 0 && amount < 0
-        ? TypeOfPnLColor.LOSS
-        : TypeOfPnLColor.EQUAL,
-    ...rest,
-  }));
+  ].map(({amount, percentage, ...rest}) => {
+    const percentageAbs = Math.abs(percentage);
+    const result = {
+      content:
+        amount > 0
+          ? `+ ${amount.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)} ${unitAsset}`
+          : `${amount.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)} ${unitAsset}`,
+      remarks:
+        percentage > 0 ? `▴ ${percentageAbs.toString()} %` : `▾ ${percentageAbs.toString()} %`,
+      textColor:
+        percentage > 0 && amount > 0
+          ? TypeOfPnLColor.PROFIT
+          : percentage < 0 && amount < 0
+          ? TypeOfPnLColor.LOSS
+          : TypeOfPnLColor.EQUAL,
+      ...rest,
+    };
+    return result;
+  });
 
   const statisticContentList = statisticContent.map(
     ({title, content, remarks, textColor}, index) => (

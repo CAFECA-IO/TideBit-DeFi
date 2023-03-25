@@ -243,7 +243,7 @@ const ReceiptSearch = ({
 
   return (
     <div className="flex flex-col items-center sm:items-stretch">
-      {displayedTicker}
+      {/* displayedTicker */}
       <div className="flex items-center justify-between py-6">
         {displayedFilterBar}
         {displayedSearchBar}

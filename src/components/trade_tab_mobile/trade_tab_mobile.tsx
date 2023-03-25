@@ -334,7 +334,7 @@ const TradeTabMobile = () => {
   const displayedRequiredMarginStyle = (
     <>
       <div className={`${isDisplayedMarginStyle} ${isDisplayedMarginSize} mt-1 text-base`}>
-        {requiredMargin?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)} USDT
+        {requiredMargin?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)} {unitAsset}
       </div>
       <div className={`${isDisplayedMarginWarning} ml-3 text-xs text-lightRed`}>
         * {t('TRADE_PAGE.TRADE_TAB_NOT_ENOUGH_MARGIN')}
@@ -420,7 +420,7 @@ const TradeTabMobile = () => {
         <label className="ml-2 flex text-sm font-medium text-lightGray">
           {t('TRADE_PAGE.TRADE_TAB_GUARANTEED_STOP')} &nbsp;
           <span className="text-lightWhite">
-            ({t('TRADE_PAGE.TRADE_TAB_FEE')} {guaranteedStopFee} USDT)
+            ({t('TRADE_PAGE.TRADE_TAB_FEE')} {guaranteedStopFee} {unitAsset})
           </span>
           {/* tooltip */}
           <div className="ml-2">
@@ -562,7 +562,7 @@ const TradeTabMobile = () => {
           {t('TRADE_PAGE.TRADE_TAB_GUARANTEED_STOP')} &nbsp;
           <span className="text-lightWhite">
             {' '}
-            ({t('TRADE_PAGE.TRADE_TAB_FEE')} {guaranteedStopFee} USDT)
+            ({t('TRADE_PAGE.TRADE_TAB_FEE')} {guaranteedStopFee} {unitAsset})
           </span>
           {/* tooltip */}
           <div className="ml-2">
@@ -675,7 +675,7 @@ const TradeTabMobile = () => {
             <div className="w-1/2">
               <div className="text-sm text-lightGray">{t('TRADE_PAGE.TRADE_TAB_VALUE')}</div>
               <div className={`text-base text-lightWhite ${isDisplayedValueSize}`}>
-                {valueOfPosition?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)} USDT
+                {valueOfPosition?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)} {unitAsset}
               </div>
             </div>
           </div>

@@ -386,7 +386,7 @@ const TradeTab = () => {
     <>
       {/* <div className="mt-1 text-base text-lightWhite">$ 13.14 USDT</div> */}
       <div className={`${isDisplayedMarginStyle} ${isDisplayedMarginSize} mt-1 text-base`}>
-        {requiredMarginRef.current?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)} USDT
+        {requiredMarginRef.current?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)} {unitAsset}
       </div>
       <div className={`${isDisplayedMarginWarning} ml-3 text-xs text-lightRed`}>
         * {t('TRADE_PAGE.TRADE_TAB_NOT_ENOUGH_MARGIN')}
@@ -493,7 +493,7 @@ const TradeTab = () => {
         {t('TRADE_PAGE.TRADE_TAB_GUARANTEED_STOP')} &nbsp;
         <span className="text-lightWhite">
           {' '}
-          ({t('TRADE_PAGE.TRADE_TAB_FEE')}: {guaranteedStopFee} USDT)
+          ({t('TRADE_PAGE.TRADE_TAB_FEE')}: {guaranteedStopFee} {unitAsset})
         </span>
         {/* <span className="">
           <AiOutlineQuestionCircle size={20} />
@@ -613,7 +613,7 @@ const TradeTab = () => {
           {t('TRADE_PAGE.TRADE_TAB_GUARANTEED_STOP')} &nbsp;
           <span className="text-lightWhite">
             {' '}
-            ({t('TRADE_PAGE.TRADE_TAB_FEE')}: {guaranteedStopFee} USDT)
+            ({t('TRADE_PAGE.TRADE_TAB_FEE')}: {guaranteedStopFee} {unitAsset})
           </span>
           {/* <span className="">
           <AiOutlineQuestionCircle size={20} />
@@ -691,7 +691,7 @@ const TradeTab = () => {
                     <div className="text-sm text-lightGray">{t('TRADE_PAGE.TRADE_TAB_VALUE')}</div>
                     <div className={`text-base text-lightWhite ${isDisplayedValueSize}`}>
                       {valueOfPositionRef.current?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}{' '}
-                      USDT
+                      {unitAsset}
                     </div>
                   </div>
                 </div>
@@ -766,7 +766,7 @@ const TradeTab = () => {
                     <div className="text-sm text-lightGray">{t('TRADE_PAGE.TRADE_TAB_VALUE')}</div>
                     <div className={`text-base text-lightWhite ${isDisplayedValueSize}`}>
                       {valueOfPositionRef.current?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}{' '}
-                      USDT
+                      {unitAsset}
                     </div>
                   </div>
                 </div>

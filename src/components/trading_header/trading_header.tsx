@@ -7,6 +7,7 @@ import {MarketContext} from '../../contexts/market_context';
 import {Trend} from '../../constants/trend';
 import eventEmitter from '../../constants/tidebit_event';
 import {useTranslation} from 'next-i18next';
+import {unitAsset} from '../../constants/config';
 
 type TranslateFunction = (s: string) => string;
 
@@ -90,7 +91,8 @@ const TradingHeader = () => {
         {/* Trading volume */}
         <div className="relative">
           <div className="absolute -right-48 top-10 w-300px text-sm text-lightWhite/60 lg:left-0">
-            {t('TRADE_PAGE.TRADING_VIEW_24H_VOLUME')} {marketCtx.selectedTicker?.tradingVolume} USDT
+            {t('TRADE_PAGE.TRADING_VIEW_24H_VOLUME')} {marketCtx.selectedTicker?.tradingVolume}{' '}
+            {unitAsset}
           </div>
         </div>
       </div>

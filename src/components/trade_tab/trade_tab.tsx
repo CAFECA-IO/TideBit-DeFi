@@ -669,7 +669,7 @@ const TradeTab = () => {
               {/* Stop Loss Setting */}
               <div>
                 <div className="flex h-25px items-center justify-between">
-                  <div className="text-sm text-lightGray">Clost at loss</div>
+                  <div className="text-sm text-lightGray">Close at loss</div>
                   <div className="w-105px">{displayedLongSlSetting}</div>
                   <Toggle getToggledState={getToggledLongSlSetting} />
                 </div>
@@ -747,7 +747,7 @@ const TradeTab = () => {
                   {/* Stop Loss Setting */}
                   <div>
                     <div className="flex h-25px items-center justify-between">
-                      <div className="text-sm text-lightGray">Clost at loss</div>
+                      <div className="text-sm text-lightGray">Close at loss</div>
                       <div className="w-105px">{displayedShortSlSetting}</div>
                       <div className="">
                         <Toggle getToggledState={getToggledShortSlSetting} />

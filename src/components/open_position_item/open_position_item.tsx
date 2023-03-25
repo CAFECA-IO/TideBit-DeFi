@@ -74,8 +74,8 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
   const denominator = remainSecs < 60 ? 60 : remainSecs < 3600 ? 60 : 24;
 
   const squareClickHandler = () => {
-    visiblePositionClosedModalHandler();
     dataPositionClosedModalHandler(openCfdDetails);
+    visiblePositionClosedModalHandler();
   };
 
   const displayedString =
@@ -164,9 +164,10 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
 
           <div>
             <CircularProgressBar
+              label={label}
               showLabel={true}
               numerator={remainTime}
-              denominator={24}
+              denominator={denominator}
               progressBarColor={[displayedColorHex]}
               hollowSize="40%"
               circularBarSize="100"

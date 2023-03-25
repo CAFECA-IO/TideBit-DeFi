@@ -42,3 +42,6 @@ export const MAX_PRICE_TRADING_CHART_ONE_SEC = 1.005; // 1.005
 export const MIN_PRICE_TRADING_CHART_ONE_SEC = 0.995; // 0.995
 
 export const TRADING_CHART_PRICE_LIMIT_ONE_SEC = 0.1;
+
+export const SUGGEST_TP = 0.2;
+export const SUGGEST_SL = 0.1;

@@ -55,6 +55,18 @@ const PositionOpenModal = ({
   const [secondsLeft, setSecondsLeft] = useState(POSITION_PRICE_RENEWAL_INTERVAL_SECONDS);
   const [dataRenewedStyle, setDataRenewedStyle] = useState('text-lightWhite');
 
+  const toApplyCreateOrder = (
+    openCfdRequest: IApplyCreateCFDOrderData
+  ): IApplyCreateCFDOrderData => {
+    const order: IApplyCreateCFDOrderData = {
+      ...openCfdRequest,
+      createTimestamp: getTimestamp(),
+      liquidationTime: getTimestamp() + 86400,
+    };
+
+    return order;
+  };
+
   /** ToDo: 
     // loading modal -> UserContext.function (負責簽名) ->
     // 猶豫太久的話，單子會過期，就會顯示 failed modal，

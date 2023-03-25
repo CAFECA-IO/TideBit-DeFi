@@ -1,42 +1,7 @@
 import {useState, Dispatch, SetStateAction} from 'react';
 import {TRADING_INPUT_STEP} from '../../constants/display';
 
-export const TRADING_INPUT_HANDLER_TYPE_CLASSES = {
-  margin: {
-    input: 'margin-input',
-    decrement: 'margin-decrement',
-    increment: 'margin-increment',
-  },
-  long: {
-    takeProfit: {
-      input: 'long-take-profit-input',
-      decrement: 'long-take-profit-decrement',
-      increment: 'long-take-profit-increment',
-    },
-    stopLoss: {
-      input: 'long-stop-loss-input',
-      decrement: 'long-stop-loss-decrement',
-      increment: 'long-stop-loss-increment',
-    },
-  },
-  short: {
-    takeProfit: {
-      input: 'short-take-profit-input',
-      decrement: 'short-take-profit-decrement',
-      increment: 'short-take-profit-increment',
-    },
-    stopLoss: {
-      input: 'short-stop-loss-input',
-      decrement: 'short-stop-loss-decrement',
-      increment: 'short-stop-loss-increment',
-    },
-  },
-};
-
 interface ITradingInputProps {
-  // decrementClickHandler?: () => void;
-  // incrementClickHandler?: () => void;
-  // inputChangeHandler?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   inputInitialValue: number;
   getInputValue?: (props: number) => void;
 
@@ -89,12 +54,10 @@ const TradingInput = ({
   };
 
   const inputChangeHandler: React.ChangeEventHandler<HTMLInputElement> = event => {
-    // const log = marginInputRef.current?.value;
-    // const regex = /^\d*\.?\d{0,2}$/;
     const value = event.target.value;
 
     if (regex.test(value)) {
-      // TODO: 讓 input 不能變成 '01' 的條件式
+      // Info: (20230316 - Shirley) 讓 input 不能變成 '01' 的條件式
       // if (Number(value) >= upperLimit || Number(value) <= lowerLimit) {
       //   return;
       // }
@@ -116,13 +79,6 @@ const TradingInput = ({
   };
 
   const incrementClickHandler = () => {
-    // const change = Number(marginInputRef?.current?.value) + COUNT_CLICK;
-    // const changeRounded = Math.round(change * 1000000) / 1000000;
-
-    // if (marginInputRef.current) {
-    //   marginInputRef.current.value = changeRounded.toString();
-    //     }
-
     const change = inputValue + TRADING_INPUT_STEP;
     const changeRounded = Math.round(change * 100) / 100;
 
@@ -133,189 +89,16 @@ const TradingInput = ({
     passValueHandler(changeRounded);
   };
 
-  /** Margin
- // minimum margin is 0.01
-    if (inputValue <= 0 || changeRounded < 0.01) {
-      return;
-    }
-   */
-  // TODO: refactor: use callback `someFunction: () => boolean`
-  // TODO: `handlerType?: string` error because it applies to `onClick`?
   const decrementClickHandler = () => {
     const change = inputValue - TRADING_INPUT_STEP;
     const changeRounded = Math.round(change * 100) / 100;
 
     // minimum margin is 0.01
     if (inputValue <= 0 || changeRounded < 0.01 || changeRounded < lowerLimit) {
-      // getHandler(handlerType);
       return;
     }
     setInputValue(changeRounded);
     passValueHandler(changeRounded);
-  };
-
-  // *----------Margin handlers-----*
-  const marginDecrementHandler = () => {
-    const change = inputValue - TRADING_INPUT_STEP;
-    const changeRounded = Math.round(change * 100) / 100;
-
-    // minimum margin is 0.01
-    if (inputValue <= 0 || changeRounded < 0.01) {
-      return;
-    }
-    setInputValue(changeRounded);
-  };
-
-  // TODO: make it easier to read `const localMarginLimit = upperLimit;`
-  const marginIncrementHandler = () => {
-    const change = inputValue + TRADING_INPUT_STEP;
-    const changeRounded = Math.round(change * 100) / 100;
-
-    // limit to each one's deposit or trading restriction
-    const localMarginLimit = upperLimit ?? 0;
-    if (inputValue >= localMarginLimit) {
-      // console.log('Margin restriction');
-      // <p>Couldn't above marginLimit</p>
-      return;
-    }
-
-    setInputValue(changeRounded);
-  };
-
-  const marginInputChangeHandler: React.ChangeEventHandler<HTMLInputElement> = event => {
-    // const log = marginInputRef.current?.value;
-    // const regex = /^\d*\.?\d{0,2}$/;
-    const value = event.target.value;
-
-    if (regex.test(value)) {
-      const localMarginLimit = upperLimit;
-      if (localMarginLimit) {
-        if (Number(value) >= localMarginLimit) {
-          // console.log('Margin restriction');
-          // <p>Couldn't above marginLimit</p>
-          return;
-        }
-      }
-      setInputValue(Number(value));
-    }
-  };
-
-  // *----------Long handlers----------*
-  const longSlInputChangeHandler: React.ChangeEventHandler<HTMLInputElement> = event => {
-    // const regex = /^\d*\.?\d{0,2}$/;
-    const value = event.target.value;
-    if (regex.test(value)) {
-      // [lower limit] Long's stop-loss limit [longSlLimit/lowerLimit]
-      // let localLongStopLossLimit = lowerLimit
-      if (lowerLimit >= Number(value)) {
-        // console.log('Stop loss restriction');
-        // <p>Couldn't below longSlLimit</p>
-        return;
-      }
-      setInputValue(Number(value));
-    }
-  };
-
-  // TODO: Logic condition for Long's stop loss
-  // const longSlIncrementHandler = () => {}
-  const longSlDecrementHandler = () => {
-    const change = inputValue - TRADING_INPUT_STEP;
-    const changeRounded = Math.round(change * 100) / 100;
-
-    // [lower limit] Long's stop-loss limit [longSlLimit/lowerLimit]
-    if (lowerLimit >= inputValue || changeRounded < 0.01) {
-      // <p>Couldn't below longSlLimit</p>
-      return;
-    }
-    setInputValue(changeRounded);
-  };
-
-  // TODO: Limit condition for Long's take profit
-  const longTpInputChangeHandler: React.ChangeEventHandler<HTMLInputElement> = event => {
-    // const regex = /^\d*\.?\d{0,2}$/;
-    const value = event.target.value;
-    if (regex.test(value)) {
-      if (upperLimit) {
-        // [upper limit] Long's take-profit limit [longTpLimit/upperLimit]
-        if (Number(value) >= upperLimit) {
-          // console.log('Take profit restriction');
-          // <p>Couldn't above shortTpLimit</p>
-          return;
-        }
-      }
-      setInputValue(Number(value));
-    }
-  };
-
-  // TODO: Logic condition for Long's stop loss
-  // const longTpDecrementHandler = () => {}
-  // const longTpIncrementHandler = () => {}
-
-  // ----------Short handlers----------
-  const shortSlInputChangeHandler: React.ChangeEventHandler<HTMLInputElement> = event => {
-    // const regex = /^\d*\.?\d{0,2}$/;
-    const value = event.target.value;
-    if (regex.test(value)) {
-      // [upper limit] Short's stop loss limit [shortSlLimit/upperLimit]
-      if (upperLimit) {
-        if (upperLimit <= Number(value)) {
-          // console.log('Stop loss restriction');
-          // <p>Couldn't above shortSlLimit</p>
-          return;
-        }
-      }
-
-      setInputValue(Number(value));
-    }
-  };
-
-  const shortSlDecrementHandler = () => {
-    const change = inputValue - TRADING_INPUT_STEP;
-    const changeRounded = Math.round(change * 100) / 100;
-
-    // [upper limit] Short's stop loss limit [shortSlLimit/upperLimit]
-    if (upperLimit) {
-      if (upperLimit <= inputValue || changeRounded < 0.01) {
-        // <p>Couldn't above shortSlLimit</p>
-        return;
-      }
-    }
-
-    setInputValue(changeRounded);
-  };
-
-  const getHandler = (handlerType: string) => {
-    return {
-      [TRADING_INPUT_HANDLER_TYPE_CLASSES.margin.input]: marginInputChangeHandler,
-      [TRADING_INPUT_HANDLER_TYPE_CLASSES.margin.increment]: marginIncrementHandler,
-      [TRADING_INPUT_HANDLER_TYPE_CLASSES.margin.decrement]: marginDecrementHandler,
-      [TRADING_INPUT_HANDLER_TYPE_CLASSES.long.stopLoss.input]: longSlInputChangeHandler,
-      [TRADING_INPUT_HANDLER_TYPE_CLASSES.long.stopLoss.decrement]: longSlDecrementHandler,
-      [TRADING_INPUT_HANDLER_TYPE_CLASSES.long.takeProfit.input]: longTpInputChangeHandler,
-      [TRADING_INPUT_HANDLER_TYPE_CLASSES.short.stopLoss.input]: shortSlInputChangeHandler,
-      [TRADING_INPUT_HANDLER_TYPE_CLASSES.short.stopLoss.decrement]: shortSlDecrementHandler,
-    }[handlerType];
-
-    // switch (type) {
-    //   case 'marginDecrement':
-    //     return marginDecrementHandler;
-    //   case 'marginIncrement':
-    //     return marginIncrementHandler;
-    //   case 'marginInputChange':
-    //     return marginInputChangeHandler;
-    //   case 'longSlDecrement':
-    //     return longSlDecrementHandler;
-    //   case 'longSlInputChange':
-    //     return longSlInputChangeHandler;
-    //   case 'longTpInputChange':
-    //     return longTpInputChangeHandler;
-    //   case 'shortSlDecrement':
-    //     return shortSlDecrementHandler;
-    //   case 'shortSlInputChange':
-    //     return shortSlInputChangeHandler;
-    //   default:
-    //     return () => {};
-    // }
   };
 
   return (

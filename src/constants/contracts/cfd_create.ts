@@ -1,4 +1,5 @@
 import IEIP712Data from '../../interfaces/ieip712data';
+import {getTimestamp} from '../../lib/common';
 
 const CFDOrderCreate: IEIP712Data = {
   domain: {
@@ -67,7 +68,7 @@ const CFDOrderCreate: IEIP712Data = {
       amount: 112,
     },
     liquidationPrice: 19083,
-    liquidationTime: Math.ceil(Date.now() / 1000) + 86400,
+    liquidationTime: getTimestamp() + 86400,
     // takeProfit: 74521,
     // stopLoss: 25250,
     createTimestamp: Math.ceil(Date.now()),
@@ -77,7 +78,7 @@ const CFDOrderCreate: IEIP712Data = {
       targetAsset: 'ETH',
       unitAsset: 'USDT',
       price: 21023,
-      deadline: Math.ceil(Date.now() / 1000) + 15,
+      deadline: getTimestamp() + 15,
       signature: '0x',
     },
     // takeProfit: null,

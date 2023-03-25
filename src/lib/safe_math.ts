@@ -41,10 +41,10 @@ class SafeMath {
    * @param {string | number} b
    * @returns {string}
    */
-  static plus(a: string | number, b: string | number): string {
+  static plus(a: string | number, b: string | number): number {
     const bnA = SafeMath.toBn(a);
     const bnB = SafeMath.toBn(b);
-    return bnA.plus(bnB).toFixed();
+    return parseFloat(bnA.plus(bnB).toFixed());
   }
 
   /**

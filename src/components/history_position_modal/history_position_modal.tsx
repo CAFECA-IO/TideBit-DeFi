@@ -11,21 +11,20 @@ import TradingInput from '../trading_input/trading_input';
 import {AiOutlineQuestionCircle} from 'react-icons/ai';
 import {useGlobal} from '../../contexts/global_context';
 import {timestampToString} from '../../lib/common';
-import {IClosedCFDDetails} from '../../interfaces/tidebit_defi_background/closed_cfd_details';
 import {MarketContext} from '../../contexts/market_context';
 import {CFDClosedType} from '../../constants/cfd_closed_type';
 import {OrderState} from '../../constants/order_state';
+import {IDisplayAcceptedCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
 import {useTranslation} from 'react-i18next';
 
 type TranslateFunction = (s: string) => string;
 interface IHistoryPositionModal {
   modalVisible: boolean;
   modalClickHandler: () => void;
-  closedCfdDetails: IClosedCFDDetails;
+  closedCfdDetails: IDisplayAcceptedCFDOrder;
 }
 
 const HistoryPositionModal = ({
-  // openCfdDetails,
   modalVisible,
   modalClickHandler,
   closedCfdDetails: closedCfdDetails,
@@ -89,8 +88,8 @@ const HistoryPositionModal = ({
 
   const socialMediaStyle = 'hover:cursor-pointer hover:opacity-80';
 
-  const openTime = timestampToString(closedCfdDetails?.openTimestamp ?? 0);
-  const closedTime = timestampToString(closedCfdDetails?.closedTimestamp ?? 0);
+  const openTime = timestampToString(closedCfdDetails.createTimestamp ?? 0);
+  const closedTime = timestampToString(closedCfdDetails?.closeTimestamp ?? 0);
 
   const formContent = (
     <div className="relative flex w-full flex-auto flex-col pt-0">
@@ -98,8 +97,6 @@ const HistoryPositionModal = ({
         className={`${displayedBorderColor} mx-7 mt-3 border-1px text-base leading-relaxed text-lightWhite`}
       >
         <div className="flex-col justify-center text-center text-xs">
-          {/* {displayedDataFormat()} */}
-
           <div className={`${layoutInsideBorder}`}>
             <div className="text-lightGray">{t('POSITION_MODAL.TYPE')}</div>
             <div className={`${displayedPositionColor}`}>
@@ -206,13 +203,6 @@ const HistoryPositionModal = ({
             <div className="text-lightGray">{t('POSITION_MODAL.GUARANTEED_STOP')}</div>
             <div className={``}>{displayedGuaranteedStopSetting}</div>
           </div>
-
-          {/* <div className={`${layoutInsideBorder}`}>
-            <div className="text-lightGray">Liquidation Price</div>
-            <div className="">
-              $ {openCfdDetails?.liquidationPrice?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}
-            </div>
-          </div> */}
 
           <div className={`${layoutInsideBorder}`}>
             <div className="text-lightGray">{t('POSITION_MODAL.STATE')}</div>

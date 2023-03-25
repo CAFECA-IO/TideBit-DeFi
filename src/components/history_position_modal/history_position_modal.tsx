@@ -5,6 +5,7 @@ import {
   TypeOfPnLColor,
   UNIVERSAL_NUMBER_FORMAT_LOCALE,
 } from '../../constants/display';
+import {unitAsset} from '../../constants/config';
 import Toggle from '../toggle/toggle';
 import {useContext, useRef, useState} from 'react';
 import TradingInput from '../trading_input/trading_input';
@@ -154,7 +155,7 @@ const HistoryPositionModal = ({
               {closedCfdDetails?.openPrice?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
                 minimumFractionDigits: 2,
               }) ?? 0}
-              <span className="ml-1 text-lightGray">USDT</span>
+              <span className="ml-1 text-lightGray">{unitAsset}</span>
             </div>
           </div>
 
@@ -164,7 +165,7 @@ const HistoryPositionModal = ({
               {closedCfdDetails?.openPrice?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
                 minimumFractionDigits: 2,
               }) ?? 0}
-              <span className="ml-1 text-lightGray">USDT</span>
+              <span className="ml-1 text-lightGray">{unitAsset}</span>
             </div>
           </div>
 
@@ -218,7 +219,7 @@ const HistoryPositionModal = ({
       <div
         className={`mx-7 mt-2 flex items-center justify-end pb-3 text-base leading-relaxed text-lightGray`}
       >
-        <div className="text-sm">{t('POSITION_MODAL.SHARE')}</div>
+        <div className="text-sm">{t('POSITION_MODAL.SHARE')}:</div>
         <div className="flex items-center justify-between">
           <div className={`${socialMediaStyle}`}>
             <Image src="/elements/group_15237.svg" width={44} height={44} alt="Facebook" />

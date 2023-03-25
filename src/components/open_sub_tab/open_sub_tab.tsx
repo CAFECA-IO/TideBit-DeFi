@@ -17,7 +17,7 @@ const OpenSubTab = () => {
 
   return (
     <>
-      <div className="">
+      <div className="h-full overflow-y-auto overflow-x-hidden pb-40">
         <div className="">
           {/* 6 */}
           {openPositionList}

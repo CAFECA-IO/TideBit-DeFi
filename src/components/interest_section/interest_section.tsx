@@ -1,6 +1,6 @@
 import React from 'react';
 import Lottie from 'lottie-react';
-
+import {unitAsset} from '../../constants/config';
 import runningDog from '../../../public/animation/70560-puli-dog-run.json';
 import {useGlobal} from '../../contexts/global_context';
 
@@ -38,7 +38,7 @@ const InterestSection = () => {
           }`}
         >
           <span className="text-4xl text-tidebitTheme">{value}</span>&nbsp;
-          {key === 'APY' ? '%' : 'USDT'}
+          {key === 'APY' ? '%' : unitAsset}
         </p>
       </div>
     </div>
@@ -61,7 +61,7 @@ const InterestSection = () => {
           }`}
         >
           <span className="text-2xl text-tidebitTheme lg:text-4xl">{value}</span>&nbsp;
-          {key === 'APY' ? '%' : 'USDT'}
+          {key === 'APY' ? '%' : unitAsset}
         </p>
       </div>
     </div>

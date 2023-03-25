@@ -448,7 +448,7 @@ const PositionClosedModal = ({
                 {/* TODO: Hardcode USDT */}
                 {openCfdDetails.openPrice.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
                   minimumFractionDigits: 2,
-                })}{' '}
+                }) ?? 0}{' '}
                 <span className="ml-1 text-lightGray">{unitAsset}</span>
               </div>
             </div>

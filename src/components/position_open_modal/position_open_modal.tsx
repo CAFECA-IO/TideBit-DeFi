@@ -55,33 +55,6 @@ const PositionOpenModal = ({
   const [secondsLeft, setSecondsLeft] = useState(POSITION_PRICE_RENEWAL_INTERVAL_SECONDS);
   const [dataRenewedStyle, setDataRenewedStyle] = useState('text-lightWhite');
 
-  const [lock, unlock] = locker('position_open_modal.UseEffect');
-
-  const displayedGuaranteedStopSetting = !!openCfdRequest.guaranteedStop ? 'Yes' : 'No';
-
-  const displayedTypeOfPosition =
-    openCfdRequest.typeOfPosition === TypeOfPosition.BUY
-      ? t('POSITION_MODAL.TYPE_UP')
-      : t('POSITION_MODAL.TYPE_DOWN');
-
-  const displayedBuyOrSell =
-    openCfdRequest.typeOfPosition === TypeOfPosition.BUY
-      ? t('POSITION_MODAL.TYPE_BUY')
-      : t('POSITION_MODAL.TYPE_SELL');
-
-  const [guaranteedTooltipStatus, setGuaranteedTooltipStatus] = useState(0);
-
-  const displayedPositionColor = 'text-tidebitTheme';
-
-  const displayedBorderColor = TypeOfBorderColor.NORMAL;
-
-  const displayedTakeProfit = openCfdRequest.takeProfit ? `$ ${openCfdRequest.takeProfit}` : '-';
-  const displayedStopLoss = openCfdRequest.stopLoss ? `$ ${openCfdRequest.stopLoss}` : '-';
-
-  const layoutInsideBorder = 'mx-5 my-2 flex justify-between';
-
-  const displayedExpirationTime = timestampToString(openCfdRequest.liquidationTime);
-
   const toApplyCreateOrder = (
     openCfdRequest: IApplyCreateCFDOrderData
   ): IApplyCreateCFDOrderData => {
@@ -94,7 +67,7 @@ const PositionOpenModal = ({
     return order;
   };
 
-  /** ToDo: (20230324 - Shirley)
+  /** ToDo: 
     // loading modal -> UserContext.function (負責簽名) ->
     // 猶豫太久的話，單子會過期，就會顯示 failed modal，
     // 用戶沒簽名才是顯示 canceled modal
@@ -115,8 +88,6 @@ const PositionOpenModal = ({
 
     const applyCreateOrder: IApplyCreateCFDOrderData = toApplyCreateOrder(openCfdRequest);
     const result = await userCtx.createCFDOrder(applyCreateOrder);
-    // eslint-disable-next-line no-console
-    console.log('open result', result);
 
     // ToDo: temporary waiting
     await wait(DELAYED_HIDDEN_SECONDS);
@@ -163,6 +134,49 @@ const PositionOpenModal = ({
     unlock();
     return;
   };
+
+  // ToDo: Typo `guaranteedStop`
+  const displayedGuaranteedStopSetting = !!openCfdRequest.guaranteedStop ? 'Yes' : 'No';
+
+  const displayedTypeOfPosition =
+    openCfdRequest.typeOfPosition === TypeOfPosition.BUY
+      ? t('POSITION_MODAL.TYPE_UP')
+      : t('POSITION_MODAL.TYPE_DOWN');
+
+  const displayedBuyOrSell =
+    openCfdRequest.typeOfPosition === TypeOfPosition.BUY
+      ? t('POSITION_MODAL.TYPE_BUY')
+      : t('POSITION_MODAL.TYPE_SELL');
+
+  const [guaranteedTooltipStatus, setGuaranteedTooltipStatus] = useState(0);
+
+  // const displayedPnLColor =
+  //   openCfdRequest?.pnl.type === 'PROFIT'
+  //     ? TypeOfPnLColor.PROFIT
+  //     : openCfdRequest?.pnl.type === 'LOSS'
+  //     ? TypeOfPnLColor.LOSS
+  //     : TypeOfPnLColor.EQUAL;
+
+  const displayedPositionColor = 'text-tidebitTheme';
+  // openCfdRequest.typeOfPosition === TypeOfPosition.BUY
+  //   ? TypeOfPnLColor.PROFIT
+  //   : TypeOfPnLColor.LOSS;
+
+  const displayedBorderColor = TypeOfBorderColor.NORMAL;
+  // openCfdRequest.typeOfPosition === TypeOfPosition.BUY
+  //   ? TypeOfBorderColor.LONG
+  //   : TypeOfBorderColor.SHORT;
+
+  const displayedTakeProfit = openCfdRequest.takeProfit ? `$ ${openCfdRequest.takeProfit}` : '-';
+  const displayedStopLoss = openCfdRequest.stopLoss ? `$ ${openCfdRequest.stopLoss}` : '-';
+
+  const displayedExpirationTime = timestampToString(openCfdRequest?.quotation.deadline ?? 0);
+
+  const layoutInsideBorder = 'mx-5 my-2 flex justify-between';
+
+  // let dataRenewedStyle = 'text-lightGray';
+
+  // const displayedTime = timestampToString(openCfdRequest?.createTimestamp ?? 0);
 
   const renewDataHandler = async () => {
     setDataRenewedStyle('animate-flash text-lightYellow2');
@@ -277,7 +291,7 @@ const PositionOpenModal = ({
                   minimumFractionDigits: 2,
                 }) ?? 0}
                 {/* ToDo: Hardcode USDT */}
-                <span className="ml-1 text-lightGray">USDT</span>
+                <span className="ml-1 text-lightGray">{unitAsset}</span>
               </div>
             </div>
 
@@ -295,7 +309,7 @@ const PositionOpenModal = ({
               <div className={`${dataRenewedStyle}`}>
                 {openCfdRequest.margin.amount.toFixed(2)}
                 {/* ToDo: Hardcode USDT */}
-                <span className="ml-1 text-lightGray">USDT</span>
+                <span className="ml-1 text-lightGray">{unitAsset}</span>
               </div>
             </div>
 
@@ -304,7 +318,7 @@ const PositionOpenModal = ({
               <div className="">
                 {displayedTakeProfit} / {displayedStopLoss}
                 {/* ToDo: Hardcode USDT */}
-                <span className="ml-1 text-lightGray">USDT</span>
+                <span className="ml-1 text-lightGray">{unitAsset}</span>
               </div>
             </div>
 
@@ -344,13 +358,10 @@ const PositionOpenModal = ({
 
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">{t('POSITION_MODAL.LIQUIDATION_PRICE')}</div>
-              {/* ToDo: Liquidation Price */}
-
               <div className="">
-                ${' '}
                 {openCfdRequest.liquidationPrice?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
                   minimumFractionDigits: 2,
-                })}
+                }) ?? 0}
                 {/* ToDo: Hardcode USDT */}
                 <span className="ml-1 text-lightGray">{unitAsset}</span>
               </div>

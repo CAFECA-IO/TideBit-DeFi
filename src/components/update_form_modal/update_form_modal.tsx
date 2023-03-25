@@ -441,7 +441,7 @@ const UpdatedFormModal = ({
         <label className="ml-2 flex text-xs font-medium text-lightGray">
           {t('POSITION_MODAL.GUARANTEED_STOP')}
           <span className="ml-1 text-lightWhite">
-            ({t('POSITION_MODAL.FEE')}: {openCfdDetails?.guaranteedStopFee} USDT)
+            ({t('POSITION_MODAL.FEE')}: {openCfdDetails?.guaranteedStopFee} {unitAsset})
           </span>
           {/* tooltip */}
           <div className="ml-3">
@@ -647,7 +647,7 @@ const UpdatedFormModal = ({
                       {openCfdDetails?.openPrice?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
                         minimumFractionDigits: 2,
                       }) ?? 0}
-                      <span className="ml-1 text-lightGray">USDT</span>
+                      <span className="ml-1 text-lightGray">{unitAsset}</span>
                     </div>
                   </div>
 
@@ -690,7 +690,7 @@ const UpdatedFormModal = ({
                           minimumFractionDigits: 2,
                         }
                       )}
-                      <span className="ml-1 text-lightGray">USDT</span>
+                      <span className="ml-1 text-lightGray">{unitAsset}</span>
                     </div>
                   </div>
 

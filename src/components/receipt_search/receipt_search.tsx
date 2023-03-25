@@ -9,9 +9,16 @@ type TranslateFunction = (s: string) => string;
 interface IReceiptSearchProps {
   filteredTradingType: string;
   setFilteredTradingType: Dispatch<SetStateAction<string>>;
+  searches: string;
+  setSearches: Dispatch<SetStateAction<string>>;
 }
 
-const ReceiptSearch = ({filteredTradingType, setFilteredTradingType}: IReceiptSearchProps) => {
+const ReceiptSearch = ({
+  filteredTradingType,
+  setFilteredTradingType,
+  searches,
+  setSearches,
+}: IReceiptSearchProps) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
   const currentDate = new Date();
@@ -29,6 +36,7 @@ const ReceiptSearch = ({filteredTradingType, setFilteredTradingType}: IReceiptSe
       `${currentDate.getFullYear()}-${currentDate.getMonth() + 1}-${currentDate.getDate()} 08:00:00`
     )
   );
+  const [tickersSettings, setTickersSettings] = useState(null);
 
   const tradingTypeMenuText =
     filteredTradingType === OrderType.DEPOSIT
@@ -72,18 +80,59 @@ const ReceiptSearch = ({filteredTradingType, setFilteredTradingType}: IReceiptSe
     setTradingTypeMenuOpen(false);
   };
 
-  /* Todo: (20230316 - Julian) dateUpdateHandler #289
+  /* Todo: (20230316 - Julian) dateUpdateHandler #289 
   const dateStartUpdateHandler = useCallback(
-    async (date: Date) => {
+    async (date:any) => {
       const newPage = 1;
       setPage(newPage);
       setIsLoading(true);
       setDateStart(date);
       const end = dateEnd.toISOString().substring(0, 10);
       const start = date.toISOString().substring(0, 10);
-      let tradingType = filteredTradingType;
+      let tickerSetting = tickersSettings[filterExchange][filterTicker];
+      if (tickerSetting.source === SupportedExchange.OKEX) {
+        const result = await storeCtx.getOuterTradesProfits({
+          ticker: filterTicker,
+          exchange: tickerSetting.source,
+          start,
+          end,
+        });
+        if (result.chartData) setChartData(result.chartData);
+        else setChartData({ data: {}, xaxisType: "string" });
+        setProfits(result.profits);
+      }
+      const trades = await getVouchers({
+        ticker: filterTicker,
+        exchange: tickerSetting.source,
+        start,
+        end,
+        offset: 0,
+        limit: limit,
+      });
+      if (tickerSetting.source === SupportedExchange.TIDEBIT) {
+        if (trades.chartData) setChartData(trades.chartData);
+        else setChartData({ data: {}, xaxisType: "string" });
+        setProfits(trades.profits);
+      }
+      filter(trades, {});
+      setIsLoading(false);
+    },
+    [
+      dateEnd,
+      filter,
+      filterExchange,
+      filterTicker,
+      getVouchers,
+      limit,
+      storeCtx,
+      tickersSettings,
+    ]
+  ); */
 
-}, [dateStart]) */
+  const onSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const searchString = event.target.value.toLocaleLowerCase();
+    setSearches(searchString);
+  };
 
   const displayedFilterBar = (
     <div className="hidden space-x-10 text-lightWhite sm:flex">
@@ -135,7 +184,10 @@ const ReceiptSearch = ({filteredTradingType, setFilteredTradingType}: IReceiptSe
         {t('MY_ASSETS_PAGE.RECEIPT_SECTION_DATE_TITLE')}
         {/* ToDo: (20230316 - Julian) DatePicker */}
         <div className="mt-2 flex items-center space-x-2">
-          <DatePicker minDate={new Date(1)} maxDate={new Date(10)} />
+          <DatePicker
+            minDate={new Date(1)}
+            /* setDate={dateStartUpdateHandler} */ maxDate={new Date(10)}
+          />
           <p>{t('MY_ASSETS_PAGE.RECEIPT_SECTION_DATE_TO')}</p>
           <label>DatePicker</label>
         </div>
@@ -165,7 +217,7 @@ const ReceiptSearch = ({filteredTradingType, setFilteredTradingType}: IReceiptSe
         className="block w-full rounded-full bg-darkGray7 p-3 pl-4 text-sm text-white focus:border-blue-500 focus:outline-none focus:ring-0 focus:ring-blue-500"
         placeholder="Search"
         required
-        //onChange={onSearchChange}
+        onChange={onSearchChange}
       />
       <button
         type="button"

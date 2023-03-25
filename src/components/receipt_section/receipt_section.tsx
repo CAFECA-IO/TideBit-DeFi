@@ -4,25 +4,18 @@ import ReceiptSearch from '../receipt_search/receipt_search';
 import {UserContext} from '../../contexts/user_context';
 import {OrderType} from '../../constants/order_type';
 import {OrderState} from '../../constants/order_state';
-import {
-  IOrder,
-  dummyDepositOrder,
-  dummyWithdrawalOrder,
-  dummyOpenCFDOrder,
-  dummyClosedCFDOrder,
-} from '../../interfaces/tidebit_defi_background/order';
+import {IOrder} from '../../interfaces/tidebit_defi_background/order';
 import {timestampToString} from '../../lib/common';
 
 const ReceiptSection = () => {
   const userCtx = useContext(UserContext);
 
-  /* ToDo: (20230316 - Julian) get data from userCtx */
-  /* Till: (20230331 - Julian) dummy data for test */
+  /* Till: (20230331 - Julian) dummy data for test 
   const dummyHistoryList: IOrder[] = [
-    dummyDepositOrder,
-    dummyWithdrawalOrder,
-    dummyOpenCFDOrder,
-    dummyClosedCFDOrder,
+    userCtx.histories[0],
+    userCtx.histories[1],
+    userCtx.histories[2],
+    userCtx.histories[3],
     {
       timestamp: 1679587700,
       type: OrderType.DEPOSIT,
@@ -101,32 +94,40 @@ const ReceiptSection = () => {
         fee: 0,
       },
     },
-  ];
-  /* Till: (20230331 - Julian) dummy data for test */
+  ]; Till: (20230331 - Julian) dummy data for test */
 
+  const listHistories = userCtx.histories;
+
+  const [searches, setSearches] = useState('');
   const [filteredTradingType, setFilteredTradingType] = useState('');
   const [filteredReceipts, setFilteredReceipts] = useState<IOrder[]>([]);
 
   useEffect(() => {
-    if (filteredTradingType === '') {
-      setFilteredReceipts(dummyHistoryList);
+    if (filteredTradingType === '' && searches === '') {
+      setFilteredReceipts(listHistories);
+    } else if (searches !== '') {
+      const searchResult = listHistories.filter(v => {
+        const result =
+          v.type.includes(searches || '') ||
+          v.targetAsset.toLocaleLowerCase().includes(searches || '') ||
+          v.targetAmount.toString().includes(searches || '');
+        return result;
+      });
+      setFilteredReceipts(searchResult);
     } else if (filteredTradingType === OrderType.DEPOSIT) {
-      setFilteredReceipts(dummyHistoryList.filter(v => v.type === OrderType.DEPOSIT));
+      setFilteredReceipts(listHistories.filter(v => v.type === OrderType.DEPOSIT));
     } else if (filteredTradingType === OrderType.WITHDRAW) {
-      setFilteredReceipts(dummyHistoryList.filter(v => v.type === OrderType.WITHDRAW));
+      setFilteredReceipts(listHistories.filter(v => v.type === OrderType.WITHDRAW));
     } else if (filteredTradingType === OrderState.OPENING) {
-      setFilteredReceipts(
-        dummyHistoryList.filter(v => v.orderSnapshot.state === OrderState.OPENING)
-      );
+      setFilteredReceipts(listHistories.filter(v => v.orderSnapshot.state === OrderState.OPENING));
     } else if (filteredTradingType === OrderState.CLOSED) {
-      setFilteredReceipts(
-        dummyHistoryList.filter(v => v.orderSnapshot.state === OrderState.CLOSED)
-      );
+      setFilteredReceipts(listHistories.filter(v => v.orderSnapshot.state === OrderState.CLOSED));
     }
-  }, [filteredTradingType]);
+  }, [filteredTradingType, searches]);
 
   const dataMonthList = filteredReceipts
-    .sort((a, b) => b.timestamp - a.timestamp) /* Info: (20230322 - Julian) sort by desc */
+    /* Info: (20230322 - Julian) sort by desc */
+    .sort((a, b) => b.timestamp - a.timestamp)
     .map(history => {
       return timestampToString(history.timestamp).monthAndYear;
     });
@@ -152,6 +153,8 @@ const ReceiptSection = () => {
       <ReceiptSearch
         filteredTradingType={filteredTradingType}
         setFilteredTradingType={setFilteredTradingType}
+        searches={searches}
+        setSearches={setSearches}
       />
       <div>{listCluster}</div>
     </div>

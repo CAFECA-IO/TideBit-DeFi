@@ -173,6 +173,7 @@ const PositionClosedModal = ({
       throw error;
     }
 
+    // TODO: replace `twoDecimal` with `toLocaleString` (20230325 - Shirley)
     const openValue = twoDecimal(cfd.openPrice * cfd.amount);
     const closeValue = twoDecimal(cfd.closePrice * cfd.amount);
 

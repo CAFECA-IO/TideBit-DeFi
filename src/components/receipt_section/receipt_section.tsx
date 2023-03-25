@@ -153,7 +153,6 @@ const ReceiptSection = () => {
       <ReceiptSearch
         filteredTradingType={filteredTradingType}
         setFilteredTradingType={setFilteredTradingType}
-        searches={searches}
         setSearches={setSearches}
       />
       <div>{listCluster}</div>

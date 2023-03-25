@@ -9,14 +9,12 @@ type TranslateFunction = (s: string) => string;
 interface IReceiptSearchProps {
   filteredTradingType: string;
   setFilteredTradingType: Dispatch<SetStateAction<string>>;
-  searches: string;
   setSearches: Dispatch<SetStateAction<string>>;
 }
 
 const ReceiptSearch = ({
   filteredTradingType,
   setFilteredTradingType,
-  searches,
   setSearches,
 }: IReceiptSearchProps) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
@@ -82,7 +80,7 @@ const ReceiptSearch = ({
 
   /* Todo: (20230316 - Julian) dateUpdateHandler #289 
   const dateStartUpdateHandler = useCallback(
-    async (date:any) => {
+    async (date: Date) => {
       const newPage = 1;
       setPage(newPage);
       setIsLoading(true);

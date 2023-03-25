@@ -188,7 +188,7 @@ const UpdatedFormModal = ({
         {roundToDecimalPlaces(Math.abs(expectedProfitValueRef.current), 2).toLocaleString(
           UNIVERSAL_NUMBER_FORMAT_LOCALE
         )}{' '}
-        {unitAsset}
+        USDT
       </div>
     </div>
   );
@@ -208,7 +208,7 @@ const UpdatedFormModal = ({
         {roundToDecimalPlaces(Math.abs(expectedLossValueRef.current), 2).toLocaleString(
           UNIVERSAL_NUMBER_FORMAT_LOCALE
         )}{' '}
-        {unitAsset}
+        USDT
       </div>
     </div>
   );
@@ -441,7 +441,7 @@ const UpdatedFormModal = ({
         <label className="ml-2 flex text-xs font-medium text-lightGray">
           {t('POSITION_MODAL.GUARANTEED_STOP')}
           <span className="ml-1 text-lightWhite">
-            ({t('POSITION_MODAL.FEE')}: {openCfdDetails?.guaranteedStopFee} {unitAsset})
+            ({t('POSITION_MODAL.FEE')}: {openCfdDetails?.guaranteedStopFee} USDT)
           </span>
           {/* tooltip */}
           <div className="ml-3">
@@ -647,7 +647,7 @@ const UpdatedFormModal = ({
                       {openCfdDetails?.openPrice?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
                         minimumFractionDigits: 2,
                       }) ?? 0}
-                      <span className="ml-1 text-lightGray">{unitAsset}</span>
+                      <span className="ml-1 text-lightGray">USDT</span>
                     </div>
                   </div>
 
@@ -690,7 +690,7 @@ const UpdatedFormModal = ({
                           minimumFractionDigits: 2,
                         }
                       )}
-                      <span className="ml-1 text-lightGray">{unitAsset}</span>
+                      <span className="ml-1 text-lightGray">USDT</span>
                     </div>
                   </div>
 

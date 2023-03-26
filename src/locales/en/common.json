@@ -48,6 +48,7 @@
     "TICKER_SELECTOR_TAB_ALL": "All",
     "TICKER_SELECTOR_TAB_FAVORITE": "Favorite",
     "TRADING_VIEW_24H_VOLUME": "24h Volume",
+    "TRADE_TAB": "Trade",
     "TRADE_TAB_NOT_ENOUGH_MARGIN": "Not enough margin",
     "TRADE_TAB_EXPECTED_PROFIT": "Expected profit",
     "TRADE_TAB_EXPECTED_LOSS": "Expected loss",
@@ -55,7 +56,7 @@
     "TRADE_TAB_SL_SETTING": "Close at loss",
     "TRADE_TAB_GUARANTEED_STOP": "Guaranteed Stop",
     "TRADE_TAB_GUARANTEED_STOP_HINT": "Guaranteed stop will force the position to close at your chosen rate (price) even if the market price surpasses it.",
-    "TRADE_TAB_FEE": "Fee:",
+    "TRADE_TAB_FEE": "Fee",
     "TRADE_TAB_LEVERAGE": "Leverage",
     "TRADE_TAB_REQUIRED_MARGIN": "Required Margin",
     "TRADE_TAB_VALUE": "Value",
@@ -63,6 +64,7 @@
     "TRADE_TAB_LONG_BUTTON_SUBTITLE": "Above",
     "TRADE_TAB_SHORT_BUTTON": "Down",
     "TRADE_TAB_SHORT_BUTTON_SUBTITLE": "Below",
+    "POSITION_TAB": "Position",
     "POSITION_TAB_OPEN": "Open",
     "POSITION_TAB_HISTORY": "History",
     "HISTORY_POSITION_ITEM_VALUE": "Open / Close Value",
@@ -108,7 +110,7 @@
     "TP_AND_SL": "TP/ SL",
     "TP_SETTING": "Close at profit",
     "SL_SETTING": "Close at loss",
-    "EXPECTED_PROFIT": "Expected profit:",
+    "EXPECTED_PROFIT": "Expected profit",
     "EXPECTED_LOSS": "Expected loss:",
     "GUARANTEED_STOP": "Guaranteed Stop",
     "GUARANTEED_STOP_HINT": "Guaranteed stop will force the position to close at your chosen rate (price) even if the market price surpasses it.",
@@ -128,13 +130,27 @@
     "CLOSED_REASON_BY_USER": "Manual",
     "CLOSED_REASON_TAKE_PROFIT": "Take Profit",
     "CLOSED_REASON_STOP_LOSS": "Stop Loss",
-    "SHARE": "Share:"
+    "SHARE": "Share"
   },
   "MY_ASSETS_PAGE": {
     "BALANCE_SECTION_DEPOSIT": "Deposit",
     "BALANCE_SECTION_WITHDRAW": "Withdraw",
     "BALANCE_SECTION_TOTAL_BALANCE": "Total Balance",
     "BALANCE_SECTION_AVAILABLE": "Avbl:",
-    "BALANCE_SECTION_LOCKED": "Locked:"
+    "BALANCE_SECTION_LOCKED": "Locked:",
+    "RECEIPT_SECTION_TRADING_TYPE_TITLE": "Trading Type",
+    "RECEIPT_SECTION_TRADING_TYPE_ALL": "All",
+    "RECEIPT_SECTION_TRADING_TYPE_DEPOSIT": "Deposit",
+    "RECEIPT_SECTION_TRADING_TYPE_WITHDRAW": "Withdraw",
+    "RECEIPT_SECTION_TRADING_TYPE_CFD_OPEN": "Open Position",
+    "RECEIPT_SECTION_TRADING_TYPE_CFD_CLOSE": "Close Position",
+    "RECEIPT_SECTION_DATE_TITLE": "Date",
+    "RECEIPT_SECTION_DATE_TO": "TO",
+    "RECEIPT_SECTION_SEARCH_PLACEHOLDER": "Search",
+    "RECEIPT_SECTION_DETAIL": "Detail",
+    "RECEIPT_SECTION_ORDER_STATUS_PROCESSING": "Processing",
+    "RECEIPT_SECTION_ORDER_STATUS_FAILED": "Failed",
+    "RECEIPT_SECTION_FEE": "Fee",
+    "RECEIPT_SECTION_AVAILABLE": "Available"
   }
 }

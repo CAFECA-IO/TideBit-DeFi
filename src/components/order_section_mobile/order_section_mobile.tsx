@@ -1,6 +1,5 @@
-import {useContext} from 'react';
+import {useContext, useState} from 'react';
 import {UserContext} from '../../contexts/user_context';
-import {MarketContext} from '../../contexts/market_context';
 import TideButton from '../tide_button/tide_button';
 import PositionTabMobile from '../position_tab_mobile/position_tab_mobile';
 import TradeTabMobile from '../trade_tab_mobile/trade_tab_mobile';
@@ -15,14 +14,63 @@ const OrderSectionMobile = () => {
   const globalCtx = useGlobal();
   const userCtx = useContext(UserContext);
 
-  const btnClickHandler = () => {
+  const [positionActiveTab, setPositionActiveTab] = useState('Open');
+  const [showPositionMenu, setShowPositionMenu] = useState(false);
+
+  const activeOpenTabStyle =
+    positionActiveTab == 'Open' ? 'bg-darkGray8 text-lightWhite' : 'bg-darkGray6 text-lightGray';
+  const activeHistoryTabStyle =
+    positionActiveTab == 'History' ? 'bg-darkGray8 text-lightWhite' : 'bg-darkGray6 text-lightGray';
+
+  const walletClickHandler = () => {
     globalCtx.visibleWalletPanelHandler();
   };
 
+  const openTabClickHandler = () => {
+    setPositionActiveTab('Open');
+  };
+
+  const historyTabClickHandler = () => {
+    setPositionActiveTab('History');
+  };
+
+  const displayedPositionSubTab = showPositionMenu ? (
+    <div
+      className={`flex items-center ${'h-76px w-280px'} bg-darkGray transition-all duration-300`}
+    >
+      <ul className="ml-5 flex basis-full items-center text-center text-sm font-medium">
+        <li className="w-full">
+          <button
+            onClick={openTabClickHandler}
+            className={`${activeOpenTabStyle} inline-block w-full rounded-md py-3 px-7`}
+          >
+            {t('TRADE_PAGE.POSITION_TAB_OPEN')}
+          </button>
+        </li>
+        <li className="ml-1 w-full">
+          <button
+            onClick={historyTabClickHandler}
+            className={`${activeHistoryTabStyle} inline-block w-full rounded-md py-3 px-7`}
+          >
+            {t('TRADE_PAGE.POSITION_TAB_HISTORY')}
+          </button>
+        </li>
+      </ul>
+    </div>
+  ) : (
+    <TradeTabMobile />
+  );
+
   const displayedTab = userCtx.enableServiceTerm ? (
     <>
-      <TradeTabMobile />
-      <PositionTabMobile />
+      {displayedPositionSubTab}
+      <div className="ml-4">
+        <PositionTabMobile
+          showSubMenu={showPositionMenu}
+          setShowSubMenu={setShowPositionMenu}
+          activeTab={positionActiveTab}
+        />
+      </div>
     </>
   ) : (
     <div className="flex items-center justify-center">
@@ -31,7 +79,7 @@ const OrderSectionMobile = () => {
       </div>
 
       <TideButton
-        onClick={btnClickHandler}
+        onClick={walletClickHandler}
         className={`ml-10 rounded border-0 bg-tidebitTheme py-2 px-5 text-base text-white transition-all hover:opacity-90`}
       >
         {t('TRADE_PAGE.WALLET_CONNECT_BUTTON')}

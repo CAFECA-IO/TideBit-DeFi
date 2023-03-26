@@ -6,6 +6,7 @@ import {MarketContext} from '../../contexts/market_context';
 import useStateRef from 'react-usestateref';
 import {INITIAL_POSITION_LABEL_DISPLAYED_STATE} from '../../constants/display';
 import {useTranslation} from 'next-i18next';
+import {unitAsset} from '../../constants/config';
 
 type TranslateFunction = (s: string) => string;
 
@@ -100,7 +101,8 @@ const TradingViewMobile = () => {
   return (
     <div className="relative">
       <div className="absolute top-10 text-sm text-lightWhite/60">
-        {t('TRADE_PAGE.TRADING_VIEW_24H_VOLUME')} {marketCtx.selectedTicker?.tradingVolume} USDT
+        {t('TRADE_PAGE.TRADING_VIEW_24H_VOLUME')} {marketCtx.selectedTicker?.tradingVolume}{' '}
+        {unitAsset}
       </div>
       <div className="">{displayedTradingView}</div>
       <div

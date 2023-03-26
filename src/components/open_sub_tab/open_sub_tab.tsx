@@ -83,8 +83,13 @@ const OpenSubTab = () => {
 
   return (
     <>
-      <div className="">
-        <div className="">{openPositionList}</div>
+      <div className="h-full overflow-y-auto overflow-x-hidden pb-40">
+        <div className="">
+          {/* 6 */}
+          {openPositionList}
+        </div>
+        {/* Divider */}
+        {/* <div className="my-auto h-px w-full rounded bg-white/50"></div> */}
       </div>
     </>
   );

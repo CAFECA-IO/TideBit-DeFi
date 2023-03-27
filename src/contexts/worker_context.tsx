@@ -95,8 +95,15 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
           case Events.TRADES:
             break;
           case Events.PUBILC_TRADES:
+            /* Deprecate: replaced by TideBitEvent.TRADES (20230407 - tzuhan)
             notificationCtx.emitter.emit(
               TideBitEvent.CANDLESTICK,
+              metaData.data.market,
+              metaData.data.trades
+            );
+            */
+            notificationCtx.emitter.emit(
+              TideBitEvent.TRADES,
               metaData.data.market,
               metaData.data.trades
             );

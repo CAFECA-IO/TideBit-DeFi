@@ -4,6 +4,9 @@ import {API_VERSION, AVAILABLE_TICKERS, BASE_URL, unitAsset} from '../../../../c
 import {
   dummyTickers,
   ITickerData,
+  ITBETicker,
+  ITickerMarket,
+  convertToTickerMartketData,
 } from '../../../../interfaces/tidebit_defi_background/ticker_data';
 import {toQuery} from '../../../../lib/common';
 
@@ -15,6 +18,23 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       if (!prev[curr.currency]) prev[curr.currency] = curr;
       return prev;
     }, tickers);
+    const tbeTickersUrl = `${BASE_URL}${API_VERSION}${TBEURL.LIST_TICKERS}`;
+    const tbeTickersResponse = await fetch(tbeTickersUrl);
+    const tbeTickersResult = await tbeTickersResponse.json();
+    if (tbeTickersResult.success) {
+      const tbeTickers = (tbeTickersResult.payload as ITBETicker[]).filter(
+        d => d.quoteUnit === unitAsset.toLowerCase()
+      );
+      for (const tbeTicker of tbeTickers) {
+        const tickerMarket: ITickerMarket | null = convertToTickerMartketData(tbeTicker);
+        if (tickers[tbeTicker.baseUnit.toUpperCase()] && tickerMarket) {
+          tickers[tbeTicker.baseUnit.toUpperCase()] = {
+            ...tickers[tbeTicker.baseUnit.toUpperCase()],
+            ...tickerMarket,
+          };
+        }
+      }
+    }
     for (const ticker of AVAILABLE_TICKERS) {
       const query = toQuery(
         params

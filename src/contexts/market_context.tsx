@@ -187,21 +187,44 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     return defaultResultSuccess;
   };
 
+  const listTradesData = async (tickerId: string) => {
+    let result: IResult = defaultResultFailed;
+    try {
+      const trades = (await workerCtx.requestHandler({
+        name: APIName.LIST_TBE_TRADES,
+        method: Method.GET,
+        params: {
+          symbol: tickerId,
+          limit: tickerBook.limit,
+        },
+      })) as ITBETrade[];
+      tickerBook.updateTrades(tickerId, trades);
+      result = defaultResultSuccess;
+    } catch (error) {
+      // Deprecate: error handle (Tzuhan - 20230327)
+      // eslint-disable-next-line no-console
+      console.error(`listTradesData error`, error);
+      result.reason = (error as Error).message;
+    }
+    return result;
+  };
+
   const getCandlestickChartData = async (tickerId: string) => {
     let result: IResult = defaultResultFailed;
     try {
+      /* Deprecate: replaced by listTradesData (20230407 - tzuhan)
       const apiResult = (await workerCtx.requestHandler({
         name: APIName.GET_CANDLESTICK_DATA,
         method: Method.GET,
         params: {
           symbol: tickerId,
           limit: tickerBook.limit,
-          timespan: timeSpan,
+          timespan: timeSpanRef.current,
         },
         /* Deprecated: callback in requestHandler (Tzuhan - 20230420)
         callback: (result: ICandlestickData[], error: Error) => {
           if (error) {
-            // TODO: error handle (Tzuhan - 20230321)
+            // Deprecate: error handle (Tzuhan - 20230321)
           } else {
             const candlestickChartData = result.map(data => ({
               ...data,
@@ -211,17 +234,18 @@ export const MarketProvider = ({children}: IMarketProvider) => {
             setCandlestickChartData(tickerBook.candlesticks[tickerId]);
           }
         },
-        */
       })) as ICandlestickData[];
       const candlestickChartData = apiResult.map(data => ({
         ...data,
         x: new Date(data.x),
       }));
       tickerBook.updateCandlestick(tickerId, candlestickChartData);
-      setCandlestickChartData(tickerBook.candlesticks[tickerId]);
+      */
+      await listTradesData(tickerId);
+      setCandlestickChartData(tickerBook.listCandlestickData(tickerId, {}));
       result = defaultResultSuccess;
     } catch (error) {
-      // TODO: error handle (Tzuhan - 20230321)
+      // Deprecate: error handle (Tzuhan - 20230321)
       // eslint-disable-next-line no-console
       console.error(`getCandlestickChartData error`, error);
       result.reason = (error as Error).message;
@@ -272,7 +296,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
         /* Deprecated: callback in requestHandler (Tzuhan - 20230420)
         callback: (result: number, error: Error) => {
           if (error) {
-            // TODO: error handle (Tzuhan - 20230321)
+            // Deprecate: error handle (Tzuhan - 20230321)
           } else {
             setGuaranteedStopFeePercentage(result);
           }
@@ -283,7 +307,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       result = defaultResultSuccess;
       result.data = guaranteedStopFeePercentage;
     } catch (error) {
-      // TODO: error handle (Tzuhan - 20230321)
+      // Deprecate: error handle (Tzuhan - 20230321)
       // eslint-disable-next-line no-console
       console.error(`getGuaranteedStopFeePercentage error`, error);
       result.reason = (error as Error).message;
@@ -299,12 +323,12 @@ export const MarketProvider = ({children}: IMarketProvider) => {
         method: Method.GET,
         params: {
           limit: tickerBook.limit,
-          timespan: timeSpan,
+          timespan: timeSpanRef.current,
         },
         /* Deprecated: callback in requestHandler (Tzuhan - 20230420)
         callback: (tickers: ITickerData[], error: Error) => {
           if (error) {
-            // TODO: error handle (Tzuhan - 20230321)
+            // Deprecate: error handle (Tzuhan - 20230321)
           } else {
             tickerBook.updateTickers(tickers);
             setAvailableTickers({...tickerBook.tickers});
@@ -319,7 +343,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       result = defaultResultSuccess;
       result.data = tickers;
     } catch (error) {
-      // TODO: error handle (Tzuhan - 20230321)
+      // Deprecate: error handle (Tzuhan - 20230321)
       // eslint-disable-next-line no-console
       console.error(`listTickers error`, error);
       result.reason = (error as Error).message;
@@ -336,7 +360,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
         /* Deprecated: callback in requestHandler (Tzuhan - 20230420)
         callback: (cryptocurrencies: ICryptocurrency[], error: Error) => {
           if (error) {
-            // TODO: error handle (Tzuhan - 20230321)
+            // Deprecate: error handle (Tzuhan - 20230321)
           } else {
             setDepositCryptocurrencies([...cryptocurrencies]);
           }
@@ -347,7 +371,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       result = defaultResultSuccess;
       result.data = cryptocurrencies;
     } catch (error) {
-      // TODO: error handle (Tzuhan - 20230321)
+      // Deprecate: error handle (Tzuhan - 20230321)
       // eslint-disable-next-line no-console
       console.error(`listDepositCryptocurrencies error`, error);
       result.reason = (error as Error).message;
@@ -364,7 +388,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
         /* Deprecated: callback in requestHandler (Tzuhan - 20230420)
         callback: (cryptocurrencies: ICryptocurrency[], error: Error) => {
           if (error) {
-            // TODO: error handle (Tzuhan - 20230321)
+            // Deprecate: error handle (Tzuhan - 20230321)
           } else {
             setWithdrawCryptocurrencies([...cryptocurrencies]);
           }
@@ -375,7 +399,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       result = defaultResultSuccess;
       result.data = cryptocurrencies;
     } catch (error) {
-      // TODO: error handle (Tzuhan - 20230321)
+      // Deprecate: error handle (Tzuhan - 20230321)
       // eslint-disable-next-line no-console
       console.error(`lisWithdrawCryptocurrencies error`, error);
       result.reason = (error as Error).message;
@@ -429,7 +453,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       ),
     []
   );
-
+  /* Deprecate: replaced by TideBitEvent.TRADES (20230407 - tzuhan)
   React.useMemo(
     () =>
       notificationCtx.emitter.on(
@@ -442,6 +466,18 @@ export const MarketProvider = ({children}: IMarketProvider) => {
             setCandlestickChartData([...tickerBook.candlesticks[ticker]]);
         }
       ),
+    []
+  );
+  */
+  React.useMemo(
+    () =>
+      notificationCtx.emitter.on(TideBitEvent.TRADES, (market: string, trades: ITBETrade[]) => {
+        const ticker = market.toUpperCase().replace(unitAsset, ``);
+        tickerBook.updateTrades(ticker, trades);
+        setAvailableTickers({...tickerBook.tickers});
+        if (selectedTickerRef.current?.currency === ticker)
+          setCandlestickChartData([...tickerBook.candlesticks[ticker]]);
+      }),
     []
   );
 

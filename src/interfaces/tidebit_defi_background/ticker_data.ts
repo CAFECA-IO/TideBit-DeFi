@@ -35,16 +35,12 @@ export interface ITickerData {
   chain: string;
   star: boolean;
   starred: boolean;
-  // starColor: string;
-  // getStarredStateCallback: (bool: boolean) => void;
   price: number;
   upOrDown: ITrend;
   priceChange: number;
   fluctuating: number;
   tradingVolume: string;
-  // gradientColor: string;
   tokenImg: string;
-
   lineGraphProps: ILineGraphProps;
 }
 
@@ -155,6 +151,13 @@ export interface ITBETrade {
   at: number;
   ts: string;
   date: string;
+}
+
+export interface ISortedTrade {
+  [second: string]: {
+    second: number;
+    trades: {open: ITBETrade; high: ITBETrade; low: ITBETrade; close: ITBETrade};
+  };
 }
 
 export const convertToTickerMartketData = (data: ITBETicker) => {

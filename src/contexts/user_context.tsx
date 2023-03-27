@@ -39,9 +39,11 @@ import {Code, Reason} from '../constants/code';
 import {
   getDummyDisplayAcceptedCFDOrder,
   IDisplayAcceptedCFDOrder,
-  toDisplayAcceptedCFDOrder,
 } from '../interfaces/tidebit_defi_background/display_accepted_cfd_order';
 import {acceptedOrderToOrder} from '../lib/common';
+import TickerBookInstance from '../lib/books/ticker_book';
+import {TypeOfPosition} from '../constants/type_of_position';
+import {ProfitState} from '../constants/profit_state';
 
 export interface IUserBalance {
   available: number;
@@ -213,8 +215,10 @@ export const UserContext = createContext<IUserContext>({
 
 export const UserProvider = ({children}: IUserProvider) => {
   // TODO: get partial user type from `IUserContext`
+  const tickerBook = React.useMemo(() => TickerBookInstance, []);
   const transactionEngine = React.useMemo(() => TransactionEngineInstance, []);
   const workerCtx = useContext(WorkerContext);
+  const notificationCtx = useContext(NotificationContext);
   const [id, setId, idRef] = useState<string | null>(null);
   const [username, setUsername, usernameRef] = useState<string | null>(null);
   const [wallet, setWallet, walletRef] = useState<string | null>(null);
@@ -241,8 +245,6 @@ export const UserProvider = ({children}: IUserProvider) => {
   const [isConnectedWithTideBit, setIsConnectedWithTideBit, isConnectedWithTideBitRef] =
     useState<boolean>(false);
   const [selectedTicker, setSelectedTicker, selectedTickerRef] = useState<ITickerData | null>(null);
-
-  const notificationCtx = useContext(NotificationContext);
 
   const setPrivateData = async (walletAddress: string) => {
     setWallet(walletAddress);
@@ -313,6 +315,45 @@ export const UserProvider = ({children}: IUserProvider) => {
     return result;
   }, []);
 
+  const toDisplayAcceptedCFDOrder = async (acceptedCFDOrder: IAcceptedCFDOrder) => {
+    const openValue = acceptedCFDOrder.openPrice * acceptedCFDOrder.amount;
+    const closeValue =
+      acceptedCFDOrder.state === OrderState.CLOSED && acceptedCFDOrder.closePrice
+        ? acceptedCFDOrder.closePrice * acceptedCFDOrder.amount
+        : 0;
+    const pnl =
+      acceptedCFDOrder.state === OrderState.CLOSED && acceptedCFDOrder.closePrice
+        ? (closeValue - openValue) *
+          (acceptedCFDOrder.typeOfPosition === TypeOfPosition.BUY ? 1 : -1)
+        : 0;
+    const takeProfit = acceptedCFDOrder.typeOfPosition === TypeOfPosition.BUY ? 1.2 : 0.8;
+    const stopLoss = acceptedCFDOrder.typeOfPosition === TypeOfPosition.BUY ? 0.8 : 1.2;
+    const suggestion = {
+      takeProfit: acceptedCFDOrder.openPrice * takeProfit,
+      stopLoss: acceptedCFDOrder.openPrice * stopLoss,
+    };
+    // TODO: to verify positionLineGraph (20230327 - tzuhan)
+    // const positionLineGraph = [90, 72, 60, 65, 42, 25, 32, 20, 15, 32, 90, 10];
+    const positionLineGraph: number[] = tickerBook.listTickerPositions(acceptedCFDOrder.ticker, {
+      begin: acceptedCFDOrder.createTimestamp,
+    });
+
+    const displayAcceptedCFDOrder: IDisplayAcceptedCFDOrder = {
+      ...acceptedCFDOrder,
+      pnl: {
+        type: pnl > 0 ? ProfitState.PROFIT : ProfitState.LOSS,
+        value: pnl,
+      },
+      openValue: acceptedCFDOrder.openPrice * acceptedCFDOrder.amount,
+      closeValue: acceptedCFDOrder.closePrice
+        ? acceptedCFDOrder.closePrice * acceptedCFDOrder.amount
+        : undefined,
+      positionLineGraph,
+      suggestion,
+    };
+    return displayAcceptedCFDOrder;
+  };
+
   const listCFDs = useCallback(async (ticker: string) => {
     let result: IResult = defaultResultFailed;
     result.code = Code.SERVICE_TERM_DISABLE;
@@ -348,13 +389,14 @@ export const UserProvider = ({children}: IUserProvider) => {
         let openCFDs: IDisplayAcceptedCFDOrder[] = [];
         let closedCFDs: IDisplayAcceptedCFDOrder[] = [];
         for (const order of CFDs) {
+          const displayAcceptedCFDOrder = await toDisplayAcceptedCFDOrder(order);
           switch (order.state) {
             case OrderState.OPENING:
             case OrderState.FREEZED:
-              openCFDs = openCFDs.concat(toDisplayAcceptedCFDOrder(order));
+              openCFDs = openCFDs.concat(displayAcceptedCFDOrder);
               break;
             case OrderState.CLOSED:
-              closedCFDs = closedCFDs.concat(toDisplayAcceptedCFDOrder(order));
+              closedCFDs = closedCFDs.concat(displayAcceptedCFDOrder);
               break;
             default:
               break;
@@ -531,6 +573,7 @@ export const UserProvider = ({children}: IUserProvider) => {
       })) as string[];
       updatedFavoriteTickers.push(newFavorite);
       setFavoriteTickers(updatedFavoriteTickers);
+      notificationCtx.emitter.emit(TideBitEvent.FAVORITE_TICKER, updatedFavoriteTickers);
       result = defaultResultSuccess;
     }
     return result;
@@ -553,6 +596,7 @@ export const UserProvider = ({children}: IUserProvider) => {
         updatedFavoriteTickers.splice(index, 1);
       }
       setFavoriteTickers(updatedFavoriteTickers);
+      notificationCtx.emitter.emit(TideBitEvent.FAVORITE_TICKER, updatedFavoriteTickers);
       result = defaultResultSuccess;
     }
     return result;
@@ -625,8 +669,8 @@ export const UserProvider = ({children}: IUserProvider) => {
               code: Code.SUCCESS,
               data: acceptedCFDOrder,
             };
-            setOpenedCFDs(prev => [...prev, toDisplayAcceptedCFDOrder(acceptedCFDOrder)]);
-            // ++ TODO: verify update histories logic (20230324 - tzuhan)
+            const displayAcceptedCFDOrder = await toDisplayAcceptedCFDOrder(acceptedCFDOrder);
+            setOpenedCFDs(prev => [...prev, displayAcceptedCFDOrder]);
             const balance = getBalance(applyCreateCFDOrderData.margin.asset);
             if (balance) {
               const updatedBalance = updateBalance({
@@ -686,13 +730,17 @@ export const UserProvider = ({children}: IUserProvider) => {
               data: acceptedCFDOrder,
             };
             setOpenedCFDs(prev => [...prev].splice(index, 1));
-            setClosedCFDs(prev => [...prev, toDisplayAcceptedCFDOrder(acceptedCFDOrder)]);
-            // ++ TODO: verify update histories logic (20230324 - tzuhan)
+            const displayAcceptedCFDOrder = await toDisplayAcceptedCFDOrder(acceptedCFDOrder);
+            setClosedCFDs(prev => [...prev, displayAcceptedCFDOrder]);
             const balance = getBalance(openCFDs[index].margin.asset);
+            const profit =
+              (applyCloseCFDOrderData.closePrice - openCFDs[index].openPrice) *
+              openCFDs[index].amount *
+              (openCFDs[index].typeOfPosition === TypeOfPosition.BUY ? 1 : -1);
             if (balance) {
               const balanceDiff: IBalance = {
                 currency: openCFDs[index].margin.asset,
-                available: openCFDs[index].margin.amount,
+                available: openCFDs[index].margin.amount + profit,
                 locked: -openCFDs[index].margin.amount,
               };
               const updatedBalance = updateBalance(balanceDiff);
@@ -747,9 +795,10 @@ export const UserProvider = ({children}: IUserProvider) => {
               code: Code.SUCCESS,
               data: acceptedCFDOrder,
             };
+            const displayAcceptedCFDOrder = await toDisplayAcceptedCFDOrder(acceptedCFDOrder);
             setOpenedCFDs(prev => {
               const cfds = [...prev];
-              cfds[index] = toDisplayAcceptedCFDOrder(acceptedCFDOrder);
+              cfds[index] = displayAcceptedCFDOrder;
               return cfds;
             });
             const balance = getBalance(openCFDs[index].margin.asset);

@@ -39,3 +39,39 @@ export const TimeSpanUnion: ITimeSpanUnionConstant = {
   _12h: '12h',
   _1d: '1d',
 };
+
+export const getTime = (timeSpan: ITimeSpanUnion) => {
+  let time = 1000;
+  switch (timeSpan) {
+    case TimeSpanUnion._1s:
+      time = 1 * 1000;
+      break;
+    case TimeSpanUnion._1m:
+      time = 1 * 60 * 1000;
+      break;
+    case TimeSpanUnion._3m:
+      time = 3 * 60 * 1000;
+      break;
+    case TimeSpanUnion._5m:
+      time = 5 * 60 * 1000;
+      break;
+    case TimeSpanUnion._15m:
+      time = 15 * 60 * 1000;
+      break;
+    case TimeSpanUnion._1h:
+      time = 60 * 60 * 1000;
+      break;
+    case TimeSpanUnion._4h:
+      time = 4 * 60 * 60 * 1000;
+      break;
+    case TimeSpanUnion._12h:
+      time = 12 * 60 * 60 * 1000;
+      break;
+    case TimeSpanUnion._1d:
+      time = 24 * 60 * 60 * 1000;
+      break;
+    default:
+      break;
+  }
+  return time;
+};

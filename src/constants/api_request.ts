@@ -22,6 +22,7 @@ export type IAPIName =
   | 'GET_CFD_QUOTATION'
   | 'GET_TICKER_HISTORY'
   | 'GET_GUARANTEED_STOP_FEE_PERCENTAGE'
+  | 'LIST_TBE_TRADES'
   // trades
   | 'LIST_CFD_TRADES'
   | 'GET_CFD_TRADE'
@@ -70,6 +71,7 @@ export interface IAPINameConstant {
   GET_CFD_QUOTATION: IAPIName;
   GET_TICKER_HISTORY: IAPIName;
   GET_GUARANTEED_STOP_FEE_PERCENTAGE: IAPIName;
+  LIST_TBE_TRADES: IAPIName;
   // trades
   LIST_CFD_TRADES: IAPIName;
   GET_CFD_TRADE: IAPIName;
@@ -119,6 +121,7 @@ export const APIName: IAPINameConstant = {
   GET_CFD_QUOTATION: 'GET_CFD_QUOTATION',
   GET_TICKER_HISTORY: 'GET_TICKER_HISTORY',
   GET_GUARANTEED_STOP_FEE_PERCENTAGE: 'GET_GUARANTEED_STOP_FEE_PERCENTAGE',
+  LIST_TBE_TRADES: 'LIST_TBE_TRADES',
   // trades
   LIST_CFD_TRADES: 'LIST_CFD_TRADES',
   GET_CFD_TRADE: 'GET_CFD_TRADE',
@@ -169,6 +172,7 @@ export const APIURL = {
   GET_CFD_QUOTATION: '/api/market/quotation',
   GET_TICKER_HISTORY: '/api/market/histories', // deprecated: '/api/market/tickerhistory' (20230323 - tzuhan)
   GET_GUARANTEED_STOP_FEE_PERCENTAGE: '/api/market/fee/stop-percetage', // deprecated: '/api/market/stopfeepercentage' (20230323 - tzuhan)
+  LIST_TBE_TRADES: '/api/market/trades',
   // trades
   LIST_CFD_TRADES: '/api/trades/cfds',
   GET_CFD_TRADE: '/api/trades/cfds',
@@ -200,23 +204,7 @@ export const APIURL = {
 export const TBEURL = {
   LIST_TICKERS: '/market/tickers?instType=SPOT',
   LIST_TRADES: '/market/trades', // ++ TODO: ticker => `${ticker}usdt` (20230315 - Tzuhan)
-  // SEND_EMAIL_CODE: '/api/user/email',
-  // CONNECT_TIDEBIT: '/api/tidebit',
-  // CONNECT_EMAIL: '/api/user/email',
-  // UPDATE_USER_ICON: '/api/user/icon',
-  // SUBSCRIBE_NEWS_LETTERS: '/api/newsletters',
-  // LIST_FAVORITE_TICKERS: '/api/tickers',
   GET_CANDLESTICK_DATA: '/tradingview/history',
-  // GET_PNL: '/api/pnl',
-  // LIST_HISTORIES: '/api/histories',
-  // LIST_DEPOSIT_CRYPTO_CURRENCIES: '/api/deposits',
-  // LIST_WITHDRAW_CRYPTO_CURRENCIES: '/api/withdraws',
-  // LIST_NEWS: '/api/',
-  // LIST_COURSES: '/api/',
-  // LIST_FAQS: '/api/faqs',
-  // LIST_JOBS: '/api/jobs',
-  // APPLY_JOB: '/api/jobs',
-  // REPORT_ISSUE: '/api/issues',
 };
 
 export type TypeRequest = {

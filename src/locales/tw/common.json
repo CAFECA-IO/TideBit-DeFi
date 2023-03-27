@@ -155,5 +155,9 @@
   },
   "NOT_FOUND_PAGE": {
     "DESCRIPTION": "糟糕！您要找的頁面不存在。"
+  },
+  "ERROR_PAGE": {
+    "DESCRIPTION1": "糟糕！發生錯誤，",
+    "DESCRIPTION2": "我們將會盡快修復。"
   }
 }

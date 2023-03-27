@@ -38,7 +38,7 @@ const Custom404 = () => {
             {displayedNavBar}
             <div className="relative flex min-h-600px flex-col items-center justify-center">
               <Lottie animationData={notFoundAnimation} />
-              <div className="absolute bottom-1/3 text-white">
+              <div className="absolute bottom-1/3 text-center text-white">
                 {t('NOT_FOUND_PAGE.DESCRIPTION')}
               </div>
             </div>

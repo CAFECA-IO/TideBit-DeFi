@@ -155,5 +155,9 @@
   },
   "NOT_FOUND_PAGE": {
     "DESCRIPTION": "Oops! Page can not be found."
+  },
+  "ERROR_PAGE": {
+    "DESCRIPTION1": "Oops! Something went wrong",
+    "DESCRIPTION2": "and we're trying to fix it now."
   }
 }

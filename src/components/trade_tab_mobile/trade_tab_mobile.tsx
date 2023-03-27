@@ -36,8 +36,84 @@ const TradeTabMobile = () => {
   const notificationCtx = useContext(NotificationContext);
 
   const [mounted, setMounted] = useState(false);
+
+  const [secondsLeft, setSecondsLeft, secondsLeftRef] = useStateRef(
+    POSITION_PRICE_RENEWAL_INTERVAL_SECONDS
+  );
   const [longQuotation, setLongQuotation, longQuotationRef] = useStateRef<IQuotation>();
   const [shortQuotation, setShortQuotation, shortQuotationRef] = useStateRef<IQuotation>();
+
+  const tickerLiveStatistics = marketCtx.tickerLiveStatistics;
+  const tickerStaticStatistics = marketCtx.tickerStatic;
+
+  const TEMP_PLACEHOLDER = TARGET_LIMIT_DIGITS;
+
+  const ticker = marketCtx.selectedTicker?.currency ?? '';
+
+  const USER_BALANCE = userCtx.balance?.available ?? 0;
+
+  const leverage = tickerStaticStatistics?.leverage ?? 1;
+  const guaranteedStopFee = tickerStaticStatistics?.guaranteedStopFee;
+
+  let marketPrice = marketCtx.selectedTicker?.price ?? TEMP_PLACEHOLDER;
+
+  const buyPrice = (longQuotationRef.current?.price ?? TEMP_PLACEHOLDER).toFixed(2); // market price * (1+spread)
+  const sellPrice = (shortQuotationRef.current?.price ?? TEMP_PLACEHOLDER).toFixed(2); // market price * (1-spread)
+  const longRecommendedTp = Number(
+    (tickerLiveStatistics?.longRecommendedTp ?? TEMP_PLACEHOLDER).toFixed(2)
+  );
+  const longRecommendedSl = Number(
+    (tickerLiveStatistics?.longRecommendedSl ?? TEMP_PLACEHOLDER).toFixed(2)
+  );
+
+  const [longTooltipStatus, setLongTooltipStatus] = useState(0);
+  const [shortTooltipStatus, setShortTooltipStatus] = useState(0);
+
+  const [targetInputValue, setTargetInputValue, targetInputValueRef] = useStateRef(0.02);
+
+  const [longTpValue, setLongTpValue] = useState(longRecommendedTp);
+  const [longSlValue, setLongSlValue] = useState(longRecommendedSl);
+  const [longTpToggle, setLongTpToggle] = useState(false);
+  const [longSlToggle, setLongSlToggle] = useState(false);
+
+  const [shortTpValue, setShortTpValue] = useState(longRecommendedSl);
+  const [shortSlValue, setShortSlValue] = useState(longRecommendedTp);
+  const [shortTpToggle, setShortTpToggle] = useState(false);
+  const [shortSlToggle, setShortSlToggle] = useState(false);
+
+  const [activeTab, setActiveTab] = useState('Long');
+  const [openSubMenu, setOpenSubMenu] = useState(false);
+
+  const [expectedLongProfitValue, setExpectedLongProfitValue, expectedLongProfitValueRef] =
+    useStateRef((longTpValue - Number(buyPrice)) * targetInputValueRef.current);
+
+  const [expectedLongLossValue, setExpectedLongLossValue, expectedLongLossValueRef] = useStateRef(
+    (Number(buyPrice) - longSlValue) * targetInputValueRef.current
+  );
+
+  const [expectedShortProfitValue, setExpectedShortProfitValue, expectedShortProfitValueRef] =
+    useStateRef((Number(sellPrice) - shortTpValue) * targetInputValueRef.current);
+
+  const [expectedShortLossValue, setExpectedShortLossValue, expectedShortLossValueRef] =
+    useStateRef((shortSlValue - Number(sellPrice)) * targetInputValueRef.current);
+
+  const [longGuaranteedStopChecked, setLongGuaranteedStopChecked] = useState(false);
+  const [shortGuaranteedStopChecked, setShortGuaranteedStopChecked] = useState(false);
+
+  const [requiredMargin, setRequiredMargin, requiredMarginRef] = useStateRef(
+    roundToDecimalPlaces((targetInputValue * marketPrice) / leverage, 2)
+  );
+  const [valueOfPosition, setValueOfPosition, valueOfPositionRef] = useStateRef(
+    roundToDecimalPlaces(targetInputValue * marketPrice, 2)
+  );
+  const [marginWarning, setMarginWarning] = useState(false);
+
+  const [targetLength, setTargetLength] = useState(
+    roundToDecimalPlaces((targetInputValue * marketPrice) / leverage, 2).toString().length
+  );
+  const [valueOfPositionLength, setValueOfPositionLength] = useState(
+    roundToDecimalPlaces(targetInputValue * marketPrice, 2).toString().length
+  );
 
   useEffect(() => {
     if (mounted) return;
@@ -143,78 +219,6 @@ const TradeTabMobile = () => {
 
     return {longQuotation: longQuotation, shortQuotation: shortQuotation};
   };
-
-  const tickerLiveStatistics = marketCtx.tickerLiveStatistics;
-  const tickerStaticStatistics = marketCtx.tickerStatic;
-
-  const TEMP_PLACEHOLDER = TARGET_LIMIT_DIGITS;
-
-  const ticker = marketCtx.selectedTicker?.currency ?? '';
-
-  const USER_BALANCE = userCtx.balance?.available ?? 0;
-
-  const leverage = tickerStaticStatistics?.leverage ?? 1;
-  const guaranteedStopFee = tickerStaticStatistics?.guaranteedStopFee;
-
-  let marketPrice = marketCtx.selectedTicker?.price ?? TEMP_PLACEHOLDER;
-
-  const buyPrice = (longQuotationRef.current?.price ?? TEMP_PLACEHOLDER).toFixed(2); // market price * (1+spread)
-  const sellPrice = (shortQuotationRef.current?.price ?? TEMP_PLACEHOLDER).toFixed(2); // market price * (1-spread)
-  const longRecommendedTp = Number(
-    (tickerLiveStatistics?.longRecommendedTp ?? TEMP_PLACEHOLDER).toFixed(2)
-  );
-  const longRecommendedSl = Number(
-    (tickerLiveStatistics?.longRecommendedSl ?? TEMP_PLACEHOLDER).toFixed(2)
-  );
-
-  const [longTooltipStatus, setLongTooltipStatus] = useState(0);
-  const [shortTooltipStatus, setShortTooltipStatus] = useState(0);
-
-  const [targetInputValue, setTargetInputValue, targetInputValueRef] = useStateRef(0.02);
-
-  const [longTpValue, setLongTpValue] = useState(longRecommendedTp);
-  const [longSlValue, setLongSlValue] = useState(longRecommendedSl);
-  const [longTpToggle, setLongTpToggle] = useState(false);
-  const [longSlToggle, setLongSlToggle] = useState(false);
-
-  const [shortTpValue, setShortTpValue] = useState(longRecommendedSl);
-  const [shortSlValue, setShortSlValue] = useState(longRecommendedTp);
-  const [shortTpToggle, setShortTpToggle] = useState(false);
-  const [shortSlToggle, setShortSlToggle] = useState(false);
-
-  const [activeTab, setActiveTab] = useState('Long');
-  const [openSubMenu, setOpenSubMenu] = useState(false);
-
-  const [expectedLongProfitValue, setExpectedLongProfitValue, expectedLongProfitValueRef] =
-    useStateRef((longTpValue - Number(buyPrice)) * targetInputValueRef.current);
-
-  const [expectedLongLossValue, setExpectedLongLossValue, expectedLongLossValueRef] = useStateRef(
-    (Number(buyPrice) - longSlValue) * targetInputValueRef.current
-  );
-
-  const [expectedShortProfitValue, setExpectedShortProfitValue, expectedShortProfitValueRef] =
-    useStateRef((Number(sellPrice) - shortTpValue) * targetInputValueRef.current);
-
-  const [expectedShortLossValue, setExpectedShortLossValue, expectedShortLossValueRef] =
-    useStateRef((shortSlValue - Number(sellPrice)) * targetInputValueRef.current);
-
-  const [longGuaranteedStopChecked, setLongGuaranteedStopChecked] = useState(false);
-  const [shortGuaranteedStopChecked, setShortGuaranteedStopChecked] = useState(false);
-
-  const [requiredMargin, setRequiredMargin, requiredMarginRef] = useStateRef(
-    roundToDecimalPlaces((targetInputValue * marketPrice) / leverage, 2)
-  );
-  const [valueOfPosition, setValueOfPosition, valueOfPositionRef] = useStateRef(
-    roundToDecimalPlaces(targetInputValue * marketPrice, 2)
-  );
-  const [marginWarning, setMarginWarning] = useState(false);
-
-  const [targetLength, setTargetLength] = useState(
-    roundToDecimalPlaces((targetInputValue * marketPrice) / leverage, 2).toString().length
-  );
-  const [valueOfPositionLength, setValueOfPositionLength] = useState(
-    roundToDecimalPlaces(targetInputValue * marketPrice, 2).toString().length
-  );
 
   const getTargetInputValue = (value: number) => {
     setTargetInputValue(value);

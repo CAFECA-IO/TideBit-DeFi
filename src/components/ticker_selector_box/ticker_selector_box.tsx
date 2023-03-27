@@ -9,7 +9,8 @@ import {MarketContext, IMarketContext} from '../../contexts/market_context';
 import {UserContext, IUserContext} from '../../contexts/user_context';
 import {ILineGraphProps, ITickerData} from '../../interfaces/tidebit_defi_background/ticker_data';
 import {useRouter} from 'next/router';
-import eventEmitter, {ClickEvent} from '../../constants/tidebit_event';
+import {ClickEvent} from '../../constants/tidebit_event';
+import {NotificationContext} from '../../contexts/notification_context';
 
 type TranslateFunction = (s: string) => string;
 
@@ -43,6 +44,7 @@ const TickerSelectorBox = ({
 }: ITickerSelectorBox) => {
   const marketCtx = useContext<IMarketContext>(MarketContext);
   const userCtx = useContext(UserContext) as IUserContext;
+  const notificationCtx = useContext(NotificationContext);
 
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
@@ -62,8 +64,7 @@ const TickerSelectorBox = ({
     tickerSelectorBoxClickHandler();
     routing(route);
 
-    eventEmitter.emit(ClickEvent.TICKER_CHANGED, () => {
-      // console.log('event emitted');
+    notificationCtx.emitter.emit(ClickEvent.TICKER_CHANGED, () => {
       return;
     });
   };

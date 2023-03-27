@@ -198,7 +198,7 @@ export const APIURL = {
 };
 
 export const TBEURL = {
-  // LIST_TICKERS: '/api/tickers',
+  LIST_TICKERS: '/market/tickers?instType=SPOT',
   LIST_TRADES: '/market/trades', // ++ TODO: ticker => `${ticker}usdt` (20230315 - Tzuhan)
   // SEND_EMAIL_CODE: '/api/user/email',
   // CONNECT_TIDEBIT: '/api/tidebit',

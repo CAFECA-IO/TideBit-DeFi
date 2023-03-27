@@ -12,7 +12,7 @@ const HistorySubTabMobile = () => {
 
   return (
     <>
-      <div className="flex w-screen flex-col overflow-x-hidden px-8 sm:w-700px">
+      <div className="flex w-screen flex-col overflow-x-hidden px-8 sm:w-500px">
         <div className="h-80vh overflow-y-auto px-4">{historyPositionList}</div>
       </div>
     </>

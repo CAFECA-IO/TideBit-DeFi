@@ -16,10 +16,11 @@ import {
   POSITION_PRICE_RENEWAL_INTERVAL_SECONDS,
   unitAsset,
 } from '../../constants/config';
-import eventEmitter, {ClickEvent} from '../../constants/tidebit_event';
+import {ClickEvent} from '../../constants/tidebit_event';
 import {useTranslation} from 'next-i18next';
 import {roundToDecimalPlaces} from '../../lib/common';
 import {getDummyQuotation} from '../../interfaces/tidebit_defi_background/quotation';
+import {NotificationContext} from '../../contexts/notification_context';
 
 type TranslateFunction = (s: string) => string;
 
@@ -29,17 +30,18 @@ const TradeTabMobile = () => {
   const globalCtx = useGlobal();
   const marketCtx = useContext(MarketContext);
   const userCtx = useContext(UserContext);
+  const notificationCtx = useContext(NotificationContext);
 
   useEffect(() => {
-    eventEmitter.once(ClickEvent.TICKER_CHANGED, () => {
+    notificationCtx.emitter.once(ClickEvent.TICKER_CHANGED, () => {
       marketPrice = marketCtx.selectedTickerRef.current?.price ?? TEMP_PLACEHOLDER;
       renewValueOfPosition(marketPrice);
     });
 
     return () => {
-      eventEmitter.removeAllListeners(ClickEvent.TICKER_CHANGED);
+      notificationCtx.emitter.removeAllListeners(ClickEvent.TICKER_CHANGED);
     };
-  }, [marketCtx.selectedTickerRef.current]);
+  }, [marketCtx.selectedTicker]);
 
   const tickerLiveStatistics = marketCtx.tickerLiveStatistics;
   const tickerStaticStatistics = marketCtx.tickerStatic;
@@ -334,7 +336,7 @@ const TradeTabMobile = () => {
   const displayedRequiredMarginStyle = (
     <>
       <div className={`${isDisplayedMarginStyle} ${isDisplayedMarginSize} mt-1 text-base`}>
-        {requiredMargin?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)} USDT
+        {requiredMargin?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)} {unitAsset}
       </div>
       <div className={`${isDisplayedMarginWarning} ml-3 text-xs text-lightRed`}>
         * {t('TRADE_PAGE.TRADE_TAB_NOT_ENOUGH_MARGIN')}
@@ -420,7 +422,7 @@ const TradeTabMobile = () => {
         <label className="ml-2 flex text-sm font-medium text-lightGray">
           {t('TRADE_PAGE.TRADE_TAB_GUARANTEED_STOP')} &nbsp;
           <span className="text-lightWhite">
-            ({t('TRADE_PAGE.TRADE_TAB_FEE')} {guaranteedStopFee} USDT)
+            ({t('TRADE_PAGE.TRADE_TAB_FEE')} {guaranteedStopFee} {unitAsset})
           </span>
           {/* tooltip */}
           <div className="ml-2">
@@ -562,7 +564,7 @@ const TradeTabMobile = () => {
           {t('TRADE_PAGE.TRADE_TAB_GUARANTEED_STOP')} &nbsp;
           <span className="text-lightWhite">
             {' '}
-            ({t('TRADE_PAGE.TRADE_TAB_FEE')} {guaranteedStopFee} USDT)
+            ({t('TRADE_PAGE.TRADE_TAB_FEE')} {guaranteedStopFee} {unitAsset})
           </span>
           {/* tooltip */}
           <div className="ml-2">
@@ -630,7 +632,7 @@ const TradeTabMobile = () => {
 
   const subMenu = (
     <div
-      className={`flex h-screen w-screen flex-col items-center overflow-y-auto bg-darkGray ${
+      className={`flex h-screen w-screen flex-col items-center overflow-x-hidden overflow-y-hidden bg-darkGray ${
         openSubMenu ? 'visible translate-y-0 opacity-100' : 'invisible translate-y-full opacity-0'
       } absolute left-0 ${'bottom-76px'} overflow-hidden pt-40 transition-all duration-150`}
     >
@@ -639,7 +641,7 @@ const TradeTabMobile = () => {
       </div>
 
       {/* ---------- margin setting ---------- */}
-      <div className="w-screen px-8 sm:w-1/2">
+      <div className="w-screen overflow-y-auto overflow-x-hidden px-8 sm:w-1/2">
         <div className="flex flex-col items-center justify-between space-y-7">
           <div className="flex w-full items-center justify-center">
             <UserOverview
@@ -675,7 +677,7 @@ const TradeTabMobile = () => {
             <div className="w-1/2">
               <div className="text-sm text-lightGray">{t('TRADE_PAGE.TRADE_TAB_VALUE')}</div>
               <div className={`text-base text-lightWhite ${isDisplayedValueSize}`}>
-                {valueOfPosition?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)} USDT
+                {valueOfPosition?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)} {unitAsset}
               </div>
             </div>
           </div>
@@ -698,7 +700,7 @@ const TradeTabMobile = () => {
           >
             <b>{t('TRADE_PAGE.TRADE_TAB_LONG_BUTTON')}</b> <br />
             <p className="text-xs">
-              {t('TRADE_PAGE.TRADE_TAB_LONG_BUTTON_SUBTITLE')} $ {buyPrice}
+              {t('TRADE_PAGE.TRADE_TAB_LONG_BUTTON_SUBTITLE')} ₮ {buyPrice}
             </p>
           </RippleButton>
         </div>
@@ -714,7 +716,7 @@ const TradeTabMobile = () => {
           >
             <b>{t('TRADE_PAGE.TRADE_TAB_SHORT_BUTTON')}</b> <br />
             <p className="text-xs">
-              {t('TRADE_PAGE.TRADE_TAB_SHORT_BUTTON_SUBTITLE')} $ {sellPrice}
+              {t('TRADE_PAGE.TRADE_TAB_SHORT_BUTTON_SUBTITLE')} ₮ {sellPrice}
             </p>
           </RippleButton>
         </div>

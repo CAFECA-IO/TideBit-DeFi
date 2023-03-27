@@ -6,8 +6,13 @@ import TradeVisitorTab from '../trade_visitor_tab/trade_visitor_tab';
 import {UserContext, IUserContext} from '../../contexts/user_context';
 import {MarketContext, IMarketContext} from '../../contexts/market_context';
 import PositionVisitorTab from '../position_visitor_tab/position_visitor_tab';
+import {useTranslation} from 'next-i18next';
+
+type TranslateFunction = (s: string) => string;
 
 const OrderSection = () => {
+  const {t}: {t: TranslateFunction} = useTranslation('common');
+
   const userCtx = useContext(UserContext);
   const {isCFDTradable} = useContext(MarketContext);
 
@@ -54,7 +59,7 @@ const OrderSection = () => {
             className={`${activeTradeTabStyle} inline-block rounded-t-2xl px-59px py-2 hover:cursor-pointer`}
             onClick={tradeTabClickHandler}
           >
-            Trade
+            {t('TRADE_PAGE.TRADE_TAB')}
           </button>
         </div>
         <div className="">
@@ -63,7 +68,7 @@ const OrderSection = () => {
             className={`${activePositionTabStyle} inline-block rounded-t-2xl px-57px py-2 hover:cursor-pointer`}
             onClick={positionTabClickHandler}
           >
-            Position
+            {t('TRADE_PAGE.POSITION_TAB')}
           </button>
         </div>
       </div>

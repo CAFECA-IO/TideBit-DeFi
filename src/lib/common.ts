@@ -26,7 +26,7 @@ export function randomFloatFromInterval(min: number, max: number, decimalPlaces:
 }
 
 export function getDeadline(deadline: number) {
-  return new Date().getTime() / 1000 + deadline;
+  return Math.ceil(new Date().getTime() / 1000) + deadline;
 }
 
 /**

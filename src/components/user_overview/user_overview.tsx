@@ -1,5 +1,6 @@
 import React from 'react';
 import {useTranslation} from 'next-i18next';
+import {unitAsset} from '../../constants/config';
 
 type TranslateFunction = (s: string) => string;
 
@@ -29,17 +30,23 @@ const UserOverview = ({
         <div className="hidden space-x-5 lg:flex xl:space-x-20">
           <div className="">
             <div className="text-sm text-lightGray4">{t('USER.OVERVIEW_AVAILABLE')}</div>
-            <div className="text-sm xl:text-base">{depositAvailable} USDT</div>
+            <div className="text-sm xl:text-base">
+              {depositAvailable} {unitAsset}
+            </div>
           </div>
 
           <div className="">
             <div className="text-sm text-lightGray4">{t('USER.OVERVIEW_M_MARGIN')}</div>
-            <div className="text-sm xl:text-base">{marginLocked} USDT</div>
+            <div className="text-sm xl:text-base">
+              {marginLocked} {unitAsset}
+            </div>
           </div>
 
           <div className="">
             <div className="text-sm text-lightGray4">{t('USER.OVERVIEW_PNL')}</div>
-            <div className="text-sm xl:text-base">{profitOrLossAmount} USDT</div>
+            <div className="text-sm xl:text-base">
+              {profitOrLossAmount} {unitAsset}
+            </div>
           </div>
         </div>
       </div>
@@ -54,21 +61,27 @@ const UserOverview = ({
             <div className="whitespace-nowrap p-1 text-sm text-lightGray4">
               {t('USER.OVERVIEW_AVAILABLE')}
             </div>
-            <div className="whitespace-nowrap p-1 text-xs">{depositAvailable} USDT</div>
+            <div className="whitespace-nowrap p-1 text-xs">
+              {depositAvailable} {unitAsset}
+            </div>
           </div>
 
           <div className="">
             <div className="whitespace-nowrap p-1 text-sm text-lightGray4">
               {t('USER.OVERVIEW_M_MARGIN')}
             </div>
-            <div className="whitespace-nowrap p-1 text-xs">{marginLocked} USDT</div>
+            <div className="whitespace-nowrap p-1 text-xs">
+              {marginLocked} {unitAsset}
+            </div>
           </div>
 
           <div className="">
             <div className="whitespace-nowrap p-1 text-sm text-lightGray4">
               {t('USER.OVERVIEW_PNL')}
             </div>
-            <div className="whitespace-nowrap p-1 text-xs">{profitOrLossAmount} USDT</div>
+            <div className="whitespace-nowrap p-1 text-xs">
+              {profitOrLossAmount} {unitAsset}
+            </div>
           </div>
         </div>
       </div>

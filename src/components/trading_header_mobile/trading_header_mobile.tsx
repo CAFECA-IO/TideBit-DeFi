@@ -4,7 +4,6 @@ import useOuterClick from '../../lib/hooks/use_outer_click';
 import {UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
 import {MarketContext} from '../../contexts/market_context';
 import {Trend} from '../../constants/trend';
-import eventEmitter from '../../constants/tidebit_event';
 import TickerSelectorBoxMobile from '../ticker_selector_box_mobile/ticker_selector_box_mobile';
 
 const TradingHeaderMobile = () => {
@@ -33,6 +32,10 @@ const TradingHeaderMobile = () => {
     marketCtx.selectedTicker?.upOrDown === Trend.UP ? 'priceUpShadow' : 'priceDownShadow';
 
   // const displayedTickerBox = showTickerSelector ? <TickerSelectorModal /> : null;
+
+  const priceChange = Math.abs(marketCtx.selectedTicker?.priceChange ?? 0);
+
+  const priceChangePercentage = Math.abs(marketCtx.selectedTicker?.fluctuating ?? 0);
 
   const tickerTitle = (
     <h1 className="text-3xl font-medium">{marketCtx.selectedTicker?.currency}</h1>
@@ -68,14 +71,12 @@ const TradingHeaderMobile = () => {
         <div className={`${priceShadowColor} flex flex-col items-center space-x-7 text-center`}>
           <div className="text-3xl">
             <span className="">
-              {marketCtx.selectedTicker?.price.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}
+              ₮ {marketCtx.selectedTicker?.price.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}
             </span>
           </div>
           <div className="text-lg">{`${
             marketCtx.selectedTicker?.upOrDown === Trend.UP ? '▴' : '▾'
-          } $${marketCtx.selectedTicker?.priceChange} (${
-            marketCtx.selectedTicker?.upOrDown === Trend.UP ? '+' : '-'
-          }${marketCtx.selectedTicker?.fluctuating}%)`}</div>
+          } ${priceChange} (${priceChangePercentage}%)`}</div>
         </div>
       </div>
     </>

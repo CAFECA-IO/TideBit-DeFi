@@ -174,7 +174,7 @@ const UpdateFormModal = ({
       } -mt-0 items-center transition-all`}
     >
       <div className="text-xs text-lightWhite">
-        * {t('POSITION_MODAL.EXPECTED_PROFIT')}: + ${' '}
+        * {t('POSITION_MODAL.EXPECTED_PROFIT')}: +{' '}
         {roundToDecimalPlaces(Math.abs(expectedProfitValueRef.current), 2).toLocaleString(
           UNIVERSAL_NUMBER_FORMAT_LOCALE
         )}{' '}
@@ -194,7 +194,7 @@ const UpdateFormModal = ({
         {guaranteedpCheckedRef.current
           ? t('POSITION_MODAL.SL_SETTING')
           : t('POSITION_MODAL.EXPECTED_LOSS')}
-        : - ${' '}
+        : -{' '}
         {roundToDecimalPlaces(Math.abs(expectedLossValueRef.current), 2).toLocaleString(
           UNIVERSAL_NUMBER_FORMAT_LOCALE
         )}{' '}
@@ -413,7 +413,7 @@ const UpdateFormModal = ({
         <label className="ml-2 flex text-xs font-medium text-lightGray">
           {t('POSITION_MODAL.GUARANTEED_STOP')}
           <span className="ml-1 text-lightWhite">
-            ({t('POSITION_MODAL.FEE')}: {openCfdDetails?.guaranteedStopFee} USDT)
+            ({t('POSITION_MODAL.FEE')}: {openCfdDetails?.guaranteedStopFee} {unitAsset})
           </span>
           {/* tooltip */}
           <div className="ml-3">
@@ -531,9 +531,10 @@ const UpdateFormModal = ({
 
                     <div className="">
                       <CircularProgressBar
+                        label={label}
                         showLabel={true}
                         numerator={remainTime}
-                        denominator={24}
+                        denominator={denominator}
                         progressBarColor={[displayedColorHex]}
                         hollowSize="40%"
                         circularBarSize="100"
@@ -597,11 +598,11 @@ const UpdateFormModal = ({
                   <div className={`${layoutInsideBorder}`}>
                     <div className="text-lightGray">{t('POSITION_MODAL.OPEN_PRICE')}</div>
                     <div className="">
-                      ${' '}
+                      {' '}
                       {openCfdDetails?.openPrice?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
                         minimumFractionDigits: 2,
                       }) ?? 0}
-                      <span className="ml-1 text-lightGray">USDT</span>
+                      <span className="ml-1 text-lightGray">{unitAsset}</span>
                     </div>
                   </div>
 
@@ -644,7 +645,7 @@ const UpdateFormModal = ({
                           minimumFractionDigits: 2,
                         }
                       )}
-                      <span className="ml-1 text-lightGray">USDT</span>
+                      <span className="ml-1 text-lightGray">{unitAsset}</span>
                     </div>
                   </div>
 

@@ -1,14 +1,24 @@
 import {useState, Dispatch, SetStateAction, useCallback} from 'react';
+import {OrderType} from '../../constants/order_type';
+import {OrderState} from '../../constants/order_state';
 import Image from 'next/image';
 import DatePicker from '../date_picker/date_picker';
+import {useTranslation} from 'next-i18next';
 
+type TranslateFunction = (s: string) => string;
 interface IReceiptSearchProps {
   filteredTradingType: string;
   setFilteredTradingType: Dispatch<SetStateAction<string>>;
+  setSearches: Dispatch<SetStateAction<string>>;
 }
 
-/* ToDo: (20230316 - Julian) i18n */
-const ReceiptSearch = ({filteredTradingType, setFilteredTradingType}: IReceiptSearchProps) => {
+const ReceiptSearch = ({
+  filteredTradingType,
+  setFilteredTradingType,
+  setSearches,
+}: IReceiptSearchProps) => {
+  const {t}: {t: TranslateFunction} = useTranslation('common');
+
   const currentDate = new Date();
 
   const [tradingTypeMenuOpen, setTradingTypeMenuOpen] = useState(false);
@@ -24,41 +34,42 @@ const ReceiptSearch = ({filteredTradingType, setFilteredTradingType}: IReceiptSe
       `${currentDate.getFullYear()}-${currentDate.getMonth() + 1}-${currentDate.getDate()} 08:00:00`
     )
   );
+  const [tickersSettings, setTickersSettings] = useState(null);
 
   const tradingTypeMenuText =
-    filteredTradingType === 'DEPOSIT'
-      ? 'Deposit'
-      : filteredTradingType === 'WITHDRAW'
-      ? 'Withdraw'
-      : filteredTradingType === 'OPEN_CFD'
-      ? 'Open Position'
-      : filteredTradingType === 'CLOSE_CFD'
-      ? 'Close Position'
-      : 'Trading Type';
+    filteredTradingType === OrderType.DEPOSIT
+      ? t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_DEPOSIT')
+      : filteredTradingType === OrderType.WITHDRAW
+      ? t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_WITHDRAW')
+      : filteredTradingType === OrderState.OPENING
+      ? t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_CFD_OPEN')
+      : filteredTradingType === OrderState.CLOSED
+      ? t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_CFD_CLOSE')
+      : t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_TITLE');
 
-  const dropMenuItemStyle = 'inline-block px-5 py-3 text-left hover:cursor-pointer';
+  const dropMenuItemStyle = 'inline-block px-5 py-3 w-full text-left hover:cursor-pointer';
 
   const tradingTypeMenuClickHandler = () => {
     setTradingTypeMenuOpen(!tradingTypeMenuOpen);
   };
 
   const depositButtonClickHandler = () => {
-    setFilteredTradingType('DEPOSIT');
+    setFilteredTradingType(OrderType.DEPOSIT);
     setTradingTypeMenuOpen(false);
   };
 
   const withdrawButtonClickHandler = () => {
-    setFilteredTradingType('WITHDRAW');
+    setFilteredTradingType(OrderType.WITHDRAW);
     setTradingTypeMenuOpen(false);
   };
 
   const openPositionButtonClickHandler = () => {
-    setFilteredTradingType('OPEN_CFD');
+    setFilteredTradingType(OrderState.OPENING);
     setTradingTypeMenuOpen(false);
   };
 
   const closePositionButtonClickHandler = () => {
-    setFilteredTradingType('CLOSE_CFD');
+    setFilteredTradingType(OrderState.CLOSED);
     setTradingTypeMenuOpen(false);
   };
 
@@ -67,7 +78,7 @@ const ReceiptSearch = ({filteredTradingType, setFilteredTradingType}: IReceiptSe
     setTradingTypeMenuOpen(false);
   };
 
-  /* Todo: (20230316 - Julian) dateUpdateHandler #289
+  /* Todo: (20230316 - Julian) dateUpdateHandler #289 
   const dateStartUpdateHandler = useCallback(
     async (date: Date) => {
       const newPage = 1;
@@ -76,15 +87,56 @@ const ReceiptSearch = ({filteredTradingType, setFilteredTradingType}: IReceiptSe
       setDateStart(date);
       const end = dateEnd.toISOString().substring(0, 10);
       const start = date.toISOString().substring(0, 10);
-      let tradingType = filteredTradingType;
+      let tickerSetting = tickersSettings[filterExchange][filterTicker];
+      if (tickerSetting.source === SupportedExchange.OKEX) {
+        const result = await storeCtx.getOuterTradesProfits({
+          ticker: filterTicker,
+          exchange: tickerSetting.source,
+          start,
+          end,
+        });
+        if (result.chartData) setChartData(result.chartData);
+        else setChartData({ data: {}, xaxisType: "string" });
+        setProfits(result.profits);
+      }
+      const trades = await getVouchers({
+        ticker: filterTicker,
+        exchange: tickerSetting.source,
+        start,
+        end,
+        offset: 0,
+        limit: limit,
+      });
+      if (tickerSetting.source === SupportedExchange.TIDEBIT) {
+        if (trades.chartData) setChartData(trades.chartData);
+        else setChartData({ data: {}, xaxisType: "string" });
+        setProfits(trades.profits);
+      }
+      filter(trades, {});
+      setIsLoading(false);
+    },
+    [
+      dateEnd,
+      filter,
+      filterExchange,
+      filterTicker,
+      getVouchers,
+      limit,
+      storeCtx,
+      tickersSettings,
+    ]
+  ); */
 
-}, [dateStart]) */
+  const onSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const searchString = event.target.value.toLocaleLowerCase();
+    setSearches(searchString);
+  };
 
   const displayedFilterBar = (
     <div className="hidden space-x-10 text-lightWhite sm:flex">
       {/* Info: (20230316 - Julian) Trading Type Dropdown Menu */}
       <div className="flex flex-col items-start">
-        Trading Type
+        {t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_TITLE')}
         <div className="relative mt-2 w-160px">
           <button
             className={`flex w-full items-center justify-between px-5 py-3 text-left text-lightGray4 transition-all duration-200 ease-in-out hover:cursor-pointer ${
@@ -107,19 +159,19 @@ const ReceiptSearch = ({filteredTradingType, setFilteredTradingType}: IReceiptSe
             }`}
           >
             <button className={`${dropMenuItemStyle}`} onClick={allButtonClickHandler}>
-              All
+              {t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_ALL')}
             </button>
             <button className={`${dropMenuItemStyle}`} onClick={depositButtonClickHandler}>
-              Deposit
+              {t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_DEPOSIT')}
             </button>
             <button className={`${dropMenuItemStyle}`} onClick={withdrawButtonClickHandler}>
-              Withdraw
+              {t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_WITHDRAW')}
             </button>
             <button className={`${dropMenuItemStyle}`} onClick={openPositionButtonClickHandler}>
-              Open Position
+              {t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_CFD_OPEN')}
             </button>
             <button className={`${dropMenuItemStyle}`} onClick={closePositionButtonClickHandler}>
-              Close Position
+              {t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_CFD_CLOSE')}
             </button>
           </div>
         </div>
@@ -127,11 +179,14 @@ const ReceiptSearch = ({filteredTradingType, setFilteredTradingType}: IReceiptSe
 
       {/* Info: (20230316 - Julian) Date Picker */}
       <div className="flex flex-col items-start">
-        Date
+        {t('MY_ASSETS_PAGE.RECEIPT_SECTION_DATE_TITLE')}
         {/* ToDo: (20230316 - Julian) DatePicker */}
         <div className="mt-2 flex items-center space-x-2">
-          <DatePicker minDate={new Date(1)} maxDate={new Date(10)} />
-          <p>TO</p>
+          <DatePicker
+            minDate={new Date(1)}
+            /* setDate={dateStartUpdateHandler} */ maxDate={new Date(10)}
+          />
+          <p>{t('MY_ASSETS_PAGE.RECEIPT_SECTION_DATE_TO')}</p>
           <label>DatePicker</label>
         </div>
       </div>
@@ -160,7 +215,7 @@ const ReceiptSearch = ({filteredTradingType, setFilteredTradingType}: IReceiptSe
         className="block w-full rounded-full bg-darkGray7 p-3 pl-4 text-sm text-white focus:border-blue-500 focus:outline-none focus:ring-0 focus:ring-blue-500"
         placeholder="Search"
         required
-        //onChange={onSearchChange}
+        onChange={onSearchChange}
       />
       <button
         type="button"
@@ -188,7 +243,7 @@ const ReceiptSearch = ({filteredTradingType, setFilteredTradingType}: IReceiptSe
 
   return (
     <div className="flex flex-col items-center sm:items-stretch">
-      {displayedTicker}
+      {/* displayedTicker */}
       <div className="flex items-center justify-between py-6">
         {displayedFilterBar}
         {displayedSearchBar}

@@ -98,12 +98,6 @@ const TradeTab = () => {
     };
   }, [marketCtx.selectedTicker]);
 
-  // useEffect(() => {
-  //   const result = async () => await fetchQuotation();
-  // }, [userCtx.enableServiceTerm]);
-
-  const tabBodyWidth = 'w-320px';
-
   const fetchQuotation = async () => {
     const {longQuotation, shortQuotation} = await getQuotation();
     const long = longQuotation.data as IQuotation;
@@ -304,6 +298,8 @@ const TradeTab = () => {
   const targetAmountDetection = (value?: number) => {
     renewValueOfPosition();
   };
+
+  const tabBodyWidth = 'w-320px';
 
   const longProfitSymbol =
     expectedLongProfitValueRef.current > 0

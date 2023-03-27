@@ -19,9 +19,11 @@ import {
 import {ClickEvent} from '../../constants/tidebit_event';
 import {useTranslation} from 'next-i18next';
 import {getTimestamp, roundToDecimalPlaces} from '../../lib/common';
-import {getDummyQuotation} from '../../interfaces/tidebit_defi_background/quotation';
+import {IQuotation, getDummyQuotation} from '../../interfaces/tidebit_defi_background/quotation';
 import {NotificationContext} from '../../contexts/notification_context';
 import {IApplyCreateCFDOrderData} from '../../interfaces/tidebit_defi_background/apply_create_cfd_order_data';
+import {Code} from '../../constants/code';
+import {defaultResultSuccess} from '../../interfaces/tidebit_defi_background/result';
 
 type TranslateFunction = (s: string) => string;
 
@@ -33,16 +35,138 @@ const TradeTabMobile = () => {
   const userCtx = useContext(UserContext);
   const notificationCtx = useContext(NotificationContext);
 
+  const [mounted, setMounted] = useState(false);
+  const [longQuotation, setLongQuotation, longQuotationRef] = useStateRef<IQuotation>();
+  const [shortQuotation, setShortQuotation, shortQuotationRef] = useStateRef<IQuotation>();
+
+  useEffect(() => {
+    if (mounted) return;
+
+    (async () => {
+      const {long, short} = await fetchQuotation();
+    })();
+
+    // eslint-disable-next-line no-console
+    console.log('get quotation in first Effect');
+
+    setMounted(true);
+  }, []);
+
   useEffect(() => {
     notificationCtx.emitter.once(ClickEvent.TICKER_CHANGED, () => {
       marketPrice = marketCtx.selectedTickerRef.current?.price ?? TEMP_PLACEHOLDER;
       renewValueOfPosition(marketPrice);
     });
 
+    // if (!mounted) return;
+
+    setMounted(false);
+    // eslint-disable-next-line no-console
+    console.log('mounted in second Effect', mounted);
+
+    const intervalId = setInterval(async () => {
+      // const base =
+      if (!longQuotationRef.current || !shortQuotationRef.current) return;
+
+      const base = longQuotationRef.current.deadline;
+      const diff = base - getTimestamp();
+      const tickingSec = diff > 0 ? Math.floor(diff) : 0;
+      // eslint-disable-next-line no-console
+      console.log('tickingSec in second Effect', tickingSec);
+
+      if (tickingSec === 0) {
+        const {long, short} = await fetchQuotation();
+      }
+      // setLongQuotation(result.long);
+      // setShortQuotation(result.short);
+
+      // console.log('result from fetchQuotation', result);
+
+      // console.log('long', longQuotation);
+      // console.log('long ref', longQuotationRef.current);
+
+      // console.log('short', shortQuotation);
+      // console.log('short ref', shortQuotationRef.current);
+    }, 1000);
+
     return () => {
       notificationCtx.emitter.removeAllListeners(ClickEvent.TICKER_CHANGED);
+      clearInterval(intervalId);
     };
   }, [marketCtx.selectedTicker]);
+
+  const fetchQuotation = async () => {
+    const {longQuotation, shortQuotation} = await getQuotation();
+    const long = longQuotation.data as IQuotation;
+    const short = shortQuotation.data as IQuotation;
+
+    if (longQuotation.success && long) {
+      setLongQuotation(long);
+      // eslint-disable-next-line no-console
+      console.log('long', long);
+      // eslint-disable-next-line no-console
+      console.log('long ref', longQuotationRef.current);
+    }
+
+    if (shortQuotation.success && short) {
+      setShortQuotation(short);
+      // eslint-disable-next-line no-console
+      console.log('short', short);
+      // eslint-disable-next-line no-console
+      console.log('short ref', shortQuotationRef.current);
+    }
+
+    return {long: longQuotation?.data as IQuotation, short: shortQuotation?.data as IQuotation};
+  };
+
+  const getQuotation = async () => {
+    let long = defaultResultSuccess;
+    let short = defaultResultSuccess;
+
+    try {
+      long = await marketCtx.getCFDQuotation(
+        marketCtx.selectedTicker?.currency ?? '',
+        TypeOfPosition.BUY
+      );
+
+      // ToDo: handle the error code (20230327 - Shirley)
+      if (long.code === Code.WALLET_IS_NOT_CONNECT) {
+        // console.log('WALLET_IS_NOT_CONNECT');
+      } else if (long.code === Code.INVAILD_INPUTS) {
+        // console.log('INVAILD_INPUTS');
+      } else if (long.code === Code.SERVICE_TERM_DISABLE) {
+        // console.log('SERVICE_TERM_DISABLE');
+      } else if (long.code === Code.INTERNAL_SERVER_ERROR) {
+        // console.log('INTERNAL_SERVER_ERROR');
+      }
+    } catch (err) {
+      // ToDo: handle the error code (20230327 - Shirley)
+      // console.error(err);
+    }
+
+    try {
+      short = await marketCtx.getCFDQuotation(
+        marketCtx.selectedTicker?.currency ?? '',
+        TypeOfPosition.SELL
+      );
+
+      // ToDo: handle the error code (20230327 - Shirley)
+      if (short.code === Code.WALLET_IS_NOT_CONNECT) {
+        // console.log('WALLET_IS_NOT_CONNECT');
+      } else if (short.code === Code.INVAILD_INPUTS) {
+        // console.log('INVAILD_INPUTS');
+      } else if (short.code === Code.SERVICE_TERM_DISABLE) {
+        // console.log('SERVICE_TERM_DISABLE');
+      } else if (short.code === Code.INTERNAL_SERVER_ERROR) {
+        // console.log('INTERNAL_SERVER_ERROR');
+      }
+    } catch (err) {
+      // ToDo: handle the error code (20230327 - Shirley)
+      // console.error(err);
+    }
+
+    return {longQuotation: long, shortQuotation: short};
+  };
 
   const tickerLiveStatistics = marketCtx.tickerLiveStatistics;
   const tickerStaticStatistics = marketCtx.tickerStatic;
@@ -58,8 +182,8 @@ const TradeTabMobile = () => {
 
   let marketPrice = marketCtx.selectedTicker?.price ?? TEMP_PLACEHOLDER;
 
-  const buyPrice = (tickerLiveStatistics?.buyEstimatedFilledPrice ?? TEMP_PLACEHOLDER).toFixed(2); // market price * (1+spread)
-  const sellPrice = (tickerLiveStatistics?.sellEstimatedFilledPrice ?? TEMP_PLACEHOLDER).toFixed(2); // market price * (1-spread)
+  const buyPrice = (longQuotationRef.current?.price ?? TEMP_PLACEHOLDER).toFixed(2); // market price * (1+spread)
+  const sellPrice = (shortQuotationRef.current?.price ?? TEMP_PLACEHOLDER).toFixed(2); // market price * (1-spread)
   const longRecommendedTp = Number(
     (tickerLiveStatistics?.longRecommendedTp ?? TEMP_PLACEHOLDER).toFixed(2)
   );

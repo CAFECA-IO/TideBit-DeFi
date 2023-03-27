@@ -118,22 +118,8 @@ const TradeTab = () => {
     roundToDecimalPlaces(targetInputValue * marketPrice, 2).toString().length
   );
 
-  // useEffect(() => {
-  //   // if (mountedRef.current) return;
-  //   if (mounted) return;
-
-  //   setMounted(true);
-
-  //   (async () => {
-  //     const {longQuotation, shortQuotation} = await getQuotation();
-  //   })();
-
-  //   console.log('in mounted, quotation', longQuotationRef.current, shortQuotationRef.current);
-  // }, [marketCtx.selectedTicker]);
-
   // Info: Fetch quotation in period (20230327 - Shirley)
   useEffect(() => {
-    // setMounted(false);
     const intervalId = setInterval(async () => {
       if (!longQuotationRef.current || !shortQuotationRef.current) return;
 
@@ -143,17 +129,13 @@ const TradeTab = () => {
       setSecondsLeft(tickingSec);
 
       const now = getTimestamp();
-      // eslint-disable-next-line no-console
-      // console.log('secondsLeft', secondsLeft, now);
-      // eslint-disable-next-line no-console
-      // console.log('secondsLeftRef', secondsLeftRef.current, now);
-      // eslint-disable-next-line no-console
-      // console.log('tickingSec', tickingSec, now);
 
       if (tickingSec === 0) {
         const {longQuotation, shortQuotation} = await getQuotation(
           marketCtx.selectedTicker?.currency ?? 'ETH'
         );
+
+        // Deprecated: before merging into develop (20230327 - Shirley)
         // eslint-disable-next-line no-console
         console.log('countdown Effect', now, longQuotationRef.current, shortQuotationRef.current);
       }
@@ -171,6 +153,12 @@ const TradeTab = () => {
         marketCtx.selectedTicker?.currency ?? 'ETH'
       );
     })();
+
+    const now = getTimestamp();
+
+    // Deprecated: before merging into develop (20230327 - Shirley)
+    // eslint-disable-next-line no-console
+    console.log('first time Effect', now, longQuotationRef.current, shortQuotationRef.current);
   }, [userCtx.enableServiceTerm]);
 
   // Info: Fetch quotation when ticker changed (20230327 - Shirley)
@@ -180,8 +168,9 @@ const TradeTab = () => {
       renewValueOfPosition(marketPrice);
 
       const {longQuotation, shortQuotation} = await getQuotation(
-        // marketCtx.selectedTickerRef.current?.currency ?? 'ETH'
-        marketCtx.selectedTicker?.currency ?? 'ETH'
+        marketCtx.selectedTickerRef.current?.currency ?? 'ETH'
+        // TODO: should be marketCtx.selectedTicker?.currency ?? 'ETH' (20230327 - Shirley)
+        // marketCtx.selectedTicker?.currency ?? 'ETH'
       );
 
       const now = getTimestamp();

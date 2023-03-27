@@ -115,51 +115,83 @@ const TradeTabMobile = () => {
     roundToDecimalPlaces(targetInputValue * marketPrice, 2).toString().length
   );
 
+  // Info: Fetch quotation in period (20230327 - Shirley)
   useEffect(() => {
-    if (mounted) return;
-
-    (async () => {
-      const {longQuotation, shortQuotation} = await getQuotation();
-    })();
-
-    setMounted(true);
-  }, []);
-
-  useEffect(() => {
-    notificationCtx.emitter.once(ClickEvent.TICKER_CHANGED, () => {
-      marketPrice = marketCtx.selectedTickerRef.current?.price ?? TEMP_PLACEHOLDER;
-      renewValueOfPosition(marketPrice);
-    });
-
-    setMounted(false);
-
     const intervalId = setInterval(async () => {
       if (!longQuotationRef.current || !shortQuotationRef.current) return;
 
       const base = longQuotationRef.current.deadline;
       const diff = base - getTimestamp();
       const tickingSec = diff > 0 ? Math.floor(diff) : 0;
+      setSecondsLeft(tickingSec);
+
+      const now = getTimestamp();
 
       if (tickingSec === 0) {
-        const {longQuotation, shortQuotation} = await getQuotation();
+        const {longQuotation, shortQuotation} = await getQuotation(
+          marketCtx.selectedTicker?.currency ?? 'ETH'
+        );
+
+        // Deprecated: before merging into develop (20230327 - Shirley)
+        // eslint-disable-next-line no-console
+        console.log('countdown Effect', now, longQuotationRef.current, shortQuotationRef.current);
       }
     }, 1000);
 
     return () => {
-      notificationCtx.emitter.removeAllListeners(ClickEvent.TICKER_CHANGED);
       clearInterval(intervalId);
+    };
+  }, [secondsLeft]);
+
+  // Info: Fetch quotation in the first time (20230327 - Shirley)
+  useEffect(() => {
+    (async () => {
+      const {longQuotation, shortQuotation} = await getQuotation(
+        marketCtx.selectedTicker?.currency ?? 'ETH'
+      );
+    })();
+
+    const now = getTimestamp();
+
+    // Deprecated: before merging into develop (20230327 - Shirley)
+    // eslint-disable-next-line no-console
+    console.log('first time Effect', now, longQuotationRef.current, shortQuotationRef.current);
+  }, [userCtx.enableServiceTerm]);
+
+  // Info: Fetch quotation when ticker changed (20230327 - Shirley)
+  useEffect(() => {
+    notificationCtx.emitter.once(ClickEvent.TICKER_CHANGED, async () => {
+      marketPrice = marketCtx.selectedTickerRef.current?.price ?? TEMP_PLACEHOLDER;
+      renewValueOfPosition(marketPrice);
+
+      const {longQuotation, shortQuotation} = await getQuotation(
+        marketCtx.selectedTickerRef.current?.currency ?? 'ETH'
+        // TODO: should be marketCtx.selectedTicker?.currency ?? 'ETH' (20230327 - Shirley)
+        // marketCtx.selectedTicker?.currency ?? 'ETH'
+      );
+
+      const now = getTimestamp();
+
+      // eslint-disable-next-line no-console
+      console.log(
+        'when ticker changed Effect',
+        now,
+        longQuotationRef.current,
+        shortQuotationRef.current
+      );
+    });
+
+    return () => {
+      notificationCtx.emitter.removeAllListeners(ClickEvent.TICKER_CHANGED);
     };
   }, [marketCtx.selectedTicker]);
 
-  const getQuotation = async () => {
+  const getQuotation = async (tickerId: string) => {
     let longQuotation = defaultResultSuccess;
     let shortQuotation = defaultResultSuccess;
 
     try {
-      longQuotation = await marketCtx.getCFDQuotation(
-        marketCtx.selectedTicker?.currency ?? '',
-        TypeOfPosition.BUY
-      );
+      longQuotation = await marketCtx.getCFDQuotation(tickerId, TypeOfPosition.BUY);
 
       const long = longQuotation.data as IQuotation;
 
@@ -168,7 +200,7 @@ const TradeTabMobile = () => {
 
         // Deprecated: before merging into develop (20230327 - Shirley)
         // eslint-disable-next-line no-console
-        console.log('long ref in effect', longQuotationRef.current);
+        // console.log('long ref in effect', longQuotationRef.current);
       }
 
       // ToDo: handle the error code (20230327 - Shirley)
@@ -187,10 +219,7 @@ const TradeTabMobile = () => {
     }
 
     try {
-      shortQuotation = await marketCtx.getCFDQuotation(
-        marketCtx.selectedTicker?.currency ?? '',
-        TypeOfPosition.SELL
-      );
+      shortQuotation = await marketCtx.getCFDQuotation(tickerId, TypeOfPosition.SELL);
 
       const short = shortQuotation.data as IQuotation;
 
@@ -199,7 +228,7 @@ const TradeTabMobile = () => {
 
         // Deprecated: before merging into develop (20230327 - Shirley)
         // eslint-disable-next-line no-console
-        console.log('short ref in effect', shortQuotationRef.current);
+        // console.log('short ref in effect', shortQuotationRef.current);
       }
 
       // ToDo: handle the error code (20230327 - Shirley)

@@ -159,5 +159,9 @@
   "ERROR_PAGE": {
     "DESCRIPTION1": "Oops! Something went wrong",
     "DESCRIPTION2": "and we're trying to fix it now."
+  },
+  "COMING_SOON_PAGE": {
+    "DESCRIPTION1": "We're working hard to bring you amazing experience.",
+    "DESCRIPTION2": "Stay tuned for our new service!"
   }
 }

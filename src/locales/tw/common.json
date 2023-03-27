@@ -159,5 +159,9 @@
   "ERROR_PAGE": {
     "DESCRIPTION1": "糟糕！發生錯誤，",
     "DESCRIPTION2": "我們將會盡快修復。"
+  },
+  "COMING_SOON_PAGE": {
+    "DESCRIPTION1": "我們正在努力為您帶來驚奇的體驗",
+    "DESCRIPTION2": "請持續關注我們的最新服務！"
   }
 }

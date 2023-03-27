@@ -49,9 +49,6 @@ const TradeTab = () => {
       const {longQuotation, shortQuotation} = await getQuotation();
     })();
 
-    // eslint-disable-next-line no-console
-    // console.log('get quotation in first Effect');
-
     setMounted(true);
   }, []);
 
@@ -61,35 +58,18 @@ const TradeTab = () => {
       renewValueOfPosition(marketPrice);
     });
 
-    // if (!mounted) return;
-
     setMounted(false);
-    // eslint-disable-next-line no-console
-    // console.log('mounted in second Effect', mounted);
 
     const intervalId = setInterval(async () => {
-      // const base =
       if (!longQuotationRef.current || !shortQuotationRef.current) return;
 
       const base = longQuotationRef.current.deadline;
       const diff = base - getTimestamp();
       const tickingSec = diff > 0 ? Math.floor(diff) : 0;
-      // eslint-disable-next-line no-console
-      // console.log('tickingSec in second Effect', tickingSec);
 
       if (tickingSec === 0) {
         const {longQuotation, shortQuotation} = await getQuotation();
       }
-      // setLongQuotation(result.long);
-      // setShortQuotation(result.short);
-
-      // console.log('result from fetchQuotation', result);
-
-      // console.log('long', longQuotation);
-      // eslint-disable-next-line no-console
-
-      // console.log('short', shortQuotation);
-      // eslint-disable-next-line no-console
     }, 1000);
 
     return () => {
@@ -113,6 +93,7 @@ const TradeTab = () => {
       if (longQuotation.success && long.typeOfPosition === TypeOfPosition.BUY) {
         setLongQuotation(long);
 
+        // Deprecated: before merging into develop (20230327 - Shirley)
         // eslint-disable-next-line no-console
         console.log('long ref in effect', longQuotationRef.current);
       }
@@ -143,6 +124,7 @@ const TradeTab = () => {
       if (shortQuotation.success && short && short.typeOfPosition === TypeOfPosition.SELL) {
         setShortQuotation(short);
 
+        // Deprecated: before merging into develop (20230327 - Shirley)
         // eslint-disable-next-line no-console
         console.log('short ref in effect', shortQuotationRef.current);
       }

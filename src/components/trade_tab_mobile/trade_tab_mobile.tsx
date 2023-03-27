@@ -43,11 +43,8 @@ const TradeTabMobile = () => {
     if (mounted) return;
 
     (async () => {
-      const {long, short} = await fetchQuotation();
+      const {longQuotation, shortQuotation} = await getQuotation();
     })();
-
-    // eslint-disable-next-line no-console
-    console.log('get quotation in first Effect');
 
     setMounted(true);
   }, []);
@@ -58,35 +55,18 @@ const TradeTabMobile = () => {
       renewValueOfPosition(marketPrice);
     });
 
-    // if (!mounted) return;
-
     setMounted(false);
-    // eslint-disable-next-line no-console
-    console.log('mounted in second Effect', mounted);
 
     const intervalId = setInterval(async () => {
-      // const base =
       if (!longQuotationRef.current || !shortQuotationRef.current) return;
 
       const base = longQuotationRef.current.deadline;
       const diff = base - getTimestamp();
       const tickingSec = diff > 0 ? Math.floor(diff) : 0;
-      // eslint-disable-next-line no-console
-      console.log('tickingSec in second Effect', tickingSec);
 
       if (tickingSec === 0) {
-        const {long, short} = await fetchQuotation();
+        const {longQuotation, shortQuotation} = await getQuotation();
       }
-      // setLongQuotation(result.long);
-      // setShortQuotation(result.short);
-
-      // console.log('result from fetchQuotation', result);
-
-      // console.log('long', longQuotation);
-      // console.log('long ref', longQuotationRef.current);
-
-      // console.log('short', shortQuotation);
-      // console.log('short ref', shortQuotationRef.current);
     }, 1000);
 
     return () => {
@@ -95,48 +75,34 @@ const TradeTabMobile = () => {
     };
   }, [marketCtx.selectedTicker]);
 
-  const fetchQuotation = async () => {
-    const {longQuotation, shortQuotation} = await getQuotation();
-    const long = longQuotation.data as IQuotation;
-    const short = shortQuotation.data as IQuotation;
-
-    if (longQuotation.success && long) {
-      setLongQuotation(long);
-      // eslint-disable-next-line no-console
-      console.log('long', long);
-      // eslint-disable-next-line no-console
-      console.log('long ref', longQuotationRef.current);
-    }
-
-    if (shortQuotation.success && short) {
-      setShortQuotation(short);
-      // eslint-disable-next-line no-console
-      console.log('short', short);
-      // eslint-disable-next-line no-console
-      console.log('short ref', shortQuotationRef.current);
-    }
-
-    return {long: longQuotation?.data as IQuotation, short: shortQuotation?.data as IQuotation};
-  };
-
   const getQuotation = async () => {
-    let long = defaultResultSuccess;
-    let short = defaultResultSuccess;
+    let longQuotation = defaultResultSuccess;
+    let shortQuotation = defaultResultSuccess;
 
     try {
-      long = await marketCtx.getCFDQuotation(
+      longQuotation = await marketCtx.getCFDQuotation(
         marketCtx.selectedTicker?.currency ?? '',
         TypeOfPosition.BUY
       );
 
+      const long = longQuotation.data as IQuotation;
+
+      if (longQuotation.success && long.typeOfPosition === TypeOfPosition.BUY) {
+        setLongQuotation(long);
+
+        // Deprecated: before merging into develop (20230327 - Shirley)
+        // eslint-disable-next-line no-console
+        console.log('long ref in effect', longQuotationRef.current);
+      }
+
       // ToDo: handle the error code (20230327 - Shirley)
-      if (long.code === Code.WALLET_IS_NOT_CONNECT) {
+      if (longQuotation.code === Code.WALLET_IS_NOT_CONNECT) {
         // console.log('WALLET_IS_NOT_CONNECT');
-      } else if (long.code === Code.INVAILD_INPUTS) {
+      } else if (longQuotation.code === Code.INVAILD_INPUTS) {
         // console.log('INVAILD_INPUTS');
-      } else if (long.code === Code.SERVICE_TERM_DISABLE) {
+      } else if (longQuotation.code === Code.SERVICE_TERM_DISABLE) {
         // console.log('SERVICE_TERM_DISABLE');
-      } else if (long.code === Code.INTERNAL_SERVER_ERROR) {
+      } else if (longQuotation.code === Code.INTERNAL_SERVER_ERROR) {
         // console.log('INTERNAL_SERVER_ERROR');
       }
     } catch (err) {
@@ -145,19 +111,29 @@ const TradeTabMobile = () => {
     }
 
     try {
-      short = await marketCtx.getCFDQuotation(
+      shortQuotation = await marketCtx.getCFDQuotation(
         marketCtx.selectedTicker?.currency ?? '',
         TypeOfPosition.SELL
       );
 
+      const short = shortQuotation.data as IQuotation;
+
+      if (shortQuotation.success && short && short.typeOfPosition === TypeOfPosition.SELL) {
+        setShortQuotation(short);
+
+        // Deprecated: before merging into develop (20230327 - Shirley)
+        // eslint-disable-next-line no-console
+        console.log('short ref in effect', shortQuotationRef.current);
+      }
+
       // ToDo: handle the error code (20230327 - Shirley)
-      if (short.code === Code.WALLET_IS_NOT_CONNECT) {
+      if (shortQuotation.code === Code.WALLET_IS_NOT_CONNECT) {
         // console.log('WALLET_IS_NOT_CONNECT');
-      } else if (short.code === Code.INVAILD_INPUTS) {
+      } else if (shortQuotation.code === Code.INVAILD_INPUTS) {
         // console.log('INVAILD_INPUTS');
-      } else if (short.code === Code.SERVICE_TERM_DISABLE) {
+      } else if (shortQuotation.code === Code.SERVICE_TERM_DISABLE) {
         // console.log('SERVICE_TERM_DISABLE');
-      } else if (short.code === Code.INTERNAL_SERVER_ERROR) {
+      } else if (shortQuotation.code === Code.INTERNAL_SERVER_ERROR) {
         // console.log('INTERNAL_SERVER_ERROR');
       }
     } catch (err) {
@@ -165,7 +141,7 @@ const TradeTabMobile = () => {
       // console.error(err);
     }
 
-    return {longQuotation: long, shortQuotation: short};
+    return {longQuotation: longQuotation, shortQuotation: shortQuotation};
   };
 
   const tickerLiveStatistics = marketCtx.tickerLiveStatistics;

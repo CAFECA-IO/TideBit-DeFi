@@ -103,13 +103,13 @@ const TradeTab = () => {
   const [longGuaranteedStopChecked, setLongGuaranteedStopChecked] = useState(false);
   const [shortGuaranteedStopChecked, setShortGuaranteedStopChecked] = useState(false);
 
-  const [requiredMargin, setRequiredMargin, requiredMarginRef] = useStateRef(
-    roundToDecimalPlaces((targetInputValue * marketPrice) / leverage, 2)
+  const [requiredMarginLong, setRequiredMarginLong, requiredMarginLongRef] = useStateRef(
+    roundToDecimalPlaces((targetInputValue * Number(longQuotationRef.current?.price)) / leverage, 2)
   );
-  const [valueOfPosition, setValueOfPosition, valueOfPositionRef] = useStateRef(
-    roundToDecimalPlaces(targetInputValue * marketPrice, 2)
+  const [valueOfPositionLong, setValueOfPositionLong, valueOfPositionLongRef] = useStateRef(
+    roundToDecimalPlaces(targetInputValue * Number(longQuotationRef.current?.price), 2)
   );
-  const [marginWarning, setMarginWarning] = useState(false);
+  const [marginWarning, setMarginWarning, marginWarningRef] = useStateRef(false);
 
   const [targetLength, setTargetLength] = useState(
     roundToDecimalPlaces((targetInputValue * marketPrice) / leverage, 2).toString().length
@@ -135,6 +135,17 @@ const TradeTab = () => {
           marketCtx.selectedTicker?.currency ?? 'ETH'
         );
 
+        setRequiredMarginLong(
+          roundToDecimalPlaces(
+            (targetInputValue * Number(longQuotationRef.current?.price)) / leverage,
+            2
+          )
+        );
+        setValueOfPositionLong(
+          roundToDecimalPlaces(targetInputValue * Number(longQuotationRef.current?.price), 2)
+        );
+        setMarginWarning(requiredMarginLongRef.current > USER_BALANCE);
+
         // Deprecated: before merging into develop (20230327 - Shirley)
         // eslint-disable-next-line no-console
         console.log('countdown Effect', now, longQuotationRef.current, shortQuotationRef.current);
@@ -152,6 +163,16 @@ const TradeTab = () => {
       const {longQuotation, shortQuotation} = await getQuotation(
         marketCtx.selectedTicker?.currency ?? 'ETH'
       );
+      setRequiredMarginLong(
+        roundToDecimalPlaces(
+          (targetInputValue * Number(longQuotationRef.current?.price)) / leverage,
+          2
+        )
+      );
+      setValueOfPositionLong(
+        roundToDecimalPlaces(targetInputValue * Number(longQuotationRef.current?.price), 2)
+      );
+      setMarginWarning(requiredMarginLongRef.current > USER_BALANCE);
     })();
 
     const now = getTimestamp();
@@ -172,6 +193,17 @@ const TradeTab = () => {
         // TODO: should be marketCtx.selectedTicker?.currency ?? 'ETH' (20230327 - Shirley)
         // marketCtx.selectedTicker?.currency ?? 'ETH'
       );
+
+      setRequiredMarginLong(
+        roundToDecimalPlaces(
+          (targetInputValue * Number(longQuotationRef.current?.price)) / leverage,
+          2
+        )
+      );
+      setValueOfPositionLong(
+        roundToDecimalPlaces(targetInputValue * Number(longQuotationRef.current?.price), 2)
+      );
+      setMarginWarning(requiredMarginLongRef.current > USER_BALANCE);
 
       const now = getTimestamp();
 
@@ -288,14 +320,14 @@ const TradeTab = () => {
   const renewValueOfPosition = (price?: number) => {
     const newValueOfPosition = price
       ? targetInputValueRef.current * price
-      : targetInputValueRef.current * marketPrice;
+      : targetInputValueRef.current * (longQuotationRef.current?.price ?? 0);
 
     const roundedValueOfPosition = roundToDecimalPlaces(newValueOfPosition, 2);
-    setValueOfPosition(roundedValueOfPosition);
+    setValueOfPositionLong(roundedValueOfPosition);
 
     const margin = newValueOfPosition / leverage;
     const roundedMargin = roundToDecimalPlaces(margin, 2);
-    setRequiredMargin(roundedMargin);
+    setRequiredMarginLong(roundedMargin);
 
     setMarginWarning(margin > USER_BALANCE);
 
@@ -359,8 +391,8 @@ const TradeTab = () => {
   const isDisplayedLongTpSetting = longTpToggle ? 'flex' : 'invisible';
   const isDisplayedShortTpSetting = shortTpToggle ? 'flex' : 'invisible';
 
-  const isDisplayedMarginStyle = marginWarning ? 'text-lightGray' : 'text-lightWhite';
-  const isDisplayedMarginWarning = marginWarning ? 'flex' : 'invisible';
+  const isDisplayedMarginStyle = marginWarningRef.current ? 'text-lightGray' : 'text-lightWhite';
+  const isDisplayedMarginWarning = marginWarningRef.current ? 'flex' : 'invisible';
   const isDisplayedMarginSize = targetLength > 7 ? 'text-sm' : 'text-base';
   const isDisplayedValueSize = valueOfPositionLength > 7 ? 'text-sm' : 'text-base';
   const isDisplayedDividerSpacing =
@@ -380,7 +412,7 @@ const TradeTab = () => {
       leverage: marketCtx.tickerStatic?.leverage ?? 1,
       margin: {
         asset: unitAsset,
-        amount: requiredMarginRef.current,
+        amount: requiredMarginLongRef.current,
       },
       quotation: {
         ticker: marketCtx.selectedTicker?.currency ?? '',
@@ -408,7 +440,7 @@ const TradeTab = () => {
       typeOfPosition: TypeOfPosition.SELL,
       margin: {
         asset: unitAsset,
-        amount: requiredMarginRef.current,
+        amount: requiredMarginLongRef.current,
       },
       quotation: {
         ticker: marketCtx.selectedTicker?.currency ?? '',
@@ -512,7 +544,7 @@ const TradeTab = () => {
     <>
       {/* <div className="mt-1 text-base text-lightWhite">$ 13.14 USDT</div> */}
       <div className={`${isDisplayedMarginStyle} ${isDisplayedMarginSize} mt-1 text-base`}>
-        {requiredMarginRef.current?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)} {unitAsset}
+        {requiredMarginLongRef.current?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)} {unitAsset}
       </div>
       <div className={`${isDisplayedMarginWarning} ml-3 text-xs text-lightRed`}>
         * {t('TRADE_PAGE.TRADE_TAB_NOT_ENOUGH_MARGIN')}
@@ -814,7 +846,9 @@ const TradeTab = () => {
                   <div className="w-1/2 space-y-1">
                     <div className="text-sm text-lightGray">{t('TRADE_PAGE.TRADE_TAB_VALUE')}</div>
                     <div className={`text-base text-lightWhite ${isDisplayedValueSize}`}>
-                      {valueOfPositionRef.current?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}{' '}
+                      {valueOfPositionLongRef.current?.toLocaleString(
+                        UNIVERSAL_NUMBER_FORMAT_LOCALE
+                      )}{' '}
                       {unitAsset}
                     </div>
                   </div>
@@ -855,7 +889,7 @@ const TradeTab = () => {
                 {/* Long Button */}
                 <div className="ml-1/4">
                   <RippleButton
-                    disabled={marginWarning}
+                    disabled={marginWarningRef.current}
                     onClick={longOrderSubmitHandler}
                     buttonType="button"
                     className="mr-2 mb-2 rounded-md bg-lightGreen5 px-7 py-1 text-sm font-medium tracking-wide text-white transition-colors duration-300 hover:bg-lightGreen5/80 disabled:bg-lightGray"
@@ -890,7 +924,9 @@ const TradeTab = () => {
                   <div className="w-1/2 space-y-1">
                     <div className="text-sm text-lightGray">{t('TRADE_PAGE.TRADE_TAB_VALUE')}</div>
                     <div className={`text-base text-lightWhite ${isDisplayedValueSize}`}>
-                      {valueOfPositionRef.current?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}{' '}
+                      {valueOfPositionLongRef.current?.toLocaleString(
+                        UNIVERSAL_NUMBER_FORMAT_LOCALE
+                      )}{' '}
                       {unitAsset}
                     </div>
                   </div>
@@ -931,7 +967,7 @@ const TradeTab = () => {
                 {/* Short Button */}
                 <div className="ml-1/4">
                   <RippleButton
-                    disabled={marginWarning}
+                    disabled={marginWarningRef.current}
                     onClick={shortOrderSubmitHandler}
                     buttonType="button"
                     className="mr-2 mb-2 rounded-md bg-lightRed px-7 py-1 text-sm font-medium tracking-wide text-white transition-colors duration-300 hover:bg-lightRed/80 disabled:bg-lightGray"

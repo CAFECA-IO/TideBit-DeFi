@@ -50,7 +50,7 @@ const TradeTab = () => {
     })();
 
     // eslint-disable-next-line no-console
-    console.log('get quotation in first Effect');
+    // console.log('get quotation in first Effect');
 
     setMounted(true);
   }, []);
@@ -65,7 +65,7 @@ const TradeTab = () => {
 
     setMounted(false);
     // eslint-disable-next-line no-console
-    console.log('mounted in second Effect', mounted);
+    // console.log('mounted in second Effect', mounted);
 
     const intervalId = setInterval(async () => {
       // const base =
@@ -75,7 +75,7 @@ const TradeTab = () => {
       const diff = base - getTimestamp();
       const tickingSec = diff > 0 ? Math.floor(diff) : 0;
       // eslint-disable-next-line no-console
-      console.log('tickingSec in second Effect', tickingSec);
+      // console.log('tickingSec in second Effect', tickingSec);
 
       if (tickingSec === 0) {
         const {long, short} = await fetchQuotation();
@@ -86,10 +86,12 @@ const TradeTab = () => {
       // console.log('result from fetchQuotation', result);
 
       // console.log('long', longQuotation);
-      // console.log('long ref', longQuotationRef.current);
+      // eslint-disable-next-line no-console
+      console.log('long ref', longQuotationRef.current);
 
       // console.log('short', shortQuotation);
-      // console.log('short ref', shortQuotationRef.current);
+      // eslint-disable-next-line no-console
+      console.log('short ref', shortQuotationRef.current);
     }, 1000);
 
     return () => {
@@ -103,20 +105,22 @@ const TradeTab = () => {
     const long = longQuotation.data as IQuotation;
     const short = shortQuotation.data as IQuotation;
 
+    // console.log('quotations', longQuotation, shortQuotation);
+
     if (longQuotation.success && long) {
       setLongQuotation(long);
       // eslint-disable-next-line no-console
-      console.log('long', long);
+      // console.log('long', long);
       // eslint-disable-next-line no-console
-      console.log('long ref', longQuotationRef.current);
+      // console.log('long ref', longQuotationRef.current);
     }
 
     if (shortQuotation.success && short) {
       setShortQuotation(short);
       // eslint-disable-next-line no-console
-      console.log('short', short);
+      // console.log('short', short);
       // eslint-disable-next-line no-console
-      console.log('short ref', shortQuotationRef.current);
+      // console.log('short ref', shortQuotationRef.current);
     }
 
     return {long: longQuotation?.data as IQuotation, short: shortQuotation?.data as IQuotation};
@@ -131,6 +135,9 @@ const TradeTab = () => {
         marketCtx.selectedTicker?.currency ?? '',
         TypeOfPosition.BUY
       );
+
+      // eslint-disable-next-line no-console
+      console.log('long fetched', long.data);
 
       // ToDo: handle the error code (20230327 - Shirley)
       if (long.code === Code.WALLET_IS_NOT_CONNECT) {
@@ -152,6 +159,9 @@ const TradeTab = () => {
         marketCtx.selectedTicker?.currency ?? '',
         TypeOfPosition.SELL
       );
+
+      // eslint-disable-next-line no-console
+      console.log('short fetched', short.data);
 
       // ToDo: handle the error code (20230327 - Shirley)
       if (short.code === Code.WALLET_IS_NOT_CONNECT) {

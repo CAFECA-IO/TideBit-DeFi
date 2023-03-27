@@ -109,11 +109,16 @@ const TradeTab = () => {
   const [valueOfPositionLong, setValueOfPositionLong, valueOfPositionLongRef] = useStateRef(
     roundToDecimalPlaces(targetInputValue * Number(longQuotationRef.current?.price), 2)
   );
+
+  // TODO: long vs short (20230327 - Shirley)
   const [marginWarning, setMarginWarning, marginWarningRef] = useStateRef(false);
 
+  // TODO: long vs short && rm marketPrice (20230327 - Shirley)
   const [targetLength, setTargetLength] = useState(
     roundToDecimalPlaces((targetInputValue * marketPrice) / leverage, 2).toString().length
   );
+
+  // TODO: long vs short (20230327 - Shirley)
   const [valueOfPositionLength, setValueOfPositionLength] = useState(
     roundToDecimalPlaces(targetInputValue * marketPrice, 2).toString().length
   );
@@ -885,6 +890,7 @@ const TradeTab = () => {
                   </div>
                 </div>
 
+                {/* Deprecated: before merging into develop (20230327 - Shirley) */}
                 <p>{secondsLeft}</p>
                 {/* Long Button */}
                 <div className="ml-1/4">

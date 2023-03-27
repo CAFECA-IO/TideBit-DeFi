@@ -100,17 +100,22 @@ const TradeTabMobile = () => {
   const [longGuaranteedStopChecked, setLongGuaranteedStopChecked] = useState(false);
   const [shortGuaranteedStopChecked, setShortGuaranteedStopChecked] = useState(false);
 
-  const [requiredMargin, setRequiredMargin, requiredMarginRef] = useStateRef(
+  const [requiredMarginLong, setRequiredMarginLong, requiredMarginLongRef] = useStateRef(
     roundToDecimalPlaces((targetInputValue * marketPrice) / leverage, 2)
   );
-  const [valueOfPosition, setValueOfPosition, valueOfPositionRef] = useStateRef(
+  const [valueOfPositionLong, setValueOfPositionLong, valueOfPositionLongRef] = useStateRef(
     roundToDecimalPlaces(targetInputValue * marketPrice, 2)
   );
-  const [marginWarning, setMarginWarning] = useState(false);
 
+  // TODO: long vs short (20230327 - Shirley)
+  const [marginWarning, setMarginWarning, marginWarningRef] = useStateRef(false);
+
+  // TODO: long vs short && rm marketPrice (20230327 - Shirley)
   const [targetLength, setTargetLength] = useState(
     roundToDecimalPlaces((targetInputValue * marketPrice) / leverage, 2).toString().length
   );
+
+  // TODO: long vs short (20230327 - Shirley)
   const [valueOfPositionLength, setValueOfPositionLength] = useState(
     roundToDecimalPlaces(targetInputValue * marketPrice, 2).toString().length
   );
@@ -132,6 +137,17 @@ const TradeTabMobile = () => {
           marketCtx.selectedTicker?.currency ?? 'ETH'
         );
 
+        setRequiredMarginLong(
+          roundToDecimalPlaces(
+            (targetInputValue * Number(longQuotationRef.current?.price)) / leverage,
+            2
+          )
+        );
+        setValueOfPositionLong(
+          roundToDecimalPlaces(targetInputValue * Number(longQuotationRef.current?.price), 2)
+        );
+        setMarginWarning(requiredMarginLongRef.current > USER_BALANCE);
+
         // Deprecated: before merging into develop (20230327 - Shirley)
         // eslint-disable-next-line no-console
         console.log('countdown Effect', now, longQuotationRef.current, shortQuotationRef.current);
@@ -149,6 +165,16 @@ const TradeTabMobile = () => {
       const {longQuotation, shortQuotation} = await getQuotation(
         marketCtx.selectedTicker?.currency ?? 'ETH'
       );
+      setRequiredMarginLong(
+        roundToDecimalPlaces(
+          (targetInputValue * Number(longQuotationRef.current?.price)) / leverage,
+          2
+        )
+      );
+      setValueOfPositionLong(
+        roundToDecimalPlaces(targetInputValue * Number(longQuotationRef.current?.price), 2)
+      );
+      setMarginWarning(requiredMarginLongRef.current > USER_BALANCE);
     })();
 
     const now = getTimestamp();
@@ -169,6 +195,17 @@ const TradeTabMobile = () => {
         // TODO: should be marketCtx.selectedTicker?.currency ?? 'ETH' (20230327 - Shirley)
         // marketCtx.selectedTicker?.currency ?? 'ETH'
       );
+
+      setRequiredMarginLong(
+        roundToDecimalPlaces(
+          (targetInputValue * Number(longQuotationRef.current?.price)) / leverage,
+          2
+        )
+      );
+      setValueOfPositionLong(
+        roundToDecimalPlaces(targetInputValue * Number(longQuotationRef.current?.price), 2)
+      );
+      setMarginWarning(requiredMarginLongRef.current > USER_BALANCE);
 
       const now = getTimestamp();
 
@@ -289,11 +326,11 @@ const TradeTabMobile = () => {
       : targetInputValueRef.current * marketPrice;
 
     const roundedValueOfPosition = roundToDecimalPlaces(newValueOfPosition, 2);
-    setValueOfPosition(roundedValueOfPosition);
+    setValueOfPositionLong(roundedValueOfPosition);
 
     const margin = newValueOfPosition / leverage;
     const roundedMargin = roundToDecimalPlaces(margin, 2);
-    setRequiredMargin(roundedMargin);
+    setRequiredMarginLong(roundedMargin);
 
     setMarginWarning(margin > USER_BALANCE);
 
@@ -349,7 +386,7 @@ const TradeTabMobile = () => {
       leverage: marketCtx.tickerStatic?.leverage ?? 1,
       margin: {
         asset: unitAsset,
-        amount: requiredMarginRef.current,
+        amount: requiredMarginLongRef.current,
       },
       quotation: {
         ticker: marketCtx.selectedTicker?.currency ?? '',
@@ -377,7 +414,7 @@ const TradeTabMobile = () => {
       typeOfPosition: TypeOfPosition.SELL,
       margin: {
         asset: unitAsset,
-        amount: requiredMarginRef.current,
+        amount: requiredMarginLongRef.current,
       },
       quotation: {
         ticker: marketCtx.selectedTicker?.currency ?? '',
@@ -466,8 +503,8 @@ const TradeTabMobile = () => {
   const isDisplayedLongTpSetting = longTpToggle ? 'flex' : 'invisible';
   const isDisplayedShortTpSetting = shortTpToggle ? 'flex' : 'invisible';
 
-  const isDisplayedMarginStyle = marginWarning ? 'text-lightGray' : 'text-lightWhite';
-  const isDisplayedMarginWarning = marginWarning ? 'flex' : 'invisible';
+  const isDisplayedMarginStyle = marginWarningRef.current ? 'text-lightGray' : 'text-lightWhite';
+  const isDisplayedMarginWarning = marginWarningRef.current ? 'flex' : 'invisible';
   const isDisplayedMarginSize = targetLength > 7 ? 'text-sm' : 'text-base';
   const isDisplayedValueSize = valueOfPositionLength > 7 ? 'text-sm' : 'text-base';
   const isDisplayedDividerSpacing =
@@ -493,7 +530,7 @@ const TradeTabMobile = () => {
   const displayedRequiredMarginStyle = (
     <>
       <div className={`${isDisplayedMarginStyle} ${isDisplayedMarginSize} mt-1 text-base`}>
-        {requiredMargin?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)} {unitAsset}
+        {requiredMarginLong?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)} {unitAsset}
       </div>
       <div className={`${isDisplayedMarginWarning} ml-3 text-xs text-lightRed`}>
         * {t('TRADE_PAGE.TRADE_TAB_NOT_ENOUGH_MARGIN')}
@@ -834,7 +871,7 @@ const TradeTabMobile = () => {
             <div className="w-1/2">
               <div className="text-sm text-lightGray">{t('TRADE_PAGE.TRADE_TAB_VALUE')}</div>
               <div className={`text-base text-lightWhite ${isDisplayedValueSize}`}>
-                {valueOfPosition?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)} {unitAsset}
+                {valueOfPositionLong?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)} {unitAsset}
               </div>
             </div>
           </div>
@@ -851,6 +888,7 @@ const TradeTabMobile = () => {
         {/* Long Button */}
         <div className={`bg-black/100 transition-all duration-300 ease-in-out ${longButtonStyles}`}>
           <RippleButton
+            disabled={marginWarningRef.current}
             buttonType="button"
             className={`w-full rounded-md bg-lightGreen5 py-2 text-sm font-medium tracking-wide text-white transition-colors duration-300 hover:bg-lightGreen5/80`}
             onClick={longSectionClickHandler}
@@ -867,6 +905,7 @@ const TradeTabMobile = () => {
           className={`bg-black/100 transition-all duration-300 ease-in-out ${shortButtonStyles}`}
         >
           <RippleButton
+            disabled={marginWarningRef.current}
             buttonType="button"
             className={`w-full rounded-md bg-lightRed py-2 text-sm font-medium tracking-wide text-white transition-colors duration-300 hover:bg-lightRed/80`}
             onClick={shortSectionClickHandler}

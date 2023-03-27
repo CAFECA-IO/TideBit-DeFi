@@ -61,6 +61,9 @@ module.exports = {
         '3xs': '200px',
         '1200px': '1200px',
       },
+      minHeight: {
+        '600px': '600px',
+      },
       spacing: {
         // width / height / padding / margin / top / bottom / right / left
         '1px': '1px',

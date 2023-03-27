@@ -152,5 +152,8 @@
     "RECEIPT_SECTION_ORDER_STATUS_FAILED": "Failed",
     "RECEIPT_SECTION_FEE": "Fee",
     "RECEIPT_SECTION_AVAILABLE": "Available"
+  },
+  "NOT_FOUND_PAGE": {
+    "DESCRIPTION": "Oops! Page can not be found."
   }
 }

@@ -38,8 +38,22 @@ const TradeTab = () => {
   const userCtx = useContext(UserContext);
   const notificationCtx = useContext(NotificationContext);
 
+  const [mounted, setMounted] = useState(false);
   const [longQuotation, setLongQuotation, longQuotationRef] = useStateRef<IQuotation>();
   const [shortQuotation, setShortQuotation, shortQuotationRef] = useStateRef<IQuotation>();
+
+  useEffect(() => {
+    if (mounted) return;
+
+    (async () => {
+      const {long, short} = await fetchQuotation();
+    })();
+
+    // eslint-disable-next-line no-console
+    console.log('get quotation in first Effect');
+
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     notificationCtx.emitter.once(ClickEvent.TICKER_CHANGED, () => {
@@ -47,33 +61,25 @@ const TradeTab = () => {
       renewValueOfPosition(marketPrice);
     });
 
-    const fetchQuotation = async () => {
-      const {longQuotation, shortQuotation} = await getQuotation();
-      const long = longQuotation.data as IQuotation;
-      const short = shortQuotation.data as IQuotation;
+    // if (!mounted) return;
 
-      if (longQuotation.success && long) {
-        setLongQuotation(long);
-        // eslint-disable-next-line no-console
-        console.log('long', long);
-        // eslint-disable-next-line no-console
-        console.log('long ref', longQuotationRef.current);
-      }
-
-      if (shortQuotation.success && short) {
-        setShortQuotation(short);
-        // eslint-disable-next-line no-console
-        console.log('short', short);
-        // eslint-disable-next-line no-console
-        console.log('short ref', shortQuotationRef.current);
-      }
-
-      return {long: longQuotation?.data, short: shortQuotation?.data};
-    };
+    setMounted(false);
+    // eslint-disable-next-line no-console
+    console.log('mounted in second Effect', mounted);
 
     const intervalId = setInterval(async () => {
       // const base =
-      const result = await fetchQuotation();
+      if (!longQuotationRef.current || !shortQuotationRef.current) return;
+
+      const base = longQuotationRef.current.deadline;
+      const diff = base - getTimestamp();
+      const tickingSec = diff > 0 ? Math.floor(diff) : 0;
+      // eslint-disable-next-line no-console
+      console.log('tickingSec in second Effect', tickingSec);
+
+      if (tickingSec === 0) {
+        const {long, short} = await fetchQuotation();
+      }
       // setLongQuotation(result.long);
       // setShortQuotation(result.short);
 
@@ -84,7 +90,7 @@ const TradeTab = () => {
 
       // console.log('short', shortQuotation);
       // console.log('short ref', shortQuotationRef.current);
-    }, 3000);
+    }, 1000);
 
     return () => {
       notificationCtx.emitter.removeAllListeners(ClickEvent.TICKER_CHANGED);
@@ -92,7 +98,35 @@ const TradeTab = () => {
     };
   }, [marketCtx.selectedTicker]);
 
+  // useEffect(() => {
+  //   const result = async () => await fetchQuotation();
+  // }, [userCtx.enableServiceTerm]);
+
   const tabBodyWidth = 'w-320px';
+
+  const fetchQuotation = async () => {
+    const {longQuotation, shortQuotation} = await getQuotation();
+    const long = longQuotation.data as IQuotation;
+    const short = shortQuotation.data as IQuotation;
+
+    if (longQuotation.success && long) {
+      setLongQuotation(long);
+      // eslint-disable-next-line no-console
+      console.log('long', long);
+      // eslint-disable-next-line no-console
+      console.log('long ref', longQuotationRef.current);
+    }
+
+    if (shortQuotation.success && short) {
+      setShortQuotation(short);
+      // eslint-disable-next-line no-console
+      console.log('short', short);
+      // eslint-disable-next-line no-console
+      console.log('short ref', shortQuotationRef.current);
+    }
+
+    return {long: longQuotation?.data as IQuotation, short: shortQuotation?.data as IQuotation};
+  };
 
   const getQuotation = async () => {
     let long = defaultResultSuccess;

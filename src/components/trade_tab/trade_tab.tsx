@@ -58,9 +58,6 @@ const TradeTab = () => {
   const leverage = tickerStaticStatistics?.leverage ?? 1;
   const gsl = marketCtx.guaranteedStopFeePercentage;
 
-  // let marketPrice = tickerLiveStatistics?.price ?? TEMP_PLACEHOLDER;
-  let marketPrice = marketCtx.selectedTicker?.price ?? TEMP_PLACEHOLDER;
-
   const defaultBuyQuotation: IQuotation = getDummyQuotation(ticker, TypeOfPosition.BUY);
   const defaultSellQuotation: IQuotation = getDummyQuotation(ticker, TypeOfPosition.SELL);
 
@@ -72,16 +69,16 @@ const TradeTab = () => {
     useStateRef<IQuotation>(defaultBuyQuotation);
   const [shortQuotation, setShortQuotation, shortQuotationRef] =
     useStateRef<IQuotation>(defaultSellQuotation);
-  const [quotationError, setQuotationError, quotationErrorRef] = useStateRef(false);
 
-  const buyPrice = longQuotationRef.current?.price ?? TEMP_PLACEHOLDER; // market price * (1+spread)
-  const sellPrice = shortQuotationRef.current?.price ?? TEMP_PLACEHOLDER; // market price * (1-spread)
-  const longRecommendedTp = Number(
-    (tickerLiveStatistics?.longRecommendedTp ?? TEMP_PLACEHOLDER).toFixed(2)
-  ); // recommendedTp // MARKET_PRICE * 1.15
-  const longRecommendedSl = Number(
-    (tickerLiveStatistics?.longRecommendedSl ?? TEMP_PLACEHOLDER).toFixed(2)
-  ); // recommendedSl // MARKET_PRICE * 0.85
+  // Till: (20230410 - Shirley)
+  // const buyPrice = longQuotationRef.current?.price ?? TEMP_PLACEHOLDER; // market price * (1+spread)
+  // const sellPrice = shortQuotationRef.current?.price ?? TEMP_PLACEHOLDER; // market price * (1-spread)
+  // const longRecommendedTp = Number(
+  //   (tickerLiveStatistics?.longRecommendedTp ?? TEMP_PLACEHOLDER).toFixed(2)
+  // ); // recommendedTp // MARKET_PRICE * 1.15
+  // const longRecommendedSl = Number(
+  //   (tickerLiveStatistics?.longRecommendedSl ?? TEMP_PLACEHOLDER).toFixed(2)
+  // ); // recommendedSl // MARKET_PRICE * 0.85
 
   const [longTooltipStatus, setLongTooltipStatus] = useState(0);
   const [shortTooltipStatus, setShortTooltipStatus] = useState(0);
@@ -181,8 +178,6 @@ const TradeTab = () => {
   useEffect(() => {
     if (!userCtx.enableServiceTerm) return;
 
-    // const now = getTimestamp();
-
     (async () => {
       const {longQuotation, shortQuotation} = await getQuotation(
         marketCtx.selectedTicker?.currency ?? DEFAULT_TICKER
@@ -250,15 +245,11 @@ const TradeTab = () => {
   // Info: Fetch quotation when ticker changed (20230327 - Shirley)
   useEffect(() => {
     notificationCtx.emitter.once(ClickEvent.TICKER_CHANGED, async () => {
-      marketPrice = marketCtx.selectedTickerRef.current?.price ?? TEMP_PLACEHOLDER;
-
       const {longQuotation, shortQuotation} = await getQuotation(
         marketCtx.selectedTickerRef.current?.currency ?? DEFAULT_TICKER
       );
 
       renewPosition();
-
-      // const now = getTimestamp();
 
       // Deprecated: before merging into develop (20230327 - Shirley)
       // eslint-disable-next-line no-console
@@ -544,26 +535,6 @@ const TradeTab = () => {
     );
   };
 
-  const isDisplayedLongSlSetting = longSlToggle ? 'flex' : 'invisible';
-  const isDisplayedShortSlSetting = shortSlToggle ? 'flex' : 'invisible';
-
-  const isDisplayedLongTpSetting = longTpToggle ? 'flex' : 'invisible';
-  const isDisplayedShortTpSetting = shortTpToggle ? 'flex' : 'invisible';
-
-  const isDisplayedMarginLongStyle = marginWarningLongRef.current
-    ? 'text-lightGray'
-    : 'text-lightWhite';
-  const isDisplayedMarginLongWarning = marginWarningLongRef.current ? 'flex' : 'invisible';
-  const isDisplayedMarginLongSize = targetLengthLong > 7 ? 'text-sm' : 'text-base';
-  const isDisplayedValueLongSize = valueOfPositionLengthLong > 7 ? 'text-sm' : 'text-base';
-
-  const isDisplayedMarginShortStyle = marginWarningShortRef.current
-    ? 'text-lightGray'
-    : 'text-lightWhite';
-  const isDisplayedMarginShortWarning = marginWarningShortRef.current ? 'flex' : 'invisible';
-  const isDisplayedMarginShortSize = targetLengthShort > 7 ? 'text-sm' : 'text-base';
-  const isDisplayedValueShortSize = valueOfPositionLengthShort > 7 ? 'text-sm' : 'text-base';
-
   const toApplyCreateOrder = (): {
     longOrder: IApplyCreateCFDOrderData;
     shortOrder: IApplyCreateCFDOrderData;
@@ -637,6 +608,26 @@ const TradeTab = () => {
     return;
   };
 
+  const isDisplayedLongSlSetting = longSlToggle ? 'flex' : 'invisible';
+  const isDisplayedShortSlSetting = shortSlToggle ? 'flex' : 'invisible';
+
+  const isDisplayedLongTpSetting = longTpToggle ? 'flex' : 'invisible';
+  const isDisplayedShortTpSetting = shortTpToggle ? 'flex' : 'invisible';
+
+  const isDisplayedMarginLongStyle = marginWarningLongRef.current
+    ? 'text-lightGray'
+    : 'text-lightWhite';
+  const isDisplayedMarginLongWarning = marginWarningLongRef.current ? 'flex' : 'invisible';
+  const isDisplayedMarginLongSize = targetLengthLong > 7 ? 'text-sm' : 'text-base';
+  const isDisplayedValueLongSize = valueOfPositionLengthLong > 7 ? 'text-sm' : 'text-base';
+
+  const isDisplayedMarginShortStyle = marginWarningShortRef.current
+    ? 'text-lightGray'
+    : 'text-lightWhite';
+  const isDisplayedMarginShortWarning = marginWarningShortRef.current ? 'flex' : 'invisible';
+  const isDisplayedMarginShortSize = targetLengthShort > 7 ? 'text-sm' : 'text-base';
+  const isDisplayedValueShortSize = valueOfPositionLengthShort > 7 ? 'text-sm' : 'text-base';
+
   const longToolMouseEnterHandler = () => setLongTooltipStatus(3);
   const longToolMouseLeaveHandler = () => setLongTooltipStatus(0);
 
@@ -691,7 +682,6 @@ const TradeTab = () => {
   // ----------long area----------
   const displayedRequiredMarginLongStyle = (
     <>
-      {/* <div className="mt-1 text-base text-lightWhite">$ 13.14 USDT</div> */}
       <div className={`${isDisplayedMarginLongStyle} ${isDisplayedMarginLongSize} mt-1 text-base`}>
         {requiredMarginLongRef.current?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
           minimumFractionDigits: 2,

@@ -103,9 +103,7 @@ const ReceiptSection = () => {
   const [filteredReceipts, setFilteredReceipts] = useState<IOrder[]>([]);
 
   useEffect(() => {
-    if (filteredTradingType === '' && searches === '') {
-      setFilteredReceipts(listHistories);
-    } else if (searches !== '') {
+    if (searches !== '') {
       const searchResult = listHistories.filter(v => {
         const result =
           v.type.includes(searches || '') ||
@@ -114,6 +112,8 @@ const ReceiptSection = () => {
         return result;
       });
       setFilteredReceipts(searchResult);
+    } else if (filteredTradingType === '' && searches === '') {
+      setFilteredReceipts(listHistories);
     } else if (filteredTradingType === OrderType.DEPOSIT) {
       setFilteredReceipts(listHistories.filter(v => v.type === OrderType.DEPOSIT));
     } else if (filteredTradingType === OrderType.WITHDRAW) {

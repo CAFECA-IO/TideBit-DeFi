@@ -3,7 +3,6 @@ import Image from 'next/image';
 import TideButton from '../tide_button/tide_button';
 import Link from 'next/link';
 import {useTranslation} from 'next-i18next';
-import RippleButton from '../ripple_button/ripple_button';
 
 type TranslateFunction = (s: string) => string;
 
@@ -32,7 +31,7 @@ const Cta = () => {
               {t('HOME_PAGE.CTA_DESCRIPTION')}
             </div>
             <div className="pt-2 md:pt-8 xl:pt-5">
-              <a
+              <Link
                 href="/trade/cfd/ethusdt"
                 className="px-2 py-1 font-normal xxs:text-xxs sm:py-2 sm:px-5 sm:text-base xl:py-3 xl:px-5 xl:text-lg"
               >
@@ -41,7 +40,7 @@ const Cta = () => {
                 >
                   {t('HOME_PAGE.CTA_BUTTON')}
                 </TideButton>
-              </a>
+              </Link>
             </div>
           </div>
         </div>
@@ -66,16 +65,17 @@ const Cta = () => {
               {t('HOME_PAGE.CTA_DESCRIPTION')}
             </div>
             <div className="mx-auto pt-2 md:pt-8">
-              <a
-                href="/trading"
+              <Link
+                href="/trade/cfd/ethusdt"
                 className="px-2 py-1 font-normal xxs:text-xxs sm:py-2 sm:px-5 sm:text-base xl:py-3 xl:px-5 xl:text-lg"
               >
+                {/* Todo: (20230328 - Julian) 手機版點不到按鈕 -> 檢查結構 */}
                 <TideButton
                   className={`mt-4 rounded border-0 bg-tidebitTheme py-2 px-5 text-base text-white transition-all duration-300 hover:bg-cyan-600 md:mt-0`}
                 >
                   {t('HOME_PAGE.CTA_BUTTON')}
                 </TideButton>
-              </a>
+              </Link>
             </div>
           </div>
         </div>

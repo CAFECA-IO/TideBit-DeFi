@@ -47,7 +47,7 @@ const UserMobile = () => {
     <div
       className={`${
         avatarMenuVisible ? 'visible opacity-100' : 'invisible opacity-0'
-      } fixed top-0 left-0 z-60 flex h-14 w-full items-center divide-x divide-lightGray bg-darkGray px-5 pt-1`}
+      } fixed top-0 left-0 z-60 flex h-14 w-full items-center divide-x divide-lightGray bg-black/100 px-5 pt-1`}
     >
       <div className="flex basis-full items-end">
         <div className="mr-0 flex border-r border-lightGray1 lg:hidden">
@@ -69,19 +69,23 @@ const UserMobile = () => {
   ) : null;
 
   const isDisplayedAvatarMenu = userCtx.wallet ? (
-    /* Info: (20230327 - Julian) Fix fade in animation */
-    <div className={`${avatarMenuVisible ? 'visible opacity-100' : 'invisible opacity-0'}`}>
+    /* ToDo: (20230327 - Julian) Fix fade in animation */
+    <div
+      className={`fixed left-0 top-0 ${
+        avatarMenuVisible ? 'bg-darkGray/100 opacity-100' : 'invisible opacity-0'
+      } transition-all duration-300`}
+    >
       <div
         id="userDropdown"
-        className={`fixed top-0 left-0 flex flex h-screen w-screen flex-col divide-y divide-lightGray bg-darkGray px-9 pt-20 transition-all duration-300`}
+        className={`flex h-screen w-screen flex-col divide-y divide-lightGray px-9 pt-20`}
       >
-        {/* Avatar Section */}
+        {/* Info: (20230327 - Julian) Avatar Section */}
         <div className="items-center py-4 px-4 text-center text-sm text-lightGray">
-          {/* Avatar */}
-          <div className="relative inline-flex h-28 w-28 items-center justify-center overflow-hidden rounded-full bg-tidebitTheme text-center">
+          {/* Info: (20230327 - Julian) Avatar */}
+          <div className="inline-flex h-28 w-28 items-center justify-center overflow-hidden rounded-full bg-tidebitTheme text-center">
             <span className="text-5xl font-bold text-lightWhite">{username}</span>
           </div>
-          {/* Account */}
+          {/* Info: (20230327 - Julian) Account */}
           <div className="mt-2 truncate text-sm">{accountTruncate(userCtx.wallet)}</div>
         </div>
 
@@ -146,7 +150,7 @@ const UserMobile = () => {
     <>
       <button
         onClick={avatarClickHandler}
-        className="relative ml-3 inline-flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-tidebitTheme"
+        className="ml-3 inline-flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-tidebitTheme"
       >
         <span className="text-2xl font-bold text-lightWhite">{username}</span>
       </button>

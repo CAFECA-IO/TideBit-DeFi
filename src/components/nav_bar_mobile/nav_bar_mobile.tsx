@@ -24,10 +24,9 @@ const NavBarMobile = () => {
   const [navOpen, setNavOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  //lang sub menu
   const [langIsOpen, setLangIsOpen] = useState(false);
 
-  //menu text
+  /* Info: (20230327 - Julian) Menu Text */
   const menuText = langIsOpen ? t('NAV_BAR.LANGUAGE') : t('NAV_BAR.MENU');
 
   const {
@@ -36,15 +35,7 @@ const NavBarMobile = () => {
     setComponentVisible,
   } = useOuterClick<HTMLDivElement>(false);
 
-  // // TODO: move to Global COntext
-  // const [panelVisible, setPanelVisible] = useState(false);
-
-  // const panelClickHandler = () => {
-  //   setPanelVisible(!panelVisible);
-  // };
-
   const wallectConnectBtnClickHandler = () => {
-    // setNavOpen(!navOpen);
     globalCtx.visibleWalletPanelHandler();
   };
 
@@ -76,7 +67,6 @@ const NavBarMobile = () => {
     : 'translate-y-0 origin-left w-3/4 rotate-35';
 
   const isDisplayedMobileNavBar = navOpen ? 'top-14 min-h-screen inset-0 bg-darkGray/100' : '';
-  // componentVisible ? 'animate-fadeIn' : 'animate-fadeOut';
 
   const isDisplayedNotificationSidebarMobileCover = (
     <div
@@ -103,7 +93,7 @@ const NavBarMobile = () => {
       onClick={wallectConnectBtnClickHandler} // show wallet panel
       className={`rounded border-0 bg-tidebitTheme py-2 px-3 text-sm text-white transition-all duration-300 hover:bg-cyan-600`}
     >
-      {/* Wallet Connect */}
+      {/* Info: (20230327 - Julian) Show Wallet Connect */}
       {t('NAV_BAR.WALLET_CONNECT')}
     </TideButton>
   );
@@ -196,8 +186,6 @@ const NavBarMobile = () => {
                 <div className="px-3 py-5">
                   <I18n langIsOpen={langIsOpen} setLangIsOpen={setLangIsOpen} />
                 </div>
-
-                {/* <TbMinusVertical size={30} className="" /> */}
               </div>
               <span className={`${dividerInsideMobileNavBar}`}></span>
               {isDisplayedUserOverview}

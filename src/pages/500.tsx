@@ -54,8 +54,9 @@ const Custom500 = () => {
             <div className="relative flex min-h-600px flex-col items-center justify-center">
               <Lottie animationData={errorAnimation} />
               <div className="absolute bottom-1/3 text-center text-white">
-                <div>{t('ERROR_PAGE.DESCRIPTION1')}</div>
-                <div>{t('ERROR_PAGE.DESCRIPTION2')}</div>
+                <div className="whiteSpace-auto sm:whiteSpace-nowrap w-200px sm:w-auto">
+                  {t('ERROR_PAGE.DESCRIPTION1')} {t('ERROR_PAGE.DESCRIPTION2')}
+                </div>
               </div>
             </div>
             <Footer />

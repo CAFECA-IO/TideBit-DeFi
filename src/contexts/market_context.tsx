@@ -239,7 +239,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     } catch (error) {
       result = defaultResultFailed;
     }
-    return result;
+    return {...result};
   };
 
   const getTickerHistory = async (

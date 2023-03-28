@@ -249,15 +249,16 @@ const TradeTab = () => {
       longQuotation = await marketCtx.getCFDQuotation(tickerId, TypeOfPosition.BUY);
       shortQuotation = await marketCtx.getCFDQuotation(tickerId, TypeOfPosition.SELL);
 
+      const now = getTimestamp();
       const long = longQuotation.data as IQuotation;
       const short = shortQuotation.data as IQuotation;
 
       // Deprecated: before merging into develop (20230327 - Shirley)
       // eslint-disable-next-line no-console
-      console.log('long', long);
+      console.log('long', now, long);
       // Deprecated: before merging into develop (20230327 - Shirley)
       // eslint-disable-next-line no-console
-      console.log('short', short);
+      console.log('short', now, short);
 
       if (longQuotation.success && long.typeOfPosition === TypeOfPosition.BUY) {
         setLongQuotation(long);

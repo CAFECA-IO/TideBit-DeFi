@@ -15,29 +15,6 @@ export interface IDisplayAcceptedCFDOrder extends IAcceptedCFDOrder {
   suggestion: ICFDSuggestion;
 }
 
-export const toDisplayAcceptedCFDOrder = (acceptedCFDOrder: IAcceptedCFDOrder) => {
-  // TODO: calculate pnl (20230323 - tzuhan)
-  const pnlValue = 0;
-  // TODO: get positionLineGraph (20230323 - tzuhan)
-  const positionLineGraph = [90, 72, 60, 65, 42, 25, 32, 20, 15, 32, 90, 10];
-  // TODO: get suggestion (20230323 - tzuhan)
-  const suggestion = {takeProfit: 74521, stopLoss: 25250};
-  const displayAcceptedCFDOrder: IDisplayAcceptedCFDOrder = {
-    ...acceptedCFDOrder,
-    pnl: {
-      type: ProfitState.PROFIT,
-      value: pnlValue,
-    },
-    openValue: acceptedCFDOrder.openPrice * acceptedCFDOrder.amount,
-    closeValue: acceptedCFDOrder.closePrice
-      ? acceptedCFDOrder.closePrice * acceptedCFDOrder.amount
-      : undefined,
-    positionLineGraph,
-    suggestion,
-  };
-  return displayAcceptedCFDOrder;
-};
-
 function randomIntFromInterval(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1) + min);
 }

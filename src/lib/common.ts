@@ -1,6 +1,6 @@
-import {getTime, ICandlestickData} from '../interfaces/tidebit_defi_background/candlestickData';
+import {ICandlestickData} from '../interfaces/tidebit_defi_background/candlestickData';
 import {ITBETrade} from '../interfaces/tidebit_defi_background/ticker_data';
-import {ITimeSpanUnion} from '../interfaces/tidebit_defi_background/time_span_union';
+import {getTime, ITimeSpanUnion} from '../interfaces/tidebit_defi_background/time_span_union';
 import {OrderState} from '../constants/order_state';
 import {OrderStatusUnion} from '../constants/order_status_union';
 import {OrderType} from '../constants/order_type';
@@ -163,6 +163,8 @@ export const locker = (id: string): ILocker => {
 
 export const getTimestamp = () => Math.ceil(Date.now() / 1000);
 
+export const millesecondsToSeconds = (milleseconds: number) => Math.ceil(milleseconds / 1000);
+
 export const twoDecimal = (num: number, mul?: number): number => {
   const roundedNum = Math.round(num * 100) / 100;
   const str = roundedNum.toFixed(2).replace(/\.?0+$/, '');
@@ -281,11 +283,7 @@ export const acceptedOrderToOrder = (acceptedOrder: IAcceptedOrder, balance: IBa
       order.targetAmount = (acceptedOrder as IAcceptedWithdrawOrder).targetAmount;
       break;
   }
-  order.balanceSnapshot = {
-    ...order.balanceSnapshot,
-    available: balance.available - order.targetAmount,
-    locked: balance.locked + order.targetAmount,
-  };
+  return order;
 };
 
 export const randomHex = (length: number) => {

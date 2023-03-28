@@ -8,6 +8,8 @@ import {
   TARGET_LIMIT_DIGITS,
   POSITION_PRICE_RENEWAL_INTERVAL_SECONDS,
   unitAsset,
+  SUGGEST_TP,
+  SUGGEST_SL,
 } from '../../constants/config';
 import {useGlobal} from '../../contexts/global_context';
 import {MarketContext} from '../../contexts/market_context';
@@ -65,9 +67,10 @@ const TradeTab = () => {
   );
   const [longQuotation, setLongQuotation, longQuotationRef] = useStateRef<IQuotation>();
   const [shortQuotation, setShortQuotation, shortQuotationRef] = useStateRef<IQuotation>();
+  const [quotationError, setQuotationError, quotationErrorRef] = useStateRef(false);
 
-  const buyPrice = (longQuotationRef.current?.price ?? TEMP_PLACEHOLDER).toFixed(2); // market price * (1+spread)
-  const sellPrice = (shortQuotationRef.current?.price ?? TEMP_PLACEHOLDER).toFixed(2); // market price * (1-spread)
+  const buyPrice = longQuotationRef.current?.price ?? TEMP_PLACEHOLDER; // market price * (1+spread)
+  const sellPrice = shortQuotationRef.current?.price ?? TEMP_PLACEHOLDER; // market price * (1-spread)
   const longRecommendedTp = Number(
     (tickerLiveStatistics?.longRecommendedTp ?? TEMP_PLACEHOLDER).toFixed(2)
   ); // recommendedTp // MARKET_PRICE * 1.15
@@ -81,28 +84,42 @@ const TradeTab = () => {
   const [targetInputValue, setTargetInputValue, targetInputValueRef] = useStateRef(0.02);
 
   // FIXME: SL setting should have a lower limit and an upper limit depending on its position type
-  const [longTpValue, setLongTpValue] = useState(longRecommendedTp);
-  const [longSlValue, setLongSlValue] = useState(longRecommendedSl);
+  const [longTpValue, setLongTpValue, loneTpValueRef] = useStateRef(
+    Number(longQuotationRef.current?.price) * (1 + SUGGEST_TP)
+  );
+  const [longSlValue, setLongSlValue, longSlValueRef] = useStateRef(
+    Number(longQuotationRef.current?.price) * (1 - SUGGEST_SL)
+  );
   const [longTpToggle, setLongTpToggle] = useState(false);
   const [longSlToggle, setLongSlToggle] = useState(false);
 
-  const [shortTpValue, setShortTpValue] = useState(longRecommendedSl);
-  const [shortSlValue, setShortSlValue] = useState(longRecommendedTp);
+  const [shortTpValue, setShortTpValue, shortTpValueRef] = useStateRef(
+    Number(shortQuotationRef.current?.price) * (1 - SUGGEST_TP)
+  );
+  const [shortSlValue, setShortSlValue, shortSlValueRef] = useStateRef(
+    Number(shortQuotationRef.current?.price) * (1 + SUGGEST_SL)
+  );
   const [shortTpToggle, setShortTpToggle] = useState(false);
   const [shortSlToggle, setShortSlToggle] = useState(false);
 
   const [expectedLongProfitValue, setExpectedLongProfitValue, expectedLongProfitValueRef] =
-    useStateRef((longTpValue - Number(buyPrice)) * targetInputValueRef.current);
+    useStateRef(
+      (longTpValue - Number(longQuotationRef.current?.price)) * targetInputValueRef.current
+    );
 
   const [expectedLongLossValue, setExpectedLongLossValue, expectedLongLossValueRef] = useStateRef(
-    (Number(buyPrice) - longSlValue) * targetInputValueRef.current
+    (Number(longQuotationRef.current?.price) - longSlValue) * targetInputValueRef.current
   );
 
   const [expectedShortProfitValue, setExpectedShortProfitValue, expectedShortProfitValueRef] =
-    useStateRef((Number(sellPrice) - shortTpValue) * targetInputValueRef.current);
+    useStateRef(
+      (Number(shortQuotationRef.current?.price) - shortTpValue) * targetInputValueRef.current
+    );
 
   const [expectedShortLossValue, setExpectedShortLossValue, expectedShortLossValueRef] =
-    useStateRef((shortSlValue - Number(sellPrice)) * targetInputValueRef.current);
+    useStateRef(
+      (shortSlValue - Number(shortQuotationRef.current?.price)) * targetInputValueRef.current
+    );
 
   const [longGuaranteedStopChecked, setLongGuaranteedStopChecked] = useState(false);
   const [shortGuaranteedStopChecked, setShortGuaranteedStopChecked] = useState(false);
@@ -114,19 +131,42 @@ const TradeTab = () => {
     roundToDecimalPlaces(targetInputValue * Number(longQuotationRef.current?.price), 2)
   );
 
-  const [quotationError, setQuotationError, quotationErrorRef] = useStateRef(false);
-
-  // TODO: long vs short (20230327 - Shirley)
-  const [marginWarning, setMarginWarning, marginWarningRef] = useStateRef(false);
-
-  // TODO: long vs short && rm marketPrice (20230327 - Shirley)
-  const [targetLength, setTargetLength] = useState(
-    roundToDecimalPlaces((targetInputValue * marketPrice) / leverage, 2).toString().length
+  const [requiredMarginShort, setRequiredMarginShort, requiredMarginShortRef] = useStateRef(
+    roundToDecimalPlaces(
+      (targetInputValue * Number(shortQuotationRef.current?.price)) / leverage,
+      2
+    )
+  );
+  const [valueOfPositionShort, setValueOfPositionShort, valueOfPositionShortRef] = useStateRef(
+    roundToDecimalPlaces(targetInputValue * Number(shortQuotationRef.current?.price), 2)
   );
 
   // TODO: long vs short (20230327 - Shirley)
-  const [valueOfPositionLength, setValueOfPositionLength] = useState(
-    roundToDecimalPlaces(targetInputValue * marketPrice, 2).toString().length
+  const [marginWarningLong, setMarginWarningLong, marginWarningLongRef] = useStateRef(false);
+  const [marginWarningShort, setMarginWarningShort, marginWarningShortRef] = useStateRef(false);
+
+  // TODO: long vs short && rm marketPrice (20230327 - Shirley)
+  const [targetLengthLong, setTargetLengthLong] = useState(
+    roundToDecimalPlaces(
+      (targetInputValue * Number(longQuotationRef.current?.price)) / leverage,
+      2
+    ).toString().length
+  );
+  const [targetLengthShort, setTargetLengthShort] = useState(
+    roundToDecimalPlaces(
+      (targetInputValue * Number(shortQuotationRef.current?.price)) / leverage,
+      2
+    ).toString().length
+  );
+
+  // TODO: long vs short (20230327 - Shirley)
+  const [valueOfPositionLengthLong, setValueOfPositionLengthLong] = useState(
+    roundToDecimalPlaces(targetInputValue * Number(longQuotationRef.current?.price), 2).toString()
+      .length
+  );
+  const [valueOfPositionLengthShort, setValueOfPositionLengthShort] = useState(
+    roundToDecimalPlaces(targetInputValue * Number(shortQuotationRef.current?.price), 2).toString()
+      .length
   );
 
   // Info: Fetch quotation the first time (20230327 - Shirley)
@@ -146,16 +186,13 @@ const TradeTab = () => {
       // eslint-disable-next-line no-console
       console.log('first time Effect (direct short)', now, shortQuotation.data);
 
-      setRequiredMarginLong(
-        roundToDecimalPlaces(
-          (targetInputValue * Number(longQuotationRef.current?.price)) / leverage,
-          2
-        )
-      );
-      setValueOfPositionLong(
-        roundToDecimalPlaces(targetInputValue * Number(longQuotationRef.current?.price), 2)
-      );
-      setMarginWarning(requiredMarginLongRef.current > USER_BALANCE);
+      renewPosition();
+
+      setLongTpValue(Number(longQuotationRef.current?.price) * (1 + SUGGEST_TP));
+      setLongSlValue(Number(longQuotationRef.current?.price) * (1 - SUGGEST_SL));
+
+      setShortTpValue(Number(shortQuotationRef.current?.price) * (1 - SUGGEST_TP));
+      setShortSlValue(Number(shortQuotationRef.current?.price) * (1 + SUGGEST_SL));
     })();
 
     // Deprecated: before merging into develop (20230327 - Shirley)
@@ -180,16 +217,7 @@ const TradeTab = () => {
           marketCtx.selectedTicker?.currency ?? DEFAULT_TICKER
         );
 
-        setRequiredMarginLong(
-          roundToDecimalPlaces(
-            (targetInputValue * Number(longQuotationRef.current?.price)) / leverage,
-            2
-          )
-        );
-        setValueOfPositionLong(
-          roundToDecimalPlaces(targetInputValue * Number(longQuotationRef.current?.price), 2)
-        );
-        setMarginWarning(requiredMarginLongRef.current > USER_BALANCE);
+        renewPosition();
 
         // Deprecated: before merging into develop (20230327 - Shirley)
         // eslint-disable-next-line no-console
@@ -206,7 +234,6 @@ const TradeTab = () => {
   useEffect(() => {
     notificationCtx.emitter.once(ClickEvent.TICKER_CHANGED, async () => {
       marketPrice = marketCtx.selectedTickerRef.current?.price ?? TEMP_PLACEHOLDER;
-      renewValueOfPosition(marketPrice);
 
       const {longQuotation, shortQuotation} = await getQuotation(
         marketCtx.selectedTickerRef.current?.currency ?? DEFAULT_TICKER
@@ -214,16 +241,7 @@ const TradeTab = () => {
         // marketCtx.selectedTicker?.currency ?? DEFAULT_TICKER
       );
 
-      setRequiredMarginLong(
-        roundToDecimalPlaces(
-          (targetInputValue * Number(longQuotationRef.current?.price)) / leverage,
-          2
-        )
-      );
-      setValueOfPositionLong(
-        roundToDecimalPlaces(targetInputValue * Number(longQuotationRef.current?.price), 2)
-      );
-      setMarginWarning(requiredMarginLongRef.current > USER_BALANCE);
+      renewPosition();
 
       const now = getTimestamp();
 
@@ -260,7 +278,11 @@ const TradeTab = () => {
       // eslint-disable-next-line no-console
       console.log('short', now, short);
 
-      if (longQuotation.success && long.typeOfPosition === TypeOfPosition.BUY) {
+      if (
+        longQuotation.success &&
+        long.typeOfPosition === TypeOfPosition.BUY &&
+        longQuotation.data !== null
+      ) {
         setLongQuotation(long);
 
         // Deprecated: before merging into develop (20230327 - Shirley)
@@ -270,7 +292,12 @@ const TradeTab = () => {
         setQuotationError(true);
       }
 
-      if (shortQuotation.success && short && short.typeOfPosition === TypeOfPosition.SELL) {
+      if (
+        shortQuotation.success &&
+        short &&
+        short.typeOfPosition === TypeOfPosition.SELL &&
+        shortQuotation.data !== null
+      ) {
         setShortQuotation(short);
 
         // Deprecated: before merging into develop (20230327 - Shirley)
@@ -280,7 +307,7 @@ const TradeTab = () => {
         setQuotationError(true);
       }
 
-      // // ToDo: handle the error code (20230327 - Shirley)
+      // // Till: handle the error code (20230412 - Shirley)
       // if (longQuotation.code === Code.WALLET_IS_NOT_CONNECT) {
       //   // console.log('WALLET_IS_NOT_CONNECT');
       //   setQuotationError(true);
@@ -295,45 +322,10 @@ const TradeTab = () => {
       //   setQuotationError(true);
       // }
     } catch (err) {
-      // ToDo: handle the error code (20230327 - Shirley)
-      // console.error(err);
       if (!longQuotationRef.current || !shortQuotationRef.current) {
         setQuotationError(true);
       }
     }
-
-    // try {
-    //   shortQuotation = await marketCtx.getCFDQuotation(tickerId, TypeOfPosition.SELL);
-
-    //   const short = shortQuotation.data as IQuotation;
-
-    //   if (shortQuotation.success && short && short.typeOfPosition === TypeOfPosition.SELL) {
-    //     setShortQuotation(short);
-
-    //     // Deprecated: before merging into develop (20230327 - Shirley)
-    //     // eslint-disable-next-line no-console
-    //     // console.log('short ref in effect', shortQuotationRef.current);
-    //   }
-
-    //   // ToDo: handle the error code (20230327 - Shirley)
-    //   if (shortQuotation.code === Code.WALLET_IS_NOT_CONNECT) {
-    //     // console.log('WALLET_IS_NOT_CONNECT');
-    //     setQuotationError(true);
-    //   } else if (shortQuotation.code === Code.INVAILD_INPUTS) {
-    //     // console.log('INVAILD_INPUTS');
-    //     setQuotationError(true);
-    //   } else if (shortQuotation.code === Code.SERVICE_TERM_DISABLE) {
-    //     // console.log('SERVICE_TERM_DISABLE');
-    //     setQuotationError(true);
-    //   } else if (shortQuotation.code === Code.INTERNAL_SERVER_ERROR) {
-    //     // console.log('INTERNAL_SERVER_ERROR');
-    //     setQuotationError(true);
-    //   }
-    // } catch (err) {
-    //   // ToDo: handle the error code (20230327 - Shirley)
-    //   // console.error(err);
-    //   setQuotationError(true);
-    // }
 
     return {longQuotation: longQuotation, shortQuotation: shortQuotation};
   };
@@ -342,55 +334,115 @@ const TradeTab = () => {
     setTargetInputValue(value);
     targetAmountDetection(value);
 
-    setExpectedLongProfitValue((longTpValue - Number(buyPrice)) * targetInputValueRef.current);
-    setExpectedLongLossValue((Number(buyPrice) - longSlValue) * targetInputValueRef.current);
-    setExpectedShortProfitValue((Number(sellPrice) - shortTpValue) * targetInputValueRef.current);
-    setExpectedShortLossValue((shortSlValue - Number(sellPrice)) * targetInputValueRef.current);
+    setExpectedLongProfitValue(
+      (longTpValue - Number(longQuotationRef.current?.price)) * targetInputValueRef.current
+    );
+    setExpectedLongLossValue(
+      (Number(longQuotationRef.current?.price) - longSlValue) * targetInputValueRef.current
+    );
+    setExpectedShortProfitValue(
+      (Number(shortQuotationRef.current?.price) - shortTpValue) * targetInputValueRef.current
+    );
+    setExpectedShortLossValue(
+      (shortSlValue - Number(shortQuotationRef.current?.price)) * targetInputValueRef.current
+    );
   };
   const getLongTpValue = (value: number) => {
     setLongTpValue(value);
 
-    setExpectedLongProfitValue((longTpValue - Number(buyPrice)) * targetInputValueRef.current);
+    setExpectedLongProfitValue(
+      (longTpValue - Number(longQuotationRef.current?.price)) * targetInputValueRef.current
+    );
   };
 
   const getLongSlValue = (value: number) => {
     setLongSlValue(value);
 
-    setExpectedLongLossValue((Number(buyPrice) - longSlValue) * targetInputValueRef.current);
+    setExpectedLongLossValue(
+      (Number(longQuotationRef.current?.price) - longSlValue) * targetInputValueRef.current
+    );
   };
 
   const getShortTpValue = (value: number) => {
     setShortTpValue(value);
 
-    setExpectedShortProfitValue((Number(sellPrice) - shortTpValue) * targetInputValueRef.current);
+    setExpectedShortProfitValue(
+      (Number(shortQuotationRef.current?.price) - shortTpValue) * targetInputValueRef.current
+    );
   };
 
   const getShortSlValue = (value: number) => {
     setShortSlValue(value);
 
-    setExpectedShortLossValue((shortSlValue - Number(sellPrice)) * targetInputValueRef.current);
+    setExpectedShortLossValue(
+      (shortSlValue - Number(shortQuotationRef.current?.price)) * targetInputValueRef.current
+    );
   };
 
-  const renewValueOfPosition = (price?: number) => {
-    const newValueOfPosition = price
-      ? targetInputValueRef.current * price
-      : targetInputValueRef.current * (longQuotationRef.current?.price ?? 0);
+  // Info: renew the value of position when target input changed (20230328 - Shirley)
+  const renewPosition = () => {
+    // TODO: Long
+    const newLongValue = targetInputValueRef.current * Number(longQuotationRef.current?.price);
 
-    const roundedValueOfPosition = roundToDecimalPlaces(newValueOfPosition, 2);
-    setValueOfPositionLong(roundedValueOfPosition);
+    const roundedLongValue = roundToDecimalPlaces(newLongValue, 2);
+    setValueOfPositionLong(roundedLongValue);
 
-    const margin = newValueOfPosition / leverage;
-    const roundedMargin = roundToDecimalPlaces(margin, 2);
-    setRequiredMarginLong(roundedMargin);
+    const marginLong = newLongValue / leverage;
+    const roundedMarginLong = roundToDecimalPlaces(marginLong, 2);
+    setRequiredMarginLong(roundedMarginLong);
 
-    setMarginWarning(margin > USER_BALANCE);
+    setMarginWarningLong(marginLong > USER_BALANCE);
 
-    setTargetLength(roundedMargin.toString().length);
-    setValueOfPositionLength(roundedValueOfPosition.toString().length);
+    setTargetLengthLong(roundedMarginLong.toString().length);
+    setValueOfPositionLengthLong(roundedLongValue.toString().length);
+
+    setExpectedLongProfitValue(
+      (longTpValue - Number(longQuotationRef.current?.price)) * targetInputValueRef.current
+    );
+    setExpectedLongLossValue(
+      (Number(longQuotationRef.current?.price) - longSlValue) * targetInputValueRef.current
+    );
+
+    // setRequiredMarginLong(roundToDecimalPlaces((targetInputValue * Number(longQuotationRef.current?.price)) / leverage, 2));
+    // setValueOfPositionLong(roundToDecimalPlaces(targetInputValue * Number(longQuotationRef.current?.price), 2));
+    // setMarginWarningLong(requiredMarginLongRef.current > USER_BALANCE);
+
+    // setRequiredMarginLong(
+    //   roundToDecimalPlaces(
+    //     (targetInputValue * Number(longQuotationRef.current?.price)) / leverage,
+    //     2
+    //   )
+    // );
+    // setValueOfPositionLong(
+    //   roundToDecimalPlaces(targetInputValue * Number(longQuotationRef.current?.price), 2)
+    // );
+    // setMarginWarningLong(requiredMarginLongRef.current > USER_BALANCE);
+
+    // TODO: Short
+    const newShortValue = targetInputValueRef.current * Number(shortQuotationRef.current?.price);
+
+    const roundedShortValue = roundToDecimalPlaces(newShortValue, 2);
+    setValueOfPositionShort(roundedShortValue);
+
+    const marginShort = newShortValue / leverage;
+    const roundedMarginShort = roundToDecimalPlaces(marginShort, 2);
+    setRequiredMarginShort(roundedMarginShort);
+
+    setMarginWarningShort(marginShort > USER_BALANCE);
+
+    setTargetLengthShort(roundedMarginShort.toString().length);
+    setValueOfPositionLengthShort(roundedShortValue.toString().length);
+
+    setExpectedShortProfitValue(
+      (Number(shortQuotationRef.current?.price) - shortTpValue) * targetInputValueRef.current
+    );
+    setExpectedShortLossValue(
+      (shortSlValue - Number(shortQuotationRef.current?.price)) * targetInputValueRef.current
+    );
   };
 
   const targetAmountDetection = (value?: number) => {
-    renewValueOfPosition();
+    renewPosition();
   };
 
   const tabBodyWidth = 'w-320px';
@@ -418,25 +470,33 @@ const TradeTab = () => {
   const getToggledLongTpSetting = (bool: boolean) => {
     setLongTpToggle(bool);
 
-    setExpectedLongProfitValue((longTpValue - Number(buyPrice)) * targetInputValueRef.current);
+    setExpectedLongProfitValue(
+      (longTpValue - Number(longQuotationRef.current?.price)) * targetInputValueRef.current
+    );
   };
 
   const getToggledLongSlSetting = (bool: boolean) => {
     setLongSlToggle(bool);
 
-    setExpectedLongLossValue((Number(buyPrice) - longSlValue) * targetInputValueRef.current);
+    setExpectedLongLossValue(
+      (Number(longQuotationRef.current?.price) - longSlValue) * targetInputValueRef.current
+    );
   };
 
   const getToggledShortTpSetting = (bool: boolean) => {
     setShortTpToggle(bool);
 
-    setExpectedShortProfitValue((Number(sellPrice) - shortTpValue) * targetInputValueRef.current);
+    setExpectedShortProfitValue(
+      (Number(shortQuotationRef.current?.price) - shortTpValue) * targetInputValueRef.current
+    );
   };
 
   const getToggledShortSlSetting = (bool: boolean) => {
     setShortSlToggle(bool);
 
-    setExpectedShortLossValue((shortSlValue - Number(sellPrice)) * targetInputValueRef.current);
+    setExpectedShortLossValue(
+      (shortSlValue - Number(shortQuotationRef.current?.price)) * targetInputValueRef.current
+    );
   };
 
   const isDisplayedLongSlSetting = longSlToggle ? 'flex' : 'invisible';
@@ -445,12 +505,19 @@ const TradeTab = () => {
   const isDisplayedLongTpSetting = longTpToggle ? 'flex' : 'invisible';
   const isDisplayedShortTpSetting = shortTpToggle ? 'flex' : 'invisible';
 
-  const isDisplayedMarginStyle = marginWarningRef.current ? 'text-lightGray' : 'text-lightWhite';
-  const isDisplayedMarginWarning = marginWarningRef.current ? 'flex' : 'invisible';
-  const isDisplayedMarginSize = targetLength > 7 ? 'text-sm' : 'text-base';
-  const isDisplayedValueSize = valueOfPositionLength > 7 ? 'text-sm' : 'text-base';
-  const isDisplayedDividerSpacing =
-    valueOfPositionLength > 10 || targetLength > 10 ? 'top-430px' : 'top-420px';
+  const isDisplayedMarginLongStyle = marginWarningLongRef.current
+    ? 'text-lightGray'
+    : 'text-lightWhite';
+  const isDisplayedMarginLongWarning = marginWarningLongRef.current ? 'flex' : 'invisible';
+  const isDisplayedMarginLongSize = targetLengthLong > 7 ? 'text-sm' : 'text-base';
+  const isDisplayedValueLongSize = valueOfPositionLengthLong > 7 ? 'text-sm' : 'text-base';
+
+  const isDisplayedMarginShortStyle = marginWarningShortRef.current
+    ? 'text-lightGray'
+    : 'text-lightWhite';
+  const isDisplayedMarginShortWarning = marginWarningShortRef.current ? 'flex' : 'invisible';
+  const isDisplayedMarginShortSize = targetLengthShort > 7 ? 'text-sm' : 'text-base';
+  const isDisplayedValueShortSize = valueOfPositionLengthShort > 7 ? 'text-sm' : 'text-base';
 
   const toApplyCreateOrder = (): {
     longOrder: IApplyCreateCFDOrderData;
@@ -471,14 +538,14 @@ const TradeTab = () => {
 
     const longOrder: IApplyCreateCFDOrderData = {
       ...share,
-      price: Number(buyPrice) ?? BUY_PRICE_ERROR,
+      price: Number(longQuotationRef.current?.price) ?? BUY_PRICE_ERROR,
       typeOfPosition: TypeOfPosition.BUY,
       quotation: {
         ticker: marketCtx.selectedTicker?.currency ?? '',
         targetAsset: marketCtx.selectedTicker?.currency ?? '',
         typeOfPosition: TypeOfPosition.BUY,
         unitAsset: unitAsset,
-        price: Number(buyPrice) ?? BUY_PRICE_ERROR,
+        price: Number(longQuotationRef.current?.price) ?? BUY_PRICE_ERROR,
         deadline: getTimestamp() + POSITION_PRICE_RENEWAL_INTERVAL_SECONDS,
         signature: '0x',
       },
@@ -499,11 +566,11 @@ const TradeTab = () => {
         typeOfPosition: TypeOfPosition.SELL,
         targetAsset: marketCtx.selectedTicker?.currency ?? '',
         unitAsset: unitAsset,
-        price: Number(sellPrice) ?? SELL_PRICE_ERROR,
+        price: Number(shortQuotationRef.current?.price) ?? SELL_PRICE_ERROR,
         deadline: getTimestamp() + POSITION_PRICE_RENEWAL_INTERVAL_SECONDS,
         signature: '0x',
       },
-      price: Number(sellPrice) ?? SELL_PRICE_ERROR,
+      price: Number(shortQuotationRef.current?.price) ?? SELL_PRICE_ERROR,
       liquidationPrice: 1000,
       fee: marketCtx.tickerLiveStatistics?.fee ?? BUY_PRICE_ERROR,
       guaranteedStop: shortSlToggle ? shortGuaranteedStopChecked : false,
@@ -589,13 +656,35 @@ const TradeTab = () => {
     />
   );
 
-  const displayedRequiredMarginStyle = (
+  const displayedRequiredMarginLongStyle = (
     <>
       {/* <div className="mt-1 text-base text-lightWhite">$ 13.14 USDT</div> */}
-      <div className={`${isDisplayedMarginStyle} ${isDisplayedMarginSize} mt-1 text-base`}>
-        {requiredMarginLongRef.current?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)} {unitAsset}
+      <div className={`${isDisplayedMarginLongStyle} ${isDisplayedMarginLongSize} mt-1 text-base`}>
+        {requiredMarginLongRef.current?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        })}{' '}
+        {unitAsset}
       </div>
-      <div className={`${isDisplayedMarginWarning} ml-3 text-xs text-lightRed`}>
+      <div className={`${isDisplayedMarginLongWarning} ml-3 text-xs text-lightRed`}>
+        * {t('TRADE_PAGE.TRADE_TAB_NOT_ENOUGH_MARGIN')}
+      </div>
+    </>
+  );
+
+  const displayedRequiredMarginShortStyle = (
+    <>
+      {/* <div className="mt-1 text-base text-lightWhite">$ 13.14 USDT</div> */}
+      <div
+        className={`${isDisplayedMarginShortStyle} ${isDisplayedMarginShortSize} mt-1 text-base`}
+      >
+        {requiredMarginShortRef.current?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        })}{' '}
+        {unitAsset}
+      </div>
+      <div className={`${isDisplayedMarginShortWarning} ml-3 text-xs text-lightRed`}>
         * {t('TRADE_PAGE.TRADE_TAB_NOT_ENOUGH_MARGIN')}
       </div>
     </>
@@ -887,16 +976,20 @@ const TradeTab = () => {
                     <div className="text-sm text-lightGray">
                       {t('TRADE_PAGE.TRADE_TAB_REQUIRED_MARGIN')}
                     </div>
-                    {displayedRequiredMarginStyle}
+                    {displayedRequiredMarginLongStyle}
                   </div>
                   {/* Left Divider */}
                   <div className="mx-2 h-14 justify-center border-r-1px border-lightGray"></div>
 
                   <div className="w-1/2 space-y-1">
                     <div className="text-sm text-lightGray">{t('TRADE_PAGE.TRADE_TAB_VALUE')}</div>
-                    <div className={`text-base text-lightWhite ${isDisplayedValueSize}`}>
+                    <div className={`text-base text-lightWhite ${isDisplayedValueLongSize}`}>
                       {valueOfPositionLongRef.current?.toLocaleString(
-                        UNIVERSAL_NUMBER_FORMAT_LOCALE
+                        UNIVERSAL_NUMBER_FORMAT_LOCALE,
+                        {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        }
                       )}{' '}
                       {unitAsset}
                     </div>
@@ -939,13 +1032,20 @@ const TradeTab = () => {
                 {/* Long Button */}
                 <div className="ml-1/4">
                   <RippleButton
-                    disabled={marginWarningRef.current || quotationErrorRef.current}
+                    disabled={marginWarningLongRef.current || quotationErrorRef.current}
                     onClick={longOrderSubmitHandler}
                     buttonType="button"
                     className="mr-2 mb-2 rounded-md bg-lightGreen5 px-7 py-1 text-sm font-medium tracking-wide text-white transition-colors duration-300 hover:bg-lightGreen5/80 disabled:bg-lightGray"
                   >
                     <b>{t('TRADE_PAGE.TRADE_TAB_LONG_BUTTON')}</b> <br />
-                    {t('TRADE_PAGE.TRADE_TAB_LONG_BUTTON_SUBTITLE')} ₮ {buyPrice}
+                    {t('TRADE_PAGE.TRADE_TAB_LONG_BUTTON_SUBTITLE')} ₮{' '}
+                    {Number(longQuotationRef.current?.price).toLocaleString(
+                      UNIVERSAL_NUMBER_FORMAT_LOCALE,
+                      {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      }
+                    )}
                   </RippleButton>
                 </div>
               </div>
@@ -966,16 +1066,20 @@ const TradeTab = () => {
                     <div className="text-sm text-lightGray">
                       {t('TRADE_PAGE.TRADE_TAB_REQUIRED_MARGIN')}
                     </div>
-                    {displayedRequiredMarginStyle}
+                    {displayedRequiredMarginShortStyle}
                   </div>
                   {/* Left Divider */}
                   <div className="mx-2 h-14 justify-center border-r-1px border-lightGray"></div>
 
                   <div className="w-1/2 space-y-1">
                     <div className="text-sm text-lightGray">{t('TRADE_PAGE.TRADE_TAB_VALUE')}</div>
-                    <div className={`text-base text-lightWhite ${isDisplayedValueSize}`}>
-                      {valueOfPositionLongRef.current?.toLocaleString(
-                        UNIVERSAL_NUMBER_FORMAT_LOCALE
+                    <div className={`text-base text-lightWhite ${isDisplayedValueShortSize}`}>
+                      {valueOfPositionShortRef.current?.toLocaleString(
+                        UNIVERSAL_NUMBER_FORMAT_LOCALE,
+                        {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        }
                       )}{' '}
                       {unitAsset}
                     </div>
@@ -1017,13 +1121,20 @@ const TradeTab = () => {
                 {/* Short Button */}
                 <div className="ml-1/4">
                   <RippleButton
-                    disabled={marginWarningRef.current || quotationErrorRef.current}
+                    disabled={marginWarningLongRef.current || quotationErrorRef.current}
                     onClick={shortOrderSubmitHandler}
                     buttonType="button"
                     className="mr-2 mb-2 rounded-md bg-lightRed px-7 py-1 text-sm font-medium tracking-wide text-white transition-colors duration-300 hover:bg-lightRed/80 disabled:bg-lightGray"
                   >
                     <b>{t('TRADE_PAGE.TRADE_TAB_SHORT_BUTTON')}</b> <br />
-                    {t('TRADE_PAGE.TRADE_TAB_SHORT_BUTTON_SUBTITLE')} ₮ {sellPrice}
+                    {t('TRADE_PAGE.TRADE_TAB_SHORT_BUTTON_SUBTITLE')} ₮{' '}
+                    {Number(shortQuotationRef.current?.price).toLocaleString(
+                      UNIVERSAL_NUMBER_FORMAT_LOCALE,
+                      {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      }
+                    )}
                   </RippleButton>
                 </div>
               </div>

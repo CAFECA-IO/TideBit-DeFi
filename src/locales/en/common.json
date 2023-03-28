@@ -11,6 +11,18 @@
     "NOTIFICATION_TITLE": "Notification",
     "NOTIFICATION_READ_ALL": "Read All"
   },
+  "FOOTER": {
+    "SERVICES": "Services",
+    "TIDEBIT": "TideBit",
+    "HIRING": "Hiring",
+    "POLICY_CONDITIONS": "Policy & Conditions",
+    "SERVICE_POLICY": "Service policy",
+    "PRIVACY_POLICY": "Privacy Policy",
+    "NEWSLETTER": "Newsletter",
+    "EMAIL_PLACEHOLDER": "Email Address",
+    "SUBSCRIBE_BUTTON": "SUBSCRIBE",
+    "COPYRIGHT": "TideBit © 2022"
+  },
   "USER": {
     "PERSONAL_SETTING": "Personal Setting",
     "ASSETS": "My Assets",

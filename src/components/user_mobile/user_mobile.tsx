@@ -71,13 +71,15 @@ const UserMobile = () => {
   const isDisplayedAvatarMenu = userCtx.wallet ? (
     /* ToDo: (20230327 - Julian) Fix fade in animation */
     <div
-      className={`fixed left-0 top-0 ${
-        avatarMenuVisible ? 'bg-darkGray/100 opacity-100' : 'invisible opacity-0'
+      className={`fixed left-0 ${
+        avatarMenuVisible ? 'bg-darkGray/100' : ''
       } transition-all duration-300`}
     >
       <div
         id="userDropdown"
-        className={`flex h-screen w-screen flex-col divide-y divide-lightGray px-9 pt-20`}
+        className={`flex h-screen w-screen flex-col ${
+          avatarMenuVisible ? 'visible' : 'invisible'
+        } divide-y divide-lightGray px-9 pt-10`}
       >
         {/* Info: (20230327 - Julian) Avatar Section */}
         <div className="items-center py-4 px-4 text-center text-sm text-lightGray">

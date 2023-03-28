@@ -45,11 +45,22 @@ const PositionUpdatedModal = ({
   const [gtslTextStyle, setGtslTextStyle] = useState('text-lightWhite');
 
   const toApplyUpdateOrder = (position: IDisplayAcceptedCFDOrder): IApplyUpdateCFDOrderData => {
+    const gsl = marketCtx.guaranteedStopFeePercentage;
+    const gslFee = updatedProps?.guaranteedStop ? Number(gsl) * position.openValue : 0;
     const request = {
       orderId: position.id,
       ...updatedProps,
       guaranteedStop: updatedProps?.guaranteedStop ?? false,
+      guaranteedStopFee: gslFee,
     };
+
+    // Deprecated: before merging into develop (20230327 - Shirley)
+    // eslint-disable-next-line no-console
+    console.log('update request', request);
+    // eslint-disable-next-line no-console
+    console.log('gsl', gsl);
+    // eslint-disable-next-line no-console
+    console.log('open value', position.openValue);
 
     return request;
   };
@@ -70,7 +81,7 @@ const PositionUpdatedModal = ({
     const result = await userCtx.updateCFDOrder(toApplyUpdateOrder(openCfdDetails));
 
     // TODO:  (20230317 - Shirley) for debug
-    globalCtx.toast({message: 'update-position result: ' + JSON.stringify(result), type: 'info'});
+    // globalCtx.toast({message: 'update-position result: ' + JSON.stringify(result), type: 'info'});
 
     globalCtx.dataLoadingModalHandler({
       modalTitle: 'Update Position',

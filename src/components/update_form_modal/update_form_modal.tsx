@@ -337,11 +337,12 @@ const UpdateFormModal = ({
     if (Object.keys(changedProperties).filter(key => key !== 'orderId').length > 0) {
       changedProperties = {...changedProperties};
 
-      globalCtx.toast({
-        type: 'info',
-        message: 'Changes: \n' + JSON.stringify(changedProperties),
-        toastId: JSON.stringify(changedProperties),
-      });
+      // Till: (20230410 - Shirley)
+      // globalCtx.toast({
+      //   type: 'info',
+      //   message: 'Changes: \n' + JSON.stringify(changedProperties),
+      //   toastId: JSON.stringify(changedProperties),
+      // });
     }
 
     return changedProperties;

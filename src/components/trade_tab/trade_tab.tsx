@@ -247,8 +247,17 @@ const TradeTab = () => {
 
     try {
       longQuotation = await marketCtx.getCFDQuotation(tickerId, TypeOfPosition.BUY);
+      shortQuotation = await marketCtx.getCFDQuotation(tickerId, TypeOfPosition.SELL);
 
       const long = longQuotation.data as IQuotation;
+      const short = shortQuotation.data as IQuotation;
+
+      // Deprecated: before merging into develop (20230327 - Shirley)
+      // eslint-disable-next-line no-console
+      console.log('long', long);
+      // Deprecated: before merging into develop (20230327 - Shirley)
+      // eslint-disable-next-line no-console
+      console.log('short', short);
 
       if (longQuotation.success && long.typeOfPosition === TypeOfPosition.BUY) {
         setLongQuotation(long);
@@ -256,32 +265,9 @@ const TradeTab = () => {
         // Deprecated: before merging into develop (20230327 - Shirley)
         // eslint-disable-next-line no-console
         // console.log('long ref in effect', longQuotationRef.current);
-      }
-
-      // ToDo: handle the error code (20230327 - Shirley)
-      if (longQuotation.code === Code.WALLET_IS_NOT_CONNECT) {
-        // console.log('WALLET_IS_NOT_CONNECT');
-        setQuotationError(true);
-      } else if (longQuotation.code === Code.INVAILD_INPUTS) {
-        // console.log('INVAILD_INPUTS');
-        setQuotationError(true);
-      } else if (longQuotation.code === Code.SERVICE_TERM_DISABLE) {
-        // console.log('SERVICE_TERM_DISABLE');
-        setQuotationError(true);
-      } else if (longQuotation.code === Code.INTERNAL_SERVER_ERROR) {
-        // console.log('INTERNAL_SERVER_ERROR');
+      } else if (!longQuotationRef.current) {
         setQuotationError(true);
       }
-    } catch (err) {
-      // ToDo: handle the error code (20230327 - Shirley)
-      // console.error(err);
-      setQuotationError(true);
-    }
-
-    try {
-      shortQuotation = await marketCtx.getCFDQuotation(tickerId, TypeOfPosition.SELL);
-
-      const short = shortQuotation.data as IQuotation;
 
       if (shortQuotation.success && short && short.typeOfPosition === TypeOfPosition.SELL) {
         setShortQuotation(short);
@@ -289,27 +275,64 @@ const TradeTab = () => {
         // Deprecated: before merging into develop (20230327 - Shirley)
         // eslint-disable-next-line no-console
         // console.log('short ref in effect', shortQuotationRef.current);
+      } else if (!shortQuotationRef.current) {
+        setQuotationError(true);
       }
 
-      // ToDo: handle the error code (20230327 - Shirley)
-      if (shortQuotation.code === Code.WALLET_IS_NOT_CONNECT) {
-        // console.log('WALLET_IS_NOT_CONNECT');
-        setQuotationError(true);
-      } else if (shortQuotation.code === Code.INVAILD_INPUTS) {
-        // console.log('INVAILD_INPUTS');
-        setQuotationError(true);
-      } else if (shortQuotation.code === Code.SERVICE_TERM_DISABLE) {
-        // console.log('SERVICE_TERM_DISABLE');
-        setQuotationError(true);
-      } else if (shortQuotation.code === Code.INTERNAL_SERVER_ERROR) {
-        // console.log('INTERNAL_SERVER_ERROR');
-        setQuotationError(true);
-      }
+      // // ToDo: handle the error code (20230327 - Shirley)
+      // if (longQuotation.code === Code.WALLET_IS_NOT_CONNECT) {
+      //   // console.log('WALLET_IS_NOT_CONNECT');
+      //   setQuotationError(true);
+      // } else if (longQuotation.code === Code.INVAILD_INPUTS) {
+      //   // console.log('INVAILD_INPUTS');
+      //   setQuotationError(true);
+      // } else if (longQuotation.code === Code.SERVICE_TERM_DISABLE) {
+      //   // console.log('SERVICE_TERM_DISABLE');
+      //   setQuotationError(true);
+      // } else if (longQuotation.code === Code.INTERNAL_SERVER_ERROR) {
+      //   // console.log('INTERNAL_SERVER_ERROR');
+      //   setQuotationError(true);
+      // }
     } catch (err) {
       // ToDo: handle the error code (20230327 - Shirley)
       // console.error(err);
-      setQuotationError(true);
+      if (!longQuotationRef.current || !shortQuotationRef.current) {
+        setQuotationError(true);
+      }
     }
+
+    // try {
+    //   shortQuotation = await marketCtx.getCFDQuotation(tickerId, TypeOfPosition.SELL);
+
+    //   const short = shortQuotation.data as IQuotation;
+
+    //   if (shortQuotation.success && short && short.typeOfPosition === TypeOfPosition.SELL) {
+    //     setShortQuotation(short);
+
+    //     // Deprecated: before merging into develop (20230327 - Shirley)
+    //     // eslint-disable-next-line no-console
+    //     // console.log('short ref in effect', shortQuotationRef.current);
+    //   }
+
+    //   // ToDo: handle the error code (20230327 - Shirley)
+    //   if (shortQuotation.code === Code.WALLET_IS_NOT_CONNECT) {
+    //     // console.log('WALLET_IS_NOT_CONNECT');
+    //     setQuotationError(true);
+    //   } else if (shortQuotation.code === Code.INVAILD_INPUTS) {
+    //     // console.log('INVAILD_INPUTS');
+    //     setQuotationError(true);
+    //   } else if (shortQuotation.code === Code.SERVICE_TERM_DISABLE) {
+    //     // console.log('SERVICE_TERM_DISABLE');
+    //     setQuotationError(true);
+    //   } else if (shortQuotation.code === Code.INTERNAL_SERVER_ERROR) {
+    //     // console.log('INTERNAL_SERVER_ERROR');
+    //     setQuotationError(true);
+    //   }
+    // } catch (err) {
+    //   // ToDo: handle the error code (20230327 - Shirley)
+    //   // console.error(err);
+    //   setQuotationError(true);
+    // }
 
     return {longQuotation: longQuotation, shortQuotation: shortQuotation};
   };

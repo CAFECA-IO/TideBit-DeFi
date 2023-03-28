@@ -20,7 +20,7 @@ export const getDummyQuotation = (currency: string, typeOfPosition: ITypeOfPosit
     ticker: currency,
     targetAsset: currency,
     unitAsset: unitAsset,
-    typeOfPosition: TypeOfPosition.BUY,
+    typeOfPosition,
     price: randomIntFromInterval(1000, 10000),
     deadline: Math.ceil(Date.now() / 1000) + POSITION_PRICE_RENEWAL_INTERVAL_SECONDS,
     signature: '0x',

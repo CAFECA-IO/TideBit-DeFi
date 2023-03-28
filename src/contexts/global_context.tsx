@@ -18,6 +18,7 @@ import CanceledModal from '../components/canceled_modal/canceled_modal';
 import SuccessfulModal from '../components/successful_modal/successful_modal';
 import DepositModal from '../components/deposit_modal/deposit_modal';
 import WithdrawalModal from '../components/withdrawal_modal/withdrawal_modal';
+import DepositHistoryModal from '../components/deposit_history_modal/deposit_history_modal';
 import WalletPanel from '../components/wallet_panel/wallet_panel';
 import QrcodeModal from '../components/qrcode_modal/qrcode_modal';
 import HelloModal from '../components/hello_modal/hello_modal';
@@ -50,6 +51,10 @@ import {OrderState} from '../constants/order_state';
 import {IApplyUpdateCFDOrderData} from '../interfaces/tidebit_defi_background/apply_update_cfd_order_data';
 import useStateRef from 'react-usestateref';
 import {POSITION_PRICE_RENEWAL_INTERVAL_SECONDS} from '../constants/config';
+import {
+  IDisplayAcceptedDepositOrder,
+  getDummyDisplayAcceptedDepositOrder,
+} from '../interfaces/tidebit_defi_background/display_accepted_deposit_order';
 
 export interface IToastify {
   type: 'error' | 'warning' | 'info' | 'success';
@@ -255,6 +260,11 @@ export interface IGlobalContext {
   visibleWithdrawalModal: boolean;
   visibleWithdrawalModalHandler: () => void;
 
+  visibleDepositHistoryModal: boolean;
+  visibleDepositHistoryModalHandler: () => void;
+  dataDepositHistoryModal: IDisplayAcceptedDepositOrder | null;
+  dataDepositHistoryModalHandler: (data: IDisplayAcceptedDepositOrder) => void;
+
   visibleLoadingModal: boolean;
   visibleLoadingModalHandler: () => void;
   zoomOutLoadingModal: () => void;
@@ -375,6 +385,11 @@ export const GlobalContext = createContext<IGlobalContext>({
   visibleWithdrawalModal: false,
   visibleWithdrawalModalHandler: () => null,
 
+  visibleDepositHistoryModal: false,
+  visibleDepositHistoryModalHandler: () => null,
+  dataDepositHistoryModal: null,
+  dataDepositHistoryModalHandler: () => null,
+
   visibleLoadingModal: false,
   visibleLoadingModalHandler: () => null,
   zoomOutLoadingModal: () => null,
@@ -489,6 +504,10 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
   const [visibleWithdrawalModal, setVisibleWithdrawalModal] = useState(false);
 
   const [visibleDepositModal, setVisibleDepositModal] = useState(false);
+
+  const [visibleDepositHistoryModal, setVisibleDepositHistoryModal] = useState(false);
+  const [dataDepositHistoryModal, setDataDepositHistoryModal] =
+    useState<IDisplayAcceptedDepositOrder>(getDummyDisplayAcceptedDepositOrder('USDT'));
 
   const [visibleLoadingModal, setVisibleLoadingModal] = useState(false);
   const [dataLoadingModal, setDataLoadingModal] = useState<IProcessDataModal>({
@@ -607,6 +626,8 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     setVisibleDepositModal(false);
     setVisibleWithdrawalModal(false);
 
+    setVisibleDepositHistoryModal(false);
+
     setVisibleLoadingModal(false);
     setVisibleFailedModal(false);
     setVisibleCanceledModal(false);
@@ -635,6 +656,14 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
 
   const visibleWithdrawalModalHandler = () => {
     setVisibleWithdrawalModal(!visibleWithdrawalModal);
+  };
+
+  const visibleDepositHistoryModalHandler = () => {
+    setVisibleDepositHistoryModal(!visibleDepositHistoryModal);
+  };
+
+  const dataDepositHistoryModalHandler = (data: IDisplayAcceptedDepositOrder) => {
+    setDataDepositHistoryModal(data);
   };
 
   const zoomOutLoadingModal = () => {
@@ -880,6 +909,11 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     visibleWithdrawalModal,
     visibleWithdrawalModalHandler,
 
+    visibleDepositHistoryModal,
+    visibleDepositHistoryModalHandler,
+    dataDepositHistoryModal,
+    dataDepositHistoryModalHandler,
+
     visibleLoadingModal,
     visibleLoadingModalHandler,
     zoomOutLoadingModal,
@@ -1030,6 +1064,12 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
         getSubmissionState={getWithdrawSubmissionState}
         modalVisible={visibleWithdrawalModal}
         modalClickHandler={visibleWithdrawalModalHandler}
+      />
+
+      <DepositHistoryModal
+        modalVisible={visibleDepositHistoryModal}
+        modalClickHandler={visibleDepositHistoryModalHandler}
+        getDepositHistoryData={dataDepositHistoryModal}
       />
 
       <WalletPanel

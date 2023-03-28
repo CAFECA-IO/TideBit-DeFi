@@ -10,7 +10,7 @@ import {timestampToString} from '../../lib/common';
 const ReceiptSection = () => {
   const userCtx = useContext(UserContext);
 
-  /* Till: (20230331 - Julian) dummy data for test 
+  /* Till: (20230331 - Julian) dummy data for test */
   const dummyHistoryList: IOrder[] = [
     userCtx.histories[0],
     userCtx.histories[1],
@@ -21,7 +21,7 @@ const ReceiptSection = () => {
       type: OrderType.DEPOSIT,
       targetAsset: 'ETH',
       targetAmount: 80,
-      remarks: '',
+      detail: '',
       balanceSnapshot: {
         currency: 'USDT',
         available: 2308,
@@ -31,7 +31,7 @@ const ReceiptSection = () => {
         id: 'TBDDeposit20230324_002',
         txid: '0x',
         status: 'SUCCESS',
-        detail: '',
+        remarks: '',
         fee: 0,
       },
     },
@@ -40,7 +40,7 @@ const ReceiptSection = () => {
       type: OrderType.WITHDRAW,
       targetAsset: 'ETH',
       targetAmount: -10,
-      remarks: '',
+      detail: '',
       balanceSnapshot: {
         currency: 'USDT',
         available: 1979,
@@ -50,7 +50,7 @@ const ReceiptSection = () => {
         id: 'TBDWithdraw20230324_002',
         txid: '0x',
         status: 'SUCCESS',
-        detail: '',
+        remarks: '',
         fee: -0.05,
       },
     },
@@ -59,7 +59,7 @@ const ReceiptSection = () => {
       type: OrderType.CFD,
       targetAsset: 'ETH',
       targetAmount: -5,
-      remarks: '',
+      detail: '',
       balanceSnapshot: {
         currency: 'USDT',
         available: 1999,
@@ -70,7 +70,7 @@ const ReceiptSection = () => {
         txid: '0x',
         status: 'FAILED',
         state: OrderState.OPENING,
-        detail: '',
+        remarks: '',
         fee: 0,
       },
     },
@@ -79,7 +79,7 @@ const ReceiptSection = () => {
       type: OrderType.CFD,
       targetAsset: 'ETH',
       targetAmount: +30,
-      remarks: '',
+      detail: '',
       balanceSnapshot: {
         currency: 'USDT',
         available: 1998,
@@ -90,13 +90,13 @@ const ReceiptSection = () => {
         txid: '0x',
         status: 'SUCCESS',
         state: OrderState.CLOSED,
-        detail: '',
+        remarks: '',
         fee: 0,
       },
     },
-  ]; Till: (20230331 - Julian) dummy data for test */
+  ]; /* Till: (20230331 - Julian) dummy data for test */
 
-  const listHistories = userCtx.histories;
+  const listHistories = dummyHistoryList; //userCtx.histories;
 
   const [searches, setSearches] = useState('');
   const [filteredTradingType, setFilteredTradingType] = useState('');

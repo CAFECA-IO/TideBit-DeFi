@@ -24,6 +24,7 @@ import {
   dummyTicker,
   ITBETrade,
   ITickerMarket,
+  ITickerItem,
 } from '../interfaces/tidebit_defi_background/ticker_data';
 import {ITimeSpanUnion, TimeSpanUnion} from '../interfaces/tidebit_defi_background/time_span_union';
 import {ICandlestickData} from '../interfaces/tidebit_defi_background/candlestickData';
@@ -241,7 +242,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       }));
       tickerBook.updateCandlestick(tickerId, candlestickChartData);
       */
-      await listTradesData(tickerId);
+      // await listTradesData(tickerId);
       setCandlestickChartData(tickerBook.listCandlestickData(tickerId, {}));
       result = defaultResultSuccess;
     } catch (error) {
@@ -318,30 +319,28 @@ export const MarketProvider = ({children}: IMarketProvider) => {
   const listTickers = async () => {
     let result: IResult = defaultResultFailed;
     try {
+      // 1. get tickers from backend
       const tickers = (await workerCtx.requestHandler({
         name: APIName.LIST_TICKERS,
         method: Method.GET,
-        params: {
-          limit: tickerBook.limit,
-          timespan: timeSpanRef.current,
-        },
-        /* Deprecated: callback in requestHandler (Tzuhan - 20230420)
-        callback: (tickers: ITickerData[], error: Error) => {
-          if (error) {
-            // Deprecate: error handle (Tzuhan - 20230321)
-          } else {
-            tickerBook.updateTickers(tickers);
-            setAvailableTickers({...tickerBook.tickers});
-            selectTickerHandler(tickers[0].currency);
-          }
-        },
-        */
-      })) as ITickerData[];
+      })) as ITickerItem[];
       tickerBook.updateTickers(tickers);
-      setAvailableTickers({...tickerBook.tickers});
+      setAvailableTickers({...tickerBook.listTickers()});
+      // 2. get ticker trades
+      // 2.1 available tickers get trades from api
+      for (const ticker of tickers) {
+        const trades = (await workerCtx.requestHandler({
+          name: APIName.LIST_TBE_TRADES,
+          method: Method.GET,
+          params: {
+            symbol: ticker.currency,
+          },
+        })) as ITBETrade[];
+        tickerBook.updateTrades(ticker.currency, trades);
+      }
+      setAvailableTickers({...tickerBook.listTickers()});
       await selectTickerHandler(tickers[0].currency);
       result = defaultResultSuccess;
-      result.data = tickers;
     } catch (error) {
       // Deprecate: error handle (Tzuhan - 20230321)
       // eslint-disable-next-line no-console
@@ -428,9 +427,10 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     () =>
       notificationCtx.emitter.on(TideBitEvent.TICKER, (tickerMarketData: ITickerMarket) => {
         tickerBook.updateTicker(tickerMarketData);
-        setAvailableTickers({...tickerBook.tickers});
+        const updateTickers = {...tickerBook.listTickers()};
+        setAvailableTickers(updateTickers);
         if (tickerMarketData.currency === selectedTickerRef.current?.currency)
-          setSelectedTicker(tickerBook.tickers[tickerMarketData.currency]);
+          setSelectedTicker(updateTickers[tickerMarketData.currency]);
       }),
     []
   );
@@ -474,9 +474,10 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       notificationCtx.emitter.on(TideBitEvent.TRADES, (market: string, trades: ITBETrade[]) => {
         const ticker = market.toUpperCase().replace(unitAsset, ``);
         tickerBook.updateTrades(ticker, trades);
-        setAvailableTickers({...tickerBook.tickers});
+        const updateTickers = {...tickerBook.listTickers()};
+        setAvailableTickers(updateTickers);
         if (selectedTickerRef.current?.currency === ticker)
-          setCandlestickChartData([...tickerBook.candlesticks[ticker]]);
+          setCandlestickChartData([...tickerBook.listCandlestickData(ticker, {})]);
       }),
     []
   );

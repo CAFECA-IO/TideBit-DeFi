@@ -52,7 +52,9 @@ const PositionOpenModal = ({
   const marketCtx = useContext(MarketContext);
   const userCtx = useContext(UserContext);
 
-  const [secondsLeft, setSecondsLeft] = useState(POSITION_PRICE_RENEWAL_INTERVAL_SECONDS);
+  const [secondsLeft, setSecondsLeft] = useState(
+    Math.round(openCfdRequest.quotation.deadline - getTimestamp() - 1)
+  );
   const [dataRenewedStyle, setDataRenewedStyle] = useState('text-lightWhite');
 
   const toApplyCreateOrder = (
@@ -174,10 +176,6 @@ const PositionOpenModal = ({
 
   const layoutInsideBorder = 'mx-5 my-2 flex justify-between';
 
-  // let dataRenewedStyle = 'text-lightGray';
-
-  // const displayedTime = timestampToString(openCfdRequest?.createTimestamp ?? 0);
-
   const renewDataHandler = async () => {
     setDataRenewedStyle('animate-flash text-lightYellow2');
     await wait(DELAYED_HIDDEN_SECONDS / 5);
@@ -229,7 +227,7 @@ const PositionOpenModal = ({
     // if (!lock()) return;
 
     if (!globalCtx.visiblePositionOpenModal) {
-      setSecondsLeft(POSITION_PRICE_RENEWAL_INTERVAL_SECONDS);
+      setSecondsLeft(Math.round(openCfdRequest.quotation.deadline - getTimestamp() - 1));
       setDataRenewedStyle('text-lightWhite');
 
       return;

@@ -45,3 +45,5 @@ export const TRADING_CHART_PRICE_LIMIT_ONE_SEC = 0.1;
 
 export const SUGGEST_TP = 0.2;
 export const SUGGEST_SL = 0.1;
+
+export const LIQUIDATION_FIVE_LEVERAGE = 0.2;

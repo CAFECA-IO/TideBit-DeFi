@@ -24,12 +24,19 @@ import {BsClockHistory} from 'react-icons/bs';
 import {useGlobal} from '../../contexts/global_context';
 import {TypeOfPosition} from '../../constants/type_of_position';
 import {UserContext} from '../../contexts/user_context';
-import {POSITION_PRICE_RENEWAL_INTERVAL_SECONDS, unitAsset} from '../../constants/config';
+import {
+  LIQUIDATION_FIVE_LEVERAGE,
+  POSITION_PRICE_RENEWAL_INTERVAL_SECONDS,
+  unitAsset,
+} from '../../constants/config';
 import {
   getDummyApplyCreateCFDOrderData,
   IApplyCreateCFDOrderData,
 } from '../../interfaces/tidebit_defi_background/apply_create_cfd_order_data';
 import {useTranslation} from 'react-i18next';
+import {defaultResultSuccess} from '../../interfaces/tidebit_defi_background/result';
+import {IQuotation} from '../../interfaces/tidebit_defi_background/quotation';
+import useStateRef from 'react-usestateref';
 
 type TranslateFunction = (s: string) => string;
 interface IPositionOpenModal {
@@ -52,10 +59,11 @@ const PositionOpenModal = ({
   const marketCtx = useContext(MarketContext);
   const userCtx = useContext(UserContext);
 
-  const [secondsLeft, setSecondsLeft] = useState(
+  const [secondsLeft, setSecondsLeft, secondsLeftRef] = useStateRef(
     Math.round(openCfdRequest.quotation.deadline - getTimestamp() - 1)
   );
   const [dataRenewedStyle, setDataRenewedStyle] = useState('text-lightWhite');
+  const [quotationError, setQuotationError, quotationErrorRef] = useStateRef(false);
 
   const toApplyCreateOrder = (
     openCfdRequest: IApplyCreateCFDOrderData
@@ -176,42 +184,75 @@ const PositionOpenModal = ({
 
   const layoutInsideBorder = 'mx-5 my-2 flex justify-between';
 
+  const getQuotation = async () => {
+    let quotation = defaultResultSuccess;
+
+    try {
+      quotation = await marketCtx.getCFDQuotation(
+        openCfdRequest.ticker,
+        openCfdRequest.typeOfPosition
+      );
+
+      const data = quotation.data as IQuotation;
+
+      // Info: if there's error fetching quotation, disable the submit btn (20230327 - Shirley)
+      if (
+        quotation.success &&
+        data.typeOfPosition === openCfdRequest.typeOfPosition &&
+        quotation.data !== null
+      ) {
+        return data;
+      } else {
+        // Deprecated: before merging into develop (20230327 - Shirley)
+        // eslint-disable-next-line no-console
+        console.log('diable submit');
+        setQuotationError(true);
+      }
+    } catch (err) {
+      setQuotationError(true);
+    }
+  };
+
   const renewDataHandler = async () => {
+    const newQuotation = await getQuotation();
+    const gsl = marketCtx.guaranteedStopFeePercentage;
+
     setDataRenewedStyle('animate-flash text-lightYellow2');
     await wait(DELAYED_HIDDEN_SECONDS / 5);
 
-    const deadline = getDeadline(POSITION_PRICE_RENEWAL_INTERVAL_SECONDS);
+    if (!newQuotation) return;
+
+    const deadline = newQuotation.deadline;
     setSecondsLeft(deadline - getTimestamp());
 
-    const newPrice =
+    const newPrice = newQuotation.price;
+
+    const newMargin = (Number(newQuotation.price) * Number(openCfdRequest.amount)) / 5;
+    const newLiquidationPrice =
       openCfdRequest.typeOfPosition === TypeOfPosition.BUY
-        ? randomIntFromInterval(
-            marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice * 0.75,
-            marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice * 1.25
-          )
-        : openCfdRequest.typeOfPosition === TypeOfPosition.SELL
-        ? randomIntFromInterval(
-            marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice * 1.1,
-            marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice * 1.25
-          )
-        : 999999;
-    const newMargin = randomIntFromInterval(100, 500);
+        ? newQuotation.price * (1 - LIQUIDATION_FIVE_LEVERAGE)
+        : newQuotation.price * (1 + LIQUIDATION_FIVE_LEVERAGE);
+    const gslFee = Number(gsl) * openCfdRequest.amount * newPrice;
 
     // TODO: (20230324 - Shirley) renew price, liquidation time, liquidation price
+
     globalCtx.dataPositionOpenModalHandler({
       openCfdRequest: {
         ...openCfdRequest,
-        quotation: {
-          ...openCfdRequest.quotation,
-          deadline: deadline,
-          price: newPrice,
-          signature: '0x',
-        },
+        quotation: newQuotation,
+        // {
+        //   ...openCfdRequest.quotation,
+        //   deadline: deadline,
+        //   price: newPrice,
+        //   signature: '0x',
+        // },
         price: newPrice,
         margin: {
           ...openCfdRequest.margin,
           amount: newMargin,
         },
+        guaranteedStopFee: openCfdRequest.guaranteedStop ? gslFee : 0,
+        liquidationPrice: newLiquidationPrice,
       },
     });
 
@@ -227,11 +268,15 @@ const PositionOpenModal = ({
     // if (!lock()) return;
 
     if (!globalCtx.visiblePositionOpenModal) {
-      setSecondsLeft(Math.round(openCfdRequest.quotation.deadline - getTimestamp() - 1));
+      // setSecondsLeft(Math.round(openCfdRequest.quotation.deadline - getTimestamp() - 1));
       setDataRenewedStyle('text-lightWhite');
 
       return;
     }
+
+    // Deprecated: before merging into develop (20230327 - Shirley)
+    // eslint-disable-next-line no-console
+    console.log('gsl in open modal', openCfdRequest.guaranteedStopFee);
 
     const intervalId = setInterval(() => {
       const base = openCfdRequest.quotation.deadline;
@@ -370,7 +415,7 @@ const PositionOpenModal = ({
         <div className="my-4 text-xxs text-lightGray">{t('POSITION_MODAL.CFD_CONTENT')}</div>
 
         <RippleButton
-          disabled={secondsLeft < 1}
+          disabled={secondsLeft < 1 || quotationErrorRef.current}
           onClick={submitClickHandler}
           buttonType="button"
           className={`mt-0 whitespace-nowrap rounded border-0 bg-tidebitTheme py-2 px-16 text-base text-white transition-colors duration-300 hover:bg-cyan-600 focus:outline-none disabled:bg-lightGray`}

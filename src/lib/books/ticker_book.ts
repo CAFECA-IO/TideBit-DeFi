@@ -181,7 +181,7 @@ class TickerBook {
   ): ICandlestickData[] {
     const sortedTrades = this.sortTrades(ticker, options);
     const candlestickData: ICandlestickData[] = Object.values(sortedTrades).map(t => ({
-      x: new Date(t.second),
+      x: new Date(t.second * 1000),
       y: {
         open: +t.trades.open.price,
         high: +t.trades.high.price,

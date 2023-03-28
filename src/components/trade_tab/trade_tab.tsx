@@ -85,19 +85,19 @@ const TradeTab = () => {
 
   // FIXME: SL setting should have a lower limit and an upper limit depending on its position type
   const [longTpValue, setLongTpValue, loneTpValueRef] = useStateRef(
-    Number(longQuotationRef.current?.price) * (1 + SUGGEST_TP)
+    Number((Number(longQuotationRef.current?.price) * (1 + SUGGEST_TP)).toFixed(2))
   );
   const [longSlValue, setLongSlValue, longSlValueRef] = useStateRef(
-    Number(longQuotationRef.current?.price) * (1 - SUGGEST_SL)
+    Number((Number(longQuotationRef.current?.price) * (1 - SUGGEST_SL)).toFixed(2))
   );
   const [longTpToggle, setLongTpToggle] = useState(false);
   const [longSlToggle, setLongSlToggle] = useState(false);
 
   const [shortTpValue, setShortTpValue, shortTpValueRef] = useStateRef(
-    Number(shortQuotationRef.current?.price) * (1 - SUGGEST_TP)
+    Number((Number(shortQuotationRef.current?.price) * (1 - SUGGEST_TP)).toFixed(2))
   );
   const [shortSlValue, setShortSlValue, shortSlValueRef] = useStateRef(
-    Number(shortQuotationRef.current?.price) * (1 + SUGGEST_SL)
+    Number((Number(shortQuotationRef.current?.price) * (1 + SUGGEST_SL)).toFixed(2))
   );
   const [shortTpToggle, setShortTpToggle] = useState(false);
   const [shortSlToggle, setShortSlToggle] = useState(false);
@@ -188,11 +188,19 @@ const TradeTab = () => {
 
       renewPosition();
 
-      setLongTpValue(Number(longQuotationRef.current?.price) * (1 + SUGGEST_TP));
-      setLongSlValue(Number(longQuotationRef.current?.price) * (1 - SUGGEST_SL));
+      setLongTpValue(
+        Number((Number(longQuotationRef.current?.price) * (1 + SUGGEST_TP)).toFixed(2))
+      );
+      setLongSlValue(
+        Number((Number(longQuotationRef.current?.price) * (1 - SUGGEST_SL)).toFixed(2))
+      );
 
-      setShortTpValue(Number(shortQuotationRef.current?.price) * (1 - SUGGEST_TP));
-      setShortSlValue(Number(shortQuotationRef.current?.price) * (1 + SUGGEST_SL));
+      setShortTpValue(
+        Number((Number(shortQuotationRef.current?.price) * (1 - SUGGEST_TP)).toFixed(2))
+      );
+      setShortSlValue(
+        Number((Number(shortQuotationRef.current?.price) * (1 + SUGGEST_SL)).toFixed(2))
+      );
     })();
 
     // Deprecated: before merging into develop (20230327 - Shirley)
@@ -1030,7 +1038,7 @@ const TradeTab = () => {
                 {/* Deprecated: before merging into develop (20230327 - Shirley) */}
                 <p>{secondsLeft}</p>
                 {/* Long Button */}
-                <div className="ml-1/4">
+                <div className="ml-60px">
                   <RippleButton
                     disabled={marginWarningLongRef.current || quotationErrorRef.current}
                     onClick={longOrderSubmitHandler}
@@ -1119,7 +1127,7 @@ const TradeTab = () => {
                 </div>
 
                 {/* Short Button */}
-                <div className="ml-1/4">
+                <div className="ml-60px">
                   <RippleButton
                     disabled={marginWarningLongRef.current || quotationErrorRef.current}
                     onClick={shortOrderSubmitHandler}

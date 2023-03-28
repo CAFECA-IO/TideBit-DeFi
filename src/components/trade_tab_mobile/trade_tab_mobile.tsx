@@ -47,6 +47,10 @@ const TradeTabMobile = () => {
   const tickerStaticStatistics = marketCtx.tickerStatic;
 
   const TEMP_PLACEHOLDER = TARGET_LIMIT_DIGITS;
+  const DEFAULT_TICKER = 'ETH';
+  const SELL_PRICE_ERROR = 0;
+  const BUY_PRICE_ERROR = 9999999999;
+  const LEVERAGE_ERROR = 1;
 
   const ticker = marketCtx.selectedTicker?.currency ?? '';
 

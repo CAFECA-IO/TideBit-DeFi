@@ -45,7 +45,6 @@ const TradeTab = () => {
   const tickerLiveStatistics = marketCtx.tickerLiveStatistics;
   const tickerStaticStatistics = marketCtx.tickerStatic;
 
-  // FIXME: It should have the default value of `tickerLiveStatistics`
   const TEMP_PLACEHOLDER = TARGET_LIMIT_DIGITS;
   const DEFAULT_TICKER = 'ETH';
   const SELL_PRICE_ERROR = 0;
@@ -57,7 +56,7 @@ const TradeTab = () => {
   const USER_BALANCE = userCtx.balance?.available ?? 0;
 
   const leverage = tickerStaticStatistics?.leverage ?? 1;
-  const guaranteedStopFee = tickerStaticStatistics?.guaranteedStopFee;
+  const gsl = marketCtx.guaranteedStopFeePercentage;
 
   // let marketPrice = tickerLiveStatistics?.price ?? TEMP_PLACEHOLDER;
   let marketPrice = marketCtx.selectedTicker?.price ?? TEMP_PLACEHOLDER;
@@ -147,11 +146,9 @@ const TradeTab = () => {
     roundToDecimalPlaces(targetInputValue * Number(shortQuotationRef.current?.price), 2)
   );
 
-  // TODO: long vs short (20230327 - Shirley)
   const [marginWarningLong, setMarginWarningLong, marginWarningLongRef] = useStateRef(false);
   const [marginWarningShort, setMarginWarningShort, marginWarningShortRef] = useStateRef(false);
 
-  // TODO: long vs short && rm marketPrice (20230327 - Shirley)
   const [targetLengthLong, setTargetLengthLong] = useState(
     roundToDecimalPlaces(
       (targetInputValue * Number(longQuotationRef.current?.price)) / leverage,
@@ -165,7 +162,6 @@ const TradeTab = () => {
     ).toString().length
   );
 
-  // TODO: long vs short (20230327 - Shirley)
   const [valueOfPositionLengthLong, setValueOfPositionLengthLong] = useState(
     roundToDecimalPlaces(targetInputValue * Number(longQuotationRef.current?.price), 2).toString()
       .length
@@ -174,6 +170,12 @@ const TradeTab = () => {
     roundToDecimalPlaces(targetInputValue * Number(shortQuotationRef.current?.price), 2).toString()
       .length
   );
+
+  const [guaranteedStopFeeLong, setGuaranteedStopFeeLong, guaranteedStopFeeLongRef] = useStateRef(
+    Number(gsl) * valueOfPositionLongRef.current
+  );
+  const [guaranteedStopFeeShort, setGuaranteedStopFeeShort, guaranteedStopFeeShortRef] =
+    useStateRef(Number(gsl) * valueOfPositionShortRef.current);
 
   // Info: Fetch quotation the first time (20230327 - Shirley)
   useEffect(() => {
@@ -436,6 +438,7 @@ const TradeTab = () => {
 
   // Info: renew the value of position when target input changed (20230328 - Shirley)
   const renewPosition = () => {
+    // Long
     const newLongValue = targetInputValueRef.current * Number(longQuotationRef.current?.price);
 
     const roundedLongValue = roundToDecimalPlaces(newLongValue, 2);
@@ -457,6 +460,9 @@ const TradeTab = () => {
       (Number(longQuotationRef.current?.price) - longSlValue) * targetInputValueRef.current
     );
 
+    setGuaranteedStopFeeLong(Number(gsl) * valueOfPositionLongRef.current);
+
+    // Short
     const newShortValue = targetInputValueRef.current * Number(shortQuotationRef.current?.price);
 
     const roundedShortValue = roundToDecimalPlaces(newShortValue, 2);
@@ -477,6 +483,7 @@ const TradeTab = () => {
     setExpectedShortLossValue(
       (shortSlValue - Number(shortQuotationRef.current?.price)) * targetInputValueRef.current
     );
+    setGuaranteedStopFeeShort(Number(gsl) * valueOfPositionShortRef.current);
   };
 
   const targetAmountDetection = (value?: number) => {
@@ -561,9 +568,8 @@ const TradeTab = () => {
     longOrder: IApplyCreateCFDOrderData;
     shortOrder: IApplyCreateCFDOrderData;
   } => {
-    const gsl = marketCtx.guaranteedStopFeePercentage;
-    const longGsl = Number(gsl) * valueOfPositionLongRef.current;
-    const shortGsl = Number(gsl) * valueOfPositionShortRef.current;
+    // const longGsl = Number(gsl) * valueOfPositionLongRef.current;
+    // const shortGsl = Number(gsl) * valueOfPositionShortRef.current;
 
     const share = {
       ticker: marketCtx.selectedTicker?.currency ?? '',
@@ -586,7 +592,8 @@ const TradeTab = () => {
       liquidationPrice: longQuotationRef.current.price * (1 - LIQUIDATION_FIVE_LEVERAGE),
       fee: marketCtx.tickerLiveStatistics?.fee ?? BUY_PRICE_ERROR,
       guaranteedStop: longSlToggle ? longGuaranteedStopChecked : false,
-      guaranteedStopFee: longSlToggle && longGuaranteedStopChecked ? longGsl : 0,
+      guaranteedStopFee:
+        longSlToggle && longGuaranteedStopChecked ? guaranteedStopFeeLongRef.current : 0,
       takeProfit: longTpToggle ? longTpValue : undefined,
       stopLoss: longSlToggle ? longSlValue : undefined,
     };
@@ -599,7 +606,8 @@ const TradeTab = () => {
       liquidationPrice: shortQuotationRef.current.price * (1 + LIQUIDATION_FIVE_LEVERAGE),
       fee: marketCtx.tickerLiveStatistics?.fee ?? BUY_PRICE_ERROR,
       guaranteedStop: shortSlToggle ? shortGuaranteedStopChecked : false,
-      guaranteedStopFee: shortSlToggle && shortGuaranteedStopChecked ? shortGsl : 0,
+      guaranteedStopFee:
+        shortSlToggle && shortGuaranteedStopChecked ? guaranteedStopFeeShortRef.current : 0,
       takeProfit: shortTpToggle ? shortTpValue : undefined,
       stopLoss: shortSlToggle ? shortSlValue : undefined,
     };
@@ -793,7 +801,12 @@ const TradeTab = () => {
         {t('TRADE_PAGE.TRADE_TAB_GUARANTEED_STOP')} &nbsp;
         <span className="text-lightWhite">
           {' '}
-          ({t('TRADE_PAGE.TRADE_TAB_FEE')}: {guaranteedStopFee} {unitAsset})
+          ({t('TRADE_PAGE.TRADE_TAB_FEE')}:{' '}
+          {guaranteedStopFeeLongRef.current?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          })}{' '}
+          {unitAsset})
         </span>
         {/* tooltip */}
         <div className="ml-1">
@@ -926,7 +939,12 @@ const TradeTab = () => {
           {t('TRADE_PAGE.TRADE_TAB_GUARANTEED_STOP')} &nbsp;
           <span className="text-lightWhite">
             {' '}
-            ({t('TRADE_PAGE.TRADE_TAB_FEE')}: {guaranteedStopFee} {unitAsset})
+            ({t('TRADE_PAGE.TRADE_TAB_FEE')}:{' '}
+            {guaranteedStopFeeShortRef.current?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}{' '}
+            {unitAsset})
           </span>
           {/* tooltip */}
           <div className="ml-1">
@@ -1044,7 +1062,7 @@ const TradeTab = () => {
                 </div>
 
                 {/* Deprecated: before merging into develop (20230327 - Shirley) */}
-                <p>{secondsLeft}</p>
+                {/* <p>{secondsLeft}</p> */}
                 {/* Long Button */}
                 <div className="ml-60px">
                   <RippleButton

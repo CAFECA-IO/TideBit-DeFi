@@ -44,6 +44,10 @@ const TradeTab = () => {
 
   // FIXME: It should have the default value of `tickerLiveStatistics`
   const TEMP_PLACEHOLDER = TARGET_LIMIT_DIGITS;
+  const DEFAULT_TICKER = 'ETH';
+  const SELL_PRICE_ERROR = 0;
+  const BUY_PRICE_ERROR = 9999999999;
+  const LEVERAGE_ERROR = 1;
 
   const ticker = marketCtx.selectedTicker?.currency ?? '';
   // const LIQUIDATION_PRICE = 7548; // TODO: tickerLiveStatistics
@@ -133,7 +137,7 @@ const TradeTab = () => {
 
     (async () => {
       const {longQuotation, shortQuotation} = await getQuotation(
-        marketCtx.selectedTicker?.currency ?? 'ETH'
+        marketCtx.selectedTicker?.currency ?? DEFAULT_TICKER
       );
 
       // Deprecated: before merging into develop (20230327 - Shirley)
@@ -173,7 +177,7 @@ const TradeTab = () => {
 
       if (tickingSec === 0) {
         const {longQuotation, shortQuotation} = await getQuotation(
-          marketCtx.selectedTicker?.currency ?? 'ETH'
+          marketCtx.selectedTicker?.currency ?? DEFAULT_TICKER
         );
 
         setRequiredMarginLong(
@@ -205,9 +209,9 @@ const TradeTab = () => {
       renewValueOfPosition(marketPrice);
 
       const {longQuotation, shortQuotation} = await getQuotation(
-        marketCtx.selectedTickerRef.current?.currency ?? 'ETH'
-        // TODO: should be marketCtx.selectedTicker?.currency ?? 'ETH' (20230327 - Shirley)
-        // marketCtx.selectedTicker?.currency ?? 'ETH'
+        marketCtx.selectedTickerRef.current?.currency ?? DEFAULT_TICKER
+        // TODO: should be marketCtx.selectedTicker?.currency ?? DEFAULT_TICKER (20230327 - Shirley)
+        // marketCtx.selectedTicker?.currency ?? DEFAULT_TICKER
       );
 
       setRequiredMarginLong(
@@ -428,30 +432,34 @@ const TradeTab = () => {
     longOrder: IApplyCreateCFDOrderData;
     shortOrder: IApplyCreateCFDOrderData;
   } => {
-    const longOrder: IApplyCreateCFDOrderData = {
+    const share = {
       ticker: marketCtx.selectedTicker?.currency ?? '',
       targetAsset: marketCtx.selectedTicker?.currency ?? '',
       unitAsset: unitAsset,
-      price: Number(buyPrice) ?? 9999999999,
       amount: targetInputValueRef.current,
-      typeOfPosition: TypeOfPosition.BUY,
-      leverage: marketCtx.tickerStatic?.leverage ?? 1,
+      leverage: marketCtx.tickerStatic?.leverage ?? LEVERAGE_ERROR,
       margin: {
         asset: unitAsset,
         amount: requiredMarginLongRef.current,
       },
+      liquidationTime: Math.ceil(Date.now() / 1000) + 86400,
+    };
+
+    const longOrder: IApplyCreateCFDOrderData = {
+      ...share,
+      price: Number(buyPrice) ?? BUY_PRICE_ERROR,
+      typeOfPosition: TypeOfPosition.BUY,
       quotation: {
         ticker: marketCtx.selectedTicker?.currency ?? '',
         targetAsset: marketCtx.selectedTicker?.currency ?? '',
         typeOfPosition: TypeOfPosition.BUY,
         unitAsset: unitAsset,
-        price: Number(buyPrice) ?? 9999999999,
+        price: Number(buyPrice) ?? BUY_PRICE_ERROR,
         deadline: getTimestamp() + POSITION_PRICE_RENEWAL_INTERVAL_SECONDS,
         signature: '0x',
       },
       liquidationPrice: 1000,
-      liquidationTime: Math.ceil(Date.now() / 1000) + 86400,
-      fee: marketCtx.tickerLiveStatistics?.fee ?? 9999999999,
+      fee: marketCtx.tickerLiveStatistics?.fee ?? BUY_PRICE_ERROR,
       guaranteedStop: longSlToggle ? longGuaranteedStopChecked : false,
       // TODO: (20230315 - SHirley) cal guaranteedStopFee (percent from Ctx)
       guaranteedStopFee: longSlToggle && longGuaranteedStopChecked ? 22 : 0,
@@ -460,29 +468,20 @@ const TradeTab = () => {
     };
 
     const shortOrder: IApplyCreateCFDOrderData = {
-      ticker: marketCtx.selectedTicker?.currency ?? '',
-      targetAsset: marketCtx.selectedTicker?.currency ?? '',
-      unitAsset: unitAsset,
+      ...share,
       typeOfPosition: TypeOfPosition.SELL,
-      margin: {
-        asset: unitAsset,
-        amount: requiredMarginLongRef.current,
-      },
       quotation: {
         ticker: marketCtx.selectedTicker?.currency ?? '',
         typeOfPosition: TypeOfPosition.SELL,
         targetAsset: marketCtx.selectedTicker?.currency ?? '',
         unitAsset: unitAsset,
-        price: Number(sellPrice) ?? 9999999999,
+        price: Number(sellPrice) ?? SELL_PRICE_ERROR,
         deadline: getTimestamp() + POSITION_PRICE_RENEWAL_INTERVAL_SECONDS,
         signature: '0x',
       },
-      price: Number(sellPrice) ?? 9999999999,
-      amount: targetInputValueRef.current,
+      price: Number(sellPrice) ?? SELL_PRICE_ERROR,
       liquidationPrice: 1000,
-      liquidationTime: getTimestamp() + 86400,
-      fee: marketCtx.tickerLiveStatistics?.fee ?? 9999999999,
-      leverage: marketCtx.tickerStatic?.leverage ?? 1,
+      fee: marketCtx.tickerLiveStatistics?.fee ?? BUY_PRICE_ERROR,
       guaranteedStop: shortSlToggle ? shortGuaranteedStopChecked : false,
       // TODO: (20230315 - SHirley) cal guaranteedStopFee (percent from Ctx)
       guaranteedStopFee: shortSlToggle && shortGuaranteedStopChecked ? 22 : 0,

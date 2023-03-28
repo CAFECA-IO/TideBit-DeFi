@@ -110,6 +110,8 @@ const TradeTab = () => {
     roundToDecimalPlaces(targetInputValue * Number(longQuotationRef.current?.price), 2)
   );
 
+  const [quotationError, setQuotationError, quotationErrorRef] = useStateRef(false);
+
   // TODO: long vs short (20230327 - Shirley)
   const [marginWarning, setMarginWarning, marginWarningRef] = useStateRef(false);
 
@@ -122,6 +124,40 @@ const TradeTab = () => {
   const [valueOfPositionLength, setValueOfPositionLength] = useState(
     roundToDecimalPlaces(targetInputValue * marketPrice, 2).toString().length
   );
+
+  // Info: Fetch quotation the first time (20230327 - Shirley)
+  useEffect(() => {
+    if (!userCtx.enableServiceTerm) return;
+
+    const now = getTimestamp();
+
+    (async () => {
+      const {longQuotation, shortQuotation} = await getQuotation(
+        marketCtx.selectedTicker?.currency ?? 'ETH'
+      );
+
+      // Deprecated: before merging into develop (20230327 - Shirley)
+      // eslint-disable-next-line no-console
+      console.log('first time Effect (direct long)', now, longQuotation.data);
+      // eslint-disable-next-line no-console
+      console.log('first time Effect (direct short)', now, shortQuotation.data);
+
+      setRequiredMarginLong(
+        roundToDecimalPlaces(
+          (targetInputValue * Number(longQuotationRef.current?.price)) / leverage,
+          2
+        )
+      );
+      setValueOfPositionLong(
+        roundToDecimalPlaces(targetInputValue * Number(longQuotationRef.current?.price), 2)
+      );
+      setMarginWarning(requiredMarginLongRef.current > USER_BALANCE);
+    })();
+
+    // Deprecated: before merging into develop (20230327 - Shirley)
+    // eslint-disable-next-line no-console
+    console.log('first time Effect', now, longQuotationRef.current, shortQuotationRef.current);
+  }, [userCtx.enableServiceTerm]);
 
   // Info: Fetch quotation in period (20230327 - Shirley)
   useEffect(() => {
@@ -161,31 +197,6 @@ const TradeTab = () => {
       clearInterval(intervalId);
     };
   }, [secondsLeft]);
-
-  // Info: Fetch quotation in the first time (20230327 - Shirley)
-  useEffect(() => {
-    (async () => {
-      const {longQuotation, shortQuotation} = await getQuotation(
-        marketCtx.selectedTicker?.currency ?? 'ETH'
-      );
-      setRequiredMarginLong(
-        roundToDecimalPlaces(
-          (targetInputValue * Number(longQuotationRef.current?.price)) / leverage,
-          2
-        )
-      );
-      setValueOfPositionLong(
-        roundToDecimalPlaces(targetInputValue * Number(longQuotationRef.current?.price), 2)
-      );
-      setMarginWarning(requiredMarginLongRef.current > USER_BALANCE);
-    })();
-
-    const now = getTimestamp();
-
-    // Deprecated: before merging into develop (20230327 - Shirley)
-    // eslint-disable-next-line no-console
-    console.log('first time Effect', now, longQuotationRef.current, shortQuotationRef.current);
-  }, [userCtx.enableServiceTerm]);
 
   // Info: Fetch quotation when ticker changed (20230327 - Shirley)
   useEffect(() => {
@@ -246,16 +257,21 @@ const TradeTab = () => {
       // ToDo: handle the error code (20230327 - Shirley)
       if (longQuotation.code === Code.WALLET_IS_NOT_CONNECT) {
         // console.log('WALLET_IS_NOT_CONNECT');
+        setQuotationError(true);
       } else if (longQuotation.code === Code.INVAILD_INPUTS) {
         // console.log('INVAILD_INPUTS');
+        setQuotationError(true);
       } else if (longQuotation.code === Code.SERVICE_TERM_DISABLE) {
         // console.log('SERVICE_TERM_DISABLE');
+        setQuotationError(true);
       } else if (longQuotation.code === Code.INTERNAL_SERVER_ERROR) {
         // console.log('INTERNAL_SERVER_ERROR');
+        setQuotationError(true);
       }
     } catch (err) {
       // ToDo: handle the error code (20230327 - Shirley)
       // console.error(err);
+      setQuotationError(true);
     }
 
     try {
@@ -274,16 +290,21 @@ const TradeTab = () => {
       // ToDo: handle the error code (20230327 - Shirley)
       if (shortQuotation.code === Code.WALLET_IS_NOT_CONNECT) {
         // console.log('WALLET_IS_NOT_CONNECT');
+        setQuotationError(true);
       } else if (shortQuotation.code === Code.INVAILD_INPUTS) {
         // console.log('INVAILD_INPUTS');
+        setQuotationError(true);
       } else if (shortQuotation.code === Code.SERVICE_TERM_DISABLE) {
         // console.log('SERVICE_TERM_DISABLE');
+        setQuotationError(true);
       } else if (shortQuotation.code === Code.INTERNAL_SERVER_ERROR) {
         // console.log('INTERNAL_SERVER_ERROR');
+        setQuotationError(true);
       }
     } catch (err) {
       // ToDo: handle the error code (20230327 - Shirley)
       // console.error(err);
+      setQuotationError(true);
     }
 
     return {longQuotation: longQuotation, shortQuotation: shortQuotation};
@@ -895,7 +916,7 @@ const TradeTab = () => {
                 {/* Long Button */}
                 <div className="ml-1/4">
                   <RippleButton
-                    disabled={marginWarningRef.current}
+                    disabled={marginWarningRef.current || quotationErrorRef.current}
                     onClick={longOrderSubmitHandler}
                     buttonType="button"
                     className="mr-2 mb-2 rounded-md bg-lightGreen5 px-7 py-1 text-sm font-medium tracking-wide text-white transition-colors duration-300 hover:bg-lightGreen5/80 disabled:bg-lightGray"
@@ -973,7 +994,7 @@ const TradeTab = () => {
                 {/* Short Button */}
                 <div className="ml-1/4">
                   <RippleButton
-                    disabled={marginWarningRef.current}
+                    disabled={marginWarningRef.current || quotationErrorRef.current}
                     onClick={shortOrderSubmitHandler}
                     buttonType="button"
                     className="mr-2 mb-2 rounded-md bg-lightRed px-7 py-1 text-sm font-medium tracking-wide text-white transition-colors duration-300 hover:bg-lightRed/80 disabled:bg-lightGray"

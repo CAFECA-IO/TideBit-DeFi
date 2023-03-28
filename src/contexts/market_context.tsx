@@ -239,7 +239,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     } catch (error) {
       result = defaultResultFailed;
     }
-    return {...result};
+    return {...result}; // Info: (20230328 - Shirley) return a new object to avoid the reference of result.data being changed
   };
 
   const getTickerHistory = async (

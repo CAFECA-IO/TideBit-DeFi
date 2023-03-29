@@ -316,7 +316,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     return result;
   }, []);
 
-  const toDisplayAcceptedCFDOrder = async (acceptedCFDOrder: IAcceptedCFDOrder) => {
+  const toDisplayAcceptedCFDOrder = (acceptedCFDOrder: IAcceptedCFDOrder) => {
     const openValue = acceptedCFDOrder.openPrice * acceptedCFDOrder.amount;
     const closeValue =
       acceptedCFDOrder.state === OrderState.CLOSED && acceptedCFDOrder.closePrice
@@ -665,7 +665,7 @@ export const UserProvider = ({children}: IUserProvider) => {
               method: Method.POST,
               body: CFDOrder,
             })) as IAcceptedCFDOrder;
-            const displayAcceptedCFDOrder = await toDisplayAcceptedCFDOrder(acceptedCFDOrder);
+            const displayAcceptedCFDOrder = toDisplayAcceptedCFDOrder(acceptedCFDOrder);
             setOpenedCFDs(prev => [...prev, displayAcceptedCFDOrder]);
             const updatedBalance = updateBalance({
               currency: applyCreateCFDOrderData.margin.asset,
@@ -720,7 +720,7 @@ export const UserProvider = ({children}: IUserProvider) => {
               },
             })) as IAcceptedCFDOrder;
             setOpenedCFDs(prev => [...prev].splice(index, 1));
-            const displayAcceptedCFDOrder = await toDisplayAcceptedCFDOrder(acceptedCFDOrder);
+            const displayAcceptedCFDOrder = toDisplayAcceptedCFDOrder(acceptedCFDOrder);
             setClosedCFDs(prev => [...prev, displayAcceptedCFDOrder]);
             const profit =
               (applyCloseCFDOrderData.closePrice - openCFDs[index].openPrice) *
@@ -779,7 +779,7 @@ export const UserProvider = ({children}: IUserProvider) => {
                 openCFD: openCFDs[index], // Deprecated: remove when backend is ready (20230424 - tzuhan)
               },
             })) as IAcceptedCFDOrder;
-            const displayAcceptedCFDOrder = await toDisplayAcceptedCFDOrder(acceptedCFDOrder);
+            const displayAcceptedCFDOrder = toDisplayAcceptedCFDOrder(acceptedCFDOrder);
             setOpenedCFDs(prev => {
               const cfds = [...prev];
               cfds[index] = displayAcceptedCFDOrder;

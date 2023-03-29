@@ -11,6 +11,7 @@ import {IAcceptedOrder} from '../interfaces/tidebit_defi_background/accepted_ord
 import {IAcceptedWithdrawOrder} from '../interfaces/tidebit_defi_background/accepted_withdraw_order';
 import {IBalance} from '../interfaces/tidebit_defi_background/balance';
 import {IOrder} from '../interfaces/tidebit_defi_background/order';
+import {IDisplayAcceptedDepositOrder} from '../interfaces/tidebit_defi_background/display_accepted_deposit_order';
 
 export const roundToDecimalPlaces = (val: number, precision: number): number => {
   const roundedNumber = Number(val.toFixed(precision));
@@ -279,13 +280,33 @@ export const acceptedOrderToOrder = (acceptedOrder: IAcceptedOrder, balance: IBa
     case OrderType.DEPOSIT:
       order.targetAsset = (acceptedOrder as IAcceptedDepositOrder).targetAsset;
       order.targetAmount = (acceptedOrder as IAcceptedDepositOrder).targetAmount;
+      order.orderSnapshot.decimals = (acceptedOrder as IAcceptedDepositOrder).decimals;
+      order.orderSnapshot.to = (acceptedOrder as IAcceptedDepositOrder).to;
       break;
     case OrderType.WITHDRAW:
       order.targetAsset = (acceptedOrder as IAcceptedWithdrawOrder).targetAsset;
       order.targetAmount = (acceptedOrder as IAcceptedWithdrawOrder).targetAmount;
+      order.orderSnapshot.to = (acceptedOrder as IAcceptedWithdrawOrder).to;
       break;
   }
   return order;
+};
+
+export const toDisplayAcceptedDepositOrder = (depositHistory: IOrder) => {
+  const displayAcceptedDepositOrder: IDisplayAcceptedDepositOrder = {
+    targetAsset: depositHistory.targetAsset,
+    targetAmount: depositHistory.targetAmount,
+    orderType: depositHistory.type,
+    createTimestamp: depositHistory.timestamp,
+    balanceSnapshot: depositHistory.balanceSnapshot,
+    id: depositHistory.orderSnapshot.id,
+    txid: depositHistory.orderSnapshot.txid,
+    orderStatus: depositHistory.orderSnapshot.status,
+    fee: depositHistory.orderSnapshot.fee,
+    decimals: depositHistory.orderSnapshot.decimals || 0,
+    to: depositHistory.orderSnapshot.to || '',
+  };
+  return displayAcceptedDepositOrder;
 };
 
 export const randomHex = (length: number) => {

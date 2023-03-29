@@ -19,7 +19,7 @@ const DepositHistoryModal = ({
   modalClickHandler,
   getDepositHistoryData,
 }: IDepositHistoryModal) => {
-  const {txid, createTimestamp, orderStatus, fee, targetAsset, targetAmount, available} =
+  const {txid, createTimestamp, orderStatus, fee, targetAsset, targetAmount, balanceSnapshot} =
     getDepositHistoryData;
 
   const displayedDepositTime = timestampToString(createTimestamp);
@@ -66,7 +66,7 @@ const DepositHistoryModal = ({
       <Lottie className="w-20px" animationData={smallConnectingAnimation} />
     ) : (
       <div>
-        {available.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+        {balanceSnapshot.locked.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
           minimumFractionDigits: 2,
         })}
       </div>

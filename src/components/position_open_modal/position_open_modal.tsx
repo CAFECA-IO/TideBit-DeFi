@@ -75,7 +75,7 @@ const PositionOpenModal = ({
     return order;
   };
 
-  /** ToDo: 
+  /** ToDo: (20230329 - Shirley)
     // loading modal -> UserContext.function (負責簽名) ->
     // 猶豫太久的話，單子會過期，就會顯示 failed modal，
     // 用戶沒簽名才是顯示 canceled modal
@@ -143,7 +143,6 @@ const PositionOpenModal = ({
     return;
   };
 
-  // ToDo: Typo `guaranteedStop`
   const displayedGuaranteedStopSetting = !!openCfdRequest.guaranteedStop ? 'Yes' : 'No';
 
   const displayedTypeOfPosition =
@@ -170,7 +169,7 @@ const PositionOpenModal = ({
   const layoutInsideBorder = 'mx-5 my-2 flex justify-between';
 
   const getQuotation = async () => {
-    let quotation = defaultResultSuccess;
+    let quotation = {...defaultResultSuccess};
 
     try {
       quotation = await marketCtx.getCFDQuotation(
@@ -241,8 +240,12 @@ const PositionOpenModal = ({
   const mouseEnterHandler = () => setGuaranteedTooltipStatus(3);
   const mouseLeaveHandler = () => setGuaranteedTooltipStatus(0);
 
+  // Info: get the quotation before the modal is shown (20230327 - Shirley)
   useEffect(() => {
-    if (!globalCtx.visiblePositionOpenModal) return;
+    if (!globalCtx.visiblePositionOpenModal) {
+      setDataRenewedStyle('text-lightWhite');
+      return;
+    }
 
     const base = openCfdRequest.quotation.deadline;
     const tickingSec = base - getTimestamp();
@@ -250,14 +253,6 @@ const PositionOpenModal = ({
   }, [globalCtx.visiblePositionOpenModal]);
 
   useEffect(() => {
-    // if (!lock()) return;
-
-    if (!globalCtx.visiblePositionOpenModal) {
-      // setSecondsLeft(Math.round(openCfdRequest.quotation.deadline - getTimestamp() - 1));
-      setDataRenewedStyle('text-lightWhite');
-      return;
-    }
-
     const intervalId = setInterval(() => {
       const base = openCfdRequest.quotation.deadline;
       const tickingSec = base - getTimestamp();
@@ -271,7 +266,6 @@ const PositionOpenModal = ({
 
     return () => {
       clearInterval(intervalId);
-      // unlock();
     };
   }, [secondsLeft, globalCtx.visiblePositionOpenModal]);
 

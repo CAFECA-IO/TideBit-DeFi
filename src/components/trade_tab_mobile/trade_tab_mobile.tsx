@@ -659,7 +659,9 @@ const TradeTabMobile = () => {
     />
   );
 
-  const displayedRequiredMarginStyle = (
+  // ----------long area----------
+
+  const displayedRequiredMarginLongStyle = (
     <>
       <div className={`${isDisplayedMarginLongStyle} ${isDisplayedMarginLongSize} mt-1 text-base`}>
         {requiredMarginLongRef.current?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
@@ -674,7 +676,6 @@ const TradeTabMobile = () => {
     </>
   );
 
-  // ----------long area----------
   const longGuaranteedStopChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setLongGuaranteedStopChecked(e.target.checked);
   };
@@ -739,7 +740,6 @@ const TradeTabMobile = () => {
     </div>
   );
 
-  // TODO:　Guranteed stop Layout
   const longGuaranteedStop = (
     <div className={`${isDisplayedLongSlSetting}`}>
       <div className="flex items-center">
@@ -818,6 +818,24 @@ const TradeTabMobile = () => {
   );
 
   // ----------short area----------
+  const displayedRequiredMarginShortStyle = (
+    <>
+      <div
+        className={`${isDisplayedMarginShortStyle} ${isDisplayedMarginShortSize} mt-1 text-base`}
+      >
+        {' '}
+        {requiredMarginShortRef.current?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        })}{' '}
+        {unitAsset}
+      </div>
+      <div className={`${isDisplayedMarginLongWarning} ml-3 text-xs text-lightRed`}>
+        * {t('TRADE_PAGE.TRADE_TAB_NOT_ENOUGH_MARGIN')}
+      </div>
+    </>
+  );
+
   const shortGuaranteedStopChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setShortGuaranteedStopChecked(e.target.checked);
   };
@@ -1007,7 +1025,9 @@ const TradeTabMobile = () => {
               <div className="text-sm text-lightGray">
                 {t('TRADE_PAGE.TRADE_TAB_REQUIRED_MARGIN')}
               </div>
-              {displayedRequiredMarginStyle}
+              {activeTab === 'Long'
+                ? displayedRequiredMarginLongStyle
+                : displayedRequiredMarginShortStyle}
             </div>
 
             <div>
@@ -1016,13 +1036,23 @@ const TradeTabMobile = () => {
 
             <div className="w-1/2">
               <div className="text-sm text-lightGray">{t('TRADE_PAGE.TRADE_TAB_VALUE')}</div>
-              <div className={`text-base text-lightWhite ${isDisplayedValueLongSize}`}>
-                {valueOfPositionLongRef.current?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                })}{' '}
-                {unitAsset}
-              </div>
+              {activeTab === 'Long' ? (
+                <div className={`text-base text-lightWhite ${isDisplayedValueLongSize}`}>
+                  {valueOfPositionLongRef.current?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })}{' '}
+                  {unitAsset}
+                </div>
+              ) : (
+                <div className={`text-base text-lightWhite ${isDisplayedValueShortSize}`}>
+                  {valueOfPositionShortRef.current?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })}{' '}
+                  {unitAsset}
+                </div>
+              )}
             </div>
           </div>
           {longSetting}

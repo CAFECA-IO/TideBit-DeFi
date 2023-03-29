@@ -52,7 +52,6 @@ const TradeTab = () => {
   const LEVERAGE_ERROR = 1;
 
   const ticker = marketCtx.selectedTicker?.currency ?? '';
-  // const LIQUIDATION_PRICE = 7548; // TODO: tickerLiveStatistics
   const USER_BALANCE = userCtx.balance?.available ?? 0;
 
   const leverage = tickerStaticStatistics?.leverage ?? 1;
@@ -61,7 +60,6 @@ const TradeTab = () => {
   const defaultBuyQuotation: IQuotation = getDummyQuotation(ticker, TypeOfPosition.BUY);
   const defaultSellQuotation: IQuotation = getDummyQuotation(ticker, TypeOfPosition.SELL);
 
-  // const [mounted, setMounted, mountedRef] = useStateRef(false);
   const [secondsLeft, setSecondsLeft, secondsLeftRef] = useStateRef(
     POSITION_PRICE_RENEWAL_INTERVAL_SECONDS
   );
@@ -191,19 +189,7 @@ const TradeTab = () => {
 
       renewPosition();
 
-      setLongTpValue(
-        Number((Number(longQuotationRef.current?.price) * (1 + SUGGEST_TP)).toFixed(2))
-      );
-      setLongSlValue(
-        Number((Number(longQuotationRef.current?.price) * (1 - SUGGEST_SL)).toFixed(2))
-      );
-
-      setShortTpValue(
-        Number((Number(shortQuotationRef.current?.price) * (1 - SUGGEST_TP)).toFixed(2))
-      );
-      setShortSlValue(
-        Number((Number(shortQuotationRef.current?.price) * (1 + SUGGEST_SL)).toFixed(2))
-      );
+      initSuggestion();
     })();
 
     // Deprecated: before merging into develop (20230327 - Shirley)
@@ -221,8 +207,6 @@ const TradeTab = () => {
       const diff = base - getTimestamp();
       const tickingSec = diff > 0 ? Math.floor(diff) : 0;
       setSecondsLeft(tickingSec);
-
-      // const now = getTimestamp();
 
       if (tickingSec === 0) {
         const {longQuotation, shortQuotation} = await getQuotation(
@@ -273,7 +257,6 @@ const TradeTab = () => {
       longQuotation = await marketCtx.getCFDQuotation(tickerId, TypeOfPosition.BUY);
       shortQuotation = await marketCtx.getCFDQuotation(tickerId, TypeOfPosition.SELL);
 
-      // const now = getTimestamp();
       const long = longQuotation.data as IQuotation;
       const short = shortQuotation.data as IQuotation;
 
@@ -426,6 +409,19 @@ const TradeTab = () => {
     );
   };
 
+  // Info: suggest the tp / sl in the beginning (20230329 - Shirley)
+  const initSuggestion = () => {
+    setLongTpValue(Number((Number(longQuotationRef.current?.price) * (1 + SUGGEST_TP)).toFixed(2)));
+    setLongSlValue(Number((Number(longQuotationRef.current?.price) * (1 - SUGGEST_SL)).toFixed(2)));
+
+    setShortTpValue(
+      Number((Number(shortQuotationRef.current?.price) * (1 - SUGGEST_TP)).toFixed(2))
+    );
+    setShortSlValue(
+      Number((Number(shortQuotationRef.current?.price) * (1 + SUGGEST_SL)).toFixed(2))
+    );
+  };
+
   // Info: renew the value of position when target input changed (20230328 - Shirley)
   const renewPosition = () => {
     // Long
@@ -538,9 +534,6 @@ const TradeTab = () => {
     longOrder: IApplyCreateCFDOrderData;
     shortOrder: IApplyCreateCFDOrderData;
   } => {
-    // const longGsl = Number(gsl) * valueOfPositionLongRef.current;
-    // const shortGsl = Number(gsl) * valueOfPositionShortRef.current;
-
     const share = {
       ticker: marketCtx.selectedTicker?.currency ?? '',
       targetAsset: marketCtx.selectedTicker?.currency ?? '',
@@ -633,34 +626,6 @@ const TradeTab = () => {
   const shortToolMouseEnterHandler = () => setShortTooltipStatus(3);
   const shortToolMouseLeaveHandler = () => setShortTooltipStatus(0);
 
-  /* Till: (20230409 - Shirley)
-  // FIXME: it won't renew when user check guaranteed-stop
-  // useEffect(() => {
-  //   globalCtx.dataPositionOpenModalHandler({
-  //     id: '202302221915',
-  //     ticker: marketCtx.selectedTicker?.currency ?? '',
-  //     typeOfPosition: TypeOfPosition.BUY,
-  //     orderType: OrderType.CFD,
-  //     orderStatus: OrderStatusUnion.PROCESSING,
-  //     price: Number(buyEstimatedFilledPrice) ?? 9999999999,
-  //     // price: marketCtx.tickerLiveStatistics?.buyEstimatedFilledPrice ?? 9999999999,
-  //     // price: marketCtx.selectedTicker?.price ?? 9999999999,
-  //     triggerPrice: marketCtx.selectedTicker?.price ?? 9999999999,
-  //     estimatedFilledPrice: marketCtx.selectedTicker?.price ?? 9999999999,
-  //     fee: marketCtx.tickerLiveStatistics?.fee ?? 9999999999,
-  //     leverage: marketCtx.tickerStatic?.leverage ?? 1,
-  //     // TODO: requiredMarginRef.current / requiredMargin
-  //     margin: requiredMarginRef.current,
-  //     guranteedStop: longSlToggle ? longGuaranteedStopChecked : false,
-  //     takeProfit: longTpToggle ? longTpValue : undefined,
-  //     stopLoss: longSlToggle ? longSlValue : undefined,
-  //     createdTime: 1676369333495,
-  //     targetUnit: marketCtx.selectedTicker?.currency ?? '',
-  //     chargeUnit: 'USDT',
-  //   });
-  // }, [marginInputValue, marketCtx.selectedTicker]);
-  */
-
   // ----------Target area----------
   const displayedTargetAmountSetting = (
     <TradingInput
@@ -716,14 +681,6 @@ const TradeTab = () => {
   );
 
   const displayedExpectedLongProfit = (
-    // longTpToggle ? (
-    //   <div className={`${`translate-y-2`} -mt-0 items-center transition-all duration-500`}>
-    //     <div className="text-sm text-lightWhite">
-    //       {expectedLongProfitValue.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}
-    //     </div>
-    //   </div>
-    // ) : null;
-
     <div
       className={`${
         longTpToggle ? `mb-5 translate-y-2` : `invisible translate-y-0`
@@ -772,7 +729,6 @@ const TradeTab = () => {
     </div>
   );
 
-  // TODO:　Guranteed stop Layout
   const longGuaranteedStop = (
     // <div className={`${isDisplayedLongSlSetting} mt-0 h-14 items-center`}>
     <div
@@ -975,8 +931,6 @@ const TradeTab = () => {
             <div
               className={`pointer-events-auto ${tabBodyWidth} h-screen overflow-y-auto bg-darkGray p-5 text-white transition-all duration-300`}
             >
-              {/* <h1 className="pl-5 text-2xl font-bold">Start to trade</h1> */}
-
               {/* ---target input area--- */}
               {displayedTargetAmountSetting}
 
@@ -1050,8 +1004,6 @@ const TradeTab = () => {
                   </div>
                 </div>
 
-                {/* Deprecated: before merging into develop (20230327 - Shirley) */}
-                {/* <p>{secondsLeft}</p> */}
                 {/* Long Button */}
                 <div className="ml-60px">
                   <RippleButton
@@ -1075,11 +1027,6 @@ const TradeTab = () => {
 
               {/* Divider: border-bottom */}
               <div className="mt-3 border-b-1px border-lightGray"></div>
-
-              {/* Divider between long and short */}
-              {/* <span
-                className={`${isDisplayedDividerSpacing} absolute top-420px my-auto h-px w-7/8 rounded bg-white/50`}
-              ></span> */}
 
               {/* ---Short Section--- */}
               <div className="pb-24">

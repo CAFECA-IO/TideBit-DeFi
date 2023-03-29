@@ -280,6 +280,10 @@ const UpdateFormModal = ({
 
   const layoutInsideBorder = 'mx-5 my-3 flex justify-between';
 
+  const gslFee = openCfdDetails.guaranteedStop
+    ? openCfdDetails.guaranteedStopFee
+    : guaranteedStopFeeRef.current;
+
   const toDisplayCloseOrder = (cfd: IDisplayAcceptedCFDOrder): IDisplayAcceptedCFDOrder => {
     const order = {
       ...cfd,
@@ -290,7 +294,7 @@ const UpdateFormModal = ({
   const toApplyUpdateOrder = () => {
     let changedProperties: IApplyUpdateCFDOrderData = {orderId: openCfdDetails.id};
 
-    // Detect if tpValue has changed
+    // Info: (20230329 - Shirley) Detect if tpValue has changed
     if (tpToggle && tpValue !== openCfdDetails.takeProfit) {
       changedProperties = {
         ...changedProperties,
@@ -298,12 +302,12 @@ const UpdateFormModal = ({
       };
     }
 
-    // Detect if spValue has changed
+    // Info: (20230329 - Shirley) Detect if spValue has changed
     if (slToggle && slValue !== openCfdDetails.stopLoss) {
       changedProperties = {...changedProperties, stopLoss: slValue};
     }
 
-    // Detect if tpToggle has changed
+    // Info: (20230329 - Shirley) Detect if tpToggle has changed
     if (initialTpToggle !== tpToggle) {
       changedProperties = {
         ...changedProperties,
@@ -311,7 +315,7 @@ const UpdateFormModal = ({
       };
     }
 
-    // Detect if slToggle has changed
+    // Info: (20230329 - Shirley) Detect if slToggle has changed
     if (initialSlToggle !== slToggle) {
       changedProperties = {
         ...changedProperties,
@@ -319,7 +323,7 @@ const UpdateFormModal = ({
       };
     }
 
-    // Detect if guaranteedStop has changed
+    // Info: (20230329 - Shirley) Detect if guaranteedStop has changed
     if (guaranteedChecked !== openCfdDetails.guaranteedStop) {
       const stopLoss = slValue !== openCfdDetails.stopLoss ? slValue : undefined;
       const guaranteedStopFee = guaranteedStopFeeRef.current;
@@ -334,13 +338,6 @@ const UpdateFormModal = ({
 
     if (Object.keys(changedProperties).filter(key => key !== 'orderId').length > 0) {
       changedProperties = {...changedProperties};
-
-      // Till: (20230410 - Shirley)
-      // globalCtx.toast({
-      //   type: 'info',
-      //   message: 'Changes: \n' + JSON.stringify(changedProperties),
-      //   toastId: JSON.stringify(changedProperties),
-      // });
     }
 
     return changedProperties;
@@ -398,10 +395,6 @@ const UpdateFormModal = ({
       />
     </div>
   );
-
-  const gslFee = openCfdDetails.guaranteedStop
-    ? openCfdDetails.guaranteedStopFee
-    : guaranteedStopFeeRef.current;
 
   const guaranteedStopLoss = (
     <div className="">
@@ -659,15 +652,7 @@ const UpdateFormModal = ({
 
                   <div className={`${layoutInsideBorder}`}>
                     <div className="text-lightGray">{t('POSITION_MODAL.STATE')}</div>
-                    <div className="">
-                      {t('POSITION_MODAL.STATE_OPEN')}
-                      {/* <button
-                        type="button"
-                        className="ml-2 text-tidebitTheme underline underline-offset-2"
-                      >
-                        Close
-                      </button> */}
-                    </div>
+                    <div className="">{t('POSITION_MODAL.STATE_OPEN')}</div>
                   </div>
                 </div>
               </div>

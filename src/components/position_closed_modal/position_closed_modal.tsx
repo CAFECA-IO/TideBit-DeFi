@@ -77,7 +77,7 @@ const PositionClosedModal = ({
 
   const [quotationError, setQuotationError, quotationErrorRef] = useStateRef(false);
 
-  // TODO: (20230317 - Shirley) get from marketCtx
+  // Info: dummy data (20230329 - Shirley)
   const quotation: IQuotation = {
     ticker: openCfdDetails.ticker,
     typeOfPosition: openCfdDetails.typeOfPosition,
@@ -86,12 +86,6 @@ const PositionClosedModal = ({
     unitAsset: openCfdDetails.unitAsset,
     deadline: getDeadline(POSITION_PRICE_RENEWAL_INTERVAL_SECONDS),
     signature: '0x',
-  };
-
-  const cfdDetails: IDisplayAcceptedCFDOrder = {
-    ...openCfdDetails,
-    closePrice: quotation.price,
-    pnl: {type: ProfitState.PROFIT, value: 1000}, // TODO: (20230317 - Shirley)  自己算 PNL
   };
 
   const [gQuotation, setGQuotation, gQuotationRef] = useStateRef<IQuotation>(quotation);
@@ -224,7 +218,7 @@ const PositionClosedModal = ({
   };
 
   const getQuotation = async () => {
-    let quotation = defaultResultSuccess;
+    let quotation = {...defaultResultSuccess};
 
     try {
       quotation = await marketCtx.getCFDQuotation(
@@ -297,7 +291,6 @@ const PositionClosedModal = ({
       // TODO: temporary waiting
       await wait(DELAYED_HIDDEN_SECONDS);
 
-      // Close loading modal
       globalCtx.eliminateAllModals();
 
       // TODO: Revise the `result.reason` to constant by using enum or object
@@ -405,10 +398,6 @@ const PositionClosedModal = ({
       globalCtx.dataPositionClosedModalHandler(displayedCloseOrder);
 
       setGQuotation(quotation);
-
-      // Deprecated: before merging into develop (20230327 - Shirley)
-      // eslint-disable-next-line no-console
-      // console.log('quotation from ctx', quotation);
     })();
   }, [globalCtx.visiblePositionClosedModal]);
 
@@ -467,11 +456,8 @@ const PositionClosedModal = ({
           className={`${displayedBorderColor} mt-1 border-1px py-4 text-xs leading-relaxed text-lightWhite`}
         >
           <div className="flex flex-col justify-center text-center">
-            {/* {displayedDataFormat()} */}
-
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">{t('POSITION_MODAL.TYPE')}</div>
-              {/* TODO: color variable */}
               <div className={`${displayedPositionColor}`}>
                 {displayedTypeOfPosition}
                 <span className="ml-1 text-lightGray">{displayedBuyOrSell}</span>

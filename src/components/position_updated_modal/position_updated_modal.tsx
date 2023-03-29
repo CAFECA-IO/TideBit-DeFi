@@ -79,11 +79,7 @@ const PositionUpdatedModal = ({
     });
     globalCtx.visibleLoadingModalHandler();
 
-    // TODO: (20230315 - Shirley) the guaranteedStop should be removed
     const result = await userCtx.updateCFDOrder(toApplyUpdateOrder(openCfdDetails));
-
-    // TODO:  (20230317 - Shirley) for debug
-    // globalCtx.toast({message: 'update-position result: ' + JSON.stringify(result), type: 'info'});
 
     globalCtx.dataLoadingModalHandler({
       modalTitle: 'Update Position',

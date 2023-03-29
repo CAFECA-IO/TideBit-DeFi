@@ -179,7 +179,7 @@ const ReserveRatio = () => {
                       <BiLinkAlt size={20} />
                     </div>
                   </div>
-                  <span className="my-auto h-px w-full rounded bg-lightGray1/30 xs:inline-block"></span>
+                  <span className="my-auto inline-block h-px w-full rounded bg-lightGray1/30"></span>
 
                   {/* <a className="mt-3 inline-flex items-center text-indigo-400">
                   Learn More

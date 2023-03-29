@@ -12,6 +12,7 @@ import {IOrder} from '../../interfaces/tidebit_defi_background/order';
 import {UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
 import {useTranslation} from 'next-i18next';
 import {IAcceptedDepositOrder} from '../../interfaces/tidebit_defi_background/accepted_deposit_order';
+import {IAcceptedWithdrawOrder} from '../../interfaces/tidebit_defi_background/accepted_withdraw_order';
 
 type TranslateFunction = (s: string) => string;
 interface IReceiptItemProps {

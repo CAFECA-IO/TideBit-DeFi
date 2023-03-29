@@ -189,19 +189,7 @@ const TradeTabMobile = () => {
 
       renewPosition();
 
-      setLongTpValue(
-        Number((Number(longQuotationRef.current?.price) * (1 + SUGGEST_TP)).toFixed(2))
-      );
-      setLongSlValue(
-        Number((Number(longQuotationRef.current?.price) * (1 - SUGGEST_SL)).toFixed(2))
-      );
-
-      setShortTpValue(
-        Number((Number(shortQuotationRef.current?.price) * (1 - SUGGEST_TP)).toFixed(2))
-      );
-      setShortSlValue(
-        Number((Number(shortQuotationRef.current?.price) * (1 + SUGGEST_SL)).toFixed(2))
-      );
+      initSuggestion();
     })();
 
     // Deprecated: before merging into develop (20230327 - Shirley)
@@ -219,8 +207,6 @@ const TradeTabMobile = () => {
       const diff = base - getTimestamp();
       const tickingSec = diff > 0 ? Math.floor(diff) : 0;
       setSecondsLeft(tickingSec);
-
-      // const now = getTimestamp();
 
       if (tickingSec === 0) {
         const {longQuotation, shortQuotation} = await getQuotation(
@@ -423,6 +409,18 @@ const TradeTabMobile = () => {
     );
   };
 
+  const initSuggestion = () => {
+    setLongTpValue(Number((Number(longQuotationRef.current?.price) * (1 + SUGGEST_TP)).toFixed(2)));
+    setLongSlValue(Number((Number(longQuotationRef.current?.price) * (1 - SUGGEST_SL)).toFixed(2)));
+
+    setShortTpValue(
+      Number((Number(shortQuotationRef.current?.price) * (1 - SUGGEST_TP)).toFixed(2))
+    );
+    setShortSlValue(
+      Number((Number(shortQuotationRef.current?.price) * (1 + SUGGEST_SL)).toFixed(2))
+    );
+  };
+
   // Info: renew the value of position when target input changed (20230328 - Shirley)
   const renewPosition = () => {
     // Long
@@ -513,9 +511,6 @@ const TradeTabMobile = () => {
     longOrder: IApplyCreateCFDOrderData;
     shortOrder: IApplyCreateCFDOrderData;
   } => {
-    // const longGsl = Number(gsl) * valueOfPositionLongRef.current;
-    // const shortGsl = Number(gsl) * valueOfPositionShortRef.current;
-
     const share = {
       ticker: marketCtx.selectedTicker?.currency ?? '',
       targetAsset: marketCtx.selectedTicker?.currency ?? '',
@@ -660,7 +655,6 @@ const TradeTabMobile = () => {
   );
 
   // ----------long area----------
-
   const displayedRequiredMarginLongStyle = (
     <>
       <div className={`${isDisplayedMarginLongStyle} ${isDisplayedMarginLongSize} mt-1 text-base`}>
@@ -830,7 +824,7 @@ const TradeTabMobile = () => {
         })}{' '}
         {unitAsset}
       </div>
-      <div className={`${isDisplayedMarginLongWarning} ml-3 text-xs text-lightRed`}>
+      <div className={`${isDisplayedMarginShortWarning} ml-3 text-xs text-lightRed`}>
         * {t('TRADE_PAGE.TRADE_TAB_NOT_ENOUGH_MARGIN')}
       </div>
     </>

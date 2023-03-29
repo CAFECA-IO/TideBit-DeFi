@@ -46,7 +46,9 @@ const PositionUpdatedModal = ({
 
   const toApplyUpdateOrder = (position: IDisplayAcceptedCFDOrder): IApplyUpdateCFDOrderData => {
     const gsl = marketCtx.guaranteedStopFeePercentage;
-    const gslFee = updatedProps?.guaranteedStop ? Number(gsl) * position.openValue : 0;
+    const gslFee = updatedProps?.guaranteedStop
+      ? Number((Number(gsl) * position.openValue).toFixed(2))
+      : 0;
     const request = {
       orderId: position.id,
       ...updatedProps,

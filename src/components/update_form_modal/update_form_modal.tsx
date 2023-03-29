@@ -44,7 +44,7 @@ const UpdateFormModal = ({
   ...otherProps
 }: IUpdatedFormModal) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
-  // console.log('openCfdDetails in details modal: ', openCfdDetails.id);
+
   const globalCtx = useGlobal();
   const marketCtx = useContext(MarketContext);
 
@@ -53,6 +53,7 @@ const UpdateFormModal = ({
 
   const cfdTp = openCfdDetails?.takeProfit;
   const cfdSl = openCfdDetails?.stopLoss;
+  const gsl = marketCtx.guaranteedStopFeePercentage;
 
   const initialTpInput = cfdTp ?? openCfdDetails.suggestion.takeProfit;
 
@@ -78,14 +79,13 @@ const UpdateFormModal = ({
   const [expectedProfitValue, setExpectedProfitValue, expectedProfitValueRef] = useStateRef(0);
   const [expectedLossValue, setExpectedLossValue, expectedLossValueRef] = useStateRef(0);
 
-  const displayedState =
-    openCfdDetails.state === OrderState.OPENING
-      ? 'Open'
-      : openCfdDetails.state === OrderState.CLOSED
-      ? 'Close'
-      : openCfdDetails.state === OrderState.FREEZED
-      ? 'Freezed'
-      : '';
+  const [guaranteedStopFee, setGuaranteedStopFee, guaranteedStopFeeRef] = useStateRef(
+    Number(gsl) * openCfdDetails.openPrice * openCfdDetails.amount
+  );
+
+  useEffect(() => {
+    setGuaranteedStopFee(Number(gsl) * openCfdDetails.openPrice * openCfdDetails.amount);
+  }, [gsl, openCfdDetails.openPrice, openCfdDetails.amount]);
 
   const getToggledTpSetting = (bool: boolean) => {
     setTpToggle(bool);
@@ -322,9 +322,7 @@ const UpdateFormModal = ({
     // Detect if guaranteedStop has changed
     if (guaranteedChecked !== openCfdDetails.guaranteedStop) {
       const stopLoss = slValue !== openCfdDetails.stopLoss ? slValue : undefined;
-      const guaranteedStopFee = Number(
-        (openCfdDetails.openValue * (marketCtx?.tickerStatic?.guaranteedStopFee ?? 99)).toFixed(2)
-      );
+      const guaranteedStopFee = guaranteedStopFeeRef.current;
 
       changedProperties = {
         ...changedProperties,
@@ -401,6 +399,10 @@ const UpdateFormModal = ({
     </div>
   );
 
+  const gslFee = openCfdDetails.guaranteedStop
+    ? openCfdDetails.guaranteedStopFee
+    : guaranteedStopFeeRef.current;
+
   const guaranteedStopLoss = (
     <div className="">
       <div className="flex items-center text-center">
@@ -414,7 +416,12 @@ const UpdateFormModal = ({
         <label className="ml-2 flex text-xs font-medium text-lightGray">
           {t('POSITION_MODAL.GUARANTEED_STOP')}
           <span className="ml-1 text-lightWhite">
-            ({t('POSITION_MODAL.FEE')}: {openCfdDetails?.guaranteedStopFee} {unitAsset})
+            ({t('POSITION_MODAL.FEE')}:{' '}
+            {gslFee?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}{' '}
+            {unitAsset})
           </span>
           {/* tooltip */}
           <div className="ml-3">

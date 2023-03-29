@@ -1,3 +1,4 @@
+import keccak from '@cafeca/keccak';
 import Lunar from '@cafeca/lunar';
 import React, {createContext, useCallback, useContext} from 'react';
 import useState from 'react-usestateref';
@@ -664,26 +665,20 @@ export const UserProvider = ({children}: IUserProvider) => {
               method: Method.POST,
               body: CFDOrder,
             })) as IAcceptedCFDOrder;
+            const displayAcceptedCFDOrder = await toDisplayAcceptedCFDOrder(acceptedCFDOrder);
+            setOpenedCFDs(prev => [...prev, displayAcceptedCFDOrder]);
+            const updatedBalance = updateBalance({
+              currency: applyCreateCFDOrderData.margin.asset,
+              available: -applyCreateCFDOrderData.margin.amount,
+              locked: applyCreateCFDOrderData.margin.amount,
+            });
+            const history: IOrder = acceptedOrderToOrder(acceptedCFDOrder, updatedBalance);
+            setHistories(prev => [...prev, history]);
             result = {
               success: true,
               code: Code.SUCCESS,
-              data: acceptedCFDOrder,
+              data: history,
             };
-            const displayAcceptedCFDOrder = await toDisplayAcceptedCFDOrder(acceptedCFDOrder);
-            setOpenedCFDs(prev => [...prev, displayAcceptedCFDOrder]);
-            const balance = getBalance(applyCreateCFDOrderData.margin.asset);
-            if (balance) {
-              const updatedBalance = updateBalance({
-                currency: applyCreateCFDOrderData.margin.asset,
-                available: -applyCreateCFDOrderData.margin.amount,
-                locked: applyCreateCFDOrderData.margin.amount,
-              });
-              const history: IOrder = acceptedOrderToOrder(acceptedCFDOrder, updatedBalance);
-              setHistories(prev => [...prev, history]);
-              // Deprecated: remove when backend is ready (20230424 - tzuhan)
-              // eslint-disable-next-line no-console
-              console.log(`historiesRef.current`, historiesRef.current);
-            }
           }
         }
       }
@@ -724,32 +719,26 @@ export const UserProvider = ({children}: IUserProvider) => {
                 openCFD: openCFDs[index], // Deprecated: remove when backend is ready (20230424 - tzuhan)
               },
             })) as IAcceptedCFDOrder;
-            result = {
-              success: true,
-              code: Code.SUCCESS,
-              data: acceptedCFDOrder,
-            };
             setOpenedCFDs(prev => [...prev].splice(index, 1));
             const displayAcceptedCFDOrder = await toDisplayAcceptedCFDOrder(acceptedCFDOrder);
             setClosedCFDs(prev => [...prev, displayAcceptedCFDOrder]);
-            const balance = getBalance(openCFDs[index].margin.asset);
             const profit =
               (applyCloseCFDOrderData.closePrice - openCFDs[index].openPrice) *
               openCFDs[index].amount *
               (openCFDs[index].typeOfPosition === TypeOfPosition.BUY ? 1 : -1);
-            if (balance) {
-              const balanceDiff: IBalance = {
-                currency: openCFDs[index].margin.asset,
-                available: openCFDs[index].margin.amount + profit,
-                locked: -openCFDs[index].margin.amount,
-              };
-              const updatedBalance = updateBalance(balanceDiff);
-              const history: IOrder = acceptedOrderToOrder(acceptedCFDOrder, updatedBalance);
-              setHistories(prev => [...prev, history]);
-              // Deprecated: remove when backend is ready (20230424 - tzuhan)
-              // eslint-disable-next-line no-console
-              console.log(`historiesRef.current`, historiesRef.current);
-            }
+            const balanceDiff: IBalance = {
+              currency: openCFDs[index].margin.asset,
+              available: openCFDs[index].margin.amount + profit,
+              locked: -openCFDs[index].margin.amount,
+            };
+            const updatedBalance = updateBalance(balanceDiff);
+            const history: IOrder = acceptedOrderToOrder(acceptedCFDOrder, updatedBalance);
+            setHistories(prev => [...prev, history]);
+            result = {
+              success: true,
+              code: Code.SUCCESS,
+              data: history,
+            };
           }
         }
       }
@@ -790,34 +779,28 @@ export const UserProvider = ({children}: IUserProvider) => {
                 openCFD: openCFDs[index], // Deprecated: remove when backend is ready (20230424 - tzuhan)
               },
             })) as IAcceptedCFDOrder;
-            result = {
-              success: true,
-              code: Code.SUCCESS,
-              data: acceptedCFDOrder,
-            };
             const displayAcceptedCFDOrder = await toDisplayAcceptedCFDOrder(acceptedCFDOrder);
             setOpenedCFDs(prev => {
               const cfds = [...prev];
               cfds[index] = displayAcceptedCFDOrder;
               return cfds;
             });
-            const balance = getBalance(openCFDs[index].margin.asset);
-            if (balance) {
-              const updatedBalance = updateBalance({
-                currency: openCFDs[index].margin.asset,
-                available: 0,
-                locked: 0,
-              });
-              const history: IOrder = acceptedOrderToOrder(acceptedCFDOrder, updatedBalance);
-              setHistories(prev => [...prev, history]);
-              // Deprecated: remove when backend is ready (20230424 - tzuhan)
-              // eslint-disable-next-line no-console
-              console.log(`historiesRef.current`, historiesRef.current);
-            }
+            const updatedBalance = updateBalance({
+              currency: openCFDs[index].margin.asset,
+              available: 0,
+              locked: 0,
+            });
+            const history: IOrder = acceptedOrderToOrder(acceptedCFDOrder, updatedBalance);
+            setHistories(prev => [...prev, history]);
+            result = {
+              success: true,
+              code: Code.SUCCESS,
+              data: history,
+            };
           }
         }
       }
-      return await Promise.resolve<IResult>(result);
+      return result;
     } else {
       const isConnected = await connect();
       if (isConnected) return updateCFDOrder(applyUpdateCFDOrderData);
@@ -831,21 +814,35 @@ export const UserProvider = ({children}: IUserProvider) => {
   const deposit = async (depositOrder: IApplyDepositOrder): Promise<IResult> => {
     let result: IResult = defaultResultFailed;
     if (lunar.isConnected) {
+      /** 
+      * TODO: temporary comment send metamask, will uncomment (20230329 - tzuhan)
       const walletBalance: IWalletBalance | null = getWalletBalance(depositOrder.targetAsset);
-      // if (walletBalance && walletBalance.balance >= depositOrder.targetAmount) { // ++ TODO verify
+      if (walletBalance && walletBalance.balance >= depositOrder.targetAmount) {
       const transaction: {to: string; amount: number; data: string} =
         transactionEngine.transferDepositOrderToTransaction(depositOrder);
       const txHash = await lunar.send(transaction);
       // TODO: updateWalletBalances
+      // */
+      const txHash = keccak.keccak256(
+        transactionEngine.transferDepositOrderToTransaction(depositOrder)
+      );
       const acceptedDepositOrder = (await workerCtx.requestHandler({
         name: APIName.CREATE_WITHDRAW_TRADE,
         method: Method.POST,
         body: {data: depositOrder, txHash},
       })) as IAcceptedDepositOrder;
+      setDeposits(prev => [...prev, acceptedDepositOrder]);
+      const updatedBalance = updateBalance({
+        currency: depositOrder.targetAsset,
+        available: 0,
+        locked: depositOrder.targetAmount,
+      });
+      const history: IOrder = acceptedOrderToOrder(acceptedDepositOrder, updatedBalance);
+      setHistories(prev => [...prev, history]);
       result = {
         success: true,
         code: Code.SUCCESS,
-        data: acceptedDepositOrder,
+        data: history,
       };
       return result;
     } else {
@@ -872,10 +869,17 @@ export const UserProvider = ({children}: IUserProvider) => {
             method: Method.POST,
             body: {data: withdrawOrder, signature},
           })) as IAcceptedWithdrawOrder;
+          const updatedBalance = updateBalance({
+            currency: withdrawOrder.targetAsset,
+            available: -withdrawOrder.targetAmount,
+            locked: withdrawOrder.targetAmount,
+          });
+          const history: IOrder = acceptedOrderToOrder(acceptedWithdrawOrder, updatedBalance);
+          setHistories(prev => [...prev, history]);
           result = {
             success: true,
             code: Code.SUCCESS,
-            data: acceptedWithdrawOrder,
+            data: history,
           };
         }
       }

@@ -1,6 +1,6 @@
 import React, {useContext, useEffect} from 'react';
 import Lottie from 'lottie-react';
-import errorAnimation from '../../public/animation/oops.json';
+import comingSoonAnimation from '../../public/animation/coming-soon.json';
 import NavBar from '../components/nav_bar/nav_bar';
 import NavBarMobile from '../components/nav_bar_mobile/nav_bar_mobile';
 import {serverSideTranslations} from 'next-i18next/serverSideTranslations';
@@ -12,23 +12,8 @@ import Head from 'next/head';
 import {useTranslation} from 'next-i18next';
 
 type TranslateFunction = (s: string) => string;
-// function Error({statusCode}: any) {
-//   return (
-//     <div>
-//       <NavBar />
-//       <Lottie animationData={errorAnimation} />
-//     </div>
-//   );
-// }
 
-// Error.getInitialProps = ({res, err}: any) => {
-//   const statusCode = res ? res.statusCode : err ? err.statusCode : 404;
-//   return {statusCode};
-// };
-
-// export default Error;
-
-const Custom500 = () => {
+const ComingSoon = () => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
   const {layoutAssertion} = useGlobal();
@@ -46,17 +31,16 @@ const Custom500 = () => {
       {appCtx.isInit ? (
         <>
           <Head>
-            <title>Error - TideBit DeFi</title>
+            <title>Coming Soon - TideBit DeFi</title>
             <link rel="icon" href="/favicon.ico" />
           </Head>
           <div>
             {displayedNavBar}
             <div className="relative flex min-h-600px flex-col items-center justify-center">
-              <Lottie animationData={errorAnimation} />
+              <Lottie animationData={comingSoonAnimation} />
               <div className="absolute bottom-1/3 text-center text-white">
-                <div className="whiteSpace-auto sm:whiteSpace-nowrap w-200px sm:w-auto">
-                  {t('ERROR_PAGE.DESCRIPTION1')} {t('ERROR_PAGE.DESCRIPTION2')}
-                </div>
+                <div>{t('COMING_SOON_PAGE.DESCRIPTION1')}</div>
+                <div>{t('COMING_SOON_PAGE.DESCRIPTION2')}</div>
               </div>
             </div>
             <Footer />
@@ -79,4 +63,4 @@ const getStaticPropsFunction = async ({locale}: ILocale) => ({
 
 export const getStaticProps = getStaticPropsFunction;
 
-export default Custom500;
+export default ComingSoon;

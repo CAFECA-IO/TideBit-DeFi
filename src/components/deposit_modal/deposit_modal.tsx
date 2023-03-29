@@ -284,7 +284,7 @@ const DepositModal = ({
           <div
             id="depositModal"
             // ref={modalRef}
-            className="relative flex h-420px w-296px flex-col rounded-3xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none"
+            className="relative flex h-420px w-296px flex-col rounded-xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none"
           >
             {/*header*/}
             <div className="flex items-start justify-between rounded-t pt-9">

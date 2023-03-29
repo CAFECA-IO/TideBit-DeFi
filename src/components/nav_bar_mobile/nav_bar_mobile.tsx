@@ -24,10 +24,9 @@ const NavBarMobile = () => {
   const [navOpen, setNavOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  //lang sub menu
   const [langIsOpen, setLangIsOpen] = useState(false);
 
-  //menu text
+  /* Info: (20230327 - Julian) Menu Text */
   const menuText = langIsOpen ? t('NAV_BAR.LANGUAGE') : t('NAV_BAR.MENU');
 
   const {
@@ -36,15 +35,7 @@ const NavBarMobile = () => {
     setComponentVisible,
   } = useOuterClick<HTMLDivElement>(false);
 
-  // // TODO: move to Global COntext
-  // const [panelVisible, setPanelVisible] = useState(false);
-
-  // const panelClickHandler = () => {
-  //   setPanelVisible(!panelVisible);
-  // };
-
   const wallectConnectBtnClickHandler = () => {
-    // setNavOpen(!navOpen);
     globalCtx.visibleWalletPanelHandler();
   };
 
@@ -59,7 +50,6 @@ const NavBarMobile = () => {
   const sidebarOpenHandler = () => {
     setSidebarOpen(!sidebarOpen);
     setComponentVisible(!componentVisible);
-    //console.log('sidebarOpenHandler clicked, componentVisible: ', componentVisible);
   };
 
   const hamburgerStyles = 'opacity-100 block bg-lightWhite h-3px rounded-12px ease-in duration-300';
@@ -67,7 +57,7 @@ const NavBarMobile = () => {
   const menuItemStyles =
     'block rounded-md px-3 py-5 font-medium hover:cursor-pointer hover:text-tidebitTheme';
 
-  // hamburger animation
+  /* Info: (20230327 - Julian) Hamburger Animation */
   const displayedMobileNavBarLine1 = !navOpen
     ? 'translate-y-0 rotate-0'
     : 'translate-y-1.5 origin-left w-3/4 -rotate-35';
@@ -77,7 +67,6 @@ const NavBarMobile = () => {
     : 'translate-y-0 origin-left w-3/4 rotate-35';
 
   const isDisplayedMobileNavBar = navOpen ? 'top-14 min-h-screen inset-0 bg-darkGray/100' : '';
-  // componentVisible ? 'animate-fadeIn' : 'animate-fadeOut';
 
   const isDisplayedNotificationSidebarMobileCover = (
     <div
@@ -104,7 +93,7 @@ const NavBarMobile = () => {
       onClick={wallectConnectBtnClickHandler} // show wallet panel
       className={`rounded border-0 bg-tidebitTheme py-2 px-3 text-sm text-white transition-all duration-300 hover:bg-cyan-600`}
     >
-      {/* Wallet Connect */}
+      {/* Info: (20230327 - Julian) Show Wallet Connect */}
       {t('NAV_BAR.WALLET_CONNECT')}
     </TideButton>
   );
@@ -149,14 +138,7 @@ const NavBarMobile = () => {
 
             <div className="z-50 flex grow justify-end">{isDisplayedUser}</div>
 
-            <div className="invisible ml-auto lg:visible">
-              {/* <WalletPanel
-                panelVisible={panelVisible}
-                panelClickHandler={panelClickHandler}
-                // getUserLoginState={getUserLoginHandler}
-                className="flex:auto"
-              /> */}
-            </div>
+            <div className="invisible ml-auto lg:visible"></div>
           </div>
         </div>
 
@@ -164,10 +146,10 @@ const NavBarMobile = () => {
           ref={notifyRef}
           className={`absolute transition-all duration-300 lg:hidden ${isDisplayedMobileNavBar}`}
         >
-          {/* Cover for mobile bell icon */}
+          {/* Info: (20230327 - Julian) Cover for mobile bell icon */}
           {isDisplayedNotificationSidebarMobileCover}
 
-          {/* Mobile menu section */}
+          {/* Info: (20230327 - Julian) Mobile menu section */}
           <div className="flex h-screen flex-col items-center justify-start px-2 pt-8 pb-24 text-base sm:px-3">
             <div className="flex h-full w-screen flex-col items-center justify-start">
               <div className="flex items-center justify-start px-3 pt-3">
@@ -204,21 +186,11 @@ const NavBarMobile = () => {
                 <div className="px-3 py-5">
                   <I18n langIsOpen={langIsOpen} setLangIsOpen={setLangIsOpen} />
                 </div>
-
-                {/* <TbMinusVertical size={30} className="" /> */}
               </div>
-              {/* <div className="border-b border-cuteBlue"></div> */}
               <span className={`${dividerInsideMobileNavBar}`}></span>
               {isDisplayedUserOverview}
-              {/* <WalletPanel
-                className="ml-2"
-                panelVisible={panelVisible}
-                panelClickHandler={panelClickHandler}
-                // getUserLoginState={getUserLoginHandler}
-              />{' '} */}
             </div>
           </div>
-          {/* <div className="mb-2 flex w-full justify-end pr-10">{isDisplayedUser}</div> */}
         </div>
       </div>
 

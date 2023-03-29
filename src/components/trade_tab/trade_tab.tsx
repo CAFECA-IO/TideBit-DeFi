@@ -208,7 +208,7 @@ const TradeTab = () => {
 
     // Deprecated: before merging into develop (20230327 - Shirley)
     // eslint-disable-next-line no-console
-    // console.log('first time Effect', now, longQuotationRef.current, shortQuotationRef.current);
+    console.log('first time Effect', longQuotationRef.current, shortQuotationRef.current);
   }, [userCtx.enableServiceTerm]);
 
   // Info: Fetch quotation in period (20230327 - Shirley)
@@ -233,7 +233,7 @@ const TradeTab = () => {
 
         // Deprecated: before merging into develop (20230327 - Shirley)
         // eslint-disable-next-line no-console
-        // console.log('countdown Effect', now, longQuotationRef.current, shortQuotationRef.current);
+        console.log('countdown Effect', longQuotationRef.current, shortQuotationRef.current);
       }
     }, 1000);
 
@@ -253,12 +253,11 @@ const TradeTab = () => {
 
       // Deprecated: before merging into develop (20230327 - Shirley)
       // eslint-disable-next-line no-console
-      // console.log(
-      //   'when ticker changed Effect',
-      //   now,
-      //   longQuotationRef.current,
-      //   shortQuotationRef.current
-      // );
+      console.log(
+        'when ticker changed Effect',
+        longQuotationRef.current,
+        shortQuotationRef.current
+      );
     });
 
     return () => {

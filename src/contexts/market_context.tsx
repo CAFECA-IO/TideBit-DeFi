@@ -255,16 +255,16 @@ export const MarketProvider = ({children}: IMarketProvider) => {
   };
 
   const getCFDQuotation = async (tickerId: string, typeOfPosition: ITypeOfPosition) => {
-    let result: IResult = defaultResultFailed;
+    let result: IResult = {...defaultResultFailed};
     try {
       // TODO: send request (Tzuhan - 20230317)
       const quotation: IQuotation = getDummyQuotation(tickerId, typeOfPosition);
-      result = defaultResultSuccess;
+      result = {...defaultResultSuccess};
       result.data = quotation;
     } catch (error) {
       result = defaultResultFailed;
     }
-    return {...result}; // Info: (20230328 - Shirley) return a new object to avoid the reference of result.data being changed
+    return result;
   };
 
   const getTickerHistory = async (

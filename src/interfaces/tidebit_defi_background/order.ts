@@ -7,7 +7,7 @@ import {IBalance} from './balance';
  * @interface IWithdrawalOrder
  * @interface IDepositOrder
  * @interface IOpenCFDOrder
- * @interface IClosedCFDOrder [TODO: closed_cfd_order.ts]
+ * @interface IClosedCFDOrder
  */
 export interface IOrder {
   // address: string;
@@ -102,6 +102,89 @@ export const dummyClosedCFDOrder: IOrder = {
     id: 'TBDCFD20230320_002',
     txid: '0x',
     status: OrderStatusUnion.SUCCESS,
+    state: OrderState.CLOSED,
+    remarks: '',
+    fee: 0,
+  },
+};
+
+/* Info: (20230331 - Julian) dummy data for test */
+export const dummyDepositOrder2: IOrder = {
+  timestamp: 1679587700,
+  type: OrderType.DEPOSIT,
+  targetAsset: 'ETH',
+  targetAmount: 80,
+  detail: '',
+  balanceSnapshot: {
+    currency: 'USDT',
+    available: 2308,
+    locked: 1,
+  },
+  orderSnapshot: {
+    id: 'TBDDeposit20230324_002',
+    txid: '0x',
+    status: 'SUCCESS',
+    remarks: '',
+    fee: 0,
+  },
+};
+
+export const dummyWithdrawalOrder2: IOrder = {
+  timestamp: 1679587200,
+  type: OrderType.WITHDRAW,
+  targetAsset: 'ETH',
+  targetAmount: -10,
+  detail: '',
+  balanceSnapshot: {
+    currency: 'USDT',
+    available: 1979,
+    locked: 1,
+  },
+  orderSnapshot: {
+    id: 'TBDWithdraw20230324_002',
+    txid: '0x',
+    status: 'SUCCESS',
+    remarks: '',
+    fee: -0.05,
+  },
+};
+
+export const dummyOpenCFDOrder2: IOrder = {
+  timestamp: 1673299651,
+  type: OrderType.CFD,
+  targetAsset: 'ETH',
+  targetAmount: -5,
+  detail: '',
+  balanceSnapshot: {
+    currency: 'USDT',
+    available: 1999,
+    locked: 1,
+  },
+  orderSnapshot: {
+    id: 'TBD202303240000001',
+    txid: '0x',
+    status: 'FAILED',
+    state: OrderState.OPENING,
+    remarks: '',
+    fee: 0,
+  },
+};
+
+export const dummyClosedCFDOrder2: IOrder = {
+  timestamp: 1679999651,
+  type: OrderType.CFD,
+  targetAsset: 'ETH',
+  targetAmount: +30,
+  detail: '',
+  balanceSnapshot: {
+    currency: 'USDT',
+    available: 1998,
+    locked: 1,
+  },
+  orderSnapshot: {
+    id: 'TBD202303240000001',
+    txid: '0x',
+    status: 'SUCCESS',
     state: OrderState.CLOSED,
     remarks: '',
     fee: 0,

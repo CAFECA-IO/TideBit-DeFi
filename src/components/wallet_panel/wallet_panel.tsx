@@ -1028,7 +1028,7 @@ export default function WalletPanel({
           {/*content & panel*/}
           <div
             id="connectModal"
-            className="relative flex w-full flex-col rounded-xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none"
+            className="relative flex w-full flex-col items-center rounded-xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none"
           >
             {/*header*/}
             <div className="mx-auto flex items-start rounded-t pt-6">

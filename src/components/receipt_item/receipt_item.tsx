@@ -35,7 +35,7 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
     txid: '0x',
     orderType: OrderType.DEPOSIT,
     createTimestamp: 1679587700,
-    orderStatus: OrderStatusUnion.FAILED,
+    orderStatus: OrderStatusUnion.PROCESSING,
     fee: 0,
     remark: '',
     targetAsset: 'USDT',

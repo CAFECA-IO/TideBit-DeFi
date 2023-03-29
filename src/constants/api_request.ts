@@ -141,6 +141,7 @@ export const TBEURL = {
   // LIST_JOBS: '/api/jobs',
   // APPLY_JOB: '/api/jobs',
   // REPORT_ISSUE: '/api/issues',
+  COMING_SOON: '/coming-soon',
 };
 
 export type TypeRequest = {

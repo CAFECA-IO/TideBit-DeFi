@@ -18,6 +18,10 @@ import {
   dummyDepositOrder,
   dummyOpenCFDOrder,
   dummyWithdrawalOrder,
+  dummyClosedCFDOrder2,
+  dummyDepositOrder2,
+  dummyOpenCFDOrder2,
+  dummyWithdrawalOrder2,
   IOrder,
 } from '../interfaces/tidebit_defi_background/order';
 import {INotificationItem} from '../interfaces/tidebit_defi_background/notification_item';
@@ -714,7 +718,16 @@ export const UserProvider = ({children}: IUserProvider) => {
     result.reason = Reason[result.code];
     if (enableServiceTermRef.current) {
       // TODO: getHistories from backend (tzuhan - 20230323)
-      histories = [dummyDepositOrder, dummyClosedCFDOrder, dummyOpenCFDOrder, dummyWithdrawalOrder];
+      histories = [
+        dummyDepositOrder,
+        dummyClosedCFDOrder,
+        dummyOpenCFDOrder,
+        dummyWithdrawalOrder,
+        dummyOpenCFDOrder2,
+        dummyClosedCFDOrder2,
+        dummyDepositOrder2,
+        dummyWithdrawalOrder2,
+      ];
       setHistories(histories);
       result = defaultResultSuccess;
       result.data = histories;

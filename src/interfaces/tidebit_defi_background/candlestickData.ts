@@ -1,4 +1,4 @@
-import {ITimeSpanUnion, TimeSpanUnion} from './time_span_union';
+import {getTime, ITimeSpanUnion} from './time_span_union';
 
 const chartBlank = 1.68;
 const dummyDataSize = 80;
@@ -15,42 +15,6 @@ export interface ICandlestickData {
   x: Date;
   y: ICandle;
 }
-
-export const getTime = (timeSpan: ITimeSpanUnion) => {
-  let time = 1000;
-  switch (timeSpan) {
-    case TimeSpanUnion._1s:
-      time = 1 * 1000;
-      break;
-    case TimeSpanUnion._1m:
-      time = 1 * 60 * 1000;
-      break;
-    case TimeSpanUnion._3m:
-      time = 3 * 60 * 1000;
-      break;
-    case TimeSpanUnion._5m:
-      time = 5 * 60 * 1000;
-      break;
-    case TimeSpanUnion._15m:
-      time = 15 * 60 * 1000;
-      break;
-    case TimeSpanUnion._1h:
-      time = 60 * 60 * 1000;
-      break;
-    case TimeSpanUnion._4h:
-      time = 4 * 60 * 60 * 1000;
-      break;
-    case TimeSpanUnion._12h:
-      time = 12 * 60 * 60 * 1000;
-      break;
-    case TimeSpanUnion._1d:
-      time = 24 * 60 * 60 * 1000;
-      break;
-    default:
-      break;
-  }
-  return time;
-};
 
 /* Till: remove generate dummy price data (20230327 - Tzuhan)
 export const getDummyPrices = (point: number) => {

@@ -13,7 +13,8 @@ export interface IResult {
     | ITickerData[]
     | ICryptocurrency[]
     | IOrder[]
-    | IAcceptedOrder
+    // | IAcceptedOrder
+    | IOrder
     | IQuotation
     | ITickerHistoryData[]
     | null;

@@ -261,6 +261,8 @@ export const acceptedOrderToOrder = (acceptedOrder: IAcceptedOrder, balance: IBa
     order.detail = 'Processing';
   } else if (order.orderSnapshot.status === OrderStatusUnion.FAILED) {
     order.detail = 'Failed';
+  } else if (order.orderSnapshot.status === OrderStatusUnion.WAITING) {
+    order.detail = 'Waiting';
   }
   switch (acceptedOrder.orderType) {
     case OrderType.CFD:

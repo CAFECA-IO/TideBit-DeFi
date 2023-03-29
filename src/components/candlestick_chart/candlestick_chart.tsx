@@ -20,6 +20,7 @@ import {
   CandlestickData,
   WhitespaceData,
   UTCTimestamp,
+  LocalizationOptions,
 } from 'lightweight-charts';
 import Lottie, {useLottie} from 'lottie-react';
 import spotAnimation from '../../../public/animation/circle.json';
@@ -491,6 +492,14 @@ export default function CandlestickChart({
       //   // },
       // };
 
+      const locale: LocalizationOptions = {
+        locale: 'zh-TW',
+        dateFormat: 'yyyy-MM-dd',
+        // timeFormatter: (date: Date) => {
+        //   return date.toLocaleTimeString();
+        // }
+      };
+
       const chart = createChart(chartContainerRef.current, {
         width: 1000,
         height: 300,
@@ -510,6 +519,12 @@ export default function CandlestickChart({
           fontFamily: 'barlow, sans-serif',
           fontStyle: 'bold',
         },
+        timeScale: {
+          timeVisible: true,
+          secondsVisible: true,
+          ticksVisible: false,
+        },
+        localization: locale,
         // autoSize: true,
         // timeScale: {
         //   timeVisible: true,

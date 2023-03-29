@@ -19,6 +19,7 @@ import {
   ChartOptions,
   CandlestickData,
   WhitespaceData,
+  UTCTimestamp,
 } from 'lightweight-charts';
 import Lottie, {useLottie} from 'lottie-react';
 import spotAnimation from '../../../public/animation/circle.json';
@@ -434,7 +435,7 @@ export default function CandlestickChart({
       console.log('lwc data in JSON', JSON.stringify(lwcData));
 
       const dummyCandles = getDummyCandlestickChartData(30, TimeSpanUnion._1s).map(d => ({
-        time: d.x.getTime() / 1000,
+        time: (d.x.getTime() / 1000) as UTCTimestamp,
         open: d.y.open,
         high: d.y.high,
         low: d.y.low,

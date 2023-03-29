@@ -12,7 +12,14 @@
  */
 
 import React, {useState, useContext, useEffect, useRef} from 'react';
-import {createChart, CrosshairMode, ColorType} from 'lightweight-charts';
+import {
+  createChart,
+  CrosshairMode,
+  ColorType,
+  ChartOptions,
+  CandlestickData,
+  WhitespaceData,
+} from 'lightweight-charts';
 import Lottie, {useLottie} from 'lottie-react';
 import spotAnimation from '../../../public/animation/circle.json';
 import {
@@ -48,6 +55,7 @@ import {
 } from '../../constants/config';
 import {ProfitState} from '../../constants/profit_state';
 import {TypeOfPosition} from '../../constants/type_of_position';
+import {TimeSpanUnion} from '../../interfaces/tidebit_defi_background/time_span_union';
 
 interface ITradingChartGraphProps {
   strokeColor: string[];
@@ -353,7 +361,7 @@ export default function CandlestickChart({
 
   const lwcData = trimmedData.map((d: ICandlestickData) => {
     return {
-      time: d.x,
+      time: d.x.getTime() / 1000,
       open: d.y.open,
       high: d.y.high,
       low: d.y.low,
@@ -382,13 +390,12 @@ export default function CandlestickChart({
   const maxNumber = max && min ? TRADING_CHART_PRICE_LIMIT_ONE_SEC * (max - min) + max : 10000;
   const minNumber = max && min ? min - TRADING_CHART_PRICE_LIMIT_ONE_SEC * (max - min) : 0;
 
-  // Till: (20230329 - Shirley)
+  // Till: (20230412 - Shirley)
   // console.log('before isDisplayedCharts, marketCtx', candlestickChartDataFromCtx);
   // console.log('before isDisplayedCharts, latest price', toLatestPriceLineDataRef.current);
   // console.log('before isDisplayedCharts, candle', toCandlestickChartDataRef.current);
   // console.log('before isDisplayedCharts, line', toLineChartDataRef.current);
 
-  // const {backgroundColor = 'black', candleColor = 'white', textColor = 'white'} = colors;
   const colors = {
     backgroundColor: 'black',
     candleColor: 'white',
@@ -399,23 +406,133 @@ export default function CandlestickChart({
 
   useEffect(() => {
     if (chartContainerRef.current) {
+      // Till: (20230412 - Shirley)
       // const handleResize = () => {
       //   chart.applyOptions({width: chartContainerRef.current.clientWidth});
       // };
 
-      const chartOptions = {
+      const trimmedData = parseCandlestickData({
+        data: candlestickChartDataFromCtx,
+        dataSize: 30,
+        timespan: 1,
+      });
+
+      const lwcData = trimmedData.map((d: ICandlestickData) => {
+        return {
+          time: d.x.getTime() / 1000,
+          open: d.y.open,
+          high: d.y.high,
+          low: d.y.low,
+          close: d.y.close,
+        };
+      });
+
+      // Deprecated: before merging into develop (20230329 - Shirley)
+      // eslint-disable-next-line no-console
+      console.log('lwcdata', lwcData);
+      // eslint-disable-next-line no-console
+      console.log('lwc data in JSON', JSON.stringify(lwcData));
+
+      const dummyCandles = getDummyCandlestickChartData(30, TimeSpanUnion._1s).map(d => ({
+        time: d.x.getTime() / 1000,
+        open: d.y.open,
+        high: d.y.high,
+        low: d.y.low,
+        close: d.y.close,
+      }));
+      // Deprecated: before merging into develop (20230329 - Shirley)
+      // eslint-disable-next-line no-console
+      console.log('dummyCandles', dummyCandles);
+
+      // ToDo: (20230329 - Shirley) options
+      // const chartOptions: ChartOptions = {
+      //   width: 1000,
+      //   height: 300,
+      //   layout: {
+      //     fontSize: 12,
+      //     fontFamily: 'barlow, sans-serif',
+      //     background: {type: ColorType.Solid, color: colors.backgroundColor},
+      //     textColor: colors.textColor,
+      //   },
+      //   watermark: {
+      //     // Till: (20230329 - Shirley) color: 'rgba(41, 193, 225, 0.4)',
+      //     color: 'rgba(41, 193, 225, 0.2)',
+      //     visible: true,
+      //     text: 'TideBit',
+      //     fontSize: 24,
+      //     horzAlign: 'right',
+      //     vertAlign: 'bottom',
+      //     fontFamily: 'barlow, sans-serif',
+      //     fontStyle: 'bold',
+      //   },
+      //   // autoSize: true,
+      //   // timeScale: {
+      //   //   timeVisible: true,
+      //   //   secondsVisible: false,
+      //   //   rightOffset: 0,
+      //   //   barSpacing: 3,
+      //   //   fixLeftEdge: true,
+      //   //   lockVisibleTimeRangeOnResize: true,
+      //   //   rightBarStaysOnScroll: true,
+      //   //   borderVisible: false,
+      //   //   borderColor: '#fff000',
+      //   //   visible: true,
+      //   // },
+      //   // timeScale: {
+      //   //   timeVisible: true,
+      //   // },
+
+      //   // leftPriceScale: {
+      //   //   autoScale: false,
+      //   // },
+      //   // rightPriceScale: {
+      //   //   autoScale: true,
+      //   // },
+      // };
+
+      const chart = createChart(chartContainerRef.current, {
         width: 1000,
         height: 300,
         layout: {
-          background: {type: ColorType.VerticalGradient, color: colors.backgroundColor},
+          fontSize: 12,
+          fontFamily: 'barlow, sans-serif',
+          background: {type: ColorType.Solid, color: colors.backgroundColor},
           textColor: colors.textColor,
         },
-        crosshair: {
-          mode: CrosshairMode.Normal,
+        watermark: {
+          color: 'rgba(41, 193, 225, 0.6)',
+          visible: true,
+          text: 'TideBit.com',
+          fontSize: 24,
+          horzAlign: 'right',
+          vertAlign: 'bottom',
+          fontFamily: 'barlow, sans-serif',
+          fontStyle: 'bold',
         },
-      };
+        // autoSize: true,
+        // timeScale: {
+        //   timeVisible: true,
+        //   secondsVisible: false,
+        //   rightOffset: 0,
+        //   barSpacing: 3,
+        //   fixLeftEdge: true,
+        //   lockVisibleTimeRangeOnResize: true,
+        //   rightBarStaysOnScroll: true,
+        //   borderVisible: false,
+        //   borderColor: '#fff000',
+        //   visible: true,
+        // },
+        // timeScale: {
+        //   timeVisible: true,
+        // },
 
-      const chart = createChart(chartContainerRef.current, chartOptions);
+        // leftPriceScale: {
+        //   autoScale: false,
+        // },
+        // rightPriceScale: {
+        //   autoScale: true,
+        // },
+      });
 
       const candlestickSeries = chart.addCandlestickSeries({
         upColor: LINE_GRAPH_STROKE_COLOR.UP,
@@ -425,26 +542,14 @@ export default function CandlestickChart({
         wickDownColor: LINE_GRAPH_STROKE_COLOR.DOWN,
       });
 
-      //  {time: '2023-03-28', open: null, high: null, low: null, close: null},
       const dummyData = [
-        {time: '2023-03-19', open: 75.16, high: 84.84, low: 36.16, close: 145.72},
-        {time: '2023-03-20', open: 55.16, high: 72.84, low: 36.16, close: 25.72},
-        {time: '2023-03-21', open: 45.16, high: 92.84, low: 36.16, close: 32.72},
-        {time: '2023-03-22', open: 75.16, high: 82.84, low: 36.16, close: 45.72},
-        {time: '2023-03-23', open: 45.12, high: 53.9, low: 45.12, close: 48.09},
-        {time: '2023-03-24', open: 60.71, high: 60.71, low: 53.39, close: 59.29},
-        {time: '2023-03-25', open: 68.26, high: 68.26, low: 59.04, close: 60.5},
-        {time: '2023-03-26', open: 67.71, high: 105.85, low: 66.67, close: 91.04},
-        {time: '2023-03-27', open: 91.04, high: 121.4, low: 82.7, close: 111.4},
-        {time: '2023-03-28', open: 111.51, high: 142.83, low: 103.34, close: 131.25},
-      ];
+        {time: 1529899200, open: 75.16, high: 84.84, low: 36.16, close: 145.72},
+        {time: 1529899201, open: 55.16, high: 72.84, low: 36.16, close: 25.72},
+        {time: 1529899202, open: 45.16, high: 92.84, low: 36.16, close: 32.72},
+        {time: 1529899203, open: 75.16, high: 82.84, low: 36.16, close: 45.72},
+      ] as (CandlestickData | WhitespaceData)[];
 
-      // Deprecated: before merging into develop (20230329 - Shirley)
-      // eslint-disable-next-line no-console
-      console.log('lwcdata', lwcData);
-      // eslint-disable-next-line no-console
-      console.log('lwc data in JSON', JSON.stringify(lwcData));
-      candlestickSeries.setData(dummyData);
+      candlestickSeries.setData(dummyCandles as (CandlestickData | WhitespaceData)[]);
 
       const generateRandomCandle = () => {
         const now = new Date();
@@ -465,8 +570,8 @@ export default function CandlestickChart({
         candlestickSeries.update(randomCandle);
       };
 
+      // ToDo: (20230329 - Shirley) updates (vs useEffect)
       // const intervalId = setInterval(updateChart, 200);
-
       // window.addEventListener('resize', handleResize);
 
       chart.timeScale().fitContent();

@@ -262,7 +262,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       result = {...defaultResultSuccess};
       result.data = quotation;
     } catch (error) {
-      result = defaultResultFailed;
+      result = {...defaultResultFailed};
     }
     return result;
   };

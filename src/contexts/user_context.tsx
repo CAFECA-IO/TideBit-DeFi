@@ -1,3 +1,4 @@
+import keccak from '@cafeca/keccak';
 import Lunar from '@cafeca/lunar';
 import React, {createContext, useCallback, useContext} from 'react';
 import useState from 'react-usestateref';
@@ -12,18 +13,8 @@ import {
   dummyWalletBalance_USDT,
   IWalletBalance,
 } from '../interfaces/tidebit_defi_background/wallet_balance';
-import {getDummyBalances, IBalance} from '../interfaces/tidebit_defi_background/balance';
-import {
-  dummyClosedCFDOrder,
-  dummyDepositOrder,
-  dummyOpenCFDOrder,
-  dummyWithdrawalOrder,
-  dummyClosedCFDOrder2,
-  dummyDepositOrder2,
-  dummyOpenCFDOrder2,
-  dummyWithdrawalOrder2,
-  IOrder,
-} from '../interfaces/tidebit_defi_background/order';
+import {IBalance} from '../interfaces/tidebit_defi_background/balance';
+import {IOrder} from '../interfaces/tidebit_defi_background/order';
 import {INotificationItem} from '../interfaces/tidebit_defi_background/notification_item';
 import {TideBitEvent} from '../constants/tidebit_event';
 import {NotificationContext} from './notification_context';
@@ -37,21 +28,10 @@ import {IApplyCloseCFDOrderData} from '../interfaces/tidebit_defi_background/app
 import {IApplyUpdateCFDOrderData} from '../interfaces/tidebit_defi_background/apply_update_cfd_order_data';
 import TransactionEngineInstance from '../lib/engines/transaction_engine';
 import {CFDOrderType} from '../constants/cfd_order_type';
-import {
-  convertApplyCloseCFDToAcceptedCFD,
-  convertApplyCreateCFDToAcceptedCFD,
-  convertApplyUpdateCFDToAcceptedCFD,
-  IApplyCFDOrder,
-} from '../interfaces/tidebit_defi_background/apply_cfd_order';
+import {IApplyCFDOrder} from '../interfaces/tidebit_defi_background/apply_cfd_order';
 import {IAcceptedCFDOrder} from '../interfaces/tidebit_defi_background/accepted_cfd_order';
-import {
-  convertApplyDepositOrderToAcceptedDepositOrder,
-  IApplyDepositOrder,
-} from '../interfaces/tidebit_defi_background/apply_deposit_order';
-import {
-  convertApplyWithdrawOrderToAcceptedWithdrawOrder,
-  IApplyWithdrawOrder,
-} from '../interfaces/tidebit_defi_background/apply_withdraw_order';
+import {IApplyDepositOrder} from '../interfaces/tidebit_defi_background/apply_deposit_order';
+import {IApplyWithdrawOrder} from '../interfaces/tidebit_defi_background/apply_withdraw_order';
 import {IAcceptedWithdrawOrder} from '../interfaces/tidebit_defi_background/accepted_withdraw_order';
 import {IAcceptedDepositOrder} from '../interfaces/tidebit_defi_background/accepted_deposit_order';
 import {APIName, Method} from '../constants/api_request';
@@ -60,8 +40,11 @@ import {Code, Reason} from '../constants/code';
 import {
   getDummyDisplayAcceptedCFDOrder,
   IDisplayAcceptedCFDOrder,
-  toDisplayAcceptedCFDOrder,
 } from '../interfaces/tidebit_defi_background/display_accepted_cfd_order';
+import {acceptedOrderToOrder} from '../lib/common';
+import TickerBookInstance from '../lib/books/ticker_book';
+import {TypeOfPosition} from '../constants/type_of_position';
+import {ProfitState} from '../constants/profit_state';
 
 export interface IUserBalance {
   available: number;
@@ -233,8 +216,10 @@ export const UserContext = createContext<IUserContext>({
 
 export const UserProvider = ({children}: IUserProvider) => {
   // TODO: get partial user type from `IUserContext`
+  const tickerBook = React.useMemo(() => TickerBookInstance, []);
   const transactionEngine = React.useMemo(() => TransactionEngineInstance, []);
   const workerCtx = useContext(WorkerContext);
+  const notificationCtx = useContext(NotificationContext);
   const [id, setId, idRef] = useState<string | null>(null);
   const [username, setUsername, usernameRef] = useState<string | null>(null);
   const [wallet, setWallet, walletRef] = useState<string | null>(null);
@@ -262,12 +247,10 @@ export const UserProvider = ({children}: IUserProvider) => {
     useState<boolean>(false);
   const [selectedTicker, setSelectedTicker, selectedTickerRef] = useState<ITickerData | null>(null);
 
-  const notificationCtx = useContext(NotificationContext);
-
   const setPrivateData = async (walletAddress: string) => {
     setWallet(walletAddress);
     setWalletBalances([dummyWalletBalance_BTC, dummyWalletBalance_ETH, dummyWalletBalance_USDT]);
-    // TODO getUser from backend by walletAddress
+    // TODO: getUser and User balance from backend (20230324 - tzuhan)
     setId('002');
     setUsername('Tidebit DeFi Test User');
     setBalance({
@@ -275,12 +258,11 @@ export const UserProvider = ({children}: IUserProvider) => {
       locked: 583.62,
       PNL: 1956.84,
     });
-    setBalances(getDummyBalances());
+    await listBalances();
     if (selectedTickerRef.current) {
-      listCFDs(selectedTickerRef.current.currency);
+      await listCFDs(selectedTickerRef.current.currency);
     }
-    // ++ TODO fetch user favorite tickers
-    setFavoriteTickers(['ETH', 'BTC']);
+    await listFavoriteTickers();
     await listHistories();
     workerCtx.registerUserHandler(walletAddress);
   };
@@ -309,6 +291,69 @@ export const UserProvider = ({children}: IUserProvider) => {
   lunar.on('accountsChanged', async (address: string) => {
     clearPrivateData();
   });
+
+  const listFavoriteTickers = useCallback(async (address?: string) => {
+    let result: IResult = defaultResultFailed;
+    if (enableServiceTermRef.current) {
+      try {
+        const tickers = (await workerCtx.requestHandler({
+          name: APIName.LIST_FAVORITE_TICKERS,
+          method: Method.GET,
+          // params: {
+          //   address,
+          // },
+        })) as string[];
+        setFavoriteTickers(tickers);
+        result = defaultResultSuccess;
+      } catch (error) {
+        // TODO: error handle (Tzuhan - 20230321)
+        // eslint-disable-next-line no-console
+        console.error(`listFavoriteTickers error`, error);
+        result.code = Code.INTERNAL_SERVER_ERROR;
+        result.reason = (error as Error).message;
+      }
+    }
+    return result;
+  }, []);
+
+  const toDisplayAcceptedCFDOrder = (acceptedCFDOrder: IAcceptedCFDOrder) => {
+    const openValue = acceptedCFDOrder.openPrice * acceptedCFDOrder.amount;
+    const closeValue =
+      acceptedCFDOrder.state === OrderState.CLOSED && acceptedCFDOrder.closePrice
+        ? acceptedCFDOrder.closePrice * acceptedCFDOrder.amount
+        : 0;
+    const pnl =
+      acceptedCFDOrder.state === OrderState.CLOSED && acceptedCFDOrder.closePrice
+        ? (closeValue - openValue) *
+          (acceptedCFDOrder.typeOfPosition === TypeOfPosition.BUY ? 1 : -1)
+        : 0;
+    const takeProfit = acceptedCFDOrder.typeOfPosition === TypeOfPosition.BUY ? 1.2 : 0.8;
+    const stopLoss = acceptedCFDOrder.typeOfPosition === TypeOfPosition.BUY ? 0.8 : 1.2;
+    const suggestion = {
+      takeProfit: acceptedCFDOrder.openPrice * takeProfit,
+      stopLoss: acceptedCFDOrder.openPrice * stopLoss,
+    };
+    // TODO: to verify positionLineGraph (20230327 - tzuhan)
+    // const positionLineGraph = [90, 72, 60, 65, 42, 25, 32, 20, 15, 32, 90, 10];
+    const positionLineGraph: number[] = tickerBook.listTickerPositions(acceptedCFDOrder.ticker, {
+      begin: acceptedCFDOrder.createTimestamp,
+    });
+
+    const displayAcceptedCFDOrder: IDisplayAcceptedCFDOrder = {
+      ...acceptedCFDOrder,
+      pnl: {
+        type: pnl > 0 ? ProfitState.PROFIT : ProfitState.LOSS,
+        value: pnl,
+      },
+      openValue: acceptedCFDOrder.openPrice * acceptedCFDOrder.amount,
+      closeValue: acceptedCFDOrder.closePrice
+        ? acceptedCFDOrder.closePrice * acceptedCFDOrder.amount
+        : undefined,
+      positionLineGraph,
+      suggestion,
+    };
+    return displayAcceptedCFDOrder;
+  };
 
   const listCFDs = useCallback(async (ticker: string) => {
     let result: IResult = defaultResultFailed;
@@ -345,13 +390,14 @@ export const UserProvider = ({children}: IUserProvider) => {
         let openCFDs: IDisplayAcceptedCFDOrder[] = [];
         let closedCFDs: IDisplayAcceptedCFDOrder[] = [];
         for (const order of CFDs) {
+          const displayAcceptedCFDOrder = await toDisplayAcceptedCFDOrder(order);
           switch (order.state) {
             case OrderState.OPENING:
             case OrderState.FREEZED:
-              openCFDs = openCFDs.concat(toDisplayAcceptedCFDOrder(order));
+              openCFDs = openCFDs.concat(displayAcceptedCFDOrder);
               break;
             case OrderState.CLOSED:
-              closedCFDs = closedCFDs.concat(toDisplayAcceptedCFDOrder(order));
+              closedCFDs = closedCFDs.concat(displayAcceptedCFDOrder);
               break;
             default:
               break;
@@ -371,7 +417,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     return result;
   }, []);
 
-  const listDeposits = useCallback(async (props: string) => {
+  const listDeposits = useCallback(async (address: string) => {
     let result: IResult = defaultResultFailed;
     result.code = Code.SERVICE_TERM_DISABLE;
     result.reason = Reason[result.code];
@@ -380,6 +426,9 @@ export const UserProvider = ({children}: IUserProvider) => {
         const deposits = (await workerCtx.requestHandler({
           name: APIName.LIST_DEPOSIT_TRADES,
           method: Method.GET,
+          params: {
+            address,
+          },
           /* Deprecated: callback in requestHandler (Tzuhan - 20230420)
           callback: (deposits: IAcceptedDepositOrder[]) => {
             setDeposits(deposits);
@@ -399,13 +448,16 @@ export const UserProvider = ({children}: IUserProvider) => {
     return result;
   }, []);
 
-  const listWithdraws = useCallback(async (props: string) => {
+  const listWithdraws = useCallback(async (address: string) => {
     let result: IResult = defaultResultFailed;
     if (enableServiceTermRef.current) {
       try {
         const withdraws = (await workerCtx.requestHandler({
           name: APIName.LIST_DEPOSIT_TRADES,
           method: Method.GET,
+          params: {
+            address,
+          },
           /* Deprecated: callback in requestHandler (Tzuhan - 20230420)
         callback: (withdraws: IAcceptedWithdrawOrder[]) => {
           setWithdraws(withdraws);
@@ -418,6 +470,30 @@ export const UserProvider = ({children}: IUserProvider) => {
         // TODO: error handle (Tzuhan - 20230321)
         // eslint-disable-next-line no-console
         console.error(`listWithdraws error`, error);
+        result.code = Code.INTERNAL_SERVER_ERROR;
+        result.reason = (error as Error).message;
+      }
+    }
+    return result;
+  }, []);
+
+  const listBalances = useCallback(async (address?: string) => {
+    let result: IResult = defaultResultFailed;
+    if (enableServiceTermRef.current) {
+      try {
+        const balances = (await workerCtx.requestHandler({
+          name: APIName.LIST_BALANCES,
+          method: Method.GET,
+          // params: {
+          //   address,
+          // },
+        })) as IBalance[];
+        setBalances(balances);
+        result = defaultResultSuccess;
+      } catch (error) {
+        // TODO: error handle (Tzuhan - 20230321)
+        // eslint-disable-next-line no-console
+        console.error(`listBalances error`, error);
         result.code = Code.INTERNAL_SERVER_ERROR;
         result.reason = (error as Error).message;
       }
@@ -488,24 +564,40 @@ export const UserProvider = ({children}: IUserProvider) => {
     let result: IResult = defaultResultFailed;
     if (isConnectedRef.current) {
       const updatedFavoriteTickers = [...favoriteTickers];
+      (await workerCtx.requestHandler({
+        name: APIName.ADD_FAVORITE_TICKERS,
+        method: Method.PUT,
+        body: {
+          ticker: newFavorite,
+          starred: true,
+        },
+      })) as string[];
       updatedFavoriteTickers.push(newFavorite);
       setFavoriteTickers(updatedFavoriteTickers);
-      // console.log(`userContext updatedFavoriteTickers`, updatedFavoriteTickers);
+      notificationCtx.emitter.emit(TideBitEvent.FAVORITE_TICKER, updatedFavoriteTickers);
       result = defaultResultSuccess;
     }
     return result;
   };
 
-  const removeFavorites = async (previousFavorite: string) => {
+  const removeFavorites = async (ticker: string) => {
     let result: IResult = defaultResultFailed;
     if (isConnectedRef.current) {
       const updatedFavoriteTickers = [...favoriteTickers];
-      const index: number = updatedFavoriteTickers.findIndex(
-        currency => currency === previousFavorite
-      );
-      if (index !== -1) updatedFavoriteTickers.splice(index, 1);
+      const index: number = updatedFavoriteTickers.findIndex(currency => currency === ticker);
+      if (index !== -1) {
+        (await workerCtx.requestHandler({
+          name: APIName.REMOVE_FAVORITE_TICKERS,
+          method: Method.PUT,
+          body: {
+            ticker,
+            starred: false,
+          },
+        })) as string[];
+        updatedFavoriteTickers.splice(index, 1);
+      }
       setFavoriteTickers(updatedFavoriteTickers);
-      // console.log(`userContext updatedFavoriteTickers`, updatedFavoriteTickers);
+      notificationCtx.emitter.emit(TideBitEvent.FAVORITE_TICKER, updatedFavoriteTickers);
       result = defaultResultSuccess;
     }
     return result;
@@ -531,21 +623,23 @@ export const UserProvider = ({children}: IUserProvider) => {
     return balance;
   };
 
-  const updateBalance = (data: {currency: string; available: number; locked: number}) => {
+  const updateBalance = (balanceDiff: IBalance) => {
+    // ++ TODO: verify update balance logic (20230324 - tzuhan)
     if (balancesRef.current) {
       const index = balancesRef.current?.findIndex(balance => balance.currency);
       if (index !== -1) {
         const balance = balancesRef.current[index];
         const updateBalance: IBalance = {
           ...balance,
-          available: SafeMath.plus(balance.available, data.available),
-          locked: SafeMath.plus(balance.locked, data.locked),
+          available: SafeMath.plus(balance.available, balanceDiff.available),
+          locked: SafeMath.plus(balance.locked, balanceDiff.locked),
         };
         const updateBalances = [...balancesRef.current];
         updateBalances[index] = updateBalance;
         setBalances(updateBalances);
-      }
-    }
+        return updateBalance;
+      } else throw Error('Balance not found');
+    } else throw Error('Balance not found');
   };
 
   const createCFDOrder = async (
@@ -565,17 +659,30 @@ export const UserProvider = ({children}: IUserProvider) => {
           if (transferR.success) {
             const signature: string = await lunar.signTypedData(transferR.data);
             CFDOrder.signature = signature;
-            // ++ API send transaction
+            // ++ TODO: send request to chain(use Lunar?) (20230324 - tzuhan)
+            const acceptedCFDOrder = (await workerCtx.requestHandler({
+              name: APIName.CREATE_CFD_TRADE,
+              method: Method.POST,
+              body: CFDOrder,
+            })) as IAcceptedCFDOrder;
+            const displayAcceptedCFDOrder = toDisplayAcceptedCFDOrder(acceptedCFDOrder);
+            setOpenedCFDs(prev => [...prev, displayAcceptedCFDOrder]);
+            const updatedBalance = updateBalance({
+              currency: applyCreateCFDOrderData.margin.asset,
+              available: -applyCreateCFDOrderData.margin.amount,
+              locked: applyCreateCFDOrderData.margin.amount,
+            });
+            const history: IOrder = acceptedOrderToOrder(acceptedCFDOrder, updatedBalance);
+            setHistories(prev => [...prev, history]);
             result = {
               success: true,
               code: Code.SUCCESS,
-              data: convertApplyCreateCFDToAcceptedCFD(applyCreateCFDOrderData),
+              data: history,
             };
-            // ++ TODO: acceptedOrderToOrder (20230322 - tzuhan)
           }
         }
       }
-      return await Promise.resolve<IResult>(result);
+      return result;
     } else {
       const isConnected = await connect();
       if (isConnected) return createCFDOrder(applyCreateCFDOrderData);
@@ -592,8 +699,8 @@ export const UserProvider = ({children}: IUserProvider) => {
     let result: IResult = defaultResultFailed;
     if (lunar.isConnected) {
       if (applyCloseCFDOrderData) {
-        const openCFD = openCFDs.find(o => o.id === applyCloseCFDOrderData.orderId);
-        if (openCFD) {
+        const index = openCFDs.findIndex(o => o.id === applyCloseCFDOrderData.orderId);
+        if (index !== -1) {
           const CFDOrder: IApplyCFDOrder = {
             type: CFDOrderType.CLOSE,
             data: applyCloseCFDOrderData,
@@ -603,16 +710,39 @@ export const UserProvider = ({children}: IUserProvider) => {
           if (transferR.success) {
             const signature: string = await lunar.signTypedData(transferR.data);
             CFDOrder.signature = signature;
-            // ++ API send transaction
+            // ++ TODO: send request to chain(use Lunar?) (20230324 - tzuhan)
+            const acceptedCFDOrder = (await workerCtx.requestHandler({
+              name: APIName.CLOSE_CFD_TRADE,
+              method: Method.PUT,
+              body: {
+                ...CFDOrder,
+                openCFD: openCFDs[index], // Deprecated: remove when backend is ready (20230424 - tzuhan)
+              },
+            })) as IAcceptedCFDOrder;
+            setOpenedCFDs(prev => [...prev].splice(index, 1));
+            const displayAcceptedCFDOrder = toDisplayAcceptedCFDOrder(acceptedCFDOrder);
+            setClosedCFDs(prev => [...prev, displayAcceptedCFDOrder]);
+            const profit =
+              (applyCloseCFDOrderData.closePrice - openCFDs[index].openPrice) *
+              openCFDs[index].amount *
+              (openCFDs[index].typeOfPosition === TypeOfPosition.BUY ? 1 : -1);
+            const balanceDiff: IBalance = {
+              currency: openCFDs[index].margin.asset,
+              available: openCFDs[index].margin.amount + profit,
+              locked: -openCFDs[index].margin.amount,
+            };
+            const updatedBalance = updateBalance(balanceDiff);
+            const history: IOrder = acceptedOrderToOrder(acceptedCFDOrder, updatedBalance);
+            setHistories(prev => [...prev, history]);
             result = {
               success: true,
               code: Code.SUCCESS,
-              data: convertApplyCloseCFDToAcceptedCFD(applyCloseCFDOrderData, openCFD),
-            }; // ++ TODO: acceptedOrderToOrder (20230322 - tzuhan)
+              data: history,
+            };
           }
         }
       }
-      return await Promise.resolve<IResult>(result);
+      return result;
     } else {
       const isConnected = await connect();
       if (isConnected) return closeCFDOrder(applyCloseCFDOrderData);
@@ -629,8 +759,8 @@ export const UserProvider = ({children}: IUserProvider) => {
     let result: IResult = defaultResultFailed;
     if (lunar.isConnected) {
       if (applyUpdateCFDOrderData) {
-        const openCFD = openCFDs.find(o => o.id === applyUpdateCFDOrderData.orderId);
-        if (openCFD) {
+        const index = openCFDs.findIndex(o => o.id === applyUpdateCFDOrderData.orderId);
+        if (index !== -1) {
           const CFDOrder: IApplyCFDOrder = {
             type: CFDOrderType.UPDATE,
             data: applyUpdateCFDOrderData,
@@ -640,17 +770,37 @@ export const UserProvider = ({children}: IUserProvider) => {
           if (transferR.success) {
             const signature: string = await lunar.signTypedData(transferR.data);
             CFDOrder.signature = signature;
-            // ++ API send transaction
+            // ++ TODO: send request to chain(use Lunar?) (20230324 - tzuhan)
+            const acceptedCFDOrder = (await workerCtx.requestHandler({
+              name: APIName.UPDATE_CFD_TRADE,
+              method: Method.PUT,
+              body: {
+                ...CFDOrder,
+                openCFD: openCFDs[index], // Deprecated: remove when backend is ready (20230424 - tzuhan)
+              },
+            })) as IAcceptedCFDOrder;
+            const displayAcceptedCFDOrder = toDisplayAcceptedCFDOrder(acceptedCFDOrder);
+            setOpenedCFDs(prev => {
+              const cfds = [...prev];
+              cfds[index] = displayAcceptedCFDOrder;
+              return cfds;
+            });
+            const updatedBalance = updateBalance({
+              currency: openCFDs[index].margin.asset,
+              available: 0,
+              locked: 0,
+            });
+            const history: IOrder = acceptedOrderToOrder(acceptedCFDOrder, updatedBalance);
+            setHistories(prev => [...prev, history]);
             result = {
               success: true,
               code: Code.SUCCESS,
-              data: convertApplyUpdateCFDToAcceptedCFD(applyUpdateCFDOrderData, openCFD),
+              data: history,
             };
-            // ++ TODO: acceptedOrderToOrder (20230322 - tzuhan)
           }
         }
       }
-      return await Promise.resolve<IResult>(result);
+      return result;
     } else {
       const isConnected = await connect();
       if (isConnected) return updateCFDOrder(applyUpdateCFDOrderData);
@@ -664,19 +814,37 @@ export const UserProvider = ({children}: IUserProvider) => {
   const deposit = async (depositOrder: IApplyDepositOrder): Promise<IResult> => {
     let result: IResult = defaultResultFailed;
     if (lunar.isConnected) {
+      /** 
+      * TODO: temporary comment send metamask, will uncomment (20230329 - tzuhan)
       const walletBalance: IWalletBalance | null = getWalletBalance(depositOrder.targetAsset);
-      // if (walletBalance && walletBalance.balance >= depositOrder.targetAmount) { // ++ TODO verify
+      if (walletBalance && walletBalance.balance >= depositOrder.targetAmount) {
       const transaction: {to: string; amount: number; data: string} =
         transactionEngine.transferDepositOrderToTransaction(depositOrder);
-      const sendR = await lunar.send(transaction);
+      const txHash = await lunar.send(transaction);
       // TODO: updateWalletBalances
+      // */
+      const txHash = keccak.keccak256(
+        transactionEngine.transferDepositOrderToTransaction(depositOrder)
+      );
+      const acceptedDepositOrder = (await workerCtx.requestHandler({
+        name: APIName.CREATE_WITHDRAW_TRADE,
+        method: Method.POST,
+        body: {data: depositOrder, txHash},
+      })) as IAcceptedDepositOrder;
+      setDeposits(prev => [...prev, acceptedDepositOrder]);
+      const updatedBalance = updateBalance({
+        currency: depositOrder.targetAsset,
+        available: 0,
+        locked: depositOrder.targetAmount,
+      });
+      const history: IOrder = acceptedOrderToOrder(acceptedDepositOrder, updatedBalance);
+      setHistories(prev => [...prev, history]);
       result = {
         success: true,
         code: Code.SUCCESS,
-        data: convertApplyDepositOrderToAcceptedDepositOrder(depositOrder), // new walletBalance
+        data: history,
       };
-      // }
-      return await Promise.resolve<IResult>(result);
+      return result;
     } else {
       const isConnected = await connect();
       if (isConnected) return deposit(depositOrder);
@@ -695,16 +863,27 @@ export const UserProvider = ({children}: IUserProvider) => {
         const transferR = transactionEngine.transferWithdrawOrderToTransaction(withdrawOrder);
         if (transferR.success) {
           const signature: string = await lunar.signTypedData(transferR.data);
-          withdrawOrder.signature = signature;
-          // ++ API send transaction
+          // ++ TODO: send request to chain(use Lunar?) (20230324 - tzuhan)
+          const acceptedWithdrawOrder = (await workerCtx.requestHandler({
+            name: APIName.CREATE_WITHDRAW_TRADE,
+            method: Method.POST,
+            body: {data: withdrawOrder, signature},
+          })) as IAcceptedWithdrawOrder;
+          const updatedBalance = updateBalance({
+            currency: withdrawOrder.targetAsset,
+            available: -withdrawOrder.targetAmount,
+            locked: withdrawOrder.targetAmount,
+          });
+          const history: IOrder = acceptedOrderToOrder(acceptedWithdrawOrder, updatedBalance);
+          setHistories(prev => [...prev, history]);
           result = {
             success: true,
             code: Code.SUCCESS,
-            data: convertApplyWithdrawOrderToAcceptedWithdrawOrder(withdrawOrder), // ++ TODO remove dummy ticker
+            data: history,
           };
         }
       }
-      return await Promise.resolve<IResult>(result);
+      return result;
     } else {
       await connect();
       return withdraw(withdrawOrder);
@@ -712,96 +891,20 @@ export const UserProvider = ({children}: IUserProvider) => {
   };
 
   const listHistories = async () => {
-    let histories: IOrder[] = [],
-      result: IResult = defaultResultFailed;
+    let result: IResult = defaultResultFailed;
     result.code = Code.SERVICE_TERM_DISABLE;
     result.reason = Reason[result.code];
     if (enableServiceTermRef.current) {
-      // TODO: getHistories from backend (tzuhan - 20230323)
-      histories = [
-        dummyDepositOrder,
-        dummyClosedCFDOrder,
-        dummyOpenCFDOrder,
-        dummyWithdrawalOrder,
-        dummyOpenCFDOrder2,
-        dummyClosedCFDOrder2,
-        dummyDepositOrder2,
-        dummyWithdrawalOrder2,
-      ];
+      const histories = (await workerCtx.requestHandler({
+        name: APIName.LIST_HISTORIES,
+        method: Method.GET,
+      })) as IOrder[];
       setHistories(histories);
       result = defaultResultSuccess;
       result.data = histories;
     }
     return result;
   };
-
-  // const updateHistories = (updatedOrders: IAcceptedOrder[]) => {
-  //   interface IOrderData {
-  //     [key: string]: IAcceptedOrder;
-  //   }
-  //   const histories = [...historiesRef.current];
-  //   const CFDs: IOrderData = {};
-  //   const deposits: IOrderData = {};
-  //   const withdraws: IOrderData = {};
-  //   for (const order of histories) {
-  //     switch (order.orderType) {
-  //       case OrderType.CFD:
-  //         if (!CFDs[order.id]) CFDs[order.id] = {...order};
-  //         break;
-  //       case OrderType.DEPOSIT:
-  //         if (!deposits[order.id]) deposits[order.id] = {...order};
-  //         break;
-  //       case OrderType.WITHDRAW:
-  //         if (!withdraws[order.id]) withdraws[order.id] = {...order};
-  //         break;
-  //       // case OrderType.SPOT: // -- current is not support SPOT order
-  //       // break;
-  //       default:
-  //         break;
-  //     }
-  //   }
-  //   for (const updatedOrder of updatedOrders) {
-  //     switch (updatedOrder.orderType) {
-  //       case OrderType.CFD:
-  //         CFDs[updatedOrder.id] = {...updatedOrder};
-  //         break;
-  //       case OrderType.DEPOSIT:
-  //         deposits[updatedOrder.id] = {...updatedOrder};
-  //         break;
-  //       case OrderType.WITHDRAW:
-  //         withdraws[updatedOrder.id] = {...updatedOrder};
-  //         break;
-  //       // case OrderType.SPOT: // -- current is not support SPOT order
-  //       // break;
-  //       default:
-  //         break;
-  //     }
-  //   }
-  //   let updateOpenCFDs: IAcceptedCFDOrder[] = [];
-  //   let updateCloseCFDs: IAcceptedCFDOrder[] = [];
-  //   (Object.values(CFDs) as IAcceptedCFDOrder[]).forEach(order => {
-  //     switch (order.state) {
-  //       case OrderState.OPENING:
-  //       case OrderState.FREEZED:
-  //         updateOpenCFDs = updateOpenCFDs.concat(order);
-  //         break;
-  //       case OrderState.CLOSED:
-  //         updateCloseCFDs = updateCloseCFDs.concat(order);
-  //         break;
-  //       default:
-  //         break;
-  //     }
-  //   });
-  //   updateOpenCFDs = updateOpenCFDs.sort((a, b) => b.createTimestamp - a.createTimestamp);
-  //   updateCloseCFDs = updateCloseCFDs.sort((a, b) => b.createTimestamp - a.createTimestamp);
-  //   const updateHistories = Object.values(CFDs)
-  //     .concat(Object.values(deposits))
-  //     .concat(Object.values(withdraws))
-  //     .sort((a, b) => b.createTimestamp - a.createTimestamp);
-  //   setOpenedCFDs(updateOpenCFDs);
-  //   setClosedCFDs(updateCloseCFDs);
-  //   setHistories(updateHistories);
-  // };
 
   const sendEmailCode = async (email: string, hashCash: string) => {
     let result: IResult = defaultResultFailed;
@@ -899,7 +1002,9 @@ export const UserProvider = ({children}: IUserProvider) => {
     []
   );
   React.useMemo(() => notificationCtx.emitter.on(TideBitEvent.BALANCES, updateBalances), []);
-  // React.useMemo(() => notificationCtx.emitter.on(TideBitEvent.ORDER, updateHistories), []);
+  /* Deprecated: 由 issue#419 處理，留著做為參考 (20230423 - tzuhan)
+  React.useMemo(() => notificationCtx.emitter.on(TideBitEvent.ORDER, updateHistories), []);
+  */
   React.useMemo(
     () => notificationCtx.emitter.on(TideBitEvent.UPDATE_READ_NOTIFICATIONS, readNotifications),
     []

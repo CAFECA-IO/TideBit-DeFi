@@ -23,6 +23,8 @@ export interface IOrder {
     status: IOrderStatusUnion;
     state?: IOrderState;
     fee: number; // 手續費
+    to?: string;
+    decimals?: number;
     remarks?: string; // 備註,
   };
 }

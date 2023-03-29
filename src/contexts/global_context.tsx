@@ -52,9 +52,9 @@ import {IApplyUpdateCFDOrderData} from '../interfaces/tidebit_defi_background/ap
 import useStateRef from 'react-usestateref';
 import {POSITION_PRICE_RENEWAL_INTERVAL_SECONDS} from '../constants/config';
 import {
-  IAcceptedDepositOrder,
-  getDummyAcceptedDepositOrder,
-} from '../interfaces/tidebit_defi_background/accepted_deposit_order';
+  IDisplayAcceptedDepositOrder,
+  getDummyDisplayAcceptedDepositOrder,
+} from '../interfaces/tidebit_defi_background/display_accepted_deposit_order';
 import {
   IAcceptedWithdrawOrder,
   getDummyAcceptedWithdrawOrder,
@@ -266,8 +266,8 @@ export interface IGlobalContext {
 
   visibleDepositHistoryModal: boolean;
   visibleDepositHistoryModalHandler: () => void;
-  dataDepositHistoryModal: IAcceptedDepositOrder | null;
-  dataDepositHistoryModalHandler: (data: IAcceptedDepositOrder) => void;
+  dataDepositHistoryModal: IDisplayAcceptedDepositOrder | null;
+  dataDepositHistoryModalHandler: (data: IDisplayAcceptedDepositOrder) => void;
 
   visibleWithdrawalHistoryModal: boolean;
   visibleWithdrawalHistoryModalHandler: () => void;
@@ -520,9 +520,8 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
   const [visibleDepositModal, setVisibleDepositModal] = useState(false);
 
   const [visibleDepositHistoryModal, setVisibleDepositHistoryModal] = useState(false);
-  const [dataDepositHistoryModal, setDataDepositHistoryModal] = useState<IAcceptedDepositOrder>(
-    getDummyAcceptedDepositOrder()
-  );
+  const [dataDepositHistoryModal, setDataDepositHistoryModal] =
+    useState<IDisplayAcceptedDepositOrder>(getDummyDisplayAcceptedDepositOrder('USDT'));
 
   const [visibleWithdrawalHistoryModal, setVisibleWithdrawalHistoryModal] = useState(false);
   const [dataWithdrawalHistoryModal, setDataWithdrawalHistoryModal] =
@@ -681,7 +680,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     setVisibleDepositHistoryModal(!visibleDepositHistoryModal);
   };
 
-  const dataDepositHistoryModalHandler = (data: IAcceptedDepositOrder) => {
+  const dataDepositHistoryModalHandler = (data: IDisplayAcceptedDepositOrder) => {
     setDataDepositHistoryModal(data);
   };
 
@@ -891,25 +890,35 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
         remark: '',
         fee: 0,
       })
-      .then(_ => setDepositProcess('success'));
+      .then(result => {
+        // Deprecate: after Julian confirm result format (20230329 - tzuhan)
+        // eslint-disable-next-line no-console
+        console.log(`userCtx.deposit result:`, result);
+        setDepositProcess('success');
+      });
   };
 
   const withdrawSubmitHandler = async (props: {asset: ICryptocurrency; amount: number}) => {
     /*
     // INFO: Set the process in modal component. `eliminateAllModals` won't work here (20230317 - Shirley)
     // setWithdrawProcess('loading');
-    // userCtx
-    // .withdraw({
-    //   orderType: OrderType.WITHDRAW,
-    //   createTimestamp: getTimestamp(),
-    //   targetAsset: props.asset.symbol,
-    //   to: props.asset.contract,
-    //   targetAmount: props.amount,
-    //   remark: '',
-    //   fee: 0,
-    // })
-    // .then(_ => setDepositProcess('success'));
     */
+    userCtx
+      .withdraw({
+        orderType: OrderType.WITHDRAW,
+        createTimestamp: getTimestamp(),
+        targetAsset: props.asset.symbol,
+        to: props.asset.contract,
+        targetAmount: props.amount,
+        remark: '',
+        fee: 0,
+      })
+      .then(result => {
+        // Deprecate: after Julian confirm result format (20230329 - tzuhan)
+        // eslint-disable-next-line no-console
+        console.log(`userCtx.deposit result:`, result);
+        setDepositProcess('success');
+      });
   };
 
   // ------------------------------------------ //

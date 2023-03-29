@@ -1,12 +1,11 @@
-import {getTime} from './candlestickData';
-import {ITimeSpanUnion, TimeSpanUnion} from './time_span_union';
+import {getTime, ITimeSpanUnion, TimeSpanUnion} from './time_span_union';
 
 const defaultLimit = 450;
 const defaultTimeSpan = TimeSpanUnion._1m;
 
 export interface ITickerHistoryData {
   date: Date;
-  open: number;
+  open: number | null;
 }
 
 export const getDummyTickerHistoryData = (

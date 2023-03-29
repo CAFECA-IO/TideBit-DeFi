@@ -4,7 +4,7 @@ import smallConnectingAnimation from '../../../public/animation/lf30_editor_cnkx
 import Image from 'next/image';
 import {UserContext} from '../../contexts/user_context';
 import {GlobalContext} from '../../contexts/global_context';
-import {timestampToString} from '../../lib/common';
+import {timestampToString, toDisplayAcceptedDepositOrder} from '../../lib/common';
 import {OrderType} from '../../constants/order_type';
 import {OrderState} from '../../constants/order_state';
 import {OrderStatusUnion} from '../../constants/order_status_union';
@@ -31,7 +31,7 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
   const getCFDData = userCtx.getCFD(orderSnapshot.id);
 
   /* Todo: (20230328 - Julian) get data from userContext 
-  const getDepositData: IAcceptedDepositOrder = {
+  const getDepositData: IDisplayAcceptedDepositOrder = {
     id: 'TBD202303280000001',
     txid: '0x',
     orderType: OrderType.DEPOSIT,
@@ -43,8 +43,14 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
     targetAmount: 80,
     decimals: 18,
     to: '0x',
-    //available: 1900,
-  }; */
+    balanceSnapshot: {
+      currency: 'USDT',
+      available: 0,
+      locked: 1900,
+    },
+  };*/
+
+  const displayedDepositData = toDisplayAcceptedDepositOrder(histories.histories);
 
   const receiptDate = timestampToString(timestamp ?? 0);
 
@@ -114,8 +120,8 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
           }
       : type === OrderType.DEPOSIT
       ? () => {
-          /* ToDo: (20230329 - Julian) transfer IOrder to IAcceptedDepositOrder
-          globalCtx.dataDepositHistoryModalHandler(getDepositData); */
+          /* Todo: (20230324 - Julian) deposit history modal */
+          globalCtx.dataDepositHistoryModalHandler(displayedDepositData);
           globalCtx.visibleDepositHistoryModalHandler();
         }
       : () => {

@@ -1,169 +1,6 @@
-import {unitAsset} from '../../constants/config';
+import {TRADING_CRYPTO_DATA, unitAsset} from '../../constants/config';
 import {TypeOfPnLColorHex} from '../../constants/display';
 import {ITrend, Trend} from '../../constants/trend';
-
-const TRADING_CRYPTO_DATA = [
-  {
-    currency: 'ETH',
-    chain: 'Ethereum',
-    star: true,
-    starred: false,
-    // price: 1288.4,
-    // fluctuating: 1.14,
-    tokenImg: '/asset_icon/eth.svg',
-    tradingVolume: '217,268,645',
-  },
-  {
-    currency: 'BTC',
-    chain: 'Bitcoin',
-    star: true,
-    starred: false,
-    // price: 1288.4,
-    // fluctuating: 1.14,
-    tokenImg: '/asset_icon/btc.svg',
-    tradingVolume: '217,268,645',
-  },
-  {
-    currency: 'LTC',
-    chain: 'Litecoin',
-    star: true,
-    starred: false,
-    // price: 1288.4,
-    // fluctuating: 1.14,
-    tokenImg: '/asset_icon/ltc.svg',
-    tradingVolume: '217,268,645',
-  },
-  {
-    currency: 'MATIC',
-    chain: 'Polygon',
-    star: true,
-    starred: false,
-    // price: 1288.4,
-    // fluctuating: 1.14,
-    tokenImg: '/asset_icon/matic.svg',
-    tradingVolume: '217,268,645',
-  },
-  {
-    currency: 'BNB',
-    chain: 'BNB',
-    star: true,
-    starred: false,
-    // price: 1288.4,
-    // fluctuating: 1.14,
-    tokenImg: '/asset_icon/bnb.svg',
-    tradingVolume: '217,268,645',
-  },
-  {
-    currency: 'SOL',
-    chain: 'Solana',
-    star: true,
-    starred: false,
-    // price: 1288.4,
-    // fluctuating: 1.14,
-    tokenImg: '/asset_icon/sol.svg',
-    tradingVolume: '217,268,645',
-  },
-  {
-    currency: 'SHIB',
-    chain: 'Shiba Inu',
-    star: true,
-    starred: false,
-    // price: 1288.4,
-    // fluctuating: 1.14,
-    tokenImg: '/asset_icon/shib.svg',
-    tradingVolume: '217,268,645',
-  },
-  {
-    currency: 'DOT',
-    chain: 'Polkadot',
-    star: true,
-    starred: false,
-    // price: 1288.4,
-    // fluctuating: 1.14,
-    tokenImg: '/asset_icon/dot.svg',
-    tradingVolume: '217,268,645',
-  },
-  {
-    currency: 'ADA',
-    chain: 'Cardano',
-    star: true,
-    starred: false,
-    // price: 1288.4,
-    // fluctuating: 1.14,
-    tokenImg: '/asset_icon/ada.svg',
-    tradingVolume: '217,268,645',
-  },
-  {
-    currency: 'AVAX',
-    chain: 'Avalanche',
-    star: true,
-    starred: false,
-    // price: 1288.4,
-    // fluctuating: 1.14,
-    tokenImg: '/asset_icon/avax.svg',
-    tradingVolume: '217,268,645',
-  },
-  {
-    currency: 'Dai',
-    chain: 'Dai',
-    star: true,
-    starred: false,
-    // price: 1288.4,
-    // fluctuating: 1.14,
-    tokenImg: '/asset_icon/dai.svg',
-    tradingVolume: '217,268,645',
-  },
-  {
-    currency: 'MKR',
-    chain: 'Maker',
-    star: true,
-    starred: false,
-    // price: 1288.4,
-    // fluctuating: 1.14,
-    tokenImg: '/asset_icon/mkr.svg',
-    tradingVolume: '217,268,645',
-  },
-  {
-    currency: 'XRP',
-    chain: 'XRP',
-    star: true,
-    starred: false,
-    // price: 1288.4,
-    // fluctuating: 1.14,
-    tokenImg: '/asset_icon/xrp.svg',
-    tradingVolume: '217,268,645',
-  },
-  {
-    currency: 'DOGE',
-    chain: 'Dogecoin',
-    star: true,
-    starred: false,
-    // price: 1288.4,
-    // fluctuating: 1.14,
-    tokenImg: '/asset_icon/doge.svg',
-    tradingVolume: '217,268,645',
-  },
-  {
-    currency: 'UNI',
-    chain: 'Uniswap',
-    star: true,
-    starred: false,
-    // price: 1288.4,
-    // fluctuating: 1.14,
-    tokenImg: '/asset_icon/uni.svg',
-    tradingVolume: '217,268,645',
-  },
-  {
-    currency: 'Flow',
-    chain: 'Flow',
-    star: true,
-    starred: false,
-    // price: 1288.4,
-    // fluctuating: 1.14,
-    tokenImg: '/asset_icon/flow.svg',
-    tradingVolume: '217,268,645',
-  },
-];
 
 function randomNumber(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1) + min);
@@ -177,7 +14,7 @@ function randomArray(min: number, max: number, length: number) {
   return arr;
 }
 
-const strokeColorDisplayed = (sampleArray: number[]) => {
+export const strokeColorDisplayed = (sampleArray: number[]) => {
   if (sampleArray[sampleArray.length - 1] > sampleArray[sampleArray.length - 2]) {
     // priceColor = 'text-lightGreen';
     return [TypeOfPnLColorHex.PROFIT];
@@ -193,32 +30,30 @@ export interface ILineGraphProps {
   lineGraphWidth?: string;
   lineGraphWidthMobile?: string;
 }
-export interface ITickerData {
+
+export interface ITicker {
   currency: string;
   chain: string;
-  star: boolean;
-  starred: boolean;
-  // starColor: string;
-  // getStarredStateCallback: (bool: boolean) => void;
-  price: number;
-  upOrDown: ITrend;
-  priceChange: number;
-  fluctuating: number;
-  tradingVolume: string;
-  // gradientColor: string;
-  tokenImg: string;
-
-  lineGraphProps: ILineGraphProps;
 }
 
-export interface ITickerMarket {
-  currency: string;
-  chain: string;
+export interface ITickerProperty extends ITicker {
+  star: boolean;
+  starred: boolean;
+  tokenImg: string;
+}
+
+export interface ITickerMarket extends ITicker {
   price: number;
   upOrDown: ITrend;
   priceChange: number;
   fluctuating: number;
   tradingVolume: string;
+}
+
+export interface ITickerItem extends ITickerProperty, ITickerMarket {}
+
+export interface ITickerData extends ITickerItem {
+  lineGraphProps: ILineGraphProps;
 }
 
 // Add line graph property to each object in array
@@ -228,6 +63,7 @@ export const dummyTickers: ITickerData[] = TRADING_CRYPTO_DATA.map(data => {
   const price = parseFloat((Math.random() * 1000).toFixed(2));
   const priceChange = parseFloat((Math.random() * 100).toFixed(2));
   const fluctuating = parseFloat((priceChange / (price + priceChange)).toFixed(2));
+  const tradingVolume = (Math.random() * 1000).toFixed(2);
   const upOrDown =
     Math.random() >= 0.5 ? (Math.random() === 0.5 ? Trend.EQUAL : Trend.UP) : Trend.DOWN;
   const ticker: ITickerData = {
@@ -236,6 +72,7 @@ export const dummyTickers: ITickerData[] = TRADING_CRYPTO_DATA.map(data => {
     priceChange,
     fluctuating,
     upOrDown,
+    tradingVolume,
     lineGraphProps: {
       dataArray: dataArray,
       strokeColor: strokeColor,
@@ -258,12 +95,14 @@ export const getDummyTicker = (currency: string) => {
   const fluctuating = parseFloat((priceChange / (price + priceChange)).toFixed(2));
   const upOrDown =
     Math.random() >= 0.5 ? (Math.random() === 0.5 ? Trend.EQUAL : Trend.UP) : Trend.DOWN;
+  const tradingVolume = (Math.random() * 1000).toFixed(2);
   const dummyTicker: ITickerData = {
     ...data,
     price,
     priceChange,
     fluctuating,
     upOrDown,
+    tradingVolume,
     lineGraphProps: {
       dataArray: dataArray,
       strokeColor: strokeColor,
@@ -320,27 +159,41 @@ export interface ITBETrade {
   date: string;
 }
 
-export const convertToTickerMartketData = (data: ITBETicker) => {
+export interface ISortedTrade {
+  [second: string]: {
+    second: number;
+    trades: {open: ITBETrade; high: ITBETrade; low: ITBETrade; close: ITBETrade};
+    datas: ITBETrade[];
+  };
+}
+
+export const convertToTickerMartket = (tickerProperty: ITickerProperty, marketData: ITBETicker) => {
+  const ticker: ITickerMarket = {
+    currency: tickerProperty.currency,
+    chain: tickerProperty.chain,
+    tradingVolume: marketData.volume,
+    price: parseFloat(marketData.last),
+    upOrDown:
+      +marketData.changePct === 0
+        ? Trend.EQUAL
+        : marketData.changePct.includes('-')
+        ? Trend.DOWN
+        : Trend.UP,
+    priceChange: parseFloat(marketData.change),
+    fluctuating: parseFloat((parseFloat(marketData.changePct) * 100).toFixed(2)),
+  };
+
+  return ticker;
+};
+
+export const convertToTickerMartketData = (marketData: ITBETicker) => {
   let ticker: ITickerMarket | null = null;
-  if (data.quoteUnit.toUpperCase() === unitAsset) {
-    const tickerData = TRADING_CRYPTO_DATA.find(
-      ticker => ticker.currency === data.baseUnit.toUpperCase()
+  if (marketData.quoteUnit.toUpperCase() === unitAsset) {
+    const tickerData: ITickerProperty | undefined = TRADING_CRYPTO_DATA.find(
+      ticker => ticker.currency === marketData.baseUnit.toUpperCase()
     );
     if (tickerData) {
-      ticker = {
-        currency: tickerData.currency,
-        chain: tickerData.chain,
-        tradingVolume: data.volume,
-        price: parseFloat(data.last),
-        upOrDown:
-          +data.changePct === 0
-            ? Trend.EQUAL
-            : data.changePct.includes('-')
-            ? Trend.DOWN
-            : Trend.UP,
-        priceChange: parseFloat(data.change),
-        fluctuating: parseFloat((parseFloat(data.changePct) * 100).toFixed(2)),
-      };
+      ticker = convertToTickerMartket(tickerData, marketData);
     }
   }
   return ticker;

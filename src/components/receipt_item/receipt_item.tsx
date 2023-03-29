@@ -11,6 +11,7 @@ import {OrderStatusUnion} from '../../constants/order_status_union';
 import {IOrder} from '../../interfaces/tidebit_defi_background/order';
 import {UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
 import {useTranslation} from 'next-i18next';
+import {IDisplayAcceptedDepositOrder} from '../../interfaces/tidebit_defi_background/display_accepted_deposit_order';
 
 type TranslateFunction = (s: string) => string;
 interface IReceiptItemProps {
@@ -25,6 +26,24 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
 
   const {timestamp, type, orderSnapshot, targetAmount, targetAsset, balanceSnapshot} =
     histories.histories;
+
+  const getCFDData = userCtx.getCFD(orderSnapshot.id);
+
+  /* Todo: (20230328 - Julian) get data from userContext */
+  const getDepositData: IDisplayAcceptedDepositOrder = {
+    id: 'TBD202303280000001',
+    txid: '0x',
+    orderType: OrderType.DEPOSIT,
+    createTimestamp: 1679587700,
+    orderStatus: OrderStatusUnion.FAILED,
+    fee: 0,
+    remark: '',
+    targetAsset: 'USDT',
+    targetAmount: 80,
+    decimals: 18,
+    to: '0x',
+    available: 1900,
+  };
 
   const receiptDate = timestampToString(timestamp ?? 0);
 
@@ -81,20 +100,22 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
     type === OrderType.CFD
       ? orderSnapshot.state === OrderState.OPENING
         ? () => {
-            /* ToDo: convert IAceptedOrder to IDisplayedAcceptedOrder in order to use getCFD (20230324 - Luphia)
-            globalCtx.dataPositionUpdatedModalHandler(userCtx.getCFD(orderSnapshot.id));
+            /* ToDo: convert IAceptedOrder to IDataPositionUpdatedModal in order to use getCFD (20230324 - Luphia)
+            globalCtx.dataPositionUpdatedModalHandler(getCFDData);
              */
             globalCtx.visiblePositionUpdatedModalHandler();
           }
         : () => {
-            /* ToDo: convert IAceptedOrder to IDisplayedAcceptedOrder in order to use getCFD (20230324 - Luphia)
-            globalCtx.dataHistoryPositionModalHandler(userCtx.getCFD(orderSnapshot.id));
+            /* ToDo: convert IAceptedOrder to IDisplayAcceptedCFDOrder in order to use getCFD (20230324 - Luphia)
+            globalCtx.dataHistoryPositionModalHandler(getCFDData);
              */
             globalCtx.visibleHistoryPositionModalHandler();
           }
       : type === OrderType.DEPOSIT
       ? () => {
           /* Todo: (20230324 - Julian) deposit history modal */
+          globalCtx.visibleDepositHistoryModalHandler();
+          globalCtx.dataDepositHistoryModalHandler(getDepositData);
         }
       : () => {
           /* Todo: (20230324 - Julian) withdraw history modal */
@@ -183,6 +204,10 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
     <div className="hidden flex-auto flex-col lg:flex lg:w-64">
       <span className="text-lightGray">{t('MY_ASSETS_PAGE.RECEIPT_SECTION_DETAIL')}</span>
       <div className="inline-flex items-center">
+        {/* Todo: (20230328 - Julian) available
+         * 1. 用戶地址(to)
+         * 2. Bolt 地址(超連結)
+         */}
         <p className={`${displayedReceiptStateColor} mr-2`}>{displayedReceiptState}</p>
         {displayedReceiptStateIcon}
       </div>

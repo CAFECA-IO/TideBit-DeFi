@@ -439,10 +439,6 @@ const PositionClosedModal = ({
       setSecondsLeft(POSITION_PRICE_RENEWAL_INTERVAL_SECONDS);
       setDataRenewedStyle('text-lightWhite');
 
-      const base = gQuotationRef.current.deadline;
-      const tickingSec = base - getTimestamp();
-      setSecondsLeft(tickingSec > 0 ? Math.round(tickingSec) : 0);
-
       return;
     }
 

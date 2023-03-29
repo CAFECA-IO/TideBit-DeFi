@@ -60,7 +60,7 @@ const PositionOpenModal = ({
   const userCtx = useContext(UserContext);
 
   const [secondsLeft, setSecondsLeft, secondsLeftRef] = useStateRef(
-    Math.round(openCfdRequest.quotation.deadline - getTimestamp() - 1)
+    POSITION_PRICE_RENEWAL_INTERVAL_SECONDS
   );
   const [dataRenewedStyle, setDataRenewedStyle] = useState('text-lightWhite');
   const [quotationError, setQuotationError, quotationErrorRef] = useStateRef(false);
@@ -333,7 +333,6 @@ const PositionOpenModal = ({
                 {openCfdRequest.price?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
                   minimumFractionDigits: 2,
                 }) ?? 0}
-                {/* ToDo: Hardcode USDT */}
                 <span className="ml-1 text-lightGray">{unitAsset}</span>
               </div>
             </div>
@@ -351,7 +350,6 @@ const PositionOpenModal = ({
               <div className="text-lightGray">{t('POSITION_MODAL.REQUIRED_MARGIN')}</div>
               <div className={`${dataRenewedStyle}`}>
                 {openCfdRequest.margin.amount.toFixed(2)}
-                {/* ToDo: Hardcode USDT */}
                 <span className="ml-1 text-lightGray">{unitAsset}</span>
               </div>
             </div>
@@ -360,7 +358,6 @@ const PositionOpenModal = ({
               <div className="text-lightGray">{t('POSITION_MODAL.TP_AND_SL')}</div>
               <div className="">
                 {displayedTakeProfit} / {displayedStopLoss}
-                {/* ToDo: Hardcode USDT */}
                 <span className="ml-1 text-lightGray">{unitAsset}</span>
               </div>
             </div>
@@ -405,7 +402,6 @@ const PositionOpenModal = ({
                 {openCfdRequest.liquidationPrice?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
                   minimumFractionDigits: 2,
                 }) ?? 0}
-                {/* ToDo: Hardcode USDT */}
                 <span className="ml-1 text-lightGray">{unitAsset}</span>
               </div>
             </div>

@@ -193,18 +193,6 @@ const PositionUpdatedModal = ({
         })}`
       : '-';
 
-  // const displayedStopLoss =
-  //   updatedProps.stopLoss === 0
-  //     ? '-'
-  //     : updatedProps.stopLoss !== 0
-  //     ? updatedProps.stopLoss
-  //     : openCfdDetails.stopLoss
-  //     ? openCfdDetails.stopLoss
-  //     : '-';
-
-  // const displayedPnLSymbol =
-  //   openCfdDetails.pnl.type === 'PROFIT' ? '+' : openCfdDetails.pnl.type === 'LOSS' ? '-' : '';
-
   const displayedTypeOfPosition =
     openCfdDetails?.typeOfPosition === TypeOfPosition.BUY
       ? t('POSITION_MODAL.TYPE_UP')
@@ -215,17 +203,7 @@ const PositionUpdatedModal = ({
       ? t('POSITION_MODAL.TYPE_BUY')
       : t('POSITION_MODAL.TYPE_SELL');
 
-  // const displayedPnLColor =
-  //   updatedCfdRequest?.pnl.type === 'PROFIT'
-  //     ? TypeOfPnLColor.PROFIT
-  //     : updatedCfdRequest?.pnl.type === 'LOSS'
-  //     ? TypeOfPnLColor.LOSS
-  //     : TypeOfPnLColor.EQUAL;
-
   const displayedPositionColor = 'text-tidebitTheme';
-  // openCfdDetails.typeOfPosition === TypeOfPosition.BUY
-  //   ? TypeOfPnLColor.PROFIT
-  //   : TypeOfPnLColor.LOSS;
 
   const displayedBorderColor = TypeOfBorderColor.NORMAL;
 
@@ -263,12 +241,7 @@ const PositionUpdatedModal = ({
 
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">{t('POSITION_MODAL.OPEN_PRICE')}</div>
-              {/* <div className="">
-                {openCfdDetails?.amount?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0}{' '}
-                {openCfdDetails.ticker}
-              </div> */}
               <div className={``}>
-                {/* TODO: Hardcode USDT */}
                 {openCfdDetails?.openPrice?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
                   minimumFractionDigits: 2,
                 }) ?? 0}{' '}

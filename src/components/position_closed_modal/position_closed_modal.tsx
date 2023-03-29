@@ -238,7 +238,7 @@ const PositionClosedModal = ({
       // eslint-disable-next-line no-console
       console.log('quotation from ctx in closed modal', data);
 
-      // Info: if there's error fetching quotation, disable the submit btn (20230327 - Shirley)
+      // Info: if there's error fetching quotation, disable the submit btn (20230328 - Shirley)
       if (
         quotation.success &&
         data.typeOfPosition === openCfdDetails.typeOfPosition &&
@@ -273,17 +273,6 @@ const PositionClosedModal = ({
       modalContent: 'Confirm the transaction',
     });
     globalCtx.visibleLoadingModalHandler();
-
-    /*// Till: (20230409 - Shirley)
-    // const quotation = {
-    //   ticker: openCfdDetails.ticker,
-    //   price: 202303, // TODO: (20230315 - Shirley) get from marketCtx
-    //   targetAsset: openCfdDetails.targetAsset,
-    //   uniAsset: openCfdDetails.uniAsset,
-    //   deadline: getTimestamp() + RENEW_QUOTATION_INTERVAL_SECONDS, // TODO: (20230315 - Shirley) get from marketCtx
-    //   signature: '0x', // TODO: (20230315 - Shirley) get from marketCtx
-    // };
-    */
 
     try {
       const applyCloseOrder: IApplyCloseCFDOrderData = toApplyCloseOrder(
@@ -401,18 +390,8 @@ const PositionClosedModal = ({
     setPnlRenewedStyle('');
   };
 
+  // Info: Get quotation before the modal is shown (20230329 - Shirley)
   useEffect(() => {
-    // TODO: (20230317 - Shirley) from marketCtx
-    // const quotation: IQuotation = {
-    //   ticker: openCfdDetails.ticker,
-    //   typeOfPosition: openCfdDetails.typeOfPosition,
-    //   price: randomIntFromInterval(2, 500),
-    //   targetAsset: openCfdDetails.targetAsset,
-    //   unitAsset: openCfdDetails.unitAsset,
-    //   deadline: getTimestamp() + POSITION_PRICE_RENEWAL_INTERVAL_SECONDS,
-    //   signature: '0x',
-    // };
-
     if (!globalCtx.visiblePositionClosedModal) return;
 
     (async () => {
@@ -422,7 +401,6 @@ const PositionClosedModal = ({
         throw error;
       }
 
-      // TODO: (20230317 - Shirley) PnL, close price
       const displayedCloseOrder = toDisplayCloseOrder(openCfdDetails, quotation);
       globalCtx.dataPositionClosedModalHandler(displayedCloseOrder);
 
@@ -450,17 +428,7 @@ const PositionClosedModal = ({
       setSecondsLeft(tickingSec > 0 ? Math.round(tickingSec) : 0);
 
       if (secondsLeft === 0) {
-        // TODO: (20230317 - Shirley) get quotation from marketCtx
         const quotation = await getQuotation();
-        // {
-        //   ticker: openCfdDetails.ticker,
-        //   typeOfPosition: openCfdDetails.typeOfPosition,
-        //   price: randomIntFromInterval(10, 1000),
-        //   targetAsset: openCfdDetails.targetAsset,
-        //   unitAsset: openCfdDetails.unitAsset,
-        //   deadline: getTimestamp() + POSITION_PRICE_RENEWAL_INTERVAL_SECONDS,
-        //   signature: '0x',
-        // };
 
         if (!quotation) {
           setQuotationError(true);
@@ -513,7 +481,6 @@ const PositionClosedModal = ({
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">{t('POSITION_MODAL.OPEN_PRICE')}</div>
               <div className="">
-                {/* TODO: Hardcode USDT */}
                 {openCfdDetails.openPrice.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
                   minimumFractionDigits: 2,
                 }) ?? 0}{' '}
@@ -531,11 +498,9 @@ const PositionClosedModal = ({
               </div>
             </div>
 
-            {/* FIXME: close price from market price DEPENDING ON sell or buy */}
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">{t('POSITION_MODAL.CLOSED_PRICE')}</div>
               <div className={`${dataRenewedStyle}`}>
-                {/* TODO: Hardcode USDT */}
                 {gQuotationRef.current.price?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
                   minimumFractionDigits: 2,
                   maximumFractionDigits: 2,

@@ -11,7 +11,6 @@ import {OrderStatusUnion} from '../../constants/order_status_union';
 import {IOrder} from '../../interfaces/tidebit_defi_background/order';
 import {UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
 import {useTranslation} from 'next-i18next';
-import {IDisplayAcceptedDepositOrder} from '../../interfaces/tidebit_defi_background/display_accepted_deposit_order';
 
 type TranslateFunction = (s: string) => string;
 interface IReceiptItemProps {
@@ -29,7 +28,7 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
 
   const getCFDData = userCtx.getCFD(orderSnapshot.id);
 
-  /* Todo: (20230328 - Julian) get data from userContext */
+  /* Todo: (20230328 - Julian) get data from userContext 
   const getDepositData: IDisplayAcceptedDepositOrder = {
     id: 'TBD202303280000001',
     txid: '0x',
@@ -47,7 +46,9 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
       available: 0,
       locked: 1900,
     },
-  };
+  };*/
+
+  const displayedDepositData = toDisplayAcceptedDepositOrder(histories.histories);
 
   const receiptDate = timestampToString(timestamp ?? 0);
 
@@ -119,9 +120,7 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
       ? () => {
           /* Todo: (20230324 - Julian) deposit history modal */
           globalCtx.visibleDepositHistoryModalHandler();
-          globalCtx.dataDepositHistoryModalHandler(
-            toDisplayAcceptedDepositOrder(histories.histories)
-          );
+          globalCtx.dataDepositHistoryModalHandler(displayedDepositData);
         }
       : () => {
           /* Todo: (20230324 - Julian) withdraw history modal */

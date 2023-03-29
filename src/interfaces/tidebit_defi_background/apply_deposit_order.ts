@@ -41,6 +41,11 @@ export const convertApplyDepositOrderToAcceptedDepositOrder = (
     createTimestamp: applyDepositOrder.createTimestamp
       ? applyDepositOrder.createTimestamp
       : getTimestamp(),
+    balanceSnapshot: {
+      currency: applyDepositOrder.targetAsset,
+      available: 0,
+      locked: 0,
+    },
   };
   return accpetedDepositOrder;
 };

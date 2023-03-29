@@ -52,9 +52,9 @@ import {IApplyUpdateCFDOrderData} from '../interfaces/tidebit_defi_background/ap
 import useStateRef from 'react-usestateref';
 import {POSITION_PRICE_RENEWAL_INTERVAL_SECONDS} from '../constants/config';
 import {
-  IDisplayAcceptedDepositOrder,
-  getDummyDisplayAcceptedDepositOrder,
-} from '../interfaces/tidebit_defi_background/display_accepted_deposit_order';
+  IAcceptedDepositOrder,
+  getDummyAcceptedDepositOrder,
+} from '../interfaces/tidebit_defi_background/accepted_deposit_order';
 
 export interface IToastify {
   type: 'error' | 'warning' | 'info' | 'success';
@@ -262,8 +262,8 @@ export interface IGlobalContext {
 
   visibleDepositHistoryModal: boolean;
   visibleDepositHistoryModalHandler: () => void;
-  dataDepositHistoryModal: IDisplayAcceptedDepositOrder | null;
-  dataDepositHistoryModalHandler: (data: IDisplayAcceptedDepositOrder) => void;
+  dataDepositHistoryModal: IAcceptedDepositOrder | null;
+  dataDepositHistoryModalHandler: (data: IAcceptedDepositOrder) => void;
 
   visibleLoadingModal: boolean;
   visibleLoadingModalHandler: () => void;
@@ -506,8 +506,9 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
   const [visibleDepositModal, setVisibleDepositModal] = useState(false);
 
   const [visibleDepositHistoryModal, setVisibleDepositHistoryModal] = useState(false);
-  const [dataDepositHistoryModal, setDataDepositHistoryModal] =
-    useState<IDisplayAcceptedDepositOrder>(getDummyDisplayAcceptedDepositOrder('USDT'));
+  const [dataDepositHistoryModal, setDataDepositHistoryModal] = useState<IAcceptedDepositOrder>(
+    getDummyAcceptedDepositOrder('USDT')
+  );
 
   const [visibleLoadingModal, setVisibleLoadingModal] = useState(false);
   const [dataLoadingModal, setDataLoadingModal] = useState<IProcessDataModal>({
@@ -662,7 +663,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     setVisibleDepositHistoryModal(!visibleDepositHistoryModal);
   };
 
-  const dataDepositHistoryModalHandler = (data: IDisplayAcceptedDepositOrder) => {
+  const dataDepositHistoryModalHandler = (data: IAcceptedDepositOrder) => {
     setDataDepositHistoryModal(data);
   };
 

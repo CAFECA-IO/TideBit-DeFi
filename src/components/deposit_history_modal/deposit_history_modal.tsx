@@ -3,14 +3,14 @@ import Image from 'next/image';
 import Lottie from 'lottie-react';
 import smallConnectingAnimation from '../../../public/animation/lf30_editor_cnkxmhy3.json';
 import {ImCross} from 'react-icons/im';
-import {IDisplayAcceptedDepositOrder} from '../../interfaces/tidebit_defi_background/display_accepted_deposit_order';
+import {IAcceptedDepositOrder} from '../../interfaces/tidebit_defi_background/accepted_deposit_order';
 import {UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
 import {timestampToString} from '../../lib/common';
 
 interface IDepositHistoryModal {
   modalVisible: boolean;
   modalClickHandler: () => void;
-  getDepositHistoryData: IDisplayAcceptedDepositOrder;
+  getDepositHistoryData: IAcceptedDepositOrder;
 }
 
 /* Todo: (20230328 - Julian) i18n */
@@ -66,7 +66,7 @@ const DepositHistoryModal = ({
       <Lottie className="w-20px" animationData={smallConnectingAnimation} />
     ) : (
       <div>
-        {balanceSnapshot.locked.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+        {balanceSnapshot.available.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
           minimumFractionDigits: 2,
         })}
       </div>

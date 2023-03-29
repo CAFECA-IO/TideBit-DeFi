@@ -10,7 +10,7 @@ const TRADING_CRYPTO_DATA = [
     starred: false,
     // price: 1288.4,
     // fluctuating: 1.14,
-    tokenImg: '/elements/group_2371.svg',
+    tokenImg: '/asset_icon/eth.svg',
     tradingVolume: '217,268,645',
   },
   {
@@ -20,7 +20,7 @@ const TRADING_CRYPTO_DATA = [
     starred: false,
     // price: 1288.4,
     // fluctuating: 1.14,
-    tokenImg: '/elements/group_2372.svg',
+    tokenImg: '/asset_icon/btc.svg',
     tradingVolume: '217,268,645',
   },
   {
@@ -30,7 +30,7 @@ const TRADING_CRYPTO_DATA = [
     starred: false,
     // price: 1288.4,
     // fluctuating: 1.14,
-    tokenImg: '/elements/c5b7bda06ddfe2b3f59b37ed6bb65ab4.svg',
+    tokenImg: '/asset_icon/ltc.svg',
     tradingVolume: '217,268,645',
   },
   {
@@ -40,7 +40,7 @@ const TRADING_CRYPTO_DATA = [
     starred: false,
     // price: 1288.4,
     // fluctuating: 1.14,
-    tokenImg: '/elements/9cc18b0cbe765b0a28791d253207f0c0.svg',
+    tokenImg: '/asset_icon/matic.svg',
     tradingVolume: '217,268,645',
   },
   {
@@ -50,7 +50,7 @@ const TRADING_CRYPTO_DATA = [
     starred: false,
     // price: 1288.4,
     // fluctuating: 1.14,
-    tokenImg: '/elements/group_2374.svg',
+    tokenImg: '/asset_icon/bnb.svg',
     tradingVolume: '217,268,645',
   },
   {
@@ -60,7 +60,7 @@ const TRADING_CRYPTO_DATA = [
     starred: false,
     // price: 1288.4,
     // fluctuating: 1.14,
-    tokenImg: '/elements/group_2378.svg',
+    tokenImg: '/asset_icon/sol.svg',
     tradingVolume: '217,268,645',
   },
   {
@@ -70,7 +70,7 @@ const TRADING_CRYPTO_DATA = [
     starred: false,
     // price: 1288.4,
     // fluctuating: 1.14,
-    tokenImg: '/elements/group_2381.svg',
+    tokenImg: '/asset_icon/shib.svg',
     tradingVolume: '217,268,645',
   },
   {
@@ -80,7 +80,7 @@ const TRADING_CRYPTO_DATA = [
     starred: false,
     // price: 1288.4,
     // fluctuating: 1.14,
-    tokenImg: '/elements/group_2385.svg',
+    tokenImg: '/asset_icon/dot.svg',
     tradingVolume: '217,268,645',
   },
   {
@@ -90,7 +90,7 @@ const TRADING_CRYPTO_DATA = [
     starred: false,
     // price: 1288.4,
     // fluctuating: 1.14,
-    tokenImg: '/elements/group_2388.svg',
+    tokenImg: '/asset_icon/ada.svg',
     tradingVolume: '217,268,645',
   },
   {
@@ -100,7 +100,7 @@ const TRADING_CRYPTO_DATA = [
     starred: false,
     // price: 1288.4,
     // fluctuating: 1.14,
-    tokenImg: '/elements/group_2391.svg',
+    tokenImg: '/asset_icon/avax.svg',
     tradingVolume: '217,268,645',
   },
   {
@@ -110,7 +110,7 @@ const TRADING_CRYPTO_DATA = [
     starred: false,
     // price: 1288.4,
     // fluctuating: 1.14,
-    tokenImg: '/elements/layer_x0020_1.svg',
+    tokenImg: '/asset_icon/dai.svg',
     tradingVolume: '217,268,645',
   },
   {
@@ -120,7 +120,7 @@ const TRADING_CRYPTO_DATA = [
     starred: false,
     // price: 1288.4,
     // fluctuating: 1.14,
-    tokenImg: '/elements/layer_2.svg',
+    tokenImg: '/asset_icon/mkr.svg',
     tradingVolume: '217,268,645',
   },
   {
@@ -130,7 +130,7 @@ const TRADING_CRYPTO_DATA = [
     starred: false,
     // price: 1288.4,
     // fluctuating: 1.14,
-    tokenImg: '/elements/group_2406.svg',
+    tokenImg: '/asset_icon/xrp.svg',
     tradingVolume: '217,268,645',
   },
   {
@@ -140,7 +140,7 @@ const TRADING_CRYPTO_DATA = [
     starred: false,
     // price: 1288.4,
     // fluctuating: 1.14,
-    tokenImg: '/elements/layer_2-1.svg',
+    tokenImg: '/asset_icon/doge.svg',
     tradingVolume: '217,268,645',
   },
   {
@@ -150,7 +150,7 @@ const TRADING_CRYPTO_DATA = [
     starred: false,
     // price: 1288.4,
     // fluctuating: 1.14,
-    tokenImg: '/elements/uniswap-uni-logo.svg',
+    tokenImg: '/asset_icon/uni.svg',
     tradingVolume: '217,268,645',
   },
   {
@@ -160,7 +160,7 @@ const TRADING_CRYPTO_DATA = [
     starred: false,
     // price: 1288.4,
     // fluctuating: 1.14,
-    tokenImg: '/elements/layer_2_1_.svg',
+    tokenImg: '/asset_icon/flow.svg',
     tradingVolume: '217,268,645',
   },
 ];

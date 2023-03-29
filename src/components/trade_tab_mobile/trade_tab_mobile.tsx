@@ -272,7 +272,6 @@ const TradeTabMobile = () => {
       longQuotation = await marketCtx.getCFDQuotation(tickerId, TypeOfPosition.BUY);
       shortQuotation = await marketCtx.getCFDQuotation(tickerId, TypeOfPosition.SELL);
 
-      // const now = getTimestamp();
       const long = longQuotation.data as IQuotation;
       const short = shortQuotation.data as IQuotation;
 

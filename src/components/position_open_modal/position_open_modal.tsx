@@ -45,8 +45,6 @@ interface IPositionOpenModal {
   openCfdRequest: IApplyCreateCFDOrderData;
 }
 
-// ToDo: seconds constant in display.ts or config.ts?
-
 const PositionOpenModal = ({
   modalVisible,
   modalClickHandler,
@@ -160,22 +158,9 @@ const PositionOpenModal = ({
 
   const [guaranteedTooltipStatus, setGuaranteedTooltipStatus] = useState(0);
 
-  // const displayedPnLColor =
-  //   openCfdRequest?.pnl.type === 'PROFIT'
-  //     ? TypeOfPnLColor.PROFIT
-  //     : openCfdRequest?.pnl.type === 'LOSS'
-  //     ? TypeOfPnLColor.LOSS
-  //     : TypeOfPnLColor.EQUAL;
-
   const displayedPositionColor = 'text-tidebitTheme';
-  // openCfdRequest.typeOfPosition === TypeOfPosition.BUY
-  //   ? TypeOfPnLColor.PROFIT
-  //   : TypeOfPnLColor.LOSS;
 
   const displayedBorderColor = TypeOfBorderColor.NORMAL;
-  // openCfdRequest.typeOfPosition === TypeOfPosition.BUY
-  //   ? TypeOfBorderColor.LONG
-  //   : TypeOfBorderColor.SHORT;
 
   const displayedTakeProfit = openCfdRequest.takeProfit ? `$ ${openCfdRequest.takeProfit}` : '-';
   const displayedStopLoss = openCfdRequest.stopLoss ? `$ ${openCfdRequest.stopLoss}` : '-';
@@ -234,18 +219,10 @@ const PositionOpenModal = ({
         : newQuotation.price * (1 + LIQUIDATION_FIVE_LEVERAGE);
     const gslFee = Number(gsl) * openCfdRequest.amount * newPrice;
 
-    // TODO: (20230324 - Shirley) renew price, liquidation time, liquidation price
-
     globalCtx.dataPositionOpenModalHandler({
       openCfdRequest: {
         ...openCfdRequest,
         quotation: newQuotation,
-        // {
-        //   ...openCfdRequest.quotation,
-        //   deadline: deadline,
-        //   price: newPrice,
-        //   signature: '0x',
-        // },
         price: newPrice,
         margin: {
           ...openCfdRequest.margin,
@@ -265,18 +242,21 @@ const PositionOpenModal = ({
   const mouseLeaveHandler = () => setGuaranteedTooltipStatus(0);
 
   useEffect(() => {
+    if (!globalCtx.visiblePositionOpenModal) return;
+
+    const base = openCfdRequest.quotation.deadline;
+    const tickingSec = base - getTimestamp();
+    setSecondsLeft(tickingSec > 0 ? Math.round(tickingSec) : 0);
+  }, [globalCtx.visiblePositionOpenModal]);
+
+  useEffect(() => {
     // if (!lock()) return;
 
     if (!globalCtx.visiblePositionOpenModal) {
       // setSecondsLeft(Math.round(openCfdRequest.quotation.deadline - getTimestamp() - 1));
       setDataRenewedStyle('text-lightWhite');
-
       return;
     }
-
-    // Deprecated: before merging into develop (20230327 - Shirley)
-    // eslint-disable-next-line no-console
-    console.log('gsl in open modal', openCfdRequest.guaranteedStopFee);
 
     const intervalId = setInterval(() => {
       const base = openCfdRequest.quotation.deadline;
@@ -317,8 +297,6 @@ const PositionOpenModal = ({
           className={`${displayedBorderColor} mt-1 border-1px py-4 text-xs leading-relaxed text-lightWhite`}
         >
           <div className="flex flex-col justify-center text-center">
-            {/* {displayedDataFormat()} */}
-
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">{t('POSITION_MODAL.TYPE')}</div>
               <div className={`${displayedPositionColor}`}>
@@ -339,7 +317,6 @@ const PositionOpenModal = ({
 
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">{t('POSITION_MODAL.AMOUNT')}</div>
-              {/* ToDo:{openCfdRequest?.amount?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0} */}
               <div className="">
                 {openCfdRequest.amount.toFixed(2)}
                 <span className="ml-1 text-lightGray">{marketCtx.selectedTicker?.currency}</span>
@@ -424,9 +401,6 @@ const PositionOpenModal = ({
 
   const isDisplayedModal = modalVisible ? (
     <>
-      {/*  <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">*/}
-      {/*  overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none */}
-      {/* position: relative; top: 50%; left: 50%; transform: translate(-50%, -50%) */}
       <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">
         {/* The position of the modal */}
         <div className="relative my-6 mx-auto w-auto max-w-xl">

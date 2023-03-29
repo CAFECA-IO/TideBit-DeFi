@@ -203,13 +203,16 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
   const displayedReceiptDetail = (
     <div className="hidden flex-auto flex-col lg:flex lg:w-64">
       <span className="text-lightGray">{t('MY_ASSETS_PAGE.RECEIPT_SECTION_DETAIL')}</span>
-      <div className="inline-flex items-center">
-        {/* Todo: (20230328 - Julian) available
-         * 1. 用戶地址(to)
-         * 2. Bolt 地址(超連結)
-         */}
-        <p className={`${displayedReceiptStateColor} mr-2`}>{displayedReceiptState}</p>
-        {displayedReceiptStateIcon}
+      <div className="flex flex-col">
+        <div className="inline-flex items-center">
+          {/* Todo: (20230328 - Julian) available
+           * 1. 用戶地址(to)
+           * 2. Bolt 地址(超連結)
+           */}
+          <p className={`${displayedReceiptStateColor} mr-2`}>{displayedReceiptState}</p>
+          {displayedReceiptStateIcon}
+        </div>
+        <div className="inline-flex items-center"></div>
       </div>
     </div>
   );

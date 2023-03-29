@@ -63,12 +63,7 @@ const TrialComponent = () => {
               >
                 <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
               </svg> */}
-                <Image
-                  src="/elements/tether-seeklogo.com.svg"
-                  width={50}
-                  height={50}
-                  alt="tether-seeklogo.com.svg"
-                />
+                <Image src="/asset_icon/usdt.svg" width={50} height={50} alt="USDT_icon" />
               </div>
               <div className="flex flex-col">
                 <h2 className="text-3xl font-medium text-lightGreen2">USDT</h2>

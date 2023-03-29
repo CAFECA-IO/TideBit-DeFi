@@ -228,12 +228,7 @@ const ReceiptSearch = ({
 
   const displayedTicker = (
     <div className="flex items-center space-x-2">
-      <Image
-        src="/elements/tether-seeklogo.com.svg"
-        width={50}
-        height={50}
-        alt="tether-seeklogo.com.svg"
-      />
+      <Image src="/asset_icon/usdt.svg" width={50} height={50} alt="USDT_icon" />
       <div className="flex flex-col items-start">
         <p className="text-xl">Tether</p>
         <p className="text-lg">USDT</p>

@@ -552,9 +552,9 @@ const UpdateFormModal = ({
               </button>
             </div>
             {/*body*/}
-            <div className="relative flex w-full flex-auto flex-col items-stretch pt-0">
+            <div className="relative flex flex-auto flex-col items-center px-10 pt-0">
               <div
-                className={`${displayedBorderColor} mx-10 mt-2 border-1px text-xs leading-relaxed text-lightWhite`}
+                className={`${displayedBorderColor} mt-2 w-full border-1px text-xs leading-relaxed text-lightWhite`}
               >
                 <div className="flex-col justify-center text-center">
                   <div className={`${layoutInsideBorder}`}>

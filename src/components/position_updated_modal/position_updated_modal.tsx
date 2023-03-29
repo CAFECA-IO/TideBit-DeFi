@@ -234,9 +234,9 @@ const PositionUpdatedModal = ({
         <div className="text-2xl">{openCfdDetails.ticker}</div>
       </div>
 
-      <div className="relative flex-auto pt-1">
+      <div className="relative flex flex-col items-center pt-1">
         <div
-          className={`${displayedBorderColor} mt-1 border-1px py-4 text-xs leading-relaxed text-lightWhite`}
+          className={`${displayedBorderColor} mt-1 w-full border-1px py-4 text-xs leading-relaxed text-lightWhite`}
         >
           <div className="flex flex-col justify-center text-center">
             {/* {displayedDataFormat()} */}

@@ -10,7 +10,7 @@ export interface ICryptocurrency {
 
 export const dummyCryptocurrency: ICryptocurrency = {
   id: 'USDT',
-  icon: '/elements/group_2371.svg',
+  icon: '/asset_icon/usdt.svg',
   symbol: 'USDT',
   name: 'Tether',
   contract: '0x',
@@ -24,7 +24,7 @@ export const dummyCryptocurrencies = [
     symbol: 'USDT',
     name: 'Tether',
     decimals: 6,
-    icon: '/elements/tether-seeklogo.com.svg',
+    icon: '/asset_icon/usdt.com.svg',
     fee: 0,
     contract: '0x',
   },
@@ -33,7 +33,7 @@ export const dummyCryptocurrencies = [
     symbol: 'ETH',
     name: 'ETH',
     decimals: 18,
-    icon: '/elements/group_2371.svg',
+    icon: '/asset_icon/eth.svg',
     fee: 0,
     contract: '0x',
   },

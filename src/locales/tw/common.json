@@ -144,6 +144,18 @@
     "CLOSED_REASON_STOP_LOSS": "止損",
     "SHARE": "分享至"
   },
+  "D_W_MODAL": {
+    "DEPOSIT": "入金",
+    "WITHDRAW": "出金",
+    "STATUS_PROCESSING": "處理中",
+    "STATUS_FAILED": "失敗",
+    "TYPE": "類型",
+    "ASSETS": "資產",
+    "AMOUNT": "交易量",
+    "FEE": "手續費",
+    "AVAILABLE": "可用餘額",
+    "DETAIL": "詳細資訊"
+  },
   "MY_ASSETS_PAGE": {
     "BALANCE_SECTION_DEPOSIT": "入金",
     "BALANCE_SECTION_WITHDRAW": "出金",
@@ -160,7 +172,7 @@
     "RECEIPT_SECTION_DATE_TO": "到",
     "RECEIPT_SECTION_SEARCH_PLACEHOLDER": "搜尋",
     "RECEIPT_SECTION_DETAIL": "詳細",
-    "RECEIPT_SECTION_ORDER_STATUS_PROCESSING": "進行中",
+    "RECEIPT_SECTION_ORDER_STATUS_PROCESSING": "處理中",
     "RECEIPT_SECTION_ORDER_STATUS_FAILED": "失敗",
     "RECEIPT_SECTION_FEE": "手續費",
     "RECEIPT_SECTION_AVAILABLE": "可用餘額"

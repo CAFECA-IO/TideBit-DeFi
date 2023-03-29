@@ -144,6 +144,18 @@
     "CLOSED_REASON_STOP_LOSS": "Stop Loss",
     "SHARE": "Share"
   },
+  "D_W_MODAL": {
+    "DEPOSIT": "Deposit",
+    "WITHDRAW": "Withdraw",
+    "STATUS_PROCESSING": "Processing",
+    "STATUS_FAILED": "Failed",
+    "TYPE": "Type",
+    "ASSETS": "Assets",
+    "AMOUNT": "Amount",
+    "FEE": "Fee",
+    "AVAILABLE": "Available",
+    "DETAIL": "Detail"
+  },
   "MY_ASSETS_PAGE": {
     "BALANCE_SECTION_DEPOSIT": "Deposit",
     "BALANCE_SECTION_WITHDRAW": "Withdraw",

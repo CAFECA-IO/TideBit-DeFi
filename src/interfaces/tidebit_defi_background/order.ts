@@ -123,7 +123,7 @@ export const dummyDepositOrder2: IOrder = {
   orderSnapshot: {
     id: 'TBDDeposit20230324_002',
     txid: '0x',
-    status: 'SUCCESS',
+    status: OrderStatusUnion.SUCCESS,
     remarks: '',
     fee: 0,
   },
@@ -143,7 +143,7 @@ export const dummyWithdrawalOrder2: IOrder = {
   orderSnapshot: {
     id: 'TBDWithdraw20230324_002',
     txid: '0x',
-    status: 'SUCCESS',
+    status: OrderStatusUnion.SUCCESS,
     remarks: '',
     fee: -0.05,
   },
@@ -163,7 +163,7 @@ export const dummyOpenCFDOrder2: IOrder = {
   orderSnapshot: {
     id: 'TBD202303240000001',
     txid: '0x',
-    status: 'FAILED',
+    status: OrderStatusUnion.FAILED,
     state: OrderState.OPENING,
     remarks: '',
     fee: 0,
@@ -184,7 +184,7 @@ export const dummyClosedCFDOrder2: IOrder = {
   orderSnapshot: {
     id: 'TBD202303240000001',
     txid: '0x',
-    status: 'SUCCESS',
+    status: OrderStatusUnion.FAILED,
     state: OrderState.CLOSED,
     remarks: '',
     fee: 0,

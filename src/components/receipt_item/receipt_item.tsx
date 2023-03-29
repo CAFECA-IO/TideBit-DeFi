@@ -29,7 +29,7 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
 
   const getCFDData = userCtx.getCFD(orderSnapshot.id);
 
-  /* Todo: (20230328 - Julian) get data from userContext */
+  /* Todo: (20230328 - Julian) get data from userContext 
   const getDepositData: IAcceptedDepositOrder = {
     id: 'TBD202303280000001',
     txid: '0x',
@@ -43,7 +43,7 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
     decimals: 18,
     to: '0x',
     //available: 1900,
-  };
+  }; */
 
   const receiptDate = timestampToString(timestamp ?? 0);
 
@@ -113,12 +113,15 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
           }
       : type === OrderType.DEPOSIT
       ? () => {
-          /* Todo: (20230324 - Julian) deposit history modal */
+          /* ToDo: (20230329 - Julian) transfer IOrder to IAcceptedDepositOrder
+          globalCtx.dataDepositHistoryModalHandler(getDepositData); */
           globalCtx.visibleDepositHistoryModalHandler();
-          globalCtx.dataDepositHistoryModalHandler(getDepositData);
         }
       : () => {
-          /* Todo: (20230324 - Julian) withdraw history modal */
+          /* ToDo: (20230329 - Julian) transfer IOrder to IAcceptedWithdrawOrder 
+          globalCtx.dataWithdrawalHistoryModalHandler(getDepositData);
+          */
+          globalCtx.visibleWithdrawalHistoryModalHandler();
         };
 
   const detailIcon = (

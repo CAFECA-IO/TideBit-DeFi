@@ -4,7 +4,7 @@ import Link from 'next/link';
 import TideLink from '../tide_link/tide_link';
 import RippleButton from '../ripple_button/ripple_button';
 import {useTranslation} from 'react-i18next';
-import {TBEURL} from '../../constants/api_request';
+import {TBDURL} from '../../constants/api_request';
 
 type TranslateFunction = (s: string) => string;
 
@@ -15,14 +15,14 @@ const Footer = () => {
   const socialMediaLinks = [
     {
       label: 'Facebook',
-      path: TBEURL.COMING_SOON,
+      path: TBDURL.COMING_SOON,
       icon: (
         <Image src={'/elements/facebook.svg'} alt="Facebook" width={ICON_SIZE} height={ICON_SIZE} />
       ),
     },
     {
       label: 'Instagram',
-      path: TBEURL.COMING_SOON,
+      path: TBDURL.COMING_SOON,
       icon: (
         <Image
           src={'/elements/instagram.svg'}
@@ -34,14 +34,14 @@ const Footer = () => {
     },
     {
       label: 'Twitter',
-      path: TBEURL.COMING_SOON,
+      path: TBDURL.COMING_SOON,
       icon: (
         <Image src={'/elements/twitter.svg'} alt="twitter" width={ICON_SIZE} height={ICON_SIZE} />
       ),
     },
     {
       label: 'Reddit',
-      path: TBEURL.COMING_SOON,
+      path: TBDURL.COMING_SOON,
       icon: (
         <Image src={'/elements/reddit.svg'} alt="reddit" width={ICON_SIZE} height={ICON_SIZE} />
       ),
@@ -50,15 +50,15 @@ const Footer = () => {
 
   const servicesLinks = [
     {label: t('NAV_BAR.TRADE'), path: '/trade/cfd/ethusdt'},
-    {label: t('NAV_BAR.TIDEBIT_UNIVERSITY'), path: TBEURL.COMING_SOON},
-    {label: t('NAV_BAR.HELP_CENTER'), path: TBEURL.COMING_SOON},
+    {label: t('NAV_BAR.TIDEBIT_UNIVERSITY'), path: TBDURL.COMING_SOON},
+    {label: t('NAV_BAR.HELP_CENTER'), path: TBDURL.COMING_SOON},
   ];
 
-  const tideBitLinks = [{label: t('FOOTER.HIRING'), path: TBEURL.COMING_SOON}];
+  const tideBitLinks = [{label: t('FOOTER.HIRING'), path: TBDURL.COMING_SOON}];
 
   const policyLinks = [
-    {label: t('FOOTER.SERVICE_POLICY'), path: TBEURL.COMING_SOON},
-    {label: t('FOOTER.PRIVACY_POLICY'), path: TBEURL.COMING_SOON},
+    {label: t('FOOTER.SERVICE_POLICY'), path: TBDURL.COMING_SOON},
+    {label: t('FOOTER.PRIVACY_POLICY'), path: TBDURL.COMING_SOON},
   ];
 
   const socialMediaLinksList = socialMediaLinks.map(({label, path, icon}) => (

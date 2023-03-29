@@ -72,7 +72,7 @@ const UserMobile = () => {
     /* ToDo: (20230327 - Julian) Fix fade in animation */
     <div
       className={`fixed left-0 ${
-        avatarMenuVisible ? 'bg-darkGray/100' : ''
+        avatarMenuVisible ? 'bg-darkGray/100' : 'invisible'
       } transition-all duration-300`}
     >
       <div

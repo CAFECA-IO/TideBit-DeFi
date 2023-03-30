@@ -166,15 +166,15 @@ export const updateDummyCandlestickChartData = (data: ICandlestickData[]): ICand
   const withNullData = [
     ...originWithoutNull,
     newCandlestickData,
-    ...Array.from({length: nullNum}, (_, i) => ({
-      x: new Date(nowSecond + unitOfLive * nullTime),
-      y: {
-        open: null,
-        high: null,
-        low: null,
-        close: null,
-      },
-    })),
+    // ...Array.from({length: nullNum}, (_, i) => ({
+    //   x: new Date(nowSecond + unitOfLive * nullTime),
+    //   y: {
+    //     open: null,
+    //     high: null,
+    //     low: null,
+    //     close: null,
+    //   },
+    // })),
   ];
 
   return withNullData;
@@ -442,9 +442,9 @@ export default function CandlestickChart({
 
       // Deprecated: before merging into develop (20230329 - Shirley)
       // eslint-disable-next-line no-console
-      console.log('lwcdata', lwcData);
+      console.log('lwcdata from ctx', lwcData);
       // eslint-disable-next-line no-console
-      console.log('lwc data in JSON', JSON.stringify(lwcData));
+      // console.log('lwc data in JSON', JSON.stringify(lwcData));
 
       const dummyCandles = getDummyCandlestickChartData(30, TimeSpanUnion._1s).map(d => ({
         time: (d.x.getTime() / 1000) as UTCTimestamp,
@@ -557,9 +557,16 @@ export default function CandlestickChart({
           ticksVisible: false,
           fixLeftEdge: true,
           shiftVisibleRangeOnNewBar: true,
+          borderVisible: false,
+          // Till: Restrict the drag (20230413 - Shirley)
+          // fixRightEdge: true,
         },
         localization: locale,
       });
+
+      // chart.timeScale().applyOptions({
+      //   borderVisible: false,
+      // });
 
       const candlestickSeries = chart.addCandlestickSeries({
         upColor: LINE_GRAPH_STROKE_COLOR.UP,
@@ -579,33 +586,54 @@ export default function CandlestickChart({
       candlestickSeries.setData(dummyCandles);
 
       const generateRandomCandle = () => {
-        const now = new Date();
-        const timestamp = now.toISOString().split('T')[0];
-        const price = (Math.random() * 100).toFixed(2);
+        // const newCandle = candlestickSeries.dataAt(candlestickSeries.data().length - 1);
+        const candles: ICandlestickData[] = dummyCandles.map(d => ({
+          x: new Date(d.time * 1000),
+          y: {
+            open: d.open,
+            high: d.high,
+            low: d.low,
+            close: d.close,
+          },
+        }));
+        const newCandles = updateDummyCandlestickChartData(candles);
 
-        return {
-          time: timestamp,
-          open: Number(price),
-          high: Number(price) + Math.random(),
-          low: Number(price) - Math.random(),
-          close: Number(price) + Math.random() - 0.5,
-        };
+        return newCandles;
+
+        // const now = new Date();
+        // const timestamp = now.toISOString().split('T')[0];
+        // const price = (Math.random() * 100).toFixed(2);
+
+        // return {
+        //   time: timestamp,
+        //   open: Number(price),
+        //   high: Number(price) + Math.random(),
+        //   low: Number(price) - Math.random(),
+        //   close: Number(price) + Math.random() - 0.5,
+        // };
       };
 
       const updateChart = () => {
-        const randomCandle = generateRandomCandle();
-        candlestickSeries.update(randomCandle);
+        const randomCandle = generateRandomCandle().map(d => ({
+          time: (d.x.getTime() / 1000) as UTCTimestamp,
+          open: d.y.open,
+          high: d.y.high,
+          low: d.y.low,
+          close: d.y.close,
+        }));
+
+        candlestickSeries.update(randomCandle[randomCandle.length - 1]);
       };
 
       // ToDo: (20230329 - Shirley) updates (vs useEffect)
-      // const intervalId = setInterval(updateChart, 200);
+      const intervalId = setInterval(updateChart, 200);
       // window.addEventListener('resize', handleResize);
 
       chart.timeScale().fitContent();
 
       return () => {
         // window.removeEventListener('resize', handleResize);
-        // clearInterval(intervalId);
+        clearInterval(intervalId);
         chart.remove();
       };
     }
@@ -614,7 +642,7 @@ export default function CandlestickChart({
   return (
     <>
       {/* <div className="-ml-5 w-full lg:w-7/10">Candlestick Chart with D3.js</div> */}
-      <div className="ml-5 w-full lg:w-7/10">
+      <div className="ml-5 w-full pt-20 pb-20 lg:w-7/10 lg:pt-14 lg:pb-5">
         <div ref={chartContainerRef} className="hover:cursor-crosshair"></div>
       </div>
     </>

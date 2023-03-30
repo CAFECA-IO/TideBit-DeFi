@@ -17,13 +17,12 @@ import {MarketContext} from '../../contexts/market_context';
 import {UserContext} from '../../contexts/user_context';
 import {
   IDisplayAcceptedCFDOrder,
-  getDummyDisplayAcceptedCFDOrder,
+  // getDummyDisplayAcceptedCFDOrder,
 } from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
 import {
   IDisplayApplyCFDOrder,
   getDummyDisplayApplyCloseCFDOrder,
 } from '../../interfaces/tidebit_defi_background/display_apply_cfd_order';
-import {CFDOrderType} from '../../constants/cfd_order_type';
 
 interface IOpenPositionItemProps {
   openCfdDetails: IDisplayAcceptedCFDOrder;
@@ -46,7 +45,7 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
 
     toast({
       message: `marketPrice: ${
-        openCfdDetails.typeOfPosition === TypeOfPosition.BUY
+        openCfdDetails.orderSnapshot.typeOfPosition === TypeOfPosition.BUY
           ? marketCtx.tickerLiveStatistics?.sellEstimatedFilledPrice ?? 0
           : marketCtx.tickerLiveStatistics?.buyEstimatedFilledPrice ?? 999999999
       }\nsuggestion: ${JSON.stringify(openCfdDetails.suggestion)}`,
@@ -55,7 +54,7 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
   };
 
   const nowTimestamp = new Date().getTime() / 1000;
-  const remainSecs = openCfdDetails.liquidationTime - nowTimestamp;
+  const remainSecs = openCfdDetails.orderSnapshot.liquidationTime - nowTimestamp;
 
   const remainTime =
     remainSecs < 60
@@ -79,7 +78,7 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
   };
 
   const displayedString =
-    openCfdDetails.typeOfPosition === TypeOfPosition.BUY
+    openCfdDetails.orderSnapshot.typeOfPosition === TypeOfPosition.BUY
       ? TypeOfTransaction.LONG
       : TypeOfTransaction.SHORT;
 
@@ -126,7 +125,7 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
               width={15}
               height={15}
             />
-            <p className="ml-1">{openCfdDetails.ticker}</p>
+            <p className="ml-1">{openCfdDetails.orderSnapshot.ticker}</p>
           </div>
           <div className="text-sm text-lightWhite">
             {displayedString.TITLE}{' '}
@@ -183,7 +182,7 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
           strokeColor={[`${displayedColorHex}`]}
           dataArray={openCfdDetails.positionLineGraph}
           lineGraphWidth={OPEN_POSITION_LINE_GRAPH_WIDTH}
-          annotatedValue={openCfdDetails.openPrice}
+          annotatedValue={openCfdDetails.orderSnapshot.openPrice}
         />
       </div>
     </div>

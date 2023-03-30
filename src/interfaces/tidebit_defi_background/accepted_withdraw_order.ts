@@ -1,15 +1,13 @@
-import {OrderStatusUnion} from '../../constants/order_status_union';
-import {OrderType} from '../../constants/order_type';
-import {getTimestamp, randomHex} from '../../lib/common';
 import {IAcceptedOrder} from './accepted_order';
+import {IApplyWithdrawOrder} from './apply_withdraw_order';
+import {IWithdrawOrderSnapshot} from './order_snapshot';
 
 export interface IAcceptedWithdrawOrder extends IAcceptedOrder {
-  targetAsset: string;
-  targetAmount: number;
-  // decimals: number;
-  to: string;
+  applyData: IApplyWithdrawOrder;
+  orderSnapshot: IWithdrawOrderSnapshot;
 }
 
+/* TODO: dummyAcceptedWithdrawrder (20230330 - tzuhan)
 export const dummyAcceptedWithdrawOrder: IAcceptedWithdrawOrder = {
   id: '001',
   txid: '0x',
@@ -41,3 +39,4 @@ export const getDummyAcceptedWithdrawOrder = (currency = 'ETH'): IAcceptedWithdr
   };
   return dummyAcceptedWithdrawOrder;
 };
+*/

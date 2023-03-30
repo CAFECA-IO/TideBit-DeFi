@@ -23,11 +23,11 @@ import {OrderState} from '../constants/order_state';
 import {OrderType} from '../constants/order_type';
 import {WorkerContext} from './worker_context';
 import ServiceTerm from '../constants/contracts/service_term';
-import {IApplyCreateCFDOrderData} from '../interfaces/tidebit_defi_background/apply_create_cfd_order_data';
-import {IApplyCloseCFDOrderData} from '../interfaces/tidebit_defi_background/apply_close_cfd_order_data';
-import {IApplyUpdateCFDOrderData} from '../interfaces/tidebit_defi_background/apply_update_cfd_order_data';
+import {IApplyCreateCFDOrder} from '../interfaces/tidebit_defi_background/apply_create_cfd_order_data';
+import {IApplyCloseCFDOrder} from '../interfaces/tidebit_defi_background/apply_close_cfd_order_data';
+import {IApplyUpdateCFDOrder} from '../interfaces/tidebit_defi_background/apply_update_cfd_order_data';
 import TransactionEngineInstance from '../lib/engines/transaction_engine';
-import {CFDOrderType} from '../constants/cfd_order_type';
+import {CFDOperation} from '../constants/cfd_order_type';
 import {IApplyCFDOrder} from '../interfaces/tidebit_defi_background/apply_cfd_order';
 import {IAcceptedCFDOrder} from '../interfaces/tidebit_defi_background/accepted_cfd_order';
 import {IApplyDepositOrder} from '../interfaces/tidebit_defi_background/apply_deposit_order';
@@ -38,10 +38,10 @@ import {APIName, Method} from '../constants/api_request';
 import SafeMath from '../lib/safe_math';
 import {Code, Reason} from '../constants/code';
 import {
-  getDummyDisplayAcceptedCFDOrder,
+  // getDummyDisplayAcceptedCFDOrder,
   IDisplayAcceptedCFDOrder,
 } from '../interfaces/tidebit_defi_background/display_accepted_cfd_order';
-import {acceptedOrderToOrder} from '../lib/common';
+import {acceptedOrderToOrder, randomHex} from '../lib/common';
 import TickerBookInstance from '../lib/books/ticker_book';
 import {TypeOfPosition} from '../constants/type_of_position';
 import {ProfitState} from '../constants/profit_state';
@@ -106,9 +106,9 @@ export interface IUserContext {
   listHistories: (props: string) => Promise<IResult>; // TODO: result.data: IOrder[] (20230323 - tzuhan)
   listCFDs: (props: string) => Promise<IResult>; // TODO: result.data: IAcceptedCFDOrder[] (20230323 - tzuhan)
   getCFD: (props: string) => IDisplayAcceptedCFDOrder | null;
-  createCFDOrder: (props: IApplyCreateCFDOrderData | undefined) => Promise<IResult>;
-  closeCFDOrder: (props: IApplyCloseCFDOrderData | undefined) => Promise<IResult>;
-  updateCFDOrder: (props: IApplyUpdateCFDOrderData | undefined) => Promise<IResult>;
+  createCFDOrder: (props: IApplyCreateCFDOrder | undefined) => Promise<IResult>;
+  closeCFDOrder: (props: IApplyCloseCFDOrder | undefined) => Promise<IResult>;
+  updateCFDOrder: (props: IApplyUpdateCFDOrder | undefined) => Promise<IResult>;
   listDeposits: (props: string) => Promise<IResult>; // TODO: result.data: IAcceptedDepositOrder[] (20230323 - tzuhan)
   deposit: (props: IApplyDepositOrder) => Promise<IResult>;
   listWithdraws: (props: string) => Promise<IResult>; // TODO: result.data: IAcceptedWithdrawOrder[] (20230323 - tzuhan)
@@ -166,7 +166,9 @@ export const UserContext = createContext<IUserContext>({
   listCFDs: (): Promise<IResult> => {
     throw new Error('Function not implemented.');
   },
-  getCFD: () => getDummyDisplayAcceptedCFDOrder('ETH'),
+  getCFD: (): IDisplayAcceptedCFDOrder | null => {
+    throw new Error('Function not implemented.');
+  },
   createCFDOrder: (): Promise<IResult> => {
     throw new Error('Function not implemented.');
   },
@@ -316,26 +318,26 @@ export const UserProvider = ({children}: IUserProvider) => {
     return result;
   }, []);
 
-  const toDisplayAcceptedCFDOrder = async (acceptedCFDOrder: IAcceptedCFDOrder) => {
-    const openValue = acceptedCFDOrder.openPrice * acceptedCFDOrder.amount;
+  const toDisplayAcceptedCFDOrder = (acceptedCFDOrder: IAcceptedCFDOrder) => {
+    const {orderSnapshot} = acceptedCFDOrder;
+    const openValue = orderSnapshot.openPrice * orderSnapshot.amount;
     const closeValue =
-      acceptedCFDOrder.state === OrderState.CLOSED && acceptedCFDOrder.closePrice
-        ? acceptedCFDOrder.closePrice * acceptedCFDOrder.amount
+      orderSnapshot.state === OrderState.CLOSED && orderSnapshot.closePrice
+        ? orderSnapshot.closePrice * orderSnapshot.amount
         : 0;
     const pnl =
-      acceptedCFDOrder.state === OrderState.CLOSED && acceptedCFDOrder.closePrice
-        ? (closeValue - openValue) *
-          (acceptedCFDOrder.typeOfPosition === TypeOfPosition.BUY ? 1 : -1)
+      orderSnapshot.state === OrderState.CLOSED && orderSnapshot.closePrice
+        ? (closeValue - openValue) * (orderSnapshot.typeOfPosition === TypeOfPosition.BUY ? 1 : -1)
         : 0;
-    const takeProfit = acceptedCFDOrder.typeOfPosition === TypeOfPosition.BUY ? 1.2 : 0.8;
-    const stopLoss = acceptedCFDOrder.typeOfPosition === TypeOfPosition.BUY ? 0.8 : 1.2;
+    const takeProfit = orderSnapshot.typeOfPosition === TypeOfPosition.BUY ? 1.2 : 0.8;
+    const stopLoss = orderSnapshot.typeOfPosition === TypeOfPosition.BUY ? 0.8 : 1.2;
     const suggestion = {
-      takeProfit: acceptedCFDOrder.openPrice * takeProfit,
-      stopLoss: acceptedCFDOrder.openPrice * stopLoss,
+      takeProfit: orderSnapshot.openPrice * takeProfit,
+      stopLoss: orderSnapshot.openPrice * stopLoss,
     };
     // TODO: to verify positionLineGraph (20230327 - tzuhan)
     // const positionLineGraph = [90, 72, 60, 65, 42, 25, 32, 20, 15, 32, 90, 10];
-    const positionLineGraph: number[] = tickerBook.listTickerPositions(acceptedCFDOrder.ticker, {
+    const positionLineGraph: number[] = tickerBook.listTickerPositions(orderSnapshot.ticker, {
       begin: acceptedCFDOrder.createTimestamp,
     });
 
@@ -345,9 +347,9 @@ export const UserProvider = ({children}: IUserProvider) => {
         type: pnl > 0 ? ProfitState.PROFIT : ProfitState.LOSS,
         value: pnl,
       },
-      openValue: acceptedCFDOrder.openPrice * acceptedCFDOrder.amount,
-      closeValue: acceptedCFDOrder.closePrice
-        ? acceptedCFDOrder.closePrice * acceptedCFDOrder.amount
+      openValue: orderSnapshot.openPrice * orderSnapshot.amount,
+      closeValue: orderSnapshot.closePrice
+        ? orderSnapshot.closePrice * orderSnapshot.amount
         : undefined,
       positionLineGraph,
       suggestion,
@@ -389,9 +391,9 @@ export const UserProvider = ({children}: IUserProvider) => {
         })) as IAcceptedCFDOrder[];
         let openCFDs: IDisplayAcceptedCFDOrder[] = [];
         let closedCFDs: IDisplayAcceptedCFDOrder[] = [];
-        for (const order of CFDs) {
-          const displayAcceptedCFDOrder = await toDisplayAcceptedCFDOrder(order);
-          switch (order.state) {
+        for (const CFD of CFDs) {
+          const displayAcceptedCFDOrder = toDisplayAcceptedCFDOrder(CFD);
+          switch (CFD.orderSnapshot.state) {
             case OrderState.OPENING:
             case OrderState.FREEZED:
               openCFDs = openCFDs.concat(displayAcceptedCFDOrder);
@@ -643,36 +645,26 @@ export const UserProvider = ({children}: IUserProvider) => {
   };
 
   const createCFDOrder = async (
-    applyCreateCFDOrderData: IApplyCreateCFDOrderData | undefined
+    applyCreateCFDOrder: IApplyCreateCFDOrder | undefined
   ): Promise<IResult> => {
     let result: IResult = defaultResultFailed;
     if (lunar.isConnected) {
-      if (applyCreateCFDOrderData) {
-        const balance: IBalance | null = getBalance(applyCreateCFDOrderData.margin.asset);
-        if (balance && balance.available >= applyCreateCFDOrderData.margin.amount) {
-          const CFDOrder: IApplyCFDOrder = {
-            orderType: OrderType.CFD,
-            type: CFDOrderType.CREATE,
-            data: applyCreateCFDOrderData,
-          };
-          const transferR = transactionEngine.transferCFDOrderToTransaction(CFDOrder);
+      if (applyCreateCFDOrder) {
+        const balance: IBalance | null = getBalance(applyCreateCFDOrder.margin.asset);
+        if (balance && balance.available >= applyCreateCFDOrder.margin.amount) {
+          const transferR = transactionEngine.transferCFDOrderToTransaction(applyCreateCFDOrder);
           if (transferR.success) {
             const signature: string = await lunar.signTypedData(transferR.data);
-            CFDOrder.signature = signature;
             // ++ TODO: send request to chain(use Lunar?) (20230324 - tzuhan)
             const acceptedCFDOrder = (await workerCtx.requestHandler({
               name: APIName.CREATE_CFD_TRADE,
               method: Method.POST,
-              body: CFDOrder,
+              body: {applyData: applyCreateCFDOrder, balance: balance, userSignature: signature},
             })) as IAcceptedCFDOrder;
-            const displayAcceptedCFDOrder = await toDisplayAcceptedCFDOrder(acceptedCFDOrder);
+            const displayAcceptedCFDOrder = toDisplayAcceptedCFDOrder(acceptedCFDOrder);
             setOpenedCFDs(prev => [...prev, displayAcceptedCFDOrder]);
-            const updatedBalance = updateBalance({
-              currency: applyCreateCFDOrderData.margin.asset,
-              available: -applyCreateCFDOrderData.margin.amount,
-              locked: applyCreateCFDOrderData.margin.amount,
-            });
-            const history: IOrder = acceptedOrderToOrder(acceptedCFDOrder, updatedBalance);
+            updateBalance(acceptedCFDOrder.balanceDifferenceCauseByOrder);
+            const history: IOrder = acceptedOrderToOrder(acceptedCFDOrder);
             setHistories(prev => [...prev, history]);
             result = {
               success: true,
@@ -685,7 +677,7 @@ export const UserProvider = ({children}: IUserProvider) => {
       return result;
     } else {
       const isConnected = await connect();
-      if (isConnected) return createCFDOrder(applyCreateCFDOrderData);
+      if (isConnected) return createCFDOrder(applyCreateCFDOrder);
       else {
         result.code = Code.WALLET_IS_NOT_CONNECT;
         return result;
@@ -694,45 +686,33 @@ export const UserProvider = ({children}: IUserProvider) => {
   };
 
   const closeCFDOrder = async (
-    applyCloseCFDOrderData: IApplyCloseCFDOrderData | undefined
+    applyCloseCFDOrder: IApplyCloseCFDOrder | undefined
   ): Promise<IResult> => {
     let result: IResult = defaultResultFailed;
     if (lunar.isConnected) {
-      if (applyCloseCFDOrderData) {
-        const index = openCFDs.findIndex(o => o.id === applyCloseCFDOrderData.orderId);
+      if (applyCloseCFDOrder) {
+        const index = openCFDs.findIndex(o => o.id === applyCloseCFDOrder.referenceId);
         if (index !== -1) {
-          const CFDOrder: IApplyCFDOrder = {
-            type: CFDOrderType.CLOSE,
-            data: applyCloseCFDOrderData,
-            orderType: 'CFD',
-          };
-          const transferR = transactionEngine.transferCFDOrderToTransaction(CFDOrder);
+          const balance: IBalance | null = getBalance(openCFDs[index].targetAsset);
+          const transferR = transactionEngine.transferCFDOrderToTransaction(applyCloseCFDOrder);
           if (transferR.success) {
             const signature: string = await lunar.signTypedData(transferR.data);
-            CFDOrder.signature = signature;
             // ++ TODO: send request to chain(use Lunar?) (20230324 - tzuhan)
             const acceptedCFDOrder = (await workerCtx.requestHandler({
               name: APIName.CLOSE_CFD_TRADE,
               method: Method.PUT,
               body: {
-                ...CFDOrder,
+                applyData: applyCloseCFDOrder,
                 openCFD: openCFDs[index], // Deprecated: remove when backend is ready (20230424 - tzuhan)
+                balance,
+                userSignature: signature,
               },
             })) as IAcceptedCFDOrder;
             setOpenedCFDs(prev => [...prev].splice(index, 1));
-            const displayAcceptedCFDOrder = await toDisplayAcceptedCFDOrder(acceptedCFDOrder);
+            const displayAcceptedCFDOrder = toDisplayAcceptedCFDOrder(acceptedCFDOrder);
             setClosedCFDs(prev => [...prev, displayAcceptedCFDOrder]);
-            const profit =
-              (applyCloseCFDOrderData.closePrice - openCFDs[index].openPrice) *
-              openCFDs[index].amount *
-              (openCFDs[index].typeOfPosition === TypeOfPosition.BUY ? 1 : -1);
-            const balanceDiff: IBalance = {
-              currency: openCFDs[index].margin.asset,
-              available: openCFDs[index].margin.amount + profit,
-              locked: -openCFDs[index].margin.amount,
-            };
-            const updatedBalance = updateBalance(balanceDiff);
-            const history: IOrder = acceptedOrderToOrder(acceptedCFDOrder, updatedBalance);
+            updateBalance(acceptedCFDOrder.balanceDifferenceCauseByOrder);
+            const history: IOrder = acceptedOrderToOrder(acceptedCFDOrder);
             setHistories(prev => [...prev, history]);
             result = {
               success: true,
@@ -745,7 +725,7 @@ export const UserProvider = ({children}: IUserProvider) => {
       return result;
     } else {
       const isConnected = await connect();
-      if (isConnected) return closeCFDOrder(applyCloseCFDOrderData);
+      if (isConnected) return closeCFDOrder(applyCloseCFDOrder);
       else {
         result.code = Code.WALLET_IS_NOT_CONNECT;
         return result;
@@ -754,43 +734,34 @@ export const UserProvider = ({children}: IUserProvider) => {
   };
 
   const updateCFDOrder = async (
-    applyUpdateCFDOrderData: IApplyUpdateCFDOrderData | undefined
+    applyUpdateCFDOrder: IApplyUpdateCFDOrder | undefined
   ): Promise<IResult> => {
     let result: IResult = defaultResultFailed;
     if (lunar.isConnected) {
-      if (applyUpdateCFDOrderData) {
-        const index = openCFDs.findIndex(o => o.id === applyUpdateCFDOrderData.orderId);
+      if (applyUpdateCFDOrder) {
+        const index = openCFDs.findIndex(o => o.id === applyUpdateCFDOrder.referenceId);
         if (index !== -1) {
-          const CFDOrder: IApplyCFDOrder = {
-            type: CFDOrderType.UPDATE,
-            data: applyUpdateCFDOrderData,
-            orderType: 'CFD',
-          };
-          const transferR = transactionEngine.transferCFDOrderToTransaction(CFDOrder);
+          const transferR = transactionEngine.transferCFDOrderToTransaction(applyUpdateCFDOrder);
           if (transferR.success) {
             const signature: string = await lunar.signTypedData(transferR.data);
-            CFDOrder.signature = signature;
             // ++ TODO: send request to chain(use Lunar?) (20230324 - tzuhan)
             const acceptedCFDOrder = (await workerCtx.requestHandler({
               name: APIName.UPDATE_CFD_TRADE,
               method: Method.PUT,
               body: {
-                ...CFDOrder,
+                applyData: applyUpdateCFDOrder,
+                userSignature: signature,
                 openCFD: openCFDs[index], // Deprecated: remove when backend is ready (20230424 - tzuhan)
               },
             })) as IAcceptedCFDOrder;
-            const displayAcceptedCFDOrder = await toDisplayAcceptedCFDOrder(acceptedCFDOrder);
+            const displayAcceptedCFDOrder = toDisplayAcceptedCFDOrder(acceptedCFDOrder);
             setOpenedCFDs(prev => {
               const cfds = [...prev];
               cfds[index] = displayAcceptedCFDOrder;
               return cfds;
             });
-            const updatedBalance = updateBalance({
-              currency: openCFDs[index].margin.asset,
-              available: 0,
-              locked: 0,
-            });
-            const history: IOrder = acceptedOrderToOrder(acceptedCFDOrder, updatedBalance);
+            updateBalance(acceptedCFDOrder.balanceDifferenceCauseByOrder);
+            const history: IOrder = acceptedOrderToOrder(acceptedCFDOrder);
             setHistories(prev => [...prev, history]);
             result = {
               success: true,
@@ -803,7 +774,7 @@ export const UserProvider = ({children}: IUserProvider) => {
       return result;
     } else {
       const isConnected = await connect();
-      if (isConnected) return updateCFDOrder(applyUpdateCFDOrderData);
+      if (isConnected) return updateCFDOrder(applyUpdateCFDOrder);
       else {
         result.code = Code.WALLET_IS_NOT_CONNECT;
         return result;
@@ -820,24 +791,18 @@ export const UserProvider = ({children}: IUserProvider) => {
       if (walletBalance && walletBalance.balance >= depositOrder.targetAmount) {
       const transaction: {to: string; amount: number; data: string} =
         transactionEngine.transferDepositOrderToTransaction(depositOrder);
-      const txHash = await lunar.send(transaction);
+      const txid = await lunar.send(transaction);
       // TODO: updateWalletBalances
       // */
-      const txHash = keccak.keccak256(
-        transactionEngine.transferDepositOrderToTransaction(depositOrder)
-      );
+      const txid = randomHex(32);
       const acceptedDepositOrder = (await workerCtx.requestHandler({
         name: APIName.CREATE_WITHDRAW_TRADE,
         method: Method.POST,
-        body: {data: depositOrder, txHash},
+        body: {applyData: depositOrder, txid, balance: getBalance(depositOrder.targetAsset)},
       })) as IAcceptedDepositOrder;
       setDeposits(prev => [...prev, acceptedDepositOrder]);
-      const updatedBalance = updateBalance({
-        currency: depositOrder.targetAsset,
-        available: 0,
-        locked: depositOrder.targetAmount,
-      });
-      const history: IOrder = acceptedOrderToOrder(acceptedDepositOrder, updatedBalance);
+      updateBalance(acceptedDepositOrder.balanceDifferenceCauseByOrder);
+      const history: IOrder = acceptedOrderToOrder(acceptedDepositOrder);
       setHistories(prev => [...prev, history]);
       result = {
         success: true,
@@ -867,14 +832,14 @@ export const UserProvider = ({children}: IUserProvider) => {
           const acceptedWithdrawOrder = (await workerCtx.requestHandler({
             name: APIName.CREATE_WITHDRAW_TRADE,
             method: Method.POST,
-            body: {data: withdrawOrder, signature},
+            body: {
+              applyData: withdrawOrder,
+              userSignature: signature,
+              balance: getBalance(withdrawOrder.targetAsset),
+            },
           })) as IAcceptedWithdrawOrder;
-          const updatedBalance = updateBalance({
-            currency: withdrawOrder.targetAsset,
-            available: -withdrawOrder.targetAmount,
-            locked: withdrawOrder.targetAmount,
-          });
-          const history: IOrder = acceptedOrderToOrder(acceptedWithdrawOrder, updatedBalance);
+          updateBalance(acceptedWithdrawOrder.balanceDifferenceCauseByOrder);
+          const history: IOrder = acceptedOrderToOrder(acceptedWithdrawOrder);
           setHistories(prev => [...prev, history]);
           result = {
             success: true,

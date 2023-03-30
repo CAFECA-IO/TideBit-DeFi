@@ -1,5 +1,10 @@
-export interface IApplyUpdateCFDOrderData {
-  orderId: string;
+import {CFDOperation, ICFDOperation} from '../../constants/cfd_order_type';
+import {OrderType} from '../../constants/order_type';
+import {IApplyCFDOrder} from './apply_cfd_order';
+
+export interface IApplyUpdateCFDOrder extends IApplyCFDOrder {
+  operation: ICFDOperation;
+  referenceId: string;
   takeProfit?: number;
   stopLoss?: number;
   guaranteedStop?: boolean;
@@ -10,10 +15,12 @@ function randomIntFromInterval(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
-export const getDummyApplyUpdateCFDOrderData = (currency: string, id?: string) => {
+export const getDummyApplyUpdateCFDOrder = (currency: string, id?: string) => {
   const date = new Date();
-  const dummyApplyUpdateCFDOrderData: IApplyUpdateCFDOrderData = {
-    orderId: id
+  const dummyApplyUpdateCFDOrder: IApplyUpdateCFDOrder = {
+    orderType: OrderType.CFD,
+    operation: CFDOperation.UPDATE,
+    referenceId: id
       ? id
       : `TB${date.getFullYear()}${
           date.getMonth() + 1
@@ -23,5 +30,5 @@ export const getDummyApplyUpdateCFDOrderData = (currency: string, id?: string) =
     guaranteedStop: false,
     guaranteedStopFee: 0.77,
   };
-  return dummyApplyUpdateCFDOrderData;
+  return dummyApplyUpdateCFDOrder;
 };

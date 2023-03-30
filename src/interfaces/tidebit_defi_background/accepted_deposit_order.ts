@@ -1,15 +1,13 @@
-import {OrderStatusUnion} from '../../constants/order_status_union';
-import {OrderType} from '../../constants/order_type';
-import {getTimestamp, randomHex} from '../../lib/common';
 import {IAcceptedOrder} from './accepted_order';
+import {IApplyDepositOrder} from './apply_deposit_order';
+import {IDepositOrderSnapshot} from './order_snapshot';
 
 export interface IAcceptedDepositOrder extends IAcceptedOrder {
-  targetAsset: string;
-  targetAmount: number;
-  decimals: number;
-  to: string;
+  applyData: IApplyDepositOrder;
+  orderSnapshot: IDepositOrderSnapshot;
 }
 
+/* TODO: dummyAcceptedDepositrder (20230330 - tzuhan)
 export const dummyAcceptedDepositOrder: IAcceptedDepositOrder = {
   id: '001',
   txid: '0x',
@@ -41,3 +39,4 @@ export const getDummyAcceptedDepositOrder = (currency = 'ETH'): IAcceptedDeposit
   };
   return dummyAcceptedDepositOrder;
 };
+*/

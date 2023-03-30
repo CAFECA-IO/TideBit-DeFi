@@ -43,13 +43,15 @@ import {
   getDummyDisplayApplyCreateCFDOrder,
 } from '../interfaces/tidebit_defi_background/display_apply_cfd_order';
 import {
-  IApplyCreateCFDOrderData,
-  getDummyApplyCreateCFDOrderData,
+  getDummyApplyCreateCFDOrder,
+  IApplyCreateCFDOrder,
+  // getDummyApplyCreateCFDOrderData,
 } from '../interfaces/tidebit_defi_background/apply_create_cfd_order_data';
 import {OrderState} from '../constants/order_state';
-import {IApplyUpdateCFDOrderData} from '../interfaces/tidebit_defi_background/apply_update_cfd_order_data';
+import {IApplyUpdateCFDOrder} from '../interfaces/tidebit_defi_background/apply_update_cfd_order_data';
 import useStateRef from 'react-usestateref';
 import {POSITION_PRICE_RENEWAL_INTERVAL_SECONDS} from '../constants/config';
+import {CFDOperation} from '../constants/cfd_order_type';
 
 export interface IToastify {
   type: 'error' | 'warning' | 'info' | 'success';
@@ -64,7 +66,7 @@ export interface IUpdatedCFDInputProps {
 
 export interface IDataPositionUpdatedModal {
   openCfdDetails: IDisplayAcceptedCFDOrder;
-  updatedProps: IApplyUpdateCFDOrderData;
+  updatedProps: IApplyUpdateCFDOrder;
 }
 
 export interface IClosedCFDInfoProps {
@@ -77,18 +79,23 @@ export interface IDataPositionClosedModal {
 }
 
 export interface IDataPositionOpenModal {
-  openCfdRequest: IApplyCreateCFDOrderData;
+  openCfdRequest: IApplyCreateCFDOrder;
 }
 
 export const dummyDataPositionOpenModal: IDataPositionOpenModal = {
-  openCfdRequest: getDummyApplyCreateCFDOrderData('ETH'),
+  openCfdRequest: getDummyApplyCreateCFDOrder('ETH'),
 };
 
-const acceptedCFDOrders: IDisplayAcceptedCFDOrder[] = Array.from({length: 10}, () => {
+const acceptedCFDOrders: IDisplayAcceptedCFDOrder[] = [];
+/* TODO: dummyDisplayAcceptedCFDOrder (20230330 - tzuhan)
+Array.from({length: 10}, () => {
   return getDummyDisplayAcceptedCFDOrder('ETH');
 });
+*/
 
-const dummyOpenCFD = acceptedCFDOrders.filter(order => order.state === OrderState.OPENING)[0];
+const dummyOpenCFD = acceptedCFDOrders.filter(
+  order => order.orderSnapshot.state === OrderState.OPENING
+)[0];
 
 export const dummyDataPositionClosedModal: IDataPositionClosedModal = {
   openCfdDetails: acceptedCFDOrders[0],
@@ -97,7 +104,9 @@ export const dummyDataPositionClosedModal: IDataPositionClosedModal = {
 export const dummyDataPositionUpdatedModal: IDataPositionUpdatedModal = {
   openCfdDetails: acceptedCFDOrders[0],
   updatedProps: {
-    orderId: 'DUMMY_DATA_GLOBAL_CTX_20230314_1',
+    orderType: OrderType.CFD,
+    operation: CFDOperation.UPDATE,
+    referenceId: 'DUMMY_DATA_GLOBAL_CTX_20230314_1',
     takeProfit: 0,
     stopLoss: 0,
     guaranteedStop: false,

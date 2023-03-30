@@ -1,12 +1,12 @@
-export type ICFDOrderType = 'CREATE' | 'UPDATE' | 'CLOSE';
+export type ICFDOperation = 'CREATE' | 'UPDATE' | 'CLOSE';
 
-export type ICFDOrderTypeConstant = {
-  CREATE: ICFDOrderType;
-  UPDATE: ICFDOrderType;
-  CLOSE: ICFDOrderType;
+export type ICFDOperationConstant = {
+  CREATE: ICFDOperation;
+  UPDATE: ICFDOperation;
+  CLOSE: ICFDOperation;
 };
 
-export const CFDOrderType: ICFDOrderTypeConstant = {
+export const CFDOperation: ICFDOperationConstant = {
   CREATE: 'CREATE',
   CLOSE: 'CLOSE',
   UPDATE: 'UPDATE',

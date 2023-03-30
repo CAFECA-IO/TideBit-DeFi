@@ -23,7 +23,7 @@ const HistoryPositionItem = ({closedCfdDetails, ...otherProps}: IHistoryPosition
   const marketCtx = useContext(MarketContext);
 
   const displayedString =
-    closedCfdDetails.typeOfPosition === TypeOfPosition.BUY
+    closedCfdDetails.orderSnapshot.typeOfPosition === TypeOfPosition.BUY
       ? TypeOfTransaction.LONG
       : TypeOfTransaction.SHORT;
 
@@ -42,7 +42,7 @@ const HistoryPositionItem = ({closedCfdDetails, ...otherProps}: IHistoryPosition
     globalCtx.visibleHistoryPositionModalHandler();
   };
 
-  const displayedTime = timestampToString(closedCfdDetails?.closeTimestamp ?? 0);
+  const displayedTime = timestampToString(closedCfdDetails?.orderSnapshot?.closeTimestamp ?? 0);
 
   return (
     <>
@@ -65,7 +65,7 @@ const HistoryPositionItem = ({closedCfdDetails, ...otherProps}: IHistoryPosition
                 width={15}
                 height={15}
               />
-              <p className="ml-1">{closedCfdDetails.ticker}</p>
+              <p className="ml-1">{closedCfdDetails.orderSnapshot.ticker}</p>
             </div>
             <div className="text-lightWhite">
               {displayedString.TITLE}

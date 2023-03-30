@@ -18,13 +18,13 @@ const OpenSubTab = () => {
   const toOpenPositionItems = (cfds: IAcceptedCFDOrder[]): IDisplayAcceptedCFDOrder[] => {
     const displayedOpenPositionList = cfds.map(cfd => {
       const rTp =
-        cfd.typeOfPosition === TypeOfPosition.BUY
-          ? twoDecimal(cfd.openPrice * (1 + SUGGEST_TP / cfd.leverage))
-          : twoDecimal(cfd.openPrice * (1 - SUGGEST_TP / cfd.leverage));
+        cfd.orderSnapshot.typeOfPosition === TypeOfPosition.BUY
+          ? twoDecimal(cfd.orderSnapshot.openPrice * (1 + SUGGEST_TP / cfd.orderSnapshot.leverage))
+          : twoDecimal(cfd.orderSnapshot.openPrice * (1 - SUGGEST_TP / cfd.orderSnapshot.leverage));
       const rSl =
-        cfd.typeOfPosition === TypeOfPosition.BUY
-          ? twoDecimal(cfd.openPrice * (1 - SUGGEST_SL / cfd.leverage))
-          : twoDecimal(cfd.openPrice * (1 + SUGGEST_SL / cfd.leverage));
+        cfd.orderSnapshot.typeOfPosition === TypeOfPosition.BUY
+          ? twoDecimal(cfd.orderSnapshot.openPrice * (1 - SUGGEST_SL / cfd.orderSnapshot.leverage))
+          : twoDecimal(cfd.orderSnapshot.openPrice * (1 + SUGGEST_SL / cfd.orderSnapshot.leverage));
 
       // TODO: (20230314 - Shirley) get price point from `marketCtx`
       const positionLineGraph = [
@@ -33,17 +33,17 @@ const OpenSubTab = () => {
 
       // TODO: (20230314 - Shirley) get the very last price point from `marketCtx`
       const marketPrice =
-        cfd.typeOfPosition === TypeOfPosition.BUY
+        cfd.orderSnapshot.typeOfPosition === TypeOfPosition.BUY
           ? marketCtx.tickerLiveStatistics?.sellEstimatedFilledPrice ?? 0
           : marketCtx.tickerLiveStatistics?.buyEstimatedFilledPrice ?? 999999999;
 
-      const marketValue = marketPrice * cfd.amount;
+      const marketValue = marketPrice * cfd.orderSnapshot.amount;
 
-      const openValue = cfd.openPrice * cfd.amount;
+      const openValue = cfd.orderSnapshot.openPrice * cfd.orderSnapshot.amount;
 
       // TODO: (20230314 - Shirley) Calculate with `positionLineGraph[n-1]` buy/sell price
       const pnlSoFar =
-        cfd.typeOfPosition === TypeOfPosition.BUY
+        cfd.orderSnapshot.typeOfPosition === TypeOfPosition.BUY
           ? twoDecimal(marketValue - openValue)
           : twoDecimal(openValue - marketValue);
 
@@ -73,7 +73,7 @@ const OpenSubTab = () => {
 
   const openPositionList = cfds.map(cfd => {
     return (
-      <div key={cfd.id}>
+      <div key={cfd.orderSnapshot.id}>
         <OpenPositionItem openCfdDetails={cfd} />
         <div className="my-auto h-px w-full rounded bg-white/50"></div>
       </div>

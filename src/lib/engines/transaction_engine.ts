@@ -4,11 +4,11 @@ import CFDOrderClose from '../../constants/contracts/cfd_close';
 import CFDOrderCreate from '../../constants/contracts/cfd_create';
 import CFDOrderUpdate from '../../constants/contracts/cfd_update';
 import Withdraw from '../../constants/contracts/withdraw';
-import {CFDOrderType} from '../../constants/cfd_order_type';
+import {CFDOperation} from '../../constants/cfd_order_type';
 import {IApplyCFDOrder} from '../../interfaces/tidebit_defi_background/apply_cfd_order';
-import {IApplyCloseCFDOrderData} from '../../interfaces/tidebit_defi_background/apply_close_cfd_order_data';
-import {IApplyUpdateCFDOrderData} from '../../interfaces/tidebit_defi_background/apply_update_cfd_order_data';
-import {IApplyCreateCFDOrderData} from '../../interfaces/tidebit_defi_background/apply_create_cfd_order_data';
+import {IApplyCloseCFDOrder} from '../../interfaces/tidebit_defi_background/apply_close_cfd_order_data';
+import {IApplyUpdateCFDOrder} from '../../interfaces/tidebit_defi_background/apply_update_cfd_order_data';
+import {IApplyCreateCFDOrder} from '../../interfaces/tidebit_defi_background/apply_create_cfd_order_data';
 import {IApplyDepositOrder} from '../../interfaces/tidebit_defi_background/apply_deposit_order';
 import {IApplyWithdrawOrder} from '../../interfaces/tidebit_defi_background/apply_withdraw_order';
 import {IResult} from '../../interfaces/tidebit_defi_background/result';
@@ -16,7 +16,7 @@ import {Code} from '../../constants/code';
 import {getTimestamp, toIJSON} from '../common';
 
 class TransactionEngine {
-  isApplyCreateCFDOrderData(obj: object): obj is IApplyCreateCFDOrderData {
+  isApplyCreateCFDOrderData(obj: object): obj is IApplyCreateCFDOrder {
     return (
       obj instanceof Object &&
       'ticker' in obj &&
@@ -32,14 +32,14 @@ class TransactionEngine {
       'liquidationTime' in obj
     );
   }
-  isApplyUpdateCFDOrderData(obj: object): obj is IApplyUpdateCFDOrderData {
+  isApplyUpdateCFDOrderData(obj: object): obj is IApplyUpdateCFDOrder {
     return obj instanceof Object && 'orderId' in obj;
   }
-  isApplyCloseCFDOrderData(obj: object): obj is IApplyCloseCFDOrderData {
+  isApplyCloseCFDOrderData(obj: object): obj is IApplyCloseCFDOrder {
     return obj instanceof Object && 'orderId' in obj && 'closePrice' in obj && 'quotation' in obj;
   }
 
-  convertCreateCFDOrderData(data: IApplyCreateCFDOrderData) {
+  convertCreateCFDOrderData(data: IApplyCreateCFDOrder) {
     const convertedCreateCFDOrderData = {
       ...data,
       price: SafeMath.toSmallestUnit(data.price, 10),
@@ -66,7 +66,7 @@ class TransactionEngine {
     return convertedCreateCFDOrderData;
   }
 
-  convertUpdateCFDOrderData(data: IApplyUpdateCFDOrderData) {
+  convertUpdateCFDOrderData(data: IApplyUpdateCFDOrder) {
     const convertedUpdateCFDOrderData = {
       ...data,
       guaranteedStop: data.guaranteedStop ? data.guaranteedStop : false,
@@ -79,7 +79,7 @@ class TransactionEngine {
     return convertedUpdateCFDOrderData;
   }
 
-  convertCloseCFDOrderData(data: IApplyCloseCFDOrderData) {
+  convertCloseCFDOrderData(data: IApplyCloseCFDOrder) {
     const convertedCloseCFDOrderData = {
       ...data,
       closePrice: SafeMath.toSmallestUnit(data.closePrice, 10),
@@ -109,11 +109,11 @@ class TransactionEngine {
       code: Code.INVAILD_INPUTS,
       reason: 'data and type is not match',
     };
-    switch (order.type) {
-      case CFDOrderType.CREATE:
-        if (this.isApplyCreateCFDOrderData(order.data)) {
+    switch (order.operation) {
+      case CFDOperation.CREATE:
+        if (this.isApplyCreateCFDOrderData(order)) {
           const typeData = CFDOrderCreate;
-          typeData.message = this.convertCreateCFDOrderData(order.data);
+          typeData.message = this.convertCreateCFDOrderData(order);
           result = {
             success: true,
             code: Code.SUCCESS,
@@ -121,10 +121,10 @@ class TransactionEngine {
           };
         }
         break;
-      case CFDOrderType.UPDATE:
-        if (this.isApplyUpdateCFDOrderData(order.data)) {
+      case CFDOperation.UPDATE:
+        if (this.isApplyUpdateCFDOrderData(order)) {
           const typeData = CFDOrderUpdate;
-          typeData.message = this.convertUpdateCFDOrderData(order.data);
+          typeData.message = this.convertUpdateCFDOrderData(order);
           result = {
             success: true,
             code: Code.SUCCESS,
@@ -132,10 +132,10 @@ class TransactionEngine {
           };
         }
         break;
-      case CFDOrderType.CLOSE:
-        if (this.isApplyCloseCFDOrderData(order.data)) {
+      case CFDOperation.CLOSE:
+        if (this.isApplyCloseCFDOrderData(order)) {
           const typeData = CFDOrderClose;
-          typeData.message = this.convertCloseCFDOrderData(order.data);
+          typeData.message = this.convertCloseCFDOrderData(order);
           result = {
             success: true,
             code: Code.SUCCESS,

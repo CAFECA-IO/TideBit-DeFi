@@ -14,10 +14,10 @@ const HistorySubTab = () => {
 
   const toHistoryPositionItems = (cfds: IAcceptedCFDOrder[]) => {
     const displayedHistoryPositionList: (IDisplayAcceptedCFDOrder | undefined)[] = cfds.map(cfd => {
-      if (!cfd.closePrice) return;
+      if (!cfd.orderSnapshot.closePrice) return;
 
-      const openValue = cfd.openPrice * cfd.amount;
-      const closeValue = cfd.closePrice * cfd.amount;
+      const openValue = cfd.orderSnapshot.openPrice * cfd.orderSnapshot.amount;
+      const closeValue = cfd.orderSnapshot.closePrice * cfd.orderSnapshot.amount;
 
       const positionLineGraph = [100, 100]; // TODO: (20230316 - Shirley) from `marketCtx`
       const suggestion: ICFDSuggestion = {
@@ -27,7 +27,9 @@ const HistorySubTab = () => {
       };
 
       const value =
-        cfd.typeOfPosition === TypeOfPosition.BUY ? closeValue - openValue : openValue - closeValue;
+        cfd.orderSnapshot.typeOfPosition === TypeOfPosition.BUY
+          ? closeValue - openValue
+          : openValue - closeValue;
 
       const pnl: IPnL = {
         type: value > 0 ? ProfitState.PROFIT : value < 0 ? ProfitState.LOSS : ProfitState.EQUAL,

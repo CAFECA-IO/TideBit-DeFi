@@ -11,6 +11,7 @@ import {IAcceptedOrder} from '../interfaces/tidebit_defi_background/accepted_ord
 import {IAcceptedWithdrawOrder} from '../interfaces/tidebit_defi_background/accepted_withdraw_order';
 import {IBalance} from '../interfaces/tidebit_defi_background/balance';
 import {IOrder} from '../interfaces/tidebit_defi_background/order';
+import {ICFDOrderSnapshot} from '../interfaces/tidebit_defi_background/order_snapshot';
 
 export const roundToDecimalPlaces = (val: number, precision: number): number => {
   const roundedNumber = Number(val.toFixed(precision));
@@ -233,23 +234,21 @@ export const toIJSON = (typeData: IEIP712Data) => {
   return JSON.parse(JSON.stringify(typeData));
 };
 
-export const acceptedOrderToOrder = (acceptedOrder: IAcceptedOrder, balance: IBalance) => {
+export const acceptedOrderToOrder = (acceptedOrder: IAcceptedOrder) => {
   const order: IOrder = {
     timestamp: acceptedOrder.createTimestamp,
     type: acceptedOrder.orderType,
-    targetAsset: '',
-    targetAmount: 0,
-    balanceSnapshot: {
-      ...balance,
-    },
+    targetAsset: acceptedOrder.targetAsset,
+    targetAmount: acceptedOrder.targetAmount,
+    balanceSnapshot: acceptedOrder.balanceSnapshot,
     detail: '',
     orderSnapshot: {
       id: acceptedOrder.id,
-      txid: acceptedOrder.txid,
+      txid: acceptedOrder.orderSnapshot.txid,
       status: acceptedOrder.orderStatus,
       state: undefined,
-      remarks: acceptedOrder.remark,
-      fee: acceptedOrder.fee,
+      remarks: acceptedOrder.orderSnapshot.remark,
+      fee: acceptedOrder.orderSnapshot.fee,
     },
   };
   if (
@@ -264,26 +263,14 @@ export const acceptedOrderToOrder = (acceptedOrder: IAcceptedOrder, balance: IBa
   } else if (order.orderSnapshot.status === OrderStatusUnion.WAITING) {
     order.detail = 'Waiting';
   }
-  switch (acceptedOrder.orderType) {
-    case OrderType.CFD:
-      order.targetAsset = (acceptedOrder as IAcceptedCFDOrder).targetAsset;
-      order.targetAmount = (acceptedOrder as IAcceptedCFDOrder).amount;
-      order.orderSnapshot.state = (acceptedOrder as IAcceptedCFDOrder).state;
-      if (order.orderSnapshot.state === OrderState.OPENING) {
-        order.detail = `Open position of ${order.targetAsset}`;
-      }
-      if (order.orderSnapshot.state === OrderState.CLOSED) {
-        order.detail = `Close position of ${order.targetAsset}`;
-      }
-      break;
-    case OrderType.DEPOSIT:
-      order.targetAsset = (acceptedOrder as IAcceptedDepositOrder).targetAsset;
-      order.targetAmount = (acceptedOrder as IAcceptedDepositOrder).targetAmount;
-      break;
-    case OrderType.WITHDRAW:
-      order.targetAsset = (acceptedOrder as IAcceptedWithdrawOrder).targetAsset;
-      order.targetAmount = (acceptedOrder as IAcceptedWithdrawOrder).targetAmount;
-      break;
+  if (acceptedOrder.orderType === OrderType.CFD) {
+    order.orderSnapshot.state = (acceptedOrder.orderSnapshot as ICFDOrderSnapshot).state;
+    if (order.orderSnapshot.state === OrderState.OPENING) {
+      order.detail = `Open position of ${order.targetAsset}`;
+    }
+    if (order.orderSnapshot.state === OrderState.CLOSED) {
+      order.detail = `Close position of ${order.targetAsset}`;
+    }
   }
   return order;
 };

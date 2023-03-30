@@ -21,6 +21,7 @@ import {roundToDecimalPlaces} from '../../lib/common';
 import {getDummyQuotation} from '../../interfaces/tidebit_defi_background/quotation';
 import {NotificationContext} from '../../contexts/notification_context';
 import {useTranslation} from 'next-i18next';
+import {CFDOperation} from '../../constants/cfd_order_type';
 
 type TranslateFunction = (s: string) => string;
 
@@ -246,6 +247,8 @@ const TradeTab = () => {
   const longOrderSubmitHandler = () => {
     globalCtx.dataPositionOpenModalHandler({
       openCfdRequest: {
+        orderType: OrderType.CFD,
+        operation: CFDOperation.CREATE,
         ticker: marketCtx.selectedTicker?.currency ?? '',
         targetAsset: marketCtx.selectedTicker?.currency ?? '',
         unitAsset: unitAsset,
@@ -308,6 +311,8 @@ const TradeTab = () => {
   const shortOrderSubmitHandler = () => {
     globalCtx.dataPositionOpenModalHandler({
       openCfdRequest: {
+        orderType: OrderType.CFD,
+        operation: CFDOperation.CREATE,
         ticker: marketCtx.selectedTicker?.currency ?? '',
         targetAsset: unitAsset,
         unitAsset: marketCtx.selectedTicker?.currency ?? '',

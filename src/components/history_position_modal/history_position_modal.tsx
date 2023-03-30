@@ -37,19 +37,21 @@ const HistoryPositionModal = ({
   const marketCtx = useContext(MarketContext);
 
   const displayedClosedReason =
-    closedCfdDetails.closedType === CFDClosedType.SCHEDULE
+    closedCfdDetails.orderSnapshot.closedType === CFDClosedType.SCHEDULE
       ? t('POSITION_MODAL.CLOSED_REASON_SCHEDULE')
-      : closedCfdDetails.closedType === CFDClosedType.FORCED_LIQUIDATION
+      : closedCfdDetails.orderSnapshot.closedType === CFDClosedType.FORCED_LIQUIDATION
       ? t('POSITION_MODAL.CLOSED_REASON_FORCED_LIQUIDATION')
-      : closedCfdDetails.closedType === CFDClosedType.BY_USER
+      : closedCfdDetails.orderSnapshot.closedType === CFDClosedType.BY_USER
       ? t('POSITION_MODAL.CLOSED_REASON_BY_USER')
-      : closedCfdDetails.closedType === CFDClosedType.TAKE_PROFIT
+      : closedCfdDetails.orderSnapshot.closedType === CFDClosedType.TAKE_PROFIT
       ? t('POSITION_MODAL.CLOSED_REASON_TAKE_PROFIT')
-      : closedCfdDetails.closedType === CFDClosedType.STOP_LOSS
+      : closedCfdDetails.orderSnapshot.closedType === CFDClosedType.STOP_LOSS
       ? t('POSITION_MODAL.CLOSED_REASON_STOP_LOSS')
       : '';
 
-  const displayedGuaranteedStopSetting = !!closedCfdDetails.guaranteedStop ? 'Yes' : 'No';
+  const displayedGuaranteedStopSetting = !!closedCfdDetails.orderSnapshot.guaranteedStop
+    ? 'Yes'
+    : 'No';
 
   const displayedPositionColor = 'text-tidebitTheme';
 
@@ -59,12 +61,12 @@ const HistoryPositionModal = ({
     closedCfdDetails.pnl.type === 'PROFIT' ? '+' : closedCfdDetails.pnl.type === 'LOSS' ? '-' : '';
 
   const displayedTypeOfPosition =
-    closedCfdDetails?.typeOfPosition === 'BUY'
+    closedCfdDetails?.orderSnapshot?.typeOfPosition === 'BUY'
       ? t('POSITION_MODAL.TYPE_UP')
       : t('POSITION_MODAL.TYPE_DOWN');
 
   const displayedBuyOrSell =
-    closedCfdDetails?.typeOfPosition === 'BUY'
+    closedCfdDetails?.orderSnapshot?.typeOfPosition === 'BUY'
       ? t('POSITION_MODAL.TYPE_BUY')
       : t('POSITION_MODAL.TYPE_SELL');
 
@@ -83,14 +85,14 @@ const HistoryPositionModal = ({
       : TypeOfBorderColor.NORMAL;
 
   const displayedPositionState =
-    closedCfdDetails.state === OrderState.OPENING
+    closedCfdDetails.orderSnapshot.state === OrderState.OPENING
       ? t('POSITION_MODAL.STATE_OPEN')
       : t('POSITION_MODAL.STATE_CLOSED');
 
   const socialMediaStyle = 'hover:cursor-pointer hover:opacity-80';
 
   const openTime = timestampToString(closedCfdDetails.createTimestamp ?? 0);
-  const closedTime = timestampToString(closedCfdDetails?.closeTimestamp ?? 0);
+  const closedTime = timestampToString(closedCfdDetails?.orderSnapshot?.closeTimestamp ?? 0);
 
   const formContent = (
     <div className="relative flex w-full flex-auto flex-col pt-0">
@@ -109,10 +111,13 @@ const HistoryPositionModal = ({
           <div className={`${layoutInsideBorder}`}>
             <div className="text-lightGray">{t('POSITION_MODAL.AMOUNT')}</div>
             <div className="">
-              {closedCfdDetails?.amount?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
-                minimumFractionDigits: 2,
-              }) ?? 0}
-              <span className="ml-1 text-lightGray">{closedCfdDetails.ticker}</span>
+              {closedCfdDetails?.orderSnapshot?.amount?.toLocaleString(
+                UNIVERSAL_NUMBER_FORMAT_LOCALE,
+                {
+                  minimumFractionDigits: 2,
+                }
+              ) ?? 0}
+              <span className="ml-1 text-lightGray">{closedCfdDetails.orderSnapshot.ticker}</span>
             </div>
           </div>
 
@@ -149,9 +154,12 @@ const HistoryPositionModal = ({
           <div className={`${layoutInsideBorder}`}>
             <div className="text-lightGray">{t('POSITION_MODAL.OPEN_PRICE')}</div>
             <div className="">
-              {closedCfdDetails?.openPrice?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
-                minimumFractionDigits: 2,
-              }) ?? 0}
+              {closedCfdDetails?.orderSnapshot?.openPrice?.toLocaleString(
+                UNIVERSAL_NUMBER_FORMAT_LOCALE,
+                {
+                  minimumFractionDigits: 2,
+                }
+              ) ?? 0}
               <span className="ml-1 text-lightGray">{unitAsset}</span>
             </div>
           </div>
@@ -159,9 +167,12 @@ const HistoryPositionModal = ({
           <div className={`${layoutInsideBorder}`}>
             <div className="text-lightGray">{t('POSITION_MODAL.CLOSED_PRICE')}</div>
             <div className="">
-              {closedCfdDetails?.closePrice?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
-                minimumFractionDigits: 2,
-              }) ?? 0}
+              {closedCfdDetails?.orderSnapshot?.closePrice?.toLocaleString(
+                UNIVERSAL_NUMBER_FORMAT_LOCALE,
+                {
+                  minimumFractionDigits: 2,
+                }
+              ) ?? 0}
               <span className="ml-1 text-lightGray">{unitAsset}</span>
             </div>
           </div>
@@ -184,15 +195,21 @@ const HistoryPositionModal = ({
             <div className="text-lightGray">{t('POSITION_MODAL.TP_AND_SL')}</div>
             <div className="">
               <span className={`text-lightWhite`}>
-                {closedCfdDetails?.takeProfit?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
-                  minimumFractionDigits: 2,
-                }) ?? '-'}
+                {closedCfdDetails?.orderSnapshot?.takeProfit?.toLocaleString(
+                  UNIVERSAL_NUMBER_FORMAT_LOCALE,
+                  {
+                    minimumFractionDigits: 2,
+                  }
+                ) ?? '-'}
               </span>{' '}
               /{' '}
               <span className={`text-lightWhite`}>
-                {closedCfdDetails?.stopLoss?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
-                  minimumFractionDigits: 2,
-                }) ?? '-'}
+                {closedCfdDetails?.orderSnapshot?.stopLoss?.toLocaleString(
+                  UNIVERSAL_NUMBER_FORMAT_LOCALE,
+                  {
+                    minimumFractionDigits: 2,
+                  }
+                ) ?? '-'}
               </span>
             </div>
           </div>
@@ -255,7 +272,7 @@ const HistoryPositionModal = ({
                     width={30}
                     height={30}
                   />
-                  <h3 className="">{closedCfdDetails.ticker} </h3>
+                  <h3 className="">{closedCfdDetails.orderSnapshot.ticker} </h3>
                 </div>
               </div>
 

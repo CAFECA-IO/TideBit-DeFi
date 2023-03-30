@@ -1,14 +1,11 @@
-import {CFDOrderType, ICFDOrderType} from '../../constants/cfd_order_type';
+import {CFDOperation, ICFDOperation} from '../../constants/cfd_order_type';
 import {OrderType} from '../../constants/order_type';
 import {ProfitState} from '../../constants/profit_state';
 import {randomIntFromInterval} from '../../lib/common';
-import {ApplyCFDOrderData, IApplyCFDOrder} from './apply_cfd_order';
-import {getDummyApplyCloseCFDOrderData} from './apply_close_cfd_order_data';
-import {
-  IApplyCreateCFDOrderData,
-  getDummyApplyCreateCFDOrderData,
-} from './apply_create_cfd_order_data';
-import {getDummyApplyUpdateCFDOrderData} from './apply_update_cfd_order_data';
+import {IApplyCFDOrder} from './apply_cfd_order';
+import {getDummyApplyCloseCFDOrder} from './apply_close_cfd_order_data';
+import {IApplyCreateCFDOrder, getDummyApplyCreateCFDOrder} from './apply_create_cfd_order_data';
+import {getDummyApplyUpdateCFDOrder} from './apply_update_cfd_order_data';
 import {IPnL} from './pnl';
 
 // Deprecated: (20230314 - Shirley) To be removed
@@ -17,12 +14,9 @@ export interface IDisplayApplyCFDOrder extends IApplyCFDOrder {
 }
 
 export const getDummyDisplayApplyCreateCFDOrder = (currency: string, id?: string) => {
-  const date = new Date();
+  // const date = new Date();
   const dummyApplyCreateCFDOrder: IDisplayApplyCFDOrder = {
-    orderType: OrderType.CFD,
-    type: CFDOrderType.CREATE,
-    data: getDummyApplyCreateCFDOrderData(currency),
-    signature: '0x',
+    ...getDummyApplyCreateCFDOrder(currency),
   };
   return dummyApplyCreateCFDOrder;
 };
@@ -30,10 +24,7 @@ export const getDummyDisplayApplyCreateCFDOrder = (currency: string, id?: string
 export const getDummyDisplayApplyUpdateCFDOrder = (currency: string, id?: string) => {
   const date = new Date();
   const dummyApplyUpdateCFDOrder: IDisplayApplyCFDOrder = {
-    orderType: OrderType.CFD,
-    type: CFDOrderType.UPDATE,
-    data: getDummyApplyUpdateCFDOrderData(currency, id),
-    signature: '0x',
+    ...getDummyApplyUpdateCFDOrder(currency, id),
     pnl: {
       type: randomIntFromInterval(1, 10) > 5 ? ProfitState.PROFIT : ProfitState.LOSS,
       value: randomIntFromInterval(1, 1000),
@@ -45,10 +36,7 @@ export const getDummyDisplayApplyUpdateCFDOrder = (currency: string, id?: string
 export const getDummyDisplayApplyCloseCFDOrder = (currency: string, id?: string) => {
   const date = new Date();
   const dummyApplyCloseCFDOrder: IDisplayApplyCFDOrder = {
-    orderType: OrderType.CFD,
-    type: CFDOrderType.CLOSE,
-    data: getDummyApplyCloseCFDOrderData(currency, id),
-    signature: '0x',
+    ...getDummyApplyCloseCFDOrder(currency, id),
     pnl: {
       type: randomIntFromInterval(1, 10) > 5 ? ProfitState.PROFIT : ProfitState.LOSS,
       value: randomIntFromInterval(1, 1000),

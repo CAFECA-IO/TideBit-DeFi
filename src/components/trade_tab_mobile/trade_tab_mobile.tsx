@@ -21,6 +21,8 @@ import {useTranslation} from 'next-i18next';
 import {roundToDecimalPlaces} from '../../lib/common';
 import {getDummyQuotation} from '../../interfaces/tidebit_defi_background/quotation';
 import {NotificationContext} from '../../contexts/notification_context';
+import {OrderType} from '../../constants/order_type';
+import {CFDOperation} from '../../constants/cfd_order_type';
 
 type TranslateFunction = (s: string) => string;
 
@@ -211,6 +213,8 @@ const TradeTabMobile = () => {
         /* ToDo: 接 PositionOpenModal (20230313 - Julian) */
         globalCtx.dataPositionOpenModalHandler({
           openCfdRequest: {
+            orderType: OrderType.CFD,
+            operation: CFDOperation.CREATE,
             ticker: marketCtx.selectedTicker?.currency ?? '',
             targetAsset: marketCtx.selectedTicker?.currency ?? '',
             unitAsset: unitAsset,
@@ -252,6 +256,8 @@ const TradeTabMobile = () => {
         /* ToDo: 接 PositionOpenModal (20230313 - Julian) */
         globalCtx.dataPositionOpenModalHandler({
           openCfdRequest: {
+            orderType: OrderType.CFD,
+            operation: CFDOperation.CREATE,
             ticker: marketCtx.selectedTicker?.currency ?? '',
             targetAsset: unitAsset,
             unitAsset: marketCtx.selectedTicker?.currency ?? '',

@@ -533,7 +533,7 @@ export default function CandlestickChart({
     width:
       globalCtx.layoutAssertion === 'desktop'
         ? globalCtx.width * 0.6 - 2000 / globalCtx.width + (globalCtx.width - 1150) * 0.5
-        : globalCtx.width * 0.9, // 650
+        : globalCtx.width * 0.9,
     height: 300,
     layout: {
       fontSize: 12,
@@ -712,6 +712,10 @@ export default function CandlestickChart({
     updateData();
   };
 
+  const handleResize = () => {
+    chart.applyOptions({width: Number(chartContainerRef?.current?.clientWidth) - 50});
+  };
+
   /**
    * ToDo:
    * 高頻率更新的資料，需要更注意流程
@@ -719,12 +723,17 @@ export default function CandlestickChart({
    * 2. data cleaning
    * 3. 畫圖 (函式把圖畫出來)
    */
+  // useEffect(() => {
+  //   initChart();
+
+  //   return () => {
+  //     chart.remove();
+  //   };
+  // }, [globalCtx.width]);
+
   useEffect(() => {
     // Till: (20230412 - Shirley)
     // if (chartContainerRef.current) {
-    // const handleResize = () => {
-    //   chart.applyOptions({width: chartContainerRef.current.clientWidth});
-    // };
 
     // Info: 1. Initial job (20230330 - Shirley)
     initChart();
@@ -733,15 +742,14 @@ export default function CandlestickChart({
     // ToDo: (20230330 - Shirley) updates (vs useEffect)
     const intervalId = setInterval(updateChart, 200);
 
-    // ToDo: (20230330 - Shirley) resize
-    // window.addEventListener('resize', handleResize);
+    window.addEventListener('resize', handleResize);
     return () => {
-      // window.removeEventListener('resize', handleResize);
+      window.removeEventListener('resize', handleResize);
       clearInterval(intervalId);
-      // chart.remove();
+      chart.remove();
     };
     // }
-  }, [globalCtx.width]);
+  }, []); // chartContainerRef
 
   /* ToDO: Get candlestick data from ctx (20230330 - Shirley) */
   useEffect(() => {

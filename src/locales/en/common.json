@@ -11,6 +11,18 @@
     "NOTIFICATION_TITLE": "Notification",
     "NOTIFICATION_READ_ALL": "Read All"
   },
+  "FOOTER": {
+    "SERVICES": "Services",
+    "TIDEBIT": "TideBit",
+    "HIRING": "Hiring",
+    "POLICY_CONDITIONS": "Policy & Conditions",
+    "SERVICE_POLICY": "Service policy",
+    "PRIVACY_POLICY": "Privacy Policy",
+    "NEWSLETTER": "Newsletter",
+    "EMAIL_PLACEHOLDER": "Email Address",
+    "SUBSCRIBE_BUTTON": "SUBSCRIBE",
+    "COPYRIGHT": "TideBit © 2022"
+  },
   "USER": {
     "PERSONAL_SETTING": "Personal Setting",
     "ASSETS": "My Assets",
@@ -152,5 +164,16 @@
     "RECEIPT_SECTION_ORDER_STATUS_FAILED": "Failed",
     "RECEIPT_SECTION_FEE": "Fee",
     "RECEIPT_SECTION_AVAILABLE": "Available"
+  },
+  "NOT_FOUND_PAGE": {
+    "DESCRIPTION": "Oops! Page can not be found."
+  },
+  "ERROR_PAGE": {
+    "DESCRIPTION1": "Oops! Something went wrong",
+    "DESCRIPTION2": "and we're trying to fix it now."
+  },
+  "COMING_SOON_PAGE": {
+    "DESCRIPTION1": "We're working hard to bring you amazing experience.",
+    "DESCRIPTION2": "Stay tuned for our new service!"
   }
 }

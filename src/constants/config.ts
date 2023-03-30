@@ -1,6 +1,6 @@
 // `const` which can be changed later
 
-export const POSITION_PRICE_RENEWAL_INTERVAL_SECONDS = 3;
+export const POSITION_PRICE_RENEWAL_INTERVAL_SECONDS = 10;
 
 // 10 ** 9 - 0.01
 export const TARGET_LIMIT_DIGITS = 10 ** 9 - 0.01;
@@ -45,6 +45,8 @@ export const TRADING_CHART_PRICE_LIMIT_ONE_SEC = 0.1;
 
 export const SUGGEST_TP = 0.2;
 export const SUGGEST_SL = 0.1;
+
+export const LIQUIDATION_FIVE_LEVERAGE = 0.2;
 
 export const TRADING_CRYPTO_DATA = [
   {

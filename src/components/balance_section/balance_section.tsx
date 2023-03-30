@@ -32,10 +32,10 @@ const BalanceSection = () => {
   const circleSize = '380';
   const eyeIconSize = 30;
   const btnStyle =
-    'mt-4 rounded border-0 bg-tidebitTheme py-2 px-30px lg:px-40px text-base text-white transition-all duration-300 hover:bg-cyan-600 md:mt-0';
+    'mt-4 w-160px rounded border-0 bg-tidebitTheme py-2 text-base text-white transition-all duration-300 hover:bg-cyan-600 md:mt-0';
 
   const depositBtn = (
-    <p className="flex items-center space-x-3 text-center">
+    <p className="flex w-full items-center justify-center space-x-3 text-center">
       {t('MY_ASSETS_PAGE.BALANCE_SECTION_DEPOSIT')}
       <span className="ml-3">
         <Image src="/elements/group_149621.svg" width={15} height={15} alt="deposit icon" />
@@ -44,7 +44,7 @@ const BalanceSection = () => {
   );
 
   const withdrawBtn = (
-    <p className="flex items-center space-x-3 text-center">
+    <p className="flex w-full items-center justify-center space-x-3 text-center">
       {t('MY_ASSETS_PAGE.BALANCE_SECTION_WITHDRAW')}
       <span className="ml-3">
         <Image src="/elements/group_14962.svg" width={15} height={15} alt="withdraw icon" />

@@ -45,16 +45,16 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
 
     toast({
       message: `marketPrice: ${
-        openCfdDetails.orderSnapshot.typeOfPosition === TypeOfPosition.BUY
+        openCfdDetails?.orderSnapshot?.typeOfPosition === TypeOfPosition.BUY
           ? marketCtx.tickerLiveStatistics?.sellEstimatedFilledPrice ?? 0
           : marketCtx.tickerLiveStatistics?.buyEstimatedFilledPrice ?? 999999999
-      }\nsuggestion: ${JSON.stringify(openCfdDetails.suggestion)}`,
+      }\nsuggestion: ${JSON.stringify(openCfdDetails?.suggestion)}`,
       type: 'info',
     });
   };
 
   const nowTimestamp = new Date().getTime() / 1000;
-  const remainSecs = openCfdDetails.orderSnapshot.liquidationTime - nowTimestamp;
+  const remainSecs = openCfdDetails?.orderSnapshot?.liquidationTime - nowTimestamp;
 
   const remainTime =
     remainSecs < 60
@@ -78,31 +78,31 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
   };
 
   const displayedString =
-    openCfdDetails.orderSnapshot.typeOfPosition === TypeOfPosition.BUY
+    openCfdDetails?.orderSnapshot?.typeOfPosition === TypeOfPosition.BUY
       ? TypeOfTransaction.LONG
       : TypeOfTransaction.SHORT;
 
   const displayedColorHex =
-    openCfdDetails.pnl.type === ProfitState.PROFIT
+    openCfdDetails?.pnl?.type === ProfitState.PROFIT
       ? TypeOfPnLColorHex.PROFIT
-      : openCfdDetails.pnl.type === ProfitState.LOSS
+      : openCfdDetails?.pnl?.type === ProfitState.LOSS
       ? TypeOfPnLColorHex.LOSS
       : TypeOfPnLColorHex.EQUAL;
 
   const displayedTextColor =
-    openCfdDetails.pnl.type === ProfitState.PROFIT ? 'text-lightGreen5' : 'text-lightRed';
+    openCfdDetails?.pnl?.type === ProfitState.PROFIT ? 'text-lightGreen5' : 'text-lightRed';
 
   const displayedCrossColor =
-    openCfdDetails.pnl.type === ProfitState.PROFIT
+    openCfdDetails?.pnl?.type === ProfitState.PROFIT
       ? 'hover:before:bg-lightGreen5 hover:after:bg-lightGreen5'
       : 'hover:before:bg-lightRed hover:after:bg-lightRed';
   const displayedCrossStyle =
     'before:absolute before:-left-2px before:top-10px before:z-40 before:block before:h-1 before:w-7 before:rotate-45 before:rounded-md after:absolute after:-left-2px after:top-10px after:z-40 after:block after:h-1 after:w-7 after:-rotate-45 after:rounded-md';
 
   const displayedSymbol =
-    openCfdDetails.pnl.type === ProfitState.PROFIT
+    openCfdDetails?.pnl?.type === ProfitState.PROFIT
       ? '+'
-      : openCfdDetails.pnl.type === ProfitState.LOSS
+      : openCfdDetails?.pnl?.type === ProfitState.LOSS
       ? '-'
       : '';
 
@@ -125,7 +125,7 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
               width={15}
               height={15}
             />
-            <p className="ml-1">{openCfdDetails.orderSnapshot.ticker}</p>
+            <p className="ml-1">{openCfdDetails?.orderSnapshot?.ticker}</p>
           </div>
           <div className="text-sm text-lightWhite">
             {displayedString.TITLE}{' '}
@@ -137,7 +137,7 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
           <div className="text-xs text-lightGray">Value</div>
           <div className="text-sm">
             ${' '}
-            {openCfdDetails.openValue.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+            {openCfdDetails?.openValue.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
               minimumFractionDigits: 2,
             })}
           </div>
@@ -147,7 +147,7 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
           <div className="text-xs text-lightGray">PNL</div>
           <div className={`${displayedTextColor} text-sm`}>
             <span className="">{displayedSymbol}</span> ${' '}
-            {openCfdDetails.pnl.value.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+            {openCfdDetails?.pnl?.value.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
               minimumFractionDigits: 2,
             })}
           </div>
@@ -182,7 +182,7 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
           strokeColor={[`${displayedColorHex}`]}
           dataArray={openCfdDetails.positionLineGraph}
           lineGraphWidth={OPEN_POSITION_LINE_GRAPH_WIDTH}
-          annotatedValue={openCfdDetails.orderSnapshot.openPrice}
+          annotatedValue={openCfdDetails?.orderSnapshot?.openPrice}
         />
       </div>
     </div>

@@ -70,7 +70,7 @@ const OpenSubTab = () => {
     return displayedOpenPositionList;
   };
 
-  const cfds = toOpenPositionItems(openCFDs);
+  const cfds = toOpenPositionItems(openCFDs.filter(cfd => cfd.display));
 
   const openPositionList = cfds.map(cfd => {
     return (

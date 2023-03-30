@@ -16,7 +16,7 @@ import {Code} from '../../constants/code';
 import {getTimestamp, toIJSON} from '../common';
 
 class TransactionEngine {
-  isApplyCreateCFDOrderData(obj: object): obj is IApplyCreateCFDOrder {
+  isApplyCreateCFDOrder(obj: object): obj is IApplyCreateCFDOrder {
     return (
       obj instanceof Object &&
       'ticker' in obj &&
@@ -32,11 +32,13 @@ class TransactionEngine {
       'liquidationTime' in obj
     );
   }
-  isApplyUpdateCFDOrderData(obj: object): obj is IApplyUpdateCFDOrder {
-    return obj instanceof Object && 'orderId' in obj;
+  isApplyUpdateCFDOrder(obj: object): obj is IApplyUpdateCFDOrder {
+    return obj instanceof Object && 'referenceId' in obj;
   }
   isApplyCloseCFDOrderData(obj: object): obj is IApplyCloseCFDOrder {
-    return obj instanceof Object && 'orderId' in obj && 'closePrice' in obj && 'quotation' in obj;
+    return (
+      obj instanceof Object && 'referenceId' in obj && 'closePrice' in obj && 'quotation' in obj
+    );
   }
 
   convertCreateCFDOrderData(data: IApplyCreateCFDOrder) {
@@ -111,7 +113,7 @@ class TransactionEngine {
     };
     switch (order.operation) {
       case CFDOperation.CREATE:
-        if (this.isApplyCreateCFDOrderData(order)) {
+        if (this.isApplyCreateCFDOrder(order)) {
           const typeData = CFDOrderCreate;
           typeData.message = this.convertCreateCFDOrderData(order);
           result = {
@@ -122,7 +124,7 @@ class TransactionEngine {
         }
         break;
       case CFDOperation.UPDATE:
-        if (this.isApplyUpdateCFDOrderData(order)) {
+        if (this.isApplyUpdateCFDOrder(order)) {
           const typeData = CFDOrderUpdate;
           typeData.message = this.convertUpdateCFDOrderData(order);
           result = {

@@ -3,6 +3,7 @@ import {IApplyCFDOrder} from './apply_cfd_order';
 import {ICFDOrderSnapshot} from './order_snapshot';
 
 export interface IAcceptedCFDOrder extends IAcceptedOrder {
+  display: boolean;
   applyData: IApplyCFDOrder;
   orderSnapshot: ICFDOrderSnapshot;
 }

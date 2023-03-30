@@ -141,19 +141,19 @@ const PositionUpdatedModal = ({
     if (updatedProps === undefined) return;
 
     updatedProps.guaranteedStop &&
-    updatedProps.guaranteedStop !== openCfdDetails.orderSnapshot.guaranteedStop
+    updatedProps.guaranteedStop !== openCfdDetails?.orderSnapshot?.guaranteedStop
       ? setGtslTextStyle('text-lightYellow2')
       : setGtslTextStyle('text-lightWhite');
 
     //  && updatedProps.takeProfit !== openCfdDetails.takeProfit
     updatedProps.takeProfit !== undefined &&
-    updatedProps.takeProfit !== openCfdDetails.orderSnapshot.takeProfit
+    updatedProps.takeProfit !== openCfdDetails?.orderSnapshot?.takeProfit
       ? setTpTextStyle('text-lightYellow2')
       : setTpTextStyle('text-lightWhite');
 
     // && updatedProps.stopLoss !== openCfdDetails.stopLoss
     updatedProps.stopLoss !== undefined &&
-    updatedProps.stopLoss !== openCfdDetails.orderSnapshot.stopLoss
+    updatedProps.stopLoss !== openCfdDetails?.orderSnapshot?.stopLoss
       ? setSlTextStyle('text-lightYellow2')
       : setSlTextStyle('text-lightWhite');
   };
@@ -164,7 +164,7 @@ const PositionUpdatedModal = ({
 
   const displayedGuaranteedStopSetting = updatedProps?.guaranteedStop
     ? 'Yes'
-    : openCfdDetails.orderSnapshot.guaranteedStop
+    : openCfdDetails?.orderSnapshot?.guaranteedStop
     ? 'Yes'
     : 'No';
 
@@ -177,8 +177,8 @@ const PositionUpdatedModal = ({
             minimumFractionDigits: 2,
           })}`
         : undefined
-      : openCfdDetails.orderSnapshot.takeProfit
-      ? `$ ${openCfdDetails.orderSnapshot.takeProfit.toLocaleString(
+      : openCfdDetails?.orderSnapshot?.takeProfit
+      ? `$ ${openCfdDetails?.orderSnapshot?.takeProfit.toLocaleString(
           UNIVERSAL_NUMBER_FORMAT_LOCALE,
           {
             minimumFractionDigits: 2,
@@ -195,10 +195,13 @@ const PositionUpdatedModal = ({
             minimumFractionDigits: 2,
           })}`
         : undefined
-      : openCfdDetails.orderSnapshot.stopLoss
-      ? `$ ${openCfdDetails.orderSnapshot.stopLoss.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
-          minimumFractionDigits: 2,
-        })}`
+      : openCfdDetails?.orderSnapshot?.stopLoss
+      ? `$ ${openCfdDetails?.orderSnapshot?.stopLoss.toLocaleString(
+          UNIVERSAL_NUMBER_FORMAT_LOCALE,
+          {
+            minimumFractionDigits: 2,
+          }
+        )}`
       : '-';
 
   const displayedTypeOfPosition =
@@ -228,7 +231,7 @@ const PositionUpdatedModal = ({
           height={30}
           alt="ticker icon"
         />
-        <div className="text-2xl">{openCfdDetails.orderSnapshot.ticker}</div>
+        <div className="text-2xl">{openCfdDetails?.orderSnapshot?.ticker}</div>
       </div>
 
       <div className="relative flex-auto pt-1">

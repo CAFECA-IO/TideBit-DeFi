@@ -73,6 +73,7 @@ export const convertApplyCreateCFDToAcceptedCFD = (
     },
     nodeSignature: nodeSignature,
     createTimestamp: getTimestamp(),
+    display: true,
   };
   return accpetedCFDOrder;
 };
@@ -110,6 +111,7 @@ export const convertApplyUpdateCFDToAcceptedCFD = (
     },
     nodeSignature: nodeSignature,
     createTimestamp: getTimestamp(),
+    display: true,
   };
   return updateAccpetedCFDOrder;
 };
@@ -151,6 +153,7 @@ export const convertApplyCloseCFDToAcceptedCFD = (
     },
     orderSnapshot: {
       ...orderSnapshot,
+      state: OrderState.CLOSED,
       closePrice: applyCFDData.closePrice,
       closeTimestamp: applyCFDData.closeTimestamp,
       closedType: applyCFDData.closedType,
@@ -159,6 +162,7 @@ export const convertApplyCloseCFDToAcceptedCFD = (
     },
     nodeSignature: nodeSignature,
     createTimestamp: getTimestamp(),
+    display: true,
   };
   return updateAccpetedCFDOrder;
 };

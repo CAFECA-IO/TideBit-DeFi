@@ -82,11 +82,11 @@ const PositionClosedModal = ({
 
   // Info: dummy data (20230329 - Shirley)
   const quotation: IQuotation = {
-    ticker: openCfdDetails.orderSnapshot.ticker,
-    typeOfPosition: openCfdDetails.orderSnapshot.typeOfPosition,
+    ticker: openCfdDetails?.orderSnapshot?.ticker,
+    typeOfPosition: openCfdDetails?.orderSnapshot?.typeOfPosition,
     price: randomIntFromInterval(20, 29),
-    targetAsset: openCfdDetails.orderSnapshot.targetAsset,
-    unitAsset: openCfdDetails.orderSnapshot.unitAsset,
+    targetAsset: openCfdDetails?.orderSnapshot?.targetAsset,
+    unitAsset: openCfdDetails?.orderSnapshot?.unitAsset,
     deadline: getDeadline(POSITION_PRICE_RENEWAL_INTERVAL_SECONDS),
     signature: '0x',
   };
@@ -98,14 +98,14 @@ const PositionClosedModal = ({
   const [dataRenewedStyle, setDataRenewedStyle] = useState('text-lightWhite');
   const [pnlRenewedStyle, setPnlRenewedStyle] = useState('');
 
-  const displayedGuaranteedStopSetting = !!openCfdDetails.orderSnapshot.guaranteedStop
+  const displayedGuaranteedStopSetting = !!openCfdDetails?.orderSnapshot?.guaranteedStop
     ? 'Yes'
     : 'No';
 
   const displayedPnLSymbol =
-    openCfdDetails.pnl.type === ProfitState.PROFIT
+    openCfdDetails?.pnl?.type === ProfitState.PROFIT
       ? '+'
-      : openCfdDetails.pnl.type === ProfitState.LOSS
+      : openCfdDetails?.pnl?.type === ProfitState.LOSS
       ? '-'
       : '';
 
@@ -232,8 +232,8 @@ const PositionClosedModal = ({
 
     try {
       quotation = await marketCtx.getCFDQuotation(
-        openCfdDetails.orderSnapshot.ticker,
-        openCfdDetails.orderSnapshot.typeOfPosition
+        openCfdDetails?.orderSnapshot?.ticker,
+        openCfdDetails?.orderSnapshot?.typeOfPosition
       );
 
       const data = quotation.data as IQuotation;
@@ -245,7 +245,7 @@ const PositionClosedModal = ({
       // Info: if there's error fetching quotation, disable the submit btn (20230328 - Shirley)
       if (
         quotation.success &&
-        data.typeOfPosition === openCfdDetails.orderSnapshot.typeOfPosition &&
+        data.typeOfPosition === openCfdDetails?.orderSnapshot?.typeOfPosition &&
         quotation.data !== null
       ) {
         return data;
@@ -453,7 +453,7 @@ const PositionClosedModal = ({
           height={30}
           alt="ticker icon"
         />
-        <div className="text-2xl">{openCfdDetails.orderSnapshot.ticker}</div>
+        <div className="text-2xl">{openCfdDetails?.orderSnapshot?.ticker}</div>
       </div>
 
       <div className="absolute top-105px right-6 flex items-center space-x-1 text-center">
@@ -477,7 +477,7 @@ const PositionClosedModal = ({
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">{t('POSITION_MODAL.OPEN_PRICE')}</div>
               <div className="">
-                {openCfdDetails.orderSnapshot.openPrice.toLocaleString(
+                {openCfdDetails?.orderSnapshot?.openPrice.toLocaleString(
                   UNIVERSAL_NUMBER_FORMAT_LOCALE,
                   {
                     minimumFractionDigits: 2,
@@ -490,13 +490,13 @@ const PositionClosedModal = ({
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">{t('POSITION_MODAL.AMOUNT')}</div>
               <div className="">
-                {openCfdDetails.orderSnapshot.amount.toLocaleString(
+                {openCfdDetails?.orderSnapshot?.amount.toLocaleString(
                   UNIVERSAL_NUMBER_FORMAT_LOCALE,
                   {
                     minimumFractionDigits: 2,
                   }
                 )}{' '}
-                <span className="ml-1 text-lightGray">{openCfdDetails.orderSnapshot.ticker}</span>
+                <span className="ml-1 text-lightGray">{openCfdDetails?.orderSnapshot?.ticker}</span>
               </div>
             </div>
 
@@ -515,7 +515,7 @@ const PositionClosedModal = ({
               <div className="text-lightGray">{t('POSITION_MODAL.PNL')}</div>
               <div className={`${pnlRenewedStyle} ${displayedPnLColor}`}>
                 {displayedPnLSymbol} ${' '}
-                {openCfdDetails.pnl.value.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+                {openCfdDetails?.pnl?.value.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
                   minimumFractionDigits: 2,
                 })}
               </div>

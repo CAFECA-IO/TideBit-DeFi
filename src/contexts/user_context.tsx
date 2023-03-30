@@ -756,8 +756,8 @@ export const UserProvider = ({children}: IUserProvider) => {
             })) as IAcceptedCFDOrder;
             const displayAcceptedCFDOrder = toDisplayAcceptedCFDOrder(acceptedCFDOrder);
             setOpenedCFDs(prev => {
-              const cfds = [...prev];
-              cfds[index] = displayAcceptedCFDOrder;
+              const cfds = [...prev, displayAcceptedCFDOrder];
+              cfds[index].display = false;
               return cfds;
             });
             updateBalance(acceptedCFDOrder.balanceDifferenceCauseByOrder);

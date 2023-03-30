@@ -213,7 +213,7 @@ const ReceiptSearch = ({
         type="search"
         //value={searches}
         className="block w-full rounded-full bg-darkGray7 p-3 pl-4 text-sm text-white focus:border-blue-500 focus:outline-none focus:ring-0 focus:ring-blue-500"
-        placeholder="Search"
+        placeholder={t('MY_ASSETS_PAGE.RECEIPT_SECTION_SEARCH_PLACEHOLDER')}
         required
         onChange={onSearchChange}
       />

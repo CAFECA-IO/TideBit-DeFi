@@ -1,10 +1,13 @@
 import React from 'react';
+import {useTranslation} from 'react-i18next';
 import {TypeOfPnLColor, UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
 import {unitAsset} from '../../constants/config';
 
+type TranslateFunction = (s: string) => string;
+
 const PnlSection = () => {
+  const {t}: {t: TranslateFunction} = useTranslation('common');
   // TODO: pnl from userContext
-  // TODO: i18n
   const pnlToday = {amount: -128.29, percentage: -1.5};
   const pnl30Days = {amount: 98124532.83, percentage: 10.36};
   const cumulativePnl = {amount: -57692.47, percentage: -22.75};
@@ -12,9 +15,9 @@ const PnlSection = () => {
   // const displayedTextColor =
 
   const statisticContent = [
-    {title: 'PNL in today', ...pnlToday},
-    {title: 'PNL in 30 days', ...pnl30Days},
-    {title: 'Cumulative PNL', ...cumulativePnl},
+    {title: t('MY_ASSETS_PAGE.PNL_SECTION_TODAY'), ...pnlToday},
+    {title: t('MY_ASSETS_PAGE.PNL_SECTION_30_DAYS'), ...pnl30Days},
+    {title: t('MY_ASSETS_PAGE.PNL_SECTION_CUMULATIVE'), ...cumulativePnl},
   ].map(({amount, percentage, ...rest}) => {
     const percentageAbs = Math.abs(percentage);
     const result = {

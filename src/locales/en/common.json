@@ -20,8 +20,7 @@
     "PRIVACY_POLICY": "Privacy Policy",
     "NEWSLETTER": "Newsletter",
     "EMAIL_PLACEHOLDER": "Email Address",
-    "SUBSCRIBE_BUTTON": "SUBSCRIBE",
-    "COPYRIGHT": "TideBit © 2022"
+    "SUBSCRIBE_BUTTON": "SUBSCRIBE"
   },
   "USER": {
     "PERSONAL_SETTING": "Personal Setting",
@@ -182,6 +181,13 @@
     "BALANCE_SECTION_TOTAL_BALANCE": "Total Balance",
     "BALANCE_SECTION_AVAILABLE": "Avbl:",
     "BALANCE_SECTION_LOCKED": "Locked:",
+    "PNL_SECTION_TODAY": "PNL in today",
+    "PNL_SECTION_30_DAYS": "PNL in 30 days",
+    "PNL_SECTION_CUMULATIVE": "Cumulative PNL",
+    "INTEREST_SECTION_TITLE": "Earning Interest",
+    "INTEREST_SECTION_APY": "APY",
+    "INTEREST_SECTION_30_DAYS": "Interest you earn in 30 days",
+    "INTEREST_SECTION_CUMULATIVE": "Cumulative Interest",
     "RECEIPT_SECTION_TRADING_TYPE_TITLE": "Trading Type",
     "RECEIPT_SECTION_TRADING_TYPE_ALL": "All",
     "RECEIPT_SECTION_TRADING_TYPE_DEPOSIT": "Deposit",

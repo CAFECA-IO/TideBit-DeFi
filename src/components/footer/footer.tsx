@@ -5,6 +5,7 @@ import TideLink from '../tide_link/tide_link';
 import RippleButton from '../ripple_button/ripple_button';
 import {useTranslation} from 'react-i18next';
 import {TBDURL} from '../../constants/api_request';
+import {COPYRIGHT} from '../../constants/config';
 
 type TranslateFunction = (s: string) => string;
 
@@ -162,7 +163,7 @@ const Footer = () => {
           <div className="mt-0 pb-0">
             <div className="flex flex-col flex-wrap px-5 pt-1 pb-4 sm:flex-row sm:justify-center md:justify-end">
               <p className="text-center text-xs text-gray-400 sm:text-left md:mt-5 lg:mr-36 lg:mt-0">
-                {t('FOOTER.COPYRIGHT')}
+                {COPYRIGHT}
               </p>
             </div>
           </div>
@@ -237,7 +238,7 @@ const Footer = () => {
           <div className="mt-0 pb-0">
             <div className="flex flex-col flex-wrap px-5 pt-1 pb-8 sm:flex-row sm:justify-center md:justify-end">
               <p className="text-center text-xs text-gray-400 sm:text-left md:mt-5 lg:mr-36 lg:mt-0">
-                {t('FOOTER.COPYRIGHT')}
+                {COPYRIGHT}
               </p>
             </div>
           </div>

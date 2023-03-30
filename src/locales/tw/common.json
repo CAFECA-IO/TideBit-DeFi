@@ -20,8 +20,7 @@
     "PRIVACY_POLICY": "隱私權政策",
     "NEWSLETTER": "訂閱電子報",
     "EMAIL_PLACEHOLDER": "電子信箱地址",
-    "SUBSCRIBE_BUTTON": "訂閱",
-    "COPYRIGHT": "TideBit © 2022"
+    "SUBSCRIBE_BUTTON": "訂閱"
   },
   "USER": {
     "PERSONAL_SETTING": "用戶設定",
@@ -126,7 +125,7 @@
     "OPEN_POSITION_TITLE": "開倉",
     "CLOSE_POSITION_TITLE": "平倉",
     "UPDATE_POSITION_TITLE": "更新持倉",
-    "TYPE": "Type",
+    "TYPE": "類型",
     "TYPE_UP": "Up",
     "TYPE_BUY": "(買入)",
     "TYPE_DOWN": "Down",
@@ -182,6 +181,13 @@
     "BALANCE_SECTION_TOTAL_BALANCE": "總餘額",
     "BALANCE_SECTION_AVAILABLE": "可用:",
     "BALANCE_SECTION_LOCKED": "鎖定:",
+    "PNL_SECTION_TODAY": "今日損益",
+    "PNL_SECTION_30_DAYS": "30 天內損益",
+    "PNL_SECTION_CUMULATIVE": "累計損益",
+    "INTEREST_SECTION_TITLE": "獲得利息",
+    "INTEREST_SECTION_APY": "年化收益率",
+    "INTEREST_SECTION_30_DAYS": "30 天內收益",
+    "INTEREST_SECTION_CUMULATIVE": "累計收益",
     "RECEIPT_SECTION_TRADING_TYPE_TITLE": "交易類型",
     "RECEIPT_SECTION_TRADING_TYPE_ALL": "全部",
     "RECEIPT_SECTION_TRADING_TYPE_DEPOSIT": "入金",

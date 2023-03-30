@@ -173,4 +173,5 @@ export const LINE_GRAPH_STROKE_COLOR = {
   UP: '#17BF88',
   DOWN: '#E86D6D',
   TIDEBIT_THEME: '#29C1E1',
+  LIGHT_GRAY: '#8B8E91',
 };

@@ -36,6 +36,7 @@ import {BsFillArrowDownCircleFill, BsFillArrowUpCircleFill} from 'react-icons/bs
 import {MarketContext, MarketProvider} from '../../contexts/market_context';
 import {
   getNowSeconds,
+  getTimestamp,
   randomFloatFromInterval,
   randomIntFromInterval,
   timestampToString,
@@ -58,6 +59,8 @@ import {
 import {ProfitState} from '../../constants/profit_state';
 import {TypeOfPosition} from '../../constants/type_of_position';
 import {TimeSpanUnion} from '../../interfaces/tidebit_defi_background/time_span_union';
+import {freemem} from 'os';
+import {normalize} from 'path';
 
 interface ITradingChartGraphProps {
   strokeColor: string[];
@@ -413,6 +416,14 @@ export default function CandlestickChart({
       //   chart.applyOptions({width: chartContainerRef.current.clientWidth});
       // };
 
+      const locale: LocalizationOptions = {
+        locale: 'zh-TW',
+        dateFormat: 'yyyy-MM-dd',
+        // timeFormatter: (date: Date) => {
+        //   return date.toLocaleTimeString();
+        // }
+      };
+
       const trimmedData = parseCandlestickData({
         data: candlestickChartDataFromCtx,
         dataSize: 30,
@@ -442,6 +453,17 @@ export default function CandlestickChart({
         low: d.y.low,
         close: d.y.close,
       }));
+      // ToDo: null data (20230330 - Shirley)
+      // .concat([
+      //   {
+      //     time: (getTimestamp() + 1 * 10) as UTCTimestamp,
+      //     // open: null,
+      //     // high: null,
+      //     // low: null,
+      //     // close: null,
+      //   },
+      // ]) as (CandlestickData | WhitespaceData)[];
+
       // Deprecated: before merging into develop (20230329 - Shirley)
       // eslint-disable-next-line no-console
       console.log('dummyCandles', dummyCandles);
@@ -456,17 +478,17 @@ export default function CandlestickChart({
       //     background: {type: ColorType.Solid, color: colors.backgroundColor},
       //     textColor: colors.textColor,
       //   },
-      //   watermark: {
-      //     // Till: (20230329 - Shirley) color: 'rgba(41, 193, 225, 0.4)',
-      //     color: 'rgba(41, 193, 225, 0.2)',
-      //     visible: true,
-      //     text: 'TideBit',
-      //     fontSize: 24,
-      //     horzAlign: 'right',
-      //     vertAlign: 'bottom',
-      //     fontFamily: 'barlow, sans-serif',
-      //     fontStyle: 'bold',
+      //   // grid: {
+      //   //   vertLines: {
+
+      //   //   }
+      //   // },
+      //   timeScale: {
+      //     timeVisible: true,
+      //     secondsVisible: true,
+      //     ticksVisible: false,
       //   },
+      //   localization: locale,
       //   // autoSize: true,
       //   // timeScale: {
       //   //   timeVisible: true,
@@ -488,66 +510,55 @@ export default function CandlestickChart({
       //   //   autoScale: false,
       //   // },
       //   // rightPriceScale: {
-      //   //   autoScale: true,
+      //   //   autoS#55575899
       //   // },
       // };
 
-      const locale: LocalizationOptions = {
-        locale: 'zh-TW',
-        dateFormat: 'yyyy-MM-dd',
-        // timeFormatter: (date: Date) => {
-        //   return date.toLocaleTimeString();
-        // }
-      };
-
       const chart = createChart(chartContainerRef.current, {
-        width: 1000,
+        width: 650,
         height: 300,
         layout: {
           fontSize: 12,
           fontFamily: 'barlow, sans-serif',
           background: {type: ColorType.Solid, color: colors.backgroundColor},
-          textColor: colors.textColor,
+          textColor: LINE_GRAPH_STROKE_COLOR.LIGHT_GRAY,
         },
-        watermark: {
-          color: 'rgba(41, 193, 225, 0.6)',
-          visible: true,
-          text: 'TideBit.com',
-          fontSize: 24,
-          horzAlign: 'right',
-          vertAlign: 'bottom',
-          fontFamily: 'barlow, sans-serif',
-          fontStyle: 'bold',
+        grid: {
+          vertLines: {
+            visible: false,
+          },
+          horzLines: {
+            visible: false,
+          },
         },
+
+        handleScale: {
+          pinch: true,
+          mouseWheel: true,
+          axisDoubleClickReset: true,
+          axisPressedMouseMove: false,
+        },
+        crosshair: {
+          mode: 0,
+          vertLine: {
+            color: LINE_GRAPH_STROKE_COLOR.DEFAULT,
+
+            // labelBackgroundColor: LINE_GRAPH_STROKE_COLOR.TIDEBIT_THEME,
+          },
+          horzLine: {
+            color: LINE_GRAPH_STROKE_COLOR.DEFAULT,
+            // labelBackgroundColor: LINE_GRAPH_STROKE_COLOR.TIDEBIT_THEME,
+          },
+        },
+
         timeScale: {
           timeVisible: true,
           secondsVisible: true,
           ticksVisible: false,
+          fixLeftEdge: true,
+          shiftVisibleRangeOnNewBar: true,
         },
         localization: locale,
-        // autoSize: true,
-        // timeScale: {
-        //   timeVisible: true,
-        //   secondsVisible: false,
-        //   rightOffset: 0,
-        //   barSpacing: 3,
-        //   fixLeftEdge: true,
-        //   lockVisibleTimeRangeOnResize: true,
-        //   rightBarStaysOnScroll: true,
-        //   borderVisible: false,
-        //   borderColor: '#fff000',
-        //   visible: true,
-        // },
-        // timeScale: {
-        //   timeVisible: true,
-        // },
-
-        // leftPriceScale: {
-        //   autoScale: false,
-        // },
-        // rightPriceScale: {
-        //   autoScale: true,
-        // },
       });
 
       const candlestickSeries = chart.addCandlestickSeries({
@@ -565,7 +576,7 @@ export default function CandlestickChart({
         {time: 1529899203, open: 75.16, high: 82.84, low: 36.16, close: 45.72},
       ] as (CandlestickData | WhitespaceData)[];
 
-      candlestickSeries.setData(dummyCandles as (CandlestickData | WhitespaceData)[]);
+      candlestickSeries.setData(dummyCandles);
 
       const generateRandomCandle = () => {
         const now = new Date();
@@ -604,7 +615,7 @@ export default function CandlestickChart({
     <>
       {/* <div className="-ml-5 w-full lg:w-7/10">Candlestick Chart with D3.js</div> */}
       <div className="ml-5 w-full lg:w-7/10">
-        <div ref={chartContainerRef}></div>
+        <div ref={chartContainerRef} className="hover:cursor-crosshair"></div>
       </div>
     </>
   );

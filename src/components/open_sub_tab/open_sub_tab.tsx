@@ -17,6 +17,7 @@ const OpenSubTab = () => {
 
   const toOpenPositionItems = (cfds: IAcceptedCFDOrder[]): IDisplayAcceptedCFDOrder[] => {
     const displayedOpenPositionList = cfds.map(cfd => {
+      // TODO: replace `twoDecimal` with `toLocaleString` (20230325 - Shirley)
       const rTp =
         cfd.typeOfPosition === TypeOfPosition.BUY
           ? twoDecimal(cfd.openPrice * (1 + SUGGEST_TP / cfd.leverage))
@@ -44,8 +45,8 @@ const OpenSubTab = () => {
       // TODO: (20230314 - Shirley) Calculate with `positionLineGraph[n-1]` buy/sell price
       const pnlSoFar =
         cfd.typeOfPosition === TypeOfPosition.BUY
-          ? twoDecimal(marketValue - openValue)
-          : twoDecimal(openValue - marketValue);
+          ? marketValue - openValue
+          : openValue - marketValue;
 
       const suggestion: ICFDSuggestion = {
         takeProfit: rTp,

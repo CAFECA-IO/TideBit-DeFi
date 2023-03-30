@@ -44,7 +44,7 @@ const UpdateFormModal = ({
   ...otherProps
 }: IUpdatedFormModal) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
-  // console.log('openCfdDetails in details modal: ', openCfdDetails.id);
+
   const globalCtx = useGlobal();
   const marketCtx = useContext(MarketContext);
 
@@ -53,6 +53,7 @@ const UpdateFormModal = ({
 
   const cfdTp = openCfdDetails?.takeProfit;
   const cfdSl = openCfdDetails?.stopLoss;
+  const gsl = marketCtx.guaranteedStopFeePercentage;
 
   const initialTpInput = cfdTp ?? openCfdDetails.suggestion.takeProfit;
 
@@ -78,14 +79,13 @@ const UpdateFormModal = ({
   const [expectedProfitValue, setExpectedProfitValue, expectedProfitValueRef] = useStateRef(0);
   const [expectedLossValue, setExpectedLossValue, expectedLossValueRef] = useStateRef(0);
 
-  const displayedState =
-    openCfdDetails.state === OrderState.OPENING
-      ? 'Open'
-      : openCfdDetails.state === OrderState.CLOSED
-      ? 'Close'
-      : openCfdDetails.state === OrderState.FREEZED
-      ? 'Freezed'
-      : '';
+  const [guaranteedStopFee, setGuaranteedStopFee, guaranteedStopFeeRef] = useStateRef(
+    Number(gsl) * openCfdDetails.openPrice * openCfdDetails.amount
+  );
+
+  useEffect(() => {
+    setGuaranteedStopFee(Number(gsl) * openCfdDetails.openPrice * openCfdDetails.amount);
+  }, [gsl, openCfdDetails.openPrice, openCfdDetails.amount]);
 
   const getToggledTpSetting = (bool: boolean) => {
     setTpToggle(bool);
@@ -280,6 +280,10 @@ const UpdateFormModal = ({
 
   const layoutInsideBorder = 'mx-5 my-3 flex justify-between';
 
+  const gslFee = openCfdDetails.guaranteedStop
+    ? openCfdDetails.guaranteedStopFee
+    : guaranteedStopFeeRef.current;
+
   const toDisplayCloseOrder = (cfd: IDisplayAcceptedCFDOrder): IDisplayAcceptedCFDOrder => {
     const order = {
       ...cfd,
@@ -290,7 +294,7 @@ const UpdateFormModal = ({
   const toApplyUpdateOrder = () => {
     let changedProperties: IApplyUpdateCFDOrderData = {orderId: openCfdDetails.id};
 
-    // Detect if tpValue has changed
+    // Info: (20230329 - Shirley) Detect if tpValue has changed
     if (tpToggle && tpValue !== openCfdDetails.takeProfit) {
       changedProperties = {
         ...changedProperties,
@@ -298,12 +302,12 @@ const UpdateFormModal = ({
       };
     }
 
-    // Detect if spValue has changed
+    // Info: (20230329 - Shirley) Detect if spValue has changed
     if (slToggle && slValue !== openCfdDetails.stopLoss) {
       changedProperties = {...changedProperties, stopLoss: slValue};
     }
 
-    // Detect if tpToggle has changed
+    // Info: (20230329 - Shirley) Detect if tpToggle has changed
     if (initialTpToggle !== tpToggle) {
       changedProperties = {
         ...changedProperties,
@@ -311,7 +315,7 @@ const UpdateFormModal = ({
       };
     }
 
-    // Detect if slToggle has changed
+    // Info: (20230329 - Shirley) Detect if slToggle has changed
     if (initialSlToggle !== slToggle) {
       changedProperties = {
         ...changedProperties,
@@ -319,12 +323,10 @@ const UpdateFormModal = ({
       };
     }
 
-    // Detect if guaranteedStop has changed
+    // Info: (20230329 - Shirley) Detect if guaranteedStop has changed
     if (guaranteedChecked !== openCfdDetails.guaranteedStop) {
       const stopLoss = slValue !== openCfdDetails.stopLoss ? slValue : undefined;
-      const guaranteedStopFee = Number(
-        (openCfdDetails.openValue * (marketCtx?.tickerStatic?.guaranteedStopFee ?? 99)).toFixed(2)
-      );
+      const guaranteedStopFee = guaranteedStopFeeRef.current;
 
       changedProperties = {
         ...changedProperties,
@@ -336,12 +338,6 @@ const UpdateFormModal = ({
 
     if (Object.keys(changedProperties).filter(key => key !== 'orderId').length > 0) {
       changedProperties = {...changedProperties};
-
-      globalCtx.toast({
-        type: 'info',
-        message: 'Changes: \n' + JSON.stringify(changedProperties),
-        toastId: JSON.stringify(changedProperties),
-      });
     }
 
     return changedProperties;
@@ -413,7 +409,12 @@ const UpdateFormModal = ({
         <label className="ml-2 flex text-xs font-medium text-lightGray">
           {t('POSITION_MODAL.GUARANTEED_STOP')}
           <span className="ml-1 text-lightWhite">
-            ({t('POSITION_MODAL.FEE')}: {openCfdDetails?.guaranteedStopFee} {unitAsset})
+            ({t('POSITION_MODAL.FEE')}:{' '}
+            {gslFee?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}{' '}
+            {unitAsset})
           </span>
           {/* tooltip */}
           <div className="ml-3">
@@ -651,15 +652,7 @@ const UpdateFormModal = ({
 
                   <div className={`${layoutInsideBorder}`}>
                     <div className="text-lightGray">{t('POSITION_MODAL.STATE')}</div>
-                    <div className="">
-                      {t('POSITION_MODAL.STATE_OPEN')}
-                      {/* <button
-                        type="button"
-                        className="ml-2 text-tidebitTheme underline underline-offset-2"
-                      >
-                        Close
-                      </button> */}
-                    </div>
+                    <div className="">{t('POSITION_MODAL.STATE_OPEN')}</div>
                   </div>
                 </div>
               </div>

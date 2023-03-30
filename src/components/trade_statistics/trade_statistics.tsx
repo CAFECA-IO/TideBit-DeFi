@@ -1,5 +1,7 @@
 import React from 'react';
+import {useTranslation} from 'react-i18next';
 
+type TranslateFunction = (s: string) => string;
 interface ITradeStatistics {
   bullAndBearIndex: number;
   long: number;
@@ -17,6 +19,8 @@ const TradeStatistics = ({
   sixtyMin,
   oneDay,
 }: ITradeStatistics) => {
+  const {t}: {t: TranslateFunction} = useTranslation('common');
+
   const overallWidth = 'w-full pr-5 lg:p-0 lg:w-2/3 xl:w-3/4';
   const dividerWidth = 'w-full lg:w-2/3 xl:w-3/4';
   // const displayedBBI = `w-${bullAndBearIndex}`;
@@ -60,16 +64,24 @@ const TradeStatistics = ({
   return (
     <>
       <div style={{width: '97%'}} className="flex-col justify-start">
-        <h1 className="text-start text-xl text-lightWhite">Live Statistics</h1>
+        <h1 className="text-start text-xl text-lightWhite">
+          {t('TRADE_PAGE.TRADE_STATISTICS_LIVE_STATISTICS')}
+        </h1>
         <span className={`${dividerWidth} mb-3 inline-block h-px rounded bg-white/30`}></span>
 
         {/* ----------Sellers vs. Buyers---------- */}
-        <p className="mb-3 text-base text-lightGray">Traders' Sentiment</p>
+        <p className="mb-3 text-base text-lightGray">
+          {t('TRADE_PAGE.TRADE_STATISTICS_TRADERS_SENTIMENT')}
+        </p>
         <div className={`${overallWidth}`}>
           {/* Text */}
           <div className="flex w-full justify-between">
-            <p className="text-sm text-lightGreen5">{long}% Buyers</p>
-            <p className="text-sm text-lightRed">{short}% Sellers</p>
+            <p className="text-sm text-lightGreen5">
+              {long}% {t('TRADE_PAGE.TRADE_STATISTICS_BUYERS')}
+            </p>
+            <p className="text-sm text-lightRed">
+              {short}% {t('TRADE_PAGE.TRADE_STATISTICS_SELLERS')}
+            </p>
           </div>
           {/* Bar */}
           <div className={`relative mb-4 h-2 w-full rounded-full bg-lightRed`}>
@@ -81,12 +93,14 @@ const TradeStatistics = ({
         </div>
 
         {/* ----------High and Low vs. Now---------- */}
-        <p className="mb-3 text-base text-lightGray">High/ Low</p>
+        <p className="mb-3 text-base text-lightGray">
+          {t('TRADE_PAGE.TRADE_STATISTICS_HIGH_AND_LOW')}
+        </p>
         <div className={`${overallWidth}`}>
           {/* Text */}
           <div className="-mb-2 flex w-full justify-between">
-            <p className="text-sm text-lightWhite">Low</p>
-            <p className="text-sm text-lightWhite">High</p>
+            <p className="text-sm text-lightWhite">{t('TRADE_PAGE.TRADE_STATISTICS_LOW')}</p>
+            <p className="text-sm text-lightWhite">{t('TRADE_PAGE.TRADE_STATISTICS_HIGH')}</p>
           </div>
 
           {/* [5 min] Progress bar and triangle */}
@@ -100,7 +114,9 @@ const TradeStatistics = ({
 
             <div className="flex w-full justify-between">
               <p className="text-sm text-lightWhite">{fiveMin.low}</p>
-              <p className="text-sm text-lightWhite">5 minutes</p>
+              <p className="text-sm text-lightWhite">
+                {t('TRADE_PAGE.TRADE_STATISTICS_5_MINUTES')}
+              </p>
               <p className="text-sm text-lightWhite">{fiveMin.high}</p>
             </div>
           </div>
@@ -116,7 +132,9 @@ const TradeStatistics = ({
 
             <div className="flex w-full justify-between">
               <p className="text-sm text-lightWhite">{sixtyMin.low}</p>
-              <p className="text-sm text-lightWhite">60 minutes</p>
+              <p className="text-sm text-lightWhite">
+                {t('TRADE_PAGE.TRADE_STATISTICS_60_MINUTES')}
+              </p>
               <p className="text-sm text-lightWhite">{sixtyMin.high}</p>
             </div>
           </div>
@@ -132,7 +150,7 @@ const TradeStatistics = ({
 
             <div className="flex w-full justify-between">
               <p className="text-sm text-lightWhite">{oneDay.low}</p>
-              <p className="text-sm text-lightWhite">1 day</p>
+              <p className="text-sm text-lightWhite">{t('TRADE_PAGE.TRADE_STATISTICS_1_DAY')}</p>
               <p className="text-sm text-lightWhite">{oneDay.high}</p>
             </div>
           </div>

@@ -1,7 +1,9 @@
 import React, {useContext} from 'react';
 import {BiLinkAlt} from 'react-icons/bi';
 import {MarketContext} from '../../contexts/market_context';
+import {useTranslation} from 'react-i18next';
 
+type TranslateFunction = (s: string) => string;
 interface ICryptoSummary {
   icon: string;
   label: string;
@@ -32,6 +34,8 @@ const CryptoSummary = ({
   totalValue,
   tradingValue,
 }: ICryptoSummary) => {
+  const {t}: {t: TranslateFunction} = useTranslation('common');
+
   const overallWidth = 'w-full pr-5 lg:p-0 lg:w-2/3 xl:w-3/4';
   const dividerWidth = 'w-full lg:w-2/3 xl:w-3/4';
 
@@ -106,18 +110,18 @@ const CryptoSummary = ({
                 {/* Links */}
                 <div className="mt-5 flex space-x-2">
                   <div
-                    className={`flex w-120px flex-row items-center rounded-full bg-lightGray3 px-3 py-1 text-sm text-lightWhite`}
+                    className={`flex w-120px flex-row items-center justify-center rounded-full bg-lightGray3 px-3 py-1 text-sm text-lightWhite`}
                   >
-                    <p>Whitepaper</p>
+                    <p>{t('TRADE_PAGE.CRYPTO_SUMMARY_WHITEPAPER')}</p>
                     <a href={whitePaperLink} className="pl-2">
                       <BiLinkAlt size={20} />
                     </a>
                   </div>
 
                   <div
-                    className={`flex w-100px flex-row items-center rounded-full bg-lightGray3 px-3 py-1 text-sm text-lightWhite`}
+                    className={`flex w-100px flex-row items-center justify-center rounded-full bg-lightGray3 px-3 py-1 text-sm text-lightWhite`}
                   >
-                    <p>Website</p>
+                    <p>{t('TRADE_PAGE.CRYPTO_SUMMARY_WEBSITE')}</p>
                     <a href={websiteLink} className="pl-2">
                       <BiLinkAlt size={20} />
                     </a>
@@ -143,37 +147,37 @@ const CryptoSummary = ({
               {/* Right side */}
               <div className="mt-4 flex w-full flex-col justify-start lg:w-1/2 lg:pl-12">
                 <div className="flex justify-between pb-5 text-sm text-lightGray5 lg:pr-10">
-                  <p>Price</p>
+                  <p>{t('TRADE_PAGE.CRYPTO_SUMMARY_PRICE')}</p>
                   <p>{price}</p>
                 </div>
 
                 <div className="flex justify-between pb-5 text-sm text-lightGray5 lg:pr-10">
-                  <p>Rank</p>
+                  <p>{t('TRADE_PAGE.CRYPTO_SUMMARY_RANK')}</p>
                   <p>{rank}</p>
                 </div>
 
                 <div className="flex justify-between pb-5 text-sm text-lightGray5 lg:pr-10">
-                  <p>Publish time</p>
+                  <p>{t('TRADE_PAGE.CRYPTO_SUMMARY_PUBLISH_TIME')}</p>
                   <p>{publishTime}</p>
                 </div>
 
                 <div className="flex justify-between pb-5 text-sm text-lightGray5 lg:pr-10">
-                  <p>Publish amount</p>
+                  <p>{t('TRADE_PAGE.CRYPTO_SUMMARY_PUBLISH_AMOUNT')}</p>
                   <p>{publishAmount}</p>
                 </div>
 
                 <div className="flex justify-between pb-5 text-sm text-lightGray5 lg:pr-10">
-                  <p>Trading volume</p>
+                  <p>{t('TRADE_PAGE.CRYPTO_SUMMARY_TRADING_VOLUME')}</p>
                   <p>{tradingVolume}</p>
                 </div>
 
                 <div className="flex justify-between pb-5 text-sm text-lightGray5 lg:pr-10">
-                  <p>Total value</p>
+                  <p>{t('TRADE_PAGE.CRYPTO_SUMMARY_TOTAL_VALUE')}</p>
                   <p>{totalValue}</p>
                 </div>
 
                 <div className="flex justify-between pb-5 text-sm text-lightGray5 lg:pr-10">
-                  <p>Trading value</p>
+                  <p>{t('TRADE_PAGE.CRYPTO_SUMMARY_TRADING_VALUE')}</p>
                   <p>{tradingValue}</p>
                 </div>
               </div>

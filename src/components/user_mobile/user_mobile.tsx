@@ -81,12 +81,12 @@ const UserMobile = () => {
         id="userDropdown"
         className={`flex h-screen w-screen flex-col ${
           avatarMenuVisible ? 'visible' : 'invisible'
-        } divide-y divide-lightGray px-9 pt-2`}
+        } divide-y divide-lightGray px-9 pt-8`}
       >
-        <div className="flex flex-col">
+        <div className="flex flex-col items-center">
           {/* Info: (20230327 - Julian) Avatar Section */}
-          <div className="flex w-full items-center py-4 text-center text-sm text-lightGray">
-            <div className="inline-flex w-full items-center">
+          <div className="flex w-full max-w-350px items-center justify-between py-4 text-center text-sm text-lightGray">
+            <div className="inline-flex items-center">
               {/* Info: (20230327 - Julian) Avatar */}
               <div className="inline-flex h-16 w-16 items-center justify-center overflow-hidden rounded-full bg-tidebitTheme text-center">
                 <span className="text-4xl font-bold text-lightWhite">{username}</span>

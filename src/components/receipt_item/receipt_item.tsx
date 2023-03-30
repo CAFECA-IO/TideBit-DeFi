@@ -95,7 +95,7 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
   const displayedReceiptState =
     orderSnapshot.status === OrderStatusUnion.SUCCESS
       ? type === OrderType.CFD
-        ? `${displayedReceiptType} of ETH`
+        ? `${displayedReceiptType}`
         : displayedReceiptTxId
       : orderSnapshot.status === OrderStatusUnion.PROCESSING
       ? t('MY_ASSETS_PAGE.RECEIPT_SECTION_ORDER_STATUS_PROCESSING')

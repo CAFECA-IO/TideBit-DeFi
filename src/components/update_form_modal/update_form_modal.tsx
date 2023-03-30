@@ -46,7 +46,7 @@ const UpdateFormModal = ({
   ...otherProps
 }: IUpdatedFormModal) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
-  // console.log('openCfdDetails in details modal: ', openCfdDetails.id);
+
   const globalCtx = useGlobal();
   const marketCtx = useContext(MarketContext);
 
@@ -55,6 +55,7 @@ const UpdateFormModal = ({
 
   const cfdTp = openCfdDetails?.orderSnapshot?.takeProfit;
   const cfdSl = openCfdDetails?.orderSnapshot?.stopLoss;
+  const gsl = marketCtx.guaranteedStopFeePercentage;
 
   const initialTpInput = cfdTp ?? openCfdDetails.suggestion.takeProfit;
 
@@ -88,6 +89,15 @@ const UpdateFormModal = ({
       : openCfdDetails.orderSnapshot.state === OrderState.FREEZED
       ? 'Freezed'
       : '';
+  const [guaranteedStopFee, setGuaranteedStopFee, guaranteedStopFeeRef] = useStateRef(
+    Number(gsl) * openCfdDetails.orderSnapshot.openPrice * openCfdDetails.orderSnapshot.amount
+  );
+
+  useEffect(() => {
+    setGuaranteedStopFee(
+      Number(gsl) * openCfdDetails.orderSnapshot.openPrice * openCfdDetails.orderSnapshot.amount
+    );
+  }, [gsl, openCfdDetails.orderSnapshot.openPrice, openCfdDetails.orderSnapshot.amount]);
 
   const getToggledTpSetting = (bool: boolean) => {
     setTpToggle(bool);
@@ -294,6 +304,10 @@ const UpdateFormModal = ({
 
   const layoutInsideBorder = 'mx-5 my-3 flex justify-between';
 
+  const gslFee = openCfdDetails.orderSnapshot.guaranteedStop
+    ? openCfdDetails.orderSnapshot.guaranteedStopFee
+    : guaranteedStopFeeRef.current;
+
   const toDisplayCloseOrder = (cfd: IDisplayAcceptedCFDOrder): IDisplayAcceptedCFDOrder => {
     const order = {
       ...cfd,
@@ -308,7 +322,7 @@ const UpdateFormModal = ({
       orderType: OrderType.CFD,
     };
 
-    // Detect if tpValue has changed
+    // Info: (20230329 - Shirley) Detect if tpValue has changed
     if (tpToggle && tpValue !== openCfdDetails.orderSnapshot.takeProfit) {
       changedProperties = {
         ...changedProperties,
@@ -316,12 +330,12 @@ const UpdateFormModal = ({
       };
     }
 
-    // Detect if spValue has changed
+    // Info: (20230329 - Shirley) Detect if spValue has changed
     if (slToggle && slValue !== openCfdDetails.orderSnapshot.stopLoss) {
       changedProperties = {...changedProperties, stopLoss: slValue};
     }
 
-    // Detect if tpToggle has changed
+    // Info: (20230329 - Shirley) Detect if tpToggle has changed
     if (initialTpToggle !== tpToggle) {
       changedProperties = {
         ...changedProperties,
@@ -329,7 +343,7 @@ const UpdateFormModal = ({
       };
     }
 
-    // Detect if slToggle has changed
+    // Info: (20230329 - Shirley) Detect if slToggle has changed
     if (initialSlToggle !== slToggle) {
       changedProperties = {
         ...changedProperties,
@@ -337,12 +351,10 @@ const UpdateFormModal = ({
       };
     }
 
-    // Detect if guaranteedStop has changed
+    // Info: (20230329 - Shirley) Detect if guaranteedStop has changed
     if (guaranteedChecked !== openCfdDetails.orderSnapshot.guaranteedStop) {
       const stopLoss = slValue !== openCfdDetails.orderSnapshot.stopLoss ? slValue : undefined;
-      const guaranteedStopFee = Number(
-        (openCfdDetails.openValue * (marketCtx?.tickerStatic?.guaranteedStopFee ?? 99)).toFixed(2)
-      );
+      const guaranteedStopFee = guaranteedStopFeeRef.current;
 
       changedProperties = {
         ...changedProperties,
@@ -354,12 +366,6 @@ const UpdateFormModal = ({
 
     if (Object.keys(changedProperties).filter(key => key !== 'orderId').length > 0) {
       changedProperties = {...changedProperties};
-
-      globalCtx.toast({
-        type: 'info',
-        message: 'Changes: \n' + JSON.stringify(changedProperties),
-        toastId: JSON.stringify(changedProperties),
-      });
     }
 
     return changedProperties;
@@ -431,7 +437,11 @@ const UpdateFormModal = ({
         <label className="ml-2 flex text-xs font-medium text-lightGray">
           {t('POSITION_MODAL.GUARANTEED_STOP')}
           <span className="ml-1 text-lightWhite">
-            ({t('POSITION_MODAL.FEE')}: {openCfdDetails?.orderSnapshot?.guaranteedStopFee}{' '}
+            ({t('POSITION_MODAL.FEE')}:{' '}
+            {gslFee?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}{' '}
             {unitAsset})
           </span>
           {/* tooltip */}
@@ -678,15 +688,7 @@ const UpdateFormModal = ({
 
                   <div className={`${layoutInsideBorder}`}>
                     <div className="text-lightGray">{t('POSITION_MODAL.STATE')}</div>
-                    <div className="">
-                      {t('POSITION_MODAL.STATE_OPEN')}
-                      {/* <button
-                        type="button"
-                        className="ml-2 text-tidebitTheme underline underline-offset-2"
-                      >
-                        Close
-                      </button> */}
-                    </div>
+                    <div className="">{t('POSITION_MODAL.STATE_OPEN')}</div>
                   </div>
                 </div>
               </div>

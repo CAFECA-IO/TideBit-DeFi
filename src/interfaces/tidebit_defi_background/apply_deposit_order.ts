@@ -1,6 +1,6 @@
 import {OrderStatusUnion} from '../../constants/order_status_union';
 import {OrderType, IOrderType} from '../../constants/order_type';
-import {getTimestamp, randomHex} from '../../lib/common';
+import {getTimestamp} from '../../lib/common';
 import {IAcceptedDepositOrder} from './accepted_deposit_order';
 import {IApplyOrder} from './apply_order';
 import {IBalance} from './balance';

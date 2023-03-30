@@ -17,6 +17,7 @@ const OpenSubTab = () => {
 
   const toOpenPositionItems = (cfds: IAcceptedCFDOrder[]): IDisplayAcceptedCFDOrder[] => {
     const displayedOpenPositionList = cfds.map(cfd => {
+      // TODO: replace `twoDecimal` with `toLocaleString` (20230325 - Shirley)
       const rTp =
         cfd.orderSnapshot.typeOfPosition === TypeOfPosition.BUY
           ? twoDecimal(cfd.orderSnapshot.openPrice * (1 + SUGGEST_TP / cfd.orderSnapshot.leverage))

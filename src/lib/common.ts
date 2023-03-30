@@ -275,6 +275,46 @@ export const acceptedOrderToOrder = (acceptedOrder: IAcceptedOrder) => {
   return order;
 };
 
+export const toDisplayAcceptedDepositOrder = (depositHistory: IOrder) => {
+  const displayAcceptedDepositOrder: IAcceptedDepositOrder = {
+    id: depositHistory.orderSnapshot.id,
+    targetAsset: depositHistory.targetAsset,
+    targetAmount: depositHistory.targetAmount,
+    orderType: depositHistory.type,
+    balanceSnapshot: {...depositHistory.balanceSnapshot, createTimestamp: depositHistory.timestamp},
+    orderStatus: depositHistory.orderSnapshot.status,
+    applyData: {
+      orderType: depositHistory.type,
+      createTimestamp: depositHistory.timestamp,
+      targetAsset: depositHistory.targetAsset,
+      targetAmount: depositHistory.targetAmount,
+      decimals: depositHistory.orderSnapshot.decimals || 0,
+      to: depositHistory.orderSnapshot.to || '',
+      remark: '',
+      fee: depositHistory.orderSnapshot.fee || 0,
+    },
+    balanceDifferenceCauseByOrder: {
+      currency: depositHistory.targetAsset,
+      available: 0,
+      locked: depositHistory.targetAmount,
+    },
+    createTimestamp: depositHistory.timestamp,
+    userSignature: '',
+    nodeSignature: '',
+    orderSnapshot: {
+      orderType: OrderType.DEPOSIT,
+      id: depositHistory.orderSnapshot.id,
+      txid: depositHistory.orderSnapshot.txid,
+      targetAsset: depositHistory.targetAsset,
+      targetAmount: depositHistory.targetAmount,
+      fee: depositHistory.orderSnapshot.fee,
+      decimals: depositHistory.orderSnapshot.decimals || 0,
+      to: depositHistory.orderSnapshot.to || '',
+    },
+  };
+  return displayAcceptedDepositOrder;
+};
+
 export const randomHex = (length: number) => {
   return (
     '0x' +

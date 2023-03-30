@@ -9,7 +9,6 @@ import {useTranslation} from 'next-i18next';
 import UserMobile from '../user_mobile/user_mobile';
 import {useGlobal} from '../../contexts/global_context';
 import TideButton from '../tide_button/tide_button';
-import UserOverview from '../user_overview/user_overview';
 import {NotificationContext} from '../../contexts/notification_context';
 import {TBDURL} from '../../constants/api_request';
 
@@ -79,17 +78,19 @@ const NavBarMobile = () => {
     </div>
   );
 
-  const isDisplayedUserOverview = userCtx.enableServiceTerm ? (
-    <UserOverview
-      depositAvailable={userCtx.balance?.available ?? 0}
-      marginLocked={userCtx.balance?.locked ?? 0}
-      profitOrLossAmount={userCtx.balance?.PNL ?? 0}
-    />
-  ) : null;
-
   const isDisplayedUser = userCtx.enableServiceTerm ? (
     <UserMobile />
   ) : (
+    <TideButton
+      onClick={wallectConnectBtnClickHandler} // show wallet panel
+      className={`rounded border-0 bg-tidebitTheme py-2 px-3 text-sm text-white transition-all duration-300 hover:bg-cyan-600`}
+    >
+      {/* Info: (20230327 - Julian) Show Wallet Connect */}
+      {t('NAV_BAR.WALLET_CONNECT')}
+    </TideButton>
+  );
+
+  const isDisplayedSubNavWalletConnect = userCtx.enableServiceTerm ? null : (
     <TideButton
       onClick={wallectConnectBtnClickHandler} // show wallet panel
       className={`rounded border-0 bg-tidebitTheme py-2 px-3 text-sm text-white transition-all duration-300 hover:bg-cyan-600`}
@@ -189,7 +190,7 @@ const NavBarMobile = () => {
                 </div>
               </div>
               <span className={`${dividerInsideMobileNavBar}`}></span>
-              {isDisplayedUserOverview}
+              <div className="p-5">{isDisplayedSubNavWalletConnect}</div>
             </div>
           </div>
         </div>

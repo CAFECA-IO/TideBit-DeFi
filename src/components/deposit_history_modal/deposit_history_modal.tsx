@@ -58,32 +58,6 @@ const DepositHistoryModal = ({
     </>
   );
 
-  const detailIcon = (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="19.989"
-      height="19.989"
-      viewBox="0 0 19.989 19.989"
-    >
-      <g id="Group_785" data-name="Group 785" transform="translate(-896 -505)">
-        <path
-          id="Path_76"
-          data-name="Path 76"
-          d="M21.082,24.294H11.088a3.213,3.213,0,0,1-3.213-3.213V11.088a3.213,3.213,0,0,1,3.213-3.213h9.994a3.213,3.213,0,0,1,3.213,3.213v9.994a3.213,3.213,0,0,1-3.213,3.213Z"
-          transform="translate(891.694 500.694)"
-          fill="#f2f2f2"
-        />
-        <path
-          id="Path_77"
-          data-name="Path 77"
-          d="M7.961,4.392H18.485A3.218,3.218,0,0,0,15.457,2.25H5.463A3.213,3.213,0,0,0,2.25,5.463v9.994a3.218,3.218,0,0,0,2.142,3.029V7.961A3.569,3.569,0,0,1,7.961,4.392Z"
-          transform="translate(893.75 502.75)"
-          fill="#f2f2f2"
-        />
-      </g>
-    </svg>
-  );
-
   const displayedDepositAvailable =
     orderStatus === OrderStatusUnion.PROCESSING ? (
       <Lottie className="w-20px" animationData={smallConnectingAnimation} />
@@ -103,7 +77,9 @@ const DepositHistoryModal = ({
     ) : (
       <div className="flex items-center text-tidebitTheme">
         {txid}
-        <div className="ml-2">{detailIcon}</div>
+        <div className="ml-2">
+          <Image src="/elements/detail_icon.svg" alt="" width={20} height={20} />
+        </div>
       </div>
     );
 

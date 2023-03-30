@@ -1,7 +1,9 @@
 import React, {useContext, useState} from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
+import {ImCross, ImExit} from 'react-icons/im';
+import UserOverview from '../user_overview/user_overview';
 import {UserContext} from '../../contexts/user_context';
-import {ImExit} from 'react-icons/im';
 import {VscAccount} from 'react-icons/vsc';
 import {FaDownload, FaUpload} from 'react-icons/fa';
 import {BiWallet} from 'react-icons/bi';
@@ -44,27 +46,26 @@ const UserMobile = () => {
     globalCtx.visibleWithdrawalModalHandler();
   };
 
+  const isDisplayedUserOverview = userCtx.enableServiceTerm ? (
+    <UserOverview
+      depositAvailable={userCtx.balance?.available ?? 0}
+      marginLocked={userCtx.balance?.locked ?? 0}
+      profitOrLossAmount={userCtx.balance?.PNL ?? 0}
+    />
+  ) : null;
+
   const isDisplayedNavbarCover = userCtx.wallet ? (
     <div
       className={`${
         avatarMenuVisible ? 'visible opacity-100' : 'invisible opacity-0'
       } fixed top-0 left-0 z-60 flex h-14 w-full items-center divide-x divide-lightGray bg-black/100 px-5 pt-1`}
     >
-      <div className="flex basis-full items-end">
-        <div className="mr-0 flex border-r border-lightGray1 lg:hidden">
-          <button
-            onClick={avatarClickHandler}
-            className="z-50 inline-flex items-center justify-center rounded-md p-2"
-          >
-            <div className="relative h-20px w-30px cursor-pointer">
-              <span className={`${hamburgerStyles} ${displayedMobileNavBarLine1}`}></span>
-              <span className={`${hamburgerStyles} ${displayedMobileNavBarLine2}`}></span>
-              <span className={`${hamburgerStyles} ${displayedMobileNavBarLine3}`}></span>
-            </div>
-          </button>
-        </div>
-
+      <div className="relative flex basis-full items-center">
         <p className="self-center pl-5">{t('USER.PERSONAL_SETTING')}</p>
+
+        <div className="absolute top-1 right-2 block lg:hidden">
+          <ImCross onClick={avatarClickHandler} />
+        </div>
       </div>
     </div>
   ) : null;
@@ -80,16 +81,24 @@ const UserMobile = () => {
         id="userDropdown"
         className={`flex h-screen w-screen flex-col ${
           avatarMenuVisible ? 'visible' : 'invisible'
-        } divide-y divide-lightGray px-9 pt-10`}
+        } divide-y divide-lightGray px-9 pt-2`}
       >
-        {/* Info: (20230327 - Julian) Avatar Section */}
-        <div className="items-center py-4 px-4 text-center text-sm text-lightGray">
-          {/* Info: (20230327 - Julian) Avatar */}
-          <div className="inline-flex h-28 w-28 items-center justify-center overflow-hidden rounded-full bg-tidebitTheme text-center">
-            <span className="text-5xl font-bold text-lightWhite">{username}</span>
+        <div className="flex flex-col">
+          {/* Info: (20230327 - Julian) Avatar Section */}
+          <div className="flex w-full items-center py-4 text-center text-sm text-lightGray">
+            <div className="inline-flex w-full items-center">
+              {/* Info: (20230327 - Julian) Avatar */}
+              <div className="inline-flex h-16 w-16 items-center justify-center overflow-hidden rounded-full bg-tidebitTheme text-center">
+                <span className="text-4xl font-bold text-lightWhite">{username}</span>
+              </div>
+              {/* Info: (20230327 - Julian) Account */}
+              <div className="ml-4 truncate text-sm">{accountTruncate(userCtx.wallet)}</div>
+            </div>
+            <button className="p-4">
+              <Image src="/elements/edit_icon.svg" alt="edit_icon" width={25} height={25} />
+            </button>
           </div>
-          {/* Info: (20230327 - Julian) Account */}
-          <div className="mt-2 truncate text-sm">{accountTruncate(userCtx.wallet)}</div>
+          <div className="py-4">{isDisplayedUserOverview}</div>
         </div>
 
         <div className="flex justify-center">

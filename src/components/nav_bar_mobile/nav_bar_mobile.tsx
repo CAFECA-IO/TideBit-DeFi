@@ -11,6 +11,7 @@ import {useGlobal} from '../../contexts/global_context';
 import TideButton from '../tide_button/tide_button';
 import UserOverview from '../user_overview/user_overview';
 import {NotificationContext} from '../../contexts/notification_context';
+import {TBDURL} from '../../constants/api_request';
 
 type TranslateFunction = (s: string) => string;
 
@@ -168,7 +169,7 @@ const NavBarMobile = () => {
                 </Link>
               </div>
               <div className="flex items-center justify-start px-3">
-                <Link href="/trade/cfd/ethusdt" className={menuItemStyles}>
+                <Link href={TBDURL.TRADE} className={menuItemStyles}>
                   {t('NAV_BAR.TRADE')}
                 </Link>
               </div>

@@ -3,6 +3,7 @@ import Image from 'next/image';
 import TideButton from '../tide_button/tide_button';
 import Link from 'next/link';
 import {useTranslation} from 'next-i18next';
+import {TBDURL} from '../../constants/api_request';
 
 type TranslateFunction = (s: string) => string;
 
@@ -32,7 +33,7 @@ const Cta = () => {
             </div>
             <div className="pt-2 md:pt-8 xl:pt-5">
               <Link
-                href="/trade/cfd/ethusdt"
+                href={TBDURL.TRADE}
                 className="px-2 py-1 font-normal xxs:text-xxs sm:py-2 sm:px-5 sm:text-base xl:py-3 xl:px-5 xl:text-lg"
               >
                 <TideButton
@@ -66,8 +67,7 @@ const Cta = () => {
             {t('HOME_PAGE.CTA_DESCRIPTION')}
           </div>
           <div className="mx-auto pt-4 md:pt-8">
-            <Link href="/trade/cfd/ethusdt">
-              {/* Todo: (20230328 - Julian) 手機版點不到按鈕 -> 檢查結構 */}
+            <Link href={TBDURL.TRADE}>
               <TideButton
                 className={`mt-4 rounded border-0 bg-tidebitTheme py-3 px-5 text-base text-white transition-all duration-300 hover:bg-cyan-600 md:mt-0`}
               >

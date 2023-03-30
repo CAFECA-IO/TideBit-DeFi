@@ -63,6 +63,7 @@ const TrialComponent = () => {
               >
                 <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
               </svg> */}
+                {/* ToDo: (20230329 - Julian) get data from marketContext */}
                 <Image src="/asset_icon/usdt.svg" width={50} height={50} alt="USDT_icon" />
               </div>
               <div className="flex flex-col">

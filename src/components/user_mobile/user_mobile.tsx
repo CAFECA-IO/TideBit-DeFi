@@ -8,6 +8,7 @@ import {BiWallet} from 'react-icons/bi';
 import {accountTruncate} from '../../lib/common';
 import {useGlobal} from '../../contexts/global_context';
 import {useTranslation} from 'next-i18next';
+import {TBDURL} from '../../constants/api_request';
 
 type TranslateFunction = (s: string) => string;
 
@@ -97,7 +98,7 @@ const UserMobile = () => {
             aria-labelledby="avatarButton"
           >
             <li>
-              <Link href="/my-assets" className="block py-4 pr-4 pl-3 hover:bg-darkGray5">
+              <Link href={TBDURL.MY_ASSETS} className="block py-4 pr-4 pl-3 hover:bg-darkGray5">
                 <div className="flex flex-row items-center space-x-2">
                   <BiWallet />
                   <p>{t('USER.ASSETS')}</p>

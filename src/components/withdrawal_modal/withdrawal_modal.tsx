@@ -11,7 +11,9 @@ import {getTimestamp, locker, wait} from '../../lib/common';
 import {DELAYED_HIDDEN_SECONDS} from '../../constants/display';
 import {UserContext} from '../../contexts/user_context';
 import {OrderType} from '../../constants/order_type';
+import {useTranslation} from 'react-i18next';
 
+type TranslateFunction = (s: string) => string;
 interface IWithdrawalModal {
   // transferType: 'deposit' | 'withdraw';
   // userAvailableBalance: number;
@@ -32,6 +34,7 @@ const WithdrawalModal = ({
   submitHandler, // submit information from parent component
   ...otherProps
 }: IWithdrawalModal) => {
+  const {t}: {t: TranslateFunction} = useTranslation('common');
   // TODO: [UserContext] withdraw: userCtx.balance?.available
   const userCtx = useContext(UserContext);
   const userAvailableBalance = 397.51;
@@ -173,7 +176,7 @@ const WithdrawalModal = ({
 
   const formButton = (
     <p className="flex items-center space-x-3 text-center">
-      Withdraw
+      {t('D_W_MODAL.WITHDRAW')}
       <span className="ml-3">
         <Image src="/elements/group_14962.svg" width={15} height={15} alt="withdraw icon" />
       </span>
@@ -356,7 +359,7 @@ const WithdrawalModal = ({
             {/*header*/}
             <div className="flex items-start justify-between rounded-t pt-9">
               <h3 className="mt-2 w-full text-center text-xl font-normal text-lightWhite">
-                Withdraw
+                {t('D_W_MODAL.WITHDRAW')}
               </h3>
               <button className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
                 <span className="absolute top-5 right-5 block outline-none focus:outline-none">

@@ -1,10 +1,13 @@
 import Image from 'next/image';
 import React from 'react';
-import RippleButton from '../ripple_button/ripple_button';
+import {useTranslation} from 'react-i18next';
+
+type TranslateFunction = (s: string) => string;
 
 const AppDowloadContainer = () => {
-  // const containerDescription = `container mx-auto flex items-center md:flex-row flex-col`;
+  const {t}: {t: TranslateFunction} = useTranslation('common');
 
+  // const containerDescription = `container mx-auto flex items-center md:flex-row flex-col`;
   const desktopVersionBreakpoint = 'hidden lg:flex';
   const mobileVersionBreakpoint = 'flex lg:hidden';
 
@@ -14,8 +17,12 @@ const AppDowloadContainer = () => {
       <div className={`${desktopVersionBreakpoint}`}>
         <section className={`bg-black py-24`}>
           <h1 className="flex shrink-0 items-center justify-center py-20 px-2 text-lg font-bold text-white sm:text-2xl md:px-20 md:text-3xl lg:text-4xl xl:text-6xl">
-            Trade on&nbsp;<span className="text-cyan-400">TideBit</span>
-            &nbsp;anywhere, anytime
+            {t('HOME_PAGE.APP_DOWLOAD_CONTAINER_TITLE')}&nbsp;
+            <span className="text-cyan-400">
+              {t('HOME_PAGE.APP_DOWLOAD_CONTAINER_TITLE_HIGHLIGHT')}
+            </span>
+            &nbsp;
+            {t('HOME_PAGE.APP_DOWLOAD_CONTAINER_TITLE_2')}
           </h1>
 
           <div className="mx-auto flex flex-wrap items-center space-y-2 pb-24 md:flex-row">
@@ -68,9 +75,12 @@ const AppDowloadContainer = () => {
         <section className={`bg-black`}>
           <div className="flex shrink-0 flex-col items-center justify-center space-y-2 px-2 pt-0 pb-10 text-2xl font-bold text-white sm:space-y-5 sm:text-3xl md:px-20 md:pb-20 md:text-4xl">
             <div>
-              Trade on&nbsp;<span className="text-cyan-400">TideBit</span>
+              {t('HOME_PAGE.APP_DOWLOAD_CONTAINER_TITLE')}&nbsp;
+              <span className="text-cyan-400">
+                {t('HOME_PAGE.APP_DOWLOAD_CONTAINER_TITLE_HIGHLIGHT')}
+              </span>
             </div>
-            <div>anywhere, anytime</div>
+            <div>{t('HOME_PAGE.APP_DOWLOAD_CONTAINER_TITLE_2')}</div>
           </div>
 
           <div className="mx-auto flex flex-wrap items-center space-y-2 pb-24 md:flex-row">

@@ -21,6 +21,7 @@ import {
   WhitespaceData,
   UTCTimestamp,
   LocalizationOptions,
+  IChartApi,
 } from 'lightweight-charts';
 import Lottie, {useLottie} from 'lottie-react';
 import spotAnimation from '../../../public/animation/circle.json';
@@ -408,9 +409,79 @@ export default function CandlestickChart({
   };
 
   const chartContainerRef = useRef<HTMLDivElement>(null);
+  let chart: IChartApi;
+  // chartContainerRef.current = document.getElementById('chart-container');
+  // chartContainerRef.current ? () : ()
+
+  const initChart = () => {
+    const locale: LocalizationOptions = {
+      locale: 'zh-TW',
+      dateFormat: 'yyyy-MM-dd',
+      // timeFormatter: (date: Date) => {
+      //   return date.toLocaleTimeString();
+      // }
+    };
+
+    if (chartContainerRef.current) {
+      chart = createChart(chartContainerRef.current, {
+        width:
+          globalCtx.layoutAssertion === 'desktop'
+            ? globalCtx.width * 0.6 - 2000 / globalCtx.width + (globalCtx.width - 1150) * 0.5
+            : globalCtx.width * 0.9, // 650
+        height: 300,
+        layout: {
+          fontSize: 12,
+          fontFamily: 'barlow, sans-serif',
+          background: {type: ColorType.Solid, color: colors.backgroundColor},
+          textColor: LINE_GRAPH_STROKE_COLOR.LIGHT_GRAY,
+        },
+        grid: {
+          vertLines: {
+            visible: false,
+          },
+          horzLines: {
+            visible: false,
+          },
+        },
+
+        handleScale: {
+          pinch: true,
+          mouseWheel: true,
+          axisDoubleClickReset: true,
+          axisPressedMouseMove: false,
+        },
+        crosshair: {
+          mode: 0,
+          vertLine: {
+            color: LINE_GRAPH_STROKE_COLOR.DEFAULT,
+
+            // labelBackgroundColor: LINE_GRAPH_STROKE_COLOR.TIDEBIT_THEME,
+          },
+          horzLine: {
+            color: LINE_GRAPH_STROKE_COLOR.DEFAULT,
+            // labelBackgroundColor: LINE_GRAPH_STROKE_COLOR.TIDEBIT_THEME,
+          },
+        },
+
+        timeScale: {
+          timeVisible: true,
+          secondsVisible: true,
+          ticksVisible: false,
+          fixLeftEdge: true,
+          shiftVisibleRangeOnNewBar: true,
+          borderVisible: false,
+          // Till: Restrict the drag (20230413 - Shirley)
+          // fixRightEdge: true,
+        },
+        localization: locale,
+      });
+    }
+  };
 
   useEffect(() => {
+    // console.log('first, container ref current', chartContainerRef.current);
     if (chartContainerRef.current) {
+      // console.log('container ref current', chartContainerRef.current);
       // Till: (20230412 - Shirley)
       // const handleResize = () => {
       //   chart.applyOptions({width: chartContainerRef.current.clientWidth});
@@ -468,101 +539,60 @@ export default function CandlestickChart({
       // eslint-disable-next-line no-console
       console.log('dummyCandles', dummyCandles);
 
-      // ToDo: (20230329 - Shirley) options
-      // const chartOptions: ChartOptions = {
-      //   width: 1000,
+      // const chart = createChart(chartContainerRef.current, {
+      //   width:
+      //     globalCtx.layoutAssertion === 'desktop'
+      //       ? globalCtx.width * 0.7 - 100
+      //       : globalCtx.width * 0.9, // 650
       //   height: 300,
       //   layout: {
       //     fontSize: 12,
       //     fontFamily: 'barlow, sans-serif',
       //     background: {type: ColorType.Solid, color: colors.backgroundColor},
-      //     textColor: colors.textColor,
+      //     textColor: LINE_GRAPH_STROKE_COLOR.LIGHT_GRAY,
       //   },
-      //   // grid: {
-      //   //   vertLines: {
+      //   grid: {
+      //     vertLines: {
+      //       visible: false,
+      //     },
+      //     horzLines: {
+      //       visible: false,
+      //     },
+      //   },
 
-      //   //   }
-      //   // },
+      //   handleScale: {
+      //     pinch: true,
+      //     mouseWheel: true,
+      //     axisDoubleClickReset: true,
+      //     axisPressedMouseMove: false,
+      //   },
+      //   crosshair: {
+      //     mode: 0,
+      //     vertLine: {
+      //       color: LINE_GRAPH_STROKE_COLOR.DEFAULT,
+
+      //       // labelBackgroundColor: LINE_GRAPH_STROKE_COLOR.TIDEBIT_THEME,
+      //     },
+      //     horzLine: {
+      //       color: LINE_GRAPH_STROKE_COLOR.DEFAULT,
+      //       // labelBackgroundColor: LINE_GRAPH_STROKE_COLOR.TIDEBIT_THEME,
+      //     },
+      //   },
+
       //   timeScale: {
       //     timeVisible: true,
       //     secondsVisible: true,
       //     ticksVisible: false,
+      //     fixLeftEdge: true,
+      //     shiftVisibleRangeOnNewBar: true,
+      //     borderVisible: false,
+      //     // Till: Restrict the drag (20230413 - Shirley)
+      //     // fixRightEdge: true,
       //   },
       //   localization: locale,
-      //   // autoSize: true,
-      //   // timeScale: {
-      //   //   timeVisible: true,
-      //   //   secondsVisible: false,
-      //   //   rightOffset: 0,
-      //   //   barSpacing: 3,
-      //   //   fixLeftEdge: true,
-      //   //   lockVisibleTimeRangeOnResize: true,
-      //   //   rightBarStaysOnScroll: true,
-      //   //   borderVisible: false,
-      //   //   borderColor: '#fff000',
-      //   //   visible: true,
-      //   // },
-      //   // timeScale: {
-      //   //   timeVisible: true,
-      //   // },
+      // });
 
-      //   // leftPriceScale: {
-      //   //   autoScale: false,
-      //   // },
-      //   // rightPriceScale: {
-      //   //   autoS#55575899
-      //   // },
-      // };
-
-      const chart = createChart(chartContainerRef.current, {
-        width: 650,
-        height: 300,
-        layout: {
-          fontSize: 12,
-          fontFamily: 'barlow, sans-serif',
-          background: {type: ColorType.Solid, color: colors.backgroundColor},
-          textColor: LINE_GRAPH_STROKE_COLOR.LIGHT_GRAY,
-        },
-        grid: {
-          vertLines: {
-            visible: false,
-          },
-          horzLines: {
-            visible: false,
-          },
-        },
-
-        handleScale: {
-          pinch: true,
-          mouseWheel: true,
-          axisDoubleClickReset: true,
-          axisPressedMouseMove: false,
-        },
-        crosshair: {
-          mode: 0,
-          vertLine: {
-            color: LINE_GRAPH_STROKE_COLOR.DEFAULT,
-
-            // labelBackgroundColor: LINE_GRAPH_STROKE_COLOR.TIDEBIT_THEME,
-          },
-          horzLine: {
-            color: LINE_GRAPH_STROKE_COLOR.DEFAULT,
-            // labelBackgroundColor: LINE_GRAPH_STROKE_COLOR.TIDEBIT_THEME,
-          },
-        },
-
-        timeScale: {
-          timeVisible: true,
-          secondsVisible: true,
-          ticksVisible: false,
-          fixLeftEdge: true,
-          shiftVisibleRangeOnNewBar: true,
-          borderVisible: false,
-          // Till: Restrict the drag (20230413 - Shirley)
-          // fixRightEdge: true,
-        },
-        localization: locale,
-      });
+      initChart();
 
       // chart.timeScale().applyOptions({
       //   borderVisible: false,
@@ -637,12 +667,21 @@ export default function CandlestickChart({
         chart.remove();
       };
     }
-  }, []);
+  }, [globalCtx.width]);
+
+  // const [mounted, setMounted] = useState(false);
+
+  // useEffect(() => {
+  //   if (mounted) return;
+  //   setMounted(true);
+
+  //   initChart();
+  // }, [globalCtx.width]);
 
   return (
     <>
       {/* <div className="-ml-5 w-full lg:w-7/10">Candlestick Chart with D3.js</div> */}
-      <div className="ml-5 w-full pt-20 pb-20 lg:w-7/10 lg:pt-14 lg:pb-5">
+      <div className="ml-5 pt-20 pb-20 lg:w-7/10 lg:pt-14 lg:pb-5">
         <div ref={chartContainerRef} className="hover:cursor-crosshair"></div>
       </div>
     </>

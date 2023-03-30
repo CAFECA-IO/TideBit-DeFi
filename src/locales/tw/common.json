@@ -11,6 +11,18 @@
     "NOTIFICATION_TITLE": "通知",
     "NOTIFICATION_READ_ALL": "全部已讀"
   },
+  "FOOTER": {
+    "SERVICES": "服務",
+    "TIDEBIT": "TideBit",
+    "HIRING": "人才招募",
+    "POLICY_CONDITIONS": "政策條款",
+    "SERVICE_POLICY": "服務條款",
+    "PRIVACY_POLICY": "隱私權政策",
+    "NEWSLETTER": "訂閱電子報",
+    "EMAIL_PLACEHOLDER": "電子信箱地址",
+    "SUBSCRIBE_BUTTON": "訂閱",
+    "COPYRIGHT": "TideBit © 2022"
+  },
   "USER": {
     "PERSONAL_SETTING": "用戶設定",
     "ASSETS": "我的資產",
@@ -44,7 +56,7 @@
   "TRADE_PAGE": {
     "WALLET_CONNECT_BUTTON": "連接錢包",
     "WALLET_CONNECT_DESCRIPTION": "連接錢包以開始交易",
-    "WALLET_CONNECT_DESCRIPTION_MOBILE": "Start trading after",
+    "WALLET_CONNECT_DESCRIPTION_MOBILE": "立即開始交易",
     "TICKER_SELECTOR_TAB_ALL": "全部",
     "TICKER_SELECTOR_TAB_FAVORITE": "我的最愛",
     "TRADING_VIEW_24H_VOLUME": "24h成交量",
@@ -91,22 +103,22 @@
     "DONE_BUTTON": "完成"
   },
   "POSITION_MODAL": {
-    "OPEN_POSITION_TITLE": "Open Position",
-    "CLOSE_POSITION_TITLE": "Close Position",
-    "UPDATE_POSITION_TITLE": "Update Position",
+    "OPEN_POSITION_TITLE": "開倉",
+    "CLOSE_POSITION_TITLE": "平倉",
+    "UPDATE_POSITION_TITLE": "更新持倉",
     "TYPE": "Type",
     "TYPE_UP": "Up",
-    "TYPE_BUY": "(Buy)",
+    "TYPE_BUY": "(買入)",
     "TYPE_DOWN": "Down",
-    "TYPE_SELL": "(Sell)",
+    "TYPE_SELL": "(賣出)",
     "OPEN_VALUE": "Open Value",
     "CLOSED_VALUE": "Closed Value",
-    "OPEN_PRICE": "Open Price",
-    "CLOSED_PRICE": "Closed Price",
-    "OPEN_TIME": "Open Time",
-    "CLOSED_TIME": "Closed Time",
-    "AMOUNT": "Amount",
-    "REQUIRED_MARGIN": "Required Margin",
+    "OPEN_PRICE": "開盤價格",
+    "CLOSED_PRICE": "收盤價格",
+    "OPEN_TIME": "開倉時間",
+    "CLOSED_TIME": "平倉時間",
+    "AMOUNT": "交易量",
+    "REQUIRED_MARGIN": "所需保證金",
     "TP_AND_SL": "止盈/ 止損",
     "TP_SETTING": "止盈設定",
     "SL_SETTING": "止損設定",
@@ -114,22 +126,22 @@
     "EXPECTED_LOSS": "預期損失",
     "GUARANTEED_STOP": "保證止損",
     "GUARANTEED_STOP_HINT": "Guaranteed stop will force the position to close at your chosen rate (price) even if the market price surpasses it.",
-    "EXPIRATION_TIME": "Expiration Time",
-    "LIQUIDATION_PRICE": "Liquidation Price",
+    "EXPIRATION_TIME": "過期時間",
+    "LIQUIDATION_PRICE": "清算價格",
     "PNL": "損益",
     "FEE": "手續費",
     "CFD_CONTENT": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna",
-    "CONFIRM_BUTTON": "Confirm the order",
-    "STATE": "State",
+    "CONFIRM_BUTTON": "確認訂單",
+    "STATE": "狀態",
     "STATE_OPEN": "Open",
     "STATE_CLOSED": "Closed",
-    "CLOSED_REASON": "Closed Reason",
-    "CLOSED_REASON_MARKET_CLOSED": "Market closed",
+    "CLOSED_REASON": "平倉原因",
+    "CLOSED_REASON_MARKET_CLOSED": "市場已關閉",
     "CLOSED_REASON_SCHEDULE": "Scheduled",
-    "CLOSED_REASON_FORCED_LIQUIDATION": "Forced Liquidation",
+    "CLOSED_REASON_FORCED_LIQUIDATION": "強制平倉",
     "CLOSED_REASON_BY_USER": "Manual",
-    "CLOSED_REASON_TAKE_PROFIT": "Take Profit",
-    "CLOSED_REASON_STOP_LOSS": "Stop Loss",
+    "CLOSED_REASON_TAKE_PROFIT": "止盈",
+    "CLOSED_REASON_STOP_LOSS": "止損",
     "SHARE": "分享至"
   },
   "MY_ASSETS_PAGE": {
@@ -152,5 +164,16 @@
     "RECEIPT_SECTION_ORDER_STATUS_FAILED": "失敗",
     "RECEIPT_SECTION_FEE": "手續費",
     "RECEIPT_SECTION_AVAILABLE": "可用餘額"
+  },
+  "NOT_FOUND_PAGE": {
+    "DESCRIPTION": "糟糕！您要找的頁面不存在。"
+  },
+  "ERROR_PAGE": {
+    "DESCRIPTION1": "糟糕！發生錯誤，",
+    "DESCRIPTION2": "我們將會盡快修復。"
+  },
+  "COMING_SOON_PAGE": {
+    "DESCRIPTION1": "我們正在努力為您帶來驚奇的體驗",
+    "DESCRIPTION2": "敬請期待我們的最新服務！"
   }
 }

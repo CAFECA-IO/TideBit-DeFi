@@ -19,7 +19,7 @@ export default function Notification({
   const hamburgerStyles =
     'block bg-lightWhite h-3px opacity-100 rounded-12px opacity-100 ease-in duration-300';
 
-  // hamburger animation
+  /* Info: (20230327 - Julian) Hamburger Animation */
   const displayedMobileNavBarLine1 = !componentVisible
     ? 'translate-y-0 rotate-0'
     : 'translate-y-1.5 origin-left w-3/4 -rotate-35';

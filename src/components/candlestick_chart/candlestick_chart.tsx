@@ -524,6 +524,60 @@ export default function CandlestickChart({
     }
   };
 
+  const locale: LocalizationOptions = {
+    locale: 'zh-TW',
+    dateFormat: 'yyyy-MM-dd',
+  };
+
+  const chartOptions = {
+    width:
+      globalCtx.layoutAssertion === 'desktop'
+        ? globalCtx.width * 0.6 - 2000 / globalCtx.width + (globalCtx.width - 1150) * 0.5
+        : globalCtx.width * 0.9,
+    height: 300,
+    layout: {
+      fontSize: 12,
+      fontFamily: 'barlow, sans-serif',
+      background: {type: ColorType.Solid, color: LINE_GRAPH_STROKE_COLOR.BLACK},
+      textColor: LINE_GRAPH_STROKE_COLOR.LIGHT_GRAY,
+    },
+    grid: {
+      vertLines: {
+        visible: false,
+      },
+      horzLines: {
+        visible: false,
+      },
+    },
+
+    handleScale: {
+      pinch: true,
+      mouseWheel: true,
+      axisDoubleClickReset: true,
+      axisPressedMouseMove: false,
+    },
+    crosshair: {
+      mode: 0,
+      vertLine: {
+        color: LINE_GRAPH_STROKE_COLOR.DEFAULT,
+      },
+      horzLine: {
+        color: LINE_GRAPH_STROKE_COLOR.DEFAULT,
+      },
+    },
+
+    timeScale: {
+      timeVisible: true,
+      secondsVisible: true,
+      ticksVisible: false,
+      fixLeftEdge: true,
+      shiftVisibleRangeOnNewBar: true,
+      borderVisible: false,
+      // Till: Restrict the drag (20230413 - Shirley) // fixRightEdge: true,
+    },
+    localization: locale,
+  };
+
   // Info: 1. initialize the chart options and data (20230330 - Shirley)
   const initChart = () => {
     initData = initJob({
@@ -532,60 +586,9 @@ export default function CandlestickChart({
       timespan: 1,
     });
 
-    const locale: LocalizationOptions = {
-      locale: 'zh-TW',
-      dateFormat: 'yyyy-MM-dd',
-    };
-
     if (chartContainerRef.current) {
-      chart = createChart(chartContainerRef.current, {
-        width:
-          globalCtx.layoutAssertion === 'desktop'
-            ? globalCtx.width * 0.6 - 2000 / globalCtx.width + (globalCtx.width - 1150) * 0.5
-            : globalCtx.width * 0.9, // 650
-        height: 300,
-        layout: {
-          fontSize: 12,
-          fontFamily: 'barlow, sans-serif',
-          background: {type: ColorType.Solid, color: LINE_GRAPH_STROKE_COLOR.BLACK},
-          textColor: LINE_GRAPH_STROKE_COLOR.LIGHT_GRAY,
-        },
-        grid: {
-          vertLines: {
-            visible: false,
-          },
-          horzLines: {
-            visible: false,
-          },
-        },
-
-        handleScale: {
-          pinch: true,
-          mouseWheel: true,
-          axisDoubleClickReset: true,
-          axisPressedMouseMove: false,
-        },
-        crosshair: {
-          mode: 0,
-          vertLine: {
-            color: LINE_GRAPH_STROKE_COLOR.DEFAULT,
-          },
-          horzLine: {
-            color: LINE_GRAPH_STROKE_COLOR.DEFAULT,
-          },
-        },
-
-        timeScale: {
-          timeVisible: true,
-          secondsVisible: true,
-          ticksVisible: false,
-          fixLeftEdge: true,
-          shiftVisibleRangeOnNewBar: true,
-          borderVisible: false,
-          // Till: Restrict the drag (20230413 - Shirley) // fixRightEdge: true,
-        },
-        localization: locale,
-      });
+      // Info: Draw
+      chart = createChart(chartContainerRef.current, chartOptions);
 
       // chart.timeScale().applyOptions({
       //   borderVisible: false,
@@ -606,6 +609,70 @@ export default function CandlestickChart({
   };
 
   // Info: 2. Renew the chart with the filtered and merged data (20230330 - Shirley)
+  /**
+   * Trade array (交易的資料): generateRandomTrade return `{price:number, volume:number, timestamp: UTCTimestamp}`
+   * Candlestick array: translate TradeArray to `{x: Date, y: {open: number, high: number, low: number, close: number}}`
+   */
+
+  const generateRandomTrade = () => {
+    const trade = {
+      price: Math.random() * 100,
+      volume: Math.random() * 100,
+      time: (Date.now() / 1000) as UTCTimestamp,
+    };
+
+    return trade;
+  };
+
+  const newArr = new Array(10).fill(0).map(d => generateRandomTrade());
+
+  /**
+   * Transform newArr to CandlestickData[] (Round up the timestamp to the nearest second)
+   */
+  // const transform = (
+  //   arr: {
+  //     price: number;
+  //     volume: number;
+  //     time: UTCTimestamp;
+  //   }[]
+  // ) => {
+  //   const candlestickData = arr.reduce((acc, curr) => {
+  //     const {price, volume, time} = curr;
+  //     const timestamp = Math.ceil(time);
+  //     const last = acc[acc.length - 1];
+
+  //     if (last && last.time === timestamp) {
+  //       const {open, high, low, close} = last;
+  //       const newHigh = Math.max(high, price);
+  //       const newLow = Math.min(low, price);
+  //       const newClose = price;
+
+  //       return [
+  //         ...acc.slice(0, acc.length - 1),
+  //         {
+  //           time: timestamp,
+  //           open,
+  //           high: newHigh,
+  //           low: newLow,
+  //           close: newClose,
+  //         },
+  //       ];
+  //     } else {
+  //       return [
+  //         ...acc,
+  //         {
+  //           time: timestamp,
+  //           open: price,
+  //           high: price,
+  //           low: price,
+  //           close: price,
+  //         },
+  //       ];
+  //     }
+  //   }, [] as CandlestickData[]);
+  //   return candlestickData;
+  // };
+
   const updateChart = () => {
     const generateRandomCandle = () => {
       const candles: ICandlestickData[] = initData.map(d => ({
@@ -645,12 +712,28 @@ export default function CandlestickChart({
     updateData();
   };
 
+  const handleResize = () => {
+    chart.applyOptions({width: Number(chartContainerRef?.current?.clientWidth) - 50});
+  };
+
+  /**
+   * ToDo:
+   * 高頻率更新的資料，需要更注意流程
+   * 1. 圖表樣式 不應該在 useEffect 被重複執行
+   * 2. data cleaning
+   * 3. 畫圖 (函式把圖畫出來)
+   */
+  // useEffect(() => {
+  //   initChart();
+
+  //   return () => {
+  //     chart.remove();
+  //   };
+  // }, [globalCtx.width]);
+
   useEffect(() => {
     // Till: (20230412 - Shirley)
     // if (chartContainerRef.current) {
-    // const handleResize = () => {
-    //   chart.applyOptions({width: chartContainerRef.current.clientWidth});
-    // };
 
     // Info: 1. Initial job (20230330 - Shirley)
     initChart();
@@ -659,15 +742,14 @@ export default function CandlestickChart({
     // ToDo: (20230330 - Shirley) updates (vs useEffect)
     const intervalId = setInterval(updateChart, 200);
 
-    // ToDo: (20230330 - Shirley) resize
-    // window.addEventListener('resize', handleResize);
+    window.addEventListener('resize', handleResize);
     return () => {
-      // window.removeEventListener('resize', handleResize);
+      window.removeEventListener('resize', handleResize);
       clearInterval(intervalId);
       chart.remove();
     };
     // }
-  }, [globalCtx.width]);
+  }, []); // chartContainerRef
 
   /* ToDO: Get candlestick data from ctx (20230330 - Shirley) */
   useEffect(() => {

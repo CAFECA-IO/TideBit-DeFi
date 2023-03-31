@@ -1,17 +1,12 @@
 import {ICandlestickData} from '../interfaces/tidebit_defi_background/candlestickData';
 import {ITBETrade} from '../interfaces/tidebit_defi_background/ticker_data';
 import {getTime, ITimeSpanUnion} from '../interfaces/tidebit_defi_background/time_span_union';
-import {OrderState} from '../constants/order_state';
-import {OrderStatusUnion} from '../constants/order_status_union';
-import {OrderType} from '../constants/order_type';
 import IEIP712Data from '../interfaces/ieip712data';
 import {IAcceptedCFDOrder} from '../interfaces/tidebit_defi_background/accepted_cfd_order';
-import {IAcceptedDepositOrder} from '../interfaces/tidebit_defi_background/accepted_deposit_order';
-import {IAcceptedOrder} from '../interfaces/tidebit_defi_background/accepted_order';
-import {IAcceptedWithdrawOrder} from '../interfaces/tidebit_defi_background/accepted_withdraw_order';
-import {IBalance} from '../interfaces/tidebit_defi_background/balance';
-import {IOrder} from '../interfaces/tidebit_defi_background/order';
-import {ICFDOrderSnapshot} from '../interfaces/tidebit_defi_background/order_snapshot';
+import {OrderState} from '../constants/order_state';
+import {TypeOfPosition} from '../constants/type_of_position';
+import {IDisplayAcceptedCFDOrder} from '../interfaces/tidebit_defi_background/display_accepted_cfd_order';
+import {ProfitState} from '../constants/profit_state';
 
 export const roundToDecimalPlaces = (val: number, precision: number): number => {
   const roundedNumber = Number(val.toFixed(precision));
@@ -234,6 +229,7 @@ export const toIJSON = (typeData: IEIP712Data) => {
   return JSON.parse(JSON.stringify(typeData));
 };
 
+/* Deprecated: IOrder replaced by IAcceptedOrder (20230407 - tzuhan)
 export const acceptedOrderToOrder = (acceptedOrder: IAcceptedOrder) => {
   const order: IOrder = {
     timestamp: acceptedOrder.createTimestamp,
@@ -265,7 +261,7 @@ export const acceptedOrderToOrder = (acceptedOrder: IAcceptedOrder) => {
   }
   if (acceptedOrder.orderType === OrderType.CFD) {
     order.orderSnapshot.state = (acceptedOrder.orderSnapshot as ICFDOrderSnapshot).state;
-    if (order.orderSnapshot.state === OrderState.OPENING) {
+    if (order.orderSnapshot.state === eOrderState.OPENING) {
       order.detail = `Open position of ${order.targetAsset}`;
     }
     if (order.orderSnapshot.state === OrderState.CLOSED) {
@@ -274,7 +270,9 @@ export const acceptedOrderToOrder = (acceptedOrder: IAcceptedOrder) => {
   }
   return order;
 };
+*/
 
+/* Deprecated: IOrder replaced by IAcceptedDepositOrder (20230407 - tzuhan)
 export const toDisplayAcceptedDepositOrder = (depositHistory: IOrder) => {
   const displayAcceptedDepositOrder: IAcceptedDepositOrder = {
     id: depositHistory.orderSnapshot.id,
@@ -314,6 +312,7 @@ export const toDisplayAcceptedDepositOrder = (depositHistory: IOrder) => {
   };
   return displayAcceptedDepositOrder;
 };
+*/
 
 export const randomHex = (length: number) => {
   return (
@@ -322,4 +321,44 @@ export const randomHex = (length: number) => {
       .toString(16)
       .substring(2, length + 2)
   );
+};
+
+// const positionLineGraph: number[] = tickerBook.listTickerPositions(orderSnapshot.ticker, {
+//   begin: acceptedCFDOrder.createTimestamp,
+// });
+
+export const toDisplayAcceptedCFDOrder = (
+  cfdOrder: IAcceptedCFDOrder,
+  positionLineGraph: number[]
+) => {
+  const {orderSnapshot} = cfdOrder;
+  const openValue = orderSnapshot.openPrice * orderSnapshot.amount;
+  const closeValue =
+    orderSnapshot.state === OrderState.CLOSED && orderSnapshot.closePrice
+      ? orderSnapshot.closePrice * orderSnapshot.amount
+      : 0;
+  const pnl =
+    orderSnapshot.state === OrderState.CLOSED && orderSnapshot.closePrice
+      ? (closeValue - openValue) * (orderSnapshot.typeOfPosition === TypeOfPosition.BUY ? 1 : -1)
+      : 0;
+  const takeProfit = orderSnapshot.typeOfPosition === TypeOfPosition.BUY ? 1.2 : 0.8;
+  const stopLoss = orderSnapshot.typeOfPosition === TypeOfPosition.BUY ? 0.8 : 1.2;
+  const suggestion = {
+    takeProfit: orderSnapshot.openPrice * takeProfit,
+    stopLoss: orderSnapshot.openPrice * stopLoss,
+  };
+  const displayAcceptedCFDOrder: IDisplayAcceptedCFDOrder = {
+    ...cfdOrder,
+    pnl: {
+      type: pnl > 0 ? ProfitState.PROFIT : ProfitState.LOSS,
+      value: pnl,
+    },
+    openValue: orderSnapshot.openPrice * orderSnapshot.amount,
+    closeValue: orderSnapshot.closePrice
+      ? orderSnapshot.closePrice * orderSnapshot.amount
+      : undefined,
+    positionLineGraph,
+    suggestion,
+  };
+  return displayAcceptedCFDOrder;
 };

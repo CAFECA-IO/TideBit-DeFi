@@ -1,12 +1,13 @@
 import React, {useContext} from 'react';
 import HistoryPositionItem from '../history_position_item/history_position_item';
 import {UserContext} from '../../contexts/user_context';
+import {toDisplayAcceptedCFDOrder} from '../../lib/common';
 
 const HistorySubTabMobile = () => {
   const userCtx = useContext(UserContext);
   const historyPositionList = userCtx.closedCFDs.map(cfd => (
     <div key={cfd.id}>
-      <HistoryPositionItem closedCfdDetails={cfd} />
+      <HistoryPositionItem closedCfdDetails={toDisplayAcceptedCFDOrder(cfd, [])} />
     </div>
   ));
 

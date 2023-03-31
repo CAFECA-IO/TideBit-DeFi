@@ -1,20 +1,14 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext} from 'react';
 import OpenPositionItem from '../open_position_item/open_position_item';
 import {UserContext} from '../../contexts/user_context';
-import {IAcceptedCFDOrder} from '../../interfaces/tidebit_defi_background/accepted_cfd_order';
-import {getTimestamp, twoDecimal} from '../../lib/common';
-import {ICFDSuggestion} from '../../interfaces/tidebit_defi_background/cfd_suggestion';
-import {IDisplayAcceptedCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
-import {IPnL} from '../../interfaces/tidebit_defi_background/pnl';
-import {ProfitState} from '../../constants/profit_state';
-import {TypeOfPosition} from '../../constants/type_of_position';
 import {MarketContext} from '../../contexts/market_context';
-import {SUGGEST_SL, SUGGEST_TP} from '../../constants/config';
+import {toDisplayAcceptedCFDOrder} from '../../lib/common';
+import {IDisplayAcceptedCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
 
 const OpenSubTab = () => {
   const {openCFDs} = useContext(UserContext);
   const marketCtx = useContext(MarketContext);
-
+  /* Deprecated: replaced by `toDisplayAcceptedCFDOrder` (20230407 - tzuhan)
   const toOpenPositionItems = (cfds: IAcceptedCFDOrder[]): IDisplayAcceptedCFDOrder[] => {
     const displayedOpenPositionList = cfds.map(cfd => {
       // TODO: replace `twoDecimal` with `toLocaleString` (20230325 - Shirley)
@@ -69,8 +63,20 @@ const OpenSubTab = () => {
 
     return displayedOpenPositionList;
   };
+  */
 
-  const cfds = toOpenPositionItems(openCFDs.filter(cfd => cfd.display));
+  const cfds = openCFDs
+    .filter(cfd => cfd.display)
+    .map(cfd => {
+      const positionLineGraph = marketCtx.listTickerPositions(cfd.targetAsset, {
+        begin: cfd.createTimestamp,
+      });
+      const displayCFD: IDisplayAcceptedCFDOrder = toDisplayAcceptedCFDOrder(
+        cfd,
+        positionLineGraph
+      );
+      return displayCFD;
+    });
 
   const openPositionList = cfds.map(cfd => {
     return (

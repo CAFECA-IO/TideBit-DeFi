@@ -91,12 +91,9 @@ export const dummyDataPositionOpenModal: IDataPositionOpenModal = {
   openCfdRequest: getDummyApplyCreateCFDOrder('ETH'),
 };
 
-const acceptedCFDOrders: IDisplayAcceptedCFDOrder[] = [];
-/* TODO: dummyDisplayAcceptedCFDOrder (20230330 - tzuhan)
-Array.from({length: 10}, () => {
+const acceptedCFDOrders: IDisplayAcceptedCFDOrder[] = Array.from({length: 10}, () => {
   return getDummyDisplayAcceptedCFDOrder('ETH');
 });
-*/
 
 const dummyOpenCFD = acceptedCFDOrders.filter(
   order => order.orderSnapshot.state === OrderState.OPENING

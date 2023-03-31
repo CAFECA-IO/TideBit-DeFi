@@ -1,6 +1,6 @@
 import {CFDOperation, ICFDOperation} from '../../constants/cfd_order_type';
 import {OrderState} from '../../constants/order_state';
-import {OrderStatusUnion} from '../../constants/order_status_union';
+import {IOrderStatusUnion, OrderStatusUnion} from '../../constants/order_status_union';
 import {OrderType} from '../../constants/order_type';
 import {TypeOfPosition} from '../../constants/type_of_position';
 import {getTimestamp, randomHex} from '../../lib/common';
@@ -20,23 +20,25 @@ export const convertApplyCreateCFDToAcceptedCFD = (
   applyCFDData: IApplyCreateCFDOrder,
   balance: IBalance,
   userSignature: string,
-  nodeSignature: string
+  nodeSignature: string,
+  orderStatus?: IOrderStatusUnion
 ) => {
   const date = new Date();
   const id = `${OrderType.CFD}${CFDOperation.CREATE}${date.getTime()}${
     applyCFDData.ticker
   }${Math.ceil(Math.random() * 1000000000)}`;
   const txid = randomHex(32);
-  const accpetedCFDOrder: IAcceptedCFDOrder = {
+  const acceptedCFDOrder: IAcceptedCFDOrder = {
     id,
     orderType: OrderType.CFD,
-    orderStatus: OrderStatusUnion.WAITING,
+    orderStatus: orderStatus ? orderStatus : OrderStatusUnion.WAITING,
     applyData: applyCFDData,
     targetAsset: applyCFDData.margin.asset,
     targetAmount: -applyCFDData.margin.amount,
     userSignature: userSignature,
     orderSnapshot: {
       id,
+      referenceId: id,
       txid,
       fee: 0,
 
@@ -75,39 +77,42 @@ export const convertApplyCreateCFDToAcceptedCFD = (
     createTimestamp: getTimestamp(),
     display: true,
   };
-  return accpetedCFDOrder;
+  return acceptedCFDOrder;
 };
 
 export const convertApplyUpdateCFDToAcceptedCFD = (
   applyCFDData: IApplyUpdateCFDOrder,
-  accpetedCFDOrder: IAcceptedCFDOrder,
+  acceptedCFDOrder: IAcceptedCFDOrder,
   userSignature: string,
-  nodeSignature: string
+  nodeSignature: string,
+  orderStatus?: IOrderStatusUnion
 ) => {
   const date = new Date();
   const id = `${OrderType.CFD}${CFDOperation.UPDATE}${date.getTime()}${
-    accpetedCFDOrder.orderSnapshot.ticker
+    acceptedCFDOrder.orderSnapshot.ticker
   }${Math.ceil(Math.random() * 1000000000)}`;
   const updateAccpetedCFDOrder: IAcceptedCFDOrder = {
-    ...accpetedCFDOrder,
+    ...acceptedCFDOrder,
     id,
     orderType: OrderType.CFD,
-    orderStatus: OrderStatusUnion.WAITING,
+    orderStatus: orderStatus ? orderStatus : OrderStatusUnion.WAITING,
     applyData: applyCFDData,
     userSignature: userSignature,
     balanceDifferenceCauseByOrder: {
-      currency: accpetedCFDOrder.balanceDifferenceCauseByOrder.currency,
+      currency: acceptedCFDOrder.balanceDifferenceCauseByOrder.currency,
       available: 0,
       locked: 0,
     },
     orderSnapshot: {
-      ...accpetedCFDOrder.orderSnapshot,
+      ...acceptedCFDOrder.orderSnapshot,
+      id,
+      referenceId: acceptedCFDOrder.orderSnapshot.referenceId,
       takeProfit: applyCFDData.takeProfit,
       stopLoss: applyCFDData.stopLoss,
       guaranteedStopFee: applyCFDData.guaranteedStopFee,
       guaranteedStop: applyCFDData.guaranteedStop
         ? applyCFDData.guaranteedStop
-        : accpetedCFDOrder.orderSnapshot.guaranteedStop,
+        : acceptedCFDOrder.orderSnapshot.guaranteedStop,
     },
     nodeSignature: nodeSignature,
     createTimestamp: getTimestamp(),
@@ -118,12 +123,13 @@ export const convertApplyUpdateCFDToAcceptedCFD = (
 
 export const convertApplyCloseCFDToAcceptedCFD = (
   applyCFDData: IApplyCloseCFDOrder,
-  accpetedCFDOrder: IAcceptedCFDOrder,
+  acceptedCFDOrder: IAcceptedCFDOrder,
   balance: IBalance,
   userSignature: string,
-  nodeSignature: string
+  nodeSignature: string,
+  orderStatus?: IOrderStatusUnion
 ) => {
-  const {balanceDifferenceCauseByOrder, orderSnapshot} = accpetedCFDOrder;
+  const {balanceDifferenceCauseByOrder, orderSnapshot} = acceptedCFDOrder;
   const pnl =
     (applyCFDData.closePrice - orderSnapshot.openPrice) *
     orderSnapshot.amount *
@@ -138,10 +144,10 @@ export const convertApplyCloseCFDToAcceptedCFD = (
     orderSnapshot.ticker
   }${Math.ceil(Math.random() * 1000000000)}`;
   const updateAccpetedCFDOrder: IAcceptedCFDOrder = {
-    ...accpetedCFDOrder,
+    ...acceptedCFDOrder,
     id,
     orderType: OrderType.CFD,
-    orderStatus: OrderStatusUnion.WAITING,
+    orderStatus: orderStatus ? orderStatus : OrderStatusUnion.WAITING,
     applyData: applyCFDData,
     userSignature: userSignature,
     balanceDifferenceCauseByOrder: balanceDiff,
@@ -153,6 +159,8 @@ export const convertApplyCloseCFDToAcceptedCFD = (
     },
     orderSnapshot: {
       ...orderSnapshot,
+      id,
+      referenceId: acceptedCFDOrder.orderSnapshot.referenceId,
       state: OrderState.CLOSED,
       closePrice: applyCFDData.closePrice,
       closeTimestamp: applyCFDData.closeTimestamp,

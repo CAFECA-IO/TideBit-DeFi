@@ -1,18 +1,10 @@
 import {NextApiRequest, NextApiResponse} from 'next';
 import {
-  dummyDepositOrder,
-  dummyClosedCFDOrder,
-  dummyOpenCFDOrder,
-  dummyWithdrawalOrder,
-  IOrder,
-} from '../../../../interfaces/tidebit_defi_background/order';
+  dummyAcceptedOrders,
+  IAcceptedOrder,
+} from '../../../../interfaces/tidebit_defi_background/accepted_order';
 
-const histories: IOrder[] = [
-  dummyDepositOrder,
-  dummyClosedCFDOrder,
-  dummyOpenCFDOrder,
-  dummyWithdrawalOrder,
-];
+const histories: IAcceptedOrder[] = [...dummyAcceptedOrders];
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'GET') {

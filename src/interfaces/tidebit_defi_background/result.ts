@@ -1,7 +1,6 @@
 import {Code, ICode, Reason} from '../../constants/code';
 import {IAcceptedOrder} from './accepted_order';
 import {ICryptocurrency} from './cryptocurrency';
-import {IOrder} from './order';
 import {IQuotation} from './quotation';
 import {ITickerData} from './ticker_data';
 import {ITickerHistoryData} from './ticker_history_data';
@@ -12,9 +11,8 @@ export interface IResult {
     | number
     | ITickerData[]
     | ICryptocurrency[]
-    | IOrder[]
-    // | IAcceptedOrder
-    | IOrder
+    | IAcceptedOrder
+    | IAcceptedOrder[]
     | IQuotation
     | ITickerHistoryData[]
     | null;

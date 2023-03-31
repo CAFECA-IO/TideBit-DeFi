@@ -1,5 +1,8 @@
 import {IOrderStatusUnion} from '../../constants/order_status_union';
 import {IOrderType} from '../../constants/order_type';
+import {dummyAcceptedCFDOrders} from './accepted_cfd_order';
+import {dummyAcceptedDepositOrders} from './accepted_deposit_order';
+import {dummyAcceptedWithdrawrders} from './accepted_withdraw_order';
 import {IApplyOrder} from './apply_order';
 import {IBalance} from './balance';
 import {IOrderSnapshot} from './order_snapshot';
@@ -32,3 +35,9 @@ export interface IAcceptedOrder {
   createTimestamp: number;
   // updateTimestamp: number;
 }
+
+export const dummyAcceptedOrders: IAcceptedOrder[] = [
+  ...dummyAcceptedDepositOrders,
+  ...dummyAcceptedCFDOrders,
+  ...dummyAcceptedWithdrawrders,
+];

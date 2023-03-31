@@ -13,7 +13,7 @@ export interface IOrderSnapshot {
 }
 
 export interface ICFDOrderSnapshot extends IOrderSnapshot {
-  referenceId?: string;
+  referenceId: string;
   ticker: string;
   state: IOrderState;
   orderType: IOrderType;

@@ -1,5 +1,16 @@
+import {IOrderStatusUnion, OrderStatusUnion} from '../../constants/order_status_union';
+import {randomHex} from '../../lib/common';
 import {IAcceptedOrder} from './accepted_order';
-import {IApplyCFDOrder} from './apply_cfd_order';
+import {
+  convertApplyCloseCFDToAcceptedCFD,
+  convertApplyCreateCFDToAcceptedCFD,
+  convertApplyUpdateCFDToAcceptedCFD,
+  IApplyCFDOrder,
+} from './apply_cfd_order';
+import {getDummyApplyCloseCFDOrder, IApplyCloseCFDOrder} from './apply_close_cfd_order_data';
+import {getDummyApplyCreateCFDOrder, IApplyCreateCFDOrder} from './apply_create_cfd_order_data';
+import {getDummyApplyUpdateCFDOrder, IApplyUpdateCFDOrder} from './apply_update_cfd_order_data';
+import {IBalance} from './balance';
 import {ICFDOrderSnapshot} from './order_snapshot';
 
 export interface IAcceptedCFDOrder extends IAcceptedOrder {
@@ -8,118 +19,83 @@ export interface IAcceptedCFDOrder extends IAcceptedOrder {
   orderSnapshot: ICFDOrderSnapshot;
 }
 
-/* TODO: dummyAcceptedCFDOrder (20230330 - tzuhan)
-function randomIntFromInterval(min: number, max: number) {
-  return Math.floor(Math.random() * (max - min + 1) + min);
-}
-export const getDummyAcceptedCFDOrder = (currency = 'ETH', state?: IOrderState) => {
-  const random = Math.random();
-  const typeOfPosition = random > 0.5 ? TypeOfPosition.BUY : TypeOfPosition.SELL;
-  const date = new Date();
-  const dummyAcceptedCFDOrder: IAcceptedCFDOrder = {
-    id: '',
-    orderType: 'CFD',
-    orderStatus: 'WAITING',
-    targetAsset: '',
-    targetAmount: 0,
-    applyData: undefined,
-    userSignature: '',
-    balanceDifferenceCauseByOrder: undefined,
-    balanceSnapshot: undefined,
-    orderSnapshot: {
-      id: `TBAcceptedCFD${date.getFullYear()}${
-     date.getMonth() + 1
-   }${date.getDate()}${date.getSeconds()}${currency}`,
-   txid: '0x',
-   ticker: currency,
-   orderStatus: random > 0.5 ? OrderStatusUnion.PROCESSING : OrderStatusUnion.SUCCESS,
-   orderType: OrderType.CFD,
-   state: state
-     ? state
-     : random > 0.5
-     ? OrderState.CLOSED
-     : random === 0.5
-     ? OrderState.FREEZED
-     : OrderState.OPENING,
-   typeOfPosition: typeOfPosition,
-   targetAsset: currency,
-   unitAsset: unitAsset,
-   openPrice: 24058,
-   amount: 1.8,
-   createTimestamp: 1675299651,
-   leverage: 5,
-   margin: {asset: 'BTC', amount: randomIntFromInterval(650, 10000)},
-   takeProfit: 74521,
-   stopLoss: 25250,
-   fee: 0,
-   guaranteedStop: false,
-   guaranteedStopFee: 0.77,
-   liquidationPrice: 19537,
-   liquidationTime: 1675386051, // openTimestamp + 86400
-   closePrice: 19537,
-   closeTimestamp: 1675386051,
-   closedType: CFDClosedType.SCHEDULE,
-   forcedClose: true,
-   remark: 'str',
-   },
-    nodeSignature: '',
-    createTimestamp: 0,
-    updateTimestamp: 0
+export const getDummyAcceptedCreateCFDOrder = (
+  currency = 'ETH',
+  orderStatus?: IOrderStatusUnion
+) => {
+  const applyCreateCFDOrder: IApplyCreateCFDOrder = getDummyApplyCreateCFDOrder(currency);
+  const dummyBalance = {
+    currency: currency,
+    available: applyCreateCFDOrder.amount * 1.5,
+    locked: 0,
   };
-  return dummyAcceptedCFDOrder;
+  const dummyUserSignature = randomHex(32);
+  const dummyNodeSignature = randomHex(32);
+  const acceptedCreateCFDOrder = convertApplyCreateCFDToAcceptedCFD(
+    applyCreateCFDOrder,
+    dummyBalance,
+    dummyUserSignature,
+    dummyNodeSignature,
+    orderStatus
+  );
+  return acceptedCreateCFDOrder;
 };
 
-export const getDummyAcceptedCFDs = (currency: string, state?: IOrderState, id?: string) => {
-  const date = new Date();
-  const dummyAcceptedCFDs: IAcceptedCFDOrder[] = [];
-  for (let i = 0; i < 3; i++) {
-    const random = Math.random();
-    const typeOfPosition = random > 0.5 ? TypeOfPosition.BUY : TypeOfPosition.SELL;
-    const dummyAcceptedCFDOrder: IAcceptedCFDOrder = {
-      id: id
-        ? id
-        : `TBAcceptedCFD${date.getFullYear()}${
-            date.getMonth() + 1
-          }${date.getDate()}${date.getSeconds()}${currency}-${i}`,
-      txid: randomHex(32),
-      ticker: currency,
-      orderStatus: random > 0.5 ? OrderStatusUnion.SUCCESS : OrderStatusUnion.PROCESSING,
-      orderType: OrderType.CFD,
-      state: state
-        ? state
-        : random > 0.5
-        ? OrderState.CLOSED
-        : random === 0.5
-        ? OrderState.FREEZED
-        : OrderState.OPENING,
-      typeOfPosition: typeOfPosition,
-      targetAsset: currency,
-      unitAsset: unitAsset,
-      openPrice: randomIntFromInterval(1000, 10000),
-      amount: 1.8,
-      createTimestamp: getTimestamp(),
-      leverage: 5,
-      margin: {asset: 'BTC', amount: randomIntFromInterval(650, 10000)},
-      takeProfit: randomIntFromInterval(7000, 70000),
-      stopLoss: randomIntFromInterval(100, 1000),
-      fee: 0,
-      guaranteedStop: false,
-      guaranteedStopFee: 0.77,
-      liquidationPrice: randomIntFromInterval(1000, 10000),
-      liquidationTime: getTimestamp() + 86400,
-      closePrice: randomIntFromInterval(1000, 10000),
-      closeTimestamp: random > 0.5 ? getTimestamp() + 86400 : undefined,
-      closedType:
-        random > 0.5
-          ? Math.random() > 0.5
-            ? CFDClosedType.FORCED_LIQUIDATION
-            : CFDClosedType.SCHEDULE
-          : undefined,
-      forcedClose: true,
-      remark: 'str',
-    };
-    dummyAcceptedCFDs.push(dummyAcceptedCFDOrder);
-  }
-  return dummyAcceptedCFDs;
+export const getDummyAcceptedUpdateCFDOrder = (
+  currency = 'ETH',
+  orderStatus?: IOrderStatusUnion
+) => {
+  const accpetedCreateCFDOrder: IAcceptedCFDOrder = getDummyAcceptedCreateCFDOrder(
+    currency,
+    OrderStatusUnion.SUCCESS
+  );
+  const applyUpdateCFDOrder: IApplyUpdateCFDOrder = getDummyApplyUpdateCFDOrder(
+    currency,
+    accpetedCreateCFDOrder.id
+  );
+  const dummyUserSignature = randomHex(32);
+  const dummyNodeSignature = randomHex(32);
+  const acceptedUpdateCFDOrder = convertApplyUpdateCFDToAcceptedCFD(
+    applyUpdateCFDOrder,
+    accpetedCreateCFDOrder,
+    dummyUserSignature,
+    dummyNodeSignature,
+    orderStatus
+  );
+  return [accpetedCreateCFDOrder, acceptedUpdateCFDOrder];
 };
-*/
+
+export const getDummyAcceptedCloseCFDOrder = (
+  currency = 'ETH',
+  orderStatus?: IOrderStatusUnion
+) => {
+  const accpetedCreateCFDOrder: IAcceptedCFDOrder = getDummyAcceptedCreateCFDOrder(
+    currency,
+    OrderStatusUnion.SUCCESS
+  );
+  const applyCloseCFDOrder: IApplyCloseCFDOrder = getDummyApplyCloseCFDOrder(
+    currency,
+    accpetedCreateCFDOrder.id
+  );
+  const dummyBalance = accpetedCreateCFDOrder.balanceSnapshot as IBalance;
+  const dummyUserSignature = randomHex(32);
+  const dummyNodeSignature = randomHex(32);
+  const acceptedCloseCFDOrder = convertApplyCloseCFDToAcceptedCFD(
+    applyCloseCFDOrder,
+    accpetedCreateCFDOrder,
+    dummyBalance,
+    dummyUserSignature,
+    dummyNodeSignature,
+    orderStatus
+  );
+  return [accpetedCreateCFDOrder, acceptedCloseCFDOrder];
+};
+
+export const dummyAcceptedCFDOrders: IAcceptedCFDOrder[] = [
+  getDummyAcceptedCreateCFDOrder('ETH', OrderStatusUnion.PROCESSING),
+  getDummyAcceptedCreateCFDOrder('ETH', OrderStatusUnion.FAILED),
+  ...getDummyAcceptedUpdateCFDOrder('ETH'),
+  ...getDummyAcceptedUpdateCFDOrder('ETH', OrderStatusUnion.FAILED),
+  ...getDummyAcceptedCloseCFDOrder('ETH'),
+  ...getDummyAcceptedCloseCFDOrder('ETH', OrderStatusUnion.FAILED),
+];

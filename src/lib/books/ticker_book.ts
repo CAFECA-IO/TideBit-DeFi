@@ -7,6 +7,7 @@ import {
   ITickerMarket,
   strokeColorDisplayed,
 } from '../../interfaces/tidebit_defi_background/ticker_data';
+import {ITickerHistoryData} from '../../interfaces/tidebit_defi_background/ticker_history_data';
 import {
   getTime,
   ITimeSpanUnion,
@@ -163,6 +164,19 @@ class TickerBook {
     }
     if (options.limit) trades = trades.slice(trades.length - options.limit, trades.length);
     return sortedTrades;
+  }
+
+  getTickerHistory(
+    ticker: string,
+    options: {begin?: number; end?: number; limit?: number; timeSpan?: ITimeSpanUnion}
+  ) {
+    const sortedTrades = this.sortTrades(ticker, options);
+    const tickerHistories: ITickerHistoryData[] = Object.values(sortedTrades).map(t => ({
+      date: new Date(t.second * 1000),
+      open: +t.trades.open.price,
+    }));
+
+    return tickerHistories;
   }
 
   listTickerPositions(

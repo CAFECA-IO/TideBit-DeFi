@@ -1,4 +1,4 @@
-import {OrderStatusUnion} from '../../constants/order_status_union';
+import {IOrderStatusUnion, OrderStatusUnion} from '../../constants/order_status_union';
 import {OrderType} from '../../constants/order_type';
 import {getTimestamp, randomHex} from '../../lib/common';
 import {IAcceptedOrder} from './accepted_order';
@@ -10,7 +10,10 @@ export interface IAcceptedDepositOrder extends IAcceptedOrder {
   orderSnapshot: IDepositOrderSnapshot;
 }
 
-export const getDummyAcceptedDepositOrder = (currency = 'ETH'): IAcceptedDepositOrder => {
+export const getDummyAcceptedDepositOrder = (
+  currency = 'ETH',
+  orderStatus?: IOrderStatusUnion
+): IAcceptedDepositOrder => {
   const date = new Date();
 
   const id = `TBAcceptedDeposit${date.getFullYear()}${
@@ -25,16 +28,16 @@ export const getDummyAcceptedDepositOrder = (currency = 'ETH'): IAcceptedDeposit
       id,
       orderType: OrderType.DEPOSIT,
       txid,
-      targetAsset: 'ETH',
+      targetAsset: currency,
       targetAmount: 2,
       decimals: 18,
       to: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
       remark: '',
       fee: 0,
     },
-    id: '',
+    id,
     orderType: OrderType.DEPOSIT,
-    orderStatus: OrderStatusUnion.WAITING,
+    orderStatus: orderStatus ? orderStatus : OrderStatusUnion.WAITING,
     targetAsset: dummyDepositOrder.targetAsset,
     targetAmount: dummyDepositOrder.targetAmount,
     userSignature: '',
@@ -55,24 +58,7 @@ export const getDummyAcceptedDepositOrder = (currency = 'ETH'): IAcceptedDeposit
   return dummyAcceptedDepositOrder;
 };
 
-/* TODO: dummyAcceptedDepositrder (20230330 - tzuhan)
-export const dummyAcceptedDepositOrder: IAcceptedDepositOrder = {
-  id: '001',
-  txid: '0x',
-  orderType: OrderType.DEPOSIT,
-  createTimestamp: Math.ceil(Date.now() / 1000),
-  orderStatus: OrderStatusUnion.SUCCESS,
-  targetAsset: 'ETH',
-  decimals: 18,
-  targetAmount: 7.91,
-  to: '0x',
-  fee: 0,
-  balanceSnapshot: {
-    currency: 'ETH',
-    available: 2000,
-    locked: 0,
-  },
-};
-
-
-*/
+export const dummyAcceptedDepositOrders: IAcceptedDepositOrder[] = [
+  getDummyAcceptedDepositOrder('ETH', OrderStatusUnion.WAITING),
+  getDummyAcceptedDepositOrder('ETH', OrderStatusUnion.SUCCESS),
+];

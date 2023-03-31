@@ -255,14 +255,14 @@ export const MarketProvider = ({children}: IMarketProvider) => {
   };
 
   const getCFDQuotation = async (tickerId: string, typeOfPosition: ITypeOfPosition) => {
-    let result: IResult = defaultResultFailed;
+    let result: IResult = {...defaultResultFailed};
     try {
       // TODO: send request (Tzuhan - 20230317)
       const quotation: IQuotation = getDummyQuotation(tickerId, typeOfPosition);
-      result = defaultResultSuccess;
+      result = {...defaultResultSuccess};
       result.data = quotation;
     } catch (error) {
-      result = defaultResultFailed;
+      result = {...defaultResultFailed};
     }
     return result;
   };

@@ -1,5 +1,5 @@
 import {POSITION_PRICE_RENEWAL_INTERVAL_SECONDS, unitAsset} from '../../constants/config';
-import {ITypeOfPosition} from '../../constants/type_of_position';
+import {ITypeOfPosition, TypeOfPosition} from '../../constants/type_of_position';
 
 export interface IQuotation {
   ticker: string;
@@ -25,5 +25,6 @@ export const getDummyQuotation = (currency: string, typeOfPosition: ITypeOfPosit
     deadline: Math.ceil(Date.now() / 1000) + POSITION_PRICE_RENEWAL_INTERVAL_SECONDS,
     signature: '0x',
   };
+
   return quotation;
 };

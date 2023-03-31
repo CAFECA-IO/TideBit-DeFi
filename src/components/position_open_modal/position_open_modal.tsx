@@ -24,12 +24,19 @@ import {BsClockHistory} from 'react-icons/bs';
 import {useGlobal} from '../../contexts/global_context';
 import {TypeOfPosition} from '../../constants/type_of_position';
 import {UserContext} from '../../contexts/user_context';
-import {POSITION_PRICE_RENEWAL_INTERVAL_SECONDS, unitAsset} from '../../constants/config';
+import {
+  LIQUIDATION_FIVE_LEVERAGE,
+  POSITION_PRICE_RENEWAL_INTERVAL_SECONDS,
+  unitAsset,
+} from '../../constants/config';
 import {
   getDummyApplyCreateCFDOrderData,
   IApplyCreateCFDOrderData,
 } from '../../interfaces/tidebit_defi_background/apply_create_cfd_order_data';
 import {useTranslation} from 'react-i18next';
+import {defaultResultSuccess} from '../../interfaces/tidebit_defi_background/result';
+import {IQuotation} from '../../interfaces/tidebit_defi_background/quotation';
+import useStateRef from 'react-usestateref';
 
 type TranslateFunction = (s: string) => string;
 interface IPositionOpenModal {
@@ -37,8 +44,6 @@ interface IPositionOpenModal {
   modalClickHandler: () => void;
   openCfdRequest: IApplyCreateCFDOrderData;
 }
-
-// ToDo: seconds constant in display.ts or config.ts?
 
 const PositionOpenModal = ({
   modalVisible,
@@ -52,8 +57,11 @@ const PositionOpenModal = ({
   const marketCtx = useContext(MarketContext);
   const userCtx = useContext(UserContext);
 
-  const [secondsLeft, setSecondsLeft] = useState(POSITION_PRICE_RENEWAL_INTERVAL_SECONDS);
+  const [secondsLeft, setSecondsLeft, secondsLeftRef] = useStateRef(
+    POSITION_PRICE_RENEWAL_INTERVAL_SECONDS
+  );
   const [dataRenewedStyle, setDataRenewedStyle] = useState('text-lightWhite');
+  const [quotationError, setQuotationError, quotationErrorRef] = useStateRef(false);
 
   const toApplyCreateOrder = (
     openCfdRequest: IApplyCreateCFDOrderData
@@ -67,7 +75,7 @@ const PositionOpenModal = ({
     return order;
   };
 
-  /** ToDo: 
+  /** ToDo: (20230329 - Shirley)
     // loading modal -> UserContext.function (負責簽名) ->
     // 猶豫太久的話，單子會過期，就會顯示 failed modal，
     // 用戶沒簽名才是顯示 canceled modal
@@ -135,7 +143,6 @@ const PositionOpenModal = ({
     return;
   };
 
-  // ToDo: Typo `guaranteedStop`
   const displayedGuaranteedStopSetting = !!openCfdRequest.guaranteedStop ? 'Yes' : 'No';
 
   const displayedTypeOfPosition =
@@ -150,22 +157,9 @@ const PositionOpenModal = ({
 
   const [guaranteedTooltipStatus, setGuaranteedTooltipStatus] = useState(0);
 
-  // const displayedPnLColor =
-  //   openCfdRequest?.pnl.type === 'PROFIT'
-  //     ? TypeOfPnLColor.PROFIT
-  //     : openCfdRequest?.pnl.type === 'LOSS'
-  //     ? TypeOfPnLColor.LOSS
-  //     : TypeOfPnLColor.EQUAL;
-
   const displayedPositionColor = 'text-tidebitTheme';
-  // openCfdRequest.typeOfPosition === TypeOfPosition.BUY
-  //   ? TypeOfPnLColor.PROFIT
-  //   : TypeOfPnLColor.LOSS;
 
   const displayedBorderColor = TypeOfBorderColor.NORMAL;
-  // openCfdRequest.typeOfPosition === TypeOfPosition.BUY
-  //   ? TypeOfBorderColor.LONG
-  //   : TypeOfBorderColor.SHORT;
 
   const displayedTakeProfit = openCfdRequest.takeProfit ? `$ ${openCfdRequest.takeProfit}` : '-';
   const displayedStopLoss = openCfdRequest.stopLoss ? `$ ${openCfdRequest.stopLoss}` : '-';
@@ -174,46 +168,67 @@ const PositionOpenModal = ({
 
   const layoutInsideBorder = 'mx-5 my-2 flex justify-between';
 
-  // let dataRenewedStyle = 'text-lightGray';
+  const getQuotation = async () => {
+    let quotation = {...defaultResultSuccess};
 
-  // const displayedTime = timestampToString(openCfdRequest?.createTimestamp ?? 0);
+    try {
+      quotation = await marketCtx.getCFDQuotation(
+        openCfdRequest.ticker,
+        openCfdRequest.typeOfPosition
+      );
+
+      const data = quotation.data as IQuotation;
+
+      // Info: if there's error fetching quotation, disable the submit btn (20230327 - Shirley)
+      if (
+        quotation.success &&
+        data.typeOfPosition === openCfdRequest.typeOfPosition &&
+        quotation.data !== null
+      ) {
+        return data;
+      } else {
+        // Deprecated: before merging into develop (20230327 - Shirley)
+        // eslint-disable-next-line no-console
+        console.log('diable submit');
+        setQuotationError(true);
+      }
+    } catch (err) {
+      setQuotationError(true);
+    }
+  };
 
   const renewDataHandler = async () => {
+    const newQuotation = await getQuotation();
+    const gsl = marketCtx.guaranteedStopFeePercentage;
+
     setDataRenewedStyle('animate-flash text-lightYellow2');
     await wait(DELAYED_HIDDEN_SECONDS / 5);
 
-    const deadline = getDeadline(POSITION_PRICE_RENEWAL_INTERVAL_SECONDS);
+    if (!newQuotation) return;
+
+    const deadline = newQuotation.deadline;
     setSecondsLeft(deadline - getTimestamp());
 
-    const newPrice =
-      openCfdRequest.typeOfPosition === TypeOfPosition.BUY
-        ? randomIntFromInterval(
-            marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice * 0.75,
-            marketCtx.tickerLiveStatistics!.buyEstimatedFilledPrice * 1.25
-          )
-        : openCfdRequest.typeOfPosition === TypeOfPosition.SELL
-        ? randomIntFromInterval(
-            marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice * 1.1,
-            marketCtx.tickerLiveStatistics!.sellEstimatedFilledPrice * 1.25
-          )
-        : 999999;
-    const newMargin = randomIntFromInterval(100, 500);
+    const newPrice = newQuotation.price;
 
-    // TODO: (20230324 - Shirley) renew price, liquidation time, liquidation price
+    const newMargin = (Number(newQuotation.price) * Number(openCfdRequest.amount)) / 5;
+    const newLiquidationPrice =
+      openCfdRequest.typeOfPosition === TypeOfPosition.BUY
+        ? newQuotation.price * (1 - LIQUIDATION_FIVE_LEVERAGE)
+        : newQuotation.price * (1 + LIQUIDATION_FIVE_LEVERAGE);
+    const gslFee = Number(gsl) * openCfdRequest.amount * newPrice;
+
     globalCtx.dataPositionOpenModalHandler({
       openCfdRequest: {
         ...openCfdRequest,
-        quotation: {
-          ...openCfdRequest.quotation,
-          deadline: deadline,
-          price: newPrice,
-          signature: '0x',
-        },
+        quotation: newQuotation,
         price: newPrice,
         margin: {
           ...openCfdRequest.margin,
           amount: newMargin,
         },
+        guaranteedStopFee: openCfdRequest.guaranteedStop ? gslFee : 0,
+        liquidationPrice: newLiquidationPrice,
       },
     });
 
@@ -225,16 +240,19 @@ const PositionOpenModal = ({
   const mouseEnterHandler = () => setGuaranteedTooltipStatus(3);
   const mouseLeaveHandler = () => setGuaranteedTooltipStatus(0);
 
+  // Info: get the quotation before the modal is shown (20230327 - Shirley)
   useEffect(() => {
-    // if (!lock()) return;
-
     if (!globalCtx.visiblePositionOpenModal) {
-      setSecondsLeft(POSITION_PRICE_RENEWAL_INTERVAL_SECONDS);
       setDataRenewedStyle('text-lightWhite');
-
       return;
     }
 
+    const base = openCfdRequest.quotation.deadline;
+    const tickingSec = base - getTimestamp();
+    setSecondsLeft(tickingSec > 0 ? Math.round(tickingSec) : 0);
+  }, [globalCtx.visiblePositionOpenModal]);
+
+  useEffect(() => {
     const intervalId = setInterval(() => {
       const base = openCfdRequest.quotation.deadline;
       const tickingSec = base - getTimestamp();
@@ -248,7 +266,6 @@ const PositionOpenModal = ({
 
     return () => {
       clearInterval(intervalId);
-      // unlock();
     };
   }, [secondsLeft, globalCtx.visiblePositionOpenModal]);
 
@@ -274,8 +291,6 @@ const PositionOpenModal = ({
           className={`${displayedBorderColor} mt-1 w-full border-1px py-4 text-xs leading-relaxed text-lightWhite`}
         >
           <div className="flex flex-col justify-center text-center">
-            {/* {displayedDataFormat()} */}
-
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">{t('POSITION_MODAL.TYPE')}</div>
               <div className={`${displayedPositionColor}`}>
@@ -290,14 +305,12 @@ const PositionOpenModal = ({
                 {openCfdRequest.price?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
                   minimumFractionDigits: 2,
                 }) ?? 0}
-                {/* ToDo: Hardcode USDT */}
                 <span className="ml-1 text-lightGray">{unitAsset}</span>
               </div>
             </div>
 
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">{t('POSITION_MODAL.AMOUNT')}</div>
-              {/* ToDo:{openCfdRequest?.amount?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0} */}
               <div className="">
                 {openCfdRequest.amount.toFixed(2)}
                 <span className="ml-1 text-lightGray">{marketCtx.selectedTicker?.currency}</span>
@@ -308,7 +321,6 @@ const PositionOpenModal = ({
               <div className="text-lightGray">{t('POSITION_MODAL.REQUIRED_MARGIN')}</div>
               <div className={`${dataRenewedStyle}`}>
                 {openCfdRequest.margin.amount.toFixed(2)}
-                {/* ToDo: Hardcode USDT */}
                 <span className="ml-1 text-lightGray">{unitAsset}</span>
               </div>
             </div>
@@ -317,7 +329,6 @@ const PositionOpenModal = ({
               <div className="text-lightGray">{t('POSITION_MODAL.TP_AND_SL')}</div>
               <div className="">
                 {displayedTakeProfit} / {displayedStopLoss}
-                {/* ToDo: Hardcode USDT */}
                 <span className="ml-1 text-lightGray">{unitAsset}</span>
               </div>
             </div>
@@ -362,7 +373,6 @@ const PositionOpenModal = ({
                 {openCfdRequest.liquidationPrice?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
                   minimumFractionDigits: 2,
                 }) ?? 0}
-                {/* ToDo: Hardcode USDT */}
                 <span className="ml-1 text-lightGray">{unitAsset}</span>
               </div>
             </div>
@@ -372,7 +382,7 @@ const PositionOpenModal = ({
         <div className="my-4 text-xxs text-lightGray">{t('POSITION_MODAL.CFD_CONTENT')}</div>
 
         <RippleButton
-          disabled={secondsLeft < 1}
+          disabled={secondsLeft < 1 || quotationErrorRef.current}
           onClick={submitClickHandler}
           buttonType="button"
           className={`mt-0 whitespace-nowrap rounded border-0 bg-tidebitTheme py-2 px-16 text-base text-white transition-colors duration-300 hover:bg-cyan-600 focus:outline-none disabled:bg-lightGray`}
@@ -385,9 +395,6 @@ const PositionOpenModal = ({
 
   const isDisplayedModal = modalVisible ? (
     <>
-      {/*  <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">*/}
-      {/*  overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none */}
-      {/* position: relative; top: 50%; left: 50%; transform: translate(-50%, -50%) */}
       <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">
         {/* The position of the modal */}
         <div className="relative my-6 mx-auto w-auto max-w-xl">

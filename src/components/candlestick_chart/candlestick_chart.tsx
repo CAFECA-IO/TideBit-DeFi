@@ -73,33 +73,6 @@ interface ITradingChartGraphProps {
   candlestickChartHeight: string;
 }
 
-interface VictoryThemeDefinition {
-  axis: {
-    style: {
-      tickLabels: {
-        fill: string;
-        fontSize: number;
-        fontFamily: string;
-        padding: number;
-      };
-      axis: {
-        stroke: string;
-      };
-      grid: {
-        stroke: string;
-      };
-    };
-  };
-  line: {
-    style: {
-      data: {
-        stroke: string;
-        strokeWidth: number;
-      };
-    };
-  };
-}
-
 export interface ILineChartData {
   x: Date;
   y: number | null;
@@ -371,26 +344,8 @@ export default function CandlestickChart({
     };
   });
 
-  // Deprecated: before merging into develop (20230323 - Shirley)
-  // const [candlestickChartData, setCandlestickChartData, candlestickChartDataRef] = useStateRef<
-  //   ICandlestickData[] | undefined
-  // >(trimmedData);
-
   const [toCandlestickChartData, setToCandlestickChartData, toCandlestickChartDataRef] =
     useStateRef<ICandlestickData[] | undefined>(trimmedData);
-
-  const ys = trimmedData
-    ? (trimmedData
-        .filter((data: ICandlestickData) => Object.values(data.y).includes(null) === false)
-        .map((data: ICandlestickData) => [data.y.open, data.y.high, data.y.low, data.y.close])
-        .flat() as number[])
-    : [];
-
-  const max = ys.length > 0 ? Math.max(...ys) : null;
-  const min = ys.length > 0 ? Math.min(...ys) : null;
-
-  const maxNumber = max && min ? TRADING_CHART_PRICE_LIMIT_ONE_SEC * (max - min) + max : 10000;
-  const minNumber = max && min ? min - TRADING_CHART_PRICE_LIMIT_ONE_SEC * (max - min) : 0;
 
   // Till: (20230412 - Shirley)
   // console.log('before isDisplayedCharts, marketCtx', candlestickChartDataFromCtx);
@@ -402,103 +357,6 @@ export default function CandlestickChart({
   let chart: IChartApi;
   let candlestickSeries: ISeriesApi<'Candlestick'>;
   let initData: CandlestickData[];
-
-  const createBaseArray = ({timespan, dataSize}: {timespan: number; dataSize: number}) => {
-    const getLastTime = () => {
-      const now = new Date().getTime();
-      return now - (now % (timespan * 1000));
-    };
-
-    const base = new Array(dataSize).fill(0).map((v, i) => {
-      const eachTime = new Date(getLastTime() - (dataSize - i) * timespan * 1000);
-      const eachTimestamp = eachTime.getTime() / 1000;
-
-      return {
-        time: eachTimestamp as UTCTimestamp,
-        open: null,
-        high: null,
-        low: null,
-        close: null,
-      };
-    });
-
-    const newBase = [...base];
-
-    // Deprecated: before merging into develop (20230329 - Shirley)
-    // eslint-disable-next-line no-console
-    console.log('spec base array in createBaseArray', newBase);
-
-    return base;
-  };
-
-  const filterCandlestickData = ({
-    dataArray,
-    baseArray,
-  }: {
-    dataArray: ITradingData[];
-    baseArray: ITradingData[];
-  }) => {
-    let previousClose = 0;
-    const base = [...baseArray];
-    const data = [...dataArray];
-
-    for (let i = 0; i < base.length; i++) {
-      const index = data.findIndex(d => {
-        const baseTime = base[i]?.time;
-        const dataTime = d.time;
-        return baseTime === dataTime;
-      });
-      if (index >= 0) {
-        base[i].open = data[index].open;
-        base[i].high = data[index].high;
-        base[i].low = data[index].low;
-        base[i].close = data[index].close;
-
-        previousClose = data[index].close || previousClose;
-      } else if (previousClose !== null) {
-        base[i].open = previousClose;
-        base[i].high = previousClose;
-        base[i].low = previousClose;
-        base[i].close = previousClose;
-      }
-    }
-
-    const result = base;
-
-    return result;
-  };
-
-  // Info: specify the data spec (20230330 - Shirley)
-  const initJob = ({data, dataSize, timespan}: ITrimCandlestickData) => {
-    const spec = createBaseArray({dataSize, timespan});
-
-    // Deprecated: before merging into develop (20230329 - Shirley)
-    // eslint-disable-next-line no-console
-    console.log('spec in initJob', JSON.parse(JSON.stringify(spec)));
-    // eslint-disable-next-line no-console
-    console.log('data in initJob', data);
-    // eslint-disable-next-line no-console
-    console.log('market context data in initJob', marketCtx.candlestickChartData);
-
-    // ToDo: Get data from context (20230330 - Shirley)
-    const raw = getDummyCandlestickChartData(50, TimeSpanUnion._1s).map(d => ({
-      time: (d.x.getTime() / 1000) as UTCTimestamp,
-      open: d.y.open,
-      high: d.y.high,
-      low: d.y.low,
-      close: d.y.close,
-    }));
-
-    const filtered = filterCandlestickData({dataArray: raw, baseArray: spec});
-
-    // Deprecated: before merging into develop (20230329 - Shirley)
-    // eslint-disable-next-line no-console
-    console.log('raw dummy data in initJob', raw);
-    // eslint-disable-next-line no-console
-    console.log('filtered data in initJob', filtered);
-
-    return filtered as CandlestickData[];
-  };
 
   const locale: LocalizationOptions = {
     locale: 'zh-TW',
@@ -554,13 +412,111 @@ export default function CandlestickChart({
     localization: locale,
   };
 
+  const handleResize = () => {
+    chart.applyOptions({width: Number(chartContainerRef?.current?.clientWidth) - 50});
+  };
+
+  const createBaseArray = ({timespan, dataSize}: {timespan: number; dataSize: number}) => {
+    const getLastTime = () => {
+      const now = new Date().getTime();
+      return now - (now % (timespan * 1000));
+    };
+
+    const base = new Array(dataSize).fill(0).map((v, i) => {
+      const eachTime = new Date(getLastTime() - (dataSize - i) * timespan * 1000);
+      const eachTimestamp = eachTime.getTime() / 1000;
+
+      return {
+        time: eachTimestamp as UTCTimestamp,
+        open: null,
+        high: null,
+        low: null,
+        close: null,
+      };
+    });
+
+    return base;
+  };
+
+  const initCandlestickData = ({
+    dataArray,
+    baseArray,
+  }: {
+    dataArray: ITradingData[];
+    baseArray: ITradingData[];
+  }) => {
+    let previousClose = 0;
+    const base = [...baseArray];
+    const data = [...dataArray];
+
+    for (let i = 0; i < base.length; i++) {
+      const index = data.findIndex(d => {
+        const baseTime = base[i]?.time;
+        const dataTime = d.time;
+        return baseTime === dataTime;
+      });
+      if (index >= 0) {
+        base[i].open = data[index].open;
+        base[i].high = data[index].high;
+        base[i].low = data[index].low;
+        base[i].close = data[index].close;
+
+        previousClose = data[index].close || previousClose;
+      } else if (previousClose !== null) {
+        base[i].open = previousClose;
+        base[i].high = previousClose;
+        base[i].low = previousClose;
+        base[i].close = previousClose;
+      }
+    }
+
+    const result = base;
+
+    return result;
+  };
+
+  // Info: specify the data spec (20230330 - Shirley)
+  const initJob = ({data, dataSize, timespan}: ITrimCandlestickData) => {
+    const spec = createBaseArray({dataSize, timespan});
+
+    // Deprecated: before merging into develop (20230329 - Shirley)
+    // eslint-disable-next-line no-console
+    console.log('spec in initJob', JSON.parse(JSON.stringify(spec)));
+    // eslint-disable-next-line no-console
+    console.log('data in initJob', JSON.parse(JSON.stringify(data)));
+    // eslint-disable-next-line no-console
+    console.log(
+      'market context data in initJob',
+      JSON.parse(JSON.stringify(marketCtx.candlestickChartData))
+    );
+
+    // ToDo: Get data from context (20230330 - Shirley)
+    const raw = getDummyCandlestickChartData(50, TimeSpanUnion._1s).map(d => ({
+      time: (d.x.getTime() / 1000) as UTCTimestamp,
+      open: d.y.open,
+      high: d.y.high,
+      low: d.y.low,
+      close: d.y.close,
+    }));
+
+    const filtered = initCandlestickData({dataArray: raw, baseArray: spec});
+
+    // Deprecated: before merging into develop (20230329 - Shirley)
+    // eslint-disable-next-line no-console
+    console.log('raw dummy data in initJob', JSON.parse(JSON.stringify(raw)));
+    // eslint-disable-next-line no-console
+    console.log('filtered data in initJob', JSON.parse(JSON.stringify(filtered)));
+
+    return filtered as CandlestickData[];
+  };
+
   // Info: 1. initialize the chart options and data (20230330 - Shirley)
   const initChart = () => {
-    initData = initJob({
-      data: marketCtx?.candlestickChartData ?? [],
-      dataSize: 30,
-      timespan: 1,
-    });
+    // initData = initJob({
+    //   data: marketCtx?.candlestickChartData ?? [],
+    //   dataSize: 30,
+    //   timespan: 1,
+    // });
 
     if (chartContainerRef.current) {
       // Info: Draw
@@ -570,86 +526,76 @@ export default function CandlestickChart({
       //   borderVisible: false,
       // });
 
-      candlestickSeries = chart.addCandlestickSeries({
-        upColor: LINE_GRAPH_STROKE_COLOR.UP,
-        downColor: LINE_GRAPH_STROKE_COLOR.DOWN,
-        borderVisible: false,
-        wickUpColor: LINE_GRAPH_STROKE_COLOR.UP,
-        wickDownColor: LINE_GRAPH_STROKE_COLOR.DOWN,
-      });
+      // candlestickSeries.setData(initData);
 
-      candlestickSeries.setData(initData);
-
-      chart.timeScale().fitContent();
+      // chart.timeScale().fitContent();
     }
   };
 
-  // Info: 2. Renew the chart with the filtered and merged data (20230330 - Shirley)
-  /**
-   * Trade array (交易的資料): generateRandomTrade return `{price:number, volume:number, timestamp: UTCTimestamp}`
-   * Candlestick array: translate TradeArray to `{x: Date, y: {open: number, high: number, low: number, close: number}}`
-   */
+  const initChartData = () => {
+    initData = initJob({
+      data: marketCtx?.candlestickChartData ?? [],
+      dataSize: 30,
+      timespan: 1,
+    });
 
-  const generateRandomTrade = () => {
-    const trade = {
-      price: Math.random() * 100,
-      volume: Math.random() * 100,
-      time: (Date.now() / 1000) as UTCTimestamp,
-    };
+    candlestickSeries = chart.addCandlestickSeries({
+      upColor: LINE_GRAPH_STROKE_COLOR.UP,
+      downColor: LINE_GRAPH_STROKE_COLOR.DOWN,
+      borderVisible: false,
+      wickUpColor: LINE_GRAPH_STROKE_COLOR.UP,
+      wickDownColor: LINE_GRAPH_STROKE_COLOR.DOWN,
+    });
 
-    return trade;
+    candlestickSeries.setData(initData);
+
+    chart.timeScale().fitContent();
   };
 
-  const newArr = new Array(10).fill(0).map(d => generateRandomTrade());
+  // Get candlestick data from market context, check the data format and merge with `initData`
+  const mergeCandlestickData = () => {
+    const dataFromCtx = marketCtx.candlestickChartData;
+    if (dataFromCtx === null) {
+      return;
+    }
 
-  /**
-   * Transform newArr to CandlestickData[] (Round up the timestamp to the nearest second)
-   */
-  // const transform = (
-  //   arr: {
-  //     price: number;
-  //     volume: number;
-  //     time: UTCTimestamp;
-  //   }[]
-  // ) => {
-  //   const candlestickData = arr.reduce((acc, curr) => {
-  //     const {price, volume, time} = curr;
-  //     const timestamp = Math.ceil(time);
-  //     const last = acc[acc.length - 1];
+    // Info: Transform the data to the format that the chart can accept (20230330 - Shirley)
+    const temp = dataFromCtx.slice(-50).map(d => ({
+      time: (d.x.getTime() / 1000) as UTCTimestamp,
+      open: d.y.open,
+      high: d.y.high,
+      low: d.y.low,
+      close: d.y.close,
+    }));
 
-  //     if (last && last.time === timestamp) {
-  //       const {open, high, low, close} = last;
-  //       const newHigh = Math.max(high, price);
-  //       const newLow = Math.min(low, price);
-  //       const newClose = price;
+    // Info: Check if the data is valid: 1. data format 2. no repeated data (20230330 - Shirley)
+    const validData = temp
+      .filter(data => {
+        return (
+          data.time &&
+          typeof data.open === 'number' &&
+          typeof data.high === 'number' &&
+          typeof data.low === 'number' &&
+          typeof data.close === 'number'
+        );
+      })
+      .filter(data => {
+        // Check if the data already exists in the chart
+        const index = initData?.findIndex(d => d.time === data.time);
+        return index < 0;
+      }) as CandlestickData[];
 
-  //       return [
-  //         ...acc.slice(0, acc.length - 1),
-  //         {
-  //           time: timestamp,
-  //           open,
-  //           high: newHigh,
-  //           low: newLow,
-  //           close: newClose,
-  //         },
-  //       ];
-  //     } else {
-  //       return [
-  //         ...acc,
-  //         {
-  //           time: timestamp,
-  //           open: price,
-  //           high: price,
-  //           low: price,
-  //           close: price,
-  //         },
-  //       ];
-  //     }
-  //   }, [] as CandlestickData[]);
-  //   return candlestickData;
-  // };
+    initData = [...initData, ...validData];
+
+    // eslint-disable-next-line no-console
+    console.log('market ctx data in merge function', JSON.parse(JSON.stringify(dataFromCtx)));
+    // eslint-disable-next-line no-console
+    console.log('init data in merge function', JSON.parse(JSON.stringify(initData)));
+  };
 
   const updateChart = () => {
+    // mergeCandlestickData();
+
     const generateRandomCandle = () => {
       const candles: ICandlestickData[] = initData.map(d => ({
         x: new Date((d.time as number) * 1000),
@@ -685,10 +631,6 @@ export default function CandlestickChart({
     updateData();
   };
 
-  const handleResize = () => {
-    chart.applyOptions({width: Number(chartContainerRef?.current?.clientWidth) - 50});
-  };
-
   /**
    * ToDo:
    * 高頻率更新的資料，需要更注意流程
@@ -711,21 +653,13 @@ export default function CandlestickChart({
     // Info: 1. Initial job (20230330 - Shirley)
     initChart();
 
-    // Info: 2. Periodical job (20230330 - Shirley)
-    // ToDo: (20230330 - Shirley) updates (vs useEffect)
-    const intervalId = setInterval(updateChart, 200);
-
-    window.addEventListener('resize', handleResize);
-    return () => {
-      window.removeEventListener('resize', handleResize);
-      clearInterval(intervalId);
-      chart.remove();
-    };
     // }
   }, []); // chartContainerRef
 
   /* ToDO: Get candlestick data from ctx (20230330 - Shirley) */
   useEffect(() => {
+    // mergeCandlestickData();
+
     const trimmedData = parseCandlestickData({
       data: marketCtx.candlestickChartData ?? [],
       dataSize: 30,
@@ -747,6 +681,19 @@ export default function CandlestickChart({
     console.log('market data which comply with data spec', lwcData);
     // eslint-disable-next-line no-console
     console.log('whole data from ctx', marketCtx.candlestickChartData);
+
+    initChartData();
+
+    // Info: 2. Periodical job (20230330 - Shirley)
+    // ToDo: (20230330 - Shirley) updates (vs useEffect)
+    const intervalId = setInterval(updateChart, 200);
+
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      clearInterval(intervalId);
+      chart.remove();
+    };
   }, [marketCtx.candlestickChartData]);
 
   /* ToDo: Resize the chart for RWD solely (20230330 - Shirley) */

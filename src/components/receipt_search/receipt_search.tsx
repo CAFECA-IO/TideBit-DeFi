@@ -213,7 +213,7 @@ const ReceiptSearch = ({
         type="search"
         //value={searches}
         className="block w-full rounded-full bg-darkGray7 p-3 pl-4 text-sm text-white focus:border-blue-500 focus:outline-none focus:ring-0 focus:ring-blue-500"
-        placeholder="Search"
+        placeholder={t('MY_ASSETS_PAGE.RECEIPT_SECTION_SEARCH_PLACEHOLDER')}
         required
         onChange={onSearchChange}
       />
@@ -228,12 +228,7 @@ const ReceiptSearch = ({
 
   const displayedTicker = (
     <div className="flex items-center space-x-2">
-      <Image
-        src="/elements/tether-seeklogo.com.svg"
-        width={50}
-        height={50}
-        alt="tether-seeklogo.com.svg"
-      />
+      <Image src="/asset_icon/usdt.svg" width={50} height={50} alt="USDT_icon" />
       <div className="flex flex-col items-start">
         <p className="text-xl">Tether</p>
         <p className="text-lg">USDT</p>

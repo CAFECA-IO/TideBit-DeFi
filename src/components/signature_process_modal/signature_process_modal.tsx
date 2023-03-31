@@ -345,7 +345,7 @@ const SignatureProcessModal = ({
           <div
             id="connectModal"
             ref={processModalRef}
-            className="relative flex h-auto w-full flex-col rounded-xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none md:w-450px"
+            className="relative flex h-auto w-full flex-col items-center rounded-xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none md:w-450px"
           >
             {/*header*/}
             <div className="mx-auto flex items-start justify-between rounded-t pt-6">

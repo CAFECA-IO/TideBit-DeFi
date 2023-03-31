@@ -3,7 +3,7 @@ import Image from 'next/image';
 import TideButton from '../tide_button/tide_button';
 import Link from 'next/link';
 import {useTranslation} from 'next-i18next';
-import RippleButton from '../ripple_button/ripple_button';
+import {TBDURL} from '../../constants/api_request';
 
 type TranslateFunction = (s: string) => string;
 
@@ -32,8 +32,8 @@ const Cta = () => {
               {t('HOME_PAGE.CTA_DESCRIPTION')}
             </div>
             <div className="pt-2 md:pt-8 xl:pt-5">
-              <a
-                href="/trade/cfd/ethusdt"
+              <Link
+                href={TBDURL.TRADE}
                 className="px-2 py-1 font-normal xxs:text-xxs sm:py-2 sm:px-5 sm:text-base xl:py-3 xl:px-5 xl:text-lg"
               >
                 <TideButton
@@ -41,7 +41,7 @@ const Cta = () => {
                 >
                   {t('HOME_PAGE.CTA_BUTTON')}
                 </TideButton>
-              </a>
+              </Link>
             </div>
           </div>
         </div>
@@ -56,27 +56,24 @@ const Cta = () => {
           width={596}
           height={545}
         />
-        <div className="flex justify-center text-center">
-          <div className="mx-1/10 w-fit text-2xl font-bold tracking-wide text-white xxs:mx-1/5 xxs:text-3xl xs:w-4/5 xs:text-4xl md:text-5xl">
+        <div className="mx-5 flex w-fit flex-col items-center justify-center text-center text-2xl font-bold tracking-wide text-white">
+          <div className="w-8/10">
             <span className="leading-normal text-tidebitTheme">
               {t('HOME_PAGE.CTA_HIGHLIGHT_TITLE')}
             </span>{' '}
             {t('HOME_PAGE.CTA_REST_TITLE')}
-            <div className="mx-1/10 mt-10 max-w-md text-sm font-normal tracking-0.02rem text-lightGray md:text-xl">
-              {t('HOME_PAGE.CTA_DESCRIPTION')}
-            </div>
-            <div className="mx-auto pt-2 md:pt-8">
-              <a
-                href="/trading"
-                className="px-2 py-1 font-normal xxs:text-xxs sm:py-2 sm:px-5 sm:text-base xl:py-3 xl:px-5 xl:text-lg"
+          </div>
+          <div className="mx-5 mt-4 max-w-md text-sm font-normal leading-7 tracking-0.02rem text-white md:text-xl">
+            {t('HOME_PAGE.CTA_DESCRIPTION')}
+          </div>
+          <div className="mx-auto pt-4 md:pt-8">
+            <Link href={TBDURL.TRADE}>
+              <TideButton
+                className={`mt-4 rounded border-0 bg-tidebitTheme py-3 px-5 text-base text-white transition-all duration-300 hover:bg-cyan-600 md:mt-0`}
               >
-                <TideButton
-                  className={`mt-4 rounded border-0 bg-tidebitTheme py-2 px-5 text-base text-white transition-all duration-300 hover:bg-cyan-600 md:mt-0`}
-                >
-                  {t('HOME_PAGE.CTA_BUTTON')}
-                </TideButton>
-              </a>
-            </div>
+                {t('HOME_PAGE.CTA_BUTTON')}
+              </TideButton>
+            </Link>
           </div>
         </div>
       </section>

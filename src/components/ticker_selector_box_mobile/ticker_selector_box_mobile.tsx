@@ -410,12 +410,11 @@ const TickerSelectorBoxMobile = ({
 
             {/* `border border-gray-300` for input border */}
             <div className="mt-10 flex w-full">
-              {/* <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center"></div> */}
               <input
                 type="search"
                 value={searches}
                 className="block w-full rounded-full bg-darkGray2 p-3 pl-4 text-sm text-white focus:border-blue-500 focus:outline-none focus:ring-0 focus:ring-blue-500"
-                placeholder="Search Cryptocurrencies"
+                placeholder={t('TRADE_PAGE.TICKER_SELECTOR_SEARCH_PLACEHOLDER')}
                 required
                 onChange={onSearchChange}
               />

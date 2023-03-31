@@ -11,6 +11,7 @@ import {IAcceptedOrder} from '../interfaces/tidebit_defi_background/accepted_ord
 import {IAcceptedWithdrawOrder} from '../interfaces/tidebit_defi_background/accepted_withdraw_order';
 import {IBalance} from '../interfaces/tidebit_defi_background/balance';
 import {IOrder} from '../interfaces/tidebit_defi_background/order';
+import {IDisplayAcceptedDepositOrder} from '../interfaces/tidebit_defi_background/display_accepted_deposit_order';
 
 export const roundToDecimalPlaces = (val: number, precision: number): number => {
   const roundedNumber = Number(val.toFixed(precision));
@@ -292,7 +293,7 @@ export const acceptedOrderToOrder = (acceptedOrder: IAcceptedOrder, balance: IBa
 };
 
 export const toDisplayAcceptedDepositOrder = (depositHistory: IOrder) => {
-  const displayAcceptedDepositOrder: IAcceptedDepositOrder = {
+  const displayAcceptedDepositOrder: IDisplayAcceptedDepositOrder = {
     targetAsset: depositHistory.targetAsset,
     targetAmount: depositHistory.targetAmount,
     orderType: depositHistory.type,

@@ -8,7 +8,9 @@ import {ICryptocurrency} from '../../interfaces/tidebit_defi_background/cryptocu
 import Image from 'next/image';
 import {UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
 import {useGlobal} from '../../contexts/global_context';
+import {useTranslation} from 'react-i18next';
 
+type TranslateFunction = (s: string) => string;
 interface IDepositModal {
   // transferType: 'deposit' | 'withdraw';
   // userAvailableBalance: number;
@@ -29,6 +31,7 @@ const DepositModal = ({
   submitHandler, // submit information from parent component
   ...otherProps
 }: IDepositModal) => {
+  const {t}: {t: TranslateFunction} = useTranslation('common');
   // TODO: [UserContext] deposit: userCtx.walletBalance
   const userAvailableBalance = 4568735165.11;
   const {depositCryptocurrencies} = useContext(MarketContext);
@@ -102,7 +105,7 @@ const DepositModal = ({
 
   const formButton = (
     <p className="flex items-center space-x-3 text-center">
-      Deposit
+      {t('D_W_MODAL.DEPOSIT')}
       <span className="ml-3">
         <Image src="/elements/group_149621.svg" width={15} height={15} alt="deposit icon" />
       </span>
@@ -289,7 +292,7 @@ const DepositModal = ({
             {/*header*/}
             <div className="flex items-start justify-between rounded-t pt-9">
               <h3 className="mt-2 w-full text-center text-xl font-normal text-lightWhite">
-                Deposit
+                {t('D_W_MODAL.DEPOSIT')}
               </h3>
               <button className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
                 <span className="absolute top-5 right-5 block outline-none focus:outline-none">

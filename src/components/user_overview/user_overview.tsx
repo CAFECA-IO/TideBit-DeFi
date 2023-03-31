@@ -54,8 +54,6 @@ const UserOverview = ({
       {/* ----------Mobile version---------- */}
 
       <div className="mt-5">
-        {/* <div className="my-auto h-px w-full rounded bg-white/50"></div> */}
-
         <div className="flex justify-center space-x-10 text-center lg:hidden">
           <div className="">
             <div className="whitespace-nowrap p-1 text-sm text-lightGray4">

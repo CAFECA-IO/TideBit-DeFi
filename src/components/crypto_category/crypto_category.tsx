@@ -1,12 +1,15 @@
 import CryptoCard from '../crypto_card/crypto_card';
 import {useContext, useEffect, useState} from 'react';
-
 import {MarketContext, IMarketContext} from '../../contexts/market_context';
 import {CRYPTO_CARD_COLORS} from '../../constants/display';
 import Link from 'next/link';
 import {ITickerData} from '../../interfaces/tidebit_defi_background/ticker_data';
+import {useTranslation} from 'react-i18next';
 
+type TranslateFunction = (s: string) => string;
 const CryptoCategory = ({...otherProps}) => {
+  const {t}: {t: TranslateFunction} = useTranslation('common');
+
   const marketCtx = useContext<IMarketContext>(MarketContext);
 
   const [tickers, setTickers] = useState<ITickerData[] | null>();
@@ -70,7 +73,10 @@ const CryptoCategory = ({...otherProps}) => {
           <div className="flex items-center justify-center">
             <span className="my-auto h-px w-1/11 rounded bg-white/50 xs:inline-block xs:w-1/10 lg:w-1/5 xl:mx-2 xl:w-1/3"></span>
             <h1 className="mx-1 text-center xl:w-410px">
-              <span className="text-tidebitTheme">Popular</span> cryptocurrencies
+              <span className="text-tidebitTheme">
+                {t('HOME_PAGE.CRYPTO_CATEGORY_TITLE_HIGHLIGHT')}
+              </span>{' '}
+              {t('HOME_PAGE.CRYPTO_CATEGORY_TITLE')}
             </h1>
             <span className="my-auto h-px w-1/11 rounded bg-white/50 xs:inline-block xs:w-1/10 lg:w-1/5 xl:mx-2 xl:w-1/3"></span>
           </div>

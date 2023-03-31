@@ -3,9 +3,13 @@ import Lottie from 'lottie-react';
 import {unitAsset} from '../../constants/config';
 import runningDog from '../../../public/animation/70560-puli-dog-run.json';
 import {useGlobal} from '../../contexts/global_context';
+import {useTranslation} from 'react-i18next';
 
-// TODO: i18n
+type TranslateFunction = (s: string) => string;
+
 const InterestSection = () => {
+  const {t}: {t: TranslateFunction} = useTranslation('common');
+
   const {layoutAssertion} = useGlobal();
 
   // TODO: interestInfo should be fetched from context
@@ -26,10 +30,10 @@ const InterestSection = () => {
       <div className="h-full w-full space-y-8 text-center lg:text-start">
         <h1 className={`text-center text-lg leading-relaxed xl:text-xl`}>
           {key === 'interest30Days'
-            ? 'Interest you earn in 30 days'
+            ? t('MY_ASSETS_PAGE.INTEREST_SECTION_30_DAYS')
             : key === 'cumulativeInterest'
-            ? 'Cumulative Interest'
-            : key}
+            ? t('MY_ASSETS_PAGE.INTEREST_SECTION_CUMULATIVE')
+            : t('MY_ASSETS_PAGE.INTEREST_SECTION_APY')}
         </h1>
         {/* <h2 className={`text-3xl font-medium text-white xl:text-4xl`}>content</h2> */}
         <p
@@ -49,10 +53,10 @@ const InterestSection = () => {
       <div className="h-full w-full space-y-5 pt-5 text-center lg:text-start">
         <h1 className={`text-base leading-3 md:leading-relaxed lg:text-lg xl:text-xl`}>
           {key === 'interest30Days'
-            ? 'Interest you earn in 30 days'
+            ? t('MY_ASSETS_PAGE.INTEREST_SECTION_30_DAYS')
             : key === 'cumulativeInterest'
-            ? 'Cumulative Interest'
-            : key}
+            ? t('MY_ASSETS_PAGE.INTEREST_SECTION_CUMULATIVE')
+            : t('MY_ASSETS_PAGE.INTEREST_SECTION_APY')}
         </h1>
         {/* <h2 className={`text-3xl font-medium text-white xl:text-4xl`}>content</h2> */}
         <p
@@ -87,7 +91,9 @@ const InterestSection = () => {
 
   return (
     <div className=" bg-darkGray4">
-      <h1 className="flex justify-center pt-8 text-2xl">Earning Interest</h1>
+      <h1 className="flex justify-center pt-8 text-2xl">
+        {t('MY_ASSETS_PAGE.INTEREST_SECTION_TITLE')}
+      </h1>
 
       <div className="mx-20 pb-16 xl:mx-40">
         {layoutAssertion === 'mobile' ? <>{mobileLayout}</> : <>{desktopLayout}</>}

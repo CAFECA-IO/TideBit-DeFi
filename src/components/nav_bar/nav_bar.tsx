@@ -13,6 +13,7 @@ import {UserContext} from '../../contexts/user_context';
 import User from '../user/user';
 import {useGlobal} from '../../contexts/global_context';
 import {NotificationContext} from '../../contexts/notification_context';
+import {TBDURL} from '../../constants/api_request';
 
 type TranslateFunction = (s: string) => string;
 
@@ -104,7 +105,7 @@ const NavBar = () => {
                 <div className={`hidden pb-5 text-base text-lightGray1 lg:block`}>
                   <div className="ml-10 mt-5 flex flex-1 items-center space-x-4 xl:ml-10">
                     <Link
-                      href="/trade/cfd/ethusdt"
+                      href={TBDURL.TRADE}
                       className="hover:cursor-pointer hover:text-tidebitTheme"
                     >
                       {t('NAV_BAR.TRADE')}

@@ -9,12 +9,14 @@ import Hero1 from '../hero1/hero1';
 import HeroReverse from '../hero_reverse/hero_reverse';
 import HeroReverse1 from '../hero_reverse1/hero_reverse1';
 import StatisticBlock from '../statistic/statistic';
-import Image from 'next/image';
 import ReserveRatio from '../reserve_ratio/reserve_ratio';
-import TrialComponent from '../trial_component/trial_component';
-import {MarketProvider} from '../../contexts/market_context';
+import {useTranslation} from 'react-i18next';
+
+type TranslateFunction = (s: string) => string;
 
 export default function HeroDescription() {
+  const {t}: {t: TranslateFunction} = useTranslation('common');
+
   return (
     <div className="flex min-h-screen flex-col items-center justify-center overflow-hidden pt-24">
       {/* Body */}
@@ -39,9 +41,9 @@ export default function HeroDescription() {
 
         {/* Web3.0 */}
         <HeroReverse
-          heading={`Web`}
-          highlight={`3.0`}
-          content={`To fit in the new generation, TideBit uses Web 3.0 technology. Make it easy to buy and sell crypto currency.`}
+          heading={t('HOME_PAGE.WEB_3_TITLE')}
+          highlight={t('HOME_PAGE.WEB_3_TITLE_HIGHLIGHT')}
+          content={t('HOME_PAGE.WEB_3_DESCRIPTION')}
           img="/elements/2634@2x.png"
         />
         <div className="py-5 lg:py-40"></div>
@@ -50,11 +52,11 @@ export default function HeroDescription() {
         <Hero
           heading={
             <div className="font-bold">
-              <span className="text-tidebitTheme">{`Easy `}</span>
-              {` Trade`}
+              <span className="text-tidebitTheme">{t('HOME_PAGE.EASY_TRADE_TITLE_HIGHLIGHT')}</span>{' '}
+              {t('HOME_PAGE.EASY_TRADE_TITLE')}
             </div>
           }
-          content={`Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam`}
+          content={t('HOME_PAGE.EASY_TRADE_DESCRIPTION')}
           img="/elements/group_15200@2x.png"
         />
         <div className="py-5 lg:py-40"></div>
@@ -63,11 +65,13 @@ export default function HeroDescription() {
         <HeroReverse1
           heading={
             <div className="font-bold">
-              <span className="text-tidebitTheme">{`Secure `}</span>
-              {` System`}
+              <span className="text-tidebitTheme">
+                {t('HOME_PAGE.SECURE_SYSTEM_TITLE_HIGHLIGHT')}
+              </span>{' '}
+              {t('HOME_PAGE.SECURE_SYSTEM_TITLE')}
             </div>
           }
-          content={`Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam`}
+          content={t('HOME_PAGE.SECURE_SYSTEM_DESCRIPTION')}
           img="/elements/group_15145@2x.png"
         />
         <div className="py-5 lg:py-40"></div>
@@ -76,11 +80,13 @@ export default function HeroDescription() {
         <Hero1
           heading={
             <div className="font-bold">
-              <span className="text-tidebitTheme">{`Free `}</span>
-              {` Online courses`}
+              <span className="text-tidebitTheme">
+                {t('HOME_PAGE.FREE_ONLINE_COURSES_TITLE_HIGHLIGHT')}
+              </span>{' '}
+              {t('HOME_PAGE.FREE_ONLINE_COURSES_TITLE')}
             </div>
           }
-          content={`Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam`}
+          content={t('HOME_PAGE.FREE_ONLINE_COURSES_DESCRIPTION')}
           img={`/elements/group_15201.svg`}
         />
         <div className="py-5 lg:py-10"></div>

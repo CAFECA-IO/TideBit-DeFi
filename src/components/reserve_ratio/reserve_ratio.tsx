@@ -72,12 +72,8 @@ const ReserveRatio = () => {
               >
                 <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
               </svg> */}
-                    <Image
-                      src="/elements/tether-seeklogo.com.svg"
-                      width={50}
-                      height={50}
-                      alt="tether-seeklogo.com.svg"
-                    />
+                    {/* ToDo: (20230329 - Julian) get data from marketContext */}
+                    <Image src="/asset_icon/usdt.svg" width={50} height={50} alt="USDT_icon" />
                   </div>
                   <div className="flex flex-col">
                     <h2 className="text-3xl font-medium text-lightGreen2">USDT</h2>
@@ -153,12 +149,7 @@ const ReserveRatio = () => {
               >
                 <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
               </svg> */}
-                    <Image
-                      src="/elements/tether-seeklogo.com.svg"
-                      width={50}
-                      height={50}
-                      alt="tether-seeklogo.com.svg"
-                    />
+                    <Image src="/asset_icon/usdt.svg" width={50} height={50} alt="USDT_icon" />
                   </div>
                   <div className="flex flex-col">
                     <h2 className="text-3xl font-medium text-lightGreen2">USDT</h2>
@@ -179,7 +170,7 @@ const ReserveRatio = () => {
                       <BiLinkAlt size={20} />
                     </div>
                   </div>
-                  <span className="my-auto h-px w-full rounded bg-lightGray1/30 xs:inline-block"></span>
+                  <span className="my-auto inline-block h-px w-full rounded bg-lightGray1/30"></span>
 
                   {/* <a className="mt-3 inline-flex items-center text-indigo-400">
                   Learn More

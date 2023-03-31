@@ -204,7 +204,7 @@ export interface ITrimCandlestickData {
 }
 
 export interface ITradingData {
-  time: number;
+  time: UTCTimestamp;
   open: number | null;
   high: number | null;
   low: number | null;
@@ -475,22 +475,29 @@ export default function CandlestickChart({
     return result;
   };
 
-  // Info: specify the data spec (20230330 - Shirley)
+  // Info: 1.2 Initialize the 30 cleaned data (20230330 - Shirley)
   const initJob = ({data, dataSize, timespan}: ITrimCandlestickData) => {
     const spec = createBaseArray({dataSize, timespan});
 
-    // Deprecated: before merging into develop (20230329 - Shirley)
-    // eslint-disable-next-line no-console
-    console.log('spec in initJob', JSON.parse(JSON.stringify(spec)));
-    // eslint-disable-next-line no-console
-    console.log('data in initJob', JSON.parse(JSON.stringify(data)));
-    // eslint-disable-next-line no-console
-    console.log(
-      'market context data in initJob',
-      JSON.parse(JSON.stringify(marketCtx.candlestickChartData))
-    );
+    // // Deprecated: before merging into develop (20230329 - Shirley)
+    // // eslint-disable-next-line no-console
+    // console.log('spec in initJob', JSON.parse(JSON.stringify(spec)));
+    // // eslint-disable-next-line no-console
+    // console.log('data in initJob', JSON.parse(JSON.stringify(data)));
+    // // eslint-disable-next-line no-console
+    // console.log(
+    //   'market context data in initJob',
+    //   JSON.parse(JSON.stringify(marketCtx.candlestickChartData))
+    // );
 
-    // ToDo: Get data from context (20230330 - Shirley)
+    // ToDo: Get data from context and move to update when context is updated (20230330 - Shirley)
+    // const raw = data.map(d => ({
+    //   time: (d.x.getTime() / 1000) as UTCTimestamp,
+    //   open: d.y.open,
+    //   high: d.y.high,
+    //   low: d.y.low,
+    //   close: d.y.close,
+    // }));
     const raw = getDummyCandlestickChartData(50, TimeSpanUnion._1s).map(d => ({
       time: (d.x.getTime() / 1000) as UTCTimestamp,
       open: d.y.open,
@@ -501,22 +508,22 @@ export default function CandlestickChart({
 
     const filtered = initCandlestickData({dataArray: raw, baseArray: spec});
 
-    // Deprecated: before merging into develop (20230329 - Shirley)
-    // eslint-disable-next-line no-console
-    console.log('raw dummy data in initJob', JSON.parse(JSON.stringify(raw)));
-    // eslint-disable-next-line no-console
-    console.log('filtered data in initJob', JSON.parse(JSON.stringify(filtered)));
+    // // Deprecated: before merging into develop (20230329 - Shirley)
+    // // eslint-disable-next-line no-console
+    // console.log('raw dummy data in initJob', JSON.parse(JSON.stringify(raw)));
+    // // eslint-disable-next-line no-console
+    // console.log('filtered data in initJob', JSON.parse(JSON.stringify(filtered)));
 
     return filtered as CandlestickData[];
   };
 
-  // Info: 1. initialize the chart options and data (20230330 - Shirley)
+  // ToDo: Info: 1.2 fetch candlestick chart data from market context (20230330 - Shirley)
   const initChart = () => {
-    // initData = initJob({
-    //   data: marketCtx?.candlestickChartData ?? [],
-    //   dataSize: 30,
-    //   timespan: 1,
-    // });
+    initData = initJob({
+      data: marketCtx?.candlestickChartData ?? [],
+      dataSize: 30,
+      timespan: 1,
+    });
 
     if (chartContainerRef.current) {
       // Info: Draw
@@ -526,71 +533,75 @@ export default function CandlestickChart({
       //   borderVisible: false,
       // });
 
-      // candlestickSeries.setData(initData);
+      candlestickSeries = chart.addCandlestickSeries({
+        upColor: LINE_GRAPH_STROKE_COLOR.UP,
+        downColor: LINE_GRAPH_STROKE_COLOR.DOWN,
+        borderVisible: false,
+        wickUpColor: LINE_GRAPH_STROKE_COLOR.UP,
+        wickDownColor: LINE_GRAPH_STROKE_COLOR.DOWN,
+      });
 
-      // chart.timeScale().fitContent();
+      candlestickSeries.setData(initData);
+
+      chart.timeScale().fitContent();
     }
-  };
-
-  const initChartData = () => {
-    initData = initJob({
-      data: marketCtx?.candlestickChartData ?? [],
-      dataSize: 30,
-      timespan: 1,
-    });
-
-    candlestickSeries = chart.addCandlestickSeries({
-      upColor: LINE_GRAPH_STROKE_COLOR.UP,
-      downColor: LINE_GRAPH_STROKE_COLOR.DOWN,
-      borderVisible: false,
-      wickUpColor: LINE_GRAPH_STROKE_COLOR.UP,
-      wickDownColor: LINE_GRAPH_STROKE_COLOR.DOWN,
-    });
-
-    candlestickSeries.setData(initData);
-
-    chart.timeScale().fitContent();
   };
 
   // Get candlestick data from market context, check the data format and merge with `initData`
-  const mergeCandlestickData = () => {
-    const dataFromCtx = marketCtx.candlestickChartData;
-    if (dataFromCtx === null) {
-      return;
-    }
-
-    // Info: Transform the data to the format that the chart can accept (20230330 - Shirley)
-    const temp = dataFromCtx.slice(-50).map(d => ({
-      time: (d.x.getTime() / 1000) as UTCTimestamp,
-      open: d.y.open,
-      high: d.y.high,
-      low: d.y.low,
-      close: d.y.close,
-    }));
-
-    // Info: Check if the data is valid: 1. data format 2. no repeated data (20230330 - Shirley)
-    const validData = temp
-      .filter(data => {
-        return (
-          data.time &&
-          typeof data.open === 'number' &&
-          typeof data.high === 'number' &&
-          typeof data.low === 'number' &&
-          typeof data.close === 'number'
-        );
-      })
-      .filter(data => {
-        // Check if the data already exists in the chart
-        const index = initData?.findIndex(d => d.time === data.time);
-        return index < 0;
-      }) as CandlestickData[];
-
-    initData = [...initData, ...validData];
-
+  const mergeCandlestickData = ({
+    dataArray,
+    baseArray,
+  }: {
+    dataArray: ITradingData[];
+    baseArray: CandlestickData[];
+  }) => {
     // eslint-disable-next-line no-console
-    console.log('market ctx data in merge function', JSON.parse(JSON.stringify(dataFromCtx)));
+    // console.log('baseArray', JSON.parse(JSON.stringify(baseArray)));
+    // const lastTime = baseArray[baseArray.length - 1].time;
+    // const validData = dataArray
+    //   .filter(data => {
+    //     return (
+    //       data.time &&
+    //       typeof data.open === 'number' &&
+    //       typeof data.high === 'number' &&
+    //       typeof data.low === 'number' &&
+    //       typeof data.close === 'number'
+    //     );
+    //   })
+    //   .filter(data => data.time === Number(lastTime) + 1);
+    // const dataFromCtx = marketCtx.candlestickChartData;
+    // if (dataFromCtx === null) {
+    //   return;
+    // }
+    // // Info: Transform the data to the format that the chart can accept (20230330 - Shirley)
+    // const temp = dataFromCtx.slice(-50).map(d => ({
+    //   time: (d.x.getTime() / 1000) as UTCTimestamp,
+    //   open: d.y.open,
+    //   high: d.y.high,
+    //   low: d.y.low,
+    //   close: d.y.close,
+    // }));
+    // // Info: Check if the data is valid: 1. data format 2. no repeated data (20230330 - Shirley)
+    // const validData = temp
+    //   .filter(data => {
+    //     return (
+    //       data.time &&
+    //       typeof data.open === 'number' &&
+    //       typeof data.high === 'number' &&
+    //       typeof data.low === 'number' &&
+    //       typeof data.close === 'number'
+    //     );
+    //   })
+    //   .filter(data => {
+    //     // Check if the data already exists in the chart
+    //     const index = initData?.findIndex(d => d.time === data.time);
+    //     return index < 0;
+    //   }) as CandlestickData[];
+    // initData = [...initData, ...validData];
     // eslint-disable-next-line no-console
-    console.log('init data in merge function', JSON.parse(JSON.stringify(initData)));
+    // console.log('market ctx data in merge function', JSON.parse(JSON.stringify(dataFromCtx)));
+    // eslint-disable-next-line no-console
+    // console.log('init data in merge function', JSON.parse(JSON.stringify(initData)));
   };
 
   const updateChart = () => {
@@ -620,13 +631,35 @@ export default function CandlestickChart({
         close: d.y.close,
       })) as CandlestickData[];
 
-      candlestickSeries.update(randomCandle[randomCandle.length - 1]);
+      // FIXME: Need to update the initData with one candlestick data one second (no repeated data)
+      initData = [...initData, randomCandle[randomCandle.length - 1]];
+      candlestickSeries.setData(initData);
+
+      // candlestickSeries.update(randomCandle[randomCandle.length - 1]);
 
       // // TODO: Get the lastest price position and locate a lottie (20230329 - Shirley)
       // const lastPrice = randomCandle[randomCandle.length - 1].close;
       // console.log('object', randomCandle[randomCandle.length - 1]);
       // console.log('close coordinate', candlestickSeries.priceToCoordinate(lastPrice));
     };
+
+    const trimmedData = parseCandlestickData({
+      data: marketCtx.candlestickChartData ?? [],
+      dataSize: 30,
+      timespan: 1,
+    });
+
+    const lwcData = trimmedData.map((d: ICandlestickData) => {
+      return {
+        time: (d.x.getTime() / 1000) as UTCTimestamp,
+        open: d.y.open,
+        high: d.y.high,
+        low: d.y.low,
+        close: d.y.close,
+      };
+    });
+
+    mergeCandlestickData({dataArray: lwcData, baseArray: initData});
 
     updateData();
   };
@@ -650,43 +683,23 @@ export default function CandlestickChart({
     // Till: (20230412 - Shirley)
     // if (chartContainerRef.current) {
 
-    // Info: 1. Initial job (20230330 - Shirley)
+    // Info: 1.4 draw candlestick chart with data (20230330 - Shirley)
     initChart();
-
-    // }
-  }, []); // chartContainerRef
-
-  /* ToDO: Get candlestick data from ctx (20230330 - Shirley) */
-  useEffect(() => {
-    // mergeCandlestickData();
-
-    const trimmedData = parseCandlestickData({
-      data: marketCtx.candlestickChartData ?? [],
-      dataSize: 30,
-      timespan: 1,
-    });
-
-    const lwcData = trimmedData.map((d: ICandlestickData) => {
-      return {
-        time: d.x.getTime() / 1000,
-        open: d.y.open,
-        high: d.y.high,
-        low: d.y.low,
-        close: d.y.close,
-      };
-    });
-
-    // Deprecated: before merging into develop (20230329 - Shirley)
-    // eslint-disable-next-line no-console
-    console.log('market data which comply with data spec', lwcData);
-    // eslint-disable-next-line no-console
-    console.log('whole data from ctx', marketCtx.candlestickChartData);
-
-    initChartData();
 
     // Info: 2. Periodical job (20230330 - Shirley)
     // ToDo: (20230330 - Shirley) updates (vs useEffect)
-    const intervalId = setInterval(updateChart, 200);
+    const intervalId = setInterval(updateChart, 1000);
+
+    // eslint-disable-next-line no-console
+    console.log('init data in useEffect', initData);
+
+    // Get the data drawn on the chart
+    // const data = candlestickSeries.dataByIndex(0);
+    // const data = candlestickSeries.barsInLogicalRange({from: 0, to: 100}); // get time
+    const data = candlestickSeries.seriesType();
+
+    // eslint-disable-next-line no-console
+    console.log('candlestick series in chart', JSON.parse(JSON.stringify(data)));
 
     window.addEventListener('resize', handleResize);
     return () => {
@@ -694,6 +707,37 @@ export default function CandlestickChart({
       clearInterval(intervalId);
       chart.remove();
     };
+    // }
+  }, []); // chartContainerRef
+
+  /* ToDO: Get candlestick data from ctx (20230330 - Shirley) */
+  useEffect(() => {
+    const trimmedData = parseCandlestickData({
+      data: marketCtx.candlestickChartData ?? [],
+      dataSize: 30,
+      timespan: 1,
+    });
+
+    const lwcData = trimmedData
+      .filter(({y}) => y.open !== null && y.high !== null && y.low !== null && y.close !== null)
+      .map((d: ICandlestickData) => {
+        return {
+          time: (d.x.getTime() / 1000) as UTCTimestamp,
+          open: d.y.open,
+          high: d.y.high,
+          low: d.y.low,
+          close: d.y.close,
+        };
+      });
+
+    // FIXME: 執行到這邊的時候，initData 還是空的 (20230330 - Shirley)
+    // mergeCandlestickData({dataArray: lwcData, baseArray: initData});
+
+    // Deprecated: before merging into develop (20230329 - Shirley)
+    // eslint-disable-next-line no-console
+    console.log('market data which comply with data spec', JSON.parse(JSON.stringify(lwcData)));
+    // eslint-disable-next-line no-console
+    console.log('whole data from ctx', JSON.parse(JSON.stringify(marketCtx.candlestickChartData)));
   }, [marketCtx.candlestickChartData]);
 
   /* ToDo: Resize the chart for RWD solely (20230330 - Shirley) */

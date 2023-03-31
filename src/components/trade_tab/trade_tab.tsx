@@ -612,175 +612,171 @@ const TradeTab = () => {
   );
 
   return (
-    <div>
-      {/* `overflow-y-scroll scroll-smooth` only show the scroll bar but no functionality */}
-      <div
-        className={`pointer-events-none fixed top-82px right-0 z-10 flex overflow-x-hidden overflow-y-hidden outline-none focus:outline-none`}
-      >
-        <div className="relative my-6 mx-auto w-auto max-w-xl">
-          {' '}
-          <div className={`relative`}>
-            {/* ---sidebar self--- */}
-            <div
-              className={`pointer-events-auto ${tabBodyWidth} h-screen overflow-y-auto bg-darkGray p-5 text-white transition-all duration-300`}
-            >
-              {/* <h1 className="pl-5 text-2xl font-bold">Start to trade</h1> */}
+    <div
+      className={`pointer-events-none fixed top-82px right-0 z-10 flex overflow-x-hidden overflow-y-hidden outline-none focus:outline-none`}
+    >
+      <div className="relative my-6 mx-auto w-auto max-w-xl">
+        {' '}
+        <div className={`relative`}>
+          {/* ---sidebar self--- */}
+          <div
+            className={`pointer-events-auto ${tabBodyWidth} h-screen overflow-y-auto bg-darkGray p-5 text-white transition-all duration-300`}
+          >
+            {/* <h1 className="pl-5 text-2xl font-bold">Start to trade</h1> */}
 
-              {/* ---target input area--- */}
-              {displayedTargetAmountSetting}
+            {/* ---target input area--- */}
+            {displayedTargetAmountSetting}
 
-              {/* ---universal trading info area--- */}
-              <div className="mt-2 text-lightGray">
-                <div className="flex justify-center text-xs">{ticker}</div>
-                <div className="mt-2">
-                  <div className="flex justify-center text-sm">
-                    {t('TRADE_PAGE.TRADE_TAB_LEVERAGE')}
+            {/* ---universal trading info area--- */}
+            <div className="mt-2 text-lightGray">
+              <div className="flex justify-center text-xs">{ticker}</div>
+              <div className="mt-2">
+                <div className="flex justify-center text-sm">
+                  {t('TRADE_PAGE.TRADE_TAB_LEVERAGE')}
+                </div>
+                <div className="flex justify-center text-base text-lightWhite">1:{leverage}</div>
+              </div>
+            </div>
+
+            {/* ---Long Section--- */}
+            <div className="">
+              {/* ---custom trading info area--- */}
+              <div className="mt-2 flex justify-center text-center text-base tracking-normal">
+                <div className="w-1/2 space-y-1">
+                  <div className="text-sm text-lightGray">
+                    {t('TRADE_PAGE.TRADE_TAB_REQUIRED_MARGIN')}
                   </div>
-                  <div className="flex justify-center text-base text-lightWhite">1:{leverage}</div>
+                  {displayedRequiredMarginStyle}
+                </div>
+                {/* Left Divider */}
+                <div className="mx-2 h-14 justify-center border-r-1px border-lightGray"></div>
+
+                <div className="w-1/2 space-y-1">
+                  <div className="text-sm text-lightGray">{t('TRADE_PAGE.TRADE_TAB_VALUE')}</div>
+                  <div className={`text-base text-lightWhite ${isDisplayedValueSize}`}>
+                    {valueOfPositionRef.current?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}{' '}
+                    {unitAsset}
+                  </div>
                 </div>
               </div>
 
-              {/* ---Long Section--- */}
               <div className="">
-                {/* ---custom trading info area--- */}
-                <div className="mt-2 flex justify-center text-center text-base tracking-normal">
-                  <div className="w-1/2 space-y-1">
+                {/* Take Profit Setting */}
+                <div className="h-60px">
+                  <div className="mt-3 mb-5 flex h-25px items-center justify-between">
                     <div className="text-sm text-lightGray">
-                      {t('TRADE_PAGE.TRADE_TAB_REQUIRED_MARGIN')}
+                      {t('TRADE_PAGE.TRADE_TAB_TP_SETTING')}
                     </div>
-                    {displayedRequiredMarginStyle}
+                    {displayedLongTpSetting}
+                    <Toggle getToggledState={getToggledLongTpSetting} />
                   </div>
-                  {/* Left Divider */}
-                  <div className="mx-2 h-14 justify-center border-r-1px border-lightGray"></div>
 
-                  <div className="w-1/2 space-y-1">
-                    <div className="text-sm text-lightGray">{t('TRADE_PAGE.TRADE_TAB_VALUE')}</div>
-                    <div className={`text-base text-lightWhite ${isDisplayedValueSize}`}>
-                      {valueOfPositionRef.current?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}{' '}
-                      {unitAsset}
-                    </div>
-                  </div>
+                  {displayedExpectedLongProfit}
                 </div>
 
-                <div className="">
-                  {/* Take Profit Setting */}
-                  <div className="h-60px">
-                    <div className="mt-3 mb-5 flex h-25px items-center justify-between">
-                      <div className="text-sm text-lightGray">
-                        {t('TRADE_PAGE.TRADE_TAB_TP_SETTING')}
-                      </div>
-                      {displayedLongTpSetting}
-                      <Toggle getToggledState={getToggledLongTpSetting} />
+                {/* Stop Loss Setting */}
+                <div>
+                  <div className="flex h-25px items-center justify-between">
+                    <div className="text-sm text-lightGray">
+                      {t('TRADE_PAGE.TRADE_TAB_SL_SETTING')}
                     </div>
-
-                    {displayedExpectedLongProfit}
+                    <div className="w-105px">{displayedLongSlSetting}</div>
+                    <Toggle getToggledState={getToggledLongSlSetting} />
                   </div>
 
-                  {/* Stop Loss Setting */}
-                  <div>
-                    <div className="flex h-25px items-center justify-between">
-                      <div className="text-sm text-lightGray">
-                        {t('TRADE_PAGE.TRADE_TAB_SL_SETTING')}
-                      </div>
-                      <div className="w-105px">{displayedLongSlSetting}</div>
-                      <Toggle getToggledState={getToggledLongSlSetting} />
-                    </div>
+                  {displayedExpectedLongLoss}
 
-                    {displayedExpectedLongLoss}
-
-                    {/* Guaranteed stop */}
-                    {longGuaranteedStop}
-                  </div>
-                </div>
-
-                {/* Long Button */}
-                <div className="ml-1/4">
-                  <RippleButton
-                    disabled={marginWarning}
-                    onClick={longOrderSubmitHandler}
-                    buttonType="button"
-                    className="mr-2 mb-2 rounded-md bg-lightGreen5 px-7 py-1 text-sm font-medium tracking-wide text-white transition-colors duration-300 hover:bg-lightGreen5/80 disabled:bg-lightGray"
-                  >
-                    <b>{t('TRADE_PAGE.TRADE_TAB_LONG_BUTTON')}</b> <br />
-                    {t('TRADE_PAGE.TRADE_TAB_LONG_BUTTON_SUBTITLE')} ₮ {buyPrice}
-                  </RippleButton>
+                  {/* Guaranteed stop */}
+                  {longGuaranteedStop}
                 </div>
               </div>
 
-              {/* Divider: border-bottom */}
-              <div className="mt-3 border-b-1px border-lightGray"></div>
+              {/* Long Button */}
+              <div className="ml-1/4">
+                <RippleButton
+                  disabled={marginWarning}
+                  onClick={longOrderSubmitHandler}
+                  buttonType="button"
+                  className="mr-2 mb-2 rounded-md bg-lightGreen5 px-7 py-1 text-sm font-medium tracking-wide text-white transition-colors duration-300 hover:bg-lightGreen5/80 disabled:bg-lightGray"
+                >
+                  <b>{t('TRADE_PAGE.TRADE_TAB_LONG_BUTTON')}</b> <br />
+                  {t('TRADE_PAGE.TRADE_TAB_LONG_BUTTON_SUBTITLE')} ₮ {buyPrice}
+                </RippleButton>
+              </div>
+            </div>
 
-              {/* Divider between long and short */}
-              {/* <span
+            {/* Divider: border-bottom */}
+            <div className="mt-3 border-b-1px border-lightGray"></div>
+
+            {/* Divider between long and short */}
+            {/* <span
                 className={`${isDisplayedDividerSpacing} absolute top-420px my-auto h-px w-7/8 rounded bg-white/50`}
               ></span> */}
 
-              {/* ---Short Section--- */}
-              <div className="pb-24">
-                {/* ---custom trading info--- */}
-                <div className="mt-5 flex justify-center text-center text-base tracking-normal">
-                  <div className="w-1/2 space-y-1">
+            {/* ---Short Section--- */}
+            <div className="pb-24">
+              {/* ---custom trading info--- */}
+              <div className="mt-5 flex justify-center text-center text-base tracking-normal">
+                <div className="w-1/2 space-y-1">
+                  <div className="text-sm text-lightGray">
+                    {t('TRADE_PAGE.TRADE_TAB_REQUIRED_MARGIN')}
+                  </div>
+                  {displayedRequiredMarginStyle}
+                </div>
+                {/* Left Divider */}
+                <div className="mx-2 h-14 justify-center border-r-1px border-lightGray"></div>
+
+                <div className="w-1/2 space-y-1">
+                  <div className="text-sm text-lightGray">{t('TRADE_PAGE.TRADE_TAB_VALUE')}</div>
+                  <div className={`text-base text-lightWhite ${isDisplayedValueSize}`}>
+                    {valueOfPositionRef.current?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}{' '}
+                    {unitAsset}
+                  </div>
+                </div>
+              </div>
+
+              <div className="">
+                {/* Take Profit Setting */}
+                <div className="h-60px">
+                  <div className="mt-3 mb-5 flex h-25px items-center justify-between">
                     <div className="text-sm text-lightGray">
-                      {t('TRADE_PAGE.TRADE_TAB_REQUIRED_MARGIN')}
+                      {t('TRADE_PAGE.TRADE_TAB_TP_SETTING')}
                     </div>
-                    {displayedRequiredMarginStyle}
+                    {displayedShortTpSetting} <Toggle getToggledState={getToggledShortTpSetting} />
                   </div>
-                  {/* Left Divider */}
-                  <div className="mx-2 h-14 justify-center border-r-1px border-lightGray"></div>
 
-                  <div className="w-1/2 space-y-1">
-                    <div className="text-sm text-lightGray">{t('TRADE_PAGE.TRADE_TAB_VALUE')}</div>
-                    <div className={`text-base text-lightWhite ${isDisplayedValueSize}`}>
-                      {valueOfPositionRef.current?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}{' '}
-                      {unitAsset}
-                    </div>
-                  </div>
+                  {displayedExpectedShortProfit}
                 </div>
 
-                <div className="">
-                  {/* Take Profit Setting */}
-                  <div className="h-60px">
-                    <div className="mt-3 mb-5 flex h-25px items-center justify-between">
-                      <div className="text-sm text-lightGray">
-                        {t('TRADE_PAGE.TRADE_TAB_TP_SETTING')}
-                      </div>
-                      {displayedShortTpSetting}{' '}
-                      <Toggle getToggledState={getToggledShortTpSetting} />
+                {/* Stop Loss Setting */}
+                <div>
+                  <div className="flex h-25px items-center justify-between">
+                    <div className="text-sm text-lightGray">
+                      {t('TRADE_PAGE.TRADE_TAB_SL_SETTING')}
                     </div>
+                    <div className="w-105px">{displayedShortSlSetting}</div>
 
-                    {displayedExpectedShortProfit}
+                    <Toggle getToggledState={getToggledShortSlSetting} />
                   </div>
 
-                  {/* Stop Loss Setting */}
-                  <div>
-                    <div className="flex h-25px items-center justify-between">
-                      <div className="text-sm text-lightGray">
-                        {t('TRADE_PAGE.TRADE_TAB_SL_SETTING')}
-                      </div>
-                      <div className="w-105px">{displayedShortSlSetting}</div>
+                  {displayedExpectedShortLoss}
 
-                      <Toggle getToggledState={getToggledShortSlSetting} />
-                    </div>
-
-                    {displayedExpectedShortLoss}
-
-                    {/* Guaranteed stop */}
-                    {shortGuaranteedStop}
-                  </div>
+                  {/* Guaranteed stop */}
+                  {shortGuaranteedStop}
                 </div>
+              </div>
 
-                {/* Short Button */}
-                <div className="ml-1/4">
-                  <RippleButton
-                    disabled={marginWarning}
-                    onClick={shortOrderSubmitHandler}
-                    buttonType="button"
-                    className="mr-2 mb-2 rounded-md bg-lightRed px-7 py-1 text-sm font-medium tracking-wide text-white transition-colors duration-300 hover:bg-lightRed/80 disabled:bg-lightGray"
-                  >
-                    <b>{t('TRADE_PAGE.TRADE_TAB_SHORT_BUTTON')}</b> <br />
-                    {t('TRADE_PAGE.TRADE_TAB_SHORT_BUTTON_SUBTITLE')} ₮ {sellPrice}
-                  </RippleButton>
-                </div>
+              {/* Short Button */}
+              <div className="ml-1/4">
+                <RippleButton
+                  disabled={marginWarning}
+                  onClick={shortOrderSubmitHandler}
+                  buttonType="button"
+                  className="mr-2 mb-2 rounded-md bg-lightRed px-7 py-1 text-sm font-medium tracking-wide text-white transition-colors duration-300 hover:bg-lightRed/80 disabled:bg-lightGray"
+                >
+                  <b>{t('TRADE_PAGE.TRADE_TAB_SHORT_BUTTON')}</b> <br />
+                  {t('TRADE_PAGE.TRADE_TAB_SHORT_BUTTON_SUBTITLE')} ₮ {sellPrice}
+                </RippleButton>
               </div>
             </div>
           </div>

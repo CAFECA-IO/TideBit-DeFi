@@ -287,6 +287,20 @@ export default function CandlestickChart({
 
         candlestickSeries.update(newCandle);
       }, 200);
+
+      window.addEventListener('resize', handleResize);
+
+      // eslint-disable-next-line no-console
+      console.log('temp func1');
+
+      // tempFunc 回傳的 function
+      return () => {
+        // eslint-disable-next-line no-console
+        console.log('temp funct return');
+        window.removeEventListener('resize', handleResize);
+        clearInterval(intervalId);
+        chart.remove();
+      };
     }
     /**
      * HTML tag -> re render -> HTML tag -> re render -> HTML tag -> ...
@@ -295,10 +309,23 @@ export default function CandlestickChart({
     // ------------------
 
     // eslint-disable-next-line no-console
-    console.log('temp func');
+    console.log('temp func outside `if`');
   };
 
-  tempFunc();
+  useEffect(() => {
+    // eslint-disable-next-line no-console
+    console.log('useEffect');
+    // Info: 這個Component結束的時候要做的事
+    // 這個寫法會在 component destroyed 後被執行
+    return () => {
+      tempFunc();
+    };
+
+    // return () => {
+    //   tempFunc();
+    //   // clearInterval(intervalId)
+    // };
+  }, []);
 
   return (
     <>

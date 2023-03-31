@@ -409,11 +409,6 @@ export default function CandlestickChart({
       return now - (now % (timespan * 1000));
     };
 
-    // Till: (20230410 - Shirley)
-    // const getLastTime = () => {
-    //   return data[data.length - 1]?.x.getTime() as number;
-    // };
-
     const base = new Array(dataSize).fill(0).map((v, i) => {
       const eachTime = new Date(getLastTime() - (dataSize - i) * timespan * 1000);
       const eachTimestamp = eachTime.getTime() / 1000;
@@ -427,40 +422,48 @@ export default function CandlestickChart({
       };
     });
 
+    const newBase = [...base];
+
+    // Deprecated: before merging into develop (20230329 - Shirley)
+    // eslint-disable-next-line no-console
+    console.log('spec base array in createBaseArray', newBase);
+
     return base;
   };
 
   const filterCandlestickData = ({
-    data,
+    dataArray,
     baseArray,
   }: {
-    data: ITradingData[];
+    dataArray: ITradingData[];
     baseArray: ITradingData[];
   }) => {
     let previousClose = 0;
+    const base = [...baseArray];
+    const data = [...dataArray];
 
-    for (let i = 0; i < baseArray.length; i++) {
+    for (let i = 0; i < base.length; i++) {
       const index = data.findIndex(d => {
-        const baseTime = baseArray[i]?.time;
+        const baseTime = base[i]?.time;
         const dataTime = d.time;
         return baseTime === dataTime;
       });
       if (index >= 0) {
-        baseArray[i].open = data[index].open;
-        baseArray[i].high = data[index].high;
-        baseArray[i].low = data[index].low;
-        baseArray[i].close = data[index].close;
+        base[i].open = data[index].open;
+        base[i].high = data[index].high;
+        base[i].low = data[index].low;
+        base[i].close = data[index].close;
 
         previousClose = data[index].close || previousClose;
       } else if (previousClose !== null) {
-        baseArray[i].open = previousClose;
-        baseArray[i].high = previousClose;
-        baseArray[i].low = previousClose;
-        baseArray[i].close = previousClose;
+        base[i].open = previousClose;
+        base[i].high = previousClose;
+        base[i].low = previousClose;
+        base[i].close = previousClose;
       }
     }
 
-    const result = [...baseArray];
+    const result = base;
 
     return result;
   };
@@ -471,9 +474,11 @@ export default function CandlestickChart({
 
     // Deprecated: before merging into develop (20230329 - Shirley)
     // eslint-disable-next-line no-console
-    console.log('spec in initJob', spec);
+    console.log('spec in initJob', JSON.parse(JSON.stringify(spec)));
     // eslint-disable-next-line no-console
     console.log('data in initJob', data);
+    // eslint-disable-next-line no-console
+    console.log('market context data in initJob', marketCtx.candlestickChartData);
 
     // ToDo: Get data from context (20230330 - Shirley)
     const raw = getDummyCandlestickChartData(50, TimeSpanUnion._1s).map(d => ({
@@ -484,44 +489,15 @@ export default function CandlestickChart({
       close: d.y.close,
     }));
 
-    const filtered = filterCandlestickData({data: raw, baseArray: spec});
+    const filtered = filterCandlestickData({dataArray: raw, baseArray: spec});
 
     // Deprecated: before merging into develop (20230329 - Shirley)
     // eslint-disable-next-line no-console
-    console.log('raw data in initJob', raw);
+    console.log('raw dummy data in initJob', raw);
     // eslint-disable-next-line no-console
     console.log('filtered data in initJob', filtered);
 
     return filtered as CandlestickData[];
-  };
-
-  // ToDo: Info: Show fluctuation of the latest price in 1 sec (20230330 - Shirley)
-  const mergeTickToBar = ({
-    currBar,
-    prevBar,
-  }: {
-    currBar: ITradingData;
-    prevBar: ITradingData;
-  }): ITradingData => {
-    const {time, open, high, low, close} = currBar;
-
-    if (open === null) {
-      return {
-        time,
-        open: prevBar.close,
-        high: prevBar.close,
-        low: prevBar.close,
-        close: prevBar.close,
-      };
-    } else {
-      return {
-        time,
-        open,
-        high: Math.max(high as number, prevBar.close as number),
-        low: Math.min(low as number, prevBar.close as number),
-        close: prevBar.close,
-      };
-    }
   };
 
   const locale: LocalizationOptions = {
@@ -697,9 +673,6 @@ export default function CandlestickChart({
         low: d.y.low,
         close: d.y.close,
       })) as CandlestickData[];
-
-      // ToDo: Info: Show fluctuation of the latest price in 1 sec (20230330 - Shirley)
-      // mergeTickToBar({currBar: randomCandle[randomCandle.length - 1], prevBar: initData[initData.length - 1]})
 
       candlestickSeries.update(randomCandle[randomCandle.length - 1]);
 

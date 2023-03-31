@@ -164,6 +164,27 @@ const filterCandlestickData = ({
   const result = data.filter(d => {
     return Number(d.time) >= targetTime;
   });
+
+  return result;
+};
+
+const tuningTimezone = (time: number) => {
+  // Get the timezone of the client browser
+  const tzOffset = new Date().getTimezoneOffset() * 60;
+  const result = time - tzOffset;
+  return result;
+};
+
+const tuningTzCandlestickData = (data: CandlestickData) => {
+  const time = tuningTimezone(Number(data.time));
+  return {...data, time};
+};
+
+const tuningTzCandlestickDataArray = (dataArray: CandlestickData[]) => {
+  const data = [...dataArray];
+
+  const result = data.map(tuningTzCandlestickData);
+
   return result;
 };
 
@@ -226,7 +247,6 @@ export default function CandlestickChart({
 
   const chartContainerRef = useRef<HTMLDivElement>(null);
   let chart: IChartApi;
-  let initData: CandlestickData[];
 
   const handleResize = () => {
     chart.applyOptions({width: Number(chartContainerRef?.current?.clientWidth) - 50});
@@ -256,7 +276,7 @@ export default function CandlestickChart({
 
     const filtered = filterCandlestickData({dataArray: cleanedData, targetTime: targetTime});
 
-    // initData = filtered;
+    const tuned = tuningTzCandlestickDataArray(filtered) as CandlestickData[];
 
     if (chartContainerRef.current) {
       // Info: Draw
@@ -271,60 +291,42 @@ export default function CandlestickChart({
         wickDownColor: LINE_GRAPH_STROKE_COLOR.DOWN,
       });
 
-      candlestickSeries.setData(filtered);
+      candlestickSeries.setData(tuned);
 
       chart.timeScale().fitContent();
 
       // Info: updateChart in period
       // ToDo: 只要有新的資料就更新，不用 setInterval (20230331 - Shirley)
       const intervalId = setInterval(() => {
-        const option = {
-          lastPrice: filtered[filtered.length - 1].close,
-        };
-        const newCandleRaw = generateRandomCandle(option);
+        try {
+          const option = {
+            lastPrice: filtered[filtered.length - 1].close,
+          };
 
-        const newCandle = toCandlestickData(newCandleRaw);
+          // ToDo: data from market context (20230331 - Shirley)
+          const newCandleRaw = generateRandomCandle(option);
 
-        candlestickSeries.update(newCandle);
+          const newCandle = toCandlestickData(newCandleRaw);
+          const tunedNewCandle = tuningTzCandlestickData(newCandle) as CandlestickData;
+
+          candlestickSeries.update(tunedNewCandle);
+        } catch (err) {
+          // ToDo: re render (20230331 - Shirley)
+        }
       }, 200);
 
       window.addEventListener('resize', handleResize);
 
-      // eslint-disable-next-line no-console
-      console.log('temp func1');
-
-      // tempFunc 回傳的 function
       return () => {
-        // eslint-disable-next-line no-console
-        console.log('temp funct return');
         window.removeEventListener('resize', handleResize);
         clearInterval(intervalId);
         chart.remove();
       };
     }
-    /**
-     * HTML tag -> re render -> HTML tag -> re render -> HTML tag -> ...
-     */
-
-    // ------------------
-
-    // eslint-disable-next-line no-console
-    console.log('temp func outside `if`');
   };
 
   useEffect(() => {
-    // eslint-disable-next-line no-console
-    console.log('useEffect');
-    // Info: 這個Component結束的時候要做的事
-    // 這個寫法會在 component destroyed 後被執行
-    return () => {
-      tempFunc();
-    };
-
-    // return () => {
-    //   tempFunc();
-    //   // clearInterval(intervalId)
-    // };
+    return tempFunc();
   }, []);
 
   return (

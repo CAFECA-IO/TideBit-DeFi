@@ -699,8 +699,7 @@ const TradeTab = () => {
                   buttonType="button"
                   className="mr-2 mb-2 rounded-md bg-lightGreen5 px-7 py-1 text-sm font-medium tracking-wide text-white transition-colors duration-300 hover:bg-lightGreen5/80 disabled:bg-lightGray"
                 >
-                  <b>{t('TRADE_PAGE.TRADE_TAB_LONG_BUTTON')}</b> <br />
-                  {t('TRADE_PAGE.TRADE_TAB_LONG_BUTTON_SUBTITLE')} ₮ {buyPrice}
+                  <b>{t('TRADE_PAGE.TRADE_TAB_LONG_BUTTON')}</b> <br />₮ {buyPrice}
                 </RippleButton>
               </div>
             </div>
@@ -774,8 +773,7 @@ const TradeTab = () => {
                   buttonType="button"
                   className="mr-2 mb-2 rounded-md bg-lightRed px-7 py-1 text-sm font-medium tracking-wide text-white transition-colors duration-300 hover:bg-lightRed/80 disabled:bg-lightGray"
                 >
-                  <b>{t('TRADE_PAGE.TRADE_TAB_SHORT_BUTTON')}</b> <br />
-                  {t('TRADE_PAGE.TRADE_TAB_SHORT_BUTTON_SUBTITLE')} ₮ {sellPrice}
+                  <b>{t('TRADE_PAGE.TRADE_TAB_SHORT_BUTTON')}</b> <br />₮ {sellPrice}
                 </RippleButton>
               </div>
             </div>

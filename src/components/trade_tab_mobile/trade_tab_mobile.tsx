@@ -699,9 +699,7 @@ const TradeTabMobile = () => {
             onClick={longSectionClickHandler}
           >
             <b>{t('TRADE_PAGE.TRADE_TAB_LONG_BUTTON')}</b> <br />
-            <p className="text-xs">
-              {t('TRADE_PAGE.TRADE_TAB_LONG_BUTTON_SUBTITLE')} ₮ {buyPrice}
-            </p>
+            <p className="text-xs">₮ {buyPrice}</p>
           </RippleButton>
         </div>
 
@@ -715,9 +713,7 @@ const TradeTabMobile = () => {
             onClick={shortSectionClickHandler}
           >
             <b>{t('TRADE_PAGE.TRADE_TAB_SHORT_BUTTON')}</b> <br />
-            <p className="text-xs">
-              {t('TRADE_PAGE.TRADE_TAB_SHORT_BUTTON_SUBTITLE')} ₮ {sellPrice}
-            </p>
+            <p className="text-xs">₮ {sellPrice}</p>
           </RippleButton>
         </div>
       </div>

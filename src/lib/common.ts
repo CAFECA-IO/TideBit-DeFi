@@ -7,6 +7,7 @@ import {OrderState} from '../constants/order_state';
 import {TypeOfPosition} from '../constants/type_of_position';
 import {IDisplayAcceptedCFDOrder} from '../interfaces/tidebit_defi_background/display_accepted_cfd_order';
 import {ProfitState} from '../constants/profit_state';
+import {SUGGEST_SL, SUGGEST_TP} from '../constants/config';
 
 export const roundToDecimalPlaces = (val: number, precision: number): number => {
   const roundedNumber = Number(val.toFixed(precision));
@@ -341,11 +342,17 @@ export const toDisplayAcceptedCFDOrder = (
     orderSnapshot.state === OrderState.CLOSED && orderSnapshot.closePrice
       ? (closeValue - openValue) * (orderSnapshot.typeOfPosition === TypeOfPosition.BUY ? 1 : -1)
       : 0;
-  const takeProfit = orderSnapshot.typeOfPosition === TypeOfPosition.BUY ? 1.2 : 0.8;
-  const stopLoss = orderSnapshot.typeOfPosition === TypeOfPosition.BUY ? 0.8 : 1.2;
+  const rTp =
+    orderSnapshot.typeOfPosition === TypeOfPosition.BUY
+      ? twoDecimal(orderSnapshot.openPrice * (1 + SUGGEST_TP / orderSnapshot.leverage))
+      : twoDecimal(orderSnapshot.openPrice * (1 - SUGGEST_TP / orderSnapshot.leverage));
+  const rSl =
+    orderSnapshot.typeOfPosition === TypeOfPosition.BUY
+      ? twoDecimal(orderSnapshot.openPrice * (1 - SUGGEST_SL / orderSnapshot.leverage))
+      : twoDecimal(orderSnapshot.openPrice * (1 + SUGGEST_SL / orderSnapshot.leverage));
   const suggestion = {
-    takeProfit: orderSnapshot.openPrice * takeProfit,
-    stopLoss: orderSnapshot.openPrice * stopLoss,
+    takeProfit: rTp,
+    stopLoss: rSl,
   };
   const displayAcceptedCFDOrder: IDisplayAcceptedCFDOrder = {
     ...cfdOrder,

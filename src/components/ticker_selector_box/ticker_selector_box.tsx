@@ -387,7 +387,7 @@ const TickerSelectorBox = ({
                 type="search"
                 value={searches}
                 className="absolute right-0 block w-430px rounded-full bg-darkGray2 p-3 pl-10 text-sm text-white focus:border-blue-500 focus:outline-none focus:ring-0 focus:ring-blue-500"
-                placeholder="Search Cryptocurrencies"
+                placeholder={t('TRADE_PAGE.TICKER_SELECTOR_SEARCH_PLACEHOLDER')}
                 required
                 onChange={onSearchChange}
               />

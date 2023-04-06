@@ -268,7 +268,7 @@ const PositionOpenModal = ({
   }, [secondsLeft, globalCtx.visiblePositionOpenModal]);
 
   const formContent = (
-    <div className="mt-8 flex flex-col px-6 pb-2">
+    <div className="mt-4 flex flex-col px-6 pb-2">
       <div className="flex items-center justify-center space-x-2 text-center">
         <Image
           src={marketCtx.selectedTicker?.tokenImg ?? ''}
@@ -279,14 +279,14 @@ const PositionOpenModal = ({
         <div className="text-2xl">{marketCtx.selectedTicker?.currency}</div>
       </div>
 
-      <div className="absolute top-105px right-6 flex items-center space-x-1 text-center">
+      <div className="absolute top-90px right-6 flex items-center space-x-1 text-center">
         <BsClockHistory size={20} className="text-lightGray" />
         <p className="w-8 text-xs">00:{secondsLeft.toString().padStart(2, '0')}</p>
       </div>
 
-      <div className="relative flex-auto pt-1">
+      <div className="relative flex flex-col items-center pt-1">
         <div
-          className={`${displayedBorderColor} mt-1 border-1px py-4 text-xs leading-relaxed text-lightWhite`}
+          className={`${displayedBorderColor} mt-1 w-full border-1px py-4 text-xs leading-relaxed text-lightWhite`}
         >
           <div className="flex flex-col justify-center text-center">
             <div className={`${layoutInsideBorder}`}>

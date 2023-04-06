@@ -52,20 +52,20 @@ const OrderSection = () => {
 
   const tabPart = (
     <>
-      <div className="z-10 flex flex-wrap border-gray-200 text-center text-sm font-medium text-gray-500 dark:border-gray-700 dark:text-gray-400">
-        <div className="pr-3px">
+      <div className="z-10 flex w-320px border-gray-200 text-center text-sm font-medium text-gray-500 dark:border-gray-700 dark:text-gray-400">
+        <div className="mr-3px w-full">
           <button
             type="button"
-            className={`${activeTradeTabStyle} inline-block rounded-t-2xl px-59px py-2 hover:cursor-pointer`}
+            className={`${activeTradeTabStyle} inline-block w-full rounded-t-2xl px-60px py-2 hover:cursor-pointer`}
             onClick={tradeTabClickHandler}
           >
             {t('TRADE_PAGE.TRADE_TAB')}
           </button>
         </div>
-        <div className="">
+        <div className="w-full">
           <button
             type="button"
-            className={`${activePositionTabStyle} inline-block rounded-t-2xl px-57px py-2 hover:cursor-pointer`}
+            className={`${activePositionTabStyle} inline-block w-full rounded-t-2xl px-60px py-2 hover:cursor-pointer`}
             onClick={positionTabClickHandler}
           >
             {t('TRADE_PAGE.POSITION_TAB')}

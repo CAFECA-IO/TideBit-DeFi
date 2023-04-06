@@ -43,7 +43,7 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
     txid: '0x',
     orderType: OrderType.DEPOSIT,
     createTimestamp: 1679587700,
-    orderStatus: OrderStatusUnion.FAILED,
+    orderStatus: OrderStatusUnion.PROCESSING,
     fee: 0,
     remark: '',
     targetAsset: 'USDT',
@@ -104,7 +104,7 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
   const displayedReceiptState =
     orderStatus === OrderStatusUnion.SUCCESS
       ? orderType === OrderType.CFD
-        ? `${displayedReceiptType} of ETH`
+        ? `${displayedReceiptType}`
         : displayedReceiptTxId
       : orderStatus === OrderStatusUnion.PROCESSING
       ? t('MY_ASSETS_PAGE.RECEIPT_SECTION_ORDER_STATUS_PROCESSING')
@@ -130,48 +130,25 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
       : orderType === OrderType.DEPOSIT
       ? () => {
           /* Todo: (20230324 - Julian) deposit history modal */
-          globalCtx.visibleDepositHistoryModalHandler();
           globalCtx.dataDepositHistoryModalHandler(histories.histories as IAcceptedDepositOrder);
+          globalCtx.visibleDepositHistoryModalHandler();
         }
       : () => {
-          /* Todo: (20230324 - Julian) withdraw history modal */
+          /* ToDo: (20230329 - Julian) transfer IOrder to IAcceptedWithdrawOrder 
+          globalCtx.dataWithdrawalHistoryModalHandler(getDepositData);
+          */
+          globalCtx.visibleWithdrawalHistoryModalHandler();
         };
-
-  const detailIcon = (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="19.989"
-      height="19.989"
-      viewBox="0 0 19.989 19.989"
-    >
-      <g id="Group_785" data-name="Group 785" transform="translate(-896 -505)">
-        <path
-          id="Path_76"
-          data-name="Path 76"
-          d="M21.082,24.294H11.088a3.213,3.213,0,0,1-3.213-3.213V11.088a3.213,3.213,0,0,1,3.213-3.213h9.994a3.213,3.213,0,0,1,3.213,3.213v9.994a3.213,3.213,0,0,1-3.213,3.213Z"
-          transform="translate(891.694 500.694)"
-          fill="#f2f2f2"
-        />
-        <path
-          id="Path_77"
-          data-name="Path 77"
-          d="M7.961,4.392H18.485A3.218,3.218,0,0,0,15.457,2.25H5.463A3.213,3.213,0,0,0,2.25,5.463v9.994a3.218,3.218,0,0,0,2.142,3.029V7.961A3.569,3.569,0,0,1,7.961,4.392Z"
-          transform="translate(893.75 502.75)"
-          fill="#f2f2f2"
-        />
-      </g>
-    </svg>
-  );
 
   const displayedReceiptStateIcon =
     orderStatus === OrderStatusUnion.PROCESSING ? null : orderType === OrderType.CFD ? (
       orderStatus === OrderStatusUnion.FAILED ? (
-        detailIcon
+        <Image src="/elements/detail_icon.svg" alt="" width={20} height={20} />
       ) : (
         <Image src="/elements/position_tab_icon.svg" alt="position_icon" width={25} height={25} />
       )
     ) : (
-      detailIcon
+      <Image src="/elements/detail_icon.svg" alt="" width={20} height={20} />
     );
 
   const displayedReceiptFeeText =
@@ -219,13 +196,16 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
   const displayedReceiptDetail = (
     <div className="hidden flex-auto flex-col lg:flex lg:w-64">
       <span className="text-lightGray">{t('MY_ASSETS_PAGE.RECEIPT_SECTION_DETAIL')}</span>
-      <div className="inline-flex items-center">
-        {/* Todo: (20230328 - Julian) available
-         * 1. 用戶地址(to)
-         * 2. Bolt 地址(超連結)
-         */}
-        <p className={`${displayedReceiptStateColor} mr-2`}>{displayedReceiptState}</p>
-        {displayedReceiptStateIcon}
+      <div className="flex flex-col">
+        <div className="inline-flex items-center">
+          {/* Todo: (20230328 - Julian) available
+           * 1. 用戶地址(to)
+           * 2. Bolt 地址(超連結)
+           */}
+          <p className={`${displayedReceiptStateColor} mr-2`}>{displayedReceiptState}</p>
+          {displayedReceiptStateIcon}
+        </div>
+        <div className="inline-flex items-center"></div>
       </div>
     </div>
   );

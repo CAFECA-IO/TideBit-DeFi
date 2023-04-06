@@ -4,6 +4,8 @@ import Link from 'next/link';
 import TideLink from '../tide_link/tide_link';
 import RippleButton from '../ripple_button/ripple_button';
 import {useTranslation} from 'react-i18next';
+import {TBDURL} from '../../constants/api_request';
+import {COPYRIGHT} from '../../constants/config';
 
 type TranslateFunction = (s: string) => string;
 
@@ -14,14 +16,14 @@ const Footer = () => {
   const socialMediaLinks = [
     {
       label: 'Facebook',
-      path: '/coming-soon',
+      path: TBDURL.COMING_SOON,
       icon: (
         <Image src={'/elements/facebook.svg'} alt="Facebook" width={ICON_SIZE} height={ICON_SIZE} />
       ),
     },
     {
       label: 'Instagram',
-      path: '/coming-soon',
+      path: TBDURL.COMING_SOON,
       icon: (
         <Image
           src={'/elements/instagram.svg'}
@@ -33,14 +35,14 @@ const Footer = () => {
     },
     {
       label: 'Twitter',
-      path: '/coming-soon',
+      path: TBDURL.COMING_SOON,
       icon: (
         <Image src={'/elements/twitter.svg'} alt="twitter" width={ICON_SIZE} height={ICON_SIZE} />
       ),
     },
     {
       label: 'Reddit',
-      path: '/coming-soon',
+      path: TBDURL.COMING_SOON,
       icon: (
         <Image src={'/elements/reddit.svg'} alt="reddit" width={ICON_SIZE} height={ICON_SIZE} />
       ),
@@ -48,16 +50,16 @@ const Footer = () => {
   ];
 
   const servicesLinks = [
-    {label: t('NAV_BAR.TRADE'), path: '/trade/cfd/ethusdt'},
-    {label: t('NAV_BAR.TIDEBIT_UNIVERSITY'), path: '/coming-soon'},
-    {label: t('NAV_BAR.HELP_CENTER'), path: '/coming-soon'},
+    {label: t('NAV_BAR.TRADE'), path: TBDURL.TRADE},
+    {label: t('NAV_BAR.TIDEBIT_UNIVERSITY'), path: TBDURL.COMING_SOON},
+    {label: t('NAV_BAR.HELP_CENTER'), path: TBDURL.COMING_SOON},
   ];
 
-  const tideBitLinks = [{label: t('FOOTER.HIRING'), path: '/coming-soon'}];
+  const tideBitLinks = [{label: t('FOOTER.HIRING'), path: TBDURL.COMING_SOON}];
 
   const policyLinks = [
-    {label: t('FOOTER.SERVICE_POLICY'), path: '/coming-soon'},
-    {label: t('FOOTER.PRIVACY_POLICY'), path: '/coming-soon'},
+    {label: t('FOOTER.SERVICE_POLICY'), path: TBDURL.COMING_SOON},
+    {label: t('FOOTER.PRIVACY_POLICY'), path: TBDURL.COMING_SOON},
   ];
 
   const socialMediaLinksList = socialMediaLinks.map(({label, path, icon}) => (
@@ -161,7 +163,7 @@ const Footer = () => {
           <div className="mt-0 pb-0">
             <div className="flex flex-col flex-wrap px-5 pt-1 pb-4 sm:flex-row sm:justify-center md:justify-end">
               <p className="text-center text-xs text-gray-400 sm:text-left md:mt-5 lg:mr-36 lg:mt-0">
-                {t('FOOTER.COPYRIGHT')}
+                {COPYRIGHT}
               </p>
             </div>
           </div>
@@ -236,7 +238,7 @@ const Footer = () => {
           <div className="mt-0 pb-0">
             <div className="flex flex-col flex-wrap px-5 pt-1 pb-8 sm:flex-row sm:justify-center md:justify-end">
               <p className="text-center text-xs text-gray-400 sm:text-left md:mt-5 lg:mr-36 lg:mt-0">
-                {t('FOOTER.COPYRIGHT')}
+                {COPYRIGHT}
               </p>
             </div>
           </div>

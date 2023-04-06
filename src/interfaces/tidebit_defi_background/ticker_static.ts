@@ -51,7 +51,7 @@ export const dummyTickerStatic: ITickerStatic = {
     },
   ],
   cryptoSummary: {
-    icon: '/elements/group_2371.svg', // TODO: Use icon of Context in CryptoSummary component instead of hardcode
+    icon: '/asset_icon/eth.svg', // TODO: Use icon of Context in CryptoSummary component instead of hardcode
     id: 'ETH',
     name: 'Ethereum',
     introduction: `Ethereum (ETH) was launched in 2015. Ethereum is a decentralized blockchain that supports smart contracts-essentially computer programs-that can automatically execute when certain conditions are met. The native cryptocurrency-essentially computer programs-of the platform is called ether or ethereum. Ethereum is divisible to 18 decimal places. There is currently no hard cap on the total supply

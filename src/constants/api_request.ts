@@ -207,6 +207,12 @@ export const TBEURL = {
   GET_CANDLESTICK_DATA: '/tradingview/history',
 };
 
+export const TBDURL = {
+  COMING_SOON: '/coming-soon',
+  TRADE: '/trade/cfd/ethusdt',
+  MY_ASSETS: '/my-assets',
+};
+
 export type TypeRequest = {
   name: IAPIName;
   method: IMethodConstant;

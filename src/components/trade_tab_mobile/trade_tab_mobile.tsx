@@ -13,7 +13,7 @@ import RippleButton from '../ripple_button/ripple_button';
 import {UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
 import {
   TARGET_LIMIT_DIGITS,
-  POSITION_PRICE_RENEWAL_INTERVAL_SECONDS,
+  QUOTATION_RENEWAL_INTERVAL_SECONDS,
   unitAsset,
   SUGGEST_SL,
   SUGGEST_TP,
@@ -58,7 +58,7 @@ const TradeTabMobile = () => {
   const defaultSellQuotation: IQuotation = getDummyQuotation(ticker, TypeOfPosition.SELL);
 
   const [secondsLeft, setSecondsLeft, secondsLeftRef] = useStateRef(
-    POSITION_PRICE_RENEWAL_INTERVAL_SECONDS
+    QUOTATION_RENEWAL_INTERVAL_SECONDS
   );
   const [longQuotation, setLongQuotation, longQuotationRef] =
     useStateRef<IQuotation>(defaultBuyQuotation);
@@ -286,7 +286,7 @@ const TradeTabMobile = () => {
           typeOfPosition: TypeOfPosition.BUY,
           unitAsset: unitAsset,
           price: buyPrice,
-          deadline: getTimestamp() + POSITION_PRICE_RENEWAL_INTERVAL_SECONDS,
+          deadline: getTimestamp() + QUOTATION_RENEWAL_INTERVAL_SECONDS,
           signature: '0x',
         };
 
@@ -315,7 +315,7 @@ const TradeTabMobile = () => {
           typeOfPosition: TypeOfPosition.SELL,
           unitAsset: unitAsset,
           price: sellPrice,
-          deadline: getTimestamp() + POSITION_PRICE_RENEWAL_INTERVAL_SECONDS,
+          deadline: getTimestamp() + QUOTATION_RENEWAL_INTERVAL_SECONDS,
           signature: '0x',
         };
 
@@ -335,7 +335,7 @@ const TradeTabMobile = () => {
         typeOfPosition: TypeOfPosition.BUY,
         unitAsset: unitAsset,
         price: buyPrice,
-        deadline: getTimestamp() + POSITION_PRICE_RENEWAL_INTERVAL_SECONDS,
+        deadline: getTimestamp() + QUOTATION_RENEWAL_INTERVAL_SECONDS,
         signature: '0x',
       };
 
@@ -351,7 +351,7 @@ const TradeTabMobile = () => {
         typeOfPosition: TypeOfPosition.SELL,
         unitAsset: unitAsset,
         price: sellPrice,
-        deadline: getTimestamp() + POSITION_PRICE_RENEWAL_INTERVAL_SECONDS,
+        deadline: getTimestamp() + QUOTATION_RENEWAL_INTERVAL_SECONDS,
         signature: '0x',
       };
 
@@ -766,7 +766,7 @@ const TradeTabMobile = () => {
               {longTooltipStatus == 3 && (
                 <div
                   role="tooltip"
-                  className="absolute -top-120px -left-52 z-20 mr-8 w-56 rounded bg-darkGray8 p-4 shadow-lg transition duration-150 ease-in-out"
+                  className="absolute -left-52 -top-120px z-20 mr-8 w-56 rounded bg-darkGray8 p-4 shadow-lg transition duration-150 ease-in-out"
                 >
                   <p className="pb-1 text-sm font-medium text-white">
                     {t('TRADE_PAGE.GUARANTEED_STOP_HINT')}
@@ -931,7 +931,7 @@ const TradeTabMobile = () => {
               {shortTooltipStatus == 3 && (
                 <div
                   role="tooltip"
-                  className="absolute -top-120px -left-52 z-20 mr-8 w-56 rounded bg-darkGray8 p-4 shadow-lg transition duration-150 ease-in-out"
+                  className="absolute -left-52 -top-120px z-20 mr-8 w-56 rounded bg-darkGray8 p-4 shadow-lg transition duration-150 ease-in-out"
                 >
                   <p className="pb-1 text-sm font-medium text-white">
                     {t('TRADE_PAGE.TRADE_TAB_GUARANTEED_STOP_HINT')}

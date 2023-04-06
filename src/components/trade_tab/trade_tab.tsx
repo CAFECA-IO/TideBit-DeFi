@@ -1,3 +1,4 @@
+/*eslint-disable no-console */
 import React, {useContext, useEffect, useRef, useState} from 'react';
 import Toggle from '../toggle/toggle';
 import TradingInput from '../trading_input/trading_input';
@@ -6,11 +7,13 @@ import RippleButton from '../ripple_button/ripple_button';
 import {UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
 import {
   TARGET_LIMIT_DIGITS,
-  POSITION_PRICE_RENEWAL_INTERVAL_SECONDS,
+  QUOTATION_RENEWAL_INTERVAL_SECONDS,
   unitAsset,
   SUGGEST_TP,
   SUGGEST_SL,
   LIQUIDATION_FIVE_LEVERAGE,
+  DISPLAY_QUOTATION_RENEWAL_INTERVAL_SECONDS,
+  WAITING_TIME_FOR_USER_SIGNING,
 } from '../../constants/config';
 import {useGlobal} from '../../contexts/global_context';
 import {MarketContext} from '../../contexts/market_context';
@@ -61,7 +64,7 @@ const TradeTab = () => {
   const defaultSellQuotation: IQuotation = getDummyQuotation(ticker, TypeOfPosition.SELL);
 
   const [secondsLeft, setSecondsLeft, secondsLeftRef] = useStateRef(
-    POSITION_PRICE_RENEWAL_INTERVAL_SECONDS
+    DISPLAY_QUOTATION_RENEWAL_INTERVAL_SECONDS
   );
   const [longQuotation, setLongQuotation, longQuotationRef] =
     useStateRef<IQuotation>(defaultBuyQuotation);
@@ -202,11 +205,12 @@ const TradeTab = () => {
     const intervalId = setInterval(async () => {
       if (!longQuotationRef.current || !shortQuotationRef.current) return;
 
-      const base = longQuotationRef.current.deadline;
+      const base = longQuotationRef.current.deadline - WAITING_TIME_FOR_USER_SIGNING;
 
       const diff = base - getTimestamp();
-      const tickingSec = diff > 0 ? Math.floor(diff) : 0;
+      const tickingSec = diff > 0 ? Math.round(diff) : 0;
       setSecondsLeft(tickingSec);
+      console.log('tab, displayed timestamp:', base, 'left sec', secondsLeftRef.current);
 
       if (tickingSec === 0) {
         const {longQuotation, shortQuotation} = await getQuotation(
@@ -214,10 +218,6 @@ const TradeTab = () => {
         );
 
         renewPosition();
-
-        // Deprecated: before merging into develop (20230327 - Shirley)
-        // eslint-disable-next-line no-console
-        console.log('countdown Effect', longQuotationRef.current, shortQuotationRef.current);
       }
     }, 1000);
 
@@ -285,7 +285,7 @@ const TradeTab = () => {
           typeOfPosition: TypeOfPosition.BUY,
           unitAsset: unitAsset,
           price: buyPrice,
-          deadline: getTimestamp() + POSITION_PRICE_RENEWAL_INTERVAL_SECONDS,
+          deadline: getTimestamp() + QUOTATION_RENEWAL_INTERVAL_SECONDS,
           signature: '0x',
         };
 
@@ -314,7 +314,7 @@ const TradeTab = () => {
           typeOfPosition: TypeOfPosition.SELL,
           unitAsset: unitAsset,
           price: sellPrice,
-          deadline: getTimestamp() + POSITION_PRICE_RENEWAL_INTERVAL_SECONDS,
+          deadline: getTimestamp() + QUOTATION_RENEWAL_INTERVAL_SECONDS,
           signature: '0x',
         };
 
@@ -334,7 +334,7 @@ const TradeTab = () => {
         typeOfPosition: TypeOfPosition.BUY,
         unitAsset: unitAsset,
         price: buyPrice,
-        deadline: getTimestamp() + POSITION_PRICE_RENEWAL_INTERVAL_SECONDS,
+        deadline: getTimestamp() + QUOTATION_RENEWAL_INTERVAL_SECONDS,
         signature: '0x',
       };
 
@@ -350,7 +350,7 @@ const TradeTab = () => {
         typeOfPosition: TypeOfPosition.SELL,
         unitAsset: unitAsset,
         price: sellPrice,
-        deadline: getTimestamp() + POSITION_PRICE_RENEWAL_INTERVAL_SECONDS,
+        deadline: getTimestamp() + QUOTATION_RENEWAL_INTERVAL_SECONDS,
         signature: '0x',
       };
 
@@ -470,6 +470,18 @@ const TradeTab = () => {
       (shortSlValue - Number(shortQuotationRef.current?.price)) * targetInputValueRef.current
     );
     setGuaranteedStopFeeShort(Number(gsl) * valueOfPositionShortRef.current);
+
+    // Countdown
+    const newDeadline = longQuotationRef.current.deadline - WAITING_TIME_FOR_USER_SIGNING;
+    const rounded = Math.round(newDeadline - getTimestamp());
+    setSecondsLeft(rounded);
+
+    console.log(
+      'tab, [renew] displayed timestamp:',
+      newDeadline,
+      'left sec',
+      secondsLeftRef.current
+    );
   };
 
   const targetAmountDetection = (value?: number) => {
@@ -734,7 +746,7 @@ const TradeTab = () => {
     <div
       className={`${
         longSlToggle ? `translate-y-5` : `invisible translate-y-0`
-      } mt-0 mb-10 flex items-center transition-all`}
+      } mb-10 mt-0 flex items-center transition-all`}
     >
       <input
         type="checkbox"
@@ -766,7 +778,7 @@ const TradeTab = () => {
             {longTooltipStatus == 3 && (
               <div
                 role="tooltip"
-                className={`absolute -top-120px -left-52 z-20 mr-8 w-56 rounded bg-darkGray8 p-4 shadow-lg transition duration-150 ease-in-out`}
+                className={`absolute -left-52 -top-120px z-20 mr-8 w-56 rounded bg-darkGray8 p-4 shadow-lg transition duration-150 ease-in-out`}
               >
                 <p className="pb-1 text-sm font-medium text-white">
                   {t('TRADE_PAGE.TRADE_TAB_GUARANTEED_STOP_HINT')}
@@ -871,7 +883,7 @@ const TradeTab = () => {
     <div
       className={`${
         shortSlToggle ? `translate-y-5` : `invisible translate-y-0`
-      } mt-0 mb-10 items-center transition-all`}
+      } mb-10 mt-0 items-center transition-all`}
     >
       <div className="mt-0 flex items-center">
         <input
@@ -904,7 +916,7 @@ const TradeTab = () => {
               {shortTooltipStatus == 3 && (
                 <div
                   role="tooltip"
-                  className="absolute -top-120px -left-52 z-20 mr-8 w-56 rounded bg-darkGray8 p-4 shadow-lg transition duration-150 ease-in-out"
+                  className="absolute -left-52 -top-120px z-20 mr-8 w-56 rounded bg-darkGray8 p-4 shadow-lg transition duration-150 ease-in-out"
                 >
                   <p className="pb-1 text-sm font-medium text-white">
                     {t('TRADE_PAGE.TRADE_TAB_GUARANTEED_STOP_HINT')}
@@ -920,9 +932,9 @@ const TradeTab = () => {
 
   return (
     <div
-      className={`pointer-events-none fixed top-82px right-0 z-10 flex overflow-x-hidden overflow-y-hidden outline-none focus:outline-none`}
+      className={`pointer-events-none fixed right-0 top-82px z-10 flex overflow-x-hidden overflow-y-hidden outline-none focus:outline-none`}
     >
-      <div className="relative my-6 mx-auto w-auto max-w-xl">
+      <div className="relative mx-auto my-6 w-auto max-w-xl">
         {' '}
         <div className={`relative`}>
           {/* ---sidebar self--- */}
@@ -970,7 +982,7 @@ const TradeTab = () => {
               <div className="">
                 {/* Take Profit Setting */}
                 <div className="h-60px">
-                  <div className="mt-3 mb-5 flex h-25px items-center justify-between">
+                  <div className="mb-5 mt-3 flex h-25px items-center justify-between">
                     <div className="text-sm text-lightGray">
                       {t('TRADE_PAGE.TRADE_TAB_TP_SETTING')}
                     </div>
@@ -1004,7 +1016,7 @@ const TradeTab = () => {
                   disabled={marginWarningLongRef.current}
                   onClick={longOrderSubmitHandler}
                   buttonType="button"
-                  className="mr-2 mb-2 rounded-md bg-lightGreen5 px-7 py-1 text-sm font-medium tracking-wide text-white transition-colors duration-300 hover:bg-lightGreen5/80 disabled:bg-lightGray"
+                  className="mb-2 mr-2 rounded-md bg-lightGreen5 px-7 py-1 text-sm font-medium tracking-wide text-white transition-colors duration-300 hover:bg-lightGreen5/80 disabled:bg-lightGray"
                 >
                   <b>{t('TRADE_PAGE.TRADE_TAB_LONG_BUTTON')}</b> <br />₮{' '}
                   {Number(longQuotationRef.current?.price).toLocaleString(
@@ -1053,7 +1065,7 @@ const TradeTab = () => {
               <div className="">
                 {/* Take Profit Setting */}
                 <div className="h-60px">
-                  <div className="mt-3 mb-5 flex h-25px items-center justify-between">
+                  <div className="mb-5 mt-3 flex h-25px items-center justify-between">
                     <div className="text-sm text-lightGray">
                       {t('TRADE_PAGE.TRADE_TAB_TP_SETTING')}
                     </div>
@@ -1087,7 +1099,7 @@ const TradeTab = () => {
                   disabled={marginWarningShortRef.current}
                   onClick={shortOrderSubmitHandler}
                   buttonType="button"
-                  className="mr-2 mb-2 rounded-md bg-lightRed px-7 py-1 text-sm font-medium tracking-wide text-white transition-colors duration-300 hover:bg-lightRed/80 disabled:bg-lightGray"
+                  className="mb-2 mr-2 rounded-md bg-lightRed px-7 py-1 text-sm font-medium tracking-wide text-white transition-colors duration-300 hover:bg-lightRed/80 disabled:bg-lightGray"
                 >
                   <b>{t('TRADE_PAGE.TRADE_TAB_SHORT_BUTTON')}</b> <br />₮{' '}
                   {Number(shortQuotationRef.current?.price).toLocaleString(

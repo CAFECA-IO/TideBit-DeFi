@@ -56,7 +56,7 @@ import {
   MAX_PRICE_TRADING_CHART_ONE_SEC,
   MIN_PRICE_TRADING_CHART_ONE_SEC,
   TRADING_CHART_PRICE_LIMIT_ONE_SEC,
-  POSITION_PRICE_RENEWAL_INTERVAL_SECONDS,
+  QUOTATION_RENEWAL_INTERVAL_SECONDS,
 } from '../../constants/config';
 import {ProfitState} from '../../constants/profit_state';
 import {TypeOfPosition} from '../../constants/type_of_position';
@@ -81,6 +81,8 @@ const candlestickDataCleaning = (dataArray: CandlestickData[]) => {
 
   return data;
 };
+
+// 確認 market context real-time data 能更新 component 的資料->在 market context 裡每0.2秒更新假資料
 
 interface IChartSpecProps {
   timespan: number;
@@ -331,7 +333,7 @@ export default function CandlestickChart({
 
   return (
     <>
-      <div className="ml-5 pt-20 pb-20 lg:w-7/10 lg:pt-14 lg:pb-5">
+      <div className="ml-5 pb-20 pt-20 lg:w-7/10 lg:pb-5 lg:pt-14">
         <div ref={chartContainerRef} className="hover:cursor-crosshair"></div>
       </div>
     </>

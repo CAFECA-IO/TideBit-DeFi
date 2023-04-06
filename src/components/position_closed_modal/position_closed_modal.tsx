@@ -19,10 +19,12 @@ import {
 import {useContext, useEffect, useState} from 'react';
 import {MarketContext} from '../../contexts/market_context';
 import {
-  POSITION_PRICE_RENEWAL_INTERVAL_SECONDS,
+  QUOTATION_RENEWAL_INTERVAL_SECONDS,
+  DISPLAY_QUOTATION_RENEWAL_INTERVAL_SECONDS,
   SUGGEST_SL,
   SUGGEST_TP,
   unitAsset,
+  WAITING_TIME_FOR_USER_SIGNING,
 } from '../../constants/config';
 import {TypeOfPosition} from '../../constants/type_of_position';
 import {IClosedCFDInfoProps, useGlobal} from '../../contexts/global_context';
@@ -84,13 +86,13 @@ const PositionClosedModal = ({
     price: randomIntFromInterval(20, 29),
     targetAsset: openCfdDetails.targetAsset,
     unitAsset: openCfdDetails.unitAsset,
-    deadline: getDeadline(POSITION_PRICE_RENEWAL_INTERVAL_SECONDS),
+    deadline: getDeadline(QUOTATION_RENEWAL_INTERVAL_SECONDS),
     signature: '0x',
   };
 
   const [gQuotation, setGQuotation, gQuotationRef] = useStateRef<IQuotation>(quotation);
 
-  const [secondsLeft, setSecondsLeft] = useStateRef(POSITION_PRICE_RENEWAL_INTERVAL_SECONDS);
+  const [secondsLeft, setSecondsLeft] = useStateRef(DISPLAY_QUOTATION_RENEWAL_INTERVAL_SECONDS);
 
   const [dataRenewedStyle, setDataRenewedStyle] = useState('text-lightWhite');
   const [pnlRenewedStyle, setPnlRenewedStyle] = useState('');
@@ -366,8 +368,9 @@ const PositionClosedModal = ({
     setDataRenewedStyle('animate-flash text-lightYellow2');
     setPnlRenewedStyle('animate-flash text-lightYellow2');
 
-    const newDeadline = quotation.deadline;
-    setSecondsLeft(Math.round(newDeadline - getTimestamp()));
+    const newDeadline = quotation.deadline - WAITING_TIME_FOR_USER_SIGNING;
+    const rounded = Math.round(newDeadline - getTimestamp());
+    setSecondsLeft(rounded);
 
     const displayedCloseOrder = toDisplayCloseOrder(openCfdDetails, quotation);
 
@@ -403,14 +406,14 @@ const PositionClosedModal = ({
 
   useEffect(() => {
     if (!globalCtx.visiblePositionClosedModal) {
-      setSecondsLeft(POSITION_PRICE_RENEWAL_INTERVAL_SECONDS);
+      setSecondsLeft(DISPLAY_QUOTATION_RENEWAL_INTERVAL_SECONDS);
       setDataRenewedStyle('text-lightWhite');
 
       return;
     }
 
     const intervalId = setInterval(async () => {
-      const base = gQuotationRef.current.deadline;
+      const base = gQuotationRef.current.deadline - WAITING_TIME_FOR_USER_SIGNING;
 
       const tickingSec = base - getTimestamp();
 
@@ -446,7 +449,7 @@ const PositionClosedModal = ({
         <div className="text-2xl">{openCfdDetails.ticker}</div>
       </div>
 
-      <div className="absolute top-90px right-6 flex items-center space-x-1 text-center">
+      <div className="absolute right-6 top-90px flex items-center space-x-1 text-center">
         <BsClockHistory size={20} className="text-lightGray" />
         <p className="w-8 text-xs">00:{secondsLeft.toString().padStart(2, '0')}</p>
       </div>
@@ -525,7 +528,7 @@ const PositionClosedModal = ({
           disabled={secondsLeft < 1 || quotationErrorRef.current}
           onClick={submitClickHandler}
           buttonType="button"
-          className={`mt-0 whitespace-nowrap rounded border-0 bg-tidebitTheme py-2 px-16 text-base text-white transition-colors duration-300 hover:bg-cyan-600 focus:outline-none disabled:bg-lightGray`}
+          className={`mt-0 whitespace-nowrap rounded border-0 bg-tidebitTheme px-16 py-2 text-base text-white transition-colors duration-300 hover:bg-cyan-600 focus:outline-none disabled:bg-lightGray`}
         >
           {t('POSITION_MODAL.CONFIRM_BUTTON')}
         </RippleButton>
@@ -537,7 +540,7 @@ const PositionClosedModal = ({
     <>
       <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">
         {/* The position of the modal */}
-        <div className="relative my-6 mx-auto w-auto max-w-xl">
+        <div className="relative mx-auto my-6 w-auto max-w-xl">
           {' '}
           {/*content & panel*/}
           <div
@@ -550,7 +553,7 @@ const PositionClosedModal = ({
                 {t('POSITION_MODAL.CLOSE_POSITION_TITLE')}
               </h3>
               <button className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
-                <span className="absolute top-5 right-5 block outline-none focus:outline-none">
+                <span className="absolute right-5 top-5 block outline-none focus:outline-none">
                   <ImCross onClick={modalClickHandler} />
                 </span>
               </button>

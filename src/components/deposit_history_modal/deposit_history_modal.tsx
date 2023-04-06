@@ -4,16 +4,17 @@ import Lottie from 'lottie-react';
 import smallConnectingAnimation from '../../../public/animation/lf30_editor_cnkxmhy3.json';
 import {ImCross} from 'react-icons/im';
 import {OrderStatusUnion} from '../../constants/order_status_union';
-import {IDisplayAcceptedDepositOrder} from '../../interfaces/tidebit_defi_background/display_accepted_deposit_order';
+// import {IDisplayAcceptedDepositOrder} from '../../interfaces/tidebit_defi_background/display_accepted_deposit_order';
 import {UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
 import {timestampToString} from '../../lib/common';
 import {useTranslation} from 'react-i18next';
+import {IAcceptedDepositOrder} from '../../interfaces/tidebit_defi_background/accepted_deposit_order';
 
 type TranslateFunction = (s: string) => string;
 interface IDepositHistoryModal {
   modalVisible: boolean;
   modalClickHandler: () => void;
-  getDepositHistoryData: IDisplayAcceptedDepositOrder;
+  getDepositHistoryData: IAcceptedDepositOrder;
 }
 
 const DepositHistoryModal = ({

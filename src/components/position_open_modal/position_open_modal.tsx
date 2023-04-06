@@ -30,8 +30,8 @@ import {
   unitAsset,
 } from '../../constants/config';
 import {
-  getDummyApplyCreateCFDOrderData,
-  IApplyCreateCFDOrderData,
+  getDummyApplyCreateCFDOrder,
+  IApplyCreateCFDOrder,
 } from '../../interfaces/tidebit_defi_background/apply_create_cfd_order_data';
 import {useTranslation} from 'react-i18next';
 import {defaultResultSuccess} from '../../interfaces/tidebit_defi_background/result';
@@ -42,7 +42,7 @@ type TranslateFunction = (s: string) => string;
 interface IPositionOpenModal {
   modalVisible: boolean;
   modalClickHandler: () => void;
-  openCfdRequest: IApplyCreateCFDOrderData;
+  openCfdRequest: IApplyCreateCFDOrder;
 }
 
 const PositionOpenModal = ({
@@ -63,10 +63,8 @@ const PositionOpenModal = ({
   const [dataRenewedStyle, setDataRenewedStyle] = useState('text-lightWhite');
   const [quotationError, setQuotationError, quotationErrorRef] = useStateRef(false);
 
-  const toApplyCreateOrder = (
-    openCfdRequest: IApplyCreateCFDOrderData
-  ): IApplyCreateCFDOrderData => {
-    const order: IApplyCreateCFDOrderData = {
+  const toApplyCreateOrder = (openCfdRequest: IApplyCreateCFDOrder): IApplyCreateCFDOrder => {
+    const order: IApplyCreateCFDOrder = {
       ...openCfdRequest,
       createTimestamp: getTimestamp(),
       liquidationTime: getTimestamp() + 86400,
@@ -94,7 +92,7 @@ const PositionOpenModal = ({
     });
     globalCtx.visibleLoadingModalHandler();
 
-    const applyCreateOrder: IApplyCreateCFDOrderData = toApplyCreateOrder(openCfdRequest);
+    const applyCreateOrder: IApplyCreateCFDOrder = toApplyCreateOrder(openCfdRequest);
     const result = await userCtx.createCFDOrder(applyCreateOrder);
 
     // ToDo: temporary waiting

@@ -9,8 +9,14 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     res.status(200).json(acceptedWithdrawOrders);
   } else if (req.method === 'POST') {
     try {
+      const nodeSignature = '0x';
       // TODO: verify req.body.signature (20230324 - tzuhan)
-      const acceptedWithdrawOrder = convertApplyWithdrawOrderToAcceptedWithdrawOrder(req.body.data);
+      const acceptedWithdrawOrder = convertApplyWithdrawOrderToAcceptedWithdrawOrder(
+        req.body.applyData,
+        req.body.balance,
+        req.body.userSignature,
+        nodeSignature
+      );
       acceptedWithdrawOrders = [...acceptedWithdrawOrders, acceptedWithdrawOrder];
       res.status(200).json(acceptedWithdrawOrder);
     } catch (error) {

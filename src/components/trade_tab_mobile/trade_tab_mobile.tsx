@@ -24,9 +24,11 @@ import {useTranslation} from 'next-i18next';
 import {getTimestamp, roundToDecimalPlaces} from '../../lib/common';
 import {IQuotation, getDummyQuotation} from '../../interfaces/tidebit_defi_background/quotation';
 import {NotificationContext} from '../../contexts/notification_context';
-import {IApplyCreateCFDOrderData} from '../../interfaces/tidebit_defi_background/apply_create_cfd_order_data';
+import {IApplyCreateCFDOrder} from '../../interfaces/tidebit_defi_background/apply_create_cfd_order_data';
 import {Code} from '../../constants/code';
 import {defaultResultSuccess} from '../../interfaces/tidebit_defi_background/result';
+import {OrderType} from '../../constants/order_type';
+import {CFDOperation} from '../../constants/cfd_order_type';
 
 type TranslateFunction = (s: string) => string;
 
@@ -508,8 +510,8 @@ const TradeTabMobile = () => {
   };
 
   const toApplyCreateOrder = (): {
-    longOrder: IApplyCreateCFDOrderData;
-    shortOrder: IApplyCreateCFDOrderData;
+    longOrder: IApplyCreateCFDOrder;
+    shortOrder: IApplyCreateCFDOrder;
   } => {
     const share = {
       ticker: marketCtx.selectedTicker?.currency ?? '',
@@ -524,8 +526,10 @@ const TradeTabMobile = () => {
       liquidationTime: Math.ceil(Date.now() / 1000) + 86400,
     };
 
-    const longOrder: IApplyCreateCFDOrderData = {
+    const longOrder: IApplyCreateCFDOrder = {
       ...share,
+      orderType: OrderType.CFD,
+      operation: CFDOperation.CREATE,
       price: longQuotationRef.current.price,
       typeOfPosition: TypeOfPosition.BUY,
       quotation: longQuotationRef.current,
@@ -538,8 +542,10 @@ const TradeTabMobile = () => {
       stopLoss: longSlToggle ? longSlValue : undefined,
     };
 
-    const shortOrder: IApplyCreateCFDOrderData = {
+    const shortOrder: IApplyCreateCFDOrder = {
       ...share,
+      orderType: OrderType.CFD,
+      operation: CFDOperation.CREATE,
       typeOfPosition: TypeOfPosition.SELL,
       quotation: shortQuotationRef.current,
       price: shortQuotationRef.current.price,

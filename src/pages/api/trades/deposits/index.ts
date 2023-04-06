@@ -9,8 +9,14 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     res.status(200).json(acceptedDepositOrders);
   } else if (req.method === 'POST') {
     try {
+      const nodeSignature = '0x';
       // TODO: verify req.body.txHash (20230324 - tzuhan)
-      const acceptedDepositOrder = convertApplyDepositOrderToAcceptedDepositOrder(req.body.data);
+      const acceptedDepositOrder = convertApplyDepositOrderToAcceptedDepositOrder(
+        req.body.applyData,
+        req.body.balance,
+        req.body.txid,
+        nodeSignature
+      );
       acceptedDepositOrders = [...acceptedDepositOrders, acceptedDepositOrder];
       res.status(200).json(acceptedDepositOrder);
     } catch (error) {

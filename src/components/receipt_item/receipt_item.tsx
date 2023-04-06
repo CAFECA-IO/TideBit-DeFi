@@ -4,19 +4,19 @@ import smallConnectingAnimation from '../../../public/animation/lf30_editor_cnkx
 import Image from 'next/image';
 import {UserContext} from '../../contexts/user_context';
 import {GlobalContext} from '../../contexts/global_context';
-import {timestampToString, toDisplayAcceptedDepositOrder} from '../../lib/common';
+import {timestampToString} from '../../lib/common';
 import {OrderType} from '../../constants/order_type';
 import {OrderState} from '../../constants/order_state';
 import {OrderStatusUnion} from '../../constants/order_status_union';
-import {IOrder} from '../../interfaces/tidebit_defi_background/order';
 import {UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
 import {useTranslation} from 'next-i18next';
+import {IAcceptedOrder} from '../../interfaces/tidebit_defi_background/accepted_order';
 import {IAcceptedDepositOrder} from '../../interfaces/tidebit_defi_background/accepted_deposit_order';
-import {IAcceptedWithdrawOrder} from '../../interfaces/tidebit_defi_background/accepted_withdraw_order';
+import {ICFDOrderSnapshot} from '../../interfaces/tidebit_defi_background/order_snapshot';
 
 type TranslateFunction = (s: string) => string;
 interface IReceiptItemProps {
-  histories: IOrder;
+  histories: IAcceptedOrder;
 }
 
 const ReceiptItem = (histories: IReceiptItemProps) => {
@@ -25,8 +25,15 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
   const userCtx = useContext(UserContext);
   const globalCtx = useContext(GlobalContext);
 
-  const {timestamp, type, orderSnapshot, targetAmount, targetAsset, balanceSnapshot} =
-    histories.histories;
+  const {
+    createTimestamp,
+    orderStatus,
+    orderType,
+    orderSnapshot,
+    targetAmount,
+    targetAsset,
+    balanceSnapshot,
+  } = histories.histories;
 
   const getCFDData = userCtx.getCFD(orderSnapshot.id);
 
@@ -50,22 +57,22 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
     },
   };*/
 
-  const displayedDepositData = toDisplayAcceptedDepositOrder(histories.histories);
+  // const displayedDepositData = toDisplayAcceptedDepositOrder(histories.histories);
 
-  const receiptDate = timestampToString(timestamp ?? 0);
+  const receiptDate = timestampToString(createTimestamp ?? 0);
 
   const displayedButtonColor =
     targetAmount == 0 ? 'bg-lightGray' : targetAmount > 0 ? 'bg-lightGreen5' : 'bg-lightRed';
 
   const displayedReceiptType =
-    type === OrderType.DEPOSIT
+    orderType === OrderType.DEPOSIT
       ? t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_DEPOSIT')
-      : type === OrderType.WITHDRAW
+      : orderType === OrderType.WITHDRAW
       ? t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_WITHDRAW')
-      : type === OrderType.CFD
-      ? orderSnapshot.state === OrderState.OPENING
+      : orderType === OrderType.CFD
+      ? (orderSnapshot as ICFDOrderSnapshot).state === OrderState.OPENING
         ? t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_CFD_OPEN')
-        : orderSnapshot.state === OrderState.CLOSED
+        : (orderSnapshot as ICFDOrderSnapshot).state === OrderState.CLOSED
         ? t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_CFD_CLOSE')
         : t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_TITLE')
       : t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_TITLE');
@@ -73,7 +80,9 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
   const displayedButtonText = displayedReceiptType;
 
   const displayedButtonImage =
-    type === OrderType.DEPOSIT || orderSnapshot.state === OrderState.CLOSED
+    orderType === OrderType.DEPOSIT ||
+    (orderType === OrderType.CFD &&
+      (orderSnapshot as ICFDOrderSnapshot).state === OrderState.CLOSED)
       ? '/elements/group_149621.svg'
       : '/elements/group_14962.svg';
 
@@ -82,30 +91,30 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
   const displayedReceiptTxId = orderSnapshot.txid;
 
   const displayedReceiptStateColor =
-    orderSnapshot.status === OrderStatusUnion.SUCCESS
-      ? type === OrderType.CFD
+    orderStatus === OrderStatusUnion.SUCCESS
+      ? orderType === OrderType.CFD
         ? 'text-lightWhite'
         : 'text-tidebitTheme'
-      : orderSnapshot.status === OrderStatusUnion.PROCESSING
+      : orderStatus === OrderStatusUnion.PROCESSING
       ? 'text-lightGreen5'
-      : orderSnapshot.status === OrderStatusUnion.FAILED
+      : orderStatus === OrderStatusUnion.FAILED
       ? 'text-lightRed'
       : 'text-lightGray';
 
   const displayedReceiptState =
-    orderSnapshot.status === OrderStatusUnion.SUCCESS
-      ? type === OrderType.CFD
+    orderStatus === OrderStatusUnion.SUCCESS
+      ? orderType === OrderType.CFD
         ? `${displayedReceiptType}`
         : displayedReceiptTxId
-      : orderSnapshot.status === OrderStatusUnion.PROCESSING
+      : orderStatus === OrderStatusUnion.PROCESSING
       ? t('MY_ASSETS_PAGE.RECEIPT_SECTION_ORDER_STATUS_PROCESSING')
-      : orderSnapshot.status === OrderStatusUnion.FAILED
+      : orderStatus === OrderStatusUnion.FAILED
       ? t('MY_ASSETS_PAGE.RECEIPT_SECTION_ORDER_STATUS_FAILED')
       : '-';
 
   const buttonClickHandler =
-    type === OrderType.CFD
-      ? orderSnapshot.state === OrderState.OPENING
+    orderType === OrderType.CFD
+      ? (orderSnapshot as ICFDOrderSnapshot).state === OrderState.OPENING
         ? () => {
             /* ToDo: convert IAceptedOrder to IDataPositionUpdatedModal in order to use getCFD (20230324 - Luphia)
             globalCtx.dataPositionUpdatedModalHandler(getCFDData);
@@ -118,10 +127,10 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
              */
             globalCtx.visibleHistoryPositionModalHandler();
           }
-      : type === OrderType.DEPOSIT
+      : orderType === OrderType.DEPOSIT
       ? () => {
           /* Todo: (20230324 - Julian) deposit history modal */
-          globalCtx.dataDepositHistoryModalHandler(displayedDepositData);
+          globalCtx.dataDepositHistoryModalHandler(histories.histories as IAcceptedDepositOrder);
           globalCtx.visibleDepositHistoryModalHandler();
         }
       : () => {
@@ -132,8 +141,8 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
         };
 
   const displayedReceiptStateIcon =
-    orderSnapshot.status === OrderStatusUnion.PROCESSING ? null : type === OrderType.CFD ? (
-      orderSnapshot.status === OrderStatusUnion.FAILED ? (
+    orderStatus === OrderStatusUnion.PROCESSING ? null : orderType === OrderType.CFD ? (
+      orderStatus === OrderStatusUnion.FAILED ? (
         <Image src="/elements/detail_icon.svg" alt="" width={20} height={20} />
       ) : (
         <Image src="/elements/position_tab_icon.svg" alt="position_icon" width={25} height={25} />
@@ -150,7 +159,7 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
         });
 
   const displayedReceiptAvailableText =
-    orderSnapshot.status === OrderStatusUnion.PROCESSING ? (
+    orderStatus === OrderStatusUnion.PROCESSING ? (
       <Lottie className="w-20px" animationData={smallConnectingAnimation} />
     ) : (
       balanceSnapshot.available.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {

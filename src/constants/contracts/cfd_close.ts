@@ -17,7 +17,7 @@ const CFDOrderClose: IEIP712Data = {
   types: {
     // TODO: Clarify if EIP712Domain refers to the domain the contract is hosted on
     CloseCFDOrderData: [
-      {name: 'orderId', type: 'string'},
+      {name: 'referenceId', type: 'string'},
       {name: 'quotation', type: 'Quotation'},
       {name: 'closePrice', type: 'uint256'},
       {name: 'closeTimestamp', type: 'uint256'},
@@ -39,7 +39,7 @@ const CFDOrderClose: IEIP712Data = {
     - This is DApp Specific
     - Be as explicit as possible when building out the message schema.
     */
-    orderId: `TB202303020001ETH`,
+    referenceId: `TB202303020001ETH`,
     quotation: {
       ticker: 'ETH',
       targetAsset: 'ETH',

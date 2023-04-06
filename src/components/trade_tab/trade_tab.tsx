@@ -28,8 +28,9 @@ import {
   defaultResultFailed,
   defaultResultSuccess,
 } from '../../interfaces/tidebit_defi_background/result';
-import {IApplyCreateCFDOrderData} from '../../interfaces/tidebit_defi_background/apply_create_cfd_order_data';
+import {IApplyCreateCFDOrder} from '../../interfaces/tidebit_defi_background/apply_create_cfd_order_data';
 import {Code} from '../../constants/code';
+import {CFDOperation} from '../../constants/cfd_order_type';
 
 type TranslateFunction = (s: string) => string;
 
@@ -531,8 +532,8 @@ const TradeTab = () => {
   };
 
   const toApplyCreateOrder = (): {
-    longOrder: IApplyCreateCFDOrderData;
-    shortOrder: IApplyCreateCFDOrderData;
+    longOrder: IApplyCreateCFDOrder;
+    shortOrder: IApplyCreateCFDOrder;
   } => {
     const share = {
       ticker: marketCtx.selectedTicker?.currency ?? '',
@@ -547,8 +548,10 @@ const TradeTab = () => {
       liquidationTime: Math.ceil(Date.now() / 1000) + 86400,
     };
 
-    const longOrder: IApplyCreateCFDOrderData = {
+    const longOrder: IApplyCreateCFDOrder = {
       ...share,
+      orderType: OrderType.CFD,
+      operation: CFDOperation.CREATE,
       price: longQuotationRef.current.price,
       typeOfPosition: TypeOfPosition.BUY,
       quotation: longQuotationRef.current,
@@ -561,8 +564,10 @@ const TradeTab = () => {
       stopLoss: longSlToggle ? longSlValue : undefined,
     };
 
-    const shortOrder: IApplyCreateCFDOrderData = {
+    const shortOrder: IApplyCreateCFDOrder = {
       ...share,
+      orderType: OrderType.CFD,
+      operation: CFDOperation.CREATE,
       typeOfPosition: TypeOfPosition.SELL,
       quotation: shortQuotationRef.current,
       price: shortQuotationRef.current.price,

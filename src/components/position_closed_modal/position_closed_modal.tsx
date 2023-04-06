@@ -33,27 +33,30 @@ import {useCountdown} from '../../lib/hooks/use_countdown';
 import {useTranslation} from 'react-i18next';
 import {
   IDisplayAcceptedCFDOrder,
-  getDummyDisplayAcceptedCFDOrder,
+  // getDummyDisplayAcceptedCFDOrder,
 } from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
 import {
   IAcceptedCFDOrder,
-  getDummyAcceptedCFDOrder,
+  // getDummyAcceptedCFDOrder,
 } from '../../interfaces/tidebit_defi_background/accepted_cfd_order';
 import {
   IDisplayApplyCFDOrder,
   getDummyDisplayApplyCloseCFDOrder,
 } from '../../interfaces/tidebit_defi_background/display_apply_cfd_order';
 import {
-  IApplyCloseCFDOrderData,
-  getDummyApplyCloseCFDOrderData,
+  IApplyCloseCFDOrder,
+  // getDummyApplyCloseCFDOrderData,
 } from '../../interfaces/tidebit_defi_background/apply_close_cfd_order_data';
 import {IPnL} from '../../interfaces/tidebit_defi_background/pnl';
 import {ICFDSuggestion} from '../../interfaces/tidebit_defi_background/cfd_suggestion';
 import {IQuotation, getDummyQuotation} from '../../interfaces/tidebit_defi_background/quotation';
 import useStateRef from 'react-usestateref';
 import {OrderState} from '../../constants/order_state';
-import {ApplyCFDOrderData} from '../../interfaces/tidebit_defi_background/apply_cfd_order';
+import {IApplyCFDOrder} from '../../interfaces/tidebit_defi_background/apply_cfd_order';
 import {defaultResultSuccess} from '../../interfaces/tidebit_defi_background/result';
+import {CFDOperation} from '../../constants/cfd_order_type';
+import {OrderType} from '../../constants/order_type';
+import {CFDClosedType} from '../../constants/cfd_closed_type';
 
 type TranslateFunction = (s: string) => string;
 interface IPositionClosedModal {
@@ -79,11 +82,11 @@ const PositionClosedModal = ({
 
   // Info: dummy data (20230329 - Shirley)
   const quotation: IQuotation = {
-    ticker: openCfdDetails.ticker,
-    typeOfPosition: openCfdDetails.typeOfPosition,
+    ticker: openCfdDetails?.orderSnapshot?.ticker,
+    typeOfPosition: openCfdDetails?.orderSnapshot?.typeOfPosition,
     price: randomIntFromInterval(20, 29),
-    targetAsset: openCfdDetails.targetAsset,
-    unitAsset: openCfdDetails.unitAsset,
+    targetAsset: openCfdDetails?.orderSnapshot?.targetAsset,
+    unitAsset: openCfdDetails?.orderSnapshot?.unitAsset,
     deadline: getDeadline(POSITION_PRICE_RENEWAL_INTERVAL_SECONDS),
     signature: '0x',
   };
@@ -95,22 +98,24 @@ const PositionClosedModal = ({
   const [dataRenewedStyle, setDataRenewedStyle] = useState('text-lightWhite');
   const [pnlRenewedStyle, setPnlRenewedStyle] = useState('');
 
-  const displayedGuaranteedStopSetting = !!openCfdDetails.guaranteedStop ? 'Yes' : 'No';
+  const displayedGuaranteedStopSetting = !!openCfdDetails?.orderSnapshot?.guaranteedStop
+    ? 'Yes'
+    : 'No';
 
   const displayedPnLSymbol =
-    openCfdDetails.pnl.type === ProfitState.PROFIT
+    openCfdDetails?.pnl?.type === ProfitState.PROFIT
       ? '+'
-      : openCfdDetails.pnl.type === ProfitState.LOSS
+      : openCfdDetails?.pnl?.type === ProfitState.LOSS
       ? '-'
       : '';
 
   const displayedTypeOfPosition =
-    openCfdDetails?.typeOfPosition === TypeOfPosition.BUY
+    openCfdDetails?.orderSnapshot?.typeOfPosition === TypeOfPosition.BUY
       ? t('POSITION_MODAL.TYPE_UP')
       : t('POSITION_MODAL.TYPE_DOWN');
 
   const displayedBuyOrSell =
-    openCfdDetails?.typeOfPosition === TypeOfPosition.BUY
+    openCfdDetails?.orderSnapshot?.typeOfPosition === TypeOfPosition.BUY
       ? t('POSITION_MODAL.TYPE_BUY')
       : t('POSITION_MODAL.TYPE_SELL');
 
@@ -138,14 +143,16 @@ const PositionClosedModal = ({
     cfd: IDisplayAcceptedCFDOrder,
     quotation: IQuotation
   ): IDisplayAcceptedCFDOrder => {
-    const openValue = cfd.openPrice * cfd.amount;
-    const nowValue = quotation.price * cfd.amount;
+    const openValue = cfd.orderSnapshot.openPrice * cfd.orderSnapshot.amount;
+    const nowValue = quotation.price * cfd.orderSnapshot.amount;
     const pnlSoFar =
-      cfd.typeOfPosition === TypeOfPosition.BUY ? nowValue - openValue : openValue - nowValue;
+      cfd.orderSnapshot.typeOfPosition === TypeOfPosition.BUY
+        ? nowValue - openValue
+        : openValue - nowValue;
 
     return {
       ...cfd,
-      closePrice: quotation.price,
+      // closePrice: quotation.price,
       pnl: {
         type: pnlSoFar > 0 ? ProfitState.PROFIT : ProfitState.LOSS,
         value: Math.abs(pnlSoFar),
@@ -156,17 +163,20 @@ const PositionClosedModal = ({
   const toApplyCloseOrder = (
     order: IDisplayAcceptedCFDOrder,
     quotation: IQuotation
-  ): IApplyCloseCFDOrderData => {
-    if (order.state !== OrderState.OPENING) {
+  ): IApplyCloseCFDOrder => {
+    if (order.orderSnapshot.state !== OrderState.OPENING) {
       const error = new Error('Order is not opening');
       throw error;
     }
 
-    const request: IApplyCloseCFDOrderData = {
-      orderId: order.id,
+    const request: IApplyCloseCFDOrder = {
+      referenceId: order.id,
+      orderType: OrderType.CFD,
+      operation: CFDOperation.CLOSE,
       closePrice: quotation.price,
       quotation: quotation,
       closeTimestamp: getTimestamp(),
+      closedType: CFDClosedType.BY_USER, // TODO: veridy this (20230330 - tzuhan)
     };
 
     return request;
@@ -174,17 +184,17 @@ const PositionClosedModal = ({
 
   // TODO: (20230315 - Shirley) organize the data before history modal
   const toHistoryModal = (cfd: IAcceptedCFDOrder): IDisplayAcceptedCFDOrder => {
-    if (cfd.state !== OrderState.CLOSED || !cfd.closePrice) {
+    if (cfd.orderSnapshot.state !== OrderState.CLOSED || !cfd.orderSnapshot.closePrice) {
       const error = new Error('Order is not closed');
       throw error;
     }
 
     // TODO: replace `twoDecimal` with `toLocaleString` (20230325 - Shirley)
-    const openValue = twoDecimal(cfd.openPrice * cfd.amount);
-    const closeValue = twoDecimal(cfd.closePrice * cfd.amount);
+    const openValue = twoDecimal(cfd.orderSnapshot.openPrice * cfd.orderSnapshot.amount);
+    const closeValue = twoDecimal(cfd.orderSnapshot.closePrice * cfd.orderSnapshot.amount);
 
     const pnlValue =
-      cfd.typeOfPosition === TypeOfPosition.BUY
+      cfd.orderSnapshot.typeOfPosition === TypeOfPosition.BUY
         ? twoDecimal(closeValue - openValue)
         : twoDecimal(openValue - closeValue);
     const pnl: IPnL = {
@@ -196,11 +206,11 @@ const PositionClosedModal = ({
 
     const suggestion: ICFDSuggestion = {
       takeProfit:
-        cfd.typeOfPosition === TypeOfPosition.BUY
+        cfd.orderSnapshot.typeOfPosition === TypeOfPosition.BUY
           ? openValue * (1 + SUGGEST_TP)
           : openValue * (1 - SUGGEST_TP),
       stopLoss:
-        cfd.typeOfPosition === TypeOfPosition.BUY
+        cfd.orderSnapshot.typeOfPosition === TypeOfPosition.BUY
           ? openValue * (1 - SUGGEST_SL)
           : openValue * (1 + SUGGEST_SL),
     };
@@ -222,8 +232,8 @@ const PositionClosedModal = ({
 
     try {
       quotation = await marketCtx.getCFDQuotation(
-        openCfdDetails.ticker,
-        openCfdDetails.typeOfPosition
+        openCfdDetails?.orderSnapshot?.ticker,
+        openCfdDetails?.orderSnapshot?.typeOfPosition
       );
 
       const data = quotation.data as IQuotation;
@@ -235,7 +245,7 @@ const PositionClosedModal = ({
       // Info: if there's error fetching quotation, disable the submit btn (20230328 - Shirley)
       if (
         quotation.success &&
-        data.typeOfPosition === openCfdDetails.typeOfPosition &&
+        data.typeOfPosition === openCfdDetails?.orderSnapshot?.typeOfPosition &&
         quotation.data !== null
       ) {
         return data;
@@ -269,7 +279,7 @@ const PositionClosedModal = ({
     globalCtx.visibleLoadingModalHandler();
 
     try {
-      const applyCloseOrder: IApplyCloseCFDOrderData = toApplyCloseOrder(
+      const applyCloseOrder: IApplyCloseCFDOrder = toApplyCloseOrder(
         openCfdDetails,
         gQuotationRef.current
       );
@@ -443,7 +453,7 @@ const PositionClosedModal = ({
           height={30}
           alt="ticker icon"
         />
-        <div className="text-2xl">{openCfdDetails.ticker}</div>
+        <div className="text-2xl">{openCfdDetails?.orderSnapshot?.ticker}</div>
       </div>
 
       <div className="absolute top-90px right-6 flex items-center space-x-1 text-center">
@@ -467,9 +477,12 @@ const PositionClosedModal = ({
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">{t('POSITION_MODAL.OPEN_PRICE')}</div>
               <div className="">
-                {openCfdDetails.openPrice.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
-                  minimumFractionDigits: 2,
-                }) ?? 0}{' '}
+                {openCfdDetails?.orderSnapshot?.openPrice.toLocaleString(
+                  UNIVERSAL_NUMBER_FORMAT_LOCALE,
+                  {
+                    minimumFractionDigits: 2,
+                  }
+                ) ?? 0}{' '}
                 <span className="ml-1 text-lightGray">{unitAsset}</span>
               </div>
             </div>
@@ -477,10 +490,13 @@ const PositionClosedModal = ({
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">{t('POSITION_MODAL.AMOUNT')}</div>
               <div className="">
-                {openCfdDetails.amount.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
-                  minimumFractionDigits: 2,
-                })}{' '}
-                <span className="ml-1 text-lightGray">{openCfdDetails.ticker}</span>
+                {openCfdDetails?.orderSnapshot?.amount.toLocaleString(
+                  UNIVERSAL_NUMBER_FORMAT_LOCALE,
+                  {
+                    minimumFractionDigits: 2,
+                  }
+                )}{' '}
+                <span className="ml-1 text-lightGray">{openCfdDetails?.orderSnapshot?.ticker}</span>
               </div>
             </div>
 
@@ -499,7 +515,7 @@ const PositionClosedModal = ({
               <div className="text-lightGray">{t('POSITION_MODAL.PNL')}</div>
               <div className={`${pnlRenewedStyle} ${displayedPnLColor}`}>
                 {displayedPnLSymbol} ${' '}
-                {openCfdDetails.pnl.value.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+                {openCfdDetails?.pnl?.value.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
                   minimumFractionDigits: 2,
                 })}
               </div>

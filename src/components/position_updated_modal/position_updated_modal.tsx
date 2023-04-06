@@ -16,15 +16,17 @@ import {UserContext} from '../../contexts/user_context';
 import {useTranslation} from 'react-i18next';
 import {unitAsset} from '../../constants/config';
 import {IDisplayApplyCFDOrder} from '../../interfaces/tidebit_defi_background/display_apply_cfd_order';
-import {IApplyUpdateCFDOrderData} from '../../interfaces/tidebit_defi_background/apply_update_cfd_order_data';
+import {IApplyUpdateCFDOrder} from '../../interfaces/tidebit_defi_background/apply_update_cfd_order_data';
 import {IDisplayAcceptedCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
+import {CFDOperation} from '../../constants/cfd_order_type';
+import {OrderType} from '../../constants/order_type';
 
 type TranslateFunction = (s: string) => string;
 interface IPositionUpdatedModal {
   modalVisible: boolean;
   modalClickHandler: () => void;
   openCfdDetails: IDisplayAcceptedCFDOrder;
-  updatedProps?: IApplyUpdateCFDOrderData;
+  updatedProps?: IApplyUpdateCFDOrder;
 }
 
 const PositionUpdatedModal = ({
@@ -44,13 +46,15 @@ const PositionUpdatedModal = ({
   const [slTextStyle, setSlTextStyle] = useState('text-lightWhite');
   const [gtslTextStyle, setGtslTextStyle] = useState('text-lightWhite');
 
-  const toApplyUpdateOrder = (position: IDisplayAcceptedCFDOrder): IApplyUpdateCFDOrderData => {
+  const toApplyUpdateOrder = (position: IDisplayAcceptedCFDOrder): IApplyUpdateCFDOrder => {
     const gsl = marketCtx.guaranteedStopFeePercentage;
     const gslFee = updatedProps?.guaranteedStop
       ? Number((Number(gsl) * position.openValue).toFixed(2))
       : 0;
-    const request = {
-      orderId: position.id,
+    const request: IApplyUpdateCFDOrder = {
+      operation: CFDOperation.UPDATE,
+      orderType: OrderType.CFD,
+      referenceId: position.id,
       ...updatedProps,
       guaranteedStop: updatedProps?.guaranteedStop ?? false,
       guaranteedStopFee: gslFee,
@@ -136,17 +140,20 @@ const PositionUpdatedModal = ({
   const renewDataStyle = () => {
     if (updatedProps === undefined) return;
 
-    updatedProps.guaranteedStop && updatedProps.guaranteedStop !== openCfdDetails.guaranteedStop
+    updatedProps.guaranteedStop &&
+    updatedProps.guaranteedStop !== openCfdDetails?.orderSnapshot?.guaranteedStop
       ? setGtslTextStyle('text-lightYellow2')
       : setGtslTextStyle('text-lightWhite');
 
     //  && updatedProps.takeProfit !== openCfdDetails.takeProfit
-    updatedProps.takeProfit !== undefined && updatedProps.takeProfit !== openCfdDetails.takeProfit
+    updatedProps.takeProfit !== undefined &&
+    updatedProps.takeProfit !== openCfdDetails?.orderSnapshot?.takeProfit
       ? setTpTextStyle('text-lightYellow2')
       : setTpTextStyle('text-lightWhite');
 
     // && updatedProps.stopLoss !== openCfdDetails.stopLoss
-    updatedProps.stopLoss !== undefined && updatedProps.stopLoss !== openCfdDetails.stopLoss
+    updatedProps.stopLoss !== undefined &&
+    updatedProps.stopLoss !== openCfdDetails?.orderSnapshot?.stopLoss
       ? setSlTextStyle('text-lightYellow2')
       : setSlTextStyle('text-lightWhite');
   };
@@ -157,7 +164,7 @@ const PositionUpdatedModal = ({
 
   const displayedGuaranteedStopSetting = updatedProps?.guaranteedStop
     ? 'Yes'
-    : openCfdDetails.guaranteedStop
+    : openCfdDetails?.orderSnapshot?.guaranteedStop
     ? 'Yes'
     : 'No';
 
@@ -170,10 +177,13 @@ const PositionUpdatedModal = ({
             minimumFractionDigits: 2,
           })}`
         : undefined
-      : openCfdDetails.takeProfit
-      ? `$ ${openCfdDetails.takeProfit.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
-          minimumFractionDigits: 2,
-        })}`
+      : openCfdDetails?.orderSnapshot?.takeProfit
+      ? `$ ${openCfdDetails?.orderSnapshot?.takeProfit.toLocaleString(
+          UNIVERSAL_NUMBER_FORMAT_LOCALE,
+          {
+            minimumFractionDigits: 2,
+          }
+        )}`
       : '-';
 
   const displayedStopLoss =
@@ -185,19 +195,22 @@ const PositionUpdatedModal = ({
             minimumFractionDigits: 2,
           })}`
         : undefined
-      : openCfdDetails.stopLoss
-      ? `$ ${openCfdDetails.stopLoss.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
-          minimumFractionDigits: 2,
-        })}`
+      : openCfdDetails?.orderSnapshot?.stopLoss
+      ? `$ ${openCfdDetails?.orderSnapshot?.stopLoss.toLocaleString(
+          UNIVERSAL_NUMBER_FORMAT_LOCALE,
+          {
+            minimumFractionDigits: 2,
+          }
+        )}`
       : '-';
 
   const displayedTypeOfPosition =
-    openCfdDetails?.typeOfPosition === TypeOfPosition.BUY
+    openCfdDetails?.orderSnapshot?.typeOfPosition === TypeOfPosition.BUY
       ? t('POSITION_MODAL.TYPE_UP')
       : t('POSITION_MODAL.TYPE_DOWN');
 
   const displayedBuyOrSell =
-    openCfdDetails?.typeOfPosition === TypeOfPosition.BUY
+    openCfdDetails?.orderSnapshot?.typeOfPosition === TypeOfPosition.BUY
       ? t('POSITION_MODAL.TYPE_BUY')
       : t('POSITION_MODAL.TYPE_SELL');
 
@@ -218,7 +231,7 @@ const PositionUpdatedModal = ({
           height={30}
           alt="ticker icon"
         />
-        <div className="text-2xl">{openCfdDetails.ticker}</div>
+        <div className="text-2xl">{openCfdDetails?.orderSnapshot?.ticker}</div>
       </div>
 
       <div className="relative flex flex-col items-center pt-1">
@@ -240,9 +253,12 @@ const PositionUpdatedModal = ({
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">{t('POSITION_MODAL.OPEN_PRICE')}</div>
               <div className={``}>
-                {openCfdDetails?.openPrice?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
-                  minimumFractionDigits: 2,
-                }) ?? 0}{' '}
+                {openCfdDetails?.orderSnapshot?.openPrice?.toLocaleString(
+                  UNIVERSAL_NUMBER_FORMAT_LOCALE,
+                  {
+                    minimumFractionDigits: 2,
+                  }
+                ) ?? 0}{' '}
                 <span className="ml-1 text-lightGray">{unitAsset}</span>
                 {/* {openCfdDetails?.price?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0} USDT */}
               </div>

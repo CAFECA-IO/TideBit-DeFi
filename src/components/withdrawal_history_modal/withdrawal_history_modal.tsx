@@ -24,7 +24,7 @@ const WithdrawalHistoryModal = ({
 }: IWithdrawalHistoryModal) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
-  const {txid, createTimestamp, orderStatus, fee, targetAmount, targetAsset} =
+  const {orderSnapshot, createTimestamp, orderStatus, targetAmount, targetAsset} =
     getWithdrawalHistoryData;
 
   const displayedWithdrawalAsset = targetAsset;
@@ -34,9 +34,9 @@ const WithdrawalHistoryModal = ({
     minimumFractionDigits: 2,
   });
   const displayedWithdrawalFee =
-    fee === 0
+    orderSnapshot.fee === 0
       ? '-'
-      : fee.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+      : orderSnapshot.fee.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
           minimumFractionDigits: 2,
         });
 
@@ -71,7 +71,7 @@ const WithdrawalHistoryModal = ({
       <div className="text-lightRed">{t('D_W_MODAL.STATUS_FAILED')}</div>
     ) : (
       <div className="flex items-center text-tidebitTheme">
-        {txid}
+        {orderSnapshot.txid}
         <div className="ml-2">
           <Image src="/elements/detail_icon.svg" alt="" width={20} height={20} />
         </div>

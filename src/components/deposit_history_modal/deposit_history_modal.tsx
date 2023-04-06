@@ -4,16 +4,17 @@ import Lottie from 'lottie-react';
 import smallConnectingAnimation from '../../../public/animation/lf30_editor_cnkxmhy3.json';
 import {ImCross} from 'react-icons/im';
 import {OrderStatusUnion} from '../../constants/order_status_union';
-import {IDisplayAcceptedDepositOrder} from '../../interfaces/tidebit_defi_background/display_accepted_deposit_order';
+// import {IDisplayAcceptedDepositOrder} from '../../interfaces/tidebit_defi_background/display_accepted_deposit_order';
 import {UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
 import {timestampToString} from '../../lib/common';
 import {useTranslation} from 'react-i18next';
+import {IAcceptedDepositOrder} from '../../interfaces/tidebit_defi_background/accepted_deposit_order';
 
 type TranslateFunction = (s: string) => string;
 interface IDepositHistoryModal {
   modalVisible: boolean;
   modalClickHandler: () => void;
-  getDepositHistoryData: IDisplayAcceptedDepositOrder;
+  getDepositHistoryData: IAcceptedDepositOrder;
 }
 
 const DepositHistoryModal = ({
@@ -21,17 +22,9 @@ const DepositHistoryModal = ({
   modalClickHandler,
   getDepositHistoryData,
 }: IDepositHistoryModal) => {
+  const {orderSnapshot, createTimestamp, orderStatus, targetAsset, targetAmount, balanceSnapshot} =
+    getDepositHistoryData;
   const {t}: {t: TranslateFunction} = useTranslation('common');
-
-  const {
-    txid,
-    createTimestamp,
-    orderStatus,
-    fee,
-    targetAsset,
-    targetAmount,
-    balanceSnapshot /* available */,
-  } = getDepositHistoryData;
 
   const displayedDepositTime = timestampToString(createTimestamp);
   const displayedDepositType = t('D_W_MODAL.DEPOSIT');
@@ -40,9 +33,9 @@ const DepositHistoryModal = ({
     minimumFractionDigits: 2,
   });
   const displayedDepositFee =
-    fee === 0
+    orderSnapshot.fee === 0
       ? '-'
-      : fee.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+      : orderSnapshot.fee.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
           minimumFractionDigits: 2,
         });
 
@@ -76,7 +69,7 @@ const DepositHistoryModal = ({
       <div className="text-lightRed">{t('D_W_MODAL.STATUS_FAILED')}</div>
     ) : (
       <div className="flex items-center text-tidebitTheme">
-        {txid}
+        {orderSnapshot.txid}
         <div className="ml-2">
           <Image src="/elements/detail_icon.svg" alt="" width={20} height={20} />
         </div>

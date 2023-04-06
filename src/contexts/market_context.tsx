@@ -69,14 +69,23 @@ export interface IMarketContext {
   getCandlestickChartData: (tickerId: string) => Promise<IResult>; // x 100
   getCFDQuotation: (tickerId: string, typeOfPosition: ITypeOfPosition) => Promise<IResult>;
   getTickerHistory: (
-    tickerId: string,
+    ticker: string,
     options: {
       timespan?: ITimeSpanUnion;
       begin?: number;
       end?: number;
       limit?: number;
     }
-  ) => Promise<IResult>;
+  ) => IResult;
+  listTickerPositions: (
+    ticker: string,
+    options: {
+      timespan?: ITimeSpanUnion;
+      begin?: number;
+      end?: number;
+      limit?: number;
+    }
+  ) => number[];
 }
 // TODO: Note: _app.tsx 啟動的時候 => createContext
 export const MarketContext = createContext<IMarketContext>({
@@ -106,7 +115,12 @@ export const MarketContext = createContext<IMarketContext>({
   selectTickerHandler: () => Promise.resolve(defaultResultSuccess),
   getCandlestickChartData: () => Promise.resolve(defaultResultSuccess),
   getCFDQuotation: () => Promise.resolve(defaultResultSuccess),
-  getTickerHistory: () => Promise.resolve(defaultResultSuccess),
+  getTickerHistory: (): IResult => {
+    throw new Error('Function not implemented.');
+  },
+  listTickerPositions: (): number[] => {
+    throw new Error('Function not implemented.');
+  },
 });
 
 export const MarketProvider = ({children}: IMarketProvider) => {
@@ -267,8 +281,8 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     return result;
   };
 
-  const getTickerHistory = async (
-    tickerId: string,
+  const getTickerHistory = (
+    ticker: string,
     options: {
       timespan?: ITimeSpanUnion;
       begin?: number;
@@ -278,14 +292,31 @@ export const MarketProvider = ({children}: IMarketProvider) => {
   ) => {
     let result: IResult = defaultResultFailed;
     try {
-      // TODO: send request (Tzuhan - 20230317)
-      const tickerHistory: ITickerHistoryData[] = getDummyTickerHistoryData(tickerId, options);
+      const tickerHistory: ITickerHistoryData[] = tickerBook.getTickerHistory(ticker, options);
       result = defaultResultSuccess;
       result.data = tickerHistory;
     } catch (error) {
       result = defaultResultFailed;
     }
     return result;
+  };
+
+  const listTickerPositions = (
+    ticker: string,
+    options: {
+      timespan?: ITimeSpanUnion;
+      begin?: number;
+      end?: number;
+      limit?: number;
+    }
+  ) => {
+    let positions: number[] = [];
+    try {
+      positions = tickerBook.listTickerPositions(ticker, options);
+    } catch (error) {
+      // TODO: error handle (20230331 - tzuhan)
+    }
+    return positions;
   };
 
   const getGuaranteedStopFeePercentage = async () => {
@@ -504,6 +535,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     getCandlestickChartData,
     getCFDQuotation,
     getTickerHistory,
+    listTickerPositions,
     init,
   };
 

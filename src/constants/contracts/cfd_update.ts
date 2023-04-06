@@ -16,7 +16,7 @@ const CFDOrderUpdate: IEIP712Data = {
   types: {
     // Refer to PrimaryType
     UpdateCFDOrderData: [
-      {name: 'orderId', type: 'string'},
+      {name: 'referenceId', type: 'string'},
       {name: 'takeProfit', type: 'uint256'},
       {name: 'stopLoss', type: 'uint256'},
       {name: 'guaranteedStop', type: 'bool'},
@@ -31,7 +31,7 @@ const CFDOrderUpdate: IEIP712Data = {
     - This is DApp Specific
     - Be as explicit as possible when building out the message schema.
     */
-    orderId: `TB202303020001ETH`,
+    referenceId: `TB202303020001ETH`,
     takeProfit: 71232,
     stopLoss: 10992,
     guaranteedStop: true,

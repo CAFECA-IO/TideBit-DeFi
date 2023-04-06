@@ -1,23 +1,18 @@
 import React, {useContext} from 'react';
 import HistoryPositionItem from '../history_position_item/history_position_item';
 import {UserContext} from '../../contexts/user_context';
-import {IPnL} from '../../interfaces/tidebit_defi_background/pnl';
-import {ProfitState} from '../../constants/profit_state';
-import {TypeOfPosition} from '../../constants/type_of_position';
-import {ICFDSuggestion} from '../../interfaces/tidebit_defi_background/cfd_suggestion';
-import {twoDecimal} from '../../lib/common';
-import {IAcceptedCFDOrder} from '../../interfaces/tidebit_defi_background/accepted_cfd_order';
-import {IDisplayAcceptedCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
+import {toDisplayAcceptedCFDOrder} from '../../lib/common';
 
 const HistorySubTab = () => {
   const userCtx = useContext(UserContext);
 
+  /* Deprecated: replaced by `toDisplayAcceptedCFDOrder` (20230407 - tzuhan)
   const toHistoryPositionItems = (cfds: IAcceptedCFDOrder[]) => {
     const displayedHistoryPositionList: (IDisplayAcceptedCFDOrder | undefined)[] = cfds.map(cfd => {
-      if (!cfd.closePrice) return;
+      if (!cfd.orderSnapshot.closePrice) return;
 
-      const openValue = cfd.openPrice * cfd.amount;
-      const closeValue = cfd.closePrice * cfd.amount;
+      const openValue = cfd.orderSnapshot.openPrice * cfd.orderSnapshot.amount;
+      const closeValue = cfd.orderSnapshot.closePrice * cfd.orderSnapshot.amount;
 
       const positionLineGraph = [100, 100]; // TODO: (20230316 - Shirley) from `marketCtx`
       const suggestion: ICFDSuggestion = {
@@ -27,7 +22,9 @@ const HistorySubTab = () => {
       };
 
       const value =
-        cfd.typeOfPosition === TypeOfPosition.BUY ? closeValue - openValue : openValue - closeValue;
+        cfd.orderSnapshot.typeOfPosition === TypeOfPosition.BUY
+          ? closeValue - openValue
+          : openValue - closeValue;
 
       const pnl: IPnL = {
         type: value > 0 ? ProfitState.PROFIT : value < 0 ? ProfitState.LOSS : ProfitState.EQUAL,
@@ -39,11 +36,12 @@ const HistorySubTab = () => {
 
     return displayedHistoryPositionList;
   };
+  */
 
-  const historyPositionList = toHistoryPositionItems(userCtx.closedCFDs).map(cfd =>
+  const historyPositionList = userCtx.closedCFDs.map(cfd =>
     cfd ? (
       <div key={cfd.id}>
-        <HistoryPositionItem closedCfdDetails={cfd} />
+        <HistoryPositionItem closedCfdDetails={toDisplayAcceptedCFDOrder(cfd, [])} />
       </div>
     ) : null
   );

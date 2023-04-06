@@ -1,15 +1,15 @@
 import React from 'react';
-import {IOrder} from '../../interfaces/tidebit_defi_background/order';
 import ReceiptItem from '../receipt_item/receipt_item';
+import {IAcceptedOrder} from '../../interfaces/tidebit_defi_background/accepted_order';
 import {timestampToString} from '../../lib/common';
 interface IReceiptListProps {
   monthData: string;
-  filteredReceipts: IOrder[];
+  filteredReceipts: IAcceptedOrder[];
 }
 
 const ReceiptList = ({monthData, filteredReceipts}: IReceiptListProps) => {
   const historyList = filteredReceipts.map(history => {
-    const monthAndYear = timestampToString(history.timestamp).monthAndYear;
+    const monthAndYear = timestampToString(history.createTimestamp).monthAndYear;
 
     if (monthAndYear == monthData) {
       return (

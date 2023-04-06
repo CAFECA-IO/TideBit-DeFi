@@ -3,6 +3,7 @@ import {IOrderType, OrderType} from '../../constants/order_type';
 import {getTimestamp, randomHex} from '../../lib/common';
 import {IAcceptedWithdrawOrder} from './accepted_withdraw_order';
 import {IApplyOrder} from './apply_order';
+import {IBalance} from './balance';
 
 export interface IApplyWithdrawOrder extends IApplyOrder {
   orderType: IOrderType;
@@ -27,21 +28,38 @@ export const dummyWithdrawOrder: IApplyWithdrawOrder = {
 };
 
 export const convertApplyWithdrawOrderToAcceptedWithdrawOrder = (
-  applyWithdrawOrder: IApplyWithdrawOrder
+  applyWithdrawOrder: IApplyWithdrawOrder,
+  balance: IBalance,
+  userSignature: string,
+  nodeSignature: string
 ) => {
   const date = new Date();
-  const id = `CFD${date.getTime()}${applyWithdrawOrder.targetAsset}${Math.ceil(
+  const id = `${OrderType.WITHDRAW}${date.getTime()}${applyWithdrawOrder.targetAsset}${Math.ceil(
     Math.random() * 1000000000
   )}`;
   const txid = randomHex(32);
   const accpetedWithdrawOrder: IAcceptedWithdrawOrder = {
     ...applyWithdrawOrder,
     id,
-    txid,
     orderStatus: OrderStatusUnion.WAITING,
     createTimestamp: applyWithdrawOrder.createTimestamp
       ? applyWithdrawOrder.createTimestamp
       : getTimestamp(),
+    applyData: applyWithdrawOrder,
+    orderSnapshot: {...applyWithdrawOrder, txid, id},
+    userSignature: userSignature,
+    balanceDifferenceCauseByOrder: {
+      currency: applyWithdrawOrder.targetAsset,
+      available: -applyWithdrawOrder.targetAmount,
+      locked: applyWithdrawOrder.targetAmount,
+    },
+    balanceSnapshot: {
+      currency: applyWithdrawOrder.targetAsset,
+      available: balance.available - applyWithdrawOrder.targetAmount,
+      locked: balance.locked + applyWithdrawOrder.targetAmount,
+      createTimestamp: getTimestamp(),
+    },
+    nodeSignature: nodeSignature,
   };
   return accpetedWithdrawOrder;
 };

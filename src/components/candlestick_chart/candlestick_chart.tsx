@@ -188,6 +188,7 @@ const tuningTzCandlestickDataArray = (dataArray: CandlestickData[]) => {
   return result;
 };
 
+/*
 const generateRandomCandle = ({time, lastPrice = 1288}: {time?: Date; lastPrice?: number}) => {
   const rnd = Math.random() / 1.2;
   const ts = rnd > 0.25 ? 1 + rnd ** 5 : 1 - rnd;
@@ -214,6 +215,7 @@ const generateRandomCandle = ({time, lastPrice = 1288}: {time?: Date; lastPrice?
 
   return candle;
 };
+*/
 
 const toCandlestickData = (data: ICandlestickData): CandlestickData => {
   return {
@@ -264,6 +266,7 @@ export default function CandlestickChart({
     });
 
     // ToDo: data from market context (20230331 - Shirley)
+    /*
     const raw = getDummyCandlestickChartData(50, TimeSpanUnion._1s).map(d => ({
       time: (d.x.getTime() / 1000) as UTCTimestamp,
       open: d.y.open,
@@ -271,6 +274,8 @@ export default function CandlestickChart({
       low: d.y.low,
       close: d.y.close,
     })) as CandlestickData[];
+    */
+    const raw = marketCtx.candlestickChartData?.map(toCandlestickData) ?? [];
 
     const cleanedData = candlestickDataCleaning(raw);
 
@@ -297,6 +302,7 @@ export default function CandlestickChart({
 
       // Info: updateChart in period
       // ToDo: 只要有新的資料就更新，不用 setInterval (20230331 - Shirley)
+      /*
       const intervalId = setInterval(() => {
         try {
           const option = {
@@ -308,18 +314,18 @@ export default function CandlestickChart({
 
           const newCandle = toCandlestickData(newCandleRaw);
           const tunedNewCandle = tuningTzCandlestickData(newCandle) as CandlestickData;
-
           candlestickSeries.update(tunedNewCandle);
         } catch (err) {
           // ToDo: re render (20230331 - Shirley)
         }
       }, 200);
+      */
 
       window.addEventListener('resize', handleResize);
 
       return () => {
         window.removeEventListener('resize', handleResize);
-        clearInterval(intervalId);
+        // clearInterval(intervalId);
         chart.remove();
       };
     }

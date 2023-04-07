@@ -27,7 +27,11 @@ import {
   ITickerItem,
 } from '../interfaces/tidebit_defi_background/ticker_data';
 import {ITimeSpanUnion, TimeSpanUnion} from '../interfaces/tidebit_defi_background/time_span_union';
-import {ICandlestickData} from '../interfaces/tidebit_defi_background/candlestickData';
+import {
+  ICandlestickData,
+  getDummyCandlestickChartData,
+  updateDummyCandlestickChartData,
+} from '../interfaces/tidebit_defi_background/candlestickData';
 import {TideBitEvent} from '../constants/tidebit_event';
 import {NotificationContext} from './notification_context';
 import {WorkerContext} from './worker_context';
@@ -257,7 +261,28 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       tickerBook.updateCandlestick(tickerId, candlestickChartData);
       */
       // await listTradesData(tickerId);
-      setCandlestickChartData(tickerBook.listCandlestickData(tickerId, {}));
+      const raw = getDummyCandlestickChartData(50, TimeSpanUnion._1s);
+      // setCandlestickChartData(tickerBook.listCandlestickData(tickerId, {}));
+      setCandlestickChartData(raw);
+      // eslint-disable-next-line no-console
+      console.log('set data first time', candlestickChartDataRef.current);
+
+      const updatingInterval = setInterval(() => {
+        if (candlestickChartDataRef.current) {
+          const updated = updateDummyCandlestickChartData(
+            candlestickChartDataRef.current,
+            TimeSpanUnion._1s
+          );
+          setCandlestickChartData(updated);
+        } else {
+          const raw = getDummyCandlestickChartData(50, TimeSpanUnion._1s);
+          // setCandlestickChartData(tickerBook.listCandlestickData(tickerId, {}));
+          setCandlestickChartData(raw);
+        }
+      }, 200);
+
+      clearInterval(updatingInterval);
+
       result = defaultResultSuccess;
     } catch (error) {
       // Deprecate: error handle (Tzuhan - 20230321)
@@ -507,8 +532,25 @@ export const MarketProvider = ({children}: IMarketProvider) => {
         tickerBook.updateTrades(ticker, trades);
         const updateTickers = {...tickerBook.listTickers()};
         setAvailableTickers(updateTickers);
-        if (selectedTickerRef.current?.currency === ticker)
-          setCandlestickChartData([...tickerBook.listCandlestickData(ticker, {})]);
+        // if (selectedTickerRef.current?.currency === ticker) {
+        //   // setCandlestickChartData([...tickerBook.listCandlestickData(ticker, {})]);
+
+        //   // const raw = getDummyCandlestickChartData(50, TimeSpanUnion._1s);
+        //   // setCandlestickChartData(raw);
+        //   console.log('ref', candlestickChartDataRef.current);
+        //   console.log('candle state in ctx', candlestickChartData);
+        //   if (candlestickChartDataRef.current !== null) {
+        //     const updates = updateDummyCandlestickChartData(
+        //       candlestickChartDataRef?.current,
+        //       TimeSpanUnion._1s
+        //     );
+        //     setCandlestickChartData(updates);
+        //   } else {
+        //     const raw = getDummyCandlestickChartData(50, TimeSpanUnion._1s);
+        //     setCandlestickChartData(raw);
+        //     updateDummyCandlestickChartData(raw, TimeSpanUnion._1s);
+        //   }
+        // }
       }),
     []
   );

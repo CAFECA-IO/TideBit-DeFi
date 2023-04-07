@@ -46,6 +46,7 @@ import {
 import {
   ICandlestickData,
   getDummyCandlestickChartData,
+  updateDummyCandlestickChartData,
 } from '../../interfaces/tidebit_defi_background/candlestickData';
 import useStateRef from 'react-usestateref';
 import {AppContext} from '../../contexts/app_context';
@@ -227,6 +228,18 @@ const toCandlestickData = (data: ICandlestickData): CandlestickData => {
   };
 };
 
+const toICandlestickData = (data: CandlestickData): ICandlestickData => {
+  return {
+    x: new Date((data.time as number) * 1000),
+    y: {
+      open: data.open,
+      high: data.high,
+      low: data.low,
+      close: data.close,
+    },
+  };
+};
+
 // ToDo: 從外面傳進來的參數: 1.timespan 2.style of chart
 export default function CandlestickChart({
   strokeColor,
@@ -241,6 +254,8 @@ export default function CandlestickChart({
   const appCtx = useContext(AppContext);
   const globalCtx = useContext(GlobalContext);
   const userCtx = useContext(UserContext);
+
+  const [mounted, setMounted] = useState(false);
 
   const width =
     globalCtx.layoutAssertion === 'desktop'
@@ -299,7 +314,9 @@ export default function CandlestickChart({
     if (chartContainerRef.current) {
       // Info: Draw
       const tuned = fetchCandlestickData();
-      // console.log('new', tuned);
+      // eslint-disable-next-line no-console
+      console.log('new', JSON.parse(JSON.stringify(tuned)));
+
       chart = createChart(chartContainerRef.current, chartOptions);
 
       candlestickSeries = chart.addCandlestickSeries({

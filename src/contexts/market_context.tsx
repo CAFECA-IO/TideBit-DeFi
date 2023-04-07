@@ -44,6 +44,7 @@ import {
   ITickerHistoryData,
 } from '../interfaces/tidebit_defi_background/ticker_history_data';
 import {ITypeOfPosition} from '../constants/type_of_position';
+import {getTimestamp} from '../lib/common';
 
 export interface IMarketProvider {
   children: React.ReactNode;
@@ -279,9 +280,11 @@ export const MarketProvider = ({children}: IMarketProvider) => {
           // setCandlestickChartData(tickerBook.listCandlestickData(tickerId, {}));
           setCandlestickChartData(raw);
         }
+        // eslint-disable-next-line no-console
+        console.log('in interval', getTimestamp());
       }, 200);
 
-      clearInterval(updatingInterval);
+      // clearInterval(updatingInterval);
 
       result = defaultResultSuccess;
     } catch (error) {

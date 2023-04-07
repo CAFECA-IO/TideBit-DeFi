@@ -252,14 +252,14 @@ export const formatAPIRequest = (data: TypeRequest) => {
         ? {
             headers: {
               'Content-Type': 'application/json',
-              'Cookie': 'document.cookie',
+              'Cookie': document.cookie,
               ...data.headers,
             },
           }
         : {
             headers: {
               'Content-Type': 'application/json',
-              'Cookie': 'document.cookie',
+              'Cookie': document.cookie,
             },
           },
     },

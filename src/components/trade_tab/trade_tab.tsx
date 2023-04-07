@@ -11,6 +11,8 @@ import {
   SUGGEST_TP,
   SUGGEST_SL,
   LIQUIDATION_FIVE_LEVERAGE,
+  DISPLAY_QUOTATION_RENEWAL_INTERVAL_SECONDS,
+  WAITING_TIME_FOR_USER_SIGNING,
 } from '../../constants/config';
 import {useGlobal} from '../../contexts/global_context';
 import {MarketContext} from '../../contexts/market_context';
@@ -62,7 +64,7 @@ const TradeTab = () => {
   const defaultSellQuotation: IQuotation = getDummyQuotation(ticker, TypeOfPosition.SELL);
 
   const [secondsLeft, setSecondsLeft, secondsLeftRef] = useStateRef(
-    QUOTATION_RENEWAL_INTERVAL_SECONDS
+    DISPLAY_QUOTATION_RENEWAL_INTERVAL_SECONDS
   );
   const [longQuotation, setLongQuotation, longQuotationRef] =
     useStateRef<IQuotation>(defaultBuyQuotation);
@@ -203,17 +205,23 @@ const TradeTab = () => {
     const intervalId = setInterval(async () => {
       if (!longQuotationRef.current || !shortQuotationRef.current) return;
 
-      const base = longQuotationRef.current.deadline;
+      const base = longQuotationRef.current.deadline - WAITING_TIME_FOR_USER_SIGNING;
 
-      const diff = base - getTimestamp();
-      const tickingSec = diff > 0 ? Math.floor(diff) : 0;
-      setSecondsLeft(tickingSec);
+      const tickingSec = base - getTimestamp();
+      // const tickingSec = diff > 0 ? Math.round(diff) : 0;
+      setSecondsLeft(tickingSec > 0 ? Math.round(tickingSec) : 0);
+      // ToDo: FIXME: countdown is inconsistent with position open modal (20230407 - Shirley)
+      // eslint-disable-next-line no-console
+      console.log(
+        'tab, displayed deadline:',
+        base
+        //   'left sec state',
+        //   secondsLeft,
+        //   'left sec Ref',
+        //   secondsLeftRef.current
+      );
 
-      if (tickingSec === 0) {
-        const {longQuotation, shortQuotation} = await getQuotation(
-          marketCtx.selectedTicker?.currency ?? DEFAULT_TICKER
-        );
-
+      if (secondsLeftRef.current === 0) {
         renewPosition();
 
         // Deprecated: before merging into develop (20230327 - Shirley)
@@ -424,7 +432,17 @@ const TradeTab = () => {
   };
 
   // Info: renew the value of position when target input changed (20230328 - Shirley)
-  const renewPosition = () => {
+  const renewPosition = async () => {
+    const {longQuotation, shortQuotation} = await getQuotation(
+      marketCtx.selectedTicker?.currency ?? DEFAULT_TICKER
+    );
+
+    const longInfo = longQuotation.data as IQuotation;
+
+    const newDeadline = longInfo.deadline - WAITING_TIME_FOR_USER_SIGNING;
+    const rounded = Math.round(newDeadline - getTimestamp());
+    setSecondsLeft(rounded);
+
     // Long
     const newLongValue = targetInputValueRef.current * Number(longQuotationRef.current?.price);
 
@@ -471,6 +489,19 @@ const TradeTab = () => {
       (shortSlValue - Number(shortQuotationRef.current?.price)) * targetInputValueRef.current
     );
     setGuaranteedStopFeeShort(Number(gsl) * valueOfPositionShortRef.current);
+
+    // // Countdown
+    // const newDeadline = longQuotationRef.current.deadline - WAITING_TIME_FOR_USER_SIGNING;
+    // const rounded = Math.round(newDeadline - getTimestamp());
+    // setSecondsLeft(rounded);
+
+    // console.log(
+    //   'renew function',
+    //   'tab, [renew] displayed timestamp:',
+    //   newDeadline,
+    //   'left sec',
+    //   secondsLeftRef.current
+    // );
   };
 
   const targetAmountDetection = (value?: number) => {

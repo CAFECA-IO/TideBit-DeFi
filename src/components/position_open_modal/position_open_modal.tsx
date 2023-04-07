@@ -254,11 +254,22 @@ const PositionOpenModal = ({
   }, [globalCtx.visiblePositionOpenModal]);
 
   useEffect(() => {
+    if (!userCtx.enableServiceTerm) return;
     const intervalId = setInterval(() => {
       const base = openCfdRequest.quotation.deadline - WAITING_TIME_FOR_USER_SIGNING;
       const tickingSec = base - getTimestamp();
 
       setSecondsLeft(tickingSec > 0 ? Math.round(tickingSec) : 0);
+      // ToDo: FIXME: countdown is inconsistent with position open modal (20230407 - Shirley)
+      // eslint-disable-next-line no-console
+      console.log(
+        'open, displayed deadline:',
+        base
+        // 'left sec state',
+        // secondsLeft,
+        // 'left sec Ref',
+        // secondsLeftRef.current
+      );
 
       if (secondsLeft === 0) {
         renewDataHandler();
@@ -396,7 +407,7 @@ const PositionOpenModal = ({
 
   const isDisplayedModal = modalVisible ? (
     <>
-      <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">
+      <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-none focus:outline-none">
         {/* The position of the modal */}
         <div className="relative mx-auto my-6 w-auto max-w-xl">
           {' '}

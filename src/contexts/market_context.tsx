@@ -265,8 +265,6 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       const raw = getDummyCandlestickChartData(50, TimeSpanUnion._1s);
       // setCandlestickChartData(tickerBook.listCandlestickData(tickerId, {}));
       setCandlestickChartData(raw);
-      // eslint-disable-next-line no-console
-      console.log('set data first time', candlestickChartDataRef.current);
 
       const updatingInterval = setInterval(() => {
         if (candlestickChartDataRef.current) {
@@ -280,9 +278,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
           // setCandlestickChartData(tickerBook.listCandlestickData(tickerId, {}));
           setCandlestickChartData(raw);
         }
-        // eslint-disable-next-line no-console
-        console.log('in interval', getTimestamp());
-      }, 200);
+      }, 1000);
 
       // clearInterval(updatingInterval);
 

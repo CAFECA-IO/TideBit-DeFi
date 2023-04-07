@@ -314,8 +314,8 @@ export default function CandlestickChart({
     if (chartContainerRef.current) {
       // Info: Draw
       const tuned = fetchCandlestickData();
-      // eslint-disable-next-line no-console
-      console.log('new', JSON.parse(JSON.stringify(tuned)));
+      // // eslint-disable-next-line no-console
+      // console.log('new', JSON.parse(JSON.stringify(tuned)));
 
       chart = createChart(chartContainerRef.current, chartOptions);
 

@@ -18,6 +18,7 @@ import {
   SUGGEST_SL,
   SUGGEST_TP,
   LIQUIDATION_FIVE_LEVERAGE,
+  WAITING_TIME_FOR_USER_SIGNING,
 } from '../../constants/config';
 import {ClickEvent} from '../../constants/tidebit_event';
 import {useTranslation} from 'next-i18next';
@@ -204,13 +205,23 @@ const TradeTabMobile = () => {
     const intervalId = setInterval(async () => {
       if (!longQuotationRef.current || !shortQuotationRef.current) return;
 
-      const base = longQuotationRef.current.deadline;
+      const base = longQuotationRef.current.deadline - WAITING_TIME_FOR_USER_SIGNING;
 
-      const diff = base - getTimestamp();
-      const tickingSec = diff > 0 ? Math.floor(diff) : 0;
+      const tickingSec = base - getTimestamp();
+      // const tickingSec = tickingSec > 0 ? Math.floor(tickingSec) : 0;
       setSecondsLeft(tickingSec);
+      // ToDo: FIXME: countdown is inconsistent with position open modal (20230407 - Shirley)
+      // eslint-disable-next-line no-console
+      console.log(
+        'tab mobile, displayed deadline:',
+        base
+        //   'left sec state',
+        //   secondsLeft,
+        //   'left sec Ref',
+        //   secondsLeftRef.current
+      );
 
-      if (tickingSec === 0) {
+      if (secondsLeftRef.current === 0) {
         const {longQuotation, shortQuotation} = await getQuotation(
           marketCtx.selectedTicker?.currency ?? DEFAULT_TICKER
         );

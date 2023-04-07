@@ -32,9 +32,16 @@ import {IAcceptedDepositOrder} from '../interfaces/tidebit_defi_background/accep
 import {APIName, Method} from '../constants/api_request';
 import SafeMath from '../lib/safe_math';
 import {Code, Reason} from '../constants/code';
-import {randomHex} from '../lib/common';
+import {
+  getServiceTermContract,
+  randomHex,
+  rlpDecodeServiceTerm,
+  rlpEncodeServiceTerm,
+  verifySignedServiceTerm,
+} from '../lib/common';
 import {IAcceptedOrder} from '../interfaces/tidebit_defi_background/accepted_order';
 import {OrderType} from '../constants/order_type';
+import {verify} from 'crypto';
 
 export interface IUserBalance {
   available: number;
@@ -244,6 +251,7 @@ export const UserProvider = ({children}: IUserProvider) => {
   const [selectedTicker, setSelectedTicker, selectedTickerRef] = useState<ITickerData | null>(null);
 
   const setPrivateData = async (walletAddress: string) => {
+    setEnableServiceTerm(true);
     setWallet(walletAddress);
     setWalletBalances([dummyWalletBalance_BTC, dummyWalletBalance_ETH, dummyWalletBalance_USDT]);
     // TODO: getUser and User balance from backend (20230324 - tzuhan)
@@ -449,6 +457,8 @@ export const UserProvider = ({children}: IUserProvider) => {
     try {
       const connect = await lunar.connect({});
       if (connect && lunar.isConnected) {
+        const isDeWTLegit = checkDeWT();
+        if (isDeWTLegit) await setPrivateData(lunar.address);
         result = {
           success: true,
           code: Code.SUCCESS,
@@ -460,15 +470,51 @@ export const UserProvider = ({children}: IUserProvider) => {
     return result;
   };
 
+  const getCookieByName = (name: string): string | undefined => {
+    const cookieValue = document.cookie
+      .split('; ')
+      .find(row => row.startsWith(`${name}=`))
+      ?.split('=')[1];
+    return cookieValue;
+  };
+
+  const checkDeWT = (): boolean => {
+    let isDeWTLegit = false;
+    const deWT = getCookieByName('DeWT');
+    if (!!deWT) {
+      const tmp = deWT.split('.');
+      const encodedData = tmp[0];
+      const signature = tmp[1];
+      isDeWTLegit = verifySignedServiceTerm(encodedData);
+      // eslint-disable-next-line no-console
+      console.log(`isDeWTLegit`, isDeWTLegit);
+      // 5. verify signature
+      // TODO: verify signature (Tzuhan - 20230407)
+    }
+    if (!isDeWTLegit) {
+      setDeWT('');
+      clearPrivateData();
+    }
+    return isDeWTLegit;
+  };
+
+  const setDeWT = (deWT: string) => {
+    document.cookie = `DeWT=${deWT}`;
+  };
+
   const signServiceTerm = async (): Promise<IResult> => {
     let eip712signature: string,
       result: IResult = defaultResultFailed;
     if (lunar.isConnected) {
-      eip712signature = await lunar.signTypedData(ServiceTerm);
+      const serviceTermContract = getServiceTermContract(lunar.address);
+      const encodedData = rlpEncodeServiceTerm(serviceTermContract);
+      rlpDecodeServiceTerm(encodedData);
+      eip712signature = await lunar.signTypedData(serviceTermContract);
       const verifyR: boolean = lunar.verifyTypedData(ServiceTerm, eip712signature);
       if (verifyR) {
+        const deWT = `${encodedData}.${eip712signature}`;
+        setDeWT(deWT);
         // ++ TODO to checksum address
-        setEnableServiceTerm(true);
         await setPrivateData(lunar.address);
         result = {
           success: true,
@@ -918,6 +964,10 @@ export const UserProvider = ({children}: IUserProvider) => {
   );
 
   const init = async () => {
+    const isDeWTLegit = checkDeWT();
+    // eslint-disable-next-line no-console
+    console.log(`lunar.isConnected: ${lunar.isConnected}`);
+    if (isDeWTLegit && lunar.isConnected) await setPrivateData(lunar.address);
     return await Promise.resolve();
   };
 

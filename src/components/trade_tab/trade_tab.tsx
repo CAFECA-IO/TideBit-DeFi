@@ -222,6 +222,16 @@ const TradeTab = () => {
       );
 
       if (secondsLeftRef.current === 0) {
+        const {longQuotation, shortQuotation} = await getQuotation(
+          marketCtx.selectedTicker?.currency ?? DEFAULT_TICKER
+        );
+
+        const longInfo = longQuotation.data as IQuotation;
+
+        const newDeadline = longInfo.deadline - WAITING_TIME_FOR_USER_SIGNING;
+        const rounded = Math.round(newDeadline - getTimestamp());
+        setSecondsLeft(rounded);
+
         renewPosition();
 
         // Deprecated: before merging into develop (20230327 - Shirley)
@@ -433,16 +443,6 @@ const TradeTab = () => {
 
   // Info: renew the value of position when target input changed (20230328 - Shirley)
   const renewPosition = async () => {
-    const {longQuotation, shortQuotation} = await getQuotation(
-      marketCtx.selectedTicker?.currency ?? DEFAULT_TICKER
-    );
-
-    const longInfo = longQuotation.data as IQuotation;
-
-    const newDeadline = longInfo.deadline - WAITING_TIME_FOR_USER_SIGNING;
-    const rounded = Math.round(newDeadline - getTimestamp());
-    setSecondsLeft(rounded);
-
     // Long
     const newLongValue = targetInputValueRef.current * Number(longQuotationRef.current?.price);
 

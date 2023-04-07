@@ -486,10 +486,14 @@ export const UserProvider = ({children}: IUserProvider) => {
       const encodedData = tmp[0];
       const signature = tmp[1];
       isDeWTLegit = verifySignedServiceTerm(encodedData);
+      // 5. verify signature recreate serviceTermContract
+      /** TODO: verify signature (Tzuhan - 20230407)
+      // const serviceTermContract = getServiceTermContract(lunar.address);
+      // const verifyR: boolean = lunar.verifyTypedData(serviceTermContract, signature);
+      // isDeWTLegit = isDeWTLegit && verifyR;
+       */
       // eslint-disable-next-line no-console
       console.log(`isDeWTLegit`, isDeWTLegit);
-      // 5. verify signature
-      // TODO: verify signature (Tzuhan - 20230407)
     }
     if (!isDeWTLegit) {
       setDeWT('');
@@ -510,7 +514,7 @@ export const UserProvider = ({children}: IUserProvider) => {
       const encodedData = rlpEncodeServiceTerm(serviceTermContract);
       rlpDecodeServiceTerm(encodedData);
       eip712signature = await lunar.signTypedData(serviceTermContract);
-      const verifyR: boolean = lunar.verifyTypedData(ServiceTerm, eip712signature);
+      const verifyR: boolean = lunar.verifyTypedData(serviceTermContract, eip712signature);
       if (verifyR) {
         const deWT = `${encodedData}.${eip712signature}`;
         setDeWT(deWT);

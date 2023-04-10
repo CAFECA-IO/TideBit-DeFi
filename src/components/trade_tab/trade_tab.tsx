@@ -71,7 +71,7 @@ const TradeTab = () => {
   const [shortQuotation, setShortQuotation, shortQuotationRef] =
     useStateRef<IQuotation>(defaultSellQuotation);
 
-  // Till: (20230410 - Shirley)
+  // Till: (20230424 - Shirley)
   // const buyPrice = longQuotationRef.current?.price ?? TEMP_PLACEHOLDER; // market price * (1+spread)
   // const sellPrice = shortQuotationRef.current?.price ?? TEMP_PLACEHOLDER; // market price * (1-spread)
   // const longRecommendedTp = Number(
@@ -186,10 +186,6 @@ const TradeTab = () => {
 
       initSuggestion();
     })();
-
-    // Deprecated: before merging into develop (20230327 - Shirley)
-    // eslint-disable-next-line no-console
-    console.log('first time Effect', longQuotationRef.current, shortQuotationRef.current);
   }, [userCtx.enableServiceTerm]);
 
   // Info: Fetch quotation in period (20230327 - Shirley)
@@ -201,33 +197,10 @@ const TradeTab = () => {
       const tickingSec = (base * 1000 - getTimestampInMilliseconds()) / 1000;
       setSecondsLeft(tickingSec > 0 ? Math.round(tickingSec) : 0);
 
-      // ToDo: FIXME: countdown is inconsistent with position open modal (20230407 - Shirley)
-      // eslint-disable-next-line no-console
-      console.log(
-        'tab, displayed deadline [ref]:',
-        JSON.parse(JSON.stringify(base)),
-        'now:',
-        JSON.parse(JSON.stringify(getTimestamp())),
-        'left in sec:',
-        JSON.parse(JSON.stringify(secondsLeftRef.current)),
-        'actual deadline:',
-        JSON.parse(JSON.stringify(longQuotationRef.current.deadline))
-      );
-
       if (secondsLeftRef.current === 0) {
         await getQuotation(marketCtx.selectedTicker?.currency ?? DEFAULT_TICKER);
 
         renewPosition();
-
-        const nowMs = getTimestampInMilliseconds();
-        const nowS = Math.round(nowMs / 1000);
-        // ToDo: FIXME: countdown is inconsistent with position open modal (20230407 - Shirley)
-        // eslint-disable-next-line no-console
-        console.log('get quotation at sec:', nowS, 'ms:', nowMs);
-
-        // Deprecated: before merging into develop (20230327 - Shirley)
-        // eslint-disable-next-line no-console
-        console.log('countdown Effect', longQuotationRef.current, shortQuotationRef.current);
       }
     }, 1000);
 
@@ -242,14 +215,6 @@ const TradeTab = () => {
       await getQuotation(marketCtx.selectedTicker?.currency ?? DEFAULT_TICKER);
 
       renewPosition();
-
-      // Deprecated: before merging into develop (20230327 - Shirley)
-      // eslint-disable-next-line no-console
-      console.log(
-        'when ticker changed Effect',
-        longQuotationRef.current,
-        shortQuotationRef.current
-      );
     });
 
     return () => {
@@ -291,9 +256,6 @@ const TradeTab = () => {
         };
 
         setLongQuotation(buyQuotation);
-        // Deprecated: before merging into develop (20230327 - Shirley)
-        // eslint-disable-next-line no-console
-        console.log('calculate, long', longQuotationRef.current);
       }
 
       // Info: if there's error fetching quotation, use the previous quotation or calculate the quotation (20230327 - Shirley)
@@ -320,9 +282,6 @@ const TradeTab = () => {
         };
 
         setShortQuotation(sellQuotation);
-        // Deprecated: before merging into develop (20230327 - Shirley)
-        // eslint-disable-next-line no-console
-        console.log('calculate, short', shortQuotationRef.current);
       }
     } catch (err) {
       const buyPrice =

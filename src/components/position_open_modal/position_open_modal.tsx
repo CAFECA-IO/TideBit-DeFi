@@ -205,11 +205,6 @@ const PositionOpenModal = ({
 
     if (!newQuotation) return;
 
-    // Info: if it's comments, it couldn't renew the quotation
-    const base = newQuotation.deadline - WAITING_TIME_FOR_USER_SIGNING;
-    const tickingSec = (base * 1000 - getTimestampInMilliseconds()) / 1000;
-    setSecondsLeft(tickingSec > 0 ? Math.round(tickingSec) : 0);
-
     const newPrice = newQuotation.price;
 
     const newMargin = (Number(newQuotation.price) * Number(openCfdRequest.amount)) / 5;
@@ -249,7 +244,6 @@ const PositionOpenModal = ({
     }
 
     const base = openCfdRequest.quotation.deadline - WAITING_TIME_FOR_USER_SIGNING;
-    // const tickingSec = base - getTimestamp();
     const tickingSec = (base * 1000 - getTimestampInMilliseconds()) / 1000;
     setSecondsLeft(tickingSec > 0 ? Math.round(tickingSec) : 0);
   }, [globalCtx.visiblePositionOpenModal]);
@@ -261,27 +255,8 @@ const PositionOpenModal = ({
       const tickingSec = (base * 1000 - getTimestampInMilliseconds()) / 1000;
       setSecondsLeft(tickingSec > 0 ? Math.round(tickingSec) : 0);
 
-      // ToDo: FIXME: countdown is inconsistent with position open modal (20230407 - Shirley)
-      // eslint-disable-next-line no-console
-      console.log(
-        'open, displayed deadline [ref1]:',
-        JSON.parse(JSON.stringify(base)),
-        'now:',
-        JSON.parse(JSON.stringify(getTimestamp())),
-        'left in sec:',
-        JSON.parse(JSON.stringify(secondsLeftRef.current)),
-        'actual deadline:',
-        JSON.parse(JSON.stringify(openCfdRequest.quotation.deadline))
-      );
-
       if (secondsLeft === 0) {
         renewDataHandler();
-
-        const nowMs = getTimestampInMilliseconds();
-        const nowS = Math.round(nowMs / 1000);
-        // ToDo: FIXME: countdown is inconsistent with position open modal (20230407 - Shirley)
-        // eslint-disable-next-line no-console
-        console.log('get quotation at sec:', nowS, 'ms:', nowMs);
       }
     }, 1000);
 

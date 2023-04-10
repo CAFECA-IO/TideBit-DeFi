@@ -506,14 +506,14 @@ export const UserProvider = ({children}: IUserProvider) => {
         ...serviceTermContractTemplate,
         ...result.serviceTerm,
       };
-      const verifyR: boolean = lunar.verifyTypedData(serviceTermContract, signature);
+      const verifyR: boolean = lunar.verifyTypedData(serviceTermContract, `0x${signature}`);
       isDeWTLegit = isDeWTLegit && verifyR;
 
       // eslint-disable-next-line no-console
       console.log(`isDeWTLegit`, isDeWTLegit);
     }
     if (!isDeWTLegit) {
-      disconnect();
+      clearPrivateData();
     }
     return isDeWTLegit;
   };
@@ -530,6 +530,8 @@ export const UserProvider = ({children}: IUserProvider) => {
       const encodedData = rlpEncodeServiceTerm(serviceTermContract);
       eip712signature = await lunar.signTypedData(serviceTermContract);
       const verifyR: boolean = lunar.verifyTypedData(serviceTermContract, eip712signature);
+      // eslint-disable-next-line no-console
+      console.log(`verifyR`, verifyR);
       if (verifyR) {
         const deWT = `${encodedData}.${eip712signature.replace('0x', '')}`;
         setDeWT(deWT);
@@ -1053,9 +1055,14 @@ export const UserProvider = ({children}: IUserProvider) => {
 
   const init = async () => {
     const isDeWTLegit = checkDeWT();
+    /** TODO: wait for lunar isConnected & lunar.address (20230421 - tzuhan)
+    if (isDeWTLegit && lunar.isConnected) await setPrivateData(lunar.address);
     // eslint-disable-next-line no-console
     console.log(`lunar.isConnected: ${lunar.isConnected}`);
-    if (isDeWTLegit && lunar.isConnected) await setPrivateData(lunar.address);
+    // eslint-disable-next-line no-console
+     console.log(`lunar.address: ${lunar.address}`);
+    */
+    if (isDeWTLegit) await setPrivateData(lunar.address);
     return await Promise.resolve();
   };
 

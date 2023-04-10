@@ -417,11 +417,6 @@ const convertServiceTermToObject = (serviceTerm: IEIP712Data) => {
 export const rlpEncodeServiceTerm = (serviceTerm: IEIP712Data) => {
   const data = convertServiceTermToObject(serviceTerm);
   const encodedData = RLP.encode([
-    data.primaryType,
-    data.domain.chainId,
-    data.domain.verifyingContract,
-    data.domain.name,
-    data.domain.version,
     data.message.title,
     data.message.domain,
     data.message.version,
@@ -452,35 +447,19 @@ const asciiToInt = (asciiBuffer: Uint8Array) => {
 export const rlpDecodeServiceTerm = (data: string) => {
   const buffer = Buffer.from(data, 'hex');
   const decodedData = RLP.decode(buffer);
-  const primaryType = decodedData[0] ? asciiToString(decodedData[0] as Uint8Array) : undefined;
-  const chainId = decodedData[1]
-    ? `0x${Buffer.from(decodedData[1] as Uint8Array).toString('hex')}`
-    : undefined;
-  const verifyingContract = decodedData[2]
-    ? `0x${Buffer.from(decodedData[1] as Uint8Array).toString('hex')}`
-    : undefined;
-  const name = decodedData[3] ? asciiToString(decodedData[3] as Uint8Array) : undefined;
-  const domainVersion = decodedData[4] ? asciiToString(decodedData[4] as Uint8Array) : undefined;
-  const title = decodedData[5] ? asciiToString(decodedData[5] as Uint8Array) : undefined;
-  const domain = decodedData[6] ? asciiToString(decodedData[6] as Uint8Array) : undefined;
-  const version = decodedData[7] ? asciiToString(decodedData[7] as Uint8Array) : undefined;
+  const title = decodedData[0] ? asciiToString(decodedData[0] as Uint8Array) : undefined;
+  const domain = decodedData[1] ? asciiToString(decodedData[1] as Uint8Array) : undefined;
+  const version = decodedData[2] ? asciiToString(decodedData[2] as Uint8Array) : undefined;
   const agree = [
-    asciiToString((decodedData[8] as Array<Uint8Array>)[0]),
-    asciiToString((decodedData[8] as Array<Uint8Array>)[1]),
+    asciiToString((decodedData[3] as Array<Uint8Array>)[0]),
+    asciiToString((decodedData[3] as Array<Uint8Array>)[1]),
   ];
-  const signer = decodedData[9]
-    ? `0x${Buffer.from(decodedData[9] as Uint8Array).toString('hex')}`
+  const signer = decodedData[4]
+    ? `0x${Buffer.from(decodedData[4] as Uint8Array).toString('hex')}`
     : undefined;
-  const expired = decodedData[10] ? asciiToInt(decodedData[10] as Uint8Array) : undefined;
-  const iat = decodedData[11] ? asciiToInt(decodedData[11] as Uint8Array) : undefined;
+  const expired = decodedData[5] ? asciiToInt(decodedData[5] as Uint8Array) : undefined;
+  const iat = decodedData[6] ? asciiToInt(decodedData[6] as Uint8Array) : undefined;
   return {
-    primaryType,
-    domain: {
-      chainId,
-      verifyingContract,
-      name,
-      version: domainVersion,
-    },
     message: {
       title,
       domain,

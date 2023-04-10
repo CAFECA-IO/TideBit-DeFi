@@ -285,7 +285,7 @@ const PositionUpdatedModal = ({
           </div>
         </div>
 
-        <div className="my-4 text-xxs text-lightGray">{t('POSITION_MODAL.CFD_CONTENT')}</div>
+        <div className="my-4 text-xs text-lightGray">{t('POSITION_MODAL.CFD_CONTENT')}</div>
 
         <RippleButton
           onClick={submitClickHandler}

@@ -377,7 +377,7 @@ const PositionOpenModal = ({
           </div>
         </div>
 
-        <div className="my-4 text-xxs text-lightGray">{t('POSITION_MODAL.CFD_CONTENT')}</div>
+        <div className="my-4 text-xs text-lightGray">{t('POSITION_MODAL.CFD_CONTENT')}</div>
 
         <RippleButton
           disabled={secondsLeft < 1 || quotationErrorRef.current}

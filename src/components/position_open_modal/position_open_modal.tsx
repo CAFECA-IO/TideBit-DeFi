@@ -205,6 +205,11 @@ const PositionOpenModal = ({
 
     if (!newQuotation) return;
 
+    // Info: if it's comments, it couldn't renew the quotation
+    const base = newQuotation.deadline - WAITING_TIME_FOR_USER_SIGNING;
+    const tickingSec = (base * 1000 - getTimestampInMilliseconds()) / 1000;
+    setSecondsLeft(tickingSec > 0 ? Math.floor(tickingSec) : 0);
+
     const newPrice = newQuotation.price;
 
     const newMargin = (Number(newQuotation.price) * Number(openCfdRequest.amount)) / 5;

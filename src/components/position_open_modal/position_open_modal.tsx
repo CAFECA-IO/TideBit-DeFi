@@ -208,8 +208,8 @@ const PositionOpenModal = ({
     if (!newQuotation) return;
 
     // Info: if it's comments, it couldn't renew the quotation
-    const base = newQuotation.deadline - WAITING_TIME_FOR_USER_SIGNING;
-    const tickingSec = base * 1000 - getTimestampInMilliseconds();
+    const base = newQuotation.deadline - WAITING_TIME_FOR_USER_SIGNING * 1000;
+    const tickingSec = (base - getTimestampInMilliseconds()) / 1000;
     setSecondsLeft(tickingSec > 0 ? Math.round(tickingSec) : 0);
 
     const newPrice = newQuotation.price;
@@ -250,32 +250,44 @@ const PositionOpenModal = ({
       return;
     }
 
-    const base = openCfdRequest.quotation.deadline - WAITING_TIME_FOR_USER_SIGNING;
-    const tickingSec = base - getTimestamp();
+    const base = openCfdRequest.quotation.deadline - WAITING_TIME_FOR_USER_SIGNING * 1000;
+    // const tickingSec = base - getTimestamp();
+    const tickingSec = (base - getTimestampInMilliseconds()) / 1000;
     setSecondsLeft(tickingSec > 0 ? Math.round(tickingSec) : 0);
   }, [globalCtx.visiblePositionOpenModal]);
 
   useEffect(() => {
     if (!userCtx.enableServiceTerm) return;
     const intervalId = setInterval(() => {
-      const base = openCfdRequest.quotation.deadline - WAITING_TIME_FOR_USER_SIGNING;
-      const tickingSec = (base * 1000 - getTimestampInMilliseconds()) / 1000;
-
+      const base = openCfdRequest.quotation.deadline - WAITING_TIME_FOR_USER_SIGNING * 1000;
+      const tickingSec = (base - getTimestampInMilliseconds()) / 1000;
       setSecondsLeft(tickingSec > 0 ? Math.round(tickingSec) : 0);
-      // const tempNow = getTimestamp();
+
+      const tempBase = Math.round(base / 1000);
+      const tempNow = Math.round(getTimestampInMilliseconds() / 1000);
+      const tempDeadline = Math.round(openCfdRequest.quotation.deadline / 1000);
       // const rs = base - tempNow;
       // ToDo: FIXME: countdown is inconsistent with position open modal (20230407 - Shirley)
       // eslint-disable-next-line no-console
       console.log(
         'open, displayed deadline [ref1]:',
-        base,
+        tempBase,
+        'now:',
+        tempNow,
+        'left in sec:',
         secondsLeftRef.current,
         'actual deadline:',
-        openCfdRequest.quotation.deadline
+        tempDeadline
       );
 
       if (secondsLeftRef.current === 0) {
         renewDataHandler();
+
+        const nowMs = getTimestampInMilliseconds();
+        const nowS = Math.round(nowMs / 1000);
+        // ToDo: FIXME: countdown is inconsistent with position open modal (20230407 - Shirley)
+        // eslint-disable-next-line no-console
+        console.log('get quotation at sec:', nowS, 'ms:', nowMs);
       }
     }, 1000);
 

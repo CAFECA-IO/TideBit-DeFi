@@ -165,8 +165,6 @@ const PositionOpenModal = ({
   const displayedTakeProfit = openCfdRequest.takeProfit ? `$ ${openCfdRequest.takeProfit}` : '-';
   const displayedStopLoss = openCfdRequest.stopLoss ? `$ ${openCfdRequest.stopLoss}` : '-';
 
-  const displayedExpirationTime = timestampToString(openCfdRequest?.quotation.deadline ?? 0);
-
   const layoutInsideBorder = 'mx-5 my-2 flex justify-between';
 
   const getQuotation = async () => {
@@ -271,16 +269,16 @@ const PositionOpenModal = ({
       // eslint-disable-next-line no-console
       console.log(
         'open, displayed deadline [ref1]:',
-        tempBase,
+        JSON.parse(JSON.stringify(tempBase)),
         'now:',
-        tempNow,
+        JSON.parse(JSON.stringify(tempNow)),
         'left in sec:',
-        secondsLeftRef.current,
+        JSON.parse(JSON.stringify(secondsLeftRef.current)),
         'actual deadline:',
-        tempDeadline
+        JSON.parse(JSON.stringify(tempDeadline))
       );
 
-      if (secondsLeftRef.current === 0) {
+      if (secondsLeft === 0) {
         renewDataHandler();
 
         const nowMs = getTimestampInMilliseconds();
@@ -390,13 +388,14 @@ const PositionOpenModal = ({
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">{t('POSITION_MODAL.EXPIRATION_TIME')}</div>
               <div className="">
-                {displayedExpirationTime.date} {displayedExpirationTime.time}
+                {/* {displayedExpirationTime.date} {displayedExpirationTime.time} */}
+                {t('POSITION_MODAL.LIQUIDATION_TIME')}
               </div>
             </div>
 
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">{t('POSITION_MODAL.LIQUIDATION_PRICE')}</div>
-              <div className="">
+              <div className={`${dataRenewedStyle}`}>
                 {openCfdRequest.liquidationPrice?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
                   minimumFractionDigits: 2,
                 }) ?? 0}

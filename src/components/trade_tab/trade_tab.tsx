@@ -204,7 +204,7 @@ const TradeTab = () => {
       // ToDo: FIXME: countdown is inconsistent with position open modal (20230407 - Shirley)
       // eslint-disable-next-line no-console
       console.log(
-        'tab, displayed deadline:',
+        'tab, displayed deadline [ref]:',
         base,
         secondsLeftRef.current,
         'actual deadline:',
@@ -466,19 +466,6 @@ const TradeTab = () => {
       (shortSlValue - Number(shortQuotationRef.current?.price)) * targetInputValueRef.current
     );
     setGuaranteedStopFeeShort(Number(gsl) * valueOfPositionShortRef.current);
-
-    // // Countdown
-    // const newDeadline = longQuotationRef.current.deadline - WAITING_TIME_FOR_USER_SIGNING;
-    // const rounded = Math.round(newDeadline - getTimestamp());
-    // setSecondsLeft(rounded);
-
-    // console.log(
-    //   'renew function',
-    //   'tab, [renew] displayed timestamp:',
-    //   newDeadline,
-    //   'left sec',
-    //   secondsLeftRef.current
-    // );
   };
 
   const targetAmountDetection = (value?: number) => {

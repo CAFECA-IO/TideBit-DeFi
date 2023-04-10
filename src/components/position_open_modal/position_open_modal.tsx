@@ -207,9 +207,10 @@ const PositionOpenModal = ({
 
     if (!newQuotation) return;
 
-    const newDeadline = newQuotation.deadline - WAITING_TIME_FOR_USER_SIGNING;
-    const rounded = Math.round(newDeadline - getTimestamp());
-    setSecondsLeft(rounded);
+    // Info: if it's comments, it couldn't renew the quotation
+    const base = newQuotation.deadline - WAITING_TIME_FOR_USER_SIGNING;
+    const tickingSec = base * 1000 - getTimestampInMilliseconds();
+    setSecondsLeft(tickingSec > 0 ? Math.round(tickingSec) : 0);
 
     const newPrice = newQuotation.price;
 
@@ -258,7 +259,6 @@ const PositionOpenModal = ({
     if (!userCtx.enableServiceTerm) return;
     const intervalId = setInterval(() => {
       const base = openCfdRequest.quotation.deadline - WAITING_TIME_FOR_USER_SIGNING;
-      // const tickingSec = base - getTimestamp();
       const tickingSec = (base * 1000 - getTimestampInMilliseconds()) / 1000;
 
       setSecondsLeft(tickingSec > 0 ? Math.round(tickingSec) : 0);
@@ -267,7 +267,7 @@ const PositionOpenModal = ({
       // ToDo: FIXME: countdown is inconsistent with position open modal (20230407 - Shirley)
       // eslint-disable-next-line no-console
       console.log(
-        'open, displayed deadline:',
+        'open, displayed deadline [ref1]:',
         base,
         secondsLeftRef.current,
         'actual deadline:',
@@ -298,7 +298,7 @@ const PositionOpenModal = ({
 
       <div className="absolute right-6 top-90px flex items-center space-x-1 text-center">
         <BsClockHistory size={20} className="text-lightGray" />
-        <p className="w-8 text-xs">00:{secondsLeft.toString().padStart(2, '0')}</p>
+        <p className="w-8 text-xs">00:{secondsLeftRef.current.toString().padStart(2, '0')}</p>
       </div>
 
       <div className="relative flex flex-col items-center pt-1">

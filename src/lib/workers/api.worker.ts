@@ -11,8 +11,6 @@ self.onmessage = async function (event) {
       body: body ? JSON.stringify(body) : body,
     };
     const response = await fetch(url, request);
-    // eslint-disable-next-line no-console
-    console.log(`HTTP request: `, request);
     if (response?.ok) {
       const result = await response.json();
       self.postMessage({name, result});

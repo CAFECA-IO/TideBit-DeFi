@@ -252,20 +252,15 @@ export const formatAPIRequest = (data: TypeRequest) => {
         ? {
             headers: {
               'Content-Type': 'application/json',
-              'Cookie': document.cookie,
               ...data.headers,
             },
           }
         : {
             headers: {
               'Content-Type': 'application/json',
-              'Cookie': document.cookie,
             },
           },
     },
-    /* Deprecated: callback in requestHandler (Tzuhan - 20230420)
-    callback: (result: any, error: Error) => void;
-    */
   };
   return request;
 };

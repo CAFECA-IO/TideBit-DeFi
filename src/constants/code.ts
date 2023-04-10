@@ -1,4 +1,4 @@
-export type ICode = '00000000' | '90000000' | '91000000' | '92000000' | '93000000';
+export type ICode = '00000000' | '90000000' | '91000000' | '92000000' | '93000000' | '94000000';
 
 export type ICodeConstant = {
   SUCCESS: ICode;
@@ -6,6 +6,7 @@ export type ICodeConstant = {
   WALLET_IS_NOT_CONNECT: ICode;
   SERVICE_TERM_DISABLE: ICode;
   INVAILD_INPUTS: ICode;
+  DEWT_IS_NOT_LEGIT: ICode;
 };
 
 export type IReason = {
@@ -18,6 +19,7 @@ export const Code: ICodeConstant = {
   WALLET_IS_NOT_CONNECT: '91000000',
   SERVICE_TERM_DISABLE: '92000000',
   INVAILD_INPUTS: '93000000',
+  DEWT_IS_NOT_LEGIT: '94000000',
 };
 
 export const Reason: IReason = {
@@ -26,4 +28,5 @@ export const Reason: IReason = {
   '91000000': 'Wallet is not connected',
   '92000000': 'Service term is not enabled',
   '93000000': 'Invalid Inputs',
+  '94000000': 'Dewt is not legit',
 };

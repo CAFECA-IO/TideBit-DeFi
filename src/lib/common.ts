@@ -508,8 +508,16 @@ export const verifySignedServiceTerm = (encodedServiceTerm: string) => {
     !serviceTerm.message.expired ||
     !serviceTerm.message.iat ||
     serviceTerm.message.expired < getTimestamp() ||
-    serviceTerm.message.iat - getTimestamp() > DeWT_VALIDITY_PERIOD
+    getTimestamp() - serviceTerm.message.iat > DeWT_VALIDITY_PERIOD
   )
     isDeWTLegit = false && isDeWTLegit;
-  return isDeWTLegit;
+  return {isDeWTLegit, serviceTerm};
+};
+
+export const getCookieByName = (name: string): string | undefined => {
+  const cookieValue = document.cookie
+    .split('; ')
+    .find(row => row.startsWith(`${name}=`))
+    ?.split('=')[1];
+  return cookieValue;
 };

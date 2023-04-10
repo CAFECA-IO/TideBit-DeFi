@@ -277,9 +277,8 @@ export default function CandlestickChart({
   const displayedOHLC =
     ohlcInfo.close !== 0 ? (
       <p className="text-sm text-lightGray">
-        O:
-        {ohlcInfo.open} &nbsp;&nbsp;&nbsp;H: {ohlcInfo.high} &nbsp;&nbsp;&nbsp;L: {ohlcInfo.low}{' '}
-        &nbsp;&nbsp;&nbsp;C: {ohlcInfo.close}
+        O：{ohlcInfo.open} &nbsp;&nbsp;&nbsp;H：{ohlcInfo.high} &nbsp;&nbsp;&nbsp;L：{ohlcInfo.low}{' '}
+        &nbsp;&nbsp;&nbsp;C：{ohlcInfo.close}
       </p>
     ) : null;
 
@@ -406,7 +405,7 @@ export default function CandlestickChart({
 
   return (
     <>
-      <div className="-mt-8 mb-5 ml-5">{displayedOHLC}</div>
+      <div className="mt-5 -mb-8 lg:-mt-8 lg:mb-5 lg:ml-5">{displayedOHLC}</div>
       <div className="ml-5 pb-20 pt-20 lg:w-7/10 lg:pb-5 lg:pt-14">
         <div ref={chartContainerRef} className="hover:cursor-crosshair"></div>
       </div>

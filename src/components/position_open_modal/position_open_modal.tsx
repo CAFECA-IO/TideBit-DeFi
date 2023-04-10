@@ -206,8 +206,8 @@ const PositionOpenModal = ({
     if (!newQuotation) return;
 
     // Info: if it's comments, it couldn't renew the quotation
-    const base = newQuotation.deadline - WAITING_TIME_FOR_USER_SIGNING * 1000;
-    const tickingSec = (base - getTimestampInMilliseconds()) / 1000;
+    const base = newQuotation.deadline - WAITING_TIME_FOR_USER_SIGNING;
+    const tickingSec = (base * 1000 - getTimestampInMilliseconds()) / 1000;
     setSecondsLeft(tickingSec > 0 ? Math.round(tickingSec) : 0);
 
     const newPrice = newQuotation.price;
@@ -248,34 +248,30 @@ const PositionOpenModal = ({
       return;
     }
 
-    const base = openCfdRequest.quotation.deadline - WAITING_TIME_FOR_USER_SIGNING * 1000;
+    const base = openCfdRequest.quotation.deadline - WAITING_TIME_FOR_USER_SIGNING;
     // const tickingSec = base - getTimestamp();
-    const tickingSec = (base - getTimestampInMilliseconds()) / 1000;
+    const tickingSec = (base * 1000 - getTimestampInMilliseconds()) / 1000;
     setSecondsLeft(tickingSec > 0 ? Math.round(tickingSec) : 0);
   }, [globalCtx.visiblePositionOpenModal]);
 
   useEffect(() => {
     if (!userCtx.enableServiceTerm) return;
     const intervalId = setInterval(() => {
-      const base = openCfdRequest.quotation.deadline - WAITING_TIME_FOR_USER_SIGNING * 1000;
-      const tickingSec = (base - getTimestampInMilliseconds()) / 1000;
+      const base = openCfdRequest.quotation.deadline - WAITING_TIME_FOR_USER_SIGNING;
+      const tickingSec = (base * 1000 - getTimestampInMilliseconds()) / 1000;
       setSecondsLeft(tickingSec > 0 ? Math.round(tickingSec) : 0);
 
-      const tempBase = Math.round(base / 1000);
-      const tempNow = Math.round(getTimestampInMilliseconds() / 1000);
-      const tempDeadline = Math.round(openCfdRequest.quotation.deadline / 1000);
-      // const rs = base - tempNow;
       // ToDo: FIXME: countdown is inconsistent with position open modal (20230407 - Shirley)
       // eslint-disable-next-line no-console
       console.log(
         'open, displayed deadline [ref1]:',
-        JSON.parse(JSON.stringify(tempBase)),
+        JSON.parse(JSON.stringify(base)),
         'now:',
-        JSON.parse(JSON.stringify(tempNow)),
+        JSON.parse(JSON.stringify(getTimestamp())),
         'left in sec:',
         JSON.parse(JSON.stringify(secondsLeftRef.current)),
         'actual deadline:',
-        JSON.parse(JSON.stringify(tempDeadline))
+        JSON.parse(JSON.stringify(openCfdRequest.quotation.deadline))
       );
 
       if (secondsLeft === 0) {

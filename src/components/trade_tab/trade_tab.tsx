@@ -196,25 +196,21 @@ const TradeTab = () => {
     const intervalId = setInterval(async () => {
       if (!longQuotationRef.current || !shortQuotationRef.current) return;
 
-      const base = longQuotationRef.current.deadline - WAITING_TIME_FOR_USER_SIGNING * 1000;
-      const tickingSec = (base - getTimestampInMilliseconds()) / 1000;
+      const base = longQuotationRef.current.deadline - WAITING_TIME_FOR_USER_SIGNING;
+      const tickingSec = (base * 1000 - getTimestampInMilliseconds()) / 1000;
       setSecondsLeft(tickingSec > 0 ? Math.round(tickingSec) : 0);
 
-      const tempBase = Math.round(base / 1000);
-      const tempNow = Math.round(getTimestampInMilliseconds() / 1000);
-      const tempDeadline = Math.round(longQuotationRef.current.deadline / 1000);
-      // const rs = base - tempNow;
       // ToDo: FIXME: countdown is inconsistent with position open modal (20230407 - Shirley)
       // eslint-disable-next-line no-console
       console.log(
         'tab, displayed deadline [ref]:',
-        tempBase,
+        JSON.parse(JSON.stringify(base)),
         'now:',
-        tempNow,
+        JSON.parse(JSON.stringify(getTimestamp())),
         'left in sec:',
-        secondsLeftRef.current,
+        JSON.parse(JSON.stringify(secondsLeftRef.current)),
         'actual deadline:',
-        tempDeadline
+        JSON.parse(JSON.stringify(longQuotationRef.current.deadline))
       );
 
       if (secondsLeftRef.current === 0) {

@@ -262,26 +262,8 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       tickerBook.updateCandlestick(tickerId, candlestickChartData);
       */
       // await listTradesData(tickerId);
-      const raw = getDummyCandlestickChartData(50, TimeSpanUnion._1s);
-      // setCandlestickChartData(tickerBook.listCandlestickData(tickerId, {}));
-      setCandlestickChartData(raw);
 
-      const updatingInterval = setInterval(() => {
-        if (candlestickChartDataRef.current) {
-          const updated = updateDummyCandlestickChartData(
-            candlestickChartDataRef.current,
-            TimeSpanUnion._1s
-          );
-          setCandlestickChartData(updated);
-        } else {
-          const raw = getDummyCandlestickChartData(50, TimeSpanUnion._1s);
-          // setCandlestickChartData(tickerBook.listCandlestickData(tickerId, {}));
-          setCandlestickChartData(raw);
-        }
-      }, 1000);
-
-      // clearInterval(updatingInterval);
-
+      setCandlestickChartData(tickerBook.listCandlestickData(tickerId, {}));
       result = defaultResultSuccess;
     } catch (error) {
       // Deprecate: error handle (Tzuhan - 20230321)
@@ -531,25 +513,8 @@ export const MarketProvider = ({children}: IMarketProvider) => {
         tickerBook.updateTrades(ticker, trades);
         const updateTickers = {...tickerBook.listTickers()};
         setAvailableTickers(updateTickers);
-        // if (selectedTickerRef.current?.currency === ticker) {
-        //   // setCandlestickChartData([...tickerBook.listCandlestickData(ticker, {})]);
-
-        //   // const raw = getDummyCandlestickChartData(50, TimeSpanUnion._1s);
-        //   // setCandlestickChartData(raw);
-        //   console.log('ref', candlestickChartDataRef.current);
-        //   console.log('candle state in ctx', candlestickChartData);
-        //   if (candlestickChartDataRef.current !== null) {
-        //     const updates = updateDummyCandlestickChartData(
-        //       candlestickChartDataRef?.current,
-        //       TimeSpanUnion._1s
-        //     );
-        //     setCandlestickChartData(updates);
-        //   } else {
-        //     const raw = getDummyCandlestickChartData(50, TimeSpanUnion._1s);
-        //     setCandlestickChartData(raw);
-        //     updateDummyCandlestickChartData(raw, TimeSpanUnion._1s);
-        //   }
-        // }
+        if (selectedTickerRef.current?.currency === ticker)
+          setCandlestickChartData([...tickerBook.listCandlestickData(ticker, {})]);
       }),
     []
   );

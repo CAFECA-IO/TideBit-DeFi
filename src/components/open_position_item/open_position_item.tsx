@@ -12,7 +12,7 @@ import UpdateFormModal from '../update_form_modal/update_form_modal';
 import {IDataPositionClosedModal, useGlobal} from '../../contexts/global_context';
 import {ProfitState} from '../../constants/profit_state';
 import {TypeOfPosition} from '../../constants/type_of_position';
-import {getNowSeconds, randomIntFromInterval} from '../../lib/common';
+import {timestampToString, getNowSeconds, randomIntFromInterval} from '../../lib/common';
 import {MarketContext} from '../../contexts/market_context';
 import {UserContext} from '../../contexts/user_context';
 import {
@@ -23,12 +23,16 @@ import {
   IDisplayApplyCFDOrder,
   getDummyDisplayApplyCloseCFDOrder,
 } from '../../interfaces/tidebit_defi_background/display_apply_cfd_order';
+import {useTranslation} from 'react-i18next';
 
+type TranslateFunction = (s: string) => string;
 interface IOpenPositionItemProps {
   openCfdDetails: IDisplayAcceptedCFDOrder;
 }
 
 const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProps) => {
+  const {t}: {t: TranslateFunction} = useTranslation('common');
+
   const marketCtx = useContext(MarketContext);
   const userCtx = useContext(UserContext);
   const {
@@ -83,21 +87,23 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
       : TypeOfTransaction.SHORT;
 
   const displayedColorHex =
-    openCfdDetails?.pnl?.type === ProfitState.PROFIT
+    remainSecs < 60
+      ? TypeOfPnLColorHex.LIQUIDATION
+      : openCfdDetails?.pnl?.type === ProfitState.PROFIT
       ? TypeOfPnLColorHex.PROFIT
       : openCfdDetails?.pnl?.type === ProfitState.LOSS
       ? TypeOfPnLColorHex.LOSS
       : TypeOfPnLColorHex.EQUAL;
 
   const displayedTextColor =
-    openCfdDetails?.pnl?.type === ProfitState.PROFIT ? 'text-lightGreen5' : 'text-lightRed';
+    openCfdDetails?.pnl?.type === ProfitState.PROFIT ? 'text-lightGreen5' : 'text-lightRed'; //lightYellow2
 
   const displayedCrossColor =
     openCfdDetails?.pnl?.type === ProfitState.PROFIT
       ? 'hover:before:bg-lightGreen5 hover:after:bg-lightGreen5'
       : 'hover:before:bg-lightRed hover:after:bg-lightRed';
   const displayedCrossStyle =
-    'before:absolute before:-left-2px before:top-10px before:z-40 before:block before:h-1 before:w-7 before:rotate-45 before:rounded-md after:absolute after:-left-2px after:top-10px after:z-40 after:block after:h-1 after:w-7 after:-rotate-45 after:rounded-md';
+    'before:absolute before:left-1 before:top-10px before:z-40 before:block before:h-1 before:w-5 before:rotate-45 before:rounded-md after:absolute after:left-1 after:top-10px after:z-40 after:block after:h-1 after:w-5 after:-rotate-45 after:rounded-md';
 
   const displayedSymbol =
     openCfdDetails?.pnl?.type === ProfitState.PROFIT
@@ -106,6 +112,8 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
       ? '-'
       : '';
 
+  const displayedTime = timestampToString(openCfdDetails?.orderSnapshot?.createTimestamp ?? 0);
+
   return (
     <div className="relative">
       <div
@@ -113,28 +121,45 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
         onClick={openItemClickHandler}
       ></div>
       {/* brief of this open position */}
-      <div className="mt-5 flex justify-between">
+      <div className="mt-2 flex justify-between">
         {/* TODO: switch the layout */}
         {/* {displayedTickerLayout} */}
-        <div className="">
-          <div className="inline-flex items-center text-sm">
-            {/* ToDo: default currency icon (20230310 - Julian) issue #338 */}
-            <Image
-              src={marketCtx.selectedTicker?.tokenImg ?? ''}
-              alt="currency icon"
-              width={15}
-              height={15}
-            />
-            <p className="ml-1">{openCfdDetails?.orderSnapshot?.ticker}</p>
-          </div>
-          <div className="text-sm text-lightWhite">
+
+        <div className="inline-flex items-center text-sm">
+          {/* ToDo: default currency icon (20230310 - Julian) issue #338 */}
+          <Image
+            src={`/asset_icon/${openCfdDetails?.orderSnapshot?.ticker}.svg`}
+            alt={`${openCfdDetails?.orderSnapshot?.ticker} icon`}
+            width={15}
+            height={15}
+          />
+          <p className="ml-1">{openCfdDetails?.orderSnapshot?.ticker}</p>
+
+          <div className="ml-2 text-sm text-tidebitTheme">
             {displayedString.TITLE}{' '}
             <span className="text-xs text-lightGray">{displayedString.SUBTITLE}</span>
           </div>
         </div>
 
-        <div className="mt-1">
-          <div className="text-xs text-lightGray">Value</div>
+        <div className="flex flex-col items-end text-xs text-lightGray">
+          <p>{displayedTime.date}</p>
+          <p>{displayedTime.time}</p>
+        </div>
+      </div>
+
+      {/* Line graph */}
+      <div className="-mt-6 -mb-6 -ml-4">
+        <PositionLineGraph
+          strokeColor={[displayedColorHex]}
+          dataArray={openCfdDetails.positionLineGraph}
+          lineGraphWidth={OPEN_POSITION_LINE_GRAPH_WIDTH}
+          annotatedValue={openCfdDetails?.orderSnapshot?.openPrice}
+        />
+      </div>
+
+      <div className="mt-1 flex justify-between">
+        <div className="">
+          <div className="text-xs text-lightGray">{t('TRADE_PAGE.OPEN_POSITION_ITEM_VALUE')}</div>
           <div className="text-sm">
             ${' '}
             {openCfdDetails?.openValue.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
@@ -143,8 +168,8 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
           </div>
         </div>
 
-        <div className="mt-1">
-          <div className="text-xs text-lightGray">PNL</div>
+        <div className="-ml-8">
+          <div className="text-xs text-lightGray">{t('TRADE_PAGE.OPEN_POSITION_ITEM_PNL')}</div>
           <div className={`${displayedTextColor} text-sm`}>
             <span className="">{displayedSymbol}</span> ${' '}
             {openCfdDetails?.pnl?.value.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
@@ -153,10 +178,10 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
           </div>
         </div>
 
-        <div className="relative -mt-4 -ml-2 w-50px">
+        <div className="relative -mt-4 w-50px">
           {/* -----Paused square----- */}
           <div
-            className={`absolute left-14px top-26px z-30 h-6 w-6 hover:cursor-pointer hover:bg-darkGray
+            className={`absolute left-12px top-21px z-30 h-28px w-28px rounded-full hover:cursor-pointer hover:bg-darkGray
               ${displayedCrossColor} ${displayedCrossStyle} transition-all duration-150`}
             onClick={squareClickHandler}
           ></div>
@@ -169,21 +194,11 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
               denominator={denominator}
               progressBarColor={[displayedColorHex]}
               hollowSize="40%"
-              circularBarSize="100"
+              circularBarSize="90"
               // clickHandler={circularClick}
             />
           </div>
         </div>
-      </div>
-
-      {/* Line graph */}
-      <div className="-mt-8 -mb-7 -ml-4">
-        <PositionLineGraph
-          strokeColor={[`${displayedColorHex}`]}
-          dataArray={openCfdDetails.positionLineGraph}
-          lineGraphWidth={OPEN_POSITION_LINE_GRAPH_WIDTH}
-          annotatedValue={openCfdDetails?.orderSnapshot?.openPrice}
-        />
       </div>
     </div>
   );

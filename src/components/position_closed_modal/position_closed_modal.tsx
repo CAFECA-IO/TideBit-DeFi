@@ -15,6 +15,7 @@ import {
   getDeadline,
   getTimestamp,
   twoDecimal,
+  getTimestampInMilliseconds,
 } from '../../lib/common';
 import {useContext, useEffect, useState} from 'react';
 import {MarketContext} from '../../contexts/market_context';
@@ -95,7 +96,9 @@ const PositionClosedModal = ({
 
   const [gQuotation, setGQuotation, gQuotationRef] = useStateRef<IQuotation>(quotation);
 
-  const [secondsLeft, setSecondsLeft] = useStateRef(DISPLAY_QUOTATION_RENEWAL_INTERVAL_SECONDS);
+  const [secondsLeft, setSecondsLeft, secondsLeftRef] = useStateRef(
+    DISPLAY_QUOTATION_RENEWAL_INTERVAL_SECONDS
+  );
 
   const [dataRenewedStyle, setDataRenewedStyle] = useState('text-lightWhite');
   const [pnlRenewedStyle, setPnlRenewedStyle] = useState('');
@@ -378,8 +381,8 @@ const PositionClosedModal = ({
     setDataRenewedStyle('animate-flash text-lightYellow2');
     setPnlRenewedStyle('animate-flash text-lightYellow2');
 
-    const newDeadline = quotation.deadline - WAITING_TIME_FOR_USER_SIGNING;
-    const rounded = Math.round(newDeadline - getTimestamp());
+    const base = quotation.deadline - WAITING_TIME_FOR_USER_SIGNING;
+    const rounded = Math.round(base * 1000 - getTimestampInMilliseconds());
     setSecondsLeft(rounded);
 
     const displayedCloseOrder = toDisplayCloseOrder(openCfdDetails, quotation);
@@ -425,7 +428,7 @@ const PositionClosedModal = ({
     const intervalId = setInterval(async () => {
       const base = gQuotationRef.current.deadline - WAITING_TIME_FOR_USER_SIGNING;
 
-      const tickingSec = base - getTimestamp();
+      const tickingSec = (base * 1000 - getTimestampInMilliseconds()) / 1000;
 
       setSecondsLeft(tickingSec > 0 ? Math.round(tickingSec) : 0);
 

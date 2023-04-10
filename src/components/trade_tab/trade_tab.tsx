@@ -180,7 +180,8 @@ const TradeTab = () => {
     if (!userCtx.enableServiceTerm) return;
 
     (async () => {
-      renewQuotation();
+      await getQuotation(marketCtx.selectedTicker?.currency ?? DEFAULT_TICKER);
+
       renewPosition();
 
       initSuggestion();
@@ -214,7 +215,8 @@ const TradeTab = () => {
       );
 
       if (secondsLeftRef.current === 0) {
-        renewQuotation();
+        await getQuotation(marketCtx.selectedTicker?.currency ?? DEFAULT_TICKER);
+
         renewPosition();
 
         const nowMs = getTimestampInMilliseconds();
@@ -237,10 +239,8 @@ const TradeTab = () => {
   // Info: Fetch quotation when ticker changed (20230327 - Shirley)
   useEffect(() => {
     notificationCtx.emitter.once(ClickEvent.TICKER_CHANGED, async () => {
-      // const {longQuotation, shortQuotation} = await getQuotation(
-      //   marketCtx.selectedTicker?.currency ?? DEFAULT_TICKER
-      // );
-      renewQuotation();
+      await getQuotation(marketCtx.selectedTicker?.currency ?? DEFAULT_TICKER);
+
       renewPosition();
 
       // Deprecated: before merging into develop (20230327 - Shirley)
@@ -420,12 +420,6 @@ const TradeTab = () => {
     );
     setShortSlValue(
       Number((Number(shortQuotationRef.current?.price) * (1 + SUGGEST_SL)).toFixed(2))
-    );
-  };
-
-  const renewQuotation = async () => {
-    const {longQuotation, shortQuotation} = await getQuotation(
-      marketCtx.selectedTicker?.currency ?? DEFAULT_TICKER
     );
   };
 

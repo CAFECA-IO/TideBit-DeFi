@@ -274,7 +274,7 @@ const PositionOpenModal = ({
         JSON.parse(JSON.stringify(openCfdRequest.quotation.deadline))
       );
 
-      if (secondsLeft === 0) {
+      if (secondsLeftRef.current === 0) {
         renewDataHandler();
 
         const nowMs = getTimestampInMilliseconds();

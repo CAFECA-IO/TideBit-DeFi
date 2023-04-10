@@ -180,9 +180,7 @@ const TradeTabMobile = () => {
     if (!userCtx.enableServiceTerm) return;
 
     (async () => {
-      const {longQuotation, shortQuotation} = await getQuotation(
-        marketCtx.selectedTicker?.currency ?? DEFAULT_TICKER
-      );
+      await getQuotation(marketCtx.selectedTicker?.currency ?? DEFAULT_TICKER);
 
       // Deprecated: before merging into develop (20230327 - Shirley)
       // eslint-disable-next-line no-console
@@ -222,9 +220,7 @@ const TradeTabMobile = () => {
       );
 
       if (secondsLeftRef.current === 0) {
-        const {longQuotation, shortQuotation} = await getQuotation(
-          marketCtx.selectedTicker?.currency ?? DEFAULT_TICKER
-        );
+        await getQuotation(marketCtx.selectedTicker?.currency ?? DEFAULT_TICKER);
 
         renewPosition();
 
@@ -242,9 +238,7 @@ const TradeTabMobile = () => {
   // Info: Fetch quotation when ticker changed (20230327 - Shirley)
   useEffect(() => {
     notificationCtx.emitter.once(ClickEvent.TICKER_CHANGED, async () => {
-      const {longQuotation, shortQuotation} = await getQuotation(
-        marketCtx.selectedTickerRef.current?.currency ?? DEFAULT_TICKER
-      );
+      await getQuotation(marketCtx.selectedTickerRef.current?.currency ?? DEFAULT_TICKER);
 
       renewPosition();
 
@@ -431,12 +425,6 @@ const TradeTabMobile = () => {
     );
     setShortSlValue(
       Number((Number(shortQuotationRef.current?.price) * (1 + SUGGEST_SL)).toFixed(2))
-    );
-  };
-
-  const renewQuotation = async () => {
-    const {longQuotation, shortQuotation} = await getQuotation(
-      marketCtx.selectedTicker?.currency ?? DEFAULT_TICKER
     );
   };
 

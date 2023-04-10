@@ -189,8 +189,7 @@ const tuningTzCandlestickDataArray = (dataArray: CandlestickData[]) => {
 };
 
 const generateRandomCandle = ({time, lastPrice = 1288}: {time?: Date; lastPrice?: number}) => {
-  const rnd = Math.random() / 1.2;
-  const ts = rnd > 0.25 ? 1 + rnd ** 5 : 1 - rnd;
+  const ts = randomFloatFromInterval(0.9995, 1.0005, 2);
   const price = lastPrice * ts;
 
   const open = price * (1 + (Math.random() - 0.5) / 10);

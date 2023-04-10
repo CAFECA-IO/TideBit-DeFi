@@ -1,3 +1,4 @@
+import {randomFloatFromInterval} from '../../lib/common';
 import {getTime, ITimeSpanUnion} from './time_span_union';
 
 const chartBlank = 1.68;
@@ -69,4 +70,44 @@ export const getDummyCandlestickChartData = (
   // });
 
   return data;
+};
+
+export const updateDummyCandlestickChartData = (
+  data: ICandlestickData[],
+  timeSpan: ITimeSpanUnion
+) => {
+  // Info: update dummy data with the certain amount of non-null data (20230407 - Shirley)
+  const origin = [...data];
+  const originWithoutNull = origin.filter(obj => !Object.values(obj.y).includes(null));
+  const stripped = originWithoutNull.slice(1);
+
+  const lastData = stripped[stripped.length - 1];
+  const lastSecond = lastData.x.getTime();
+  const point = lastData?.y.close as number;
+
+  const now = new Date().getTime();
+  const nowSecond = now - (now % getTime(timeSpan));
+
+  const y: [...number[]] = new Array(4).fill(0).map(v => {
+    const ts = randomFloatFromInterval(0.95, 1.05, 2);
+    const price = point * ts;
+
+    const prettyPrice = Math.trunc(price * 100) / 100;
+    return prettyPrice;
+  });
+
+  const result: ICandlestickData = {
+    // x: new Date(nowSecond - 1 * getTime(timeSpan)),
+    x: new Date(lastSecond + getTime(timeSpan)),
+    y: {
+      open: y[0],
+      high: y[1],
+      low: y[2],
+      close: y[3],
+    },
+  };
+
+  const newData = [...data, result];
+
+  return newData;
 };

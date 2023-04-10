@@ -23,6 +23,7 @@ import {
   LocalizationOptions,
   IChartApi,
   ISeriesApi,
+  BarData,
 } from 'lightweight-charts';
 import Lottie, {useLottie} from 'lottie-react';
 import spotAnimation from '../../../public/animation/circle.json';
@@ -72,6 +73,13 @@ interface ITradingChartGraphProps {
   showPositionLabel: boolean;
   candlestickChartWidth: string;
   candlestickChartHeight: string;
+}
+
+interface IOHLCInfo {
+  open: number;
+  high: number;
+  low: number;
+  close: number;
 }
 
 // Get candlestick data from market context, check the data format and merge with `initData`
@@ -251,16 +259,29 @@ export default function CandlestickChart({
   ...otherProps
 }: ITradingChartGraphProps) {
   const marketCtx = useContext(MarketContext);
-  const appCtx = useContext(AppContext);
   const globalCtx = useContext(GlobalContext);
   const userCtx = useContext(UserContext);
 
-  const [mounted, setMounted] = useState(false);
+  const [ohlcInfo, setOhlcInfo] = useState<IOHLCInfo>({
+    open: 0,
+    high: 0,
+    low: 0,
+    close: 0,
+  });
 
   const width =
     globalCtx.layoutAssertion === 'desktop'
       ? globalCtx.width * 0.6 - 2000 / globalCtx.width + (globalCtx.width - 1150) * 0.5
       : globalCtx.width * 0.9;
+
+  const displayedOHLC =
+    ohlcInfo.close !== 0 ? (
+      <p className="text-sm text-lightGray">
+        O:
+        {ohlcInfo.open} &nbsp;&nbsp;&nbsp;H: {ohlcInfo.high} &nbsp;&nbsp;&nbsp;L: {ohlcInfo.low}{' '}
+        &nbsp;&nbsp;&nbsp;C: {ohlcInfo.close}
+      </p>
+    ) : null;
 
   const chartContainerRef = useRef<HTMLDivElement>(null);
   let chart: IChartApi;
@@ -326,8 +347,26 @@ export default function CandlestickChart({
 
       chart.timeScale().fitContent();
 
+      chart.subscribeCrosshairMove(param => {
+        if (param.point === undefined || param.time === undefined) {
+          return;
+        }
+
+        if (param.seriesData) {
+          param.seriesData.forEach(series => {
+            const candle = series as CandlestickData;
+            setOhlcInfo({
+              open: candle.open,
+              high: candle.high,
+              low: candle.low,
+              close: candle.close,
+            });
+          });
+        }
+      });
+
       // Info: updateChart in period
-      // ToDo: 只要有新的資料就更新，不用 setInterval (20230331 - Shirley)
+      // Till: (20230424 - Shirley) 只要有新的資料就更新，不用 setInterval
       /*
     const intervalId = setInterval(() => {
       try {
@@ -352,7 +391,7 @@ export default function CandlestickChart({
       return () => {
         try {
           window.removeEventListener('resize', handleResize);
-          // clearInterval(intervalId);
+          // Till: (20230424 - Shirley) // clearInterval(intervalId);
           chart.remove();
         } catch (err) {
           // Info: (20230406 - Shirley) do nothing
@@ -367,6 +406,7 @@ export default function CandlestickChart({
 
   return (
     <>
+      <div className="-mt-8 mb-5 ml-5">{displayedOHLC}</div>
       <div className="ml-5 pb-20 pt-20 lg:w-7/10 lg:pb-5 lg:pt-14">
         <div ref={chartContainerRef} className="hover:cursor-crosshair"></div>
       </div>

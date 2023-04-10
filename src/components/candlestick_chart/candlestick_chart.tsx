@@ -138,7 +138,7 @@ const createSpec = ({timespan, dataSize, chartHeight, chartWidth}: IChartSpecPro
       fixLeftEdge: true,
       shiftVisibleRangeOnNewBar: true,
       borderVisible: false,
-      // Till: Restrict the drag (20230413 - Shirley) // fixRightEdge: true,
+      fixRightEdge: true, // Info: Restrict the drag (20230413 - Shirley)
     },
     localization: locale,
   };
@@ -170,7 +170,7 @@ const filterCandlestickData = ({
 };
 
 const tuningTimezone = (time: number) => {
-  // Get the timezone of the client browser
+  // Info: Get the timezone of the client browser (20230410 - Shirley )
   const tzOffset = new Date().getTimezoneOffset() * 60;
   const result = time - tzOffset;
   return result;
@@ -189,7 +189,7 @@ const tuningTzCandlestickDataArray = (dataArray: CandlestickData[]) => {
   return result;
 };
 
-/*
+/* Till: (20230424 - Shirley) to update the one candlestick
 const generateRandomCandle = ({time, lastPrice = 1288}: {time?: Date; lastPrice?: number}) => {
   const rnd = Math.random() / 1.2;
   const ts = rnd > 0.25 ? 1 + rnd ** 5 : 1 - rnd;
@@ -291,15 +291,12 @@ export default function CandlestickChart({
       const newCandlestickList = fetchCandlestickData();
       const newCandlestick = newCandlestickList[newCandlestickList.length - 1];
       candlestickSeries.update(newCandlestick);
-      // console.log('update', newCandlestickList);
     } catch (err) {
       // Info: (20230406 - Shirley) nothing to do
     }
   };
 
   const drawChart = () => {
-    // Info: initChart
-
     // ToDo: data from market context (20230331 - Shirley)
     /*
     const raw = getDummyCandlestickChartData(50, TimeSpanUnion._1s).map(d => ({
@@ -314,8 +311,6 @@ export default function CandlestickChart({
     if (chartContainerRef.current) {
       // Info: Draw
       const tuned = fetchCandlestickData();
-      // // eslint-disable-next-line no-console
-      // console.log('new', JSON.parse(JSON.stringify(tuned)));
 
       chart = createChart(chartContainerRef.current, chartOptions);
 

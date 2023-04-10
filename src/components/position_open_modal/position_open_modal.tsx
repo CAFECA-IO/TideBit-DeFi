@@ -17,6 +17,7 @@ import {
   getDeadline,
   getNowSeconds,
   getTimestamp,
+  getTimestampInMilliseconds,
 } from '../../lib/common';
 import {useContext, useEffect, useState} from 'react';
 import {MarketContext} from '../../contexts/market_context';
@@ -257,21 +258,23 @@ const PositionOpenModal = ({
     if (!userCtx.enableServiceTerm) return;
     const intervalId = setInterval(() => {
       const base = openCfdRequest.quotation.deadline - WAITING_TIME_FOR_USER_SIGNING;
-      const tickingSec = base - getTimestamp();
+      // const tickingSec = base - getTimestamp();
+      const tickingSec = (base * 1000 - getTimestampInMilliseconds()) / 1000;
 
       setSecondsLeft(tickingSec > 0 ? Math.round(tickingSec) : 0);
+      // const tempNow = getTimestamp();
+      // const rs = base - tempNow;
       // ToDo: FIXME: countdown is inconsistent with position open modal (20230407 - Shirley)
       // eslint-disable-next-line no-console
       console.log(
         'open, displayed deadline:',
-        base
-        // 'left sec state',
-        // secondsLeft,
-        // 'left sec Ref',
-        // secondsLeftRef.current
+        base,
+        secondsLeftRef.current,
+        'actual deadline:',
+        openCfdRequest.quotation.deadline
       );
 
-      if (secondsLeft === 0) {
+      if (secondsLeftRef.current === 0) {
         renewDataHandler();
       }
     }, 1000);

@@ -22,7 +22,7 @@ import {TypeOfPosition} from '../../constants/type_of_position';
 import {OrderType} from '../../constants/order_type';
 import {OrderStatusUnion} from '../../constants/order_status_union';
 import {ClickEvent} from '../../constants/tidebit_event';
-import {getTimestamp, roundToDecimalPlaces} from '../../lib/common';
+import {getTimestamp, getTimestampInMilliseconds, roundToDecimalPlaces} from '../../lib/common';
 import {IQuotation, getDummyQuotation} from '../../interfaces/tidebit_defi_background/quotation';
 import {NotificationContext} from '../../contexts/notification_context';
 import {useTranslation} from 'next-i18next';
@@ -180,16 +180,7 @@ const TradeTab = () => {
     if (!userCtx.enableServiceTerm) return;
 
     (async () => {
-      const {longQuotation, shortQuotation} = await getQuotation(
-        marketCtx.selectedTicker?.currency ?? DEFAULT_TICKER
-      );
-
-      // Deprecated: before merging into develop (20230327 - Shirley)
-      // eslint-disable-next-line no-console
-      // console.log('first time Effect (direct long)', now, longQuotation.data);
-      // eslint-disable-next-line no-console
-      // console.log('first time Effect (direct short)', now, shortQuotation.data);
-
+      renewQuotation();
       renewPosition();
 
       initSuggestion();
@@ -206,32 +197,22 @@ const TradeTab = () => {
       if (!longQuotationRef.current || !shortQuotationRef.current) return;
 
       const base = longQuotationRef.current.deadline - WAITING_TIME_FOR_USER_SIGNING;
-
-      const tickingSec = base - getTimestamp();
-      // const tickingSec = diff > 0 ? Math.round(diff) : 0;
+      const tickingSec = (base * 1000 - getTimestampInMilliseconds()) / 1000;
       setSecondsLeft(tickingSec > 0 ? Math.round(tickingSec) : 0);
+      // const tempNow = getTimestamp();
+      // const rs = base - tempNow;
       // ToDo: FIXME: countdown is inconsistent with position open modal (20230407 - Shirley)
       // eslint-disable-next-line no-console
       console.log(
         'tab, displayed deadline:',
-        base
-        //   'left sec state',
-        //   secondsLeft,
-        //   'left sec Ref',
-        //   secondsLeftRef.current
+        base,
+        secondsLeftRef.current,
+        'actual deadline:',
+        longQuotationRef.current.deadline
       );
 
       if (secondsLeftRef.current === 0) {
-        const {longQuotation, shortQuotation} = await getQuotation(
-          marketCtx.selectedTicker?.currency ?? DEFAULT_TICKER
-        );
-
-        const longInfo = longQuotation.data as IQuotation;
-
-        const newDeadline = longInfo.deadline - WAITING_TIME_FOR_USER_SIGNING;
-        const rounded = Math.round(newDeadline - getTimestamp());
-        setSecondsLeft(rounded);
-
+        renewQuotation();
         renewPosition();
 
         // Deprecated: before merging into develop (20230327 - Shirley)
@@ -248,10 +229,7 @@ const TradeTab = () => {
   // Info: Fetch quotation when ticker changed (20230327 - Shirley)
   useEffect(() => {
     notificationCtx.emitter.once(ClickEvent.TICKER_CHANGED, async () => {
-      const {longQuotation, shortQuotation} = await getQuotation(
-        marketCtx.selectedTickerRef.current?.currency ?? DEFAULT_TICKER
-      );
-
+      renewQuotation();
       renewPosition();
 
       // Deprecated: before merging into develop (20230327 - Shirley)
@@ -278,13 +256,6 @@ const TradeTab = () => {
 
       const long = longQuotation.data as IQuotation;
       const short = shortQuotation.data as IQuotation;
-
-      // Deprecated: before merging into develop (20230327 - Shirley)
-      // eslint-disable-next-line no-console
-      // console.log('long', now, long);
-      // Deprecated: before merging into develop (20230327 - Shirley)
-      // eslint-disable-next-line no-console
-      // console.log('short', now, short);
 
       // Info: if there's error fetching quotation, use the previous quotation or calculate the quotation (20230327 - Shirley)
       if (
@@ -438,6 +409,12 @@ const TradeTab = () => {
     );
     setShortSlValue(
       Number((Number(shortQuotationRef.current?.price) * (1 + SUGGEST_SL)).toFixed(2))
+    );
+  };
+
+  const renewQuotation = async () => {
+    const {longQuotation, shortQuotation} = await getQuotation(
+      marketCtx.selectedTicker?.currency ?? DEFAULT_TICKER
     );
   };
 

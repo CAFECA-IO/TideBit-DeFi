@@ -274,7 +274,7 @@ const PositionOpenModal = ({
         JSON.parse(JSON.stringify(openCfdRequest.quotation.deadline))
       );
 
-      if (secondsLeftRef.current === 0) {
+      if (secondsLeft === 0) {
         renewDataHandler();
 
         const nowMs = getTimestampInMilliseconds();
@@ -304,7 +304,7 @@ const PositionOpenModal = ({
 
       <div className="absolute right-6 top-90px flex items-center space-x-1 text-center">
         <BsClockHistory size={20} className="text-lightGray" />
-        <p className="w-8 text-xs">00:{secondsLeftRef.current.toString().padStart(2, '0')}</p>
+        <p className="w-8 text-xs">00:{secondsLeft.toString().padStart(2, '0')}</p>
       </div>
 
       <div className="relative flex flex-col items-center pt-1">

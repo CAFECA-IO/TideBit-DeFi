@@ -382,7 +382,7 @@ const PositionClosedModal = ({
     setPnlRenewedStyle('animate-flash text-lightYellow2');
 
     const base = quotation.deadline - WAITING_TIME_FOR_USER_SIGNING;
-    const rounded = Math.round(base * 1000 - getTimestampInMilliseconds());
+    const rounded = Math.round((base * 1000 - getTimestampInMilliseconds()) / 1000);
     setSecondsLeft(rounded);
 
     const displayedCloseOrder = toDisplayCloseOrder(openCfdDetails, quotation);

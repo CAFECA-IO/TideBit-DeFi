@@ -22,7 +22,7 @@ import {
 } from '../../constants/config';
 import {ClickEvent} from '../../constants/tidebit_event';
 import {useTranslation} from 'next-i18next';
-import {getTimestamp, roundToDecimalPlaces} from '../../lib/common';
+import {getTimestamp, getTimestampInMilliseconds, roundToDecimalPlaces} from '../../lib/common';
 import {IQuotation, getDummyQuotation} from '../../interfaces/tidebit_defi_background/quotation';
 import {NotificationContext} from '../../contexts/notification_context';
 import {IApplyCreateCFDOrder} from '../../interfaces/tidebit_defi_background/apply_create_cfd_order_data';
@@ -205,7 +205,7 @@ const TradeTabMobile = () => {
 
       const base = longQuotationRef.current.deadline - WAITING_TIME_FOR_USER_SIGNING;
 
-      const tickingSec = base - getTimestamp();
+      const tickingSec = (base * 1000 - getTimestampInMilliseconds()) / 1000;
       // const tickingSec = tickingSec > 0 ? Math.floor(tickingSec) : 0;
       setSecondsLeft(tickingSec);
       // ToDo: FIXME: countdown is inconsistent with position open modal (20230407 - Shirley)

@@ -434,6 +434,12 @@ const TradeTabMobile = () => {
     );
   };
 
+  const renewQuotation = async () => {
+    const {longQuotation, shortQuotation} = await getQuotation(
+      marketCtx.selectedTicker?.currency ?? DEFAULT_TICKER
+    );
+  };
+
   // Info: renew the value of position when target input changed (20230328 - Shirley)
   const renewPosition = () => {
     // Long

@@ -237,6 +237,9 @@ const TradeTab = () => {
   // Info: Fetch quotation when ticker changed (20230327 - Shirley)
   useEffect(() => {
     notificationCtx.emitter.once(ClickEvent.TICKER_CHANGED, async () => {
+      // const {longQuotation, shortQuotation} = await getQuotation(
+      //   marketCtx.selectedTicker?.currency ?? DEFAULT_TICKER
+      // );
       renewQuotation();
       renewPosition();
 

@@ -24,7 +24,7 @@ const WithdrawalHistoryModal = ({
 }: IWithdrawalHistoryModal) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
-  const {orderSnapshot, createTimestamp, orderStatus, targetAmount, targetAsset} =
+  const {orderSnapshot, createTimestamp, orderStatus, targetAmount, targetAsset, balanceSnapshot} =
     getWithdrawalHistoryData;
 
   const displayedWithdrawalAsset = targetAsset;
@@ -56,12 +56,11 @@ const WithdrawalHistoryModal = ({
     orderStatus === OrderStatusUnion.PROCESSING ? (
       <Lottie animationData={smallConnectingAnimation} loop={true} />
     ) : (
-      <>
-        {/* available.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
-        minimumFractionDigits: 2,
-        })
-       */}
-      </>
+      <div>
+        {balanceSnapshot.available.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+          minimumFractionDigits: 2,
+        })}
+      </div>
     );
 
   const displayedWithdrawalDetail =

@@ -475,22 +475,22 @@ export const rlpDecodeServiceTerm = (data: string) => {
 export const verifySignedServiceTerm = (encodedServiceTerm: string) => {
   let isDeWTLegit = true;
   const serviceTerm = rlpDecodeServiceTerm(encodedServiceTerm);
-  // 1. verify contract domain
+  // Info: 1. verify contract domain (20230411 - tzuhan)
   if (serviceTerm.message.domain !== DOMAIN) isDeWTLegit = false && isDeWTLegit;
-  // 2. verify contract version
+  // Info: 2. verify contract version (20230411 - tzuhan)
   if (serviceTerm.message.version !== packageJson.version) isDeWTLegit = false && isDeWTLegit;
-  // 3. verify contract agreement
+  // Info: 3. verify contract agreement (20230411 - tzuhan)
   if (serviceTerm.message.agree[0] !== TERM_OF_SERVICE) isDeWTLegit = false && isDeWTLegit;
   if (serviceTerm.message.agree[1] !== PRIVATE_POLICY) isDeWTLegit = false && isDeWTLegit;
-  // 4. verify contract expiration time
+  // Info: 4. verify contract expiration time (20230411 - tzuhan)
   if (
-    !serviceTerm.message.expired || // expired 不存在
-    !serviceTerm.message.iat || // iat 不存在
-    serviceTerm.message.iat > serviceTerm.message.expired || // iat 大於 expired
-    serviceTerm.message.iat > getTimestamp() || // iat 大於現在時間
-    serviceTerm.message.expired < getTimestamp() || // expired 小於現在時間
-    serviceTerm.message.iat - serviceTerm.message.expired > DeWT_VALIDITY_PERIOD ||
-    getTimestamp() - serviceTerm.message.iat > DeWT_VALIDITY_PERIOD
+    !serviceTerm.message.expired || // Info: expired 不存在 (20230411 - tzuhan)
+    !serviceTerm.message.iat || // Info: iat 不存在 (20230411 - tzuhan)
+    serviceTerm.message.iat > serviceTerm.message.expired || // Info: iat 大於 expired (20230411 - tzuhan)
+    serviceTerm.message.iat > getTimestamp() || // Info: iat 大於現在時間  (20230411 - tzuhan)
+    serviceTerm.message.expired < getTimestamp() || // Info: expired 小於現在時間 (20230411 - tzuhan)
+    serviceTerm.message.iat - serviceTerm.message.expired > DeWT_VALIDITY_PERIOD || // Info: iat 與 expired 的時間間隔大於 DeWT 的有效時間 (20230411 - tzuhan)
+    getTimestamp() - serviceTerm.message.iat > DeWT_VALIDITY_PERIOD // Info: 現在時間與 iat 的時間間隔大於 DeWT 的有效時間 (20230411 - tzuhan)
   )
     isDeWTLegit = false && isDeWTLegit;
   return {isDeWTLegit, serviceTerm};

@@ -12,6 +12,7 @@ import {DELAYED_HIDDEN_SECONDS} from '../../constants/display';
 import {UserContext} from '../../contexts/user_context';
 import {OrderType} from '../../constants/order_type';
 import {useTranslation} from 'react-i18next';
+import {Code} from '../../constants/code';
 
 type TranslateFunction = (s: string) => string;
 interface IWithdrawalModal {
@@ -83,58 +84,135 @@ const WithdrawalModal = ({
     });
     globalCtx.visibleLoadingModalHandler();
 
-    const result = await userCtx.withdraw({
-      orderType: OrderType.WITHDRAW,
-      createTimestamp: getTimestamp(),
-      targetAsset: selectedCrypto.symbol,
-      to: selectedCrypto.contract,
-      targetAmount: amountInput,
-      remark: '',
-      fee: 0,
-    });
+    try {
+      const result = await userCtx.withdraw({
+        orderType: OrderType.WITHDRAW,
+        createTimestamp: getTimestamp(),
+        targetAsset: selectedCrypto.symbol,
+        to: selectedCrypto.contract,
+        targetAmount: amountInput,
+        remark: '',
+        fee: 0,
+      });
 
-    // TODO: for debug
-    globalCtx.toast({message: 'withdraw result: ' + JSON.stringify(result), type: 'info'});
+      // TODO: for debug
+      globalCtx.toast({message: 'withdraw result: ' + JSON.stringify(result), type: 'info'});
 
-    globalCtx.dataLoadingModalHandler({
-      modalTitle: 'Withdraw',
-      modalContent: 'Transaction broadcast',
-      btnMsg: 'View on Boltchain',
-      btnUrl: '#',
-    });
-
-    // INFO: for UX
-    await wait(DELAYED_HIDDEN_SECONDS);
-
-    globalCtx.eliminateAllModals();
-
-    // TODO: the button URL
-    if (result.success) {
-      globalCtx.dataSuccessfulModalHandler({
+      globalCtx.dataLoadingModalHandler({
         modalTitle: 'Withdraw',
-        modalContent: 'Transaction succeed',
+        modalContent: 'Transaction broadcast',
         btnMsg: 'View on Boltchain',
         btnUrl: '#',
       });
 
-      globalCtx.visibleSuccessfulModalHandler();
-      // TODO: `result.code` (20230316 - Shirley)
-    } else if (result.reason === 'CANCELED') {
-      globalCtx.dataCanceledModalHandler({
-        modalTitle: 'Withdraw',
-        modalContent: 'Transaction canceled',
-      });
+      // INFO: for UX
+      await wait(DELAYED_HIDDEN_SECONDS);
 
-      globalCtx.visibleCanceledModalHandler();
-    } else if (result.reason === 'FAILED') {
-      globalCtx.dataFailedModalHandler({
-        modalTitle: 'Withdraw',
-        failedTitle: 'Failed',
-        failedMsg: 'Failed to withdraw',
-      });
+      globalCtx.eliminateAllModals();
 
-      globalCtx.visibleFailedModalHandler();
+      // TODO: the button URL
+      if (result.success) {
+        globalCtx.dataSuccessfulModalHandler({
+          modalTitle: 'Withdraw',
+          modalContent: 'Transaction succeed',
+          btnMsg: 'View on Boltchain',
+          btnUrl: '#',
+        });
+
+        globalCtx.visibleSuccessfulModalHandler();
+        // TODO: `result.code` (20230316 - Shirley)
+      } else if (
+        result.code === Code.INTERNAL_SERVER_ERROR ||
+        result.code === Code.INVAILD_INPUTS ||
+        result.code === Code.SERVICE_TERM_DISABLE ||
+        result.code === Code.WALLET_IS_NOT_CONNECT
+      ) {
+        globalCtx.dataFailedModalHandler({
+          modalTitle: 'Withdraw',
+          failedTitle: 'Failed',
+          failedMsg: 'Failed to withdraw',
+        });
+
+        globalCtx.visibleFailedModalHandler();
+      }
+
+      // ToDo: Rejected signature [Canceled]
+      // else if
+    } catch (error: any) {
+      globalCtx.eliminateAllModals();
+
+      // Info: Signature rejected
+      // ToDo: Catch the error which user rejected the signature in UserContext (20230411 - Shirley)
+      if (error?.code === 4001) {
+        globalCtx.dataCanceledModalHandler({
+          modalTitle: 'Open Position',
+          modalContent: 'Transaction canceled',
+        });
+
+        globalCtx.visibleCanceledModalHandler();
+      } else {
+        // Info: Unknown error
+        globalCtx.dataFailedModalHandler({
+          modalTitle: 'Open Position',
+          failedTitle: 'Failed',
+          failedMsg: 'Transaction failed',
+        });
+
+        globalCtx.visibleFailedModalHandler();
+      }
     }
+    // const result = await userCtx.withdraw({
+    //   orderType: OrderType.WITHDRAW,
+    //   createTimestamp: getTimestamp(),
+    //   targetAsset: selectedCrypto.symbol,
+    //   to: selectedCrypto.contract,
+    //   targetAmount: amountInput,
+    //   remark: '',
+    //   fee: 0,
+    // });
+
+    // // TODO: for debug
+    // globalCtx.toast({message: 'withdraw result: ' + JSON.stringify(result), type: 'info'});
+
+    // globalCtx.dataLoadingModalHandler({
+    //   modalTitle: 'Withdraw',
+    //   modalContent: 'Transaction broadcast',
+    //   btnMsg: 'View on Boltchain',
+    //   btnUrl: '#',
+    // });
+
+    // // INFO: for UX
+    // await wait(DELAYED_HIDDEN_SECONDS);
+
+    // globalCtx.eliminateAllModals();
+
+    // // TODO: the button URL
+    // if (result.success) {
+    //   globalCtx.dataSuccessfulModalHandler({
+    //     modalTitle: 'Withdraw',
+    //     modalContent: 'Transaction succeed',
+    //     btnMsg: 'View on Boltchain',
+    //     btnUrl: '#',
+    //   });
+
+    //   globalCtx.visibleSuccessfulModalHandler();
+    //   // TODO: `result.code` (20230316 - Shirley)
+    // } else if (result.reason === 'CANCELED') {
+    //   globalCtx.dataCanceledModalHandler({
+    //     modalTitle: 'Withdraw',
+    //     modalContent: 'Transaction canceled',
+    //   });
+
+    //   globalCtx.visibleCanceledModalHandler();
+    // } else if (result.reason === 'FAILED') {
+    //   globalCtx.dataFailedModalHandler({
+    //     modalTitle: 'Withdraw',
+    //     failedTitle: 'Failed',
+    //     failedMsg: 'Failed to withdraw',
+    //   });
+
+    //   globalCtx.visibleFailedModalHandler();
+    // }
 
     unlock();
 

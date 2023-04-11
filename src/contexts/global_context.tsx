@@ -914,22 +914,22 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     // INFO: Set the process in modal component. `eliminateAllModals` won't work here (20230317 - Shirley)
     // setWithdrawProcess('loading');
     */
-    userCtx
-      .withdraw({
-        orderType: OrderType.WITHDRAW,
-        createTimestamp: getTimestamp(),
-        targetAsset: props.asset.symbol,
-        to: props.asset.contract,
-        targetAmount: props.amount,
-        remark: '',
-        fee: 0,
-      })
-      .then(result => {
-        // Deprecate: after Julian confirm result format (20230329 - tzuhan)
-        // eslint-disable-next-line no-console
-        console.log(`userCtx.deposit result:`, result);
-        setDepositProcess('success');
-      });
+    // userCtx
+    //   .withdraw({
+    //     orderType: OrderType.WITHDRAW,
+    //     createTimestamp: getTimestamp(),
+    //     targetAsset: props.asset.symbol,
+    //     to: props.asset.contract,
+    //     targetAmount: props.amount,
+    //     remark: '',
+    //     fee: 0,
+    //   })
+    //   .then(result => {
+    //     // Deprecate: after Julian confirm result format (20230329 - tzuhan)
+    //     // eslint-disable-next-line no-console
+    //     console.log(`userCtx.deposit result:`, result);
+    //     setDepositProcess('success');
+    //   });
   };
 
   // ------------------------------------------ //

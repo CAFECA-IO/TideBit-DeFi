@@ -79,9 +79,9 @@ const PositionOpenModal = ({
 
   /** ToDo: (20230329 - Shirley)
     // loading modal -> UserContext.function (負責簽名) ->
-    // 猶豫太久的話，單子會過期，就會顯示 failed modal，
-    // 用戶沒簽名才是顯示 canceled modal
-    // 用戶簽名成功，就會顯示 successful modal
+    // 猶豫太久的話，單子會過期，就會顯示 canceled modal (User context)，
+    // 用戶沒簽名也是顯示 canceled modal (User context)
+    // 用戶簽名成功，就會顯示 successful modal (User context)
    */
   const submitClickHandler = async () => {
     const [lock, unlock] = locker('position_open_modal.submitClickHandler');
@@ -140,7 +140,7 @@ const PositionOpenModal = ({
 
         globalCtx.visibleSuccessfulModalHandler();
       } else if (
-        // ToDo: Expired quotation
+        // ToDo: Expired quotation [Failed] and Rejected signature [Canceled]
         result.code === Code.INTERNAL_SERVER_ERROR ||
         result.code === Code.INVAILD_INPUTS ||
         result.code === Code.SERVICE_TERM_DISABLE ||

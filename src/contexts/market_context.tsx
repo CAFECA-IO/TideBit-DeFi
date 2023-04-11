@@ -257,6 +257,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       tickerBook.updateCandlestick(tickerId, candlestickChartData);
       */
       // await listTradesData(tickerId);
+
       setCandlestickChartData(tickerBook.listCandlestickData(tickerId, {}));
       result = defaultResultSuccess;
     } catch (error) {

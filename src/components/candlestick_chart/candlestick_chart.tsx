@@ -23,6 +23,7 @@ import {
   LocalizationOptions,
   IChartApi,
   ISeriesApi,
+  BarData,
 } from 'lightweight-charts';
 import Lottie, {useLottie} from 'lottie-react';
 import spotAnimation from '../../../public/animation/circle.json';
@@ -46,18 +47,13 @@ import {
 import {
   ICandlestickData,
   getDummyCandlestickChartData,
+  updateDummyCandlestickChartData,
 } from '../../interfaces/tidebit_defi_background/candlestickData';
 import useStateRef from 'react-usestateref';
 import {AppContext} from '../../contexts/app_context';
 import Image from 'next/image';
 import {GlobalContext} from '../../contexts/global_context';
 import {UserContext} from '../../contexts/user_context';
-import {
-  MAX_PRICE_TRADING_CHART_ONE_SEC,
-  MIN_PRICE_TRADING_CHART_ONE_SEC,
-  TRADING_CHART_PRICE_LIMIT_ONE_SEC,
-  POSITION_PRICE_RENEWAL_INTERVAL_SECONDS,
-} from '../../constants/config';
 import {ProfitState} from '../../constants/profit_state';
 import {TypeOfPosition} from '../../constants/type_of_position';
 import {TimeSpanUnion} from '../../interfaces/tidebit_defi_background/time_span_union';
@@ -73,7 +69,14 @@ interface ITradingChartGraphProps {
   candlestickChartHeight: string;
 }
 
-// Get candlestick data from market context, check the data format and merge with `initData`
+interface IOHLCInfo {
+  open: number;
+  high: number;
+  low: number;
+  close: number;
+}
+
+// Info: Get candlestick data from market context, check the data format and merge with `initData` (20230411 - Shirley)
 const candlestickDataCleaning = (dataArray: CandlestickData[]) => {
   const data = [...dataArray];
 
@@ -137,7 +140,7 @@ const createSpec = ({timespan, dataSize, chartHeight, chartWidth}: IChartSpecPro
       fixLeftEdge: true,
       shiftVisibleRangeOnNewBar: true,
       borderVisible: false,
-      // Till: Restrict the drag (20230413 - Shirley) // fixRightEdge: true,
+      fixRightEdge: true, // Info: Restrict the drag (20230413 - Shirley)
     },
     localization: locale,
   };
@@ -169,7 +172,7 @@ const filterCandlestickData = ({
 };
 
 const tuningTimezone = (time: number) => {
-  // Get the timezone of the client browser
+  // Info: Get the timezone of the client browser (20230410 - Shirley )
   const tzOffset = new Date().getTimezoneOffset() * 60;
   const result = time - tzOffset;
   return result;
@@ -188,33 +191,6 @@ const tuningTzCandlestickDataArray = (dataArray: CandlestickData[]) => {
   return result;
 };
 
-const generateRandomCandle = ({time, lastPrice = 1288}: {time?: Date; lastPrice?: number}) => {
-  const rnd = Math.random() / 1.2;
-  const ts = rnd > 0.25 ? 1 + rnd ** 5 : 1 - rnd;
-  const price = lastPrice * ts;
-
-  const open = price * (1 + (Math.random() - 0.5) / 10);
-  const close = price * (1 + (Math.random() - 0.5) / 10);
-  const high = Math.max(open, close) * (1 + Math.random() / 10);
-  const low = Math.min(open, close) * (1 - Math.random() / 10);
-
-  const currentTime = time ? time?.getTime() : new Date().getTime();
-  const timeOffset = currentTime - (currentTime % 1000);
-  const dateOffset = new Date(timeOffset);
-
-  const candle: ICandlestickData = {
-    x: dateOffset,
-    y: {
-      open: open,
-      high: high,
-      low: low,
-      close: close,
-    },
-  };
-
-  return candle;
-};
-
 const toCandlestickData = (data: ICandlestickData): CandlestickData => {
   return {
     time: (data.x.getTime() / 1000) as UTCTimestamp,
@@ -222,6 +198,18 @@ const toCandlestickData = (data: ICandlestickData): CandlestickData => {
     high: data.y.high || 0,
     low: data.y.low || 0,
     close: data.y.close || 0,
+  };
+};
+
+const toICandlestickData = (data: CandlestickData): ICandlestickData => {
+  return {
+    x: new Date((data.time as number) * 1000),
+    y: {
+      open: data.open,
+      high: data.high,
+      low: data.low,
+      close: data.close,
+    },
   };
 };
 
@@ -236,50 +224,58 @@ export default function CandlestickChart({
   ...otherProps
 }: ITradingChartGraphProps) {
   const marketCtx = useContext(MarketContext);
-  const appCtx = useContext(AppContext);
   const globalCtx = useContext(GlobalContext);
   const userCtx = useContext(UserContext);
+
+  const [ohlcInfo, setOhlcInfo] = useState<IOHLCInfo>({
+    open: 0,
+    high: 0,
+    low: 0,
+    close: 0,
+  });
 
   const width =
     globalCtx.layoutAssertion === 'desktop'
       ? globalCtx.width * 0.6 - 2000 / globalCtx.width + (globalCtx.width - 1150) * 0.5
       : globalCtx.width * 0.9;
 
+  const displayedOHLC =
+    ohlcInfo.close !== 0 ? (
+      <p className="text-sm text-lightGray">
+        O：{ohlcInfo.open} &nbsp;&nbsp;&nbsp;H：{ohlcInfo.high} &nbsp;&nbsp;&nbsp;L：{ohlcInfo.low}{' '}
+        &nbsp;&nbsp;&nbsp;C：{ohlcInfo.close}
+      </p>
+    ) : null;
+
   const chartContainerRef = useRef<HTMLDivElement>(null);
   let chart: IChartApi;
+  let candlestickSeries: ISeriesApi<'Candlestick'>;
+
+  const {targetTime, chartOptions} = createSpec({
+    dataSize: 30,
+    timespan: 1,
+    chartWidth: width, // ToDo: candlestickChartWidth
+    chartHeight: 300, // ToDo: candlestickChartHeight
+  });
 
   const handleResize = () => {
     chart.applyOptions({width: Number(chartContainerRef?.current?.clientWidth) - 50});
   };
 
-  const tempFunc = () => {
-    // Info: initChart
-    let candlestickSeries: ISeriesApi<'Candlestick'>;
-
-    const {targetTime, chartOptions} = createSpec({
-      dataSize: 30,
-      timespan: 1,
-      chartWidth: width, // ToDo: candlestickChartWidth
-      chartHeight: 300, // ToDo: candlestickChartHeight
-    });
-
-    // ToDo: data from market context (20230331 - Shirley)
-    const raw = getDummyCandlestickChartData(50, TimeSpanUnion._1s).map(d => ({
-      time: (d.x.getTime() / 1000) as UTCTimestamp,
-      open: d.y.open,
-      high: d.y.high,
-      low: d.y.low,
-      close: d.y.close,
-    })) as CandlestickData[];
-
+  const fetchCandlestickData = () => {
+    const originRaw = marketCtx.candlestickChartData?.map(toCandlestickData) ?? [];
+    const raw = originRaw.sort((a, b) => Number(a.time) - Number(b.time));
     const cleanedData = candlestickDataCleaning(raw);
-
     const filtered = filterCandlestickData({dataArray: cleanedData, targetTime: targetTime});
+    const result = tuningTzCandlestickDataArray(filtered) as CandlestickData[];
+    return result;
+  };
 
-    const tuned = tuningTzCandlestickDataArray(filtered) as CandlestickData[];
-
+  const drawChart = () => {
     if (chartContainerRef.current) {
       // Info: Draw
+      const tuned = fetchCandlestickData();
+
       chart = createChart(chartContainerRef.current, chartOptions);
 
       candlestickSeries = chart.addCandlestickSeries({
@@ -290,48 +286,54 @@ export default function CandlestickChart({
         wickUpColor: LINE_GRAPH_STROKE_COLOR.UP,
         wickDownColor: LINE_GRAPH_STROKE_COLOR.DOWN,
       });
-
       candlestickSeries.setData(tuned);
 
       chart.timeScale().fitContent();
 
-      // Info: updateChart in period
-      // ToDo: 只要有新的資料就更新，不用 setInterval (20230331 - Shirley)
-      const intervalId = setInterval(() => {
-        try {
-          const option = {
-            lastPrice: filtered[filtered.length - 1].close,
-          };
-
-          // ToDo: data from market context (20230331 - Shirley)
-          const newCandleRaw = generateRandomCandle(option);
-
-          const newCandle = toCandlestickData(newCandleRaw);
-          const tunedNewCandle = tuningTzCandlestickData(newCandle) as CandlestickData;
-
-          candlestickSeries.update(tunedNewCandle);
-        } catch (err) {
-          // ToDo: re render (20230331 - Shirley)
+      chart.subscribeCrosshairMove(param => {
+        if (param.point === undefined || param.time === undefined) {
+          return;
         }
-      }, 200);
+
+        if (param.seriesData) {
+          param.seriesData.forEach(series => {
+            const candle = series as CandlestickData;
+            setOhlcInfo({
+              open: candle.open,
+              high: candle.high,
+              low: candle.low,
+              close: candle.close,
+            });
+          });
+        }
+      });
 
       window.addEventListener('resize', handleResize);
 
       return () => {
-        window.removeEventListener('resize', handleResize);
-        clearInterval(intervalId);
-        chart.remove();
+        try {
+          window.removeEventListener('resize', handleResize);
+          chart.remove();
+        } catch (err) {
+          // Info: (20230406 - Shirley) do nothing
+        }
       };
     }
   };
 
   useEffect(() => {
-    return tempFunc();
-  }, []);
+    // Deprecate: Sometimes, data isn't immediate. [for debug] (20230411 - Shirley)
+    // eslint-disable-next-line no-console
+    console.log('context data', JSON.parse(JSON.stringify(marketCtx.candlestickChartData)));
+    // eslint-disable-next-line no-console
+    console.log('now', Date());
+    return drawChart();
+  }, [marketCtx.candlestickChartData]);
 
   return (
     <>
-      <div className="ml-5 pt-20 pb-20 lg:w-7/10 lg:pt-14 lg:pb-5">
+      <div className="mt-5 -mb-8 lg:-mt-8 lg:mb-5 lg:ml-5">{displayedOHLC}</div>
+      <div className="ml-5 pb-20 pt-20 lg:w-7/10 lg:pb-5 lg:pt-14">
         <div ref={chartContainerRef} className="hover:cursor-crosshair"></div>
       </div>
     </>

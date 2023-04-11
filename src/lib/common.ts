@@ -7,7 +7,19 @@ import {OrderState} from '../constants/order_state';
 import {TypeOfPosition} from '../constants/type_of_position';
 import {IDisplayAcceptedCFDOrder} from '../interfaces/tidebit_defi_background/display_accepted_cfd_order';
 import {ProfitState} from '../constants/profit_state';
-import {SUGGEST_SL, SUGGEST_TP} from '../constants/config';
+import {
+  DeWT_VALIDITY_PERIOD,
+  DOMAIN,
+  PRIVATE_POLICY,
+  SERVICE_TERM_TITLE,
+  SUGGEST_SL,
+  SUGGEST_TP,
+  TERM_OF_SERVICE,
+} from '../constants/config';
+import ServiceTerm from '../constants/contracts/service_term';
+import packageJson from '../../package.json';
+import IJSON from '../interfaces/ijson';
+import RLP from 'rlp';
 
 export const roundToDecimalPlaces = (val: number, precision: number): number => {
   const roundedNumber = Number(val.toFixed(precision));
@@ -368,4 +380,126 @@ export const toDisplayAcceptedCFDOrder = (
     suggestion,
   };
   return displayAcceptedCFDOrder;
+};
+
+export const getServiceTermContract = (address: string) => {
+  const serviceTermsContract = ServiceTerm;
+  const message = {
+    title: SERVICE_TERM_TITLE,
+    domain: DOMAIN,
+    version: packageJson.version,
+    agree: [TERM_OF_SERVICE, PRIVATE_POLICY],
+    signer: address,
+    expired: getTimestamp() + DeWT_VALIDITY_PERIOD,
+    iat: getTimestamp(),
+  };
+  serviceTermsContract.message = message;
+  return serviceTermsContract;
+};
+const convertServiceTermToObject = (serviceTerm: IEIP712Data) => {
+  const message = serviceTerm.message as {[key: string]: IJSON};
+  const data = {
+    primaryType: serviceTerm.primaryType as string,
+    domain: {...serviceTerm.domain},
+    message: {
+      title: message.title as string,
+      domain: message.domain as string,
+      version: message.version as string,
+      agree: message.agree as string[],
+      signer: message.signer as string,
+      expired: message.expired as number,
+      iat: message.iat as number,
+    },
+  };
+  return data;
+};
+
+export const rlpEncodeServiceTerm = (serviceTerm: IEIP712Data) => {
+  const data = convertServiceTermToObject(serviceTerm);
+  const encodedData = RLP.encode([
+    data.message.title,
+    data.message.domain,
+    data.message.version,
+    data.message.agree,
+    data.message.signer,
+    data.message.expired,
+    data.message.iat,
+  ]);
+  const dataToHex = Buffer.from(encodedData).toString('hex');
+  return dataToHex;
+};
+
+const asciiToString = (asciiBuffer: Uint8Array) => {
+  let string = '';
+  const hexString = Buffer.from(asciiBuffer).toString('hex');
+  for (let i = 0; i < hexString.length; i += 2) {
+    string += String.fromCharCode(parseInt(hexString.substr(i, 2), 16));
+  }
+  return string;
+};
+
+const asciiToInt = (asciiBuffer: Uint8Array) => {
+  const hexString = Buffer.from(asciiBuffer).toString('hex');
+  const asciiInt = parseInt(hexString, 16);
+  return asciiInt;
+};
+
+export const rlpDecodeServiceTerm = (data: string) => {
+  const buffer = Buffer.from(data, 'hex');
+  const decodedData = RLP.decode(buffer);
+  const title = decodedData[0] ? asciiToString(decodedData[0] as Uint8Array) : undefined;
+  const domain = decodedData[1] ? asciiToString(decodedData[1] as Uint8Array) : undefined;
+  const version = decodedData[2] ? asciiToString(decodedData[2] as Uint8Array) : undefined;
+  const agree = [
+    asciiToString((decodedData[3] as Array<Uint8Array>)[0]),
+    asciiToString((decodedData[3] as Array<Uint8Array>)[1]),
+  ];
+  const signer = decodedData[4]
+    ? `0x${Buffer.from(decodedData[4] as Uint8Array).toString('hex')}`
+    : undefined;
+  const expired = decodedData[5] ? asciiToInt(decodedData[5] as Uint8Array) : undefined;
+  const iat = decodedData[6] ? asciiToInt(decodedData[6] as Uint8Array) : undefined;
+  return {
+    message: {
+      title,
+      domain,
+      version,
+      agree,
+      signer,
+      expired,
+      iat,
+    },
+  };
+};
+
+export const verifySignedServiceTerm = (encodedServiceTerm: string) => {
+  let isDeWTLegit = true;
+  const serviceTerm = rlpDecodeServiceTerm(encodedServiceTerm);
+  // Info: 1. verify contract domain (20230411 - tzuhan)
+  if (serviceTerm.message.domain !== DOMAIN) isDeWTLegit = false && isDeWTLegit;
+  // Info: 2. verify contract version (20230411 - tzuhan)
+  if (serviceTerm.message.version !== packageJson.version) isDeWTLegit = false && isDeWTLegit;
+  // Info: 3. verify contract agreement (20230411 - tzuhan)
+  if (serviceTerm.message.agree[0] !== TERM_OF_SERVICE) isDeWTLegit = false && isDeWTLegit;
+  if (serviceTerm.message.agree[1] !== PRIVATE_POLICY) isDeWTLegit = false && isDeWTLegit;
+  // Info: 4. verify contract expiration time (20230411 - tzuhan)
+  if (
+    !serviceTerm.message.expired || // Info: expired 不存在 (20230411 - tzuhan)
+    !serviceTerm.message.iat || // Info: iat 不存在 (20230411 - tzuhan)
+    serviceTerm.message.iat > serviceTerm.message.expired || // Info: iat 大於 expired (20230411 - tzuhan)
+    serviceTerm.message.iat > getTimestamp() || // Info: iat 大於現在時間  (20230411 - tzuhan)
+    serviceTerm.message.expired < getTimestamp() || // Info: expired 小於現在時間 (20230411 - tzuhan)
+    serviceTerm.message.iat - serviceTerm.message.expired > DeWT_VALIDITY_PERIOD || // Info: iat 與 expired 的時間間隔大於 DeWT 的有效時間 (20230411 - tzuhan)
+    getTimestamp() - serviceTerm.message.iat > DeWT_VALIDITY_PERIOD // Info: 現在時間與 iat 的時間間隔大於 DeWT 的有效時間 (20230411 - tzuhan)
+  )
+    isDeWTLegit = false && isDeWTLegit;
+  return {isDeWTLegit, serviceTerm};
+};
+
+export const getCookieByName = (name: string): string | undefined => {
+  const cookieValue = document.cookie
+    .split('; ')
+    .find(row => row.startsWith(`${name}=`))
+    ?.split('=')[1];
+  return cookieValue;
 };

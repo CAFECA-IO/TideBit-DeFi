@@ -19,7 +19,6 @@ import {NotificationContext} from './notification_context';
 import {ITickerData} from '../interfaces/tidebit_defi_background/ticker_data';
 import {OrderState} from '../constants/order_state';
 import {WorkerContext} from './worker_context';
-import ServiceTerm from '../constants/contracts/service_term';
 import {IApplyCreateCFDOrder} from '../interfaces/tidebit_defi_background/apply_create_cfd_order_data';
 import {IApplyCloseCFDOrder} from '../interfaces/tidebit_defi_background/apply_close_cfd_order_data';
 import {IApplyUpdateCFDOrder} from '../interfaces/tidebit_defi_background/apply_update_cfd_order_data';
@@ -29,10 +28,16 @@ import {IApplyDepositOrder} from '../interfaces/tidebit_defi_background/apply_de
 import {IApplyWithdrawOrder} from '../interfaces/tidebit_defi_background/apply_withdraw_order';
 import {IAcceptedWithdrawOrder} from '../interfaces/tidebit_defi_background/accepted_withdraw_order';
 import {IAcceptedDepositOrder} from '../interfaces/tidebit_defi_background/accepted_deposit_order';
-import {APIName, Method} from '../constants/api_request';
+import {APIName, Method, TypeRequest} from '../constants/api_request';
 import SafeMath from '../lib/safe_math';
 import {Code, Reason} from '../constants/code';
-import {randomHex} from '../lib/common';
+import {
+  getCookieByName,
+  getServiceTermContract,
+  randomHex,
+  rlpEncodeServiceTerm,
+  verifySignedServiceTerm,
+} from '../lib/common';
 import {IAcceptedOrder} from '../interfaces/tidebit_defi_background/accepted_order';
 import {OrderType} from '../constants/order_type';
 
@@ -92,21 +97,21 @@ export interface IUserContext {
   closedCFDs: IAcceptedCFDOrder[];
   deposits: IAcceptedDepositOrder[];
   withdraws: IAcceptedWithdrawOrder[];
-  histories: IAcceptedOrder[]; // TODO: remove IOrder replace by IDisplayAcceptedOrder (20230331 - tzuhan)
+  histories: IAcceptedOrder[];
   connect: () => Promise<IResult>;
   signServiceTerm: () => Promise<IResult>;
   disconnect: () => Promise<IResult>;
   addFavorites: (props: string) => Promise<IResult>;
   removeFavorites: (props: string) => Promise<IResult>;
-  listHistories: (props: string) => Promise<IResult>; // TODO: result.data: IOrder[] (20230323 - tzuhan)
-  listCFDs: (props: string) => Promise<IResult>; // TODO: result.data: IAcceptedCFDOrder[] (20230323 - tzuhan)
+  listHistories: (props: string) => Promise<IResult>;
+  listCFDs: (props: string) => Promise<IResult>;
   getCFD: (props: string) => IAcceptedCFDOrder | null;
   createCFDOrder: (props: IApplyCreateCFDOrder | undefined) => Promise<IResult>;
   closeCFDOrder: (props: IApplyCloseCFDOrder | undefined) => Promise<IResult>;
   updateCFDOrder: (props: IApplyUpdateCFDOrder | undefined) => Promise<IResult>;
-  listDeposits: (props: string) => Promise<IResult>; // TODO: result.data: IAcceptedDepositOrder[] (20230323 - tzuhan)
+  listDeposits: (props: string) => Promise<IResult>;
   deposit: (props: IApplyDepositOrder) => Promise<IResult>;
-  listWithdraws: (props: string) => Promise<IResult>; // TODO: result.data: IAcceptedWithdrawOrder[] (20230323 - tzuhan)
+  listWithdraws: (props: string) => Promise<IResult>;
   withdraw: (props: IApplyWithdrawOrder) => Promise<IResult>;
   sendEmailCode: (email: string, hashCash: string) => Promise<IResult>;
   connectEmail: (email: string, code: number) => Promise<IResult>;
@@ -244,6 +249,7 @@ export const UserProvider = ({children}: IUserProvider) => {
   const [selectedTicker, setSelectedTicker, selectedTickerRef] = useState<ITickerData | null>(null);
 
   const setPrivateData = async (walletAddress: string) => {
+    setEnableServiceTerm(true);
     setWallet(walletAddress);
     setWalletBalances([dummyWalletBalance_BTC, dummyWalletBalance_ETH, dummyWalletBalance_USDT]);
     // TODO: getUser and User balance from backend (20230324 - tzuhan)
@@ -264,6 +270,8 @@ export const UserProvider = ({children}: IUserProvider) => {
   };
 
   const clearPrivateData = () => {
+    // clear DeWT
+    setDeWT('');
     setEnableServiceTerm(false);
     setId(null);
     setUsername(null);
@@ -288,11 +296,29 @@ export const UserProvider = ({children}: IUserProvider) => {
     clearPrivateData();
   });
 
+  const privateRequestHandler = useCallback(async (data: TypeRequest) => {
+    try {
+      const isDeWTLegit = checkDeWT();
+      if (isDeWTLegit) {
+        return await workerCtx.requestHandler({
+          ...data,
+          headers: {
+            'DeWT': getCookieByName('DeWT'),
+          },
+        });
+      } else {
+        throw Error(Code.DEWT_IS_NOT_LEGIT);
+      }
+    } catch (error) {
+      throw error;
+    }
+  }, []);
+
   const listFavoriteTickers = useCallback(async (address?: string) => {
     let result: IResult = defaultResultFailed;
     if (enableServiceTermRef.current) {
       try {
-        const tickers = (await workerCtx.requestHandler({
+        const tickers = (await privateRequestHandler({
           name: APIName.LIST_FAVORITE_TICKERS,
           method: Method.GET,
           // params: {
@@ -302,7 +328,7 @@ export const UserProvider = ({children}: IUserProvider) => {
         setFavoriteTickers(tickers);
         result = defaultResultSuccess;
       } catch (error) {
-        // TODO: error handle (Tzuhan - 20230321)
+        // TODO: error handle (Tzuhan - 20230421)
         // eslint-disable-next-line no-console
         console.error(`listFavoriteTickers error`, error);
         result.code = Code.INTERNAL_SERVER_ERROR;
@@ -318,7 +344,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     result.reason = Reason[result.code];
     if (enableServiceTermRef.current) {
       try {
-        const CFDs = (await workerCtx.requestHandler({
+        const CFDs = (await privateRequestHandler({
           name: APIName.LIST_CFD_TRADES,
           method: Method.GET,
           params: {
@@ -348,7 +374,7 @@ export const UserProvider = ({children}: IUserProvider) => {
         console.log(`closedCFDs`, closedCFDsRef.current);
         result = defaultResultSuccess;
       } catch (error) {
-        // TODO: error handle (Tzuhan - 20230321)
+        // TODO: error handle (Tzuhan - 20230421)
         // eslint-disable-next-line no-console
         console.error(`listCFDs error`, error);
         result.code = Code.INTERNAL_SERVER_ERROR;
@@ -364,7 +390,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     result.reason = Reason[result.code];
     if (enableServiceTermRef.current) {
       try {
-        const deposits = (await workerCtx.requestHandler({
+        const deposits = (await privateRequestHandler({
           name: APIName.LIST_DEPOSIT_TRADES,
           method: Method.GET,
           params: {
@@ -379,7 +405,7 @@ export const UserProvider = ({children}: IUserProvider) => {
         setDeposits(deposits);
         result = defaultResultSuccess;
       } catch (error) {
-        // TODO: error handle (Tzuhan - 20230321)
+        // TODO: error handle (Tzuhan - 20230421)
         // eslint-disable-next-line no-console
         console.error(`listDeposits error`, error);
         result.code = Code.INTERNAL_SERVER_ERROR;
@@ -393,7 +419,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     let result: IResult = defaultResultFailed;
     if (enableServiceTermRef.current) {
       try {
-        const withdraws = (await workerCtx.requestHandler({
+        const withdraws = (await privateRequestHandler({
           name: APIName.LIST_DEPOSIT_TRADES,
           method: Method.GET,
           params: {
@@ -408,7 +434,7 @@ export const UserProvider = ({children}: IUserProvider) => {
         setWithdraws(withdraws);
         result = defaultResultSuccess;
       } catch (error) {
-        // TODO: error handle (Tzuhan - 20230321)
+        // TODO: error handle (Tzuhan - 20230421)
         // eslint-disable-next-line no-console
         console.error(`listWithdraws error`, error);
         result.code = Code.INTERNAL_SERVER_ERROR;
@@ -422,7 +448,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     let result: IResult = defaultResultFailed;
     if (enableServiceTermRef.current) {
       try {
-        const balances = (await workerCtx.requestHandler({
+        const balances = (await privateRequestHandler({
           name: APIName.LIST_BALANCES,
           method: Method.GET,
           // params: {
@@ -432,7 +458,7 @@ export const UserProvider = ({children}: IUserProvider) => {
         setBalances(balances);
         result = defaultResultSuccess;
       } catch (error) {
-        // TODO: error handle (Tzuhan - 20230321)
+        // TODO: error handle (Tzuhan - 20230421)
         // eslint-disable-next-line no-console
         console.error(`listBalances error`, error);
         result.code = Code.INTERNAL_SERVER_ERROR;
@@ -449,6 +475,8 @@ export const UserProvider = ({children}: IUserProvider) => {
     try {
       const connect = await lunar.connect({});
       if (connect && lunar.isConnected) {
+        const isDeWTLegit = checkDeWT();
+        if (isDeWTLegit) await setPrivateData(lunar.address);
         result = {
           success: true,
           code: Code.SUCCESS,
@@ -460,15 +488,54 @@ export const UserProvider = ({children}: IUserProvider) => {
     return result;
   };
 
+  const checkDeWT = (): boolean => {
+    let isDeWTLegit = false;
+    // 1. get DeWT from cookie
+    const deWT = getCookieByName('DeWT');
+    if (!!deWT) {
+      const tmp = deWT.split('.');
+      const encodedData = tmp[0];
+      const signature = tmp[1];
+      // 2. decode and verify signed serviceTermContract
+      const result = verifySignedServiceTerm(encodedData);
+      isDeWTLegit = result.isDeWTLegit;
+
+      // 3. verify signature with recreate serviceTermContract
+      const serviceTermContractTemplate = getServiceTermContract(lunar.address);
+      const serviceTermContract = {
+        ...serviceTermContractTemplate,
+        ...result.serviceTerm,
+      };
+      const verifyR: boolean = lunar.verifyTypedData(serviceTermContract, `0x${signature}`);
+      isDeWTLegit = isDeWTLegit && verifyR;
+
+      // eslint-disable-next-line no-console
+      console.log(`isDeWTLegit`, isDeWTLegit);
+    }
+    if (!isDeWTLegit) {
+      clearPrivateData();
+    }
+    return isDeWTLegit;
+  };
+
+  const setDeWT = (deWT: string) => {
+    document.cookie = `DeWT=${deWT}`;
+  };
+
   const signServiceTerm = async (): Promise<IResult> => {
     let eip712signature: string,
       result: IResult = defaultResultFailed;
     if (lunar.isConnected) {
-      eip712signature = await lunar.signTypedData(ServiceTerm);
-      const verifyR: boolean = lunar.verifyTypedData(ServiceTerm, eip712signature);
+      const serviceTermContract = getServiceTermContract(lunar.address);
+      const encodedData = rlpEncodeServiceTerm(serviceTermContract);
+      eip712signature = await lunar.signTypedData(serviceTermContract);
+      const verifyR: boolean = lunar.verifyTypedData(serviceTermContract, eip712signature);
+      // eslint-disable-next-line no-console
+      console.log(`verifyR`, verifyR);
       if (verifyR) {
+        const deWT = `${encodedData}.${eip712signature.replace('0x', '')}`;
+        setDeWT(deWT);
         // ++ TODO to checksum address
-        setEnableServiceTerm(true);
         await setPrivateData(lunar.address);
         result = {
           success: true,
@@ -490,33 +557,46 @@ export const UserProvider = ({children}: IUserProvider) => {
   const disconnect = async () => {
     let result: IResult = defaultResultFailed;
     try {
+      clearPrivateData();
+      setIsConnected(false);
       await lunar.disconnect();
       if (!lunar.isConnected) {
+        /** TODO  */
         result = {
           success: true,
           code: Code.SUCCESS,
         };
       }
-    } catch (error) {}
+    } catch (error) {
+      // await disconnect();
+    }
     return result;
   };
 
   const addFavorites = async (newFavorite: string) => {
     let result: IResult = defaultResultFailed;
     if (isConnectedRef.current) {
-      const updatedFavoriteTickers = [...favoriteTickers];
-      (await workerCtx.requestHandler({
-        name: APIName.ADD_FAVORITE_TICKERS,
-        method: Method.PUT,
-        body: {
-          ticker: newFavorite,
-          starred: true,
-        },
-      })) as string[];
-      updatedFavoriteTickers.push(newFavorite);
-      setFavoriteTickers(updatedFavoriteTickers);
-      notificationCtx.emitter.emit(TideBitEvent.FAVORITE_TICKER, updatedFavoriteTickers);
-      result = defaultResultSuccess;
+      try {
+        const updatedFavoriteTickers = [...favoriteTickers];
+        (await workerCtx.requestHandler({
+          name: APIName.ADD_FAVORITE_TICKERS,
+          method: Method.PUT,
+          body: {
+            ticker: newFavorite,
+            starred: true,
+          },
+        })) as string[];
+        updatedFavoriteTickers.push(newFavorite);
+        setFavoriteTickers(updatedFavoriteTickers);
+        notificationCtx.emitter.emit(TideBitEvent.FAVORITE_TICKER, updatedFavoriteTickers);
+        result = defaultResultSuccess;
+      } catch (error) {
+        // TODO: error handle (Tzuhan - 20230421)
+        // eslint-disable-next-line no-console
+        console.error(`${APIName.ADD_FAVORITE_TICKERS} error`, error);
+        result.code = Code.INTERNAL_SERVER_ERROR;
+        result.reason = (error as Error).message;
+      }
     }
     return result;
   };
@@ -524,22 +604,30 @@ export const UserProvider = ({children}: IUserProvider) => {
   const removeFavorites = async (ticker: string) => {
     let result: IResult = defaultResultFailed;
     if (isConnectedRef.current) {
-      const updatedFavoriteTickers = [...favoriteTickers];
-      const index: number = updatedFavoriteTickers.findIndex(currency => currency === ticker);
-      if (index !== -1) {
-        (await workerCtx.requestHandler({
-          name: APIName.REMOVE_FAVORITE_TICKERS,
-          method: Method.PUT,
-          body: {
-            ticker,
-            starred: false,
-          },
-        })) as string[];
-        updatedFavoriteTickers.splice(index, 1);
+      try {
+        const updatedFavoriteTickers = [...favoriteTickers];
+        const index: number = updatedFavoriteTickers.findIndex(currency => currency === ticker);
+        if (index !== -1) {
+          (await privateRequestHandler({
+            name: APIName.REMOVE_FAVORITE_TICKERS,
+            method: Method.PUT,
+            body: {
+              ticker,
+              starred: false,
+            },
+          })) as string[];
+          updatedFavoriteTickers.splice(index, 1);
+        }
+        setFavoriteTickers(updatedFavoriteTickers);
+        notificationCtx.emitter.emit(TideBitEvent.FAVORITE_TICKER, updatedFavoriteTickers);
+        result = defaultResultSuccess;
+      } catch (error) {
+        // TODO: error handle (Tzuhan - 20230421)
+        // eslint-disable-next-line no-console
+        console.error(`${APIName.REMOVE_FAVORITE_TICKERS} error`, error);
+        result.code = Code.INTERNAL_SERVER_ERROR;
+        result.reason = (error as Error).message;
       }
-      setFavoriteTickers(updatedFavoriteTickers);
-      notificationCtx.emitter.emit(TideBitEvent.FAVORITE_TICKER, updatedFavoriteTickers);
-      result = defaultResultSuccess;
     }
     return result;
   };
@@ -595,19 +683,27 @@ export const UserProvider = ({children}: IUserProvider) => {
           if (transferR.success) {
             const signature: string = await lunar.signTypedData(transferR.data);
             // ++ TODO: send request to chain(use Lunar?) (20230324 - tzuhan)
-            const acceptedCFDOrder = (await workerCtx.requestHandler({
-              name: APIName.CREATE_CFD_TRADE,
-              method: Method.POST,
-              body: {applyData: applyCreateCFDOrder, balance: balance, userSignature: signature},
-            })) as IAcceptedCFDOrder;
-            setOpenedCFDs(prev => [...prev, acceptedCFDOrder]);
-            updateBalance(acceptedCFDOrder.balanceDifferenceCauseByOrder);
-            setHistories(prev => [...prev, acceptedCFDOrder]);
-            result = {
-              success: true,
-              code: Code.SUCCESS,
-              data: acceptedCFDOrder,
-            };
+            try {
+              const acceptedCFDOrder = (await privateRequestHandler({
+                name: APIName.CREATE_CFD_TRADE,
+                method: Method.POST,
+                body: {applyData: applyCreateCFDOrder, balance: balance, userSignature: signature},
+              })) as IAcceptedCFDOrder;
+              setOpenedCFDs(prev => [...prev, acceptedCFDOrder]);
+              updateBalance(acceptedCFDOrder.balanceDifferenceCauseByOrder);
+              setHistories(prev => [...prev, acceptedCFDOrder]);
+              result = {
+                success: true,
+                code: Code.SUCCESS,
+                data: acceptedCFDOrder,
+              };
+            } catch (error) {
+              // TODO: error handle (Tzuhan - 20230421)
+              // eslint-disable-next-line no-console
+              console.error(`${APIName.CREATE_CFD_TRADE} error`, error);
+              result.code = Code.INTERNAL_SERVER_ERROR;
+              result.reason = (error as Error).message;
+            }
           }
         }
       }
@@ -635,25 +731,33 @@ export const UserProvider = ({children}: IUserProvider) => {
           if (transferR.success) {
             const signature: string = await lunar.signTypedData(transferR.data);
             // ++ TODO: send request to chain(use Lunar?) (20230324 - tzuhan)
-            const acceptedCFDOrder = (await workerCtx.requestHandler({
-              name: APIName.CLOSE_CFD_TRADE,
-              method: Method.PUT,
-              body: {
-                applyData: applyCloseCFDOrder,
-                openCFD: openCFDs[index], // Deprecated: remove when backend is ready (20230424 - tzuhan)
-                balance,
-                userSignature: signature,
-              },
-            })) as IAcceptedCFDOrder;
-            setOpenedCFDs(prev => [...prev].splice(index, 1));
-            setClosedCFDs(prev => [...prev, acceptedCFDOrder]);
-            updateBalance(acceptedCFDOrder.balanceDifferenceCauseByOrder);
-            setHistories(prev => [...prev, acceptedCFDOrder]);
-            result = {
-              success: true,
-              code: Code.SUCCESS,
-              data: acceptedCFDOrder,
-            };
+            try {
+              const acceptedCFDOrder = (await privateRequestHandler({
+                name: APIName.CLOSE_CFD_TRADE,
+                method: Method.PUT,
+                body: {
+                  applyData: applyCloseCFDOrder,
+                  openCFD: openCFDs[index], // Deprecated: remove when backend is ready (20230424 - tzuhan)
+                  balance,
+                  userSignature: signature,
+                },
+              })) as IAcceptedCFDOrder;
+              setOpenedCFDs(prev => [...prev].splice(index, 1));
+              setClosedCFDs(prev => [...prev, acceptedCFDOrder]);
+              updateBalance(acceptedCFDOrder.balanceDifferenceCauseByOrder);
+              setHistories(prev => [...prev, acceptedCFDOrder]);
+              result = {
+                success: true,
+                code: Code.SUCCESS,
+                data: acceptedCFDOrder,
+              };
+            } catch (error) {
+              // TODO: error handle (Tzuhan - 20230421)
+              // eslint-disable-next-line no-console
+              console.error(`${APIName.CLOSE_CFD_TRADE} error`, error);
+              result.code = Code.INTERNAL_SERVER_ERROR;
+              result.reason = (error as Error).message;
+            }
           }
         }
       }
@@ -682,27 +786,35 @@ export const UserProvider = ({children}: IUserProvider) => {
           if (transferR.success) {
             const signature: string = await lunar.signTypedData(transferR.data);
             // ++ TODO: send request to chain(use Lunar?) (20230324 - tzuhan)
-            const acceptedCFDOrder = (await workerCtx.requestHandler({
-              name: APIName.UPDATE_CFD_TRADE,
-              method: Method.PUT,
-              body: {
-                applyData: applyUpdateCFDOrder,
-                userSignature: signature,
-                openCFD: openCFDs[index], // Deprecated: remove when backend is ready (20230424 - tzuhan)
-              },
-            })) as IAcceptedCFDOrder;
-            setOpenedCFDs(prev => {
-              const cfds = [...prev, acceptedCFDOrder];
-              cfds[index].display = false;
-              return cfds;
-            });
-            updateBalance(acceptedCFDOrder.balanceDifferenceCauseByOrder);
-            setHistories(prev => [...prev, acceptedCFDOrder]);
-            result = {
-              success: true,
-              code: Code.SUCCESS,
-              data: acceptedCFDOrder,
-            };
+            try {
+              const acceptedCFDOrder = (await privateRequestHandler({
+                name: APIName.UPDATE_CFD_TRADE,
+                method: Method.PUT,
+                body: {
+                  applyData: applyUpdateCFDOrder,
+                  userSignature: signature,
+                  openCFD: openCFDs[index], // Deprecated: remove when backend is ready (20230424 - tzuhan)
+                },
+              })) as IAcceptedCFDOrder;
+              setOpenedCFDs(prev => {
+                const cfds = [...prev, acceptedCFDOrder];
+                cfds[index].display = false;
+                return cfds;
+              });
+              updateBalance(acceptedCFDOrder.balanceDifferenceCauseByOrder);
+              setHistories(prev => [...prev, acceptedCFDOrder]);
+              result = {
+                success: true,
+                code: Code.SUCCESS,
+                data: acceptedCFDOrder,
+              };
+            } catch (error) {
+              // TODO: error handle (Tzuhan - 20230421)
+              // eslint-disable-next-line no-console
+              console.error(`${APIName.UPDATE_CFD_TRADE} error`, error);
+              result.code = Code.INTERNAL_SERVER_ERROR;
+              result.reason = (error as Error).message;
+            }
           }
         }
       }
@@ -720,7 +832,8 @@ export const UserProvider = ({children}: IUserProvider) => {
   const deposit = async (depositOrder: IApplyDepositOrder): Promise<IResult> => {
     let result: IResult = defaultResultFailed;
     if (lunar.isConnected) {
-      /** 
+      try {
+        /** 
       * TODO: temporary comment send metamask, will uncomment (20230329 - tzuhan)
       const walletBalance: IWalletBalance | null = getWalletBalance(depositOrder.targetAsset);
       if (walletBalance && walletBalance.balance >= depositOrder.targetAmount) {
@@ -729,20 +842,27 @@ export const UserProvider = ({children}: IUserProvider) => {
       const txid = await lunar.send(transaction);
       // TODO: updateWalletBalances
       // */
-      const txid = randomHex(32);
-      const acceptedDepositOrder = (await workerCtx.requestHandler({
-        name: APIName.CREATE_WITHDRAW_TRADE,
-        method: Method.POST,
-        body: {applyData: depositOrder, txid, balance: getBalance(depositOrder.targetAsset)},
-      })) as IAcceptedDepositOrder;
-      setDeposits(prev => [...prev, acceptedDepositOrder]);
-      updateBalance(acceptedDepositOrder.balanceDifferenceCauseByOrder);
-      setHistories(prev => [...prev, acceptedDepositOrder]);
-      result = {
-        success: true,
-        code: Code.SUCCESS,
-        data: acceptedDepositOrder,
-      };
+        const txid = randomHex(32);
+        const acceptedDepositOrder = (await privateRequestHandler({
+          name: APIName.CREATE_DEPOSIT_TRADE,
+          method: Method.POST,
+          body: {applyData: depositOrder, txid, balance: getBalance(depositOrder.targetAsset)},
+        })) as IAcceptedDepositOrder;
+        setDeposits(prev => [...prev, acceptedDepositOrder]);
+        updateBalance(acceptedDepositOrder.balanceDifferenceCauseByOrder);
+        setHistories(prev => [...prev, acceptedDepositOrder]);
+        result = {
+          success: true,
+          code: Code.SUCCESS,
+          data: acceptedDepositOrder,
+        };
+      } catch (error) {
+        // TODO: error handle (Tzuhan - 20230421)
+        // eslint-disable-next-line no-console
+        console.error(`${APIName.CREATE_DEPOSIT_TRADE} error`, error);
+        result.code = Code.INTERNAL_SERVER_ERROR;
+        result.reason = (error as Error).message;
+      }
       return result;
     } else {
       const isConnected = await connect();
@@ -763,22 +883,30 @@ export const UserProvider = ({children}: IUserProvider) => {
         if (transferR.success) {
           const signature: string = await lunar.signTypedData(transferR.data);
           // ++ TODO: send request to chain(use Lunar?) (20230324 - tzuhan)
-          const acceptedWithdrawOrder = (await workerCtx.requestHandler({
-            name: APIName.CREATE_WITHDRAW_TRADE,
-            method: Method.POST,
-            body: {
-              applyData: withdrawOrder,
-              userSignature: signature,
-              balance: getBalance(withdrawOrder.targetAsset),
-            },
-          })) as IAcceptedWithdrawOrder;
-          updateBalance(acceptedWithdrawOrder.balanceDifferenceCauseByOrder);
-          setHistories(prev => [...prev, acceptedWithdrawOrder]);
-          result = {
-            success: true,
-            code: Code.SUCCESS,
-            data: acceptedWithdrawOrder,
-          };
+          try {
+            const acceptedWithdrawOrder = (await privateRequestHandler({
+              name: APIName.CREATE_WITHDRAW_TRADE,
+              method: Method.POST,
+              body: {
+                applyData: withdrawOrder,
+                userSignature: signature,
+                balance: getBalance(withdrawOrder.targetAsset),
+              },
+            })) as IAcceptedWithdrawOrder;
+            updateBalance(acceptedWithdrawOrder.balanceDifferenceCauseByOrder);
+            setHistories(prev => [...prev, acceptedWithdrawOrder]);
+            result = {
+              success: true,
+              code: Code.SUCCESS,
+              data: acceptedWithdrawOrder,
+            };
+          } catch (error) {
+            // TODO: error handle (Tzuhan - 20230421)
+            // eslint-disable-next-line no-console
+            console.error(`${APIName.CREATE_WITHDRAW_TRADE} error`, error);
+            result.code = Code.INTERNAL_SERVER_ERROR;
+            result.reason = (error as Error).message;
+          }
         }
       }
       return result;
@@ -794,13 +922,21 @@ export const UserProvider = ({children}: IUserProvider) => {
     result.code = Code.SERVICE_TERM_DISABLE;
     result.reason = Reason[result.code];
     if (enableServiceTermRef.current) {
-      const histories = (await workerCtx.requestHandler({
-        name: APIName.LIST_HISTORIES,
-        method: Method.GET,
-      })) as IAcceptedOrder[];
-      setHistories(histories);
-      result = defaultResultSuccess;
-      result.data = histories;
+      try {
+        const histories = (await privateRequestHandler({
+          name: APIName.LIST_HISTORIES,
+          method: Method.GET,
+        })) as IAcceptedOrder[];
+        setHistories(histories);
+        result = defaultResultSuccess;
+        result.data = histories;
+      } catch (error) {
+        // TODO: error handle (Tzuhan - 20230421)
+        // eslint-disable-next-line no-console
+        console.error(`${APIName.LIST_HISTORIES} error`, error);
+        result.code = Code.INTERNAL_SERVER_ERROR;
+        result.reason = (error as Error).message;
+      }
     }
     return result;
   };
@@ -918,6 +1054,15 @@ export const UserProvider = ({children}: IUserProvider) => {
   );
 
   const init = async () => {
+    const isDeWTLegit = checkDeWT();
+    /** TODO: wait for lunar isConnected & lunar.address (20230421 - tzuhan)
+    if (isDeWTLegit && lunar.isConnected) await setPrivateData(lunar.address);
+    // eslint-disable-next-line no-console
+    console.log(`lunar.isConnected: ${lunar.isConnected}`);
+    // eslint-disable-next-line no-console
+     console.log(`lunar.address: ${lunar.address}`);
+    */
+    if (isDeWTLegit) await setPrivateData(lunar.address);
     return await Promise.resolve();
   };
 

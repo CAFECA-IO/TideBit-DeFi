@@ -231,8 +231,8 @@ export type FormatedTypeRequest = {
     method: string;
     url: string;
     body?: object;
-    options?: {
-      headers?: object;
+    options: {
+      headers: object;
     };
   };
   /* Deprecated: callback in requestHandler (Tzuhan - 20230420)
@@ -250,13 +250,17 @@ export const formatAPIRequest = (data: TypeRequest) => {
       body: data.body ? data.body : undefined,
       options: data.headers
         ? {
-            headers: data.headers,
+            headers: {
+              'Content-Type': 'application/json',
+              ...data.headers,
+            },
           }
-        : undefined,
+        : {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          },
     },
-    /* Deprecated: callback in requestHandler (Tzuhan - 20230420)
-    callback: (result: any, error: Error) => void;
-    */
   };
   return request;
 };

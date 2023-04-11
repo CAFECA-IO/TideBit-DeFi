@@ -81,6 +81,33 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
     visiblePositionClosedModalHandler();
   };
 
+  const openPrice = openCfdDetails?.orderSnapshot?.openPrice;
+  const nowPrice = 300; //openCfdDetails.positionLineGraph[openCfdDetails.positionLineGraph.length - 1];
+  const liquidationPrice = openCfdDetails?.orderSnapshot?.liquidationPrice;
+  const takeProfitPrice = openCfdDetails?.orderSnapshot?.takeProfit ?? 0;
+  const stopLossPrice = openCfdDetails?.orderSnapshot?.stopLoss ?? 0;
+  const rangingLiquidation = Math.abs(openPrice - liquidationPrice);
+  const rangingTP = Math.abs(openPrice - (takeProfitPrice ?? 0));
+  const rangingSL = Math.abs(openPrice - (stopLossPrice ?? 0));
+
+  const displayedAnnotatedValue =
+    Math.abs(nowPrice - liquidationPrice) <= rangingLiquidation * 0.1
+      ? liquidationPrice
+      : Math.abs(nowPrice - takeProfitPrice) <= rangingTP * 0.1
+      ? takeProfitPrice
+      : Math.abs(nowPrice - stopLossPrice) <= rangingSL * 0.1
+      ? stopLossPrice
+      : openPrice;
+
+  const displayedAnnotatedString =
+    Math.abs(nowPrice - liquidationPrice) <= rangingLiquidation * 0.1
+      ? t('TRADE_PAGE.OPEN_POSITION_ITEM_LIQUIDATION')
+      : Math.abs(nowPrice - takeProfitPrice) <= rangingTP * 0.1
+      ? t('TRADE_PAGE.OPEN_POSITION_ITEM_TP')
+      : Math.abs(nowPrice - stopLossPrice) <= rangingSL * 0.1
+      ? t('TRADE_PAGE.OPEN_POSITION_ITEM_SL')
+      : `$ ${openPrice}`;
+
   const displayedString =
     openCfdDetails?.orderSnapshot?.typeOfPosition === TypeOfPosition.BUY
       ? TypeOfTransaction.LONG
@@ -94,6 +121,20 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
       : openCfdDetails?.pnl?.type === ProfitState.LOSS
       ? TypeOfPnLColorHex.LOSS
       : TypeOfPnLColorHex.EQUAL;
+
+  const displayedColorDashLine =
+    Math.abs(nowPrice - liquidationPrice) <= rangingLiquidation * 0.1 ||
+    Math.abs(nowPrice - takeProfitPrice) <= rangingTP * 0.1 ||
+    Math.abs(nowPrice - stopLossPrice) <= rangingSL * 0.1
+      ? TypeOfPnLColorHex.LIQUIDATION
+      : displayedColorHex;
+
+  const displayedColorAnnotatedString =
+    Math.abs(nowPrice - liquidationPrice) <= rangingLiquidation * 0.1 ||
+    Math.abs(nowPrice - takeProfitPrice) <= rangingTP * 0.1 ||
+    Math.abs(nowPrice - stopLossPrice) <= rangingSL * 0.1
+      ? '#000000'
+      : '#FFFFFF';
 
   const displayedTextColor =
     openCfdDetails?.pnl?.type === ProfitState.PROFIT ? 'text-lightGreen5' : 'text-lightRed'; //lightYellow2
@@ -112,12 +153,16 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
       ? '-'
       : '';
 
-  const displayedTime = timestampToString(openCfdDetails?.orderSnapshot?.createTimestamp ?? 0);
+  const displayedCreateTime = timestampToString(
+    openCfdDetails?.orderSnapshot?.createTimestamp ?? 0
+  );
+
+  //console.log(openCfdDetails.positionLineGraph);
 
   return (
     <div className="relative">
       <div
-        className="absolute z-10 h-120px w-280px bg-transparent hover:cursor-pointer"
+        className="absolute z-10 h-150px w-280px bg-transparent hover:cursor-pointer"
         onClick={openItemClickHandler}
       ></div>
       {/* brief of this open position */}
@@ -128,7 +173,7 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
         <div className="inline-flex items-center text-sm">
           {/* ToDo: default currency icon (20230310 - Julian) issue #338 */}
           <Image
-            src={`/asset_icon/${openCfdDetails?.orderSnapshot?.ticker}.svg`}
+            src={`/asset_icon/${openCfdDetails?.orderSnapshot?.ticker.toLowerCase()}.svg`}
             alt={`${openCfdDetails?.orderSnapshot?.ticker} icon`}
             width={15}
             height={15}
@@ -142,18 +187,19 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
         </div>
 
         <div className="flex flex-col items-end text-xs text-lightGray">
-          <p>{displayedTime.date}</p>
-          <p>{displayedTime.time}</p>
+          <p>{displayedCreateTime.date}</p>
+          <p>{displayedCreateTime.time}</p>
         </div>
       </div>
 
       {/* Line graph */}
-      <div className="-mt-6 -mb-6 -ml-4">
+      <div className="-my-6 -mx-4">
         <PositionLineGraph
-          strokeColor={[displayedColorHex]}
+          strokeColor={[displayedColorHex, displayedColorDashLine, displayedColorAnnotatedString]}
           dataArray={openCfdDetails.positionLineGraph}
           lineGraphWidth={OPEN_POSITION_LINE_GRAPH_WIDTH}
-          annotatedValue={openCfdDetails?.orderSnapshot?.openPrice}
+          annotatedValue={displayedAnnotatedValue}
+          annotatedString={displayedAnnotatedString}
         />
       </div>
 
@@ -186,18 +232,15 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
             onClick={squareClickHandler}
           ></div>
 
-          <div>
-            <CircularProgressBar
-              label={label}
-              showLabel={true}
-              numerator={remainTime}
-              denominator={denominator}
-              progressBarColor={[displayedColorHex]}
-              hollowSize="40%"
-              circularBarSize="90"
-              // clickHandler={circularClick}
-            />
-          </div>
+          <CircularProgressBar
+            label={label}
+            showLabel={true}
+            numerator={remainTime}
+            denominator={denominator}
+            progressBarColor={[displayedColorHex]}
+            hollowSize="40%"
+            circularBarSize="90"
+          />
         </div>
       </div>
     </div>

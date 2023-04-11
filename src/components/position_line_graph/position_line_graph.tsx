@@ -11,6 +11,7 @@ interface ILineGraphProps {
   dataArray: number[];
   lineGraphWidth: string;
   annotatedValue: number;
+  annotatedString: string;
 }
 // sampleArray = [42, 50, 45, 55, 49, 52, 48],
 // sampleArray = [30, 72, 85, 65, 42, 99, 67, 55, 49, 32, 48, 20],
@@ -20,6 +21,7 @@ export default function PositionLineGraph({
   dataArray,
   lineGraphWidth,
   annotatedValue,
+  annotatedString,
   ...otherProps
 }: ILineGraphProps): JSX.Element {
   const chartOptions: ApexOptions = {
@@ -92,9 +94,9 @@ export default function PositionLineGraph({
         {
           y: annotatedValue,
           strokeDashArray: 5,
-          borderColor: strokeColor[0],
+          borderColor: strokeColor[1],
           width: '150%',
-          fillColor: '#ffffff',
+          fillColor: strokeColor[2],
           label: {
             position: 'right',
             borderColor: 'transparent',
@@ -102,11 +104,11 @@ export default function PositionLineGraph({
             offsetY: 10,
             offsetX: OPEN_POSITION_LINE_LABEL_POSITION,
             style: {
-              color: '#ffffff',
-              background: strokeColor[0],
+              color: strokeColor[2],
+              background: strokeColor[1],
               // cssClass: 'apexchartHorizontalLine',
             },
-            text: `$ ${annotatedValue.toString()}`,
+            text: annotatedString,
             borderWidth: 20,
           },
 

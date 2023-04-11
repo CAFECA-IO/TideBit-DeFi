@@ -18,9 +18,13 @@ const OpenSubTabMobile = () => {
   const cfds = openCFDs
     .filter(cfd => cfd.display)
     .map(cfd => {
-      const positionLineGraph = marketCtx.listTickerPositions(cfd.targetAsset, {
-        begin: cfd.createTimestamp,
-      });
+      const positionLineGraph = [
+        40050, 29972, 31060, 3042, 3296, 2325, 302, 32722, 15392, 3908, 31111, 30021, 34992, 3291,
+        27100, 3424, 58608, 300,
+      ]; /*
+        marketCtx.listTickerPositions(cfd.targetAsset, {
+          begin: cfd.createTimestamp,
+        });*/
       const displayCFD: IDisplayAcceptedCFDOrder = toDisplayAcceptedCFDOrder(
         cfd,
         positionLineGraph

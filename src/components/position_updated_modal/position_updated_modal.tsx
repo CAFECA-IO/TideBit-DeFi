@@ -88,7 +88,7 @@ const PositionUpdatedModal = ({
     globalCtx.dataLoadingModalHandler({
       modalTitle: 'Update Position',
       modalContent: 'Transaction broadcast',
-      btnMsg: 'View on Etherscan',
+      btnMsg: 'View on Boltchain',
       btnUrl: '#',
     });
 
@@ -103,7 +103,7 @@ const PositionUpdatedModal = ({
       globalCtx.dataSuccessfulModalHandler({
         modalTitle: 'Update Position',
         modalContent: 'Transaction succeed',
-        btnMsg: 'View on Etherscan',
+        btnMsg: 'View on Boltchain',
         btnUrl: '#',
       });
 

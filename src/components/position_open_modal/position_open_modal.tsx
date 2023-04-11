@@ -40,6 +40,7 @@ import {useTranslation} from 'react-i18next';
 import {defaultResultSuccess} from '../../interfaces/tidebit_defi_background/result';
 import {IQuotation} from '../../interfaces/tidebit_defi_background/quotation';
 import useStateRef from 'react-usestateref';
+import {Code} from '../../constants/code';
 
 type TranslateFunction = (s: string) => string;
 interface IPositionOpenModal {
@@ -85,6 +86,20 @@ const PositionOpenModal = ({
   const submitClickHandler = async () => {
     const [lock, unlock] = locker('position_open_modal.submitClickHandler');
 
+    // Info: when the quotation expires, return the canceled error code
+    // setTimeout(() => {
+    //   if (secondsLeftRef.current === 0) {
+    //     globalCtx.eliminateAllModals();
+
+    //     globalCtx.dataCanceledModalHandler({
+    //       modalTitle: 'Open Position',
+    //       modalContent: 'Transaction canceled',
+    //     });
+
+    //     globalCtx.visibleCanceledModalHandler();
+    //   }
+    // }, DISPLAY_QUOTATION_RENEWAL_INTERVAL_SECONDS * 1000);
+
     if (!lock()) return;
     await wait(DELAYED_HIDDEN_SECONDS / 5);
     modalClickHandler();
@@ -96,48 +111,71 @@ const PositionOpenModal = ({
     globalCtx.visibleLoadingModalHandler();
 
     const applyCreateOrder: IApplyCreateCFDOrder = toApplyCreateOrder(openCfdRequest);
-    const result = await userCtx.createCFDOrder(applyCreateOrder);
 
-    // ToDo: temporary waiting
-    await wait(DELAYED_HIDDEN_SECONDS);
-    globalCtx.dataLoadingModalHandler({
-      modalTitle: 'Open Position',
-      modalContent: 'Transaction broadcast',
-      btnMsg: 'View on Etherscan',
-      btnUrl: '#',
-    });
+    try {
+      const result = await userCtx.createCFDOrder(applyCreateOrder);
 
-    // ToDo: temporary waiting
-    await wait(DELAYED_HIDDEN_SECONDS);
-
-    globalCtx.eliminateAllModals();
-
-    // ToDo: Revise the `result.reason` to constant by using enum or object
-    // ToDo: the button URL
-    if (result.success) {
-      globalCtx.dataSuccessfulModalHandler({
+      globalCtx.dataLoadingModalHandler({
         modalTitle: 'Open Position',
-        modalContent: 'Transaction succeed',
-        btnMsg: 'View on Etherscan',
+        modalContent: 'Transaction broadcast',
+        btnMsg: 'View on Boltchain',
         btnUrl: '#',
       });
 
-      globalCtx.visibleSuccessfulModalHandler();
-    } else if (result.reason === 'CANCELED') {
-      globalCtx.dataCanceledModalHandler({
-        modalTitle: 'Open Position',
-        modalContent: 'Transaction canceled',
-      });
+      // ToDo: temporary waiting
+      await wait(DELAYED_HIDDEN_SECONDS);
 
-      globalCtx.visibleCanceledModalHandler();
-    } else if (result.reason === 'FAILED') {
-      globalCtx.dataFailedModalHandler({
-        modalTitle: 'Open Position',
-        failedTitle: 'Failed',
-        failedMsg: 'Failed to open Position',
-      });
+      globalCtx.eliminateAllModals();
 
-      globalCtx.visibleFailedModalHandler();
+      // ToDo: Revise the `result.reason` to constant by using enum or object
+      // ToDo: the button URL
+
+      if (result.success) {
+        globalCtx.dataSuccessfulModalHandler({
+          modalTitle: 'Open Position',
+          modalContent: 'Transaction succeed',
+          btnMsg: 'View on Boltchain',
+          btnUrl: '#',
+        });
+
+        globalCtx.visibleSuccessfulModalHandler();
+      } else if (
+        // ToDo: Expired quotation
+        result.code === Code.INTERNAL_SERVER_ERROR ||
+        result.code === Code.INVAILD_INPUTS ||
+        result.code === Code.SERVICE_TERM_DISABLE ||
+        result.code === Code.WALLET_IS_NOT_CONNECT
+      ) {
+        globalCtx.dataFailedModalHandler({
+          modalTitle: 'Open Position',
+          failedTitle: 'Failed',
+          failedMsg: 'Transaction failed',
+        });
+
+        globalCtx.visibleFailedModalHandler();
+      }
+    } catch (error: any) {
+      globalCtx.eliminateAllModals();
+
+      // Info: Signature rejected
+      // ToDo: Catch the error which user rejected the signature in UserContext (20230411 - Shirley)
+      if (error?.code === 4001) {
+        globalCtx.dataCanceledModalHandler({
+          modalTitle: 'Open Position',
+          modalContent: 'Transaction canceled',
+        });
+
+        globalCtx.visibleCanceledModalHandler();
+      } else {
+        // Info: Unknown error
+        globalCtx.dataFailedModalHandler({
+          modalTitle: 'Open Position',
+          failedTitle: 'Failed',
+          failedMsg: 'Transaction failed',
+        });
+
+        globalCtx.visibleFailedModalHandler();
+      }
     }
 
     unlock();

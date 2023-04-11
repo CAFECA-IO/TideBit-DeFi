@@ -99,7 +99,7 @@ const WithdrawalModal = ({
     globalCtx.dataLoadingModalHandler({
       modalTitle: 'Withdraw',
       modalContent: 'Transaction broadcast',
-      btnMsg: 'View on Etherscan',
+      btnMsg: 'View on Boltchain',
       btnUrl: '#',
     });
 
@@ -113,7 +113,7 @@ const WithdrawalModal = ({
       globalCtx.dataSuccessfulModalHandler({
         modalTitle: 'Withdraw',
         modalContent: 'Transaction succeed',
-        btnMsg: 'View on Etherscan',
+        btnMsg: 'View on Boltchain',
         btnUrl: '#',
       });
 

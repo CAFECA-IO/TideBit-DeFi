@@ -29,6 +29,8 @@ import {
   LogicalRange,
   LogicalRangeChangeEventHandler,
   LineStyle,
+  SeriesMarker,
+  Time,
 } from 'lightweight-charts';
 import Lottie, {useLottie} from 'lottie-react';
 import spotAnimation from '../../../public/animation/circle.json';
@@ -219,8 +221,6 @@ const toICandlestickData = (data: CandlestickData): ICandlestickData => {
   };
 };
 
-// const toOpenPriceLine
-
 // ToDo: 從外面傳進來的參數: 1.timespan 2.style of chart
 export default function CandlestickChart({
   strokeColor,
@@ -241,6 +241,9 @@ export default function CandlestickChart({
     low: 0,
     close: 0,
   });
+  const [cursorStyle, setCursorStyle, cursorStyleRef] = useStateRef<
+    'hover:cursor-crosshair' | 'hover:cursor-pointer'
+  >('hover:cursor-crosshair');
 
   const chartContainerRef = useRef<HTMLDivElement>(null);
   let chart: IChartApi;
@@ -288,6 +291,13 @@ export default function CandlestickChart({
         });
       });
     }
+
+    // ToDo: when hovering over the label of open position, change the cursor (20230413 - Shirley)
+    // if (param.time === (((tuned[tuned.length - 1].time as number) + 1) as UTCTimestamp)) {
+    //   setCursorStyle('hover:cursor-pointer');
+    //   return;
+    // }
+    // setCursorStyle('hover:cursor-crosshair');
   };
 
   const updatePriceLine = (lastClosePrice: number) => {
@@ -305,26 +315,81 @@ export default function CandlestickChart({
   const openPriceLine = () => {
     const numOfPosition = 3;
     for (let i = 0; i < numOfPosition; i++) {
-      // const randomPrice = randomIntFromInterval(1, 10);
       const price =
-        i === 0 ? tuned[tuned.length - 1]?.close + 0.01 : tuned[tuned.length - 1]?.close - 0.01 * i;
+        i === 0 ? tuned[tuned.length - 1]?.close + 1 : tuned[tuned.length - 1]?.close - 1 * i;
       const color = i === 0 ? LINE_GRAPH_STROKE_COLOR.UP : LINE_GRAPH_STROKE_COLOR.DOWN;
-
-      const openPriceLine = candlestickSeries.createPriceLine({
-        price: price,
-        color: color,
-        lineWidth: 1,
-        lineStyle: LineStyle.Solid,
-        axisLabelVisible: true,
-        lineVisible: true,
-        // axisLabelHorizontalAlignment: 'left',
-      });
 
       const lineSeries = chart.addLineSeries({
         color: color,
         lineWidth: 1,
         lineStyle: LineStyle.Solid,
-        // priceLineVisible: false,
+        priceLineStyle: LineStyle.Solid,
+        crosshairMarkerVisible: false,
+        lastValueVisible: false,
+        title: `Position: ${price.toFixed(2)}　Close`,
+        baseLineVisible: true,
+      });
+
+      if (!lineSeries || !tuned || tuned.length === 0) return;
+
+      try {
+        const time = [
+          (tuned[0]?.time as number) - 1,
+          (tuned[tuned.length - 1]?.time as number) + 1,
+        ];
+        lineSeries.setData([
+          {
+            time: time[0] as UTCTimestamp,
+            value: price,
+          },
+          {
+            time: time[1] as UTCTimestamp,
+            value: price,
+          },
+        ]);
+
+        // // Info: Create a custom marker for the label (20230411 - Shirley)
+        // const marker = {
+        //   time: (tuned[tuned.length - 1]?.time ?? 0) as UTCTimestamp,
+        //   position: 'inBar',
+        //   color: color,
+        //   // shape: 'arrowUp',
+        //   text: `Position: ${price.toFixed(2)}　Close`,
+        // };
+
+        // lineSeries.setMarkers([marker] as Array<SeriesMarker<Time>>);
+
+        // lineSeries.applyOptions({
+        //   lastValueVisible: false,
+        //   title: `Position: ${price.toFixed(2)}　Close`,
+        //   baseLineVisible: true,
+        // });
+      } catch (err) {
+        // Info: Catch the error and do nothing (20230411 - Shirley)
+      }
+
+      chart.subscribeClick((param: MouseEventParams) => {
+        // Info: Get the clicked point (20230411 - Shirley)
+        const point = param?.point;
+
+        if (point === undefined) return;
+
+        // Info: Get the time value from the clicked point (20230411 - Shirley)
+        const time = chart.timeScale().coordinateToTime(point.x);
+
+        // eslint-disable-next-line no-console
+        console.log('time hovered: ', time, 'price hovered: ', price, 'color: ', color);
+
+        // // Info: Set the marker (20230411 - Shirley)
+        // lineSeries.setMarkers([
+        //   {
+        //     time: time as UTCTimestamp,
+        //     position: 'inBar',
+        //     color: color,
+        //     // shape: 'arrowUp',
+        //     text: `Position: ${price.toFixed(2)}　Close`,
+        //   },
+        // ] as Array<SeriesMarker<Time>>);
       });
     }
   };
@@ -363,28 +428,8 @@ export default function CandlestickChart({
         axisLabelColor: LINE_GRAPH_STROKE_COLOR.TIDEBIT_THEME,
       });
 
-      openPriceLine();
-
-      // const randomPrice = Math.random() * 100;
-      // candlestickSeries.createPriceLine({
-      //   price: tuned[tuned.length - 1]?.close + 0.01,
-      //   color: 'red',
-      //   lineWidth: 2,
-      //   lineStyle: LineStyle.Solid,
-      //   axisLabelVisible: true,
-      // });
-
-      // candlestickSeries.createPriceLine({
-      //   price: tuned[tuned.length - 1]?.close - 0.01,
-      //   color: 'red',
-      //   lineWidth: 2,
-      //   lineStyle: LineStyle.Solid,
-      //   axisLabelVisible: true,
-      // });
-
       // Info: Create a custom price line
       candlestickSeries.applyOptions({
-        // priceLineColor: '#29C1E1',
         lastValueVisible: false,
       });
 
@@ -393,6 +438,8 @@ export default function CandlestickChart({
         .subscribeVisibleLogicalRangeChange(
           priceRangeChangeHandler as LogicalRangeChangeEventHandler
         );
+
+      openPriceLine();
 
       // Info: OHLC hovered information
       chart.subscribeCrosshairMove(crosshairMoveHandler);
@@ -429,7 +476,7 @@ export default function CandlestickChart({
     <>
       <div className="mt-5 -mb-8 lg:-mt-8 lg:mb-5 lg:ml-5">{displayedOHLC}</div>
       <div className="ml-5 pb-20 pt-20 lg:w-7/10 lg:pb-5 lg:pt-14">
-        <div ref={chartContainerRef} className="hover:cursor-crosshair"></div>
+        <div ref={chartContainerRef} className={`${cursorStyleRef.current}`}></div>
       </div>
     </>
   );

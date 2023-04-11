@@ -54,12 +54,6 @@ import {AppContext} from '../../contexts/app_context';
 import Image from 'next/image';
 import {GlobalContext} from '../../contexts/global_context';
 import {UserContext} from '../../contexts/user_context';
-import {
-  MAX_PRICE_TRADING_CHART_ONE_SEC,
-  MIN_PRICE_TRADING_CHART_ONE_SEC,
-  TRADING_CHART_PRICE_LIMIT_ONE_SEC,
-  POSITION_PRICE_RENEWAL_INTERVAL_SECONDS,
-} from '../../constants/config';
 import {ProfitState} from '../../constants/profit_state';
 import {TypeOfPosition} from '../../constants/type_of_position';
 import {TimeSpanUnion} from '../../interfaces/tidebit_defi_background/time_span_union';

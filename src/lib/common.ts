@@ -484,9 +484,12 @@ export const verifySignedServiceTerm = (encodedServiceTerm: string) => {
   if (serviceTerm.message.agree[1] !== PRIVATE_POLICY) isDeWTLegit = false && isDeWTLegit;
   // 4. verify contract expiration time
   if (
-    !serviceTerm.message.expired ||
-    !serviceTerm.message.iat ||
-    serviceTerm.message.expired < getTimestamp() ||
+    !serviceTerm.message.expired || // expired 不存在
+    !serviceTerm.message.iat || // iat 不存在
+    serviceTerm.message.iat > serviceTerm.message.expired || // iat 大於 expired
+    serviceTerm.message.iat > getTimestamp() || // iat 大於現在時間
+    serviceTerm.message.expired < getTimestamp() || // expired 小於現在時間
+    serviceTerm.message.iat - serviceTerm.message.expired > DeWT_VALIDITY_PERIOD ||
     getTimestamp() - serviceTerm.message.iat > DeWT_VALIDITY_PERIOD
   )
     isDeWTLegit = false && isDeWTLegit;

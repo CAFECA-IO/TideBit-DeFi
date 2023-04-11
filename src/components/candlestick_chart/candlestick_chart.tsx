@@ -76,7 +76,7 @@ interface IOHLCInfo {
   close: number;
 }
 
-// Get candlestick data from market context, check the data format and merge with `initData`
+// Info: Get candlestick data from market context, check the data format and merge with `initData` (20230411 - Shirley)
 const candlestickDataCleaning = (dataArray: CandlestickData[]) => {
   const data = [...dataArray];
 
@@ -191,35 +191,6 @@ const tuningTzCandlestickDataArray = (dataArray: CandlestickData[]) => {
   return result;
 };
 
-/* Till: (20230424 - Shirley) to update the one candlestick
-const generateRandomCandle = ({time, lastPrice = 1288}: {time?: Date; lastPrice?: number}) => {
-  const rnd = Math.random() / 1.2;
-  const ts = rnd > 0.25 ? 1 + rnd ** 5 : 1 - rnd;
-  const price = lastPrice * ts;
-
-  const open = price * (1 + (Math.random() - 0.5) / 10);
-  const close = price * (1 + (Math.random() - 0.5) / 10);
-  const high = Math.max(open, close) * (1 + Math.random() / 10);
-  const low = Math.min(open, close) * (1 - Math.random() / 10);
-
-  const currentTime = time ? time?.getTime() : new Date().getTime();
-  const timeOffset = currentTime - (currentTime % 1000);
-  const dateOffset = new Date(timeOffset);
-
-  const candle: ICandlestickData = {
-    x: dateOffset,
-    y: {
-      open: open,
-      high: high,
-      low: low,
-      close: close,
-    },
-  };
-
-  return candle;
-};
-*/
-
 const toCandlestickData = (data: ICandlestickData): CandlestickData => {
   return {
     time: (data.x.getTime() / 1000) as UTCTimestamp,
@@ -300,28 +271,7 @@ export default function CandlestickChart({
     return result;
   };
 
-  const updateChart = () => {
-    try {
-      const newCandlestickList = fetchCandlestickData();
-      const newCandlestick = newCandlestickList[newCandlestickList.length - 1];
-      candlestickSeries.update(newCandlestick);
-    } catch (err) {
-      // Info: (20230406 - Shirley) nothing to do
-    }
-  };
-
   const drawChart = () => {
-    // ToDo: data from market context (20230331 - Shirley)
-    /*
-    const raw = getDummyCandlestickChartData(50, TimeSpanUnion._1s).map(d => ({
-      time: (d.x.getTime() / 1000) as UTCTimestamp,
-      open: d.y.open,
-      high: d.y.high,
-      low: d.y.low,
-      close: d.y.close,
-    })) as CandlestickData[];
-    */
-
     if (chartContainerRef.current) {
       // Info: Draw
       const tuned = fetchCandlestickData();
@@ -358,33 +308,11 @@ export default function CandlestickChart({
         }
       });
 
-      // Info: updateChart in period
-      // Till: (20230424 - Shirley) 只要有新的資料就更新，不用 setInterval
-      /*
-    const intervalId = setInterval(() => {
-      try {
-        const option = {
-          lastPrice: filtered[filtered.length - 1].close,
-        };
-
-        // ToDo: data from market context (20230331 - Shirley)
-        const newCandleRaw = generateRandomCandle(option);
-
-        const newCandle = toCandlestickData(newCandleRaw);
-        const tunedNewCandle = tuningTzCandlestickData(newCandle) as CandlestickData;
-        candlestickSeries.update(tunedNewCandle);
-      } catch (err) {
-        // ToDo: re render (20230331 - Shirley)
-      }
-    }, 200);
-    */
-
       window.addEventListener('resize', handleResize);
 
       return () => {
         try {
           window.removeEventListener('resize', handleResize);
-          // Till: (20230424 - Shirley) // clearInterval(intervalId);
           chart.remove();
         } catch (err) {
           // Info: (20230406 - Shirley) do nothing
@@ -394,6 +322,11 @@ export default function CandlestickChart({
   };
 
   useEffect(() => {
+    // Deprecate: Sometimes, data isn't immediate. [for debug] (20230411 - Shirley)
+    // eslint-disable-next-line no-console
+    console.log('context data', JSON.parse(JSON.stringify(marketCtx.candlestickChartData)));
+    // eslint-disable-next-line no-console
+    console.log('now', Date());
     return drawChart();
   }, [marketCtx.candlestickChartData]);
 

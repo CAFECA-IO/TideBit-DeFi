@@ -28,6 +28,7 @@ import {
   IPriceLine,
   LogicalRange,
   LogicalRangeChangeEventHandler,
+  LineStyle,
 } from 'lightweight-charts';
 import Lottie, {useLottie} from 'lottie-react';
 import spotAnimation from '../../../public/animation/circle.json';
@@ -218,6 +219,8 @@ const toICandlestickData = (data: CandlestickData): ICandlestickData => {
   };
 };
 
+// const toOpenPriceLine
+
 // ToDo: 從外面傳進來的參數: 1.timespan 2.style of chart
 export default function CandlestickChart({
   strokeColor,
@@ -299,6 +302,33 @@ export default function CandlestickChart({
     updatePriceLine(lastData?.close);
   };
 
+  const openPriceLine = () => {
+    const numOfPosition = 3;
+    for (let i = 0; i < numOfPosition; i++) {
+      // const randomPrice = randomIntFromInterval(1, 10);
+      const price =
+        i === 0 ? tuned[tuned.length - 1]?.close + 0.01 : tuned[tuned.length - 1]?.close - 0.01 * i;
+      const color = i === 0 ? LINE_GRAPH_STROKE_COLOR.UP : LINE_GRAPH_STROKE_COLOR.DOWN;
+
+      const openPriceLine = candlestickSeries.createPriceLine({
+        price: price,
+        color: color,
+        lineWidth: 1,
+        lineStyle: LineStyle.Solid,
+        axisLabelVisible: true,
+        lineVisible: true,
+        // axisLabelHorizontalAlignment: 'left',
+      });
+
+      const lineSeries = chart.addLineSeries({
+        color: color,
+        lineWidth: 1,
+        lineStyle: LineStyle.Solid,
+        // priceLineVisible: false,
+      });
+    }
+  };
+
   const fetchCandlestickData = () => {
     const originRaw = marketCtx.candlestickChartData?.map(toCandlestickData) ?? [];
     const raw = originRaw.sort((a, b) => Number(a.time) - Number(b.time));
@@ -332,6 +362,25 @@ export default function CandlestickChart({
         axisLabelTextColor: LINE_GRAPH_STROKE_COLOR.WHITE,
         axisLabelColor: LINE_GRAPH_STROKE_COLOR.TIDEBIT_THEME,
       });
+
+      openPriceLine();
+
+      // const randomPrice = Math.random() * 100;
+      // candlestickSeries.createPriceLine({
+      //   price: tuned[tuned.length - 1]?.close + 0.01,
+      //   color: 'red',
+      //   lineWidth: 2,
+      //   lineStyle: LineStyle.Solid,
+      //   axisLabelVisible: true,
+      // });
+
+      // candlestickSeries.createPriceLine({
+      //   price: tuned[tuned.length - 1]?.close - 0.01,
+      //   color: 'red',
+      //   lineWidth: 2,
+      //   lineStyle: LineStyle.Solid,
+      //   axisLabelVisible: true,
+      // });
 
       // Info: Create a custom price line
       candlestickSeries.applyOptions({

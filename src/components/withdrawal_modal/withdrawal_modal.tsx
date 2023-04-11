@@ -93,6 +93,9 @@ const WithdrawalModal = ({
       remark: '',
       fee: 0,
     };
+    // Deprecated: for debug (20230411 - Shirley)
+    // eslint-disable-next-line no-console
+    console.log('withdraw order', withdrawOrder);
 
     try {
       const result = await userCtx.withdraw(withdrawOrder);
@@ -100,20 +103,20 @@ const WithdrawalModal = ({
       // TODO: for debug
       globalCtx.toast({message: 'withdraw result: ' + JSON.stringify(result), type: 'info'});
 
-      globalCtx.dataLoadingModalHandler({
-        modalTitle: 'Withdraw',
-        modalContent: 'Transaction broadcast',
-        btnMsg: 'View on Boltchain',
-        btnUrl: '#',
-      });
-
-      // INFO: for UX
-      await wait(DELAYED_HIDDEN_SECONDS);
-
-      globalCtx.eliminateAllModals();
-
       // TODO: the button URL
       if (result.success) {
+        globalCtx.dataLoadingModalHandler({
+          modalTitle: 'Withdraw',
+          modalContent: 'Transaction broadcast',
+          btnMsg: 'View on Boltchain',
+          btnUrl: '#',
+        });
+
+        // INFO: for UX
+        await wait(DELAYED_HIDDEN_SECONDS);
+
+        globalCtx.eliminateAllModals();
+
         globalCtx.dataSuccessfulModalHandler({
           modalTitle: 'Withdraw',
           modalContent: 'Transaction succeed',

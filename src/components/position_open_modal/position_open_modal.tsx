@@ -115,22 +115,22 @@ const PositionOpenModal = ({
     try {
       const result = await userCtx.createCFDOrder(applyCreateOrder);
 
-      globalCtx.dataLoadingModalHandler({
-        modalTitle: 'Open Position',
-        modalContent: 'Transaction broadcast',
-        btnMsg: 'View on Boltchain',
-        btnUrl: '#',
-      });
-
-      // ToDo: temporary waiting
-      await wait(DELAYED_HIDDEN_SECONDS);
-
-      globalCtx.eliminateAllModals();
-
       // ToDo: Revise the `result.reason` to constant by using enum or object
       // ToDo: the button URL
 
       if (result.success) {
+        globalCtx.dataLoadingModalHandler({
+          modalTitle: 'Open Position',
+          modalContent: 'Transaction broadcast',
+          btnMsg: 'View on Boltchain',
+          btnUrl: '#',
+        });
+
+        // ToDo: temporary waiting
+        await wait(DELAYED_HIDDEN_SECONDS);
+
+        globalCtx.eliminateAllModals();
+
         globalCtx.dataSuccessfulModalHandler({
           modalTitle: 'Open Position',
           modalContent: 'Transaction succeed',

@@ -292,7 +292,7 @@ export default function CandlestickChart({
       });
     }
 
-    // ToDo: when hovering over the label of open position, change the cursor (20230413 - Shirley)
+    // ToDo: [time->price point]when hovering over the label of open position, change the cursor (20230413 - Shirley)
     // if (param.time === (((tuned[tuned.length - 1].time as number) + 1) as UTCTimestamp)) {
     //   setCursorStyle('hover:cursor-pointer');
     //   return;
@@ -313,6 +313,7 @@ export default function CandlestickChart({
   };
 
   const openPriceLine = () => {
+    // ToDo: get the open position from user context (20230411 - Shirley)
     const numOfPosition = 3;
     for (let i = 0; i < numOfPosition; i++) {
       const price =
@@ -347,49 +348,22 @@ export default function CandlestickChart({
             value: price,
           },
         ]);
-
-        // // Info: Create a custom marker for the label (20230411 - Shirley)
-        // const marker = {
-        //   time: (tuned[tuned.length - 1]?.time ?? 0) as UTCTimestamp,
-        //   position: 'inBar',
-        //   color: color,
-        //   // shape: 'arrowUp',
-        //   text: `Position: ${price.toFixed(2)}　Close`,
-        // };
-
-        // lineSeries.setMarkers([marker] as Array<SeriesMarker<Time>>);
-
-        // lineSeries.applyOptions({
-        //   lastValueVisible: false,
-        //   title: `Position: ${price.toFixed(2)}　Close`,
-        //   baseLineVisible: true,
-        // });
       } catch (err) {
         // Info: Catch the error and do nothing (20230411 - Shirley)
       }
 
+      // ToDo: When clicking, pop up the position closed modal with position information (20230411 - Shirley)
+      // ToDo: unsubscribe the event listener (20230411 - Shirley)
       chart.subscribeClick((param: MouseEventParams) => {
         // Info: Get the clicked point (20230411 - Shirley)
         const point = param?.point;
 
         if (point === undefined) return;
 
-        // Info: Get the time value from the clicked point (20230411 - Shirley)
-        const time = chart.timeScale().coordinateToTime(point.x);
+        globalCtx.visiblePositionClosedModalHandler();
 
-        // eslint-disable-next-line no-console
-        console.log('time hovered: ', time, 'price hovered: ', price, 'color: ', color);
-
-        // // Info: Set the marker (20230411 - Shirley)
-        // lineSeries.setMarkers([
-        //   {
-        //     time: time as UTCTimestamp,
-        //     position: 'inBar',
-        //     color: color,
-        //     // shape: 'arrowUp',
-        //     text: `Position: ${price.toFixed(2)}　Close`,
-        //   },
-        // ] as Array<SeriesMarker<Time>>);
+        // ToDo: (lottie) Get the time value from the clicked point (20230411 - Shirley)
+        // const time = chart.timeScale().coordinateToTime(point.x);
       });
     }
   };
@@ -439,7 +413,8 @@ export default function CandlestickChart({
           priceRangeChangeHandler as LogicalRangeChangeEventHandler
         );
 
-      openPriceLine();
+      // Info: Draw the open price line
+      // openPriceLine();
 
       // Info: OHLC hovered information
       chart.subscribeCrosshairMove(crosshairMoveHandler);

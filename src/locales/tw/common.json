@@ -167,6 +167,7 @@
     "GUARANTEED_STOP": "保證止損",
     "GUARANTEED_STOP_HINT": "保證止損可強制平倉於您選定的價格，即使市場價格超過此價格也一樣。",
     "EXPIRATION_TIME": "到期時間",
+    "LIQUIDATION_TIME": "24 小時後到期",
     "LIQUIDATION_PRICE": "清算價格",
     "PNL": "損益",
     "FEE": "手續費",

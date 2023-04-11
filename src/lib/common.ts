@@ -160,6 +160,8 @@ export const locker = (id: string): ILocker => {
 
 export const getTimestamp = () => Math.ceil(Date.now() / 1000);
 
+export const getTimestampInMilliseconds = () => Date.now();
+
 export const millesecondsToSeconds = (milleseconds: number) => Math.ceil(milleseconds / 1000);
 
 export const twoDecimal = (num: number, mul?: number): number => {

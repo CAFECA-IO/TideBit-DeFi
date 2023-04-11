@@ -51,7 +51,7 @@ import {
 import {OrderState} from '../constants/order_state';
 import {IApplyUpdateCFDOrder} from '../interfaces/tidebit_defi_background/apply_update_cfd_order_data';
 import useStateRef from 'react-usestateref';
-import {POSITION_PRICE_RENEWAL_INTERVAL_SECONDS} from '../constants/config';
+import {QUOTATION_RENEWAL_INTERVAL_SECONDS} from '../constants/config';
 import {CFDOperation} from '../constants/cfd_order_type';
 import {
   getDummyAcceptedDepositOrder,

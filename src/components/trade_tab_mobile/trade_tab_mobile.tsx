@@ -13,15 +13,16 @@ import RippleButton from '../ripple_button/ripple_button';
 import {UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
 import {
   TARGET_LIMIT_DIGITS,
-  POSITION_PRICE_RENEWAL_INTERVAL_SECONDS,
+  QUOTATION_RENEWAL_INTERVAL_SECONDS,
   unitAsset,
   SUGGEST_SL,
   SUGGEST_TP,
   LIQUIDATION_FIVE_LEVERAGE,
+  WAITING_TIME_FOR_USER_SIGNING,
 } from '../../constants/config';
 import {ClickEvent} from '../../constants/tidebit_event';
 import {useTranslation} from 'next-i18next';
-import {getTimestamp, roundToDecimalPlaces} from '../../lib/common';
+import {getTimestamp, getTimestampInMilliseconds, roundToDecimalPlaces} from '../../lib/common';
 import {IQuotation, getDummyQuotation} from '../../interfaces/tidebit_defi_background/quotation';
 import {NotificationContext} from '../../contexts/notification_context';
 import {IApplyCreateCFDOrder} from '../../interfaces/tidebit_defi_background/apply_create_cfd_order_data';
@@ -60,7 +61,7 @@ const TradeTabMobile = () => {
   const defaultSellQuotation: IQuotation = getDummyQuotation(ticker, TypeOfPosition.SELL);
 
   const [secondsLeft, setSecondsLeft, secondsLeftRef] = useStateRef(
-    POSITION_PRICE_RENEWAL_INTERVAL_SECONDS
+    QUOTATION_RENEWAL_INTERVAL_SECONDS
   );
   const [longQuotation, setLongQuotation, longQuotationRef] =
     useStateRef<IQuotation>(defaultBuyQuotation);
@@ -179,24 +180,12 @@ const TradeTabMobile = () => {
     if (!userCtx.enableServiceTerm) return;
 
     (async () => {
-      const {longQuotation, shortQuotation} = await getQuotation(
-        marketCtx.selectedTicker?.currency ?? DEFAULT_TICKER
-      );
-
-      // Deprecated: before merging into develop (20230327 - Shirley)
-      // eslint-disable-next-line no-console
-      // console.log('first time Effect (direct long)', now, longQuotation.data);
-      // eslint-disable-next-line no-console
-      // console.log('first time Effect (direct short)', now, shortQuotation.data);
+      await getQuotation(marketCtx.selectedTicker?.currency ?? DEFAULT_TICKER);
 
       renewPosition();
 
       initSuggestion();
     })();
-
-    // Deprecated: before merging into develop (20230327 - Shirley)
-    // eslint-disable-next-line no-console
-    // console.log('first time Effect', now, longQuotationRef.current, shortQuotationRef.current);
   }, [userCtx.enableServiceTerm]);
 
   // Info: Fetch quotation in period (20230327 - Shirley)
@@ -204,22 +193,18 @@ const TradeTabMobile = () => {
     const intervalId = setInterval(async () => {
       if (!longQuotationRef.current || !shortQuotationRef.current) return;
 
-      const base = longQuotationRef.current.deadline;
+      const base = longQuotationRef.current.deadline - WAITING_TIME_FOR_USER_SIGNING;
 
-      const diff = base - getTimestamp();
-      const tickingSec = diff > 0 ? Math.floor(diff) : 0;
-      setSecondsLeft(tickingSec);
+      const tickingSec = (base * 1000 - getTimestampInMilliseconds()) / 1000;
+      setSecondsLeft(tickingSec > 0 ? Math.round(tickingSec) : 0);
+      // ToDo: FIXME: countdown is inconsistent with position open modal (20230407 - Shirley)
+      // eslint-disable-next-line no-console
+      console.log('[ref]tab mobile, displayed deadline:', base, secondsLeftRef.current);
 
-      if (tickingSec === 0) {
-        const {longQuotation, shortQuotation} = await getQuotation(
-          marketCtx.selectedTicker?.currency ?? DEFAULT_TICKER
-        );
+      if (secondsLeftRef.current === 0) {
+        await getQuotation(marketCtx.selectedTicker?.currency ?? DEFAULT_TICKER);
 
         renewPosition();
-
-        // Deprecated: before merging into develop (20230327 - Shirley)
-        // eslint-disable-next-line no-console
-        // console.log('countdown Effect', now, longQuotationRef.current, shortQuotationRef.current);
       }
     }, 1000);
 
@@ -231,20 +216,9 @@ const TradeTabMobile = () => {
   // Info: Fetch quotation when ticker changed (20230327 - Shirley)
   useEffect(() => {
     notificationCtx.emitter.once(ClickEvent.TICKER_CHANGED, async () => {
-      const {longQuotation, shortQuotation} = await getQuotation(
-        marketCtx.selectedTickerRef.current?.currency ?? DEFAULT_TICKER
-      );
+      await getQuotation(marketCtx.selectedTickerRef.current?.currency ?? DEFAULT_TICKER);
 
       renewPosition();
-
-      // Deprecated: before merging into develop (20230327 - Shirley)
-      // eslint-disable-next-line no-console
-      // console.log(
-      //   'when ticker changed Effect',
-      //   now,
-      //   longQuotationRef.current,
-      //   shortQuotationRef.current
-      // );
     });
 
     return () => {
@@ -262,13 +236,6 @@ const TradeTabMobile = () => {
 
       const long = longQuotation.data as IQuotation;
       const short = shortQuotation.data as IQuotation;
-
-      // Deprecated: before merging into develop (20230327 - Shirley)
-      // eslint-disable-next-line no-console
-      // console.log('long', now, long);
-      // Deprecated: before merging into develop (20230327 - Shirley)
-      // eslint-disable-next-line no-console
-      // console.log('short', now, short);
 
       // Info: if there's error fetching quotation, use the previous quotation or calculate the quotation (20230327 - Shirley)
       if (
@@ -288,14 +255,11 @@ const TradeTabMobile = () => {
           typeOfPosition: TypeOfPosition.BUY,
           unitAsset: unitAsset,
           price: buyPrice,
-          deadline: getTimestamp() + POSITION_PRICE_RENEWAL_INTERVAL_SECONDS,
+          deadline: getTimestamp() + QUOTATION_RENEWAL_INTERVAL_SECONDS,
           signature: '0x',
         };
 
         setLongQuotation(buyQuotation);
-        // Deprecated: before merging into develop (20230327 - Shirley)
-        // eslint-disable-next-line no-console
-        console.log('calculate, long', longQuotationRef.current);
       }
 
       // Info: if there's error fetching quotation, use the previous quotation or calculate the quotation (20230327 - Shirley)
@@ -317,14 +281,11 @@ const TradeTabMobile = () => {
           typeOfPosition: TypeOfPosition.SELL,
           unitAsset: unitAsset,
           price: sellPrice,
-          deadline: getTimestamp() + POSITION_PRICE_RENEWAL_INTERVAL_SECONDS,
+          deadline: getTimestamp() + QUOTATION_RENEWAL_INTERVAL_SECONDS,
           signature: '0x',
         };
 
         setShortQuotation(sellQuotation);
-        // Deprecated: before merging into develop (20230327 - Shirley)
-        // eslint-disable-next-line no-console
-        console.log('calculate, short', shortQuotationRef.current);
       }
     } catch (err) {
       const buyPrice =
@@ -337,7 +298,7 @@ const TradeTabMobile = () => {
         typeOfPosition: TypeOfPosition.BUY,
         unitAsset: unitAsset,
         price: buyPrice,
-        deadline: getTimestamp() + POSITION_PRICE_RENEWAL_INTERVAL_SECONDS,
+        deadline: getTimestamp() + QUOTATION_RENEWAL_INTERVAL_SECONDS,
         signature: '0x',
       };
 
@@ -353,7 +314,7 @@ const TradeTabMobile = () => {
         typeOfPosition: TypeOfPosition.SELL,
         unitAsset: unitAsset,
         price: sellPrice,
-        deadline: getTimestamp() + POSITION_PRICE_RENEWAL_INTERVAL_SECONDS,
+        deadline: getTimestamp() + QUOTATION_RENEWAL_INTERVAL_SECONDS,
         signature: '0x',
       };
 
@@ -772,7 +733,7 @@ const TradeTabMobile = () => {
               {longTooltipStatus == 3 && (
                 <div
                   role="tooltip"
-                  className="absolute -top-120px -left-52 z-20 mr-8 w-56 rounded bg-darkGray8 p-4 shadow-lg transition duration-150 ease-in-out"
+                  className="absolute -left-52 -top-120px z-20 mr-8 w-56 rounded bg-darkGray8 p-4 shadow-lg transition duration-150 ease-in-out"
                 >
                   <p className="pb-1 text-sm font-medium text-white">
                     {t('TRADE_PAGE.GUARANTEED_STOP_HINT')}
@@ -937,7 +898,7 @@ const TradeTabMobile = () => {
               {shortTooltipStatus == 3 && (
                 <div
                   role="tooltip"
-                  className="absolute -top-120px -left-52 z-20 mr-8 w-56 rounded bg-darkGray8 p-4 shadow-lg transition duration-150 ease-in-out"
+                  className="absolute -left-52 -top-120px z-20 mr-8 w-56 rounded bg-darkGray8 p-4 shadow-lg transition duration-150 ease-in-out"
                 >
                   <p className="pb-1 text-sm font-medium text-white">
                     {t('TRADE_PAGE.TRADE_TAB_GUARANTEED_STOP_HINT')}

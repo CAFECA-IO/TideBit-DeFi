@@ -27,11 +27,7 @@ import {
   ITickerItem,
 } from '../interfaces/tidebit_defi_background/ticker_data';
 import {ITimeSpanUnion, TimeSpanUnion} from '../interfaces/tidebit_defi_background/time_span_union';
-import {
-  ICandlestickData,
-  getDummyCandlestickChartData,
-  updateDummyCandlestickChartData,
-} from '../interfaces/tidebit_defi_background/candlestickData';
+import {ICandlestickData} from '../interfaces/tidebit_defi_background/candlestickData';
 import {TideBitEvent} from '../constants/tidebit_event';
 import {NotificationContext} from './notification_context';
 import {WorkerContext} from './worker_context';
@@ -44,7 +40,6 @@ import {
   ITickerHistoryData,
 } from '../interfaces/tidebit_defi_background/ticker_history_data';
 import {ITypeOfPosition} from '../constants/type_of_position';
-import {getTimestamp} from '../lib/common';
 
 export interface IMarketProvider {
   children: React.ReactNode;

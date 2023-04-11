@@ -84,16 +84,18 @@ const WithdrawalModal = ({
     });
     globalCtx.visibleLoadingModalHandler();
 
+    const withdrawOrder = {
+      orderType: OrderType.WITHDRAW,
+      createTimestamp: getTimestamp(),
+      targetAsset: selectedCrypto.symbol,
+      to: selectedCrypto.contract,
+      targetAmount: amountInput,
+      remark: '',
+      fee: 0,
+    };
+
     try {
-      const result = await userCtx.withdraw({
-        orderType: OrderType.WITHDRAW,
-        createTimestamp: getTimestamp(),
-        targetAsset: selectedCrypto.symbol,
-        to: selectedCrypto.contract,
-        targetAmount: amountInput,
-        remark: '',
-        fee: 0,
-      });
+      const result = await userCtx.withdraw(withdrawOrder);
 
       // TODO: for debug
       globalCtx.toast({message: 'withdraw result: ' + JSON.stringify(result), type: 'info'});
@@ -145,7 +147,7 @@ const WithdrawalModal = ({
       // ToDo: Catch the error which user rejected the signature in UserContext (20230411 - Shirley)
       if (error?.code === 4001) {
         globalCtx.dataCanceledModalHandler({
-          modalTitle: 'Open Position',
+          modalTitle: 'Withdraw',
           modalContent: 'Transaction canceled',
         });
 
@@ -153,7 +155,7 @@ const WithdrawalModal = ({
       } else {
         // Info: Unknown error
         globalCtx.dataFailedModalHandler({
-          modalTitle: 'Open Position',
+          modalTitle: 'Withdraw',
           failedTitle: 'Failed',
           failedMsg: 'Transaction failed',
         });

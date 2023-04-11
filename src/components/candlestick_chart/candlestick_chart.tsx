@@ -24,6 +24,10 @@ import {
   IChartApi,
   ISeriesApi,
   BarData,
+  MouseEventParams,
+  IPriceLine,
+  LogicalRange,
+  LogicalRangeChangeEventHandler,
 } from 'lightweight-charts';
 import Lottie, {useLottie} from 'lottie-react';
 import spotAnimation from '../../../public/animation/circle.json';
@@ -102,6 +106,7 @@ const createSpec = ({timespan, dataSize, chartHeight, chartWidth}: IChartSpecPro
   const chartOptions = {
     width: chartWidth,
     height: chartHeight,
+
     layout: {
       fontSize: 12,
       fontFamily: 'barlow, sans-serif',
@@ -126,10 +131,10 @@ const createSpec = ({timespan, dataSize, chartHeight, chartWidth}: IChartSpecPro
     crosshair: {
       mode: 0,
       vertLine: {
-        color: LINE_GRAPH_STROKE_COLOR.DEFAULT,
+        color: LINE_GRAPH_STROKE_COLOR.WHITE,
       },
       horzLine: {
-        color: LINE_GRAPH_STROKE_COLOR.DEFAULT,
+        color: LINE_GRAPH_STROKE_COLOR.WHITE,
       },
     },
 
@@ -234,6 +239,12 @@ export default function CandlestickChart({
     close: 0,
   });
 
+  const chartContainerRef = useRef<HTMLDivElement>(null);
+  let chart: IChartApi;
+  let candlestickSeries: ISeriesApi<'Candlestick'>;
+  let customPriceLine: IPriceLine;
+  let tuned: CandlestickData[];
+
   const width =
     globalCtx.layoutAssertion === 'desktop'
       ? globalCtx.width * 0.6 - 2000 / globalCtx.width + (globalCtx.width - 1150) * 0.5
@@ -247,10 +258,6 @@ export default function CandlestickChart({
       </p>
     ) : null;
 
-  const chartContainerRef = useRef<HTMLDivElement>(null);
-  let chart: IChartApi;
-  let candlestickSeries: ISeriesApi<'Candlestick'>;
-
   const {targetTime, chartOptions} = createSpec({
     dataSize: 30,
     timespan: 1,
@@ -260,6 +267,36 @@ export default function CandlestickChart({
 
   const handleResize = () => {
     chart.applyOptions({width: Number(chartContainerRef?.current?.clientWidth) - 50});
+  };
+
+  const crosshairMoveHandler = (param: MouseEventParams) => {
+    if (param.point === undefined || param.time === undefined) {
+      return;
+    }
+
+    if (param.seriesData) {
+      param.seriesData.forEach(series => {
+        const candle = series as CandlestickData;
+        setOhlcInfo({
+          open: candle.open,
+          high: candle.high,
+          low: candle.low,
+          close: candle.close,
+        });
+      });
+    }
+  };
+
+  const updatePriceLine = (lastClosePrice: number) => {
+    customPriceLine.applyOptions({
+      price: lastClosePrice,
+    });
+  };
+
+  const priceRangeChangeHandler = (newVisibleLogicalRange: LogicalRange) => {
+    const lastData = tuned[tuned.length - 1] as CandlestickData;
+
+    updatePriceLine(lastData?.close);
   };
 
   const fetchCandlestickData = () => {
@@ -273,11 +310,9 @@ export default function CandlestickChart({
 
   const drawChart = () => {
     if (chartContainerRef.current) {
-      // Info: Draw
-      const tuned = fetchCandlestickData();
-
+      // Info: Get data and draw the chart
+      tuned = fetchCandlestickData();
       chart = createChart(chartContainerRef.current, chartOptions);
-
       candlestickSeries = chart.addCandlestickSeries({
         // ToDo: `createSpec` 可以讀外面的參數，但這邊直接拿createSpec
         upColor: LINE_GRAPH_STROKE_COLOR.UP,
@@ -290,29 +325,40 @@ export default function CandlestickChart({
 
       chart.timeScale().fitContent();
 
-      chart.subscribeCrosshairMove(param => {
-        if (param.point === undefined || param.time === undefined) {
-          return;
-        }
-
-        if (param.seriesData) {
-          param.seriesData.forEach(series => {
-            const candle = series as CandlestickData;
-            setOhlcInfo({
-              open: candle.open,
-              high: candle.high,
-              low: candle.low,
-              close: candle.close,
-            });
-          });
-        }
+      customPriceLine = candlestickSeries.createPriceLine({
+        price: 0,
+        color: LINE_GRAPH_STROKE_COLOR.TIDEBIT_THEME,
+        axisLabelVisible: true,
+        axisLabelTextColor: LINE_GRAPH_STROKE_COLOR.WHITE,
+        axisLabelColor: LINE_GRAPH_STROKE_COLOR.TIDEBIT_THEME,
       });
+
+      // Info: Create a custom price line
+      candlestickSeries.applyOptions({
+        // priceLineColor: '#29C1E1',
+        lastValueVisible: false,
+      });
+
+      chart
+        .timeScale()
+        .subscribeVisibleLogicalRangeChange(
+          priceRangeChangeHandler as LogicalRangeChangeEventHandler
+        );
+
+      // Info: OHLC hovered information
+      chart.subscribeCrosshairMove(crosshairMoveHandler);
 
       window.addEventListener('resize', handleResize);
 
       return () => {
         try {
           window.removeEventListener('resize', handleResize);
+          chart.unsubscribeCrosshairMove(crosshairMoveHandler);
+          chart
+            .timeScale()
+            .unsubscribeVisibleLogicalRangeChange(
+              priceRangeChangeHandler as LogicalRangeChangeEventHandler
+            );
           chart.remove();
         } catch (err) {
           // Info: (20230406 - Shirley) do nothing

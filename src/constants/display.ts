@@ -169,7 +169,7 @@ export const EXAMPLE_BLUE_COLOR = '#92c5f7';
 export const LIGHT_GRAY_COLOR = '#8B8E91';
 
 export const LINE_GRAPH_STROKE_COLOR = {
-  DEFAULT: '#FFFFFF',
+  WHITE: '#FFFFFF',
   UP: '#17BF88',
   DOWN: '#E86D6D',
   TIDEBIT_THEME: '#29C1E1',

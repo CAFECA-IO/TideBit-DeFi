@@ -226,7 +226,7 @@
     "FEE": "手續費",
     "AVAILABLE": "可用餘額",
     "AVAILABLE_ON_TIDEBIT": "TideBit 可用餘額",
-    "AVAILABLE_ON_WALLET": "錢包可用餘額",
+    "AVAILABLE_IN_WALLET": "錢包可用餘額",
     "DETAIL": "詳細資訊"
   },
   "MY_ASSETS_PAGE": {

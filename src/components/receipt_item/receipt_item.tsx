@@ -12,6 +12,8 @@ import {UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
 import {useTranslation} from 'next-i18next';
 import {IAcceptedOrder} from '../../interfaces/tidebit_defi_background/accepted_order';
 import {IAcceptedDepositOrder} from '../../interfaces/tidebit_defi_background/accepted_deposit_order';
+import {IAcceptedWithdrawOrder} from '../../interfaces/tidebit_defi_background/accepted_withdraw_order';
+import {IDisplayAcceptedCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
 import {ICFDOrderSnapshot} from '../../interfaces/tidebit_defi_background/order_snapshot';
 
 type TranslateFunction = (s: string) => string;
@@ -35,7 +37,7 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
     balanceSnapshot,
   } = histories.histories;
 
-  const getCFDData = userCtx.getCFD(orderSnapshot.id);
+  const getCFDData = userCtx.getCFD((orderSnapshot as ICFDOrderSnapshot).id);
 
   /* Todo: (20230328 - Julian) get data from userContext 
   const getDepositData: IDisplayAcceptedDepositOrder = {
@@ -56,8 +58,6 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
       locked: 1900,
     },
   };*/
-
-  // const displayedDepositData = toDisplayAcceptedDepositOrder(histories.histories);
 
   const receiptDate = timestampToString(createTimestamp ?? 0);
 
@@ -95,7 +95,7 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
       ? orderType === OrderType.CFD
         ? 'text-lightWhite'
         : 'text-tidebitTheme'
-      : orderStatus === OrderStatusUnion.PROCESSING
+      : orderStatus === OrderStatusUnion.PROCESSING || orderStatus === OrderStatusUnion.WAITING
       ? 'text-lightGreen5'
       : orderStatus === OrderStatusUnion.FAILED
       ? 'text-lightRed'
@@ -106,7 +106,7 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
       ? orderType === OrderType.CFD
         ? `${displayedReceiptType}`
         : displayedReceiptTxId
-      : orderStatus === OrderStatusUnion.PROCESSING
+      : orderStatus === OrderStatusUnion.PROCESSING || orderStatus === OrderStatusUnion.WAITING
       ? t('MY_ASSETS_PAGE.RECEIPT_SECTION_ORDER_STATUS_PROCESSING')
       : orderStatus === OrderStatusUnion.FAILED
       ? t('MY_ASSETS_PAGE.RECEIPT_SECTION_ORDER_STATUS_FAILED')
@@ -117,31 +117,32 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
       ? (orderSnapshot as ICFDOrderSnapshot).state === OrderState.OPENING
         ? () => {
             /* ToDo: convert IAceptedOrder to IDataPositionUpdatedModal in order to use getCFD (20230324 - Luphia)
-            globalCtx.dataPositionUpdatedModalHandler(getCFDData);
-             */
-            globalCtx.visiblePositionUpdatedModalHandler();
+            globalCtx.dataUpdateFormModalHandler(getCFDData);
+            
+            globalCtx.dataPositionUpdatedModalHandler(getCFDData as IDataPositionUpdatedModal); 
+            globalCtx.visiblePositionUpdatedModalHandler(); */
+            globalCtx.visibleUpdateFormModalHandler();
           }
         : () => {
-            /* ToDo: convert IAceptedOrder to IDisplayAcceptedCFDOrder in order to use getCFD (20230324 - Luphia)
-            globalCtx.dataHistoryPositionModalHandler(getCFDData);
-             */
+            /* ToDo: convert IAceptedOrder to IDisplayAcceptedCFDOrder in order to use getCFD (20230324 - Luphia) 
+            globalCtx.dataHistoryPositionModalHandler(toDisplayAcceptedCFDOrder(getCFDData, [])); */
             globalCtx.visibleHistoryPositionModalHandler();
           }
       : orderType === OrderType.DEPOSIT
       ? () => {
-          /* Todo: (20230324 - Julian) deposit history modal */
           globalCtx.dataDepositHistoryModalHandler(histories.histories as IAcceptedDepositOrder);
           globalCtx.visibleDepositHistoryModalHandler();
         }
       : () => {
-          /* ToDo: (20230329 - Julian) transfer IOrder to IAcceptedWithdrawOrder 
-          globalCtx.dataWithdrawalHistoryModalHandler(getDepositData);
-          */
+          globalCtx.dataWithdrawalHistoryModalHandler(
+            histories.histories as IAcceptedWithdrawOrder
+          );
           globalCtx.visibleWithdrawalHistoryModalHandler();
         };
 
   const displayedReceiptStateIcon =
-    orderStatus === OrderStatusUnion.PROCESSING ? null : orderType === OrderType.CFD ? (
+    orderStatus === OrderStatusUnion.PROCESSING ||
+    orderStatus === OrderStatusUnion.WAITING ? null : orderType === OrderType.CFD ? (
       orderStatus === OrderStatusUnion.FAILED ? (
         <Image src="/elements/detail_icon.svg" alt="" width={20} height={20} />
       ) : (
@@ -159,7 +160,7 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
         });
 
   const displayedReceiptAvailableText =
-    orderStatus === OrderStatusUnion.PROCESSING ? (
+    orderStatus === OrderStatusUnion.PROCESSING || orderStatus === OrderStatusUnion.WAITING ? (
       <Lottie className="w-20px" animationData={smallConnectingAnimation} />
     ) : (
       balanceSnapshot.available.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {

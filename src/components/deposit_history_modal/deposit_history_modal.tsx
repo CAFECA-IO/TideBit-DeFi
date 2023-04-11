@@ -52,7 +52,7 @@ const DepositHistoryModal = ({
   );
 
   const displayedDepositAvailable =
-    orderStatus === OrderStatusUnion.PROCESSING ? (
+    orderStatus === OrderStatusUnion.WAITING ? (
       <Lottie className="w-20px" animationData={smallConnectingAnimation} />
     ) : (
       <div>
@@ -63,7 +63,7 @@ const DepositHistoryModal = ({
     );
 
   const displayedDepositDetail =
-    orderStatus === OrderStatusUnion.PROCESSING ? (
+    orderStatus === OrderStatusUnion.WAITING ? (
       <div className="text-lightGreen5">{t('D_W_MODAL.STATUS_PROCESSING')}</div>
     ) : orderStatus === OrderStatusUnion.FAILED ? (
       <div className="text-lightRed">{t('D_W_MODAL.STATUS_FAILED')}</div>

@@ -273,8 +273,8 @@ const PositionClosedModal = ({
     modalClickHandler();
 
     globalCtx.dataLoadingModalHandler({
-      modalTitle: 'Close Position',
-      modalContent: 'Confirm the transaction',
+      modalTitle: t('POSITION_MODAL.CLOSE_POSITION_TITLE'),
+      modalContent: t('POSITION_MODAL.CONFIRM_CONTENT'),
     });
     globalCtx.visibleLoadingModalHandler();
 
@@ -292,9 +292,9 @@ const PositionClosedModal = ({
       // TODO: temporary waiting
       await wait(DELAYED_HIDDEN_SECONDS);
       globalCtx.dataLoadingModalHandler({
-        modalTitle: 'Close Position',
-        modalContent: 'Transaction broadcast',
-        btnMsg: 'View on Etherscan',
+        modalTitle: t('POSITION_MODAL.CLOSE_POSITION_TITLE'),
+        modalContent: t('POSITION_MODAL.TRANSACTION_BROADCAST'),
+        btnMsg: t('POSITION_MODAL.VIEW_ON_BUTTON'),
         btnUrl: '#',
       });
 
@@ -307,9 +307,9 @@ const PositionClosedModal = ({
       // TODO: the button URL
       if (result.success) {
         globalCtx.dataSuccessfulModalHandler({
-          modalTitle: 'Close Position',
-          modalContent: 'Transaction succeed',
-          btnMsg: 'View on Etherscan',
+          modalTitle: t('POSITION_MODAL.CLOSE_POSITION_TITLE'),
+          modalContent: t('POSITION_MODAL.TRANSACTION_SUCCEED'),
+          btnMsg: t('POSITION_MODAL.VIEW_ON_BUTTON'),
           btnUrl: '#',
         });
 
@@ -334,9 +334,9 @@ const PositionClosedModal = ({
             globalCtx.visibleHistoryPositionModalHandler();
           } catch (error) {
             globalCtx.dataFailedModalHandler({
-              modalTitle: 'Close Position',
-              failedTitle: 'Failed',
-              failedMsg: 'Order is not closed',
+              modalTitle: t('POSITION_MODAL.CLOSE_POSITION_TITLE'),
+              failedTitle: t('POSITION_MODAL.FAILED_TITLE'),
+              failedMsg: t('POSITION_MODAL.FAILED_REASON_DELAY'),
             });
 
             globalCtx.visibleFailedModalHandler();
@@ -344,25 +344,25 @@ const PositionClosedModal = ({
         }
       } else if (result.reason === 'CANCELED') {
         globalCtx.dataCanceledModalHandler({
-          modalTitle: 'Close Position',
-          modalContent: 'Transaction canceled',
+          modalTitle: t('POSITION_MODAL.CLOSE_POSITION_TITLE'),
+          modalContent: t('POSITION_MODAL.FAILED_REASON_CANCELED'),
         });
 
         globalCtx.visibleCanceledModalHandler();
       } else if (result.reason === 'FAILED') {
         globalCtx.dataFailedModalHandler({
-          modalTitle: 'Close Position',
-          failedTitle: 'Failed',
-          failedMsg: 'Failed to close position',
+          modalTitle: t('POSITION_MODAL.CLOSE_POSITION_TITLE'),
+          failedTitle: t('POSITION_MODAL.FAILED_TITLE'),
+          failedMsg: t('POSITION_MODAL.FAILED_REASON_FAILED_TO_CLOSE'),
         });
 
         globalCtx.visibleFailedModalHandler();
       }
     } catch (error) {
       globalCtx.dataFailedModalHandler({
-        modalTitle: 'Close Position',
-        failedTitle: 'Failed',
-        failedMsg: 'Order is not opening',
+        modalTitle: t('POSITION_MODAL.CLOSE_POSITION_TITLE'),
+        failedTitle: t('POSITION_MODAL.FAILED_TITLE'),
+        failedMsg: t('POSITION_MODAL.FAILED_REASON_ERROR'),
       });
 
       globalCtx.visibleFailedModalHandler();
@@ -535,7 +535,7 @@ const PositionClosedModal = ({
           </div>
         </div>
 
-        <div className="my-3 text-xxs text-lightGray">{t('POSITION_MODAL.CFD_CONTENT')}</div>
+        <div className="my-3 text-xs text-lightGray">{t('POSITION_MODAL.CFD_CONTENT')}</div>
 
         <RippleButton
           disabled={secondsLeft < 1 || quotationErrorRef.current}

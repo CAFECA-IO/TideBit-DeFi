@@ -125,6 +125,7 @@ export const TypeOfPnLColorHex = {
   LOSS: '#E86D6D',
   TIDEBIT_THEME: '#29C1E1',
   EQUAL: '#8B8E91',
+  LIQUIDATION: '#F8E71C',
 };
 
 export const TypeOfPnLColor = {

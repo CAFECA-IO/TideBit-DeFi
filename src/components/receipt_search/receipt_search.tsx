@@ -1,6 +1,7 @@
 import {useState, Dispatch, SetStateAction, useCallback} from 'react';
 import {OrderType} from '../../constants/order_type';
 import {OrderState} from '../../constants/order_state';
+import {CgSearch} from 'react-icons/cg';
 import Image from 'next/image';
 import DatePicker from '../date_picker/date_picker';
 import {useTranslation} from 'next-i18next';
@@ -193,20 +194,6 @@ const ReceiptSearch = ({
     </div>
   );
 
-  const searchIcon = (
-    <svg xmlns="http://www.w3.org/2000/svg" width="25" height="24.984" viewBox="0 0 25 24.984">
-      <g id="search" transform="translate(-5.993 -2.299)">
-        <path
-          id="Path_25775"
-          data-name="Path 25775"
-          d="M24.934,19.358a10.589,10.589,0,1,0-1.867,1.866l.057.06,5.61,5.611a1.323,1.323,0,1,0,1.872-1.872l-5.611-5.61q-.029-.029-.06-.056Zm-2.745-12.1a7.934,7.934,0,1,1-11.221,0,7.933,7.933,0,0,1,11.221,0Z"
-          fill="#f2f2f2"
-          fillRule="evenodd"
-        />
-      </g>
-    </svg>
-  );
-
   const displayedSearchBar = (
     <div className="relative w-300px">
       <input
@@ -219,9 +206,9 @@ const ReceiptSearch = ({
       />
       <button
         type="button"
-        className="absolute top-px right-1 rounded-lg bg-transparent px-4 py-2 text-sm font-medium text-white hover:text-gray-700/80 focus:outline-none focus:ring-0 focus:ring-blue-300"
+        className="absolute top-0 right-1 rounded-lg bg-transparent px-4 py-2 text-sm font-medium text-white hover:text-gray-700/80 focus:outline-none focus:ring-0 focus:ring-blue-300"
       >
-        {searchIcon}
+        <CgSearch size={30} />
       </button>
     </div>
   );

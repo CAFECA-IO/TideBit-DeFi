@@ -56,7 +56,7 @@ const OrderSection = () => {
         <div className="mr-3px w-full">
           <button
             type="button"
-            className={`${activeTradeTabStyle} inline-block w-full rounded-t-2xl px-60px py-2 hover:cursor-pointer`}
+            className={`${activeTradeTabStyle} inline-block w-full rounded-t-2xl px-40px py-2 hover:cursor-pointer`}
             onClick={tradeTabClickHandler}
           >
             {t('TRADE_PAGE.TRADE_TAB')}
@@ -65,7 +65,7 @@ const OrderSection = () => {
         <div className="w-full">
           <button
             type="button"
-            className={`${activePositionTabStyle} inline-block w-full rounded-t-2xl px-60px py-2 hover:cursor-pointer`}
+            className={`${activePositionTabStyle} inline-block w-full rounded-t-2xl px-40px py-2 hover:cursor-pointer`}
             onClick={positionTabClickHandler}
           >
             {t('TRADE_PAGE.POSITION_TAB')}

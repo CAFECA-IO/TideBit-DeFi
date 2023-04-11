@@ -2,6 +2,7 @@ import {ToastContainer, toast, ToastOptions, useToast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {CRYPTO_CARD_COLORS} from '../../constants/display';
 import {ImCross} from 'react-icons/im';
+import {CgSearch} from 'react-icons/cg';
 import {useContext, useEffect, useState} from 'react';
 import CryptoCard from '../crypto_card/crypto_card';
 import {MarketContext, IMarketContext} from '../../contexts/market_context';
@@ -316,20 +317,6 @@ const TickerSelectorBoxMobile = ({
 
   const displayedCryptoCards = activeTab === 'All' ? displayedAllCryptoCards : displayedFavorites;
 
-  const searchIcon = (
-    <svg xmlns="http://www.w3.org/2000/svg" width="25" height="24.984" viewBox="0 0 25 24.984">
-      <g id="search" transform="translate(-5.993 -2.299)">
-        <path
-          id="Path_25775"
-          data-name="Path 25775"
-          d="M24.934,19.358a10.589,10.589,0,1,0-1.867,1.866l.057.06,5.61,5.611a1.323,1.323,0,1,0,1.872-1.872l-5.611-5.61q-.029-.029-.06-.056Zm-2.745-12.1a7.934,7.934,0,1,1-11.221,0,7.933,7.933,0,0,1,11.221,0Z"
-          fill="#f2f2f2"
-          fillRule="evenodd"
-        />
-      </g>
-    </svg>
-  );
-
   const dropdownMenuText =
     activeTab === 'All'
       ? t('TRADE_PAGE.TICKER_SELECTOR_TAB_ALL')
@@ -409,20 +396,20 @@ const TickerSelectorBoxMobile = ({
             <div className="w-full">{tabPart}</div>
 
             {/* `border border-gray-300` for input border */}
-            <div className="mt-10 flex w-full">
+            <div className="relative mt-10 flex w-full">
               <input
                 type="search"
                 value={searches}
                 className="block w-full rounded-full bg-darkGray2 p-3 pl-4 text-sm text-white focus:border-blue-500 focus:outline-none focus:ring-0 focus:ring-blue-500"
-                placeholder={t('TRADE_PAGE.TICKER_SELECTOR_SEARCH_PLACEHOLDER')}
+                placeholder={t('TRADE_PAGE.TICKER_SELECTOR_TAB_SEARCH_PLACEHOLDER')}
                 required
                 onChange={onSearchChange}
               />
               <button
                 type="button"
-                className="absolute right-4 rounded-lg bg-transparent px-4 py-2 text-sm font-medium text-white hover:text-gray-700/80 focus:outline-none focus:ring-0 focus:ring-blue-300"
+                className="absolute top-0 right-0 rounded-lg bg-transparent px-4 py-2 text-sm font-medium text-white hover:text-gray-700/80 focus:outline-none focus:ring-0 focus:ring-blue-300"
               >
-                {searchIcon}
+                <CgSearch size={30} />
               </button>
             </div>
 

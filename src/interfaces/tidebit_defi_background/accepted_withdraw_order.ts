@@ -26,7 +26,7 @@ export const getDummyAcceptedWithdrawOrder = (
     applyData: dummyWithdrawOrder,
     orderSnapshot: {
       id,
-      orderType: OrderType.DEPOSIT,
+      orderType: OrderType.WITHDRAW,
       txid,
       targetAsset: currency,
       targetAmount: 2,
@@ -35,7 +35,7 @@ export const getDummyAcceptedWithdrawOrder = (
       fee: 0,
     },
     id,
-    orderType: OrderType.DEPOSIT,
+    orderType: OrderType.WITHDRAW,
     orderStatus: orderStatus ? orderStatus : OrderStatusUnion.WAITING,
     targetAsset: dummyWithdrawOrder.targetAsset,
     targetAmount: dummyWithdrawOrder.targetAmount,

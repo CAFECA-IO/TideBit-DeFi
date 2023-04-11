@@ -78,17 +78,17 @@ const PositionUpdatedModal = ({
     modalClickHandler();
 
     globalCtx.dataLoadingModalHandler({
-      modalTitle: 'Update Position',
-      modalContent: 'Confirm the transaction',
+      modalTitle: t('POSITION_MODAL.UPDATE_POSITION_TITLE'),
+      modalContent: t('POSITION_MODAL.CONFIRM_CONTENT'),
     });
     globalCtx.visibleLoadingModalHandler();
 
     const result = await userCtx.updateCFDOrder(toApplyUpdateOrder(openCfdDetails));
 
     globalCtx.dataLoadingModalHandler({
-      modalTitle: 'Update Position',
-      modalContent: 'Transaction broadcast',
-      btnMsg: 'View on Etherscan',
+      modalTitle: t('POSITION_MODAL.UPDATE_POSITION_TITLE'),
+      modalContent: t('POSITION_MODAL.TRANSACTION_BROADCAST'),
+      btnMsg: t('POSITION_MODAL.VIEW_ON_BUTTON'),
       btnUrl: '#',
     });
 
@@ -101,9 +101,9 @@ const PositionUpdatedModal = ({
     // TODO: (20230317 - Shirley) the button URL
     if (result.success) {
       globalCtx.dataSuccessfulModalHandler({
-        modalTitle: 'Update Position',
-        modalContent: 'Transaction succeed',
-        btnMsg: 'View on Etherscan',
+        modalTitle: t('POSITION_MODAL.UPDATE_POSITION_TITLE'),
+        modalContent: t('POSITION_MODAL.TRANSACTION_SUCCEED'),
+        btnMsg: t('POSITION_MODAL.VIEW_ON_BUTTON'),
         btnUrl: '#',
       });
 
@@ -116,16 +116,16 @@ const PositionUpdatedModal = ({
       globalCtx.visibleUpdateFormModalHandler();
     } else if (result.reason === 'CANCELED') {
       globalCtx.dataCanceledModalHandler({
-        modalTitle: 'Update Position',
-        modalContent: 'Transaction canceled',
+        modalTitle: t('POSITION_MODAL.UPDATE_POSITION_TITLE'),
+        modalContent: t('POSITION_MODAL.FAILED_REASON_CANCELED'),
       });
 
       globalCtx.visibleCanceledModalHandler();
     } else if (result.reason === 'FAILED') {
       globalCtx.dataFailedModalHandler({
-        modalTitle: 'Update Position',
-        failedTitle: 'Failed',
-        failedMsg: 'Failed to update position',
+        modalTitle: t('POSITION_MODAL.UPDATE_POSITION_TITLE'),
+        failedTitle: t('POSITION_MODAL.FAILED_TITLE'),
+        failedMsg: t('POSITION_MODAL.FAILED_REASON_FAILED_TO_UPDATE'),
       });
 
       globalCtx.visibleFailedModalHandler();
@@ -285,7 +285,7 @@ const PositionUpdatedModal = ({
           </div>
         </div>
 
-        <div className="my-4 text-xxs text-lightGray">{t('POSITION_MODAL.CFD_CONTENT')}</div>
+        <div className="my-4 text-xs text-lightGray">{t('POSITION_MODAL.CFD_CONTENT')}</div>
 
         <RippleButton
           onClick={submitClickHandler}

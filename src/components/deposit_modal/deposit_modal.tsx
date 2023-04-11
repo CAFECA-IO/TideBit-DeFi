@@ -147,7 +147,7 @@ const DepositModal = ({
         <div className="flex-col justify-center text-center">
           {/* ----------Type input---------- */}
           <div className="mx-6 pt-8 text-start">
-            <p className="text-sm text-lightGray4">Asset</p>
+            <p className="text-sm text-lightGray4">{t('D_W_MODAL.ASSET')}</p>
             <div className="hover:cursor-pointer" onClick={cryptoMenuClickHandler}>
               <div className={`${formStyle} flex rounded-md bg-darkGray8`}>
                 <div className={`z-50 flex items-center space-x-2 pl-2`}>
@@ -217,7 +217,7 @@ const DepositModal = ({
 
           {/* ----------Amount input---------- */}
           <div className="mx-6 pt-12 text-start">
-            <p className="text-sm text-lightGray4">Amount</p>
+            <p className="text-sm text-lightGray4">{t('D_W_MODAL.AMOUNT')}</p>
             {/* <div className="max-w-xl bg-darkGray8">Tether</div> */}
             <div className="flex rounded-md bg-darkGray8">
               <input
@@ -239,7 +239,7 @@ const DepositModal = ({
                 onClick={maxClickHandler}
                 className="my-1 mx-1 rounded-sm bg-lightGray3 px-2 text-xs text-white hover:bg-lightGray3/80"
               >
-                MAX
+                {t('D_W_MODAL.MAX')}
               </button>
             </div>
 
@@ -249,7 +249,7 @@ const DepositModal = ({
               </p> */}
 
               <p className="pt-3 text-end text-xs tracking-wide">
-                Available in MetaMask:{' '}
+                {t('D_W_MODAL.AVAILABLE_IN_WALLET')}:{' '}
                 <span className="text-tidebitTheme">
                   {userAvailableBalance.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}
                 </span>{' '}

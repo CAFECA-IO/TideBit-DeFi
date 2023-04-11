@@ -1,6 +1,6 @@
 import {useContext} from 'react';
 import TickerSelectorBox from '../ticker_selector_box/ticker_selector_box';
-import {CgArrowsExchange} from 'react-icons/cg';
+import {CgSearchLoading} from 'react-icons/cg';
 import useOuterClick from '../../lib/hooks/use_outer_click';
 import {UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
 import {MarketContext} from '../../contexts/market_context';
@@ -67,7 +67,7 @@ const TradingHeader = () => {
           </button>
 
           <div className="pl-0 hover:cursor-pointer">
-            <CgArrowsExchange size={35} />
+            <CgSearchLoading size={35} />
           </div>
         </div>
 

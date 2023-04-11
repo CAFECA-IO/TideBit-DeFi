@@ -89,7 +89,7 @@ const HistoryPositionItem = ({closedCfdDetails, ...otherProps}: IHistoryPosition
 
           <div className="w-60px text-end">
             <div className="text-lightGray">{t('TRADE_PAGE.HISTORY_POSITION_ITEM_PNL')}</div>
-            <div className={`${displayedTextColor}`}>
+            <div className={`${displayedTextColor} whitespace-nowrap`}>
               <span className="">{displayedSymbol}</span> $
               {closedCfdDetails.pnl.value?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
                 minimumFractionDigits: 2,

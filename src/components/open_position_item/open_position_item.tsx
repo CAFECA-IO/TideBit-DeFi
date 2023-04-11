@@ -61,14 +61,14 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
   const remainSecs = openCfdDetails?.orderSnapshot?.liquidationTime - nowTimestamp;
 
   const remainTime =
-    remainSecs < 60
+    remainSecs <= 60
       ? Math.round(remainSecs)
       : remainSecs < 3600
       ? Math.round(remainSecs / 60)
       : Math.round(remainSecs / 3600);
 
   const label =
-    remainSecs < 60
+    remainSecs <= 60
       ? [`${Math.round(remainSecs)} S`]
       : remainSecs < 3600
       ? [`${Math.round(remainSecs / 60)} M`]
@@ -82,7 +82,7 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
   };
 
   const openPrice = openCfdDetails?.orderSnapshot?.openPrice;
-  const nowPrice = 300; //openCfdDetails.positionLineGraph[openCfdDetails.positionLineGraph.length - 1];
+  const nowPrice = openCfdDetails.positionLineGraph[openCfdDetails.positionLineGraph.length - 1];
   const liquidationPrice = openCfdDetails?.orderSnapshot?.liquidationPrice;
   const takeProfitPrice = openCfdDetails?.orderSnapshot?.takeProfit ?? 0;
   const stopLossPrice = openCfdDetails?.orderSnapshot?.stopLoss ?? 0;
@@ -90,22 +90,27 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
   const rangingTP = Math.abs(openPrice - (takeProfitPrice ?? 0));
   const rangingSL = Math.abs(openPrice - (stopLossPrice ?? 0));
 
+  /* Info: (20230411 - Julian) 折線圖參考線的優先顯示順序:
+   * 1. Liquidation
+   * 2. Stop Loss Price
+   * 3. Take Profit Price
+   * 4. Open price */
   const displayedAnnotatedValue =
     Math.abs(nowPrice - liquidationPrice) <= rangingLiquidation * 0.1
       ? liquidationPrice
-      : Math.abs(nowPrice - takeProfitPrice) <= rangingTP * 0.1
-      ? takeProfitPrice
       : Math.abs(nowPrice - stopLossPrice) <= rangingSL * 0.1
       ? stopLossPrice
+      : Math.abs(nowPrice - takeProfitPrice) <= rangingTP * 0.1
+      ? takeProfitPrice
       : openPrice;
 
   const displayedAnnotatedString =
     Math.abs(nowPrice - liquidationPrice) <= rangingLiquidation * 0.1
       ? t('TRADE_PAGE.OPEN_POSITION_ITEM_LIQUIDATION')
-      : Math.abs(nowPrice - takeProfitPrice) <= rangingTP * 0.1
-      ? t('TRADE_PAGE.OPEN_POSITION_ITEM_TP')
       : Math.abs(nowPrice - stopLossPrice) <= rangingSL * 0.1
       ? t('TRADE_PAGE.OPEN_POSITION_ITEM_SL')
+      : Math.abs(nowPrice - takeProfitPrice) <= rangingTP * 0.1
+      ? t('TRADE_PAGE.OPEN_POSITION_ITEM_TP')
       : `$ ${openPrice}`;
 
   const displayedString =
@@ -113,8 +118,9 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
       ? TypeOfTransaction.LONG
       : TypeOfTransaction.SHORT;
 
+  /* Info: (20230411 - Julian) 剩 60 秒時折線圖呈現黃色 */
   const displayedColorHex =
-    remainSecs < 60
+    remainSecs <= 60
       ? TypeOfPnLColorHex.LIQUIDATION
       : openCfdDetails?.pnl?.type === ProfitState.PROFIT
       ? TypeOfPnLColorHex.PROFIT
@@ -122,6 +128,7 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
       ? TypeOfPnLColorHex.LOSS
       : TypeOfPnLColorHex.EQUAL;
 
+  /* Info: (20230411 - Julian) 折線圖參考線顏色 */
   const displayedColorDashLine =
     Math.abs(nowPrice - liquidationPrice) <= rangingLiquidation * 0.1 ||
     Math.abs(nowPrice - takeProfitPrice) <= rangingTP * 0.1 ||
@@ -129,6 +136,7 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
       ? TypeOfPnLColorHex.LIQUIDATION
       : displayedColorHex;
 
+  /* Info: (20230411 - Julian) 折線圖參考線上的字顏色 */
   const displayedColorAnnotatedString =
     Math.abs(nowPrice - liquidationPrice) <= rangingLiquidation * 0.1 ||
     Math.abs(nowPrice - takeProfitPrice) <= rangingTP * 0.1 ||
@@ -153,11 +161,14 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
       ? '-'
       : '';
 
+  const displayedPNL = openCfdDetails?.pnl?.value.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+    maximumFractionDigits: 2,
+    minimumFractionDigits: 2,
+  });
+
   const displayedCreateTime = timestampToString(
     openCfdDetails?.orderSnapshot?.createTimestamp ?? 0
   );
-
-  //console.log(openCfdDetails.positionLineGraph);
 
   return (
     <div className="relative">
@@ -165,11 +176,8 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
         className="absolute z-10 h-150px w-280px bg-transparent hover:cursor-pointer"
         onClick={openItemClickHandler}
       ></div>
-      {/* brief of this open position */}
+      {/* Info: (20230411 - Julian) brief of this open position */}
       <div className="mt-2 flex justify-between">
-        {/* TODO: switch the layout */}
-        {/* {displayedTickerLayout} */}
-
         <div className="inline-flex items-center text-sm">
           {/* ToDo: default currency icon (20230310 - Julian) issue #338 */}
           <Image
@@ -192,7 +200,7 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
         </div>
       </div>
 
-      {/* Line graph */}
+      {/* Info: (20230411 - Julian) Line graph */}
       <div className="-my-6 -mx-4">
         <PositionLineGraph
           strokeColor={[displayedColorHex, displayedColorDashLine, displayedColorAnnotatedString]}
@@ -217,15 +225,12 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
         <div className="-ml-8">
           <div className="text-xs text-lightGray">{t('TRADE_PAGE.OPEN_POSITION_ITEM_PNL')}</div>
           <div className={`${displayedTextColor} text-sm`}>
-            <span className="">{displayedSymbol}</span> ${' '}
-            {openCfdDetails?.pnl?.value.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
-              minimumFractionDigits: 2,
-            })}
+            <span className="">{displayedSymbol}</span> $ {displayedPNL}
           </div>
         </div>
 
         <div className="relative -mt-4 w-50px">
-          {/* -----Paused square----- */}
+          {/* Info: (20230411 - Julian) Paused square */}
           <div
             className={`absolute left-12px top-21px z-30 h-28px w-28px rounded-full hover:cursor-pointer hover:bg-darkGray
               ${displayedCrossColor} ${displayedCrossStyle} transition-all duration-150`}

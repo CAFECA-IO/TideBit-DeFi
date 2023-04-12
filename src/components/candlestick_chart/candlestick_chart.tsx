@@ -407,6 +407,7 @@ export default function CandlestickChart({
         lastValueVisible: false,
       });
 
+      // ToDo: [Workaround] without subscription, the price line won't be drawn (20230411 - Shirley)
       chart
         .timeScale()
         .subscribeVisibleLogicalRangeChange(

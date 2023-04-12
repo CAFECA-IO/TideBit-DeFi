@@ -37,7 +37,10 @@ const months = [
   'December',
 ];
 
-/* ToDo: (20230320 - Julian) props type */
+/* ToDo: (20230320 - Julian)
+ * 1. props type
+ * 2. 選到的日期要有不同的顏色
+ */
 const PopulateDates = (props: any) => {
   return props.daysInMonth.map((el: Dates) => {
     const date = el

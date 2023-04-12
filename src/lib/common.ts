@@ -8,6 +8,7 @@ import {TypeOfPosition} from '../constants/type_of_position';
 import {IDisplayAcceptedCFDOrder} from '../interfaces/tidebit_defi_background/display_accepted_cfd_order';
 import {ProfitState} from '../constants/profit_state';
 import {SUGGEST_SL, SUGGEST_TP} from '../constants/config';
+import {cfdStateCode} from '../constants/cfd_state_code';
 
 export const roundToDecimalPlaces = (val: number, precision: number): number => {
   const roundedNumber = Number(val.toFixed(precision));
@@ -327,13 +328,6 @@ export const randomHex = (length: number) => {
 // const positionLineGraph: number[] = tickerBook.listTickerPositions(orderSnapshot.ticker, {
 //   begin: acceptedCFDOrder.createTimestamp,
 // });
-
-export const cfdStateCode = {
-  COMMON: 0,
-  TAKE_PROFIT: 1,
-  STOP_LOSS: 2,
-  LIQUIDATION: 3,
-};
 
 export const toDisplayAcceptedCFDOrder = (
   cfdOrder: IAcceptedCFDOrder,

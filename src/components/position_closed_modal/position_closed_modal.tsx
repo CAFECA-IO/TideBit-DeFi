@@ -57,6 +57,7 @@ import {defaultResultSuccess} from '../../interfaces/tidebit_defi_background/res
 import {CFDOperation} from '../../constants/cfd_order_type';
 import {OrderType} from '../../constants/order_type';
 import {CFDClosedType} from '../../constants/cfd_closed_type';
+import {cfdStateCode} from '../../constants/cfd_state_code';
 
 type TranslateFunction = (s: string) => string;
 interface IPositionClosedModal {
@@ -222,6 +223,7 @@ const PositionClosedModal = ({
       closeValue: closeValue,
       positionLineGraph: positionLineGraph,
       suggestion: suggestion,
+      stateCode: cfdStateCode.COMMON,
     };
 
     return historyCfd;

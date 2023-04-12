@@ -64,14 +64,14 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
   const remainSecs = openCfdDetails?.orderSnapshot?.liquidationTime - nowTimestamp;
 
   const remainTime =
-    remainSecs <= 60
+    remainSecs < 60
       ? Math.round(remainSecs)
       : remainSecs < 3600
       ? Math.round(remainSecs / 60)
       : Math.round(remainSecs / 3600);
 
   const label =
-    remainSecs <= 60
+    remainSecs < 60
       ? [`${Math.round(remainSecs)} S`]
       : remainSecs < 3600
       ? [`${Math.round(remainSecs / 60)} M`]

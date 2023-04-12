@@ -44,7 +44,7 @@ export const getDummyApplyCreateCFDOrder = (currency: string) => {
     price: randomIntFromInterval(1000, 10000),
     targetAsset: currency,
     unitAsset: unitAsset,
-    margin: {asset: 'BTC', amount: randomIntFromInterval(10, 100)},
+    margin: {asset: unitAsset, amount: randomIntFromInterval(10, 100)},
     takeProfit: 74521,
     stopLoss: 25250,
     fee: 0,

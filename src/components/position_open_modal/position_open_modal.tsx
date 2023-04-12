@@ -35,7 +35,7 @@ import {
 import {
   getDummyApplyCreateCFDOrder,
   IApplyCreateCFDOrder,
-} from '../../interfaces/tidebit_defi_background/apply_create_cfd_order_data';
+} from '../../interfaces/tidebit_defi_background/apply_create_cfd_order';
 import {useTranslation} from 'react-i18next';
 import {defaultResultSuccess} from '../../interfaces/tidebit_defi_background/result';
 import {IQuotation} from '../../interfaces/tidebit_defi_background/quotation';

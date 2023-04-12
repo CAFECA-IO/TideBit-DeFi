@@ -16,8 +16,8 @@ import {UserContext} from '../../contexts/user_context';
 import {useTranslation} from 'react-i18next';
 import {unitAsset} from '../../constants/config';
 import {IDisplayApplyCFDOrder} from '../../interfaces/tidebit_defi_background/display_apply_cfd_order';
-import {IApplyUpdateCFDOrder} from '../../interfaces/tidebit_defi_background/apply_update_cfd_order_data';
-import {IDisplayAcceptedCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
+import {IApplyUpdateCFDOrder} from '../../interfaces/tidebit_defi_background/apply_update_cfd_order';
+import {IDisplayCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
 import {CFDOperation} from '../../constants/cfd_order_type';
 import {OrderType} from '../../constants/order_type';
 
@@ -25,7 +25,7 @@ type TranslateFunction = (s: string) => string;
 interface IPositionUpdatedModal {
   modalVisible: boolean;
   modalClickHandler: () => void;
-  openCfdDetails: IDisplayAcceptedCFDOrder;
+  openCfdDetails: IDisplayCFDOrder;
   updatedProps?: IApplyUpdateCFDOrder;
 }
 
@@ -46,7 +46,7 @@ const PositionUpdatedModal = ({
   const [slTextStyle, setSlTextStyle] = useState('text-lightWhite');
   const [gtslTextStyle, setGtslTextStyle] = useState('text-lightWhite');
 
-  const toApplyUpdateOrder = (position: IDisplayAcceptedCFDOrder): IApplyUpdateCFDOrder => {
+  const toApplyUpdateOrder = (position: IDisplayCFDOrder): IApplyUpdateCFDOrder => {
     const gsl = marketCtx.guaranteedStopFeePercentage;
     const gslFee = updatedProps?.guaranteedStop
       ? Number((Number(gsl) * position.openValue).toFixed(2))
@@ -140,20 +140,17 @@ const PositionUpdatedModal = ({
   const renewDataStyle = () => {
     if (updatedProps === undefined) return;
 
-    updatedProps.guaranteedStop &&
-    updatedProps.guaranteedStop !== openCfdDetails?.orderSnapshot?.guaranteedStop
+    updatedProps.guaranteedStop && updatedProps.guaranteedStop !== openCfdDetails?.guaranteedStop
       ? setGtslTextStyle('text-lightYellow2')
       : setGtslTextStyle('text-lightWhite');
 
     //  && updatedProps.takeProfit !== openCfdDetails.takeProfit
-    updatedProps.takeProfit !== undefined &&
-    updatedProps.takeProfit !== openCfdDetails?.orderSnapshot?.takeProfit
+    updatedProps.takeProfit !== undefined && updatedProps.takeProfit !== openCfdDetails?.takeProfit
       ? setTpTextStyle('text-lightYellow2')
       : setTpTextStyle('text-lightWhite');
 
     // && updatedProps.stopLoss !== openCfdDetails.stopLoss
-    updatedProps.stopLoss !== undefined &&
-    updatedProps.stopLoss !== openCfdDetails?.orderSnapshot?.stopLoss
+    updatedProps.stopLoss !== undefined && updatedProps.stopLoss !== openCfdDetails?.stopLoss
       ? setSlTextStyle('text-lightYellow2')
       : setSlTextStyle('text-lightWhite');
   };
@@ -164,7 +161,7 @@ const PositionUpdatedModal = ({
 
   const displayedGuaranteedStopSetting = updatedProps?.guaranteedStop
     ? 'Yes'
-    : openCfdDetails?.orderSnapshot?.guaranteedStop
+    : openCfdDetails?.guaranteedStop
     ? 'Yes'
     : 'No';
 
@@ -177,13 +174,10 @@ const PositionUpdatedModal = ({
             minimumFractionDigits: 2,
           })}`
         : undefined
-      : openCfdDetails?.orderSnapshot?.takeProfit
-      ? `$ ${openCfdDetails?.orderSnapshot?.takeProfit.toLocaleString(
-          UNIVERSAL_NUMBER_FORMAT_LOCALE,
-          {
-            minimumFractionDigits: 2,
-          }
-        )}`
+      : openCfdDetails?.takeProfit
+      ? `$ ${openCfdDetails?.takeProfit.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+          minimumFractionDigits: 2,
+        })}`
       : '-';
 
   const displayedStopLoss =
@@ -195,22 +189,19 @@ const PositionUpdatedModal = ({
             minimumFractionDigits: 2,
           })}`
         : undefined
-      : openCfdDetails?.orderSnapshot?.stopLoss
-      ? `$ ${openCfdDetails?.orderSnapshot?.stopLoss.toLocaleString(
-          UNIVERSAL_NUMBER_FORMAT_LOCALE,
-          {
-            minimumFractionDigits: 2,
-          }
-        )}`
+      : openCfdDetails?.stopLoss
+      ? `$ ${openCfdDetails?.stopLoss.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+          minimumFractionDigits: 2,
+        })}`
       : '-';
 
   const displayedTypeOfPosition =
-    openCfdDetails?.orderSnapshot?.typeOfPosition === TypeOfPosition.BUY
+    openCfdDetails?.typeOfPosition === TypeOfPosition.BUY
       ? t('POSITION_MODAL.TYPE_UP')
       : t('POSITION_MODAL.TYPE_DOWN');
 
   const displayedBuyOrSell =
-    openCfdDetails?.orderSnapshot?.typeOfPosition === TypeOfPosition.BUY
+    openCfdDetails?.typeOfPosition === TypeOfPosition.BUY
       ? t('POSITION_MODAL.TYPE_BUY')
       : t('POSITION_MODAL.TYPE_SELL');
 
@@ -231,7 +222,7 @@ const PositionUpdatedModal = ({
           height={30}
           alt="ticker icon"
         />
-        <div className="text-2xl">{openCfdDetails?.orderSnapshot?.ticker}</div>
+        <div className="text-2xl">{openCfdDetails?.ticker}</div>
       </div>
 
       <div className="relative flex flex-col items-center pt-1">
@@ -253,12 +244,9 @@ const PositionUpdatedModal = ({
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">{t('POSITION_MODAL.OPEN_PRICE')}</div>
               <div className={``}>
-                {openCfdDetails?.orderSnapshot?.openPrice?.toLocaleString(
-                  UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                  {
-                    minimumFractionDigits: 2,
-                  }
-                ) ?? 0}{' '}
+                {openCfdDetails?.openPrice?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+                  minimumFractionDigits: 2,
+                }) ?? 0}{' '}
                 <span className="ml-1 text-lightGray">{unitAsset}</span>
                 {/* {openCfdDetails?.price?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0} USDT */}
               </div>

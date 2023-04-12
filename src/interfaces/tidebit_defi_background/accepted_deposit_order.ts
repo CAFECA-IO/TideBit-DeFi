@@ -1,64 +1,53 @@
 import {IOrderStatusUnion, OrderStatusUnion} from '../../constants/order_status_union';
-import {OrderType} from '../../constants/order_type';
 import {getTimestamp, randomHex} from '../../lib/common';
 import {IAcceptedOrder} from './accepted_order';
 import {dummyDepositOrder, IApplyDepositOrder} from './apply_deposit_order';
-import {IDepositOrderSnapshot} from './order_snapshot';
+import {IDepositReceipt} from './receipt';
 
 export interface IAcceptedDepositOrder extends IAcceptedOrder {
   applyData: IApplyDepositOrder;
-  orderSnapshot: IDepositOrderSnapshot;
+  receipt: IDepositReceipt;
 }
 
 export const getDummyAcceptedDepositOrder = (
-  currency = 'ETH',
+  currency?: string,
   orderStatus?: IOrderStatusUnion
 ): IAcceptedDepositOrder => {
-  const date = new Date();
-
-  const id = `TBAcceptedDeposit${date.getFullYear()}${
-    date.getMonth() + 1
-  }${date.getDate()}${date.getSeconds()}${currency}`;
-
   const txid = randomHex(32);
-
   const dummyAcceptedDepositOrder: IAcceptedDepositOrder = {
+    txid,
     applyData: dummyDepositOrder,
-    orderSnapshot: {
-      id,
-      orderType: OrderType.DEPOSIT,
-      txid,
-      targetAsset: currency,
-      targetAmount: 2,
-      decimals: 18,
-      to: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
-      remark: '',
-      fee: 0,
+    userSignature: randomHex(32),
+    receipt: {
+      order: {
+        ...dummyDepositOrder,
+        /** Info: dummyDepositOrder provide all the info below (20230412 - tzuhan)
+        orderType: OrderType.DEPOSIT,
+        targetAmount: dummyDepositOrder.targetAmount,
+        decimals: dummyDepositOrder.decimals,
+        to: dummyDepositOrder.to,
+        remark: dummyDepositOrder.remark,
+        fee: dummyDepositOrder.fee,
+         */
+        id: randomHex(20),
+        txid,
+        orderStatus: orderStatus ? orderStatus : OrderStatusUnion.WAITING,
+        targetAsset: currency || dummyDepositOrder.targetAsset,
+      },
+      balance: {
+        currency: currency || dummyDepositOrder.targetAsset,
+        available: 100,
+        locked: dummyDepositOrder.targetAmount,
+      },
     },
-    id,
-    orderType: OrderType.DEPOSIT,
-    orderStatus: orderStatus ? orderStatus : OrderStatusUnion.WAITING,
-    targetAsset: dummyDepositOrder.targetAsset,
-    targetAmount: dummyDepositOrder.targetAmount,
-    userSignature: '',
-    balanceDifferenceCauseByOrder: {
-      currency: dummyDepositOrder.targetAsset,
-      available: 0,
-      locked: dummyDepositOrder.targetAmount,
-    },
-    balanceSnapshot: {
-      currency: dummyDepositOrder.targetAsset,
-      available: 0,
-      locked: dummyDepositOrder.targetAmount,
-      createTimestamp: getTimestamp(),
-    },
-    nodeSignature: '',
+    nodeSignature: randomHex(32),
     createTimestamp: getTimestamp(),
   };
   return dummyAcceptedDepositOrder;
 };
 
 export const dummyAcceptedDepositOrders: IAcceptedDepositOrder[] = [
+  getDummyAcceptedDepositOrder('ETH', OrderStatusUnion.CANCELDED),
   getDummyAcceptedDepositOrder('ETH', OrderStatusUnion.WAITING),
   getDummyAcceptedDepositOrder('ETH', OrderStatusUnion.SUCCESS),
 ];

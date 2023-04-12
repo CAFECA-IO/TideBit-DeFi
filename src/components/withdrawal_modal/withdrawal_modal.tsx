@@ -402,7 +402,7 @@ const WithdrawalModal = ({
               <button
                 type="button"
                 onClick={maxClickHandler}
-                className="my-1 mx-1 rounded-sm bg-lightGray3 px-2 text-xs text-white hover:bg-lightGray3/80"
+                className="my-1 mx-1 whitespace-nowrap rounded-sm bg-lightGray3 px-2 text-xs text-white hover:bg-lightGray3/80"
               >
                 {t('D_W_MODAL.MAX')}
               </button>

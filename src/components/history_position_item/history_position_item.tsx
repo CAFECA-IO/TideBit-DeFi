@@ -5,13 +5,13 @@ import {ProfitState} from '../../constants/profit_state';
 import {timestampToString} from '../../lib/common';
 import {TypeOfPosition} from '../../constants/type_of_position';
 import {useGlobal} from '../../contexts/global_context';
-import {IDisplayAcceptedCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
+import {IDisplayCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
 import {useTranslation} from 'react-i18next';
 import {MarketContext} from '../../contexts/market_context';
 
 type TranslateFunction = (s: string) => string;
 interface IHistoryPositionItemProps {
-  closedCfdDetails: IDisplayAcceptedCFDOrder;
+  closedCfdDetails: IDisplayCFDOrder;
 }
 
 const HistoryPositionItem = ({closedCfdDetails, ...otherProps}: IHistoryPositionItemProps) => {
@@ -23,12 +23,19 @@ const HistoryPositionItem = ({closedCfdDetails, ...otherProps}: IHistoryPosition
   const marketCtx = useContext(MarketContext);
 
   const displayedString =
-    closedCfdDetails.orderSnapshot.typeOfPosition === TypeOfPosition.BUY
+    closedCfdDetails.typeOfPosition === TypeOfPosition.BUY
       ? TypeOfTransaction.LONG
       : TypeOfTransaction.SHORT;
 
   const displayedTextColor =
     closedCfdDetails.pnl.type === ProfitState.PROFIT ? 'text-lightGreen5' : 'text-lightRed';
+
+  const displayedPnl = Math.abs(closedCfdDetails.pnl.value).toLocaleString(
+    UNIVERSAL_NUMBER_FORMAT_LOCALE,
+    {
+      minimumFractionDigits: 2,
+    }
+  );
 
   const displayedSymbol =
     closedCfdDetails.pnl.type === ProfitState.PROFIT
@@ -42,7 +49,7 @@ const HistoryPositionItem = ({closedCfdDetails, ...otherProps}: IHistoryPosition
     globalCtx.visibleHistoryPositionModalHandler();
   };
 
-  const displayedTime = timestampToString(closedCfdDetails?.orderSnapshot?.closeTimestamp ?? 0);
+  const displayedTime = timestampToString(closedCfdDetails?.closeTimestamp ?? 0);
 
   return (
     <>
@@ -65,10 +72,10 @@ const HistoryPositionItem = ({closedCfdDetails, ...otherProps}: IHistoryPosition
                 width={15}
                 height={15}
               />
-              <p className="ml-1">{closedCfdDetails.orderSnapshot.ticker}</p>
+              <p className="ml-1">{closedCfdDetails.ticker}</p>
             </div>
             <div className="text-lightWhite">
-              {displayedString.TITLE}
+              {displayedString.TITLE}{' '}
               <span className="text-lightGray">{displayedString.SUBTITLE}</span>
             </div>
           </div>
@@ -90,10 +97,7 @@ const HistoryPositionItem = ({closedCfdDetails, ...otherProps}: IHistoryPosition
           <div className="w-60px text-end">
             <div className="text-lightGray">{t('TRADE_PAGE.HISTORY_POSITION_ITEM_PNL')}</div>
             <div className={`${displayedTextColor} whitespace-nowrap`}>
-              <span className="">{displayedSymbol}</span> $
-              {closedCfdDetails.pnl.value?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
-                minimumFractionDigits: 2,
-              })}
+              <span className="">{displayedSymbol}</span> ${displayedPnl}
             </div>
           </div>
         </div>

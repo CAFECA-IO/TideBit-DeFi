@@ -1,6 +1,9 @@
 // `const` which can be changed later
 
-export const POSITION_PRICE_RENEWAL_INTERVAL_SECONDS = 10;
+export const QUOTATION_RENEWAL_INTERVAL_SECONDS = 60;
+export const WAITING_TIME_FOR_USER_SIGNING = 45;
+export const DISPLAY_QUOTATION_RENEWAL_INTERVAL_SECONDS =
+  QUOTATION_RENEWAL_INTERVAL_SECONDS - WAITING_TIME_FOR_USER_SIGNING;
 
 export const POSITION_CLOSE_COUNTDOWN_SECONDS = 60;
 
@@ -214,3 +217,8 @@ export const TRADING_CRYPTO_DATA = [
     tradingVolume: '217,268,645',
   },
 ];
+export const SERVICE_TERM_TITLE = 'ServiceTerm';
+export const DOMAIN = 'https://www.tidebit-defi.com';
+export const TERM_OF_SERVICE = 'https://www.tidebit-defi.com/term_of_service/{hash}';
+export const PRIVATE_POLICY = 'https://www.tidebit-defi.com/private_policy/{hash}';
+export const DeWT_VALIDITY_PERIOD = 60 * 60; // seconds

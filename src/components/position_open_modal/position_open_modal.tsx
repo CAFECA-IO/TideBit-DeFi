@@ -17,6 +17,7 @@ import {
   getDeadline,
   getNowSeconds,
   getTimestamp,
+  getTimestampInMilliseconds,
 } from '../../lib/common';
 import {useContext, useEffect, useState} from 'react';
 import {MarketContext} from '../../contexts/market_context';
@@ -25,14 +26,16 @@ import {useGlobal} from '../../contexts/global_context';
 import {TypeOfPosition} from '../../constants/type_of_position';
 import {UserContext} from '../../contexts/user_context';
 import {
+  DISPLAY_QUOTATION_RENEWAL_INTERVAL_SECONDS,
   LIQUIDATION_FIVE_LEVERAGE,
-  POSITION_PRICE_RENEWAL_INTERVAL_SECONDS,
+  QUOTATION_RENEWAL_INTERVAL_SECONDS,
+  WAITING_TIME_FOR_USER_SIGNING,
   unitAsset,
 } from '../../constants/config';
 import {
   getDummyApplyCreateCFDOrder,
   IApplyCreateCFDOrder,
-} from '../../interfaces/tidebit_defi_background/apply_create_cfd_order_data';
+} from '../../interfaces/tidebit_defi_background/apply_create_cfd_order';
 import {useTranslation} from 'react-i18next';
 import {defaultResultSuccess} from '../../interfaces/tidebit_defi_background/result';
 import {IQuotation} from '../../interfaces/tidebit_defi_background/quotation';
@@ -58,7 +61,7 @@ const PositionOpenModal = ({
   const userCtx = useContext(UserContext);
 
   const [secondsLeft, setSecondsLeft, secondsLeftRef] = useStateRef(
-    POSITION_PRICE_RENEWAL_INTERVAL_SECONDS
+    DISPLAY_QUOTATION_RENEWAL_INTERVAL_SECONDS
   );
   const [dataRenewedStyle, setDataRenewedStyle] = useState('text-lightWhite');
   const [quotationError, setQuotationError, quotationErrorRef] = useStateRef(false);
@@ -162,8 +165,6 @@ const PositionOpenModal = ({
   const displayedTakeProfit = openCfdRequest.takeProfit ? `$ ${openCfdRequest.takeProfit}` : '-';
   const displayedStopLoss = openCfdRequest.stopLoss ? `$ ${openCfdRequest.stopLoss}` : '-';
 
-  const displayedExpirationTime = timestampToString(openCfdRequest?.quotation.deadline ?? 0);
-
   const layoutInsideBorder = 'mx-5 my-2 flex justify-between';
 
   const getQuotation = async () => {
@@ -204,8 +205,10 @@ const PositionOpenModal = ({
 
     if (!newQuotation) return;
 
-    const deadline = newQuotation.deadline;
-    setSecondsLeft(deadline - getTimestamp());
+    // Info: if it's comments, it couldn't renew the quotation
+    const base = newQuotation.deadline - WAITING_TIME_FOR_USER_SIGNING;
+    const tickingSec = (base * 1000 - getTimestampInMilliseconds()) / 1000;
+    setSecondsLeft(tickingSec > 0 ? Math.floor(tickingSec) : 0);
 
     const newPrice = newQuotation.price;
 
@@ -245,16 +248,16 @@ const PositionOpenModal = ({
       return;
     }
 
-    const base = openCfdRequest.quotation.deadline;
-    const tickingSec = base - getTimestamp();
+    const base = openCfdRequest.quotation.deadline - WAITING_TIME_FOR_USER_SIGNING;
+    const tickingSec = (base * 1000 - getTimestampInMilliseconds()) / 1000;
     setSecondsLeft(tickingSec > 0 ? Math.round(tickingSec) : 0);
   }, [globalCtx.visiblePositionOpenModal]);
 
   useEffect(() => {
+    if (!userCtx.enableServiceTerm) return;
     const intervalId = setInterval(() => {
-      const base = openCfdRequest.quotation.deadline;
-      const tickingSec = base - getTimestamp();
-
+      const base = openCfdRequest.quotation.deadline - WAITING_TIME_FOR_USER_SIGNING;
+      const tickingSec = (base * 1000 - getTimestampInMilliseconds()) / 1000;
       setSecondsLeft(tickingSec > 0 ? Math.round(tickingSec) : 0);
 
       if (secondsLeft === 0) {
@@ -279,7 +282,7 @@ const PositionOpenModal = ({
         <div className="text-2xl">{marketCtx.selectedTicker?.currency}</div>
       </div>
 
-      <div className="absolute top-90px right-6 flex items-center space-x-1 text-center">
+      <div className="absolute right-6 top-90px flex items-center space-x-1 text-center">
         <BsClockHistory size={20} className="text-lightGray" />
         <p className="w-8 text-xs">00:{secondsLeft.toString().padStart(2, '0')}</p>
       </div>
@@ -347,7 +350,7 @@ const PositionOpenModal = ({
                   {guaranteedTooltipStatus == 3 && (
                     <div
                       role="tooltip"
-                      className="absolute -top-120px -left-52 z-20 mr-8 w-56 rounded bg-darkGray8 p-4 shadow-lg shadow-black/80 transition duration-150 ease-in-out"
+                      className="absolute -left-52 -top-120px z-20 mr-8 w-56 rounded bg-darkGray8 p-4 shadow-lg shadow-black/80 transition duration-150 ease-in-out"
                     >
                       <p className="pb-0 text-sm font-medium text-white">
                         {t('POSITION_MODAL.GUARANTEED_STOP_HINT')}
@@ -361,13 +364,14 @@ const PositionOpenModal = ({
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">{t('POSITION_MODAL.EXPIRATION_TIME')}</div>
               <div className="">
-                {displayedExpirationTime.date} {displayedExpirationTime.time}
+                {/* {displayedExpirationTime.date} {displayedExpirationTime.time} */}
+                {t('POSITION_MODAL.LIQUIDATION_TIME')}
               </div>
             </div>
 
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">{t('POSITION_MODAL.LIQUIDATION_PRICE')}</div>
-              <div className="">
+              <div className={`${dataRenewedStyle}`}>
                 {openCfdRequest.liquidationPrice?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
                   minimumFractionDigits: 2,
                 }) ?? 0}
@@ -383,7 +387,7 @@ const PositionOpenModal = ({
           disabled={secondsLeft < 1 || quotationErrorRef.current}
           onClick={submitClickHandler}
           buttonType="button"
-          className={`mt-0 whitespace-nowrap rounded border-0 bg-tidebitTheme py-2 px-16 text-base text-white transition-colors duration-300 hover:bg-cyan-600 focus:outline-none disabled:bg-lightGray`}
+          className={`mt-0 whitespace-nowrap rounded border-0 bg-tidebitTheme px-16 py-2 text-base text-white transition-colors duration-300 hover:bg-cyan-600 focus:outline-none disabled:bg-lightGray`}
         >
           {t('POSITION_MODAL.CONFIRM_BUTTON')}
         </RippleButton>
@@ -395,7 +399,7 @@ const PositionOpenModal = ({
     <>
       <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">
         {/* The position of the modal */}
-        <div className="relative my-6 mx-auto w-auto max-w-xl">
+        <div className="relative mx-auto my-6 w-auto max-w-xl">
           {' '}
           {/*content & panel*/}
           <div
@@ -409,7 +413,7 @@ const PositionOpenModal = ({
                 {t('POSITION_MODAL.OPEN_POSITION_TITLE')}
               </h3>
               <button className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
-                <span className="absolute top-5 right-5 block outline-none focus:outline-none">
+                <span className="absolute right-5 top-5 block outline-none focus:outline-none">
                   <ImCross onClick={modalClickHandler} />
                 </span>
               </button>

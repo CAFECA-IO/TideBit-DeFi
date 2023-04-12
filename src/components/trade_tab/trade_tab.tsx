@@ -6,11 +6,13 @@ import RippleButton from '../ripple_button/ripple_button';
 import {UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
 import {
   TARGET_LIMIT_DIGITS,
-  POSITION_PRICE_RENEWAL_INTERVAL_SECONDS,
+  QUOTATION_RENEWAL_INTERVAL_SECONDS,
   unitAsset,
   SUGGEST_TP,
   SUGGEST_SL,
   LIQUIDATION_FIVE_LEVERAGE,
+  DISPLAY_QUOTATION_RENEWAL_INTERVAL_SECONDS,
+  WAITING_TIME_FOR_USER_SIGNING,
 } from '../../constants/config';
 import {useGlobal} from '../../contexts/global_context';
 import {MarketContext} from '../../contexts/market_context';
@@ -20,7 +22,7 @@ import {TypeOfPosition} from '../../constants/type_of_position';
 import {OrderType} from '../../constants/order_type';
 import {OrderStatusUnion} from '../../constants/order_status_union';
 import {ClickEvent} from '../../constants/tidebit_event';
-import {getTimestamp, roundToDecimalPlaces} from '../../lib/common';
+import {getTimestamp, getTimestampInMilliseconds, roundToDecimalPlaces} from '../../lib/common';
 import {IQuotation, getDummyQuotation} from '../../interfaces/tidebit_defi_background/quotation';
 import {NotificationContext} from '../../contexts/notification_context';
 import {useTranslation} from 'next-i18next';
@@ -28,7 +30,7 @@ import {
   defaultResultFailed,
   defaultResultSuccess,
 } from '../../interfaces/tidebit_defi_background/result';
-import {IApplyCreateCFDOrder} from '../../interfaces/tidebit_defi_background/apply_create_cfd_order_data';
+import {IApplyCreateCFDOrder} from '../../interfaces/tidebit_defi_background/apply_create_cfd_order';
 import {Code} from '../../constants/code';
 import {CFDOperation} from '../../constants/cfd_order_type';
 
@@ -62,14 +64,14 @@ const TradeTab = () => {
   const defaultSellQuotation: IQuotation = getDummyQuotation(ticker, TypeOfPosition.SELL);
 
   const [secondsLeft, setSecondsLeft, secondsLeftRef] = useStateRef(
-    POSITION_PRICE_RENEWAL_INTERVAL_SECONDS
+    DISPLAY_QUOTATION_RENEWAL_INTERVAL_SECONDS
   );
   const [longQuotation, setLongQuotation, longQuotationRef] =
     useStateRef<IQuotation>(defaultBuyQuotation);
   const [shortQuotation, setShortQuotation, shortQuotationRef] =
     useStateRef<IQuotation>(defaultSellQuotation);
 
-  // Till: (20230410 - Shirley)
+  // Till: (20230424 - Shirley)
   // const buyPrice = longQuotationRef.current?.price ?? TEMP_PLACEHOLDER; // market price * (1+spread)
   // const sellPrice = shortQuotationRef.current?.price ?? TEMP_PLACEHOLDER; // market price * (1-spread)
   // const longRecommendedTp = Number(
@@ -178,24 +180,12 @@ const TradeTab = () => {
     if (!userCtx.enableServiceTerm) return;
 
     (async () => {
-      const {longQuotation, shortQuotation} = await getQuotation(
-        marketCtx.selectedTicker?.currency ?? DEFAULT_TICKER
-      );
-
-      // Deprecated: before merging into develop (20230327 - Shirley)
-      // eslint-disable-next-line no-console
-      // console.log('first time Effect (direct long)', now, longQuotation.data);
-      // eslint-disable-next-line no-console
-      // console.log('first time Effect (direct short)', now, shortQuotation.data);
+      await getQuotation(marketCtx.selectedTicker?.currency ?? DEFAULT_TICKER);
 
       renewPosition();
 
       initSuggestion();
     })();
-
-    // Deprecated: before merging into develop (20230327 - Shirley)
-    // eslint-disable-next-line no-console
-    console.log('first time Effect', longQuotationRef.current, shortQuotationRef.current);
   }, [userCtx.enableServiceTerm]);
 
   // Info: Fetch quotation in period (20230327 - Shirley)
@@ -203,22 +193,14 @@ const TradeTab = () => {
     const intervalId = setInterval(async () => {
       if (!longQuotationRef.current || !shortQuotationRef.current) return;
 
-      const base = longQuotationRef.current.deadline;
+      const base = longQuotationRef.current.deadline - WAITING_TIME_FOR_USER_SIGNING;
+      const tickingSec = (base * 1000 - getTimestampInMilliseconds()) / 1000;
+      setSecondsLeft(tickingSec > 0 ? Math.round(tickingSec) : 0);
 
-      const diff = base - getTimestamp();
-      const tickingSec = diff > 0 ? Math.floor(diff) : 0;
-      setSecondsLeft(tickingSec);
-
-      if (tickingSec === 0) {
-        const {longQuotation, shortQuotation} = await getQuotation(
-          marketCtx.selectedTicker?.currency ?? DEFAULT_TICKER
-        );
+      if (secondsLeftRef.current === 0) {
+        await getQuotation(marketCtx.selectedTicker?.currency ?? DEFAULT_TICKER);
 
         renewPosition();
-
-        // Deprecated: before merging into develop (20230327 - Shirley)
-        // eslint-disable-next-line no-console
-        console.log('countdown Effect', longQuotationRef.current, shortQuotationRef.current);
       }
     }, 1000);
 
@@ -230,19 +212,9 @@ const TradeTab = () => {
   // Info: Fetch quotation when ticker changed (20230327 - Shirley)
   useEffect(() => {
     notificationCtx.emitter.once(ClickEvent.TICKER_CHANGED, async () => {
-      const {longQuotation, shortQuotation} = await getQuotation(
-        marketCtx.selectedTickerRef.current?.currency ?? DEFAULT_TICKER
-      );
+      await getQuotation(marketCtx.selectedTicker?.currency ?? DEFAULT_TICKER);
 
       renewPosition();
-
-      // Deprecated: before merging into develop (20230327 - Shirley)
-      // eslint-disable-next-line no-console
-      console.log(
-        'when ticker changed Effect',
-        longQuotationRef.current,
-        shortQuotationRef.current
-      );
     });
 
     return () => {
@@ -260,13 +232,6 @@ const TradeTab = () => {
 
       const long = longQuotation.data as IQuotation;
       const short = shortQuotation.data as IQuotation;
-
-      // Deprecated: before merging into develop (20230327 - Shirley)
-      // eslint-disable-next-line no-console
-      // console.log('long', now, long);
-      // Deprecated: before merging into develop (20230327 - Shirley)
-      // eslint-disable-next-line no-console
-      // console.log('short', now, short);
 
       // Info: if there's error fetching quotation, use the previous quotation or calculate the quotation (20230327 - Shirley)
       if (
@@ -286,14 +251,11 @@ const TradeTab = () => {
           typeOfPosition: TypeOfPosition.BUY,
           unitAsset: unitAsset,
           price: buyPrice,
-          deadline: getTimestamp() + POSITION_PRICE_RENEWAL_INTERVAL_SECONDS,
+          deadline: getTimestamp() + QUOTATION_RENEWAL_INTERVAL_SECONDS,
           signature: '0x',
         };
 
         setLongQuotation(buyQuotation);
-        // Deprecated: before merging into develop (20230327 - Shirley)
-        // eslint-disable-next-line no-console
-        console.log('calculate, long', longQuotationRef.current);
       }
 
       // Info: if there's error fetching quotation, use the previous quotation or calculate the quotation (20230327 - Shirley)
@@ -315,14 +277,11 @@ const TradeTab = () => {
           typeOfPosition: TypeOfPosition.SELL,
           unitAsset: unitAsset,
           price: sellPrice,
-          deadline: getTimestamp() + POSITION_PRICE_RENEWAL_INTERVAL_SECONDS,
+          deadline: getTimestamp() + QUOTATION_RENEWAL_INTERVAL_SECONDS,
           signature: '0x',
         };
 
         setShortQuotation(sellQuotation);
-        // Deprecated: before merging into develop (20230327 - Shirley)
-        // eslint-disable-next-line no-console
-        console.log('calculate, short', shortQuotationRef.current);
       }
     } catch (err) {
       const buyPrice =
@@ -335,7 +294,7 @@ const TradeTab = () => {
         typeOfPosition: TypeOfPosition.BUY,
         unitAsset: unitAsset,
         price: buyPrice,
-        deadline: getTimestamp() + POSITION_PRICE_RENEWAL_INTERVAL_SECONDS,
+        deadline: getTimestamp() + QUOTATION_RENEWAL_INTERVAL_SECONDS,
         signature: '0x',
       };
 
@@ -351,7 +310,7 @@ const TradeTab = () => {
         typeOfPosition: TypeOfPosition.SELL,
         unitAsset: unitAsset,
         price: sellPrice,
-        deadline: getTimestamp() + POSITION_PRICE_RENEWAL_INTERVAL_SECONDS,
+        deadline: getTimestamp() + QUOTATION_RENEWAL_INTERVAL_SECONDS,
         signature: '0x',
       };
 
@@ -424,7 +383,7 @@ const TradeTab = () => {
   };
 
   // Info: renew the value of position when target input changed (20230328 - Shirley)
-  const renewPosition = () => {
+  const renewPosition = async () => {
     // Long
     const newLongValue = targetInputValueRef.current * Number(longQuotationRef.current?.price);
 
@@ -739,7 +698,7 @@ const TradeTab = () => {
     <div
       className={`${
         longSlToggle ? `translate-y-5` : `invisible translate-y-0`
-      } mt-0 mb-10 flex items-center transition-all`}
+      } mb-10 mt-0 flex items-center transition-all`}
     >
       <input
         type="checkbox"
@@ -771,7 +730,7 @@ const TradeTab = () => {
             {longTooltipStatus == 3 && (
               <div
                 role="tooltip"
-                className={`absolute -top-120px -left-52 z-20 mr-8 w-56 rounded bg-darkGray8 p-4 shadow-lg transition duration-150 ease-in-out`}
+                className={`absolute -left-52 -top-120px z-20 mr-8 w-56 rounded bg-darkGray8 p-4 shadow-lg transition duration-150 ease-in-out`}
               >
                 <p className="pb-1 text-sm font-medium text-white">
                   {t('TRADE_PAGE.TRADE_TAB_GUARANTEED_STOP_HINT')}
@@ -876,7 +835,7 @@ const TradeTab = () => {
     <div
       className={`${
         shortSlToggle ? `translate-y-5` : `invisible translate-y-0`
-      } mt-0 mb-10 items-center transition-all`}
+      } mb-10 mt-0 items-center transition-all`}
     >
       <div className="mt-0 flex items-center">
         <input
@@ -909,7 +868,7 @@ const TradeTab = () => {
               {shortTooltipStatus == 3 && (
                 <div
                   role="tooltip"
-                  className="absolute -top-120px -left-52 z-20 mr-8 w-56 rounded bg-darkGray8 p-4 shadow-lg transition duration-150 ease-in-out"
+                  className="absolute -left-52 -top-120px z-20 mr-8 w-56 rounded bg-darkGray8 p-4 shadow-lg transition duration-150 ease-in-out"
                 >
                   <p className="pb-1 text-sm font-medium text-white">
                     {t('TRADE_PAGE.TRADE_TAB_GUARANTEED_STOP_HINT')}
@@ -925,9 +884,9 @@ const TradeTab = () => {
 
   return (
     <div
-      className={`pointer-events-none fixed top-82px right-0 z-10 flex overflow-x-hidden overflow-y-hidden outline-none focus:outline-none`}
+      className={`pointer-events-none fixed right-0 top-82px z-10 flex overflow-x-hidden overflow-y-hidden outline-none focus:outline-none`}
     >
-      <div className="relative my-6 mx-auto w-auto max-w-xl">
+      <div className="relative mx-auto my-6 w-auto max-w-xl">
         {' '}
         <div className={`relative`}>
           {/* ---sidebar self--- */}
@@ -975,7 +934,7 @@ const TradeTab = () => {
               <div className="">
                 {/* Take Profit Setting */}
                 <div className="h-60px">
-                  <div className="mt-3 mb-5 flex h-25px items-center justify-between">
+                  <div className="mb-5 mt-3 flex h-25px items-center justify-between">
                     <div className="text-sm text-lightGray">
                       {t('TRADE_PAGE.TRADE_TAB_TP_SETTING')}
                     </div>
@@ -1058,7 +1017,7 @@ const TradeTab = () => {
               <div className="">
                 {/* Take Profit Setting */}
                 <div className="h-60px">
-                  <div className="mt-3 mb-5 flex h-25px items-center justify-between">
+                  <div className="mb-5 mt-3 flex h-25px items-center justify-between">
                     <div className="text-sm text-lightGray">
                       {t('TRADE_PAGE.TRADE_TAB_TP_SETTING')}
                     </div>

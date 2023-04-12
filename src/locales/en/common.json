@@ -188,6 +188,7 @@
     "GUARANTEED_STOP": "Guaranteed Stop",
     "GUARANTEED_STOP_HINT": "Guaranteed stop will force the position to close at your chosen rate (price) even if the market price surpasses it.",
     "EXPIRATION_TIME": "Expiration Time",
+    "LIQUIDATION_TIME": "Close in 24 hrs",
     "LIQUIDATION_PRICE": "Liquidation Price",
     "PNL": "PNL",
     "FEE": "Fee",

@@ -36,8 +36,8 @@ import {TypeOfPosition} from '../constants/type_of_position';
 import {ICryptocurrency} from '../interfaces/tidebit_defi_background/cryptocurrency';
 import {getDeadline, getTimestamp, locker, wait} from '../lib/common';
 import {
-  IDisplayAcceptedCFDOrder,
-  getDummyDisplayAcceptedCFDOrder,
+  IDisplayCFDOrder,
+  getDummyDisplayCFDOrder,
 } from '../interfaces/tidebit_defi_background/display_accepted_cfd_order';
 import {
   IDisplayApplyCFDOrder,
@@ -47,11 +47,11 @@ import {
   getDummyApplyCreateCFDOrder,
   IApplyCreateCFDOrder,
   // getDummyApplyCreateCFDOrderData,
-} from '../interfaces/tidebit_defi_background/apply_create_cfd_order_data';
+} from '../interfaces/tidebit_defi_background/apply_create_cfd_order';
 import {OrderState} from '../constants/order_state';
-import {IApplyUpdateCFDOrder} from '../interfaces/tidebit_defi_background/apply_update_cfd_order_data';
+import {IApplyUpdateCFDOrder} from '../interfaces/tidebit_defi_background/apply_update_cfd_order';
 import useStateRef from 'react-usestateref';
-import {POSITION_PRICE_RENEWAL_INTERVAL_SECONDS} from '../constants/config';
+import {QUOTATION_RENEWAL_INTERVAL_SECONDS} from '../constants/config';
 import {CFDOperation} from '../constants/cfd_order_type';
 import {
   getDummyAcceptedDepositOrder,
@@ -78,7 +78,7 @@ export interface IUpdatedCFDInputProps {
 }
 
 export interface IDataPositionUpdatedModal {
-  openCfdDetails: IDisplayAcceptedCFDOrder;
+  openCfdDetails: IDisplayCFDOrder;
   updatedProps: IApplyUpdateCFDOrder;
 }
 
@@ -88,7 +88,7 @@ export interface IClosedCFDInfoProps {
 }
 
 export interface IDataPositionClosedModal {
-  openCfdDetails: IDisplayAcceptedCFDOrder;
+  openCfdDetails: IDisplayCFDOrder;
 }
 
 export interface IDataPositionOpenModal {
@@ -99,13 +99,11 @@ export const dummyDataPositionOpenModal: IDataPositionOpenModal = {
   openCfdRequest: getDummyApplyCreateCFDOrder('ETH'),
 };
 
-const acceptedCFDOrders: IDisplayAcceptedCFDOrder[] = Array.from({length: 10}, () => {
-  return getDummyDisplayAcceptedCFDOrder('ETH');
+const acceptedCFDOrders: IDisplayCFDOrder[] = Array.from({length: 10}, () => {
+  return getDummyDisplayCFDOrder('ETH');
 });
 
-const dummyOpenCFD = acceptedCFDOrders.filter(
-  order => order.orderSnapshot.state === OrderState.OPENING
-)[0];
+const dummyOpenCFD = acceptedCFDOrders.filter(order => order.state === OrderState.OPENING)[0];
 
 export const dummyDataPositionClosedModal: IDataPositionClosedModal = {
   openCfdDetails: acceptedCFDOrders[0],
@@ -265,8 +263,8 @@ export interface IGlobalContext {
 
   visibleUpdateFormModal: boolean;
   visibleUpdateFormModalHandler: () => void;
-  dataUpdateFormModal: IDisplayAcceptedCFDOrder | null;
-  dataUpdateFormModalHandler: (data: IDisplayAcceptedCFDOrder) => void;
+  dataUpdateFormModal: IDisplayCFDOrder | null;
+  dataUpdateFormModalHandler: (data: IDisplayCFDOrder) => void;
 
   visibleDepositModal: boolean;
   visibleDepositModalHandler: () => void;
@@ -316,14 +314,14 @@ export interface IGlobalContext {
 
   visibleHistoryPositionModal: boolean;
   visibleHistoryPositionModalHandler: () => void;
-  dataHistoryPositionModal: IDisplayAcceptedCFDOrder | null;
-  dataHistoryPositionModalHandler: (data: IDisplayAcceptedCFDOrder) => void;
+  dataHistoryPositionModal: IDisplayCFDOrder | null;
+  dataHistoryPositionModalHandler: (data: IDisplayCFDOrder) => void;
 
   visiblePositionClosedModal: boolean;
   // TODO: (20230317 - Shirley) countdown // visiblePositionClosedModalRef: React.MutableRefObject<boolean>;
   visiblePositionClosedModalHandler: () => void;
-  dataPositionClosedModal: IDisplayAcceptedCFDOrder | null;
-  dataPositionClosedModalHandler: (data: IDisplayAcceptedCFDOrder) => void;
+  dataPositionClosedModal: IDisplayCFDOrder | null;
+  dataPositionClosedModalHandler: (data: IDisplayCFDOrder) => void;
 
   visiblePositionOpenModal: boolean;
   visiblePositionOpenModalHandler: () => void;
@@ -522,8 +520,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
 
   const [visibleUpdateFormModal, setVisibleUpdateFormModal] = useState(false);
   // TODO: (20230316 - Shirley) replace dummy data with standard example data
-  const [dataUpdateFormModal, setDataUpdateFormModal] =
-    useState<IDisplayAcceptedCFDOrder>(dummyOpenCFD);
+  const [dataUpdateFormModal, setDataUpdateFormModal] = useState<IDisplayCFDOrder>(dummyOpenCFD);
 
   const [visibleWithdrawalModal, setVisibleWithdrawalModal] = useState(false);
 
@@ -572,13 +569,14 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
   //   useState<IDataSignatrueProcessModal | null>();
 
   const [visibleHistoryPositionModal, setVisibleHistoryPositionModal] = useState(false);
-  const [dataHistoryPositionModal, setDataHistoryPositionModal] =
-    useState<IDisplayAcceptedCFDOrder>(getDummyDisplayAcceptedCFDOrder('BTC'));
+  const [dataHistoryPositionModal, setDataHistoryPositionModal] = useState<IDisplayCFDOrder>(
+    getDummyDisplayCFDOrder('BTC')
+  );
 
   const [visiblePositionClosedModal, setVisiblePositionClosedModal, visiblePositionClosedModalRef] =
     useStateRef<boolean>(false);
   const [dataPositionClosedModal, setDataPositionClosedModal] =
-    useState<IDisplayAcceptedCFDOrder>(dummyOpenCFD);
+    useState<IDisplayCFDOrder>(dummyOpenCFD);
 
   const [visiblePositionOpenModal, setVisiblePositionOpenModal] = useState(false);
   // const [dataPositionOpenModal, setDataPositionOpenModal] = useState<IDisplayApplyCFDOrder>(
@@ -675,7 +673,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
   const visibleUpdateFormModalHandler = () => {
     setVisibleUpdateFormModal(!visibleUpdateFormModal);
   };
-  const dataUpdateFormModalHandler = (data: IDisplayAcceptedCFDOrder) => {
+  const dataUpdateFormModalHandler = (data: IDisplayCFDOrder) => {
     setDataUpdateFormModal(data);
   };
 
@@ -771,7 +769,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     setVisibleHistoryPositionModal(!visibleHistoryPositionModal);
   };
 
-  const dataHistoryPositionModalHandler = (data: IDisplayAcceptedCFDOrder) => {
+  const dataHistoryPositionModalHandler = (data: IDisplayCFDOrder) => {
     setDataHistoryPositionModal(data);
   };
 
@@ -779,7 +777,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     setVisiblePositionClosedModal(!visiblePositionClosedModal);
   };
 
-  const dataPositionClosedModalHandler = (data: IDisplayAcceptedCFDOrder) => {
+  const dataPositionClosedModalHandler = (data: IDisplayCFDOrder) => {
     setDataPositionClosedModal(data);
   };
 

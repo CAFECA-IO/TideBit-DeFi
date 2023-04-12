@@ -15,13 +15,16 @@ import {
   getDeadline,
   getTimestamp,
   twoDecimal,
+  getTimestampInMilliseconds,
 } from '../../lib/common';
 import {useContext, useEffect, useState} from 'react';
 import {MarketContext} from '../../contexts/market_context';
 import {
-  POSITION_PRICE_RENEWAL_INTERVAL_SECONDS,
+  DISPLAY_QUOTATION_RENEWAL_INTERVAL_SECONDS,
+  QUOTATION_RENEWAL_INTERVAL_SECONDS,
   SUGGEST_SL,
   SUGGEST_TP,
+  WAITING_TIME_FOR_USER_SIGNING,
   unitAsset,
 } from '../../constants/config';
 import {TypeOfPosition} from '../../constants/type_of_position';
@@ -32,7 +35,7 @@ import {UserContext} from '../../contexts/user_context';
 import {useCountdown} from '../../lib/hooks/use_countdown';
 import {useTranslation} from 'react-i18next';
 import {
-  IDisplayAcceptedCFDOrder,
+  IDisplayCFDOrder,
   // getDummyDisplayAcceptedCFDOrder,
 } from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
 import {
@@ -46,7 +49,7 @@ import {
 import {
   IApplyCloseCFDOrder,
   // getDummyApplyCloseCFDOrderData,
-} from '../../interfaces/tidebit_defi_background/apply_close_cfd_order_data';
+} from '../../interfaces/tidebit_defi_background/apply_close_cfd_order';
 import {IPnL} from '../../interfaces/tidebit_defi_background/pnl';
 import {ICFDSuggestion} from '../../interfaces/tidebit_defi_background/cfd_suggestion';
 import {IQuotation, getDummyQuotation} from '../../interfaces/tidebit_defi_background/quotation';
@@ -58,12 +61,13 @@ import {CFDOperation} from '../../constants/cfd_order_type';
 import {OrderType} from '../../constants/order_type';
 import {CFDClosedType} from '../../constants/cfd_closed_type';
 import {cfdStateCode} from '../../constants/cfd_state_code';
+import {ICFDOrder} from '../../interfaces/tidebit_defi_background/order';
 
 type TranslateFunction = (s: string) => string;
 interface IPositionClosedModal {
   modalVisible: boolean;
   modalClickHandler: () => void;
-  openCfdDetails: IDisplayAcceptedCFDOrder;
+  openCfdDetails: IDisplayCFDOrder;
 }
 
 // TODO: replace all hardcode options with variables
@@ -83,25 +87,25 @@ const PositionClosedModal = ({
 
   // Info: dummy data (20230329 - Shirley)
   const quotation: IQuotation = {
-    ticker: openCfdDetails?.orderSnapshot?.ticker,
-    typeOfPosition: openCfdDetails?.orderSnapshot?.typeOfPosition,
+    ticker: openCfdDetails?.ticker,
+    typeOfPosition: openCfdDetails?.typeOfPosition,
     price: randomIntFromInterval(20, 29),
-    targetAsset: openCfdDetails?.orderSnapshot?.targetAsset,
-    unitAsset: openCfdDetails?.orderSnapshot?.unitAsset,
-    deadline: getDeadline(POSITION_PRICE_RENEWAL_INTERVAL_SECONDS),
+    targetAsset: openCfdDetails?.targetAsset,
+    unitAsset: openCfdDetails?.unitAsset,
+    deadline: getDeadline(QUOTATION_RENEWAL_INTERVAL_SECONDS),
     signature: '0x',
   };
 
   const [gQuotation, setGQuotation, gQuotationRef] = useStateRef<IQuotation>(quotation);
 
-  const [secondsLeft, setSecondsLeft] = useStateRef(POSITION_PRICE_RENEWAL_INTERVAL_SECONDS);
+  const [secondsLeft, setSecondsLeft, secondsLeftRef] = useStateRef(
+    DISPLAY_QUOTATION_RENEWAL_INTERVAL_SECONDS
+  );
 
   const [dataRenewedStyle, setDataRenewedStyle] = useState('text-lightWhite');
   const [pnlRenewedStyle, setPnlRenewedStyle] = useState('');
 
-  const displayedGuaranteedStopSetting = !!openCfdDetails?.orderSnapshot?.guaranteedStop
-    ? 'Yes'
-    : 'No';
+  const displayedGuaranteedStopSetting = !!openCfdDetails?.guaranteedStop ? 'Yes' : 'No';
 
   const displayedPnLSymbol =
     openCfdDetails?.pnl?.type === ProfitState.PROFIT
@@ -111,12 +115,12 @@ const PositionClosedModal = ({
       : '';
 
   const displayedTypeOfPosition =
-    openCfdDetails?.orderSnapshot?.typeOfPosition === TypeOfPosition.BUY
+    openCfdDetails?.typeOfPosition === TypeOfPosition.BUY
       ? t('POSITION_MODAL.TYPE_UP')
       : t('POSITION_MODAL.TYPE_DOWN');
 
   const displayedBuyOrSell =
-    openCfdDetails?.orderSnapshot?.typeOfPosition === TypeOfPosition.BUY
+    openCfdDetails?.typeOfPosition === TypeOfPosition.BUY
       ? t('POSITION_MODAL.TYPE_BUY')
       : t('POSITION_MODAL.TYPE_SELL');
 
@@ -140,16 +144,11 @@ const PositionClosedModal = ({
 
   const displayedTime = timestampToString(openCfdDetails?.createTimestamp ?? 0);
 
-  const toDisplayCloseOrder = (
-    cfd: IDisplayAcceptedCFDOrder,
-    quotation: IQuotation
-  ): IDisplayAcceptedCFDOrder => {
-    const openValue = cfd.orderSnapshot.openPrice * cfd.orderSnapshot.amount;
-    const nowValue = quotation.price * cfd.orderSnapshot.amount;
+  const toDisplayCloseOrder = (cfd: IDisplayCFDOrder, quotation: IQuotation): IDisplayCFDOrder => {
+    const openValue = cfd.openPrice * cfd.amount;
+    const nowValue = quotation.price * cfd.amount;
     const pnlSoFar =
-      cfd.orderSnapshot.typeOfPosition === TypeOfPosition.BUY
-        ? nowValue - openValue
-        : openValue - nowValue;
+      cfd.typeOfPosition === TypeOfPosition.BUY ? nowValue - openValue : openValue - nowValue;
 
     return {
       ...cfd,
@@ -162,10 +161,10 @@ const PositionClosedModal = ({
   };
 
   const toApplyCloseOrder = (
-    order: IDisplayAcceptedCFDOrder,
+    order: IDisplayCFDOrder,
     quotation: IQuotation
   ): IApplyCloseCFDOrder => {
-    if (order.orderSnapshot.state !== OrderState.OPENING) {
+    if (order.state !== OrderState.OPENING) {
       const error = new Error('Order is not opening');
       throw error;
     }
@@ -184,18 +183,18 @@ const PositionClosedModal = ({
   };
 
   // TODO: (20230315 - Shirley) organize the data before history modal
-  const toHistoryModal = (cfd: IAcceptedCFDOrder): IDisplayAcceptedCFDOrder => {
-    if (cfd.orderSnapshot.state !== OrderState.CLOSED || !cfd.orderSnapshot.closePrice) {
+  const toHistoryModal = (cfd: ICFDOrder): IDisplayCFDOrder => {
+    if (cfd.state !== OrderState.CLOSED || !cfd.closePrice) {
       const error = new Error('Order is not closed');
       throw error;
     }
 
     // TODO: replace `twoDecimal` with `toLocaleString` (20230325 - Shirley)
-    const openValue = twoDecimal(cfd.orderSnapshot.openPrice * cfd.orderSnapshot.amount);
-    const closeValue = twoDecimal(cfd.orderSnapshot.closePrice * cfd.orderSnapshot.amount);
+    const openValue = twoDecimal(cfd.openPrice * cfd.amount);
+    const closeValue = twoDecimal(cfd.closePrice * cfd.amount);
 
     const pnlValue =
-      cfd.orderSnapshot.typeOfPosition === TypeOfPosition.BUY
+      cfd.typeOfPosition === TypeOfPosition.BUY
         ? twoDecimal(closeValue - openValue)
         : twoDecimal(openValue - closeValue);
     const pnl: IPnL = {
@@ -207,16 +206,16 @@ const PositionClosedModal = ({
 
     const suggestion: ICFDSuggestion = {
       takeProfit:
-        cfd.orderSnapshot.typeOfPosition === TypeOfPosition.BUY
+        cfd.typeOfPosition === TypeOfPosition.BUY
           ? openValue * (1 + SUGGEST_TP)
           : openValue * (1 - SUGGEST_TP),
       stopLoss:
-        cfd.orderSnapshot.typeOfPosition === TypeOfPosition.BUY
+        cfd.typeOfPosition === TypeOfPosition.BUY
           ? openValue * (1 - SUGGEST_SL)
           : openValue * (1 + SUGGEST_SL),
     };
 
-    const historyCfd: IDisplayAcceptedCFDOrder = {
+    const historyCfd: IDisplayCFDOrder = {
       ...cfd,
       pnl: pnl,
       openValue: openValue,
@@ -234,8 +233,8 @@ const PositionClosedModal = ({
 
     try {
       quotation = await marketCtx.getCFDQuotation(
-        openCfdDetails?.orderSnapshot?.ticker,
-        openCfdDetails?.orderSnapshot?.typeOfPosition
+        openCfdDetails?.ticker,
+        openCfdDetails?.typeOfPosition
       );
 
       const data = quotation.data as IQuotation;
@@ -247,7 +246,7 @@ const PositionClosedModal = ({
       // Info: if there's error fetching quotation, disable the submit btn (20230328 - Shirley)
       if (
         quotation.success &&
-        data.typeOfPosition === openCfdDetails?.orderSnapshot?.typeOfPosition &&
+        data.typeOfPosition === openCfdDetails?.typeOfPosition &&
         quotation.data !== null
       ) {
         return data;
@@ -378,8 +377,9 @@ const PositionClosedModal = ({
     setDataRenewedStyle('animate-flash text-lightYellow2');
     setPnlRenewedStyle('animate-flash text-lightYellow2');
 
-    const newDeadline = quotation.deadline;
-    setSecondsLeft(Math.round(newDeadline - getTimestamp()));
+    const base = quotation.deadline - WAITING_TIME_FOR_USER_SIGNING;
+    const tickingSec = (base * 1000 - getTimestampInMilliseconds()) / 1000;
+    setSecondsLeft(tickingSec > 0 ? Math.floor(tickingSec) : 0);
 
     const displayedCloseOrder = toDisplayCloseOrder(openCfdDetails, quotation);
 
@@ -415,16 +415,16 @@ const PositionClosedModal = ({
 
   useEffect(() => {
     if (!globalCtx.visiblePositionClosedModal) {
-      setSecondsLeft(POSITION_PRICE_RENEWAL_INTERVAL_SECONDS);
+      setSecondsLeft(DISPLAY_QUOTATION_RENEWAL_INTERVAL_SECONDS);
       setDataRenewedStyle('text-lightWhite');
 
       return;
     }
 
     const intervalId = setInterval(async () => {
-      const base = gQuotationRef.current.deadline;
+      const base = gQuotationRef.current.deadline - WAITING_TIME_FOR_USER_SIGNING;
 
-      const tickingSec = base - getTimestamp();
+      const tickingSec = (base * 1000 - getTimestampInMilliseconds()) / 1000;
 
       setSecondsLeft(tickingSec > 0 ? Math.round(tickingSec) : 0);
 
@@ -455,10 +455,10 @@ const PositionClosedModal = ({
           height={30}
           alt="ticker icon"
         />
-        <div className="text-2xl">{openCfdDetails?.orderSnapshot?.ticker}</div>
+        <div className="text-2xl">{openCfdDetails?.ticker}</div>
       </div>
 
-      <div className="absolute top-90px right-6 flex items-center space-x-1 text-center">
+      <div className="absolute right-6 top-90px flex items-center space-x-1 text-center">
         <BsClockHistory size={20} className="text-lightGray" />
         <p className="w-8 text-xs">00:{secondsLeft.toString().padStart(2, '0')}</p>
       </div>
@@ -479,12 +479,9 @@ const PositionClosedModal = ({
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">{t('POSITION_MODAL.OPEN_PRICE')}</div>
               <div className="">
-                {openCfdDetails?.orderSnapshot?.openPrice.toLocaleString(
-                  UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                  {
-                    minimumFractionDigits: 2,
-                  }
-                ) ?? 0}{' '}
+                {openCfdDetails?.openPrice.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+                  minimumFractionDigits: 2,
+                }) ?? 0}{' '}
                 <span className="ml-1 text-lightGray">{unitAsset}</span>
               </div>
             </div>
@@ -492,13 +489,10 @@ const PositionClosedModal = ({
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">{t('POSITION_MODAL.AMOUNT')}</div>
               <div className="">
-                {openCfdDetails?.orderSnapshot?.amount.toLocaleString(
-                  UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                  {
-                    minimumFractionDigits: 2,
-                  }
-                )}{' '}
-                <span className="ml-1 text-lightGray">{openCfdDetails?.orderSnapshot?.ticker}</span>
+                {openCfdDetails?.amount.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+                  minimumFractionDigits: 2,
+                })}{' '}
+                <span className="ml-1 text-lightGray">{openCfdDetails?.ticker}</span>
               </div>
             </div>
 
@@ -543,7 +537,7 @@ const PositionClosedModal = ({
           disabled={secondsLeft < 1 || quotationErrorRef.current}
           onClick={submitClickHandler}
           buttonType="button"
-          className={`mt-0 whitespace-nowrap rounded border-0 bg-tidebitTheme py-2 px-16 text-base text-white transition-colors duration-300 hover:bg-cyan-600 focus:outline-none disabled:bg-lightGray`}
+          className={`mt-0 whitespace-nowrap rounded border-0 bg-tidebitTheme px-16 py-2 text-base text-white transition-colors duration-300 hover:bg-cyan-600 focus:outline-none disabled:bg-lightGray`}
         >
           {t('POSITION_MODAL.CONFIRM_BUTTON')}
         </RippleButton>
@@ -555,7 +549,7 @@ const PositionClosedModal = ({
     <>
       <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">
         {/* The position of the modal */}
-        <div className="relative my-6 mx-auto w-auto max-w-xl">
+        <div className="relative mx-auto my-6 w-auto max-w-xl">
           {' '}
           {/*content & panel*/}
           <div
@@ -568,7 +562,7 @@ const PositionClosedModal = ({
                 {t('POSITION_MODAL.CLOSE_POSITION_TITLE')}
               </h3>
               <button className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
-                <span className="absolute top-5 right-5 block outline-none focus:outline-none">
+                <span className="absolute right-5 top-5 block outline-none focus:outline-none">
                   <ImCross onClick={modalClickHandler} />
                 </span>
               </button>

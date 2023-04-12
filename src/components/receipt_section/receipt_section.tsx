@@ -6,7 +6,11 @@ import {OrderType} from '../../constants/order_type';
 import {OrderState} from '../../constants/order_state';
 import {IAcceptedOrder} from '../../interfaces/tidebit_defi_background/accepted_order';
 import {timestampToString} from '../../lib/common';
-import {ICFDOrderSnapshot} from '../../interfaces/tidebit_defi_background/order_snapshot';
+import {
+  ICFDOrder,
+  IDepositOrder,
+  IWithdrawOrder,
+} from '../../interfaces/tidebit_defi_background/order';
 
 const ReceiptSection = () => {
   const userCtx = useContext(UserContext);
@@ -23,33 +27,53 @@ const ReceiptSection = () => {
      * filter receipts by filteredDate #289 */
     if (searches !== '') {
       const searchResult = listHistories.filter(v => {
+        const orderType = v.receipt.order.orderType;
+        const targetAsset =
+          orderType === OrderType.CFD
+            ? (v.receipt.order as ICFDOrder).margin.asset
+            : orderType === OrderType.DEPOSIT
+            ? (v.receipt.order as IDepositOrder).targetAsset
+            : (v.receipt.order as IWithdrawOrder).targetAsset;
+        const targetAmount =
+          orderType === OrderType.CFD
+            ? (v.receipt.order as ICFDOrder).margin.amount
+            : orderType === OrderType.DEPOSIT
+            ? (v.receipt.order as IDepositOrder).targetAmount
+            : (v.receipt.order as IWithdrawOrder).targetAmount;
         const result =
-          v.orderType.includes(searches || '') ||
-          v.targetAsset.toLocaleLowerCase().includes(searches || '') ||
-          v.targetAmount.toString().includes(searches || '');
+          orderType.includes(searches || '') ||
+          targetAsset.toLocaleLowerCase().includes(searches || '') ||
+          targetAmount.toString().includes(searches || '');
         return result;
       });
       setFilteredReceipts(searchResult);
     } else if (filteredTradingType === '' && searches === '') {
       setFilteredReceipts(listHistories);
     } else if (filteredTradingType === OrderType.DEPOSIT) {
-      setFilteredReceipts(listHistories.filter(v => v.orderType === OrderType.DEPOSIT));
+      setFilteredReceipts(
+        listHistories.filter(v => {
+          const orderType = v.receipt.order.orderType;
+          return orderType === OrderType.DEPOSIT;
+        })
+      );
     } else if (filteredTradingType === OrderType.WITHDRAW) {
-      setFilteredReceipts(listHistories.filter(v => v.orderType === OrderType.WITHDRAW));
+      setFilteredReceipts(
+        listHistories.filter(v => v.receipt.order.orderType === OrderType.WITHDRAW)
+      );
     } else if (filteredTradingType === OrderState.OPENING) {
       setFilteredReceipts(
         listHistories.filter(
           v =>
-            v.orderType === OrderType.CFD &&
-            (v.orderSnapshot as ICFDOrderSnapshot).state === OrderState.OPENING
+            v.receipt.order.orderType === OrderType.CFD &&
+            (v.receipt.order as ICFDOrder).state === OrderState.OPENING
         )
       );
     } else if (filteredTradingType === OrderState.CLOSED) {
       setFilteredReceipts(
         listHistories.filter(
           v =>
-            v.orderType === OrderType.CFD &&
-            (v.orderSnapshot as ICFDOrderSnapshot).state === OrderState.CLOSED
+            v.receipt.order.orderType === OrderType.CFD &&
+            (v.receipt.order as ICFDOrder).state === OrderState.OPENING
         )
       );
     }

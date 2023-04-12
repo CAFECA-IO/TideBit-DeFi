@@ -1,4 +1,5 @@
 import IEIP712Data from '../../interfaces/ieip712data';
+import {getTimestamp} from '../../lib/common';
 
 const ServiceTerm: IEIP712Data = {
   domain: {
@@ -20,9 +21,20 @@ const ServiceTerm: IEIP712Data = {
   - Be as explicit as possible when building out the message schema.
   */
     title: 'ServiceTerm',
+    /* Deprecate: replace with following content (20230407 - tzuhan)
     content: 'You are going to use TideBit-DeFi and agree every rules in TideBit',
     from: '0xCAFECAAd15f96E1EfcD846e1ae27115645C6D606',
     to: 'TideBit-DeFi',
+    */
+    domain: 'https://www.tidebit-defi.com',
+    version: '',
+    agree: [
+      'https://www.tidebit-defi.com/term_of_service/{hash}',
+      'https://www.tidebit-defi.com/private_policy/{hash}',
+    ],
+    signer: '0xfc657dAf7D901982a75ee4eCD4bDCF93bd767CA4',
+    // expired: getTimestamp() + 3600,
+    // iat: getTimestamp(),
   },
   // Refers to the keys of the *types* object below.
   primaryType: 'ServiceTerm',
@@ -35,11 +47,21 @@ const ServiceTerm: IEIP712Data = {
     //   {name: 'verifyingContract', type: 'address'},
     // ],
     // Refer to PrimaryType
+    /* Deprecate: replace with following content (20230407 - tzuhan)
     ServiceTerm: [
       {name: 'title', type: 'string'},
       {name: 'content', type: 'string'},
       {name: 'from', type: 'string'},
       {name: 'to', type: 'string'},
+    ],
+    */
+    ServiceTerm: [
+      {name: 'domain', type: 'string'},
+      {name: 'version', type: 'string'},
+      {name: 'agree', type: 'string[2]'},
+      {name: 'signer', type: 'string'},
+      {name: 'expired', type: 'uint256'},
+      {name: 'iat', type: 'uint256'},
     ],
   },
 };

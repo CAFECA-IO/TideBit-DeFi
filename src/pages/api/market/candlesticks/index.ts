@@ -2,10 +2,7 @@ import {NextApiRequest, NextApiResponse} from 'next';
 import {TBEURL} from '../../../../constants/api_request';
 import {API_VERSION, AVAILABLE_TICKERS, BASE_URL, unitAsset} from '../../../../constants/config';
 import {getDummyCandlestickChartData} from '../../../../interfaces/tidebit_defi_background/candlestickData';
-import {
-  ITimeSpanUnion,
-  TimeSpanUnion,
-} from '../../../../interfaces/tidebit_defi_background/time_span_union';
+import {ITimeSpanUnion, TimeSpanUnion} from '../../../../constants/time_span_union';
 import {convertTradesToCandlestickData, toQuery} from '../../../../lib/common';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {

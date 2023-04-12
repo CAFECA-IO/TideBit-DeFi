@@ -26,7 +26,7 @@ import {
   ITickerMarket,
   ITickerItem,
 } from '../interfaces/tidebit_defi_background/ticker_data';
-import {ITimeSpanUnion, TimeSpanUnion} from '../interfaces/tidebit_defi_background/time_span_union';
+import {ITimeSpanUnion, TimeSpanUnion} from '../constants/time_span_union';
 import {ICandlestickData} from '../interfaces/tidebit_defi_background/candlestickData';
 import {TideBitEvent} from '../constants/tidebit_event';
 import {NotificationContext} from './notification_context';
@@ -257,6 +257,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       tickerBook.updateCandlestick(tickerId, candlestickChartData);
       */
       // await listTradesData(tickerId);
+
       setCandlestickChartData(tickerBook.listCandlestickData(tickerId, {}));
       result = defaultResultSuccess;
     } catch (error) {

@@ -8,11 +8,7 @@ import {
   strokeColorDisplayed,
 } from '../../interfaces/tidebit_defi_background/ticker_data';
 import {ITickerHistoryData} from '../../interfaces/tidebit_defi_background/ticker_history_data';
-import {
-  getTime,
-  ITimeSpanUnion,
-  TimeSpanUnion,
-} from '../../interfaces/tidebit_defi_background/time_span_union';
+import {getTime, ITimeSpanUnion, TimeSpanUnion} from '../../constants/time_span_union';
 import {millesecondsToSeconds} from '../common';
 
 class TickerBook {

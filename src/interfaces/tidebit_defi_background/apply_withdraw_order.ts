@@ -33,32 +33,25 @@ export const convertApplyWithdrawOrderToAcceptedWithdrawOrder = (
   userSignature: string,
   nodeSignature: string
 ) => {
-  const date = new Date();
-  const id = `${OrderType.WITHDRAW}${date.getTime()}${applyWithdrawOrder.targetAsset}${Math.ceil(
-    Math.random() * 1000000000
-  )}`;
   const txid = randomHex(32);
   const accpetedWithdrawOrder: IAcceptedWithdrawOrder = {
-    ...applyWithdrawOrder,
-    id,
-    orderStatus: OrderStatusUnion.WAITING,
-    createTimestamp: applyWithdrawOrder.createTimestamp
-      ? applyWithdrawOrder.createTimestamp
-      : getTimestamp(),
+    txid,
     applyData: applyWithdrawOrder,
-    orderSnapshot: {...applyWithdrawOrder, txid, id},
-    userSignature: userSignature,
-    balanceDifferenceCauseByOrder: {
-      currency: applyWithdrawOrder.targetAsset,
-      available: -applyWithdrawOrder.targetAmount,
-      locked: applyWithdrawOrder.targetAmount,
+    userSignature,
+    receipt: {
+      order: {
+        ...applyWithdrawOrder,
+        id: randomHex(20),
+        txid,
+        orderStatus: OrderStatusUnion.WAITING,
+      },
+      balance: {
+        currency: applyWithdrawOrder.targetAsset,
+        available: balance.available,
+        locked: balance.locked + applyWithdrawOrder.targetAmount,
+      },
     },
-    balanceSnapshot: {
-      currency: applyWithdrawOrder.targetAsset,
-      available: balance.available - applyWithdrawOrder.targetAmount,
-      locked: balance.locked + applyWithdrawOrder.targetAmount,
-      createTimestamp: getTimestamp(),
-    },
+    createTimestamp: getTimestamp(),
     nodeSignature: nodeSignature,
   };
   return accpetedWithdrawOrder;

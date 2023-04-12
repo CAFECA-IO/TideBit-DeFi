@@ -7,16 +7,15 @@ import {
   convertApplyUpdateCFDToAcceptedCFD,
   IApplyCFDOrder,
 } from './apply_cfd_order';
-import {getDummyApplyCloseCFDOrder, IApplyCloseCFDOrder} from './apply_close_cfd_order_data';
-import {getDummyApplyCreateCFDOrder, IApplyCreateCFDOrder} from './apply_create_cfd_order_data';
-import {getDummyApplyUpdateCFDOrder, IApplyUpdateCFDOrder} from './apply_update_cfd_order_data';
+import {getDummyApplyCloseCFDOrder, IApplyCloseCFDOrder} from './apply_close_cfd_order';
+import {getDummyApplyCreateCFDOrder, IApplyCreateCFDOrder} from './apply_create_cfd_order';
+import {getDummyApplyUpdateCFDOrder, IApplyUpdateCFDOrder} from './apply_update_cfd_order';
 import {IBalance} from './balance';
-import {ICFDOrderSnapshot} from './order_snapshot';
+import {ICFDReceipt} from './receipt';
 
 export interface IAcceptedCFDOrder extends IAcceptedOrder {
-  display: boolean;
   applyData: IApplyCFDOrder;
-  orderSnapshot: ICFDOrderSnapshot;
+  receipt: ICFDReceipt;
 }
 
 export const getDummyAcceptedCreateCFDOrder = (
@@ -31,14 +30,14 @@ export const getDummyAcceptedCreateCFDOrder = (
   };
   const dummyUserSignature = randomHex(32);
   const dummyNodeSignature = randomHex(32);
-  const acceptedCreateCFDOrder = convertApplyCreateCFDToAcceptedCFD(
+  const {acceptedCFDOrder} = convertApplyCreateCFDToAcceptedCFD(
     applyCreateCFDOrder,
     dummyBalance,
     dummyUserSignature,
     dummyNodeSignature,
     orderStatus
   );
-  return acceptedCreateCFDOrder;
+  return acceptedCFDOrder;
 };
 
 export const getDummyAcceptedUpdateCFDOrder = (
@@ -51,18 +50,20 @@ export const getDummyAcceptedUpdateCFDOrder = (
   );
   const applyUpdateCFDOrder: IApplyUpdateCFDOrder = getDummyApplyUpdateCFDOrder(
     currency,
-    accpetedCreateCFDOrder.id
+    accpetedCreateCFDOrder.receipt.order.id
   );
+  const dummyBalance = accpetedCreateCFDOrder.receipt.balance;
   const dummyUserSignature = randomHex(32);
   const dummyNodeSignature = randomHex(32);
-  const acceptedUpdateCFDOrder = convertApplyUpdateCFDToAcceptedCFD(
+  const {acceptedCFDOrder} = convertApplyUpdateCFDToAcceptedCFD(
     applyUpdateCFDOrder,
-    accpetedCreateCFDOrder,
+    accpetedCreateCFDOrder.receipt.order,
+    dummyBalance,
     dummyUserSignature,
     dummyNodeSignature,
     orderStatus
   );
-  return [accpetedCreateCFDOrder, acceptedUpdateCFDOrder];
+  return [accpetedCreateCFDOrder, acceptedCFDOrder];
 };
 
 export const getDummyAcceptedCloseCFDOrder = (
@@ -75,20 +76,20 @@ export const getDummyAcceptedCloseCFDOrder = (
   );
   const applyCloseCFDOrder: IApplyCloseCFDOrder = getDummyApplyCloseCFDOrder(
     currency,
-    accpetedCreateCFDOrder.id
+    accpetedCreateCFDOrder.receipt.order.id
   );
-  const dummyBalance = accpetedCreateCFDOrder.balanceSnapshot as IBalance;
+  const dummyBalance = accpetedCreateCFDOrder.receipt.balance;
   const dummyUserSignature = randomHex(32);
   const dummyNodeSignature = randomHex(32);
-  const acceptedCloseCFDOrder = convertApplyCloseCFDToAcceptedCFD(
+  const {acceptedCFDOrder} = convertApplyCloseCFDToAcceptedCFD(
     applyCloseCFDOrder,
-    accpetedCreateCFDOrder,
+    accpetedCreateCFDOrder.receipt.order,
     dummyBalance,
     dummyUserSignature,
     dummyNodeSignature,
     orderStatus
   );
-  return [accpetedCreateCFDOrder, acceptedCloseCFDOrder];
+  return [accpetedCreateCFDOrder, acceptedCFDOrder];
 };
 
 export const dummyAcceptedCFDOrders: IAcceptedCFDOrder[] = [

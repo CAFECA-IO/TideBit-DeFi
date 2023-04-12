@@ -31,23 +31,24 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
       } else if (req.method === 'PUT') {
         if (req.body.applyData.operation === CFDOperation.CLOSE) {
           const nodeSignature = '0x';
-          const acceptedClosedCFDOrder = convertApplyCloseCFDToAcceptedCFD(
+          const {updateCFDOrder, acceptedCFDOrder} = convertApplyCloseCFDToAcceptedCFD(
             req.body.applyData,
             req.body.openCFD,
             req.body.balance,
             req.body.userSignature,
             nodeSignature
           );
-          res.status(200).json(acceptedClosedCFDOrder);
+          res.status(200).json({updateCFDOrder, acceptedCFDOrder});
         } else if (req.body.applyData.operation === CFDOperation.UPDATE) {
           const nodeSignature = '0x';
-          const acceptedUpdatedCFDOrder = convertApplyUpdateCFDToAcceptedCFD(
+          const {updateCFDOrder, acceptedCFDOrder} = convertApplyUpdateCFDToAcceptedCFD(
             req.body.applyData,
             req.body.openCFD,
+            req.body.balance,
             req.body.userSignature,
             nodeSignature
           );
-          res.status(200).json(acceptedUpdatedCFDOrder);
+          res.status(200).json({updateCFDOrder, acceptedCFDOrder});
         } else res.status(500).json({error: Reason[Code.INTERNAL_SERVER_ERROR]});
       }
     } catch (error) {

@@ -1,5 +1,5 @@
 import {randomFloatFromInterval} from '../../lib/common';
-import {getTime, ITimeSpanUnion} from './time_span_union';
+import {getTime, ITimeSpanUnion} from '../../constants/time_span_union';
 
 const chartBlank = 1.68;
 const dummyDataSize = 80;

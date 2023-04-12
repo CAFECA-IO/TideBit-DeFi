@@ -25,7 +25,7 @@ import {useTranslation} from 'next-i18next';
 import {getTimestamp, getTimestampInMilliseconds, roundToDecimalPlaces} from '../../lib/common';
 import {IQuotation, getDummyQuotation} from '../../interfaces/tidebit_defi_background/quotation';
 import {NotificationContext} from '../../contexts/notification_context';
-import {IApplyCreateCFDOrder} from '../../interfaces/tidebit_defi_background/apply_create_cfd_order_data';
+import {IApplyCreateCFDOrder} from '../../interfaces/tidebit_defi_background/apply_create_cfd_order';
 import {Code} from '../../constants/code';
 import {defaultResultSuccess} from '../../interfaces/tidebit_defi_background/result';
 import {OrderType} from '../../constants/order_type';

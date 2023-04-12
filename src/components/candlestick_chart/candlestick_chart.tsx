@@ -56,7 +56,7 @@ import {GlobalContext} from '../../contexts/global_context';
 import {UserContext} from '../../contexts/user_context';
 import {ProfitState} from '../../constants/profit_state';
 import {TypeOfPosition} from '../../constants/type_of_position';
-import {TimeSpanUnion} from '../../interfaces/tidebit_defi_background/time_span_union';
+import {TimeSpanUnion} from '../../constants/time_span_union';
 import {freemem} from 'os';
 import {normalize} from 'path';
 

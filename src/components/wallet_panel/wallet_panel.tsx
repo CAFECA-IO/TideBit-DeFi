@@ -915,8 +915,8 @@ export default function WalletPanel({
         // globalCtx.visibleSuccessfulModalHandler();
 
         globalCtx.dataLoadingModalHandler({
-          modalTitle: 'Wallet Connect',
-          modalContent: 'Connecting...',
+          modalTitle: t('WALLET_PANEL.TITLE'),
+          modalContent: t('WALLET_PANEL.CONNECTING'),
         });
         globalCtx.visibleLoadingModalHandler();
 

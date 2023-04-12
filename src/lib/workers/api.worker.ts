@@ -1,7 +1,7 @@
 self.onmessage = async function (event) {
   const {name, method, url, body, options} = event.data;
   try {
-    const response = await fetch(url, {
+    const request = {
       method,
       headers: options?.headers
         ? options.headers
@@ -9,7 +9,8 @@ self.onmessage = async function (event) {
             'Content-Type': 'application/json',
           },
       body: body ? JSON.stringify(body) : body,
-    });
+    };
+    const response = await fetch(url, request);
     if (response?.ok) {
       const result = await response.json();
       self.postMessage({name, result});

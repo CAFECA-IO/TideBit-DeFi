@@ -24,7 +24,7 @@ const WithdrawalHistoryModal = ({
 }: IWithdrawalHistoryModal) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
-  const {orderSnapshot, createTimestamp, orderStatus, targetAmount, targetAsset} =
+  const {orderSnapshot, createTimestamp, orderStatus, targetAmount, targetAsset, balanceSnapshot} =
     getWithdrawalHistoryData;
 
   const displayedWithdrawalAsset = targetAsset;
@@ -53,19 +53,18 @@ const WithdrawalHistoryModal = ({
   );
 
   const displayedWithdrawalAvailable =
-    orderStatus === OrderStatusUnion.PROCESSING ? (
-      <Lottie animationData={smallConnectingAnimation} loop={true} />
+    orderStatus === OrderStatusUnion.WAITING ? (
+      <Lottie className="w-20px" animationData={smallConnectingAnimation} />
     ) : (
-      <>
-        {/* available.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
-        minimumFractionDigits: 2,
-        })
-       */}
-      </>
+      <div>
+        {balanceSnapshot.available.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+          minimumFractionDigits: 2,
+        })}
+      </div>
     );
 
   const displayedWithdrawalDetail =
-    orderStatus === OrderStatusUnion.PROCESSING ? (
+    orderStatus === OrderStatusUnion.WAITING ? (
       <div className="text-lightGreen5">{t('D_W_MODAL.STATUS_PROCESSING')}</div>
     ) : orderStatus === OrderStatusUnion.FAILED ? (
       <div className="text-lightRed">{t('D_W_MODAL.STATUS_FAILED')}</div>

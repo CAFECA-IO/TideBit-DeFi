@@ -610,7 +610,7 @@ const TradeTab = () => {
   // ----------long area----------
   const displayedRequiredMarginLongStyle = (
     <>
-      <div className={`${isDisplayedMarginLongStyle} ${isDisplayedMarginLongSize} mt-1 text-base`}>
+      <div className={`${isDisplayedMarginLongStyle} ${isDisplayedMarginLongSize} my-1 text-base`}>
         {requiredMarginLongRef.current?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
           minimumFractionDigits: 2,
           maximumFractionDigits: 2,
@@ -963,12 +963,12 @@ const TradeTab = () => {
               </div>
 
               {/* Long Button */}
-              <div className="ml-1/4">
+              <div className="flex justify-center">
                 <RippleButton
                   disabled={marginWarningLongRef.current}
                   onClick={longOrderSubmitHandler}
                   buttonType="button"
-                  className="mb-2 mr-2 rounded-md bg-lightGreen5 px-7 py-1 text-sm font-medium tracking-wide text-white transition-colors duration-300 hover:bg-lightGreen5/80 disabled:bg-lightGray"
+                  className="rounded-md bg-lightGreen5 px-7 py-1 text-sm font-medium tracking-wide text-white transition-colors duration-300 hover:bg-lightGreen5/80 disabled:bg-lightGray"
                 >
                   <b>{t('TRADE_PAGE.TRADE_TAB_LONG_BUTTON')}</b> <br />₮{' '}
                   {Number(longQuotationRef.current?.price).toLocaleString(
@@ -1046,12 +1046,12 @@ const TradeTab = () => {
               </div>
 
               {/* Short Button */}
-              <div className="ml-1/4">
+              <div className="flex justify-center">
                 <RippleButton
                   disabled={marginWarningShortRef.current}
                   onClick={shortOrderSubmitHandler}
                   buttonType="button"
-                  className="mb-2 mr-2 rounded-md bg-lightRed px-7 py-1 text-sm font-medium tracking-wide text-white transition-colors duration-300 hover:bg-lightRed/80 disabled:bg-lightGray"
+                  className="rounded-md bg-lightRed px-7 py-1 text-sm font-medium tracking-wide text-white transition-colors duration-300 hover:bg-lightRed/80 disabled:bg-lightGray"
                 >
                   <b>{t('TRADE_PAGE.TRADE_TAB_SHORT_BUTTON')}</b> <br />₮{' '}
                   {Number(shortQuotationRef.current?.price).toLocaleString(

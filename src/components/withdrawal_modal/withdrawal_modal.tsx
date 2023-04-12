@@ -79,8 +79,8 @@ const WithdrawalModal = ({
     globalCtx.visibleWithdrawalModalHandler();
 
     globalCtx.dataLoadingModalHandler({
-      modalTitle: 'Withdraw',
-      modalContent: 'Confirm the transaction',
+      modalTitle: t('D_W_MODAL.WITHDRAW'),
+      modalContent: t('D_W_MODAL.CONFIRM_CONTENT'),
     });
     globalCtx.visibleLoadingModalHandler();
 
@@ -103,39 +103,47 @@ const WithdrawalModal = ({
       // TODO: for debug
       globalCtx.toast({message: 'withdraw result: ' + JSON.stringify(result), type: 'info'});
 
+      globalCtx.dataLoadingModalHandler({
+        modalTitle: t('D_W_MODAL.WITHDRAW'),
+        modalContent: t('D_W_MODAL.TRANSACTION_BROADCAST'),
+        btnMsg: t('D_W_MODAL.VIEW_ON_BUTTON'),
+        btnUrl: '#',
+      });
+
+      // INFO: for UX
+      await wait(DELAYED_HIDDEN_SECONDS);
+
+      globalCtx.eliminateAllModals();
+
       // TODO: the button URL
       if (result.success) {
-        globalCtx.dataLoadingModalHandler({
-          modalTitle: 'Withdraw',
-          modalContent: 'Transaction broadcast',
-          btnMsg: 'View on Boltchain',
-          btnUrl: '#',
-        });
-
-        // INFO: for UX
-        await wait(DELAYED_HIDDEN_SECONDS);
-
-        globalCtx.eliminateAllModals();
-
         globalCtx.dataSuccessfulModalHandler({
-          modalTitle: 'Withdraw',
-          modalContent: 'Transaction succeed',
-          btnMsg: 'View on Boltchain',
+          modalTitle: t('D_W_MODAL.WITHDRAW'),
+          modalContent: t('D_W_MODAL.TRANSACTION_SUCCEED'),
+          btnMsg: t('D_W_MODAL.VIEW_ON_BUTTON'),
           btnUrl: '#',
         });
 
         globalCtx.visibleSuccessfulModalHandler();
         // TODO: `result.code` (20230316 - Shirley)
       } else if (
-        result.code === Code.INTERNAL_SERVER_ERROR ||
-        result.code === Code.INVAILD_INPUTS ||
         result.code === Code.SERVICE_TERM_DISABLE ||
         result.code === Code.WALLET_IS_NOT_CONNECT
       ) {
+        globalCtx.dataCanceledModalHandler({
+          modalTitle: t('D_W_MODAL.WITHDRAW'),
+          modalContent: t('D_W_MODAL.FAILED_REASON_CANCELED'),
+        });
+
+        globalCtx.visibleCanceledModalHandler();
+      } else if (
+        result.code === Code.INTERNAL_SERVER_ERROR ||
+        result.code === Code.INVAILD_INPUTS
+      ) {
         globalCtx.dataFailedModalHandler({
-          modalTitle: 'Withdraw',
-          failedTitle: 'Failed',
-          failedMsg: 'Failed to withdraw',
+          modalTitle: t('D_W_MODAL.WITHDRAW'),
+          failedTitle: t('D_W_MODAL.FAILED_TITLE'),
+          failedMsg: t('D_W_MODAL.FAILED_REASON_FAILED_TO_WITHDRAW'),
         });
 
         globalCtx.visibleFailedModalHandler();
@@ -150,17 +158,17 @@ const WithdrawalModal = ({
       // ToDo: Catch the error which user rejected the signature in UserContext (20230411 - Shirley)
       if (error?.code === 4001) {
         globalCtx.dataCanceledModalHandler({
-          modalTitle: 'Withdraw',
-          modalContent: 'Transaction canceled',
+          modalTitle: t('D_W_MODAL.WITHDRAW'),
+          modalContent: t('D_W_MODAL.FAILED_REASON_CANCELED'),
         });
 
         globalCtx.visibleCanceledModalHandler();
       } else {
         // Info: Unknown error
         globalCtx.dataFailedModalHandler({
-          modalTitle: 'Withdraw',
-          failedTitle: 'Failed',
-          failedMsg: 'Transaction failed',
+          modalTitle: t('D_W_MODAL.WITHDRAW'),
+          failedTitle: t('D_W_MODAL.FAILED_TITLE'),
+          failedMsg: t('D_W_MODAL.FAILED_REASON_FAILED_TO_WITHDRAW'),
         });
 
         globalCtx.visibleFailedModalHandler();
@@ -301,7 +309,7 @@ const WithdrawalModal = ({
         <div className="flex-col justify-center text-center">
           {/* ----------Type input---------- */}
           <div className="mx-6 pt-8 text-start">
-            <p className="text-sm text-lightGray4">Asset</p>
+            <p className="text-sm text-lightGray4">{t('D_W_MODAL.ASSET')}</p>
             <div className="hover:cursor-pointer" onClick={cryptoMenuClickHandler}>
               <div className={`${formStyle} flex rounded-md bg-darkGray8`}>
                 <div className={`z-50 flex items-center space-x-2 pl-2`}>
@@ -370,7 +378,7 @@ const WithdrawalModal = ({
 
           {/* ----------Amount input---------- */}
           <div className="mx-6 pt-12 text-start">
-            <p className="text-sm text-lightGray4">Amount</p>
+            <p className="text-sm text-lightGray4">{t('D_W_MODAL.AMOUNT')}</p>
             {/* <div className="max-w-xl bg-darkGray8">Tether</div> */}
             <div className="flex rounded-md bg-darkGray8">
               <input
@@ -392,7 +400,7 @@ const WithdrawalModal = ({
                 onClick={maxClickHandler}
                 className="my-1 mx-1 rounded-sm bg-lightGray3 px-2 text-xs text-white hover:bg-lightGray3/80"
               >
-                MAX
+                {t('D_W_MODAL.MAX')}
               </button>
             </div>
 
@@ -402,7 +410,7 @@ const WithdrawalModal = ({
               </p> */}
 
               <p className="pt-3 text-end text-xs tracking-wide">
-                Available on Tidebit:{' '}
+                {t('D_W_MODAL.AVAILABLE_ON_TIDEBIT')}:{' '}
                 <span className="text-tidebitTheme">{userAvailableBalance}</span>{' '}
                 {selectedCrypto.symbol}
               </p>

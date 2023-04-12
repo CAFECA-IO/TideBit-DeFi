@@ -1036,7 +1036,7 @@ const TradeTabMobile = () => {
           >
             <b>{t('TRADE_PAGE.TRADE_TAB_LONG_BUTTON')}</b> <br />
             <p className="text-xs">
-              {t('TRADE_PAGE.TRADE_TAB_LONG_BUTTON_SUBTITLE')} ₮{' '}
+              ₮{' '}
               {Number(longQuotationRef.current?.price).toLocaleString(
                 UNIVERSAL_NUMBER_FORMAT_LOCALE,
                 {
@@ -1060,7 +1060,7 @@ const TradeTabMobile = () => {
           >
             <b>{t('TRADE_PAGE.TRADE_TAB_SHORT_BUTTON')}</b> <br />
             <p className="text-xs">
-              {t('TRADE_PAGE.TRADE_TAB_SHORT_BUTTON_SUBTITLE')} ₮{' '}
+              ₮{' '}
               {Number(shortQuotationRef.current?.price).toLocaleString(
                 UNIVERSAL_NUMBER_FORMAT_LOCALE,
                 {

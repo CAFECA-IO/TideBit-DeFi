@@ -11,20 +11,22 @@ interface IReceiptSearchProps {
   filteredTradingType: string;
   setFilteredTradingType: Dispatch<SetStateAction<string>>;
   setSearches: Dispatch<SetStateAction<string>>;
+  filteredDate: string[];
+  setFilteredDate: Dispatch<SetStateAction<string[]>>;
 }
+
+const currentDate = new Date();
 
 const ReceiptSearch = ({
   filteredTradingType,
   setFilteredTradingType,
   setSearches,
+  filteredDate,
+  setFilteredDate,
 }: IReceiptSearchProps) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
-  const currentDate = new Date();
-
   const [tradingTypeMenuOpen, setTradingTypeMenuOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [page, setPage] = useState(1);
   const [dateStart, setDateStart] = useState(
     new Date(
       `${currentDate.getFullYear()}-${currentDate.getMonth() + 1}-${currentDate.getDate()} 08:00:00`
@@ -35,7 +37,7 @@ const ReceiptSearch = ({
       `${currentDate.getFullYear()}-${currentDate.getMonth() + 1}-${currentDate.getDate()} 08:00:00`
     )
   );
-  const [tickersSettings, setTickersSettings] = useState(null);
+  //const [tickersSettings, setTickersSettings] = useState(null);
 
   const tradingTypeMenuText =
     filteredTradingType === OrderType.DEPOSIT
@@ -79,54 +81,29 @@ const ReceiptSearch = ({
     setTradingTypeMenuOpen(false);
   };
 
-  /* Todo: (20230316 - Julian) dateUpdateHandler #289 
+  /* Todo: (20230412 - Julian)
+   * date to timestamp #289 */
   const dateStartUpdateHandler = useCallback(
     async (date: Date) => {
-      const newPage = 1;
-      setPage(newPage);
-      setIsLoading(true);
       setDateStart(date);
       const end = dateEnd.toISOString().substring(0, 10);
       const start = date.toISOString().substring(0, 10);
-      let tickerSetting = tickersSettings[filterExchange][filterTicker];
-      if (tickerSetting.source === SupportedExchange.OKEX) {
-        const result = await storeCtx.getOuterTradesProfits({
-          ticker: filterTicker,
-          exchange: tickerSetting.source,
-          start,
-          end,
-        });
-        if (result.chartData) setChartData(result.chartData);
-        else setChartData({ data: {}, xaxisType: "string" });
-        setProfits(result.profits);
-      }
-      const trades = await getVouchers({
-        ticker: filterTicker,
-        exchange: tickerSetting.source,
-        start,
-        end,
-        offset: 0,
-        limit: limit,
-      });
-      if (tickerSetting.source === SupportedExchange.TIDEBIT) {
-        if (trades.chartData) setChartData(trades.chartData);
-        else setChartData({ data: {}, xaxisType: "string" });
-        setProfits(trades.profits);
-      }
-      filter(trades, {});
-      setIsLoading(false);
+
+      setFilteredDate([start, end]);
     },
-    [
-      dateEnd,
-      filter,
-      filterExchange,
-      filterTicker,
-      getVouchers,
-      limit,
-      storeCtx,
-      tickersSettings,
-    ]
-  ); */
+    [dateEnd, filteredDate]
+  );
+
+  const dateEndUpdateHandler = useCallback(
+    async (date: Date) => {
+      setDateEnd(date);
+      const end = date.toISOString().substring(0, 10);
+      const start = dateStart.toISOString().substring(0, 10);
+
+      setFilteredDate([start, end]);
+    },
+    [dateStart, filteredDate]
+  );
 
   const onSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const searchString = event.target.value.toLocaleLowerCase();
@@ -183,12 +160,9 @@ const ReceiptSearch = ({
         {t('MY_ASSETS_PAGE.RECEIPT_SECTION_DATE_TITLE')}
         {/* ToDo: (20230316 - Julian) DatePicker */}
         <div className="mt-2 flex items-center space-x-2">
-          <DatePicker
-            minDate={new Date(1)}
-            /* setDate={dateStartUpdateHandler} */ maxDate={new Date(10)}
-          />
+          <DatePicker date={dateStart} setDate={dateStartUpdateHandler} maxDate={dateEnd} />
           <p>{t('MY_ASSETS_PAGE.RECEIPT_SECTION_DATE_TO')}</p>
-          <label>DatePicker</label>
+          <DatePicker date={dateEnd} setDate={dateEndUpdateHandler} minDate={dateStart} />
         </div>
       </div>
     </div>
@@ -198,7 +172,6 @@ const ReceiptSearch = ({
     <div className="relative w-300px">
       <input
         type="search"
-        //value={searches}
         className="block w-full rounded-full bg-darkGray7 p-3 pl-4 text-sm text-white focus:border-blue-500 focus:outline-none focus:ring-0 focus:ring-blue-500"
         placeholder={t('MY_ASSETS_PAGE.RECEIPT_SECTION_SEARCH_PLACEHOLDER')}
         required

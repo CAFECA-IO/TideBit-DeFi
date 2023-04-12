@@ -10,9 +10,10 @@ interface IPopulateDatesParams {
 }
 
 interface IDatePickerProps {
-  minDate: Date;
-  maxDate: Date;
-  //setDate: (date: Date) => void;
+  date: Date;
+  minDate?: Date;
+  maxDate?: Date;
+  setDate: (date: Date) => void;
 }
 
 type Dates = {
@@ -44,22 +45,26 @@ const PopulateDates = (props: any) => {
       : null;
 
     const isSelected = date?.getTime() ? date.getTime() === props.selectedTime : false;
+
+    const formatDate = el?.date !== undefined ? (el.date < 10 ? `0${el.date}` : `${el.date}`) : ' ';
     return (
       <div
-        className={`rounded-full text-center hover:cursor-pointer ${
+        className={`whitespace-nowrap rounded-full text-center hover:cursor-pointer ${
           isSelected ? 'bg-tidebitTheme' : ''
         }${el?.disable ? 'text-lightGray' : ''}`}
         onClick={() => {
           if (el?.date && !el?.disable) props.selectDate(el);
         }}
-      >{`${el?.date !== undefined ? el.date : ' '}`}</div>
+      >
+        {formatDate}
+      </div>
     );
   });
 };
 
-const DatePicker = ({minDate, /* setDate, */ maxDate}: IDatePickerProps) => {
-  const [selectedMonth, setSelectedMonth] = useState(minDate.getMonth()); // 0 (January) to 11 (December).
-  const [selectedYear, setSelectedYear] = useState(minDate.getFullYear());
+const DatePicker = ({date, setDate, minDate, maxDate}: IDatePickerProps) => {
+  const [selectedMonth, setSelectedMonth] = useState(date.getMonth()); // 0 (January) to 11 (December).
+  const [selectedYear, setSelectedYear] = useState(date.getFullYear());
   const [openDates, setOpenDates] = useState(false);
 
   const firstDayOfMonth = (year: number, month: number) => {
@@ -95,17 +100,13 @@ const DatePicker = ({minDate, /* setDate, */ maxDate}: IDatePickerProps) => {
     return dates;
   };
 
-  const formatDate = (obj: any) => {
-    let day = obj.getDate();
-    if (day < 10) {
-      day = '0' + day;
-    }
-    let month = obj.getMonth() + 1;
-    if (month < 10) {
-      month = '0' + month;
-    }
+  const formatDate = (obj: Date) => {
+    const day = obj.getDate();
+    const month = obj.getMonth() + 1;
+    const formatDay = day < 10 ? '0' + day : `${day}`;
+    const formatMonth = month < 10 ? '0' + month : `${month}`;
     const year = obj.getFullYear();
-    return year + '/' + month + '/' + day;
+    return year + '-' + formatMonth + '-' + formatDay;
   };
 
   const goToNextMonth = useCallback(() => {
@@ -135,15 +136,15 @@ const DatePicker = ({minDate, /* setDate, */ maxDate}: IDatePickerProps) => {
   }, [selectedMonth, selectedYear]);
 
   const selectDate = useCallback(
-    (el: any) => {
+    (el: Dates) => {
       let newDate = new Date(el.time);
       newDate = new Date(
         `${newDate.getFullYear()}-${newDate.getMonth() + 1}-${newDate.getDate()} 08:00:00`
       );
-      //setDate(newDate);
+      setDate(newDate);
       setOpenDates(false);
     },
-    [minDate, maxDate, selectedMonth, selectedYear]
+    [minDate, maxDate, selectedMonth, selectedYear, date]
   );
 
   return (
@@ -158,12 +159,12 @@ const DatePicker = ({minDate, /* setDate, */ maxDate}: IDatePickerProps) => {
           setOpenDates(!openDates);
         }}
       >
-        <div className="mr-2 text-sm text-lightGray4">{formatDate(minDate)}</div>
+        <div className="mr-2 whitespace-nowrap text-sm text-lightGray4">{formatDate(date)}</div>
         <Image src="/elements/date_icon.svg" alt="" width={20} height={20} />
       </button>
 
       <div
-        className={`absolute top-10 h-auto w-320px flex-col bg-darkGray2 p-6 ${
+        className={`absolute top-10 z-10 h-auto  w-320px flex-col bg-darkGray2 p-6 ${
           openDates ? 'flex' : 'hidden'
         }`}
       >
@@ -191,11 +192,10 @@ const DatePicker = ({minDate, /* setDate, */ maxDate}: IDatePickerProps) => {
           <div>SAT</div>
         </div>
 
-        {/* ToDo: (20230320 - Julian) 補零 */}
         <div className="grid grid-cols-7 gap-4">
           <PopulateDates
             daysInMonth={daysInMonth(selectedYear, selectedMonth)}
-            selectedTime={new Date(formatDate(minDate)).getTime()}
+            selectedTime={new Date(formatDate(date)).getTime()}
             selectedYear={selectedYear}
             selectedMonth={selectedMonth}
             selectDate={selectDate}

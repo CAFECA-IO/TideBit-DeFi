@@ -5,8 +5,8 @@ export interface IReceipt {
   order: IOrder;
   balance: IBalance;
   /**
-   *  TODO: IMPORTANT!!! confrim this balance.available is balance.available after order or balance.available difference caused by order (20230412 - tzuhan)
-   *  TODO: IMPORTANT!!! confrim this balance.locked is balance.locked after order or balance.locked difference caused by order (20230412 - tzuhan)
+   *  Info: IMPORTANT!!! this balance.available is balance.available after order (20230412 - tzuhan)
+   *  Info: IMPORTANT!!! this balance.locked is balance.locked after order (20230412 - tzuhan)
    * */
 }
 

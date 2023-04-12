@@ -19,9 +19,12 @@ const ReceiptSection = () => {
 
   const [searches, setSearches] = useState('');
   const [filteredTradingType, setFilteredTradingType] = useState('');
+  const [filteredDate, setFilteredDate] = useState<string[]>([]);
   const [filteredReceipts, setFilteredReceipts] = useState<IAcceptedOrder[]>([]);
 
   useEffect(() => {
+    /* Todo: (20230412 - Julian)
+     * filter receipts by filteredDate #289 */
     if (searches !== '') {
       const searchResult = listHistories.filter(v => {
         const orderType = v.receipt.order.orderType;
@@ -105,8 +108,14 @@ const ReceiptSection = () => {
         filteredTradingType={filteredTradingType}
         setFilteredTradingType={setFilteredTradingType}
         setSearches={setSearches}
+        filteredDate={filteredDate}
+        setFilteredDate={setFilteredDate}
       />
       <div>{listCluster}</div>
+      {/* Till: (20230420 - Julian) 
+     <p>
+        {filteredDate[0]} ~ {filteredDate[1]}
+      </p> */}
     </div>
   );
 };

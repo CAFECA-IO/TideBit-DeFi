@@ -3,7 +3,10 @@ import OpenPositionItem from '../open_position_item/open_position_item';
 import {UserContext} from '../../contexts/user_context';
 import {MarketContext} from '../../contexts/market_context';
 import {toDisplayCFDOrder} from '../../lib/common';
-import {IDisplayCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
+import {
+  IDisplayCFDOrder,
+  listDummyDisplayCFDOrder,
+} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
 
 const OpenSubTab = () => {
   const {openCFDs} = useContext(UserContext);
@@ -17,7 +20,16 @@ const OpenSubTab = () => {
     return displayCFD;
   });
 
-  const openPositionList = cfds.map(cfd => {
+  /* ToDo: (20230411 - Julian) dummy data */
+  const dummyCFDs: IDisplayCFDOrder[] = listDummyDisplayCFDOrder('ETH')
+    .sort((a, b) => {
+      return a.createTimestamp - b.createTimestamp;
+    })
+    .sort((a, b) => {
+      return b.stateCode - a.stateCode;
+    });
+
+  const openPositionList = dummyCFDs.map(cfd => {
     return (
       <div key={cfd.id}>
         <OpenPositionItem openCfdDetails={cfd} />

@@ -30,6 +30,13 @@ const HistoryPositionItem = ({closedCfdDetails, ...otherProps}: IHistoryPosition
   const displayedTextColor =
     closedCfdDetails.pnl.type === ProfitState.PROFIT ? 'text-lightGreen5' : 'text-lightRed';
 
+  const displayedPnl = Math.abs(closedCfdDetails.pnl.value).toLocaleString(
+    UNIVERSAL_NUMBER_FORMAT_LOCALE,
+    {
+      minimumFractionDigits: 2,
+    }
+  );
+
   const displayedSymbol =
     closedCfdDetails.pnl.type === ProfitState.PROFIT
       ? '+'
@@ -68,7 +75,7 @@ const HistoryPositionItem = ({closedCfdDetails, ...otherProps}: IHistoryPosition
               <p className="ml-1">{closedCfdDetails.ticker}</p>
             </div>
             <div className="text-lightWhite">
-              {displayedString.TITLE}
+              {displayedString.TITLE}{' '}
               <span className="text-lightGray">{displayedString.SUBTITLE}</span>
             </div>
           </div>
@@ -90,10 +97,7 @@ const HistoryPositionItem = ({closedCfdDetails, ...otherProps}: IHistoryPosition
           <div className="w-60px text-end">
             <div className="text-lightGray">{t('TRADE_PAGE.HISTORY_POSITION_ITEM_PNL')}</div>
             <div className={`${displayedTextColor} whitespace-nowrap`}>
-              <span className="">{displayedSymbol}</span> $
-              {closedCfdDetails.pnl.value?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
-                minimumFractionDigits: 2,
-              })}
+              <span className="">{displayedSymbol}</span> ${displayedPnl}
             </div>
           </div>
         </div>

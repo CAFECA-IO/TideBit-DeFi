@@ -6,6 +6,7 @@ import {OrderState} from '../constants/order_state';
 import {TypeOfPosition} from '../constants/type_of_position';
 import {IDisplayCFDOrder} from '../interfaces/tidebit_defi_background/display_accepted_cfd_order';
 import {ProfitState} from '../constants/profit_state';
+import {cfdStateCode} from '../constants/cfd_state_code';
 import {
   DeWT_VALIDITY_PERIOD,
   DOMAIN,
@@ -275,6 +276,27 @@ export const toDisplayCFDOrder = (cfdOrder: ICFDOrder, positionLineGraph: number
     takeProfit: rTp,
     stopLoss: rSl,
   };
+
+  const openPrice = cfdOrder.openPrice;
+  const nowPrice = positionLineGraph[positionLineGraph.length - 1];
+  const liquidationPrice = cfdOrder.liquidationPrice;
+  const takeProfitPrice = cfdOrder.takeProfit ?? 0;
+  const stopLossPrice = cfdOrder.stopLoss ?? 0;
+
+  const rangingLiquidation = Math.abs(openPrice - liquidationPrice);
+  const rangingTP = Math.abs(openPrice - takeProfitPrice);
+  const rangingSL = Math.abs(openPrice - stopLossPrice);
+
+  /* Info: (20230411 - Julian) sort by stateCode (liquidation -> SL -> TP -> createTimestamp) */
+  const stateCode =
+    Math.abs(nowPrice - liquidationPrice) <= rangingLiquidation * 0.1
+      ? cfdStateCode.LIQUIDATION
+      : Math.abs(nowPrice - stopLossPrice) <= rangingSL * 0.1
+      ? cfdStateCode.STOP_LOSS
+      : Math.abs(nowPrice - takeProfitPrice) <= rangingTP * 0.1
+      ? cfdStateCode.TAKE_PROFIT
+      : cfdStateCode.COMMON;
+
   const displayCFDOrder: IDisplayCFDOrder = {
     ...cfdOrder,
     pnl: {
@@ -285,6 +307,7 @@ export const toDisplayCFDOrder = (cfdOrder: ICFDOrder, positionLineGraph: number
     closeValue: cfdOrder.closePrice ? cfdOrder.closePrice * cfdOrder.amount : undefined,
     positionLineGraph,
     suggestion,
+    stateCode: stateCode,
   };
   return displayCFDOrder;
 };

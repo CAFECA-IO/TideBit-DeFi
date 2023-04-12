@@ -693,8 +693,8 @@ export const UserProvider = ({children}: IUserProvider) => {
               updateBalance(acceptedCFDOrder.balanceDifferenceCauseByOrder);
               setHistories(prev => [...prev, acceptedCFDOrder]);
               result = {
-                success: true,
-                code: Code.SUCCESS,
+                success: false,
+                code: Code.INVAILD_INPUTS,
                 data: acceptedCFDOrder,
               };
             } catch (error) {

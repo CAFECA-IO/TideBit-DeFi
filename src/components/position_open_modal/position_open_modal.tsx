@@ -114,6 +114,7 @@ const PositionOpenModal = ({
 
     try {
       const result = await userCtx.createCFDOrder(applyCreateOrder);
+      // globalCtx.eliminateAllModals();
 
       // ToDo: Revise the `result.reason` to constant by using enum or object
       // ToDo: the button URL
@@ -126,7 +127,7 @@ const PositionOpenModal = ({
           btnUrl: '#',
         });
 
-        // ToDo: temporary waiting
+        // ToDo: Need to get a singnal from somewhere to show the successful modal
         await wait(DELAYED_HIDDEN_SECONDS);
 
         globalCtx.eliminateAllModals();
@@ -142,10 +143,14 @@ const PositionOpenModal = ({
       } else if (
         // ToDo: Expired quotation [Failed] and Rejected signature [Canceled]
         result.code === Code.INTERNAL_SERVER_ERROR ||
-        result.code === Code.INVAILD_INPUTS ||
-        result.code === Code.SERVICE_TERM_DISABLE ||
-        result.code === Code.WALLET_IS_NOT_CONNECT
+        result.code === Code.INVAILD_INPUTS
       ) {
+        // Deprecated: [debug] sometimes, show the failed modal without any information revealed (20230412 - Shirley)
+        // eslint-disable-next-line no-console
+        console.log('open position result', result);
+
+        globalCtx.eliminateAllModals();
+
         globalCtx.dataFailedModalHandler({
           modalTitle: t('POSITION_MODAL.OPEN_POSITION_TITLE'),
           failedTitle: t('POSITION_MODAL.FAILED_TITLE'),
@@ -153,8 +158,28 @@ const PositionOpenModal = ({
         });
 
         globalCtx.visibleFailedModalHandler();
+      } else if (
+        result.code === Code.SERVICE_TERM_DISABLE ||
+        result.code === Code.WALLET_IS_NOT_CONNECT
+      ) {
+        // Deprecated: [debug] sometimes, show the failed modal without any information revealed (20230412 - Shirley)
+        // eslint-disable-next-line no-console
+        console.log('open position result', result);
+
+        globalCtx.eliminateAllModals();
+
+        globalCtx.dataCanceledModalHandler({
+          modalTitle: t('POSITION_MODAL.OPEN_POSITION_TITLE'),
+          modalContent: t('POSITION_MODAL.FAILED_REASON_CANCELED'),
+        });
+
+        globalCtx.visibleCanceledModalHandler();
       }
     } catch (error: any) {
+      // Deprecated: [debug] sometimes, show the failed modal without any information revealed (20230412 - Shirley)
+      // eslint-disable-next-line no-console
+      console.log('open position error', error);
+
       globalCtx.eliminateAllModals();
 
       // Info: Signature rejected

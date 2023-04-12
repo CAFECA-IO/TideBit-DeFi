@@ -127,8 +127,10 @@ const WithdrawalModal = ({
         globalCtx.visibleSuccessfulModalHandler();
         // TODO: `result.code` (20230316 - Shirley)
       } else if (
+        // Info: cancel (20230412 - Shirley)
         result.code === Code.SERVICE_TERM_DISABLE ||
-        result.code === Code.WALLET_IS_NOT_CONNECT
+        result.code === Code.WALLET_IS_NOT_CONNECT ||
+        result.code === Code.REJECTED_SIGNATURE
       ) {
         globalCtx.dataCanceledModalHandler({
           modalTitle: t('D_W_MODAL.WITHDRAW'),
@@ -164,6 +166,8 @@ const WithdrawalModal = ({
 
         globalCtx.visibleCanceledModalHandler();
       } else {
+        // ToDo: Throw error (20230412 - Shirley)
+        // result.code === Code.WITHDRAWAL_FAILED
         // Info: Unknown error
         globalCtx.dataFailedModalHandler({
           modalTitle: t('D_W_MODAL.WITHDRAW'),

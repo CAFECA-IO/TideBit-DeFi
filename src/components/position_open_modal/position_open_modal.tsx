@@ -142,7 +142,7 @@ const PositionOpenModal = ({
 
         globalCtx.visibleSuccessfulModalHandler();
       } else if (
-        // Info: cancel
+        // Info: cancel (20230412 - Shirley)
         result.code === Code.SERVICE_TERM_DISABLE ||
         result.code === Code.WALLET_IS_NOT_CONNECT ||
         result.code === Code.EXPIRED_QUOTATION_CANCELED ||
@@ -163,7 +163,6 @@ const PositionOpenModal = ({
       } else if (
         result.code === Code.INTERNAL_SERVER_ERROR ||
         result.code === Code.INVAILD_INPUTS ||
-        result.code === Code.CFD_OPEN_FAILED ||
         result.code === Code.EXPIRED_QUOTATION_FAILED ||
         result.code === Code.UNKNOWN_ERROR
       ) {
@@ -198,6 +197,8 @@ const PositionOpenModal = ({
 
         globalCtx.visibleCanceledModalHandler();
       } else {
+        // ToDo: Throw error (20230412 - Shirley)
+        // result.code === Code.CFD_OPEN_FAILED
         // Info: Unknown error between context and component
         globalCtx.dataFailedModalHandler({
           modalTitle: t('POSITION_MODAL.OPEN_POSITION_TITLE'),

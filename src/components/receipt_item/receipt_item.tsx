@@ -65,10 +65,12 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
       : (receipt.order as IWithdrawOrder).targetAsset;
   const targetAmount =
     orderType === OrderType.CFD
-      ? (receipt.order as ICFDOrder).margin.amount
+      ? (receipt.order as ICFDOrder).state === OrderState.CLOSED
+        ? (receipt.order as ICFDOrder).margin.amount
+        : (receipt.order as ICFDOrder).margin.amount * -1
       : orderType === OrderType.DEPOSIT
       ? (receipt.order as IDepositOrder).targetAmount
-      : (receipt.order as IWithdrawOrder).targetAmount;
+      : (receipt.order as IWithdrawOrder).targetAmount * -1;
 
   const displayedButtonColor =
     targetAmount == 0 ? 'bg-lightGray' : targetAmount > 0 ? 'bg-lightGreen5' : 'bg-lightRed';

@@ -24,27 +24,30 @@ const WithdrawalHistoryModal = ({
 }: IWithdrawalHistoryModal) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
-  const {orderSnapshot, createTimestamp, orderStatus, targetAmount, targetAsset, balanceSnapshot} =
-    getWithdrawalHistoryData;
+  const {receipt, createTimestamp} = getWithdrawalHistoryData;
+  const {order, balance} = receipt;
 
-  const displayedWithdrawalAsset = targetAsset;
+  const displayedWithdrawalAsset = order.targetAsset;
   const displayedWithdrawalTime = timestampToString(createTimestamp ?? 0);
   const displayedWithdrawalType = t('D_W_MODAL.WITHDRAW');
-  const displayedWithdrawalAmount = targetAmount.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
-    minimumFractionDigits: 2,
-  });
+  const displayedWithdrawalAmount = order.targetAmount.toLocaleString(
+    UNIVERSAL_NUMBER_FORMAT_LOCALE,
+    {
+      minimumFractionDigits: 2,
+    }
+  );
   const displayedWithdrawalFee =
-    orderSnapshot.fee === 0
+    order.fee === 0
       ? '-'
-      : orderSnapshot.fee.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+      : order.fee.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
           minimumFractionDigits: 2,
         });
 
   const displayedWithdrawalAssetIcon = (
     <>
       <Image
-        alt={targetAsset}
-        src={`/asset_icon/${targetAsset.toLocaleLowerCase()}.svg`}
+        alt={order.targetAsset}
+        src={`/asset_icon/${order.targetAsset.toLocaleLowerCase()}.svg`}
         width={30}
         height={30}
       />
@@ -53,24 +56,24 @@ const WithdrawalHistoryModal = ({
   );
 
   const displayedWithdrawalAvailable =
-    orderStatus === OrderStatusUnion.WAITING ? (
+    order.orderStatus === OrderStatusUnion.WAITING ? (
       <Lottie className="w-20px" animationData={smallConnectingAnimation} />
     ) : (
       <div>
-        {balanceSnapshot.available.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+        {balance.available.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
           minimumFractionDigits: 2,
         })}
       </div>
     );
 
   const displayedWithdrawalDetail =
-    orderStatus === OrderStatusUnion.WAITING ? (
+    order.orderStatus === OrderStatusUnion.WAITING ? (
       <div className="text-lightGreen5">{t('D_W_MODAL.STATUS_PROCESSING')}</div>
-    ) : orderStatus === OrderStatusUnion.FAILED ? (
+    ) : order.orderStatus === OrderStatusUnion.FAILED ? (
       <div className="text-lightRed">{t('D_W_MODAL.STATUS_FAILED')}</div>
     ) : (
       <div className="flex items-center text-tidebitTheme">
-        {orderSnapshot.txid}
+        {order.txid}
         <div className="ml-2">
           <Image src="/elements/detail_icon.svg" alt="" width={20} height={20} />
         </div>

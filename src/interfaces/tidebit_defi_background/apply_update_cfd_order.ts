@@ -1,5 +1,6 @@
 import {CFDOperation, ICFDOperation} from '../../constants/cfd_order_type';
 import {OrderType} from '../../constants/order_type';
+import {randomHex} from '../../lib/common';
 import {IApplyCFDOrder} from './apply_cfd_order';
 
 export interface IApplyUpdateCFDOrder extends IApplyCFDOrder {
@@ -16,15 +17,10 @@ function randomIntFromInterval(min: number, max: number) {
 }
 
 export const getDummyApplyUpdateCFDOrder = (currency: string, id?: string) => {
-  const date = new Date();
   const dummyApplyUpdateCFDOrder: IApplyUpdateCFDOrder = {
     orderType: OrderType.CFD,
     operation: CFDOperation.UPDATE,
-    referenceId: id
-      ? id
-      : `TB${date.getFullYear()}${
-          date.getMonth() + 1
-        }${date.getDate()}${date.getSeconds()}${currency}`,
+    referenceId: id ? id : randomHex(20),
     takeProfit: randomIntFromInterval(7000, 70000),
     stopLoss: randomIntFromInterval(100, 1000),
     guaranteedStop: false,

@@ -1,6 +1,8 @@
 import {Code, ICode, Reason} from '../../constants/code';
+import {IAcceptedCFDOrder} from './accepted_cfd_order';
 import {IAcceptedOrder} from './accepted_order';
 import {ICryptocurrency} from './cryptocurrency';
+import {IOrder} from './order';
 import {IQuotation} from './quotation';
 import {ITickerData} from './ticker_data';
 import {ITickerHistoryData} from './ticker_history_data';
@@ -13,6 +15,7 @@ export interface IResult {
     | ICryptocurrency[]
     | IAcceptedOrder
     | IAcceptedOrder[]
+    | {order: IOrder; acceptedOrder: IAcceptedOrder}
     | IQuotation
     | ITickerHistoryData[]
     | null;

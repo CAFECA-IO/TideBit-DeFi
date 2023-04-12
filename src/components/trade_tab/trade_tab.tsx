@@ -30,7 +30,7 @@ import {
   defaultResultFailed,
   defaultResultSuccess,
 } from '../../interfaces/tidebit_defi_background/result';
-import {IApplyCreateCFDOrder} from '../../interfaces/tidebit_defi_background/apply_create_cfd_order_data';
+import {IApplyCreateCFDOrder} from '../../interfaces/tidebit_defi_background/apply_create_cfd_order';
 import {Code} from '../../constants/code';
 import {CFDOperation} from '../../constants/cfd_order_type';
 

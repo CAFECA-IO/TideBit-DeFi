@@ -1,6 +1,6 @@
 import {OrderStatusUnion} from '../../constants/order_status_union';
 import {OrderType, IOrderType} from '../../constants/order_type';
-import {getTimestamp} from '../../lib/common';
+import {getTimestamp, randomHex} from '../../lib/common';
 import {IAcceptedDepositOrder} from './accepted_deposit_order';
 import {IApplyOrder} from './apply_order';
 import {IBalance} from './balance';
@@ -33,31 +33,19 @@ export const convertApplyDepositOrderToAcceptedDepositOrder = (
   txid: string,
   nodeSignature: string
 ) => {
-  const date = new Date();
-  const id = `${OrderType.DEPOSIT}${date.getTime()}${applyDepositOrder.targetAsset}${Math.ceil(
-    Math.random() * 1000000000
-  )}`;
   const accpetedDepositOrder: IAcceptedDepositOrder = {
-    ...applyDepositOrder,
-    id,
-    orderStatus: OrderStatusUnion.WAITING,
-    createTimestamp: applyDepositOrder.createTimestamp
-      ? applyDepositOrder.createTimestamp
-      : getTimestamp(),
+    txid,
     applyData: applyDepositOrder,
-    orderSnapshot: {...applyDepositOrder, txid, id},
-    userSignature: '',
-    balanceDifferenceCauseByOrder: {
-      currency: applyDepositOrder.targetAsset,
-      available: 0,
-      locked: applyDepositOrder.targetAmount,
+    userSignature: randomHex(32),
+    receipt: {
+      order: {...applyDepositOrder, id: randomHex(20), txid, orderStatus: OrderStatusUnion.WAITING},
+      balance: {
+        currency: applyDepositOrder.targetAsset,
+        available: balance.available,
+        locked: balance.locked + applyDepositOrder.targetAmount,
+      },
     },
-    balanceSnapshot: {
-      currency: applyDepositOrder.targetAsset,
-      available: balance.available,
-      locked: balance.locked + applyDepositOrder.targetAmount,
-      createTimestamp: getTimestamp(),
-    },
+    createTimestamp: getTimestamp(),
     nodeSignature: nodeSignature,
   };
   return accpetedDepositOrder;

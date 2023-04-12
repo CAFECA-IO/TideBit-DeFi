@@ -26,9 +26,9 @@ import CircularProgressBar from '../circular_progress_bar/circular_progress_bar'
 import {unitAsset} from '../../constants/config';
 import useStateRef from 'react-usestateref';
 import {useTranslation} from 'react-i18next';
-import {IDisplayAcceptedCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
+import {IDisplayCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
 import {OrderState} from '../../constants/order_state';
-import {IApplyUpdateCFDOrder} from '../../interfaces/tidebit_defi_background/apply_update_cfd_order_data';
+import {IApplyUpdateCFDOrder} from '../../interfaces/tidebit_defi_background/apply_update_cfd_order';
 import {CFDOperation} from '../../constants/cfd_order_type';
 import {OrderType} from '../../constants/order_type';
 
@@ -36,7 +36,7 @@ type TranslateFunction = (s: string) => string;
 interface IUpdatedFormModal {
   modalVisible: boolean;
   modalClickHandler: (bool?: boolean | any) => void;
-  openCfdDetails: IDisplayAcceptedCFDOrder;
+  openCfdDetails: IDisplayCFDOrder;
 }
 
 const UpdateFormModal = ({
@@ -50,18 +50,18 @@ const UpdateFormModal = ({
   const globalCtx = useGlobal();
   const marketCtx = useContext(MarketContext);
 
-  const initialTpToggle = openCfdDetails?.orderSnapshot?.takeProfit ? true : false;
-  const initialSlToggle = openCfdDetails?.orderSnapshot?.stopLoss ? true : false;
+  const initialTpToggle = openCfdDetails?.takeProfit ? true : false;
+  const initialSlToggle = openCfdDetails?.stopLoss ? true : false;
 
-  const cfdTp = openCfdDetails?.orderSnapshot?.takeProfit;
-  const cfdSl = openCfdDetails?.orderSnapshot?.stopLoss;
+  const cfdTp = openCfdDetails?.takeProfit;
+  const cfdSl = openCfdDetails?.stopLoss;
   const gsl = marketCtx.guaranteedStopFeePercentage;
 
   const initialTpInput = cfdTp ?? openCfdDetails?.suggestion?.takeProfit;
 
   const initialSlInput = cfdSl ?? openCfdDetails?.suggestion?.takeProfit;
 
-  const initialGuaranteedChecked = openCfdDetails?.orderSnapshot?.guaranteedStop;
+  const initialGuaranteedChecked = openCfdDetails?.guaranteedStop;
 
   const [tpValue, setTpValue, tpValueRef] = useState(initialTpInput);
   const [slValue, setSlValue, slValueRef] = useState(initialSlInput);
@@ -82,36 +82,32 @@ const UpdateFormModal = ({
   const [expectedLossValue, setExpectedLossValue, expectedLossValueRef] = useStateRef(0);
 
   const displayedState =
-    openCfdDetails?.orderSnapshot?.state === OrderState.OPENING
+    openCfdDetails?.state === OrderState.OPENING
       ? 'Open'
-      : openCfdDetails?.orderSnapshot?.state === OrderState.CLOSED
+      : openCfdDetails?.state === OrderState.CLOSED
       ? 'Close'
-      : openCfdDetails?.orderSnapshot?.state === OrderState.FREEZED
+      : openCfdDetails?.state === OrderState.FREEZED
       ? 'Freezed'
       : '';
   const [guaranteedStopFee, setGuaranteedStopFee, guaranteedStopFeeRef] = useStateRef(
-    Number(gsl) * openCfdDetails?.orderSnapshot?.openPrice * openCfdDetails?.orderSnapshot?.amount
+    Number(gsl) * openCfdDetails?.openPrice * openCfdDetails?.amount
   );
 
   useEffect(() => {
-    setGuaranteedStopFee(
-      Number(gsl) * openCfdDetails?.orderSnapshot?.openPrice * openCfdDetails?.orderSnapshot?.amount
-    );
-  }, [gsl, openCfdDetails?.orderSnapshot?.openPrice, openCfdDetails?.orderSnapshot?.amount]);
+    setGuaranteedStopFee(Number(gsl) * openCfdDetails?.openPrice * openCfdDetails?.amount);
+  }, [gsl, openCfdDetails?.openPrice, openCfdDetails?.amount]);
 
   const getToggledTpSetting = (bool: boolean) => {
     setTpToggle(bool);
 
     const profit =
-      openCfdDetails?.orderSnapshot?.typeOfPosition === TypeOfPosition.BUY
+      openCfdDetails?.typeOfPosition === TypeOfPosition.BUY
         ? roundToDecimalPlaces(
-            (tpValueRef.current - openCfdDetails?.orderSnapshot?.openPrice) *
-              openCfdDetails?.orderSnapshot?.amount,
+            (tpValueRef.current - openCfdDetails?.openPrice) * openCfdDetails?.amount,
             2
           )
         : roundToDecimalPlaces(
-            (openCfdDetails?.orderSnapshot?.openPrice - tpValueRef.current) *
-              openCfdDetails?.orderSnapshot?.amount,
+            (openCfdDetails?.openPrice - tpValueRef.current) * openCfdDetails?.amount,
             2
           );
 
@@ -122,15 +118,13 @@ const UpdateFormModal = ({
     setSlToggle(bool);
 
     const loss =
-      openCfdDetails?.orderSnapshot?.typeOfPosition === TypeOfPosition.BUY
+      openCfdDetails?.typeOfPosition === TypeOfPosition.BUY
         ? roundToDecimalPlaces(
-            (openCfdDetails?.orderSnapshot?.openPrice - slValueRef.current) *
-              openCfdDetails?.orderSnapshot?.amount,
+            (openCfdDetails?.openPrice - slValueRef.current) * openCfdDetails?.amount,
             2
           )
         : roundToDecimalPlaces(
-            (slValueRef.current - openCfdDetails?.orderSnapshot?.openPrice) *
-              openCfdDetails?.orderSnapshot?.amount,
+            (slValueRef.current - openCfdDetails?.openPrice) * openCfdDetails?.amount,
             2
           );
 
@@ -141,15 +135,13 @@ const UpdateFormModal = ({
     setTpValue(value);
 
     const profit =
-      openCfdDetails?.orderSnapshot?.typeOfPosition === TypeOfPosition.BUY
+      openCfdDetails?.typeOfPosition === TypeOfPosition.BUY
         ? roundToDecimalPlaces(
-            (tpValueRef.current - openCfdDetails?.orderSnapshot?.openPrice) *
-              openCfdDetails?.orderSnapshot?.amount,
+            (tpValueRef.current - openCfdDetails?.openPrice) * openCfdDetails?.amount,
             2
           )
         : roundToDecimalPlaces(
-            (openCfdDetails?.orderSnapshot?.openPrice - tpValueRef.current) *
-              openCfdDetails?.orderSnapshot?.amount,
+            (openCfdDetails?.openPrice - tpValueRef.current) * openCfdDetails?.amount,
             2
           );
 
@@ -160,15 +152,13 @@ const UpdateFormModal = ({
     setSlValue(value);
 
     const loss =
-      openCfdDetails?.orderSnapshot?.typeOfPosition === TypeOfPosition.BUY
+      openCfdDetails?.typeOfPosition === TypeOfPosition.BUY
         ? roundToDecimalPlaces(
-            (openCfdDetails?.orderSnapshot?.openPrice - slValueRef.current) *
-              openCfdDetails?.orderSnapshot?.amount,
+            (openCfdDetails?.openPrice - slValueRef.current) * openCfdDetails?.amount,
             2
           )
         : roundToDecimalPlaces(
-            (slValueRef.current - openCfdDetails?.orderSnapshot?.openPrice) *
-              openCfdDetails?.orderSnapshot?.amount,
+            (slValueRef.current - openCfdDetails?.openPrice) * openCfdDetails?.amount,
             2
           );
 
@@ -224,7 +214,7 @@ const UpdateFormModal = ({
   );
 
   const guaranteedCheckedChangeHandler = () => {
-    if (!openCfdDetails?.orderSnapshot?.guaranteedStop) {
+    if (!openCfdDetails?.guaranteedStop) {
       setGuaranteedChecked(!guaranteedChecked);
       setSlToggle(true);
       setSlLowerLimit(0);
@@ -232,13 +222,9 @@ const UpdateFormModal = ({
 
       return;
     } else {
-      setSlLowerLimit(
-        openCfdDetails?.orderSnapshot?.stopLoss ?? openCfdDetails?.suggestion?.stopLoss
-      );
-      setSlUpperLimit(
-        openCfdDetails?.orderSnapshot?.stopLoss ?? openCfdDetails?.suggestion?.stopLoss
-      );
-      setSlValue(openCfdDetails?.orderSnapshot?.stopLoss ?? openCfdDetails?.suggestion?.stopLoss);
+      setSlLowerLimit(openCfdDetails?.stopLoss ?? openCfdDetails?.suggestion?.stopLoss);
+      setSlUpperLimit(openCfdDetails?.stopLoss ?? openCfdDetails?.suggestion?.stopLoss);
+      setSlValue(openCfdDetails?.stopLoss ?? openCfdDetails?.suggestion?.stopLoss);
       return;
     }
   };
@@ -251,12 +237,12 @@ const UpdateFormModal = ({
       : '';
 
   const displayedTypeOfPosition =
-    openCfdDetails?.orderSnapshot?.typeOfPosition === TypeOfPosition.BUY
+    openCfdDetails?.typeOfPosition === TypeOfPosition.BUY
       ? t('POSITION_MODAL.TYPE_UP')
       : t('POSITION_MODAL.TYPE_DOWN');
 
   const displayedBuyOrSell =
-    openCfdDetails?.orderSnapshot?.typeOfPosition === TypeOfPosition.BUY
+    openCfdDetails?.typeOfPosition === TypeOfPosition.BUY
       ? t('POSITION_MODAL.TYPE_BUY')
       : t('POSITION_MODAL.TYPE_SELL');
 
@@ -293,22 +279,22 @@ const UpdateFormModal = ({
   const isDisplayedTakeProfitSetting = tpToggle ? 'flex' : 'invisible';
   const isDisplayedStopLossSetting = slToggle ? 'flex' : 'invisible';
 
-  const displayedSlLowerLimit = openCfdDetails?.orderSnapshot?.guaranteedStop
-    ? openCfdDetails?.orderSnapshot?.stopLoss ?? openCfdDetails?.suggestion?.stopLoss
+  const displayedSlLowerLimit = openCfdDetails?.guaranteedStop
+    ? openCfdDetails?.stopLoss ?? openCfdDetails?.suggestion?.stopLoss
     : slLowerLimit;
-  const displayedSlUpperLimit = openCfdDetails?.orderSnapshot?.guaranteedStop
-    ? openCfdDetails?.orderSnapshot?.stopLoss ?? openCfdDetails?.suggestion?.stopLoss
+  const displayedSlUpperLimit = openCfdDetails?.guaranteedStop
+    ? openCfdDetails?.stopLoss ?? openCfdDetails?.suggestion?.stopLoss
     : slUpperLimit;
 
-  const displayedTime = timestampToString(openCfdDetails?.orderSnapshot?.createTimestamp ?? 0);
+  const displayedTime = timestampToString(openCfdDetails?.createTimestamp ?? 0);
 
   const layoutInsideBorder = 'mx-5 my-3 flex justify-between';
 
-  const gslFee = openCfdDetails?.orderSnapshot?.guaranteedStop
-    ? openCfdDetails?.orderSnapshot?.guaranteedStopFee
+  const gslFee = openCfdDetails?.guaranteedStop
+    ? openCfdDetails?.guaranteedStopFee
     : guaranteedStopFeeRef.current;
 
-  const toDisplayCloseOrder = (cfd: IDisplayAcceptedCFDOrder): IDisplayAcceptedCFDOrder => {
+  const toDisplayCloseOrder = (cfd: IDisplayCFDOrder): IDisplayCFDOrder => {
     const order = {
       ...cfd,
     };
@@ -323,7 +309,7 @@ const UpdateFormModal = ({
     };
 
     // Info: (20230329 - Shirley) Detect if tpValue has changed
-    if (tpToggle && tpValue !== openCfdDetails?.orderSnapshot?.takeProfit) {
+    if (tpToggle && tpValue !== openCfdDetails?.takeProfit) {
       changedProperties = {
         ...changedProperties,
         takeProfit: tpValue,
@@ -331,7 +317,7 @@ const UpdateFormModal = ({
     }
 
     // Info: (20230329 - Shirley) Detect if spValue has changed
-    if (slToggle && slValue !== openCfdDetails?.orderSnapshot?.stopLoss) {
+    if (slToggle && slValue !== openCfdDetails?.stopLoss) {
       changedProperties = {...changedProperties, stopLoss: slValue};
     }
 
@@ -352,8 +338,8 @@ const UpdateFormModal = ({
     }
 
     // Info: (20230329 - Shirley) Detect if guaranteedStop has changed
-    if (guaranteedChecked !== openCfdDetails?.orderSnapshot?.guaranteedStop) {
-      const stopLoss = slValue !== openCfdDetails?.orderSnapshot?.stopLoss ? slValue : undefined;
+    if (guaranteedChecked !== openCfdDetails?.guaranteedStop) {
+      const stopLoss = slValue !== openCfdDetails?.stopLoss ? slValue : undefined;
       const guaranteedStopFee = guaranteedStopFeeRef.current;
 
       changedProperties = {
@@ -472,11 +458,11 @@ const UpdateFormModal = ({
   );
 
   const changeComparison = () => {
-    if (tpToggleRef.current && tpValueRef.current !== openCfdDetails?.orderSnapshot?.takeProfit) {
+    if (tpToggleRef.current && tpValueRef.current !== openCfdDetails?.takeProfit) {
       setSubmitDisabled(false);
     }
 
-    if (slToggleRef.current && slValueRef.current !== openCfdDetails?.orderSnapshot?.stopLoss) {
+    if (slToggleRef.current && slValueRef.current !== openCfdDetails?.stopLoss) {
       setSubmitDisabled(false);
     }
 
@@ -488,13 +474,13 @@ const UpdateFormModal = ({
       setSubmitDisabled(false);
     }
 
-    if (guaranteedpCheckedRef.current !== openCfdDetails?.orderSnapshot?.guaranteedStop) {
+    if (guaranteedpCheckedRef.current !== openCfdDetails?.guaranteedStop) {
       setSubmitDisabled(false);
     }
   };
 
   const nowTimestamp = new Date().getTime() / 1000;
-  const remainSecs = openCfdDetails?.orderSnapshot?.liquidationTime - nowTimestamp;
+  const remainSecs = openCfdDetails?.liquidationTime - nowTimestamp;
 
   const remainTime =
     remainSecs < 60
@@ -546,7 +532,7 @@ const UpdateFormModal = ({
                     height={30}
                     alt="icon"
                   />
-                  <h3 className="text-2xl">{openCfdDetails?.orderSnapshot?.ticker} </h3>
+                  <h3 className="text-2xl">{openCfdDetails?.ticker} </h3>
                 </div>
 
                 <div className="inline-flex items-center">
@@ -597,15 +583,10 @@ const UpdateFormModal = ({
                   <div className={`${layoutInsideBorder}`}>
                     <div className="text-lightGray">{t('POSITION_MODAL.AMOUNT')}</div>
                     <div className="">
-                      {openCfdDetails?.orderSnapshot?.amount?.toLocaleString(
-                        UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                        {
-                          minimumFractionDigits: 2,
-                        }
-                      ) ?? 0}
-                      <span className="ml-1 text-lightGray">
-                        {openCfdDetails?.orderSnapshot?.ticker}
-                      </span>
+                      {openCfdDetails?.amount?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+                        minimumFractionDigits: 2,
+                      }) ?? 0}
+                      <span className="ml-1 text-lightGray">{openCfdDetails?.ticker}</span>
                     </div>
                   </div>
 
@@ -633,12 +614,9 @@ const UpdateFormModal = ({
                     <div className="text-lightGray">{t('POSITION_MODAL.OPEN_PRICE')}</div>
                     <div className="">
                       {' '}
-                      {openCfdDetails?.orderSnapshot?.openPrice?.toLocaleString(
-                        UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                        {
-                          minimumFractionDigits: 2,
-                        }
-                      ) ?? 0}
+                      {openCfdDetails?.openPrice?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+                        minimumFractionDigits: 2,
+                      }) ?? 0}
                       <span className="ml-1 text-lightGray">{unitAsset}</span>
                     </div>
                   </div>
@@ -657,7 +635,7 @@ const UpdateFormModal = ({
                         {cfdTp?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
                           minimumFractionDigits: 2,
                         }) ?? '-'}
-                        {/* {openCfdDetails?.orderSnapshot?.takeProfit?.toLocaleString(
+                        {/* {openCfdDetails?.takeProfit?.toLocaleString(
                           UNIVERSAL_NUMBER_FORMAT_LOCALE
                         ) ?? '-'} */}
                       </span>{' '}
@@ -666,7 +644,7 @@ const UpdateFormModal = ({
                         {cfdSl?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
                           minimumFractionDigits: 2,
                         }) ?? '-'}
-                        {/* {openCfdDetails?.orderSnapshot?.stopLoss?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ??
+                        {/* {openCfdDetails?.stopLoss?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ??
                           '-'} */}
                       </span>
                     </div>
@@ -676,7 +654,7 @@ const UpdateFormModal = ({
                     <div className="text-lightGray">{t('POSITION_MODAL.LIQUIDATION_PRICE')}</div>
                     <div className="">
                       {' '}
-                      {openCfdDetails?.orderSnapshot?.liquidationPrice?.toLocaleString(
+                      {openCfdDetails?.liquidationPrice?.toLocaleString(
                         UNIVERSAL_NUMBER_FORMAT_LOCALE,
                         {
                           minimumFractionDigits: 2,

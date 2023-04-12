@@ -1,4 +1,4 @@
-import {getTime, ITimeSpanUnion, TimeSpanUnion} from './time_span_union';
+import {getTime, ITimeSpanUnion, TimeSpanUnion} from '../../constants/time_span_union';
 
 const defaultLimit = 450;
 const defaultTimeSpan = TimeSpanUnion._1m;

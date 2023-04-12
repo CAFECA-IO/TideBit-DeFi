@@ -22,28 +22,28 @@ const DepositHistoryModal = ({
   modalClickHandler,
   getDepositHistoryData,
 }: IDepositHistoryModal) => {
-  const {orderSnapshot, createTimestamp, orderStatus, targetAsset, targetAmount, balanceSnapshot} =
-    getDepositHistoryData;
+  const {receipt, createTimestamp} = getDepositHistoryData;
+  const {order, balance} = receipt;
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
   const displayedDepositTime = timestampToString(createTimestamp);
   const displayedDepositType = t('D_W_MODAL.DEPOSIT');
-  const displayedDepositAsset = targetAsset;
-  const displayedDepositAmount = targetAmount.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+  const displayedDepositAsset = order.targetAsset;
+  const displayedDepositAmount = order.targetAmount.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
     minimumFractionDigits: 2,
   });
   const displayedDepositFee =
-    orderSnapshot.fee === 0
+    order.fee === 0
       ? '-'
-      : orderSnapshot.fee.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+      : order.fee.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
           minimumFractionDigits: 2,
         });
 
   const displayedDepositHeaderAsset = (
     <>
       <Image
-        alt={targetAsset}
-        src={`/asset_icon/${targetAsset.toLocaleLowerCase()}.svg`}
+        alt={order.targetAsset}
+        src={`/asset_icon/${order.targetAsset.toLocaleLowerCase()}.svg`}
         width={30}
         height={30}
       />
@@ -52,24 +52,24 @@ const DepositHistoryModal = ({
   );
 
   const displayedDepositAvailable =
-    orderStatus === OrderStatusUnion.WAITING ? (
+    order.orderStatus === OrderStatusUnion.WAITING ? (
       <Lottie className="w-20px" animationData={smallConnectingAnimation} />
     ) : (
       <div>
-        {balanceSnapshot.available.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+        {balance.available.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
           minimumFractionDigits: 2,
         })}
       </div>
     );
 
   const displayedDepositDetail =
-    orderStatus === OrderStatusUnion.WAITING ? (
+    order.orderStatus === OrderStatusUnion.WAITING ? (
       <div className="text-lightGreen5">{t('D_W_MODAL.STATUS_PROCESSING')}</div>
-    ) : orderStatus === OrderStatusUnion.FAILED ? (
+    ) : order.orderStatus === OrderStatusUnion.FAILED ? (
       <div className="text-lightRed">{t('D_W_MODAL.STATUS_FAILED')}</div>
     ) : (
       <div className="flex items-center text-tidebitTheme">
-        {orderSnapshot.txid}
+        {order.txid}
         <div className="ml-2">
           <Image src="/elements/detail_icon.svg" alt="" width={20} height={20} />
         </div>

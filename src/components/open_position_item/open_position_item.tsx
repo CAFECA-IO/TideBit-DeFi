@@ -16,7 +16,7 @@ import {timestampToString, getNowSeconds, randomIntFromInterval} from '../../lib
 import {MarketContext} from '../../contexts/market_context';
 import {UserContext} from '../../contexts/user_context';
 import {
-  IDisplayAcceptedCFDOrder,
+  IDisplayCFDOrder,
   // getDummyDisplayAcceptedCFDOrder,
 } from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
 import {
@@ -27,7 +27,7 @@ import {useTranslation} from 'react-i18next';
 
 type TranslateFunction = (s: string) => string;
 interface IOpenPositionItemProps {
-  openCfdDetails: IDisplayAcceptedCFDOrder;
+  openCfdDetails: IDisplayCFDOrder;
 }
 
 const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProps) => {
@@ -49,7 +49,7 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
 
     toast({
       message: `marketPrice: ${
-        openCfdDetails?.orderSnapshot?.typeOfPosition === TypeOfPosition.BUY
+        openCfdDetails?.typeOfPosition === TypeOfPosition.BUY
           ? marketCtx.tickerLiveStatistics?.sellEstimatedFilledPrice ?? 0
           : marketCtx.tickerLiveStatistics?.buyEstimatedFilledPrice ?? 999999999
       }\nsuggestion: ${JSON.stringify(openCfdDetails?.suggestion)}`,
@@ -58,7 +58,7 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
   };
 
   const nowTimestamp = new Date().getTime() / 1000;
-  const remainSecs = openCfdDetails?.orderSnapshot?.liquidationTime - nowTimestamp;
+  const remainSecs = openCfdDetails?.liquidationTime - nowTimestamp;
 
   const remainTime =
     remainSecs < 60
@@ -82,7 +82,7 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
   };
 
   const displayedString =
-    openCfdDetails?.orderSnapshot?.typeOfPosition === TypeOfPosition.BUY
+    openCfdDetails?.typeOfPosition === TypeOfPosition.BUY
       ? TypeOfTransaction.LONG
       : TypeOfTransaction.SHORT;
 
@@ -112,7 +112,7 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
       ? '-'
       : '';
 
-  const displayedTime = timestampToString(openCfdDetails?.orderSnapshot?.createTimestamp ?? 0);
+  const displayedTime = timestampToString(openCfdDetails?.createTimestamp ?? 0);
 
   return (
     <div className="relative">
@@ -128,12 +128,12 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
         <div className="inline-flex items-center text-sm">
           {/* ToDo: default currency icon (20230310 - Julian) issue #338 */}
           <Image
-            src={`/asset_icon/${openCfdDetails?.orderSnapshot?.ticker}.svg`}
-            alt={`${openCfdDetails?.orderSnapshot?.ticker} icon`}
+            src={`/asset_icon/${openCfdDetails?.ticker}.svg`}
+            alt={`${openCfdDetails?.ticker} icon`}
             width={15}
             height={15}
           />
-          <p className="ml-1">{openCfdDetails?.orderSnapshot?.ticker}</p>
+          <p className="ml-1">{openCfdDetails?.ticker}</p>
 
           <div className="ml-2 text-sm text-tidebitTheme">
             {displayedString.TITLE}{' '}
@@ -153,7 +153,7 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
           strokeColor={[displayedColorHex]}
           dataArray={openCfdDetails.positionLineGraph}
           lineGraphWidth={OPEN_POSITION_LINE_GRAPH_WIDTH}
-          annotatedValue={openCfdDetails?.orderSnapshot?.openPrice}
+          annotatedValue={openCfdDetails?.openPrice}
         />
       </div>
 

@@ -11,6 +11,7 @@ export interface IDisplayAcceptedCFDOrder extends IAcceptedCFDOrder {
   closeValue?: number;
   positionLineGraph: number[];
   suggestion: ICFDSuggestion;
+  stateCode: number;
 }
 
 export const getDummyDisplayAcceptedCFDOrder = (currency: string) => {
@@ -89,6 +90,7 @@ export const dummyDisplayAcceptedCFDOrders: IDisplayAcceptedCFDOrder[] = [
     targetAsset: 'ETH',
     userSignature: '',
     nodeSignature: '',
+    stateCode: 0,
   },
   {
     display: true,
@@ -150,6 +152,7 @@ export const dummyDisplayAcceptedCFDOrders: IDisplayAcceptedCFDOrder[] = [
     targetAsset: 'ETH',
     userSignature: '',
     nodeSignature: '',
+    stateCode: 3,
   },
   {
     display: true,
@@ -189,7 +192,7 @@ export const dummyDisplayAcceptedCFDOrders: IDisplayAcceptedCFDOrder[] = [
         asset: 'USDT',
         amount: 1000,
       },
-      liquidationTime: 1681208500,
+      liquidationTime: 1682208500,
       liquidationPrice: 400,
       typeOfPosition: 'BUY',
       fee: 0,
@@ -211,6 +214,7 @@ export const dummyDisplayAcceptedCFDOrders: IDisplayAcceptedCFDOrder[] = [
     targetAsset: 'ETH',
     userSignature: '',
     nodeSignature: '',
+    stateCode: 1,
   },
   {
     display: true,
@@ -272,6 +276,7 @@ export const dummyDisplayAcceptedCFDOrders: IDisplayAcceptedCFDOrder[] = [
     targetAsset: 'SOL',
     userSignature: '',
     nodeSignature: '',
+    stateCode: 2,
   },
   {
     display: true,
@@ -334,6 +339,7 @@ export const dummyDisplayAcceptedCFDOrders: IDisplayAcceptedCFDOrder[] = [
     targetAsset: 'BTC',
     userSignature: '',
     nodeSignature: '',
+    stateCode: 3,
   },
   {
     display: true,
@@ -373,7 +379,7 @@ export const dummyDisplayAcceptedCFDOrders: IDisplayAcceptedCFDOrder[] = [
         asset: 'USDT',
         amount: 1000,
       },
-      liquidationTime: 1681253602,
+      liquidationTime: 1681953602,
       liquidationPrice: 1500,
       typeOfPosition: 'BUY',
       fee: 0,
@@ -385,7 +391,9 @@ export const dummyDisplayAcceptedCFDOrders: IDisplayAcceptedCFDOrder[] = [
     },
     openValue: 3392.4,
     closeValue: 4371.32,
-    positionLineGraph: [972, 5720, 20050, 7100, 815, 632, 2065, 3422, 4532, 6720, 8415, 2451],
+    positionLineGraph: [
+      4246, 6890, 972, 5720, 20050, 7100, 815, 632, 2065, 3422, 4532, 6720, 8415, 2451,
+    ],
     suggestion: {
       takeProfit: 0,
       stopLoss: 0,
@@ -394,6 +402,7 @@ export const dummyDisplayAcceptedCFDOrders: IDisplayAcceptedCFDOrder[] = [
     targetAsset: 'ETH',
     userSignature: '',
     nodeSignature: '',
+    stateCode: 0,
   },
 ];
 

@@ -2,6 +2,8 @@
 
 export const POSITION_PRICE_RENEWAL_INTERVAL_SECONDS = 10;
 
+export const POSITION_CLOSE_COUNTDOWN_SECONDS = 60;
+
 export const COPYRIGHT = 'TideBit © 2022';
 
 // 10 ** 9 - 0.01

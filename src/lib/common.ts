@@ -328,6 +328,13 @@ export const randomHex = (length: number) => {
 //   begin: acceptedCFDOrder.createTimestamp,
 // });
 
+export const cfdStateCode = {
+  COMMON: 0,
+  TAKE_PROFIT: 1,
+  STOP_LOSS: 2,
+  LIQUIDATION: 3,
+};
+
 export const toDisplayAcceptedCFDOrder = (
   cfdOrder: IAcceptedCFDOrder,
   positionLineGraph: number[]
@@ -354,6 +361,26 @@ export const toDisplayAcceptedCFDOrder = (
     takeProfit: rTp,
     stopLoss: rSl,
   };
+
+  const openPrice = orderSnapshot.openPrice;
+  const nowPrice = positionLineGraph[positionLineGraph.length - 1];
+  const liquidationPrice = orderSnapshot.liquidationPrice;
+  const takeProfitPrice = orderSnapshot.takeProfit ?? 0;
+  const stopLossPrice = orderSnapshot.stopLoss ?? 0;
+
+  const rangingLiquidation = Math.abs(openPrice - liquidationPrice);
+  const rangingTP = Math.abs(openPrice - takeProfitPrice);
+  const rangingSL = Math.abs(openPrice - stopLossPrice);
+
+  const stateCode =
+    Math.abs(nowPrice - liquidationPrice) <= rangingLiquidation * 0.1
+      ? cfdStateCode.LIQUIDATION
+      : Math.abs(nowPrice - stopLossPrice) <= rangingSL * 0.1
+      ? cfdStateCode.STOP_LOSS
+      : Math.abs(nowPrice - takeProfitPrice) <= rangingTP * 0.1
+      ? cfdStateCode.TAKE_PROFIT
+      : cfdStateCode.COMMON;
+
   const displayAcceptedCFDOrder: IDisplayAcceptedCFDOrder = {
     ...cfdOrder,
     pnl: {
@@ -366,6 +393,7 @@ export const toDisplayAcceptedCFDOrder = (
       : undefined,
     positionLineGraph,
     suggestion,
+    stateCode: stateCode,
   };
   return displayAcceptedCFDOrder;
 };

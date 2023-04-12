@@ -82,7 +82,13 @@ const OpenSubTab = () => {
     });
 
   /* ToDo: (20230411 - Julian) dummy data */
-  const dummyCFDs: IDisplayAcceptedCFDOrder[] = dummyDisplayAcceptedCFDOrders;
+  const dummyCFDs: IDisplayAcceptedCFDOrder[] = dummyDisplayAcceptedCFDOrders
+    .sort((a, b) => {
+      return a.createTimestamp - b.createTimestamp;
+    })
+    .sort((a, b) => {
+      return b.stateCode - a.stateCode;
+    });
 
   const openPositionList = dummyCFDs.map(cfd => {
     return (

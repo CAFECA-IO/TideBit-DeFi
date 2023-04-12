@@ -372,6 +372,7 @@ export const toDisplayAcceptedCFDOrder = (
   const rangingTP = Math.abs(openPrice - takeProfitPrice);
   const rangingSL = Math.abs(openPrice - stopLossPrice);
 
+  /* Info: (20230411 - Julian) sort by stateCode (liquidation -> SL -> TP -> createTimestamp) */
   const stateCode =
     Math.abs(nowPrice - liquidationPrice) <= rangingLiquidation * 0.1
       ? cfdStateCode.LIQUIDATION

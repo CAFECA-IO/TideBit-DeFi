@@ -4,13 +4,6 @@ import {UserContext} from '../../contexts/user_context';
 import {IDisplayAcceptedCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
 import {toDisplayAcceptedCFDOrder} from '../../lib/common';
 import {MarketContext} from '../../contexts/market_context';
-// import {IAcceptedCFDOrder} from '../../interfaces/tidebit_defi_background/accepted_cfd_order';
-// import {twoDecimal} from '../../lib/common';
-// import {ICFDSuggestion} from '../../interfaces/tidebit_defi_background/cfd_suggestion';
-// import {IPnL} from '../../interfaces/tidebit_defi_background/pnl';
-// import {ProfitState} from '../../constants/profit_state';
-// import {TypeOfPosition} from '../../constants/type_of_position';
-// import {SUGGEST_SL, SUGGEST_TP} from '../../constants/config';
 
 const OpenSubTabMobile = () => {
   const {openCFDs} = useContext(UserContext);

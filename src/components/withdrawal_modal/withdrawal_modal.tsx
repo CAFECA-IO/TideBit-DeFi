@@ -103,20 +103,20 @@ const WithdrawalModal = ({
       // TODO: for debug
       globalCtx.toast({message: 'withdraw result: ' + JSON.stringify(result), type: 'info'});
 
-      globalCtx.dataLoadingModalHandler({
-        modalTitle: t('D_W_MODAL.WITHDRAW'),
-        modalContent: t('D_W_MODAL.TRANSACTION_BROADCAST'),
-        btnMsg: t('D_W_MODAL.VIEW_ON_BUTTON'),
-        btnUrl: '#',
-      });
-
-      // INFO: for UX
-      await wait(DELAYED_HIDDEN_SECONDS);
-
-      globalCtx.eliminateAllModals();
-
       // TODO: the button URL
       if (result.success) {
+        globalCtx.dataLoadingModalHandler({
+          modalTitle: t('D_W_MODAL.WITHDRAW'),
+          modalContent: t('D_W_MODAL.TRANSACTION_BROADCAST'),
+          btnMsg: t('D_W_MODAL.VIEW_ON_BUTTON'),
+          btnUrl: '#',
+        });
+
+        // INFO: for UX
+        await wait(DELAYED_HIDDEN_SECONDS);
+
+        globalCtx.eliminateAllModals();
+
         globalCtx.dataSuccessfulModalHandler({
           modalTitle: t('D_W_MODAL.WITHDRAW'),
           modalContent: t('D_W_MODAL.TRANSACTION_SUCCEED'),

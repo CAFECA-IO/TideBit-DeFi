@@ -113,6 +113,7 @@ const PositionOpenModal = ({
     const applyCreateOrder: IApplyCreateCFDOrder = toApplyCreateOrder(openCfdRequest);
 
     try {
+      // ToDo: CFD_OPEN_FAILED: ICode;
       const result = await userCtx.createCFDOrder(applyCreateOrder);
       // globalCtx.eliminateAllModals();
 
@@ -141,9 +142,30 @@ const PositionOpenModal = ({
 
         globalCtx.visibleSuccessfulModalHandler();
       } else if (
-        // ToDo: Expired quotation [Failed] and Rejected signature [Canceled]
+        // Info: cancel
+        result.code === Code.SERVICE_TERM_DISABLE ||
+        result.code === Code.WALLET_IS_NOT_CONNECT ||
+        result.code === Code.EXPIRED_QUOTATION_CANCELED ||
+        result.code === Code.REJECTED_SIGNATURE
+      ) {
+        // Deprecated: [debug] sometimes, show the failed modal without any information revealed (20230412 - Shirley)
+        // eslint-disable-next-line no-console
+        console.log('open position result', result);
+
+        globalCtx.eliminateAllModals();
+
+        globalCtx.dataCanceledModalHandler({
+          modalTitle: t('POSITION_MODAL.OPEN_POSITION_TITLE'),
+          modalContent: t('POSITION_MODAL.FAILED_REASON_CANCELED'),
+        });
+
+        globalCtx.visibleCanceledModalHandler();
+      } else if (
         result.code === Code.INTERNAL_SERVER_ERROR ||
-        result.code === Code.INVAILD_INPUTS
+        result.code === Code.INVAILD_INPUTS ||
+        result.code === Code.CFD_OPEN_FAILED ||
+        result.code === Code.EXPIRED_QUOTATION_FAILED ||
+        result.code === Code.UNKNOWN_ERROR
       ) {
         // Deprecated: [debug] sometimes, show the failed modal without any information revealed (20230412 - Shirley)
         // eslint-disable-next-line no-console
@@ -158,22 +180,6 @@ const PositionOpenModal = ({
         });
 
         globalCtx.visibleFailedModalHandler();
-      } else if (
-        result.code === Code.SERVICE_TERM_DISABLE ||
-        result.code === Code.WALLET_IS_NOT_CONNECT
-      ) {
-        // Deprecated: [debug] sometimes, show the failed modal without any information revealed (20230412 - Shirley)
-        // eslint-disable-next-line no-console
-        console.log('open position result', result);
-
-        globalCtx.eliminateAllModals();
-
-        globalCtx.dataCanceledModalHandler({
-          modalTitle: t('POSITION_MODAL.OPEN_POSITION_TITLE'),
-          modalContent: t('POSITION_MODAL.FAILED_REASON_CANCELED'),
-        });
-
-        globalCtx.visibleCanceledModalHandler();
       }
     } catch (error: any) {
       // Deprecated: [debug] sometimes, show the failed modal without any information revealed (20230412 - Shirley)
@@ -192,7 +198,7 @@ const PositionOpenModal = ({
 
         globalCtx.visibleCanceledModalHandler();
       } else {
-        // Info: Unknown error
+        // Info: Unknown error between context and component
         globalCtx.dataFailedModalHandler({
           modalTitle: t('POSITION_MODAL.OPEN_POSITION_TITLE'),
           failedTitle: t('POSITION_MODAL.FAILED_TITLE'),

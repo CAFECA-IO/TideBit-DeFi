@@ -12,6 +12,8 @@ import {useGlobal} from '../../contexts/global_context';
 import {locker, wait} from '../../lib/common';
 import {DELAYED_HIDDEN_SECONDS} from '../../constants/display';
 import {useTranslation} from 'next-i18next';
+import {Code} from '../../constants/code';
+import useStateRef from 'react-usestateref';
 
 type TranslateFunction = (s: string) => string;
 interface ISignatureProcessModal {
@@ -59,38 +61,8 @@ const SignatureProcessModal = ({
     REJECTED: 'REJECTED',
   };
 
-  const [connectingProcess, setConnectingProcess] = useState<IConnectingProcessType>(
-    ConnectingProcess.EMPTY
-  );
-
-  // const secondStopResult: ISignInResult = userCtx.connectingProcess
-  // const connectingProcess =
-
-  // const firstStepSuccess = userCtx.isConnected;
-  // const firstStepError = !userCtx.isConnected;
-  // const secondStepSuccess = userCtx.enableServiceTerm;
-  // const secondStepError = !userCtx.enableServiceTerm;
-
-  // -----------------------------------
-  // const [firstStepSuccess, setFirstStepSuccess] = useState(userCtx.isConnected);
-  // const [firstStepError, setFirstStepError] = useState(!userCtx.isConnected);
-  // const [secondStepSuccess, setSecondStepSuccess] = useState(userCtx.enableServiceTerm);
-  // const [secondStepError, setSecondStepError] = useState(!userCtx.enableServiceTerm);
-  // -----------------------------------
-
-  // const requestSendingHandler = async () => {
-  //   try {
-  //     setLoading(true);
-  //     const signResult = await userCtx.signServiceTerm();
-  //     globalCtx.toast({type: 'success', message: `Success:  ${signResult}`});
-  //     console.log(signResult);
-  //   } catch (error) {
-  //     console.log(error);
-  //     globalCtx.toast({type: 'error', message: `Error:  ${error}`});
-  //   }
-
-  //   setLoading(false);
-  // };
+  const [connectingProcess, setConnectingProcess, connectingProcessRef] =
+    useStateRef<IConnectingProcessType>(ConnectingProcess.EMPTY);
 
   const controlSpace =
     !userCtx.isConnected || connectingProcess === ConnectingProcess.REJECTED
@@ -99,15 +71,9 @@ const SignatureProcessModal = ({
   const btnSpace =
     userCtx.isConnected && connectingProcess !== ConnectingProcess.REJECTED ? 'mt-10' : 'mt-16';
 
-  // if (firstStepError && secondStepError) return
-  // if (firstStepError && secondStepSuccess) return
-
   const firstStepIcon = (
     <div className="relative flex items-center justify-center">
       <Lottie className="relative w-32" animationData={activeIconPulse} />
-      {/* <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-sky-400 opacity-75"></span> */}
-
-      {/* absolute top-48px left-46px */}
       <Image
         className="absolute mr-1 mb-1px"
         src="/elements/group_2415.svg"
@@ -133,9 +99,7 @@ const SignatureProcessModal = ({
   const secondStepActivatedIcon = (
     <div className="relative flex items-center justify-center">
       <Lottie className="relative w-32" animationData={activeIconPulse} />
-      {/* <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-sky-400 opacity-75"></span> */}
 
-      {/* absolute top-48px left-46px */}
       <Image
         className="absolute mr-1 mb-1px"
         src="/elements/group_2418(1).svg"
@@ -157,45 +121,53 @@ const SignatureProcessModal = ({
 
     if (!userCtx.isConnected) {
       // It's a cycle
-      const connectWalletResult = await userCtx.connect();
+      try {
+        setConnectingProcess(ConnectingProcess.CONNECTING);
 
-      // TODO1
-      unlock();
+        const connectResult = await userCtx.connect();
 
-      // if (connectWalletResult) {
-      //   await wait(DELAYED_HIDDEN_SECONDS);
-      //   // setConnectingProcess(ConnectingProcess.CONNECTED);
-      // }
+        unlock();
+      } catch (e) {
+        unlock();
+      }
 
       setConnectingProcess(ConnectingProcess.EMPTY);
     } else {
-      const signResult = await userCtx.signServiceTerm();
+      try {
+        setConnectingProcess(ConnectingProcess.CONNECTING);
 
-      // TODO1
-      unlock();
+        const signResult = await userCtx.signServiceTerm();
 
-      if (signResult) {
-        setConnectingProcess(ConnectingProcess.CONNECTED);
+        unlock();
 
-        await wait(DELAYED_HIDDEN_SECONDS / 5);
-        // globalCtx.visibleSignatureProcessModalHandler();
-        setConnectingProcess(ConnectingProcess.EMPTY);
-      } else {
-        await wait(DELAYED_HIDDEN_SECONDS / 5);
+        if (signResult.success) {
+          setConnectingProcess(ConnectingProcess.CONNECTED);
+
+          await wait(DELAYED_HIDDEN_SECONDS / 5);
+          // globalCtx.visibleSignatureProcessModalHandler();
+          setConnectingProcess(ConnectingProcess.EMPTY);
+
+          globalCtx.visibleSignatureProcessModalHandler();
+          globalCtx.visibleHelloModalHandler();
+        } else {
+          await wait(DELAYED_HIDDEN_SECONDS / 5);
+          setConnectingProcess(ConnectingProcess.REJECTED);
+        }
+      } catch (e) {
+        unlock();
+
         setConnectingProcess(ConnectingProcess.REJECTED);
-        return;
       }
-
-      globalCtx.visibleSignatureProcessModalHandler();
-      globalCtx.visibleHelloModalHandler();
     }
   };
 
   // TODO: Replace with `userCtx.connectingProcess === 'CONNECTING'` Else if `userCtx.connectingProcess === 'EMPTY'`
   const requestButtonHandler =
-    connectingProcess === 'CONNECTING' || connectingProcess === 'CONNECTED' ? (
+    connectingProcessRef.current === ConnectingProcess.CONNECTING ||
+    connectingProcessRef.current === ConnectingProcess.CONNECTED ? (
       <Lottie className="w-40px" animationData={smallConnectingAnimation} />
-    ) : connectingProcess === 'EMPTY' || connectingProcess === 'REJECTED' ? (
+    ) : connectingProcessRef.current === ConnectingProcess.EMPTY ||
+      connectingProcessRef.current === ConnectingProcess.REJECTED ? (
       <TideButton
         onClick={requestSendingHandler}
         className="rounded bg-tidebitTheme px-5 py-2 text-base transition-all hover:opacity-90"

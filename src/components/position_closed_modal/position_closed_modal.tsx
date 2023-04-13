@@ -270,6 +270,12 @@ const PositionClosedModal = ({
   const submitClickHandler = async () => {
     const [lock, unlock] = locker('position_closed_modal.submitClickHandler');
     if (!lock()) return;
+
+    const applyCloseOrder: IApplyCloseCFDOrder = toApplyCloseOrder(
+      openCfdDetails,
+      gQuotationRef.current
+    );
+
     await wait(DELAYED_HIDDEN_SECONDS / 5);
     modalClickHandler();
 
@@ -280,33 +286,26 @@ const PositionClosedModal = ({
     globalCtx.visibleLoadingModalHandler();
 
     try {
-      const applyCloseOrder: IApplyCloseCFDOrder = toApplyCloseOrder(
-        openCfdDetails,
-        gQuotationRef.current
-      );
-
       const result = await userCtx.closeCFDOrder(applyCloseOrder);
       // Deprecated: before merging into develop (20230330 - Shirley)
       // eslint-disable-next-line no-console
       console.log('close result', result);
 
-      // TODO: temporary waiting
-      await wait(DELAYED_HIDDEN_SECONDS);
-      globalCtx.dataLoadingModalHandler({
-        modalTitle: t('POSITION_MODAL.CLOSE_POSITION_TITLE'),
-        modalContent: t('POSITION_MODAL.TRANSACTION_BROADCAST'),
-        btnMsg: t('POSITION_MODAL.VIEW_ON_BUTTON'),
-        btnUrl: '#',
-      });
-
-      // TODO: temporary waiting
-      await wait(DELAYED_HIDDEN_SECONDS);
-
-      globalCtx.eliminateAllModals();
-
       // TODO: Revise the `result.reason` to constant by using enum or object
       // TODO: the button URL
       if (result.success) {
+        globalCtx.dataLoadingModalHandler({
+          modalTitle: t('POSITION_MODAL.CLOSE_POSITION_TITLE'),
+          modalContent: t('POSITION_MODAL.TRANSACTION_BROADCAST'),
+          btnMsg: t('POSITION_MODAL.VIEW_ON_BUTTON'),
+          btnUrl: '#',
+        });
+
+        // ToDo: Need to get a singnal from somewhere to show the successful modal
+        await wait(DELAYED_HIDDEN_SECONDS);
+
+        globalCtx.eliminateAllModals();
+
         globalCtx.dataSuccessfulModalHandler({
           modalTitle: t('POSITION_MODAL.CLOSE_POSITION_TITLE'),
           modalContent: t('POSITION_MODAL.TRANSACTION_SUCCEED'),

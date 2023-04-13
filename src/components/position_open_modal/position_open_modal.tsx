@@ -101,6 +101,8 @@ const PositionOpenModal = ({
     // }, DISPLAY_QUOTATION_RENEWAL_INTERVAL_SECONDS * 1000);
 
     if (!lock()) return;
+    const applyCreateOrder: IApplyCreateCFDOrder = toApplyCreateOrder(openCfdRequest);
+
     await wait(DELAYED_HIDDEN_SECONDS / 5);
     modalClickHandler();
 
@@ -109,8 +111,6 @@ const PositionOpenModal = ({
       modalContent: t('POSITION_MODAL.CONFIRM_CONTENT'),
     });
     globalCtx.visibleLoadingModalHandler();
-
-    const applyCreateOrder: IApplyCreateCFDOrder = toApplyCreateOrder(openCfdRequest);
 
     try {
       // ToDo: CFD_OPEN_FAILED: ICode;

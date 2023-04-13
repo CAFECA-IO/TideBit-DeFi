@@ -22,6 +22,7 @@ const OpenSubTab = () => {
 
   /* ToDo: (20230411 - Julian) dummy data */
   const dummyCFDs: IDisplayCFDOrder[] = listDummyDisplayCFDOrder('ETH')
+    .slice(-2)
     .sort((a, b) => {
       return a.createTimestamp - b.createTimestamp;
     })

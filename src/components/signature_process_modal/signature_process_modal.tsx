@@ -114,7 +114,6 @@ const SignatureProcessModal = ({
   const requestSendingHandler = async () => {
     const [lock, unlock] = locker('signature_process_modal.RequestSendingHandler');
 
-    // TODO1
     if (!lock()) return; // 沒有成功上鎖，所以不執行接下來的程式碼
 
     if (!userCtx.isConnected) {
@@ -146,11 +145,6 @@ const SignatureProcessModal = ({
 
           globalCtx.visibleSignatureProcessModalHandler();
           globalCtx.visibleHelloModalHandler();
-        } else if (signResult.code === Code.SERVICE_TERM_DISABLE) {
-          setErrorCode(Code.SERVICE_TERM_DISABLE);
-
-          await wait(DELAYED_HIDDEN_SECONDS / 5);
-          setConnectingProcess(ConnectingProcess.REJECTED);
         } else {
           switch (signResult.code) {
             case Code.SERVICE_TERM_DISABLE:

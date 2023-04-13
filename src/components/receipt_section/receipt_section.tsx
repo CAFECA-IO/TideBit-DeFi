@@ -108,7 +108,7 @@ const ReceiptSection = () => {
   });
 
   return (
-    <div className="p-4 sm:p-16">
+    <div className="p-8 lg:p-16">
       <ReceiptSearch
         filteredTradingType={filteredTradingType}
         setFilteredTradingType={setFilteredTradingType}

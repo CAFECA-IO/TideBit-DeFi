@@ -175,12 +175,12 @@ const NavBarMobile = () => {
                 </Link>
               </div>
               <div className="flex items-center justify-start px-3">
-                <Link href="#" className={menuItemStyles}>
+                <Link href={TBDURL.COMING_SOON} className={menuItemStyles}>
                   {t('NAV_BAR.LEADERBOARD')}
                 </Link>
               </div>
               <div className="flex items-center justify-start px-3">
-                <Link href="#" className={menuItemStyles}>
+                <Link href={TBDURL.COMING_SOON} className={menuItemStyles}>
                   {t('NAV_BAR.SUPPORT')}
                 </Link>
               </div>

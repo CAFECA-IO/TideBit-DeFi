@@ -108,7 +108,7 @@ const ReceiptSearch = ({
   };
 
   const displayedFilterBar = (
-    <div className="hidden space-x-10 text-lightWhite sm:flex">
+    <div className="hidden space-x-10 text-lightWhite sm:flex sm:py-2">
       {/* Info: (20230316 - Julian) Trading Type Dropdown Menu */}
       <div className="flex flex-col items-start">
         {t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_TITLE')}
@@ -166,7 +166,7 @@ const ReceiptSearch = ({
   );
 
   const displayedSearchBar = (
-    <div className="relative w-300px">
+    <div className="relative w-8/10 sm:py-2 lg:w-300px">
       <input
         type="search"
         className="block w-full rounded-full bg-darkGray7 p-3 pl-4 text-sm text-white focus:border-blue-500 focus:outline-none focus:ring-0 focus:ring-blue-500"
@@ -176,7 +176,7 @@ const ReceiptSearch = ({
       />
       <button
         type="button"
-        className="absolute top-0 right-1 rounded-lg bg-transparent px-4 py-2 text-sm font-medium text-white hover:text-gray-700/80 focus:outline-none focus:ring-0 focus:ring-blue-300"
+        className="absolute top-2 right-1 rounded-lg bg-transparent px-4 py-2 text-sm font-medium text-white hover:text-gray-700/80 focus:outline-none focus:ring-0 focus:ring-blue-300"
       >
         <CgSearch size={30} />
       </button>
@@ -194,9 +194,9 @@ const ReceiptSearch = ({
   );
 
   return (
-    <div className="flex flex-col items-center sm:items-stretch">
+    <div className="items-between flex w-full flex-col">
       {/* displayedTicker */}
-      <div className="flex items-center justify-between py-6">
+      <div className="flex flex-col items-center justify-between lg:flex-row lg:py-6">
         {displayedFilterBar}
         {displayedSearchBar}
       </div>

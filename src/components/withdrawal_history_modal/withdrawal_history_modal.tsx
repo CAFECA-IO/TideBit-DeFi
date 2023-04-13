@@ -8,6 +8,7 @@ import {IAcceptedWithdrawOrder} from '../../interfaces/tidebit_defi_background/a
 import {UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
 import {timestampToString} from '../../lib/common';
 import {useTranslation} from 'react-i18next';
+import {FRACTION_DIGITS} from '../../constants/config';
 
 type TranslateFunction = (s: string) => string;
 
@@ -32,16 +33,12 @@ const WithdrawalHistoryModal = ({
   const displayedWithdrawalType = t('D_W_MODAL.WITHDRAW');
   const displayedWithdrawalAmount = order.targetAmount.toLocaleString(
     UNIVERSAL_NUMBER_FORMAT_LOCALE,
-    {
-      minimumFractionDigits: 2,
-    }
+    FRACTION_DIGITS
   );
   const displayedWithdrawalFee =
     order.fee === 0
       ? '-'
-      : order.fee.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
-          minimumFractionDigits: 2,
-        });
+      : order.fee.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
 
   const displayedWithdrawalAssetIcon = (
     <>
@@ -59,11 +56,7 @@ const WithdrawalHistoryModal = ({
     order.orderStatus === OrderStatusUnion.WAITING ? (
       <Lottie className="w-20px" animationData={smallConnectingAnimation} />
     ) : (
-      <div>
-        {balance.available.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
-          minimumFractionDigits: 2,
-        })}
-      </div>
+      <div>{balance.available.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)}</div>
     );
 
   const displayedWithdrawalDetail =

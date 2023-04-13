@@ -12,6 +12,13 @@ export const COPYRIGHT = 'TideBit © 2022';
 // 10 ** 9 - 0.01
 export const TARGET_LIMIT_DIGITS = 10 ** 9 - 0.01;
 
+//export const FRACTION_DIGITS = 2;
+
+export const FRACTION_DIGITS = {
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2,
+};
+
 export const WALLET_CONNECT_BRIDGE_URL = 'https://bridge.walletconnect.org';
 
 export const SUPPORTED_NETWORKS = [

@@ -8,6 +8,7 @@ import {useGlobal} from '../../contexts/global_context';
 import {IDisplayCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
 import {useTranslation} from 'react-i18next';
 import {MarketContext} from '../../contexts/market_context';
+import {FRACTION_DIGITS} from '../../constants/config';
 
 type TranslateFunction = (s: string) => string;
 interface IHistoryPositionItemProps {
@@ -32,9 +33,7 @@ const HistoryPositionItem = ({closedCfdDetails, ...otherProps}: IHistoryPosition
 
   const displayedPnl = Math.abs(closedCfdDetails.pnl.value).toLocaleString(
     UNIVERSAL_NUMBER_FORMAT_LOCALE,
-    {
-      minimumFractionDigits: 2,
-    }
+    FRACTION_DIGITS
   );
 
   const displayedSymbol =
@@ -84,13 +83,15 @@ const HistoryPositionItem = ({closedCfdDetails, ...otherProps}: IHistoryPosition
             <div className="text-lightGray">{t('TRADE_PAGE.HISTORY_POSITION_ITEM_VALUE')}</div>
             <div className="">
               $
-              {closedCfdDetails.openValue.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
-                minimumFractionDigits: 2,
-              })}
+              {closedCfdDetails.openValue.toLocaleString(
+                UNIVERSAL_NUMBER_FORMAT_LOCALE,
+                FRACTION_DIGITS
+              )}
               / $
-              {(closedCfdDetails.closeValue || 0).toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
-                minimumFractionDigits: 2,
-              })}
+              {(closedCfdDetails.closeValue || 0).toLocaleString(
+                UNIVERSAL_NUMBER_FORMAT_LOCALE,
+                FRACTION_DIGITS
+              )}
             </div>
           </div>
 

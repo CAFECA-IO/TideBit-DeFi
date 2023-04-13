@@ -12,7 +12,7 @@ import {useGlobal} from '../../contexts/global_context';
 import {locker, wait} from '../../lib/common';
 import {DELAYED_HIDDEN_SECONDS} from '../../constants/display';
 import {useTranslation} from 'next-i18next';
-import {Code} from '../../constants/code';
+import {Code, ICode} from '../../constants/code';
 import useStateRef from 'react-usestateref';
 
 type TranslateFunction = (s: string) => string;
@@ -63,6 +63,7 @@ const SignatureProcessModal = ({
 
   const [connectingProcess, setConnectingProcess, connectingProcessRef] =
     useStateRef<IConnectingProcessType>(ConnectingProcess.EMPTY);
+  const [errorCode, setErrorCode, errorCodeRef] = useStateRef<ICode>(Code.SERVICE_TERM_DISABLE);
 
   const controlSpace =
     !userCtx.isConnected || connectingProcess === ConnectingProcess.REJECTED
@@ -116,22 +117,19 @@ const SignatureProcessModal = ({
     // TODO1
     if (!lock()) return; // 沒有成功上鎖，所以不執行接下來的程式碼
 
-    // setConnectingProcess(ConnectingProcess.CONNECTING);
-    // console.log('is connected: ', userCtx.isConnected);
-
     if (!userCtx.isConnected) {
       // It's a cycle
       try {
         setConnectingProcess(ConnectingProcess.CONNECTING);
 
         const connectResult = await userCtx.connect();
-
-        unlock();
       } catch (e) {
+        // Info: 用戶拒絕連線，不會造成錯誤，如果有錯誤就是 component 跟 context 之間的錯誤
+        // ToDo: Report the error which user rejected the signature in UserContext (20230411 - Shirley)
+      } finally {
         unlock();
+        setConnectingProcess(ConnectingProcess.EMPTY);
       }
-
-      setConnectingProcess(ConnectingProcess.EMPTY);
     } else {
       try {
         setConnectingProcess(ConnectingProcess.CONNECTING);
@@ -144,24 +142,47 @@ const SignatureProcessModal = ({
           setConnectingProcess(ConnectingProcess.CONNECTED);
 
           await wait(DELAYED_HIDDEN_SECONDS / 5);
-          // globalCtx.visibleSignatureProcessModalHandler();
           setConnectingProcess(ConnectingProcess.EMPTY);
 
           globalCtx.visibleSignatureProcessModalHandler();
           globalCtx.visibleHelloModalHandler();
+        } else if (signResult.code === Code.SERVICE_TERM_DISABLE) {
+          setErrorCode(Code.SERVICE_TERM_DISABLE);
+
+          await wait(DELAYED_HIDDEN_SECONDS / 5);
+          setConnectingProcess(ConnectingProcess.REJECTED);
         } else {
+          switch (signResult.code) {
+            case Code.SERVICE_TERM_DISABLE:
+              setErrorCode(Code.SERVICE_TERM_DISABLE);
+              break;
+            case Code.UNKNOWN_ERROR:
+              setErrorCode(Code.UNKNOWN_ERROR);
+              break;
+
+            default:
+              setErrorCode(Code.UNKNOWN_ERROR);
+              break;
+          }
+
           await wait(DELAYED_HIDDEN_SECONDS / 5);
           setConnectingProcess(ConnectingProcess.REJECTED);
         }
-      } catch (e) {
+      } catch (error: any) {
         unlock();
+
+        if (error?.code === 4001) {
+          setErrorCode(Code.SERVICE_TERM_DISABLE);
+        } else {
+          // ToDo: report error to backend (20230413 - Shirley)
+          setErrorCode(Code.UNKNOWN_ERROR);
+        }
 
         setConnectingProcess(ConnectingProcess.REJECTED);
       }
     }
   };
 
-  // TODO: Replace with `userCtx.connectingProcess === 'CONNECTING'` Else if `userCtx.connectingProcess === 'EMPTY'`
   const requestButtonHandler =
     connectingProcessRef.current === ConnectingProcess.CONNECTING ||
     connectingProcessRef.current === ConnectingProcess.CONNECTED ? (
@@ -179,11 +200,7 @@ const SignatureProcessModal = ({
   const firstStepDefaultView = (
     <>
       <div className="-mt-6 -mb-5 inline-flex">
-        <div className="relative -ml-11 -mt-2">
-          {' '}
-          {firstStepIcon}
-          {/* <Image src="/elements/group_2418(1).svg" width={32} height={32} alt="step 2 icon" /> */}
-        </div>
+        <div className="relative -ml-11 -mt-2"> {firstStepIcon}</div>
         <div className="-ml-7 w-271px space-y-1 pt-7 text-lightWhite">
           <div className="text-lg">{t('WALLET_PANEL.SIGNATURE_STEP1_TITLE')}</div>
           <div className="text-sm">{t('WALLET_PANEL.SIGNATURE_STEP1_DESCRIPTION')}</div>
@@ -214,16 +231,7 @@ const SignatureProcessModal = ({
   );
 
   const firstStepSectionHandler = (
-    // {firstStepSuccess ? 'success section' : firstStepError ? 'error section' : 'default section'}
-    <>
-      {userCtx.isConnected ? firstStepSuccessView : firstStepDefaultView}
-      {/* TODO: [in storage] Stale solution */}
-      {/* {firstStepSuccess
-        ? firstStepSuccessView
-        : firstStepError
-        ? firstStepErrorView
-        : firstStepDefaultView} */}
-    </>
+    <>{userCtx.isConnected ? firstStepSuccessView : firstStepDefaultView}</>
   );
 
   const secondStepDefaultView = (
@@ -240,11 +248,7 @@ const SignatureProcessModal = ({
   const secondStepActiveView = (
     <>
       <div className="inline-flex">
-        <div className="relative -ml-11">
-          {' '}
-          {secondStepActivatedIcon}
-          {/* <Image src="/elements/group_2418(1).svg" width={32} height={32} alt="step 2 icon" /> */}
-        </div>
+        <div className="relative -ml-11"> {secondStepActivatedIcon}</div>
         <div className="-ml-7 w-271px space-y-1 pt-7 text-lightWhite">
           <div className="text-lg">{t('WALLET_PANEL.SIGNATURE_STEP2_TITLE')}</div>
           <div className="text-sm">{t('WALLET_PANEL.SIGNATURE_STEP2_DESCRIPTION')}</div>
@@ -274,38 +278,38 @@ const SignatureProcessModal = ({
     </>
   );
 
+  const secondStepDisableServiceTermErrorView = (
+    <>
+      <div className="mr-6 mt-7 -mb-5">{errorIcon}</div>
+      <div className="mt-7 -mb-5 w-271px space-y-1 text-lightWhite">
+        <div className="text-lg">{t('WALLET_PANEL.SIGNATURE_STEP2_TITLE')}</div>
+        <div className="text-sm">{t('WALLET_PANEL.SIGNATURE_STEP2_DESCRIPTION')}</div>
+        <div className="text-sm text-lightRed3">
+          {t('WALLET_PANEL.DISABLE_SERVICE_TERM_ERROR_MESSAGE')}
+        </div>
+      </div>
+    </>
+  );
+
+  const secondStopErrorHandler = (errorType?: string) => {
+    switch (errorType) {
+      case Code.SERVICE_TERM_DISABLE:
+        return secondStepDisableServiceTermErrorView;
+
+      default:
+        return secondStepErrorView;
+    }
+  };
+
   const secondStepSectionHandler = (
     <>
-      {/* Temporary solution for no connecting process attribute */}
-      {/* {userCtx.enableServiceTerm
-        ? secondStepSuccessView
-        : userCtx.isConnected
-        ? secondStepActiveView
-        : secondStepDefaultView} */}
-
-      {/* TODO: Solution with connecting process attribute */}
       {!userCtx.isConnected
         ? secondStepDefaultView
         : connectingProcess === ConnectingProcess.CONNECTED
         ? secondStepSuccessView
         : connectingProcess === ConnectingProcess.REJECTED
-        ? secondStepErrorView
+        ? secondStopErrorHandler(errorCodeRef.current)
         : secondStepActiveView}
-
-      {/* {userCtx.isConnected && userCtx.connectingProcess === 'connected' && secondStepSuccessView}
-      {userCtx.isConnected && userCtx.connectingProcess === 'rejected' && secondStepErrorView}
-      {userCtx.isConnected && userCtx.connectingProcess === 'connecting' && secondStepActiveView} //
-      btn
-      {userCtx.isConnected && userCtx.connectingProcess === 'empty' && secondStepDefaultView} // btn */}
-
-      {/* -----TODO: [in storage] Stale solution----- */}
-      {/* {secondStepSuccess
-        ? secondStepSuccessView
-        : secondStepError
-        ? secondStepErrorView
-        : firstStepSuccess
-        ? secondStepActiveView
-        : secondStepDefaultView} */}
     </>
   );
 

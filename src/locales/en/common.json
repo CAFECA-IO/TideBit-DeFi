@@ -146,6 +146,7 @@
     "SIGNATURE_STEP1_DESCRIPTION": "Confirm you are the owner of this wallet",
     "SIGNATURE_STEP2_TITLE": "Enable trading",
     "SIGNATURE_STEP2_DESCRIPTION": "Enable secure access to our API for lightning quick trading.",
+    "DISABLE_SERVICE_TERM_ERROR_MESSAGE": "Please agree to the terms and conditions.",
     "ERROR_MESSAGE": "Something went wrong, please try again",
     "SEND_REQUESTS_BUTTON": "Send Requests",
     "HELLO_DESCRIPTION": "You can start using TideBit now.",

@@ -39,6 +39,7 @@ const I18n = ({langIsOpen, setLangIsOpen}: II18nParams) => {
   const internationalizationList = [
     {label: '繁體中文', value: 'tw'},
     {label: 'English', value: 'en'},
+    {label: '简体中文', value: 'cn'},
   ];
 
   const displayedDesktopMenu = openMenu ? (
@@ -68,15 +69,15 @@ const I18n = ({langIsOpen, setLangIsOpen}: II18nParams) => {
     <div className="opacity-100 transition-opacity lg:hidden">
       <div
         id="i18nDropdown"
-        className="absolute top-32 left-0 z-10 h-full w-screen bg-darkGray/100 shadow"
+        className="absolute top-28 left-0 z-10 h-full w-screen bg-darkGray shadow"
       >
-        <ul className="pt-3 text-center text-base dark:text-gray-200" aria-labelledby="i18nButton">
+        <ul className="text-center text-base dark:text-gray-200" aria-labelledby="i18nButton">
           {internationalizationList.map((item, index) => (
             <li key={index} onClick={clickHandler}>
               <Link
                 locale={item.value}
                 href={asPath}
-                className="block rounded-none px-3 py-7 font-medium hover:cursor-pointer hover:text-tidebitTheme"
+                className="block rounded-none px-3 py-5 font-medium hover:cursor-pointer hover:text-tidebitTheme"
               >
                 {item.label}
               </Link>

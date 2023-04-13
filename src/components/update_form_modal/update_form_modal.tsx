@@ -23,7 +23,7 @@ import {
 import {MarketContext} from '../../contexts/market_context';
 import useState from 'react-usestateref';
 import CircularProgressBar from '../circular_progress_bar/circular_progress_bar';
-import {unitAsset} from '../../constants/config';
+import {unitAsset, FRACTION_DIGITS} from '../../constants/config';
 import useStateRef from 'react-usestateref';
 import {useTranslation} from 'react-i18next';
 import {IDisplayCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
@@ -424,11 +424,7 @@ const UpdateFormModal = ({
           {t('POSITION_MODAL.GUARANTEED_STOP')}
           <span className="ml-1 text-lightWhite">
             ({t('POSITION_MODAL.FEE')}:{' '}
-            {gslFee?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
-            })}{' '}
-            {unitAsset})
+            {gslFee?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)} {unitAsset})
           </span>
           {/* tooltip */}
           <div className="ml-3">
@@ -527,12 +523,12 @@ const UpdateFormModal = ({
               <div className="mx-10 mt-6 flex w-full justify-between">
                 <div className="flex items-center space-x-3 text-center text-lightWhite">
                   <Image
-                    src={marketCtx.selectedTicker?.tokenImg ?? ''}
+                    src={`/asset_icon/${openCfdDetails.ticker.toLowerCase()}.svg`}
                     width={30}
                     height={30}
-                    alt="icon"
+                    alt="currency icon"
                   />
-                  <h3 className="text-2xl">{openCfdDetails?.ticker} </h3>
+                  <h3 className="text-2xl">{openCfdDetails.ticker} </h3>
                 </div>
 
                 <div className="inline-flex items-center">
@@ -583,9 +579,10 @@ const UpdateFormModal = ({
                   <div className={`${layoutInsideBorder}`}>
                     <div className="text-lightGray">{t('POSITION_MODAL.AMOUNT')}</div>
                     <div className="">
-                      {openCfdDetails?.amount?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
-                        minimumFractionDigits: 2,
-                      }) ?? 0}
+                      {openCfdDetails?.amount?.toLocaleString(
+                        UNIVERSAL_NUMBER_FORMAT_LOCALE,
+                        FRACTION_DIGITS
+                      ) ?? 0}
                       <span className="ml-1 text-lightGray">{openCfdDetails?.ticker}</span>
                     </div>
                   </div>
@@ -594,9 +591,10 @@ const UpdateFormModal = ({
                     <div className="text-lightGray">{t('POSITION_MODAL.PNL')}</div>
                     <div className={`${displayedPnLColor}`}>
                       {displayedPnLSymbol} ${' '}
-                      {openCfdDetails?.pnl?.value?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
-                        minimumFractionDigits: 2,
-                      })}
+                      {openCfdDetails?.pnl?.value?.toLocaleString(
+                        UNIVERSAL_NUMBER_FORMAT_LOCALE,
+                        FRACTION_DIGITS
+                      )}
                     </div>
                   </div>
 
@@ -604,9 +602,10 @@ const UpdateFormModal = ({
                     <div className="text-lightGray">{t('POSITION_MODAL.OPEN_VALUE')}</div>
                     <div className="">
                       ${' '}
-                      {openCfdDetails?.openValue?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
-                        minimumFractionDigits: 2,
-                      }) ?? 0}
+                      {openCfdDetails?.openValue?.toLocaleString(
+                        UNIVERSAL_NUMBER_FORMAT_LOCALE,
+                        FRACTION_DIGITS
+                      ) ?? 0}
                     </div>
                   </div>
 
@@ -614,9 +613,10 @@ const UpdateFormModal = ({
                     <div className="text-lightGray">{t('POSITION_MODAL.OPEN_PRICE')}</div>
                     <div className="">
                       {' '}
-                      {openCfdDetails?.openPrice?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
-                        minimumFractionDigits: 2,
-                      }) ?? 0}
+                      {openCfdDetails?.openPrice?.toLocaleString(
+                        UNIVERSAL_NUMBER_FORMAT_LOCALE,
+                        FRACTION_DIGITS
+                      ) ?? 0}
                       <span className="ml-1 text-lightGray">{unitAsset}</span>
                     </div>
                   </div>
@@ -632,18 +632,16 @@ const UpdateFormModal = ({
                     <div className="text-lightGray">{t('POSITION_MODAL.TP_AND_SL')}</div>
                     <div className="">
                       <span className={`text-lightWhite`}>
-                        {cfdTp?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
-                          minimumFractionDigits: 2,
-                        }) ?? '-'}
+                        {cfdTp?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS) ??
+                          '-'}
                         {/* {openCfdDetails?.takeProfit?.toLocaleString(
                           UNIVERSAL_NUMBER_FORMAT_LOCALE
                         ) ?? '-'} */}
                       </span>{' '}
                       /{' '}
                       <span className={`text-lightWhite`}>
-                        {cfdSl?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
-                          minimumFractionDigits: 2,
-                        }) ?? '-'}
+                        {cfdSl?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS) ??
+                          '-'}
                         {/* {openCfdDetails?.stopLoss?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ??
                           '-'} */}
                       </span>
@@ -656,9 +654,7 @@ const UpdateFormModal = ({
                       {' '}
                       {openCfdDetails?.liquidationPrice?.toLocaleString(
                         UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                        {
-                          minimumFractionDigits: 2,
-                        }
+                        FRACTION_DIGITS
                       )}
                       <span className="ml-1 text-lightGray">{unitAsset}</span>
                     </div>

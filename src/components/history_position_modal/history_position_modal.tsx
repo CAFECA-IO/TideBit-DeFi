@@ -5,7 +5,7 @@ import {
   TypeOfPnLColor,
   UNIVERSAL_NUMBER_FORMAT_LOCALE,
 } from '../../constants/display';
-import {unitAsset} from '../../constants/config';
+import {unitAsset, FRACTION_DIGITS} from '../../constants/config';
 import Toggle from '../toggle/toggle';
 import {useContext, useRef, useState} from 'react';
 import TradingInput from '../trading_input/trading_input';
@@ -109,9 +109,10 @@ const HistoryPositionModal = ({
           <div className={`${layoutInsideBorder}`}>
             <div className="text-lightGray">{t('POSITION_MODAL.AMOUNT')}</div>
             <div className="">
-              {closedCfdDetails?.amount?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
-                minimumFractionDigits: 2,
-              }) ?? 0}
+              {closedCfdDetails?.amount?.toLocaleString(
+                UNIVERSAL_NUMBER_FORMAT_LOCALE,
+                FRACTION_DIGITS
+              ) ?? 0}
               <span className="ml-1 text-lightGray">{closedCfdDetails.ticker}</span>
             </div>
           </div>
@@ -120,9 +121,10 @@ const HistoryPositionModal = ({
             <div className="text-lightGray">{t('POSITION_MODAL.PNL')}</div>
             <div className={`${displayedPnLColor}`}>
               {displayedPnLSymbol} ${' '}
-              {closedCfdDetails?.pnl.value?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
-                minimumFractionDigits: 2,
-              })}
+              {closedCfdDetails?.pnl.value?.toLocaleString(
+                UNIVERSAL_NUMBER_FORMAT_LOCALE,
+                FRACTION_DIGITS
+              )}
             </div>
           </div>
 
@@ -130,9 +132,10 @@ const HistoryPositionModal = ({
             <div className="text-lightGray">{t('POSITION_MODAL.OPEN_VALUE')}</div>
             <div className="">
               ${' '}
-              {closedCfdDetails?.openValue?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
-                minimumFractionDigits: 2,
-              }) ?? 0}
+              {closedCfdDetails?.openValue?.toLocaleString(
+                UNIVERSAL_NUMBER_FORMAT_LOCALE,
+                FRACTION_DIGITS
+              ) ?? 0}
             </div>
           </div>
 
@@ -140,18 +143,20 @@ const HistoryPositionModal = ({
             <div className="text-lightGray">{t('POSITION_MODAL.CLOSED_VALUE')}</div>
             <div className="">
               ${' '}
-              {(closedCfdDetails?.closeValue ?? 0)?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
-                minimumFractionDigits: 2,
-              }) ?? 0}
+              {(closedCfdDetails?.closeValue ?? 0)?.toLocaleString(
+                UNIVERSAL_NUMBER_FORMAT_LOCALE,
+                FRACTION_DIGITS
+              ) ?? 0}
             </div>
           </div>
 
           <div className={`${layoutInsideBorder}`}>
             <div className="text-lightGray">{t('POSITION_MODAL.OPEN_PRICE')}</div>
             <div className="">
-              {closedCfdDetails?.openPrice?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
-                minimumFractionDigits: 2,
-              }) ?? 0}
+              {closedCfdDetails?.openPrice?.toLocaleString(
+                UNIVERSAL_NUMBER_FORMAT_LOCALE,
+                FRACTION_DIGITS
+              ) ?? 0}
               <span className="ml-1 text-lightGray">{unitAsset}</span>
             </div>
           </div>
@@ -159,9 +164,10 @@ const HistoryPositionModal = ({
           <div className={`${layoutInsideBorder}`}>
             <div className="text-lightGray">{t('POSITION_MODAL.CLOSED_PRICE')}</div>
             <div className="">
-              {closedCfdDetails?.closePrice?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
-                minimumFractionDigits: 2,
-              }) ?? 0}
+              {closedCfdDetails?.closePrice?.toLocaleString(
+                UNIVERSAL_NUMBER_FORMAT_LOCALE,
+                FRACTION_DIGITS
+              ) ?? 0}
               <span className="ml-1 text-lightGray">{unitAsset}</span>
             </div>
           </div>
@@ -184,15 +190,17 @@ const HistoryPositionModal = ({
             <div className="text-lightGray">{t('POSITION_MODAL.TP_AND_SL')}</div>
             <div className="">
               <span className={`text-lightWhite`}>
-                {closedCfdDetails?.takeProfit?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
-                  minimumFractionDigits: 2,
-                }) ?? '-'}
+                {closedCfdDetails?.takeProfit?.toLocaleString(
+                  UNIVERSAL_NUMBER_FORMAT_LOCALE,
+                  FRACTION_DIGITS
+                ) ?? '-'}
               </span>{' '}
               /{' '}
               <span className={`text-lightWhite`}>
-                {closedCfdDetails?.stopLoss?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
-                  minimumFractionDigits: 2,
-                }) ?? '-'}
+                {closedCfdDetails?.stopLoss?.toLocaleString(
+                  UNIVERSAL_NUMBER_FORMAT_LOCALE,
+                  FRACTION_DIGITS
+                ) ?? '-'}
               </span>
             </div>
           </div>
@@ -250,7 +258,7 @@ const HistoryPositionModal = ({
                 <div className="flex w-full items-center justify-center space-x-2 text-center text-2xl text-lightWhite">
                   {/* ToDo: default currency icon (20230310 - Julian) issue #338 */}
                   <Image
-                    src={marketCtx.selectedTicker?.tokenImg ?? ''}
+                    src={`/asset_icon/${closedCfdDetails?.ticker.toLowerCase()}.svg`}
                     alt="currency icon"
                     width={30}
                     height={30}

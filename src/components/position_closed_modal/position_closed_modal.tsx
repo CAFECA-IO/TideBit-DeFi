@@ -26,6 +26,7 @@ import {
   SUGGEST_TP,
   WAITING_TIME_FOR_USER_SIGNING,
   unitAsset,
+  FRACTION_DIGITS,
 } from '../../constants/config';
 import {TypeOfPosition} from '../../constants/type_of_position';
 import {IClosedCFDInfoProps, useGlobal} from '../../contexts/global_context';
@@ -450,12 +451,12 @@ const PositionClosedModal = ({
     <div className="mt-4 flex flex-col px-6 pb-2">
       <div className="flex items-center justify-center space-x-2 text-center">
         <Image
-          src={marketCtx.selectedTicker?.tokenImg ?? ''}
+          src={`/asset_icon/${openCfdDetails.ticker.toLowerCase()}.svg`}
           width={30}
           height={30}
-          alt="ticker icon"
+          alt="currency icon"
         />
-        <div className="text-2xl">{openCfdDetails?.ticker}</div>
+        <div className="text-2xl">{openCfdDetails.ticker}</div>
       </div>
 
       <div className="absolute right-6 top-90px flex items-center space-x-1 text-center">
@@ -479,9 +480,10 @@ const PositionClosedModal = ({
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">{t('POSITION_MODAL.OPEN_PRICE')}</div>
               <div className="">
-                {openCfdDetails?.openPrice.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
-                  minimumFractionDigits: 2,
-                }) ?? 0}{' '}
+                {openCfdDetails?.openPrice.toLocaleString(
+                  UNIVERSAL_NUMBER_FORMAT_LOCALE,
+                  FRACTION_DIGITS
+                ) ?? 0}{' '}
                 <span className="ml-1 text-lightGray">{unitAsset}</span>
               </div>
             </div>
@@ -489,9 +491,10 @@ const PositionClosedModal = ({
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">{t('POSITION_MODAL.AMOUNT')}</div>
               <div className="">
-                {openCfdDetails?.amount.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
-                  minimumFractionDigits: 2,
-                })}{' '}
+                {openCfdDetails?.amount.toLocaleString(
+                  UNIVERSAL_NUMBER_FORMAT_LOCALE,
+                  FRACTION_DIGITS
+                )}{' '}
                 <span className="ml-1 text-lightGray">{openCfdDetails?.ticker}</span>
               </div>
             </div>
@@ -499,10 +502,10 @@ const PositionClosedModal = ({
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">{t('POSITION_MODAL.CLOSED_PRICE')}</div>
               <div className={`${dataRenewedStyle}`}>
-                {gQuotationRef.current.price?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                }) ?? 0}{' '}
+                {gQuotationRef.current.price?.toLocaleString(
+                  UNIVERSAL_NUMBER_FORMAT_LOCALE,
+                  FRACTION_DIGITS
+                ) ?? 0}{' '}
                 <span className="ml-1 text-lightGray">{unitAsset}</span>
               </div>
             </div>
@@ -511,9 +514,10 @@ const PositionClosedModal = ({
               <div className="text-lightGray">{t('POSITION_MODAL.PNL')}</div>
               <div className={`${pnlRenewedStyle} ${displayedPnLColor}`}>
                 {displayedPnLSymbol} ${' '}
-                {openCfdDetails?.pnl?.value.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
-                  minimumFractionDigits: 2,
-                })}
+                {openCfdDetails?.pnl?.value.toLocaleString(
+                  UNIVERSAL_NUMBER_FORMAT_LOCALE,
+                  FRACTION_DIGITS
+                )}
               </div>
             </div>
 

@@ -110,10 +110,16 @@ const NavBar = () => {
                     >
                       {t('NAV_BAR.TRADE')}
                     </Link>
-                    <Link href="#" className="mr-5 hover:cursor-pointer hover:text-tidebitTheme">
+                    <Link
+                      href={TBDURL.COMING_SOON}
+                      className="mr-5 hover:cursor-pointer hover:text-tidebitTheme"
+                    >
                       {t('NAV_BAR.LEADERBOARD')}
                     </Link>
-                    <Link href="#" className="mr-5 hover:cursor-pointer hover:text-tidebitTheme">
+                    <Link
+                      href={TBDURL.COMING_SOON}
+                      className="mr-5 hover:cursor-pointer hover:text-tidebitTheme"
+                    >
                       {t('NAV_BAR.SUPPORT')}
                     </Link>
 

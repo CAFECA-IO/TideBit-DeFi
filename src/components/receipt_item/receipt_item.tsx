@@ -239,7 +239,6 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
       <div className="flex h-full w-full items-center justify-between border-b-2 border-dashed border-lightGray4 pl-6">
         {displayedReceiptButton}
         {displayedReceiptIncome}
-        {createTimestamp}
         {displayedReceiptDetail}
         {displayedReceiptFee}
         {displayedReceiptAvailable}

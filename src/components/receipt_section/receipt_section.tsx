@@ -117,7 +117,6 @@ const ReceiptSection = () => {
         setFilteredDate={setFilteredDate}
       />
       <div>{listCluster}</div>
-      {filteredDate[0]} ~ {filteredDate[1]}
     </div>
   );
 };

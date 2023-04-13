@@ -12,7 +12,22 @@ export const COPYRIGHT = 'TideBit © 2022';
 // 10 ** 9 - 0.01
 export const TARGET_LIMIT_DIGITS = 10 ** 9 - 0.01;
 
-//export const FRACTION_DIGITS = 2;
+export const MONTH_FULL_NAME_LIST = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
+];
+
+export const WEEK_LIST = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
 
 export const FRACTION_DIGITS = {
   minimumFractionDigits: 2,

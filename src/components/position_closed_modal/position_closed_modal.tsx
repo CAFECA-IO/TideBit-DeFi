@@ -184,12 +184,6 @@ const PositionClosedModal = ({
 
   // TODO: (20230315 - Shirley) organize the data before history modal
   const toHistoryModal = (cfd: ICFDOrder, quotation: IQuotation): IDisplayCFDOrder => {
-    // ToDo: Don't have to check the CFD state, because it's yet to do.
-    // if (cfd.state !== OrderState.CLOSED || !cfd.closePrice) {
-    //   const error = new Error('Order is not closed');
-    //   throw error;
-    // }
-
     // TODO: replace `twoDecimal` with `toLocaleString` (20230325 - Shirley)
     const openPrice = cfd.openPrice;
     const closePrice = quotation.price;
@@ -231,7 +225,7 @@ const PositionClosedModal = ({
       closeTimestamp: quotation.deadline,
       closePrice: closePrice,
       closedType: CFDClosedType.BY_USER,
-      state: OrderState.CLOSED, // ToDo: Not sure if it's THE property (20230413 - Shirley)
+      state: OrderState.CLOSED,
     };
 
     return historyCfd;

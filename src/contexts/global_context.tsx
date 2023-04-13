@@ -886,25 +886,24 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
   };
 
   const depositSubmitHandler = (props: {asset: ICryptocurrency; amount: number}) => {
-    // setDepositProcess('loading');
-    // TODO: (20230316 - Shirley) withdraw / deposit process (loading / success / fail)
-    userCtx
-      .deposit({
-        orderType: OrderType.DEPOSIT,
-        createTimestamp: getTimestamp(),
-        targetAsset: props.asset.symbol,
-        decimals: props.asset.decimals,
-        to: props.asset.contract,
-        targetAmount: props.amount,
-        remark: '',
-        fee: 0,
-      })
-      .then(result => {
-        // Deprecate: after Julian confirm result format (20230329 - tzuhan)
-        // eslint-disable-next-line no-console
-        console.log(`userCtx.deposit result:`, result);
-        setDepositProcess('success');
-      });
+    // INFO: Set the process in modal component. `eliminateAllModals` won't work here (20230413 - Shirley)
+    // userCtx
+    //   .deposit({
+    //     orderType: OrderType.DEPOSIT,
+    //     createTimestamp: getTimestamp(),
+    //     targetAsset: props.asset.symbol,
+    //     decimals: props.asset.decimals,
+    //     to: props.asset.contract,
+    //     targetAmount: props.amount,
+    //     remark: '',
+    //     fee: 0,
+    //   })
+    //   .then(result => {
+    //     // Deprecate: after Julian confirm result format (20230329 - tzuhan)
+    //     // eslint-disable-next-line no-console
+    //     console.log(`userCtx.deposit result:`, result);
+    //     setDepositProcess('success');
+    //   });
   };
 
   const withdrawSubmitHandler = async (props: {asset: ICryptocurrency; amount: number}) => {

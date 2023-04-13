@@ -1,24 +1,24 @@
 import React, {useContext, useState} from 'react';
-// import useState from 'react-usestateref';
 import RippleButton from '../ripple_button/ripple_button';
 import {MarketContext} from '../../contexts/market_context';
 import {MdKeyboardArrowDown} from 'react-icons/md';
 import {ImCross} from 'react-icons/im';
 import {ICryptocurrency} from '../../interfaces/tidebit_defi_background/cryptocurrency';
 import Image from 'next/image';
-import {UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
+import {DELAYED_HIDDEN_SECONDS, UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
 import {useGlobal} from '../../contexts/global_context';
 import {useTranslation} from 'react-i18next';
+import {getTimestamp, locker, wait} from '../../lib/common';
+import {OrderType} from '../../constants/order_type';
+import {UserContext} from '../../contexts/user_context';
+import {Code} from '../../constants/code';
+import useStateRef from 'react-usestateref';
 
 type TranslateFunction = (s: string) => string;
 interface IDepositModal {
-  // transferType: 'deposit' | 'withdraw';
-  // userAvailableBalance: number;
-  // transferStep: 'form' | 'loading' | 'success' | 'cancellation' | 'fail';
   modalVisible: boolean;
   modalClickHandler: () => void;
   getSubmissionState: (props: 'success' | 'cancellation' | 'fail') => void;
-  // transferOptions: ITransferOptions[];
   getTransferData: (props: {asset: string; amount: number}) => void;
   submitHandler: (props: {asset: ICryptocurrency; amount: number}) => void;
 }
@@ -36,9 +36,12 @@ const DepositModal = ({
   const userAvailableBalance = 4568735165.11;
   const {depositCryptocurrencies} = useContext(MarketContext);
   const globalCtx = useGlobal();
+  const userCtx = useContext(UserContext);
 
-  const [showCryptoMenu, setShowCryptoMenu] = useState(false);
-  const [selectedCrypto, setSelectedCrypto] = useState(depositCryptocurrencies[0]);
+  const [showCryptoMenu, setShowCryptoMenu, showCryptoMenuRef] = useStateRef(false);
+  const [selectedCrypto, setSelectedCrypto, selectedCryptoRef] = useStateRef(
+    depositCryptocurrencies[0]
+  );
   const [amountInput, setAmountInput] = useState<number | undefined>();
 
   const regex = /^\d*\.?\d{0,2}$/;
@@ -57,36 +60,133 @@ const DepositModal = ({
   };
 
   // TODO: send deposit request
-  const submitClickHandler = () => {
+  const submitClickHandler = async () => {
     if (amountInput === 0 || amountInput === undefined) {
       return;
     }
 
     submitHandler({asset: selectedCrypto, amount: amountInput});
+    const [lock, unlock] = locker('deposit_modal.submitClickHandler');
+
+    if (!lock()) return;
+
+    await wait(DELAYED_HIDDEN_SECONDS / 5);
+    globalCtx.visibleDepositModalHandler();
+
+    globalCtx.dataLoadingModalHandler({
+      modalTitle: t('D_W_MODAL.DEPOSIT'),
+      modalContent: t('D_W_MODAL.CONFIRM_CONTENT'),
+    });
+    globalCtx.visibleLoadingModalHandler();
+
+    const depositOrder = {
+      orderType: OrderType.DEPOSIT,
+      createTimestamp: getTimestamp(),
+      targetAsset: selectedCrypto.symbol,
+      decimals: selectedCrypto.decimals,
+      to: selectedCrypto.contract,
+      targetAmount: amountInput,
+      remark: '',
+      fee: 0,
+    };
+
+    try {
+      const result = await userCtx.deposit(depositOrder);
+
+      // Deprecate: after Julian confirm result format (20230413 - Shirley)
+      // eslint-disable-next-line no-console
+      console.log(`userCtx.deposit result:`, result);
+
+      // TODO: for debug
+      globalCtx.toast({message: 'deposit result: ' + JSON.stringify(result), type: 'info'});
+
+      // TODO: the button URL
+      if (result.success) {
+        // ToDo: to tell when to show the loading modal with button
+        globalCtx.dataLoadingModalHandler({
+          modalTitle: t('D_W_MODAL.DEPOSIT'),
+          modalContent: t('D_W_MODAL.TRANSACTION_BROADCAST'),
+          btnMsg: t('D_W_MODAL.VIEW_ON_BUTTON'),
+          btnUrl: '#',
+        });
+
+        // INFO: for UX
+        await wait(DELAYED_HIDDEN_SECONDS);
+
+        globalCtx.eliminateAllModals();
+
+        globalCtx.dataSuccessfulModalHandler({
+          modalTitle: t('D_W_MODAL.DEPOSIT'),
+          modalContent: t('D_W_MODAL.TRANSACTION_SUCCEED'),
+          btnMsg: t('D_W_MODAL.VIEW_ON_BUTTON'),
+          btnUrl: '#',
+        });
+
+        globalCtx.visibleSuccessfulModalHandler();
+      } else if (
+        // Info: cancel (20230413 - Shirley)
+        result.code === Code.SERVICE_TERM_DISABLE ||
+        result.code === Code.WALLET_IS_NOT_CONNECT ||
+        result.code === Code.REJECTED_SIGNATURE
+      ) {
+        globalCtx.eliminateAllModals();
+
+        globalCtx.dataCanceledModalHandler({
+          modalTitle: t('D_W_MODAL.DEPOSIT'),
+          modalContent: t('D_W_MODAL.FAILED_REASON_CANCELED'),
+        });
+
+        globalCtx.visibleCanceledModalHandler();
+      } else if (
+        result.code === Code.INTERNAL_SERVER_ERROR ||
+        result.code === Code.INVAILD_INPUTS
+      ) {
+        globalCtx.eliminateAllModals();
+
+        globalCtx.dataFailedModalHandler({
+          modalTitle: t('D_W_MODAL.DEPOSIT'),
+          failedTitle: t('D_W_MODAL.FAILED_TITLE'),
+          failedMsg: t('D_W_MODAL.FAILED_REASON_FAILED_TO_WITHDRAW'),
+        });
+
+        globalCtx.visibleFailedModalHandler();
+      }
+    } catch (error: any) {
+      globalCtx.eliminateAllModals();
+
+      // Info: Signature rejected
+      // ToDo: Catch the error which user rejected the signature in UserContext (20230411 - Shirley)
+      if (error?.code === 4001) {
+        globalCtx.dataCanceledModalHandler({
+          modalTitle: t('D_W_MODAL.DEPOSIT'),
+          modalContent: t('D_W_MODAL.FAILED_REASON_CANCELED'),
+        });
+
+        globalCtx.visibleCanceledModalHandler();
+      } else {
+        // ToDo: Report error to backend (20230413 - Shirley)
+        // Info: Unknown error
+        globalCtx.dataFailedModalHandler({
+          modalTitle: t('D_W_MODAL.DEPOSIT'),
+          failedTitle: t('D_W_MODAL.FAILED_TITLE'),
+          failedMsg: t('D_W_MODAL.FAILED_REASON_FAILED_TO_WITHDRAW'),
+        });
+
+        globalCtx.visibleFailedModalHandler();
+      }
+    }
+
+    unlock();
 
     setAmountInput(undefined);
 
-    setTimeout(() => {
-      // passSubmissionStateHandler('loading');
-      globalCtx.visibleDepositModalHandler();
-    }, 800);
+    return;
   };
 
   const amountOnChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
 
     if (regex.test(value)) {
-      // // TODO: 讓 input 不能變成 '01' 的條件式
-      // if (Number(value) >= userAvailableBalance || Number(value) <= 0) {
-      //   return;
-      // }
-
-      // // No upperlimit in deposit modal
-      // if (modalType === 'Deposit') {
-      //   setAmountInput(Number(value));
-      //   return;
-      // }
-
       // Upperlimit in withdraw modal
       if (Number(value) > userAvailableBalance) {
         setAmountInput(Number(userAvailableBalance));
@@ -181,14 +281,6 @@ const DepositModal = ({
                     className={`transition-all duration-300 ${rotationStyle}`}
                     size={30}
                   />
-                  {/* {showCryptoMenu ? (
-                    <MdKeyboardArrowRight className="text-blue-300" size={30} />
-                  ) : (
-                    <MdKeyboardArrowDown
-                      className={`text-blue-300 ${rotationStyle}`}
-                      size={30}
-                    />
-                  )} */}
                 </button>
               </div>
             </div>
@@ -205,20 +297,11 @@ const DepositModal = ({
             >
               {avaliableCryptoMenu}
             </ul>
-            {/* <div className="py-1">
-              <a
-                href="#"
-                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600 dark:hover:text-white"
-              >
-                Separated link
-              </a>
-            </div> */}
           </div>
 
           {/* ----------Amount input---------- */}
           <div className="mx-6 pt-12 text-start">
             <p className="text-sm text-lightGray4">{t('D_W_MODAL.AMOUNT')}</p>
-            {/* <div className="max-w-xl bg-darkGray8">Tether</div> */}
             <div className="flex rounded-md bg-darkGray8">
               <input
                 className="w-250px rounded-md bg-darkGray8 py-2 pl-3 text-sm text-white focus:outline-none focus:ring-0"
@@ -244,10 +327,6 @@ const DepositModal = ({
             </div>
 
             <div className="flex justify-end">
-              {/* <p className={`${warningStyle} pt-3 text-end text-sm tracking-wide text-lightRed`}>
-                Invalid input
-              </p> */}
-
               <p className="pt-3 text-end text-xs tracking-wide">
                 {t('D_W_MODAL.AVAILABLE_IN_WALLET')}:{' '}
                 <span className="text-tidebitTheme">
@@ -276,9 +355,6 @@ const DepositModal = ({
 
   const isDisplayedModal = modalVisible ? (
     <>
-      {/*  <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">*/}
-      {/*  overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none */}
-      {/* position: relative; top: 50%; left: 50%; transform: translate(-50%, -50%) */}
       <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">
         {/* The position of the modal */}
         <div className="relative my-6 mx-auto w-auto max-w-xl">

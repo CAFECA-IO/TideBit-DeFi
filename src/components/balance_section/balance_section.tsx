@@ -20,9 +20,6 @@ const BalanceSection = () => {
 
   // TODO: totalBalance from userContext
   // TODO: fixed to two decimal places
-  // const totalBalance = Number((200005429.8489).toFixed(2));
-  // const avblBalance = Number((80004531.5233).toFixed(2));
-  // const lockedBalance = Number((120000058.3256).toFixed(2));
   const avblBalance = userCtx.balance?.available ?? 0;
   const lockedBalance = userCtx.balance?.locked ?? 0;
   const totalBalance = avblBalance && lockedBalance ? avblBalance + lockedBalance : 0;

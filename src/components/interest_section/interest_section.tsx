@@ -19,8 +19,6 @@ const InterestSection = () => {
     cumulativeInterest: 241,
   };
 
-  // const interestContent =
-
   const interestContentJsx = Object.entries(interestInfo).map(([key, value]) => (
     <div
       className={`${
@@ -35,7 +33,6 @@ const InterestSection = () => {
             ? t('MY_ASSETS_PAGE.INTEREST_SECTION_CUMULATIVE')
             : t('MY_ASSETS_PAGE.INTEREST_SECTION_APY')}
         </h1>
-        {/* <h2 className={`text-3xl font-medium text-white xl:text-4xl`}>content</h2> */}
         <p
           className={`text-center leading-relaxed text-lightWhite xl:text-xl ${
             key === 'APY' ? 'pt-3 text-lg' : 'pt-3 text-base'
@@ -58,7 +55,6 @@ const InterestSection = () => {
             ? t('MY_ASSETS_PAGE.INTEREST_SECTION_CUMULATIVE')
             : t('MY_ASSETS_PAGE.INTEREST_SECTION_APY')}
         </h1>
-        {/* <h2 className={`text-3xl font-medium text-white xl:text-4xl`}>content</h2> */}
         <p
           className={`text-sm leading-relaxed text-lightWhite lg:pt-3 lg:text-base xl:text-xl ${
             key === 'APY' ? 'text-lg' : 'text-base'
@@ -83,7 +79,6 @@ const InterestSection = () => {
       <Lottie className="mx-auto flex w-150px pt-10 lg:hidden" animationData={runningDog} />
 
       {interestContentJsx}
-      {/* <div className="flex flex-wrap">{interestContentJsx}</div> */}
 
       <Lottie className="-mr-10 hidden w-250px pt-2 lg:flex xl:-mr-20" animationData={runningDog} />
     </div>

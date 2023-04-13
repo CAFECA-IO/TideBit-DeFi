@@ -36,20 +36,11 @@ const MyAssets = () => {
             {displayedNavBar}
 
             <main>
-              {/*  min-h-screen */}
               <div className="">
                 {' '}
                 <AssetsPageBody />
-                {/* <div className="">~AssetsPageBody~</div>
-          <div className="">Balance / Withdraw / Deposit</div>
-          <div className="">PnL Section</div>
-          <div className="">Interest Section</div>
-          <div className="">Receipt Section</div> */}
               </div>
             </main>
-            {/* <div className="">
-          <Footer />
-        </div> */}
           </div>
         </>
       ) : (

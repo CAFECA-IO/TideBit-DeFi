@@ -1126,6 +1126,5 @@ export const UserProvider = ({children}: IUserProvider) => {
     init,
   };
 
-  // FIXME: 'setUser' is missing in type '{ user: IUser[] | null; }'
   return <UserContext.Provider value={defaultValue}>{children}</UserContext.Provider>;
 };

@@ -374,6 +374,8 @@ const PositionClosedModal = ({
 
         globalCtx.visibleCanceledModalHandler();
       } else {
+        // ToDo: report error to backend (20230413 - Shirley)
+        // Info: Unknown error between context and component
         globalCtx.dataFailedModalHandler({
           modalTitle: t('POSITION_MODAL.CLOSE_POSITION_TITLE'),
           failedTitle: t('POSITION_MODAL.FAILED_TITLE'),

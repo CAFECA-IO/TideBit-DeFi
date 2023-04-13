@@ -179,8 +179,7 @@ const PositionOpenModal = ({
 
         globalCtx.visibleCanceledModalHandler();
       } else {
-        // ToDo: Throw error (20230412 - Shirley)
-        // result.code === Code.CFD_OPEN_FAILED
+        // ToDo: report error to backend (20230413 - Shirley)
         // Info: Unknown error between context and component
         globalCtx.dataFailedModalHandler({
           modalTitle: t('POSITION_MODAL.OPEN_POSITION_TITLE'),

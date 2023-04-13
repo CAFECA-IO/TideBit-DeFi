@@ -113,7 +113,6 @@ const PositionOpenModal = ({
     globalCtx.visibleLoadingModalHandler();
 
     try {
-      // ToDo: CFD_OPEN_FAILED: ICode;
       const result = await userCtx.createCFDOrder(applyCreateOrder);
       // globalCtx.eliminateAllModals();
 

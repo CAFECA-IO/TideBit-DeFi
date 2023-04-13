@@ -451,12 +451,12 @@ const PositionClosedModal = ({
     <div className="mt-4 flex flex-col px-6 pb-2">
       <div className="flex items-center justify-center space-x-2 text-center">
         <Image
-          src={marketCtx.selectedTicker?.tokenImg ?? ''}
+          src={`/asset_icon/${openCfdDetails.ticker.toLowerCase()}.svg`}
           width={30}
           height={30}
-          alt="ticker icon"
+          alt="currency icon"
         />
-        <div className="text-2xl">{openCfdDetails?.ticker}</div>
+        <div className="text-2xl">{openCfdDetails.ticker}</div>
       </div>
 
       <div className="absolute right-6 top-90px flex items-center space-x-1 text-center">

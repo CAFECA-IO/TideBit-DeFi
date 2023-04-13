@@ -758,7 +758,9 @@ export const UserProvider = ({children}: IUserProvider) => {
                   userSignature: signature,
                 },
               })) as {updateCFDOrder: ICFDOrder; acceptedCFDOrder: IAcceptedCFDOrder};
-              setOpenedCFDs(prev => [...prev].splice(index, 1));
+              const newOpenedCFDs = [...openCFDs];
+              newOpenedCFDs.splice(index, 1);
+              setOpenedCFDs(newOpenedCFDs);
               setClosedCFDs(prev => [...prev, updateCFDOrder]);
               updateBalance(acceptedCFDOrder.receipt.balance);
               setHistories(prev => [...prev, acceptedCFDOrder]);

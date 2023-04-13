@@ -86,20 +86,6 @@ const PositionOpenModal = ({
   const submitClickHandler = async () => {
     const [lock, unlock] = locker('position_open_modal.submitClickHandler');
 
-    // Info: when the quotation expires, return the canceled error code
-    // setTimeout(() => {
-    //   if (secondsLeftRef.current === 0) {
-    //     globalCtx.eliminateAllModals();
-
-    //     globalCtx.dataCanceledModalHandler({
-    //       modalTitle: 'Open Position',
-    //       modalContent: 'Transaction canceled',
-    //     });
-
-    //     globalCtx.visibleCanceledModalHandler();
-    //   }
-    // }, DISPLAY_QUOTATION_RENEWAL_INTERVAL_SECONDS * 1000);
-
     if (!lock()) return;
     const applyCreateOrder: IApplyCreateCFDOrder = toApplyCreateOrder(openCfdRequest);
 
@@ -114,12 +100,9 @@ const PositionOpenModal = ({
 
     try {
       const result = await userCtx.createCFDOrder(applyCreateOrder);
-      // globalCtx.eliminateAllModals();
-
-      // ToDo: Revise the `result.reason` to constant by using enum or object
-      // ToDo: the button URL
 
       if (result.success) {
+        // TODO: (20230413 - Shirley) the button URL
         globalCtx.dataLoadingModalHandler({
           modalTitle: t('POSITION_MODAL.OPEN_POSITION_TITLE'),
           modalContent: t('POSITION_MODAL.TRANSACTION_BROADCAST'),

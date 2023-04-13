@@ -21,7 +21,7 @@ const OpenSubTab = () => {
       return displayCFD;
     })
     .sort((a, b) => {
-      return -(a.createTimestamp - b.createTimestamp);
+      return a.createTimestamp - b.createTimestamp;
     })
     .sort((a, b) => {
       return b.stateCode - a.stateCode;

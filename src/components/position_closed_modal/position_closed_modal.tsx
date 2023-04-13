@@ -165,7 +165,7 @@ const PositionClosedModal = ({
     quotation: IQuotation
   ): IApplyCloseCFDOrder => {
     if (order.state !== OrderState.OPENING) {
-      const error = new Error('Order is not opening');
+      const error = new Error('Order is not opening!!');
       throw error;
     }
 
@@ -290,11 +290,10 @@ const PositionClosedModal = ({
     try {
       const result = await userCtx.closeCFDOrder(applyCloseOrder);
 
-      // TODO: Revise the `result.reason` to constant by using enum or object
-      // TODO: the button URL
       if (result.success) {
         const historyData: IDisplayCFDOrder = toHistoryModal(openCfdDetails, gQuotationRef.current);
 
+        // TODO: (20230413 - Shirley) the button URL
         globalCtx.dataLoadingModalHandler({
           modalTitle: t('POSITION_MODAL.CLOSE_POSITION_TITLE'),
           modalContent: t('POSITION_MODAL.TRANSACTION_BROADCAST'),
@@ -317,7 +316,6 @@ const PositionClosedModal = ({
         globalCtx.visibleSuccessfulModalHandler();
 
         await wait(DELAYED_HIDDEN_SECONDS);
-
         globalCtx.eliminateAllModals();
 
         globalCtx.dataHistoryPositionModalHandler(historyData);

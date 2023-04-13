@@ -693,6 +693,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     if (lunar.isConnected) {
       if (applyCreateCFDOrder) {
         const balance: IBalance | null = getBalance(applyCreateCFDOrder.margin.asset);
+
         if (balance && balance.available >= applyCreateCFDOrder.margin.amount) {
           const transferR = transactionEngine.transferCFDOrderToTransaction(applyCreateCFDOrder);
           if (transferR.success) {

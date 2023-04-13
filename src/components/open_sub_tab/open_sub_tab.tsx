@@ -27,15 +27,16 @@ const OpenSubTab = () => {
       return b.stateCode - a.stateCode;
     });
 
-  /* ToDo: (20230411 - Julian) dummy data */
-  const dummyCFDs: IDisplayCFDOrder[] = listDummyDisplayCFDOrder('ETH')
-    .slice(-2)
-    .sort((a, b) => {
-      return a.createTimestamp - b.createTimestamp;
-    })
-    .sort((a, b) => {
-      return b.stateCode - a.stateCode;
-    });
+  // Deprecated: to be removed (20230413 - Shirley)
+  // /* ToDo: (20230411 - Julian) dummy data */
+  // const dummyCFDs: IDisplayCFDOrder[] = listDummyDisplayCFDOrder('ETH')
+  //   .slice(-2)
+  //   .sort((a, b) => {
+  //     return a.createTimestamp - b.createTimestamp;
+  //   })
+  //   .sort((a, b) => {
+  //     return b.stateCode - a.stateCode;
+  //   });
 
   // ToDo: FIXME: Closed CFDs still show up in Open tab (20230413 - Shirley)
   // eslint-disable-next-line no-console

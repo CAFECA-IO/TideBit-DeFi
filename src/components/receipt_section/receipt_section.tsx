@@ -48,7 +48,7 @@ const ReceiptSection = () => {
     } else if (filteredDate[0] && filteredDate[1]) {
       setFilteredReceipts(
         listHistories.filter(v => {
-          const createTimestamp = v.createTimestamp;
+          const createTimestamp = v.createTimestamp * 1000;
           return createTimestamp >= filteredDate[0] && createTimestamp <= filteredDate[1];
         })
       );
@@ -117,6 +117,7 @@ const ReceiptSection = () => {
         setFilteredDate={setFilteredDate}
       />
       <div>{listCluster}</div>
+      {filteredDate[0]} ~ {filteredDate[1]}
     </div>
   );
 };

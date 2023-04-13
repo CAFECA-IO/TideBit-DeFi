@@ -34,9 +34,7 @@ const ReceiptSearch = ({
   );
   const [dateEnd, setDateEnd] = useState(
     new Date(
-      `${currentDate.getFullYear()}-${currentDate.getMonth() + 1}-${
-        currentDate.getDate() + 1
-      } 00:00:00`
+      `${currentDate.getFullYear()}-${currentDate.getMonth() + 1}-${currentDate.getDate()} 23:59:59`
     )
   );
 
@@ -82,13 +80,11 @@ const ReceiptSearch = ({
     setTradingTypeMenuOpen(false);
   };
 
-  /* Todo: (20230412 - Julian)
-   * date to timestamp #289 */
   const dateStartUpdateHandler = useCallback(
     async (date: Date) => {
       setDateStart(date);
-      const end = dateEnd.getTime() / 1000;
-      const start = date.getTime() / 1000;
+      const end = dateEnd.getTime();
+      const start = date.getTime();
 
       setFilteredDate([start, end]);
     },
@@ -98,8 +94,8 @@ const ReceiptSearch = ({
   const dateEndUpdateHandler = useCallback(
     async (date: Date) => {
       setDateEnd(date);
-      const end = date.getTime() / 1000;
-      const start = dateStart.getTime() / 1000;
+      const end = date.getTime();
+      const start = dateStart.getTime();
 
       setFilteredDate([start, end]);
     },

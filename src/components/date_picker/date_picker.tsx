@@ -134,9 +134,7 @@ const DatePicker = ({date, minDate, maxDate, setDate}: IDatePickerProps) => {
   const selectDate = useCallback(
     (el: Dates) => {
       let newDate = new Date(el.time);
-      newDate = new Date(
-        `${newDate.getFullYear()}-${newDate.getMonth() + 1}-${newDate.getDate()} 08:00:00`
-      );
+      newDate = new Date(`${newDate.getFullYear()}-${newDate.getMonth() + 1}-${newDate.getDate()}`);
       setDate(newDate);
       setOpenDates(false);
     },

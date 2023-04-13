@@ -11,8 +11,8 @@ interface IReceiptSearchProps {
   filteredTradingType: string;
   setFilteredTradingType: Dispatch<SetStateAction<string>>;
   setSearches: Dispatch<SetStateAction<string>>;
-  filteredDate: string[];
-  setFilteredDate: Dispatch<SetStateAction<string[]>>;
+  filteredDate: number[];
+  setFilteredDate: Dispatch<SetStateAction<number[]>>;
 }
 
 const currentDate = new Date();
@@ -29,15 +29,16 @@ const ReceiptSearch = ({
   const [tradingTypeMenuOpen, setTradingTypeMenuOpen] = useState(false);
   const [dateStart, setDateStart] = useState(
     new Date(
-      `${currentDate.getFullYear()}-${currentDate.getMonth() + 1}-${currentDate.getDate()} 08:00:00`
+      `${currentDate.getFullYear()}-${currentDate.getMonth() + 1}-${currentDate.getDate()} 00:00:00`
     )
   );
   const [dateEnd, setDateEnd] = useState(
     new Date(
-      `${currentDate.getFullYear()}-${currentDate.getMonth() + 1}-${currentDate.getDate()} 08:00:00`
+      `${currentDate.getFullYear()}-${currentDate.getMonth() + 1}-${
+        currentDate.getDate() + 1
+      } 00:00:00`
     )
   );
-  //const [tickersSettings, setTickersSettings] = useState(null);
 
   const tradingTypeMenuText =
     filteredTradingType === OrderType.DEPOSIT
@@ -86,8 +87,8 @@ const ReceiptSearch = ({
   const dateStartUpdateHandler = useCallback(
     async (date: Date) => {
       setDateStart(date);
-      const end = dateEnd.toISOString().substring(0, 10);
-      const start = date.toISOString().substring(0, 10);
+      const end = dateEnd.getTime() / 1000;
+      const start = date.getTime() / 1000;
 
       setFilteredDate([start, end]);
     },
@@ -97,8 +98,8 @@ const ReceiptSearch = ({
   const dateEndUpdateHandler = useCallback(
     async (date: Date) => {
       setDateEnd(date);
-      const end = date.toISOString().substring(0, 10);
-      const start = dateStart.toISOString().substring(0, 10);
+      const end = date.getTime() / 1000;
+      const start = dateStart.getTime() / 1000;
 
       setFilteredDate([start, end]);
     },

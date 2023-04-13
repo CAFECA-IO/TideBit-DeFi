@@ -168,6 +168,7 @@
     "FAILED_REASON_FAILED_TO_OPEN": "Failed to open position",
     "FAILED_REASON_FAILED_TO_UPDATE": "Failed to update position",
     "FAILED_REASON_ERROR": "Order is not opening",
+    "ERROR_MESSAGE": "Something went wrong, please try again",
     "TYPE": "Type",
     "TYPE_UP": "Up",
     "TYPE_BUY": "(Buy)",

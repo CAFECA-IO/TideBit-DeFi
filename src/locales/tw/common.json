@@ -167,6 +167,7 @@
     "FAILED_REASON_FAILED_TO_OPEN": "開倉失敗",
     "FAILED_REASON_FAILED_TO_UPDATE": "更新失敗",
     "FAILED_REASON_ERROR": "訂單未開啟",
+    "ERROR_MESSAGE": "發生錯誤，請再試一次",
     "TYPE": "類型",
     "TYPE_UP": "看漲",
     "TYPE_BUY": "(買入)",

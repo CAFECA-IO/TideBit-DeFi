@@ -373,7 +373,7 @@ const PositionClosedModal = ({
         globalCtx.dataFailedModalHandler({
           modalTitle: t('POSITION_MODAL.CLOSE_POSITION_TITLE'),
           failedTitle: t('POSITION_MODAL.FAILED_TITLE'),
-          failedMsg: t('POSITION_MODAL.FAILED_REASON_ERROR'),
+          failedMsg: t('POSITION_MODAL.ERROR_MESSAGE'),
         });
 
         globalCtx.visibleFailedModalHandler();

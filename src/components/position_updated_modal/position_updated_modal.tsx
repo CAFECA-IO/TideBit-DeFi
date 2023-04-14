@@ -156,24 +156,34 @@ const PositionUpdatedModal = ({
 
       globalCtx.eliminateAllModals();
 
-      if (error?.code === 4001) {
-        globalCtx.dataCanceledModalHandler({
-          modalTitle: t('POSITION_MODAL.UPDATE_POSITION_TITLE'),
-          modalContent: t('POSITION_MODAL.FAILED_REASON_CANCELED'),
-        });
+      // if (error?.code === 4001) {
+      //   globalCtx.dataCanceledModalHandler({
+      //     modalTitle: t('POSITION_MODAL.UPDATE_POSITION_TITLE'),
+      //     modalContent: t('POSITION_MODAL.FAILED_REASON_CANCELED'),
+      //   });
 
-        globalCtx.visibleCanceledModalHandler();
-      } else {
-        // ToDo: report error to backend (20230413 - Shirley)
-        // Info: Unknown error between context and component
-        globalCtx.dataFailedModalHandler({
-          modalTitle: t('POSITION_MODAL.UPDATE_POSITION_TITLE'),
-          failedTitle: t('POSITION_MODAL.FAILED_TITLE'),
-          failedMsg: t('POSITION_MODAL.FAILED_REASON_FAILED_TO_UPDATE'),
-        });
+      //   globalCtx.visibleCanceledModalHandler();
+      // } else {
+      //   // ToDo: report error to backend (20230413 - Shirley)
+      //   // Info: Unknown error between context and component
+      //   globalCtx.dataFailedModalHandler({
+      //     modalTitle: t('POSITION_MODAL.UPDATE_POSITION_TITLE'),
+      //     failedTitle: t('POSITION_MODAL.FAILED_TITLE'),
+      //     failedMsg: t('POSITION_MODAL.FAILED_REASON_FAILED_TO_UPDATE'),
+      //   });
 
-        globalCtx.visibleFailedModalHandler();
-      }
+      //   globalCtx.visibleFailedModalHandler();
+      // }
+
+      // ToDo: report error to backend (20230413 - Shirley)
+      // Info: Unknown error between context and component
+      globalCtx.dataFailedModalHandler({
+        modalTitle: t('POSITION_MODAL.UPDATE_POSITION_TITLE'),
+        failedTitle: t('POSITION_MODAL.FAILED_TITLE'),
+        failedMsg: t('POSITION_MODAL.FAILED_REASON_FAILED_TO_UPDATE'),
+      });
+
+      globalCtx.visibleFailedModalHandler();
     }
 
     unlock();

@@ -826,40 +826,18 @@ export default function WalletPanel({
         setShowToast(true);
       }
 
-      // let balance = await provider.getBalance(address);
       const userBalance = ethers.utils.formatEther(balance);
       setUserBalance(userBalance);
 
-      // setUserBalance(ethers.utils.formatEther(balance));
-
-      // Connect to the wallet => first step success
-      // Clear other state of the process modal
-      // setFirstStepSuccess(true);
-      // setSecondStepSuccess(false);
-      // setSecondStepError(false);
-
-      // setLoading(true);
       const signature = await signer._signTypedData(DOMAIN, TYPES, VALUE);
 
-      // TODO: Notes why defaultAccount is '' here
       const isVerifyedSignature =
         address.toString() ===
         ethers.utils.verifyTypedData(DOMAIN, TYPES, VALUE, signature).toString();
 
-      // console.log(
-      //   `Sign by ${ethers.utils
-      //     .verifyTypedData(DOMAIN, TYPES, VALUE, signature)
-      //     .toString()}, Expected ${address}`
-      // );
-
       if (/^(0x|0X)?[a-fA-F0-9]+$/.test(signature) && isVerifyedSignature) {
         userCtx.signServiceTerm();
         setSignature(signature);
-        // setSecondStepSuccess(true);
-        // console.log(verifyedSignature, defaultAccount, signature);
-        // console.log(typeof ethers.utils.verifyTypedData(domain, types, value, signature));
-
-        // setTimeout(() => setProcessModalVisible(false), DELAYED_HIDDEN_SECONDS);
 
         globalCtx.visibleHelloModalHandler();
         globalCtx.visibleWalletPanelHandler();
@@ -908,34 +886,18 @@ export default function WalletPanel({
 
     if (!userCtx.isConnected) {
       try {
-        // globalCtx.dataSuccessfulModalHandler({
-        //   modalTitle: 'Wallet Connect',
-        //   modalContent: 'Welcome!',
-        // });
-        // globalCtx.visibleSuccessfulModalHandler();
-
         globalCtx.dataLoadingModalHandler({
           modalTitle: t('WALLET_PANEL.TITLE'),
           modalContent: t('WALLET_PANEL.CONNECTING'),
         });
         globalCtx.visibleLoadingModalHandler();
 
-        const connectWalletResult = await userCtx.connect();
+        await userCtx.connect();
 
-        // TODO: [Zoom out the loading modal should be still in the connecting process and popup the afterward modals when it's proceeded to the next step]
         globalCtx.eliminateAllModals();
 
-        // console.log('connect wallet result', connectWalletResult);
-        // globalCtx.visibleLoadingModalHandler();
-        // globalCtx.visibleSuccessfulModalHandler();
-
-        if (connectWalletResult) {
-          globalCtx.visibleSignatureProcessModalHandler();
-        } else {
-          globalCtx.visibleWalletPanelHandler();
-        }
+        globalCtx.visibleSignatureProcessModalHandler();
       } catch (error) {
-        // console.error(error);
         globalCtx.visibleWalletPanelHandler();
       }
     } else {
@@ -944,14 +906,11 @@ export default function WalletPanel({
   }
 
   const walletconnectOptionClickHandler = async () => {
-    // walletConnectSignClient();
     setChooseWalletConnect(true);
     setChooseMetamask(false);
 
     setErrorMessages('');
-    // setChooseMetamask(false);
     await walletConnectClient();
-    // await walletConnectProgram();
   };
 
   const metamaskOptionClickHandler = async () => {

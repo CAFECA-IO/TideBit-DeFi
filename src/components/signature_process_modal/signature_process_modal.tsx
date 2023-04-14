@@ -171,12 +171,9 @@ const SignatureProcessModal = ({
       } catch (error: any) {
         unlock();
 
-        // if (error?.code === 4001) {
-        //   setErrorCode(Code.SERVICE_TERM_DISABLE);
-        // } else {
-        //   // ToDo: report error to backend (20230413 - Shirley)
-        //   setErrorCode(Code.UNKNOWN_ERROR);
-        // }
+        // ToDo: report error to backend (20230413 - Shirley)
+
+        setErrorCode(Code.UNKNOWN_ERROR);
 
         setConnectingProcess(ConnectingProcess.REJECTED);
       }

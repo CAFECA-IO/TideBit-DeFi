@@ -153,26 +153,36 @@ const WithdrawalModal = ({
     } catch (error: any) {
       globalCtx.eliminateAllModals();
 
-      // Info: Signature rejected
-      // ToDo: Catch the error which user rejected the signature in UserContext (20230411 - Shirley)
-      if (error?.code === 4001) {
-        globalCtx.dataCanceledModalHandler({
-          modalTitle: t('D_W_MODAL.WITHDRAW'),
-          modalContent: t('D_W_MODAL.FAILED_REASON_CANCELED'),
-        });
+      // // Info: Signature rejected
+      // // ToDo: Catch the error which user rejected the signature in UserContext (20230411 - Shirley)
+      // if (error?.code === 4001) {
+      //   globalCtx.dataCanceledModalHandler({
+      //     modalTitle: t('D_W_MODAL.WITHDRAW'),
+      //     modalContent: t('D_W_MODAL.FAILED_REASON_CANCELED'),
+      //   });
 
-        globalCtx.visibleCanceledModalHandler();
-      } else {
-        // ToDo: Report error to backend (20230413 - Shirley)
-        // Info: Unknown error
-        globalCtx.dataFailedModalHandler({
-          modalTitle: t('D_W_MODAL.WITHDRAW'),
-          failedTitle: t('D_W_MODAL.FAILED_TITLE'),
-          failedMsg: t('D_W_MODAL.FAILED_REASON_FAILED_TO_WITHDRAW'),
-        });
+      //   globalCtx.visibleCanceledModalHandler();
+      // } else {
+      //   // ToDo: Report error to backend (20230413 - Shirley)
+      //   // Info: Unknown error
+      //   globalCtx.dataFailedModalHandler({
+      //     modalTitle: t('D_W_MODAL.WITHDRAW'),
+      //     failedTitle: t('D_W_MODAL.FAILED_TITLE'),
+      //     failedMsg: t('D_W_MODAL.FAILED_REASON_FAILED_TO_WITHDRAW'),
+      //   });
 
-        globalCtx.visibleFailedModalHandler();
-      }
+      //   globalCtx.visibleFailedModalHandler();
+      // }
+
+      // ToDo: Report error to backend (20230413 - Shirley)
+      // Info: Unknown error
+      globalCtx.dataFailedModalHandler({
+        modalTitle: t('D_W_MODAL.WITHDRAW'),
+        failedTitle: t('D_W_MODAL.FAILED_TITLE'),
+        failedMsg: t('D_W_MODAL.FAILED_REASON_FAILED_TO_WITHDRAW'),
+      });
+
+      globalCtx.visibleFailedModalHandler();
     }
 
     unlock();

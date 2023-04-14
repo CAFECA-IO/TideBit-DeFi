@@ -481,6 +481,7 @@ export const UserProvider = ({children}: IUserProvider) => {
       resultCode = Code.WALLET_IS_NOT_CONNECT;
       const connect = await lunar.connect({});
       if (connect && lunar.isConnected) {
+        resultCode = Code.DEWT_IS_NOT_LEGIT;
         const isDeWTLegit = checkDeWT();
         if (isDeWTLegit) await setPrivateData(lunar.address);
         resultCode = Code.SUCCESS;
@@ -489,26 +490,11 @@ export const UserProvider = ({children}: IUserProvider) => {
           code: resultCode,
         };
       }
-      // eslint-disable-next-line no-console
-      console.log('connect 491', connect, lunar.isConnected);
-      // eslint-disable-next-line no-console
-      console.log('result 492', result);
-      return result;
     } catch (error) {
-      // result = defaultResultFailed;
-      // result.code = resultCode;
-      // result.reason = Reason[result.code];
-      // eslint-disable-next-line no-console
-      console.log('connect error', error);
-
-      const e = new CustomError(resultCode);
-      // eslint-disable-next-line no-console
-      console.log('resulte code', resultCode);
-      // eslint-disable-next-line no-console
-      console.log('error thrown by connect()', e);
-      throw e;
-      // return result;
+      result.code = resultCode;
+      result.reason = Reason[result.code];
     }
+    return result;
   };
 
   const checkDeWT = (): boolean => {
@@ -573,8 +559,6 @@ export const UserProvider = ({children}: IUserProvider) => {
         return result;
       } else {
         const isConnected = await connect();
-        // eslint-disable-next-line no-console
-        console.log('isConnect 內容物', isConnected);
         if (isConnected) return signServiceTerm();
         else {
           resultCode = Code.WALLET_IS_NOT_CONNECT;
@@ -728,7 +712,6 @@ export const UserProvider = ({children}: IUserProvider) => {
     if (lunar.isConnected) {
       if (applyCreateCFDOrder) {
         const balance: IBalance | null = getBalance(applyCreateCFDOrder.margin.asset);
-
         if (balance && balance.available >= applyCreateCFDOrder.margin.amount) {
           const transferR = transactionEngine.transferCFDOrderToTransaction(applyCreateCFDOrder);
           if (transferR.success) {
@@ -771,7 +754,7 @@ export const UserProvider = ({children}: IUserProvider) => {
       else {
         resultCode = Code.WALLET_IS_NOT_CONNECT;
         result.code = resultCode;
-        result.reason = Reason[resultCode];
+        result.reason = Reason[result.code];
         return result;
       }
     }
@@ -781,6 +764,8 @@ export const UserProvider = ({children}: IUserProvider) => {
     applyCloseCFDOrder: IApplyCloseCFDOrder | undefined
   ): Promise<IResult> => {
     let result: IResult = defaultResultFailed;
+    let resultCode = Code.UNKNOWN_ERROR;
+
     if (lunar.isConnected) {
       if (applyCloseCFDOrder) {
         const index = openCFDs.findIndex(o => o.id === applyCloseCFDOrder.referenceId);
@@ -788,9 +773,12 @@ export const UserProvider = ({children}: IUserProvider) => {
           const balance: IBalance | null = getBalance(openCFDs[index].targetAsset);
           const transferR = transactionEngine.transferCFDOrderToTransaction(applyCloseCFDOrder);
           if (transferR.success) {
-            const signature: string = await lunar.signTypedData(transferR.data);
             // ++ TODO: send request to chain(use Lunar?) (20230324 - tzuhan)
             try {
+              resultCode = Code.REJECTED_SIGNATURE;
+              const signature: string = await lunar.signTypedData(transferR.data);
+
+              resultCode = Code.INTERNAL_SERVER_ERROR;
               const {updateCFDOrder, acceptedCFDOrder} = (await privateRequestHandler({
                 name: APIName.CLOSE_CFD_TRADE,
                 method: Method.PUT,
@@ -807,17 +795,19 @@ export const UserProvider = ({children}: IUserProvider) => {
               setClosedCFDs(prev => [...prev, updateCFDOrder]);
               updateBalance(acceptedCFDOrder.receipt.balance);
               setHistories(prev => [...prev, acceptedCFDOrder]);
+
+              resultCode = Code.SUCCESS;
               result = {
                 success: true,
-                code: Code.SUCCESS,
+                code: resultCode,
                 data: {order: updateCFDOrder, acceptedOrder: acceptedCFDOrder},
               };
             } catch (error) {
               // TODO: error handle (Tzuhan - 20230421)
               // eslint-disable-next-line no-console
               console.error(`${APIName.CLOSE_CFD_TRADE} error`, error);
-              result.code = Code.INTERNAL_SERVER_ERROR;
-              result.reason = (error as Error).message;
+              result.code = resultCode;
+              result.reason = Reason[resultCode];
             }
           }
         }
@@ -827,7 +817,9 @@ export const UserProvider = ({children}: IUserProvider) => {
       const isConnected = await connect();
       if (isConnected) return closeCFDOrder(applyCloseCFDOrder);
       else {
-        result.code = Code.WALLET_IS_NOT_CONNECT;
+        resultCode = Code.WALLET_IS_NOT_CONNECT;
+        result.code = resultCode;
+        result.reason = Reason[result.code];
         return result;
       }
     }
@@ -837,15 +829,20 @@ export const UserProvider = ({children}: IUserProvider) => {
     applyUpdateCFDOrder: IApplyUpdateCFDOrder | undefined
   ): Promise<IResult> => {
     let result: IResult = defaultResultFailed;
+    let resultCode = Code.UNKNOWN_ERROR;
+
     if (lunar.isConnected) {
       if (applyUpdateCFDOrder) {
         const index = openCFDs.findIndex(o => o.id === applyUpdateCFDOrder.referenceId);
         if (index !== -1) {
           const transferR = transactionEngine.transferCFDOrderToTransaction(applyUpdateCFDOrder);
           if (transferR.success) {
-            const signature: string = await lunar.signTypedData(transferR.data);
             // ++ TODO: send request to chain(use Lunar?) (20230324 - tzuhan)
             try {
+              resultCode = Code.REJECTED_SIGNATURE;
+              const signature: string = await lunar.signTypedData(transferR.data);
+
+              resultCode = Code.INTERNAL_SERVER_ERROR;
               const {updateCFDOrder, acceptedCFDOrder} = (await privateRequestHandler({
                 name: APIName.UPDATE_CFD_TRADE,
                 method: Method.PUT,
@@ -860,17 +857,19 @@ export const UserProvider = ({children}: IUserProvider) => {
               setOpenedCFDs(updateCFDOrders);
               updateBalance(acceptedCFDOrder.receipt.balance);
               setHistories(prev => [...prev, acceptedCFDOrder]);
+
+              resultCode = Code.SUCCESS;
               result = {
                 success: true,
-                code: Code.SUCCESS,
+                code: resultCode,
                 data: {order: updateCFDOrder, acceptedOrder: acceptedCFDOrder},
               };
             } catch (error) {
               // TODO: error handle (Tzuhan - 20230421)
               // eslint-disable-next-line no-console
               console.error(`${APIName.UPDATE_CFD_TRADE} error`, error);
-              result.code = Code.INTERNAL_SERVER_ERROR;
-              result.reason = (error as Error).message;
+              result.code = resultCode;
+              result.reason = Reason[resultCode];
             }
           }
         }
@@ -880,7 +879,9 @@ export const UserProvider = ({children}: IUserProvider) => {
       const isConnected = await connect();
       if (isConnected) return updateCFDOrder(applyUpdateCFDOrder);
       else {
-        result.code = Code.WALLET_IS_NOT_CONNECT;
+        resultCode = Code.WALLET_IS_NOT_CONNECT;
+        result.code = resultCode;
+        result.reason = Reason[result.code];
         return result;
       }
     }
@@ -888,6 +889,8 @@ export const UserProvider = ({children}: IUserProvider) => {
 
   const deposit = async (depositOrder: IApplyDepositOrder): Promise<IResult> => {
     let result: IResult = defaultResultFailed;
+    let resultCode = Code.UNKNOWN_ERROR;
+
     if (lunar.isConnected) {
       try {
         /** 
@@ -900,6 +903,8 @@ export const UserProvider = ({children}: IUserProvider) => {
       // TODO: updateWalletBalances
       // */
         const txid = randomHex(32);
+
+        resultCode = Code.INTERNAL_SERVER_ERROR;
         const acceptedDepositOrder = (await privateRequestHandler({
           name: APIName.CREATE_DEPOSIT_TRADE,
           method: Method.POST,
@@ -908,24 +913,28 @@ export const UserProvider = ({children}: IUserProvider) => {
         setDeposits(prev => [...prev, acceptedDepositOrder.receipt.order]);
         updateBalance(acceptedDepositOrder.receipt.balance);
         setHistories(prev => [...prev, acceptedDepositOrder]);
+
+        resultCode = Code.SUCCESS;
         result = {
           success: true,
-          code: Code.SUCCESS,
+          code: resultCode,
           data: acceptedDepositOrder,
         };
       } catch (error) {
         // TODO: error handle (Tzuhan - 20230421)
         // eslint-disable-next-line no-console
         console.error(`${APIName.CREATE_DEPOSIT_TRADE} error`, error);
-        result.code = Code.INTERNAL_SERVER_ERROR;
-        result.reason = (error as Error).message;
+        result.code = resultCode;
+        result.reason = Reason[resultCode];
       }
       return result;
     } else {
       const isConnected = await connect();
       if (isConnected) return deposit(depositOrder);
       else {
-        result.code = Code.WALLET_IS_NOT_CONNECT;
+        resultCode = Code.WALLET_IS_NOT_CONNECT;
+        result.code = resultCode;
+        result.reason = Reason[result.code];
         return result;
       }
     }
@@ -933,14 +942,19 @@ export const UserProvider = ({children}: IUserProvider) => {
 
   const withdraw = async (withdrawOrder: IApplyWithdrawOrder): Promise<IResult> => {
     let result: IResult = defaultResultFailed;
+    let resultCode = Code.UNKNOWN_ERROR;
+
     if (lunar.isConnected) {
       const balance: IBalance | null = getBalance(withdrawOrder.targetAsset); // TODO: ticker is not currency
       if (balance && balance.available >= withdrawOrder.targetAmount) {
         const transferR = transactionEngine.transferWithdrawOrderToTransaction(withdrawOrder);
         if (transferR.success) {
-          const signature: string = await lunar.signTypedData(transferR.data);
           // ++ TODO: send request to chain(use Lunar?) (20230324 - tzuhan)
           try {
+            resultCode = Code.REJECTED_SIGNATURE;
+            const signature: string = await lunar.signTypedData(transferR.data);
+
+            resultCode = Code.INTERNAL_SERVER_ERROR;
             const acceptedWithdrawOrder = (await privateRequestHandler({
               name: APIName.CREATE_WITHDRAW_TRADE,
               method: Method.POST,
@@ -953,17 +967,19 @@ export const UserProvider = ({children}: IUserProvider) => {
             setWithdraws(prev => [...prev, acceptedWithdrawOrder.receipt.order]);
             updateBalance(acceptedWithdrawOrder.receipt.balance);
             setHistories(prev => [...prev, acceptedWithdrawOrder]);
+
+            resultCode = Code.SUCCESS;
             result = {
               success: true,
-              code: Code.SUCCESS,
+              code: resultCode,
               data: acceptedWithdrawOrder,
             };
           } catch (error) {
             // TODO: error handle (Tzuhan - 20230421)
             // eslint-disable-next-line no-console
             console.error(`${APIName.CREATE_WITHDRAW_TRADE} error`, error);
-            result.code = Code.INTERNAL_SERVER_ERROR;
-            result.reason = (error as Error).message;
+            result.code = resultCode;
+            result.reason = Reason[resultCode];
           }
         }
       }

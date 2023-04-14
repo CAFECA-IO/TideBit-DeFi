@@ -24,6 +24,13 @@ import {
   IChartApi,
   ISeriesApi,
   BarData,
+  MouseEventParams,
+  IPriceLine,
+  LogicalRange,
+  LogicalRangeChangeEventHandler,
+  LineStyle,
+  SeriesMarker,
+  Time,
 } from 'lightweight-charts';
 import Lottie, {useLottie} from 'lottie-react';
 import spotAnimation from '../../../public/animation/circle.json';
@@ -102,6 +109,7 @@ const createSpec = ({timespan, dataSize, chartHeight, chartWidth}: IChartSpecPro
   const chartOptions = {
     width: chartWidth,
     height: chartHeight,
+
     layout: {
       fontSize: 12,
       fontFamily: 'barlow, sans-serif',
@@ -126,10 +134,10 @@ const createSpec = ({timespan, dataSize, chartHeight, chartWidth}: IChartSpecPro
     crosshair: {
       mode: 0,
       vertLine: {
-        color: LINE_GRAPH_STROKE_COLOR.DEFAULT,
+        color: LINE_GRAPH_STROKE_COLOR.WHITE,
       },
       horzLine: {
-        color: LINE_GRAPH_STROKE_COLOR.DEFAULT,
+        color: LINE_GRAPH_STROKE_COLOR.WHITE,
       },
     },
 
@@ -233,6 +241,15 @@ export default function CandlestickChart({
     low: 0,
     close: 0,
   });
+  const [cursorStyle, setCursorStyle, cursorStyleRef] = useStateRef<
+    'hover:cursor-crosshair' | 'hover:cursor-pointer'
+  >('hover:cursor-crosshair');
+
+  const chartContainerRef = useRef<HTMLDivElement>(null);
+  let chart: IChartApi;
+  let candlestickSeries: ISeriesApi<'Candlestick'>;
+  let customPriceLine: IPriceLine;
+  let tuned: CandlestickData[];
 
   const width =
     globalCtx.layoutAssertion === 'desktop'
@@ -247,10 +264,6 @@ export default function CandlestickChart({
       </p>
     ) : null;
 
-  const chartContainerRef = useRef<HTMLDivElement>(null);
-  let chart: IChartApi;
-  let candlestickSeries: ISeriesApi<'Candlestick'>;
-
   const {targetTime, chartOptions} = createSpec({
     dataSize: 30,
     timespan: 1,
@@ -260,6 +273,99 @@ export default function CandlestickChart({
 
   const handleResize = () => {
     chart.applyOptions({width: Number(chartContainerRef?.current?.clientWidth) - 50});
+  };
+
+  const crosshairMoveHandler = (param: MouseEventParams) => {
+    if (param.point === undefined || param.time === undefined) {
+      return;
+    }
+
+    if (param.seriesData) {
+      param.seriesData.forEach(series => {
+        const candle = series as CandlestickData;
+        setOhlcInfo({
+          open: candle.open,
+          high: candle.high,
+          low: candle.low,
+          close: candle.close,
+        });
+      });
+    }
+
+    // ToDo: [time->price point]when hovering over the label of open position, change the cursor (20230413 - Shirley)
+    // if (param.time === (((tuned[tuned.length - 1].time as number) + 1) as UTCTimestamp)) {
+    //   setCursorStyle('hover:cursor-pointer');
+    //   return;
+    // }
+    // setCursorStyle('hover:cursor-crosshair');
+  };
+
+  const updatePriceLine = (lastClosePrice: number) => {
+    customPriceLine.applyOptions({
+      price: lastClosePrice,
+    });
+  };
+
+  const priceRangeChangeHandler = (newVisibleLogicalRange: LogicalRange) => {
+    const lastData = tuned[tuned.length - 1] as CandlestickData;
+
+    updatePriceLine(lastData?.close);
+  };
+
+  const openPriceLine = () => {
+    // ToDo: get the open position from user context (20230411 - Shirley)
+    const numOfPosition = 3;
+    for (let i = 0; i < numOfPosition; i++) {
+      const price =
+        i === 0 ? tuned[tuned.length - 1]?.close + 1 : tuned[tuned.length - 1]?.close - 1 * i;
+      const color = i === 0 ? LINE_GRAPH_STROKE_COLOR.UP : LINE_GRAPH_STROKE_COLOR.DOWN;
+
+      const lineSeries = chart.addLineSeries({
+        color: color,
+        lineWidth: 1,
+        lineStyle: LineStyle.Solid,
+        priceLineStyle: LineStyle.Solid,
+        crosshairMarkerVisible: false,
+        lastValueVisible: false,
+        title: `Position: ${price.toFixed(2)}　Close`,
+        baseLineVisible: true,
+      });
+
+      if (!lineSeries || !tuned || tuned.length === 0) return;
+
+      try {
+        const time = [
+          (tuned[0]?.time as number) - 1,
+          (tuned[tuned.length - 1]?.time as number) + 1,
+        ];
+        lineSeries.setData([
+          {
+            time: time[0] as UTCTimestamp,
+            value: price,
+          },
+          {
+            time: time[1] as UTCTimestamp,
+            value: price,
+          },
+        ]);
+      } catch (err) {
+        // Info: Catch the error and do nothing (20230411 - Shirley)
+      }
+
+      // ToDo: When clicking, pop up the position closed modal with position information (20230411 - Shirley)
+      // ToDo: unsubscribe the event listener (20230411 - Shirley)
+      chart.subscribeClick((param: MouseEventParams) => {
+        // Info: Get the clicked point (20230411 - Shirley)
+        const point = param?.point;
+
+        if (point === undefined) return;
+
+        globalCtx.visiblePositionClosedModalHandler();
+
+        // ToDo: (lottie) Get the time value from the clicked point (20230411 - Shirley)
+        // const time = chart.timeScale().coordinateToTime(point.x);
+      });
+    }
   };
 
   const fetchCandlestickData = () => {
@@ -273,11 +379,9 @@ export default function CandlestickChart({
 
   const drawChart = () => {
     if (chartContainerRef.current) {
-      // Info: Draw
-      const tuned = fetchCandlestickData();
-
+      // Info: Get data and draw the chart
+      tuned = fetchCandlestickData();
       chart = createChart(chartContainerRef.current, chartOptions);
-
       candlestickSeries = chart.addCandlestickSeries({
         // ToDo: `createSpec` 可以讀外面的參數，但這邊直接拿createSpec
         upColor: LINE_GRAPH_STROKE_COLOR.UP,
@@ -290,29 +394,43 @@ export default function CandlestickChart({
 
       chart.timeScale().fitContent();
 
-      chart.subscribeCrosshairMove(param => {
-        if (param.point === undefined || param.time === undefined) {
-          return;
-        }
-
-        if (param.seriesData) {
-          param.seriesData.forEach(series => {
-            const candle = series as CandlestickData;
-            setOhlcInfo({
-              open: candle.open,
-              high: candle.high,
-              low: candle.low,
-              close: candle.close,
-            });
-          });
-        }
+      customPriceLine = candlestickSeries.createPriceLine({
+        price: 0,
+        color: LINE_GRAPH_STROKE_COLOR.TIDEBIT_THEME,
+        axisLabelVisible: true,
+        axisLabelTextColor: LINE_GRAPH_STROKE_COLOR.WHITE,
+        axisLabelColor: LINE_GRAPH_STROKE_COLOR.TIDEBIT_THEME,
       });
+
+      // Info: Create a custom price line
+      candlestickSeries.applyOptions({
+        lastValueVisible: false,
+      });
+
+      // ToDo: [Workaround] without subscription, the price line won't be drawn (20230411 - Shirley)
+      chart
+        .timeScale()
+        .subscribeVisibleLogicalRangeChange(
+          priceRangeChangeHandler as LogicalRangeChangeEventHandler
+        );
+
+      // Info: Draw the open price line
+      // openPriceLine();
+
+      // Info: OHLC hovered information
+      chart.subscribeCrosshairMove(crosshairMoveHandler);
 
       window.addEventListener('resize', handleResize);
 
       return () => {
         try {
           window.removeEventListener('resize', handleResize);
+          chart.unsubscribeCrosshairMove(crosshairMoveHandler);
+          chart
+            .timeScale()
+            .unsubscribeVisibleLogicalRangeChange(
+              priceRangeChangeHandler as LogicalRangeChangeEventHandler
+            );
           chart.remove();
         } catch (err) {
           // Info: (20230406 - Shirley) do nothing
@@ -334,7 +452,7 @@ export default function CandlestickChart({
     <>
       <div className="mt-5 -mb-8 lg:-mt-8 lg:mb-5 lg:ml-5">{displayedOHLC}</div>
       <div className="ml-5 pb-20 pt-20 lg:w-7/10 lg:pb-5 lg:pt-14">
-        <div ref={chartContainerRef} className="hover:cursor-crosshair"></div>
+        <div ref={chartContainerRef} className={`${cursorStyleRef.current}`}></div>
       </div>
     </>
   );

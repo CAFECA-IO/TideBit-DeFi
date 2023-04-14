@@ -14,12 +14,13 @@ import {IUpdatedCFDInputProps, useGlobal} from '../../contexts/global_context';
 import {TypeOfPosition} from '../../constants/type_of_position';
 import {UserContext} from '../../contexts/user_context';
 import {useTranslation} from 'react-i18next';
-import {unitAsset, FRACTION_DIGITS} from '../../constants/config';
+import {unitAsset} from '../../constants/config';
 import {IDisplayApplyCFDOrder} from '../../interfaces/tidebit_defi_background/display_apply_cfd_order';
 import {IApplyUpdateCFDOrder} from '../../interfaces/tidebit_defi_background/apply_update_cfd_order';
 import {IDisplayCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
 import {CFDOperation} from '../../constants/cfd_order_type';
 import {OrderType} from '../../constants/order_type';
+import {Code} from '../../constants/code';
 
 type TranslateFunction = (s: string) => string;
 interface IPositionUpdatedModal {
@@ -60,20 +61,15 @@ const PositionUpdatedModal = ({
       guaranteedStopFee: gslFee,
     };
 
-    // Deprecated: before merging into develop (20230327 - Shirley)
-    // eslint-disable-next-line no-console
-    console.log('update request', request);
-    // eslint-disable-next-line no-console
-    console.log('gsl', gsl);
-    // eslint-disable-next-line no-console
-    console.log('open value', position.openValue);
-
     return request;
   };
 
   const submitClickHandler = async () => {
     const [lock, unlock] = locker('position_updated_modal.submitClickHandler');
+
     if (!lock()) return;
+    const applyUpdateOrder = toApplyUpdateOrder(openCfdDetails);
+
     await wait(DELAYED_HIDDEN_SECONDS / 5);
     modalClickHandler();
 
@@ -83,45 +79,85 @@ const PositionUpdatedModal = ({
     });
     globalCtx.visibleLoadingModalHandler();
 
-    const result = await userCtx.updateCFDOrder(toApplyUpdateOrder(openCfdDetails));
+    try {
+      const result = await userCtx.updateCFDOrder(applyUpdateOrder);
 
-    globalCtx.dataLoadingModalHandler({
-      modalTitle: t('POSITION_MODAL.UPDATE_POSITION_TITLE'),
-      modalContent: t('POSITION_MODAL.TRANSACTION_BROADCAST'),
-      btnMsg: t('POSITION_MODAL.VIEW_ON_BUTTON'),
-      btnUrl: '#',
-    });
+      if (result.success) {
+        // TODO: (20230413 - Shirley) the button URL
+        globalCtx.dataLoadingModalHandler({
+          modalTitle: t('POSITION_MODAL.UPDATE_POSITION_TITLE'),
+          modalContent: t('POSITION_MODAL.TRANSACTION_BROADCAST'),
+          btnMsg: t('POSITION_MODAL.VIEW_ON_BUTTON'),
+          btnUrl: '#',
+        });
 
-    // TODO: (20230317 - Shirley) temporary waiting
-    await wait(DELAYED_HIDDEN_SECONDS);
+        // TODO: (20230317 - Shirley) temporary waiting
+        await wait(DELAYED_HIDDEN_SECONDS);
 
-    globalCtx.eliminateAllModals();
+        globalCtx.eliminateAllModals();
 
-    // TODO: (20230317 - Shirley) Revise the `result.reason` to constant by using enum or object
-    // TODO: (20230317 - Shirley) the button URL
-    if (result.success) {
-      globalCtx.dataSuccessfulModalHandler({
-        modalTitle: t('POSITION_MODAL.UPDATE_POSITION_TITLE'),
-        modalContent: t('POSITION_MODAL.TRANSACTION_SUCCEED'),
-        btnMsg: t('POSITION_MODAL.VIEW_ON_BUTTON'),
-        btnUrl: '#',
-      });
+        globalCtx.dataSuccessfulModalHandler({
+          modalTitle: t('POSITION_MODAL.UPDATE_POSITION_TITLE'),
+          modalContent: t('POSITION_MODAL.TRANSACTION_SUCCEED'),
+          btnMsg: t('POSITION_MODAL.VIEW_ON_BUTTON'),
+          btnUrl: '#',
+        });
 
-      globalCtx.visibleSuccessfulModalHandler();
-      await wait(DELAYED_HIDDEN_SECONDS);
+        globalCtx.visibleSuccessfulModalHandler();
+
+        await wait(DELAYED_HIDDEN_SECONDS);
+        globalCtx.eliminateAllModals();
+
+        globalCtx.dataUpdateFormModalHandler(openCfdDetails);
+        globalCtx.visibleUpdateFormModalHandler();
+      } else if (
+        // Info: cancel (20230412 - Shirley)
+        result.code === Code.SERVICE_TERM_DISABLE ||
+        result.code === Code.WALLET_IS_NOT_CONNECT ||
+        result.code === Code.EXPIRED_QUOTATION_CANCELED ||
+        result.code === Code.REJECTED_SIGNATURE
+      ) {
+        // Deprecated: [debug] (20230413 - Shirley)
+        // eslint-disable-next-line no-console
+        console.log('update result', result);
+
+        globalCtx.eliminateAllModals();
+
+        globalCtx.dataCanceledModalHandler({
+          modalTitle: t('POSITION_MODAL.UPDATE_POSITION_TITLE'),
+          modalContent: t('POSITION_MODAL.FAILED_REASON_CANCELED'),
+        });
+
+        globalCtx.visibleCanceledModalHandler();
+      } else if (
+        result.code === Code.INTERNAL_SERVER_ERROR ||
+        result.code === Code.INVAILD_INPUTS ||
+        result.code === Code.EXPIRED_QUOTATION_FAILED ||
+        result.code === Code.UNKNOWN_ERROR
+      ) {
+        // Deprecated: [debug] (20230413 - Shirley)
+        // eslint-disable-next-line no-console
+        console.log('update result', result);
+
+        globalCtx.eliminateAllModals();
+
+        globalCtx.dataFailedModalHandler({
+          modalTitle: t('POSITION_MODAL.UPDATE_POSITION_TITLE'),
+          failedTitle: t('POSITION_MODAL.FAILED_TITLE'),
+          failedMsg: t('POSITION_MODAL.FAILED_REASON_FAILED_TO_UPDATE'),
+        });
+
+        globalCtx.visibleFailedModalHandler();
+      }
+    } catch (error: any) {
+      // Deprecated: [debug] (20230412 - Shirley)
+      // eslint-disable-next-line no-console
+      console.log('update position error', error);
 
       globalCtx.eliminateAllModals();
 
-      globalCtx.dataUpdateFormModalHandler(openCfdDetails);
-      globalCtx.visibleUpdateFormModalHandler();
-    } else if (result.reason === 'CANCELED') {
-      globalCtx.dataCanceledModalHandler({
-        modalTitle: t('POSITION_MODAL.UPDATE_POSITION_TITLE'),
-        modalContent: t('POSITION_MODAL.FAILED_REASON_CANCELED'),
-      });
-
-      globalCtx.visibleCanceledModalHandler();
-    } else if (result.reason === 'FAILED') {
+      // ToDo: report error to backend (20230413 - Shirley)
+      // Info: Unknown error between context and component
       globalCtx.dataFailedModalHandler({
         modalTitle: t('POSITION_MODAL.UPDATE_POSITION_TITLE'),
         failedTitle: t('POSITION_MODAL.FAILED_TITLE'),
@@ -132,11 +168,10 @@ const PositionUpdatedModal = ({
     }
 
     unlock();
-
     return;
   };
 
-  // Double check if the value is updated
+  // Info: Double check if the value is updated (20230413 - Shirley)
   const renewDataStyle = () => {
     if (updatedProps === undefined) return;
 
@@ -144,12 +179,10 @@ const PositionUpdatedModal = ({
       ? setGtslTextStyle('text-lightYellow2')
       : setGtslTextStyle('text-lightWhite');
 
-    //  && updatedProps.takeProfit !== openCfdDetails.takeProfit
     updatedProps.takeProfit !== undefined && updatedProps.takeProfit !== openCfdDetails?.takeProfit
       ? setTpTextStyle('text-lightYellow2')
       : setTpTextStyle('text-lightWhite');
 
-    // && updatedProps.stopLoss !== openCfdDetails.stopLoss
     updatedProps.stopLoss !== undefined && updatedProps.stopLoss !== openCfdDetails?.stopLoss
       ? setSlTextStyle('text-lightYellow2')
       : setSlTextStyle('text-lightWhite');
@@ -170,16 +203,14 @@ const PositionUpdatedModal = ({
       ? updatedProps.takeProfit === 0
         ? '-'
         : updatedProps.takeProfit !== 0
-        ? `$ ${updatedProps.takeProfit.toLocaleString(
-            UNIVERSAL_NUMBER_FORMAT_LOCALE,
-            FRACTION_DIGITS
-          )}`
+        ? `$ ${updatedProps.takeProfit.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+            minimumFractionDigits: 2,
+          })}`
         : undefined
       : openCfdDetails?.takeProfit
-      ? `$ ${openCfdDetails?.takeProfit.toLocaleString(
-          UNIVERSAL_NUMBER_FORMAT_LOCALE,
-          FRACTION_DIGITS
-        )}`
+      ? `$ ${openCfdDetails?.takeProfit.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+          minimumFractionDigits: 2,
+        })}`
       : '-';
 
   const displayedStopLoss =
@@ -187,16 +218,14 @@ const PositionUpdatedModal = ({
       ? updatedProps.stopLoss === 0
         ? '-'
         : updatedProps.stopLoss !== 0
-        ? `$ ${updatedProps.stopLoss.toLocaleString(
-            UNIVERSAL_NUMBER_FORMAT_LOCALE,
-            FRACTION_DIGITS
-          )}`
+        ? `$ ${updatedProps.stopLoss.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+            minimumFractionDigits: 2,
+          })}`
         : undefined
       : openCfdDetails?.stopLoss
-      ? `$ ${openCfdDetails?.stopLoss.toLocaleString(
-          UNIVERSAL_NUMBER_FORMAT_LOCALE,
-          FRACTION_DIGITS
-        )}`
+      ? `$ ${openCfdDetails?.stopLoss.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+          minimumFractionDigits: 2,
+        })}`
       : '-';
 
   const displayedTypeOfPosition =
@@ -221,12 +250,12 @@ const PositionUpdatedModal = ({
     <div className="mt-8 flex flex-col px-6 pb-2">
       <div className="flex items-center justify-center space-x-2 text-center">
         <Image
-          src={`/asset_icon/${openCfdDetails.ticker.toLowerCase()}.svg`}
+          src={marketCtx.selectedTicker?.tokenImg ?? ''}
           width={30}
           height={30}
-          alt="currency icon"
+          alt="ticker icon"
         />
-        <div className="text-2xl">{openCfdDetails.ticker}</div>
+        <div className="text-2xl">{openCfdDetails?.ticker}</div>
       </div>
 
       <div className="relative flex flex-col items-center pt-1">
@@ -248,10 +277,9 @@ const PositionUpdatedModal = ({
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">{t('POSITION_MODAL.OPEN_PRICE')}</div>
               <div className={``}>
-                {openCfdDetails?.openPrice?.toLocaleString(
-                  UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                  FRACTION_DIGITS
-                ) ?? 0}{' '}
+                {openCfdDetails?.openPrice?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+                  minimumFractionDigits: 2,
+                }) ?? 0}{' '}
                 <span className="ml-1 text-lightGray">{unitAsset}</span>
                 {/* {openCfdDetails?.price?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0} USDT */}
               </div>

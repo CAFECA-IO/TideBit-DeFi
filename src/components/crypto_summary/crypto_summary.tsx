@@ -90,7 +90,7 @@ const CryptoSummary = ({
       <div style={{width: '97%'}} className="flex-col justify-start">
         {' '}
         <h1 className="pr-12 text-start text-xl text-lightWhite">
-          {t('TRADE_PAGE.CRYPTO_SUMMARY_TITLE')}
+          {t('TRADE_PAGE.CRYPTO_SUMMARY_WHITEPAPER_TITLE')}
         </h1>
         <span className={`${dividerWidth} mb-3 inline-block h-px rounded bg-white/30`}></span>
         <div className={`${overallWidth}`}>

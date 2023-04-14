@@ -11,8 +11,8 @@ interface IReceiptSearchProps {
   filteredTradingType: string;
   setFilteredTradingType: Dispatch<SetStateAction<string>>;
   setSearches: Dispatch<SetStateAction<string>>;
-  filteredDate: number[];
-  setFilteredDate: Dispatch<SetStateAction<number[]>>;
+  filteredDate: string[];
+  setFilteredDate: Dispatch<SetStateAction<string[]>>;
 }
 
 const currentDate = new Date();
@@ -29,14 +29,15 @@ const ReceiptSearch = ({
   const [tradingTypeMenuOpen, setTradingTypeMenuOpen] = useState(false);
   const [dateStart, setDateStart] = useState(
     new Date(
-      `${currentDate.getFullYear()}-${currentDate.getMonth() + 1}-${currentDate.getDate()} 00:00:00`
+      `${currentDate.getFullYear()}-${currentDate.getMonth() + 1}-${currentDate.getDate()} 08:00:00`
     )
   );
   const [dateEnd, setDateEnd] = useState(
     new Date(
-      `${currentDate.getFullYear()}-${currentDate.getMonth() + 1}-${currentDate.getDate()} 23:59:59`
+      `${currentDate.getFullYear()}-${currentDate.getMonth() + 1}-${currentDate.getDate()} 08:00:00`
     )
   );
+  //const [tickersSettings, setTickersSettings] = useState(null);
 
   const tradingTypeMenuText =
     filteredTradingType === OrderType.DEPOSIT
@@ -80,11 +81,13 @@ const ReceiptSearch = ({
     setTradingTypeMenuOpen(false);
   };
 
+  /* Todo: (20230412 - Julian)
+   * date to timestamp #289 */
   const dateStartUpdateHandler = useCallback(
     async (date: Date) => {
       setDateStart(date);
-      const end = dateEnd.getTime();
-      const start = date.getTime();
+      const end = dateEnd.toISOString().substring(0, 10);
+      const start = date.toISOString().substring(0, 10);
 
       setFilteredDate([start, end]);
     },
@@ -94,8 +97,8 @@ const ReceiptSearch = ({
   const dateEndUpdateHandler = useCallback(
     async (date: Date) => {
       setDateEnd(date);
-      const end = date.getTime();
-      const start = dateStart.getTime();
+      const end = date.toISOString().substring(0, 10);
+      const start = dateStart.toISOString().substring(0, 10);
 
       setFilteredDate([start, end]);
     },
@@ -108,7 +111,7 @@ const ReceiptSearch = ({
   };
 
   const displayedFilterBar = (
-    <div className="hidden space-x-10 text-lightWhite sm:flex sm:py-2">
+    <div className="hidden space-x-10 text-lightWhite sm:flex">
       {/* Info: (20230316 - Julian) Trading Type Dropdown Menu */}
       <div className="flex flex-col items-start">
         {t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_TITLE')}
@@ -166,7 +169,7 @@ const ReceiptSearch = ({
   );
 
   const displayedSearchBar = (
-    <div className="relative w-8/10 sm:py-2 lg:w-300px">
+    <div className="relative w-300px">
       <input
         type="search"
         className="block w-full rounded-full bg-darkGray7 p-3 pl-4 text-sm text-white focus:border-blue-500 focus:outline-none focus:ring-0 focus:ring-blue-500"
@@ -176,7 +179,7 @@ const ReceiptSearch = ({
       />
       <button
         type="button"
-        className="absolute top-2 right-1 rounded-lg bg-transparent px-4 py-2 text-sm font-medium text-white hover:text-gray-700/80 focus:outline-none focus:ring-0 focus:ring-blue-300"
+        className="absolute top-0 right-1 rounded-lg bg-transparent px-4 py-2 text-sm font-medium text-white hover:text-gray-700/80 focus:outline-none focus:ring-0 focus:ring-blue-300"
       >
         <CgSearch size={30} />
       </button>
@@ -194,9 +197,9 @@ const ReceiptSearch = ({
   );
 
   return (
-    <div className="items-between flex w-full flex-col">
+    <div className="flex flex-col items-center sm:items-stretch">
       {/* displayedTicker */}
-      <div className="flex flex-col items-center justify-between lg:flex-row lg:py-6">
+      <div className="flex items-center justify-between py-6">
         {displayedFilterBar}
         {displayedSearchBar}
       </div>

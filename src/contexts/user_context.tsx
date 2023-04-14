@@ -723,6 +723,7 @@ export const UserProvider = ({children}: IUserProvider) => {
               const signature: string = await lunar.signTypedData(transferR.data);
 
               resultCode = Code.INTERNAL_SERVER_ERROR;
+              // ToDo: Check if the quotation is expired, if so return `failed result` in `catch`. (20230414 - Shirley)
               const {CFDOrder, acceptedCFDOrder} = (await privateRequestHandler({
                 name: APIName.CREATE_CFD_TRADE,
                 method: Method.POST,

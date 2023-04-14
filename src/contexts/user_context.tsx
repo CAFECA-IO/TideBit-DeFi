@@ -34,6 +34,7 @@ import {Code, ICode, Reason} from '../constants/code';
 import {
   getCookieByName,
   getServiceTermContract,
+  getTimestamp,
   randomHex,
   rlpEncodeServiceTerm,
   verifySignedServiceTerm,
@@ -45,6 +46,7 @@ import {
   IWithdrawOrder,
 } from '../interfaces/tidebit_defi_background/order';
 import {CustomError} from '../lib/custom_error';
+import {setTimeout} from 'timers/promises';
 
 export interface IUserBalance {
   available: number;
@@ -704,7 +706,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     } else throw Error('Balance not found');
   };
 
-  const createCFDOrder = async (
+  const _createCFDOrder = async (
     applyCreateCFDOrder: IApplyCreateCFDOrder | undefined
   ): Promise<IResult> => {
     let result: IResult = defaultResultFailed;
@@ -758,6 +760,49 @@ export const UserProvider = ({children}: IUserProvider) => {
         return result;
       }
     }
+  };
+
+  const createCFDOrder = async (
+    applyCreateCFDOrder: IApplyCreateCFDOrder | undefined
+  ): Promise<IResult> => {
+    const timeLeft = (Number(applyCreateCFDOrder?.quotation.deadline) - getTimestamp()) * 1000;
+    // Deprecated: (20230420 - Shirley)
+    // eslint-disable-next-line no-console
+    console.log('time left', timeLeft);
+    if (timeLeft < 0) {
+      const result: IResult = defaultResultFailed;
+      const resultCode = Code.EXPIRED_QUOTATION_CANCELED;
+      result.code = resultCode;
+      result.reason = Reason[resultCode];
+      return result;
+    }
+
+    const countdown = () =>
+      new Promise<IResult>(resolve => {
+        window.setTimeout(() => {
+          const result: IResult = defaultResultFailed;
+          const resultCode = Code.EXPIRED_QUOTATION_CANCELED;
+          result.code = resultCode;
+          result.reason = Reason[resultCode];
+          resolve(result);
+          // Deprecated: (20230420 - Shirley)
+          // eslint-disable-next-line no-console
+          console.log('result in coundown Promise');
+        }, timeLeft);
+      });
+
+    if (!lunar.isConnected) {
+      const isConnected = await connect();
+      if (!isConnected) {
+        const result: IResult = defaultResultFailed;
+        const resultCode = Code.WALLET_IS_NOT_CONNECT;
+        result.code = resultCode;
+        result.reason = Reason[result.code];
+        return result;
+      }
+    }
+
+    return Promise.race([_createCFDOrder(applyCreateCFDOrder), countdown()]);
   };
 
   const closeCFDOrder = async (

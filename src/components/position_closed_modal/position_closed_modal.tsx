@@ -360,25 +360,6 @@ const PositionClosedModal = ({
 
       globalCtx.eliminateAllModals();
 
-      // if (error?.code === 4001) {
-      //   globalCtx.dataCanceledModalHandler({
-      //     modalTitle: t('POSITION_MODAL.OPEN_POSITION_TITLE'),
-      //     modalContent: t('POSITION_MODAL.FAILED_REASON_CANCELED'),
-      //   });
-
-      //   globalCtx.visibleCanceledModalHandler();
-      // } else {
-      //   // ToDo: report error to backend (20230413 - Shirley)
-      //   // Info: Unknown error between context and component
-      //   globalCtx.dataFailedModalHandler({
-      //     modalTitle: t('POSITION_MODAL.CLOSE_POSITION_TITLE'),
-      //     failedTitle: t('POSITION_MODAL.FAILED_TITLE'),
-      //     failedMsg: t('POSITION_MODAL.ERROR_MESSAGE'),
-      //   });
-
-      //   globalCtx.visibleFailedModalHandler();
-      // }
-
       // ToDo: report error to backend (20230413 - Shirley)
       // Info: Unknown error between context and component
       globalCtx.dataFailedModalHandler({

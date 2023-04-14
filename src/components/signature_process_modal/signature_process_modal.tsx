@@ -122,13 +122,9 @@ const SignatureProcessModal = ({
         setConnectingProcess(ConnectingProcess.CONNECTING);
 
         const connectResult = await userCtx.connect();
-        // eslint-disable-next-line no-console
-        console.log('connect result:', connectResult);
       } catch (e) {
         // Info: 用戶拒絕連線，不會造成錯誤，如果有錯誤就是 component 跟 context 之間的錯誤
         // ToDo: Report the error which user rejected the signature in UserContext (20230411 - Shirley)
-        // eslint-disable-next-line no-console
-        console.log('connect error in component:', e);
       } finally {
         unlock();
         setConnectingProcess(ConnectingProcess.EMPTY);
@@ -138,8 +134,6 @@ const SignatureProcessModal = ({
         setConnectingProcess(ConnectingProcess.CONNECTING);
 
         const signResult = await userCtx.signServiceTerm();
-        // eslint-disable-next-line no-console
-        console.log('sign result:', signResult);
 
         unlock();
 

@@ -1,4 +1,3 @@
-// import LineGraph from '../line_graph/line_graph';
 import {BsStar, BsStarFill} from 'react-icons/bs';
 import React, {useContext, useState} from 'react';
 import dynamic from 'next/dynamic';
@@ -7,10 +6,6 @@ import {TypeOfPnLColorHex, UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants
 import {UserContext, IUserContext} from '../../contexts/user_context';
 import {MarketContext} from '../../contexts/market_context';
 import {useGlobal} from '../../contexts/global_context';
-// import {FaEthereum} from 'react-icons/fa';
-// // import {ReactComponent as ethIcon} from '/public/elements/group_15143.svg';
-// // import {ReactComponent as Logo} from './logo.svg';
-// import LineGraph from '../line_graph/line_graph';
 
 /**
  * @dev used when it needs the star functionality
@@ -44,9 +39,6 @@ export interface ICardProps {
 
   className?: string;
   cardClickHandler?: () => void;
-  // lineGraphDataArray?: number[];
-  // lineGraphStrokeColor?: string[];
-  // lineGraphWidth?: string;
 }
 
 const CryptoCard = ({
@@ -61,17 +53,11 @@ const CryptoCard = ({
   starColor,
   lineGraphProps,
   cardClickHandler,
-  // lineGraphDataArray,
-  // lineGraphStrokeColor,
-  // lineGraphWidth,
   ...otherProps
 }: ICardProps): JSX.Element => {
   const userCtx = useContext(UserContext) as IUserContext;
   const marketCtx = useContext(MarketContext);
-  // FIXME: comment for `.tsx`
-  // price = price > 0.001 ? price.toLocaleString() : price;
   fluctuating = Number(fluctuating);
-  // console.log('fluctuating', fluctuating);
   const priceRise = fluctuating > 0 ? true : false;
   const fluctuatingAbs = Math.abs(fluctuating);
   const fluctuatingRate = priceRise
@@ -79,29 +65,7 @@ const CryptoCard = ({
     : `▾ ${fluctuatingAbs.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}%`;
   // TODO: input the data and price color change as props
   const priceColor = priceRise ? `text-lightGreen5` : `text-lightRed`;
-  // let priceColor = '';
 
-  // console.log('priceColor', priceColor);
-
-  // const upSvg = (
-  //   <svg
-  //     width="20"
-  //     height="20"
-  //     fill="currentColor"
-  //     viewBox="0 0 1792 1792"
-  //     xmlns="http://www.w3.org/2000/svg"
-  //   >
-  //     <path d="M1408 1216q0 26-19 45t-45 19h-896q-26 0-45-19t-19-45 19-45l448-448q19-19 45-19t45 19l448 448q19 19 19 45z"></path>
-  //   </svg>
-  // );
-  // const [starFilled, setStarFilled] = useState(starred);
-
-  // const passStarClickHandler = (data: boolean) => {
-  //   // make sure the function is not undefined
-  //   if (!getStarredState) return;
-
-  //   getStarredState(data);
-  // };
   const globalCtx = useGlobal();
 
   const starClickHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -110,8 +74,6 @@ const CryptoCard = ({
     }
 
     event.stopPropagation(); // Prevent the div click handler from firing
-
-    // setStarFilled(!starFilled);
 
     if (!starred) {
       userCtx.addFavorites(currency);
@@ -241,42 +203,16 @@ const CryptoCard = ({
     return arr;
   }
 
-  // function arrayGenerator() {
-  //   let arr = [];
-  //   for (let i = 0; i < 10; i++) {
-  //     arr.push(randomArray(22, 222, 5));
-  //   }
-  //   return arr;
-  // }
-  // console.log(arrayGenerator());
-
   const sampleArray = randomArray(1100, 1200, 10);
-  // console.log('sample array', sampleArray);
 
-  // TODO: Taking Notes- execution order about parameters and logic flow
-  // #17BF88 is light green, #E86D6D is light red
   const fakeDataColor = () => {
     if (sampleArray[sampleArray.length - 1] > sampleArray[sampleArray.length - 2]) {
-      // priceColor = 'text-lightGreen';
       return [TypeOfPnLColorHex.PROFIT];
     }
 
-    // priceColor = 'text-lightRed';
     return [TypeOfPnLColorHex.LOSS];
   };
   const thisRandomColor = fakeDataColor();
-
-  // const priceColorDetect = () => {
-  //   if (thisRandomColor === '#1AE2A0') {
-  //     priceColor = 'text-lightGreen';
-  //   } else if (thisRandomColor === '#E86D6D') {
-  //     priceColor = 'text-lightRed';
-  //   }
-  // };
-
-  // priceColorDetect();
-
-  // console.log('randomColor', randomColor());
 
   return (
     <>

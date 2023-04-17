@@ -1234,7 +1234,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     () =>
       notificationCtx.emitter.on(TideBitEvent.TICKER_CHANGE, (ticker: ITickerData) => {
         setSelectedTicker(ticker);
-        listCFDs(ticker.currency);
+        listCFDs(ticker?.currency);
       }),
     []
   );

@@ -433,3 +433,11 @@ export const getCookieByName = (name: string): string | undefined => {
     ?.split('=')[1];
   return cookieValue;
 };
+
+export const hasValue = (obj: any) => {
+  return Object?.values(obj)?.some(v => v !== null && v !== undefined);
+};
+
+export const capitalized = (str: string) => {
+  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+};

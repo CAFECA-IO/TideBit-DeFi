@@ -123,7 +123,7 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
   /* Info: (20230411 - Julian) 折線圖參考線顏色 */
   const lineGraphAnnotationColor = {
     CLOSING_TIME: {DASH_LINE: TypeOfPnLColorHex.LIQUIDATION, STRING: LINE_GRAPH_STROKE_COLOR.BLACK},
-    COMMON: {DASH_LINE: displayedColorHex, STRING: LINE_GRAPH_STROKE_COLOR.DEFAULT},
+    COMMON: {DASH_LINE: displayedColorHex, STRING: LINE_GRAPH_STROKE_COLOR.WHITE},
   };
 
   const displayedAnnotationColor =

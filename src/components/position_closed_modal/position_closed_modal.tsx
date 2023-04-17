@@ -63,6 +63,7 @@ import {OrderType} from '../../constants/order_type';
 import {CFDClosedType} from '../../constants/cfd_closed_type';
 import {cfdStateCode} from '../../constants/cfd_state_code';
 import {ICFDOrder} from '../../interfaces/tidebit_defi_background/order';
+import {Code} from '../../constants/code';
 
 type TranslateFunction = (s: string) => string;
 interface IPositionClosedModal {
@@ -153,7 +154,6 @@ const PositionClosedModal = ({
 
     return {
       ...cfd,
-      // closePrice: quotation.price,
       pnl: {
         type: pnlSoFar > 0 ? ProfitState.PROFIT : ProfitState.LOSS,
         value: Math.abs(pnlSoFar),
@@ -166,7 +166,7 @@ const PositionClosedModal = ({
     quotation: IQuotation
   ): IApplyCloseCFDOrder => {
     if (order.state !== OrderState.OPENING) {
-      const error = new Error('Order is not opening');
+      const error = new Error('Order is not opening!!');
       throw error;
     }
 
@@ -184,15 +184,13 @@ const PositionClosedModal = ({
   };
 
   // TODO: (20230315 - Shirley) organize the data before history modal
-  const toHistoryModal = (cfd: ICFDOrder): IDisplayCFDOrder => {
-    if (cfd.state !== OrderState.CLOSED || !cfd.closePrice) {
-      const error = new Error('Order is not closed');
-      throw error;
-    }
-
+  const toHistoryModal = (cfd: ICFDOrder, quotation: IQuotation): IDisplayCFDOrder => {
     // TODO: replace `twoDecimal` with `toLocaleString` (20230325 - Shirley)
-    const openValue = twoDecimal(cfd.openPrice * cfd.amount);
-    const closeValue = twoDecimal(cfd.closePrice * cfd.amount);
+    const openPrice = cfd.openPrice;
+    const closePrice = quotation.price;
+
+    const openValue = twoDecimal(openPrice * cfd.amount);
+    const closeValue = twoDecimal(closePrice * cfd.amount);
 
     const pnlValue =
       cfd.typeOfPosition === TypeOfPosition.BUY
@@ -224,6 +222,11 @@ const PositionClosedModal = ({
       positionLineGraph: positionLineGraph,
       suggestion: suggestion,
       stateCode: cfdStateCode.COMMON,
+
+      closeTimestamp: quotation.deadline,
+      closePrice: closePrice,
+      closedType: CFDClosedType.BY_USER,
+      state: OrderState.CLOSED,
     };
 
     return historyCfd;
@@ -240,10 +243,6 @@ const PositionClosedModal = ({
 
       const data = quotation.data as IQuotation;
 
-      // Deprecated: before merging into develop (20230327 - Shirley)
-      // eslint-disable-next-line no-console
-      console.log('quotation from ctx in closed modal', data);
-
       // Info: if there's error fetching quotation, disable the submit btn (20230328 - Shirley)
       if (
         quotation.success &&
@@ -252,9 +251,6 @@ const PositionClosedModal = ({
       ) {
         return data;
       } else {
-        // Deprecated: before merging into develop (20230327 - Shirley)
-        // eslint-disable-next-line no-console
-        console.log('diable submit');
         setQuotationError(true);
       }
     } catch (err) {
@@ -271,6 +267,12 @@ const PositionClosedModal = ({
   const submitClickHandler = async () => {
     const [lock, unlock] = locker('position_closed_modal.submitClickHandler');
     if (!lock()) return;
+
+    const applyCloseOrder: IApplyCloseCFDOrder = toApplyCloseOrder(
+      openCfdDetails,
+      gQuotationRef.current
+    );
+
     await wait(DELAYED_HIDDEN_SECONDS / 5);
     modalClickHandler();
 
@@ -281,33 +283,24 @@ const PositionClosedModal = ({
     globalCtx.visibleLoadingModalHandler();
 
     try {
-      const applyCloseOrder: IApplyCloseCFDOrder = toApplyCloseOrder(
-        openCfdDetails,
-        gQuotationRef.current
-      );
-
       const result = await userCtx.closeCFDOrder(applyCloseOrder);
-      // Deprecated: before merging into develop (20230330 - Shirley)
-      // eslint-disable-next-line no-console
-      console.log('close result', result);
 
-      // TODO: temporary waiting
-      await wait(DELAYED_HIDDEN_SECONDS);
-      globalCtx.dataLoadingModalHandler({
-        modalTitle: t('POSITION_MODAL.CLOSE_POSITION_TITLE'),
-        modalContent: t('POSITION_MODAL.TRANSACTION_BROADCAST'),
-        btnMsg: t('POSITION_MODAL.VIEW_ON_BUTTON'),
-        btnUrl: '#',
-      });
-
-      // TODO: temporary waiting
-      await wait(DELAYED_HIDDEN_SECONDS);
-
-      globalCtx.eliminateAllModals();
-
-      // TODO: Revise the `result.reason` to constant by using enum or object
-      // TODO: the button URL
       if (result.success) {
+        const historyData: IDisplayCFDOrder = toHistoryModal(openCfdDetails, gQuotationRef.current);
+
+        // TODO: (20230413 - Shirley) the button URL
+        globalCtx.dataLoadingModalHandler({
+          modalTitle: t('POSITION_MODAL.CLOSE_POSITION_TITLE'),
+          modalContent: t('POSITION_MODAL.TRANSACTION_BROADCAST'),
+          btnMsg: t('POSITION_MODAL.VIEW_ON_BUTTON'),
+          btnUrl: '#',
+        });
+
+        // ToDo: Need to get a singnal from somewhere to show the successful modal
+        await wait(DELAYED_HIDDEN_SECONDS);
+
+        globalCtx.eliminateAllModals();
+
         globalCtx.dataSuccessfulModalHandler({
           modalTitle: t('POSITION_MODAL.CLOSE_POSITION_TITLE'),
           modalContent: t('POSITION_MODAL.TRANSACTION_SUCCEED'),
@@ -315,43 +308,44 @@ const PositionClosedModal = ({
           btnUrl: '#',
         });
 
-        const cfd = userCtx.getCFD(openCfdDetails.id);
-        // Deprecated: before merging into develop (20230330 - Shirley)
+        globalCtx.visibleSuccessfulModalHandler();
+
+        await wait(DELAYED_HIDDEN_SECONDS);
+        globalCtx.eliminateAllModals();
+
+        globalCtx.dataHistoryPositionModalHandler(historyData);
+        globalCtx.visibleHistoryPositionModalHandler();
+      } else if (
+        // Info: cancel (20230412 - Shirley)
+        result.code === Code.SERVICE_TERM_DISABLE ||
+        result.code === Code.WALLET_IS_NOT_CONNECT ||
+        result.code === Code.EXPIRED_QUOTATION_CANCELED ||
+        result.code === Code.REJECTED_SIGNATURE
+      ) {
+        // Deprecated: [debug] (20230413 - Shirley)
         // eslint-disable-next-line no-console
-        console.log('CFD gotten', cfd);
+        console.log('close result', result);
 
-        // TODO: get the closed cfd and calculate the PNL and sth (20230324 - Shirley)
-        // const closedCFD: IAcceptedCFDOrder = userCtx.getClosedCFD(openCfdDetails.id);
-        // const historyData = toHistoryModal(closedCFD);
+        globalCtx.eliminateAllModals();
 
-        if (cfd) {
-          try {
-            const historyData = toHistoryModal(cfd);
-
-            globalCtx.visibleSuccessfulModalHandler();
-            await wait(DELAYED_HIDDEN_SECONDS);
-            globalCtx.eliminateAllModals();
-
-            globalCtx.dataHistoryPositionModalHandler(historyData);
-            globalCtx.visibleHistoryPositionModalHandler();
-          } catch (error) {
-            globalCtx.dataFailedModalHandler({
-              modalTitle: t('POSITION_MODAL.CLOSE_POSITION_TITLE'),
-              failedTitle: t('POSITION_MODAL.FAILED_TITLE'),
-              failedMsg: t('POSITION_MODAL.FAILED_REASON_DELAY'),
-            });
-
-            globalCtx.visibleFailedModalHandler();
-          }
-        }
-      } else if (result.reason === 'CANCELED') {
         globalCtx.dataCanceledModalHandler({
           modalTitle: t('POSITION_MODAL.CLOSE_POSITION_TITLE'),
           modalContent: t('POSITION_MODAL.FAILED_REASON_CANCELED'),
         });
 
         globalCtx.visibleCanceledModalHandler();
-      } else if (result.reason === 'FAILED') {
+      } else if (
+        result.code === Code.INTERNAL_SERVER_ERROR ||
+        result.code === Code.INVAILD_INPUTS ||
+        result.code === Code.EXPIRED_QUOTATION_FAILED ||
+        result.code === Code.UNKNOWN_ERROR
+      ) {
+        // Deprecated: [debug] (20230413 - Shirley)
+        // eslint-disable-next-line no-console
+        console.log('close result', result);
+
+        globalCtx.eliminateAllModals();
+
         globalCtx.dataFailedModalHandler({
           modalTitle: t('POSITION_MODAL.CLOSE_POSITION_TITLE'),
           failedTitle: t('POSITION_MODAL.FAILED_TITLE'),
@@ -360,14 +354,31 @@ const PositionClosedModal = ({
 
         globalCtx.visibleFailedModalHandler();
       }
-    } catch (error) {
-      globalCtx.dataFailedModalHandler({
-        modalTitle: t('POSITION_MODAL.CLOSE_POSITION_TITLE'),
-        failedTitle: t('POSITION_MODAL.FAILED_TITLE'),
-        failedMsg: t('POSITION_MODAL.FAILED_REASON_ERROR'),
-      });
+    } catch (error: any) {
+      // Deprecated: [debug] (20230412 - Shirley)
+      // eslint-disable-next-line no-console
+      console.log('close position error', error);
 
-      globalCtx.visibleFailedModalHandler();
+      globalCtx.eliminateAllModals();
+
+      if (error?.code === 4001) {
+        globalCtx.dataCanceledModalHandler({
+          modalTitle: t('POSITION_MODAL.OPEN_POSITION_TITLE'),
+          modalContent: t('POSITION_MODAL.FAILED_REASON_CANCELED'),
+        });
+
+        globalCtx.visibleCanceledModalHandler();
+      } else {
+        // ToDo: report error to backend (20230413 - Shirley)
+        // Info: Unknown error between context and component
+        globalCtx.dataFailedModalHandler({
+          modalTitle: t('POSITION_MODAL.CLOSE_POSITION_TITLE'),
+          failedTitle: t('POSITION_MODAL.FAILED_TITLE'),
+          failedMsg: t('POSITION_MODAL.ERROR_MESSAGE'),
+        });
+
+        globalCtx.visibleFailedModalHandler();
+      }
     }
 
     unlock();

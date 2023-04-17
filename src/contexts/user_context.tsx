@@ -693,6 +693,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     if (lunar.isConnected) {
       if (applyCreateCFDOrder) {
         const balance: IBalance | null = getBalance(applyCreateCFDOrder.margin.asset);
+
         if (balance && balance.available >= applyCreateCFDOrder.margin.amount) {
           const transferR = transactionEngine.transferCFDOrderToTransaction(applyCreateCFDOrder);
           if (transferR.success) {
@@ -758,7 +759,9 @@ export const UserProvider = ({children}: IUserProvider) => {
                   userSignature: signature,
                 },
               })) as {updateCFDOrder: ICFDOrder; acceptedCFDOrder: IAcceptedCFDOrder};
-              setOpenedCFDs(prev => [...prev].splice(index, 1));
+              const newOpenedCFDs = [...openCFDs];
+              newOpenedCFDs.splice(index, 1);
+              setOpenedCFDs(newOpenedCFDs);
               setClosedCFDs(prev => [...prev, updateCFDOrder]);
               updateBalance(acceptedCFDOrder.receipt.balance);
               setHistories(prev => [...prev, acceptedCFDOrder]);
@@ -1126,6 +1129,5 @@ export const UserProvider = ({children}: IUserProvider) => {
     init,
   };
 
-  // FIXME: 'setUser' is missing in type '{ user: IUser[] | null; }'
   return <UserContext.Provider value={defaultValue}>{children}</UserContext.Provider>;
 };

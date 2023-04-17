@@ -41,6 +41,7 @@ import {useTranslation} from 'react-i18next';
 import {defaultResultSuccess} from '../../interfaces/tidebit_defi_background/result';
 import {IQuotation} from '../../interfaces/tidebit_defi_background/quotation';
 import useStateRef from 'react-usestateref';
+import {Code} from '../../constants/code';
 
 type TranslateFunction = (s: string) => string;
 interface IPositionOpenModal {
@@ -79,14 +80,16 @@ const PositionOpenModal = ({
 
   /** ToDo: (20230329 - Shirley)
     // loading modal -> UserContext.function (負責簽名) ->
-    // 猶豫太久的話，單子會過期，就會顯示 failed modal，
-    // 用戶沒簽名才是顯示 canceled modal
-    // 用戶簽名成功，就會顯示 successful modal
+    // 猶豫太久的話，單子會過期，就會顯示 canceled modal (User context)，
+    // 用戶沒簽名也是顯示 canceled modal (User context)
+    // 用戶簽名成功，就會顯示 successful modal (User context)
    */
   const submitClickHandler = async () => {
     const [lock, unlock] = locker('position_open_modal.submitClickHandler');
 
     if (!lock()) return;
+    const applyCreateOrder: IApplyCreateCFDOrder = toApplyCreateOrder(openCfdRequest);
+
     await wait(DELAYED_HIDDEN_SECONDS / 5);
     modalClickHandler();
 
@@ -96,49 +99,97 @@ const PositionOpenModal = ({
     });
     globalCtx.visibleLoadingModalHandler();
 
-    const applyCreateOrder: IApplyCreateCFDOrder = toApplyCreateOrder(openCfdRequest);
-    const result = await userCtx.createCFDOrder(applyCreateOrder);
+    try {
+      const result = await userCtx.createCFDOrder(applyCreateOrder);
 
-    // ToDo: temporary waiting
-    await wait(DELAYED_HIDDEN_SECONDS);
-    globalCtx.dataLoadingModalHandler({
-      modalTitle: t('POSITION_MODAL.OPEN_POSITION_TITLE'),
-      modalContent: t('POSITION_MODAL.TRANSACTION_BROADCAST'),
-      btnMsg: t('POSITION_MODAL.VIEW_ON_BUTTON'),
-      btnUrl: '#',
-    });
+      if (result.success) {
+        // TODO: (20230413 - Shirley) the button URL
+        globalCtx.dataLoadingModalHandler({
+          modalTitle: t('POSITION_MODAL.OPEN_POSITION_TITLE'),
+          modalContent: t('POSITION_MODAL.TRANSACTION_BROADCAST'),
+          btnMsg: t('POSITION_MODAL.VIEW_ON_BUTTON'),
+          btnUrl: '#',
+        });
 
-    // ToDo: temporary waiting
-    await wait(DELAYED_HIDDEN_SECONDS);
+        // ToDo: Need to get a singnal from somewhere to show the successful modal
+        await wait(DELAYED_HIDDEN_SECONDS);
 
-    globalCtx.eliminateAllModals();
+        globalCtx.eliminateAllModals();
 
-    // ToDo: Revise the `result.reason` to constant by using enum or object
-    // ToDo: the button URL
-    if (result.success) {
-      globalCtx.dataSuccessfulModalHandler({
-        modalTitle: t('POSITION_MODAL.OPEN_POSITION_TITLE'),
-        modalContent: t('POSITION_MODAL.TRANSACTION_SUCCEED'),
-        btnMsg: t('POSITION_MODAL.VIEW_ON_BUTTON'),
-        btnUrl: '#',
-      });
+        globalCtx.dataSuccessfulModalHandler({
+          modalTitle: t('POSITION_MODAL.OPEN_POSITION_TITLE'),
+          modalContent: t('POSITION_MODAL.TRANSACTION_SUCCEED'),
+          btnMsg: t('POSITION_MODAL.VIEW_ON_BUTTON'),
+          btnUrl: '#',
+        });
 
-      globalCtx.visibleSuccessfulModalHandler();
-    } else if (result.reason === 'CANCELED') {
-      globalCtx.dataCanceledModalHandler({
-        modalTitle: t('POSITION_MODAL.OPEN_POSITION_TITLE'),
-        modalContent: t('POSITION_MODAL.FAILED_REASON_CANCELED'),
-      });
+        globalCtx.visibleSuccessfulModalHandler();
+      } else if (
+        // Info: cancel (20230412 - Shirley)
+        result.code === Code.SERVICE_TERM_DISABLE ||
+        result.code === Code.WALLET_IS_NOT_CONNECT ||
+        result.code === Code.EXPIRED_QUOTATION_CANCELED ||
+        result.code === Code.REJECTED_SIGNATURE
+      ) {
+        // Deprecated: [debug] sometimes, show the failed modal without any information revealed (20230412 - Shirley)
+        // eslint-disable-next-line no-console
+        console.log('open position result', result);
 
-      globalCtx.visibleCanceledModalHandler();
-    } else if (result.reason === 'FAILED') {
-      globalCtx.dataFailedModalHandler({
-        modalTitle: t('POSITION_MODAL.OPEN_POSITION_TITLE'),
-        failedTitle: t('POSITION_MODAL.FAILED_TITLE'),
-        failedMsg: t('POSITION_MODAL.FAILED_REASON_FAILED_TO_OPEN'),
-      });
+        globalCtx.eliminateAllModals();
 
-      globalCtx.visibleFailedModalHandler();
+        globalCtx.dataCanceledModalHandler({
+          modalTitle: t('POSITION_MODAL.OPEN_POSITION_TITLE'),
+          modalContent: t('POSITION_MODAL.FAILED_REASON_CANCELED'),
+        });
+
+        globalCtx.visibleCanceledModalHandler();
+      } else if (
+        result.code === Code.INTERNAL_SERVER_ERROR ||
+        result.code === Code.INVAILD_INPUTS ||
+        result.code === Code.EXPIRED_QUOTATION_FAILED ||
+        result.code === Code.UNKNOWN_ERROR
+      ) {
+        // Deprecated: [debug] sometimes, show the failed modal without any information revealed (20230412 - Shirley)
+        // eslint-disable-next-line no-console
+        console.log('open position result', result);
+
+        globalCtx.eliminateAllModals();
+
+        globalCtx.dataFailedModalHandler({
+          modalTitle: t('POSITION_MODAL.OPEN_POSITION_TITLE'),
+          failedTitle: t('POSITION_MODAL.FAILED_TITLE'),
+          failedMsg: t('POSITION_MODAL.FAILED_REASON_FAILED_TO_OPEN'),
+        });
+
+        globalCtx.visibleFailedModalHandler();
+      }
+    } catch (error: any) {
+      // Deprecated: [debug] sometimes, show the failed modal without any information revealed (20230412 - Shirley)
+      // eslint-disable-next-line no-console
+      console.log('open position error', error);
+
+      globalCtx.eliminateAllModals();
+
+      // Info: Signature rejected
+      // ToDo: Catch the error which user rejected the signature in UserContext (20230411 - Shirley)
+      if (error?.code === 4001) {
+        globalCtx.dataCanceledModalHandler({
+          modalTitle: t('POSITION_MODAL.OPEN_POSITION_TITLE'),
+          modalContent: t('POSITION_MODAL.FAILED_REASON_CANCELED'),
+        });
+
+        globalCtx.visibleCanceledModalHandler();
+      } else {
+        // ToDo: report error to backend (20230413 - Shirley)
+        // Info: Unknown error between context and component
+        globalCtx.dataFailedModalHandler({
+          modalTitle: t('POSITION_MODAL.OPEN_POSITION_TITLE'),
+          failedTitle: t('POSITION_MODAL.FAILED_TITLE'),
+          failedMsg: t('POSITION_MODAL.FAILED_REASON_FAILED_TO_OPEN'),
+        });
+
+        globalCtx.visibleFailedModalHandler();
+      }
     }
 
     unlock();

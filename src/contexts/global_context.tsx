@@ -231,7 +231,12 @@ const toastHandler = ({type, message, toastId}: IToastify) => {
     case 'error':
       toastify.error(message, {
         toastId: type + message + toastId,
-        icon: <FaRegTimesCircle className="h-20px w-20px text-lightRed" />,
+        icon: (
+          <div className="-ml-12 inline-flex items-center justify-center text-lightRed">
+            <FaRegTimesCircle className="h-15px w-15px" />
+            <span className="ml-2">Error</span>
+          </div>
+        ),
         bodyClassName:
           'text-lightWhite text-sm whitespace-nowrap flex p-4 w-auto before:block before:absolute before:-left-1 before:w-2 before:h-50px before:bg-lightRed',
       });
@@ -239,7 +244,12 @@ const toastHandler = ({type, message, toastId}: IToastify) => {
     case 'warning':
       toastify.warning(message, {
         toastId: type + message + toastId,
-        icon: <ImWarning className="h-20px w-20px text-lightYellow2" />,
+        icon: (
+          <div className="-ml-12 inline-flex items-center justify-center text-lightYellow2">
+            <ImWarning className="h-15px w-15px " />
+            <span className="ml-2">Warning</span>
+          </div>
+        ),
         bodyClassName:
           'text-lightWhite text-sm whitespace-nowrap flex p-4 w-auto before:block before:absolute before:-left-1 before:w-2 before:h-50px before:bg-lightYellow2',
       });
@@ -247,15 +257,25 @@ const toastHandler = ({type, message, toastId}: IToastify) => {
     case 'info':
       toastify.info(message, {
         toastId: type + message + toastId,
-        icon: <ImInfo className="h-20px w-20px text-tidebitTheme" />,
+        icon: (
+          <div className="-ml-12 inline-flex items-center justify-center text-tidebitTheme">
+            <ImInfo className="h-15px w-15px" />
+            <span className="ml-2">Info</span>
+          </div>
+        ),
         bodyClassName:
-          'text-lightWhite text-sm whitespace-nowrap flex p-4 w-auto before:block before:absolute before:-left-1 before:w-2 before:h-50px before:bg-tidebitTheme',
+          'text-lightWhite text-sm whitespace-nowrap flex w-auto before:block before:absolute before:-left-1 before:w-2 before:h-50px before:bg-tidebitTheme',
       });
       break;
     case 'success':
       toastify.success(message, {
         toastId: type + message + toastId,
-        icon: <FaRegCheckCircle className="h-20px w-20px text-lightGreen5" />,
+        icon: (
+          <div className="-ml-12 inline-flex items-center justify-center text-lightGreen5">
+            <FaRegCheckCircle className="h-15px w-15px" />
+            <span className="ml-2">Success</span>
+          </div>
+        ),
         bodyClassName:
           'text-lightWhite text-sm whitespace-nowrap flex p-4 w-auto before:block before:absolute before:-left-1 before:w-2 before:h-50px before:bg-lightGreen5',
       });

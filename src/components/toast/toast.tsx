@@ -4,7 +4,7 @@ import {ToastContainer} from 'react-toastify';
 
 const Toast = () => {
   const toastClassName = () =>
-    'pr-4 overflow-hidden cursor-pointer w-500px h-50px bg-darkGray1 flex items-center justify-between';
+    'pl-14 pr-3 mt-2 overflow-hidden cursor-pointer w-550px h-50px bg-darkGray1 flex items-center justify-between shadow-lg shadow-black/80';
 
   return (
     <div>
@@ -20,7 +20,7 @@ const Toast = () => {
         pauseOnHover
         theme="dark"
         limit={10}
-        closeButton={<ImCross />}
+        closeButton={<ImCross className="text-lightGray2" />}
         toastClassName={toastClassName}
       />
     </div>

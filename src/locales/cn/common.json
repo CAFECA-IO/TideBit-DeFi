@@ -112,7 +112,7 @@
     "TRADE_TAB_GUARANTEED_STOP_HINT": "保证止损可强制平仓于您选定的价格，即使市场价格超过此价格也一样。",
     "TRADE_TAB_FEE": "手续费",
     "TRADE_TAB_LEVERAGE": "杠杆",
-    "TRADE_TAB_REQUIRED_MARGIN": "抵押品数量",
+    "TRADE_TAB_REQUIRED_MARGIN": "保证金",
     "TRADE_TAB_VALUE": "总交易额",
     "TRADE_TAB_LONG_BUTTON": "看涨",
     "TRADE_TAB_SHORT_BUTTON": "看跌",

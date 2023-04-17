@@ -12,8 +12,6 @@ const PnlSection = () => {
   const pnl30Days = {amount: 98124532.83, percentage: 10.36};
   const cumulativePnl = {amount: -57692.47, percentage: -22.75};
 
-  // const displayedTextColor =
-
   const statisticContent = [
     {title: t('MY_ASSETS_PAGE.PNL_SECTION_TODAY'), ...pnlToday},
     {title: t('MY_ASSETS_PAGE.PNL_SECTION_30_DAYS'), ...pnl30Days},
@@ -50,12 +48,6 @@ const PnlSection = () => {
           <h2 className={`text-2xl font-medium lg:text-3xl xl:text-4xl ${textColor}`}>{content}</h2>
           <p className={`text-lg leading-relaxed lg:text-lg xl:text-xl ${textColor}`}>{remarks}</p>
         </div>
-
-        {/* How to position it to w-1/3 */}
-        {/* {index !== statisticContent.length - 1 && (
-          <div className="-mr-32 ml-10 border-r border-lightGray/50"></div>
-        )} */}
-        {/* <div className="border-r border-lightGray/50"></div> */}
       </div>
     )
   );

@@ -12,16 +12,14 @@ const OpenSubTab = () => {
   const {openCFDs} = useContext(UserContext);
   const marketCtx = useContext(MarketContext);
 
-  const cfds = openCFDs.map(cfd => {
-    const positionLineGraph = marketCtx.listTickerPositions(cfd.targetAsset, {
-      begin: cfd.createTimestamp,
-    });
-    const displayCFD: IDisplayCFDOrder = toDisplayCFDOrder(cfd, positionLineGraph);
-    return displayCFD;
-  });
-
-  /* ToDo: (20230411 - Julian) dummy data */
-  const dummyCFDs: IDisplayCFDOrder[] = listDummyDisplayCFDOrder('ETH')
+  const cfds = openCFDs
+    .map(cfd => {
+      const positionLineGraph = marketCtx.listTickerPositions(cfd.targetAsset, {
+        begin: cfd.createTimestamp,
+      });
+      const displayCFD: IDisplayCFDOrder = toDisplayCFDOrder(cfd, positionLineGraph);
+      return displayCFD;
+    })
     .sort((a, b) => {
       return a.createTimestamp - b.createTimestamp;
     })
@@ -29,7 +27,22 @@ const OpenSubTab = () => {
       return b.stateCode - a.stateCode;
     });
 
-  const openPositionList = dummyCFDs.map(cfd => {
+  // Deprecated: to be removed (20230413 - Shirley)
+  // /* ToDo: (20230411 - Julian) dummy data */
+  // const dummyCFDs: IDisplayCFDOrder[] = listDummyDisplayCFDOrder('ETH')
+  //   .slice(-2)
+  //   .sort((a, b) => {
+  //     return a.createTimestamp - b.createTimestamp;
+  //   })
+  //   .sort((a, b) => {
+  //     return b.stateCode - a.stateCode;
+  //   });
+
+  // ToDo: FIXME: Closed CFDs still show up in Open tab (20230413 - Shirley)
+  // eslint-disable-next-line no-console
+  console.log('cfd from ctx ', JSON.parse(JSON.stringify(cfds)));
+
+  const openPositionList = cfds.map(cfd => {
     return (
       <div key={cfd.id}>
         <OpenPositionItem openCfdDetails={cfd} />

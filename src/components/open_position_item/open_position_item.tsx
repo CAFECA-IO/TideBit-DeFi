@@ -15,7 +15,7 @@ import {ProfitState} from '../../constants/profit_state';
 import {TypeOfPosition} from '../../constants/type_of_position';
 import {timestampToString, getNowSeconds, randomIntFromInterval} from '../../lib/common';
 import {cfdStateCode} from '../../constants/cfd_state_code';
-import {POSITION_CLOSE_COUNTDOWN_SECONDS, FRACTION_DIGITS} from '../../constants/config';
+import {POSITION_CLOSE_COUNTDOWN_SECONDS} from '../../constants/config';
 import {MarketContext} from '../../contexts/market_context';
 import {UserContext} from '../../contexts/user_context';
 import {
@@ -123,7 +123,7 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
   /* Info: (20230411 - Julian) 折線圖參考線顏色 */
   const lineGraphAnnotationColor = {
     CLOSING_TIME: {DASH_LINE: TypeOfPnLColorHex.LIQUIDATION, STRING: LINE_GRAPH_STROKE_COLOR.BLACK},
-    COMMON: {DASH_LINE: displayedColorHex, STRING: LINE_GRAPH_STROKE_COLOR.DEFAULT},
+    COMMON: {DASH_LINE: displayedColorHex, STRING: LINE_GRAPH_STROKE_COLOR.WHITE},
   };
 
   const displayedAnnotationColor =
@@ -153,10 +153,10 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
       ? '-'
       : '';
 
-  const displayedPNL = openCfdDetails?.pnl?.value.toLocaleString(
-    UNIVERSAL_NUMBER_FORMAT_LOCALE,
-    FRACTION_DIGITS
-  );
+  const displayedPNL = openCfdDetails?.pnl?.value.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+    maximumFractionDigits: 2,
+    minimumFractionDigits: 2,
+  });
 
   const displayedCreateTime = timestampToString(openCfdDetails?.createTimestamp ?? 0);
 
@@ -210,10 +210,9 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
           <div className="text-xs text-lightGray">{t('TRADE_PAGE.OPEN_POSITION_ITEM_VALUE')}</div>
           <div className="text-sm">
             ${' '}
-            {openCfdDetails?.openValue.toLocaleString(
-              UNIVERSAL_NUMBER_FORMAT_LOCALE,
-              FRACTION_DIGITS
-            )}
+            {openCfdDetails?.openValue.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+              minimumFractionDigits: 2,
+            })}
           </div>
         </div>
 

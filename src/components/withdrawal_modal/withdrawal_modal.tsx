@@ -12,16 +12,13 @@ import {DELAYED_HIDDEN_SECONDS} from '../../constants/display';
 import {UserContext} from '../../contexts/user_context';
 import {OrderType} from '../../constants/order_type';
 import {useTranslation} from 'react-i18next';
+import {Code} from '../../constants/code';
 
 type TranslateFunction = (s: string) => string;
 interface IWithdrawalModal {
-  // transferType: 'deposit' | 'withdraw';
-  // userAvailableBalance: number;
-  // transferStep: 'form' | 'loading' | 'success' | 'cancellation' | 'fail';
   modalVisible: boolean;
   modalClickHandler: () => void;
   getSubmissionState: (props: 'success' | 'cancellation' | 'fail') => void;
-  // transferOptions: ITransferOptions[];
   getTransferData: (props: {asset: string; amount: number}) => void;
   submitHandler: (props: {asset: ICryptocurrency; amount: number}) => void;
 }
@@ -48,7 +45,6 @@ const WithdrawalModal = ({
   const [amountInput, setAmountInput, amountInputRef] = useStateRef<number | undefined>();
 
   const regex = /^\d*\.?\d{0,2}$/;
-  // const regex = /^(?!0\.00)\d+(\.\d{2})?$/;
 
   const cryptoMenuClickHandler = () => {
     setShowCryptoMenu(!showCryptoMenu);
@@ -83,7 +79,7 @@ const WithdrawalModal = ({
     });
     globalCtx.visibleLoadingModalHandler();
 
-    const result = await userCtx.withdraw({
+    const withdrawOrder = {
       orderType: OrderType.WITHDRAW,
       createTimestamp: getTimestamp(),
       targetAsset: selectedCrypto.symbol,
@@ -91,42 +87,74 @@ const WithdrawalModal = ({
       targetAmount: amountInput,
       remark: '',
       fee: 0,
-    });
+    };
+    // Deprecated: for debug (20230411 - Shirley)
+    // eslint-disable-next-line no-console
+    console.log('withdraw order', withdrawOrder);
 
-    // TODO: for debug
-    globalCtx.toast({message: 'withdraw result: ' + JSON.stringify(result), type: 'info'});
+    try {
+      const result = await userCtx.withdraw(withdrawOrder);
 
-    globalCtx.dataLoadingModalHandler({
-      modalTitle: t('D_W_MODAL.WITHDRAW'),
-      modalContent: t('D_W_MODAL.TRANSACTION_BROADCAST'),
-      btnMsg: t('D_W_MODAL.VIEW_ON_BUTTON'),
-      btnUrl: '#',
-    });
+      // TODO: for debug
+      globalCtx.toast({message: 'withdraw result: ' + JSON.stringify(result), type: 'info'});
 
-    // INFO: for UX
-    await wait(DELAYED_HIDDEN_SECONDS);
+      // TODO: the button URL
+      if (result.success) {
+        // ToDo: to tell when to show the loading modal with button
+        globalCtx.dataLoadingModalHandler({
+          modalTitle: t('D_W_MODAL.WITHDRAW'),
+          modalContent: t('D_W_MODAL.TRANSACTION_BROADCAST'),
+          btnMsg: t('D_W_MODAL.VIEW_ON_BUTTON'),
+          btnUrl: '#',
+        });
 
-    globalCtx.eliminateAllModals();
+        // INFO: for UX
+        await wait(DELAYED_HIDDEN_SECONDS);
 
-    // TODO: the button URL
-    if (result.success) {
-      globalCtx.dataSuccessfulModalHandler({
-        modalTitle: t('D_W_MODAL.WITHDRAW'),
-        modalContent: t('D_W_MODAL.TRANSACTION_SUCCEED'),
-        btnMsg: t('D_W_MODAL.VIEW_ON_BUTTON'),
-        btnUrl: '#',
-      });
+        globalCtx.eliminateAllModals();
 
-      globalCtx.visibleSuccessfulModalHandler();
-      // TODO: `result.code` (20230316 - Shirley)
-    } else if (result.reason === 'CANCELED') {
-      globalCtx.dataCanceledModalHandler({
-        modalTitle: t('D_W_MODAL.WITHDRAW'),
-        modalContent: t('D_W_MODAL.FAILED_REASON_CANCELED'),
-      });
+        globalCtx.dataSuccessfulModalHandler({
+          modalTitle: t('D_W_MODAL.WITHDRAW'),
+          modalContent: t('D_W_MODAL.TRANSACTION_SUCCEED'),
+          btnMsg: t('D_W_MODAL.VIEW_ON_BUTTON'),
+          btnUrl: '#',
+        });
 
-      globalCtx.visibleCanceledModalHandler();
-    } else if (result.reason === 'FAILED') {
+        globalCtx.visibleSuccessfulModalHandler();
+        // TODO: `result.code` (20230316 - Shirley)
+      } else if (
+        // Info: cancel (20230412 - Shirley)
+        result.code === Code.SERVICE_TERM_DISABLE ||
+        result.code === Code.WALLET_IS_NOT_CONNECT ||
+        result.code === Code.REJECTED_SIGNATURE
+      ) {
+        globalCtx.eliminateAllModals();
+
+        globalCtx.dataCanceledModalHandler({
+          modalTitle: t('D_W_MODAL.WITHDRAW'),
+          modalContent: t('D_W_MODAL.FAILED_REASON_CANCELED'),
+        });
+
+        globalCtx.visibleCanceledModalHandler();
+      } else if (
+        result.code === Code.INTERNAL_SERVER_ERROR ||
+        result.code === Code.INVAILD_INPUTS
+      ) {
+        globalCtx.eliminateAllModals();
+
+        globalCtx.dataFailedModalHandler({
+          modalTitle: t('D_W_MODAL.WITHDRAW'),
+          failedTitle: t('D_W_MODAL.FAILED_TITLE'),
+          failedMsg: t('D_W_MODAL.FAILED_REASON_FAILED_TO_WITHDRAW'),
+        });
+
+        globalCtx.visibleFailedModalHandler();
+      }
+    } catch (error: any) {
+      globalCtx.eliminateAllModals();
+
+      // ToDo: Report error to backend (20230413 - Shirley)
+      // Info: Unknown error
       globalCtx.dataFailedModalHandler({
         modalTitle: t('D_W_MODAL.WITHDRAW'),
         failedTitle: t('D_W_MODAL.FAILED_TITLE'),
@@ -147,17 +175,6 @@ const WithdrawalModal = ({
     const value = event.target.value;
 
     if (regex.test(value)) {
-      /* // Till: 讓 input 不能變成 '01' 的條件式 (20230410 - Shirley)
-      // if (Number(value) >= userAvailableBalance || Number(value) <= 0) {
-      //   return;
-      // }
-
-      // // No upperlimit in deposit modal
-      // if (modalType === 'Deposit') {
-      //   setAmountInput(Number(value));
-      //   return;
-      // }
-*/
       // Upperlimit in withdraw modal
       if (Number(value) > userAvailableBalance) {
         setAmountInput(Number(userAvailableBalance));
@@ -251,14 +268,6 @@ const WithdrawalModal = ({
                     className={`transition-all duration-300 ${rotationStyle}`}
                     size={30}
                   />
-                  {/* {showCryptoMenu ? (
-                    <MdKeyboardArrowRight className="text-blue-300" size={30} />
-                  ) : (
-                    <MdKeyboardArrowDown
-                      className={`text-blue-300 ${rotationStyle}`}
-                      size={30}
-                    />
-                  )} */}
                 </button>
               </div>
             </div>
@@ -275,20 +284,11 @@ const WithdrawalModal = ({
             >
               {avaliableCryptoMenu}
             </ul>
-            {/* <div className="py-1">
-              <a
-                href="#"
-                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600 dark:hover:text-white"
-              >
-                Separated link
-              </a>
-            </div> */}
           </div>
 
           {/* ----------Amount input---------- */}
           <div className="mx-6 pt-12 text-start">
             <p className="text-sm text-lightGray4">{t('D_W_MODAL.AMOUNT')}</p>
-            {/* <div className="max-w-xl bg-darkGray8">Tether</div> */}
             <div className="flex rounded-md bg-darkGray8">
               <input
                 className="w-250px rounded-md bg-darkGray8 py-2 pl-3 text-sm text-white focus:outline-none focus:ring-0"
@@ -314,10 +314,6 @@ const WithdrawalModal = ({
             </div>
 
             <div className="flex justify-end">
-              {/* <p className={`${warningStyle} pt-3 text-end text-sm tracking-wide text-lightRed`}>
-                Invalid input
-              </p> */}
-
               <p className="pt-3 text-end text-xs tracking-wide">
                 {t('D_W_MODAL.AVAILABLE_ON_TIDEBIT')}:{' '}
                 <span className="text-tidebitTheme">{userAvailableBalance}</span>{' '}
@@ -343,9 +339,6 @@ const WithdrawalModal = ({
 
   const isDisplayedModal = modalVisible ? (
     <>
-      {/*  <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">*/}
-      {/*  overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none */}
-      {/* position: relative; top: 50%; left: 50%; transform: translate(-50%, -50%) */}
       <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">
         {/* The position of the modal */}
         <div className="relative my-6 mx-auto w-auto max-w-xl">

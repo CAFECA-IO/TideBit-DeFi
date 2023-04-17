@@ -19,10 +19,12 @@ const ReceiptSection = () => {
 
   const [searches, setSearches] = useState('');
   const [filteredTradingType, setFilteredTradingType] = useState('');
-  const [filteredDate, setFilteredDate] = useState<number[]>([]);
+  const [filteredDate, setFilteredDate] = useState<string[]>([]);
   const [filteredReceipts, setFilteredReceipts] = useState<IAcceptedOrder[]>([]);
 
   useEffect(() => {
+    /* Todo: (20230412 - Julian)
+     * filter receipts by filteredDate #289 */
     if (searches !== '') {
       const searchResult = listHistories.filter(v => {
         const orderType = v.receipt.order.orderType;
@@ -39,19 +41,12 @@ const ReceiptSection = () => {
             ? (v.receipt.order as IDepositOrder).targetAmount
             : (v.receipt.order as IWithdrawOrder).targetAmount;
         const result =
-          orderType.toLocaleLowerCase().includes(searches) ||
-          targetAsset.toLocaleLowerCase().includes(searches) ||
-          targetAmount.toString().includes(searches);
+          orderType.includes(searches || '') ||
+          targetAsset.toLocaleLowerCase().includes(searches || '') ||
+          targetAmount.toString().includes(searches || '');
         return result;
       });
       setFilteredReceipts(searchResult);
-    } else if (filteredDate[0] && filteredDate[1]) {
-      setFilteredReceipts(
-        listHistories.filter(v => {
-          const createTimestamp = v.createTimestamp * 1000;
-          return createTimestamp >= filteredDate[0] && createTimestamp <= filteredDate[1];
-        })
-      );
     } else if (filteredTradingType === '' && searches === '') {
       setFilteredReceipts(listHistories);
     } else if (filteredTradingType === OrderType.DEPOSIT) {
@@ -78,11 +73,11 @@ const ReceiptSection = () => {
         listHistories.filter(
           v =>
             v.receipt.order.orderType === OrderType.CFD &&
-            (v.receipt.order as ICFDOrder).state === OrderState.CLOSED
+            (v.receipt.order as ICFDOrder).state === OrderState.OPENING
         )
       );
     }
-  }, [filteredTradingType, filteredDate, searches]);
+  }, [filteredTradingType, searches]);
 
   const dataMonthList = filteredReceipts
     /* Info: (20230322 - Julian) sort by desc */
@@ -108,7 +103,7 @@ const ReceiptSection = () => {
   });
 
   return (
-    <div className="p-8 lg:p-16">
+    <div className="p-4 sm:p-16">
       <ReceiptSearch
         filteredTradingType={filteredTradingType}
         setFilteredTradingType={setFilteredTradingType}
@@ -117,6 +112,10 @@ const ReceiptSection = () => {
         setFilteredDate={setFilteredDate}
       />
       <div>{listCluster}</div>
+      {/* Till: (20230420 - Julian) 
+     <p>
+        {filteredDate[0]} ~ {filteredDate[1]}
+      </p> */}
     </div>
   );
 };

@@ -122,9 +122,9 @@ const BalanceSection = () => {
 
           <div className="">
             <div className="text-xs text-lightGray">
-              {t('MY_ASSETS_PAGE.BALANCE_SECTION_AVAILABLE')}:{' '}
+              {t('MY_ASSETS_PAGE.BALANCE_SECTION_AVAILABLE')}{' '}
               <span className="text-base text-lightWhite">{displayedAvblBalance}</span> /
-              {t('MY_ASSETS_PAGE.BALANCE_SECTION_LOCKED')}:{' '}
+              {t('MY_ASSETS_PAGE.BALANCE_SECTION_LOCKED')}{' '}
               <span className="text-base text-lightWhite">{displayedLockedBalance}</span>
             </div>
           </div>

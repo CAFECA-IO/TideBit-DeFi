@@ -15,7 +15,6 @@ import {
   SUGGEST_SL,
   SUGGEST_TP,
   TERM_OF_SERVICE,
-  MONTH_FULL_NAME_LIST,
 } from '../constants/config';
 import ServiceTerm from '../constants/contracts/service_term';
 import packageJson from '../../package.json';
@@ -82,8 +81,23 @@ export const timestampToString = (timestamp: number) => {
     'Dec',
   ];
 
+  const monthFullNames = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
+  ];
+
   const monthName = monthNames[monthIndex];
-  const monthFullName = MONTH_FULL_NAME_LIST[monthIndex];
+  const monthFullName = monthFullNames[monthIndex];
 
   const dateString = `${year}-${month}-${day}`;
   const timeString = `${hour}:${minute}:${second}`;

@@ -9,7 +9,6 @@ import {UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
 import {timestampToString} from '../../lib/common';
 import {useTranslation} from 'react-i18next';
 import {IAcceptedDepositOrder} from '../../interfaces/tidebit_defi_background/accepted_deposit_order';
-import {FRACTION_DIGITS} from '../../constants/config';
 
 type TranslateFunction = (s: string) => string;
 interface IDepositHistoryModal {
@@ -30,14 +29,15 @@ const DepositHistoryModal = ({
   const displayedDepositTime = timestampToString(createTimestamp);
   const displayedDepositType = t('D_W_MODAL.DEPOSIT');
   const displayedDepositAsset = order.targetAsset;
-  const displayedDepositAmount = order.targetAmount.toLocaleString(
-    UNIVERSAL_NUMBER_FORMAT_LOCALE,
-    FRACTION_DIGITS
-  );
+  const displayedDepositAmount = order.targetAmount.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+    minimumFractionDigits: 2,
+  });
   const displayedDepositFee =
     order.fee === 0
       ? '-'
-      : order.fee.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
+      : order.fee.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+          minimumFractionDigits: 2,
+        });
 
   const displayedDepositHeaderAsset = (
     <>
@@ -55,7 +55,11 @@ const DepositHistoryModal = ({
     order.orderStatus === OrderStatusUnion.WAITING ? (
       <Lottie className="w-20px" animationData={smallConnectingAnimation} />
     ) : (
-      <div>{balance.available.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)}</div>
+      <div>
+        {balance.available.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+          minimumFractionDigits: 2,
+        })}
+      </div>
     );
 
   const displayedDepositDetail =

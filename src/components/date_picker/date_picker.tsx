@@ -1,18 +1,12 @@
 import React, {useCallback, useState} from 'react';
 import Image from 'next/image';
-import {MONTH_FULL_NAME_LIST, WEEK_LIST} from '../../constants/config';
 
-type Dates = {
-  date: number;
-  time: number;
-  disable: boolean;
-};
 interface IPopulateDatesParams {
-  daysInMonth: Dates[];
+  daysInMonth: number[];
   selectedTime: number;
   selectedYear: number;
   selectedMonth: number;
-  selectDate: (date: Dates) => void;
+  selectDate: (date: number) => void;
 }
 
 interface IDatePickerProps {
@@ -22,48 +16,59 @@ interface IDatePickerProps {
   setDate: (date: Date) => void;
 }
 
-const formatGridStyle = 'grid grid-cols-7 gap-4';
+type Dates = {
+  date: number;
+  time: number;
+  disable: boolean;
+};
 
-const PopulateDates = ({
-  daysInMonth,
-  selectedTime,
-  selectedYear,
-  selectedMonth,
-  selectDate,
-}: IPopulateDatesParams) => {
-  const formatDaysInMonth = daysInMonth.map((el: Dates) => {
-    const date = el ? new Date(`${selectedYear}-${selectedMonth + 1}-${el.date}`) : null;
-    const isSelected = date?.getTime() && el.date === selectedTime ? true : false;
+const months = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
+];
+
+/* ToDo: (20230320 - Julian)
+ * 1. props type
+ * 2. 選到的日期要有不同的顏色
+ */
+const PopulateDates = (props: any) => {
+  return props.daysInMonth.map((el: Dates) => {
+    const date = el
+      ? new Date(`${props.selectedYear}-${props.selectedMonth + 1}-${el.date}`)
+      : null;
+
+    const isSelected = date?.getTime() ? date.getTime() === props.selectedTime : false;
 
     const formatDate = el?.date !== undefined ? (el.date < 10 ? `0${el.date}` : `${el.date}`) : ' ';
-
-    const dateClickHandler = () => {
-      if (el?.date && !el?.disable) selectDate(el);
-    };
-
     return (
       <div
-        className={`whitespace-nowrap rounded-full text-center hover:cursor-pointer hover:bg-cuteBlue ${
+        className={`whitespace-nowrap rounded-full text-center hover:cursor-pointer ${
           isSelected ? 'bg-tidebitTheme' : ''
         }${el?.disable ? 'text-lightGray' : ''}`}
-        onClick={dateClickHandler}
+        onClick={() => {
+          if (el?.date && !el?.disable) props.selectDate(el);
+        }}
       >
         {formatDate}
       </div>
     );
   });
-
-  return <div className={formatGridStyle}>{formatDaysInMonth}</div>;
 };
 
-const DatePicker = ({date, minDate, maxDate, setDate}: IDatePickerProps) => {
+const DatePicker = ({date, setDate, minDate, maxDate}: IDatePickerProps) => {
   const [selectedMonth, setSelectedMonth] = useState(date.getMonth()); // 0 (January) to 11 (December).
   const [selectedYear, setSelectedYear] = useState(date.getFullYear());
   const [openDates, setOpenDates] = useState(false);
-
-  const displayWeek = WEEK_LIST.map(v => {
-    return <div>{v}</div>;
-  });
 
   const firstDayOfMonth = (year: number, month: number) => {
     return new Date(year, month, 1).getDay();
@@ -117,6 +122,7 @@ const DatePicker = ({date, minDate, maxDate, setDate}: IDatePickerProps) => {
     }
     setSelectedMonth(month);
     setSelectedYear(year);
+    // props.setDate(new Date(`${year}-${month}-${selectedDate}`));
   }, [selectedMonth, selectedYear]);
 
   const goToPrevMonth = useCallback(() => {
@@ -129,21 +135,20 @@ const DatePicker = ({date, minDate, maxDate, setDate}: IDatePickerProps) => {
     }
     setSelectedMonth(month);
     setSelectedYear(year);
+    // props.setDate(new Date(`${year}-${month}-${selectedDate}`));
   }, [selectedMonth, selectedYear]);
 
   const selectDate = useCallback(
     (el: Dates) => {
       let newDate = new Date(el.time);
-      newDate = new Date(`${newDate.getFullYear()}-${newDate.getMonth() + 1}-${newDate.getDate()}`);
+      newDate = new Date(
+        `${newDate.getFullYear()}-${newDate.getMonth() + 1}-${newDate.getDate()} 08:00:00`
+      );
       setDate(newDate);
       setOpenDates(false);
     },
     [minDate, maxDate, selectedMonth, selectedYear, date]
   );
-
-  const openDateHandler = () => {
-    setOpenDates(!openDates);
-  };
 
   return (
     <div
@@ -153,7 +158,9 @@ const DatePicker = ({date, minDate, maxDate, setDate}: IDatePickerProps) => {
     >
       <button
         className="inline-flex w-140px items-center justify-between px-5 py-3"
-        onClick={openDateHandler}
+        onClick={() => {
+          setOpenDates(!openDates);
+        }}
       >
         <div className="mr-2 whitespace-nowrap text-sm text-lightGray4">{formatDate(date)}</div>
         <Image src="/elements/date_icon.svg" alt="" width={20} height={20} />
@@ -165,7 +172,7 @@ const DatePicker = ({date, minDate, maxDate, setDate}: IDatePickerProps) => {
         }`}
       >
         <div className="flex items-center justify-between py-2">
-          <div className="text-2xl">{`${MONTH_FULL_NAME_LIST[selectedMonth]} ${selectedYear}`}</div>
+          <div className="text-2xl">{`${months[selectedMonth]} ${selectedYear}`}</div>
           <div className="flex">
             <div
               className="h-10px w-10px rotate-45 border-b-2 border-l-2 border-lightWhite"
@@ -178,17 +185,25 @@ const DatePicker = ({date, minDate, maxDate, setDate}: IDatePickerProps) => {
           </div>
         </div>
 
-        <div className={`my-4 ${formatGridStyle} text-center text-xxs text-lightGray`}>
-          {displayWeek}
+        <div className="my-4 grid grid-cols-7 gap-4 text-center text-xxs text-lightGray">
+          <div>SUN</div>
+          <div>MON</div>
+          <div>TUE</div>
+          <div>WED</div>
+          <div>THU</div>
+          <div>FRI</div>
+          <div>SAT</div>
         </div>
 
-        <PopulateDates
-          daysInMonth={daysInMonth(selectedYear, selectedMonth)}
-          selectedTime={new Date(formatDate(date)).getDate()}
-          selectedYear={selectedYear}
-          selectedMonth={selectedMonth}
-          selectDate={selectDate}
-        />
+        <div className="grid grid-cols-7 gap-4">
+          <PopulateDates
+            daysInMonth={daysInMonth(selectedYear, selectedMonth)}
+            selectedTime={new Date(formatDate(date)).getTime()}
+            selectedYear={selectedYear}
+            selectedMonth={selectedMonth}
+            selectDate={selectDate}
+          />
+        </div>
       </div>
     </div>
   );

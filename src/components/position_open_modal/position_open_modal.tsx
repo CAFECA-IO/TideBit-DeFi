@@ -31,7 +31,6 @@ import {
   QUOTATION_RENEWAL_INTERVAL_SECONDS,
   WAITING_TIME_FOR_USER_SIGNING,
   unitAsset,
-  FRACTION_DIGITS,
 } from '../../constants/config';
 import {
   getDummyApplyCreateCFDOrder,
@@ -170,26 +169,15 @@ const PositionOpenModal = ({
 
       globalCtx.eliminateAllModals();
 
-      // Info: Signature rejected
-      // ToDo: Catch the error which user rejected the signature in UserContext (20230411 - Shirley)
-      if (error?.code === 4001) {
-        globalCtx.dataCanceledModalHandler({
-          modalTitle: t('POSITION_MODAL.OPEN_POSITION_TITLE'),
-          modalContent: t('POSITION_MODAL.FAILED_REASON_CANCELED'),
-        });
+      // ToDo: report error to backend (20230413 - Shirley)
+      // Info: Unknown error between context and component
+      globalCtx.dataFailedModalHandler({
+        modalTitle: t('POSITION_MODAL.OPEN_POSITION_TITLE'),
+        failedTitle: t('POSITION_MODAL.FAILED_TITLE'),
+        failedMsg: t('POSITION_MODAL.FAILED_REASON_FAILED_TO_OPEN'),
+      });
 
-        globalCtx.visibleCanceledModalHandler();
-      } else {
-        // ToDo: report error to backend (20230413 - Shirley)
-        // Info: Unknown error between context and component
-        globalCtx.dataFailedModalHandler({
-          modalTitle: t('POSITION_MODAL.OPEN_POSITION_TITLE'),
-          failedTitle: t('POSITION_MODAL.FAILED_TITLE'),
-          failedMsg: t('POSITION_MODAL.FAILED_REASON_FAILED_TO_OPEN'),
-        });
-
-        globalCtx.visibleFailedModalHandler();
-      }
+      globalCtx.visibleFailedModalHandler();
     }
 
     unlock();
@@ -355,10 +343,9 @@ const PositionOpenModal = ({
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">{t('POSITION_MODAL.OPEN_PRICE')}</div>
               <div className={`${dataRenewedStyle}`}>
-                {openCfdRequest.price?.toLocaleString(
-                  UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                  FRACTION_DIGITS
-                ) ?? 0}
+                {openCfdRequest.price?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+                  minimumFractionDigits: 2,
+                }) ?? 0}
                 <span className="ml-1 text-lightGray">{unitAsset}</span>
               </div>
             </div>
@@ -425,10 +412,9 @@ const PositionOpenModal = ({
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">{t('POSITION_MODAL.LIQUIDATION_PRICE')}</div>
               <div className={`${dataRenewedStyle}`}>
-                {openCfdRequest.liquidationPrice?.toLocaleString(
-                  UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                  FRACTION_DIGITS
-                ) ?? 0}
+                {openCfdRequest.liquidationPrice?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+                  minimumFractionDigits: 2,
+                }) ?? 0}
                 <span className="ml-1 text-lightGray">{unitAsset}</span>
               </div>
             </div>

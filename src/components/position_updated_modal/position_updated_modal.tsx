@@ -14,7 +14,7 @@ import {IUpdatedCFDInputProps, useGlobal} from '../../contexts/global_context';
 import {TypeOfPosition} from '../../constants/type_of_position';
 import {UserContext} from '../../contexts/user_context';
 import {useTranslation} from 'react-i18next';
-import {unitAsset, FRACTION_DIGITS} from '../../constants/config';
+import {unitAsset} from '../../constants/config';
 import {IDisplayApplyCFDOrder} from '../../interfaces/tidebit_defi_background/display_apply_cfd_order';
 import {IApplyUpdateCFDOrder} from '../../interfaces/tidebit_defi_background/apply_update_cfd_order';
 import {IDisplayCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
@@ -156,24 +156,15 @@ const PositionUpdatedModal = ({
 
       globalCtx.eliminateAllModals();
 
-      if (error?.code === 4001) {
-        globalCtx.dataCanceledModalHandler({
-          modalTitle: t('POSITION_MODAL.UPDATE_POSITION_TITLE'),
-          modalContent: t('POSITION_MODAL.FAILED_REASON_CANCELED'),
-        });
+      // ToDo: report error to backend (20230413 - Shirley)
+      // Info: Unknown error between context and component
+      globalCtx.dataFailedModalHandler({
+        modalTitle: t('POSITION_MODAL.UPDATE_POSITION_TITLE'),
+        failedTitle: t('POSITION_MODAL.FAILED_TITLE'),
+        failedMsg: t('POSITION_MODAL.FAILED_REASON_FAILED_TO_UPDATE'),
+      });
 
-        globalCtx.visibleCanceledModalHandler();
-      } else {
-        // ToDo: report error to backend (20230413 - Shirley)
-        // Info: Unknown error between context and component
-        globalCtx.dataFailedModalHandler({
-          modalTitle: t('POSITION_MODAL.UPDATE_POSITION_TITLE'),
-          failedTitle: t('POSITION_MODAL.FAILED_TITLE'),
-          failedMsg: t('POSITION_MODAL.FAILED_REASON_FAILED_TO_UPDATE'),
-        });
-
-        globalCtx.visibleFailedModalHandler();
-      }
+      globalCtx.visibleFailedModalHandler();
     }
 
     unlock();
@@ -212,16 +203,14 @@ const PositionUpdatedModal = ({
       ? updatedProps.takeProfit === 0
         ? '-'
         : updatedProps.takeProfit !== 0
-        ? `$ ${updatedProps.takeProfit.toLocaleString(
-            UNIVERSAL_NUMBER_FORMAT_LOCALE,
-            FRACTION_DIGITS
-          )}`
+        ? `$ ${updatedProps.takeProfit.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+            minimumFractionDigits: 2,
+          })}`
         : undefined
       : openCfdDetails?.takeProfit
-      ? `$ ${openCfdDetails?.takeProfit.toLocaleString(
-          UNIVERSAL_NUMBER_FORMAT_LOCALE,
-          FRACTION_DIGITS
-        )}`
+      ? `$ ${openCfdDetails?.takeProfit.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+          minimumFractionDigits: 2,
+        })}`
       : '-';
 
   const displayedStopLoss =
@@ -229,16 +218,14 @@ const PositionUpdatedModal = ({
       ? updatedProps.stopLoss === 0
         ? '-'
         : updatedProps.stopLoss !== 0
-        ? `$ ${updatedProps.stopLoss.toLocaleString(
-            UNIVERSAL_NUMBER_FORMAT_LOCALE,
-            FRACTION_DIGITS
-          )}`
+        ? `$ ${updatedProps.stopLoss.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+            minimumFractionDigits: 2,
+          })}`
         : undefined
       : openCfdDetails?.stopLoss
-      ? `$ ${openCfdDetails?.stopLoss.toLocaleString(
-          UNIVERSAL_NUMBER_FORMAT_LOCALE,
-          FRACTION_DIGITS
-        )}`
+      ? `$ ${openCfdDetails?.stopLoss.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+          minimumFractionDigits: 2,
+        })}`
       : '-';
 
   const displayedTypeOfPosition =
@@ -263,12 +250,12 @@ const PositionUpdatedModal = ({
     <div className="mt-8 flex flex-col px-6 pb-2">
       <div className="flex items-center justify-center space-x-2 text-center">
         <Image
-          src={`/asset_icon/${openCfdDetails.ticker.toLowerCase()}.svg`}
+          src={marketCtx.selectedTicker?.tokenImg ?? ''}
           width={30}
           height={30}
-          alt="currency icon"
+          alt="ticker icon"
         />
-        <div className="text-2xl">{openCfdDetails.ticker}</div>
+        <div className="text-2xl">{openCfdDetails?.ticker}</div>
       </div>
 
       <div className="relative flex flex-col items-center pt-1">
@@ -290,10 +277,9 @@ const PositionUpdatedModal = ({
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">{t('POSITION_MODAL.OPEN_PRICE')}</div>
               <div className={``}>
-                {openCfdDetails?.openPrice?.toLocaleString(
-                  UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                  FRACTION_DIGITS
-                ) ?? 0}{' '}
+                {openCfdDetails?.openPrice?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+                  minimumFractionDigits: 2,
+                }) ?? 0}{' '}
                 <span className="ml-1 text-lightGray">{unitAsset}</span>
                 {/* {openCfdDetails?.price?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0} USDT */}
               </div>

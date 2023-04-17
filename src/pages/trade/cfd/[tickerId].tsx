@@ -51,7 +51,10 @@ const Trading = (props: IPageProps) => {
   }, []);
 
   useEffect(() => {
+    if ((marketCtx?.selectedTickerRef?.current?.currency?.toString() ?? '') === currency) return;
     redirectToTicker();
+    // eslint-disable-next-line no-console
+    console.log('selected currenct', marketCtx?.selectedTickerRef?.current?.currency?.toString());
   }, [marketCtx.availableTickers]);
 
   if (!router.isFallback && !props.tickerId) {

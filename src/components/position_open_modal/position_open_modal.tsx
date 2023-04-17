@@ -100,6 +100,8 @@ const PositionOpenModal = ({
 
     try {
       const result = await userCtx.createCFDOrder(applyCreateOrder);
+      // eslint-disable-next-line no-console
+      console.log('open position result', result);
 
       if (result.success) {
         // TODO: (20230413 - Shirley) the button URL

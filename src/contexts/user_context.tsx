@@ -47,7 +47,6 @@ import {
 } from '../interfaces/tidebit_defi_background/order';
 import {CustomError} from '../lib/custom_error';
 import {setTimeout} from 'timers/promises';
-import {useTranslation} from 'react-i18next';
 import {useGlobal} from './global_context';
 
 export interface IUserBalance {
@@ -226,7 +225,6 @@ export const UserContext = createContext<IUserContext>({
 });
 
 export const UserProvider = ({children}: IUserProvider) => {
-  const globalCtx = useGlobal();
   const transactionEngine = React.useMemo(() => TransactionEngineInstance, []);
   const workerCtx = useContext(WorkerContext);
   const notificationCtx = useContext(NotificationContext);

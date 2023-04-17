@@ -27,14 +27,12 @@ const Trading = (props: IPageProps) => {
   const {layoutAssertion} = useGlobal();
   const appCtx = useContext(AppContext);
 
-  const [mounted, setMounted] = useState(false);
-
   const displayedNavBar = layoutAssertion === 'mobile' ? <NavBarMobile /> : <NavBar />;
 
   const router = useRouter();
   const {tickerId} = router.query;
 
-  const currency = tickerId?.toString().replace('usdt', '').toUpperCase();
+  const currency = tickerId ? tickerId.toString().replace('usdt', '').toUpperCase() : undefined;
 
   useEffect(() => {
     if (!appCtx.isInit) {
@@ -46,7 +44,6 @@ const Trading = (props: IPageProps) => {
     const capitalizeCurrency = ['Flow', 'Dai'];
 
     const redirectTicker = async () => {
-      // await wait(1000 * 5);
       if (hasValue(marketCtx.availableTickers) && currency) {
         if (capitalizeCurrency.includes(capitalized(currency))) {
           marketCtx.selectTickerHandler(capitalized(currency));

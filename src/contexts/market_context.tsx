@@ -40,7 +40,6 @@ import {
   ITickerHistoryData,
 } from '../interfaces/tidebit_defi_background/ticker_history_data';
 import {ITypeOfPosition} from '../constants/type_of_position';
-import {hasValue} from '../lib/common';
 
 export interface IMarketProvider {
   children: React.ReactNode;
@@ -359,7 +358,6 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       })) as ITickerItem[];
       tickerBook.updateTickers(tickers);
       setAvailableTickers({...tickerBook.listTickers()});
-      const tickerExists = hasValue(availableTickersRef.current);
       // 2. get ticker trades
       // 2.1 available tickers get trades from api
       for (const ticker of tickers) {

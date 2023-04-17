@@ -66,6 +66,8 @@ import {
   getDummyAcceptedWithdrawOrder,
 } from '../interfaces/tidebit_defi_background/accepted_withdraw_order';
 import WithdrawalHistoryModal from '../components/withdrawal_history_modal/withdrawal_history_modal';
+import {ImInfo, ImWarning} from 'react-icons/im';
+import {FaRegCheckCircle, FaRegTimesCircle} from 'react-icons/fa';
 export interface IToastify {
   type: 'error' | 'warning' | 'info' | 'success';
   message: string;
@@ -227,16 +229,36 @@ const toastHandler = ({type, message, toastId}: IToastify) => {
 
   switch (type) {
     case 'error':
-      toastify.error(message, {toastId: type + message + toastId});
+      toastify.error(message, {
+        toastId: type + message + toastId,
+        icon: <FaRegTimesCircle className="h-20px w-20px text-lightRed" />,
+        bodyClassName:
+          'text-lightWhite text-sm whitespace-nowrap flex p-4 w-auto before:block before:absolute before:-left-1 before:w-2 before:h-50px before:bg-lightRed',
+      });
       break;
     case 'warning':
-      toastify.warning(message, {toastId: type + message + toastId});
+      toastify.warning(message, {
+        toastId: type + message + toastId,
+        icon: <ImWarning className="h-20px w-20px text-lightYellow2" />,
+        bodyClassName:
+          'text-lightWhite text-sm whitespace-nowrap flex p-4 w-auto before:block before:absolute before:-left-1 before:w-2 before:h-50px before:bg-lightYellow2',
+      });
       break;
     case 'info':
-      toastify.info(message, {toastId: type + message + toastId});
+      toastify.info(message, {
+        toastId: type + message + toastId,
+        icon: <ImInfo className="h-20px w-20px text-tidebitTheme" />,
+        bodyClassName:
+          'text-lightWhite text-sm whitespace-nowrap flex p-4 w-auto before:block before:absolute before:-left-1 before:w-2 before:h-50px before:bg-tidebitTheme',
+      });
       break;
     case 'success':
-      toastify.success(message, {toastId: type + message + toastId});
+      toastify.success(message, {
+        toastId: type + message + toastId,
+        icon: <FaRegCheckCircle className="h-20px w-20px text-lightGreen5" />,
+        bodyClassName:
+          'text-lightWhite text-sm whitespace-nowrap flex p-4 w-auto before:block before:absolute before:-left-1 before:w-2 before:h-50px before:bg-lightGreen5',
+      });
       break;
     default:
       return;

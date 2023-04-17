@@ -16,15 +16,8 @@ import {useRouter} from 'next/router';
 // import ErrorPage from 'next/error';
 import Error from 'next/error';
 
-interface ILocale {
-  // locale: string;
-  locale: any;
-}
-
 interface IPageProps {
   tickerId: string;
-  // content:
-  // locale: ILocale;
 }
 
 // {tickerId}
@@ -37,7 +30,7 @@ const Trading = (props: IPageProps) => {
   const displayedNavBar = layoutAssertion === 'mobile' ? <NavBarMobile /> : <NavBar />;
   const appCtx = useContext(AppContext);
 
-  // // // TODO: should be used
+  // TODO: should be used
   if (!router.isFallback && !props.tickerId) {
     // return <Error statusCode={404} />;
     // throw new Error('Internal Server Error');

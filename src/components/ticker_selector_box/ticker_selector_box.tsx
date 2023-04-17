@@ -14,7 +14,6 @@ import {NotificationContext} from '../../contexts/notification_context';
 
 type TranslateFunction = (s: string) => string;
 
-// TODO: useContext
 interface ITickerSelectorBox {
   tickerSelectorBoxRef: React.RefObject<HTMLDivElement>;
   tickerSelectorBoxVisible: boolean;
@@ -30,9 +29,6 @@ interface ICryptoCardData {
   fluctuating: number;
   tokenImg: string;
   lineGraphProps: ILineGraphProps;
-
-  // getStarredStateCallback: (bool: boolean) => void;
-
   starColor?: string;
   gradientColor?: string;
 }
@@ -52,14 +48,6 @@ const TickerSelectorBox = ({
 
   const [activeTab, setActiveTab] = useState('All');
 
-  // const cryptoCards = useMemo(() => {
-  //   if (activeTab === 'All') {
-  //     return allCards;
-  //   } else {
-  //     return favorites;
-  //   }
-  // }, [activeTab, allCards, favorites]);
-
   const cardClickHandler = (route: string) => {
     tickerSelectorBoxClickHandler();
     routing(route);
@@ -72,7 +60,6 @@ const TickerSelectorBox = ({
   const routing = (currency: string) => {
     const base = currency.toLocaleLowerCase();
     router.push(`/trade/cfd/${base}usdt`);
-    // console.log(`/trade/cfd/${base}usdt`);
   };
 
   const convertTickersToCryptoCardsData = (availableTickers: ITickerData[]) => {
@@ -80,16 +67,6 @@ const TickerSelectorBox = ({
       const color = CRYPTO_CARD_COLORS.find(i => i.label === each.currency);
       const addCallbackFunc: ICryptoCardData = {
         ...each,
-        // getStarredStateCallback: (bool: boolean) => {
-        //   // `bool` 是從 Crypto Card 得到的最新的 starred 狀態，each.starred只是從 availableTickers 得到的初始 starred 狀態
-        //   // console.log('if starred: ', each.starred, 'boolean: ', bool);
-        //   if (bool) {
-        //     userCtx.addFavorites(each.currency);
-        //   } else {
-        //     userCtx.removeFavorites(each.currency);
-        //   }
-        //   // console.log(each.currency, 'clicked');
-        // },
         starColor: color?.starColor,
         gradientColor: color?.gradientColor,
       };
@@ -97,42 +74,6 @@ const TickerSelectorBox = ({
     });
     return cryptoCardsData;
   };
-
-  // const addCallbackToCryptoCardsData = availableTickers?.map((each, index) => {
-  //   const addCallbackFunc = {
-  //     ...each,
-  //     getStarredStateCallback: (bool: boolean) => {
-  //       // `bool` 是從 Crypto Card 得到的最新的 starred 狀態，each.starred只是從 availableTickers 得到的初始 starred 狀態
-  //       // console.log('if starred: ', each.starred, 'boolean: ', bool);
-  //       if (bool) {
-  //         addFavorites(each.currency);
-  //       } else {
-  //         removeFavorites(each.currency);
-  //       }
-  //       // console.log(each.currency, 'clicked');
-  //     },
-  //   };
-  //   return addCallbackFunc;
-  // });
-
-  // const cryptoCardsData: ICryptoCardData[] = addCallbackToCryptoCardsData
-  //   // .filter(item => CRYPTO_CARD_COLORS.some(i => i.label === item.currency))
-  //   ?.map((each, index) => {
-  //     const color = CRYPTO_CARD_COLORS.find(i => i.label === each.currency);
-  //     return {
-  //       ...each,
-  //       starColor: color?.starColor,
-  //       gradientColor: color?.gradientColor,
-  //     };
-  //   });
-
-  // const cryptoCardsData: ICryptoCardData[] = convertTickersToCryptoCardsData(availableTickers);
-
-  // console.log('cryptoCardsData in ticker selector box: ', cryptoCardsData);
-
-  // const favoriteTabCardsData = cryptoCardsData.filter(cryptoCardData => cryptoCardData.starred);
-
-  // const [favoritesSearches, setFavoritesSearches] = useState<string>();
 
   const [filteredFavorites, setFilteredFavorites] = useState<ICryptoCardData[] | undefined>(
     undefined
@@ -142,20 +83,10 @@ const TickerSelectorBox = ({
 
   const [filteredCards, setFilteredCards] = useState<ICryptoCardData[]>([]);
 
-  // const [filteredCards, setFilteredCards] = useState<ICryptoCardData[] | null>(cryptoCardsData);
-
   const onSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const searchString = event.target.value.toLocaleLowerCase();
     setSearches(searchString);
-
-    // // 這樣寫，會顯示上一步的搜尋結果
-    // const newSearchResult = TRADING_CRYPTO_DATA.filter(each => {
-    //   return each.chain.toLocaleLowerCase().includes(searches || '');
-    // });
-    // setFilteredCards(newSearchResult);
   };
-
-  // const testResult =
 
   useEffect(() => {
     if (tickerSelectorBoxVisible) {
@@ -197,90 +128,17 @@ const TickerSelectorBox = ({
   const activeFavoriteTabStyle =
     activeTab == 'Favorite' ? 'bg-darkGray1 text-lightWhite' : 'bg-darkGray5 text-lightGray';
 
-  const displayedAllCryptoCards = filteredCards
-    // .filter(each => {
-    //   if (!availableTickers) return;
-
-    //   // // TODO: Displaying the favorite tickers on all tab
-    //   // if (user && user[0].favoriteTickers) {
-    //   //   for (let i = 0; i < user[0].favoriteTickers.length; i++) {
-    //   //     return user[0].favoriteTickers.find((fav: ITickerData) => fav.currency === each.currency);
-    //   //     // if (each.currency === user[0].favoriteTickers.find((each: ICryptoCardData) => each)) {
-    //   //     //   each.starred = true;
-    //   //     //   return each;
-    //   //     // }
-    //   //   }
-    //   // }
-
-    //   // for (let i = 0; i < availableTickers.length; i++) {
-    //   //   if (each.currency === (availableTickers && availableTickers[i])) {
-    //   //     return each;
-    //   //   }
-    //   // }
-    // })
-    ?.map((cryptoCard, i) => {
-      if (i === 0) {
-        return (
-          <CryptoCard
-            key={cryptoCard.currency}
-            cardClickHandler={() => cardClickHandler(cryptoCard.currency)}
-            className="mt-4 ml-4"
-            lineGraphProps={cryptoCard.lineGraphProps}
-            star={cryptoCard.star}
-            starColor={cryptoCard.starColor}
-            starred={cryptoCard.starred}
-            // getStarredState={cryptoCard.getStarredStateCallback}
-            chain={cryptoCard.chain}
-            currency={cryptoCard.currency}
-            price={cryptoCard.price}
-            fluctuating={cryptoCard.fluctuating}
-            gradientColor={cryptoCard?.gradientColor ?? ''}
-            tokenImg={cryptoCard.tokenImg}
-          />
-        );
-      }
-
-      return (
-        <CryptoCard
-          key={cryptoCard.currency}
-          // cardClickHandler={() => {
-          //   tickerSelectorBoxClickHandler();
-          //   routing(cryptoCard.currency);
-          // }}
-          cardClickHandler={() => cardClickHandler(cryptoCard.currency)}
-          className="mt-0"
-          lineGraphProps={cryptoCard.lineGraphProps}
-          star={cryptoCard.star}
-          starColor={cryptoCard.starColor}
-          starred={cryptoCard.starred}
-          // getStarredState={cryptoCard.getStarredStateCallback}
-          chain={cryptoCard.chain}
-          currency={cryptoCard.currency}
-          price={cryptoCard.price}
-          fluctuating={cryptoCard.fluctuating}
-          gradientColor={cryptoCard?.gradientColor ?? ''}
-          tokenImg={cryptoCard.tokenImg}
-        />
-      );
-    });
-
-  const displayedFavorites = filteredFavorites?.map((cryptoCard, i) => {
-    if (cryptoCard.starred !== true) return;
+  const displayedAllCryptoCards = filteredCards?.map((cryptoCard, i) => {
     if (i === 0) {
       return (
         <CryptoCard
           key={cryptoCard.currency}
-          // cardClickHandler={() => {
-          //   tickerSelectorBoxClickHandler();
-          //   routing(cryptoCard.currency);
-          // }}
           cardClickHandler={() => cardClickHandler(cryptoCard.currency)}
           className="mt-4 ml-4"
           lineGraphProps={cryptoCard.lineGraphProps}
           star={cryptoCard.star}
           starColor={cryptoCard.starColor}
           starred={cryptoCard.starred}
-          // getStarredState={cryptoCard.getStarredStateCallback}
           chain={cryptoCard.chain}
           currency={cryptoCard.currency}
           price={cryptoCard.price}
@@ -295,16 +153,52 @@ const TickerSelectorBox = ({
       <CryptoCard
         key={cryptoCard.currency}
         cardClickHandler={() => cardClickHandler(cryptoCard.currency)}
-        // cardClickHandler={() => {
-        //   tickerSelectorBoxClickHandler();
-        //   routing(cryptoCard.currency);
-        // }}
         className="mt-0"
         lineGraphProps={cryptoCard.lineGraphProps}
         star={cryptoCard.star}
         starColor={cryptoCard.starColor}
         starred={cryptoCard.starred}
-        // getStarredState={cryptoCard.getStarredStateCallback}
+        chain={cryptoCard.chain}
+        currency={cryptoCard.currency}
+        price={cryptoCard.price}
+        fluctuating={cryptoCard.fluctuating}
+        gradientColor={cryptoCard?.gradientColor ?? ''}
+        tokenImg={cryptoCard.tokenImg}
+      />
+    );
+  });
+
+  const displayedFavorites = filteredFavorites?.map((cryptoCard, i) => {
+    if (cryptoCard.starred !== true) return;
+    if (i === 0) {
+      return (
+        <CryptoCard
+          key={cryptoCard.currency}
+          cardClickHandler={() => cardClickHandler(cryptoCard.currency)}
+          className="mt-4 ml-4"
+          lineGraphProps={cryptoCard.lineGraphProps}
+          star={cryptoCard.star}
+          starColor={cryptoCard.starColor}
+          starred={cryptoCard.starred}
+          chain={cryptoCard.chain}
+          currency={cryptoCard.currency}
+          price={cryptoCard.price}
+          fluctuating={cryptoCard.fluctuating}
+          gradientColor={cryptoCard?.gradientColor ?? ''}
+          tokenImg={cryptoCard.tokenImg}
+        />
+      );
+    }
+
+    return (
+      <CryptoCard
+        key={cryptoCard.currency}
+        cardClickHandler={() => cardClickHandler(cryptoCard.currency)}
+        className="mt-0"
+        lineGraphProps={cryptoCard.lineGraphProps}
+        star={cryptoCard.star}
+        starColor={cryptoCard.starColor}
+        starred={cryptoCard.starred}
         chain={cryptoCard.chain}
         currency={cryptoCard.currency}
         price={cryptoCard.price}

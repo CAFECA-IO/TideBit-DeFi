@@ -67,7 +67,7 @@ export const Reason: IReason = {
   '93100000': 'Invalid order inputs',
   '94000000': 'Dewt is not legit',
   '95000000': 'Signature rejected by user',
-  '96000000': 'Expired quotation should not be sent to server',
+  '96000000': 'Deal canceled due to expired quotation',
   '96100000': 'An order cannot be created from an expired quotation',
   '98000000': 'Failed to open CFD',
   '98100000': 'Failed to update CFD',

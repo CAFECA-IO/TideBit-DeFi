@@ -66,6 +66,8 @@ import {
   getDummyAcceptedWithdrawOrder,
 } from '../interfaces/tidebit_defi_background/accepted_withdraw_order';
 import WithdrawalHistoryModal from '../components/withdrawal_history_modal/withdrawal_history_modal';
+import {ImInfo, ImWarning} from 'react-icons/im';
+import {FaRegCheckCircle, FaRegTimesCircle} from 'react-icons/fa';
 export interface IToastify {
   type: 'error' | 'warning' | 'info' | 'success';
   message: string;
@@ -225,18 +227,59 @@ const toastHandler = ({type, message, toastId}: IToastify) => {
   //   [TOAST_CLASSES_TYPE.info]: toastify.info(message),
   // }[type];
 
+  /* ToDo: (20230418 - Julian) toast type text require i18n */
   switch (type) {
     case 'error':
-      toastify.error(message, {toastId: type + message + toastId});
+      toastify.error(message, {
+        toastId: type + message + toastId,
+        icon: (
+          <div className="-ml-12 inline-flex items-center justify-center text-lightRed">
+            <FaRegTimesCircle className="h-15px w-15px" />
+            <span className="ml-2">Error</span>
+          </div>
+        ),
+        bodyClassName:
+          'text-lightWhite text-sm lg:whitespace-nowrap flex p-4 w-auto before:block before:absolute before:-left-1 before:w-2 before:h-50px before:bg-lightRed',
+      });
       break;
     case 'warning':
-      toastify.warning(message, {toastId: type + message + toastId});
+      toastify.warning(message, {
+        toastId: type + message + toastId,
+        icon: (
+          <div className="-ml-12 inline-flex items-center justify-center text-lightYellow2">
+            <ImWarning className="h-15px w-15px " />
+            <span className="ml-2">Warning</span>
+          </div>
+        ),
+        bodyClassName:
+          'text-lightWhite text-sm lg:whitespace-nowrap flex p-4 w-auto before:block before:absolute before:-left-1 before:w-2 before:h-50px before:bg-lightYellow2',
+      });
       break;
     case 'info':
-      toastify.info(message, {toastId: type + message + toastId});
+      toastify.info(message, {
+        toastId: type + message + toastId,
+        icon: (
+          <div className="-ml-12 inline-flex items-center justify-center text-tidebitTheme">
+            <ImInfo className="h-15px w-15px" />
+            <span className="ml-2">Info</span>
+          </div>
+        ),
+        bodyClassName:
+          'text-lightWhite text-sm lg:whitespace-nowrap flex w-auto before:block before:absolute before:-left-1 before:w-2 before:h-50px before:bg-tidebitTheme',
+      });
       break;
     case 'success':
-      toastify.success(message, {toastId: type + message + toastId});
+      toastify.success(message, {
+        toastId: type + message + toastId,
+        icon: (
+          <div className="-ml-12 inline-flex items-center justify-center text-lightGreen5">
+            <FaRegCheckCircle className="h-15px w-15px" />
+            <span className="ml-2">Success</span>
+          </div>
+        ),
+        bodyClassName:
+          'text-lightWhite text-sm lg:whitespace-nowrap flex p-4 w-auto before:block before:absolute before:-left-1 before:w-2 before:h-50px before:bg-lightGreen5',
+      });
       break;
     default:
       return;

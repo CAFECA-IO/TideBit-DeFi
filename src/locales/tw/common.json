@@ -92,7 +92,7 @@
     "TRADE_STATISTICS_1_DAY": "1 天",
     "CRYPTO_SUMMARY_WHITEPAPER_TITLE": "幣種資訊",
     "CRYPTO_SUMMARY_WHITEPAPER": "白皮書",
-    "CRYPTO_SUMMARY_WEBSITE": "官網",
+    "CRYPTO_SUMMARY_WEBSITE": "官方網站",
     "CRYPTO_SUMMARY_PRICE": "價格",
     "CRYPTO_SUMMARY_RANK": "排名",
     "CRYPTO_SUMMARY_PUBLISH_TIME": "發行時間",
@@ -112,7 +112,7 @@
     "TRADE_TAB_GUARANTEED_STOP_HINT": "保證止損可強制平倉於您選定的價格，即使市場價格超過此價格也一樣。",
     "TRADE_TAB_FEE": "手續費",
     "TRADE_TAB_LEVERAGE": "槓杆",
-    "TRADE_TAB_REQUIRED_MARGIN": "抵押品數量",
+    "TRADE_TAB_REQUIRED_MARGIN": "保證金",
     "TRADE_TAB_VALUE": "總交易額",
     "TRADE_TAB_LONG_BUTTON": "看漲",
     "TRADE_TAB_SHORT_BUTTON": "看跌",
@@ -128,7 +128,7 @@
     "OPEN_POSITION_ITEM_LIQUIDATION": "強制平倉線",
     "OPEN_POSITION_ITEM_TP": "止盈線",
     "OPEN_POSITION_ITEM_SL": "止損線",
-    "HISTORY_POSITION_ITEM_VALUE": "開倉 / 平倉價值",
+    "HISTORY_POSITION_ITEM_VALUE": "建倉 / 平倉價值",
     "HISTORY_POSITION_ITEM_PNL": "損益"
   },
   "WALLET_PANEL": {
@@ -153,7 +153,7 @@
     "DONE_BUTTON": "完成"
   },
   "POSITION_MODAL": {
-    "OPEN_POSITION_TITLE": "開倉",
+    "OPEN_POSITION_TITLE": "建倉",
     "CLOSE_POSITION_TITLE": "平倉",
     "UPDATE_POSITION_TITLE": "更新持倉",
     "CONFIRM_CONTENT": "請確認您的交易",
@@ -163,21 +163,28 @@
     "FAILED_TITLE": "交易失敗",
     "FAILED_REASON_DELAY": "訂單尚未關閉",
     "FAILED_REASON_CANCELED": "交易已取消",
-    "FAILED_REASON_FAILED_TO_CLOSE": "關倉失敗",
-    "FAILED_REASON_FAILED_TO_OPEN": "開倉失敗",
+    "FAILED_REASON_FAILED_TO_CLOSE": "平倉失敗",
+    "FAILED_REASON_FAILED_TO_OPEN": "建倉失敗",
     "FAILED_REASON_FAILED_TO_UPDATE": "更新失敗",
     "FAILED_REASON_ERROR": "訂單未開啟",
     "ERROR_MESSAGE": "發生錯誤，請再試一次",
+    "WARNING_POSITION_CLOSED_TITLE": "倉位已關閉",
+    "WARNING_POSITION_CLOSED_CONTENT": "您的倉位已觸及您設定的止損價格並已關閉。",
+    "WARNING_SUSPENDED_TITLE": "交易已暫停",
+    "WARNING_SUSPENDED_CONTENT": "由於 Bitcoin 跌停，暫停交易。",
+    "WARNING_CHECK_POSITION_BUTTON": "查看倉位",
+    "WARNING_CHECK_TRADING_BUTTON": "查看交易",
+    "WARNING_OK_BUTTON": "好的",
     "TYPE": "類型",
     "TYPE_UP": "看漲",
     "TYPE_BUY": "(買入)",
     "TYPE_DOWN": "看跌",
     "TYPE_SELL": "(賣出)",
-    "OPEN_VALUE": "開倉價值",
+    "OPEN_VALUE": "建倉價值",
     "CLOSED_VALUE": "平倉價值",
     "OPEN_PRICE": "開盤價格",
     "CLOSED_PRICE": "收盤價格",
-    "OPEN_TIME": "開倉時間",
+    "OPEN_TIME": "建倉時間",
     "CLOSED_TIME": "平倉時間",
     "AMOUNT": "交易量",
     "REQUIRED_MARGIN": "所需保證金",
@@ -270,5 +277,11 @@
   "COMING_SOON_PAGE": {
     "DESCRIPTION1": "我們正在努力為您帶來驚奇的體驗",
     "DESCRIPTION2": "敬請期待我們的最新服務！"
+  },
+  "TOAST": {
+    "ERROR": "錯誤",
+    "SUCCESS": "成功",
+    "WARNING": "警告",
+    "INFO": "訊息"
   }
 }

@@ -169,6 +169,13 @@
     "FAILED_REASON_FAILED_TO_UPDATE": "Failed to update position",
     "FAILED_REASON_ERROR": "Order is not opening",
     "ERROR_MESSAGE": "Something went wrong, please try again",
+    "WARNING_POSITION_CLOSED_TITLE": "Position closed",
+    "WARNING_POSITION_CLOSED_CONTENT": "Your position has hit the stop price you set and closed.",
+    "WARNING_SUSPENDED_TITLE": "Trading suspension",
+    "WARNING_SUSPENDED_CONTENT": "Bitcoin hits the limit down and suspend trading temporarily.",
+    "WARNING_CHECK_POSITION_BUTTON": "Check the position",
+    "WARNING_CHECK_TRADING_BUTTON": "Check Trading page",
+    "WARNING_OK_BUTTON": "Got it",
     "TYPE": "Type",
     "TYPE_UP": "Up",
     "TYPE_BUY": "(Buy)",
@@ -271,5 +278,11 @@
   "COMING_SOON_PAGE": {
     "DESCRIPTION1": "We're working hard to bring you amazing experience.",
     "DESCRIPTION2": "Stay tuned for our new service!"
+  },
+  "TOAST": {
+    "ERROR": "Error",
+    "SUCCESS": "Success",
+    "WARNING": "Warning",
+    "INFO": "Info"
   }
 }

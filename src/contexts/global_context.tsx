@@ -140,6 +140,7 @@ export interface IProcessDataModal {
 
 export interface IFailedModal {
   modalTitle: string;
+  modalContent?: string;
   btnMsg?: string;
   btnUrl?: string;
   failedTitle: string;
@@ -1120,7 +1121,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
       />
       <FailedModal
         modalTitle={dataFailedModal.modalTitle}
-        // modalContent={dataFailedModal.modalContent}
+        modalContent={dataFailedModal.modalContent}
         modalVisible={visibleFailedModal}
         modalClickHandler={visibleFailedModalHandler}
         btnMsg={dataFailedModal?.btnMsg}

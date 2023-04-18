@@ -238,7 +238,7 @@ const toastHandler = ({type, message, toastId}: IToastify) => {
           </div>
         ),
         bodyClassName:
-          'text-lightWhite text-sm whitespace-nowrap flex p-4 w-auto before:block before:absolute before:-left-1 before:w-2 before:h-50px before:bg-lightRed',
+          'text-lightWhite text-sm lg:whitespace-nowrap flex p-4 w-auto before:block before:absolute before:-left-1 before:w-2 before:h-50px before:bg-lightRed',
       });
       break;
     case 'warning':
@@ -251,7 +251,7 @@ const toastHandler = ({type, message, toastId}: IToastify) => {
           </div>
         ),
         bodyClassName:
-          'text-lightWhite text-sm whitespace-nowrap flex p-4 w-auto before:block before:absolute before:-left-1 before:w-2 before:h-50px before:bg-lightYellow2',
+          'text-lightWhite text-sm lg:whitespace-nowrap flex p-4 w-auto before:block before:absolute before:-left-1 before:w-2 before:h-50px before:bg-lightYellow2',
       });
       break;
     case 'info':
@@ -264,7 +264,7 @@ const toastHandler = ({type, message, toastId}: IToastify) => {
           </div>
         ),
         bodyClassName:
-          'text-lightWhite text-sm whitespace-nowrap flex w-auto before:block before:absolute before:-left-1 before:w-2 before:h-50px before:bg-tidebitTheme',
+          'text-lightWhite text-sm lg:whitespace-nowrap flex w-auto before:block before:absolute before:-left-1 before:w-2 before:h-50px before:bg-tidebitTheme',
       });
       break;
     case 'success':
@@ -277,7 +277,7 @@ const toastHandler = ({type, message, toastId}: IToastify) => {
           </div>
         ),
         bodyClassName:
-          'text-lightWhite text-sm whitespace-nowrap flex p-4 w-auto before:block before:absolute before:-left-1 before:w-2 before:h-50px before:bg-lightGreen5',
+          'text-lightWhite text-sm lg:whitespace-nowrap flex p-4 w-auto before:block before:absolute before:-left-1 before:w-2 before:h-50px before:bg-lightGreen5',
       });
       break;
     default:

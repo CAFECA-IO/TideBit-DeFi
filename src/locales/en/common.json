@@ -271,5 +271,11 @@
   "COMING_SOON_PAGE": {
     "DESCRIPTION1": "We're working hard to bring you amazing experience.",
     "DESCRIPTION2": "Stay tuned for our new service!"
+  },
+  "TOAST": {
+    "ERROR": "Error",
+    "SUCCESS": "Success",
+    "WARNING": "Warning",
+    "INFO": "Info"
   }
 }

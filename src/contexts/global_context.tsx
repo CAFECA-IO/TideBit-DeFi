@@ -887,6 +887,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
 
   const depositSubmitHandler = (props: {asset: ICryptocurrency; amount: number}) => {
     // INFO: Set the process in modal component. `eliminateAllModals` won't work here (20230413 - Shirley)
+    /* Deprecated: (20230413 - Shirley)
     // userCtx
     //   .deposit({
     //     orderType: OrderType.DEPOSIT,
@@ -904,6 +905,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     //     console.log(`userCtx.deposit result:`, result);
     //     setDepositProcess('success');
     //   });
+    */
   };
 
   const withdrawSubmitHandler = async (props: {asset: ICryptocurrency; amount: number}) => {
@@ -911,6 +913,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     // INFO: Set the process in modal component. `eliminateAllModals` won't work here (20230317 - Shirley)
     // setWithdrawProcess('loading');
     */
+    /* Deprecated: (20230413 - Shirley)
     // userCtx
     //   .withdraw({
     //     orderType: OrderType.WITHDRAW,
@@ -927,6 +930,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     //     console.log(`userCtx.deposit result:`, result);
     //     setDepositProcess('success');
     //   });
+    */
   };
 
   // ------------------------------------------ //

@@ -1,5 +1,7 @@
 // `const` which can be changed later
 
+import {Currency} from './currency';
+
 export const QUOTATION_RENEWAL_INTERVAL_SECONDS = 60;
 export const WAITING_TIME_FOR_USER_SIGNING = 45;
 export const DISPLAY_QUOTATION_RENEWAL_INTERVAL_SECONDS =
@@ -55,9 +57,28 @@ export const SUGGEST_SL = 0.1;
 
 export const LIQUIDATION_FIVE_LEVERAGE = 0.2;
 
+export const tickerIds = [
+  'ethusdt',
+  'btcusdt',
+  'ltcusdt',
+  'maticusdt',
+  'bnbusdt',
+  'solusdt',
+  'shibusdt',
+  'dotusdt',
+  'adausdt',
+  'avaxusdt',
+  'daiusdt',
+  'mkrusdt',
+  'xrpusdt',
+  'dogeusdt',
+  'uniusdt',
+  'flowusdt',
+];
+
 export const TRADING_CRYPTO_DATA = [
   {
-    currency: 'ETH',
+    currency: Currency.ETH,
     chain: 'Ethereum',
     star: true,
     starred: false,
@@ -67,7 +88,7 @@ export const TRADING_CRYPTO_DATA = [
     tradingVolume: '217,268,645',
   },
   {
-    currency: 'BTC',
+    currency: Currency.BTC,
     chain: 'Bitcoin',
     star: true,
     starred: false,
@@ -77,7 +98,7 @@ export const TRADING_CRYPTO_DATA = [
     tradingVolume: '217,268,645',
   },
   {
-    currency: 'LTC',
+    currency: Currency.LTC,
     chain: 'Litecoin',
     star: true,
     starred: false,
@@ -87,7 +108,7 @@ export const TRADING_CRYPTO_DATA = [
     tradingVolume: '217,268,645',
   },
   {
-    currency: 'MATIC',
+    currency: Currency.MATIC,
     chain: 'Polygon',
     star: true,
     starred: false,
@@ -97,7 +118,7 @@ export const TRADING_CRYPTO_DATA = [
     tradingVolume: '217,268,645',
   },
   {
-    currency: 'BNB',
+    currency: Currency.BNB,
     chain: 'BNB',
     star: true,
     starred: false,
@@ -107,7 +128,7 @@ export const TRADING_CRYPTO_DATA = [
     tradingVolume: '217,268,645',
   },
   {
-    currency: 'SOL',
+    currency: Currency.SOL,
     chain: 'Solana',
     star: true,
     starred: false,
@@ -117,7 +138,7 @@ export const TRADING_CRYPTO_DATA = [
     tradingVolume: '217,268,645',
   },
   {
-    currency: 'SHIB',
+    currency: Currency.SHIB,
     chain: 'Shiba Inu',
     star: true,
     starred: false,
@@ -127,7 +148,7 @@ export const TRADING_CRYPTO_DATA = [
     tradingVolume: '217,268,645',
   },
   {
-    currency: 'DOT',
+    currency: Currency.DOT,
     chain: 'Polkadot',
     star: true,
     starred: false,
@@ -137,7 +158,7 @@ export const TRADING_CRYPTO_DATA = [
     tradingVolume: '217,268,645',
   },
   {
-    currency: 'ADA',
+    currency: Currency.ADA,
     chain: 'Cardano',
     star: true,
     starred: false,
@@ -147,7 +168,7 @@ export const TRADING_CRYPTO_DATA = [
     tradingVolume: '217,268,645',
   },
   {
-    currency: 'AVAX',
+    currency: Currency.AVAX,
     chain: 'Avalanche',
     star: true,
     starred: false,
@@ -157,7 +178,7 @@ export const TRADING_CRYPTO_DATA = [
     tradingVolume: '217,268,645',
   },
   {
-    currency: 'Dai',
+    currency: Currency.DAI,
     chain: 'Dai',
     star: true,
     starred: false,
@@ -167,7 +188,7 @@ export const TRADING_CRYPTO_DATA = [
     tradingVolume: '217,268,645',
   },
   {
-    currency: 'MKR',
+    currency: Currency.MKR,
     chain: 'Maker',
     star: true,
     starred: false,
@@ -177,7 +198,7 @@ export const TRADING_CRYPTO_DATA = [
     tradingVolume: '217,268,645',
   },
   {
-    currency: 'XRP',
+    currency: Currency.XRP,
     chain: 'XRP',
     star: true,
     starred: false,
@@ -187,7 +208,7 @@ export const TRADING_CRYPTO_DATA = [
     tradingVolume: '217,268,645',
   },
   {
-    currency: 'DOGE',
+    currency: Currency.DOGE,
     chain: 'Dogecoin',
     star: true,
     starred: false,
@@ -197,7 +218,7 @@ export const TRADING_CRYPTO_DATA = [
     tradingVolume: '217,268,645',
   },
   {
-    currency: 'UNI',
+    currency: Currency.UNI,
     chain: 'Uniswap',
     star: true,
     starred: false,
@@ -207,7 +228,7 @@ export const TRADING_CRYPTO_DATA = [
     tradingVolume: '217,268,645',
   },
   {
-    currency: 'Flow',
+    currency: Currency.FLOW,
     chain: 'Flow',
     star: true,
     starred: false,

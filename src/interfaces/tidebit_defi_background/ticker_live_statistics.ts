@@ -1,3 +1,4 @@
+import {ICurrency} from '../../constants/currency';
 import {Trend} from '../../constants/trend';
 import {IFluctuating} from './fluctuating';
 import {getDummyTicker, ITickerData} from './ticker_data';
@@ -46,7 +47,7 @@ export const dummyTickerLiveStatistics: ITickerLiveStatistics = {
   },
 };
 
-export const getDummyTickerLiveStatistics = (currency: string) => {
+export const getDummyTickerLiveStatistics = (currency: ICurrency) => {
   const ticker: ITickerData = getDummyTicker(currency);
   const longRecommendedSl = parseFloat((Math.random() * 10000).toFixed(2));
   const longRecommendedTp = longRecommendedSl + parseFloat((Math.random() * 1000).toFixed(2));

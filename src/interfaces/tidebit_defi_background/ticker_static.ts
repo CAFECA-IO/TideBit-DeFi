@@ -1,3 +1,4 @@
+import {ICurrency} from '../../constants/currency';
 import {IBriefNewsItem} from './brief_news_item';
 import {ICryptoSummary} from './crypto_summary';
 import {IFluctuating} from './fluctuating';
@@ -68,7 +69,7 @@ of ETH.`,
   },
 };
 
-export const getDummyTickerStatic = (currency: string) => {
+export const getDummyTickerStatic = (currency: ICurrency) => {
   const ticker: ITickerData = getDummyTicker(currency);
   const tickerStatic: ITickerStatic = {
     id: `${currency}`,

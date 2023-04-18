@@ -47,6 +47,7 @@ import {
 } from '../interfaces/tidebit_defi_background/order';
 import {CustomError} from '../lib/custom_error';
 import {setTimeout} from 'timers/promises';
+import {useGlobal} from './global_context';
 
 export interface IUserBalance {
   available: number;
@@ -224,7 +225,6 @@ export const UserContext = createContext<IUserContext>({
 });
 
 export const UserProvider = ({children}: IUserProvider) => {
-  // TODO: get partial user type from `IUserContext`
   const transactionEngine = React.useMemo(() => TransactionEngineInstance, []);
   const workerCtx = useContext(WorkerContext);
   const notificationCtx = useContext(NotificationContext);
@@ -722,9 +722,18 @@ export const UserProvider = ({children}: IUserProvider) => {
             try {
               resultCode = Code.REJECTED_SIGNATURE;
               const signature: string = await lunar.signTypedData(transferR.data);
+              const now = getTimestamp();
+
+              // ToDo: Check if the quotation is expired, if so return `failed result` in `catch`. (20230414 - Shirley)
+              if (applyCreateCFDOrder.quotation.deadline < now) {
+                resultCode = Code.EXPIRED_QUOTATION_FAILED;
+                result.code = resultCode;
+                result.reason = Reason[resultCode];
+                const error = new CustomError(resultCode);
+                throw error;
+              }
 
               resultCode = Code.INTERNAL_SERVER_ERROR;
-              // ToDo: Check if the quotation is expired, if so return `failed result` in `catch`. (20230414 - Shirley)
               const {CFDOrder, acceptedCFDOrder} = (await privateRequestHandler({
                 name: APIName.CREATE_CFD_TRADE,
                 method: Method.POST,
@@ -770,9 +779,10 @@ export const UserProvider = ({children}: IUserProvider) => {
     const timeLeft = (Number(applyCreateCFDOrder?.quotation.deadline) - getTimestamp()) * 1000;
     // Deprecated: (20230420 - Shirley)
     // eslint-disable-next-line no-console
-    console.log('time left', timeLeft);
+    console.log('time left[open]', timeLeft);
+
     if (timeLeft < 0) {
-      const result: IResult = defaultResultFailed;
+      const result: IResult = {...defaultResultFailed};
       const resultCode = Code.EXPIRED_QUOTATION_CANCELED;
       result.code = resultCode;
       result.reason = Reason[resultCode];
@@ -782,21 +792,21 @@ export const UserProvider = ({children}: IUserProvider) => {
     const countdown = () =>
       new Promise<IResult>(resolve => {
         window.setTimeout(() => {
-          const result: IResult = defaultResultFailed;
+          const result: IResult = {...defaultResultFailed};
           const resultCode = Code.EXPIRED_QUOTATION_CANCELED;
           result.code = resultCode;
           result.reason = Reason[resultCode];
           resolve(result);
           // Deprecated: (20230420 - Shirley)
           // eslint-disable-next-line no-console
-          console.log('result in coundown Promise');
+          console.log('result in coundown Promise[open]');
         }, timeLeft);
       });
 
     if (!lunar.isConnected) {
       const isConnected = await connect();
       if (!isConnected) {
-        const result: IResult = defaultResultFailed;
+        const result: IResult = {...defaultResultFailed};
         const resultCode = Code.WALLET_IS_NOT_CONNECT;
         result.code = resultCode;
         result.reason = Reason[result.code];
@@ -807,7 +817,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     return Promise.race([_createCFDOrder(applyCreateCFDOrder), countdown()]);
   };
 
-  const closeCFDOrder = async (
+  const _closeCFDOrder = async (
     applyCloseCFDOrder: IApplyCloseCFDOrder | undefined
   ): Promise<IResult> => {
     let result: IResult = defaultResultFailed;
@@ -824,6 +834,16 @@ export const UserProvider = ({children}: IUserProvider) => {
             try {
               resultCode = Code.REJECTED_SIGNATURE;
               const signature: string = await lunar.signTypedData(transferR.data);
+              const now = getTimestamp();
+
+              // ToDo: Check if the quotation is expired, if so return `failed result` in `catch`. (20230414 - Shirley)
+              if (applyCloseCFDOrder.quotation.deadline < now) {
+                resultCode = Code.EXPIRED_QUOTATION_FAILED;
+                result.code = resultCode;
+                result.reason = Reason[resultCode];
+                const error = new CustomError(resultCode);
+                throw error;
+              }
 
               resultCode = Code.INTERNAL_SERVER_ERROR;
               const {updateCFDOrder, acceptedCFDOrder} = (await privateRequestHandler({
@@ -870,6 +890,49 @@ export const UserProvider = ({children}: IUserProvider) => {
         return result;
       }
     }
+  };
+
+  const closeCFDOrder = async (
+    applyCloseCFDOrder: IApplyCloseCFDOrder | undefined
+  ): Promise<IResult> => {
+    const timeLeft = (Number(applyCloseCFDOrder?.quotation.deadline) - getTimestamp()) * 1000;
+    // Deprecated: (20230420 - Shirley)
+    // eslint-disable-next-line no-console
+    console.log('time left [close]', timeLeft);
+    if (timeLeft < 0) {
+      const result: IResult = {...defaultResultFailed};
+      const resultCode = Code.EXPIRED_QUOTATION_CANCELED;
+      result.code = resultCode;
+      result.reason = Reason[resultCode];
+      return result;
+    }
+
+    const countdown = () =>
+      new Promise<IResult>(resolve => {
+        window.setTimeout(() => {
+          const result: IResult = {...defaultResultFailed};
+          const resultCode = Code.EXPIRED_QUOTATION_CANCELED;
+          result.code = resultCode;
+          result.reason = Reason[resultCode];
+          resolve(result);
+          // Deprecated: (20230420 - Shirley)
+          // eslint-disable-next-line no-console
+          console.log('result in coundown Promise [close]');
+        }, timeLeft);
+      });
+
+    if (!lunar.isConnected) {
+      const isConnected = await connect();
+      if (!isConnected) {
+        const result: IResult = {...defaultResultFailed};
+        const resultCode = Code.WALLET_IS_NOT_CONNECT;
+        result.code = resultCode;
+        result.reason = Reason[result.code];
+        return result;
+      }
+    }
+
+    return Promise.race([_closeCFDOrder(applyCloseCFDOrder), countdown()]);
   };
 
   const updateCFDOrder = async (
@@ -1169,7 +1232,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     () =>
       notificationCtx.emitter.on(TideBitEvent.TICKER_CHANGE, (ticker: ITickerData) => {
         setSelectedTicker(ticker);
-        listCFDs(ticker.currency);
+        listCFDs(ticker?.currency);
       }),
     []
   );

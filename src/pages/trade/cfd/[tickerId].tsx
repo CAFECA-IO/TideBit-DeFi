@@ -16,6 +16,7 @@ import Error from 'next/error';
 import useStateRef from 'react-usestateref';
 import {capitalized, hasValue, wait} from '../../../lib/common';
 import {CAPITALIZED_CURRENCY} from '../../../constants/config';
+import {Currency, ICurrency} from '../../../constants/currency';
 
 interface IPageProps {
   tickerId: string;
@@ -31,14 +32,16 @@ const Trading = (props: IPageProps) => {
   const router = useRouter();
   const {tickerId} = router.query;
 
-  const currency = tickerId ? tickerId.toString().replace('usdt', '').toUpperCase() : undefined;
+  const currency: ICurrency = tickerId
+    ? (tickerId.toString().replace('usdt', '').toUpperCase() as ICurrency)
+    : Currency.ETH;
 
   const redirectToTicker = async () => {
     if (hasValue(marketCtx.availableTickers) && currency) {
-      if (CAPITALIZED_CURRENCY.includes(capitalized(currency))) {
-        marketCtx.selectTickerHandler(capitalized(currency));
-        return;
-      }
+      // if (CAPITALIZED_CURRENCY.includes(capitalized(currency))) {
+      //   marketCtx.selectTickerHandler(capitalized(currency));
+      //   return;
+      // }
 
       marketCtx.selectTickerHandler(currency);
     }

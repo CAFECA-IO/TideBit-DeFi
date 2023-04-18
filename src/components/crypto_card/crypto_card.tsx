@@ -6,6 +6,7 @@ import {TypeOfPnLColorHex, UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants
 import {UserContext, IUserContext} from '../../contexts/user_context';
 import {MarketContext} from '../../contexts/market_context';
 import {useGlobal} from '../../contexts/global_context';
+import {ICurrency} from '../../constants/currency';
 
 /**
  * @dev used when it needs the star functionality
@@ -26,7 +27,7 @@ export interface ILineGraphProps {
 export interface ICardProps {
   tokenImg: string;
   chain: string;
-  currency: string;
+  currency: ICurrency;
   price: number;
   fluctuating: number;
   gradientColor: string;

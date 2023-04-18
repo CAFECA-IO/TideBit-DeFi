@@ -211,7 +211,7 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
         JSON.stringify({
           op: 'registerMarket',
           args: {
-            market: `${ticker.currency.toLowerCase()}usdt`,
+            market: `${ticker?.currency.toLowerCase()}usdt`,
           },
         })
       );

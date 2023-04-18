@@ -21,6 +21,7 @@ import packageJson from '../../package.json';
 import IJSON from '../interfaces/ijson';
 import RLP from 'rlp';
 import {ICFDOrder} from '../interfaces/tidebit_defi_background/order';
+import {Currency, ICurrency, ICurrencyConstant} from '../constants/currency';
 
 export const roundToDecimalPlaces = (val: number, precision: number): number => {
   const roundedNumber = Number(val.toFixed(precision));
@@ -441,3 +442,15 @@ export const hasValue = (obj: any) => {
 export const capitalized = (str: string) => {
   return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 };
+
+export function findCurrencyByCode(code: string): ICurrency | undefined {
+  const currencyKeys = Object.keys(Currency) as Array<keyof ICurrencyConstant>;
+
+  for (const key of currencyKeys) {
+    if (key.toUpperCase() === code.toUpperCase()) {
+      return Currency[key] as ICurrency;
+    }
+  }
+
+  return undefined;
+}

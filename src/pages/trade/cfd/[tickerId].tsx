@@ -14,9 +14,9 @@ import {GetStaticPaths, GetStaticProps} from 'next';
 import {useRouter} from 'next/router';
 import Error from 'next/error';
 import useStateRef from 'react-usestateref';
-import {capitalized, hasValue, wait} from '../../../lib/common';
-import {CAPITALIZED_CURRENCY} from '../../../constants/config';
-import {Currency, ICurrency} from '../../../constants/currency';
+import {capitalized, findCurrencyByCode, hasValue, wait} from '../../../lib/common';
+import {tickerIds} from '../../../constants/config';
+import {Currency, ICurrency, ICurrencyConstant} from '../../../constants/currency';
 
 interface IPageProps {
   tickerId: string;
@@ -32,17 +32,14 @@ const Trading = (props: IPageProps) => {
   const router = useRouter();
   const {tickerId} = router.query;
 
-  const currency: ICurrency = tickerId
-    ? (tickerId.toString().replace('usdt', '').toUpperCase() as ICurrency)
+  const currencyCode = tickerId
+    ? tickerId.toString().replace('usdt', '').toUpperCase()
     : Currency.ETH;
+
+  const currency = findCurrencyByCode(currencyCode);
 
   const redirectToTicker = async () => {
     if (hasValue(marketCtx.availableTickers) && currency) {
-      // if (CAPITALIZED_CURRENCY.includes(capitalized(currency))) {
-      //   marketCtx.selectTickerHandler(capitalized(currency));
-      //   return;
-      // }
-
       marketCtx.selectTickerHandler(currency);
     }
   };
@@ -57,7 +54,7 @@ const Trading = (props: IPageProps) => {
     if ((marketCtx?.selectedTickerRef?.current?.currency?.toString() ?? '') === currency) return;
     redirectToTicker();
     // eslint-disable-next-line no-console
-    console.log('selected currenct', marketCtx?.selectedTickerRef?.current?.currency?.toString());
+    console.log('selected currency', marketCtx?.selectedTickerRef?.current?.currency?.toString());
   }, [marketCtx.availableTickers]);
 
   if (!router.isFallback && !props.tickerId) {
@@ -103,25 +100,6 @@ export const getStaticProps: GetStaticProps<IPageProps> = async ({params, locale
  * In production, getStaticPaths runs at build time.
  */
 export const getStaticPaths: GetStaticPaths = async ({locales}) => {
-  const tickerIds = [
-    'ethusdt',
-    'btcusdt',
-    'ltcusdt',
-    'maticusdt',
-    'bnbusdt',
-    'solusdt',
-    'shibusdt',
-    'dotusdt',
-    'adausdt',
-    'avaxusdt',
-    'daiusdt',
-    'mkrusdt',
-    'xrpusdt',
-    'dogeusdt',
-    'uniusdt',
-    'flowusdt',
-  ];
-
   const paths = tickerIds
     .flatMap(id => {
       return locales?.map(locale => ({

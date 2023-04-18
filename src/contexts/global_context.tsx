@@ -28,6 +28,7 @@ import PositionOpenModal from '../components/position_open_modal/position_open_m
 import PositionClosedModal from '../components/position_closed_modal/position_closed_modal';
 import PositionUpdatedModal from '../components/position_updated_modal/position_updated_modal';
 import HistoryPositionModal from '../components/history_position_modal/history_position_modal';
+import WarningModal from '../components/warning_modal/warning_modal';
 import {IPnL} from '../interfaces/tidebit_defi_background/pnl';
 import {ProfitState} from '../constants/profit_state';
 import {OrderType} from '../constants/order_type';
@@ -160,7 +161,6 @@ export interface IWarningModal {
   content: string;
   numberOfButton: number;
   reactionOfButton: string;
-  styleOfButton: 'style1' | 'style2';
 }
 
 export const dummyWarningModal: IWarningModal = {
@@ -168,7 +168,6 @@ export const dummyWarningModal: IWarningModal = {
   content: '',
   numberOfButton: 0,
   reactionOfButton: '',
-  styleOfButton: 'style1',
 };
 
 // TODO:(20230317 - Shirley) to be continued
@@ -1207,6 +1206,11 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
         modalClickHandler={visiblePositionUpdatedModalHandler}
         openCfdDetails={dataPositionUpdatedModal.openCfdDetails}
         updatedProps={dataPositionUpdatedModal.updatedProps}
+      />
+      <WarningModal
+        modalVisible={visibleWarningModal}
+        modalClickHandler={visibleWarningModalHandler}
+        getWarningData={dataWarningModal}
       />
 
       {/* Info: One toast container avoids duplicate toast overlaying */}

@@ -1180,11 +1180,8 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
 export const useGlobal = () => {
   const context = useContext(GlobalContext);
   // Info: If not in a provider, it still reveals `createContext<IGlobalContext>` data, meaning it'll never be falsy.
-  // if (context === undefined) {
-  //   throw new Error('useGlobal must be used within a GlobalProvider');
-  // }
 
-  // TODO: Debug tool [to be removed](20230317 - Shirley)
+  // Deprecated: Debug tool [to be removed](20230317 - Shirley)
   const g: any =
     typeof globalThis === 'object'
       ? globalThis

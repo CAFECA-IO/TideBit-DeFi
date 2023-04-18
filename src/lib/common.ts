@@ -22,6 +22,8 @@ import IJSON from '../interfaces/ijson';
 import RLP from 'rlp';
 import {ICFDOrder} from '../interfaces/tidebit_defi_background/order';
 import {Currency, ICurrency, ICurrencyConstant} from '../constants/currency';
+import {CustomError} from './custom_error';
+import {Code} from '../constants/code';
 
 export const roundToDecimalPlaces = (val: number, precision: number): number => {
   const roundedNumber = Number(val.toFixed(precision));
@@ -165,7 +167,7 @@ export const locker = (id: string): ILocker => {
       return true;
     } else {
       // 重複解鎖，代表流程有問題，故拋出錯誤
-      throw new Error('Something is wrong with the procedure. Unlocking when not locked.');
+      throw new CustomError(Code.LOCK_PROCEDURE_WRONG);
     }
   };
 

@@ -63,6 +63,7 @@ import {CFDClosedType} from '../../constants/cfd_closed_type';
 import {cfdStateCode} from '../../constants/cfd_state_code';
 import {ICFDOrder} from '../../interfaces/tidebit_defi_background/order';
 import {Code} from '../../constants/code';
+import {CustomError} from '../../lib/custom_error';
 
 type TranslateFunction = (s: string) => string;
 interface IPositionClosedModal {
@@ -165,7 +166,7 @@ const PositionClosedModal = ({
     quotation: IQuotation
   ): IApplyCloseCFDOrder => {
     if (order.state !== OrderState.OPENING) {
-      const error = new Error('Order is not opening!!');
+      const error = new CustomError(Code.ORDER_NOT_OPENING);
       throw error;
     }
 
@@ -404,7 +405,7 @@ const PositionClosedModal = ({
     (async () => {
       const quotation = await getQuotation();
       if (!quotation) {
-        const error = new Error('Cannot get quotation');
+        const error = new CustomError(Code.CANNOT_GET_QUOTATION_FROM_CONTEXT);
         throw error;
       }
 

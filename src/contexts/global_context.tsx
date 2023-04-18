@@ -227,7 +227,7 @@ const toastHandler = ({type, message, toastId}: IToastify) => {
   //   [TOAST_CLASSES_TYPE.info]: toastify.info(message),
   // }[type];
 
-  /* (20230418 - Julian) type i18n */
+  /* ToDo: (20230418 - Julian) toast type text require i18n */
   switch (type) {
     case 'error':
       toastify.error(message, {

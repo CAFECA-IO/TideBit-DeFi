@@ -15,7 +15,7 @@ import {ProfitState} from '../../constants/profit_state';
 import {TypeOfPosition} from '../../constants/type_of_position';
 import {timestampToString, getNowSeconds, randomIntFromInterval} from '../../lib/common';
 import {cfdStateCode} from '../../constants/cfd_state_code';
-import {POSITION_CLOSE_COUNTDOWN_SECONDS} from '../../constants/config';
+import {POSITION_CLOSE_COUNTDOWN_SECONDS, FRACTION_DIGITS} from '../../constants/config';
 import {MarketContext} from '../../contexts/market_context';
 import {UserContext} from '../../contexts/user_context';
 import {
@@ -153,10 +153,10 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
       ? '-'
       : '';
 
-  const displayedPNL = openCfdDetails?.pnl?.value.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
-    maximumFractionDigits: 2,
-    minimumFractionDigits: 2,
-  });
+  const displayedPNL = openCfdDetails?.pnl?.value.toLocaleString(
+    UNIVERSAL_NUMBER_FORMAT_LOCALE,
+    FRACTION_DIGITS
+  );
 
   const displayedCreateTime = timestampToString(openCfdDetails?.createTimestamp ?? 0);
 

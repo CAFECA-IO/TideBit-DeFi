@@ -13,6 +13,7 @@ import {
   LIQUIDATION_FIVE_LEVERAGE,
   DISPLAY_QUOTATION_RENEWAL_INTERVAL_SECONDS,
   WAITING_TIME_FOR_USER_SIGNING,
+  FRACTION_DIGITS,
 } from '../../constants/config';
 import {useGlobal} from '../../contexts/global_context';
 import {MarketContext} from '../../contexts/market_context';
@@ -611,10 +612,10 @@ const TradeTab = () => {
   const displayedRequiredMarginLongStyle = (
     <>
       <div className={`${isDisplayedMarginLongStyle} ${isDisplayedMarginLongSize} my-1 text-base`}>
-        {requiredMarginLongRef.current?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2,
-        })}{' '}
+        {requiredMarginLongRef.current?.toLocaleString(
+          UNIVERSAL_NUMBER_FORMAT_LOCALE,
+          FRACTION_DIGITS
+        )}{' '}
         {unitAsset}
       </div>
       <div className={`${isDisplayedMarginLongWarning} ml-3 text-xs text-lightRed`}>
@@ -711,10 +712,10 @@ const TradeTab = () => {
         <span className="text-lightWhite">
           {' '}
           ({t('TRADE_PAGE.TRADE_TAB_FEE')}:{' '}
-          {guaranteedStopFeeLongRef.current?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-          })}{' '}
+          {guaranteedStopFeeLongRef.current?.toLocaleString(
+            UNIVERSAL_NUMBER_FORMAT_LOCALE,
+            FRACTION_DIGITS
+          )}{' '}
           {unitAsset})
         </span>
         {/* tooltip */}
@@ -749,10 +750,10 @@ const TradeTab = () => {
       <div
         className={`${isDisplayedMarginShortStyle} ${isDisplayedMarginShortSize} mt-1 text-base`}
       >
-        {requiredMarginShortRef.current?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2,
-        })}{' '}
+        {requiredMarginShortRef.current?.toLocaleString(
+          UNIVERSAL_NUMBER_FORMAT_LOCALE,
+          FRACTION_DIGITS
+        )}{' '}
         {unitAsset}
       </div>
       <div className={`${isDisplayedMarginShortWarning} ml-3 text-xs text-lightRed`}>
@@ -849,10 +850,10 @@ const TradeTab = () => {
           <span className="text-lightWhite">
             {' '}
             ({t('TRADE_PAGE.TRADE_TAB_FEE')}:{' '}
-            {guaranteedStopFeeShortRef.current?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
-            })}{' '}
+            {guaranteedStopFeeShortRef.current?.toLocaleString(
+              UNIVERSAL_NUMBER_FORMAT_LOCALE,
+              FRACTION_DIGITS
+            )}{' '}
             {unitAsset})
           </span>
           {/* tooltip */}
@@ -973,10 +974,7 @@ const TradeTab = () => {
                   <b>{t('TRADE_PAGE.TRADE_TAB_LONG_BUTTON')}</b> <br />₮{' '}
                   {Number(longQuotationRef.current?.price).toLocaleString(
                     UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                    {
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 2,
-                    }
+                    FRACTION_DIGITS
                   )}
                 </RippleButton>
               </div>
@@ -1056,10 +1054,7 @@ const TradeTab = () => {
                   <b>{t('TRADE_PAGE.TRADE_TAB_SHORT_BUTTON')}</b> <br />₮{' '}
                   {Number(shortQuotationRef.current?.price).toLocaleString(
                     UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                    {
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 2,
-                    }
+                    FRACTION_DIGITS
                   )}
                 </RippleButton>
               </div>

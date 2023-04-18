@@ -1,7 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
 import RippleButton from '../ripple_button/ripple_button';
-import {TBDURL} from '../../constants/api_request';
 import {IWarningModal} from '../../contexts/global_context';
 import {MODAL_BUTTON_STYLES} from '../../constants/display';
 import {ImCross, ImWarning} from 'react-icons/im';
@@ -19,12 +18,12 @@ const WarningModal = ({modalVisible, modalClickHandler, getWarningData}: IWarnin
 
   const displayedButton =
     getWarningData.numberOfButton === 2 ? (
-      <div className="flex flex-row items-center justify-between whitespace-nowrap px-9">
-        <Link href={TBDURL.TRADE}>
+      <div className="flex w-full flex-row items-center justify-between whitespace-nowrap px-7">
+        <Link href={getWarningData.pathOfButton}>
           <RippleButton
             buttonType="button"
             onClick={modalClickHandler}
-            className={`${MODAL_BUTTON_STYLES.SOLID} py-2 px-4`}
+            className={`${MODAL_BUTTON_STYLES.SOLID} w-150px py-2`}
           >
             {getWarningData.reactionOfButton}
           </RippleButton>
@@ -33,13 +32,13 @@ const WarningModal = ({modalVisible, modalClickHandler, getWarningData}: IWarnin
         <RippleButton
           buttonType="button"
           onClick={modalClickHandler}
-          className={`${MODAL_BUTTON_STYLES.HOLLOW} py-2 px-4`}
+          className={`${MODAL_BUTTON_STYLES.HOLLOW} w-70px py-2`}
         >
           {t('POSITION_MODAL.WARNING_OK_BUTTON')}
         </RippleButton>
       </div>
     ) : getWarningData.numberOfButton === 1 ? (
-      <div className="flex flex-row items-center justify-center px-9">
+      <div className="flex flex-row items-center justify-center px-7">
         <button
           type="button"
           onClick={modalClickHandler}

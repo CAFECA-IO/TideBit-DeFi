@@ -161,6 +161,7 @@ export interface IWarningModal {
   content: string;
   numberOfButton: number;
   reactionOfButton: string;
+  pathOfButton: string;
 }
 
 export const dummyWarningModal: IWarningModal = {
@@ -168,6 +169,7 @@ export const dummyWarningModal: IWarningModal = {
   content: '',
   numberOfButton: 0,
   reactionOfButton: '',
+  pathOfButton: '/',
 };
 
 // TODO:(20230317 - Shirley) to be continued

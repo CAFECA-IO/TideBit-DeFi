@@ -38,7 +38,7 @@ const OpenSubTab = () => {
   //     return b.stateCode - a.stateCode;
   //   });
 
-  // ToDo: FIXME: Closed CFDs still show up in Open tab (20230413 - Shirley)
+  // Deprecated: [debug] (20230413 - Shirley)
   // eslint-disable-next-line no-console
   console.log('cfd from ctx ', JSON.parse(JSON.stringify(cfds)));
 

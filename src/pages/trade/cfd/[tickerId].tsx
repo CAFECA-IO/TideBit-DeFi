@@ -53,6 +53,7 @@ const Trading = (props: IPageProps) => {
   useEffect(() => {
     if ((marketCtx?.selectedTickerRef?.current?.currency?.toString() ?? '') === currency) return;
     redirectToTicker();
+    // Deprecated: (20230413 - Shirley)
     // eslint-disable-next-line no-console
     console.log('selected currency', marketCtx?.selectedTickerRef?.current?.currency?.toString());
   }, [marketCtx.availableTickers]);

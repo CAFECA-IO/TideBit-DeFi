@@ -100,6 +100,7 @@ const PositionOpenModal = ({
 
     try {
       const result = await userCtx.createCFDOrder(applyCreateOrder);
+      // Deprecated: [debug] (20230413 - Shirley)
       // eslint-disable-next-line no-console
       console.log('open position result', result);
 
@@ -230,7 +231,7 @@ const PositionOpenModal = ({
       } else {
         // Deprecated: before merging into develop (20230327 - Shirley)
         // eslint-disable-next-line no-console
-        console.log('diable submit');
+        console.log('disable submit');
         setQuotationError(true);
       }
     } catch (err) {

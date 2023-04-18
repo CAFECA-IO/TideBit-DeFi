@@ -133,6 +133,7 @@
   },
   "WALLET_PANEL": {
     "TITLE": "連接錢包",
+    "SEARCHING": "尋找錢包...",
     "CONNECTING": "連接中...",
     "QR_CODE_DESCRIPTION_PART1": "請開啟您的",
     "QR_CODE_DESCRIPTION_HIGHLIGHT": "錢包",

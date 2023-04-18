@@ -134,6 +134,7 @@
   },
   "WALLET_PANEL": {
     "TITLE": "Wallet Connect",
+    "SEARCHING": "Searching for your wallet…",
     "CONNECTING": "Connecting...",
     "QR_CODE_DESCRIPTION_PART1": "Please open your",
     "QR_CODE_DESCRIPTION_HIGHLIGHT": "wallet",

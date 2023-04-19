@@ -1,20 +1,20 @@
 export type ICode =
   | '00000000'
+  | '60220001'
+  | '40430001'
+  | '40430002'
+  | '30410004'
+  | '30420001'
+  | '40430003'
+  | '40430004'
+  | '30410002'
+  | '30410003'
   | '90000000'
-  | '91000000'
-  | '92000000'
-  | '93000000'
-  | '93100000'
-  | '94000000'
-  | '95000000'
-  | '96000000'
-  | '96100000'
-  | '98000000'
-  | '98100000'
-  | '98200000'
-  | '98300000'
-  | '98400000'
-  | '9A000000';
+  | '10210001'
+  | '30110001'
+  | '10110002'
+  | '40230001'
+  | '10110001';
 
 export type ICodeConstant = {
   SUCCESS: ICode;
@@ -27,12 +27,12 @@ export type ICodeConstant = {
   REJECTED_SIGNATURE: ICode;
   EXPIRED_QUOTATION_CANCELED: ICode;
   EXPIRED_QUOTATION_FAILED: ICode;
-  CFD_OPEN_FAILED: ICode;
-  CFD_UPDATED_FAILED: ICode;
-  CFD_CLOSED_FAILED: ICode;
-  WITHDRAWAL_FAILED: ICode;
-  DEPOSIT_FAILED: ICode;
   UNKNOWN_ERROR: ICode;
+  FUNCTION_NOT_IMPLEMENTED: ICode;
+  ORDER_NOT_OPENING: ICode;
+  CANNOT_GET_QUOTATION_FROM_CONTEXT: ICode;
+  BALANCE_NOT_FOUND: ICode;
+  LOCK_PROCEDURE_WRONG: ICode;
 };
 
 export type IReason = {
@@ -41,38 +41,46 @@ export type IReason = {
 
 export const Code: ICodeConstant = {
   SUCCESS: '00000000',
-  INTERNAL_SERVER_ERROR: '90000000',
-  WALLET_IS_NOT_CONNECT: '91000000',
-  SERVICE_TERM_DISABLE: '92000000',
-  INVAILD_INPUTS: '93000000',
-  INVAILD_ORDER_INPUTS: '93100000',
-  DEWT_IS_NOT_LEGIT: '94000000',
-  REJECTED_SIGNATURE: '95000000',
-  EXPIRED_QUOTATION_CANCELED: '96000000',
-  EXPIRED_QUOTATION_FAILED: '96100000',
-  CFD_OPEN_FAILED: '98000000',
-  CFD_UPDATED_FAILED: '98100000',
-  CFD_CLOSED_FAILED: '98200000',
-  WITHDRAWAL_FAILED: '98300000',
-  DEPOSIT_FAILED: '98400000',
-  UNKNOWN_ERROR: '9A000000',
+  UNKNOWN_ERROR: '90000000',
+
+  LOCK_PROCEDURE_WRONG: '10110001',
+  FUNCTION_NOT_IMPLEMENTED: '10210001',
+  CANNOT_GET_QUOTATION_FROM_CONTEXT: '10110002',
+
+  ORDER_NOT_OPENING: '30110001',
+  INVAILD_ORDER_INPUTS: '30420001',
+  EXPIRED_QUOTATION_CANCELED: '30410002',
+  EXPIRED_QUOTATION_FAILED: '30410003',
+  INVAILD_INPUTS: '30410004',
+
+  BALANCE_NOT_FOUND: '40230001',
+  WALLET_IS_NOT_CONNECT: '40430001',
+  SERVICE_TERM_DISABLE: '40430002',
+  DEWT_IS_NOT_LEGIT: '40430003',
+  REJECTED_SIGNATURE: '40430004',
+
+  INTERNAL_SERVER_ERROR: '60220001',
 };
 
 export const Reason: IReason = {
   '00000000': 'success',
-  '90000000': 'Internal server error',
-  '91000000': 'Wallet is not connected',
-  '92000000': 'Service term is not enabled',
-  '93000000': 'Invalid Inputs',
-  '93100000': 'Invalid order inputs',
-  '94000000': 'Dewt is not legit',
-  '95000000': 'Signature rejected by user',
-  '96000000': 'Expired quotation should not be sent to server',
-  '96100000': 'An order cannot be created from an expired quotation',
-  '98000000': 'Failed to open CFD',
-  '98100000': 'Failed to update CFD',
-  '98200000': 'Failed to close CFD',
-  '98300000': 'Failed to withdraw',
-  '98400000': 'Failed to deposit',
-  '9A000000': 'Unknown error',
+  '10110001': 'Lock procedure wrong',
+  '10210001': 'Function not implemented',
+  '10110002': 'Cannot get quotation from context',
+
+  '30110001': 'Order is not opening',
+  '30420001': 'Invalid order inputs',
+  '30410002': 'Deal canceled due to expired quotation',
+  '30410003': 'An order cannot be created from an expired quotation',
+  '30410004': 'Invalid Inputs',
+
+  '40230001': 'Balance not found',
+  '40430001': 'Wallet is not connected',
+  '40430002': 'Service term is not enabled',
+  '40430003': 'Dewt is not legit',
+  '40430004': 'Signature rejected by user',
+
+  '60220001': 'Internal server error',
+
+  '90000000': 'Unknown error',
 };

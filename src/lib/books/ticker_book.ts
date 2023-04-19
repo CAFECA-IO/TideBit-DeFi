@@ -10,6 +10,7 @@ import {
 import {ITickerHistoryData} from '../../interfaces/tidebit_defi_background/ticker_history_data';
 import {getTime, ITimeSpanUnion, TimeSpanUnion} from '../../constants/time_span_union';
 import {millesecondsToSeconds} from '../common';
+import {ICurrency} from '../../constants/currency';
 
 class TickerBook {
   private _dataLength = 1000;
@@ -202,8 +203,8 @@ class TickerBook {
     return candlestickData;
   }
 
-  listTickers(): {[currency: string]: ITickerData} {
-    let tickers: {[currency: string]: ITickerData} = {};
+  listTickers(): {[currency in ICurrency]: ITickerData} {
+    let tickers: {[currency in ICurrency]?: ITickerData} = {};
     tickers = Object.values(this.tickers).reduce((prev, curr) => {
       const dataArray = this.listTickerPositions(curr.currency, {});
       const strokeColor = strokeColorDisplayed(dataArray);
@@ -219,7 +220,7 @@ class TickerBook {
       prev[curr.currency] = ticker;
       return prev;
     }, tickers);
-    return tickers;
+    return tickers as {[currency in ICurrency]: ITickerData};
   }
 
   updateTrades(ticker: string, newTrades: ITBETrade[]) {

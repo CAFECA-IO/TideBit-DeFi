@@ -229,7 +229,7 @@ const toastHandler = ({type, message, toastId}: IToastify) => {
   //   [TOAST_CLASSES_TYPE.info]: toastify.info(message),
   // }[type];
 
-  /* (20230418 - Julian) type i18n */
+  /* ToDo: (20230418 - Julian) toast type text require i18n */
   switch (type) {
     case 'error':
       toastify.error(message, {
@@ -932,6 +932,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
 
   const depositSubmitHandler = (props: {asset: ICryptocurrency; amount: number}) => {
     // INFO: Set the process in modal component. `eliminateAllModals` won't work here (20230413 - Shirley)
+    /* Deprecated: (20230413 - Shirley)
     // userCtx
     //   .deposit({
     //     orderType: OrderType.DEPOSIT,
@@ -949,6 +950,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     //     console.log(`userCtx.deposit result:`, result);
     //     setDepositProcess('success');
     //   });
+    */
   };
 
   const withdrawSubmitHandler = async (props: {asset: ICryptocurrency; amount: number}) => {
@@ -956,6 +958,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     // INFO: Set the process in modal component. `eliminateAllModals` won't work here (20230317 - Shirley)
     // setWithdrawProcess('loading');
     */
+    /* Deprecated: (20230413 - Shirley)
     // userCtx
     //   .withdraw({
     //     orderType: OrderType.WITHDRAW,
@@ -972,6 +975,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     //     console.log(`userCtx.deposit result:`, result);
     //     setDepositProcess('success');
     //   });
+    */
   };
 
   // ------------------------------------------ //
@@ -1226,11 +1230,8 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
 export const useGlobal = () => {
   const context = useContext(GlobalContext);
   // Info: If not in a provider, it still reveals `createContext<IGlobalContext>` data, meaning it'll never be falsy.
-  // if (context === undefined) {
-  //   throw new Error('useGlobal must be used within a GlobalProvider');
-  // }
 
-  // TODO: Debug tool [to be removed](20230317 - Shirley)
+  // Deprecated: Debug tool [to be removed](20230317 - Shirley)
   const g: any =
     typeof globalThis === 'object'
       ? globalThis

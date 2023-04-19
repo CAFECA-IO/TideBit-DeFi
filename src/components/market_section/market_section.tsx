@@ -28,67 +28,6 @@ const MarketSection = () => {
     tradingValue,
   } = marketCtx.tickerStatic?.cryptoSummary ?? {};
 
-  // console.log('getCryptoSummary', sth);
-  // const {} = cryptoSummaryFunc ?? {};
-
-  // // Trial: getCryptoSummary() in context
-  // let cryptoSum = {};
-  // const {getCryptoSummary} = tickerStatic;
-  // cryptoSum = getCryptoSummary() ?? {};
-  // console.log('cryptoSum', cryptoSum);
-  // // if (getCryptoSummary) {
-  // //   cryptoSum = getCryptoSummary() ?? {};
-  // //   console.log('cryptoSum', cryptoSum);
-  // // }
-  // // console.log(cryptoSum);
-  // const {
-  //   icon,
-  //   label,
-  //   introduction,
-  //   whitePaperLink,
-  //   websiteLink,
-  //   price,
-  //   rank,
-  //   publishTime,
-  //   publishAmount,
-  //   tradingVolume,
-  //   totalValue,
-  //   tradingValue,
-  // } = cryptoSum ?? {};
-
-  // // Trial: cryptoSummary attribute in context
-  // const {cryptoSummary} = tickerStatic ?? {};
-  // const {
-  //   icon,
-  //   label,
-  //   introduction,
-  //   whitePaperLink,
-  //   websiteLink,
-  //   price,
-  //   rank,
-  //   publishTime,
-  //   publishAmount,
-  //   tradingVolume,
-  //   totalValue,
-  //   tradingValue,
-  // } = cryptoSummary ?? {};
-
-  // const {cryptoSummary} = useContext(MarketContext);
-  // const {
-  // icon,
-  // label,
-  // introduction,
-  // whitePaperLink,
-  // websiteLink,
-  // price,
-  // rank,
-  // publishTime,
-  // publishAmount,
-  // tradingVolume,
-  // totalValue,
-  // tradingValue,
-  // } = cryptoSummary ?? {};
-
   const displayedTickerHeader =
     layoutAssertion === 'mobile' ? <TradingHeaderMobile /> : <TradingHeader />;
 
@@ -97,10 +36,7 @@ const MarketSection = () => {
 
   return (
     <div className="ml-5 py-100px">
-      <div className="ml-5">
-        {displayedTickerHeader}
-        {/* <TradingHeader upOrDown="up" tradingVolume="217,268,645" /> */}
-      </div>
+      <div className="ml-5">{displayedTickerHeader}</div>
 
       <div>
         {displayedTradingView}

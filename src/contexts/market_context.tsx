@@ -25,6 +25,8 @@ import {
   ITBETrade,
   ITickerMarket,
   ITickerItem,
+  dummyTickers,
+  toDummyTickers,
 } from '../interfaces/tidebit_defi_background/ticker_data';
 import {ITimeSpanUnion, TimeSpanUnion} from '../constants/time_span_union';
 import {ICandlestickData} from '../interfaces/tidebit_defi_background/candlestickData';
@@ -33,13 +35,16 @@ import {NotificationContext} from './notification_context';
 import {WorkerContext} from './worker_context';
 import {APIName, Method} from '../constants/api_request';
 import TickerBookInstance from '../lib/books/ticker_book';
-import {unitAsset} from '../constants/config';
+import {TRADING_CRYPTO_DATA, unitAsset} from '../constants/config';
 import {getDummyQuotation, IQuotation} from '../interfaces/tidebit_defi_background/quotation';
 import {
   getDummyTickerHistoryData,
   ITickerHistoryData,
 } from '../interfaces/tidebit_defi_background/ticker_history_data';
 import {ITypeOfPosition} from '../constants/type_of_position';
+import {Currency, ICurrency} from '../constants/currency';
+import {CustomError} from '../lib/custom_error';
+import {Code, Reason} from '../constants/code';
 
 export interface IMarketProvider {
   children: React.ReactNode;
@@ -64,7 +69,7 @@ export interface IMarketContext {
   showPositionOnChartHandler: (bool: boolean) => void;
   candlestickChartIdHandler: (id: string) => void;
   listAvailableTickers: () => ITickerData[];
-  selectTickerHandler: (props: string) => Promise<IResult>;
+  selectTickerHandler: (props: ICurrency) => Promise<IResult>;
   selectTimeSpanHandler: (props: ITimeSpanUnion) => void;
   getCandlestickChartData: (tickerId: string) => Promise<IResult>; // x 100
   getCFDQuotation: (tickerId: string, typeOfPosition: ITypeOfPosition) => Promise<IResult>;
@@ -116,10 +121,10 @@ export const MarketContext = createContext<IMarketContext>({
   getCandlestickChartData: () => Promise.resolve(defaultResultSuccess),
   getCFDQuotation: () => Promise.resolve(defaultResultSuccess),
   getTickerHistory: (): IResult => {
-    throw new Error('Function not implemented.');
+    throw new CustomError(Code.FUNCTION_NOT_IMPLEMENTED);
   },
   listTickerPositions: (): number[] => {
-    throw new Error('Function not implemented.');
+    throw new CustomError(Code.FUNCTION_NOT_IMPLEMENTED);
   },
 });
 
@@ -148,8 +153,8 @@ export const MarketProvider = ({children}: IMarketProvider) => {
   >(null);
   const [timeSpan, setTimeSpan, timeSpanRef] = useState<ITimeSpanUnion>(tickerBook.timeSpan);
   const [availableTickers, setAvailableTickers, availableTickersRef] = useState<{
-    [currency: string]: ITickerData;
-  }>({});
+    [currency in ICurrency]: ITickerData;
+  }>(toDummyTickers);
   const [isCFDTradable, setIsCFDTradable] = useState<boolean>(false);
   const [candlestickId, setCandlestickId] = useState<string>('');
 
@@ -188,7 +193,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     tickerBook.timeSpan = timeSpan;
     setTimeSpan(tickerBook.timeSpan);
   };
-  const selectTickerHandler = async (tickerId: string) => {
+  const selectTickerHandler = async (tickerId: ICurrency) => {
     const ticker: ITickerData = availableTickersRef.current[tickerId];
     setSelectedTicker(ticker);
     // ++ TODO: get from api
@@ -219,7 +224,8 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       // Deprecate: error handle (Tzuhan - 20230327)
       // eslint-disable-next-line no-console
       console.error(`listTradesData error`, error);
-      result.reason = (error as Error).message;
+      result.code = Code.INTERNAL_SERVER_ERROR;
+      result.reason = Reason[result.code];
     }
     return result;
   };
@@ -264,7 +270,8 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       // Deprecate: error handle (Tzuhan - 20230321)
       // eslint-disable-next-line no-console
       console.error(`getCandlestickChartData error`, error);
-      result.reason = (error as Error).message;
+      result.code = Code.INTERNAL_SERVER_ERROR;
+      result.reason = Reason[result.code];
     }
     return result;
   };
@@ -343,7 +350,8 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       // Deprecate: error handle (Tzuhan - 20230321)
       // eslint-disable-next-line no-console
       console.error(`getGuaranteedStopFeePercentage error`, error);
-      result.reason = (error as Error).message;
+      result.code = Code.INTERNAL_SERVER_ERROR;
+      result.reason = Reason[result.code];
     }
     return result;
   };
@@ -377,7 +385,8 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       // Deprecate: error handle (Tzuhan - 20230321)
       // eslint-disable-next-line no-console
       console.error(`listTickers error`, error);
-      result.reason = (error as Error).message;
+      result.code = Code.INTERNAL_SERVER_ERROR;
+      result.reason = Reason[result.code];
     }
     return result;
   };
@@ -405,7 +414,8 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       // Deprecate: error handle (Tzuhan - 20230321)
       // eslint-disable-next-line no-console
       console.error(`listDepositCryptocurrencies error`, error);
-      result.reason = (error as Error).message;
+      result.code = Code.INTERNAL_SERVER_ERROR;
+      result.reason = Reason[result.code];
     }
     return result;
   };
@@ -433,7 +443,8 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       // Deprecate: error handle (Tzuhan - 20230321)
       // eslint-disable-next-line no-console
       console.error(`lisWithdrawCryptocurrencies error`, error);
-      result.reason = (error as Error).message;
+      result.code = Code.INTERNAL_SERVER_ERROR;
+      result.reason = Reason[result.code];
     }
     return result;
   };

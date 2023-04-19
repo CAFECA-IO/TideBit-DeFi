@@ -12,6 +12,7 @@ import {ILineGraphProps, ITickerData} from '../../interfaces/tidebit_defi_backgr
 import {useRouter} from 'next/router';
 import {ClickEvent} from '../../constants/tidebit_event';
 import {NotificationContext} from '../../contexts/notification_context';
+import {ICurrency} from '../../constants/currency';
 
 type TranslateFunction = (s: string) => string;
 
@@ -23,7 +24,7 @@ interface ITickerSelectorBox {
 }
 
 interface ICryptoCardData {
-  currency: string;
+  currency: ICurrency;
   chain: string;
   star: boolean;
   starred: boolean;

@@ -46,7 +46,7 @@ import {
   IWithdrawOrder,
 } from '../interfaces/tidebit_defi_background/order';
 import {CustomError} from '../lib/custom_error';
-import {setTimeout} from 'timers/promises';
+//import {setTimeout} from 'timers/promises';
 
 export interface IUserBalance {
   available: number;

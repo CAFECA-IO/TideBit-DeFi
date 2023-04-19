@@ -171,7 +171,7 @@
     "FAILED_BUTTON_TRY_AGAIN": "再试一次",
     "ERROR_MESSAGE": "发生错误，请再试一次",
     "WARNING_POSITION_CLOSED_TITLE": "仓位已关闭",
-    "WARNING_POSITION_CLOSED_CONTENT": "您的仓位已触及您设定的止损价格并已关闭。",
+    "WARNING_POSITION_CLOSED_CONTENT": "您的仓位已触及您设定的止盈/止损价格并已关闭。",
     "WARNING_SUSPENDED_TITLE": "交易已暂停",
     "WARNING_SUSPENDED_CONTENT": "由于 Bitcoin 跌停，暂停交易。",
     "WARNING_CHECK_POSITION_BUTTON": "查看仓位",

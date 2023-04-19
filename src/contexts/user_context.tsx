@@ -429,26 +429,6 @@ export const UserProvider = ({children}: IUserProvider) => {
     return result;
   }, []);
 
-  useEffect(() => {
-    (async () => {
-      const waitSec = 1000 * 10;
-      await wait(waitSec);
-      setWalletExtensions(prev => [...prev, WalletExtension.COINBASE]);
-
-      await wait(waitSec);
-      setWalletExtensions(prev => [...prev, WalletExtension.I_SUN_ONE]);
-
-      await wait(waitSec);
-      setWalletExtensions(prev => [...prev, WalletExtension.IM_TOKEN]);
-
-      await wait(waitSec);
-      setWalletExtensions(prev => [...prev, WalletExtension.TRUST]);
-
-      await wait(waitSec);
-      setWalletExtensions(prev => [...prev, WalletExtension.TOKEN_POCKET]);
-    })();
-  }, []);
-
   const listWithdraws = useCallback(async (address: string) => {
     let result: IResult = defaultResultFailed;
     if (enableServiceTermRef.current) {

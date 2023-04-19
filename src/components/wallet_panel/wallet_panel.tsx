@@ -241,7 +241,8 @@ IWalletPanelProps) {
   const walletOptionsSection = (
     <div className="grid grid-cols-3 gap-3">
       {
-        Object.values(walletData).map(option => (
+        // Object.values(walletData).map(option => (
+        filteredWalletData.map(option => (
           <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2">
             <WalletOption
               name={option.name}

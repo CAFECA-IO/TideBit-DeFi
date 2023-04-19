@@ -259,7 +259,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     useState<boolean>(false);
   const [selectedTicker, setSelectedTicker, selectedTickerRef] = useState<ITickerData | null>(null);
   const [walletExtensions, setWalletExtensions, walletExtensionsRef] = useState<IWalletExtension[]>(
-    []
+    [WalletExtension.META_MASK]
   ); // ToDo: Get user wallet extension (20230419 - Shirley)
 
   const setPrivateData = async (walletAddress: string) => {

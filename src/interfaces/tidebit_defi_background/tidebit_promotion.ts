@@ -5,7 +5,7 @@ export interface ITideBitPromotion {
 }
 
 export const dummyTideBitPromotion: ITideBitPromotion = {
-  volume: 365000000000,
-  users: 30000000000,
+  volume: 3650000,
+  users: 300000,
   va: 48808348,
 };

@@ -64,11 +64,11 @@ const TradingHeader = () => {
               />
             </span>
             {tickerTitle}
-          </button>
 
-          <div className="pl-0 hover:cursor-pointer">
-            <CgSearchLoading size={35} />
-          </div>
+            <div className="pl-0 hover:cursor-pointer">
+              <CgSearchLoading size={35} />
+            </div>
+          </button>
         </div>
 
         {/* Price and fluctuation percentage */}

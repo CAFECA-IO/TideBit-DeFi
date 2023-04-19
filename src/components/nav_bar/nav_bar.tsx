@@ -45,6 +45,16 @@ const NavBar = () => {
     await wait(DELAYED_HIDDEN_SECONDS);
 
     globalCtx.eliminateAllModals();
+
+    // if (userCtx.walletExtensions?.includes('metamask')) {
+    //   metamaskConnect();
+    // } else if (userCtx.walletExtensions?.includes('walletConnect')) {
+    //   walletConnectConnect();
+    // } else {
+    //   failed();
+    // }
+
+    // if ()
     // globalCtx.dataFailedModalHandler({
     //   modalTitle: t('POSITION_MODAL.OPEN_POSITION_TITLE'),
     //   failedTitle: t('POSITION_MODAL.FAILED_TITLE'),

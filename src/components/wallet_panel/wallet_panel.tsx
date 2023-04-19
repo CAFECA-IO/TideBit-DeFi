@@ -15,6 +15,7 @@ import {useTranslation} from 'next-i18next';
 import {MarketContext} from '../../contexts/market_context';
 import {UserContext} from '../../contexts/user_context';
 import {useGlobal} from '../../contexts/global_context';
+import {IWalletExtension, WalletExtension} from '../../constants/wallet_extension';
 
 const ICON_SIZE = 50;
 const WALLET_CONNECT_PROJECT_ID = process.env.WALLET_CONNECT_PROJECT_ID;
@@ -26,6 +27,7 @@ interface IWalletPanelProps {
   getUserLoginState?: (props: boolean) => void;
   panelVisible: boolean;
   panelClickHandler: () => void;
+  // walletExtension: IWalletExtension[];
 }
 
 export default function WalletPanel({
@@ -33,12 +35,12 @@ export default function WalletPanel({
   getUserLoginState,
   panelVisible,
   panelClickHandler,
-}: IWalletPanelProps) {
+}: // walletExtension,
+IWalletPanelProps) {
   const globalCtx = useGlobal();
+  const userCtx = useContext(UserContext);
 
   const {t}: {t: TranslateFunction} = useTranslation('common');
-
-  const userCtx = useContext(UserContext);
 
   const failed = () => {
     globalCtx.dataFailedModalHandler({
@@ -88,58 +90,188 @@ export default function WalletPanel({
     metamaskConnect();
   };
 
+  // console.log('wallet extension in wallet panel', userCtx.walletExtensions);
+
+  type WalletUnion = {
+    [key in IWalletExtension]: {
+      name: IWalletExtension;
+      img: string;
+    };
+  };
+
+  type WalletDataUnion = {
+    [x: string]: {
+      name: IWalletExtension;
+      img: string;
+      onClick?: () => void;
+    };
+  };
+
+  const additionalWalletOptions = [
+    {name: 'Metamask', img: '/elements/74263ff26820cd0d895968e3b55e8902.svg'},
+    {name: 'iSunOne', img: '/elements/i_sun_one.svg'},
+    {name: 'imToken', img: '/elements/path_25918.svg'},
+    {name: 'Coinbase', img: '/elements/18060234@2x.png'},
+    {name: 'Trust', img: '/elements/twt@2x.png'},
+    {name: 'Rainbow', img: '/elements/unnamed@2x.png'},
+    {name: 'Houbi', img: '/elements/logo@2x.png'},
+    {name: 'Coin98', img: '/elements/coin98_c98_logo@2x.png'},
+    {name: 'TokenPocket', img: '/elements/tokenpocket_wallet_logo@2x.png'},
+    {name: 'WalletConnect', img: '/elements/walletconnect@2x.png'},
+    {name: 'BitKeep', img: '/elements/path_25917.svg'},
+    {name: 'Others', img: '/elements/wallet@2x.png'},
+  ];
+
+  const walletData: WalletDataUnion = {
+    [WalletExtension.META_MASK]: {
+      name: WalletExtension.META_MASK,
+      img: '/elements/74263ff26820cd0d895968e3b55e8902.svg',
+      onClick: metamaskOptionClickHandler,
+    },
+    [WalletExtension.I_SUN_ONE]: {
+      name: WalletExtension.I_SUN_ONE,
+      img: '/elements/i_sun_one.svg',
+    },
+    [WalletExtension.IM_TOKEN]: {
+      name: WalletExtension.IM_TOKEN,
+      img: '/elements/path_25918.svg',
+    },
+    [WalletExtension.COINBASE]: {
+      name: WalletExtension.COINBASE,
+      img: '/elements/18060234@2x.png',
+    },
+    [WalletExtension.TRUST]: {
+      name: WalletExtension.TRUST,
+      img: '/elements/twt@2x.png',
+    },
+    [WalletExtension.RAINBOW]: {
+      name: WalletExtension.RAINBOW,
+      img: '/elements/unnamed@2x.png',
+    },
+    [WalletExtension.HOUBI]: {
+      name: WalletExtension.HOUBI,
+      img: '/elements/logo@2x.png',
+    },
+    [WalletExtension.COIN_98]: {
+      name: WalletExtension.COIN_98,
+      img: '/elements/coin98_c98_logo@2x.png',
+    },
+    [WalletExtension.TOKEN_POCKET]: {
+      name: WalletExtension.TOKEN_POCKET,
+      img: '/elements/tokenpocket_wallet_logo@2x.png',
+    },
+    [WalletExtension.WALLET_CONNECT]: {
+      name: WalletExtension.WALLET_CONNECT,
+      img: '/elements/walletconnect@2x.png',
+      onClick: walletconnectOptionClickHandler,
+    },
+    [WalletExtension.BIT_KEEP]: {
+      name: WalletExtension.BIT_KEEP,
+      img: '/elements/path_25917.svg',
+    },
+    [WalletExtension.OTHERS]: {
+      name: WalletExtension.OTHERS,
+      img: '/elements/wallet@2x.png',
+    },
+  };
+
+  const filteredWalletData = Object.values(walletData).filter(wallet => {
+    return userCtx.walletExtensions.includes(wallet.name);
+  });
+
+  // Deprecated: (20230419 - Shirley)
+  // eslint-disable-next-line no-console
+  console.log('filteredWalletData', filteredWalletData);
+
+  // const walletOptionsSection = (
+  //   <div className="grid grid-cols-3 gap-3">
+  //     <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2">
+  //       <WalletOption
+  //         onClick={metamaskOptionClickHandler}
+  //         name={`Metamask`}
+  //         img={`/elements/74263ff26820cd0d895968e3b55e8902.svg`}
+  //         iconSize={50}
+  //       />
+  //     </div>
+  //     <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2">
+  //       <WalletOption name={`iSunOne`} img={`/elements/i_sun_one.svg`} iconSize={50} />
+  //     </div>
+  //     <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2">
+  //       <WalletOption name={`imToken`} img={`/elements/path_25918.svg`} iconSize={50} />
+  //     </div>
+  //     <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2">
+  //       <WalletOption name={`Coinbase`} img={`/elements/18060234@2x.png`} iconSize={50} />
+  //     </div>
+  //     <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2">
+  //       <WalletOption name={`Trust`} img={`/elements/twt@2x.png`} iconSize={50} />
+  //     </div>
+  //     <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2">
+  //       <WalletOption name={`Rainbow`} img={`/elements/unnamed@2x.png`} iconSize={50} />
+  //     </div>
+  //     <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2">
+  //       <WalletOption name={`Houbi`} img={`/elements/logo@2x.png`} iconSize={50} />
+  //     </div>
+  //     <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2">
+  //       <WalletOption name={`Coin98`} img={`/elements/coin98_c98_logo@2x.png`} iconSize={50} />
+  //     </div>
+  //     <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2">
+  //       <WalletOption
+  //         name={`TokenPocket`}
+  //         img={`/elements/tokenpocket_wallet_logo@2x.png`}
+  //         iconSize={50}
+  //       />
+  //     </div>
+  //     <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2">
+  //       <WalletOption
+  //         onClick={walletconnectOptionClickHandler}
+  //         name={`WalletConnect`}
+  //         img={`/elements/walletconnect@2x.png`}
+  //         iconSize={50}
+  //       />
+  //     </div>
+  //     <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2">
+  //       <WalletOption name={`BitKeep`} img={`/elements/path_25917.svg`} iconSize={45} />
+  //     </div>
+  //     <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2">
+  //       <WalletOption name={`Others`} img={`/elements/wallet@2x.png`} iconSize={50} />
+  //     </div>
+  //   </div>
+  // );
+
   const walletOptionsSection = (
     <div className="grid grid-cols-3 gap-3">
-      <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2">
-        <WalletOption
-          onClick={metamaskOptionClickHandler}
-          name={`Metamask`}
-          img={`/elements/74263ff26820cd0d895968e3b55e8902.svg`}
-          iconSize={50}
-        />
-      </div>
-      <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2">
-        <WalletOption name={`iSunOne`} img={`/elements/i_sun_one.svg`} iconSize={50} />
-      </div>
-      <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2">
-        <WalletOption name={`imToken`} img={`/elements/path_25918.svg`} iconSize={50} />
-      </div>
-      <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2">
-        <WalletOption name={`Coinbase`} img={`/elements/18060234@2x.png`} iconSize={50} />
-      </div>
-      <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2">
-        <WalletOption name={`Trust`} img={`/elements/twt@2x.png`} iconSize={50} />
-      </div>
-      <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2">
-        <WalletOption name={`Rainbow`} img={`/elements/unnamed@2x.png`} iconSize={50} />
-      </div>
-      <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2">
-        <WalletOption name={`Houbi`} img={`/elements/logo@2x.png`} iconSize={50} />
-      </div>
-      <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2">
-        <WalletOption name={`Coin98`} img={`/elements/coin98_c98_logo@2x.png`} iconSize={50} />
-      </div>
-      <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2">
-        <WalletOption
-          name={`TokenPocket`}
-          img={`/elements/tokenpocket_wallet_logo@2x.png`}
-          iconSize={50}
-        />
-      </div>
-      <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2">
-        <WalletOption
-          onClick={walletconnectOptionClickHandler}
-          name={`WalletConnect`}
-          img={`/elements/walletconnect@2x.png`}
-          iconSize={50}
-        />
-      </div>
-      <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2">
-        <WalletOption name={`BitKeep`} img={`/elements/path_25917.svg`} iconSize={45} />
-      </div>
-      <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2">
-        <WalletOption name={`Others`} img={`/elements/wallet@2x.png`} iconSize={50} />
-      </div>
+      {
+        Object.values(walletData).map(option => (
+          <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2">
+            <WalletOption
+              name={option.name}
+              img={option.img}
+              onClick={option.onClick}
+              iconSize={50}
+            />
+          </div>
+        ))
+
+        // Object.keys(walletOptions).map((key) => {
+        //   const walletOption = walletOptions[key];
+        //   return (
+        //     <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2">
+        //       <WalletOption
+        //         onClick={() => {
+        //           if (walletOption.name === WalletExtension.OTHERS) {
+        //             setWalletPanelOpen(true);
+        //           } else {
+        //             walletOptionClickHandler(walletOption.name);
+        //           }
+        //         }}
+        //         name={walletOption.name}
+        //         img={walletOption.img}
+        //         iconSize={50}
+        //       />
+        //     </div>
+        //   );
+        // })
+      }
     </div>
   );
 

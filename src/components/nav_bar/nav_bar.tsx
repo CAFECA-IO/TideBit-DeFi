@@ -14,6 +14,8 @@ import User from '../user/user';
 import {useGlobal} from '../../contexts/global_context';
 import {NotificationContext} from '../../contexts/notification_context';
 import {TBDURL} from '../../constants/api_request';
+import {wait} from '../../lib/common';
+import {DELAYED_HIDDEN_SECONDS} from '../../constants/display';
 
 type TranslateFunction = (s: string) => string;
 
@@ -32,24 +34,24 @@ const NavBar = () => {
   } = useOuterClick<HTMLDivElement>(false);
 
   const sidebarOpenHandler = () => {
-    // setSidebarOpen(!sidebarOpen);
     setNotifyVisible(!notifyVisible);
-    // console.log('sidebarOpenHandler clicked, componentVisible: ', componentVisible);
   };
 
-  // const getUserLoginHandler = (bool: boolean) => {
-  //   setUserOverview(bool);
-  // };
+  const wallectConnectBtnClickHandler = async () => {
+    // console.log('wallet', userCtx.walletExtensions);
+    globalCtx.visibleSearchingModalHandler();
+    // globalCtx.visibleWalletPanelHandler();
 
-  // TODO: move to Global COntext
-  const [panelVisible, setPanelVisible] = useState(false);
+    await wait(DELAYED_HIDDEN_SECONDS);
 
-  const panelClickHandler = () => {
-    setPanelVisible(!panelVisible);
-  };
+    globalCtx.eliminateAllModals();
+    // globalCtx.dataFailedModalHandler({
+    //   modalTitle: t('POSITION_MODAL.OPEN_POSITION_TITLE'),
+    //   failedTitle: t('POSITION_MODAL.FAILED_TITLE'),
+    //   failedMsg: t('POSITION_MODAL.FAILED_REASON_FAILED_TO_OPEN'),
+    // });
 
-  const wallectConnectBtnClickHandler = () => {
-    globalCtx.visibleWalletPanelHandler();
+    // globalCtx.visibleFailedModalHandler();
   };
 
   const isDisplayedUserOverview = userCtx.enableServiceTerm ? (

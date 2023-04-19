@@ -48,6 +48,7 @@ import {
 import {CustomError} from '../lib/custom_error';
 import {setTimeout} from 'timers/promises';
 import {useGlobal} from './global_context';
+import {IWalletExtension, WalletExtension} from '../constants/wallet_extension';
 
 export interface IUserBalance {
   available: number;
@@ -131,6 +132,7 @@ export interface IUserContext {
   getBalance: (props: string) => IBalance | null;
   getWalletBalance: (props: string) => IWalletBalance | null;
   init: () => Promise<void>;
+  walletExtensions: IWalletExtension[];
 }
 
 export const UserContext = createContext<IUserContext>({
@@ -222,6 +224,7 @@ export const UserContext = createContext<IUserContext>({
   getBalance: () => null,
   getWalletBalance: () => null,
   init: () => Promise.resolve(),
+  walletExtensions: [],
 });
 
 export const UserProvider = ({children}: IUserProvider) => {
@@ -254,6 +257,9 @@ export const UserProvider = ({children}: IUserProvider) => {
   const [isConnectedWithTideBit, setIsConnectedWithTideBit, isConnectedWithTideBitRef] =
     useState<boolean>(false);
   const [selectedTicker, setSelectedTicker, selectedTickerRef] = useState<ITickerData | null>(null);
+  const [walletExtensions, setWalletExtensions, walletExtensionsRef] = useState<IWalletExtension[]>(
+    [WalletExtension.META_MASK, WalletExtension.WALLET_CONNECT]
+  );
 
   const setPrivateData = async (walletAddress: string) => {
     setEnableServiceTerm(true);
@@ -1295,6 +1301,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     getBalance,
     getWalletBalance,
     init,
+    walletExtensions: walletExtensionsRef.current,
   };
 
   return <UserContext.Provider value={defaultValue}>{children}</UserContext.Provider>;

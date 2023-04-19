@@ -66,6 +66,7 @@ import {
   getDummyAcceptedWithdrawOrder,
 } from '../interfaces/tidebit_defi_background/accepted_withdraw_order';
 import WithdrawalHistoryModal from '../components/withdrawal_history_modal/withdrawal_history_modal';
+import SearchingModal from '../components/searching_modal/searching_modal';
 export interface IToastify {
   type: 'error' | 'warning' | 'info' | 'success';
   message: string;
@@ -378,6 +379,9 @@ export interface IGlobalContext {
   visibleBadgeSharingModalHandler: () => void;
   dataBadgeSharingModal: IBadgeSharingModal | null;
   dataBadgeSharingModalHandler: (data: IBadgeSharingModal) => void;
+
+  visibleSearchingModal: boolean;
+  visibleSearchingModalHandler: () => void;
 }
 
 export const GlobalContext = createContext<IGlobalContext>({
@@ -508,6 +512,9 @@ export const GlobalContext = createContext<IGlobalContext>({
   visibleBadgeSharingModalHandler: () => null,
   dataBadgeSharingModal: null,
   dataBadgeSharingModalHandler: () => null,
+
+  visibleSearchingModal: false,
+  visibleSearchingModalHandler: () => null,
 });
 
 const initialColorMode: ColorModeUnion = 'dark';
@@ -579,13 +586,9 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     useState<IDisplayCFDOrder>(dummyOpenCFD);
 
   const [visiblePositionOpenModal, setVisiblePositionOpenModal] = useState(false);
-  // const [dataPositionOpenModal, setDataPositionOpenModal] = useState<IDisplayApplyCFDOrder>(
-  //   getDummyDisplayApplyCreateCFDOrder(marketCtx.selectedTickerRef.current!.currency)
-  // ); // TODO:(20230317 - Shirley) Open position parameter
   const [dataPositionOpenModal, setDataPositionOpenModal] = useState<IDataPositionOpenModal>(
     dummyDataPositionOpenModal
-    // getDummyDisplayApplyCreateCFDOrder('ETH')
-  ); // TODO:(20230317 - Shirley) Open position parameter
+  );
 
   const [visiblePositionUpdatedModal, setVisiblePositionUpdatedModal] = useState(false);
   const [dataPositionUpdatedModal, setDataPositionUpdatedModal] =
@@ -624,6 +627,8 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
   const [visibleBadgeSharingModal, setVisibleBadgeSharingModal] = useState(false);
   const [dataBadgeSharingModal, setDataBadgeSharingModal] =
     useState<IBadgeSharingModal>(dummyBadgeSharingModal);
+
+  const [visibleSearchingModal, setVisibleSearchingModal] = useState(false);
 
   // TODO: (20230316 - Shirley) To get the withdrawal / deposit result
   const [depositProcess, setDepositProcess] = useState<
@@ -668,6 +673,8 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     setVisibleHistoryPositionModal(false);
 
     setVisiblePositionClosedModal(false);
+
+    setVisibleSearchingModal(false);
   };
 
   const visibleUpdateFormModalHandler = () => {
@@ -933,6 +940,10 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     */
   };
 
+  const visibleSearchingModalHandler = () => {
+    setVisibleSearchingModal(!visibleSearchingModal);
+  };
+
   // ------------------------------------------ //
 
   const defaultValue = {
@@ -1066,6 +1077,9 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     visibleBadgeSharingModalHandler,
     dataBadgeSharingModal,
     dataBadgeSharingModalHandler,
+
+    visibleSearchingModal,
+    visibleSearchingModalHandler,
   };
   return (
     <GlobalContext.Provider value={defaultValue}>
@@ -1168,6 +1182,10 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
         modalClickHandler={visiblePositionUpdatedModalHandler}
         openCfdDetails={dataPositionUpdatedModal.openCfdDetails}
         updatedProps={dataPositionUpdatedModal.updatedProps}
+      />
+      <SearchingModal
+        modalVisible={visibleSearchingModal}
+        modalClickHandler={visibleSearchingModalHandler}
       />
 
       {/* Info: One toast container avoids duplicate toast overlaying */}

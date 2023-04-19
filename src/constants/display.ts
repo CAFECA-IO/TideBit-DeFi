@@ -177,3 +177,10 @@ export const LINE_GRAPH_STROKE_COLOR = {
   LIGHT_GRAY: '#8B8E91',
   BLACK: '#000000',
 };
+
+export const MODAL_BUTTON_STYLES = {
+  SOLID:
+    'rounded border-0 whitespace-nowrap bg-tidebitTheme text-sm text-white transition-colors duration-300 hover:bg-cyan-600 focus:outline-none disabled:bg-lightGray',
+  HOLLOW:
+    'whitespace-nowrap rounded border border-tidebitTheme text-sm text-white transition-colors duration-300 focus:outline-none disabled:bg-lightGray',
+};

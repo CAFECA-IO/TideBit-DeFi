@@ -23,7 +23,7 @@ import {
 import {MarketContext} from '../../contexts/market_context';
 import useState from 'react-usestateref';
 import CircularProgressBar from '../circular_progress_bar/circular_progress_bar';
-import {unitAsset} from '../../constants/config';
+import {unitAsset, FRACTION_DIGITS} from '../../constants/config';
 import useStateRef from 'react-usestateref';
 import {useTranslation} from 'react-i18next';
 import {IDisplayCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
@@ -424,11 +424,7 @@ const UpdateFormModal = ({
           {t('POSITION_MODAL.GUARANTEED_STOP')}
           <span className="ml-1 text-lightWhite">
             ({t('POSITION_MODAL.FEE')}:{' '}
-            {gslFee?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
-            })}{' '}
-            {unitAsset})
+            {gslFee?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)} {unitAsset})
           </span>
           {/* tooltip */}
           <div className="ml-3">

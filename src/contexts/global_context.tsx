@@ -143,8 +143,8 @@ export interface IFailedModal {
   modalContent?: string;
   btnMsg?: string;
   btnUrl?: string;
-  failedTitle: string;
-  failedMsg: string;
+  failedTitle?: string;
+  failedMsg?: string;
 }
 
 // TODO:(20230317 - Shirley) to be continued

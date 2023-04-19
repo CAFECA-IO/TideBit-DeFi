@@ -156,13 +156,13 @@ export const dummyRecordSharingModal: IRecordSharingModal = {
   orderIdRecordSharing: 0,
 };
 
-// TODO:(20230317 - Shirley) to be continued
+/* Info (20230419 - Julian) 目前只有能帶路徑 (string) 的參數，如果需要處理 function 就要另外再加參數 */
 export interface IWarningModal {
   title: string;
   content: string;
   numberOfButton: number;
   reactionOfButton: string;
-  pathOfButton: string;
+  pathOfButton?: string;
 }
 
 export const dummyWarningModal: IWarningModal = {

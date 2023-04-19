@@ -34,7 +34,7 @@ const FailedModal = ({
 
       <div className="w-full grow">
         <div className="mx-21px my-4 bg-lightRed">
-          <p className="text-lg">{failedTitle ?? `Failed`}</p>
+          <p className="text-lg">{failedTitle}</p>
 
           <p className="mt-1 bg-darkGray1/50 py-2 px-3 text-start text-xs leading-4 tracking-wide">
             {failedMsg}

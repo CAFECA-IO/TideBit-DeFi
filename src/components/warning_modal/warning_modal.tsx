@@ -16,10 +16,13 @@ interface IWarningModalProps {
 const WarningModal = ({modalVisible, modalClickHandler, getWarningData}: IWarningModalProps) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
+  const path = getWarningData.pathOfButton ?? '/';
+  const btnPath = path.startsWith('/') || path.startsWith('http') ? path : '/';
+
   const displayedButton =
     getWarningData.numberOfButton === 2 ? (
       <div className="flex w-full flex-row items-center justify-between whitespace-nowrap px-7">
-        <Link href={getWarningData.pathOfButton}>
+        <Link href={btnPath}>
           <RippleButton
             buttonType="button"
             onClick={modalClickHandler}
@@ -39,13 +42,13 @@ const WarningModal = ({modalVisible, modalClickHandler, getWarningData}: IWarnin
       </div>
     ) : getWarningData.numberOfButton === 1 ? (
       <div className="flex flex-row items-center justify-center px-7">
-        <button
-          type="button"
+        <RippleButton
+          buttonType="button"
           onClick={modalClickHandler}
           className={`${MODAL_BUTTON_STYLES.SOLID} py-2 px-6`}
         >
           {t('POSITION_MODAL.WARNING_OK_BUTTON')}
-        </button>
+        </RippleButton>
       </div>
     ) : null;
 

@@ -1,6 +1,5 @@
 import {useTranslation} from 'next-i18next';
 import Link from 'next/link';
-import TideButton from '../tide_button/tide_button';
 import {useContext, useState} from 'react';
 import Image from 'next/image';
 import version from '../../lib/version';
@@ -16,6 +15,7 @@ import {NotificationContext} from '../../contexts/notification_context';
 import {TBDURL} from '../../constants/api_request';
 import {wait} from '../../lib/common';
 import {DELAYED_HIDDEN_SECONDS} from '../../constants/display';
+import {WalletConnectButton} from '../wallet_connect_button/wallet_connect_button';
 
 type TranslateFunction = (s: string) => string;
 
@@ -38,7 +38,6 @@ const NavBar = () => {
   };
 
   const wallectConnectBtnClickHandler = async () => {
-    // console.log('wallet', userCtx.walletExtensions);
     globalCtx.visibleSearchingModalHandler();
     // globalCtx.visibleWalletPanelHandler();
 
@@ -46,22 +45,16 @@ const NavBar = () => {
 
     globalCtx.eliminateAllModals();
 
-    // if (userCtx.walletExtensions?.includes('metamask')) {
-    //   metamaskConnect();
-    // } else if (userCtx.walletExtensions?.includes('walletConnect')) {
-    //   walletConnectConnect();
-    // } else {
-    //   failed();
-    // }
+    globalCtx.dataFailedModalHandler({
+      modalTitle: t('WALLET_PANEL.TITLE'),
+      failedTitle: t('WALLET_PANEL.WALLET_EXTENSION_NOT_FOUND1'),
+      failedMsg: `${t('WALLET_PANEL.WALLET_EXTENSION_NOT_FOUND2')} ${t(
+        'WALLET_PANEL.WALLET_EXTENSION_NOT_FOUND3'
+      )} ${t('WALLET_PANEL.WALLET_EXTENSION_NOT_FOUND5')}`,
+      btnMsg: t('WALLET_PANEL.WALLET_EXTENSION_NOT_FOUND4'),
+    });
 
-    // if ()
-    // globalCtx.dataFailedModalHandler({
-    //   modalTitle: t('POSITION_MODAL.OPEN_POSITION_TITLE'),
-    //   failedTitle: t('POSITION_MODAL.FAILED_TITLE'),
-    //   failedMsg: t('POSITION_MODAL.FAILED_REASON_FAILED_TO_OPEN'),
-    // });
-
-    // globalCtx.visibleFailedModalHandler();
+    globalCtx.visibleFailedModalHandler();
   };
 
   const isDisplayedUserOverview = userCtx.enableServiceTerm ? (
@@ -76,12 +69,7 @@ const NavBar = () => {
     <User />
   ) : (
     /* Info: (20230327 - Julian) show wallet panel */
-    <TideButton
-      onClick={wallectConnectBtnClickHandler}
-      className={`mt-4 rounded border-0 bg-tidebitTheme py-2 px-5 text-base text-white transition-all duration-300 hover:bg-cyan-600 md:mt-0`}
-    >
-      {t('NAV_BAR.WALLET_CONNECT')}
-    </TideButton>
+    <WalletConnectButton className="mt-4 py-2 px-5 md:mt-0" />
   );
 
   const userOverviewDividerDesktop = userCtx.enableServiceTerm ? (

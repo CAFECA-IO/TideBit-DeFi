@@ -5,6 +5,7 @@ import PositionTabMobile from '../position_tab_mobile/position_tab_mobile';
 import TradeTabMobile from '../trade_tab_mobile/trade_tab_mobile';
 import {useGlobal} from '../../contexts/global_context';
 import {useTranslation} from 'next-i18next';
+import {WalletConnectButton} from '../wallet_connect_button/wallet_connect_button';
 
 type TranslateFunction = (s: string) => string;
 
@@ -21,10 +22,6 @@ const OrderSectionMobile = () => {
     positionActiveTab == 'Open' ? 'bg-darkGray8 text-lightWhite' : 'bg-darkGray6 text-lightGray';
   const activeHistoryTabStyle =
     positionActiveTab == 'History' ? 'bg-darkGray8 text-lightWhite' : 'bg-darkGray6 text-lightGray';
-
-  const walletClickHandler = () => {
-    globalCtx.visibleWalletPanelHandler();
-  };
 
   const openTabClickHandler = () => {
     setPositionActiveTab('Open');
@@ -74,16 +71,11 @@ const OrderSectionMobile = () => {
     </>
   ) : (
     <div className="flex items-center justify-center">
-      <div className="text-center text-sm text-lightGray">
+      <div className="mr-10 text-center text-sm text-lightGray">
         {t('TRADE_PAGE.WALLET_CONNECT_DESCRIPTION_MOBILE')}
       </div>
 
-      <TideButton
-        onClick={walletClickHandler}
-        className={`ml-10 rounded border-0 bg-tidebitTheme py-2 px-5 text-base text-white transition-all hover:opacity-90`}
-      >
-        {t('TRADE_PAGE.WALLET_CONNECT_BUTTON')}
-      </TideButton>
+      <WalletConnectButton className="py-2 px-5" />
     </div>
   );
 

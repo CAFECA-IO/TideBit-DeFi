@@ -1,5 +1,5 @@
 import Lunar from '@cafeca/lunar';
-import React, {createContext, useCallback, useContext} from 'react';
+import React, {createContext, useCallback, useContext, useEffect} from 'react';
 import useState from 'react-usestateref';
 import {
   defaultResultFailed,
@@ -38,6 +38,7 @@ import {
   randomHex,
   rlpEncodeServiceTerm,
   verifySignedServiceTerm,
+  wait,
 } from '../lib/common';
 import {IAcceptedOrder} from '../interfaces/tidebit_defi_background/accepted_order';
 import {
@@ -258,8 +259,8 @@ export const UserProvider = ({children}: IUserProvider) => {
     useState<boolean>(false);
   const [selectedTicker, setSelectedTicker, selectedTickerRef] = useState<ITickerData | null>(null);
   const [walletExtensions, setWalletExtensions, walletExtensionsRef] = useState<IWalletExtension[]>(
-    []
-  );
+    [WalletExtension.META_MASK]
+  ); // ToDo: Get user wallet extension (20230419 - Shirley)
 
   const setPrivateData = async (walletAddress: string) => {
     setEnableServiceTerm(true);
@@ -426,6 +427,26 @@ export const UserProvider = ({children}: IUserProvider) => {
       }
     }
     return result;
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+      const waitSec = 1000 * 5;
+      await wait(waitSec);
+      setWalletExtensions(prev => [...prev, WalletExtension.COINBASE]);
+
+      await wait(waitSec);
+      setWalletExtensions(prev => [...prev, WalletExtension.I_SUN_ONE]);
+
+      await wait(waitSec);
+      setWalletExtensions(prev => [...prev, WalletExtension.IM_TOKEN]);
+
+      await wait(waitSec);
+      setWalletExtensions(prev => [...prev, WalletExtension.TRUST]);
+
+      await wait(waitSec);
+      setWalletExtensions(prev => [...prev, WalletExtension.TOKEN_POCKET]);
+    })();
   }, []);
 
   const listWithdraws = useCallback(async (address: string) => {

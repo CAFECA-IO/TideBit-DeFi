@@ -259,7 +259,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     useState<boolean>(false);
   const [selectedTicker, setSelectedTicker, selectedTickerRef] = useState<ITickerData | null>(null);
   const [walletExtensions, setWalletExtensions, walletExtensionsRef] = useState<IWalletExtension[]>(
-    [WalletExtension.META_MASK]
+    []
   ); // ToDo: Get user wallet extension (20230419 - Shirley)
 
   const setPrivateData = async (walletAddress: string) => {
@@ -431,7 +431,7 @@ export const UserProvider = ({children}: IUserProvider) => {
 
   useEffect(() => {
     (async () => {
-      const waitSec = 1000 * 5;
+      const waitSec = 1000 * 10;
       await wait(waitSec);
       setWalletExtensions(prev => [...prev, WalletExtension.COINBASE]);
 

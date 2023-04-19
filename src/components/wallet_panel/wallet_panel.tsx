@@ -6,7 +6,11 @@ import {useTranslation} from 'next-i18next';
 import {MarketContext} from '../../contexts/market_context';
 import {UserContext} from '../../contexts/user_context';
 import {useGlobal} from '../../contexts/global_context';
-import {IWalletExtension, WalletExtension} from '../../constants/wallet_extension';
+import {
+  IWalletExtension,
+  WALLET_EXTENSION_DATA,
+  WalletExtension,
+} from '../../constants/wallet_extension';
 
 type TranslateFunction = (s: string) => string;
 
@@ -60,91 +64,35 @@ export default function WalletPanel({
     metamaskConnect();
   };
 
-  const additionalWalletOptions = [
-    {name: 'Metamask', img: '/elements/74263ff26820cd0d895968e3b55e8902.svg'},
-    {name: 'iSunOne', img: '/elements/i_sun_one.svg'},
-    {name: 'imToken', img: '/elements/path_25918.svg'},
-    {name: 'Coinbase', img: '/elements/18060234@2x.png'},
-    {name: 'Trust', img: '/elements/twt@2x.png'},
-    {name: 'Rainbow', img: '/elements/unnamed@2x.png'},
-    {name: 'Houbi', img: '/elements/logo@2x.png'},
-    {name: 'Coin98', img: '/elements/coin98_c98_logo@2x.png'},
-    {name: 'TokenPocket', img: '/elements/tokenpocket_wallet_logo@2x.png'},
-    {name: 'WalletConnect', img: '/elements/walletconnect@2x.png'},
-    {name: 'BitKeep', img: '/elements/path_25917.svg'},
-    {name: 'Others', img: '/elements/wallet@2x.png'},
-  ];
+  const addOnClickHandlers = (walletObj: {name: IWalletExtension; img: string}) => {
+    if (walletObj.name === WalletExtension.META_MASK) {
+      return {...walletObj, onClick: metamaskOptionClickHandler};
+    }
 
-  const walletData = {
-    [WalletExtension.META_MASK]: {
-      name: WalletExtension.META_MASK,
-      img: '/elements/74263ff26820cd0d895968e3b55e8902.svg',
-      onClick: metamaskOptionClickHandler,
-    },
-    [WalletExtension.I_SUN_ONE]: {
-      name: WalletExtension.I_SUN_ONE,
-      img: '/elements/i_sun_one.svg',
-    },
-    [WalletExtension.IM_TOKEN]: {
-      name: WalletExtension.IM_TOKEN,
-      img: '/elements/path_25918.svg',
-    },
-    [WalletExtension.COINBASE]: {
-      name: WalletExtension.COINBASE,
-      img: '/elements/18060234@2x.png',
-    },
-    [WalletExtension.TRUST]: {
-      name: WalletExtension.TRUST,
-      img: '/elements/twt@2x.png',
-    },
-    [WalletExtension.RAINBOW]: {
-      name: WalletExtension.RAINBOW,
-      img: '/elements/unnamed@2x.png',
-    },
-    [WalletExtension.HOUBI]: {
-      name: WalletExtension.HOUBI,
-      img: '/elements/logo@2x.png',
-    },
-    [WalletExtension.COIN_98]: {
-      name: WalletExtension.COIN_98,
-      img: '/elements/coin98_c98_logo@2x.png',
-    },
-    [WalletExtension.TOKEN_POCKET]: {
-      name: WalletExtension.TOKEN_POCKET,
-      img: '/elements/tokenpocket_wallet_logo@2x.png',
-    },
-    [WalletExtension.WALLET_CONNECT]: {
-      name: WalletExtension.WALLET_CONNECT,
-      img: '/elements/walletconnect@2x.png',
-      onClick: walletconnectOptionClickHandler,
-    },
-    [WalletExtension.BIT_KEEP]: {
-      name: WalletExtension.BIT_KEEP,
-      img: '/elements/path_25917.svg',
-    },
-    [WalletExtension.OTHERS]: {
-      name: WalletExtension.OTHERS,
-      img: '/elements/wallet@2x.png',
-    },
+    if (walletObj.name === WalletExtension.WALLET_CONNECT) {
+      return {...walletObj, onClick: walletconnectOptionClickHandler};
+    }
+
+    return walletObj;
   };
 
-  const filteredWalletData = Object.values(walletData).filter(wallet => {
-    const walletName = userCtx.walletExtensions.includes(wallet.name);
+  const filteredWalletData = Object.values(WALLET_EXTENSION_DATA).filter(wallet =>
+    userCtx.walletExtensions.includes(wallet.name)
+  );
 
-    // Deprecated: (20230419 - Shirley)
-    // eslint-disable-next-line no-console
-    console.log('useCtx walletExtensions', userCtx.walletExtensions);
-    return walletName;
-  });
-
-  // const walletConnectExists = userCtx.walletExtensions.includes(WalletExtension.WALLET_CONNECT);
   const walletConnectExists = filteredWalletData.find(
     wallet => wallet.name === WalletExtension.WALLET_CONNECT
   );
 
-  const renderWalletData = walletConnectExists
-    ? filteredWalletData
-    : filteredWalletData.concat(walletData[WalletExtension.WALLET_CONNECT]);
+  const renderWalletData: {
+    onClick?: () => void;
+    name: IWalletExtension;
+    img: string;
+  }[] = walletConnectExists
+    ? filteredWalletData.map(wallet => addOnClickHandlers(wallet))
+    : filteredWalletData
+        .concat(WALLET_EXTENSION_DATA[WalletExtension.WALLET_CONNECT])
+        .map(wallet => addOnClickHandlers(wallet));
 
   // Deprecated: (20230419 - Shirley)
   // eslint-disable-next-line no-console
@@ -155,11 +103,14 @@ export default function WalletPanel({
   const walletOptionsSection = (
     <div className="grid grid-cols-3 gap-3">
       {renderWalletData.map(option => (
-        <div className="col-span-1 flex items-center justify-center rounded bg-darkGray2">
+        <div
+          key={option.name}
+          className="col-span-1 flex items-center justify-center rounded bg-darkGray2"
+        >
           <WalletOption
             name={option.name}
             img={option.img}
-            onClick={option.onClick}
+            onClick={option?.onClick}
             iconSize={50}
           />
         </div>

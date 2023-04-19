@@ -112,7 +112,7 @@ const CryptoSummary = ({
                 {/* Links */}
                 <div className="mt-5 flex space-x-2">
                   <div
-                    className={`flex w-120px flex-row items-center justify-center rounded-full bg-lightGray3 px-3 py-1 text-sm text-lightWhite`}
+                    className={`flex flex-row items-center justify-center whitespace-nowrap rounded-full bg-lightGray3 px-3 py-1 text-sm text-lightWhite`}
                   >
                     <p>{t('TRADE_PAGE.CRYPTO_SUMMARY_WHITEPAPER')}</p>
                     <a href={whitePaperLink} className="pl-2">
@@ -121,7 +121,7 @@ const CryptoSummary = ({
                   </div>
 
                   <div
-                    className={`flex w-100px flex-row items-center justify-center rounded-full bg-lightGray3 px-3 py-1 text-sm text-lightWhite`}
+                    className={`flex flex-row items-center justify-center whitespace-nowrap rounded-full bg-lightGray3 px-3 py-1 text-sm text-lightWhite`}
                   >
                     <p>{t('TRADE_PAGE.CRYPTO_SUMMARY_WEBSITE')}</p>
                     <a href={websiteLink} className="pl-2">

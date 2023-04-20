@@ -71,7 +71,7 @@ const PositionOpenModal = ({
     const order: IApplyCreateCFDOrder = {
       ...openCfdRequest,
       createTimestamp: getTimestamp(),
-      liquidationTime: getTimestamp() + 86400,
+      liquidationTime: openCfdRequest.quotation.deadline + 86400,
     };
 
     return order;

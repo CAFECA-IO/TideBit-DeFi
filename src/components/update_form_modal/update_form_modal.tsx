@@ -67,8 +67,9 @@ const UpdateFormModal = ({
   const [slValue, setSlValue, slValueRef] = useState(initialSlInput);
   const [tpToggle, setTpToggle, tpToggleRef] = useState(initialTpToggle);
   const [slToggle, setSlToggle, slToggleRef] = useState(initialSlToggle);
-  const [guaranteedChecked, setGuaranteedChecked, guaranteedpCheckedRef] =
-    useState(initialGuaranteedChecked);
+  const [guaranteedChecked, setGuaranteedChecked, guaranteedpCheckedRef] = useState(
+    openCfdDetails.guaranteedStop
+  );
 
   const [guaranteedTooltipStatus, setGuaranteedTooltipStatus] = useState(0);
 
@@ -214,7 +215,7 @@ const UpdateFormModal = ({
   );
 
   const guaranteedCheckedChangeHandler = () => {
-    if (!openCfdDetails?.guaranteedStop) {
+    if (!openCfdDetails.guaranteedStop) {
       setGuaranteedChecked(!guaranteedChecked);
       setSlToggle(true);
       setSlLowerLimit(0);
@@ -222,6 +223,7 @@ const UpdateFormModal = ({
 
       return;
     } else {
+      setGuaranteedChecked(true);
       setSlLowerLimit(openCfdDetails?.stopLoss ?? openCfdDetails?.suggestion?.stopLoss);
       setSlUpperLimit(openCfdDetails?.stopLoss ?? openCfdDetails?.suggestion?.stopLoss);
       setSlValue(openCfdDetails?.stopLoss ?? openCfdDetails?.suggestion?.stopLoss);
@@ -415,8 +417,8 @@ const UpdateFormModal = ({
       <div className="flex items-center text-center">
         <input
           type="checkbox"
-          value=""
-          checked={guaranteedChecked}
+          // value=""
+          checked={guaranteedpCheckedRef.current}
           onChange={guaranteedCheckedChangeHandler}
           className="h-5 w-5 rounded text-lightWhite accent-lightGray4"
         />
@@ -511,6 +513,48 @@ const UpdateFormModal = ({
     slToggleRef.current,
     guaranteedpCheckedRef.current,
   ]);
+
+  useEffect(() => {
+    setGuaranteedChecked(openCfdDetails.guaranteedStop);
+    setTpToggle(!!openCfdDetails.takeProfit);
+    setSlToggle(!!openCfdDetails.stopLoss);
+    setTpValue(openCfdDetails?.takeProfit ?? openCfdDetails.suggestion.takeProfit);
+    setSlValue(openCfdDetails?.stopLoss ?? openCfdDetails.suggestion.stopLoss);
+
+    const gslFee =
+      Number(marketCtx.guaranteedStopFeePercentage) *
+      openCfdDetails?.openPrice *
+      openCfdDetails?.amount;
+    setGuaranteedStopFee(
+      openCfdDetails.guaranteedStop ? Number(openCfdDetails?.guaranteedStopFee) : gslFee
+    );
+
+    const profit =
+      openCfdDetails?.typeOfPosition === TypeOfPosition.BUY
+        ? roundToDecimalPlaces(
+            (tpValueRef.current - openCfdDetails?.openPrice) * openCfdDetails?.amount,
+            2
+          )
+        : roundToDecimalPlaces(
+            (openCfdDetails?.openPrice - tpValueRef.current) * openCfdDetails?.amount,
+            2
+          );
+
+    setExpectedProfitValue(profit);
+
+    const loss =
+      openCfdDetails?.typeOfPosition === TypeOfPosition.BUY
+        ? roundToDecimalPlaces(
+            (openCfdDetails?.openPrice - slValueRef.current) * openCfdDetails?.amount,
+            2
+          )
+        : roundToDecimalPlaces(
+            (slValueRef.current - openCfdDetails?.openPrice) * openCfdDetails?.amount,
+            2
+          );
+
+    setExpectedLossValue(loss);
+  }, [globalCtx.visibleUpdateFormModal]);
 
   const isDisplayedDetailedPositionModal = modalVisible ? (
     <div {...otherProps}>

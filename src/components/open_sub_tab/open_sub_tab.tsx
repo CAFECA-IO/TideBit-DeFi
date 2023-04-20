@@ -142,12 +142,6 @@ const OpenSubTab = () => {
 
   const setQuotation = async () => {
     await getQuotation(marketCtx.selectedTicker?.currency ?? DEFAULT_TICKER);
-
-    // Deprecated: (20230420 - Shirley)
-    // eslint-disable-next-line no-console
-    console.log('longQuotationRef.current', longQuotationRef.current);
-    // eslint-disable-next-line no-console
-    console.log('shortQuotationRef.current', shortQuotationRef.current);
   };
 
   useEffect(() => {
@@ -167,10 +161,6 @@ const OpenSubTab = () => {
       if (secondsLeftRef.current === 0) {
         setQuotation();
       }
-
-      // Deprecated: (20230420 - Shirley)
-      // eslint-disable-next-line no-console
-      console.log('secondsLeftRef.current', secondsLeftRef.current);
     }, 1000);
 
     return () => {
@@ -189,16 +179,6 @@ const OpenSubTab = () => {
           : shortQuotationRef.current;
 
       const displayCFD: IDisplayCFDOrder = toDisplayCFDOrder(cfd, positionLineGraph, quotation);
-
-      // Deprecated: (20230420 - Shirley)
-      // eslint-disable-next-line no-console
-      console.log('line graph', positionLineGraph);
-      // eslint-disable-next-line no-console
-      console.log('open price', displayCFD.openPrice);
-      // eslint-disable-next-line no-console
-      console.log('quotation price', quotation.price);
-      // eslint-disable-next-line no-console
-      console.log('pnl', displayCFD.pnl);
 
       return displayCFD;
     })

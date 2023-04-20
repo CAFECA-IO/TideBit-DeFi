@@ -8,7 +8,7 @@ import {UserContext} from '../../contexts/user_context';
 import {useGlobal} from '../../contexts/global_context';
 import {
   IWalletExtension,
-  WALLET_EXTENSION_DATA,
+  WalletExtensionData,
   WalletExtension,
 } from '../../constants/wallet_extension';
 
@@ -76,7 +76,7 @@ export default function WalletPanel({
     return walletObj;
   };
 
-  const filteredWalletData = Object.values(WALLET_EXTENSION_DATA).filter(wallet =>
+  const filteredWalletData = Object.values(WalletExtensionData).filter(wallet =>
     userCtx.walletExtensions.includes(wallet.name)
   );
 
@@ -91,7 +91,7 @@ export default function WalletPanel({
   }[] = walletConnectExists
     ? filteredWalletData.map(wallet => addOnClickHandlers(wallet))
     : filteredWalletData
-        .concat(WALLET_EXTENSION_DATA[WalletExtension.WALLET_CONNECT])
+        .concat(WalletExtensionData[WalletExtension.WALLET_CONNECT])
         .map(wallet => addOnClickHandlers(wallet));
 
   // Deprecated: (20230419 - Shirley)

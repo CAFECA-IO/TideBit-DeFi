@@ -42,7 +42,7 @@ export const WalletExtension: IWalletExtensionConstant = {
   OTHERS: 'Others',
 };
 
-export const WALLET_EXTENSION_DATA = {
+export const WalletExtensionData = {
   [WalletExtension.META_MASK]: {
     name: WalletExtension.META_MASK,
     img: '/elements/74263ff26820cd0d895968e3b55e8902.svg',

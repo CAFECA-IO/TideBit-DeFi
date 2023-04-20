@@ -1,6 +1,5 @@
 import {useTranslation} from 'next-i18next';
 import Link from 'next/link';
-import TideButton from '../tide_button/tide_button';
 import {useContext, useState} from 'react';
 import Image from 'next/image';
 import version from '../../lib/version';
@@ -14,6 +13,9 @@ import User from '../user/user';
 import {useGlobal} from '../../contexts/global_context';
 import {NotificationContext} from '../../contexts/notification_context';
 import {TBDURL} from '../../constants/api_request';
+import {wait} from '../../lib/common';
+import {DELAYED_HIDDEN_SECONDS} from '../../constants/display';
+import {WalletConnectButton} from '../wallet_connect_button/wallet_connect_button';
 
 type TranslateFunction = (s: string) => string;
 
@@ -32,24 +34,27 @@ const NavBar = () => {
   } = useOuterClick<HTMLDivElement>(false);
 
   const sidebarOpenHandler = () => {
-    // setSidebarOpen(!sidebarOpen);
     setNotifyVisible(!notifyVisible);
-    // console.log('sidebarOpenHandler clicked, componentVisible: ', componentVisible);
   };
 
-  // const getUserLoginHandler = (bool: boolean) => {
-  //   setUserOverview(bool);
-  // };
+  const wallectConnectBtnClickHandler = async () => {
+    globalCtx.visibleSearchingModalHandler();
+    // globalCtx.visibleWalletPanelHandler();
 
-  // TODO: move to Global COntext
-  const [panelVisible, setPanelVisible] = useState(false);
+    await wait(DELAYED_HIDDEN_SECONDS);
 
-  const panelClickHandler = () => {
-    setPanelVisible(!panelVisible);
-  };
+    globalCtx.eliminateAllModals();
 
-  const wallectConnectBtnClickHandler = () => {
-    globalCtx.visibleWalletPanelHandler();
+    globalCtx.dataFailedModalHandler({
+      modalTitle: t('WALLET_PANEL.TITLE'),
+      failedTitle: t('WALLET_PANEL.WALLET_EXTENSION_NOT_FOUND1'),
+      failedMsg: `${t('WALLET_PANEL.WALLET_EXTENSION_NOT_FOUND2')} ${t(
+        'WALLET_PANEL.WALLET_EXTENSION_NOT_FOUND3'
+      )} ${t('WALLET_PANEL.WALLET_EXTENSION_NOT_FOUND5')}`,
+      btnMsg: t('WALLET_PANEL.WALLET_EXTENSION_NOT_FOUND4'),
+    });
+
+    globalCtx.visibleFailedModalHandler();
   };
 
   const isDisplayedUserOverview = userCtx.enableServiceTerm ? (
@@ -64,12 +69,7 @@ const NavBar = () => {
     <User />
   ) : (
     /* Info: (20230327 - Julian) show wallet panel */
-    <TideButton
-      onClick={wallectConnectBtnClickHandler}
-      className={`mt-4 rounded border-0 bg-tidebitTheme py-2 px-5 text-base text-white transition-all duration-300 hover:bg-cyan-600 md:mt-0`}
-    >
-      {t('NAV_BAR.WALLET_CONNECT')}
-    </TideButton>
+    <WalletConnectButton className="mt-4 py-2 px-5 md:mt-0" />
   );
 
   const userOverviewDividerDesktop = userCtx.enableServiceTerm ? (

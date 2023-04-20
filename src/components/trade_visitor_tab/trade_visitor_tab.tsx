@@ -1,8 +1,8 @@
 import {useState} from 'react';
 import WalletPanel from '../wallet_panel/wallet_panel';
-import TideButton from '../tide_button/tide_button';
 import {useGlobal} from '../../contexts/global_context';
 import {useTranslation} from 'next-i18next';
+import {WalletConnectButton} from '../wallet_connect_button/wallet_connect_button';
 
 type TranslateFunction = (s: string) => string;
 
@@ -12,16 +12,6 @@ const TradeVisitorTab = () => {
   const globalCtx = useGlobal();
 
   const tabBodyWidth = 'w-320px';
-
-  // const [userLoginState, setUserLoginState] = useState(false);
-
-  // const getUserLoginHandler = (bool: boolean) => {
-  //   setUserLoginState(bool);
-  // };
-
-  const btnClickHandler = () => {
-    globalCtx.visibleWalletPanelHandler();
-  };
 
   return (
     <div>
@@ -50,12 +40,7 @@ const TradeVisitorTab = () => {
                   </div>
                   <div className="mt-10">
                     {/* <WalletPanel getUserLoginState={getUserLoginHandler} /> */}
-                    <TideButton
-                      onClick={btnClickHandler}
-                      className={`rounded border-0 bg-tidebitTheme py-2 px-5 text-base text-white transition-all hover:opacity-90 md:mt-0`}
-                    >
-                      {t('TRADE_PAGE.WALLET_CONNECT_BUTTON')}
-                    </TideButton>
+                    <WalletConnectButton className="mt-4 py-2 px-5 md:mt-0" />
                   </div>
                 </div>
               </div>

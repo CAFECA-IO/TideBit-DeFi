@@ -47,8 +47,7 @@ import {
   IWithdrawOrder,
 } from '../interfaces/tidebit_defi_background/order';
 import {CustomError} from '../lib/custom_error';
-import {setTimeout} from 'timers/promises';
-import {useGlobal} from './global_context';
+//import {setTimeout} from 'timers/promises';
 import {IWalletExtension, WalletExtension} from '../constants/wallet_extension';
 
 export interface IUserBalance {

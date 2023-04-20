@@ -28,6 +28,7 @@ import PositionOpenModal from '../components/position_open_modal/position_open_m
 import PositionClosedModal from '../components/position_closed_modal/position_closed_modal';
 import PositionUpdatedModal from '../components/position_updated_modal/position_updated_modal';
 import HistoryPositionModal from '../components/history_position_modal/history_position_modal';
+import WarningModal from '../components/warning_modal/warning_modal';
 import {IPnL} from '../interfaces/tidebit_defi_background/pnl';
 import {ProfitState} from '../constants/profit_state';
 import {OrderType} from '../constants/order_type';
@@ -140,6 +141,7 @@ export interface IProcessDataModal {
 
 export interface IFailedModal {
   modalTitle: string;
+  modalContent?: string;
   btnMsg?: string;
   btnUrl?: string;
   failedTitle: string;
@@ -155,13 +157,13 @@ export const dummyRecordSharingModal: IRecordSharingModal = {
   orderIdRecordSharing: 0,
 };
 
-// TODO:(20230317 - Shirley) to be continued
+/* Info (20230419 - Julian) 目前只有能帶路徑 (string) 的參數，如果需要處理 function 就要另外再加參數 */
 export interface IWarningModal {
   title: string;
   content: string;
   numberOfButton: number;
   reactionOfButton: string;
-  styleOfButton: 'style1' | 'style2';
+  pathOfButton?: string;
 }
 
 export const dummyWarningModal: IWarningModal = {
@@ -169,7 +171,7 @@ export const dummyWarningModal: IWarningModal = {
   content: '',
   numberOfButton: 0,
   reactionOfButton: '',
-  styleOfButton: 'style1',
+  pathOfButton: '/',
 };
 
 // TODO:(20230317 - Shirley) to be continued
@@ -1137,7 +1139,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
       />
       <FailedModal
         modalTitle={dataFailedModal.modalTitle}
-        // modalContent={dataFailedModal.modalContent}
+        modalContent={dataFailedModal.modalContent}
         modalVisible={visibleFailedModal}
         modalClickHandler={visibleFailedModalHandler}
         btnMsg={dataFailedModal?.btnMsg}
@@ -1225,6 +1227,11 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
         modalClickHandler={visiblePositionUpdatedModalHandler}
         openCfdDetails={dataPositionUpdatedModal.openCfdDetails}
         updatedProps={dataPositionUpdatedModal.updatedProps}
+      />
+      <WarningModal
+        modalVisible={visibleWarningModal}
+        modalClickHandler={visibleWarningModalHandler}
+        getWarningData={dataWarningModal}
       />
       <SearchingModal
         modalVisible={visibleSearchingModal}

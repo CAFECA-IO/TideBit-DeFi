@@ -33,7 +33,7 @@ const useScanProcess = () => {
       setScanned(true);
       globalCtx.visibleSearchingModalHandler();
 
-      await wait(DELAYED_HIDDEN_SECONDS);
+      await wait(DELAYED_HIDDEN_SECONDS / 2);
 
       globalCtx.eliminateAllModals();
 

@@ -4,6 +4,7 @@ import Link from 'next/link';
 import TideButton from '../../components/tide_button/tide_button';
 import smallConnectingAnimation from '../../../public/animation/lf30_editor_cnkxmhy3.json';
 import activeIconPulse from '../../../public/animation/lf30_editor_cyvxlluo.json';
+import searching from '../../../public/animation/searching.json';
 import Lottie from 'lottie-react';
 import {UserContext} from '../../contexts/user_context';
 import {useContext, useState} from 'react';
@@ -108,6 +109,17 @@ const SignatureProcessModal = ({
         height={33}
         alt="step 2 icon"
       />
+    </div>
+  );
+
+  const searchingSection = (
+    <div className="flex flex-col items-center justify-center space-y-4">
+      <div className="relative h-32 w-32">
+        <Lottie animationData={searching} />
+      </div>
+      <p className="text-center text-2xl font-bold text-white">
+        {t('signature_process_modal.searching')}
+      </p>
     </div>
   );
 
@@ -304,6 +316,15 @@ const SignatureProcessModal = ({
     </>
   );
 
+  const displayedSection = (
+    <div className={`${controlSpace} flex flex-col px-4 pt-16`}>
+      <div className="flex items-center justify-center">{firstStepSectionHandler}</div>
+
+      {/* Second Step */}
+      <div className="flex items-center justify-center">{secondStepSectionHandler}</div>
+    </div>
+  );
+
   const isDisplayedProcessModal = processModalVisible ? (
     <>
       <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">
@@ -344,17 +365,7 @@ const SignatureProcessModal = ({
                     </div>
                   </div>
 
-                  {/* Activate First Step */}
-                  <div className={`${controlSpace} flex flex-col px-4 pt-16`}>
-                    <div className="flex items-center justify-center">
-                      {firstStepSectionHandler}
-                    </div>
-
-                    {/* Second Step */}
-                    <div className="flex items-center justify-center">
-                      {secondStepSectionHandler}
-                    </div>
-                  </div>
+                  {displayedSection}
 
                   <div className={`${btnSpace}`}>{requestButtonHandler}</div>
                 </div>

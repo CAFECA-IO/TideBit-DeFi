@@ -1,5 +1,5 @@
 import Lunar from '@cafeca/lunar';
-import React, {createContext, useCallback, useContext} from 'react';
+import React, {createContext, useCallback, useContext, useEffect} from 'react';
 import useState from 'react-usestateref';
 import {
   defaultResultFailed,
@@ -38,6 +38,7 @@ import {
   randomHex,
   rlpEncodeServiceTerm,
   verifySignedServiceTerm,
+  wait,
 } from '../lib/common';
 import {IAcceptedOrder} from '../interfaces/tidebit_defi_background/accepted_order';
 import {
@@ -47,6 +48,7 @@ import {
 } from '../interfaces/tidebit_defi_background/order';
 import {CustomError} from '../lib/custom_error';
 //import {setTimeout} from 'timers/promises';
+import {IWalletExtension, WalletExtension} from '../constants/wallet_extension';
 
 export interface IUserBalance {
   available: number;
@@ -130,6 +132,7 @@ export interface IUserContext {
   getBalance: (props: string) => IBalance | null;
   getWalletBalance: (props: string) => IWalletBalance | null;
   init: () => Promise<void>;
+  walletExtensions: IWalletExtension[];
 }
 
 export const UserContext = createContext<IUserContext>({
@@ -153,78 +156,78 @@ export const UserContext = createContext<IUserContext>({
   withdraws: [],
   histories: [],
   connect: (): Promise<IResult> => {
-    throw new Error('Function not implemented.');
+    throw new CustomError(Code.FUNCTION_NOT_IMPLEMENTED);
   },
   signServiceTerm: (): Promise<IResult> => {
-    throw new Error('Function not implemented.');
+    throw new CustomError(Code.FUNCTION_NOT_IMPLEMENTED);
   },
   disconnect: (): Promise<IResult> => {
-    throw new Error('Function not implemented.');
+    throw new CustomError(Code.FUNCTION_NOT_IMPLEMENTED);
   },
   addFavorites: (): Promise<IResult> => {
-    throw new Error('Function not implemented.');
+    throw new CustomError(Code.FUNCTION_NOT_IMPLEMENTED);
   },
   removeFavorites: (): Promise<IResult> => {
-    throw new Error('Function not implemented.');
+    throw new CustomError(Code.FUNCTION_NOT_IMPLEMENTED);
   },
   listHistories: (): Promise<IResult> => {
-    throw new Error('Function not implemented.');
+    throw new CustomError(Code.FUNCTION_NOT_IMPLEMENTED);
   },
   listCFDs: (): Promise<IResult> => {
-    throw new Error('Function not implemented.');
+    throw new CustomError(Code.FUNCTION_NOT_IMPLEMENTED);
   },
   getCFD: (): ICFDOrder | null => {
-    throw new Error('Function not implemented.');
+    throw new CustomError(Code.FUNCTION_NOT_IMPLEMENTED);
   },
   createCFDOrder: (): Promise<IResult> => {
-    throw new Error('Function not implemented.');
+    throw new CustomError(Code.FUNCTION_NOT_IMPLEMENTED);
   },
   closeCFDOrder: (): Promise<IResult> => {
-    throw new Error('Function not implemented.');
+    throw new CustomError(Code.FUNCTION_NOT_IMPLEMENTED);
   },
   updateCFDOrder: (): Promise<IResult> => {
-    throw new Error('Function not implemented.');
+    throw new CustomError(Code.FUNCTION_NOT_IMPLEMENTED);
   },
   listDeposits: (): Promise<IResult> => {
-    throw new Error('Function not implemented.');
+    throw new CustomError(Code.FUNCTION_NOT_IMPLEMENTED);
   },
   deposit: (): Promise<IResult> => {
-    throw new Error('Function not implemented.');
+    throw new CustomError(Code.FUNCTION_NOT_IMPLEMENTED);
   },
   listWithdraws: (): Promise<IResult> => {
-    throw new Error('Function not implemented.');
+    throw new CustomError(Code.FUNCTION_NOT_IMPLEMENTED);
   },
   withdraw: (): Promise<IResult> => {
-    throw new Error('Function not implemented.');
+    throw new CustomError(Code.FUNCTION_NOT_IMPLEMENTED);
   },
   sendEmailCode: (): Promise<IResult> => {
-    throw new Error('Function not implemented.');
+    throw new CustomError(Code.FUNCTION_NOT_IMPLEMENTED);
   },
   connectEmail: (): Promise<IResult> => {
-    throw new Error('Function not implemented.');
+    throw new CustomError(Code.FUNCTION_NOT_IMPLEMENTED);
   },
   toggleEmailNotification: (): Promise<IResult> => {
-    throw new Error('Function not implemented.');
+    throw new CustomError(Code.FUNCTION_NOT_IMPLEMENTED);
   },
   subscribeNewsletters: (): Promise<IResult> => {
-    throw new Error('Function not implemented.');
+    throw new CustomError(Code.FUNCTION_NOT_IMPLEMENTED);
   },
   connectTideBit: (): Promise<IResult> => {
-    throw new Error('Function not implemented.');
+    throw new CustomError(Code.FUNCTION_NOT_IMPLEMENTED);
   },
   shareTradeRecord: (): Promise<IResult> => {
-    throw new Error('Function not implemented.');
+    throw new CustomError(Code.FUNCTION_NOT_IMPLEMENTED);
   },
   readNotifications: (): Promise<IResult> => {
-    throw new Error('Function not implemented.');
+    throw new CustomError(Code.FUNCTION_NOT_IMPLEMENTED);
   },
   getBalance: () => null,
   getWalletBalance: () => null,
   init: () => Promise.resolve(),
+  walletExtensions: [],
 });
 
 export const UserProvider = ({children}: IUserProvider) => {
-  // TODO: get partial user type from `IUserContext`
   const transactionEngine = React.useMemo(() => TransactionEngineInstance, []);
   const workerCtx = useContext(WorkerContext);
   const notificationCtx = useContext(NotificationContext);
@@ -254,6 +257,9 @@ export const UserProvider = ({children}: IUserProvider) => {
   const [isConnectedWithTideBit, setIsConnectedWithTideBit, isConnectedWithTideBitRef] =
     useState<boolean>(false);
   const [selectedTicker, setSelectedTicker, selectedTickerRef] = useState<ITickerData | null>(null);
+  const [walletExtensions, setWalletExtensions, walletExtensionsRef] = useState<IWalletExtension[]>(
+    [WalletExtension.META_MASK]
+  ); // ToDo: Get user wallet extension (20230419 - Shirley)
 
   const setPrivateData = async (walletAddress: string) => {
     setEnableServiceTerm(true);
@@ -314,7 +320,7 @@ export const UserProvider = ({children}: IUserProvider) => {
           },
         });
       } else {
-        throw Error(Code.DEWT_IS_NOT_LEGIT);
+        throw new CustomError(Code.DEWT_IS_NOT_LEGIT);
       }
     } catch (error) {
       throw error;
@@ -339,7 +345,7 @@ export const UserProvider = ({children}: IUserProvider) => {
         // eslint-disable-next-line no-console
         console.error(`listFavoriteTickers error`, error);
         result.code = Code.INTERNAL_SERVER_ERROR;
-        result.reason = (error as Error).message;
+        result.reason = Reason[result.code];
       }
     }
     return result;
@@ -385,7 +391,7 @@ export const UserProvider = ({children}: IUserProvider) => {
         // eslint-disable-next-line no-console
         console.error(`listCFDs error`, error);
         result.code = Code.INTERNAL_SERVER_ERROR;
-        result.reason = (error as Error).message;
+        result.reason = Reason[result.code];
       }
     }
     return result;
@@ -416,7 +422,7 @@ export const UserProvider = ({children}: IUserProvider) => {
         // eslint-disable-next-line no-console
         console.error(`listDeposits error`, error);
         result.code = Code.INTERNAL_SERVER_ERROR;
-        result.reason = (error as Error).message;
+        result.reason = Reason[result.code];
       }
     }
     return result;
@@ -445,7 +451,7 @@ export const UserProvider = ({children}: IUserProvider) => {
         // eslint-disable-next-line no-console
         console.error(`listWithdraws error`, error);
         result.code = Code.INTERNAL_SERVER_ERROR;
-        result.reason = (error as Error).message;
+        result.reason = Reason[result.code];
       }
     }
     return result;
@@ -469,7 +475,7 @@ export const UserProvider = ({children}: IUserProvider) => {
         // eslint-disable-next-line no-console
         console.error(`listBalances error`, error);
         result.code = Code.INTERNAL_SERVER_ERROR;
-        result.reason = (error as Error).message;
+        result.reason = Reason[result.code];
       }
     }
     return result;
@@ -619,7 +625,7 @@ export const UserProvider = ({children}: IUserProvider) => {
         // eslint-disable-next-line no-console
         console.error(`${APIName.ADD_FAVORITE_TICKERS} error`, error);
         result.code = Code.INTERNAL_SERVER_ERROR;
-        result.reason = (error as Error).message;
+        result.reason = Reason[result.code];
       }
     }
     return result;
@@ -650,7 +656,7 @@ export const UserProvider = ({children}: IUserProvider) => {
         // eslint-disable-next-line no-console
         console.error(`${APIName.REMOVE_FAVORITE_TICKERS} error`, error);
         result.code = Code.INTERNAL_SERVER_ERROR;
-        result.reason = (error as Error).message;
+        result.reason = Reason[result.code];
       }
     }
     return result;
@@ -690,8 +696,8 @@ export const UserProvider = ({children}: IUserProvider) => {
         updateBalances[index] = updateBalance;
         setBalances(updateBalances);
         return updateBalance;
-      } else throw Error('Balance not found');
-    } else throw Error('Balance not found');
+      } else throw new CustomError(Code.BALANCE_NOT_FOUND);
+    } else throw new CustomError(Code.BALANCE_NOT_FOUND);
   };
   */
 
@@ -702,8 +708,8 @@ export const UserProvider = ({children}: IUserProvider) => {
         const updateBalances = [...balancesRef.current];
         updateBalances[index] = updatedBalance;
         setBalances(updateBalances);
-      } else throw Error('Balance not found');
-    } else throw Error('Balance not found');
+      } else throw new CustomError(Code.BALANCE_NOT_FOUND);
+    } else throw new CustomError(Code.BALANCE_NOT_FOUND);
   };
 
   const _createCFDOrder = async (
@@ -722,9 +728,18 @@ export const UserProvider = ({children}: IUserProvider) => {
             try {
               resultCode = Code.REJECTED_SIGNATURE;
               const signature: string = await lunar.signTypedData(transferR.data);
+              const now = getTimestamp();
+
+              // ToDo: Check if the quotation is expired, if so return `failed result` in `catch`. (20230414 - Shirley)
+              if (applyCreateCFDOrder.quotation.deadline < now) {
+                resultCode = Code.EXPIRED_QUOTATION_FAILED;
+                result.code = resultCode;
+                result.reason = Reason[resultCode];
+                const error = new CustomError(resultCode);
+                throw error;
+              }
 
               resultCode = Code.INTERNAL_SERVER_ERROR;
-              // ToDo: Check if the quotation is expired, if so return `failed result` in `catch`. (20230414 - Shirley)
               const {CFDOrder, acceptedCFDOrder} = (await privateRequestHandler({
                 name: APIName.CREATE_CFD_TRADE,
                 method: Method.POST,
@@ -770,9 +785,10 @@ export const UserProvider = ({children}: IUserProvider) => {
     const timeLeft = (Number(applyCreateCFDOrder?.quotation.deadline) - getTimestamp()) * 1000;
     // Deprecated: (20230420 - Shirley)
     // eslint-disable-next-line no-console
-    console.log('time left', timeLeft);
+    console.log('time left[open]', timeLeft);
+
     if (timeLeft < 0) {
-      const result: IResult = defaultResultFailed;
+      const result: IResult = {...defaultResultFailed};
       const resultCode = Code.EXPIRED_QUOTATION_CANCELED;
       result.code = resultCode;
       result.reason = Reason[resultCode];
@@ -782,21 +798,21 @@ export const UserProvider = ({children}: IUserProvider) => {
     const countdown = () =>
       new Promise<IResult>(resolve => {
         window.setTimeout(() => {
-          const result: IResult = defaultResultFailed;
+          const result: IResult = {...defaultResultFailed};
           const resultCode = Code.EXPIRED_QUOTATION_CANCELED;
           result.code = resultCode;
           result.reason = Reason[resultCode];
           resolve(result);
           // Deprecated: (20230420 - Shirley)
           // eslint-disable-next-line no-console
-          console.log('result in coundown Promise');
+          console.log('result in coundown Promise[open]');
         }, timeLeft);
       });
 
     if (!lunar.isConnected) {
       const isConnected = await connect();
       if (!isConnected) {
-        const result: IResult = defaultResultFailed;
+        const result: IResult = {...defaultResultFailed};
         const resultCode = Code.WALLET_IS_NOT_CONNECT;
         result.code = resultCode;
         result.reason = Reason[result.code];
@@ -807,7 +823,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     return Promise.race([_createCFDOrder(applyCreateCFDOrder), countdown()]);
   };
 
-  const closeCFDOrder = async (
+  const _closeCFDOrder = async (
     applyCloseCFDOrder: IApplyCloseCFDOrder | undefined
   ): Promise<IResult> => {
     let result: IResult = defaultResultFailed;
@@ -824,6 +840,16 @@ export const UserProvider = ({children}: IUserProvider) => {
             try {
               resultCode = Code.REJECTED_SIGNATURE;
               const signature: string = await lunar.signTypedData(transferR.data);
+              const now = getTimestamp();
+
+              // ToDo: Check if the quotation is expired, if so return `failed result` in `catch`. (20230414 - Shirley)
+              if (applyCloseCFDOrder.quotation.deadline < now) {
+                resultCode = Code.EXPIRED_QUOTATION_FAILED;
+                result.code = resultCode;
+                result.reason = Reason[resultCode];
+                const error = new CustomError(resultCode);
+                throw error;
+              }
 
               resultCode = Code.INTERNAL_SERVER_ERROR;
               const {updateCFDOrder, acceptedCFDOrder} = (await privateRequestHandler({
@@ -870,6 +896,49 @@ export const UserProvider = ({children}: IUserProvider) => {
         return result;
       }
     }
+  };
+
+  const closeCFDOrder = async (
+    applyCloseCFDOrder: IApplyCloseCFDOrder | undefined
+  ): Promise<IResult> => {
+    const timeLeft = (Number(applyCloseCFDOrder?.quotation.deadline) - getTimestamp()) * 1000;
+    // Deprecated: (20230420 - Shirley)
+    // eslint-disable-next-line no-console
+    console.log('time left [close]', timeLeft);
+    if (timeLeft < 0) {
+      const result: IResult = {...defaultResultFailed};
+      const resultCode = Code.EXPIRED_QUOTATION_CANCELED;
+      result.code = resultCode;
+      result.reason = Reason[resultCode];
+      return result;
+    }
+
+    const countdown = () =>
+      new Promise<IResult>(resolve => {
+        window.setTimeout(() => {
+          const result: IResult = {...defaultResultFailed};
+          const resultCode = Code.EXPIRED_QUOTATION_CANCELED;
+          result.code = resultCode;
+          result.reason = Reason[resultCode];
+          resolve(result);
+          // Deprecated: (20230420 - Shirley)
+          // eslint-disable-next-line no-console
+          console.log('result in coundown Promise [close]');
+        }, timeLeft);
+      });
+
+    if (!lunar.isConnected) {
+      const isConnected = await connect();
+      if (!isConnected) {
+        const result: IResult = {...defaultResultFailed};
+        const resultCode = Code.WALLET_IS_NOT_CONNECT;
+        result.code = resultCode;
+        result.reason = Reason[result.code];
+        return result;
+      }
+    }
+
+    return Promise.race([_closeCFDOrder(applyCloseCFDOrder), countdown()]);
   };
 
   const updateCFDOrder = async (
@@ -1056,7 +1125,7 @@ export const UserProvider = ({children}: IUserProvider) => {
         // eslint-disable-next-line no-console
         console.error(`${APIName.LIST_HISTORIES} error`, error);
         result.code = Code.INTERNAL_SERVER_ERROR;
-        result.reason = (error as Error).message;
+        result.reason = Reason[result.code];
       }
     }
     return result;
@@ -1169,7 +1238,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     () =>
       notificationCtx.emitter.on(TideBitEvent.TICKER_CHANGE, (ticker: ITickerData) => {
         setSelectedTicker(ticker);
-        listCFDs(ticker.currency);
+        listCFDs(ticker?.currency);
       }),
     []
   );
@@ -1232,6 +1301,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     getBalance,
     getWalletBalance,
     init,
+    walletExtensions: walletExtensionsRef.current,
   };
 
   return <UserContext.Provider value={defaultValue}>{children}</UserContext.Provider>;

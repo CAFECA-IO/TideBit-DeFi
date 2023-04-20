@@ -130,7 +130,13 @@
   },
   "WALLET_PANEL": {
     "TITLE": "Wallet Connect",
+    "SEARCHING": "Searching for your wallet…",
     "CONNECTING": "Connecting...",
+    "WALLET_EXTENSION_NOT_FOUND1": "No wallet is found.",
+    "WALLET_EXTENSION_NOT_FOUND2": "We suggest you to try other browser.",
+    "WALLET_EXTENSION_NOT_FOUND3": "Or",
+    "WALLET_EXTENSION_NOT_FOUND4": "Scan QR code to login",
+    "WALLET_EXTENSION_NOT_FOUND5": "I don't have a wallet ?",
     "QR_CODE_DESCRIPTION_PART1": "Please open your",
     "QR_CODE_DESCRIPTION_HIGHLIGHT": "wallet",
     "QR_CODE_DESCRIPTION_PART2": "to scan the QR code.",

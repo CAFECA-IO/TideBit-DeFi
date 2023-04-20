@@ -13,13 +13,8 @@ const CryptoCategory = ({...otherProps}) => {
   const marketCtx = useContext<IMarketContext>(MarketContext);
 
   const [tickers, setTickers] = useState<ITickerData[] | null>();
-  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    // if (mounted) return;
-
-    setMounted(true);
-
     setTickers(marketCtx.listAvailableTickers());
   }, [marketCtx.availableTickers]);
 

@@ -443,6 +443,7 @@ export default function CandlestickChart({
     // Deprecate: Sometimes, data isn't immediate. [for debug] (20230411 - Shirley)
     // eslint-disable-next-line no-console
     console.log('context data', JSON.parse(JSON.stringify(marketCtx.candlestickChartData)));
+    // Deprecated: [debug] (20230413 - Shirley)
     // eslint-disable-next-line no-console
     console.log('now', Date());
     return drawChart();

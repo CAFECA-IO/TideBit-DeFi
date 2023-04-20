@@ -198,7 +198,7 @@ const TradeTabMobile = () => {
 
       const tickingSec = (base * 1000 - getTimestampInMilliseconds()) / 1000;
       setSecondsLeft(tickingSec > 0 ? Math.round(tickingSec) : 0);
-      // ToDo: FIXME: countdown is inconsistent with position open modal (20230407 - Shirley)
+      // Deprecated: [debug] (20230413 - Shirley)
       // eslint-disable-next-line no-console
       console.log('[ref]tab mobile, displayed deadline:', base, secondsLeftRef.current);
 

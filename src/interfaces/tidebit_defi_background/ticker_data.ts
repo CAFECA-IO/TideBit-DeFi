@@ -1,4 +1,5 @@
 import {TRADING_CRYPTO_DATA, unitAsset} from '../../constants/config';
+import {ICurrency} from '../../constants/currency';
 import {TypeOfPnLColorHex} from '../../constants/display';
 import {ITrend, Trend} from '../../constants/trend';
 
@@ -32,7 +33,7 @@ export interface ILineGraphProps {
 }
 
 export interface ITicker {
-  currency: string;
+  currency: ICurrency;
   chain: string;
 }
 
@@ -83,9 +84,17 @@ export const dummyTickers: ITickerData[] = TRADING_CRYPTO_DATA.map(data => {
   return ticker;
 });
 
+export const toDummyTickers: {[currency in ICurrency]: ITickerData} = dummyTickers.reduce(
+  (acc, ticker) => {
+    acc[ticker.currency] = ticker;
+    return acc;
+  },
+  {} as {[currency in ICurrency]: ITickerData}
+);
+
 export const dummyTicker: ITickerData = dummyTickers[0];
 
-export const getDummyTicker = (currency: string) => {
+export const getDummyTicker = (currency: ICurrency) => {
   const data =
     TRADING_CRYPTO_DATA.find(ticker => ticker.currency === currency) || TRADING_CRYPTO_DATA[0];
   const dataArray = randomArray(1100, 1200, 10);

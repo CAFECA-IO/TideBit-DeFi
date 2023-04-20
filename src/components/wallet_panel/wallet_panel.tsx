@@ -94,12 +94,6 @@ export default function WalletPanel({
         .concat(WalletExtensionData[WalletExtension.WALLET_CONNECT])
         .map(wallet => addOnClickHandlers(wallet));
 
-  // Deprecated: (20230419 - Shirley)
-  // eslint-disable-next-line no-console
-  console.log('filteredWalletData', filteredWalletData);
-  // eslint-disable-next-line no-console
-  console.log('renderWalletData', renderWalletData);
-
   const walletOptionsSection = (
     <div className="grid grid-cols-3 gap-3">
       {renderWalletData.map(option => (

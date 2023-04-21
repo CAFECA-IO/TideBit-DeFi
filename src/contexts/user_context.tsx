@@ -977,7 +977,7 @@ export const UserProvider = ({children}: IUserProvider) => {
               // Deprecated: not found currency (20230430 - Shirley)
               // eslint-disable-next-line no-console
               console.log('acceptedCFD in ctx', acceptedCFDOrder);
-              updateBalance(acceptedCFDOrder.receipt.balance);
+              // updateBalance(acceptedCFDOrder.receipt.balance);
               setHistories(prev => [...prev, acceptedCFDOrder]);
 
               resultCode = Code.SUCCESS;

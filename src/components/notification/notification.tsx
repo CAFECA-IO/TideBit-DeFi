@@ -32,12 +32,8 @@ export default function Notification({
   const notificationList = notificationCtx.unreadNotifications;
 
   const displayedNotificationList = notificationList.map(v => {
-    const itemClickHandler = () => {
-      notificationCtx.isRead(v.id);
-    };
-
     return (
-      <div key={v.id} onClick={itemClickHandler}>
+      <div key={v.id} className={`transition-all duration-500`}>
         <NotificationItem
           id={v.id}
           title={v.title}
@@ -86,7 +82,7 @@ export default function Notification({
               </div>
 
               {/* Info: (20230420 - Julian) Notification List*/}
-              <div className="flex h-80vh flex-col space-y-10 overflow-y-auto overflow-x-hidden pb-40 sm:pb-10">
+              <div className="flex h-80vh flex-col space-y-5 overflow-y-auto overflow-x-hidden pb-40 sm:pb-10">
                 {displayedNotificationList}
               </div>
             </div>

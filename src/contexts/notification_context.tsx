@@ -34,6 +34,7 @@ export const NotificationContext = createContext<INotificationContext>({
 
 export const NotificationProvider = ({children}: INotificationProvider) => {
   // const marketCtx = useContext(MarketContext);
+
   const emitter = React.useMemo(() => new EventEmitter(), []);
   const [notifications, setNotifications, notificationsRef] =
     useState<INotificationItem[]>(dummyNotifications);
@@ -50,6 +51,7 @@ export const NotificationProvider = ({children}: INotificationProvider) => {
       };
     }
     emitter.emit(TideBitEvent.UPDATE_READ_NOTIFICATIONS, updatedNotifications);
+    updateNotifications(updatedNotifications);
     return;
   };
 
@@ -61,20 +63,17 @@ export const NotificationProvider = ({children}: INotificationProvider) => {
         }))
       : [];
     emitter.emit(TideBitEvent.UPDATE_READ_NOTIFICATIONS, updatedNotifications);
+    updateNotifications(updatedNotifications);
     return;
   };
 
   const updateNotifications = (notifications: INotificationItem[]) => {
-    const updateNotifications: INotificationItem[] = [
-      ...notificationsRef.current,
-      ...notifications,
-    ];
+    const updateNotifications: INotificationItem[] = [...notifications];
     setNotifications(updateNotifications);
     setUnreadNotifications(updateNotifications.filter(n => !n.isRead));
   };
 
   const init = async () => {
-    // console.log(`NotificationProvider init is called`);
     return await Promise.resolve();
   };
 

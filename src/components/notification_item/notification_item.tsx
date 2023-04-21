@@ -1,21 +1,33 @@
-import React from 'react';
+import React, {useState, useContext} from 'react';
 import Image from 'next/image';
+import {NotificationContext} from '../../contexts/notification_context';
 import {INotificationItem} from '../../interfaces/tidebit_defi_background/notification_item';
 import {timestampToString} from '../../lib/common';
 
-export default function NotificationItem(
-  notificationItem: INotificationItem,
-  itemHeight = 'h-158px'
-) {
-  const {title, content, timestamp} = notificationItem;
+export default function NotificationItem(notificationItem: INotificationItem) {
+  const {id, title, content, timestamp} = notificationItem;
+  const notificationCtx = useContext(NotificationContext);
+
+  const [itemStyle, setItemStyle] = useState('h-160px translate-x-0 opacity-100');
 
   const displayTime = timestampToString(timestamp);
 
+  const itemClickHandler = () => {
+    setItemStyle('h-0 translate-x-500px opacity-10');
+
+    setTimeout(() => {
+      notificationCtx.isRead(id);
+    }, 500);
+  };
+
   return (
-    <div className="relative cursor-pointer">
-      <div className="mb-0 flex pb-0">
+    <div
+      className={`relative cursor-pointer ${itemStyle} transition-all duration-500 ease-in-out`}
+      onClick={itemClickHandler}
+    >
+      <div className="flex">
         {/* Vertical line */}
-        <span className={`mx-2 ${itemHeight} w-5px shrink-0 bg-tidebitTheme`}></span>
+        <span className={`mx-2 h-160px w-5px shrink-0 bg-tidebitTheme`}></span>
 
         {/* contain divider */}
         <div>

@@ -64,6 +64,33 @@ const PositionUpdatedModal = ({
     return request;
   };
 
+  // Info: To show the updated CFD in UpdateFormModal: Create a function to compare the difference between updatedProps and openCfdDetails, if there's different, change the openCfdDetails's value to updatedProps's value
+  const compareUpdatedProps = (position: IDisplayCFDOrder) => {
+    const updatedPosition = {...position};
+
+    if (updatedProps?.takeProfit !== updatedPosition.takeProfit) {
+      updatedPosition.takeProfit =
+        updatedProps?.takeProfit === undefined || 0 ? undefined : updatedProps.takeProfit;
+    }
+
+    if (updatedProps?.stopLoss !== updatedPosition.stopLoss) {
+      updatedPosition.stopLoss =
+        updatedProps?.stopLoss === undefined || 0 ? undefined : updatedProps.stopLoss;
+    }
+
+    if (position.guaranteedStop) {
+      return updatedPosition;
+    } else if (!position.guaranteedStop && !!updatedProps?.guaranteedStop) {
+      if (!!updatedProps?.stopLoss) {
+        updatedPosition.stopLoss = updatedProps.stopLoss;
+      }
+      updatedPosition.guaranteedStop = updatedProps.guaranteedStop;
+      updatedPosition.guaranteedStopFee = updatedProps.guaranteedStopFee;
+    }
+
+    return updatedPosition;
+  };
+
   const submitClickHandler = async () => {
     const [lock, unlock] = locker('position_updated_modal.submitClickHandler');
 
@@ -83,6 +110,7 @@ const PositionUpdatedModal = ({
       const result = await userCtx.updateCFDOrder(applyUpdateOrder);
 
       if (result.success) {
+        const updatedPosition = compareUpdatedProps(openCfdDetails);
         // TODO: (20230413 - Shirley) the button URL
         globalCtx.dataLoadingModalHandler({
           modalTitle: t('POSITION_MODAL.UPDATE_POSITION_TITLE'),
@@ -108,7 +136,7 @@ const PositionUpdatedModal = ({
         await wait(DELAYED_HIDDEN_SECONDS);
         globalCtx.eliminateAllModals();
 
-        globalCtx.dataUpdateFormModalHandler(openCfdDetails);
+        globalCtx.dataUpdateFormModalHandler(updatedPosition);
         globalCtx.visibleUpdateFormModalHandler();
       } else if (
         // Info: cancel (20230412 - Shirley)
@@ -173,7 +201,7 @@ const PositionUpdatedModal = ({
 
   // Info: Double check if the value is updated (20230413 - Shirley)
   const renewDataStyle = () => {
-    if (updatedProps === undefined) return;
+    if (!updatedProps || Object.keys(updatedProps).length === 0) return;
 
     updatedProps.guaranteedStop && updatedProps.guaranteedStop !== openCfdDetails?.guaranteedStop
       ? setGtslTextStyle('text-lightYellow2')

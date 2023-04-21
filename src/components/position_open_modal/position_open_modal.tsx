@@ -26,6 +26,7 @@ import {useGlobal} from '../../contexts/global_context';
 import {TypeOfPosition} from '../../constants/type_of_position';
 import {UserContext} from '../../contexts/user_context';
 import {
+  CFD_LIQUIDATION_TIME,
   DISPLAY_QUOTATION_RENEWAL_INTERVAL_SECONDS,
   LIQUIDATION_FIVE_LEVERAGE,
   QUOTATION_RENEWAL_INTERVAL_SECONDS,
@@ -71,7 +72,7 @@ const PositionOpenModal = ({
     const order: IApplyCreateCFDOrder = {
       ...openCfdRequest,
       createTimestamp: getTimestamp(),
-      liquidationTime: openCfdRequest.quotation.deadline + 86400,
+      liquidationTime: openCfdRequest.quotation.deadline + CFD_LIQUIDATION_TIME,
     };
 
     return order;

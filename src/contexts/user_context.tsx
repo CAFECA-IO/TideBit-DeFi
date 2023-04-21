@@ -702,8 +702,11 @@ export const UserProvider = ({children}: IUserProvider) => {
   */
 
   const updateBalance = (updatedBalance: IBalance) => {
+    // Deprecated: not found currency (20230430 - Shirley)
+    // eslint-disable-next-line no-console
+    console.log('arg in updateBalance in ctx', updatedBalance);
     if (balancesRef.current) {
-      const index = balancesRef.current?.findIndex(balance => balance.currency);
+      const index = balancesRef.current?.findIndex(balance => balance?.currency);
       if (index !== -1) {
         const updateBalances = [...balancesRef.current];
         updateBalances[index] = updatedBalance;
@@ -747,6 +750,9 @@ export const UserProvider = ({children}: IUserProvider) => {
               })) as {CFDOrder: ICFDOrder; acceptedCFDOrder: IAcceptedCFDOrder};
               // TODO: extract ICFDOrder from IAcceptedCFDOrder (20230412 - tzuhan)
               setOpenedCFDs(prev => [...prev, CFDOrder]);
+              // Deprecated: not found currency (20230430 - Shirley)
+              // eslint-disable-next-line no-console
+              console.log('acceptedCFDOrder in _createCFDOrder in ctx', acceptedCFDOrder);
               updateBalance(acceptedCFDOrder.receipt.balance);
               setHistories(prev => [...prev, acceptedCFDOrder]);
 
@@ -783,9 +789,6 @@ export const UserProvider = ({children}: IUserProvider) => {
     applyCreateCFDOrder: IApplyCreateCFDOrder | undefined
   ): Promise<IResult> => {
     const timeLeft = (Number(applyCreateCFDOrder?.quotation.deadline) - getTimestamp()) * 1000;
-    // Deprecated: (20230420 - Shirley)
-    // eslint-disable-next-line no-console
-    console.log('time left[open]', timeLeft);
 
     if (timeLeft < 0) {
       const result: IResult = {...defaultResultFailed};
@@ -803,9 +806,6 @@ export const UserProvider = ({children}: IUserProvider) => {
           result.code = resultCode;
           result.reason = Reason[resultCode];
           resolve(result);
-          // Deprecated: (20230420 - Shirley)
-          // eslint-disable-next-line no-console
-          console.log('result in coundown Promise[open]');
         }, timeLeft);
       });
 
@@ -902,9 +902,6 @@ export const UserProvider = ({children}: IUserProvider) => {
     applyCloseCFDOrder: IApplyCloseCFDOrder | undefined
   ): Promise<IResult> => {
     const timeLeft = (Number(applyCloseCFDOrder?.quotation.deadline) - getTimestamp()) * 1000;
-    // Deprecated: (20230420 - Shirley)
-    // eslint-disable-next-line no-console
-    console.log('time left [close]', timeLeft);
     if (timeLeft < 0) {
       const result: IResult = {...defaultResultFailed};
       const resultCode = Code.EXPIRED_QUOTATION_CANCELED;
@@ -921,9 +918,6 @@ export const UserProvider = ({children}: IUserProvider) => {
           result.code = resultCode;
           result.reason = Reason[resultCode];
           resolve(result);
-          // Deprecated: (20230420 - Shirley)
-          // eslint-disable-next-line no-console
-          console.log('result in coundown Promise [close]');
         }, timeLeft);
       });
 
@@ -952,6 +946,9 @@ export const UserProvider = ({children}: IUserProvider) => {
         const index = openCFDs.findIndex(o => o.id === applyUpdateCFDOrder.referenceId);
         if (index !== -1) {
           const transferR = transactionEngine.transferCFDOrderToTransaction(applyUpdateCFDOrder);
+          // Deprecated: not found currency (20230430 - Shirley)
+          // eslint-disable-next-line no-console
+          console.log('original CFD in ctx', openCFDs[index]);
           if (transferR.success) {
             // ++ TODO: send request to chain(use Lunar?) (20230324 - tzuhan)
             try {
@@ -970,7 +967,16 @@ export const UserProvider = ({children}: IUserProvider) => {
               })) as {updateCFDOrder: ICFDOrder; acceptedCFDOrder: IAcceptedCFDOrder};
               const updateCFDOrders = [...openCFDs];
               updateCFDOrders[index] = updateCFDOrder;
+              // Deprecated: not found currency (20230430 - Shirley)
+              // eslint-disable-next-line no-console
+              console.log('THE updated CFD in ctx', updateCFDOrders[index]);
               setOpenedCFDs(updateCFDOrders);
+              // Deprecated: not found currency (20230430 - Shirley)
+              // eslint-disable-next-line no-console
+              console.log('after updating CFD in ctx', openCFDsRef.current);
+              // Deprecated: not found currency (20230430 - Shirley)
+              // eslint-disable-next-line no-console
+              console.log('acceptedCFD in ctx', acceptedCFDOrder);
               updateBalance(acceptedCFDOrder.receipt.balance);
               setHistories(prev => [...prev, acceptedCFDOrder]);
 

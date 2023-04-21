@@ -32,8 +32,12 @@ export default function Notification({
   const notificationList = notificationCtx.unreadNotifications;
 
   const displayedNotificationList = notificationList.map(v => {
+    const itemClickHandler = () => {
+      notificationCtx.isRead(v.id);
+    };
+
     return (
-      <div key={v.id}>
+      <div key={v.id} onClick={itemClickHandler}>
         <NotificationItem
           id={v.id}
           title={v.title}

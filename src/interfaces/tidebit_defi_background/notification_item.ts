@@ -69,7 +69,7 @@ export const getDummyNotifications = (numbers: number) => {
   return dummyNotificationItems;
 };
 
-export const dummyNotifications: INotificationItem[] = getDummyNotifications(1);
+export const dummyNotifications: INotificationItem[] = getDummyNotifications(3);
 
 export const dummyUnReadNotifications: INotificationItem[] = dummyNotifications.filter(
   n => !n.isRead

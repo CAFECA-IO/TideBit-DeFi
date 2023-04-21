@@ -1,5 +1,6 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import Image from 'next/image';
+import {NotificationContext} from '../../contexts/notification_context';
 import {INotificationItem} from '../../interfaces/tidebit_defi_background/notification_item';
 {
   /* Notification item itself */
@@ -11,6 +12,8 @@ export default function NotificationItem(
   itemHeight = 'h-158px'
   // }
 ) {
+  const notificationCtx = useContext(NotificationContext);
+
   const {title, content, timestamp} = notificationItem;
   const unixTimestamp = timestamp * 1000;
   const date = `${new Date(unixTimestamp).getFullYear()}-${
@@ -19,18 +22,13 @@ export default function NotificationItem(
   const time = `${new Date(unixTimestamp).getHours()}:${
     new Date(unixTimestamp).getMinutes() + 1
   }:${new Date(unixTimestamp).getSeconds()}`;
-  // title = title ? title : 'Happy Birthday to TideBit';
-  // date = date ? date : '2022-10-05';
-  // time = time ? time : '14:28:38';
-  // content = content
-  //   ? content
-  //   : `Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
-  // invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et
-  // accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata
-  // sanctus est Lorem`;
+
+  const itemClickHandler = () => {
+    notificationCtx.isRead(notificationItem.id);
+  };
 
   return (
-    <div className="relative">
+    <div className="relative cursor-pointer" onClick={itemClickHandler}>
       <div className="mb-0 flex pb-0">
         {/* Vertical line */}
         <span className={`mx-2 ${itemHeight} w-5px shrink-0 bg-tidebitTheme`}></span>

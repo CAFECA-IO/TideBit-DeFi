@@ -8,7 +8,6 @@ import {UserContext} from '../../contexts/user_context';
 import {useTranslation} from 'next-i18next';
 import UserMobile from '../user_mobile/user_mobile';
 import {useGlobal} from '../../contexts/global_context';
-import TideButton from '../tide_button/tide_button';
 import {NotificationContext} from '../../contexts/notification_context';
 import {TBDURL} from '../../constants/api_request';
 import {WalletConnectButton} from '../wallet_connect_button/wallet_connect_button';
@@ -67,6 +66,8 @@ const NavBarMobile = () => {
     ? 'translate-y-3 rotate-0'
     : 'translate-y-0 origin-left w-3/4 rotate-35';
 
+  const dividerInsideMobileNavBar = navOpen && `inline-block h-px w-11/12 rounded bg-lightGray`;
+
   const isDisplayedMobileNavBar = navOpen ? 'top-14 min-h-screen inset-0 bg-darkGray/100' : '';
 
   const isDisplayedNotificationSidebarMobileCover = (
@@ -82,16 +83,21 @@ const NavBarMobile = () => {
   const isDisplayedUser = userCtx.enableServiceTerm ? (
     <UserMobile />
   ) : (
-    // {/* Info: (20230327 - Julian) Show Wallet Connect */}
+    /* Info: (20230327 - Julian) Show Wallet Connect */
     <WalletConnectButton className="py-2 px-3 text-sm" />
   );
 
   const isDisplayedSubNavWalletConnect = userCtx.enableServiceTerm ? null : (
-    // {/* Info: (20230327 - Julian) Show Wallet Connect */}
+    /* Info: (20230327 - Julian) Show Wallet Connect */
     <WalletConnectButton className="py-2 px-3 text-sm" />
   );
 
-  const dividerInsideMobileNavBar = navOpen && `inline-block h-px w-11/12 rounded bg-lightGray`;
+  const isDisplayedUnreadnumber =
+    notificationCtx.unreadNotifications.length > 0 ? (
+      <span className="absolute top-0 right-0 z-20 inline-flex h-3 w-3 items-center justify-center rounded-xl bg-tidebitTheme">
+        <p className="text-center text-3xs">{notificationCtx.unreadNotifications.length}</p>
+      </span>
+    ) : null;
 
   return (
     <>
@@ -113,18 +119,14 @@ const NavBarMobile = () => {
 
             <div className="z-50 ml-4 flex">
               <button onClick={sidebarOpenHandler} className="relative hover:cursor-pointer">
-                <span className="absolute top-0 right-0 z-20 inline-block h-3 w-3 rounded-xl bg-tidebitTheme">
-                  <p className="text-center text-3xs hover:text-white">
-                    {notificationCtx.unreadNotifications.length}
-                  </p>
-                </span>
+                {isDisplayedUnreadnumber}
 
                 <Image
                   src="/elements/notifications_outline.svg"
                   width={25}
                   height={25}
                   className="hover:cursor-pointer hover:text-cyan-300"
-                  alt="icon"
+                  alt="notification icon"
                 />
               </button>
             </div>
@@ -150,11 +152,10 @@ const NavBarMobile = () => {
                   <div className="inline-flex items-center hover:cursor-pointer hover:text-cyan-300 hover:opacity-100">
                     <div className="relative h-55px w-150px flex-col justify-center hover:cursor-pointer hover:opacity-80">
                       <Image
-                        className=""
-                        src={'/elements/nav_logo.svg'}
+                        src="/elements/nav_logo.svg"
                         height={50}
                         width={150}
-                        alt={'logo'}
+                        alt="TideBit_logo"
                       />
                     </div>
                   </div>

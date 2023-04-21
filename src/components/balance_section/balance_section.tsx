@@ -1,12 +1,11 @@
 import React, {useContext, useState} from 'react';
 import CircularProgressBar from '../circular_progress_bar/circular_progress_bar';
 import Image from 'next/image';
-import TideButton from '../tide_button/tide_button';
 import {useGlobal} from '../../contexts/global_context';
 import {UserContext} from '../../contexts/user_context';
 import RippleButton from '../ripple_button/ripple_button';
 import {UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
-import {unitAsset} from '../../constants/config';
+import {unitAsset, FRACTION_DIGITS} from '../../constants/config';
 import {useTranslation} from 'next-i18next';
 
 type TranslateFunction = (s: string) => string;
@@ -16,12 +15,10 @@ const BalanceSection = () => {
 
   const globalCtx = useGlobal();
   const userCtx = useContext(UserContext);
-  const {layoutAssertion} = globalCtx;
 
-  // TODO: totalBalance from userContext
-  // TODO: fixed to two decimal places
-  const avblBalance = userCtx.balance?.available ?? 0;
-  const lockedBalance = userCtx.balance?.locked ?? 0;
+  /* ToDo: (20230420 - Julian) getMyAssets by currency */
+  const avblBalance = userCtx.getMyAssets('')?.balance.available ?? 0; //userCtx.balance?.available ?? 0;
+  const lockedBalance = userCtx.getMyAssets('')?.balance.locked ?? 0; //userCtx.balance?.locked ?? 0;
   const totalBalance = avblBalance && lockedBalance ? avblBalance + lockedBalance : 0;
 
   const [hidden, setHidden] = useState(false);
@@ -71,15 +68,15 @@ const BalanceSection = () => {
 
   const displayedBalance = hidden
     ? '********'
-    : totalBalance?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE);
+    : totalBalance?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
 
   const displayedAvblBalance = hidden
     ? '*****'
-    : avblBalance?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE);
+    : avblBalance?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
 
   const displayedLockedBalance = hidden
     ? '*****'
-    : lockedBalance?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE);
+    : lockedBalance?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
 
   const depositClickHandler = () => {
     globalCtx.visibleDepositModalHandler();

@@ -16,6 +16,7 @@ export default function Notification({
 }: INotificationProps): JSX.Element {
   const {t}: {t: TranslateFunction} = useTranslation('common');
   const notificationCtx = useContext(NotificationContext);
+
   const hamburgerStyles =
     'block bg-lightWhite h-3px opacity-100 rounded-12px opacity-100 ease-in duration-300';
 
@@ -28,7 +29,9 @@ export default function Notification({
     ? 'translate-y-3 rotate-0'
     : 'translate-y-0 origin-left w-3/4 rotate-35';
 
-  const NotificationList = notificationCtx.unreadNotifications.map(v => {
+  const notificationList = notificationCtx.unreadNotifications;
+
+  const displayedNotificationList = notificationList.map(v => {
     return (
       <div key={v.id}>
         <NotificationItem
@@ -45,18 +48,10 @@ export default function Notification({
     );
   });
 
-  // const NotificationList = DUMMY_DATA.map(v => {
-  //   return (
-  //     <div key={v.id}>
-  //       <NotificationItem />
-  //     </div>
-  //   );
-  // });
-
-  // Desktop notification drawer
+  /* Info: (20230420 - Julian) Desktop notification drawer */
   const isDisplayedNotificationSidebarSection = (
     <>
-      {/* sidebar section */}
+      {/* Info: (20230420 - Julian) sidebar section */}
       <div
         className={`pointer-events-none fixed right-1 top-44px ${
           componentVisible ? 'z-30' : 'z-30'
@@ -65,7 +60,7 @@ export default function Notification({
         <div className="relative my-3 mx-auto w-auto max-w-xl">
           {' '}
           <div className={`relative`}>
-            {/* sidebar self */}
+            {/* Info: (20230420 - Julian) sidebar self */}
             <div
               ref={notifyRef}
               className={`pointer-events-auto min-h-screen w-screen ${`sm:w-479px`} ${
@@ -86,9 +81,9 @@ export default function Notification({
                 </div>
               </div>
 
-              {/* Notification List*/}
+              {/* Info: (20230420 - Julian) Notification List*/}
               <div className="flex h-80vh flex-col space-y-10 overflow-y-auto overflow-x-hidden pb-40 sm:pb-10">
-                {NotificationList}
+                {displayedNotificationList}
               </div>
             </div>
           </div>
@@ -97,11 +92,11 @@ export default function Notification({
     </>
   );
 
-  // Cover for Desktop notification drawer
+  /* Info: (20230420 - Julian) Cover for Desktop notification drawer */
   // FIXME: Detect if user signed in or not (avator showing) and change the cover's position accordingly
   const isDisplayedNotificationSidebarCover = componentVisible ? (
     <>
-      {/* cover for NavBar ***Bell Icon*** */}
+      {/* Info: (20230420 - Julian) cover for NavBar ***Bell Icon*** */}
       <div
         className={`${
           componentVisible ? 'visible duration-700 ease-in-out' : 'invisible'
@@ -110,7 +105,7 @@ export default function Notification({
         {' '}
       </div>
 
-      {/* cover for Main, Footer */}
+      {/* Info: (20230420 - Julian) cover for Main, Footer */}
       <div
         className={`${
           componentVisible ? 'transition-opacity duration-700 ease-in-out' : 'invisible'
@@ -121,7 +116,7 @@ export default function Notification({
     </>
   ) : null;
 
-  // Cover for Mobile notification drawer
+  /* Info: (20230420 - Julian) Cover for Mobile notification drawer */
   const isDisplayedNotificationSidebarMobileCover = (
     <div
       className={`sm:hidden ${
@@ -147,11 +142,9 @@ export default function Notification({
     </div>
   );
 
-  // TODO: Mobile notification drawer [Not yet implemented]
-
   return (
     <div>
-      {/* Notification Sidebar */}
+      {/* Info: (20230420 - Julian) Notification Sidebar */}
       {isDisplayedNotificationSidebarCover}
       {isDisplayedNotificationSidebarMobileCover}
       {isDisplayedNotificationSidebarSection}

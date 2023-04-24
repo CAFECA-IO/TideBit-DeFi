@@ -118,6 +118,8 @@ export const TIDEBIT_BUTTON_CONFIG =
 
 export const DELAYED_HIDDEN_SECONDS = 1000;
 
+export const INPUT_VALIDATION_DELAY = 500;
+
 export const TRADING_INPUT_STEP = 0.01;
 
 export const TypeOfPnLColorHex = {

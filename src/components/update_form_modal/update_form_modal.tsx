@@ -23,7 +23,7 @@ import {
 import {MarketContext} from '../../contexts/market_context';
 import useState from 'react-usestateref';
 import CircularProgressBar from '../circular_progress_bar/circular_progress_bar';
-import {unitAsset, FRACTION_DIGITS} from '../../constants/config';
+import {unitAsset, FRACTION_DIGITS, TARGET_LIMIT_DIGITS} from '../../constants/config';
 import useStateRef from 'react-usestateref';
 import {useTranslation} from 'react-i18next';
 import {IDisplayCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
@@ -75,7 +75,9 @@ const UpdateFormModal = ({
 
   // FIXME: SL setting should have a lower limit and an upper limit depending on its position type
   const [slLowerLimit, setSlLowerLimit, slLowerLimitRef] = useState(0);
-  const [slUpperLimit, setSlUpperLimit, slUpperLimitRef] = useState(Infinity);
+  const [slUpperLimit, setSlUpperLimit, slUpperLimitRef] = useState(0);
+  const [tpLowerLimit, setTpLowerLimit, tpLowerLimitRef] = useState(0);
+  const [tpUpperLimit, setTpUpperLimit, tpUpperLimitRef] = useState(0);
 
   const [submitDisabled, setSubmitDisabled] = useState(true);
 
@@ -280,13 +282,6 @@ const UpdateFormModal = ({
   const isDisplayedTakeProfitSetting = tpToggle ? 'flex' : 'invisible';
   const isDisplayedStopLossSetting = slToggle ? 'flex' : 'invisible';
 
-  const displayedSlLowerLimit = openCfdDetails?.guaranteedStop
-    ? openCfdDetails?.stopLoss ?? openCfdDetails?.suggestion?.stopLoss
-    : slLowerLimit;
-  const displayedSlUpperLimit = openCfdDetails?.guaranteedStop
-    ? openCfdDetails?.stopLoss ?? openCfdDetails?.suggestion?.stopLoss
-    : slUpperLimit;
-
   const displayedTime = timestampToString(openCfdDetails?.createTimestamp ?? 0);
 
   const layoutInsideBorder = 'mx-5 my-3 flex justify-between';
@@ -381,7 +376,8 @@ const UpdateFormModal = ({
     <div className={`mr-8 ${isDisplayedTakeProfitSetting}`}>
       <TradingInput
         getInputValue={getTpValue}
-        lowerLimit={0}
+        lowerLimit={tpLowerLimitRef.current}
+        upperLimit={tpUpperLimitRef.current}
         inputInitialValue={tpValue}
         inputValueFromParent={tpValue}
         setInputValueFromParent={setTpValue}
@@ -399,8 +395,8 @@ const UpdateFormModal = ({
     <div className={`mr-8 ${isDisplayedStopLossSetting}`}>
       <TradingInput
         getInputValue={getSlValue}
-        lowerLimit={displayedSlLowerLimit}
-        upperLimit={displayedSlUpperLimit}
+        lowerLimit={slLowerLimitRef.current}
+        upperLimit={slUpperLimitRef.current}
         inputInitialValue={slValue}
         setInputValueFromParent={setSlValue}
         inputValueFromParent={slValue}
@@ -504,6 +500,101 @@ const UpdateFormModal = ({
     globalCtx.visiblePositionClosedModalHandler();
   };
 
+  const initPosition = () => {
+    setGuaranteedChecked(openCfdDetails.guaranteedStop);
+    setTpToggle(!!openCfdDetails.takeProfit);
+    setSlToggle(!!openCfdDetails.stopLoss);
+
+    const caledTpLowerLimit =
+      openCfdDetails.typeOfPosition === TypeOfPosition.BUY ? openCfdDetails.openPrice : 0;
+    const caledTpUpperLimit =
+      openCfdDetails.typeOfPosition === TypeOfPosition.SELL
+        ? openCfdDetails.openPrice
+        : TARGET_LIMIT_DIGITS;
+
+    const caledSlLowerLimit =
+      openCfdDetails.typeOfPosition === TypeOfPosition.BUY
+        ? openCfdDetails.liquidationPrice
+        : openCfdDetails.openPrice;
+
+    const caledSlUpperLimit =
+      openCfdDetails.typeOfPosition === TypeOfPosition.BUY
+        ? openCfdDetails.openPrice
+        : openCfdDetails.liquidationPrice;
+
+    const caledSl =
+      marketCtx.selectedTicker?.price !== undefined
+        ? roundToDecimalPlaces(
+            (marketCtx.selectedTicker.price + openCfdDetails.liquidationPrice) / 2,
+            2
+          )
+        : openCfdDetails.liquidationPrice;
+
+    const suggestedSl =
+      marketCtx.selectedTicker?.price !== undefined
+        ? openCfdDetails.typeOfPosition === TypeOfPosition.BUY &&
+          marketCtx.selectedTicker?.price < openCfdDetails.suggestion.stopLoss
+          ? caledSl
+          : openCfdDetails.typeOfPosition === TypeOfPosition.SELL &&
+            marketCtx.selectedTicker?.price > openCfdDetails.suggestion.stopLoss
+          ? caledSl
+          : openCfdDetails.suggestion.stopLoss
+        : openCfdDetails.suggestion.stopLoss;
+
+    const gslFee =
+      Number(marketCtx.guaranteedStopFeePercentage) *
+      openCfdDetails?.openPrice *
+      openCfdDetails?.amount;
+
+    const profit =
+      openCfdDetails?.typeOfPosition === TypeOfPosition.BUY
+        ? roundToDecimalPlaces(
+            (tpValueRef.current - openCfdDetails?.openPrice) * openCfdDetails?.amount,
+            2
+          )
+        : roundToDecimalPlaces(
+            (openCfdDetails?.openPrice - tpValueRef.current) * openCfdDetails?.amount,
+            2
+          );
+
+    const loss =
+      openCfdDetails?.typeOfPosition === TypeOfPosition.BUY
+        ? roundToDecimalPlaces(
+            (openCfdDetails?.openPrice - slValueRef.current) * openCfdDetails?.amount,
+            2
+          )
+        : roundToDecimalPlaces(
+            (slValueRef.current - openCfdDetails?.openPrice) * openCfdDetails?.amount,
+            2
+          );
+
+    setGuaranteedStopFee(
+      openCfdDetails.guaranteedStop ? Number(openCfdDetails?.guaranteedStopFee) : gslFee
+    );
+
+    setSlLowerLimit(caledSlLowerLimit);
+    setSlUpperLimit(caledSlUpperLimit);
+
+    setTpLowerLimit(caledTpLowerLimit);
+    setTpUpperLimit(caledTpUpperLimit);
+
+    setTpValue(
+      openCfdDetails.takeProfit === 0 || openCfdDetails.takeProfit === undefined
+        ? openCfdDetails.suggestion.takeProfit
+        : openCfdDetails.takeProfit
+    );
+
+    setSlValue(
+      openCfdDetails.stopLoss === 0 || openCfdDetails.stopLoss === undefined
+        ? suggestedSl
+        : openCfdDetails.stopLoss
+    );
+
+    setExpectedProfitValue(profit);
+
+    setExpectedLossValue(loss);
+  };
+
   useEffect(() => {
     setGuaranteedStopFee(Number(gsl) * openCfdDetails?.openPrice * openCfdDetails?.amount);
   }, [gsl, openCfdDetails?.openPrice, openCfdDetails?.amount]);
@@ -520,72 +611,7 @@ const UpdateFormModal = ({
   ]);
 
   useEffect(() => {
-    setGuaranteedChecked(openCfdDetails.guaranteedStop);
-    setTpToggle(!!openCfdDetails.takeProfit);
-    setSlToggle(!!openCfdDetails.stopLoss);
-    setTpValue(
-      openCfdDetails.takeProfit === 0 || openCfdDetails.takeProfit === undefined
-        ? openCfdDetails.suggestion.takeProfit
-        : openCfdDetails.takeProfit
-    );
-
-    const caledSl =
-      marketCtx.selectedTicker?.price !== undefined
-        ? Number(
-            ((marketCtx.selectedTicker.price + openCfdDetails.liquidationPrice) / 2).toFixed(2)
-          )
-        : openCfdDetails.liquidationPrice;
-
-    const suggestedSl =
-      marketCtx.selectedTicker?.price !== undefined
-        ? openCfdDetails.typeOfPosition === TypeOfPosition.BUY &&
-          marketCtx.selectedTicker?.price < openCfdDetails.suggestion.stopLoss
-          ? caledSl
-          : openCfdDetails.typeOfPosition === TypeOfPosition.SELL &&
-            marketCtx.selectedTicker?.price > openCfdDetails.suggestion.stopLoss
-          ? caledSl
-          : openCfdDetails.suggestion.stopLoss
-        : openCfdDetails.suggestion.stopLoss;
-
-    setSlValue(
-      openCfdDetails.stopLoss === 0 || openCfdDetails.stopLoss === undefined
-        ? suggestedSl
-        : openCfdDetails.stopLoss
-    );
-
-    const gslFee =
-      Number(marketCtx.guaranteedStopFeePercentage) *
-      openCfdDetails?.openPrice *
-      openCfdDetails?.amount;
-    setGuaranteedStopFee(
-      openCfdDetails.guaranteedStop ? Number(openCfdDetails?.guaranteedStopFee) : gslFee
-    );
-
-    const profit =
-      openCfdDetails?.typeOfPosition === TypeOfPosition.BUY
-        ? roundToDecimalPlaces(
-            (tpValueRef.current - openCfdDetails?.openPrice) * openCfdDetails?.amount,
-            2
-          )
-        : roundToDecimalPlaces(
-            (openCfdDetails?.openPrice - tpValueRef.current) * openCfdDetails?.amount,
-            2
-          );
-
-    setExpectedProfitValue(profit);
-
-    const loss =
-      openCfdDetails?.typeOfPosition === TypeOfPosition.BUY
-        ? roundToDecimalPlaces(
-            (openCfdDetails?.openPrice - slValueRef.current) * openCfdDetails?.amount,
-            2
-          )
-        : roundToDecimalPlaces(
-            (slValueRef.current - openCfdDetails?.openPrice) * openCfdDetails?.amount,
-            2
-          );
-
-    setExpectedLossValue(loss);
+    initPosition();
   }, [globalCtx.visibleUpdateFormModal]);
 
   const isDisplayedDetailedPositionModal = modalVisible ? (

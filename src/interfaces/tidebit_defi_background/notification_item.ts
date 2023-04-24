@@ -65,10 +65,10 @@ export const getDummyNotifications = (numbers: number) => {
     };
     dummyNotificationItems.push(dummyNotificationItem);
   }
-  // console.log(`dummyNotificationItems`, dummyNotificationItems)
   return dummyNotificationItems;
 };
 
+/* ToDo: (20230424 - Julian) replace dummy data */
 export const dummyNotifications: INotificationItem[] = getDummyNotifications(3);
 
 export const dummyUnReadNotifications: INotificationItem[] = dummyNotifications.filter(

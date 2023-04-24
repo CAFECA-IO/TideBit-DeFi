@@ -1,5 +1,6 @@
-import {useContext} from 'react';
+import {useContext, useState} from 'react';
 import NotificationItem from '../notification_item/notification_item';
+import {UserContext} from '../../contexts/user_context';
 import {NotificationContext} from '../../contexts/notification_context';
 import {useTranslation} from 'next-i18next';
 
@@ -16,6 +17,9 @@ export default function Notification({
 }: INotificationProps): JSX.Element {
   const {t}: {t: TranslateFunction} = useTranslation('common');
   const notificationCtx = useContext(NotificationContext);
+  const {enableServiceTerm} = useContext(UserContext);
+
+  const [readAllanim, setReadAllanim] = useState('translate-x-0 opacity-100');
 
   const hamburgerStyles =
     'block bg-lightWhite h-3px opacity-100 rounded-12px opacity-100 ease-in duration-300';
@@ -29,11 +33,15 @@ export default function Notification({
     ? 'translate-y-3 rotate-0'
     : 'translate-y-0 origin-left w-3/4 rotate-35';
 
-  const notificationList = notificationCtx.unreadNotifications;
+  const readAllHandler = () => {
+    setReadAllanim('translate-x-500px opacity-10');
 
-  const displayedNotificationList = notificationList.map(v => {
+    setTimeout(notificationCtx.readAll, 500);
+  };
+
+  const displayedNotificationList = notificationCtx.unreadNotifications.map(v => {
     return (
-      <div key={v.id} className={`transition-all duration-500`}>
+      <div key={v.id} className={`transition-all duration-500 ${readAllanim}`}>
         <NotificationItem
           id={v.id}
           title={v.title}
@@ -75,7 +83,7 @@ export default function Notification({
                 </h1>
                 <div
                   className="ml-auto pr-30px text-sm text-tidebitTheme underline hover:cursor-pointer"
-                  onClick={notificationCtx.readAll}
+                  onClick={readAllHandler}
                 >
                   {t('NAV_BAR.NOTIFICATION_READ_ALL')}
                 </div>
@@ -93,7 +101,6 @@ export default function Notification({
   );
 
   /* Info: (20230420 - Julian) Cover for Desktop notification drawer */
-  // FIXME: Detect if user signed in or not (avator showing) and change the cover's position accordingly
   const isDisplayedNotificationSidebarCover = componentVisible ? (
     <>
       {/* Info: (20230420 - Julian) cover for NavBar ***Bell Icon*** */}
@@ -116,19 +123,17 @@ export default function Notification({
     </>
   ) : null;
 
-  /* Info: (20230420 - Julian) Cover for Mobile notification drawer */
+  /* Info: (20230420 - Julian) Cover for Mobile notification drawer
+   * 如果用戶為登入狀態， cover width 改為 7/10 讓頭貼可以被看到 */
   const isDisplayedNotificationSidebarMobileCover = (
     <div
-      className={`sm:hidden ${
+      className={`sm:hidden ${enableServiceTerm ? 'w-7/10' : 'w-screen'} ${
         componentVisible ? 'visible opacity-100' : 'invisible opacity-0'
-      } fixed z-50 flex h-14 w-screen items-center justify-center overflow-x-hidden overflow-y-hidden bg-black/100 px-5 pt-1 outline-none transition-all delay-150 duration-300 hover:cursor-pointer focus:outline-none`}
+      } fixed z-50 flex h-14 items-center justify-center overflow-x-hidden overflow-y-hidden bg-black/100 px-5 pt-1 outline-none transition-all delay-150 duration-300 hover:cursor-pointer focus:outline-none`}
     >
       <div className="flex basis-full items-end">
-        <div className="mr-0 flex border-r border-lightGray1 lg:hidden">
-          <button
-            //onClick={clickHanlder}
-            className="z-50 inline-flex items-center justify-center rounded-md p-2"
-          >
+        <div className="flex border-r border-lightGray1 lg:hidden">
+          <button className="z-50 inline-flex items-center justify-center rounded-md p-2">
             <div className="relative h-20px w-30px cursor-pointer">
               <span className={`${hamburgerStyles} ${displayedMobileNavBarLine1}`}></span>
               <span className={`${hamburgerStyles} ${displayedMobileNavBarLine2}`}></span>

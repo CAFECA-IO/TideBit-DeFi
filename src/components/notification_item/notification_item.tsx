@@ -26,12 +26,12 @@ export default function NotificationItem(notificationItem: INotificationItem) {
       onClick={itemClickHandler}
     >
       <div className="flex">
-        {/* Vertical line */}
+        {/* Info: (20230420 - Julian) Vertical line */}
         <span className={`mx-2 h-160px w-5px shrink-0 bg-tidebitTheme`}></span>
 
-        {/* contain divider */}
+        {/* Info: (20230420 - Julian) contain divider */}
         <div>
-          {/* Speaker & Heading & Date */}
+          {/* Info: (20230420 - Julian) Speaker & Heading & Date */}
           <div className="flex items-start">
             <Image
               className="sm:ml-8px"
@@ -54,7 +54,7 @@ export default function NotificationItem(notificationItem: INotificationItem) {
             </div>
           </div>
 
-          {/* Content */}
+          {/* Info: (20230420 - Julian) Content */}
           <div className="mt-0 mb-5 flex w-11/12 flex-wrap pl-12 pt-0 text-xs text-lightGray">
             {content}
           </div>

@@ -1,4 +1,4 @@
-import {useState, Dispatch, SetStateAction, useEffect} from 'react';
+import {useState, Dispatch, SetStateAction, useEffect, useRef, useCallback} from 'react';
 import {
   DELAYED_HIDDEN_SECONDS,
   INPUT_VALIDATION_DELAY,
@@ -47,20 +47,33 @@ const TradingInput = ({
 
   ...otherProps
 }: ITradingInputProps) => {
-  const [inputValue, setInputValue] =
-    inputValueFromParent && setInputValueFromParent
-      ? [inputValueFromParent, setInputValueFromParent]
-      : useState<number>(inputInitialValue);
+  // const [inputValue, setInputValue] =
+  //   inputValueFromParent && setInputValueFromParent
+  //     ? [inputValueFromParent, setInputValueFromParent]
+  //     : useState<number>(inputInitialValue);
+  const [inputValue, setInputValue] = useState<number>(inputInitialValue);
+
   const [validationTimeout, setValidationTimeout, validationTimeoutRef] = useStateRef<ReturnType<
     typeof setTimeout
   > | null>(null);
+  // const [validationTimeout, setValidationTimeout] = useState<ReturnType<typeof setTimeout> | null>(
+  //   null
+  // );
+  // const validationTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // const regex = /^\d*\.?\d{0,2}$/;
   const regex = /^(?!0\d)\d*\.?\d{0,2}$/;
 
-  const passValueHandler = (data: number) => {
-    getInputValue && getInputValue(data);
-  };
+  // const passValueHandler = (data: number) => {
+  //   getInputValue && getInputValue(data);
+  // };
+
+  const passValueHandler = useCallback(
+    (data: number) => {
+      getInputValue && getInputValue(data);
+    },
+    [getInputValue]
+  );
 
   const validateInput = (value: number) => {
     if (upperLimit && value >= upperLimit) {
@@ -93,6 +106,28 @@ const TradingInput = ({
     setValidationTimeout(newTimeout);
   };
 
+  // Debounce function
+  function debounce(fn: (...args: any[]) => void, ms: number): (...args: any[]) => void {
+    let timer: ReturnType<typeof setTimeout> | null;
+    return (...args) => {
+      if (timer) clearTimeout(timer);
+      timer = setTimeout(() => {
+        timer = null;
+        fn(...args);
+        // fn.apply(this, args);
+      }, ms);
+    };
+  }
+
+  // // Debounce the validateInput function
+  // const debouncedValidateInput = useCallback(
+  //   debounce((value: number) => {
+  //     validateInput(value);
+  //     console.log('in debounceInput', value);
+  //   }, INPUT_VALIDATION_DELAY),
+  //   []
+  // );
+
   const inputChangeHandler: React.ChangeEventHandler<HTMLInputElement> = event => {
     const value = event.target.value;
 
@@ -101,10 +136,15 @@ const TradingInput = ({
       setInputValue(numberValue);
       passValueHandler(numberValue);
 
+      // debouncedValidateInput(numberValue);
+
       debounceValidation(numberValue);
+    } else {
+      setInputValue(0);
     }
   };
 
+  // ToDo: 在下限內加，要直接加到下限值
   const incrementClickHandler = () => {
     const change = inputValue + TRADING_INPUT_STEP;
     const changeRounded = Math.round(change * 100) / 100;
@@ -127,6 +167,12 @@ const TradingInput = ({
     setInputValue(changeRounded);
     passValueHandler(changeRounded);
   };
+
+  useEffect(() => {
+    if (inputValueFromParent !== undefined && setInputValueFromParent !== undefined) {
+      setInputValue(inputValueFromParent);
+    }
+  }, [inputValueFromParent, setInputValueFromParent]);
 
   useEffect(() => {
     // Info: Clean up validation timeout on unmount (20230424 - Shirley)

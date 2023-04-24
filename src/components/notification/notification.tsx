@@ -74,7 +74,7 @@ export default function Notification({
               className={`pointer-events-auto min-h-screen w-screen ${`sm:w-479px`} ${
                 componentVisible
                   ? 'visible opacity-100 sm:translate-x-0'
-                  : 'invisible opacity-0 sm:translate-x-full'
+                  : 'invisible opacity-10 sm:translate-x-full'
               } flex flex-col bg-darkGray/90 pt-8 pb-20 text-white transition-all duration-300 sm:p-5`}
             >
               <div className="mb-10 flex flex items-center">

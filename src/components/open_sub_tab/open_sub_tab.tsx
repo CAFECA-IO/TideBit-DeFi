@@ -1,4 +1,4 @@
-import React, {useContext, Suspense, useEffect} from 'react';
+import React, {useContext, Suspense, useEffect, useRef} from 'react';
 import Lottie from 'lottie-react';
 import smallConnectingAnimation from '../../../public/animation/lf30_editor_cnkxmhy3.json';
 import OpenPositionItem from '../open_position_item/open_position_item';
@@ -24,6 +24,8 @@ const DEFAULT_TICKER = 'ETH';
 const SELL_PRICE_ERROR = 0;
 const BUY_PRICE_ERROR = 0;
 
+type Callback = () => void;
+
 const OpenSubTab = () => {
   const {openCFDs} = useContext(UserContext);
   const marketCtx = useContext(MarketContext);
@@ -40,6 +42,27 @@ const OpenSubTab = () => {
   const [secondsLeft, setSecondsLeft, secondsLeftRef] = useStateRef(
     DISPLAY_QUOTATION_RENEWAL_INTERVAL_SECONDS
   );
+
+  function useTimeout(callback: Callback, delay: number) {
+    const savedCallback = useRef<Callback | null>(null);
+
+    useEffect(() => {
+      savedCallback.current = callback;
+    }, [callback]);
+
+    useEffect(() => {
+      function tick() {
+        if (delay !== null) {
+          const id = setTimeout(() => {
+            savedCallback.current?.();
+            tick();
+          }, delay);
+          return () => clearTimeout(id);
+        }
+      }
+      return tick();
+    }, [delay]);
+  }
 
   const getQuotation = async (tickerId: string) => {
     let longQuotation = defaultResultSuccess;
@@ -153,6 +176,26 @@ const OpenSubTab = () => {
   }, []);
 
   useEffect(() => {
+    /* ToDo: use useTimeout instead of setInterval (20230424 - Shirley)
+    // if (!longQuotationRef.current || !shortQuotationRef.current) return;
+
+    // const base = longQuotationRef.current.deadline - WAITING_TIME_FOR_USER_SIGNING;
+    // const endTime = base * 1000;
+    // const updateTime = () => {
+    //   const tickingSec = (endTime - getTimestampInMilliseconds()) / 1000;
+    //   setSecondsLeft(tickingSec > 0 ? Math.round(tickingSec) : 0);
+
+    //   if (secondsLeftRef.current === 0) {
+    //     setQuotation();
+    //   } else {
+    //     useTimeout(updateTime, 1000);
+    //   }
+
+    //   console.log('in updateTime');
+    // };
+
+    // updateTime();
+    */
     const intervalId = setInterval(async () => {
       if (!longQuotationRef.current || !shortQuotationRef.current) return;
 
@@ -168,7 +211,7 @@ const OpenSubTab = () => {
     return () => {
       clearInterval(intervalId);
     };
-  }, [secondsLeft]);
+  }, []);
 
   const cfds = openCFDs
     .map(cfd => {

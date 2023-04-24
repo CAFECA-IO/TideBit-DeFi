@@ -14,7 +14,7 @@ import {IUpdatedCFDInputProps, useGlobal} from '../../contexts/global_context';
 import {TypeOfPosition} from '../../constants/type_of_position';
 import {UserContext} from '../../contexts/user_context';
 import {useTranslation} from 'react-i18next';
-import {unitAsset} from '../../constants/config';
+import {unitAsset, FRACTION_DIGITS} from '../../constants/config';
 import {IDisplayApplyCFDOrder} from '../../interfaces/tidebit_defi_background/display_apply_cfd_order';
 import {IApplyUpdateCFDOrder} from '../../interfaces/tidebit_defi_background/apply_update_cfd_order';
 import {IDisplayCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
@@ -223,24 +223,26 @@ const PositionUpdatedModal = ({
   }, [globalCtx.visiblePositionUpdatedModal]);
 
   const displayedGuaranteedStopSetting = updatedProps?.guaranteedStop
-    ? 'Yes'
+    ? t('POSITION_MODAL.GUARANTEED_STOP_YES')
     : openCfdDetails?.guaranteedStop
-    ? 'Yes'
-    : 'No';
+    ? t('POSITION_MODAL.GUARANTEED_STOP_YES')
+    : t('POSITION_MODAL.GUARANTEED_STOP_NO');
 
   const displayedTakeProfit =
     updatedProps?.takeProfit !== undefined
       ? updatedProps.takeProfit === 0
         ? '-'
         : updatedProps.takeProfit !== 0
-        ? `$ ${updatedProps.takeProfit.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
-            minimumFractionDigits: 2,
-          })}`
+        ? `$ ${updatedProps.takeProfit.toLocaleString(
+            UNIVERSAL_NUMBER_FORMAT_LOCALE,
+            FRACTION_DIGITS
+          )}`
         : undefined
       : openCfdDetails?.takeProfit
-      ? `$ ${openCfdDetails?.takeProfit.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
-          minimumFractionDigits: 2,
-        })}`
+      ? `$ ${openCfdDetails?.takeProfit.toLocaleString(
+          UNIVERSAL_NUMBER_FORMAT_LOCALE,
+          FRACTION_DIGITS
+        )}`
       : '-';
 
   const displayedStopLoss =
@@ -248,14 +250,16 @@ const PositionUpdatedModal = ({
       ? updatedProps.stopLoss === 0
         ? '-'
         : updatedProps.stopLoss !== 0
-        ? `$ ${updatedProps.stopLoss.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
-            minimumFractionDigits: 2,
-          })}`
+        ? `$ ${updatedProps.stopLoss.toLocaleString(
+            UNIVERSAL_NUMBER_FORMAT_LOCALE,
+            FRACTION_DIGITS
+          )}`
         : undefined
       : openCfdDetails?.stopLoss
-      ? `$ ${openCfdDetails?.stopLoss.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
-          minimumFractionDigits: 2,
-        })}`
+      ? `$ ${openCfdDetails?.stopLoss.toLocaleString(
+          UNIVERSAL_NUMBER_FORMAT_LOCALE,
+          FRACTION_DIGITS
+        )}`
       : '-';
 
   const displayedTypeOfPosition =
@@ -307,9 +311,10 @@ const PositionUpdatedModal = ({
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">{t('POSITION_MODAL.OPEN_PRICE')}</div>
               <div className={``}>
-                {openCfdDetails?.openPrice?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
-                  minimumFractionDigits: 2,
-                }) ?? 0}{' '}
+                {openCfdDetails?.openPrice?.toLocaleString(
+                  UNIVERSAL_NUMBER_FORMAT_LOCALE,
+                  FRACTION_DIGITS
+                ) ?? 0}{' '}
                 <span className="ml-1 text-lightGray">{unitAsset}</span>
                 {/* {openCfdDetails?.price?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ?? 0} USDT */}
               </div>

@@ -11,8 +11,8 @@ export interface IFailedModal {
   modalContent?: string;
   btnMsg?: string;
   btnUrl?: string;
-  failedTitle: string;
-  failedMsg: string;
+  failedTitle?: string;
+  failedMsg?: string;
 }
 
 const FailedModal = ({
@@ -27,19 +27,24 @@ const FailedModal = ({
   failedMsg,
   ...otherProps
 }: IFailedModal) => {
+  const displayedModalContent =
+    (!failedTitle || !failedMsg) && !modalContent ? 'Failed' : modalContent;
+
   const failContent = (
     <div className="relative flex flex-auto flex-col items-center pt-1 text-center text-lg leading-relaxed text-lightWhite">
       <Lottie className="w-150px pt-5 pb-2" animationData={failedAnimation} />
-      <div className="text-base text-lightWhite">{modalContent}</div>
+      <div className="text-base text-lightWhite">{displayedModalContent}</div>
 
       <div className="w-full grow">
-        <div className="mx-21px my-4 bg-lightRed">
-          <p className="text-lg">{failedTitle}</p>
+        {failedTitle && failedMsg ? (
+          <div className="mx-21px my-4 bg-lightRed">
+            <p className="text-lg">{failedTitle}</p>
 
-          <p className="mt-1 bg-darkGray1/50 py-2 px-3 text-start text-xs leading-4 tracking-wide">
-            {failedMsg}
-          </p>
-        </div>
+            <p className="mt-1 bg-darkGray1/50 py-2 px-3 text-start text-xs leading-4 tracking-wide">
+              {failedMsg}
+            </p>
+          </div>
+        ) : null}
       </div>
 
       <div className="relative">

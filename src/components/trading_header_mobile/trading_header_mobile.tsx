@@ -1,4 +1,5 @@
 import {useContext} from 'react';
+import Image from 'next/image';
 import {CgSearchLoading} from 'react-icons/cg';
 import useOuterClick from '../../lib/hooks/use_outer_click';
 import {UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
@@ -52,17 +53,20 @@ const TradingHeaderMobile = () => {
             onClick={tickerBoxClickHandler}
           >
             <span className="relative h-40px w-40px">
-              <img
-                src={marketCtx.selectedTicker?.tokenImg}
-                alt={marketCtx.selectedTicker?.currency}
+              {/* ToDo (20230419 - Julian) default currency icon */}
+              <Image
+                src={marketCtx.selectedTicker?.tokenImg ?? ''}
+                alt={marketCtx.selectedTicker?.currency ?? ''}
+                width={40}
+                height={40}
               />
             </span>
             {tickerTitle}
-          </button>
 
-          <div className="pl-0 hover:cursor-pointer">
-            <CgSearchLoading size={35} />
-          </div>
+            <div className="pl-0 hover:cursor-pointer">
+              <CgSearchLoading size={35} />
+            </div>
+          </button>
         </div>
 
         {/* Price and fluctuation percentage */}

@@ -32,8 +32,6 @@ const DepositModal = ({
   ...otherProps
 }: IDepositModal) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
-  // TODO: [UserContext] deposit: userCtx.walletBalance
-  const userAvailableBalance = 4568735165.11;
   const {depositCryptocurrencies} = useContext(MarketContext);
   const globalCtx = useGlobal();
   const userCtx = useContext(UserContext);
@@ -43,6 +41,8 @@ const DepositModal = ({
     depositCryptocurrencies[0]
   );
   const [amountInput, setAmountInput] = useState<number | undefined>();
+
+  const userAvailableBalance = userCtx.getWalletBalance(selectedCrypto.symbol)?.balance ?? 0;
 
   const regex = /^\d*\.?\d{0,2}$/;
 

@@ -42,6 +42,10 @@ import {
   ITickerHistoryData,
 } from '../interfaces/tidebit_defi_background/ticker_history_data';
 import {ITypeOfPosition} from '../constants/type_of_position';
+import {
+  dummyTideBitPromotion,
+  ITideBitPromotion,
+} from '../interfaces/tidebit_defi_background/tidebit_promotion';
 import {Currency, ICurrency} from '../constants/currency';
 import {CustomError} from '../lib/custom_error';
 import {Code, Reason} from '../constants/code';
@@ -64,6 +68,7 @@ export interface IMarketContext {
   candlestickChartData: ICandlestickData[] | null;
   depositCryptocurrencies: ICryptocurrency[]; // () => ICryptocurrency[];
   withdrawCryptocurrencies: ICryptocurrency[]; //  () => ICryptocurrency[];
+  tidebitPromotion: ITideBitPromotion;
   init: () => Promise<void>;
   // getGuaranteedStopFeePercentage: () => Promise<IResult>;
   showPositionOnChartHandler: (bool: boolean) => void;
@@ -112,6 +117,7 @@ export const MarketContext = createContext<IMarketContext>({
   tickerLiveStatistics: null,
   depositCryptocurrencies: [], // () => [],
   withdrawCryptocurrencies: [], // () => [],
+  tidebitPromotion: dummyTideBitPromotion,
   init: () => Promise.resolve(),
   // getGuaranteedStopFeePercentage: () => Promise.resolve(defaultResultSuccess),
   showPositionOnChartHandler: () => null,
@@ -157,6 +163,9 @@ export const MarketProvider = ({children}: IMarketProvider) => {
   }>(toDummyTickers);
   const [isCFDTradable, setIsCFDTradable] = useState<boolean>(false);
   const [candlestickId, setCandlestickId] = useState<string>('');
+  /* ToDo: (20230419 - Julian) get TideBit data from backend */
+  const [tidebitPromotion, setTidebitPromotion] =
+    useState<ITideBitPromotion>(dummyTideBitPromotion);
 
   const [showPositionOnChart, setShowPositionOnChart] = useState<boolean>(
     INITIAL_POSITION_LABEL_DISPLAYED_STATE
@@ -544,6 +553,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     listAvailableTickers,
     depositCryptocurrencies: depositCryptocurrenciesRef.current,
     withdrawCryptocurrencies: withdrawCryptocurrenciesRef.current,
+    tidebitPromotion,
     getCandlestickChartData,
     getCFDQuotation,
     getTickerHistory,

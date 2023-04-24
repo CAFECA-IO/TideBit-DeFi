@@ -32,9 +32,9 @@ const WithdrawalModal = ({
   ...otherProps
 }: IWithdrawalModal) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
-  // TODO: [UserContext] withdraw: userCtx.balance?.available
+
   const userCtx = useContext(UserContext);
-  const userAvailableBalance = 397.51;
+
   const {withdrawCryptocurrencies} = useContext(MarketContext);
   const globalCtx = useGlobal();
 
@@ -43,6 +43,8 @@ const WithdrawalModal = ({
     withdrawCryptocurrencies[0]
   );
   const [amountInput, setAmountInput, amountInputRef] = useStateRef<number | undefined>();
+
+  const userAvailableBalance = userCtx.getBalance(selectedCrypto.symbol)?.available ?? 0;
 
   const regex = /^\d*\.?\d{0,2}$/;
 

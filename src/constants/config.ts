@@ -265,3 +265,5 @@ export const DOMAIN = 'https://www.tidebit-defi.com';
 export const TERM_OF_SERVICE = 'https://www.tidebit-defi.com/term_of_service/{hash}';
 export const PRIVATE_POLICY = 'https://www.tidebit-defi.com/private_policy/{hash}';
 export const DeWT_VALIDITY_PERIOD = 60 * 60; // seconds
+export const PUSHER_KEY = '6303b44ffdd00a300546';
+export const PUSHER_CLUSTER = 'ap3';

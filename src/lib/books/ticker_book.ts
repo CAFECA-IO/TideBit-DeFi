@@ -1,12 +1,12 @@
-import {ICandlestickData} from '../../interfaces/tidebit_defi_background/candlestickData';
 import {
-  ISortedTrade,
-  ITBETrade,
   ITickerData,
   ITickerItem,
+  ISortedTrade,
+  ITBETrade,
   ITickerMarket,
   strokeColorDisplayed,
 } from '../../interfaces/tidebit_defi_background/ticker_data';
+import {ICandlestickData} from '../../interfaces/tidebit_defi_background/candlestickData';
 import {ITickerHistoryData} from '../../interfaces/tidebit_defi_background/ticker_history_data';
 import {getTime, ITimeSpanUnion, TimeSpanUnion} from '../../constants/time_span_union';
 import {millesecondsToSeconds} from '../common';
@@ -16,16 +16,22 @@ class TickerBook {
   private _dataLength = 1000;
   private _timeSpan: ITimeSpanUnion = TimeSpanUnion._1s;
   private _limit = 50;
-  private _tickers: {[currency: string]: ITickerItem} = {};
+  private _tickers: {[currency: string]: ITickerData} = {};
+
+  /** Deprecated: replaced by pusher (20230424 - tzuhan)
   private _trades: {
     [currency: string]: ISortedTrade;
   } = {};
+  */
 
   constructor() {
     this._tickers = {};
+    /** Deprecated: replaced by pusher (20230424 - tzuhan)
     this._trades = {};
+    */
   }
 
+  /** Deprecated: replaced by pusher (20230424 - tzuhan)
   formatTrades(ticker: string, trades: ITBETrade[]) {
     const newTrades = [...trades].sort((a, b) => +a.ts - +b.ts);
     let formattedTrades: ISortedTrade = {},
@@ -176,14 +182,16 @@ class TickerBook {
     return tickerHistories;
   }
 
-  listTickerPositions(
-    ticker: string,
-    options: {begin?: number; end?: number; limit?: number; timeSpan?: ITimeSpanUnion}
-  ) {
-    const sortedTrades = this.sortTrades(ticker, options);
-    const dataArray: number[] = Object.values(sortedTrades).map(t => +t.trades.open.price);
-
-    return dataArray;
+  updateTrades(ticker: string, newTrades: ITBETrade[]) {
+    if (!this._trades[ticker]) this._trades[ticker] = {};
+    const trades: ISortedTrade = this._trades[ticker];
+    let updatedTrades: ISortedTrade = {};
+    if (newTrades.length > 0) {
+      const formattedTrades: ISortedTrade = this.formatTrades(ticker, newTrades);
+      updatedTrades = this.combineTrades(trades, formattedTrades);
+      this._trades[ticker] = updatedTrades;
+    }
+    return updatedTrades;
   }
 
   listCandlestickData(
@@ -202,20 +210,31 @@ class TickerBook {
     }));
     return candlestickData;
   }
+  */
+
+  listTickerPositions(
+    ticker: string,
+    options: {begin?: number; end?: number; limit?: number; timeSpan?: ITimeSpanUnion}
+  ): number[] {
+    // const sortedTrades = this.sortTrades(ticker, options);
+    // const dataArray: number[] = Object.values(sortedTrades).map(t => +t.trades.open.price);
+    // TODO: temporary need further discussion on how to calculate the position (20230424 - tzuhan)
+    return this.tickers[ticker]?.lineGraphProps || ([] as number[]);
+  }
 
   listTickers(): {[currency in ICurrency]: ITickerData} {
     let tickers: {[currency in ICurrency]?: ITickerData} = {};
     tickers = Object.values(this.tickers).reduce((prev, curr) => {
-      const dataArray = this.listTickerPositions(curr.currency, {});
-      const strokeColor = strokeColorDisplayed(dataArray);
+      // const dataArray = this.listTickerPositions(curr.currency, {});
+      // const strokeColor = strokeColorDisplayed(dataArray);
       const ticker: ITickerData = {
         ...curr,
-        lineGraphProps: {
-          dataArray,
-          strokeColor,
-          lineGraphWidth: '170',
-          lineGraphWidthMobile: '140',
-        },
+        // lineGraphProps: {
+        //   dataArray,
+        //   strokeColor,
+        //   lineGraphWidth: '170',
+        //   lineGraphWidthMobile: '140',
+        // },
       };
       prev[curr.currency] = ticker;
       return prev;
@@ -223,47 +242,32 @@ class TickerBook {
     return tickers as {[currency in ICurrency]: ITickerData};
   }
 
-  updateTrades(ticker: string, newTrades: ITBETrade[]) {
-    if (!this._trades[ticker]) this._trades[ticker] = {};
-    const trades: ISortedTrade = this._trades[ticker];
-    let updatedTrades: ISortedTrade = {};
-    if (newTrades.length > 0) {
-      const formattedTrades: ISortedTrade = this.formatTrades(ticker, newTrades);
-      updatedTrades = this.combineTrades(trades, formattedTrades);
-      this._trades[ticker] = updatedTrades;
-    }
-    return updatedTrades;
-  }
-
-  updateTicker(value: ITickerMarket) {
-    const tickers: {[currency: string]: ITickerItem} = {...this.tickers};
-    tickers[value.currency] = {
-      ...tickers[value.currency],
-      price: value.price,
-      upOrDown: value.upOrDown,
-      priceChange: value.priceChange,
-      fluctuating: value.fluctuating,
-      tradingVolume: value.tradingVolume,
-    };
-    this.tickers = tickers;
-    return tickers;
+  updateTicker(value: ITickerData) {
+    const updateTicker: ITickerData = {...this._tickers[value.currency]};
+    updateTicker.lineGraphProps = value.lineGraphProps;
+    updateTicker.fluctuating = value.fluctuating;
+    updateTicker.price = value.price;
+    updateTicker.priceChange = value.priceChange;
+    updateTicker.tradingVolume = value.tradingVolume;
+    updateTicker.upOrDown = value.upOrDown;
+    this._tickers[value.currency] = updateTicker;
   }
 
   updateTickers(value: ITickerItem[]) {
-    let tickers: {[currency: string]: ITickerItem} = {};
+    let tickers: {[currency: string]: ITickerData} = {};
     tickers = [...value].reduce((prev, curr) => {
-      if (!prev[curr.currency]) prev[curr.currency] = curr;
+      if (!prev[curr.currency]) prev[curr.currency] = {...curr, lineGraphProps: []};
       return prev;
     }, tickers);
     this.tickers = tickers;
     return tickers;
   }
 
-  get tickers(): {[currency: string]: ITickerItem} {
+  get tickers(): {[currency: string]: ITickerData} {
     return this._tickers;
   }
 
-  set tickers(value: {[currency: string]: ITickerItem}) {
+  set tickers(value: {[currency: string]: ITickerData}) {
     this._tickers = value;
   }
 

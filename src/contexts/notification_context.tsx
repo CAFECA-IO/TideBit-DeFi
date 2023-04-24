@@ -1,5 +1,4 @@
 import EventEmitter from 'events';
-import Pusher from 'pusher-js';
 import React, {createContext} from 'react';
 import useState from 'react-usestateref';
 import {TideBitEvent} from '../constants/tidebit_event';
@@ -32,10 +31,6 @@ export const NotificationContext = createContext<INotificationContext>({
 
 export const NotificationProvider = ({children}: INotificationProvider) => {
   // const marketCtx = useContext(MarketContext);
-  const pusher = new Pusher('6303b44ffdd00a300546', {
-    cluster: 'ap3',
-  });
-
   const emitter = React.useMemo(() => new EventEmitter(), []);
   const [notifications, setNotifications, notificationsRef] = useState<INotificationItem[]>([]);
   const [unreadNotifications, setUnreadNotifications, unreadNotificationsRef] = useState<
@@ -75,33 +70,7 @@ export const NotificationProvider = ({children}: INotificationProvider) => {
     setUnreadNotifications(updateNotifications.filter(n => !n.isRead));
   };
 
-  const subscribeTickers = () => {
-    // Deprecated: when function is done (20230421 - tzuhan)
-    // eslint-disable-next-line no-console
-    console.log(`subscribeTickers is called`);
-    const channel = pusher.subscribe('global_channel');
-    channel.bind(Events.TICKERS, (data: any) => {
-      // Deprecated: when function is done (20230421 - tzuhan)
-      // eslint-disable-next-line no-console
-      console.log(`global_channel, Event: ${Events.TICKERS} data`, data);
-    });
-  };
-
-  const subscribeCandlesticks = () => {
-    // Deprecated: when function is done (20230421 - tzuhan)
-    // eslint-disable-next-line no-console
-    console.log(`subscribeCandlesticks is called`);
-    const channel = pusher.subscribe('global_channel');
-    channel.bind(Events.CANDLE_ON_UPDATE, (data: any) => {
-      // Deprecated: when function is done (20230421 - tzuhan)
-      // eslint-disable-next-line no-console
-      console.log(`global_channel, Event: ${Events.CANDLE_ON_UPDATE} data`, data);
-    });
-  };
-
   const init = async () => {
-    subscribeTickers();
-    subscribeCandlesticks();
     return await Promise.resolve();
   };
 

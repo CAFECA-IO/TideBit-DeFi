@@ -17,6 +17,11 @@ export interface ICandlestickData {
   y: ICandle;
 }
 
+export interface ICandlestick {
+  instId: string;
+  candlesticks: ICandlestickData[];
+}
+
 /* Till: remove generate dummy price data (20230327 - Tzuhan)
 export const getDummyPrices = (point: number) => {
   const prices: [...(number | null)[]] = new Array(4).fill(0).map(v => {

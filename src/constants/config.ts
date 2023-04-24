@@ -266,3 +266,6 @@ export const TERM_OF_SERVICE = 'https://www.tidebit-defi.com/term_of_service/{ha
 export const PRIVATE_POLICY = 'https://www.tidebit-defi.com/private_policy/{hash}';
 export const DeWT_VALIDITY_PERIOD = 60 * 60; // seconds
 export const CFD_LIQUIDATION_TIME = 86400;
+export const SELL_PRICE_ERROR = 0;
+export const BUY_PRICE_ERROR = 9999999999;
+export const LEVERAGE_ERROR = 1;

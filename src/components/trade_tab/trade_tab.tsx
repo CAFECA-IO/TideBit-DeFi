@@ -14,6 +14,9 @@ import {
   DISPLAY_QUOTATION_RENEWAL_INTERVAL_SECONDS,
   WAITING_TIME_FOR_USER_SIGNING,
   FRACTION_DIGITS,
+  BUY_PRICE_ERROR,
+  LEVERAGE_ERROR,
+  SELL_PRICE_ERROR,
 } from '../../constants/config';
 import {useGlobal} from '../../contexts/global_context';
 import {MarketContext} from '../../contexts/market_context';
@@ -51,9 +54,6 @@ const TradeTab = () => {
 
   const TEMP_PLACEHOLDER = TARGET_LIMIT_DIGITS;
   const DEFAULT_TICKER = 'ETH';
-  const SELL_PRICE_ERROR = 0;
-  const BUY_PRICE_ERROR = 9999999999;
-  const LEVERAGE_ERROR = 1;
 
   const ticker = marketCtx.selectedTicker?.currency ?? '';
   const USER_BALANCE = userCtx.balance?.available ?? 0;

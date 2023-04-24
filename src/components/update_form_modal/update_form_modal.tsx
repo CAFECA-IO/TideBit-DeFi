@@ -74,8 +74,8 @@ const UpdateFormModal = ({
   const [guaranteedTooltipStatus, setGuaranteedTooltipStatus] = useState(0);
 
   // FIXME: SL setting should have a lower limit and an upper limit depending on its position type
-  const [slLowerLimit, setSlLowerLimit] = useState(0);
-  const [slUpperLimit, setSlUpperLimit] = useState(Infinity);
+  const [slLowerLimit, setSlLowerLimit, slLowerLimitRef] = useState(0);
+  const [slUpperLimit, setSlUpperLimit, slUpperLimitRef] = useState(Infinity);
 
   const [submitDisabled, setSubmitDisabled] = useState(true);
 
@@ -210,6 +210,7 @@ const UpdateFormModal = ({
     </div>
   );
 
+  // ToDo: Recommend SL in the price between market price and liquidation price
   const guaranteedCheckedChangeHandler = () => {
     if (!openCfdDetails.guaranteedStop) {
       setGuaranteedChecked(!guaranteedChecked);
@@ -220,6 +221,8 @@ const UpdateFormModal = ({
       return;
     } else {
       setGuaranteedChecked(true);
+
+      // Info: Lock the change of input value when guaranteed stop is checked
       setSlLowerLimit(openCfdDetails?.stopLoss ?? openCfdDetails?.suggestion?.stopLoss);
       setSlUpperLimit(openCfdDetails?.stopLoss ?? openCfdDetails?.suggestion?.stopLoss);
       setSlValue(openCfdDetails?.stopLoss ?? openCfdDetails?.suggestion?.stopLoss);
@@ -532,9 +535,31 @@ const UpdateFormModal = ({
         ? openCfdDetails.suggestion.takeProfit
         : openCfdDetails.takeProfit
     );
+
+    const caledSl =
+      marketCtx.selectedTicker?.price !== undefined
+        ? Number(
+            ((marketCtx.selectedTicker.price + openCfdDetails.liquidationPrice) / 2).toFixed(2)
+          )
+        : openCfdDetails.liquidationPrice;
+
+    const suggestedSl =
+      marketCtx.selectedTicker?.price !== undefined
+        ? openCfdDetails.typeOfPosition === TypeOfPosition.BUY &&
+          marketCtx.selectedTicker?.price < openCfdDetails.suggestion.stopLoss
+          ? caledSl
+          : openCfdDetails.typeOfPosition === TypeOfPosition.SELL &&
+            marketCtx.selectedTicker?.price > openCfdDetails.suggestion.stopLoss
+          ? caledSl
+          : openCfdDetails.suggestion.stopLoss
+        : openCfdDetails.suggestion.stopLoss;
+
+    // if (market)
+
     setSlValue(
       openCfdDetails.stopLoss === 0 || openCfdDetails.stopLoss === undefined
-        ? openCfdDetails.suggestion.stopLoss
+        ? // ? openCfdDetails.suggestion.stopLoss
+          suggestedSl
         : openCfdDetails.stopLoss
     );
 

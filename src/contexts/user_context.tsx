@@ -702,11 +702,12 @@ export const UserProvider = ({children}: IUserProvider) => {
   */
 
   const updateBalance = (updatedBalance: IBalance) => {
+    // ToDo: throw error `Invalid input in updateBalance` (20230424 - Shirley)
     // Deprecated: not found currency (20230430 - Shirley)
     // eslint-disable-next-line no-console
     console.log('arg in updateBalance in ctx', updatedBalance);
     if (balancesRef.current) {
-      const index = balancesRef.current?.findIndex(balance => balance?.currency);
+      const index = balancesRef.current?.findIndex(balance => balance.currency);
       if (index !== -1) {
         const updateBalances = [...balancesRef.current];
         updateBalances[index] = updatedBalance;
@@ -753,6 +754,7 @@ export const UserProvider = ({children}: IUserProvider) => {
               // Deprecated: not found currency (20230430 - Shirley)
               // eslint-disable-next-line no-console
               console.log('acceptedCFDOrder in _createCFDOrder in ctx', acceptedCFDOrder);
+              // ToDo: resultCode (20230424 - Shirley)
               updateBalance(acceptedCFDOrder.receipt.balance);
               setHistories(prev => [...prev, acceptedCFDOrder]);
 
@@ -866,6 +868,7 @@ export const UserProvider = ({children}: IUserProvider) => {
               newOpenedCFDs.splice(index, 1);
               setOpenedCFDs(newOpenedCFDs);
               setClosedCFDs(prev => [...prev, updateCFDOrder]);
+              // ToDo: resultCode (20230424 - Shirley)
               updateBalance(acceptedCFDOrder.receipt.balance);
               setHistories(prev => [...prev, acceptedCFDOrder]);
 

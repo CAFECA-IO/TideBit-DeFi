@@ -98,7 +98,11 @@ const DepositModal = ({
       console.log(`userCtx.deposit result:`, result);
 
       // TODO: for debug
-      globalCtx.toast({message: 'deposit result: ' + JSON.stringify(result), type: 'info'});
+      globalCtx.toast({
+        message: 'deposit result: ' + JSON.stringify(result),
+        type: 'info',
+        typeText: t('TOAST.INFO'),
+      });
 
       // TODO: the button URL
       if (result.success) {

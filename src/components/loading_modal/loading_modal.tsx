@@ -4,7 +4,9 @@ import Image from 'next/image';
 import RippleButton from '../ripple_button/ripple_button';
 import {GlobalContext} from '../../contexts/global_context';
 import {useContext} from 'react';
+import {useTranslation} from 'next-i18next';
 
+type TranslateFunction = (s: string) => string;
 export interface ILoadingModal {
   modalRef?: React.RefObject<HTMLDivElement>;
   modalVisible: boolean;
@@ -13,6 +15,7 @@ export interface ILoadingModal {
   modalContent: string;
   btnMsg?: string;
   btnUrl?: string;
+  isShowZoomOutBtn?: boolean;
   //zoomOutHandler: () => void;
 }
 
@@ -24,9 +27,10 @@ const LoadingModal = ({
   modalContent,
   btnMsg,
   btnUrl,
-  //zoomOutHandler,
+  isShowZoomOutBtn,
   ...otherProps
 }: ILoadingModal) => {
+  const {t}: {t: TranslateFunction} = useTranslation('common');
   const globalCtx = useContext(GlobalContext);
 
   const zoomOutHandler = () => {
@@ -35,10 +39,11 @@ const LoadingModal = ({
     if (globalCtx.visibleLoadingModal) {
       globalCtx.toast({
         type: 'info',
-        message:
-          '[TODO] Pending toast which cannot be closed manually and automatically unless the process is finished',
+        message: `${modalTitle} is still in progress, please wait...`,
         toastId: 'loadingModalClosed',
         autoClose: false,
+        isLoading: true,
+        typeText: t('TOAST.INFO'),
       });
     }
   };
@@ -58,19 +63,21 @@ const LoadingModal = ({
               <h3 className="mx-auto mt-2 w-full text-center text-2xl font-normal text-lightWhite">
                 {modalTitle}
               </h3>
-              <button className="z-10 float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
-                <span
-                  onClick={zoomOutHandler}
-                  className="absolute top-3 right-3 block outline-none focus:outline-none"
-                >
-                  <Image
-                    src="/elements/group_14915.svg"
-                    width={30}
-                    height={30}
-                    alt="zoom-out icon"
-                  />
-                </span>
-              </button>
+              {isShowZoomOutBtn ? (
+                <button className="z-10 float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
+                  <span
+                    onClick={zoomOutHandler}
+                    className="absolute top-3 right-3 block outline-none focus:outline-none"
+                  >
+                    <Image
+                      src="/elements/group_14915.svg"
+                      width={30}
+                      height={30}
+                      alt="zoom-out icon"
+                    />
+                  </span>
+                </button>
+              ) : null}
             </div>
             {/*body*/}
             <div className="relative flex-auto pt-1">

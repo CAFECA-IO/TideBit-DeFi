@@ -178,7 +178,7 @@ export const LINE_GRAPH_STROKE_COLOR = {
   BLACK: '#000000',
 };
 
-export const MODAL_BUTTON_STYLES = {
+export const MODAL_BUTTON_STYLE = {
   SOLID:
     'rounded border-0 whitespace-nowrap bg-tidebitTheme text-sm text-white transition-colors duration-300 hover:bg-cyan-600 focus:outline-none disabled:bg-lightGray',
   HOLLOW:

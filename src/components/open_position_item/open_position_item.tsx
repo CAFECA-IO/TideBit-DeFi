@@ -57,6 +57,7 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
           : marketCtx.tickerLiveStatistics?.buyEstimatedFilledPrice ?? 999999999
       }\nsuggestion: ${JSON.stringify(openCfdDetails?.suggestion)}`,
       type: 'info',
+      typeText: t('TOAST.INFO'),
     });
   };
 

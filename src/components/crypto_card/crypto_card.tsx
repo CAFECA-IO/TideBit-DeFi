@@ -8,7 +8,9 @@ import {UserContext, IUserContext} from '../../contexts/user_context';
 import {MarketContext} from '../../contexts/market_context';
 import {useGlobal} from '../../contexts/global_context';
 import {ICurrency} from '../../constants/currency';
+import {useTranslation} from 'react-i18next';
 
+type TranslateFunction = (s: string) => string;
 /**
  * @dev used when it needs the star functionality
  * @param {star} empty star
@@ -57,6 +59,7 @@ const CryptoCard = ({
   cardClickHandler,
   ...otherProps
 }: ICardProps): JSX.Element => {
+  const {t}: {t: TranslateFunction} = useTranslation('common');
   const userCtx = useContext(UserContext) as IUserContext;
   const marketCtx = useContext(MarketContext);
   fluctuating = Number(fluctuating);
@@ -72,7 +75,11 @@ const CryptoCard = ({
 
   const starClickHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
     if (!userCtx.enableServiceTerm) {
-      globalCtx.toast({type: 'error', message: 'Please login to add to favorites'});
+      globalCtx.toast({
+        type: 'error',
+        message: 'Please login to add to favorites',
+        typeText: t('TOAST.ERROR'),
+      });
     }
 
     event.stopPropagation(); // Prevent the div click handler from firing

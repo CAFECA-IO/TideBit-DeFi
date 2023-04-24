@@ -84,8 +84,9 @@ const User = () => {
         <li
           onClick={() => {
             globalCtx.dataLoadingModalHandler({
-              modalTitle: 'test',
+              modalTitle: 'Deposit',
               modalContent: 'Dont forget delete this',
+              isShowZoomOutBtn: true,
             });
             globalCtx.visibleLoadingModalHandler();
           }}

@@ -98,7 +98,11 @@ const WithdrawalModal = ({
       const result = await userCtx.withdraw(withdrawOrder);
 
       // TODO: for debug
-      globalCtx.toast({message: 'withdraw result: ' + JSON.stringify(result), type: 'info'});
+      globalCtx.toast({
+        message: 'withdraw result: ' + JSON.stringify(result),
+        type: 'info',
+        typeText: t('TOAST.INFO'),
+      });
 
       // TODO: the button URL
       if (result.success) {

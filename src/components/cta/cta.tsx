@@ -48,7 +48,7 @@ const Cta = () => {
       </section>
 
       {/* Mobile version (width < 1024 px) */}
-      <section className="mb-1/10 flex w-screen flex-col items-center justify-center lg:hidden">
+      <section className="mb-1/10 flex flex-col items-center justify-center lg:hidden">
         <Image
           className="ml-1/10"
           alt="candlestick chart view"

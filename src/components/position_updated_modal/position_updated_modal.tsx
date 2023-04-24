@@ -207,13 +207,15 @@ const PositionUpdatedModal = ({
       ? setGtslTextStyle('text-lightYellow2')
       : setGtslTextStyle('text-lightWhite');
 
-    updatedProps.takeProfit !== undefined && updatedProps.takeProfit !== openCfdDetails?.takeProfit
-      ? setTpTextStyle('text-lightYellow2')
-      : setTpTextStyle('text-lightWhite');
+    (updatedProps.takeProfit === 0 && openCfdDetails.takeProfit === undefined) ||
+    updatedProps.takeProfit === openCfdDetails?.takeProfit
+      ? setTpTextStyle('text-lightWhite')
+      : setTpTextStyle('text-lightYellow2');
 
-    updatedProps.stopLoss !== undefined && updatedProps.stopLoss !== openCfdDetails?.stopLoss
-      ? setSlTextStyle('text-lightYellow2')
-      : setSlTextStyle('text-lightWhite');
+    (updatedProps.stopLoss === 0 && openCfdDetails.stopLoss === undefined) ||
+    updatedProps.stopLoss === openCfdDetails?.stopLoss
+      ? setSlTextStyle('text-lightWhite')
+      : setSlTextStyle('text-lightYellow2');
   };
 
   useEffect(() => {

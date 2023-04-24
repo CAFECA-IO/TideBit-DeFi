@@ -2,6 +2,8 @@ import Lottie from 'lottie-react';
 import bigConnectingAnimation from '../../../public/animation/lf30_editor_qlduo5gq.json';
 import Image from 'next/image';
 import RippleButton from '../ripple_button/ripple_button';
+import {GlobalContext} from '../../contexts/global_context';
+import {useContext} from 'react';
 
 export interface ILoadingModal {
   modalRef?: React.RefObject<HTMLDivElement>;
@@ -11,6 +13,7 @@ export interface ILoadingModal {
   modalContent: string;
   btnMsg?: string;
   btnUrl?: string;
+  //zoomOutHandler: () => void;
 }
 
 const LoadingModal = ({
@@ -21,8 +24,25 @@ const LoadingModal = ({
   modalContent,
   btnMsg,
   btnUrl,
+  //zoomOutHandler,
   ...otherProps
 }: ILoadingModal) => {
+  const globalCtx = useContext(GlobalContext);
+
+  const zoomOutHandler = () => {
+    modalClickHandler();
+
+    if (globalCtx.visibleLoadingModal) {
+      globalCtx.toast({
+        type: 'info',
+        message:
+          '[TODO] Pending toast which cannot be closed manually and automatically unless the process is finished',
+        toastId: 'loadingModalClosed',
+        autoClose: false,
+      });
+    }
+  };
+
   const isDisplayedConnecting = modalVisible ? (
     <>
       <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">
@@ -40,7 +60,7 @@ const LoadingModal = ({
               </h3>
               <button className="z-10 float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
                 <span
-                  onClick={modalClickHandler}
+                  onClick={zoomOutHandler}
                   className="absolute top-3 right-3 block outline-none focus:outline-none"
                 >
                   <Image

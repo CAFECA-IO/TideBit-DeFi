@@ -74,6 +74,7 @@ export interface IToastify {
   type: 'error' | 'warning' | 'info' | 'success';
   message: string;
   toastId?: string | number; // Prevent duplicate toast
+  autoClose?: number | false;
 }
 export interface IUpdatedCFDInputProps {
   takeProfit?: number;
@@ -222,7 +223,7 @@ export const dummyBadgeSharingModal: IBadgeSharingModal = {
   badgeId: 'TBDFUTURES2023FEB05',
 };
 
-const toastHandler = ({type, message, toastId}: IToastify) => {
+const toastHandler = ({type, message, toastId, autoClose}: IToastify) => {
   // Till: (20230330 - Shirley)
   // return {
   //   [TOAST_CLASSES_TYPE.error]: toastify.error(message),
@@ -243,6 +244,7 @@ const toastHandler = ({type, message, toastId}: IToastify) => {
         ),
         bodyClassName:
           'text-lightWhite text-sm lg:whitespace-nowrap flex p-4 w-auto before:block before:absolute before:-left-1 before:w-2 before:h-50px before:bg-lightRed',
+        autoClose: autoClose ?? 3000,
       });
       break;
     case 'warning':
@@ -256,6 +258,7 @@ const toastHandler = ({type, message, toastId}: IToastify) => {
         ),
         bodyClassName:
           'text-lightWhite text-sm lg:whitespace-nowrap flex p-4 w-auto before:block before:absolute before:-left-1 before:w-2 before:h-50px before:bg-lightYellow2',
+        autoClose: autoClose ?? 3000,
       });
       break;
     case 'info':
@@ -268,7 +271,8 @@ const toastHandler = ({type, message, toastId}: IToastify) => {
           </div>
         ),
         bodyClassName:
-          'text-lightWhite text-sm lg:whitespace-nowrap flex w-auto before:block before:absolute before:-left-1 before:w-2 before:h-50px before:bg-tidebitTheme',
+          'text-lightWhite pr-4 text-sm lg:whitespace-nowrap w-auto before:block before:absolute before:-left-1 before:w-2 before:h-50px before:bg-tidebitTheme',
+        autoClose: autoClose ?? 3000,
       });
       break;
     case 'success':
@@ -282,6 +286,7 @@ const toastHandler = ({type, message, toastId}: IToastify) => {
         ),
         bodyClassName:
           'text-lightWhite text-sm lg:whitespace-nowrap flex p-4 w-auto before:block before:absolute before:-left-1 before:w-2 before:h-50px before:bg-lightGreen5',
+        autoClose: autoClose ?? 3000,
       });
       break;
     default:
@@ -695,8 +700,8 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     setColorMode(colorMode === 'light' ? 'dark' : 'light');
   };
 
-  const toast = ({type, message, toastId}: IToastify) => {
-    toastHandler({type: type, message: message, toastId: toastId});
+  const toast = ({type, message, toastId, autoClose}: IToastify) => {
+    toastHandler({type: type, message: message, toastId: toastId, autoClose: autoClose});
   };
 
   const eliminateAllModals = () => {
@@ -762,6 +767,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
         message:
           '[TODO] Pending toast which cannot be closed manually and automatically unless the process is finished',
         toastId: 'loadingModalClosed',
+        autoClose: false,
       });
     }
   };
@@ -1130,7 +1136,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     <GlobalContext.Provider value={defaultValue}>
       <LoadingModal
         modalVisible={visibleLoadingModal}
-        // zoomOutLoadingModal
+        //zoomOutHandler={zoomOutLoadingModal}
         modalClickHandler={visibleLoadingModalHandler}
         modalTitle={dataLoadingModal.modalTitle}
         modalContent={dataLoadingModal.modalContent}

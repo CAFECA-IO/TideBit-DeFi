@@ -357,10 +357,6 @@ const UpdateFormModal = ({
       changedProperties = {...changedProperties};
     }
 
-    // Deprecated: not found currency (20230430 - Shirley)
-    // eslint-disable-next-line no-console
-    console.log('form modal, changedProperties: ', changedProperties);
-
     return changedProperties;
   };
 
@@ -524,9 +520,6 @@ const UpdateFormModal = ({
   ]);
 
   useEffect(() => {
-    // Deprecated: not found currency (20230430 - Shirley)
-    // eslint-disable-next-line no-console
-    console.log('cfd info', openCfdDetails, 'globalCtx', globalCtx.visibleUpdateFormModal);
     setGuaranteedChecked(openCfdDetails.guaranteedStop);
     setTpToggle(!!openCfdDetails.takeProfit);
     setSlToggle(!!openCfdDetails.stopLoss);
@@ -554,12 +547,9 @@ const UpdateFormModal = ({
           : openCfdDetails.suggestion.stopLoss
         : openCfdDetails.suggestion.stopLoss;
 
-    // if (market)
-
     setSlValue(
       openCfdDetails.stopLoss === 0 || openCfdDetails.stopLoss === undefined
-        ? // ? openCfdDetails.suggestion.stopLoss
-          suggestedSl
+        ? suggestedSl
         : openCfdDetails.stopLoss
     );
 

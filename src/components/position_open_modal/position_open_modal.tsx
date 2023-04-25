@@ -95,7 +95,7 @@ const PositionOpenModal = ({
     globalCtx.dataLoadingModalHandler({
       modalTitle: t('POSITION_MODAL.OPEN_POSITION_TITLE'),
       modalContent: t('POSITION_MODAL.CONFIRM_CONTENT'),
-      isShowZoomOutBtn: true,
+      isShowZoomOutBtn: false,
     });
     globalCtx.visibleLoadingModalHandler();
 
@@ -112,6 +112,7 @@ const PositionOpenModal = ({
           modalContent: t('POSITION_MODAL.TRANSACTION_BROADCAST'),
           btnMsg: t('POSITION_MODAL.VIEW_ON_BUTTON'),
           btnUrl: '#',
+          isShowZoomOutBtn: false,
         });
 
         // ToDo: Need to get a singnal from somewhere to show the successful modal

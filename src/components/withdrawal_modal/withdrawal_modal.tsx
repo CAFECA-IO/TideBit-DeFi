@@ -114,6 +114,7 @@ const WithdrawalModal = ({
           modalContent: t('D_W_MODAL.TRANSACTION_BROADCAST'),
           btnMsg: t('D_W_MODAL.VIEW_ON_BUTTON'),
           btnUrl: '#',
+          isShowZoomOutBtn: true,
         });
 
         // INFO: for UX

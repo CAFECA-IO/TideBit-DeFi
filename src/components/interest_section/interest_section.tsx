@@ -1,8 +1,10 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import Lottie from 'lottie-react';
-import {unitAsset} from '../../constants/config';
+import {unitAsset, FRACTION_DIGITS} from '../../constants/config';
+import {UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
 import runningDog from '../../../public/animation/70560-puli-dog-run.json';
 import {useGlobal} from '../../contexts/global_context';
+import {UserContext} from '../../contexts/user_context';
 import {useTranslation} from 'react-i18next';
 
 type TranslateFunction = (s: string) => string;
@@ -12,11 +14,19 @@ const InterestSection = () => {
 
   const {layoutAssertion} = useGlobal();
 
-  // TODO: interestInfo should be fetched from context
+  const userCtx = useContext(UserContext);
+
+  /* ToDo: (20230420 - Julian) getMyAssets by currency */
   const interestInfo = {
-    APY: 1,
-    interest30Days: 20,
-    cumulativeInterest: 241,
+    APY: userCtx.getMyAssets('')?.interest.apy ?? 0,
+    interest30Days:
+      userCtx
+        .getMyAssets('')
+        ?.interest.monthly.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS) ?? 0,
+    cumulativeInterest:
+      userCtx
+        .getMyAssets('')
+        ?.interest.cumulative.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS) ?? 0,
   };
 
   const interestContentJsx = Object.entries(interestInfo).map(([key, value]) => (
@@ -38,7 +48,8 @@ const InterestSection = () => {
             key === 'APY' ? 'pt-3 text-lg' : 'pt-3 text-base'
           }`}
         >
-          <span className="text-4xl text-tidebitTheme">{value}</span>&nbsp;
+          <span className="text-4xl text-tidebitTheme">{value}</span>
+          &nbsp;
           {key === 'APY' ? '%' : unitAsset}
         </p>
       </div>

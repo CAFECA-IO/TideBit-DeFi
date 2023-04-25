@@ -50,6 +50,32 @@ import {CustomError} from '../lib/custom_error';
 //import {setTimeout} from 'timers/promises';
 import {IWalletExtension, WalletExtension} from '../constants/wallet_extension';
 
+export interface IMyAssets {
+  currency: string;
+  balance: {
+    available: number;
+    locked: number;
+  };
+  pnl: {
+    today: {
+      amount: number;
+      percentage: number;
+    };
+    monthly: {
+      amount: number;
+      percentage: number;
+    };
+    cumulative: {
+      amount: number;
+      percentage: number;
+    };
+  };
+  interest: {
+    apy: number;
+    monthly: number;
+    cumulative: number;
+  };
+}
 export interface IUserBalance {
   available: number;
   locked: number;
@@ -131,6 +157,7 @@ export interface IUserContext {
   readNotifications: (notifications: INotificationItem[]) => Promise<IResult>;
   getBalance: (props: string) => IBalance | null;
   getWalletBalance: (props: string) => IWalletBalance | null;
+  getMyAssets: (props: string) => IMyAssets | null;
   init: () => Promise<void>;
   walletExtensions: IWalletExtension[];
 }
@@ -223,6 +250,7 @@ export const UserContext = createContext<IUserContext>({
   },
   getBalance: () => null,
   getWalletBalance: () => null,
+  getMyAssets: () => null,
   init: () => Promise.resolve(),
   walletExtensions: [],
 });
@@ -682,6 +710,30 @@ export const UserProvider = ({children}: IUserProvider) => {
       if (index !== -1) balance = balancesRef.current[index];
     }
     return balance;
+  };
+
+  const getMyAssets = (currency: string) => {
+    const myAsset: IMyAssets = {
+      currency: 'USDT',
+      balance: {
+        available: 1296.47,
+        locked: 589.628,
+      },
+      pnl: {
+        today: {
+          amount: -128.293,
+          percentage: -1.5,
+        },
+        monthly: {amount: 98164532.83, percentage: 10.36},
+        cumulative: {amount: -57692.4, percentage: -22.75},
+      },
+      interest: {
+        apy: 1,
+        monthly: 20.2,
+        cumulative: 245,
+      },
+    };
+    return myAsset;
   };
   /** Deprecated: transaction return updated balance (20230412 - tzuhan) 
   const updateBalance = (balanceDiff: IBalance) => {
@@ -1302,6 +1354,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     readNotifications,
     getBalance,
     getWalletBalance,
+    getMyAssets,
     init,
     walletExtensions: walletExtensionsRef.current,
   };

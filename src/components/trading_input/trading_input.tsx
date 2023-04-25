@@ -29,6 +29,8 @@ interface ITradingInputProps {
 
   shortTpLimit?: number;
   longTpLimit?: number;
+
+  reachOppositeLimit?: boolean;
 }
 
 const TradingInput = ({
@@ -45,28 +47,17 @@ const TradingInput = ({
   lowerLimit,
   upperLimit,
 
+  reachOppositeLimit,
+
   ...otherProps
 }: ITradingInputProps) => {
-  // const [inputValue, setInputValue] =
-  //   inputValueFromParent && setInputValueFromParent
-  //     ? [inputValueFromParent, setInputValueFromParent]
-  //     : useState<number>(inputInitialValue);
   const [inputValue, setInputValue] = useState<number>(inputInitialValue);
 
   const [validationTimeout, setValidationTimeout, validationTimeoutRef] = useStateRef<ReturnType<
     typeof setTimeout
   > | null>(null);
-  // const [validationTimeout, setValidationTimeout] = useState<ReturnType<typeof setTimeout> | null>(
-  //   null
-  // );
-  // const validationTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // const regex = /^\d*\.?\d{0,2}$/;
-  const regex = /^(?!0\d)\d*\.?\d{0,2}$/;
-
-  // const passValueHandler = (data: number) => {
-  //   getInputValue && getInputValue(data);
-  // };
+  const regex = /^\d*\.?\d{0,2}$/;
 
   const passValueHandler = useCallback(
     (data: number) => {
@@ -81,6 +72,13 @@ const TradingInput = ({
       passValueHandler(upperLimit);
       return;
     } else if (lowerLimit && value <= lowerLimit) {
+      // Info: For short SL setting, if the value is lower than the lower limit, it will be set to the UPPER limit (Liquidation Price) (20230424 - Shirley)
+      if (!!reachOppositeLimit && upperLimit) {
+        setInputValue(upperLimit);
+        passValueHandler(upperLimit);
+        return;
+      }
+
       setInputValue(lowerLimit);
       passValueHandler(lowerLimit);
       return;
@@ -106,28 +104,6 @@ const TradingInput = ({
     setValidationTimeout(newTimeout);
   };
 
-  // Debounce function
-  function debounce(fn: (...args: any[]) => void, ms: number): (...args: any[]) => void {
-    let timer: ReturnType<typeof setTimeout> | null;
-    return (...args) => {
-      if (timer) clearTimeout(timer);
-      timer = setTimeout(() => {
-        timer = null;
-        fn(...args);
-        // fn.apply(this, args);
-      }, ms);
-    };
-  }
-
-  // // Debounce the validateInput function
-  // const debouncedValidateInput = useCallback(
-  //   debounce((value: number) => {
-  //     validateInput(value);
-  //     console.log('in debounceInput', value);
-  //   }, INPUT_VALIDATION_DELAY),
-  //   []
-  // );
-
   const inputChangeHandler: React.ChangeEventHandler<HTMLInputElement> = event => {
     const value = event.target.value;
 
@@ -135,8 +111,6 @@ const TradingInput = ({
       const numberValue = Number(value);
       setInputValue(numberValue);
       passValueHandler(numberValue);
-
-      // debouncedValidateInput(numberValue);
 
       debounceValidation(numberValue);
     } else {

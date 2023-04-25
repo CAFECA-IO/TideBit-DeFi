@@ -27,6 +27,7 @@ import {
   WAITING_TIME_FOR_USER_SIGNING,
   unitAsset,
   FRACTION_DIGITS,
+  LEVERAGE_ERROR,
 } from '../../constants/config';
 import {TypeOfPosition} from '../../constants/type_of_position';
 import {IClosedCFDInfoProps, useGlobal} from '../../contexts/global_context';
@@ -189,6 +190,7 @@ const PositionClosedModal = ({
     // TODO: replace `twoDecimal` with `toLocaleString` (20230325 - Shirley)
     const openPrice = cfd.openPrice;
     const closePrice = quotation.price;
+    const leverage = marketCtx.tickerStatic?.leverage ?? LEVERAGE_ERROR;
 
     const openValue = twoDecimal(openPrice * cfd.amount);
     const closeValue = twoDecimal(closePrice * cfd.amount);
@@ -207,12 +209,12 @@ const PositionClosedModal = ({
     const suggestion: ICFDSuggestion = {
       takeProfit:
         cfd.typeOfPosition === TypeOfPosition.BUY
-          ? openValue * (1 + SUGGEST_TP)
-          : openValue * (1 - SUGGEST_TP),
+          ? openValue * (1 + SUGGEST_TP / leverage)
+          : openValue * (1 - SUGGEST_TP / leverage),
       stopLoss:
         cfd.typeOfPosition === TypeOfPosition.BUY
-          ? openValue * (1 - SUGGEST_SL)
-          : openValue * (1 + SUGGEST_SL),
+          ? openValue * (1 - SUGGEST_SL / leverage)
+          : openValue * (1 + SUGGEST_SL / leverage),
     };
 
     const historyCfd: IDisplayCFDOrder = {

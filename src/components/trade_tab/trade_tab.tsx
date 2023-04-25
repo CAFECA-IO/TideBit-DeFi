@@ -17,6 +17,8 @@ import {
   BUY_PRICE_ERROR,
   LEVERAGE_ERROR,
   SELL_PRICE_ERROR,
+  USER_BALANCE_ERROR,
+  TP_SL_LIMIT_PERCENT,
 } from '../../constants/config';
 import {useGlobal} from '../../contexts/global_context';
 import {MarketContext} from '../../contexts/market_context';
@@ -61,9 +63,9 @@ const TradeTab = () => {
   const DEFAULT_TICKER = 'ETH';
 
   const ticker = marketCtx.selectedTicker?.currency ?? '';
-  const USER_BALANCE = userCtx.balance?.available ?? 0;
+  const USER_BALANCE = userCtx.balance?.available ?? USER_BALANCE_ERROR;
 
-  const leverage = tickerStaticStatistics?.leverage ?? 1;
+  const leverage = tickerStaticStatistics?.leverage ?? LEVERAGE_ERROR;
   const gsl = marketCtx.guaranteedStopFeePercentage;
 
   const defaultBuyQuotation: IQuotation = getDummyQuotation(ticker, TypeOfPosition.BUY);
@@ -83,20 +85,20 @@ const TradeTab = () => {
   const [targetInputValue, setTargetInputValue, targetInputValueRef] = useStateRef(0.02);
 
   // FIXME: SL setting should have a lower limit and an upper limit depending on its position type
-  const [longTpValue, setLongTpValue, loneTpValueRef] = useStateRef(
-    Number((Number(longQuotationRef.current?.price) * (1 + SUGGEST_TP)).toFixed(2))
+  const [longTpValue, setLongTpValue, longTpValueRef] = useStateRef(
+    Number((Number(longQuotationRef.current?.price) * (1 + SUGGEST_TP / leverage)).toFixed(2))
   );
   const [longSlValue, setLongSlValue, longSlValueRef] = useStateRef(
-    Number((Number(longQuotationRef.current?.price) * (1 - SUGGEST_SL)).toFixed(2))
+    Number((Number(longQuotationRef.current?.price) * (1 - SUGGEST_SL / leverage)).toFixed(2))
   );
   const [longTpToggle, setLongTpToggle] = useState(false);
   const [longSlToggle, setLongSlToggle] = useState(false);
 
   const [shortTpValue, setShortTpValue, shortTpValueRef] = useStateRef(
-    Number((Number(shortQuotationRef.current?.price) * (1 - SUGGEST_TP)).toFixed(2))
+    Number((Number(shortQuotationRef.current?.price) * (1 - SUGGEST_TP / leverage)).toFixed(2))
   );
   const [shortSlValue, setShortSlValue, shortSlValueRef] = useStateRef(
-    Number((Number(shortQuotationRef.current?.price) * (1 + SUGGEST_SL)).toFixed(2))
+    Number((Number(shortQuotationRef.current?.price) * (1 + SUGGEST_SL / leverage)).toFixed(2))
   );
   const [shortTpToggle, setShortTpToggle] = useState(false);
   const [shortSlToggle, setShortSlToggle] = useState(false);
@@ -179,6 +181,11 @@ const TradeTab = () => {
   const [longTpLowerLimit, setLongTpLowerLimit, longTpLowerLimitRef] = useStateRef(0);
   const [shortTpUpperLimit, setShortTpUpperLimit, shortTpUpperLimitRef] = useStateRef(0);
 
+  const [longTpSuggestion, setLongTpSuggestion, longTpSuggestionRef] = useStateRef(0);
+  const [longSlSuggestion, setLongSlSuggestion, longSlSuggestionRef] = useStateRef(0);
+  const [shortTpSuggestion, setShortTpSuggestion, shortTpSuggestionRef] = useStateRef(0);
+  const [shortSlSuggestion, setShortSlSuggestion, shortSlSuggestionRef] = useStateRef(0);
+
   // Info: Fetch quotation the first time (20230327 - Shirley)
   useEffect(() => {
     if (!userCtx.enableServiceTerm) return;
@@ -186,9 +193,9 @@ const TradeTab = () => {
     (async () => {
       await getQuotation(marketCtx.selectedTicker?.currency ?? DEFAULT_TICKER);
 
+      setTpSlBounds();
+      setSuggestions();
       renewPosition();
-
-      initSuggestion();
     })();
   }, [userCtx.enableServiceTerm]);
 
@@ -203,7 +210,8 @@ const TradeTab = () => {
 
       if (secondsLeftRef.current === 0) {
         await getQuotation(marketCtx.selectedTicker?.currency ?? DEFAULT_TICKER);
-
+        setTpSlBounds();
+        checkTpSlWithinBounds();
         renewPosition();
       }
     }, 1000);
@@ -218,9 +226,9 @@ const TradeTab = () => {
     notificationCtx.emitter.once(ClickEvent.TICKER_CHANGED, async () => {
       await getQuotation(marketCtx.selectedTicker?.currency ?? DEFAULT_TICKER);
 
+      setTpSlBounds();
+      setSuggestions();
       renewPosition();
-
-      initSuggestion();
     });
 
     return () => {
@@ -321,8 +329,6 @@ const TradeTab = () => {
       };
 
       setShortQuotation(sellQuotation);
-    } finally {
-      setTpSlBounds();
     }
 
     return {longQuotation: longQuotation, shortQuotation: shortQuotation};
@@ -377,38 +383,85 @@ const TradeTab = () => {
     );
   };
 
-  const setTpSlBounds = () => {
-    const longTpLowerBound = Number(longQuotationRef.current?.price);
-    const shortTpUpperBound = Number(shortQuotationRef.current?.price);
+  const checkTpSlWithinBounds = () => {
+    if (
+      longSlValueRef.current < longSlLowerLimitRef.current ||
+      longSlValueRef.current > longSlUpperLimitRef.current
+    ) {
+      setLongSlValue(longSlSuggestionRef.current);
+    }
 
-    const longSlLowerBound = twoDecimal(
-      Number(longQuotationRef.current?.price) * (1 - LIQUIDATION_FIVE_LEVERAGE)
+    if (
+      shortSlValueRef.current > shortSlUpperLimitRef.current ||
+      shortSlValueRef.current < shortSlLowerLimitRef.current
+    ) {
+      setShortSlValue(shortSlSuggestionRef.current);
+    }
+
+    if (longTpValueRef.current < longTpLowerLimitRef.current) {
+      setLongTpValue(longTpSuggestionRef.current);
+    }
+
+    if (shortTpValueRef.current > shortTpUpperLimitRef.current) {
+      setShortTpValue(shortTpSuggestionRef.current);
+    }
+  };
+
+  const setTpSlBounds = () => {
+    const longTpLowerBound = roundToDecimalPlaces(
+      Number(longQuotationRef.current?.price) * (1 + TP_SL_LIMIT_PERCENT),
+      2
+    );
+    const shortTpUpperBound = roundToDecimalPlaces(
+      Number(shortQuotationRef.current?.price) * (1 - TP_SL_LIMIT_PERCENT),
+      2
     );
 
-    const shortSlUpperBound = twoDecimal(
-      Number(shortQuotationRef.current?.price) * (1 + LIQUIDATION_FIVE_LEVERAGE)
+    const longSlLowerBound = roundToDecimalPlaces(
+      Number(longQuotationRef.current?.price) * (1 - LIQUIDATION_FIVE_LEVERAGE),
+      2
+    );
+
+    const shortSlUpperBound = roundToDecimalPlaces(
+      Number(shortQuotationRef.current?.price) * (1 + LIQUIDATION_FIVE_LEVERAGE),
+      2
     );
 
     setLongSlLowerLimit(longSlLowerBound);
-    setLongSlUpperLimit(longTpLowerBound); // Open price
-    setLongTpLowerLimit(longTpLowerBound); // Open price
+    setLongSlUpperLimit(longTpLowerBound); // Open price with buffer
+    setLongTpLowerLimit(longTpLowerBound); // Open price with buffer
 
-    setShortTpUpperLimit(shortTpUpperBound); // Open price
+    setShortTpUpperLimit(shortTpUpperBound); // Open price with buffer
     setShortSlUpperLimit(shortSlUpperBound);
-    setShortSlLowerLimit(shortTpUpperBound); // Open price
+    setShortSlLowerLimit(shortTpUpperBound); // Open price with buffer
+
+    updateSuggestions();
+  };
+
+  const updateSuggestions = () => {
+    const tpTimes = SUGGEST_TP / leverage;
+    const slTimes = SUGGEST_SL / leverage;
+
+    setLongTpSuggestion(
+      Number((Number(longQuotationRef.current?.price) * (1 + tpTimes)).toFixed(2))
+    );
+    setLongSlSuggestion(
+      Number((Number(longQuotationRef.current?.price) * (1 - slTimes)).toFixed(2))
+    );
+    setShortTpSuggestion(
+      Number((Number(shortQuotationRef.current?.price) * (1 - tpTimes)).toFixed(2))
+    );
+    setShortSlSuggestion(
+      Number((Number(shortQuotationRef.current?.price) * (1 + slTimes)).toFixed(2))
+    );
   };
 
   // Info: suggest the tp / sl in the beginning (20230329 - Shirley)
-  const initSuggestion = () => {
-    setLongTpValue(Number((Number(longQuotationRef.current?.price) * (1 + SUGGEST_TP)).toFixed(2)));
-    setLongSlValue(Number((Number(longQuotationRef.current?.price) * (1 - SUGGEST_SL)).toFixed(2)));
-
-    setShortTpValue(
-      Number((Number(shortQuotationRef.current?.price) * (1 - SUGGEST_TP)).toFixed(2))
-    );
-    setShortSlValue(
-      Number((Number(shortQuotationRef.current?.price) * (1 + SUGGEST_SL)).toFixed(2))
-    );
+  const setSuggestions = () => {
+    setLongTpValue(longTpSuggestionRef.current);
+    setLongSlValue(longSlSuggestionRef.current);
+    setShortTpValue(shortTpSuggestionRef.current);
+    setShortSlValue(shortSlSuggestionRef.current);
   };
 
   // Info: renew the value of position when target input changed (20230328 - Shirley)

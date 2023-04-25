@@ -16,6 +16,7 @@ import {TypeOfPosition} from '../../constants/type_of_position';
 import {ProfitState} from '../../constants/profit_state';
 import {
   getNowSeconds,
+  getTimestamp,
   randomIntFromInterval,
   roundToDecimalPlaces,
   timestampToString,
@@ -73,7 +74,6 @@ const UpdateFormModal = ({
 
   const [guaranteedTooltipStatus, setGuaranteedTooltipStatus] = useState(0);
 
-  // FIXME: SL setting should have a lower limit and an upper limit depending on its position type
   const [slLowerLimit, setSlLowerLimit, slLowerLimitRef] = useState(0);
   const [slUpperLimit, setSlUpperLimit, slUpperLimitRef] = useState(0);
   const [tpLowerLimit, setTpLowerLimit, tpLowerLimitRef] = useState(0);
@@ -84,14 +84,6 @@ const UpdateFormModal = ({
   const [expectedProfitValue, setExpectedProfitValue, expectedProfitValueRef] = useStateRef(0);
   const [expectedLossValue, setExpectedLossValue, expectedLossValueRef] = useStateRef(0);
 
-  const displayedState =
-    openCfdDetails?.state === OrderState.OPENING
-      ? 'Open'
-      : openCfdDetails?.state === OrderState.CLOSED
-      ? 'Close'
-      : openCfdDetails?.state === OrderState.FREEZED
-      ? 'Freezed'
-      : '';
   const [guaranteedStopFee, setGuaranteedStopFee, guaranteedStopFeeRef] = useStateRef(
     Number(gsl) * openCfdDetails?.openPrice * openCfdDetails?.amount
   );
@@ -168,15 +160,6 @@ const UpdateFormModal = ({
   const mouseLeaveHandler = () => setGuaranteedTooltipStatus(0);
 
   const displayedExpectedProfit = (
-    // Till: (20230330 - Shirley)
-    // longTpToggle ? (
-    //   <div className={`${`translate-y-2`} -mt-0 items-center transition-all duration-500`}>
-    //     <div className="text-sm text-lightWhite">
-    //       {expectedLongProfitValue.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}
-    //     </div>
-    //   </div>
-    // ) : null;
-
     <div
       className={`${
         tpToggle ? `mb-3 translate-y-1` : `invisible translate-y-0`
@@ -212,7 +195,6 @@ const UpdateFormModal = ({
     </div>
   );
 
-  // ToDo: Recommend SL in the price between market price and liquidation price
   const guaranteedCheckedChangeHandler = () => {
     if (!openCfdDetails.guaranteedStop) {
       setGuaranteedChecked(!guaranteedChecked);
@@ -371,7 +353,6 @@ const UpdateFormModal = ({
     globalCtx.visiblePositionUpdatedModalHandler();
   };
 
-  // FIXME: Inconsistent information between text and input
   const displayedTakeProfitSetting = (
     <div className={`mr-8 ${isDisplayedTakeProfitSetting}`}>
       <TradingInput
@@ -390,7 +371,6 @@ const UpdateFormModal = ({
     </div>
   );
 
-  // FIXME: Inconsistent information between text and input
   const displayedStopLossSetting = (
     <div className={`mr-8 ${isDisplayedStopLossSetting}`}>
       <TradingInput
@@ -414,7 +394,6 @@ const UpdateFormModal = ({
       <div className="flex items-center text-center">
         <input
           type="checkbox"
-          // value=""
           checked={guaranteedpCheckedRef.current}
           onChange={guaranteedCheckedChangeHandler}
           className="h-5 w-5 rounded text-lightWhite accent-lightGray4"
@@ -474,7 +453,7 @@ const UpdateFormModal = ({
     }
   };
 
-  const nowTimestamp = new Date().getTime() / 1000;
+  const nowTimestamp = getTimestamp();
   const remainSecs = openCfdDetails?.liquidationTime - nowTimestamp;
 
   const remainTime =
@@ -524,11 +503,16 @@ const UpdateFormModal = ({
 
     const caledSl =
       marketCtx.selectedTicker?.price !== undefined
-        ? roundToDecimalPlaces(
-            (marketCtx.selectedTicker.price + openCfdDetails.liquidationPrice) / 2,
-            2
-          )
-        : openCfdDetails.liquidationPrice;
+        ? (openCfdDetails.typeOfPosition === TypeOfPosition.BUY &&
+            marketCtx.selectedTicker.price < openCfdDetails.liquidationPrice) ||
+          (openCfdDetails.typeOfPosition === TypeOfPosition.SELL &&
+            marketCtx.selectedTicker.price > openCfdDetails.liquidationPrice)
+          ? openCfdDetails.liquidationPrice
+          : roundToDecimalPlaces(
+              (marketCtx.selectedTicker.price + openCfdDetails.liquidationPrice) / 2,
+              2
+            )
+        : roundToDecimalPlaces(openCfdDetails.liquidationPrice, 2);
 
     const suggestedSl =
       marketCtx.selectedTicker?.price !== undefined

@@ -120,7 +120,7 @@ const CryptoCard = ({
 
   function lineGraph({
     strokeColor = ['#3CC8C8'],
-    dataArray = lineGraphProps.dataArray || [42, 50, 45, 55, 49, 52, 48, 68, 48, 20],
+    dataArray = [42, 50, 45, 55, 49, 52, 48, 68, 48, 20],
     lineGraphWidth,
     ...otherProps
   }: ILineGraphProps) {
@@ -251,9 +251,9 @@ const CryptoCard = ({
           <div className="flex flex-col justify-start">
             <div className="pointer-events-none absolute top-4 h-96 bg-transparent">
               {lineGraph({
-                dataArray: sampleArray,
-                strokeColor: thisRandomColor,
-                lineGraphWidth: '170',
+                dataArray: lineGraphProps?.dataArray || sampleArray,
+                strokeColor: lineGraphProps?.strokeColor || thisRandomColor,
+                lineGraphWidth: lineGraphProps?.lineGraphWidth || '170',
               })}
               {/* <LineGraph
                 sampleArray={sampleArray}

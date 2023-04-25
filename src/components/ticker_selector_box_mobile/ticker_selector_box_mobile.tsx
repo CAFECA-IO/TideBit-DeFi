@@ -31,7 +31,7 @@ interface ICryptoCardData {
   price: number;
   fluctuating: number;
   tokenImg: string;
-  lineGraphProps: ILineGraphProps;
+  lineGraphProps: number[]; //ILineGraphProps;
 
   // getStarredStateCallback: (bool: boolean) => void;
 

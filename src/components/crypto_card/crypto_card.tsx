@@ -31,7 +31,7 @@ export interface ICardProps {
   price: number;
   fluctuating: number;
   gradientColor: string;
-  lineGraphProps: ILineGraphProps;
+  lineGraphProps: number[]; //ILineGraphProps;
 
   star?: boolean;
   starColor?: string;
@@ -251,9 +251,9 @@ const CryptoCard = ({
           <div className="flex flex-col justify-start">
             <div className="pointer-events-none absolute top-4 h-96 bg-transparent">
               {lineGraph({
-                dataArray: lineGraphProps?.dataArray || sampleArray,
-                strokeColor: lineGraphProps?.strokeColor || thisRandomColor,
-                lineGraphWidth: lineGraphProps?.lineGraphWidth || '170',
+                dataArray: sampleArray,
+                strokeColor: thisRandomColor,
+                lineGraphWidth: '170',
               })}
               {/* <LineGraph
                 sampleArray={sampleArray}
@@ -305,9 +305,9 @@ const CryptoCard = ({
             <div className="pointer-events-none absolute right-0 top-1 bg-transparent">
               {/* <div className="absolute top-0 left-0 h-2 w-2/3 rounded bg-blue-200"></div> */}
               {lineGraph({
-                dataArray: lineGraphProps?.dataArray || sampleArray,
-                strokeColor: lineGraphProps?.strokeColor || thisRandomColor,
-                lineGraphWidth: lineGraphProps?.lineGraphWidthMobile || '140',
+                dataArray: sampleArray,
+                strokeColor: thisRandomColor,
+                lineGraphWidth: '140',
               })}
               {/* <LineGraph
                 sampleArray={sampleArray}

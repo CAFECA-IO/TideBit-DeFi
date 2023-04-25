@@ -529,7 +529,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       notificationCtx.emitter.on(
         TideBitEvent.CANDLESTICK,
         (action: IPusherAction, candlesticks: ICandlestick) => {
-          candlestickBook.updateCandlestickData(action, candlesticks);
+          candlestickBook.updateCandlesticksData(action, candlesticks);
           const [baseUnit, quoteUnit] = candlesticks.instId.split(`-`);
           if (selectedTickerRef.current?.currency === baseUnit)
             setCandlestickChartData(candlestickBook.listCandlestickData(candlesticks.instId, {}));

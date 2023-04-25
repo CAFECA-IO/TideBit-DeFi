@@ -1,15 +1,19 @@
 import {
   ITickerData,
   ITickerItem,
+  /** Deprecated: replaced by pusher (20230424 - tzuhan)
   ISortedTrade,
   ITBETrade,
   ITickerMarket,
   strokeColorDisplayed,
+  */
 } from '../../interfaces/tidebit_defi_background/ticker_data';
+/** Deprecated: replaced by pusher (20230424 - tzuhan)
 import {ICandlestickData} from '../../interfaces/tidebit_defi_background/candlestickData';
 import {ITickerHistoryData} from '../../interfaces/tidebit_defi_background/ticker_history_data';
-import {getTime, ITimeSpanUnion, TimeSpanUnion} from '../../constants/time_span_union';
 import {millesecondsToSeconds} from '../common';
+*/
+import {ITimeSpanUnion, TimeSpanUnion} from '../../constants/time_span_union';
 import {ICurrency} from '../../constants/currency';
 
 class TickerBook {
@@ -219,7 +223,7 @@ class TickerBook {
     // const sortedTrades = this.sortTrades(ticker, options);
     // const dataArray: number[] = Object.values(sortedTrades).map(t => +t.trades.open.price);
     // TODO: temporary need further discussion on how to calculate the position (20230424 - tzuhan)
-    return this.tickers[ticker]?.lineGraphProps || ([] as number[]);
+    return this.tickers[ticker]?.lineGraphProps.dataArray || ([] as number[]);
   }
 
   listTickers(): {[currency in ICurrency]: ITickerData} {
@@ -256,7 +260,7 @@ class TickerBook {
   updateTickers(value: ITickerItem[]) {
     let tickers: {[currency: string]: ITickerData} = {};
     tickers = [...value].reduce((prev, curr) => {
-      if (!prev[curr.currency]) prev[curr.currency] = {...curr, lineGraphProps: []};
+      if (!prev[curr.currency]) prev[curr.currency] = {...curr, lineGraphProps: {dataArray: []}};
       return prev;
     }, tickers);
     this.tickers = tickers;

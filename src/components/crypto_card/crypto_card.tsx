@@ -31,7 +31,7 @@ export interface ICardProps {
   price: number;
   fluctuating: number;
   gradientColor: string;
-  lineGraphProps: number[]; //ILineGraphProps;
+  lineGraphProps: ILineGraphProps;
 
   star?: boolean;
   starColor?: string;
@@ -120,7 +120,7 @@ const CryptoCard = ({
 
   function lineGraph({
     strokeColor = ['#3CC8C8'],
-    dataArray = [42, 50, 45, 55, 49, 52, 48, 68, 48, 20],
+    dataArray = lineGraphProps.dataArray || [42, 50, 45, 55, 49, 52, 48, 68, 48, 20],
     lineGraphWidth,
     ...otherProps
   }: ILineGraphProps) {

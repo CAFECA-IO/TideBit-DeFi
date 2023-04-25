@@ -29,7 +29,7 @@ interface ICryptoCardData {
   price: number;
   fluctuating: number;
   tokenImg: string;
-  lineGraphProps: number[]; //ILineGraphProps;
+  lineGraphProps: ILineGraphProps;
   starColor?: string;
   gradientColor?: string;
 }

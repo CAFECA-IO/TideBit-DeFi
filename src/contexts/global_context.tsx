@@ -72,8 +72,9 @@ import {FaRegCheckCircle, FaRegTimesCircle} from 'react-icons/fa';
 import SearchingModal from '../components/searching_modal/searching_modal';
 import Lottie from 'lottie-react';
 import smallConnectingAnimation from '../../public/animation/lf30_editor_cnkxmhy3.json';
+import {IToastType, ToastType} from '../constants/toast_type';
 export interface IToastify {
-  type: 'error' | 'warning' | 'info' | 'success';
+  type: IToastType;
   message: string;
   toastId?: string | number; // Prevent duplicate toast
   autoClose?: number | false;
@@ -229,13 +230,6 @@ export const dummyBadgeSharingModal: IBadgeSharingModal = {
 };
 
 const toastHandler = ({type, message, toastId, autoClose, isLoading, typeText}: IToastify) => {
-  // Till: (20230330 - Shirley)
-  // return {
-  //   [TOAST_CLASSES_TYPE.error]: toastify.error(message),
-  //   [TOAST_CLASSES_TYPE.warning]: toastify.warning(message),
-  //   [TOAST_CLASSES_TYPE.info]: toastify.info(message),
-  // }[type];
-
   const toastBodyStyle =
     'text-lightWhite text-sm lg:whitespace-nowrap px-4 before:block before:absolute before:-left-1 before:w-2 before:h-50px';
 
@@ -249,7 +243,7 @@ const toastHandler = ({type, message, toastId, autoClose, isLoading, typeText}: 
   );
 
   switch (type) {
-    case 'error':
+    case ToastType.ERROR:
       toastify.error(isLoadingMessage, {
         toastId: type + message + toastId,
         icon: (
@@ -262,7 +256,7 @@ const toastHandler = ({type, message, toastId, autoClose, isLoading, typeText}: 
         autoClose: autoClose ?? 3000,
       });
       break;
-    case 'warning':
+    case ToastType.WARNING:
       toastify.warning(isLoadingMessage, {
         toastId: type + message + toastId,
         icon: (
@@ -275,7 +269,7 @@ const toastHandler = ({type, message, toastId, autoClose, isLoading, typeText}: 
         autoClose: autoClose ?? 3000,
       });
       break;
-    case 'info':
+    case ToastType.INFO:
       toastify.info(isLoadingMessage, {
         toastId: type + message + toastId,
         icon: (
@@ -288,7 +282,7 @@ const toastHandler = ({type, message, toastId, autoClose, isLoading, typeText}: 
         autoClose: autoClose ?? 3000,
       });
       break;
-    case 'success':
+    case ToastType.SUCCESS:
       toastify.success(isLoadingMessage, {
         toastId: type + message + toastId,
         icon: (
@@ -783,7 +777,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
 
     if (visibleLoadingModal) {
       toast({
-        type: 'info',
+        type: ToastType.INFO,
         message:
           '[TODO] Pending toast which cannot be closed manually and automatically unless the process is finished',
         toastId: 'loadingModalClosed',

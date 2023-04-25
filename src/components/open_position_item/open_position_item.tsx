@@ -26,6 +26,7 @@ import {
   IDisplayApplyCFDOrder,
   getDummyDisplayApplyCloseCFDOrder,
 } from '../../interfaces/tidebit_defi_background/display_apply_cfd_order';
+import {ToastTypeAndText} from '../../constants/toast_type';
 import {useTranslation} from 'react-i18next';
 
 type TranslateFunction = (s: string) => string;
@@ -56,8 +57,8 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
           ? marketCtx.tickerLiveStatistics?.sellEstimatedFilledPrice ?? 0
           : marketCtx.tickerLiveStatistics?.buyEstimatedFilledPrice ?? 999999999
       }\nsuggestion: ${JSON.stringify(openCfdDetails?.suggestion)}`,
-      type: 'info',
-      typeText: t('TOAST.INFO'),
+      type: ToastTypeAndText.INFO.type,
+      typeText: t(ToastTypeAndText.INFO.text),
     });
   };
 

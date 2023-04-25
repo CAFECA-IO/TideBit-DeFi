@@ -13,6 +13,7 @@ import {UserContext} from '../../contexts/user_context';
 import {OrderType} from '../../constants/order_type';
 import {useTranslation} from 'react-i18next';
 import {Code} from '../../constants/code';
+import {ToastTypeAndText} from '../../constants/toast_type';
 
 type TranslateFunction = (s: string) => string;
 interface IWithdrawalModal {
@@ -101,8 +102,8 @@ const WithdrawalModal = ({
       // TODO: for debug
       globalCtx.toast({
         message: 'withdraw result: ' + JSON.stringify(result),
-        type: 'info',
-        typeText: t('TOAST.INFO'),
+        type: ToastTypeAndText.INFO.type,
+        typeText: t(ToastTypeAndText.INFO.text),
       });
 
       // TODO: the button URL

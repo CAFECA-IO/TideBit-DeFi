@@ -8,6 +8,7 @@ import {UserContext, IUserContext} from '../../contexts/user_context';
 import {MarketContext} from '../../contexts/market_context';
 import {useGlobal} from '../../contexts/global_context';
 import {ICurrency} from '../../constants/currency';
+import {ToastTypeAndText} from '../../constants/toast_type';
 import {useTranslation} from 'react-i18next';
 
 type TranslateFunction = (s: string) => string;
@@ -76,9 +77,9 @@ const CryptoCard = ({
   const starClickHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
     if (!userCtx.enableServiceTerm) {
       globalCtx.toast({
-        type: 'error',
+        type: ToastTypeAndText.ERROR.type,
         message: 'Please login to add to favorites',
-        typeText: t('TOAST.ERROR'),
+        typeText: t(ToastTypeAndText.ERROR.text),
       });
     }
 

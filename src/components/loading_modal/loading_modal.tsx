@@ -3,6 +3,7 @@ import bigConnectingAnimation from '../../../public/animation/lf30_editor_qlduo5
 import Image from 'next/image';
 import RippleButton from '../ripple_button/ripple_button';
 import {GlobalContext} from '../../contexts/global_context';
+import {ToastTypeAndText} from '../../constants/toast_type';
 import {useContext} from 'react';
 import {useTranslation} from 'next-i18next';
 
@@ -16,7 +17,6 @@ export interface ILoadingModal {
   btnMsg?: string;
   btnUrl?: string;
   isShowZoomOutBtn?: boolean;
-  //zoomOutHandler: () => void;
 }
 
 const LoadingModal = ({
@@ -45,12 +45,12 @@ const LoadingModal = ({
 
     if (globalCtx.visibleLoadingModal) {
       globalCtx.toast({
-        type: 'info',
+        type: ToastTypeAndText.INFO.type,
         message: `${modalTitle} is still in progress, please wait...`,
         toastId: 'loadingModalClosed',
         autoClose: false,
         isLoading: true,
-        typeText: t('TOAST.INFO'),
+        typeText: t(ToastTypeAndText.INFO.type),
       }); /* ToDo:(20230424 - Julian) 找到關掉 toast 的 function */
     }
   };

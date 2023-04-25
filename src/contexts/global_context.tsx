@@ -766,6 +766,8 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     setVisiblePositionClosedModal(false);
 
     setVisibleSearchingModal(false);
+
+    toastify.dismiss(undefined);
   };
 
   const visibleUpdateFormModalHandler = () => {
@@ -798,21 +800,21 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
   const dataWithdrawalHistoryModalHandler = (data: IAcceptedWithdrawOrder) => {
     setDataWithdrawalHistoryModal(data);
   };
+  /* Till: (20230503 - Julian) */
+  // const zoomOutLoadingModal = () => {
+  //   visibleLoadingModalHandler();
 
-  const zoomOutLoadingModal = () => {
-    visibleLoadingModalHandler();
-
-    if (visibleLoadingModal) {
-      toast({
-        type: ToastType.INFO,
-        message:
-          '[TODO] Pending toast which cannot be closed manually and automatically unless the process is finished',
-        toastId: 'loadingModalClosed',
-        autoClose: false,
-        typeText: 'Pending',
-      });
-    }
-  };
+  //   if (visibleLoadingModal) {
+  //     toast({
+  //       type: ToastType.INFO,
+  //       message:
+  //         '[TODO] Pending toast which cannot be closed manually and automatically unless the process is finished',
+  //       toastId: 'loadingModalClosed',
+  //       autoClose: false,
+  //       typeText: 'Pending',
+  //     });
+  //   }
+  // };
 
   const visibleLoadingModalHandler = () => {
     // TODO: (20230317 - Shirley) loading toast

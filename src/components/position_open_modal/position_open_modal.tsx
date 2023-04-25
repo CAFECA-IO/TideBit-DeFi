@@ -95,6 +95,7 @@ const PositionOpenModal = ({
     globalCtx.dataLoadingModalHandler({
       modalTitle: t('POSITION_MODAL.OPEN_POSITION_TITLE'),
       modalContent: t('POSITION_MODAL.CONFIRM_CONTENT'),
+      isShowZoomOutBtn: true,
     });
     globalCtx.visibleLoadingModalHandler();
 

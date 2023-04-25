@@ -78,6 +78,7 @@ const WithdrawalModal = ({
     globalCtx.dataLoadingModalHandler({
       modalTitle: t('D_W_MODAL.WITHDRAW'),
       modalContent: t('D_W_MODAL.CONFIRM_CONTENT'),
+      isShowZoomOutBtn: true,
     });
     globalCtx.visibleLoadingModalHandler();
 

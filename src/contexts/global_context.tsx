@@ -237,7 +237,7 @@ const toastHandler = ({type, message, toastId, autoClose, isLoading, typeText}: 
   // }[type];
 
   const toastBodyStyle =
-    'text-lightWhite text-sm lg:whitespace-nowrap w-auto before:block before:absolute before:-left-1 before:w-2 before:h-50px';
+    'text-lightWhite text-sm lg:whitespace-nowrap px-4 before:block before:absolute before:-left-1 before:w-2 before:h-50px';
 
   const isLoadingMessage = isLoading ? (
     <div className="inline-flex">

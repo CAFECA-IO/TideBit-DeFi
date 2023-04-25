@@ -76,6 +76,7 @@ const DepositModal = ({
     globalCtx.dataLoadingModalHandler({
       modalTitle: t('D_W_MODAL.DEPOSIT'),
       modalContent: t('D_W_MODAL.CONFIRM_CONTENT'),
+      isShowZoomOutBtn: true,
     });
     globalCtx.visibleLoadingModalHandler();
 

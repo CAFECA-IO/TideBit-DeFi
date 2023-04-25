@@ -34,6 +34,13 @@ const LoadingModal = ({
   const globalCtx = useContext(GlobalContext);
 
   const zoomOutHandler = () => {
+    /**
+     * Info: (20230424 - Julian) 關掉 modal
+     * 1. 記錄目前 modal 的內容
+     * 2. 關掉 modal
+     * 3. 顯示 toast
+     * 4. 點擊 toast 關掉 toast 並且顯示 modal
+     */
     modalClickHandler();
 
     if (globalCtx.visibleLoadingModal) {
@@ -44,7 +51,7 @@ const LoadingModal = ({
         autoClose: false,
         isLoading: true,
         typeText: t('TOAST.INFO'),
-      });
+      }); /* ToDo:(20230424 - Julian) 找到關掉 toast 的 function */
     }
   };
 

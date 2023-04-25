@@ -307,7 +307,7 @@ const CryptoCard = ({
               {lineGraph({
                 dataArray: lineGraphProps?.dataArray || sampleArray,
                 strokeColor: lineGraphProps?.strokeColor || thisRandomColor,
-                lineGraphWidth: lineGraphProps?.lineGraphWidth || '140',
+                lineGraphWidth: lineGraphProps?.lineGraphWidthMobile || '140',
               })}
               {/* <LineGraph
                 sampleArray={sampleArray}

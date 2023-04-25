@@ -1,4 +1,4 @@
-import {useContext, useState} from 'react';
+import {useContext} from 'react';
 import Image from 'next/image';
 import CircularProgressBar from '../circular_progress_bar/circular_progress_bar';
 import {
@@ -9,11 +9,10 @@ import {
   UNIVERSAL_NUMBER_FORMAT_LOCALE,
 } from '../../constants/display';
 import PositionLineGraph from '../position_line_graph/position_line_graph';
-import UpdateFormModal from '../update_form_modal/update_form_modal';
-import {IDataPositionClosedModal, useGlobal} from '../../contexts/global_context';
+import {useGlobal} from '../../contexts/global_context';
 import {ProfitState} from '../../constants/profit_state';
 import {TypeOfPosition} from '../../constants/type_of_position';
-import {timestampToString, getNowSeconds, randomIntFromInterval} from '../../lib/common';
+import {timestampToString} from '../../lib/common';
 import {cfdStateCode} from '../../constants/cfd_state_code';
 import {POSITION_CLOSE_COUNTDOWN_SECONDS, FRACTION_DIGITS} from '../../constants/config';
 import {MarketContext} from '../../contexts/market_context';
@@ -22,10 +21,6 @@ import {
   IDisplayCFDOrder,
   // getDummyDisplayAcceptedCFDOrder,
 } from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
-import {
-  IDisplayApplyCFDOrder,
-  getDummyDisplayApplyCloseCFDOrder,
-} from '../../interfaces/tidebit_defi_background/display_apply_cfd_order';
 import {ToastTypeAndText} from '../../constants/toast_type';
 import {useTranslation} from 'react-i18next';
 

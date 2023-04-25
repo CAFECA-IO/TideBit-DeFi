@@ -12,7 +12,7 @@ import {
   dummyWalletBalance_USDT,
   IWalletBalance,
 } from '../interfaces/tidebit_defi_background/wallet_balance';
-import {IBalance} from '../interfaces/tidebit_defi_background/balance';
+import {IBalance, isIBalance} from '../interfaces/tidebit_defi_background/balance';
 import {INotificationItem} from '../interfaces/tidebit_defi_background/notification_item';
 import {TideBitEvent} from '../constants/tidebit_event';
 import {NotificationContext} from './notification_context';
@@ -758,14 +758,21 @@ export const UserProvider = ({children}: IUserProvider) => {
     // Deprecated: not found currency (20230430 - Shirley)
     // eslint-disable-next-line no-console
     console.log('arg in updateBalance in ctx', updatedBalance);
-    if (balancesRef.current) {
-      const index = balancesRef.current?.findIndex(balance => balance.currency);
-      if (index !== -1) {
-        const updateBalances = [...balancesRef.current];
-        updateBalances[index] = updatedBalance;
-        setBalances(updateBalances);
+    if (!isIBalance(updatedBalance)) throw new CustomError(Code.BALANCE_NOT_FOUND);
+    // balancesRef.current
+    try {
+      if (balancesRef.current) {
+        const index = balancesRef.current?.findIndex(balance => balance.currency);
+        if (index !== -1) {
+          const updateBalances = [...balancesRef.current];
+          updateBalances[index] = updatedBalance;
+          setBalances(updateBalances);
+        } else throw new CustomError(Code.BALANCE_NOT_FOUND);
       } else throw new CustomError(Code.BALANCE_NOT_FOUND);
-    } else throw new CustomError(Code.BALANCE_NOT_FOUND);
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('error in updateBalance in ctx', error);
+    }
   };
 
   const _createCFDOrder = async (
@@ -1032,7 +1039,7 @@ export const UserProvider = ({children}: IUserProvider) => {
               // Deprecated: not found currency (20230430 - Shirley)
               // eslint-disable-next-line no-console
               console.log('acceptedCFD in ctx', acceptedCFDOrder);
-              // updateBalance(acceptedCFDOrder.receipt.balance);
+              updateBalance(acceptedCFDOrder.receipt.balance);
               setHistories(prev => [...prev, acceptedCFDOrder]);
 
               resultCode = Code.SUCCESS;

@@ -17,3 +17,16 @@ export const getDummyBalances = () => {
   });
   return balances;
 };
+
+export function isIBalance(obj: IBalance): obj is IBalance {
+  return (
+    obj !== null &&
+    typeof obj === 'object' &&
+    'currency' in obj &&
+    typeof obj.currency === 'string' &&
+    'available' in obj &&
+    typeof obj.available === 'number' &&
+    'locked' in obj &&
+    typeof obj.locked === 'number'
+  );
+}

@@ -10,7 +10,6 @@ type TranslateFunction = (s: string) => string;
 const ReserveRatio = () => {
   const {i18n} = useTranslation('common');
   const {t}: {t: TranslateFunction} = useTranslation('common');
-  // console.log(i18n.language);
 
   const isTw = i18n.language === 'tw';
   const cardForTwMobile = isTw ? 'w-95px ml-40' : 'w-120px ml-36';
@@ -18,7 +17,6 @@ const ReserveRatio = () => {
 
   return (
     <>
-      {/* TODO: `text-white` in ReserveRatioBlockCard doesn't work */}
       <section className="text-white">
         <div className="mb-40 items-center text-2xl font-medium text-white lg:text-3xl xl:text-4xl">
           <div className="flex items-center justify-center">

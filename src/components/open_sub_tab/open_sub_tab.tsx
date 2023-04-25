@@ -1,4 +1,6 @@
-import React, {useContext, useEffect, useRef} from 'react';
+import React, {useContext, Suspense, useEffect, useRef} from 'react';
+import Lottie from 'lottie-react';
+import smallConnectingAnimation from '../../../public/animation/lf30_editor_cnkxmhy3.json';
 import OpenPositionItem from '../open_position_item/open_position_item';
 import {UserContext} from '../../contexts/user_context';
 import {MarketContext} from '../../contexts/market_context';
@@ -256,11 +258,18 @@ const OpenSubTab = () => {
     <>
       <div className="h-full overflow-y-auto overflow-x-hidden pb-40">
         <div className="">
-          {/* 6 */}
-          {openPositionList}
+          <Suspense
+            fallback={
+              <div className="inline-flex items-end">
+                {/* ToDo: (20230419 - Julian) Loading animation */}
+                <Lottie className="w-40px" animationData={smallConnectingAnimation} />
+                Loading...
+              </div>
+            }
+          >
+            {openPositionList}
+          </Suspense>
         </div>
-        {/* Divider */}
-        {/* <div className="my-auto h-px w-full rounded bg-white/50"></div> */}
       </div>
     </>
   );

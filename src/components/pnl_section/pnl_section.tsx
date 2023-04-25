@@ -1,16 +1,21 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import {useTranslation} from 'react-i18next';
+import {UserContext} from '../../contexts/user_context';
 import {TypeOfPnLColor, UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
-import {unitAsset} from '../../constants/config';
+import {unitAsset, FRACTION_DIGITS} from '../../constants/config';
 
 type TranslateFunction = (s: string) => string;
 
 const PnlSection = () => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
-  // TODO: pnl from userContext
-  const pnlToday = {amount: -128.29, percentage: -1.5};
-  const pnl30Days = {amount: 98124532.83, percentage: 10.36};
-  const cumulativePnl = {amount: -57692.47, percentage: -22.75};
+
+  const userCtx = useContext(UserContext);
+
+  const defaultPnlData = {amount: 0, percentage: 0};
+  /* ToDo: (20230420 - Julian) getMyAssets by currency */
+  const pnlToday = userCtx.getMyAssets('')?.pnl.today ?? defaultPnlData;
+  const pnl30Days = userCtx.getMyAssets('')?.pnl.monthly ?? defaultPnlData;
+  const cumulativePnl = userCtx.getMyAssets('')?.pnl.cumulative ?? defaultPnlData;
 
   const statisticContent = [
     {title: t('MY_ASSETS_PAGE.PNL_SECTION_TODAY'), ...pnlToday},
@@ -21,8 +26,14 @@ const PnlSection = () => {
     const result = {
       content:
         amount > 0
-          ? `+ ${amount.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)} ${unitAsset}`
-          : `${amount.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)} ${unitAsset}`,
+          ? `+${amount.toLocaleString(
+              UNIVERSAL_NUMBER_FORMAT_LOCALE,
+              FRACTION_DIGITS
+            )} ${unitAsset}`
+          : `${amount.toLocaleString(
+              UNIVERSAL_NUMBER_FORMAT_LOCALE,
+              FRACTION_DIGITS
+            )} ${unitAsset}`,
       remarks:
         percentage > 0 ? `▴ ${percentageAbs.toString()} %` : `▾ ${percentageAbs.toString()} %`,
       textColor:
@@ -36,21 +47,19 @@ const PnlSection = () => {
     return result;
   });
 
-  const statisticContentList = statisticContent.map(
-    ({title, content, remarks, textColor}, index) => (
-      <div
-        key={title}
-        style={{height: '', marginTop: '10px'}}
-        className="mx-0 mb-6 flex w-screen justify-center border-b border-lightGray/50 p-4 lg:mx-0 lg:mb-0 lg:w-1/3 lg:border-b-0 lg:border-r"
-      >
-        <div className="h-full space-y-3 text-center lg:text-start">
-          <h1 className={`text-lg leading-relaxed xl:text-xl`}>{title}</h1>
-          <h2 className={`text-2xl font-medium lg:text-3xl xl:text-4xl ${textColor}`}>{content}</h2>
-          <p className={`text-lg leading-relaxed lg:text-lg xl:text-xl ${textColor}`}>{remarks}</p>
-        </div>
+  const statisticContentList = statisticContent.map(({title, content, remarks, textColor}) => (
+    <div
+      key={title}
+      style={{marginTop: '10px'}}
+      className="mx-0 mb-6 flex w-screen justify-center border-b border-lightGray/50 p-4 lg:mx-0 lg:mb-0 lg:w-1/3 lg:border-b-0 lg:border-r"
+    >
+      <div className="h-full space-y-3 text-center lg:text-start">
+        <h1 className={`text-lg leading-relaxed xl:text-xl`}>{title}</h1>
+        <h2 className={`text-2xl font-medium lg:text-3xl xl:text-4xl ${textColor}`}>{content}</h2>
+        <p className={`text-lg leading-relaxed lg:text-lg xl:text-xl ${textColor}`}>{remarks}</p>
       </div>
-    )
-  );
+    </div>
+  ));
 
   return (
     <section className={`mt-10 bg-black text-lightGray lg:mt-0`}>

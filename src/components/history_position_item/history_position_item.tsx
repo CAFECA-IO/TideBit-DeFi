@@ -1,6 +1,7 @@
 import React, {useContext} from 'react';
 import Image from 'next/image';
 import {TypeOfTransaction, UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
+import {FRACTION_DIGITS} from '../../constants/config';
 import {ProfitState} from '../../constants/profit_state';
 import {timestampToString} from '../../lib/common';
 import {TypeOfPosition} from '../../constants/type_of_position';
@@ -32,9 +33,7 @@ const HistoryPositionItem = ({closedCfdDetails, ...otherProps}: IHistoryPosition
 
   const displayedPnl = Math.abs(closedCfdDetails.pnl.value).toLocaleString(
     UNIVERSAL_NUMBER_FORMAT_LOCALE,
-    {
-      minimumFractionDigits: 2,
-    }
+    FRACTION_DIGITS
   );
 
   const displayedSymbol =
@@ -84,13 +83,15 @@ const HistoryPositionItem = ({closedCfdDetails, ...otherProps}: IHistoryPosition
             <div className="text-lightGray">{t('TRADE_PAGE.HISTORY_POSITION_ITEM_VALUE')}</div>
             <div className="">
               $
-              {closedCfdDetails.openValue.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
-                minimumFractionDigits: 2,
-              })}
+              {closedCfdDetails.openValue.toLocaleString(
+                UNIVERSAL_NUMBER_FORMAT_LOCALE,
+                FRACTION_DIGITS
+              )}
               / $
-              {(closedCfdDetails.closeValue || 0).toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
-                minimumFractionDigits: 2,
-              })}
+              {(closedCfdDetails.closeValue || 0).toLocaleString(
+                UNIVERSAL_NUMBER_FORMAT_LOCALE,
+                FRACTION_DIGITS
+              )}
             </div>
           </div>
 

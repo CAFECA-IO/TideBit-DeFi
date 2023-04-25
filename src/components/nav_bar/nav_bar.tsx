@@ -1,6 +1,6 @@
 import {useTranslation} from 'next-i18next';
 import Link from 'next/link';
-import {useContext, useState} from 'react';
+import {useContext} from 'react';
 import Image from 'next/image';
 import version from '../../lib/version';
 import useOuterClick from '../../lib/hooks/use_outer_click';
@@ -72,6 +72,13 @@ const NavBar = () => {
     <WalletConnectButton className="mt-4 py-2 px-5 md:mt-0" />
   );
 
+  const isDisplayedUnreadnumber =
+    notificationCtx.unreadNotifications.length > 0 ? (
+      <span className="absolute bottom-4 left-3 z-20 inline-flex h-4 w-4 items-center justify-center rounded-xl bg-tidebitTheme">
+        <p className="text-center text-3xs">{notificationCtx.unreadNotifications.length}</p>
+      </span>
+    ) : null;
+
   const userOverviewDividerDesktop = userCtx.enableServiceTerm ? (
     <span className="mx-2 inline-block h-10 w-px rounded bg-lightGray1/50"></span>
   ) : null;
@@ -88,11 +95,10 @@ const NavBar = () => {
                   <div className="inline-flex items-center hover:cursor-pointer hover:text-cyan-300 hover:opacity-100">
                     <div className="relative h-55px w-150px flex-col justify-center hover:cursor-pointer hover:opacity-80">
                       <Image
-                        className=""
-                        src={'/elements/nav_logo.svg'}
+                        src="/elements/nav_logo.svg"
                         height={50}
                         width={150}
-                        alt={'logo'}
+                        alt="TideBit_logo"
                       />
 
                       <p className="absolute bottom-1 right-0 text-end text-xxs text-lightGray">
@@ -110,10 +116,16 @@ const NavBar = () => {
                     >
                       {t('NAV_BAR.TRADE')}
                     </Link>
-                    <Link href="#" className="mr-5 hover:cursor-pointer hover:text-tidebitTheme">
+                    <Link
+                      href={TBDURL.COMING_SOON}
+                      className="mr-5 hover:cursor-pointer hover:text-tidebitTheme"
+                    >
                       {t('NAV_BAR.LEADERBOARD')}
                     </Link>
-                    <Link href="#" className="mr-5 hover:cursor-pointer hover:text-tidebitTheme">
+                    <Link
+                      href={TBDURL.COMING_SOON}
+                      className="mr-5 hover:cursor-pointer hover:text-tidebitTheme"
+                    >
                       {t('NAV_BAR.SUPPORT')}
                     </Link>
 
@@ -132,18 +144,14 @@ const NavBar = () => {
                   <span className="mx-2 inline-block h-10 w-px rounded bg-lightGray1"></span>
 
                   <button onClick={sidebarOpenHandler} className="relative hover:cursor-pointer">
-                    <span className="absolute bottom-4 left-3 z-20 inline-block h-3 w-3 rounded-xl bg-tidebitTheme">
-                      <p className="text-center text-3xs">
-                        {notificationCtx.unreadNotifications.length}
-                      </p>
-                    </span>
+                    {isDisplayedUnreadnumber}
 
                     <Image
                       src="/elements/notifications_outline.svg"
                       width={25}
                       height={25}
                       className="hover:cursor-pointer hover:text-cyan-300"
-                      alt="icon"
+                      alt="notification icon"
                     />
                   </button>
                 </div>

@@ -2,7 +2,11 @@ import EventEmitter from 'events';
 import React, {createContext} from 'react';
 import useState from 'react-usestateref';
 import {TideBitEvent} from '../constants/tidebit_event';
-import {INotificationItem} from '../interfaces/tidebit_defi_background/notification_item';
+import {
+  INotificationItem,
+  dummyNotifications,
+  dummyUnReadNotifications,
+} from '../interfaces/tidebit_defi_background/notification_item';
 
 export interface INotificationProvider {
   children: React.ReactNode;
@@ -30,11 +34,12 @@ export const NotificationContext = createContext<INotificationContext>({
 
 export const NotificationProvider = ({children}: INotificationProvider) => {
   // const marketCtx = useContext(MarketContext);
+
   const emitter = React.useMemo(() => new EventEmitter(), []);
-  const [notifications, setNotifications, notificationsRef] = useState<INotificationItem[]>([]);
-  const [unreadNotifications, setUnreadNotifications, unreadNotificationsRef] = useState<
-    INotificationItem[]
-  >([]);
+  const [notifications, setNotifications, notificationsRef] =
+    useState<INotificationItem[]>(dummyNotifications);
+  const [unreadNotifications, setUnreadNotifications, unreadNotificationsRef] =
+    useState<INotificationItem[]>(dummyUnReadNotifications);
 
   const isRead = async (id: string) => {
     const updatedNotifications: INotificationItem[] = [...notificationsRef.current];
@@ -46,6 +51,7 @@ export const NotificationProvider = ({children}: INotificationProvider) => {
       };
     }
     emitter.emit(TideBitEvent.UPDATE_READ_NOTIFICATIONS, updatedNotifications);
+    updateNotifications(updatedNotifications);
     return;
   };
 
@@ -57,20 +63,17 @@ export const NotificationProvider = ({children}: INotificationProvider) => {
         }))
       : [];
     emitter.emit(TideBitEvent.UPDATE_READ_NOTIFICATIONS, updatedNotifications);
+    updateNotifications(updatedNotifications);
     return;
   };
 
   const updateNotifications = (notifications: INotificationItem[]) => {
-    const updateNotifications: INotificationItem[] = [
-      ...notificationsRef.current,
-      ...notifications,
-    ];
+    const updateNotifications: INotificationItem[] = [...notifications];
     setNotifications(updateNotifications);
     setUnreadNotifications(updateNotifications.filter(n => !n.isRead));
   };
 
   const init = async () => {
-    // console.log(`NotificationProvider init is called`);
     return await Promise.resolve();
   };
 

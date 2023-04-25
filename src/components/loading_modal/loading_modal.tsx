@@ -36,7 +36,7 @@ const LoadingModal = ({
   const zoomOutHandler = () => {
     /**
      * Info: (20230424 - Julian) 關掉 modal
-     * 1. 記錄目前 modal 的內容
+     * 1. 記錄目前 modal 的內容 (modalReOpenData)
      * 2. 關掉 modal
      * 3. 顯示 toast
      * 4. 點擊 toast 關掉 toast 並且顯示 modal
@@ -46,12 +46,19 @@ const LoadingModal = ({
     if (globalCtx.visibleLoadingModal) {
       globalCtx.toast({
         type: ToastTypeAndText.INFO.type,
-        message: `${modalTitle} is still in progress, please wait...`,
-        toastId: 'loadingModalClosed',
+        message: `${modalTitle} ${t('TOAST.PROGRESSING_MESSAGE')}`,
+        toastId: 'loadingModalMinimized',
         autoClose: false,
         isLoading: true,
-        typeText: t(ToastTypeAndText.INFO.type),
-      }); /* ToDo:(20230424 - Julian) 找到關掉 toast 的 function */
+        typeText: t(ToastTypeAndText.INFO.text),
+        modalReOpenData: {
+          modalTitle: modalTitle,
+          modalContent: modalContent,
+          btnMsg: btnMsg,
+          btnUrl: btnUrl,
+          isShowZoomOutBtn: true,
+        },
+      });
     }
   };
 

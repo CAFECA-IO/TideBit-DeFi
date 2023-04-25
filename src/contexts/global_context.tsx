@@ -1,14 +1,7 @@
-import React, {
-  createContext,
-  useState,
-  useEffect,
-  useContext,
-  Dispatch,
-  SetStateAction,
-} from 'react';
+import React, {createContext, useState, useContext} from 'react';
 import useWindowSize from '../lib/hooks/use_window_size';
 import {DELAYED_HIDDEN_SECONDS, LAYOUT_BREAKPOINT} from '../constants/display';
-import {ToastContainer, toast as toastify} from 'react-toastify';
+import {toast as toastify} from 'react-toastify';
 import UpdateFormModal from '../components/update_form_modal/update_form_modal';
 import {MarketContext} from './market_context';
 import Toast from '../components/toast/toast';
@@ -80,6 +73,7 @@ export interface IToastify {
   autoClose?: number | false;
   isLoading?: boolean;
   typeText: string;
+  modalReOpenData?: IProcessDataModal;
 }
 export interface IUpdatedCFDInputProps {
   takeProfit?: number;
@@ -227,77 +221,6 @@ export interface IBadgeSharingModal {
 
 export const dummyBadgeSharingModal: IBadgeSharingModal = {
   badgeId: 'TBDFUTURES2023FEB05',
-};
-
-const toastHandler = ({type, message, toastId, autoClose, isLoading, typeText}: IToastify) => {
-  const toastBodyStyle =
-    'text-lightWhite text-sm lg:whitespace-nowrap px-4 before:block before:absolute before:-left-1 before:w-2 before:h-50px';
-
-  const isLoadingMessage = isLoading ? (
-    <div className="inline-flex">
-      {message}
-      <Lottie className="ml-2 w-20px" animationData={smallConnectingAnimation} />
-    </div>
-  ) : (
-    <>{message}</>
-  );
-
-  switch (type) {
-    case ToastType.ERROR:
-      toastify.error(isLoadingMessage, {
-        toastId: type + message + toastId,
-        icon: (
-          <div className="-ml-12 inline-flex items-center justify-center text-lightRed">
-            <FaRegTimesCircle className="h-15px w-15px" />
-            <span className="ml-2">{typeText}</span>
-          </div>
-        ),
-        bodyClassName: `${toastBodyStyle} before:bg-lightRed`,
-        autoClose: autoClose ?? 3000,
-      });
-      break;
-    case ToastType.WARNING:
-      toastify.warning(isLoadingMessage, {
-        toastId: type + message + toastId,
-        icon: (
-          <div className="-ml-12 inline-flex items-center justify-center text-lightYellow2">
-            <ImWarning className="h-15px w-15px " />
-            <span className="ml-2">{typeText}</span>
-          </div>
-        ),
-        bodyClassName: `${toastBodyStyle} before:bg-lightYellow2`,
-        autoClose: autoClose ?? 3000,
-      });
-      break;
-    case ToastType.INFO:
-      toastify.info(isLoadingMessage, {
-        toastId: type + message + toastId,
-        icon: (
-          <div className="-ml-12 inline-flex items-center justify-center text-tidebitTheme">
-            <ImInfo className="h-15px w-15px" />
-            <span className="ml-2">{typeText}</span>
-          </div>
-        ),
-        bodyClassName: `${toastBodyStyle} before:bg-tidebitTheme`,
-        autoClose: autoClose ?? 3000,
-      });
-      break;
-    case ToastType.SUCCESS:
-      toastify.success(isLoadingMessage, {
-        toastId: type + message + toastId,
-        icon: (
-          <div className="-ml-12 inline-flex items-center justify-center text-lightGreen5">
-            <FaRegCheckCircle className="h-15px w-15px" />
-            <span className="ml-2">{typeText}</span>
-          </div>
-        ),
-        bodyClassName: `${toastBodyStyle} before:bg-lightGreen5`,
-        autoClose: autoClose ?? 3000,
-      });
-      break;
-    default:
-      return;
-  }
 };
 
 export interface IGlobalProvider {
@@ -707,7 +630,110 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     setColorMode(colorMode === 'light' ? 'dark' : 'light');
   };
 
-  const toast = ({type, message, toastId, autoClose, isLoading, typeText}: IToastify) => {
+  const toastHandler = ({
+    type,
+    message,
+    toastId,
+    autoClose,
+    isLoading,
+    typeText,
+    modalReOpenData,
+  }: IToastify) => {
+    const toastBodyStyle =
+      'text-lightWhite text-sm lg:whitespace-nowrap px-4 before:block before:absolute before:-left-1 before:w-2 before:h-50px';
+
+    const isLoadingMessage = isLoading ? (
+      <div className="inline-flex">
+        {message}
+        <Lottie className="ml-2 w-20px" animationData={smallConnectingAnimation} />
+      </div>
+    ) : (
+      <>{message}</>
+    );
+
+    const modalReOpenHandler = modalReOpenData
+      ? () => {
+          setDataLoadingModal(modalReOpenData),
+            setVisibleLoadingModal(true),
+            toastify.dismiss(type + message + toastId);
+        }
+      : undefined;
+
+    switch (type) {
+      case ToastType.ERROR:
+        toastify.error(isLoadingMessage, {
+          toastId: type + message + toastId,
+          icon: (
+            <div className="-ml-12 inline-flex items-center justify-center text-lightRed">
+              <FaRegTimesCircle className="h-15px w-15px" />
+              <span className="ml-2">{typeText}</span>
+            </div>
+          ),
+          bodyClassName: `${toastBodyStyle} before:bg-lightRed`,
+          autoClose: autoClose ?? 3000,
+          closeOnClick: modalReOpenData ? false : true,
+          onClick: modalReOpenHandler,
+        });
+        break;
+      case ToastType.WARNING:
+        toastify.warning(isLoadingMessage, {
+          toastId: type + message + toastId,
+          icon: (
+            <div className="-ml-12 inline-flex items-center justify-center text-lightYellow2">
+              <ImWarning className="h-15px w-15px " />
+              <span className="ml-2">{typeText}</span>
+            </div>
+          ),
+          bodyClassName: `${toastBodyStyle} before:bg-lightYellow2`,
+          autoClose: autoClose ?? 3000,
+          closeOnClick: modalReOpenData ? false : true,
+          onClick: modalReOpenHandler,
+        });
+        break;
+      case ToastType.INFO:
+        toastify.info(isLoadingMessage, {
+          toastId: type + message + toastId,
+          icon: (
+            <div className="-ml-12 inline-flex items-center justify-center text-tidebitTheme">
+              <ImInfo className="h-15px w-15px" />
+              <span className="ml-2">{typeText}</span>
+            </div>
+          ),
+          bodyClassName: `${toastBodyStyle} before:bg-tidebitTheme`,
+          autoClose: autoClose ?? 3000,
+          closeOnClick: modalReOpenData ? false : true,
+          onClick: modalReOpenHandler,
+        });
+        break;
+      case ToastType.SUCCESS:
+        toastify.success(isLoadingMessage, {
+          toastId: type + message + toastId,
+          icon: (
+            <div className="-ml-12 inline-flex items-center justify-center text-lightGreen5">
+              <FaRegCheckCircle className="h-15px w-15px" />
+              <span className="ml-2">{typeText}</span>
+            </div>
+          ),
+          bodyClassName: `${toastBodyStyle} before:bg-lightGreen5`,
+          autoClose: autoClose ?? 3000,
+          closeOnClick: modalReOpenData ? false : true,
+          onClick: modalReOpenHandler,
+        });
+        break;
+      default:
+        return;
+    }
+  };
+
+  const toast = ({
+    type,
+    message,
+    toastId,
+    autoClose,
+    isLoading,
+    typeText,
+    modalReOpenData,
+  }: IToastify) => {
     toastHandler({
       type: type,
       message: message,
@@ -715,6 +741,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
       autoClose: autoClose,
       isLoading: isLoading,
       typeText: typeText,
+      modalReOpenData: modalReOpenData,
     });
   };
 

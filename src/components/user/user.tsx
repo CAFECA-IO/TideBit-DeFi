@@ -81,16 +81,7 @@ const User = () => {
             <p>{t('USER.WITHDRAW')}</p>
           </div>
         </li>
-        <li
-          onClick={() => {
-            globalCtx.dataLoadingModalHandler({
-              modalTitle: 'Deposit',
-              modalContent: 'Dont forget delete this',
-              isShowZoomOutBtn: true,
-            });
-            globalCtx.visibleLoadingModalHandler();
-          }}
-        >
+        <li>
           <Link href="#" className="block py-2 pr-4 pl-3 hover:bg-darkGray5">
             <div className="flex flex-row items-center space-x-2">
               <VscAccount />

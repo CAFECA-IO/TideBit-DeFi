@@ -305,9 +305,9 @@ const CryptoCard = ({
             <div className="pointer-events-none absolute right-0 top-1 bg-transparent">
               {/* <div className="absolute top-0 left-0 h-2 w-2/3 rounded bg-blue-200"></div> */}
               {lineGraph({
-                dataArray: sampleArray,
-                strokeColor: thisRandomColor,
-                lineGraphWidth: '140',
+                dataArray: lineGraphProps?.dataArray || sampleArray,
+                strokeColor: lineGraphProps?.strokeColor || thisRandomColor,
+                lineGraphWidth: lineGraphProps?.lineGraphWidth || '140',
               })}
               {/* <LineGraph
                 sampleArray={sampleArray}

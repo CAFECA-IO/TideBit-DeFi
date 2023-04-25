@@ -1008,9 +1008,6 @@ export const UserProvider = ({children}: IUserProvider) => {
         const index = openCFDs.findIndex(o => o.id === applyUpdateCFDOrder.referenceId);
         if (index !== -1) {
           const transferR = transactionEngine.transferCFDOrderToTransaction(applyUpdateCFDOrder);
-          // Deprecated: not found currency (20230430 - Shirley)
-          // eslint-disable-next-line no-console
-          console.log('original CFD in ctx', openCFDs[index]);
           if (transferR.success) {
             // ++ TODO: send request to chain(use Lunar?) (20230324 - tzuhan)
             try {
@@ -1029,17 +1026,7 @@ export const UserProvider = ({children}: IUserProvider) => {
               })) as {updateCFDOrder: ICFDOrder; acceptedCFDOrder: IAcceptedCFDOrder};
               const updateCFDOrders = [...openCFDs];
               updateCFDOrders[index] = updateCFDOrder;
-              // Deprecated: not found currency (20230430 - Shirley)
-              // eslint-disable-next-line no-console
-              console.log('THE updated CFD in ctx', updateCFDOrders[index]);
               setOpenedCFDs(updateCFDOrders);
-              // Deprecated: not found currency (20230430 - Shirley)
-              // eslint-disable-next-line no-console
-              console.log('after updating CFD in ctx', openCFDsRef.current);
-              // Deprecated: not found currency (20230430 - Shirley)
-              // eslint-disable-next-line no-console
-              console.log('acceptedCFD in ctx', acceptedCFDOrder);
-              updateBalance(acceptedCFDOrder.receipt.balance);
               setHistories(prev => [...prev, acceptedCFDOrder]);
 
               resultCode = Code.SUCCESS;

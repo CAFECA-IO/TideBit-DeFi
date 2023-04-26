@@ -159,9 +159,6 @@ const TradingInput = ({
     }
 
     setDisabledState(!!disabled);
-    // Deprecated: (20230426 - Shirley) note
-    // eslint-disable-next-line no-console
-    console.log('disable in input component', disabled, disabledStateRef.current);
   }, [inputValueFromParent, setInputValueFromParent, disabled]);
 
   useEffect(() => {

@@ -521,51 +521,6 @@ const UpdateFormModal = ({
         ? openCfdDetails.openPrice
         : TARGET_LIMIT_DIGITS;
 
-    // ToDo: check if it's over the liquidation price
-    // const caledSlLowerLimit =
-    //   marketCtx.selectedTicker?.price !== undefined
-    //     ? openCfdDetails.typeOfPosition === TypeOfPosition.BUY
-    //       ? // ? openCfdDetails.liquidationPrice > marketCtx.selectedTicker?.price
-    //         openCfdDetails.liquidationPrice
-    //       : openCfdDetails.openPrice
-    //     : openCfdDetails.liquidationPrice;
-
-    // const caledSlUpperLimit =
-    //   marketCtx.selectedTicker?.price !== undefined
-    //     ? openCfdDetails.typeOfPosition === TypeOfPosition.BUY
-    //       ? openCfdDetails.openPrice
-    //       : openCfdDetails.liquidationPrice
-    //     : openCfdDetails.liquidationPrice;
-
-    // const caledSlLowerLimit =
-    //   marketCtx.selectedTicker?.price !== undefined
-    //     ? openCfdDetails.typeOfPosition === TypeOfPosition.BUY
-    //       ? openCfdDetails.liquidationPrice > marketCtx.selectedTicker.price
-    //         ? openCfdDetails.liquidationPrice
-    //         : openCfdDetails.openPrice
-    //       : openCfdDetails.liquidationPrice < marketCtx.selectedTicker.price // Info: it's short position (20230426 - Shirley)
-    //       ? openCfdDetails.liquidationPrice
-    //       : openCfdDetails.openPrice
-    //     : openCfdDetails.liquidationPrice;
-
-    // const caledSlUpperLimit =
-    //   marketCtx.selectedTicker?.price !== undefined
-    //     ? openCfdDetails.typeOfPosition === TypeOfPosition.BUY
-    //       ? openCfdDetails.liquidationPrice > marketCtx.selectedTicker.price
-    //         ? openCfdDetails.liquidationPrice
-    //         : openCfdDetails.openPrice
-    //       : openCfdDetails.liquidationPrice < marketCtx.selectedTicker.price // Info: it's short position (20230426 - Shirley)
-    //       ? openCfdDetails.liquidationPrice
-    //       : openCfdDetails.openPrice
-    //     : openCfdDetails.liquidationPrice;
-
-    // const beLiquidated =
-    //   marketCtx.selectedTicker?.price !== undefined
-    //     ? openCfdDetails.typeOfPosition === TypeOfPosition.BUY
-    //       ? marketCtx.selectedTicker.price < openCfdDetails.liquidationPrice
-    //       : marketCtx.selectedTicker.price > openCfdDetails.liquidationPrice
-    //     : true;
-
     const beLiquidated =
       marketCtx.selectedTicker?.price !== undefined
         ? openCfdDetails.typeOfPosition === TypeOfPosition.BUY
@@ -574,38 +529,6 @@ const UpdateFormModal = ({
           ? openCfdDetails.liquidationPrice < marketCtx.selectedTicker.price
           : false
         : true;
-
-    // let liquidated;
-
-    // if (marketCtx.selectedTicker?.price !== undefined) {
-    //   if (openCfdDetails.typeOfPosition === TypeOfPosition.BUY) {
-    //     if (openCfdDetails.liquidationPrice > marketCtx.selectedTicker.price) {
-    //       liquidated = true;
-    //     } else {
-    //       liquidated = false;
-    //     }
-    //   } else if (openCfdDetails.typeOfPosition === TypeOfPosition.SELL) {
-    //     if (openCfdDetails.liquidationPrice < marketCtx.selectedTicker.price) {
-    //       liquidated = true;
-    //     } else {
-    //       liquidated = false;
-    //     }
-    //   }
-    // } else {
-    //   liquidated = true;
-    // }
-
-    // const caledSlLowerLimit = beLiquidated
-    //   ? openCfdDetails.typeOfPosition === TypeOfPosition.BUY
-    //     ? openCfdDetails.liquidationPrice
-    //     : openCfdDetails.openPrice
-    //   : openCfdDetails.liquidationPrice;
-
-    // const caledSlUpperLimit = beLiquidated
-    //   ? openCfdDetails.typeOfPosition === TypeOfPosition.BUY
-    //     ? openCfdDetails.openPrice
-    //     : openCfdDetails.liquidationPrice
-    //   : openCfdDetails.liquidationPrice;
 
     const caledSlLowerLimit = beLiquidated
       ? openCfdDetails.liquidationPrice
@@ -619,45 +542,6 @@ const UpdateFormModal = ({
       ? openCfdDetails.openPrice
       : openCfdDetails.liquidationPrice;
 
-    // let theSlLowerLimit;
-    // let theSlUpperLimit;
-
-    // if (beLiquidated) {
-    //   theSlLowerLimit = openCfdDetails.liquidationPrice;
-    //   theSlUpperLimit = openCfdDetails.liquidationPrice;
-    //   // if (openCfdDetails.typeOfPosition === TypeOfPosition.BUY) {
-    //   //   theSlLowerLimit = openCfdDetails.liquidationPrice;
-    //   //   theSlUpperLimit = openCfdDetails.liquidationPrice;
-    //   // } else if (openCfdDetails.typeOfPosition === TypeOfPosition.SELL) {
-    //   //   theSlUpperLimit = openCfdDetails.liquidationPrice;
-    //   //   theSlLowerLimit = openCfdDetails.liquidationPrice;
-    //   // }
-    // } else {
-    //   if (openCfdDetails.typeOfPosition === TypeOfPosition.BUY) {
-    //     theSlLowerLimit = openCfdDetails.liquidationPrice;
-    //     theSlUpperLimit = openCfdDetails.openPrice;
-    //   } else if (openCfdDetails.typeOfPosition === TypeOfPosition.SELL) {
-    //     theSlUpperLimit = openCfdDetails.liquidationPrice;
-    //     theSlLowerLimit = openCfdDetails.openPrice;
-    //   }
-    // }
-
-    // Deprecated: (20230426 - Shirley) note
-    // eslint-disable-next-line no-console
-    console.log('beLiquidated', beLiquidated);
-    // Deprecated: (20230426 - Shirley) note
-    // eslint-disable-next-line no-console
-    console.log('caledSlLowerLimit', caledSlLowerLimit, 'caledSlUpperLimit', caledSlUpperLimit);
-    // Deprecated: (20230426 - Shirley) note
-    // eslint-disable-next-line no-console
-    console.log(
-      'caledSlLowerLimit-1',
-      caledSlLowerLimit1,
-      'caledSlUpperLimit-1',
-      caledSlUpperLimit1
-    );
-
-    // setDisableSlInput(caledSlLowerLimit === caledSlUpperLimit);
     setDisableSlInput(beLiquidated);
 
     const caledSl =

@@ -31,8 +31,7 @@ const OpenSubTab = () => {
     });
 
   useEffect(() => {
-    setTimeout(() => setIsLoading(false), 3000);
-    //setIsLoading(false);
+    setTimeout(() => setIsLoading(false), 1000);
   }, [cfds]);
 
   // Deprecated: to be removed (20230413 - Shirley)

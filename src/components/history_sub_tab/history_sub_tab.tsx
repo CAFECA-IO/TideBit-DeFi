@@ -23,8 +23,7 @@ const HistorySubTab = () => {
   );
 
   useEffect(() => {
-    setTimeout(() => setIsLoading(false), 3000);
-    //setIsLoading(false);
+    setTimeout(() => setIsLoading(false), 1000);
   }, [historyPositionList]);
 
   return (

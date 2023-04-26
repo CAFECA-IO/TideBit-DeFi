@@ -155,7 +155,7 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
   const displayedCreateTime = timestampToString(openCfdDetails?.createTimestamp ?? 0);
 
   return (
-    <div className="relative my-2">
+    <div className="relative my-2 min-h-160px">
       <div
         className="absolute z-10 h-150px w-280px bg-transparent hover:cursor-pointer"
         onClick={openItemClickHandler}

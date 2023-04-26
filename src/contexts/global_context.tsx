@@ -240,6 +240,7 @@ export interface IGlobalContext {
   toast: (props: IToastify) => void;
 
   eliminateAllModals: () => void;
+  eliminateToasts: (id: string) => void;
 
   visibleUpdateFormModal: boolean;
   visibleUpdateFormModalHandler: () => void;
@@ -373,6 +374,7 @@ export const GlobalContext = createContext<IGlobalContext>({
   toast: () => null,
 
   eliminateAllModals: () => null,
+  eliminateToasts: () => null,
 
   visibleUpdateFormModal: false,
   visibleUpdateFormModalHandler: () => null,
@@ -766,8 +768,15 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     setVisiblePositionClosedModal(false);
 
     setVisibleSearchingModal(false);
+  };
 
-    toastify.dismiss(undefined);
+  const eliminateToasts = (id: string) => {
+    /* Info: (20230426 - Julian) remove toasts by toastId, or 'all' for remove all  */
+    if (id === 'all') {
+      toastify?.dismiss();
+    } else {
+      toastify?.dismiss(id);
+    }
   };
 
   const visibleUpdateFormModalHandler = () => {
@@ -1051,6 +1060,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     toast,
 
     eliminateAllModals,
+    eliminateToasts,
 
     visibleUpdateFormModal,
     visibleUpdateFormModalHandler,

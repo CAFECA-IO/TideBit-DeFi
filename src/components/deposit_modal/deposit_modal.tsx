@@ -129,6 +129,7 @@ const DepositModal = ({
           btnUrl: '#',
         });
 
+        globalCtx.eliminateToasts('all');
         globalCtx.visibleSuccessfulModalHandler();
       } else if (
         // Info: cancel (20230413 - Shirley)
@@ -143,6 +144,7 @@ const DepositModal = ({
           modalContent: t('D_W_MODAL.FAILED_REASON_CANCELED'),
         });
 
+        globalCtx.eliminateToasts('all');
         globalCtx.visibleCanceledModalHandler();
       } else if (
         result.code === Code.INTERNAL_SERVER_ERROR ||
@@ -157,6 +159,7 @@ const DepositModal = ({
           failedMsg: t('D_W_MODAL.FAILED_REASON_FAILED_TO_DEPOSIT'),
         });
 
+        globalCtx.eliminateToasts('all');
         globalCtx.visibleFailedModalHandler();
       }
     } catch (error: any) {
@@ -171,6 +174,7 @@ const DepositModal = ({
         failedMsg: t('D_W_MODAL.FAILED_REASON_FAILED_TO_DEPOSIT'),
       });
 
+      globalCtx.eliminateToasts('all');
       globalCtx.visibleFailedModalHandler();
     }
 

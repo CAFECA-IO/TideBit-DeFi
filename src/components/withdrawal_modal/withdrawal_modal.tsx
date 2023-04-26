@@ -129,6 +129,7 @@ const WithdrawalModal = ({
           btnUrl: '#',
         });
 
+        globalCtx.eliminateToasts('all');
         globalCtx.visibleSuccessfulModalHandler();
         // TODO: `result.code` (20230316 - Shirley)
       } else if (
@@ -144,6 +145,7 @@ const WithdrawalModal = ({
           modalContent: t('D_W_MODAL.FAILED_REASON_CANCELED'),
         });
 
+        globalCtx.eliminateToasts('all');
         globalCtx.visibleCanceledModalHandler();
       } else if (
         result.code === Code.INTERNAL_SERVER_ERROR ||
@@ -157,6 +159,7 @@ const WithdrawalModal = ({
           failedMsg: t('D_W_MODAL.FAILED_REASON_FAILED_TO_WITHDRAW'),
         });
 
+        globalCtx.eliminateToasts('all');
         globalCtx.visibleFailedModalHandler();
       }
     } catch (error: any) {
@@ -170,6 +173,7 @@ const WithdrawalModal = ({
         failedMsg: t('D_W_MODAL.FAILED_REASON_FAILED_TO_WITHDRAW'),
       });
 
+      globalCtx.eliminateToasts('all');
       globalCtx.visibleFailedModalHandler();
     }
 

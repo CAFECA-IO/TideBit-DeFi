@@ -1037,8 +1037,6 @@ export const UserProvider = ({children}: IUserProvider) => {
               const updateCFDOrders = [...openCFDs];
               updateCFDOrders[index] = updateCFDOrder;
               setOpenedCFDs(updateCFDOrders);
-              resultCode = Code.FAILE_TO_UPDATE_BALANCE;
-              updateBalance(acceptedCFDOrder.receipt.balance);
               setHistories(prev => [...prev, acceptedCFDOrder]);
 
               resultCode = Code.SUCCESS;
@@ -1051,12 +1049,6 @@ export const UserProvider = ({children}: IUserProvider) => {
               // TODO: error handle (Tzuhan - 20230421)
               // eslint-disable-next-line no-console
               console.error(`${APIName.UPDATE_CFD_TRADE} error`, error);
-              // Info: `updateBalance` has two options of error (20230426 - Shirley)
-              if (isCustomError(error)) {
-                if (error.code === Code.BALANCE_NOT_FOUND) {
-                  resultCode = Code.BALANCE_NOT_FOUND;
-                }
-              }
               result.code = resultCode;
               result.reason = Reason[resultCode];
             }

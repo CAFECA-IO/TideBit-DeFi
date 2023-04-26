@@ -31,6 +31,7 @@ interface ITradingInputProps {
   longTpLimit?: number;
 
   reachOppositeLimit?: boolean;
+  disabled?: boolean;
 }
 
 const TradingInput = ({
@@ -48,9 +49,11 @@ const TradingInput = ({
   upperLimit,
 
   reachOppositeLimit,
+  disabled,
 
   ...otherProps
 }: ITradingInputProps) => {
+  const [disabledState, setDisabledState, disabledStateRef] = useStateRef<boolean>(false);
   const [inputValue, setInputValue, inputValueRef] = useStateRef<number>(inputInitialValue);
 
   const [validationTimeout, setValidationTimeout, validationTimeoutRef] = useStateRef<ReturnType<
@@ -109,6 +112,10 @@ const TradingInput = ({
 
     if (regex.test(value)) {
       const numberValue = Number(value);
+      if (numberValue === upperLimit && numberValue === lowerLimit) {
+        return;
+      }
+
       setInputValue(numberValue);
       passValueHandler(numberValue);
 
@@ -118,12 +125,16 @@ const TradingInput = ({
     }
   };
 
-  // ToDo: 在下限內加，要直接加到下限值
   const incrementClickHandler = () => {
     const change = inputValue + TRADING_INPUT_STEP;
     const changeRounded = Math.round(change * 100) / 100;
 
     if (upperLimit && changeRounded >= upperLimit) {
+      return;
+    } else if (lowerLimit && changeRounded <= lowerLimit) {
+      // Info: 在下限內加，要直接加到下限值 (20230426 - Shirley)
+      setInputValue(lowerLimit);
+      passValueHandler(lowerLimit);
       return;
     }
     setInputValue(changeRounded);
@@ -146,7 +157,12 @@ const TradingInput = ({
     if (inputValueFromParent !== undefined && setInputValueFromParent !== undefined) {
       setInputValue(inputValueFromParent);
     }
-  }, [inputValueFromParent, setInputValueFromParent]);
+
+    setDisabledState(!!disabled);
+    // Deprecated: (20230426 - Shirley) note
+    // eslint-disable-next-line no-console
+    console.log('disable in input component', disabled, disabledStateRef.current);
+  }, [inputValueFromParent, setInputValueFromParent, disabled]);
 
   useEffect(() => {
     // Info: Clean up validation timeout on unmount (20230424 - Shirley)
@@ -195,7 +211,12 @@ const TradingInput = ({
           <input
             type="number"
             className={`${inputSize} bg-darkGray8 text-center text-lightWhite outline-none ring-transparent`}
-            value={inputValue}
+            disabled={
+              disabledStateRef.current ||
+              (Number(inputValueRef.current) === upperLimit &&
+                Number(inputValueRef.current) === lowerLimit)
+            }
+            value={inputValueRef.current}
             name={inputName}
             onChange={inputChangeHandler}
             placeholder={inputPlaceholder}

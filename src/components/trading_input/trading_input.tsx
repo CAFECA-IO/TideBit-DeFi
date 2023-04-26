@@ -51,7 +51,7 @@ const TradingInput = ({
 
   ...otherProps
 }: ITradingInputProps) => {
-  const [inputValue, setInputValue] = useState<number>(inputInitialValue);
+  const [inputValue, setInputValue, inputValueRef] = useStateRef<number>(inputInitialValue);
 
   const [validationTimeout, setValidationTimeout, validationTimeoutRef] = useStateRef<ReturnType<
     typeof setTimeout

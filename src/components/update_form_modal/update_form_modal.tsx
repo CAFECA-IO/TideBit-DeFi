@@ -484,6 +484,7 @@ const UpdateFormModal = ({
     setTpToggle(!!openCfdDetails.takeProfit);
     setSlToggle(!!openCfdDetails.stopLoss);
 
+    // ToDo: add buffer for the most limited tp price
     const caledTpLowerLimit =
       openCfdDetails.typeOfPosition === TypeOfPosition.BUY ? openCfdDetails.openPrice : 0;
     const caledTpUpperLimit =
@@ -491,6 +492,7 @@ const UpdateFormModal = ({
         ? openCfdDetails.openPrice
         : TARGET_LIMIT_DIGITS;
 
+    // ToDo: check if it's over the liquidation price
     const caledSlLowerLimit =
       openCfdDetails.typeOfPosition === TypeOfPosition.BUY
         ? openCfdDetails.liquidationPrice

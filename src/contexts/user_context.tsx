@@ -12,7 +12,7 @@ import {
   dummyWalletBalance_USDT,
   IWalletBalance,
 } from '../interfaces/tidebit_defi_background/wallet_balance';
-import {IBalance} from '../interfaces/tidebit_defi_background/balance';
+import {IBalance, isIBalance} from '../interfaces/tidebit_defi_background/balance';
 import {INotificationItem} from '../interfaces/tidebit_defi_background/notification_item';
 import {TideBitEvent} from '../constants/tidebit_event';
 import {NotificationContext} from './notification_context';
@@ -46,7 +46,7 @@ import {
   IDepositOrder,
   IWithdrawOrder,
 } from '../interfaces/tidebit_defi_background/order';
-import {CustomError} from '../lib/custom_error';
+import {CustomError, isCustomError} from '../lib/custom_error';
 //import {setTimeout} from 'timers/promises';
 import {IWalletExtension, WalletExtension} from '../constants/wallet_extension';
 
@@ -754,17 +754,23 @@ export const UserProvider = ({children}: IUserProvider) => {
   */
 
   const updateBalance = (updatedBalance: IBalance) => {
-    // Deprecated: not found currency (20230430 - Shirley)
-    // eslint-disable-next-line no-console
-    console.log('arg in updateBalance in ctx', updatedBalance);
-    if (balancesRef.current) {
-      const index = balancesRef.current?.findIndex(balance => balance?.currency);
-      if (index !== -1) {
-        const updateBalances = [...balancesRef.current];
-        updateBalances[index] = updatedBalance;
-        setBalances(updateBalances);
+    if (!isIBalance(updatedBalance)) throw new CustomError(Code.BALANCE_NOT_FOUND);
+
+    try {
+      if (balancesRef.current) {
+        const index = balancesRef.current?.findIndex(balance => balance.currency);
+        if (index !== -1) {
+          const updateBalances = [...balancesRef.current];
+          updateBalances[index] = updatedBalance;
+          setBalances(updateBalances);
+        } else throw new CustomError(Code.BALANCE_NOT_FOUND);
       } else throw new CustomError(Code.BALANCE_NOT_FOUND);
-    } else throw new CustomError(Code.BALANCE_NOT_FOUND);
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('error in updateBalance in ctx', error);
+
+      throw new CustomError(Code.FAILE_TO_UPDATE_BALANCE);
+    }
   };
 
   const _createCFDOrder = async (
@@ -805,6 +811,7 @@ export const UserProvider = ({children}: IUserProvider) => {
               // Deprecated: not found currency (20230430 - Shirley)
               // eslint-disable-next-line no-console
               console.log('acceptedCFDOrder in _createCFDOrder in ctx', acceptedCFDOrder);
+              resultCode = Code.FAILE_TO_UPDATE_BALANCE;
               updateBalance(acceptedCFDOrder.receipt.balance);
               setHistories(prev => [...prev, acceptedCFDOrder]);
 
@@ -818,6 +825,12 @@ export const UserProvider = ({children}: IUserProvider) => {
               // TODO: error handle (Tzuhan - 20230421)
               // eslint-disable-next-line no-console
               console.error(`${APIName.CREATE_CFD_TRADE} error`, error);
+              // Info: `updateBalance` has two options of error (20230426 - Shirley)
+              if (isCustomError(error)) {
+                if (error.code === Code.BALANCE_NOT_FOUND) {
+                  resultCode = Code.BALANCE_NOT_FOUND;
+                }
+              }
               result.code = resultCode;
               result.reason = Reason[resultCode];
             }
@@ -918,6 +931,7 @@ export const UserProvider = ({children}: IUserProvider) => {
               newOpenedCFDs.splice(index, 1);
               setOpenedCFDs(newOpenedCFDs);
               setClosedCFDs(prev => [...prev, updateCFDOrder]);
+              resultCode = Code.FAILE_TO_UPDATE_BALANCE;
               updateBalance(acceptedCFDOrder.receipt.balance);
               setHistories(prev => [...prev, acceptedCFDOrder]);
 
@@ -931,6 +945,12 @@ export const UserProvider = ({children}: IUserProvider) => {
               // TODO: error handle (Tzuhan - 20230421)
               // eslint-disable-next-line no-console
               console.error(`${APIName.CLOSE_CFD_TRADE} error`, error);
+              // Info: `updateBalance` has two options of error (20230426 - Shirley)
+              if (isCustomError(error)) {
+                if (error.code === Code.BALANCE_NOT_FOUND) {
+                  resultCode = Code.BALANCE_NOT_FOUND;
+                }
+              }
               result.code = resultCode;
               result.reason = Reason[resultCode];
             }
@@ -998,9 +1018,6 @@ export const UserProvider = ({children}: IUserProvider) => {
         const index = openCFDs.findIndex(o => o.id === applyUpdateCFDOrder.referenceId);
         if (index !== -1) {
           const transferR = transactionEngine.transferCFDOrderToTransaction(applyUpdateCFDOrder);
-          // Deprecated: not found currency (20230430 - Shirley)
-          // eslint-disable-next-line no-console
-          console.log('original CFD in ctx', openCFDs[index]);
           if (transferR.success) {
             // ++ TODO: send request to chain(use Lunar?) (20230324 - tzuhan)
             try {
@@ -1019,17 +1036,7 @@ export const UserProvider = ({children}: IUserProvider) => {
               })) as {updateCFDOrder: ICFDOrder; acceptedCFDOrder: IAcceptedCFDOrder};
               const updateCFDOrders = [...openCFDs];
               updateCFDOrders[index] = updateCFDOrder;
-              // Deprecated: not found currency (20230430 - Shirley)
-              // eslint-disable-next-line no-console
-              console.log('THE updated CFD in ctx', updateCFDOrders[index]);
               setOpenedCFDs(updateCFDOrders);
-              // Deprecated: not found currency (20230430 - Shirley)
-              // eslint-disable-next-line no-console
-              console.log('after updating CFD in ctx', openCFDsRef.current);
-              // Deprecated: not found currency (20230430 - Shirley)
-              // eslint-disable-next-line no-console
-              console.log('acceptedCFD in ctx', acceptedCFDOrder);
-              // updateBalance(acceptedCFDOrder.receipt.balance);
               setHistories(prev => [...prev, acceptedCFDOrder]);
 
               resultCode = Code.SUCCESS;

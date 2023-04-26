@@ -133,7 +133,7 @@ const DepositModal = ({
 
         globalCtx.dataCanceledModalHandler({
           modalTitle: t('D_W_MODAL.DEPOSIT'),
-          modalContent: t('D_W_MODAL.FAILED_REASON_CANCELED'),
+          modalContent: `${t('D_W_MODAL.FAILED_REASON_CANCELED')} (${result.code})`,
         });
 
         globalCtx.visibleCanceledModalHandler();
@@ -145,9 +145,7 @@ const DepositModal = ({
 
         globalCtx.dataFailedModalHandler({
           modalTitle: t('D_W_MODAL.DEPOSIT'),
-          modalContent: t('D_W_MODAL.FAILED_CONTENT'),
-          failedTitle: t('D_W_MODAL.FAILED_TITLE'),
-          failedMsg: t('D_W_MODAL.FAILED_REASON_FAILED_TO_DEPOSIT'),
+          modalContent: `${t('D_W_MODAL.FAILED_CONTENT')} (${result.code})`,
         });
 
         globalCtx.visibleFailedModalHandler();
@@ -159,9 +157,7 @@ const DepositModal = ({
       // Info: Unknown error
       globalCtx.dataFailedModalHandler({
         modalTitle: t('D_W_MODAL.DEPOSIT'),
-        modalContent: t('D_W_MODAL.FAILED_CONTENT'),
-        failedTitle: t('D_W_MODAL.FAILED_TITLE'),
-        failedMsg: t('D_W_MODAL.FAILED_REASON_FAILED_TO_DEPOSIT'),
+        modalContent: `${t('D_W_MODAL.FAILED_CONTENT')} (${Code.UNKNOWN_ERROR_IN_COMPONENT})`,
       });
 
       globalCtx.visibleFailedModalHandler();

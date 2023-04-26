@@ -37,26 +37,6 @@ const NavBar = () => {
     setNotifyVisible(!notifyVisible);
   };
 
-  const wallectConnectBtnClickHandler = async () => {
-    globalCtx.visibleSearchingModalHandler();
-    // globalCtx.visibleWalletPanelHandler();
-
-    await wait(DELAYED_HIDDEN_SECONDS);
-
-    globalCtx.eliminateAllModals();
-
-    globalCtx.dataFailedModalHandler({
-      modalTitle: t('WALLET_PANEL.TITLE'),
-      failedTitle: t('WALLET_PANEL.WALLET_EXTENSION_NOT_FOUND1'),
-      failedMsg: `${t('WALLET_PANEL.WALLET_EXTENSION_NOT_FOUND2')} ${t(
-        'WALLET_PANEL.WALLET_EXTENSION_NOT_FOUND3'
-      )} ${t('WALLET_PANEL.WALLET_EXTENSION_NOT_FOUND5')}`,
-      btnMsg: t('WALLET_PANEL.WALLET_EXTENSION_NOT_FOUND4'),
-    });
-
-    globalCtx.visibleFailedModalHandler();
-  };
-
   const isDisplayedUserOverview = userCtx.enableServiceTerm ? (
     <UserOverview
       depositAvailable={userCtx.balance?.available ?? 0}

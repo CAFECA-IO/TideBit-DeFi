@@ -153,7 +153,7 @@ const PositionUpdatedModal = ({
 
         globalCtx.dataCanceledModalHandler({
           modalTitle: t('POSITION_MODAL.UPDATE_POSITION_TITLE'),
-          modalContent: t('POSITION_MODAL.FAILED_REASON_CANCELED'),
+          modalContent: `${t('POSITION_MODAL.FAILED_REASON_CANCELED')} (${result.code})`,
         });
 
         globalCtx.visibleCanceledModalHandler();
@@ -161,7 +161,9 @@ const PositionUpdatedModal = ({
         result.code === Code.INTERNAL_SERVER_ERROR ||
         result.code === Code.INVAILD_INPUTS ||
         result.code === Code.EXPIRED_QUOTATION_FAILED ||
-        result.code === Code.UNKNOWN_ERROR
+        result.code === Code.UNKNOWN_ERROR ||
+        result.code === Code.BALANCE_NOT_FOUND ||
+        result.code === Code.FAILE_TO_UPDATE_BALANCE
       ) {
         // Deprecated: [debug] (20230413 - Shirley)
         // eslint-disable-next-line no-console
@@ -171,8 +173,7 @@ const PositionUpdatedModal = ({
 
         globalCtx.dataFailedModalHandler({
           modalTitle: t('POSITION_MODAL.UPDATE_POSITION_TITLE'),
-          failedTitle: t('POSITION_MODAL.FAILED_TITLE'),
-          failedMsg: t('POSITION_MODAL.FAILED_REASON_FAILED_TO_UPDATE'),
+          modalContent: `${t('POSITION_MODAL.FAILED_REASON_FAILED_TO_UPDATE')} (${result.code})`,
         });
 
         globalCtx.visibleFailedModalHandler();
@@ -188,8 +189,9 @@ const PositionUpdatedModal = ({
       // Info: Unknown error between context and component
       globalCtx.dataFailedModalHandler({
         modalTitle: t('POSITION_MODAL.UPDATE_POSITION_TITLE'),
-        failedTitle: t('POSITION_MODAL.FAILED_TITLE'),
-        failedMsg: t('POSITION_MODAL.FAILED_REASON_FAILED_TO_UPDATE'),
+        modalContent: `${t('POSITION_MODAL.FAILED_REASON_FAILED_TO_UPDATE')} (${
+          Code.UNKNOWN_ERROR_IN_COMPONENT
+        })`,
       });
 
       globalCtx.visibleFailedModalHandler();

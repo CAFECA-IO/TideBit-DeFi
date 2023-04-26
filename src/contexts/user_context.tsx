@@ -46,7 +46,7 @@ import {
   IDepositOrder,
   IWithdrawOrder,
 } from '../interfaces/tidebit_defi_background/order';
-import {CustomError} from '../lib/custom_error';
+import {CustomError, isCustomError} from '../lib/custom_error';
 //import {setTimeout} from 'timers/promises';
 import {IWalletExtension, WalletExtension} from '../constants/wallet_extension';
 
@@ -754,12 +754,8 @@ export const UserProvider = ({children}: IUserProvider) => {
   */
 
   const updateBalance = (updatedBalance: IBalance) => {
-    // ToDo: throw error `Invalid input in updateBalance` (20230424 - Shirley)
-    // Deprecated: not found currency (20230430 - Shirley)
-    // eslint-disable-next-line no-console
-    console.log('arg in updateBalance in ctx', updatedBalance);
     if (!isIBalance(updatedBalance)) throw new CustomError(Code.BALANCE_NOT_FOUND);
-    // balancesRef.current
+
     try {
       if (balancesRef.current) {
         const index = balancesRef.current?.findIndex(balance => balance.currency);
@@ -772,6 +768,8 @@ export const UserProvider = ({children}: IUserProvider) => {
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error('error in updateBalance in ctx', error);
+
+      throw new CustomError(Code.FAILE_TO_UPDATE_BALANCE);
     }
   };
 
@@ -813,7 +811,7 @@ export const UserProvider = ({children}: IUserProvider) => {
               // Deprecated: not found currency (20230430 - Shirley)
               // eslint-disable-next-line no-console
               console.log('acceptedCFDOrder in _createCFDOrder in ctx', acceptedCFDOrder);
-              // ToDo: resultCode (20230424 - Shirley)
+              resultCode = Code.FAILE_TO_UPDATE_BALANCE;
               updateBalance(acceptedCFDOrder.receipt.balance);
               setHistories(prev => [...prev, acceptedCFDOrder]);
 
@@ -927,7 +925,7 @@ export const UserProvider = ({children}: IUserProvider) => {
               newOpenedCFDs.splice(index, 1);
               setOpenedCFDs(newOpenedCFDs);
               setClosedCFDs(prev => [...prev, updateCFDOrder]);
-              // ToDo: resultCode (20230424 - Shirley)
+              resultCode = Code.FAILE_TO_UPDATE_BALANCE;
               updateBalance(acceptedCFDOrder.receipt.balance);
               setHistories(prev => [...prev, acceptedCFDOrder]);
 
@@ -1027,6 +1025,8 @@ export const UserProvider = ({children}: IUserProvider) => {
               const updateCFDOrders = [...openCFDs];
               updateCFDOrders[index] = updateCFDOrder;
               setOpenedCFDs(updateCFDOrders);
+              resultCode = Code.FAILE_TO_UPDATE_BALANCE;
+              updateBalance(acceptedCFDOrder.receipt.balance);
               setHistories(prev => [...prev, acceptedCFDOrder]);
 
               resultCode = Code.SUCCESS;
@@ -1039,6 +1039,12 @@ export const UserProvider = ({children}: IUserProvider) => {
               // TODO: error handle (Tzuhan - 20230421)
               // eslint-disable-next-line no-console
               console.error(`${APIName.UPDATE_CFD_TRADE} error`, error);
+              // Info: `updateBalance` has two options of error (20230426 - Shirley)
+              if (isCustomError(error)) {
+                if (error.code === Code.BALANCE_NOT_FOUND) {
+                  resultCode = Code.BALANCE_NOT_FOUND;
+                }
+              }
               result.code = resultCode;
               result.reason = Reason[resultCode];
             }

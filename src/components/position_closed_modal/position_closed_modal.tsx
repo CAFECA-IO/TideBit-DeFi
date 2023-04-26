@@ -333,7 +333,7 @@ const PositionClosedModal = ({
 
         globalCtx.dataCanceledModalHandler({
           modalTitle: t('POSITION_MODAL.CLOSE_POSITION_TITLE'),
-          modalContent: t('POSITION_MODAL.FAILED_REASON_CANCELED'),
+          modalContent: `${t('POSITION_MODAL.FAILED_REASON_CANCELED')} (${result.code})`,
         });
 
         globalCtx.visibleCanceledModalHandler();
@@ -351,8 +351,7 @@ const PositionClosedModal = ({
 
         globalCtx.dataFailedModalHandler({
           modalTitle: t('POSITION_MODAL.CLOSE_POSITION_TITLE'),
-          failedTitle: t('POSITION_MODAL.FAILED_TITLE'),
-          failedMsg: t('POSITION_MODAL.FAILED_REASON_FAILED_TO_CLOSE'),
+          modalContent: `${t('POSITION_MODAL.FAILED_REASON_FAILED_TO_CLOSE')} (${result.code})`,
         });
 
         globalCtx.visibleFailedModalHandler();
@@ -368,8 +367,7 @@ const PositionClosedModal = ({
       // Info: Unknown error between context and component
       globalCtx.dataFailedModalHandler({
         modalTitle: t('POSITION_MODAL.CLOSE_POSITION_TITLE'),
-        failedTitle: t('POSITION_MODAL.FAILED_TITLE'),
-        failedMsg: t('POSITION_MODAL.ERROR_MESSAGE'),
+        modalContent: `${t('POSITION_MODAL.ERROR_MESSAGE')}  (${Code.UNKNOWN_ERROR_IN_COMPONENT})`,
       });
 
       globalCtx.visibleFailedModalHandler();

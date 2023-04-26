@@ -9,3 +9,7 @@ export class CustomError extends Error {
     this.code = code;
   }
 }
+
+export const isCustomError = (error: any): error is CustomError => {
+  return error instanceof CustomError;
+};

@@ -67,8 +67,9 @@ const UpdateFormModal = ({
   const [slValue, setSlValue, slValueRef] = useState(initialSlInput);
   const [tpToggle, setTpToggle, tpToggleRef] = useState(initialTpToggle);
   const [slToggle, setSlToggle, slToggleRef] = useState(initialSlToggle);
-  const [guaranteedChecked, setGuaranteedChecked, guaranteedpCheckedRef] =
-    useState(initialGuaranteedChecked);
+  const [guaranteedChecked, setGuaranteedChecked, guaranteedpCheckedRef] = useState(
+    openCfdDetails.guaranteedStop
+  );
 
   const [guaranteedTooltipStatus, setGuaranteedTooltipStatus] = useState(0);
 
@@ -92,10 +93,6 @@ const UpdateFormModal = ({
   const [guaranteedStopFee, setGuaranteedStopFee, guaranteedStopFeeRef] = useStateRef(
     Number(gsl) * openCfdDetails?.openPrice * openCfdDetails?.amount
   );
-
-  useEffect(() => {
-    setGuaranteedStopFee(Number(gsl) * openCfdDetails?.openPrice * openCfdDetails?.amount);
-  }, [gsl, openCfdDetails?.openPrice, openCfdDetails?.amount]);
 
   const getToggledTpSetting = (bool: boolean) => {
     setTpToggle(bool);
@@ -214,7 +211,7 @@ const UpdateFormModal = ({
   );
 
   const guaranteedCheckedChangeHandler = () => {
-    if (!openCfdDetails?.guaranteedStop) {
+    if (!openCfdDetails.guaranteedStop) {
       setGuaranteedChecked(!guaranteedChecked);
       setSlToggle(true);
       setSlLowerLimit(0);
@@ -222,6 +219,7 @@ const UpdateFormModal = ({
 
       return;
     } else {
+      setGuaranteedChecked(true);
       setSlLowerLimit(openCfdDetails?.stopLoss ?? openCfdDetails?.suggestion?.stopLoss);
       setSlUpperLimit(openCfdDetails?.stopLoss ?? openCfdDetails?.suggestion?.stopLoss);
       setSlValue(openCfdDetails?.stopLoss ?? openCfdDetails?.suggestion?.stopLoss);
@@ -306,40 +304,42 @@ const UpdateFormModal = ({
       referenceId: openCfdDetails?.id,
       operation: CFDOperation.UPDATE,
       orderType: OrderType.CFD,
+      takeProfit: openCfdDetails.takeProfit,
+      stopLoss: openCfdDetails.stopLoss,
+      guaranteedStop: openCfdDetails.guaranteedStop,
+      guaranteedStopFee: openCfdDetails.guaranteedStopFee,
     };
 
-    // Info: (20230329 - Shirley) Detect if tpValue has changed
-    if (tpToggle && tpValue !== openCfdDetails?.takeProfit) {
+    // Info: (20230329 - Shirley) if tpValue has changed
+    if (tpToggle) {
+      if (tpValue !== openCfdDetails?.takeProfit) {
+        changedProperties = {
+          ...changedProperties,
+          takeProfit: tpValue,
+        };
+      }
+    } else {
       changedProperties = {
         ...changedProperties,
-        takeProfit: tpValue,
+        takeProfit: 0,
       };
     }
 
-    // Info: (20230329 - Shirley) Detect if spValue has changed
-    if (slToggle && slValue !== openCfdDetails?.stopLoss) {
-      changedProperties = {...changedProperties, stopLoss: slValue};
-    }
-
-    // Info: (20230329 - Shirley) Detect if tpToggle has changed
-    if (initialTpToggle !== tpToggle) {
+    // Info: (20230329 - Shirley) if spValue has changed
+    if (slToggle) {
+      if (slValue !== openCfdDetails?.stopLoss) {
+        changedProperties = {...changedProperties, stopLoss: slValue};
+      }
+    } else {
       changedProperties = {
         ...changedProperties,
-        takeProfit: tpToggle ? tpValue : 0,
+        stopLoss: 0,
       };
     }
 
-    // Info: (20230329 - Shirley) Detect if slToggle has changed
-    if (initialSlToggle !== slToggle) {
-      changedProperties = {
-        ...changedProperties,
-        stopLoss: slToggle ? slValue : 0,
-      };
-    }
-
-    // Info: (20230329 - Shirley) Detect if guaranteedStop has changed
-    if (guaranteedChecked !== openCfdDetails?.guaranteedStop) {
-      const stopLoss = slValue !== openCfdDetails?.stopLoss ? slValue : undefined;
+    // Info: (20230329 - Shirley) if guaranteedStop has changed
+    if (!openCfdDetails.guaranteedStop && guaranteedChecked) {
+      const stopLoss = slValue !== openCfdDetails?.stopLoss ? slValue : openCfdDetails?.stopLoss;
       const guaranteedStopFee = guaranteedStopFeeRef.current;
 
       changedProperties = {
@@ -353,6 +353,10 @@ const UpdateFormModal = ({
     if (Object.keys(changedProperties).filter(key => key !== 'orderId').length > 0) {
       changedProperties = {...changedProperties};
     }
+
+    // Deprecated: not found currency (20230430 - Shirley)
+    // eslint-disable-next-line no-console
+    console.log('form modal, changedProperties: ', changedProperties);
 
     return changedProperties;
   };
@@ -415,8 +419,8 @@ const UpdateFormModal = ({
       <div className="flex items-center text-center">
         <input
           type="checkbox"
-          value=""
-          checked={guaranteedChecked}
+          // value=""
+          checked={guaranteedpCheckedRef.current}
           onChange={guaranteedCheckedChangeHandler}
           className="h-5 w-5 rounded text-lightWhite accent-lightGray4"
         />
@@ -502,6 +506,10 @@ const UpdateFormModal = ({
   };
 
   useEffect(() => {
+    setGuaranteedStopFee(Number(gsl) * openCfdDetails?.openPrice * openCfdDetails?.amount);
+  }, [gsl, openCfdDetails?.openPrice, openCfdDetails?.amount]);
+
+  useEffect(() => {
     setSubmitDisabled(true);
     changeComparison();
   }, [
@@ -511,6 +519,59 @@ const UpdateFormModal = ({
     slToggleRef.current,
     guaranteedpCheckedRef.current,
   ]);
+
+  useEffect(() => {
+    // Deprecated: not found currency (20230430 - Shirley)
+    // eslint-disable-next-line no-console
+    console.log('cfd info', openCfdDetails, 'globalCtx', globalCtx.visibleUpdateFormModal);
+    setGuaranteedChecked(openCfdDetails.guaranteedStop);
+    setTpToggle(!!openCfdDetails.takeProfit);
+    setSlToggle(!!openCfdDetails.stopLoss);
+    setTpValue(
+      openCfdDetails.takeProfit === 0 || openCfdDetails.takeProfit === undefined
+        ? openCfdDetails.suggestion.takeProfit
+        : openCfdDetails.takeProfit
+    );
+    setSlValue(
+      openCfdDetails.stopLoss === 0 || openCfdDetails.stopLoss === undefined
+        ? openCfdDetails.suggestion.stopLoss
+        : openCfdDetails.stopLoss
+    );
+
+    const gslFee =
+      Number(marketCtx.guaranteedStopFeePercentage) *
+      openCfdDetails?.openPrice *
+      openCfdDetails?.amount;
+    setGuaranteedStopFee(
+      openCfdDetails.guaranteedStop ? Number(openCfdDetails?.guaranteedStopFee) : gslFee
+    );
+
+    const profit =
+      openCfdDetails?.typeOfPosition === TypeOfPosition.BUY
+        ? roundToDecimalPlaces(
+            (tpValueRef.current - openCfdDetails?.openPrice) * openCfdDetails?.amount,
+            2
+          )
+        : roundToDecimalPlaces(
+            (openCfdDetails?.openPrice - tpValueRef.current) * openCfdDetails?.amount,
+            2
+          );
+
+    setExpectedProfitValue(profit);
+
+    const loss =
+      openCfdDetails?.typeOfPosition === TypeOfPosition.BUY
+        ? roundToDecimalPlaces(
+            (openCfdDetails?.openPrice - slValueRef.current) * openCfdDetails?.amount,
+            2
+          )
+        : roundToDecimalPlaces(
+            (slValueRef.current - openCfdDetails?.openPrice) * openCfdDetails?.amount,
+            2
+          );
+
+    setExpectedLossValue(loss);
+  }, [globalCtx.visibleUpdateFormModal]);
 
   const isDisplayedDetailedPositionModal = modalVisible ? (
     <div {...otherProps}>
@@ -628,20 +689,19 @@ const UpdateFormModal = ({
                     <div className="text-lightGray">{t('POSITION_MODAL.TP_AND_SL')}</div>
                     <div className="">
                       <span className={`text-lightWhite`}>
-                        {cfdTp?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
-                          minimumFractionDigits: 2,
-                        }) ?? '-'}
-                        {/* {openCfdDetails?.takeProfit?.toLocaleString(
-                          UNIVERSAL_NUMBER_FORMAT_LOCALE
-                        ) ?? '-'} */}
+                        {cfdTp === undefined || cfdTp === 0
+                          ? '-'
+                          : cfdTp.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+                              minimumFractionDigits: 2,
+                            })}
                       </span>{' '}
                       /{' '}
                       <span className={`text-lightWhite`}>
-                        {cfdSl?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
-                          minimumFractionDigits: 2,
-                        }) ?? '-'}
-                        {/* {openCfdDetails?.stopLoss?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ??
-                          '-'} */}
+                        {cfdSl === undefined || cfdSl === 0
+                          ? '-'
+                          : cfdSl.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+                              minimumFractionDigits: 2,
+                            })}
                       </span>
                     </div>
                   </div>

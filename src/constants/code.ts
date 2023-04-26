@@ -14,7 +14,9 @@ export type ICode =
   | '30110001'
   | '10110002'
   | '40230001'
-  | '10110001';
+  | '10110001'
+  | '40230002'
+  | '90000001';
 
 export type ICodeConstant = {
   SUCCESS: ICode;
@@ -33,6 +35,8 @@ export type ICodeConstant = {
   CANNOT_GET_QUOTATION_FROM_CONTEXT: ICode;
   BALANCE_NOT_FOUND: ICode;
   LOCK_PROCEDURE_WRONG: ICode;
+  FAILE_TO_UPDATE_BALANCE: ICode;
+  UNKNOWN_ERROR_IN_COMPONENT: ICode;
 };
 
 export type IReason = {
@@ -42,6 +46,7 @@ export type IReason = {
 export const Code: ICodeConstant = {
   SUCCESS: '00000000',
   UNKNOWN_ERROR: '90000000',
+  UNKNOWN_ERROR_IN_COMPONENT: '90000001',
 
   LOCK_PROCEDURE_WRONG: '10110001',
   FUNCTION_NOT_IMPLEMENTED: '10210001',
@@ -54,6 +59,7 @@ export const Code: ICodeConstant = {
   INVAILD_INPUTS: '30410004',
 
   BALANCE_NOT_FOUND: '40230001', // 1. 用戶嘗試攻擊 2. 我們程式碼嚴重缺陷
+  FAILE_TO_UPDATE_BALANCE: '40230002',
   WALLET_IS_NOT_CONNECT: '40430001',
   SERVICE_TERM_DISABLE: '40430002',
   DEWT_IS_NOT_LEGIT: '40430003',
@@ -75,6 +81,7 @@ export const Reason: IReason = {
   '30410004': 'Invalid Inputs',
 
   '40230001': 'Balance not found',
+  '40230002': 'Failed to update balance',
   '40430001': 'Wallet is not connected',
   '40430002': 'Service term is not enabled',
   '40430003': 'Dewt is not legit',
@@ -83,4 +90,5 @@ export const Reason: IReason = {
   '60220001': 'Internal server error',
 
   '90000000': 'Unknown error',
+  '90000001': 'Unknown error in component',
 };

@@ -3,8 +3,8 @@ import TradeTab from '../trade_tab/trade_tab';
 import PositionTab from '../position_tab/position_tab';
 import TradeSuspendedTab from '../trade_suspended_tab/trade_suspended_tab';
 import TradeVisitorTab from '../trade_visitor_tab/trade_visitor_tab';
-import {UserContext, IUserContext} from '../../contexts/user_context';
-import {MarketContext, IMarketContext} from '../../contexts/market_context';
+import {UserContext} from '../../contexts/user_context';
+import {MarketContext} from '../../contexts/market_context';
 import PositionVisitorTab from '../position_visitor_tab/position_visitor_tab';
 import {useTranslation} from 'next-i18next';
 
@@ -17,9 +17,6 @@ const OrderSection = () => {
   const {isCFDTradable} = useContext(MarketContext);
 
   const [activeTab, setActiveTab] = useState('Trade');
-
-  // const [suspendTrade, setSuspendTrade] = useState(false);
-  // const [dUser, setDUser] = useState(false);
 
   const tradeTabClickHandler = () => {
     setActiveTab('Trade');

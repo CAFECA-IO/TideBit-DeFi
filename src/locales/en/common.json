@@ -294,6 +294,7 @@
     "ERROR": "Error",
     "SUCCESS": "Success",
     "WARNING": "Warning",
-    "INFO": "Info"
+    "INFO": "Info",
+    "PROGRESSING_MESSAGE": "is still in progress, please wait..."
   }
 }

@@ -103,6 +103,7 @@ const PositionUpdatedModal = ({
     globalCtx.dataLoadingModalHandler({
       modalTitle: t('POSITION_MODAL.UPDATE_POSITION_TITLE'),
       modalContent: t('POSITION_MODAL.CONFIRM_CONTENT'),
+      isShowZoomOutBtn: false,
     });
     globalCtx.visibleLoadingModalHandler();
 
@@ -117,6 +118,7 @@ const PositionUpdatedModal = ({
           modalContent: t('POSITION_MODAL.TRANSACTION_BROADCAST'),
           btnMsg: t('POSITION_MODAL.VIEW_ON_BUTTON'),
           btnUrl: '#',
+          isShowZoomOutBtn: false,
         });
 
         // TODO: (20230317 - Shirley) temporary waiting

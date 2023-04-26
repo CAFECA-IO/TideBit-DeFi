@@ -2,7 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import RippleButton from '../ripple_button/ripple_button';
 import {IWarningModal} from '../../contexts/global_context';
-import {MODAL_BUTTON_STYLES} from '../../constants/display';
+import {MODAL_BUTTON_STYLE} from '../../constants/display';
 import {ImCross, ImWarning} from 'react-icons/im';
 import {useTranslation} from 'react-i18next';
 
@@ -26,7 +26,7 @@ const WarningModal = ({modalVisible, modalClickHandler, getWarningData}: IWarnin
           <RippleButton
             buttonType="button"
             onClick={modalClickHandler}
-            className={`${MODAL_BUTTON_STYLES.SOLID} w-150px py-2`}
+            className={`${MODAL_BUTTON_STYLE.SOLID} w-150px py-2`}
           >
             {getWarningData.reactionOfButton}
           </RippleButton>
@@ -35,7 +35,7 @@ const WarningModal = ({modalVisible, modalClickHandler, getWarningData}: IWarnin
         <RippleButton
           buttonType="button"
           onClick={modalClickHandler}
-          className={`${MODAL_BUTTON_STYLES.HOLLOW} w-70px py-2`}
+          className={`${MODAL_BUTTON_STYLE.HOLLOW} w-70px py-2`}
         >
           {t('POSITION_MODAL.WARNING_OK_BUTTON')}
         </RippleButton>
@@ -45,7 +45,7 @@ const WarningModal = ({modalVisible, modalClickHandler, getWarningData}: IWarnin
         <RippleButton
           buttonType="button"
           onClick={modalClickHandler}
-          className={`${MODAL_BUTTON_STYLES.SOLID} py-2 px-6`}
+          className={`${MODAL_BUTTON_STYLE.SOLID} py-2 px-6`}
         >
           {t('POSITION_MODAL.WARNING_OK_BUTTON')}
         </RippleButton>

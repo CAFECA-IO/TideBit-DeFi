@@ -141,7 +141,7 @@ const WithdrawalModal = ({
 
         globalCtx.dataCanceledModalHandler({
           modalTitle: t('D_W_MODAL.WITHDRAW'),
-          modalContent: t('D_W_MODAL.FAILED_REASON_CANCELED'),
+          modalContent: `${t('D_W_MODAL.FAILED_REASON_CANCELED')} (${result.code})`,
         });
 
         globalCtx.visibleCanceledModalHandler();
@@ -153,8 +153,7 @@ const WithdrawalModal = ({
 
         globalCtx.dataFailedModalHandler({
           modalTitle: t('D_W_MODAL.WITHDRAW'),
-          failedTitle: t('D_W_MODAL.FAILED_TITLE'),
-          failedMsg: t('D_W_MODAL.FAILED_REASON_FAILED_TO_WITHDRAW'),
+          modalContent: `${t('D_W_MODAL.FAILED_REASON_FAILED_TO_WITHDRAW')} (${result.code})`,
         });
 
         globalCtx.visibleFailedModalHandler();
@@ -166,8 +165,9 @@ const WithdrawalModal = ({
       // Info: Unknown error
       globalCtx.dataFailedModalHandler({
         modalTitle: t('D_W_MODAL.WITHDRAW'),
-        failedTitle: t('D_W_MODAL.FAILED_TITLE'),
-        failedMsg: t('D_W_MODAL.FAILED_REASON_FAILED_TO_WITHDRAW'),
+        modalContent: `${t('D_W_MODAL.FAILED_REASON_FAILED_TO_WITHDRAW')} (${
+          Code.UNKNOWN_ERROR_IN_COMPONENT
+        })`,
       });
 
       globalCtx.visibleFailedModalHandler();

@@ -25,6 +25,7 @@ import {ICFDOrder} from '../interfaces/tidebit_defi_background/order';
 import {Currency, ICurrency, ICurrencyConstant} from '../constants/currency';
 import {CustomError} from './custom_error';
 import {Code} from '../constants/code';
+import {IQuotation} from '../interfaces/tidebit_defi_background/quotation';
 
 export const roundToDecimalPlaces = (val: number, precision: number): number => {
   const roundedNumber = Number(val.toFixed(precision));
@@ -243,16 +244,21 @@ export const randomHex = (length: number) => {
   );
 };
 
-export const toDisplayCFDOrder = (cfdOrder: ICFDOrder, positionLineGraph: number[]) => {
+export const toDisplayCFDOrder = (
+  cfdOrder: ICFDOrder,
+  positionLineGraph: number[],
+  quotation?: IQuotation
+) => {
   const openValue = cfdOrder.openPrice * cfdOrder.amount;
   const closeValue =
     cfdOrder.state === OrderState.CLOSED && cfdOrder.closePrice
       ? cfdOrder.closePrice * cfdOrder.amount
       : 0;
+  const currentValue = Number(quotation?.price) * cfdOrder.amount;
   const pnl =
     cfdOrder.state === OrderState.CLOSED && cfdOrder.closePrice
       ? (closeValue - openValue) * (cfdOrder.typeOfPosition === TypeOfPosition.BUY ? 1 : -1)
-      : 0;
+      : (currentValue - openValue) * (cfdOrder.typeOfPosition === TypeOfPosition.BUY ? 1 : -1);
   const rTp =
     cfdOrder.typeOfPosition === TypeOfPosition.BUY
       ? twoDecimal(cfdOrder.openPrice * (1 + SUGGEST_TP / cfdOrder.leverage))
@@ -290,7 +296,7 @@ export const toDisplayCFDOrder = (cfdOrder: ICFDOrder, positionLineGraph: number
     ...cfdOrder,
     pnl: {
       type: pnl > 0 ? ProfitState.PROFIT : ProfitState.LOSS,
-      value: pnl,
+      value: Math.abs(pnl),
     },
     openValue: cfdOrder.openPrice * cfdOrder.amount,
     closeValue: cfdOrder.closePrice ? cfdOrder.closePrice * cfdOrder.amount : undefined,

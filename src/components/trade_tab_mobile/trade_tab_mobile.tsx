@@ -419,22 +419,36 @@ const TradeTabMobile = () => {
     );
 
     const longSlLowerBound = roundToDecimalPlaces(
-      Number(longQuotationRef.current?.price) * (1 - LIQUIDATION_FIVE_LEVERAGE),
+      Number(longQuotationRef.current?.price) *
+        (1 - LIQUIDATION_FIVE_LEVERAGE) *
+        (1 + TP_SL_LIMIT_PERCENT),
       2
     );
 
     const shortSlUpperBound = roundToDecimalPlaces(
-      Number(shortQuotationRef.current?.price) * (1 + LIQUIDATION_FIVE_LEVERAGE),
+      Number(shortQuotationRef.current?.price) *
+        (1 + LIQUIDATION_FIVE_LEVERAGE) *
+        (1 - TP_SL_LIMIT_PERCENT),
+      2
+    );
+
+    const longSlUpperBound = roundToDecimalPlaces(
+      Number(longQuotationRef.current?.price) * (1 - TP_SL_LIMIT_PERCENT),
+      2
+    );
+
+    const shortSlLowerBound = roundToDecimalPlaces(
+      Number(shortQuotationRef.current?.price) * (1 + TP_SL_LIMIT_PERCENT),
       2
     );
 
     setLongSlLowerLimit(longSlLowerBound);
-    setLongSlUpperLimit(longTpLowerBound); // Open price with buffer
+    setLongSlUpperLimit(longSlUpperBound); // Open price with buffer
     setLongTpLowerLimit(longTpLowerBound); // Open price with buffer
 
     setShortTpUpperLimit(shortTpUpperBound); // Open price with buffer
     setShortSlUpperLimit(shortSlUpperBound);
-    setShortSlLowerLimit(shortTpUpperBound); // Open price with buffer
+    setShortSlLowerLimit(shortSlLowerBound); // Open price with buffer
 
     updateSuggestions();
   };

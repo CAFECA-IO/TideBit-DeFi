@@ -465,7 +465,7 @@ const UpdateFormModal = ({
     </div>
   );
 
-  const changeComparison = () => {
+  const compareChange = () => {
     if (tpToggleRef.current && tpValueRef.current !== openCfdDetails?.takeProfit) {
       setSubmitDisabled(false);
     }
@@ -528,7 +528,7 @@ const UpdateFormModal = ({
         ? roundToDecimalPlaces(openCfdDetails.openPrice * (1 - TP_SL_LIMIT_PERCENT), 2)
         : TARGET_LIMIT_DIGITS;
 
-    const beLiquidated =
+    const isLiquidated =
       marketCtx.selectedTicker?.price !== undefined
         ? openCfdDetails.typeOfPosition === TypeOfPosition.BUY
           ? openCfdDetails.liquidationPrice > marketCtx.selectedTicker.price
@@ -537,13 +537,13 @@ const UpdateFormModal = ({
           : false
         : true;
 
-    const caledSlLowerLimit = beLiquidated
+    const caledSlLowerLimit = isLiquidated
       ? roundToDecimalPlaces(openCfdDetails.liquidationPrice, 2) // Info: 相當於不能設定 SL (20230426 - Shirley)
       : openCfdDetails.typeOfPosition === TypeOfPosition.BUY
       ? roundToDecimalPlaces(openCfdDetails.liquidationPrice * (1 + TP_SL_LIMIT_PERCENT), 2)
       : roundToDecimalPlaces(openCfdDetails.openPrice * (1 + TP_SL_LIMIT_PERCENT), 2);
 
-    const caledSlUpperLimit = beLiquidated
+    const caledSlUpperLimit = isLiquidated
       ? roundToDecimalPlaces(openCfdDetails.liquidationPrice, 2) // Info: 相當於不能設定 SL (20230426 - Shirley)
       : openCfdDetails.typeOfPosition === TypeOfPosition.BUY
       ? roundToDecimalPlaces(openCfdDetails.openPrice * (1 - TP_SL_LIMIT_PERCENT), 2)
@@ -600,7 +600,7 @@ const UpdateFormModal = ({
             2
           );
 
-    setDisableSlInput(beLiquidated);
+    setDisableSlInput(isLiquidated);
 
     setGuaranteedStopFee(
       openCfdDetails.guaranteedStop ? Number(openCfdDetails?.guaranteedStopFee) : gslFee
@@ -635,7 +635,7 @@ const UpdateFormModal = ({
 
   useEffect(() => {
     setSubmitDisabled(true);
-    changeComparison();
+    compareChange();
   }, [
     tpValueRef.current,
     slValueRef.current,

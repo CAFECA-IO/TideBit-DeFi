@@ -84,7 +84,6 @@ const TradeTab = () => {
 
   const [targetInputValue, setTargetInputValue, targetInputValueRef] = useStateRef(0.02);
 
-  // FIXME: SL setting should have a lower limit and an upper limit depending on its position type
   const [longTpValue, setLongTpValue, longTpValueRef] = useStateRef(
     Number((Number(longQuotationRef.current?.price) * (1 + SUGGEST_TP / leverage)).toFixed(2))
   );

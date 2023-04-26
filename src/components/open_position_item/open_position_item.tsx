@@ -17,10 +17,7 @@ import {cfdStateCode} from '../../constants/cfd_state_code';
 import {POSITION_CLOSE_COUNTDOWN_SECONDS, FRACTION_DIGITS} from '../../constants/config';
 import {MarketContext} from '../../contexts/market_context';
 import {UserContext} from '../../contexts/user_context';
-import {
-  IDisplayCFDOrder,
-  // getDummyDisplayAcceptedCFDOrder,
-} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
+import {IDisplayCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
 import {ToastTypeAndText} from '../../constants/toast_type';
 import {useTranslation} from 'react-i18next';
 

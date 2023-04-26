@@ -1,6 +1,7 @@
 import '../styles/globals.css';
 import '../styles/dpr.css';
 import '../styles/custom.css';
+import 'react-loading-skeleton/dist/skeleton.css';
 import type {AppProps} from 'next/app';
 import {appWithTranslation} from 'next-i18next';
 import {MarketProvider} from '../contexts/market_context';

@@ -49,15 +49,6 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
   const openItemClickHandler = () => {
     dataUpdateFormModalHandler(openCfdDetails);
     visibleUpdateFormModalHandler();
-
-    toast({
-      message: `marketPrice: ${
-        openCfdDetails?.typeOfPosition === TypeOfPosition.BUY
-          ? marketCtx.tickerLiveStatistics?.sellEstimatedFilledPrice ?? 0
-          : marketCtx.tickerLiveStatistics?.buyEstimatedFilledPrice ?? 999999999
-      }\nsuggestion: ${JSON.stringify(openCfdDetails?.suggestion)}`,
-      type: 'info',
-    });
   };
 
   const nowTimestamp = new Date().getTime() / 1000;

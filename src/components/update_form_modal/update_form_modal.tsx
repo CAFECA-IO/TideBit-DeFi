@@ -24,7 +24,12 @@ import {
 import {MarketContext} from '../../contexts/market_context';
 import useState from 'react-usestateref';
 import CircularProgressBar from '../circular_progress_bar/circular_progress_bar';
-import {unitAsset, FRACTION_DIGITS, TARGET_LIMIT_DIGITS} from '../../constants/config';
+import {
+  unitAsset,
+  FRACTION_DIGITS,
+  TARGET_LIMIT_DIGITS,
+  TP_SL_LIMIT_PERCENT,
+} from '../../constants/config';
 import useStateRef from 'react-usestateref';
 import {useTranslation} from 'react-i18next';
 import {IDisplayCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
@@ -513,12 +518,14 @@ const UpdateFormModal = ({
     setTpToggle(!!openCfdDetails.takeProfit);
     setSlToggle(!!openCfdDetails.stopLoss);
 
-    // ToDo: add buffer for the most limited tp price
+    // Info: minimum price (open price) with buffer (20230426 - Shirley)
     const caledTpLowerLimit =
-      openCfdDetails.typeOfPosition === TypeOfPosition.BUY ? openCfdDetails.openPrice : 0;
+      openCfdDetails.typeOfPosition === TypeOfPosition.BUY
+        ? roundToDecimalPlaces(openCfdDetails.openPrice * (1 + TP_SL_LIMIT_PERCENT), 2)
+        : 0;
     const caledTpUpperLimit =
       openCfdDetails.typeOfPosition === TypeOfPosition.SELL
-        ? openCfdDetails.openPrice
+        ? roundToDecimalPlaces(openCfdDetails.openPrice * (1 - TP_SL_LIMIT_PERCENT), 2)
         : TARGET_LIMIT_DIGITS;
 
     const beLiquidated =
@@ -531,18 +538,16 @@ const UpdateFormModal = ({
         : true;
 
     const caledSlLowerLimit = beLiquidated
-      ? openCfdDetails.liquidationPrice
+      ? roundToDecimalPlaces(openCfdDetails.liquidationPrice, 2) // Info: 相當於不能設定 SL (20230426 - Shirley)
       : openCfdDetails.typeOfPosition === TypeOfPosition.BUY
-      ? openCfdDetails.liquidationPrice
-      : openCfdDetails.openPrice;
+      ? roundToDecimalPlaces(openCfdDetails.liquidationPrice * (1 + TP_SL_LIMIT_PERCENT), 2)
+      : roundToDecimalPlaces(openCfdDetails.openPrice * (1 + TP_SL_LIMIT_PERCENT), 2);
 
     const caledSlUpperLimit = beLiquidated
-      ? openCfdDetails.liquidationPrice
+      ? roundToDecimalPlaces(openCfdDetails.liquidationPrice, 2) // Info: 相當於不能設定 SL (20230426 - Shirley)
       : openCfdDetails.typeOfPosition === TypeOfPosition.BUY
-      ? openCfdDetails.openPrice
-      : openCfdDetails.liquidationPrice;
-
-    setDisableSlInput(beLiquidated);
+      ? roundToDecimalPlaces(openCfdDetails.openPrice * (1 - TP_SL_LIMIT_PERCENT), 2)
+      : roundToDecimalPlaces(openCfdDetails.liquidationPrice * (1 - TP_SL_LIMIT_PERCENT), 2);
 
     const caledSl =
       marketCtx.selectedTicker?.price !== undefined
@@ -594,6 +599,8 @@ const UpdateFormModal = ({
             (slValueRef.current - openCfdDetails?.openPrice) * openCfdDetails?.amount,
             2
           );
+
+    setDisableSlInput(beLiquidated);
 
     setGuaranteedStopFee(
       openCfdDetails.guaranteedStop ? Number(openCfdDetails?.guaranteedStopFee) : gslFee

@@ -26,6 +26,7 @@ import {
   DEFAULT_TICKER,
   BUY_PRICE_ERROR,
   SELL_PRICE_ERROR,
+  SPREAD_ERROR,
 } from '../../constants/config';
 import {ClickEvent} from '../../constants/tidebit_event';
 import {useTranslation} from 'next-i18next';
@@ -186,13 +187,29 @@ const TradeTabMobile = () => {
     if (!userCtx.enableServiceTerm) return;
 
     (async () => {
-      await getQuotation(marketCtx.selectedTicker?.currency ?? DEFAULT_TICKER);
+      setQuotation();
 
       setTpSlBounds();
       setSuggestions();
       renewPosition();
     })();
   }, [userCtx.enableServiceTerm]);
+
+  // Info: Calculate quotation when market price changes (20230427 - Shirley)
+  useEffect(() => {
+    setQuotation();
+    // eslint-disable-next-line no-console
+    console.log(
+      'spread',
+      marketCtx.tickerLiveStatistics?.spread,
+      'market price',
+      marketCtx.selectedTicker?.price,
+      'long',
+      longQuotationRef.current,
+      'short',
+      shortQuotationRef.current
+    );
+  }, [marketCtx.selectedTicker?.price]);
 
   // Info: Fetch quotation in period (20230327 - Shirley)
   useEffect(() => {
@@ -205,8 +222,7 @@ const TradeTabMobile = () => {
       setSecondsLeft(tickingSec > 0 ? Math.round(tickingSec) : 0);
 
       if (secondsLeftRef.current === 0) {
-        await getQuotation(marketCtx.selectedTicker?.currency ?? DEFAULT_TICKER);
-
+        setQuotation();
         setTpSlBounds();
         checkTpSlWithinBounds();
         renewPosition();
@@ -221,8 +237,7 @@ const TradeTabMobile = () => {
   // Info: Fetch quotation when ticker changed (20230327 - Shirley)
   useEffect(() => {
     notificationCtx.emitter.once(ClickEvent.TICKER_CHANGED, async () => {
-      await getQuotation(marketCtx.selectedTickerRef.current?.currency ?? DEFAULT_TICKER);
-
+      setQuotation();
       setTpSlBounds();
       setSuggestions();
       renewPosition();
@@ -233,102 +248,42 @@ const TradeTabMobile = () => {
     };
   }, [marketCtx.selectedTicker]);
 
-  const getQuotation = async (tickerId: string) => {
-    let longQuotation = defaultResultSuccess;
-    let shortQuotation = defaultResultSuccess;
+  const setQuotation = () => {
+    const deadline = getTimestamp() + QUOTATION_RENEWAL_INTERVAL_SECONDS;
+    const buyPrice = roundToDecimalPlaces(
+      (marketCtx.selectedTicker?.price ?? BUY_PRICE_ERROR) *
+        (1 + (marketCtx.tickerLiveStatistics?.spread ?? SPREAD_ERROR)),
+      2
+    );
 
-    try {
-      longQuotation = await marketCtx.getCFDQuotation(tickerId, TypeOfPosition.BUY);
-      shortQuotation = await marketCtx.getCFDQuotation(tickerId, TypeOfPosition.SELL);
+    const sellPrice = roundToDecimalPlaces(
+      (marketCtx.selectedTicker?.price ?? SELL_PRICE_ERROR) *
+        (1 - (marketCtx.tickerLiveStatistics?.spread ?? SPREAD_ERROR)),
+      2
+    );
 
-      const long = longQuotation.data as IQuotation;
-      const short = shortQuotation.data as IQuotation;
+    const long: IQuotation = {
+      ticker: marketCtx.selectedTicker?.currency ?? DEFAULT_TICKER,
+      targetAsset: marketCtx.selectedTicker?.currency ?? DEFAULT_TICKER,
+      unitAsset: unitAsset,
+      typeOfPosition: TypeOfPosition.BUY,
+      price: buyPrice,
+      deadline: deadline,
+      signature: '0x',
+    };
 
-      // Info: if there's error fetching quotation, use the previous quotation or calculate the quotation (20230327 - Shirley)
-      if (
-        longQuotation.success &&
-        long.typeOfPosition === TypeOfPosition.BUY &&
-        longQuotation.data !== null
-      ) {
-        setLongQuotation(long);
-      } else {
-        const buyPrice =
-          (marketCtx.selectedTickerRef.current?.price ?? BUY_PRICE_ERROR) *
-          (1 + (marketCtx.tickerLiveStatistics?.spread ?? 0));
+    const short: IQuotation = {
+      ticker: marketCtx.selectedTicker?.currency ?? DEFAULT_TICKER,
+      targetAsset: marketCtx.selectedTicker?.currency ?? DEFAULT_TICKER,
+      unitAsset: unitAsset,
+      typeOfPosition: TypeOfPosition.SELL,
+      price: sellPrice,
+      deadline: deadline,
+      signature: '0x',
+    };
 
-        const buyQuotation: IQuotation = {
-          ticker: marketCtx.selectedTicker?.currency ?? DEFAULT_TICKER,
-          targetAsset: marketCtx.selectedTicker?.currency ?? DEFAULT_TICKER,
-          typeOfPosition: TypeOfPosition.BUY,
-          unitAsset: unitAsset,
-          price: buyPrice,
-          deadline: getTimestamp() + QUOTATION_RENEWAL_INTERVAL_SECONDS,
-          signature: '0x',
-        };
-
-        setLongQuotation(buyQuotation);
-      }
-
-      // Info: if there's error fetching quotation, use the previous quotation or calculate the quotation (20230327 - Shirley)
-      if (
-        shortQuotation.success &&
-        short &&
-        short.typeOfPosition === TypeOfPosition.SELL &&
-        shortQuotation.data !== null
-      ) {
-        setShortQuotation(short);
-      } else {
-        const sellPrice =
-          (marketCtx.selectedTickerRef.current?.price ?? BUY_PRICE_ERROR) *
-          (1 + (marketCtx.tickerLiveStatistics?.spread ?? 0));
-
-        const sellQuotation: IQuotation = {
-          ticker: marketCtx.selectedTicker?.currency ?? DEFAULT_TICKER,
-          targetAsset: marketCtx.selectedTicker?.currency ?? DEFAULT_TICKER,
-          typeOfPosition: TypeOfPosition.SELL,
-          unitAsset: unitAsset,
-          price: sellPrice,
-          deadline: getTimestamp() + QUOTATION_RENEWAL_INTERVAL_SECONDS,
-          signature: '0x',
-        };
-
-        setShortQuotation(sellQuotation);
-      }
-    } catch (err) {
-      const buyPrice =
-        (marketCtx.selectedTickerRef.current?.price ?? BUY_PRICE_ERROR) *
-        (1 + (marketCtx.tickerLiveStatistics?.spread ?? 0));
-
-      const buyQuotation: IQuotation = {
-        ticker: marketCtx.selectedTicker?.currency ?? DEFAULT_TICKER,
-        targetAsset: marketCtx.selectedTicker?.currency ?? DEFAULT_TICKER,
-        typeOfPosition: TypeOfPosition.BUY,
-        unitAsset: unitAsset,
-        price: buyPrice,
-        deadline: getTimestamp() + QUOTATION_RENEWAL_INTERVAL_SECONDS,
-        signature: '0x',
-      };
-
-      setLongQuotation(buyQuotation);
-
-      const sellPrice =
-        (marketCtx.selectedTickerRef.current?.price ?? SELL_PRICE_ERROR) *
-        (1 - (marketCtx.tickerLiveStatistics?.spread ?? 0));
-
-      const sellQuotation: IQuotation = {
-        ticker: marketCtx.selectedTicker?.currency ?? DEFAULT_TICKER,
-        targetAsset: marketCtx.selectedTicker?.currency ?? DEFAULT_TICKER,
-        typeOfPosition: TypeOfPosition.SELL,
-        unitAsset: unitAsset,
-        price: sellPrice,
-        deadline: getTimestamp() + QUOTATION_RENEWAL_INTERVAL_SECONDS,
-        signature: '0x',
-      };
-
-      setShortQuotation(sellQuotation);
-    }
-
-    return {longQuotation: longQuotation, shortQuotation: shortQuotation};
+    setLongQuotation(long);
+    setShortQuotation(short);
   };
 
   const calculateLongProfit = () => {
@@ -580,7 +535,7 @@ const TradeTabMobile = () => {
         asset: unitAsset,
         amount: requiredMarginLongRef.current,
       },
-      liquidationTime: Math.ceil(Date.now() / 1000) + 86400,
+      liquidationTime: getTimestamp() + 86400,
     };
 
     const longOrder: IApplyCreateCFDOrder = {
@@ -590,7 +545,10 @@ const TradeTabMobile = () => {
       price: longQuotationRef.current.price,
       typeOfPosition: TypeOfPosition.BUY,
       quotation: longQuotationRef.current,
-      liquidationPrice: longQuotationRef.current.price * (1 - LIQUIDATION_FIVE_LEVERAGE),
+      liquidationPrice: roundToDecimalPlaces(
+        longQuotationRef.current.price * (1 - LIQUIDATION_FIVE_LEVERAGE),
+        2
+      ),
       fee: marketCtx.tickerLiveStatistics?.fee ?? BUY_PRICE_ERROR,
       guaranteedStop: longSlToggle ? longGuaranteedStopChecked : false,
       guaranteedStopFee:
@@ -606,7 +564,10 @@ const TradeTabMobile = () => {
       typeOfPosition: TypeOfPosition.SELL,
       quotation: shortQuotationRef.current,
       price: shortQuotationRef.current.price,
-      liquidationPrice: shortQuotationRef.current.price * (1 + LIQUIDATION_FIVE_LEVERAGE),
+      liquidationPrice: roundToDecimalPlaces(
+        shortQuotationRef.current.price * (1 + LIQUIDATION_FIVE_LEVERAGE),
+        2
+      ),
       fee: marketCtx.tickerLiveStatistics?.fee ?? BUY_PRICE_ERROR,
       guaranteedStop: shortSlToggle ? shortGuaranteedStopChecked : false,
       guaranteedStopFee:

@@ -48,7 +48,8 @@ const WithdrawalModal = ({
 
   const regex = /^\d*\.?\d{0,2}$/;
 
-  const toastId = `${t('D_W_MODAL.WITHDRAW')}LoadingModalMinimized`;
+  /* Info: (20230427 - Julian) toastId by minimizedModal */
+  const toastId = `${t('D_W_MODAL.WITHDRAW')}_LoadingModalMinimized`;
 
   const cryptoMenuClickHandler = () => {
     setShowCryptoMenu(!showCryptoMenu);

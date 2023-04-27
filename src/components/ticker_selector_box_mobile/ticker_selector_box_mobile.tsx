@@ -1,5 +1,3 @@
-import {ToastContainer, toast, ToastOptions, useToast} from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import {CRYPTO_CARD_COLORS} from '../../constants/display';
 import {ImCross} from 'react-icons/im';
 import {CgSearch} from 'react-icons/cg';
@@ -16,7 +14,6 @@ import {ICurrency} from '../../constants/currency';
 
 type TranslateFunction = (s: string) => string;
 
-// TODO: useContext
 interface ITickerSelectorBox {
   tickerSelectorBoxRef: React.RefObject<HTMLDivElement>;
   tickerSelectorBoxVisible: boolean;
@@ -32,9 +29,6 @@ interface ICryptoCardData {
   fluctuating: number;
   tokenImg: string;
   lineGraphProps: ILineGraphProps;
-
-  // getStarredStateCallback: (bool: boolean) => void;
-
   starColor?: string;
   gradientColor?: string;
 }
@@ -51,14 +45,7 @@ const TickerSelectorBoxMobile = ({
   const {t}: {t: TranslateFunction} = useTranslation('common');
   const router = useRouter();
   const [activeTab, setActiveTab] = useState('All');
-
-  // const cryptoCards = useMemo(() => {
-  //   if (activeTab === 'All') {
-  //     return allCards;
-  //   } else {
-  //     return favorites;
-  //   }
-  // }, [activeTab, allCards, favorites]);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const cardClickHandler = (route: string) => {
     tickerSelectorBoxClickHandler();
@@ -72,24 +59,13 @@ const TickerSelectorBoxMobile = ({
   const routing = (currency: string) => {
     const base = currency.toLocaleLowerCase();
     router.push(`/trade/cfd/${base}usdt`);
-    // console.log(`/trade/cfd/${base}usdt`);
   };
 
   const convertTickersToCryptoCardsData = (availableTickers: ITickerData[]) => {
-    const cryptoCardsData: ICryptoCardData[] = availableTickers?.map((each, index) => {
+    const cryptoCardsData: ICryptoCardData[] = availableTickers?.map(each => {
       const color = CRYPTO_CARD_COLORS.find(i => i.label === each.currency);
       const addCallbackFunc: ICryptoCardData = {
         ...each,
-        // getStarredStateCallback: (bool: boolean) => {
-        //   // `bool` 是從 Crypto Card 得到的最新的 starred 狀態，each.starred只是從 availableTickers 得到的初始 starred 狀態
-        //   // console.log('if starred: ', each.starred, 'boolean: ', bool);
-        //   if (bool) {
-        //     userCtx.addFavorites(each.currency);
-        //   } else {
-        //     userCtx.removeFavorites(each.currency);
-        //   }
-        //   // console.log(each.currency, 'clicked');
-        // },
         starColor: color?.starColor,
         gradientColor: color?.gradientColor,
       };
@@ -97,42 +73,6 @@ const TickerSelectorBoxMobile = ({
     });
     return cryptoCardsData;
   };
-
-  // const addCallbackToCryptoCardsData = availableTickers?.map((each, index) => {
-  //   const addCallbackFunc = {
-  //     ...each,
-  //     getStarredStateCallback: (bool: boolean) => {
-  //       // `bool` 是從 Crypto Card 得到的最新的 starred 狀態，each.starred只是從 availableTickers 得到的初始 starred 狀態
-  //       // console.log('if starred: ', each.starred, 'boolean: ', bool);
-  //       if (bool) {
-  //         addFavorites(each.currency);
-  //       } else {
-  //         removeFavorites(each.currency);
-  //       }
-  //       // console.log(each.currency, 'clicked');
-  //     },
-  //   };
-  //   return addCallbackFunc;
-  // });
-
-  // const cryptoCardsData: ICryptoCardData[] = addCallbackToCryptoCardsData
-  //   // .filter(item => CRYPTO_CARD_COLORS.some(i => i.label === item.currency))
-  //   ?.map((each, index) => {
-  //     const color = CRYPTO_CARD_COLORS.find(i => i.label === each.currency);
-  //     return {
-  //       ...each,
-  //       starColor: color?.starColor,
-  //       gradientColor: color?.gradientColor,
-  //     };
-  //   });
-
-  // const cryptoCardsData: ICryptoCardData[] = convertTickersToCryptoCardsData(availableTickers);
-
-  // console.log('cryptoCardsData in ticker selector box: ', cryptoCardsData);
-
-  // const favoriteTabCardsData = cryptoCardsData.filter(cryptoCardData => cryptoCardData.starred);
-
-  // const [favoritesSearches, setFavoritesSearches] = useState<string>();
 
   const [filteredFavorites, setFilteredFavorites] = useState<ICryptoCardData[] | undefined>(
     undefined
@@ -142,23 +82,10 @@ const TickerSelectorBoxMobile = ({
 
   const [filteredCards, setFilteredCards] = useState<ICryptoCardData[]>([]);
 
-  // const [filteredCards, setFilteredCards] = useState<ICryptoCardData[] | null>(cryptoCardsData);
-
   const onSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const searchString = event.target.value.toLocaleLowerCase();
     setSearches(searchString);
-
-    // // 這樣寫，會顯示上一步的搜尋結果
-    // const newSearchResult = TRADING_CRYPTO_DATA.filter(each => {
-    //   return each.chain.toLocaleLowerCase().includes(searches || '');
-    // });
-    // setFilteredCards(newSearchResult);
   };
-
-  // const testResult =
-
-  // dropdown menu
-  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     if (tickerSelectorBoxVisible) {
@@ -198,90 +125,17 @@ const TickerSelectorBoxMobile = ({
 
   const dropdownMenuClickHandler = () => setMenuOpen(!menuOpen);
 
-  const displayedAllCryptoCards = filteredCards
-    // .filter(each => {
-    //   if (!availableTickers) return;
-
-    //   // // TODO: Displaying the favorite tickers on all tab
-    //   // if (user && user[0].favoriteTickers) {
-    //   //   for (let i = 0; i < user[0].favoriteTickers.length; i++) {
-    //   //     return user[0].favoriteTickers.find((fav: ITickerData) => fav.currency === each.currency);
-    //   //     // if (each.currency === user[0].favoriteTickers.find((each: ICryptoCardData) => each)) {
-    //   //     //   each.starred = true;
-    //   //     //   return each;
-    //   //     // }
-    //   //   }
-    //   // }
-
-    //   // for (let i = 0; i < availableTickers.length; i++) {
-    //   //   if (each.currency === (availableTickers && availableTickers[i])) {
-    //   //     return each;
-    //   //   }
-    //   // }
-    // })
-    ?.map((cryptoCard, i) => {
-      if (i === 0) {
-        return (
-          <CryptoCard
-            key={cryptoCard.currency}
-            cardClickHandler={() => cardClickHandler(cryptoCard.currency)}
-            className="mt-4 ml-4"
-            lineGraphProps={cryptoCard.lineGraphProps}
-            star={cryptoCard.star}
-            starColor={cryptoCard.starColor}
-            starred={cryptoCard.starred}
-            // getStarredState={cryptoCard.getStarredStateCallback}
-            chain={cryptoCard.chain}
-            currency={cryptoCard.currency}
-            price={cryptoCard.price}
-            fluctuating={cryptoCard.fluctuating}
-            gradientColor={cryptoCard?.gradientColor ?? ''}
-            tokenImg={cryptoCard.tokenImg}
-          />
-        );
-      }
-
-      return (
-        <CryptoCard
-          key={cryptoCard.currency}
-          // cardClickHandler={() => {
-          //   tickerSelectorBoxClickHandler();
-          //   routing(cryptoCard.currency);
-          // }}
-          cardClickHandler={() => cardClickHandler(cryptoCard.currency)}
-          className="mt-0"
-          lineGraphProps={cryptoCard.lineGraphProps}
-          star={cryptoCard.star}
-          starColor={cryptoCard.starColor}
-          starred={cryptoCard.starred}
-          // getStarredState={cryptoCard.getStarredStateCallback}
-          chain={cryptoCard.chain}
-          currency={cryptoCard.currency}
-          price={cryptoCard.price}
-          fluctuating={cryptoCard.fluctuating}
-          gradientColor={cryptoCard?.gradientColor ?? ''}
-          tokenImg={cryptoCard.tokenImg}
-        />
-      );
-    });
-
-  const displayedFavorites = filteredFavorites?.map((cryptoCard, i) => {
-    if (cryptoCard.starred !== true) return;
+  const displayedAllCryptoCards = filteredCards?.map((cryptoCard, i) => {
     if (i === 0) {
       return (
         <CryptoCard
           key={cryptoCard.currency}
-          // cardClickHandler={() => {
-          //   tickerSelectorBoxClickHandler();
-          //   routing(cryptoCard.currency);
-          // }}
           cardClickHandler={() => cardClickHandler(cryptoCard.currency)}
           className="mt-4 ml-4"
           lineGraphProps={cryptoCard.lineGraphProps}
           star={cryptoCard.star}
           starColor={cryptoCard.starColor}
           starred={cryptoCard.starred}
-          // getStarredState={cryptoCard.getStarredStateCallback}
           chain={cryptoCard.chain}
           currency={cryptoCard.currency}
           price={cryptoCard.price}
@@ -296,16 +150,52 @@ const TickerSelectorBoxMobile = ({
       <CryptoCard
         key={cryptoCard.currency}
         cardClickHandler={() => cardClickHandler(cryptoCard.currency)}
-        // cardClickHandler={() => {
-        //   tickerSelectorBoxClickHandler();
-        //   routing(cryptoCard.currency);
-        // }}
         className="mt-0"
         lineGraphProps={cryptoCard.lineGraphProps}
         star={cryptoCard.star}
         starColor={cryptoCard.starColor}
         starred={cryptoCard.starred}
-        // getStarredState={cryptoCard.getStarredStateCallback}
+        chain={cryptoCard.chain}
+        currency={cryptoCard.currency}
+        price={cryptoCard.price}
+        fluctuating={cryptoCard.fluctuating}
+        gradientColor={cryptoCard?.gradientColor ?? ''}
+        tokenImg={cryptoCard.tokenImg}
+      />
+    );
+  });
+
+  const displayedFavorites = filteredFavorites?.map((cryptoCard, i) => {
+    if (cryptoCard.starred !== true) return;
+    if (i === 0) {
+      return (
+        <CryptoCard
+          key={cryptoCard.currency}
+          cardClickHandler={() => cardClickHandler(cryptoCard.currency)}
+          className="mt-4 ml-4"
+          lineGraphProps={cryptoCard.lineGraphProps}
+          star={cryptoCard.star}
+          starColor={cryptoCard.starColor}
+          starred={cryptoCard.starred}
+          chain={cryptoCard.chain}
+          currency={cryptoCard.currency}
+          price={cryptoCard.price}
+          fluctuating={cryptoCard.fluctuating}
+          gradientColor={cryptoCard?.gradientColor ?? ''}
+          tokenImg={cryptoCard.tokenImg}
+        />
+      );
+    }
+
+    return (
+      <CryptoCard
+        key={cryptoCard.currency}
+        cardClickHandler={() => cardClickHandler(cryptoCard.currency)}
+        className="mt-0"
+        lineGraphProps={cryptoCard.lineGraphProps}
+        star={cryptoCard.star}
+        starColor={cryptoCard.starColor}
+        starred={cryptoCard.starred}
         chain={cryptoCard.chain}
         currency={cryptoCard.currency}
         price={cryptoCard.price}
@@ -363,8 +253,7 @@ const TickerSelectorBoxMobile = ({
           ) : (
             <></>
           )}
-
-          {/* Other tabs */}
+          {/* Info: (20230427 - Julian) Other tabs */}
         </div>
       </div>
     </>
@@ -373,15 +262,15 @@ const TickerSelectorBoxMobile = ({
   const isDisplayedTickerSelectorBox = tickerSelectorBoxVisible ? (
     <>
       <div className="fixed inset-0 z-50 flex items-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">
-        {/* The position of the box */}
+        {/* Info: (20230427 - Julian) The position of the box */}
         <div
           className="relative mx-auto my-10px min-w-fit"
           id="tickerSelectorModal"
           ref={tickerSelectorBoxRef}
         >
-          {/* ticker cards section */}
+          {/* Info: (20230427 - Julian) ticker cards section */}
           <div className="flex h-95vh w-90vw flex-col items-center rounded-xl border-0 bg-darkGray1 px-4 shadow-lg shadow-black/80 outline-none focus:outline-none">
-            {/*header*/}
+            {/* Info: (20230427 - Julian) header */}
             <button
               className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none"
               onClick={tickerSelectorBoxClickHandler}
@@ -391,12 +280,11 @@ const TickerSelectorBoxMobile = ({
               </span>
             </button>
 
-            {/* ----- body ----- */}
+            {/* Info: (20230427 - Julian) ----- body ----- */}
 
-            {/* tab section */}
+            {/* Info: (20230427 - Julian) tab section */}
             <div className="w-full">{tabPart}</div>
 
-            {/* `border border-gray-300` for input border */}
             <div className="relative mt-10 flex w-full">
               <input
                 type="search"
@@ -414,14 +302,14 @@ const TickerSelectorBoxMobile = ({
               </button>
             </div>
 
-            {/* Card section */}
+            {/* Info: (20230427 - Julian) Card section */}
             <div className="mt-10 flex h-7/10 flex-auto flex-col items-center justify-start sm:h-3/4">
               <div className="mb-5 mr-4 grid h-full auto-rows-min grid-cols-2 space-y-4 space-x-4 overflow-y-auto overflow-x-hidden md:grid-cols-3">
                 {displayedCryptoCards}
               </div>
             </div>
-            {/*footer*/}
-            {/* <div className="flex items-center justify-end rounded-b p-2"></div> */}
+            {/* Info: (20230427 - Julian) footer */}
+            <div className="flex items-center justify-end rounded-b p-2"></div>
           </div>
         </div>
       </div>

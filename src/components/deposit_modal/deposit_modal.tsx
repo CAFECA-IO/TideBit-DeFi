@@ -13,7 +13,6 @@ import {OrderType} from '../../constants/order_type';
 import {UserContext} from '../../contexts/user_context';
 import {Code} from '../../constants/code';
 import useStateRef from 'react-usestateref';
-import {ToastTypeAndText} from '../../constants/toast_type';
 
 type TranslateFunction = (s: string) => string;
 interface IDepositModal {
@@ -47,7 +46,8 @@ const DepositModal = ({
 
   const regex = /^\d*\.?\d{0,2}$/;
 
-  const toastId = `${t('D_W_MODAL.DEPOSIT')}LoadingModalMinimized`;
+  /* Info: (20230427 - Julian) toastId by minimizedModal */
+  const toastId = `${t('D_W_MODAL.DEPOSIT')}_LoadingModalMinimized`;
 
   const cryptoMenuClickHandler = () => {
     setShowCryptoMenu(!showCryptoMenu);
@@ -96,18 +96,6 @@ const DepositModal = ({
 
     try {
       const result = await userCtx.deposit(depositOrder);
-
-      // Deprecate: after Julian confirm result format (20230413 - Shirley)
-      // eslint-disable-next-line no-console
-      console.log(`userCtx.deposit result:`, result);
-
-      // TODO: for debug
-      globalCtx.toast({
-        message: JSON.stringify(result),
-        type: ToastTypeAndText.INFO.type,
-        typeText: t(ToastTypeAndText.INFO.text),
-        autoClose: false,
-      });
 
       // TODO: the button URL
       if (result.success) {

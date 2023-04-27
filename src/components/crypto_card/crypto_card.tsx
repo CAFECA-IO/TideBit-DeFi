@@ -77,9 +77,9 @@ const CryptoCard = ({
   const starClickHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
     if (!userCtx.enableServiceTerm) {
       globalCtx.toast({
-        type: ToastTypeAndText.ERROR.type,
+        type: ToastTypeAndText.INFO.type,
         message: 'Please login to add to favorites',
-        typeText: t(ToastTypeAndText.ERROR.text),
+        typeText: t(ToastTypeAndText.INFO.text),
       });
     }
 

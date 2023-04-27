@@ -2,7 +2,12 @@ import Lottie from 'lottie-react';
 import bigConnectingAnimation from '../../../public/animation/lf30_editor_qlduo5gq.json';
 import Image from 'next/image';
 import RippleButton from '../ripple_button/ripple_button';
+import {GlobalContext} from '../../contexts/global_context';
+import {ToastTypeAndText} from '../../constants/toast_type';
+import {useContext} from 'react';
+import {useTranslation} from 'next-i18next';
 
+type TranslateFunction = (s: string) => string;
 export interface ILoadingModal {
   modalRef?: React.RefObject<HTMLDivElement>;
   modalVisible: boolean;
@@ -11,6 +16,7 @@ export interface ILoadingModal {
   modalContent: string;
   btnMsg?: string;
   btnUrl?: string;
+  isShowZoomOutBtn?: boolean;
 }
 
 const LoadingModal = ({
@@ -21,8 +27,41 @@ const LoadingModal = ({
   modalContent,
   btnMsg,
   btnUrl,
+  isShowZoomOutBtn,
   ...otherProps
 }: ILoadingModal) => {
+  const {t}: {t: TranslateFunction} = useTranslation('common');
+  const globalCtx = useContext(GlobalContext);
+
+  const zoomOutHandler = () => {
+    /**
+     * Info: (20230424 - Julian) 關掉 modal
+     * 1. 記錄目前 modal 的內容 (modalReOpenData)
+     * 2. 關掉 modal
+     * 3. 顯示 toast
+     * 4. 點擊 toast 關掉 toast 並且顯示 modal
+     */
+    modalClickHandler();
+
+    if (globalCtx.visibleLoadingModal) {
+      globalCtx.toast({
+        type: ToastTypeAndText.INFO.type,
+        message: `${modalTitle} ${t('TOAST.PROGRESSING_MESSAGE')}`,
+        toastId: 'loadingModalMinimized',
+        autoClose: false,
+        isLoading: true,
+        typeText: t(ToastTypeAndText.INFO.text),
+        modalReOpenData: {
+          modalTitle: modalTitle,
+          modalContent: modalContent,
+          btnMsg: btnMsg,
+          btnUrl: btnUrl,
+          isShowZoomOutBtn: true,
+        },
+      });
+    }
+  };
+
   const isDisplayedConnecting = modalVisible ? (
     <>
       <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">
@@ -38,19 +77,21 @@ const LoadingModal = ({
               <h3 className="mx-auto mt-2 w-full text-center text-2xl font-normal text-lightWhite">
                 {modalTitle}
               </h3>
-              <button className="z-10 float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
-                <span
-                  onClick={modalClickHandler}
-                  className="absolute top-3 right-3 block outline-none focus:outline-none"
-                >
-                  <Image
-                    src="/elements/group_14915.svg"
-                    width={30}
-                    height={30}
-                    alt="zoom-out icon"
-                  />
-                </span>
-              </button>
+              {isShowZoomOutBtn ? (
+                <button className="z-10 float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
+                  <span
+                    onClick={zoomOutHandler}
+                    className="absolute top-3 right-3 block outline-none focus:outline-none"
+                  >
+                    <Image
+                      src="/elements/group_14915.svg"
+                      width={30}
+                      height={30}
+                      alt="zoom-out icon"
+                    />
+                  </span>
+                </button>
+              ) : null}
             </div>
             {/*body*/}
             <div className="relative flex-auto pt-1">

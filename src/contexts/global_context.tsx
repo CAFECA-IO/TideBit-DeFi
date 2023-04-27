@@ -265,7 +265,6 @@ export interface IGlobalContext {
 
   visibleLoadingModal: boolean;
   visibleLoadingModalHandler: () => void;
-  //zoomOutLoadingModal: () => void;
   dataLoadingModal: IProcessDataModal | null;
   dataLoadingModalHandler: (data: IProcessDataModal) => void;
 
@@ -399,7 +398,6 @@ export const GlobalContext = createContext<IGlobalContext>({
 
   visibleLoadingModal: false,
   visibleLoadingModalHandler: () => null,
-  //zoomOutLoadingModal: () => null,
   dataLoadingModal: null,
   dataLoadingModalHandler: () => null,
 
@@ -1085,7 +1083,6 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
 
     visibleLoadingModal,
     visibleLoadingModalHandler,
-    //zoomOutLoadingModal,
     dataLoadingModal,
     dataLoadingModalHandler,
 
@@ -1190,7 +1187,6 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     <GlobalContext.Provider value={defaultValue}>
       <LoadingModal
         modalVisible={visibleLoadingModal}
-        //zoomOutHandler={zoomOutLoadingModal}
         modalClickHandler={visibleLoadingModalHandler}
         modalTitle={dataLoadingModal.modalTitle}
         modalContent={dataLoadingModal.modalContent}

@@ -22,6 +22,10 @@ import {
   FRACTION_DIGITS,
   USER_BALANCE_ERROR,
   TP_SL_LIMIT_PERCENT,
+  LEVERAGE_ERROR,
+  DEFAULT_TICKER,
+  BUY_PRICE_ERROR,
+  SELL_PRICE_ERROR,
 } from '../../constants/config';
 import {ClickEvent} from '../../constants/tidebit_event';
 import {useTranslation} from 'next-i18next';
@@ -49,14 +53,12 @@ const TradeTabMobile = () => {
   const userCtx = useContext(UserContext);
   const notificationCtx = useContext(NotificationContext);
 
-  const tickerLiveStatistics = marketCtx.tickerLiveStatistics;
   const tickerStaticStatistics = marketCtx.tickerStatic;
 
-  const TEMP_PLACEHOLDER = TARGET_LIMIT_DIGITS;
-  const DEFAULT_TICKER = 'ETH';
-  const SELL_PRICE_ERROR = 0;
-  const BUY_PRICE_ERROR = 9999999999;
-  const LEVERAGE_ERROR = 1;
+  const initialState = {
+    number: 0,
+    symbol: '',
+  };
 
   const ticker = marketCtx.selectedTicker?.currency ?? '';
 
@@ -103,24 +105,17 @@ const TradeTabMobile = () => {
   const [activeTab, setActiveTab] = useState('Long');
   const [openSubMenu, setOpenSubMenu] = useState(false);
 
-  const [expectedLongProfitValue, setExpectedLongProfitValue, expectedLongProfitValueRef] =
-    useStateRef(
-      (longTpValue - Number(longQuotationRef.current?.price)) * targetInputValueRef.current
-    );
+  const [estimatedLongProfitValue, setEstimatedLongProfitValue, estimatedLongProfitValueRef] =
+    useStateRef(initialState);
 
-  const [expectedLongLossValue, setExpectedLongLossValue, expectedLongLossValueRef] = useStateRef(
-    (Number(longQuotationRef.current?.price) - longSlValue) * targetInputValueRef.current
-  );
+  const [estimatedLongLossValue, setEstimatedLongLossValue, estimatedLongLossValueRef] =
+    useStateRef(initialState);
 
-  const [expectedShortProfitValue, setExpectedShortProfitValue, expectedShortProfitValueRef] =
-    useStateRef(
-      (Number(longQuotationRef.current?.price) - shortTpValue) * targetInputValueRef.current
-    );
+  const [estimatedShortProfitValue, setEstimatedShortProfitValue, estimatedShortProfitValueRef] =
+    useStateRef(initialState);
 
-  const [expectedShortLossValue, setExpectedShortLossValue, expectedShortLossValueRef] =
-    useStateRef(
-      (shortSlValue - Number(longQuotationRef.current?.price)) * targetInputValueRef.current
-    );
+  const [estimatedShortLossValue, setEstimatedShortLossValue, estimatedShortLossValueRef] =
+    useStateRef(initialState);
 
   const [longGuaranteedStopChecked, setLongGuaranteedStopChecked] = useState(false);
   const [shortGuaranteedStopChecked, setShortGuaranteedStopChecked] = useState(false);
@@ -335,53 +330,74 @@ const TradeTabMobile = () => {
 
     return {longQuotation: longQuotation, shortQuotation: shortQuotation};
   };
+
+  const calculateLongProfit = () => {
+    const rs =
+      (longTpValueRef.current - Number(longQuotationRef.current?.price)) *
+      targetInputValueRef.current;
+    const symbol = rs > 0 ? '+' : '-';
+    const number = Math.abs(rs);
+    setEstimatedLongProfitValue({number: number, symbol: symbol});
+  };
+
+  const calculateLongLoss = () => {
+    const rs =
+      (longSlValueRef.current - Number(longQuotationRef.current?.price)) *
+      targetInputValueRef.current;
+    const symbol = rs > 0 ? '+' : '-';
+    const number = Math.abs(rs);
+    setEstimatedLongLossValue({number: number, symbol: symbol});
+  };
+
+  const calculateShortProfit = () => {
+    const rs =
+      (Number(shortQuotationRef.current?.price) - shortTpValueRef.current) *
+      targetInputValueRef.current;
+    const symbol = rs > 0 ? '+' : '-'; // FIXME: Check
+    const number = Math.abs(rs);
+    setEstimatedShortProfitValue({number: number, symbol: symbol});
+  };
+
+  const calculateShortLoss = () => {
+    const rs =
+      (Number(shortQuotationRef.current?.price) - shortSlValueRef.current) *
+      targetInputValueRef.current;
+    const symbol = rs > 0 ? '+' : '-';
+    const number = Math.abs(rs);
+    setEstimatedShortLossValue({number: number, symbol: symbol});
+  };
+
   const getTargetInputValue = (value: number) => {
     setTargetInputValue(value);
     targetAmountDetection(value);
 
-    setExpectedLongProfitValue(
-      (longTpValue - Number(longQuotationRef.current?.price)) * targetInputValueRef.current
-    );
-    setExpectedLongLossValue(
-      (Number(longQuotationRef.current?.price) - longSlValue) * targetInputValueRef.current
-    );
-    setExpectedShortProfitValue(
-      (Number(shortQuotationRef.current?.price) - shortTpValue) * targetInputValueRef.current
-    );
-    setExpectedShortLossValue(
-      (shortSlValue - Number(shortQuotationRef.current?.price)) * targetInputValueRef.current
-    );
+    calculateLongProfit();
+    calculateLongLoss();
+    calculateShortProfit();
+    calculateShortLoss();
   };
   const getLongTpValue = (value: number) => {
     setLongTpValue(value);
 
-    setExpectedLongProfitValue(
-      (longTpValue - Number(longQuotationRef.current?.price)) * targetInputValueRef.current
-    );
+    calculateLongProfit();
   };
 
   const getLongSlValue = (value: number) => {
     setLongSlValue(value);
 
-    setExpectedLongLossValue(
-      (Number(longQuotationRef.current?.price) - longSlValue) * targetInputValueRef.current
-    );
+    calculateLongLoss();
   };
 
   const getShortTpValue = (value: number) => {
     setShortTpValue(value);
 
-    setExpectedShortProfitValue(
-      (Number(shortQuotationRef.current?.price) - shortTpValue) * targetInputValueRef.current
-    );
+    calculateShortProfit();
   };
 
   const getShortSlValue = (value: number) => {
     setShortSlValue(value);
 
-    setExpectedShortLossValue(
-      (shortSlValue - Number(shortQuotationRef.current?.price)) * targetInputValueRef.current
-    );
+    calculateShortLoss();
   };
 
   const checkTpSlWithinBounds = () => {
@@ -496,12 +512,8 @@ const TradeTabMobile = () => {
     setTargetLengthLong(roundedMarginLong.toString().length);
     setValueOfPositionLengthLong(roundedLongValue.toString().length);
 
-    setExpectedLongProfitValue(
-      (longTpValue - Number(longQuotationRef.current?.price)) * targetInputValueRef.current
-    );
-    setExpectedLongLossValue(
-      (Number(longQuotationRef.current?.price) - longSlValue) * targetInputValueRef.current
-    );
+    calculateLongProfit();
+    calculateLongLoss();
 
     setGuaranteedStopFeeLong(Number(gsl) * valueOfPositionLongRef.current);
 
@@ -520,12 +532,9 @@ const TradeTabMobile = () => {
     setTargetLengthShort(roundedMarginShort.toString().length);
     setValueOfPositionLengthShort(roundedShortValue.toString().length);
 
-    setExpectedShortProfitValue(
-      (Number(shortQuotationRef.current?.price) - shortTpValue) * targetInputValueRef.current
-    );
-    setExpectedShortLossValue(
-      (shortSlValue - Number(shortQuotationRef.current?.price)) * targetInputValueRef.current
-    );
+    calculateShortProfit();
+    calculateShortLoss();
+
     setGuaranteedStopFeeShort(Number(gsl) * valueOfPositionShortRef.current);
   };
 
@@ -536,33 +545,25 @@ const TradeTabMobile = () => {
   const getToggledLongTpSetting = (bool: boolean) => {
     setLongTpToggle(bool);
 
-    setExpectedLongProfitValue(
-      (longTpValue - Number(longQuotationRef.current?.price)) * targetInputValueRef.current
-    );
+    calculateLongProfit();
   };
 
   const getToggledLongSlSetting = (bool: boolean) => {
     setLongSlToggle(bool);
 
-    setExpectedLongLossValue(
-      (Number(longQuotationRef.current?.price) - longSlValue) * targetInputValueRef.current
-    );
+    calculateLongLoss();
   };
 
   const getToggledShortTpSetting = (bool: boolean) => {
     setShortTpToggle(bool);
 
-    setExpectedShortProfitValue(
-      (Number(shortQuotationRef.current?.price) - shortTpValue) * targetInputValueRef.current
-    );
+    calculateShortProfit();
   };
 
   const getToggledShortSlSetting = (bool: boolean) => {
     setShortSlToggle(bool);
 
-    setExpectedShortLossValue(
-      (shortSlValue - Number(shortQuotationRef.current?.price)) * targetInputValueRef.current
-    );
+    calculateShortLoss();
   };
 
   const toApplyCreateOrder = (): {
@@ -659,26 +660,6 @@ const TradeTabMobile = () => {
     }
   };
 
-  const longProfitSymbol =
-    expectedLongProfitValueRef.current > 0
-      ? '+'
-      : expectedLongProfitValueRef.current < 0
-      ? '-'
-      : '';
-
-  const longLossSymbol =
-    expectedLongLossValueRef.current > 0 ? '+' : expectedLongLossValueRef.current < 0 ? '-' : '';
-
-  const shortProfitSymbol =
-    expectedShortProfitValueRef.current > 0
-      ? '+'
-      : expectedShortProfitValueRef.current < 0
-      ? '-'
-      : '';
-
-  const shortLossSymbol =
-    expectedShortLossValueRef.current > 0 ? '+' : expectedShortLossValueRef.current < 0 ? '-' : '';
-
   const isDisplayedLongSlSetting = longSlToggle ? 'flex' : 'invisible';
   const isDisplayedShortSlSetting = shortSlToggle ? 'flex' : 'invisible';
 
@@ -757,10 +738,11 @@ const TradeTabMobile = () => {
   const displayedExpectedLongProfit = (
     <div className={`${longTpToggle ? `translate-y-2` : `invisible translate-y-0`} transition-all`}>
       <div className="text-xs text-lightWhite">
-        * {t('TRADE_PAGE.TRADE_TAB_EXPECTED_PROFIT')} {longProfitSymbol}
-        {roundToDecimalPlaces(Math.abs(expectedLongProfitValueRef.current), 2).toLocaleString(
-          UNIVERSAL_NUMBER_FORMAT_LOCALE
-        )}{' '}
+        * {t('TRADE_PAGE.TRADE_TAB_EXPECTED_PROFIT')} {estimatedLongProfitValueRef.current.symbol}
+        {roundToDecimalPlaces(
+          Math.abs(estimatedLongProfitValueRef.current.number),
+          2
+        ).toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}{' '}
         {unitAsset}
       </div>
     </div>
@@ -789,8 +771,8 @@ const TradeTabMobile = () => {
       className={`${longSlToggle ? `translate-y-0` : `invisible -translate-y-2`} transition-all`}
     >
       <div className="text-xs text-lightWhite">
-        * {t('TRADE_PAGE.TRADE_TAB_EXPECTED_LOSS')} {longLossSymbol}
-        {roundToDecimalPlaces(Math.abs(expectedLongLossValueRef.current), 2).toLocaleString(
+        * {t('TRADE_PAGE.TRADE_TAB_EXPECTED_LOSS')} {estimatedLongLossValueRef.current.symbol}
+        {roundToDecimalPlaces(Math.abs(estimatedLongLossValueRef.current.number), 2).toLocaleString(
           UNIVERSAL_NUMBER_FORMAT_LOCALE
         )}{' '}
         {unitAsset}
@@ -921,10 +903,11 @@ const TradeTabMobile = () => {
       className={`${shortTpToggle ? `translate-y-2` : `invisible translate-y-0`} transition-all`}
     >
       <div className="text-xs text-lightWhite">
-        * {t('TRADE_PAGE.TRADE_TAB_EXPECTED_PROFIT')} {shortProfitSymbol}
-        {roundToDecimalPlaces(Math.abs(expectedShortProfitValueRef.current), 2).toLocaleString(
-          UNIVERSAL_NUMBER_FORMAT_LOCALE
-        )}{' '}
+        * {t('TRADE_PAGE.TRADE_TAB_EXPECTED_PROFIT')} {estimatedShortProfitValueRef.current.symbol}
+        {roundToDecimalPlaces(
+          Math.abs(estimatedShortProfitValueRef.current.number),
+          2
+        ).toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}{' '}
         {unitAsset}
       </div>
     </div>
@@ -955,10 +938,11 @@ const TradeTabMobile = () => {
       } -mt-0 items-center transition-all`}
     >
       <div className="text-xs text-lightWhite">
-        * {t('TRADE_PAGE.TRADE_TAB_EXPECTED_LOSS')} {shortLossSymbol}
-        {roundToDecimalPlaces(Math.abs(expectedShortLossValueRef.current), 2).toLocaleString(
-          UNIVERSAL_NUMBER_FORMAT_LOCALE
-        )}{' '}
+        * {t('TRADE_PAGE.TRADE_TAB_EXPECTED_LOSS')} {estimatedShortLossValueRef.current.symbol}
+        {roundToDecimalPlaces(
+          Math.abs(estimatedShortLossValueRef.current.number),
+          2
+        ).toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}{' '}
         {unitAsset}
       </div>
     </div>
@@ -977,7 +961,7 @@ const TradeTabMobile = () => {
           {t('TRADE_PAGE.TRADE_TAB_GUARANTEED_STOP')} &nbsp;
           <span className="text-lightWhite">
             {' '}
-            ({t('TRADE_PAGE.TRADE_TAB_FEE')}
+            ({t('TRADE_PAGE.TRADE_TAB_FEE')}{' '}
             {guaranteedStopFeeShortRef.current?.toLocaleString(
               UNIVERSAL_NUMBER_FORMAT_LOCALE,
               FRACTION_DIGITS

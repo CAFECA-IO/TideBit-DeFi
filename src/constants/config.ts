@@ -271,3 +271,4 @@ export const BUY_PRICE_ERROR = 9999999999;
 export const LEVERAGE_ERROR = 1;
 export const USER_BALANCE_ERROR = 0;
 export const TP_SL_LIMIT_PERCENT = 0.01;
+export const DEFAULT_TICKER = 'ETH';

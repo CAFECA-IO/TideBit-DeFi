@@ -95,32 +95,6 @@ const UpdateFormModal = ({
 
   const [disableSlInput, setDisableSlInput, disableSlInputRef] = useStateRef(false);
 
-  const [caledSlLowerLimit1, caledSlUpperLimit1] = useMemo(() => {
-    const lowerLimit =
-      marketCtx.selectedTicker?.price !== undefined
-        ? openCfdDetails.typeOfPosition === TypeOfPosition.BUY
-          ? openCfdDetails.liquidationPrice > marketCtx.selectedTicker.price
-            ? openCfdDetails.liquidationPrice
-            : openCfdDetails.openPrice
-          : openCfdDetails.liquidationPrice < marketCtx.selectedTicker.price // Info: it's short position (20230426 - Shirley)
-          ? openCfdDetails.liquidationPrice
-          : openCfdDetails.openPrice
-        : openCfdDetails.liquidationPrice;
-
-    const upperLimit =
-      marketCtx.selectedTicker?.price !== undefined
-        ? openCfdDetails.typeOfPosition === TypeOfPosition.BUY
-          ? !(openCfdDetails.liquidationPrice > marketCtx.selectedTicker.price)
-            ? openCfdDetails.openPrice
-            : openCfdDetails.liquidationPrice
-          : !(openCfdDetails.liquidationPrice < marketCtx.selectedTicker.price) // Info: it's short position (20230426 - Shirley)
-          ? openCfdDetails.openPrice
-          : openCfdDetails.liquidationPrice
-        : openCfdDetails.liquidationPrice;
-
-    return [lowerLimit, upperLimit];
-  }, [marketCtx.selectedTicker, openCfdDetails]);
-
   const getToggledTpSetting = (bool: boolean) => {
     setTpToggle(bool);
 

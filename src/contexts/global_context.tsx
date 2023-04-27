@@ -642,6 +642,8 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     const toastBodyStyle =
       'text-lightWhite text-sm lg:whitespace-nowrap px-4 before:block before:absolute before:-left-1 before:w-2 before:h-50px';
 
+    const isToastId = toastId ?? type + message;
+
     const isLoadingMessage = isLoading ? (
       <div className="inline-flex">
         {message}
@@ -655,14 +657,16 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
       ? () => {
           setDataLoadingModal(modalReOpenData),
             setVisibleLoadingModal(true),
-            toastify.dismiss(type + message + toastId);
+            toastify.dismiss(isToastId);
         }
-      : undefined;
+      : () => {
+          toastify.dismiss(isToastId);
+        };
 
     switch (type) {
       case ToastType.ERROR:
         toastify.error(isLoadingMessage, {
-          toastId: type + message + toastId,
+          toastId: isToastId,
           icon: (
             <div className="-ml-12 inline-flex items-center justify-center text-lightRed">
               <FaRegTimesCircle className="h-15px w-15px" />
@@ -677,7 +681,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
         break;
       case ToastType.WARNING:
         toastify.warning(isLoadingMessage, {
-          toastId: type + message + toastId,
+          toastId: isToastId,
           icon: (
             <div className="-ml-12 inline-flex items-center justify-center text-lightYellow2">
               <ImWarning className="h-15px w-15px " />
@@ -692,7 +696,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
         break;
       case ToastType.INFO:
         toastify.info(isLoadingMessage, {
-          toastId: type + message + toastId,
+          toastId: isToastId,
           icon: (
             <div className="-ml-12 inline-flex items-center justify-center text-tidebitTheme">
               <ImInfo className="h-15px w-15px" />
@@ -707,7 +711,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
         break;
       case ToastType.SUCCESS:
         toastify.success(isLoadingMessage, {
-          toastId: type + message + toastId,
+          toastId: isToastId,
           icon: (
             <div className="-ml-12 inline-flex items-center justify-center text-lightGreen5">
               <FaRegCheckCircle className="h-15px w-15px" />

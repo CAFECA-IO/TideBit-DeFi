@@ -48,6 +48,8 @@ const WithdrawalModal = ({
 
   const regex = /^\d*\.?\d{0,2}$/;
 
+  const toastId = `${t('D_W_MODAL.WITHDRAW')}LoadingModalMinimized`;
+
   const cryptoMenuClickHandler = () => {
     setShowCryptoMenu(!showCryptoMenu);
   };
@@ -117,7 +119,7 @@ const WithdrawalModal = ({
           btnUrl: '#',
         });
 
-        globalCtx.eliminateToasts('all');
+        globalCtx.eliminateToasts(toastId);
         globalCtx.visibleSuccessfulModalHandler();
         // TODO: `result.code` (20230316 - Shirley)
       } else if (
@@ -133,7 +135,7 @@ const WithdrawalModal = ({
           modalContent: `${t('D_W_MODAL.FAILED_REASON_CANCELED')} (${result.code})`,
         });
 
-        globalCtx.eliminateToasts('all');
+        globalCtx.eliminateToasts(toastId);
         globalCtx.visibleCanceledModalHandler();
       } else if (
         result.code === Code.INTERNAL_SERVER_ERROR ||
@@ -146,7 +148,7 @@ const WithdrawalModal = ({
           modalContent: `${t('D_W_MODAL.FAILED_REASON_FAILED_TO_WITHDRAW')} (${result.code})`,
         });
 
-        globalCtx.eliminateToasts('all');
+        globalCtx.eliminateToasts(toastId);
         globalCtx.visibleFailedModalHandler();
       }
     } catch (error: any) {
@@ -161,7 +163,7 @@ const WithdrawalModal = ({
         })`,
       });
 
-      globalCtx.eliminateToasts('all');
+      globalCtx.eliminateToasts(toastId);
       globalCtx.visibleFailedModalHandler();
     }
 

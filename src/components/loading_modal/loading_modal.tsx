@@ -47,7 +47,7 @@ const LoadingModal = ({
       globalCtx.toast({
         type: ToastTypeAndText.INFO.type,
         message: `${modalTitle} ${t('TOAST.PROGRESSING_MESSAGE')}`,
-        toastId: 'loadingModalMinimized',
+        toastId: `${modalTitle}LoadingModalMinimized`,
         autoClose: false,
         isLoading: true,
         typeText: t(ToastTypeAndText.INFO.text),

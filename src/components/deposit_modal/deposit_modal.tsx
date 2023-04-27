@@ -47,6 +47,8 @@ const DepositModal = ({
 
   const regex = /^\d*\.?\d{0,2}$/;
 
+  const toastId = `${t('D_W_MODAL.DEPOSIT')}LoadingModalMinimized`;
+
   const cryptoMenuClickHandler = () => {
     setShowCryptoMenu(!showCryptoMenu);
   };
@@ -101,9 +103,10 @@ const DepositModal = ({
 
       // TODO: for debug
       globalCtx.toast({
-        message: 'deposit result: ' + JSON.stringify(result),
+        message: JSON.stringify(result),
         type: ToastTypeAndText.INFO.type,
         typeText: t(ToastTypeAndText.INFO.text),
+        autoClose: false,
       });
 
       // TODO: the button URL
@@ -129,7 +132,7 @@ const DepositModal = ({
           btnUrl: '#',
         });
 
-        globalCtx.eliminateToasts('all');
+        globalCtx.eliminateToasts(toastId);
         globalCtx.visibleSuccessfulModalHandler();
       } else if (
         // Info: cancel (20230413 - Shirley)
@@ -144,7 +147,7 @@ const DepositModal = ({
           modalContent: `${t('D_W_MODAL.FAILED_REASON_CANCELED')} (${result.code})`,
         });
 
-        globalCtx.eliminateToasts('all');
+        globalCtx.eliminateToasts(toastId);
         globalCtx.visibleCanceledModalHandler();
       } else if (
         result.code === Code.INTERNAL_SERVER_ERROR ||
@@ -157,7 +160,7 @@ const DepositModal = ({
           modalContent: `${t('D_W_MODAL.FAILED_CONTENT')} (${result.code})`,
         });
 
-        globalCtx.eliminateToasts('all');
+        globalCtx.eliminateToasts(toastId);
         globalCtx.visibleFailedModalHandler();
       }
     } catch (error: any) {
@@ -170,7 +173,7 @@ const DepositModal = ({
         modalContent: `${t('D_W_MODAL.FAILED_CONTENT')} (${Code.UNKNOWN_ERROR_IN_COMPONENT})`,
       });
 
-      globalCtx.eliminateToasts('all');
+      globalCtx.eliminateToasts(toastId);
       globalCtx.visibleFailedModalHandler();
     }
 

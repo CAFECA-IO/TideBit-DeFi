@@ -1,5 +1,6 @@
 import {BsStar, BsStarFill} from 'react-icons/bs';
 import React, {useContext, useState} from 'react';
+import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import {ApexOptions} from 'apexcharts';
 import {TypeOfPnLColorHex, UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
@@ -7,7 +8,10 @@ import {UserContext, IUserContext} from '../../contexts/user_context';
 import {MarketContext} from '../../contexts/market_context';
 import {useGlobal} from '../../contexts/global_context';
 import {ICurrency} from '../../constants/currency';
+import {ToastTypeAndText} from '../../constants/toast_type';
+import {useTranslation} from 'react-i18next';
 
+type TranslateFunction = (s: string) => string;
 /**
  * @dev used when it needs the star functionality
  * @param {star} empty star
@@ -56,6 +60,7 @@ const CryptoCard = ({
   cardClickHandler,
   ...otherProps
 }: ICardProps): JSX.Element => {
+  const {t}: {t: TranslateFunction} = useTranslation('common');
   const userCtx = useContext(UserContext) as IUserContext;
   const marketCtx = useContext(MarketContext);
   fluctuating = Number(fluctuating);
@@ -71,7 +76,11 @@ const CryptoCard = ({
 
   const starClickHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
     if (!userCtx.enableServiceTerm) {
-      globalCtx.toast({type: 'error', message: 'Please login to add to favorites'});
+      globalCtx.toast({
+        type: ToastTypeAndText.ERROR.type,
+        message: 'Please login to add to favorites',
+        typeText: t(ToastTypeAndText.ERROR.text),
+      });
     }
 
     event.stopPropagation(); // Prevent the div click handler from firing
@@ -229,9 +238,8 @@ const CryptoCard = ({
         <div className="px-2 py-1">
           {/* token icon & chain & coin name */}
           <div className="flex items-center">
-            <span className="relative h-40px w-40px">
-              <img src={tokenImg} alt={currency} />
-            </span>
+            <Image src={tokenImg} alt={currency} height={40} width={40} />
+
             <div className="ml-3 items-center">
               <p className="text-lg leading-6 text-lightWhite"> {chain}</p>
               <p className="text-sm text-lightWhite opacity-60">{currency}</p>
@@ -289,10 +297,8 @@ const CryptoCard = ({
         <div className="px-2 py-1">
           {/* token icon & chain & coin name */}
           <div className="mb-1 flex items-center">
-            <span className="relative h-28px w-28px">
-              {' '}
-              <img src={tokenImg} alt={currency} />
-            </span>
+            <Image src={tokenImg} alt={currency} width={28} height={28} />
+
             <div className="ml-3 items-center">
               <p className="text-sm leading-none text-lightWhite"> {chain}</p>
               <p className="text-xs text-lightWhite opacity-60">{currency}</p>

@@ -13,6 +13,7 @@ import {OrderType} from '../../constants/order_type';
 import {UserContext} from '../../contexts/user_context';
 import {Code} from '../../constants/code';
 import useStateRef from 'react-usestateref';
+import {ToastTypeAndText} from '../../constants/toast_type';
 
 type TranslateFunction = (s: string) => string;
 interface IDepositModal {
@@ -76,6 +77,7 @@ const DepositModal = ({
     globalCtx.dataLoadingModalHandler({
       modalTitle: t('D_W_MODAL.DEPOSIT'),
       modalContent: t('D_W_MODAL.CONFIRM_CONTENT'),
+      isShowZoomOutBtn: true,
     });
     globalCtx.visibleLoadingModalHandler();
 
@@ -98,7 +100,11 @@ const DepositModal = ({
       console.log(`userCtx.deposit result:`, result);
 
       // TODO: for debug
-      globalCtx.toast({message: 'deposit result: ' + JSON.stringify(result), type: 'info'});
+      globalCtx.toast({
+        message: 'deposit result: ' + JSON.stringify(result),
+        type: ToastTypeAndText.INFO.type,
+        typeText: t(ToastTypeAndText.INFO.text),
+      });
 
       // TODO: the button URL
       if (result.success) {
@@ -108,6 +114,7 @@ const DepositModal = ({
           modalContent: t('D_W_MODAL.TRANSACTION_BROADCAST'),
           btnMsg: t('D_W_MODAL.VIEW_ON_BUTTON'),
           btnUrl: '#',
+          isShowZoomOutBtn: true,
         });
 
         // INFO: for UX

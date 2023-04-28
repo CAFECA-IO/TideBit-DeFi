@@ -66,12 +66,12 @@ const NavBarMobile = () => {
 
   const isDisplayedMobileNavBar = navOpen ? 'top-14 min-h-screen inset-0 bg-darkGray/100' : '';
 
-  /* Info: (20230424 - Julian) 如果用戶為登入狀態， cover width 改為 7/10 讓頭貼可以被看到 */
+  /* Info: (20230424 - Julian) 如果用戶為登入狀態， cover width 改為 5/10 讓頭貼可以被看到 */
   const isDisplayedNotificationSidebarMobileCover = (
     <div
       className={`${userCtx.enableServiceTerm ? 'w-5/10' : 'w-screen'} ${
         navOpen ? 'visible opacity-100' : 'invisible opacity-0'
-      } fixed top-0 left-20 z-50 flex h-14 w-screen items-center overflow-x-hidden overflow-y-hidden bg-black/100 outline-none`}
+      } fixed top-0 left-20 z-50 flex h-14 items-center overflow-x-hidden overflow-y-hidden bg-black/100 outline-none`}
     >
       <p className="pl-5">{menuText}</p>
     </div>

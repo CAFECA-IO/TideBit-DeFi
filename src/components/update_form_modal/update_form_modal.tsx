@@ -7,7 +7,7 @@ import {
   UNIVERSAL_NUMBER_FORMAT_LOCALE,
 } from '../../constants/display';
 import Toggle from '../toggle/toggle';
-import {useContext, useEffect, useRef} from 'react';
+import {useContext, useEffect, useMemo, useRef} from 'react';
 import TradingInput from '../trading_input/trading_input';
 import {AiOutlineQuestionCircle} from 'react-icons/ai';
 import RippleButton from '../ripple_button/ripple_button';
@@ -16,6 +16,7 @@ import {TypeOfPosition} from '../../constants/type_of_position';
 import {ProfitState} from '../../constants/profit_state';
 import {
   getNowSeconds,
+  getTimestamp,
   randomIntFromInterval,
   roundToDecimalPlaces,
   timestampToString,
@@ -23,7 +24,12 @@ import {
 import {MarketContext} from '../../contexts/market_context';
 import useState from 'react-usestateref';
 import CircularProgressBar from '../circular_progress_bar/circular_progress_bar';
-import {unitAsset, FRACTION_DIGITS} from '../../constants/config';
+import {
+  unitAsset,
+  FRACTION_DIGITS,
+  TARGET_LIMIT_DIGITS,
+  TP_SL_LIMIT_PERCENT,
+} from '../../constants/config';
 import useStateRef from 'react-usestateref';
 import {useTranslation} from 'react-i18next';
 import {IDisplayCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
@@ -58,134 +64,76 @@ const UpdateFormModal = ({
   const gsl = marketCtx.guaranteedStopFeePercentage;
 
   const initialTpInput = cfdTp ?? openCfdDetails?.suggestion?.takeProfit;
-
   const initialSlInput = cfdSl ?? openCfdDetails?.suggestion?.takeProfit;
 
-  const initialGuaranteedChecked = openCfdDetails?.guaranteedStop;
+  const initialState = {
+    number: 0,
+    symbol: '',
+  };
 
   const [tpValue, setTpValue, tpValueRef] = useState(initialTpInput);
   const [slValue, setSlValue, slValueRef] = useState(initialSlInput);
   const [tpToggle, setTpToggle, tpToggleRef] = useState(initialTpToggle);
   const [slToggle, setSlToggle, slToggleRef] = useState(initialSlToggle);
-  const [guaranteedChecked, setGuaranteedChecked, guaranteedpCheckedRef] =
-    useState(initialGuaranteedChecked);
+  const [guaranteedChecked, setGuaranteedChecked, guaranteedpCheckedRef] = useState(
+    openCfdDetails.guaranteedStop
+  );
 
   const [guaranteedTooltipStatus, setGuaranteedTooltipStatus] = useState(0);
 
-  // FIXME: SL setting should have a lower limit and an upper limit depending on its position type
-  const [slLowerLimit, setSlLowerLimit] = useState(0);
-  const [slUpperLimit, setSlUpperLimit] = useState(Infinity);
+  const [slLowerLimit, setSlLowerLimit, slLowerLimitRef] = useState(0);
+  const [slUpperLimit, setSlUpperLimit, slUpperLimitRef] = useState(0);
+  const [tpLowerLimit, setTpLowerLimit, tpLowerLimitRef] = useState(0);
+  const [tpUpperLimit, setTpUpperLimit, tpUpperLimitRef] = useState(0);
 
-  const [submitDisabled, setSubmitDisabled] = useState(true);
+  const [submitDisabled, setSubmitDisabled, submitDisabledRef] = useStateRef(true);
 
-  const [expectedProfitValue, setExpectedProfitValue, expectedProfitValueRef] = useStateRef(0);
-  const [expectedLossValue, setExpectedLossValue, expectedLossValueRef] = useStateRef(0);
+  const [estimatedProfitValue, setEstimatedProfitValue, estimatedProfitValueRef] =
+    useStateRef(initialState);
+  const [estimatedLossValue, setEstimatedLossValue, estimatedLossValueRef] =
+    useStateRef(initialState);
 
-  const displayedState =
-    openCfdDetails?.state === OrderState.OPENING
-      ? 'Open'
-      : openCfdDetails?.state === OrderState.CLOSED
-      ? 'Close'
-      : openCfdDetails?.state === OrderState.FREEZED
-      ? 'Freezed'
-      : '';
   const [guaranteedStopFee, setGuaranteedStopFee, guaranteedStopFeeRef] = useStateRef(
     Number(gsl) * openCfdDetails?.openPrice * openCfdDetails?.amount
   );
 
-  useEffect(() => {
-    setGuaranteedStopFee(Number(gsl) * openCfdDetails?.openPrice * openCfdDetails?.amount);
-  }, [gsl, openCfdDetails?.openPrice, openCfdDetails?.amount]);
+  const [disableSlInput, setDisableSlInput, disableSlInputRef] = useStateRef(false);
 
   const getToggledTpSetting = (bool: boolean) => {
     setTpToggle(bool);
 
-    const profit =
-      openCfdDetails?.typeOfPosition === TypeOfPosition.BUY
-        ? roundToDecimalPlaces(
-            (tpValueRef.current - openCfdDetails?.openPrice) * openCfdDetails?.amount,
-            2
-          )
-        : roundToDecimalPlaces(
-            (openCfdDetails?.openPrice - tpValueRef.current) * openCfdDetails?.amount,
-            2
-          );
-
-    setExpectedProfitValue(profit);
+    calculateProfit();
   };
 
   const getToggledSlSetting = (bool: boolean) => {
     setSlToggle(bool);
 
-    const loss =
-      openCfdDetails?.typeOfPosition === TypeOfPosition.BUY
-        ? roundToDecimalPlaces(
-            (openCfdDetails?.openPrice - slValueRef.current) * openCfdDetails?.amount,
-            2
-          )
-        : roundToDecimalPlaces(
-            (slValueRef.current - openCfdDetails?.openPrice) * openCfdDetails?.amount,
-            2
-          );
-
-    setExpectedLossValue(loss);
+    calculateLoss();
   };
 
   const getTpValue = (value: number) => {
     setTpValue(value);
 
-    const profit =
-      openCfdDetails?.typeOfPosition === TypeOfPosition.BUY
-        ? roundToDecimalPlaces(
-            (tpValueRef.current - openCfdDetails?.openPrice) * openCfdDetails?.amount,
-            2
-          )
-        : roundToDecimalPlaces(
-            (openCfdDetails?.openPrice - tpValueRef.current) * openCfdDetails?.amount,
-            2
-          );
-
-    setExpectedProfitValue(profit);
+    calculateProfit();
   };
 
   const getSlValue = (value: number) => {
     setSlValue(value);
-
-    const loss =
-      openCfdDetails?.typeOfPosition === TypeOfPosition.BUY
-        ? roundToDecimalPlaces(
-            (openCfdDetails?.openPrice - slValueRef.current) * openCfdDetails?.amount,
-            2
-          )
-        : roundToDecimalPlaces(
-            (slValueRef.current - openCfdDetails?.openPrice) * openCfdDetails?.amount,
-            2
-          );
-
-    setExpectedLossValue(loss);
+    calculateLoss();
   };
 
   const mouseEnterHandler = () => setGuaranteedTooltipStatus(3);
   const mouseLeaveHandler = () => setGuaranteedTooltipStatus(0);
 
-  const displayedExpectedProfit = (
-    // Till: (20230330 - Shirley)
-    // longTpToggle ? (
-    //   <div className={`${`translate-y-2`} -mt-0 items-center transition-all duration-500`}>
-    //     <div className="text-sm text-lightWhite">
-    //       {expectedLongProfitValue.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}
-    //     </div>
-    //   </div>
-    // ) : null;
-
+  const displayedEstimatedProfit = (
     <div
       className={`${
         tpToggle ? `mb-3 translate-y-1` : `invisible translate-y-0`
       } -mt-0 items-center transition-all`}
     >
       <div className="text-xs text-lightWhite">
-        * {t('POSITION_MODAL.EXPECTED_PROFIT')}: +{' '}
-        {roundToDecimalPlaces(Math.abs(expectedProfitValueRef.current), 2).toLocaleString(
+        * {t('POSITION_MODAL.EXPECTED_PROFIT')}: {estimatedProfitValueRef.current.symbol}{' '}
+        {roundToDecimalPlaces(Math.abs(estimatedProfitValueRef.current.number), 2).toLocaleString(
           UNIVERSAL_NUMBER_FORMAT_LOCALE
         )}{' '}
         {unitAsset}
@@ -193,7 +141,7 @@ const UpdateFormModal = ({
     </div>
   );
 
-  const displayedExpectedLoss = (
+  const displayedEstimatedLoss = (
     <div
       className={`${
         slToggle ? `mb-3 translate-y-1` : `invisible translate-y-0`
@@ -204,8 +152,8 @@ const UpdateFormModal = ({
         {guaranteedpCheckedRef.current
           ? t('POSITION_MODAL.SL_SETTING')
           : t('POSITION_MODAL.EXPECTED_LOSS')}
-        : -{' '}
-        {roundToDecimalPlaces(Math.abs(expectedLossValueRef.current), 2).toLocaleString(
+        : {estimatedLossValueRef.current.symbol}{' '}
+        {roundToDecimalPlaces(Math.abs(estimatedLossValueRef.current.number), 2).toLocaleString(
           UNIVERSAL_NUMBER_FORMAT_LOCALE
         )}{' '}
         {unitAsset}
@@ -214,7 +162,7 @@ const UpdateFormModal = ({
   );
 
   const guaranteedCheckedChangeHandler = () => {
-    if (!openCfdDetails?.guaranteedStop) {
+    if (!openCfdDetails.guaranteedStop) {
       setGuaranteedChecked(!guaranteedChecked);
       setSlToggle(true);
       setSlLowerLimit(0);
@@ -222,6 +170,9 @@ const UpdateFormModal = ({
 
       return;
     } else {
+      setGuaranteedChecked(true);
+
+      // Info: Lock the change of input value when guaranteed stop is checked
       setSlLowerLimit(openCfdDetails?.stopLoss ?? openCfdDetails?.suggestion?.stopLoss);
       setSlUpperLimit(openCfdDetails?.stopLoss ?? openCfdDetails?.suggestion?.stopLoss);
       setSlValue(openCfdDetails?.stopLoss ?? openCfdDetails?.suggestion?.stopLoss);
@@ -279,13 +230,6 @@ const UpdateFormModal = ({
   const isDisplayedTakeProfitSetting = tpToggle ? 'flex' : 'invisible';
   const isDisplayedStopLossSetting = slToggle ? 'flex' : 'invisible';
 
-  const displayedSlLowerLimit = openCfdDetails?.guaranteedStop
-    ? openCfdDetails?.stopLoss ?? openCfdDetails?.suggestion?.stopLoss
-    : slLowerLimit;
-  const displayedSlUpperLimit = openCfdDetails?.guaranteedStop
-    ? openCfdDetails?.stopLoss ?? openCfdDetails?.suggestion?.stopLoss
-    : slUpperLimit;
-
   const displayedTime = timestampToString(openCfdDetails?.createTimestamp ?? 0);
 
   const layoutInsideBorder = 'mx-5 my-3 flex justify-between';
@@ -306,40 +250,42 @@ const UpdateFormModal = ({
       referenceId: openCfdDetails?.id,
       operation: CFDOperation.UPDATE,
       orderType: OrderType.CFD,
+      takeProfit: openCfdDetails.takeProfit,
+      stopLoss: openCfdDetails.stopLoss,
+      guaranteedStop: openCfdDetails.guaranteedStop,
+      guaranteedStopFee: openCfdDetails.guaranteedStopFee,
     };
 
-    // Info: (20230329 - Shirley) Detect if tpValue has changed
-    if (tpToggle && tpValue !== openCfdDetails?.takeProfit) {
+    // Info: (20230329 - Shirley) if tpValue has changed
+    if (tpToggle) {
+      if (tpValue !== openCfdDetails?.takeProfit) {
+        changedProperties = {
+          ...changedProperties,
+          takeProfit: tpValue,
+        };
+      }
+    } else {
       changedProperties = {
         ...changedProperties,
-        takeProfit: tpValue,
+        takeProfit: 0,
       };
     }
 
-    // Info: (20230329 - Shirley) Detect if spValue has changed
-    if (slToggle && slValue !== openCfdDetails?.stopLoss) {
-      changedProperties = {...changedProperties, stopLoss: slValue};
-    }
-
-    // Info: (20230329 - Shirley) Detect if tpToggle has changed
-    if (initialTpToggle !== tpToggle) {
+    // Info: (20230329 - Shirley) if spValue has changed
+    if (slToggle) {
+      if (slValue !== openCfdDetails?.stopLoss) {
+        changedProperties = {...changedProperties, stopLoss: slValue};
+      }
+    } else {
       changedProperties = {
         ...changedProperties,
-        takeProfit: tpToggle ? tpValue : 0,
+        stopLoss: 0,
       };
     }
 
-    // Info: (20230329 - Shirley) Detect if slToggle has changed
-    if (initialSlToggle !== slToggle) {
-      changedProperties = {
-        ...changedProperties,
-        stopLoss: slToggle ? slValue : 0,
-      };
-    }
-
-    // Info: (20230329 - Shirley) Detect if guaranteedStop has changed
-    if (guaranteedChecked !== openCfdDetails?.guaranteedStop) {
-      const stopLoss = slValue !== openCfdDetails?.stopLoss ? slValue : undefined;
+    // Info: (20230329 - Shirley) if guaranteedStop has changed
+    if (!openCfdDetails.guaranteedStop && guaranteedChecked) {
+      const stopLoss = slValue !== openCfdDetails?.stopLoss ? slValue : openCfdDetails?.stopLoss;
       const guaranteedStopFee = guaranteedStopFeeRef.current;
 
       changedProperties = {
@@ -373,12 +319,12 @@ const UpdateFormModal = ({
     globalCtx.visiblePositionUpdatedModalHandler();
   };
 
-  // FIXME: Inconsistent information between text and input
   const displayedTakeProfitSetting = (
     <div className={`mr-8 ${isDisplayedTakeProfitSetting}`}>
       <TradingInput
         getInputValue={getTpValue}
-        lowerLimit={0}
+        lowerLimit={tpLowerLimitRef.current}
+        upperLimit={tpUpperLimitRef.current}
         inputInitialValue={tpValue}
         inputValueFromParent={tpValue}
         setInputValueFromParent={setTpValue}
@@ -391,13 +337,13 @@ const UpdateFormModal = ({
     </div>
   );
 
-  // FIXME: Inconsistent information between text and input
   const displayedStopLossSetting = (
     <div className={`mr-8 ${isDisplayedStopLossSetting}`}>
       <TradingInput
+        disabled={disableSlInputRef.current}
         getInputValue={getSlValue}
-        lowerLimit={displayedSlLowerLimit}
-        upperLimit={displayedSlUpperLimit}
+        lowerLimit={slLowerLimitRef.current}
+        upperLimit={slUpperLimitRef.current}
         inputInitialValue={slValue}
         setInputValueFromParent={setSlValue}
         inputValueFromParent={slValue}
@@ -415,8 +361,7 @@ const UpdateFormModal = ({
       <div className="flex items-center text-center">
         <input
           type="checkbox"
-          value=""
-          checked={guaranteedChecked}
+          checked={guaranteedpCheckedRef.current}
           onChange={guaranteedCheckedChangeHandler}
           className="h-5 w-5 rounded text-lightWhite accent-lightGray4"
         />
@@ -453,13 +398,37 @@ const UpdateFormModal = ({
     </div>
   );
 
-  const changeComparison = () => {
+  const calculateProfit = () => {
+    const diff =
+      openCfdDetails.typeOfPosition === TypeOfPosition.BUY
+        ? tpValueRef.current - openCfdDetails.openPrice
+        : openCfdDetails.openPrice - tpValueRef.current;
+    const rs = diff * openCfdDetails.amount;
+    const symbol = rs > 0 ? '+' : '-';
+    const number = Math.abs(rs);
+    setEstimatedProfitValue({number: number, symbol: symbol});
+  };
+
+  const calculateLoss = () => {
+    const diff =
+      openCfdDetails.typeOfPosition === TypeOfPosition.BUY
+        ? openCfdDetails.openPrice - slValueRef.current
+        : slValueRef.current - openCfdDetails.openPrice;
+    const rs = diff * openCfdDetails.amount;
+    const symbol = rs < 0 ? '+' : '-';
+    const number = Math.abs(rs);
+    setEstimatedLossValue({number: number, symbol: symbol});
+  };
+
+  const compareChange = () => {
     if (tpToggleRef.current && tpValueRef.current !== openCfdDetails?.takeProfit) {
       setSubmitDisabled(false);
+      calculateProfit();
     }
 
     if (slToggleRef.current && slValueRef.current !== openCfdDetails?.stopLoss) {
       setSubmitDisabled(false);
+      calculateLoss();
     }
 
     if (tpToggleRef.current !== initialTpToggle) {
@@ -475,7 +444,7 @@ const UpdateFormModal = ({
     }
   };
 
-  const nowTimestamp = new Date().getTime() / 1000;
+  const nowTimestamp = getTimestamp();
   const remainSecs = openCfdDetails?.liquidationTime - nowTimestamp;
 
   const remainTime =
@@ -501,9 +470,105 @@ const UpdateFormModal = ({
     globalCtx.visiblePositionClosedModalHandler();
   };
 
+  const initPosition = () => {
+    setGuaranteedChecked(openCfdDetails.guaranteedStop);
+    setTpToggle(!!openCfdDetails.takeProfit);
+    setSlToggle(!!openCfdDetails.stopLoss);
+
+    // Info: minimum price (open price) with buffer (20230426 - Shirley)
+    const caledTpLowerLimit =
+      openCfdDetails.typeOfPosition === TypeOfPosition.BUY
+        ? roundToDecimalPlaces(openCfdDetails.openPrice * (1 + TP_SL_LIMIT_PERCENT), 2)
+        : 0;
+    const caledTpUpperLimit =
+      openCfdDetails.typeOfPosition === TypeOfPosition.SELL
+        ? roundToDecimalPlaces(openCfdDetails.openPrice * (1 - TP_SL_LIMIT_PERCENT), 2)
+        : TARGET_LIMIT_DIGITS;
+
+    const isLiquidated =
+      marketCtx.selectedTicker?.price !== undefined
+        ? openCfdDetails.typeOfPosition === TypeOfPosition.BUY
+          ? openCfdDetails.liquidationPrice > marketCtx.selectedTicker.price
+          : openCfdDetails.typeOfPosition === TypeOfPosition.SELL
+          ? openCfdDetails.liquidationPrice < marketCtx.selectedTicker.price
+          : false
+        : true;
+
+    const caledSlLowerLimit = isLiquidated
+      ? roundToDecimalPlaces(openCfdDetails.liquidationPrice, 2) // Info: 相當於不能設定 SL (20230426 - Shirley)
+      : openCfdDetails.typeOfPosition === TypeOfPosition.BUY
+      ? roundToDecimalPlaces(openCfdDetails.liquidationPrice * (1 + TP_SL_LIMIT_PERCENT), 2)
+      : roundToDecimalPlaces(openCfdDetails.openPrice * (1 + TP_SL_LIMIT_PERCENT), 2);
+
+    const caledSlUpperLimit = isLiquidated
+      ? roundToDecimalPlaces(openCfdDetails.liquidationPrice, 2) // Info: 相當於不能設定 SL (20230426 - Shirley)
+      : openCfdDetails.typeOfPosition === TypeOfPosition.BUY
+      ? roundToDecimalPlaces(openCfdDetails.openPrice * (1 - TP_SL_LIMIT_PERCENT), 2)
+      : roundToDecimalPlaces(openCfdDetails.liquidationPrice * (1 - TP_SL_LIMIT_PERCENT), 2);
+
+    const caledSl =
+      marketCtx.selectedTicker?.price !== undefined
+        ? (openCfdDetails.typeOfPosition === TypeOfPosition.BUY &&
+            marketCtx.selectedTicker.price < openCfdDetails.liquidationPrice) ||
+          (openCfdDetails.typeOfPosition === TypeOfPosition.SELL &&
+            marketCtx.selectedTicker.price > openCfdDetails.liquidationPrice)
+          ? roundToDecimalPlaces(openCfdDetails.liquidationPrice, 2)
+          : roundToDecimalPlaces(
+              (marketCtx.selectedTicker.price + openCfdDetails.liquidationPrice) / 2,
+              2
+            )
+        : roundToDecimalPlaces(openCfdDetails.liquidationPrice, 2);
+
+    const suggestedSl =
+      marketCtx.selectedTicker?.price !== undefined
+        ? openCfdDetails.typeOfPosition === TypeOfPosition.BUY &&
+          marketCtx.selectedTicker?.price < openCfdDetails.suggestion.stopLoss
+          ? caledSl
+          : openCfdDetails.typeOfPosition === TypeOfPosition.SELL &&
+            marketCtx.selectedTicker?.price > openCfdDetails.suggestion.stopLoss
+          ? caledSl
+          : openCfdDetails.suggestion.stopLoss
+        : openCfdDetails.suggestion.stopLoss;
+
+    const gslFee =
+      Number(marketCtx.guaranteedStopFeePercentage) *
+      openCfdDetails?.openPrice *
+      openCfdDetails?.amount;
+
+    setDisableSlInput(isLiquidated);
+
+    setGuaranteedStopFee(
+      openCfdDetails.guaranteedStop ? Number(openCfdDetails?.guaranteedStopFee) : gslFee
+    );
+
+    setSlLowerLimit(caledSlLowerLimit);
+    setSlUpperLimit(caledSlUpperLimit);
+
+    setTpLowerLimit(caledTpLowerLimit);
+    setTpUpperLimit(caledTpUpperLimit);
+
+    setTpValue(
+      openCfdDetails.takeProfit === 0 || openCfdDetails.takeProfit === undefined
+        ? openCfdDetails.suggestion.takeProfit
+        : openCfdDetails.takeProfit
+    );
+
+    setSlValue(
+      openCfdDetails.stopLoss === 0 || openCfdDetails.stopLoss === undefined
+        ? suggestedSl
+        : openCfdDetails.stopLoss
+    );
+    calculateProfit();
+    calculateLoss();
+  };
+
+  useEffect(() => {
+    setGuaranteedStopFee(Number(gsl) * openCfdDetails?.openPrice * openCfdDetails?.amount);
+  }, [gsl, openCfdDetails?.openPrice, openCfdDetails?.amount]);
+
   useEffect(() => {
     setSubmitDisabled(true);
-    changeComparison();
+    compareChange();
   }, [
     tpValueRef.current,
     slValueRef.current,
@@ -511,6 +576,10 @@ const UpdateFormModal = ({
     slToggleRef.current,
     guaranteedpCheckedRef.current,
   ]);
+
+  useEffect(() => {
+    initPosition();
+  }, [globalCtx.visibleUpdateFormModal]);
 
   const isDisplayedDetailedPositionModal = modalVisible ? (
     <div {...otherProps}>
@@ -549,7 +618,6 @@ const UpdateFormModal = ({
                         progressBarColor={[displayedColorHex]}
                         hollowSize="40%"
                         circularBarSize="100"
-                        // clickHandler={circularClick}
                       />
                     </div>
                   </div>
@@ -628,20 +696,19 @@ const UpdateFormModal = ({
                     <div className="text-lightGray">{t('POSITION_MODAL.TP_AND_SL')}</div>
                     <div className="">
                       <span className={`text-lightWhite`}>
-                        {cfdTp?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
-                          minimumFractionDigits: 2,
-                        }) ?? '-'}
-                        {/* {openCfdDetails?.takeProfit?.toLocaleString(
-                          UNIVERSAL_NUMBER_FORMAT_LOCALE
-                        ) ?? '-'} */}
+                        {cfdTp === undefined || cfdTp === 0
+                          ? '-'
+                          : cfdTp.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+                              minimumFractionDigits: 2,
+                            })}
                       </span>{' '}
                       /{' '}
                       <span className={`text-lightWhite`}>
-                        {cfdSl?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
-                          minimumFractionDigits: 2,
-                        }) ?? '-'}
-                        {/* {openCfdDetails?.stopLoss?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE) ??
-                          '-'} */}
+                        {cfdSl === undefined || cfdSl === 0
+                          ? '-'
+                          : cfdSl.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+                              minimumFractionDigits: 2,
+                            })}
                       </span>
                     </div>
                   </div>
@@ -679,7 +746,7 @@ const UpdateFormModal = ({
                     />
                   </div>
 
-                  {displayedExpectedProfit}
+                  {displayedEstimatedProfit}
                 </div>
 
                 <div className="mb-5 h-70px">
@@ -692,18 +759,17 @@ const UpdateFormModal = ({
                       initialToggleState={guaranteedChecked}
                       toggleStateFromParent={slToggle}
                       setToggleStateFromParent={setSlToggle}
-                      // getToggleFunction={getSlToggleFunction}
                     />
                   </div>
-                  {displayedExpectedLoss}
+                  {displayedEstimatedLoss}
                   {guaranteedStopLoss}
                 </div>
 
                 <RippleButton
-                  disabled={submitDisabled}
+                  disabled={submitDisabledRef.current}
                   onClick={buttonClickHandler}
                   buttonType="button"
-                  className="mt-0 whitespace-nowrap rounded border-0 bg-tidebitTheme p-90px py-2 text-sm text-white transition-colors duration-300 hover:cursor-pointer hover:bg-cyan-600 focus:outline-none disabled:bg-lightGray md:mt-0 md:px-28"
+                  className="mt-0 whitespace-nowrap rounded border-0 bg-tidebitTheme p-90px py-2 text-sm text-white transition-colors duration-300 hover:cursor-pointer hover:bg-cyan-600 focus:outline-none disabled:cursor-default disabled:bg-lightGray md:mt-0 md:px-28"
                 >
                   {t('POSITION_MODAL.UPDATE_POSITION_TITLE')}
                 </RippleButton>

@@ -1,5 +1,10 @@
-import {useState, Dispatch, SetStateAction} from 'react';
-import {TRADING_INPUT_STEP} from '../../constants/display';
+import {useState, Dispatch, SetStateAction, useEffect, useRef, useCallback} from 'react';
+import {
+  DELAYED_HIDDEN_SECONDS,
+  INPUT_VALIDATION_DELAY,
+  TRADING_INPUT_STEP,
+} from '../../constants/display';
+import useStateRef from 'react-usestateref';
 
 interface ITradingInputProps {
   inputInitialValue: number;
@@ -24,6 +29,9 @@ interface ITradingInputProps {
 
   shortTpLimit?: number;
   longTpLimit?: number;
+
+  reachOppositeLimit?: boolean;
+  disabled?: boolean;
 }
 
 const TradingInput = ({
@@ -40,41 +48,80 @@ const TradingInput = ({
   lowerLimit,
   upperLimit,
 
+  reachOppositeLimit,
+  disabled,
+
   ...otherProps
 }: ITradingInputProps) => {
-  const [inputValue, setInputValue] =
-    inputValueFromParent && setInputValueFromParent
-      ? [inputValueFromParent, setInputValueFromParent]
-      : useState<number>(inputInitialValue);
+  const [disabledState, setDisabledState, disabledStateRef] = useStateRef<boolean>(false);
+  const [inputValue, setInputValue, inputValueRef] = useStateRef<number>(inputInitialValue);
+
+  const [validationTimeout, setValidationTimeout, validationTimeoutRef] = useStateRef<ReturnType<
+    typeof setTimeout
+  > | null>(null);
 
   const regex = /^\d*\.?\d{0,2}$/;
 
-  const passValueHandler = (data: number) => {
-    getInputValue && getInputValue(data);
+  const passValueHandler = useCallback(
+    (data: number) => {
+      getInputValue && getInputValue(data);
+    },
+    [getInputValue]
+  );
+
+  const validateInput = (value: number) => {
+    if (upperLimit && value >= upperLimit) {
+      setInputValue(upperLimit);
+      passValueHandler(upperLimit);
+      return;
+    } else if (lowerLimit && value <= lowerLimit) {
+      // Info: For short SL setting, if the value is lower than the lower limit, it will be set to the UPPER limit (Liquidation Price) (20230424 - Shirley)
+      if (!!reachOppositeLimit && upperLimit) {
+        setInputValue(upperLimit);
+        passValueHandler(upperLimit);
+        return;
+      }
+
+      setInputValue(lowerLimit);
+      passValueHandler(lowerLimit);
+      return;
+    } else if (upperLimit && lowerLimit === upperLimit) {
+      // Do nothing
+      return;
+    } else {
+      setInputValue(value);
+      passValueHandler(value);
+      return;
+    }
+  };
+
+  const debounceValidation = (value: number) => {
+    if (validationTimeout) {
+      clearTimeout(validationTimeout);
+    }
+
+    const newTimeout = setTimeout(() => {
+      validateInput(value);
+    }, INPUT_VALIDATION_DELAY);
+
+    setValidationTimeout(newTimeout);
   };
 
   const inputChangeHandler: React.ChangeEventHandler<HTMLInputElement> = event => {
     const value = event.target.value;
 
     if (regex.test(value)) {
-      // Info: (20230316 - Shirley) 讓 input 不能變成 '01' 的條件式
-      // if (Number(value) >= upperLimit || Number(value) <= lowerLimit) {
-      //   return;
-      // }
-
-      if (upperLimit && Number(value) >= upperLimit) {
-        setInputValue(upperLimit);
-        passValueHandler(upperLimit);
-
+      const numberValue = Number(value);
+      if (numberValue === upperLimit && numberValue === lowerLimit) {
         return;
       }
 
-      if (upperLimit && lowerLimit === upperLimit) {
-        return;
-      }
+      setInputValue(numberValue);
+      passValueHandler(numberValue);
 
-      setInputValue(Number(value));
-      passValueHandler(Number(value));
+      debounceValidation(numberValue);
+    } else {
+      setInputValue(0);
     }
   };
 
@@ -83,6 +130,11 @@ const TradingInput = ({
     const changeRounded = Math.round(change * 100) / 100;
 
     if (upperLimit && changeRounded >= upperLimit) {
+      return;
+    } else if (lowerLimit && changeRounded <= lowerLimit) {
+      // Info: 在下限內加，要直接加到下限值 (20230426 - Shirley)
+      setInputValue(lowerLimit);
+      passValueHandler(lowerLimit);
       return;
     }
     setInputValue(changeRounded);
@@ -100,6 +152,23 @@ const TradingInput = ({
     setInputValue(changeRounded);
     passValueHandler(changeRounded);
   };
+
+  useEffect(() => {
+    if (inputValueFromParent !== undefined && setInputValueFromParent !== undefined) {
+      setInputValue(inputValueFromParent);
+    }
+
+    setDisabledState(!!disabled);
+  }, [inputValueFromParent, setInputValueFromParent, disabled]);
+
+  useEffect(() => {
+    // Info: Clean up validation timeout on unmount (20230424 - Shirley)
+    return () => {
+      if (validationTimeout) {
+        clearTimeout(validationTimeout);
+      }
+    };
+  }, [validationTimeout]);
 
   return (
     <>
@@ -139,7 +208,12 @@ const TradingInput = ({
           <input
             type="number"
             className={`${inputSize} bg-darkGray8 text-center text-lightWhite outline-none ring-transparent`}
-            value={inputValue}
+            disabled={
+              disabledStateRef.current ||
+              (Number(inputValueRef.current) === upperLimit &&
+                Number(inputValueRef.current) === lowerLimit)
+            }
+            value={inputValueRef.current}
             name={inputName}
             onChange={inputChangeHandler}
             placeholder={inputPlaceholder}

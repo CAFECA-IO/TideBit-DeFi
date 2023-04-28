@@ -1,5 +1,6 @@
 import {ImCross} from 'react-icons/im';
 import {
+  DEFAULT_LEVERAGE,
   DELAYED_HIDDEN_SECONDS,
   TypeOfBorderColor,
   TypeOfPnLColor,
@@ -189,6 +190,7 @@ const PositionClosedModal = ({
     // TODO: replace `twoDecimal` with `toLocaleString` (20230325 - Shirley)
     const openPrice = cfd.openPrice;
     const closePrice = quotation.price;
+    const leverage = marketCtx.tickerStatic?.leverage ?? DEFAULT_LEVERAGE;
 
     const openValue = twoDecimal(openPrice * cfd.amount);
     const closeValue = twoDecimal(closePrice * cfd.amount);
@@ -207,12 +209,12 @@ const PositionClosedModal = ({
     const suggestion: ICFDSuggestion = {
       takeProfit:
         cfd.typeOfPosition === TypeOfPosition.BUY
-          ? openValue * (1 + SUGGEST_TP)
-          : openValue * (1 - SUGGEST_TP),
+          ? openValue * (1 + SUGGEST_TP / leverage)
+          : openValue * (1 - SUGGEST_TP / leverage),
       stopLoss:
         cfd.typeOfPosition === TypeOfPosition.BUY
-          ? openValue * (1 - SUGGEST_SL)
-          : openValue * (1 + SUGGEST_SL),
+          ? openValue * (1 - SUGGEST_SL / leverage)
+          : openValue * (1 + SUGGEST_SL / leverage),
     };
 
     const historyCfd: IDisplayCFDOrder = {
@@ -280,6 +282,7 @@ const PositionClosedModal = ({
     globalCtx.dataLoadingModalHandler({
       modalTitle: t('POSITION_MODAL.CLOSE_POSITION_TITLE'),
       modalContent: t('POSITION_MODAL.CONFIRM_CONTENT'),
+      isShowZoomOutBtn: false,
     });
     globalCtx.visibleLoadingModalHandler();
 
@@ -295,6 +298,7 @@ const PositionClosedModal = ({
           modalContent: t('POSITION_MODAL.TRANSACTION_BROADCAST'),
           btnMsg: t('POSITION_MODAL.VIEW_ON_BUTTON'),
           btnUrl: '#',
+          isShowZoomOutBtn: false,
         });
 
         // ToDo: Need to get a singnal from somewhere to show the successful modal
@@ -331,7 +335,7 @@ const PositionClosedModal = ({
 
         globalCtx.dataCanceledModalHandler({
           modalTitle: t('POSITION_MODAL.CLOSE_POSITION_TITLE'),
-          modalContent: t('POSITION_MODAL.FAILED_REASON_CANCELED'),
+          modalContent: `${t('POSITION_MODAL.FAILED_REASON_CANCELED')} (${result.code})`,
         });
 
         globalCtx.visibleCanceledModalHandler();
@@ -349,8 +353,7 @@ const PositionClosedModal = ({
 
         globalCtx.dataFailedModalHandler({
           modalTitle: t('POSITION_MODAL.CLOSE_POSITION_TITLE'),
-          failedTitle: t('POSITION_MODAL.FAILED_TITLE'),
-          failedMsg: t('POSITION_MODAL.FAILED_REASON_FAILED_TO_CLOSE'),
+          modalContent: `${t('POSITION_MODAL.FAILED_REASON_FAILED_TO_CLOSE')} (${result.code})`,
         });
 
         globalCtx.visibleFailedModalHandler();
@@ -366,8 +369,7 @@ const PositionClosedModal = ({
       // Info: Unknown error between context and component
       globalCtx.dataFailedModalHandler({
         modalTitle: t('POSITION_MODAL.CLOSE_POSITION_TITLE'),
-        failedTitle: t('POSITION_MODAL.FAILED_TITLE'),
-        failedMsg: t('POSITION_MODAL.ERROR_MESSAGE'),
+        modalContent: `${t('POSITION_MODAL.ERROR_MESSAGE')}  (${Code.UNKNOWN_ERROR_IN_COMPONENT})`,
       });
 
       globalCtx.visibleFailedModalHandler();

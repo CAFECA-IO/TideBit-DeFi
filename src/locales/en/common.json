@@ -198,7 +198,7 @@
     "TP_SETTING": "Close at profit",
     "SL_SETTING": "Close at loss",
     "EXPECTED_PROFIT": "Expected profit",
-    "EXPECTED_LOSS": "Expected loss:",
+    "EXPECTED_LOSS": "Expected loss",
     "GUARANTEED_STOP": "Guaranteed Stop",
     "GUARANTEED_STOP_HINT": "Guaranteed stop will force the position to close at your chosen rate (price) even if the market price surpasses it.",
     "GUARANTEED_STOP_YES": "Yes",
@@ -294,6 +294,7 @@
     "ERROR": "Error",
     "SUCCESS": "Success",
     "WARNING": "Warning",
-    "INFO": "Info"
+    "INFO": "Info",
+    "PROGRESSING_MESSAGE": "is still in progress, please wait..."
   }
 }

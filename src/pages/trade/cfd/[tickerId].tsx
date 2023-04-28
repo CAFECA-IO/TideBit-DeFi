@@ -1,22 +1,19 @@
-import Image from 'next/image';
 import Head from 'next/head';
 import NavBar from '../../../components/nav_bar/nav_bar';
 import {serverSideTranslations} from 'next-i18next/serverSideTranslations';
-import {useContext, useEffect, useState} from 'react';
+import {useContext, useEffect} from 'react';
 import {AppContext} from '../../../contexts/app_context';
-import OrderSection from '../../../components/order_section/order_section';
 import TradePageBody from '../../../components/trade_page_body/trade_page_body';
-import {MarketContext, MarketProvider} from '../../../contexts/market_context';
-import {UserContext, UserProvider} from '../../../contexts/user_context';
-import {GlobalContext, useGlobal} from '../../../contexts/global_context';
+import {MarketContext} from '../../../contexts/market_context';
+import {useGlobal} from '../../../contexts/global_context';
 import NavBarMobile from '../../../components/nav_bar_mobile/nav_bar_mobile';
 import {GetStaticPaths, GetStaticProps} from 'next';
 import {useRouter} from 'next/router';
 import Error from 'next/error';
-import useStateRef from 'react-usestateref';
-import {capitalized, findCurrencyByCode, hasValue, wait} from '../../../lib/common';
+import {findCurrencyByCode, hasValue} from '../../../lib/common';
 import {tickerIds} from '../../../constants/config';
-import {Currency, ICurrency, ICurrencyConstant} from '../../../constants/currency';
+import {Currency} from '../../../constants/currency';
+import Skeleton, {SkeletonTheme} from 'react-loading-skeleton';
 
 interface IPageProps {
   tickerId: string;

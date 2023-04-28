@@ -22,7 +22,7 @@ export const getDummyQuotation = (currency: string, typeOfPosition: ITypeOfPosit
     targetAsset: currency,
     unitAsset: unitAsset,
     typeOfPosition,
-    price: randomIntFromInterval(1000, 10000),
+    price: randomIntFromInterval(1300, 2200),
     deadline: getTimestamp() + QUOTATION_RENEWAL_INTERVAL_SECONDS,
     signature: '0x',
   };

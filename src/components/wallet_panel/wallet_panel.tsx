@@ -40,6 +40,7 @@ export default function WalletPanel({
         globalCtx.dataLoadingModalHandler({
           modalTitle: t('WALLET_PANEL.TITLE'),
           modalContent: t('WALLET_PANEL.CONNECTING'),
+          isShowZoomOutBtn: false,
         });
         globalCtx.visibleLoadingModalHandler();
 

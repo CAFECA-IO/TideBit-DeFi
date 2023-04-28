@@ -294,6 +294,7 @@
     "ERROR": "錯誤",
     "SUCCESS": "成功",
     "WARNING": "警告",
-    "INFO": "訊息"
+    "INFO": "訊息",
+    "PROGRESSING_MESSAGE": "處理中，請稍候..."
   }
 }

@@ -64,6 +64,33 @@ const PositionUpdatedModal = ({
     return request;
   };
 
+  // Info: To show the updated CFD in UpdateFormModal: Create a function to compare the difference between updatedProps and openCfdDetails, if there's different, change the openCfdDetails's value to updatedProps's value
+  const compareUpdatedProps = (position: IDisplayCFDOrder) => {
+    const updatedPosition = {...position};
+
+    if (updatedProps?.takeProfit !== updatedPosition.takeProfit) {
+      updatedPosition.takeProfit =
+        updatedProps?.takeProfit === undefined || 0 ? undefined : updatedProps.takeProfit;
+    }
+
+    if (updatedProps?.stopLoss !== updatedPosition.stopLoss) {
+      updatedPosition.stopLoss =
+        updatedProps?.stopLoss === undefined || 0 ? undefined : updatedProps.stopLoss;
+    }
+
+    if (position.guaranteedStop) {
+      return updatedPosition;
+    } else if (!position.guaranteedStop && !!updatedProps?.guaranteedStop) {
+      if (!!updatedProps?.stopLoss) {
+        updatedPosition.stopLoss = updatedProps.stopLoss;
+      }
+      updatedPosition.guaranteedStop = updatedProps.guaranteedStop;
+      updatedPosition.guaranteedStopFee = updatedProps.guaranteedStopFee;
+    }
+
+    return updatedPosition;
+  };
+
   const submitClickHandler = async () => {
     const [lock, unlock] = locker('position_updated_modal.submitClickHandler');
 
@@ -76,6 +103,7 @@ const PositionUpdatedModal = ({
     globalCtx.dataLoadingModalHandler({
       modalTitle: t('POSITION_MODAL.UPDATE_POSITION_TITLE'),
       modalContent: t('POSITION_MODAL.CONFIRM_CONTENT'),
+      isShowZoomOutBtn: false,
     });
     globalCtx.visibleLoadingModalHandler();
 
@@ -83,12 +111,14 @@ const PositionUpdatedModal = ({
       const result = await userCtx.updateCFDOrder(applyUpdateOrder);
 
       if (result.success) {
+        const updatedPosition = compareUpdatedProps(openCfdDetails);
         // TODO: (20230413 - Shirley) the button URL
         globalCtx.dataLoadingModalHandler({
           modalTitle: t('POSITION_MODAL.UPDATE_POSITION_TITLE'),
           modalContent: t('POSITION_MODAL.TRANSACTION_BROADCAST'),
           btnMsg: t('POSITION_MODAL.VIEW_ON_BUTTON'),
           btnUrl: '#',
+          isShowZoomOutBtn: false,
         });
 
         // TODO: (20230317 - Shirley) temporary waiting
@@ -108,7 +138,7 @@ const PositionUpdatedModal = ({
         await wait(DELAYED_HIDDEN_SECONDS);
         globalCtx.eliminateAllModals();
 
-        globalCtx.dataUpdateFormModalHandler(openCfdDetails);
+        globalCtx.dataUpdateFormModalHandler(updatedPosition);
         globalCtx.visibleUpdateFormModalHandler();
       } else if (
         // Info: cancel (20230412 - Shirley)
@@ -125,7 +155,7 @@ const PositionUpdatedModal = ({
 
         globalCtx.dataCanceledModalHandler({
           modalTitle: t('POSITION_MODAL.UPDATE_POSITION_TITLE'),
-          modalContent: t('POSITION_MODAL.FAILED_REASON_CANCELED'),
+          modalContent: `${t('POSITION_MODAL.FAILED_REASON_CANCELED')} (${result.code})`,
         });
 
         globalCtx.visibleCanceledModalHandler();
@@ -133,7 +163,9 @@ const PositionUpdatedModal = ({
         result.code === Code.INTERNAL_SERVER_ERROR ||
         result.code === Code.INVAILD_INPUTS ||
         result.code === Code.EXPIRED_QUOTATION_FAILED ||
-        result.code === Code.UNKNOWN_ERROR
+        result.code === Code.UNKNOWN_ERROR ||
+        result.code === Code.BALANCE_NOT_FOUND ||
+        result.code === Code.FAILE_TO_UPDATE_BALANCE
       ) {
         // Deprecated: [debug] (20230413 - Shirley)
         // eslint-disable-next-line no-console
@@ -143,8 +175,7 @@ const PositionUpdatedModal = ({
 
         globalCtx.dataFailedModalHandler({
           modalTitle: t('POSITION_MODAL.UPDATE_POSITION_TITLE'),
-          failedTitle: t('POSITION_MODAL.FAILED_TITLE'),
-          failedMsg: t('POSITION_MODAL.FAILED_REASON_FAILED_TO_UPDATE'),
+          modalContent: `${t('POSITION_MODAL.FAILED_REASON_FAILED_TO_UPDATE')} (${result.code})`,
         });
 
         globalCtx.visibleFailedModalHandler();
@@ -160,8 +191,9 @@ const PositionUpdatedModal = ({
       // Info: Unknown error between context and component
       globalCtx.dataFailedModalHandler({
         modalTitle: t('POSITION_MODAL.UPDATE_POSITION_TITLE'),
-        failedTitle: t('POSITION_MODAL.FAILED_TITLE'),
-        failedMsg: t('POSITION_MODAL.FAILED_REASON_FAILED_TO_UPDATE'),
+        modalContent: `${t('POSITION_MODAL.FAILED_REASON_FAILED_TO_UPDATE')} (${
+          Code.UNKNOWN_ERROR_IN_COMPONENT
+        })`,
       });
 
       globalCtx.visibleFailedModalHandler();
@@ -173,19 +205,21 @@ const PositionUpdatedModal = ({
 
   // Info: Double check if the value is updated (20230413 - Shirley)
   const renewDataStyle = () => {
-    if (updatedProps === undefined) return;
+    if (!updatedProps || Object.keys(updatedProps).length === 0) return;
 
     updatedProps.guaranteedStop && updatedProps.guaranteedStop !== openCfdDetails?.guaranteedStop
       ? setGtslTextStyle('text-lightYellow2')
       : setGtslTextStyle('text-lightWhite');
 
-    updatedProps.takeProfit !== undefined && updatedProps.takeProfit !== openCfdDetails?.takeProfit
-      ? setTpTextStyle('text-lightYellow2')
-      : setTpTextStyle('text-lightWhite');
+    (updatedProps.takeProfit === 0 && openCfdDetails.takeProfit === undefined) ||
+    updatedProps.takeProfit === openCfdDetails?.takeProfit
+      ? setTpTextStyle('text-lightWhite')
+      : setTpTextStyle('text-lightYellow2');
 
-    updatedProps.stopLoss !== undefined && updatedProps.stopLoss !== openCfdDetails?.stopLoss
-      ? setSlTextStyle('text-lightYellow2')
-      : setSlTextStyle('text-lightWhite');
+    (updatedProps.stopLoss === 0 && openCfdDetails.stopLoss === undefined) ||
+    updatedProps.stopLoss === openCfdDetails?.stopLoss
+      ? setSlTextStyle('text-lightWhite')
+      : setSlTextStyle('text-lightYellow2');
   };
 
   useEffect(() => {

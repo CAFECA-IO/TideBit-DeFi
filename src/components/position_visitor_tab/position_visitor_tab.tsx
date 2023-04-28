@@ -1,5 +1,4 @@
 import React from 'react';
-import {useGlobal} from '../../contexts/global_context';
 import {useTranslation} from 'next-i18next';
 import {WalletConnectButton} from '../wallet_connect_button/wallet_connect_button';
 
@@ -7,8 +6,6 @@ type TranslateFunction = (s: string) => string;
 
 const PositionVisitorTab = () => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
-
-  const globalCtx = useGlobal();
 
   const tabBodyWidth = 'w-320px';
 

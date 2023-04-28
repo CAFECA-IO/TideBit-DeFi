@@ -48,6 +48,9 @@ const WithdrawalModal = ({
 
   const regex = /^\d*\.?\d{0,2}$/;
 
+  /* Info: (20230427 - Julian) toastId by minimizedModal */
+  const toastId = `${t('D_W_MODAL.WITHDRAW')}_LoadingModalMinimized`;
+
   const cryptoMenuClickHandler = () => {
     setShowCryptoMenu(!showCryptoMenu);
   };
@@ -78,6 +81,7 @@ const WithdrawalModal = ({
     globalCtx.dataLoadingModalHandler({
       modalTitle: t('D_W_MODAL.WITHDRAW'),
       modalContent: t('D_W_MODAL.CONFIRM_CONTENT'),
+      isShowZoomOutBtn: true,
     });
     globalCtx.visibleLoadingModalHandler();
 
@@ -90,16 +94,9 @@ const WithdrawalModal = ({
       remark: '',
       fee: 0,
     };
-    // Deprecated: for debug (20230411 - Shirley)
-    // eslint-disable-next-line no-console
-    console.log('withdraw order', withdrawOrder);
 
     try {
       const result = await userCtx.withdraw(withdrawOrder);
-
-      // TODO: for debug
-      globalCtx.toast({message: 'withdraw result: ' + JSON.stringify(result), type: 'info'});
-
       // TODO: the button URL
       if (result.success) {
         // ToDo: to tell when to show the loading modal with button
@@ -108,6 +105,7 @@ const WithdrawalModal = ({
           modalContent: t('D_W_MODAL.TRANSACTION_BROADCAST'),
           btnMsg: t('D_W_MODAL.VIEW_ON_BUTTON'),
           btnUrl: '#',
+          isShowZoomOutBtn: true,
         });
 
         // INFO: for UX
@@ -122,6 +120,7 @@ const WithdrawalModal = ({
           btnUrl: '#',
         });
 
+        globalCtx.eliminateToasts(toastId);
         globalCtx.visibleSuccessfulModalHandler();
         // TODO: `result.code` (20230316 - Shirley)
       } else if (
@@ -134,9 +133,10 @@ const WithdrawalModal = ({
 
         globalCtx.dataCanceledModalHandler({
           modalTitle: t('D_W_MODAL.WITHDRAW'),
-          modalContent: t('D_W_MODAL.FAILED_REASON_CANCELED'),
+          modalContent: `${t('D_W_MODAL.FAILED_REASON_CANCELED')} (${result.code})`,
         });
 
+        globalCtx.eliminateToasts(toastId);
         globalCtx.visibleCanceledModalHandler();
       } else if (
         result.code === Code.INTERNAL_SERVER_ERROR ||
@@ -146,10 +146,10 @@ const WithdrawalModal = ({
 
         globalCtx.dataFailedModalHandler({
           modalTitle: t('D_W_MODAL.WITHDRAW'),
-          failedTitle: t('D_W_MODAL.FAILED_TITLE'),
-          failedMsg: t('D_W_MODAL.FAILED_REASON_FAILED_TO_WITHDRAW'),
+          modalContent: `${t('D_W_MODAL.FAILED_REASON_FAILED_TO_WITHDRAW')} (${result.code})`,
         });
 
+        globalCtx.eliminateToasts(toastId);
         globalCtx.visibleFailedModalHandler();
       }
     } catch (error: any) {
@@ -159,10 +159,12 @@ const WithdrawalModal = ({
       // Info: Unknown error
       globalCtx.dataFailedModalHandler({
         modalTitle: t('D_W_MODAL.WITHDRAW'),
-        failedTitle: t('D_W_MODAL.FAILED_TITLE'),
-        failedMsg: t('D_W_MODAL.FAILED_REASON_FAILED_TO_WITHDRAW'),
+        modalContent: `${t('D_W_MODAL.FAILED_REASON_FAILED_TO_WITHDRAW')} (${
+          Code.UNKNOWN_ERROR_IN_COMPONENT
+        })`,
       });
 
+      globalCtx.eliminateToasts(toastId);
       globalCtx.visibleFailedModalHandler();
     }
 
@@ -255,9 +257,6 @@ const WithdrawalModal = ({
                   type="text"
                   placeholder={selectedCrypto.name}
                   disabled
-                  onFocus={() => {
-                    // console.log('focusing');
-                  }}
                   value={selectedCrypto?.name}
                 />
 

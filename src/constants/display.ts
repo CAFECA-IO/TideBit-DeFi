@@ -118,6 +118,8 @@ export const TIDEBIT_BUTTON_CONFIG =
 
 export const DELAYED_HIDDEN_SECONDS = 1000;
 
+export const INPUT_VALIDATION_DELAY = 500;
+
 export const TRADING_INPUT_STEP = 0.01;
 
 export const TypeOfPnLColorHex = {
@@ -178,9 +180,14 @@ export const LINE_GRAPH_STROKE_COLOR = {
   BLACK: '#000000',
 };
 
-export const MODAL_BUTTON_STYLES = {
+export const MODAL_BUTTON_STYLE = {
   SOLID:
     'rounded border-0 whitespace-nowrap bg-tidebitTheme text-sm text-white transition-colors duration-300 hover:bg-cyan-600 focus:outline-none disabled:bg-lightGray',
   HOLLOW:
     'whitespace-nowrap rounded border border-tidebitTheme text-sm text-white transition-colors duration-300 focus:outline-none disabled:bg-lightGray',
 };
+
+export const DEFAULT_SELL_PRICE = 0;
+export const DEFAULT_BUY_PRICE = 9999999999;
+export const DEFAULT_LEVERAGE = 1;
+export const DEFAULT_USER_BALANCE = 0;

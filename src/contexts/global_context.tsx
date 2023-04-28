@@ -1,14 +1,7 @@
-import React, {
-  createContext,
-  useState,
-  useEffect,
-  useContext,
-  Dispatch,
-  SetStateAction,
-} from 'react';
+import React, {createContext, useState, useContext} from 'react';
 import useWindowSize from '../lib/hooks/use_window_size';
 import {DELAYED_HIDDEN_SECONDS, LAYOUT_BREAKPOINT} from '../constants/display';
-import {ToastContainer, toast as toastify} from 'react-toastify';
+import {toast as toastify} from 'react-toastify';
 import UpdateFormModal from '../components/update_form_modal/update_form_modal';
 import {MarketContext} from './market_context';
 import Toast from '../components/toast/toast';
@@ -70,10 +63,17 @@ import WithdrawalHistoryModal from '../components/withdrawal_history_modal/withd
 import {ImInfo, ImWarning} from 'react-icons/im';
 import {FaRegCheckCircle, FaRegTimesCircle} from 'react-icons/fa';
 import SearchingModal from '../components/searching_modal/searching_modal';
+import Lottie from 'lottie-react';
+import smallConnectingAnimation from '../../public/animation/lf30_editor_cnkxmhy3.json';
+import {IToastType, ToastType} from '../constants/toast_type';
 export interface IToastify {
-  type: 'error' | 'warning' | 'info' | 'success';
+  type: IToastType;
   message: string;
   toastId?: string | number; // Prevent duplicate toast
+  autoClose?: number | false;
+  isLoading?: boolean;
+  typeText: string;
+  modalReOpenData?: IProcessDataModal;
 }
 export interface IUpdatedCFDInputProps {
   takeProfit?: number;
@@ -137,6 +137,7 @@ export interface IProcessDataModal {
   modalContent: string;
   btnMsg?: string;
   btnUrl?: string;
+  isShowZoomOutBtn?: boolean;
 }
 
 export interface IFailedModal {
@@ -222,73 +223,6 @@ export const dummyBadgeSharingModal: IBadgeSharingModal = {
   badgeId: 'TBDFUTURES2023FEB05',
 };
 
-const toastHandler = ({type, message, toastId}: IToastify) => {
-  // Till: (20230330 - Shirley)
-  // return {
-  //   [TOAST_CLASSES_TYPE.error]: toastify.error(message),
-  //   [TOAST_CLASSES_TYPE.warning]: toastify.warning(message),
-  //   [TOAST_CLASSES_TYPE.info]: toastify.info(message),
-  // }[type];
-
-  /* ToDo: (20230418 - Julian) toast type text require i18n */
-  switch (type) {
-    case 'error':
-      toastify.error(message, {
-        toastId: type + message + toastId,
-        icon: (
-          <div className="-ml-12 inline-flex items-center justify-center text-lightRed">
-            <FaRegTimesCircle className="h-15px w-15px" />
-            <span className="ml-2">Error</span>
-          </div>
-        ),
-        bodyClassName:
-          'text-lightWhite text-sm lg:whitespace-nowrap flex p-4 w-auto before:block before:absolute before:-left-1 before:w-2 before:h-50px before:bg-lightRed',
-      });
-      break;
-    case 'warning':
-      toastify.warning(message, {
-        toastId: type + message + toastId,
-        icon: (
-          <div className="-ml-12 inline-flex items-center justify-center text-lightYellow2">
-            <ImWarning className="h-15px w-15px " />
-            <span className="ml-2">Warning</span>
-          </div>
-        ),
-        bodyClassName:
-          'text-lightWhite text-sm lg:whitespace-nowrap flex p-4 w-auto before:block before:absolute before:-left-1 before:w-2 before:h-50px before:bg-lightYellow2',
-      });
-      break;
-    case 'info':
-      toastify.info(message, {
-        toastId: type + message + toastId,
-        icon: (
-          <div className="-ml-12 inline-flex items-center justify-center text-tidebitTheme">
-            <ImInfo className="h-15px w-15px" />
-            <span className="ml-2">Info</span>
-          </div>
-        ),
-        bodyClassName:
-          'text-lightWhite text-sm lg:whitespace-nowrap flex w-auto before:block before:absolute before:-left-1 before:w-2 before:h-50px before:bg-tidebitTheme',
-      });
-      break;
-    case 'success':
-      toastify.success(message, {
-        toastId: type + message + toastId,
-        icon: (
-          <div className="-ml-12 inline-flex items-center justify-center text-lightGreen5">
-            <FaRegCheckCircle className="h-15px w-15px" />
-            <span className="ml-2">Success</span>
-          </div>
-        ),
-        bodyClassName:
-          'text-lightWhite text-sm lg:whitespace-nowrap flex p-4 w-auto before:block before:absolute before:-left-1 before:w-2 before:h-50px before:bg-lightGreen5',
-      });
-      break;
-    default:
-      return;
-  }
-};
-
 export interface IGlobalProvider {
   children: React.ReactNode;
 }
@@ -306,6 +240,7 @@ export interface IGlobalContext {
   toast: (props: IToastify) => void;
 
   eliminateAllModals: () => void;
+  eliminateToasts: (id: string) => void;
 
   visibleUpdateFormModal: boolean;
   visibleUpdateFormModalHandler: () => void;
@@ -330,7 +265,6 @@ export interface IGlobalContext {
 
   visibleLoadingModal: boolean;
   visibleLoadingModalHandler: () => void;
-  zoomOutLoadingModal: () => void;
   dataLoadingModal: IProcessDataModal | null;
   dataLoadingModalHandler: (data: IProcessDataModal) => void;
 
@@ -439,6 +373,7 @@ export const GlobalContext = createContext<IGlobalContext>({
   toast: () => null,
 
   eliminateAllModals: () => null,
+  eliminateToasts: () => null,
 
   visibleUpdateFormModal: false,
   visibleUpdateFormModalHandler: () => null,
@@ -463,7 +398,6 @@ export const GlobalContext = createContext<IGlobalContext>({
 
   visibleLoadingModal: false,
   visibleLoadingModalHandler: () => null,
-  zoomOutLoadingModal: () => null,
   dataLoadingModal: null,
   dataLoadingModalHandler: () => null,
 
@@ -591,6 +525,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
   const [dataLoadingModal, setDataLoadingModal] = useState<IProcessDataModal>({
     modalTitle: '',
     modalContent: '',
+    isShowZoomOutBtn: false,
   });
 
   const [visibleFailedModal, setVisibleFailedModal] = useState(false);
@@ -695,8 +630,123 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     setColorMode(colorMode === 'light' ? 'dark' : 'light');
   };
 
-  const toast = ({type, message, toastId}: IToastify) => {
-    toastHandler({type: type, message: message, toastId: toastId});
+  const toastHandler = ({
+    type,
+    message,
+    toastId,
+    autoClose,
+    isLoading,
+    typeText,
+    modalReOpenData,
+  }: IToastify) => {
+    const toastBodyStyle =
+      'text-lightWhite text-sm lg:whitespace-nowrap px-4 before:block before:absolute before:-left-1 before:w-2 before:h-50px';
+
+    const isToastId = toastId ?? type + message;
+
+    const isLoadingMessage = isLoading ? (
+      <div className="inline-flex">
+        {message}
+        <Lottie className="ml-2 w-20px" animationData={smallConnectingAnimation} />
+      </div>
+    ) : (
+      <>{message}</>
+    );
+
+    const modalReOpenHandler = modalReOpenData
+      ? () => {
+          setDataLoadingModal(modalReOpenData),
+            setVisibleLoadingModal(true),
+            toastify.dismiss(isToastId);
+        }
+      : () => {
+          toastify.dismiss(isToastId);
+        };
+
+    switch (type) {
+      case ToastType.ERROR:
+        toastify.error(isLoadingMessage, {
+          toastId: isToastId,
+          icon: (
+            <div className="-ml-12 inline-flex items-center justify-center text-lightRed">
+              <FaRegTimesCircle className="h-15px w-15px" />
+              <span className="ml-2">{typeText}</span>
+            </div>
+          ),
+          bodyClassName: `${toastBodyStyle} before:bg-lightRed`,
+          autoClose: autoClose ?? 3000,
+          closeOnClick: modalReOpenData ? false : true,
+          onClick: modalReOpenHandler,
+        });
+        break;
+      case ToastType.WARNING:
+        toastify.warning(isLoadingMessage, {
+          toastId: isToastId,
+          icon: (
+            <div className="-ml-12 inline-flex items-center justify-center text-lightYellow2">
+              <ImWarning className="h-15px w-15px " />
+              <span className="ml-2">{typeText}</span>
+            </div>
+          ),
+          bodyClassName: `${toastBodyStyle} before:bg-lightYellow2`,
+          autoClose: autoClose ?? 3000,
+          closeOnClick: modalReOpenData ? false : true,
+          onClick: modalReOpenHandler,
+        });
+        break;
+      case ToastType.INFO:
+        toastify.info(isLoadingMessage, {
+          toastId: isToastId,
+          icon: (
+            <div className="-ml-12 inline-flex items-center justify-center text-tidebitTheme">
+              <ImInfo className="h-15px w-15px" />
+              <span className="ml-2">{typeText}</span>
+            </div>
+          ),
+          bodyClassName: `${toastBodyStyle} before:bg-tidebitTheme`,
+          autoClose: autoClose ?? 3000,
+          closeOnClick: modalReOpenData ? false : true,
+          onClick: modalReOpenHandler,
+        });
+        break;
+      case ToastType.SUCCESS:
+        toastify.success(isLoadingMessage, {
+          toastId: isToastId,
+          icon: (
+            <div className="-ml-12 inline-flex items-center justify-center text-lightGreen5">
+              <FaRegCheckCircle className="h-15px w-15px" />
+              <span className="ml-2">{typeText}</span>
+            </div>
+          ),
+          bodyClassName: `${toastBodyStyle} before:bg-lightGreen5`,
+          autoClose: autoClose ?? 3000,
+          closeOnClick: modalReOpenData ? false : true,
+          onClick: modalReOpenHandler,
+        });
+        break;
+      default:
+        return;
+    }
+  };
+
+  const toast = ({
+    type,
+    message,
+    toastId,
+    autoClose,
+    isLoading,
+    typeText,
+    modalReOpenData,
+  }: IToastify) => {
+    toastHandler({
+      type: type,
+      message: message,
+      toastId: toastId,
+      autoClose: autoClose,
+      isLoading: isLoading,
+      typeText: typeText,
+      modalReOpenData: modalReOpenData,
+    });
   };
 
   const eliminateAllModals = () => {
@@ -720,6 +770,15 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     setVisiblePositionClosedModal(false);
 
     setVisibleSearchingModal(false);
+  };
+
+  const eliminateToasts = (id: string) => {
+    /* Info: (20230426 - Julian) remove toasts by toastId, or 'all' for remove all  */
+    if (id === 'all') {
+      toastify?.dismiss();
+    } else {
+      toastify?.dismiss(id);
+    }
   };
 
   const visibleUpdateFormModalHandler = () => {
@@ -752,19 +811,21 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
   const dataWithdrawalHistoryModalHandler = (data: IAcceptedWithdrawOrder) => {
     setDataWithdrawalHistoryModal(data);
   };
+  /* Till: (20230503 - Julian) */
+  // const zoomOutLoadingModal = () => {
+  //   visibleLoadingModalHandler();
 
-  const zoomOutLoadingModal = () => {
-    visibleLoadingModalHandler();
-
-    if (visibleLoadingModal) {
-      toast({
-        type: 'info',
-        message:
-          '[TODO] Pending toast which cannot be closed manually and automatically unless the process is finished',
-        toastId: 'loadingModalClosed',
-      });
-    }
-  };
+  //   if (visibleLoadingModal) {
+  //     toast({
+  //       type: ToastType.INFO,
+  //       message:
+  //         '[TODO] Pending toast which cannot be closed manually and automatically unless the process is finished',
+  //       toastId: 'loadingModalClosed',
+  //       autoClose: false,
+  //       typeText: 'Pending',
+  //     });
+  //   }
+  // };
 
   const visibleLoadingModalHandler = () => {
     // TODO: (20230317 - Shirley) loading toast
@@ -1001,6 +1062,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     toast,
 
     eliminateAllModals,
+    eliminateToasts,
 
     visibleUpdateFormModal,
     visibleUpdateFormModalHandler,
@@ -1025,7 +1087,6 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
 
     visibleLoadingModal,
     visibleLoadingModalHandler,
-    zoomOutLoadingModal,
     dataLoadingModal,
     dataLoadingModalHandler,
 
@@ -1130,12 +1191,12 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     <GlobalContext.Provider value={defaultValue}>
       <LoadingModal
         modalVisible={visibleLoadingModal}
-        // zoomOutLoadingModal
         modalClickHandler={visibleLoadingModalHandler}
         modalTitle={dataLoadingModal.modalTitle}
         modalContent={dataLoadingModal.modalContent}
         btnMsg={dataLoadingModal?.btnMsg}
         btnUrl={dataLoadingModal?.btnUrl}
+        isShowZoomOutBtn={dataLoadingModal?.isShowZoomOutBtn}
       />
       <FailedModal
         modalTitle={dataFailedModal.modalTitle}

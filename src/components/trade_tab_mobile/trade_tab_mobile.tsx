@@ -10,7 +10,13 @@ import TradingInput from '../trading_input/trading_input';
 import UserOverview from '../user_overview/user_overview';
 import {AiOutlineQuestionCircle} from 'react-icons/ai';
 import RippleButton from '../ripple_button/ripple_button';
-import {UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
+import {
+  DEFAULT_BUY_PRICE,
+  DEFAULT_LEVERAGE,
+  DEFAULT_SELL_PRICE,
+  DEFAULT_USER_BALANCE,
+  UNIVERSAL_NUMBER_FORMAT_LOCALE,
+} from '../../constants/display';
 import {
   TARGET_LIMIT_DIGITS,
   QUOTATION_RENEWAL_INTERVAL_SECONDS,
@@ -20,10 +26,16 @@ import {
   LIQUIDATION_FIVE_LEVERAGE,
   WAITING_TIME_FOR_USER_SIGNING,
   FRACTION_DIGITS,
+  TP_SL_LIMIT_PERCENT,
 } from '../../constants/config';
 import {ClickEvent} from '../../constants/tidebit_event';
 import {useTranslation} from 'next-i18next';
-import {getTimestamp, getTimestampInMilliseconds, roundToDecimalPlaces} from '../../lib/common';
+import {
+  getTimestamp,
+  getTimestampInMilliseconds,
+  roundToDecimalPlaces,
+  twoDecimal,
+} from '../../lib/common';
 import {IQuotation, getDummyQuotation} from '../../interfaces/tidebit_defi_background/quotation';
 import {NotificationContext} from '../../contexts/notification_context';
 import {IApplyCreateCFDOrder} from '../../interfaces/tidebit_defi_background/apply_create_cfd_order';
@@ -53,9 +65,9 @@ const TradeTabMobile = () => {
 
   const ticker = marketCtx.selectedTicker?.currency ?? '';
 
-  const USER_BALANCE = userCtx.balance?.available ?? 0;
+  const USER_BALANCE = userCtx.balance?.available ?? DEFAULT_USER_BALANCE;
 
-  const leverage = tickerStaticStatistics?.leverage ?? 1;
+  const leverage = tickerStaticStatistics?.leverage ?? DEFAULT_LEVERAGE;
   const gsl = marketCtx.guaranteedStopFeePercentage;
 
   const defaultBuyQuotation: IQuotation = getDummyQuotation(ticker, TypeOfPosition.BUY);
@@ -69,36 +81,26 @@ const TradeTabMobile = () => {
   const [shortQuotation, setShortQuotation, shortQuotationRef] =
     useStateRef<IQuotation>(defaultSellQuotation);
 
-  // Till: (20230410 - Shirley)
-  // const buyPrice = (longQuotationRef.current?.price ?? TEMP_PLACEHOLDER).toFixed(2); // market price * (1+spread)
-  // const sellPrice = (shortQuotationRef.current?.price ?? TEMP_PLACEHOLDER).toFixed(2); // market price * (1-spread)
-  // const longRecommendedTp = Number(
-  //   (tickerLiveStatistics?.longRecommendedTp ?? TEMP_PLACEHOLDER).toFixed(2)
-  // );
-  // const longRecommendedSl = Number(
-  //   (tickerLiveStatistics?.longRecommendedSl ?? TEMP_PLACEHOLDER).toFixed(2)
-  // );
-
   const [longTooltipStatus, setLongTooltipStatus] = useState(0);
   const [shortTooltipStatus, setShortTooltipStatus] = useState(0);
 
   const [targetInputValue, setTargetInputValue, targetInputValueRef] = useStateRef(0.02);
 
   // FIXME: SL setting should have a lower limit and an upper limit depending on its position type
-  const [longTpValue, setLongTpValue, loneTpValueRef] = useStateRef(
-    Number((Number(longQuotationRef.current?.price) * (1 + SUGGEST_TP)).toFixed(2))
+  const [longTpValue, setLongTpValue, longTpValueRef] = useStateRef(
+    Number((Number(longQuotationRef.current?.price) * (1 + SUGGEST_TP / leverage)).toFixed(2))
   );
   const [longSlValue, setLongSlValue, longSlValueRef] = useStateRef(
-    Number((Number(longQuotationRef.current?.price) * (1 - SUGGEST_SL)).toFixed(2))
+    Number((Number(longQuotationRef.current?.price) * (1 - SUGGEST_SL / leverage)).toFixed(2))
   );
   const [longTpToggle, setLongTpToggle] = useState(false);
   const [longSlToggle, setLongSlToggle] = useState(false);
 
   const [shortTpValue, setShortTpValue, shortTpValueRef] = useStateRef(
-    Number((Number(shortQuotationRef.current?.price) * (1 - SUGGEST_TP)).toFixed(2))
+    Number((Number(shortQuotationRef.current?.price) * (1 - SUGGEST_TP / leverage)).toFixed(2))
   );
   const [shortSlValue, setShortSlValue, shortSlValueRef] = useStateRef(
-    Number((Number(shortQuotationRef.current?.price) * (1 + SUGGEST_SL)).toFixed(2))
+    Number((Number(shortQuotationRef.current?.price) * (1 + SUGGEST_SL / leverage)).toFixed(2))
   );
   const [shortTpToggle, setShortTpToggle] = useState(false);
   const [shortSlToggle, setShortSlToggle] = useState(false);
@@ -176,6 +178,19 @@ const TradeTabMobile = () => {
   const [guaranteedStopFeeShort, setGuaranteedStopFeeShort, guaranteedStopFeeShortRef] =
     useStateRef(Number(gsl) * valueOfPositionShortRef.current);
 
+  const [longSlLowerLimit, setLongSlLowerLimit, longSlLowerLimitRef] = useStateRef(0);
+  const [longSlUpperLimit, setLongSlUpperLimit, longSlUpperLimitRef] = useStateRef(0);
+  const [shortSlLowerLimit, setShortSlLowerLimit, shortSlLowerLimitRef] = useStateRef(0);
+  const [shortSlUpperLimit, setShortSlUpperLimit, shortSlUpperLimitRef] = useStateRef(0);
+
+  const [longTpLowerLimit, setLongTpLowerLimit, longTpLowerLimitRef] = useStateRef(0);
+  const [shortTpUpperLimit, setShortTpUpperLimit, shortTpUpperLimitRef] = useStateRef(0);
+
+  const [longTpSuggestion, setLongTpSuggestion, longTpSuggestionRef] = useStateRef(0);
+  const [longSlSuggestion, setLongSlSuggestion, longSlSuggestionRef] = useStateRef(0);
+  const [shortTpSuggestion, setShortTpSuggestion, shortTpSuggestionRef] = useStateRef(0);
+  const [shortSlSuggestion, setShortSlSuggestion, shortSlSuggestionRef] = useStateRef(0);
+
   // Info: Fetch quotation the first time (20230327 - Shirley)
   useEffect(() => {
     if (!userCtx.enableServiceTerm) return;
@@ -183,9 +198,9 @@ const TradeTabMobile = () => {
     (async () => {
       await getQuotation(marketCtx.selectedTicker?.currency ?? DEFAULT_TICKER);
 
+      setTpSlBounds();
+      setSuggestions();
       renewPosition();
-
-      initSuggestion();
     })();
   }, [userCtx.enableServiceTerm]);
 
@@ -198,13 +213,12 @@ const TradeTabMobile = () => {
 
       const tickingSec = (base * 1000 - getTimestampInMilliseconds()) / 1000;
       setSecondsLeft(tickingSec > 0 ? Math.round(tickingSec) : 0);
-      // Deprecated: [debug] (20230413 - Shirley)
-      // eslint-disable-next-line no-console
-      console.log('[ref]tab mobile, displayed deadline:', base, secondsLeftRef.current);
 
       if (secondsLeftRef.current === 0) {
         await getQuotation(marketCtx.selectedTicker?.currency ?? DEFAULT_TICKER);
 
+        setTpSlBounds();
+        checkTpSlWithinBounds();
         renewPosition();
       }
     }, 1000);
@@ -219,6 +233,8 @@ const TradeTabMobile = () => {
     notificationCtx.emitter.once(ClickEvent.TICKER_CHANGED, async () => {
       await getQuotation(marketCtx.selectedTickerRef.current?.currency ?? DEFAULT_TICKER);
 
+      setTpSlBounds();
+      setSuggestions();
       renewPosition();
     });
 
@@ -247,7 +263,7 @@ const TradeTabMobile = () => {
         setLongQuotation(long);
       } else {
         const buyPrice =
-          (marketCtx.selectedTickerRef.current?.price ?? BUY_PRICE_ERROR) *
+          (marketCtx.selectedTickerRef.current?.price ?? DEFAULT_BUY_PRICE) *
           (1 + (marketCtx.tickerLiveStatistics?.spread ?? 0));
 
         const buyQuotation: IQuotation = {
@@ -273,7 +289,7 @@ const TradeTabMobile = () => {
         setShortQuotation(short);
       } else {
         const sellPrice =
-          (marketCtx.selectedTickerRef.current?.price ?? BUY_PRICE_ERROR) *
+          (marketCtx.selectedTickerRef.current?.price ?? DEFAULT_BUY_PRICE) *
           (1 + (marketCtx.tickerLiveStatistics?.spread ?? 0));
 
         const sellQuotation: IQuotation = {
@@ -290,7 +306,7 @@ const TradeTabMobile = () => {
       }
     } catch (err) {
       const buyPrice =
-        (marketCtx.selectedTickerRef.current?.price ?? BUY_PRICE_ERROR) *
+        (marketCtx.selectedTickerRef.current?.price ?? DEFAULT_BUY_PRICE) *
         (1 + (marketCtx.tickerLiveStatistics?.spread ?? 0));
 
       const buyQuotation: IQuotation = {
@@ -306,7 +322,7 @@ const TradeTabMobile = () => {
       setLongQuotation(buyQuotation);
 
       const sellPrice =
-        (marketCtx.selectedTickerRef.current?.price ?? SELL_PRICE_ERROR) *
+        (marketCtx.selectedTickerRef.current?.price ?? DEFAULT_SELL_PRICE) *
         (1 - (marketCtx.tickerLiveStatistics?.spread ?? 0));
 
       const sellQuotation: IQuotation = {
@@ -373,16 +389,99 @@ const TradeTabMobile = () => {
     );
   };
 
-  const initSuggestion = () => {
-    setLongTpValue(Number((Number(longQuotationRef.current?.price) * (1 + SUGGEST_TP)).toFixed(2)));
-    setLongSlValue(Number((Number(longQuotationRef.current?.price) * (1 - SUGGEST_SL)).toFixed(2)));
+  const checkTpSlWithinBounds = () => {
+    if (
+      longSlValueRef.current < longSlLowerLimitRef.current ||
+      longSlValueRef.current > longSlUpperLimitRef.current
+    ) {
+      setLongSlValue(longSlSuggestionRef.current);
+    }
 
-    setShortTpValue(
-      Number((Number(shortQuotationRef.current?.price) * (1 - SUGGEST_TP)).toFixed(2))
+    if (
+      shortSlValueRef.current > shortSlUpperLimitRef.current ||
+      shortSlValueRef.current < shortSlLowerLimitRef.current
+    ) {
+      setShortSlValue(shortSlSuggestionRef.current);
+    }
+
+    if (longTpValueRef.current < longTpLowerLimitRef.current) {
+      setLongTpValue(longTpSuggestionRef.current);
+    }
+
+    if (shortTpValueRef.current > shortTpUpperLimitRef.current) {
+      setShortTpValue(shortTpSuggestionRef.current);
+    }
+  };
+
+  const setTpSlBounds = () => {
+    const longTpLowerBound = roundToDecimalPlaces(
+      Number(longQuotationRef.current?.price) * (1 + TP_SL_LIMIT_PERCENT),
+      2
     );
-    setShortSlValue(
-      Number((Number(shortQuotationRef.current?.price) * (1 + SUGGEST_SL)).toFixed(2))
+    const shortTpUpperBound = roundToDecimalPlaces(
+      Number(shortQuotationRef.current?.price) * (1 - TP_SL_LIMIT_PERCENT),
+      2
     );
+
+    const longSlLowerBound = roundToDecimalPlaces(
+      Number(longQuotationRef.current?.price) *
+        (1 - LIQUIDATION_FIVE_LEVERAGE) *
+        (1 + TP_SL_LIMIT_PERCENT),
+      2
+    );
+
+    const shortSlUpperBound = roundToDecimalPlaces(
+      Number(shortQuotationRef.current?.price) *
+        (1 + LIQUIDATION_FIVE_LEVERAGE) *
+        (1 - TP_SL_LIMIT_PERCENT),
+      2
+    );
+
+    const longSlUpperBound = roundToDecimalPlaces(
+      Number(longQuotationRef.current?.price) * (1 - TP_SL_LIMIT_PERCENT),
+      2
+    );
+
+    const shortSlLowerBound = roundToDecimalPlaces(
+      Number(shortQuotationRef.current?.price) * (1 + TP_SL_LIMIT_PERCENT),
+      2
+    );
+
+    setLongSlLowerLimit(longSlLowerBound);
+    setLongSlUpperLimit(longSlUpperBound); // Open price with buffer
+    setLongTpLowerLimit(longTpLowerBound); // Open price with buffer
+
+    setShortTpUpperLimit(shortTpUpperBound); // Open price with buffer
+    setShortSlUpperLimit(shortSlUpperBound);
+    setShortSlLowerLimit(shortSlLowerBound); // Open price with buffer
+
+    updateSuggestions();
+  };
+
+  const updateSuggestions = () => {
+    const tpTimes = SUGGEST_TP / leverage;
+    const slTimes = SUGGEST_SL / leverage;
+
+    setLongTpSuggestion(
+      Number((Number(longQuotationRef.current?.price) * (1 + tpTimes)).toFixed(2))
+    );
+    setLongSlSuggestion(
+      Number((Number(longQuotationRef.current?.price) * (1 - slTimes)).toFixed(2))
+    );
+    setShortTpSuggestion(
+      Number((Number(shortQuotationRef.current?.price) * (1 - tpTimes)).toFixed(2))
+    );
+    setShortSlSuggestion(
+      Number((Number(shortQuotationRef.current?.price) * (1 + slTimes)).toFixed(2))
+    );
+  };
+
+  // Info: suggest the tp / sl in the beginning (20230329 - Shirley)
+  const setSuggestions = () => {
+    setLongTpValue(longTpSuggestionRef.current);
+    setLongSlValue(longSlSuggestionRef.current);
+    setShortTpValue(shortTpSuggestionRef.current);
+    setShortSlValue(shortSlSuggestionRef.current);
   };
 
   // Info: renew the value of position when target input changed (20230328 - Shirley)
@@ -480,7 +579,7 @@ const TradeTabMobile = () => {
       targetAsset: marketCtx.selectedTicker?.currency ?? '',
       unitAsset: unitAsset,
       amount: targetInputValueRef.current,
-      leverage: marketCtx.tickerStatic?.leverage ?? LEVERAGE_ERROR,
+      leverage: marketCtx.tickerStatic?.leverage ?? DEFAULT_LEVERAGE,
       margin: {
         asset: unitAsset,
         amount: requiredMarginLongRef.current,
@@ -496,7 +595,7 @@ const TradeTabMobile = () => {
       typeOfPosition: TypeOfPosition.BUY,
       quotation: longQuotationRef.current,
       liquidationPrice: longQuotationRef.current.price * (1 - LIQUIDATION_FIVE_LEVERAGE),
-      fee: marketCtx.tickerLiveStatistics?.fee ?? BUY_PRICE_ERROR,
+      fee: marketCtx.tickerLiveStatistics?.fee ?? DEFAULT_BUY_PRICE,
       guaranteedStop: longSlToggle ? longGuaranteedStopChecked : false,
       guaranteedStopFee:
         longSlToggle && longGuaranteedStopChecked ? guaranteedStopFeeLongRef.current : 0,
@@ -512,7 +611,7 @@ const TradeTabMobile = () => {
       quotation: shortQuotationRef.current,
       price: shortQuotationRef.current.price,
       liquidationPrice: shortQuotationRef.current.price * (1 + LIQUIDATION_FIVE_LEVERAGE),
-      fee: marketCtx.tickerLiveStatistics?.fee ?? BUY_PRICE_ERROR,
+      fee: marketCtx.tickerLiveStatistics?.fee ?? DEFAULT_BUY_PRICE,
       guaranteedStop: shortSlToggle ? shortGuaranteedStopChecked : false,
       guaranteedStopFee:
         shortSlToggle && shortGuaranteedStopChecked ? guaranteedStopFeeShortRef.current : 0,
@@ -645,7 +744,8 @@ const TradeTabMobile = () => {
   const displayedLongTpSetting = (
     <div className={isDisplayedLongTpSetting}>
       <TradingInput
-        lowerLimit={0}
+        lowerLimit={longTpLowerLimitRef.current}
+        upperLimit={TARGET_LIMIT_DIGITS}
         inputInitialValue={longTpValue}
         inputValueFromParent={longTpValue}
         setInputValueFromParent={setLongTpValue}
@@ -674,7 +774,8 @@ const TradeTabMobile = () => {
   const displayedLongSlSetting = (
     <div className={isDisplayedLongSlSetting}>
       <TradingInput
-        lowerLimit={0}
+        lowerLimit={longSlLowerLimitRef.current}
+        upperLimit={longSlUpperLimitRef.current}
         inputInitialValue={longSlValue}
         inputValueFromParent={longSlValue}
         setInputValueFromParent={setLongSlValue}
@@ -806,6 +907,7 @@ const TradeTabMobile = () => {
     <div className={isDisplayedShortTpSetting}>
       <TradingInput
         lowerLimit={0}
+        upperLimit={shortTpUpperLimitRef.current}
         inputInitialValue={shortTpValue}
         inputValueFromParent={shortTpValue}
         setInputValueFromParent={setShortTpValue}
@@ -836,7 +938,8 @@ const TradeTabMobile = () => {
   const displayedShortSlSetting = (
     <div className={isDisplayedShortSlSetting}>
       <TradingInput
-        lowerLimit={0}
+        lowerLimit={shortSlLowerLimitRef.current}
+        upperLimit={shortSlUpperLimitRef.current}
         inputInitialValue={shortSlValue}
         inputValueFromParent={shortSlValue}
         setInputValueFromParent={setShortSlValue}

@@ -1,5 +1,6 @@
 import {ImCross} from 'react-icons/im';
 import {
+  DEFAULT_LEVERAGE,
   DELAYED_HIDDEN_SECONDS,
   TypeOfBorderColor,
   TypeOfPnLColor,
@@ -189,6 +190,7 @@ const PositionClosedModal = ({
     // TODO: replace `twoDecimal` with `toLocaleString` (20230325 - Shirley)
     const openPrice = cfd.openPrice;
     const closePrice = quotation.price;
+    const leverage = marketCtx.tickerStatic?.leverage ?? DEFAULT_LEVERAGE;
 
     const openValue = twoDecimal(openPrice * cfd.amount);
     const closeValue = twoDecimal(closePrice * cfd.amount);
@@ -207,12 +209,12 @@ const PositionClosedModal = ({
     const suggestion: ICFDSuggestion = {
       takeProfit:
         cfd.typeOfPosition === TypeOfPosition.BUY
-          ? openValue * (1 + SUGGEST_TP)
-          : openValue * (1 - SUGGEST_TP),
+          ? openValue * (1 + SUGGEST_TP / leverage)
+          : openValue * (1 - SUGGEST_TP / leverage),
       stopLoss:
         cfd.typeOfPosition === TypeOfPosition.BUY
-          ? openValue * (1 - SUGGEST_SL)
-          : openValue * (1 + SUGGEST_SL),
+          ? openValue * (1 - SUGGEST_SL / leverage)
+          : openValue * (1 + SUGGEST_SL / leverage),
     };
 
     const historyCfd: IDisplayCFDOrder = {

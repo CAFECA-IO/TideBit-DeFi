@@ -7,7 +7,7 @@ import {
   UNIVERSAL_NUMBER_FORMAT_LOCALE,
 } from '../../constants/display';
 import Toggle from '../toggle/toggle';
-import {useContext, useEffect, useRef} from 'react';
+import {useContext, useEffect, useMemo, useRef} from 'react';
 import TradingInput from '../trading_input/trading_input';
 import {AiOutlineQuestionCircle} from 'react-icons/ai';
 import RippleButton from '../ripple_button/ripple_button';
@@ -16,6 +16,7 @@ import {TypeOfPosition} from '../../constants/type_of_position';
 import {ProfitState} from '../../constants/profit_state';
 import {
   getNowSeconds,
+  getTimestamp,
   randomIntFromInterval,
   roundToDecimalPlaces,
   timestampToString,
@@ -23,7 +24,12 @@ import {
 import {MarketContext} from '../../contexts/market_context';
 import useState from 'react-usestateref';
 import CircularProgressBar from '../circular_progress_bar/circular_progress_bar';
-import {unitAsset, FRACTION_DIGITS} from '../../constants/config';
+import {
+  unitAsset,
+  FRACTION_DIGITS,
+  TARGET_LIMIT_DIGITS,
+  TP_SL_LIMIT_PERCENT,
+} from '../../constants/config';
 import useStateRef from 'react-usestateref';
 import {useTranslation} from 'react-i18next';
 import {IDisplayCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
@@ -73,26 +79,21 @@ const UpdateFormModal = ({
 
   const [guaranteedTooltipStatus, setGuaranteedTooltipStatus] = useState(0);
 
-  // FIXME: SL setting should have a lower limit and an upper limit depending on its position type
-  const [slLowerLimit, setSlLowerLimit] = useState(0);
-  const [slUpperLimit, setSlUpperLimit] = useState(Infinity);
+  const [slLowerLimit, setSlLowerLimit, slLowerLimitRef] = useState(0);
+  const [slUpperLimit, setSlUpperLimit, slUpperLimitRef] = useState(0);
+  const [tpLowerLimit, setTpLowerLimit, tpLowerLimitRef] = useState(0);
+  const [tpUpperLimit, setTpUpperLimit, tpUpperLimitRef] = useState(0);
 
   const [submitDisabled, setSubmitDisabled] = useState(true);
 
   const [expectedProfitValue, setExpectedProfitValue, expectedProfitValueRef] = useStateRef(0);
   const [expectedLossValue, setExpectedLossValue, expectedLossValueRef] = useStateRef(0);
 
-  const displayedState =
-    openCfdDetails?.state === OrderState.OPENING
-      ? 'Open'
-      : openCfdDetails?.state === OrderState.CLOSED
-      ? 'Close'
-      : openCfdDetails?.state === OrderState.FREEZED
-      ? 'Freezed'
-      : '';
   const [guaranteedStopFee, setGuaranteedStopFee, guaranteedStopFeeRef] = useStateRef(
     Number(gsl) * openCfdDetails?.openPrice * openCfdDetails?.amount
   );
+
+  const [disableSlInput, setDisableSlInput, disableSlInputRef] = useStateRef(false);
 
   const getToggledTpSetting = (bool: boolean) => {
     setTpToggle(bool);
@@ -166,15 +167,6 @@ const UpdateFormModal = ({
   const mouseLeaveHandler = () => setGuaranteedTooltipStatus(0);
 
   const displayedExpectedProfit = (
-    // Till: (20230330 - Shirley)
-    // longTpToggle ? (
-    //   <div className={`${`translate-y-2`} -mt-0 items-center transition-all duration-500`}>
-    //     <div className="text-sm text-lightWhite">
-    //       {expectedLongProfitValue.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}
-    //     </div>
-    //   </div>
-    // ) : null;
-
     <div
       className={`${
         tpToggle ? `mb-3 translate-y-1` : `invisible translate-y-0`
@@ -220,6 +212,8 @@ const UpdateFormModal = ({
       return;
     } else {
       setGuaranteedChecked(true);
+
+      // Info: Lock the change of input value when guaranteed stop is checked
       setSlLowerLimit(openCfdDetails?.stopLoss ?? openCfdDetails?.suggestion?.stopLoss);
       setSlUpperLimit(openCfdDetails?.stopLoss ?? openCfdDetails?.suggestion?.stopLoss);
       setSlValue(openCfdDetails?.stopLoss ?? openCfdDetails?.suggestion?.stopLoss);
@@ -276,13 +270,6 @@ const UpdateFormModal = ({
 
   const isDisplayedTakeProfitSetting = tpToggle ? 'flex' : 'invisible';
   const isDisplayedStopLossSetting = slToggle ? 'flex' : 'invisible';
-
-  const displayedSlLowerLimit = openCfdDetails?.guaranteedStop
-    ? openCfdDetails?.stopLoss ?? openCfdDetails?.suggestion?.stopLoss
-    : slLowerLimit;
-  const displayedSlUpperLimit = openCfdDetails?.guaranteedStop
-    ? openCfdDetails?.stopLoss ?? openCfdDetails?.suggestion?.stopLoss
-    : slUpperLimit;
 
   const displayedTime = timestampToString(openCfdDetails?.createTimestamp ?? 0);
 
@@ -354,10 +341,6 @@ const UpdateFormModal = ({
       changedProperties = {...changedProperties};
     }
 
-    // Deprecated: not found currency (20230430 - Shirley)
-    // eslint-disable-next-line no-console
-    console.log('form modal, changedProperties: ', changedProperties);
-
     return changedProperties;
   };
 
@@ -377,12 +360,12 @@ const UpdateFormModal = ({
     globalCtx.visiblePositionUpdatedModalHandler();
   };
 
-  // FIXME: Inconsistent information between text and input
   const displayedTakeProfitSetting = (
     <div className={`mr-8 ${isDisplayedTakeProfitSetting}`}>
       <TradingInput
         getInputValue={getTpValue}
-        lowerLimit={0}
+        lowerLimit={tpLowerLimitRef.current}
+        upperLimit={tpUpperLimitRef.current}
         inputInitialValue={tpValue}
         inputValueFromParent={tpValue}
         setInputValueFromParent={setTpValue}
@@ -395,13 +378,13 @@ const UpdateFormModal = ({
     </div>
   );
 
-  // FIXME: Inconsistent information between text and input
   const displayedStopLossSetting = (
     <div className={`mr-8 ${isDisplayedStopLossSetting}`}>
       <TradingInput
+        disabled={disableSlInputRef.current}
         getInputValue={getSlValue}
-        lowerLimit={displayedSlLowerLimit}
-        upperLimit={displayedSlUpperLimit}
+        lowerLimit={slLowerLimitRef.current}
+        upperLimit={slUpperLimitRef.current}
         inputInitialValue={slValue}
         setInputValueFromParent={setSlValue}
         inputValueFromParent={slValue}
@@ -419,7 +402,6 @@ const UpdateFormModal = ({
       <div className="flex items-center text-center">
         <input
           type="checkbox"
-          // value=""
           checked={guaranteedpCheckedRef.current}
           onChange={guaranteedCheckedChangeHandler}
           className="h-5 w-5 rounded text-lightWhite accent-lightGray4"
@@ -457,7 +439,7 @@ const UpdateFormModal = ({
     </div>
   );
 
-  const changeComparison = () => {
+  const compareChange = () => {
     if (tpToggleRef.current && tpValueRef.current !== openCfdDetails?.takeProfit) {
       setSubmitDisabled(false);
     }
@@ -479,7 +461,7 @@ const UpdateFormModal = ({
     }
   };
 
-  const nowTimestamp = new Date().getTime() / 1000;
+  const nowTimestamp = getTimestamp();
   const remainSecs = openCfdDetails?.liquidationTime - nowTimestamp;
 
   const remainTime =
@@ -505,46 +487,70 @@ const UpdateFormModal = ({
     globalCtx.visiblePositionClosedModalHandler();
   };
 
-  useEffect(() => {
-    setGuaranteedStopFee(Number(gsl) * openCfdDetails?.openPrice * openCfdDetails?.amount);
-  }, [gsl, openCfdDetails?.openPrice, openCfdDetails?.amount]);
-
-  useEffect(() => {
-    setSubmitDisabled(true);
-    changeComparison();
-  }, [
-    tpValueRef.current,
-    slValueRef.current,
-    tpToggleRef.current,
-    slToggleRef.current,
-    guaranteedpCheckedRef.current,
-  ]);
-
-  useEffect(() => {
-    // Deprecated: not found currency (20230430 - Shirley)
-    // eslint-disable-next-line no-console
-    console.log('cfd info', openCfdDetails, 'globalCtx', globalCtx.visibleUpdateFormModal);
+  const initPosition = () => {
     setGuaranteedChecked(openCfdDetails.guaranteedStop);
     setTpToggle(!!openCfdDetails.takeProfit);
     setSlToggle(!!openCfdDetails.stopLoss);
-    setTpValue(
-      openCfdDetails.takeProfit === 0 || openCfdDetails.takeProfit === undefined
-        ? openCfdDetails.suggestion.takeProfit
-        : openCfdDetails.takeProfit
-    );
-    setSlValue(
-      openCfdDetails.stopLoss === 0 || openCfdDetails.stopLoss === undefined
-        ? openCfdDetails.suggestion.stopLoss
-        : openCfdDetails.stopLoss
-    );
+
+    // Info: minimum price (open price) with buffer (20230426 - Shirley)
+    const caledTpLowerLimit =
+      openCfdDetails.typeOfPosition === TypeOfPosition.BUY
+        ? roundToDecimalPlaces(openCfdDetails.openPrice * (1 + TP_SL_LIMIT_PERCENT), 2)
+        : 0;
+    const caledTpUpperLimit =
+      openCfdDetails.typeOfPosition === TypeOfPosition.SELL
+        ? roundToDecimalPlaces(openCfdDetails.openPrice * (1 - TP_SL_LIMIT_PERCENT), 2)
+        : TARGET_LIMIT_DIGITS;
+
+    const isLiquidated =
+      marketCtx.selectedTicker?.price !== undefined
+        ? openCfdDetails.typeOfPosition === TypeOfPosition.BUY
+          ? openCfdDetails.liquidationPrice > marketCtx.selectedTicker.price
+          : openCfdDetails.typeOfPosition === TypeOfPosition.SELL
+          ? openCfdDetails.liquidationPrice < marketCtx.selectedTicker.price
+          : false
+        : true;
+
+    const caledSlLowerLimit = isLiquidated
+      ? roundToDecimalPlaces(openCfdDetails.liquidationPrice, 2) // Info: 相當於不能設定 SL (20230426 - Shirley)
+      : openCfdDetails.typeOfPosition === TypeOfPosition.BUY
+      ? roundToDecimalPlaces(openCfdDetails.liquidationPrice * (1 + TP_SL_LIMIT_PERCENT), 2)
+      : roundToDecimalPlaces(openCfdDetails.openPrice * (1 + TP_SL_LIMIT_PERCENT), 2);
+
+    const caledSlUpperLimit = isLiquidated
+      ? roundToDecimalPlaces(openCfdDetails.liquidationPrice, 2) // Info: 相當於不能設定 SL (20230426 - Shirley)
+      : openCfdDetails.typeOfPosition === TypeOfPosition.BUY
+      ? roundToDecimalPlaces(openCfdDetails.openPrice * (1 - TP_SL_LIMIT_PERCENT), 2)
+      : roundToDecimalPlaces(openCfdDetails.liquidationPrice * (1 - TP_SL_LIMIT_PERCENT), 2);
+
+    const caledSl =
+      marketCtx.selectedTicker?.price !== undefined
+        ? (openCfdDetails.typeOfPosition === TypeOfPosition.BUY &&
+            marketCtx.selectedTicker.price < openCfdDetails.liquidationPrice) ||
+          (openCfdDetails.typeOfPosition === TypeOfPosition.SELL &&
+            marketCtx.selectedTicker.price > openCfdDetails.liquidationPrice)
+          ? roundToDecimalPlaces(openCfdDetails.liquidationPrice, 2)
+          : roundToDecimalPlaces(
+              (marketCtx.selectedTicker.price + openCfdDetails.liquidationPrice) / 2,
+              2
+            )
+        : roundToDecimalPlaces(openCfdDetails.liquidationPrice, 2);
+
+    const suggestedSl =
+      marketCtx.selectedTicker?.price !== undefined
+        ? openCfdDetails.typeOfPosition === TypeOfPosition.BUY &&
+          marketCtx.selectedTicker?.price < openCfdDetails.suggestion.stopLoss
+          ? caledSl
+          : openCfdDetails.typeOfPosition === TypeOfPosition.SELL &&
+            marketCtx.selectedTicker?.price > openCfdDetails.suggestion.stopLoss
+          ? caledSl
+          : openCfdDetails.suggestion.stopLoss
+        : openCfdDetails.suggestion.stopLoss;
 
     const gslFee =
       Number(marketCtx.guaranteedStopFeePercentage) *
       openCfdDetails?.openPrice *
       openCfdDetails?.amount;
-    setGuaranteedStopFee(
-      openCfdDetails.guaranteedStop ? Number(openCfdDetails?.guaranteedStopFee) : gslFee
-    );
 
     const profit =
       openCfdDetails?.typeOfPosition === TypeOfPosition.BUY
@@ -557,8 +563,6 @@ const UpdateFormModal = ({
             2
           );
 
-    setExpectedProfitValue(profit);
-
     const loss =
       openCfdDetails?.typeOfPosition === TypeOfPosition.BUY
         ? roundToDecimalPlaces(
@@ -570,7 +574,52 @@ const UpdateFormModal = ({
             2
           );
 
+    setDisableSlInput(isLiquidated);
+
+    setGuaranteedStopFee(
+      openCfdDetails.guaranteedStop ? Number(openCfdDetails?.guaranteedStopFee) : gslFee
+    );
+
+    setSlLowerLimit(caledSlLowerLimit);
+    setSlUpperLimit(caledSlUpperLimit);
+
+    setTpLowerLimit(caledTpLowerLimit);
+    setTpUpperLimit(caledTpUpperLimit);
+
+    setTpValue(
+      openCfdDetails.takeProfit === 0 || openCfdDetails.takeProfit === undefined
+        ? openCfdDetails.suggestion.takeProfit
+        : openCfdDetails.takeProfit
+    );
+
+    setSlValue(
+      openCfdDetails.stopLoss === 0 || openCfdDetails.stopLoss === undefined
+        ? suggestedSl
+        : openCfdDetails.stopLoss
+    );
+
+    setExpectedProfitValue(profit);
+
     setExpectedLossValue(loss);
+  };
+
+  useEffect(() => {
+    setGuaranteedStopFee(Number(gsl) * openCfdDetails?.openPrice * openCfdDetails?.amount);
+  }, [gsl, openCfdDetails?.openPrice, openCfdDetails?.amount]);
+
+  useEffect(() => {
+    setSubmitDisabled(true);
+    compareChange();
+  }, [
+    tpValueRef.current,
+    slValueRef.current,
+    tpToggleRef.current,
+    slToggleRef.current,
+    guaranteedpCheckedRef.current,
+  ]);
+
+  useEffect(() => {
+    initPosition();
   }, [globalCtx.visibleUpdateFormModal]);
 
   const isDisplayedDetailedPositionModal = modalVisible ? (

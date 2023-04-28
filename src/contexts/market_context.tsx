@@ -49,7 +49,6 @@ import {
 import {Currency, ICurrency} from '../constants/currency';
 import {CustomError} from '../lib/custom_error';
 import {Code, Reason} from '../constants/code';
-import {randomIntFromInterval} from '../lib/common';
 
 export interface IMarketProvider {
   children: React.ReactNode;

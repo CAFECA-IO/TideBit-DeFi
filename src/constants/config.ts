@@ -267,3 +267,4 @@ export const PRIVATE_POLICY = 'https://www.tidebit-defi.com/private_policy/{hash
 export const DeWT_VALIDITY_PERIOD = 60 * 60; // seconds
 export const CFD_LIQUIDATION_TIME = 86400;
 export const TP_SL_LIMIT_PERCENT = 0.01;
+export const DEFAULT_TICKER = 'ETH';

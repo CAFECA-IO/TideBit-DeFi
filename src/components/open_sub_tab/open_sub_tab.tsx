@@ -16,24 +16,22 @@ import {
 } from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
 import {TypeOfPosition} from '../../constants/type_of_position';
 import {
-  BUY_PRICE_ERROR,
   DEFAULT_TICKER,
   DISPLAY_QUOTATION_RENEWAL_INTERVAL_SECONDS,
   QUOTATION_RENEWAL_INTERVAL_SECONDS,
-  SELL_PRICE_ERROR,
-  SPREAD_ERROR,
   WAITING_TIME_FOR_USER_SIGNING,
   unitAsset,
 } from '../../constants/config';
 import {IQuotation, getDummyQuotation} from '../../interfaces/tidebit_defi_background/quotation';
 import {defaultResultSuccess} from '../../interfaces/tidebit_defi_background/result';
 import useStateRef from 'react-usestateref';
+import {DEFAULT_SPREAD} from '../../constants/display';
 
 const OpenSubTab = () => {
   const {openCFDs} = useContext(UserContext);
   const marketCtx = useContext(MarketContext);
   const ticker = marketCtx?.selectedTickerRef?.current?.currency ?? DEFAULT_TICKER;
-  const spread = marketCtx.tickerLiveStatistics?.spread ?? SPREAD_ERROR;
+  const spread = marketCtx.tickerLiveStatistics?.spread ?? DEFAULT_SPREAD;
 
   const defaultBuyQuotation: IQuotation = getDummyQuotation(ticker, TypeOfPosition.BUY);
   const defaultSellQuotation: IQuotation = getDummyQuotation(ticker, TypeOfPosition.SELL);

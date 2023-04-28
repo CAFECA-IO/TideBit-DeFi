@@ -10,7 +10,14 @@ import TradingInput from '../trading_input/trading_input';
 import UserOverview from '../user_overview/user_overview';
 import {AiOutlineQuestionCircle} from 'react-icons/ai';
 import RippleButton from '../ripple_button/ripple_button';
-import {UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
+import {
+  DEFAULT_BUY_PRICE,
+  DEFAULT_LEVERAGE,
+  DEFAULT_SELL_PRICE,
+  DEFAULT_SPREAD,
+  DEFAULT_USER_BALANCE,
+  UNIVERSAL_NUMBER_FORMAT_LOCALE,
+} from '../../constants/display';
 import {
   TARGET_LIMIT_DIGITS,
   QUOTATION_RENEWAL_INTERVAL_SECONDS,
@@ -20,13 +27,8 @@ import {
   LIQUIDATION_FIVE_LEVERAGE,
   WAITING_TIME_FOR_USER_SIGNING,
   FRACTION_DIGITS,
-  USER_BALANCE_ERROR,
   TP_SL_LIMIT_PERCENT,
-  LEVERAGE_ERROR,
   DEFAULT_TICKER,
-  BUY_PRICE_ERROR,
-  SELL_PRICE_ERROR,
-  SPREAD_ERROR,
 } from '../../constants/config';
 import {ClickEvent} from '../../constants/tidebit_event';
 import {useTranslation} from 'next-i18next';
@@ -63,9 +65,9 @@ const TradeTabMobile = () => {
 
   const ticker = marketCtx.selectedTicker?.currency ?? '';
 
-  const USER_BALANCE = userCtx.balance?.available ?? USER_BALANCE_ERROR;
+  const USER_BALANCE = userCtx.balance?.available ?? DEFAULT_USER_BALANCE;
 
-  const leverage = tickerStaticStatistics?.leverage ?? LEVERAGE_ERROR;
+  const leverage = tickerStaticStatistics?.leverage ?? DEFAULT_LEVERAGE;
   const gsl = marketCtx.guaranteedStopFeePercentage;
 
   const defaultBuyQuotation: IQuotation = getDummyQuotation(ticker, TypeOfPosition.BUY);
@@ -251,14 +253,14 @@ const TradeTabMobile = () => {
   const setQuotation = () => {
     const deadline = getTimestamp() + QUOTATION_RENEWAL_INTERVAL_SECONDS;
     const buyPrice = roundToDecimalPlaces(
-      (marketCtx.selectedTicker?.price ?? BUY_PRICE_ERROR) *
-        (1 + (marketCtx.tickerLiveStatistics?.spread ?? SPREAD_ERROR)),
+      (marketCtx.selectedTicker?.price ?? DEFAULT_BUY_PRICE) *
+        (1 + (marketCtx.tickerLiveStatistics?.spread ?? DEFAULT_SPREAD)),
       2
     );
 
     const sellPrice = roundToDecimalPlaces(
-      (marketCtx.selectedTicker?.price ?? SELL_PRICE_ERROR) *
-        (1 - (marketCtx.tickerLiveStatistics?.spread ?? SPREAD_ERROR)),
+      (marketCtx.selectedTicker?.price ?? DEFAULT_SELL_PRICE) *
+        (1 - (marketCtx.tickerLiveStatistics?.spread ?? DEFAULT_SPREAD)),
       2
     );
 
@@ -414,12 +416,12 @@ const TradeTabMobile = () => {
     );
 
     setLongSlLowerLimit(longSlLowerBound);
-    setLongSlUpperLimit(longSlUpperBound); // Open price with buffer
-    setLongTpLowerLimit(longTpLowerBound); // Open price with buffer
+    setLongSlUpperLimit(longSlUpperBound); // Info: Open price with buffer (20230428 - Shirley)
+    setLongTpLowerLimit(longTpLowerBound); // Info: Open price with buffer (20230428 - Shirley)
 
-    setShortTpUpperLimit(shortTpUpperBound); // Open price with buffer
+    setShortTpUpperLimit(shortTpUpperBound); // Info: Open price with buffer (20230428 - Shirley)
     setShortSlUpperLimit(shortSlUpperBound);
-    setShortSlLowerLimit(shortSlLowerBound); // Open price with buffer
+    setShortSlLowerLimit(shortSlLowerBound); // Info: Open price with buffer (20230428 - Shirley)
 
     updateSuggestions();
   };
@@ -530,7 +532,7 @@ const TradeTabMobile = () => {
       targetAsset: marketCtx.selectedTicker?.currency ?? '',
       unitAsset: unitAsset,
       amount: targetInputValueRef.current,
-      leverage: marketCtx.tickerStatic?.leverage ?? LEVERAGE_ERROR,
+      leverage: marketCtx.tickerStatic?.leverage ?? DEFAULT_LEVERAGE,
       margin: {
         asset: unitAsset,
         amount: requiredMarginLongRef.current,
@@ -549,7 +551,7 @@ const TradeTabMobile = () => {
         longQuotationRef.current.price * (1 - LIQUIDATION_FIVE_LEVERAGE),
         2
       ),
-      fee: marketCtx.tickerLiveStatistics?.fee ?? BUY_PRICE_ERROR,
+      fee: marketCtx.tickerLiveStatistics?.fee ?? DEFAULT_BUY_PRICE,
       guaranteedStop: longSlToggle ? longGuaranteedStopChecked : false,
       guaranteedStopFee:
         longSlToggle && longGuaranteedStopChecked ? guaranteedStopFeeLongRef.current : 0,
@@ -568,7 +570,7 @@ const TradeTabMobile = () => {
         shortQuotationRef.current.price * (1 + LIQUIDATION_FIVE_LEVERAGE),
         2
       ),
-      fee: marketCtx.tickerLiveStatistics?.fee ?? BUY_PRICE_ERROR,
+      fee: marketCtx.tickerLiveStatistics?.fee ?? DEFAULT_BUY_PRICE,
       guaranteedStop: shortSlToggle ? shortGuaranteedStopChecked : false,
       guaranteedStopFee:
         shortSlToggle && shortGuaranteedStopChecked ? guaranteedStopFeeShortRef.current : 0,

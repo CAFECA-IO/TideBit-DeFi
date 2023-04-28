@@ -180,12 +180,17 @@ const UpdateFormModal = ({
     }
   };
 
-  const displayedPnLSymbol =
-    openCfdDetails?.pnl?.type === ProfitState.PROFIT
-      ? '+'
-      : openCfdDetails?.pnl?.type === ProfitState.LOSS
-      ? '-'
-      : '';
+  const displayedPnLSymbol = !!!marketCtx.selectedTicker?.price
+    ? ''
+    : openCfdDetails?.pnl?.type === ProfitState.PROFIT
+    ? '+'
+    : openCfdDetails?.pnl?.type === ProfitState.LOSS
+    ? '-'
+    : '';
+
+  const displayedPnLValue = !!!marketCtx.selectedTicker?.price
+    ? '- -'
+    : openCfdDetails?.pnl?.value.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
 
   const displayedTypeOfPosition =
     openCfdDetails?.typeOfPosition === TypeOfPosition.BUY
@@ -657,10 +662,7 @@ const UpdateFormModal = ({
                   <div className={`${layoutInsideBorder}`}>
                     <div className="text-lightGray">{t('POSITION_MODAL.PNL')}</div>
                     <div className={`${displayedPnLColor}`}>
-                      {displayedPnLSymbol} ${' '}
-                      {openCfdDetails?.pnl?.value?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
-                        minimumFractionDigits: 2,
-                      })}
+                      {displayedPnLSymbol} $ {displayedPnLValue}
                     </div>
                   </div>
 

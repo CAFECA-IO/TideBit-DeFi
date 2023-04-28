@@ -25,29 +25,40 @@ import {
 import {IQuotation, getDummyQuotation} from '../../interfaces/tidebit_defi_background/quotation';
 import {defaultResultSuccess} from '../../interfaces/tidebit_defi_background/result';
 import useStateRef from 'react-usestateref';
-import {DEFAULT_SPREAD} from '../../constants/display';
+import {DEFAULT_BUY_PRICE, DEFAULT_SELL_PRICE, DEFAULT_SPREAD} from '../../constants/display';
 
 const OpenSubTab = () => {
   const {openCFDs} = useContext(UserContext);
   const marketCtx = useContext(MarketContext);
-  const ticker = marketCtx?.selectedTickerRef?.current?.currency ?? DEFAULT_TICKER;
-  const spread = marketCtx.tickerLiveStatistics?.spread ?? DEFAULT_SPREAD;
 
-  const defaultBuyQuotation: IQuotation = getDummyQuotation(ticker, TypeOfPosition.BUY);
-  const defaultSellQuotation: IQuotation = getDummyQuotation(ticker, TypeOfPosition.SELL);
+  const initState = {
+    longPrice: 0,
+    shortPrice: 0,
+  };
+  const [caledPrice, setCaledPrice, caledPriceRef] = useStateRef(initState);
 
-  const [longQuotation, setLongQuotation, longQuotationRef] =
-    useStateRef<IQuotation>(defaultBuyQuotation);
-  const [shortQuotation, setShortQuotation, shortQuotationRef] =
-    useStateRef<IQuotation>(defaultSellQuotation);
+  useEffect(() => {
+    const buyPrice = !!marketCtx.selectedTicker?.price
+      ? roundToDecimalPlaces(
+          marketCtx.selectedTicker.price *
+            (1 + (marketCtx.tickerLiveStatistics?.spread ?? DEFAULT_SPREAD)),
+          2
+        )
+      : 0;
 
-  const [secondsLeft, setSecondsLeft, secondsLeftRef] = useStateRef(
-    DISPLAY_QUOTATION_RENEWAL_INTERVAL_SECONDS
-  );
+    const sellPrice = !!marketCtx.selectedTicker?.price
+      ? roundToDecimalPlaces(
+          marketCtx.selectedTicker.price *
+            (1 - (marketCtx.tickerLiveStatistics?.spread ?? DEFAULT_SPREAD)),
+          2
+        )
+      : 0;
 
-  // useEffect(() => {
-
-  // }, [marketCtx.selectedTicker?.price]);
+    setCaledPrice({
+      longPrice: buyPrice,
+      shortPrice: sellPrice,
+    });
+  }, [marketCtx.selectedTicker?.price]);
 
   const cfds = openCFDs
     .map(cfd => {
@@ -55,9 +66,25 @@ const OpenSubTab = () => {
         begin: cfd.createTimestamp,
       });
 
-      // TODO: 沒有折線圖，就拿市價來算；沒有市價就拿顯示 `--`
-      const sd = cfd.typeOfPosition === TypeOfPosition.BUY ? 1 + spread : 1 - spread;
-      const currentPrice = positionLineGraph[positionLineGraph.length - 1] * sd;
+      const spread =
+        cfd.typeOfPosition === TypeOfPosition.BUY
+          ? 1 + (marketCtx.tickerLiveStatistics?.spread ?? DEFAULT_SPREAD)
+          : 1 - (marketCtx.tickerLiveStatistics?.spread ?? DEFAULT_SPREAD);
+
+      /**
+       * Info: (20230428 - Shirley)
+       * without `positionLineGraph`, use market price to calculate
+       * without `market price`, use the open price of the CFD to get PNL === 0 and display `--`
+       * (OpenPositionItem & UpdateFormModal)
+       */
+      const currentPrice =
+        positionLineGraph.length > 0
+          ? positionLineGraph[positionLineGraph.length - 1] * spread
+          : (!!marketCtx.selectedTicker?.price &&
+              ((cfd.typeOfPosition === TypeOfPosition.BUY && caledPriceRef.current.longPrice) ||
+                (cfd.typeOfPosition === TypeOfPosition.SELL &&
+                  caledPriceRef.current.shortPrice))) ||
+            0;
 
       const displayCFD: IDisplayCFDOrder = toDisplayCFDOrder(cfd, positionLineGraph, currentPrice);
 

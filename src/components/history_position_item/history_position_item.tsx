@@ -31,12 +31,12 @@ const HistoryPositionItem = ({closedCfdDetails, ...otherProps}: IHistoryPosition
   const displayedTextColor =
     closedCfdDetails.pnl.type === ProfitState.PROFIT ? 'text-lightGreen5' : 'text-lightRed';
 
-  const displayedPnl = Math.abs(closedCfdDetails.pnl.value).toLocaleString(
+  const displayedPnLValue = Math.abs(closedCfdDetails.pnl.value).toLocaleString(
     UNIVERSAL_NUMBER_FORMAT_LOCALE,
     FRACTION_DIGITS
   );
 
-  const displayedSymbol =
+  const displayedPnLSymbol =
     closedCfdDetails.pnl.type === ProfitState.PROFIT
       ? '+'
       : closedCfdDetails.pnl.type === ProfitState.LOSS
@@ -98,7 +98,7 @@ const HistoryPositionItem = ({closedCfdDetails, ...otherProps}: IHistoryPosition
           <div className="w-60px text-end">
             <div className="text-lightGray">{t('TRADE_PAGE.HISTORY_POSITION_ITEM_PNL')}</div>
             <div className={`${displayedTextColor} whitespace-nowrap`}>
-              <span className="">{displayedSymbol}</span> ${displayedPnl}
+              <span className="">{displayedPnLSymbol}</span> ${displayedPnLValue}
             </div>
           </div>
         </div>

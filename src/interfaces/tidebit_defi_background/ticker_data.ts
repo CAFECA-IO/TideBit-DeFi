@@ -60,7 +60,7 @@ export interface ITickerData extends ITickerItem {
 // Add line graph property to each object in array
 export const dummyTickers: ITickerData[] = TRADING_CRYPTO_DATA.map(data => {
   const dataArray = randomArray(1100, 1200, 10);
-  const strokeColor = strokeColorDisplayed(dataArray);
+  // const strokeColor = strokeColorDisplayed(dataArray);
   const price = parseFloat((Math.random() * 1000).toFixed(2));
   const priceChange = parseFloat((Math.random() * 100).toFixed(2));
   const fluctuating = parseFloat((priceChange / (price + priceChange)).toFixed(2));
@@ -75,10 +75,7 @@ export const dummyTickers: ITickerData[] = TRADING_CRYPTO_DATA.map(data => {
     upOrDown,
     tradingVolume,
     lineGraphProps: {
-      dataArray: dataArray,
-      strokeColor: strokeColor,
-      lineGraphWidth: '170',
-      lineGraphWidthMobile: '140',
+      dataArray,
     },
   };
   return ticker;
@@ -98,7 +95,7 @@ export const getDummyTicker = (currency: ICurrency) => {
   const data =
     TRADING_CRYPTO_DATA.find(ticker => ticker.currency === currency) || TRADING_CRYPTO_DATA[0];
   const dataArray = randomArray(1100, 1200, 10);
-  const strokeColor = strokeColorDisplayed(dataArray);
+  // const strokeColor = strokeColorDisplayed(dataArray);
   const price = parseFloat((Math.random() * 1000).toFixed(2));
   const priceChange = parseFloat((Math.random() * 100).toFixed(2));
   const fluctuating = parseFloat((priceChange / (price + priceChange)).toFixed(2));
@@ -112,12 +109,7 @@ export const getDummyTicker = (currency: ICurrency) => {
     fluctuating,
     upOrDown,
     tradingVolume,
-    lineGraphProps: {
-      dataArray: dataArray,
-      strokeColor: strokeColor,
-      lineGraphWidth: '170',
-      lineGraphWidthMobile: '140',
-    },
+    lineGraphProps: {dataArray},
   };
   return dummyTicker;
 };

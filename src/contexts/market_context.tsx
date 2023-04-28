@@ -29,7 +29,10 @@ import {
   toDummyTickers,
 } from '../interfaces/tidebit_defi_background/ticker_data';
 import {ITimeSpanUnion, TimeSpanUnion} from '../constants/time_span_union';
-import {ICandlestickData} from '../interfaces/tidebit_defi_background/candlestickData';
+import {
+  ICandlestick,
+  ICandlestickData,
+} from '../interfaces/tidebit_defi_background/candlestickData';
 import {TideBitEvent} from '../constants/tidebit_event';
 import {NotificationContext} from './notification_context';
 import {WorkerContext} from './worker_context';
@@ -49,6 +52,8 @@ import {
 import {Currency, ICurrency} from '../constants/currency';
 import {CustomError} from '../lib/custom_error';
 import {Code, Reason} from '../constants/code';
+import CandlestickBookInstance from '../lib/books/candlestick_book';
+import {IPusherAction} from '../interfaces/tidebit_defi_background/pusher_data';
 
 export interface IMarketProvider {
   children: React.ReactNode;
@@ -78,6 +83,7 @@ export interface IMarketContext {
   selectTimeSpanHandler: (props: ITimeSpanUnion) => void;
   getCandlestickChartData: (tickerId: string) => Promise<IResult>; // x 100
   getCFDQuotation: (tickerId: string, typeOfPosition: ITypeOfPosition) => Promise<IResult>;
+  /** Deprecated: replaced by pusher (20230424 - tzuhan)
   getTickerHistory: (
     ticker: string,
     options: {
@@ -87,6 +93,7 @@ export interface IMarketContext {
       limit?: number;
     }
   ) => IResult;
+    */
   listTickerPositions: (
     ticker: string,
     options: {
@@ -126,9 +133,11 @@ export const MarketContext = createContext<IMarketContext>({
   selectTickerHandler: () => Promise.resolve(defaultResultSuccess),
   getCandlestickChartData: () => Promise.resolve(defaultResultSuccess),
   getCFDQuotation: () => Promise.resolve(defaultResultSuccess),
+  /** Deprecated: replaced by pusher (20230424 - tzuhan)
   getTickerHistory: (): IResult => {
     throw new CustomError(Code.FUNCTION_NOT_IMPLEMENTED);
   },
+  */
   listTickerPositions: (): number[] => {
     throw new CustomError(Code.FUNCTION_NOT_IMPLEMENTED);
   },
@@ -136,6 +145,7 @@ export const MarketContext = createContext<IMarketContext>({
 
 export const MarketProvider = ({children}: IMarketProvider) => {
   const tickerBook = React.useMemo(() => TickerBookInstance, []);
+  const candlestickBook = React.useMemo(() => CandlestickBookInstance, []);
   const userCtx = useContext(UserContext);
   const notificationCtx = useContext(NotificationContext);
   const workerCtx = useContext(WorkerContext);
@@ -212,10 +222,13 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     setTickerLiveStatistics(tickerLiveStatistics);
 
     await getCandlestickChartData(tickerId);
+    /** Deprecated: replaced by pusher (20230502 - tzuhan) 
     workerCtx.tickerChangeHandler(ticker);
+    */
     return defaultResultSuccess;
   };
 
+  /** Deprecated: replaced by pusher (20230424 - tzuhan)
   const listTradesData = async (tickerId: string) => {
     let result: IResult = defaultResultFailed;
     try {
@@ -238,11 +251,12 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     }
     return result;
   };
+  */
 
   const getCandlestickChartData = async (tickerId: string) => {
     let result: IResult = defaultResultFailed;
     try {
-      /* Deprecate: replaced by listTradesData (20230407 - tzuhan)
+      /* TODO: when backend provide this api (20230424 - tzuhan)
       const apiResult = (await workerCtx.requestHandler({
         name: APIName.GET_CANDLESTICK_DATA,
         method: Method.GET,
@@ -273,7 +287,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       */
       // await listTradesData(tickerId);
 
-      setCandlestickChartData(tickerBook.listCandlestickData(tickerId, {}));
+      setCandlestickChartData(candlestickBook.listCandlestickData(`${tickerId}-${unitAsset}`, {}));
       result = defaultResultSuccess;
     } catch (error) {
       // Deprecate: error handle (Tzuhan - 20230321)
@@ -298,6 +312,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     return result;
   };
 
+  /** Deprecated: replaced by pusher (20230424 - tzuhan)
   const getTickerHistory = (
     ticker: string,
     options: {
@@ -317,6 +332,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     }
     return result;
   };
+  */
 
   const listTickerPositions = (
     ticker: string,
@@ -377,6 +393,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       setAvailableTickers({...tickerBook.listTickers()});
       // 2. get ticker trades
       // 2.1 available tickers get trades from api
+      /** Deprecated: replaced by pusher (20230424 - tzuhan)
       for (const ticker of tickers) {
         const trades = (await workerCtx.requestHandler({
           name: APIName.LIST_TBE_TRADES,
@@ -388,6 +405,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
         tickerBook.updateTrades(ticker.currency, trades);
       }
       setAvailableTickers({...tickerBook.listTickers()});
+      */
       await selectTickerHandler(tickers[0].currency);
       result = defaultResultSuccess;
     } catch (error) {
@@ -477,12 +495,12 @@ export const MarketProvider = ({children}: IMarketProvider) => {
 
   React.useMemo(
     () =>
-      notificationCtx.emitter.on(TideBitEvent.TICKER, (tickerMarketData: ITickerMarket) => {
-        tickerBook.updateTicker(tickerMarketData);
+      notificationCtx.emitter.on(TideBitEvent.TICKER, (tickerData: ITickerData) => {
+        tickerBook.updateTicker(tickerData);
         const updateTickers = {...tickerBook.listTickers()};
         setAvailableTickers(updateTickers);
-        if (tickerMarketData.currency === selectedTickerRef.current?.currency)
-          setSelectedTicker(updateTickers[tickerMarketData.currency]);
+        if (tickerData.currency === selectedTickerRef.current?.currency)
+          setSelectedTicker(updateTickers[tickerData.currency]);
       }),
     []
   );
@@ -505,22 +523,22 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       ),
     []
   );
-  /* Deprecate: replaced by TideBitEvent.TRADES (20230407 - tzuhan)
+
   React.useMemo(
     () =>
       notificationCtx.emitter.on(
         TideBitEvent.CANDLESTICK,
-        (market: string, trades: ITBETrade[]) => {
-          const ticker = market.toUpperCase().replace(unitAsset, ``);
-          tickerBook.updateCandlestickByTrade(ticker, trades);
-          setAvailableTickers({...tickerBook.tickers});
-          if (selectedTickerRef.current?.currency === ticker)
-            setCandlestickChartData([...tickerBook.candlesticks[ticker]]);
+        (action: IPusherAction, candlesticks: ICandlestick) => {
+          candlestickBook.updateCandlesticksData(action, candlesticks);
+          const [baseUnit, quoteUnit] = candlesticks.instId.split(`-`);
+          if (selectedTickerRef.current?.currency === baseUnit)
+            setCandlestickChartData(candlestickBook.listCandlestickData(candlesticks.instId, {}));
         }
       ),
     []
   );
-  */
+
+  /** Deprecated: replaced by pusher (20230424 - tzuhan)
   React.useMemo(
     () =>
       notificationCtx.emitter.on(TideBitEvent.TRADES, (market: string, trades: ITBETrade[]) => {
@@ -533,6 +551,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       }),
     []
   );
+  */
 
   const defaultValue = {
     selectedTicker: selectedTickerRef.current,
@@ -556,7 +575,9 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     tidebitPromotion,
     getCandlestickChartData,
     getCFDQuotation,
+    /** Deprecated: replaced by pusher (20230424 - tzuhan)
     getTickerHistory,
+    */
     listTickerPositions,
     init,
   };

@@ -2,16 +2,18 @@ import React, {createContext, useRef, useContext} from 'react';
 import useState from 'react-usestateref';
 import {formatAPIRequest, FormatedTypeRequest, TypeRequest} from '../constants/api_request';
 
-import {WS_URL} from '../constants/config';
+import {PUSHER_CLUSTER, PUSHER_KEY, WS_URL} from '../constants/config';
 import {Events} from '../constants/events';
 import {TideBitEvent} from '../constants/tidebit_event';
-import {
-  convertToTickerMartketData,
-  ITBETicker,
-  ITickerData,
-  ITickerMarket,
-} from '../interfaces/tidebit_defi_background/ticker_data';
+import {ITickerData} from '../interfaces/tidebit_defi_background/ticker_data';
+import Pusher from 'pusher-js';
 import {NotificationContext} from './notification_context';
+import {
+  IPusherData,
+  PusherAction,
+  PusherChannel,
+} from '../interfaces/tidebit_defi_background/pusher_data';
+import {ICandlestick} from '../interfaces/tidebit_defi_background/candlestickData';
 
 type IJobType = 'API' | 'WS';
 
@@ -34,29 +36,44 @@ interface IRequest {
 */
 
 interface IWorkerContext {
+  /** Deprecated: replaced by pusher (20230502 - tzuhan) 
   wsWorker: WebSocket | null;
+  */
+  pusherWorker: Pusher | null;
   apiWorker: Worker | null;
   init: () => void;
   requestHandler: (data: TypeRequest) => Promise<unknown>;
+  subscribeUser: (address: string) => void;
+  /** Deprecated: replaced by pusher (20230502 - tzuhan) 
   tickerChangeHandler: (ticker: ITickerData) => void;
   registerUserHandler: (address: string) => void;
+  */
 }
 
 export const WorkerContext = createContext<IWorkerContext>({
+  /** Deprecated: replaced by pusher (20230502 - tzuhan) 
   wsWorker: null,
+  */
   apiWorker: null,
+  pusherWorker: null,
   init: () => null,
   requestHandler: () => Promise.resolve(),
+  subscribeUser: () => null,
+  /** Deprecated: replaced by pusher (20230502 - tzuhan) 
   tickerChangeHandler: () => null,
   registerUserHandler: () => null,
+  */
 });
 
 let jobTimer: NodeJS.Timeout | null = null;
+/** Deprecated: replaced by pusher (20230502 - tzuhan) 
 let wsWorker: WebSocket | null;
+*/
 
 export const WorkerProvider = ({children}: IWorkerProvider) => {
   const notificationCtx = useContext(NotificationContext);
   const [apiWorker, setAPIWorker, apiWorkerRef] = useState<Worker | null>(null);
+  const [pusherWorker, setPuserWorker, pusherWorkerRef] = useState<Pusher | null>(null);
   const jobQueueOfWS = useRef<((...args: []) => Promise<void>)[]>([]);
   const jobQueueOfAPI = useRef<((...args: []) => Promise<void>)[]>([]);
   /* Deprecated: callback in requestHandler (Tzuhan - 20230420)
@@ -75,6 +92,52 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
     */
   };
 
+  const subscribeTickers = () => {
+    if (pusherWorkerRef.current) {
+      const channel = pusherWorkerRef.current.subscribe(PusherChannel.GLOBAL_CHANNEL);
+      channel.bind(Events.TICKERS, (pusherData: IPusherData) => {
+        const {action, data} = pusherData;
+        const tickerData = data as ITickerData;
+        notificationCtx.emitter.emit(TideBitEvent.TICKER, tickerData);
+      });
+    }
+  };
+
+  const subscribeCandlesticks = () => {
+    if (pusherWorkerRef.current) {
+      const channel = pusherWorkerRef.current?.subscribe(PusherChannel.GLOBAL_CHANNEL);
+      channel.bind(Events.CANDLE_ON_UPDATE, (pusherData: IPusherData) => {
+        const {action, data} = pusherData;
+        const candlesticks = data as ICandlestick;
+        notificationCtx.emitter.emit(TideBitEvent.CANDLESTICK, action, candlesticks);
+      });
+    }
+  };
+
+  // TODO: when user login, register user to pusher (未開票)(20230424 - tzuhan)
+  const subscribeUser = (address: string) => {
+    if (pusherWorkerRef.current) {
+      const channel = pusherWorkerRef.current?.subscribe(PusherChannel.PRIVATE_CHANNEL);
+      channel.bind(Events.ACCOUNT, (pusherData: IPusherData) => {
+        const {action, data} = pusherData;
+      });
+      channel.bind(Events.ORDER, (pusherData: IPusherData) => {
+        const {action, data} = pusherData;
+      });
+      channel.bind(Events.TRADES, (pusherData: IPusherData) => {
+        const {action, data} = pusherData;
+      });
+    }
+  };
+
+  const pusherInit = () => {
+    const pusher = new Pusher(PUSHER_KEY, {cluster: PUSHER_CLUSTER});
+    setPuserWorker(pusher);
+    subscribeTickers();
+    subscribeCandlesticks();
+  };
+
+  /** Deprecated: replaced by pusher (20230502 - tzuhan) 
   const wsInit = async () => {
     wsWorker = new WebSocket(WS_URL);
     if (wsWorker) {
@@ -95,13 +158,6 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
           case Events.TRADES:
             break;
           case Events.PUBILC_TRADES:
-            /* Deprecate: replaced by TideBitEvent.TRADES (20230407 - tzuhan)
-            notificationCtx.emitter.emit(
-              TideBitEvent.CANDLESTICK,
-              metaData.data.market,
-              metaData.data.trades
-            );
-            */
             notificationCtx.emitter.emit(
               TideBitEvent.TRADES,
               metaData.data.market,
@@ -122,12 +178,14 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
       };
     }
   };
+  */
 
   const init = async () => {
     apiInit();
-    await wsInit();
+    pusherInit();
+    // await wsInit();
     await _apiWorker();
-    await _wsWorker();
+    // await _wsWorker();
   };
 
   const _apiWorker = async () => {
@@ -141,6 +199,7 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
     }
   };
 
+  /** Deprecated: replaced by pusher (20230502 - tzuhan) 
   const _wsWorker = async () => {
     if (wsWorker?.readyState === 1) {
       const job = jobQueueOfWS.current.shift();
@@ -156,6 +215,7 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
       jobTimer = setTimeout(() => _wsWorker(), 1000);
     }
   };
+  */
 
   const createJob = (type: IJobType, callback: () => Promise<unknown>) => {
     const job = () => {
@@ -204,6 +264,7 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
     }
   };
 
+  /** Deprecated: replaced by pusher (20230502 - tzuhan) 
   const tickerChangeHandler = async (ticker: ITickerData) => {
     notificationCtx.emitter.emit(TideBitEvent.TICKER_CHANGE, ticker);
     if (wsWorker?.readyState === 1) {
@@ -219,7 +280,9 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
       createJob(JobType.WS, () => tickerChangeHandler(ticker));
     }
   };
+  */
 
+  /** Deprecated: replaced by pusher (20230502 - tzuhan) 
   const registerUserHandler = async (address: string) => {
     notificationCtx.emitter.emit(TideBitEvent.SERVICE_TERM_ENABLED, address);
     if (wsWorker?.readyState === 1) {
@@ -235,14 +298,21 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
       createJob(JobType.WS, () => registerUserHandler(address));
     }
   };
+  */
 
   const defaultValue = {
     apiWorker: apiWorkerRef.current,
+    pusherWorker: pusherWorkerRef.current,
+    /** Deprecated: replaced by pusher (20230502 - tzuhan) 
     wsWorker,
+      */
     init,
     requestHandler,
+    subscribeUser,
+    /** Deprecated: replaced by pusher (20230502 - tzuhan) 
     tickerChangeHandler,
     registerUserHandler,
+    */
   };
 
   return <WorkerContext.Provider value={defaultValue}>{children}</WorkerContext.Provider>;

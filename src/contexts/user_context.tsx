@@ -307,7 +307,9 @@ export const UserProvider = ({children}: IUserProvider) => {
     }
     await listFavoriteTickers();
     await listHistories();
-    workerCtx.registerUserHandler(walletAddress);
+    /** TODO: when user login, register user to pusher (未開票)(20230424 - tzuhan)
+    workerCtx.subscribeUser(walletAddress);
+    */
   };
 
   const clearPrivateData = () => {

@@ -27,10 +27,7 @@ import {
   WAITING_TIME_FOR_USER_SIGNING,
   FRACTION_DIGITS,
   TP_SL_LIMIT_PERCENT,
-  LEVERAGE_ERROR,
   DEFAULT_TICKER,
-  BUY_PRICE_ERROR,
-  SELL_PRICE_ERROR,
 } from '../../constants/config';
 import {ClickEvent} from '../../constants/tidebit_event';
 import {useTranslation} from 'next-i18next';

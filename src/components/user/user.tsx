@@ -81,7 +81,17 @@ const User = () => {
             <p>{t('USER.WITHDRAW')}</p>
           </div>
         </li>
-        <li>
+        <li
+          onClick={() => {
+            globalCtx.toast({
+              type: 'error',
+              typeText: 'Error',
+              message: 'Hope it wont crash again :(',
+              autoClose: false,
+              isLoading: false,
+            });
+          }}
+        >
           <Link href="#" className="block py-2 pr-4 pl-3 hover:bg-darkGray5">
             <div className="flex flex-row items-center space-x-2">
               <VscAccount />

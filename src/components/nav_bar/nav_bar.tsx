@@ -13,8 +13,6 @@ import User from '../user/user';
 import {useGlobal} from '../../contexts/global_context';
 import {NotificationContext} from '../../contexts/notification_context';
 import {TBDURL} from '../../constants/api_request';
-import {wait} from '../../lib/common';
-import {DELAYED_HIDDEN_SECONDS} from '../../constants/display';
 import {WalletConnectButton} from '../wallet_connect_button/wallet_connect_button';
 
 type TranslateFunction = (s: string) => string;
@@ -97,8 +95,17 @@ const NavBar = () => {
                       {t('NAV_BAR.TRADE')}
                     </Link>
                     <Link
-                      href={TBDURL.COMING_SOON}
+                      href="#" //{TBDURL.COMING_SOON}
                       className="mr-5 hover:cursor-pointer hover:text-tidebitTheme"
+                      onClick={() => {
+                        globalCtx.toast({
+                          type: 'success',
+                          typeText: 'Success',
+                          message: 'Dont forget delete this toast',
+                          autoClose: false,
+                          isLoading: false,
+                        });
+                      }}
                     >
                       {t('NAV_BAR.LEADERBOARD')}
                     </Link>
@@ -117,7 +124,17 @@ const NavBar = () => {
               </div>
               <div className="hidden pt-3 lg:flex">
                 <div className="flex items-center justify-center px-5">
-                  <div>
+                  <div
+                    onClick={() => {
+                      globalCtx.toast({
+                        type: 'warning',
+                        typeText: 'Warning',
+                        message: 'Testing toast, dont forget delete me!',
+                        autoClose: false,
+                        isLoading: false,
+                      });
+                    }}
+                  >
                     <I18n />
                   </div>
                   {/* <TbMinusVertical size={30} className="" /> */}

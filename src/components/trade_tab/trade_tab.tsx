@@ -3,7 +3,13 @@ import Toggle from '../toggle/toggle';
 import TradingInput from '../trading_input/trading_input';
 import {AiOutlineQuestionCircle} from 'react-icons/ai';
 import RippleButton from '../ripple_button/ripple_button';
-import {UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
+import {
+  DEFAULT_BUY_PRICE,
+  DEFAULT_LEVERAGE,
+  DEFAULT_SELL_PRICE,
+  DEFAULT_USER_BALANCE,
+  UNIVERSAL_NUMBER_FORMAT_LOCALE,
+} from '../../constants/display';
 import {
   TARGET_LIMIT_DIGITS,
   QUOTATION_RENEWAL_INTERVAL_SECONDS,
@@ -14,10 +20,6 @@ import {
   DISPLAY_QUOTATION_RENEWAL_INTERVAL_SECONDS,
   WAITING_TIME_FOR_USER_SIGNING,
   FRACTION_DIGITS,
-  BUY_PRICE_ERROR,
-  LEVERAGE_ERROR,
-  SELL_PRICE_ERROR,
-  USER_BALANCE_ERROR,
   TP_SL_LIMIT_PERCENT,
   DEFAULT_TICKER,
 } from '../../constants/config';
@@ -66,9 +68,9 @@ const TradeTab = () => {
   const TEMP_PLACEHOLDER = TARGET_LIMIT_DIGITS;
 
   const ticker = marketCtx.selectedTicker?.currency ?? '';
-  const USER_BALANCE = userCtx.balance?.available ?? USER_BALANCE_ERROR;
+  const USER_BALANCE = userCtx.balance?.available ?? DEFAULT_USER_BALANCE;
 
-  const leverage = tickerStaticStatistics?.leverage ?? LEVERAGE_ERROR;
+  const leverage = tickerStaticStatistics?.leverage ?? DEFAULT_LEVERAGE;
   const gsl = marketCtx.guaranteedStopFeePercentage;
 
   const defaultBuyQuotation: IQuotation = getDummyQuotation(ticker, TypeOfPosition.BUY);
@@ -251,7 +253,7 @@ const TradeTab = () => {
         setLongQuotation(long);
       } else {
         const buyPrice =
-          (marketCtx.selectedTickerRef.current?.price ?? BUY_PRICE_ERROR) *
+          (marketCtx.selectedTickerRef.current?.price ?? DEFAULT_BUY_PRICE) *
           (1 + (marketCtx.tickerLiveStatistics?.spread ?? 0));
 
         const buyQuotation: IQuotation = {
@@ -277,7 +279,7 @@ const TradeTab = () => {
         setShortQuotation(short);
       } else {
         const sellPrice =
-          (marketCtx.selectedTickerRef.current?.price ?? BUY_PRICE_ERROR) *
+          (marketCtx.selectedTickerRef.current?.price ?? DEFAULT_SELL_PRICE) *
           (1 + (marketCtx.tickerLiveStatistics?.spread ?? 0));
 
         const sellQuotation: IQuotation = {
@@ -294,7 +296,7 @@ const TradeTab = () => {
       }
     } catch (err) {
       const buyPrice =
-        (marketCtx.selectedTickerRef.current?.price ?? BUY_PRICE_ERROR) *
+        (marketCtx.selectedTickerRef.current?.price ?? DEFAULT_BUY_PRICE) *
         (1 + (marketCtx.tickerLiveStatistics?.spread ?? 0));
 
       const buyQuotation: IQuotation = {
@@ -310,7 +312,7 @@ const TradeTab = () => {
       setLongQuotation(buyQuotation);
 
       const sellPrice =
-        (marketCtx.selectedTickerRef.current?.price ?? SELL_PRICE_ERROR) *
+        (marketCtx.selectedTickerRef.current?.price ?? DEFAULT_SELL_PRICE) *
         (1 - (marketCtx.tickerLiveStatistics?.spread ?? 0));
 
       const sellQuotation: IQuotation = {
@@ -576,7 +578,7 @@ const TradeTab = () => {
       targetAsset: marketCtx.selectedTicker?.currency ?? '',
       unitAsset: unitAsset,
       amount: targetInputValueRef.current,
-      leverage: marketCtx.tickerStatic?.leverage ?? LEVERAGE_ERROR,
+      leverage: marketCtx.tickerStatic?.leverage ?? DEFAULT_LEVERAGE,
       margin: {
         asset: unitAsset,
         amount: requiredMarginLongRef.current,
@@ -592,7 +594,7 @@ const TradeTab = () => {
       typeOfPosition: TypeOfPosition.BUY,
       quotation: longQuotationRef.current,
       liquidationPrice: longQuotationRef.current.price * (1 - LIQUIDATION_FIVE_LEVERAGE),
-      fee: marketCtx.tickerLiveStatistics?.fee ?? BUY_PRICE_ERROR,
+      fee: marketCtx.tickerLiveStatistics?.fee ?? DEFAULT_BUY_PRICE,
       guaranteedStop: longSlToggle ? longGuaranteedStopChecked : false,
       guaranteedStopFee:
         longSlToggle && longGuaranteedStopChecked ? guaranteedStopFeeLongRef.current : 0,
@@ -608,7 +610,7 @@ const TradeTab = () => {
       quotation: shortQuotationRef.current,
       price: shortQuotationRef.current.price,
       liquidationPrice: shortQuotationRef.current.price * (1 + LIQUIDATION_FIVE_LEVERAGE),
-      fee: marketCtx.tickerLiveStatistics?.fee ?? BUY_PRICE_ERROR,
+      fee: marketCtx.tickerLiveStatistics?.fee ?? DEFAULT_BUY_PRICE,
       guaranteedStop: shortSlToggle ? shortGuaranteedStopChecked : false,
       guaranteedStopFee:
         shortSlToggle && shortGuaranteedStopChecked ? guaranteedStopFeeShortRef.current : 0,

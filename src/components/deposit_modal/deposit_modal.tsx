@@ -13,7 +13,6 @@ import {OrderType} from '../../constants/order_type';
 import {UserContext} from '../../contexts/user_context';
 import {Code} from '../../constants/code';
 import useStateRef from 'react-usestateref';
-import {ToastTypeAndText} from '../../constants/toast_type';
 
 type TranslateFunction = (s: string) => string;
 interface IDepositModal {
@@ -46,6 +45,9 @@ const DepositModal = ({
   const userAvailableBalance = userCtx.getWalletBalance(selectedCrypto.symbol)?.balance ?? 0;
 
   const regex = /^\d*\.?\d{0,2}$/;
+
+  /* Info: (20230427 - Julian) toastId by minimizedModal */
+  const toastId = `${t('D_W_MODAL.DEPOSIT')}_LoadingModalMinimized`;
 
   const cryptoMenuClickHandler = () => {
     setShowCryptoMenu(!showCryptoMenu);
@@ -95,17 +97,6 @@ const DepositModal = ({
     try {
       const result = await userCtx.deposit(depositOrder);
 
-      // Deprecate: after Julian confirm result format (20230413 - Shirley)
-      // eslint-disable-next-line no-console
-      console.log(`userCtx.deposit result:`, result);
-
-      // TODO: for debug
-      globalCtx.toast({
-        message: 'deposit result: ' + JSON.stringify(result),
-        type: ToastTypeAndText.INFO.type,
-        typeText: t(ToastTypeAndText.INFO.text),
-      });
-
       // TODO: the button URL
       if (result.success) {
         // ToDo: to tell when to show the loading modal with button
@@ -129,6 +120,7 @@ const DepositModal = ({
           btnUrl: '#',
         });
 
+        globalCtx.eliminateToasts(toastId);
         globalCtx.visibleSuccessfulModalHandler();
       } else if (
         // Info: cancel (20230413 - Shirley)
@@ -143,6 +135,7 @@ const DepositModal = ({
           modalContent: `${t('D_W_MODAL.FAILED_REASON_CANCELED')} (${result.code})`,
         });
 
+        globalCtx.eliminateToasts(toastId);
         globalCtx.visibleCanceledModalHandler();
       } else if (
         result.code === Code.INTERNAL_SERVER_ERROR ||
@@ -155,6 +148,7 @@ const DepositModal = ({
           modalContent: `${t('D_W_MODAL.FAILED_CONTENT')} (${result.code})`,
         });
 
+        globalCtx.eliminateToasts(toastId);
         globalCtx.visibleFailedModalHandler();
       }
     } catch (error: any) {
@@ -167,6 +161,7 @@ const DepositModal = ({
         modalContent: `${t('D_W_MODAL.FAILED_CONTENT')} (${Code.UNKNOWN_ERROR_IN_COMPONENT})`,
       });
 
+      globalCtx.eliminateToasts(toastId);
       globalCtx.visibleFailedModalHandler();
     }
 

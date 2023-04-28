@@ -1,6 +1,4 @@
-import {useState} from 'react';
-import WalletPanel from '../wallet_panel/wallet_panel';
-import {useGlobal} from '../../contexts/global_context';
+import React from 'react';
 import {useTranslation} from 'next-i18next';
 import {WalletConnectButton} from '../wallet_connect_button/wallet_connect_button';
 
@@ -8,8 +6,6 @@ type TranslateFunction = (s: string) => string;
 
 const TradeVisitorTab = () => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
-
-  const globalCtx = useGlobal();
 
   const tabBodyWidth = 'w-320px';
 

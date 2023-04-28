@@ -13,7 +13,6 @@ import {UserContext} from '../../contexts/user_context';
 import {OrderType} from '../../constants/order_type';
 import {useTranslation} from 'react-i18next';
 import {Code} from '../../constants/code';
-import {ToastTypeAndText} from '../../constants/toast_type';
 
 type TranslateFunction = (s: string) => string;
 interface IWithdrawalModal {
@@ -48,6 +47,9 @@ const WithdrawalModal = ({
   const userAvailableBalance = userCtx.getBalance(selectedCrypto.symbol)?.available ?? 0;
 
   const regex = /^\d*\.?\d{0,2}$/;
+
+  /* Info: (20230427 - Julian) toastId by minimizedModal */
+  const toastId = `${t('D_W_MODAL.WITHDRAW')}_LoadingModalMinimized`;
 
   const cryptoMenuClickHandler = () => {
     setShowCryptoMenu(!showCryptoMenu);
@@ -92,20 +94,9 @@ const WithdrawalModal = ({
       remark: '',
       fee: 0,
     };
-    // Deprecated: for debug (20230411 - Shirley)
-    // eslint-disable-next-line no-console
-    console.log('withdraw order', withdrawOrder);
 
     try {
       const result = await userCtx.withdraw(withdrawOrder);
-
-      // TODO: for debug
-      globalCtx.toast({
-        message: 'withdraw result: ' + JSON.stringify(result),
-        type: ToastTypeAndText.INFO.type,
-        typeText: t(ToastTypeAndText.INFO.text),
-      });
-
       // TODO: the button URL
       if (result.success) {
         // ToDo: to tell when to show the loading modal with button
@@ -129,6 +120,7 @@ const WithdrawalModal = ({
           btnUrl: '#',
         });
 
+        globalCtx.eliminateToasts(toastId);
         globalCtx.visibleSuccessfulModalHandler();
         // TODO: `result.code` (20230316 - Shirley)
       } else if (
@@ -144,6 +136,7 @@ const WithdrawalModal = ({
           modalContent: `${t('D_W_MODAL.FAILED_REASON_CANCELED')} (${result.code})`,
         });
 
+        globalCtx.eliminateToasts(toastId);
         globalCtx.visibleCanceledModalHandler();
       } else if (
         result.code === Code.INTERNAL_SERVER_ERROR ||
@@ -156,6 +149,7 @@ const WithdrawalModal = ({
           modalContent: `${t('D_W_MODAL.FAILED_REASON_FAILED_TO_WITHDRAW')} (${result.code})`,
         });
 
+        globalCtx.eliminateToasts(toastId);
         globalCtx.visibleFailedModalHandler();
       }
     } catch (error: any) {
@@ -170,6 +164,7 @@ const WithdrawalModal = ({
         })`,
       });
 
+      globalCtx.eliminateToasts(toastId);
       globalCtx.visibleFailedModalHandler();
     }
 
@@ -262,9 +257,6 @@ const WithdrawalModal = ({
                   type="text"
                   placeholder={selectedCrypto.name}
                   disabled
-                  onFocus={() => {
-                    // console.log('focusing');
-                  }}
                   value={selectedCrypto?.name}
                 />
 

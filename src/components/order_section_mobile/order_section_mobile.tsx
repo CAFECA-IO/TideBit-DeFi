@@ -1,9 +1,7 @@
 import {useContext, useState} from 'react';
 import {UserContext} from '../../contexts/user_context';
-import TideButton from '../tide_button/tide_button';
 import PositionTabMobile from '../position_tab_mobile/position_tab_mobile';
 import TradeTabMobile from '../trade_tab_mobile/trade_tab_mobile';
-import {useGlobal} from '../../contexts/global_context';
 import {useTranslation} from 'next-i18next';
 import {WalletConnectButton} from '../wallet_connect_button/wallet_connect_button';
 
@@ -12,7 +10,6 @@ type TranslateFunction = (s: string) => string;
 const OrderSectionMobile = () => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
-  const globalCtx = useGlobal();
   const userCtx = useContext(UserContext);
 
   const [positionActiveTab, setPositionActiveTab] = useState('Open');

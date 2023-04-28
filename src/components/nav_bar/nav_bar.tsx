@@ -95,17 +95,8 @@ const NavBar = () => {
                       {t('NAV_BAR.TRADE')}
                     </Link>
                     <Link
-                      href="#" //{TBDURL.COMING_SOON}
+                      href={TBDURL.COMING_SOON}
                       className="mr-5 hover:cursor-pointer hover:text-tidebitTheme"
-                      onClick={() => {
-                        globalCtx.toast({
-                          type: 'success',
-                          typeText: 'Success',
-                          message: 'Dont forget delete this toast',
-                          autoClose: false,
-                          isLoading: false,
-                        });
-                      }}
                     >
                       {t('NAV_BAR.LEADERBOARD')}
                     </Link>
@@ -124,17 +115,7 @@ const NavBar = () => {
               </div>
               <div className="hidden pt-3 lg:flex">
                 <div className="flex items-center justify-center px-5">
-                  <div
-                    onClick={() => {
-                      globalCtx.toast({
-                        type: 'warning',
-                        typeText: 'Warning',
-                        message: 'Testing toast, dont forget delete me!',
-                        autoClose: false,
-                        isLoading: false,
-                      });
-                    }}
-                  >
+                  <div>
                     <I18n />
                   </div>
                   {/* <TbMinusVertical size={30} className="" /> */}

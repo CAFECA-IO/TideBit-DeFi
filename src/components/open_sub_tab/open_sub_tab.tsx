@@ -57,6 +57,7 @@ const OpenSubTab = () => {
         begin: cfd.createTimestamp,
       });
 
+      // TODO: 沒有折線圖，就拿市價來算；沒有市價就拿顯示 `--`
       const sd = cfd.typeOfPosition === TypeOfPosition.BUY ? 1 + spread : 1 - spread;
       const currentPrice = positionLineGraph[positionLineGraph.length - 1] * sd;
 

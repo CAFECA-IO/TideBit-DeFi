@@ -460,12 +460,12 @@ const TradeTab = () => {
     );
 
     setLongSlLowerLimit(longSlLowerBound);
-    setLongSlUpperLimit(longSlUpperBound); // Open price with buffer
-    setLongTpLowerLimit(longTpLowerBound); // Open price with buffer
+    setLongSlUpperLimit(longSlUpperBound); // Info: Open price with buffer (20230428 - Shirley)
+    setLongTpLowerLimit(longTpLowerBound); // Info: Open price with buffer (20230428 - Shirley)
 
-    setShortTpUpperLimit(shortTpUpperBound); // Open price with buffer
+    setShortTpUpperLimit(shortTpUpperBound); // Info: Open price with buffer (20230428 - Shirley)
     setShortSlUpperLimit(shortSlUpperBound);
-    setShortSlLowerLimit(shortSlLowerBound); // Open price with buffer
+    setShortSlLowerLimit(shortSlLowerBound); // Info: Open price with buffer (20230428 - Shirley)
 
     updateSuggestions();
   };

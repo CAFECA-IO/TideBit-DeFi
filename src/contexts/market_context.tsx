@@ -206,15 +206,6 @@ export const MarketProvider = ({children}: IMarketProvider) => {
   const selectTickerHandler = async (tickerId: ICurrency) => {
     const ticker: ITickerData = availableTickersRef.current[tickerId];
     setSelectedTicker(ticker);
-    setInterval(() => {
-      setSelectedTicker(prev => {
-        if (prev === null) {
-          return null;
-        }
-
-        return {...prev, price: randomIntFromInterval(200, 50000)};
-      });
-    }, 3000);
     // ++ TODO: get from api
     const tickerStatic: ITickerStatic = getDummyTickerStatic(tickerId);
     setTickerStatic(tickerStatic);

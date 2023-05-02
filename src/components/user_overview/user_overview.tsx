@@ -21,7 +21,7 @@ const UserOverview = ({
 
   // if (profitOrLoss !== 'profit' && profitOrLoss !== 'loss') return <></>;
 
-  // const displayedSymbol = profitOrLoss === 'profit' ? '+' : '-';
+  // const displayedPnLSymbol = profitOrLoss === 'profit' ? '+' : '-';
 
   return (
     <>

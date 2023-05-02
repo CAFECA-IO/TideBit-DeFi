@@ -1,18 +1,77 @@
-import React, {useContext} from 'react';
+import React, {useContext, useEffect} from 'react';
 import OpenPositionItem from '../open_position_item/open_position_item';
 import {UserContext} from '../../contexts/user_context';
 import {IDisplayCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
-import {toDisplayCFDOrder} from '../../lib/common';
+import {getTimestamp, roundToDecimalPlaces, toDisplayCFDOrder} from '../../lib/common';
 import {MarketContext} from '../../contexts/market_context';
+import {TypeOfPosition} from '../../constants/type_of_position';
+import {
+  DEFAULT_TICKER,
+  QUOTATION_RENEWAL_INTERVAL_SECONDS,
+  unitAsset,
+} from '../../constants/config';
+import useStateRef from 'react-usestateref';
+import {IQuotation, getDummyQuotation} from '../../interfaces/tidebit_defi_background/quotation';
+import {DEFAULT_SPREAD} from '../../constants/display';
 
 const OpenSubTabMobile = () => {
   const {openCFDs} = useContext(UserContext);
   const marketCtx = useContext(MarketContext);
+
+  const initState = {
+    longPrice: 0,
+    shortPrice: 0,
+  };
+  const [caledPrice, setCaledPrice, caledPriceRef] = useStateRef(initState);
+
+  useEffect(() => {
+    const buyPrice = !!marketCtx.selectedTicker?.price
+      ? roundToDecimalPlaces(
+          marketCtx.selectedTicker.price *
+            (1 + (marketCtx.tickerLiveStatistics?.spread ?? DEFAULT_SPREAD)),
+          2
+        )
+      : 0;
+
+    const sellPrice = !!marketCtx.selectedTicker?.price
+      ? roundToDecimalPlaces(
+          marketCtx.selectedTicker.price *
+            (1 - (marketCtx.tickerLiveStatistics?.spread ?? DEFAULT_SPREAD)),
+          2
+        )
+      : 0;
+
+    setCaledPrice({
+      longPrice: buyPrice,
+      shortPrice: sellPrice,
+    });
+  }, [marketCtx.selectedTicker?.price]);
+
   const cfds = openCFDs.map(cfd => {
     const positionLineGraph = marketCtx.listTickerPositions(cfd.targetAsset, {
       begin: cfd.createTimestamp,
     });
-    const displayCFD: IDisplayCFDOrder = toDisplayCFDOrder(cfd, positionLineGraph);
+
+    const spread =
+      cfd.typeOfPosition === TypeOfPosition.BUY
+        ? 1 + (marketCtx.tickerLiveStatistics?.spread ?? DEFAULT_SPREAD)
+        : 1 - (marketCtx.tickerLiveStatistics?.spread ?? DEFAULT_SPREAD);
+
+    /**
+     * Info: (20230428 - Shirley)
+     * without `positionLineGraph`, use market price to calculate
+     * without `market price`, use the open price of the CFD to get PNL === 0 and display `--`
+     * (OpenPositionItem & UpdateFormModal)
+     */
+    const currentPrice =
+      positionLineGraph.length > 0
+        ? positionLineGraph[positionLineGraph.length - 1] * spread
+        : (!!marketCtx.selectedTicker?.price &&
+            ((cfd.typeOfPosition === TypeOfPosition.BUY && caledPriceRef.current.longPrice) ||
+              (cfd.typeOfPosition === TypeOfPosition.SELL && caledPriceRef.current.shortPrice))) ||
+          0;
+
+    const displayCFD: IDisplayCFDOrder = toDisplayCFDOrder(cfd, positionLineGraph, currentPrice);
     return displayCFD;
   });
 

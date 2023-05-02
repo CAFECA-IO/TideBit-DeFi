@@ -3,13 +3,19 @@ import Skeleton, {SkeletonTheme} from 'react-loading-skeleton';
 import OpenPositionItem from '../open_position_item/open_position_item';
 import {UserContext} from '../../contexts/user_context';
 import {MarketContext} from '../../contexts/market_context';
-import {getTimestamp, getTimestampInMilliseconds, toDisplayCFDOrder} from '../../lib/common';
+import {
+  getTimestamp,
+  getTimestampInMilliseconds,
+  roundToDecimalPlaces,
+  toDisplayCFDOrder,
+} from '../../lib/common';
 import {
   IDisplayCFDOrder,
   listDummyDisplayCFDOrder,
 } from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
 import {TypeOfPosition} from '../../constants/type_of_position';
 import {
+  DEFAULT_TICKER,
   DISPLAY_QUOTATION_RENEWAL_INTERVAL_SECONDS,
   QUOTATION_RENEWAL_INTERVAL_SECONDS,
   WAITING_TIME_FOR_USER_SIGNING,
@@ -18,158 +24,40 @@ import {
 import {IQuotation, getDummyQuotation} from '../../interfaces/tidebit_defi_background/quotation';
 import {defaultResultSuccess} from '../../interfaces/tidebit_defi_background/result';
 import useStateRef from 'react-usestateref';
-
-const DEFAULT_TICKER = 'ETH';
-const SELL_PRICE_ERROR = 0;
-const BUY_PRICE_ERROR = 0;
-
-type Callback = () => void;
+import {DEFAULT_BUY_PRICE, DEFAULT_SELL_PRICE, DEFAULT_SPREAD} from '../../constants/display';
 
 const OpenSubTab = () => {
   const {openCFDs} = useContext(UserContext);
   const marketCtx = useContext(MarketContext);
-  const ticker = marketCtx?.selectedTickerRef?.current?.currency ?? DEFAULT_TICKER;
 
-  const defaultBuyQuotation: IQuotation = getDummyQuotation(ticker, TypeOfPosition.BUY);
-  const defaultSellQuotation: IQuotation = getDummyQuotation(ticker, TypeOfPosition.SELL);
-
-  const [longQuotation, setLongQuotation, longQuotationRef] =
-    useStateRef<IQuotation>(defaultBuyQuotation);
-  const [shortQuotation, setShortQuotation, shortQuotationRef] =
-    useStateRef<IQuotation>(defaultSellQuotation);
-
-  const [secondsLeft, setSecondsLeft, secondsLeftRef] = useStateRef(
-    DISPLAY_QUOTATION_RENEWAL_INTERVAL_SECONDS
-  );
-
-  const getQuotation = async (tickerId: string) => {
-    let longQuotation = defaultResultSuccess;
-    let shortQuotation = defaultResultSuccess;
-
-    try {
-      longQuotation = await marketCtx.getCFDQuotation(tickerId, TypeOfPosition.BUY);
-      shortQuotation = await marketCtx.getCFDQuotation(tickerId, TypeOfPosition.SELL);
-
-      const long = longQuotation.data as IQuotation;
-      const short = shortQuotation.data as IQuotation;
-
-      // Info: if there's error fetching quotation, use the previous quotation or calculate the quotation (20230327 - Shirley)
-      if (
-        longQuotation.success &&
-        long.typeOfPosition === TypeOfPosition.BUY &&
-        longQuotation.data !== null
-      ) {
-        setLongQuotation(long);
-      } else {
-        const buyPrice =
-          (marketCtx.selectedTickerRef.current?.price ?? BUY_PRICE_ERROR) *
-          (1 + (marketCtx.tickerLiveStatistics?.spread ?? 0));
-
-        const buyQuotation: IQuotation = {
-          ticker: marketCtx.selectedTicker?.currency ?? DEFAULT_TICKER,
-          targetAsset: marketCtx.selectedTicker?.currency ?? DEFAULT_TICKER,
-          typeOfPosition: TypeOfPosition.BUY,
-          unitAsset: unitAsset,
-          price: buyPrice,
-          deadline: getTimestamp() + QUOTATION_RENEWAL_INTERVAL_SECONDS,
-          signature: '0x',
-        };
-
-        setLongQuotation(buyQuotation);
-      }
-
-      // Info: if there's error fetching quotation, use the previous quotation or calculate the quotation (20230327 - Shirley)
-      if (
-        shortQuotation.success &&
-        short &&
-        short.typeOfPosition === TypeOfPosition.SELL &&
-        shortQuotation.data !== null
-      ) {
-        setShortQuotation(short);
-      } else {
-        const sellPrice =
-          (marketCtx.selectedTickerRef.current?.price ?? BUY_PRICE_ERROR) *
-          (1 + (marketCtx.tickerLiveStatistics?.spread ?? 0));
-
-        const sellQuotation: IQuotation = {
-          ticker: marketCtx.selectedTicker?.currency ?? DEFAULT_TICKER,
-          targetAsset: marketCtx.selectedTicker?.currency ?? DEFAULT_TICKER,
-          typeOfPosition: TypeOfPosition.SELL,
-          unitAsset: unitAsset,
-          price: sellPrice,
-          deadline: getTimestamp() + QUOTATION_RENEWAL_INTERVAL_SECONDS,
-          signature: '0x',
-        };
-
-        setShortQuotation(sellQuotation);
-      }
-    } catch (err) {
-      const buyPrice =
-        (marketCtx.selectedTickerRef.current?.price ?? BUY_PRICE_ERROR) *
-        (1 + (marketCtx.tickerLiveStatistics?.spread ?? 0));
-
-      const buyQuotation: IQuotation = {
-        ticker: marketCtx.selectedTicker?.currency ?? DEFAULT_TICKER,
-        targetAsset: marketCtx.selectedTicker?.currency ?? DEFAULT_TICKER,
-        typeOfPosition: TypeOfPosition.BUY,
-        unitAsset: unitAsset,
-        price: buyPrice,
-        deadline: getTimestamp() + QUOTATION_RENEWAL_INTERVAL_SECONDS,
-        signature: '0x',
-      };
-
-      setLongQuotation(buyQuotation);
-
-      const sellPrice =
-        (marketCtx.selectedTickerRef.current?.price ?? SELL_PRICE_ERROR) *
-        (1 - (marketCtx.tickerLiveStatistics?.spread ?? 0));
-
-      const sellQuotation: IQuotation = {
-        ticker: marketCtx.selectedTicker?.currency ?? DEFAULT_TICKER,
-        targetAsset: marketCtx.selectedTicker?.currency ?? DEFAULT_TICKER,
-        typeOfPosition: TypeOfPosition.SELL,
-        unitAsset: unitAsset,
-        price: sellPrice,
-        deadline: getTimestamp() + QUOTATION_RENEWAL_INTERVAL_SECONDS,
-        signature: '0x',
-      };
-
-      setShortQuotation(sellQuotation);
-    }
-
-    return {
-      longQuotation: longQuotation.data as IQuotation,
-      shortQuotation: shortQuotation.data as IQuotation,
-    };
+  const initState = {
+    longPrice: 0,
+    shortPrice: 0,
   };
-
-  const setQuotation = async () => {
-    await getQuotation(marketCtx.selectedTicker?.currency ?? DEFAULT_TICKER);
-  };
+  const [caledPrice, setCaledPrice, caledPriceRef] = useStateRef(initState);
 
   useEffect(() => {
-    return () => {
-      setQuotation();
-    };
-  }, []);
+    const buyPrice = !!marketCtx.selectedTicker?.price
+      ? roundToDecimalPlaces(
+          marketCtx.selectedTicker.price *
+            (1 + (marketCtx.tickerLiveStatistics?.spread ?? DEFAULT_SPREAD)),
+          2
+        )
+      : 0;
 
-  useEffect(() => {
-    const intervalId = setInterval(async () => {
-      if (!longQuotationRef.current || !shortQuotationRef.current) return;
+    const sellPrice = !!marketCtx.selectedTicker?.price
+      ? roundToDecimalPlaces(
+          marketCtx.selectedTicker.price *
+            (1 - (marketCtx.tickerLiveStatistics?.spread ?? DEFAULT_SPREAD)),
+          2
+        )
+      : 0;
 
-      const base = longQuotationRef.current.deadline - WAITING_TIME_FOR_USER_SIGNING;
-      const tickingSec = (base * 1000 - getTimestampInMilliseconds()) / 1000;
-      setSecondsLeft(tickingSec > 0 ? Math.round(tickingSec) : 0);
-
-      if (secondsLeftRef.current === 0) {
-        setQuotation();
-      }
-    }, 1000);
-
-    return () => {
-      clearInterval(intervalId);
-    };
-  }, []);
+    setCaledPrice({
+      longPrice: buyPrice,
+      shortPrice: sellPrice,
+    });
+  }, [marketCtx.selectedTicker?.price]);
 
   const [isLoading, setIsLoading] = useState(true);
 
@@ -178,12 +66,28 @@ const OpenSubTab = () => {
       const positionLineGraph = marketCtx.listTickerPositions(cfd.targetAsset, {
         begin: cfd.createTimestamp,
       });
-      const quotation =
-        cfd.typeOfPosition === TypeOfPosition.BUY
-          ? longQuotationRef.current
-          : shortQuotationRef.current;
 
-      const displayCFD: IDisplayCFDOrder = toDisplayCFDOrder(cfd, positionLineGraph, quotation);
+      const spread =
+        cfd.typeOfPosition === TypeOfPosition.BUY
+          ? 1 + (marketCtx.tickerLiveStatistics?.spread ?? DEFAULT_SPREAD)
+          : 1 - (marketCtx.tickerLiveStatistics?.spread ?? DEFAULT_SPREAD);
+
+      /**
+       * Info: (20230428 - Shirley)
+       * without `positionLineGraph`, use market price to calculate
+       * without `market price`, use the open price of the CFD to get PNL === 0 and display `--`
+       * (OpenPositionItem & UpdateFormModal)
+       */
+      const currentPrice =
+        positionLineGraph.length > 0
+          ? positionLineGraph[positionLineGraph.length - 1] * spread
+          : (!!marketCtx.selectedTicker?.price &&
+              ((cfd.typeOfPosition === TypeOfPosition.BUY && caledPriceRef.current.longPrice) ||
+                (cfd.typeOfPosition === TypeOfPosition.SELL &&
+                  caledPriceRef.current.shortPrice))) ||
+            0;
+
+      const displayCFD: IDisplayCFDOrder = toDisplayCFDOrder(cfd, positionLineGraph, currentPrice);
 
       return displayCFD;
     })

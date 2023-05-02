@@ -42,6 +42,7 @@ import {defaultResultSuccess} from '../../interfaces/tidebit_defi_background/res
 import {IQuotation} from '../../interfaces/tidebit_defi_background/quotation';
 import useStateRef from 'react-usestateref';
 import {Code} from '../../constants/code';
+import {CustomError} from '../../lib/custom_error';
 
 type TranslateFunction = (s: string) => string;
 interface IPositionOpenModal {
@@ -246,10 +247,11 @@ const PositionOpenModal = ({
     const newQuotation = await getQuotation();
     const gsl = marketCtx.guaranteedStopFeePercentage;
 
+    // ToDo: exception handling (20230428 - Shirley)
+    if (!newQuotation || quotationErrorRef.current) return;
+
     setDataRenewedStyle('animate-flash text-lightYellow2');
     await wait(DELAYED_HIDDEN_SECONDS / 5);
-
-    if (!newQuotation) return;
 
     // Info: if it's comments, it couldn't renew the quotation
     const base = newQuotation.deadline - WAITING_TIME_FOR_USER_SIGNING;
@@ -296,7 +298,7 @@ const PositionOpenModal = ({
 
     const base = openCfdRequest.quotation.deadline - WAITING_TIME_FOR_USER_SIGNING;
     const tickingSec = (base * 1000 - getTimestampInMilliseconds()) / 1000;
-    setSecondsLeft(tickingSec > 0 ? Math.round(tickingSec) : 0);
+    setSecondsLeft(tickingSec > 0 ? Math.floor(tickingSec) : 0);
   }, [globalCtx.visiblePositionOpenModal]);
 
   useEffect(() => {
@@ -304,7 +306,7 @@ const PositionOpenModal = ({
     const intervalId = setInterval(() => {
       const base = openCfdRequest.quotation.deadline - WAITING_TIME_FOR_USER_SIGNING;
       const tickingSec = (base * 1000 - getTimestampInMilliseconds()) / 1000;
-      setSecondsLeft(tickingSec > 0 ? Math.round(tickingSec) : 0);
+      setSecondsLeft(tickingSec > 0 ? Math.floor(tickingSec) : 0);
 
       if (secondsLeft === 0) {
         renewDataHandler();

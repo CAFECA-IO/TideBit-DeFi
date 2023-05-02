@@ -432,11 +432,12 @@ const PositionClosedModal = ({
 
       const tickingSec = (base * 1000 - getTimestampInMilliseconds()) / 1000;
 
-      setSecondsLeft(tickingSec > 0 ? Math.round(tickingSec) : 0);
+      setSecondsLeft(tickingSec > 0 ? Math.floor(tickingSec) : 0);
 
       if (secondsLeft === 0) {
         const quotation = await getQuotation();
 
+        // ToDo: exception handling (20230428 - Shirley)
         if (!quotation) {
           setQuotationError(true);
           return;

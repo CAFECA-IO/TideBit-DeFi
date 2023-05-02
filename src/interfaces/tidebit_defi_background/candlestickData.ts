@@ -12,9 +12,43 @@ export interface ICandle {
   close: number | null;
 }
 
+export interface ISortedCandlestick {
+  [second: number]: ICandlestickData;
+}
+
+export interface ITrade {
+  tradeId: string;
+  instId: string;
+  baseUnit: string;
+  quoteUnit: string;
+  source: number; // Info: trade source (OKX, CoinBase, etc.) (20230419 - tzuhan)
+  type: number; // Info: trade type (market, limit, ioc etc.) (20230419 - tzuhan)
+  side: number; // Info: buy or sell (20230419 - tzuhan)
+  price: number;
+  amount: number;
+  volume: number; // TODO: current would be 0, 之後需要寫爬蟲取得 (20230419 - tzuhan)
+  timestamp: number;
+}
+export interface formattedTrades {
+  second: number;
+  trades: {
+    open: ITrade;
+    high: ITrade;
+    low: ITrade;
+    close: ITrade;
+  };
+  datas: ITrade[];
+}
+
 export interface ICandlestickData {
   x: Date;
   y: ICandle;
+  trade?: formattedTrades; // Deprecated: when data is correct (20230425 - tzuhan)
+}
+
+export interface ICandlestick {
+  instId: string;
+  candlesticks: ICandlestickData[];
 }
 
 /* Till: remove generate dummy price data (20230327 - Tzuhan)

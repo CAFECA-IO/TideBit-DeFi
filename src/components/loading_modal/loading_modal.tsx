@@ -43,11 +43,11 @@ const LoadingModal = ({
      */
     modalClickHandler();
 
-    if (globalCtx.visibleLoadingModal) {
+    if (globalCtx.visibleLoadingModal && globalCtx.toast) {
       globalCtx.toast({
         type: ToastTypeAndText.INFO.type,
         message: `${modalTitle} ${t('TOAST.PROGRESSING_MESSAGE')}`,
-        toastId: 'loadingModalMinimized',
+        toastId: `${modalTitle}_LoadingModalMinimized`,
         autoClose: false,
         isLoading: true,
         typeText: t(ToastTypeAndText.INFO.text),

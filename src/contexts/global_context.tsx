@@ -240,6 +240,7 @@ export interface IGlobalContext {
   toast: (props: IToastify) => void;
 
   eliminateAllModals: () => void;
+  eliminateToasts: (id: string) => void;
 
   visibleUpdateFormModal: boolean;
   visibleUpdateFormModalHandler: () => void;
@@ -264,7 +265,6 @@ export interface IGlobalContext {
 
   visibleLoadingModal: boolean;
   visibleLoadingModalHandler: () => void;
-  //zoomOutLoadingModal: () => void;
   dataLoadingModal: IProcessDataModal | null;
   dataLoadingModalHandler: (data: IProcessDataModal) => void;
 
@@ -373,6 +373,7 @@ export const GlobalContext = createContext<IGlobalContext>({
   toast: () => null,
 
   eliminateAllModals: () => null,
+  eliminateToasts: () => null,
 
   visibleUpdateFormModal: false,
   visibleUpdateFormModalHandler: () => null,
@@ -397,7 +398,6 @@ export const GlobalContext = createContext<IGlobalContext>({
 
   visibleLoadingModal: false,
   visibleLoadingModalHandler: () => null,
-  //zoomOutLoadingModal: () => null,
   dataLoadingModal: null,
   dataLoadingModalHandler: () => null,
 
@@ -642,6 +642,8 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     const toastBodyStyle =
       'text-lightWhite text-sm lg:whitespace-nowrap px-4 before:block before:absolute before:-left-1 before:w-2 before:h-50px';
 
+    const isToastId = toastId ?? type + message;
+
     const isLoadingMessage = isLoading ? (
       <div className="inline-flex">
         {message}
@@ -655,14 +657,16 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
       ? () => {
           setDataLoadingModal(modalReOpenData),
             setVisibleLoadingModal(true),
-            toastify.dismiss(type + message + toastId);
+            toastify.dismiss(isToastId);
         }
-      : undefined;
+      : () => {
+          toastify.dismiss(isToastId);
+        };
 
     switch (type) {
       case ToastType.ERROR:
         toastify.error(isLoadingMessage, {
-          toastId: type + message + toastId,
+          toastId: isToastId,
           icon: (
             <div className="-ml-12 inline-flex items-center justify-center text-lightRed">
               <FaRegTimesCircle className="h-15px w-15px" />
@@ -677,7 +681,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
         break;
       case ToastType.WARNING:
         toastify.warning(isLoadingMessage, {
-          toastId: type + message + toastId,
+          toastId: isToastId,
           icon: (
             <div className="-ml-12 inline-flex items-center justify-center text-lightYellow2">
               <ImWarning className="h-15px w-15px " />
@@ -692,7 +696,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
         break;
       case ToastType.INFO:
         toastify.info(isLoadingMessage, {
-          toastId: type + message + toastId,
+          toastId: isToastId,
           icon: (
             <div className="-ml-12 inline-flex items-center justify-center text-tidebitTheme">
               <ImInfo className="h-15px w-15px" />
@@ -707,7 +711,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
         break;
       case ToastType.SUCCESS:
         toastify.success(isLoadingMessage, {
-          toastId: type + message + toastId,
+          toastId: isToastId,
           icon: (
             <div className="-ml-12 inline-flex items-center justify-center text-lightGreen5">
               <FaRegCheckCircle className="h-15px w-15px" />
@@ -766,8 +770,15 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     setVisiblePositionClosedModal(false);
 
     setVisibleSearchingModal(false);
+  };
 
-    toastify.dismiss(undefined);
+  const eliminateToasts = (id: string) => {
+    /* Info: (20230426 - Julian) remove toasts by toastId, or 'all' for remove all  */
+    if (id === 'all') {
+      toastify?.dismiss();
+    } else {
+      toastify?.dismiss(id);
+    }
   };
 
   const visibleUpdateFormModalHandler = () => {
@@ -1051,6 +1062,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     toast,
 
     eliminateAllModals,
+    eliminateToasts,
 
     visibleUpdateFormModal,
     visibleUpdateFormModalHandler,
@@ -1075,7 +1087,6 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
 
     visibleLoadingModal,
     visibleLoadingModalHandler,
-    //zoomOutLoadingModal,
     dataLoadingModal,
     dataLoadingModalHandler,
 
@@ -1180,7 +1191,6 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     <GlobalContext.Provider value={defaultValue}>
       <LoadingModal
         modalVisible={visibleLoadingModal}
-        //zoomOutHandler={zoomOutLoadingModal}
         modalClickHandler={visibleLoadingModalHandler}
         modalTitle={dataLoadingModal.modalTitle}
         modalContent={dataLoadingModal.modalContent}

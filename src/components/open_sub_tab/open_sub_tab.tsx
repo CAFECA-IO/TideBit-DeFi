@@ -1,6 +1,5 @@
-import React, {useContext, Suspense, useEffect, useRef} from 'react';
-import Lottie from 'lottie-react';
-import smallConnectingAnimation from '../../../public/animation/lf30_editor_cnkxmhy3.json';
+import React, {useContext, useState, useEffect, useRef} from 'react';
+import Skeleton, {SkeletonTheme} from 'react-loading-skeleton';
 import OpenPositionItem from '../open_position_item/open_position_item';
 import {UserContext} from '../../contexts/user_context';
 import {MarketContext} from '../../contexts/market_context';
@@ -60,6 +59,8 @@ const OpenSubTab = () => {
     });
   }, [marketCtx.selectedTicker?.price]);
 
+  const [isLoading, setIsLoading] = useState(true);
+
   const cfds = openCFDs
     .map(cfd => {
       const positionLineGraph = marketCtx.listTickerPositions(cfd.targetAsset, {
@@ -97,6 +98,10 @@ const OpenSubTab = () => {
       return b.stateCode - a.stateCode;
     });
 
+  useEffect(() => {
+    setTimeout(() => setIsLoading(false), 1000);
+  }, [cfds]);
+
   // Deprecated: to be removed (20230413 - Shirley)
   // /* ToDo: (20230411 - Julian) dummy data */
   // const dummyCFDs: IDisplayCFDOrder[] = listDummyDisplayCFDOrder('ETH')
@@ -111,7 +116,7 @@ const OpenSubTab = () => {
   const openPositionList = cfds.map(cfd => {
     return (
       <div key={cfd.id}>
-        <OpenPositionItem openCfdDetails={cfd} />
+        {isLoading ? <Skeleton count={5} height={30} /> : <OpenPositionItem openCfdDetails={cfd} />}
         <div className="my-auto h-px w-full rounded bg-white/50"></div>
       </div>
     );
@@ -119,21 +124,9 @@ const OpenSubTab = () => {
 
   return (
     <>
-      <div className="h-full overflow-y-auto overflow-x-hidden pb-40">
-        <div className="">
-          <Suspense
-            fallback={
-              <div className="inline-flex items-end">
-                {/* ToDo: (20230419 - Julian) Loading animation */}
-                <Lottie className="w-40px" animationData={smallConnectingAnimation} />
-                Loading...
-              </div>
-            }
-          >
-            {openPositionList}
-          </Suspense>
-        </div>
-      </div>
+      <SkeletonTheme baseColor="#202020" highlightColor="#444">
+        <div className="h-full overflow-y-auto overflow-x-hidden pb-40">{openPositionList}</div>
+      </SkeletonTheme>
     </>
   );
 };

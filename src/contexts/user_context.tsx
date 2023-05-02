@@ -1,5 +1,5 @@
 import Lunar from '@cafeca/lunar';
-import React, {createContext, useCallback, useContext, useEffect} from 'react';
+import React, {createContext, useCallback, useContext} from 'react';
 import useState from 'react-usestateref';
 import {
   defaultResultFailed,
@@ -30,7 +30,7 @@ import {IAcceptedWithdrawOrder} from '../interfaces/tidebit_defi_background/acce
 import {IAcceptedDepositOrder} from '../interfaces/tidebit_defi_background/accepted_deposit_order';
 import {APIName, Method, TypeRequest} from '../constants/api_request';
 // import SafeMath from '../lib/safe_math';
-import {Code, ICode, Reason} from '../constants/code';
+import {Code, Reason} from '../constants/code';
 import {
   getCookieByName,
   getServiceTermContract,
@@ -49,6 +49,8 @@ import {
 import {CustomError, isCustomError} from '../lib/custom_error';
 //import {setTimeout} from 'timers/promises';
 import {IWalletExtension, WalletExtension} from '../constants/wallet_extension';
+import {Events} from '../constants/events';
+import {OrderStatusUnion} from '../constants/order_status_union';
 
 export interface IMyAssets {
   currency: string;
@@ -307,9 +309,8 @@ export const UserProvider = ({children}: IUserProvider) => {
     }
     await listFavoriteTickers();
     await listHistories();
-    /** TODO: when user login, register user to pusher (未開票)(20230424 - tzuhan)
+
     workerCtx.subscribeUser(walletAddress);
-    */
   };
 
   const clearPrivateData = () => {
@@ -1272,20 +1273,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     return result;
   };
 
-  const updateBalances = (balance: IBalance) => {
-    if (balancesRef.current) {
-      const updateBalances = [...balancesRef.current];
-      const index = balancesRef.current.findIndex(
-        _balance => _balance.currency === balance.currency
-      );
-      if (index !== -1) {
-        updateBalances[index] = balance;
-      } else updateBalances.push(balance);
-    } else {
-      setBalances([balance]);
-    }
-  };
-
+  /* Deprecated: 由 issue#419 處理，留著做為參考 (20230423 - tzuhan)
   React.useMemo(
     () =>
       notificationCtx.emitter.on(TideBitEvent.BALANCE, (balance: IUserBalance) => {
@@ -1293,10 +1281,53 @@ export const UserProvider = ({children}: IUserProvider) => {
       }),
     []
   );
-  React.useMemo(() => notificationCtx.emitter.on(TideBitEvent.BALANCES, updateBalances), []);
-  /* Deprecated: 由 issue#419 處理，留著做為參考 (20230423 - tzuhan)
   React.useMemo(() => notificationCtx.emitter.on(TideBitEvent.ORDER, updateHistories), []);
+  React.useMemo(() => notificationCtx.emitter.on(TideBitEvent.BALANCES, updateBalances), []);
   */
+
+  const updateBalanceHandler = (updateBalance: IBalance) => {
+    if (balancesRef.current) {
+      const updatedBalances = [...balancesRef.current];
+      const index = balancesRef.current.findIndex(obj => obj.currency === updateBalance.currency);
+      if (index !== -1) {
+        const updatedBalance = {
+          ...balancesRef.current[index],
+          ...updateBalance,
+        };
+        updatedBalances[index] = updatedBalance;
+      } else updatedBalances.push(updateBalance);
+      setBalances(updatedBalances);
+    }
+  };
+
+  const updateCFDHandler = (updateCFD: ICFDOrder) => {
+    let updatedCFDs: ICFDOrder[] = [];
+    if (openCFDsRef.current) {
+      updatedCFDs = [...openCFDsRef.current];
+    }
+    if (closedCFDsRef.current) {
+      updatedCFDs = [...closedCFDsRef.current];
+    }
+    const index = updatedCFDs.findIndex(obj => obj.id === updateCFD.id);
+    if (index !== -1) {
+      updatedCFDs[index] = updateCFD;
+    } else {
+      updatedCFDs.push(updateCFD);
+    }
+    const openCFDs = updatedCFDs.filter(obj => obj.state === OrderState.OPENING);
+    const closedCFDs = updatedCFDs.filter(obj => obj.state === OrderState.CLOSED);
+    setOpenedCFDs(openCFDs);
+    setClosedCFDs(closedCFDs);
+  };
+
+  const updateHistoryHandler = () => {
+    // TODO: update history (20230502 - tzuhan)
+  };
+
+  React.useMemo(() => notificationCtx.emitter.on(Events.BALANCE, updateBalanceHandler), []);
+  React.useMemo(() => notificationCtx.emitter.on(Events.CFD, updateCFDHandler), []);
+  React.useMemo(() => notificationCtx.emitter.on(Events.BALANCE, updateHistoryHandler), []);
+
   React.useMemo(
     () => notificationCtx.emitter.on(TideBitEvent.UPDATE_READ_NOTIFICATIONS, readNotifications),
     []

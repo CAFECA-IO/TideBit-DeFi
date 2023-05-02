@@ -1,4 +1,5 @@
 import React, {createContext, useRef, useContext} from 'react';
+import keccak from '@cafeca/keccak';
 import useState from 'react-usestateref';
 import {formatAPIRequest, FormatedTypeRequest, TypeRequest} from '../constants/api_request';
 
@@ -10,6 +11,7 @@ import Pusher from 'pusher-js';
 import {NotificationContext} from './notification_context';
 import {
   IPusherData,
+  IPusherPrivateData,
   PusherAction,
   PusherChannel,
 } from '../interfaces/tidebit_defi_background/pusher_data';
@@ -114,18 +116,20 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
     }
   };
 
-  // TODO: when user login, register user to pusher (未開票)(20230424 - tzuhan)
   const subscribeUser = (address: string) => {
     if (pusherWorkerRef.current) {
-      const channel = pusherWorkerRef.current?.subscribe(PusherChannel.PRIVATE_CHANNEL);
-      channel.bind(Events.ACCOUNT, (pusherData: IPusherData) => {
-        const {action, data} = pusherData;
+      const channelName = `${PusherChannel.PRIVATE_CHANNEL}-${keccak
+        .keccak256(address.toLowerCase().replace(`0x`, ``))
+        .slice(0, 8)}`;
+      const channel = pusherWorkerRef.current?.subscribe(channelName);
+      channel.bind(Events.BALANCE, (data: IPusherPrivateData) => {
+        notificationCtx.emitter.emit(Events.BALANCE, data);
       });
-      channel.bind(Events.ORDER, (pusherData: IPusherData) => {
-        const {action, data} = pusherData;
+      channel.bind(Events.CFD, (data: IPusherPrivateData) => {
+        notificationCtx.emitter.emit(Events.CFD, data);
       });
-      channel.bind(Events.TRADES, (pusherData: IPusherData) => {
-        const {action, data} = pusherData;
+      channel.bind(Events.BOLT_TRANSACTION, (data: IPusherPrivateData) => {
+        notificationCtx.emitter.emit(Events.BOLT_TRANSACTION, data);
       });
     }
   };

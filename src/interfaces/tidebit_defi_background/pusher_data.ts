@@ -1,9 +1,15 @@
+import {IBalance} from './balance';
 import {ICandlestick} from './candlestickData';
+import {ICFDOrder} from './order';
 import {ITickerData} from './ticker_data';
 
 export interface IPusherData {
   action: IPusherAction;
   data: ICandlestick | ITickerData;
+}
+
+export interface IPusherPrivateData {
+  data: IBalance | ICFDOrder;
 }
 
 export interface IPusherResponse {

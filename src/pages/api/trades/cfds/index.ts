@@ -10,6 +10,7 @@ import {
   convertApplyCreateCFDToAcceptedCFD,
   convertApplyUpdateCFDToAcceptedCFD,
 } from '../../../../interfaces/tidebit_defi_background/apply_cfd_order';
+import {randomHex} from '../../../../lib/common';
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'GET') {
@@ -19,34 +20,34 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     try {
       if (req.method === 'POST') {
         if (req.body.applyData.operation === CFDOperation.CREATE) {
-          const nodeSignature = '0x';
           const acceptedCFDOrder = convertApplyCreateCFDToAcceptedCFD(
             req.body.applyData,
             req.body.balance,
             req.body.userSignature,
-            nodeSignature
+            randomHex(32),
+            randomHex(32)
           );
           res.status(200).json(acceptedCFDOrder);
         } else res.status(500).json({error: 'Internal Server Error'});
       } else if (req.method === 'PUT') {
         if (req.body.applyData.operation === CFDOperation.CLOSE) {
-          const nodeSignature = '0x';
           const {updateCFDOrder, acceptedCFDOrder} = convertApplyCloseCFDToAcceptedCFD(
             req.body.applyData,
             req.body.openCFD,
             req.body.balance,
             req.body.userSignature,
-            nodeSignature
+            randomHex(32),
+            randomHex(32)
           );
           res.status(200).json({updateCFDOrder, acceptedCFDOrder});
         } else if (req.body.applyData.operation === CFDOperation.UPDATE) {
-          const nodeSignature = '0x';
           const {updateCFDOrder, acceptedCFDOrder} = convertApplyUpdateCFDToAcceptedCFD(
             req.body.applyData,
             req.body.openCFD,
             req.body.balance,
             req.body.userSignature,
-            nodeSignature
+            randomHex(32),
+            randomHex(32)
           );
           res.status(200).json({updateCFDOrder, acceptedCFDOrder});
         } else res.status(500).json({error: Reason[Code.INTERNAL_SERVER_ERROR]});

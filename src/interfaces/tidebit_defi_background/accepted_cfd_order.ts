@@ -29,12 +29,14 @@ export const getDummyAcceptedCreateCFDOrder = (
     locked: 0,
   };
   const dummyUserSignature = randomHex(32);
-  const dummyNodeSignature = randomHex(32);
+  const droneSignature = randomHex(32);
+  const locutusSignature = randomHex(32);
   const {acceptedCFDOrder} = convertApplyCreateCFDToAcceptedCFD(
     applyCreateCFDOrder,
     dummyBalance,
     dummyUserSignature,
-    dummyNodeSignature,
+    droneSignature,
+    locutusSignature,
     orderStatus
   );
   return acceptedCFDOrder;
@@ -50,17 +52,19 @@ export const getDummyAcceptedUpdateCFDOrder = (
   );
   const applyUpdateCFDOrder: IApplyUpdateCFDOrder = getDummyApplyUpdateCFDOrder(
     currency,
-    accpetedCreateCFDOrder.receipt.order.id
+    accpetedCreateCFDOrder.receipt.orderSnapshot.id
   );
-  const dummyBalance = accpetedCreateCFDOrder.receipt.balance;
+  const droneSignature = randomHex(32);
+  const locutusSignature = randomHex(32);
+  const dummyBalance = accpetedCreateCFDOrder.receipt.balanceSnapshot[0];
   const dummyUserSignature = randomHex(32);
-  const dummyNodeSignature = randomHex(32);
   const {acceptedCFDOrder} = convertApplyUpdateCFDToAcceptedCFD(
     applyUpdateCFDOrder,
-    accpetedCreateCFDOrder.receipt.order,
+    accpetedCreateCFDOrder.receipt.orderSnapshot,
     dummyBalance,
     dummyUserSignature,
-    dummyNodeSignature,
+    droneSignature,
+    locutusSignature,
     orderStatus
   );
   return [accpetedCreateCFDOrder, acceptedCFDOrder];
@@ -76,17 +80,19 @@ export const getDummyAcceptedCloseCFDOrder = (
   );
   const applyCloseCFDOrder: IApplyCloseCFDOrder = getDummyApplyCloseCFDOrder(
     currency,
-    accpetedCreateCFDOrder.receipt.order.id
+    accpetedCreateCFDOrder.receipt.orderSnapshot.id
   );
-  const dummyBalance = accpetedCreateCFDOrder.receipt.balance;
+  const dummyBalance = accpetedCreateCFDOrder.receipt.balanceSnapshot[0];
   const dummyUserSignature = randomHex(32);
-  const dummyNodeSignature = randomHex(32);
+  const droneSignature = randomHex(32);
+  const locutusSignature = randomHex(32);
   const {acceptedCFDOrder} = convertApplyCloseCFDToAcceptedCFD(
     applyCloseCFDOrder,
-    accpetedCreateCFDOrder.receipt.order,
+    accpetedCreateCFDOrder.receipt.orderSnapshot,
     dummyBalance,
     dummyUserSignature,
-    dummyNodeSignature,
+    droneSignature,
+    locutusSignature,
     orderStatus
   );
   return [accpetedCreateCFDOrder, acceptedCFDOrder];

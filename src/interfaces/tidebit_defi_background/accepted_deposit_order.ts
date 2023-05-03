@@ -1,4 +1,5 @@
 import {IOrderStatusUnion, OrderStatusUnion} from '../../constants/order_status_union';
+import {OrderType} from '../../constants/order_type';
 import {getTimestamp, randomHex} from '../../lib/common';
 import {IAcceptedOrder} from './accepted_order';
 import {dummyDepositOrder, IApplyDepositOrder} from './apply_deposit_order';
@@ -13,35 +14,43 @@ export const getDummyAcceptedDepositOrder = (
   currency?: string,
   orderStatus?: IOrderStatusUnion
 ): IAcceptedDepositOrder => {
-  const txid = randomHex(32);
+  const id = randomHex(20);
+  const txhash = randomHex(32);
+  const timestamp = getTimestamp();
+  const sequence = Math.ceil(Math.random() * 10000);
   const dummyAcceptedDepositOrder: IAcceptedDepositOrder = {
-    txid,
+    id,
+    orderType: OrderType.DEPOSIT,
+    sequence,
+    txhash,
     applyData: dummyDepositOrder,
     userSignature: randomHex(32),
     receipt: {
-      order: {
-        ...dummyDepositOrder,
-        /** Info: dummyDepositOrder provide all the info below (20230412 - tzuhan)
-        orderType: OrderType.DEPOSIT,
-        targetAmount: dummyDepositOrder.targetAmount,
-        decimals: dummyDepositOrder.decimals,
-        to: dummyDepositOrder.to,
-        remark: dummyDepositOrder.remark,
-        fee: dummyDepositOrder.fee,
-         */
+      txhash,
+      sequence,
+      orderSnapshot: {
         id: randomHex(20),
-        txid,
+        orderType: OrderType.DEPOSIT,
+        txhash,
         orderStatus: orderStatus ? orderStatus : OrderStatusUnion.WAITING,
         targetAsset: currency || dummyDepositOrder.targetAsset,
+        targetAmount: dummyDepositOrder.targetAmount,
+        ethereumTxHash: randomHex(32),
+        createTimestamp: timestamp,
+        updatedTimestamp: timestamp,
+        fee: 0,
       },
-      balance: {
-        currency: currency || dummyDepositOrder.targetAsset,
-        available: 100,
-        locked: dummyDepositOrder.targetAmount,
-      },
+      balanceSnapshot: [
+        {
+          currency: currency || dummyDepositOrder.targetAsset,
+          available: 100,
+          locked: dummyDepositOrder.targetAmount,
+        },
+      ],
     },
-    nodeSignature: randomHex(32),
-    createTimestamp: getTimestamp(),
+    droneSignature: randomHex(32),
+    locutusSignature: randomHex(32),
+    createTimestamp: timestamp,
   };
   return dummyAcceptedDepositOrder;
 };

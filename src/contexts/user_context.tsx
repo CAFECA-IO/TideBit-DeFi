@@ -29,7 +29,6 @@ import {IApplyWithdrawOrder} from '../interfaces/tidebit_defi_background/apply_w
 import {IAcceptedWithdrawOrder} from '../interfaces/tidebit_defi_background/accepted_withdraw_order';
 import {IAcceptedDepositOrder} from '../interfaces/tidebit_defi_background/accepted_deposit_order';
 import {APIName, Method, TypeRequest} from '../constants/api_request';
-// import SafeMath from '../lib/safe_math';
 import {Code, Reason} from '../constants/code';
 import {
   getCookieByName,
@@ -38,7 +37,6 @@ import {
   randomHex,
   rlpEncodeServiceTerm,
   verifySignedServiceTerm,
-  wait,
 } from '../lib/common';
 import {IAcceptedOrder} from '../interfaces/tidebit_defi_background/accepted_order';
 import {
@@ -50,7 +48,6 @@ import {CustomError, isCustomError} from '../lib/custom_error';
 //import {setTimeout} from 'timers/promises';
 import {IWalletExtension, WalletExtension} from '../constants/wallet_extension';
 import {Events} from '../constants/events';
-import {OrderStatusUnion} from '../constants/order_status_union';
 
 export interface IMyAssets {
   currency: string;
@@ -790,7 +787,6 @@ export const UserProvider = ({children}: IUserProvider) => {
               resultCode = Code.REJECTED_SIGNATURE;
               const signature: string = await lunar.signTypedData(transferR.data);
               const now = getTimestamp();
-
               // ToDo: Check if the quotation is expired, if so return `failed result` in `catch`. (20230414 - Shirley)
               if (applyCreateCFDOrder.quotation.deadline < now) {
                 resultCode = Code.EXPIRED_QUOTATION_FAILED;
@@ -799,27 +795,23 @@ export const UserProvider = ({children}: IUserProvider) => {
                 const error = new CustomError(resultCode);
                 throw error;
               }
-
               resultCode = Code.INTERNAL_SERVER_ERROR;
-              const {CFDOrder, acceptedCFDOrder} = (await privateRequestHandler({
+              const {balanceSnapshot, orderSnapshot: CFDOrder} = (await privateRequestHandler({
                 name: APIName.CREATE_CFD_TRADE,
                 method: Method.POST,
-                body: {applyData: applyCreateCFDOrder, balance: balance, userSignature: signature},
-              })) as {CFDOrder: ICFDOrder; acceptedCFDOrder: IAcceptedCFDOrder};
+                body: {applyData: applyCreateCFDOrder, userSignature: signature},
+              })) as {txhash: string; orderSnapshot: ICFDOrder; balanceSnapshot: IBalance};
               // TODO: extract ICFDOrder from IAcceptedCFDOrder (20230412 - tzuhan)
               setOpenedCFDs(prev => [...prev, CFDOrder]);
-              // Deprecated: not found currency (20230430 - Shirley)
-              // eslint-disable-next-line no-console
-              console.log('acceptedCFDOrder in _createCFDOrder in ctx', acceptedCFDOrder);
               resultCode = Code.FAILE_TO_UPDATE_BALANCE;
-              updateBalance(acceptedCFDOrder.receipt.balance);
-              setHistories(prev => [...prev, acceptedCFDOrder]);
+              updateBalance(balanceSnapshot);
+              // setHistories(prev => [...prev, acceptedCFDOrder]);
 
               resultCode = Code.SUCCESS;
               result = {
                 success: true,
                 code: resultCode,
-                data: {order: CFDOrder, acceptedOrder: acceptedCFDOrder},
+                data: {order: CFDOrder},
               };
             } catch (error) {
               // TODO: error handle (Tzuhan - 20230421)
@@ -898,7 +890,7 @@ export const UserProvider = ({children}: IUserProvider) => {
       if (applyCloseCFDOrder) {
         const index = openCFDs.findIndex(o => o.id === applyCloseCFDOrder.referenceId);
         if (index !== -1) {
-          const balance: IBalance | null = getBalance(openCFDs[index].targetAsset);
+          // const balance: IBalance | null = getBalance(openCFDs[index].targetAsset);
           const transferR = transactionEngine.transferCFDOrderToTransaction(applyCloseCFDOrder);
           if (transferR.success) {
             // ++ TODO: send request to chain(use Lunar?) (20230324 - tzuhan)
@@ -917,29 +909,29 @@ export const UserProvider = ({children}: IUserProvider) => {
               }
 
               resultCode = Code.INTERNAL_SERVER_ERROR;
-              const {updateCFDOrder, acceptedCFDOrder} = (await privateRequestHandler({
-                name: APIName.CLOSE_CFD_TRADE,
-                method: Method.PUT,
-                body: {
-                  applyData: applyCloseCFDOrder,
-                  openCFD: openCFDs[index], // Deprecated: remove when backend is ready (20230424 - tzuhan)
-                  balance,
-                  userSignature: signature,
-                },
-              })) as {updateCFDOrder: ICFDOrder; acceptedCFDOrder: IAcceptedCFDOrder};
+              const {balanceSnapshot, orderSnapshot: updateCFDOrder} = (await privateRequestHandler(
+                {
+                  name: APIName.CLOSE_CFD_TRADE,
+                  method: Method.PUT,
+                  body: {
+                    applyData: applyCloseCFDOrder,
+                    userSignature: signature,
+                  },
+                }
+              )) as {txhash: string; orderSnapshot: ICFDOrder; balanceSnapshot: IBalance};
               const newOpenedCFDs = [...openCFDs];
               newOpenedCFDs.splice(index, 1);
               setOpenedCFDs(newOpenedCFDs);
               setClosedCFDs(prev => [...prev, updateCFDOrder]);
               resultCode = Code.FAILE_TO_UPDATE_BALANCE;
-              updateBalance(acceptedCFDOrder.receipt.balance);
-              setHistories(prev => [...prev, acceptedCFDOrder]);
+              updateBalance(balanceSnapshot);
+              // setHistories(prev => [...prev, acceptedCFDOrder]);
 
               resultCode = Code.SUCCESS;
               result = {
                 success: true,
                 code: resultCode,
-                data: {order: updateCFDOrder, acceptedOrder: acceptedCFDOrder},
+                data: {order: updateCFDOrder},
               };
             } catch (error) {
               // TODO: error handle (Tzuhan - 20230421)
@@ -1025,7 +1017,7 @@ export const UserProvider = ({children}: IUserProvider) => {
               const signature: string = await lunar.signTypedData(transferR.data);
 
               resultCode = Code.INTERNAL_SERVER_ERROR;
-              const {updateCFDOrder, acceptedCFDOrder} = (await privateRequestHandler({
+              const {orderSnapshot: updateCFDOrder} = (await privateRequestHandler({
                 name: APIName.UPDATE_CFD_TRADE,
                 method: Method.PUT,
                 body: {
@@ -1033,17 +1025,17 @@ export const UserProvider = ({children}: IUserProvider) => {
                   userSignature: signature,
                   openCFD: openCFDs[index], // Deprecated: remove when backend is ready (20230424 - tzuhan)
                 },
-              })) as {updateCFDOrder: ICFDOrder; acceptedCFDOrder: IAcceptedCFDOrder};
+              })) as {txhash: string; orderSnapshot: ICFDOrder; balanceSnapshot: IBalance};
               const updateCFDOrders = [...openCFDs];
               updateCFDOrders[index] = updateCFDOrder;
               setOpenedCFDs(updateCFDOrders);
-              setHistories(prev => [...prev, acceptedCFDOrder]);
+              // setHistories(prev => [...prev, acceptedCFDOrder]);
 
               resultCode = Code.SUCCESS;
               result = {
                 success: true,
                 code: resultCode,
-                data: {order: updateCFDOrder, acceptedOrder: acceptedCFDOrder},
+                data: {order: updateCFDOrder},
               };
             } catch (error) {
               // TODO: error handle (Tzuhan - 20230421)
@@ -1068,7 +1060,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     }
   };
 
-  const deposit = async (depositOrder: IApplyDepositOrder): Promise<IResult> => {
+  const deposit = async (applyDepositOrder: IApplyDepositOrder): Promise<IResult> => {
     let result: IResult = defaultResultFailed;
     let resultCode = Code.UNKNOWN_ERROR;
 
@@ -1080,26 +1072,30 @@ export const UserProvider = ({children}: IUserProvider) => {
       if (walletBalance && walletBalance.balance >= depositOrder.targetAmount) {
       const transaction: {to: string; amount: number; data: string} =
         transactionEngine.transferDepositOrderToTransaction(depositOrder);
-      const txid = await lunar.send(transaction);
+      const txhash = await lunar.send(transaction);
       // TODO: updateWalletBalances
       // */
-        const txid = randomHex(32);
+        const txhash = randomHex(32);
 
         resultCode = Code.INTERNAL_SERVER_ERROR;
-        const acceptedDepositOrder = (await privateRequestHandler({
+        const {balanceSnapshot, orderSnapshot: depositOrder} = (await privateRequestHandler({
           name: APIName.CREATE_DEPOSIT_TRADE,
           method: Method.POST,
-          body: {applyData: depositOrder, txid, balance: getBalance(depositOrder.targetAsset)},
-        })) as IAcceptedDepositOrder;
-        setDeposits(prev => [...prev, acceptedDepositOrder.receipt.order]);
-        updateBalance(acceptedDepositOrder.receipt.balance);
-        setHistories(prev => [...prev, acceptedDepositOrder]);
+          body: {
+            applyData: applyDepositOrder,
+            txhash,
+            balance: getBalance(applyDepositOrder.targetAsset),
+          },
+        })) as {txhash: string; orderSnapshot: IDepositOrder; balanceSnapshot: IBalance};
+        setDeposits(prev => [...prev, depositOrder]);
+        updateBalance(balanceSnapshot);
+        // setHistories(prev => [...prev, acceptedDepositOrder]);
 
         resultCode = Code.SUCCESS;
         result = {
           success: true,
           code: resultCode,
-          data: acceptedDepositOrder,
+          data: {order: depositOrder},
         };
       } catch (error) {
         // TODO: error handle (Tzuhan - 20230421)
@@ -1111,7 +1107,7 @@ export const UserProvider = ({children}: IUserProvider) => {
       return result;
     } else {
       const isConnected = await connect();
-      if (isConnected) return deposit(depositOrder);
+      if (isConnected) return deposit(applyDepositOrder);
       else {
         resultCode = Code.WALLET_IS_NOT_CONNECT;
         result.code = resultCode;
@@ -1121,14 +1117,14 @@ export const UserProvider = ({children}: IUserProvider) => {
     }
   };
 
-  const withdraw = async (withdrawOrder: IApplyWithdrawOrder): Promise<IResult> => {
+  const withdraw = async (applyWithdrawOrder: IApplyWithdrawOrder): Promise<IResult> => {
     let result: IResult = defaultResultFailed;
     let resultCode = Code.UNKNOWN_ERROR;
 
     if (lunar.isConnected) {
-      const balance: IBalance | null = getBalance(withdrawOrder.targetAsset); // TODO: ticker is not currency
-      if (balance && balance.available >= withdrawOrder.targetAmount) {
-        const transferR = transactionEngine.transferWithdrawOrderToTransaction(withdrawOrder);
+      const balance: IBalance | null = getBalance(applyWithdrawOrder.targetAsset); // TODO: ticker is not currency
+      if (balance && balance.available >= applyWithdrawOrder.targetAmount) {
+        const transferR = transactionEngine.transferWithdrawOrderToTransaction(applyWithdrawOrder);
         if (transferR.success) {
           // ++ TODO: send request to chain(use Lunar?) (20230324 - tzuhan)
           try {
@@ -1136,24 +1132,24 @@ export const UserProvider = ({children}: IUserProvider) => {
             const signature: string = await lunar.signTypedData(transferR.data);
 
             resultCode = Code.INTERNAL_SERVER_ERROR;
-            const acceptedWithdrawOrder = (await privateRequestHandler({
+            const {balanceSnapshot, orderSnapshot: withdrawOrder} = (await privateRequestHandler({
               name: APIName.CREATE_WITHDRAW_TRADE,
               method: Method.POST,
               body: {
-                applyData: withdrawOrder,
+                applyData: applyWithdrawOrder,
                 userSignature: signature,
-                balance: getBalance(withdrawOrder.targetAsset),
+                balance: getBalance(applyWithdrawOrder.targetAsset),
               },
-            })) as IAcceptedWithdrawOrder;
-            setWithdraws(prev => [...prev, acceptedWithdrawOrder.receipt.order]);
-            updateBalance(acceptedWithdrawOrder.receipt.balance);
-            setHistories(prev => [...prev, acceptedWithdrawOrder]);
+            })) as {txhash: string; orderSnapshot: IWithdrawOrder; balanceSnapshot: IBalance};
+            setWithdraws(prev => [...prev, withdrawOrder]);
+            updateBalance(balanceSnapshot);
+            // setHistories(prev => [...prev, acceptedWithdrawOrder]);
 
             resultCode = Code.SUCCESS;
             result = {
               success: true,
               code: resultCode,
-              data: acceptedWithdrawOrder,
+              data: {order: withdrawOrder},
             };
           } catch (error) {
             // TODO: error handle (Tzuhan - 20230421)
@@ -1167,7 +1163,7 @@ export const UserProvider = ({children}: IUserProvider) => {
       return result;
     } else {
       await connect();
-      return withdraw(withdrawOrder);
+      return withdraw(applyWithdrawOrder);
     }
   };
 
@@ -1323,10 +1319,11 @@ export const UserProvider = ({children}: IUserProvider) => {
     setClosedCFDs(closedCFDs);
   };
 
-  const updateHistoryHandler = (history: any) => {
+  const updateHistoryHandler = (history: IAcceptedOrder) => {
     // Deprecated: when this function is finished, remove this console (20230502 - tzuhan)
     // eslint-disable-next-line no-console
     console.log(`updateHistoryHandler is called history:`, history);
+    setHistories(prev => [...prev, history]);
     // TODO: update history (20230502 - tzuhan)
   };
 

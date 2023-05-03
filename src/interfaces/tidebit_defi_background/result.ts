@@ -1,5 +1,5 @@
 import {Code, ICode, Reason} from '../../constants/code';
-import {IAcceptedCFDOrder} from './accepted_cfd_order';
+// import {IAcceptedCFDOrder} from './accepted_cfd_order';
 import {IAcceptedOrder} from './accepted_order';
 import {ICryptocurrency} from './cryptocurrency';
 import {IOrder} from './order';
@@ -16,6 +16,7 @@ export interface IResult {
     | IAcceptedOrder
     | IAcceptedOrder[]
     | {order: IOrder; acceptedOrder: IAcceptedOrder}
+    | {order: IOrder}
     | IQuotation
     | ITickerHistoryData[]
     | null;

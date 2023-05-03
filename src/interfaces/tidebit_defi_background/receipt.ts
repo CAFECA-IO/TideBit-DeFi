@@ -2,22 +2,20 @@ import {IBalance} from './balance';
 import {ICFDOrder, IDepositOrder, IOrder, IWithdrawOrder} from './order';
 
 export interface IReceipt {
-  order: IOrder;
-  balance: IBalance;
-  /**
-   *  Info: IMPORTANT!!! this balance.available is balance.available after order (20230412 - tzuhan)
-   *  Info: IMPORTANT!!! this balance.locked is balance.locked after order (20230412 - tzuhan)
-   * */
+  txhash: string;
+  sequence: number;
+  balanceSnapshot: IBalance[];
+  orderSnapshot: IOrder;
 }
 
 export interface ICFDReceipt extends IReceipt {
-  order: ICFDOrder;
+  orderSnapshot: ICFDOrder;
 }
 
 export interface IDepositReceipt extends IReceipt {
-  order: IDepositOrder;
+  orderSnapshot: IDepositOrder;
 }
 
 export interface IWithdrawReceipt extends IReceipt {
-  order: IWithdrawOrder;
+  orderSnapshot: IWithdrawOrder;
 }

@@ -242,6 +242,8 @@ export interface IGlobalContext {
   eliminateAllModals: () => void;
   eliminateToasts: (id: string) => void;
 
+  displayedToast: (id: string) => boolean;
+
   visibleUpdateFormModal: boolean;
   visibleUpdateFormModalHandler: () => void;
   dataUpdateFormModal: IDisplayCFDOrder | null;
@@ -374,6 +376,8 @@ export const GlobalContext = createContext<IGlobalContext>({
 
   eliminateAllModals: () => null,
   eliminateToasts: () => null,
+
+  displayedToast: () => false,
 
   visibleUpdateFormModal: false,
   visibleUpdateFormModalHandler: () => null,
@@ -665,65 +669,86 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
 
     switch (type) {
       case ToastType.ERROR:
-        toastify.error(isLoadingMessage, {
-          toastId: isToastId,
-          icon: (
-            <div className="-ml-12 inline-flex items-center justify-center text-lightRed">
-              <FaRegTimesCircle className="h-15px w-15px" />
-              <span className="ml-2">{typeText}</span>
-            </div>
-          ),
-          bodyClassName: `${toastBodyStyle} before:bg-lightRed`,
-          autoClose: autoClose ?? 3000,
-          closeOnClick: modalReOpenData ? false : true,
-          onClick: modalReOpenHandler,
-        });
-        break;
+        try {
+          toastify.error(isLoadingMessage, {
+            toastId: isToastId,
+            icon: (
+              <div className="-ml-12 inline-flex items-center justify-center text-lightRed">
+                <FaRegTimesCircle className="h-15px w-15px" />
+                <span className="ml-2">{typeText}</span>
+              </div>
+            ),
+            bodyClassName: `${toastBodyStyle} before:bg-lightRed`,
+            autoClose: autoClose ?? 3000,
+            closeOnClick: modalReOpenData ? false : true,
+            onClick: modalReOpenHandler,
+          });
+          break;
+        } catch (error) {
+          // eslint-disable-next-line no-console
+          console.log(error);
+        }
       case ToastType.WARNING:
-        toastify.warning(isLoadingMessage, {
-          toastId: isToastId,
-          icon: (
-            <div className="-ml-12 inline-flex items-center justify-center text-lightYellow2">
-              <ImWarning className="h-15px w-15px " />
-              <span className="ml-2">{typeText}</span>
-            </div>
-          ),
-          bodyClassName: `${toastBodyStyle} before:bg-lightYellow2`,
-          autoClose: autoClose ?? 3000,
-          closeOnClick: modalReOpenData ? false : true,
-          onClick: modalReOpenHandler,
-        });
-        break;
+        try {
+          toastify.warning(isLoadingMessage, {
+            toastId: isToastId,
+            icon: (
+              <div className="-ml-12 inline-flex items-center justify-center text-lightYellow2">
+                <ImWarning className="h-15px w-15px " />
+                <span className="ml-2">{typeText}</span>
+              </div>
+            ),
+            bodyClassName: `${toastBodyStyle} before:bg-lightYellow2`,
+            autoClose: autoClose ?? 3000,
+            closeOnClick: modalReOpenData ? false : true,
+            onClick: modalReOpenHandler,
+          });
+          break;
+        } catch (error) {
+          // eslint-disable-next-line no-console
+          console.log(error);
+        }
       case ToastType.INFO:
-        toastify.info(isLoadingMessage, {
-          toastId: isToastId,
-          icon: (
-            <div className="-ml-12 inline-flex items-center justify-center text-tidebitTheme">
-              <ImInfo className="h-15px w-15px" />
-              <span className="ml-2">{typeText}</span>
-            </div>
-          ),
-          bodyClassName: `${toastBodyStyle} before:bg-tidebitTheme`,
-          autoClose: autoClose ?? 3000,
-          closeOnClick: modalReOpenData ? false : true,
-          onClick: modalReOpenHandler,
-        });
-        break;
+        try {
+          toastify.info(isLoadingMessage, {
+            toastId: isToastId,
+            icon: (
+              <div className="-ml-12 inline-flex items-center justify-center text-tidebitTheme">
+                <ImInfo className="h-15px w-15px" />
+                <span className="ml-2">{typeText}</span>
+              </div>
+            ),
+            bodyClassName: `${toastBodyStyle} before:bg-tidebitTheme`,
+            autoClose: autoClose ?? 3000,
+            closeOnClick: modalReOpenData ? false : true,
+            onClick: modalReOpenHandler,
+          });
+          break;
+        } catch (error) {
+          // eslint-disable-next-line no-console
+          console.log(error);
+        }
+
       case ToastType.SUCCESS:
-        toastify.success(isLoadingMessage, {
-          toastId: isToastId,
-          icon: (
-            <div className="-ml-12 inline-flex items-center justify-center text-lightGreen5">
-              <FaRegCheckCircle className="h-15px w-15px" />
-              <span className="ml-2">{typeText}</span>
-            </div>
-          ),
-          bodyClassName: `${toastBodyStyle} before:bg-lightGreen5`,
-          autoClose: autoClose ?? 3000,
-          closeOnClick: modalReOpenData ? false : true,
-          onClick: modalReOpenHandler,
-        });
-        break;
+        try {
+          toastify.success(isLoadingMessage, {
+            toastId: isToastId,
+            icon: (
+              <div className="-ml-12 inline-flex items-center justify-center text-lightGreen5">
+                <FaRegCheckCircle className="h-15px w-15px" />
+                <span className="ml-2">{typeText}</span>
+              </div>
+            ),
+            bodyClassName: `${toastBodyStyle} before:bg-lightGreen5`,
+            autoClose: autoClose ?? 3000,
+            closeOnClick: modalReOpenData ? false : true,
+            onClick: modalReOpenHandler,
+          });
+          break;
+        } catch (error) {
+          // eslint-disable-next-line no-console
+          console.log(error);
+        }
       default:
         return;
     }
@@ -779,6 +804,10 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     } else {
       toastify?.dismiss(id);
     }
+  };
+
+  const displayedToast = (id: string) => {
+    return toastify?.isActive(id);
   };
 
   const visibleUpdateFormModalHandler = () => {
@@ -1063,6 +1092,8 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
 
     eliminateAllModals,
     eliminateToasts,
+
+    displayedToast,
 
     visibleUpdateFormModal,
     visibleUpdateFormModalHandler,

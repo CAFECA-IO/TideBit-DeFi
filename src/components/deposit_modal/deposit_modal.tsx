@@ -46,7 +46,9 @@ const DepositModal = ({
 
   const regex = /^\d*\.?\d{0,2}$/;
 
-  /* Info: (20230427 - Julian) toastId by minimizedModal */
+  /* Info: (20230427 - Julian) toastId by minimizedModal
+   * ToDo: (20230427 - Julian) 改良取得id的方式
+   */
   const toastId = `${t('D_W_MODAL.DEPOSIT')}_LoadingModalMinimized`;
 
   const cryptoMenuClickHandler = () => {
@@ -64,6 +66,16 @@ const DepositModal = ({
 
   // TODO: send deposit request
   const submitClickHandler = async () => {
+    if (globalCtx.displayedToast(toastId) || globalCtx.visibleLoadingModal) {
+      globalCtx.dataWarningModalHandler({
+        title: t('POSITION_MODAL.WARNING_UNFINISHED_TITLE'),
+        content: t('POSITION_MODAL.WARNING_UNFINISHED_CONTENT'),
+        numberOfButton: 1,
+        reactionOfButton: t('POSITION_MODAL.WARNING_OK_BUTTON'),
+      });
+      globalCtx.visibleWarningModalHandler();
+    }
+
     if (amountInput === 0 || amountInput === undefined) {
       return;
     }

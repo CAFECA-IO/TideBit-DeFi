@@ -760,26 +760,6 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
         return;
     }
   };
-  /* 
-  const toast = ({
-    type,
-    message,
-    toastId,
-    autoClose,
-    isLoading,
-    typeText,
-    modalReOpenData,
-  }: IToastify) => {
-    toastHandler({
-      type: type,
-      message: message,
-      toastId: toastId,
-      autoClose: autoClose,
-      isLoading: isLoading,
-      typeText: typeText,
-      modalReOpenData: modalReOpenData,
-    });
-  }; */
 
   const eliminateAllModals = () => {
     setVisibleDepositModal(false);

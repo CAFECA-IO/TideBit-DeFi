@@ -556,9 +556,6 @@ export const UserProvider = ({children}: IUserProvider) => {
       };
       const verifyR: boolean = lunar.verifyTypedData(serviceTermContract, `0x${signature}`);
       isDeWTLegit = isDeWTLegit && verifyR;
-
-      // eslint-disable-next-line no-console
-      console.log(`isDeWTLegit`, isDeWTLegit);
     }
     if (!isDeWTLegit) {
       clearPrivateData();
@@ -1286,6 +1283,9 @@ export const UserProvider = ({children}: IUserProvider) => {
   */
 
   const updateBalanceHandler = (updateBalance: IBalance) => {
+    // Deprecated: when this function is finished, remove this console (20230502 - tzuhan)
+    // eslint-disable-next-line no-console
+    console.log(`updateBalanceHandler is called updateBalance:`, updateBalance);
     if (balancesRef.current) {
       const updatedBalances = [...balancesRef.current];
       const index = balancesRef.current.findIndex(obj => obj.currency === updateBalance.currency);
@@ -1301,6 +1301,9 @@ export const UserProvider = ({children}: IUserProvider) => {
   };
 
   const updateCFDHandler = (updateCFD: ICFDOrder) => {
+    // Deprecated: when this function is finished, remove this console (20230502 - tzuhan)
+    // eslint-disable-next-line no-console
+    console.log(`updateCFDHandler is called updateCFD:`, updateCFD);
     let updatedCFDs: ICFDOrder[] = [];
     if (openCFDsRef.current) {
       updatedCFDs = [...openCFDsRef.current];
@@ -1320,7 +1323,10 @@ export const UserProvider = ({children}: IUserProvider) => {
     setClosedCFDs(closedCFDs);
   };
 
-  const updateHistoryHandler = () => {
+  const updateHistoryHandler = (history: any) => {
+    // Deprecated: when this function is finished, remove this console (20230502 - tzuhan)
+    // eslint-disable-next-line no-console
+    console.log(`updateHistoryHandler is called history:`, history);
     // TODO: update history (20230502 - tzuhan)
   };
 

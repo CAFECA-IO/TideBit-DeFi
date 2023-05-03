@@ -1,6 +1,8 @@
+// CustomQRCode.tsx
+import React, {useEffect, useState} from 'react';
 import QRCode, {QRCodeToDataURLOptions} from 'qrcode';
 
-export async function generateQRCodeWithStyledEyeBorders(text: string): Promise<string> {
+async function generateQRCodeWithStyledEyeBorders(text: string): Promise<string> {
   const options = {
     type: 'svg',
     color: {
@@ -9,9 +11,7 @@ export async function generateQRCodeWithStyledEyeBorders(text: string): Promise<
     },
   };
 
-  const svgString = await QRCode.toString(text, {
-    type: 'svg',
-  });
+  const svgString = await QRCode.toString(text, {type: 'svg'});
 
   const parser = new DOMParser();
   const svgDocument = parser.parseFromString(svgString, 'image/svg+xml');
@@ -47,11 +47,24 @@ function styleEyeBorders(svgElement: Element): void {
   });
 }
 
-// Usage
-generateQRCodeWithStyledEyeBorders('https://www.example.com')
-  .then(styledSvgString => {
-    // console.log(styledSvgString);
-  })
-  .catch(error => {
-    // console.error('Error:', error);
-  });
+interface CustomQRCodeProps {
+  text: string;
+}
+
+const CustomQRCode: React.FC<CustomQRCodeProps> = ({text}) => {
+  const [svgString, setSvgString] = useState('');
+
+  useEffect(() => {
+    generateQRCodeWithStyledEyeBorders(text)
+      .then(styledSvgString => {
+        setSvgString(styledSvgString);
+      })
+      .catch(error => {
+        // console.error('Error:', error);
+      });
+  }, [text]);
+
+  return <div dangerouslySetInnerHTML={{__html: svgString}} style={{width: 100, height: 100}} />;
+};
+
+export default CustomQRCode;

@@ -6,8 +6,9 @@ import {TypeOfBorderColor} from '../../constants/display';
 import QRCode from 'qrcode';
 import useStateRef from 'react-usestateref';
 import QRCodeLib from 'qrcode';
-import {qrRender} from '../../lib/qrCodeGenerator';
-import QrCodeSvg from './qr_code_svg';
+import {qrRender} from '../../lib/qrCodeGeneratorTest1';
+import {generateQRCodeWithStyledEyeBorders} from '../../lib/qrCodeGenerator';
+import CustomQRCode from './custom_qr_code';
 
 interface IRecordSharingBoxProps {
   // TODO: accept props from globalContext (20230502 - Shirley)
@@ -24,6 +25,7 @@ const RecordSharingBox = ({
   boxRef,
   boxClickHandler: modalClickHandler,
 }: IRecordSharingBoxProps) => {
+  const url = `https://tidebit-defi.com/`;
   const [qrcode, setQrcode, qrcodeRef] = useStateRef<string>('');
   const opts = {
     errorCorrectionLevel: 'H',
@@ -46,28 +48,15 @@ const RecordSharingBox = ({
           quality: 1,
         },
       });
-      const qrCreated = QRCode.create(text, {
-        errorCorrectionLevel: 'H',
-        // type: 'image/jpeg',
-        // margin: 3,
-        // rendererOpts: {
-        //   quality: 1,
-        // },
-      });
 
-      // QRCode.toCanvas(
-      //   qrCreated
-      //   //   , (err: any, canvas: any) => {
-      //   //   if (err) throw err;
-      //   //   console.log('canvas', canvas);
-      //   // }
-      // );
+      const qrDIY = await generateQRCodeWithStyledEyeBorders(text);
 
       const qrSvg = qrRender(QRCode.create(text), {color: 'colored'});
       setQrcode(qr);
       // console.log('qrCreated', qrCreated);
       // console.log('qrSvg', qrSvg);
       // console.log('qr', qr);
+      // console.log('qrDIY', qrDIY);
     } catch (err) {
       // console.error(err);
     }
@@ -146,13 +135,14 @@ const RecordSharingBox = ({
               <div className="pl-370px pt-5">
                 {qrcodeRef.current && (
                   <>
-                    <Image
+                    <CustomQRCode text={url} />
+                    {/* <Image
                       className="rounded-xl"
                       src={qrcodeRef.current}
                       width={100}
                       height={100}
                       alt="QR Code"
-                    />
+                    /> */}
 
                     {/* <QrCodeSvg /> */}
                   </>
@@ -165,10 +155,24 @@ const RecordSharingBox = ({
                   height={100}
                 /> */}
               </div>
+              <div>
+                {/* <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 33 33"
+                  shape-rendering="crispEdges"
+                >
+                  <path fill="#ffffff" d="M0 0h33v33H0z" />
+                  <path
+                    stroke="#000000"
+                    d="M4 4.5h7m1 0h2m1 0h1m1 0h2m3 0h7M4 5.5h1m5 0h1m1 0h3m2 0h1m4 0h1m5 0h1M4 6.5h1m1 0h3m1 0h1m1 0h1m2 0h1m1 0h3m2 0h1m1 0h3m1 0h1M4 7.5h1m1 0h3m1 0h1m2 0h1m1 0h3m2 0h1m1 0h1m1 0h3m1 0h1M4 8.5h1m1 0h3m1 0h1m1 0h1m1 0h2m2 0h1m1 0h1m1 0h1m1 0h3m1 0h1M4 9.5h1m5 0h1m3 0h2m1 0h2m3 0h1m5 0h1M4 10.5h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7M15 11.5h1m1 0h2m1 0h1M4 12.5h1m2 0h8m3 0h1m1 0h2m2 0h1m1 0h3M4 13.5h1m1 0h1m1 0h1m3 0h1m1 0h1m2 0h4m2 0h5M5 14.5h2m1 0h1m1 0h3m1 0h2m2 0h2m1 0h1m2 0h2m2 0h1M4 15.5h3m1 0h2m2 0h1m1 0h1m3 0h1m3 0h2m1 0h4M6 16.5h1m3 0h1m1 0h2m1 0h2m1 0h2m2 0h1m5 0h1M4 17.5h1m1 0h3m3 0h2m4 0h3m3 0h1m2 0h1M4 18.5h2m1 0h1m2 0h1m3 0h3m1 0h2m1 0h2m1 0h5M4 19.5h1m4 0h1m3 0h3m2 0h1m1 0h1m1 0h2m1 0h2m1 0h1M4 20.5h1m5 0h4m2 0h2m2 0h5m1 0h2M12 21.5h2m1 0h2m3 0h1m3 0h1m1 0h2M4 22.5h7m1 0h4m2 0h1m1 0h1m1 0h1m1 0h1m3 0h1M4 23.5h1m5 0h1m1 0h1m2 0h1m1 0h1m1 0h2m3 0h1m2 0h2M4 24.5h1m1 0h3m1 0h1m1 0h2m1 0h2m1 0h7M4 25.5h1m1 0h3m1 0h1m1 0h1m2 0h4m2 0h2m4 0h2M4 26.5h1m1 0h3m1 0h1m2 0h3m1 0h1m1 0h1m1 0h1m2 0h5M4 27.5h1m5 0h1m4 0h1m2 0h1m3 0h3m1 0h3M4 28.5h7m1 0h1m1 0h1m1 0h1m3 0h1m1 0h1m2 0h1m2 0h1"
+                  />
+                </svg> */}
+              </div>
             </div>
           </div>
         </div>
       </div>
+
       <div className="fixed inset-0 z-40 bg-black opacity-25"></div>
     </>
   ) : null;

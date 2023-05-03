@@ -1,8 +1,13 @@
 import Image from 'next/image';
-import React from 'react';
+import React, {useEffect} from 'react';
 import {IDisplayCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
 import {IAcceptedCFDOrder} from '../../interfaces/tidebit_defi_background/accepted_cfd_order';
 import {TypeOfBorderColor} from '../../constants/display';
+import QRCode from 'qrcode';
+import useStateRef from 'react-usestateref';
+import QRCodeLib from 'qrcode';
+import {qrRender} from '../../lib/qrCodeGenerator';
+import QrCodeSvg from './qr_code_svg';
 
 interface IRecordSharingBoxProps {
   // TODO: accept props from globalContext (20230502 - Shirley)
@@ -19,6 +24,59 @@ const RecordSharingBox = ({
   boxRef,
   boxClickHandler: modalClickHandler,
 }: IRecordSharingBoxProps) => {
+  const [qrcode, setQrcode, qrcodeRef] = useStateRef<string>('');
+  const opts = {
+    errorCorrectionLevel: 'H',
+    type: 'image/jpeg',
+    quality: 0.3,
+    margin: 1,
+    color: {
+      dark: '#010599FF',
+      light: '#FFBF60FF',
+    },
+  };
+
+  const generateQR = async (text: string) => {
+    try {
+      const qr = await QRCode.toDataURL(text, {
+        errorCorrectionLevel: 'H',
+        type: 'image/jpeg',
+        margin: 3,
+        rendererOpts: {
+          quality: 1,
+        },
+      });
+      const qrCreated = QRCode.create(text, {
+        errorCorrectionLevel: 'H',
+        // type: 'image/jpeg',
+        // margin: 3,
+        // rendererOpts: {
+        //   quality: 1,
+        // },
+      });
+
+      // QRCode.toCanvas(
+      //   qrCreated
+      //   //   , (err: any, canvas: any) => {
+      //   //   if (err) throw err;
+      //   //   console.log('canvas', canvas);
+      //   // }
+      // );
+
+      const qrSvg = qrRender(QRCode.create(text), {color: 'colored'});
+      setQrcode(qr);
+      // console.log('qrCreated', qrCreated);
+      // console.log('qrSvg', qrSvg);
+      // console.log('qr', qr);
+    } catch (err) {
+      // console.error(err);
+    }
+  };
+
+  useEffect(() => {
+    generateQR('https://tidebit-defi.com/');
+  }, []);
+
   const displayedBorderColor = TypeOfBorderColor.LONG;
   const displayedTextColor = 'text-lightGreen5';
   const isDisplayedModal = boxVisible ? (
@@ -86,13 +144,26 @@ const RecordSharingBox = ({
               </div>
 
               <div className="pl-370px pt-5">
-                <Image
+                {qrcodeRef.current && (
+                  <>
+                    <Image
+                      className="rounded-xl"
+                      src={qrcodeRef.current}
+                      width={100}
+                      height={100}
+                      alt="QR Code"
+                    />
+
+                    {/* <QrCodeSvg /> */}
+                  </>
+                )}
+                {/* <Image
                   className=""
                   alt="QR Code"
                   src="/elements/tidebit_qrcode.png"
                   width={100}
                   height={100}
-                />
+                /> */}
               </div>
             </div>
           </div>

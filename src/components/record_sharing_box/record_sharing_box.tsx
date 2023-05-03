@@ -1,6 +1,9 @@
 import Image from 'next/image';
 import React, {useEffect} from 'react';
-import {IDisplayCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
+import {
+  IDisplayCFDOrder,
+  ISharingOrder,
+} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
 import {IAcceptedCFDOrder} from '../../interfaces/tidebit_defi_background/accepted_cfd_order';
 import {TypeOfBorderColor, UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
 import QRCode from 'qrcode';
@@ -21,7 +24,7 @@ import {useGlobal} from '../../contexts/global_context';
  * CFD order 的 owner
  */
 interface IRecordSharingBoxProps {
-  order: IDisplayCFDOrder;
+  order: ISharingOrder;
   qrcodeUrl?: string;
   boxVisible: boolean;
   boxRef?: React.RefObject<HTMLDivElement>;
@@ -77,6 +80,8 @@ const RecordSharingBox = ({
     generateQRCode(url);
     // console.log('cfd in box', order);
   }, []);
+
+  const displayedUsername = order.owner.slice(-1).toUpperCase();
 
   const displayedTypeOfPosition =
     order.typeOfPosition === TypeOfPosition.BUY
@@ -134,7 +139,9 @@ const RecordSharingBox = ({
                   <div className="flex flex-col justify-center text-center">
                     {/* Info: Avatar (20230502 - Shirley) */}
                     <div className="relative mx-auto inline-flex h-28 w-28 items-center justify-center overflow-hidden rounded-full bg-tidebitTheme text-center">
-                      <span className="text-5xl font-bold text-lightWhite">J</span>
+                      <span className="text-5xl font-bold text-lightWhite">
+                        {displayedUsername}
+                      </span>
                     </div>
                     {/* Info: PNL percentage (20230502 - Shirley) */}
                     <div className={`text-5xl font-extrabold ${displayedTextColor} mt-5 mb-3`}>

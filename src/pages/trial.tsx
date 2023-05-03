@@ -39,10 +39,9 @@ const Trial = () => {
     }
   }, []);
 
+  // TODO: Download png test (20230503 - Shirley)
   useEffect(() => {
     setMounted(true);
-    // convertHTMLToImage()
-    // console.log('useEffect', recordSharingBoxRef);
 
     if (recordSharingBoxRef.current === null) {
       return;
@@ -51,7 +50,7 @@ const Trial = () => {
     const png = toPng(recordSharingBoxRef.current, {cacheBust: true})
       .then(dataUrl => {
         const link = document.createElement('a');
-        link.download = 'TideBit_DeFi_Record.png';
+        link.download = 'TideBit_DeFi_Record_202305050022.png';
         link.href = dataUrl;
         link.click();
       })
@@ -64,17 +63,6 @@ const Trial = () => {
   const modalClickHandler = () => {
     setModalVisible(!modalVisible);
   };
-
-  const order = toDisplayCFDOrder(
-    getDummyAcceptedCloseCFDOrder(Currency.BTC, OrderStatusUnion.SUCCESS)[1].receipt.order,
-    []
-  );
-
-  // const handleDownloadClick = async () => {
-  //   if (recordSharingBoxRef.current) {
-  //     // await convertHTMLToImage(recordSharingBoxRef.current, 'record-sharing-box.jpeg');
-  //   }
-  // };
 
   const handleDownloadClick = useCallback(() => {
     if (recordSharingBoxRef.current === null) {
@@ -100,15 +88,13 @@ const Trial = () => {
       {appCtx.isInit ? (
         <div className="w-full space-y-10 bg-transparent">
           <RecordSharingBox
-            // order={order}
             innerRef={recordSharingBoxRef}
             order={marketCtx.sharingOrder}
-            // qrcodeUrl="https://tidebit-defi.com/trial"
             boxRef={tickerBoxRef}
             boxVisible={tickerBoxVisible}
             boxClickHandler={modalClickHandler}
           />
-          <button onClick={handleDownloadClick}>Download as JPEG</button>
+          {/* <button onClick={handleDownloadClick}>Download as JPEG</button> */}
         </div>
       ) : (
         <div>Loading...</div>

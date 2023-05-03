@@ -80,6 +80,8 @@ const CryptoCard = ({
         type: ToastTypeAndText.INFO.type,
         message: 'Please login to add to favorites',
         typeText: t(ToastTypeAndText.INFO.text),
+        autoClose: 3000,
+        isLoading: false,
       });
     }
 

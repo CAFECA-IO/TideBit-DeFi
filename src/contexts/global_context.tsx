@@ -70,8 +70,8 @@ export interface IToastify {
   type: IToastType;
   message: string;
   toastId?: string | number; // Prevent duplicate toast
-  autoClose?: number | false;
-  isLoading?: boolean;
+  autoClose: number | false;
+  isLoading: boolean;
   typeText: string;
   modalReOpenData?: IProcessDataModal;
 }
@@ -642,16 +642,11 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     const toastBodyStyle =
       'text-lightWhite text-sm lg:whitespace-nowrap px-4 before:block before:absolute before:-left-1 before:w-2 before:h-50px';
 
-    const isToastId = toastId ?? type + message;
+    const isToastId = toastId ? toastId : type + message;
 
-    const isLoadingMessage = isLoading ? (
-      <div className="inline-flex">
-        {message}
-        <Lottie className="ml-2 w-20px" animationData={smallConnectingAnimation} />
-      </div>
-    ) : (
-      <>{message}</>
-    );
+    const isAutoClose = autoClose ? autoClose : false;
+
+    const isCloseOnClick = modalReOpenData ? false : true;
 
     const modalReOpenHandler = modalReOpenData
       ? () => {
@@ -663,69 +658,105 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
           toastify.dismiss(isToastId);
         };
 
-    switch (type) {
-      case ToastType.ERROR:
-        toastify.error(isLoadingMessage, {
-          toastId: isToastId,
-          icon: (
-            <div className="-ml-12 inline-flex items-center justify-center text-lightRed">
-              <FaRegTimesCircle className="h-15px w-15px" />
-              <span className="ml-2">{typeText}</span>
-            </div>
-          ),
-          bodyClassName: `${toastBodyStyle} before:bg-lightRed`,
-          autoClose: autoClose ?? 3000,
-          closeOnClick: modalReOpenData ? false : true,
-          onClick: modalReOpenHandler,
-        });
-        break;
-      case ToastType.WARNING:
-        toastify.warning(isLoadingMessage, {
-          toastId: isToastId,
-          icon: (
-            <div className="-ml-12 inline-flex items-center justify-center text-lightYellow2">
-              <ImWarning className="h-15px w-15px " />
-              <span className="ml-2">{typeText}</span>
-            </div>
-          ),
-          bodyClassName: `${toastBodyStyle} before:bg-lightYellow2`,
-          autoClose: autoClose ?? 3000,
-          closeOnClick: modalReOpenData ? false : true,
-          onClick: modalReOpenHandler,
-        });
-        break;
-      case ToastType.INFO:
-        toastify.info(isLoadingMessage, {
-          toastId: isToastId,
-          icon: (
-            <div className="-ml-12 inline-flex items-center justify-center text-tidebitTheme">
-              <ImInfo className="h-15px w-15px" />
-              <span className="ml-2">{typeText}</span>
-            </div>
-          ),
-          bodyClassName: `${toastBodyStyle} before:bg-tidebitTheme`,
-          autoClose: autoClose ?? 3000,
-          closeOnClick: modalReOpenData ? false : true,
-          onClick: modalReOpenHandler,
-        });
-        break;
-      case ToastType.SUCCESS:
-        toastify.success(isLoadingMessage, {
-          toastId: isToastId,
-          icon: (
-            <div className="-ml-12 inline-flex items-center justify-center text-lightGreen5">
-              <FaRegCheckCircle className="h-15px w-15px" />
-              <span className="ml-2">{typeText}</span>
-            </div>
-          ),
-          bodyClassName: `${toastBodyStyle} before:bg-lightGreen5`,
-          autoClose: autoClose ?? 3000,
-          closeOnClick: modalReOpenData ? false : true,
-          onClick: modalReOpenHandler,
-        });
-        break;
-      default:
-        return;
+    try {
+      switch (type) {
+        case ToastType.ERROR:
+          toastify.error(
+            <div className="inline-flex">
+              {message}
+              {isLoading ? (
+                <Lottie className="ml-2 w-20px" animationData={smallConnectingAnimation} />
+              ) : null}
+            </div>,
+            {
+              toastId: isToastId,
+              icon: (
+                <div className="-ml-12 inline-flex items-center justify-center text-lightRed">
+                  <FaRegTimesCircle className="h-15px w-15px" />
+                  <span className="ml-2">{typeText}</span>
+                </div>
+              ),
+              bodyClassName: `${toastBodyStyle} before:bg-lightRed`,
+              autoClose: isAutoClose,
+              closeOnClick: isCloseOnClick,
+              onClick: modalReOpenHandler,
+            }
+          );
+          break;
+        case ToastType.WARNING:
+          toastify.warning(
+            <div className="inline-flex">
+              {message}
+              {isLoading ? (
+                <Lottie className="ml-2 w-20px" animationData={smallConnectingAnimation} />
+              ) : null}
+            </div>,
+            {
+              toastId: isToastId,
+              icon: (
+                <div className="-ml-12 inline-flex items-center justify-center text-lightYellow2">
+                  <ImWarning className="h-15px w-15px " />
+                  <span className="ml-2">{typeText}</span>
+                </div>
+              ),
+              bodyClassName: `${toastBodyStyle} before:bg-lightYellow2`,
+              autoClose: isAutoClose,
+              closeOnClick: isCloseOnClick,
+              onClick: modalReOpenHandler,
+            }
+          );
+          break;
+        case ToastType.INFO:
+          toastify.info(
+            <div className="inline-flex">
+              {message}
+              {isLoading ? (
+                <Lottie className="ml-2 w-20px" animationData={smallConnectingAnimation} />
+              ) : null}
+            </div>,
+            {
+              toastId: isToastId,
+              icon: (
+                <div className="-ml-12 inline-flex items-center justify-center text-tidebitTheme">
+                  <ImInfo className="h-15px w-15px" />
+                  <span className="ml-2">{typeText}</span>
+                </div>
+              ),
+              bodyClassName: `${toastBodyStyle} before:bg-tidebitTheme`,
+              autoClose: isAutoClose,
+              closeOnClick: isCloseOnClick,
+              onClick: modalReOpenHandler,
+            }
+          );
+          break;
+        case ToastType.SUCCESS:
+          toastify.success(
+            <div className="inline-flex">
+              {message}
+              {isLoading ? (
+                <Lottie className="ml-2 w-20px" animationData={smallConnectingAnimation} />
+              ) : null}
+            </div>,
+            {
+              toastId: isToastId,
+              icon: (
+                <div className="-ml-12 inline-flex items-center justify-center text-lightGreen5">
+                  <FaRegCheckCircle className="h-15px w-15px" />
+                  <span className="ml-2">{typeText}</span>
+                </div>
+              ),
+              bodyClassName: `${toastBodyStyle} before:bg-lightGreen5`,
+              autoClose: isAutoClose,
+              closeOnClick: isCloseOnClick,
+              onClick: modalReOpenHandler,
+            }
+          );
+          break;
+        default:
+          return;
+      }
+    } catch (error) {
+      throw error;
     }
   };
 
@@ -775,9 +806,9 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
   const eliminateToasts = (id: string) => {
     /* Info: (20230426 - Julian) remove toasts by toastId, or 'all' for remove all  */
     if (id === 'all') {
-      toastify?.dismiss();
+      toastify.dismiss();
     } else {
-      toastify?.dismiss(id);
+      toastify.dismiss(id);
     }
   };
 
@@ -811,21 +842,6 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
   const dataWithdrawalHistoryModalHandler = (data: IAcceptedWithdrawOrder) => {
     setDataWithdrawalHistoryModal(data);
   };
-  /* Till: (20230503 - Julian) */
-  // const zoomOutLoadingModal = () => {
-  //   visibleLoadingModalHandler();
-
-  //   if (visibleLoadingModal) {
-  //     toast({
-  //       type: ToastType.INFO,
-  //       message:
-  //         '[TODO] Pending toast which cannot be closed manually and automatically unless the process is finished',
-  //       toastId: 'loadingModalClosed',
-  //       autoClose: false,
-  //       typeText: 'Pending',
-  //     });
-  //   }
-  // };
 
   const visibleLoadingModalHandler = () => {
     // TODO: (20230317 - Shirley) loading toast
@@ -1301,6 +1317,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
 
       {/* Info: One toast container avoids duplicate toast overlaying */}
       <Toast />
+
       {children}
     </GlobalContext.Provider>
   );

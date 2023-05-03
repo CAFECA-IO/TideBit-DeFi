@@ -18,7 +18,7 @@ const Toast = () => {
         pauseOnHover
         theme="dark"
         limit={10}
-        closeButton={<ImCross className="w-12px text-lightGray2" />}
+        closeButton={() => <ImCross className="w-12px text-lightGray2" />}
         toastClassName={toastClassName}
       />
     </div>

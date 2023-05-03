@@ -13,8 +13,6 @@ import User from '../user/user';
 import {useGlobal} from '../../contexts/global_context';
 import {NotificationContext} from '../../contexts/notification_context';
 import {TBDURL} from '../../constants/api_request';
-import {wait} from '../../lib/common';
-import {DELAYED_HIDDEN_SECONDS} from '../../constants/display';
 import {WalletConnectButton} from '../wallet_connect_button/wallet_connect_button';
 
 type TranslateFunction = (s: string) => string;

@@ -14,6 +14,7 @@ import {
   PusherChannel,
 } from '../interfaces/tidebit_defi_background/pusher_data';
 import {ICandlestick} from '../interfaces/tidebit_defi_background/candlestickData';
+import {getCookieByName} from '../lib/common';
 
 type IJobType = 'API' | 'WS';
 
@@ -154,9 +155,12 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
       channelAuthorization: {
         transport: 'jsonp',
         endpoint: `${process.env.PUSHER_API}/pusher/auth`,
-        // headers: {
-        //   deWT,
-        // },
+        headers: {
+          deWT: getCookieByName('DeWT'),
+        },
+        params: {
+          deWT: getCookieByName('DeWT'),
+        },
       },
     });
     setPuser(pusher);

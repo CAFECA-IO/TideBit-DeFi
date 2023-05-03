@@ -1,5 +1,4 @@
 import IEIP712Data from '../../interfaces/ieip712data';
-import {getTimestamp} from '../../lib/common';
 
 const ServiceTerm: IEIP712Data = {
   domain: {
@@ -27,7 +26,6 @@ const ServiceTerm: IEIP712Data = {
     to: 'TideBit-DeFi',
     */
     domain: 'https://www.tidebit-defi.com',
-    version: '',
     agree: [
       'https://www.tidebit-defi.com/term_of_service/{hash}',
       'https://www.tidebit-defi.com/private_policy/{hash}',
@@ -57,7 +55,6 @@ const ServiceTerm: IEIP712Data = {
     */
     ServiceTerm: [
       {name: 'domain', type: 'string'},
-      {name: 'version', type: 'string'},
       {name: 'agree', type: 'string[2]'},
       {name: 'signer', type: 'string'},
       {name: 'expired', type: 'uint256'},

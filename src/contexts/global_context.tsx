@@ -634,7 +634,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     setColorMode(colorMode === 'light' ? 'dark' : 'light');
   };
 
-  const toastHandler = ({
+  const toast = ({
     type,
     message,
     toastId,
@@ -682,9 +682,11 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
             autoClose: autoClose ?? 3000,
             closeOnClick: modalReOpenData ? false : true,
             onClick: modalReOpenHandler,
+            delay: 150,
           });
           break;
         } catch (error) {
+          /* Till (20230510 - Julian) debug */
           // eslint-disable-next-line no-console
           console.log(error);
         }
@@ -702,9 +704,11 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
             autoClose: autoClose ?? 3000,
             closeOnClick: modalReOpenData ? false : true,
             onClick: modalReOpenHandler,
+            delay: 150,
           });
           break;
         } catch (error) {
+          /* Till (20230510 - Julian) debug */
           // eslint-disable-next-line no-console
           console.log(error);
         }
@@ -722,13 +726,14 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
             autoClose: autoClose ?? 3000,
             closeOnClick: modalReOpenData ? false : true,
             onClick: modalReOpenHandler,
+            delay: 150,
           });
           break;
         } catch (error) {
+          /* Till (20230510 - Julian) debug */
           // eslint-disable-next-line no-console
           console.log(error);
         }
-
       case ToastType.SUCCESS:
         try {
           toastify.success(isLoadingMessage, {
@@ -743,9 +748,11 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
             autoClose: autoClose ?? 3000,
             closeOnClick: modalReOpenData ? false : true,
             onClick: modalReOpenHandler,
+            delay: 150,
           });
           break;
         } catch (error) {
+          /* Till (20230510 - Julian) debug */
           // eslint-disable-next-line no-console
           console.log(error);
         }
@@ -753,7 +760,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
         return;
     }
   };
-
+  /* 
   const toast = ({
     type,
     message,
@@ -772,7 +779,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
       typeText: typeText,
       modalReOpenData: modalReOpenData,
     });
-  };
+  }; */
 
   const eliminateAllModals = () => {
     setVisibleDepositModal(false);
@@ -840,30 +847,8 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
   const dataWithdrawalHistoryModalHandler = (data: IAcceptedWithdrawOrder) => {
     setDataWithdrawalHistoryModal(data);
   };
-  /* Till: (20230503 - Julian) */
-  // const zoomOutLoadingModal = () => {
-  //   visibleLoadingModalHandler();
-
-  //   if (visibleLoadingModal) {
-  //     toast({
-  //       type: ToastType.INFO,
-  //       message:
-  //         '[TODO] Pending toast which cannot be closed manually and automatically unless the process is finished',
-  //       toastId: 'loadingModalClosed',
-  //       autoClose: false,
-  //       typeText: 'Pending',
-  //     });
-  //   }
-  // };
 
   const visibleLoadingModalHandler = () => {
-    // TODO: (20230317 - Shirley) loading toast
-    // if (bool) {
-    //   console.log('in global context, visibileLoadingModalHandler: ', bool);
-    //   setVisibleLoadingModal(bool);
-    //   return;
-    // }
-
     setVisibleLoadingModal(!visibleLoadingModal);
   };
 

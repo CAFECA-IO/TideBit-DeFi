@@ -4,6 +4,8 @@ import {getDummyApplyCreateCFDOrder} from './apply_create_cfd_order';
 import {convertApplyCreateCFDToAcceptedCFD} from './apply_cfd_order';
 import {randomHex, toDisplayCFDOrder} from '../../lib/common';
 import {ICFDOrder} from './order';
+import {OrderStatusUnion} from '../../constants/order_status_union';
+import {getDummyAcceptedCloseCFDOrder} from './accepted_cfd_order';
 
 export interface IDisplayCFDOrder extends ICFDOrder {
   pnl: IPnL;
@@ -12,6 +14,10 @@ export interface IDisplayCFDOrder extends ICFDOrder {
   positionLineGraph: number[];
   suggestion: ICFDSuggestion;
   stateCode: number;
+}
+
+export interface ISharingOrder extends IDisplayCFDOrder {
+  owner: string;
 }
 
 export const getDummyDisplayCFDOrder = (currency: string) => {
@@ -35,4 +41,25 @@ export const listDummyDisplayCFDOrder = (currency: string) => {
   const count = 10;
   const list = new Array(count).fill(0).map(() => getDummyDisplayCFDOrder(currency));
   return list;
+};
+
+export const getDummySharingCFDOrder = (currency: string) => {
+  const dummyApplyCloseCFDOrder = getDummyApplyCreateCFDOrder(currency);
+  // const dummyApplyCloseCFDOrder = getDummyAcceptedCloseCFDOrder(currency, OrderStatusUnion.SUCCESS);
+  const {CFDOrder} = convertApplyCreateCFDToAcceptedCFD(
+    dummyApplyCloseCFDOrder,
+    {currency, available: 10, locked: 0},
+    randomHex(32),
+    randomHex(32)
+  );
+  const dummyPositionLineGraph: number[] = [90, 72, 60, 65, 42, 25, 32, 20, 15, 32, 90, 10];
+  CFDOrder.openPrice = dummyPositionLineGraph[0];
+  const dummyDisplayCFDOrder: IDisplayCFDOrder = toDisplayCFDOrder(
+    CFDOrder,
+    dummyPositionLineGraph
+  );
+  CFDOrder.closePrice = dummyPositionLineGraph[dummyPositionLineGraph.length - 1];
+  const displayedOrder = toDisplayCFDOrder(CFDOrder, dummyPositionLineGraph);
+  const dummySharingCFDOrder: ISharingOrder = {...displayedOrder, owner: '0x123a'};
+  return dummySharingCFDOrder;
 };

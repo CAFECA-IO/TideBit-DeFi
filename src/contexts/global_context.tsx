@@ -22,7 +22,6 @@ import PositionClosedModal from '../components/position_closed_modal/position_cl
 import PositionUpdatedModal from '../components/position_updated_modal/position_updated_modal';
 import HistoryPositionModal from '../components/history_position_modal/history_position_modal';
 import WarningModal from '../components/warning_modal/warning_modal';
-import {IPnL} from '../interfaces/tidebit_defi_background/pnl';
 import {ProfitState} from '../constants/profit_state';
 import {OrderType} from '../constants/order_type';
 import {OrderStatusUnion} from '../constants/order_status_union';

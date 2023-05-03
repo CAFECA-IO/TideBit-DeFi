@@ -16,7 +16,8 @@ export type ICode =
   | '40230001'
   | '10110001'
   | '40230002'
-  | '90000001';
+  | '90000001'
+  | '10120001';
 
 export type ICodeConstant = {
   SUCCESS: ICode;
@@ -37,6 +38,7 @@ export type ICodeConstant = {
   LOCK_PROCEDURE_WRONG: ICode;
   FAILE_TO_UPDATE_BALANCE: ICode;
   UNKNOWN_ERROR_IN_COMPONENT: ICode;
+  CANNOT_FIND_CHAIN_BY_CURRENCY: ICode;
 };
 
 export type IReason = {
@@ -51,6 +53,7 @@ export const Code: ICodeConstant = {
   LOCK_PROCEDURE_WRONG: '10110001',
   FUNCTION_NOT_IMPLEMENTED: '10210001',
   CANNOT_GET_QUOTATION_FROM_CONTEXT: '10110002',
+  CANNOT_FIND_CHAIN_BY_CURRENCY: '10120001', // Info: 分享時，公鏈的名稱找不到 (20230503 - Shirley)
 
   ORDER_NOT_OPENING: '30110001',
   INVAILD_ORDER_INPUTS: '30420001',
@@ -58,7 +61,7 @@ export const Code: ICodeConstant = {
   EXPIRED_QUOTATION_FAILED: '30410003',
   INVAILD_INPUTS: '30410004',
 
-  BALANCE_NOT_FOUND: '40230001', // 1. 用戶嘗試攻擊 2. 我們程式碼嚴重缺陷
+  BALANCE_NOT_FOUND: '40230001', // Info: 1. 用戶嘗試攻擊 2. 我們程式碼嚴重缺陷 (20230503 - Shirley)
   FAILE_TO_UPDATE_BALANCE: '40230002',
   WALLET_IS_NOT_CONNECT: '40430001',
   SERVICE_TERM_DISABLE: '40430002',
@@ -73,6 +76,7 @@ export const Reason: IReason = {
   '10110001': 'Lock procedure wrong',
   '10210001': 'Function not implemented',
   '10110002': 'Cannot get quotation from context',
+  '10120001': '',
 
   '30110001': 'Order is not opening',
   '30420001': 'Invalid order inputs',

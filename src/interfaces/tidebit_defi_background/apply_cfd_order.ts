@@ -3,7 +3,7 @@ import {OrderState} from '../../constants/order_state';
 import {IOrderStatusUnion, OrderStatusUnion} from '../../constants/order_status_union';
 import {ProfitState} from '../../constants/profit_state';
 import {TypeOfPosition} from '../../constants/type_of_position';
-import {getTimestamp, randomHex} from '../../lib/common';
+import {getTimestamp, randomHex, roundToDecimalPlaces} from '../../lib/common';
 import {IAcceptedCFDOrder} from './accepted_cfd_order';
 import {IApplyCloseCFDOrder} from './apply_close_cfd_order';
 import {IApplyCreateCFDOrder} from './apply_create_cfd_order';
@@ -113,6 +113,7 @@ export const convertApplyCloseCFDToAcceptedCFD = (
     (applyCFDData.closePrice - cfdOrder.openPrice) *
     cfdOrder.amount *
     (cfdOrder.typeOfPosition === TypeOfPosition.BUY ? 1 : -1);
+  const pnlPercent = roundToDecimalPlaces(pnl / (cfdOrder.openPrice * cfdOrder.amount), 2);
   const balanceDiff = {
     currency: balance.currency,
     available: balance.available * -1 + pnl,
@@ -130,6 +131,7 @@ export const convertApplyCloseCFDToAcceptedCFD = (
     pnl: {
       type: pnl > 0 ? ProfitState.PROFIT : ProfitState.LOSS,
       value: pnl,
+      percent: pnlPercent,
     },
   };
   const acceptedCFDOrder: IAcceptedCFDOrder = {

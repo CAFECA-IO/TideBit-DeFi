@@ -278,7 +278,7 @@ const PositionUpdatedModal = ({
 
   const displayedPositionColor = 'text-tidebitTheme';
 
-  const displayedBorderColor = TypeOfBorderColor.NORMAL;
+  const displayedBorderColor = TypeOfBorderColor.EQUAL;
 
   const layoutInsideBorder = 'mx-5 my-2 flex justify-between';
 

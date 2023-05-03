@@ -17,6 +17,7 @@ import {
   getTimestamp,
   twoDecimal,
   getTimestampInMilliseconds,
+  roundToDecimalPlaces,
 } from '../../lib/common';
 import {useContext, useEffect, useState} from 'react';
 import {MarketContext} from '../../contexts/market_context';
@@ -137,10 +138,10 @@ const PositionClosedModal = ({
 
   const displayedBorderColor =
     openCfdDetails?.pnl.type === ProfitState.PROFIT
-      ? TypeOfBorderColor.LONG
+      ? TypeOfBorderColor.PROFIT
       : openCfdDetails?.pnl.type === ProfitState.LOSS
-      ? TypeOfBorderColor.SHORT
-      : TypeOfBorderColor.NORMAL;
+      ? TypeOfBorderColor.LOSS
+      : TypeOfBorderColor.EQUAL;
 
   const displayedPositionColor = 'text-tidebitTheme';
 
@@ -153,12 +154,13 @@ const PositionClosedModal = ({
     const nowValue = quotation.price * cfd.amount;
     const pnlSoFar =
       cfd.typeOfPosition === TypeOfPosition.BUY ? nowValue - openValue : openValue - nowValue;
-
+    const pnlPercent = roundToDecimalPlaces((pnlSoFar / openValue) * 100, 2);
     return {
       ...cfd,
       pnl: {
         type: pnlSoFar > 0 ? ProfitState.PROFIT : ProfitState.LOSS,
         value: Math.abs(pnlSoFar),
+        percent: Math.abs(pnlPercent),
       },
     };
   };
@@ -199,9 +201,12 @@ const PositionClosedModal = ({
       cfd.typeOfPosition === TypeOfPosition.BUY
         ? twoDecimal(closeValue - openValue)
         : twoDecimal(openValue - closeValue);
+
+    const pnlPercent = twoDecimal((pnlValue / openValue) * 100);
     const pnl: IPnL = {
       type: pnlValue > 0 ? ProfitState.PROFIT : pnlValue < 0 ? ProfitState.LOSS : ProfitState.EQUAL,
       value: Math.abs(pnlValue),
+      percent: Math.abs(pnlPercent),
     };
 
     const positionLineGraph = [100, 100]; // TODO: (20230316 - Shirley) from `marketCtx`

@@ -1,6 +1,6 @@
 {
   "name": "src",
-  "version": "0.1.0+88.2",
+  "version": "0.1.0+88.3",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -24,6 +24,7 @@
     "apexcharts": "^3.37.1",
     "bignumber.js": "^9.1.1",
     "ethers": "^5.7.2",
+    "html-to-image": "^1.11.11",
     "i18next": "^22.4.5",
     "lightweight-charts": "^4.0.1",
     "lottie-react": "^2.3.1",

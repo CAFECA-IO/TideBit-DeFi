@@ -137,9 +137,9 @@ export const TypeOfPnLColor = {
 };
 
 export const TypeOfBorderColor = {
-  LONG: 'border-lightGreen5',
-  SHORT: 'border-lightRed',
-  NORMAL: 'border-lightWhite',
+  PROFIT: 'border-lightGreen5',
+  LOSS: 'border-lightRed',
+  EQUAL: 'border-lightWhite',
 };
 
 export const TypeOfTransaction = {

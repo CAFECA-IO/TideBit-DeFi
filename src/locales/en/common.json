@@ -296,5 +296,14 @@
     "WARNING": "Warning",
     "INFO": "Info",
     "PROGRESSING_MESSAGE": "is still in progress, please wait..."
+  },
+  "SHARING_BOX": {
+    "TYPE_UP": "Up",
+    "TYPE_BUY": "(Buy)",
+    "TYPE_DOWN": "Down",
+    "TYPE_SELL": "(Sell)",
+    "OPEN_PRICE": "Open Price",
+    "CLOSED_PRICE": "Close Price",
+    "LEVERAGE": "Leverage"
   }
 }

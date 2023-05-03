@@ -296,5 +296,14 @@
     "WARNING": "警告",
     "INFO": "訊息",
     "PROGRESSING_MESSAGE": "處理中，請稍候..."
+  },
+  "SHARING_BOX": {
+    "TYPE_UP": "看漲",
+    "TYPE_BUY": "(買入)",
+    "TYPE_DOWN": "看跌",
+    "TYPE_SELL": "(賣出)",
+    "OPEN_PRICE": "開盤價格",
+    "CLOSED_PRICE": "收盤價格",
+    "LEVERAGE": "槓杆"
   }
 }

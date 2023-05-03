@@ -77,10 +77,10 @@ const HistoryPositionModal = ({
 
   const displayedBorderColor =
     closedCfdDetails?.pnl.type === 'PROFIT'
-      ? TypeOfBorderColor.LONG
+      ? TypeOfBorderColor.PROFIT
       : closedCfdDetails?.pnl.type === 'LOSS'
-      ? TypeOfBorderColor.SHORT
-      : TypeOfBorderColor.NORMAL;
+      ? TypeOfBorderColor.LOSS
+      : TypeOfBorderColor.EQUAL;
 
   const displayedPositionState =
     closedCfdDetails.state === OrderState.OPENING

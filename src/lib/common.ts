@@ -25,7 +25,7 @@ import {ICFDOrder} from '../interfaces/tidebit_defi_background/order';
 import {Currency, ICurrency, ICurrencyConstant} from '../constants/currency';
 import {CustomError} from './custom_error';
 import {Code} from '../constants/code';
-import {IQuotation} from '../interfaces/tidebit_defi_background/quotation';
+import {toJpeg} from 'html-to-image';
 
 export const roundToDecimalPlaces = (val: number, precision: number): number => {
   const roundedNumber = Number(val.toFixed(precision));
@@ -254,7 +254,14 @@ export const toDisplayCFDOrder = (
     cfdOrder.state === OrderState.CLOSED && cfdOrder.closePrice
       ? roundToDecimalPlaces(cfdOrder.closePrice * cfdOrder.amount, 2)
       : 0;
-  const currentValue = roundToDecimalPlaces(Number(currentPrice) * cfdOrder.amount, 2);
+  const currentValue = currentPrice
+    ? roundToDecimalPlaces(Number(currentPrice) * cfdOrder.amount, 2)
+    : positionLineGraph.length > 0
+    ? roundToDecimalPlaces(
+        Number(positionLineGraph[positionLineGraph.length - 1]) * cfdOrder.amount,
+        2
+      )
+    : roundToDecimalPlaces(Number(cfdOrder.openPrice) * cfdOrder.amount, 2);
   const pnl =
     cfdOrder.state === OrderState.CLOSED && cfdOrder.closePrice
       ? roundToDecimalPlaces(
@@ -265,6 +272,7 @@ export const toDisplayCFDOrder = (
           (currentValue - openValue) * (cfdOrder.typeOfPosition === TypeOfPosition.BUY ? 1 : -1),
           2
         );
+  const pnlPerncent = roundToDecimalPlaces((pnl / openValue) * 100, 2);
   const rTp =
     cfdOrder.typeOfPosition === TypeOfPosition.BUY
       ? twoDecimal(cfdOrder.openPrice * (1 + SUGGEST_TP / cfdOrder.leverage))
@@ -303,6 +311,7 @@ export const toDisplayCFDOrder = (
     pnl: {
       type: pnl > 0 ? ProfitState.PROFIT : ProfitState.LOSS,
       value: Math.abs(pnl),
+      percent: Math.abs(pnlPerncent),
     },
     openValue: openValue,
     closeValue: closeValue,
@@ -453,4 +462,24 @@ export function findCurrencyByCode(code: string): ICurrency | undefined {
   }
 
   return undefined;
+}
+
+export function getChainNameByCurrency(
+  currency: ICurrency,
+  tradingData: {
+    currency: ICurrency;
+    chain: string;
+    star: boolean;
+    starred: boolean;
+    tokenImg: string;
+    tradingVolume: string;
+  }[]
+) {
+  const foundCurrency = tradingData.find(item => item.currency === currency);
+
+  if (foundCurrency && !!foundCurrency.chain) {
+    return foundCurrency.chain;
+  } else {
+    throw new CustomError(Code.CANNOT_FIND_CHAIN_BY_CURRENCY);
+  }
 }

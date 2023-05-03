@@ -2,43 +2,59 @@ import Image from 'next/image';
 import React, {useEffect} from 'react';
 import {IDisplayCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
 import {IAcceptedCFDOrder} from '../../interfaces/tidebit_defi_background/accepted_cfd_order';
-import {TypeOfBorderColor} from '../../constants/display';
+import {TypeOfBorderColor, UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
 import QRCode from 'qrcode';
 import useStateRef from 'react-usestateref';
-import QRCodeLib from 'qrcode';
-import {qrRender} from '../../lib/qrCodeGeneratorTest1';
-import {generateQRCodeWithStyledEyeBorders} from '../../lib/qrCodeGenerator';
-import CustomQRCode from './custom_qr_code';
+import {getChainNameByCurrency, toDisplayCFDOrder} from '../../lib/common';
+import {ICFDOrder} from '../../interfaces/tidebit_defi_background/order';
+import {ProfitState} from '../../constants/profit_state';
+import {TranslateFunction} from '../../interfaces/tidebit_defi_background/locale';
+import {useTranslation} from 'react-i18next';
+import {TypeOfPosition} from '../../constants/type_of_position';
+import {DOMAIN, TRADING_CRYPTO_DATA} from '../../constants/config';
+import {ICurrency} from '../../constants/currency';
+import {useGlobal} from '../../contexts/global_context';
 
+/**
+ *    TODO:  (20230502 - Shirley)
+ * PNL = (1 / entryPrice - 1 / exitPrice) * amount 百分比
+ * CFD order 的 owner
+ */
 interface IRecordSharingBoxProps {
-  // TODO: accept props from globalContext (20230502 - Shirley)
-  // ticker: string;
-  // user: string;
-  // cfd: IAcceptedCFDOrder;
+  order: IDisplayCFDOrder;
+  qrcodeUrl?: string;
   boxVisible: boolean;
-  boxRef: React.RefObject<HTMLDivElement>;
+  boxRef?: React.RefObject<HTMLDivElement>;
   boxClickHandler: () => void;
+  innerRef?: React.RefObject<HTMLDivElement>;
 }
 
 const RecordSharingBox = ({
+  innerRef,
+  order,
+  qrcodeUrl,
   boxVisible = true,
   boxRef,
   boxClickHandler: modalClickHandler,
+  ...otherProps
 }: IRecordSharingBoxProps) => {
-  const url = `https://tidebit-defi.com/`;
-  const [qrcode, setQrcode, qrcodeRef] = useStateRef<string>('');
-  const opts = {
-    errorCorrectionLevel: 'H',
-    type: 'image/jpeg',
-    quality: 0.3,
-    margin: 1,
-    color: {
-      dark: '#010599FF',
-      light: '#FFBF60FF',
-    },
-  };
+  const {t}: {t: TranslateFunction} = useTranslation('common');
+  const globalCtx = useGlobal();
 
-  const generateQR = async (text: string) => {
+  const url = qrcodeUrl ? qrcodeUrl : DOMAIN;
+  const [qrcode, setQrcode, qrcodeRef] = useStateRef<string>('');
+
+  let displayedChain = '';
+
+  try {
+    displayedChain = getChainNameByCurrency(order.ticker as ICurrency, TRADING_CRYPTO_DATA);
+  } catch (e) {
+    // TODO: Error handling (20230503 - Shirley)
+    // eslint-disable-next-line no-console
+    console.error(e);
+  }
+
+  const generateQRCode = async (text: string) => {
     try {
       const qr = await QRCode.toDataURL(text, {
         errorCorrectionLevel: 'H',
@@ -49,32 +65,44 @@ const RecordSharingBox = ({
         },
       });
 
-      const qrDIY = await generateQRCodeWithStyledEyeBorders(text);
-
-      const qrSvg = qrRender(QRCode.create(text), {color: 'colored'});
       setQrcode(qr);
-      // console.log('qrCreated', qrCreated);
-      // console.log('qrSvg', qrSvg);
-      // console.log('qr', qr);
-      // console.log('qrDIY', qrDIY);
     } catch (err) {
-      // console.error(err);
+      // TODO: handle error (20230503 - Shirley)
+      // eslint-disable-next-line no-console
+      console.error(`Generate qr code, ${err}`);
     }
   };
 
   useEffect(() => {
-    generateQR('https://tidebit-defi.com/');
+    generateQRCode(url);
+    // console.log('cfd in box', order);
   }, []);
 
-  const displayedBorderColor = TypeOfBorderColor.LONG;
-  const displayedTextColor = 'text-lightGreen5';
+  const displayedTypeOfPosition =
+    order.typeOfPosition === TypeOfPosition.BUY
+      ? `${t('SHARING_BOX.TYPE_UP')} ${t('SHARING_BOX.TYPE_BUY')}`
+      : `${t('SHARING_BOX.TYPE_DOWN')} ${t('SHARING_BOX.TYPE_SELL')}`;
+
+  const displayedBorderColor =
+    order.pnl.type === ProfitState.PROFIT ? TypeOfBorderColor.PROFIT : TypeOfBorderColor.LOSS;
+  const displayedTextColor =
+    order.pnl.type === ProfitState.PROFIT
+      ? 'text-lightGreen5'
+      : order.pnl.type === ProfitState.LOSS
+      ? 'text-lightRed3'
+      : '';
+
+  const displayedPnLSymbol =
+    order.pnl.type === ProfitState.PROFIT ? '⬆' : order.pnl.type === ProfitState.LOSS ? '⬇' : '';
+
   const isDisplayedModal = boxVisible ? (
     <>
       <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">
         <div ref={boxRef}>
           <div
+            ref={innerRef}
             style={{
-              backgroundImage: `url('/elements/group_15214.png')`,
+              backgroundImage: `url('/elements/group_15214@2x.png')`,
               backgroundSize: 'cover',
               backgroundPosition: 'center',
               width: 600,
@@ -86,11 +114,16 @@ const RecordSharingBox = ({
               <div className="flex items-center space-x-5">
                 {' '}
                 <div className="flex items-center space-x-4">
-                  <Image src="/asset_icon/eth.svg" width={45} height={45} alt="asset icon" />
-                  <h1 className="text-4xl font-normal">Ethereum</h1>
+                  <Image
+                    src={`/asset_icon/${order.targetAsset.toLocaleLowerCase()}.svg`}
+                    width={45}
+                    height={45}
+                    alt="asset icon"
+                  />
+                  <h1 className="text-4xl font-normal">{displayedChain}</h1>
                 </div>
                 <p className="mt-2 rounded-sm bg-white/80 px-1 text-sm font-bold text-black">
-                  Up (Buy)
+                  {displayedTypeOfPosition}
                 </p>
               </div>
 
@@ -105,27 +138,37 @@ const RecordSharingBox = ({
                     </div>
                     {/* Info: PNL percentage (20230502 - Shirley) */}
                     <div className={`text-5xl font-extrabold ${displayedTextColor} mt-5 mb-3`}>
-                      ⬆ 17%
+                      {displayedPnLSymbol} {order.pnl?.percent} %
                     </div>
                     {/* Info: CFD info (20230502 - Shirley) */}
                     <div className="flex-col space-y-2">
                       <div className="mx-5 flex justify-between text-base text-lightGray">
-                        <div className="">Open Price</div>
+                        <div className="">{t('SHARING_BOX.OPEN_PRICE')}</div>
                         <div className="flex items-end space-x-2 text-white">
-                          <p>1313.8</p>
+                          <p>
+                            {order.openPrice.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+                              minimumFractionDigits: 2,
+                              maximumFractionDigits: 2,
+                            })}
+                          </p>
                           <span className="text-xs text-lightGray">USDT</span>
                         </div>
                       </div>
                       <div className="mx-5 flex justify-between text-base text-lightGray">
-                        <div className="">Close Price</div>
+                        <div className="">{t('SHARING_BOX.CLOSED_PRICE')}</div>
                         <div className="flex items-end space-x-2 text-white">
-                          <p>1383.6</p>
+                          <p>
+                            {order?.closePrice?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+                              minimumFractionDigits: 2,
+                              maximumFractionDigits: 2,
+                            }) ?? 0}
+                          </p>
                           <span className="text-xs text-lightGray">USDT</span>
                         </div>
                       </div>
                       <div className="mx-5 flex justify-between text-base text-lightGray">
-                        <div className="">Leverage</div>
-                        <div className="flex text-white">5x</div>
+                        <div className="">{t('SHARING_BOX.LEVERAGE')}</div>
+                        <div className="flex text-white">{order.leverage}x</div>
                       </div>
                     </div>
                   </div>
@@ -135,38 +178,15 @@ const RecordSharingBox = ({
               <div className="pl-370px pt-5">
                 {qrcodeRef.current && (
                   <>
-                    <CustomQRCode text={url} />
-                    {/* <Image
+                    <Image
                       className="rounded-xl"
                       src={qrcodeRef.current}
                       width={100}
                       height={100}
                       alt="QR Code"
-                    /> */}
-
-                    {/* <QrCodeSvg /> */}
+                    />
                   </>
                 )}
-                {/* <Image
-                  className=""
-                  alt="QR Code"
-                  src="/elements/tidebit_qrcode.png"
-                  width={100}
-                  height={100}
-                /> */}
-              </div>
-              <div>
-                {/* <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 33 33"
-                  shape-rendering="crispEdges"
-                >
-                  <path fill="#ffffff" d="M0 0h33v33H0z" />
-                  <path
-                    stroke="#000000"
-                    d="M4 4.5h7m1 0h2m1 0h1m1 0h2m3 0h7M4 5.5h1m5 0h1m1 0h3m2 0h1m4 0h1m5 0h1M4 6.5h1m1 0h3m1 0h1m1 0h1m2 0h1m1 0h3m2 0h1m1 0h3m1 0h1M4 7.5h1m1 0h3m1 0h1m2 0h1m1 0h3m2 0h1m1 0h1m1 0h3m1 0h1M4 8.5h1m1 0h3m1 0h1m1 0h1m1 0h2m2 0h1m1 0h1m1 0h1m1 0h3m1 0h1M4 9.5h1m5 0h1m3 0h2m1 0h2m3 0h1m5 0h1M4 10.5h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7M15 11.5h1m1 0h2m1 0h1M4 12.5h1m2 0h8m3 0h1m1 0h2m2 0h1m1 0h3M4 13.5h1m1 0h1m1 0h1m3 0h1m1 0h1m2 0h4m2 0h5M5 14.5h2m1 0h1m1 0h3m1 0h2m2 0h2m1 0h1m2 0h2m2 0h1M4 15.5h3m1 0h2m2 0h1m1 0h1m3 0h1m3 0h2m1 0h4M6 16.5h1m3 0h1m1 0h2m1 0h2m1 0h2m2 0h1m5 0h1M4 17.5h1m1 0h3m3 0h2m4 0h3m3 0h1m2 0h1M4 18.5h2m1 0h1m2 0h1m3 0h3m1 0h2m1 0h2m1 0h5M4 19.5h1m4 0h1m3 0h3m2 0h1m1 0h1m1 0h2m1 0h2m1 0h1M4 20.5h1m5 0h4m2 0h2m2 0h5m1 0h2M12 21.5h2m1 0h2m3 0h1m3 0h1m1 0h2M4 22.5h7m1 0h4m2 0h1m1 0h1m1 0h1m1 0h1m3 0h1M4 23.5h1m5 0h1m1 0h1m2 0h1m1 0h1m1 0h2m3 0h1m2 0h2M4 24.5h1m1 0h3m1 0h1m1 0h2m1 0h2m1 0h7M4 25.5h1m1 0h3m1 0h1m1 0h1m2 0h4m2 0h2m4 0h2M4 26.5h1m1 0h3m1 0h1m2 0h3m1 0h1m1 0h1m1 0h1m2 0h5M4 27.5h1m5 0h1m4 0h1m2 0h1m3 0h3m1 0h3M4 28.5h7m1 0h1m1 0h1m1 0h1m3 0h1m1 0h1m2 0h1m2 0h1"
-                  />
-                </svg> */}
               </div>
             </div>
           </div>

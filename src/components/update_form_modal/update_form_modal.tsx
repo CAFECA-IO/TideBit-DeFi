@@ -213,10 +213,10 @@ const UpdateFormModal = ({
 
   const displayedBorderColor =
     openCfdDetails?.pnl?.type === ProfitState.PROFIT
-      ? TypeOfBorderColor.LONG
+      ? TypeOfBorderColor.PROFIT
       : openCfdDetails?.pnl?.type === ProfitState.LOSS
-      ? TypeOfBorderColor.SHORT
-      : TypeOfBorderColor.NORMAL;
+      ? TypeOfBorderColor.LOSS
+      : TypeOfBorderColor.EQUAL;
 
   const displayedColorHex =
     openCfdDetails?.pnl?.type === ProfitState.PROFIT

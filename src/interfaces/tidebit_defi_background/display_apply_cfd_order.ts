@@ -28,6 +28,7 @@ export const getDummyDisplayApplyUpdateCFDOrder = (currency: string, id?: string
     pnl: {
       type: randomIntFromInterval(1, 10) > 5 ? ProfitState.PROFIT : ProfitState.LOSS,
       value: randomIntFromInterval(1, 1000),
+      percent: randomIntFromInterval(1, 500),
     },
   };
   return dummyApplyUpdateCFDOrder;
@@ -40,6 +41,7 @@ export const getDummyDisplayApplyCloseCFDOrder = (currency: string, id?: string)
     pnl: {
       type: randomIntFromInterval(1, 10) > 5 ? ProfitState.PROFIT : ProfitState.LOSS,
       value: randomIntFromInterval(1, 1000),
+      percent: randomIntFromInterval(1, 500),
     },
   };
   return dummyApplyCloseCFDOrder;

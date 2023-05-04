@@ -71,8 +71,8 @@ export interface IToastify {
   type: IToastType;
   message: string;
   toastId?: string | number; // Prevent duplicate toast
-  autoClose?: number | false;
-  isLoading?: boolean;
+  autoClose: number | false;
+  isLoading: boolean;
   typeText: string;
   modalReOpenData?: IProcessDataModal;
 }
@@ -647,16 +647,11 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     const toastBodyStyle =
       'text-lightWhite text-sm lg:whitespace-nowrap px-4 before:block before:absolute before:-left-1 before:w-2 before:h-50px';
 
-    const isToastId = toastId ?? type + message;
+    const isToastId = toastId ? toastId : type + message;
 
-    const isLoadingMessage = isLoading ? (
-      <div className="inline-flex">
-        {message}
-        <Lottie className="ml-2 w-20px" animationData={smallConnectingAnimation} />
-      </div>
-    ) : (
-      <>{message}</>
-    );
+    const isAutoClose = autoClose ? autoClose : false;
+
+    const isCloseOnClick = modalReOpenData ? false : true;
 
     const modalReOpenHandler = modalReOpenData
       ? () => {
@@ -816,9 +811,9 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
   const eliminateToasts = (id: string) => {
     /* Info: (20230426 - Julian) remove toasts by toastId, or 'all' for remove all  */
     if (id === 'all') {
-      toastify?.dismiss();
+      toastify.dismiss();
     } else {
-      toastify?.dismiss(id);
+      toastify.dismiss(id);
     }
   };
 
@@ -1326,6 +1321,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
 
       {/* Info: One toast container avoids duplicate toast overlaying */}
       <Toast />
+
       {children}
     </GlobalContext.Provider>
   );

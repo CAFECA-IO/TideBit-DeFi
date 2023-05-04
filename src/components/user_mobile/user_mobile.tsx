@@ -24,16 +24,6 @@ const UserMobile = () => {
 
   const username = userCtx.wallet?.slice(-1).toUpperCase();
 
-  /* Info: (20230327 - Julian) Hamburger Animation */
-  const hamburgerStyles = 'opacity-100 block bg-lightWhite h-3px rounded-12px ease-in duration-300';
-  const displayedMobileNavBarLine1 = !avatarMenuVisible
-    ? 'translate-y-0 rotate-0 w-full'
-    : 'translate-y-1.5 origin-left w-3/4 -rotate-35';
-  const displayedMobileNavBarLine2 = !avatarMenuVisible ? 'translate-y-1.5 w-full' : 'w-0';
-  const displayedMobileNavBarLine3 = !avatarMenuVisible
-    ? 'translate-y-3 rotate-0 w-full'
-    : 'translate-y-0 origin-left w-3/4 rotate-35';
-
   const avatarClickHandler = () => {
     setAvatarMenuVisible(!avatarMenuVisible);
   };

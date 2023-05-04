@@ -690,9 +690,11 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
           /* Info: (20230510 - Julian) if toastify error */
           dataFailedModalHandler({
             modalTitle: 'Toastify Error',
-            modalContent: `${Reason[Code.THIRD_PARTY_LIBRARY_ERROR]} (${
+            failedTitle: 'Toastify Error',
+            failedMsg: `${Reason[Code.THIRD_PARTY_LIBRARY_ERROR]} (${
               Code.THIRD_PARTY_LIBRARY_ERROR
             })`,
+            btnMsg: 'OK',
           });
           visibleFailedModalHandler();
         }
@@ -717,9 +719,11 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
           /* Info: (20230510 - Julian) if toastify error */
           dataFailedModalHandler({
             modalTitle: 'Toastify Error',
-            modalContent: `${Reason[Code.THIRD_PARTY_LIBRARY_ERROR]} (${
+            failedTitle: 'Toastify Error',
+            failedMsg: `${Reason[Code.THIRD_PARTY_LIBRARY_ERROR]} (${
               Code.THIRD_PARTY_LIBRARY_ERROR
             })`,
+            btnMsg: 'OK',
           });
           visibleFailedModalHandler();
         }
@@ -744,9 +748,11 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
           /* Info: (20230510 - Julian) if toastify error */
           dataFailedModalHandler({
             modalTitle: 'Toastify Error',
-            modalContent: `${Reason[Code.THIRD_PARTY_LIBRARY_ERROR]} (${
+            failedTitle: 'Toastify Error',
+            failedMsg: `${Reason[Code.THIRD_PARTY_LIBRARY_ERROR]} (${
               Code.THIRD_PARTY_LIBRARY_ERROR
             })`,
+            btnMsg: 'OK',
           });
           visibleFailedModalHandler();
         }
@@ -771,9 +777,11 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
           /* Info: (20230510 - Julian) if toastify error */
           dataFailedModalHandler({
             modalTitle: 'Toastify Error',
-            modalContent: `${Reason[Code.THIRD_PARTY_LIBRARY_ERROR]} (${
+            failedTitle: 'Toastify Error',
+            failedMsg: `${Reason[Code.THIRD_PARTY_LIBRARY_ERROR]} (${
               Code.THIRD_PARTY_LIBRARY_ERROR
             })`,
+            btnMsg: 'OK',
           });
           visibleFailedModalHandler();
         }

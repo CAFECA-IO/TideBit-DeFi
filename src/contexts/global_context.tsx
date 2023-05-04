@@ -658,10 +658,6 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
       <>{message}</>
     );
 
-    const isAutoClose = autoClose ? autoClose : false;
-
-    const isCloseOnClick = modalReOpenData ? false : true;
-
     const modalReOpenHandler = modalReOpenData
       ? () => {
           setDataLoadingModal(modalReOpenData),

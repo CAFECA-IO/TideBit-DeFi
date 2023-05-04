@@ -17,7 +17,7 @@ export type ICode =
   | '10110001'
   | '40230002'
   | '90000001'
-  | '80440001';
+  | '10310001';
 
 export type ICodeConstant = {
   SUCCESS: ICode;
@@ -69,7 +69,7 @@ export const Code: ICodeConstant = {
 
   INTERNAL_SERVER_ERROR: '60220001',
 
-  THIRD_PARTY_LIBRARY_ERROR: '80440001',
+  THIRD_PARTY_LIBRARY_ERROR: '10310001',
 };
 
 export const Reason: IReason = {
@@ -93,7 +93,7 @@ export const Reason: IReason = {
 
   '60220001': 'Internal server error',
 
-  '80440001': 'Third party library error',
+  '10310001': 'Third party library error',
 
   '90000000': 'Unknown error',
   '90000001': 'Unknown error in component',

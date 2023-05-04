@@ -117,33 +117,53 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
     if (privatePusher) {
     */
     if (pusherRef.current) {
-      const channelName = `${PusherChannel.PRIVATE_CHANNEL}-${keccak
+      const channelName = `${PusherChannel.PRIVATE_CHANNEL_TEMP}-${keccak
         .keccak256(address.toLowerCase().replace(`0x`, ``))
         .slice(0, 8)}`;
       const channel = pusherRef.current?.subscribe(channelName);
-      // eslint-disable-next-line no-console
-      console.log(`pusher subscribeUser channel:`, channel);
-      channel.bind_global((data: string) => {
+      /** Deprecate: when privateChannel is done (20230509 - tzuhan)
+      channel.bind('pusher:member_added', (member: any) => {
         // eslint-disable-next-line no-console
-        console.log(`pusher private channel test:`, data);
+        console.log(`pusher allChannels:`, member);
+      });
+
+      channel.bind('pusher:subscription_count', (data: {subscription_count: any}) => {
+        // eslint-disable-next-line no-console
+        console.log(`data.subscription_count:`, data.subscription_count);
+        // eslint-disable-next-line no-console
+        console.log(`channel.subscription_count:`, channel.subscriptionCount);
+      });
+
+      channel.bind('pusher:subscription_succeeded', (data: any) => {
+        // eslint-disable-next-line no-console
+        console.log(`data.subscription_succeeded:`, data);
+      });
+
+      channel.bind('pusher:subscription_error', (data: any) => {
+        // eslint-disable-next-line no-console
+        console.log(`data.subscription_error:`, data);
+      });
+
+      pusherRef.current.allChannels().forEach(channel => {
+        // eslint-disable-next-line no-console
+        console.log(`pusher allChannels:`, channel);
+      });
+      channel.bind_global((data: string, metadata: any) => {
+        // eslint-disable-next-line no-console
+        console.log(`pusher PRIVATE_CHANNEL bind_global:`, data, `metadata`, metadata);
       });
       channel.bind('test', (data: string) => {
         // eslint-disable-next-line no-console
-        console.log(`pusher private channel test:`, data);
+        console.log(`pusher PRIVATE_CHANNEL test:`, data);
       });
+      */
       channel.bind(Events.BALANCE, (data: IPusherPrivateData) => {
-        // eslint-disable-next-line no-console
-        console.log(`pusher Events.BALANCE:`, data);
         notificationCtx.emitter.emit(Events.BALANCE, data);
       });
       channel.bind(Events.CFD, (data: IPusherPrivateData) => {
-        // eslint-disable-next-line no-console
-        console.log(`pusher Events.CFD:`, data);
         notificationCtx.emitter.emit(Events.CFD, data);
       });
       channel.bind(Events.BOLT_TRANSACTION, (data: IPusherPrivateData) => {
-        // eslint-disable-next-line no-console
-        console.log(`pusher Events.BOLT_TRANSACTION:`, data);
         notificationCtx.emitter.emit(Events.BOLT_TRANSACTION, data);
       });
     }
@@ -163,6 +183,44 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
         },
       },
     });
+    /** Deprecate: when privateChannel is done (20230509 - tzuhan)
+    pusher.connection.bind('connected', () => {
+      // eslint-disable-next-line no-console
+      console.log(`pusher connected`);
+    });
+    pusher.connection.bind('disconnected', () => {
+      // eslint-disable-next-line no-console
+      console.log(`pusher disconnected`);
+    });
+    pusher.connection.bind('error', (err: any) => {
+      // eslint-disable-next-line no-console
+      console.log(`pusher error:`, err);
+    });
+    pusher.connection.bind('connecting', () => {
+      // eslint-disable-next-line no-console
+      console.log(`pusher connecting`);
+    });
+    pusher.connection.bind('unavailable', () => {
+      // eslint-disable-next-line no-console
+      console.log(`pusher unavailable`);
+    });
+    pusher.connection.bind('failed', () => {
+      // eslint-disable-next-line no-console
+      console.log(`pusher failed`);
+    });
+    pusher.connection.bind('connecting_in', (delay: number) => {
+      // eslint-disable-next-line no-console
+      console.log(`pusher connecting_in:`, delay);
+    });
+    pusher.connection.bind('state_change', (states: any) => {
+      // eslint-disable-next-line no-console
+      console.log(`pusher state_change:`, states);
+    });
+    pusher.bind_global((data: string, metadata: any) => {
+      // eslint-disable-next-line no-console
+      console.log(`pusher bind_global: data`, data, `metadata`, metadata);
+    });
+*/
     setPuser(pusher);
     subscribeTickers();
     subscribeCandlesticks();

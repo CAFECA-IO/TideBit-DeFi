@@ -1278,13 +1278,17 @@ export const UserProvider = ({children}: IUserProvider) => {
   React.useMemo(() => notificationCtx.emitter.on(TideBitEvent.BALANCES, updateBalances), []);
   */
 
-  const updateBalanceHandler = (updateBalance: IBalance) => {
-    // Deprecated: when this function is finished, remove this console (20230502 - tzuhan)
-    // eslint-disable-next-line no-console
-    console.log(`updateBalanceHandler is called updateBalance:`, updateBalance);
+  const updateBalanceHandler = useCallback((updateBalance: IBalance) => {
     if (balancesRef.current) {
       const updatedBalances = [...balancesRef.current];
       const index = balancesRef.current.findIndex(obj => obj.currency === updateBalance.currency);
+      // Deprecated: when this function is finished, remove this console (20230504 - tzuhan)
+      // eslint-disable-next-line no-console
+      console.log(
+        `updateBalanceHandler is called updateBalance: index:[${index}]`,
+        updateBalance,
+        updatedBalances
+      );
       if (index !== -1) {
         const updatedBalance = {
           ...balancesRef.current[index],
@@ -1293,43 +1297,75 @@ export const UserProvider = ({children}: IUserProvider) => {
         updatedBalances[index] = updatedBalance;
       } else updatedBalances.push(updateBalance);
       setBalances(updatedBalances);
+      // Deprecated: when this function is finished, remove this console (20230504 - tzuhan)
+      // eslint-disable-next-line no-console
+      console.log(
+        `updateBalanceHandler after update`,
+        index !== -1 ? balancesRef.current[index] : balancesRef.current
+      );
     }
-  };
+  }, []);
 
-  const updateCFDHandler = (updateCFD: ICFDOrder) => {
-    // Deprecated: when this function is finished, remove this console (20230502 - tzuhan)
-    // eslint-disable-next-line no-console
-    console.log(`updateCFDHandler is called updateCFD:`, updateCFD);
+  const updateCFDHandler = useCallback((updateCFD: ICFDOrder) => {
     let updatedCFDs: ICFDOrder[] = [];
     if (openCFDsRef.current) {
-      updatedCFDs = [...openCFDsRef.current];
+      updatedCFDs = [...updatedCFDs, ...openCFDsRef.current];
     }
     if (closedCFDsRef.current) {
-      updatedCFDs = [...closedCFDsRef.current];
+      updatedCFDs = [...updatedCFDs, ...closedCFDsRef.current];
     }
     const index = updatedCFDs.findIndex(obj => obj.id === updateCFD.id);
+    // Deprecated: when this function is finished, remove this console (20230504 - tzuhan)
+    // eslint-disable-next-line no-console
+    console.log(`updateCFDHandler is called updateCFD: index:[${index}]`, updateCFD, updatedCFDs);
     if (index !== -1) {
       updatedCFDs[index] = updateCFD;
     } else {
       updatedCFDs.push(updateCFD);
     }
+    // Deprecated: when this function is finished, remove this console (20230504 - tzuhan)
+    // eslint-disable-next-line no-console
+    console.log(`updateCFDHandler after update`, index !== -1 ? updatedCFDs[index] : updatedCFDs);
     const openCFDs = updatedCFDs.filter(obj => obj.state === OrderState.OPENING);
     const closedCFDs = updatedCFDs.filter(obj => obj.state === OrderState.CLOSED);
     setOpenedCFDs(openCFDs);
-    setClosedCFDs(closedCFDs);
-  };
-
-  const updateHistoryHandler = (history: IAcceptedOrder) => {
-    // Deprecated: when this function is finished, remove this console (20230502 - tzuhan)
+    // Deprecated: when this function is finished, remove this console (20230504 - tzuhan)
     // eslint-disable-next-line no-console
-    console.log(`updateHistoryHandler is called history:`, history);
-    setHistories(prev => [...prev, history]);
-    // TODO: update history (20230502 - tzuhan)
-  };
+    console.log(`updateCFDHandler after update openCFDs`, openCFDsRef.current);
+    setClosedCFDs(closedCFDs);
+    // Deprecated: when this function is finished, remove this console (20230504 - tzuhan)
+    // eslint-disable-next-line no-console
+    console.log(`updateCFDHandler after update closedCFDs`, closedCFDsRef.current);
+  }, []);
+
+  const updateHistoryHandler = useCallback((history: IAcceptedOrder) => {
+    const index = historiesRef.current.findIndex(obj => obj.id === history.id);
+    // Deprecated: when this function is finished, remove this console (20230504 - tzuhan)
+    // eslint-disable-next-line no-console
+    console.log(
+      `updateHistoryHandler is called history: index[${index}]`,
+      history,
+      historiesRef.current
+    );
+    if (index === -1) {
+      const updatedHistory: IAcceptedOrder[] = [...historiesRef.current];
+      updatedHistory.push(history);
+      setHistories(updatedHistory);
+    }
+    // Deprecated: when this function is finished, remove this console (20230504 - tzuhan)
+    // eslint-disable-next-line no-console
+    console.log(
+      `updateHistoryHandler after update historiesRef.current, index:[${index}]`,
+      historiesRef.current
+    );
+  }, []);
 
   React.useMemo(() => notificationCtx.emitter.on(Events.BALANCE, updateBalanceHandler), []);
   React.useMemo(() => notificationCtx.emitter.on(Events.CFD, updateCFDHandler), []);
-  React.useMemo(() => notificationCtx.emitter.on(Events.BALANCE, updateHistoryHandler), []);
+  React.useMemo(
+    () => notificationCtx.emitter.on(Events.BOLT_TRANSACTION, updateHistoryHandler),
+    []
+  );
 
   React.useMemo(
     () => notificationCtx.emitter.on(TideBitEvent.UPDATE_READ_NOTIFICATIONS, readNotifications),

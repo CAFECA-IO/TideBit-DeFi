@@ -11,12 +11,12 @@ import {GetStaticPaths, GetStaticProps} from 'next';
 import {useRouter} from 'next/router';
 import Error from 'next/error';
 import {findCurrencyByCode, hasValue} from '../../../lib/common';
-import {tickerIds} from '../../../constants/config';
+// import {tickerIds} from '../../../constants/config';
 import {Currency} from '../../../constants/currency';
 import Skeleton, {SkeletonTheme} from 'react-loading-skeleton';
 
 interface IPageProps {
-  tickerId: string;
+  cfdId: string;
 }
 
 const Trading = (props: IPageProps) => {
@@ -27,11 +27,9 @@ const Trading = (props: IPageProps) => {
   const displayedNavBar = layoutAssertion === 'mobile' ? <NavBarMobile /> : <NavBar />;
 
   const router = useRouter();
-  const {tickerId} = router.query;
+  const {cfdId} = router.query;
 
-  const currencyCode = tickerId
-    ? tickerId.toString().replace('usdt', '').toUpperCase()
-    : Currency.ETH;
+  const currencyCode = cfdId ? cfdId.toString().replace('usdt', '').toUpperCase() : Currency.ETH;
 
   const currency = findCurrencyByCode(currencyCode);
 
@@ -52,7 +50,7 @@ const Trading = (props: IPageProps) => {
     redirectToTicker();
   }, [marketCtx.availableTickers]);
 
-  if (!router.isFallback && !props.tickerId) {
+  if (!router.isFallback && !props.cfdId) {
     return <Error statusCode={404} />;
   }
 
@@ -75,7 +73,7 @@ const Trading = (props: IPageProps) => {
 };
 
 export const getStaticProps: GetStaticProps<IPageProps> = async ({params, locale}) => {
-  if (!params || !params.tickerId || typeof params.tickerId !== 'string') {
+  if (!params || !params.cfdId || typeof params.cfdId !== 'string') {
     return {
       notFound: true,
     };
@@ -83,7 +81,7 @@ export const getStaticProps: GetStaticProps<IPageProps> = async ({params, locale
 
   return {
     props: {
-      tickerId: params.tickerId,
+      cfdId: params.cfdId,
       ...(await serverSideTranslations(locale as string, ['common', 'footer'])),
     },
   };
@@ -95,14 +93,15 @@ export const getStaticProps: GetStaticProps<IPageProps> = async ({params, locale
  * In production, `getStaticPaths` runs at build time.
  */
 export const getStaticPaths: GetStaticPaths = async ({locales}) => {
-  const paths = tickerIds
+  const cfdIds = ['test'];
+  const paths = cfdIds
     .flatMap(id => {
       return locales?.map(locale => ({
-        params: {tickerId: id},
+        params: {cfdId: id},
         locale: locale,
       }));
     })
-    .filter((path): path is {params: {tickerId: string}; locale: string} => !!path);
+    .filter((path): path is {params: {cfdId: string}; locale: string} => !!path);
 
   return {
     paths: paths,

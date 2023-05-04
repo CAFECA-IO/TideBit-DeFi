@@ -13,6 +13,7 @@ import {UserContext} from '../../contexts/user_context';
 import {OrderType} from '../../constants/order_type';
 import {useTranslation} from 'react-i18next';
 import {Code} from '../../constants/code';
+import {ToastId} from '../../constants/toast_id';
 
 type TranslateFunction = (s: string) => string;
 interface IWithdrawalModal {
@@ -48,11 +49,6 @@ const WithdrawalModal = ({
 
   const regex = /^\d*\.?\d{0,2}$/;
 
-  /* Info: (20230427 - Julian) toastId by minimizedModal
-   * ToDo: (20230427 - Julian) 改良取得id的方式
-   */
-  const toastId = `${t('D_W_MODAL.WITHDRAW')}_LoadingModalMinimized`;
-
   const cryptoMenuClickHandler = () => {
     setShowCryptoMenu(!showCryptoMenu);
   };
@@ -68,6 +64,16 @@ const WithdrawalModal = ({
 
   // TODO: send withdrawal request
   const submitClickHandler = async () => {
+    if (globalCtx.displayedToast(ToastId.WITHDRAW) || globalCtx.visibleLoadingModal) {
+      globalCtx.dataWarningModalHandler({
+        title: t('POSITION_MODAL.WARNING_UNFINISHED_TITLE'),
+        content: t('POSITION_MODAL.WARNING_UNFINISHED_CONTENT'),
+        numberOfButton: 1,
+        reactionOfButton: t('POSITION_MODAL.WARNING_OK_BUTTON'),
+      });
+      globalCtx.visibleWarningModalHandler();
+    }
+
     if (amountInput === 0 || amountInput === undefined) {
       return;
     }
@@ -122,7 +128,7 @@ const WithdrawalModal = ({
           btnUrl: '#',
         });
 
-        globalCtx.eliminateToasts(toastId);
+        globalCtx.eliminateToasts(ToastId.WITHDRAW);
         globalCtx.visibleSuccessfulModalHandler();
         // TODO: `result.code` (20230316 - Shirley)
       } else if (
@@ -138,7 +144,7 @@ const WithdrawalModal = ({
           modalContent: `${t('D_W_MODAL.FAILED_REASON_CANCELED')} (${result.code})`,
         });
 
-        globalCtx.eliminateToasts(toastId);
+        globalCtx.eliminateToasts(ToastId.WITHDRAW);
         globalCtx.visibleCanceledModalHandler();
       } else if (
         result.code === Code.INTERNAL_SERVER_ERROR ||
@@ -151,7 +157,7 @@ const WithdrawalModal = ({
           modalContent: `${t('D_W_MODAL.FAILED_REASON_FAILED_TO_WITHDRAW')} (${result.code})`,
         });
 
-        globalCtx.eliminateToasts(toastId);
+        globalCtx.eliminateToasts(ToastId.WITHDRAW);
         globalCtx.visibleFailedModalHandler();
       }
     } catch (error: any) {
@@ -166,7 +172,7 @@ const WithdrawalModal = ({
         })`,
       });
 
-      globalCtx.eliminateToasts(toastId);
+      globalCtx.eliminateToasts(ToastId.WITHDRAW);
       globalCtx.visibleFailedModalHandler();
     }
 

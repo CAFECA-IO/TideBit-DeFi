@@ -649,6 +649,15 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
 
     const isToastId = toastId ? toastId : type + message;
 
+    const isLoadingMessage = isLoading ? (
+      <div className="inline-flex">
+        {message}
+        <Lottie className="ml-2 w-20px" animationData={smallConnectingAnimation} />
+      </div>
+    ) : (
+      <>{message}</>
+    );
+
     const isAutoClose = autoClose ? autoClose : false;
 
     const isCloseOnClick = modalReOpenData ? false : true;

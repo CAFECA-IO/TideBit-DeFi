@@ -20,7 +20,7 @@ interface IPageProps {
   cfdId: string;
 }
 
-const Trading = (props: IPageProps) => {
+const CfdSharing = (props: IPageProps) => {
   const marketCtx = useContext(MarketContext);
   const {layoutAssertion} = useGlobal();
   const appCtx = useContext(AppContext);
@@ -100,4 +100,4 @@ export const getStaticPaths: GetStaticPaths = async ({locales}) => {
   };
 };
 
-export default Trading;
+export default CfdSharing;

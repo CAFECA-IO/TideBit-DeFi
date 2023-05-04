@@ -83,6 +83,7 @@ export const getStaticProps: GetStaticProps<IPageProps> = async ({params, locale
  * In production, `getStaticPaths` runs at build time.
  */
 export const getStaticPaths: GetStaticPaths = async ({locales}) => {
+  // TODO: cfdIds should be fetched from API (20230504 - Shirley)
   const cfdIds = ['test'];
   const paths = cfdIds
     .flatMap(id => {

@@ -107,7 +107,6 @@ export interface IMarketContext {
       limit?: number;
     }
   ) => number[];
-  sharingOrder: ISharingOrder;
   getSharingOrder: (orderId: string) => IResult | Promise<IResult>;
 }
 // TODO: Note: _app.tsx 啟動的時候 => createContext
@@ -147,7 +146,6 @@ export const MarketContext = createContext<IMarketContext>({
   listTickerPositions: (): number[] => {
     throw new CustomError(Code.FUNCTION_NOT_IMPLEMENTED);
   },
-  sharingOrder: getDummySharingCFDOrder(Currency.BTC),
   getSharingOrder: () => Promise.resolve(defaultResultSuccess),
 });
 
@@ -184,9 +182,6 @@ export const MarketProvider = ({children}: IMarketProvider) => {
   /* ToDo: (20230419 - Julian) get TideBit data from backend */
   const [tidebitPromotion, setTidebitPromotion] =
     useState<ITideBitPromotion>(dummyTideBitPromotion);
-  const [sharingOrder, setSharingOrder, sharingOrderRef] = useState<ISharingOrder>(
-    getDummySharingCFDOrder(Currency.BTC)
-  );
 
   const [showPositionOnChart, setShowPositionOnChart] = useState<boolean>(
     INITIAL_POSITION_LABEL_DISPLAYED_STATE
@@ -608,7 +603,6 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     */
     listTickerPositions,
     init,
-    sharingOrder: sharingOrderRef.current,
     getSharingOrder,
   };
 

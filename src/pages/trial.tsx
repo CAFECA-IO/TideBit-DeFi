@@ -23,6 +23,7 @@ import {
   getDummySharingCFDOrder,
 } from '../interfaces/tidebit_defi_background/display_accepted_cfd_order';
 import Image from 'next/image';
+import Head from 'next/head';
 
 const Trial = () => {
   const appCtx = useContext(AppContext);
@@ -88,49 +89,19 @@ const Trial = () => {
 
     // eslint-disable-next-line no-console
     console.log('orderRef', orderRef.current);
-
-    // if (recordSharingBoxRef.current === null) {
-    //   return;
-    // }
-
-    // const png = toPng(recordSharingBoxRef.current, {cacheBust: true})
-    //   .then(dataUrl => {
-    //     const link = document.createElement('a');
-    //     link.download = 'TideBit_DeFi_Record_202305050022.png';
-    //     link.href = dataUrl;
-    //     link.click();
-    //   })
-    //   .catch(err => {
-    //     // console.log(err);
-    //   });
-    // // console.log('png', png);
-  }, [mounted]);
+  }, [mounted, recordSharingBoxRef.current]);
 
   const modalClickHandler = () => {
     setModalVisible(!modalVisible);
   };
 
-  // const handleDownloadClick = useCallback(() => {
-  //   if (recordSharingBoxRef.current === null) {
-  //     return;
-  //   }
-  //   const png = toPng(recordSharingBoxRef.current, {cacheBust: true})
-  //     .then(dataUrl => {
-  //       const link = document.createElement('a');
-  //       link.download = 'my-image-name.png';
-  //       link.href = dataUrl;
-  //       link.click();
-  //     })
-  //     .catch(err => {
-  //       // console.log(err);
-  //     });
-  //   // console.log('png', png);
-  // }, [recordSharingBoxRef.current]);
-
   return (
     <>
       {appCtx.isInit ? (
         <>
+          <Head>
+            <meta property="og:image" content="https://erikkarlsson.dev/assets/prev.png" />
+          </Head>
           <div className="w-full space-y-10 bg-transparent">
             <RecordSharingBox
               innerRef={recordSharingBoxRef}
@@ -140,8 +111,6 @@ const Trial = () => {
               boxVisible={modalVisible}
               boxClickHandler={modalClickHandler}
             />
-
-            {/* <button onClick={handleDownloadClick}>Download as JPEG</button> */}
           </div>
 
           <div>

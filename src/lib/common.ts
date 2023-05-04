@@ -484,12 +484,12 @@ export function getChainNameByCurrency(
   }
 }
 
-export const convertHTMLToImage = async (element: HTMLElement): Promise<HTMLImageElement> => {
+export const convertHTMLToImageSrc = async (element: HTMLElement): Promise<string> => {
   try {
     const dataUrl = await toPng(element);
-    const img = new Image();
-    img.src = dataUrl;
-    return img;
+    // const img = new Image();
+    // img.src = dataUrl;
+    return dataUrl;
   } catch (error) {
     // console.error('oops, something went wrong!', error);
     throw new CustomError(Code.CANNOT_CONVERT_TO_IMAGE);

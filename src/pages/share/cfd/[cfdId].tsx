@@ -14,6 +14,7 @@ import {findCurrencyByCode, hasValue} from '../../../lib/common';
 // import {tickerIds} from '../../../constants/config';
 import {Currency} from '../../../constants/currency';
 import Skeleton, {SkeletonTheme} from 'react-loading-skeleton';
+import Image from 'next/image';
 
 interface IPageProps {
   cfdId: string;
@@ -54,21 +55,10 @@ const Trading = (props: IPageProps) => {
     return <Error statusCode={404} />;
   }
 
-  return appCtx.isInit ? (
+  return (
     <>
-      <Head>
-        <title>CFD - TideBit DeFi</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-
-      {displayedNavBar}
-
-      <main>
-        <TradePageBody />
-      </main>
+      <Image src="/elements/sharing_example.png" width={500} height={500} alt="record" />
     </>
-  ) : (
-    <div>Loading...</div>
   );
 };
 

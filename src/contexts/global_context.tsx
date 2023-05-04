@@ -66,6 +66,7 @@ import SearchingModal from '../components/searching_modal/searching_modal';
 import Lottie from 'lottie-react';
 import smallConnectingAnimation from '../../public/animation/lf30_editor_cnkxmhy3.json';
 import {IToastType, ToastType} from '../constants/toast_type';
+import {Code, Reason} from '../constants/code';
 export interface IToastify {
   type: IToastType;
   message: string;
@@ -686,9 +687,14 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
           });
           break;
         } catch (error) {
-          /* Till (20230510 - Julian) debug */
-          // eslint-disable-next-line no-console
-          console.log(error);
+          /* Info: (20230510 - Julian) if toastify error */
+          dataFailedModalHandler({
+            modalTitle: 'Toastify Error',
+            modalContent: `${Reason[Code.THIRD_PARTY_LIBRARY_ERROR]} (${
+              Code.THIRD_PARTY_LIBRARY_ERROR
+            })`,
+          });
+          visibleFailedModalHandler();
         }
       case ToastType.WARNING:
         try {
@@ -708,9 +714,14 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
           });
           break;
         } catch (error) {
-          /* Till (20230510 - Julian) debug */
-          // eslint-disable-next-line no-console
-          console.log(error);
+          /* Info: (20230510 - Julian) if toastify error */
+          dataFailedModalHandler({
+            modalTitle: 'Toastify Error',
+            modalContent: `${Reason[Code.THIRD_PARTY_LIBRARY_ERROR]} (${
+              Code.THIRD_PARTY_LIBRARY_ERROR
+            })`,
+          });
+          visibleFailedModalHandler();
         }
       case ToastType.INFO:
         try {
@@ -730,9 +741,14 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
           });
           break;
         } catch (error) {
-          /* Till (20230510 - Julian) debug */
-          // eslint-disable-next-line no-console
-          console.log(error);
+          /* Info: (20230510 - Julian) if toastify error */
+          dataFailedModalHandler({
+            modalTitle: 'Toastify Error',
+            modalContent: `${Reason[Code.THIRD_PARTY_LIBRARY_ERROR]} (${
+              Code.THIRD_PARTY_LIBRARY_ERROR
+            })`,
+          });
+          visibleFailedModalHandler();
         }
       case ToastType.SUCCESS:
         try {
@@ -752,9 +768,14 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
           });
           break;
         } catch (error) {
-          /* Till (20230510 - Julian) debug */
-          // eslint-disable-next-line no-console
-          console.log(error);
+          /* Info: (20230510 - Julian) if toastify error */
+          dataFailedModalHandler({
+            modalTitle: 'Toastify Error',
+            modalContent: `${Reason[Code.THIRD_PARTY_LIBRARY_ERROR]} (${
+              Code.THIRD_PARTY_LIBRARY_ERROR
+            })`,
+          });
+          visibleFailedModalHandler();
         }
       default:
         return;

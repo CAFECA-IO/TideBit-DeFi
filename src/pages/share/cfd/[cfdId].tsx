@@ -96,7 +96,7 @@ export const getStaticPaths: GetStaticPaths = async ({locales}) => {
 
   return {
     paths: paths,
-    fallback: false,
+    fallback: true,
   };
 };
 

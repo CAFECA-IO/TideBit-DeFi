@@ -1,4 +1,5 @@
 import {toQuery} from '../lib/common';
+import {URL} from './config';
 
 export type IAPIName =
   // general
@@ -15,6 +16,7 @@ export type IAPIName =
   | 'GET_JOB'
   | 'APPLY_JOB'
   // market
+  | 'LIST_CURRENCIES'
   | 'LIST_TICKERS'
   | 'LIST_DEPOSIT_CRYPTO_CURRENCIES'
   | 'LIST_WITHDRAW_CRYPTO_CURRENCIES'
@@ -22,7 +24,7 @@ export type IAPIName =
   | 'GET_CFD_QUOTATION'
   | 'GET_TICKER_HISTORY'
   | 'GET_GUARANTEED_STOP_FEE_PERCENTAGE'
-  | 'LIST_TBE_TRADES'
+  | 'LIST_MARKET_TRADES'
   // trades
   | 'LIST_CFD_TRADES'
   | 'GET_CFD_TRADE'
@@ -34,6 +36,7 @@ export type IAPIName =
   | 'LIST_WITHDRAW_TRADES'
   | 'CREATE_WITHDRAW_TRADE'
   // user
+  | 'DEWT_LOGIN'
   | 'LIST_HISTORIES'
   | 'LIST_FAVORITE_TICKERS'
   | 'ADD_FAVORITE_TICKERS'
@@ -64,6 +67,7 @@ export interface IAPINameConstant {
   GET_JOB: IAPIName;
   APPLY_JOB: IAPIName;
   // market
+  LIST_CURRENCIES: IAPIName;
   LIST_TICKERS: IAPIName;
   LIST_DEPOSIT_CRYPTO_CURRENCIES: IAPIName;
   LIST_WITHDRAW_CRYPTO_CURRENCIES: IAPIName;
@@ -71,7 +75,7 @@ export interface IAPINameConstant {
   GET_CFD_QUOTATION: IAPIName;
   GET_TICKER_HISTORY: IAPIName;
   GET_GUARANTEED_STOP_FEE_PERCENTAGE: IAPIName;
-  LIST_TBE_TRADES: IAPIName;
+  LIST_MARKET_TRADES: IAPIName;
   // trades
   LIST_CFD_TRADES: IAPIName;
   GET_CFD_TRADE: IAPIName;
@@ -83,6 +87,7 @@ export interface IAPINameConstant {
   LIST_WITHDRAW_TRADES: IAPIName;
   CREATE_WITHDRAW_TRADE: IAPIName;
   // user
+  DEWT_LOGIN: IAPIName;
   LIST_HISTORIES: IAPIName;
   LIST_FAVORITE_TICKERS: IAPIName;
   ADD_FAVORITE_TICKERS: IAPIName;
@@ -114,6 +119,7 @@ export const APIName: IAPINameConstant = {
   GET_JOB: 'GET_JOB',
   APPLY_JOB: 'APPLY_JOB',
   // market
+  LIST_CURRENCIES: 'LIST_CURRENCIES',
   LIST_TICKERS: 'LIST_TICKERS',
   LIST_DEPOSIT_CRYPTO_CURRENCIES: 'LIST_DEPOSIT_CRYPTO_CURRENCIES',
   LIST_WITHDRAW_CRYPTO_CURRENCIES: 'LIST_WITHDRAW_CRYPTO_CURRENCIES',
@@ -121,7 +127,7 @@ export const APIName: IAPINameConstant = {
   GET_CFD_QUOTATION: 'GET_CFD_QUOTATION',
   GET_TICKER_HISTORY: 'GET_TICKER_HISTORY',
   GET_GUARANTEED_STOP_FEE_PERCENTAGE: 'GET_GUARANTEED_STOP_FEE_PERCENTAGE',
-  LIST_TBE_TRADES: 'LIST_TBE_TRADES',
+  LIST_MARKET_TRADES: 'LIST_MARKET_TRADES',
   // trades
   LIST_CFD_TRADES: 'LIST_CFD_TRADES',
   GET_CFD_TRADE: 'GET_CFD_TRADE',
@@ -133,6 +139,7 @@ export const APIName: IAPINameConstant = {
   LIST_WITHDRAW_TRADES: 'LIST_WITHDRAW_TRADES',
   CREATE_WITHDRAW_TRADE: 'CREATE_WITHDRAW_TRADE',
   // user
+  DEWT_LOGIN: 'DEWT_LOGIN',
   LIST_HISTORIES: 'LIST_HISTORIES',
   LIST_FAVORITE_TICKERS: 'LIST_FAVORITE_TICKERS',
   ADD_FAVORITE_TICKERS: 'ADD_FAVORITE_TICKERS',
@@ -165,6 +172,7 @@ export const APIURL = {
   GET_JOB: '/api/general/jobs',
   APPLY_JOB: '/api/general/jobs',
   // market
+  LIST_CURRENCIES: `${URL}/currencies`,
   LIST_TICKERS: '/api/market/tickers',
   LIST_DEPOSIT_CRYPTO_CURRENCIES: '/api/market/deposit-currencies',
   LIST_WITHDRAW_CRYPTO_CURRENCIES: '/api/market/withdraw-currencies',
@@ -172,7 +180,7 @@ export const APIURL = {
   GET_CFD_QUOTATION: '/api/market/quotation',
   GET_TICKER_HISTORY: '/api/market/histories', // deprecated: '/api/market/tickerhistory' (20230323 - tzuhan)
   GET_GUARANTEED_STOP_FEE_PERCENTAGE: '/api/market/fee/stop-percetage', // deprecated: '/api/market/stopfeepercentage' (20230323 - tzuhan)
-  LIST_TBE_TRADES: '/api/market/trades',
+  LIST_MARKET_TRADES: '/api/market/trades',
   // trades
   LIST_CFD_TRADES: '/api/trades/cfds',
   GET_CFD_TRADE: '/api/trades/cfds',
@@ -184,6 +192,7 @@ export const APIURL = {
   LIST_WITHDRAW_TRADES: '/api/trades/withdraws',
   CREATE_WITHDRAW_TRADE: '/api/trades/withdraws',
   // user
+  DEWT_LOGIN: `${URL}/dewt`,
   LIST_HISTORIES: '/api/user/histories',
   LIST_FAVORITE_TICKERS: '/api/user/tickers',
   ADD_FAVORITE_TICKERS: '/api/user/tickers',

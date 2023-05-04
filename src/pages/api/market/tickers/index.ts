@@ -1,11 +1,12 @@
 import {NextApiRequest, NextApiResponse} from 'next';
-import {TBEURL} from '../../../../constants/api_request';
+import {APIURL, TBEURL} from '../../../../constants/api_request';
 import {Code, Reason} from '../../../../constants/code';
 import {
   API_VERSION,
   AVAILABLE_TICKERS,
   BASE_URL,
   TRADING_CRYPTO_DATA,
+  URL,
   unitAsset,
 } from '../../../../constants/config';
 import {Trend} from '../../../../constants/trend';
@@ -26,6 +27,11 @@ import {
  */
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  const testURL = `${URL}/market/tickers`;
+  const response = await fetch(testURL);
+  // eslint-disable-next-line no-console
+  console.log(`LIST_TICKERS testURL(${testURL}):`, response);
+
   if (req.method === 'GET') {
     try {
       let tickers: {[currency: string]: ITickerItem} = {};

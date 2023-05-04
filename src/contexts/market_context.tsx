@@ -352,6 +352,27 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     return positions;
   };
 
+  const listCurrencies = async () => {
+    let result: IResult = defaultResultFailed;
+    try {
+      const currencies = (await workerCtx.requestHandler({
+        name: APIName.LIST_CURRENCIES,
+        method: Method.GET,
+      })) as any[];
+      // eslint-disable-next-line no-console
+      console.log('listCurrencies currencies', currencies);
+      result = defaultResultSuccess;
+      result.data = guaranteedStopFeePercentage;
+    } catch (error) {
+      // Deprecate: error handle (Tzuhan - 20230321)
+      // eslint-disable-next-line no-console
+      console.error(`listCurrencies error`, error);
+      result.code = Code.INTERNAL_SERVER_ERROR;
+      result.reason = Reason[result.code];
+    }
+    return result;
+  };
+
   const getGuaranteedStopFeePercentage = async () => {
     let result: IResult = defaultResultFailed;
     try {
@@ -477,6 +498,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
   };
 
   const init = async () => {
+    await listCurrencies();
     setIsCFDTradable(true);
     await getGuaranteedStopFeePercentage();
     await listTickers();

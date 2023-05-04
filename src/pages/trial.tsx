@@ -17,6 +17,12 @@ import {serverSideTranslations} from 'next-i18next/serverSideTranslations';
 import {ILocale} from '../interfaces/tidebit_defi_background/locale';
 import {MarketContext} from '../contexts/market_context';
 import {toPng} from 'html-to-image';
+import useStateRef from 'react-usestateref';
+import {
+  ISharingOrder,
+  getDummySharingCFDOrder,
+} from '../interfaces/tidebit_defi_background/display_accepted_cfd_order';
+import Image from 'next/image';
 
 const Trial = () => {
   const appCtx = useContext(AppContext);
@@ -27,6 +33,11 @@ const Trial = () => {
     componentVisible: tickerBoxVisible,
     setComponentVisible: setTickerBoxVisible,
   } = useOuterClick<HTMLDivElement>(true);
+  const [order, setOrder, orderRef] = useStateRef<ISharingOrder>(
+    getDummySharingCFDOrder(Currency.BTC)
+  );
+  const [img, setImg, imgRef] = useStateRef<string>('');
+
   const recordSharingBoxRef = useRef<HTMLDivElement>(null);
 
   const [mounted, setMounted] = useState(false);
@@ -39,63 +50,106 @@ const Trial = () => {
     }
   }, []);
 
+  const fetchSharingOrder = async (cfdId: string) => {
+    const sharingOrder = await marketCtx.getSharingOrder(cfdId);
+    return sharingOrder;
+  };
+
+  const convertToImg = async () => {
+    try {
+      if (recordSharingBoxRef.current === null) return;
+      const img = await toPng(recordSharingBoxRef.current, {cacheBust: true});
+      setImg(img);
+    } catch (e) {
+      // TODO: Error handling (20230504 - Shirley)
+      // eslint-disable-next-line no-console
+      console.log(`convertToImg error: ${e}`);
+    }
+  };
+
   // TODO: Download png test (20230503 - Shirley)
   useEffect(() => {
     setMounted(true);
 
-    if (recordSharingBoxRef.current === null) {
-      return;
-    }
+    (async () => {
+      const result = await fetchSharingOrder('123');
+      const data = result.data as ISharingOrder;
+      setOrder(data);
+      // eslint-disable-next-line no-console
+      console.log('orderRef in function', orderRef.current);
 
-    const png = toPng(recordSharingBoxRef.current, {cacheBust: true})
-      .then(dataUrl => {
-        const link = document.createElement('a');
-        link.download = 'TideBit_DeFi_Record_202305050022.png';
-        link.href = dataUrl;
-        link.click();
-      })
-      .catch(err => {
-        // console.log(err);
-      });
-    // console.log('png', png);
+      await convertToImg();
+      // eslint-disable-next-line no-console
+      console.log('in function img', imgRef.current);
+      if (!!imgRef.current) {
+        setModalVisible(false);
+      }
+    })();
+
+    // eslint-disable-next-line no-console
+    console.log('orderRef', orderRef.current);
+
+    // if (recordSharingBoxRef.current === null) {
+    //   return;
+    // }
+
+    // const png = toPng(recordSharingBoxRef.current, {cacheBust: true})
+    //   .then(dataUrl => {
+    //     const link = document.createElement('a');
+    //     link.download = 'TideBit_DeFi_Record_202305050022.png';
+    //     link.href = dataUrl;
+    //     link.click();
+    //   })
+    //   .catch(err => {
+    //     // console.log(err);
+    //   });
+    // // console.log('png', png);
   }, [mounted]);
 
   const modalClickHandler = () => {
     setModalVisible(!modalVisible);
   };
 
-  const handleDownloadClick = useCallback(() => {
-    if (recordSharingBoxRef.current === null) {
-      return;
-    }
-
-    const png = toPng(recordSharingBoxRef.current, {cacheBust: true})
-      .then(dataUrl => {
-        const link = document.createElement('a');
-        link.download = 'my-image-name.png';
-        link.href = dataUrl;
-        link.click();
-      })
-      .catch(err => {
-        // console.log(err);
-      });
-
-    // console.log('png', png);
-  }, [recordSharingBoxRef.current]);
+  // const handleDownloadClick = useCallback(() => {
+  //   if (recordSharingBoxRef.current === null) {
+  //     return;
+  //   }
+  //   const png = toPng(recordSharingBoxRef.current, {cacheBust: true})
+  //     .then(dataUrl => {
+  //       const link = document.createElement('a');
+  //       link.download = 'my-image-name.png';
+  //       link.href = dataUrl;
+  //       link.click();
+  //     })
+  //     .catch(err => {
+  //       // console.log(err);
+  //     });
+  //   // console.log('png', png);
+  // }, [recordSharingBoxRef.current]);
 
   return (
     <>
       {appCtx.isInit ? (
-        <div className="w-full space-y-10 bg-transparent">
-          <RecordSharingBox
-            innerRef={recordSharingBoxRef}
-            order={marketCtx.sharingOrder}
-            boxRef={tickerBoxRef}
-            boxVisible={tickerBoxVisible}
-            boxClickHandler={modalClickHandler}
-          />
-          {/* <button onClick={handleDownloadClick}>Download as JPEG</button> */}
-        </div>
+        <>
+          <div className="w-full space-y-10 bg-transparent">
+            <RecordSharingBox
+              innerRef={recordSharingBoxRef}
+              // order={marketCtx.sharingOrder}
+              order={orderRef.current}
+              // boxRef={tickerBoxRef}
+              boxVisible={modalVisible}
+              boxClickHandler={modalClickHandler}
+            />
+
+            {/* <button onClick={handleDownloadClick}>Download as JPEG</button> */}
+          </div>
+
+          <div>
+            {imgRef.current && (
+              <Image src={imgRef.current} alt={`TideBit CFD record`} width={500} height={500} />
+            )}
+          </div>
+        </>
       ) : (
         <div>Loading...</div>
       )}

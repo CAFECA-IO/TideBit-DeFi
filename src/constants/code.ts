@@ -17,7 +17,8 @@ export type ICode =
   | '10110001'
   | '40230002'
   | '90000001'
-  | '10120001';
+  | '10120001'
+  | '60310001';
 
 export type ICodeConstant = {
   SUCCESS: ICode;
@@ -39,6 +40,7 @@ export type ICodeConstant = {
   FAILE_TO_UPDATE_BALANCE: ICode;
   UNKNOWN_ERROR_IN_COMPONENT: ICode;
   CANNOT_FIND_CHAIN_BY_CURRENCY: ICode;
+  CANNOT_CONVERT_TO_IMAGE: ICode;
 };
 
 export type IReason = {
@@ -69,6 +71,7 @@ export const Code: ICodeConstant = {
   REJECTED_SIGNATURE: '40430004',
 
   INTERNAL_SERVER_ERROR: '60220001',
+  CANNOT_CONVERT_TO_IMAGE: '60310001',
 };
 
 export const Reason: IReason = {
@@ -76,7 +79,7 @@ export const Reason: IReason = {
   '10110001': 'Lock procedure wrong',
   '10210001': 'Function not implemented',
   '10110002': 'Cannot get quotation from context',
-  '10120001': '',
+  '10120001': 'Chain name does not exist',
 
   '30110001': 'Order is not opening',
   '30420001': 'Invalid order inputs',
@@ -92,6 +95,7 @@ export const Reason: IReason = {
   '40430004': 'Signature rejected by user',
 
   '60220001': 'Internal server error',
+  '60310001': 'Cannot convert HTML to image',
 
   '90000000': 'Unknown error',
   '90000001': 'Unknown error in component',

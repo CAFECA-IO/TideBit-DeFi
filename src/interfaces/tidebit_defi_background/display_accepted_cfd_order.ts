@@ -63,3 +63,13 @@ export const getDummySharingCFDOrder = (currency: string) => {
   const dummySharingCFDOrder: ISharingOrder = {...displayedOrder, owner: '0x123a'};
   return dummySharingCFDOrder;
 };
+
+export const listDummySharingCFDOrder = (currency: string): ISharingOrder[] => {
+  const count = 10;
+  const list = new Array(count).fill(0).map(() => {
+    const order = getDummyDisplayCFDOrder(currency);
+    const dummySharingCFDOrder: ISharingOrder = {...order, owner: '0x123a'};
+    return dummySharingCFDOrder;
+  });
+  return list;
+};

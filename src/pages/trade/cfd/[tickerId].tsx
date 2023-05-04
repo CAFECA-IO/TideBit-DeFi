@@ -90,9 +90,9 @@ export const getStaticProps: GetStaticProps<IPageProps> = async ({params, locale
 };
 
 /**
- * @note getStaticPaths
- * In development (npm run dev or yarn dev), getStaticPaths runs on every request.
- * In production, getStaticPaths runs at build time.
+ * Info: (20230504 - Shirley) getStaticPaths
+ * In development (npm run dev or yarn dev), `getStaticPaths` runs on every request.
+ * In production, `getStaticPaths` runs at build time.
  */
 export const getStaticPaths: GetStaticPaths = async ({locales}) => {
   const paths = tickerIds

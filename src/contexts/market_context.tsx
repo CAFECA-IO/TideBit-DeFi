@@ -108,6 +108,7 @@ export interface IMarketContext {
     }
   ) => number[];
   sharingOrder: ISharingOrder;
+  getSharingOrder: (orderId: string) => IResult | Promise<IResult>;
 }
 // TODO: Note: _app.tsx 啟動的時候 => createContext
 export const MarketContext = createContext<IMarketContext>({
@@ -147,6 +148,7 @@ export const MarketContext = createContext<IMarketContext>({
     throw new CustomError(Code.FUNCTION_NOT_IMPLEMENTED);
   },
   sharingOrder: getDummySharingCFDOrder(Currency.BTC),
+  getSharingOrder: () => Promise.resolve(defaultResultSuccess),
 });
 
 export const MarketProvider = ({children}: IMarketProvider) => {
@@ -193,6 +195,23 @@ export const MarketProvider = ({children}: IMarketProvider) => {
   const showPositionOnChartHandler = (bool: boolean) => {
     setShowPositionOnChart(bool);
     // console.log('in market context, position context boolean:', bool);
+  };
+
+  // TODO: Get the correspond order to share (20230504 - Shirley)
+  const getSharingOrder = (orderId: string) => {
+    let result: IResult = {...defaultResultFailed};
+    try {
+      // TODO: send request (20230504 - Shirley)
+      const sharingOrder: ISharingOrder = getDummySharingCFDOrder(Currency.BTC);
+      result = {...defaultResultSuccess};
+      result.data = sharingOrder;
+    } catch (error) {
+      // ToDo: Error Handling (20230504 - Shirley)
+      // eslint-disable-next-line no-console
+      console.log(`error in getSharingOrder: ${error}`);
+      result = {...defaultResultFailed};
+    }
+    return result;
   };
 
   const candlestickChartIdHandler = (id: string) => {
@@ -590,6 +609,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     listTickerPositions,
     init,
     sharingOrder: sharingOrderRef.current,
+    getSharingOrder,
   };
 
   return <MarketContext.Provider value={defaultValue}>{children}</MarketContext.Provider>;

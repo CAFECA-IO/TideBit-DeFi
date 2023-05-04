@@ -25,7 +25,7 @@ import {ICFDOrder} from '../interfaces/tidebit_defi_background/order';
 import {Currency, ICurrency, ICurrencyConstant} from '../constants/currency';
 import {CustomError} from './custom_error';
 import {Code} from '../constants/code';
-import {toJpeg} from 'html-to-image';
+import {toJpeg, toPng} from 'html-to-image';
 
 export const roundToDecimalPlaces = (val: number, precision: number): number => {
   const roundedNumber = Number(val.toFixed(precision));
@@ -483,3 +483,15 @@ export function getChainNameByCurrency(
     throw new CustomError(Code.CANNOT_FIND_CHAIN_BY_CURRENCY);
   }
 }
+
+export const convertHTMLToImage = async (element: HTMLElement): Promise<HTMLImageElement> => {
+  try {
+    const dataUrl = await toPng(element);
+    const img = new Image();
+    img.src = dataUrl;
+    return img;
+  } catch (error) {
+    // console.error('oops, something went wrong!', error);
+    throw new CustomError(Code.CANNOT_CONVERT_TO_IMAGE);
+  }
+};

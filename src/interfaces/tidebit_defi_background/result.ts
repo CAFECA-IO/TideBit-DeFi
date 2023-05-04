@@ -2,6 +2,7 @@ import {Code, ICode, Reason} from '../../constants/code';
 import {IAcceptedCFDOrder} from './accepted_cfd_order';
 import {IAcceptedOrder} from './accepted_order';
 import {ICryptocurrency} from './cryptocurrency';
+import {ISharingOrder} from './display_accepted_cfd_order';
 import {IOrder} from './order';
 import {IQuotation} from './quotation';
 import {ITickerData} from './ticker_data';
@@ -18,6 +19,7 @@ export interface IResult {
     | {order: IOrder; acceptedOrder: IAcceptedOrder}
     | IQuotation
     | ITickerHistoryData[]
+    | ISharingOrder
     | null;
   code: ICode;
   reason?: string;

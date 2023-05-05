@@ -117,7 +117,7 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
     if (privatePusher) {
     */
     if (pusherRef.current) {
-      const channelName = `${PusherChannel.PRIVATE_CHANNEL_TEMP}-${keccak
+      const channelName = `${PusherChannel.PRIVATE_CHANNEL}-${keccak
         .keccak256(address.toLowerCase().replace(`0x`, ``))
         .slice(0, 8)}`;
       const channel = pusherRef.current?.subscribe(channelName);

@@ -55,9 +55,39 @@ const CfdSharing = (props: IPageProps) => {
     return <Error statusCode={404} />;
   }
 
+  // Do SEO some <meta> tags
   return (
     <>
-      <Image src="/elements/sharing_example.png" width={500} height={500} alt="record" />
+      <Head>
+        <title>TideBit DeFi - CFD Sharing</title>
+        <meta name="description" content="CFD Sharing" />
+        <meta name="keywords" content="CFD Sharing" />
+        <meta name="author" content="TideBit" />
+        <meta name="application-name" content="TideBit DeFi" />
+        <meta name="apple-mobile-web-app-title" content="TideBit DeFi" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" />
+
+        <meta property="og:title" content="TideBit DeFi CFD" />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://tidebit-defi.com/" />
+        <meta property="og:image" content="/api/images/cfd" />
+        <meta property="og:image:width" content="600" />
+        <meta property="og:image:height" content="600" />
+        <meta property="og:description" content="CFD Sharing" />
+        <meta property="og:site_name" content="TideBit" />
+        <meta property="og:locale" content="en_US" />
+
+        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:site" content="@tidebit" />
+        <meta name="twitter:creator" content="@tidebit" />
+        <meta name="twitter:url" content="https://tidebit-defi.com/" />
+        <meta name="twitter:title" content="TideBit DeFi CFD" />
+        <meta name="twitter:description" content="TideBit DeFi CFD" />
+        <meta name="twitter:image" content="/api/images/cfd" />
+        <meta name="twitter:image:alt" content="TideBit DeFi CFD" />
+      </Head>
+      <img src={`/api/images/cfd`} width={600} height={600} alt="CFD record" />
     </>
   );
 };

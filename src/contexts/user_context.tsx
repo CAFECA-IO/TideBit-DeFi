@@ -1162,8 +1162,6 @@ export const UserProvider = ({children}: IUserProvider) => {
             setHistories(prev => [...prev, acceptedWithdrawOrder]);
 
             resultCode = Code.SUCCESS;
-            // eslint-disable-next-line no-console
-            console.log('result: success');
             result = {
               success: success,
               code: resultCode,

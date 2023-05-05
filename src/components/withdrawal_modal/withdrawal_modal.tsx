@@ -106,15 +106,6 @@ const WithdrawalModal = ({
     try {
       const result = await userCtx.withdraw(withdrawOrder);
 
-      /* Till: (20230519 - Julian) debug */
-      globalCtx.toast({
-        message: 'withdraw result: ' + JSON.stringify(result),
-        type: 'info',
-        typeText: 'Info',
-        isLoading: false,
-        autoClose: 5000,
-      });
-
       // TODO: the button URL
       if (result.success) {
         // ToDo: to tell when to show the loading modal with button

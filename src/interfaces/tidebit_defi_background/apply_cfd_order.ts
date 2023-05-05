@@ -113,7 +113,6 @@ export const convertApplyCloseCFDToAcceptedCFD = (
     (applyCFDData.closePrice - cfdOrder.openPrice) *
     cfdOrder.amount *
     (cfdOrder.typeOfPosition === TypeOfPosition.BUY ? 1 : -1);
-  const pnlPercent = roundToDecimalPlaces(pnl / (cfdOrder.openPrice * cfdOrder.amount), 2);
   const balanceDiff = {
     currency: balance.currency,
     available: balance.available * -1 + pnl,
@@ -131,7 +130,6 @@ export const convertApplyCloseCFDToAcceptedCFD = (
     pnl: {
       type: pnl > 0 ? ProfitState.PROFIT : ProfitState.LOSS,
       value: pnl,
-      percent: pnlPercent,
     },
   };
   const acceptedCFDOrder: IAcceptedCFDOrder = {

@@ -311,7 +311,6 @@ export const toDisplayCFDOrder = (
     pnl: {
       type: pnl > 0 ? ProfitState.PROFIT : ProfitState.LOSS,
       value: Math.abs(pnl),
-      percent: Math.abs(pnlPerncent),
     },
     openValue: openValue,
     closeValue: closeValue,

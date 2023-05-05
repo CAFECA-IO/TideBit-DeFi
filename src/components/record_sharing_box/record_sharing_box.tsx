@@ -145,7 +145,7 @@ const RecordSharingBox = ({
                     </div>
                     {/* Info: PNL percentage (20230502 - Shirley) */}
                     <div className={`text-5xl font-extrabold ${displayedTextColor} mt-5 mb-3`}>
-                      {displayedPnLSymbol} {order.pnl?.percent} %
+                      {displayedPnLSymbol} {`22`} %
                     </div>
                     {/* Info: CFD info (20230502 - Shirley) */}
                     <div className="flex-col space-y-2">

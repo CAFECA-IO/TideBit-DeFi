@@ -173,7 +173,7 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
     const pusher = new Pusher(pusherKey, {
       cluster: pusherCluster,
       channelAuthorization: {
-        transport: 'jsonp',
+        transport: 'ajax',
         endpoint: `${process.env.PUSHER_API}/pusher/auth`,
         headers: {
           deWT: getCookieByName('DeWT'),

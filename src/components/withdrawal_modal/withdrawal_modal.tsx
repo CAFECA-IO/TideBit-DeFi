@@ -105,6 +105,14 @@ const WithdrawalModal = ({
 
     try {
       const result = await userCtx.withdraw(withdrawOrder);
+
+      globalCtx.toast({
+        message: 'withdraw result: ' + JSON.stringify(result),
+        type: 'info',
+        typeText: 'Info',
+        isLoading: false,
+        autoClose: 5000,
+      });
       // TODO: the button URL
       if (result.success) {
         // ToDo: to tell when to show the loading modal with button
@@ -128,7 +136,7 @@ const WithdrawalModal = ({
           btnUrl: '#',
         });
 
-        globalCtx.eliminateToasts(ToastId.WITHDRAW);
+        //globalCtx.eliminateToasts(ToastId.WITHDRAW);
         globalCtx.visibleSuccessfulModalHandler();
         // TODO: `result.code` (20230316 - Shirley)
       } else if (
@@ -144,7 +152,7 @@ const WithdrawalModal = ({
           modalContent: `${t('D_W_MODAL.FAILED_REASON_CANCELED')} (${result.code})`,
         });
 
-        globalCtx.eliminateToasts(ToastId.WITHDRAW);
+        //globalCtx.eliminateToasts(ToastId.WITHDRAW);
         globalCtx.visibleCanceledModalHandler();
       } else if (
         result.code === Code.INTERNAL_SERVER_ERROR ||
@@ -154,10 +162,11 @@ const WithdrawalModal = ({
 
         globalCtx.dataFailedModalHandler({
           modalTitle: t('D_W_MODAL.WITHDRAW'),
-          modalContent: `${t('D_W_MODAL.FAILED_REASON_FAILED_TO_WITHDRAW')} (${result.code})`,
+          failedTitle: t('D_W_MODAL.FAILED_TITLE'),
+          failedMsg: `${t('D_W_MODAL.FAILED_REASON_FAILED_TO_WITHDRAW')} (${result.code})`,
         });
 
-        globalCtx.eliminateToasts(ToastId.WITHDRAW);
+        //globalCtx.eliminateToasts(ToastId.WITHDRAW);
         globalCtx.visibleFailedModalHandler();
       }
     } catch (error: any) {
@@ -167,12 +176,13 @@ const WithdrawalModal = ({
       // Info: Unknown error
       globalCtx.dataFailedModalHandler({
         modalTitle: t('D_W_MODAL.WITHDRAW'),
-        modalContent: `${t('D_W_MODAL.FAILED_REASON_FAILED_TO_WITHDRAW')} (${
+        failedTitle: t('D_W_MODAL.FAILED_TITLE'),
+        failedMsg: `${t('D_W_MODAL.FAILED_REASON_FAILED_TO_WITHDRAW')} (${
           Code.UNKNOWN_ERROR_IN_COMPONENT
         })`,
       });
 
-      globalCtx.eliminateToasts(ToastId.WITHDRAW);
+      //globalCtx.eliminateToasts(ToastId.WITHDRAW);
       globalCtx.visibleFailedModalHandler();
     }
 

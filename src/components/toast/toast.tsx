@@ -3,6 +3,8 @@ import {ImCross} from 'react-icons/im';
 import {ToastContainer} from 'react-toastify';
 
 const Toast = () => {
+  const closeButton = () => <ImCross className="w-12px text-lightGray2" />;
+
   const toastClassName = () =>
     'pl-14 pr-3 my-2 overflow-hidden cursor-pointer w-screen sm:w-fit sm:whitespace-nowrap h-50px bg-darkGray1 inline-flex items-center justify-between shadow-lg shadow-black/80';
 
@@ -18,7 +20,7 @@ const Toast = () => {
         pauseOnHover
         theme="dark"
         limit={10}
-        closeButton={<ImCross className="w-12px text-lightGray2" />}
+        closeButton={closeButton}
         toastClassName={toastClassName}
       />
     </div>

@@ -18,7 +18,8 @@ export type ICode =
   | '40230002'
   | '90000001'
   | '10120001'
-  | '60310001';
+  | '60310001'
+  | '10310001';
 
 export type ICodeConstant = {
   SUCCESS: ICode;
@@ -41,6 +42,7 @@ export type ICodeConstant = {
   UNKNOWN_ERROR_IN_COMPONENT: ICode;
   CANNOT_FIND_CHAIN_BY_CURRENCY: ICode;
   CANNOT_CONVERT_TO_IMAGE: ICode;
+  THIRD_PARTY_LIBRARY_ERROR: ICode;
 };
 
 export type IReason = {
@@ -72,6 +74,8 @@ export const Code: ICodeConstant = {
 
   INTERNAL_SERVER_ERROR: '60220001',
   CANNOT_CONVERT_TO_IMAGE: '60310001',
+
+  THIRD_PARTY_LIBRARY_ERROR: '10310001',
 };
 
 export const Reason: IReason = {
@@ -96,6 +100,8 @@ export const Reason: IReason = {
 
   '60220001': 'Internal server error',
   '60310001': 'Cannot convert HTML to image',
+
+  '10310001': 'Third party library error',
 
   '90000000': 'Unknown error',
   '90000001': 'Unknown error in component',

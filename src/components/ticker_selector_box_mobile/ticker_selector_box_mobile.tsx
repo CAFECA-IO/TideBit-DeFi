@@ -111,7 +111,7 @@ const TickerSelectorBoxMobile = ({
         setFilteredFavorites(newSearchResult);
       }
     }
-  }, [tickerSelectorBoxVisible, searches, activeTab, marketCtx.availableTickers]);
+  }, [tickerSelectorBoxVisible, searches, activeTab, marketCtx.listAvailableTickers()]);
 
   const allTabClickHandler = () => {
     setMenuOpen(false);

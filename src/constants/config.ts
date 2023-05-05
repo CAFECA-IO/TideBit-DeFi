@@ -270,3 +270,4 @@ export const PUSHER_CLUSTER = 'ap3';
 export const CFD_LIQUIDATION_TIME = 86400;
 export const TP_SL_LIMIT_PERCENT = 0.01;
 export const DEFAULT_TICKER = 'ETH';
+export const NEXT_API_ROUTES = 'http://localhost:3000';

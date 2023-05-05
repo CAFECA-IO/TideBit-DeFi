@@ -7,7 +7,7 @@ import TradePageBody from '../../../components/trade_page_body/trade_page_body';
 import {MarketContext} from '../../../contexts/market_context';
 import {useGlobal} from '../../../contexts/global_context';
 import NavBarMobile from '../../../components/nav_bar_mobile/nav_bar_mobile';
-import {GetStaticPaths, GetStaticProps} from 'next';
+import {GetServerSideProps, GetStaticPaths, GetStaticProps} from 'next';
 import {useRouter} from 'next/router';
 import Error from 'next/error';
 import {findCurrencyByCode, hasValue} from '../../../lib/common';
@@ -15,6 +15,7 @@ import {findCurrencyByCode, hasValue} from '../../../lib/common';
 import {Currency} from '../../../constants/currency';
 import Skeleton, {SkeletonTheme} from 'react-loading-skeleton';
 import Image from 'next/image';
+import {NEXT_API_ROUTES} from '../../../constants/config';
 
 interface IPageProps {
   cfdId: string;
@@ -26,6 +27,8 @@ const CfdSharing = (props: IPageProps) => {
   const appCtx = useContext(AppContext);
 
   const displayedNavBar = layoutAssertion === 'mobile' ? <NavBarMobile /> : <NavBar />;
+
+  const imgUrl = `${NEXT_API_ROUTES}/api/images/cfd`;
 
   const router = useRouter();
   const {cfdId} = router.query;
@@ -71,7 +74,7 @@ const CfdSharing = (props: IPageProps) => {
         <meta property="og:title" content="TideBit DeFi CFD" />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://tidebit-defi.com/" />
-        <meta property="og:image" content={`/api/images/cfd`} />
+        <meta property="og:image" content={imgUrl} />
         <meta property="og:image:width" content="100" />
         <meta property="og:image:height" content="100" />
         <meta property="og:description" content="CFD Sharing" />
@@ -84,10 +87,10 @@ const CfdSharing = (props: IPageProps) => {
         <meta name="twitter:url" content="https://tidebit-defi.com/" />
         <meta name="twitter:title" content="TideBit DeFi CFD" />
         <meta name="twitter:description" content="TideBit DeFi CFD" />
-        <meta name="twitter:image" content={`/api/images/cfd`} />
+        <meta name="twitter:image" content={imgUrl} />
         <meta name="twitter:image:alt" content="TideBit DeFi CFD" />
       </Head>
-      <img src={`/api/images/cfd`} width={600} height={600} alt="CFD record" />
+      <img src={imgUrl} width={600} height={600} alt="CFD record" />
     </>
   );
 };

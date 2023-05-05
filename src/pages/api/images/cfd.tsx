@@ -11,6 +11,7 @@ export const config = {
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   // const bgUrl = req.query.bgUrl as string;
   const bgUrl = 'https://gcdnb.pbrd.co/images/WkqDgGonPnnp.png?o=1';
+  // TODO: get icon url from api (20230503 - Shirley)
   const iconUrl = 'https://svgshare.com/i/spv.svg';
   const randomPnL = randomIntFromInterval(1, 100);
   const generateQRCode = async (text: string) => {
@@ -44,6 +45,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         <div
           style={{
             zIndex: -1,
+            // TODO: image should upload to server and fix that image URL (20230505 - Shirley)
             backgroundImage: `url('https://gcdnb.pbrd.co/images/WkqDgGonPnnp.png?o=1')`,
             backgroundSize: '600px 600px',
             backgroundPosition: 'relative',

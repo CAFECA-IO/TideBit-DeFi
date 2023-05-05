@@ -1134,8 +1134,14 @@ export const UserProvider = ({children}: IUserProvider) => {
         if (transferR.success) {
           // ++ TODO: send request to chain(use Lunar?) (20230324 - tzuhan)
           try {
+            // eslint-disable-next-line no-console
+            console.log('check point 1');
             resultCode = Code.REJECTED_SIGNATURE;
+            // eslint-disable-next-line no-console
+            console.log('check point 2');
             const signature: string = await lunar.signTypedData(transferR.data);
+            // eslint-disable-next-line no-console
+            console.log('check point 3');
 
             resultCode = Code.INTERNAL_SERVER_ERROR;
             const acceptedWithdrawOrder = (await privateRequestHandler({

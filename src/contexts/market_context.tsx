@@ -254,7 +254,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
   */
 
   const getCandlestickChartData = async (tickerId: string) => {
-    let result: IResult = defaultResultFailed;
+    let result: IResult = {...defaultResultFailed};
     try {
       /* TODO: when backend provide this api (20230424 - tzuhan)
       const apiResult = (await workerCtx.requestHandler({
@@ -353,7 +353,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
   };
 
   const getGuaranteedStopFeePercentage = async () => {
-    let result: IResult = defaultResultFailed;
+    let result: IResult = {...defaultResultFailed};
     try {
       const guaranteedStopFeePercentage = (await workerCtx.requestHandler({
         name: APIName.GET_GUARANTEED_STOP_FEE_PERCENTAGE,
@@ -382,7 +382,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
   };
 
   const listTickers = async () => {
-    let result: IResult = defaultResultFailed;
+    let result: IResult = {...defaultResultFailed};
     try {
       // 1. get tickers from backend
       const tickers = (await workerCtx.requestHandler({
@@ -419,7 +419,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
   };
 
   const listDepositCryptocurrencies = async () => {
-    let result: IResult = defaultResultFailed;
+    let result: IResult = {...defaultResultFailed};
     try {
       const cryptocurrencies = (await workerCtx.requestHandler({
         name: APIName.LIST_DEPOSIT_CRYPTO_CURRENCIES,
@@ -448,7 +448,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
   };
 
   const lisWithdrawCryptocurrencies = async () => {
-    let result: IResult = defaultResultFailed;
+    let result: IResult = {...defaultResultFailed};
     try {
       const cryptocurrencies = (await workerCtx.requestHandler({
         name: APIName.LIST_WITHDRAW_CRYPTO_CURRENCIES,

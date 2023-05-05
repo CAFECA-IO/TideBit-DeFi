@@ -30,7 +30,7 @@ import {IAcceptedWithdrawOrder} from '../interfaces/tidebit_defi_background/acce
 import {IAcceptedDepositOrder} from '../interfaces/tidebit_defi_background/accepted_deposit_order';
 import {APIName, Method, TypeRequest} from '../constants/api_request';
 // import SafeMath from '../lib/safe_math';
-import {Code, ICode, Reason} from '../constants/code';
+import {Code, Reason} from '../constants/code';
 import {
   getCookieByName,
   getServiceTermContract,
@@ -38,7 +38,6 @@ import {
   randomHex,
   rlpEncodeServiceTerm,
   verifySignedServiceTerm,
-  wait,
 } from '../lib/common';
 import {IAcceptedOrder} from '../interfaces/tidebit_defi_background/accepted_order';
 import {
@@ -791,6 +790,9 @@ export const UserProvider = ({children}: IUserProvider) => {
             try {
               resultCode = Code.REJECTED_SIGNATURE;
               const signature: string = await lunar.signTypedData(transferR.data);
+              /* Info: (20230505 - Julian) 需要再驗證一次簽名是否正確 */
+              const success = await lunar.verifyTypedData(transferR.data, signature);
+              if (!success) throw new Error('verify signature failed');
               const now = getTimestamp();
 
               // ToDo: Check if the quotation is expired, if so return `failed result` in `catch`. (20230414 - Shirley)
@@ -819,7 +821,7 @@ export const UserProvider = ({children}: IUserProvider) => {
 
               resultCode = Code.SUCCESS;
               result = {
-                success: true,
+                success: success,
                 code: resultCode,
                 data: {order: CFDOrder, acceptedOrder: acceptedCFDOrder},
               };
@@ -907,6 +909,9 @@ export const UserProvider = ({children}: IUserProvider) => {
             try {
               resultCode = Code.REJECTED_SIGNATURE;
               const signature: string = await lunar.signTypedData(transferR.data);
+              /* Info: (20230505 - Julian) 需要再驗證一次簽名是否正確 */
+              const success = await lunar.verifyTypedData(transferR.data, signature);
+              if (!success) throw new Error('verify signature failed');
               const now = getTimestamp();
 
               // ToDo: Check if the quotation is expired, if so return `failed result` in `catch`. (20230414 - Shirley)
@@ -939,7 +944,7 @@ export const UserProvider = ({children}: IUserProvider) => {
 
               resultCode = Code.SUCCESS;
               result = {
-                success: true,
+                success: success,
                 code: resultCode,
                 data: {order: updateCFDOrder, acceptedOrder: acceptedCFDOrder},
               };
@@ -1025,6 +1030,9 @@ export const UserProvider = ({children}: IUserProvider) => {
             try {
               resultCode = Code.REJECTED_SIGNATURE;
               const signature: string = await lunar.signTypedData(transferR.data);
+              /* Info: (20230505 - Julian) 需要再驗證一次簽名是否正確 */
+              const success = await lunar.verifyTypedData(transferR.data, signature);
+              if (!success) throw new Error('verify signature failed');
 
               resultCode = Code.INTERNAL_SERVER_ERROR;
               const {updateCFDOrder, acceptedCFDOrder} = (await privateRequestHandler({
@@ -1043,7 +1051,7 @@ export const UserProvider = ({children}: IUserProvider) => {
 
               resultCode = Code.SUCCESS;
               result = {
-                success: true,
+                success: success,
                 code: resultCode,
                 data: {order: updateCFDOrder, acceptedOrder: acceptedCFDOrder},
               };
@@ -1126,8 +1134,6 @@ export const UserProvider = ({children}: IUserProvider) => {
   const withdraw = async (withdrawOrder: IApplyWithdrawOrder): Promise<IResult> => {
     let result: IResult = {...defaultResultFailed};
     let resultCode = Code.UNKNOWN_ERROR;
-    // eslint-disable-next-line no-console
-    console.log('defaultResultFailed', defaultResultFailed);
     if (lunar.isConnected) {
       const balance: IBalance | null = getBalance(withdrawOrder.targetAsset); // TODO: ticker is not currency
       if (balance && balance.available >= withdrawOrder.targetAmount) {
@@ -1137,8 +1143,10 @@ export const UserProvider = ({children}: IUserProvider) => {
           try {
             resultCode = Code.REJECTED_SIGNATURE;
             const signature: string = await lunar.signTypedData(transferR.data);
-            // eslint-disable-next-line no-console
-            console.log(signature);
+            /* Info: (20230505 - Julian) 需要再驗證一次簽名是否正確 */
+            const success = await lunar.verifyTypedData(transferR.data, signature);
+            if (!success) throw new Error('verify signature failed');
+
             resultCode = Code.INTERNAL_SERVER_ERROR;
             const acceptedWithdrawOrder = (await privateRequestHandler({
               name: APIName.CREATE_WITHDRAW_TRADE,
@@ -1155,9 +1163,9 @@ export const UserProvider = ({children}: IUserProvider) => {
 
             resultCode = Code.SUCCESS;
             // eslint-disable-next-line no-console
-            console.log('success');
+            console.log('result: success');
             result = {
-              success: true,
+              success: success,
               code: resultCode,
               data: acceptedWithdrawOrder,
             };

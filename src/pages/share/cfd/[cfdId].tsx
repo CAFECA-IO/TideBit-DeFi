@@ -71,9 +71,9 @@ const CfdSharing = (props: IPageProps) => {
         <meta property="og:title" content="TideBit DeFi CFD" />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://tidebit-defi.com/" />
-        <meta property="og:image" content="/api/images/cfd" />
-        <meta property="og:image:width" content="600" />
-        <meta property="og:image:height" content="600" />
+        <meta property="og:image" content={`/api/images/cfd`} />
+        <meta property="og:image:width" content="100" />
+        <meta property="og:image:height" content="100" />
         <meta property="og:description" content="CFD Sharing" />
         <meta property="og:site_name" content="TideBit" />
         <meta property="og:locale" content="en_US" />
@@ -84,7 +84,7 @@ const CfdSharing = (props: IPageProps) => {
         <meta name="twitter:url" content="https://tidebit-defi.com/" />
         <meta name="twitter:title" content="TideBit DeFi CFD" />
         <meta name="twitter:description" content="TideBit DeFi CFD" />
-        <meta name="twitter:image" content="/api/images/cfd" />
+        <meta name="twitter:image" content={`/api/images/cfd`} />
         <meta name="twitter:image:alt" content="TideBit DeFi CFD" />
       </Head>
       <img src={`/api/images/cfd`} width={600} height={600} alt="CFD record" />

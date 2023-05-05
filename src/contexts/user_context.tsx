@@ -1124,7 +1124,7 @@ export const UserProvider = ({children}: IUserProvider) => {
   };
 
   const withdraw = async (withdrawOrder: IApplyWithdrawOrder): Promise<IResult> => {
-    let result: IResult = defaultResultFailed;
+    let result: IResult = {...defaultResultFailed};
     let resultCode = Code.UNKNOWN_ERROR;
 
     if (lunar.isConnected) {

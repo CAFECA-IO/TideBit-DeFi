@@ -776,7 +776,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
         } catch (error) {
           /* Info: (20230510 - Julian) if toastify error */
           dataFailedModalHandler({
-            modalTitle: 'Toastify Error',
+            modalTitle: 'Error',
             failedTitle: 'Toastify Error',
             failedMsg: `${Reason[Code.THIRD_PARTY_LIBRARY_ERROR]} (${
               Code.THIRD_PARTY_LIBRARY_ERROR

@@ -82,6 +82,7 @@ const User = () => {
           </div>
         </li>
         <li
+          /* Till: (20230519 - Julian) Remove this code after testing */
           onClick={() => {
             globalCtx.toast({
               typeText: 'Error',

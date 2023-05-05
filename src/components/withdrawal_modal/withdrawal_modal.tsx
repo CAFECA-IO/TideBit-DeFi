@@ -105,6 +105,7 @@ const WithdrawalModal = ({
 
     try {
       const result = await userCtx.withdraw(withdrawOrder);
+
       // TODO: the button URL
       if (result.success) {
         // ToDo: to tell when to show the loading modal with button
@@ -154,7 +155,8 @@ const WithdrawalModal = ({
 
         globalCtx.dataFailedModalHandler({
           modalTitle: t('D_W_MODAL.WITHDRAW'),
-          modalContent: `${t('D_W_MODAL.FAILED_REASON_FAILED_TO_WITHDRAW')} (${result.code})`,
+          failedTitle: t('D_W_MODAL.FAILED_TITLE'),
+          failedMsg: `${t('D_W_MODAL.FAILED_REASON_FAILED_TO_WITHDRAW')} (${result.code})`,
         });
 
         globalCtx.eliminateToasts(ToastId.WITHDRAW);
@@ -167,7 +169,8 @@ const WithdrawalModal = ({
       // Info: Unknown error
       globalCtx.dataFailedModalHandler({
         modalTitle: t('D_W_MODAL.WITHDRAW'),
-        modalContent: `${t('D_W_MODAL.FAILED_REASON_FAILED_TO_WITHDRAW')} (${
+        failedTitle: t('D_W_MODAL.FAILED_TITLE'),
+        failedMsg: `${t('D_W_MODAL.FAILED_REASON_FAILED_TO_WITHDRAW')} (${
           Code.UNKNOWN_ERROR_IN_COMPONENT
         })`,
       });

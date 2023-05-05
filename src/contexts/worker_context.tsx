@@ -121,11 +121,9 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
         .keccak256(address.toLowerCase().replace(`0x`, ``))
         .slice(0, 8)}`;
       const channel = pusherRef.current?.subscribe(channelName);
+      // eslint-disable-next-line no-console
+      console.log(`pusher channel:`, channel);
       /** Deprecate: when privateChannel is done (20230509 - tzuhan)
-      channel.bind('pusher:member_added', (member: any) => {
-        // eslint-disable-next-line no-console
-        console.log(`pusher allChannels:`, member);
-      });
 
       channel.bind('pusher:subscription_count', (data: {subscription_count: any}) => {
         // eslint-disable-next-line no-console

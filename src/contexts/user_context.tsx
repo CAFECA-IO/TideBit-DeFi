@@ -1,5 +1,5 @@
 import Lunar from '@cafeca/lunar';
-import React, {createContext, useCallback, useContext, useEffect} from 'react';
+import React, {createContext, useCallback, useContext} from 'react';
 import useState from 'react-usestateref';
 import {
   defaultResultFailed,
@@ -1135,9 +1135,19 @@ export const UserProvider = ({children}: IUserProvider) => {
           // ++ TODO: send request to chain(use Lunar?) (20230324 - tzuhan)
           try {
             resultCode = Code.REJECTED_SIGNATURE;
-            const signature: string = await lunar.signTypedData(transferR.data);
             // eslint-disable-next-line no-console
-            console.log('signature: ' + signature);
+            console.log('check point 1');
+            const signature: string = await lunar.signTypedData(transferR.data);
+            if (signature == '0x') {
+              resultCode = Code.REJECTED_SIGNATURE;
+              result.code = resultCode;
+              result.reason = Reason[resultCode];
+              // eslint-disable-next-line no-console
+              console.log('check point 2');
+              return result;
+            }
+            // eslint-disable-next-line no-console
+            console.log('check point 3');
 
             resultCode = Code.INTERNAL_SERVER_ERROR;
             const acceptedWithdrawOrder = (await privateRequestHandler({

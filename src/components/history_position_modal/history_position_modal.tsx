@@ -5,7 +5,7 @@ import {
   TypeOfPnLColor,
   UNIVERSAL_NUMBER_FORMAT_LOCALE,
 } from '../../constants/display';
-import {unitAsset} from '../../constants/config';
+import {NEXT_API_ROUTES, unitAsset} from '../../constants/config';
 import Toggle from '../toggle/toggle';
 import {useContext, useRef, useState} from 'react';
 import TradingInput from '../trading_input/trading_input';
@@ -91,6 +91,15 @@ const HistoryPositionModal = ({
 
   const openTime = timestampToString(closedCfdDetails.createTimestamp ?? 0);
   const closedTime = timestampToString(closedCfdDetails?.closeTimestamp ?? 0);
+
+  const shareToFacebook = () => {
+    const shareUrl = NEXT_API_ROUTES + `/share/cfd/orderId123`;
+    window.open(
+      `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`,
+      'facebook-share-dialog',
+      'width=800,height=600'
+    );
+  };
 
   const formContent = (
     <div className="relative flex w-full flex-auto flex-col pt-0">
@@ -219,7 +228,13 @@ const HistoryPositionModal = ({
         <div className="text-sm">{t('POSITION_MODAL.SHARE')}:</div>
         <div className="flex items-center justify-between">
           <div className={`${socialMediaStyle}`}>
-            <Image src="/elements/group_15237.svg" width={44} height={44} alt="Facebook" />
+            <Image
+              onClick={shareToFacebook}
+              src="/elements/group_15237.svg"
+              width={44}
+              height={44}
+              alt="Facebook"
+            />
           </div>
 
           <div className={`${socialMediaStyle}`}>

@@ -13,7 +13,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const bgUrl = 'https://gcdnb.pbrd.co/images/WkqDgGonPnnp.png?o=1';
   // TODO: get icon url from api (20230503 - Shirley)
   const iconUrl = 'https://svgshare.com/i/spv.svg';
-  const randomPnL = randomIntFromInterval(1, 100);
+  const randomPnL = 16;
   const generateQRCode = async (text: string) => {
     try {
       const qrcode = await QRCode.toDataURL(text, {

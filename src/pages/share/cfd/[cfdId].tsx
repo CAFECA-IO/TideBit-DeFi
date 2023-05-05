@@ -28,7 +28,9 @@ const CfdSharing = (props: IPageProps) => {
 
   const displayedNavBar = layoutAssertion === 'mobile' ? <NavBarMobile /> : <NavBar />;
 
-  const imgUrl = `${NEXT_API_ROUTES}/api/images/cfd`;
+  // TODO: for meta content (20230505 - Shirley)
+  // const imgUrl = `${NEXT_API_ROUTES}/api/images/cfd`;
+  const imgUrl = `/api/images/cfd`;
 
   const router = useRouter();
   const {cfdId} = router.query;

@@ -4,7 +4,8 @@ import {
   IAcceptedOrder,
 } from '../../../../interfaces/tidebit_defi_background/accepted_order';
 
-const histories: IAcceptedOrder[] = [...dummyAcceptedOrders];
+// const histories: IAcceptedOrder[] = [...dummyAcceptedOrders];
+const histories: IAcceptedOrder[] = [];
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'GET') {

@@ -1284,11 +1284,11 @@ export const UserProvider = ({children}: IUserProvider) => {
       const index = balancesRef.current.findIndex(obj => obj.currency === updateBalance.currency);
       // Deprecated: when this function is finished, remove this console (20230504 - tzuhan)
       // eslint-disable-next-line no-console
-      console.log(
-        `updateBalanceHandler is called updateBalance: index:[${index}]`,
-        updateBalance,
-        updatedBalances
-      );
+      // console.log(
+      //   `updateBalanceHandler is called updateBalance: index:[${index}]`,
+      //   updateBalance,
+      //   updatedBalances
+      // );
       if (index !== -1) {
         const updatedBalance = {
           ...balancesRef.current[index],
@@ -1299,14 +1299,15 @@ export const UserProvider = ({children}: IUserProvider) => {
       setBalances(updatedBalances);
       // Deprecated: when this function is finished, remove this console (20230504 - tzuhan)
       // eslint-disable-next-line no-console
-      console.log(
-        `updateBalanceHandler after update`,
-        index !== -1 ? balancesRef.current[index] : balancesRef.current
-      );
+      // console.log(
+      //   `updateBalanceHandler after update`,
+      //   index !== -1 ? balancesRef.current[index] : balancesRef.current
+      // );
     }
   }, []);
 
   const updateCFDHandler = useCallback((updateCFD: ICFDOrder) => {
+    const _updateCFD = {...updateCFD, ticker: updateCFD.ticker.split('-')[0]};
     let updatedCFDs: ICFDOrder[] = [];
     if (openCFDsRef.current) {
       updatedCFDs = [...updatedCFDs, ...openCFDsRef.current];
@@ -1317,36 +1318,36 @@ export const UserProvider = ({children}: IUserProvider) => {
     const index = updatedCFDs.findIndex(obj => obj.id === updateCFD.id);
     // Deprecated: when this function is finished, remove this console (20230504 - tzuhan)
     // eslint-disable-next-line no-console
-    console.log(`updateCFDHandler is called updateCFD: index:[${index}]`, updateCFD, updatedCFDs);
+    // console.log(`updateCFDHandler is called updateCFD: index:[${index}]`, _updateCFD, updatedCFDs);
     if (index !== -1) {
-      updatedCFDs[index] = updateCFD;
+      updatedCFDs[index] = _updateCFD;
     } else {
-      updatedCFDs.push(updateCFD);
+      updatedCFDs.push(_updateCFD);
     }
     // Deprecated: when this function is finished, remove this console (20230504 - tzuhan)
     // eslint-disable-next-line no-console
-    console.log(`updateCFDHandler after update`, index !== -1 ? updatedCFDs[index] : updatedCFDs);
+    // console.log(`updateCFDHandler after update`, index !== -1 ? updatedCFDs[index] : updatedCFDs);
     const openCFDs = updatedCFDs.filter(obj => obj.state === OrderState.OPENING);
     const closedCFDs = updatedCFDs.filter(obj => obj.state === OrderState.CLOSED);
     setOpenedCFDs(openCFDs);
     // Deprecated: when this function is finished, remove this console (20230504 - tzuhan)
     // eslint-disable-next-line no-console
-    console.log(`updateCFDHandler after update openCFDs`, openCFDsRef.current);
+    // console.log(`updateCFDHandler after update openCFDs`, openCFDsRef.current);
     setClosedCFDs(closedCFDs);
     // Deprecated: when this function is finished, remove this console (20230504 - tzuhan)
     // eslint-disable-next-line no-console
-    console.log(`updateCFDHandler after update closedCFDs`, closedCFDsRef.current);
+    // console.log(`updateCFDHandler after update closedCFDs`, closedCFDsRef.current);
   }, []);
 
   const updateHistoryHandler = useCallback((history: IAcceptedOrder) => {
     const index = historiesRef.current.findIndex(obj => obj.id === history.id);
     // Deprecated: when this function is finished, remove this console (20230504 - tzuhan)
     // eslint-disable-next-line no-console
-    console.log(
-      `updateHistoryHandler is called history: index[${index}]`,
-      history,
-      historiesRef.current
-    );
+    // console.log(
+    //   `updateHistoryHandler is called history: index[${index}]`,
+    //   history,
+    //   historiesRef.current
+    // );
     if (index === -1) {
       const updatedHistory: IAcceptedOrder[] = [...historiesRef.current];
       updatedHistory.push(history);
@@ -1354,10 +1355,10 @@ export const UserProvider = ({children}: IUserProvider) => {
     }
     // Deprecated: when this function is finished, remove this console (20230504 - tzuhan)
     // eslint-disable-next-line no-console
-    console.log(
-      `updateHistoryHandler after update historiesRef.current, index:[${index}]`,
-      historiesRef.current
-    );
+    // console.log(
+    //   `updateHistoryHandler after update historiesRef.current, index:[${index}]`,
+    //   historiesRef.current
+    // );
   }, []);
 
   React.useMemo(() => notificationCtx.emitter.on(Events.BALANCE, updateBalanceHandler), []);

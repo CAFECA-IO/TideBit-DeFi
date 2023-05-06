@@ -26,7 +26,7 @@ export interface IPusherChannelConstant {
 }
 export const PusherChannel: IPusherChannelConstant = {
   GLOBAL_CHANNEL: 'global-channel',
-  PRIVATE_CHANNEL: 'private_channel',
+  PRIVATE_CHANNEL: 'private_channel', // Info: this is a workaround, official private channel is with the prefix: private- (20230506 - tzuhan), will fixed by #606
 };
 
 export type IPusherAction = 'SNAPSHOT' | 'UPDATE';

@@ -19,14 +19,14 @@ export interface IPusherResponse {
   data: IPusherData;
 }
 
-export type IPusherChannel = 'global-channel' | 'private-channel';
+export type IPusherChannel = 'global-channel' | 'private_channel';
 export interface IPusherChannelConstant {
   GLOBAL_CHANNEL: IPusherChannel;
   PRIVATE_CHANNEL: IPusherChannel;
 }
 export const PusherChannel: IPusherChannelConstant = {
   GLOBAL_CHANNEL: 'global-channel',
-  PRIVATE_CHANNEL: 'private-channel',
+  PRIVATE_CHANNEL: 'private_channel',
 };
 
 export type IPusherAction = 'SNAPSHOT' | 'UPDATE';

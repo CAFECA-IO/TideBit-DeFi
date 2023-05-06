@@ -55,6 +55,7 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
   const [pusher, setPuser, pusherRef] = useState<Pusher | null>(null);
   const jobQueueOfWS = useRef<((...args: []) => Promise<void>)[]>([]);
   const jobQueueOfAPI = useRef<((...args: []) => Promise<void>)[]>([]);
+  const [sockedId, setSocketId, sockedIdRef] = useState<string | null>(null);
   /* Deprecated: callback in requestHandler (Tzuhan - 20230420)
   const requests = useRef<IRequest>({});
   */
@@ -94,69 +95,22 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
   };
 
   const subscribeUser = (address: string) => {
-    /* Deprecate: replaced by pusher (20230502 - tzuhan)
-    const privatePusher = new Pusher(pusherKey, {
-      cluster: pusherCluster,
-      // userAuthentication: {
-      channelAuthorization: {
-        transport: 'jsonp',
-        endpoint: `${process.env.PUSHER_API}/pusher/auth`,
-        // headers: {
-        //   deWT,
-        // },
-      },
-    });
-    // privatePusher.signin();
-    // eslint-disable-next-line no-console
-    console.log(
-      `pusher privatePusher:`,
-      privatePusher,
-      `endpoint: `,
-      `${process.env.PUSHER_API}/pusher/auth`
-    );
-    if (privatePusher) {
-    */
     if (pusherRef.current) {
       const channelName = `${PusherChannel.PRIVATE_CHANNEL}-${keccak
         .keccak256(address.toLowerCase().replace(`0x`, ``))
         .slice(0, 8)}`;
+      // eslint-disable-next-line no-console
+      // console.log(`when subscribeUser DeWT`, getCookieByName('DeWT'));
       const channel = pusherRef.current?.subscribe(channelName);
-      /** Deprecate: when privateChannel is done (20230509 - tzuhan)
-      channel.bind('pusher:member_added', (member: any) => {
-        // eslint-disable-next-line no-console
-        console.log(`pusher allChannels:`, member);
-      });
 
-      channel.bind('pusher:subscription_count', (data: {subscription_count: any}) => {
-        // eslint-disable-next-line no-console
-        console.log(`data.subscription_count:`, data.subscription_count);
-        // eslint-disable-next-line no-console
-        console.log(`channel.subscription_count:`, channel.subscriptionCount);
-      });
+      // eslint-disable-next-line no-console
+      // console.log(`pusher channel:`, channel);
 
-      channel.bind('pusher:subscription_succeeded', (data: any) => {
-        // eslint-disable-next-line no-console
-        console.log(`data.subscription_succeeded:`, data);
-      });
-
-      channel.bind('pusher:subscription_error', (data: any) => {
-        // eslint-disable-next-line no-console
-        console.log(`data.subscription_error:`, data);
-      });
-
-      pusherRef.current.allChannels().forEach(channel => {
-        // eslint-disable-next-line no-console
-        console.log(`pusher allChannels:`, channel);
-      });
       channel.bind_global((data: string, metadata: any) => {
         // eslint-disable-next-line no-console
         console.log(`pusher PRIVATE_CHANNEL bind_global:`, data, `metadata`, metadata);
       });
-      channel.bind('test', (data: string) => {
-        // eslint-disable-next-line no-console
-        console.log(`pusher PRIVATE_CHANNEL test:`, data);
-      });
-      */
+
       channel.bind(Events.BALANCE, (data: IPusherPrivateData) => {
         notificationCtx.emitter.emit(Events.BALANCE, data);
       });
@@ -173,8 +127,9 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
     const pusher = new Pusher(pusherKey, {
       cluster: pusherCluster,
       channelAuthorization: {
-        transport: 'ajax',
-        endpoint: `${process.env.PUSHER_API}/pusher/auth`,
+        transport: 'jsonp',
+        endpoint: `http://localhost:3000/api/pusher/auth`,
+        // endpoint: `${process.env.PUSHER_API}/pusher/auth`,
         headers: {
           deWT: getCookieByName('DeWT'),
         },
@@ -183,44 +138,12 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
         },
       },
     });
-    /** Deprecate: when privateChannel is done (20230509 - tzuhan)
-    pusher.connection.bind('connected', () => {
+    pusher.connection.bind('connected', function () {
+      const socketId = pusher.connection.socket_id;
       // eslint-disable-next-line no-console
-      console.log(`pusher connected`);
+      // console.log('My socket ID is ' + socketId);
+      setSocketId(sockedId);
     });
-    pusher.connection.bind('disconnected', () => {
-      // eslint-disable-next-line no-console
-      console.log(`pusher disconnected`);
-    });
-    pusher.connection.bind('error', (err: any) => {
-      // eslint-disable-next-line no-console
-      console.log(`pusher error:`, err);
-    });
-    pusher.connection.bind('connecting', () => {
-      // eslint-disable-next-line no-console
-      console.log(`pusher connecting`);
-    });
-    pusher.connection.bind('unavailable', () => {
-      // eslint-disable-next-line no-console
-      console.log(`pusher unavailable`);
-    });
-    pusher.connection.bind('failed', () => {
-      // eslint-disable-next-line no-console
-      console.log(`pusher failed`);
-    });
-    pusher.connection.bind('connecting_in', (delay: number) => {
-      // eslint-disable-next-line no-console
-      console.log(`pusher connecting_in:`, delay);
-    });
-    pusher.connection.bind('state_change', (states: any) => {
-      // eslint-disable-next-line no-console
-      console.log(`pusher state_change:`, states);
-    });
-    pusher.bind_global((data: string, metadata: any) => {
-      // eslint-disable-next-line no-console
-      console.log(`pusher bind_global: data`, data, `metadata`, metadata);
-    });
-*/
     setPuser(pusher);
     subscribeTickers();
     subscribeCandlesticks();

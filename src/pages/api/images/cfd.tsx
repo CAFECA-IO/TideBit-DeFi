@@ -14,25 +14,25 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   // TODO: get icon url from api (20230503 - Shirley)
   const iconUrl = 'https://svgshare.com/i/spv.svg';
   const randomPnL = 16;
-  const generateQRCode = async (text: string) => {
-    try {
-      const qrcode = await QRCode.toDataURL(text, {
-        errorCorrectionLevel: 'H',
-        type: 'image/jpeg',
-        margin: 3,
-        rendererOpts: {
-          quality: 1,
-        },
-      });
-      return qrcode;
-    } catch (err) {
-      // TODO: handle error (20230503 - Shirley)
-      // eslint-disable-next-line no-console
-      console.error(`Generate qr code, ${err}`);
-    }
-  };
+  // const generateQRCode = async (text: string) => {
+  //   try {
+  //     const qrcode = await QRCode.toDataURL(text, {
+  //       errorCorrectionLevel: 'H',
+  //       type: 'image/jpeg',
+  //       margin: 3,
+  //       rendererOpts: {
+  //         quality: 1,
+  //       },
+  //     });
+  //     return qrcode;
+  //   } catch (err) {
+  //     // TODO: handle error (20230503 - Shirley)
+  //     // eslint-disable-next-line no-console
+  //     console.error(`Generate qr code, ${err}`);
+  //   }
+  // };
 
-  const qrcode = generateQRCode('https://tidebit-defi.com/');
+  // const qrcode = generateQRCode('https://tidebit-defi.com/');
 
   return new ImageResponse(
     (
@@ -42,6 +42,72 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           flexDirection: 'column',
         }}
       >
+        {/* <style jsx>{`
+          .fixed {
+            position: fixed;
+          }
+
+          .inset0 {
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+          }
+
+          .z50 {
+            z-index: 50;
+          }
+
+          .flex {
+            display: flex;
+          }
+
+          .itemsCenter {
+            align-items: center;
+          }
+
+          .justifyCenter {
+            justify-content: center;
+          }
+
+          .overflowYAuto {
+            overflow-y: auto;
+          }
+
+          .overflowXHidden {
+            overflow-x: hidden;
+          }
+
+          .outlineNone {
+            outline: none;
+          }
+
+          .backdropBlurSm {
+            backdrop-filter: blur(4px);
+          }
+
+          .focusOutlineNone:focus {
+            outline: none;
+          }
+
+          .z40 {
+            z-index: 40;
+          }
+
+          .bgBlack {
+            background-color: #000000;
+          }
+
+          .bgBlue {
+            background-color: #74cffd;
+          }
+
+          .opacity25 {
+            opacity: 0.25;
+          }
+
+          // ... remaining CSS classes ...
+        `}</style> */}
         <div
           style={{
             zIndex: -1,

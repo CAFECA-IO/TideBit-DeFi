@@ -13,18 +13,12 @@ export const config = {
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  // eslint-disable-next-line no-console
-  console.log('req', req);
-  // eslint-disable-next-line no-console
-  console.log('url', req?.url);
-  // eslint-disable-next-line no-console
-  console.log('url truncated', req?.url?.split('=')[1]);
-
   // TODO: use `cfdId` to call API to get the data (20230508 - Shirley)
   const cfdId = req?.url?.split('=')[1];
 
+  // TODO: Data from API (20230508 - Shirley)
   const ticker = Currency.BTC;
-  const user = cfdId ? cfdId[cfdId?.length - 1].toUpperCase() : 'X';
+  const user = 'J';
   const targetAssetName = 'Bitcoin';
   const typeOfPosition = TypeOfPosition.SELL;
   const openPrice = 1393.8;
@@ -384,10 +378,3 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
   );
 }
-
-// export function getQSParamFromURL(key: string, url: string | undefined): string | null {
-//   if (!url) return '';
-//   const search = new URL(url).search;
-//   const urlParams = new URLSearchParams(search);
-//   return urlParams.get(key);
-// }

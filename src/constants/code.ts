@@ -16,7 +16,8 @@ export type ICode =
   | '40230001'
   | '10110001'
   | '40230002'
-  | '90000001';
+  | '90000001'
+  | '10310001';
 
 export type ICodeConstant = {
   SUCCESS: ICode;
@@ -37,6 +38,7 @@ export type ICodeConstant = {
   LOCK_PROCEDURE_WRONG: ICode;
   FAILE_TO_UPDATE_BALANCE: ICode;
   UNKNOWN_ERROR_IN_COMPONENT: ICode;
+  THIRD_PARTY_LIBRARY_ERROR: ICode;
 };
 
 export type IReason = {
@@ -66,6 +68,8 @@ export const Code: ICodeConstant = {
   REJECTED_SIGNATURE: '40430004',
 
   INTERNAL_SERVER_ERROR: '60220001',
+
+  THIRD_PARTY_LIBRARY_ERROR: '10310001',
 };
 
 export const Reason: IReason = {
@@ -88,6 +92,8 @@ export const Reason: IReason = {
   '40430004': 'Signature rejected by user',
 
   '60220001': 'Internal server error',
+
+  '10310001': 'Third party library error',
 
   '90000000': 'Unknown error',
   '90000001': 'Unknown error in component',

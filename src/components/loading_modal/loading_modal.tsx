@@ -6,6 +6,7 @@ import {GlobalContext} from '../../contexts/global_context';
 import {ToastTypeAndText} from '../../constants/toast_type';
 import {useContext} from 'react';
 import {useTranslation} from 'next-i18next';
+import {ToastId} from '../../constants/toast_id';
 
 type TranslateFunction = (s: string) => string;
 export interface ILoadingModal {
@@ -44,10 +45,17 @@ const LoadingModal = ({
     modalClickHandler();
 
     if (globalCtx.visibleLoadingModal && globalCtx.toast) {
+      const toastId =
+        modalTitle === t('D_W_MODAL.DEPOSIT')
+          ? ToastId.DEPOSIT
+          : t('D_W_MODAL.WITHDRAW')
+          ? ToastId.WITHDRAW
+          : `${modalTitle}_LoadingModalMinimized`;
+
       globalCtx.toast({
         type: ToastTypeAndText.INFO.type,
         message: `${modalTitle} ${t('TOAST.PROGRESSING_MESSAGE')}`,
-        toastId: `${modalTitle}_LoadingModalMinimized`,
+        toastId: toastId,
         autoClose: false,
         isLoading: true,
         typeText: t(ToastTypeAndText.INFO.text),

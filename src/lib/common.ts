@@ -246,18 +246,24 @@ export const randomHex = (length: number) => {
 export const toDisplayCFDOrder = (
   cfdOrder: ICFDOrder,
   positionLineGraph: number[],
-  quotation?: IQuotation
+  currentPrice?: number
 ) => {
-  const openValue = cfdOrder.openPrice * cfdOrder.amount;
+  const openValue = roundToDecimalPlaces(cfdOrder.openPrice * cfdOrder.amount, 2);
   const closeValue =
     cfdOrder.state === OrderState.CLOSED && cfdOrder.closePrice
-      ? cfdOrder.closePrice * cfdOrder.amount
+      ? roundToDecimalPlaces(cfdOrder.closePrice * cfdOrder.amount, 2)
       : 0;
-  const currentValue = Number(quotation?.price) * cfdOrder.amount;
+  const currentValue = roundToDecimalPlaces(Number(currentPrice) * cfdOrder.amount, 2);
   const pnl =
     cfdOrder.state === OrderState.CLOSED && cfdOrder.closePrice
-      ? (closeValue - openValue) * (cfdOrder.typeOfPosition === TypeOfPosition.BUY ? 1 : -1)
-      : (currentValue - openValue) * (cfdOrder.typeOfPosition === TypeOfPosition.BUY ? 1 : -1);
+      ? roundToDecimalPlaces(
+          (closeValue - openValue) * (cfdOrder.typeOfPosition === TypeOfPosition.BUY ? 1 : -1),
+          2
+        )
+      : roundToDecimalPlaces(
+          (currentValue - openValue) * (cfdOrder.typeOfPosition === TypeOfPosition.BUY ? 1 : -1),
+          2
+        );
   const rTp =
     cfdOrder.typeOfPosition === TypeOfPosition.BUY
       ? twoDecimal(cfdOrder.openPrice * (1 + SUGGEST_TP / cfdOrder.leverage))
@@ -297,8 +303,8 @@ export const toDisplayCFDOrder = (
       type: pnl > 0 ? ProfitState.PROFIT : ProfitState.LOSS,
       value: Math.abs(pnl),
     },
-    openValue: cfdOrder.openPrice * cfdOrder.amount,
-    closeValue: cfdOrder.closePrice ? cfdOrder.closePrice * cfdOrder.amount : undefined,
+    openValue: openValue,
+    closeValue: closeValue,
     positionLineGraph,
     suggestion,
     stateCode: stateCode,

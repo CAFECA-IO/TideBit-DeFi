@@ -29,7 +29,8 @@ import {IApplyWithdrawOrder} from '../interfaces/tidebit_defi_background/apply_w
 import {IAcceptedWithdrawOrder} from '../interfaces/tidebit_defi_background/accepted_withdraw_order';
 import {IAcceptedDepositOrder} from '../interfaces/tidebit_defi_background/accepted_deposit_order';
 import {APIName, Method, TypeRequest} from '../constants/api_request';
-import {Code, IReason, Reason} from '../constants/code';
+// import SafeMath from '../lib/safe_math';
+import {Code, ICode, Reason} from '../constants/code';
 import {
   getCookieByName,
   getServiceTermContract,
@@ -344,7 +345,7 @@ export const UserProvider = ({children}: IUserProvider) => {
   }, []);
 
   const listFavoriteTickers = useCallback(async (address?: string) => {
-    let result: IResult = defaultResultFailed;
+    let result: IResult = {...defaultResultFailed};
     if (enableServiceTermRef.current) {
       try {
         const tickers = (await privateRequestHandler({
@@ -419,7 +420,7 @@ export const UserProvider = ({children}: IUserProvider) => {
   }, []);
 
   const listDeposits = useCallback(async (address: string) => {
-    let result: IResult = defaultResultFailed;
+    let result: IResult = {...defaultResultFailed};
     result.code = Code.SERVICE_TERM_DISABLE;
     result.reason = Reason[result.code];
     if (enableServiceTermRef.current) {
@@ -450,7 +451,7 @@ export const UserProvider = ({children}: IUserProvider) => {
   }, []);
 
   const listWithdraws = useCallback(async (address: string) => {
-    let result: IResult = defaultResultFailed;
+    let result: IResult = {...defaultResultFailed};
     if (enableServiceTermRef.current) {
       try {
         const withdraws = (await privateRequestHandler({
@@ -524,7 +525,7 @@ export const UserProvider = ({children}: IUserProvider) => {
   }, []);
 
   const connect = async () => {
-    let result: IResult = defaultResultFailed,
+    let result: IResult = {...defaultResultFailed},
       resultCode = Code.UNKNOWN_ERROR;
 
     try {
@@ -625,7 +626,7 @@ export const UserProvider = ({children}: IUserProvider) => {
 
   const signServiceTerm = async (): Promise<IResult> => {
     let eip712signature: string,
-      result: IResult = defaultResultFailed,
+      result: IResult = {...defaultResultFailed},
       resultCode = Code.UNKNOWN_ERROR;
 
     try {
@@ -669,7 +670,7 @@ export const UserProvider = ({children}: IUserProvider) => {
   };
 
   const disconnect = async () => {
-    let result: IResult = defaultResultFailed;
+    let result: IResult = {...defaultResultFailed};
     try {
       clearPrivateData();
       setIsConnected(false);
@@ -688,7 +689,7 @@ export const UserProvider = ({children}: IUserProvider) => {
   };
 
   const addFavorites = async (newFavorite: string) => {
-    let result: IResult = defaultResultFailed;
+    let result: IResult = {...defaultResultFailed};
     if (isConnectedRef.current) {
       try {
         const updatedFavoriteTickers = [...favoriteTickers];
@@ -716,7 +717,7 @@ export const UserProvider = ({children}: IUserProvider) => {
   };
 
   const removeFavorites = async (ticker: string) => {
-    let result: IResult = defaultResultFailed;
+    let result: IResult = {...defaultResultFailed};
     if (isConnectedRef.current) {
       try {
         const updatedFavoriteTickers = [...favoriteTickers];
@@ -826,6 +827,9 @@ export const UserProvider = ({children}: IUserProvider) => {
             try {
               result.code = Code.REJECTED_SIGNATURE;
               const signature: string = await lunar.signTypedData(transferR.data);
+              /* Info: (20230505 - Julian) 需要再驗證一次簽名是否正確 */
+              const success = await lunar.verifyTypedData(transferR.data, signature);
+              if (!success) throw new Error('verify signature failed');
               const now = getTimestamp();
               // ToDo: Check if the quotation is expired, if so return `failed result` in `catch`. (20230414 - Shirley)
               if (applyCreateCFDOrder.quotation.deadline < now) {
@@ -934,6 +938,9 @@ export const UserProvider = ({children}: IUserProvider) => {
             try {
               result.code = Code.REJECTED_SIGNATURE;
               const signature: string = await lunar.signTypedData(transferR.data);
+              /* Info: (20230505 - Julian) 需要再驗證一次簽名是否正確 */
+              const success = await lunar.verifyTypedData(transferR.data, signature);
+              if (!success) throw new Error('verify signature failed');
               const now = getTimestamp();
 
               // ToDo: Check if the quotation is expired, if so return `failed result` in `catch`. (20230414 - Shirley)
@@ -1048,6 +1055,9 @@ export const UserProvider = ({children}: IUserProvider) => {
             try {
               result.code = Code.REJECTED_SIGNATURE;
               const signature: string = await lunar.signTypedData(transferR.data);
+              /* Info: (20230505 - Julian) 需要再驗證一次簽名是否正確 */
+              const success = await lunar.verifyTypedData(transferR.data, signature);
+              if (!success) throw new Error('verify signature failed');
 
               result.code = Code.INTERNAL_SERVER_ERROR;
               result = (await privateRequestHandler({
@@ -1142,7 +1152,6 @@ export const UserProvider = ({children}: IUserProvider) => {
   const withdraw = async (applyWithdrawOrder: IApplyWithdrawOrder): Promise<IResult> => {
     let result: IResult = defaultResultFailed;
     let resultCode = Code.UNKNOWN_ERROR;
-
     if (lunar.isConnected) {
       const balance: IBalance | null = getBalance(applyWithdrawOrder.targetAsset); // TODO: ticker is not currency
       if (balance && balance.available >= applyWithdrawOrder.targetAmount) {
@@ -1152,6 +1161,9 @@ export const UserProvider = ({children}: IUserProvider) => {
           try {
             resultCode = Code.REJECTED_SIGNATURE;
             const signature: string = await lunar.signTypedData(transferR.data);
+            /* Info: (20230505 - Julian) 需要再驗證一次簽名是否正確 */
+            const success = await lunar.verifyTypedData(transferR.data, signature);
+            if (!success) throw new Error('verify signature failed');
 
             resultCode = Code.INTERNAL_SERVER_ERROR;
             const {balanceSnapshot, orderSnapshot: withdrawOrder} = (await privateRequestHandler({
@@ -1169,7 +1181,7 @@ export const UserProvider = ({children}: IUserProvider) => {
 
             resultCode = Code.SUCCESS;
             result = {
-              success: true,
+              success: success,
               code: resultCode,
               data: {order: withdrawOrder},
             };
@@ -1219,73 +1231,73 @@ export const UserProvider = ({children}: IUserProvider) => {
   };
 
   const sendEmailCode = async (email: string, hashCash: string) => {
-    let result: IResult = defaultResultFailed;
+    let result: IResult = {...defaultResultFailed};
     try {
       // TODO: post request (Tzuhan - 20230317)
       result = defaultResultSuccess;
     } catch (error) {
-      result = defaultResultFailed;
+      result = {...defaultResultFailed};
     }
     return result;
   };
   const connectEmail = async (email: string, code: number) => {
-    let result: IResult = defaultResultFailed;
+    let result: IResult = {...defaultResultFailed};
     try {
       // TODO: post request (Tzuhan - 20230317)
       result = defaultResultSuccess;
     } catch (error) {
-      result = defaultResultFailed;
+      result = {...defaultResultFailed};
     }
     return result;
   };
   const toggleEmailNotification = async (props: boolean) => {
-    let result: IResult = defaultResultFailed;
+    let result: IResult = {...defaultResultFailed};
     try {
       // TODO: put request (Tzuhan - 20230317)
     } catch (error) {
-      result = defaultResultFailed;
+      result = {...defaultResultFailed};
     }
     return result;
   };
   const subscribeNewsletters = async (props: boolean) => {
-    let result: IResult = defaultResultFailed;
+    let result: IResult = {...defaultResultFailed};
     try {
       // TODO: put request (Tzuhan - 20230317)
     } catch (error) {
-      result = defaultResultFailed;
+      result = {...defaultResultFailed};
     }
     return result;
   };
   const connectTideBit = async (email: string, password: string) => {
-    let result: IResult = defaultResultFailed;
+    let result: IResult = {...defaultResultFailed};
     try {
       // TODO: post request (Tzuhan - 20230317)
       result = defaultResultSuccess;
     } catch (error) {
-      result = defaultResultFailed;
+      result = {...defaultResultFailed};
     }
     return result;
   };
   const shareTradeRecord = async (tradeId: string) => {
-    let result: IResult = defaultResultFailed;
+    let result: IResult = {...defaultResultFailed};
     try {
       // TODO: call 3rd party api (Tzuhan - 20230317)
       result = defaultResultSuccess;
     } catch (error) {
-      result = defaultResultFailed;
+      result = {...defaultResultFailed};
     }
     return result;
   };
 
   const readNotifications = async (notifications: INotificationItem[]) => {
-    let result: IResult = defaultResultFailed;
+    let result: IResult = {...defaultResultFailed};
     if (enableServiceTermRef.current) {
       try {
         // TODO: post request (Tzuhan - 20230317)
         result = defaultResultSuccess;
         notificationCtx.emitter.emit(TideBitEvent.UPDATE_READ_NOTIFICATIONS_RESULT, notifications);
       } catch (error) {
-        result = defaultResultFailed;
+        result = {...defaultResultFailed};
       }
     }
 

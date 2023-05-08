@@ -81,7 +81,18 @@ const User = () => {
             <p>{t('USER.WITHDRAW')}</p>
           </div>
         </li>
-        <li>
+        <li
+          /* Till: (20230519 - Julian) Remove this code after testing */
+          onClick={() => {
+            globalCtx.toast({
+              typeText: 'Error',
+              message: 'Something went wrong.',
+              type: 'error',
+              isLoading: false,
+              autoClose: false,
+            });
+          }}
+        >
           <Link href="#" className="block py-2 pr-4 pl-3 hover:bg-darkGray5">
             <div className="flex flex-row items-center space-x-2">
               <VscAccount />

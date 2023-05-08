@@ -130,17 +130,17 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
   const displayedCrossStyle =
     'before:absolute before:left-1 before:top-10px before:z-40 before:block before:h-1 before:w-5 before:rotate-45 before:rounded-md after:absolute after:left-1 after:top-10px after:z-40 after:block after:h-1 after:w-5 after:-rotate-45 after:rounded-md';
 
-  const displayedSymbol =
-    openCfdDetails?.pnl?.type === ProfitState.PROFIT
-      ? '+'
-      : openCfdDetails?.pnl?.type === ProfitState.LOSS
-      ? '-'
-      : '';
+  const displayedPnLSymbol = !!!marketCtx.selectedTicker?.price
+    ? ''
+    : openCfdDetails?.pnl?.type === ProfitState.PROFIT
+    ? '+'
+    : openCfdDetails?.pnl?.type === ProfitState.LOSS
+    ? '-'
+    : '';
 
-  const displayedPNL = openCfdDetails?.pnl?.value.toLocaleString(
-    UNIVERSAL_NUMBER_FORMAT_LOCALE,
-    FRACTION_DIGITS
-  );
+  const displayedPnLValue = !!!marketCtx.selectedTicker?.price
+    ? '- -'
+    : openCfdDetails?.pnl?.value.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
 
   const displayedCreateTime = timestampToString(openCfdDetails?.createTimestamp ?? 0);
 
@@ -203,7 +203,7 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
         <div className="-ml-8">
           <div className="text-xs text-lightGray">{t('TRADE_PAGE.OPEN_POSITION_ITEM_PNL')}</div>
           <div className={`${displayedTextColor} text-sm`}>
-            <span className="">{displayedSymbol}</span> $ {displayedPNL}
+            <span className="">{displayedPnLSymbol}</span> $ {displayedPnLValue}
           </div>
         </div>
 

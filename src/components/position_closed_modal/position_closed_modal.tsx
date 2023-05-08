@@ -34,22 +34,27 @@ import {IClosedCFDInfoProps, useGlobal} from '../../contexts/global_context';
 import {BsClockHistory} from 'react-icons/bs';
 import {ProfitState} from '../../constants/profit_state';
 import {UserContext} from '../../contexts/user_context';
-import {useCountdown} from '../../lib/hooks/use_countdown';
 import {useTranslation} from 'react-i18next';
 import {IDisplayCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
 import {IApplyCloseCFDOrder} from '../../interfaces/tidebit_defi_background/apply_close_cfd_order';
 import {IPnL} from '../../interfaces/tidebit_defi_background/pnl';
 import {ICFDSuggestion} from '../../interfaces/tidebit_defi_background/cfd_suggestion';
-import {IQuotation, getDummyQuotation} from '../../interfaces/tidebit_defi_background/quotation';
+import {IQuotation} from '../../interfaces/tidebit_defi_background/quotation';
 import useStateRef from 'react-usestateref';
 import {OrderState} from '../../constants/order_state';
-import {defaultResultSuccess} from '../../interfaces/tidebit_defi_background/result';
+import {
+  defaultResultSuccess,
+  defaultResultFailed,
+  IResult,
+} from '../../interfaces/tidebit_defi_background/result';
 import {CFDOperation} from '../../constants/cfd_order_type';
 import {OrderType} from '../../constants/order_type';
 import {CFDClosedType} from '../../constants/cfd_closed_type';
 import {cfdStateCode} from '../../constants/cfd_state_code';
 import {ICFDOrder} from '../../interfaces/tidebit_defi_background/order';
 import {Code} from '../../constants/code';
+import {ToastTypeAndText} from '../../constants/toast_type';
+import {ToastId} from '../../constants/toast_id';
 import {CustomError} from '../../lib/custom_error';
 
 type TranslateFunction = (s: string) => string;
@@ -73,6 +78,7 @@ const PositionClosedModal = ({
   const userCtx = useContext(UserContext);
 
   const [quotationError, setQuotationError, quotationErrorRef] = useStateRef(false);
+  const [quotationErrorMessage, setQuotationErrorMessage] = useState<IResult>(defaultResultFailed);
 
   // Info: dummy data (20230329 - Shirley)
   const quotation: IQuotation = {
@@ -237,12 +243,17 @@ const PositionClosedModal = ({
         data.typeOfPosition === openCfdDetails?.typeOfPosition &&
         quotation.data !== null
       ) {
+        globalCtx.eliminateToasts(ToastId.GET_QUOTATION_ERROR_CLOSE);
         return data;
       } else {
         setQuotationError(true);
+        /* Info: (20230508 - Julian) get quotation error message */
+        setQuotationErrorMessage({success: false, code: quotation.code, reason: quotation.reason});
       }
     } catch (err) {
       setQuotationError(true);
+      /* Info: (20230508 - Julian) get quotation error message */
+      setQuotationErrorMessage({success: false, code: quotation.code, reason: quotation.reason});
     }
   };
 
@@ -393,8 +404,16 @@ const PositionClosedModal = ({
     (async () => {
       const quotation = await getQuotation();
       if (!quotation) {
-        const error = new CustomError(Code.CANNOT_GET_QUOTATION_FROM_CONTEXT);
-        throw error;
+        /* Info: (20230508 - Julian) exception handling: error toast */
+        globalCtx.toast({
+          type: ToastTypeAndText.ERROR.type,
+          toastId: ToastId.GET_QUOTATION_ERROR_CLOSE,
+          message: `${quotationErrorMessage.reason} (${quotationErrorMessage.code}) close`,
+          typeText: t(ToastTypeAndText.ERROR.text),
+          isLoading: false,
+          autoClose: false,
+        });
+        return;
       }
 
       const displayedCloseOrder = toDisplayCloseOrder(openCfdDetails, quotation);
@@ -422,7 +441,6 @@ const PositionClosedModal = ({
       if (secondsLeft === 0) {
         const quotation = await getQuotation();
 
-        // ToDo: exception handling (20230428 - Shirley)
         if (!quotation) {
           setQuotationError(true);
           return;

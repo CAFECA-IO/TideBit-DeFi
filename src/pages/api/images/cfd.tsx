@@ -54,7 +54,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           style={{
             // zIndex: -1,
             // TODO: image should upload to server and fix that image URL (20230505 - Shirley)
-            backgroundImage: `url('https://gcdnb.pbrd.co/images/WkqDgGonPnnp.png?o=1')`,
+            // backgroundImage: `url('https://gcdnb.pbrd.co/images/WkqDgGonPnnp.png?o=1')`,
+            backgroundImage: `url('http:localhost:3000/elements/group_15214@2x.png')`,
             backgroundSize: '600px 600px',
             backgroundPosition: 'relative',
             backgroundRepeat: 'no-repeat',
@@ -72,10 +73,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           <div
             style={{
               marginLeft: 64,
-              marginTop: 10,
+              marginTop: '30px',
               display: 'flex',
               alignItems: 'center',
               fontFamily: 'barlow',
+              // marginBottom: '-50px',
             }}
           >
             <div
@@ -92,15 +94,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 {targetAssetName}
               </h1>
             </div>
-            <div style={{marginTop: 10, display: 'flex', fontFamily: 'barlow'}}>
+            <div
+              style={{marginTop: '15px', marginLeft: '15px', display: 'flex', fontFamily: 'barlow'}}
+            >
               <p
                 style={{
                   marginTop: '0.5rem',
-                  borderRadius: '0.375rem',
+                  borderRadius: '3px',
                   backgroundColor: 'rgba(255, 255, 255, 0.8)',
                   paddingLeft: '0.25rem',
                   paddingRight: '0.25rem',
-                  fontSize: '0.875rem',
+                  fontSize: '14px',
                   fontWeight: 'bold',
                   color: 'black',
                   fontFamily: 'barlow',
@@ -117,13 +121,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             }}
           ></div>
           <div
-            style={{display: 'flex', marginLeft: '4rem', marginTop: '3rem', fontFamily: 'barlow'}}
+            style={{display: 'flex', marginLeft: '4rem', marginTop: '25px', fontFamily: 'barlow'}}
           >
             <div
               style={{
                 display: 'flex',
                 marginLeft: '3.5rem',
-                // marginTop: '1.25rem',
+                marginTop: '-20px',
                 width: '100%',
                 fontFamily: 'barlow',
               }}
@@ -131,13 +135,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
               <div
                 style={{
                   display: 'flex',
-                  marginLeft: '0',
+                  marginLeft: '5px',
                   width: '350px',
                   height: '320px',
                   borderWidth: '1px',
                   borderColor: TypeOfPnLColorHex.PROFIT,
-                  paddingTop: '1rem',
-                  paddingBottom: '1rem',
                   fontSize: '16px',
                   lineHeight: '1.5',
                   color: 'rgba(229, 231, 235, 1)',
@@ -156,7 +158,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                   <div
                     style={{
                       position: 'relative',
-                      // margin: 'auto',
                       marginLeft: '115px',
                       display: 'flex', // inline-flex // FIXME: inline-flex is not working
                       height: '7rem',
@@ -181,8 +182,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                       {user}
                     </span>
                   </div>{' '}
-                  <div style={{display: 'flex', marginLeft: '100px'}}>
-                    <span style={{marginTop: '18px'}}>
+                  <div style={{display: 'flex', marginLeft: '100px', marginBottom: '10px'}}>
+                    <span style={{marginTop: '18px', marginRight: '5px'}}>
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         width="28.125"
@@ -202,7 +203,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                         fontWeight: 'bold',
                         color: TypeOfPnLColorHex.PROFIT,
                         marginTop: '30px',
-                        marginBottom: '10px',
                         fontFamily: 'barlow',
                       }}
                     >
@@ -215,26 +215,37 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                       flexDirection: 'column',
                       gap: '0px',
                       fontFamily: 'barlow',
+                      width: '330px',
                     }}
                   >
                     {/* Rest of the code */}
-                    <div style={{display: 'flex', gap: '0.5rem', justifyContent: 'flex-end'}}>
+                    <div
+                      style={{
+                        display: 'flex',
+                        // justifyContent: 'space-around',
+                      }}
+                    >
                       <p
                         style={{
                           fontSize: '16px',
                           fontWeight: 'bold',
                           color: '#8B8E91',
                           fontFamily: 'barlow',
+                          width: '260px',
+                          marginLeft: '20px',
                         }}
                       >
                         Open Price
                       </p>
+                      <div style={{width: '50px'}}></div>
+
                       <p
                         style={{
                           fontSize: '16px',
                           fontWeight: 'bold',
                           color: '#fff',
                           fontFamily: 'barlow',
+                          marginRight: '35px',
                         }}
                       >
                         {openPrice}
@@ -245,6 +256,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                             fontWeight: 'lighter',
                             color: '#8B8E91',
                             fontFamily: 'barlow',
+                            marginLeft: '2px',
                           }}
                         >
                           USDT
@@ -252,46 +264,67 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                       </p>
                     </div>
 
-                    <div style={{display: 'flex', gap: '0.5rem'}}>
+                    <div style={{display: 'flex'}}>
                       <p
                         style={{
                           fontSize: '16px',
                           fontWeight: 'bold',
                           color: '#8B8E91',
                           fontFamily: 'barlow',
+                          width: '260px',
+                          marginLeft: '20px',
                         }}
                       >
                         Close Price
                       </p>
+                      <div style={{width: '50px'}}></div>
+
                       <p
                         style={{
                           fontSize: '16px',
                           fontWeight: 'bold',
                           color: '#fff',
                           fontFamily: 'barlow',
+                          marginRight: '35px',
                         }}
                       >
                         {closePrice}
+                        <span
+                          style={{
+                            marginTop: '2px',
+                            fontSize: '12px',
+                            fontWeight: 'lighter',
+                            color: '#8B8E91',
+                            fontFamily: 'barlow',
+                            marginLeft: '2px',
+                          }}
+                        >
+                          USDT
+                        </span>
                       </p>
                     </div>
 
-                    <div style={{display: 'flex', gap: '0.5rem'}}>
+                    <div style={{display: 'flex'}}>
                       <p
                         style={{
                           fontSize: '16px',
                           fontWeight: 'bold',
                           color: '#8B8E91',
                           fontFamily: 'barlow',
+                          width: '260px',
+                          marginLeft: '20px',
                         }}
                       >
                         Leverage
                       </p>
+                      <div style={{width: '50px'}}></div>
                       <p
                         style={{
                           fontSize: '16px',
                           fontWeight: 'bold',
                           color: '#fff',
                           fontFamily: 'barlow',
+                          marginRight: '10px',
                         }}
                       >
                         {leverage}x

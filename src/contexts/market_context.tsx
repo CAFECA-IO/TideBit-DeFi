@@ -302,9 +302,6 @@ export const MarketProvider = ({children}: IMarketProvider) => {
   const getCFDQuotation = async (tickerId: string, typeOfPosition: ITypeOfPosition) => {
     let result: IResult = {...defaultResultFailed};
     try {
-      // Deprecate: for testing
-      //throw new Error('getCFDQuotation error');
-
       // TODO: send request (Tzuhan - 20230317)
       const quotation: IQuotation = getDummyQuotation(tickerId, typeOfPosition);
       result = {...defaultResultSuccess};

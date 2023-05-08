@@ -362,7 +362,7 @@ export const UserProvider = ({children}: IUserProvider) => {
         const tickers = (await privateRequestHandler({
           name: APIName.LIST_FAVORITE_TICKERS,
           method: Method.GET,
-          // params: {
+          // query: {
           //   address,
           // },
         })) as string[];
@@ -388,7 +388,7 @@ export const UserProvider = ({children}: IUserProvider) => {
         const CFDs = (await privateRequestHandler({
           name: APIName.LIST_CFD_TRADES,
           method: Method.GET,
-          params: {
+          query: {
             ticker,
           },
         })) as ICFDOrder[];
@@ -434,7 +434,7 @@ export const UserProvider = ({children}: IUserProvider) => {
         const deposits = (await privateRequestHandler({
           name: APIName.LIST_DEPOSIT_TRADES,
           method: Method.GET,
-          params: {
+          query: {
             address,
           },
           /* Deprecated: callback in requestHandler (Tzuhan - 20230420)
@@ -463,7 +463,7 @@ export const UserProvider = ({children}: IUserProvider) => {
         const withdraws = (await privateRequestHandler({
           name: APIName.LIST_DEPOSIT_TRADES,
           method: Method.GET,
-          params: {
+          query: {
             address,
           },
           /* Deprecated: callback in requestHandler (Tzuhan - 20230420)
@@ -492,7 +492,7 @@ export const UserProvider = ({children}: IUserProvider) => {
         const balances = (await privateRequestHandler({
           name: APIName.LIST_BALANCES,
           method: Method.GET,
-          // params: {
+          // query: {
           //   address,
           // },
         })) as IBalance[];

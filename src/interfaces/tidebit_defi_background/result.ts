@@ -1,6 +1,7 @@
 import {Code, ICode, Reason} from '../../constants/code';
 // import {IAcceptedCFDOrder} from './accepted_cfd_order';
 import {IAcceptedOrder} from './accepted_order';
+import {ICandlestickData} from './candlestickData';
 import {ICryptocurrency} from './cryptocurrency';
 import {IOrder} from './order';
 import {IQuotation} from './quotation';
@@ -11,6 +12,7 @@ export interface IResult {
   success: boolean;
   data?:
     | number
+    | ICandlestickData[]
     | ITickerData[]
     | ICryptocurrency[]
     | IAcceptedOrder

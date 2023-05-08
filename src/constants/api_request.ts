@@ -18,10 +18,11 @@ export type IAPIName =
   // market
   | 'LIST_CURRENCIES'
   | 'LIST_TICKERS'
-  | 'LIST_DEPOSIT_CRYPTO_CURRENCIES'
-  | 'LIST_WITHDRAW_CRYPTO_CURRENCIES'
+  // | 'LIST_DEPOSIT_CRYPTO_CURRENCIES'
+  // | 'LIST_WITHDRAW_CRYPTO_CURRENCIES'
   | 'GET_CANDLESTICK_DATA'
   | 'GET_CFD_QUOTATION'
+  | 'GET_CFD_SUGGESTION'
   | 'GET_TICKER_HISTORY'
   | 'GET_GUARANTEED_STOP_FEE_PERCENTAGE'
   | 'LIST_MARKET_TRADES'
@@ -69,10 +70,11 @@ export interface IAPINameConstant {
   // market
   LIST_CURRENCIES: IAPIName;
   LIST_TICKERS: IAPIName;
-  LIST_DEPOSIT_CRYPTO_CURRENCIES: IAPIName;
-  LIST_WITHDRAW_CRYPTO_CURRENCIES: IAPIName;
+  // LIST_DEPOSIT_CRYPTO_CURRENCIES: IAPIName;
+  // LIST_WITHDRAW_CRYPTO_CURRENCIES: IAPIName;
   GET_CANDLESTICK_DATA: IAPIName;
   GET_CFD_QUOTATION: IAPIName;
+  GET_CFD_SUGGESTION: IAPIName;
   GET_TICKER_HISTORY: IAPIName;
   GET_GUARANTEED_STOP_FEE_PERCENTAGE: IAPIName;
   LIST_MARKET_TRADES: IAPIName;
@@ -121,10 +123,11 @@ export const APIName: IAPINameConstant = {
   // market
   LIST_CURRENCIES: 'LIST_CURRENCIES',
   LIST_TICKERS: 'LIST_TICKERS',
-  LIST_DEPOSIT_CRYPTO_CURRENCIES: 'LIST_DEPOSIT_CRYPTO_CURRENCIES',
-  LIST_WITHDRAW_CRYPTO_CURRENCIES: 'LIST_WITHDRAW_CRYPTO_CURRENCIES',
+  // LIST_DEPOSIT_CRYPTO_CURRENCIES: 'LIST_DEPOSIT_CRYPTO_CURRENCIES',
+  // LIST_WITHDRAW_CRYPTO_CURRENCIES: 'LIST_WITHDRAW_CRYPTO_CURRENCIES',
   GET_CANDLESTICK_DATA: 'GET_CANDLESTICK_DATA',
   GET_CFD_QUOTATION: 'GET_CFD_QUOTATION',
+  GET_CFD_SUGGESTION: 'GET_CFD_SUGGESTION',
   GET_TICKER_HISTORY: 'GET_TICKER_HISTORY',
   GET_GUARANTEED_STOP_FEE_PERCENTAGE: 'GET_GUARANTEED_STOP_FEE_PERCENTAGE',
   LIST_MARKET_TRADES: 'LIST_MARKET_TRADES',
@@ -173,13 +176,14 @@ export const APIURL = {
   APPLY_JOB: '/api/general/jobs',
   // market
   LIST_CURRENCIES: `${URL}/currencies`,
-  LIST_TICKERS: '/api/market/tickers',
-  LIST_DEPOSIT_CRYPTO_CURRENCIES: '/api/market/deposit-currencies',
-  LIST_WITHDRAW_CRYPTO_CURRENCIES: '/api/market/withdraw-currencies',
-  GET_CANDLESTICK_DATA: '/api/market/candlesticks',
-  GET_CFD_QUOTATION: '/api/market/quotation',
+  LIST_TICKERS: `${URL}/market/tickers`,
+  // LIST_DEPOSIT_CRYPTO_CURRENCIES: '/api/market/deposit-currencies',
+  // LIST_WITHDRAW_CRYPTO_CURRENCIES: '/api/market/withdraw-currencies',
+  GET_CANDLESTICK_DATA: `${URL}/market/candlesticks`,
+  GET_CFD_QUOTATION: `${URL}/market/qutation`,
+  GET_CFD_SUGGESTION: `${URL}/market/suggestion`,
   GET_TICKER_HISTORY: '/api/market/histories', // deprecated: '/api/market/tickerhistory' (20230323 - tzuhan)
-  GET_GUARANTEED_STOP_FEE_PERCENTAGE: '/api/market/fee/stop-percetage', // deprecated: '/api/market/stopfeepercentage' (20230323 - tzuhan)
+  GET_GUARANTEED_STOP_FEE_PERCENTAGE: `${URL}/market/guaranteed-stop-fee`,
   LIST_MARKET_TRADES: '/api/market/trades',
   // trades
   LIST_CFD_TRADES: '/api/trades/cfds',
@@ -225,7 +229,8 @@ export const TBDURL = {
 export type TypeRequest = {
   name: IAPIName;
   method: IMethodConstant;
-  params?: {[key: string]: string | number | boolean};
+  params?: string;
+  query?: {[key: string]: string | number | boolean};
   body?: object;
   headers?: object;
   /* Deprecated: callback in requestHandler (Tzuhan - 20230420)
@@ -255,7 +260,7 @@ export const formatAPIRequest = (data: TypeRequest) => {
     request: {
       name: data.name,
       method: Method[data.method],
-      url: `${APIURL[data.name]}${toQuery(data.params)}`,
+      url: `${APIURL[data.name]}${data.params ? `/${data.params}` : ''}${toQuery(data.query)}`,
       body: data.body ? data.body : undefined,
       options: data.headers
         ? {

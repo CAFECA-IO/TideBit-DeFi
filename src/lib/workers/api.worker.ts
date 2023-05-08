@@ -1,27 +1,23 @@
+const DEFAULT_HEADERS = {
+  'Content-Type': 'application/json',
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE,OPTIONS',
+  'Access-Control-Allow-Headers': 'X-Requested-With,content-type',
+};
 self.onmessage = async function (event) {
   const {name, method, url, body, options} = event.data;
   try {
     const request = {
       method,
-      headers: options?.headers
-        ? options.headers
-        : {
-            'Content-Type': 'application/json',
-          },
+      headers: options?.headers ? {...DEFAULT_HEADERS, ...options.headers} : DEFAULT_HEADERS,
       body: body ? JSON.stringify(body) : body,
-      mode: 'no-cors' as RequestMode,
+      // mode: 'cors' as RequestMode, //Info: due to enable cors in backend, so here is no need to set request mode (20230508 - Tzuhan)
     };
-    // Deprecated: remove console.log (20230509 - tzuhan)
-    // eslint-disable-next-line no-console
-    console.log(`HTTP request: url(${url})`, request);
     const response = await fetch(url, request);
     if (response?.ok) {
       const result = await response.json();
       self.postMessage({name, result});
     } else {
-      // Deprecated: remove console.log (20230509 - tzuhan)
-      // eslint-disable-next-line no-console
-      console.log(`HTTP Response Code: ${response?.status}`, response);
       self.postMessage({name, error: response?.statusText});
     }
   } catch (error) {

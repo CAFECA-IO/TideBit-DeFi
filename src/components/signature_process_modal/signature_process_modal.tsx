@@ -7,8 +7,7 @@ import activeIconPulse from '../../../public/animation/lf30_editor_cyvxlluo.json
 import searching from '../../../public/animation/searching.json';
 import Lottie from 'lottie-react';
 import {UserContext} from '../../contexts/user_context';
-import {useContext, useState} from 'react';
-import {toast} from 'react-toastify';
+import {useContext} from 'react';
 import {useGlobal} from '../../contexts/global_context';
 import {locker, wait} from '../../lib/common';
 import {DELAYED_HIDDEN_SECONDS} from '../../constants/display';

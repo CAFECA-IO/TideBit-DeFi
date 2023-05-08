@@ -1,5 +1,5 @@
 import Lunar from '@cafeca/lunar';
-import React, {createContext, useCallback, useContext, useEffect} from 'react';
+import React, {createContext, useCallback, useContext} from 'react';
 import useState from 'react-usestateref';
 import {
   defaultResultFailed,
@@ -30,7 +30,7 @@ import {IAcceptedWithdrawOrder} from '../interfaces/tidebit_defi_background/acce
 import {IAcceptedDepositOrder} from '../interfaces/tidebit_defi_background/accepted_deposit_order';
 import {APIName, Method, TypeRequest} from '../constants/api_request';
 // import SafeMath from '../lib/safe_math';
-import {Code, ICode, Reason} from '../constants/code';
+import {Code, Reason} from '../constants/code';
 import {
   getCookieByName,
   getServiceTermContract,
@@ -38,7 +38,6 @@ import {
   randomHex,
   rlpEncodeServiceTerm,
   verifySignedServiceTerm,
-  wait,
 } from '../lib/common';
 import {IAcceptedOrder} from '../interfaces/tidebit_defi_background/accepted_order';
 import {
@@ -358,7 +357,7 @@ export const UserProvider = ({children}: IUserProvider) => {
   }, []);
 
   const listFavoriteTickers = useCallback(async (address?: string) => {
-    let result: IResult = defaultResultFailed;
+    let result: IResult = {...defaultResultFailed};
     if (enableServiceTermRef.current) {
       try {
         const tickers = (await privateRequestHandler({
@@ -382,7 +381,7 @@ export const UserProvider = ({children}: IUserProvider) => {
   }, []);
 
   const listCFDs = useCallback(async (ticker: string) => {
-    let result: IResult = defaultResultFailed;
+    let result: IResult = {...defaultResultFailed};
     result.code = Code.SERVICE_TERM_DISABLE;
     result.reason = Reason[result.code];
     if (enableServiceTermRef.current) {
@@ -428,7 +427,7 @@ export const UserProvider = ({children}: IUserProvider) => {
   }, []);
 
   const listDeposits = useCallback(async (address: string) => {
-    let result: IResult = defaultResultFailed;
+    let result: IResult = {...defaultResultFailed};
     result.code = Code.SERVICE_TERM_DISABLE;
     result.reason = Reason[result.code];
     if (enableServiceTermRef.current) {
@@ -459,7 +458,7 @@ export const UserProvider = ({children}: IUserProvider) => {
   }, []);
 
   const listWithdraws = useCallback(async (address: string) => {
-    let result: IResult = defaultResultFailed;
+    let result: IResult = {...defaultResultFailed};
     if (enableServiceTermRef.current) {
       try {
         const withdraws = (await privateRequestHandler({
@@ -488,7 +487,7 @@ export const UserProvider = ({children}: IUserProvider) => {
   }, []);
 
   const listBalances = useCallback(async (address?: string) => {
-    let result: IResult = defaultResultFailed;
+    let result: IResult = {...defaultResultFailed};
     if (enableServiceTermRef.current) {
       try {
         const balances = (await privateRequestHandler({
@@ -512,7 +511,7 @@ export const UserProvider = ({children}: IUserProvider) => {
   }, []);
 
   const connect = async () => {
-    let result: IResult = defaultResultFailed,
+    let result: IResult = {...defaultResultFailed},
       resultCode = Code.UNKNOWN_ERROR;
 
     try {
@@ -571,7 +570,7 @@ export const UserProvider = ({children}: IUserProvider) => {
 
   const signServiceTerm = async (): Promise<IResult> => {
     let eip712signature: string,
-      result: IResult = defaultResultFailed,
+      result: IResult = {...defaultResultFailed},
       resultCode = Code.UNKNOWN_ERROR;
 
     try {
@@ -615,7 +614,7 @@ export const UserProvider = ({children}: IUserProvider) => {
   };
 
   const disconnect = async () => {
-    let result: IResult = defaultResultFailed;
+    let result: IResult = {...defaultResultFailed};
     try {
       clearPrivateData();
       setIsConnected(false);
@@ -634,7 +633,7 @@ export const UserProvider = ({children}: IUserProvider) => {
   };
 
   const addFavorites = async (newFavorite: string) => {
-    let result: IResult = defaultResultFailed;
+    let result: IResult = {...defaultResultFailed};
     if (isConnectedRef.current) {
       try {
         const updatedFavoriteTickers = [...favoriteTickers];
@@ -662,7 +661,7 @@ export const UserProvider = ({children}: IUserProvider) => {
   };
 
   const removeFavorites = async (ticker: string) => {
-    let result: IResult = defaultResultFailed;
+    let result: IResult = {...defaultResultFailed};
     if (isConnectedRef.current) {
       try {
         const updatedFavoriteTickers = [...favoriteTickers];
@@ -778,7 +777,7 @@ export const UserProvider = ({children}: IUserProvider) => {
   const _createCFDOrder = async (
     applyCreateCFDOrder: IApplyCreateCFDOrder | undefined
   ): Promise<IResult> => {
-    let result: IResult = defaultResultFailed;
+    let result: IResult = {...defaultResultFailed};
     let resultCode = Code.UNKNOWN_ERROR;
     if (lunar.isConnected) {
       if (applyCreateCFDOrder) {
@@ -791,6 +790,9 @@ export const UserProvider = ({children}: IUserProvider) => {
             try {
               resultCode = Code.REJECTED_SIGNATURE;
               const signature: string = await lunar.signTypedData(transferR.data);
+              /* Info: (20230505 - Julian) 需要再驗證一次簽名是否正確 */
+              const success = await lunar.verifyTypedData(transferR.data, signature);
+              if (!success) throw new Error('verify signature failed');
               const now = getTimestamp();
 
               // ToDo: Check if the quotation is expired, if so return `failed result` in `catch`. (20230414 - Shirley)
@@ -819,7 +821,7 @@ export const UserProvider = ({children}: IUserProvider) => {
 
               resultCode = Code.SUCCESS;
               result = {
-                success: true,
+                success: success,
                 code: resultCode,
                 data: {order: CFDOrder, acceptedOrder: acceptedCFDOrder},
               };
@@ -893,7 +895,7 @@ export const UserProvider = ({children}: IUserProvider) => {
   const _closeCFDOrder = async (
     applyCloseCFDOrder: IApplyCloseCFDOrder | undefined
   ): Promise<IResult> => {
-    let result: IResult = defaultResultFailed;
+    let result: IResult = {...defaultResultFailed};
     let resultCode = Code.UNKNOWN_ERROR;
 
     if (lunar.isConnected) {
@@ -907,6 +909,9 @@ export const UserProvider = ({children}: IUserProvider) => {
             try {
               resultCode = Code.REJECTED_SIGNATURE;
               const signature: string = await lunar.signTypedData(transferR.data);
+              /* Info: (20230505 - Julian) 需要再驗證一次簽名是否正確 */
+              const success = await lunar.verifyTypedData(transferR.data, signature);
+              if (!success) throw new Error('verify signature failed');
               const now = getTimestamp();
 
               // ToDo: Check if the quotation is expired, if so return `failed result` in `catch`. (20230414 - Shirley)
@@ -939,7 +944,7 @@ export const UserProvider = ({children}: IUserProvider) => {
 
               resultCode = Code.SUCCESS;
               result = {
-                success: true,
+                success: success,
                 code: resultCode,
                 data: {order: updateCFDOrder, acceptedOrder: acceptedCFDOrder},
               };
@@ -1012,7 +1017,7 @@ export const UserProvider = ({children}: IUserProvider) => {
   const updateCFDOrder = async (
     applyUpdateCFDOrder: IApplyUpdateCFDOrder | undefined
   ): Promise<IResult> => {
-    let result: IResult = defaultResultFailed;
+    let result: IResult = {...defaultResultFailed};
     let resultCode = Code.UNKNOWN_ERROR;
 
     if (lunar.isConnected) {
@@ -1025,6 +1030,9 @@ export const UserProvider = ({children}: IUserProvider) => {
             try {
               resultCode = Code.REJECTED_SIGNATURE;
               const signature: string = await lunar.signTypedData(transferR.data);
+              /* Info: (20230505 - Julian) 需要再驗證一次簽名是否正確 */
+              const success = await lunar.verifyTypedData(transferR.data, signature);
+              if (!success) throw new Error('verify signature failed');
 
               resultCode = Code.INTERNAL_SERVER_ERROR;
               const {updateCFDOrder, acceptedCFDOrder} = (await privateRequestHandler({
@@ -1043,7 +1051,7 @@ export const UserProvider = ({children}: IUserProvider) => {
 
               resultCode = Code.SUCCESS;
               result = {
-                success: true,
+                success: success,
                 code: resultCode,
                 data: {order: updateCFDOrder, acceptedOrder: acceptedCFDOrder},
               };
@@ -1071,7 +1079,7 @@ export const UserProvider = ({children}: IUserProvider) => {
   };
 
   const deposit = async (depositOrder: IApplyDepositOrder): Promise<IResult> => {
-    let result: IResult = defaultResultFailed;
+    let result: IResult = {...defaultResultFailed};
     let resultCode = Code.UNKNOWN_ERROR;
 
     if (lunar.isConnected) {
@@ -1124,9 +1132,8 @@ export const UserProvider = ({children}: IUserProvider) => {
   };
 
   const withdraw = async (withdrawOrder: IApplyWithdrawOrder): Promise<IResult> => {
-    let result: IResult = defaultResultFailed;
+    let result: IResult = {...defaultResultFailed};
     let resultCode = Code.UNKNOWN_ERROR;
-
     if (lunar.isConnected) {
       const balance: IBalance | null = getBalance(withdrawOrder.targetAsset); // TODO: ticker is not currency
       if (balance && balance.available >= withdrawOrder.targetAmount) {
@@ -1136,6 +1143,9 @@ export const UserProvider = ({children}: IUserProvider) => {
           try {
             resultCode = Code.REJECTED_SIGNATURE;
             const signature: string = await lunar.signTypedData(transferR.data);
+            /* Info: (20230505 - Julian) 需要再驗證一次簽名是否正確 */
+            const success = await lunar.verifyTypedData(transferR.data, signature);
+            if (!success) throw new Error('verify signature failed');
 
             resultCode = Code.INTERNAL_SERVER_ERROR;
             const acceptedWithdrawOrder = (await privateRequestHandler({
@@ -1153,7 +1163,7 @@ export const UserProvider = ({children}: IUserProvider) => {
 
             resultCode = Code.SUCCESS;
             result = {
-              success: true,
+              success: success,
               code: resultCode,
               data: acceptedWithdrawOrder,
             };
@@ -1175,7 +1185,7 @@ export const UserProvider = ({children}: IUserProvider) => {
 
   // TODO: update histories api and dummy data(20230331 - tzuhan)
   const listHistories = async () => {
-    let result: IResult = defaultResultFailed;
+    let result: IResult = {...defaultResultFailed};
     result.code = Code.SERVICE_TERM_DISABLE;
     result.reason = Reason[result.code];
     if (enableServiceTermRef.current) {
@@ -1199,73 +1209,73 @@ export const UserProvider = ({children}: IUserProvider) => {
   };
 
   const sendEmailCode = async (email: string, hashCash: string) => {
-    let result: IResult = defaultResultFailed;
+    let result: IResult = {...defaultResultFailed};
     try {
       // TODO: post request (Tzuhan - 20230317)
       result = defaultResultSuccess;
     } catch (error) {
-      result = defaultResultFailed;
+      result = {...defaultResultFailed};
     }
     return result;
   };
   const connectEmail = async (email: string, code: number) => {
-    let result: IResult = defaultResultFailed;
+    let result: IResult = {...defaultResultFailed};
     try {
       // TODO: post request (Tzuhan - 20230317)
       result = defaultResultSuccess;
     } catch (error) {
-      result = defaultResultFailed;
+      result = {...defaultResultFailed};
     }
     return result;
   };
   const toggleEmailNotification = async (props: boolean) => {
-    let result: IResult = defaultResultFailed;
+    let result: IResult = {...defaultResultFailed};
     try {
       // TODO: put request (Tzuhan - 20230317)
     } catch (error) {
-      result = defaultResultFailed;
+      result = {...defaultResultFailed};
     }
     return result;
   };
   const subscribeNewsletters = async (props: boolean) => {
-    let result: IResult = defaultResultFailed;
+    let result: IResult = {...defaultResultFailed};
     try {
       // TODO: put request (Tzuhan - 20230317)
     } catch (error) {
-      result = defaultResultFailed;
+      result = {...defaultResultFailed};
     }
     return result;
   };
   const connectTideBit = async (email: string, password: string) => {
-    let result: IResult = defaultResultFailed;
+    let result: IResult = {...defaultResultFailed};
     try {
       // TODO: post request (Tzuhan - 20230317)
       result = defaultResultSuccess;
     } catch (error) {
-      result = defaultResultFailed;
+      result = {...defaultResultFailed};
     }
     return result;
   };
   const shareTradeRecord = async (tradeId: string) => {
-    let result: IResult = defaultResultFailed;
+    let result: IResult = {...defaultResultFailed};
     try {
       // TODO: call 3rd party api (Tzuhan - 20230317)
       result = defaultResultSuccess;
     } catch (error) {
-      result = defaultResultFailed;
+      result = {...defaultResultFailed};
     }
     return result;
   };
 
   const readNotifications = async (notifications: INotificationItem[]) => {
-    let result: IResult = defaultResultFailed;
+    let result: IResult = {...defaultResultFailed};
     if (enableServiceTermRef.current) {
       try {
         // TODO: post request (Tzuhan - 20230317)
         result = defaultResultSuccess;
         notificationCtx.emitter.emit(TideBitEvent.UPDATE_READ_NOTIFICATIONS_RESULT, notifications);
       } catch (error) {
-        result = defaultResultFailed;
+        result = {...defaultResultFailed};
       }
     }
 

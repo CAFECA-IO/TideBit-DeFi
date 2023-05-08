@@ -494,3 +494,11 @@ export const convertHTMLToImageSrc = async (element: HTMLElement): Promise<strin
     throw new CustomError(Code.CANNOT_CONVERT_TO_IMAGE);
   }
 };
+
+export function truncateStringAfterEqual(inputString: string): string {
+  const equalIndex = inputString.indexOf('=');
+  if (equalIndex >= 0) {
+    return inputString.substring(0, equalIndex + 1);
+  }
+  return inputString;
+}

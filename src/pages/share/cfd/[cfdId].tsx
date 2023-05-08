@@ -17,6 +17,9 @@ import Skeleton, {SkeletonTheme} from 'react-loading-skeleton';
 import Image from 'next/image';
 import {API_ROUTE_DOMAIN} from '../../../constants/config';
 import {WIDTH_HEIGHT_OF_SHARING_RECORD} from '../../../constants/display';
+import {CustomError} from '../../../lib/custom_error';
+import {Code} from '../../../constants/code';
+import useStateRef from 'react-usestateref';
 
 interface IPageProps {
   cfdId: string;
@@ -24,25 +27,57 @@ interface IPageProps {
 
 const CfdSharing = (props: IPageProps) => {
   const appCtx = useContext(AppContext);
+  const router = useRouter();
+
+  const [imgUrl, setImgUrl, imgUrlRef] = useStateRef<string>('');
+
+  const {cfdId} = router.query;
 
   // TODO: for meta content (20230505 - Shirley)
   // const imgUrl = `${NEXT_API_ROUTES}/api/images/cfd`;
-  const imgUrl = `/api/images/cfd`;
-
-  const router = useRouter();
-  const {cfdId} = router.query;
+  // const imgUrl = `/api/images/cfd/${cfdId}`;
+  const getImg = async () => await fetch(`${API_ROUTE_DOMAIN}/api/images/cfd/${props.cfdId}`);
 
   useEffect(() => {
     if (!appCtx.isInit) {
       appCtx.init();
     }
+    (async () => {
+      try {
+        // const img = await getImg();
+        setImgUrl(`${API_ROUTE_DOMAIN}/api/images/cfd/${props.cfdId}`);
+        // console.log('img', img);
+        // eslint-disable-next-line no-console
+        console.log('imgUrl', imgUrlRef.current);
+      } catch (e) {
+        // TODO: Error handling (20230508 - Shirley)
+        // eslint-disable-next-line no-console
+        console.log(`Failed to get image: ${e}`);
+        throw new CustomError(Code.CANNOT_CONVERT_TO_IMAGE);
+      }
+    })();
+
+    // return () => {
+    //   (async () => {
+    //     try {
+    //       // const img = await getImg();
+    //       setImgUrl(`${API_ROUTE_DOMAIN}/api/images/cfd/${props.cfdId}`);
+    //       // console.log('img', img);
+    //       console.log('imgUrl', imgUrlRef.current);
+    //     } catch (e) {
+    //       // TODO: Error handling (20230508 - Shirley)
+    //       // eslint-disable-next-line no-console
+    //       console.log(`Failed to get image: ${e}`);
+    //       throw new CustomError(Code.CANNOT_CONVERT_TO_IMAGE);
+    //     }
+    //   })();
+    // };
   }, []);
 
   if (!router.isFallback && !props.cfdId) {
     return <Error statusCode={404} />;
   }
 
-  // Do SEO some <meta> tags
   return (
     <>
       <Head>
@@ -58,7 +93,7 @@ const CfdSharing = (props: IPageProps) => {
         <meta property="og:title" content="TideBit DeFi CFD" />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://tidebit-defi.com/" />
-        <meta property="og:image" content={imgUrl} />
+        <meta property="og:image" content={imgUrlRef.current} />
         <meta property="og:image:width" content={WIDTH_HEIGHT_OF_SHARING_RECORD.toString()} />
         <meta property="og:image:height" content={WIDTH_HEIGHT_OF_SHARING_RECORD.toString()} />
         <meta property="og:description" content="CFD Sharing" />
@@ -71,15 +106,18 @@ const CfdSharing = (props: IPageProps) => {
         <meta name="twitter:url" content="https://tidebit-defi.com/" />
         <meta name="twitter:title" content="TideBit DeFi CFD" />
         <meta name="twitter:description" content="TideBit DeFi CFD" />
-        <meta name="twitter:image" content={imgUrl} />
+        <meta name="twitter:image" content={imgUrlRef.current} />
         <meta name="twitter:image:alt" content="TideBit DeFi CFD" />
       </Head>
-      <img
-        src={imgUrl}
-        width={WIDTH_HEIGHT_OF_SHARING_RECORD}
-        height={WIDTH_HEIGHT_OF_SHARING_RECORD}
-        alt="CFD record"
-      />
+      {imgUrlRef.current === `${API_ROUTE_DOMAIN}/api/images/cfd/${props.cfdId}` ? (
+        <img
+          src={imgUrlRef.current}
+          // src={imgUrl}
+          width={WIDTH_HEIGHT_OF_SHARING_RECORD}
+          height={WIDTH_HEIGHT_OF_SHARING_RECORD}
+          alt="CFD record"
+        />
+      ) : null}
     </>
   );
 };

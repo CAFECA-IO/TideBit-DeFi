@@ -94,7 +94,7 @@ const CfdSharing = (props: IPageProps) => {
         <meta name="twitter:image" content={img} />
         <meta name="twitter:image:alt" content="TideBit DeFi CFD" />
       </Head>
-      {appCtx.isInit && isVisibleRef.current ? (
+      {appCtx.isInit ? (
         <img
           src={imgUrlRef.current}
           width={WIDTH_HEIGHT_OF_SHARING_RECORD}

@@ -1,26 +1,70 @@
 import {NextApiRequest, NextApiResponse} from 'next';
 import {ImageResponse} from 'next/server';
-import {randomIntFromInterval} from '../../../lib/common';
+import {randomIntFromInterval, roundToDecimalPlaces} from '../../../lib/common';
 import {TypeOfPnLColorHex} from '../../../constants/display';
 import QRCode from 'qrcode';
+import {NEXT_API_ROUTES} from '../../../constants/config';
+import {ProfitState} from '../../../constants/profit_state';
+import {TypeOfPosition} from '../../../constants/type_of_position';
+import {Currency} from '../../../constants/currency';
 
 export const config = {
   runtime: 'edge',
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  // const bgUrl = req.query.bgUrl as string;
-  const bgUrl = 'https://gcdnb.pbrd.co/images/WkqDgGonPnnp.png?o=1';
-  // TODO: get icon url from api (20230503 - Shirley)
-  const iconUrl = 'https://svgshare.com/i/spv.svg';
-  const randomPnL = 16;
+  const ticker = Currency.BTC;
   const user = 'Z';
-  const targetAssetName = 'Ethereum';
-  const typeOfPosition = 'Up (Buy)';
-  const openPrice = 1313.8;
+  const targetAssetName = 'Bitcoin';
+  const typeOfPosition = TypeOfPosition.SELL;
+  const openPrice = 1393.8;
   const closePrice = 1383.6;
   const leverage = 5;
 
+  const iconUrl = NEXT_API_ROUTES + `/asset_icon/${ticker.toLowerCase()}.svg`;
+  // TODO: Image resolution (20230508 - Shirley)
+  const backgroundImageUrl = NEXT_API_ROUTES + '/elements/group_15214@2x.png';
+
+  const pnlPercent =
+    typeOfPosition === TypeOfPosition.BUY
+      ? roundToDecimalPlaces(((closePrice - openPrice) / openPrice) * 100, 2)
+      : roundToDecimalPlaces(((openPrice - closePrice) / openPrice) * 100, 2);
+
+  const displayedPnlPercent = Math.abs(pnlPercent);
+
+  const profitState = pnlPercent > 0 ? ProfitState.PROFIT : ProfitState.LOSS;
+
+  const displayedTypeOfPosition =
+    typeOfPosition === TypeOfPosition.BUY ? 'Up (Buy)' : 'Down (Sell)';
+  const displayedTextColor =
+    profitState === ProfitState.PROFIT ? TypeOfPnLColorHex.PROFIT : TypeOfPnLColorHex.LOSS;
+  const displayedBorderColor =
+    profitState === ProfitState.PROFIT ? TypeOfPnLColorHex.PROFIT : TypeOfPnLColorHex.LOSS;
+
+  const upArrow = (
+    <svg xmlns="http://www.w3.org/2000/svg" width="28.125" height="36" viewBox="0 0 28.125 36">
+      <path
+        fill="#17bf88"
+        d="M18 0L3.937 21.094h7.576V36h12.973V21.094h7.576z"
+        transform="translate(-3.937)"
+      ></path>
+    </svg>
+  );
+
+  const downArrow = (
+    <svg xmlns="http://www.w3.org/2000/svg" width="28.125" height="36" viewBox="0 0 256 256">
+      <path
+        fill="#E86D6D"
+        strokeMiterlimit="10"
+        strokeWidth="0"
+        d="M46.969 89.104a2.611 2.611 0 01-3.937 0L13.299 54.989c-.932-1.072-.171-2.743 1.25-2.743h14.249V1.91A1.91 1.91 0 0130.708 0h28.584a1.91 1.91 0 011.91 1.91v50.336h14.249c1.421 0 2.182 1.671 1.25 2.743L46.969 89.104z"
+        transform="matrix(2.81 0 0 2.81 1.407 1.407)"
+      ></path>
+    </svg>
+  );
+
+  const displayedArrow = profitState === ProfitState.PROFIT ? upArrow : downArrow;
+  // TODO: QR code (20230508 - Shirley)
   // const generateQRCode = async (text: string) => {
   //   try {
   //     const qrcode = await QRCode.toDataURL(text, {
@@ -52,10 +96,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       >
         <div
           style={{
-            // zIndex: -1,
-            // TODO: image should upload to server and fix that image URL (20230505 - Shirley)
-            // backgroundImage: `url('https://gcdnb.pbrd.co/images/WkqDgGonPnnp.png?o=1')`,
-            backgroundImage: `url('http:localhost:3000/elements/group_15214@2x.png')`,
+            backgroundImage: `url(${backgroundImageUrl})`,
             backgroundSize: '600px 600px',
             backgroundPosition: 'relative',
             backgroundRepeat: 'no-repeat',
@@ -77,7 +118,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
               display: 'flex',
               alignItems: 'center',
               fontFamily: 'barlow',
-              // marginBottom: '-50px',
             }}
           >
             <div
@@ -95,7 +135,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
               </h1>
             </div>
             <div
-              style={{marginTop: '15px', marginLeft: '15px', display: 'flex', fontFamily: 'barlow'}}
+              style={{
+                marginTop: '15px',
+                marginLeft: '15px',
+                display: 'flex',
+                fontFamily: 'barlow',
+              }}
             >
               <p
                 style={{
@@ -110,7 +155,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                   fontFamily: 'barlow',
                 }}
               >
-                {typeOfPosition}
+                {displayedTypeOfPosition}
               </p>
             </div>
           </div>{' '}
@@ -139,7 +184,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                   width: '350px',
                   height: '320px',
                   borderWidth: '1px',
-                  borderColor: TypeOfPnLColorHex.PROFIT,
+                  borderColor: `${displayedBorderColor}`,
                   fontSize: '16px',
                   lineHeight: '1.5',
                   color: 'rgba(229, 231, 235, 1)',
@@ -159,7 +204,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     style={{
                       position: 'relative',
                       marginLeft: '115px',
-                      display: 'flex', // inline-flex // FIXME: inline-flex is not working
+                      display: 'flex',
                       height: '7rem',
                       width: '7rem',
                       alignItems: 'center',
@@ -183,30 +228,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     </span>
                   </div>{' '}
                   <div style={{display: 'flex', marginLeft: '100px', marginBottom: '10px'}}>
-                    <span style={{marginTop: '18px', marginRight: '5px'}}>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="28.125"
-                        height="36"
-                        viewBox="0 0 28.125 36"
-                      >
-                        <path
-                          fill="#17bf88"
-                          d="M18 0L3.937 21.094h7.576V36h12.973V21.094h7.576z"
-                          transform="translate(-3.937)"
-                        ></path>
-                      </svg>
-                    </span>{' '}
+                    <span style={{marginTop: '15px', marginRight: '5px'}}>{displayedArrow}</span>{' '}
                     <p
                       style={{
-                        fontSize: '48px',
+                        fontSize: '45px',
                         fontWeight: 'bold',
-                        color: TypeOfPnLColorHex.PROFIT,
+                        color: `${displayedTextColor}`,
                         marginTop: '30px',
                         fontFamily: 'barlow',
                       }}
                     >
-                      {randomPnL} %
+                      {displayedPnlPercent} %
                     </p>
                   </div>
                   <div
@@ -218,11 +250,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                       width: '330px',
                     }}
                   >
-                    {/* Rest of the code */}
                     <div
                       style={{
                         display: 'flex',
-                        // justifyContent: 'space-around',
                       }}
                     >
                       <p
@@ -334,11 +364,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 </div>
               </div>
             </div>
-
-            {/* <div style={{display: 'flex', paddingLeft: '23.125rem', paddingTop: '1.25rem'}}>
-             
-              <img src={`${qrcode}`} width={100} height={100} alt="QR Code" />
-            </div> */}
           </div>
         </div>
       </div>

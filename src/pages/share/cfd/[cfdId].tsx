@@ -15,18 +15,15 @@ import {findCurrencyByCode, hasValue} from '../../../lib/common';
 import {Currency} from '../../../constants/currency';
 import Skeleton, {SkeletonTheme} from 'react-loading-skeleton';
 import Image from 'next/image';
-import {NEXT_API_ROUTES} from '../../../constants/config';
+import {API_ROUTE_DOMAIN} from '../../../constants/config';
+import {WIDTH_HEIGHT_OF_SHARING_RECORD} from '../../../constants/display';
 
 interface IPageProps {
   cfdId: string;
 }
 
 const CfdSharing = (props: IPageProps) => {
-  const marketCtx = useContext(MarketContext);
-  const {layoutAssertion} = useGlobal();
   const appCtx = useContext(AppContext);
-
-  const displayedNavBar = layoutAssertion === 'mobile' ? <NavBarMobile /> : <NavBar />;
 
   // TODO: for meta content (20230505 - Shirley)
   // const imgUrl = `${NEXT_API_ROUTES}/api/images/cfd`;
@@ -35,26 +32,11 @@ const CfdSharing = (props: IPageProps) => {
   const router = useRouter();
   const {cfdId} = router.query;
 
-  const currencyCode = cfdId ? cfdId.toString().replace('usdt', '').toUpperCase() : Currency.ETH;
-
-  const currency = findCurrencyByCode(currencyCode);
-
-  const redirectToTicker = async () => {
-    if (hasValue(marketCtx.availableTickers) && currency) {
-      marketCtx.selectTickerHandler(currency);
-    }
-  };
-
   useEffect(() => {
     if (!appCtx.isInit) {
       appCtx.init();
     }
   }, []);
-
-  useEffect(() => {
-    if ((marketCtx?.selectedTickerRef?.current?.currency?.toString() ?? '') === currency) return;
-    redirectToTicker();
-  }, [marketCtx.availableTickers]);
 
   if (!router.isFallback && !props.cfdId) {
     return <Error statusCode={404} />;
@@ -77,8 +59,8 @@ const CfdSharing = (props: IPageProps) => {
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://tidebit-defi.com/" />
         <meta property="og:image" content={imgUrl} />
-        <meta property="og:image:width" content="100" />
-        <meta property="og:image:height" content="100" />
+        <meta property="og:image:width" content={WIDTH_HEIGHT_OF_SHARING_RECORD.toString()} />
+        <meta property="og:image:height" content={WIDTH_HEIGHT_OF_SHARING_RECORD.toString()} />
         <meta property="og:description" content="CFD Sharing" />
         <meta property="og:site_name" content="TideBit" />
         <meta property="og:locale" content="en_US" />
@@ -92,7 +74,12 @@ const CfdSharing = (props: IPageProps) => {
         <meta name="twitter:image" content={imgUrl} />
         <meta name="twitter:image:alt" content="TideBit DeFi CFD" />
       </Head>
-      <img src={imgUrl} width={600} height={600} alt="CFD record" />
+      <img
+        src={imgUrl}
+        width={WIDTH_HEIGHT_OF_SHARING_RECORD}
+        height={WIDTH_HEIGHT_OF_SHARING_RECORD}
+        alt="CFD record"
+      />
     </>
   );
 };

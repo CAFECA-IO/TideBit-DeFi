@@ -5,7 +5,7 @@ import {
   TypeOfPnLColor,
   UNIVERSAL_NUMBER_FORMAT_LOCALE,
 } from '../../constants/display';
-import {NEXT_API_ROUTES, unitAsset} from '../../constants/config';
+import {API_ROUTE_DOMAIN, unitAsset} from '../../constants/config';
 import Toggle from '../toggle/toggle';
 import {useContext, useRef, useState} from 'react';
 import TradingInput from '../trading_input/trading_input';
@@ -93,7 +93,7 @@ const HistoryPositionModal = ({
   const closedTime = timestampToString(closedCfdDetails?.closeTimestamp ?? 0);
 
   const shareToFacebook = () => {
-    const shareUrl = NEXT_API_ROUTES + `/share/cfd/orderId123`;
+    const shareUrl = API_ROUTE_DOMAIN + `/share/cfd/orderId123`;
     window.open(
       `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`,
       'facebook-share-dialog',

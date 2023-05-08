@@ -1,9 +1,9 @@
 import {NextApiRequest, NextApiResponse} from 'next';
 import {ImageResponse} from 'next/server';
 import {randomIntFromInterval, roundToDecimalPlaces} from '../../../lib/common';
-import {TypeOfPnLColorHex} from '../../../constants/display';
+import {TypeOfPnLColorHex, WIDTH_HEIGHT_OF_SHARING_RECORD} from '../../../constants/display';
 import QRCode from 'qrcode';
-import {NEXT_API_ROUTES} from '../../../constants/config';
+import {API_ROUTE_DOMAIN} from '../../../constants/config';
 import {ProfitState} from '../../../constants/profit_state';
 import {TypeOfPosition} from '../../../constants/type_of_position';
 import {Currency} from '../../../constants/currency';
@@ -21,9 +21,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const closePrice = 1383.6;
   const leverage = 5;
 
-  const iconUrl = NEXT_API_ROUTES + `/asset_icon/${ticker.toLowerCase()}.svg`;
+  const iconUrl = API_ROUTE_DOMAIN + `/asset_icon/${ticker.toLowerCase()}.svg`;
   // TODO: Image resolution (20230508 - Shirley)
-  const backgroundImageUrl = NEXT_API_ROUTES + '/elements/group_15214@2x.png';
+  const backgroundImageUrl = API_ROUTE_DOMAIN + '/elements/group_15214@2x.png';
 
   const pnlPercent =
     typeOfPosition === TypeOfPosition.BUY
@@ -97,7 +97,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         <div
           style={{
             backgroundImage: `url(${backgroundImageUrl})`,
-            backgroundSize: '600px 600px',
+            backgroundSize: `${WIDTH_HEIGHT_OF_SHARING_RECORD}px ${WIDTH_HEIGHT_OF_SHARING_RECORD}px`,
             backgroundPosition: 'relative',
             backgroundRepeat: 'no-repeat',
             background: 'transparent',
@@ -106,8 +106,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             flexDirection: 'column',
             alignItems: 'flex-start',
             justifyContent: 'flex-start',
-            height: '600px',
-            width: '600px',
+            height: `${WIDTH_HEIGHT_OF_SHARING_RECORD}px`,
+            width: `${WIDTH_HEIGHT_OF_SHARING_RECORD}px`,
             fontFamily: 'barlow',
           }}
         >
@@ -369,8 +369,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       </div>
     ),
     {
-      width: 600,
-      height: 600,
+      width: WIDTH_HEIGHT_OF_SHARING_RECORD,
+      height: WIDTH_HEIGHT_OF_SHARING_RECORD,
     }
   );
 }

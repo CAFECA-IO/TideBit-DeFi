@@ -54,10 +54,6 @@ import {CustomError} from '../lib/custom_error';
 import {Code, Reason} from '../constants/code';
 import CandlestickBookInstance from '../lib/books/candlestick_book';
 import {IPusherAction} from '../interfaces/tidebit_defi_background/pusher_data';
-import {
-  ISharingOrder,
-  getDummySharingCFDOrder,
-} from '../interfaces/tidebit_defi_background/display_accepted_cfd_order';
 
 export interface IMarketProvider {
   children: React.ReactNode;
@@ -107,7 +103,6 @@ export interface IMarketContext {
       limit?: number;
     }
   ) => number[];
-  getSharingOrder: (orderId: string) => IResult | Promise<IResult>;
 }
 // TODO: Note: _app.tsx 啟動的時候 => createContext
 export const MarketContext = createContext<IMarketContext>({
@@ -146,7 +141,6 @@ export const MarketContext = createContext<IMarketContext>({
   listTickerPositions: (): number[] => {
     throw new CustomError(Code.FUNCTION_NOT_IMPLEMENTED);
   },
-  getSharingOrder: () => Promise.resolve(defaultResultSuccess),
 });
 
 export const MarketProvider = ({children}: IMarketProvider) => {
@@ -190,23 +184,6 @@ export const MarketProvider = ({children}: IMarketProvider) => {
   const showPositionOnChartHandler = (bool: boolean) => {
     setShowPositionOnChart(bool);
     // console.log('in market context, position context boolean:', bool);
-  };
-
-  // TODO: Get the correspond order to share (20230504 - Shirley)
-  const getSharingOrder = (orderId: string) => {
-    let result: IResult = {...defaultResultFailed};
-    try {
-      // TODO: send request (20230504 - Shirley)
-      const sharingOrder: ISharingOrder = getDummySharingCFDOrder(Currency.BTC);
-      result = {...defaultResultSuccess};
-      result.data = sharingOrder;
-    } catch (error) {
-      // ToDo: Error Handling (20230504 - Shirley)
-      // eslint-disable-next-line no-console
-      console.log(`error in getSharingOrder: ${error}`);
-      result = {...defaultResultFailed};
-    }
-    return result;
   };
 
   const candlestickChartIdHandler = (id: string) => {
@@ -603,7 +580,6 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     */
     listTickerPositions,
     init,
-    getSharingOrder,
   };
 
   return <MarketContext.Provider value={defaultValue}>{children}</MarketContext.Provider>;

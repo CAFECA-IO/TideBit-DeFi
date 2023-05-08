@@ -16,10 +16,6 @@ export interface IDisplayCFDOrder extends ICFDOrder {
   stateCode: number;
 }
 
-export interface ISharingOrder extends IDisplayCFDOrder {
-  owner: string;
-}
-
 export const getDummyDisplayCFDOrder = (currency: string) => {
   const dummyApplyCloseCFDOrder = getDummyApplyCreateCFDOrder(currency);
   const {CFDOrder} = convertApplyCreateCFDToAcceptedCFD(
@@ -40,36 +36,5 @@ export const getDummyDisplayCFDOrder = (currency: string) => {
 export const listDummyDisplayCFDOrder = (currency: string) => {
   const count = 10;
   const list = new Array(count).fill(0).map(() => getDummyDisplayCFDOrder(currency));
-  return list;
-};
-
-export const getDummySharingCFDOrder = (currency: string) => {
-  const dummyApplyCloseCFDOrder = getDummyApplyCreateCFDOrder(currency);
-  // const dummyApplyCloseCFDOrder = getDummyAcceptedCloseCFDOrder(currency, OrderStatusUnion.SUCCESS);
-  const {CFDOrder} = convertApplyCreateCFDToAcceptedCFD(
-    dummyApplyCloseCFDOrder,
-    {currency, available: 10, locked: 0},
-    randomHex(32),
-    randomHex(32)
-  );
-  const dummyPositionLineGraph: number[] = [90, 72, 60, 65, 42, 25, 32, 20, 15, 32, 90, 10];
-  CFDOrder.openPrice = dummyPositionLineGraph[0];
-  const dummyDisplayCFDOrder: IDisplayCFDOrder = toDisplayCFDOrder(
-    CFDOrder,
-    dummyPositionLineGraph
-  );
-  CFDOrder.closePrice = dummyPositionLineGraph[dummyPositionLineGraph.length - 1];
-  const displayedOrder = toDisplayCFDOrder(CFDOrder, dummyPositionLineGraph);
-  const dummySharingCFDOrder: ISharingOrder = {...displayedOrder, owner: '0x123a'};
-  return dummySharingCFDOrder;
-};
-
-export const listDummySharingCFDOrder = (currency: string): ISharingOrder[] => {
-  const count = 10;
-  const list = new Array(count).fill(0).map(() => {
-    const order = getDummyDisplayCFDOrder(currency);
-    const dummySharingCFDOrder: ISharingOrder = {...order, owner: '0x123a'};
-    return dummySharingCFDOrder;
-  });
   return list;
 };

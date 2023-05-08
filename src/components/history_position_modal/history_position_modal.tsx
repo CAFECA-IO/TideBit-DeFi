@@ -93,7 +93,10 @@ const HistoryPositionModal = ({
   const closedTime = timestampToString(closedCfdDetails?.closeTimestamp ?? 0);
 
   const shareToFacebook = () => {
-    const shareUrl = API_ROUTE_DOMAIN + `/share/cfd/orderId123`;
+    const shareUrl = API_ROUTE_DOMAIN + `/share/cfd/${Date.now()}`;
+    // const shareUrl = API_ROUTE_DOMAIN + `/api/images/cfd/${Date.now()}`;
+
+    window.open(`${shareUrl}`);
     window.open(
       `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`,
       'facebook-share-dialog',

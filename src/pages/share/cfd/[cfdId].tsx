@@ -30,25 +30,26 @@ const CfdSharing = (props: IPageProps) => {
   const router = useRouter();
 
   const [imgUrl, setImgUrl, imgUrlRef] = useStateRef<string>('');
+  const [isVisible, setIsVisible, isVisibleRef] = useStateRef<boolean>(false);
 
   const {cfdId} = router.query;
 
   // TODO: for meta content (20230505 - Shirley)
-  // const imgUrl = `${NEXT_API_ROUTES}/api/images/cfd`;
-  // const imgUrl = `/api/images/cfd/${cfdId}`;
-  const getImg = async () => await fetch(`${API_ROUTE_DOMAIN}/api/images/cfd/${props.cfdId}`);
+  const img = `${API_ROUTE_DOMAIN}/api/images/cfd/${props.cfdId}`;
 
   useEffect(() => {
     if (!appCtx.isInit) {
       appCtx.init();
     }
+  }, []);
+
+  useEffect(() => {
     (async () => {
       try {
-        // const img = await getImg();
         setImgUrl(`${API_ROUTE_DOMAIN}/api/images/cfd/${props.cfdId}`);
-        // console.log('img', img);
-        // eslint-disable-next-line no-console
-        console.log('imgUrl', imgUrlRef.current);
+        setTimeout(() => {
+          setIsVisible(true);
+        }, 1000);
       } catch (e) {
         // TODO: Error handling (20230508 - Shirley)
         // eslint-disable-next-line no-console
@@ -56,23 +57,7 @@ const CfdSharing = (props: IPageProps) => {
         throw new CustomError(Code.CANNOT_CONVERT_TO_IMAGE);
       }
     })();
-
-    // return () => {
-    //   (async () => {
-    //     try {
-    //       // const img = await getImg();
-    //       setImgUrl(`${API_ROUTE_DOMAIN}/api/images/cfd/${props.cfdId}`);
-    //       // console.log('img', img);
-    //       console.log('imgUrl', imgUrlRef.current);
-    //     } catch (e) {
-    //       // TODO: Error handling (20230508 - Shirley)
-    //       // eslint-disable-next-line no-console
-    //       console.log(`Failed to get image: ${e}`);
-    //       throw new CustomError(Code.CANNOT_CONVERT_TO_IMAGE);
-    //     }
-    //   })();
-    // };
-  }, []);
+  }, [props.cfdId]);
 
   if (!router.isFallback && !props.cfdId) {
     return <Error statusCode={404} />;
@@ -93,7 +78,7 @@ const CfdSharing = (props: IPageProps) => {
         <meta property="og:title" content="TideBit DeFi CFD" />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://tidebit-defi.com/" />
-        <meta property="og:image" content={imgUrlRef.current} />
+        <meta property="og:image" content={img} />
         <meta property="og:image:width" content={WIDTH_HEIGHT_OF_SHARING_RECORD.toString()} />
         <meta property="og:image:height" content={WIDTH_HEIGHT_OF_SHARING_RECORD.toString()} />
         <meta property="og:description" content="CFD Sharing" />
@@ -106,13 +91,12 @@ const CfdSharing = (props: IPageProps) => {
         <meta name="twitter:url" content="https://tidebit-defi.com/" />
         <meta name="twitter:title" content="TideBit DeFi CFD" />
         <meta name="twitter:description" content="TideBit DeFi CFD" />
-        <meta name="twitter:image" content={imgUrlRef.current} />
+        <meta name="twitter:image" content={img} />
         <meta name="twitter:image:alt" content="TideBit DeFi CFD" />
       </Head>
-      {imgUrlRef.current === `${API_ROUTE_DOMAIN}/api/images/cfd/${props.cfdId}` ? (
+      {appCtx.isInit && isVisibleRef.current ? (
         <img
           src={imgUrlRef.current}
-          // src={imgUrl}
           width={WIDTH_HEIGHT_OF_SHARING_RECORD}
           height={WIDTH_HEIGHT_OF_SHARING_RECORD}
           alt="CFD record"

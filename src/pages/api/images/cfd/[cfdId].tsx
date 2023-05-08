@@ -1,12 +1,21 @@
 import {NextApiRequest, NextApiResponse} from 'next';
 import {ImageResponse} from 'next/server';
 import {randomIntFromInterval, roundToDecimalPlaces} from '../../../../lib/common';
-import {TypeOfPnLColorHex, WIDTH_HEIGHT_OF_SHARING_RECORD} from '../../../../constants/display';
+import {
+  TypeOfPnLColorHex,
+  UNIVERSAL_NUMBER_FORMAT_LOCALE,
+  WIDTH_HEIGHT_OF_SHARING_RECORD,
+} from '../../../../constants/display';
 import QRCode from 'qrcode';
-import {API_ROUTE_DOMAIN} from '../../../../constants/config';
+import {API_ROUTE_DOMAIN, FRACTION_DIGITS} from '../../../../constants/config';
 import {ProfitState} from '../../../../constants/profit_state';
 import {TypeOfPosition} from '../../../../constants/type_of_position';
 import {Currency} from '../../../../constants/currency';
+import {
+  ISharingOrder,
+  getDummySharingOrder,
+  isDummySharingOrder,
+} from '../../../../interfaces/tidebit_defi_background/sharing_order';
 
 export const config = {
   runtime: 'edge',
@@ -17,15 +26,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const cfdId = req?.url?.split('=')[1];
 
   // TODO: Data from API (20230508 - Shirley)
-  const ticker = Currency.BTC;
-  const user = 'J';
-  const targetAssetName = 'Bitcoin';
-  const typeOfPosition = TypeOfPosition.SELL;
-  const openPrice = 1393.8;
-  const closePrice = 1383.6;
-  const leverage = 5;
+  // TODO: Generate QR Code (20230508 - Shirley)
+  const {tickerId, user, targetAssetName, typeOfPosition, openPrice, closePrice, leverage} =
+    getDummySharingOrder() as ISharingOrder;
 
-  const iconUrl = API_ROUTE_DOMAIN + `/asset_icon/${ticker.toLowerCase()}.svg`;
+  const displayedUser = user.slice(-1).toUpperCase();
+
+  const iconUrl = API_ROUTE_DOMAIN + `/asset_icon/${tickerId.toLowerCase()}.svg`;
   // TODO: Image resolution (20230508 - Shirley)
   const backgroundImageUrl = API_ROUTE_DOMAIN + '/elements/group_15214@2x.png';
 
@@ -34,7 +41,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       ? roundToDecimalPlaces(((closePrice - openPrice) / openPrice) * 100, 2)
       : roundToDecimalPlaces(((openPrice - closePrice) / openPrice) * 100, 2);
 
-  const displayedPnlPercent = Math.abs(pnlPercent);
+  const displayedPnlPercent = Math.abs(pnlPercent).toLocaleString(
+    UNIVERSAL_NUMBER_FORMAT_LOCALE,
+    FRACTION_DIGITS
+  );
 
   const profitState = pnlPercent > 0 ? ProfitState.PROFIT : ProfitState.LOSS;
 
@@ -228,10 +238,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                         fontFamily: 'barlow',
                       }}
                     >
-                      {user}
+                      {displayedUser}
                     </span>
                   </div>{' '}
-                  <div style={{display: 'flex', marginLeft: '100px', marginBottom: '10px'}}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      width: '100%',
+                      justifyContent: 'center',
+                      marginBottom: '20px',
+                    }}
+                  >
                     <span style={{marginTop: '15px', marginRight: '5px'}}>{displayedArrow}</span>{' '}
                     <p
                       style={{
@@ -358,7 +375,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                           fontWeight: 'bold',
                           color: '#fff',
                           fontFamily: 'barlow',
-                          marginRight: '10px',
+                          marginRight: '20px',
                         }}
                       >
                         {leverage}x

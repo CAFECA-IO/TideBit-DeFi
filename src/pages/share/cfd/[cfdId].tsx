@@ -36,6 +36,7 @@ const CfdSharing = (props: IPageProps) => {
 
   // TODO: for meta content (20230505 - Shirley)
   const img = `${API_ROUTE_DOMAIN}/api/images/cfd/${props.cfdId}`;
+  const displayImg = `/api/images/cfd/${props.cfdId}`;
 
   useEffect(() => {
     if (!appCtx.isInit) {
@@ -96,7 +97,7 @@ const CfdSharing = (props: IPageProps) => {
       </Head>
       {appCtx.isInit ? (
         <img
-          src={imgUrlRef.current}
+          src={displayImg}
           width={WIDTH_HEIGHT_OF_SHARING_RECORD}
           height={WIDTH_HEIGHT_OF_SHARING_RECORD}
           alt="CFD record"

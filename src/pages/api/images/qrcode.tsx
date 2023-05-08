@@ -28,7 +28,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   };
 
   const qrcode = await generateQRCode('https://tidebit-defi.com/');
-  // console.log('qrcode', qrcode);
 
   return new ImageResponse(
     (

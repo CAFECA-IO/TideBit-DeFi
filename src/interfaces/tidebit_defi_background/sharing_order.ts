@@ -19,9 +19,9 @@ export const getDummySharingOrder = (
   typeOfPosition?: ITypeOfPosition
 ): ISharingOrder => {
   const currencies: ICurrency[] = Object.values(Currency);
-  const ticker = currencies[randomIntFromInterval(0, currencies.length - 1)];
+  const ticker = currency ? currency : currencies[randomIntFromInterval(0, currencies.length - 1)];
   const order: ISharingOrder = {
-    tickerId: currency ? currency : ticker,
+    tickerId: ticker,
     targetAssetName: getChainNameByCurrency(ticker, TRADING_CRYPTO_DATA),
     typeOfPosition: typeOfPosition
       ? typeOfPosition

@@ -26,7 +26,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const cfdId = req?.url?.split('=')[1];
 
   // TODO: Data from API (20230508 - Shirley)
-  // TODO: Generate QR Code (20230508 - Shirley)
   const {tickerId, user, targetAssetName, typeOfPosition, openPrice, closePrice, leverage} =
     getDummySharingOrder() as ISharingOrder;
 
@@ -381,6 +380,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                         {leverage}x
                       </p>
                     </div>
+                    {/* TODO: QR code (20230508 - Shirley) */}
+                    {/* <img src="http:localhost:3000/api/images/qrcode" width={100} height={100} alt="qr code" /> */}
                   </div>
                 </div>
               </div>

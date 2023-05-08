@@ -36,28 +36,13 @@ import {ProfitState} from '../../constants/profit_state';
 import {UserContext} from '../../contexts/user_context';
 import {useCountdown} from '../../lib/hooks/use_countdown';
 import {useTranslation} from 'react-i18next';
-import {
-  IDisplayCFDOrder,
-  // getDummyDisplayAcceptedCFDOrder,
-} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
-import {
-  IAcceptedCFDOrder,
-  // getDummyAcceptedCFDOrder,
-} from '../../interfaces/tidebit_defi_background/accepted_cfd_order';
-import {
-  IDisplayApplyCFDOrder,
-  getDummyDisplayApplyCloseCFDOrder,
-} from '../../interfaces/tidebit_defi_background/display_apply_cfd_order';
-import {
-  IApplyCloseCFDOrder,
-  // getDummyApplyCloseCFDOrderData,
-} from '../../interfaces/tidebit_defi_background/apply_close_cfd_order';
+import {IDisplayCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
+import {IApplyCloseCFDOrder} from '../../interfaces/tidebit_defi_background/apply_close_cfd_order';
 import {IPnL} from '../../interfaces/tidebit_defi_background/pnl';
 import {ICFDSuggestion} from '../../interfaces/tidebit_defi_background/cfd_suggestion';
 import {IQuotation, getDummyQuotation} from '../../interfaces/tidebit_defi_background/quotation';
 import useStateRef from 'react-usestateref';
 import {OrderState} from '../../constants/order_state';
-import {IApplyCFDOrder} from '../../interfaces/tidebit_defi_background/apply_cfd_order';
 import {defaultResultSuccess} from '../../interfaces/tidebit_defi_background/result';
 import {CFDOperation} from '../../constants/cfd_order_type';
 import {OrderType} from '../../constants/order_type';

@@ -2,8 +2,6 @@ import {ImCross} from 'react-icons/im';
 import {
   DELAYED_HIDDEN_SECONDS,
   TypeOfBorderColor,
-  TypeOfPnLColor,
-  TypeOfTransaction,
   UNIVERSAL_NUMBER_FORMAT_LOCALE,
 } from '../../constants/display';
 import RippleButton from '../ripple_button/ripple_button';
@@ -11,10 +9,7 @@ import Image from 'next/image';
 import {AiOutlineQuestionCircle} from 'react-icons/ai';
 import {
   locker,
-  randomIntFromInterval,
-  timestampToString,
   wait,
-  getDeadline,
   getNowSeconds,
   getTimestamp,
   getTimestampInMilliseconds,
@@ -29,14 +24,10 @@ import {
   CFD_LIQUIDATION_TIME,
   DISPLAY_QUOTATION_RENEWAL_INTERVAL_SECONDS,
   LIQUIDATION_FIVE_LEVERAGE,
-  QUOTATION_RENEWAL_INTERVAL_SECONDS,
   WAITING_TIME_FOR_USER_SIGNING,
   unitAsset,
 } from '../../constants/config';
-import {
-  getDummyApplyCreateCFDOrder,
-  IApplyCreateCFDOrder,
-} from '../../interfaces/tidebit_defi_background/apply_create_cfd_order';
+import {IApplyCreateCFDOrder} from '../../interfaces/tidebit_defi_background/apply_create_cfd_order';
 import {useTranslation} from 'react-i18next';
 import {defaultResultSuccess} from '../../interfaces/tidebit_defi_background/result';
 import {IQuotation} from '../../interfaces/tidebit_defi_background/quotation';
@@ -183,7 +174,6 @@ const PositionOpenModal = ({
           Code.UNKNOWN_ERROR_IN_COMPONENT
         })`,
       });
-
       globalCtx.visibleFailedModalHandler();
     }
 

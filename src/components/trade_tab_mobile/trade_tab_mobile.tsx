@@ -997,10 +997,14 @@ const TradeTabMobile = () => {
   );
 
   const longButtonStyles =
-    activeTab === 'Long' && openSubMenu ? 'z-50 w-320px -translate-x-16 absolute' : 'w-120px'; //z-50 w-320px -translate-x-16 absolute
+    activeTab === 'Long' && openSubMenu
+      ? 'z-20 w-320px -translate-x-16 absolute'
+      : 'w-120px translate-x-0';
 
   const shortButtonStyles =
-    activeTab === 'Short' && openSubMenu ? 'z-50 w-320px -translate-x-16 absolute' : 'ml-4 w-120px'; //z-50 w-320px -translate-x-16 absolute
+    activeTab === 'Short' && openSubMenu
+      ? 'z-20 w-320px -translate-x-16 absolute'
+      : 'ml-4 w-120px translate-x-0';
 
   const subMenu = (
     <div

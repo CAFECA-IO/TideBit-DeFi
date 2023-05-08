@@ -15,7 +15,7 @@ import {findCurrencyByCode, hasValue} from '../../../lib/common';
 import {Currency} from '../../../constants/currency';
 import Skeleton, {SkeletonTheme} from 'react-loading-skeleton';
 import Image from 'next/image';
-import {API_ROUTE_DOMAIN, DOMAIN} from '../../../constants/config';
+import {API_DOMAIN, DOMAIN} from '../../../constants/config';
 import {WIDTH_HEIGHT_OF_SHARING_RECORD} from '../../../constants/display';
 import {CustomError} from '../../../lib/custom_error';
 import {Code} from '../../../constants/code';
@@ -50,7 +50,7 @@ const CfdSharing = (props: IPageProps) => {
         setImgUrl(`${DOMAIN}/api/images/cfd/${props.cfdId}`);
         setTimeout(() => {
           setIsVisible(true);
-        }, 1000);
+        }, 500);
       } catch (e) {
         // TODO: Error handling (20230508 - Shirley)
         // eslint-disable-next-line no-console
@@ -95,7 +95,7 @@ const CfdSharing = (props: IPageProps) => {
         <meta name="twitter:image" content={img} />
         <meta name="twitter:image:alt" content="TideBit DeFi CFD" />
       </Head>
-      {appCtx.isInit ? (
+      {appCtx.isInit && isVisibleRef.current ? (
         <img
           src={displayImg}
           width={WIDTH_HEIGHT_OF_SHARING_RECORD}

@@ -7,7 +7,7 @@ import {
   WIDTH_HEIGHT_OF_SHARING_RECORD,
 } from '../../../../constants/display';
 import QRCode from 'qrcode';
-import {API_ROUTE_DOMAIN, DOMAIN, FRACTION_DIGITS} from '../../../../constants/config';
+import {API_DOMAIN, DOMAIN, FRACTION_DIGITS} from '../../../../constants/config';
 import {ProfitState} from '../../../../constants/profit_state';
 import {TypeOfPosition} from '../../../../constants/type_of_position';
 import {Currency} from '../../../../constants/currency';
@@ -16,14 +16,16 @@ import {
   getDummySharingOrder,
   isDummySharingOrder,
 } from '../../../../interfaces/tidebit_defi_background/sharing_order';
+import {useRouter} from 'next/router';
 
 export const config = {
   runtime: 'edge',
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  // TODO: use `cfdId` to call API to get the data (20230508 - Shirley)
-  const cfdId = req?.url?.split('=')[1];
+  const {pathname} = new URL(req?.url ?? '');
+  const params = pathname.split('/');
+  const cfdId = params.pop(); // TODO: send to api (20230508 - Shirley)
 
   // TODO: Data from API (20230508 - Shirley)
   const {tickerId, user, targetAssetName, typeOfPosition, openPrice, closePrice, leverage} =
@@ -97,7 +99,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   // };
 
   // const qrcode = generateQRCode('https://tidebit-defi.com/');
-
+  // res.status(200).send()，這是由 CDN 決定的，所以不用特別加
   return new ImageResponse(
     (
       <div
@@ -113,7 +115,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             backgroundSize: `${WIDTH_HEIGHT_OF_SHARING_RECORD}px ${WIDTH_HEIGHT_OF_SHARING_RECORD}px`,
             backgroundPosition: 'relative',
             backgroundRepeat: 'no-repeat',
-            background: 'transparent',
+            background: '#000',
 
             display: 'flex',
             flexDirection: 'column',

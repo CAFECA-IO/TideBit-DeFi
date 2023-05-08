@@ -15,7 +15,7 @@ import {findCurrencyByCode, hasValue} from '../../../lib/common';
 import {Currency} from '../../../constants/currency';
 import Skeleton, {SkeletonTheme} from 'react-loading-skeleton';
 import Image from 'next/image';
-import {API_ROUTE_DOMAIN} from '../../../constants/config';
+import {API_ROUTE_DOMAIN, DOMAIN} from '../../../constants/config';
 import {WIDTH_HEIGHT_OF_SHARING_RECORD} from '../../../constants/display';
 import {CustomError} from '../../../lib/custom_error';
 import {Code} from '../../../constants/code';
@@ -35,7 +35,7 @@ const CfdSharing = (props: IPageProps) => {
   const {cfdId} = router.query;
 
   // TODO: for meta content (20230505 - Shirley)
-  const img = `${API_ROUTE_DOMAIN}/api/images/cfd/${props.cfdId}`;
+  const img = `${DOMAIN}/api/images/cfd/${props.cfdId}`;
   const displayImg = `/api/images/cfd/${props.cfdId}`;
 
   useEffect(() => {
@@ -47,7 +47,7 @@ const CfdSharing = (props: IPageProps) => {
   useEffect(() => {
     (async () => {
       try {
-        setImgUrl(`${API_ROUTE_DOMAIN}/api/images/cfd/${props.cfdId}`);
+        setImgUrl(`${DOMAIN}/api/images/cfd/${props.cfdId}`);
         setTimeout(() => {
           setIsVisible(true);
         }, 1000);

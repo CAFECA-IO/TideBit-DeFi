@@ -7,7 +7,7 @@ import {
   WIDTH_HEIGHT_OF_SHARING_RECORD,
 } from '../../../../constants/display';
 import QRCode from 'qrcode';
-import {API_ROUTE_DOMAIN, FRACTION_DIGITS} from '../../../../constants/config';
+import {API_ROUTE_DOMAIN, DOMAIN, FRACTION_DIGITS} from '../../../../constants/config';
 import {ProfitState} from '../../../../constants/profit_state';
 import {TypeOfPosition} from '../../../../constants/type_of_position';
 import {Currency} from '../../../../constants/currency';
@@ -31,9 +31,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const displayedUser = user.slice(-1).toUpperCase();
 
-  const iconUrl = API_ROUTE_DOMAIN + `/asset_icon/${tickerId.toLowerCase()}.svg`;
+  const iconUrl = DOMAIN + `/asset_icon/${tickerId.toLowerCase()}.svg`;
   // TODO: Image resolution (20230508 - Shirley)
-  const backgroundImageUrl = API_ROUTE_DOMAIN + '/elements/group_15214@2x.png';
+  const backgroundImageUrl = DOMAIN + '/elements/group_15214@2x.png';
 
   const pnlPercent =
     typeOfPosition === TypeOfPosition.BUY

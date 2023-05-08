@@ -37,7 +37,7 @@ export type IAPIName =
   | 'LIST_WITHDRAW_TRADES'
   | 'CREATE_WITHDRAW_TRADE'
   // user
-  | 'DEWT_LOGIN'
+  | 'POST_DEWT'
   | 'LIST_HISTORIES'
   | 'LIST_FAVORITE_TICKERS'
   | 'ADD_FAVORITE_TICKERS'
@@ -89,7 +89,7 @@ export interface IAPINameConstant {
   LIST_WITHDRAW_TRADES: IAPIName;
   CREATE_WITHDRAW_TRADE: IAPIName;
   // user
-  DEWT_LOGIN: IAPIName;
+  POST_DEWT: IAPIName;
   LIST_HISTORIES: IAPIName;
   LIST_FAVORITE_TICKERS: IAPIName;
   ADD_FAVORITE_TICKERS: IAPIName;
@@ -142,7 +142,7 @@ export const APIName: IAPINameConstant = {
   LIST_WITHDRAW_TRADES: 'LIST_WITHDRAW_TRADES',
   CREATE_WITHDRAW_TRADE: 'CREATE_WITHDRAW_TRADE',
   // user
-  DEWT_LOGIN: 'DEWT_LOGIN',
+  POST_DEWT: 'POST_DEWT',
   LIST_HISTORIES: 'LIST_HISTORIES',
   LIST_FAVORITE_TICKERS: 'LIST_FAVORITE_TICKERS',
   ADD_FAVORITE_TICKERS: 'ADD_FAVORITE_TICKERS',
@@ -186,22 +186,22 @@ export const APIURL = {
   GET_GUARANTEED_STOP_FEE_PERCENTAGE: `${URL}/market/guaranteed-stop-fee`,
   LIST_MARKET_TRADES: '/api/market/trades',
   // trades
-  LIST_CFD_TRADES: '/api/trades/cfds',
+  LIST_CFD_TRADES: `${URL}/trade/cfds`,
+  LIST_HISTORIES: `${URL}/trade/history`,
   GET_CFD_TRADE: '/api/trades/cfds',
   CREATE_CFD_TRADE: '/api/trades/cfds',
   UPDATE_CFD_TRADE: '/api/trades/cfds',
   CLOSE_CFD_TRADE: '/api/trades/cfds',
+  CREATE_DEPOSIT_TRADE: `${URL}/deposit`,
   LIST_DEPOSIT_TRADES: '/api/trades/deposits',
-  CREATE_DEPOSIT_TRADE: '/api/trades/deposits',
   LIST_WITHDRAW_TRADES: '/api/trades/withdraws',
   CREATE_WITHDRAW_TRADE: '/api/trades/withdraws',
   // user
-  DEWT_LOGIN: `${URL}/dewt`,
-  LIST_HISTORIES: '/api/user/histories',
+  POST_DEWT: `${URL}/dewt`,
+  LIST_BALANCES: `${URL}/balances`,
   LIST_FAVORITE_TICKERS: '/api/user/tickers',
   ADD_FAVORITE_TICKERS: '/api/user/tickers',
   REMOVE_FAVORITE_TICKERS: '/api/user/tickers',
-  LIST_BALANCES: '/api/user/balances',
   SEND_EMAIL_CODE: '/api/user/code',
   CONNECT_EMAIL: '/api/user/email',
   CONNECT_TIDEBIT: '/api/user/tidebitt',

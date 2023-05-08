@@ -15,6 +15,7 @@ import {millesecondsToSeconds} from '../common';
 */
 import {ITimeSpanUnion, TimeSpanUnion} from '../../constants/time_span_union';
 import {ICurrency} from '../../constants/currency';
+import {unitAsset} from '../../constants/config';
 
 class TickerBook {
   private _dataLength = 1000;
@@ -265,6 +266,11 @@ class TickerBook {
     }, tickers);
     this.tickers = tickers;
     return tickers;
+  }
+
+  getCurrencyRate(currency: string): number {
+    if (!this._tickers[currency]) return 0;
+    return currency === unitAsset ? 1 : this._tickers[currency].price;
   }
 
   get tickers(): {[currency: string]: ITickerData} {

@@ -73,6 +73,7 @@ export interface IMarketContext {
   depositCryptocurrencies: ICryptocurrency[];
   withdrawCryptocurrencies: ICryptocurrency[];
   tidebitPromotion: ITideBitPromotion;
+  guaranteedStopFeePercentage: number;
   init: () => Promise<void>;
   // getGuaranteedStopFeePercentage: () => Promise<IResult>;
   showPositionOnChartHandler: (bool: boolean) => void;
@@ -119,6 +120,7 @@ export const MarketContext = createContext<IMarketContext>({
   candlestickId: '',
   candlestickChartData: [],
   timeSpan: TimeSpanUnion._1s,
+  guaranteedStopFeePercentage: 0.0015,
   selectTimeSpanHandler: () => null,
   // liveStatstics: null,
   // bullAndBearIndex: 0,
@@ -160,6 +162,11 @@ export const MarketProvider = ({children}: IMarketProvider) => {
   const [cryptocurrencies, setCryptocurrencies, cryptocurrenciesRef] = useState<ICryptocurrency[]>(
     []
   );
+  const [
+    guaranteedStopFeePercentage,
+    setGuaranteedStopFeePercentage,
+    guaranteedStopFeePercentageRef,
+  ] = useState<number>(0.0015);
   const [depositCryptocurrencies, setDepositCryptocurrencies, depositCryptocurrenciesRef] =
     useState<ICryptocurrency[]>([...dummyCryptocurrencies]);
   const [withdrawCryptocurrencies, setWithdrawCryptocurrencies, withdrawCryptocurrenciesRef] =
@@ -229,9 +236,9 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     /** Deprecated: replaced by pusher (20230502 - tzuhan) 
     workerCtx.tickerChangeHandler(ticker);
     */
-    await getGuaranteedStopFeePercentage(ticker.instId);
-    await getCFDQuotation(ticker.instId, TypeOfPosition.BUY);
-    await getCFDSuggestion(ticker.instId, TypeOfPosition.BUY, ticker.price);
+    await getGuaranteedStopFeePercentage(ticker.currency);
+    await getCFDQuotation(ticker.currency, TypeOfPosition.BUY);
+    await getCFDSuggestion(ticker.currency, TypeOfPosition.BUY, ticker.price);
     return defaultResultSuccess;
   };
 
@@ -303,8 +310,9 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     return result;
   };
 
-  const getCFDQuotation = async (instId: string, typeOfPosition: ITypeOfPosition) => {
+  const getCFDQuotation = async (currency: string, typeOfPosition: ITypeOfPosition) => {
     let result: IResult = {...defaultResultFailed};
+    const instId = `${currency}-${unitAsset}`;
     try {
       result = (await workerCtx.requestHandler({
         name: APIName.GET_CFD_QUOTATION,
@@ -328,11 +336,12 @@ export const MarketProvider = ({children}: IMarketProvider) => {
   };
 
   const getCFDSuggestion = async (
-    instId: string,
+    currency: string,
     typeOfPosition: ITypeOfPosition,
     price: number
   ) => {
     let result: IResult = {...defaultResultFailed};
+    const instId = `${currency}-${unitAsset}`;
     try {
       result = (await workerCtx.requestHandler({
         name: APIName.GET_CFD_QUOTATION,
@@ -395,8 +404,9 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     return positions;
   };
 
-  const getGuaranteedStopFeePercentage = async (instId: string) => {
+  const getGuaranteedStopFeePercentage = async (currency: string) => {
     let result: IResult = {...defaultResultFailed};
+    const instId = `${currency}-${unitAsset}`;
     try {
       result = (await workerCtx.requestHandler({
         name: APIName.GET_GUARANTEED_STOP_FEE_PERCENTAGE,
@@ -406,6 +416,10 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       // Deprecate: after this functions finishing (20230508 - tzuhan)
       // eslint-disable-next-line no-console
       console.log(`getGuaranteedStopFeePercentage result`, result);
+      if (result.success) {
+        const data = result.data as number;
+        setGuaranteedStopFeePercentage(data);
+      }
     } catch (error) {
       // Deprecate: error handle (Tzuhan - 20230321)
       // eslint-disable-next-line no-console
@@ -583,6 +597,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
   const defaultValue = {
     selectedTicker: selectedTickerRef.current,
     selectedTickerRef,
+    guaranteedStopFeePercentage: guaranteedStopFeePercentageRef.current,
     selectTickerHandler,
     selectTimeSpanHandler,
     availableTickers,

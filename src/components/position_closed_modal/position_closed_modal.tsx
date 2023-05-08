@@ -408,7 +408,7 @@ const PositionClosedModal = ({
         globalCtx.toast({
           type: ToastTypeAndText.ERROR.type,
           toastId: ToastId.GET_QUOTATION_ERROR_CLOSE,
-          message: `${quotationErrorMessage.reason} (${quotationErrorMessage.code}) close`,
+          message: `${quotationErrorMessage.reason} (${quotationErrorMessage.code})`,
           typeText: t(ToastTypeAndText.ERROR.text),
           isLoading: false,
           autoClose: false,

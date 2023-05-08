@@ -251,7 +251,7 @@ const PositionOpenModal = ({
       globalCtx.toast({
         type: ToastTypeAndText.ERROR.type,
         toastId: ToastId.GET_QUOTATION_ERROR_OPEN,
-        message: `${quotationErrorMessage.reason} (${quotationErrorMessage.code}) open`,
+        message: `${quotationErrorMessage.reason} (${quotationErrorMessage.code})`,
         typeText: t(ToastTypeAndText.ERROR.text),
         isLoading: false,
         autoClose: false,

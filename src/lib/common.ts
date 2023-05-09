@@ -16,7 +16,9 @@ import {
   SUGGEST_TP,
   TERM_OF_SERVICE,
   MONTH_FULL_NAME_LIST,
+  FRACTION_DIGITS,
 } from '../constants/config';
+import {UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../constants/display';
 import ServiceTerm from '../constants/contracts/service_term';
 import IJSON from '../interfaces/ijson';
 import RLP from 'rlp';
@@ -446,3 +448,9 @@ export function findCurrencyByCode(code: string): ICurrency | undefined {
 
   return undefined;
 }
+
+export const numberFormatted = (n: number) => {
+  const result =
+    n === 0 ? '0' : Math.abs(n).toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
+  return result;
+};

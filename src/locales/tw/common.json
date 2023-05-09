@@ -298,5 +298,29 @@
     "WARNING": "警告",
     "INFO": "訊息",
     "PROGRESSING_MESSAGE": "處理中，請稍候..."
+  },
+  "ERROR_MESSAGE": {
+    "SUCCESS": "成功",
+    "UNKNOWN_ERROR": "未知錯誤",
+    "UNKNOWN_ERROR_IN_COMPONENT": "元件發生未知錯誤",
+    "LOCK_PROCEDURE_WRONG": "鎖定程序錯誤",
+    "FUNCTION_NOT_IMPLEMENTED": "功能尚未實作",
+    "CANNOT_GET_QUOTATION_FROM_CONTEXT": "無法取得報價",
+    "ORDER_NOT_OPENING": "訂單未開啟",
+    "INVAILD_ORDER_INPUTS": "訂單輸入無效",
+    "EXPIRED_QUOTATION_CANCELED": "因報價過期而取消訂單",
+    "EXPIRED_QUOTATION_FAILED": "無法從過期的報價單建立訂單",
+    "INVAILD_INPUTS": "無效的輸入",
+    "BALANCE_NOT_FOUND": "餘額不存在",
+    "FAILE_TO_UPDATE_BALANCE": "更新餘額失敗",
+    "WALLET_IS_NOT_CONNECT": "錢包未連線",
+    "SERVICE_TERM_DISABLE": "服務條款已停用",
+    "DEWT_IS_NOT_LEGIT": "DEWT 不合法",
+    "REJECTED_SIGNATURE": "簽名已被使用者拒絕",
+    "INTERNAL_SERVER_ERROR": "內部伺服器錯誤",
+    "THIRD_PARTY_LIBRARY_ERROR": "第三方函式庫錯誤"
+  },
+  "LEADERBOARD_PAGE": {
+    "TITLE": "排行榜"
   }
 }

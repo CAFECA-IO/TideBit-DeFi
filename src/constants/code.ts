@@ -76,30 +76,29 @@ export const Code: ICodeConstant = {
 };
 
 export const Reason: IReason = {
-  '00000000': 'success',
-  '10110001': 'Lock procedure wrong',
-  '10210001': 'Function not implemented',
-  '10110002': 'Cannot get quotation from context',
+  '00000000': 'ERROR_MESSAGE.SUCCESS',
+  '10110001': 'ERROR_MESSAGE.LOCK_PROCEDURE_WRONG',
+  '10210001': 'ERROR_MESSAGE.FUNCTION_NOT_IMPLEMENTED',
+  '10110002': 'ERROR_MESSAGE.CANNOT_GET_QUOTATION_FROM_CONTEXT',
 
-  '30110001': 'Order is not opening',
-  '30420001': 'Invalid order inputs',
-  '30410002': 'Deal canceled due to expired quotation',
-  '30410003': 'An order cannot be created from an expired quotation',
-  '30410004': 'Invalid Inputs',
+  '30110001': 'ERROR_MESSAGE.ORDER_NOT_OPENING',
+  '30420001': 'ERROR_MESSAGE.INVAILD_ORDER_INPUTS',
+  '30410002': 'ERROR_MESSAGE.EXPIRED_QUOTATION_CANCELED',
+  '30410003': 'ERROR_MESSAGE.EXPIRED_QUOTATION_FAILED',
+  '30410004': 'ERROR_MESSAGE.INVAILD_INPUTS',
 
-  '40230001': 'Balance not found',
-  '40230002': 'Failed to update balance',
-  '40430001': 'Wallet is not connected',
-  '40430002': 'Service term is not enabled',
-  '40430003': 'Dewt is not legit',
-  '40430004': 'Signature rejected by user',
+  '40230001': 'ERROR_MESSAGE.BALANCE_NOT_FOUND',
+  '40230002': 'ERROR_MESSAGE.FAILE_TO_UPDATE_BALANCE',
+  '40430001': 'ERROR_MESSAGE.WALLET_IS_NOT_CONNECT',
+  '40430002': 'ERROR_MESSAGE.SERVICE_TERM_DISABLE',
+  '40430003': 'ERROR_MESSAGE.DEWT_IS_NOT_LEGIT',
+  '40430004': 'ERROR_MESSAGE.REJECTED_SIGNATURE',
 
-  '60220001': 'Internal server error',
+  '60220001': 'ERROR_MESSAGE.INTERNAL_SERVER_ERROR',
 
-  '10310001': 'Third party library error',
+  '10310001': 'ERROR_MESSAGE.THIRD_PARTY_LIBRARY_ERROR',
 
-  '90000000': 'Unknown error',
-  '90000001': 'Unknown error in component',
-
+  '90000000': 'ERROR_MESSAGE.UNKNOWN_ERROR',
+  '90000001': 'ERROR_MESSAGE.UNKNOWN_ERROR_IN_COMPONENT',
   '80410001': 'Already deposit in a month',
 };

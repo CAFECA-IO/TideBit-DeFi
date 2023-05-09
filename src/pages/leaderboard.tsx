@@ -1,14 +1,14 @@
 import React, {useContext, useEffect} from 'react';
 import NavBar from '../components/nav_bar/nav_bar';
+import NavBarMobile from '../components/nav_bar_mobile/nav_bar_mobile';
+import Head from 'next/head';
+import BoardPageBody from '../components/board_page_body/board_page_body';
 import {serverSideTranslations} from 'next-i18next/serverSideTranslations';
 import {AppContext} from '../contexts/app_context';
 import {useGlobal} from '../contexts/global_context';
-import NavBarMobile from '../components/nav_bar_mobile/nav_bar_mobile';
-import AssetsPageBody from '../components/assets_page_body/assets_page_body';
-import Head from 'next/head';
 import {ILocale} from '../interfaces/tidebit_defi_background/locale';
 
-const MyAssets = () => {
+const Leaderboard = () => {
   const {layoutAssertion} = useGlobal();
   const displayedNavBar = layoutAssertion === 'mobile' ? <NavBarMobile /> : <NavBar />;
 
@@ -25,7 +25,7 @@ const MyAssets = () => {
       {appCtx.isInit ? (
         <>
           <Head>
-            <title>My Assets - TideBit DeFi</title>
+            <title>Leaderboard - TideBit DeFi</title>
             <link rel="icon" href="/favicon.ico" />
           </Head>
 
@@ -34,8 +34,7 @@ const MyAssets = () => {
 
             <main>
               <div className="">
-                {' '}
-                <AssetsPageBody />
+                <BoardPageBody />
               </div>
             </main>
           </div>
@@ -57,4 +56,4 @@ const getStaticPropsFunction = async ({locale}: ILocale) => ({
 
 export const getStaticProps = getStaticPropsFunction;
 
-export default MyAssets;
+export default Leaderboard;

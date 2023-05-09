@@ -7,7 +7,6 @@ import useOuterClick from '../../lib/hooks/use_outer_click';
 import {UserContext} from '../../contexts/user_context';
 import {useTranslation} from 'next-i18next';
 import UserMobile from '../user_mobile/user_mobile';
-import {useGlobal} from '../../contexts/global_context';
 import {NotificationContext} from '../../contexts/notification_context';
 import {TBDURL} from '../../constants/api_request';
 import {WalletConnectButton} from '../wallet_connect_button/wallet_connect_button';
@@ -17,7 +16,6 @@ type TranslateFunction = (s: string) => string;
 const NavBarMobile = () => {
   const userCtx = useContext(UserContext);
   const notificationCtx = useContext(NotificationContext);
-  const globalCtx = useGlobal();
 
   const {t}: {t: TranslateFunction} = useTranslation('common');
 

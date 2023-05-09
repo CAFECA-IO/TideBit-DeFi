@@ -1,10 +1,10 @@
 import React, {useContext} from 'react';
-import {accountTruncate} from '../../lib/common';
+import {accountTruncate, numberFormatted} from '../../lib/common';
 import {UserContext} from '../../contexts/user_context';
 import {ImArrowUp, ImArrowDown, ImArrowRight} from 'react-icons/im';
 import Image from 'next/image';
-import {TypeOfPnLColor, UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
-import {unitAsset, FRACTION_DIGITS} from '../../constants/config';
+import {TypeOfPnLColor} from '../../constants/display';
+import {unitAsset} from '../../constants/config';
 
 const UserPersonalRanking = () => {
   const userCtx = useContext(UserContext);
@@ -15,12 +15,6 @@ const UserPersonalRanking = () => {
   const pnl = -7.323;
   const rankingNumber = 214;
   const cumulativePnl = 0;
-
-  const numberFormatted = (n: number) => {
-    const result =
-      n === 0 ? '0' : Math.abs(n).toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
-    return result;
-  };
 
   const displayedPnl =
     pnl > 0 ? (

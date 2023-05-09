@@ -702,10 +702,10 @@ export const UserProvider = ({children}: IUserProvider) => {
     return walletBalance;
   };
 
-  const getBalance = (props: string) => {
+  const getBalance = (currency: string) => {
     let balance: IBalance | null = null;
     if (balancesRef.current) {
-      const index: number = balancesRef.current.findIndex(wb => wb.currency === props);
+      const index: number = balancesRef.current.findIndex(wb => wb.currency === currency);
       if (index !== -1) balance = balancesRef.current[index];
     }
     return balance;
@@ -759,7 +759,9 @@ export const UserProvider = ({children}: IUserProvider) => {
 
     try {
       if (balancesRef.current) {
-        const index = balancesRef.current?.findIndex(balance => balance.currency);
+        const index = balancesRef.current?.findIndex(
+          balance => balance.currency === updatedBalance.currency
+        );
         if (index !== -1) {
           const updateBalances = [...balancesRef.current];
           updateBalances[index] = updatedBalance;
@@ -779,10 +781,10 @@ export const UserProvider = ({children}: IUserProvider) => {
   ): Promise<IResult> => {
     let result: IResult = {...defaultResultFailed};
     let resultCode = Code.UNKNOWN_ERROR;
+
     if (lunar.isConnected) {
       if (applyCreateCFDOrder) {
         const balance: IBalance | null = getBalance(applyCreateCFDOrder.margin.asset);
-
         if (balance && balance.available >= applyCreateCFDOrder.margin.amount) {
           const transferR = transactionEngine.transferCFDOrderToTransaction(applyCreateCFDOrder);
           if (transferR.success) {

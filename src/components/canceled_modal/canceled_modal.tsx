@@ -28,7 +28,11 @@ const CanceledModal = ({
     <div className="relative flex-auto pt-1">
       <div className="text-lg leading-relaxed text-lightWhite">
         <div className="flex-col justify-center text-center">
-          <Lottie className="ml-70px w-150px pt-10" animationData={canceledAnimation} />
+          <Lottie
+            className="ml-70px w-150px pt-10"
+            animationData={canceledAnimation}
+            loop={false}
+          />
           <div className="mt-10 text-base text-lightWhite">{modalContent}</div>
           <div className="mt-5">
             {btnUrl && btnMsg ? (

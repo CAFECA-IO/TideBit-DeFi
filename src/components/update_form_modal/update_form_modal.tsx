@@ -597,7 +597,7 @@ const UpdateFormModal = ({
               <div className="mx-10 mt-6 flex w-full justify-between">
                 <div className="flex items-center space-x-3 text-center text-lightWhite">
                   <Image
-                    src={marketCtx.selectedTicker?.tokenImg ?? ''}
+                    src={`/asset_icon/${openCfdDetails?.ticker.toLowerCase()}.svg`}
                     width={30}
                     height={30}
                     alt="icon"

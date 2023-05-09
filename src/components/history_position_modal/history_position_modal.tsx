@@ -266,7 +266,7 @@ const HistoryPositionModal = ({
                 <div className="flex w-full items-center justify-center space-x-2 text-center text-2xl text-lightWhite">
                   {/* ToDo: default currency icon (20230310 - Julian) issue #338 */}
                   <Image
-                    src={marketCtx.selectedTicker?.tokenImg ?? ''}
+                    src={`/asset_icon/${closedCfdDetails?.ticker.toLowerCase()}.svg`}
                     alt="currency icon"
                     width={30}
                     height={30}

@@ -17,7 +17,6 @@ const HistorySubTab = () => {
         ) : (
           <HistoryPositionItem closedCfdDetails={toDisplayCFDOrder(cfd, [])} />
         )}
-        <div className="mx-auto mt-3 h-px w-full rounded bg-white/50"></div>
       </div>
     ) : null
   );

@@ -102,6 +102,48 @@ const HistoryPositionModal = ({
     );
   };
 
+  const shareToTwitter = () => {
+    const shareUrl = DOMAIN + `/share/cfd/${closedCfdDetails.id}`;
+    window.open(
+      `https://twitter.com/intent/tweet?url=${encodeURIComponent(
+        shareUrl
+      )}&text=Check%20this%20out!`,
+      'twitter-share-dialog',
+      'width=800,height=600'
+    );
+  };
+
+  const shareToReddit = () => {
+    const shareUrl = DOMAIN + `/share/cfd/${closedCfdDetails.id}`;
+    window.open(
+      `https://www.reddit.com/submit?url=${encodeURIComponent(shareUrl)}&title=Check%20this%20out!`,
+      'reddit-share-dialog',
+      'width=800,height=600'
+    );
+  };
+
+  const shareToInstagram = () => {
+    const imageUrl = DOMAIN + `/api/images/cfd/${closedCfdDetails.id}`;
+    // const shareUrl = DOMAIN + `/share/cfd/${closedCfdDetails.id}`;
+    // const caption = `Check this out! ${shareUrl}`;
+    // window.open(
+    //   `https://www.instagram.com/p/${imageUrl}/?caption=${encodeURIComponent(caption)}`,
+    //   'instagram-share-dialog',
+    //   'width=800,height=600'
+    // );
+
+    const fileName = `tidebit-cfd-${closedCfdDetails.id}.png`; // Set the desired file name and extension
+    const downloadLink = document.createElement('a');
+
+    downloadLink.href = imageUrl;
+    downloadLink.download = fileName;
+    downloadLink.style.display = 'none';
+
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    document.body.removeChild(downloadLink);
+  };
+
   const formContent = (
     <div className="relative flex w-full flex-auto flex-col pt-0">
       <div
@@ -239,15 +281,33 @@ const HistoryPositionModal = ({
           </div>
 
           <div className={`${socialMediaStyle}`}>
-            <Image src="/elements/group_15236.svg" width={44} height={44} alt="Instagram" />
+            <Image
+              onClick={shareToInstagram}
+              src="/elements/group_15236.svg"
+              width={44}
+              height={44}
+              alt="Instagram"
+            />
           </div>
 
           <div className={`${socialMediaStyle}`}>
-            <Image src="/elements/group_15235.svg" width={44} height={44} alt="Twitter" />
+            <Image
+              onClick={shareToTwitter}
+              src="/elements/group_15235.svg"
+              width={44}
+              height={44}
+              alt="Twitter"
+            />
           </div>
 
           <div className={`${socialMediaStyle}`}>
-            <Image src="/elements/group_15234.svg" width={44} height={44} alt="Reddit" />
+            <Image
+              onClick={shareToReddit}
+              src="/elements/group_15234.svg"
+              width={44}
+              height={44}
+              alt="Reddit"
+            />
           </div>
         </div>
       </div>

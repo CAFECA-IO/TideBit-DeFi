@@ -7,7 +7,7 @@ import {
   WIDTH_HEIGHT_OF_SHARING_RECORD,
 } from '../../../../constants/display';
 import QRCode from 'qrcode';
-import {API_DOMAIN, DOMAIN, FRACTION_DIGITS} from '../../../../constants/config';
+import {API_DOMAIN, DOMAIN, FRACTION_DIGITS, unitAsset} from '../../../../constants/config';
 import {ProfitState} from '../../../../constants/profit_state';
 import {TypeOfPosition} from '../../../../constants/type_of_position';
 import {Currency} from '../../../../constants/currency';
@@ -302,7 +302,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                           marginRight: '35px',
                         }}
                       >
-                        {openPrice}
+                        {openPrice?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)}
                         <span
                           style={{
                             marginTop: '2px',
@@ -310,10 +310,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                             fontWeight: 'lighter',
                             color: '#8B8E91',
                             fontFamily: 'barlow',
-                            marginLeft: '2px',
+                            marginLeft: '5px',
                           }}
                         >
-                          USDT
+                          {unitAsset}
                         </span>
                       </p>
                     </div>
@@ -342,7 +342,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                           marginRight: '35px',
                         }}
                       >
-                        {closePrice}
+                        {closePrice?.toLocaleString(
+                          UNIVERSAL_NUMBER_FORMAT_LOCALE,
+                          FRACTION_DIGITS
+                        )}
                         <span
                           style={{
                             marginTop: '2px',
@@ -350,10 +353,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                             fontWeight: 'lighter',
                             color: '#8B8E91',
                             fontFamily: 'barlow',
-                            marginLeft: '2px',
+                            marginLeft: '5px',
                           }}
                         >
-                          USDT
+                          {unitAsset}
                         </span>
                       </p>
                     </div>
@@ -378,7 +381,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                           fontWeight: 'bold',
                           color: '#fff',
                           fontFamily: 'barlow',
-                          marginRight: '20px',
+                          marginRight: '1px',
                         }}
                       >
                         {leverage}x

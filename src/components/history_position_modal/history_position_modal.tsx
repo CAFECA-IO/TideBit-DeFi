@@ -122,11 +122,6 @@ const HistoryPositionModal = ({
     );
   };
 
-  // TODO: share to instagram (20230509 - Shirley)
-  const shareToInstagram = () => {
-    return;
-  };
-
   const formContent = (
     <div className="relative flex w-full flex-auto flex-col pt-0">
       <div
@@ -260,16 +255,6 @@ const HistoryPositionModal = ({
               width={44}
               height={44}
               alt="Facebook"
-            />
-          </div>
-
-          <div className={`${socialMediaStyle}`}>
-            <Image
-              onClick={shareToInstagram}
-              src="/elements/group_15236.svg"
-              width={44}
-              height={44}
-              alt="Instagram"
             />
           </div>
 

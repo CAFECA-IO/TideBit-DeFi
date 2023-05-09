@@ -79,7 +79,8 @@ const PositionClosedModal = ({
   const userCtx = useContext(UserContext);
 
   const [quotationError, setQuotationError, quotationErrorRef] = useStateRef(false);
-  const [quotationErrorMessage, setQuotationErrorMessage] = useState<IResult>(defaultResultFailed);
+  const [quotationErrorMessage, setQuotationErrorMessage, quotationErrorMessageRef] =
+    useStateRef<IResult>(defaultResultFailed);
 
   // Info: dummy data (20230329 - Shirley)
   const quotation: IQuotation = {
@@ -286,6 +287,9 @@ const PositionClosedModal = ({
 
     try {
       const result = await userCtx.closeCFDOrder(applyCloseOrder);
+      // Deprecated: [debug] (20230509 - Tzuhan)
+      // eslint-disable-next-line no-console
+      console.log('close position result', result);
 
       if (result.success) {
         const historyData: IDisplayCFDOrder = toHistoryModal(openCfdDetails, gQuotationRef.current);
@@ -410,7 +414,9 @@ const PositionClosedModal = ({
         globalCtx.toast({
           type: ToastTypeAndText.ERROR.type,
           toastId: ToastId.GET_QUOTATION_ERROR,
-          message: `${quotationErrorMessage.reason} (${quotationErrorMessage.code})`,
+          message: `${t(
+            quotationErrorMessageRef.current.reason ?? 'ERROR_MESSAGE.UNKNOWN_ERROR'
+          )} (${quotationErrorMessageRef.current.code})`,
           typeText: t(ToastTypeAndText.ERROR.text),
           isLoading: false,
           autoClose: false,

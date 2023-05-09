@@ -307,5 +307,29 @@
     "OPEN_PRICE": "开盘价格",
     "CLOSED_PRICE": "收盘价格",
     "LEVERAGE": "杠杆"
+  },
+  "ERROR_MESSAGE": {
+    "SUCCESS": "成功",
+    "UNKNOWN_ERROR": "未知错误",
+    "UNKNOWN_ERROR_IN_COMPONENT": "元件发生未知错误",
+    "LOCK_PROCEDURE_WRONG": "锁定程序错误",
+    "FUNCTION_NOT_IMPLEMENTED": "功能尚未实作",
+    "CANNOT_GET_QUOTATION_FROM_CONTEXT": "无法取得报价",
+    "ORDER_NOT_OPENING": "订单未开启",
+    "INVAILD_ORDER_INPUTS": "订单输入无效",
+    "EXPIRED_QUOTATION_CANCELED": "因报价过期而取消订单",
+    "EXPIRED_QUOTATION_FAILED": "无法从过期的报价单建立订单",
+    "INVAILD_INPUTS": "无效的输入",
+    "BALANCE_NOT_FOUND": "余额不存在",
+    "FAILE_TO_UPDATE_BALANCE": "更新余额失败",
+    "WALLET_IS_NOT_CONNECT": "钱包未连线",
+    "SERVICE_TERM_DISABLE": "服务条款已停用",
+    "DEWT_IS_NOT_LEGIT": "DEWT 不合法",
+    "REJECTED_SIGNATURE": "签名已被使用者拒绝",
+    "INTERNAL_SERVER_ERROR": "内部伺服器错误",
+    "THIRD_PARTY_LIBRARY_ERROR": "第三方函式库错误"
+  },
+  "LEADERBOARD_PAGE": {
+    "TITLE": "排行榜"
   }
 }

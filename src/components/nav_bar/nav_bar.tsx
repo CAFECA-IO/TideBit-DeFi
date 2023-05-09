@@ -10,7 +10,6 @@ import I18n from '../i18n/i18n';
 import UserOverview from '../user_overview/user_overview';
 import {UserContext} from '../../contexts/user_context';
 import User from '../user/user';
-import {useGlobal} from '../../contexts/global_context';
 import {NotificationContext} from '../../contexts/notification_context';
 import {TBDURL} from '../../constants/api_request';
 import {WalletConnectButton} from '../wallet_connect_button/wallet_connect_button';
@@ -20,7 +19,6 @@ type TranslateFunction = (s: string) => string;
 const NavBar = () => {
   const userCtx = useContext(UserContext);
   const notificationCtx = useContext(NotificationContext);
-  const globalCtx = useGlobal();
 
   const {t}: {t: TranslateFunction} = useTranslation('common');
   const {locale, locales, defaultLocale, asPath} = useRouter();
@@ -39,7 +37,7 @@ const NavBar = () => {
     <UserOverview
       depositAvailable={userCtx.balance?.available ?? 0}
       marginLocked={userCtx.balance?.locked ?? 0}
-      profitOrLossAmount={userCtx.balance?.PNL ?? 0}
+      profitOrLossAmount={userCtx.balance?.PNL?.value ?? 0}
     />
   ) : null;
 

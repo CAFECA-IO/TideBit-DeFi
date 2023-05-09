@@ -1,9 +1,16 @@
+import {IAcceptedOrder} from './accepted_order';
+import {IBalance} from './balance';
 import {ICandlestick} from './candlestickData';
+import {ICFDOrder} from './order';
 import {ITickerData} from './ticker_data';
 
 export interface IPusherData {
   action: IPusherAction;
   data: ICandlestick | ITickerData;
+}
+
+export interface IPusherPrivateData {
+  data: IBalance | ICFDOrder | IAcceptedOrder;
 }
 
 export interface IPusherResponse {
@@ -12,14 +19,14 @@ export interface IPusherResponse {
   data: IPusherData;
 }
 
-export type IPusherChannel = 'global_channel' | 'private_channel';
+export type IPusherChannel = 'global-channel' | 'private_channel';
 export interface IPusherChannelConstant {
   GLOBAL_CHANNEL: IPusherChannel;
   PRIVATE_CHANNEL: IPusherChannel;
 }
 export const PusherChannel: IPusherChannelConstant = {
-  GLOBAL_CHANNEL: 'global_channel',
-  PRIVATE_CHANNEL: 'private_channel',
+  GLOBAL_CHANNEL: 'global-channel',
+  PRIVATE_CHANNEL: 'private_channel', // Info: this is a workaround, official private channel is with the prefix: private- (20230506 - tzuhan), will fixed by #606
 };
 
 export type IPusherAction = 'SNAPSHOT' | 'UPDATE';

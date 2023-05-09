@@ -14,35 +14,42 @@ export const getDummyAcceptedWithdrawOrder = (
   currency?: string,
   orderStatus?: IOrderStatusUnion
 ): IAcceptedWithdrawOrder => {
-  const txid = randomHex(32);
+  const id = randomHex(20);
+  const txhash = randomHex(32);
+  const timestamp = getTimestamp();
+  const sequence = Math.ceil(Math.random() * 10000);
   const dummyAcceptedWithdrawOrder: IAcceptedWithdrawOrder = {
-    txid,
+    id,
+    orderType: OrderType.WITHDRAW,
+    sequence,
+    txhash,
     applyData: dummyWithdrawOrder,
     userSignature: randomHex(32),
     receipt: {
-      order: {
-        ...dummyWithdrawOrder,
-        /** Info: dummyWithdrawOrder provide all the info below (20230412 - tzuhan)
-        orderType: OrderType.WITHDRAW,
-        targetAmount: dummyWithdrawOrder.targetAmount,
-        decimals: dummyWithdrawOrder.decimals,
-        to: dummyWithdrawOrder.to,
-        remark: dummyWithdrawOrder.remark,
-        fee: dummyWithdrawOrder.fee,
-         */
+      txhash,
+      sequence,
+      orderSnapshot: {
         id: randomHex(20),
-        txid,
+        orderType: OrderType.WITHDRAW,
+        txhash,
         orderStatus: orderStatus ? orderStatus : OrderStatusUnion.WAITING,
         targetAsset: currency || dummyWithdrawOrder.targetAsset,
+        targetAmount: dummyWithdrawOrder.targetAmount,
+        createTimestamp: timestamp,
+        updatedTimestamp: timestamp,
+        fee: 0,
       },
-      balance: {
-        currency: currency || dummyWithdrawOrder.targetAsset,
-        available: 100 - dummyWithdrawOrder.targetAmount,
-        locked: dummyWithdrawOrder.targetAmount,
-      },
+      balanceSnapshot: [
+        {
+          currency: currency || dummyWithdrawOrder.targetAsset,
+          available: 100 - dummyWithdrawOrder.targetAmount,
+          locked: dummyWithdrawOrder.targetAmount,
+        },
+      ],
     },
-    nodeSignature: randomHex(32),
-    createTimestamp: getTimestamp(),
+    droneSignature: randomHex(32),
+    locutusSignature: randomHex(32),
+    createTimestamp: timestamp,
   };
   return dummyAcceptedWithdrawOrder;
 };

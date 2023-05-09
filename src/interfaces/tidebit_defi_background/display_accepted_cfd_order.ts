@@ -22,6 +22,7 @@ export const getDummyDisplayCFDOrder = (currency: string) => {
     dummyApplyCloseCFDOrder,
     {currency, available: 10, locked: 0},
     randomHex(32),
+    randomHex(32),
     randomHex(32)
   );
   const dummyPositionLineGraph: number[] = [90, 72, 60, 65, 42, 25, 32, 20, 15, 32, 90, 10];

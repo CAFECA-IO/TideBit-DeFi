@@ -31,28 +31,46 @@ export const convertApplyWithdrawOrderToAcceptedWithdrawOrder = (
   applyWithdrawOrder: IApplyWithdrawOrder,
   balance: IBalance,
   userSignature: string,
-  nodeSignature: string
+  droneSignature: string,
+  locutusSignature: string
 ) => {
-  const txid = randomHex(32);
+  const id = randomHex(20);
+  const txhash = randomHex(32);
+  const timestamp = getTimestamp();
+  const sequence = Math.ceil(Math.random() * 10000);
   const accpetedWithdrawOrder: IAcceptedWithdrawOrder = {
-    txid,
+    id,
+    orderType: OrderType.WITHDRAW,
+    sequence,
+    txhash,
     applyData: applyWithdrawOrder,
     userSignature,
     receipt: {
-      order: {
+      txhash,
+      sequence,
+      orderSnapshot: {
         ...applyWithdrawOrder,
         id: randomHex(20),
-        txid,
+        orderType: OrderType.WITHDRAW,
         orderStatus: OrderStatusUnion.WAITING,
+        txhash,
+        targetAsset: applyWithdrawOrder.targetAsset,
+        targetAmount: applyWithdrawOrder.targetAmount,
+        createTimestamp: timestamp,
+        updatedTimestamp: timestamp,
+        fee: 0,
       },
-      balance: {
-        currency: applyWithdrawOrder.targetAsset,
-        available: balance.available,
-        locked: balance.locked + applyWithdrawOrder.targetAmount,
-      },
+      balanceSnapshot: [
+        {
+          currency: applyWithdrawOrder.targetAsset,
+          available: balance.available,
+          locked: balance.locked + applyWithdrawOrder.targetAmount,
+        },
+      ],
     },
-    createTimestamp: getTimestamp(),
-    nodeSignature: nodeSignature,
+    createTimestamp: timestamp,
+    droneSignature: droneSignature,
+    locutusSignature: locutusSignature,
   };
   return accpetedWithdrawOrder;
 };

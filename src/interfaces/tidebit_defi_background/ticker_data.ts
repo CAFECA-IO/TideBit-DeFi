@@ -33,6 +33,7 @@ export interface ILineGraphProps {
 }
 
 export interface ITicker {
+  instId: string;
   currency: ICurrency;
   chain: string;
 }
@@ -69,6 +70,7 @@ export const dummyTickers: ITickerData[] = TRADING_CRYPTO_DATA.map(data => {
     Math.random() >= 0.5 ? (Math.random() === 0.5 ? Trend.EQUAL : Trend.UP) : Trend.DOWN;
   const ticker: ITickerData = {
     ...data,
+    instId: `${data.currency}-${unitAsset}`,
     price,
     priceChange,
     fluctuating,
@@ -104,6 +106,7 @@ export const getDummyTicker = (currency: ICurrency) => {
   const tradingVolume = (Math.random() * 1000).toFixed(2);
   const dummyTicker: ITickerData = {
     ...data,
+    instId: `${data.currency}-${unitAsset}`,
     price,
     priceChange,
     fluctuating,
@@ -170,6 +173,7 @@ export interface ISortedTrade {
 
 export const convertToTickerMartket = (tickerProperty: ITickerProperty, marketData: ITBETicker) => {
   const ticker: ITickerMarket = {
+    instId: `${tickerProperty.currency}-${unitAsset}`,
     currency: tickerProperty.currency,
     chain: tickerProperty.chain,
     tradingVolume: marketData.volume,

@@ -15,6 +15,7 @@ import {millesecondsToSeconds} from '../common';
 */
 import {ITimeSpanUnion, TimeSpanUnion} from '../../constants/time_span_union';
 import {ICurrency} from '../../constants/currency';
+import {unitAsset} from '../../constants/config';
 
 class TickerBook {
   private _dataLength = 1000;
@@ -257,14 +258,24 @@ class TickerBook {
     this._tickers[value.currency] = updateTicker;
   }
 
-  updateTickers(value: ITickerItem[]) {
+  updateTickers(value: ITickerData[]) {
     let tickers: {[currency: string]: ITickerData} = {};
     tickers = [...value].reduce((prev, curr) => {
-      if (!prev[curr.currency]) prev[curr.currency] = {...curr, lineGraphProps: {dataArray: []}};
+      if (!prev[curr.currency])
+        prev[curr.currency] = {
+          ...curr,
+          lineGraphProps: {
+            dataArray: curr.lineGraphProps.dataArray ? [...curr.lineGraphProps.dataArray] : [],
+          },
+        };
       return prev;
     }, tickers);
     this.tickers = tickers;
     return tickers;
+  }
+
+  getCurrencyRate(currency: string): number {
+    return currency === unitAsset ? 1 : this._tickers[currency]?.price || 0;
   }
 
   get tickers(): {[currency: string]: ITickerData} {

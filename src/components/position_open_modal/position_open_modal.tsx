@@ -7,13 +7,7 @@ import {
 import RippleButton from '../ripple_button/ripple_button';
 import Image from 'next/image';
 import {AiOutlineQuestionCircle} from 'react-icons/ai';
-import {
-  locker,
-  wait,
-  getNowSeconds,
-  getTimestamp,
-  getTimestampInMilliseconds,
-} from '../../lib/common';
+import {locker, wait, getTimestamp, getTimestampInMilliseconds} from '../../lib/common';
 import {useContext, useEffect, useState} from 'react';
 import {MarketContext} from '../../contexts/market_context';
 import {BsClockHistory} from 'react-icons/bs';
@@ -39,7 +33,6 @@ import useStateRef from 'react-usestateref';
 import {Code} from '../../constants/code';
 import {ToastTypeAndText} from '../../constants/toast_type';
 import {ToastId} from '../../constants/toast_id';
-import {CustomError} from '../../lib/custom_error';
 
 type TranslateFunction = (s: string) => string;
 interface IPositionOpenModal {
@@ -65,7 +58,8 @@ const PositionOpenModal = ({
   );
   const [dataRenewedStyle, setDataRenewedStyle] = useState('text-lightWhite');
   const [quotationError, setQuotationError, quotationErrorRef] = useStateRef(false);
-  const [quotationErrorMessage, setQuotationErrorMessage] = useState<IResult>(defaultResultFailed);
+  const [quotationErrorMessage, setQuotationErrorMessage, quotationErrorMessageRef] =
+    useStateRef<IResult>(defaultResultFailed);
 
   const toApplyCreateOrder = (openCfdRequest: IApplyCreateCFDOrder): IApplyCreateCFDOrder => {
     const order: IApplyCreateCFDOrder = {
@@ -213,7 +207,6 @@ const PositionOpenModal = ({
 
   const getQuotation = async () => {
     let quotation = {...defaultResultSuccess};
-
     try {
       quotation = await marketCtx.getCFDQuotation(
         openCfdRequest.ticker,
@@ -252,7 +245,9 @@ const PositionOpenModal = ({
       globalCtx.toast({
         type: ToastTypeAndText.ERROR.type,
         toastId: ToastId.GET_QUOTATION_ERROR,
-        message: `${quotationErrorMessage.reason} (${quotationErrorMessage.code})`,
+        message: `${t(quotationErrorMessageRef.current.reason ?? 'ERROR_MESSAGE.UNKNOWN_ERROR')} (${
+          quotationErrorMessageRef.current.code
+        })`,
         typeText: t(ToastTypeAndText.ERROR.text),
         isLoading: false,
         autoClose: false,

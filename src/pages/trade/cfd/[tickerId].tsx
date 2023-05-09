@@ -13,7 +13,6 @@ import Error from 'next/error';
 import {findCurrencyByCode, hasValue} from '../../../lib/common';
 import {tickerIds} from '../../../constants/config';
 import {Currency} from '../../../constants/currency';
-import Skeleton, {SkeletonTheme} from 'react-loading-skeleton';
 
 interface IPageProps {
   tickerId: string;

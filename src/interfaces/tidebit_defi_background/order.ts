@@ -10,16 +10,18 @@ export interface IOrder {
   id: string;
   orderType: IOrderType;
   orderStatus: IOrderStatusUnion;
-  txid: string;
+  txhash: string;
   fee: number;
+  createTimestamp: number;
+  updatedTimestamp: number;
   remark?: string;
 }
 
 export interface ICFDOrder extends IOrder {
   ticker: string;
+  // fee: number;
   state: IOrderState;
   openPrice: number;
-  createTimestamp: number;
   typeOfPosition: ITypeOfPosition;
   targetAsset: string;
   unitAsset: string;
@@ -40,14 +42,15 @@ export interface ICFDOrder extends IOrder {
 }
 
 export interface IDepositOrder extends IOrder {
+  txhash: string; // txhash on BOLT
   targetAsset: string;
   targetAmount: number;
-  decimals: number;
-  to: string;
+  ethereumTxHash: string;
 }
 
 export interface IWithdrawOrder extends IOrder {
+  txhash: string; // txhash on BOLT
   targetAsset: string;
   targetAmount: number;
-  to: string;
+  // fee: number;
 }

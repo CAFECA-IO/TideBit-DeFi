@@ -10,7 +10,8 @@
     "test": "jest --coverage",
     "check-format": "prettier --ignore-path .gitignore --list-different \"**/*.+(js|ts|json)\"",
     "format": "prettier --ignore-path .gitignore --write \"**/*.+(js|ts|json)\"",
-    "validate": "npm run test && npm run check-format && npm run lint"
+    "validate": "npm run test && npm run check-format && npm run lint",
+    "production": "next start -p 80"
   },
   "dependencies": {
     "@cafeca/keccak": "^0.8.8",

@@ -31,14 +31,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   return new ImageResponse(
     (
-      <canvas id="qrcode" width="100" height="100">
+      <div id="qrcode">
         <img
           src={qrcode ? qrcode : 'https://tidebit-defi.com/'}
           width={100}
           height={100}
           alt="qr code"
         />
-      </canvas>
+      </div>
     ),
     {
       width: 100,

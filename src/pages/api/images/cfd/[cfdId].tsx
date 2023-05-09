@@ -388,7 +388,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                       </p>
                     </div>
                     {/* TODO: QR code (20230508 - Shirley) */}
-                    {/* <img src="http:localhost:3000/api/images/qrcode" width={100} height={100} alt="qr code" /> */}
+                    {/* <img
+                      style={{display: 'none', position: 'absolute', top: '0', left: '0'}}
+                      src="http:localhost:3000/api/images/qrcode"
+                      width={100}
+                      height={100}
+                      alt="qr code"
+                    /> */}
                   </div>
                 </div>
               </div>

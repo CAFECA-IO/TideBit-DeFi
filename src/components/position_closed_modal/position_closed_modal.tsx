@@ -243,7 +243,8 @@ const PositionClosedModal = ({
         data.typeOfPosition === openCfdDetails?.typeOfPosition &&
         quotation.data !== null
       ) {
-        globalCtx.eliminateToasts(ToastId.GET_QUOTATION_ERROR_CLOSE);
+        globalCtx.eliminateToasts(ToastId.GET_QUOTATION_ERROR);
+        setQuotationError(false);
         return data;
       } else {
         setQuotationError(true);
@@ -407,7 +408,7 @@ const PositionClosedModal = ({
         /* Info: (20230508 - Julian) exception handling: error toast */
         globalCtx.toast({
           type: ToastTypeAndText.ERROR.type,
-          toastId: ToastId.GET_QUOTATION_ERROR_CLOSE,
+          toastId: ToastId.GET_QUOTATION_ERROR,
           message: `${quotationErrorMessage.reason} (${quotationErrorMessage.code})`,
           typeText: t(ToastTypeAndText.ERROR.text),
           isLoading: false,

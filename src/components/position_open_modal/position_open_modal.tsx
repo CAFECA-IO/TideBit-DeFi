@@ -228,7 +228,8 @@ const PositionOpenModal = ({
         data.typeOfPosition === openCfdRequest.typeOfPosition &&
         quotation.data !== null
       ) {
-        globalCtx.eliminateToasts(ToastId.GET_QUOTATION_ERROR_OPEN);
+        globalCtx.eliminateToasts(ToastId.GET_QUOTATION_ERROR);
+        setQuotationError(false);
         return data;
       } else {
         setQuotationError(true);
@@ -250,7 +251,7 @@ const PositionOpenModal = ({
     if (!newQuotation || quotationErrorRef.current) {
       globalCtx.toast({
         type: ToastTypeAndText.ERROR.type,
-        toastId: ToastId.GET_QUOTATION_ERROR_OPEN,
+        toastId: ToastId.GET_QUOTATION_ERROR,
         message: `${quotationErrorMessage.reason} (${quotationErrorMessage.code})`,
         typeText: t(ToastTypeAndText.ERROR.text),
         isLoading: false,

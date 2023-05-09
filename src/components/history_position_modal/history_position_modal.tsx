@@ -6,13 +6,7 @@ import {
   UNIVERSAL_NUMBER_FORMAT_LOCALE,
 } from '../../constants/display';
 import {unitAsset} from '../../constants/config';
-import Toggle from '../toggle/toggle';
-import {useContext, useRef, useState} from 'react';
-import TradingInput from '../trading_input/trading_input';
-import {AiOutlineQuestionCircle} from 'react-icons/ai';
-import {useGlobal} from '../../contexts/global_context';
 import {timestampToString} from '../../lib/common';
-import {MarketContext} from '../../contexts/market_context';
 import {CFDClosedType} from '../../constants/cfd_closed_type';
 import {OrderState} from '../../constants/order_state';
 import {IDisplayCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
@@ -32,9 +26,6 @@ const HistoryPositionModal = ({
   ...otherProps
 }: IHistoryPositionModal) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
-  // console.log('openCfdDetails in details modal: ', openCfdDetails.id);
-  // const globalCtx = useGlobal();
-  const marketCtx = useContext(MarketContext);
 
   const displayedClosedReason =
     closedCfdDetails.closedType === CFDClosedType.SCHEDULE

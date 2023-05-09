@@ -279,9 +279,10 @@ export const TRADING_CRYPTO_DATA = [
 ];
 export const SERVICE_TERM_TITLE = 'ServiceTerm';
 export const DOMAIN = 'https://www.tidebit-defi.com';
-export const TERM_OF_SERVICE = 'https://www.tidebit-defi.com/term_of_service/{hash}';
-export const PRIVATE_POLICY = 'https://www.tidebit-defi.com/private_policy/{hash}';
+export const TERM_OF_SERVICE = DOMAIN + '{hash}';
+export const PRIVATE_POLICY = DOMAIN + '{hash}';
 export const DeWT_VALIDITY_PERIOD = 60 * 60; // seconds
 export const CFD_LIQUIDATION_TIME = 86400;
 export const TP_SL_LIMIT_PERCENT = 0.01;
 export const DEFAULT_TICKER = 'ETH';
+export const API_DOMAIN = 'https://api.tidebit-defi.com';

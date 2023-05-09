@@ -299,6 +299,15 @@
     "INFO": "信息",
     "PROGRESSING_MESSAGE": "处理中，请稍候..."
   },
+  "SHARING_BOX": {
+    "TYPE_UP": "看涨",
+    "TYPE_BUY": "(买入)",
+    "TYPE_DOWN": "看跌",
+    "TYPE_SELL": "(卖出)",
+    "OPEN_PRICE": "开盘价格",
+    "CLOSED_PRICE": "收盘价格",
+    "LEVERAGE": "杠杆"
+  },
   "ERROR_MESSAGE": {
     "SUCCESS": "成功",
     "UNKNOWN_ERROR": "未知错误",

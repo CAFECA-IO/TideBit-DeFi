@@ -17,6 +17,7 @@ import {
   getTimestamp,
   twoDecimal,
   getTimestampInMilliseconds,
+  roundToDecimalPlaces,
 } from '../../lib/common';
 import {useContext, useEffect, useState} from 'react';
 import {MarketContext} from '../../contexts/market_context';
@@ -129,10 +130,10 @@ const PositionClosedModal = ({
 
   const displayedBorderColor =
     openCfdDetails?.pnl.type === ProfitState.PROFIT
-      ? TypeOfBorderColor.LONG
+      ? TypeOfBorderColor.PROFIT
       : openCfdDetails?.pnl.type === ProfitState.LOSS
-      ? TypeOfBorderColor.SHORT
-      : TypeOfBorderColor.NORMAL;
+      ? TypeOfBorderColor.LOSS
+      : TypeOfBorderColor.EQUAL;
 
   const displayedPositionColor = 'text-tidebitTheme';
 
@@ -145,7 +146,6 @@ const PositionClosedModal = ({
     const nowValue = quotation.price * cfd.amount;
     const pnlSoFar =
       cfd.typeOfPosition === TypeOfPosition.BUY ? nowValue - openValue : openValue - nowValue;
-
     return {
       ...cfd,
       pnl: {
@@ -191,6 +191,7 @@ const PositionClosedModal = ({
       cfd.typeOfPosition === TypeOfPosition.BUY
         ? twoDecimal(closeValue - openValue)
         : twoDecimal(openValue - closeValue);
+
     const pnl: IPnL = {
       type: pnlValue > 0 ? ProfitState.PROFIT : pnlValue < 0 ? ProfitState.LOSS : ProfitState.EQUAL,
       value: Math.abs(pnlValue),

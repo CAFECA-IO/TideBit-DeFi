@@ -4,6 +4,8 @@ import {getDummyApplyCreateCFDOrder} from './apply_create_cfd_order';
 import {convertApplyCreateCFDToAcceptedCFD} from './apply_cfd_order';
 import {randomHex, toDisplayCFDOrder} from '../../lib/common';
 import {ICFDOrder} from './order';
+import {OrderStatusUnion} from '../../constants/order_status_union';
+import {getDummyAcceptedCloseCFDOrder} from './accepted_cfd_order';
 
 export interface IDisplayCFDOrder extends ICFDOrder {
   pnl: IPnL;

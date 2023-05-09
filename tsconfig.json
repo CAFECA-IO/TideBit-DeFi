@@ -19,6 +19,6 @@
       "middlewares/*": ["./middlewares/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "src/pages/api/images/cfd/[cfdId].tsx"],
   "exclude": ["node_modules"]
 }

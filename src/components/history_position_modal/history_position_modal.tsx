@@ -5,7 +5,12 @@ import {
   TypeOfPnLColor,
   UNIVERSAL_NUMBER_FORMAT_LOCALE,
 } from '../../constants/display';
-import {unitAsset} from '../../constants/config';
+import {API_DOMAIN, DOMAIN, unitAsset} from '../../constants/config';
+import Toggle from '../toggle/toggle';
+import {useContext, useRef, useState} from 'react';
+import TradingInput from '../trading_input/trading_input';
+import {AiOutlineQuestionCircle} from 'react-icons/ai';
+import {useGlobal} from '../../contexts/global_context';
 import {timestampToString} from '../../lib/common';
 import {CFDClosedType} from '../../constants/cfd_closed_type';
 import {OrderState} from '../../constants/order_state';
@@ -68,10 +73,10 @@ const HistoryPositionModal = ({
 
   const displayedBorderColor =
     closedCfdDetails?.pnl.type === 'PROFIT'
-      ? TypeOfBorderColor.LONG
+      ? TypeOfBorderColor.PROFIT
       : closedCfdDetails?.pnl.type === 'LOSS'
-      ? TypeOfBorderColor.SHORT
-      : TypeOfBorderColor.NORMAL;
+      ? TypeOfBorderColor.LOSS
+      : TypeOfBorderColor.EQUAL;
 
   const displayedPositionState =
     closedCfdDetails.state === OrderState.OPENING
@@ -82,6 +87,36 @@ const HistoryPositionModal = ({
 
   const openTime = timestampToString(closedCfdDetails.createTimestamp ?? 0);
   const closedTime = timestampToString(closedCfdDetails?.closeTimestamp ?? 0);
+
+  const shareToFacebook = () => {
+    // TODO: cfdId (20230508 - Shirley)
+    const shareUrl = DOMAIN + `/share/cfd/${closedCfdDetails.id}`;
+    window.open(
+      `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`,
+      'facebook-share-dialog',
+      'width=800,height=600'
+    );
+  };
+
+  const shareToTwitter = () => {
+    const shareUrl = DOMAIN + `/share/cfd/${closedCfdDetails.id}`;
+    window.open(
+      `https://twitter.com/intent/tweet?url=${encodeURIComponent(
+        shareUrl
+      )}&text=Check%20this%20out!`,
+      'twitter-share-dialog',
+      'width=800,height=600'
+    );
+  };
+
+  const shareToReddit = () => {
+    const shareUrl = DOMAIN + `/share/cfd/${closedCfdDetails.id}`;
+    window.open(
+      `https://www.reddit.com/submit?url=${encodeURIComponent(shareUrl)}&title=Check%20this%20out!`,
+      'reddit-share-dialog',
+      'width=800,height=600'
+    );
+  };
 
   const formContent = (
     <div className="relative flex w-full flex-auto flex-col pt-0">
@@ -210,19 +245,33 @@ const HistoryPositionModal = ({
         <div className="text-sm">{t('POSITION_MODAL.SHARE')}:</div>
         <div className="flex items-center justify-between">
           <div className={`${socialMediaStyle}`}>
-            <Image src="/elements/group_15237.svg" width={44} height={44} alt="Facebook" />
+            <Image
+              onClick={shareToFacebook}
+              src="/elements/group_15237.svg"
+              width={44}
+              height={44}
+              alt="Facebook"
+            />
           </div>
 
           <div className={`${socialMediaStyle}`}>
-            <Image src="/elements/group_15236.svg" width={44} height={44} alt="Instagram" />
+            <Image
+              onClick={shareToTwitter}
+              src="/elements/group_15235.svg"
+              width={44}
+              height={44}
+              alt="Twitter"
+            />
           </div>
 
           <div className={`${socialMediaStyle}`}>
-            <Image src="/elements/group_15235.svg" width={44} height={44} alt="Twitter" />
-          </div>
-
-          <div className={`${socialMediaStyle}`}>
-            <Image src="/elements/group_15234.svg" width={44} height={44} alt="Reddit" />
+            <Image
+              onClick={shareToReddit}
+              src="/elements/group_15234.svg"
+              width={44}
+              height={44}
+              alt="Reddit"
+            />
           </div>
         </div>
       </div>

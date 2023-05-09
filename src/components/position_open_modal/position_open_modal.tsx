@@ -198,7 +198,7 @@ const PositionOpenModal = ({
 
   const displayedPositionColor = 'text-tidebitTheme';
 
-  const displayedBorderColor = TypeOfBorderColor.NORMAL;
+  const displayedBorderColor = TypeOfBorderColor.EQUAL;
 
   const displayedTakeProfit = openCfdRequest.takeProfit ? `$ ${openCfdRequest.takeProfit}` : '-';
   const displayedStopLoss = openCfdRequest.stopLoss ? `$ ${openCfdRequest.stopLoss}` : '-';

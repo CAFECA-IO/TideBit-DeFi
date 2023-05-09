@@ -122,26 +122,9 @@ const HistoryPositionModal = ({
     );
   };
 
+  // TODO: share to instagram (20230509 - Shirley)
   const shareToInstagram = () => {
-    const imageUrl = DOMAIN + `/api/images/cfd/${closedCfdDetails.id}`;
-    // const shareUrl = DOMAIN + `/share/cfd/${closedCfdDetails.id}`;
-    // const caption = `Check this out! ${shareUrl}`;
-    // window.open(
-    //   `https://www.instagram.com/p/${imageUrl}/?caption=${encodeURIComponent(caption)}`,
-    //   'instagram-share-dialog',
-    //   'width=800,height=600'
-    // );
-
-    const fileName = `tidebit-cfd-${closedCfdDetails.id}.png`; // Set the desired file name and extension
-    const downloadLink = document.createElement('a');
-
-    downloadLink.href = imageUrl;
-    downloadLink.download = fileName;
-    downloadLink.style.display = 'none';
-
-    document.body.appendChild(downloadLink);
-    downloadLink.click();
-    document.body.removeChild(downloadLink);
+    return;
   };
 
   const formContent = (

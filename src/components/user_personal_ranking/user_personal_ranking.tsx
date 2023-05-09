@@ -1,7 +1,7 @@
 import React, {useContext} from 'react';
 import {accountTruncate} from '../../lib/common';
 import {UserContext} from '../../contexts/user_context';
-import {ImArrowUp, ImArrowDown} from 'react-icons/im';
+import {ImArrowUp, ImArrowDown, ImArrowRight} from 'react-icons/im';
 import Image from 'next/image';
 import {TypeOfPnLColor, UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
 import {unitAsset, FRACTION_DIGITS} from '../../constants/config';
@@ -14,7 +14,7 @@ const UserPersonalRanking = () => {
   /* ToDo: (20230509 - Julian) get Ranking data */
   const pnl = -7.323;
   const rankingNumber = 214;
-  const cumulativePnl = 2.3;
+  const cumulativePnl = 0;
 
   const numberFormatted = (n: number) => {
     const result =
@@ -40,13 +40,14 @@ const UserPersonalRanking = () => {
       <div className="text-lightYellow2">{numberFormatted(cumulativePnl)} %</div>
     );
 
+  /* ToDo: (20230509 - Julian) default icon */
   const displayedArrow =
     cumulativePnl > 0 ? (
       <ImArrowUp width={20} height={26} />
     ) : cumulativePnl < 0 ? (
       <ImArrowDown width={20} height={26} />
     ) : (
-      <></>
+      <ImArrowRight width={20} height={26} />
     );
 
   const personalRanking = userCtx.wallet ? (

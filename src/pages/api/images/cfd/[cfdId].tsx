@@ -32,16 +32,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const displayedUser = user.slice(-1).toUpperCase();
 
-  // TODO: FIXME: replace with real domain (20230508 - Shirley) DOMAIN
-  // const iconUrl = `https://www.tidebit-defi.com` + `/asset_icon/${tickerId.toLowerCase()}.svg`;
   const iconUrl = DOMAIN + `/asset_icon/${tickerId.toLowerCase()}.svg`;
   const qrcodeUrl = DOMAIN + `/elements/tidebit_qrcode.svg`;
-  // eslint-disable-next-line no-console
-  console.log('domain', DOMAIN);
 
-  // TODO: Image resolution (20230508 - Shirley)
   const backgroundImageUrl = DOMAIN + '/elements/group_15214@2x.png';
-  // const backgroundImageUrl = 'https://www.tidebit-defi.com/elements/group_15214@2x.png';
 
   const pnlPercent =
     typeOfPosition === TypeOfPosition.BUY
@@ -83,26 +77,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   );
 
   const displayedArrow = profitState === ProfitState.PROFIT ? upArrow : downArrow;
-  // TODO: QR code (20230508 - Shirley)
-  // const generateQRCode = async (text: string) => {
-  //   try {
-  //     const qrcode = await QRCode.toDataURL(text, {
-  //       errorCorrectionLevel: 'H',
-  //       type: 'image/jpeg',
-  //       margin: 3,
-  //       rendererOpts: {
-  //         quality: 1,
-  //       },
-  //     });
-  //     return qrcode;
-  //   } catch (err) {
-  //     // TODO: handle error (20230503 - Shirley)
-  //     // eslint-disable-next-line no-console
-  //     console.error(`Generate qr code, ${err}`);
-  //   }
-  // };
-
-  // console.log('qrcode in api');
 
   return new ImageResponse(
     (

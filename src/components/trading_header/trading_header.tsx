@@ -77,9 +77,6 @@ const TradingHeader = () => {
           </button>
         </div>
 
-        {/* Price and fluctuation percentage */}
-        {/* border-spacing-1 border-2 border-cyan-400  */}
-        {/*  bg-gradient-to-r from-lightGreen to-purple-800 bg-clip-text text-transparent */}
         <div
           className={`${priceShadowColor} flex w-200px flex-wrap items-start space-x-7 text-center lg:w-400px lg:items-end lg:text-start`}
         >

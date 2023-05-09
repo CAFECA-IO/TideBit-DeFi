@@ -42,22 +42,6 @@ const CfdSharing = (props: IPageProps) => {
     }
   }, []);
 
-  // useEffect(() => {
-  //   (async () => {
-  //     try {
-  //       setImgUrl(`${DOMAIN}/api/images/cfd/${props.cfdId}`);
-  //       setTimeout(() => {
-  //         setIsVisible(true);
-  //       }, 500);
-  //     } catch (e) {
-  //       // TODO: Error handling (20230508 - Shirley)
-  //       // eslint-disable-next-line no-console
-  //       console.log(`Failed to get image: ${e}`);
-  //       throw new CustomError(Code.CANNOT_CONVERT_TO_IMAGE);
-  //     }
-  //   })();
-  // }, [props.cfdId]);
-
   if (!router.isFallback && !props.cfdId) {
     return <Error statusCode={404} />;
   }

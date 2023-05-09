@@ -2,8 +2,8 @@ import Lunar from '@cafeca/lunar';
 import React, {createContext, useCallback, useContext} from 'react';
 import useState from 'react-usestateref';
 import {
-  defaultResultFailed,
   IResult,
+  defaultResultFailed,
   defaultResultSuccess,
 } from '../interfaces/tidebit_defi_background/result';
 import {
@@ -23,14 +23,11 @@ import {IApplyCreateCFDOrder} from '../interfaces/tidebit_defi_background/apply_
 import {IApplyCloseCFDOrder} from '../interfaces/tidebit_defi_background/apply_close_cfd_order';
 import {IApplyUpdateCFDOrder} from '../interfaces/tidebit_defi_background/apply_update_cfd_order';
 import TransactionEngineInstance from '../lib/engines/transaction_engine';
-import {IAcceptedCFDOrder} from '../interfaces/tidebit_defi_background/accepted_cfd_order';
 import {IApplyDepositOrder} from '../interfaces/tidebit_defi_background/apply_deposit_order';
 import {IApplyWithdrawOrder} from '../interfaces/tidebit_defi_background/apply_withdraw_order';
-import {IAcceptedWithdrawOrder} from '../interfaces/tidebit_defi_background/accepted_withdraw_order';
-import {IAcceptedDepositOrder} from '../interfaces/tidebit_defi_background/accepted_deposit_order';
 import {APIName, Method, TypeRequest} from '../constants/api_request';
 // import SafeMath from '../lib/safe_math';
-import {Code, ICode, Reason} from '../constants/code';
+import {Code, Reason} from '../constants/code';
 import {
   getCookieByName,
   getServiceTermContract,
@@ -50,8 +47,9 @@ import {CustomError, isCustomError} from '../lib/custom_error';
 import {IWalletExtension, WalletExtension} from '../constants/wallet_extension';
 import {Events} from '../constants/events';
 import {IUser} from '../interfaces/tidebit_defi_background/user';
-import {unitAsset} from '../constants/config';
 import TickerBookInstance from '../lib/books/ticker_book';
+import {IUserBalance} from '../interfaces/tidebit_defi_background/user_balance';
+import {ProfitState} from '../constants/profit_state';
 
 export interface IMyAssets {
   currency: string;
@@ -79,14 +77,6 @@ export interface IMyAssets {
     cumulative: number;
   };
 }
-export interface IUserBalance {
-  available: number;
-  locked: number;
-  PNL: number;
-  // walletBalance: number; // deposit required info
-  // interest: number; // 入金的利息
-}
-
 export interface IUserProvider {
   children: React.ReactNode;
 }
@@ -490,10 +480,40 @@ export const UserProvider = ({children}: IUserProvider) => {
       setBalance({
         available: sumAvailable,
         locked: sumLocked,
-        PNL: 0, // TODO: Caculate PNL (20230508 - tzuhan)
+        total: sumAvailable + sumLocked,
+        PNL: {
+          type: ProfitState.EQUAL,
+          value: 0,
+        }, // TODO: Caculate PNL (20230508 - tzuhan)
       });
     }
   };
+
+  const getTotalBalance = useCallback(async () => {
+    let result: IResult = {...defaultResultFailed};
+    if (enableServiceTermRef.current) {
+      try {
+        result = (await privateRequestHandler({
+          name: APIName.GET_TOTAL_BALANCE,
+          method: Method.GET,
+        })) as IResult;
+        // Deprecate: after this functions finishing (20230508 - tzuhan)
+        // eslint-disable-next-line no-console
+        console.log(`getTotalBalance result`, result);
+        if (result.success) {
+          const balance = result.data as IUserBalance;
+          setBalance(balance);
+        }
+      } catch (error) {
+        // TODO: error handle (Tzuhan - 20230421)
+        // eslint-disable-next-line no-console
+        console.error(`getTotalBalance error`, error);
+        result.code = Code.INTERNAL_SERVER_ERROR;
+        result.reason = Reason[result.code];
+      }
+    }
+    return result;
+  }, []);
 
   const listBalances = useCallback(async () => {
     let result: IResult = {...defaultResultFailed};

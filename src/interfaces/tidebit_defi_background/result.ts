@@ -9,6 +9,7 @@ import {IQuotation} from './quotation';
 import {ITickerData} from './ticker_data';
 import {ITickerHistoryData} from './ticker_history_data';
 import {IUser} from './user';
+import {IUserBalance} from './user_balance';
 
 export interface IResult {
   success: boolean;
@@ -16,6 +17,7 @@ export interface IResult {
     | number
     | {user: IUser; expiredAt: string}
     | IBalance[]
+    | IUserBalance
     | IOrder[]
     | ICandlestickData[]
     | ITickerData[]

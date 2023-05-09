@@ -40,7 +40,7 @@ const UserMobile = () => {
     <UserOverview
       depositAvailable={userCtx.balance?.available ?? 0}
       marginLocked={userCtx.balance?.locked ?? 0}
-      profitOrLossAmount={userCtx.balance?.PNL ?? 0}
+      profitOrLossAmount={userCtx.balance?.PNL?.value ?? 0}
     />
   ) : null;
 

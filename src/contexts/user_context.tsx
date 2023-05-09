@@ -842,6 +842,9 @@ export const UserProvider = ({children}: IUserProvider) => {
     let result: IResult = {...defaultResultFailed};
     result.code = Code.SERVICE_TERM_DISABLE;
     result.reason = Reason[result.code];
+    // Deprecated: [debug] (20230509 - Tzuhan)
+    // eslint-disable-next-line no-console
+    console.log('_createCFDOrder enableServiceTermRef.current', enableServiceTermRef.current);
     if (enableServiceTermRef.current) {
       if (applyCreateCFDOrder) {
         const balance: IBalance | null = getBalance(applyCreateCFDOrder.margin.asset);
@@ -853,9 +856,20 @@ export const UserProvider = ({children}: IUserProvider) => {
               const signature: string = await lunar.signTypedData(transferR.data);
               /* Info: (20230505 - Julian) 需要再驗證一次簽名是否正確 */
               const success = await lunar.verifyTypedData(transferR.data, signature);
+              // Deprecated: [debug] (20230509 - Tzuhan)
+              // eslint-disable-next-line no-console
+              console.log('_createCFDOrder lunar.verifyTypedData success', success);
               if (!success) throw new Error('verify signature failed');
               const now = getTimestamp();
               // ToDo: Check if the quotation is expired, if so return `failed result` in `catch`. (20230414 - Shirley)
+              // Deprecated: [debug] (20230509 - Tzuhan)
+              // eslint-disable-next-line no-console
+              console.log(
+                `_createCFDOrder applyCreateCFDOrder.quotation.deadline(${
+                  applyCreateCFDOrder.quotation.deadline
+                }) ${new Date(applyCreateCFDOrder.quotation.deadline * 1000)} < now${now}`,
+                applyCreateCFDOrder.quotation.deadline < now
+              );
               if (applyCreateCFDOrder.quotation.deadline < now) {
                 result.code = Code.EXPIRED_QUOTATION_FAILED;
                 result.code = result.code;
@@ -864,11 +878,17 @@ export const UserProvider = ({children}: IUserProvider) => {
                 throw error;
               }
               result.code = Code.INTERNAL_SERVER_ERROR;
+              // Deprecated: [debug] (20230509 - Tzuhan)
+              // eslint-disable-next-line no-console
+              console.log('_createCFDOrder request is called');
               result = (await privateRequestHandler({
                 name: APIName.CREATE_CFD_TRADE,
                 method: Method.POST,
                 body: {applyData: applyCreateCFDOrder, userSignature: signature},
               })) as IResult;
+              // Deprecated: [debug] (20230509 - Tzuhan)
+              // eslint-disable-next-line no-console
+              console.log('_createCFDOrder result', result);
               if (result.success) {
                 const {balanceSnapshot, orderSnapshot: CFDOrder} = result.data as {
                   txhash: string;
@@ -933,13 +953,13 @@ export const UserProvider = ({children}: IUserProvider) => {
           resolve(result);
         }, timeLeft);
       });
-    // Deprecate: after this functions finishing (20230508 - tzuhan)
+    // Deprecate: [debug] (20230509 - tzuhan)
     // eslint-disable-next-line no-console
     console.log(`createCFDOrder lunar.isConnected`, lunar.isConnected);
 
     if (!lunar.isConnected) {
       const isConnected = await connect();
-      // Deprecate: after this functions finishing (20230508 - tzuhan)
+      // Deprecate: [debug] (20230509 - tzuhan)
       // eslint-disable-next-line no-console
       console.log(`createCFDOrder isConnected`, isConnected);
 

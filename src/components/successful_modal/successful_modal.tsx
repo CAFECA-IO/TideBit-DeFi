@@ -28,7 +28,11 @@ const SuccessfulModal = ({
     <div className="relative flex-auto pt-1">
       <div className="text-lg leading-relaxed text-lightWhite">
         <div className="flex-col justify-center text-center">
-          <Lottie className="ml-70px w-150px pt-7 pb-5" animationData={successfulAnimation} />
+          <Lottie
+            className="ml-70px w-150px pt-7 pb-5"
+            animationData={successfulAnimation}
+            loop={false}
+          />
           <div className="mt-3 mb-0 h-55px text-base">
             {modalContent ? (
               modalContent

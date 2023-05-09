@@ -780,10 +780,10 @@ export const UserProvider = ({children}: IUserProvider) => {
     return walletBalance;
   };
 
-  const getBalance = (props: string) => {
+  const getBalance = (currency: string) => {
     let balance: IBalance | null = null;
     if (balancesRef.current) {
-      const index: number = balancesRef.current.findIndex(wb => wb.currency === props);
+      const index: number = balancesRef.current.findIndex(wb => wb.currency === currency);
       if (index !== -1) balance = balancesRef.current[index];
     }
     return balance;

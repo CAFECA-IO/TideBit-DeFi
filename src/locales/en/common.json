@@ -319,5 +319,8 @@
     "REJECTED_SIGNATURE": "Signature rejected by user",
     "INTERNAL_SERVER_ERROR": "Internal server error",
     "THIRD_PARTY_LIBRARY_ERROR": "Third party library error"
+  },
+  "LEADERBOARD_PAGE": {
+    "TITLE": "Leaderboard"
   }
 }

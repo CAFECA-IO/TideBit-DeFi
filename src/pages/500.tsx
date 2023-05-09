@@ -12,21 +12,6 @@ import Head from 'next/head';
 import {useTranslation} from 'next-i18next';
 
 type TranslateFunction = (s: string) => string;
-// function Error({statusCode}: any) {
-//   return (
-//     <div>
-//       <NavBar />
-//       <Lottie animationData={errorAnimation} />
-//     </div>
-//   );
-// }
-
-// Error.getInitialProps = ({res, err}: any) => {
-//   const statusCode = res ? res.statusCode : err ? err.statusCode : 404;
-//   return {statusCode};
-// };
-
-// export default Error;
 
 const Custom500 = () => {
   const {t}: {t: TranslateFunction} = useTranslation('common');

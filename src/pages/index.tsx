@@ -1,15 +1,11 @@
 import {serverSideTranslations} from 'next-i18next/serverSideTranslations';
-// import {initReactI18next} from 'react-i18next';
-// import {i18n} from 'next-i18next';
 import Head from 'next/head';
 import NavBar from '../components/nav_bar/nav_bar';
 import HeroDescription from '../components/hero_description/hero_description';
-import {MarketProvider} from '../contexts/market_context';
 import {useContext, useEffect} from 'react';
-import {GlobalContext, GlobalProvider, useGlobal} from '../contexts/global_context';
+import {useGlobal} from '../contexts/global_context';
 import NavBarMobile from '../components/nav_bar_mobile/nav_bar_mobile';
 import {AppContext} from '../contexts/app_context';
-import {GetStaticProps} from 'next';
 import {ILocale} from '../interfaces/tidebit_defi_background/locale';
 
 const Home = () => {
@@ -32,13 +28,9 @@ const Home = () => {
       </Head>
 
       {displayedNavBar}
-      {/* <NavBar /> */}
-
-      {/* <MarketProvider> */}
       <main>
         <HeroDescription />
       </main>
-      {/* </MarketProvider> */}
     </>
   ) : (
     <div>Loading...</div>

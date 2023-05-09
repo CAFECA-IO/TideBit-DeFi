@@ -2,6 +2,7 @@ import React, {useContext, useEffect} from 'react';
 import NavBar from '../components/nav_bar/nav_bar';
 import NavBarMobile from '../components/nav_bar_mobile/nav_bar_mobile';
 import Head from 'next/head';
+import BoardPageBody from '../components/board_page_body/board_page_body';
 import {serverSideTranslations} from 'next-i18next/serverSideTranslations';
 import {AppContext} from '../contexts/app_context';
 import {useGlobal} from '../contexts/global_context';
@@ -32,7 +33,9 @@ const Leaderboard = () => {
             {displayedNavBar}
 
             <main>
-              <div className=""></div>
+              <div className="">
+                <BoardPageBody />
+              </div>
             </main>
           </div>
         </>

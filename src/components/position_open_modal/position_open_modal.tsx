@@ -2,8 +2,6 @@ import {ImCross} from 'react-icons/im';
 import {
   DELAYED_HIDDEN_SECONDS,
   TypeOfBorderColor,
-  TypeOfPnLColor,
-  TypeOfTransaction,
   UNIVERSAL_NUMBER_FORMAT_LOCALE,
 } from '../../constants/display';
 import RippleButton from '../ripple_button/ripple_button';
@@ -11,10 +9,7 @@ import Image from 'next/image';
 import {AiOutlineQuestionCircle} from 'react-icons/ai';
 import {
   locker,
-  randomIntFromInterval,
-  timestampToString,
   wait,
-  getDeadline,
   getNowSeconds,
   getTimestamp,
   getTimestampInMilliseconds,
@@ -29,19 +24,21 @@ import {
   CFD_LIQUIDATION_TIME,
   DISPLAY_QUOTATION_RENEWAL_INTERVAL_SECONDS,
   LIQUIDATION_FIVE_LEVERAGE,
-  QUOTATION_RENEWAL_INTERVAL_SECONDS,
   WAITING_TIME_FOR_USER_SIGNING,
   unitAsset,
 } from '../../constants/config';
-import {
-  getDummyApplyCreateCFDOrder,
-  IApplyCreateCFDOrder,
-} from '../../interfaces/tidebit_defi_background/apply_create_cfd_order';
+import {IApplyCreateCFDOrder} from '../../interfaces/tidebit_defi_background/apply_create_cfd_order';
 import {useTranslation} from 'react-i18next';
-import {defaultResultSuccess} from '../../interfaces/tidebit_defi_background/result';
+import {
+  defaultResultSuccess,
+  defaultResultFailed,
+  IResult,
+} from '../../interfaces/tidebit_defi_background/result';
 import {IQuotation} from '../../interfaces/tidebit_defi_background/quotation';
 import useStateRef from 'react-usestateref';
 import {Code} from '../../constants/code';
+import {ToastTypeAndText} from '../../constants/toast_type';
+import {ToastId} from '../../constants/toast_id';
 import {CustomError} from '../../lib/custom_error';
 
 type TranslateFunction = (s: string) => string;
@@ -68,6 +65,7 @@ const PositionOpenModal = ({
   );
   const [dataRenewedStyle, setDataRenewedStyle] = useState('text-lightWhite');
   const [quotationError, setQuotationError, quotationErrorRef] = useStateRef(false);
+  const [quotationErrorMessage, setQuotationErrorMessage] = useState<IResult>(defaultResultFailed);
 
   const toApplyCreateOrder = (openCfdRequest: IApplyCreateCFDOrder): IApplyCreateCFDOrder => {
     const order: IApplyCreateCFDOrder = {
@@ -183,7 +181,6 @@ const PositionOpenModal = ({
           Code.UNKNOWN_ERROR_IN_COMPONENT
         })`,
       });
-
       globalCtx.visibleFailedModalHandler();
     }
 
@@ -231,15 +228,18 @@ const PositionOpenModal = ({
         data.typeOfPosition === openCfdRequest.typeOfPosition &&
         quotation.data !== null
       ) {
+        globalCtx.eliminateToasts(ToastId.GET_QUOTATION_ERROR);
+        setQuotationError(false);
         return data;
       } else {
-        // Deprecated: before merging into develop (20230327 - Shirley)
-        // eslint-disable-next-line no-console
-        console.log('disable submit');
         setQuotationError(true);
+        /* Info: (20230508 - Julian) get quotation error message */
+        setQuotationErrorMessage({success: false, code: quotation.code, reason: quotation.reason});
       }
     } catch (err) {
       setQuotationError(true);
+      /* Info: (20230508 - Julian) get quotation error message */
+      setQuotationErrorMessage({success: false, code: quotation.code, reason: quotation.reason});
     }
   };
 
@@ -247,8 +247,18 @@ const PositionOpenModal = ({
     const newQuotation = await getQuotation();
     const gsl = marketCtx.guaranteedStopFeePercentage;
 
-    // ToDo: exception handling (20230428 - Shirley)
-    if (!newQuotation || quotationErrorRef.current) return;
+    /* Info: (20230508 - Julian) exception handling: error toast */
+    if (!newQuotation || quotationErrorRef.current) {
+      globalCtx.toast({
+        type: ToastTypeAndText.ERROR.type,
+        toastId: ToastId.GET_QUOTATION_ERROR,
+        message: `${quotationErrorMessage.reason} (${quotationErrorMessage.code})`,
+        typeText: t(ToastTypeAndText.ERROR.text),
+        isLoading: false,
+        autoClose: false,
+      });
+      return;
+    }
 
     setDataRenewedStyle('animate-flash text-lightYellow2');
     await wait(DELAYED_HIDDEN_SECONDS / 5);
@@ -308,7 +318,7 @@ const PositionOpenModal = ({
       const tickingSec = (base * 1000 - getTimestampInMilliseconds()) / 1000;
       setSecondsLeft(tickingSec > 0 ? Math.floor(tickingSec) : 0);
 
-      if (secondsLeft === 0) {
+      if (modalVisible && secondsLeft === 0) {
         renewDataHandler();
       }
     }, 1000);

@@ -1025,13 +1025,16 @@ const TradeTab = () => {
                   disabled={marginWarningLongRef.current}
                   onClick={longOrderSubmitHandler}
                   buttonType="button"
-                  className="rounded-md bg-lightGreen5 px-7 py-1 text-sm font-medium tracking-wide text-white transition-colors duration-300 hover:bg-lightGreen5/80 disabled:bg-lightGray"
+                  className="w-125px rounded-md bg-lightGreen5 px-7 py-1 text-sm font-medium tracking-wide text-white transition-colors duration-300 hover:bg-lightGreen5/80 disabled:bg-lightGray"
                 >
-                  <b>{t('TRADE_PAGE.TRADE_TAB_LONG_BUTTON')}</b> <br />₮{' '}
-                  {Number(longPriceRef.current).toLocaleString(
-                    UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                    FRACTION_DIGITS
-                  )}
+                  <b>{t('TRADE_PAGE.TRADE_TAB_LONG_BUTTON')}</b> <br />
+                  <span className="whitespace-nowrap">
+                    ₮{' '}
+                    {Number(longPriceRef.current).toLocaleString(
+                      UNIVERSAL_NUMBER_FORMAT_LOCALE,
+                      FRACTION_DIGITS
+                    )}
+                  </span>
                 </RippleButton>
               </div>
             </div>
@@ -1105,13 +1108,16 @@ const TradeTab = () => {
                   disabled={marginWarningShortRef.current}
                   onClick={shortOrderSubmitHandler}
                   buttonType="button"
-                  className="rounded-md bg-lightRed px-7 py-1 text-sm font-medium tracking-wide text-white transition-colors duration-300 hover:bg-lightRed/80 disabled:bg-lightGray"
+                  className="w-125px rounded-md bg-lightRed px-7 py-1 text-sm font-medium tracking-wide text-white transition-colors duration-300 hover:bg-lightRed/80 disabled:bg-lightGray"
                 >
-                  <b>{t('TRADE_PAGE.TRADE_TAB_SHORT_BUTTON')}</b> <br />₮{' '}
-                  {Number(shortPriceRef.current).toLocaleString(
-                    UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                    FRACTION_DIGITS
-                  )}
+                  <b>{t('TRADE_PAGE.TRADE_TAB_SHORT_BUTTON')}</b> <br />
+                  <span className="whitespace-nowrap">
+                    ₮{' '}
+                    {Number(shortPriceRef.current).toLocaleString(
+                      UNIVERSAL_NUMBER_FORMAT_LOCALE,
+                      FRACTION_DIGITS
+                    )}
+                  </span>
                 </RippleButton>
               </div>
             </div>

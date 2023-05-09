@@ -20,6 +20,7 @@ import {WIDTH_HEIGHT_OF_SHARING_RECORD} from '../../../constants/display';
 import {CustomError} from '../../../lib/custom_error';
 import {Code} from '../../../constants/code';
 import useStateRef from 'react-usestateref';
+import Link from 'next/link';
 
 interface IPageProps {
   cfdId: string;
@@ -28,9 +29,6 @@ interface IPageProps {
 const CfdSharing = (props: IPageProps) => {
   const appCtx = useContext(AppContext);
   const router = useRouter();
-
-  const [imgUrl, setImgUrl, imgUrlRef] = useStateRef<string>('');
-  const [isVisible, setIsVisible, isVisibleRef] = useStateRef<boolean>(false);
 
   const {cfdId} = router.query;
 
@@ -44,25 +42,39 @@ const CfdSharing = (props: IPageProps) => {
     }
   }, []);
 
-  useEffect(() => {
-    (async () => {
-      try {
-        setImgUrl(`${DOMAIN}/api/images/cfd/${props.cfdId}`);
-        setTimeout(() => {
-          setIsVisible(true);
-        }, 500);
-      } catch (e) {
-        // TODO: Error handling (20230508 - Shirley)
-        // eslint-disable-next-line no-console
-        console.log(`Failed to get image: ${e}`);
-        throw new CustomError(Code.CANNOT_CONVERT_TO_IMAGE);
-      }
-    })();
-  }, [props.cfdId]);
+  // useEffect(() => {
+  //   (async () => {
+  //     try {
+  //       setImgUrl(`${DOMAIN}/api/images/cfd/${props.cfdId}`);
+  //       setTimeout(() => {
+  //         setIsVisible(true);
+  //       }, 500);
+  //     } catch (e) {
+  //       // TODO: Error handling (20230508 - Shirley)
+  //       // eslint-disable-next-line no-console
+  //       console.log(`Failed to get image: ${e}`);
+  //       throw new CustomError(Code.CANNOT_CONVERT_TO_IMAGE);
+  //     }
+  //   })();
+  // }, [props.cfdId]);
 
   if (!router.isFallback && !props.cfdId) {
     return <Error statusCode={404} />;
   }
+
+  const displayedImage = appCtx.isInit ? (
+    <div className="flex w-full justify-center">
+      <Link href="/">
+        <img
+          src={displayImg}
+          width={WIDTH_HEIGHT_OF_SHARING_RECORD}
+          height={WIDTH_HEIGHT_OF_SHARING_RECORD}
+          alt="CFD record"
+          className="hover:opacity-90"
+        />
+      </Link>
+    </div>
+  ) : null;
 
   return (
     <>
@@ -95,14 +107,7 @@ const CfdSharing = (props: IPageProps) => {
         <meta name="twitter:image" content={img} />
         <meta name="twitter:image:alt" content="TideBit DeFi CFD" />
       </Head>
-      {appCtx.isInit && isVisibleRef.current ? (
-        <img
-          src={displayImg}
-          width={WIDTH_HEIGHT_OF_SHARING_RECORD}
-          height={WIDTH_HEIGHT_OF_SHARING_RECORD}
-          alt="CFD record"
-        />
-      ) : null}
+      {displayedImage}
     </>
   );
 };

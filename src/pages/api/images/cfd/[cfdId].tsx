@@ -33,9 +33,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const displayedUser = user.slice(-1).toUpperCase();
 
+  // TODO: FIXME: replace with real domain (20230508 - Shirley) DOMAIN
+  // const iconUrl = `https://www.tidebit-defi.com` + `/asset_icon/${tickerId.toLowerCase()}.svg`;
   const iconUrl = DOMAIN + `/asset_icon/${tickerId.toLowerCase()}.svg`;
+  // eslint-disable-next-line no-console
+  console.log('domain', DOMAIN);
+
   // TODO: Image resolution (20230508 - Shirley)
   const backgroundImageUrl = DOMAIN + '/elements/group_15214@2x.png';
+  // const backgroundImageUrl = 'https://www.tidebit-defi.com/elements/group_15214@2x.png';
 
   const pnlPercent =
     typeOfPosition === TypeOfPosition.BUY
@@ -67,13 +73,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   );
 
   const downArrow = (
-    <svg xmlns="http://www.w3.org/2000/svg" width="28.125" height="36" viewBox="0 0 256 256">
+    <svg xmlns="http://www.w3.org/2000/svg" width="28.125" height="36" viewBox="0 0 28.125 36">
       <path
-        fill="#E86D6D"
-        strokeMiterlimit="10"
-        strokeWidth="0"
-        d="M46.969 89.104a2.611 2.611 0 01-3.937 0L13.299 54.989c-.932-1.072-.171-2.743 1.25-2.743h14.249V1.91A1.91 1.91 0 0130.708 0h28.584a1.91 1.91 0 011.91 1.91v50.336h14.249c1.421 0 2.182 1.671 1.25 2.743L46.969 89.104z"
-        transform="matrix(2.81 0 0 2.81 1.407 1.407)"
+        fill="#e86d6d"
+        d="M18 36L3.937 14.906h7.576V0h12.973v14.906h7.576z"
+        transform="translate(-3.937)"
       ></path>
     </svg>
   );
@@ -98,8 +102,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   //   }
   // };
 
-  // const qrcode = generateQRCode('https://tidebit-defi.com/');
-  // res.status(200).send()，這是由 CDN 決定的，所以不用特別加
   return new ImageResponse(
     (
       <div
@@ -115,7 +117,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             backgroundSize: `${WIDTH_HEIGHT_OF_SHARING_RECORD}px ${WIDTH_HEIGHT_OF_SHARING_RECORD}px`,
             backgroundPosition: 'relative',
             backgroundRepeat: 'no-repeat',
-            background: '#000',
+            background: 'transparent',
 
             display: 'flex',
             flexDirection: 'column',

@@ -27,19 +27,19 @@ const ReceiptSection = () => {
      * filter receipts by filteredDate #289 */
     if (searches !== '') {
       const searchResult = listHistories.filter(v => {
-        const orderType = v.receipt.order.orderType;
+        const orderType = v.receipt.orderSnapshot.orderType;
         const targetAsset =
           orderType === OrderType.CFD
-            ? (v.receipt.order as ICFDOrder).margin.asset
+            ? (v.receipt.orderSnapshot as ICFDOrder).margin.asset
             : orderType === OrderType.DEPOSIT
-            ? (v.receipt.order as IDepositOrder).targetAsset
-            : (v.receipt.order as IWithdrawOrder).targetAsset;
+            ? (v.receipt.orderSnapshot as IDepositOrder).targetAsset
+            : (v.receipt.orderSnapshot as IWithdrawOrder).targetAsset;
         const targetAmount =
           orderType === OrderType.CFD
-            ? (v.receipt.order as ICFDOrder).margin.amount
+            ? (v.receipt.orderSnapshot as ICFDOrder).margin.amount
             : orderType === OrderType.DEPOSIT
-            ? (v.receipt.order as IDepositOrder).targetAmount
-            : (v.receipt.order as IWithdrawOrder).targetAmount;
+            ? (v.receipt.orderSnapshot as IDepositOrder).targetAmount
+            : (v.receipt.orderSnapshot as IWithdrawOrder).targetAmount;
         const result =
           orderType.includes(searches || '') ||
           targetAsset.toLocaleLowerCase().includes(searches || '') ||
@@ -52,28 +52,28 @@ const ReceiptSection = () => {
     } else if (filteredTradingType === OrderType.DEPOSIT) {
       setFilteredReceipts(
         listHistories.filter(v => {
-          const orderType = v.receipt.order.orderType;
+          const orderType = v.receipt.orderSnapshot.orderType;
           return orderType === OrderType.DEPOSIT;
         })
       );
     } else if (filteredTradingType === OrderType.WITHDRAW) {
       setFilteredReceipts(
-        listHistories.filter(v => v.receipt.order.orderType === OrderType.WITHDRAW)
+        listHistories.filter(v => v.receipt.orderSnapshot.orderType === OrderType.WITHDRAW)
       );
     } else if (filteredTradingType === OrderState.OPENING) {
       setFilteredReceipts(
         listHistories.filter(
           v =>
-            v.receipt.order.orderType === OrderType.CFD &&
-            (v.receipt.order as ICFDOrder).state === OrderState.OPENING
+            v.receipt.orderSnapshot.orderType === OrderType.CFD &&
+            (v.receipt.orderSnapshot as ICFDOrder).state === OrderState.OPENING
         )
       );
     } else if (filteredTradingType === OrderState.CLOSED) {
       setFilteredReceipts(
         listHistories.filter(
           v =>
-            v.receipt.order.orderType === OrderType.CFD &&
-            (v.receipt.order as ICFDOrder).state === OrderState.OPENING
+            v.receipt.orderSnapshot.orderType === OrderType.CFD &&
+            (v.receipt.orderSnapshot as ICFDOrder).state === OrderState.OPENING
         )
       );
     }

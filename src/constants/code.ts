@@ -17,6 +17,7 @@ export type ICode =
   | '10110001'
   | '40230002'
   | '90000001'
+  | '80410001'
   | '10310001';
 
 export type ICodeConstant = {
@@ -39,6 +40,7 @@ export type ICodeConstant = {
   FAILE_TO_UPDATE_BALANCE: ICode;
   UNKNOWN_ERROR_IN_COMPONENT: ICode;
   THIRD_PARTY_LIBRARY_ERROR: ICode;
+  DEPOSIT_TOO_FREQUENCY: ICode;
 };
 
 export type IReason = {
@@ -53,6 +55,7 @@ export const Code: ICodeConstant = {
   LOCK_PROCEDURE_WRONG: '10110001',
   FUNCTION_NOT_IMPLEMENTED: '10210001',
   CANNOT_GET_QUOTATION_FROM_CONTEXT: '10110002',
+  DEPOSIT_TOO_FREQUENCY: '80410001',
 
   ORDER_NOT_OPENING: '30110001',
   INVAILD_ORDER_INPUTS: '30420001',
@@ -97,4 +100,5 @@ export const Reason: IReason = {
 
   '90000000': 'ERROR_MESSAGE.UNKNOWN_ERROR',
   '90000001': 'ERROR_MESSAGE.UNKNOWN_ERROR_IN_COMPONENT',
+  '80410001': 'Already deposit in a month',
 };

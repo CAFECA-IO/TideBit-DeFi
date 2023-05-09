@@ -8,12 +8,13 @@ import Image from 'next/image';
 import {DELAYED_HIDDEN_SECONDS, UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
 import {useGlobal} from '../../contexts/global_context';
 import {useTranslation} from 'react-i18next';
-import {getTimestamp, locker, wait} from '../../lib/common';
+import {getTimestamp, locker, randomHex, wait} from '../../lib/common';
 import {OrderType} from '../../constants/order_type';
 import {UserContext} from '../../contexts/user_context';
 import {Code} from '../../constants/code';
 import {ToastId} from '../../constants/toast_id';
 import useStateRef from 'react-usestateref';
+import {IApplyDepositOrder} from '../../interfaces/tidebit_defi_background/apply_deposit_order';
 
 type TranslateFunction = (s: string) => string;
 interface IDepositModal {
@@ -91,14 +92,12 @@ const DepositModal = ({
     });
     globalCtx.visibleLoadingModalHandler();
 
-    const depositOrder = {
+    const depositOrder: IApplyDepositOrder = {
       orderType: OrderType.DEPOSIT,
-      createTimestamp: getTimestamp(),
       targetAsset: selectedCrypto.symbol,
-      decimals: selectedCrypto.decimals,
-      to: selectedCrypto.contract,
       targetAmount: amountInput,
-      remark: '',
+      blockchain: '0x8000003c',
+      txhash: randomHex(32),
       fee: 0,
     };
 
@@ -146,6 +145,7 @@ const DepositModal = ({
         globalCtx.eliminateToasts(ToastId.DEPOSIT);
         globalCtx.visibleCanceledModalHandler();
       } else if (
+        result.code === Code.DEPOSIT_TOO_FREQUENCY ||
         result.code === Code.INTERNAL_SERVER_ERROR ||
         result.code === Code.INVAILD_INPUTS
       ) {

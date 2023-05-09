@@ -24,7 +24,9 @@ const DepositHistoryModal = ({
   getDepositHistoryData,
 }: IDepositHistoryModal) => {
   const {receipt, createTimestamp} = getDepositHistoryData;
-  const {order, balance} = receipt;
+  const {orderSnapshot: order, balanceSnapshot} = receipt;
+  const balance = balanceSnapshot.shift();
+
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
   const displayedDepositTime = timestampToString(createTimestamp);
@@ -55,7 +57,9 @@ const DepositHistoryModal = ({
     order.orderStatus === OrderStatusUnion.WAITING ? (
       <Lottie className="w-20px" animationData={smallConnectingAnimation} />
     ) : (
-      <div>{balance.available.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)}</div>
+      <div>
+        {balance?.available.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)}
+      </div>
     );
 
   const displayedDepositDetail =
@@ -65,7 +69,7 @@ const DepositHistoryModal = ({
       <div className="text-lightRed">{t('D_W_MODAL.STATUS_FAILED')}</div>
     ) : (
       <div className="flex items-center text-tidebitTheme">
-        {order.txid}
+        {order.txhash}
         <div className="ml-2">
           <Image src="/elements/detail_icon.svg" alt="" width={20} height={20} />
         </div>

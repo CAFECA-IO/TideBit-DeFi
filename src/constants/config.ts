@@ -61,6 +61,7 @@ export const unitAsset = 'USDT';
 
 export const WS_URL = 'wss://staging-001.tidebit.network/ws';
 
+export const URL = 'http://localhost:3001'; //'https://api.tidebit-defi.com';
 // Deprecated: dummy url settings (20230407 - Tzuhan)
 export const BASE_URL = 'https://staging-001.tidebit.network';
 // Deprecated: dummy url settings (20230407 - Tzuhan)
@@ -100,6 +101,7 @@ export const tickerIds = [
 
 export const TRADING_CRYPTO_DATA = [
   {
+    instId: `${Currency.ETH}-${unitAsset}`,
     currency: Currency.ETH,
     chain: 'Ethereum',
     star: true,
@@ -110,6 +112,7 @@ export const TRADING_CRYPTO_DATA = [
     tradingVolume: '217,268,645',
   },
   {
+    instId: `${Currency.BTC}-${unitAsset}`,
     currency: Currency.BTC,
     chain: 'Bitcoin',
     star: true,
@@ -120,6 +123,7 @@ export const TRADING_CRYPTO_DATA = [
     tradingVolume: '217,268,645',
   },
   {
+    instId: `${Currency.LTC}-${unitAsset}`,
     currency: Currency.LTC,
     chain: 'Litecoin',
     star: true,
@@ -130,6 +134,7 @@ export const TRADING_CRYPTO_DATA = [
     tradingVolume: '217,268,645',
   },
   {
+    instId: `${Currency.MATIC}-${unitAsset}`,
     currency: Currency.MATIC,
     chain: 'Polygon',
     star: true,
@@ -140,6 +145,7 @@ export const TRADING_CRYPTO_DATA = [
     tradingVolume: '217,268,645',
   },
   {
+    instId: `${Currency.BNB}-${unitAsset}`,
     currency: Currency.BNB,
     chain: 'BNB',
     star: true,
@@ -150,6 +156,7 @@ export const TRADING_CRYPTO_DATA = [
     tradingVolume: '217,268,645',
   },
   {
+    instId: `${Currency.SOL}-${unitAsset}`,
     currency: Currency.SOL,
     chain: 'Solana',
     star: true,
@@ -160,6 +167,7 @@ export const TRADING_CRYPTO_DATA = [
     tradingVolume: '217,268,645',
   },
   {
+    instId: `${Currency.SHIB}-${unitAsset}`,
     currency: Currency.SHIB,
     chain: 'Shiba Inu',
     star: true,
@@ -170,6 +178,7 @@ export const TRADING_CRYPTO_DATA = [
     tradingVolume: '217,268,645',
   },
   {
+    instId: `${Currency.DOT}-${unitAsset}`,
     currency: Currency.DOT,
     chain: 'Polkadot',
     star: true,
@@ -180,6 +189,7 @@ export const TRADING_CRYPTO_DATA = [
     tradingVolume: '217,268,645',
   },
   {
+    instId: `${Currency.ADA}-${unitAsset}`,
     currency: Currency.ADA,
     chain: 'Cardano',
     star: true,
@@ -190,6 +200,7 @@ export const TRADING_CRYPTO_DATA = [
     tradingVolume: '217,268,645',
   },
   {
+    instId: `${Currency.AVAX}-${unitAsset}`,
     currency: Currency.AVAX,
     chain: 'Avalanche',
     star: true,
@@ -200,6 +211,7 @@ export const TRADING_CRYPTO_DATA = [
     tradingVolume: '217,268,645',
   },
   {
+    instId: `${Currency.DAI}-${unitAsset}`,
     currency: Currency.DAI,
     chain: 'Dai',
     star: true,
@@ -210,6 +222,7 @@ export const TRADING_CRYPTO_DATA = [
     tradingVolume: '217,268,645',
   },
   {
+    instId: `${Currency.MKR}-${unitAsset}`,
     currency: Currency.MKR,
     chain: 'Maker',
     star: true,
@@ -220,6 +233,7 @@ export const TRADING_CRYPTO_DATA = [
     tradingVolume: '217,268,645',
   },
   {
+    instId: `${Currency.XRP}-${unitAsset}`,
     currency: Currency.XRP,
     chain: 'XRP',
     star: true,
@@ -230,6 +244,7 @@ export const TRADING_CRYPTO_DATA = [
     tradingVolume: '217,268,645',
   },
   {
+    instId: `${Currency.DOGE}-${unitAsset}`,
     currency: Currency.DOGE,
     chain: 'Dogecoin',
     star: true,
@@ -240,6 +255,7 @@ export const TRADING_CRYPTO_DATA = [
     tradingVolume: '217,268,645',
   },
   {
+    instId: `${Currency.UNI}-${unitAsset}`,
     currency: Currency.UNI,
     chain: 'Uniswap',
     star: true,
@@ -250,6 +266,7 @@ export const TRADING_CRYPTO_DATA = [
     tradingVolume: '217,268,645',
   },
   {
+    instId: `${Currency.FLOW}-${unitAsset}`,
     currency: Currency.FLOW,
     chain: 'Flow',
     star: true,
@@ -265,8 +282,6 @@ export const DOMAIN = 'https://www.tidebit-defi.com';
 export const TERM_OF_SERVICE = 'https://www.tidebit-defi.com/term_of_service/{hash}';
 export const PRIVATE_POLICY = 'https://www.tidebit-defi.com/private_policy/{hash}';
 export const DeWT_VALIDITY_PERIOD = 60 * 60; // seconds
-export const PUSHER_KEY = '6303b44ffdd00a300546';
-export const PUSHER_CLUSTER = 'ap3';
 export const CFD_LIQUIDATION_TIME = 86400;
 export const TP_SL_LIMIT_PERCENT = 0.01;
 export const DEFAULT_TICKER = 'ETH';

@@ -63,8 +63,8 @@ const CfdSharing = (props: IPageProps) => {
   }
 
   const displayedImage = appCtx.isInit ? (
-    <div className="flex w-full justify-center">
-      <Link href="/">
+    <Link href="/">
+      <div className="">
         <img
           src={displayImg}
           width={WIDTH_HEIGHT_OF_SHARING_RECORD}
@@ -72,8 +72,8 @@ const CfdSharing = (props: IPageProps) => {
           alt="CFD record"
           className="hover:opacity-90"
         />
-      </Link>
-    </div>
+      </div>
+    </Link>
   ) : null;
 
   return (

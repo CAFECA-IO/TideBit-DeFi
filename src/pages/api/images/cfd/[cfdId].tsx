@@ -155,7 +155,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
               </h1>
             </div>
             {/* Info: QR Code (20230509 - Shirley) */}
-            {/* <svg
+            <svg
               style={{
                 position: 'absolute',
                 top: '420px',
@@ -1129,19 +1129,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                   <path d="M27.351 100C12.261 100-.014 87.968-.014 73.192V26.794c0-4.616 1.2-8.96 3.301-12.761a27.062 27.062 0 018.36-9.174A27.606 27.606 0 0127.336 0h45.327c15.076 0 27.351 12.018 27.351 26.793v46.398c0 14.775-12.274 26.808-27.351 26.808H27.351z"></path>
                 </g>
               </g>
-            </svg> */}
-
-            <img
-              style={{
-                position: 'absolute',
-                top: '420px',
-                left: '390px',
-              }}
-              src={qrcodeUrl}
-              width={100}
-              height={100}
-              alt="qr code"
-            />
+            </svg>
 
             <div
               style={{

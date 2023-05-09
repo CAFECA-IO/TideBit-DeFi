@@ -194,3 +194,5 @@ export const DEFAULT_USER_BALANCE = 0;
 export const DEFAULT_SPREAD = 0.1;
 export const DEFAULT_EXPIRY_DATE = 1;
 export const WIDTH_HEIGHT_OF_SHARING_RECORD = 600;
+export const DEFAULT_PRICE_CHANGE = 0;
+export const DEFAULT_FLUCTUATION = 0;

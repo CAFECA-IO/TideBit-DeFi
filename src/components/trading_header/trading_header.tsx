@@ -2,11 +2,15 @@ import {useContext} from 'react';
 import TickerSelectorBox from '../ticker_selector_box/ticker_selector_box';
 import {CgSearchLoading} from 'react-icons/cg';
 import useOuterClick from '../../lib/hooks/use_outer_click';
-import {UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
+import {
+  DEFAULT_FLUCTUATION,
+  DEFAULT_PRICE_CHANGE,
+  UNIVERSAL_NUMBER_FORMAT_LOCALE,
+} from '../../constants/display';
 import {MarketContext} from '../../contexts/market_context';
 import {Trend} from '../../constants/trend';
 import {useTranslation} from 'next-i18next';
-import {unitAsset} from '../../constants/config';
+import {FRACTION_DIGITS, unitAsset} from '../../constants/config';
 
 type TranslateFunction = (s: string) => string;
 
@@ -37,11 +41,13 @@ const TradingHeader = () => {
   const priceShadowColor =
     marketCtx.selectedTicker?.upOrDown === Trend.UP ? 'priceUpShadow' : 'priceDownShadow';
 
-  const priceChange = Math.abs(marketCtx.selectedTicker?.priceChange ?? 0);
+  const priceChange = Math.abs(
+    marketCtx.selectedTicker?.priceChange ?? DEFAULT_PRICE_CHANGE
+  ).toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
 
-  const priceChangePercentage = Math.abs(marketCtx.selectedTicker?.fluctuating ?? 0);
-
-  // const displayedTickerBox = showTickerSelector ? <TickerSelectorModal /> : null;
+  const priceChangePercentage = Math.abs(
+    marketCtx.selectedTicker?.fluctuating ?? DEFAULT_FLUCTUATION
+  ).toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
 
   const tickerTitle = (
     <h1 className="text-3xl font-medium">{marketCtx.selectedTicker?.currency}</h1>
@@ -79,7 +85,11 @@ const TradingHeader = () => {
         >
           <div className="text-3xl">
             <span className="">
-              ₮ {marketCtx.selectedTicker?.price.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}
+              ₮{' '}
+              {marketCtx.selectedTicker?.price.toLocaleString(
+                UNIVERSAL_NUMBER_FORMAT_LOCALE,
+                FRACTION_DIGITS
+              )}
             </span>
           </div>
           <div className="text-lg">{`${

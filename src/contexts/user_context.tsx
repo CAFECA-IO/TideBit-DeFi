@@ -1214,7 +1214,8 @@ export const UserProvider = ({children}: IUserProvider) => {
             balanceSnapshot: IBalance[];
           };
           setDeposits(prev => [...prev, depositOrder]);
-          updateBalance(balanceSnapshot);
+          // TODO： remove updateBalance 應該等 Pusher 通知 (20230509 - Tzuhan)
+          // updateBalance(balanceSnapshot);
           // setHistories(prev => [...prev, acceptedDepositOrder]);}
         }
       } catch (error) {

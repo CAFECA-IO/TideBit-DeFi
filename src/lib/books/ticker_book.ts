@@ -258,10 +258,16 @@ class TickerBook {
     this._tickers[value.currency] = updateTicker;
   }
 
-  updateTickers(value: ITickerItem[]) {
+  updateTickers(value: ITickerData[]) {
     let tickers: {[currency: string]: ITickerData} = {};
     tickers = [...value].reduce((prev, curr) => {
-      if (!prev[curr.currency]) prev[curr.currency] = {...curr, lineGraphProps: {dataArray: []}};
+      if (!prev[curr.currency])
+        prev[curr.currency] = {
+          ...curr,
+          lineGraphProps: {
+            dataArray: curr.lineGraphProps.dataArray ? [...curr.lineGraphProps.dataArray] : [],
+          },
+        };
       return prev;
     }, tickers);
     this.tickers = tickers;
@@ -269,8 +275,7 @@ class TickerBook {
   }
 
   getCurrencyRate(currency: string): number {
-    if (!this._tickers[currency]) return 0;
-    return currency === unitAsset ? 1 : this._tickers[currency].price;
+    return currency === unitAsset ? 1 : this._tickers[currency]?.price || 0;
   }
 
   get tickers(): {[currency: string]: ITickerData} {

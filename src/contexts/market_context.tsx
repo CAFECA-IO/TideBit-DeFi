@@ -22,10 +22,6 @@ import {
 import {
   ITickerData,
   dummyTicker,
-  ITBETrade,
-  ITickerMarket,
-  ITickerItem,
-  dummyTickers,
   toDummyTickers,
 } from '../interfaces/tidebit_defi_background/ticker_data';
 import {ITimeSpanUnion, TimeSpanUnion} from '../constants/time_span_union';
@@ -38,22 +34,18 @@ import {NotificationContext} from './notification_context';
 import {WorkerContext} from './worker_context';
 import {APIName, Method} from '../constants/api_request';
 import TickerBookInstance from '../lib/books/ticker_book';
-import {TRADING_CRYPTO_DATA, unitAsset} from '../constants/config';
-import {getDummyQuotation, IQuotation} from '../interfaces/tidebit_defi_background/quotation';
-import {
-  getDummyTickerHistoryData,
-  ITickerHistoryData,
-} from '../interfaces/tidebit_defi_background/ticker_history_data';
-import {ITypeOfPosition, TypeOfPosition} from '../constants/type_of_position';
+import {unitAsset} from '../constants/config';
+import {ITypeOfPosition} from '../constants/type_of_position';
 import {
   dummyTideBitPromotion,
   ITideBitPromotion,
 } from '../interfaces/tidebit_defi_background/tidebit_promotion';
-import {Currency, ICurrency} from '../constants/currency';
+import {ICurrency} from '../constants/currency';
 import {CustomError} from '../lib/custom_error';
 import {Code, Reason} from '../constants/code';
 import CandlestickBookInstance from '../lib/books/candlestick_book';
 import {IPusherAction} from '../interfaces/tidebit_defi_background/pusher_data';
+import {IQuotation} from '../interfaces/tidebit_defi_background/quotation';
 
 export interface IMarketProvider {
   children: React.ReactNode;
@@ -73,7 +65,7 @@ export interface IMarketContext {
   depositCryptocurrencies: ICryptocurrency[];
   withdrawCryptocurrencies: ICryptocurrency[];
   tidebitPromotion: ITideBitPromotion;
-  guaranteedStopFeePercentage: number;
+  guaranteedStopFeePercentage: number | null;
   init: () => Promise<void>;
   // getGuaranteedStopFeePercentage: () => Promise<IResult>;
   showPositionOnChartHandler: (bool: boolean) => void;
@@ -120,7 +112,7 @@ export const MarketContext = createContext<IMarketContext>({
   candlestickId: '',
   candlestickChartData: [],
   timeSpan: TimeSpanUnion._1s,
-  guaranteedStopFeePercentage: 0.0015,
+  guaranteedStopFeePercentage: null,
   selectTimeSpanHandler: () => null,
   // liveStatstics: null,
   // bullAndBearIndex: 0,
@@ -166,7 +158,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     guaranteedStopFeePercentage,
     setGuaranteedStopFeePercentage,
     guaranteedStopFeePercentageRef,
-  ] = useState<number>(0.0015);
+  ] = useState<number | null>(null);
   const [depositCryptocurrencies, setDepositCryptocurrencies, depositCryptocurrenciesRef] =
     useState<ICryptocurrency[]>([...dummyCryptocurrencies]);
   const [withdrawCryptocurrencies, setWithdrawCryptocurrencies, withdrawCryptocurrenciesRef] =
@@ -226,6 +218,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
   const selectTickerHandler = async (tickerId: ICurrency) => {
     const ticker: ITickerData = availableTickersRef.current[tickerId];
     setSelectedTicker(ticker);
+    notificationCtx.emitter.emit(TideBitEvent.TICKER_CHANGE, ticker);
     // ++ TODO: get from api
     const tickerStatic: ITickerStatic = getDummyTickerStatic(tickerId);
     setTickerStatic(tickerStatic);
@@ -237,8 +230,6 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     workerCtx.tickerChangeHandler(ticker);
     */
     await getGuaranteedStopFeePercentage(ticker.currency);
-    await getCFDQuotation(ticker.currency, TypeOfPosition.BUY);
-    await getCFDSuggestion(ticker.currency, TypeOfPosition.BUY, ticker.price);
     return defaultResultSuccess;
   };
 
@@ -322,9 +313,10 @@ export const MarketProvider = ({children}: IMarketProvider) => {
           typeOfPosition,
         },
       })) as IResult;
-      // Deprecate: after this functions finishing (20230508 - tzuhan)
+      // ToDo: Check if the quotation is expired, if so return `failed result` in `catch`. (20230414 - Shirley)
+      // Deprecated: [debug] (20230509 - Tzuhan)
       // eslint-disable-next-line no-console
-      console.log(`getCFDQuotation result`, result);
+      console.log(`getCFDQuotation result(${(result.data as IQuotation)?.deadline})`);
     } catch (error) {
       // Deprecate: error handle (Tzuhan - 20230321)
       // eslint-disable-next-line no-console
@@ -352,9 +344,6 @@ export const MarketProvider = ({children}: IMarketProvider) => {
           price,
         },
       })) as IResult;
-      // Deprecate: after this functions finishing (20230508 - tzuhan)
-      // eslint-disable-next-line no-console
-      console.log(`getCFDSuggestion result`, result);
     } catch (error) {
       // Deprecate: error handle (Tzuhan - 20230321)
       // eslint-disable-next-line no-console

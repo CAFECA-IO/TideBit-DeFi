@@ -25,7 +25,7 @@ export interface IResult {
     | {
         txhash: string;
         orderSnapshot: IOrder;
-        balanceSnapshot: IBalance;
+        balanceSnapshot: IBalance[];
       }
     | {order: IOrder}
     | IQuotation

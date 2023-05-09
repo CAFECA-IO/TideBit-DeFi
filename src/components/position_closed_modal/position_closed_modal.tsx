@@ -288,6 +288,9 @@ const PositionClosedModal = ({
 
     try {
       const result = await userCtx.closeCFDOrder(applyCloseOrder);
+      // Deprecated: [debug] (20230509 - Tzuhan)
+      // eslint-disable-next-line no-console
+      console.log('close position result', result);
 
       if (result.success) {
         const historyData: IDisplayCFDOrder = toHistoryModal(openCfdDetails, gQuotationRef.current);

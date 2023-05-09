@@ -99,18 +99,7 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
       const channelName = `${PusherChannel.PRIVATE_CHANNEL}-${keccak
         .keccak256(address.toLowerCase().replace(`0x`, ``))
         .slice(0, 8)}`;
-      // eslint-disable-next-line no-console
-      // console.log(`when subscribeUser DeWT`, getCookieByName('DeWT'));
       const channel = pusherRef.current?.subscribe(channelName);
-
-      // eslint-disable-next-line no-console
-      // console.log(`pusher channel:`, channel);
-
-      channel.bind_global((data: string, metadata: any) => {
-        // eslint-disable-next-line no-console
-        console.log(`pusher PRIVATE_CHANNEL bind_global:`, data, `metadata`, metadata);
-      });
-
       channel.bind(Events.BALANCE, (data: IPusherPrivateData) => {
         notificationCtx.emitter.emit(Events.BALANCE, data);
       });

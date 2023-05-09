@@ -15,7 +15,6 @@ import {toDisplayCFDOrder} from '../lib/common';
 import {serverSideTranslations} from 'next-i18next/serverSideTranslations';
 import {ILocale} from '../interfaces/tidebit_defi_background/locale';
 import {MarketContext} from '../contexts/market_context';
-import {toPng} from 'html-to-image';
 import useStateRef from 'react-usestateref';
 import Image from 'next/image';
 import Head from 'next/head';

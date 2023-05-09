@@ -18,7 +18,6 @@ import {
   MONTH_FULL_NAME_LIST,
 } from '../constants/config';
 import ServiceTerm from '../constants/contracts/service_term';
-import packageJson from '../../package.json';
 import IJSON from '../interfaces/ijson';
 import RLP from 'rlp';
 import {ICFDOrder} from '../interfaces/tidebit_defi_background/order';
@@ -318,7 +317,6 @@ export const getServiceTermContract = (address: string) => {
   const message = {
     title: SERVICE_TERM_TITLE,
     domain: DOMAIN,
-    version: packageJson.version,
     agree: [TERM_OF_SERVICE, PRIVATE_POLICY],
     signer: address,
     expired: getTimestamp() + DeWT_VALIDITY_PERIOD,
@@ -335,7 +333,6 @@ const convertServiceTermToObject = (serviceTerm: IEIP712Data) => {
     message: {
       title: message.title as string,
       domain: message.domain as string,
-      version: message.version as string,
       agree: message.agree as string[],
       signer: message.signer as string,
       expired: message.expired as number,
@@ -350,7 +347,6 @@ export const rlpEncodeServiceTerm = (serviceTerm: IEIP712Data) => {
   const encodedData = RLP.encode([
     data.message.title,
     data.message.domain,
-    data.message.version,
     data.message.agree,
     data.message.signer,
     data.message.expired,
@@ -380,21 +376,19 @@ export const rlpDecodeServiceTerm = (data: string) => {
   const decodedData = RLP.decode(buffer);
   const title = decodedData[0] ? asciiToString(decodedData[0] as Uint8Array) : undefined;
   const domain = decodedData[1] ? asciiToString(decodedData[1] as Uint8Array) : undefined;
-  const version = decodedData[2] ? asciiToString(decodedData[2] as Uint8Array) : undefined;
   const agree = [
-    asciiToString((decodedData[3] as Array<Uint8Array>)[0]),
-    asciiToString((decodedData[3] as Array<Uint8Array>)[1]),
+    asciiToString((decodedData[2] as Array<Uint8Array>)[0]),
+    asciiToString((decodedData[2] as Array<Uint8Array>)[1]),
   ];
-  const signer = decodedData[4]
-    ? `0x${Buffer.from(decodedData[4] as Uint8Array).toString('hex')}`
+  const signer = decodedData[3]
+    ? `0x${Buffer.from(decodedData[3] as Uint8Array).toString('hex')}`
     : undefined;
-  const expired = decodedData[5] ? asciiToInt(decodedData[5] as Uint8Array) : undefined;
-  const iat = decodedData[6] ? asciiToInt(decodedData[6] as Uint8Array) : undefined;
+  const expired = decodedData[4] ? asciiToInt(decodedData[4] as Uint8Array) : undefined;
+  const iat = decodedData[5] ? asciiToInt(decodedData[5] as Uint8Array) : undefined;
   return {
     message: {
       title,
       domain,
-      version,
       agree,
       signer,
       expired,
@@ -408,12 +402,10 @@ export const verifySignedServiceTerm = (encodedServiceTerm: string) => {
   const serviceTerm = rlpDecodeServiceTerm(encodedServiceTerm);
   // Info: 1. verify contract domain (20230411 - tzuhan)
   if (serviceTerm.message.domain !== DOMAIN) isDeWTLegit = false && isDeWTLegit;
-  // Info: 2. verify contract version (20230411 - tzuhan)
-  if (serviceTerm.message.version !== packageJson.version) isDeWTLegit = false && isDeWTLegit;
-  // Info: 3. verify contract agreement (20230411 - tzuhan)
+  // Info: 2. verify contract agreement (20230411 - tzuhan)
   if (serviceTerm.message.agree[0] !== TERM_OF_SERVICE) isDeWTLegit = false && isDeWTLegit;
   if (serviceTerm.message.agree[1] !== PRIVATE_POLICY) isDeWTLegit = false && isDeWTLegit;
-  // Info: 4. verify contract expiration time (20230411 - tzuhan)
+  // Info: 3. verify contract expiration time (20230411 - tzuhan)
   if (
     !serviceTerm.message.expired || // Info: expired 不存在 (20230411 - tzuhan)
     !serviceTerm.message.iat || // Info: iat 不存在 (20230411 - tzuhan)

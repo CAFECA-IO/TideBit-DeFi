@@ -1,29 +1,34 @@
 export type IEvents =
   | 'tickers'
-  | 'update'
   | 'trades'
-  | 'publicTrades'
-  | 'account'
-  | 'order'
-  | 'trade'
-  | 'candleOnUpdate';
+  | 'candleOnUpdate'
+  | 'subscribe'
+  | 'unsubscribe'
+  | 'error'
+  | 'cfd'
+  | 'bolt_transaction'
+  | 'balance';
+
 export interface IEventsConstant {
   TICKERS: IEvents;
-  UPDATE: IEvents;
   TRADES: IEvents;
-  PUBILC_TRADES: IEvents;
-  ACCOUNT: IEvents;
-  ORDER: IEvents;
-  TRADE: IEvents;
   CANDLE_ON_UPDATE: IEvents;
+  SUBSCRIBE: IEvents;
+  UNSUBSCRIBE: IEvents;
+  ERROR: IEvents;
+  BOLT_TRANSACTION: IEvents;
+  CFD: IEvents;
+  BALANCE: IEvents;
 }
+
 export const Events: IEventsConstant = {
   TICKERS: 'tickers',
-  UPDATE: 'update',
   TRADES: 'trades',
-  PUBILC_TRADES: 'publicTrades',
-  ACCOUNT: 'account',
-  ORDER: 'order',
-  TRADE: 'trade',
   CANDLE_ON_UPDATE: 'candleOnUpdate',
+  SUBSCRIBE: 'subscribe',
+  UNSUBSCRIBE: 'unsubscribe',
+  ERROR: 'error',
+  BOLT_TRANSACTION: 'bolt_transaction',
+  CFD: 'cfd',
+  BALANCE: 'balance',
 };

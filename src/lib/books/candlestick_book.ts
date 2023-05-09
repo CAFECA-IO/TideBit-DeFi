@@ -83,6 +83,11 @@ class CandlestickBook {
     return candlestickData;
   }
 
+  updateCandlesticksDatas(instId: string, data: ICandlestickData[]) {
+    if (!this._candlesticks[instId]) this._candlesticks[instId] = [];
+    this._candlesticks[instId] = [...data];
+  }
+
   updateCandlesticksData(action: IPusherAction, data: ICandlestick) {
     const {instId, candlesticks} = data;
     if (!this._candlesticks[instId]) this._candlesticks[instId] = [];

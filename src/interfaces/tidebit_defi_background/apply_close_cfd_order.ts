@@ -11,6 +11,7 @@ export interface IApplyCloseCFDOrder extends IApplyCFDOrder {
   quotation: IQuotation;
   closePrice: number;
   closedType: ICFDClosedType;
+  forcedClose?: boolean;
   closeTimestamp?: number;
 }
 

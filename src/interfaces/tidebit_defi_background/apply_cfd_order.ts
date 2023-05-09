@@ -1,6 +1,7 @@
 import {ICFDOperation} from '../../constants/cfd_order_type';
 import {OrderState} from '../../constants/order_state';
 import {IOrderStatusUnion, OrderStatusUnion} from '../../constants/order_status_union';
+import {OrderType} from '../../constants/order_type';
 import {ProfitState} from '../../constants/profit_state';
 import {TypeOfPosition} from '../../constants/type_of_position';
 import {getTimestamp, randomHex} from '../../lib/common';
@@ -21,22 +22,27 @@ export const convertApplyCreateCFDToAcceptedCFD = (
   applyCFDData: IApplyCreateCFDOrder,
   balance: IBalance,
   userSignature: string,
-  nodeSignature: string,
+  droneSignature: string,
+  locutusSignature: string,
   orderStatus?: IOrderStatusUnion
 ) => {
   const id = randomHex(20);
-  const txid = randomHex(32);
+  const orderId = randomHex(20);
+  const txhash = randomHex(32);
+  const timestamp = getTimestamp();
+  const sequence = Math.ceil(Math.random() * 10000);
   const CFDOrder: ICFDOrder = {
-    id,
+    id: orderId,
     orderType: applyCFDData.orderType,
     orderStatus: orderStatus ? orderStatus : OrderStatusUnion.WAITING,
-    txid,
+    txhash,
     fee: 0,
     remark: '',
     ticker: applyCFDData.ticker,
     state: OrderState.OPENING,
     openPrice: applyCFDData.price,
-    createTimestamp: getTimestamp(),
+    createTimestamp: timestamp,
+    updatedTimestamp: timestamp,
     typeOfPosition: applyCFDData.typeOfPosition,
     targetAsset: applyCFDData.targetAsset,
     unitAsset: applyCFDData.unitAsset,
@@ -51,19 +57,27 @@ export const convertApplyCreateCFDToAcceptedCFD = (
     guaranteedStopFee: applyCFDData.guaranteedStopFee,
   };
   const acceptedCFDOrder: IAcceptedCFDOrder = {
-    txid,
+    id,
+    orderType: OrderType.CFD,
+    txhash,
+    sequence,
     applyData: applyCFDData,
-    userSignature: userSignature,
     receipt: {
-      order: CFDOrder,
-      balance: {
-        currency: applyCFDData.margin.asset,
-        available: balance.available - applyCFDData.margin.amount,
-        locked: balance.locked + applyCFDData.margin.amount,
-      },
+      txhash,
+      sequence,
+      orderSnapshot: CFDOrder,
+      balanceSnapshot: [
+        {
+          currency: applyCFDData.margin.asset,
+          available: balance.available - applyCFDData.margin.amount,
+          locked: balance.locked + applyCFDData.margin.amount,
+        },
+      ],
     },
-    nodeSignature: nodeSignature,
-    createTimestamp: getTimestamp(),
+    userSignature: userSignature,
+    droneSignature: droneSignature,
+    locutusSignature: locutusSignature,
+    createTimestamp: timestamp,
   };
   return {CFDOrder, acceptedCFDOrder};
 };
@@ -73,10 +87,14 @@ export const convertApplyUpdateCFDToAcceptedCFD = (
   cfdOrder: ICFDOrder,
   balance: IBalance,
   userSignature: string,
-  nodeSignature: string,
+  droneSignature: string,
+  locutusSignature: string,
   orderStatus?: IOrderStatusUnion
 ) => {
-  const txid = randomHex(32);
+  const id = randomHex(20);
+  const txhash = randomHex(32);
+  const timestamp = getTimestamp();
+  const sequence = Math.ceil(Math.random() * 10000);
   const updateCFDOrder: ICFDOrder = {
     ...cfdOrder,
     orderStatus: orderStatus ? orderStatus : OrderStatusUnion.WAITING,
@@ -88,15 +106,25 @@ export const convertApplyUpdateCFDToAcceptedCFD = (
       : cfdOrder.guaranteedStop,
   };
   const acceptedCFDOrder: IAcceptedCFDOrder = {
-    txid,
+    id,
+    orderType: OrderType.CFD,
+    txhash,
+    sequence,
     applyData: applyCFDData,
-    userSignature: userSignature,
     receipt: {
-      order: updateCFDOrder,
-      balance,
+      txhash,
+      sequence,
+      orderSnapshot: updateCFDOrder,
+      balanceSnapshot: [
+        {
+          ...balance,
+        },
+      ],
     },
-    nodeSignature: nodeSignature,
-    createTimestamp: getTimestamp(),
+    userSignature: userSignature,
+    droneSignature: droneSignature,
+    locutusSignature: locutusSignature,
+    createTimestamp: timestamp,
   };
   return {updateCFDOrder, acceptedCFDOrder};
 };
@@ -106,7 +134,8 @@ export const convertApplyCloseCFDToAcceptedCFD = (
   cfdOrder: ICFDOrder,
   balance: IBalance,
   userSignature: string,
-  nodeSignature: string,
+  droneSignature: string,
+  locutusSignature: string,
   orderStatus?: IOrderStatusUnion
 ) => {
   const pnl =
@@ -118,7 +147,10 @@ export const convertApplyCloseCFDToAcceptedCFD = (
     available: balance.available * -1 + pnl,
     locked: balance.locked * -1,
   };
-  const txid = randomHex(32);
+  const id = randomHex(20);
+  const txhash = randomHex(32);
+  const timestamp = getTimestamp();
+  const sequence = Math.ceil(Math.random() * 10000);
   const updateCFDOrder: ICFDOrder = {
     ...cfdOrder,
     orderStatus: orderStatus ? orderStatus : OrderStatusUnion.WAITING,
@@ -133,19 +165,27 @@ export const convertApplyCloseCFDToAcceptedCFD = (
     },
   };
   const acceptedCFDOrder: IAcceptedCFDOrder = {
-    txid,
+    id,
+    orderType: OrderType.CFD,
+    txhash,
+    sequence,
     applyData: applyCFDData,
-    userSignature: userSignature,
     receipt: {
-      order: updateCFDOrder,
-      balance: {
-        ...balance,
-        available: balance.available - balanceDiff.available,
-        locked: balance.locked + balanceDiff.locked,
-      },
+      txhash,
+      sequence,
+      orderSnapshot: updateCFDOrder,
+      balanceSnapshot: [
+        {
+          ...balance,
+          available: balance.available - balanceDiff.available,
+          locked: balance.locked + balanceDiff.locked,
+        },
+      ],
     },
-    nodeSignature: nodeSignature,
-    createTimestamp: getTimestamp(),
+    userSignature: userSignature,
+    droneSignature: droneSignature,
+    locutusSignature: locutusSignature,
+    createTimestamp: timestamp,
   };
   return {updateCFDOrder, acceptedCFDOrder};
 };

@@ -31,8 +31,10 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
   const globalCtx = useContext(GlobalContext);
 
   const {createTimestamp, receipt} = histories.histories;
+  const {orderSnapshot: order, balanceSnapshot} = receipt;
+  const balance = balanceSnapshot.shift();
 
-  const getCFDData = userCtx.getCFD((receipt.order as ICFDOrder).id);
+  const getCFDData = userCtx.getCFD((order as ICFDOrder).id);
 
   /* Todo: (20230328 - Julian) get data from userContext 
   const getDepositData: IDisplayAcceptedDepositOrder = {
@@ -55,22 +57,23 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
   };*/
 
   const receiptDate = timestampToString(createTimestamp ?? 0);
-  const orderType = receipt.order.orderType;
-  const orderStatus = receipt.order.orderStatus;
+
+  const orderType = order.orderType;
+  const orderStatus = order.orderStatus;
   const targetAsset =
     orderType === OrderType.CFD
-      ? (receipt.order as ICFDOrder).margin.asset
+      ? (order as ICFDOrder).margin.asset
       : orderType === OrderType.DEPOSIT
-      ? (receipt.order as IDepositOrder).targetAsset
-      : (receipt.order as IWithdrawOrder).targetAsset;
+      ? (order as IDepositOrder).targetAsset
+      : (order as IWithdrawOrder).targetAsset;
   const targetAmount =
     orderType === OrderType.CFD
-      ? (receipt.order as ICFDOrder).state === OrderState.CLOSED
-        ? (receipt.order as ICFDOrder).margin.amount
-        : (receipt.order as ICFDOrder).margin.amount * -1
+      ? (order as ICFDOrder).state === OrderState.CLOSED
+        ? (order as ICFDOrder).margin.amount
+        : (order as ICFDOrder).margin.amount * -1
       : orderType === OrderType.DEPOSIT
-      ? (receipt.order as IDepositOrder).targetAmount
-      : (receipt.order as IWithdrawOrder).targetAmount * -1;
+      ? (order as IDepositOrder).targetAmount
+      : (order as IWithdrawOrder).targetAmount * -1;
 
   const displayedButtonColor =
     targetAmount == 0 ? 'bg-lightGray' : targetAmount > 0 ? 'bg-lightGreen5' : 'bg-lightRed';
@@ -81,9 +84,9 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
       : orderType === OrderType.WITHDRAW
       ? t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_WITHDRAW')
       : orderType === OrderType.CFD
-      ? (receipt.order as ICFDOrder).state === OrderState.OPENING
+      ? (order as ICFDOrder).state === OrderState.OPENING
         ? t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_CFD_OPEN')
-        : (receipt.order as ICFDOrder).state === OrderState.CLOSED
+        : (order as ICFDOrder).state === OrderState.CLOSED
         ? t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_CFD_CLOSE')
         : t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_TITLE')
       : t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_TITLE');
@@ -92,13 +95,13 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
 
   const displayedButtonImage =
     orderType === OrderType.DEPOSIT ||
-    (orderType === OrderType.CFD && (receipt.order as ICFDOrder).state === OrderState.CLOSED)
+    (orderType === OrderType.CFD && (order as ICFDOrder).state === OrderState.CLOSED)
       ? '/elements/group_149621.svg'
       : '/elements/group_14962.svg';
 
   const displayedReceiptAmount = targetAmount >= 0 ? '+' + targetAmount : targetAmount;
 
-  const displayedReceiptTxId = receipt.order.txid;
+  const displayedReceiptTxId = order.txhash;
 
   const displayedReceiptStateColor =
     orderStatus === OrderStatusUnion.SUCCESS
@@ -124,7 +127,7 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
 
   const buttonClickHandler =
     orderType === OrderType.CFD
-      ? (receipt.order as ICFDOrder).state === OrderState.OPENING
+      ? (order as ICFDOrder).state === OrderState.OPENING
         ? () => {
             /* ToDo: convert IAceptedOrder to IDataPositionUpdatedModal in order to use getCFD (20230324 - Luphia)
             globalCtx.dataUpdateFormModalHandler(getCFDData);
@@ -163,9 +166,9 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
     );
 
   const displayedReceiptFeeText =
-    receipt.order.fee === 0
-      ? receipt.order.fee
-      : receipt.order.fee.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+    order.fee === 0
+      ? order.fee
+      : order.fee.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
           minimumFractionDigits: 2,
         });
 
@@ -173,7 +176,7 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
     orderStatus === OrderStatusUnion.PROCESSING || orderStatus === OrderStatusUnion.WAITING ? (
       <Lottie className="w-20px" animationData={smallConnectingAnimation} />
     ) : (
-      receipt.balance.available.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
+      balance?.available.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
         minimumFractionDigits: 2,
       })
     );

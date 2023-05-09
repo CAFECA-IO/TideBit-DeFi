@@ -156,7 +156,7 @@ class TransactionEngine {
     const funcNameHex = `0x${keccak.keccak256(funcName).slice(0, 8)}`;
     // ++ ToDo: fill Cross-Chain-Channel contract address into addressData
     const addressData = ''.padStart(64, '0');
-    const amountData = SafeMath.toSmallestUnitHex(depositOrder.targetAmount, depositOrder.decimals)
+    const amountData = SafeMath.toSmallestUnitHex(depositOrder.targetAmount, 6) // TODO: get decimals from currency (20230503 - tzuhan)
       .split('.')[0]
       .padStart(64, '0');
     const data = funcNameHex + addressData + amountData;
@@ -164,7 +164,7 @@ class TransactionEngine {
     const value = 0;
 
     const transaction = {
-      to: depositOrder.to,
+      to: ''.padStart(64, '0'), //depositOrder.to,  // TODO: get decimals from currency (20230503 - tzuhan)
       amount: value,
       data,
     };

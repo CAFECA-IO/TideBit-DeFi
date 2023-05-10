@@ -18,7 +18,7 @@ import {
   MONTH_FULL_NAME_LIST,
   FRACTION_DIGITS,
 } from '../constants/config';
-import {UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../constants/display';
+import {UNIVERSAL_NUMBER_FORMAT_LOCALE, DEFAULT_SPREAD} from '../constants/display';
 import ServiceTerm from '../constants/contracts/service_term';
 import IJSON from '../interfaces/ijson';
 import RLP from 'rlp';
@@ -26,6 +26,7 @@ import {ICFDOrder} from '../interfaces/tidebit_defi_background/order';
 import {Currency, ICurrency, ICurrencyConstant} from '../constants/currency';
 import {CustomError} from './custom_error';
 import {Code} from '../constants/code';
+import {getDummyTickerLiveStatistics} from '../interfaces/tidebit_defi_background/ticker_live_statistics';
 
 export const roundToDecimalPlaces = (val: number, precision: number): number => {
   const roundedNumber = Number(val.toFixed(precision));
@@ -286,6 +287,14 @@ export const toDisplayCFDOrder = (
     stopLoss: rSl,
   };
 
+  // Info: (20230510 - Julian) positionLineGraph with spread
+  const spread =
+    getDummyTickerLiveStatistics(cfdOrder.ticker as ICurrency).spread ?? DEFAULT_SPREAD;
+  const positionLineGraphWithSpread =
+    cfdOrder.typeOfPosition === TypeOfPosition.BUY
+      ? positionLineGraph.map((v: number) => v * (1 + spread))
+      : positionLineGraph.map((v: number) => v * (1 - spread));
+
   const openPrice = cfdOrder.openPrice;
   const nowPrice = positionLineGraph[positionLineGraph.length - 1];
   const liquidationPrice = cfdOrder.liquidationPrice;
@@ -314,7 +323,7 @@ export const toDisplayCFDOrder = (
     },
     openValue: openValue,
     closeValue: closeValue,
-    positionLineGraph,
+    positionLineGraph: positionLineGraphWithSpread,
     suggestion,
     stateCode: stateCode,
   };

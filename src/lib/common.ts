@@ -26,7 +26,6 @@ import {ICFDOrder} from '../interfaces/tidebit_defi_background/order';
 import {Currency, ICurrency, ICurrencyConstant} from '../constants/currency';
 import {CustomError} from './custom_error';
 import {Code} from '../constants/code';
-import {getDummyTickerLiveStatistics} from '../interfaces/tidebit_defi_background/ticker_live_statistics';
 
 export const roundToDecimalPlaces = (val: number, precision: number): number => {
   const roundedNumber = Number(val.toFixed(precision));
@@ -248,7 +247,8 @@ export const randomHex = (length: number) => {
 export const toDisplayCFDOrder = (
   cfdOrder: ICFDOrder,
   positionLineGraph: number[],
-  currentPrice?: number
+  currentPrice?: number,
+  spread?: number
 ) => {
   const openValue = roundToDecimalPlaces(cfdOrder.openPrice * cfdOrder.amount, 2);
   const closeValue =
@@ -287,13 +287,12 @@ export const toDisplayCFDOrder = (
     stopLoss: rSl,
   };
 
+  const spreadValue = spread ? spread : DEFAULT_SPREAD;
   // Info: (20230510 - Julian) positionLineGraph with spread
-  const spread =
-    getDummyTickerLiveStatistics(cfdOrder.ticker as ICurrency).spread ?? DEFAULT_SPREAD;
   const positionLineGraphWithSpread =
     cfdOrder.typeOfPosition === TypeOfPosition.BUY
-      ? positionLineGraph.map((v: number) => v * (1 + spread))
-      : positionLineGraph.map((v: number) => v * (1 - spread));
+      ? positionLineGraph.map((v: number) => v * (1 + spreadValue))
+      : positionLineGraph.map((v: number) => v * (1 - spreadValue));
 
   const openPrice = cfdOrder.openPrice;
   const nowPrice = positionLineGraph[positionLineGraph.length - 1];

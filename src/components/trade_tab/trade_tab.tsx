@@ -35,6 +35,7 @@ import {OrderType} from '../../constants/order_type';
 import {OrderStatusUnion} from '../../constants/order_status_union';
 import {ClickEvent} from '../../constants/tidebit_event';
 import {
+  getEstimatedPnL,
   getTimestamp,
   getTimestampInMilliseconds,
   roundToDecimalPlaces,
@@ -317,7 +318,19 @@ const TradeTab = () => {
       (longTpValueRef.current - Number(longPriceRef.current)) * targetInputValueRef.current;
     const symbol = rs > 0 ? '+' : '-';
     const number = Math.abs(rs);
-    setEstimatedLongProfitValue({number: number, symbol: symbol});
+    // eslint-disable-next-line no-console
+    console.log('correct long profit', number, symbol);
+    // setEstimatedLongProfitValue({number: number, symbol: symbol});
+    const profit = getEstimatedPnL(
+      targetInputValueRef.current,
+      TypeOfPosition.BUY,
+      longPriceRef.current,
+      longTpValueRef.current,
+      true
+    );
+    // eslint-disable-next-line no-console
+    console.log('long profit', profit);
+    setEstimatedLongProfitValue(profit);
   };
 
   const calculateLongLoss = () => {
@@ -325,7 +338,19 @@ const TradeTab = () => {
       (longSlValueRef.current - Number(longPriceRef.current)) * targetInputValueRef.current;
     const symbol = rs > 0 ? '+' : '-';
     const number = Math.abs(rs);
-    setEstimatedLongLossValue({number: number, symbol: symbol});
+    // eslint-disable-next-line no-console
+    console.log('correct long loss', number, symbol);
+    // setEstimatedLongLossValue({number: number, symbol: symbol});
+    const loss = getEstimatedPnL(
+      targetInputValueRef.current,
+      TypeOfPosition.BUY,
+      longPriceRef.current,
+      longSlValueRef.current,
+      false
+    );
+    // eslint-disable-next-line no-console
+    console.log('long loss', loss);
+    setEstimatedLongLossValue(loss);
   };
 
   const calculateShortProfit = () => {
@@ -333,7 +358,19 @@ const TradeTab = () => {
       (Number(shortPriceRef.current) - shortTpValueRef.current) * targetInputValueRef.current;
     const symbol = rs > 0 ? '+' : '-'; // FIXME: Check
     const number = Math.abs(rs);
-    setEstimatedShortProfitValue({number: number, symbol: symbol});
+    // eslint-disable-next-line no-console
+    console.log('correct short profit', number, symbol);
+    // setEstimatedShortProfitValue({number: number, symbol: symbol});
+    const profit = getEstimatedPnL(
+      targetInputValueRef.current,
+      TypeOfPosition.SELL,
+      shortPriceRef.current,
+      shortTpValueRef.current,
+      true
+    );
+    // eslint-disable-next-line no-console
+    console.log('short profit', profit);
+    setEstimatedShortProfitValue(profit);
   };
 
   const calculateShortLoss = () => {
@@ -341,7 +378,19 @@ const TradeTab = () => {
       (Number(shortPriceRef.current) - shortSlValueRef.current) * targetInputValueRef.current;
     const symbol = rs > 0 ? '+' : '-';
     const number = Math.abs(rs);
-    setEstimatedShortLossValue({number: number, symbol: symbol});
+    // eslint-disable-next-line no-console
+    console.log('correct short loss', number, symbol);
+    // setEstimatedShortLossValue({number: number, symbol: symbol});
+    const loss = getEstimatedPnL(
+      targetInputValueRef.current,
+      TypeOfPosition.SELL,
+      shortPriceRef.current,
+      shortSlValueRef.current,
+      false
+    );
+    // eslint-disable-next-line no-console
+    console.log('short loss', loss);
+    setEstimatedShortLossValue(loss);
   };
 
   const getTargetInputValue = (value: number) => {

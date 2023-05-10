@@ -494,13 +494,25 @@ export const getEstimatedPnL = (
   amount: number,
   typeOfPosition: ITypeOfPosition,
   entryPrice: number,
-  targetPrice: number
+  targetPrice: number,
+  isProfit: boolean
 ) => {
   // Create a logic to calculate the estimated PnL
   const isLong = typeOfPosition === TypeOfPosition.BUY;
   const diff = isLong ? targetPrice - entryPrice : entryPrice - targetPrice;
   const rs = diff * amount;
-  const symbol = (rs > 0 && isLong) || (rs < 0 && !isLong) ? '+' : '-';
+  // const symbol = (rs > 0 && isProfit) || (rs < 0 && !isProfit) ? '+' : '-';
+  // const number = Math.abs(rs);
+  const isPositive = rs > 0;
+
+  let symbol = '';
+
+  if (isProfit) {
+    symbol = isPositive ? '+' : '-';
+  } else {
+    symbol = isPositive ? '+' : '-';
+  }
+
   const number = Math.abs(rs);
   return {number: number, symbol: symbol};
 };

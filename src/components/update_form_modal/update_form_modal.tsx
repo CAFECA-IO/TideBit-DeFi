@@ -418,7 +418,8 @@ const UpdateFormModal = ({
       openCfdDetails.amount,
       openCfdDetails.typeOfPosition,
       openCfdDetails.openPrice,
-      tpValueRef.current
+      tpValueRef.current,
+      true
     );
     setEstimatedProfitValue(profit);
   };
@@ -437,7 +438,8 @@ const UpdateFormModal = ({
       openCfdDetails.amount,
       openCfdDetails.typeOfPosition,
       openCfdDetails.openPrice,
-      slValueRef.current
+      slValueRef.current,
+      false
     );
     setEstimatedProfitValue(loss);
   };

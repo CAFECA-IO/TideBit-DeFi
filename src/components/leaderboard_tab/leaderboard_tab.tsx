@@ -23,9 +23,7 @@ const LeaderboardTab = () => {
   const gold = (
     <div className="relative mt-20 md:mt-8">
       <div>
-        <div
-          className={`absolute inline-flex h-${medalistSize}px w-${medalistSize}px items-center justify-center p-3`}
-        >
+        <div className={`absolute inline-flex h-200px w-200px items-center justify-center p-3`}>
           <div
             className={`inline-flex h-full w-full items-center justify-center overflow-hidden rounded-full bg-cuteBlue text-center`}
           >
@@ -40,11 +38,11 @@ const LeaderboardTab = () => {
           alt="gold_medalist_icon"
         />
       </div>
-      <div className="absolute top-36 flex w-full flex-col items-center space-y-3">
+      <div className="absolute top-24 flex w-full scale-75 flex-col items-center md:top-36 md:scale-100 md:space-y-3">
         <Image src="/elements/gold_crown@2x.png" width={120} height={120} alt="gold_crown_icon" />
-        <div className="text-lg">name</div>
+        <div className="text-xs md:text-lg">name</div>
         <Image src="/elements/gold_star.svg" width={50} height={50} alt="gold_crown_icon" />
-        <div className="text-xl">+ 47.45 % USDT</div>
+        <div className="text-xs md:text-xl">+ 47.45 % USDT</div>
       </div>
     </div>
   );

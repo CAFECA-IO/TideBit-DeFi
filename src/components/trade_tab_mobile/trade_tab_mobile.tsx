@@ -35,6 +35,7 @@ import {
 import {ClickEvent} from '../../constants/tidebit_event';
 import {useTranslation} from 'next-i18next';
 import {
+  getEstimatedPnL,
   getTimestamp,
   getTimestampInMilliseconds,
   roundToDecimalPlaces,
@@ -314,35 +315,47 @@ const TradeTabMobile = () => {
   };
 
   const calculateLongProfit = () => {
-    const rs =
-      (longTpValueRef.current - Number(longPriceRef.current)) * targetInputValueRef.current;
-    const symbol = rs > 0 ? '+' : '-';
-    const number = Math.abs(rs);
-    setEstimatedLongProfitValue({number: number, symbol: symbol});
+    const profit = getEstimatedPnL(
+      targetInputValueRef.current,
+      TypeOfPosition.BUY,
+      longPriceRef.current,
+      longTpValueRef.current,
+      true
+    );
+    setEstimatedLongProfitValue(profit);
   };
 
   const calculateLongLoss = () => {
-    const rs =
-      (longSlValueRef.current - Number(longPriceRef.current)) * targetInputValueRef.current;
-    const symbol = rs > 0 ? '+' : '-';
-    const number = Math.abs(rs);
-    setEstimatedLongLossValue({number: number, symbol: symbol});
+    const loss = getEstimatedPnL(
+      targetInputValueRef.current,
+      TypeOfPosition.BUY,
+      longPriceRef.current,
+      longSlValueRef.current,
+      false
+    );
+    setEstimatedLongLossValue(loss);
   };
 
   const calculateShortProfit = () => {
-    const rs =
-      (Number(shortPriceRef.current) - shortTpValueRef.current) * targetInputValueRef.current;
-    const symbol = rs > 0 ? '+' : '-'; // FIXME: Check
-    const number = Math.abs(rs);
-    setEstimatedShortProfitValue({number: number, symbol: symbol});
+    const profit = getEstimatedPnL(
+      targetInputValueRef.current,
+      TypeOfPosition.SELL,
+      shortPriceRef.current,
+      shortTpValueRef.current,
+      true
+    );
+    setEstimatedShortProfitValue(profit);
   };
 
   const calculateShortLoss = () => {
-    const rs =
-      (Number(shortPriceRef.current) - shortSlValueRef.current) * targetInputValueRef.current;
-    const symbol = rs > 0 ? '+' : '-';
-    const number = Math.abs(rs);
-    setEstimatedShortLossValue({number: number, symbol: symbol});
+    const loss = getEstimatedPnL(
+      targetInputValueRef.current,
+      TypeOfPosition.SELL,
+      shortPriceRef.current,
+      shortSlValueRef.current,
+      false
+    );
+    setEstimatedShortLossValue(loss);
   };
 
   const getTargetInputValue = (value: number) => {

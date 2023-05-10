@@ -425,15 +425,6 @@ const UpdateFormModal = ({
   };
 
   const calculateLoss = () => {
-    // const diff =
-    //   openCfdDetails.typeOfPosition === TypeOfPosition.BUY
-    //     ? openCfdDetails.openPrice - slValueRef.current
-    //     : slValueRef.current - openCfdDetails.openPrice;
-    // const rs = diff * openCfdDetails.amount;
-    // const symbol = rs < 0 ? '+' : '-';
-    // const number = Math.abs(rs);
-    // setEstimatedLossValue({number: number, symbol: symbol});
-
     const loss = getEstimatedPnL(
       openCfdDetails.amount,
       openCfdDetails.typeOfPosition,
@@ -441,7 +432,7 @@ const UpdateFormModal = ({
       slValueRef.current,
       false
     );
-    setEstimatedProfitValue(loss);
+    setEstimatedLossValue(loss);
   };
 
   const compareChange = () => {

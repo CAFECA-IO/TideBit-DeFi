@@ -314,13 +314,6 @@ const TradeTab = () => {
   };
 
   const calculateLongProfit = () => {
-    const rs =
-      (longTpValueRef.current - Number(longPriceRef.current)) * targetInputValueRef.current;
-    const symbol = rs > 0 ? '+' : '-';
-    const number = Math.abs(rs);
-    // eslint-disable-next-line no-console
-    console.log('correct long profit', number, symbol);
-    // setEstimatedLongProfitValue({number: number, symbol: symbol});
     const profit = getEstimatedPnL(
       targetInputValueRef.current,
       TypeOfPosition.BUY,
@@ -328,19 +321,10 @@ const TradeTab = () => {
       longTpValueRef.current,
       true
     );
-    // eslint-disable-next-line no-console
-    console.log('long profit', profit);
     setEstimatedLongProfitValue(profit);
   };
 
   const calculateLongLoss = () => {
-    const rs =
-      (longSlValueRef.current - Number(longPriceRef.current)) * targetInputValueRef.current;
-    const symbol = rs > 0 ? '+' : '-';
-    const number = Math.abs(rs);
-    // eslint-disable-next-line no-console
-    console.log('correct long loss', number, symbol);
-    // setEstimatedLongLossValue({number: number, symbol: symbol});
     const loss = getEstimatedPnL(
       targetInputValueRef.current,
       TypeOfPosition.BUY,
@@ -348,19 +332,10 @@ const TradeTab = () => {
       longSlValueRef.current,
       false
     );
-    // eslint-disable-next-line no-console
-    console.log('long loss', loss);
     setEstimatedLongLossValue(loss);
   };
 
   const calculateShortProfit = () => {
-    const rs =
-      (Number(shortPriceRef.current) - shortTpValueRef.current) * targetInputValueRef.current;
-    const symbol = rs > 0 ? '+' : '-'; // FIXME: Check
-    const number = Math.abs(rs);
-    // eslint-disable-next-line no-console
-    console.log('correct short profit', number, symbol);
-    // setEstimatedShortProfitValue({number: number, symbol: symbol});
     const profit = getEstimatedPnL(
       targetInputValueRef.current,
       TypeOfPosition.SELL,
@@ -368,19 +343,10 @@ const TradeTab = () => {
       shortTpValueRef.current,
       true
     );
-    // eslint-disable-next-line no-console
-    console.log('short profit', profit);
     setEstimatedShortProfitValue(profit);
   };
 
   const calculateShortLoss = () => {
-    const rs =
-      (Number(shortPriceRef.current) - shortSlValueRef.current) * targetInputValueRef.current;
-    const symbol = rs > 0 ? '+' : '-';
-    const number = Math.abs(rs);
-    // eslint-disable-next-line no-console
-    console.log('correct short loss', number, symbol);
-    // setEstimatedShortLossValue({number: number, symbol: symbol});
     const loss = getEstimatedPnL(
       targetInputValueRef.current,
       TypeOfPosition.SELL,
@@ -388,8 +354,6 @@ const TradeTab = () => {
       shortSlValueRef.current,
       false
     );
-    // eslint-disable-next-line no-console
-    console.log('short loss', loss);
     setEstimatedShortLossValue(loss);
   };
 

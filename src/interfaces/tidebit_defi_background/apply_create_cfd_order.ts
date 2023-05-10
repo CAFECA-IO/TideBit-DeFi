@@ -45,8 +45,8 @@ export const getDummyApplyCreateCFDOrder = (currency: string) => {
     targetAsset: currency,
     unitAsset: unitAsset,
     margin: {asset: unitAsset, amount: randomIntFromInterval(10, 100)},
-    takeProfit: 74521,
-    stopLoss: 25250,
+    takeProfit: 0,
+    stopLoss: 0,
     fee: 0,
     quotation: getDummyQuotation(currency, typeOfPosition), // 報價單
     liquidationPrice: randomIntFromInterval(1000, 10000),

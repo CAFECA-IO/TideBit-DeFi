@@ -12,9 +12,9 @@ const UserPersonalRanking = () => {
   const username = userCtx.wallet?.slice(-1).toUpperCase();
 
   /* ToDo: (20230509 - Julian) get Ranking data */
-  const pnl = -7.323;
-  const rankingNumber = 214;
-  const cumulativePnl = 0;
+  const rankingNumber = userCtx.getMyRanking('')?.rank ?? 0;
+  const pnl = userCtx.getMyRanking('')?.pnl ?? 0;
+  const cumulativePnl = userCtx.getMyRanking('')?.cumulativePnl ?? 0;
 
   const displayedPnl =
     pnl > 0 ? (

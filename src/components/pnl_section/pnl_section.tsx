@@ -27,18 +27,11 @@ const PnlSection = () => {
     {title: t('MY_ASSETS_PAGE.PNL_SECTION_30_DAYS'), ...pnl30Days},
     {title: t('MY_ASSETS_PAGE.PNL_SECTION_CUMULATIVE'), ...cumulativePnl},
   ].map(({amount, percentage, ...rest}) => {
-    const percentageAbs = Math.abs(percentage);
     const result = {
       content:
         amount > 0
-          ? `+${amount.toLocaleString(
-              UNIVERSAL_NUMBER_FORMAT_LOCALE,
-              FRACTION_DIGITS
-            )} ${unitAsset}`
-          : `${amount.toLocaleString(
-              UNIVERSAL_NUMBER_FORMAT_LOCALE,
-              FRACTION_DIGITS
-            )} ${unitAsset}`,
+          ? `+${numberFormatted(amount)} ${unitAsset}`
+          : `-${numberFormatted(amount)} ${unitAsset}`,
       remarks:
         percentage < 0 ? `▾ ${percentageAbs.toString()} %` : `▴ ${percentageAbs.toString()} %`,
       textColor:

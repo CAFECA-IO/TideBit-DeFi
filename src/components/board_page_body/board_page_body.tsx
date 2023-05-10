@@ -9,9 +9,9 @@ const BoardPageBody = () => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
   return (
-    <div className="relative overflow-x-hidden overflow-y-hidden pt-20">
+    <div className="overflow-x-hidden overflow-y-hidden pt-20">
       <div className="min-h-screen">
-        <div className="absolute my-10 mx-auto flex w-screen flex-col items-center space-y-4">
+        <div className="absolute mx-auto my-10 flex w-screen flex-col items-center space-y-4">
           <div>
             <h1 className="text-3xl">{t('LEADERBOARD_PAGE.TITLE')}</h1>
           </div>
@@ -20,7 +20,7 @@ const BoardPageBody = () => {
           {/* ToDo: (20230509 - Julian) Ranking List with tabs */}
           <div className="h-50px w-screen rounded-xl bg-darkGray7 md:w-8/10"></div>
         </div>
-        <div className="flex justify-center">
+        <div className="relative flex justify-center">
           <UserPersonalRanking />
         </div>
       </div>

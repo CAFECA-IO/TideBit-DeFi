@@ -137,10 +137,10 @@ export interface IUserContext {
   connectTideBit: (email: string, password: string) => Promise<IResult>;
   shareTradeRecord: (tradeId: string) => Promise<IResult>;
   readNotifications: (notifications: INotificationItem[]) => Promise<IResult>;
-  getBalance: (props: string) => IBalance | null;
+  getBalance: (currency: string) => IBalance | null;
   getWalletBalance: (props: string) => IWalletBalance | null;
-  getMyAssets: (props: string) => IMyAssets | null;
-  getMyRanking: (props: string) => IMyRanking | null;
+  getMyAssets: (currency: string) => IMyAssets | null;
+  getMyRanking: (currency: string) => IMyRanking | null;
   init: () => Promise<void>;
   walletExtensions: IWalletExtension[];
 }

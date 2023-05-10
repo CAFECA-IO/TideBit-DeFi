@@ -1099,9 +1099,9 @@ const TradeTabMobile = () => {
         {/* Long Button */}
         <div className={`bg-black/100 transition-all duration-300 ease-in-out ${longButtonStyles}`}>
           <RippleButton
-            disabled={marginWarningLongRef.current}
+            disabled={openSubMenu && marginWarningLongRef.current}
             buttonType="button"
-            className={`w-full rounded-md bg-lightGreen5 py-2 text-sm font-medium tracking-wide text-white transition-colors duration-300 hover:bg-lightGreen5/80`}
+            className={`w-full rounded-md bg-lightGreen5 py-2 text-sm font-medium tracking-wide text-white transition-colors duration-300 hover:bg-lightGreen5/80 disabled:bg-lightGray`}
             onClick={longSectionClickHandler}
           >
             <b>{t('TRADE_PAGE.TRADE_TAB_LONG_BUTTON')}</b> <br />
@@ -1120,9 +1120,9 @@ const TradeTabMobile = () => {
           className={`bg-black/100 transition-all duration-300 ease-in-out ${shortButtonStyles}`}
         >
           <RippleButton
-            disabled={marginWarningShortRef.current}
+            disabled={openSubMenu && marginWarningShortRef.current}
             buttonType="button"
-            className={`w-full rounded-md bg-lightRed py-2 text-sm font-medium tracking-wide text-white transition-colors duration-300 hover:bg-lightRed/80`}
+            className={`w-full rounded-md bg-lightRed py-2 text-sm font-medium tracking-wide text-white transition-colors duration-300 hover:bg-lightRed/80 disabled:bg-lightGray`}
             onClick={shortSectionClickHandler}
           >
             <b>{t('TRADE_PAGE.TRADE_TAB_SHORT_BUTTON')}</b> <br />

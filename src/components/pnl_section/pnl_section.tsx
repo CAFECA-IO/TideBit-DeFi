@@ -1,8 +1,9 @@
 import React, {useContext} from 'react';
 import {useTranslation} from 'react-i18next';
 import {UserContext} from '../../contexts/user_context';
-import {TypeOfPnLColor, UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
-import {unitAsset, FRACTION_DIGITS} from '../../constants/config';
+import {TypeOfPnLColor} from '../../constants/display';
+import {unitAsset} from '../../constants/config';
+import {numberFormatted} from '../../lib/common';
 
 type TranslateFunction = (s: string) => string;
 
@@ -22,20 +23,15 @@ const PnlSection = () => {
     {title: t('MY_ASSETS_PAGE.PNL_SECTION_30_DAYS'), ...pnl30Days},
     {title: t('MY_ASSETS_PAGE.PNL_SECTION_CUMULATIVE'), ...cumulativePnl},
   ].map(({amount, percentage, ...rest}) => {
-    const percentageAbs = Math.abs(percentage);
     const result = {
       content:
         amount > 0
-          ? `+${amount.toLocaleString(
-              UNIVERSAL_NUMBER_FORMAT_LOCALE,
-              FRACTION_DIGITS
-            )} ${unitAsset}`
-          : `${amount.toLocaleString(
-              UNIVERSAL_NUMBER_FORMAT_LOCALE,
-              FRACTION_DIGITS
-            )} ${unitAsset}`,
+          ? `+${numberFormatted(amount)} ${unitAsset}`
+          : `-${numberFormatted(amount)} ${unitAsset}`,
       remarks:
-        percentage > 0 ? `▴ ${percentageAbs.toString()} %` : `▾ ${percentageAbs.toString()} %`,
+        percentage > 0
+          ? `▴ ${numberFormatted(percentage)} %`
+          : `▾ ${numberFormatted(percentage)} %`,
       textColor:
         percentage > 0 && amount > 0
           ? TypeOfPnLColor.PROFIT

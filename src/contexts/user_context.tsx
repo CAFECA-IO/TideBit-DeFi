@@ -77,6 +77,12 @@ export interface IMyAssets {
     cumulative: number;
   };
 }
+
+export interface IMyRanking {
+  rank: number; //排名
+  pnl: number; //percentage required
+  cumulativePnl: number; //percentage required
+}
 export interface IUserProvider {
   children: React.ReactNode;
 }
@@ -131,6 +137,7 @@ export interface IUserContext {
   getBalance: (props: string) => IBalance | null;
   getWalletBalance: (props: string) => IWalletBalance | null;
   getMyAssets: (props: string) => IMyAssets | null;
+  getMyRanking: (props: string) => IMyRanking | null;
   init: () => Promise<void>;
   walletExtensions: IWalletExtension[];
 }
@@ -224,6 +231,7 @@ export const UserContext = createContext<IUserContext>({
   getBalance: () => null,
   getWalletBalance: () => null,
   getMyAssets: () => null,
+  getMyRanking: () => null,
   init: () => Promise.resolve(),
   walletExtensions: [],
 });
@@ -789,6 +797,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     return balance;
   };
 
+  /* ToDo: (20230510 - Julian) get data from backend */
   const getMyAssets = (currency: string) => {
     const myAsset: IMyAssets = {
       currency: 'USDT',
@@ -811,6 +820,16 @@ export const UserProvider = ({children}: IUserProvider) => {
       },
     };
     return myAsset;
+  };
+
+  /* ToDo: (20230510 - Julian) get data from backend */
+  const getMyRanking = (currency: string) => {
+    const myRanking: IMyRanking = {
+      rank: 32,
+      pnl: -7.034,
+      cumulativePnl: 3.32,
+    };
+    return myRanking;
   };
 
   const updateBalance = (updatedBalances: IBalance[]) => {
@@ -1573,6 +1592,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     getBalance,
     getWalletBalance,
     getMyAssets,
+    getMyRanking,
     init,
     walletExtensions: walletExtensionsRef.current,
   };

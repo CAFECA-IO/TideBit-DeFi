@@ -405,15 +405,6 @@ const UpdateFormModal = ({
   );
 
   const calculateProfit = () => {
-    // const diff =
-    //   openCfdDetails.typeOfPosition === TypeOfPosition.BUY
-    //     ? tpValueRef.current - openCfdDetails.openPrice
-    //     : openCfdDetails.openPrice - tpValueRef.current;
-    // const rs = diff * openCfdDetails.amount;
-    // const symbol = rs > 0 ? '+' : '-';
-    // const number = Math.abs(rs);
-    // setEstimatedProfitValue({number: number, symbol: symbol});
-
     const profit = getEstimatedPnL(
       openCfdDetails.amount,
       openCfdDetails.typeOfPosition,

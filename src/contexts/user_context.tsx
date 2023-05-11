@@ -837,24 +837,28 @@ export const UserProvider = ({children}: IUserProvider) => {
           pnl: -7.034,
           cumulativePnl: 3.32,
         };
+        break;
       case RankingInterval.DAILY:
         myRanking = {
           rank: 43,
           pnl: -5.3,
           cumulativePnl: 12.45,
         };
+        break;
       case RankingInterval.WEEKLY:
         myRanking = {
           rank: 75,
           pnl: 3.41,
           cumulativePnl: 29,
         };
+        break;
       case RankingInterval.MONTHLY:
         myRanking = {
           rank: 103,
           pnl: 7.95,
           cumulativePnl: 24.34,
         };
+        break;
     }
 
     return myRanking;

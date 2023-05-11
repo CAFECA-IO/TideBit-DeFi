@@ -5,6 +5,7 @@ import {ImArrowUp, ImArrowDown, ImArrowRight} from 'react-icons/im';
 import Image from 'next/image';
 import {TypeOfPnLColor} from '../../constants/display';
 import {unitAsset} from '../../constants/config';
+import {RankingInterval} from '../../constants/ranking_time_span';
 
 const UserPersonalRanking = () => {
   const userCtx = useContext(UserContext);
@@ -12,9 +13,9 @@ const UserPersonalRanking = () => {
   const username = userCtx.wallet?.slice(-1).toUpperCase();
 
   /* ToDo: (20230509 - Julian) get Ranking data */
-  const rankingNumber = userCtx.getMyRanking('')?.rank ?? 0;
-  const pnl = userCtx.getMyRanking('')?.pnl ?? 0;
-  const cumulativePnl = userCtx.getMyRanking('')?.cumulativePnl ?? 0;
+  const rankingNumber = userCtx.getMyRanking('LIVE')?.rank ?? 0;
+  const pnl = userCtx.getMyRanking('LIVE')?.pnl ?? 0;
+  const cumulativePnl = userCtx.getMyRanking('LIVE')?.cumulativePnl ?? 0;
 
   const displayedPnl =
     pnl > 0 ? (
@@ -44,10 +45,10 @@ const UserPersonalRanking = () => {
     );
 
   const personalRanking = userCtx.wallet ? (
-    <div className="fixed bottom-0 z-30 flex h-80px w-screen whitespace-nowrap bg-darkGray3 px-4 md:w-8/10">
+    <div className="flex h-80px w-full whitespace-nowrap bg-darkGray3 px-4">
       <div className="flex flex-1 items-center space-x-2 md:space-x-4">
         <div className="inline-flex items-center sm:w-70px">
-          <Image src="/elements/crown.svg" width={25} height={25} alt="crown_icon" />
+          <Image src="/leaderboard/crown.svg" width={25} height={25} alt="crown_icon" />
 
           <div className="ml-2 text-sm sm:text-lg">{rankingNumber}</div>
         </div>
@@ -72,7 +73,7 @@ const UserPersonalRanking = () => {
     </div>
   ) : null;
 
-  return <>{personalRanking}</>;
+  return <div className="sticky bottom-0 z-30 shadow-top">{personalRanking}</div>;
 };
 
 export default UserPersonalRanking;

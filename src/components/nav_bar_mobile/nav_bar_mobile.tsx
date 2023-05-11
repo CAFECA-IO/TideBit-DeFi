@@ -69,7 +69,7 @@ const NavBarMobile = () => {
     <div
       className={`${userCtx.enableServiceTerm ? 'w-5/10' : 'w-screen'} ${
         navOpen ? 'visible opacity-100' : 'invisible opacity-0'
-      } fixed top-0 left-20 z-50 flex h-14 items-center overflow-x-hidden overflow-y-hidden bg-black/100 outline-none`}
+      } fixed left-20 top-0 z-50 flex h-14 items-center overflow-x-hidden overflow-y-hidden bg-black/100 outline-none`}
     >
       <p className="pl-5">{menuText}</p>
     </div>
@@ -79,17 +79,17 @@ const NavBarMobile = () => {
     <UserMobile />
   ) : (
     /* Info: (20230327 - Julian) Show Wallet Connect */
-    <WalletConnectButton className="py-2 px-3 text-sm" />
+    <WalletConnectButton className="px-3 py-2 text-sm" />
   );
 
   const isDisplayedSubNavWalletConnect = userCtx.enableServiceTerm ? null : (
     /* Info: (20230327 - Julian) Show Wallet Connect */
-    <WalletConnectButton className="py-2 px-3 text-sm" />
+    <WalletConnectButton className="px-3 py-2 text-sm" />
   );
 
   const isDisplayedUnreadnumber =
     notificationCtx.unreadNotifications.length > 0 ? (
-      <span className="absolute top-0 right-0 z-20 inline-flex h-3 w-3 items-center justify-center rounded-xl bg-tidebitTheme">
+      <span className="absolute right-0 top-0 z-20 inline-flex h-3 w-3 items-center justify-center rounded-xl bg-tidebitTheme">
         <p className="text-center text-3xs">{notificationCtx.unreadNotifications.length}</p>
       </span>
     ) : null;
@@ -140,7 +140,7 @@ const NavBarMobile = () => {
           {isDisplayedNotificationSidebarMobileCover}
 
           {/* Info: (20230327 - Julian) Mobile menu section */}
-          <div className="flex h-screen flex-col items-center justify-start px-2 pt-8 pb-24 text-base sm:px-3">
+          <div className="flex h-screen flex-col items-center justify-start px-2 pb-24 pt-8 text-base sm:px-3">
             <div className="flex h-full w-screen flex-col items-center justify-start">
               <div className="flex items-center justify-start px-3 pt-3">
                 <Link className="shrink-0" href="/">
@@ -162,7 +162,7 @@ const NavBarMobile = () => {
                 </Link>
               </div>
               <div className="flex items-center justify-start px-3">
-                <Link href={TBDURL.COMING_SOON} className={menuItemStyles}>
+                <Link href={TBDURL.LEADERBOARD} className={menuItemStyles}>
                   {t('NAV_BAR.LEADERBOARD')}
                 </Link>
               </div>

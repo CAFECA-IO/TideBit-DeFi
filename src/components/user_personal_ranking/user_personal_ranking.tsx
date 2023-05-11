@@ -1,11 +1,13 @@
-import React, {useContext} from 'react';
+import React, {useContext, useState} from 'react';
 import {accountTruncate, numberFormatted} from '../../lib/common';
 import {UserContext} from '../../contexts/user_context';
 import {ImArrowUp, ImArrowDown, ImArrowRight} from 'react-icons/im';
 import Image from 'next/image';
 import {TypeOfPnLColor} from '../../constants/display';
 import {unitAsset} from '../../constants/config';
-import {IRankingTimeSpan} from '../../constants/ranking_time_span';
+import {IRankingTimeSpan, RankingInterval} from '../../constants/ranking_time_span';
+import {RiShareForwardFill, RiInstagramFill} from 'react-icons/ri';
+import {BsFacebook, BsGithub, BsReddit} from 'react-icons/bs';
 
 export interface IUserPersonalRankingProps {
   timeSpan: IRankingTimeSpan;
@@ -14,11 +16,15 @@ export interface IUserPersonalRankingProps {
 const UserPersonalRanking = ({timeSpan}: IUserPersonalRankingProps) => {
   const userCtx = useContext(UserContext);
 
+  const [showShareList, setShowShareList] = useState(false);
+
   const username = userCtx.wallet?.slice(-1).toUpperCase();
 
   const rankingNumber = userCtx.getMyRanking(timeSpan)?.rank ?? 0;
   const pnl = userCtx.getMyRanking(timeSpan)?.pnl ?? 0;
   const cumulativePnl = userCtx.getMyRanking(timeSpan)?.cumulativePnl ?? 0;
+
+  const shareClickHandler = () => setShowShareList(!showShareList);
 
   const displayedPnl =
     pnl > 0 ? (
@@ -47,6 +53,34 @@ const UserPersonalRanking = ({timeSpan}: IUserPersonalRankingProps) => {
       <ImArrowRight width={20} height={26} />
     );
 
+  // ToDo: (20230511 - Julian) Style & Animation
+  const socialMediaList = (
+    <div
+      className={`absolute bottom-12 bg-darkGray7 text-lightWhite transition-all duration-300 ${
+        showShareList ? 'inline-flex opacity-100' : 'hidden opacity-0'
+      } hover:cursor-pointer hover:text-lightGray2`}
+    >
+      <BsFacebook />
+      <RiInstagramFill />
+      <BsGithub />
+      <BsReddit />
+    </div>
+  );
+
+  const isDisplayedShare =
+    timeSpan === RankingInterval.LIVE ? (
+      <div className="inline-flex items-center space-x-1 text-sm text-lightYellow2 sm:text-lg md:space-x-3">
+        <div className="hidden sm:block">{displayedCumulativePnl}</div>
+        <div>{displayedArrow}</div>
+        <div>{rankingNumber}</div>
+      </div>
+    ) : (
+      <div className="relative text-2xl text-lightWhite hover:cursor-pointer hover:text-lightGray2 md:text-4xl">
+        {socialMediaList}
+        <RiShareForwardFill onClick={shareClickHandler} />
+      </div>
+    );
+
   const personalRanking = userCtx.wallet ? (
     <div className="flex w-full whitespace-nowrap bg-darkGray3 px-4 py-6 shadow-top md:px-8 md:py-4">
       <div className="flex flex-1 items-center space-x-2 md:space-x-3">
@@ -67,11 +101,7 @@ const UserPersonalRanking = ({timeSpan}: IUserPersonalRankingProps) => {
           {displayedPnl}
           <span className="ml-1 text-sm text-lightGray4">{unitAsset}</span>
         </div>
-        <div className="inline-flex items-center space-x-1 text-sm text-lightYellow2 sm:text-lg md:space-x-3">
-          <div className="hidden sm:block">{displayedCumulativePnl}</div>
-          <div>{displayedArrow}</div>
-          <div>{rankingNumber}</div>
-        </div>
+        {isDisplayedShare}
       </div>
     </div>
   ) : null;

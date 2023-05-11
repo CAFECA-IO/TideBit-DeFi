@@ -50,6 +50,9 @@ import {IUser} from '../interfaces/tidebit_defi_background/user';
 import TickerBookInstance from '../lib/books/ticker_book';
 import {IUserBalance} from '../interfaces/tidebit_defi_background/user_balance';
 import {ProfitState} from '../constants/profit_state';
+import {DEFAULT_BALANCE} from '../constants/display';
+import {unitAsset} from '../constants/config';
+import {ICurrency} from '../constants/currency';
 
 export interface IMyAssets {
   currency: string;
@@ -791,23 +794,23 @@ export const UserProvider = ({children}: IUserProvider) => {
 
   const getMyAssets = (currency: string) => {
     const myAsset: IMyAssets = {
-      currency: 'USDT',
+      currency: unitAsset,
       balance: {
-        available: 1296.47,
-        locked: 589.628,
+        available: balanceRef.current?.available ?? DEFAULT_BALANCE,
+        locked: balanceRef.current?.locked ?? DEFAULT_BALANCE,
       },
       pnl: {
         today: {
-          amount: -128.293,
-          percentage: -1.5,
+          amount: 0,
+          percentage: 0,
         },
-        monthly: {amount: 98164532.83, percentage: 10.36},
-        cumulative: {amount: -57692.4, percentage: -22.75},
+        monthly: {amount: 0, percentage: 0},
+        cumulative: {amount: 0, percentage: 0},
       },
       interest: {
-        apy: 1,
-        monthly: 20.2,
-        cumulative: 245,
+        apy: 0,
+        monthly: 0,
+        cumulative: 0,
       },
     };
     return myAsset;

@@ -1,7 +1,11 @@
 import React, {useContext} from 'react';
 import {useTranslation} from 'react-i18next';
 import {UserContext} from '../../contexts/user_context';
-import {TypeOfPnLColor, UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
+import {
+  DEFAULT_PNL_DATA,
+  TypeOfPnLColor,
+  UNIVERSAL_NUMBER_FORMAT_LOCALE,
+} from '../../constants/display';
 import {unitAsset, FRACTION_DIGITS} from '../../constants/config';
 
 type TranslateFunction = (s: string) => string;
@@ -11,11 +15,12 @@ const PnlSection = () => {
 
   const userCtx = useContext(UserContext);
 
+  // Deprecated: DEFAULT_PNL_DATA in display (20230511 - Shirley)
   const defaultPnlData = {amount: 0, percentage: 0};
   /* ToDo: (20230420 - Julian) getMyAssets by currency */
-  const pnlToday = userCtx.getMyAssets('')?.pnl.today ?? defaultPnlData;
-  const pnl30Days = userCtx.getMyAssets('')?.pnl.monthly ?? defaultPnlData;
-  const cumulativePnl = userCtx.getMyAssets('')?.pnl.cumulative ?? defaultPnlData;
+  const pnlToday = userCtx.getMyAssets('')?.pnl.today ?? DEFAULT_PNL_DATA;
+  const pnl30Days = userCtx.getMyAssets('')?.pnl.monthly ?? DEFAULT_PNL_DATA;
+  const cumulativePnl = userCtx.getMyAssets('')?.pnl.cumulative ?? DEFAULT_PNL_DATA;
 
   const statisticContent = [
     {title: t('MY_ASSETS_PAGE.PNL_SECTION_TODAY'), ...pnlToday},
@@ -35,7 +40,7 @@ const PnlSection = () => {
               FRACTION_DIGITS
             )} ${unitAsset}`,
       remarks:
-        percentage > 0 ? `▴ ${percentageAbs.toString()} %` : `▾ ${percentageAbs.toString()} %`,
+        percentage < 0 ? `▾ ${percentageAbs.toString()} %` : `▴ ${percentageAbs.toString()} %`,
       textColor:
         percentage > 0 && amount > 0
           ? TypeOfPnLColor.PROFIT

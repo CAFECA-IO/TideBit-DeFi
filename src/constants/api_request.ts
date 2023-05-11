@@ -228,6 +228,7 @@ export const TBDURL = {
   COMING_SOON: '/coming-soon',
   TRADE: '/trade/cfd/ethusdt',
   MY_ASSETS: '/my-assets',
+  LEADERBOARD: '/leaderboard',
 };
 
 export type TypeRequest = {

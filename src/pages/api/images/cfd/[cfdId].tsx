@@ -6,7 +6,13 @@ import {
   UNIVERSAL_NUMBER_FORMAT_LOCALE,
   WIDTH_HEIGHT_OF_SHARING_RECORD,
 } from '../../../../constants/display';
-import {API_DOMAIN, DOMAIN, FRACTION_DIGITS, unitAsset} from '../../../../constants/config';
+import {
+  API_DOMAIN,
+  DOMAIN,
+  FRACTION_DIGITS,
+  SHARING_BG_IMG_THRESHOLD_PNL_PERCENT,
+  unitAsset,
+} from '../../../../constants/config';
 import {ProfitState} from '../../../../constants/profit_state';
 import {TypeOfPosition} from '../../../../constants/type_of_position';
 import {Currency} from '../../../../constants/currency';
@@ -35,12 +41,33 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const iconUrl = DOMAIN + `/asset_icon/${tickerId.toLowerCase()}.svg`;
   const qrcodeUrl = DOMAIN + `/elements/tidebit_qrcode.svg`;
 
-  const backgroundImageUrl = DOMAIN + '/elements/group_15214@2x.png';
-
   const pnlPercent =
     typeOfPosition === TypeOfPosition.BUY
       ? roundToDecimalPlaces(((closePrice - openPrice) / openPrice) * 100, 2)
       : roundToDecimalPlaces(((openPrice - closePrice) / openPrice) * 100, 2);
+
+  // const bg =
+  //   pnlPercent > 0 && pnlPercent > SHARING_BG_IMG_THRESHOLD_PNL_PERCENT
+  //     ? 'bg-green-500'
+  //     : pnlPercent < 0 && pnlPercent < -SHARING_BG_IMG_THRESHOLD_PNL_PERCENT
+  //     ? 'bg-red-500'
+  //     : 'bg-gray-500';
+
+  let bg;
+  if (pnlPercent > 0) {
+    if (pnlPercent > SHARING_BG_IMG_THRESHOLD_PNL_PERCENT) {
+      bg = 'big-profit@2x';
+    } else {
+      bg = 'small-profit@2x';
+    }
+  } else if (pnlPercent < 0) {
+    if (pnlPercent < -SHARING_BG_IMG_THRESHOLD_PNL_PERCENT) {
+      bg = 'big-loss@2x';
+    } else {
+      bg = 'small-loss@2x';
+    }
+  }
+  const backgroundImageUrl = DOMAIN + '/elements/' + bg + '.png';
 
   const displayedPnlPercent = Math.abs(pnlPercent).toLocaleString(
     UNIVERSAL_NUMBER_FORMAT_LOCALE,

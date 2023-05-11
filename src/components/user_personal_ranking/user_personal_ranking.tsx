@@ -5,17 +5,20 @@ import {ImArrowUp, ImArrowDown, ImArrowRight} from 'react-icons/im';
 import Image from 'next/image';
 import {TypeOfPnLColor} from '../../constants/display';
 import {unitAsset} from '../../constants/config';
-import {RankingInterval} from '../../constants/ranking_time_span';
+import {IRankingTimeSpan} from '../../constants/ranking_time_span';
 
-const UserPersonalRanking = () => {
+export interface IUserPersonalRankingProps {
+  timeSpan: IRankingTimeSpan;
+}
+
+const UserPersonalRanking = ({timeSpan}: IUserPersonalRankingProps) => {
   const userCtx = useContext(UserContext);
 
   const username = userCtx.wallet?.slice(-1).toUpperCase();
 
-  /* ToDo: (20230509 - Julian) get Ranking data */
-  const rankingNumber = userCtx.getMyRanking('LIVE')?.rank ?? 0;
-  const pnl = userCtx.getMyRanking('LIVE')?.pnl ?? 0;
-  const cumulativePnl = userCtx.getMyRanking('LIVE')?.cumulativePnl ?? 0;
+  const rankingNumber = userCtx.getMyRanking(timeSpan)?.rank ?? 0;
+  const pnl = userCtx.getMyRanking(timeSpan)?.pnl ?? 0;
+  const cumulativePnl = userCtx.getMyRanking(timeSpan)?.cumulativePnl ?? 0;
 
   const displayedPnl =
     pnl > 0 ? (
@@ -45,8 +48,8 @@ const UserPersonalRanking = () => {
     );
 
   const personalRanking = userCtx.wallet ? (
-    <div className="flex h-80px w-full whitespace-nowrap bg-darkGray3 px-4">
-      <div className="flex flex-1 items-center space-x-2 md:space-x-4">
+    <div className="flex w-full whitespace-nowrap bg-darkGray3 px-4 py-6 shadow-top md:px-8 md:py-4">
+      <div className="flex flex-1 items-center space-x-2 md:space-x-3">
         <div className="inline-flex items-center sm:w-70px">
           <Image src="/leaderboard/crown.svg" width={25} height={25} alt="crown_icon" />
 
@@ -73,7 +76,7 @@ const UserPersonalRanking = () => {
     </div>
   ) : null;
 
-  return <div className="sticky bottom-0 z-30 shadow-top">{personalRanking}</div>;
+  return <div className="sticky bottom-0 z-30">{personalRanking}</div>;
 };
 
 export default UserPersonalRanking;

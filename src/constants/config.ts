@@ -278,7 +278,7 @@ export const TRADING_CRYPTO_DATA = [
   },
 ];
 export const SERVICE_TERM_TITLE = 'ServiceTerm';
-export const DOMAIN = 'http://localhost:3000';
+export const DOMAIN = 'https://www.tidebit-defi.com';
 export const TERM_OF_SERVICE = DOMAIN + '{hash}';
 export const PRIVATE_POLICY = DOMAIN + '{hash}';
 export const DeWT_VALIDITY_PERIOD = 60 * 60; // seconds

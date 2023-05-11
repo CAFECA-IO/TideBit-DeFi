@@ -16,7 +16,6 @@ import {
   isDummySharingOrder,
 } from '../../../../interfaces/tidebit_defi_background/sharing_order';
 import {useRouter} from 'next/router';
-import {Barlow} from 'next/font/google';
 
 export const config = {
   runtime: 'edge',
@@ -91,7 +90,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           display: 'flex',
           position: 'relative',
           flexDirection: 'column',
-          fontFamily: "'Barlow', sans-serif", // Change the fontFamily value to use the imported custom font
+          // fontFamily: "'serif', sans-serif",
         }}
       >
         <div
@@ -127,9 +126,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
               }}
             >
               <img src={`${iconUrl}`} width={45} height={45} alt="asset icon" />
-              <h1 style={{fontSize: 36, fontWeight: 'normal', color: '#fff', fontFamily: 'barlow'}}>
-                {targetAssetName}
-              </h1>
+              <h1 style={{fontSize: 36, fontWeight: 'normal', color: '#fff'}}>{targetAssetName}</h1>
             </div>
             {/* Info: QR Code (20230509 - Shirley) */}
             <svg
@@ -1136,9 +1133,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
               display: 'flex',
             }}
           ></div>
-          <div
-            style={{display: 'flex', marginLeft: '4rem', marginTop: '25px', fontFamily: 'barlow'}}
-          >
+          <div style={{display: 'flex', marginLeft: '4rem', marginTop: '25px'}}>
             <div
               style={{
                 display: 'flex',

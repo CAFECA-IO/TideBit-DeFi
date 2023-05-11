@@ -53,6 +53,7 @@ import {ProfitState} from '../constants/profit_state';
 import {DEFAULT_BALANCE} from '../constants/display';
 import {unitAsset} from '../constants/config';
 import {ICurrency} from '../constants/currency';
+import {IRankingTimeSpan, RankingInterval} from '../constants/ranking_time_span';
 
 export interface IMyAssets {
   currency: string;
@@ -140,7 +141,7 @@ export interface IUserContext {
   getBalance: (currency: string) => IBalance | null;
   getWalletBalance: (props: string) => IWalletBalance | null;
   getMyAssets: (currency: string) => IMyAssets | null;
-  getMyRanking: (currency: string) => IMyRanking | null;
+  getMyRanking: (timeSpan: IRankingTimeSpan) => IMyRanking | null;
   init: () => Promise<void>;
   walletExtensions: IWalletExtension[];
 }
@@ -827,12 +828,39 @@ export const UserProvider = ({children}: IUserProvider) => {
   };
 
   /* ToDo: (20230510 - Julian) get data from backend */
-  const getMyRanking = (currency: string) => {
-    const myRanking: IMyRanking = {
-      rank: 32,
-      pnl: -7.034,
-      cumulativePnl: 3.32,
+  const getMyRanking = (timeSpan: IRankingTimeSpan) => {
+    let myRanking: IMyRanking = {
+      rank: 0,
+      pnl: 0,
+      cumulativePnl: 0,
     };
+    switch (timeSpan) {
+      case RankingInterval.LIVE:
+        myRanking = {
+          rank: 32,
+          pnl: -7.034,
+          cumulativePnl: 3.32,
+        };
+      case RankingInterval.DAILY:
+        myRanking = {
+          rank: 43,
+          pnl: -5.3,
+          cumulativePnl: 12.45,
+        };
+      case RankingInterval.WEEKLY:
+        myRanking = {
+          rank: 75,
+          pnl: 3.41,
+          cumulativePnl: 29,
+        };
+      case RankingInterval.MONTHLY:
+        myRanking = {
+          rank: 103,
+          pnl: 7.95,
+          cumulativePnl: 24.34,
+        };
+    }
+
     return myRanking;
   };
 

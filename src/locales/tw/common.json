@@ -330,6 +330,10 @@
     "THIRD_PARTY_LIBRARY_ERROR": "第三方函式庫錯誤"
   },
   "LEADERBOARD_PAGE": {
-    "TITLE": "排行榜"
+    "TITLE": "排行榜",
+    "LIVE": "即時",
+    "DAILY": "每日",
+    "WEEKLY": "每週",
+    "MONTHLY": "每月"
   }
 }

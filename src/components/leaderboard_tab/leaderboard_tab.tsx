@@ -1,13 +1,21 @@
-import React, {useState, useContext} from 'react';
+import React, {Dispatch, SetStateAction} from 'react';
 import Image from 'next/image';
 import useWindowSize from '../../lib/hooks/use_window_size';
 import UserPersonalRanking from '../user_personal_ranking/user_personal_ranking';
-import {MarketContext} from '../../contexts/market_context';
 import {TypeOfPnLColor, DEFAULT_USER_AVATAR} from '../../constants/display';
 import {unitAsset} from '../../constants/config';
 import {numberFormatted} from '../../lib/common';
-import {RankingInterval} from '../../constants/ranking_time_span';
-import {defaultLeaderboard} from '../../interfaces/tidebit_defi_background/leaderboard';
+import {RankingInterval, IRankingTimeSpan} from '../../constants/ranking_time_span';
+import {defaultLeaderboard, IRanking} from '../../interfaces/tidebit_defi_background/leaderboard';
+import {useTranslation} from 'next-i18next';
+
+type TranslateFunction = (s: string) => string;
+
+type LeaderboardTabProps = {
+  timeSpan: IRankingTimeSpan;
+  setTimeSpan: Dispatch<SetStateAction<IRankingTimeSpan>>;
+  rankings: IRanking[];
+};
 
 const MIN_SCREEN_WIDTH = 1024;
 const DEFAULT_PODIUM_WIDTH = 960;
@@ -22,8 +30,9 @@ const DEFAULT_AVATAR_SIZE_MOBILE = 36;
 const GAP_BETWEEN_PODIUMAND_MEDALIST = 500;
 const NUMBER_OF_MEDALIST = 3;
 
-const LeaderboardTab = () => {
-  const marketCtx = useContext(MarketContext);
+const LeaderboardTab = ({timeSpan, setTimeSpan, rankings}: LeaderboardTabProps) => {
+  const {t}: {t: TranslateFunction} = useTranslation('common');
+
   const windowSize = useWindowSize();
 
   const podiumWidth =
@@ -42,12 +51,11 @@ const LeaderboardTab = () => {
   const leaderboardUserAvatarSize =
     windowSize.width >= MIN_SCREEN_WIDTH ? DEFAULT_AVATAR_SIZE_DESKTOP : DEFAULT_AVATAR_SIZE_MOBILE;
 
-  const [timeSpan, setTimeSpan] = useState(RankingInterval.LIVE);
-
-  /* Info: (20230511 - Julian) Sorted by rank */
-  const leaderboardData = marketCtx.getLeaderboard(timeSpan)?.sort((a, b) => {
-    return b.cumulativePnl - a.cumulativePnl;
-  }) ?? [defaultLeaderboard, defaultLeaderboard, defaultLeaderboard];
+  /* Info: (20230511 - Julian) Sorted by cumulativePnl */
+  const rankingData =
+    rankings.sort((a, b) => {
+      return b.cumulativePnl - a.cumulativePnl;
+    }) ?? defaultLeaderboard;
 
   const activeLiveTabStyle =
     timeSpan == RankingInterval.LIVE
@@ -115,22 +123,22 @@ const LeaderboardTab = () => {
   /* Info: (20230511 - Julian) Time Span Data */
   const rankingTimeSpan = [
     {
-      text: 'Live',
+      text: t('LEADERBOARD_PAGE.LIVE'),
       style: activeLiveTabStyle,
       active: () => setTimeSpan(RankingInterval.LIVE),
     },
     {
-      text: 'Daily',
+      text: t('LEADERBOARD_PAGE.DAILY'),
       style: activeDailyTabStyle,
       active: () => setTimeSpan(RankingInterval.DAILY),
     },
     {
-      text: 'Weekly',
+      text: t('LEADERBOARD_PAGE.WEEKLY'),
       style: activeWeeklyTabStyle,
       active: () => setTimeSpan(RankingInterval.WEEKLY),
     },
     {
-      text: 'Monthly',
+      text: t('LEADERBOARD_PAGE.MONTHLY'),
       style: activeMonthlyTabStyle,
       active: () => setTimeSpan(RankingInterval.MONTHLY),
     },
@@ -142,9 +150,9 @@ const LeaderboardTab = () => {
       rank <= 0
         ? defaultTop3Data
         : {
-            name: leaderboardData[rank - 1].userName,
-            avatar: leaderboardData[rank - 1].userAvatar ?? DEFAULT_USER_AVATAR,
-            displayedPnl: displayPnl(leaderboardData[rank - 1].cumulativePnl),
+            name: rankingData[rank - 1].userName,
+            avatar: rankingData[rank - 1].userAvatar ?? DEFAULT_USER_AVATAR,
+            displayedPnl: displayPnl(rankingData[rank - 1].cumulativePnl),
           };
     return {...top3[sorted], userData};
   });
@@ -223,7 +231,7 @@ const LeaderboardTab = () => {
   });
 
   /* Info: (20230511 - Julian) Leaderboard List (4th ~) */
-  const displayedleaderboardList = leaderboardData
+  const displayedleaderboardList = rankingData
     .slice(3)
     .map(({rank, userName, userAvatar, cumulativePnl}) => {
       const displayedRank = rank <= 0 ? '-' : rank;

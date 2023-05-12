@@ -330,6 +330,10 @@
     "THIRD_PARTY_LIBRARY_ERROR": "Third party library error"
   },
   "LEADERBOARD_PAGE": {
-    "TITLE": "Leaderboard"
+    "TITLE": "Leaderboard",
+    "LIVE": "Live",
+    "DAILY": "Daily",
+    "WEEKLY": "Weekly",
+    "MONTHLY": "Monthly"
   }
 }

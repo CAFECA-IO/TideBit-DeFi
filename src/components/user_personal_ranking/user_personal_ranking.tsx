@@ -6,8 +6,8 @@ import Image from 'next/image';
 import {TypeOfPnLColor} from '../../constants/display';
 import {unitAsset} from '../../constants/config';
 import {IRankingTimeSpan, RankingInterval} from '../../constants/ranking_time_span';
-import {RiShareForwardFill, RiInstagramFill} from 'react-icons/ri';
-import {BsFacebook, BsGithub, BsReddit} from 'react-icons/bs';
+import {RiShareForwardFill} from 'react-icons/ri';
+import {BsFacebook, BsTwitter, BsReddit} from 'react-icons/bs';
 
 export interface IUserPersonalRankingProps {
   timeSpan: IRankingTimeSpan;
@@ -60,16 +60,15 @@ const UserPersonalRanking = ({timeSpan}: IUserPersonalRankingProps) => {
       <ImArrowRight width={20} height={26} />
     );
 
-  // ToDo: (20230511 - Julian) Style & Animation
+  /* ToDo: (20230512 - Julian) Share function */
   const socialMediaList = (
     <div
-      className={`absolute bottom-12 bg-darkGray7 text-lightWhite transition-all duration-300 ${
+      className={`absolute bottom-16 right-0 bg-darkGray7 p-2 text-lightWhite md:-right-28 ${
         showShareList ? 'inline-flex opacity-100' : 'hidden opacity-0'
-      } hover:cursor-pointer hover:text-lightGray2`}
+      } space-x-4 transition-all duration-300 hover:cursor-pointer hover:text-lightGray2`}
     >
       <BsFacebook />
-      <RiInstagramFill />
-      <BsGithub />
+      <BsTwitter />
       <BsReddit />
     </div>
   );
@@ -89,7 +88,7 @@ const UserPersonalRanking = ({timeSpan}: IUserPersonalRankingProps) => {
     );
 
   const personalRanking = userCtx.wallet ? (
-    <div className="flex w-full whitespace-nowrap bg-darkGray3 px-4 py-6 shadow-top md:px-8 md:py-4">
+    <div className="flex w-full whitespace-nowrap bg-darkGray3 px-4 py-6 shadow-top md:px-8 md:py-2">
       <div className="flex flex-1 items-center space-x-2 md:space-x-3">
         <div className="inline-flex items-center sm:w-70px">
           <Image src="/leaderboard/crown.svg" width={25} height={25} alt="crown_icon" />

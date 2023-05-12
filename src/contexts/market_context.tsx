@@ -83,7 +83,7 @@ export interface IMarketContext {
     price: number
   ) => Promise<IResult>;
   getGuaranteedStopFeePercentage: (tickerId: string) => Promise<IResult>;
-  getLeaderboard: (timeSpan: IRankingTimeSpan) => ILeaderboard[] | null;
+  getLeaderboard: (timeSpan: IRankingTimeSpan) => ILeaderboard | null;
   /** Deprecated: replaced by pusher (20230424 - tzuhan)
   getTickerHistory: (
     ticker: string,

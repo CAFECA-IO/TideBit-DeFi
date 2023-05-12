@@ -10,6 +10,7 @@ import {useGlobal} from '../../contexts/global_context';
 import {ICurrency} from '../../constants/currency';
 import {ToastTypeAndText} from '../../constants/toast_type';
 import {useTranslation} from 'react-i18next';
+import {FRACTION_DIGITS} from '../../constants/config';
 
 type TranslateFunction = (s: string) => string;
 /**
@@ -67,8 +68,8 @@ const CryptoCard = ({
   const priceRise = fluctuating > 0 ? true : false;
   const fluctuatingAbs = Math.abs(fluctuating);
   const fluctuatingRate = priceRise
-    ? `▴ ${fluctuatingAbs.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}%`
-    : `▾ ${fluctuatingAbs.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}%`;
+    ? `▴ ${fluctuatingAbs.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)}%`
+    : `▾ ${fluctuatingAbs.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)}%`;
   // TODO: input the data and price color change as props
   const priceColor = priceRise ? `text-lightGreen5` : `text-lightRed`;
 

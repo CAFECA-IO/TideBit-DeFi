@@ -71,7 +71,7 @@ const TradeTabMobile = () => {
 
   const ticker = marketCtx.selectedTicker?.currency ?? '';
 
-  const USER_BALANCE = userCtx.balance?.available ?? DEFAULT_USER_BALANCE;
+  const availableBalance = userCtx.balance?.available ?? DEFAULT_USER_BALANCE;
 
   const leverage = tickerStaticStatistics?.leverage ?? DEFAULT_LEVERAGE;
   const gsl = marketCtx.guaranteedStopFeePercentage;
@@ -187,23 +187,19 @@ const TradeTabMobile = () => {
     })();
   }, [userCtx.enableServiceTerm]);
 
+  // Info: update balance when balance changed (20230512 - Shirley)
+  useEffect(() => {
+    if (!userCtx.enableServiceTerm) return;
+
+    renewPosition();
+  }, [userCtx.balance?.available]);
+
   // Info: Calculate quotation when market price changes (20230427 - Shirley)
   useEffect(() => {
     setQuotation();
     setTpSlBounds();
     checkTpSlWithinBounds();
     renewPosition();
-    // eslint-disable-next-line no-console
-    console.log(
-      'spread',
-      marketCtx.tickerLiveStatistics?.spread,
-      'market price',
-      marketCtx.selectedTicker?.price,
-      'long',
-      longPriceRef.current,
-      'short',
-      shortPriceRef.current
-    );
   }, [marketCtx.selectedTicker?.price]);
 
   // Info: Fetch quotation when ticker changed (20230327 - Shirley)
@@ -486,7 +482,7 @@ const TradeTabMobile = () => {
     const roundedMarginLong = roundToDecimalPlaces(marginLong, 2);
     setRequiredMarginLong(roundedMarginLong);
 
-    setMarginWarningLong(marginLong > USER_BALANCE);
+    setMarginWarningLong(marginLong > availableBalance);
 
     setTargetLengthLong(roundedMarginLong.toString().length);
     setValueOfPositionLengthLong(roundedLongValue.toString().length);
@@ -506,7 +502,7 @@ const TradeTabMobile = () => {
     const roundedMarginShort = roundToDecimalPlaces(marginShort, 2);
     setRequiredMarginShort(roundedMarginShort);
 
-    setMarginWarningShort(marginShort > USER_BALANCE);
+    setMarginWarningShort(marginShort > availableBalance);
 
     setTargetLengthShort(roundedMarginShort.toString().length);
     setValueOfPositionLengthShort(roundedShortValue.toString().length);
@@ -756,7 +752,8 @@ const TradeTabMobile = () => {
       <div className="text-xs text-lightWhite">
         * {t('TRADE_PAGE.TRADE_TAB_EXPECTED_LOSS')} {estimatedLongLossValueRef.current.symbol}
         {roundToDecimalPlaces(Math.abs(estimatedLongLossValueRef.current.number), 2).toLocaleString(
-          UNIVERSAL_NUMBER_FORMAT_LOCALE
+          UNIVERSAL_NUMBER_FORMAT_LOCALE,
+          FRACTION_DIGITS
         )}{' '}
         {unitAsset}
       </div>
@@ -890,7 +887,7 @@ const TradeTabMobile = () => {
         {roundToDecimalPlaces(
           Math.abs(estimatedShortProfitValueRef.current.number),
           2
-        ).toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}{' '}
+        ).toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)}{' '}
         {unitAsset}
       </div>
     </div>
@@ -925,7 +922,7 @@ const TradeTabMobile = () => {
         {roundToDecimalPlaces(
           Math.abs(estimatedShortLossValueRef.current.number),
           2
-        ).toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}{' '}
+        ).toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)}{' '}
         {unitAsset}
       </div>
     </div>

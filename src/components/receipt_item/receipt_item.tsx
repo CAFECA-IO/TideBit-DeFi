@@ -18,6 +18,7 @@ import {
   IDepositOrder,
   IWithdrawOrder,
 } from '../../interfaces/tidebit_defi_background/order';
+import {FRACTION_DIGITS} from '../../constants/config';
 
 type TranslateFunction = (s: string) => string;
 interface IReceiptItemProps {
@@ -168,17 +169,13 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
   const displayedReceiptFeeText =
     order.fee === 0
       ? order.fee
-      : order.fee.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
-          minimumFractionDigits: 2,
-        });
+      : order.fee.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
 
   const displayedReceiptAvailableText =
     orderStatus === OrderStatusUnion.PROCESSING || orderStatus === OrderStatusUnion.WAITING ? (
       <Lottie className="w-20px" animationData={smallConnectingAnimation} />
     ) : (
-      balance?.available.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
-        minimumFractionDigits: 2,
-      })
+      balance?.available.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)
     );
 
   const displayedReceiptTime = (

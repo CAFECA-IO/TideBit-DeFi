@@ -28,6 +28,8 @@ import {ITimeSpanUnion, TimeSpanUnion} from '../constants/time_span_union';
 import {
   ICandlestick,
   ICandlestickData,
+  getDummyCandlestickChartData,
+  updateDummyCandlestickChartData,
 } from '../interfaces/tidebit_defi_background/candlestickData';
 import {TideBitEvent} from '../constants/tidebit_event';
 import {NotificationContext} from './notification_context';
@@ -276,6 +278,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
    */
   const getCandlestickChartData = async (instId: string) => {
     let result: IResult = {...defaultResultFailed};
+
     try {
       result = (await workerCtx.requestHandler({
         name: APIName.GET_CANDLESTICK_DATA,

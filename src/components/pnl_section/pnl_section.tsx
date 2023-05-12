@@ -1,9 +1,9 @@
 import React, {useContext} from 'react';
 import {useTranslation} from 'react-i18next';
 import {UserContext} from '../../contexts/user_context';
-import {TypeOfPnLColor} from '../../constants/display';
-import {unitAsset} from '../../constants/config';
 import {numberFormatted} from '../../lib/common';
+import {DEFAULT_PNL_DATA, TypeOfPnLColor} from '../../constants/display';
+import {unitAsset} from '../../constants/config';
 
 type TranslateFunction = (s: string) => string;
 
@@ -12,11 +12,12 @@ const PnlSection = () => {
 
   const userCtx = useContext(UserContext);
 
+  // Deprecated: DEFAULT_PNL_DATA in display (20230511 - Shirley)
   const defaultPnlData = {amount: 0, percentage: 0};
   /* ToDo: (20230420 - Julian) getUserAssets by currency */
-  const pnlToday = userCtx.getUserAssets('')?.pnl.today ?? defaultPnlData;
-  const pnl30Days = userCtx.getUserAssets('')?.pnl.monthly ?? defaultPnlData;
-  const cumulativePnl = userCtx.getUserAssets('')?.pnl.cumulative ?? defaultPnlData;
+  const pnlToday = userCtx.getUserAssets('')?.pnl.today ?? DEFAULT_PNL_DATA;
+  const pnl30Days = userCtx.getUserAssets('')?.pnl.monthly ?? DEFAULT_PNL_DATA;
+  const cumulativePnl = userCtx.getUserAssets('')?.pnl.cumulative ?? DEFAULT_PNL_DATA;
 
   const statisticContent = [
     {title: t('MY_ASSETS_PAGE.PNL_SECTION_TODAY'), ...pnlToday},

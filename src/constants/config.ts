@@ -61,7 +61,7 @@ export const unitAsset = 'USDT';
 
 export const WS_URL = 'wss://staging-001.tidebit.network/ws';
 
-export const URL = 'http://localhost:3001'; //'https://api.tidebit-defi.com';
+export const URL = 'https://api.tidebit-defi.com'; //'https://api.tidebit-defi.com';
 // Deprecated: dummy url settings (20230407 - Tzuhan)
 export const BASE_URL = 'https://staging-001.tidebit.network';
 // Deprecated: dummy url settings (20230407 - Tzuhan)
@@ -285,4 +285,4 @@ export const DeWT_VALIDITY_PERIOD = 60 * 60; // seconds
 export const CFD_LIQUIDATION_TIME = 86400;
 export const TP_SL_LIMIT_PERCENT = 0.01;
 export const DEFAULT_TICKER = 'ETH';
-export const API_DOMAIN = 'https://api.tidebit-defi.com';
+export const SHARING_BG_IMG_THRESHOLD_PNL_PERCENT = 5;

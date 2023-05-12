@@ -4,7 +4,7 @@ import Image from 'next/image';
 import {useGlobal} from '../../contexts/global_context';
 import {UserContext} from '../../contexts/user_context';
 import RippleButton from '../ripple_button/ripple_button';
-import {UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
+import {DEFAULT_BALANCE, UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
 import {unitAsset, FRACTION_DIGITS} from '../../constants/config';
 import {useTranslation} from 'next-i18next';
 
@@ -17,9 +17,9 @@ const BalanceSection = () => {
   const userCtx = useContext(UserContext);
 
   /* ToDo: (20230420 - Julian) getUserAssets by currency */
-  const avblBalance = userCtx.getUserAssets('')?.balance.available ?? 0;
-  const lockedBalance = userCtx.getUserAssets('')?.balance.locked ?? 0;
-  const totalBalance = avblBalance && lockedBalance ? avblBalance + lockedBalance : 0;
+  const avblBalance = userCtx.getUserAssets('')?.balance.available ?? DEFAULT_BALANCE;
+  const lockedBalance = userCtx.getUserAssets('')?.balance.locked ?? DEFAULT_BALANCE;
+  const totalBalance = avblBalance && lockedBalance ? avblBalance + lockedBalance : DEFAULT_BALANCE;
 
   const [hidden, setHidden] = useState(false);
 

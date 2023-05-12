@@ -1,3 +1,4 @@
+import {unitAsset} from '../../constants/config';
 export interface IUserAssets {
   currency: string;
   balance: {
@@ -27,7 +28,7 @@ export interface IUserAssets {
 
 export const getDummyUserAssets = (currency: string) => {
   const userAssets: IUserAssets = {
-    currency: 'USDT',
+    currency: unitAsset,
     balance: {
       available: 1296.47,
       locked: 589.628,

@@ -666,6 +666,7 @@ export const UserProvider = ({children}: IUserProvider) => {
         if (verifyR) {
           const deWT = `${encodedData}.${eip712signature.replace('0x', '')}`;
           setDeWT(deWT);
+          // setEnableServiceTerm(true);
           // ++ TODO to checksum address
           await setPrivateData(lunar.address, deWT);
           resultCode = Code.SUCCESS;

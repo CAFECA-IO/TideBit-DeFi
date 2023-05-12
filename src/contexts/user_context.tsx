@@ -50,14 +50,13 @@ import {IUser} from '../interfaces/tidebit_defi_background/user';
 import TickerBookInstance from '../lib/books/ticker_book';
 import {IUserBalance} from '../interfaces/tidebit_defi_background/user_balance';
 import {ProfitState} from '../constants/profit_state';
-import {IRankingTimeSpan, RankingInterval} from '../constants/ranking_time_span';
+import {IRankingTimeSpan} from '../constants/ranking_time_span';
 import {IUserAssets, getDummyUserAssets} from '../interfaces/tidebit_defi_background/user_assets';
+import {
+  IPersonalRanking,
+  getDummyPersonalRanking,
+} from '../interfaces/tidebit_defi_background/personal_ranking';
 
-export interface IMyRanking {
-  rank: number; //排名
-  pnl: number; //percentage required
-  cumulativePnl: number; //percentage required
-}
 export interface IUserProvider {
   children: React.ReactNode;
 }
@@ -111,7 +110,7 @@ export interface IUserContext {
   getBalance: (currency: string) => IBalance | null;
   getWalletBalance: (props: string) => IWalletBalance | null;
   getUserAssets: (currency: string) => IUserAssets | null;
-  getMyRanking: (timeSpan: IRankingTimeSpan) => IMyRanking | null;
+  getMyRanking: (timeSpan: IRankingTimeSpan) => IPersonalRanking | null;
   init: () => Promise<void>;
   walletExtensions: IWalletExtension[];
 }
@@ -778,43 +777,7 @@ export const UserProvider = ({children}: IUserProvider) => {
 
   /* ToDo: (20230510 - Julian) get data from backend */
   const getMyRanking = (timeSpan: IRankingTimeSpan) => {
-    let myRanking: IMyRanking = {
-      rank: 0,
-      pnl: 0,
-      cumulativePnl: 0,
-    };
-    switch (timeSpan) {
-      case RankingInterval.LIVE:
-        myRanking = {
-          rank: 32,
-          pnl: -7.034,
-          cumulativePnl: 3.32,
-        };
-        break;
-      case RankingInterval.DAILY:
-        myRanking = {
-          rank: 43,
-          pnl: -5.3,
-          cumulativePnl: 12.45,
-        };
-        break;
-      case RankingInterval.WEEKLY:
-        myRanking = {
-          rank: 75,
-          pnl: 3.41,
-          cumulativePnl: 29,
-        };
-        break;
-      case RankingInterval.MONTHLY:
-        myRanking = {
-          rank: 103,
-          pnl: 7.95,
-          cumulativePnl: 24.34,
-        };
-        break;
-    }
-
-    return myRanking;
+    return getDummyPersonalRanking(timeSpan);
   };
 
   const updateBalance = (updatedBalances: IBalance[]) => {

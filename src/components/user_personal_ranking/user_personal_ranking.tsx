@@ -20,14 +20,18 @@ const UserPersonalRanking = ({timeSpan}: IUserPersonalRankingProps) => {
 
   const username = userCtx.wallet?.slice(-1).toUpperCase();
 
-  const rankingNumber = userCtx.getMyRanking(timeSpan)?.rank ?? 0;
+  const rankingNumber = userCtx.getMyRanking(timeSpan)?.rank ?? -1;
   const pnl = userCtx.getMyRanking(timeSpan)?.pnl ?? 0;
   const cumulativePnl = userCtx.getMyRanking(timeSpan)?.cumulativePnl ?? 0;
 
   const shareClickHandler = () => setShowShareList(!showShareList);
 
+  const displayedRankingNumber = rankingNumber < 0 ? '-' : rankingNumber;
+
   const displayedPnl =
-    pnl > 0 ? (
+    displayedRankingNumber == '-' ? (
+      '-'
+    ) : pnl > 0 ? (
       <div className={TypeOfPnLColor.PROFIT}>+ {numberFormatted(pnl)} %</div>
     ) : pnl < 0 ? (
       <div className={TypeOfPnLColor.LOSS}>- {numberFormatted(pnl)} %</div>
@@ -36,7 +40,9 @@ const UserPersonalRanking = ({timeSpan}: IUserPersonalRankingProps) => {
     );
 
   const displayedCumulativePnl =
-    cumulativePnl > 0 ? (
+    displayedRankingNumber == '-' ? (
+      '-'
+    ) : cumulativePnl > 0 ? (
       <div className="text-lightYellow2">+ {numberFormatted(cumulativePnl)} %</div>
     ) : cumulativePnl < 0 ? (
       <div className="text-lightYellow2">- {numberFormatted(cumulativePnl)} %</div>
@@ -72,7 +78,7 @@ const UserPersonalRanking = ({timeSpan}: IUserPersonalRankingProps) => {
       <div className="inline-flex items-center space-x-1 text-sm text-lightYellow2 sm:text-lg md:space-x-3">
         <div className="hidden sm:block">{displayedCumulativePnl}</div>
         <div>{displayedArrow}</div>
-        <div>{rankingNumber}</div>
+        <div>{displayedRankingNumber}</div>
       </div>
     ) : (
       <div className="relative text-2xl text-lightWhite hover:cursor-pointer hover:text-lightGray2 md:text-4xl">
@@ -87,7 +93,7 @@ const UserPersonalRanking = ({timeSpan}: IUserPersonalRankingProps) => {
         <div className="inline-flex items-center sm:w-70px">
           <Image src="/leaderboard/crown.svg" width={25} height={25} alt="crown_icon" />
 
-          <div className="ml-2 text-sm sm:text-lg">{rankingNumber}</div>
+          <div className="ml-2 text-sm sm:text-lg">{displayedRankingNumber}</div>
         </div>
         {/* Info: (20230510 - Julian) User Avatar */}
         <div className="relative inline-flex h-36px w-36px items-center justify-center overflow-hidden rounded-full bg-tidebitTheme text-center md:h-60px md:w-60px">

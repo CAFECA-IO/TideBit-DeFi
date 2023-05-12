@@ -28,6 +28,8 @@ import {ITimeSpanUnion, TimeSpanUnion} from '../constants/time_span_union';
 import {
   ICandlestick,
   ICandlestickData,
+  getDummyCandlestickChartData,
+  updateDummyCandlestickChartData,
 } from '../interfaces/tidebit_defi_background/candlestickData';
 import {TideBitEvent} from '../constants/tidebit_event';
 import {NotificationContext} from './notification_context';
@@ -272,25 +274,44 @@ export const MarketProvider = ({children}: IMarketProvider) => {
    */
   const getCandlestickChartData = async (instId: string) => {
     let result: IResult = {...defaultResultFailed};
+
     try {
-      result = (await workerCtx.requestHandler({
-        name: APIName.GET_CANDLESTICK_DATA,
-        method: Method.GET,
-        params: instId,
-        // query: options, // TODO: add options (20230508 - tzuhan)
-      })) as IResult;
-      if (result.success) {
-        const data = (result.data as ICandlestickData[])?.map(item => ({
-          x: new Date(item.x),
-          y: {...item.y},
-        }));
-        candlestickBook.updateCandlesticksDatas(instId, data);
-        setCandlestickChartData(
-          candlestickBook.listCandlestickData(instId, {
-            // ...options, // TODO: add options (20230508 - tzuhan)
-          })
-        );
-      }
+      const raw = getDummyCandlestickChartData(50, TimeSpanUnion._1s);
+      setCandlestickChartData(raw);
+      const updatingInterval = setInterval(() => {
+        if (candlestickChartDataRef.current) {
+          const updated = updateDummyCandlestickChartData(
+            candlestickChartDataRef.current,
+            TimeSpanUnion._1s
+          );
+          setCandlestickChartData(updated);
+        } else {
+          const raw = getDummyCandlestickChartData(50, TimeSpanUnion._1s);
+          // setCandlestickChartData(tickerBook.listCandlestickData(tickerId, {}));
+          setCandlestickChartData(raw);
+        }
+      }, 1000);
+
+      result = {...defaultResultSuccess};
+
+      // result = (await workerCtx.requestHandler({
+      //   name: APIName.GET_CANDLESTICK_DATA,
+      //   method: Method.GET,
+      //   params: instId,
+      //   // query: options, // TODO: add options (20230508 - tzuhan)
+      // })) as IResult;
+      // if (result.success) {
+      //   const data = (result.data as ICandlestickData[])?.map(item => ({
+      //     x: new Date(item.x),
+      //     y: {...item.y},
+      //   }));
+      //   candlestickBook.updateCandlesticksDatas(instId, data);
+      //   setCandlestickChartData(
+      //     candlestickBook.listCandlestickData(instId, {
+      //       // ...options, // TODO: add options (20230508 - tzuhan)
+      //     })
+      //   );
+      // }
     } catch (error) {
       // Deprecate: error handle (Tzuhan - 20230321)
       // eslint-disable-next-line no-console
@@ -554,19 +575,19 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     []
   );
 
-  React.useMemo(
-    () =>
-      notificationCtx.emitter.on(
-        TideBitEvent.CANDLESTICK,
-        (action: IPusherAction, candlesticks: ICandlestick) => {
-          candlestickBook.updateCandlesticksData(action, candlesticks);
-          const [baseUnit, quoteUnit] = candlesticks.instId.split(`-`);
-          if (selectedTickerRef.current?.currency === baseUnit)
-            setCandlestickChartData(candlestickBook.listCandlestickData(candlesticks.instId, {}));
-        }
-      ),
-    []
-  );
+  // React.useMemo(
+  //   () =>
+  //     notificationCtx.emitter.on(
+  //       TideBitEvent.CANDLESTICK,
+  //       (action: IPusherAction, candlesticks: ICandlestick) => {
+  //         candlestickBook.updateCandlesticksData(action, candlesticks);
+  //         const [baseUnit, quoteUnit] = candlesticks.instId.split(`-`);
+  //         if (selectedTickerRef.current?.currency === baseUnit)
+  //           setCandlestickChartData(candlestickBook.listCandlestickData(candlesticks.instId, {}));
+  //       }
+  //     ),
+  //   []
+  // );
 
   /** Deprecated: replaced by pusher (20230424 - tzuhan)
   React.useMemo(

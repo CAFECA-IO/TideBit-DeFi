@@ -31,6 +31,7 @@ import {
   LineStyle,
   SeriesMarker,
   Time,
+  TimeScaleOptions,
 } from 'lightweight-charts';
 import Lottie, {useLottie} from 'lottie-react';
 import spotAnimation from '../../../public/animation/circle.json';
@@ -105,8 +106,26 @@ const createSpec = ({timespan, dataSize, chartHeight, chartWidth}: IChartSpecPro
     locale: 'zh-TW',
     dateFormat: 'yyyy-MM-dd',
   };
-
-  const chartOptions = {
+  // ChartOptionsChartOptions
+  // TimeScaleOptions
+  const timeScale = {
+    timeVisible: true,
+    secondsVisible: true,
+    // ticksVisible: false,
+    fixLeftEdge: true,
+    // shiftVisibleRangeOnNewBar: true,
+    // borderVisible: false,
+    // fixRightEdge: true, // Info: Restrict the drag (20230413 - Shirley)
+    // rightOffset: 100,
+    // barSpacing: 5,
+    // borderColor: LINE_GRAPH_STROKE_COLOR.TIDEBIT_THEME,
+    // minBarSpacing: 5,
+    // visible: true,
+    // rightBarStaysOnScroll: true,
+    // lockVisibleTimeRangeOnResize: true,
+    rightOffset: 12,
+  };
+  const chartOptions: any = {
     width: chartWidth,
     height: chartHeight,
 
@@ -116,6 +135,17 @@ const createSpec = ({timespan, dataSize, chartHeight, chartWidth}: IChartSpecPro
       background: {type: ColorType.Solid, color: LINE_GRAPH_STROKE_COLOR.BLACK},
       textColor: LINE_GRAPH_STROKE_COLOR.LIGHT_GRAY,
     },
+    // rightPriceScale: {
+    //   borderColor: LINE_GRAPH_STROKE_COLOR.TIDEBIT_THEME,
+    //   scaleMargins: {
+    //     top: 0.3,
+    //     bottom: 0.25,
+    //     right: 0.3,
+    //     left: 0.8,
+    //   },
+    //   borderVisible: true,
+    // },
+
     grid: {
       vertLines: {
         visible: false,
@@ -140,16 +170,18 @@ const createSpec = ({timespan, dataSize, chartHeight, chartWidth}: IChartSpecPro
         color: LINE_GRAPH_STROKE_COLOR.WHITE,
       },
     },
+    timeScale,
+    // timeScale: {
+    //   timeVisible: true,
+    //   secondsVisible: true,
+    //   ticksVisible: false,
+    //   fixLeftEdge: true,
+    //   shiftVisibleRangeOnNewBar: true,
+    //   borderVisible: false,
+    //   fixRightEdge: true, // Info: Restrict the drag (20230413 - Shirley)
+    //   rightOffset: 10,
 
-    timeScale: {
-      timeVisible: true,
-      secondsVisible: true,
-      ticksVisible: false,
-      fixLeftEdge: true,
-      shiftVisibleRangeOnNewBar: true,
-      borderVisible: false,
-      fixRightEdge: true, // Info: Restrict the drag (20230413 - Shirley)
-    },
+    // },
     localization: locale,
   };
 
@@ -292,7 +324,7 @@ export default function CandlestickChart({
       });
     }
 
-    // ToDo: [time->price point]when hovering over the label of open position, change the cursor (20230413 - Shirley)
+    // ToDo: [time->price point] when hovering over the label of open position, change the cursor (20230413 - Shirley)
     // if (param.time === (((tuned[tuned.length - 1].time as number) + 1) as UTCTimestamp)) {
     //   setCursorStyle('hover:cursor-pointer');
     //   return;
@@ -314,10 +346,9 @@ export default function CandlestickChart({
 
   const openPriceLine = () => {
     // ToDo: get the open position from user context (20230411 - Shirley)
-    const numOfPosition = 3;
+    const numOfPosition = 1;
     for (let i = 0; i < numOfPosition; i++) {
-      const price =
-        i === 0 ? tuned[tuned.length - 1]?.close + 1 : tuned[tuned.length - 1]?.close - 1 * i;
+      const price = i === 0 ? 1705 : 2500 - 1 * i;
       const color = i === 0 ? LINE_GRAPH_STROKE_COLOR.UP : LINE_GRAPH_STROKE_COLOR.DOWN;
 
       const lineSeries = chart.addLineSeries({
@@ -414,10 +445,10 @@ export default function CandlestickChart({
           priceRangeChangeHandler as LogicalRangeChangeEventHandler
         );
 
-      // Info: Draw the open price line
-      // openPriceLine();
+      // Info: Draw the open price line (20230411 - Shirleey)
+      openPriceLine();
 
-      // Info: OHLC hovered information
+      // Info: OHLC hovered information (20230411 - Shirleey)
       chart.subscribeCrosshairMove(crosshairMoveHandler);
 
       window.addEventListener('resize', handleResize);

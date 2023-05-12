@@ -15,8 +15,8 @@ import {findCurrencyByCode, hasValue} from '../../../lib/common';
 import {Currency} from '../../../constants/currency';
 import Skeleton, {SkeletonTheme} from 'react-loading-skeleton';
 import Image from 'next/image';
-import {API_DOMAIN, DOMAIN} from '../../../constants/config';
-import {WIDTH_HEIGHT_OF_SHARING_RECORD} from '../../../constants/display';
+import {DOMAIN} from '../../../constants/config';
+import {WIDTH_OF_SHARING_RECORD} from '../../../constants/display';
 import {CustomError} from '../../../lib/custom_error';
 import {Code} from '../../../constants/code';
 import useStateRef from 'react-usestateref';
@@ -51,8 +51,8 @@ const CfdSharing = (props: IPageProps) => {
       <div className="">
         <img
           src={displayImg}
-          width={WIDTH_HEIGHT_OF_SHARING_RECORD}
-          height={WIDTH_HEIGHT_OF_SHARING_RECORD}
+          width={WIDTH_OF_SHARING_RECORD}
+          height={WIDTH_OF_SHARING_RECORD}
           alt="CFD record"
           className="hover:opacity-90"
         />
@@ -76,8 +76,8 @@ const CfdSharing = (props: IPageProps) => {
         <meta property="og:type" content="website" />
         <meta property="og:url" content={DOMAIN} />
         <meta property="og:image" content={img} />
-        <meta property="og:image:width" content={WIDTH_HEIGHT_OF_SHARING_RECORD.toString()} />
-        <meta property="og:image:height" content={WIDTH_HEIGHT_OF_SHARING_RECORD.toString()} />
+        <meta property="og:image:width" content={WIDTH_OF_SHARING_RECORD.toString()} />
+        <meta property="og:image:height" content={WIDTH_OF_SHARING_RECORD.toString()} />
         <meta property="og:description" content="CFD Sharing" />
         <meta property="og:site_name" content="TideBit" />
         <meta property="og:locale" content="en_US" />

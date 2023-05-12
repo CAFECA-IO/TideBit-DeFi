@@ -23,6 +23,7 @@ import {
 } from '../../../../interfaces/tidebit_defi_background/sharing_order';
 import {useRouter} from 'next/router';
 import {BARLOW_BASE64} from '../../../../constants/fonts';
+import {Buffer} from 'buffer';
 
 export const config = {
   runtime: 'edge',

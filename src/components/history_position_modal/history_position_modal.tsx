@@ -281,7 +281,7 @@ const HistoryPositionModal = ({
   const isDisplayedDetailedPositionModal = modalVisible ? (
     <div {...otherProps}>
       <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">
-        <div className="relative my-6 mx-auto w-auto max-w-xl">
+        <div className="relative mx-auto my-6 w-auto max-w-xl">
           {/*content & panel*/}
           <div className="relative flex h-auto w-300px flex-col rounded-xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none">
             {/*header*/}
@@ -300,7 +300,7 @@ const HistoryPositionModal = ({
               </div>
 
               <button className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
-                <span className="absolute top-4 right-4 block outline-none focus:outline-none">
+                <span className="absolute right-4 top-4 block outline-none focus:outline-none">
                   <ImCross onClick={modalClickHandler} />
                 </span>
               </button>

@@ -45,7 +45,7 @@ const NavBar = () => {
     <User />
   ) : (
     /* Info: (20230327 - Julian) show wallet panel */
-    <WalletConnectButton className="mt-4 py-2 px-5 md:mt-0" />
+    <WalletConnectButton className="mt-4 px-5 py-2 md:mt-0" />
   );
 
   const isDisplayedUnreadnumber =
@@ -93,7 +93,7 @@ const NavBar = () => {
                       {t('NAV_BAR.TRADE')}
                     </Link>
                     <Link
-                      href={TBDURL.COMING_SOON}
+                      href={TBDURL.LEADERBOARD}
                       className="mr-5 hover:cursor-pointer hover:text-tidebitTheme"
                     >
                       {t('NAV_BAR.LEADERBOARD')}

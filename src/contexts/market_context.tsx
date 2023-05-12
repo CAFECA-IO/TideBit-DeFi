@@ -46,6 +46,8 @@ import {Code, Reason} from '../constants/code';
 import CandlestickBookInstance from '../lib/books/candlestick_book';
 import {IPusherAction} from '../interfaces/tidebit_defi_background/pusher_data';
 import {IQuotation} from '../interfaces/tidebit_defi_background/quotation';
+import {IRankingTimeSpan} from '../constants/ranking_time_span';
+import {ILeaderboard, getDummyLeaderboard} from '../interfaces/tidebit_defi_background/leaderboard';
 
 export interface IMarketProvider {
   children: React.ReactNode;
@@ -81,6 +83,7 @@ export interface IMarketContext {
     price: number
   ) => Promise<IResult>;
   getGuaranteedStopFeePercentage: (tickerId: string) => Promise<IResult>;
+  getLeaderboard: (timeSpan: IRankingTimeSpan) => ILeaderboard | null;
   /** Deprecated: replaced by pusher (20230424 - tzuhan)
   getTickerHistory: (
     ticker: string,
@@ -133,6 +136,7 @@ export const MarketContext = createContext<IMarketContext>({
   getCFDQuotation: () => Promise.resolve(defaultResultSuccess),
   getCFDSuggestion: () => Promise.resolve(defaultResultSuccess),
   getGuaranteedStopFeePercentage: () => Promise.resolve(defaultResultSuccess),
+  getLeaderboard: () => null,
   /** Deprecated: replaced by pusher (20230424 - tzuhan)
   getTickerHistory: (): IResult => {
     throw new CustomError(Code.FUNCTION_NOT_IMPLEMENTED);
@@ -419,6 +423,11 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     return result;
   };
 
+  // TODO: (20230511 - Julian) get data from backend
+  const getLeaderboard = (timeSpan: IRankingTimeSpan) => {
+    return getDummyLeaderboard(timeSpan);
+  };
+
   const listTickers = async () => {
     let result: IResult = {...defaultResultFailed};
     try {
@@ -607,6 +616,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     getCFDQuotation,
     getCFDSuggestion,
     getGuaranteedStopFeePercentage,
+    getLeaderboard,
     /** Deprecated: replaced by pusher (20230424 - tzuhan)
     getTickerHistory,
     */

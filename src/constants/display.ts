@@ -187,6 +187,8 @@ export const MODAL_BUTTON_STYLE = {
     'whitespace-nowrap rounded border border-tidebitTheme text-sm text-white transition-colors duration-300 focus:outline-none disabled:bg-lightGray',
 };
 
+export const DEFAULT_USER_AVATAR = '/leaderboard/default_avatar.svg';
+
 export const DEFAULT_SELL_PRICE = 0;
 export const DEFAULT_BUY_PRICE = 9999999999;
 export const DEFAULT_LEVERAGE = 1;

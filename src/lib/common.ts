@@ -18,7 +18,7 @@ import {
   MONTH_FULL_NAME_LIST,
   FRACTION_DIGITS,
 } from '../constants/config';
-import {UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../constants/display';
+import {UNIVERSAL_NUMBER_FORMAT_LOCALE, DEFAULT_SPREAD} from '../constants/display';
 import ServiceTerm from '../constants/contracts/service_term';
 import IJSON from '../interfaces/ijson';
 import RLP from 'rlp';
@@ -247,7 +247,8 @@ export const randomHex = (length: number) => {
 export const toDisplayCFDOrder = (
   cfdOrder: ICFDOrder,
   positionLineGraph: number[],
-  currentPrice?: number
+  currentPrice?: number,
+  spread?: number
 ) => {
   const openValue = roundToDecimalPlaces(cfdOrder.openPrice * cfdOrder.amount, 2);
   const closeValue =
@@ -286,6 +287,13 @@ export const toDisplayCFDOrder = (
     stopLoss: rSl,
   };
 
+  const spreadValue = spread ? spread : DEFAULT_SPREAD;
+  // Info: (20230510 - Julian) positionLineGraph with spread
+  const positionLineGraphWithSpread =
+    cfdOrder.typeOfPosition === TypeOfPosition.BUY
+      ? positionLineGraph.map((v: number) => v * (1 + spreadValue))
+      : positionLineGraph.map((v: number) => v * (1 - spreadValue));
+
   const openPrice = cfdOrder.openPrice;
   const nowPrice = positionLineGraph[positionLineGraph.length - 1];
   const liquidationPrice = cfdOrder.liquidationPrice;
@@ -314,7 +322,7 @@ export const toDisplayCFDOrder = (
     },
     openValue: openValue,
     closeValue: closeValue,
-    positionLineGraph,
+    positionLineGraph: positionLineGraphWithSpread,
     suggestion,
     stateCode: stateCode,
   };

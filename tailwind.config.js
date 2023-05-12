@@ -66,6 +66,9 @@ module.exports = {
         '420px': '420px',
         '600px': '600px',
       },
+      boxShadow: {
+        'top': '0 0 3px 5px rgba(0,0,0,0.6)',
+      },
       spacing: {
         // width / height / padding / margin / top / bottom / right / left
         '1px': '1px',

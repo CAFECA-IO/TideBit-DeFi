@@ -330,6 +330,19 @@
     "THIRD_PARTY_LIBRARY_ERROR": "第三方函式库错误"
   },
   "LEADERBOARD_PAGE": {
-    "TITLE": "排行榜"
+    "TITLE": "排行榜",
+    "LIVE": "实时",
+    "DAILY": "每日",
+    "WEEKLY": "每周",
+    "MONTHLY": "每月",
+    "SUBTITLE_LIVE": "排行榜将在",
+    "SUBTITLE_LIVE_2": "后结算",
+    "SUBTITLE_DAILY": "",
+    "SUBTITLE_DAILY_2": "日榜",
+    "SUBTITLE_WEEKLY": "",
+    "SUBTITLE_WEEKLY_2": "到",
+    "SUBTITLE_WEEKLY_3": "周榜",
+    "SUBTITLE_MONTHLY": "",
+    "SUBTITLE_MONTHLY_2": "月榜"
   }
 }

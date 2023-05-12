@@ -390,7 +390,7 @@ const UpdateFormModal = ({
               {guaranteedTooltipStatus == 3 && (
                 <div
                   role="tooltip"
-                  className="absolute -top-120px -left-52 z-20 mr-8 w-56 rounded bg-darkGray8 p-4 shadow-lg shadow-black/80 transition duration-150 ease-in-out"
+                  className="absolute -left-52 -top-120px z-20 mr-8 w-56 rounded bg-darkGray8 p-4 shadow-lg shadow-black/80 transition duration-150 ease-in-out"
                 >
                   <p className="pb-0 text-sm font-medium text-white">
                     {t('POSITION_MODAL.GUARANTEED_STOP_HINT')}
@@ -590,7 +590,7 @@ const UpdateFormModal = ({
   const isDisplayedDetailedPositionModal = modalVisible ? (
     <div {...otherProps}>
       <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">
-        <div className="relative my-6 mx-auto w-auto max-w-xl">
+        <div className="relative mx-auto my-6 w-auto max-w-xl">
           {/*content & panel*/}
           <div className="relative flex h-auto w-90vw flex-col rounded-xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none xs:w-400px">
             {/*header*/}
@@ -610,7 +610,7 @@ const UpdateFormModal = ({
                   <div className="mr-1 text-lightGray">{t('POSITION_MODAL.EXPIRATION_TIME')}</div>
                   <div className="relative flex h-50px w-50px items-center">
                     <div
-                      className={`absolute top-10px left-12px z-30 h-7 w-7 rounded-full hover:cursor-pointer hover:bg-darkGray1 
+                      className={`absolute left-12px top-10px z-30 h-7 w-7 rounded-full hover:cursor-pointer hover:bg-darkGray1 
                       ${displayedCrossColor} ${displayedCrossStyle} transition-all duration-150`}
                       onClick={squareClickHandler}
                     ></div>
@@ -631,7 +631,7 @@ const UpdateFormModal = ({
               </div>
 
               <button className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
-                <span className="absolute top-5 right-5 block outline-none focus:outline-none">
+                <span className="absolute right-5 top-5 block outline-none focus:outline-none">
                   <ImCross onClick={modalClickHandler} />
                 </span>
               </button>

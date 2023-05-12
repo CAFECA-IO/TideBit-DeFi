@@ -160,7 +160,7 @@ const LeaderboardTab = ({timeSpan, setTimeSpan, rankings}: LeaderboardTabProps) 
   const displayedtop3List = top3Data.map(({rank, marginTop, crown, star, medalist, userData}) => {
     const isDisplayedHalo = rank === 1 ? 'block' : 'hidden';
     return (
-      <div className={marginTop}>
+      <div key={rank} className={marginTop}>
         <div className="relative flex flex-col">
           {/* Info: (20230511 - Julian) User Avatar */}
           <div className={`absolute inline-flex items-center justify-center p-2 md:p-3`}>
@@ -218,7 +218,7 @@ const LeaderboardTab = ({timeSpan, setTimeSpan, rankings}: LeaderboardTabProps) 
 
   const tabList = rankingTimeSpan.map(({text, style, active}) => {
     return (
-      <div className="w-full">
+      <div key={text} className="w-full">
         <button
           type="button"
           className={`${style} inline-block w-full rounded-t-2xl px-20px py-2 text-xs hover:cursor-pointer md:text-base`}
@@ -239,7 +239,7 @@ const LeaderboardTab = ({timeSpan, setTimeSpan, rankings}: LeaderboardTabProps) 
       const displayedName = rank <= 0 ? 'N/A' : userName;
       const displayedAvatar = rank <= 0 ? DEFAULT_USER_AVATAR : userAvatar;
       return (
-        <div className="flex w-full whitespace-nowrap px-4 py-6 md:px-8 md:py-4">
+        <div key={rank} className="flex w-full whitespace-nowrap px-4 py-6 md:px-8 md:py-4">
           <div className="flex flex-1 items-center space-x-2 md:space-x-3">
             <div className="inline-flex items-center sm:w-70px">
               <Image src="/leaderboard/crown.svg" width={25} height={25} alt="crown_icon" />

@@ -334,6 +334,15 @@
     "LIVE": "Live",
     "DAILY": "Daily",
     "WEEKLY": "Weekly",
-    "MONTHLY": "Monthly"
+    "MONTHLY": "Monthly",
+    "SUBTITLE_LIVE": "This leaderboard will be closed in",
+    "SUBTITLE_LIVE_2": "",
+    "SUBTITLE_DAILY": "This leaderboard of",
+    "SUBTITLE_DAILY_2": "",
+    "SUBTITLE_WEEKLY": "This leaderboard from",
+    "SUBTITLE_WEEKLY_2": "to",
+    "SUBTITLE_WEEKLY_3": "",
+    "SUBTITLE_MONTHLY": "This leaderboard of",
+    "SUBTITLE_MONTHLY_2": ""
   }
 }

@@ -334,6 +334,15 @@
     "LIVE": "即時",
     "DAILY": "每日",
     "WEEKLY": "每週",
-    "MONTHLY": "每月"
+    "MONTHLY": "每月",
+    "SUBTITLE_LIVE": "排行榜將在",
+    "SUBTITLE_LIVE_2": "後關閉",
+    "SUBTITLE_DAILY": "",
+    "SUBTITLE_DAILY_2": "日榜",
+    "SUBTITLE_WEEKLY": "",
+    "SUBTITLE_WEEKLY_2": "到",
+    "SUBTITLE_WEEKLY_3": "週榜",
+    "SUBTITLE_MONTHLY": "",
+    "SUBTITLE_MONTHLY_2": "月榜"
   }
 }

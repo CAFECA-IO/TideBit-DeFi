@@ -16,50 +16,62 @@ const BoardPageBody = () => {
 
   const [timeSpan, setTimeSpan] = useState(RankingInterval.LIVE);
   const [subtitle, setSubtitle] = useState(<></>);
+  const [leaderboardLiveRemains, setLeaderboardLiveRemains] = useState(0);
 
   const leaderboardData = marketCtx.getLeaderboard(timeSpan) ?? defaultLeaderboard;
   const {startTime, endTime, rankings} = leaderboardData;
 
+  let countdownInterval: NodeJS.Timeout | null = null;
   useEffect(() => {
-    // ToDo: (20230512- Julian) i18n
+    countdownInterval = setTimeout(() => {
+      const now = Math.floor(Date.now() / 1000);
+      const remains = endTime - now;
+      setLeaderboardLiveRemains(remains);
+    }, 1000);
+
     const result =
       timeSpan === RankingInterval.LIVE ? (
         <div className="inline-block text-base md:text-xl">
-          This leaderboard will be closed in{' '}
+          {t('LEADERBOARD_PAGE.SUBTITLE_LIVE')}{' '}
           <span className="text-tidebitTheme">
-            {timestampToString(endTime - Date.now() / 1000).time}
+            {timestampToString(leaderboardLiveRemains).time}{' '}
           </span>
+          {t('LEADERBOARD_PAGE.SUBTITLE_LIVE_2')}
         </div>
       ) : timeSpan === RankingInterval.DAILY ? (
         <div className="inline-block text-base md:text-xl">
-          This leaderboard of{' '}
+          {t('LEADERBOARD_PAGE.SUBTITLE_DAILY')}{' '}
           <span className="text-tidebitTheme">{timestampToString(endTime).date}</span>
+          {t('LEADERBOARD_PAGE.SUBTITLE_DAILY_2')}
         </div>
       ) : timeSpan === RankingInterval.WEEKLY ? (
         <div className="inline-block text-base md:text-xl">
-          This leaderboard from{' '}
-          <span className="text-tidebitTheme">{timestampToString(startTime).date}</span> to{' '}
-          <span className="text-tidebitTheme">{timestampToString(endTime).date}</span>
+          {t('LEADERBOARD_PAGE.SUBTITLE_WEEKLY')}{' '}
+          <span className="text-tidebitTheme">{timestampToString(startTime).date}</span>{' '}
+          {t('LEADERBOARD_PAGE.SUBTITLE_WEEKLY_2')}{' '}
+          <span className="text-tidebitTheme">{timestampToString(endTime).date}</span>{' '}
+          {t('LEADERBOARD_PAGE.SUBTITLE_WEEKLY_3')}
         </div>
       ) : timeSpan === RankingInterval.MONTHLY ? (
         <div className="inline-block text-base md:text-xl">
-          This leaderboard of{' '}
+          {t('LEADERBOARD_PAGE.SUBTITLE_MONTHLY')}{' '}
           <span className="text-tidebitTheme">{timestampToString(endTime).monthAndYear}</span>
+          {t('LEADERBOARD_PAGE.SUBTITLE_MONTHLY_2')}
         </div>
       ) : (
         <></>
       );
 
     setSubtitle(result);
-  }, [Date.now(), timeSpan]);
+  }, [timeSpan, leaderboardLiveRemains]);
 
   return (
-    <div className="pt-20">
+    <div className="pt-12 md:pt-20">
       <div className="min-h-screen">
         <div className="mx-auto my-10 flex w-screen flex-col items-center space-y-4">
           <h1 className="text-3xl">{t('LEADERBOARD_PAGE.TITLE')}</h1>
           <h2 className="text-xl">{subtitle}</h2>
-          <div className="pt-150px md:pt-300px">
+          <div className="pt-150px md:pt-250px">
             <LeaderboardTab timeSpan={timeSpan} setTimeSpan={setTimeSpan} rankings={rankings} />
           </div>
         </div>

@@ -3,14 +3,24 @@ import Image from 'next/image';
 import useWindowSize from '../../lib/hooks/use_window_size';
 import UserPersonalRanking from '../user_personal_ranking/user_personal_ranking';
 import {MarketContext} from '../../contexts/market_context';
-import {TypeOfPnLColor} from '../../constants/display';
+import {TypeOfPnLColor, DEFAULT_USER_AVATAR} from '../../constants/display';
 import {unitAsset} from '../../constants/config';
 import {numberFormatted} from '../../lib/common';
 import {RankingInterval} from '../../constants/ranking_time_span';
+import {defaultLeaderboard} from '../../interfaces/tidebit_defi_background/leaderboard';
 
+const MIN_SCREEN_WIDTH = 1024;
 const DEFAULT_PODIUM_WIDTH = 960;
 const DEFAULT_PODIUM_HEIGHT = 300;
 const DEFAULT_MEDALIST_SIZE = 200;
+const DEFAULT_CROWN_SIZE_DESKTOP = 0.5;
+const DEFAULT_CROWN_SIZE_MOBILE = 0.4;
+const DEFAULT_STAR_SIZE_DESKTOP = 50;
+const DEFAULT_STAR_SIZE_MOBILE = 20;
+const DEFAULT_AVATAR_SIZE_DESKTOP = 60;
+const DEFAULT_AVATAR_SIZE_MOBILE = 36;
+const GAP_BETWEEN_PODIUMAND_MEDALIST = 500;
+const NUMBER_OF_MEDALIST = 3;
 
 const LeaderboardTab = () => {
   const marketCtx = useContext(MarketContext);
@@ -20,20 +30,24 @@ const LeaderboardTab = () => {
     windowSize.width > DEFAULT_PODIUM_WIDTH ? windowSize.width : DEFAULT_PODIUM_WIDTH;
   const podiumHeight = (DEFAULT_PODIUM_HEIGHT / DEFAULT_PODIUM_WIDTH) * podiumWidth;
   const medalistSize =
-    (podiumWidth - 500) / 3 < DEFAULT_MEDALIST_SIZE
-      ? (podiumWidth - 500) / 3
+    (podiumWidth - GAP_BETWEEN_PODIUMAND_MEDALIST) / NUMBER_OF_MEDALIST < DEFAULT_MEDALIST_SIZE
+      ? (podiumWidth - GAP_BETWEEN_PODIUMAND_MEDALIST) / NUMBER_OF_MEDALIST
       : DEFAULT_MEDALIST_SIZE;
-  const crownSize = medalistSize >= DEFAULT_MEDALIST_SIZE ? medalistSize * 0.5 : medalistSize * 0.4;
-  const starSize = medalistSize >= DEFAULT_MEDALIST_SIZE ? 50 : 20;
-  const leaderboardUserAvatarSize = windowSize.width >= 1024 ? 60 : 36;
+  const crownSize =
+    medalistSize >= DEFAULT_MEDALIST_SIZE
+      ? medalistSize * DEFAULT_CROWN_SIZE_DESKTOP
+      : medalistSize * DEFAULT_CROWN_SIZE_MOBILE;
+  const starSize =
+    medalistSize >= DEFAULT_MEDALIST_SIZE ? DEFAULT_STAR_SIZE_DESKTOP : DEFAULT_STAR_SIZE_MOBILE;
+  const leaderboardUserAvatarSize =
+    windowSize.width >= MIN_SCREEN_WIDTH ? DEFAULT_AVATAR_SIZE_DESKTOP : DEFAULT_AVATAR_SIZE_MOBILE;
 
   const [timeSpan, setTimeSpan] = useState(RankingInterval.LIVE);
 
   /* Info: (20230511 - Julian) Sorted by rank */
-  const leaderboardData =
-    marketCtx.getLeaderboard(timeSpan)?.sort((a, b) => {
-      return a.rank - b.rank;
-    }) ?? [];
+  const leaderboardData = marketCtx.getLeaderboard(timeSpan)?.sort((a, b) => {
+    return b.cumulativePnl - a.cumulativePnl;
+  }) ?? [defaultLeaderboard, defaultLeaderboard, defaultLeaderboard];
 
   const activeLiveTabStyle =
     timeSpan == RankingInterval.LIVE
@@ -55,52 +69,46 @@ const LeaderboardTab = () => {
       ? 'bg-darkGray7 text-lightWhite'
       : 'bg-darkGray6 text-lightGray';
 
-  const displayedPnl = (pnl: number) =>
+  const displayPnl = (pnl: number) =>
     pnl > 0 ? (
-      <div className={TypeOfPnLColor.PROFIT}>+ {numberFormatted(pnl)} %</div>
+      <div className={TypeOfPnLColor.PROFIT}>+ {numberFormatted(pnl)}</div>
     ) : pnl < 0 ? (
-      <div className={TypeOfPnLColor.LOSS}>- {numberFormatted(pnl)} %</div>
+      <div className={TypeOfPnLColor.LOSS}>- {numberFormatted(pnl)}</div>
     ) : (
-      <div className={TypeOfPnLColor.EQUAL}>{numberFormatted(pnl)} %</div>
+      <div className={TypeOfPnLColor.EQUAL}>{numberFormatted(pnl)}</div>
     );
 
+  const defaultTop3Data = {
+    name: 'N/A',
+    avatar: DEFAULT_USER_AVATAR,
+    displayedPnl: '-',
+  };
+
   /* Info: (20230511 - Julian) Sorted as Sliver, Gold, Bronze */
-  const top3Data = [
+  const top3 = [
     {
-      rank: 'SILVER',
+      sorted: 0,
+      rank: 2,
       marginTop: 'mt-28 md:mt-24',
       crown: '/leaderboard/silver_crown@2x.png',
       star: '/leaderboard/silver_star.svg',
       medalist: '/leaderboard/silver_medalist.svg',
-      userData: {
-        name: leaderboardData[0].userName,
-        avatar: leaderboardData[0].userAvatar ?? '/leaderboard/default_avatar.svg',
-        displayedPnl: displayedPnl(leaderboardData[0].cumulativePnl),
-      },
     },
     {
-      rank: 'GOLD',
+      sorted: 1,
+      rank: 1,
       marginTop: 'mt-20 md:mt-8',
       crown: '/leaderboard/gold_crown@2x.png',
       star: '/leaderboard/gold_star.svg',
       medalist: '/leaderboard/gold_medalist.svg',
-      userData: {
-        name: leaderboardData[1].userName,
-        avatar: leaderboardData[1].userAvatar ?? '/leaderboard/default_avatar.svg',
-        displayedPnl: displayedPnl(leaderboardData[1].cumulativePnl),
-      },
     },
     {
-      rank: 'BRONZE',
+      sorted: 2,
+      rank: 3,
       marginTop: 'mt-32',
       crown: '/leaderboard/bronze_crown@2x.png',
       star: '/leaderboard/bronze_star.svg',
       medalist: '/leaderboard/bronze_medalist.svg',
-      userData: {
-        name: leaderboardData[2].userName,
-        avatar: leaderboardData[2].userAvatar ?? '/leaderboard/default_avatar.svg',
-        displayedPnl: displayedPnl(leaderboardData[2].cumulativePnl),
-      },
     },
   ];
 
@@ -128,8 +136,21 @@ const LeaderboardTab = () => {
     },
   ];
 
-  const top3List = top3Data.map(({rank, marginTop, crown, star, medalist, userData}) => {
-    const isDisplayedHalo = rank === 'GOLD' ? 'block' : 'hidden';
+  /* Info: (20230511 - Julian) If rank <= 0, then display default data */
+  const top3Data = top3.map(({sorted, rank}) => {
+    const userData =
+      rank <= 0
+        ? defaultTop3Data
+        : {
+            name: leaderboardData[rank - 1].userName,
+            avatar: leaderboardData[rank - 1].userAvatar ?? DEFAULT_USER_AVATAR,
+            displayedPnl: displayPnl(leaderboardData[rank - 1].cumulativePnl),
+          };
+    return {...top3[sorted], userData};
+  });
+
+  const displayedtop3List = top3Data.map(({rank, marginTop, crown, star, medalist, userData}) => {
+    const isDisplayedHalo = rank === 1 ? 'block' : 'hidden';
     return (
       <div className={marginTop}>
         <div className="relative flex flex-col">
@@ -176,7 +197,7 @@ const LeaderboardTab = () => {
   const displayedTop3 = (
     <div className="relative w-screen md:w-8/10">
       <div className="absolute -top-48 flex w-full justify-between space-x-4 px-4 md:-top-56 md:px-16">
-        {top3List}
+        {displayedtop3List}
       </div>
       <Image
         src="/leaderboard/podium@2x.png"
@@ -201,35 +222,41 @@ const LeaderboardTab = () => {
     );
   });
 
-  // Info: (20230511 - Julian) Leaderboard List (4th ~)
-  const leaderboardList = leaderboardData
+  /* Info: (20230511 - Julian) Leaderboard List (4th ~) */
+  const displayedleaderboardList = leaderboardData
     .slice(3)
-    .map(({rank, userName, userAvatar, cumulativePnl}) => (
-      <div className="flex w-full whitespace-nowrap px-4 py-6 md:px-8 md:py-4">
-        <div className="flex flex-1 items-center space-x-2 md:space-x-3">
-          <div className="inline-flex items-center sm:w-70px">
-            <Image src="/leaderboard/crown.svg" width={25} height={25} alt="crown_icon" />
+    .map(({rank, userName, userAvatar, cumulativePnl}) => {
+      const displayedRank = rank <= 0 ? '-' : rank;
+      const displayedPnl = rank <= 0 ? '-' : displayPnl(cumulativePnl);
+      const displayedName = rank <= 0 ? 'N/A' : userName;
+      const displayedAvatar = rank <= 0 ? DEFAULT_USER_AVATAR : userAvatar;
+      return (
+        <div className="flex w-full whitespace-nowrap px-4 py-6 md:px-8 md:py-4">
+          <div className="flex flex-1 items-center space-x-2 md:space-x-3">
+            <div className="inline-flex items-center sm:w-70px">
+              <Image src="/leaderboard/crown.svg" width={25} height={25} alt="crown_icon" />
 
-            <div className="ml-2 text-sm sm:text-lg">{rank}</div>
+              <div className="ml-2 text-sm sm:text-lg">{displayedRank}</div>
+            </div>
+            {/* Info: (20230510 - Julian) User Avatar */}
+            <Image
+              src={displayedAvatar ?? DEFAULT_USER_AVATAR}
+              width={leaderboardUserAvatarSize}
+              height={leaderboardUserAvatarSize}
+              alt="user_avatar"
+            />
+            {/* Info: (20230510 - Julian) User Name */}
+            <div className="truncate text-sm sm:text-xl">{displayedName}</div>
           </div>
-          {/* Info: (20230510 - Julian) User Avatar */}
-          <Image
-            src={userAvatar ?? '/leaderboard/default_avatar.svg'}
-            width={leaderboardUserAvatarSize}
-            height={leaderboardUserAvatarSize}
-            alt="user_avatar"
-          />
-          {/* Info: (20230510 - Julian) User Name */}
-          <div className="truncate text-sm sm:text-xl">{userName}</div>
-        </div>
-        <div className="flex items-center space-x-3 text-base md:text-xl">
-          <div className="inline-flex items-end">
-            {displayedPnl(cumulativePnl)}
-            <span className="ml-1 text-sm text-lightGray4">{unitAsset}</span>
+          <div className="flex items-center space-x-3 text-base md:text-xl">
+            <div className="inline-flex items-end">
+              {displayedPnl}
+              <span className="ml-1 text-sm text-lightGray4">{unitAsset}</span>
+            </div>
           </div>
         </div>
-      </div>
-    ));
+      );
+    });
 
   return (
     <div className="flex flex-col items-center">
@@ -238,7 +265,7 @@ const LeaderboardTab = () => {
       <div className="my-10 w-screen md:w-8/10">
         <div className="inline-flex w-full text-center font-medium md:space-x-3px">{tabList}</div>
         <div className="relative flex w-full flex-col bg-darkGray7 pt-2">
-          {leaderboardList}
+          {displayedleaderboardList}
           <UserPersonalRanking timeSpan={timeSpan} />
         </div>
       </div>

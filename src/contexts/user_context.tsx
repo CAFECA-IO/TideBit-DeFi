@@ -110,7 +110,7 @@ export interface IUserContext {
   getBalance: (currency: string) => IBalance | null;
   getWalletBalance: (props: string) => IWalletBalance | null;
   getUserAssets: (currency: string) => IUserAssets | null;
-  getMyRanking: (timeSpan: IRankingTimeSpan) => IPersonalRanking | null;
+  getPersonalRanking: (timeSpan: IRankingTimeSpan) => IPersonalRanking | null;
   init: () => Promise<void>;
   walletExtensions: IWalletExtension[];
 }
@@ -204,7 +204,7 @@ export const UserContext = createContext<IUserContext>({
   getBalance: () => null,
   getWalletBalance: () => null,
   getUserAssets: () => null,
-  getMyRanking: () => null,
+  getPersonalRanking: () => null,
   init: () => Promise.resolve(),
   walletExtensions: [],
 });
@@ -776,7 +776,7 @@ export const UserProvider = ({children}: IUserProvider) => {
   };
 
   /* ToDo: (20230510 - Julian) get data from backend */
-  const getMyRanking = (timeSpan: IRankingTimeSpan) => {
+  const getPersonalRanking = (timeSpan: IRankingTimeSpan) => {
     return getDummyPersonalRanking(timeSpan);
   };
 
@@ -1540,7 +1540,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     getBalance,
     getWalletBalance,
     getUserAssets,
-    getMyRanking,
+    getPersonalRanking,
     init,
     walletExtensions: walletExtensionsRef.current,
   };

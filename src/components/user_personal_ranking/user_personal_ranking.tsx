@@ -20,34 +20,35 @@ const UserPersonalRanking = ({timeSpan}: IUserPersonalRankingProps) => {
 
   const username = userCtx.wallet?.slice(-1).toUpperCase();
 
-  const rankingNumber = userCtx.getMyRanking(timeSpan)?.rank ?? -1;
-  const pnl = userCtx.getMyRanking(timeSpan)?.pnl ?? 0;
-  const cumulativePnl = userCtx.getMyRanking(timeSpan)?.cumulativePnl ?? 0;
+  const rankingNumber = userCtx.getPersonalRanking(timeSpan)?.rank ?? -1;
+  const pnl = userCtx.getPersonalRanking(timeSpan)?.pnl ?? 0;
+  const cumulativePnl = userCtx.getPersonalRanking(timeSpan)?.cumulativePnl ?? 0;
 
   const shareClickHandler = () => setShowShareList(!showShareList);
 
-  const displayedRankingNumber = rankingNumber < 0 ? '-' : rankingNumber;
+  /* Info: (20230512 - Julian) rankingNumber <= 0 means can't get ranking data */
+  const displayedRankingNumber = rankingNumber <= 0 ? '-' : rankingNumber;
 
   const displayedPnl =
-    displayedRankingNumber == '-' ? (
+    rankingNumber <= 0 ? (
       '-'
     ) : pnl > 0 ? (
-      <div className={TypeOfPnLColor.PROFIT}>+ {numberFormatted(pnl)} %</div>
+      <div className={TypeOfPnLColor.PROFIT}>+ {numberFormatted(pnl)}</div>
     ) : pnl < 0 ? (
-      <div className={TypeOfPnLColor.LOSS}>- {numberFormatted(pnl)} %</div>
+      <div className={TypeOfPnLColor.LOSS}>- {numberFormatted(pnl)}</div>
     ) : (
-      <div className={TypeOfPnLColor.EQUAL}>{numberFormatted(pnl)} %</div>
+      <div className={TypeOfPnLColor.EQUAL}>{numberFormatted(pnl)}</div>
     );
 
   const displayedCumulativePnl =
-    displayedRankingNumber == '-' ? (
+    rankingNumber <= 0 ? (
       '-'
     ) : cumulativePnl > 0 ? (
-      <div className="text-lightYellow2">+ {numberFormatted(cumulativePnl)} %</div>
+      <div className="text-lightYellow2">+ {numberFormatted(cumulativePnl)}</div>
     ) : cumulativePnl < 0 ? (
-      <div className="text-lightYellow2">- {numberFormatted(cumulativePnl)} %</div>
+      <div className="text-lightYellow2">- {numberFormatted(cumulativePnl)}</div>
     ) : (
-      <div className="text-lightYellow2">{numberFormatted(cumulativePnl)} %</div>
+      <div className="text-lightYellow2">{numberFormatted(cumulativePnl)}</div>
     );
 
   const displayedArrow =

@@ -46,18 +46,12 @@ import {Code, Reason} from '../constants/code';
 import CandlestickBookInstance from '../lib/books/candlestick_book';
 import {IPusherAction} from '../interfaces/tidebit_defi_background/pusher_data';
 import {IQuotation} from '../interfaces/tidebit_defi_background/quotation';
-import {IRankingTimeSpan, RankingInterval} from '../constants/ranking_time_span';
+import {IRankingTimeSpan} from '../constants/ranking_time_span';
+import {ILeaderboard, getDummyLeaderboard} from '../interfaces/tidebit_defi_background/leaderboard';
 
 export interface IMarketProvider {
   children: React.ReactNode;
 }
-
-export type ILeaderboard = {
-  rank: number;
-  userName: string;
-  userAvatar?: string;
-  cumulativePnl: number; //percentage required
-};
 
 export interface IMarketContext {
   selectedTicker: ITickerData | null;
@@ -431,116 +425,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
 
   // TODO: (20230511 - Julian) get data from backend
   const getLeaderboard = (timeSpan: IRankingTimeSpan) => {
-    let result: ILeaderboard[] = [];
-    switch (timeSpan) {
-      case RankingInterval.LIVE:
-        result = [
-          {
-            rank: 1,
-            userName: 'Rose',
-            userAvatar: '/leaderboard/dummy_avatar_1.svg',
-            cumulativePnl: 47.45,
-          },
-          {
-            rank: 2,
-            userName: 'Bruce',
-            userAvatar: '/leaderboard/dummy_avatar_2.svg',
-            cumulativePnl: 43.02,
-          },
-          {
-            rank: 3,
-            userName: 'Simon',
-            userAvatar: '/leaderboard/dummy_avatar_3.svg',
-            cumulativePnl: 34.6,
-          },
-          {rank: 4, userName: 'Lily', cumulativePnl: 21.04},
-          {rank: 5, userName: 'Jack', cumulativePnl: 15.433},
-          {rank: 6, userName: 'Will', cumulativePnl: 15.33},
-          {rank: 7, userName: 'Tom', cumulativePnl: 11.52},
-          {rank: 8, userName: 'Mary', cumulativePnl: 10.2},
-          {rank: 9, userName: 'Aliza', cumulativePnl: 6.84},
-          {rank: 10, userName: 'David', cumulativePnl: 5.9},
-        ];
-        break;
-      case RankingInterval.DAILY:
-        result = [
-          {
-            rank: 1,
-            userName: 'Simon',
-            userAvatar: '/leaderboard/dummy_avatar_3.svg',
-            cumulativePnl: 43.2,
-          },
-          {
-            rank: 2,
-            userName: 'Bruce',
-            userAvatar: '/leaderboard/dummy_avatar_2.svg',
-            cumulativePnl: 34.64,
-          },
-          {
-            rank: 3,
-            userName: 'Jack',
-            cumulativePnl: 25.45,
-          },
-          {
-            rank: 4,
-            userName: 'Rose',
-            userAvatar: '/leaderboard/dummy_avatar_1.svg',
-            cumulativePnl: 21.04,
-          },
-          {rank: 5, userName: 'Lily', cumulativePnl: 15.433},
-        ];
-        break;
-      case RankingInterval.WEEKLY:
-        result = [
-          {
-            rank: 1,
-            userName: 'Rose',
-            userAvatar: '/leaderboard/dummy_avatar_1.svg',
-            cumulativePnl: 63.66,
-          },
-          {
-            rank: 2,
-            userName: 'Bruce',
-            userAvatar: '/leaderboard/dummy_avatar_2.svg',
-            cumulativePnl: 51.02,
-          },
-          {
-            rank: 3,
-            userName: 'Simon',
-            userAvatar: '/leaderboard/dummy_avatar_3.svg',
-            cumulativePnl: 44.111,
-          },
-          {rank: 4, userName: 'Jack', cumulativePnl: 32.46},
-          {rank: 5, userName: 'Lily', cumulativePnl: 22.22},
-        ];
-        break;
-      case RankingInterval.MONTHLY:
-        result = [
-          {
-            rank: 1,
-            userName: 'Simon',
-            userAvatar: '/leaderboard/dummy_avatar_3.svg',
-            cumulativePnl: 63.66,
-          },
-          {
-            rank: 3,
-            userName: 'Rose',
-            userAvatar: '/leaderboard/dummy_avatar_1.svg',
-            cumulativePnl: 51.02,
-          },
-          {
-            rank: 2,
-            userName: 'Bruce',
-            userAvatar: '/leaderboard/dummy_avatar_2.svg',
-            cumulativePnl: 44.111,
-          },
-          {rank: 4, userName: 'Jack', cumulativePnl: 32.46},
-          {rank: 5, userName: 'Lily', cumulativePnl: 22.22},
-        ];
-        break;
-    }
-
-    return result;
+    return getDummyLeaderboard(timeSpan);
   };
 
   const listTickers = async () => {

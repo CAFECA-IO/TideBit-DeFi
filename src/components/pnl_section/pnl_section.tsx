@@ -7,6 +7,7 @@ import {
   UNIVERSAL_NUMBER_FORMAT_LOCALE,
 } from '../../constants/display';
 import {unitAsset, FRACTION_DIGITS} from '../../constants/config';
+import {numberFormatted} from '../../lib/common';
 
 type TranslateFunction = (s: string) => string;
 
@@ -33,7 +34,9 @@ const PnlSection = () => {
           ? `+${numberFormatted(amount)} ${unitAsset}`
           : `-${numberFormatted(amount)} ${unitAsset}`,
       remarks:
-        percentage < 0 ? `▾ ${percentageAbs.toString()} %` : `▴ ${percentageAbs.toString()} %`,
+        percentage > 0
+          ? `▴ ${numberFormatted(percentage)} %`
+          : `▾ ${numberFormatted(percentage)} %`,
       textColor:
         percentage > 0 && amount > 0
           ? TypeOfPnLColor.PROFIT

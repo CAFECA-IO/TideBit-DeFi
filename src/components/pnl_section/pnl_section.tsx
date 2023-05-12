@@ -13,10 +13,10 @@ const PnlSection = () => {
   const userCtx = useContext(UserContext);
 
   const defaultPnlData = {amount: 0, percentage: 0};
-  /* ToDo: (20230420 - Julian) getMyAssets by currency */
-  const pnlToday = userCtx.getMyAssets('')?.pnl.today ?? defaultPnlData;
-  const pnl30Days = userCtx.getMyAssets('')?.pnl.monthly ?? defaultPnlData;
-  const cumulativePnl = userCtx.getMyAssets('')?.pnl.cumulative ?? defaultPnlData;
+  /* ToDo: (20230420 - Julian) getUserAssets by currency */
+  const pnlToday = userCtx.getUserAssets('')?.pnl.today ?? defaultPnlData;
+  const pnl30Days = userCtx.getUserAssets('')?.pnl.monthly ?? defaultPnlData;
+  const cumulativePnl = userCtx.getUserAssets('')?.pnl.cumulative ?? defaultPnlData;
 
   const statisticContent = [
     {title: t('MY_ASSETS_PAGE.PNL_SECTION_TODAY'), ...pnlToday},

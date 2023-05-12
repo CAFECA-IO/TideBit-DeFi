@@ -51,33 +51,7 @@ import TickerBookInstance from '../lib/books/ticker_book';
 import {IUserBalance} from '../interfaces/tidebit_defi_background/user_balance';
 import {ProfitState} from '../constants/profit_state';
 import {IRankingTimeSpan, RankingInterval} from '../constants/ranking_time_span';
-
-export interface IMyAssets {
-  currency: string;
-  balance: {
-    available: number;
-    locked: number;
-  };
-  pnl: {
-    today: {
-      amount: number;
-      percentage: number;
-    };
-    monthly: {
-      amount: number;
-      percentage: number;
-    };
-    cumulative: {
-      amount: number;
-      percentage: number;
-    };
-  };
-  interest: {
-    apy: number;
-    monthly: number;
-    cumulative: number;
-  };
-}
+import {IUserAssets, getDummyUserAssets} from '../interfaces/tidebit_defi_background/user_assets';
 
 export interface IMyRanking {
   rank: number; //排名
@@ -87,7 +61,6 @@ export interface IMyRanking {
 export interface IUserProvider {
   children: React.ReactNode;
 }
-
 export interface IUserContext {
   id: string | null;
   username: string | null;
@@ -137,7 +110,7 @@ export interface IUserContext {
   readNotifications: (notifications: INotificationItem[]) => Promise<IResult>;
   getBalance: (currency: string) => IBalance | null;
   getWalletBalance: (props: string) => IWalletBalance | null;
-  getMyAssets: (currency: string) => IMyAssets | null;
+  getUserAssets: (currency: string) => IUserAssets | null;
   getMyRanking: (timeSpan: IRankingTimeSpan) => IMyRanking | null;
   init: () => Promise<void>;
   walletExtensions: IWalletExtension[];
@@ -231,7 +204,7 @@ export const UserContext = createContext<IUserContext>({
   },
   getBalance: () => null,
   getWalletBalance: () => null,
-  getMyAssets: () => null,
+  getUserAssets: () => null,
   getMyRanking: () => null,
   init: () => Promise.resolve(),
   walletExtensions: [],
@@ -799,28 +772,8 @@ export const UserProvider = ({children}: IUserProvider) => {
   };
 
   /* ToDo: (20230510 - Julian) get data from backend */
-  const getMyAssets = (currency: string) => {
-    const myAsset: IMyAssets = {
-      currency: 'USDT',
-      balance: {
-        available: 1296.47,
-        locked: 589.628,
-      },
-      pnl: {
-        today: {
-          amount: -128.293,
-          percentage: -1.5,
-        },
-        monthly: {amount: 98164532.83, percentage: 10.36},
-        cumulative: {amount: -57692.4, percentage: -22.75},
-      },
-      interest: {
-        apy: 1,
-        monthly: 20.2,
-        cumulative: 245,
-      },
-    };
-    return myAsset;
+  const getUserAssets = (currency: string) => {
+    return getDummyUserAssets(currency);
   };
 
   /* ToDo: (20230510 - Julian) get data from backend */
@@ -1623,7 +1576,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     readNotifications,
     getBalance,
     getWalletBalance,
-    getMyAssets,
+    getUserAssets,
     getMyRanking,
     init,
     walletExtensions: walletExtensionsRef.current,

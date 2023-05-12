@@ -16,16 +16,16 @@ const InterestSection = () => {
 
   const userCtx = useContext(UserContext);
 
-  /* ToDo: (20230420 - Julian) getMyAssets by currency */
+  /* ToDo: (20230420 - Julian) getUserAssets by currency */
   const interestInfo = {
-    APY: userCtx.getMyAssets('')?.interest.apy ?? 0,
+    APY: userCtx.getUserAssets('')?.interest.apy ?? 0,
     interest30Days:
       userCtx
-        .getMyAssets('')
+        .getUserAssets('')
         ?.interest.monthly.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS) ?? 0,
     cumulativeInterest:
       userCtx
-        .getMyAssets('')
+        .getUserAssets('')
         ?.interest.cumulative.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS) ?? 0,
   };
 

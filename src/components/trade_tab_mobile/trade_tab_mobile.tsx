@@ -35,6 +35,7 @@ import {
 import {ClickEvent} from '../../constants/tidebit_event';
 import {useTranslation} from 'next-i18next';
 import {
+  getEstimatedPnL,
   getTimestamp,
   getTimestampInMilliseconds,
   roundToDecimalPlaces,
@@ -314,35 +315,47 @@ const TradeTabMobile = () => {
   };
 
   const calculateLongProfit = () => {
-    const rs =
-      (longTpValueRef.current - Number(longPriceRef.current)) * targetInputValueRef.current;
-    const symbol = rs > 0 ? '+' : '-';
-    const number = Math.abs(rs);
-    setEstimatedLongProfitValue({number: number, symbol: symbol});
+    const profit = getEstimatedPnL(
+      targetInputValueRef.current,
+      TypeOfPosition.BUY,
+      longPriceRef.current,
+      longTpValueRef.current,
+      true
+    );
+    setEstimatedLongProfitValue(profit);
   };
 
   const calculateLongLoss = () => {
-    const rs =
-      (longSlValueRef.current - Number(longPriceRef.current)) * targetInputValueRef.current;
-    const symbol = rs > 0 ? '+' : '-';
-    const number = Math.abs(rs);
-    setEstimatedLongLossValue({number: number, symbol: symbol});
+    const loss = getEstimatedPnL(
+      targetInputValueRef.current,
+      TypeOfPosition.BUY,
+      longPriceRef.current,
+      longSlValueRef.current,
+      false
+    );
+    setEstimatedLongLossValue(loss);
   };
 
   const calculateShortProfit = () => {
-    const rs =
-      (Number(shortPriceRef.current) - shortTpValueRef.current) * targetInputValueRef.current;
-    const symbol = rs > 0 ? '+' : '-'; // FIXME: Check
-    const number = Math.abs(rs);
-    setEstimatedShortProfitValue({number: number, symbol: symbol});
+    const profit = getEstimatedPnL(
+      targetInputValueRef.current,
+      TypeOfPosition.SELL,
+      shortPriceRef.current,
+      shortTpValueRef.current,
+      true
+    );
+    setEstimatedShortProfitValue(profit);
   };
 
   const calculateShortLoss = () => {
-    const rs =
-      (Number(shortPriceRef.current) - shortSlValueRef.current) * targetInputValueRef.current;
-    const symbol = rs > 0 ? '+' : '-';
-    const number = Math.abs(rs);
-    setEstimatedShortLossValue({number: number, symbol: symbol});
+    const loss = getEstimatedPnL(
+      targetInputValueRef.current,
+      TypeOfPosition.SELL,
+      shortPriceRef.current,
+      shortSlValueRef.current,
+      false
+    );
+    setEstimatedShortLossValue(loss);
   };
 
   const getTargetInputValue = (value: number) => {
@@ -1086,9 +1099,9 @@ const TradeTabMobile = () => {
         {/* Long Button */}
         <div className={`bg-black/100 transition-all duration-300 ease-in-out ${longButtonStyles}`}>
           <RippleButton
-            disabled={marginWarningLongRef.current}
+            disabled={openSubMenu && marginWarningLongRef.current}
             buttonType="button"
-            className={`w-full rounded-md bg-lightGreen5 py-2 text-sm font-medium tracking-wide text-white transition-colors duration-300 hover:bg-lightGreen5/80`}
+            className={`w-full rounded-md bg-lightGreen5 py-2 text-sm font-medium tracking-wide text-white transition-colors duration-300 hover:bg-lightGreen5/80 disabled:bg-lightGray`}
             onClick={longSectionClickHandler}
           >
             <b>{t('TRADE_PAGE.TRADE_TAB_LONG_BUTTON')}</b> <br />
@@ -1107,9 +1120,9 @@ const TradeTabMobile = () => {
           className={`bg-black/100 transition-all duration-300 ease-in-out ${shortButtonStyles}`}
         >
           <RippleButton
-            disabled={marginWarningShortRef.current}
+            disabled={openSubMenu && marginWarningShortRef.current}
             buttonType="button"
-            className={`w-full rounded-md bg-lightRed py-2 text-sm font-medium tracking-wide text-white transition-colors duration-300 hover:bg-lightRed/80`}
+            className={`w-full rounded-md bg-lightRed py-2 text-sm font-medium tracking-wide text-white transition-colors duration-300 hover:bg-lightRed/80 disabled:bg-lightGray`}
             onClick={shortSectionClickHandler}
           >
             <b>{t('TRADE_PAGE.TRADE_TAB_SHORT_BUTTON')}</b> <br />

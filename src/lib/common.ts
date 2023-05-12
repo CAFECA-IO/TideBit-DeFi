@@ -3,7 +3,7 @@ import {ITBETrade} from '../interfaces/tidebit_defi_background/ticker_data';
 import {getTime, ITimeSpanUnion} from '../constants/time_span_union';
 import IEIP712Data from '../interfaces/ieip712data';
 import {OrderState} from '../constants/order_state';
-import {TypeOfPosition} from '../constants/type_of_position';
+import {ITypeOfPosition, TypeOfPosition} from '../constants/type_of_position';
 import {IDisplayCFDOrder} from '../interfaces/tidebit_defi_background/display_accepted_cfd_order';
 import {ProfitState} from '../constants/profit_state';
 import {cfdStateCode} from '../constants/cfd_state_code';
@@ -488,4 +488,28 @@ export const numberFormatted = (n: number) => {
   const result =
     n === 0 ? '0' : Math.abs(n).toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
   return result;
+};
+
+export const getEstimatedPnL = (
+  amount: number,
+  typeOfPosition: ITypeOfPosition,
+  entryPrice: number,
+  targetPrice: number,
+  isProfit: boolean
+) => {
+  const isLong = typeOfPosition === TypeOfPosition.BUY;
+  const diff = isLong ? targetPrice - entryPrice : entryPrice - targetPrice;
+  const rs = diff * amount;
+  const isPositive = rs > 0;
+
+  let symbol = '';
+
+  if (isProfit) {
+    symbol = isPositive ? '+' : '-';
+  } else {
+    symbol = isPositive ? '+' : '-';
+  }
+
+  const number = Math.abs(rs);
+  return {number: number, symbol: symbol};
 };

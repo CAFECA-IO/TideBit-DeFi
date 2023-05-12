@@ -15,6 +15,7 @@ import {IDataPositionClosedModal, useGlobal} from '../../contexts/global_context
 import {TypeOfPosition} from '../../constants/type_of_position';
 import {ProfitState} from '../../constants/profit_state';
 import {
+  getEstimatedPnL,
   getNowSeconds,
   getTimestamp,
   randomIntFromInterval,
@@ -404,25 +405,25 @@ const UpdateFormModal = ({
   );
 
   const calculateProfit = () => {
-    const diff =
-      openCfdDetails.typeOfPosition === TypeOfPosition.BUY
-        ? tpValueRef.current - openCfdDetails.openPrice
-        : openCfdDetails.openPrice - tpValueRef.current;
-    const rs = diff * openCfdDetails.amount;
-    const symbol = rs > 0 ? '+' : '-';
-    const number = Math.abs(rs);
-    setEstimatedProfitValue({number: number, symbol: symbol});
+    const profit = getEstimatedPnL(
+      openCfdDetails.amount,
+      openCfdDetails.typeOfPosition,
+      openCfdDetails.openPrice,
+      tpValueRef.current,
+      true
+    );
+    setEstimatedProfitValue(profit);
   };
 
   const calculateLoss = () => {
-    const diff =
-      openCfdDetails.typeOfPosition === TypeOfPosition.BUY
-        ? openCfdDetails.openPrice - slValueRef.current
-        : slValueRef.current - openCfdDetails.openPrice;
-    const rs = diff * openCfdDetails.amount;
-    const symbol = rs < 0 ? '+' : '-';
-    const number = Math.abs(rs);
-    setEstimatedLossValue({number: number, symbol: symbol});
+    const loss = getEstimatedPnL(
+      openCfdDetails.amount,
+      openCfdDetails.typeOfPosition,
+      openCfdDetails.openPrice,
+      slValueRef.current,
+      false
+    );
+    setEstimatedLossValue(loss);
   };
 
   const compareChange = () => {

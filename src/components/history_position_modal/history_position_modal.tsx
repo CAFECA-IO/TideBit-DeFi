@@ -5,7 +5,7 @@ import {
   TypeOfPnLColor,
   UNIVERSAL_NUMBER_FORMAT_LOCALE,
 } from '../../constants/display';
-import {API_DOMAIN, DOMAIN, unitAsset} from '../../constants/config';
+import {DOMAIN, unitAsset} from '../../constants/config';
 import Toggle from '../toggle/toggle';
 import {useContext, useRef, useState} from 'react';
 import TradingInput from '../trading_input/trading_input';

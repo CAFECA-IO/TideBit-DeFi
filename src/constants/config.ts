@@ -285,5 +285,4 @@ export const DeWT_VALIDITY_PERIOD = 60 * 60; // seconds
 export const CFD_LIQUIDATION_TIME = 86400;
 export const TP_SL_LIMIT_PERCENT = 0.01;
 export const DEFAULT_TICKER = 'ETH';
-export const API_DOMAIN = 'https://api.tidebit-defi.com';
 export const SHARING_BG_IMG_THRESHOLD_PNL_PERCENT = 5;

@@ -15,7 +15,7 @@ import {findCurrencyByCode, hasValue} from '../../../lib/common';
 import {Currency} from '../../../constants/currency';
 import Skeleton, {SkeletonTheme} from 'react-loading-skeleton';
 import Image from 'next/image';
-import {API_DOMAIN, DOMAIN} from '../../../constants/config';
+import {DOMAIN} from '../../../constants/config';
 import {WIDTH_OF_SHARING_RECORD} from '../../../constants/display';
 import {CustomError} from '../../../lib/custom_error';
 import {Code} from '../../../constants/code';

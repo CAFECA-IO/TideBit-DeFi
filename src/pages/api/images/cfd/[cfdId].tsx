@@ -8,7 +8,6 @@ import {
   WIDTH_OF_SHARING_RECORD,
 } from '../../../../constants/display';
 import {
-  API_DOMAIN,
   DOMAIN,
   FRACTION_DIGITS,
   SHARING_BG_IMG_THRESHOLD_PNL_PERCENT,
@@ -58,7 +57,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       ? pnlPercent < -SHARING_BG_IMG_THRESHOLD_PNL_PERCENT
         ? 'big-loss@2x'
         : 'small-loss@2x'
-      : null;
+      : 'small-loss@2x';
 
   const backgroundImageUrl = DOMAIN + '/elements/' + bg + '.png';
 
@@ -72,8 +71,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const displayedTypeOfPosition =
     typeOfPosition === TypeOfPosition.BUY ? 'Up (Buy)' : 'Down (Sell)';
   const displayedTextColor =
-    profitState === ProfitState.PROFIT ? TypeOfPnLColorHex.PROFIT : TypeOfPnLColorHex.LOSS;
-  const displayedBorderColor =
     profitState === ProfitState.PROFIT ? TypeOfPnLColorHex.PROFIT : TypeOfPnLColorHex.LOSS;
 
   const BarlowBuffer = Buffer.from(BARLOW_BASE64, 'base64');

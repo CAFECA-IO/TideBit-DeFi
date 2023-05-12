@@ -278,19 +278,19 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     try {
       const raw = getDummyCandlestickChartData(50, TimeSpanUnion._1s);
       setCandlestickChartData(raw);
-      const updatingInterval = setInterval(() => {
-        if (candlestickChartDataRef.current) {
-          const updated = updateDummyCandlestickChartData(
-            candlestickChartDataRef.current,
-            TimeSpanUnion._1s
-          );
-          setCandlestickChartData(updated);
-        } else {
-          const raw = getDummyCandlestickChartData(50, TimeSpanUnion._1s);
-          // setCandlestickChartData(tickerBook.listCandlestickData(tickerId, {}));
-          setCandlestickChartData(raw);
-        }
-      }, 1000);
+      // const updatingInterval = setInterval(() => {
+      //   if (candlestickChartDataRef.current) {
+      //     const updated = updateDummyCandlestickChartData(
+      //       candlestickChartDataRef.current,
+      //       TimeSpanUnion._1s
+      //     );
+      //     setCandlestickChartData(updated);
+      //   } else {
+      //     const raw = getDummyCandlestickChartData(50, TimeSpanUnion._1s);
+      //     // setCandlestickChartData(tickerBook.listCandlestickData(tickerId, {}));
+      //     setCandlestickChartData(raw);
+      //   }
+      // }, 1000);
 
       result = {...defaultResultSuccess};
 

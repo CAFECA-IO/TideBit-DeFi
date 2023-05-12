@@ -497,9 +497,10 @@ const PositionClosedModal = ({
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">{t('POSITION_MODAL.OPEN_PRICE')}</div>
               <div className="">
-                {openCfdDetails?.openPrice.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
-                  minimumFractionDigits: 2,
-                }) ?? 0}{' '}
+                {openCfdDetails?.openPrice.toLocaleString(
+                  UNIVERSAL_NUMBER_FORMAT_LOCALE,
+                  FRACTION_DIGITS
+                ) ?? 0}{' '}
                 <span className="ml-1 text-lightGray">{unitAsset}</span>
               </div>
             </div>
@@ -507,9 +508,10 @@ const PositionClosedModal = ({
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">{t('POSITION_MODAL.AMOUNT')}</div>
               <div className="">
-                {openCfdDetails?.amount.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
-                  minimumFractionDigits: 2,
-                })}{' '}
+                {openCfdDetails?.amount.toLocaleString(
+                  UNIVERSAL_NUMBER_FORMAT_LOCALE,
+                  FRACTION_DIGITS
+                )}{' '}
                 <span className="ml-1 text-lightGray">{openCfdDetails?.ticker}</span>
               </div>
             </div>
@@ -529,9 +531,10 @@ const PositionClosedModal = ({
               <div className="text-lightGray">{t('POSITION_MODAL.PNL')}</div>
               <div className={`${pnlRenewedStyle} ${displayedPnLColor}`}>
                 {displayedPnLSymbol} ${' '}
-                {openCfdDetails?.pnl?.value.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
-                  minimumFractionDigits: 2,
-                })}
+                {openCfdDetails?.pnl?.value.toLocaleString(
+                  UNIVERSAL_NUMBER_FORMAT_LOCALE,
+                  FRACTION_DIGITS
+                )}
               </div>
             </div>
 

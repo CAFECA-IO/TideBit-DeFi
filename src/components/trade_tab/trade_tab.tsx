@@ -857,7 +857,7 @@ const TradeTab = () => {
         {roundToDecimalPlaces(
           Math.abs(estimatedShortProfitValueRef.current.number),
           2
-        ).toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}{' '}
+        ).toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)}{' '}
         {unitAsset}
       </div>
     </div>
@@ -892,7 +892,7 @@ const TradeTab = () => {
         {roundToDecimalPlaces(
           Math.abs(estimatedShortLossValueRef.current.number),
           2
-        ).toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}{' '}
+        ).toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)}{' '}
         {unitAsset}
       </div>
     </div>
@@ -992,7 +992,10 @@ const TradeTab = () => {
                 <div className="w-1/2 space-y-1">
                   <div className="text-sm text-lightGray">{t('TRADE_PAGE.TRADE_TAB_VALUE')}</div>
                   <div className={`text-base text-lightWhite ${isDisplayedValueLongSize}`}>
-                    {valueOfPositionLongRef.current?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}{' '}
+                    {valueOfPositionLongRef.current?.toLocaleString(
+                      UNIVERSAL_NUMBER_FORMAT_LOCALE,
+                      FRACTION_DIGITS
+                    )}{' '}
                     {unitAsset}
                   </div>
                 </div>
@@ -1074,7 +1077,8 @@ const TradeTab = () => {
                   <div className="text-sm text-lightGray">{t('TRADE_PAGE.TRADE_TAB_VALUE')}</div>
                   <div className={`text-base text-lightWhite ${isDisplayedValueShortSize}`}>
                     {valueOfPositionShortRef.current?.toLocaleString(
-                      UNIVERSAL_NUMBER_FORMAT_LOCALE
+                      UNIVERSAL_NUMBER_FORMAT_LOCALE,
+                      FRACTION_DIGITS
                     )}{' '}
                     {unitAsset}
                   </div>

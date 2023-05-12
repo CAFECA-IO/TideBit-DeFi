@@ -194,9 +194,10 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
           <div className="text-xs text-lightGray">{t('TRADE_PAGE.OPEN_POSITION_ITEM_VALUE')}</div>
           <div className="text-sm">
             ${' '}
-            {openCfdDetails?.openValue.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, {
-              minimumFractionDigits: 2,
-            })}
+            {openCfdDetails?.openValue.toLocaleString(
+              UNIVERSAL_NUMBER_FORMAT_LOCALE,
+              FRACTION_DIGITS
+            )}
           </div>
         </div>
 

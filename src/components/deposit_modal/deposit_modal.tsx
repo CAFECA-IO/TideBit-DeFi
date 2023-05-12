@@ -15,6 +15,7 @@ import {Code} from '../../constants/code';
 import {ToastId} from '../../constants/toast_id';
 import useStateRef from 'react-usestateref';
 import {IApplyDepositOrder} from '../../interfaces/tidebit_defi_background/apply_deposit_order';
+import {FRACTION_DIGITS} from '../../constants/config';
 
 type TranslateFunction = (s: string) => string;
 interface IDepositModal {
@@ -327,7 +328,10 @@ const DepositModal = ({
               <p className="pt-3 text-end text-xs tracking-wide">
                 {t('D_W_MODAL.AVAILABLE_IN_WALLET')}:{' '}
                 <span className="text-tidebitTheme">
-                  {userAvailableBalance.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}
+                  {userAvailableBalance.toLocaleString(
+                    UNIVERSAL_NUMBER_FORMAT_LOCALE,
+                    FRACTION_DIGITS
+                  )}
                 </span>{' '}
                 {selectedCrypto.symbol}
               </p>

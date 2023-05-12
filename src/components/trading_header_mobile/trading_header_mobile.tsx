@@ -6,6 +6,7 @@ import {UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
 import {MarketContext} from '../../contexts/market_context';
 import {Trend} from '../../constants/trend';
 import TickerSelectorBoxMobile from '../ticker_selector_box_mobile/ticker_selector_box_mobile';
+import {FRACTION_DIGITS} from '../../constants/config';
 
 const TradingHeaderMobile = () => {
   const marketCtx = useContext(MarketContext);
@@ -34,9 +35,15 @@ const TradingHeaderMobile = () => {
 
   // const displayedTickerBox = showTickerSelector ? <TickerSelectorModal /> : null;
 
-  const priceChange = Math.abs(marketCtx.selectedTicker?.priceChange ?? 0);
+  const priceChange = Math.abs(marketCtx.selectedTicker?.priceChange ?? 0).toLocaleString(
+    UNIVERSAL_NUMBER_FORMAT_LOCALE,
+    FRACTION_DIGITS
+  );
 
-  const priceChangePercentage = Math.abs(marketCtx.selectedTicker?.fluctuating ?? 0);
+  const priceChangePercentage = Math.abs(marketCtx.selectedTicker?.fluctuating ?? 0).toLocaleString(
+    UNIVERSAL_NUMBER_FORMAT_LOCALE,
+    FRACTION_DIGITS
+  );
 
   const tickerTitle = (
     <h1 className="text-3xl font-medium">{marketCtx.selectedTicker?.currency}</h1>
@@ -75,7 +82,11 @@ const TradingHeaderMobile = () => {
         <div className={`${priceShadowColor} flex flex-col items-center space-x-7 text-center`}>
           <div className="text-3xl">
             <span className="">
-              ₮ {marketCtx.selectedTicker?.price.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}
+              ₮{' '}
+              {marketCtx.selectedTicker?.price.toLocaleString(
+                UNIVERSAL_NUMBER_FORMAT_LOCALE,
+                FRACTION_DIGITS
+              )}
             </span>
           </div>
           <div className="text-lg">{`${

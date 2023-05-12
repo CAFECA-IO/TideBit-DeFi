@@ -752,7 +752,8 @@ const TradeTabMobile = () => {
       <div className="text-xs text-lightWhite">
         * {t('TRADE_PAGE.TRADE_TAB_EXPECTED_LOSS')} {estimatedLongLossValueRef.current.symbol}
         {roundToDecimalPlaces(Math.abs(estimatedLongLossValueRef.current.number), 2).toLocaleString(
-          UNIVERSAL_NUMBER_FORMAT_LOCALE
+          UNIVERSAL_NUMBER_FORMAT_LOCALE,
+          FRACTION_DIGITS
         )}{' '}
         {unitAsset}
       </div>
@@ -886,7 +887,7 @@ const TradeTabMobile = () => {
         {roundToDecimalPlaces(
           Math.abs(estimatedShortProfitValueRef.current.number),
           2
-        ).toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}{' '}
+        ).toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)}{' '}
         {unitAsset}
       </div>
     </div>
@@ -921,7 +922,7 @@ const TradeTabMobile = () => {
         {roundToDecimalPlaces(
           Math.abs(estimatedShortLossValueRef.current.number),
           2
-        ).toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}{' '}
+        ).toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)}{' '}
         {unitAsset}
       </div>
     </div>

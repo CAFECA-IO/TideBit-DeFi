@@ -106,46 +106,23 @@ const createSpec = ({timespan, dataSize, chartHeight, chartWidth}: IChartSpecPro
     locale: 'zh-TW',
     dateFormat: 'yyyy-MM-dd',
   };
-  // ChartOptionsChartOptions
-  // TimeScaleOptions
+
   const timeScale = {
     timeVisible: true,
     secondsVisible: true,
-    // ticksVisible: false,
     fixLeftEdge: true,
-    // shiftVisibleRangeOnNewBar: true,
-    // borderVisible: false,
-    // fixRightEdge: true, // Info: Restrict the drag (20230413 - Shirley)
-    // rightOffset: 100,
-    // barSpacing: 5,
-    // borderColor: LINE_GRAPH_STROKE_COLOR.TIDEBIT_THEME,
-    // minBarSpacing: 5,
-    // visible: true,
-    // rightBarStaysOnScroll: true,
-    // lockVisibleTimeRangeOnResize: true,
     rightOffset: 12,
   };
+
   const chartOptions: any = {
     width: chartWidth,
     height: chartHeight,
-
     layout: {
       fontSize: 12,
       fontFamily: 'barlow, sans-serif',
       background: {type: ColorType.Solid, color: LINE_GRAPH_STROKE_COLOR.BLACK},
       textColor: LINE_GRAPH_STROKE_COLOR.LIGHT_GRAY,
     },
-    // rightPriceScale: {
-    //   borderColor: LINE_GRAPH_STROKE_COLOR.TIDEBIT_THEME,
-    //   scaleMargins: {
-    //     top: 0.3,
-    //     bottom: 0.25,
-    //     right: 0.3,
-    //     left: 0.8,
-    //   },
-    //   borderVisible: true,
-    // },
-
     grid: {
       vertLines: {
         visible: false,
@@ -171,17 +148,6 @@ const createSpec = ({timespan, dataSize, chartHeight, chartWidth}: IChartSpecPro
       },
     },
     timeScale,
-    // timeScale: {
-    //   timeVisible: true,
-    //   secondsVisible: true,
-    //   ticksVisible: false,
-    //   fixLeftEdge: true,
-    //   shiftVisibleRangeOnNewBar: true,
-    //   borderVisible: false,
-    //   fixRightEdge: true, // Info: Restrict the drag (20230413 - Shirley)
-    //   rightOffset: 10,
-
-    // },
     localization: locale,
   };
 
@@ -446,7 +412,7 @@ export default function CandlestickChart({
         );
 
       // Info: Draw the open price line (20230411 - Shirleey)
-      openPriceLine();
+      // openPriceLine();
 
       // Info: OHLC hovered information (20230411 - Shirleey)
       chart.subscribeCrosshairMove(crosshairMoveHandler);

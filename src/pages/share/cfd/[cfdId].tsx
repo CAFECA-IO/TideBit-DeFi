@@ -55,7 +55,7 @@ const CfdSharing = (props: IPageProps) => {
         {/* <img
           src={displayImg}
           width={WIDTH_OF_SHARING_RECORD}
-          height={WIDTH_OF_SHARING_RECORD}
+          height={HEIGHT_OF_SHARING_RECORD}
           alt="CFD record"
           className="hover:opacity-90"
         /> */}
@@ -88,7 +88,7 @@ const CfdSharing = (props: IPageProps) => {
         <meta property="og:image" content={testImg} />
         {/* <meta property="og:image" content={img} /> */}
         <meta property="og:image:width" content={WIDTH_OF_SHARING_RECORD.toString()} />
-        <meta property="og:image:height" content={WIDTH_OF_SHARING_RECORD.toString()} />
+        <meta property="og:image:height" content={HEIGHT_OF_SHARING_RECORD.toString()} />
         <meta property="og:description" content="TideBit DeFi CFD Sharing" />
         <meta property="og:site_name" content="TideBit DeFi" />
         <meta property="og:locale" content="en_US" />

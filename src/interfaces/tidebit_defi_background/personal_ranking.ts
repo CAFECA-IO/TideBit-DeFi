@@ -1,46 +1,55 @@
+import {IPnL} from './pnl';
+import {ProfitState} from '../../constants/profit_state';
 import {IRankingTimeSpan, RankingInterval} from '../../constants/ranking_time_span';
 
 export interface IPersonalRanking {
   rank: number; //第幾名
-  pnl: number;
-  cumulativePnl: number;
+  pnl: IPnL;
+  cumulativePnl: IPnL;
 }
 
 export const defaultPersonalRanking: IPersonalRanking = {
   rank: -1,
-  pnl: 0,
-  cumulativePnl: 0,
+  pnl: {type: ProfitState.EQUAL, value: 0},
+  cumulativePnl: {type: ProfitState.EQUAL, value: 0},
 };
 
 export const getDummyPersonalRanking = (timeSpan: IRankingTimeSpan) => {
   let myRanking = defaultPersonalRanking;
+
+  const randomRank = Math.abs(Math.floor(Math.random() * 100)) + 3;
+
+  const randomPnlType = Math.random() >= 0.5 ? ProfitState.PROFIT : ProfitState.LOSS;
+  const randomPnl = parseFloat((Math.random() * 100).toFixed(2));
+  const randomCumulativePnl = parseFloat((Math.random() * 1000).toFixed(2));
+
   switch (timeSpan) {
     case RankingInterval.LIVE:
       myRanking = {
-        rank: 32,
-        pnl: -7.034,
-        cumulativePnl: 3.32,
+        rank: randomRank,
+        pnl: {type: randomPnlType, value: randomPnl},
+        cumulativePnl: {type: randomPnlType, value: randomCumulativePnl},
       };
       break;
     case RankingInterval.DAILY:
       myRanking = {
-        rank: 43,
-        pnl: -5.3,
-        cumulativePnl: 12.45,
+        rank: randomRank + (randomRank % 2 === 0 ? 1 : -1),
+        pnl: {type: randomPnlType, value: randomPnl},
+        cumulativePnl: {type: randomPnlType, value: randomCumulativePnl},
       };
       break;
     case RankingInterval.WEEKLY:
       myRanking = {
-        rank: 75,
-        pnl: 3.41,
-        cumulativePnl: 29,
+        rank: randomRank + (randomRank % 2 === 0 ? 9 : -5),
+        pnl: {type: randomPnlType, value: randomPnl},
+        cumulativePnl: {type: randomPnlType, value: randomCumulativePnl},
       };
       break;
     case RankingInterval.MONTHLY:
       myRanking = {
-        rank: 103,
-        pnl: 7.95,
-        cumulativePnl: 24.34,
+        rank: randomRank + (randomRank % 2 === 0 ? 20 : -10),
+        pnl: {type: randomPnlType, value: randomPnl},
+        cumulativePnl: {type: randomPnlType, value: randomCumulativePnl},
       };
       break;
   }

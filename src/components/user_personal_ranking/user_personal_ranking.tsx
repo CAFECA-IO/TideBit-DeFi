@@ -1,11 +1,13 @@
 import React, {useContext, useState} from 'react';
 import {accountTruncate, numberFormatted} from '../../lib/common';
 import {UserContext} from '../../contexts/user_context';
-import {ImArrowUp, ImArrowDown, ImArrowRight} from 'react-icons/im';
 import Image from 'next/image';
 import {TypeOfPnLColor} from '../../constants/display';
 import {unitAsset} from '../../constants/config';
 import {IRankingTimeSpan, RankingInterval} from '../../constants/ranking_time_span';
+import {ProfitState} from '../../constants/profit_state';
+import {defaultPersonalRanking} from '../../interfaces/tidebit_defi_background/personal_ranking';
+import {ImArrowUp, ImArrowDown, ImArrowRight} from 'react-icons/im';
 import {RiShareForwardFill} from 'react-icons/ri';
 import {BsFacebook, BsTwitter, BsReddit} from 'react-icons/bs';
 
@@ -20,9 +22,11 @@ const UserPersonalRanking = ({timeSpan}: IUserPersonalRankingProps) => {
 
   const username = userCtx.wallet?.slice(-1).toUpperCase();
 
-  const rankingNumber = userCtx.getPersonalRanking(timeSpan)?.rank ?? -1;
-  const pnl = userCtx.getPersonalRanking(timeSpan)?.pnl ?? 0;
-  const cumulativePnl = userCtx.getPersonalRanking(timeSpan)?.cumulativePnl ?? 0;
+  const userRankData = userCtx.getPersonalRanking(timeSpan) ?? defaultPersonalRanking;
+
+  const rankingNumber = userRankData.rank;
+  const pnl = userRankData.pnl;
+  const cumulativePnl = userRankData.cumulativePnl;
 
   const shareClickHandler = () => setShowShareList(!showShareList);
 
@@ -32,29 +36,29 @@ const UserPersonalRanking = ({timeSpan}: IUserPersonalRankingProps) => {
   const displayedPnl =
     rankingNumber <= 0 ? (
       '-'
-    ) : pnl > 0 ? (
-      <div className={TypeOfPnLColor.PROFIT}>+ {numberFormatted(pnl)}</div>
-    ) : pnl < 0 ? (
-      <div className={TypeOfPnLColor.LOSS}>- {numberFormatted(pnl)}</div>
+    ) : pnl.type === ProfitState.PROFIT ? (
+      <div className={TypeOfPnLColor.PROFIT}>+ {numberFormatted(pnl.value)}</div>
+    ) : pnl.type === ProfitState.LOSS ? (
+      <div className={TypeOfPnLColor.LOSS}>- {numberFormatted(pnl.value)}</div>
     ) : (
-      <div className={TypeOfPnLColor.EQUAL}>{numberFormatted(pnl)}</div>
+      <div className={TypeOfPnLColor.EQUAL}>{numberFormatted(pnl.value)}</div>
     );
 
   const displayedCumulativePnl =
     rankingNumber <= 0 ? (
       '-'
-    ) : cumulativePnl > 0 ? (
-      <div className="text-lightYellow2">+ {numberFormatted(cumulativePnl)}</div>
-    ) : cumulativePnl < 0 ? (
-      <div className="text-lightYellow2">- {numberFormatted(cumulativePnl)}</div>
+    ) : cumulativePnl.type === ProfitState.PROFIT ? (
+      <div className="text-lightYellow2">+ {numberFormatted(cumulativePnl.value)}</div>
+    ) : cumulativePnl.type === ProfitState.LOSS ? (
+      <div className="text-lightYellow2">- {numberFormatted(cumulativePnl.value)}</div>
     ) : (
-      <div className="text-lightYellow2">{numberFormatted(cumulativePnl)}</div>
+      <div className="text-lightYellow2">{numberFormatted(cumulativePnl.value)}</div>
     );
 
   const displayedArrow =
-    cumulativePnl > 0 ? (
+    cumulativePnl.type === ProfitState.PROFIT ? (
       <ImArrowUp width={20} height={26} />
-    ) : cumulativePnl < 0 ? (
+    ) : cumulativePnl.type === ProfitState.LOSS ? (
       <ImArrowDown width={20} height={26} />
     ) : (
       <ImArrowRight width={20} height={26} />
@@ -65,11 +69,11 @@ const UserPersonalRanking = ({timeSpan}: IUserPersonalRankingProps) => {
     <div
       className={`absolute bottom-16 right-0 bg-darkGray7 p-2 text-lightWhite md:-right-28 ${
         showShareList ? 'inline-flex opacity-100' : 'hidden opacity-0'
-      } space-x-4 transition-all duration-300 hover:cursor-pointer hover:text-lightGray2`}
+      } space-x-4 transition-all duration-300 hover:cursor-pointer`}
     >
-      <BsFacebook />
-      <BsTwitter />
-      <BsReddit />
+      <BsFacebook className="hover:text-lightGray2" />
+      <BsTwitter className="hover:text-lightGray2" />
+      <BsReddit className="hover:text-lightGray2" />
     </div>
   );
 

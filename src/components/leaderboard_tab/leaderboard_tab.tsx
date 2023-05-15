@@ -89,7 +89,7 @@ const LeaderboardTab = ({timeSpan, setTimeSpan, rankings}: LeaderboardTabProps) 
   const defaultTop3Data = {
     name: 'N/A',
     avatar: DEFAULT_USER_AVATAR,
-    displayedPnl: '-',
+    displayedPnl: <>-</>,
   };
 
   /* Info: (20230511 - Julian) Sorted as Sliver, Gold, Bronze */

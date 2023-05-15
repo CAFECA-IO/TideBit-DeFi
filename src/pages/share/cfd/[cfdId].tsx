@@ -52,20 +52,20 @@ const CfdSharing = (props: IPageProps) => {
   const displayedImage = appCtx.isInit ? (
     <Link href="/">
       <div className="">
-        {/* <img
+        <img
           src={displayImg}
           width={WIDTH_OF_SHARING_RECORD}
           height={HEIGHT_OF_SHARING_RECORD}
           alt="CFD record"
           className="hover:opacity-90"
-        /> */}
-        <img
+        />
+        {/* <img
           src={testImg}
           width={WIDTH_OF_SHARING_RECORD}
           height={HEIGHT_OF_SHARING_RECORD}
           alt="CFD record"
           className="hover:opacity-90"
-        />
+        /> */}
       </div>
     </Link>
   ) : null;

@@ -98,6 +98,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const displayedArrow = profitState === ProfitState.PROFIT ? upArrow : downArrow;
 
+  const testImg =
+    'https://thumbs.dreamstime.com/z/beautiful-rain-forest-ang-ka-nature-trail-doi-inthanon-national-park-thailand-36703721.jpg';
+
   const imageResponse = new ImageResponse(
     (
       <div
@@ -435,5 +438,42 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
   );
 
-  return imageResponse;
+  const testImageResponse = new ImageResponse(
+    (
+      <div style={{display: 'flex'}}>
+        <img
+          src={testImg}
+          width={WIDTH_OF_SHARING_RECORD}
+          height={HEIGHT_OF_SHARING_RECORD}
+          alt="CFD record"
+          className="hover:opacity-90"
+        />
+        <p
+          style={{
+            color: '#9dccf5',
+            position: 'absolute',
+            top: 0,
+            zIndex: 10,
+            backgroundColor: '#000',
+          }}
+        >
+          test img
+        </p>
+      </div>
+    ),
+    {
+      width: WIDTH_OF_SHARING_RECORD,
+      height: HEIGHT_OF_SHARING_RECORD,
+      fonts: [
+        {
+          name: 'Barlow',
+          data: BarlowBuffer,
+          weight: 400,
+          style: 'normal',
+        },
+      ],
+    }
+  );
+
+  return testImageResponse;
 }

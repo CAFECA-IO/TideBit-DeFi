@@ -91,9 +91,6 @@ const HistoryPositionModal = ({
   const shareToFacebook = () => {
     // TODO: cfdId (20230508 - Shirley)
     const shareUrl = DOMAIN + `/share/cfd/${closedCfdDetails.id}`;
-    /* Deprecated: (20230515 - Shirley)
-    const shareUrl = DOMAIN + `/api/images/cfd/20230508${closedCfdDetails.id}`;
-    */
     window.open(
       `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`,
       'facebook-share-dialog',
@@ -103,9 +100,6 @@ const HistoryPositionModal = ({
 
   const shareToTwitter = () => {
     const shareUrl = DOMAIN + `/share/cfd/${closedCfdDetails.id}`;
-    /* Deprecated: (20230515 - Shirley)
-    const shareUrl = DOMAIN + `/api/images/cfd/20230508${closedCfdDetails.id}`;
-    */
     window.open(
       `https://twitter.com/intent/tweet?url=${encodeURIComponent(
         shareUrl
@@ -117,9 +111,6 @@ const HistoryPositionModal = ({
 
   const shareToReddit = () => {
     const shareUrl = DOMAIN + `/share/cfd/${closedCfdDetails.id}`;
-    /* Deprecated: (20230515 - Shirley)
-    const shareUrl = DOMAIN + `/api/images/cfd/20230508${closedCfdDetails.id}`;
-    */
     window.open(
       `https://www.reddit.com/submit?url=${encodeURIComponent(shareUrl)}&title=Check%20this%20out!`,
       'reddit-share-dialog',

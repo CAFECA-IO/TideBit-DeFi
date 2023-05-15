@@ -3,6 +3,7 @@ import {useTranslation} from 'react-i18next';
 import {UserContext} from '../../contexts/user_context';
 import {numberFormatted} from '../../lib/common';
 import {DEFAULT_PNL_DATA, TypeOfPnLColor} from '../../constants/display';
+import {ProfitState} from '../../constants/profit_state';
 import {unitAsset} from '../../constants/config';
 
 type TranslateFunction = (s: string) => string;
@@ -12,8 +13,6 @@ const PnlSection = () => {
 
   const userCtx = useContext(UserContext);
 
-  // Deprecated: DEFAULT_PNL_DATA in display (20230511 - Shirley)
-  const defaultPnlData = {amount: 0, percentage: 0};
   /* ToDo: (20230420 - Julian) getUserAssets by currency */
   const pnlToday = userCtx.getUserAssets('')?.pnl.today ?? DEFAULT_PNL_DATA;
   const pnl30Days = userCtx.getUserAssets('')?.pnl.monthly ?? DEFAULT_PNL_DATA;
@@ -26,17 +25,21 @@ const PnlSection = () => {
   ].map(({amount, percentage, ...rest}) => {
     const result = {
       content:
-        amount > 0
-          ? `+${numberFormatted(amount)} ${unitAsset}`
-          : `-${numberFormatted(amount)} ${unitAsset}`,
+        amount.type === ProfitState.PROFIT
+          ? `+${numberFormatted(amount.value)} ${unitAsset}`
+          : amount.type === ProfitState.LOSS
+          ? `-${numberFormatted(amount.value)} ${unitAsset}`
+          : '-',
       remarks:
-        percentage > 0
-          ? `▴ ${numberFormatted(percentage)} %`
-          : `▾ ${numberFormatted(percentage)} %`,
+        percentage.type === ProfitState.PROFIT
+          ? `▴ ${numberFormatted(percentage.value)} %`
+          : percentage.type === ProfitState.LOSS
+          ? `▾ ${numberFormatted(percentage.value)} %`
+          : '-',
       textColor:
-        percentage > 0 && amount > 0
+        percentage.type === ProfitState.PROFIT && amount.type === ProfitState.PROFIT
           ? TypeOfPnLColor.PROFIT
-          : percentage < 0 && amount < 0
+          : percentage.type === ProfitState.LOSS && amount.type === ProfitState.LOSS
           ? TypeOfPnLColor.LOSS
           : TypeOfPnLColor.EQUAL,
       ...rest,

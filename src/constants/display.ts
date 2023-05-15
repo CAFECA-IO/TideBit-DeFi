@@ -200,5 +200,5 @@ export const HEIGHT_OF_SHARING_RECORD = 600;
 export const DEFAULT_PRICE_CHANGE = 0;
 export const DEFAULT_FLUCTUATION = 0;
 export const DEFAULT_BALANCE = 0;
-export const DEFAULT_PNL_DATA = {amount: 0, percentage: 0};
+export const DEFAULT_PNL_DATA = {amount: {type: '', value: 0}, percentage: {type: '', value: 0}};
 export const DEFAULT_INTEREST_RATE = 0;

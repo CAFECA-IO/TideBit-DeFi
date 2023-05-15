@@ -4,10 +4,12 @@ import useWindowSize from '../../lib/hooks/use_window_size';
 import UserPersonalRanking from '../user_personal_ranking/user_personal_ranking';
 import {TypeOfPnLColor, DEFAULT_USER_AVATAR} from '../../constants/display';
 import {unitAsset} from '../../constants/config';
+import {IPnL} from '../../interfaces/tidebit_defi_background/pnl';
 import {numberFormatted} from '../../lib/common';
 import {RankingInterval, IRankingTimeSpan} from '../../constants/ranking_time_span';
 import {defaultLeaderboard, IRanking} from '../../interfaces/tidebit_defi_background/leaderboard';
 import {useTranslation} from 'next-i18next';
+import {ProfitState} from '../../constants/profit_state';
 
 type TranslateFunction = (s: string) => string;
 
@@ -54,7 +56,7 @@ const LeaderboardTab = ({timeSpan, setTimeSpan, rankings}: LeaderboardTabProps) 
   /* Info: (20230511 - Julian) Sorted by cumulativePnl */
   const rankingData =
     rankings.sort((a, b) => {
-      return b.cumulativePnl - a.cumulativePnl;
+      return b.cumulativePnl.value - a.cumulativePnl.value;
     }) ?? defaultLeaderboard;
 
   const activeLiveTabStyle =
@@ -77,13 +79,13 @@ const LeaderboardTab = ({timeSpan, setTimeSpan, rankings}: LeaderboardTabProps) 
       ? 'bg-darkGray7 text-lightWhite'
       : 'bg-darkGray6 text-lightGray';
 
-  const displayPnl = (pnl: number) =>
-    pnl > 0 ? (
-      <div className={TypeOfPnLColor.PROFIT}>+ {numberFormatted(pnl)}</div>
-    ) : pnl < 0 ? (
-      <div className={TypeOfPnLColor.LOSS}>- {numberFormatted(pnl)}</div>
+  const displayPnl = (pnl: IPnL) =>
+    pnl.type === ProfitState.PROFIT ? (
+      <div className={TypeOfPnLColor.PROFIT}>+ {numberFormatted(pnl.value)}</div>
+    ) : pnl.type === ProfitState.LOSS ? (
+      <div className={TypeOfPnLColor.LOSS}>- {numberFormatted(pnl.value)}</div>
     ) : (
-      <div className={TypeOfPnLColor.EQUAL}>{numberFormatted(pnl)}</div>
+      <div className={TypeOfPnLColor.EQUAL}>{numberFormatted(pnl.value)}</div>
     );
 
   const defaultTop3Data = {

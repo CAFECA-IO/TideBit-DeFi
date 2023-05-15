@@ -34,15 +34,19 @@ const User = () => {
     globalCtx.visibleWithdrawalModalHandler();
   };
 
+  const personalInfoClickHandler = () => {
+    globalCtx.visiblePersonalInfoModalHandler();
+  };
+
   const isDisplayedAvatarMenu = userCtx.wallet ? (
     <div
       id="userDropdown"
-      className={`avatarMenuShadow absolute top-16 right-8 -z-10 flex w-285px flex-col ${
+      className={`avatarMenuShadow absolute right-8 top-16 -z-10 flex w-285px flex-col ${
         avatarMenuVisible ? 'translate-y-0 opacity-100' : '-translate-y-450px opacity-0'
       } divide-y divide-lightGray rounded-none bg-darkGray shadow transition-all duration-300 ease-in`}
     >
       {/* Info: (20230327 - Julian) Avatar Section */}
-      <div className="mx-3 items-center py-3 px-4 text-center text-sm text-lightGray">
+      <div className="mx-3 items-center px-4 py-3 text-center text-sm text-lightGray">
         {/* Info: (20230327 - Julian) Avatar */}
         <div className="relative ml-3 inline-flex h-28 w-28 items-center justify-center overflow-hidden rounded-full bg-tidebitTheme text-center">
           <span className="text-5xl font-bold text-lightWhite">{username}</span>
@@ -56,7 +60,7 @@ const User = () => {
         aria-labelledby="avatarButton"
       >
         <li>
-          <Link href={TBDURL.MY_ASSETS} className="block py-2 pr-4 pl-3 hover:bg-darkGray5">
+          <Link href={TBDURL.MY_ASSETS} className="block py-2 pl-3 pr-4 hover:bg-darkGray5">
             <div className="flex flex-row items-center space-x-2">
               <BiWallet />
               <p>{t('USER.ASSETS')}</p>
@@ -65,7 +69,7 @@ const User = () => {
         </li>
         <li
           onClick={depositClickHandler}
-          className="block py-2 pr-4 pl-3 hover:cursor-pointer hover:bg-darkGray5"
+          className="block py-2 pl-3 pr-4 hover:cursor-pointer hover:bg-darkGray5"
         >
           <div className="flex flex-row items-center space-x-2">
             <FaDownload />
@@ -74,26 +78,15 @@ const User = () => {
         </li>
         <li
           onClick={withdrawClickHandler}
-          className="block py-2 pr-4 pl-3 hover:cursor-pointer hover:bg-darkGray5"
+          className="block py-2 pl-3 pr-4 hover:cursor-pointer hover:bg-darkGray5"
         >
           <div className="flex flex-row items-center space-x-2">
             <FaUpload />
             <p>{t('USER.WITHDRAW')}</p>
           </div>
         </li>
-        <li
-          /* Till: (20230519 - Julian) Remove this code after testing */
-          onClick={() => {
-            globalCtx.toast({
-              typeText: 'Error',
-              message: 'Something went wrong.',
-              type: 'error',
-              isLoading: false,
-              autoClose: false,
-            });
-          }}
-        >
-          <Link href="#" className="block py-2 pr-4 pl-3 hover:bg-darkGray5">
+        <li onClick={personalInfoClickHandler}>
+          <Link href="#" className="block py-2 pl-3 pr-4 hover:bg-darkGray5">
             <div className="flex flex-row items-center space-x-2">
               <VscAccount />
               <p>{t('USER.ACCOUNT')}</p>
@@ -104,7 +97,7 @@ const User = () => {
           <Link
             onClick={userCtx.disconnect}
             href="#"
-            className="block py-2 pr-4 pl-3 hover:bg-darkGray5"
+            className="block py-2 pl-3 pr-4 hover:bg-darkGray5"
           >
             <div className="flex flex-row items-center space-x-2">
               <ImExit />

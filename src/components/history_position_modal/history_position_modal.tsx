@@ -91,6 +91,8 @@ const HistoryPositionModal = ({
   const shareToFacebook = () => {
     // TODO: cfdId (20230508 - Shirley)
     const shareUrl = DOMAIN + `/share/cfd/${closedCfdDetails.id}`;
+    // Deprecated: sharing image to Facebook has better resolution than sharing link (20230515 - Shirley)
+    // const shareUrl = DOMAIN + `/api/images/cfd/${closedCfdDetails.id}`;
     window.open(
       `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`,
       'facebook-share-dialog',

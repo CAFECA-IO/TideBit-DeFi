@@ -98,7 +98,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const displayedArrow = profitState === ProfitState.PROFIT ? upArrow : downArrow;
 
-  return new ImageResponse(
+  const imageResponse = new ImageResponse(
     (
       <div
         style={{
@@ -434,4 +434,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       ],
     }
   );
+
+  return imageResponse;
 }

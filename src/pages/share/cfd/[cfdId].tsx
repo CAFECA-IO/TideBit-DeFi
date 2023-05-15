@@ -35,6 +35,7 @@ const CfdSharing = (props: IPageProps) => {
   // TODO: for meta content (20230505 - Shirley)
   const img = `${DOMAIN}/api/images/cfd/${props.cfdId}`;
   const displayImg = `/api/images/cfd/${props.cfdId}`;
+  const shareUrl = `${DOMAIN}/share/cfd/${props.cfdId}`;
 
   useEffect(() => {
     if (!appCtx.isInit) {
@@ -50,7 +51,7 @@ const CfdSharing = (props: IPageProps) => {
     <Link href="/">
       <div className="">
         <img
-          src={displayImg}
+          src={img}
           width={WIDTH_OF_SHARING_RECORD}
           height={WIDTH_OF_SHARING_RECORD}
           alt="CFD record"
@@ -74,7 +75,7 @@ const CfdSharing = (props: IPageProps) => {
 
         <meta property="og:title" content="TideBit DeFi CFD" />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content={DOMAIN} />
+        <meta property="og:url" content={shareUrl} />
         <meta property="og:image" content={img} />
         <meta property="og:image:width" content={WIDTH_OF_SHARING_RECORD.toString()} />
         <meta property="og:image:height" content={WIDTH_OF_SHARING_RECORD.toString()} />

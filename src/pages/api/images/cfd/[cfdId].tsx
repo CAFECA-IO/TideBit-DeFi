@@ -98,7 +98,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const displayedArrow = profitState === ProfitState.PROFIT ? upArrow : downArrow;
 
-  return new ImageResponse(
+  const testImg =
+    'https://thumbs.dreamstime.com/z/beautiful-rain-forest-ang-ka-nature-trail-doi-inthanon-national-park-thailand-36703721.jpg';
+
+  const imageResponse = new ImageResponse(
     (
       <div
         style={{
@@ -434,4 +437,5 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       ],
     }
   );
+  return imageResponse;
 }

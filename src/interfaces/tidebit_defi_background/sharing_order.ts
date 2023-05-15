@@ -28,8 +28,8 @@ export const getDummySharingOrder = (
       : randomIntFromInterval(0, 1) === 0
       ? TypeOfPosition.BUY
       : TypeOfPosition.SELL,
-    openPrice: 2000,
-    closePrice: 2000,
+    openPrice: randomIntFromInterval(1000, 1200),
+    closePrice: randomIntFromInterval(1000, 1200),
     leverage: 5,
     user: 'user',
   };

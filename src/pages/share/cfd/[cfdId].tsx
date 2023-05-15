@@ -35,9 +35,6 @@ const CfdSharing = (props: IPageProps) => {
   // TODO: for meta content (20230505 - Shirley)
   const img = `${DOMAIN}/api/images/cfd/${props.cfdId}`;
   const displayImg = `/api/images/cfd/${props.cfdId}`;
-  // const shareUrl = `${DOMAIN}/share/cfd/${props.cfdId}`;
-  // const testImg =
-  //   'https://ichef.bbci.co.uk/news/976/cpsprodpb/15951/production/_117310488_16.jpg.webp';
 
   useEffect(() => {
     if (!appCtx.isInit) {
@@ -59,13 +56,6 @@ const CfdSharing = (props: IPageProps) => {
           alt="CFD record"
           className="hover:opacity-90"
         />
-        {/* <img
-          src={testImg}
-          width={WIDTH_OF_SHARING_RECORD}
-          height={HEIGHT_OF_SHARING_RECORD}
-          alt="CFD record"
-          className="hover:opacity-90"
-        /> */}
       </div>
     </Link>
   ) : null;
@@ -85,7 +75,6 @@ const CfdSharing = (props: IPageProps) => {
         <meta property="og:title" content="TideBit DeFi CFD" />
         <meta property="og:type" content="website" />
         <meta property="og:url" content={DOMAIN} />
-        {/* <meta property="og:image" content={testImg} /> */}
         <meta property="og:image" content={img} />
         <meta property="og:image:width" content={WIDTH_OF_SHARING_RECORD.toString()} />
         <meta property="og:image:height" content={HEIGHT_OF_SHARING_RECORD.toString()} />

@@ -50,7 +50,7 @@ const CfdSharing = (props: IPageProps) => {
     <Link href="/">
       <div className="">
         <img
-          src={displayImg}
+          src={img}
           width={WIDTH_OF_SHARING_RECORD}
           height={HEIGHT_OF_SHARING_RECORD}
           alt="CFD record"

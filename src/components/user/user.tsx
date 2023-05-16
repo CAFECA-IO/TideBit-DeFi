@@ -34,10 +34,6 @@ const User = () => {
     globalCtx.visibleWithdrawalModalHandler();
   };
 
-  const personalInfoClickHandler = () => {
-    globalCtx.visiblePersonalInfoModalHandler();
-  };
-
   const isDisplayedAvatarMenu = userCtx.wallet ? (
     <div
       id="userDropdown"
@@ -85,7 +81,7 @@ const User = () => {
             <p>{t('USER.WITHDRAW')}</p>
           </div>
         </li>
-        <li onClick={personalInfoClickHandler}>
+        <li>
           <Link href="#" className="block py-2 pl-3 pr-4 hover:bg-darkGray5">
             <div className="flex flex-row items-center space-x-2">
               <VscAccount />

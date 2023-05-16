@@ -27,7 +27,7 @@
     "ASSETS": "My Assets",
     "DEPOSIT": "Deposit",
     "WITHDRAW": "Withdraw",
-    "ACCOUNT": "My Account",
+    "ACCOUNT": "Account Setting",
     "DISCONNECT": "Disconnect",
     "OVERVIEW_AVAILABLE": "Available",
     "OVERVIEW_M_MARGIN": "M. Margin",
@@ -343,6 +343,12 @@
     "SUBTITLE_WEEKLY_2": "to",
     "SUBTITLE_WEEKLY_3": "",
     "SUBTITLE_MONTHLY": "This leaderboard of",
-    "SUBTITLE_MONTHLY_2": ""
+    "SUBTITLE_MONTHLY_2": "",
+    "BADGES": "Badges",
+    "TRADING_VOLUME": "Trading Volume",
+    "ONLINE_TIME": "Online Time",
+    "DIVERSIFICATION": "Diversification",
+    "HIGHTEST_ROI": "Highest ROI",
+    "LOWEST_ROI": "Lowest ROI"
   }
 }

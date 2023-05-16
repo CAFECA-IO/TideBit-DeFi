@@ -27,7 +27,7 @@
     "ASSETS": "我的資產",
     "DEPOSIT": "入金",
     "WITHDRAW": "出金",
-    "ACCOUNT": "我的帳戶",
+    "ACCOUNT": "帳戶設定",
     "DISCONNECT": "中斷錢包連接",
     "OVERVIEW_AVAILABLE": "可用餘額",
     "OVERVIEW_M_MARGIN": "維持保證金",
@@ -343,6 +343,12 @@
     "SUBTITLE_WEEKLY_2": "到",
     "SUBTITLE_WEEKLY_3": "週榜",
     "SUBTITLE_MONTHLY": "",
-    "SUBTITLE_MONTHLY_2": "月榜"
+    "SUBTITLE_MONTHLY_2": "月榜",
+    "BADGES": "獲得徽章",
+    "TRADING_VOLUME": "總交易量",
+    "ONLINE_TIME": "累積在線時間",
+    "DIVERSIFICATION": "風險分散",
+    "HIGHTEST_ROI": "最高報酬率",
+    "LOWEST_ROI": "最低報酬率"
   }
 }

@@ -27,7 +27,7 @@
     "ASSETS": "我的资产",
     "DEPOSIT": "入金",
     "WITHDRAW": "出金",
-    "ACCOUNT": "我的账户",
+    "ACCOUNT": "账户设定",
     "DISCONNECT": "中断钱包连接",
     "OVERVIEW_AVAILABLE": "可用余额",
     "OVERVIEW_M_MARGIN": "维持保证金",
@@ -343,6 +343,12 @@
     "SUBTITLE_WEEKLY_2": "到",
     "SUBTITLE_WEEKLY_3": "周榜",
     "SUBTITLE_MONTHLY": "",
-    "SUBTITLE_MONTHLY_2": "月榜"
+    "SUBTITLE_MONTHLY_2": "月榜",
+    "BADGES": "获得徽章",
+    "TRADING_VOLUME": "总交易量",
+    "ONLINE_TIME": "累积在线时间",
+    "DIVERSIFICATION": "风险分散",
+    "HIGHTEST_ROI": "最高报酬率",
+    "LOWEST_ROI": "最低报酬率"
   }
 }

@@ -30,6 +30,72 @@ export interface ICRYPTO_CARD_COLORS {
   gradientColor: string;
 }
 
+export const BADGE_LIST = [
+  {
+    id: 1,
+    title: 'Daily Top 20 Badge',
+    description: 'Be top 20 of daily leaderboard',
+    icon: '/badges/daily_20@2x.png',
+    iconSkeleton: '/badges/daily_20.svg',
+  },
+  {
+    id: 2,
+    title: 'Weekly Top 20 Badge',
+    description: 'Be top 20 of weekly leaderboard',
+    icon: '/badges/weekly_20@2x.png',
+    iconSkeleton: '/badges/weekly_20.svg',
+  },
+  {
+    id: 3,
+    title: 'Monthly Top 20 Badge',
+    description: 'Be top 20 of monthly leaderboard',
+    icon: '/badges/monthly_20@2x.png',
+    iconSkeleton: '/badges/monthly_20.svg',
+  },
+  {
+    id: 4,
+    title: 'Sharing Badge',
+    description: 'Sharing your achievements',
+    icon: '/badges/sharing_badge@2x.png',
+    iconSkeleton: '/badges/sharing_badge.svg',
+  },
+  {
+    id: 5,
+    title: 'Linked Badge',
+    description: 'Linked your E-mail on TideBit',
+    icon: '/badges/linked_badge@2x.png',
+    iconSkeleton: '/badges/linked_badge.svg',
+  },
+  {
+    id: 6,
+    title: 'Deposit Badge',
+    description: 'Finished depositing on TideBit',
+    icon: '/badges/deposit_badge@2x.png',
+    iconSkeleton: '/badges/deposit_badge.svg',
+  },
+  {
+    id: 7,
+    title: 'Bachelor Badge',
+    description: 'Finished bachelor courses in TBU',
+    icon: '/badges/bachelor_badge@2x.png',
+    iconSkeleton: '/badges/bachelor_badge.svg',
+  },
+  {
+    id: 8,
+    title: 'Master Badge',
+    description: 'Finished master courses in TBU',
+    icon: '/badges/master_badge@2x.png',
+    iconSkeleton: '/badges/master_badge.svg',
+  },
+  {
+    id: 9,
+    title: 'Doctor Badge',
+    description: 'Finished doctor courses in TBU',
+    icon: '/badges/doctor_badge@2x.png',
+    iconSkeleton: '/badges/doctor_badge.svg',
+  },
+];
+
 export const CRYPTO_CARD_COLORS = [
   {
     label: 'ETH',

@@ -1,6 +1,10 @@
 import {NextApiRequest, NextApiResponse} from 'next';
 import {ImageResponse} from 'next/server';
-import {randomIntFromInterval, roundToDecimalPlaces} from '../../../../lib/common';
+import {
+  randomIntFromInterval,
+  roundToDecimalPlaces,
+  timestampToString,
+} from '../../../../lib/common';
 import {
   BG_HEIGHT_OF_SHARING_RECORD,
   HEIGHT_OF_SHARING_RECORD,
@@ -36,8 +40,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const cfdId = params.pop(); // TODO: send to api (20230508 - Shirley)
 
   // TODO: Data from API (20230508 - Shirley)
-  const {tickerId, user, targetAssetName, typeOfPosition, openPrice, closePrice, leverage} =
-    getDummySharingOrder() as ISharingOrder;
+  const {
+    tickerId,
+    user,
+    targetAssetName,
+    typeOfPosition,
+    openPrice,
+    closePrice,
+    leverage,
+    openTime,
+    closeTime,
+  } = getDummySharingOrder() as ISharingOrder;
+
+  const {date: openDate, time: openTimeString} = timestampToString(openTime);
+  const {date: closeDate, time: closeTimeString} = timestampToString(closeTime);
 
   const displayedUser = user.slice(-1).toUpperCase();
 
@@ -285,7 +301,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                       >
                         <p
                           style={{
-                            fontSize: '18px',
+                            fontSize: '16px',
                             fontWeight: 'bold',
                             color: '#8B8E91',
 
@@ -299,7 +315,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
                         <p
                           style={{
-                            fontSize: '18px',
+                            fontSize: '16px',
                             fontWeight: 'bold',
                             color: '#fff',
 
@@ -328,7 +344,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                       <div style={{display: 'flex'}}>
                         <p
                           style={{
-                            fontSize: '18px',
+                            fontSize: '16px',
                             fontWeight: 'bold',
                             color: '#8B8E91',
 
@@ -342,7 +358,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
                         <p
                           style={{
-                            fontSize: '18px',
+                            fontSize: '16px',
                             fontWeight: 'bold',
                             color: '#fff',
 
@@ -379,10 +395,90 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                             marginLeft: '20px',
                           }}
                         >
-                          Leverage
+                          Open Time
                         </p>
                         <div style={{width: '50px'}}></div>
+
                         <p
+                          style={{
+                            fontSize: '16px',
+                            fontWeight: 'bold',
+                            color: '#fff',
+
+                            marginRight: '70px',
+                          }}
+                        >
+                          {openDate} {openTimeString}
+                          {/* <span
+                            style={{
+                              marginTop: '2px',
+                              fontSize: '14px',
+                              fontWeight: 'lighter',
+                              color: '#8B8E91',
+
+                              marginLeft: '5px',
+                            }}
+                          >
+                            {openTimeString}{' '}
+                          </span> */}
+                        </p>
+                      </div>
+
+                      <div style={{display: 'flex'}}>
+                        <p
+                          style={{
+                            fontSize: '16px',
+                            fontWeight: 'bold',
+                            color: '#8B8E91',
+
+                            width: '260px',
+                            marginLeft: '20px',
+                          }}
+                        >
+                          Close Time
+                        </p>
+                        <div style={{width: '50px'}}></div>
+
+                        <p
+                          style={{
+                            fontSize: '16px',
+                            fontWeight: 'bold',
+                            color: '#fff',
+
+                            marginRight: '70px',
+                          }}
+                        >
+                          {closeDate} {closeTimeString}
+                          {/* <span
+                            style={{
+                              marginTop: '2px',
+                              fontSize: '14px',
+                              fontWeight: 'lighter',
+                              color: '#8B8E91',
+
+                              marginLeft: '5px',
+                            }}
+                          >
+                            {unitAsset}
+                          </span> */}
+                        </p>
+                      </div>
+
+                      <div style={{display: 'flex'}}>
+                        {/* <p
+                          style={{
+                            fontSize: '16px',
+                            fontWeight: 'bold',
+                            color: '#8B8E91',
+
+                            width: '260px',
+                            marginLeft: '20px',
+                          }}
+                        >
+                          Leverage
+                        </p> */}
+                        <div style={{width: '50px'}}></div>
+                        {/* <p
                           style={{
                             fontSize: '16px',
                             fontWeight: 'bold',
@@ -392,7 +488,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                           }}
                         >
                           {leverage}x
-                        </p>
+                        </p> */}
                       </div>
                     </div>
                   </div>

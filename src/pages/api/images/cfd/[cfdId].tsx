@@ -123,29 +123,25 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           position: 'relative',
           flexDirection: 'column',
           fontFamily: "'Barlow', sans-serif",
-          backgroundColor: '#000',
-          // paddingTop: '100px',
-          // marginTop: '100px',
-
-          // backgroundSize: `${WIDTH_OF_SHARING_RECORD}px ${HEIGHT_OF_SHARING_RECORD + 200}px`,
+          backgroundSize: `${WIDTH_OF_SHARING_RECORD}px ${BG_HEIGHT_OF_SHARING_RECORD}px`,
         }}
       >
-        <div style={{height: '30px', backgroundColor: '#000'}}></div>
         <div
           style={{
             display: 'flex',
-            height: `${HEIGHT_OF_SHARING_RECORD + 100}px`,
+            height: `${BG_HEIGHT_OF_SHARING_RECORD}px`,
             width: `${WIDTH_OF_SHARING_RECORD}px`,
+            backgroundColor: '#000',
           }}
         >
           <div
             style={{
+              transform: 'translateY(50px)',
               backgroundImage: `url(${backgroundImageUrl})`,
+              objectFit: 'contain',
               backgroundSize: `${WIDTH_OF_SHARING_RECORD}px ${HEIGHT_OF_SHARING_RECORD}px`,
               backgroundPosition: 'relative',
               backgroundRepeat: 'no-repeat',
-              // background: 'transparent',
-              backgroundColor: '#000',
 
               display: 'flex',
               flexDirection: 'column',
@@ -201,12 +197,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
               <img
                 style={{
                   position: 'absolute',
-                  top: '330px',
-                  left: '160px',
+                  top: '370px',
+                  left: '730px',
                 }}
                 src={`${qrcodeUrl}`}
-                width={113}
-                height={113}
+                width={80}
+                height={80}
                 alt="qrcode"
               />
 
@@ -409,18 +405,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                           }}
                         >
                           {openDate} {openTimeString}
-                          {/* <span
-                            style={{
-                              marginTop: '2px',
-                              fontSize: '14px',
-                              fontWeight: 'lighter',
-                              color: '#8B8E91',
-
-                              marginLeft: '5px',
-                            }}
-                          >
-                            {openTimeString}{' '}
-                          </span> */}
                         </p>
                       </div>
 
@@ -449,89 +433,65 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                           }}
                         >
                           {closeDate} {closeTimeString}
-                          {/* <span
-                            style={{
-                              marginTop: '2px',
-                              fontSize: '14px',
-                              fontWeight: 'lighter',
-                              color: '#8B8E91',
-
-                              marginLeft: '5px',
-                            }}
-                          >
-                            {unitAsset}
-                          </span> */}
                         </p>
                       </div>
 
                       <div style={{display: 'flex'}}>
-                        {/* <p
-                          style={{
-                            fontSize: '16px',
-                            fontWeight: 'bold',
-                            color: '#8B8E91',
-
-                            width: '260px',
-                            marginLeft: '20px',
-                          }}
-                        >
-                          Leverage
-                        </p> */}
                         <div style={{width: '50px'}}></div>
-                        {/* <p
-                          style={{
-                            fontSize: '16px',
-                            fontWeight: 'bold',
-                            color: '#fff',
-
-                            marginRight: '1px',
-                          }}
-                        >
-                          {leverage}x
-                        </p> */}
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
+            {/* Info: User (20230516 - Shirley) */}
             <div
               style={{
-                position: 'relative',
-                top: '0',
-                left: '75px',
+                marginTop: '50px',
                 display: 'flex',
-                height: '80px',
-                width: '80px',
-                alignItems: 'center',
+                flexDirection: 'row',
                 justifyContent: 'center',
-                overflow: 'hidden',
-                borderRadius: '50%',
-                backgroundColor: TypeOfPnLColorHex.TIDEBIT_THEME,
-                color: 'rgba(229, 231, 235, 1)',
+                alignItems: 'center',
               }}
             >
-              <span
+              <div
                 style={{
-                  fontSize: 48,
-                  fontWeight: 'extrabold',
+                  position: 'relative',
+                  top: '0',
+                  left: '75px',
+                  display: 'flex',
+                  height: '60px',
+                  width: '60px',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  overflow: 'hidden',
+                  borderRadius: '50%',
+                  backgroundColor: TypeOfPnLColorHex.TIDEBIT_THEME,
                   color: 'rgba(229, 231, 235, 1)',
                 }}
               >
-                {displayedUser}
-              </span>
-            </div>{' '}
-            <p
-              style={{
-                top: '-5px',
-                marginLeft: '67px',
-                fontSize: 18,
-                fontWeight: '800',
-                color: 'rgba(229, 231, 235, 1)',
-              }}
-            >
-              User's name
-            </p>
+                <span
+                  style={{
+                    fontSize: 40,
+                    fontWeight: 'extrabold',
+                    color: 'rgba(229, 231, 235, 1)',
+                  }}
+                >
+                  {displayedUser}
+                </span>
+              </div>{' '}
+              <p
+                style={{
+                  // top: '-5px',
+                  marginLeft: '90px',
+                  fontSize: 18,
+                  fontWeight: 'bolder',
+                  color: 'rgba(229, 231, 235, 1)',
+                }}
+              >
+                User's name
+              </p>
+            </div>
           </div>
         </div>
       </div>

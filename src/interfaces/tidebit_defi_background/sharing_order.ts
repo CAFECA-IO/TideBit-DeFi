@@ -1,7 +1,7 @@
 import {TRADING_CRYPTO_DATA} from '../../constants/config';
 import {Currency, ICurrency} from '../../constants/currency';
 import {ITypeOfPosition, TypeOfPosition} from '../../constants/type_of_position';
-import {getChainNameByCurrency, randomIntFromInterval} from '../../lib/common';
+import {getChainNameByCurrency, getTimestamp, randomIntFromInterval} from '../../lib/common';
 
 export interface ISharingOrder {
   tickerId: ICurrency;
@@ -12,6 +12,8 @@ export interface ISharingOrder {
   leverage: number;
   user: string;
   qrcodeUrl?: string;
+  openTime: number;
+  closeTime: number;
 }
 
 export const getDummySharingOrder = (
@@ -30,6 +32,8 @@ export const getDummySharingOrder = (
       : TypeOfPosition.SELL,
     openPrice: randomIntFromInterval(1000, 1200),
     closePrice: randomIntFromInterval(1000, 1200),
+    openTime: getTimestamp() - 86400,
+    closeTime: getTimestamp(),
     leverage: 5,
     user: 'user',
   };

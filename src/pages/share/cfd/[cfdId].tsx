@@ -16,7 +16,12 @@ import {Currency} from '../../../constants/currency';
 import Skeleton, {SkeletonTheme} from 'react-loading-skeleton';
 import Image from 'next/image';
 import {DOMAIN} from '../../../constants/config';
-import {HEIGHT_OF_SHARING_RECORD, WIDTH_OF_SHARING_RECORD} from '../../../constants/display';
+import {
+  BG_HEIGHT_OF_SHARING_RECORD,
+  BG_WIDTH_OF_SHARING_RECORD,
+  HEIGHT_OF_SHARING_RECORD,
+  WIDTH_OF_SHARING_RECORD,
+} from '../../../constants/display';
 import {CustomError} from '../../../lib/custom_error';
 import {Code} from '../../../constants/code';
 import useStateRef from 'react-usestateref';
@@ -48,11 +53,11 @@ const CfdSharing = (props: IPageProps) => {
 
   const displayedImage = appCtx.isInit ? (
     <Link href="/">
-      <div className="">
+      <div className="flex w-full justify-center">
         <img
           src={displayImg}
-          width={WIDTH_OF_SHARING_RECORD}
-          height={HEIGHT_OF_SHARING_RECORD}
+          width={BG_WIDTH_OF_SHARING_RECORD}
+          height={BG_HEIGHT_OF_SHARING_RECORD}
           alt="CFD record"
           className="hover:opacity-90"
         />
@@ -76,9 +81,9 @@ const CfdSharing = (props: IPageProps) => {
         <meta property="og:type" content="website" />
         <meta property="og:url" content={DOMAIN} />
         <meta property="og:image" content={img} />
-        <meta property="og:image:width" content={WIDTH_OF_SHARING_RECORD.toString()} />
-        <meta property="og:image:height" content={HEIGHT_OF_SHARING_RECORD.toString()} />
-        {/* <meta property="og:description" content="TideBit DeFi CFD Sharing" /> */}
+        <meta property="og:image:width" content={BG_WIDTH_OF_SHARING_RECORD.toString()} />
+        <meta property="og:image:height" content={BG_HEIGHT_OF_SHARING_RECORD.toString()} />
+        <meta property="og:description" content="TideBit DeFi CFD Sharing" />
         <meta property="og:site_name" content="TideBit DeFi" />
         <meta property="og:locale" content="en_US" />
 

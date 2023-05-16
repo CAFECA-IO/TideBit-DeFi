@@ -1,6 +1,7 @@
 import React from 'react';
 import {useTranslation} from 'next-i18next';
-import {unitAsset} from '../../constants/config';
+import {FRACTION_DIGITS, unitAsset} from '../../constants/config';
+import {UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
 
 type TranslateFunction = (s: string) => string;
 
@@ -18,10 +19,9 @@ const UserOverview = ({
   profitOrLossAmount,
 }: IUserOverviewProps) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
-
-  // if (profitOrLoss !== 'profit' && profitOrLoss !== 'loss') return <></>;
-
-  // const displayedPnLSymbol = profitOrLoss === 'profit' ? '+' : '-';
+  const deposit = depositAvailable.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
+  const locked = marginLocked.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
+  const pnl = profitOrLossAmount.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
 
   return (
     <>
@@ -31,21 +31,21 @@ const UserOverview = ({
           <div className="">
             <div className="text-sm text-lightGray4">{t('USER.OVERVIEW_AVAILABLE')}</div>
             <div className="text-sm xl:text-base">
-              {depositAvailable} {unitAsset}
+              {deposit} {unitAsset}
             </div>
           </div>
 
           <div className="">
             <div className="text-sm text-lightGray4">{t('USER.OVERVIEW_M_MARGIN')}</div>
             <div className="text-sm xl:text-base">
-              {marginLocked} {unitAsset}
+              {locked} {unitAsset}
             </div>
           </div>
 
           <div className="">
             <div className="text-sm text-lightGray4">{t('USER.OVERVIEW_PNL')}</div>
             <div className="text-sm xl:text-base">
-              {profitOrLossAmount} {unitAsset}
+              {pnl} {unitAsset}
             </div>
           </div>
         </div>
@@ -60,7 +60,7 @@ const UserOverview = ({
               {t('USER.OVERVIEW_AVAILABLE')}
             </div>
             <div className="whitespace-nowrap p-1 text-xs">
-              {depositAvailable} {unitAsset}
+              {deposit} {unitAsset}
             </div>
           </div>
 
@@ -69,7 +69,7 @@ const UserOverview = ({
               {t('USER.OVERVIEW_M_MARGIN')}
             </div>
             <div className="whitespace-nowrap p-1 text-xs">
-              {marginLocked} {unitAsset}
+              {locked} {unitAsset}
             </div>
           </div>
 
@@ -78,7 +78,7 @@ const UserOverview = ({
               {t('USER.OVERVIEW_PNL')}
             </div>
             <div className="whitespace-nowrap p-1 text-xs">
-              {profitOrLossAmount} {unitAsset}
+              {pnl} {unitAsset}
             </div>
           </div>
         </div>

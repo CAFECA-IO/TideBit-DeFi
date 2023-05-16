@@ -2,6 +2,7 @@ import {NextApiRequest, NextApiResponse} from 'next';
 import {ImageResponse} from 'next/server';
 import {randomIntFromInterval, roundToDecimalPlaces} from '../../../../lib/common';
 import {
+  BG_HEIGHT_OF_SHARING_RECORD,
   HEIGHT_OF_SHARING_RECORD,
   TypeOfPnLColorHex,
   UNIVERSAL_NUMBER_FORMAT_LOCALE,
@@ -98,9 +99,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const displayedArrow = profitState === ProfitState.PROFIT ? upArrow : downArrow;
 
-  const testImg =
-    'https://thumbs.dreamstime.com/z/beautiful-rain-forest-ang-ka-nature-trail-doi-inthanon-national-park-thailand-36703721.jpg';
-
   const imageResponse = new ImageResponse(
     (
       <div
@@ -109,51 +107,56 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           position: 'relative',
           flexDirection: 'column',
           fontFamily: "'Barlow', sans-serif",
+          backgroundColor: '#000',
+          // paddingTop: '100px',
+          // marginTop: '100px',
+
+          // backgroundSize: `${WIDTH_OF_SHARING_RECORD}px ${HEIGHT_OF_SHARING_RECORD + 200}px`,
         }}
       >
+        <div style={{height: '30px', backgroundColor: '#000'}}></div>
         <div
           style={{
-            backgroundImage: `url(${backgroundImageUrl})`,
-            backgroundSize: `${WIDTH_OF_SHARING_RECORD}px ${HEIGHT_OF_SHARING_RECORD}px`,
-            backgroundPosition: 'relative',
-            backgroundRepeat: 'no-repeat',
-            background: 'transparent',
-
             display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'flex-start',
-            justifyContent: 'flex-start',
-            height: `${HEIGHT_OF_SHARING_RECORD}px`,
+            height: `${HEIGHT_OF_SHARING_RECORD + 100}px`,
             width: `${WIDTH_OF_SHARING_RECORD}px`,
           }}
         >
           <div
             style={{
-              marginLeft: 64,
-              marginTop: '30px',
+              backgroundImage: `url(${backgroundImageUrl})`,
+              backgroundSize: `${WIDTH_OF_SHARING_RECORD}px ${HEIGHT_OF_SHARING_RECORD}px`,
+              backgroundPosition: 'relative',
+              backgroundRepeat: 'no-repeat',
+              // background: 'transparent',
+              backgroundColor: '#000',
+
               display: 'flex',
-              alignItems: 'center',
-            }}
-          >
-            <img src={`${logoUrl}`} width={224} height={66} alt="logo" />
-          </div>
-          <div
-            style={{
-              marginLeft: 64,
-              marginTop: '30px',
-              display: 'flex',
-              alignItems: 'center',
+              flexDirection: 'column',
+              alignItems: 'flex-start',
+              justifyContent: 'flex-start',
+              height: `${HEIGHT_OF_SHARING_RECORD}px`,
+              width: `${WIDTH_OF_SHARING_RECORD}px`,
             }}
           >
             <div
               style={{
+                marginLeft: 64,
+                marginTop: '30px',
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'center',
-                gap: '1rem',
               }}
             >
-              {' '}
+              <img src={`${logoUrl}`} width={224} height={66} alt="logo" />
+            </div>
+            <div
+              style={{
+                marginLeft: 64,
+                marginTop: '30px',
+                display: 'flex',
+                alignItems: 'center',
+              }}
+            >
               <div
                 style={{
                   display: 'flex',
@@ -163,270 +166,283 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 }}
               >
                 {' '}
-                <img src={`${iconUrl}`} width={30} height={30} alt="crypto icon" />
-                <h1 style={{fontSize: 24, fontWeight: 'normal', color: '#fff'}}>
-                  {targetAssetName}
-                </h1>
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '1rem',
+                  }}
+                >
+                  {' '}
+                  <img src={`${iconUrl}`} width={30} height={30} alt="crypto icon" />
+                  <h1 style={{fontSize: 24, fontWeight: 'normal', color: '#fff'}}>
+                    {targetAssetName}
+                  </h1>
+                </div>
               </div>
-            </div>
-            {/* Info: QR Code (20230509 - Shirley) */}
-            <img
-              style={{
-                position: 'absolute',
-                top: '330px',
-                left: '160px',
-              }}
-              src={`${qrcodeUrl}`}
-              width={113}
-              height={113}
-              alt="qrcode"
-            />
-
-            <div
-              style={{
-                marginTop: '15px',
-                marginLeft: '15px',
-                display: 'flex',
-              }}
-            >
-              <p
+              {/* Info: QR Code (20230509 - Shirley) */}
+              <img
                 style={{
-                  marginTop: '0.5rem',
-                  borderRadius: '3px',
-                  backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                  paddingLeft: '0.25rem',
-                  paddingRight: '0.25rem',
-                  paddingTop: '0.2rem',
-                  paddingBottom: '0.2rem',
-                  fontSize: '14px',
-                  fontWeight: 'bold',
-                  color: 'black',
+                  position: 'absolute',
+                  top: '330px',
+                  left: '160px',
+                }}
+                src={`${qrcodeUrl}`}
+                width={113}
+                height={113}
+                alt="qrcode"
+              />
+
+              <div
+                style={{
+                  marginTop: '15px',
+                  marginLeft: '15px',
+                  display: 'flex',
                 }}
               >
-                {displayedTypeOfPosition}
-              </p>
-            </div>
-          </div>{' '}
-          <div style={{display: 'flex', marginLeft: '0', marginTop: '0'}}>
-            <div
-              style={{
-                display: 'flex',
-                marginLeft: '40px',
-                marginTop: '0',
-                width: '100%',
-              }}
-            >
+                <p
+                  style={{
+                    marginTop: '0.5rem',
+                    borderRadius: '3px',
+                    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                    paddingLeft: '0.25rem',
+                    paddingRight: '0.25rem',
+                    paddingTop: '0.2rem',
+                    paddingBottom: '0.2rem',
+                    fontSize: '14px',
+                    fontWeight: 'bold',
+                    color: 'black',
+                  }}
+                >
+                  {displayedTypeOfPosition}
+                </p>
+              </div>
+            </div>{' '}
+            <div style={{display: 'flex', marginLeft: '0', marginTop: '0'}}>
               <div
                 style={{
                   display: 'flex',
-                  marginLeft: '5px',
-                  width: '350px',
-                  height: '270px',
-                  borderWidth: '1px',
-                  borderColor: `transparent`,
-                  // marginBottom: '50px',
-                  fontSize: '16px',
-                  lineHeight: '1.5',
-                  color: 'rgba(229, 231, 235, 1)',
+                  marginLeft: '40px',
+                  marginTop: '0',
+                  width: '100%',
                 }}
               >
                 <div
                   style={{
                     display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'center',
-                    textAlign: 'center',
+                    marginLeft: '5px',
+                    width: '350px',
+                    height: '270px',
+                    borderWidth: '1px',
+                    borderColor: `transparent`,
+                    // marginBottom: '50px',
+                    fontSize: '16px',
+                    lineHeight: '1.5',
+                    color: 'rgba(229, 231, 235, 1)',
                   }}
                 >
                   <div
                     style={{
                       display: 'flex',
-                      width: '100%',
-                      justifyContent: 'center',
-                      marginBottom: '40px',
-                    }}
-                  >
-                    <span style={{marginTop: '15px', marginRight: '8px'}}>{displayedArrow}</span>{' '}
-                    <p
-                      style={{
-                        fontSize: '60px',
-                        fontWeight: 'bold',
-                        color: `${displayedTextColor}`,
-                        marginTop: '30px',
-                      }}
-                    >
-                      {displayedPnlPercent}%
-                    </p>
-                  </div>
-                  <div
-                    style={{
-                      display: 'flex',
                       flexDirection: 'column',
-                      gap: '0px',
-                      width: '330px',
+                      justifyContent: 'center',
+                      textAlign: 'center',
                     }}
                   >
                     <div
                       style={{
                         display: 'flex',
+                        width: '100%',
+                        justifyContent: 'center',
+                        marginBottom: '40px',
                       }}
                     >
+                      <span style={{marginTop: '15px', marginRight: '8px'}}>{displayedArrow}</span>{' '}
                       <p
                         style={{
-                          fontSize: '18px',
+                          fontSize: '60px',
                           fontWeight: 'bold',
-                          color: '#8B8E91',
-
-                          width: '260px',
-                          marginLeft: '20px',
+                          color: `${displayedTextColor}`,
+                          marginTop: '30px',
                         }}
                       >
-                        Open Price
-                      </p>
-                      <div style={{width: '50px'}}></div>
-
-                      <p
-                        style={{
-                          fontSize: '18px',
-                          fontWeight: 'bold',
-                          color: '#fff',
-
-                          marginRight: '35px',
-                        }}
-                      >
-                        {openPrice?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)}
-                        <span
-                          style={{
-                            marginTop: '2px',
-                            fontSize: '14px',
-                            fontWeight: 'lighter',
-                            color: '#8B8E91',
-
-                            marginLeft: '5px',
-                          }}
-                        >
-                          {unitAsset}
-                        </span>
+                        {displayedPnlPercent}%
                       </p>
                     </div>
-
-                    <div style={{display: 'flex'}}>
-                      <p
+                    <div
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '0px',
+                        width: '330px',
+                      }}
+                    >
+                      <div
                         style={{
-                          fontSize: '18px',
-                          fontWeight: 'bold',
-                          color: '#8B8E91',
-
-                          width: '260px',
-                          marginLeft: '20px',
+                          display: 'flex',
                         }}
                       >
-                        Close Price
-                      </p>
-                      <div style={{width: '50px'}}></div>
-
-                      <p
-                        style={{
-                          fontSize: '18px',
-                          fontWeight: 'bold',
-                          color: '#fff',
-
-                          marginRight: '35px',
-                        }}
-                      >
-                        {closePrice?.toLocaleString(
-                          UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                          FRACTION_DIGITS
-                        )}
-                        <span
+                        <p
                           style={{
-                            marginTop: '2px',
-                            fontSize: '14px',
-                            fontWeight: 'lighter',
+                            fontSize: '18px',
+                            fontWeight: 'bold',
                             color: '#8B8E91',
 
-                            marginLeft: '5px',
+                            width: '260px',
+                            marginLeft: '20px',
                           }}
                         >
-                          {unitAsset}
-                        </span>
-                      </p>
-                    </div>
+                          Open Price
+                        </p>
+                        <div style={{width: '50px'}}></div>
 
-                    <div style={{display: 'flex'}}>
-                      <p
-                        style={{
-                          fontSize: '16px',
-                          fontWeight: 'bold',
-                          color: '#8B8E91',
+                        <p
+                          style={{
+                            fontSize: '18px',
+                            fontWeight: 'bold',
+                            color: '#fff',
 
-                          width: '260px',
-                          marginLeft: '20px',
-                        }}
-                      >
-                        Leverage
-                      </p>
-                      <div style={{width: '50px'}}></div>
-                      <p
-                        style={{
-                          fontSize: '16px',
-                          fontWeight: 'bold',
-                          color: '#fff',
+                            marginRight: '35px',
+                          }}
+                        >
+                          {openPrice?.toLocaleString(
+                            UNIVERSAL_NUMBER_FORMAT_LOCALE,
+                            FRACTION_DIGITS
+                          )}
+                          <span
+                            style={{
+                              marginTop: '2px',
+                              fontSize: '14px',
+                              fontWeight: 'lighter',
+                              color: '#8B8E91',
 
-                          marginRight: '1px',
-                        }}
-                      >
-                        {leverage}x
-                      </p>
+                              marginLeft: '5px',
+                            }}
+                          >
+                            {unitAsset}
+                          </span>
+                        </p>
+                      </div>
+
+                      <div style={{display: 'flex'}}>
+                        <p
+                          style={{
+                            fontSize: '18px',
+                            fontWeight: 'bold',
+                            color: '#8B8E91',
+
+                            width: '260px',
+                            marginLeft: '20px',
+                          }}
+                        >
+                          Close Price
+                        </p>
+                        <div style={{width: '50px'}}></div>
+
+                        <p
+                          style={{
+                            fontSize: '18px',
+                            fontWeight: 'bold',
+                            color: '#fff',
+
+                            marginRight: '35px',
+                          }}
+                        >
+                          {closePrice?.toLocaleString(
+                            UNIVERSAL_NUMBER_FORMAT_LOCALE,
+                            FRACTION_DIGITS
+                          )}
+                          <span
+                            style={{
+                              marginTop: '2px',
+                              fontSize: '14px',
+                              fontWeight: 'lighter',
+                              color: '#8B8E91',
+
+                              marginLeft: '5px',
+                            }}
+                          >
+                            {unitAsset}
+                          </span>
+                        </p>
+                      </div>
+
+                      <div style={{display: 'flex'}}>
+                        <p
+                          style={{
+                            fontSize: '16px',
+                            fontWeight: 'bold',
+                            color: '#8B8E91',
+
+                            width: '260px',
+                            marginLeft: '20px',
+                          }}
+                        >
+                          Leverage
+                        </p>
+                        <div style={{width: '50px'}}></div>
+                        <p
+                          style={{
+                            fontSize: '16px',
+                            fontWeight: 'bold',
+                            color: '#fff',
+
+                            marginRight: '1px',
+                          }}
+                        >
+                          {leverage}x
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-          <div
-            style={{
-              position: 'relative',
-              top: '0',
-              left: '75px',
-              display: 'flex',
-              height: '80px',
-              width: '80px',
-              alignItems: 'center',
-              justifyContent: 'center',
-              overflow: 'hidden',
-              borderRadius: '50%',
-              backgroundColor: TypeOfPnLColorHex.TIDEBIT_THEME,
-              color: 'rgba(229, 231, 235, 1)',
-            }}
-          >
-            <span
+            <div
               style={{
-                fontSize: 48,
-                fontWeight: 'extrabold',
+                position: 'relative',
+                top: '0',
+                left: '75px',
+                display: 'flex',
+                height: '80px',
+                width: '80px',
+                alignItems: 'center',
+                justifyContent: 'center',
+                overflow: 'hidden',
+                borderRadius: '50%',
+                backgroundColor: TypeOfPnLColorHex.TIDEBIT_THEME,
                 color: 'rgba(229, 231, 235, 1)',
               }}
             >
-              {displayedUser}
-            </span>
-          </div>{' '}
-          <p
-            style={{
-              top: '-5px',
-              marginLeft: '67px',
-              fontSize: 18,
-              fontWeight: '800',
-              color: 'rgba(229, 231, 235, 1)',
-            }}
-          >
-            User's name
-          </p>
+              <span
+                style={{
+                  fontSize: 48,
+                  fontWeight: 'extrabold',
+                  color: 'rgba(229, 231, 235, 1)',
+                }}
+              >
+                {displayedUser}
+              </span>
+            </div>{' '}
+            <p
+              style={{
+                top: '-5px',
+                marginLeft: '67px',
+                fontSize: 18,
+                fontWeight: '800',
+                color: 'rgba(229, 231, 235, 1)',
+              }}
+            >
+              User's name
+            </p>
+          </div>
         </div>
       </div>
     ),
     {
       width: WIDTH_OF_SHARING_RECORD,
-      height: HEIGHT_OF_SHARING_RECORD,
+      height: BG_HEIGHT_OF_SHARING_RECORD,
       fonts: [
         {
           name: 'Barlow',

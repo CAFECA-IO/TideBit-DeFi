@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext, useState, useEffect} from 'react';
 import {accountTruncate, numberFormatted} from '../../lib/common';
 import {UserContext} from '../../contexts/user_context';
 import Image from 'next/image';
@@ -19,10 +19,13 @@ const UserPersonalRanking = ({timeSpan}: IUserPersonalRankingProps) => {
   const userCtx = useContext(UserContext);
 
   const [showShareList, setShowShareList] = useState(false);
+  const [userRankData, setUserRankData] = useState(defaultPersonalRanking);
+
+  useEffect(() => {
+    setUserRankData(userCtx.getPersonalRanking(timeSpan) ?? defaultPersonalRanking);
+  }, [timeSpan]);
 
   const username = userCtx.wallet?.slice(-1).toUpperCase();
-
-  const userRankData = userCtx.getPersonalRanking(timeSpan) ?? defaultPersonalRanking;
 
   const rankingNumber = userRankData.rank;
   const pnl = userRankData.pnl;
@@ -67,9 +70,9 @@ const UserPersonalRanking = ({timeSpan}: IUserPersonalRankingProps) => {
   /* ToDo: (20230512 - Julian) Share function */
   const socialMediaList = (
     <div
-      className={`absolute bottom-16 right-0 bg-darkGray7 p-2 text-lightWhite md:-right-28 ${
-        showShareList ? 'inline-flex opacity-100' : 'hidden opacity-0'
-      } space-x-4 transition-all duration-300 hover:cursor-pointer`}
+      className={`absolute bottom-10 right-0 inline-flex md:-right-28 md:bottom-16 ${
+        showShareList ? 'visible opacity-100' : 'invisible opacity-10'
+      } space-x-4 bg-darkGray7 p-2 text-lightWhite transition-all duration-300 hover:cursor-pointer`}
     >
       <BsFacebook className="hover:text-lightGray2" />
       <BsTwitter className="hover:text-lightGray2" />
@@ -92,7 +95,7 @@ const UserPersonalRanking = ({timeSpan}: IUserPersonalRankingProps) => {
     );
 
   const personalRanking = userCtx.wallet ? (
-    <div className="flex w-full whitespace-nowrap bg-darkGray3 px-4 py-6 shadow-top md:px-8 md:py-2">
+    <div className="flex w-full whitespace-nowrap bg-darkGray3 px-4 py-2 shadow-top md:px-8">
       <div className="flex flex-1 items-center space-x-2 md:space-x-3">
         <div className="inline-flex items-center sm:w-70px">
           <Image src="/leaderboard/crown.svg" width={25} height={25} alt="crown_icon" />

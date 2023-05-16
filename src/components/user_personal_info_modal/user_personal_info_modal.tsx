@@ -122,7 +122,7 @@ IPersonalInfoModal) => {
   });
 
   const formContent = (
-    <div className="flex w-full flex-col space-y-4 divide-y divide-lightGray overflow-y-auto px-8 pt-4">
+    <div className="flex w-full flex-col space-y-4 divide-y divide-lightGray overflow-y-scroll px-8 pt-4">
       {/* Info:(20230515 - Julian) User Name */}
       <div className="flex flex-col items-center space-y-6 text-lightWhite">
         <div className="text-4xl">{userName}</div>

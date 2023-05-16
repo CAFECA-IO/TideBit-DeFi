@@ -165,7 +165,9 @@ const LeaderboardTab = ({timeSpan, setTimeSpan, rankings}: LeaderboardTabProps) 
       <div key={rank} className={marginTop}>
         <div className="relative flex flex-col">
           {/* Info: (20230511 - Julian) User Avatar */}
-          <div className={`absolute inline-flex items-center justify-center p-2 md:p-3`}>
+          <div
+            className={`absolute inline-flex items-center justify-center p-2 transition-all duration-300 md:p-3`}
+          >
             <Image
               src={userData.avatar}
               width={medalistSize}
@@ -223,7 +225,7 @@ const LeaderboardTab = ({timeSpan, setTimeSpan, rankings}: LeaderboardTabProps) 
       <div key={text} className="w-full">
         <button
           type="button"
-          className={`${style} inline-block w-full rounded-t-2xl px-20px py-2 text-xs hover:cursor-pointer md:text-base`}
+          className={`${style} inline-block w-full rounded-t-2xl px-20px py-2 text-xs transition-all duration-300 hover:cursor-pointer md:text-base`}
           onClick={active}
         >
           {text}

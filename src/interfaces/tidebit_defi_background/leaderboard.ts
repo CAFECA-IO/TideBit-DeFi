@@ -92,14 +92,14 @@ export const getDummyLeaderboard = (timeSpan: IRankingTimeSpan) => {
     case RankingInterval.LIVE:
       result = {
         startTime: now,
-        endTime: now + 86400,
+        endTime: Math.floor(now / 86400),
         rankings: rankings,
       };
       break;
     case RankingInterval.DAILY:
       result = {
-        startTime: now - 86400,
-        endTime: now,
+        startTime: now - 86400 * 2,
+        endTime: now - 86400,
         rankings: rankings,
       };
       break;

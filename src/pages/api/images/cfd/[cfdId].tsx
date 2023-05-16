@@ -7,6 +7,7 @@ import {
 } from '../../../../lib/common';
 import {
   BG_HEIGHT_OF_SHARING_RECORD,
+  BG_WIDTH_OF_SHARING_RECORD,
   HEIGHT_OF_SHARING_RECORD,
   TypeOfPnLColorHex,
   UNIVERSAL_NUMBER_FORMAT_LOCALE,
@@ -123,20 +124,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           position: 'relative',
           flexDirection: 'column',
           fontFamily: "'Barlow', sans-serif",
-          backgroundSize: `${WIDTH_OF_SHARING_RECORD}px ${BG_HEIGHT_OF_SHARING_RECORD}px`,
+          // backgroundSize: `${BG_WIDTH_OF_SHARING_RECORD}px ${BG_HEIGHT_OF_SHARING_RECORD}px`,
         }}
       >
         <div
           style={{
             display: 'flex',
             height: `${BG_HEIGHT_OF_SHARING_RECORD}px`,
-            width: `${WIDTH_OF_SHARING_RECORD}px`,
+            width: `${BG_WIDTH_OF_SHARING_RECORD}px`,
             backgroundColor: '#000',
           }}
         >
           <div
             style={{
-              transform: 'translateY(50px)',
+              transform: 'translateY(20px) translateX(150px)',
               backgroundImage: `url(${backgroundImageUrl})`,
               objectFit: 'contain',
               backgroundSize: `${WIDTH_OF_SHARING_RECORD}px ${HEIGHT_OF_SHARING_RECORD}px`,
@@ -497,7 +498,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       </div>
     ),
     {
-      width: WIDTH_OF_SHARING_RECORD,
+      width: BG_WIDTH_OF_SHARING_RECORD,
       height: BG_HEIGHT_OF_SHARING_RECORD,
       fonts: [
         {

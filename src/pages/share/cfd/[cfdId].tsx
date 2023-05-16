@@ -18,6 +18,7 @@ import Image from 'next/image';
 import {DOMAIN} from '../../../constants/config';
 import {
   BG_HEIGHT_OF_SHARING_RECORD,
+  BG_WIDTH_OF_SHARING_RECORD,
   HEIGHT_OF_SHARING_RECORD,
   WIDTH_OF_SHARING_RECORD,
 } from '../../../constants/display';
@@ -55,7 +56,7 @@ const CfdSharing = (props: IPageProps) => {
       <div className="">
         <img
           src={displayImg}
-          width={WIDTH_OF_SHARING_RECORD}
+          width={BG_WIDTH_OF_SHARING_RECORD}
           height={BG_HEIGHT_OF_SHARING_RECORD}
           alt="CFD record"
           className="hover:opacity-90"
@@ -80,7 +81,7 @@ const CfdSharing = (props: IPageProps) => {
         <meta property="og:type" content="website" />
         <meta property="og:url" content={DOMAIN} />
         <meta property="og:image" content={img} />
-        <meta property="og:image:width" content={WIDTH_OF_SHARING_RECORD.toString()} />
+        <meta property="og:image:width" content={BG_WIDTH_OF_SHARING_RECORD.toString()} />
         <meta property="og:image:height" content={BG_HEIGHT_OF_SHARING_RECORD.toString()} />
         <meta property="og:description" content="TideBit DeFi CFD Sharing" />
         <meta property="og:site_name" content="TideBit DeFi" />

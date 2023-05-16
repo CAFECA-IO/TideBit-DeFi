@@ -51,7 +51,11 @@ import Lottie from 'lottie-react';
 import smallConnectingAnimation from '../../public/animation/lf30_editor_cnkxmhy3.json';
 import {IToastType, ToastType} from '../constants/toast_type';
 import {Code, Reason} from '../constants/code';
-import PersonalInfoModal from '../components/user_personal_info_modal/user_personal_info_modal';
+import PersonalInfoModal from '../components/personal_info_modal/personal_info_modal';
+import {
+  IPersonalInfo,
+  dummyPersonalInfo,
+} from '../interfaces/tidebit_defi_background/personal_info';
 export interface IToastify {
   type: IToastType;
   message: string;
@@ -83,11 +87,6 @@ export interface IDataPositionClosedModal {
 
 export interface IDataPositionOpenModal {
   openCfdRequest: IApplyCreateCFDOrder;
-}
-
-// ToDo: (20230515 - Julian) 整理 personal info modal 需要的資料
-export interface IPersonalInfoModal {
-  rank: number;
 }
 
 export const dummyDataPositionOpenModal: IDataPositionOpenModal = {
@@ -357,8 +356,8 @@ export interface IGlobalContext {
 
   visiblePersonalInfoModal: boolean;
   visiblePersonalInfoModalHandler: () => void;
-  dataPersonalInfoModal: IPersonalInfoModal | null;
-  dataPersonalInfoModalHandler: (data: IPersonalInfoModal) => void;
+  dataPersonalInfoModal: IPersonalInfo | null;
+  dataPersonalInfoModalHandler: (data: IPersonalInfo) => void;
 }
 
 export const GlobalContext = createContext<IGlobalContext>({
@@ -616,7 +615,8 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
   const [visibleSearchingModal, setVisibleSearchingModal] = useState(false);
 
   const [visiblePersonalInfoModal, setVisiblePersonalInfoModal] = useState(false);
-  const [dataPersonalInfoModal, setDataPersonalInfoModal] = useState<IPersonalInfoModal>({rank: 1});
+  const [dataPersonalInfoModal, setDataPersonalInfoModal] =
+    useState<IPersonalInfo>(dummyPersonalInfo);
 
   // TODO: (20230316 - Shirley) To get the withdrawal / deposit result
   const [depositProcess, setDepositProcess] = useState<
@@ -1080,7 +1080,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     setVisiblePersonalInfoModal(!visiblePersonalInfoModal);
   };
 
-  const dataPersonalInfoModalHandler = (data: IPersonalInfoModal) => {
+  const dataPersonalInfoModalHandler = (data: IPersonalInfo) => {
     setDataPersonalInfoModal(data);
   };
 
@@ -1342,7 +1342,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
       <PersonalInfoModal
         modalVisible={visiblePersonalInfoModal}
         modalClickHandler={visiblePersonalInfoModalHandler}
-        //getPersonalInfoData={dataPersonalInfoModal}
+        getPersonalInfoData={dataPersonalInfoModal}
       />
 
       {/* Info: One toast container avoids duplicate toast overlaying */}

@@ -1,6 +1,7 @@
 import React, {useContext, useState, useEffect} from 'react';
 import {accountTruncate, numberFormatted} from '../../lib/common';
 import {UserContext} from '../../contexts/user_context';
+import {GlobalContext} from '../../contexts/global_context';
 import Image from 'next/image';
 import {TypeOfPnLColor} from '../../constants/display';
 import {unitAsset} from '../../constants/config';
@@ -17,6 +18,7 @@ export interface IUserPersonalRankingProps {
 
 const UserPersonalRanking = ({timeSpan}: IUserPersonalRankingProps) => {
   const userCtx = useContext(UserContext);
+  const globalCtx = useContext(GlobalContext);
 
   const [showShareList, setShowShareList] = useState(false);
   const [userRankData, setUserRankData] = useState(defaultPersonalRanking);
@@ -32,6 +34,12 @@ const UserPersonalRanking = ({timeSpan}: IUserPersonalRankingProps) => {
   const cumulativePnl = userRankData.cumulativePnl;
 
   const shareClickHandler = () => setShowShareList(!showShareList);
+
+  // ToDo: (20230516 - Julian) dataPersonalInfoModalHandler
+  const personalInfoClickHandler = () => {
+    //globalCtx.dataPersonalInfoModalHandler(dummyPersonalInfo);
+    globalCtx.visiblePersonalInfoModalHandler();
+  };
 
   /* Info: (20230512 - Julian) rankingNumber <= 0 means can't get ranking data */
   const displayedRankingNumber = rankingNumber <= 0 ? '-' : rankingNumber;
@@ -119,7 +127,11 @@ const UserPersonalRanking = ({timeSpan}: IUserPersonalRankingProps) => {
     </div>
   ) : null;
 
-  return <div className="sticky bottom-0 z-30">{personalRanking}</div>;
+  return (
+    <div className="sticky bottom-0 z-30 hover:cursor-pointer" onClick={personalInfoClickHandler}>
+      {personalRanking}
+    </div>
+  );
 };
 
 export default UserPersonalRanking;

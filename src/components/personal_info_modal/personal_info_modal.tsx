@@ -2,11 +2,15 @@ import React, {useContext} from 'react';
 import {UserContext} from '../../contexts/user_context';
 import Image from 'next/image';
 import {defaultPersonalRanking} from '../../interfaces/tidebit_defi_background/personal_ranking';
-import {DEFAULT_USER_AVATAR, TypeOfPnLColor} from '../../constants/display';
+import {DEFAULT_USER_AVATAR, BADGE_LIST, TypeOfPnLColor} from '../../constants/display';
 import {unitAsset} from '../../constants/config';
 import {ProfitState} from '../../constants/profit_state';
-import {numberFormatted} from '../../lib/common';
+import {numberFormatted, accountTruncate} from '../../lib/common';
 import {useTranslation} from 'react-i18next';
+import {
+  IPersonalInfo,
+  defaultPersonalInfo,
+} from '../../interfaces/tidebit_defi_background/personal_info';
 import {ImCross} from 'react-icons/im';
 import {RiBarChart2Fill, RiDonutChartFill} from 'react-icons/ri';
 import {BiTimeFive} from 'react-icons/bi';
@@ -17,21 +21,25 @@ type TranslateFunction = (s: string) => string;
 interface IPersonalInfoModal {
   modalVisible: boolean;
   modalClickHandler: () => void;
-  //getPersonalInfoData:
+  getPersonalInfoData: IPersonalInfo;
 }
 
 const PersonalInfoModal = ({
   modalVisible,
   modalClickHandler,
-}: //getPersonalInfoData,
-IPersonalInfoModal) => {
+  getPersonalInfoData,
+}: IPersonalInfoModal) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
   const userCtx = useContext(UserContext);
 
-  // TODO: (20230515 - Julian) Get data from userCtx
-  const userName = 'Julian'; //userCtx.username
-  const userAvatar = DEFAULT_USER_AVATAR;
+  const {userAvatar, tradingVolume, onlineTime, diversification, hightestROI, lowestROI, badge} =
+    getPersonalInfoData ?? defaultPersonalInfo;
+
+  const userName =
+    userCtx.username && userCtx.username?.length > 20
+      ? accountTruncate(userCtx.username)
+      : userCtx.username;
 
   const userRankingDaily = userCtx.getPersonalRanking('DAILY') ?? defaultPersonalRanking;
   const userRankingWeekly = userCtx.getPersonalRanking('WEEKLY') ?? defaultPersonalRanking;
@@ -63,7 +71,7 @@ IPersonalInfoModal) => {
         );
 
       return (
-        <div className="flex w-100px justify-between">
+        <div key={title} className="flex w-100px justify-between">
           <div className="flex flex-col items-center">
             <div className="text-sm text-lightGray4">{title}</div>
             <div className="inline-flex items-center">
@@ -80,54 +88,97 @@ IPersonalInfoModal) => {
     }
   );
 
-  // TODO: (20230515 - Julian) Get value from userCtx, and i18n
+  const displayedROI = (roi: number) => {
+    const displayedRoi =
+      roi > 0 ? (
+        <div className="inline-flex items-center text-lightGreen5">
+          + {numberFormatted(roi)} %
+          <span className="ml-1 text-xs text-lightGray4">{unitAsset}</span>
+        </div>
+      ) : roi < 0 ? (
+        <div className="inline-flex items-center text-lightRed3">
+          - {numberFormatted(roi)} %
+          <span className="ml-1 text-xs text-lightGray4">{unitAsset}</span>
+        </div>
+      ) : (
+        <div className="inline-flex items-center text-lightWhite">
+          {roi} % <span className="ml-1 text-xs text-lightGray4">{unitAsset}</span>
+        </div>
+      );
+    return displayedRoi;
+  };
+
   const detailContent = [
     {
-      title: 'Trading volume',
+      title: t('LEADERBOARD_PAGE.TRADING_VOLUME'),
       icon: <RiBarChart2Fill className="mr-2 text-2xl text-tidebitTheme" />,
-      value: '$ 12,390',
+      value: <div>{`$ ${numberFormatted(tradingVolume)}`}</div>,
     },
     {
-      title: 'Online time',
+      title: t('LEADERBOARD_PAGE.ONLINE_TIME'),
       icon: <BiTimeFive className="mr-2 text-2xl text-tidebitTheme" />,
-      value: '592 Day 5 Hours 39 Minutes',
+      value: <div>{`${onlineTime} s`}</div>,
     },
     {
-      title: 'Diversification',
+      title: t('LEADERBOARD_PAGE.DIVERSIFICATION'),
       icon: <RiDonutChartFill className="mr-2 text-2xl text-tidebitTheme" />,
-      value: '67.35 %',
+      value: <div>{`${diversification} %`}</div>,
     },
     {
-      title: 'Highest ROI',
+      title: t('LEADERBOARD_PAGE.HIGHTEST_ROI'),
       icon: <FaRegThumbsUp className="mr-2 text-2xl text-tidebitTheme" />,
-      value: '+ 53.35 % USDT',
+      value: displayedROI(hightestROI),
     },
     {
-      title: 'Lowest ROI :',
+      title: t('LEADERBOARD_PAGE.LOWEST_ROI'),
       icon: <FaRegThumbsDown className="mr-2 text-2xl text-tidebitTheme" />,
-      value: '- 33.55 % USDT',
+      value: displayedROI(lowestROI),
     },
   ];
 
   const displayedDetailList = detailContent.map(({title, icon, value}) => {
     return (
-      <div className="inline-flex w-full justify-between">
+      <div key={title} className="inline-flex w-full justify-between">
         <div className="inline-flex items-end text-lightGray4">
           {icon}
           {title} :
         </div>
-        <div>{value}</div>
+        {value}
       </div>
     );
   });
 
-  const formContent = (
-    <div className="flex w-full flex-col space-y-4 divide-y divide-lightGray overflow-y-scroll px-8 pt-4">
+  // ToDo: (20230516 - Julian) 獲得的徽章要顯示出來 (icon)
+  const displayedBadgeList = BADGE_LIST.map(({id, description, icon, iconSkeleton}) => {
+    const hintFrameStyle = id % 3 === 0 ? 'right-0' : '';
+    const hintArrowStyle = id % 3 === 0 ? 'right-6' : 'left-6';
+    return (
+      <div key={id} className="group relative mx-auto my-auto bg-darkGray8 p-4">
+        <Image src={iconSkeleton} width={70} height={70} alt="daily_20_badge_icon" />
+        <div
+          className={`absolute -top-12 whitespace-nowrap rounded bg-black p-2 text-sm ${hintFrameStyle} opacity-0 transition-all duration-300 group-hover:opacity-100`}
+        >
+          <span
+            className={`absolute top-8 border-x-8 border-t-20px ${hintArrowStyle} border-x-transparent border-t-black`}
+          ></span>
+          {description}
+        </div>
+      </div>
+    );
+  });
+
+  const formContent = userCtx.wallet ? (
+    <div className="flex w-full flex-col space-y-4 divide-y divide-lightGray overflow-y-auto overflow-x-hidden px-8 pt-4">
       {/* Info:(20230515 - Julian) User Name */}
       <div className="flex flex-col items-center space-y-6 text-lightWhite">
         <div className="text-4xl">{userName}</div>
         <div>
-          <Image src={userAvatar} alt="user_avatar" width={120} height={120} />
+          <Image
+            src={userAvatar ?? DEFAULT_USER_AVATAR}
+            alt="user_avatar"
+            width={120}
+            height={120}
+          />
         </div>
         <div className="inline-flex w-full justify-between px-2 text-center">
           {displayedPersonalRankingList}
@@ -138,15 +189,16 @@ IPersonalInfoModal) => {
       <div className="flex flex-col space-y-6 px-4 py-6 text-sm">{displayedDetailList}</div>
 
       {/* ToDo:(20230515 - Julian) Badges */}
-      <div className="flex flex-col px-4 py-3">
-        <div className="text-lightGray">Badges</div>
+      <div className="flex flex-col px-4">
+        <div className="py-4 text-lightGray">{t('LEADERBOARD_PAGE.BADGES')}</div>
+        <div className="grid grid-cols-3 gap-3">{displayedBadgeList}</div>
       </div>
     </div>
-  );
+  ) : null;
 
   const isDisplayedModal = modalVisible ? (
     <>
-      <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">
+      <div className="fixed inset-0 z-50 flex items-center justify-center overflow-x-hidden overflow-y-hidden outline-none backdrop-blur-sm focus:outline-none">
         <div className="relative mx-auto my-6 w-auto max-w-xl">
           <div
             id="personalInfoModal"

@@ -53,7 +53,7 @@ const CfdSharing = (props: IPageProps) => {
 
   const displayedImage = appCtx.isInit ? (
     <Link href="/">
-      <div className="">
+      <div className="flex w-full justify-center">
         <img
           src={displayImg}
           width={BG_WIDTH_OF_SHARING_RECORD}

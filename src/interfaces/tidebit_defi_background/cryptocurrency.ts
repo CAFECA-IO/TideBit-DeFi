@@ -13,6 +13,21 @@ export interface ICryptocurrency {
   createdAt: number;
   updatedAt: number;
 }
+export const defaultCryptocurrency: ICryptocurrency = {
+  id: 'DEFAULT',
+  icon: '/asset_icon/default.svg',
+  symbol: '',
+  name: '-',
+  decimals: 0,
+  contract: '',
+  fee: 0,
+  enableDeposit: false,
+  enableWithdraw: false,
+  enableTrade: false,
+  enableMargin: false,
+  createdAt: 0,
+  updatedAt: 0,
+};
 
 export const dummyCryptocurrency: ICryptocurrency = {
   id: 'USDT',

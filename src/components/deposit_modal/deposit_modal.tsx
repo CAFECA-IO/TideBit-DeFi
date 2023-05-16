@@ -3,12 +3,15 @@ import RippleButton from '../ripple_button/ripple_button';
 import {MarketContext} from '../../contexts/market_context';
 import {MdKeyboardArrowDown} from 'react-icons/md';
 import {ImCross} from 'react-icons/im';
-import {ICryptocurrency} from '../../interfaces/tidebit_defi_background/cryptocurrency';
+import {
+  ICryptocurrency,
+  defaultCryptocurrency,
+} from '../../interfaces/tidebit_defi_background/cryptocurrency';
 import Image from 'next/image';
 import {DELAYED_HIDDEN_SECONDS, UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
 import {useGlobal} from '../../contexts/global_context';
 import {useTranslation} from 'react-i18next';
-import {getTimestamp, locker, randomHex, wait} from '../../lib/common';
+import {locker, randomHex, wait} from '../../lib/common';
 import {OrderType} from '../../constants/order_type';
 import {UserContext} from '../../contexts/user_context';
 import {Code} from '../../constants/code';
@@ -41,7 +44,7 @@ const DepositModal = ({
 
   const [showCryptoMenu, setShowCryptoMenu, showCryptoMenuRef] = useStateRef(false);
   const [selectedCrypto, setSelectedCrypto, selectedCryptoRef] = useStateRef(
-    depositCryptocurrencies[0]
+    depositCryptocurrencies[0] ?? defaultCryptocurrency
   );
   const [amountInput, setAmountInput] = useState<number | undefined>();
 
@@ -287,10 +290,10 @@ const DepositModal = ({
           {/* ----------Crypto Menu---------- */}
           <div
             id="dropdownIcon"
-            className={`absolute top-90px right-6 z-10 ${showMenu} ${fadeStyle} w-250px divide-y divide-gray-600 rounded bg-darkGray8 shadow transition-all duration-100`}
+            className={`absolute right-6 top-90px z-10 ${showMenu} ${fadeStyle} w-250px divide-y divide-gray-600 rounded bg-darkGray8 shadow transition-all duration-100`}
           >
             <ul
-              className="h-320px overflow-y-scroll py-1 text-start text-sm text-gray-200"
+              className="h-auto overflow-y-scroll py-1 text-start text-sm text-gray-200"
               aria-labelledby="dropdownMenuIconButton"
             >
               {avaliableCryptoMenu}
@@ -318,7 +321,7 @@ const DepositModal = ({
               <button
                 type="button"
                 onClick={maxClickHandler}
-                className="my-1 mx-1 whitespace-nowrap rounded-sm bg-lightGray3 px-2 text-xs text-white hover:bg-lightGray3/80"
+                className="mx-1 my-1 whitespace-nowrap rounded-sm bg-lightGray3 px-2 text-xs text-white hover:bg-lightGray3/80"
               >
                 {t('D_W_MODAL.MAX')}
               </button>
@@ -344,7 +347,7 @@ const DepositModal = ({
               disabled={amountInput === 0 || amountInput === undefined}
               onClick={submitClickHandler}
               buttonType="button"
-              className={`absolute -bottom-14 mt-0 rounded border-0 bg-tidebitTheme py-2 px-10 text-base text-white transition-colors duration-300 hover:bg-cyan-600 focus:outline-none disabled:bg-lightGray`}
+              className={`absolute -bottom-14 mt-0 rounded border-0 bg-tidebitTheme px-10 py-2 text-base text-white transition-colors duration-300 hover:bg-cyan-600 focus:outline-none disabled:bg-lightGray`}
             >
               {formButton}
             </RippleButton>
@@ -358,7 +361,7 @@ const DepositModal = ({
     <>
       <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">
         {/* The position of the modal */}
-        <div className="relative my-6 mx-auto w-auto max-w-xl">
+        <div className="relative mx-auto my-6 w-auto max-w-xl">
           {' '}
           {/*content & panel*/}
           <div
@@ -372,7 +375,7 @@ const DepositModal = ({
                 {t('D_W_MODAL.DEPOSIT')}
               </h3>
               <button className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
-                <span className="absolute top-5 right-5 block outline-none focus:outline-none">
+                <span className="absolute right-5 top-5 block outline-none focus:outline-none">
                   <ImCross onClick={modalClickHandler} />
                 </span>
               </button>

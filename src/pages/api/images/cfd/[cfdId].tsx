@@ -124,7 +124,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           position: 'relative',
           flexDirection: 'column',
           fontFamily: "'Barlow', sans-serif",
-          // backgroundSize: `${BG_WIDTH_OF_SHARING_RECORD}px ${BG_HEIGHT_OF_SHARING_RECORD}px`,
         }}
       >
         <div
@@ -448,7 +447,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             {/* Info: User (20230516 - Shirley) */}
             <div
               style={{
-                marginTop: '50px',
+                marginTop: '35px',
                 display: 'flex',
                 flexDirection: 'row',
                 justifyContent: 'center',

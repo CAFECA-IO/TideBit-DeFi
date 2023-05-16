@@ -278,8 +278,7 @@ export const TRADING_CRYPTO_DATA = [
   },
 ];
 export const SERVICE_TERM_TITLE = 'ServiceTerm';
-// export const DOMAIN = 'https://www.tidebit-defi.com';
-export const DOMAIN = 'https://tidebit-defi-7we0zp9ab-cafeca.vercel.app';
+export const DOMAIN = 'https://www.tidebit-defi.com';
 export const TERM_OF_SERVICE = DOMAIN + '{hash}';
 export const PRIVATE_POLICY = DOMAIN + '{hash}';
 export const DeWT_VALIDITY_PERIOD = 60 * 60; // seconds

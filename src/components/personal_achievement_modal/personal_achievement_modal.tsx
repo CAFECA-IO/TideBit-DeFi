@@ -5,7 +5,7 @@ import {defaultPersonalRanking} from '../../interfaces/tidebit_defi_background/p
 import {DEFAULT_USER_AVATAR, BADGE_LIST, TypeOfPnLColor} from '../../constants/display';
 import {unitAsset} from '../../constants/config';
 import {ProfitState} from '../../constants/profit_state';
-import {numberFormatted} from '../../lib/common';
+import {numberFormatted, accountTruncate} from '../../lib/common';
 import {useTranslation} from 'react-i18next';
 import {
   IPersonalAchievement,
@@ -43,6 +43,8 @@ const PersonalAchievementModal = ({
     lowestROI,
     badges,
   } = getPersonalAchievementData ?? defaultPersonalAchievement;
+
+  const displayedUserName = userName.length > 20 ? accountTruncate(userName) : userName;
 
   const userRankingDaily = userCtx.getPersonalRanking('DAILY') ?? defaultPersonalRanking;
   const userRankingWeekly = userCtx.getPersonalRanking('WEEKLY') ?? defaultPersonalRanking;
@@ -211,7 +213,7 @@ const PersonalAchievementModal = ({
     <div className="flex w-full flex-col space-y-4 divide-y divide-lightGray overflow-y-auto overflow-x-hidden px-8 pt-4">
       {/* Info:(20230515 - Julian) User Name */}
       <div className="flex flex-col items-center space-y-6 text-lightWhite">
-        <div className="text-2xl md:text-4xl">{userName}</div>
+        <div className="text-2xl md:text-4xl">{displayedUserName}</div>
         <div>
           <Image
             src={userAvatar ?? DEFAULT_USER_AVATAR}

@@ -47,8 +47,7 @@ export const dummyPersonalAchievement: IPersonalAchievement = {
 };
 
 export const getDummyPersonalAchievements = (userId: string): IPersonalAchievement => {
-  const randomUserAvatar =
-    Math.random() > 0.5 ? `/leaderboard/dummy_avatar_1.svg` : `/leaderboard/dummy_avatar_2.svg`;
+  const randomUserAvatar = '/leaderboard/default_avatar.svg';
   const randomTradingVolume = Math.floor(Math.random() * 100000);
   const randomOnlineTime = Math.floor(Math.random() * 1000000);
   const randomFloat = randomFloatFromInterval(10, 90, 2);

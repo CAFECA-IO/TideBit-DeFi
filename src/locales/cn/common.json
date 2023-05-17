@@ -353,14 +353,24 @@
     "DAY": "天",
     "HOUR": "小时",
     "MINUTE": "分钟",
+    "BADGE_DAILY_TOP_20_TITLE": "日榜前 20 名",
     "BADGE_DAILY_TOP_20_DESCRIPTION": "进入日榜前 20 名",
+    "BADGE_WEEKLY_TOP_20_TITLE": "周榜前 20 名",
     "BADGE_WEEKLY_TOP_20_DESCRIPTION": "进入周榜前 20 名",
+    "BADGE_MONTHLY_TOP_20_TITLE": "月榜前 20 名",
     "BADGE_MONTHLY_TOP_20_DESCRIPTION": "进入月榜前 20 名",
-    "BADGE_SHARING_DESCRIPTION": "分享成就",
+    "BADGE_SHARING_TITLE": "分享成就",
+    "BADGE_SHARING_DESCRIPTION": "分享成就至社群网站",
+    "BADGE_LINKED_TITLE": "连结 E-mail",
     "BADGE_LINKED_DESCRIPTION": "在 TideBit 上连结 E-mail",
-    "BADGE_DEPOSIT_DESCRIPTION": "入金 TideBit",
-    "BADGE_BACHELOR_DESCRIPTION": "完成 TideBit 大学学位",
+    "BADGE_DEPOSIT_TITLE": "首次入金",
+    "BADGE_DEPOSIT_DESCRIPTION": "在 TideBit 入金",
+    "BADGE_BACHELOR_TITLE": "TideBit 学士文凭",
+    "BADGE_BACHELOR_DESCRIPTION": "完成 TideBit 学士学位",
+    "BADGE_MASTER_TITLE": "TideBit 硕士文凭",
     "BADGE_MASTER_DESCRIPTION": "完成 TideBit 硕士学位",
-    "BADGE_DOCTOR_DESCRIPTION": "完成 TideBit 博士学位"
+    "BADGE_DOCTOR_TITLE": "TideBit 博士文凭",
+    "BADGE_DOCTOR_DESCRIPTION": "完成 TideBit 博士学位",
+    "DONE_BUTTON": "完成"
   }
 }

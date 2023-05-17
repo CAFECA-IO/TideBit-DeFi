@@ -33,7 +33,7 @@ const PersonalInfoModal = ({
 
   const userCtx = useContext(UserContext);
 
-  const {userAvatar, tradingVolume, onlineTime, diversification, hightestROI, lowestROI, badge} =
+  const {userAvatar, tradingVolume, onlineTime, diversification, hightestROI, lowestROI, badges} =
     getPersonalInfoData ?? defaultPersonalInfo;
 
   const userName =
@@ -50,43 +50,6 @@ const PersonalInfoModal = ({
     {title: t('LEADERBOARD_PAGE.WEEKLY'), ...userRankingWeekly},
     {title: t('LEADERBOARD_PAGE.MONTHLY'), ...userRankingMonthly},
   ];
-
-  const displayedPersonalRankingList = personalRankingContent.map(
-    ({title, rank, cumulativePnl}) => {
-      const displayedRank = rank <= 0 ? '-' : rank;
-
-      const displayedPnl =
-        rank <= 0 ? (
-          <div>-</div>
-        ) : cumulativePnl.type === ProfitState.PROFIT ? (
-          <div className={`${TypeOfPnLColor.PROFIT}`}>{`+ ${numberFormatted(
-            cumulativePnl.value
-          )}`}</div>
-        ) : cumulativePnl.type === ProfitState.LOSS ? (
-          <div className={`${TypeOfPnLColor.LOSS}`}>{`- ${numberFormatted(
-            cumulativePnl.value
-          )}`}</div>
-        ) : (
-          <div className={`${TypeOfPnLColor.EQUAL}`}>{numberFormatted(cumulativePnl.value)}</div>
-        );
-
-      return (
-        <div key={title} className="flex w-100px justify-between">
-          <div className="flex flex-col items-center">
-            <div className="text-sm text-lightGray4">{title}</div>
-            <div className="inline-flex items-center">
-              {displayedPnl}
-              <span className="ml-1 text-xs text-lightGray4">{unitAsset}</span>
-            </div>
-            <div className="inline-flex items-center">
-              <Image src="/leaderboard/crown.svg" alt="crown_icon" width={15} height={15} />
-              <span className="ml-1">{displayedRank}</span>
-            </div>
-          </div>
-        </div>
-      );
-    }
-  );
 
   const displayedROI = (roi: number) => {
     const displayedRoi =
@@ -136,6 +99,48 @@ const PersonalInfoModal = ({
     },
   ];
 
+  /* Info:(20230517 - Julian) Add "id" in BADGE_LIST */
+  const badgeList = BADGE_LIST.map((badge, index) => {
+    return {id: index + 1, ...badge};
+  });
+
+  const displayedPersonalRankingList = personalRankingContent.map(
+    ({title, rank, cumulativePnl}) => {
+      const displayedRank = rank <= 0 ? '-' : rank;
+
+      const displayedPnl =
+        rank <= 0 ? (
+          <div>-</div>
+        ) : cumulativePnl.type === ProfitState.PROFIT ? (
+          <div className={`${TypeOfPnLColor.PROFIT}`}>{`+ ${numberFormatted(
+            cumulativePnl.value
+          )}`}</div>
+        ) : cumulativePnl.type === ProfitState.LOSS ? (
+          <div className={`${TypeOfPnLColor.LOSS}`}>{`- ${numberFormatted(
+            cumulativePnl.value
+          )}`}</div>
+        ) : (
+          <div className={`${TypeOfPnLColor.EQUAL}`}>{numberFormatted(cumulativePnl.value)}</div>
+        );
+
+      return (
+        <div key={title} className="flex items-center justify-between">
+          <div className="flex flex-col items-center">
+            <div className="text-sm text-lightGray4">{title}</div>
+            <div className="inline-flex items-center">
+              {displayedPnl}
+              <span className="ml-1 text-xs text-lightGray4">{unitAsset}</span>
+            </div>
+            <div className="inline-flex items-center">
+              <Image src="/leaderboard/crown.svg" alt="crown_icon" width={15} height={15} />
+              <span className="ml-1">{displayedRank}</span>
+            </div>
+          </div>
+        </div>
+      );
+    }
+  );
+
   const displayedDetailList = detailContent.map(({title, icon, value}) => {
     return (
       <div key={title} className="inline-flex w-full justify-between">
@@ -148,13 +153,17 @@ const PersonalInfoModal = ({
     );
   });
 
-  // ToDo: (20230516 - Julian) 獲得的徽章要顯示出來 (icon)
-  const displayedBadgeList = BADGE_LIST.map(({id, description, icon, iconSkeleton}) => {
+  const displayedBadgeList = badgeList.map(({id, title, description, icon, iconSkeleton}) => {
     const hintFrameStyle = id % 3 === 0 ? 'right-0' : '';
     const hintArrowStyle = id % 3 === 0 ? 'right-6' : 'left-6';
+
+    // Info: (20230517 - Julian) if badges name 中不包含此徽章 || receiveTime <= 0 ，顯示 iconSkeleton
+    const imgSrc =
+      !badges[id - 1].name.includes(title) || badges[id - 1].receiveTime <= 0 ? iconSkeleton : icon;
+
     return (
-      <div key={id} className="group relative mx-auto my-auto bg-darkGray8 p-4">
-        <Image src={iconSkeleton} width={70} height={70} alt="daily_20_badge_icon" />
+      <div key={id} className="group relative mx-auto my-auto bg-darkGray8 p-2 md:p-4">
+        <Image src={imgSrc} width={70} height={70} alt="daily_20_badge_icon" />
         <div
           className={`absolute -top-12 whitespace-nowrap rounded bg-black p-2 text-sm ${hintFrameStyle} opacity-0 transition-all duration-300 group-hover:opacity-100`}
         >
@@ -171,7 +180,7 @@ const PersonalInfoModal = ({
     <div className="flex w-full flex-col space-y-4 divide-y divide-lightGray overflow-y-auto overflow-x-hidden px-8 pt-4">
       {/* Info:(20230515 - Julian) User Name */}
       <div className="flex flex-col items-center space-y-6 text-lightWhite">
-        <div className="text-4xl">{userName}</div>
+        <div className="text-2xl md:text-4xl">{userName}</div>
         <div>
           <Image
             src={userAvatar ?? DEFAULT_USER_AVATAR}
@@ -180,13 +189,13 @@ const PersonalInfoModal = ({
             height={120}
           />
         </div>
-        <div className="inline-flex w-full justify-between px-2 text-center">
+        <div className="inline-flex w-full justify-between text-center md:px-2">
           {displayedPersonalRankingList}
         </div>
       </div>
 
       {/* Info:(20230515 - Julian) Detail */}
-      <div className="flex flex-col space-y-6 px-4 py-6 text-sm">{displayedDetailList}</div>
+      <div className="flex flex-col space-y-6 py-6 text-sm md:px-4">{displayedDetailList}</div>
 
       {/* ToDo:(20230515 - Julian) Badges */}
       <div className="flex flex-col px-4">

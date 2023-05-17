@@ -2,6 +2,8 @@
 //   setTimeout(() => setProcessModalVisible(false), 1000);
 // };
 
+import {Badges} from './badges';
+
 // TODO: for future use, to leverage i18n needs to notice the `provider` range
 export const UNIVERSAL_NUMBER_FORMAT_LOCALE = 'en-US';
 
@@ -20,6 +22,63 @@ export const TRANSFER_OPTIONS = [
   {label: 'EOS', content: 'EOS'},
 ];
 
+export const BADGE_LIST = [
+  {
+    title: Badges.DAILY_TOP_20,
+    description: 'Be top 20 of daily leaderboard',
+    icon: '/badges/daily_20@2x.png',
+    iconSkeleton: '/badges/daily_20.svg',
+  },
+  {
+    title: Badges.WEEKLY_TOP_20,
+    description: 'Be top 20 of weekly leaderboard',
+    icon: '/badges/weekly_20@2x.png',
+    iconSkeleton: '/badges/weekly_20.svg',
+  },
+  {
+    title: Badges.MONTHLY_TOP_20,
+    description: 'Be top 20 of monthly leaderboard',
+    icon: '/badges/monthly_20@2x.png',
+    iconSkeleton: '/badges/monthly_20.svg',
+  },
+  {
+    title: Badges.SHARING,
+    description: 'Sharing your achievements',
+    icon: '/badges/sharing_badge@2x.png',
+    iconSkeleton: '/badges/sharing_badge.svg',
+  },
+  {
+    title: Badges.LINKED,
+    description: 'Linked your E-mail on TideBit',
+    icon: '/badges/linked_badge@2x.png',
+    iconSkeleton: '/badges/linked_badge.svg',
+  },
+  {
+    title: Badges.DEPOSIT,
+    description: 'Finished depositing on TideBit',
+    icon: '/badges/deposit_badge@2x.png',
+    iconSkeleton: '/badges/deposit_badge.svg',
+  },
+  {
+    title: Badges.BACHELOR,
+    description: 'Finished bachelor courses in TBU',
+    icon: '/badges/bachelor_badge@2x.png',
+    iconSkeleton: '/badges/bachelor_badge.svg',
+  },
+  {
+    title: Badges.MASTER,
+    description: 'Finished master courses in TBU',
+    icon: '/badges/master_badge@2x.png',
+    iconSkeleton: '/badges/master_badge.svg',
+  },
+  {
+    title: Badges.DOCTOR,
+    description: 'Finished doctor courses in TBU',
+    icon: '/badges/doctor_badge@2x.png',
+    iconSkeleton: '/badges/doctor_badge.svg',
+  },
+];
+
 export const LAYOUT_BREAKPOINT = 1024;
 
 export const INITIAL_POSITION_LABEL_DISPLAYED_STATE = true;
@@ -29,72 +88,6 @@ export interface ICRYPTO_CARD_COLORS {
   starColor: string;
   gradientColor: string;
 }
-
-export const BADGE_LIST = [
-  {
-    id: 1,
-    title: 'Daily Top 20 Badge',
-    description: 'Be top 20 of daily leaderboard',
-    icon: '/badges/daily_20@2x.png',
-    iconSkeleton: '/badges/daily_20.svg',
-  },
-  {
-    id: 2,
-    title: 'Weekly Top 20 Badge',
-    description: 'Be top 20 of weekly leaderboard',
-    icon: '/badges/weekly_20@2x.png',
-    iconSkeleton: '/badges/weekly_20.svg',
-  },
-  {
-    id: 3,
-    title: 'Monthly Top 20 Badge',
-    description: 'Be top 20 of monthly leaderboard',
-    icon: '/badges/monthly_20@2x.png',
-    iconSkeleton: '/badges/monthly_20.svg',
-  },
-  {
-    id: 4,
-    title: 'Sharing Badge',
-    description: 'Sharing your achievements',
-    icon: '/badges/sharing_badge@2x.png',
-    iconSkeleton: '/badges/sharing_badge.svg',
-  },
-  {
-    id: 5,
-    title: 'Linked Badge',
-    description: 'Linked your E-mail on TideBit',
-    icon: '/badges/linked_badge@2x.png',
-    iconSkeleton: '/badges/linked_badge.svg',
-  },
-  {
-    id: 6,
-    title: 'Deposit Badge',
-    description: 'Finished depositing on TideBit',
-    icon: '/badges/deposit_badge@2x.png',
-    iconSkeleton: '/badges/deposit_badge.svg',
-  },
-  {
-    id: 7,
-    title: 'Bachelor Badge',
-    description: 'Finished bachelor courses in TBU',
-    icon: '/badges/bachelor_badge@2x.png',
-    iconSkeleton: '/badges/bachelor_badge.svg',
-  },
-  {
-    id: 8,
-    title: 'Master Badge',
-    description: 'Finished master courses in TBU',
-    icon: '/badges/master_badge@2x.png',
-    iconSkeleton: '/badges/master_badge.svg',
-  },
-  {
-    id: 9,
-    title: 'Doctor Badge',
-    description: 'Finished doctor courses in TBU',
-    icon: '/badges/doctor_badge@2x.png',
-    iconSkeleton: '/badges/doctor_badge.svg',
-  },
-];
 
 export const CRYPTO_CARD_COLORS = [
   {
@@ -268,3 +261,14 @@ export const DEFAULT_FLUCTUATION = 0;
 export const DEFAULT_BALANCE = 0;
 export const DEFAULT_PNL_DATA = {amount: {type: '', value: 0}, percentage: {type: '', value: 0}};
 export const DEFAULT_INTEREST_RATE = 0;
+export const DEFAULT_BEDGES = [
+  {name: Badges.DAILY_TOP_20, receiveTime: 0},
+  {name: Badges.WEEKLY_TOP_20, receiveTime: 0},
+  {name: Badges.MONTHLY_TOP_20, receiveTime: 0},
+  {name: Badges.SHARING, receiveTime: 0},
+  {name: Badges.LINKED, receiveTime: 0},
+  {name: Badges.DEPOSIT, receiveTime: 0},
+  {name: Badges.BACHELOR, receiveTime: 0},
+  {name: Badges.MASTER, receiveTime: 0},
+  {name: Badges.DOCTOR, receiveTime: 0},
+];

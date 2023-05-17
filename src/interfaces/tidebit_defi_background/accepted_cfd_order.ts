@@ -10,7 +10,6 @@ import {
 import {getDummyApplyCloseCFDOrder, IApplyCloseCFDOrder} from './apply_close_cfd_order';
 import {getDummyApplyCreateCFDOrder, IApplyCreateCFDOrder} from './apply_create_cfd_order';
 import {getDummyApplyUpdateCFDOrder, IApplyUpdateCFDOrder} from './apply_update_cfd_order';
-import {IBalance} from './balance';
 import {ICFDReceipt} from './receipt';
 
 export interface IAcceptedCFDOrder extends IAcceptedOrder {

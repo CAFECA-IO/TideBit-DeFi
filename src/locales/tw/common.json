@@ -332,9 +332,9 @@
   "LEADERBOARD_PAGE": {
     "TITLE": "排行榜",
     "LIVE": "即時",
-    "DAILY": "每日",
-    "WEEKLY": "每週",
-    "MONTHLY": "每月",
+    "DAILY": "日榜",
+    "WEEKLY": "週榜",
+    "MONTHLY": "月榜",
     "SUBTITLE_LIVE": "排行榜將在",
     "SUBTITLE_LIVE_2": "後結算",
     "SUBTITLE_DAILY": "",

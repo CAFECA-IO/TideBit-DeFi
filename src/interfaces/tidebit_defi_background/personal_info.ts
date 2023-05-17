@@ -1,3 +1,7 @@
+import {IBadge} from './badge';
+import {Badges} from '../../constants/badges';
+import {DEFAULT_BEDGES} from '../../constants/display';
+
 export interface IPersonalInfo {
   userAvatar?: string;
   tradingVolume: number;
@@ -5,17 +9,7 @@ export interface IPersonalInfo {
   diversification: number;
   hightestROI: number;
   lowestROI: number;
-  badge: {
-    Daily_20: boolean;
-    Weekly_20: boolean;
-    Monthly_20: boolean;
-    Sharing: boolean;
-    Linked: boolean;
-    Deposit: boolean;
-    Bachelor: boolean;
-    Master: boolean;
-    Doctor: boolean;
-  };
+  badges: IBadge[];
 }
 
 export const defaultPersonalInfo: IPersonalInfo = {
@@ -25,17 +19,7 @@ export const defaultPersonalInfo: IPersonalInfo = {
   diversification: 0,
   hightestROI: 0,
   lowestROI: 0,
-  badge: {
-    Daily_20: false,
-    Weekly_20: false,
-    Monthly_20: false,
-    Sharing: false,
-    Linked: false,
-    Deposit: false,
-    Bachelor: false,
-    Master: false,
-    Doctor: false,
-  },
+  badges: DEFAULT_BEDGES,
 };
 
 export const dummyPersonalInfo: IPersonalInfo = {
@@ -45,15 +29,15 @@ export const dummyPersonalInfo: IPersonalInfo = {
   diversification: 53.4,
   hightestROI: 24.67,
   lowestROI: -14.22,
-  badge: {
-    Daily_20: true,
-    Weekly_20: false,
-    Monthly_20: false,
-    Sharing: true,
-    Linked: true,
-    Deposit: false,
-    Bachelor: true,
-    Master: false,
-    Doctor: false,
-  },
+  badges: [
+    {name: Badges.DAILY_TOP_20, receiveTime: 1684289192},
+    {name: Badges.WEEKLY_TOP_20, receiveTime: 0},
+    {name: Badges.MONTHLY_TOP_20, receiveTime: 0},
+    {name: Badges.SHARING, receiveTime: 1684229192},
+    {name: Badges.LINKED, receiveTime: 1684289624},
+    {name: Badges.DEPOSIT, receiveTime: 1684289192},
+    {name: Badges.BACHELOR, receiveTime: 1683388800},
+    {name: Badges.MASTER, receiveTime: 0},
+    {name: Badges.DOCTOR, receiveTime: 0},
+  ],
 };

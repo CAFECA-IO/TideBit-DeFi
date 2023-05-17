@@ -301,3 +301,5 @@ tradeBook.add(tradeObj4);
 tradeBook.add(tradeObj5);
 tradeBook.add(tradeObj6);
 tradeBook.add(tradeObj7);
+
+export default tradeBook;

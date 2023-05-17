@@ -51,11 +51,11 @@ import Lottie from 'lottie-react';
 import smallConnectingAnimation from '../../public/animation/lf30_editor_cnkxmhy3.json';
 import {IToastType, ToastType} from '../constants/toast_type';
 import {Code, Reason} from '../constants/code';
-import PersonalInfoModal from '../components/personal_info_modal/personal_info_modal';
+import PersonalAchievementModal from '../components/personal_achievement_modal/personal_achievement_modal';
 import {
-  IPersonalInfo,
-  dummyPersonalInfo,
-} from '../interfaces/tidebit_defi_background/personal_info';
+  IPersonalAchievement,
+  defaultPersonalAchievement,
+} from '../interfaces/tidebit_defi_background/personal_achievement';
 export interface IToastify {
   type: IToastType;
   message: string;
@@ -335,6 +335,8 @@ export interface IGlobalContext {
 
   visiblePersonalAchievementModal: boolean;
   visiblePersonalAchievementModalHandler: () => void;
+  dataPersonalAchievementModal: IPersonalAchievement | null;
+  dataPersonalAchievementModalHandler: (data: IPersonalAchievement) => void;
 
   visibleAchievementSharingModal: boolean;
   visibleAchievementSharingModalHandler: () => void;
@@ -353,11 +355,6 @@ export interface IGlobalContext {
 
   visibleSearchingModal: boolean;
   visibleSearchingModalHandler: () => void;
-
-  visiblePersonalInfoModal: boolean;
-  visiblePersonalInfoModalHandler: () => void;
-  dataPersonalInfoModal: IPersonalInfo | null;
-  dataPersonalInfoModalHandler: (data: IPersonalInfo) => void;
 }
 
 export const GlobalContext = createContext<IGlobalContext>({
@@ -475,6 +472,8 @@ export const GlobalContext = createContext<IGlobalContext>({
 
   visiblePersonalAchievementModal: false,
   visiblePersonalAchievementModalHandler: () => null,
+  dataPersonalAchievementModal: null,
+  dataPersonalAchievementModalHandler: () => null,
 
   visibleAchievementSharingModal: false,
   visibleAchievementSharingModalHandler: () => null,
@@ -493,11 +492,6 @@ export const GlobalContext = createContext<IGlobalContext>({
 
   visibleSearchingModal: false,
   visibleSearchingModalHandler: () => null,
-
-  visiblePersonalInfoModal: false,
-  visiblePersonalInfoModalHandler: () => null,
-  dataPersonalInfoModal: null,
-  dataPersonalInfoModalHandler: () => null,
 });
 
 const initialColorMode: ColorModeUnion = 'dark';
@@ -600,6 +594,8 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     useState<IAnnouncementModal>(dummyAnnouncementModal);
 
   const [visiblePersonalAchievementModal, setVisiblePersonalAchievementModal] = useState(false);
+  const [dataPersonalAchievementModal, setDataPersonalAchievementModal] =
+    useState<IPersonalAchievement>(defaultPersonalAchievement);
 
   const [visibleAchievementSharingModal, setVisibleAchievementSharingModal] = useState(false);
   const [dataAchievementSharingModal, setDataAchievementSharingModal] =
@@ -613,10 +609,6 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     useState<IBadgeSharingModal>(dummyBadgeSharingModal);
 
   const [visibleSearchingModal, setVisibleSearchingModal] = useState(false);
-
-  const [visiblePersonalInfoModal, setVisiblePersonalInfoModal] = useState(false);
-  const [dataPersonalInfoModal, setDataPersonalInfoModal] =
-    useState<IPersonalInfo>(dummyPersonalInfo);
 
   // TODO: (20230316 - Shirley) To get the withdrawal / deposit result
   const [depositProcess, setDepositProcess] = useState<
@@ -984,6 +976,10 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     setVisiblePersonalAchievementModal(!visiblePersonalAchievementModal);
   };
 
+  const dataPersonalAchievementModalHandler = (data: IPersonalAchievement) => {
+    setDataPersonalAchievementModal(data);
+  };
+
   const visibleAchievementSharingModalHandler = () => {
     setVisibleAchievementSharingModal(!visibleAchievementSharingModal);
   };
@@ -1074,14 +1070,6 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
 
   const visibleSearchingModalHandler = () => {
     setVisibleSearchingModal(!visibleSearchingModal);
-  };
-
-  const visiblePersonalInfoModalHandler = () => {
-    setVisiblePersonalInfoModal(!visiblePersonalInfoModal);
-  };
-
-  const dataPersonalInfoModalHandler = (data: IPersonalInfo) => {
-    setDataPersonalInfoModal(data);
   };
 
   // ------------------------------------------ //
@@ -1204,6 +1192,8 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
 
     visiblePersonalAchievementModal,
     visiblePersonalAchievementModalHandler,
+    dataPersonalAchievementModal,
+    dataPersonalAchievementModalHandler,
 
     visibleAchievementSharingModal,
     visibleAchievementSharingModalHandler,
@@ -1222,11 +1212,6 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
 
     visibleSearchingModal,
     visibleSearchingModalHandler,
-
-    visiblePersonalInfoModal,
-    visiblePersonalInfoModalHandler,
-    dataPersonalInfoModal,
-    dataPersonalInfoModalHandler,
   };
   return (
     <GlobalContext.Provider value={defaultValue}>
@@ -1339,10 +1324,10 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
         modalVisible={visibleSearchingModal}
         modalClickHandler={visibleSearchingModalHandler}
       />
-      <PersonalInfoModal
-        modalVisible={visiblePersonalInfoModal}
-        modalClickHandler={visiblePersonalInfoModalHandler}
-        getPersonalInfoData={dataPersonalInfoModal}
+      <PersonalAchievementModal
+        modalVisible={visiblePersonalAchievementModal}
+        modalClickHandler={visiblePersonalAchievementModalHandler}
+        getPersonalAchievementData={dataPersonalAchievementModal}
       />
 
       {/* Info: One toast container avoids duplicate toast overlaying */}

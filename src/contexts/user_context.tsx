@@ -56,6 +56,10 @@ import {
   IPersonalRanking,
   getDummyPersonalRanking,
 } from '../interfaces/tidebit_defi_background/personal_ranking';
+import {
+  IPersonalAchievement,
+  getDummyPersonalAchievements,
+} from '../interfaces/tidebit_defi_background/personal_achievement';
 
 export interface IUserProvider {
   children: React.ReactNode;
@@ -111,6 +115,7 @@ export interface IUserContext {
   getWalletBalance: (props: string) => IWalletBalance | null;
   getUserAssets: (currency: string) => IUserAssets | null;
   getPersonalRanking: (timeSpan: IRankingTimeSpan) => IPersonalRanking | null;
+  getPersonalAchievements: (userId: string) => IPersonalAchievement | null;
   init: () => Promise<void>;
   walletExtensions: IWalletExtension[];
 }
@@ -205,6 +210,7 @@ export const UserContext = createContext<IUserContext>({
   getWalletBalance: () => null,
   getUserAssets: () => null,
   getPersonalRanking: () => null,
+  getPersonalAchievements: () => null,
   init: () => Promise.resolve(),
   walletExtensions: [],
 });
@@ -779,6 +785,11 @@ export const UserProvider = ({children}: IUserProvider) => {
   /* ToDo: (20230510 - Julian) get data from backend */
   const getPersonalRanking = (timeSpan: IRankingTimeSpan) => {
     return getDummyPersonalRanking(timeSpan);
+  };
+
+  /* ToDo: (20230517 - Julian) get data from backend */
+  const getPersonalAchievements = (userId: string) => {
+    return getDummyPersonalAchievements(userId);
   };
 
   const updateBalance = (updatedBalances: IBalance[]) => {
@@ -1542,6 +1553,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     getWalletBalance,
     getUserAssets,
     getPersonalRanking,
+    getPersonalAchievements,
     init,
     walletExtensions: walletExtensionsRef.current,
   };

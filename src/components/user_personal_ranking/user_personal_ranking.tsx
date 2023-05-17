@@ -8,6 +8,7 @@ import {unitAsset} from '../../constants/config';
 import {IRankingTimeSpan, RankingInterval} from '../../constants/ranking_time_span';
 import {ProfitState} from '../../constants/profit_state';
 import {defaultPersonalRanking} from '../../interfaces/tidebit_defi_background/personal_ranking';
+import {defaultPersonalAchievement} from '../../interfaces/tidebit_defi_background/personal_achievement';
 import {ImArrowUp, ImArrowDown, ImArrowRight} from 'react-icons/im';
 import {RiShareForwardFill} from 'react-icons/ri';
 import {BsFacebook, BsTwitter, BsReddit} from 'react-icons/bs';
@@ -28,6 +29,8 @@ const UserPersonalRanking = ({timeSpan}: IUserPersonalRankingProps) => {
   }, [timeSpan]);
 
   const username = userCtx.wallet?.slice(-1).toUpperCase();
+  const userAchievement =
+    userCtx.getPersonalAchievements(userCtx.id ?? '') ?? defaultPersonalAchievement;
 
   const rankingNumber = userRankData.rank;
   const pnl = userRankData.pnl;
@@ -35,10 +38,9 @@ const UserPersonalRanking = ({timeSpan}: IUserPersonalRankingProps) => {
 
   const shareClickHandler = () => setShowShareList(!showShareList);
 
-  // ToDo: (20230516 - Julian) dataPersonalInfoModalHandler
   const personalInfoClickHandler = () => {
-    //globalCtx.dataPersonalInfoModalHandler(dummyPersonalInfo);
-    globalCtx.visiblePersonalInfoModalHandler();
+    globalCtx.dataPersonalAchievementModalHandler(userAchievement);
+    globalCtx.visiblePersonalAchievementModalHandler();
   };
 
   /* Info: (20230512 - Julian) rankingNumber <= 0 means can't get ranking data */

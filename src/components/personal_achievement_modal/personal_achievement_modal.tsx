@@ -8,9 +8,9 @@ import {ProfitState} from '../../constants/profit_state';
 import {numberFormatted, accountTruncate} from '../../lib/common';
 import {useTranslation} from 'react-i18next';
 import {
-  IPersonalInfo,
-  defaultPersonalInfo,
-} from '../../interfaces/tidebit_defi_background/personal_info';
+  IPersonalAchievement,
+  defaultPersonalAchievement,
+} from '../../interfaces/tidebit_defi_background/personal_achievement';
 import {ImCross} from 'react-icons/im';
 import {RiBarChart2Fill, RiDonutChartFill} from 'react-icons/ri';
 import {BiTimeFive} from 'react-icons/bi';
@@ -18,23 +18,23 @@ import {FaRegThumbsUp, FaRegThumbsDown} from 'react-icons/fa';
 
 type TranslateFunction = (s: string) => string;
 
-interface IPersonalInfoModal {
+interface IPersonalAchievementModal {
   modalVisible: boolean;
   modalClickHandler: () => void;
-  getPersonalInfoData: IPersonalInfo;
+  getPersonalAchievementData: IPersonalAchievement;
 }
 
-const PersonalInfoModal = ({
+const PersonalAchievementModal = ({
   modalVisible,
   modalClickHandler,
-  getPersonalInfoData,
-}: IPersonalInfoModal) => {
+  getPersonalAchievementData,
+}: IPersonalAchievementModal) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
   const userCtx = useContext(UserContext);
 
   const {userAvatar, tradingVolume, onlineTime, diversification, hightestROI, lowestROI, badges} =
-    getPersonalInfoData ?? defaultPersonalInfo;
+    getPersonalAchievementData ?? defaultPersonalAchievement;
 
   const userName =
     userCtx.username && userCtx.username?.length > 20
@@ -236,4 +236,4 @@ const PersonalInfoModal = ({
   return <div>{isDisplayedModal}</div>;
 };
 
-export default PersonalInfoModal;
+export default PersonalAchievementModal;

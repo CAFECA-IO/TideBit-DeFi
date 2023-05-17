@@ -371,6 +371,6 @@
     "BADGE_MASTER_DESCRIPTION": "Finished master courses in TBU",
     "BADGE_DOCTOR_TITLE": "Doctor Degree",
     "BADGE_DOCTOR_DESCRIPTION": "Finished doctor courses in TBU",
-    "DONE_BUTTON": "Done"
+    "CLOSE_BUTTON": "Close"
   }
 }

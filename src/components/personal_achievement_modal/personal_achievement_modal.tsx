@@ -1,5 +1,6 @@
 import React, {useContext} from 'react';
 import {UserContext} from '../../contexts/user_context';
+import {useGlobal} from '../../contexts/global_context';
 import Image from 'next/image';
 import {defaultPersonalRanking} from '../../interfaces/tidebit_defi_background/personal_ranking';
 import {DEFAULT_USER_AVATAR, BADGE_LIST, TypeOfPnLColor} from '../../constants/display';
@@ -31,6 +32,7 @@ const PersonalAchievementModal = ({
 }: IPersonalAchievementModal) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
+  const globalCtx = useGlobal();
   const userCtx = useContext(UserContext);
 
   const {
@@ -132,11 +134,6 @@ const PersonalAchievementModal = ({
     },
   ];
 
-  /* Info:(20230517 - Julian) Add "id" in BADGE_LIST */
-  const badgeList = BADGE_LIST.map((badge, index) => {
-    return {id: index + 1, ...badge};
-  });
-
   const displayedPersonalRankingList = personalRankingContent.map(
     ({title, rank, cumulativePnl}) => {
       const displayedRank = rank <= 0 ? '-' : rank;
@@ -186,16 +183,28 @@ const PersonalAchievementModal = ({
     );
   });
 
-  const displayedBadgeList = badgeList.map(({id, title, description, icon, iconSkeleton}) => {
-    const hintFrameStyle = id % 3 === 0 ? 'right-0' : '';
-    const hintArrowStyle = id % 3 === 0 ? 'right-6' : 'left-6';
+  const displayedBadgeList = BADGE_LIST.map(({name, description, icon, iconSkeleton}, index) => {
+    const hintFrameStyle = (index + 1) % 3 === 0 ? 'right-0' : '';
+    const hintArrowStyle = (index + 1) % 3 === 0 ? 'right-6' : 'left-6';
 
-    // Info: (20230517 - Julian) if badges name 中不包含此徽章 || receiveTime <= 0 ，顯示 iconSkeleton
+    /* Info: (20230517 - Julian) if badges name 中沒有此徽章的名字 || receiveTime <= 0，表示未獲得徽章 */
     const imgSrc =
-      !badges[id - 1].name.includes(title) || badges[id - 1].receiveTime <= 0 ? iconSkeleton : icon;
+      !badges[index].name.includes(name) || badges[index].receiveTime <= 0 ? iconSkeleton : icon;
+
+    // ToDo: (20230517 - Julian) 別人的徽章只能看
+    const clickHandler =
+      !badges[index].name.includes(name) || badges[index].receiveTime <= 0
+        ? () => {
+            globalCtx.visibleBadgeModalHandler();
+          }
+        : () => globalCtx.visibleBadgeModalHandler();
 
     return (
-      <div key={id} className="group relative mx-auto my-auto bg-darkGray8 p-2 md:p-4">
+      <div
+        key={index}
+        className="group relative mx-auto my-auto bg-darkGray8 p-2 hover:cursor-pointer sm:p-4"
+        onClick={clickHandler}
+      >
         <Image src={imgSrc} width={70} height={70} alt="daily_20_badge_icon" />
         <div
           className={`absolute -top-12 whitespace-nowrap rounded bg-black p-2 text-sm ${hintFrameStyle} opacity-0 transition-all duration-300 group-hover:opacity-100`}
@@ -204,6 +213,7 @@ const PersonalAchievementModal = ({
             className={`absolute top-8 border-x-8 border-t-20px ${hintArrowStyle} border-x-transparent border-t-black`}
           ></span>
           {t(description)}
+          {/* 補上獲得時間 */}
         </div>
       </div>
     );
@@ -213,7 +223,7 @@ const PersonalAchievementModal = ({
     <div className="flex w-full flex-col space-y-4 divide-y divide-lightGray overflow-y-auto overflow-x-hidden px-8 pt-4">
       {/* Info:(20230515 - Julian) User Name */}
       <div className="flex flex-col items-center space-y-6 text-lightWhite">
-        <div className="text-2xl md:text-4xl">{displayedUserName}</div>
+        <div className="text-2xl sm:text-4xl">{displayedUserName}</div>
         <div>
           <Image
             src={userAvatar ?? DEFAULT_USER_AVATAR}
@@ -222,13 +232,13 @@ const PersonalAchievementModal = ({
             height={120}
           />
         </div>
-        <div className="inline-flex w-full justify-between text-center md:px-2">
+        <div className="inline-flex w-full justify-between text-center sm:px-2">
           {displayedPersonalRankingList}
         </div>
       </div>
 
       {/* Info:(20230515 - Julian) Detail */}
-      <div className="flex flex-col space-y-6 py-6 text-sm md:px-4">{displayedDetailList}</div>
+      <div className="flex flex-col space-y-6 py-6 text-sm sm:px-4">{displayedDetailList}</div>
 
       {/* ToDo:(20230515 - Julian) Badges */}
       <div className="flex flex-col px-4">
@@ -244,7 +254,7 @@ const PersonalAchievementModal = ({
         <div className="relative mx-auto my-6 w-auto max-w-xl">
           <div
             id="personalInfoModal"
-            className="relative flex h-726px w-screen flex-col rounded-xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none md:w-450px"
+            className="relative flex h-726px w-screen flex-col rounded-xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none sm:w-450px"
           >
             {/* Info:(20230515 - Julian) Header */}
             <div className="flex items-center justify-between rounded-t pt-9">

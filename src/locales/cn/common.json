@@ -349,6 +349,18 @@
     "ONLINE_TIME": "累积在线时间",
     "DIVERSIFICATION": "风险分散",
     "HIGHTEST_ROI": "最高报酬率",
-    "LOWEST_ROI": "最低报酬率"
+    "LOWEST_ROI": "最低报酬率",
+    "DAY": "天",
+    "HOUR": "小时",
+    "MINUTE": "分钟",
+    "BADGE_DAILY_TOP_20_DESCRIPTION": "进入日榜前 20 名",
+    "BADGE_WEEKLY_TOP_20_DESCRIPTION": "进入周榜前 20 名",
+    "BADGE_MONTHLY_TOP_20_DESCRIPTION": "进入月榜前 20 名",
+    "BADGE_SHARING_DESCRIPTION": "分享成就",
+    "BADGE_LINKED_DESCRIPTION": "在 TideBit 上连结 E-mail",
+    "BADGE_DEPOSIT_DESCRIPTION": "入金 TideBit",
+    "BADGE_BACHELOR_DESCRIPTION": "完成 TideBit 大学学位",
+    "BADGE_MASTER_DESCRIPTION": "完成 TideBit 硕士学位",
+    "BADGE_DOCTOR_DESCRIPTION": "完成 TideBit 博士学位"
   }
 }

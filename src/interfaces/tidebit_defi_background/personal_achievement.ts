@@ -4,6 +4,7 @@ import {DEFAULT_BEDGES} from '../../constants/display';
 import {randomFloatFromInterval} from '../../lib/common';
 
 export interface IPersonalAchievement {
+  userName: string;
   userAvatar?: string;
   tradingVolume: number;
   onlineTime: number;
@@ -14,6 +15,7 @@ export interface IPersonalAchievement {
 }
 
 export const defaultPersonalAchievement: IPersonalAchievement = {
+  userName: 'N/A',
   userAvatar: '/leaderboard/default_avatar.svg',
   tradingVolume: 0,
   onlineTime: 0,
@@ -24,6 +26,7 @@ export const defaultPersonalAchievement: IPersonalAchievement = {
 };
 
 export const dummyPersonalAchievement: IPersonalAchievement = {
+  userName: 'Dummy User',
   userAvatar: '/leaderboard/dummy_avatar_4.svg',
   tradingVolume: 23242,
   onlineTime: 238424214,
@@ -45,8 +48,9 @@ export const dummyPersonalAchievement: IPersonalAchievement = {
 
 export const getDummyPersonalAchievements = (userId: string): IPersonalAchievement => {
   const randomUserAvatar =
-    Math.random() > 0.5 ? `/leaderboard/dummy_avatar_1.png` : `/leaderboard/dummy_avatar_2.svg`;
+    Math.random() > 0.5 ? `/leaderboard/dummy_avatar_1.svg` : `/leaderboard/dummy_avatar_2.svg`;
   const randomTradingVolume = Math.floor(Math.random() * 100000);
+  const randomOnlineTime = Math.floor(Math.random() * 1000000);
   const randomFloat = randomFloatFromInterval(10, 90, 2);
   const randomTime = Math.floor(Math.random() * (1672531200 - 1684289192) + 1684289192);
 
@@ -61,9 +65,10 @@ export const getDummyPersonalAchievements = (userId: string): IPersonalAchieveme
   });
 
   const personalAchievements = {
+    userName: userId,
     userAvatar: randomUserAvatar,
     tradingVolume: randomTradingVolume,
-    onlineTime: randomTime,
+    onlineTime: randomOnlineTime,
     diversification: randomFloat + (randomFloat % 2 === 0 ? 7.7 : -6.08),
     hightestROI: randomFloat + (randomFloat % 2 === 0 ? 3.24 : -2.56),
     lowestROI: (randomFloat + (randomFloat % 2 === 0 ? -5.75 : 4.52)) * -1,

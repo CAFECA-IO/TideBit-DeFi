@@ -4,6 +4,7 @@ import {IRankingTimeSpan, RankingInterval} from '../../constants/ranking_time_sp
 
 export interface IRanking {
   rank: number;
+  userId: string;
   userName: string;
   userAvatar?: string;
   cumulativePnl: IPnL;
@@ -17,6 +18,7 @@ export interface ILeaderboard {
 
 export const defaultRanking: IRanking = {
   rank: -1,
+  userId: '-',
   userName: '-',
   cumulativePnl: {type: ProfitState.EQUAL, value: 0},
 };
@@ -61,18 +63,19 @@ export const getDummyLeaderboard = (timeSpan: IRankingTimeSpan) => {
   const ranks = Array.from(Array(20).keys()).map(i => i + 1);
 
   /* Info:(20230515 - Julian) create random names array from the nameData, without repeating */
-  const names = ranks.map(i => {
+  const names = ranks.map(() => {
     const index = Math.floor(Math.random() * nameData.length);
     const name = nameData[index];
     nameData.splice(index, 1);
     return name;
   });
 
-  const pnls = ranks.map(i => parseFloat((Math.random() * 1000).toFixed(2))).sort((a, b) => b - a);
+  const pnls = ranks.map(() => parseFloat((Math.random() * 1000).toFixed(2))).sort((a, b) => b - a);
 
   const rankings: IRanking[] = [
     ...ranks.map((rank, index) => {
-      const userName = names[index] ?? 'Rao';
+      const userName = names[index] ?? 'Rio';
+      const userId = '20230517' + Math.floor(Math.random() * 1000000);
       const userAvatar =
         userName.slice(0, 1) === 'R'
           ? `/leaderboard/dummy_avatar_1.svg`
@@ -84,7 +87,7 @@ export const getDummyLeaderboard = (timeSpan: IRankingTimeSpan) => {
           ? `/leaderboard/dummy_avatar_4.svg`
           : `/leaderboard/default_avatar.svg`;
       const cumulativePnl = {type: ProfitState.PROFIT, value: pnls[index]};
-      return {rank, userName, userAvatar, cumulativePnl};
+      return {rank, userId, userName, userAvatar, cumulativePnl};
     }),
   ];
 

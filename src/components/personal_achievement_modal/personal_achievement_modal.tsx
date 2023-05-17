@@ -5,7 +5,7 @@ import {defaultPersonalRanking} from '../../interfaces/tidebit_defi_background/p
 import {DEFAULT_USER_AVATAR, BADGE_LIST, TypeOfPnLColor} from '../../constants/display';
 import {unitAsset} from '../../constants/config';
 import {ProfitState} from '../../constants/profit_state';
-import {numberFormatted, accountTruncate} from '../../lib/common';
+import {numberFormatted} from '../../lib/common';
 import {useTranslation} from 'react-i18next';
 import {
   IPersonalAchievement,
@@ -33,13 +33,16 @@ const PersonalAchievementModal = ({
 
   const userCtx = useContext(UserContext);
 
-  const {userAvatar, tradingVolume, onlineTime, diversification, hightestROI, lowestROI, badges} =
-    getPersonalAchievementData ?? defaultPersonalAchievement;
-
-  const userName =
-    userCtx.username && userCtx.username?.length > 20
-      ? accountTruncate(userCtx.username)
-      : userCtx.username;
+  const {
+    userName,
+    userAvatar,
+    tradingVolume,
+    onlineTime,
+    diversification,
+    hightestROI,
+    lowestROI,
+    badges,
+  } = getPersonalAchievementData ?? defaultPersonalAchievement;
 
   const userRankingDaily = userCtx.getPersonalRanking('DAILY') ?? defaultPersonalRanking;
   const userRankingWeekly = userCtx.getPersonalRanking('WEEKLY') ?? defaultPersonalRanking;
@@ -50,6 +53,34 @@ const PersonalAchievementModal = ({
     {title: t('LEADERBOARD_PAGE.WEEKLY'), ...userRankingWeekly},
     {title: t('LEADERBOARD_PAGE.MONTHLY'), ...userRankingMonthly},
   ];
+
+  const displayedOnlineTime = (onlineTime: number) => {
+    const formattedOnlineTime =
+      onlineTime < 3600 ? (
+        <div className="inline-flex items-center text-lightWhite">
+          {Math.floor(onlineTime / 60)}
+          <span className="mx-1 text-xs text-lightGray4">{t('LEADERBOARD_PAGE.MINUTE')}</span>
+        </div>
+      ) : onlineTime < 86400 ? (
+        <div className="inline-flex items-center text-lightWhite">
+          {Math.floor(onlineTime / 3600)}
+          <span className="mx-1 text-xs text-lightGray4">{t('LEADERBOARD_PAGE.HOUR')}</span>
+          {Math.floor((onlineTime % 3600) / 60)}{' '}
+          <span className="mx-1 text-xs text-lightGray4">{t('LEADERBOARD_PAGE.MINUTE')}</span>
+        </div>
+      ) : (
+        <div className="inline-flex items-center text-lightWhite">
+          {Math.floor(onlineTime / 86400)}{' '}
+          <span className="mx-1 text-xs text-lightGray4">{t('LEADERBOARD_PAGE.DAY')}</span>
+          {Math.floor((onlineTime % 86400) / 3600)}
+          <span className="mx-1 text-xs text-lightGray4">{t('LEADERBOARD_PAGE.HOUR')}</span>
+          {Math.floor(((onlineTime % 86400) % 3600) / 60)}
+          <span className="mx-1 text-xs text-lightGray4">{t('LEADERBOARD_PAGE.MINUTE')}</span>
+        </div>
+      );
+
+    return formattedOnlineTime;
+  };
 
   const displayedROI = (roi: number) => {
     const displayedRoi =
@@ -80,12 +111,12 @@ const PersonalAchievementModal = ({
     {
       title: t('LEADERBOARD_PAGE.ONLINE_TIME'),
       icon: <BiTimeFive className="mr-2 text-2xl text-tidebitTheme" />,
-      value: <div>{`${onlineTime} s`}</div>,
+      value: displayedOnlineTime(onlineTime),
     },
     {
       title: t('LEADERBOARD_PAGE.DIVERSIFICATION'),
       icon: <RiDonutChartFill className="mr-2 text-2xl text-tidebitTheme" />,
-      value: <div>{`${diversification} %`}</div>,
+      value: <div>{`${numberFormatted(diversification)} %`}</div>,
     },
     {
       title: t('LEADERBOARD_PAGE.HIGHTEST_ROI'),
@@ -170,13 +201,13 @@ const PersonalAchievementModal = ({
           <span
             className={`absolute top-8 border-x-8 border-t-20px ${hintArrowStyle} border-x-transparent border-t-black`}
           ></span>
-          {description}
+          {t(description)}
         </div>
       </div>
     );
   });
 
-  const formContent = userCtx.wallet ? (
+  const formContent = (
     <div className="flex w-full flex-col space-y-4 divide-y divide-lightGray overflow-y-auto overflow-x-hidden px-8 pt-4">
       {/* Info:(20230515 - Julian) User Name */}
       <div className="flex flex-col items-center space-y-6 text-lightWhite">
@@ -203,7 +234,7 @@ const PersonalAchievementModal = ({
         <div className="grid grid-cols-3 gap-3">{displayedBadgeList}</div>
       </div>
     </div>
-  ) : null;
+  );
 
   const isDisplayedModal = modalVisible ? (
     <>

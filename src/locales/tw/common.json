@@ -349,6 +349,18 @@
     "ONLINE_TIME": "累積在線時間",
     "DIVERSIFICATION": "風險分散",
     "HIGHTEST_ROI": "最高報酬率",
-    "LOWEST_ROI": "最低報酬率"
+    "LOWEST_ROI": "最低報酬率",
+    "DAY": "天",
+    "HOUR": "小時",
+    "MINUTE": "分鐘",
+    "BADGE_DAILY_TOP_20_DESCRIPTION": "進入日榜前 20 名",
+    "BADGE_WEEKLY_TOP_20_DESCRIPTION": "進入週榜前 20 名",
+    "BADGE_MONTHLY_TOP_20_DESCRIPTION": "進入月榜前 20 名",
+    "BADGE_SHARING_DESCRIPTION": "分享成就",
+    "BADGE_LINKED_DESCRIPTION": "在 TideBit 上連結 E-mail",
+    "BADGE_DEPOSIT_DESCRIPTION": "入金 TideBit",
+    "BADGE_BACHELOR_DESCRIPTION": "完成 TideBit 大學學位",
+    "BADGE_MASTER_DESCRIPTION": "完成 TideBit 碩士學位",
+    "BADGE_DOCTOR_DESCRIPTION": "完成 TideBit 博士學位"
   }
 }

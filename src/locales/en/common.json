@@ -349,6 +349,18 @@
     "ONLINE_TIME": "Online Time",
     "DIVERSIFICATION": "Diversification",
     "HIGHTEST_ROI": "Highest ROI",
-    "LOWEST_ROI": "Lowest ROI"
+    "LOWEST_ROI": "Lowest ROI",
+    "DAY": "Day",
+    "HOUR": "Hours",
+    "MINUTE": "Minutes",
+    "BADGE_DAILY_TOP_20_DESCRIPTION": "Be top 20 of daily leaderboard",
+    "BADGE_WEEKLY_TOP_20_DESCRIPTION": "Be top 20 of weekly leaderboard",
+    "BADGE_MONTHLY_TOP_20_DESCRIPTION": "Be top 20 of monthly leaderboard",
+    "BADGE_SHARING_DESCRIPTION": "Sharing your achievements",
+    "BADGE_LINKED_DESCRIPTION": "Linked your E-mail on TideBit",
+    "BADGE_DEPOSIT_DESCRIPTION": "Finished depositing on TideBit",
+    "BADGE_BACHELOR_DESCRIPTION": "Finished bachelor courses in TBU",
+    "BADGE_MASTER_DESCRIPTION": "Finished master courses in TBU",
+    "BADGE_DOCTOR_DESCRIPTION": "Finished doctor courses in TBU"
   }
 }

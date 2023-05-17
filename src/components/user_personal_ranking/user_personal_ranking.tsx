@@ -81,7 +81,7 @@ const UserPersonalRanking = ({timeSpan}: IUserPersonalRankingProps) => {
   const socialMediaList = (
     <div
       className={`absolute bottom-10 right-0 inline-flex md:-right-28 md:bottom-16 ${
-        showShareList ? 'visible opacity-100' : 'invisible opacity-10'
+        showShareList ? 'visible opacity-100' : 'invisible opacity-0'
       } space-x-4 bg-darkGray7 p-2 text-lightWhite transition-all duration-300 hover:cursor-pointer`}
     >
       <BsFacebook className="hover:text-lightGray2" />
@@ -91,22 +91,28 @@ const UserPersonalRanking = ({timeSpan}: IUserPersonalRankingProps) => {
   );
 
   const isDisplayedShare =
-    timeSpan === RankingInterval.LIVE ? (
-      <div className="inline-flex items-center space-x-1 text-sm text-lightYellow2 sm:text-lg md:space-x-3">
-        <div className="hidden sm:block">{displayedCumulativePnl}</div>
-        <div>{displayedArrow}</div>
-        <div>{displayedRankingNumber}</div>
-      </div>
-    ) : (
+    timeSpan === RankingInterval.LIVE ? null : (
       <div className="relative text-2xl text-lightWhite hover:cursor-pointer hover:text-lightGray2 md:text-4xl">
         {socialMediaList}
         <RiShareForwardFill onClick={shareClickHandler} />
       </div>
     );
 
+  const isDisplayedLiveRank =
+    timeSpan === RankingInterval.LIVE ? (
+      <div className="inline-flex items-center space-x-1 text-sm text-lightYellow2 sm:text-lg md:space-x-3">
+        <div className="hidden sm:block">{displayedCumulativePnl}</div>
+        <div>{displayedArrow}</div>
+        <div>{displayedRankingNumber}</div>
+      </div>
+    ) : null;
+
   const personalRanking = userCtx.wallet ? (
     <div className="flex w-full whitespace-nowrap bg-darkGray3 px-4 py-2 shadow-top md:px-8">
-      <div className="flex flex-1 items-center space-x-2 md:space-x-3">
+      <div
+        className="flex flex-1 items-center space-x-2 md:space-x-3"
+        onClick={personalInfoClickHandler}
+      >
         <div className="inline-flex items-center sm:w-70px">
           <Image src="/leaderboard/crown.svg" width={25} height={25} alt="crown_icon" />
 
@@ -124,16 +130,13 @@ const UserPersonalRanking = ({timeSpan}: IUserPersonalRankingProps) => {
           {displayedPnl}
           <span className="ml-1 text-sm text-lightGray4">{unitAsset}</span>
         </div>
+        {isDisplayedLiveRank}
         {isDisplayedShare}
       </div>
     </div>
   ) : null;
 
-  return (
-    <div className="sticky bottom-0 z-30 hover:cursor-pointer" onClick={personalInfoClickHandler}>
-      {personalRanking}
-    </div>
-  );
+  return <div className="sticky bottom-0 z-30 hover:cursor-pointer">{personalRanking}</div>;
 };
 
 export default UserPersonalRanking;

@@ -40,7 +40,7 @@ module.exports = {
       '3xl': '1600px',
     },
     extend: {
-      opacity: ['group-hover'],
+      opacity: {'group-hover': '0.8', '0': '0'},
       visible: ['group-hover'],
       backgroundImage: {
         'reserve': "url('./public/elements/group_15244.svg')",
@@ -51,6 +51,7 @@ module.exports = {
       borderWidth: {
         '0.5px': '0.5px',
         '1px': '1px',
+        '20px': '20px',
       },
       maxWidth: {
         '100px': '100px',

@@ -1,3 +1,5 @@
+import {IPnL} from './pnl';
+import {ProfitState} from '../../constants/profit_state';
 import {unitAsset} from '../../constants/config';
 export interface IUserAssets {
   currency: string;
@@ -7,16 +9,16 @@ export interface IUserAssets {
   };
   pnl: {
     today: {
-      amount: number;
-      percentage: number;
+      amount: IPnL;
+      percentage: IPnL;
     };
     monthly: {
-      amount: number;
-      percentage: number;
+      amount: IPnL;
+      percentage: IPnL;
     };
     cumulative: {
-      amount: number;
-      percentage: number;
+      amount: IPnL;
+      percentage: IPnL;
     };
   };
   interest: {
@@ -27,24 +29,49 @@ export interface IUserAssets {
 }
 
 export const getDummyUserAssets = (currency: string) => {
+  const avbl = parseFloat((Math.random() * 1000).toFixed(2));
+  const locked = parseFloat((Math.random() * 1000).toFixed(2));
+
+  const pnlTodayType = Math.random() >= 0.5 ? ProfitState.PROFIT : ProfitState.LOSS;
+  const pnlTodayAmount = parseFloat((Math.random() * 100).toFixed(2));
+  const pnlTodayPercentage = parseFloat((Math.random() * 10).toFixed(2));
+
+  const pnlMonthlyType = Math.random() >= 0.5 ? ProfitState.PROFIT : ProfitState.LOSS;
+  const pnlMonthlyAmount = parseFloat((Math.random() * 500).toFixed(2));
+  const pnlMonthlyPercentage = parseFloat((Math.random() * 50).toFixed(2));
+
+  const pnlCumulativeType = Math.random() >= 0.5 ? ProfitState.PROFIT : ProfitState.LOSS;
+  const pnlCumulativeAmount = parseFloat((Math.random() * 1000).toFixed(2));
+  const pnlCumulativePercentage = parseFloat((Math.random() * 500).toFixed(2));
+
+  const interestApy = parseFloat((Math.random() * 10).toFixed(2));
+  const interestMonthly = parseFloat((Math.random() * 100).toFixed(2));
+  const interestCumulative = parseFloat((Math.random() * 1000).toFixed(2));
+
   const userAssets: IUserAssets = {
     currency: unitAsset,
     balance: {
-      available: 1296.47,
-      locked: 589.628,
+      available: avbl,
+      locked: locked,
     },
     pnl: {
       today: {
-        amount: -128.293,
-        percentage: -1.5,
+        amount: {type: pnlTodayType, value: pnlTodayAmount},
+        percentage: {type: pnlTodayType, value: pnlTodayPercentage},
       },
-      monthly: {amount: 98164532.83, percentage: 10.36},
-      cumulative: {amount: -57692.4, percentage: -22.75},
+      monthly: {
+        amount: {type: pnlMonthlyType, value: pnlMonthlyAmount},
+        percentage: {type: pnlMonthlyType, value: pnlMonthlyPercentage},
+      },
+      cumulative: {
+        amount: {type: pnlCumulativeType, value: pnlCumulativeAmount},
+        percentage: {type: pnlCumulativeType, value: pnlCumulativePercentage},
+      },
     },
     interest: {
-      apy: 1,
-      monthly: 20.2,
-      cumulative: 245,
+      apy: interestApy,
+      monthly: interestMonthly,
+      cumulative: interestCumulative,
     },
   };
   return userAssets;

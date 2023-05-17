@@ -1,6 +1,6 @@
 import React, {createContext, useState, useContext} from 'react';
 import useWindowSize from '../lib/hooks/use_window_size';
-import {DELAYED_HIDDEN_SECONDS, LAYOUT_BREAKPOINT} from '../constants/display';
+import {LAYOUT_BREAKPOINT} from '../constants/display';
 import {toast as toastify} from 'react-toastify';
 import UpdateFormModal from '../components/update_form_modal/update_form_modal';
 import {MarketContext} from './market_context';
@@ -13,7 +13,6 @@ import DepositModal from '../components/deposit_modal/deposit_modal';
 import WithdrawalModal from '../components/withdrawal_modal/withdrawal_modal';
 import DepositHistoryModal from '../components/deposit_history_modal/deposit_history_modal';
 import WalletPanel from '../components/wallet_panel/wallet_panel';
-import QrcodeModal from '../components/qrcode_modal/qrcode_modal';
 import HelloModal from '../components/hello_modal/hello_modal';
 import SignatureProcessModal from '../components/signature_process_modal/signature_process_modal';
 import {UserContext} from './user_context';
@@ -22,38 +21,24 @@ import PositionClosedModal from '../components/position_closed_modal/position_cl
 import PositionUpdatedModal from '../components/position_updated_modal/position_updated_modal';
 import HistoryPositionModal from '../components/history_position_modal/history_position_modal';
 import WarningModal from '../components/warning_modal/warning_modal';
-import {ProfitState} from '../constants/profit_state';
 import {OrderType} from '../constants/order_type';
-import {OrderStatusUnion} from '../constants/order_status_union';
-import {TypeOfPosition} from '../constants/type_of_position';
 import {ICryptocurrency} from '../interfaces/tidebit_defi_background/cryptocurrency';
-import {getDeadline, getTimestamp, locker, wait} from '../lib/common';
 import {
   IDisplayCFDOrder,
   getDummyDisplayCFDOrder,
 } from '../interfaces/tidebit_defi_background/display_accepted_cfd_order';
 import {
-  IDisplayApplyCFDOrder,
-  getDummyDisplayApplyCreateCFDOrder,
-} from '../interfaces/tidebit_defi_background/display_apply_cfd_order';
-import {
   getDummyApplyCreateCFDOrder,
   IApplyCreateCFDOrder,
-  // getDummyApplyCreateCFDOrderData,
 } from '../interfaces/tidebit_defi_background/apply_create_cfd_order';
 import {OrderState} from '../constants/order_state';
 import {IApplyUpdateCFDOrder} from '../interfaces/tidebit_defi_background/apply_update_cfd_order';
 import useStateRef from 'react-usestateref';
-import {QUOTATION_RENEWAL_INTERVAL_SECONDS} from '../constants/config';
 import {CFDOperation} from '../constants/cfd_order_type';
 import {
   getDummyAcceptedDepositOrder,
   IAcceptedDepositOrder,
 } from '../interfaces/tidebit_defi_background/accepted_deposit_order';
-import {
-  // IDisplayAcceptedDepositOrder,
-  getDummyDisplayAcceptedDepositOrder,
-} from '../interfaces/tidebit_defi_background/display_accepted_deposit_order';
 import {
   IAcceptedWithdrawOrder,
   getDummyAcceptedWithdrawOrder,
@@ -66,6 +51,11 @@ import Lottie from 'lottie-react';
 import smallConnectingAnimation from '../../public/animation/lf30_editor_cnkxmhy3.json';
 import {IToastType, ToastType} from '../constants/toast_type';
 import {Code, Reason} from '../constants/code';
+import PersonalAchievementModal from '../components/personal_achievement_modal/personal_achievement_modal';
+import {
+  IPersonalAchievement,
+  defaultPersonalAchievement,
+} from '../interfaces/tidebit_defi_background/personal_achievement';
 export interface IToastify {
   type: IToastType;
   message: string;
@@ -345,6 +335,8 @@ export interface IGlobalContext {
 
   visiblePersonalAchievementModal: boolean;
   visiblePersonalAchievementModalHandler: () => void;
+  dataPersonalAchievementModal: IPersonalAchievement | null;
+  dataPersonalAchievementModalHandler: (data: IPersonalAchievement) => void;
 
   visibleAchievementSharingModal: boolean;
   visibleAchievementSharingModalHandler: () => void;
@@ -480,6 +472,8 @@ export const GlobalContext = createContext<IGlobalContext>({
 
   visiblePersonalAchievementModal: false,
   visiblePersonalAchievementModalHandler: () => null,
+  dataPersonalAchievementModal: null,
+  dataPersonalAchievementModalHandler: () => null,
 
   visibleAchievementSharingModal: false,
   visibleAchievementSharingModalHandler: () => null,
@@ -600,6 +594,8 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     useState<IAnnouncementModal>(dummyAnnouncementModal);
 
   const [visiblePersonalAchievementModal, setVisiblePersonalAchievementModal] = useState(false);
+  const [dataPersonalAchievementModal, setDataPersonalAchievementModal] =
+    useState<IPersonalAchievement>(defaultPersonalAchievement);
 
   const [visibleAchievementSharingModal, setVisibleAchievementSharingModal] = useState(false);
   const [dataAchievementSharingModal, setDataAchievementSharingModal] =
@@ -980,6 +976,10 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     setVisiblePersonalAchievementModal(!visiblePersonalAchievementModal);
   };
 
+  const dataPersonalAchievementModalHandler = (data: IPersonalAchievement) => {
+    setDataPersonalAchievementModal(data);
+  };
+
   const visibleAchievementSharingModalHandler = () => {
     setVisibleAchievementSharingModal(!visibleAchievementSharingModal);
   };
@@ -1192,6 +1192,8 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
 
     visiblePersonalAchievementModal,
     visiblePersonalAchievementModalHandler,
+    dataPersonalAchievementModal,
+    dataPersonalAchievementModalHandler,
 
     visibleAchievementSharingModal,
     visibleAchievementSharingModalHandler,
@@ -1321,6 +1323,11 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
       <SearchingModal
         modalVisible={visibleSearchingModal}
         modalClickHandler={visibleSearchingModalHandler}
+      />
+      <PersonalAchievementModal
+        modalVisible={visiblePersonalAchievementModal}
+        modalClickHandler={visiblePersonalAchievementModalHandler}
+        getPersonalAchievementData={dataPersonalAchievementModal}
       />
 
       {/* Info: One toast container avoids duplicate toast overlaying */}

@@ -1,10 +1,13 @@
+import {IPnL} from './pnl';
+import {ProfitState} from '../../constants/profit_state';
 import {IRankingTimeSpan, RankingInterval} from '../../constants/ranking_time_span';
 
 export interface IRanking {
   rank: number;
+  userId: string;
   userName: string;
   userAvatar?: string;
-  cumulativePnl: number;
+  cumulativePnl: IPnL;
 }
 
 export interface ILeaderboard {
@@ -15,8 +18,9 @@ export interface ILeaderboard {
 
 export const defaultRanking: IRanking = {
   rank: -1,
+  userId: '-',
   userName: '-',
-  cumulativePnl: 0,
+  cumulativePnl: {type: ProfitState.EQUAL, value: 0},
 };
 
 export const defaultLeaderboard: ILeaderboard = {
@@ -25,157 +29,96 @@ export const defaultLeaderboard: ILeaderboard = {
   rankings: [defaultRanking, defaultRanking, defaultRanking],
 };
 
-export const dummyLiveLeaderboard: ILeaderboard = {
-  startTime: 1683870086,
-  endTime: 1683956486,
-  rankings: [
-    {
-      rank: 1,
-      userName: 'Rose',
-      userAvatar: '/leaderboard/dummy_avatar_1.svg',
-      cumulativePnl: 47.45,
-    },
-    {
-      rank: 2,
-      userName: 'Bruce',
-      userAvatar: '/leaderboard/dummy_avatar_2.svg',
-      cumulativePnl: 43.02,
-    },
-    {
-      rank: 3,
-      userName: 'Simon',
-      userAvatar: '/leaderboard/dummy_avatar_3.svg',
-      cumulativePnl: 34.6,
-    },
-    {rank: 4, userName: 'Lily', cumulativePnl: 21.04},
-    {rank: 5, userName: 'Jack', cumulativePnl: 15.433},
-    {rank: 6, userName: 'Will', cumulativePnl: 15.33},
-    {rank: 7, userName: 'Tom', cumulativePnl: 11.52},
-    {rank: 8, userName: 'Mary', cumulativePnl: 10.22},
-    {rank: 9, userName: 'Aliza', cumulativePnl: 6.84},
-    {rank: 10, userName: 'David', cumulativePnl: 5.9},
-  ],
-};
-
-export const dummyDailyLeaderboard: ILeaderboard = {
-  startTime: 1683648000,
-  endTime: 1683734400,
-  rankings: [
-    {
-      rank: 1,
-      userName: 'Simon',
-      userAvatar: '/leaderboard/dummy_avatar_3.svg',
-      cumulativePnl: 143.2,
-    },
-    {
-      rank: 2,
-      userName: 'Bruce',
-      userAvatar: '/leaderboard/dummy_avatar_2.svg',
-      cumulativePnl: 134.64,
-    },
-    {
-      rank: 3,
-      userName: 'Jack',
-      cumulativePnl: 125.45,
-    },
-    {
-      rank: 4,
-      userName: 'Rose',
-      userAvatar: '/leaderboard/dummy_avatar_1.svg',
-      cumulativePnl: 121.04,
-    },
-    {rank: 5, userName: 'Lily', cumulativePnl: 115.433},
-    {rank: 6, userName: 'Will', cumulativePnl: 115.33},
-    {rank: 7, userName: 'Tom', cumulativePnl: 111.52},
-    {rank: 8, userName: 'Eric', cumulativePnl: 101.2},
-    {rank: 9, userName: 'Aliza', cumulativePnl: 61.84},
-    {rank: 10, userName: 'David', cumulativePnl: 57.9},
-  ],
-};
-
-export const dummyWeeklyLeaderboard: ILeaderboard = {
-  startTime: 1683302400,
-  endTime: 1683820800,
-  rankings: [
-    {
-      rank: 1,
-      userName: 'Rose',
-      userAvatar: '/leaderboard/dummy_avatar_1.svg',
-      cumulativePnl: 444.111,
-    },
-    {
-      rank: 2,
-      userName: 'Bruce',
-      userAvatar: '/leaderboard/dummy_avatar_2.svg',
-      cumulativePnl: 363.66,
-    },
-    {
-      rank: 3,
-      userName: 'Simon',
-      userAvatar: '/leaderboard/dummy_avatar_3.svg',
-      cumulativePnl: 251.02,
-    },
-    {rank: 4, userName: 'Jack', cumulativePnl: 232.46},
-    {rank: 5, userName: 'Lily', cumulativePnl: 222.222},
-    {
-      rank: 6,
-      userName: 'Larry',
-      userAvatar: '/leaderboard/dummy_avatar_4.svg',
-      cumulativePnl: 17.33,
-    },
-    {rank: 7, userName: 'Jone', cumulativePnl: 215.33},
-    {rank: 8, userName: 'Mary', cumulativePnl: 210.2},
-    {rank: 9, userName: 'Aliza', cumulativePnl: 139.84},
-    {rank: 10, userName: 'Will', cumulativePnl: 125.93},
-  ],
-};
-
-export const dummyMonthlyLeaderboard: ILeaderboard = {
-  startTime: 1681315200,
-  endTime: 1683820800,
-  rankings: [
-    {
-      rank: 1,
-      userName: 'Simon',
-      userAvatar: '/leaderboard/dummy_avatar_3.svg',
-      cumulativePnl: 541.02,
-    },
-    {
-      rank: 2,
-      userName: 'Rose',
-      userAvatar: '/leaderboard/dummy_avatar_1.svg',
-      cumulativePnl: 423.58,
-    },
-    {
-      rank: 3,
-      userName: 'Bruce',
-      userAvatar: '/leaderboard/dummy_avatar_2.svg',
-      cumulativePnl: 414.111,
-    },
-    {rank: 4, userName: 'Jack', cumulativePnl: 374.46},
-    {rank: 5, userName: 'Mary', cumulativePnl: 329.42},
-    {rank: 6, userName: 'Larry', cumulativePnl: 317.23},
-    {rank: 7, userName: 'Jone', cumulativePnl: 315.33},
-    {rank: 8, userName: 'Mary', cumulativePnl: 310.2},
-    {rank: 9, userName: 'Aliza', cumulativePnl: 299.84},
-    {rank: 10, userName: 'Molly', cumulativePnl: 245.9},
-  ],
-};
-
 export const getDummyLeaderboard = (timeSpan: IRankingTimeSpan) => {
   let result: ILeaderboard = defaultLeaderboard;
+
+  const nameData = [
+    'Aliza',
+    'Bruce',
+    'Carol',
+    'Diamond',
+    'Eric',
+    'Frank',
+    'Grace',
+    'Hensal',
+    'Iris',
+    'Jason',
+    'Kevin',
+    'Larry',
+    'Mason',
+    'Nancy',
+    'Olivia',
+    'Paul',
+    'Rose',
+    'Simon',
+    'Vicky',
+    'Will',
+    'Xavier',
+    'Yvonne',
+    'Zoe',
+  ];
+
+  const now = Math.floor(Date.now() / 1000);
+
+  const ranks = Array.from(Array(20).keys()).map(i => i + 1);
+
+  /* Info:(20230515 - Julian) create random names array from the nameData, without repeating */
+  const names = ranks.map(() => {
+    const index = Math.floor(Math.random() * nameData.length);
+    const name = nameData[index];
+    nameData.splice(index, 1);
+    return name;
+  });
+
+  const pnls = ranks.map(() => parseFloat((Math.random() * 1000).toFixed(2))).sort((a, b) => b - a);
+
+  const rankings: IRanking[] = [
+    ...ranks.map((rank, index) => {
+      const userName = names[index] ?? 'Rio';
+      const userId = '20230517' + Math.floor(Math.random() * 1000000);
+      const userAvatar =
+        userName.slice(0, 1) === 'R'
+          ? `/leaderboard/dummy_avatar_1.svg`
+          : userName.slice(0, 1) === 'B'
+          ? `/leaderboard/dummy_avatar_2.svg`
+          : userName.slice(0, 1) === 'S'
+          ? `/leaderboard/dummy_avatar_3.svg`
+          : userName.slice(0, 1) === 'L'
+          ? `/leaderboard/dummy_avatar_4.svg`
+          : `/leaderboard/default_avatar.svg`;
+      const cumulativePnl = {type: ProfitState.PROFIT, value: pnls[index]};
+      return {rank, userId, userName, userAvatar, cumulativePnl};
+    }),
+  ];
+
   switch (timeSpan) {
     case RankingInterval.LIVE:
-      result = dummyLiveLeaderboard;
+      result = {
+        startTime: now,
+        endTime: Math.floor(now / 86400),
+        rankings: rankings,
+      };
       break;
     case RankingInterval.DAILY:
-      result = dummyDailyLeaderboard;
+      result = {
+        startTime: now - 86400 * 2,
+        endTime: now - 86400,
+        rankings: rankings,
+      };
       break;
     case RankingInterval.WEEKLY:
-      result = dummyWeeklyLeaderboard;
+      result = {
+        startTime: now - 86400 * 7,
+        endTime: now - 86400 * 6,
+        rankings: rankings,
+      };
       break;
     case RankingInterval.MONTHLY:
-      result = dummyMonthlyLeaderboard;
+      result = {
+        startTime: now - 86400 * 30,
+        endTime: now - 86400 * 29,
+        rankings: rankings,
+      };
       break;
   }
   return result;

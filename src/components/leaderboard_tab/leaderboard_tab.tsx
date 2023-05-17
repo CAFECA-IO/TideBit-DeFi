@@ -1,13 +1,18 @@
-import React, {Dispatch, SetStateAction} from 'react';
+import React, {Dispatch, SetStateAction, useContext} from 'react';
 import Image from 'next/image';
 import useWindowSize from '../../lib/hooks/use_window_size';
 import UserPersonalRanking from '../user_personal_ranking/user_personal_ranking';
+import {GlobalContext} from '../../contexts/global_context';
+import {UserContext} from '../../contexts/user_context';
 import {TypeOfPnLColor, DEFAULT_USER_AVATAR} from '../../constants/display';
 import {unitAsset} from '../../constants/config';
+import {IPnL} from '../../interfaces/tidebit_defi_background/pnl';
+import {defaultPersonalAchievement} from '../../interfaces/tidebit_defi_background/personal_achievement';
 import {numberFormatted} from '../../lib/common';
 import {RankingInterval, IRankingTimeSpan} from '../../constants/ranking_time_span';
 import {defaultLeaderboard, IRanking} from '../../interfaces/tidebit_defi_background/leaderboard';
 import {useTranslation} from 'next-i18next';
+import {ProfitState} from '../../constants/profit_state';
 
 type TranslateFunction = (s: string) => string;
 
@@ -34,6 +39,8 @@ const LeaderboardTab = ({timeSpan, setTimeSpan, rankings}: LeaderboardTabProps) 
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
   const windowSize = useWindowSize();
+  const globalCtx = useContext(GlobalContext);
+  const userCtx = useContext(UserContext);
 
   const podiumWidth =
     windowSize.width > DEFAULT_PODIUM_WIDTH ? windowSize.width : DEFAULT_PODIUM_WIDTH;
@@ -54,7 +61,7 @@ const LeaderboardTab = ({timeSpan, setTimeSpan, rankings}: LeaderboardTabProps) 
   /* Info: (20230511 - Julian) Sorted by cumulativePnl */
   const rankingData =
     rankings.sort((a, b) => {
-      return b.cumulativePnl - a.cumulativePnl;
+      return b.cumulativePnl.value - a.cumulativePnl.value;
     }) ?? defaultLeaderboard;
 
   const activeLiveTabStyle =
@@ -77,19 +84,20 @@ const LeaderboardTab = ({timeSpan, setTimeSpan, rankings}: LeaderboardTabProps) 
       ? 'bg-darkGray7 text-lightWhite'
       : 'bg-darkGray6 text-lightGray';
 
-  const displayPnl = (pnl: number) =>
-    pnl > 0 ? (
-      <div className={TypeOfPnLColor.PROFIT}>+ {numberFormatted(pnl)}</div>
-    ) : pnl < 0 ? (
-      <div className={TypeOfPnLColor.LOSS}>- {numberFormatted(pnl)}</div>
+  const displayPnl = (pnl: IPnL) =>
+    pnl.type === ProfitState.PROFIT ? (
+      <div className={TypeOfPnLColor.PROFIT}>+ {numberFormatted(pnl.value)}</div>
+    ) : pnl.type === ProfitState.LOSS ? (
+      <div className={TypeOfPnLColor.LOSS}>- {numberFormatted(pnl.value)}</div>
     ) : (
-      <div className={TypeOfPnLColor.EQUAL}>{numberFormatted(pnl)}</div>
+      <div className={TypeOfPnLColor.EQUAL}>{numberFormatted(pnl.value)}</div>
     );
 
   const defaultTop3Data = {
     name: 'N/A',
+    id: '',
     avatar: DEFAULT_USER_AVATAR,
-    displayedPnl: '-',
+    displayedPnl: <>-</>,
   };
 
   /* Info: (20230511 - Julian) Sorted as Sliver, Gold, Bronze */
@@ -151,19 +159,29 @@ const LeaderboardTab = ({timeSpan, setTimeSpan, rankings}: LeaderboardTabProps) 
         ? defaultTop3Data
         : {
             name: rankingData[rank - 1].userName,
+            id: rankingData[rank - 1].userId,
             avatar: rankingData[rank - 1].userAvatar ?? DEFAULT_USER_AVATAR,
             displayedPnl: displayPnl(rankingData[rank - 1].cumulativePnl),
           };
     return {...top3[sorted], userData};
   });
 
-  const displayedtop3List = top3Data.map(({rank, marginTop, crown, star, medalist, userData}) => {
+  const displayedTop3List = top3Data.map(({rank, marginTop, crown, star, medalist, userData}) => {
     const isDisplayedHalo = rank === 1 ? 'block' : 'hidden';
+    const achievementData =
+      userCtx.getPersonalAchievements(userData.name) ?? defaultPersonalAchievement;
+    const clickHandler = () => {
+      globalCtx.dataPersonalAchievementModalHandler(achievementData);
+      globalCtx.visiblePersonalAchievementModalHandler();
+    };
+
     return (
-      <div key={rank} className={marginTop}>
+      <div key={rank} className={`${marginTop} hover:cursor-pointer`} onClick={clickHandler}>
         <div className="relative flex flex-col">
           {/* Info: (20230511 - Julian) User Avatar */}
-          <div className={`absolute inline-flex items-center justify-center p-2 md:p-3`}>
+          <div
+            className={`absolute inline-flex items-center justify-center p-2 transition-all duration-300 md:p-3`}
+          >
             <Image
               src={userData.avatar}
               width={medalistSize}
@@ -205,7 +223,7 @@ const LeaderboardTab = ({timeSpan, setTimeSpan, rankings}: LeaderboardTabProps) 
   const displayedTop3 = (
     <div className="relative w-screen md:w-8/10">
       <div className="absolute -top-48 flex w-full justify-between space-x-4 px-4 md:-top-56 md:px-16">
-        {displayedtop3List}
+        {displayedTop3List}
       </div>
       <Image
         src="/leaderboard/podium@2x.png"
@@ -221,7 +239,7 @@ const LeaderboardTab = ({timeSpan, setTimeSpan, rankings}: LeaderboardTabProps) 
       <div key={text} className="w-full">
         <button
           type="button"
-          className={`${style} inline-block w-full rounded-t-2xl px-20px py-2 text-xs hover:cursor-pointer md:text-base`}
+          className={`${style} inline-block w-full rounded-t-2xl px-20px py-2 text-xs transition-all duration-300 hover:cursor-pointer md:text-base`}
           onClick={active}
         >
           {text}
@@ -234,12 +252,23 @@ const LeaderboardTab = ({timeSpan, setTimeSpan, rankings}: LeaderboardTabProps) 
   const displayedleaderboardList = rankingData
     .slice(3)
     .map(({rank, userName, userAvatar, cumulativePnl}) => {
+      const achievementData =
+        userCtx.getPersonalAchievements(userName) ?? defaultPersonalAchievement;
+      const clickHandler = () => {
+        globalCtx.dataPersonalAchievementModalHandler(achievementData);
+        globalCtx.visiblePersonalAchievementModalHandler();
+      };
+
       const displayedRank = rank <= 0 ? '-' : rank;
       const displayedPnl = rank <= 0 ? '-' : displayPnl(cumulativePnl);
       const displayedName = rank <= 0 ? 'N/A' : userName;
       const displayedAvatar = rank <= 0 ? DEFAULT_USER_AVATAR : userAvatar;
       return (
-        <div key={rank} className="flex w-full whitespace-nowrap px-4 py-6 md:px-8 md:py-4">
+        <div
+          key={rank}
+          className="flex w-full whitespace-nowrap px-4 py-6 hover:cursor-pointer md:px-8 md:py-4"
+          onClick={clickHandler}
+        >
           <div className="flex flex-1 items-center space-x-2 md:space-x-3">
             <div className="inline-flex items-center sm:w-70px">
               <Image src="/leaderboard/crown.svg" width={25} height={25} alt="crown_icon" />

@@ -2,6 +2,8 @@
 //   setTimeout(() => setProcessModalVisible(false), 1000);
 // };
 
+import {Badges} from './badges';
+
 // TODO: for future use, to leverage i18n needs to notice the `provider` range
 export const UNIVERSAL_NUMBER_FORMAT_LOCALE = 'en-US';
 
@@ -18,6 +20,72 @@ export const TRANSFER_OPTIONS = [
   {label: 'USX', content: 'USX'},
   {label: 'NEO', content: 'NEO'},
   {label: 'EOS', content: 'EOS'},
+];
+
+export const BADGE_LIST = [
+  {
+    name: Badges.DAILY_TOP_20,
+    title: 'LEADERBOARD_PAGE.BADGE_DAILY_TOP_20_TITLE',
+    description: 'LEADERBOARD_PAGE.BADGE_DAILY_TOP_20_DESCRIPTION',
+    icon: '/badges/daily_20@2x.png',
+    iconSkeleton: '/badges/daily_20.svg',
+  },
+  {
+    name: Badges.WEEKLY_TOP_20,
+    title: 'LEADERBOARD_PAGE.BADGE_WEEKLY_TOP_20_TITLE',
+    description: 'LEADERBOARD_PAGE.BADGE_WEEKLY_TOP_20_DESCRIPTION',
+    icon: '/badges/weekly_20@2x.png',
+    iconSkeleton: '/badges/weekly_20.svg',
+  },
+  {
+    name: Badges.MONTHLY_TOP_20,
+    title: 'LEADERBOARD_PAGE.BADGE_MONTHLY_TOP_20_TITLE',
+    description: 'LEADERBOARD_PAGE.BADGE_MONTHLY_TOP_20_DESCRIPTION',
+    icon: '/badges/monthly_20@2x.png',
+    iconSkeleton: '/badges/monthly_20.svg',
+  },
+  {
+    name: Badges.SHARING,
+    title: 'LEADERBOARD_PAGE.BADGE_SHARING_TITLE',
+    description: 'LEADERBOARD_PAGE.BADGE_SHARING_DESCRIPTION',
+    icon: '/badges/sharing_badge@2x.png',
+    iconSkeleton: '/badges/sharing_badge.svg',
+  },
+  {
+    name: Badges.LINKED,
+    title: 'LEADERBOARD_PAGE.BADGE_LINKED_TITLE',
+    description: 'LEADERBOARD_PAGE.BADGE_LINKED_DESCRIPTION',
+    icon: '/badges/linked_badge@2x.png',
+    iconSkeleton: '/badges/linked_badge.svg',
+  },
+  {
+    name: Badges.DEPOSIT,
+    title: 'LEADERBOARD_PAGE.BADGE_DEPOSIT_TITLE',
+    description: 'LEADERBOARD_PAGE.BADGE_DEPOSIT_DESCRIPTION',
+    icon: '/badges/deposit_badge@2x.png',
+    iconSkeleton: '/badges/deposit_badge.svg',
+  },
+  {
+    name: Badges.BACHELOR,
+    title: 'LEADERBOARD_PAGE.BADGE_BACHELOR_TITLE',
+    description: 'LEADERBOARD_PAGE.BADGE_BACHELOR_DESCRIPTION',
+    icon: '/badges/bachelor_badge@2x.png',
+    iconSkeleton: '/badges/bachelor_badge.svg',
+  },
+  {
+    name: Badges.MASTER,
+    title: 'LEADERBOARD_PAGE.BADGE_MASTER_TITLE',
+    description: 'LEADERBOARD_PAGE.BADGE_MASTER_DESCRIPTION',
+    icon: '/badges/master_badge@2x.png',
+    iconSkeleton: '/badges/master_badge.svg',
+  },
+  {
+    name: Badges.DOCTOR,
+    title: 'LEADERBOARD_PAGE.BADGE_DOCTOR_TITLE',
+    description: 'LEADERBOARD_PAGE.BADGE_DOCTOR_DESCRIPTION',
+    icon: '/badges/doctor_badge@2x.png',
+    iconSkeleton: '/badges/doctor_badge.svg',
+  },
 ];
 
 export const LAYOUT_BREAKPOINT = 1024;
@@ -202,5 +270,16 @@ export const BG_HEIGHT_OF_SHARING_RECORD = 630;
 export const DEFAULT_PRICE_CHANGE = 0;
 export const DEFAULT_FLUCTUATION = 0;
 export const DEFAULT_BALANCE = 0;
-export const DEFAULT_PNL_DATA = {amount: 0, percentage: 0};
+export const DEFAULT_PNL_DATA = {amount: {type: '', value: 0}, percentage: {type: '', value: 0}};
 export const DEFAULT_INTEREST_RATE = 0;
+export const DEFAULT_BEDGES = [
+  {name: Badges.DAILY_TOP_20, receiveTime: 0},
+  {name: Badges.WEEKLY_TOP_20, receiveTime: 0},
+  {name: Badges.MONTHLY_TOP_20, receiveTime: 0},
+  {name: Badges.SHARING, receiveTime: 0},
+  {name: Badges.LINKED, receiveTime: 0},
+  {name: Badges.DEPOSIT, receiveTime: 0},
+  {name: Badges.BACHELOR, receiveTime: 0},
+  {name: Badges.MASTER, receiveTime: 0},
+  {name: Badges.DOCTOR, receiveTime: 0},
+];

@@ -84,9 +84,15 @@ const UserPersonalRanking = ({timeSpan}: IUserPersonalRankingProps) => {
         showShareList ? 'visible opacity-100' : 'invisible opacity-0'
       } space-x-4 bg-darkGray7 p-2 text-lightWhite transition-all duration-300 hover:cursor-pointer`}
     >
-      <BsFacebook className="hover:text-lightGray2" />
-      <BsTwitter className="hover:text-lightGray2" />
-      <BsReddit className="hover:text-lightGray2" />
+      <a>
+        <BsFacebook className="hover:text-lightGray2" />
+      </a>
+      <a>
+        <BsTwitter className="hover:text-lightGray2" />
+      </a>
+      <a>
+        <BsReddit className="hover:text-lightGray2" />
+      </a>
     </div>
   );
 

@@ -217,10 +217,10 @@ const PersonalAchievementModal = ({
       return (
         <div
           key={index}
-          className="group relative mx-auto my-auto bg-darkGray8 p-2 hover:cursor-pointer sm:p-4"
+          className="group relative bg-darkGray8 p-2 hover:cursor-pointer sm:p-4"
           onClick={clickHandler}
         >
-          <Image src={imgSrc} width={70} height={70} alt="daily_20_badge_icon" />
+          <Image src={imgSrc} width={70} height={70} alt="badge_icon" />
           <div
             className={`absolute -top-12 z-10 whitespace-nowrap rounded bg-black p-2 text-sm ${hintFrameStyle} opacity-0 transition-all duration-300 group-hover:opacity-100`}
           >

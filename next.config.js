@@ -6,9 +6,9 @@ const nextConfig = {
   swcMinify: true,
   env: {
     WALLET_CONNECT_PROJECT_ID: process.env.WALLET_CONNECT_PROJECT_ID,
-    PUSHER_API: process.env.PUSHER_API,
-    PUSHER_KEY: process.env.PUSHER_KEY,
-    PUSHER_CLUSTER: process.env.PUSHER_CLUSTER,
+    PUSHER_APP_KEY: process.env.PUSHER_APP_KEY,
+    PUSHER_HOST: process.env.PUSHER_HOST,
+    PUSHER_PORT: process.env.PUSHER_PORT,
   },
   async headers() {
     return [

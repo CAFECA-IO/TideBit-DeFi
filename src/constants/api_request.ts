@@ -1,5 +1,5 @@
 import {toQuery} from '../lib/common';
-import {URL} from './config';
+import {API_URL} from './config';
 
 export type IAPIName =
   // general
@@ -178,31 +178,31 @@ export const APIURL = {
   GET_JOB: '/api/general/jobs',
   APPLY_JOB: '/api/general/jobs',
   // market
-  LIST_CURRENCIES: `${URL}/currencies`,
-  LIST_TICKERS: `${URL}/market/tickers`,
+  LIST_CURRENCIES: `${API_URL}/currencies`,
+  LIST_TICKERS: `${API_URL}/market/tickers`,
   // LIST_DEPOSIT_CRYPTO_CURRENCIES: '/api/market/deposit-currencies',
   // LIST_WITHDRAW_CRYPTO_CURRENCIES: '/api/market/withdraw-currencies',
-  GET_CANDLESTICK_DATA: `${URL}/market/candlesticks`,
-  GET_CFD_QUOTATION: `${URL}/market/qutation`,
-  GET_CFD_SUGGESTION: `${URL}/market/suggestion`,
+  GET_CANDLESTICK_DATA: `${API_URL}/market/candlesticks`,
+  GET_CFD_QUOTATION: `${API_URL}/market/qutation`,
+  GET_CFD_SUGGESTION: `${API_URL}/market/suggestion`,
   GET_TICKER_HISTORY: '/api/market/histories', // deprecated: '/api/market/tickerhistory' (20230323 - tzuhan)
-  GET_GUARANTEED_STOP_FEE_PERCENTAGE: `${URL}/market/guaranteed-stop-fee`,
+  GET_GUARANTEED_STOP_FEE_PERCENTAGE: `${API_URL}/market/guaranteed-stop-fee`,
   LIST_MARKET_TRADES: '/api/market/trades',
   // trades
-  LIST_CFD_TRADES: `${URL}/trade/cfds`,
-  LIST_HISTORIES: `${URL}/trade/history`,
+  LIST_CFD_TRADES: `${API_URL}/trade/cfds`,
+  LIST_HISTORIES: `${API_URL}/trade/history`,
   GET_CFD_TRADE: '/api/trades/cfds',
-  CREATE_CFD_TRADE: `${URL}/trade/cfds`,
-  UPDATE_CFD_TRADE: `${URL}/trade/cfds/update`,
-  CLOSE_CFD_TRADE: `${URL}/trade/cfds/close`,
-  CREATE_DEPOSIT_TRADE: `${URL}/deposit`,
+  CREATE_CFD_TRADE: `${API_URL}/trade/cfds`,
+  UPDATE_CFD_TRADE: `${API_URL}/trade/cfds/update`,
+  CLOSE_CFD_TRADE: `${API_URL}/trade/cfds/close`,
+  CREATE_DEPOSIT_TRADE: `${API_URL}/deposit`,
   LIST_DEPOSIT_TRADES: '/api/trades/deposits',
   LIST_WITHDRAW_TRADES: '/api/trades/withdraws',
   CREATE_WITHDRAW_TRADE: '/api/trades/withdraws',
   // user
-  POST_DEWT: `${URL}/dewt`,
-  LIST_BALANCES: `${URL}/balances`,
-  GET_TOTAL_BALANCE: `${URL}/balances/sum`,
+  POST_DEWT: `${API_URL}/dewt`,
+  LIST_BALANCES: `${API_URL}/balances`,
+  GET_TOTAL_BALANCE: `${API_URL}/balances/sum`,
   LIST_FAVORITE_TICKERS: '/api/user/tickers',
   ADD_FAVORITE_TICKERS: '/api/user/tickers',
   REMOVE_FAVORITE_TICKERS: '/api/user/tickers',

@@ -48,8 +48,9 @@ let wsWorker: WebSocket | null;
 */
 
 export const WorkerProvider = ({children}: IWorkerProvider) => {
-  const pusherKey = process.env.PUSHER_KEY!;
-  const pusherCluster = process.env.PUSHER_CLUSTER!;
+  const pusherKey = process.env.PUSHER_APP_KEY!;
+  const pusherHost = process.env.PUSHER_HOST!;
+  const pusherPort = +process.env.PUSHER_PORT!;
   const notificationCtx = useContext(NotificationContext);
   const [apiWorker, setAPIWorker, apiWorkerRef] = useState<Worker | null>(null);
   const [pusher, setPuser, pusherRef] = useState<Pusher | null>(null);
@@ -114,11 +115,12 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
 
   const pusherInit = () => {
     const pusher = new Pusher(pusherKey, {
-      cluster: pusherCluster,
+      cluster: '',
+      wsHost: pusherHost,
+      wsPort: pusherPort,
       channelAuthorization: {
         transport: 'jsonp',
-        endpoint: `http://localhost:3000/api/pusher/auth`,
-        // endpoint: `${process.env.PUSHER_API}/pusher/auth`,
+        endpoint: `${pusherHost}/api/pusher/auth`,
         headers: {
           deWT: getCookieByName('DeWT'),
         },
@@ -127,10 +129,12 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
         },
       },
     });
+    // eslint-disable-next-line no-console
+    console.log('pusher', pusher);
     pusher.connection.bind('connected', function () {
       const socketId = pusher.connection.socket_id;
       // eslint-disable-next-line no-console
-      // console.log('My socket ID is ' + socketId);
+      console.log('pusher My socket ID is ' + socketId);
       setSocketId(sockedId);
     });
     setPuser(pusher);

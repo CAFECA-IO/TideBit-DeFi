@@ -70,7 +70,9 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
   const targetAmount =
     orderType === OrderType.CFD
       ? (order as ICFDOrder).state === OrderState.CLOSED
-        ? (order as ICFDOrder).margin.amount
+        ? (order as ICFDOrder).margin.amount + ((order as ICFDOrder).pnl?.value || 0) > 0
+          ? (order as ICFDOrder).margin.amount + ((order as ICFDOrder).pnl?.value || 0)
+          : 0
         : (order as ICFDOrder).margin.amount * -1
       : orderType === OrderType.DEPOSIT
       ? (order as IDepositOrder).targetAmount

@@ -6,7 +6,7 @@ import {defaultPersonalRanking} from '../../interfaces/tidebit_defi_background/p
 import {DEFAULT_USER_AVATAR, BADGE_LIST, TypeOfPnLColor} from '../../constants/display';
 import {unitAsset} from '../../constants/config';
 import {ProfitState} from '../../constants/profit_state';
-import {numberFormatted, accountTruncate} from '../../lib/common';
+import {numberFormatted, accountTruncate, timestampToString} from '../../lib/common';
 import {useTranslation} from 'react-i18next';
 import {
   IPersonalAchievement,
@@ -36,6 +36,7 @@ const PersonalAchievementModal = ({
   const userCtx = useContext(UserContext);
 
   const {
+    userId,
     userName,
     userAvatar,
     tradingVolume,
@@ -47,6 +48,7 @@ const PersonalAchievementModal = ({
   } = getPersonalAchievementData ?? defaultPersonalAchievement;
 
   const displayedUserName = userName.length > 20 ? accountTruncate(userName) : userName;
+  const isMe = userCtx.id === userId ? true : false;
 
   const userRankingDaily = userCtx.getPersonalRanking('DAILY') ?? defaultPersonalRanking;
   const userRankingWeekly = userCtx.getPersonalRanking('WEEKLY') ?? defaultPersonalRanking;
@@ -183,41 +185,55 @@ const PersonalAchievementModal = ({
     );
   });
 
-  const displayedBadgeList = BADGE_LIST.map(({name, description, icon, iconSkeleton}, index) => {
-    const hintFrameStyle = (index + 1) % 3 === 0 ? 'right-0' : '';
-    const hintArrowStyle = (index + 1) % 3 === 0 ? 'right-6' : 'left-6';
+  const displayedBadgeList = BADGE_LIST.map(
+    ({name, title, description, icon, iconSkeleton}, index) => {
+      const hintFrameStyle = (index + 1) % 3 === 0 ? 'right-0' : '';
+      const hintArrowStyle = (index + 1) % 3 === 0 ? 'right-6' : 'left-6';
 
-    /* Info: (20230517 - Julian) if badges name 中沒有此徽章的名字 || receiveTime <= 0，表示未獲得徽章 */
-    const imgSrc =
-      !badges[index].name.includes(name) || badges[index].receiveTime <= 0 ? iconSkeleton : icon;
+      /* Info: (20230517 - Julian) 如果 badges name 中包含徽章的名字 && receiveTime > 0，表示獲得該徽章 */
+      const isReceived =
+        badges[index].name.includes(name) && badges[index].receiveTime > 0 ? true : false;
 
-    // ToDo: (20230517 - Julian) 別人的徽章只能看
-    const clickHandler =
-      !badges[index].name.includes(name) || badges[index].receiveTime <= 0
-        ? () => {
-            globalCtx.visibleBadgeModalHandler();
-          }
-        : () => globalCtx.visibleBadgeModalHandler();
+      const imgSrc = isReceived ? icon : iconSkeleton;
+      const receiveTime = isReceived ? timestampToString(badges[index].receiveTime).date : null;
+      const hintArrowTop = isReceived ? 'top-12' : 'top-8';
 
-    return (
-      <div
-        key={index}
-        className="group relative mx-auto my-auto bg-darkGray8 p-2 hover:cursor-pointer sm:p-4"
-        onClick={clickHandler}
-      >
-        <Image src={imgSrc} width={70} height={70} alt="daily_20_badge_icon" />
+      const badgeModalData = {
+        badgeName: name,
+        title: title,
+        image: icon,
+        badgeId: badges[index].badgeId,
+      };
+
+      // Info: (20230517 - Julian) 只有自己的徽章才能點擊並分享
+      const clickHandler =
+        isMe && isReceived
+          ? () => {
+              globalCtx.dataBadgeModalHandler(badgeModalData);
+              globalCtx.visibleBadgeModalHandler();
+            }
+          : () => null;
+
+      return (
         <div
-          className={`absolute -top-12 whitespace-nowrap rounded bg-black p-2 text-sm ${hintFrameStyle} opacity-0 transition-all duration-300 group-hover:opacity-100`}
+          key={index}
+          className="group relative mx-auto my-auto bg-darkGray8 p-2 hover:cursor-pointer sm:p-4"
+          onClick={clickHandler}
         >
-          <span
-            className={`absolute top-8 border-x-8 border-t-20px ${hintArrowStyle} border-x-transparent border-t-black`}
-          ></span>
-          {t(description)}
-          {/* 補上獲得時間 */}
+          <Image src={imgSrc} width={70} height={70} alt="daily_20_badge_icon" />
+          <div
+            className={`absolute -top-12 z-10 whitespace-nowrap rounded bg-black p-2 text-sm ${hintFrameStyle} opacity-0 transition-all duration-300 group-hover:opacity-100`}
+          >
+            <span
+              className={`absolute border-x-8 border-t-20px ${hintArrowTop} ${hintArrowStyle} border-x-transparent border-t-black`}
+            ></span>
+            <div className="">{t(description)}</div>
+            <div className="text-xs text-tidebitTheme">{receiveTime}</div>
+          </div>
         </div>
-      </div>
-    );
-  });
+      );
+    }
+  );
 
   const formContent = (
     <div className="flex w-full flex-col space-y-4 divide-y divide-lightGray overflow-y-auto overflow-x-hidden px-8 pt-4">
@@ -240,7 +256,7 @@ const PersonalAchievementModal = ({
       {/* Info:(20230515 - Julian) Detail */}
       <div className="flex flex-col space-y-6 py-6 text-sm sm:px-4">{displayedDetailList}</div>
 
-      {/* ToDo:(20230515 - Julian) Badges */}
+      {/* Info:(20230515 - Julian) Badges */}
       <div className="flex flex-col px-4">
         <div className="py-4 text-lightGray">{t('LEADERBOARD_PAGE.BADGES')}</div>
         <div className="grid grid-cols-3 gap-3">{displayedBadgeList}</div>

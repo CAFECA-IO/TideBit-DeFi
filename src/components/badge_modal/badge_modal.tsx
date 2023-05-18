@@ -11,10 +11,10 @@ type TranslateFunction = (s: string) => string;
 interface IBadgeModalProps {
   modalVisible: boolean;
   modalClickHandler: () => void;
-  getBadgeData: IBadgeModal;
+  badgeData: IBadgeModal;
 }
 
-const BadgeModal = ({modalVisible, modalClickHandler, getBadgeData}: IBadgeModalProps) => {
+const BadgeModal = ({modalVisible, modalClickHandler, badgeData}: IBadgeModalProps) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
   // ToDo: (20230517 - Julian) Sharing function
@@ -45,7 +45,7 @@ const BadgeModal = ({modalVisible, modalClickHandler, getBadgeData}: IBadgeModal
             {/* Info:(20230517 - Julian) Header/Title */}
             <div className="flex items-center justify-between rounded-t pt-9">
               <h3 className="w-full text-center text-3xl font-normal text-lightWhite">
-                {t(getBadgeData.title)}
+                {t(badgeData.title)}
               </h3>
               <button className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
                 <span className="absolute right-5 top-5 block outline-none focus:outline-none">
@@ -57,7 +57,7 @@ const BadgeModal = ({modalVisible, modalClickHandler, getBadgeData}: IBadgeModal
             {/* Info:(20230517 - Julian) Content */}
             <div className="flex flex-col items-center px-3">
               <div className="p-4">
-                <Image src={getBadgeData.image} width={180} height={180} alt="badge_image" />
+                <Image src={badgeData.image} width={180} height={180} alt="badge_image" />
               </div>
               <div className="py-3 text-base">
                 {t('LEADERBOARD_PAGE.CONGRATULATION_DESCRIPTION')}

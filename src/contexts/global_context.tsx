@@ -1341,7 +1341,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
       <BadgeModal
         modalVisible={visibleBadgeModal}
         modalClickHandler={visibleBadgeModalHandler}
-        getBadgeData={dataBadgeModal}
+        badgeData={dataBadgeModal}
       />
 
       {/* Info: One toast container avoids duplicate toast overlaying */}

@@ -126,6 +126,7 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
       ? t('MY_ASSETS_PAGE.RECEIPT_SECTION_ORDER_STATUS_FAILED')
       : '-';
 
+  // ToDo:(20230518 - Julian)已關閉的倉位不可以編輯
   const buttonClickHandler =
     orderType === OrderType.CFD
       ? (order as ICFDOrder).state === OrderState.OPENING

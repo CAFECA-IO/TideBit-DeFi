@@ -24,13 +24,14 @@ const BoardPageBody = () => {
     setLeaderboardData(marketCtx.getLeaderboard(timeSpan) ?? defaultLeaderboard);
   }, [timeSpan]);
 
-  let countdownInterval: NodeJS.Timeout | null = null;
   useEffect(() => {
-    countdownInterval = setTimeout(() => {
+    const countdownInterval = setTimeout(() => {
       const now = Math.floor(Date.now() / 1000);
       const remains = endTime - now;
       setLeaderboardLiveRemains(remains);
     }, 1000);
+
+    return () => clearTimeout(countdownInterval);
   }, [leaderboardLiveRemains]);
 
   const displayedSubtitle =

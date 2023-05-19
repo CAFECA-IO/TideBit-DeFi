@@ -1,16 +1,12 @@
-/**
- * @dev timestamp in ms
- */
+// import * as math from 'mathjs';
 interface ITrade {
   tradeId: string;
   targetAsset: string;
   unitAsset: string;
   direct: string;
   price: number;
-  // quantity: number;
   timestampMs: number;
   quantity: number;
-  // predictionCounter?: number;
 }
 
 type ILine = {
@@ -55,7 +51,15 @@ class TradeBook {
   add(trade: ITrade): void {
     this.resetPrediction();
 
-    // Info: `_` 為了避免無窮迴圈，所以區分對外的接口跟實際的功能
+    if (this.trades.length > 0) {
+      const lastTrade = this.trades[this.trades.length - 1];
+      const timestampDifference = trade.timestampMs - lastTrade.timestampMs;
+
+      if (timestampDifference > 100) {
+        this.fillPredictedData(trade.timestampMs);
+      }
+    }
+
     this._add(trade);
     this.startPredictionLoop();
   }
@@ -72,27 +76,17 @@ class TradeBook {
   private startPredictionLoop = () => {
     const periodMs = 100;
 
+    clearTimeout(this.predictionTimer);
+
     // INFO: setTimeout + 遞迴
-    // 有新資料時，重置 predictionCounter
-    const predictionLoop = () => {
+    this.predictionTimer = setTimeout(() => {
       if (this.isPredicting) {
         this.predictNextTrade(periodMs, this.model);
-        this.predictionTimer = setTimeout(predictionLoop, periodMs);
+        this.startPredictionLoop();
       }
-    };
-    predictionLoop();
-
-    // INFO: setInterval [trial]
-    // const intervalId = setInterval(() => {
-    //   if (this.isPredicting) {
-    //     this.predictNextTrade(periodMs, this.model);
-    //   } else {
-    //     clearInterval(intervalId);
-    //   }
-    // }, periodMs);
+    }, periodMs);
   };
 
-  // TODO: Create a function to accept prediction modal as parameter and return the predicted price
   predictNextTrade(periodMs: number, model: (x: number) => ITrade | undefined) {
     const trade = model(periodMs);
     if (trade !== undefined) {
@@ -100,51 +94,64 @@ class TradeBook {
     }
   }
 
-  linearRegression(periodMs: number): ITrade | undefined {
-    const groupedTrades: {[key: number]: ITrade[]} = {};
+  fillPredictedData(targetTimestampMs: number) {
+    const lastTradeTimestamp = this.trades[this.trades.length - 1]?.timestampMs;
 
-    // console.log('trades', this.trades);
+    if (!!lastTradeTimestamp && !!targetTimestampMs) {
+      const timestampDifference = targetTimestampMs - lastTradeTimestamp;
 
-    this.trades.forEach(trade => {
-      if (!groupedTrades[trade.timestampMs]) {
-        groupedTrades[trade.timestampMs] = [];
+      if (timestampDifference > 100) {
+        const counts = Math.floor(timestampDifference / 100) - 1;
+
+        for (let i = 0; i < counts; i++) {
+          this.predictNextTrade(100, this.model);
+        }
       }
-      groupedTrades[trade.timestampMs].push(trade);
-    });
-
-    if (Object.keys(groupedTrades).length < 2) return;
-
-    const averagedTrades: IAveragedTrade[] = Object.entries(groupedTrades).map(
-      ([timestamp, trades]) => {
-        const sumPrice = trades.reduce((sum, trade) => sum + trade.price, 0);
-        const averagePrice = sumPrice / trades.length; // TODO: check if this is correct
-        return {
-          timestampMs: Number(timestamp),
-          averagePrice,
-        };
-      }
-    );
-
-    // Info: Ensure there are at least two trades with different timestamps
-    if (averagedTrades.length < 2) {
-      return;
     }
+  }
 
-    const t2 = averagedTrades[averagedTrades.length - 2]; // Info: 倒數第二個
-    const t1 = averagedTrades[averagedTrades.length - 1]; // Info: 倒數第一個
+  linearRegression(periodMs: number): ITrade | undefined {
+    // Step 1: Validate trades data
+    // TODO: < 30 不預測
+    if (this.trades.length < 2) return;
 
-    const priceDifference = t1.averagePrice - t2.averagePrice;
-    const timeDifference = t1.timestampMs - t2.timestampMs;
+    // TODO: 拿掉 99999999999
+    const cutoffTimeMs = Date.now() - 30 * 1000 * 99999999999;
+    const recentTrades = this.trades.filter(t => t.timestampMs > cutoffTimeMs);
 
-    const lastTrade = this.trades[this.trades.length - 1];
-    // const secondLastTrade = this.trades[this.trades.length - 2];
+    // Step 2: Prepare data for regression
+    const x = recentTrades.map((t, i) => i + 1); // Assume trade sequence as x
+    const y = recentTrades.map(t => t.price); // Trade price as y
 
+    // Step 3: Calculate means
+    const meanX = x.reduce((a, b) => a + b, 0) / x.length;
+    const meanY = y.reduce((a, b) => a + b, 0) / y.length;
+
+    // Step 4: Calculate slope for the formula: y = mx + b
+    const subtractX = x.map(val => val - meanX);
+    const subtractY = y.map(val => val - meanY);
+
+    const multiplySubtract = subtractX.map((val, i) => val * subtractY[i]);
+    const squareSubtractX = subtractX.map(val => val * val);
+
+    const sumMultiplySubtract = multiplySubtract.reduce((a, b) => a + b, 0);
+    const sumSquareSubtractX = squareSubtractX.reduce((a, b) => a + b, 0);
+
+    const m = sumMultiplySubtract / sumSquareSubtractX;
+    const b = meanY - m * meanX;
+
+    // Step 5: Predict price for the next period
+    const nextPrice = m * (x.length + 1) + b; // x.length + 1 is the x for the next trade
+
+    // Step 6: Construct new trade
+    // Increase prediction counter
     if (this.predictionCounter === 0) {
       this.predictionCounter = 1;
     } else {
       this.predictionCounter++;
     }
 
+    const lastTrade = this.trades[this.trades.length - 1];
     const newTradeId = `${
       lastTrade.tradeId.includes('-')
         ? `${lastTrade.tradeId.split('-')[0]}-${this.predictionCounter}`
@@ -157,7 +164,7 @@ class TradeBook {
       targetAsset: lastTrade.targetAsset,
       unitAsset: lastTrade.unitAsset,
       direct: lastTrade.direct,
-      price: t1.averagePrice + (priceDifference / timeDifference) * periodMs,
+      price: nextPrice,
       timestampMs: lastTrade.timestampMs + periodMs,
       quantity: 0,
     };
@@ -185,6 +192,7 @@ class TradeBook {
     return this.trades;
   }
 
+  // TODO: set prediction model
   setPredictionModel(model: (x: number) => ITrade | undefined) {
     this.model = model;
   }
@@ -238,7 +246,6 @@ const tradeObj1: ITrade = {
   targetAsset: 'ETH',
   unitAsset: 'USDT',
   direct: 'buy',
-  // quantity: 17,
   price: 4.412,
   quantity: 17,
   timestampMs: 1683775038000,
@@ -249,7 +256,6 @@ const tradeObj2: ITrade = {
   targetAsset: 'ETH',
   unitAsset: 'USDT',
   direct: 'sell',
-  // quantity: 575,
   price: 8.929,
   quantity: 575,
   timestampMs: 1683775039000,
@@ -307,25 +313,44 @@ const tradeObj7: ITrade = {
 TradeBookInstance.togglePredicting();
 
 TradeBookInstance.add(tradeObj1);
+
 TradeBookInstance.add(tradeObj2);
 
-// TradeBookInstance.togglePredicting();
+TradeBookInstance.add(tradeObj3);
+TradeBookInstance.add(tradeObj4);
 
-// TradeBookInstance.add(tradeObj5);
+TradeBookInstance.add(tradeObj5);
 
-// TradeBookInstance.add(tradeObj6);
-// TradeBookInstance.add(tradeObj7);
-
-// setTimeout(() => {
-// 	TradeBookInstance.add(tradeObj3);
-// 	TradeBookInstance.add(tradeObj4);
-// 	// TradeBookInstance.tradeData;
-// }, 1000);
+TradeBookInstance.add(tradeObj6);
+TradeBookInstance.add(tradeObj7);
 
 setTimeout(() => {
   TradeBookInstance.togglePredicting(false);
-}, 10000);
-
-// Info: Time priority ------------------------------
+  const data = TradeBookInstance.tradeData;
+  const pick = data.filter(d => {
+    if (
+      d.tradeId === '1' ||
+      d.tradeId === '2' ||
+      d.tradeId === '2-1' ||
+      d.tradeId === '2-59' ||
+      d.tradeId === '3' ||
+      d.tradeId === '4' ||
+      d.tradeId === '4-1' ||
+      d.tradeId === '4-89' ||
+      d.tradeId === '5' ||
+      d.tradeId === '5-1' ||
+      d.tradeId === '5-179' ||
+      d.tradeId === '6' ||
+      d.tradeId === '7'
+    ) {
+      return true;
+    }
+    return false;
+  });
+  // Deprecated: (20230519 - Shirley)
+  // console.log('[price priority] last data', data[data.length - 1]);
+  // console.log('[price priority] pick', pick);
+  // console.log('[price priority] all trades', data);
+}, 100);
 
 export default TradeBookInstance;

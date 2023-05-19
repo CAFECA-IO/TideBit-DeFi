@@ -110,6 +110,7 @@ class TradeBook {
     }
   }
 
+  // TODO: 帶入資料集`trades`、x軸刻度大小 `periodMs`、要補幾筆資料，回傳 `ITrade[]`，不要直接推上去
   linearRegression(periodMs: number): ITrade | undefined {
     // Step 1: Validate trades data
     // TODO: < 30 不預測
@@ -117,10 +118,12 @@ class TradeBook {
 
     // TODO: 拿掉 99999999999
     const cutoffTimeMs = Date.now() - 30 * 1000 * 99999999999;
-    const recentTrades = this.trades.filter(t => t.timestampMs > cutoffTimeMs);
+    const recentTrades = this.trades.filter(
+      t => t.timestampMs > cutoffTimeMs && !t.tradeId.includes('-')
+    );
 
     // Step 2: Prepare data for regression
-    const x = recentTrades.map((t, i) => i + 1); // Assume trade sequence as x
+    const x = recentTrades.map((t, i) => t.timestampMs); // Assume trade sequence as x
     const y = recentTrades.map(t => t.price); // Trade price as y
 
     // Step 3: Calculate means
@@ -139,9 +142,23 @@ class TradeBook {
 
     const m = sumMultiplySubtract / sumSquareSubtractX;
     const b = meanY - m * meanX;
+    // TODO: 同樣的 xy 不應該重複算 m b
+
+    // console.log('x[x.length-1]', x[x.length - 1]);
 
     // Step 5: Predict price for the next period
-    const nextPrice = m * (x.length + 1) + b; // x.length + 1 is the x for the next trade
+    const lastTrade = this.trades[this.trades.length - 1];
+
+    const nextTime = lastTrade.timestampMs + periodMs;
+    const nextPrice = m * nextTime + b; // x.length + 1 is the x for the next trade
+
+    // console.log('x', x);
+    // console.log('y', y);
+    // console.log('meanX', meanX);
+    // console.log('meanY', meanY);
+    // console.log('m', m);
+    // console.log('b', b);
+    // console.log('nextPrice', nextPrice);
 
     // Step 6: Construct new trade
     // Increase prediction counter
@@ -151,7 +168,6 @@ class TradeBook {
       this.predictionCounter++;
     }
 
-    const lastTrade = this.trades[this.trades.length - 1];
     const newTradeId = `${
       lastTrade.tradeId.includes('-')
         ? `${lastTrade.tradeId.split('-')[0]}-${this.predictionCounter}`
@@ -165,7 +181,7 @@ class TradeBook {
       unitAsset: lastTrade.unitAsset,
       direct: lastTrade.direct,
       price: nextPrice,
-      timestampMs: lastTrade.timestampMs + periodMs,
+      timestampMs: nextTime,
       quantity: 0,
     };
 
@@ -347,10 +363,9 @@ setTimeout(() => {
     }
     return false;
   });
-  // Deprecated: (20230519 - Shirley)
   // console.log('[price priority] last data', data[data.length - 1]);
   // console.log('[price priority] pick', pick);
   // console.log('[price priority] all trades', data);
-}, 100);
+}, 10000);
 
 export default TradeBookInstance;

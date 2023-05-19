@@ -216,8 +216,8 @@ class TradeBook {
   toLineChart(interval: number, length: number): ILine[] {
     const lines: ILine[] = [];
     const intervalMs = interval * 1000;
-    const lastTimestamp = this.trades[this.trades.length - 1].timestampMs;
-    const firstTimestamp = lastTimestamp - length * intervalMs;
+    const lastTimestamp = this.trades[this.trades.length - 1].timestampMs; // TODO: 要+一點，能被整除
+    const firstTimestamp = lastTimestamp - length * intervalMs; // TODO: 要-一點，能被整除5900~1900--> 5000~1000
     for (let i = firstTimestamp; i <= lastTimestamp; i += intervalMs) {
       const trades = this.trades.filter(t => t.timestampMs >= i && t.timestampMs < i + intervalMs);
       if (trades.length > 0) {
@@ -229,11 +229,12 @@ class TradeBook {
     return lines;
   }
 
+  // TODO: timestamp 應該要被 intervalMs 整除
   toCandlestick(interval: number, length: number): ICandlestick[] {
     const candleSticks: ICandlestick[] = [];
     const intervalMs = interval * 1000;
-    const lastTimestamp = this.trades[this.trades.length - 1].timestampMs;
-    const firstTimestamp = lastTimestamp - length * intervalMs;
+    const lastTimestamp = this.trades[this.trades.length - 1].timestampMs; // TODO: 要+一點，能被整除
+    const firstTimestamp = lastTimestamp - length * intervalMs; // TODO: 要-一點，能被整除5900~1900--> 5000~1000
 
     let candlestick: ICandlestick | undefined;
     for (let i = firstTimestamp; i <= lastTimestamp; i += intervalMs) {
@@ -366,6 +367,7 @@ setTimeout(() => {
   // console.log('[price priority] last data', data[data.length - 1]);
   // console.log('[price priority] pick', pick);
   // console.log('[price priority] all trades', data);
+  // console.log('to candlestick chart', TradeBookInstance.toCandlestick(1, 60));
 }, 10000);
 
 export default TradeBookInstance;

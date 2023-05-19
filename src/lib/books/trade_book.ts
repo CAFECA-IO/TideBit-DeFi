@@ -110,7 +110,7 @@ class TradeBook {
     }
   }
 
-  // TODO: 帶入資料集`trades`、x軸刻度大小 `periodMs`、要補幾筆資料，回傳 `ITrade[]`，不要直接推上去
+  // TODO: 帶入資料集`trades`、x軸刻度大小 `periodMs`、要補幾筆資料`length`，回傳 `ITrade[]`，不要直接推上去
   linearRegression(periodMs: number): ITrade | undefined {
     // Step 1: Validate trades data
     // TODO: < 30 不預測
@@ -218,6 +218,7 @@ class TradeBook {
     const intervalMs = interval * 1000;
     const lastTimestamp = this.trades[this.trades.length - 1].timestampMs; // TODO: 要+一點，能被整除
     const firstTimestamp = lastTimestamp - length * intervalMs; // TODO: 要-一點，能被整除5900~1900--> 5000~1000
+
     for (let i = firstTimestamp; i <= lastTimestamp; i += intervalMs) {
       const trades = this.trades.filter(t => t.timestampMs >= i && t.timestampMs < i + intervalMs);
       if (trades.length > 0) {

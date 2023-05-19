@@ -374,5 +374,9 @@
     "CONGRATULATION_DESCRIPTION": "Congratulations! You got a new badge!",
     "SHARE": "Share",
     "CLOSE_BUTTON": "Close"
+  },
+  "ANNOUNCEMENT_MODAL": {
+    "CHECKBOX_DESCRIPTION": "Don’t show me this again",
+    "OK_BUTTON": "OK"
   }
 }

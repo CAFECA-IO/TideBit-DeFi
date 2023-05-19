@@ -1,23 +1,44 @@
 import React, {useState, useContext} from 'react';
 import Image from 'next/image';
 import {NotificationContext} from '../../contexts/notification_context';
+import {useGlobal} from '../../contexts/global_context';
 import {INotificationItem} from '../../interfaces/tidebit_defi_background/notification_item';
 import {timestampToString} from '../../lib/common';
+import {MessageType} from '../../constants/message_type';
+import {NotificationLevel} from '../../constants/notification_level';
 
 export default function NotificationItem(notificationItem: INotificationItem) {
-  const {id, title, content, timestamp} = notificationItem;
+  const {id, title, content, timestamp, notificationLevel} = notificationItem;
   const notificationCtx = useContext(NotificationContext);
+  const globalCtx = useGlobal();
 
   const [itemStyle, setItemStyle] = useState('h-160px translate-x-0 opacity-100');
+
+  const messageType =
+    notificationLevel === NotificationLevel.CRITICAL
+      ? MessageType.ANNOUNCEMENT
+      : MessageType.NOTIFICATION;
 
   const displayTime = timestampToString(timestamp);
 
   const itemClickHandler = () => {
-    setItemStyle('h-0 translate-x-500px opacity-10');
+    globalCtx.dataAnnouncementModalHandler({
+      id: id,
+      title: title,
+      content: content,
+      numberOfButton: 1,
+      reactionOfButton: '',
+      messageType: messageType,
+    });
+    globalCtx.visibleAnnouncementModalHandler();
 
-    setTimeout(() => {
-      notificationCtx.isRead(id);
-    }, 500);
+    if (messageType === MessageType.NOTIFICATION) {
+      setItemStyle('h-0 translate-x-500px opacity-10');
+
+      setTimeout(() => {
+        notificationCtx.isRead(id);
+      }, 500);
+    }
   };
 
   return (
@@ -55,7 +76,7 @@ export default function NotificationItem(notificationItem: INotificationItem) {
           </div>
 
           {/* Info: (20230420 - Julian) Content */}
-          <div className="mt-0 mb-5 flex w-11/12 flex-wrap pl-12 pt-0 text-xs text-lightGray">
+          <div className="mb-5 mt-0 flex w-11/12 flex-wrap pl-12 pt-0 text-xs text-lightGray">
             {content}
           </div>
         </div>

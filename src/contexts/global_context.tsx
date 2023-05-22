@@ -57,6 +57,8 @@ import {
   defaultPersonalAchievement,
 } from '../interfaces/tidebit_defi_background/personal_achievement';
 import BadgeModal from '../components/badge_modal/badge_modal';
+import AnnouncementModal from '../components/announcement_modal/announcement_modal';
+import {MessageType, IMessageType} from '../constants/message_type';
 export interface IToastify {
   type: IToastType;
   message: string;
@@ -168,21 +170,21 @@ export const dummyWarningModal: IWarningModal = {
 
 // TODO:(20230317 - Shirley) to be continued
 export interface IAnnouncementModal {
+  id: string;
   title: string;
   content: string;
   numberOfButton: number;
   reactionOfButton: string;
-  styleOfButton: 'style1' | 'style2';
-  messageType: 'announcement' | 'notification';
+  messageType: IMessageType;
 }
 
 export const dummyAnnouncementModal: IAnnouncementModal = {
+  id: '',
   title: '',
   content: '',
   numberOfButton: 0,
   reactionOfButton: '',
-  styleOfButton: 'style1',
-  messageType: 'announcement',
+  messageType: MessageType.ANNOUNCEMENT,
 };
 
 // Deprecated: to be removed (20230517 - Julian)
@@ -1342,6 +1344,11 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
         modalVisible={visibleBadgeModal}
         modalClickHandler={visibleBadgeModalHandler}
         badgeData={dataBadgeModal}
+      />
+      <AnnouncementModal
+        modalVisible={visibleAnnouncementModal}
+        modalClickHandler={visibleAnnouncementModalHandler}
+        announcementData={dataAnnouncementModal}
       />
 
       {/* Info: One toast container avoids duplicate toast overlaying */}

@@ -374,5 +374,9 @@
     "CONGRATULATION_DESCRIPTION": "恭喜！您获得了新的徽章！",
     "SHARE": "分享至",
     "CLOSE_BUTTON": "关闭"
+  },
+  "ANNOUNCEMENT_MODAL": {
+    "CHECKBOX_DESCRIPTION": "不再显示此公告",
+    "OK_BUTTON": "好的"
   }
 }

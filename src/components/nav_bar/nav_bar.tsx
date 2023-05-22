@@ -5,7 +5,6 @@ import Image from 'next/image';
 import version from '../../lib/version';
 import useOuterClick from '../../lib/hooks/use_outer_click';
 import Notification from '../notification/notification';
-import {useRouter} from 'next/router';
 import I18n from '../i18n/i18n';
 import UserOverview from '../user_overview/user_overview';
 import {UserContext} from '../../contexts/user_context';
@@ -21,7 +20,6 @@ const NavBar = () => {
   const notificationCtx = useContext(NotificationContext);
 
   const {t}: {t: TranslateFunction} = useTranslation('common');
-  const {locale, locales, defaultLocale, asPath} = useRouter();
 
   const {
     targetRef: notifyRef,

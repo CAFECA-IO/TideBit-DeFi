@@ -51,6 +51,7 @@ module.exports = {
       borderWidth: {
         '0.5px': '0.5px',
         '1px': '1px',
+        '3px': '3px',
         '20px': '20px',
       },
       maxWidth: {
@@ -65,6 +66,9 @@ module.exports = {
       minHeight: {
         '160px': '160px',
         '420px': '420px',
+        '600px': '600px',
+      },
+      maxHeight: {
         '600px': '600px',
       },
       boxShadow: {

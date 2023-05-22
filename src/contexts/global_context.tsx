@@ -56,6 +56,9 @@ import {
   IPersonalAchievement,
   defaultPersonalAchievement,
 } from '../interfaces/tidebit_defi_background/personal_achievement';
+import BadgeModal from '../components/badge_modal/badge_modal';
+import AnnouncementModal from '../components/announcement_modal/announcement_modal';
+import {MessageType, IMessageType} from '../constants/message_type';
 export interface IToastify {
   type: IToastType;
   message: string;
@@ -167,51 +170,57 @@ export const dummyWarningModal: IWarningModal = {
 
 // TODO:(20230317 - Shirley) to be continued
 export interface IAnnouncementModal {
+  id: string;
   title: string;
   content: string;
   numberOfButton: number;
   reactionOfButton: string;
-  styleOfButton: 'style1' | 'style2';
-  messageType: 'announcement' | 'notification';
+  messageType: IMessageType;
 }
 
 export const dummyAnnouncementModal: IAnnouncementModal = {
+  id: '',
   title: '',
   content: '',
   numberOfButton: 0,
   reactionOfButton: '',
-  styleOfButton: 'style1',
-  messageType: 'announcement',
+  messageType: MessageType.ANNOUNCEMENT,
 };
 
-// TODO:(20230317 - Shirley) to be continued
-export interface IAchievementSharingModal {
-  userId: string;
-  period: string;
-}
+// Deprecated: to be removed (20230517 - Julian)
+// export interface IAchievementSharingModal {
+//   userId: string;
+//   period: string;
+// }
 
-export const dummyAchievementSharingModal: IAchievementSharingModal = {
-  userId: '202302220001234',
-  period: '002',
-};
+// export const dummyAchievementSharingModal: IAchievementSharingModal = {
+//   userId: '202302220001234',
+//   period: '002',
+// };
 
 // TODO:(20230317 - Shirley) to be continued
 export interface IBadgeModal {
+  badgeName: string;
+  title: string;
+  image: string;
   badgeId: string;
 }
 
 export const dummyBadgeModal: IBadgeModal = {
+  badgeName: 'Badge Name',
+  title: 'Badge Title',
+  image: '',
   badgeId: 'TBDFUTURES2023FEB05',
 };
 
-// TODO:(20230317 - Shirley) to be continued
-export interface IBadgeSharingModal {
-  badgeId: string;
-}
+// Deprecated: to be removed (20230517 - Julian)
+// export interface IBadgeSharingModal {
+//   badgeId: string;
+// }
 
-export const dummyBadgeSharingModal: IBadgeSharingModal = {
-  badgeId: 'TBDFUTURES2023FEB05',
-};
+// export const dummyBadgeSharingModal: IBadgeSharingModal = {
+//   badgeId: 'TBDFUTURES2023FEB05',
+// };
 
 export interface IGlobalProvider {
   children: React.ReactNode;
@@ -338,20 +347,21 @@ export interface IGlobalContext {
   dataPersonalAchievementModal: IPersonalAchievement | null;
   dataPersonalAchievementModalHandler: (data: IPersonalAchievement) => void;
 
-  visibleAchievementSharingModal: boolean;
-  visibleAchievementSharingModalHandler: () => void;
-  dataAchievementSharingModal: IAchievementSharingModal | null;
-  dataAchievementSharingModalHandler: (data: IAchievementSharingModal) => void;
-
   visibleBadgeModal: boolean;
   visibleBadgeModalHandler: () => void;
   dataBadgeModal: IBadgeModal | null;
   dataBadgeModalHandler: (data: IBadgeModal) => void;
 
-  visibleBadgeSharingModal: boolean;
-  visibleBadgeSharingModalHandler: () => void;
-  dataBadgeSharingModal: IBadgeSharingModal | null;
-  dataBadgeSharingModalHandler: (data: IBadgeSharingModal) => void;
+  // Deprecated: to be removed (20230517 - Julian)
+  // visibleBadgeSharingModal: boolean;
+  // visibleBadgeSharingModalHandler: () => void;
+  // dataBadgeSharingModal: IBadgeSharingModal | null;
+  // dataBadgeSharingModalHandler: (data: IBadgeSharingModal) => void;
+
+  // visibleAchievementSharingModal: boolean;
+  // visibleAchievementSharingModalHandler: () => void;
+  // dataAchievementSharingModal: IAchievementSharingModal | null;
+  // dataAchievementSharingModalHandler: (data: IAchievementSharingModal) => void;
 
   visibleSearchingModal: boolean;
   visibleSearchingModalHandler: () => void;
@@ -475,20 +485,20 @@ export const GlobalContext = createContext<IGlobalContext>({
   dataPersonalAchievementModal: null,
   dataPersonalAchievementModalHandler: () => null,
 
-  visibleAchievementSharingModal: false,
-  visibleAchievementSharingModalHandler: () => null,
-  dataAchievementSharingModal: null,
-  dataAchievementSharingModalHandler: () => null,
-
   visibleBadgeModal: false,
   visibleBadgeModalHandler: () => null,
   dataBadgeModal: null,
   dataBadgeModalHandler: () => null,
 
-  visibleBadgeSharingModal: false,
-  visibleBadgeSharingModalHandler: () => null,
-  dataBadgeSharingModal: null,
-  dataBadgeSharingModalHandler: () => null,
+  // visibleBadgeSharingModal: false,
+  // visibleBadgeSharingModalHandler: () => null,
+  // dataBadgeSharingModal: null,
+  // dataBadgeSharingModalHandler: () => null,
+
+  // visibleAchievementSharingModal: false,
+  // visibleAchievementSharingModalHandler: () => null,
+  // dataAchievementSharingModal: null,
+  // dataAchievementSharingModalHandler: () => null,
 
   visibleSearchingModal: false,
   visibleSearchingModalHandler: () => null,
@@ -597,16 +607,15 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
   const [dataPersonalAchievementModal, setDataPersonalAchievementModal] =
     useState<IPersonalAchievement>(defaultPersonalAchievement);
 
-  const [visibleAchievementSharingModal, setVisibleAchievementSharingModal] = useState(false);
-  const [dataAchievementSharingModal, setDataAchievementSharingModal] =
-    useState<IAchievementSharingModal>(dummyAchievementSharingModal);
-
   const [visibleBadgeModal, setVisibleBadgeModal] = useState(false);
   const [dataBadgeModal, setDataBadgeModal] = useState<IBadgeModal>(dummyBadgeModal);
 
-  const [visibleBadgeSharingModal, setVisibleBadgeSharingModal] = useState(false);
-  const [dataBadgeSharingModal, setDataBadgeSharingModal] =
-    useState<IBadgeSharingModal>(dummyBadgeSharingModal);
+  // Deprecated: to be removed (20230517 - Julian)
+  // const [visibleBadgeSharingModal, setVisibleBadgeSharingModal] = useState(false);
+  // const [dataBadgeSharingModal, setDataBadgeSharingModal] = useState<IBadgeSharingModal>(dummyBadgeSharingModal);
+
+  // const [visibleAchievementSharingModal, setVisibleAchievementSharingModal] = useState(false);
+  // const [dataAchievementSharingModal, setDataAchievementSharingModal] =useState<IAchievementSharingModal>(dummyAchievementSharingModal);
 
   const [visibleSearchingModal, setVisibleSearchingModal] = useState(false);
 
@@ -980,14 +989,6 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     setDataPersonalAchievementModal(data);
   };
 
-  const visibleAchievementSharingModalHandler = () => {
-    setVisibleAchievementSharingModal(!visibleAchievementSharingModal);
-  };
-
-  const dataAchievementSharingModalHandler = (data: IAchievementSharingModal) => {
-    setDataAchievementSharingModal(data);
-  };
-
   const visibleBadgeModalHandler = () => {
     setVisibleBadgeModal(!visibleBadgeModal);
   };
@@ -996,13 +997,22 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     setDataBadgeModal(data);
   };
 
-  const visibleBadgeSharingModalHandler = () => {
-    setVisibleBadgeSharingModal(!visibleBadgeSharingModal);
-  };
+  // Deprecated: to be removed (20230517 - Julian)
+  // const visibleBadgeSharingModalHandler = () => {
+  //   setVisibleBadgeSharingModal(!visibleBadgeSharingModal);
+  // };
 
-  const dataBadgeSharingModalHandler = (data: IBadgeSharingModal) => {
-    setDataBadgeSharingModal(data);
-  };
+  // const dataBadgeSharingModalHandler = (data: IBadgeSharingModal) => {
+  //   setDataBadgeSharingModal(data);
+  // };
+
+  // const visibleAchievementSharingModalHandler = () => {
+  //   setVisibleAchievementSharingModal(!visibleAchievementSharingModal);
+  // };
+
+  // const dataAchievementSharingModalHandler = (data: IAchievementSharingModal) => {
+  //   setDataAchievementSharingModal(data);
+  // };
 
   const getWithdrawSubmissionState = (state: 'success' | 'cancellation' | 'fail') => {
     setWithdrawProcess(state);
@@ -1195,20 +1205,21 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     dataPersonalAchievementModal,
     dataPersonalAchievementModalHandler,
 
-    visibleAchievementSharingModal,
-    visibleAchievementSharingModalHandler,
-    dataAchievementSharingModal,
-    dataAchievementSharingModalHandler,
-
     visibleBadgeModal,
     visibleBadgeModalHandler,
     dataBadgeModal,
     dataBadgeModalHandler,
 
-    visibleBadgeSharingModal,
-    visibleBadgeSharingModalHandler,
-    dataBadgeSharingModal,
-    dataBadgeSharingModalHandler,
+    // Deprecated: to be removed (20230517 - Julian)
+    // visibleBadgeSharingModal,
+    // visibleBadgeSharingModalHandler,
+    // dataBadgeSharingModal,
+    // dataBadgeSharingModalHandler,
+
+    // visibleAchievementSharingModal,
+    // visibleAchievementSharingModalHandler,
+    // dataAchievementSharingModal,
+    // dataAchievementSharingModalHandler,
 
     visibleSearchingModal,
     visibleSearchingModalHandler,
@@ -1328,6 +1339,16 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
         modalVisible={visiblePersonalAchievementModal}
         modalClickHandler={visiblePersonalAchievementModalHandler}
         getPersonalAchievementData={dataPersonalAchievementModal}
+      />
+      <BadgeModal
+        modalVisible={visibleBadgeModal}
+        modalClickHandler={visibleBadgeModalHandler}
+        badgeData={dataBadgeModal}
+      />
+      <AnnouncementModal
+        modalVisible={visibleAnnouncementModal}
+        modalClickHandler={visibleAnnouncementModalHandler}
+        announcementData={dataAnnouncementModal}
       />
 
       {/* Info: One toast container avoids duplicate toast overlaying */}

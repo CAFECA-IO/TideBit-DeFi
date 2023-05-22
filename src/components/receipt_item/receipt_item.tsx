@@ -70,7 +70,9 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
   const targetAmount =
     orderType === OrderType.CFD
       ? (order as ICFDOrder).state === OrderState.CLOSED
-        ? (order as ICFDOrder).margin.amount
+        ? (order as ICFDOrder).margin.amount + ((order as ICFDOrder).pnl?.value || 0) > 0
+          ? (order as ICFDOrder).margin.amount + ((order as ICFDOrder).pnl?.value || 0)
+          : 0
         : (order as ICFDOrder).margin.amount * -1
       : orderType === OrderType.DEPOSIT
       ? (order as IDepositOrder).targetAmount
@@ -126,6 +128,7 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
       ? t('MY_ASSETS_PAGE.RECEIPT_SECTION_ORDER_STATUS_FAILED')
       : '-';
 
+  // ToDo:(20230518 - Julian)已關閉的倉位不可以編輯
   const buttonClickHandler =
     orderType === OrderType.CFD
       ? (order as ICFDOrder).state === OrderState.OPENING

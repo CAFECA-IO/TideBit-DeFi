@@ -371,6 +371,12 @@
     "BADGE_MASTER_DESCRIPTION": "完成 TideBit 硕士学位",
     "BADGE_DOCTOR_TITLE": "TideBit 博士文凭",
     "BADGE_DOCTOR_DESCRIPTION": "完成 TideBit 博士学位",
+    "CONGRATULATION_DESCRIPTION": "恭喜！您获得了新的徽章！",
+    "SHARE": "分享至",
     "CLOSE_BUTTON": "关闭"
+  },
+  "ANNOUNCEMENT_MODAL": {
+    "CHECKBOX_DESCRIPTION": "不再显示此公告",
+    "OK_BUTTON": "好的"
   }
 }

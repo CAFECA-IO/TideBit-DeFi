@@ -1,9 +1,9 @@
 import {IBadge} from './badge';
-import {Badges} from '../../constants/badges';
 import {DEFAULT_BEDGES} from '../../constants/display';
 import {randomFloatFromInterval} from '../../lib/common';
 
 export interface IPersonalAchievement {
+  userId: string;
   userName: string;
   userAvatar?: string;
   tradingVolume: number;
@@ -15,6 +15,7 @@ export interface IPersonalAchievement {
 }
 
 export const defaultPersonalAchievement: IPersonalAchievement = {
+  userId: 'N/A',
   userName: 'N/A',
   userAvatar: '/leaderboard/default_avatar.svg',
   tradingVolume: 0,
@@ -25,27 +26,6 @@ export const defaultPersonalAchievement: IPersonalAchievement = {
   badges: DEFAULT_BEDGES,
 };
 
-export const dummyPersonalAchievement: IPersonalAchievement = {
-  userName: 'Dummy User',
-  userAvatar: '/leaderboard/dummy_avatar_4.svg',
-  tradingVolume: 23242,
-  onlineTime: 238424214,
-  diversification: 53.4,
-  hightestROI: 24.67,
-  lowestROI: -14.22,
-  badges: [
-    {name: Badges.DAILY_TOP_20, receiveTime: 1684289192},
-    {name: Badges.WEEKLY_TOP_20, receiveTime: 0},
-    {name: Badges.MONTHLY_TOP_20, receiveTime: 0},
-    {name: Badges.SHARING, receiveTime: 1684229192},
-    {name: Badges.LINKED, receiveTime: 1684289624},
-    {name: Badges.DEPOSIT, receiveTime: 1684289192},
-    {name: Badges.BACHELOR, receiveTime: 1683388800},
-    {name: Badges.MASTER, receiveTime: 0},
-    {name: Badges.DOCTOR, receiveTime: 0},
-  ],
-};
-
 export const getDummyPersonalAchievements = (userId: string): IPersonalAchievement => {
   const randomUserAvatar = '/leaderboard/default_avatar.svg';
   const randomTradingVolume = Math.floor(Math.random() * 100000);
@@ -54,16 +34,19 @@ export const getDummyPersonalAchievements = (userId: string): IPersonalAchieveme
   const randomTime = Math.floor(Math.random() * (1672531200 - 1684289192) + 1684289192);
 
   const randomBadges = DEFAULT_BEDGES.map(badge => {
-    const randomBadge = Math.random() > 0.5 ? {name: badge.name} : {name: ''};
+    const randomBadge =
+      Math.random() > 0.5 ? {name: badge.name, badgeId: badge.name} : {name: '', badgeId: ''};
+    const randomReceivedTime =
+      randomTime + (randomTime % 2 === 0 ? Math.random() * 1000000 : -Math.random() * 1000000);
 
     return {
       ...randomBadge,
-      receiveTime:
-        randomTime + (randomTime % 2 === 0 ? Math.random() * 10000 : -Math.random() * 10000),
+      receiveTime: randomReceivedTime,
     };
   });
 
   const personalAchievements = {
+    userId: userId,
     userName: userId,
     userAvatar: randomUserAvatar,
     tradingVolume: randomTradingVolume,

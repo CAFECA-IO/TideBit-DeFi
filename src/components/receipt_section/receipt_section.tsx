@@ -6,6 +6,7 @@ import {OrderType} from '../../constants/order_type';
 import {OrderState} from '../../constants/order_state';
 import {IAcceptedOrder} from '../../interfaces/tidebit_defi_background/accepted_order';
 import {timestampToString} from '../../lib/common';
+import Skeleton from 'react-loading-skeleton';
 import {
   ICFDOrder,
   IDepositOrder,
@@ -21,6 +22,11 @@ const ReceiptSection = () => {
   const [filteredTradingType, setFilteredTradingType] = useState('');
   const [filteredDate, setFilteredDate] = useState<string[]>([]);
   const [filteredReceipts, setFilteredReceipts] = useState<IAcceptedOrder[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    setTimeout(() => setIsLoading(false), 1000);
+  }, []);
 
   useEffect(() => {
     /* Todo: (20230412 - Julian)
@@ -97,25 +103,65 @@ const ReceiptSection = () => {
   const listCluster = monthList.map(v => {
     return (
       <div key={v}>
-        <ReceiptList monthData={v} filteredReceipts={filteredReceipts} />
+        {isLoading ? (
+          <div className="flex flex-col">
+            <Skeleton width={140} height={25} />
+            <div className="mt-5 flex justify-between space-x-2 lg:space-x-4">
+              <Skeleton width={70} height={70} />
+              <div className="flex flex-1 items-center justify-between lg:space-x-20">
+                <Skeleton width={120} height={30} borderRadius={50} />
+                <Skeleton width={100} height={25} />
+                <div className="hidden flex-1 flex-col space-y-2 lg:flex lg:w-52">
+                  <Skeleton width={30} height={20} />
+                  <Skeleton width={240} height={20} />
+                </div>
+                <div className="hidden flex-col space-y-2 lg:flex lg:w-20">
+                  <Skeleton width={30} height={20} />
+                  <Skeleton width={20} height={20} />
+                </div>
+                <div className="hidden flex-col space-y-2 lg:flex lg:w-24">
+                  <Skeleton width={60} height={20} />
+                  <Skeleton width={60} height={20} />
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <ReceiptList monthData={v} filteredReceipts={filteredReceipts} />
+        )}
       </div>
     );
   });
 
   return (
     <div className="p-4 sm:p-16">
-      <ReceiptSearch
-        filteredTradingType={filteredTradingType}
-        setFilteredTradingType={setFilteredTradingType}
-        setSearches={setSearches}
-        filteredDate={filteredDate}
-        setFilteredDate={setFilteredDate}
-      />
+      {isLoading ? (
+        <div className="mt-4 flex items-end">
+          <div className="flex flex-col">
+            <Skeleton width={95} height={25} />
+            <Skeleton width={160} height={50} />
+          </div>
+          <div className="ml-10 flex flex-col">
+            <Skeleton width={50} height={25} />
+            <Skeleton width={140} height={50} />
+          </div>
+          <div className="ml-8 flex-1">
+            <Skeleton width={140} height={50} />
+          </div>
+          <div className="">
+            <Skeleton width={300} height={50} borderRadius={50} />
+          </div>
+        </div>
+      ) : (
+        <ReceiptSearch
+          filteredTradingType={filteredTradingType}
+          setFilteredTradingType={setFilteredTradingType}
+          setSearches={setSearches}
+          filteredDate={filteredDate}
+          setFilteredDate={setFilteredDate}
+        />
+      )}
       <div>{listCluster}</div>
-      {/* Till: (20230420 - Julian) 
-     <p>
-        {filteredDate[0]} ~ {filteredDate[1]}
-      </p> */}
     </div>
   );
 };

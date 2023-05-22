@@ -31,22 +31,10 @@ export const AppProvider = ({children}: IAppProvider) => {
   const init = async () => {
     if (!isInitRef.current) {
       setIsInit(true);
-      // Deprecate: [debug: user login take time] (20230522 - tzuhan)
-      console.time(`AppProvider.init workerCtx.init`);
       workerCtx.init();
-      console.timeEnd(`AppProvider.init workerCtx.init`);
-      // Deprecate: [debug: user login take time] (20230522 - tzuhan)
-      console.time(`AppProvider.init notificationCtx.init`);
       await notificationCtx.init();
-      console.timeEnd(`AppProvider.init notificationCtx.init`);
-      // Deprecate: [debug: user login take time] (20230522 - tzuhan)
-      console.time(`AppProvider.init userCtx.init`);
       await userCtx.init();
-      console.timeEnd(`AppProvider.init userCtx.init`);
-      // Deprecate: [debug: user login take time] (20230522 - tzuhan)
-      console.time(`AppProvider.init marketCtx.init`);
       await marketCtx.init();
-      console.timeEnd(`AppProvider.init marketCtx.init`);
     }
     return;
   };

@@ -1,3 +1,4 @@
+import {ICurrency} from '../../constants/currency';
 import {ICFDClosedType} from '../../constants/cfd_closed_type';
 import {IOrderState} from '../../constants/order_state';
 import {IOrderStatusUnion} from '../../constants/order_status_union';
@@ -23,7 +24,7 @@ export interface ICFDOrder extends IOrder {
   state: IOrderState;
   openPrice: number;
   typeOfPosition: ITypeOfPosition;
-  targetAsset: string;
+  targetAsset: ICurrency;
   unitAsset: string;
   amount: number;
   leverage: number;

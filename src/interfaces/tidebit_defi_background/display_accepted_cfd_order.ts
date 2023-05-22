@@ -6,6 +6,7 @@ import {randomHex, toDisplayCFDOrder} from '../../lib/common';
 import {ICFDOrder} from './order';
 import {OrderStatusUnion} from '../../constants/order_status_union';
 import {getDummyAcceptedCloseCFDOrder} from './accepted_cfd_order';
+import {ICurrency} from '../../constants/currency';
 
 export interface IDisplayCFDOrder extends ICFDOrder {
   pnl: IPnL;
@@ -16,7 +17,7 @@ export interface IDisplayCFDOrder extends ICFDOrder {
   stateCode: number;
 }
 
-export const getDummyDisplayCFDOrder = (currency: string) => {
+export const getDummyDisplayCFDOrder = (currency: ICurrency) => {
   const dummyApplyCloseCFDOrder = getDummyApplyCreateCFDOrder(currency);
   const {CFDOrder} = convertApplyCreateCFDToAcceptedCFD(
     dummyApplyCloseCFDOrder,
@@ -34,7 +35,7 @@ export const getDummyDisplayCFDOrder = (currency: string) => {
   return dummyDisplayCFDOrder;
 };
 
-export const listDummyDisplayCFDOrder = (currency: string) => {
+export const listDummyDisplayCFDOrder = (currency: ICurrency) => {
   const count = 10;
   const list = new Array(count).fill(0).map(() => getDummyDisplayCFDOrder(currency));
   return list;

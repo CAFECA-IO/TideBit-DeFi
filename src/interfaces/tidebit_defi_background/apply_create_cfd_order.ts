@@ -1,3 +1,4 @@
+import {ICurrency} from '../../constants/currency';
 import {CFDOperation} from '../../constants/cfd_order_type';
 import {unitAsset} from '../../constants/config';
 import {OrderType} from '../../constants/order_type';
@@ -13,7 +14,7 @@ export interface IApplyCreateCFDOrder extends IApplyCFDOrder {
   typeOfPosition: ITypeOfPosition;
   price: number;
   amount: number;
-  targetAsset: string;
+  targetAsset: ICurrency;
   unitAsset: string;
   margin: IMargin;
   leverage: number;
@@ -32,7 +33,7 @@ function randomIntFromInterval(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
-export const getDummyApplyCreateCFDOrder = (currency: string) => {
+export const getDummyApplyCreateCFDOrder = (currency: ICurrency) => {
   const typeOfPosition = Math.random() > 0.5 ? TypeOfPosition.BUY : TypeOfPosition.SELL;
   const dummyApplyCreateCFDOrder: IApplyCreateCFDOrder = {
     orderType: OrderType.CFD,

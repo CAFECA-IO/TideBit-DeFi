@@ -61,8 +61,8 @@ export const unitAsset = 'USDT';
 
 export const WS_URL = 'wss://staging-001.tidebit.network/ws';
 
-export const API_URL = 'https://api.tidebit-defi.com'; //'http://localhost:3001';
-// export const API_URL = 'http://localhost:3001'; //'https://api.tidebit-defi.com';
+export const API_URL = 'https://api.tidebit-defi.com'; //'http://localhost:80';
+// export const API_URL = 'http://localhost:80'; //'https://api.tidebit-defi.com';
 // Deprecated: dummy url settings (20230407 - Tzuhan)
 export const BASE_URL = 'https://staging-001.tidebit.network';
 // Deprecated: dummy url settings (20230407 - Tzuhan)

@@ -89,6 +89,10 @@ const HistoryPositionModal = ({
   const openTime = timestampToString(closedCfdDetails.createTimestamp ?? 0);
   const closedTime = timestampToString(closedCfdDetails?.closeTimestamp ?? 0);
 
+  // TODO: userCtx -> workerCtx 呼叫 API，然後用 IResult 判斷是否分享失敗
+  // HTTP Request -> workerCtx -> userCtx -> UI (20230508 - Shirley)
+  // HTTP Request 有攻擊性的，要注意呼叫 API 的權限
+
   const shareToFacebook = () => {
     // TODO: cfdId (20230508 - Shirley)
     const shareUrl = DOMAIN + `/share/cfd/${closedCfdDetails.id}`;

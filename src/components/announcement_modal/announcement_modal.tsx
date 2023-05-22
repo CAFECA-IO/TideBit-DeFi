@@ -3,6 +3,7 @@ import RippleButton from '../ripple_button/ripple_button';
 import {IAnnouncementModal} from '../../contexts/global_context';
 import {NotificationContext} from '../../contexts/notification_context';
 import {ImCross} from 'react-icons/im';
+import {MessageType} from '../../constants/message_type';
 import {useTranslation} from 'react-i18next';
 
 type TranslateFunction = (s: string) => string;
@@ -31,6 +32,9 @@ const AnnouncementModal = ({
     setIsChecked(!isChecked);
   };
 
+  /* Info:(20230522 - Julian)
+   * notification -> 在 NotificationItem 裡設定
+   * announcement -> 判斷 Don't show again box 是否被勾選，然後在 ok button 被點擊時設定 isRead */
   const okButtonClickHandler = () => {
     modalClickHandler();
     if (isChecked) {
@@ -39,7 +43,7 @@ const AnnouncementModal = ({
   };
 
   const isDisplayedCheckBox =
-    announcementData.messageType === 'announcement' ? (
+    announcementData.messageType === MessageType.ANNOUNCEMENT ? (
       <div className="flex items-center justify-end px-8">
         <input
           id="dontShowAgainCheckbox"

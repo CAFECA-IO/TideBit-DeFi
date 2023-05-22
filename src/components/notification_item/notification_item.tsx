@@ -32,6 +32,9 @@ export default function NotificationItem(notificationItem: INotificationItem) {
     });
     globalCtx.visibleAnnouncementModalHandler();
 
+    /* Info:(20230522 - Julian)
+     * notification -> item 被點擊後就直接設定 isRead
+     * announcement -> 在 AnnouncementModal 裡設定 */
     if (messageType === MessageType.NOTIFICATION) {
       setItemStyle('h-0 translate-x-500px opacity-10');
 

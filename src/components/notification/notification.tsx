@@ -1,7 +1,10 @@
-import {useContext, useState} from 'react';
+import {useContext, useState, useEffect} from 'react';
 import NotificationItem from '../notification_item/notification_item';
 import {UserContext} from '../../contexts/user_context';
+import {useGlobal} from '../../contexts/global_context';
 import {NotificationContext} from '../../contexts/notification_context';
+import {NotificationLevel} from '../../constants/notification_level';
+import {MessageType} from '../../constants/message_type';
 import {useTranslation} from 'next-i18next';
 
 type TranslateFunction = (s: string) => string;
@@ -17,9 +20,27 @@ export default function Notification({
 }: INotificationProps): JSX.Element {
   const {t}: {t: TranslateFunction} = useTranslation('common');
   const notificationCtx = useContext(NotificationContext);
+  const globalCtx = useGlobal();
   const {enableServiceTerm} = useContext(UserContext);
 
   const [readAllanim, setReadAllanim] = useState('translate-x-0 opacity-100');
+
+  /* Info: (20230522 - Julian) 初始化完成就去抓 notificationCtx ，檢查有沒有重要通知 */
+  useEffect(() => {
+    notificationCtx.unreadNotifications.map(v => {
+      if (v.notificationLevel === NotificationLevel.CRITICAL) {
+        globalCtx.dataAnnouncementModalHandler({
+          id: v.id,
+          title: v.title,
+          content: v.content,
+          numberOfButton: 1,
+          reactionOfButton: '',
+          messageType: MessageType.ANNOUNCEMENT,
+        });
+        globalCtx.visibleAnnouncementModalHandler();
+      }
+    });
+  }, []);
 
   const hamburgerStyles =
     'block bg-lightWhite h-3px opacity-100 rounded-12px opacity-100 ease-in duration-300';
@@ -65,7 +86,7 @@ export default function Notification({
           componentVisible ? 'z-30' : 'z-30'
         } flex overflow-x-hidden overflow-y-hidden outline-none focus:outline-none`}
       >
-        <div className="relative my-3 mx-auto w-auto max-w-xl">
+        <div className="relative mx-auto my-3 w-auto max-w-xl">
           {' '}
           <div className={`relative`}>
             {/* Info: (20230420 - Julian) sidebar self */}
@@ -75,7 +96,7 @@ export default function Notification({
                 componentVisible
                   ? 'visible opacity-100 sm:translate-x-0'
                   : 'invisible opacity-10 sm:translate-x-full'
-              } flex flex-col bg-darkGray/90 pt-8 pb-20 text-white transition-all duration-300 sm:p-5`}
+              } flex flex-col bg-darkGray/90 pb-20 pt-8 text-white transition-all duration-300 sm:p-5`}
             >
               <div className="mb-10 flex flex items-center">
                 <h1 className="hidden pl-5 text-2xl font-bold sm:block">

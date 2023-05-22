@@ -29,4 +29,5 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       res.status(500).json({error: Reason[Code.INTERNAL_SERVER_ERROR]});
     }
   } else res.status(500).json({error: Reason[Code.INTERNAL_SERVER_ERROR]});
+  return;
 }

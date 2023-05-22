@@ -14,6 +14,7 @@ import {
   WIDTH_OF_SHARING_RECORD,
 } from '../../../../constants/display';
 import {
+  API_URL,
   DOMAIN,
   FRACTION_DIGITS,
   SHARING_BG_IMG_THRESHOLD_PNL_PERCENT,
@@ -39,6 +40,61 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const {pathname} = new URL(req?.url ?? '');
   const params = pathname.split('/');
   const cfdId = params.pop(); // TODO: send to api (20230508 - Shirley)
+
+  /* TODO: Data from API (20230522 - Shirley)
+  const fetchAPI = async () => {
+    try {
+      const url = `${API_URL}/public/shared/cfd/0x7b00fb9554119`;
+
+      // Call the API to enable sharing
+      // const enableResponse = await fetch(`${API_URL}/trade/cfds/share/${cfdId}`, {
+      //   method: 'PUT', // Replace with the correct HTTP method if not POST
+      //   body: JSON.stringify({cfdId}), // Replace with the correct request body structure
+      //   headers: {'Content-Type': 'application/json'}, // Adjust as needed
+      // });
+
+      // Call the API to get the order data
+      const orderResponse = await fetch(url, {
+        method: 'GET', // Replace with the correct HTTP method if not GET
+        headers: {'Content-Type': 'application/json'}, // Adjust as needed
+      });
+      // https://www.tidebit-defi.com/share/cfd/0xd167aa25047f05fcede6d7635cb4b271
+      // /trade/cfds/share/0xd167aa25047f05fcede6d7635cb4b271
+      // console.log('fetch', url);
+
+      // console.log('orderResponse', orderResponse);
+
+      // const data = await orderResponse.json();
+
+      // eslint-disable-next-line no-console
+      // console.log('API orderResponse data', data);
+    } catch (e) {
+      // 空白圖
+      // console.error('error', e);
+    }
+  };
+
+    fetchAPI();
+
+  // TODO: If false, display the default image (20230522 - Shirley)
+  // // Call the API to get if this order is shared (SKIP)
+  // const shareResponse = await fetch(`${API_URL}/public/shared/cfd/${cfdId}`, {
+  //   method: 'GET', // Replace with the correct HTTP method if not GET
+  //   headers: {'Content-Type': 'application/json'}, // Adjust as needed
+  // });
+
+  // console.log('shareResponse', shareResponse);
+  // console.log('shareResponse.body', shareResponse.body);
+
+  // if (!shareResponse.ok) {
+  //   // Handle error
+  //   // eslint-disable-next-line no-console
+  //   console.error('Error fetching order-sharing data:', shareResponse.statusText);
+  //   return;
+  // }
+
+  // console.log('enableResponse', enableResponse);
+  */
 
   // TODO: Data from API (20230508 - Shirley)
   const {

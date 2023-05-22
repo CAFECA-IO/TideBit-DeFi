@@ -3,30 +3,34 @@ import BalanceSection from '../balance_section/balance_section';
 import PnlSection from '../pnl_section/pnl_section';
 import InterestSection from '../interest_section/interest_section';
 import ReceiptSection from '../receipt_section/receipt_section';
+import Skeleton, {SkeletonTheme} from 'react-loading-skeleton';
 import Footer from '../footer/footer';
 
 const AssetsPageBody = () => {
+  // ToDo: (20230522 - Julian) add skeleton loading
   return (
     <div>
-      <div className="pt-10">
-        {' '}
-        <div className="">
-          <BalanceSection />{' '}
+      <SkeletonTheme baseColor="#202020" highlightColor="#444">
+        <div className="pt-10">
+          {' '}
+          <div className="">
+            <BalanceSection />{' '}
+          </div>
+          <div className="">
+            <PnlSection />{' '}
+          </div>
+          <div className="mb-5 mt-5">
+            <InterestSection />{' '}
+          </div>
+          <div className="">
+            <ReceiptSection />
+          </div>
         </div>
-        <div className="">
-          <PnlSection />{' '}
-        </div>
-        <div className="mt-5 mb-5">
-          <InterestSection />{' '}
-        </div>
-        <div className="">
-          <ReceiptSection />
-        </div>
-      </div>
 
-      <div className="">
-        <Footer />
-      </div>
+        <div className="">
+          <Footer />
+        </div>
+      </SkeletonTheme>
     </div>
   );
 };

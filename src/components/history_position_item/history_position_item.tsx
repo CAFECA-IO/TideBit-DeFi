@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React from 'react';
 import Image from 'next/image';
 import {TypeOfTransaction, UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
 import {FRACTION_DIGITS} from '../../constants/config';
@@ -8,7 +8,6 @@ import {TypeOfPosition} from '../../constants/type_of_position';
 import {useGlobal} from '../../contexts/global_context';
 import {IDisplayCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
 import {useTranslation} from 'react-i18next';
-import {MarketContext} from '../../contexts/market_context';
 
 type TranslateFunction = (s: string) => string;
 interface IHistoryPositionItemProps {
@@ -17,11 +16,7 @@ interface IHistoryPositionItemProps {
 
 const HistoryPositionItem = ({closedCfdDetails, ...otherProps}: IHistoryPositionItemProps) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
-  // if (longOrShort !== 'long' && longOrShort !== 'short') return <></>;
-  // if (profitOrLoss !== 'profit' && profitOrLoss !== 'loss') return <></>;
-  // if (ticker !== 'ETH' && ticker !== 'BTC') return <></>;
   const globalCtx = useGlobal();
-  const marketCtx = useContext(MarketContext);
 
   const displayedString =
     closedCfdDetails.typeOfPosition === TypeOfPosition.BUY

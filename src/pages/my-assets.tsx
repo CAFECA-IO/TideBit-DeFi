@@ -33,8 +33,7 @@ const MyAssets = () => {
             {displayedNavBar}
 
             <main>
-              <div className="">
-                {' '}
+              <div>
                 <AssetsPageBody />
               </div>
             </main>

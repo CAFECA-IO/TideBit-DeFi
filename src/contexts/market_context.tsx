@@ -24,12 +24,12 @@ import {
   dummyTicker,
   toDummyTickers,
 } from '../interfaces/tidebit_defi_background/ticker_data';
-import {ITimeSpanUnion, TimeSpanUnion} from '../constants/time_span_union';
+import {ITimeSpanUnion, TimeSpanUnion, getTime} from '../constants/time_span_union';
 import {
   ICandlestick,
   ICandlestickData,
-  getDummyCandlestickChartData,
-  updateDummyCandlestickChartData,
+  ITrade,
+  TradeSideText,
 } from '../interfaces/tidebit_defi_background/candlestickData';
 import {TideBitEvent} from '../constants/tidebit_event';
 import {NotificationContext} from './notification_context';
@@ -50,6 +50,7 @@ import {IPusherAction} from '../interfaces/tidebit_defi_background/pusher_data';
 import {IQuotation} from '../interfaces/tidebit_defi_background/quotation';
 import {IRankingTimeSpan} from '../constants/ranking_time_span';
 import {ILeaderboard, getDummyLeaderboard} from '../interfaces/tidebit_defi_background/leaderboard';
+import TradeBookInstance from '../lib/books/trade_book';
 
 export interface IMarketProvider {
   children: React.ReactNode;
@@ -152,6 +153,7 @@ export const MarketContext = createContext<IMarketContext>({
 export const MarketProvider = ({children}: IMarketProvider) => {
   const tickerBook = React.useMemo(() => TickerBookInstance, []);
   const candlestickBook = React.useMemo(() => CandlestickBookInstance, []);
+  const tradeBook = React.useMemo(() => TradeBookInstance, []);
   const userCtx = useContext(UserContext);
   const notificationCtx = useContext(NotificationContext);
   const workerCtx = useContext(WorkerContext);
@@ -563,6 +565,27 @@ export const MarketProvider = ({children}: IMarketProvider) => {
           setTickerLiveStatistics(tickerLiveStatistics);
         }
       ),
+    []
+  );
+
+  React.useMemo(
+    () =>
+      notificationCtx.emitter.on(TideBitEvent.TRADES, (action: IPusherAction, trade: ITrade) => {
+        tradeBook.add({
+          tradeId: trade.tradeId,
+          targetAsset: trade.baseUnit,
+          unitAsset: trade.quoteUnit,
+          direct: TradeSideText[trade.side],
+          price: trade.price,
+          timestampMs: trade.timestamp,
+          quantity: trade.amount,
+        });
+        if (trade.instId === selectedTickerRef.current?.instId) {
+          // Deprecated: [debug] (20230523 - tzuhan)
+          // eslint-disable-next-line no-console
+          console.log(`TideBitEvent.TRADES`, trade);
+        }
+      }),
     []
   );
 

@@ -59,8 +59,8 @@ export const SUPPORTED_NETWORKS = [
 
 export const unitAsset = 'USDT';
 
-export const API_URL = 'https://api.tidebit-defi.com'; //'http://localhost:3001';
-// export const API_URL = 'http://localhost:3001'; //'https://api.tidebit-defi.com';
+// export const API_URL = 'https://api.tidebit-defi.com'; //'http://localhost:80';
+export const API_URL = 'http://localhost:80'; //'https://api.tidebit-defi.com';
 
 export const MAX_PRICE_TRADING_CHART_ONE_SEC = 1.005; // 1.005
 

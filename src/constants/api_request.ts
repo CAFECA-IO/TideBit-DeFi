@@ -53,7 +53,9 @@ export type IAPIName =
   | 'SUBSCRIBE_NEWS_LETTERS'
   | 'LIST_READ_NOTIFICATIONS'
   | 'READ_NOTIFICATIONS'
-  | 'GET_PNL';
+  | 'GET_PNL'
+  | 'ENABLE_CFD_SHARE'
+  | 'SHARE_CFD';
 export interface IAPINameConstant {
   // general
   LIST_NEWS: IAPIName;
@@ -107,6 +109,8 @@ export interface IAPINameConstant {
   LIST_READ_NOTIFICATIONS: IAPIName;
   READ_NOTIFICATIONS: IAPIName;
   GET_PNL: IAPIName;
+  ENABLE_CFD_SHARE: IAPIName;
+  SHARE_CFD: IAPIName;
 }
 export const APIName: IAPINameConstant = {
   // general
@@ -161,6 +165,8 @@ export const APIName: IAPINameConstant = {
   LIST_READ_NOTIFICATIONS: 'LIST_READ_NOTIFICATIONS',
   READ_NOTIFICATIONS: 'READ_NOTIFICATIONS',
   GET_PNL: 'GET_PNL',
+  ENABLE_CFD_SHARE: 'ENABLE_CFD_SHARE',
+  SHARE_CFD: 'SHARE_CFD',
 };
 
 export const APIURL = {
@@ -216,6 +222,8 @@ export const APIURL = {
   LIST_READ_NOTIFICATIONS: '/api/user/notifications',
   READ_NOTIFICATIONS: '/api/user/notifications',
   GET_PNL: '/api/user/pnl',
+  ENABLE_CFD_SHARE: `${API_URL}/trade/cfds/share`,
+  SHARE_CFD: `${API_URL}/public/shared/cfd`,
 };
 
 export const TBEURL = {

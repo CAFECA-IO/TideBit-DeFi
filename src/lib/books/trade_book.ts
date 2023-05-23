@@ -58,7 +58,7 @@ class TradeBook {
 
     this.resetPrediction();
 
-    if (this.trades.length < this.config.minLengthForLinearRegression) {
+    if (this.trades.length >= this.config.minLengthForLinearRegression) {
       const lastTrade = this.trades[this.trades.length - 1];
       const timestampDifference = trade.timestampMs - lastTrade.timestampMs;
 
@@ -105,7 +105,7 @@ class TradeBook {
     // Info: setTimeout + 遞迴 (20230522 - Shirley)
     this.predictionTimer = setTimeout(() => {
       if (this.isPredicting) {
-        this.predictNextTrade(this.trades, this.config.intervalMs, 1);
+        this.predictNextTrade(this.predictedTrades, this.config.intervalMs, 1);
         this.startPredictionLoop();
       }
     }, this.config.intervalMs);
@@ -159,9 +159,10 @@ class TradeBook {
     recentTrades.forEach(trade => {
       if (timestampMap.has(trade.timestampMs)) {
         const prev = timestampMap.get(trade.timestampMs);
+        const totalQuantity = prev.quantity + trade.quantity;
         timestampMap.set(trade.timestampMs, {
           ...prev,
-          price: (prev.price + trade.price) / 2,
+          price: (prev.price * prev.quantity + trade.price * trade.quantity) / totalQuantity,
         });
       } else {
         timestampMap.set(trade.timestampMs, trade);
@@ -175,7 +176,7 @@ class TradeBook {
     const {m, b} = this.getLinearRegressionVariables(averagedTrades);
 
     for (let i = 0; i < length; i++) {
-      // Step 3: Predict price for the next period
+      // Info: (20230522 - Shirley) Step 3: Predict price for the next period
       const lastTrade = trades[trades.length - 1];
       const nextTime = lastTrade.timestampMs + periodMs * (i + 1);
       const nextPrice = m * nextTime + b;
@@ -201,12 +202,16 @@ class TradeBook {
 
   private getLinearRegressionVariables(trades: ITrade[]): {m: number; b: number} {
     // Info: (20230522 - Shirley) Step 2: Prepare data for regression
+    const totalQuantity = trades.reduce((total, trade) => total + trade.quantity, 0);
+    const weightedPrices = trades.map(trade => trade.price * (trade.quantity / totalQuantity));
+    const wSum = weightedPrices.reduce((a, b) => a + b, 0);
+
     const x = trades.map((t, i) => t.timestampMs);
     const y = trades.map(t => t.price);
 
     // Info: (20230522 - Shirley) Step 3: Calculate means
     const meanX = x.reduce((a, b) => a + b, 0) / x.length;
-    const meanY = y.reduce((a, b) => a + b, 0) / y.length;
+    const meanY = y.reduce((a, b, i) => a + weightedPrices[i] * b, 0) / wSum;
 
     // Info: (20230522 - Shirley) Step 4: Calculate slope for the formula: y = mx + b
     const subtractX = x.map(val => val - meanX);

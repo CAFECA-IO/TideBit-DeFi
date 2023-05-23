@@ -102,7 +102,10 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
       ? '/elements/group_149621.svg'
       : '/elements/group_14962.svg';
 
-  const displayedReceiptAmount = targetAmount >= 0 ? '+' + targetAmount : targetAmount;
+  const displayedReceiptAmount =
+    targetAmount >= 0
+      ? '+' + targetAmount.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)
+      : targetAmount.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
 
   const displayedReceiptTxId = order.txhash;
 

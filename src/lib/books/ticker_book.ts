@@ -1,6 +1,6 @@
 import {
   ITickerData,
-  ITickerItem,
+  toDummyTickers,
   /** Deprecated: replaced by pusher (20230424 - tzuhan)
   ISortedTrade,
   ITBETrade,
@@ -14,14 +14,14 @@ import {ITickerHistoryData} from '../../interfaces/tidebit_defi_background/ticke
 import {millesecondsToSeconds} from '../common';
 */
 import {ITimeSpanUnion, TimeSpanUnion} from '../../constants/time_span_union';
-import {ICurrency} from '../../constants/currency';
+import {Currency, ICurrency} from '../../constants/currency';
 import {unitAsset} from '../../constants/config';
 
 class TickerBook {
   private _dataLength = 1000;
   private _timeSpan: ITimeSpanUnion = TimeSpanUnion._1s;
   private _limit = 50;
-  private _tickers: {[currency: string]: ITickerData} = {};
+  private _tickers: {[currency in ICurrency]: ITickerData};
 
   /** Deprecated: replaced by pusher (20230424 - tzuhan)
   private _trades: {
@@ -30,7 +30,7 @@ class TickerBook {
   */
 
   constructor() {
-    this._tickers = {};
+    this._tickers = {...toDummyTickers};
     /** Deprecated: replaced by pusher (20230424 - tzuhan)
     this._trades = {};
     */
@@ -218,7 +218,7 @@ class TickerBook {
   */
 
   listTickerPositions(
-    ticker: string,
+    ticker: ICurrency,
     options: {begin?: number; end?: number; limit?: number; timeSpan?: ITimeSpanUnion}
   ): number[] {
     // const sortedTrades = this.sortTrades(ticker, options);
@@ -228,23 +228,7 @@ class TickerBook {
   }
 
   listTickers(): {[currency in ICurrency]: ITickerData} {
-    let tickers: {[currency in ICurrency]?: ITickerData} = {};
-    tickers = Object.values(this.tickers).reduce((prev, curr) => {
-      // const dataArray = this.listTickerPositions(curr.currency, {});
-      // const strokeColor = strokeColorDisplayed(dataArray);
-      const ticker: ITickerData = {
-        ...curr,
-        // lineGraphProps: {
-        //   dataArray,
-        //   strokeColor,
-        //   lineGraphWidth: '170',
-        //   lineGraphWidthMobile: '140',
-        // },
-      };
-      prev[curr.currency] = ticker;
-      return prev;
-    }, tickers);
-    return tickers as {[currency in ICurrency]: ITickerData};
+    return this.tickers;
   }
 
   updateTicker(value: ITickerData) {
@@ -259,8 +243,7 @@ class TickerBook {
   }
 
   updateTickers(value: ITickerData[]) {
-    let tickers: {[currency: string]: ITickerData} = {};
-    tickers = [...value].reduce((prev, curr) => {
+    const tickers = [...value].reduce((prev, curr) => {
       if (!prev[curr.currency])
         prev[curr.currency] = {
           ...curr,
@@ -269,20 +252,24 @@ class TickerBook {
           },
         };
       return prev;
-    }, tickers);
+    }, {} as {[currency in ICurrency]: ITickerData});
     this.tickers = tickers;
     return tickers;
   }
 
   getCurrencyRate(currency: string): number {
-    return currency === unitAsset ? 1 : this._tickers[currency]?.price || 0;
+    return currency === unitAsset
+      ? 1
+      : Object.values(Currency).includes(currency as ICurrency)
+      ? this._tickers[currency as ICurrency]?.price || 0
+      : 0;
   }
 
-  get tickers(): {[currency: string]: ITickerData} {
+  get tickers(): {[currency in ICurrency]: ITickerData} {
     return this._tickers;
   }
 
-  set tickers(value: {[currency: string]: ITickerData}) {
+  set tickers(value: {[currency in ICurrency]: ITickerData}) {
     this._tickers = value;
   }
 

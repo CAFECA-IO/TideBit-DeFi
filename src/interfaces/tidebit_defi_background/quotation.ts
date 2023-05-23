@@ -1,10 +1,11 @@
+import {ICurrency} from '../../constants/currency';
 import {QUOTATION_RENEWAL_INTERVAL_SECONDS, unitAsset} from '../../constants/config';
-import {ITypeOfPosition, TypeOfPosition} from '../../constants/type_of_position';
-import {getTimestamp, getTimestampInMilliseconds} from '../../lib/common';
+import {ITypeOfPosition} from '../../constants/type_of_position';
+import {getTimestamp} from '../../lib/common';
 
 export interface IQuotation {
   ticker: string;
-  targetAsset: string;
+  targetAsset: ICurrency;
   unitAsset: string;
   typeOfPosition: ITypeOfPosition;
   price: number;
@@ -16,7 +17,7 @@ function randomIntFromInterval(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
-export const getDummyQuotation = (currency: string, typeOfPosition: ITypeOfPosition) => {
+export const getDummyQuotation = (currency: ICurrency, typeOfPosition: ITypeOfPosition) => {
   const quotation: IQuotation = {
     ticker: currency,
     targetAsset: currency,

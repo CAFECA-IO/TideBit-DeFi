@@ -1,3 +1,4 @@
+import {ICurrency} from '../../constants/currency';
 import {IOrderStatusUnion, OrderStatusUnion} from '../../constants/order_status_union';
 import {randomHex} from '../../lib/common';
 import {IAcceptedOrder} from './accepted_order';
@@ -18,7 +19,7 @@ export interface IAcceptedCFDOrder extends IAcceptedOrder {
 }
 
 export const getDummyAcceptedCreateCFDOrder = (
-  currency = 'ETH',
+  currency = 'ETH' as ICurrency,
   orderStatus?: IOrderStatusUnion
 ) => {
   const applyCreateCFDOrder: IApplyCreateCFDOrder = getDummyApplyCreateCFDOrder(currency);
@@ -42,7 +43,7 @@ export const getDummyAcceptedCreateCFDOrder = (
 };
 
 export const getDummyAcceptedUpdateCFDOrder = (
-  currency = 'ETH',
+  currency = 'ETH' as ICurrency,
   orderStatus?: IOrderStatusUnion
 ) => {
   const accpetedCreateCFDOrder: IAcceptedCFDOrder = getDummyAcceptedCreateCFDOrder(
@@ -70,7 +71,7 @@ export const getDummyAcceptedUpdateCFDOrder = (
 };
 
 export const getDummyAcceptedCloseCFDOrder = (
-  currency = 'ETH',
+  currency = 'ETH' as ICurrency,
   orderStatus?: IOrderStatusUnion
 ) => {
   const accpetedCreateCFDOrder: IAcceptedCFDOrder = getDummyAcceptedCreateCFDOrder(

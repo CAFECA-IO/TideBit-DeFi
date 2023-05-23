@@ -99,7 +99,7 @@ export interface IMarketContext {
   ) => IResult;
     */
   listTickerPositions: (
-    ticker: string,
+    ticker: ICurrency,
     options: {
       timespan?: ITimeSpanUnion;
       begin?: number;
@@ -224,7 +224,9 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     setTimeSpan(tickerBook.timeSpan);
   };
   const selectTickerHandler = async (tickerId: ICurrency) => {
+    if (!tickerId) return {...defaultResultFailed};
     const ticker: ITickerData = availableTickersRef.current[tickerId];
+    if (!ticker) return {...defaultResultFailed};
     setSelectedTicker(ticker);
     notificationCtx.emitter.emit(TideBitEvent.TICKER_CHANGE, ticker);
     // ++ TODO: get from api
@@ -238,7 +240,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     workerCtx.tickerChangeHandler(ticker);
     */
     await getGuaranteedStopFeePercentage(ticker.currency);
-    return defaultResultSuccess;
+    return {...defaultResultSuccess};
   };
 
   /** Deprecated: replaced by pusher (20230424 - tzuhan)
@@ -385,7 +387,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
   */
 
   const listTickerPositions = (
-    ticker: string,
+    ticker: ICurrency,
     options: {
       timespan?: ITimeSpanUnion;
       begin?: number;
@@ -433,7 +435,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     return getDummyLeaderboard(timeSpan);
   };
 
-  const listTickers = async () => {
+  const listTickers = async (selectedTickerCurrency?: ICurrency) => {
     let result: IResult = {...defaultResultFailed};
     try {
       // 1. get tickers from backend
@@ -445,7 +447,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
         const tickers = result.data as ITickerData[];
         tickerBook.updateTickers(tickers);
         setAvailableTickers({...tickerBook.listTickers()});
-        await selectTickerHandler(tickers[0].currency);
+        await selectTickerHandler(selectedTickerCurrency || tickers[0].currency);
       }
     } catch (error) {
       // Deprecate: error handle (Tzuhan - 20230321)
@@ -542,7 +544,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       notificationCtx.emitter.on(TideBitEvent.TICKER, (tickerData: ITickerData) => {
         tickerBook.updateTicker(tickerData);
         const updateTickers = {...tickerBook.listTickers()};
-        setAvailableTickers(updateTickers);
+        setAvailableTickers({...updateTickers});
         if (tickerData.currency === selectedTickerRef.current?.currency)
           setSelectedTicker(updateTickers[tickerData.currency]);
       }),
@@ -602,21 +604,6 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       ),
     []
   );
-
-  /** Deprecated: replaced by pusher (20230424 - tzuhan)
-  React.useMemo(
-    () =>
-      notificationCtx.emitter.on(TideBitEvent.TRADES, (market: string, trades: ITBETrade[]) => {
-        const ticker = market.toUpperCase().replace(unitAsset, ``);
-        tickerBook.updateTrades(ticker, trades);
-        const updateTickers = {...tickerBook.listTickers()};
-        setAvailableTickers(updateTickers);
-        if (selectedTickerRef.current?.currency === ticker)
-          setCandlestickChartData([...tickerBook.listCandlestickData(ticker, {})]);
-      }),
-    []
-  );
-  */
 
   const defaultValue = {
     selectedTicker: selectedTickerRef.current,

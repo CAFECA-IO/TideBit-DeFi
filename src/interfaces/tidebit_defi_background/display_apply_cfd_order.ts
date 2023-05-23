@@ -1,3 +1,4 @@
+import {ICurrency} from '../../constants/currency';
 import {CFDOperation, ICFDOperation} from '../../constants/cfd_order_type';
 import {OrderType} from '../../constants/order_type';
 import {ProfitState} from '../../constants/profit_state';
@@ -13,7 +14,7 @@ export interface IDisplayApplyCFDOrder extends IApplyCFDOrder {
   pnl?: IPnL;
 }
 
-export const getDummyDisplayApplyCreateCFDOrder = (currency: string, id?: string) => {
+export const getDummyDisplayApplyCreateCFDOrder = (currency: ICurrency, id?: string) => {
   // const date = new Date();
   const dummyApplyCreateCFDOrder: IDisplayApplyCFDOrder = {
     ...getDummyApplyCreateCFDOrder(currency),
@@ -33,7 +34,7 @@ export const getDummyDisplayApplyUpdateCFDOrder = (currency: string, id?: string
   return dummyApplyUpdateCFDOrder;
 };
 
-export const getDummyDisplayApplyCloseCFDOrder = (currency: string, id?: string) => {
+export const getDummyDisplayApplyCloseCFDOrder = (currency: ICurrency, id?: string) => {
   const date = new Date();
   const dummyApplyCloseCFDOrder: IDisplayApplyCFDOrder = {
     ...getDummyApplyCloseCFDOrder(currency, id),

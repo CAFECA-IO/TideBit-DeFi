@@ -31,8 +31,8 @@ export const AppProvider = ({children}: IAppProvider) => {
       setIsInit(true);
       workerCtx.init();
       await notificationCtx.init();
-      await marketCtx.init();
       await userCtx.init();
+      await marketCtx.init();
     }
     return;
   };

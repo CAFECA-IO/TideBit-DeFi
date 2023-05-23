@@ -204,14 +204,18 @@ class TradeBook {
     // Info: (20230522 - Shirley) Step 2: Prepare data for regression
     const totalQuantity = trades.reduce((total, trade) => total + trade.quantity, 0);
     const weightedPrices = trades.map(trade => trade.price * (trade.quantity / totalQuantity));
-    const wSum = weightedPrices.reduce((a, b) => a + b, 0);
+    const weightedTimestamp = trades.map(
+      trade => trade.timestampMs * (trade.quantity / totalQuantity)
+    );
+    const wTimestampSum = weightedTimestamp.reduce((a, b) => a + b, 0);
+    const wPriceSum = weightedPrices.reduce((a, b) => a + b, 0);
 
     const x = trades.map((t, i) => t.timestampMs);
     const y = trades.map(t => t.price);
 
     // Info: (20230522 - Shirley) Step 3: Calculate means
-    const meanX = x.reduce((a, b) => a + b, 0) / x.length;
-    const meanY = y.reduce((a, b, i) => a + weightedPrices[i] * b, 0) / wSum;
+    const meanX = x.reduce((a, b, i) => a + weightedTimestamp[i] * b, 0) / wTimestampSum;
+    const meanY = y.reduce((a, b, i) => a + weightedPrices[i] * b, 0) / wPriceSum;
 
     // Info: (20230522 - Shirley) Step 4: Calculate slope for the formula: y = mx + b
     const subtractX = x.map(val => val - meanX);

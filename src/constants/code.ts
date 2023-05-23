@@ -20,7 +20,9 @@ export type ICode =
   | '10120001'
   | '60310001'
   | '80410001'
-  | '10310001';
+  | '10310001'
+  | '60210001'
+  | '10210002';
 
 export type ICodeConstant = {
   SUCCESS: ICode;
@@ -45,6 +47,8 @@ export type ICodeConstant = {
   CANNOT_CONVERT_TO_IMAGE: ICode;
   THIRD_PARTY_LIBRARY_ERROR: ICode;
   DEPOSIT_TOO_FREQUENCY: ICode;
+  INSUFFICIENT_PREDICTED_TRADES: ICode;
+  INVALID_TRADE: ICode;
 };
 
 export type IReason = {
@@ -58,6 +62,7 @@ export const Code: ICodeConstant = {
 
   LOCK_PROCEDURE_WRONG: '10110001',
   FUNCTION_NOT_IMPLEMENTED: '10210001',
+  INSUFFICIENT_PREDICTED_TRADES: '10210002',
   CANNOT_GET_QUOTATION_FROM_CONTEXT: '10110002',
   CANNOT_FIND_CHAIN_BY_CURRENCY: '10120001', // Info: 分享時，公鏈的名稱找不到 (20230503 - Shirley)
   DEPOSIT_TOO_FREQUENCY: '80410001',
@@ -74,6 +79,8 @@ export const Code: ICodeConstant = {
   SERVICE_TERM_DISABLE: '40430002',
   DEWT_IS_NOT_LEGIT: '40430003',
   REJECTED_SIGNATURE: '40430004',
+
+  INVALID_TRADE: '60210001',
 
   INTERNAL_SERVER_ERROR: '60220001',
   CANNOT_CONVERT_TO_IMAGE: '60310001',
@@ -109,4 +116,7 @@ export const Reason: IReason = {
   '90000000': 'ERROR_MESSAGE.UNKNOWN_ERROR',
   '90000001': 'ERROR_MESSAGE.UNKNOWN_ERROR_IN_COMPONENT',
   '80410001': 'Already deposit in a month',
+
+  '60210001': 'The format of trade is invalid',
+  '10210002': 'There are not enough predicted trades',
 };

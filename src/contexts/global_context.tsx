@@ -240,6 +240,7 @@ export interface IGlobalContext {
 
   eliminateAllModals: () => void;
   eliminateToasts: (id: string) => void;
+  eliminateAllProcessModals: () => void;
 
   displayedToast: (id: string) => boolean;
 
@@ -378,6 +379,7 @@ export const GlobalContext = createContext<IGlobalContext>({
 
   eliminateAllModals: () => null,
   eliminateToasts: () => null,
+  eliminateAllProcessModals: () => null,
 
   displayedToast: () => false,
 
@@ -794,16 +796,20 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     }
   };
 
+  const eliminateAllProcessModals = () => {
+    setVisibleLoadingModal(false);
+    setVisibleFailedModal(false);
+    setVisibleCanceledModal(false);
+    setVisibleSuccessfulModal(false);
+  };
+
   const eliminateAllModals = () => {
     setVisibleDepositModal(false);
     setVisibleWithdrawalModal(false);
 
     setVisibleDepositHistoryModal(false);
 
-    setVisibleLoadingModal(false);
-    setVisibleFailedModal(false);
-    setVisibleCanceledModal(false);
-    setVisibleSuccessfulModal(false);
+    eliminateAllProcessModals();
 
     setVisibleWalletPanel(false);
     setVisibleHelloModal(false);
@@ -1095,6 +1101,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
 
     eliminateAllModals,
     eliminateToasts,
+    eliminateAllProcessModals,
 
     displayedToast,
 

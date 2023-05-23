@@ -11,12 +11,14 @@ import {useContext, useRef, useState} from 'react';
 import TradingInput from '../trading_input/trading_input';
 import {AiOutlineQuestionCircle} from 'react-icons/ai';
 import {useGlobal} from '../../contexts/global_context';
-import {timestampToString} from '../../lib/common';
+import {locker, timestampToString} from '../../lib/common';
 import {CFDClosedType} from '../../constants/cfd_closed_type';
 import {OrderState} from '../../constants/order_state';
 import {IDisplayCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
 import {useTranslation} from 'react-i18next';
 import {UserContext} from '../../contexts/user_context';
+import {Code} from '../../constants/code';
+import {useRouter} from 'next/router';
 
 type TranslateFunction = (s: string) => string;
 interface IHistoryPositionModal {
@@ -32,6 +34,9 @@ const HistoryPositionModal = ({
   ...otherProps
 }: IHistoryPositionModal) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
+  const userCtx = useContext(UserContext);
+  const globalCtx = useGlobal();
+  const router = useRouter();
 
   const displayedClosedReason =
     closedCfdDetails.closedType === CFDClosedType.SCHEDULE
@@ -89,42 +94,111 @@ const HistoryPositionModal = ({
   const openTime = timestampToString(closedCfdDetails.createTimestamp ?? 0);
   const closedTime = timestampToString(closedCfdDetails?.closeTimestamp ?? 0);
 
-  // TODO: userCtx -> workerCtx 呼叫 API，然後用 IResult 判斷是否分享失敗
-  // HTTP Request -> workerCtx -> userCtx -> UI (20230508 - Shirley)
-  // HTTP Request 有攻擊性的，要注意呼叫 API 的權限
+  interface IShareToSocialMedia {
+    url: string;
+    text?: string;
+    type: string;
+    size: string;
+  }
 
-  const shareToFacebook = () => {
-    // TODO: cfdId (20230508 - Shirley)
-    const shareUrl = DOMAIN + `/share/cfd/${closedCfdDetails.id}`;
-    // Deprecated: sharing image to Facebook has better resolution than sharing link (20230515 - Shirley)
-    // const shareUrl = DOMAIN + `/api/images/cfd/${closedCfdDetails.id}`;
-    window.open(
-      `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`,
-      'facebook-share-dialog',
-      'width=800,height=600'
-    );
+  const fetchImgAPI = async () => {
+    const api = `/api/images/cfd/${closedCfdDetails.id}`;
+    try {
+      const res = await fetch(api);
+      // Deprecated: after demo (20230523 - Shirley)
+      // eslint-disable-next-line no-console
+      console.log('res in fetchImgAPI: ', res);
+      return res.ok;
+    } catch (e) {
+      // TODO: Failed open
+      globalCtx.dataFailedModalHandler({
+        modalTitle: t('POSITION_MODAL.SHARING'),
+        modalContent: `${t('POSITION_MODAL.ERROR_MESSAGE')} (${Code.CANNOT_FETCH_NEXT_IMG_URL})`,
+      });
+
+      globalCtx.visibleFailedModalHandler();
+    }
   };
 
-  const shareToTwitter = () => {
-    const shareUrl = DOMAIN + `/share/cfd/${closedCfdDetails.id}`;
-    window.open(
-      `https://twitter.com/intent/tweet?url=${encodeURIComponent(
-        shareUrl
-      )}&text=Check%20this%20out!`,
-      'twitter-share-dialog',
-      'width=800,height=600'
-    );
+  const shareTo = async ({url, text, type, size}: IShareToSocialMedia) => {
+    // TODO: lock
+    const [lock, unlock] = locker('history_position_modal.shareHandler');
+    if (!lock()) return;
+
+    globalCtx.dataLoadingModalHandler({
+      modalTitle: t('POSITION_MODAL.SHARING'),
+      modalContent: t('POSITION_MODAL.SHARING_LOADING'),
+      isShowZoomOutBtn: false,
+    });
+    globalCtx.visibleLoadingModalHandler();
+
+    try {
+      const result = await userCtx.enableShare(closedCfdDetails.id, true);
+      // eslint-disable-next-line no-console
+      console.log(`enableShare result: `, result);
+
+      if (result.success) {
+        const shareUrl = DOMAIN + `/share/cfd/${closedCfdDetails.id}`;
+
+        const fetchImg = await fetchImgAPI();
+        // Deprecated: after demo (20230523 - Shirley)
+        // eslint-disable-next-line no-console
+        console.log('fetchImg: ', fetchImg);
+        if (fetchImg) {
+          window.open(
+            `${url}${encodeURIComponent(shareUrl)}${text ? `${text}` : ''}`,
+            `${type}`,
+            `${size}`
+          );
+
+          globalCtx.eliminateAllProcessModals();
+        }
+      }
+
+      // TODO: Cancellation condition
+      // else if (
+      //   result.code === Code.WALLET_IS_NOT_CONNECT ||
+      //   result.code === Code.REJECTED_SIGNATURE
+      // ) {
+      //   globalCtx.eliminateAllProcessModals();
+
+      //   globalCtx.dataCanceledModalHandler({
+      //     modalTitle: t('POSITION_MODAL.SHARING'),
+      //     modalContent: `${t('POSITION_MODAL.SHARING_CANCELLED_TITLE')} (${result.code})`,
+      //   });
+
+      //   globalCtx.visibleCanceledModalHandler();
+      // }
+      else if (
+        result.code === Code.INTERNAL_SERVER_ERROR ||
+        result.code === Code.UNKNOWN_ERROR ||
+        result.code === Code.WALLET_IS_NOT_CONNECT
+      ) {
+        globalCtx.eliminateAllProcessModals();
+
+        // TODO: Failed open
+        globalCtx.dataFailedModalHandler({
+          modalTitle: t('POSITION_MODAL.SHARING'),
+          modalContent: `${t('POSITION_MODAL.ERROR_MESSAGE')} (${result.code})`,
+        });
+
+        globalCtx.visibleFailedModalHandler();
+      }
+    } catch (e) {
+      globalCtx.dataFailedModalHandler({
+        modalTitle: t('POSITION_MODAL.SHARING'),
+        modalContent: `${t('POSITION_MODAL.ERROR_MESSAGE')} (${Code.UNKNOWN_ERROR_IN_COMPONENT})`,
+      });
+
+      globalCtx.visibleFailedModalHandler();
+
+      // eslint-disable-next-line no-console
+      console.log('error when sharing', e);
+    }
+
+    unlock();
   };
 
-  const shareToReddit = () => {
-    const shareUrl = DOMAIN + `/share/cfd/${closedCfdDetails.id}`;
-    window.open(
-      `https://www.reddit.com/submit?url=${encodeURIComponent(shareUrl)}&title=Check%20this%20out!`,
-      'reddit-share-dialog',
-      'width=800,height=600'
-    );
-  };
-  const userCtx = useContext(UserContext);
   const formContent = (
     <div className="relative flex w-full flex-auto flex-col pt-0">
       <div
@@ -261,7 +335,14 @@ const HistoryPositionModal = ({
         <div className="flex items-center justify-between">
           <div className={`${socialMediaStyle}`}>
             <Image
-              onClick={shareToFacebook}
+              onClick={() =>
+                shareTo({
+                  url: 'https://www.facebook.com/sharer/sharer.php?u=',
+                  type: 'facebook-share-dialog',
+                  size: 'width=800,height=600',
+                })
+              }
+              // onClick={shareToFacebook}
               src="/elements/group_15237.svg"
               width={44}
               height={44}
@@ -271,7 +352,15 @@ const HistoryPositionModal = ({
 
           <div className={`${socialMediaStyle}`}>
             <Image
-              onClick={shareToTwitter}
+              onClick={() =>
+                shareTo({
+                  url: 'https://twitter.com/intent/tweet?url=',
+                  text: '&text=Check%20this%20out!',
+                  type: 'twitter-share-dialog',
+                  size: 'width=800,height=600',
+                })
+              }
+              // onClick={shareToTwitter}
               src="/elements/group_15235.svg"
               width={44}
               height={44}
@@ -281,7 +370,15 @@ const HistoryPositionModal = ({
 
           <div className={`${socialMediaStyle}`}>
             <Image
-              onClick={shareToReddit}
+              onClick={() =>
+                shareTo({
+                  url: 'https://www.reddit.com/submit?url=',
+                  text: '&title=Check%20this%20out!',
+                  type: 'reddit-share-dialog',
+                  size: 'width=800,height=600',
+                })
+              }
+              // onClick={shareToReddit}
               src="/elements/group_15234.svg"
               width={44}
               height={44}
@@ -324,25 +421,6 @@ const HistoryPositionModal = ({
             {formContent}
             {/*footer*/}
             <div className="flex items-center justify-end rounded-b p-2"></div>
-          </div>
-          {/* Decrepted: after demo (20230522 - tzuhan) */}
-          <div
-            onClick={async () => {
-              const result = await userCtx.enableShare(closedCfdDetails.id, false);
-              // eslint-disable-next-line no-console
-              console.log(`enableShare result: `, result);
-            }}
-          >
-            test enable share
-          </div>
-          <div
-            onClick={async () => {
-              const result = await userCtx.shareTradeRecord(closedCfdDetails.id);
-              // eslint-disable-next-line no-console
-              console.log(`share result: `, result);
-            }}
-          >
-            test share
           </div>
         </div>
       </div>

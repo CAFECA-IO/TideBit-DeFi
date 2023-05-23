@@ -40,6 +40,13 @@ module.exports = {
       '3xl': '1600px',
     },
     extend: {
+      zIndex: {
+        '60': '60',
+        '70': '70',
+        '80': '80',
+        '90': '90',
+        '100': '100',
+      },
       opacity: {'group-hover': '0.8', '0': '0'},
       visible: ['group-hover'],
       backgroundImage: {

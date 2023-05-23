@@ -22,7 +22,8 @@ export type ICode =
   | '80410001'
   | '10310001'
   | '60210001'
-  | '10210002';
+  | '10210002'
+  | '60210002';
 
 export type ICodeConstant = {
   SUCCESS: ICode;
@@ -49,6 +50,7 @@ export type ICodeConstant = {
   DEPOSIT_TOO_FREQUENCY: ICode;
   INSUFFICIENT_PREDICTED_TRADES: ICode;
   INVALID_TRADE: ICode;
+  CANNOT_FETCH_NEXT_IMG_URL: ICode;
 };
 
 export type IReason = {
@@ -81,6 +83,7 @@ export const Code: ICodeConstant = {
   REJECTED_SIGNATURE: '40430004',
 
   INVALID_TRADE: '60210001',
+  CANNOT_FETCH_NEXT_IMG_URL: '60210002',
 
   INTERNAL_SERVER_ERROR: '60220001',
   CANNOT_CONVERT_TO_IMAGE: '60310001',
@@ -119,4 +122,5 @@ export const Reason: IReason = {
 
   '60210001': 'The format of trade is invalid',
   '10210002': 'There are not enough predicted trades',
+  '60210002': 'Cannot fetch image url of Next API route',
 };

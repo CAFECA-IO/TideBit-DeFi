@@ -35,7 +35,11 @@ const CfdSharing = (props: IPageProps) => {
   const appCtx = useContext(AppContext);
   const router = useRouter();
 
-  const {cfdId} = router.query;
+  // Deprecated: called by component by `fetch` won't have any query or props unless type something on the url of the browser (20230523 - Shirley)
+  // const {query} = router;
+  // console.log('query in share/cfd', query);
+  // console.log('router in share/cfd', router);
+  // console.log('props in share/cfd', props);
 
   // TODO: for meta content (20230505 - Shirley)
   const img = `${DOMAIN}/api/images/cfd/${props.cfdId}`;

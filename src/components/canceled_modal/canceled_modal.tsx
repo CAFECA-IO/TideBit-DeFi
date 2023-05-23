@@ -65,7 +65,7 @@ const CanceledModal = ({
       {/*  <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">*/}
       {/*  overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none */}
       {/* position: relative; top: 50%; left: 50%; transform: translate(-50%, -50%) */}
-      <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">
+      <div className="fixed inset-0 z-70 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">
         {/* The position of the modal */}
         <div className="relative my-6 mx-auto w-auto max-w-xl">
           {' '}

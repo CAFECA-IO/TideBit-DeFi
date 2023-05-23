@@ -222,7 +222,10 @@
     "CLOSED_REASON_BY_USER": "手動關閉",
     "CLOSED_REASON_TAKE_PROFIT": "止盈",
     "CLOSED_REASON_STOP_LOSS": "止損",
-    "SHARE": "分享至"
+    "SHARE": "分享至",
+    "SHARING": "分享",
+    "SHARING_CANCELLED_TITLE": "您已取消分享",
+    "SHARING_LOADING": "正在載入"
   },
   "D_W_MODAL": {
     "DEPOSIT": "入金",

@@ -1,5 +1,3 @@
-// Deprecate: [debug: user login take time] (20230522 - tzuhan)
-/* eslint-disable no-console */
 import React, {useContext, createContext} from 'react';
 import useState from 'react-usestateref';
 import {UserContext} from './user_context';

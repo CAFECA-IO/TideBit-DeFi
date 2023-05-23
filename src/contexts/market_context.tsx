@@ -573,16 +573,16 @@ export const MarketProvider = ({children}: IMarketProvider) => {
   React.useMemo(
     () =>
       notificationCtx.emitter.on(TideBitEvent.TRADES, (action: IPusherAction, trade: ITrade) => {
-        tradeBook.add({
-          tradeId: trade.tradeId,
-          targetAsset: trade.baseUnit,
-          unitAsset: trade.quoteUnit,
-          direct: TradeSideText[trade.side],
-          price: trade.price,
-          timestampMs: trade.timestamp,
-          quantity: trade.amount,
-        });
         if (trade.instId === selectedTickerRef.current?.instId) {
+          tradeBook.add({
+            tradeId: trade.tradeId,
+            targetAsset: trade.baseUnit,
+            unitAsset: trade.quoteUnit,
+            direct: TradeSideText[trade.side],
+            price: trade.price,
+            timestampMs: trade.timestamp,
+            quantity: trade.amount,
+          });
           // Deprecated: [debug] (20230523 - tzuhan)
           // eslint-disable-next-line no-console
           console.log(`TideBitEvent.TRADES`, trade);

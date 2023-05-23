@@ -91,6 +91,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     closeTimestamp,
   } = sharingOrder;
 
+  // TODO: Timestamp 要改成用戶時區 (20230523 - Shirley)
   const {date: openDate, time: openTimeString} = timestampToString(createTimestamp);
   const {date: closeDate, time: closeTimeString} = timestampToString(closeTimestamp);
 

@@ -14,7 +14,7 @@ const AssetsPageBody = () => {
   }, []);
 
   return (
-    <div>
+    <div className="overflow-x-hidden">
       <SkeletonTheme baseColor="#1E2329" highlightColor="#444">
         <div className="pt-10">
           {' '}
@@ -58,22 +58,40 @@ const AssetsPageBody = () => {
               <PnlSection />
             )}
           </div>
-          <div className="relative mb-5 mt-5">
-            {/* ToDo: (20230522 - Julian) Add skeleton loading */}
-            {/* <div className="absolute flex w-screen justify-center">
-              <Skeleton width={200} height={30} className="mt-9" />
-            </div> */}
-            <InterestSection />
+          <div className="mb-5 mt-5">
+            {isLoading ? (
+              <div className="mb-8 flex w-screen flex-col items-center">
+                <Skeleton width={200} height={30} className="mt-9" />
+                <div className="mt-14 flex w-8/10 justify-between">
+                  <div className="ml-8 flex flex-col items-center space-y-10">
+                    <Skeleton width={100} height={25} />
+                    <Skeleton width={150} height={35} />
+                  </div>
+                  <div className="flex flex-col items-center space-y-10">
+                    <Skeleton width={250} height={25} />
+                    <Skeleton width={150} height={35} />
+                  </div>
+                  <div className="flex flex-col items-center space-y-10">
+                    <Skeleton width={200} height={25} />
+                    <Skeleton width={150} height={35} />
+                  </div>
+                  <div className="">
+                    <Skeleton width={250} height={150} />
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <InterestSection />
+            )}
           </div>
           <div className="">
             <ReceiptSection />
           </div>
         </div>
-
-        <div className="">
-          <Footer />
-        </div>
       </SkeletonTheme>
+      <div className="">
+        <Footer />
+      </div>
     </div>
   );
 };

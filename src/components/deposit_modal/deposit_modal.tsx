@@ -151,7 +151,8 @@ const DepositModal = ({
       } else if (
         result.code === Code.DEPOSIT_TOO_FREQUENCY ||
         result.code === Code.INTERNAL_SERVER_ERROR ||
-        result.code === Code.INVAILD_INPUTS
+        result.code === Code.INVAILD_INPUTS ||
+        result.code === Code.DEWT_IS_NOT_LEGIT
       ) {
         globalCtx.eliminateAllModals();
 

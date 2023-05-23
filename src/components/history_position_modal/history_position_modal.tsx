@@ -16,6 +16,7 @@ import {CFDClosedType} from '../../constants/cfd_closed_type';
 import {OrderState} from '../../constants/order_state';
 import {IDisplayCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
 import {useTranslation} from 'react-i18next';
+import {UserContext} from '../../contexts/user_context';
 
 type TranslateFunction = (s: string) => string;
 interface IHistoryPositionModal {
@@ -119,7 +120,7 @@ const HistoryPositionModal = ({
       'width=800,height=600'
     );
   };
-
+  const userCtx = useContext(UserContext);
   const formContent = (
     <div className="relative flex w-full flex-auto flex-col pt-0">
       <div
@@ -319,6 +320,25 @@ const HistoryPositionModal = ({
             {formContent}
             {/*footer*/}
             <div className="flex items-center justify-end rounded-b p-2"></div>
+          </div>
+          {/* Decrepted: after demo (20230522 - tzuhan) */}
+          <div
+            onClick={async () => {
+              const result = await userCtx.enableShare(closedCfdDetails.id, false);
+              // eslint-disable-next-line no-console
+              console.log(`enableShare result: `, result);
+            }}
+          >
+            test enable share
+          </div>
+          <div
+            onClick={async () => {
+              const result = await userCtx.shareTradeRecord(closedCfdDetails.id);
+              // eslint-disable-next-line no-console
+              console.log(`share result: `, result);
+            }}
+          >
+            test share
           </div>
         </div>
       </div>

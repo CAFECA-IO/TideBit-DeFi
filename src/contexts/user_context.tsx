@@ -109,7 +109,6 @@ export interface IUserContext {
   toggleEmailNotification: (props: boolean) => Promise<IResult>;
   subscribeNewsletters: (props: boolean) => Promise<IResult>;
   connectTideBit: (email: string, password: string) => Promise<IResult>;
-  shareTradeRecord: (tradeId: string) => Promise<IResult>;
   readNotifications: (notifications: INotificationItem[]) => Promise<IResult>;
   getBalance: (currency: string) => IBalance | null;
   getWalletBalance: (props: string) => IWalletBalance | null;
@@ -117,6 +116,8 @@ export interface IUserContext {
   getPersonalRanking: (timeSpan: IRankingTimeSpan) => IPersonalRanking | null;
   getPersonalAchievements: (userId: string) => IPersonalAchievement | null;
   init: () => Promise<void>;
+  enableShare: (cfdId: string, share: boolean) => Promise<IResult>;
+  shareTradeRecord: (cfdId: string) => Promise<IResult>;
   walletExtensions: IWalletExtension[];
 }
 
@@ -200,9 +201,6 @@ export const UserContext = createContext<IUserContext>({
   connectTideBit: (): Promise<IResult> => {
     throw new CustomError(Code.FUNCTION_NOT_IMPLEMENTED);
   },
-  shareTradeRecord: (): Promise<IResult> => {
-    throw new CustomError(Code.FUNCTION_NOT_IMPLEMENTED);
-  },
   readNotifications: (): Promise<IResult> => {
     throw new CustomError(Code.FUNCTION_NOT_IMPLEMENTED);
   },
@@ -212,6 +210,12 @@ export const UserContext = createContext<IUserContext>({
   getPersonalRanking: () => null,
   getPersonalAchievements: () => null,
   init: () => Promise.resolve(),
+  enableShare: (): Promise<IResult> => {
+    throw new CustomError(Code.FUNCTION_NOT_IMPLEMENTED);
+  },
+  shareTradeRecord: (): Promise<IResult> => {
+    throw new CustomError(Code.FUNCTION_NOT_IMPLEMENTED);
+  },
   walletExtensions: [],
 });
 
@@ -1303,6 +1307,38 @@ export const UserProvider = ({children}: IUserProvider) => {
     return result;
   };
 
+  const enableShare = async (cfdId: string, share: boolean) => {
+    let result: IResult = {...defaultResultFailed};
+    try {
+      result = (await privateRequestHandler({
+        name: APIName.ENABLE_CFD_SHARE,
+        method: Method.PUT,
+        params: cfdId,
+        body: {
+          share: share,
+        },
+      })) as IResult;
+    } catch (error) {
+      result = {...defaultResultFailed};
+    }
+    return result;
+  };
+
+  const shareTradeRecord = async (cfdId: string) => {
+    let result: IResult = {...defaultResultFailed};
+    try {
+      // TODO: call 3rd party api (Tzuhan - 20230317)
+      result = (await privateRequestHandler({
+        name: APIName.SHARE_CFD,
+        method: Method.GET,
+        params: cfdId,
+      })) as IResult;
+    } catch (error) {
+      result = {...defaultResultFailed};
+    }
+    return result;
+  };
+
   const sendEmailCode = async (email: string, hashCash: string) => {
     let result: IResult = {...defaultResultFailed};
     try {
@@ -1345,16 +1381,6 @@ export const UserProvider = ({children}: IUserProvider) => {
     let result: IResult = {...defaultResultFailed};
     try {
       // TODO: post request (Tzuhan - 20230317)
-      result = defaultResultSuccess;
-    } catch (error) {
-      result = {...defaultResultFailed};
-    }
-    return result;
-  };
-  const shareTradeRecord = async (tradeId: string) => {
-    let result: IResult = {...defaultResultFailed};
-    try {
-      // TODO: call 3rd party api (Tzuhan - 20230317)
       result = defaultResultSuccess;
     } catch (error) {
       result = {...defaultResultFailed};
@@ -1547,6 +1573,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     toggleEmailNotification,
     subscribeNewsletters,
     connectTideBit,
+    enableShare,
     shareTradeRecord,
     readNotifications,
     getBalance,

@@ -79,7 +79,7 @@ const ReceiptSection = () => {
         listHistories.filter(
           v =>
             v.receipt.orderSnapshot.orderType === OrderType.CFD &&
-            (v.receipt.orderSnapshot as ICFDOrder).state === OrderState.OPENING
+            (v.receipt.orderSnapshot as ICFDOrder).state === OrderState.CLOSED
         )
       );
     }

@@ -285,6 +285,9 @@ class TradeBook {
   }
 
   toCandlestick(interval: number, length: number): ICandlestickData[] {
+    // Deprecated: [debug] (20230523 - tzuhan)
+    // eslint-disable-next-line no-console
+    console.log(`toCandlestick: this.trades.length = ${this.trades.length}`);
     const candleSticks: ICandlestickData[] = [];
     const intervalMs = interval * 1000;
 

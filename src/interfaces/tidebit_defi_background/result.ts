@@ -2,12 +2,14 @@ import {Code, ICode, Reason} from '../../constants/code';
 // import {IAcceptedCFDOrder} from './accepted_cfd_order';
 import {IAcceptedOrder} from './accepted_order';
 import {IBalance} from './balance';
-import {ICandlestickData} from './candlestickData';
+import {ICandlestickData, ITrade} from './candlestickData';
 import {ICryptocurrency} from './cryptocurrency';
 import {IOrder} from './order';
 import {IQuotation} from './quotation';
 import {ITickerData} from './ticker_data';
 import {ITickerHistoryData} from './ticker_history_data';
+import {ITickerLiveStatistics} from './ticker_live_statistics';
+import {ITickerStatic} from './ticker_static';
 import {IUser} from './user';
 import {IUserBalance} from './user_balance';
 
@@ -32,6 +34,9 @@ export interface IResult {
     | {order: IOrder}
     | IQuotation
     | ITickerHistoryData[]
+    | ITickerStatic
+    | ITickerLiveStatistics
+    | ITrade[]
     | null;
   code: ICode;
   reason?: string;

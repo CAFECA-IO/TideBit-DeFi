@@ -25,6 +25,8 @@ export type IAPIName =
   | 'GET_CFD_SUGGESTION'
   | 'GET_TICKER_HISTORY'
   | 'GET_GUARANTEED_STOP_FEE_PERCENTAGE'
+  | 'GET_TICKER_STATIC'
+  | 'GET_TICKER_LIVE_STATISTICS'
   | 'LIST_MARKET_TRADES'
   // trades
   | 'LIST_CFD_TRADES'
@@ -80,6 +82,8 @@ export interface IAPINameConstant {
   GET_CFD_SUGGESTION: IAPIName;
   GET_TICKER_HISTORY: IAPIName;
   GET_GUARANTEED_STOP_FEE_PERCENTAGE: IAPIName;
+  GET_TICKER_STATIC: IAPIName;
+  GET_TICKER_LIVE_STATISTICS: IAPIName;
   LIST_MARKET_TRADES: IAPIName;
   // trades
   LIST_CFD_TRADES: IAPIName;
@@ -136,6 +140,8 @@ export const APIName: IAPINameConstant = {
   GET_CFD_SUGGESTION: 'GET_CFD_SUGGESTION',
   GET_TICKER_HISTORY: 'GET_TICKER_HISTORY',
   GET_GUARANTEED_STOP_FEE_PERCENTAGE: 'GET_GUARANTEED_STOP_FEE_PERCENTAGE',
+  GET_TICKER_STATIC: 'GET_TICKER_STATIC',
+  GET_TICKER_LIVE_STATISTICS: 'GET_TICKER_LIVE_STATISTICS',
   LIST_MARKET_TRADES: 'LIST_MARKET_TRADES',
   // trades
   LIST_CFD_TRADES: 'LIST_CFD_TRADES',
@@ -193,7 +199,9 @@ export const APIURL = {
   GET_CFD_SUGGESTION: `${API_URL}/market/suggestion`,
   GET_TICKER_HISTORY: '/api/market/histories', // deprecated: '/api/market/tickerhistory' (20230323 - tzuhan)
   GET_GUARANTEED_STOP_FEE_PERCENTAGE: `${API_URL}/market/guaranteed-stop-fee`,
-  LIST_MARKET_TRADES: '/api/market/trades',
+  GET_TICKER_STATIC: `${API_URL}/market/ticker-static`,
+  GET_TICKER_LIVE_STATISTICS: `${API_URL}/market/ticker-live-statistics`,
+  LIST_MARKET_TRADES: `${API_URL}/market/trades`,
   // trades
   LIST_CFD_TRADES: `${API_URL}/trade/cfds`,
   LIST_HISTORIES: `${API_URL}/trade/history`,

@@ -37,8 +37,6 @@ const HistoryPositionModal = ({
 }: IHistoryPositionModal) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
   const userCtx = useContext(UserContext);
-  const globalCtx = useGlobal();
-  const router = useRouter();
 
   const displayedClosedReason =
     closedCfdDetails.closedType === CFDClosedType.SCHEDULE
@@ -246,7 +244,6 @@ const HistoryPositionModal = ({
                   size: 'width=800,height=600',
                 })
               }
-              // onClick={shareToFacebook}
               src="/elements/group_15237.svg"
               width={44}
               height={44}
@@ -264,7 +261,6 @@ const HistoryPositionModal = ({
                   size: 'width=800,height=600',
                 })
               }
-              // onClick={shareToTwitter}
               src="/elements/group_15235.svg"
               width={44}
               height={44}
@@ -282,7 +278,6 @@ const HistoryPositionModal = ({
                   size: 'width=800,height=600',
                 })
               }
-              // onClick={shareToReddit}
               src="/elements/group_15234.svg"
               width={44}
               height={44}

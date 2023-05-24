@@ -1,6 +1,7 @@
 import {NextApiRequest, NextApiResponse} from 'next';
 import {ImageResponse} from 'next/server';
 import {
+  adjustTimestamp,
   randomIntFromInterval,
   roundToDecimalPlaces,
   timestampToString,
@@ -39,19 +40,22 @@ export const config = {
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const {pathname} = new URL(req?.url ?? '');
-  const params = pathname.split('/');
+  const url = new URL(req?.url ?? '');
+  const params = url.pathname.split('/');
   const cfdId = params.pop(); // TODO: send to api (20230508 - Shirley)
-  const url = `${API_URL}/public/shared/cfd/${cfdId}`;
+  const apiUrl = `${API_URL}/public/shared/cfd/${cfdId}`;
+  const tz = Number(url.searchParams.get('tz'));
   // Deprecated: after demo (20230523 - Shirley)
   // eslint-disable-next-line no-console
   console.log('cfdId in images/cfd', cfdId);
+  // eslint-disable-next-line no-console
+  console.log('searchParams in images/cfd', tz);
+
   let sharingOrder: ISharingOrder = getInvalidSharingOrder();
 
-  /* TODO: Data from API (20230522 - Shirley)*/
   const fetchOrder = async () => {
     try {
-      const orderResponse = await fetch(url, {
+      const orderResponse = await fetch(apiUrl, {
         method: 'GET',
         headers: {'Content-Type': 'application/json'},
       });
@@ -71,8 +75,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   try {
     await fetchOrder();
+    const adCreateTimstamp = adjustTimestamp(sharingOrder?.createTimestamp ?? 0, tz);
+    const adCloseTimstamp = adjustTimestamp(sharingOrder?.closeTimestamp ?? 0, tz);
+
+    sharingOrder = {
+      ...sharingOrder,
+      createTimestamp: adCreateTimstamp,
+      closeTimestamp: adCloseTimstamp,
+    };
   } catch (e) {
-    // TODO: error handling (20230523 - Shirley)
+    // Info: show the invalid dummy order img (20230523 - Shirley)
   }
   // Deprecated: after demo (20230523 - Shirley)
   // eslint-disable-next-line no-console

@@ -10,7 +10,7 @@ import NavBarMobile from '../../../components/nav_bar_mobile/nav_bar_mobile';
 import {GetServerSideProps, GetStaticPaths, GetStaticProps} from 'next';
 import {useRouter} from 'next/router';
 import Error from 'next/error';
-import {findCurrencyByCode, hasValue} from '../../../lib/common';
+import {findCurrencyByCode, getTimestamp, hasValue, timestampToString} from '../../../lib/common';
 // import {tickerIds} from '../../../constants/config';
 import {Currency} from '../../../constants/currency';
 import Skeleton, {SkeletonTheme} from 'react-loading-skeleton';
@@ -35,18 +35,16 @@ const CfdSharing = (props: IPageProps) => {
   const appCtx = useContext(AppContext);
   const router = useRouter();
 
+  const [userTz, setUserTz, userTzRef] = useStateRef<number>(0);
+
   // Deprecated: called by component by `fetch` won't have any query or props unless type something on the url of the browser (20230523 - Shirley)
   const {query} = router;
   // eslint-disable-next-line no-console
   console.log('query in share/cfd', query);
-  // eslint-disable-next-line no-console
-  console.log('router in share/cfd', router);
-  // eslint-disable-next-line no-console
-  console.log('props in share/cfd', props);
 
   // TODO: for meta content (20230505 - Shirley)
-  const img = `${DOMAIN}/api/images/cfd/${props.cfdId}`;
-  const displayImg = `/api/images/cfd/${props.cfdId}`;
+  const img = `${DOMAIN}/api/images/cfd/${props.cfdId}?tz=${userTzRef.current}`;
+  const displayImg = `/api/images/cfd/${props.cfdId}?tz=${userTzRef.current}`;
   const share = `${DOMAIN}/share/cfd/${props.cfdId}`;
 
   useEffect(() => {
@@ -54,6 +52,42 @@ const CfdSharing = (props: IPageProps) => {
       appCtx.init();
     }
   }, []);
+
+  useEffect(() => {
+    try {
+      // Get user's timezone offset
+      const timezoneOffset = new Date().getTimezoneOffset();
+
+      // // Get current timestamp
+      // const timestamp = Math.floor(Date.now() / 1000);
+
+      // // Convert timestamp to user's local time
+      // const userTime = timestampToString(timestamp, timezoneOffset);
+
+      const timeDiff = -timezoneOffset / 60;
+      // TODO: below is correct
+      // const timeDiff = -timezoneOffset / 60;
+      // eslint-disable-next-line no-console
+      console.log('timeDiff', timeDiff);
+      // eslint-disable-next-line no-console
+      console.log('sent to api/images/cfd', `${displayImg}`);
+
+      setUserTz(timeDiff);
+    } catch (error) {
+      // TODO: error handling (20230524 - Shirley)
+      // eslint-disable-next-line no-console
+      console.error('Error getting user time: ', error);
+    }
+
+    // const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    // const timezoneOffset = new Date().getTimezoneOffset();
+    // const timestamp = getTimestamp() - 1000 * 60 * 60 * 8;
+    // const userTime = timestampToString(timestamp, timezoneOffset);
+
+    // console.log('userTimeZone', userTimeZone);
+    // console.log('timezoneOffset', timezoneOffset);
+    // console.log('userTime', userTime);
+  }, [appCtx.isInit]);
 
   if (!router.isFallback && !props.cfdId) {
     return <Error statusCode={404} />;
@@ -116,11 +150,6 @@ export const getServerSideProps: GetServerSideProps<IPageProps> = async ({params
     };
   }
 
-  // Deprecated: (20230524 - Shirley)
-  // eslint-disable-next-line no-console
-  console.log('getServerSideProps in share/cfd', params.cfdId);
-
-  // now that we have params.cfdId, we can pass it as a prop to our page
   return {
     props: {
       cfdId: params.cfdId,
@@ -128,44 +157,5 @@ export const getServerSideProps: GetServerSideProps<IPageProps> = async ({params
     },
   };
 };
-
-// export const getStaticProps: GetStaticProps<IPageProps> = async ({params, locale}) => {
-//   if (!params || !params.cfdId || typeof params.cfdId !== 'string') {
-//     return {
-//       notFound: true,
-//     };
-//   }
-
-//   return {
-//     props: {
-//       cfdId: params.cfdId,
-//       ...(await serverSideTranslations(locale as string, ['common', 'footer'])),
-//     },
-//   };
-// };
-
-// /**
-//  * Info: (20230504 - Shirley) getStaticPaths
-//  * In development (npm run dev or yarn dev), `getStaticPaths` runs on every request.
-//  * In production, `getStaticPaths` runs at build time.
-//  */
-// export const getStaticPaths: GetStaticPaths = async ({locales}) => {
-//   // TODO: cfdIds should be fetched from API (20230504 - Shirley)
-//   const cfdIds = ['test'];
-//   const paths = cfdIds
-//     .flatMap(id => {
-//       console.log('getStaticPaths id', id);
-//       return locales?.map(locale => ({
-//         params: {cfdId: id},
-//         locale: locale,
-//       }));
-//     })
-//     .filter((path): path is {params: {cfdId: string}; locale: string} => !!path);
-
-//   return {
-//     paths: paths,
-//     fallback: true,
-//   };
-// };
 
 export default CfdSharing;

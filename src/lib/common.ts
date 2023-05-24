@@ -44,12 +44,18 @@ export function getDeadline(deadline: number) {
   return Math.ceil(new Date().getTime() / 1000) + deadline;
 }
 
+export const adjustTimestamp = (timestamp: number, timezoneOffset: number) => {
+  const ts = timestamp + timezoneOffset * 60 * 60;
+
+  return ts;
+};
+
 /**
  *
  * @param timestamp is in seconds
  * @returns object
  */
-export const timestampToString = (timestamp: number) => {
+export const timestampToString = (timestamp: number, timezoneOffset?: number) => {
   if (timestamp === 0)
     return {
       date: '-',
@@ -60,8 +66,50 @@ export const timestampToString = (timestamp: number) => {
       abbreviatedTime: '-',
     };
 
+  if (timezoneOffset !== undefined) {
+    const offsetTimestamp = timestamp + timezoneOffset * 60;
+    const date = new Date(offsetTimestamp * 1000);
+
+    const year = date.getUTCFullYear();
+    const month = (date.getUTCMonth() + 1).toString().padStart(2, '0');
+    const day = date.getUTCDate().toString().padStart(2, '0');
+    const hour = date.getUTCHours().toString().padStart(2, '0');
+    const minute = date.getUTCMinutes().toString().padStart(2, '0');
+    const second = date.getUTCSeconds().toString().padStart(2, '0');
+
+    const monthIndex = date.getUTCMonth();
+    const monthNames = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
+
+    const monthName = monthNames[monthIndex];
+    const monthFullName = MONTH_FULL_NAME_LIST[monthIndex];
+
+    const dateString = `${year}-${month}-${day}`;
+    const timeString = `${hour}:${minute}:${second}`;
+
+    return {
+      date: dateString,
+      time: timeString,
+      abbreviatedMonth: monthName,
+      monthAndYear: `${monthFullName} ${year}`,
+      day: day,
+      abbreviatedTime: `${hour}:${minute}`,
+    };
+  }
+
   const date = new Date(timestamp * 1000);
-  // const date = new Date();
 
   const year = date.getFullYear();
   const month = (date.getMonth() + 1).toString().padStart(2, '0');

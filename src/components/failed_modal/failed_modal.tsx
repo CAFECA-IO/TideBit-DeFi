@@ -13,6 +13,7 @@ export interface IFailedModal {
   btnUrl?: string;
   failedTitle?: string;
   failedMsg?: string;
+  btnFunction?: () => void;
 }
 
 // TODO: btn function (20230523 - Shirley)
@@ -26,10 +27,19 @@ const FailedModal = ({
   btnUrl,
   failedTitle,
   failedMsg,
+  btnFunction,
   ...otherProps
 }: IFailedModal) => {
   const displayedModalContent =
     (!failedTitle || !failedMsg) && !modalContent ? 'Failed' : modalContent;
+
+  const btnClickHandler = () => {
+    if (btnFunction) {
+      btnFunction();
+    }
+
+    modalClickHandler();
+  };
 
   const failContent = (
     <div className="relative flex flex-auto flex-col items-center pt-1 text-center text-lg leading-relaxed text-lightWhite">
@@ -54,7 +64,7 @@ const FailedModal = ({
             <RippleButton
               className={`absolute bottom-0 mt-0 w-254px rounded border-0 bg-tidebitTheme py-2 text-base text-white transition-colors duration-300 hover:cursor-pointer hover:bg-cyan-600 focus:outline-none md:mt-0`}
               buttonType="button"
-              onClick={modalClickHandler}
+              onClick={btnClickHandler}
             >
               {btnMsg}
             </RippleButton>
@@ -63,7 +73,7 @@ const FailedModal = ({
           <RippleButton
             className={`absolute bottom-0 mt-0 w-254px rounded border-0 bg-tidebitTheme py-2 text-base text-white transition-colors duration-300 hover:cursor-pointer hover:bg-cyan-600 focus:outline-none md:mt-0`}
             buttonType="button"
-            onClick={modalClickHandler}
+            onClick={btnClickHandler}
           >
             {btnMsg}
           </RippleButton>

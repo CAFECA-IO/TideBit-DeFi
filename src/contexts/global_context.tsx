@@ -877,9 +877,6 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
   };
 
   const visibleFailedModalHandler = () => {
-    if (!!dataFailedModal.btnFunction) {
-      dataFailedModal.btnFunction();
-    }
     setVisibleFailedModal(!visibleFailedModal);
   };
 
@@ -1255,6 +1252,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
         btnUrl={dataFailedModal?.btnUrl}
         failedTitle={dataFailedModal.failedTitle}
         failedMsg={dataFailedModal?.failedMsg}
+        btnFunction={dataFailedModal?.btnFunction}
       />
       <CanceledModal
         modalTitle={dataCanceledModal.modalTitle}

@@ -96,7 +96,7 @@ const HistoryPositionModal = ({
 
   const {shareTo} = useShareProcess({
     lockerName: 'history_position_modal.shareHandler',
-    shareType: ShareType.BADGE,
+    shareType: ShareType.CFD,
     shareId: closedCfdDetails.id,
     enableShare: userCtx.enableShare,
   });

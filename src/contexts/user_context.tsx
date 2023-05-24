@@ -1312,7 +1312,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     let result: IResult = {...defaultResultFailed};
     // Deprecated: after demo (20230524 - Shirley)
     const randomInt = randomIntFromInterval(0, 5);
-    if (randomInt < 3) {
+    if (randomInt < 4) {
       return {...result, success: false, code: Code.INTERNAL_SERVER_ERROR};
     }
 

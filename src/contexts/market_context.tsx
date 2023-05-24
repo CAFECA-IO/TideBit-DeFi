@@ -24,12 +24,12 @@ import {
   dummyTicker,
   toDummyTickers,
 } from '../interfaces/tidebit_defi_background/ticker_data';
-import {ITimeSpanUnion, TimeSpanUnion} from '../constants/time_span_union';
+import {ITimeSpanUnion, TimeSpanUnion, getTime} from '../constants/time_span_union';
 import {
   ICandlestick,
   ICandlestickData,
-  getDummyCandlestickChartData,
-  updateDummyCandlestickChartData,
+  ITrade,
+  TradeSideText,
 } from '../interfaces/tidebit_defi_background/candlestickData';
 import {TideBitEvent} from '../constants/tidebit_event';
 import {NotificationContext} from './notification_context';
@@ -46,10 +46,12 @@ import {ICurrency} from '../constants/currency';
 import {CustomError} from '../lib/custom_error';
 import {Code, Reason} from '../constants/code';
 import CandlestickBookInstance from '../lib/books/candlestick_book';
-import {IPusherAction} from '../interfaces/tidebit_defi_background/pusher_data';
+import {IPusherAction, PusherAction} from '../interfaces/tidebit_defi_background/pusher_data';
 import {IQuotation} from '../interfaces/tidebit_defi_background/quotation';
 import {IRankingTimeSpan} from '../constants/ranking_time_span';
 import {ILeaderboard, getDummyLeaderboard} from '../interfaces/tidebit_defi_background/leaderboard';
+import TradeBookInstance from '../lib/books/trade_book';
+import {millesecondsToSeconds} from '../lib/common';
 
 export interface IMarketProvider {
   children: React.ReactNode;
@@ -77,7 +79,7 @@ export interface IMarketContext {
   listAvailableTickers: () => ITickerData[];
   selectTickerHandler: (props: ICurrency) => Promise<IResult>;
   selectTimeSpanHandler: (props: ITimeSpanUnion) => void;
-  getCandlestickChartData: (tickerId: string) => Promise<IResult>; // x 100
+  // getCandlestickChartData: (tickerId: string) => Promise<IResult>; // x 100
   getCFDQuotation: (tickerId: string, typeOfPosition: ITypeOfPosition) => Promise<IResult>;
   getCFDSuggestion: (
     tickerId: string,
@@ -134,7 +136,7 @@ export const MarketContext = createContext<IMarketContext>({
   candlestickChartIdHandler: () => null,
   listAvailableTickers: () => [],
   selectTickerHandler: () => Promise.resolve(defaultResultSuccess),
-  getCandlestickChartData: () => Promise.resolve(defaultResultSuccess),
+  // getCandlestickChartData: () => Promise.resolve(defaultResultSuccess),
   getCFDQuotation: () => Promise.resolve(defaultResultSuccess),
   getCFDSuggestion: () => Promise.resolve(defaultResultSuccess),
   getGuaranteedStopFeePercentage: () => Promise.resolve(defaultResultSuccess),
@@ -152,6 +154,7 @@ export const MarketContext = createContext<IMarketContext>({
 export const MarketProvider = ({children}: IMarketProvider) => {
   const tickerBook = React.useMemo(() => TickerBookInstance, []);
   const candlestickBook = React.useMemo(() => CandlestickBookInstance, []);
+  const tradeBook = React.useMemo(() => TradeBookInstance, []);
   const userCtx = useContext(UserContext);
   const notificationCtx = useContext(NotificationContext);
   const workerCtx = useContext(WorkerContext);
@@ -176,6 +179,8 @@ export const MarketProvider = ({children}: IMarketProvider) => {
   const [candlestickChartData, setCandlestickChartData, candlestickChartDataRef] = useState<
     ICandlestickData[] | null
   >(null);
+  const [candlestickInterval, setCandlestickInterval, candlestickIntervalRef] =
+    useState<NodeJS.Timer | null>(null);
   const [timeSpan, setTimeSpan, timeSpanRef] = useState<ITimeSpanUnion>(tickerBook.timeSpan);
   const [availableTickers, setAvailableTickers, availableTickersRef] = useState<{
     [currency in ICurrency]: ITickerData;
@@ -233,7 +238,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     const tickerLiveStatistics: ITickerLiveStatistics = getDummyTickerLiveStatistics(tickerId);
     setTickerLiveStatistics(tickerLiveStatistics);
 
-    await getCandlestickChartData(ticker.instId);
+    // await getCandlestickChartData(ticker.instId);
     /** Deprecated: replaced by pusher (20230502 - tzuhan) 
     workerCtx.tickerChangeHandler(ticker);
     */
@@ -278,6 +283,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     }
    * @returns 
    */
+  /** Deprecated: replace by pusher updating (20230523 - tzuan) 
   const getCandlestickChartData = async (instId: string) => {
     let result: IResult = {...defaultResultFailed};
 
@@ -309,6 +315,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     }
     return result;
   };
+  */
 
   const getCFDQuotation = async (currency: string, typeOfPosition: ITypeOfPosition) => {
     let result: IResult = {...defaultResultFailed};
@@ -521,11 +528,24 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     return result;
   };
 
+  const syncCandlestickData = () => {
+    if (!!candlestickIntervalRef.current) {
+      clearInterval(candlestickIntervalRef.current);
+      setCandlestickInterval(null);
+    }
+    const candlestickInterval = setInterval(() => {
+      const candlesticks = tradeBook.toCandlestick(millesecondsToSeconds(getTime(timeSpan)), 100);
+      setCandlestickChartData(candlesticks);
+    }, 100);
+    setCandlestickInterval(candlestickInterval);
+  };
+
   const init = async () => {
     setIsCFDTradable(true);
     await listTickers();
     await listDepositCryptocurrencies();
     await lisWithdrawCryptocurrencies();
+    syncCandlestickData();
     return await Promise.resolve();
   };
 
@@ -570,17 +590,38 @@ export const MarketProvider = ({children}: IMarketProvider) => {
 
   React.useMemo(
     () =>
-      notificationCtx.emitter.on(
-        TideBitEvent.CANDLESTICK,
-        (action: IPusherAction, candlesticks: ICandlestick) => {
-          candlestickBook.updateCandlesticksData(action, candlesticks);
-          const [baseUnit, quoteUnit] = candlesticks.instId.split(`-`);
-          if (selectedTickerRef.current?.currency === baseUnit)
-            setCandlestickChartData(candlestickBook.listCandlestickData(candlesticks.instId, {}));
+      notificationCtx.emitter.on(TideBitEvent.TRADES, (action: IPusherAction, trade: ITrade) => {
+        if (trade.instId === selectedTickerRef.current?.instId) {
+          tradeBook.add({
+            tradeId: trade.tradeId,
+            targetAsset: trade.baseUnit,
+            unitAsset: trade.quoteUnit,
+            direct: TradeSideText[trade.side],
+            price: trade.price,
+            timestampMs: trade.timestamp,
+            quantity: trade.amount,
+          });
         }
-      ),
+      }),
     []
   );
+
+  // React.useMemo(
+  //   () =>
+  //     notificationCtx.emitter.on(
+  //       TideBitEvent.CANDLESTICK,
+  //       (action: IPusherAction, candlesticks: ICandlestick) => {
+  //         candlestickBook.updateCandlesticksData(action, candlesticks);
+  //         const [baseUnit, quoteUnit] = candlesticks.instId.split(`-`);
+  //         if (
+  //           action === PusherAction.SNAPSHOT &&
+  //           selectedTickerRef.current?.currency === baseUnit
+  //         )
+  //           setCandlestickChartData(candlestickBook.listCandlestickData(candlesticks.instId, {}));
+  //       }
+  //     ),
+  //   []
+  // );
 
   const defaultValue = {
     selectedTicker: selectedTickerRef.current,
@@ -602,7 +643,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     depositCryptocurrencies: depositCryptocurrenciesRef.current,
     withdrawCryptocurrencies: withdrawCryptocurrenciesRef.current,
     tidebitPromotion,
-    getCandlestickChartData,
+    // getCandlestickChartData,
     getCFDQuotation,
     getCFDSuggestion,
     getGuaranteedStopFeePercentage,

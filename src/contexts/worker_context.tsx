@@ -6,14 +6,14 @@ import {formatAPIRequest, FormatedTypeRequest, TypeRequest} from '../constants/a
 import {Events} from '../constants/events';
 import {TideBitEvent} from '../constants/tidebit_event';
 import {ITickerData} from '../interfaces/tidebit_defi_background/ticker_data';
-import Pusher from 'pusher-js';
+import Pusher, {Channel} from 'pusher-js';
 import {NotificationContext} from './notification_context';
 import {
   IPusherData,
   IPusherPrivateData,
   PusherChannel,
 } from '../interfaces/tidebit_defi_background/pusher_data';
-import {ICandlestick} from '../interfaces/tidebit_defi_background/candlestickData';
+import {ICandlestick, ITrade} from '../interfaces/tidebit_defi_background/candlestickData';
 import {getCookieByName} from '../lib/common';
 
 type IJobType = 'API' | 'WS';
@@ -54,6 +54,7 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
   const notificationCtx = useContext(NotificationContext);
   const [apiWorker, setAPIWorker, apiWorkerRef] = useState<Worker | null>(null);
   const [pusher, setPuser, pusherRef] = useState<Pusher | null>(null);
+  const [publicChannel, setPublicChannel, publicChannelRef] = useState<Channel | null>(null);
   const jobQueueOfWS = useRef<((...args: []) => Promise<void>)[]>([]);
   const jobQueueOfAPI = useRef<((...args: []) => Promise<void>)[]>([]);
   const [sockedId, setSocketId, sockedIdRef] = useState<string | null>(null);
@@ -85,12 +86,21 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
   };
 
   const subscribeCandlesticks = () => {
-    if (pusherRef.current) {
-      const channel = pusherRef.current?.subscribe(PusherChannel.GLOBAL_CHANNEL);
-      channel.bind(Events.CANDLE_ON_UPDATE, (pusherData: IPusherData) => {
+    if (publicChannelRef.current) {
+      publicChannelRef.current.bind(Events.CANDLE_ON_UPDATE, (pusherData: IPusherData) => {
         const {action, data} = pusherData;
         const candlesticks = data as ICandlestick;
         notificationCtx.emitter.emit(TideBitEvent.CANDLESTICK, action, candlesticks);
+      });
+    }
+  };
+
+  const subscribeTrades = () => {
+    if (publicChannelRef.current) {
+      publicChannelRef.current.bind(Events.TRADES, (pusherData: IPusherData) => {
+        const {action, data} = pusherData;
+        const trade = data as ITrade;
+        notificationCtx.emitter.emit(TideBitEvent.TRADES, action, trade);
       });
     }
   };
@@ -131,15 +141,24 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
     });
     // eslint-disable-next-line no-console
     console.log('pusher', pusher);
+    setPuser(pusher);
     pusher.connection.bind('connected', function () {
       const socketId = pusher.connection.socket_id;
+      // Deprecated: [debug] (20230523 - tzuhan)
       // eslint-disable-next-line no-console
       console.log('pusher My socket ID is ' + socketId);
       setSocketId(sockedId);
+      const channel = pusherRef.current?.subscribe(PusherChannel.GLOBAL_CHANNEL);
+      // Deprecated: [debug] (20230523 - tzuhan)
+      // eslint-disable-next-line no-console
+      console.log('channel ', channel);
+      if (channel) {
+        setPublicChannel(channel);
+        subscribeTickers();
+        subscribeTrades();
+        subscribeCandlesticks();
+      }
     });
-    setPuser(pusher);
-    subscribeTickers();
-    subscribeCandlesticks();
   };
 
   const init = async () => {

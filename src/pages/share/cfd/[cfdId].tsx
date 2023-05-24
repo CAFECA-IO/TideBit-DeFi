@@ -36,10 +36,13 @@ const CfdSharing = (props: IPageProps) => {
   const router = useRouter();
 
   // Deprecated: called by component by `fetch` won't have any query or props unless type something on the url of the browser (20230523 - Shirley)
-  // const {query} = router;
-  // console.log('query in share/cfd', query);
-  // console.log('router in share/cfd', router);
-  // console.log('props in share/cfd', props);
+  const {query} = router;
+  // eslint-disable-next-line no-console
+  console.log('query in share/cfd', query);
+  // eslint-disable-next-line no-console
+  console.log('router in share/cfd', router);
+  // eslint-disable-next-line no-console
+  console.log('props in share/cfd', props);
 
   // TODO: for meta content (20230505 - Shirley)
   const img = `${DOMAIN}/api/images/cfd/${props.cfdId}`;
@@ -106,13 +109,18 @@ const CfdSharing = (props: IPageProps) => {
   );
 };
 
-export const getStaticProps: GetStaticProps<IPageProps> = async ({params, locale}) => {
+export const getServerSideProps: GetServerSideProps<IPageProps> = async ({params, locale}) => {
   if (!params || !params.cfdId || typeof params.cfdId !== 'string') {
     return {
       notFound: true,
     };
   }
 
+  // Deprecated: (20230524 - Shirley)
+  // eslint-disable-next-line no-console
+  console.log('getServerSideProps in share/cfd', params.cfdId);
+
+  // now that we have params.cfdId, we can pass it as a prop to our page
   return {
     props: {
       cfdId: params.cfdId,
@@ -121,27 +129,43 @@ export const getStaticProps: GetStaticProps<IPageProps> = async ({params, locale
   };
 };
 
-/**
- * Info: (20230504 - Shirley) getStaticPaths
- * In development (npm run dev or yarn dev), `getStaticPaths` runs on every request.
- * In production, `getStaticPaths` runs at build time.
- */
-export const getStaticPaths: GetStaticPaths = async ({locales}) => {
-  // TODO: cfdIds should be fetched from API (20230504 - Shirley)
-  const cfdIds = ['test'];
-  const paths = cfdIds
-    .flatMap(id => {
-      return locales?.map(locale => ({
-        params: {cfdId: id},
-        locale: locale,
-      }));
-    })
-    .filter((path): path is {params: {cfdId: string}; locale: string} => !!path);
+// export const getStaticProps: GetStaticProps<IPageProps> = async ({params, locale}) => {
+//   if (!params || !params.cfdId || typeof params.cfdId !== 'string') {
+//     return {
+//       notFound: true,
+//     };
+//   }
 
-  return {
-    paths: paths,
-    fallback: true,
-  };
-};
+//   return {
+//     props: {
+//       cfdId: params.cfdId,
+//       ...(await serverSideTranslations(locale as string, ['common', 'footer'])),
+//     },
+//   };
+// };
+
+// /**
+//  * Info: (20230504 - Shirley) getStaticPaths
+//  * In development (npm run dev or yarn dev), `getStaticPaths` runs on every request.
+//  * In production, `getStaticPaths` runs at build time.
+//  */
+// export const getStaticPaths: GetStaticPaths = async ({locales}) => {
+//   // TODO: cfdIds should be fetched from API (20230504 - Shirley)
+//   const cfdIds = ['test'];
+//   const paths = cfdIds
+//     .flatMap(id => {
+//       console.log('getStaticPaths id', id);
+//       return locales?.map(locale => ({
+//         params: {cfdId: id},
+//         locale: locale,
+//       }));
+//     })
+//     .filter((path): path is {params: {cfdId: string}; locale: string} => !!path);
+
+//   return {
+//     paths: paths,
+//     fallback: true,
+//   };
+// };
 
 export default CfdSharing;

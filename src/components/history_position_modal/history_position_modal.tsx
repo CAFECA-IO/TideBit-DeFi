@@ -102,12 +102,15 @@ const HistoryPositionModal = ({
   }
 
   const fetchImgAPI = async () => {
-    const api = `/api/images/cfd/${closedCfdDetails.id}`;
+    // TODO: delete all
+    // const api = `/api/images/cfd/${closedCfdDetails.id}`;
+    const api = `/share/cfd/${closedCfdDetails.id}?foo=bar`;
+
     try {
       const res = await fetch(api);
       // Deprecated: after demo (20230523 - Shirley)
       // eslint-disable-next-line no-console
-      console.log('res in fetchImgAPI: ', res);
+      console.log('res in fetchImgAPI /share/cfd/: ', res);
       return res.ok;
     } catch (e) {
       // TODO: Failed open
@@ -144,15 +147,23 @@ const HistoryPositionModal = ({
         // Deprecated: after demo (20230523 - Shirley)
         // eslint-disable-next-line no-console
         console.log('fetchImg: ', fetchImg);
-        if (fetchImg) {
-          window.open(
-            `${url}${encodeURIComponent(shareUrl)}${text ? `${text}` : ''}`,
-            `${type}`,
-            `${size}`
-          );
+        // if (fetchImg) {
+        //   window.open(
+        //     `${url}${encodeURIComponent(shareUrl)}${text ? `${text}` : ''}`,
+        //     `${type}`,
+        //     `${size}`
+        //   );
 
-          globalCtx.eliminateAllProcessModals();
-        }
+        //   globalCtx.eliminateAllProcessModals();
+        // }
+
+        window.open(
+          `${url}${encodeURIComponent(shareUrl)}${text ? `${text}` : ''}`,
+          `${type}`,
+          `${size}`
+        );
+
+        globalCtx.eliminateAllProcessModals();
       }
 
       // TODO: Cancellation condition

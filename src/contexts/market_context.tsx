@@ -536,7 +536,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     const candlestickInterval = setInterval(() => {
       const candlesticks = tradeBook.toCandlestick(millesecondsToSeconds(getTime(timeSpan)), 100);
       setCandlestickChartData(candlesticks);
-    }, 1000);
+    }, 100);
     setCandlestickInterval(candlestickInterval);
   };
 

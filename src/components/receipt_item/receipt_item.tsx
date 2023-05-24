@@ -88,10 +88,11 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
       ? '/elements/group_149621.svg'
       : '/elements/group_14962.svg';
 
-  const displayedReceiptAmount =
-    targetAmount >= 0
-      ? '+' + targetAmount.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)
-      : targetAmount.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
+  const displayedReceiptAmount = isUpdated
+    ? '+0'
+    : targetAmount >= 0
+    ? '+' + targetAmount.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)
+    : targetAmount.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
 
   const displayedReceiptTxId = order.txhash;
 
@@ -117,9 +118,9 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
       ? t('MY_ASSETS_PAGE.RECEIPT_SECTION_ORDER_STATUS_FAILED')
       : '-';
 
-  /* Info: (20230523 - Julian) Receipt Data */
+  /* Info: (20230523 - Julian) CFD Data */
   const positionLineGraph = marketCtx.listTickerPositions(targetAsset, {begin: createTimestamp});
-  const receiptData = toDisplayCFDOrder(order as ICFDOrder, positionLineGraph);
+  const cfdData = toDisplayCFDOrder(order as ICFDOrder, positionLineGraph);
 
   // Till:(20230530 - Julian)
   /*   const buttonClickHandler =
@@ -150,11 +151,11 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
     orderType === OrderType.CFD
       ? isClosed
         ? () => {
-            globalCtx.dataHistoryPositionModalHandler(receiptData);
+            globalCtx.dataHistoryPositionModalHandler(cfdData);
             globalCtx.visibleHistoryPositionModalHandler();
           }
         : () => {
-            globalCtx.dataUpdateFormModalHandler(receiptData);
+            globalCtx.dataUpdateFormModalHandler(cfdData);
             globalCtx.visibleUpdateFormModalHandler();
           }
       : orderType === OrderType.DEPOSIT

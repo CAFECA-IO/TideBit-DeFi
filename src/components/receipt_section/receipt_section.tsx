@@ -6,6 +6,7 @@ import {OrderType} from '../../constants/order_type';
 import {OrderState} from '../../constants/order_state';
 import {IAcceptedOrder} from '../../interfaces/tidebit_defi_background/accepted_order';
 import {timestampToString} from '../../lib/common';
+import {SKELETON_DISPLAY_TIME} from '../../constants/display';
 import Skeleton from 'react-loading-skeleton';
 import {
   ICFDOrder,
@@ -25,7 +26,7 @@ const ReceiptSection = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    setTimeout(() => setIsLoading(false), 1000);
+    setTimeout(() => setIsLoading(false), SKELETON_DISPLAY_TIME);
   }, []);
 
   useEffect(() => {

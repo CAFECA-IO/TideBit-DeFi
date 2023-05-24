@@ -7,7 +7,7 @@ import {roundToDecimalPlaces, toDisplayCFDOrder} from '../../lib/common';
 import {IDisplayCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
 import {TypeOfPosition} from '../../constants/type_of_position';
 import useStateRef from 'react-usestateref';
-import {DEFAULT_SPREAD} from '../../constants/display';
+import {DEFAULT_SPREAD, SKELETON_DISPLAY_TIME} from '../../constants/display';
 
 const OpenSubTab = () => {
   const {openCFDs} = useContext(UserContext);
@@ -81,7 +81,7 @@ const OpenSubTab = () => {
     });
 
   useEffect(() => {
-    setTimeout(() => setIsLoading(false), 1000);
+    setTimeout(() => setIsLoading(false), SKELETON_DISPLAY_TIME);
   }, [cfds]);
 
   const openPositionList = cfds.map(cfd => {

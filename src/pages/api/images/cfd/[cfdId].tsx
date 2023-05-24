@@ -145,6 +145,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const displayedTextColor =
     profitState === ProfitState.PROFIT ? TypeOfPnLColorHex.PROFIT : TypeOfPnLColorHex.LOSS;
 
+  const displayedTz = tz >= 0 ? `UTC+${tz}` : `UTC-${tz}`;
+
   const BarlowBuffer = Buffer.from(BARLOW_BASE64, 'base64');
 
   const upArrow = (
@@ -456,7 +458,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                             marginRight: '70px',
                           }}
                         >
-                          {openDate} {openTimeString}
+                          {openDate} {openTimeString} ({displayedTz})
                         </p>
                       </div>
 
@@ -484,7 +486,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                             marginRight: '70px',
                           }}
                         >
-                          {closeDate} {closeTimeString}
+                          {closeDate} {closeTimeString} ({displayedTz})
                         </p>
                       </div>
 

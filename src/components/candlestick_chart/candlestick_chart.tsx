@@ -207,19 +207,6 @@ const toCandlestickData = (data: ICandlestickData): CandlestickData => {
   };
 };
 
-const toICandlestickData = (data: CandlestickData): ICandlestickData => {
-  return {
-    x: new Date((data.time as number) * 1000),
-    y: {
-      open: data.open,
-      high: data.high,
-      low: data.low,
-      close: data.close,
-      volume: 0,
-    },
-  };
-};
-
 // ToDo: 從外面傳進來的參數: 1.timespan 2.style of chart
 export default function CandlestickChart({
   strokeColor,
@@ -309,6 +296,39 @@ export default function CandlestickChart({
     const lastData = tuned[tuned.length - 1] as CandlestickData;
 
     updatePriceLine(lastData?.close);
+  };
+
+  const priceLine = () => {
+    const buyPrice = 4562;
+    const buyLineSeries = chart.addLineSeries({
+      color: LINE_GRAPH_STROKE_COLOR.UP,
+      priceLineVisible: true,
+      lineWidth: 1,
+      lineStyle: LineStyle.SparseDotted,
+      priceLineStyle: LineStyle.Dashed,
+      crosshairMarkerVisible: false,
+      lastValueVisible: false,
+      title: `${buyPrice.toFixed(2)}`,
+      baseLineVisible: true,
+    });
+
+    if (!buyLineSeries || !tuned || tuned.length === 0) return;
+
+    try {
+      const time = [(tuned[0]?.time as number) - 1, (tuned[tuned.length - 1]?.time as number) + 1];
+      buyLineSeries.setData([
+        {
+          time: time[0] as UTCTimestamp,
+          value: buyPrice,
+        },
+        {
+          time: time[1] as UTCTimestamp,
+          value: buyPrice,
+        },
+      ]);
+    } catch (err) {
+      // Info: Catch the error and do nothing (20230411 - Shirley)
+    }
   };
 
   const openPriceLine = () => {
@@ -411,6 +431,9 @@ export default function CandlestickChart({
         .subscribeVisibleLogicalRangeChange(
           priceRangeChangeHandler as LogicalRangeChangeEventHandler
         );
+
+      // Info: Draw the price line (20230411 - Shirleey)
+      priceLine();
 
       // Info: Draw the open price line (20230411 - Shirleey)
       // openPriceLine();

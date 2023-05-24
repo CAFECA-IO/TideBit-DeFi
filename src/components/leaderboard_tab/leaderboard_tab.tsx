@@ -1,10 +1,11 @@
-import React, {Dispatch, SetStateAction, useContext} from 'react';
+import React, {Dispatch, SetStateAction, useContext, useState, useEffect} from 'react';
 import Image from 'next/image';
 import useWindowSize from '../../lib/hooks/use_window_size';
 import UserPersonalRanking from '../user_personal_ranking/user_personal_ranking';
+import Skeleton from 'react-loading-skeleton';
 import {GlobalContext} from '../../contexts/global_context';
 import {UserContext} from '../../contexts/user_context';
-import {TypeOfPnLColor, DEFAULT_USER_AVATAR} from '../../constants/display';
+import {TypeOfPnLColor, DEFAULT_USER_AVATAR, SKELETON_DISPLAY_TIME} from '../../constants/display';
 import {unitAsset} from '../../constants/config';
 import {IPnL} from '../../interfaces/tidebit_defi_background/pnl';
 import {defaultPersonalAchievement} from '../../interfaces/tidebit_defi_background/personal_achievement';
@@ -32,12 +33,14 @@ const DEFAULT_STAR_SIZE_DESKTOP = 50;
 const DEFAULT_STAR_SIZE_MOBILE = 20;
 const DEFAULT_AVATAR_SIZE_DESKTOP = 60;
 const DEFAULT_AVATAR_SIZE_MOBILE = 36;
+const DEFAULT_MEDALIST_SKELETON_SIZE = 100;
 const GAP_BETWEEN_PODIUMAND_MEDALIST = 500;
 const NUMBER_OF_MEDALIST = 3;
 
 const LeaderboardTab = ({timeSpan, setTimeSpan, rankings}: LeaderboardTabProps) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
+  const [isLoading, setIsLoading] = useState(true);
   const windowSize = useWindowSize();
   const globalCtx = useContext(GlobalContext);
   const userCtx = useContext(UserContext);
@@ -57,6 +60,10 @@ const LeaderboardTab = ({timeSpan, setTimeSpan, rankings}: LeaderboardTabProps) 
     medalistSize >= DEFAULT_MEDALIST_SIZE ? DEFAULT_STAR_SIZE_DESKTOP : DEFAULT_STAR_SIZE_MOBILE;
   const leaderboardUserAvatarSize =
     windowSize.width >= MIN_SCREEN_WIDTH ? DEFAULT_AVATAR_SIZE_DESKTOP : DEFAULT_AVATAR_SIZE_MOBILE;
+  const medalistSkeletonSize =
+    windowSize.width >= MIN_SCREEN_WIDTH ? medalistSize : DEFAULT_MEDALIST_SKELETON_SIZE;
+  const nameSkeletonHeight = windowSize.width >= MIN_SCREEN_WIDTH ? 25 : 15;
+  const pnlSkeletonHeight = windowSize.width >= MIN_SCREEN_WIDTH ? 30 : 20;
 
   /* Info: (20230511 - Julian) Sorted by cumulativePnl */
   const rankingData =
@@ -83,6 +90,10 @@ const LeaderboardTab = ({timeSpan, setTimeSpan, rankings}: LeaderboardTabProps) 
     timeSpan == RankingInterval.MONTHLY
       ? 'bg-darkGray7 text-lightWhite'
       : 'bg-darkGray6 text-lightGray';
+
+  useEffect(() => {
+    setTimeout(() => setIsLoading(false), SKELETON_DISPLAY_TIME);
+  }, []);
 
   const displayPnl = (pnl: IPnL) =>
     pnl.type === ProfitState.PROFIT ? (
@@ -175,7 +186,16 @@ const LeaderboardTab = ({timeSpan, setTimeSpan, rankings}: LeaderboardTabProps) 
       globalCtx.visiblePersonalAchievementModalHandler();
     };
 
-    return (
+    return isLoading ? (
+      <div key={rank} className={`${marginTop}`}>
+        <div className="flex flex-col items-center space-y-2 md:space-y-5">
+          <Skeleton width={medalistSkeletonSize} height={medalistSkeletonSize} circle />
+          <Skeleton width={80} height={nameSkeletonHeight} />
+          <Skeleton width={starSize} height={starSize} circle />
+          <Skeleton width={100} height={pnlSkeletonHeight} />
+        </div>
+      </div>
+    ) : (
       <div key={rank} className={`${marginTop} hover:cursor-pointer`} onClick={clickHandler}>
         <div className="relative flex flex-col">
           {/* Info: (20230511 - Julian) User Avatar */}
@@ -263,7 +283,16 @@ const LeaderboardTab = ({timeSpan, setTimeSpan, rankings}: LeaderboardTabProps) 
       const displayedPnl = rank <= 0 ? '-' : displayPnl(cumulativePnl);
       const displayedName = rank <= 0 ? 'N/A' : userName;
       const displayedAvatar = rank <= 0 ? DEFAULT_USER_AVATAR : userAvatar;
-      return (
+      return isLoading ? (
+        <div key={rank} className="flex items-center justify-between px-4 py-6">
+          <div className="flex items-center space-x-5">
+            <Skeleton width={60} height={25} />
+            <Skeleton width={leaderboardUserAvatarSize} height={leaderboardUserAvatarSize} circle />
+            <Skeleton width={80} height={25} />
+          </div>
+          <Skeleton width={100} height={30} />
+        </div>
+      ) : (
         <div
           key={rank}
           className="flex w-full whitespace-nowrap px-4 py-6 hover:cursor-pointer md:px-8 md:py-4"

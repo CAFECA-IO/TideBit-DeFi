@@ -4,6 +4,7 @@ import smallConnectingAnimation from '../../../public/animation/lf30_editor_cnkx
 import Image from 'next/image';
 import {GlobalContext} from '../../contexts/global_context';
 import {MarketContext} from '../../contexts/market_context';
+import {UserContext} from '../../contexts/user_context';
 import {timestampToString, toDisplayCFDOrder} from '../../lib/common';
 import {OrderType} from '../../constants/order_type';
 import {OrderState} from '../../constants/order_state';
@@ -32,6 +33,7 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
 
   const globalCtx = useContext(GlobalContext);
   const marketCtx = useContext(MarketContext);
+  const userCtx = useContext(UserContext);
 
   const {createTimestamp, receipt} = histories.histories;
   const {orderSnapshot: order, balanceSnapshot} = receipt;
@@ -59,6 +61,8 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
 
   /* Info: (20230524 - Julian) CFD Type : create / update / close */
   const cfdType = (histories.histories as IAcceptedCFDOrder).applyData.operation;
+  /* Info: (20230524 - Julian) if can't get CFD by id, it means CFD is closed */
+  const isClosed = userCtx.getCFD(order.id) ? false : true;
 
   const displayedButtonColor =
     targetAmount == 0 ? 'bg-lightGray' : targetAmount > 0 ? 'bg-lightGreen5' : 'bg-lightRed';
@@ -148,7 +152,7 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
 
   const buttonClickHandler =
     orderType === OrderType.CFD
-      ? cfdType === CFDOperation.CLOSE
+      ? isClosed
         ? () => {
             globalCtx.dataHistoryPositionModalHandler(cfdData);
             globalCtx.visibleHistoryPositionModalHandler();

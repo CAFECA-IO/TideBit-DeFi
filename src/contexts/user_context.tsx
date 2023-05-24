@@ -606,10 +606,7 @@ export const UserProvider = ({children}: IUserProvider) => {
           ...serviceTermContractTemplate,
           ...result.serviceTerm,
         };
-        const verifyR: boolean = lunar.verifyTypedData(serviceTermContract, `0x${signature}`);
-        // Deprecate: [debug] (20230524 - tzuhan)
-        // eslint-disable-next-line no-console
-        console.log(`checkDeWT lunar.verifyTypedData => verifyR: ${verifyR} `);
+        const verifyR = lunar.verifyTypedData(serviceTermContract, `0x${signature}`);
         isDeWTLegit = isDeWTLegit && !!signer && verifyR;
       }
     }
@@ -1521,7 +1518,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     console.log(
       `app init is called: lunar.isConnected: ${lunar.isConnected}, isDeWTLegit: ${isDeWTLegit}, signer: ${signer}`
     );
-    if (lunar.isConnected && isDeWTLegit && signer && deWT) await setPrivateData(signer, deWT);
+    if (isDeWTLegit && signer && deWT) await setPrivateData(signer, deWT);
 
     return await Promise.resolve();
   };

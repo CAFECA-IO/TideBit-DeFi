@@ -26,7 +26,6 @@ import {
 } from '../interfaces/tidebit_defi_background/ticker_data';
 import {ITimeSpanUnion, TimeSpanUnion, getTime} from '../constants/time_span_union';
 import {
-  ICandlestick,
   ICandlestickData,
   ITrade,
   TradeSideText,
@@ -45,7 +44,6 @@ import {
 import {ICurrency} from '../constants/currency';
 import {CustomError} from '../lib/custom_error';
 import {Code, Reason} from '../constants/code';
-import CandlestickBookInstance from '../lib/books/candlestick_book';
 import {IPusherAction, PusherAction} from '../interfaces/tidebit_defi_background/pusher_data';
 import {IQuotation} from '../interfaces/tidebit_defi_background/quotation';
 import {IRankingTimeSpan} from '../constants/ranking_time_span';
@@ -153,7 +151,6 @@ export const MarketContext = createContext<IMarketContext>({
 
 export const MarketProvider = ({children}: IMarketProvider) => {
   const tickerBook = React.useMemo(() => TickerBookInstance, []);
-  const candlestickBook = React.useMemo(() => CandlestickBookInstance, []);
   const tradeBook = React.useMemo(() => TradeBookInstance, []);
   const userCtx = useContext(UserContext);
   const notificationCtx = useContext(NotificationContext);
@@ -271,52 +268,6 @@ export const MarketProvider = ({children}: IMarketProvider) => {
   };
   */
 
-  /**
-   * TODO: add options (20230508 - tzuhan)
-   * @param tickerId 
-   * @param options {
-      begin?: string; // Info: '2023-04-19' or '2023-04-19 00:00:00' (20230420 - tzuhan)
-      end?: string; // Info: '2023-04-20' or '2023-04-20 00:00:00' (20230420 - tzuhan)
-      timespan?: ITimeSpanUnion;
-      asc?: boolean;
-      limit?: number;
-    }
-   * @returns 
-   */
-  /** Deprecated: replace by pusher updating (20230523 - tzuan) 
-  const getCandlestickChartData = async (instId: string) => {
-    let result: IResult = {...defaultResultFailed};
-
-    try {
-      result = (await workerCtx.requestHandler({
-        name: APIName.GET_CANDLESTICK_DATA,
-        method: Method.GET,
-        params: instId,
-        // query: options, // TODO: add options (20230508 - tzuhan)
-      })) as IResult;
-      if (result.success) {
-        const data = (result.data as ICandlestickData[])?.map(item => ({
-          x: new Date(item.x),
-          y: {...item.y},
-        }));
-        candlestickBook.updateCandlesticksDatas(instId, data);
-        setCandlestickChartData(
-          candlestickBook.listCandlestickData(instId, {
-            // ...options, // TODO: add options (20230508 - tzuhan)
-          })
-        );
-      }
-    } catch (error) {
-      // Deprecate: error handle (Tzuhan - 20230321)
-      // eslint-disable-next-line no-console
-      console.error(`getCandlestickChartData error`, error);
-      result.code = Code.INTERNAL_SERVER_ERROR;
-      result.reason = Reason[result.code];
-    }
-    return result;
-  };
-  */
-
   const getCFDQuotation = async (currency: string, typeOfPosition: ITypeOfPosition) => {
     let result: IResult = {...defaultResultFailed};
     const instId = `${currency}-${unitAsset}`;
@@ -369,27 +320,6 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     }
     return result;
   };
-  /** Deprecated: replaced by pusher (20230424 - tzuhan)
-  const getTickerHistory = (
-    ticker: string,
-    options: {
-      timespan?: ITimeSpanUnion;
-      begin?: number;
-      end?: number;
-      limit?: number;
-    }
-  ) => {
-    let result: IResult = defaultResultFailed;
-    try {
-      const tickerHistory: ITickerHistoryData[] = tickerBook.getTickerHistory(ticker, options);
-      result = defaultResultSuccess;
-      result.data = tickerHistory;
-    } catch (error) {
-      result = defaultResultFailed;
-    }
-    return result;
-  };
-  */
 
   const listTickerPositions = (
     ticker: ICurrency,
@@ -605,23 +535,6 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       }),
     []
   );
-
-  // React.useMemo(
-  //   () =>
-  //     notificationCtx.emitter.on(
-  //       TideBitEvent.CANDLESTICK,
-  //       (action: IPusherAction, candlesticks: ICandlestick) => {
-  //         candlestickBook.updateCandlesticksData(action, candlesticks);
-  //         const [baseUnit, quoteUnit] = candlesticks.instId.split(`-`);
-  //         if (
-  //           action === PusherAction.SNAPSHOT &&
-  //           selectedTickerRef.current?.currency === baseUnit
-  //         )
-  //           setCandlestickChartData(candlestickBook.listCandlestickData(candlesticks.instId, {}));
-  //       }
-  //     ),
-  //   []
-  // );
 
   const defaultValue = {
     selectedTicker: selectedTickerRef.current,

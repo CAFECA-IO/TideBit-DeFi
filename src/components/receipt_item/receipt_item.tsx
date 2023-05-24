@@ -2,7 +2,6 @@ import React, {useContext} from 'react';
 import Lottie from 'lottie-react';
 import smallConnectingAnimation from '../../../public/animation/lf30_editor_cnkxmhy3.json';
 import Image from 'next/image';
-import {UserContext} from '../../contexts/user_context';
 import {GlobalContext} from '../../contexts/global_context';
 import {MarketContext} from '../../contexts/market_context';
 import {timestampToString, toDisplayCFDOrder} from '../../lib/common';
@@ -14,11 +13,13 @@ import {useTranslation} from 'next-i18next';
 import {IAcceptedOrder} from '../../interfaces/tidebit_defi_background/accepted_order';
 import {IAcceptedDepositOrder} from '../../interfaces/tidebit_defi_background/accepted_deposit_order';
 import {IAcceptedWithdrawOrder} from '../../interfaces/tidebit_defi_background/accepted_withdraw_order';
+import {IAcceptedCFDOrder} from '../../interfaces/tidebit_defi_background/accepted_cfd_order';
 import {
   ICFDOrder,
   IDepositOrder,
   IWithdrawOrder,
 } from '../../interfaces/tidebit_defi_background/order';
+import {CFDOperation} from '../../constants/cfd_order_type';
 import {FRACTION_DIGITS} from '../../constants/config';
 
 type TranslateFunction = (s: string) => string;
@@ -29,17 +30,11 @@ interface IReceiptItemProps {
 const ReceiptItem = (histories: IReceiptItemProps) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
-  const userCtx = useContext(UserContext);
   const globalCtx = useContext(GlobalContext);
   const marketCtx = useContext(MarketContext);
 
   const {createTimestamp, receipt} = histories.histories;
   const {orderSnapshot: order, balanceSnapshot} = receipt;
-
-  /* Info: (20230523 - Julian) if can't get CFD by id, it means the order is closed */
-  const isClosed = !userCtx.getCFD(order.id) ? true : false;
-  /* Info: (20230523 - Julian) if updatedTimestamp > createTimestamp, it means the order is updated */
-  const isUpdated = order.updatedTimestamp > order.createTimestamp ? true : false;
 
   const balance = balanceSnapshot.shift();
   const receiptDate = timestampToString(createTimestamp ?? 0);
@@ -62,6 +57,9 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
       ? (order as IDepositOrder).targetAmount
       : (order as IWithdrawOrder).targetAmount * -1;
 
+  /* Info: (20230524 - Julian) CFD Type : create / update / close */
+  const cfdType = (histories.histories as IAcceptedCFDOrder).applyData.operation;
+
   const displayedButtonColor =
     targetAmount == 0 ? 'bg-lightGray' : targetAmount > 0 ? 'bg-lightGreen5' : 'bg-lightRed';
 
@@ -74,7 +72,7 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
       ? (order as ICFDOrder).state === OrderState.CLOSED
         ? t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_CFD_CLOSE')
         : (order as ICFDOrder).state === OrderState.OPENING
-        ? isUpdated
+        ? cfdType === CFDOperation.UPDATE
           ? t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_CFD_UPDATE')
           : t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_CFD_OPEN')
         : t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_TITLE')
@@ -88,11 +86,12 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
       ? '/elements/group_149621.svg'
       : '/elements/group_14962.svg';
 
-  const displayedReceiptAmount = isUpdated
-    ? '+0'
-    : targetAmount >= 0
-    ? '+' + targetAmount.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)
-    : targetAmount.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
+  const displayedReceiptAmount =
+    cfdType === CFDOperation.UPDATE
+      ? '+0'
+      : targetAmount >= 0
+      ? '+' + targetAmount.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)
+      : targetAmount.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
 
   const displayedReceiptTxId = order.txhash;
 
@@ -149,7 +148,7 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
 
   const buttonClickHandler =
     orderType === OrderType.CFD
-      ? isClosed
+      ? cfdType === CFDOperation.CLOSE
         ? () => {
             globalCtx.dataHistoryPositionModalHandler(cfdData);
             globalCtx.visibleHistoryPositionModalHandler();

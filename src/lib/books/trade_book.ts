@@ -285,9 +285,6 @@ class TradeBook {
   }
 
   toCandlestick(interval: number, length: number): ICandlestickData[] {
-    // Deprecated: [debug] (20230523 - tzuhan)
-    // eslint-disable-next-line no-console
-    console.log(`toCandlestick: this.trades.length = ${this.trades.length}`);
     const candleSticks: ICandlestickData[] = [];
     const intervalMs = interval * 1000;
 
@@ -303,6 +300,10 @@ class TradeBook {
       const trades = this.predictedTrades.filter(
         t => t.timestampMs >= i && t.timestampMs < i + intervalMs
       );
+      /** Deprecated: [debug] (20230524 - tzuhan)
+      // eslint-disable-next-line no-console
+      console.log(`toCandlestick trades`, trades);
+      */
       if (trades.length > 0) {
         const open = trades[0].price;
         const close = trades[trades.length - 1].price;

@@ -179,6 +179,8 @@ export const MarketProvider = ({children}: IMarketProvider) => {
   const [candlestickChartData, setCandlestickChartData, candlestickChartDataRef] = useState<
     ICandlestickData[] | null
   >(null);
+  const [candlestickInterval, setCandlestickInterval, candlestickIntervalRef] =
+    useState<NodeJS.Timer | null>(null);
   const [timeSpan, setTimeSpan, timeSpanRef] = useState<ITimeSpanUnion>(tickerBook.timeSpan);
   const [availableTickers, setAvailableTickers, availableTickersRef] = useState<{
     [currency in ICurrency]: ITickerData;
@@ -526,11 +528,24 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     return result;
   };
 
+  const syncCandlestickData = () => {
+    if (!!candlestickIntervalRef.current) {
+      clearInterval(candlestickIntervalRef.current);
+      setCandlestickInterval(null);
+    }
+    const candlestickInterval = setInterval(() => {
+      const candlesticks = tradeBook.toCandlestick(millesecondsToSeconds(getTime(timeSpan)), 100);
+      setCandlestickChartData(candlesticks);
+    }, 1000);
+    setCandlestickInterval(candlestickInterval);
+  };
+
   const init = async () => {
     setIsCFDTradable(true);
     await listTickers();
     await listDepositCryptocurrencies();
     await lisWithdrawCryptocurrencies();
+    syncCandlestickData();
     return await Promise.resolve();
   };
 
@@ -586,19 +601,6 @@ export const MarketProvider = ({children}: IMarketProvider) => {
             timestampMs: trade.timestamp,
             quantity: trade.amount,
           });
-          const candlesticks = tradeBook.toCandlestick(
-            millesecondsToSeconds(getTime(timeSpan)),
-            100
-          );
-          // Deprecated: [debug] (20230523 - tzuhan)
-          // eslint-disable-next-line no-console
-          console.log(
-            `TideBitEvent.TRADES`,
-            trade.price,
-            new Date(trade.timestamp).toString(),
-            candlesticks.length
-          );
-          setCandlestickChartData(tradeBook.toCandlestick(getTime(timeSpan), 100));
         }
       }),
     []

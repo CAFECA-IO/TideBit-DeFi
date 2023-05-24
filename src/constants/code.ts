@@ -23,7 +23,8 @@ export type ICode =
   | '10310001'
   | '60210001'
   | '10210002'
-  | '60210002';
+  | '60210002'
+  | '10310002';
 
 export type ICodeConstant = {
   SUCCESS: ICode;
@@ -51,6 +52,7 @@ export type ICodeConstant = {
   INSUFFICIENT_PREDICTED_TRADES: ICode;
   INVALID_TRADE: ICode;
   CANNOT_FETCH_NEXT_IMG_URL: ICode;
+  NEED_SHARE_URL: ICode;
 };
 
 export type IReason = {
@@ -67,6 +69,8 @@ export const Code: ICodeConstant = {
   INSUFFICIENT_PREDICTED_TRADES: '10210002',
   CANNOT_GET_QUOTATION_FROM_CONTEXT: '10110002',
   CANNOT_FIND_CHAIN_BY_CURRENCY: '10120001', // Info: 分享時，公鏈的名稱找不到 (20230503 - Shirley)
+  NEED_SHARE_URL: '10310002',
+
   DEPOSIT_TOO_FREQUENCY: '80410001',
 
   ORDER_NOT_OPENING: '30110001',
@@ -97,6 +101,7 @@ export const Reason: IReason = {
   '10120001': 'Chain name does not exist',
   '10210001': 'ERROR_MESSAGE.FUNCTION_NOT_IMPLEMENTED',
   '10110002': 'ERROR_MESSAGE.CANNOT_GET_QUOTATION_FROM_CONTEXT',
+  '10310002': 'Cannot get share url',
 
   '30110001': 'ERROR_MESSAGE.ORDER_NOT_OPENING',
   '30420001': 'ERROR_MESSAGE.INVAILD_ORDER_INPUTS',

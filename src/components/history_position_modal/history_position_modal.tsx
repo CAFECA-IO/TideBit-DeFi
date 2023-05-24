@@ -19,6 +19,8 @@ import {useTranslation} from 'react-i18next';
 import {UserContext} from '../../contexts/user_context';
 import {Code} from '../../constants/code';
 import {useRouter} from 'next/router';
+import useShareProcess from '../../lib/hooks/use_share_process';
+import {ShareType} from '../../constants/share_type';
 
 type TranslateFunction = (s: string) => string;
 interface IHistoryPositionModal {
@@ -94,72 +96,12 @@ const HistoryPositionModal = ({
   const openTime = timestampToString(closedCfdDetails.createTimestamp ?? 0);
   const closedTime = timestampToString(closedCfdDetails?.closeTimestamp ?? 0);
 
-  interface IShareToSocialMedia {
-    url: string;
-    text?: string;
-    type: string;
-    size: string;
-  }
-
-  const shareTo = async ({url, text, type, size}: IShareToSocialMedia) => {
-    // TODO: lock
-    const [lock, unlock] = locker('history_position_modal.shareHandler');
-    if (!lock()) return;
-
-    globalCtx.dataLoadingModalHandler({
-      modalTitle: t('POSITION_MODAL.SHARING'),
-      modalContent: t('POSITION_MODAL.SHARING_LOADING'),
-      isShowZoomOutBtn: false,
-    });
-    globalCtx.visibleLoadingModalHandler();
-
-    try {
-      const result = await userCtx.enableShare(closedCfdDetails.id, true);
-      // eslint-disable-next-line no-console
-      console.log(`enableShare result: `, result);
-
-      if (result.success) {
-        const shareUrl = DOMAIN + `/share/cfd/${closedCfdDetails.id}`;
-
-        window.open(
-          `${url}${encodeURIComponent(shareUrl)}${text ? `${text}` : ''}`,
-          `${type}`,
-          `${size}`
-        );
-
-        globalCtx.eliminateAllProcessModals();
-      } else if (
-        result.code === Code.INTERNAL_SERVER_ERROR ||
-        result.code === Code.UNKNOWN_ERROR ||
-        result.code === Code.WALLET_IS_NOT_CONNECT
-      ) {
-        globalCtx.eliminateAllProcessModals();
-
-        globalCtx.dataFailedModalHandler({
-          modalTitle: t('POSITION_MODAL.SHARING'),
-          modalContent: `${t('POSITION_MODAL.ERROR_MESSAGE')} (${result.code})`,
-          // TODO: style of failed modal (20230524 - Shirley)
-          // failedTitle: 'Failed to share',
-          // failedMsg: 'Please try again later',
-          btnMsg: t('POSITION_MODAL.FAILED_BUTTON_TRY_AGAIN'),
-          btnFunction: () => {
-            shareTo({url, text, type, size});
-          },
-        });
-
-        globalCtx.visibleFailedModalHandler();
-      }
-    } catch (e) {
-      globalCtx.dataFailedModalHandler({
-        modalTitle: t('POSITION_MODAL.SHARING'),
-        modalContent: `${t('POSITION_MODAL.ERROR_MESSAGE')} (${Code.UNKNOWN_ERROR_IN_COMPONENT})`,
-      });
-
-      globalCtx.visibleFailedModalHandler();
-    }
-
-    unlock();
-  };
+  const {shareTo} = useShareProcess({
+    lockerName: 'history_position_modal.shareHandler',
+    shareType: ShareType.BADGE,
+    shareId: closedCfdDetails.id,
+    enableShare: userCtx.enableShare,
+  });
 
   const formContent = (
     <div className="relative flex w-full flex-auto flex-col pt-0">

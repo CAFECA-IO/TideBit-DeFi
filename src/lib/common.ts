@@ -25,7 +25,7 @@ import RLP from 'rlp';
 import {ICFDOrder} from '../interfaces/tidebit_defi_background/order';
 import {Currency, ICurrency, ICurrencyConstant} from '../constants/currency';
 import {CustomError} from './custom_error';
-import {Code} from '../constants/code';
+import {Code, ICode, Reason} from '../constants/code';
 
 export const roundToDecimalPlaces = (val: number, precision: number): number => {
   const roundedNumber = Number(val.toFixed(precision));
@@ -568,4 +568,17 @@ export const getEstimatedPnL = (
 
   const number = Math.abs(rs);
   return {number: number, symbol: symbol};
+};
+
+export const swapKeysAndValues = (obj: Record<string, string>): Record<string, string> => {
+  return Object.entries(obj).reduce((acc, [key, value]) => {
+    acc[value] = key;
+    return acc;
+  }, {} as Record<string, string>);
+};
+
+export const findCodeByReason = (reason: string): ICode | undefined => {
+  const ReasonToCode = swapKeysAndValues(Reason);
+
+  return ReasonToCode[reason] as ICode;
 };

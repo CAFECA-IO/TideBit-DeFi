@@ -1,12 +1,13 @@
+import {IEvents} from '../../constants/events';
 import {IAcceptedOrder} from './accepted_order';
 import {IBalance} from './balance';
-import {ICandlestick} from './candlestickData';
+import {ICandlestick, ITrade} from './candlestickData';
 import {ICFDOrder} from './order';
 import {ITickerData} from './ticker_data';
 
 export interface IPusherData {
   action: IPusherAction;
-  data: ICandlestick | ITickerData;
+  data: ICandlestick | ITickerData | ITrade;
 }
 
 export interface IPusherPrivateData {
@@ -15,7 +16,7 @@ export interface IPusherPrivateData {
 
 export interface IPusherResponse {
   channel: IPusherChannel;
-  event: string;
+  event: IEvents;
   data: IPusherData;
 }
 

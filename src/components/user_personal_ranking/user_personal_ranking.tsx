@@ -34,9 +34,9 @@ const UserPersonalRanking = ({timeSpan}: IUserPersonalRankingProps) => {
     setUserRankData(userCtx.getPersonalRanking(timeSpan) ?? defaultPersonalRanking);
   }, [timeSpan]);
 
-  const username = userCtx.wallet?.slice(-1).toUpperCase();
+  const username = userCtx.user?.address?.slice(-1).toUpperCase();
   const userAchievement =
-    userCtx.getPersonalAchievements(userCtx.id ?? '') ?? defaultPersonalAchievement;
+    userCtx.getPersonalAchievements(userCtx.user?.id ?? '') ?? defaultPersonalAchievement;
 
   const rankingNumber = userRankData.rank;
   const pnl = userRankData.pnl;
@@ -119,7 +119,7 @@ const UserPersonalRanking = ({timeSpan}: IUserPersonalRankingProps) => {
       </div>
     ) : null;
 
-  const personalRanking = userCtx.wallet ? (
+  const personalRanking = userCtx.user?.address ? (
     isLoading ? (
       <div className="flex items-center bg-darkGray3 px-4 py-2 md:px-8">
         <div className="flex flex-1 items-center space-x-4">

@@ -48,7 +48,7 @@ const PersonalAchievementModal = ({
   } = getPersonalAchievementData ?? defaultPersonalAchievement;
 
   const displayedUserName = userName.length > 20 ? accountTruncate(userName) : userName;
-  const isMe = userCtx.id === userId ? true : false;
+  const isMe = userCtx.user?.id === userId ? true : false;
 
   const userRankingDaily = userCtx.getPersonalRanking('DAILY') ?? defaultPersonalRanking;
   const userRankingWeekly = userCtx.getPersonalRanking('WEEKLY') ?? defaultPersonalRanking;

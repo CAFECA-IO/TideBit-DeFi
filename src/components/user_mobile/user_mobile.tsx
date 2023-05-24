@@ -22,7 +22,7 @@ const UserMobile = () => {
 
   const [avatarMenuVisible, setAvatarMenuVisible] = useState(false);
 
-  const username = userCtx.wallet?.slice(-1).toUpperCase();
+  const username = userCtx.user?.address?.slice(-1).toUpperCase();
 
   const avatarClickHandler = () => {
     setAvatarMenuVisible(!avatarMenuVisible);
@@ -44,7 +44,7 @@ const UserMobile = () => {
     />
   ) : null;
 
-  const isDisplayedNavbarCover = userCtx.wallet ? (
+  const isDisplayedNavbarCover = userCtx.user?.address ? (
     <div
       className={`${
         avatarMenuVisible ? 'visible opacity-100' : 'invisible opacity-0'
@@ -60,7 +60,7 @@ const UserMobile = () => {
     </div>
   ) : null;
 
-  const isDisplayedAvatarMenu = userCtx.wallet ? (
+  const isDisplayedAvatarMenu = userCtx.user?.address ? (
     /* ToDo: (20230327 - Julian) Fix fade in animation */
     <div
       className={`fixed left-0 ${
@@ -82,7 +82,7 @@ const UserMobile = () => {
                 <span className="text-4xl font-bold text-lightWhite">{username}</span>
               </div>
               {/* Info: (20230327 - Julian) Account */}
-              <div className="ml-4 truncate text-sm">{accountTruncate(userCtx.wallet)}</div>
+              <div className="ml-4 truncate text-sm">{accountTruncate(userCtx.user?.address)}</div>
             </div>
             <button className="p-4">
               <Image src="/elements/edit_icon.svg" alt="edit_icon" width={25} height={25} />

@@ -20,7 +20,7 @@ const User = () => {
 
   const [avatarMenuVisible, setAvatarMenuVisible] = useState(false);
 
-  const username = userCtx.wallet?.slice(-1).toUpperCase();
+  const username = userCtx.user?.address?.slice(-1).toUpperCase();
 
   const avatarClickHandler = () => {
     setAvatarMenuVisible(!avatarMenuVisible);
@@ -34,7 +34,7 @@ const User = () => {
     globalCtx.visibleWithdrawalModalHandler();
   };
 
-  const isDisplayedAvatarMenu = userCtx.wallet ? (
+  const isDisplayedAvatarMenu = userCtx.user?.address ? (
     <div
       id="userDropdown"
       className={`avatarMenuShadow absolute right-8 top-16 -z-10 flex w-285px flex-col ${
@@ -48,7 +48,7 @@ const User = () => {
           <span className="text-5xl font-bold text-lightWhite">{username}</span>
         </div>
         {/* Info: (20230327 - Julian) Account */}
-        <div className="ml-4 mt-2 truncate text-sm">{accountTruncate(userCtx.wallet)}</div>
+        <div className="ml-4 mt-2 truncate text-sm">{accountTruncate(userCtx.user?.address)}</div>
       </div>
 
       <ul

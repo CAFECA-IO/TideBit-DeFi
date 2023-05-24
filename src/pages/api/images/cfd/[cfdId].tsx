@@ -45,11 +45,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const cfdId = params.pop(); // TODO: send to api (20230508 - Shirley)
   const apiUrl = `${API_URL}/public/shared/cfd/${cfdId}`;
   const tz = Number(url.searchParams.get('tz'));
-  // Deprecated: after demo (20230523 - Shirley)
-  // eslint-disable-next-line no-console
-  console.log('cfdId in images/cfd', cfdId);
-  // eslint-disable-next-line no-console
-  console.log('searchParams in images/cfd', tz);
 
   let sharingOrder: ISharingOrder = getInvalidSharingOrder();
 
@@ -86,10 +81,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   } catch (e) {
     // Info: show the invalid dummy order img (20230523 - Shirley)
   }
-  // Deprecated: after demo (20230523 - Shirley)
-  // eslint-disable-next-line no-console
-  console.log('sharingOrder outside function', sharingOrder);
-
   // TODO: Data from API (20230508 - Shirley)
   const {
     ticker: tickerId,

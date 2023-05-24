@@ -74,10 +74,6 @@ const useShareProcess = ({lockerName, shareType, shareId, enableShare}: IUseShar
 
       const result = await enableShare(shareId, true);
 
-      // Deprecated: after demo (20230524 - Shirley)
-      // eslint-disable-next-line no-console
-      console.log(`enableShare result in useShareProcess hook: `, result);
-
       if (result.success) {
         window.open(
           `${url}${encodeURIComponent(shareUrl)}${text ? `${text}` : ''}`,

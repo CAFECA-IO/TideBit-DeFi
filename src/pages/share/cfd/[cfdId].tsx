@@ -55,38 +55,13 @@ const CfdSharing = (props: IPageProps) => {
 
   useEffect(() => {
     try {
-      // Get user's timezone offset
       const timezoneOffset = new Date().getTimezoneOffset();
-
-      // // Get current timestamp
-      // const timestamp = Math.floor(Date.now() / 1000);
-
-      // // Convert timestamp to user's local time
-      // const userTime = timestampToString(timestamp, timezoneOffset);
-
       const timeDiff = -timezoneOffset / 60;
-      // TODO: below is correct
-      // const timeDiff = -timezoneOffset / 60;
-      // eslint-disable-next-line no-console
-      console.log('timeDiff', timeDiff);
-      // eslint-disable-next-line no-console
-      console.log('sent to api/images/cfd', `${displayImg}`);
 
       setUserTz(timeDiff);
     } catch (error) {
       // TODO: error handling (20230524 - Shirley)
-      // eslint-disable-next-line no-console
-      console.error('Error getting user time: ', error);
     }
-
-    // const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    // const timezoneOffset = new Date().getTimezoneOffset();
-    // const timestamp = getTimestamp() - 1000 * 60 * 60 * 8;
-    // const userTime = timestampToString(timestamp, timezoneOffset);
-
-    // console.log('userTimeZone', userTimeZone);
-    // console.log('timezoneOffset', timezoneOffset);
-    // console.log('userTime', userTime);
   }, [appCtx.isInit]);
 
   if (!router.isFallback && !props.cfdId) {

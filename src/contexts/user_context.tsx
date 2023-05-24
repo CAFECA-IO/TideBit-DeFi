@@ -1310,12 +1310,6 @@ export const UserProvider = ({children}: IUserProvider) => {
 
   const enableShare = async (cfdId: string, share: boolean) => {
     let result: IResult = {...defaultResultFailed};
-    // Deprecated: after demo (20230524 - Shirley)
-    const randomInt = randomIntFromInterval(0, 5);
-    if (randomInt < 4) {
-      return {...result, success: false, code: Code.INTERNAL_SERVER_ERROR};
-    }
-
     try {
       result = (await privateRequestHandler({
         name: APIName.ENABLE_CFD_SHARE,

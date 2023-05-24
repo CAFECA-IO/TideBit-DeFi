@@ -396,6 +396,8 @@ export const MarketProvider = ({children}: IMarketProvider) => {
 
   const listCurrencies = async () => {
     let result: IResult = {...defaultResultFailed};
+    const depositCryptocurrencies: ICryptocurrency[] = [];
+    const withdrawCryptocurrencies: ICryptocurrency[] = [];
     try {
       result = (await workerCtx.requestHandler({
         name: APIName.LIST_CURRENCIES,
@@ -403,55 +405,17 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       })) as IResult;
       if (result.success) {
         setCryptocurrencies([...(result.data as ICryptocurrency[])]);
+        for (const currency of result.data as ICryptocurrency[]) {
+          if (currency.enableDeposit) depositCryptocurrencies.push(currency);
+          if (currency.enableWithdraw) withdrawCryptocurrencies.push(currency);
+        }
+        setDepositCryptocurrencies([...depositCryptocurrencies]);
+        setWithdrawCryptocurrencies([...withdrawCryptocurrencies]);
       }
     } catch (error) {
       // Deprecate: error handle (Tzuhan - 20230321)
       // eslint-disable-next-line no-console
       console.error(`listCurrencies error`, error);
-      result.code = Code.INTERNAL_SERVER_ERROR;
-      result.reason = Reason[result.code];
-    }
-    return result;
-  };
-
-  const listDepositCryptocurrencies = async () => {
-    let result: IResult = {...defaultResultFailed},
-      depositCryptocurrencies: ICryptocurrency[] = [];
-    try {
-      result = await listCurrencies();
-      if (result.success) {
-        depositCryptocurrencies = (result.data as ICryptocurrency[]).filter(
-          currency => currency.enableDeposit
-        );
-      }
-      setDepositCryptocurrencies([...depositCryptocurrencies]);
-      result.data = depositCryptocurrencies;
-    } catch (error) {
-      // Deprecate: error handle (Tzuhan - 20230321)
-      // eslint-disable-next-line no-console
-      console.error(`listDepositCryptocurrencies error`, error);
-      result.code = Code.INTERNAL_SERVER_ERROR;
-      result.reason = Reason[result.code];
-    }
-    return result;
-  };
-
-  const lisWithdrawCryptocurrencies = async () => {
-    let result: IResult = {...defaultResultFailed},
-      withdrawCryptocurrencies: ICryptocurrency[] = [];
-    try {
-      result = await listCurrencies();
-      if (result.success) {
-        withdrawCryptocurrencies = (result.data as ICryptocurrency[]).filter(
-          currency => currency.enableWithdraw
-        );
-      }
-      setWithdrawCryptocurrencies([...withdrawCryptocurrencies]);
-      result.data = withdrawCryptocurrencies;
-    } catch (error) {
-      // Deprecate: error handle (Tzuhan - 20230321)
-      // eslint-disable-next-line no-console
-      console.error(`lisWithdrawCryptocurrencies error`, error);
       result.code = Code.INTERNAL_SERVER_ERROR;
       result.reason = Reason[result.code];
     }
@@ -473,8 +437,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
   const init = async () => {
     setIsCFDTradable(true);
     await listTickers();
-    await listDepositCryptocurrencies();
-    await lisWithdrawCryptocurrencies();
+    await listCurrencies();
     syncCandlestickData();
     return await Promise.resolve();
   };

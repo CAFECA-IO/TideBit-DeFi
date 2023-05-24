@@ -140,6 +140,7 @@ export interface IFailedModal {
   btnUrl?: string;
   failedTitle?: string;
   failedMsg?: string;
+  btnFunction?: () => void;
 }
 
 // TODO:(20230317 - Shirley) to be continued
@@ -876,6 +877,9 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
   };
 
   const visibleFailedModalHandler = () => {
+    if (!!dataFailedModal.btnFunction) {
+      dataFailedModal.btnFunction();
+    }
     setVisibleFailedModal(!visibleFailedModal);
   };
 

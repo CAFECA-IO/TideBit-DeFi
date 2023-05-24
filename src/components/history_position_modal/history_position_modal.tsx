@@ -101,28 +101,6 @@ const HistoryPositionModal = ({
     size: string;
   }
 
-  const fetchImgAPI = async () => {
-    // TODO: delete all
-    // const api = `/api/images/cfd/${closedCfdDetails.id}`;
-    const api = `/share/cfd/${closedCfdDetails.id}?foo=bar`;
-
-    try {
-      const res = await fetch(api);
-      // Deprecated: after demo (20230523 - Shirley)
-      // eslint-disable-next-line no-console
-      console.log('res in fetchImgAPI /share/cfd/: ', res);
-      return res.ok;
-    } catch (e) {
-      // TODO: Failed open
-      globalCtx.dataFailedModalHandler({
-        modalTitle: t('POSITION_MODAL.SHARING'),
-        modalContent: `${t('POSITION_MODAL.ERROR_MESSAGE')} (${Code.CANNOT_FETCH_NEXT_IMG_URL})`,
-      });
-
-      globalCtx.visibleFailedModalHandler();
-    }
-  };
-
   const shareTo = async ({url, text, type, size}: IShareToSocialMedia) => {
     // TODO: lock
     const [lock, unlock] = locker('history_position_modal.shareHandler');
@@ -143,20 +121,6 @@ const HistoryPositionModal = ({
       if (result.success) {
         const shareUrl = DOMAIN + `/share/cfd/${closedCfdDetails.id}`;
 
-        const fetchImg = await fetchImgAPI();
-        // Deprecated: after demo (20230523 - Shirley)
-        // eslint-disable-next-line no-console
-        console.log('fetchImg: ', fetchImg);
-        // if (fetchImg) {
-        //   window.open(
-        //     `${url}${encodeURIComponent(shareUrl)}${text ? `${text}` : ''}`,
-        //     `${type}`,
-        //     `${size}`
-        //   );
-
-        //   globalCtx.eliminateAllProcessModals();
-        // }
-
         window.open(
           `${url}${encodeURIComponent(shareUrl)}${text ? `${text}` : ''}`,
           `${type}`,
@@ -164,33 +128,23 @@ const HistoryPositionModal = ({
         );
 
         globalCtx.eliminateAllProcessModals();
-      }
-
-      // TODO: Cancellation condition
-      // else if (
-      //   result.code === Code.WALLET_IS_NOT_CONNECT ||
-      //   result.code === Code.REJECTED_SIGNATURE
-      // ) {
-      //   globalCtx.eliminateAllProcessModals();
-
-      //   globalCtx.dataCanceledModalHandler({
-      //     modalTitle: t('POSITION_MODAL.SHARING'),
-      //     modalContent: `${t('POSITION_MODAL.SHARING_CANCELLED_TITLE')} (${result.code})`,
-      //   });
-
-      //   globalCtx.visibleCanceledModalHandler();
-      // }
-      else if (
+      } else if (
         result.code === Code.INTERNAL_SERVER_ERROR ||
         result.code === Code.UNKNOWN_ERROR ||
         result.code === Code.WALLET_IS_NOT_CONNECT
       ) {
         globalCtx.eliminateAllProcessModals();
 
-        // TODO: Failed open
         globalCtx.dataFailedModalHandler({
           modalTitle: t('POSITION_MODAL.SHARING'),
           modalContent: `${t('POSITION_MODAL.ERROR_MESSAGE')} (${result.code})`,
+          // TODO: style of failed modal (20230524 - Shirley)
+          // failedTitle: 'Failed to share',
+          // failedMsg: 'Please try again later',
+          btnMsg: t('POSITION_MODAL.FAILED_BUTTON_TRY_AGAIN'),
+          btnFunction: () => {
+            shareTo({url, text, type, size});
+          },
         });
 
         globalCtx.visibleFailedModalHandler();
@@ -202,9 +156,6 @@ const HistoryPositionModal = ({
       });
 
       globalCtx.visibleFailedModalHandler();
-
-      // eslint-disable-next-line no-console
-      console.log('error when sharing', e);
     }
 
     unlock();

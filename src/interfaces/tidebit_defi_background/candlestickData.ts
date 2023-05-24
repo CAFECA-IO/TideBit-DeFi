@@ -10,11 +10,18 @@ export interface ICandle {
   high: number | null;
   low: number | null;
   close: number | null;
+  volume: number;
 }
 
 export interface ISortedCandlestick {
   [second: number]: ICandlestickData;
 }
+
+export type ITradeSideText = 'BUY' | 'SELL';
+export const TradeSideText: {[key: number]: ITradeSideText} = {
+  0: 'BUY',
+  1: 'SELL',
+};
 
 export interface ITrade {
   tradeId: string;
@@ -43,7 +50,6 @@ export interface formattedTrades {
 export interface ICandlestickData {
   x: Date;
   y: ICandle;
-  trade?: formattedTrades; // Deprecated: when data is correct (20230425 - tzuhan)
 }
 
 export interface ICandlestick {
@@ -91,6 +97,7 @@ export const getDummyCandlestickChartData = (
         high: y[1],
         low: y[2],
         close: y[3],
+        volume: 0,
       },
     };
     return result;
@@ -138,6 +145,7 @@ export const updateDummyCandlestickChartData = (
       high: y[1],
       low: y[2],
       close: y[3],
+      volume: 0,
     },
   };
 

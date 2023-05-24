@@ -59,16 +59,8 @@ export const SUPPORTED_NETWORKS = [
 
 export const unitAsset = 'USDT';
 
-export const WS_URL = 'wss://staging-001.tidebit.network/ws';
-
-export const API_URL = 'https://api.tidebit-defi.com'; //'http://localhost:80';
-// export const API_URL = 'http://localhost:80'; //'https://api.tidebit-defi.com';
-// Deprecated: dummy url settings (20230407 - Tzuhan)
-export const BASE_URL = 'https://staging-001.tidebit.network';
-// Deprecated: dummy url settings (20230407 - Tzuhan)
-export const API_VERSION = '/api/v1';
-// Deprecated: dummy url settings (20230407 - Tzuhan)
-export const AVAILABLE_TICKERS = ['ETH', 'BTC'];
+// export const API_URL = 'https://api.tidebit-defi.com'; //'http://localhost:80';
+export const API_URL = 'http://localhost:80'; //'https://api.tidebit-defi.com';
 
 export const MAX_PRICE_TRADING_CHART_ONE_SEC = 1.005; // 1.005
 

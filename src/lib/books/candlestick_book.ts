@@ -58,6 +58,7 @@ class CandlestickBook {
               close,
               high: high === 0 ? null : high,
               low: low === 0 ? null : low,
+              volume: datas.reduce((prev, curr) => prev + curr.y.volume, 0),
             },
           };
         } else if (sortedCandlesticks[i - timeSpan]) {

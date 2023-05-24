@@ -12,7 +12,12 @@ import {
   dummyWalletBalance_USDT,
   IWalletBalance,
 } from '../interfaces/tidebit_defi_background/wallet_balance';
-import {IBalance, isIBalance} from '../interfaces/tidebit_defi_background/balance';
+import {
+  IBalance,
+  IBalanceDetails,
+  convertBalanceDetailsToBalance,
+  isIBalance,
+} from '../interfaces/tidebit_defi_background/balance';
 import {INotificationItem} from '../interfaces/tidebit_defi_background/notification_item';
 import {TideBitEvent} from '../constants/tidebit_event';
 import {NotificationContext} from './notification_context';
@@ -533,7 +538,9 @@ export const UserProvider = ({children}: IUserProvider) => {
           method: Method.GET,
         })) as IResult;
         if (result.success) {
-          const balances = result.data as IBalance[];
+          const balances = (result.data as IBalanceDetails[]).map(detail =>
+            convertBalanceDetailsToBalance(detail)
+          );
           setBalances(balances);
           sumBalance();
         }
@@ -1413,29 +1420,11 @@ export const UserProvider = ({children}: IUserProvider) => {
     return result;
   };
 
-  /* Deprecated: 由 issue#419 處理，留著做為參考 (20230423 - tzuhan)
-  React.useMemo(
-    () =>
-      notificationCtx.emitter.on(TideBitEvent.BALANCE, (balance: IUserBalance) => {
-        setBalance(balance);
-      }),
-    []
-  );
-  React.useMemo(() => notificationCtx.emitter.on(TideBitEvent.ORDER, updateHistories), []);
-  React.useMemo(() => notificationCtx.emitter.on(TideBitEvent.BALANCES, updateBalances), []);
-  */
-
-  const updateBalanceHandler = useCallback((updateBalance: IBalance) => {
+  const updateBalanceHandler = useCallback((updateBalanceDetails: IBalanceDetails) => {
+    const updateBalance = convertBalanceDetailsToBalance(updateBalanceDetails);
     if (balancesRef.current) {
       const updatedBalances = [...balancesRef.current];
       const index = balancesRef.current.findIndex(obj => obj.currency === updateBalance.currency);
-      // Deprecated: when this function is finished, remove this console (20230504 - tzuhan)
-      // eslint-disable-next-line no-console
-      // console.log(
-      //   `updateBalanceHandler is called updateBalance: index:[${index}]`,
-      //   updateBalance,
-      //   updatedBalances
-      // );
       if (index !== -1) {
         const updatedBalance = {
           ...balancesRef.current[index],
@@ -1444,12 +1433,7 @@ export const UserProvider = ({children}: IUserProvider) => {
         updatedBalances[index] = updatedBalance;
       } else updatedBalances.push(updateBalance);
       setBalances(updatedBalances);
-      // Deprecated: when this function is finished, remove this console (20230504 - tzuhan)
-      // eslint-disable-next-line no-console
-      // console.log(
-      //   `updateBalanceHandler after update`,
-      //   index !== -1 ? balancesRef.current[index] : balancesRef.current
-      // );
+      sumBalance();
     }
   }, []);
 
@@ -1508,8 +1492,8 @@ export const UserProvider = ({children}: IUserProvider) => {
     // );
   }, []);
 
-  // React.useMemo(() => notificationCtx.emitter.on(Events.BALANCE, updateBalanceHandler), []);
-  // React.useMemo(() => notificationCtx.emitter.on(Events.CFD, updateCFDHandler), []);
+  React.useMemo(() => notificationCtx.emitter.on(Events.BALANCE, updateBalanceHandler), []);
+  React.useMemo(() => notificationCtx.emitter.on(Events.CFD, updateCFDHandler), []);
   React.useMemo(
     () => notificationCtx.emitter.on(Events.BOLT_TRANSACTION, updateHistoryHandler),
     []

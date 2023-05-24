@@ -1,10 +1,30 @@
 import {TRANSFER_OPTIONS} from '../../constants/display';
 
+export interface IBalanceDetails {
+  id: string;
+  userAddress: string;
+  currency: string;
+  available: number;
+  locked: number;
+  blockNumber?: number;
+  createdAt?: number;
+  updatedAt?: number;
+}
+
 export interface IBalance {
   currency: string;
   available: number;
   locked: number;
 }
+
+export const convertBalanceDetailsToBalance = (balanceDetails: IBalanceDetails): IBalance => {
+  const balance: IBalance = {
+    currency: balanceDetails.currency,
+    available: balanceDetails.available,
+    locked: balanceDetails.locked,
+  };
+  return balance;
+};
 
 export const getDummyBalances = () => {
   const balances: IBalance[] = TRANSFER_OPTIONS.map(option => {

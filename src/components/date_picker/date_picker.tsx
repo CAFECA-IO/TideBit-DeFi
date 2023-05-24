@@ -43,6 +43,7 @@ const PopulateDates = ({
 
     return (
       <div
+        key={formatDate}
         className={`whitespace-nowrap rounded-full text-center hover:cursor-pointer hover:bg-cuteBlue ${
           isSelected ? 'bg-tidebitTheme' : ''
         }${el?.disable ? 'text-lightGray' : ''}`}
@@ -62,7 +63,7 @@ const DatePicker = ({date, minDate, maxDate, setDate}: IDatePickerProps) => {
   const [openDates, setOpenDates] = useState(false);
 
   const displayWeek = WEEK_LIST.map(v => {
-    return <div>{v}</div>;
+    return <div key={v}>{v}</div>;
   });
 
   const firstDayOfMonth = (year: number, month: number) => {

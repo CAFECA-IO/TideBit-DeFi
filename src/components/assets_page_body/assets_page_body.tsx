@@ -4,13 +4,14 @@ import PnlSection from '../pnl_section/pnl_section';
 import InterestSection from '../interest_section/interest_section';
 import ReceiptSection from '../receipt_section/receipt_section';
 import Skeleton, {SkeletonTheme} from 'react-loading-skeleton';
+import {SKELETON_DISPLAY_TIME} from '../../constants/display';
 import Footer from '../footer/footer';
 
 const AssetsPageBody = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    setTimeout(() => setIsLoading(false), 1000);
+    setTimeout(() => setIsLoading(false), SKELETON_DISPLAY_TIME);
   }, []);
 
   return (

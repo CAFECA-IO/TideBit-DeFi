@@ -95,7 +95,7 @@ export const getDummyNotifications = (numbers: number) => {
 /* ToDo: (20230424 - Julian) replace dummy data */
 export const dummyNotifications: INotificationItem[] = [
   ...getDummyNotifications(1),
-  createDummyImportantNotificationItem('Server Maintenance'),
+  //createDummyImportantNotificationItem('Server Maintenance'),
 ];
 
 export const dummyUnReadNotifications: INotificationItem[] = dummyNotifications.filter(

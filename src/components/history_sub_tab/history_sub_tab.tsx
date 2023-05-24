@@ -2,6 +2,7 @@ import React, {useContext, useState, useEffect} from 'react';
 import HistoryPositionItem from '../history_position_item/history_position_item';
 import {UserContext} from '../../contexts/user_context';
 import {toDisplayCFDOrder} from '../../lib/common';
+import {SKELETON_DISPLAY_TIME} from '../../constants/display';
 import Skeleton, {SkeletonTheme} from 'react-loading-skeleton';
 
 const HistorySubTab = () => {
@@ -22,7 +23,7 @@ const HistorySubTab = () => {
   );
 
   useEffect(() => {
-    setTimeout(() => setIsLoading(false), 1000);
+    setTimeout(() => setIsLoading(false), SKELETON_DISPLAY_TIME);
   }, [historyPositionList]);
 
   return (

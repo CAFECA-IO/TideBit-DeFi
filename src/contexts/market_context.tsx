@@ -1,14 +1,8 @@
 import React, {useContext, createContext, useCallback} from 'react';
 import useState from 'react-usestateref';
 import {INITIAL_POSITION_LABEL_DISPLAYED_STATE} from '../constants/display';
-import {
-  getDummyTickerLiveStatistics,
-  ITickerLiveStatistics,
-} from '../interfaces/tidebit_defi_background/ticker_live_statistics';
-import {
-  getDummyTickerStatic,
-  ITickerStatic,
-} from '../interfaces/tidebit_defi_background/ticker_static';
+import {ITickerLiveStatistics} from '../interfaces/tidebit_defi_background/ticker_live_statistics';
+import {ITickerStatic} from '../interfaces/tidebit_defi_background/ticker_static';
 import {UserContext} from './user_context';
 import {
   dummyCryptocurrencies,
@@ -44,7 +38,7 @@ import {
 import {ICurrency} from '../constants/currency';
 import {CustomError} from '../lib/custom_error';
 import {Code, Reason} from '../constants/code';
-import {IPusherAction, PusherAction} from '../interfaces/tidebit_defi_background/pusher_data';
+import {IPusherAction} from '../interfaces/tidebit_defi_background/pusher_data';
 import {IQuotation} from '../interfaces/tidebit_defi_background/quotation';
 import {IRankingTimeSpan} from '../constants/ranking_time_span';
 import {ILeaderboard, getDummyLeaderboard} from '../interfaces/tidebit_defi_background/leaderboard';
@@ -71,20 +65,18 @@ export interface IMarketContext {
   tidebitPromotion: ITideBitPromotion;
   guaranteedStopFeePercentage: number | null;
   init: () => Promise<void>;
-  // getGuaranteedStopFeePercentage: () => Promise<IResult>;
   showPositionOnChartHandler: (bool: boolean) => void;
   candlestickChartIdHandler: (id: string) => void;
   listAvailableTickers: () => ITickerData[];
   selectTickerHandler: (props: ICurrency) => Promise<IResult>;
   selectTimeSpanHandler: (props: ITimeSpanUnion) => void;
-  // getCandlestickChartData: (tickerId: string) => Promise<IResult>; // x 100
   getCFDQuotation: (tickerId: string, typeOfPosition: ITypeOfPosition) => Promise<IResult>;
   getCFDSuggestion: (
     tickerId: string,
     typeOfPosition: ITypeOfPosition,
     price: number
   ) => Promise<IResult>;
-  getGuaranteedStopFeePercentage: (tickerId: string) => Promise<IResult>;
+  getGuaranteedStopFeePercentage: (instId: string) => Promise<IResult>;
   getLeaderboard: (timeSpan: IRankingTimeSpan) => ILeaderboard | null;
   /** Deprecated: replaced by pusher (20230424 - tzuhan)
   getTickerHistory: (
@@ -129,12 +121,10 @@ export const MarketContext = createContext<IMarketContext>({
   withdrawCryptocurrencies: [...dummyCryptocurrencies], // () => [],
   tidebitPromotion: dummyTideBitPromotion,
   init: () => Promise.resolve(),
-  // getGuaranteedStopFeePercentage: () => Promise.resolve(defaultResultSuccess),
   showPositionOnChartHandler: () => null,
   candlestickChartIdHandler: () => null,
   listAvailableTickers: () => [],
   selectTickerHandler: () => Promise.resolve(defaultResultSuccess),
-  // getCandlestickChartData: () => Promise.resolve(defaultResultSuccess),
   getCFDQuotation: () => Promise.resolve(defaultResultSuccess),
   getCFDSuggestion: () => Promise.resolve(defaultResultSuccess),
   getGuaranteedStopFeePercentage: () => Promise.resolve(defaultResultSuccess),
@@ -223,23 +213,61 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     tickerBook.timeSpan = timeSpan;
     setTimeSpan(tickerBook.timeSpan);
   };
+
+  const getTickerStatic = async (instId: string) => {
+    let result: IResult = {...defaultResultFailed};
+    try {
+      result = (await workerCtx.requestHandler({
+        name: APIName.GET_TICKER_STATIC,
+        method: Method.GET,
+        params: instId,
+      })) as IResult;
+    } catch (error) {
+      // Deprecate: error handle (Tzuhan - 20230321)
+      // eslint-disable-next-line no-console
+      console.error(`getTickerStatic error`, error);
+      result.code = Code.INTERNAL_SERVER_ERROR;
+      result.reason = Reason[result.code];
+    }
+    return result;
+  };
+
+  const getTickerLiveStatistics = async (instId: string) => {
+    let result: IResult = {...defaultResultFailed};
+    try {
+      result = (await workerCtx.requestHandler({
+        name: APIName.GET_TICKER_LIVE_STATISTICS,
+        method: Method.GET,
+        params: instId,
+      })) as IResult;
+    } catch (error) {
+      // Deprecate: error handle (Tzuhan - 20230321)
+      // eslint-disable-next-line no-console
+      console.error(`getTickerLiveStatistics error`, error);
+      result.code = Code.INTERNAL_SERVER_ERROR;
+      result.reason = Reason[result.code];
+    }
+    return result;
+  };
+
   const selectTickerHandler = async (tickerId: ICurrency) => {
     if (!tickerId) return {...defaultResultFailed};
     const ticker: ITickerData = availableTickersRef.current[tickerId];
     if (!ticker) return {...defaultResultFailed};
     setSelectedTicker(ticker);
     notificationCtx.emitter.emit(TideBitEvent.TICKER_CHANGE, ticker);
+    await listMarketTrades(ticker.instId);
+    syncCandlestickData();
     // ++ TODO: get from api
-    const tickerStatic: ITickerStatic = getDummyTickerStatic(tickerId);
-    setTickerStatic(tickerStatic);
-    const tickerLiveStatistics: ITickerLiveStatistics = getDummyTickerLiveStatistics(tickerId);
-    setTickerLiveStatistics(tickerLiveStatistics);
-
-    // await getCandlestickChartData(ticker.instId);
-    /** Deprecated: replaced by pusher (20230502 - tzuhan) 
-    workerCtx.tickerChangeHandler(ticker);
-    */
-    await getGuaranteedStopFeePercentage(ticker.currency);
+    const {success: isGetTickerStaticSuccess, data: tickerStatic} = await getTickerStatic(
+      ticker.instId
+    );
+    if (isGetTickerStaticSuccess) setTickerStatic(tickerStatic as ITickerStatic);
+    const {success: isGetTickerLiveStatisticsSuccess, data: tickerLiveStatistics} =
+      await getTickerLiveStatistics(ticker.instId);
+    if (isGetTickerLiveStatisticsSuccess)
+      setTickerLiveStatistics(tickerLiveStatistics as ITickerLiveStatistics);
+    await getGuaranteedStopFeePercentage(ticker.instId);
     return {...defaultResultSuccess};
   };
 
@@ -339,18 +367,14 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     return positions;
   };
 
-  const getGuaranteedStopFeePercentage = async (currency: string) => {
+  const getGuaranteedStopFeePercentage = async (instId: string) => {
     let result: IResult = {...defaultResultFailed};
-    const instId = `${currency}-${unitAsset}`;
     try {
       result = (await workerCtx.requestHandler({
         name: APIName.GET_GUARANTEED_STOP_FEE_PERCENTAGE,
         method: Method.GET,
         params: instId,
       })) as IResult;
-      // Deprecate: after this functions finishing (20230508 - tzuhan)
-      // eslint-disable-next-line no-console
-      console.log(`getGuaranteedStopFeePercentage result`, result);
       if (result.success) {
         const data = result.data as number;
         setGuaranteedStopFeePercentage(data);
@@ -422,6 +446,37 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     return result;
   };
 
+  const listMarketTrades = async (instId: string) => {
+    let result: IResult = {...defaultResultFailed};
+    try {
+      result = (await workerCtx.requestHandler({
+        name: APIName.LIST_MARKET_TRADES,
+        method: Method.GET,
+        params: instId,
+      })) as IResult;
+      if (result.success) {
+        for (const trade of result.data as ITrade[]) {
+          tradeBook.add({
+            tradeId: trade.tradeId,
+            targetAsset: trade.baseUnit,
+            unitAsset: trade.quoteUnit,
+            direct: TradeSideText[trade.side],
+            price: trade.price,
+            timestampMs: trade.timestamp,
+            quantity: trade.amount,
+          });
+        }
+      }
+    } catch (error) {
+      // Deprecate: error handle (Tzuhan - 20230321)
+      // eslint-disable-next-line no-console
+      console.error(`listMarketTrades error`, error);
+      result.code = Code.INTERNAL_SERVER_ERROR;
+      result.reason = Reason[result.code];
+    }
+    return result;
+  };
+
   const syncCandlestickData = () => {
     if (!!candlestickIntervalRef.current) {
       clearInterval(candlestickIntervalRef.current);
@@ -438,7 +493,6 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     setIsCFDTradable(true);
     await listTickers();
     await listCurrencies();
-    syncCandlestickData();
     return await Promise.resolve();
   };
 
@@ -519,7 +573,6 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     depositCryptocurrencies: depositCryptocurrenciesRef.current,
     withdrawCryptocurrencies: withdrawCryptocurrenciesRef.current,
     tidebitPromotion,
-    // getCandlestickChartData,
     getCFDQuotation,
     getCFDSuggestion,
     getGuaranteedStopFeePercentage,

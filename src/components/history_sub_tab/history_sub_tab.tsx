@@ -13,7 +13,7 @@ const HistorySubTab = () => {
     cfd ? (
       <div key={cfd.id}>
         {isLoading ? (
-          <Skeleton count={1} height={40} />
+          <Skeleton count={1} height={55} />
         ) : (
           <HistoryPositionItem closedCfdDetails={toDisplayCFDOrder(cfd, [])} />
         )}

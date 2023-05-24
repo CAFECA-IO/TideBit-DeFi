@@ -87,12 +87,12 @@ const BalanceSection = () => {
   };
 
   return (
-    <div className="">
-      <div className="">
+    <>
+      <div>
         {/* balanceImgContainer */}
+
         <div className="relative pt-20 text-center">
           <CircularProgressBar
-            // showLabel={false}
             progressBarColor={['#29C1E1']}
             numerator={avblBalance}
             denominator={totalBalance}
@@ -141,7 +141,7 @@ const BalanceSection = () => {
           </RippleButton>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

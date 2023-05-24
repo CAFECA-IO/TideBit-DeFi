@@ -1,17 +1,12 @@
-import React, {useContext, useEffect} from 'react';
+import React, {useContext, useState, useEffect} from 'react';
+import Skeleton, {SkeletonTheme} from 'react-loading-skeleton';
 import OpenPositionItem from '../open_position_item/open_position_item';
 import {UserContext} from '../../contexts/user_context';
 import {IDisplayCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
-import {getTimestamp, roundToDecimalPlaces, toDisplayCFDOrder} from '../../lib/common';
+import {roundToDecimalPlaces, toDisplayCFDOrder} from '../../lib/common';
 import {MarketContext} from '../../contexts/market_context';
 import {TypeOfPosition} from '../../constants/type_of_position';
-import {
-  DEFAULT_TICKER,
-  QUOTATION_RENEWAL_INTERVAL_SECONDS,
-  unitAsset,
-} from '../../constants/config';
 import useStateRef from 'react-usestateref';
-import {IQuotation, getDummyQuotation} from '../../interfaces/tidebit_defi_background/quotation';
 import {DEFAULT_SPREAD} from '../../constants/display';
 
 const OpenSubTabMobile = () => {
@@ -23,6 +18,7 @@ const OpenSubTabMobile = () => {
     shortPrice: 0,
   };
   const [caledPrice, setCaledPrice, caledPriceRef] = useStateRef(initState);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const buyPrice = !!marketCtx.selectedTicker?.price
@@ -75,10 +71,14 @@ const OpenSubTabMobile = () => {
     return displayCFD;
   });
 
+  useEffect(() => {
+    setTimeout(() => setIsLoading(false), 1000);
+  }, [cfds]);
+
   const openPositionList = cfds.map(cfd => {
     return (
       <div key={cfd.id}>
-        <OpenPositionItem openCfdDetails={cfd} />
+        {isLoading ? <Skeleton count={5} height={30} /> : <OpenPositionItem openCfdDetails={cfd} />}
         <div className="my-auto h-px w-full rounded bg-white/50"></div>
       </div>
     );
@@ -86,9 +86,11 @@ const OpenSubTabMobile = () => {
 
   return (
     <>
-      <div className="flex w-screen flex-col overflow-x-hidden px-8 sm:w-500px">
-        <div className="h-80vh overflow-y-auto px-4">{openPositionList}</div>
-      </div>
+      <SkeletonTheme baseColor="#202020" highlightColor="#444">
+        <div className="flex w-screen flex-col overflow-x-hidden px-8 sm:w-500px">
+          <div className="h-80vh overflow-y-auto px-4">{openPositionList}</div>
+        </div>
+      </SkeletonTheme>
     </>
   );
 };

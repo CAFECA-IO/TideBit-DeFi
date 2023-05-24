@@ -23,7 +23,6 @@ import {
 import {ICurrency} from '../../constants/currency';
 import {CFDOperation} from '../../constants/cfd_order_type';
 import {FRACTION_DIGITS} from '../../constants/config';
-import {ICurrency} from '../../constants/currency';
 
 type TranslateFunction = (s: string) => string;
 interface IReceiptItemProps {

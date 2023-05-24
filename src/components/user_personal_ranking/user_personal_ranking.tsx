@@ -28,9 +28,9 @@ const UserPersonalRanking = ({timeSpan}: IUserPersonalRankingProps) => {
     setUserRankData(userCtx.getPersonalRanking(timeSpan) ?? defaultPersonalRanking);
   }, [timeSpan]);
 
-  const username = userCtx.wallet?.slice(-1).toUpperCase();
+  const username = userCtx.user?.address?.slice(-1).toUpperCase();
   const userAchievement =
-    userCtx.getPersonalAchievements(userCtx.id ?? '') ?? defaultPersonalAchievement;
+    userCtx.getPersonalAchievements(userCtx.user?.id ?? '') ?? defaultPersonalAchievement;
 
   const rankingNumber = userRankData.rank;
   const pnl = userRankData.pnl;
@@ -113,7 +113,7 @@ const UserPersonalRanking = ({timeSpan}: IUserPersonalRankingProps) => {
       </div>
     ) : null;
 
-  const personalRanking = userCtx.wallet ? (
+  const personalRanking = userCtx.user?.address ? (
     <div className="flex w-full whitespace-nowrap bg-darkGray3 px-4 py-2 shadow-top md:px-8">
       <div
         className="flex flex-1 items-center space-x-2 md:space-x-3"
@@ -129,7 +129,7 @@ const UserPersonalRanking = ({timeSpan}: IUserPersonalRankingProps) => {
           <span className="text-2xl font-bold text-lightWhite md:text-3xl">{username}</span>
         </div>
         {/* Info: (20230510 - Julian) User Name */}
-        <div className="truncate text-sm sm:text-xl">{accountTruncate(userCtx.wallet)}</div>
+        <div className="truncate text-sm sm:text-xl">{accountTruncate(userCtx.user?.address)}</div>
       </div>
       <div className="flex items-center space-x-3 text-base md:text-xl">
         <div className="inline-flex items-end">

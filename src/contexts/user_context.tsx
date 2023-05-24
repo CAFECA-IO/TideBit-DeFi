@@ -65,16 +65,13 @@ export interface IUserProvider {
   children: React.ReactNode;
 }
 export interface IUserContext {
-  id: string | null;
-  username: string | null;
-  wallet: string | null;
+  user: IUser | null;
   walletBalances: IWalletBalance[] | null;
   balance: IUserBalance | null;
   balances: IBalance[] | null;
   favoriteTickers: string[];
   isConnected: boolean;
   enableServiceTerm: boolean;
-  email: string | null;
   isSubscibedNewsletters: boolean;
   isEnabledEmailNotification: boolean;
   isConnectedWithEmail: boolean;
@@ -122,16 +119,13 @@ export interface IUserContext {
 }
 
 export const UserContext = createContext<IUserContext>({
-  id: null,
-  username: null,
-  wallet: null,
+  user: null,
   walletBalances: null,
   balance: null,
   balances: null,
   favoriteTickers: [],
   isConnected: false,
   enableServiceTerm: false,
-  email: null,
   isSubscibedNewsletters: false,
   isEnabledEmailNotification: false,
   isConnectedWithEmail: false,
@@ -224,10 +218,7 @@ export const UserProvider = ({children}: IUserProvider) => {
   const transactionEngine = React.useMemo(() => TransactionEngineInstance, []);
   const workerCtx = useContext(WorkerContext);
   const notificationCtx = useContext(NotificationContext);
-  const [id, setId, idRef] = useState<string | null>(null);
-  const [username, setUsername, usernameRef] = useState<string | null>(null);
-  const [wallet, setWallet, walletRef] = useState<string | null>(null);
-  const [email, setEmail, emailRef] = useState<string | null>(null);
+  const [user, setUser, userRef] = useState<IUser | null>(null);
   const [walletBalances, setWalletBalances, walletBalancesRef] = useState<IWalletBalance[] | null>(
     null
   );
@@ -261,11 +252,21 @@ export const UserProvider = ({children}: IUserProvider) => {
       reason: Reason[Code.INTERNAL_SERVER_ERROR],
     };
     result = await deWTLogin(address, deWT);
+    // Deprecate: [debug] (20230524 - tzuhan)
+    // eslint-disable-next-line no-console
+    console.log(`setPrivateData deWTLogin result`, result);
     if (result.success) {
+      const {user, expiredAt} = result.data as {user: IUser; expiredAt: string};
+      const expiredAtDate = new Date(expiredAt);
+      // Deprecate: [debug] (20230524 - tzuhan)
+      // eslint-disable-next-line no-console
+      console.log(`deWTLogin expiredAtDate: ${expiredAtDate}, user`, user);
+      // TODO: setTimeOut to clearPrivateData() (20230508 - tzuhan)
+      setUser(user);
+
       setEnableServiceTerm(true);
-      setWallet(address);
       setWalletBalances([dummyWalletBalance_BTC, dummyWalletBalance_ETH, dummyWalletBalance_USDT]);
-      // TODO: User balance from backend (20230324 - tzuhan)
+
       await listBalances();
       if (selectedTickerRef.current) {
         await listCFDs(selectedTickerRef.current.currency);
@@ -275,6 +276,9 @@ export const UserProvider = ({children}: IUserProvider) => {
 
       workerCtx.subscribeUser(address);
     } else {
+      // Deprecate: [debug] (20230524 - tzuhan)
+      // eslint-disable-next-line no-console
+      console.log('setPrivateData deWTLogin.result.success false => clearPrivateData');
       clearPrivateData();
     }
   };
@@ -283,9 +287,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     // clear DeWT
     setDeWT('');
     setEnableServiceTerm(false);
-    setId(null);
-    setUsername(null);
-    setWallet(null);
+    setUser(null);
     setWalletBalances(null);
     setBalance(null);
     setOpenedCFDs([]);
@@ -295,15 +297,38 @@ export const UserProvider = ({children}: IUserProvider) => {
   };
 
   const lunar = Lunar.getInstance();
-  lunar.on('connected', () => {
+  lunar.on('connected', async () => {
     setIsConnected(true);
+    if (!userRef.current) {
+      const {isDeWTLegit, signer, deWT} = checkDeWT();
+      if (isDeWTLegit && signer && deWT) await setPrivateData(signer, deWT);
+    }
   });
   lunar.on('disconnected', () => {
+    // Deprecate: [debug] (20230524 - tzuhan)
+    // eslint-disable-next-line no-console
+    console.log(`lunar.on('disconnected') => clearPrivateData`);
     setIsConnected(false);
     clearPrivateData();
   });
   lunar.on('accountsChanged', async (address: string) => {
-    clearPrivateData();
+    // Deprecate: [debug] (20230524 - tzuhan)
+    // eslint-disable-next-line no-console
+    console.log(
+      `accountsChanged address: ${address}, userRef.current?.address: ${userRef.current?.address}`
+    );
+    if (!!userRef.current && address !== userRef.current.address) {
+      // Deprecate: [debug] (20230524 - tzuhan)
+      // eslint-disable-next-line no-console
+      console.log(
+        `userRef.current: ${JSON.stringify(
+          userRef.current
+        )} !!userRef.current(${!!userRef.current}) && address !== userRef.current?.address ${
+          !!userRef.current && address !== userRef.current?.address
+        }? clearPrivateData`
+      );
+      clearPrivateData();
+    }
   });
 
   const privateRequestHandler = useCallback(async (data: TypeRequest) => {
@@ -361,9 +386,6 @@ export const UserProvider = ({children}: IUserProvider) => {
             ticker,
           },
         })) as IResult;
-        // Deprecate: after this functions finishing (20230508 - tzuhan)
-        // eslint-disable-next-line no-console
-        console.log(`listHistories result`, result);
         if (result.success) {
           const CFDs = result.data as ICFDOrder[];
           let openCFDs: ICFDOrder[] = [];
@@ -383,10 +405,6 @@ export const UserProvider = ({children}: IUserProvider) => {
           }
           setOpenedCFDs(openCFDs);
           setClosedCFDs(closedCFDs);
-          // eslint-disable-next-line no-console
-          console.log(`openCFDs`, openCFDsRef.current);
-          // eslint-disable-next-line no-console
-          console.log(`closedCFDs`, closedCFDsRef.current);
         }
       } catch (error) {
         // TODO: error handle (Tzuhan - 20230421)
@@ -514,9 +532,6 @@ export const UserProvider = ({children}: IUserProvider) => {
           name: APIName.LIST_BALANCES,
           method: Method.GET,
         })) as IResult;
-        // Deprecate: after this functions finishing (20230508 - tzuhan)
-        // eslint-disable-next-line no-console
-        console.log(`listBalances result`, result);
         if (result.success) {
           const balances = result.data as IBalance[];
           setBalances(balances);
@@ -540,10 +555,13 @@ export const UserProvider = ({children}: IUserProvider) => {
     try {
       resultCode = Code.WALLET_IS_NOT_CONNECT;
       const connect = await lunar.connect({});
+      setIsConnected(connect);
       if (connect && lunar.isConnected) {
         resultCode = Code.DEWT_IS_NOT_LEGIT;
-        const {isDeWTLegit, signer, deWT} = checkDeWT();
-        if (isDeWTLegit && signer && deWT) await setPrivateData(signer, deWT);
+        if (!userRef.current) {
+          const {isDeWTLegit, signer, deWT} = checkDeWT();
+          if (isDeWTLegit && signer && deWT) await setPrivateData(signer, deWT);
+        }
         resultCode = Code.SUCCESS;
         result = {
           success: true,
@@ -582,17 +600,23 @@ export const UserProvider = ({children}: IUserProvider) => {
           ...result.serviceTerm,
         };
         const verifyR: boolean = lunar.verifyTypedData(serviceTermContract, `0x${signature}`);
+        // Deprecate: [debug] (20230524 - tzuhan)
+        // eslint-disable-next-line no-console
+        console.log(`checkDeWT lunar.verifyTypedData => verifyR: ${verifyR} `);
         isDeWTLegit = isDeWTLegit && !!signer && verifyR;
       }
     }
     if (!isDeWTLegit) {
+      // Deprecate: [debug] (20230524 - tzuhan)
+      // eslint-disable-next-line no-console
+      console.log(`checkDeWT isDeWTLegit: ${isDeWTLegit} === false => clearPrivateData`);
       clearPrivateData();
     }
     return {isDeWTLegit, signer, deWT};
   };
 
   const deWTLogin = async (address: string, deWT: string) => {
-    let result: IResult = {...defaultResultSuccess};
+    let result: IResult = {...defaultResultFailed};
     if (address && deWT) {
       // Info postDeWT and get User data
       try {
@@ -604,25 +628,8 @@ export const UserProvider = ({children}: IUserProvider) => {
             deWT,
           },
         })) as IResult;
-        // Deprecate: after this functions finishing (20230508 - tzuhan)
-        // eslint-disable-next-line no-console
-        console.log(`deWTLogin result`, result);
-        if (result.success) {
-          const {user, expiredAt} = result.data as {user: IUser; expiredAt: string};
-          const expiredAtDate = new Date(expiredAt);
-          // Deprecate: after this functions finishing (20230508 - tzuhan)
-          // eslint-disable-next-line no-console
-          console.log(`deWTLogin user`, user);
-          // Deprecate: after this functions finishing (20230508 - tzuhan)
-          // eslint-disable-next-line no-console
-          console.log(`deWTLogin expiredAtDate`, expiredAtDate);
-          // TODO: setTimeOut to clearPrivateData() (20230508 - tzuhan)
-          setId(user.id);
-          setUsername(user?.name || user.address);
-        } else {
-          clearPrivateData();
-        }
       } catch (error) {
+        result.success = false;
         result.code = Code.INTERNAL_SERVER_ERROR;
         result.reason = Reason[result.code];
         // Deprecate: after implementing error handle (20230508 - tzuhan)
@@ -686,6 +693,9 @@ export const UserProvider = ({children}: IUserProvider) => {
   const disconnect = async () => {
     let result: IResult = {...defaultResultFailed};
     try {
+      // Deprecate: [debug] (20230524 - tzuhan)
+      // eslint-disable-next-line no-console
+      console.log(`onClick disconnect => clearPrivateData`);
       clearPrivateData();
       setIsConnected(false);
       await lunar.disconnect();
@@ -1522,28 +1532,24 @@ export const UserProvider = ({children}: IUserProvider) => {
 
   const init = async () => {
     const {isDeWTLegit, signer, deWT} = checkDeWT();
-    /** TODO: wait for lunar isConnected & lunar.address (20230421 - tzuhan)
-    if (isDeWTLegit && lunar.isConnected) await setPrivateData(lunar.address);
+    // Deprecate: [debug] (20230524 - tzuhan)
     // eslint-disable-next-line no-console
-    console.log(`lunar.isConnected: ${lunar.isConnected}`);
-    */
-    // eslint-disable-next-line no-console
-    console.log(`app init is called: isDeWTLegit${isDeWTLegit}, signer${signer}`);
-    if (isDeWTLegit && signer && deWT) await setPrivateData(signer, deWT);
+    console.log(
+      `app init is called: lunar.isConnected: ${lunar.isConnected}, isDeWTLegit: ${isDeWTLegit}, signer: ${signer}`
+    );
+    if (lunar.isConnected && isDeWTLegit && signer && deWT) await setPrivateData(signer, deWT);
+
     return await Promise.resolve();
   };
 
   const defaultValue = {
-    id: idRef.current,
-    username: usernameRef.current,
-    wallet: walletRef.current,
+    user: userRef.current,
     walletBalances: walletBalancesRef.current,
     balance: balanceRef.current,
     balances: balancesRef.current,
     favoriteTickers: favoriteTickersRef.current,
     isConnected: isConnectedRef.current,
     enableServiceTerm: enableServiceTermRef.current,
-    email: emailRef.current,
     isSubscibedNewsletters: isSubscibedNewslettersRef.current,
     isEnabledEmailNotification: isEnabledEmailNotificationRef.current,
     isConnectedWithEmail: isConnectedWithEmailRef.current,

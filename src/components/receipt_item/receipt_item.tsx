@@ -20,6 +20,7 @@ import {
   IDepositOrder,
   IWithdrawOrder,
 } from '../../interfaces/tidebit_defi_background/order';
+import {ICurrency} from '../../constants/currency';
 import {CFDOperation} from '../../constants/cfd_order_type';
 import {FRACTION_DIGITS} from '../../constants/config';
 
@@ -51,8 +52,8 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
   const targetAmount =
     orderType === OrderType.CFD
       ? (order as ICFDOrder).state === OrderState.CLOSED
-        ? (order as ICFDOrder).margin.amount + ((order as ICFDOrder).pnl?.value || 0) > 0
-          ? (order as ICFDOrder).margin.amount + ((order as ICFDOrder).pnl?.value || 0)
+        ? (order as ICFDOrder).margin.amount + ((order as ICFDOrder).pnl?.value ?? 0) > 0
+          ? (order as ICFDOrder).margin.amount + ((order as ICFDOrder).pnl?.value ?? 0)
           : 0
         : (order as ICFDOrder).margin.amount * -1
       : orderType === OrderType.DEPOSIT
@@ -122,7 +123,9 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
       : '-';
 
   /* Info: (20230523 - Julian) CFD Data */
-  const positionLineGraph = marketCtx.listTickerPositions(targetAsset, {begin: createTimestamp});
+  const positionLineGraph = marketCtx.listTickerPositions(targetAsset as ICurrency, {
+    begin: createTimestamp,
+  });
   const cfdData = toDisplayCFDOrder(order as ICFDOrder, positionLineGraph);
 
   // Till:(20230530 - Julian)

@@ -37,10 +37,7 @@ const CfdSharing = (props: IPageProps) => {
 
   const [userTz, setUserTz, userTzRef] = useStateRef<number>(0);
 
-  // Deprecated: called by component by `fetch` won't have any query or props unless type something on the url of the browser (20230523 - Shirley)
   const {query} = router;
-  // eslint-disable-next-line no-console
-  console.log('query in share/cfd', query);
 
   // TODO: for meta content (20230505 - Shirley)
   const img = `${DOMAIN}/api/images/cfd/${props.cfdId}?tz=${userTzRef.current}`;

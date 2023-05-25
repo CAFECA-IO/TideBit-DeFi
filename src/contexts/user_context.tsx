@@ -40,6 +40,7 @@ import {
   randomHex,
   rlpEncodeServiceTerm,
   verifySignedServiceTerm,
+  randomIntFromInterval,
 } from '../lib/common';
 import {IAcceptedOrder} from '../interfaces/tidebit_defi_background/accepted_order';
 import {

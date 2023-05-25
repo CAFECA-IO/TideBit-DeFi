@@ -13,6 +13,7 @@ export interface IFailedModal {
   btnUrl?: string;
   failedTitle?: string;
   failedMsg?: string;
+  btnFunction?: () => void;
 }
 
 const FailedModal = ({
@@ -25,10 +26,19 @@ const FailedModal = ({
   btnUrl,
   failedTitle,
   failedMsg,
+  btnFunction,
   ...otherProps
 }: IFailedModal) => {
   const displayedModalContent =
     (!failedTitle || !failedMsg) && !modalContent ? 'Failed' : modalContent;
+
+  const btnClickHandler = () => {
+    if (btnFunction) {
+      btnFunction();
+    }
+
+    modalClickHandler();
+  };
 
   const failContent = (
     <div className="relative flex flex-auto flex-col items-center pt-1 text-center text-lg leading-relaxed text-lightWhite">
@@ -53,7 +63,7 @@ const FailedModal = ({
             <RippleButton
               className={`absolute bottom-0 mt-0 w-254px rounded border-0 bg-tidebitTheme py-2 text-base text-white transition-colors duration-300 hover:cursor-pointer hover:bg-cyan-600 focus:outline-none md:mt-0`}
               buttonType="button"
-              onClick={modalClickHandler}
+              onClick={btnClickHandler}
             >
               {btnMsg}
             </RippleButton>
@@ -62,7 +72,7 @@ const FailedModal = ({
           <RippleButton
             className={`absolute bottom-0 mt-0 w-254px rounded border-0 bg-tidebitTheme py-2 text-base text-white transition-colors duration-300 hover:cursor-pointer hover:bg-cyan-600 focus:outline-none md:mt-0`}
             buttonType="button"
-            onClick={modalClickHandler}
+            onClick={btnClickHandler}
           >
             {btnMsg}
           </RippleButton>
@@ -76,7 +86,7 @@ const FailedModal = ({
       {/*  <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">*/}
       {/*  overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none */}
       {/* position: relative; top: 50%; left: 50%; transform: translate(-50%, -50%) */}
-      <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">
+      <div className="fixed inset-0 z-70 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">
         {/* The position of the modal */}
         <div className="relative my-6 mx-auto w-auto max-w-xl">
           {' '}

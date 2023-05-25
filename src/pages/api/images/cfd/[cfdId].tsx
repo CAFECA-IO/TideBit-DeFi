@@ -1,6 +1,9 @@
 import {NextApiRequest, NextApiResponse} from 'next';
 import {ImageResponse} from 'next/server';
 import {
+  adjustTimestamp,
+  getTimestamp,
+  getTimestampInMilliseconds,
   randomIntFromInterval,
   roundToDecimalPlaces,
   timestampToString,
@@ -14,6 +17,7 @@ import {
   WIDTH_OF_SHARING_RECORD,
 } from '../../../../constants/display';
 import {
+  API_URL,
   DOMAIN,
   FRACTION_DIGITS,
   SHARING_BG_IMG_THRESHOLD_PNL_PERCENT,
@@ -25,7 +29,9 @@ import {Currency} from '../../../../constants/currency';
 import {
   ISharingOrder,
   getDummySharingOrder,
+  getInvalidSharingOrder,
   isDummySharingOrder,
+  isSharingOrder,
 } from '../../../../interfaces/tidebit_defi_background/sharing_order';
 import {useRouter} from 'next/router';
 import {BARLOW_BASE64} from '../../../../constants/fonts';
@@ -36,34 +42,76 @@ export const config = {
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const {pathname} = new URL(req?.url ?? '');
-  const params = pathname.split('/');
-  const cfdId = params.pop(); // TODO: send to api (20230508 - Shirley)
+  const url = new URL(req?.url ?? '');
+  const params = url.pathname.split('/');
+  const cfdId = params.pop();
+  const apiUrl = `${API_URL}/public/shared/cfd/${cfdId}`;
+  const tz = Number(url.searchParams.get('tz'));
 
+  let sharingOrder: ISharingOrder = getInvalidSharingOrder();
+
+  const fetchOrder = async () => {
+    try {
+      const orderResponse = await fetch(apiUrl, {
+        method: 'GET',
+        headers: {'Content-Type': 'application/json'},
+      });
+      const order = await orderResponse.json();
+
+      if (order?.success) {
+        if (isSharingOrder(order?.data)) {
+          sharingOrder = order?.data;
+        }
+      }
+    } catch (e) {
+      // TODO: error handling (20230523 - Shirley)
+    }
+
+    return sharingOrder;
+  };
+
+  try {
+    await fetchOrder();
+
+    const offset = new Date().getTimezoneOffset() / 60;
+    const adCreateTimstamp = adjustTimestamp(offset, sharingOrder?.createTimestamp ?? 0, tz);
+    const adCloseTimstamp = adjustTimestamp(offset, sharingOrder?.closeTimestamp ?? 0, tz);
+
+    sharingOrder = {
+      ...sharingOrder,
+      createTimestamp: adCreateTimstamp,
+      closeTimestamp: adCloseTimstamp,
+    };
+  } catch (e) {
+    // Info: show the invalid dummy order img (20230523 - Shirley)
+  }
   // TODO: Data from API (20230508 - Shirley)
   const {
-    tickerId,
-    user,
+    ticker: tickerId,
+    userName,
     targetAssetName,
     typeOfPosition,
     openPrice,
     closePrice,
     leverage,
-    openTime,
-    closeTime,
-  } = getDummySharingOrder() as ISharingOrder;
+    createTimestamp,
+    closeTimestamp,
+  } = sharingOrder;
 
-  const {date: openDate, time: openTimeString} = timestampToString(openTime);
-  const {date: closeDate, time: closeTimeString} = timestampToString(closeTime);
+  // TODO: Timestamp 要改成用戶時區 (20230523 - Shirley)
+  const {date: openDate, time: openTimeString} = timestampToString(createTimestamp);
+  const {date: closeDate, time: closeTimeString} = timestampToString(closeTimestamp);
 
-  const displayedUser = user.slice(-1).toUpperCase();
+  const displayedUser = userName.slice(-1).toUpperCase();
 
   const logoUrl = DOMAIN + `/elements/group_15944.svg`;
   const iconUrl = DOMAIN + `/asset_icon/${tickerId.toLowerCase()}.svg`;
   const qrcodeUrl = DOMAIN + `/elements/tidebit_qrcode.svg`;
 
   const pnlPercent =
-    typeOfPosition === TypeOfPosition.BUY
+    !!!openPrice || !!!closePrice
+      ? 0
+      : typeOfPosition === TypeOfPosition.BUY
       ? roundToDecimalPlaces(((closePrice - openPrice) / openPrice) * 100, 2)
       : roundToDecimalPlaces(((openPrice - closePrice) / openPrice) * 100, 2);
 
@@ -91,6 +139,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     typeOfPosition === TypeOfPosition.BUY ? 'Up (Buy)' : 'Down (Sell)';
   const displayedTextColor =
     profitState === ProfitState.PROFIT ? TypeOfPnLColorHex.PROFIT : TypeOfPnLColorHex.LOSS;
+
+  const displayedTz = tz >= 0 ? `UTC+${tz}` : `UTC${tz}`;
 
   const BarlowBuffer = Buffer.from(BARLOW_BASE64, 'base64');
 
@@ -248,7 +298,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     height: '270px',
                     borderWidth: '1px',
                     borderColor: `transparent`,
-                    // marginBottom: '50px',
                     fontSize: '16px',
                     lineHeight: '1.5',
                     color: 'rgba(229, 231, 235, 1)',
@@ -404,7 +453,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                             marginRight: '70px',
                           }}
                         >
-                          {openDate} {openTimeString}
+                          {openDate} {openTimeString} ({displayedTz})
                         </p>
                       </div>
 
@@ -432,7 +481,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                             marginRight: '70px',
                           }}
                         >
-                          {closeDate} {closeTimeString}
+                          {closeDate} {closeTimeString} ({displayedTz})
                         </p>
                       </div>
 
@@ -482,14 +531,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
               </div>{' '}
               <p
                 style={{
-                  // top: '-5px',
                   marginLeft: '90px',
                   fontSize: 18,
                   fontWeight: 'bolder',
                   color: 'rgba(229, 231, 235, 1)',
                 }}
               >
-                User's name
+                {userName}
               </p>
             </div>
           </div>

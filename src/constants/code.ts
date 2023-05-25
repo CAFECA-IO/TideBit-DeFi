@@ -25,7 +25,11 @@ export type ICode =
   | '60310001'
   | '80410001'
   | '90000000'
-  | '90000001';
+  | '90000001'
+  | '60210002'
+  | '10310002'
+  | '10210005'
+  | '60210003';
 
 export type ICodeConstant = {
   SUCCESS: ICode;
@@ -55,8 +59,12 @@ export type ICodeConstant = {
   REJECTED_SIGNATURE: ICode;
 
   INVALID_TRADE: ICode;
+  CANNOT_FETCH_CFD_SHARE_ORDER: ICode;
+  NEED_SHARE_URL: ICode;
   INTERNAL_SERVER_ERROR: ICode;
   CANNOT_CONVERT_TO_IMAGE: ICode;
+  NEED_CFD_ORDER: ICode;
+  CFD_ORDER_NOT_MATCH: ICode;
 
   UNKNOWN_ERROR: ICode;
   UNKNOWN_ERROR_IN_COMPONENT: ICode;
@@ -76,6 +84,9 @@ export const Code: ICodeConstant = {
   INSUFFICIENT_PREDICTED_TRADES: '10210002',
   CFD_ORDER_NOT_FOUND: '10210003',
   CFD_ORDER_STATE_ERROR: '10210004',
+  NEED_SHARE_URL: '10310002',
+  NEED_CFD_ORDER: '10210005',
+
   THIRD_PARTY_LIBRARY_ERROR: '10310001',
 
   ORDER_NOT_OPENING: '30110001',
@@ -93,8 +104,10 @@ export const Code: ICodeConstant = {
   REJECTED_SIGNATURE: '40430004',
 
   INVALID_TRADE: '60210001',
+  CANNOT_FETCH_CFD_SHARE_ORDER: '60210002',
   INTERNAL_SERVER_ERROR: '60220001',
   CANNOT_CONVERT_TO_IMAGE: '60310001',
+  CFD_ORDER_NOT_MATCH: '60210003',
 
   DEPOSIT_TOO_FREQUENCY: '80410001',
 
@@ -108,9 +121,11 @@ export const Reason: IReason = {
   '10120001': 'Chain name does not exist',
   '10210001': 'ERROR_MESSAGE.FUNCTION_NOT_IMPLEMENTED',
   '10110002': 'ERROR_MESSAGE.CANNOT_GET_QUOTATION_FROM_CONTEXT',
+  '10310002': 'Cannot get share url',
   '10210002': 'There are not enough predicted trades',
   '10210003': 'CFD order state error',
   '10210004': 'CFD order not found',
+  '10210005': 'CFD order needed when sharing CFD to compare',
   '10310001': 'ERROR_MESSAGE.THIRD_PARTY_LIBRARY_ERROR',
 
   '30110001': 'ERROR_MESSAGE.ORDER_NOT_OPENING',
@@ -130,9 +145,11 @@ export const Reason: IReason = {
   '60210001': 'The format of trade is invalid',
   '60220001': 'ERROR_MESSAGE.INTERNAL_SERVER_ERROR',
   '60310001': 'Cannot convert HTML to image',
+  '60210003': 'CFD order are not consistent with the one got from API',
 
   '80410001': 'Already deposit in a month',
 
   '90000000': 'ERROR_MESSAGE.UNKNOWN_ERROR',
   '90000001': 'ERROR_MESSAGE.UNKNOWN_ERROR_IN_COMPONENT',
+  '60210002': 'Cannot fetch image url of Next API route',
 };

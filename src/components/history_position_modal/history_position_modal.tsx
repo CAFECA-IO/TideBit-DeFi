@@ -11,12 +11,16 @@ import {useContext, useRef, useState} from 'react';
 import TradingInput from '../trading_input/trading_input';
 import {AiOutlineQuestionCircle} from 'react-icons/ai';
 import {useGlobal} from '../../contexts/global_context';
-import {timestampToString} from '../../lib/common';
+import {locker, timestampToString} from '../../lib/common';
 import {CFDClosedType} from '../../constants/cfd_closed_type';
 import {OrderState} from '../../constants/order_state';
 import {IDisplayCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
 import {useTranslation} from 'react-i18next';
 import {UserContext} from '../../contexts/user_context';
+import {Code} from '../../constants/code';
+import {useRouter} from 'next/router';
+import useShareProcess from '../../lib/hooks/use_share_process';
+import {ShareType} from '../../constants/share_type';
 
 type TranslateFunction = (s: string) => string;
 interface IHistoryPositionModal {
@@ -32,6 +36,7 @@ const HistoryPositionModal = ({
   ...otherProps
 }: IHistoryPositionModal) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
+  const userCtx = useContext(UserContext);
 
   const displayedClosedReason =
     closedCfdDetails.closedType === CFDClosedType.SCHEDULE
@@ -89,38 +94,14 @@ const HistoryPositionModal = ({
   const openTime = timestampToString(closedCfdDetails.createTimestamp ?? 0);
   const closedTime = timestampToString(closedCfdDetails?.closeTimestamp ?? 0);
 
-  const shareToFacebook = () => {
-    // TODO: cfdId (20230508 - Shirley)
-    const shareUrl = DOMAIN + `/share/cfd/${closedCfdDetails.id}`;
-    // Deprecated: sharing image to Facebook has better resolution than sharing link (20230515 - Shirley)
-    // const shareUrl = DOMAIN + `/api/images/cfd/${closedCfdDetails.id}`;
-    window.open(
-      `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`,
-      'facebook-share-dialog',
-      'width=800,height=600'
-    );
-  };
+  const {shareTo} = useShareProcess({
+    lockerName: 'history_position_modal.shareHandler',
+    cfd: closedCfdDetails,
+    shareType: ShareType.CFD,
+    shareId: closedCfdDetails.id,
+    enableShare: userCtx.enableShare,
+  });
 
-  const shareToTwitter = () => {
-    const shareUrl = DOMAIN + `/share/cfd/${closedCfdDetails.id}`;
-    window.open(
-      `https://twitter.com/intent/tweet?url=${encodeURIComponent(
-        shareUrl
-      )}&text=Check%20this%20out!`,
-      'twitter-share-dialog',
-      'width=800,height=600'
-    );
-  };
-
-  const shareToReddit = () => {
-    const shareUrl = DOMAIN + `/share/cfd/${closedCfdDetails.id}`;
-    window.open(
-      `https://www.reddit.com/submit?url=${encodeURIComponent(shareUrl)}&title=Check%20this%20out!`,
-      'reddit-share-dialog',
-      'width=800,height=600'
-    );
-  };
-  const userCtx = useContext(UserContext);
   const formContent = (
     <div className="relative flex w-full flex-auto flex-col pt-0">
       <div
@@ -257,7 +238,13 @@ const HistoryPositionModal = ({
         <div className="flex items-center justify-between">
           <div className={`${socialMediaStyle}`}>
             <Image
-              onClick={shareToFacebook}
+              onClick={() =>
+                shareTo({
+                  url: 'https://www.facebook.com/sharer/sharer.php?u=',
+                  type: 'facebook-share-dialog',
+                  size: 'width=800,height=600',
+                })
+              }
               src="/elements/group_15237.svg"
               width={44}
               height={44}
@@ -267,7 +254,14 @@ const HistoryPositionModal = ({
 
           <div className={`${socialMediaStyle}`}>
             <Image
-              onClick={shareToTwitter}
+              onClick={() =>
+                shareTo({
+                  url: 'https://twitter.com/intent/tweet?url=',
+                  text: '&text=Check%20this%20out!',
+                  type: 'twitter-share-dialog',
+                  size: 'width=800,height=600',
+                })
+              }
               src="/elements/group_15235.svg"
               width={44}
               height={44}
@@ -277,7 +271,14 @@ const HistoryPositionModal = ({
 
           <div className={`${socialMediaStyle}`}>
             <Image
-              onClick={shareToReddit}
+              onClick={() =>
+                shareTo({
+                  url: 'https://www.reddit.com/submit?url=',
+                  text: '&title=Check%20this%20out!',
+                  type: 'reddit-share-dialog',
+                  size: 'width=800,height=600',
+                })
+              }
               src="/elements/group_15234.svg"
               width={44}
               height={44}
@@ -320,25 +321,6 @@ const HistoryPositionModal = ({
             {formContent}
             {/*footer*/}
             <div className="flex items-center justify-end rounded-b p-2"></div>
-          </div>
-          {/* Decrepted: after demo (20230522 - tzuhan) */}
-          <div
-            onClick={async () => {
-              const result = await userCtx.enableShare(closedCfdDetails.id, false);
-              // eslint-disable-next-line no-console
-              console.log(`enableShare result: `, result);
-            }}
-          >
-            test enable share
-          </div>
-          <div
-            onClick={async () => {
-              const result = await userCtx.shareTradeRecord(closedCfdDetails.id);
-              // eslint-disable-next-line no-console
-              console.log(`share result: `, result);
-            }}
-          >
-            test share
           </div>
         </div>
       </div>

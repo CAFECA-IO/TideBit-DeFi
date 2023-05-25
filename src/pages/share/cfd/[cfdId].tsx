@@ -10,7 +10,7 @@ import NavBarMobile from '../../../components/nav_bar_mobile/nav_bar_mobile';
 import {GetServerSideProps, GetStaticPaths, GetStaticProps} from 'next';
 import {useRouter} from 'next/router';
 import Error from 'next/error';
-import {findCurrencyByCode, hasValue} from '../../../lib/common';
+import {findCurrencyByCode, getTimestamp, hasValue, timestampToString} from '../../../lib/common';
 // import {tickerIds} from '../../../constants/config';
 import {Currency} from '../../../constants/currency';
 import Skeleton, {SkeletonTheme} from 'react-loading-skeleton';
@@ -35,11 +35,13 @@ const CfdSharing = (props: IPageProps) => {
   const appCtx = useContext(AppContext);
   const router = useRouter();
 
-  const {cfdId} = router.query;
+  const [userTz, setUserTz, userTzRef] = useStateRef<number>(0);
+
+  const {query} = router;
 
   // TODO: for meta content (20230505 - Shirley)
-  const img = `${DOMAIN}/api/images/cfd/${props.cfdId}`;
-  const displayImg = `/api/images/cfd/${props.cfdId}`;
+  const img = `${DOMAIN}/api/images/cfd/${props.cfdId}?tz=${userTzRef.current}`;
+  const displayImg = `/api/images/cfd/${props.cfdId}?tz=${userTzRef.current}`;
   const share = `${DOMAIN}/share/cfd/${props.cfdId}`;
 
   useEffect(() => {
@@ -47,6 +49,17 @@ const CfdSharing = (props: IPageProps) => {
       appCtx.init();
     }
   }, []);
+
+  useEffect(() => {
+    try {
+      const timezoneOffset = new Date().getTimezoneOffset();
+      const timeDiff = -timezoneOffset / 60;
+
+      setUserTz(timeDiff);
+    } catch (error) {
+      // TODO: error handling (20230524 - Shirley)
+    }
+  }, [appCtx.isInit]);
 
   if (!router.isFallback && !props.cfdId) {
     return <Error statusCode={404} />;
@@ -102,7 +115,7 @@ const CfdSharing = (props: IPageProps) => {
   );
 };
 
-export const getStaticProps: GetStaticProps<IPageProps> = async ({params, locale}) => {
+export const getServerSideProps: GetServerSideProps<IPageProps> = async ({params, locale}) => {
   if (!params || !params.cfdId || typeof params.cfdId !== 'string') {
     return {
       notFound: true,
@@ -114,29 +127,6 @@ export const getStaticProps: GetStaticProps<IPageProps> = async ({params, locale
       cfdId: params.cfdId,
       ...(await serverSideTranslations(locale as string, ['common', 'footer'])),
     },
-  };
-};
-
-/**
- * Info: (20230504 - Shirley) getStaticPaths
- * In development (npm run dev or yarn dev), `getStaticPaths` runs on every request.
- * In production, `getStaticPaths` runs at build time.
- */
-export const getStaticPaths: GetStaticPaths = async ({locales}) => {
-  // TODO: cfdIds should be fetched from API (20230504 - Shirley)
-  const cfdIds = ['test'];
-  const paths = cfdIds
-    .flatMap(id => {
-      return locales?.map(locale => ({
-        params: {cfdId: id},
-        locale: locale,
-      }));
-    })
-    .filter((path): path is {params: {cfdId: string}; locale: string} => !!path);
-
-  return {
-    paths: paths,
-    fallback: true,
   };
 };
 

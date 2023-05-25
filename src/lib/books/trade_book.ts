@@ -267,6 +267,8 @@ class TradeBook {
   }
 
   toLineChart(interval: number, length: number): ILine[] {
+    if (this.predictedTrades.length === 0) return [];
+
     const lines: ILine[] = [];
     const intervalMs = interval * 1000;
 
@@ -289,6 +291,8 @@ class TradeBook {
   }
 
   toCandlestick(interval: number, length: number): ICandlestickData[] {
+    if (this.predictedTrades.length === 0) return [];
+
     const candleSticks: ICandlestickData[] = [];
     const intervalMs = interval * 1000;
 

@@ -222,7 +222,11 @@
     "CLOSED_REASON_BY_USER": "Manual",
     "CLOSED_REASON_TAKE_PROFIT": "Take Profit",
     "CLOSED_REASON_STOP_LOSS": "Stop Loss",
-    "SHARE": "Share"
+    "SHARE": "Share",
+    "SHARING": "Sharing",
+    "SHARING_CANCELLED_TITLE": "You've cancelled sharing the post",
+    "SHARING_LOADING": "Loading...",
+    "SHARING_FAILED_CONTENT": "Failed to share the post"
   },
   "D_W_MODAL": {
     "DEPOSIT": "Deposit",

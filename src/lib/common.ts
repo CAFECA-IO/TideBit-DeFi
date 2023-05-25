@@ -22,7 +22,7 @@ import RLP from 'rlp';
 import {ICFDOrder} from '../interfaces/tidebit_defi_background/order';
 import {Currency, ICurrency, ICurrencyConstant} from '../constants/currency';
 import {CustomError} from './custom_error';
-import {Code} from '../constants/code';
+import {Code, ICode, Reason} from '../constants/code';
 
 export const roundToDecimalPlaces = (val: number, precision: number): number => {
   const roundedNumber = Number(val.toFixed(precision));
@@ -43,10 +43,27 @@ export function getDeadline(deadline: number) {
 
 /**
  *
+ * @param serverTzOffset e.g.`UTC+8`=-8
+ * @param timestamp  in seconds
+ * @param timezoneOffset e.g.`UTC+8`=8
+ * @returns timestamp with timezoneOffset
+ */
+export const adjustTimestamp = (
+  serverTzOffset: number,
+  timestamp: number,
+  timezoneOffset: number
+) => {
+  const ts = serverTzOffset * 60 * 60 + timestamp + timezoneOffset * 60 * 60;
+
+  return ts;
+};
+
+/**
+ *
  * @param timestamp is in seconds
  * @returns object
  */
-export const timestampToString = (timestamp: number) => {
+export const timestampToString = (timestamp: number, timezoneOffset?: number) => {
   if (timestamp === 0)
     return {
       date: '-',
@@ -57,8 +74,50 @@ export const timestampToString = (timestamp: number) => {
       abbreviatedTime: '-',
     };
 
+  if (timezoneOffset !== undefined) {
+    const offsetTimestamp = timestamp + timezoneOffset * 60;
+    const date = new Date(offsetTimestamp * 1000);
+
+    const year = date.getUTCFullYear();
+    const month = (date.getUTCMonth() + 1).toString().padStart(2, '0');
+    const day = date.getUTCDate().toString().padStart(2, '0');
+    const hour = date.getUTCHours().toString().padStart(2, '0');
+    const minute = date.getUTCMinutes().toString().padStart(2, '0');
+    const second = date.getUTCSeconds().toString().padStart(2, '0');
+
+    const monthIndex = date.getUTCMonth();
+    const monthNames = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
+
+    const monthName = monthNames[monthIndex];
+    const monthFullName = MONTH_FULL_NAME_LIST[monthIndex];
+
+    const dateString = `${year}-${month}-${day}`;
+    const timeString = `${hour}:${minute}:${second}`;
+
+    return {
+      date: dateString,
+      time: timeString,
+      abbreviatedMonth: monthName,
+      monthAndYear: `${monthFullName} ${year}`,
+      day: day,
+      abbreviatedTime: `${hour}:${minute}`,
+    };
+  }
+
   const date = new Date(timestamp * 1000);
-  // const date = new Date();
 
   const year = date.getFullYear();
   const month = (date.getMonth() + 1).toString().padStart(2, '0');
@@ -477,4 +536,17 @@ export const getEstimatedPnL = (
 
   const number = Math.abs(rs);
   return {number: number, symbol: symbol};
+};
+
+export const swapKeysAndValues = (obj: Record<string, string>): Record<string, string> => {
+  return Object.entries(obj).reduce((acc, [key, value]) => {
+    acc[value] = key;
+    return acc;
+  }, {} as Record<string, string>);
+};
+
+export const findCodeByReason = (reason: string): ICode | undefined => {
+  const ReasonToCode = swapKeysAndValues(Reason);
+
+  return ReasonToCode[reason] as ICode;
 };

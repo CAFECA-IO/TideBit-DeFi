@@ -9,7 +9,6 @@ import {IApplyCreateCFDOrder, getDummyApplyCreateCFDOrder} from './apply_create_
 import {getDummyApplyUpdateCFDOrder} from './apply_update_cfd_order';
 import {IPnL} from './pnl';
 
-// Deprecated: (20230314 - Shirley) To be removed
 export interface IDisplayApplyCFDOrder extends IApplyCFDOrder {
   pnl?: IPnL;
 }

@@ -145,7 +145,9 @@ const UserPersonalRanking = ({timeSpan}: IUserPersonalRankingProps) => {
             <span className="text-2xl font-bold text-lightWhite md:text-3xl">{username}</span>
           </div>
           {/* Info: (20230510 - Julian) User Name */}
-          <div className="truncate text-sm sm:text-xl">{accountTruncate(userCtx.user?.address)}</div>
+          <div className="truncate text-sm sm:text-xl">
+            {accountTruncate(userCtx.user?.address)}
+          </div>
         </div>
         <div className="flex items-center space-x-3 text-base md:text-xl">
           <div className="inline-flex items-end">

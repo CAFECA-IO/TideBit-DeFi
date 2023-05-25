@@ -41,8 +41,19 @@ export function getDeadline(deadline: number) {
   return Math.ceil(new Date().getTime() / 1000) + deadline;
 }
 
-export const adjustTimestamp = (timestamp: number, timezoneOffset: number) => {
-  const ts = timestamp + timezoneOffset * 60 * 60;
+/**
+ *
+ * @param serverTzOffset e.g.`UTC+8`=-8
+ * @param timestamp  in seconds
+ * @param timezoneOffset e.g.`UTC+8`=8
+ * @returns timestamp with timezoneOffset
+ */
+export const adjustTimestamp = (
+  serverTzOffset: number,
+  timestamp: number,
+  timezoneOffset: number
+) => {
+  const ts = serverTzOffset * 60 * 60 + timestamp + timezoneOffset * 60 * 60;
 
   return ts;
 };

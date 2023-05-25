@@ -121,9 +121,6 @@ const PositionOpenModal = ({
         globalCtx.visibleSuccessfulModalHandler();
       } else if (
         // Info: cancel (20230412 - Shirley)
-        result.code === Code.SERVICE_TERM_DISABLE ||
-        result.code === Code.WALLET_IS_NOT_CONNECT ||
-        result.code === Code.EXPIRED_QUOTATION_CANCELED ||
         result.code === Code.REJECTED_SIGNATURE
       ) {
         globalCtx.eliminateAllModals();
@@ -134,14 +131,10 @@ const PositionOpenModal = ({
         });
 
         globalCtx.visibleCanceledModalHandler();
-      } else if (
-        result.code === Code.INTERNAL_SERVER_ERROR ||
-        result.code === Code.INVAILD_INPUTS ||
-        result.code === Code.EXPIRED_QUOTATION_FAILED ||
-        result.code === Code.UNKNOWN_ERROR
-      ) {
+      } else {
         globalCtx.eliminateAllModals();
 
+        // TODO: Failed title & Failed msg (20230525 - Shirley)
         globalCtx.dataFailedModalHandler({
           modalTitle: t('POSITION_MODAL.OPEN_POSITION_TITLE'),
           modalContent: `${t('POSITION_MODAL.FAILED_REASON_FAILED_TO_OPEN')} (${result.code})`,
@@ -154,6 +147,8 @@ const PositionOpenModal = ({
 
       // ToDo: report error to backend (20230413 - Shirley)
       // Info: Unknown error between context and component
+
+      // TODO: Failed title & Failed msg (20230525 - Shirley)
       globalCtx.dataFailedModalHandler({
         modalTitle: t('POSITION_MODAL.OPEN_POSITION_TITLE'),
         modalContent: `${t('POSITION_MODAL.FAILED_REASON_FAILED_TO_OPEN')} (${

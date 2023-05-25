@@ -2,6 +2,8 @@ import {NextApiRequest, NextApiResponse} from 'next';
 import {ImageResponse} from 'next/server';
 import {
   adjustTimestamp,
+  getTimestamp,
+  getTimestampInMilliseconds,
   randomIntFromInterval,
   roundToDecimalPlaces,
   timestampToString,
@@ -42,7 +44,7 @@ export const config = {
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const url = new URL(req?.url ?? '');
   const params = url.pathname.split('/');
-  const cfdId = params.pop(); // TODO: send to api (20230508 - Shirley)
+  const cfdId = params.pop();
   const apiUrl = `${API_URL}/public/shared/cfd/${cfdId}`;
   const tz = Number(url.searchParams.get('tz'));
 
@@ -70,8 +72,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   try {
     await fetchOrder();
-    const adCreateTimstamp = adjustTimestamp(sharingOrder?.createTimestamp ?? 0, tz);
-    const adCloseTimstamp = adjustTimestamp(sharingOrder?.closeTimestamp ?? 0, tz);
+
+    const offset = new Date().getTimezoneOffset() / 60;
+    const adCreateTimstamp = adjustTimestamp(offset, sharingOrder?.createTimestamp ?? 0, tz);
+    const adCloseTimstamp = adjustTimestamp(offset, sharingOrder?.closeTimestamp ?? 0, tz);
 
     sharingOrder = {
       ...sharingOrder,

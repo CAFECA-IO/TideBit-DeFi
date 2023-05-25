@@ -225,7 +225,8 @@
     "SHARE": "Share",
     "SHARING": "Sharing",
     "SHARING_CANCELLED_TITLE": "You've cancelled sharing the post",
-    "SHARING_LOADING": "Loading..."
+    "SHARING_LOADING": "Loading...",
+    "SHARING_FAILED_CONTENT": "Failed to share the post"
   },
   "D_W_MODAL": {
     "DEPOSIT": "Deposit",

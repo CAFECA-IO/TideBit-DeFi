@@ -96,10 +96,13 @@ const HistoryPositionModal = ({
 
   const {shareTo} = useShareProcess({
     lockerName: 'history_position_modal.shareHandler',
+    cfd: closedCfdDetails,
     shareType: ShareType.CFD,
     shareId: closedCfdDetails.id,
     enableShare: userCtx.enableShare,
   });
+
+  // console.log('history_position_modal.tsx: ', closedCfdDetails);
 
   const formContent = (
     <div className="relative flex w-full flex-auto flex-col pt-0">

@@ -4,6 +4,7 @@ import {ITypeOfPosition, TypeOfPosition} from '../../constants/type_of_position'
 import {getChainNameByCurrency, getTimestamp, randomIntFromInterval} from '../../lib/common';
 
 export interface ISharingOrder {
+  id: string;
   ticker: ICurrency;
   targetAssetName: string;
   typeOfPosition: ITypeOfPosition;
@@ -23,6 +24,7 @@ export const getDummySharingOrder = (
   const currencies: ICurrency[] = Object.values(Currency);
   const ticker = currency ? currency : currencies[randomIntFromInterval(0, currencies.length - 1)];
   const order: ISharingOrder = {
+    id: 'dummy_id',
     ticker: ticker,
     targetAssetName: getChainNameByCurrency(ticker, TRADING_CRYPTO_DATA),
     typeOfPosition: typeOfPosition
@@ -101,6 +103,7 @@ export const getInvalidSharingOrder = (
 ): ISharingOrder => {
   const now = getTimestamp();
   const order: ISharingOrder = {
+    id: '_id',
     ticker: Currency.ETH,
     targetAssetName: getChainNameByCurrency(Currency.ETH, TRADING_CRYPTO_DATA),
     typeOfPosition: TypeOfPosition.BUY,

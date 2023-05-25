@@ -4,11 +4,13 @@ import {useTranslation} from 'react-i18next';
 import {TranslateFunction} from '../../interfaces/tidebit_defi_background/locale';
 import {useGlobal} from '../../contexts/global_context';
 import {UserContext} from '../../contexts/user_context';
-import {DOMAIN} from '../../constants/config';
+import {API_URL, DOMAIN} from '../../constants/config';
 import {Code} from '../../constants/code';
 import {IResult} from '../../interfaces/tidebit_defi_background/result';
 import {CustomError} from '../custom_error';
 import {IShareType, ShareType} from '../../constants/share_type';
+import {IDisplayCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
+import {ISharingOrder} from '../../interfaces/tidebit_defi_background/sharing_order';
 
 interface IShareToSocialMedia {
   url: string;
@@ -17,17 +19,19 @@ interface IShareToSocialMedia {
   size: string;
 }
 
-/**
- * @param lockerName: unique name, string `'filename_functionname'` `e.g.'history_position_modal.shareHandler'`
- */
 interface IUseShareProcess {
   lockerName: string;
   shareType: IShareType;
   shareId: string;
+  cfd?: IDisplayCFDOrder;
   enableShare: (id: string, share: boolean) => Promise<IResult>;
 }
 
-const useShareProcess = ({lockerName, shareType, shareId, enableShare}: IUseShareProcess) => {
+/**
+ * @param lockerName: unique name `'filename_functionname'` `e.g.'history_position_modal.shareHandler'`
+ * @param cfd: for checking if the order from API is consistent with the order in the page
+ */
+const useShareProcess = ({lockerName, shareType, shareId, cfd, enableShare}: IUseShareProcess) => {
   const globalCtx = useGlobal();
   const userCtx = useContext(UserContext);
   const {t}: {t: TranslateFunction} = useTranslation('common');
@@ -56,11 +60,39 @@ const useShareProcess = ({lockerName, shareType, shareId, enableShare}: IUseShar
     }
   };
 
+  const getCFDOrder = async (): Promise<ISharingOrder | undefined> => {
+    const apiUrl = `${API_URL}/public/shared/cfd/${shareId}`;
+
+    try {
+      const res = await fetch(apiUrl);
+      const data = await res.json();
+      const order = data?.data;
+      return order as ISharingOrder;
+    } catch (e) {
+      globalCtx.dataFailedModalHandler({
+        modalTitle: t('POSITION_MODAL.SHARING'),
+        failedTitle: t('POSITION_MODAL.FAILED_TITLE'),
+        failedMsg: `${t('POSITION_MODAL.SHARING_FAILED_CONTENT')} (${
+          Code.CANNOT_FETCH_CFD_SHARE_ORDER
+        })`,
+      });
+
+      globalCtx.visibleFailedModalHandler();
+    }
+  };
+
+  const compareOrder = (order: ISharingOrder) => {
+    if (order?.id === cfd?.id) return true;
+    return false;
+  };
+
   const shareTo = async ({url, text, type, size}: IShareToSocialMedia) => {
     const [lock, unlock] = locker(lockerName);
     if (!lock()) return;
 
     try {
+      if (shareType === ShareType.CFD && !!!cfd) throw new CustomError(Code.NEED_CFD_ORDER);
+
       const shareUrl = getPageUrl();
       // Info: this error will make try-again button lose its functionality (20230524 - Shirley)
       if (shareUrl === '') throw new CustomError(Code.NEED_SHARE_URL);
@@ -75,6 +107,12 @@ const useShareProcess = ({lockerName, shareType, shareId, enableShare}: IUseShar
       const result = await enableShare(shareId, true);
 
       if (result.success) {
+        const order = await getCFDOrder();
+        if (!order) throw new CustomError(Code.CANNOT_FETCH_CFD_SHARE_ORDER);
+
+        const isOrderMatched = compareOrder(order);
+        if (!isOrderMatched) throw new CustomError(Code.CFD_ORDER_NOT_MATCH);
+
         window.open(
           `${url}${encodeURIComponent(shareUrl)}${text ? `${text}` : ''}`,
           `${type}`,
@@ -82,19 +120,13 @@ const useShareProcess = ({lockerName, shareType, shareId, enableShare}: IUseShar
         );
 
         globalCtx.eliminateAllProcessModals();
-      } else if (
-        result.code === Code.INTERNAL_SERVER_ERROR ||
-        result.code === Code.UNKNOWN_ERROR ||
-        result.code === Code.WALLET_IS_NOT_CONNECT
-      ) {
+      } else {
         globalCtx.eliminateAllProcessModals();
 
         globalCtx.dataFailedModalHandler({
           modalTitle: t('POSITION_MODAL.SHARING'),
-          modalContent: `${t('POSITION_MODAL.ERROR_MESSAGE')} (${result.code})`,
-          // TODO: style of failed modal (20230524 - Shirley)
-          // failedTitle: 'Failed to share',
-          // failedMsg: 'Please try again later',
+          failedTitle: t('POSITION_MODAL.FAILED_TITLE'),
+          failedMsg: `${t('POSITION_MODAL.SHARING_FAILED_CONTENT')} (${result.code})`,
           btnMsg: t('POSITION_MODAL.FAILED_BUTTON_TRY_AGAIN'),
           btnFunction: () => {
             shareTo({url, text, type, size});
@@ -110,18 +142,18 @@ const useShareProcess = ({lockerName, shareType, shareId, enableShare}: IUseShar
 
         globalCtx.dataFailedModalHandler({
           modalTitle: t('POSITION_MODAL.SHARING'),
-          modalContent: `${t('POSITION_MODAL.ERROR_MESSAGE')} (${errorCode})`,
-          btnMsg: t('POSITION_MODAL.FAILED_BUTTON_TRY_AGAIN'),
-          btnFunction: () => {
-            shareTo({url, text, type, size});
-          },
+          failedTitle: t('POSITION_MODAL.FAILED_TITLE'),
+          failedMsg: `${t('POSITION_MODAL.SHARING_FAILED_CONTENT')} (${errorCode})`,
         });
 
         globalCtx.visibleFailedModalHandler();
       } else {
         globalCtx.dataFailedModalHandler({
           modalTitle: t('POSITION_MODAL.SHARING'),
-          modalContent: `${t('POSITION_MODAL.ERROR_MESSAGE')} (${Code.UNKNOWN_ERROR_IN_COMPONENT})`,
+          failedTitle: t('POSITION_MODAL.FAILED_TITLE'),
+          failedMsg: `${t('POSITION_MODAL.SHARING_FAILED_CONTENT')} (${
+            Code.UNKNOWN_ERROR_IN_COMPONENT
+          })`,
           btnMsg: t('POSITION_MODAL.FAILED_BUTTON_TRY_AGAIN'),
           btnFunction: () => {
             shareTo({url, text, type, size});

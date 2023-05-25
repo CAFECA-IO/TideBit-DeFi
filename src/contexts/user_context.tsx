@@ -798,6 +798,15 @@ export const UserProvider = ({children}: IUserProvider) => {
 
   /* ToDo: (20230510 - Julian) get data from backend */
   const getUserAssets = (currency: string) => {
+    /*     const balance = getBalance(currency);
+    const userAssets = {
+      currency: currency,
+      balance: {
+        available: balance?.available ?? 0,
+        locked: balance?.locked ?? 0,
+      },
+    }; */
+
     return getDummyUserAssets(currency);
   };
 

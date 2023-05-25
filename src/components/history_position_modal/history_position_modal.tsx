@@ -39,25 +39,6 @@ const HistoryPositionModal = ({
   const {t}: {t: TranslateFunction} = useTranslation('common');
   const userCtx = useContext(UserContext);
 
-  type SocialMediaImageArray = Array<{[key in SocialMedia]?: string}>;
-
-  const icons = [
-    {'FaceBook': '/elements/group_15237.svg'},
-    {'Twitter': '/elements/group_15235.svg'},
-    {'Reddit': '/elements/group_15234.svg'},
-  ];
-
-  const convertImageArrayToObject = (array: SocialMediaImageArray): Record<SocialMedia, string> => {
-    const result: Record<SocialMedia, string> = {} as Record<SocialMedia, string>;
-    array.forEach(item => {
-      const [key, value] = Object.entries(item)[0];
-      result[key as SocialMedia] = value;
-    });
-    return result;
-  };
-
-  const iconsObject = convertImageArrayToObject(icons);
-
   const displayedClosedReason =
     closedCfdDetails.closedType === CFDClosedType.SCHEDULE
       ? t('POSITION_MODAL.CLOSED_REASON_SCHEDULE')
@@ -267,7 +248,7 @@ const HistoryPositionModal = ({
                     size: value.size,
                   })
                 }
-                src={iconsObject[key as SocialMedia]}
+                src={value.icon}
                 width={44}
                 height={44}
                 alt={key}

@@ -11,11 +11,15 @@ export const SocialMediaConstant: ISocialMediaConstant = {
   REDDIT: 'Reddit',
 };
 
-export interface IShareSettings {
+export interface IShareToSocialMedia {
   url: string;
   text?: string;
   type: string;
   size: string;
+}
+
+export interface IShareSettings extends IShareToSocialMedia {
+  icon: string;
 }
 
 export const ShareSettings: Record<SocialMedia, IShareSettings> = {
@@ -23,17 +27,20 @@ export const ShareSettings: Record<SocialMedia, IShareSettings> = {
     url: 'https://www.facebook.com/sharer/sharer.php?u=',
     type: 'facebook-share-dialog',
     size: 'width=800,height=600',
+    icon: '/elements/group_15237.svg',
   },
   Twitter: {
     url: 'https://twitter.com/intent/tweet?url=',
     text: '&text=Check%20this%20out!',
     type: 'twitter-share-dialog',
     size: 'width=800,height=600',
+    icon: '/elements/group_15235.svg',
   },
   Reddit: {
     url: 'https://www.reddit.com/submit?url=',
     text: '&title=Check%20this%20out!',
     type: 'reddit-share-dialog',
     size: 'width=800,height=600',
+    icon: '/elements/group_15234.svg',
   },
 };

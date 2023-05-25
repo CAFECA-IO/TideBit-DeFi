@@ -11,13 +11,7 @@ import {CustomError} from '../custom_error';
 import {IShareType, ShareType} from '../../constants/share_type';
 import {IDisplayCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
 import {ISharingOrder} from '../../interfaces/tidebit_defi_background/sharing_order';
-
-interface IShareToSocialMedia {
-  url: string;
-  text?: string;
-  type: string;
-  size: string;
-}
+import {IShareToSocialMedia} from '../../constants/social_media';
 
 interface IUseShareProcess {
   lockerName: string;

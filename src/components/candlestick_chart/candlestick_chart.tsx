@@ -320,8 +320,8 @@ export default function CandlestickChart({
     const price = marketCtx.selectedTicker?.price ?? 0;
     const spread = marketCtx.tickerLiveStatistics?.spread ?? DEFAULT_SPREAD;
 
-    const buyPrice = price + (1 + spread);
-    const sellPrice = price - (1 + spread);
+    const buyPrice = price * (1 + spread);
+    const sellPrice = price * (1 - spread);
 
     const buyLineSeries = chart.addLineSeries({
       color: LINE_GRAPH_STROKE_COLOR.UP,

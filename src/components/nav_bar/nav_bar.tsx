@@ -35,7 +35,7 @@ const NavBar = () => {
     <UserOverview
       depositAvailable={userCtx.balance?.available ?? 0}
       marginLocked={userCtx.balance?.locked ?? 0}
-      profitOrLossAmount={userCtx.balance?.PNL?.value ?? 0}
+      profitOrLossAmount={userCtx.balance?.PnL?.value ?? 0}
     />
   ) : null;
 

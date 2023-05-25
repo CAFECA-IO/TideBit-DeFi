@@ -11,7 +11,7 @@ import Image from 'next/image';
 import {DELAYED_HIDDEN_SECONDS, UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
 import {useGlobal} from '../../contexts/global_context';
 import {useTranslation} from 'react-i18next';
-import {locker, randomHex, wait} from '../../lib/common';
+import {findCodeByReason, locker, randomHex, wait} from '../../lib/common';
 import {OrderType} from '../../constants/order_type';
 import {UserContext} from '../../contexts/user_context';
 import {Code} from '../../constants/code';
@@ -19,6 +19,7 @@ import {ToastId} from '../../constants/toast_id';
 import useStateRef from 'react-usestateref';
 import {IApplyDepositOrder} from '../../interfaces/tidebit_defi_background/apply_deposit_order';
 import {FRACTION_DIGITS} from '../../constants/config';
+import {CustomError} from '../../lib/custom_error';
 
 type TranslateFunction = (s: string) => string;
 interface IDepositModal {
@@ -65,7 +66,6 @@ const DepositModal = ({
     getSubmissionState(props);
   };
 
-  // TODO: send deposit request
   const submitClickHandler = async () => {
     if (globalCtx.displayedToast(ToastId.DEPOSIT) || globalCtx.visibleLoadingModal) {
       globalCtx.dataWarningModalHandler({
@@ -154,7 +154,7 @@ const DepositModal = ({
         globalCtx.dataFailedModalHandler({
           modalTitle: t('D_W_MODAL.DEPOSIT'),
           failedTitle: t('D_W_MODAL.FAILED_TITLE'),
-          failedMsg: `${t('D_W_MODAL.FAILED_CONTENT')} (${result.code})`,
+          failedMsg: `${t('D_W_MODAL.FAILED_REASON_FAILED_TO_DEPOSIT')} (${result.code})`,
         });
 
         globalCtx.eliminateToasts(ToastId.DEPOSIT);
@@ -165,14 +165,30 @@ const DepositModal = ({
 
       // ToDo: Report error to backend (20230413 - Shirley)
       // Info: Unknown error
-      globalCtx.dataFailedModalHandler({
-        modalTitle: t('D_W_MODAL.DEPOSIT'),
-        failedTitle: t('D_W_MODAL.FAILED_TITLE'),
-        failedMsg: `${t('D_W_MODAL.FAILED_CONTENT')} (${Code.UNKNOWN_ERROR_IN_COMPONENT})`,
-      });
+      if (error instanceof CustomError) {
+        const str = error.toString().split('Error: ')[1];
+        const errorCode = findCodeByReason(str);
 
-      globalCtx.eliminateToasts(ToastId.DEPOSIT);
-      globalCtx.visibleFailedModalHandler();
+        globalCtx.dataFailedModalHandler({
+          modalTitle: t('D_W_MODAL.DEPOSIT'),
+          failedTitle: t('D_W_MODAL.FAILED_TITLE'),
+          failedMsg: `${t('D_W_MODAL.FAILED_REASON_FAILED_TO_DEPOSIT')} (${errorCode})`,
+        });
+
+        globalCtx.eliminateToasts(ToastId.DEPOSIT);
+        globalCtx.visibleFailedModalHandler();
+      } else {
+        globalCtx.dataFailedModalHandler({
+          modalTitle: t('D_W_MODAL.DEPOSIT'),
+          failedTitle: t('D_W_MODAL.FAILED_TITLE'),
+          failedMsg: `${t('D_W_MODAL.FAILED_REASON_FAILED_TO_DEPOSIT')} (${
+            Code.UNKNOWN_ERROR_IN_COMPONENT
+          })`,
+        });
+
+        globalCtx.eliminateToasts(ToastId.DEPOSIT);
+        globalCtx.visibleFailedModalHandler();
+      }
     }
 
     unlock();

@@ -6,6 +6,7 @@ import RippleButton from '../ripple_button/ripple_button';
 import {
   DEFAULT_BUY_PRICE,
   DEFAULT_EXPIRY_DATE,
+  DEFAULT_FEE,
   DEFAULT_LEVERAGE,
   DEFAULT_SELL_PRICE,
   DEFAULT_SPREAD,
@@ -573,14 +574,14 @@ const TradeTab = () => {
       typeOfPosition: TypeOfPosition.BUY,
       quotation: long,
       liquidationPrice: roundToDecimalPlaces(long.price * (1 - LIQUIDATION_FIVE_LEVERAGE), 2),
-      fee: marketCtx.tickerLiveStatistics?.fee ?? DEFAULT_BUY_PRICE,
+      fee: marketCtx.tickerLiveStatistics?.fee ?? DEFAULT_FEE,
       guaranteedStop: longSlToggle ? longGuaranteedStopChecked : false,
       guaranteedStopFee:
         longSlToggle && longGuaranteedStopChecked ? guaranteedStopFeeLongRef.current : 0,
       takeProfit: longTpToggle ? longTpValue : undefined,
       stopLoss: longSlToggle ? longSlValue : undefined,
     };
-
+    // TODO: if not getting `fee` from context, stop the transaction
     const shortOrder: IApplyCreateCFDOrder = {
       ...share,
       orderType: OrderType.CFD,
@@ -589,7 +590,7 @@ const TradeTab = () => {
       quotation: short,
       price: short.price,
       liquidationPrice: roundToDecimalPlaces(short.price * (1 + LIQUIDATION_FIVE_LEVERAGE), 2),
-      fee: marketCtx.tickerLiveStatistics?.fee ?? DEFAULT_BUY_PRICE,
+      fee: marketCtx.tickerLiveStatistics?.fee ?? DEFAULT_FEE,
       guaranteedStop: shortSlToggle ? shortGuaranteedStopChecked : false,
       guaranteedStopFee:
         shortSlToggle && shortGuaranteedStopChecked ? guaranteedStopFeeShortRef.current : 0,

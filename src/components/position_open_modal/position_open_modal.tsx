@@ -7,7 +7,13 @@ import {
 import RippleButton from '../ripple_button/ripple_button';
 import Image from 'next/image';
 import {AiOutlineQuestionCircle} from 'react-icons/ai';
-import {locker, wait, getTimestamp, getTimestampInMilliseconds} from '../../lib/common';
+import {
+  locker,
+  wait,
+  getTimestamp,
+  getTimestampInMilliseconds,
+  findCodeByReason,
+} from '../../lib/common';
 import {useContext, useEffect, useState} from 'react';
 import {MarketContext} from '../../contexts/market_context';
 import {BsClockHistory} from 'react-icons/bs';
@@ -34,6 +40,7 @@ import useStateRef from 'react-usestateref';
 import {Code} from '../../constants/code';
 import {ToastTypeAndText} from '../../constants/toast_type';
 import {ToastId} from '../../constants/toast_id';
+import {CustomError} from '../../lib/custom_error';
 
 type TranslateFunction = (s: string) => string;
 interface IPositionOpenModal {
@@ -134,32 +141,43 @@ const PositionOpenModal = ({
       } else {
         globalCtx.eliminateAllModals();
 
-        // TODO: Failed title & Failed msg (20230525 - Shirley)
         globalCtx.dataFailedModalHandler({
           modalTitle: t('POSITION_MODAL.OPEN_POSITION_TITLE'),
-          modalContent: `${t('POSITION_MODAL.FAILED_REASON_FAILED_TO_OPEN')} (${result.code})`,
+          failedTitle: t('POSITION_MODAL.FAILED_TITLE'),
+          failedMsg: `${t('POSITION_MODAL.FAILED_REASON_FAILED_TO_OPEN')} (${result.code})`,
         });
 
         globalCtx.visibleFailedModalHandler();
       }
     } catch (error: any) {
+      // ToDo: report error to backend (20230413 - Shirley)
       globalCtx.eliminateAllModals();
 
-      // ToDo: report error to backend (20230413 - Shirley)
-      // Info: Unknown error between context and component
+      if (error instanceof CustomError) {
+        const str = error.toString().split('Error: ')[1];
+        const errorCode = findCodeByReason(str);
 
-      // TODO: Failed title & Failed msg (20230525 - Shirley)
-      globalCtx.dataFailedModalHandler({
-        modalTitle: t('POSITION_MODAL.OPEN_POSITION_TITLE'),
-        modalContent: `${t('POSITION_MODAL.FAILED_REASON_FAILED_TO_OPEN')} (${
-          Code.UNKNOWN_ERROR_IN_COMPONENT
-        })`,
-      });
-      globalCtx.visibleFailedModalHandler();
+        globalCtx.dataFailedModalHandler({
+          modalTitle: t('POSITION_MODAL.OPEN_POSITION_TITLE'),
+          failedTitle: t('POSITION_MODAL.FAILED_TITLE'),
+          failedMsg: `${t('POSITION_MODAL.FAILED_REASON_FAILED_TO_OPEN')} (${errorCode})`,
+        });
+
+        globalCtx.visibleFailedModalHandler();
+      } else {
+        globalCtx.dataFailedModalHandler({
+          modalTitle: t('POSITION_MODAL.OPEN_POSITION_TITLE'),
+          failedTitle: t('POSITION_MODAL.FAILED_TITLE'),
+          failedMsg: `${t('POSITION_MODAL.FAILED_REASON_FAILED_TO_OPEN')} (${
+            Code.UNKNOWN_ERROR_IN_COMPONENT
+          })`,
+        });
+        globalCtx.visibleFailedModalHandler();
+      }
+    } finally {
+      unlock();
+      return;
     }
-
-    unlock();
-    return;
   };
 
   const displayedGuaranteedStopSetting = !!openCfdRequest.guaranteedStop ? 'Yes' : 'No';
@@ -302,6 +320,7 @@ const PositionOpenModal = ({
       clearInterval(intervalId);
     };
   }, [secondsLeft, globalCtx.visiblePositionOpenModal]);
+  // TODO: modal check if tradable
 
   const formContent = (
     <div className="mt-4 flex flex-col px-6 pb-2">

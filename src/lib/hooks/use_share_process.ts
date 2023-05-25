@@ -51,7 +51,7 @@ const useShareProcess = ({lockerName, shareType, shareId, cfd, enableShare}: IUs
 
       case ShareType.BADGE:
         // TODO: Share badge (20230524 - Shirley)
-        shareUrl = '';
+        shareUrl = DOMAIN + `/share/badge/${shareId}`;
         return shareUrl;
 
       default:

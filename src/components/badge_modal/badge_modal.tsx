@@ -1,10 +1,13 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import Image from 'next/image';
 import RippleButton from '../ripple_button/ripple_button';
+import {UserContext} from '../../contexts/user_context';
 import {IBadgeModal} from '../../contexts/global_context';
 import {ImCross} from 'react-icons/im';
 import {BsFacebook, BsTwitter, BsReddit} from 'react-icons/bs';
 import {useTranslation} from 'react-i18next';
+import useShareProcess from '../../lib/hooks/use_share_process';
+import {ShareType} from '../../constants/share_type';
 
 type TranslateFunction = (s: string) => string;
 
@@ -17,20 +20,37 @@ interface IBadgeModalProps {
 const BadgeModal = ({modalVisible, modalClickHandler, badgeData}: IBadgeModalProps) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
+  const userCtx = useContext(UserContext);
+
+  const {shareTo} = useShareProcess({
+    lockerName: 'badge_modal.shareHandler',
+    shareType: ShareType.BADGE,
+    shareId: badgeData.badgeId,
+    enableShare: userCtx.enableShare,
+  });
+
   // ToDo: (20230517 - Julian) Sharing function
   const socialMediaList = (
     <div
       className={`inline-flex space-x-4 text-3xl text-lightWhite transition-all duration-300 hover:cursor-pointer`}
     >
-      <a>
+      <button
+        onClick={() =>
+          shareTo({
+            url: 'https://www.facebook.com/sharer/sharer.php?u=',
+            type: 'facebook-share-dialog',
+            size: 'width=800,height=600',
+          })
+        }
+      >
         <BsFacebook className="hover:text-lightGray2" />
-      </a>
-      <a>
+      </button>
+      <button>
         <BsTwitter className="hover:text-lightGray2" />
-      </a>
-      <a>
+      </button>
+      <button>
         <BsReddit className="hover:text-lightGray2" />
-      </a>
+      </button>
     </div>
   );
 

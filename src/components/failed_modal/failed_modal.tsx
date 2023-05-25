@@ -16,7 +16,6 @@ export interface IFailedModal {
   btnFunction?: () => void;
 }
 
-// TODO: btn function (20230523 - Shirley)
 const FailedModal = ({
   modalRef: modalRef,
   modalVisible: modalVisible,

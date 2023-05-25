@@ -102,8 +102,6 @@ const HistoryPositionModal = ({
     enableShare: userCtx.enableShare,
   });
 
-  // console.log('history_position_modal.tsx: ', closedCfdDetails);
-
   const formContent = (
     <div className="relative flex w-full flex-auto flex-col pt-0">
       <div

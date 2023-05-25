@@ -96,10 +96,6 @@ const PositionOpenModal = ({
 
     try {
       const result = await userCtx.createCFDOrder(applyCreateOrder);
-      // Deprecated: [debug] (20230413 - Shirley)
-      // eslint-disable-next-line no-console
-      console.log('open position result', result);
-
       if (result.success) {
         // TODO: (20230413 - Shirley) the button URL
         globalCtx.dataLoadingModalHandler({
@@ -130,10 +126,6 @@ const PositionOpenModal = ({
         result.code === Code.EXPIRED_QUOTATION_CANCELED ||
         result.code === Code.REJECTED_SIGNATURE
       ) {
-        // Deprecated: [debug] sometimes, show the failed modal without any information revealed (20230412 - Shirley)
-        // eslint-disable-next-line no-console
-        console.log('open position result', result);
-
         globalCtx.eliminateAllModals();
 
         globalCtx.dataCanceledModalHandler({
@@ -148,10 +140,6 @@ const PositionOpenModal = ({
         result.code === Code.EXPIRED_QUOTATION_FAILED ||
         result.code === Code.UNKNOWN_ERROR
       ) {
-        // Deprecated: [debug] sometimes, show the failed modal without any information revealed (20230412 - Shirley)
-        // eslint-disable-next-line no-console
-        console.log('open position result', result);
-
         globalCtx.eliminateAllModals();
 
         globalCtx.dataFailedModalHandler({
@@ -162,10 +150,6 @@ const PositionOpenModal = ({
         globalCtx.visibleFailedModalHandler();
       }
     } catch (error: any) {
-      // Deprecated: [debug] sometimes, show the failed modal without any information revealed (20230412 - Shirley)
-      // eslint-disable-next-line no-console
-      console.log('open position error', error);
-
       globalCtx.eliminateAllModals();
 
       // ToDo: report error to backend (20230413 - Shirley)

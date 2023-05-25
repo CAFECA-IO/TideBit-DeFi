@@ -329,10 +329,6 @@ const PositionClosedModal = ({
         result.code === Code.EXPIRED_QUOTATION_CANCELED ||
         result.code === Code.REJECTED_SIGNATURE
       ) {
-        // Deprecated: [debug] (20230413 - Shirley)
-        // eslint-disable-next-line no-console
-        console.log('close result', result);
-
         globalCtx.eliminateAllModals();
 
         globalCtx.dataCanceledModalHandler({
@@ -347,10 +343,6 @@ const PositionClosedModal = ({
         result.code === Code.EXPIRED_QUOTATION_FAILED ||
         result.code === Code.UNKNOWN_ERROR
       ) {
-        // Deprecated: [debug] (20230413 - Shirley)
-        // eslint-disable-next-line no-console
-        console.log('close result', result);
-
         globalCtx.eliminateAllModals();
 
         globalCtx.dataFailedModalHandler({
@@ -361,10 +353,6 @@ const PositionClosedModal = ({
         globalCtx.visibleFailedModalHandler();
       }
     } catch (error: any) {
-      // Deprecated: [debug] (20230412 - Shirley)
-      // eslint-disable-next-line no-console
-      console.log('close position error', error);
-
       globalCtx.eliminateAllModals();
 
       // ToDo: report error to backend (20230413 - Shirley)

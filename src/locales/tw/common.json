@@ -383,5 +383,9 @@
   "ANNOUNCEMENT_MODAL": {
     "CHECKBOX_DESCRIPTION": "不再顯示此訊息",
     "OK_BUTTON": "好的"
+  },
+  "CANDLESTICK_CHART":{
+    "LONG": "買在",
+    "SHORT": "賣在"
   }
 }

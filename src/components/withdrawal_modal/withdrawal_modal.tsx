@@ -10,13 +10,14 @@ import {
 } from '../../interfaces/tidebit_defi_background/cryptocurrency';
 import {useGlobal} from '../../contexts/global_context';
 import useStateRef from 'react-usestateref';
-import {getTimestamp, locker, wait} from '../../lib/common';
+import {findCodeByReason, getTimestamp, locker, wait} from '../../lib/common';
 import {DELAYED_HIDDEN_SECONDS} from '../../constants/display';
 import {UserContext} from '../../contexts/user_context';
 import {OrderType} from '../../constants/order_type';
 import {useTranslation} from 'react-i18next';
 import {Code} from '../../constants/code';
 import {ToastId} from '../../constants/toast_id';
+import {CustomError} from '../../lib/custom_error';
 
 type TranslateFunction = (s: string) => string;
 interface IWithdrawalModal {
@@ -137,8 +138,6 @@ const WithdrawalModal = ({
         // TODO: `result.code` (20230316 - Shirley)
       } else if (
         // Info: cancel (20230412 - Shirley)
-        result.code === Code.SERVICE_TERM_DISABLE ||
-        result.code === Code.WALLET_IS_NOT_CONNECT ||
         result.code === Code.REJECTED_SIGNATURE
       ) {
         globalCtx.eliminateAllModals();
@@ -150,10 +149,7 @@ const WithdrawalModal = ({
 
         globalCtx.eliminateToasts(ToastId.WITHDRAW);
         globalCtx.visibleCanceledModalHandler();
-      } else if (
-        result.code === Code.INTERNAL_SERVER_ERROR ||
-        result.code === Code.INVAILD_INPUTS
-      ) {
+      } else {
         globalCtx.eliminateAllModals();
 
         globalCtx.dataFailedModalHandler({
@@ -166,20 +162,35 @@ const WithdrawalModal = ({
         globalCtx.visibleFailedModalHandler();
       }
     } catch (error: any) {
+      // ToDo: Report error to backend (20230413 - Shirley)
       globalCtx.eliminateAllModals();
 
-      // ToDo: Report error to backend (20230413 - Shirley)
-      // Info: Unknown error
-      globalCtx.dataFailedModalHandler({
-        modalTitle: t('D_W_MODAL.WITHDRAW'),
-        failedTitle: t('D_W_MODAL.FAILED_TITLE'),
-        failedMsg: `${t('D_W_MODAL.FAILED_REASON_FAILED_TO_WITHDRAW')} (${
-          Code.UNKNOWN_ERROR_IN_COMPONENT
-        })`,
-      });
+      if (error instanceof CustomError) {
+        const str = error.toString().split('Error: ')[1];
+        const errorCode = findCodeByReason(str);
 
-      globalCtx.eliminateToasts(ToastId.WITHDRAW);
-      globalCtx.visibleFailedModalHandler();
+        globalCtx.dataFailedModalHandler({
+          modalTitle: t('D_W_MODAL.WITHDRAW'),
+          failedTitle: t('D_W_MODAL.FAILED_TITLE'),
+          failedMsg: `${t('D_W_MODAL.FAILED_REASON_FAILED_TO_WITHDRAW')} (${errorCode})`,
+        });
+
+        globalCtx.eliminateToasts(ToastId.WITHDRAW);
+
+        globalCtx.visibleFailedModalHandler();
+      } else {
+        globalCtx.dataFailedModalHandler({
+          modalTitle: t('D_W_MODAL.WITHDRAW'),
+          failedTitle: t('D_W_MODAL.FAILED_TITLE'),
+          failedMsg: `${t('D_W_MODAL.FAILED_REASON_FAILED_TO_WITHDRAW')} (${
+            Code.UNKNOWN_ERROR_IN_COMPONENT
+          })`,
+        });
+
+        globalCtx.eliminateToasts(ToastId.WITHDRAW);
+
+        globalCtx.visibleFailedModalHandler();
+      }
     }
 
     unlock();

@@ -222,6 +222,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
         params: instId,
       })) as IResult;
     } catch (error) {
+      setIsCFDTradable(false);
       // Deprecate: error handle (Tzuhan - 20230321)
       // eslint-disable-next-line no-console
       console.error(`getTickerStatic error`, error);
@@ -243,6 +244,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       // Deprecate: error handle (Tzuhan - 20230321)
       // eslint-disable-next-line no-console
       console.error(`getTickerLiveStatistics error`, error);
+      setIsCFDTradable(false);
       result.code = Code.INTERNAL_SERVER_ERROR;
       result.reason = Reason[result.code];
     }

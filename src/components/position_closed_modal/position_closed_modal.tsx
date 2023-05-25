@@ -18,6 +18,7 @@ import {
   twoDecimal,
   getTimestampInMilliseconds,
   roundToDecimalPlaces,
+  findCodeByReason,
 } from '../../lib/common';
 import {useContext, useEffect, useState} from 'react';
 import {MarketContext} from '../../contexts/market_context';
@@ -324,9 +325,6 @@ const PositionClosedModal = ({
         globalCtx.visibleHistoryPositionModalHandler();
       } else if (
         // Info: cancel (20230412 - Shirley)
-        result.code === Code.SERVICE_TERM_DISABLE ||
-        result.code === Code.WALLET_IS_NOT_CONNECT ||
-        result.code === Code.EXPIRED_QUOTATION_CANCELED ||
         result.code === Code.REJECTED_SIGNATURE
       ) {
         globalCtx.eliminateAllModals();
@@ -337,36 +335,47 @@ const PositionClosedModal = ({
         });
 
         globalCtx.visibleCanceledModalHandler();
-      } else if (
-        result.code === Code.INTERNAL_SERVER_ERROR ||
-        result.code === Code.INVAILD_INPUTS ||
-        result.code === Code.EXPIRED_QUOTATION_FAILED ||
-        result.code === Code.UNKNOWN_ERROR
-      ) {
+      } else {
         globalCtx.eliminateAllModals();
 
         globalCtx.dataFailedModalHandler({
           modalTitle: t('POSITION_MODAL.CLOSE_POSITION_TITLE'),
-          modalContent: `${t('POSITION_MODAL.FAILED_REASON_FAILED_TO_CLOSE')} (${result.code})`,
+          failedTitle: t('POSITION_MODAL.FAILED_TITLE'),
+          failedMsg: `${t('POSITION_MODAL.FAILED_REASON_FAILED_TO_CLOSE')} (${result.code})`,
         });
 
         globalCtx.visibleFailedModalHandler();
       }
     } catch (error: any) {
+      // ToDo: report error to backend (20230413 - Shirley)
       globalCtx.eliminateAllModals();
 
-      // ToDo: report error to backend (20230413 - Shirley)
-      // Info: Unknown error between context and component
-      globalCtx.dataFailedModalHandler({
-        modalTitle: t('POSITION_MODAL.CLOSE_POSITION_TITLE'),
-        modalContent: `${t('POSITION_MODAL.ERROR_MESSAGE')}  (${Code.UNKNOWN_ERROR_IN_COMPONENT})`,
-      });
+      if (error instanceof CustomError) {
+        const str = error.toString().split('Error: ')[1];
+        const errorCode = findCodeByReason(str);
 
-      globalCtx.visibleFailedModalHandler();
+        globalCtx.dataFailedModalHandler({
+          modalTitle: t('POSITION_MODAL.OPEN_POSITION_TITLE'),
+          failedTitle: t('POSITION_MODAL.FAILED_TITLE'),
+          failedMsg: `${t('POSITION_MODAL.FAILED_REASON_FAILED_TO_CLOSE')} (${errorCode})`,
+        });
+
+        globalCtx.visibleFailedModalHandler();
+      } else {
+        globalCtx.dataFailedModalHandler({
+          modalTitle: t('POSITION_MODAL.CLOSE_POSITION_TITLE'),
+          failedTitle: t('POSITION_MODAL.FAILED_TITLE'),
+          failedMsg: `${t('POSITION_MODAL.FAILED_REASON_FAILED_TO_CLOSE')} (${
+            Code.UNKNOWN_ERROR_IN_COMPONENT
+          })`,
+        });
+
+        globalCtx.visibleFailedModalHandler();
+      }
+    } finally {
+      unlock();
+      return;
     }
-
-    unlock();
-    return;
   };
 
   const renewDataStyleHandler = async (quotation: IQuotation) => {

@@ -259,6 +259,7 @@ export const MODAL_BUTTON_STYLE = {
 
 export const DEFAULT_USER_AVATAR = '/leaderboard/default_avatar.svg';
 
+export const DEFAULT_FEE = 0;
 export const DEFAULT_SELL_PRICE = 0;
 export const DEFAULT_BUY_PRICE = 9999999999;
 export const DEFAULT_LEVERAGE = 1;

@@ -51,7 +51,8 @@ const TradingView = () => {
   const [lineGraphOn, setLineGraphOn, lineGraphOnRef] = useStateRef(true);
 
   const [selectedChartType, setSelectedChartType] = useState('candlestick');
-  const [selectedChartInterval, setSelectedChartInterval] = useState('live');
+  const [selectedChartInterval, setSelectedChartInterval, selectedChartIntervalRef] =
+    useStateRef('live');
   const [showPositionLabel, setShowPositionLabel, showPositionLabelRef] = useStateRef(
     INITIAL_POSITION_LABEL_DISPLAYED_STATE
   );
@@ -121,6 +122,7 @@ const TradingView = () => {
   const displayedTradingView = (
     <>
       <CandlestickChart
+        timeSpan={selectedChartIntervalRef.current}
         showPositionLabel={showPositionLabelRef.current}
         candlestickOn={candlestickOnRef.current}
         lineGraphOn={lineGraphOnRef.current}

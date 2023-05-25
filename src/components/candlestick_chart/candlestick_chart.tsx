@@ -72,6 +72,7 @@ import {TranslateFunction} from '../../interfaces/tidebit_defi_background/locale
 import {useTranslation} from 'react-i18next';
 
 interface ITradingChartGraphProps {
+  timeSpan: string;
   strokeColor: string[];
   candlestickOn: boolean;
   lineGraphOn: boolean;
@@ -225,6 +226,7 @@ const toICandlestickData = (data: CandlestickData): ICandlestickData => {
 
 // ToDo: 從外面傳進來的參數: 1.timespan 2.style of chart
 export default function CandlestickChart({
+  timeSpan,
   strokeColor,
   candlestickOn,
   lineGraphOn,

@@ -20,6 +20,7 @@ export type ITimeSpanUnionConstant = {
   _3m: ITimeSpanUnion;
   _5m: ITimeSpanUnion;
   _15m: ITimeSpanUnion;
+  _30m: ITimeSpanUnion;
   _1h: ITimeSpanUnion;
   _4h: ITimeSpanUnion;
   _12h: ITimeSpanUnion;
@@ -34,6 +35,7 @@ export const TimeSpanUnion: ITimeSpanUnionConstant = {
   _3m: '3m',
   _5m: '5m',
   _15m: '15m',
+  _30m: '30m',
   _1h: '1h',
   _4h: '4h',
   _12h: '12h',
@@ -57,6 +59,9 @@ export const getTime = (timeSpan: ITimeSpanUnion) => {
       break;
     case TimeSpanUnion._15m:
       time = 15 * 60 * 1000;
+      break;
+    case TimeSpanUnion._30m:
+      time = 30 * 60 * 1000;
       break;
     case TimeSpanUnion._1h:
       time = 60 * 60 * 1000;

@@ -178,7 +178,7 @@ const TradeTab = () => {
     if (!userCtx.enableServiceTerm) return;
 
     (async () => {
-      setQuotation();
+      setPrice();
 
       setTpSlBounds();
       setSuggestions();
@@ -195,7 +195,7 @@ const TradeTab = () => {
 
   // Info: Calculate quotation when market price changes (20230427 - Shirley)
   useEffect(() => {
-    setQuotation();
+    setPrice();
     setTpSlBounds();
     checkTpSlWithinBounds();
     renewPosition();
@@ -205,7 +205,7 @@ const TradeTab = () => {
   // Info: Fetch quotation when ticker changed (20230327 - Shirley)
   useEffect(() => {
     notificationCtx.emitter.once(ClickEvent.TICKER_CHANGED, async () => {
-      setQuotation();
+      setPrice();
       setTpSlBounds();
       setSuggestions();
       renewPosition();
@@ -216,8 +216,8 @@ const TradeTab = () => {
     };
   }, [marketCtx.selectedTicker]);
 
-  const setQuotation = () => {
-    // const deadline = getTimestamp() + QUOTATION_RENEWAL_INTERVAL_SECONDS;
+  const setPrice = () => {
+    // const marketPrice = marketCtx.selectedTicker?.price ?? DEFAULT_MARKET_PRICE;
     const buyPrice = roundToDecimalPlaces(
       (marketCtx.selectedTicker?.price ?? DEFAULT_BUY_PRICE) *
         (1 + (marketCtx.tickerLiveStatistics?.spread ?? DEFAULT_SPREAD)),

@@ -383,5 +383,9 @@
   "ANNOUNCEMENT_MODAL": {
     "CHECKBOX_DESCRIPTION": "Don’t show me this again",
     "OK_BUTTON": "OK"
+  },
+  "CANDLESTICK_CHART":{
+    "LONG": "Buy at",
+    "SHORT": "Sell at"
   }
 }

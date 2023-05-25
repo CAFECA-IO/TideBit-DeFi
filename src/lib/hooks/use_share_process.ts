@@ -24,7 +24,7 @@ interface IUseShareProcess {
   shareType: IShareType;
   shareId: string;
   cfd?: IDisplayCFDOrder;
-  enableShare: (id: string, share: boolean) => Promise<IResult>;
+  enableShare?: (id: string, share: boolean) => Promise<IResult>;
 }
 
 /**
@@ -51,7 +51,7 @@ const useShareProcess = ({lockerName, shareType, shareId, cfd, enableShare}: IUs
 
       case ShareType.BADGE:
         // TODO: Share badge (20230524 - Shirley)
-        shareUrl = '';
+        shareUrl = DOMAIN + `/share/cfd/${shareId}`;
         return shareUrl;
 
       default:
@@ -62,7 +62,6 @@ const useShareProcess = ({lockerName, shareType, shareId, cfd, enableShare}: IUs
 
   const getCFDOrder = async (): Promise<ISharingOrder | undefined> => {
     const apiUrl = `${API_URL}/public/shared/cfd/${shareId}`;
-
     try {
       const res = await fetch(apiUrl);
       const data = await res.json();
@@ -91,49 +90,66 @@ const useShareProcess = ({lockerName, shareType, shareId, cfd, enableShare}: IUs
     if (!lock()) return;
 
     try {
-      if (shareType === ShareType.CFD && !!!cfd) throw new CustomError(Code.NEED_CFD_ORDER);
-
       const shareUrl = getPageUrl();
-      // Info: this error will make try-again button lose its functionality (20230524 - Shirley)
       if (shareUrl === '') throw new CustomError(Code.NEED_SHARE_URL);
 
-      globalCtx.dataLoadingModalHandler({
-        modalTitle: t('POSITION_MODAL.SHARING'),
-        modalContent: t('POSITION_MODAL.SHARING_LOADING'),
-        isShowZoomOutBtn: false,
-      });
-      globalCtx.visibleLoadingModalHandler();
+      switch (shareType) {
+        case ShareType.CFD:
+          if (!!!cfd) throw new CustomError(Code.NEED_CFD_ORDER);
+          if (enableShare === undefined) throw new CustomError(Code.NEED_ENABLE_SHARE_FUNCTION);
 
-      const result = await enableShare(shareId, true);
+          globalCtx.dataLoadingModalHandler({
+            modalTitle: t('POSITION_MODAL.SHARING'),
+            modalContent: t('POSITION_MODAL.SHARING_LOADING'),
+            isShowZoomOutBtn: false,
+          });
+          globalCtx.visibleLoadingModalHandler();
 
-      if (result.success) {
-        const order = await getCFDOrder();
-        if (!order) throw new CustomError(Code.CANNOT_FETCH_CFD_SHARE_ORDER);
+          const result = await enableShare(shareId, true);
 
-        const isOrderMatched = compareOrder(order);
-        if (!isOrderMatched) throw new CustomError(Code.CFD_ORDER_NOT_MATCH);
+          if (result.success) {
+            const order = await getCFDOrder();
+            if (!order) throw new CustomError(Code.CANNOT_FETCH_CFD_SHARE_ORDER);
 
-        window.open(
-          `${url}${encodeURIComponent(shareUrl)}${text ? `${text}` : ''}`,
-          `${type}`,
-          `${size}`
-        );
+            const isOrderMatched = compareOrder(order);
+            if (!isOrderMatched) throw new CustomError(Code.CFD_ORDER_NOT_MATCH);
 
-        globalCtx.eliminateAllProcessModals();
-      } else {
-        globalCtx.eliminateAllProcessModals();
+            window.open(
+              `${url}${encodeURIComponent(shareUrl)}${text ? `${text}` : ''}`,
+              `${type}`,
+              `${size}`
+            );
 
-        globalCtx.dataFailedModalHandler({
-          modalTitle: t('POSITION_MODAL.SHARING'),
-          failedTitle: t('POSITION_MODAL.FAILED_TITLE'),
-          failedMsg: `${t('POSITION_MODAL.SHARING_FAILED_CONTENT')} (${result.code})`,
-          btnMsg: t('POSITION_MODAL.FAILED_BUTTON_TRY_AGAIN'),
-          btnFunction: () => {
-            shareTo({url, text, type, size});
-          },
-        });
+            globalCtx.eliminateAllProcessModals();
+          } else {
+            globalCtx.eliminateAllProcessModals();
 
-        globalCtx.visibleFailedModalHandler();
+            globalCtx.dataFailedModalHandler({
+              modalTitle: t('POSITION_MODAL.SHARING'),
+              failedTitle: t('POSITION_MODAL.FAILED_TITLE'),
+              failedMsg: `${t('POSITION_MODAL.SHARING_FAILED_CONTENT')} (${result.code})`,
+              btnMsg: t('POSITION_MODAL.FAILED_BUTTON_TRY_AGAIN'),
+              btnFunction: () => {
+                shareTo({url, text, type, size});
+              },
+            });
+
+            globalCtx.visibleFailedModalHandler();
+          }
+          break;
+        case ShareType.RANK:
+          break;
+
+        case ShareType.BADGE:
+          window.open(
+            `${url}${encodeURIComponent(shareUrl)}${text ? `${text}` : ''}`,
+            `${type}`,
+            `${size}`
+          );
+          break;
+
+        default:
+          break;
       }
     } catch (e: any) {
       if (e instanceof CustomError) {

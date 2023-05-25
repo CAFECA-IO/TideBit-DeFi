@@ -30,7 +30,8 @@ export type ICode =
   | '10310002'
   | '10210005'
   | '60210003'
-  | '30410005';
+  | '30410005'
+  | '10110003';
 
 export type ICodeConstant = {
   SUCCESS: ICode;
@@ -67,6 +68,7 @@ export type ICodeConstant = {
   NEED_CFD_ORDER: ICode;
   CFD_ORDER_NOT_MATCH: ICode;
   UNABLE_TO_WITHDRAW_DUE_TO_POLICY: ICode;
+  NEED_ENABLE_SHARE_FUNCTION: ICode;
 
   UNKNOWN_ERROR: ICode;
   UNKNOWN_ERROR_IN_COMPONENT: ICode;
@@ -88,6 +90,7 @@ export const Code: ICodeConstant = {
   CFD_ORDER_STATE_ERROR: '10210004',
   NEED_SHARE_URL: '10310002',
   NEED_CFD_ORDER: '10210005',
+  NEED_ENABLE_SHARE_FUNCTION: '10110003',
 
   THIRD_PARTY_LIBRARY_ERROR: '10310001',
 
@@ -130,6 +133,7 @@ export const Reason: IReason = {
   '10210004': 'CFD order not found',
   '10210005': 'CFD order needed when sharing CFD to compare',
   '10310001': 'ERROR_MESSAGE.THIRD_PARTY_LIBRARY_ERROR',
+  '10110003': 'Need the shareEnable related function',
 
   '30410005': 'Unable to withdraw funds due to policy reasons',
   '30110001': 'ERROR_MESSAGE.ORDER_NOT_OPENING',

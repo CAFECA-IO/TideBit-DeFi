@@ -107,17 +107,31 @@ const useShareProcess = ({lockerName, shareType, shareId, cfd, enableShare}: IUs
       const result = await enableShare(shareId, true);
 
       if (result.success) {
-        const order = await getCFDOrder();
-        if (!order) throw new CustomError(Code.CANNOT_FETCH_CFD_SHARE_ORDER);
+        switch (shareType) {
+          case ShareType.CFD:
+            const order = await getCFDOrder();
+            if (!order) throw new CustomError(Code.CANNOT_FETCH_CFD_SHARE_ORDER);
 
-        const isOrderMatched = compareOrder(order);
-        if (!isOrderMatched) throw new CustomError(Code.CFD_ORDER_NOT_MATCH);
+            const isOrderMatched = compareOrder(order);
+            if (!isOrderMatched) throw new CustomError(Code.CFD_ORDER_NOT_MATCH);
 
-        window.open(
-          `${url}${encodeURIComponent(shareUrl)}${text ? `${text}` : ''}`,
-          `${type}`,
-          `${size}`
-        );
+            window.open(
+              `${url}${encodeURIComponent(shareUrl)}${text ? `${text}` : ''}`,
+              `${type}`,
+              `${size}`
+            );
+            break;
+          case ShareType.RANK:
+            // ToDo:(20230525 - Julian) Share rank
+            break;
+          case ShareType.BADGE:
+            window.open(
+              `${url}${encodeURIComponent(shareUrl)}${text ? `${text}` : ''}`,
+              `${type}`,
+              `${size}`
+            );
+            break;
+        }
 
         globalCtx.eliminateAllProcessModals();
       } else {

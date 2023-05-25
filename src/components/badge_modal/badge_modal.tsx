@@ -26,7 +26,7 @@ const BadgeModal = ({modalVisible, modalClickHandler, badgeData}: IBadgeModalPro
     lockerName: 'badge_modal.shareHandler',
     shareType: ShareType.BADGE,
     shareId: badgeData.badgeId,
-    enableShare: userCtx.enableShare,
+    enableShare: userCtx.enableShare, // ToDo: (20230525 - Julian) userCtx.enableShare 需補上 badge data
   });
 
   // ToDo: (20230517 - Julian) Sharing function

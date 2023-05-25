@@ -31,6 +31,7 @@ const InterestSection = () => {
 
   const interestContentJsx = Object.entries(interestInfo).map(([key, value]) => (
     <div
+      key={key}
       className={`${
         key === 'APY' ? `lg:w-1/10` : `lg:w-1/4`
       } mb-6 hidden w-full justify-center p-4 text-lightGray lg:mx-0 lg:mb-0 lg:flex lg:grow`}
@@ -57,7 +58,7 @@ const InterestSection = () => {
   ));
 
   const interestContentJsxMobile = Object.entries(interestInfo).map(([key, value]) => (
-    <div className="mt-5 flex w-full justify-center text-lightGray lg:hidden">
+    <div key={key} className="mt-5 flex w-full justify-center text-lightGray lg:hidden">
       <div className="h-full w-full space-y-5 pt-5 text-center lg:text-start">
         <h1 className={`text-base leading-3 md:leading-relaxed lg:text-lg xl:text-xl`}>
           {key === 'interest30Days'

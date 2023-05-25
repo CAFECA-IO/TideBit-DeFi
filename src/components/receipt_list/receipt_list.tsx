@@ -13,7 +13,7 @@ const ReceiptList = ({monthData, filteredReceipts}: IReceiptListProps) => {
 
     if (monthAndYear == monthData) {
       return (
-        <div key={history.receipt.orderSnapshot.id}>
+        <div key={history.receipt.txhash}>
           <ReceiptItem histories={history} />
         </div>
       );

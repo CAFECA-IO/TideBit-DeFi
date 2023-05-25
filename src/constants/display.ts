@@ -228,6 +228,8 @@ export const InvisibleStrokeColor = {
   TRANSPARENT: '#A16171900',
 };
 
+export const SKELETON_DISPLAY_TIME = 1000;
+
 export const TRADING_CHART_SWITCH_BUTTON_SIZE = 30;
 
 export const OPEN_POSITION_LINE_GRAPH_WIDTH = '180';

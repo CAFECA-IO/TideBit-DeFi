@@ -7,7 +7,7 @@ import {roundToDecimalPlaces, toDisplayCFDOrder} from '../../lib/common';
 import {MarketContext} from '../../contexts/market_context';
 import {TypeOfPosition} from '../../constants/type_of_position';
 import useStateRef from 'react-usestateref';
-import {DEFAULT_SPREAD} from '../../constants/display';
+import {DEFAULT_SPREAD, SKELETON_DISPLAY_TIME} from '../../constants/display';
 
 const OpenSubTabMobile = () => {
   const {openCFDs} = useContext(UserContext);
@@ -72,7 +72,7 @@ const OpenSubTabMobile = () => {
   });
 
   useEffect(() => {
-    setTimeout(() => setIsLoading(false), 1000);
+    setTimeout(() => setIsLoading(false), SKELETON_DISPLAY_TIME);
   }, [cfds]);
 
   const openPositionList = cfds.map(cfd => {

@@ -5,6 +5,8 @@ import {RankingInterval} from '../../constants/ranking_time_span';
 import {MarketContext} from '../../contexts/market_context';
 import {defaultLeaderboard} from '../../interfaces/tidebit_defi_background/leaderboard';
 import {timestampToString} from '../../lib/common';
+import Skeleton, {SkeletonTheme} from 'react-loading-skeleton';
+import {SKELETON_DISPLAY_TIME} from '../../constants/display';
 import {useTranslation} from 'next-i18next';
 
 type TranslateFunction = (s: string) => string;
@@ -14,11 +16,16 @@ const BoardPageBody = () => {
 
   const marketCtx = useContext(MarketContext);
 
+  const [isLoading, setIsLoading] = useState(true);
   const [timeSpan, setTimeSpan] = useState(RankingInterval.LIVE);
   const [leaderboardLiveRemains, setLeaderboardLiveRemains] = useState(0);
   const [leaderboardData, setLeaderboardData] = useState(defaultLeaderboard);
 
   const {startTime, endTime, rankings} = leaderboardData;
+
+  useEffect(() => {
+    setTimeout(() => setIsLoading(false), SKELETON_DISPLAY_TIME);
+  }, []);
 
   useEffect(() => {
     setLeaderboardData(marketCtx.getLeaderboard(timeSpan) ?? defaultLeaderboard);
@@ -34,7 +41,7 @@ const BoardPageBody = () => {
     return () => clearTimeout(countdownInterval);
   }, [leaderboardLiveRemains]);
 
-  const displayedSubtitle =
+  const subtitle =
     timeSpan === RankingInterval.LIVE ? (
       <div className="inline-block text-base md:text-xl">
         {t('LEADERBOARD_PAGE.SUBTITLE_LIVE')}{' '}
@@ -65,18 +72,27 @@ const BoardPageBody = () => {
       <div className="inline-block text-base md:text-xl">Loading...</div>
     );
 
+  const displayedTitle = isLoading ? (
+    <Skeleton width={150} height={30} />
+  ) : (
+    <h1 className="text-3xl">{t('LEADERBOARD_PAGE.TITLE')}</h1>
+  );
+
+  const displayedSubtitle = isLoading ? <Skeleton width={300} height={25} /> : subtitle;
+
   return (
     <div className="pt-12 md:pt-20">
-      <div className="min-h-screen">
-        <div className="mx-auto my-10 flex w-screen flex-col items-center space-y-4">
-          <h1 className="text-3xl">{t('LEADERBOARD_PAGE.TITLE')}</h1>
-          <h2 className="text-xl">{displayedSubtitle}</h2>
-          <div className="pt-150px md:pt-250px">
-            <LeaderboardTab timeSpan={timeSpan} setTimeSpan={setTimeSpan} rankings={rankings} />
+      <SkeletonTheme baseColor="#1E2329" highlightColor="#444">
+        <div className="min-h-screen">
+          <div className="mx-auto my-10 flex w-screen flex-col items-center space-y-4">
+            {displayedTitle}
+            {displayedSubtitle}
+            <div className="pt-150px md:pt-250px">
+              <LeaderboardTab timeSpan={timeSpan} setTimeSpan={setTimeSpan} rankings={rankings} />
+            </div>
           </div>
         </div>
-      </div>
-
+      </SkeletonTheme>
       <div className="">
         <Footer />
       </div>

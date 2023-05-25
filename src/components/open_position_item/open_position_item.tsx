@@ -16,9 +16,7 @@ import {timestampToString} from '../../lib/common';
 import {cfdStateCode} from '../../constants/cfd_state_code';
 import {POSITION_CLOSE_COUNTDOWN_SECONDS, FRACTION_DIGITS} from '../../constants/config';
 import {MarketContext} from '../../contexts/market_context';
-import {UserContext} from '../../contexts/user_context';
 import {IDisplayCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
-import {ToastTypeAndText} from '../../constants/toast_type';
 import {useTranslation} from 'react-i18next';
 
 type TranslateFunction = (s: string) => string;
@@ -26,17 +24,15 @@ interface IOpenPositionItemProps {
   openCfdDetails: IDisplayCFDOrder;
 }
 
-const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProps) => {
+const OpenPositionItem = ({openCfdDetails}: IOpenPositionItemProps) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
   const marketCtx = useContext(MarketContext);
-  const userCtx = useContext(UserContext);
   const {
     visibleUpdateFormModalHandler,
     dataUpdateFormModalHandler,
     visiblePositionClosedModalHandler,
     dataPositionClosedModalHandler,
-    toast,
   } = useGlobal();
 
   const openItemClickHandler = () => {
@@ -175,7 +171,7 @@ const OpenPositionItem = ({openCfdDetails, ...otherProps}: IOpenPositionItemProp
       </div>
 
       {/* Info: (20230411 - Julian) Line graph */}
-      <div className="-my-6 -mx-4">
+      <div className="-mx-4 -my-6">
         <PositionLineGraph
           strokeColor={[
             displayedColorHex,

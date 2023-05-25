@@ -135,8 +135,7 @@ const DepositModal = ({
         globalCtx.visibleSuccessfulModalHandler();
       } else if (
         // Info: cancel (20230413 - Shirley)
-        result.code === Code.SERVICE_TERM_DISABLE ||
-        result.code === Code.WALLET_IS_NOT_CONNECT ||
+        /* Info:(20230524 - Julian) 只有在使用者主動取消交易時，才會跳出 Canceled Modal */
         result.code === Code.REJECTED_SIGNATURE
       ) {
         globalCtx.eliminateAllModals();
@@ -148,16 +147,14 @@ const DepositModal = ({
 
         globalCtx.eliminateToasts(ToastId.DEPOSIT);
         globalCtx.visibleCanceledModalHandler();
-      } else if (
-        result.code === Code.DEPOSIT_TOO_FREQUENCY ||
-        result.code === Code.INTERNAL_SERVER_ERROR ||
-        result.code === Code.INVAILD_INPUTS
-      ) {
+      } else {
+        /* Info:(20230524 - Julian) 其他沒有包含在合約內的錯誤，就顯示 Failed Modal */
         globalCtx.eliminateAllModals();
 
         globalCtx.dataFailedModalHandler({
           modalTitle: t('D_W_MODAL.DEPOSIT'),
-          modalContent: `${t('D_W_MODAL.FAILED_CONTENT')} (${result.code})`,
+          failedTitle: t('D_W_MODAL.FAILED_TITLE'),
+          failedMsg: `${t('D_W_MODAL.FAILED_CONTENT')} (${result.code})`,
         });
 
         globalCtx.eliminateToasts(ToastId.DEPOSIT);
@@ -170,7 +167,8 @@ const DepositModal = ({
       // Info: Unknown error
       globalCtx.dataFailedModalHandler({
         modalTitle: t('D_W_MODAL.DEPOSIT'),
-        modalContent: `${t('D_W_MODAL.FAILED_CONTENT')} (${Code.UNKNOWN_ERROR_IN_COMPONENT})`,
+        failedTitle: t('D_W_MODAL.FAILED_TITLE'),
+        failedMsg: `${t('D_W_MODAL.FAILED_CONTENT')} (${Code.UNKNOWN_ERROR_IN_COMPONENT})`,
       });
 
       globalCtx.eliminateToasts(ToastId.DEPOSIT);

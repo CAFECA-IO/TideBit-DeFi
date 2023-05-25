@@ -1,3 +1,4 @@
+import {ICandlestickData} from '../../interfaces/tidebit_defi_background/candlestickData';
 import {Code} from '../../constants/code';
 import {Model} from '../../constants/model';
 import {CustomError} from '../custom_error';
@@ -287,8 +288,8 @@ class TradeBook {
     return lines;
   }
 
-  toCandlestick(interval: number, length: number): ICandlestick[] {
-    const candleSticks: ICandlestick[] = [];
+  toCandlestick(interval: number, length: number): ICandlestickData[] {
+    const candleSticks: ICandlestickData[] = [];
     const intervalMs = interval * 1000;
 
     let lastTimestamp = this.predictedTrades[this.predictedTrades.length - 1].timestampMs;
@@ -303,6 +304,10 @@ class TradeBook {
       const trades = this.predictedTrades.filter(
         t => t.timestampMs >= i && t.timestampMs < i + intervalMs
       );
+      /** Deprecated: [debug] (20230524 - tzuhan)
+      // eslint-disable-next-line no-console
+      console.log(`toCandlestick trades`, trades);
+      */
       if (trades.length > 0) {
         const open = trades[0].price;
         const close = trades[trades.length - 1].price;
@@ -310,7 +315,16 @@ class TradeBook {
         const low = Math.min(...trades.map(t => t.price));
         const volume = trades.reduce((sum, t) => sum + t.quantity, 0);
         candlestick = {open, high, low, close, volume, timestamp: i};
-        candleSticks.push(candlestick);
+        candleSticks.push({
+          x: new Date(i),
+          y: {
+            open,
+            high,
+            low,
+            close,
+            volume,
+          },
+        });
       }
     }
 

@@ -2,9 +2,10 @@ import React, {useContext} from 'react';
 import Lottie from 'lottie-react';
 import smallConnectingAnimation from '../../../public/animation/lf30_editor_cnkxmhy3.json';
 import Image from 'next/image';
-import {UserContext} from '../../contexts/user_context';
 import {GlobalContext} from '../../contexts/global_context';
-import {timestampToString} from '../../lib/common';
+import {MarketContext} from '../../contexts/market_context';
+import {UserContext} from '../../contexts/user_context';
+import {timestampToString, toDisplayCFDOrder} from '../../lib/common';
 import {OrderType} from '../../constants/order_type';
 import {OrderState} from '../../constants/order_state';
 import {OrderStatusUnion} from '../../constants/order_status_union';
@@ -13,11 +14,14 @@ import {useTranslation} from 'next-i18next';
 import {IAcceptedOrder} from '../../interfaces/tidebit_defi_background/accepted_order';
 import {IAcceptedDepositOrder} from '../../interfaces/tidebit_defi_background/accepted_deposit_order';
 import {IAcceptedWithdrawOrder} from '../../interfaces/tidebit_defi_background/accepted_withdraw_order';
+import {IAcceptedCFDOrder} from '../../interfaces/tidebit_defi_background/accepted_cfd_order';
 import {
   ICFDOrder,
   IDepositOrder,
   IWithdrawOrder,
 } from '../../interfaces/tidebit_defi_background/order';
+import {ICurrency} from '../../constants/currency';
+import {CFDOperation} from '../../constants/cfd_order_type';
 import {FRACTION_DIGITS} from '../../constants/config';
 
 type TranslateFunction = (s: string) => string;
@@ -28,37 +32,15 @@ interface IReceiptItemProps {
 const ReceiptItem = (histories: IReceiptItemProps) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
-  const userCtx = useContext(UserContext);
   const globalCtx = useContext(GlobalContext);
+  const marketCtx = useContext(MarketContext);
+  const userCtx = useContext(UserContext);
 
   const {createTimestamp, receipt} = histories.histories;
   const {orderSnapshot: order, balanceSnapshot} = receipt;
+
   const balance = balanceSnapshot.shift();
-
-  const getCFDData = userCtx.getCFD((order as ICFDOrder).id);
-
-  /* Todo: (20230328 - Julian) get data from userContext 
-  const getDepositData: IDisplayAcceptedDepositOrder = {
-    id: 'TBD202303280000001',
-    txid: '0x',
-    orderType: OrderType.DEPOSIT,
-    createTimestamp: 1679587700,
-    orderStatus: OrderStatusUnion.PROCESSING,
-    fee: 0,
-    remark: '',
-    targetAsset: 'USDT',
-    targetAmount: 80,
-    decimals: 18,
-    to: '0x',
-    balanceSnapshot: {
-      currency: 'USDT',
-      available: 0,
-      locked: 1900,
-    },
-  };*/
-
   const receiptDate = timestampToString(createTimestamp ?? 0);
-
   const orderType = order.orderType;
   const orderStatus = order.orderStatus;
   const targetAsset =
@@ -70,13 +52,18 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
   const targetAmount =
     orderType === OrderType.CFD
       ? (order as ICFDOrder).state === OrderState.CLOSED
-        ? (order as ICFDOrder).margin.amount + ((order as ICFDOrder).pnl?.value || 0) > 0
-          ? (order as ICFDOrder).margin.amount + ((order as ICFDOrder).pnl?.value || 0)
+        ? (order as ICFDOrder).margin.amount + ((order as ICFDOrder).pnl?.value ?? 0) > 0
+          ? (order as ICFDOrder).margin.amount + ((order as ICFDOrder).pnl?.value ?? 0)
           : 0
         : (order as ICFDOrder).margin.amount * -1
       : orderType === OrderType.DEPOSIT
       ? (order as IDepositOrder).targetAmount
       : (order as IWithdrawOrder).targetAmount * -1;
+
+  /* Info: (20230524 - Julian) CFD Type : create / update / close */
+  const cfdType = (histories.histories as IAcceptedCFDOrder).applyData.operation;
+  /* Info: (20230524 - Julian) if can't get CFD by id, it means CFD is closed */
+  const isClosed = userCtx.getCFD(order.id) ? false : true;
 
   const displayedButtonColor =
     targetAmount == 0 ? 'bg-lightGray' : targetAmount > 0 ? 'bg-lightGreen5' : 'bg-lightRed';
@@ -87,10 +74,12 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
       : orderType === OrderType.WITHDRAW
       ? t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_WITHDRAW')
       : orderType === OrderType.CFD
-      ? (order as ICFDOrder).state === OrderState.OPENING
-        ? t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_CFD_OPEN')
-        : (order as ICFDOrder).state === OrderState.CLOSED
+      ? (order as ICFDOrder).state === OrderState.CLOSED
         ? t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_CFD_CLOSE')
+        : (order as ICFDOrder).state === OrderState.OPENING
+        ? cfdType === CFDOperation.UPDATE
+          ? t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_CFD_UPDATE')
+          : t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_CFD_OPEN')
         : t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_TITLE')
       : t('MY_ASSETS_PAGE.RECEIPT_SECTION_TRADING_TYPE_TITLE');
 
@@ -103,7 +92,9 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
       : '/elements/group_14962.svg';
 
   const displayedReceiptAmount =
-    targetAmount >= 0
+    cfdType === CFDOperation.UPDATE
+      ? '+0'
+      : targetAmount >= 0
       ? '+' + targetAmount.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)
       : targetAmount.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
 
@@ -131,21 +122,23 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
       ? t('MY_ASSETS_PAGE.RECEIPT_SECTION_ORDER_STATUS_FAILED')
       : '-';
 
-  // ToDo:(20230518 - Julian)已關閉的倉位不可以編輯
-  const buttonClickHandler =
+  /* Info: (20230523 - Julian) CFD Data */
+  const positionLineGraph = marketCtx.listTickerPositions(targetAsset as ICurrency, {
+    begin: createTimestamp,
+  });
+  const cfdData = toDisplayCFDOrder(order as ICFDOrder, positionLineGraph);
+
+  // Till:(20230530 - Julian)
+  /*   const buttonClickHandler =
     orderType === OrderType.CFD
       ? (order as ICFDOrder).state === OrderState.OPENING
         ? () => {
-            /* ToDo: convert IAceptedOrder to IDataPositionUpdatedModal in order to use getCFD (20230324 - Luphia)
+            //ToDo: convert IAceptedOrder to IDataPositionUpdatedModal in order to use getCFD (20230324 - Luphia)
             globalCtx.dataUpdateFormModalHandler(getCFDData);
-            
-            globalCtx.dataPositionUpdatedModalHandler(getCFDData as IDataPositionUpdatedModal); 
-            globalCtx.visiblePositionUpdatedModalHandler(); */
             globalCtx.visibleUpdateFormModalHandler();
           }
         : () => {
-            /* ToDo: convert IAceptedOrder to IDisplayCFDOrder in order to use getCFD (20230324 - Luphia) 
-            globalCtx.dataHistoryPositionModalHandler(toDisplayAcceptedCFDOrder(getCFDData, [])); */
+            globalCtx.dataHistoryPositionModalHandler(receiptData);
             globalCtx.visibleHistoryPositionModalHandler();
           }
       : orderType === OrderType.DEPOSIT
@@ -158,7 +151,32 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
             histories.histories as IAcceptedWithdrawOrder
           );
           globalCtx.visibleWithdrawalHistoryModalHandler();
-        };
+        }; */
+
+  const buttonClickHandler =
+    orderType === OrderType.CFD
+      ? isClosed
+        ? () => {
+            globalCtx.dataHistoryPositionModalHandler(cfdData);
+            globalCtx.visibleHistoryPositionModalHandler();
+          }
+        : () => {
+            globalCtx.dataUpdateFormModalHandler(cfdData);
+            globalCtx.visibleUpdateFormModalHandler();
+          }
+      : orderType === OrderType.DEPOSIT
+      ? () => {
+          globalCtx.dataDepositHistoryModalHandler(histories.histories as IAcceptedDepositOrder);
+          globalCtx.visibleDepositHistoryModalHandler();
+        }
+      : orderType === OrderType.WITHDRAW
+      ? () => {
+          globalCtx.dataWithdrawalHistoryModalHandler(
+            histories.histories as IAcceptedWithdrawOrder
+          );
+          globalCtx.visibleWithdrawalHistoryModalHandler();
+        }
+      : () => null;
 
   const displayedReceiptStateIcon =
     orderStatus === OrderStatusUnion.PROCESSING ||
@@ -181,7 +199,7 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
     orderStatus === OrderStatusUnion.PROCESSING || orderStatus === OrderStatusUnion.WAITING ? (
       <Lottie className="w-20px" animationData={smallConnectingAnimation} />
     ) : (
-      balance?.available.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)
+      balance?.available.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS) ?? '-'
     );
 
   const displayedReceiptTime = (
@@ -237,7 +255,7 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
   const displayedReceiptAvailable = (
     <div className="hidden flex-col items-center lg:flex lg:w-32">
       <span className="text-lightGray">{t('MY_ASSETS_PAGE.RECEIPT_SECTION_AVAILABLE')}</span>
-      {displayedReceiptAvailableText ?? '-'}
+      {displayedReceiptAvailableText}
     </div>
   );
 

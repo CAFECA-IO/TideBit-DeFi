@@ -215,6 +215,7 @@ const toICandlestickData = (data: CandlestickData): ICandlestickData => {
       high: data.high,
       low: data.low,
       close: data.close,
+      volume: 0,
     },
   };
 };

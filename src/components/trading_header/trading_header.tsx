@@ -88,7 +88,11 @@ const TradingHeader = () => {
         {/* Trading volume */}
         <div className="relative">
           <div className="absolute -right-48 top-10 w-300px text-sm text-lightWhite/60 lg:left-0">
-            {t('TRADE_PAGE.TRADING_VIEW_24H_VOLUME')} {marketCtx.selectedTicker?.tradingVolume}{' '}
+            {t('TRADE_PAGE.TRADING_VIEW_24H_VOLUME')}{' '}
+            {Number(marketCtx.selectedTicker?.tradingVolume).toLocaleString(
+              UNIVERSAL_NUMBER_FORMAT_LOCALE,
+              FRACTION_DIGITS
+            )}{' '}
             {unitAsset}
           </div>
         </div>

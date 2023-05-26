@@ -179,10 +179,10 @@ const filterCandlestickData = ({
   const data = [...dataArray];
 
   const result = data.filter(d => {
-    const candlestick = endTime
+    const rs = endTime
       ? Number(d.time) >= startTime && Number(d.time) <= endTime
       : Number(d.time) >= startTime;
-    return candlestick;
+    return rs;
   });
 
   return result;

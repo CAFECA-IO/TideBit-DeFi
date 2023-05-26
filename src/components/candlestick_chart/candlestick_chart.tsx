@@ -179,8 +179,9 @@ const filterCandlestickData = ({
   const data = [...dataArray];
 
   const result = data.filter(d => {
-    if (endTime) return Number(d.time) >= startTime && Number(d.time) <= endTime;
-    return Number(d.time) >= startTime;
+    return endTime
+      ? Number(d.time) >= startTime && Number(d.time) <= endTime
+      : Number(d.time) >= startTime;
   });
 
   return result;

@@ -73,7 +73,7 @@ const TradeTab = () => {
   const TEMP_PLACEHOLDER = TARGET_LIMIT_DIGITS;
 
   const ticker = marketCtx.selectedTicker?.currency ?? '';
-  const availableBalance = userCtx.balance?.available ?? DEFAULT_USER_BALANCE;
+  const availableBalance = userCtx.userAssets?.balance?.available ?? DEFAULT_USER_BALANCE;
 
   const leverage = tickerStaticStatistics?.leverage ?? DEFAULT_LEVERAGE;
   const gsl = marketCtx.guaranteedStopFeePercentage;
@@ -191,7 +191,7 @@ const TradeTab = () => {
     if (!userCtx.enableServiceTerm) return;
 
     renewPosition();
-  }, [userCtx.balance?.available]);
+  }, [userCtx.userAssets?.balance?.available]);
 
   // Info: Calculate quotation when market price changes (20230427 - Shirley)
   useEffect(() => {

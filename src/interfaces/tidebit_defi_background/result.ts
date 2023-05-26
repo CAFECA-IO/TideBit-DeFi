@@ -12,6 +12,7 @@ import {ITickerLiveStatistics} from './ticker_live_statistics';
 import {ITickerStatic} from './ticker_static';
 import {ITideBitPromotion} from './tidebit_promotion';
 import {IUser} from './user';
+import {IUserAssets} from './user_assets';
 import {IUserBalance} from './user_balance';
 import {IWebsiteReserve} from './website_reserve';
 
@@ -21,7 +22,7 @@ export interface IResult {
     | number
     | {user: IUser; expiredAt: string}
     | IBalance[]
-    | IUserBalance
+    // | IUserBalance
     | IOrder[]
     | ICandlestickData[]
     | ITickerData[]
@@ -41,6 +42,7 @@ export interface IResult {
     | ITrade[]
     | ITideBitPromotion
     | IWebsiteReserve
+    | IUserAssets
     | null;
   code: ICode;
   reason?: string;

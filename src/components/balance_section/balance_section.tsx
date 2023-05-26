@@ -16,9 +16,11 @@ const BalanceSection = () => {
   const globalCtx = useGlobal();
   const userCtx = useContext(UserContext);
 
+  const {userAssets} = userCtx;
+
   /* ToDo: (20230420 - Julian) getUserAssets by currency */
-  const avblBalance = userCtx.getUserAssets('')?.balance.available ?? DEFAULT_BALANCE;
-  const lockedBalance = userCtx.getUserAssets('')?.balance.locked ?? DEFAULT_BALANCE;
+  const avblBalance = userAssets?.balance.available ?? DEFAULT_BALANCE;
+  const lockedBalance = userAssets?.balance.locked ?? DEFAULT_BALANCE;
   const totalBalance = avblBalance && lockedBalance ? avblBalance + lockedBalance : DEFAULT_BALANCE;
 
   const [hidden, setHidden] = useState(false);

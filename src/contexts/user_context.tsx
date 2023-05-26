@@ -37,10 +37,10 @@ import {
   getCookieByName,
   getServiceTermContract,
   getTimestamp,
+  millesecondsToSeconds,
   randomHex,
   rlpEncodeServiceTerm,
   verifySignedServiceTerm,
-  randomIntFromInterval,
 } from '../lib/common';
 import {IAcceptedOrder} from '../interfaces/tidebit_defi_background/accepted_order';
 import {
@@ -55,7 +55,7 @@ import {Events} from '../constants/events';
 import {IUser} from '../interfaces/tidebit_defi_background/user';
 import TickerBookInstance from '../lib/books/ticker_book';
 import {IUserBalance} from '../interfaces/tidebit_defi_background/user_balance';
-import {ProfitState} from '../constants/profit_state';
+import {ProfitState, getProfitState} from '../constants/profit_state';
 import {IRankingTimeSpan} from '../constants/ranking_time_span';
 import {IUserAssets, getDummyUserAssets} from '../interfaces/tidebit_defi_background/user_assets';
 import {
@@ -72,8 +72,9 @@ export interface IUserProvider {
 }
 export interface IUserContext {
   user: IUser | null;
+  userAssets: IUserAssets | null;
   walletBalances: IWalletBalance[] | null;
-  balance: IUserBalance | null;
+  // balance: IUserBalance | null;
   balances: IBalance[] | null;
   favoriteTickers: string[];
   isConnected: boolean;
@@ -115,20 +116,21 @@ export interface IUserContext {
   readNotifications: (notifications: INotificationItem[]) => Promise<IResult>;
   getBalance: (currency: string) => IBalance | null;
   getWalletBalance: (props: string) => IWalletBalance | null;
-  getUserAssets: (currency: string) => IUserAssets | null;
+  getUserAssets: (currency: string) => Promise<IResult>;
   getPersonalRanking: (timeSpan: IRankingTimeSpan) => IPersonalRanking | null;
   getPersonalAchievements: (userId: string) => IPersonalAchievement | null;
   init: () => Promise<void>;
   enableShare: (cfdId: string, share: boolean) => Promise<IResult>;
   shareTradeRecord: (cfdId: string) => Promise<IResult>;
-  getTotalBalance: () => Promise<IResult>;
+  // getTotalBalance: () => Promise<IResult>;
   walletExtensions: IWalletExtension[];
 }
 
 export const UserContext = createContext<IUserContext>({
   user: null,
   walletBalances: null,
-  balance: null,
+  // balance: null,
+  userAssets: null,
   balances: null,
   favoriteTickers: [],
   isConnected: false,
@@ -207,7 +209,6 @@ export const UserContext = createContext<IUserContext>({
   },
   getBalance: () => null,
   getWalletBalance: () => null,
-  getUserAssets: () => null,
   getPersonalRanking: () => null,
   getPersonalAchievements: () => null,
   init: () => Promise.resolve(),
@@ -218,7 +219,7 @@ export const UserContext = createContext<IUserContext>({
     throw new CustomError(Code.FUNCTION_NOT_IMPLEMENTED);
   },
   walletExtensions: [],
-  getTotalBalance: function (): Promise<IResult> {
+  getUserAssets: function (currency: string): Promise<IResult> {
     throw new Error('Function not implemented.');
   },
 });
@@ -232,7 +233,8 @@ export const UserProvider = ({children}: IUserProvider) => {
   const [walletBalances, setWalletBalances, walletBalancesRef] = useState<IWalletBalance[] | null>(
     null
   );
-  const [balance, setBalance, balanceRef] = useState<IUserBalance | null>(null);
+  const [userAssets, setUserAssets, userAssetsRef] = useState<IUserAssets | null>(null);
+  // const [balance, setBalance, balanceRef] = useState<IUserBalance | null>(null);
   const [balances, setBalances, balancesRef] = useState<IBalance[] | null>(null);
   const [favoriteTickers, setFavoriteTickers, favoriteTickersRef] = useState<string[]>([]);
   const [isConnected, setIsConnected, isConnectedRef] = useState<boolean>(false);
@@ -299,7 +301,8 @@ export const UserProvider = ({children}: IUserProvider) => {
     setEnableServiceTerm(false);
     setUser(null);
     setWalletBalances(null);
-    setBalance(null);
+    // setBalance(null);
+    setUserAssets(null);
     setOpenedCFDs([]);
     setClosedCFDs([]);
     setFavoriteTickers([]);
@@ -490,52 +493,102 @@ export const UserProvider = ({children}: IUserProvider) => {
   const sumBalance = () => {
     let sumAvailable = 0,
       sumLocked = 0;
-    if (balancesRef.current) {
+    const dayString = `${new Date().getFullYear()}-${
+      new Date().getMonth() + 1
+    }-${new Date().getDate()}`;
+    const dayBegin = millesecondsToSeconds(new Date(`${dayString} 00:00:00`).getTime());
+    const dayEnd = millesecondsToSeconds(new Date(`${dayString} 23:59:59`).getTime());
+    const monthBegin = millesecondsToSeconds(
+      new Date(`${new Date().getFullYear()}-${new Date().getMonth() + 1}-01 00:00:00`).getTime()
+    );
+    const monthEnd = millesecondsToSeconds(
+      new Date(
+        `${new Date().getFullYear()}-${new Date().getMonth() + 1}-${new Date().getDate()} 23:59:59`
+      ).getTime()
+    );
+    let dayPnLValue = 0,
+      monthPnLValue = 0,
+      PnLValue = 0;
+    if (balancesRef.current && userAssetsRef.current) {
       for (const balance of balancesRef.current) {
         const rate = tickerBook.getCurrencyRate(balance.currency);
         sumAvailable += balance.available * rate;
         sumLocked += balance.locked * rate;
       }
-      const PnLValue = closedCFDsRef.current.reduce((acc, cur) => {
-        return acc + (cur.pnl?.value || 0);
-      }, 0);
-      setBalance({
-        available: sumAvailable,
-        locked: sumLocked,
-        total: sumAvailable + sumLocked,
-        PnL: {
-          type:
-            PnLValue >= 0
-              ? PnLValue === 0
-                ? ProfitState.EQUAL
-                : ProfitState.PROFIT
-              : ProfitState.LOSS,
-          value: PnLValue,
-        }, // TODO: Caculate PNL (20230508 - tzuhan)
-      });
+      for (const closedCFD of closedCFDsRef.current) {
+        if (closedCFD.closeTimestamp! >= dayBegin && closedCFD.closeTimestamp! <= dayEnd) {
+          dayPnLValue += closedCFD.pnl?.value || 0;
+        }
+        if (closedCFD.closeTimestamp! >= monthBegin && closedCFD.closeTimestamp! <= monthEnd) {
+          monthPnLValue += closedCFD.pnl?.value || 0;
+        }
+        PnLValue += closedCFD.pnl?.value || 0;
+      }
+      const updateUserAssets: IUserAssets = {
+        ...userAssetsRef.current,
+        balance: {
+          available: sumAvailable,
+          locked: sumLocked,
+        },
+        pnl: {
+          ...userAssetsRef.current.pnl,
+          today: {
+            amount: {
+              type: getProfitState(dayPnLValue),
+              value: dayPnLValue,
+            },
+            percentage: {
+              type: getProfitState(dayPnLValue),
+              value: dayPnLValue / (sumAvailable + sumLocked),
+            },
+          },
+          monthly: {
+            amount: {
+              type: getProfitState(monthPnLValue),
+              value: monthPnLValue,
+            },
+            percentage: {
+              type: getProfitState(monthPnLValue),
+              value: monthPnLValue / (sumAvailable + sumLocked),
+            },
+          },
+          cumulative: {
+            amount: {
+              type: getProfitState(PnLValue),
+              value: PnLValue,
+            },
+            percentage: {
+              type: getProfitState(PnLValue),
+              value: PnLValue / (sumAvailable + sumLocked),
+            },
+          },
+        },
+      };
+      setUserAssets(updateUserAssets);
     }
   };
 
-  const getTotalBalance = useCallback(async () => {
+  const getUserAssets = useCallback(async (currency: string): Promise<IResult> => {
     let result: IResult = {...defaultResultFailed};
     if (enableServiceTermRef.current) {
       try {
         result = (await privateRequestHandler({
-          name: APIName.GET_TOTAL_BALANCE,
+          name: APIName.GET_USER_ASSETS,
           method: Method.GET,
+          params: currency,
         })) as IResult;
         // Deprecate: after this functions finishing (20230508 - tzuhan)
         // eslint-disable-next-line no-console
-        console.log(`getTotalBalance result`, result);
+        console.log(`getUserAssets result`, result);
         if (result.success) {
-          const balance = result.data as IUserBalance;
-          setBalance(balance);
-          result.data = balance;
+          const userAssets = result.data as IUserAssets;
+          setUserAssets(userAssets);
+          result.data = userAssets;
         }
       } catch (error) {
         // TODO: error handle (Tzuhan - 20230421)
         // eslint-disable-next-line no-console
-        console.error(`getTotalBalance error`, error);
+        console.error(`getUserAssets error`, error);
         result.code = Code.INTERNAL_SERVER_ERROR;
         result.reason = Reason[result.code];
       }
@@ -810,9 +863,9 @@ export const UserProvider = ({children}: IUserProvider) => {
   };
 
   /* ToDo: (20230510 - Julian) get data from backend */
-  const getUserAssets = (currency: string) => {
-    return getDummyUserAssets(currency);
-  };
+  // const getUserAssets = (currency: string) => {
+  //   return getDummyUserAssets(currency);
+  // };
 
   /* ToDo: (20230510 - Julian) get data from backend */
   const getPersonalRanking = (timeSpan: IRankingTimeSpan) => {
@@ -846,7 +899,13 @@ export const UserProvider = ({children}: IUserProvider) => {
       }
     }
   };
-
+  /**
+   *
+   * @param applyCreateCFDOrder
+   * fee: <= margin.amount * 20% && >= 0
+   * amount: >= 0
+   * @returns
+   */
   const _createCFDOrder = async (
     applyCreateCFDOrder: IApplyCreateCFDOrder | undefined
   ): Promise<IResult> => {
@@ -1540,7 +1599,8 @@ export const UserProvider = ({children}: IUserProvider) => {
   const defaultValue = {
     user: userRef.current,
     walletBalances: walletBalancesRef.current,
-    balance: balanceRef.current,
+    // balance: balanceRef.current,
+    userAssets: userAssetsRef.current,
     balances: balancesRef.current,
     favoriteTickers: favoriteTickersRef.current,
     isConnected: isConnectedRef.current,
@@ -1582,7 +1642,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     getUserAssets,
     getPersonalRanking,
     getPersonalAchievements,
-    getTotalBalance,
+    // getTotalBalance,
     init,
     walletExtensions: walletExtensionsRef.current,
   };

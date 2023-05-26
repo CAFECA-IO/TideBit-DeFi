@@ -12,11 +12,11 @@ const PnlSection = () => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
   const userCtx = useContext(UserContext);
-
+  const {userAssets} = userCtx;
   /* ToDo: (20230420 - Julian) getUserAssets by currency */
-  const pnlToday = userCtx.getUserAssets('')?.pnl.today ?? DEFAULT_PNL_DATA;
-  const pnl30Days = userCtx.getUserAssets('')?.pnl.monthly ?? DEFAULT_PNL_DATA;
-  const cumulativePnl = userCtx.getUserAssets('')?.pnl.cumulative ?? DEFAULT_PNL_DATA;
+  const pnlToday = userAssets?.pnl.today ?? DEFAULT_PNL_DATA;
+  const pnl30Days = userAssets?.pnl.monthly ?? DEFAULT_PNL_DATA;
+  const cumulativePnl = userAssets?.pnl.cumulative ?? DEFAULT_PNL_DATA;
 
   const statisticContent = [
     {title: t('MY_ASSETS_PAGE.PNL_SECTION_TODAY'), ...pnlToday},

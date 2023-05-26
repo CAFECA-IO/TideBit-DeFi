@@ -809,7 +809,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     return balance;
   };
 
-  /* ToDo: (20230510 - Julian) get data from backend */
+  /* ToDo: (20230510 - Julian) get data from backend #448 */
   const getUserAssets = (currency: string) => {
     /*     const balance = getBalance(currency);
     const userAssets = {

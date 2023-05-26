@@ -22,13 +22,11 @@ interface IBadgeModalProps {
 const BadgeModal = ({modalVisible, modalClickHandler, badgeData}: IBadgeModalProps) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
   const {badgeId, badgeName, receiveTime} = badgeData.badgeData;
-  const userCtx = useContext(UserContext);
 
   const {shareTo} = useShareProcess({
     lockerName: 'badge_modal.shareHandler',
     shareType: ShareType.BADGE,
     shareId: badgeId,
-    enableShare: userCtx.enableShare, // ToDo: (20230525 - Julian) userCtx.enableShare 需補上 badge data
   });
 
   const displayedBadgeImage = BADGE_LIST.find(badge => badge.name === badgeName)?.icon ?? '';
@@ -51,10 +49,28 @@ const BadgeModal = ({modalVisible, modalClickHandler, badgeData}: IBadgeModalPro
       >
         <BsFacebook className="hover:text-lightGray2" />
       </button>
-      <button>
+      <button
+        onClick={() =>
+          shareTo({
+            url: 'https://twitter.com/intent/tweet?url=',
+            text: '&text=Check%20this%20out!',
+            type: 'twitter-share-dialog',
+            size: 'width=800,height=600',
+          })
+        }
+      >
         <BsTwitter className="hover:text-lightGray2" />
       </button>
-      <button>
+      <button
+        onClick={() =>
+          shareTo({
+            url: 'https://www.reddit.com/submit?url=',
+            text: '&title=Check%20this%20out!',
+            type: 'reddit-share-dialog',
+            size: 'width=800,height=600',
+          })
+        }
+      >
         <BsReddit className="hover:text-lightGray2" />
       </button>
     </div>

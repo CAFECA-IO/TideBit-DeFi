@@ -164,26 +164,24 @@ const createSpec = ({timespan, dataSize, chartHeight, chartWidth}: IChartSpecPro
 
   const firstTime = (getLastTime() - (dataSize - 1) * timespan) / 1000;
 
-  // console.log('firstTime in createSpec', firstTime);
-
   return {firstTime, chartOptions};
 };
 
 const filterCandlestickData = ({
   dataArray,
-  firstTime,
+  startTime,
+  endTime,
 }: {
   dataArray: CandlestickData[];
-  firstTime: number;
+  startTime: number;
+  endTime?: number;
 }) => {
   const data = [...dataArray];
 
   const result = data.filter(d => {
-    return Number(d.time) >= firstTime;
+    if (endTime) return Number(d.time) >= startTime && Number(d.time) <= endTime;
+    return Number(d.time) >= startTime;
   });
-
-  // eslint-disable-next-line no-console
-  console.log('firstTime', firstTime);
 
   return result;
 };
@@ -327,7 +325,7 @@ export default function CandlestickChart({
 
   const longShortPriceLine = () => {
     const price = marketCtx.selectedTicker?.price ?? 0;
-    const spread = DEFAULT_SPREAD; // marketCtx.tickerLiveStatistics?.spread ??
+    const spread = marketCtx.tickerLiveStatistics?.spread ?? DEFAULT_SPREAD; //
 
     const buyPrice = price * (1 + spread);
     const sellPrice = price * (1 - spread);
@@ -445,7 +443,7 @@ export default function CandlestickChart({
     const originRaw = marketCtx.candlestickChartData?.map(toCandlestickData) ?? [];
     const raw = originRaw.sort((a, b) => Number(a.time) - Number(b.time));
     const cleanedData = candlestickDataCleaning(raw);
-    const filtered = filterCandlestickData({dataArray: cleanedData, firstTime: firstTime});
+    const filtered = filterCandlestickData({dataArray: cleanedData, startTime: firstTime});
     const result = tuningTzCandlestickDataArray(filtered) as CandlestickData[];
     return result;
   };

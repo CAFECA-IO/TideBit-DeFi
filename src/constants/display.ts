@@ -270,6 +270,7 @@ export const WIDTH_OF_SHARING_RECORD = 900;
 export const BG_WIDTH_OF_SHARING_RECORD = 1200;
 export const HEIGHT_OF_SHARING_RECORD = 600;
 export const BG_HEIGHT_OF_SHARING_RECORD = 630;
+export const SIZE_OF_SHARING_BADGE = 630;
 export const DEFAULT_PRICE_CHANGE = 0;
 export const DEFAULT_FLUCTUATION = 0;
 export const DEFAULT_BALANCE = {available: 0, locked: 0};

@@ -4,6 +4,11 @@ import {useContext, useEffect} from 'react';
 import {AppContext} from '../../../contexts/app_context';
 import {GetServerSideProps} from 'next';
 import {useRouter} from 'next/router';
+import {
+  SIZE_OF_SHARING_BADGE,
+  BG_WIDTH_OF_SHARING_RECORD,
+  BG_HEIGHT_OF_SHARING_RECORD,
+} from '../../../constants/display';
 import Error from 'next/error';
 import {DOMAIN} from '../../../constants/config';
 import useStateRef from 'react-usestateref';
@@ -22,9 +27,9 @@ const BadgeSharing = (props: IPageProps) => {
   const {query} = router;
 
   // TODO: for meta content (20230525 - Julian)
-  const img = `${DOMAIN}/api/images/badge/${props.badgeId}?tz=${userTzRef.current}`;
+  const img = `${DOMAIN}/share/cfd/${props.badgeId}`; //`${DOMAIN}/api/images/badge/${props.badgeId}?tz=${userTzRef.current}`;
   const displayImg = `/api/images/badge/${props.badgeId}?tz=${userTzRef.current}`;
-  const share = `${DOMAIN}/share/badge/${props.badgeId}`;
+  const share = `${DOMAIN}/share/cfd/${props.badgeId}`; //`${DOMAIN}/share/badge/${props.badgeId}`;
 
   useEffect(() => {
     if (!appCtx.isInit) {
@@ -52,8 +57,8 @@ const BadgeSharing = (props: IPageProps) => {
       <div className="flex w-full justify-center">
         <img
           src={displayImg}
-          width={630}
-          height={630}
+          width={SIZE_OF_SHARING_BADGE}
+          height={SIZE_OF_SHARING_BADGE}
           alt="Badge record"
           className="hover:opacity-90"
         />
@@ -77,9 +82,8 @@ const BadgeSharing = (props: IPageProps) => {
         <meta property="og:type" content="website" />
         <meta property="og:url" content={share} />
         <meta property="og:image" content={img} />
-        {/* ToDo: (20230525 - Julian) set display */}
-        <meta property="og:image:width" content={'630'} />
-        <meta property="og:image:height" content={'630'} />
+        <meta property="og:image:width" content={SIZE_OF_SHARING_BADGE.toString()} />
+        <meta property="og:image:height" content={SIZE_OF_SHARING_BADGE.toString()} />
         <meta property="og:description" content="TideBit DeFi Badge Sharing" />
         <meta property="og:site_name" content="TideBit DeFi" />
         <meta property="og:locale" content="en_US" />

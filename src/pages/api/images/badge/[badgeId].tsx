@@ -1,7 +1,12 @@
 import {NextApiRequest, NextApiResponse} from 'next';
 import {ImageResponse} from 'next/server';
 import {timestampToString, accountTruncate, adjustTimestamp} from '../../../../lib/common';
-import {BADGE_LIST} from '../../../../constants/display';
+import {
+  BADGE_LIST,
+  SIZE_OF_SHARING_BADGE,
+  BG_WIDTH_OF_SHARING_RECORD,
+  BG_HEIGHT_OF_SHARING_RECORD,
+} from '../../../../constants/display';
 import {DOMAIN, API_URL} from '../../../../constants/config';
 import {BARLOW_BASE64} from '../../../../constants/fonts';
 import {Buffer} from 'buffer';
@@ -84,7 +89,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const badgeImage = BADGE_LIST.find(badge => badge.name === badgeName)?.icon ?? '';
   const badgeImageUrl = DOMAIN + badgeImage;
   // ToDo: (20230525 - Julian) can't see background image
-  const bgImageUrl = DOMAIN + '/elements/share_badge_bg@2x.png'; //'http://localhost:3000/elements/share_badge_bg@2x.png';
+  const bgImageUrl = 'http://localhost:3000/elements/share_badge_bg@2x.png'; //DOMAIN + '/elements/share_badge_bg@2x.png'; //'http://localhost:3000/elements/share_badge_bg@2x.png';
 
   const BarlowBuffer = Buffer.from(BARLOW_BASE64, 'base64');
 
@@ -100,16 +105,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         <div
           style={{
             display: 'flex',
-            height: `630px`,
-            width: `630px`,
+            height: `${BG_HEIGHT_OF_SHARING_RECORD}px`,
+            width: `${BG_WIDTH_OF_SHARING_RECORD}px`,
             backgroundColor: '#000',
           }}
         >
           <div
             style={{
+              transform: 'translateX(300px)',
               backgroundImage: `url(${bgImageUrl})`,
               objectFit: 'contain',
-              backgroundSize: `630px 630px`,
+              backgroundSize: `${SIZE_OF_SHARING_BADGE}px ${SIZE_OF_SHARING_BADGE}px`,
               backgroundPosition: 'relative',
               backgroundRepeat: 'no-repeat',
 
@@ -118,8 +124,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
               flexDirection: 'column',
               alignItems: 'flex-start',
               justifyContent: 'flex-start',
-              height: `630px`,
-              width: `630px`,
+              height: `${SIZE_OF_SHARING_BADGE}px`,
+              width: `${SIZE_OF_SHARING_BADGE}px`,
             }}
           >
             <div
@@ -227,8 +233,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       </div>
     ),
     {
-      width: 630,
-      height: 630,
+      width: BG_WIDTH_OF_SHARING_RECORD,
+      height: BG_HEIGHT_OF_SHARING_RECORD,
       fonts: [
         {
           name: 'Barlow',

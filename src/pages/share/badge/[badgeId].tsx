@@ -27,9 +27,9 @@ const BadgeSharing = (props: IPageProps) => {
   const {query} = router;
 
   // TODO: for meta content (20230525 - Julian)
-  const img = `${DOMAIN}/share/cfd/${props.badgeId}`; //`${DOMAIN}/api/images/badge/${props.badgeId}?tz=${userTzRef.current}`;
+  const img = `${DOMAIN}/api/images/badge/${props.badgeId}?tz=${userTzRef.current}`;
   const displayImg = `/api/images/badge/${props.badgeId}?tz=${userTzRef.current}`;
-  const share = `${DOMAIN}/share/cfd/${props.badgeId}`; //`${DOMAIN}/share/badge/${props.badgeId}`;
+  const share = `${DOMAIN}/share/badge/${props.badgeId}`;
 
   useEffect(() => {
     if (!appCtx.isInit) {
@@ -57,8 +57,8 @@ const BadgeSharing = (props: IPageProps) => {
       <div className="flex w-full justify-center">
         <img
           src={displayImg}
-          width={SIZE_OF_SHARING_BADGE}
-          height={SIZE_OF_SHARING_BADGE}
+          width={BG_WIDTH_OF_SHARING_RECORD}
+          height={BG_HEIGHT_OF_SHARING_RECORD}
           alt="Badge record"
           className="hover:opacity-90"
         />

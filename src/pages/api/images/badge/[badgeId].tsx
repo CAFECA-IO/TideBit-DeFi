@@ -1,6 +1,6 @@
 import {NextApiRequest, NextApiResponse} from 'next';
 import {ImageResponse} from 'next/server';
-import {timestampToString, accountTruncate, adjustTimestamp} from '../../../../lib/common';
+import {timestampToString, adjustTimestamp} from '../../../../lib/common';
 import {
   BADGE_LIST,
   SIZE_OF_SHARING_BADGE,
@@ -83,7 +83,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const qrcodeUrl = DOMAIN + `/elements/tidebit_qrcode.svg`;
 
   const displayedUser = user.slice(-1).toUpperCase();
-  const displayedUserName = accountTruncate(user);
+  const displayedUserName = user;
   const displayedBadgeName = badgeName.replaceAll('_', ' ');
 
   const badgeImage = BADGE_LIST.find(badge => badge.name === badgeName)?.icon ?? '';

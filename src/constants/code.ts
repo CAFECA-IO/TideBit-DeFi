@@ -29,7 +29,8 @@ export type ICode =
   | '60210002'
   | '10310002'
   | '10210005'
-  | '60210003';
+  | '60210003'
+  | '10110003';
 
 export type ICodeConstant = {
   SUCCESS: ICode;
@@ -65,6 +66,7 @@ export type ICodeConstant = {
   CANNOT_CONVERT_TO_IMAGE: ICode;
   NEED_CFD_ORDER: ICode;
   CFD_ORDER_NOT_MATCH: ICode;
+  NEED_ENABLE_SHARE_FUNCTION: ICode;
 
   UNKNOWN_ERROR: ICode;
   UNKNOWN_ERROR_IN_COMPONENT: ICode;
@@ -86,6 +88,7 @@ export const Code: ICodeConstant = {
   CFD_ORDER_STATE_ERROR: '10210004',
   NEED_SHARE_URL: '10310002',
   NEED_CFD_ORDER: '10210005',
+  NEED_ENABLE_SHARE_FUNCTION: '10110003',
 
   THIRD_PARTY_LIBRARY_ERROR: '10310001',
 
@@ -127,6 +130,7 @@ export const Reason: IReason = {
   '10210004': 'CFD order not found',
   '10210005': 'CFD order needed when sharing CFD to compare',
   '10310001': 'ERROR_MESSAGE.THIRD_PARTY_LIBRARY_ERROR',
+  '10110003': 'Need the shareEnable related function',
 
   '30110001': 'ERROR_MESSAGE.ORDER_NOT_OPENING',
   '30420001': 'ERROR_MESSAGE.INVAILD_ORDER_INPUTS',

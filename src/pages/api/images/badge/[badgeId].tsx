@@ -1,8 +1,8 @@
 import {NextApiRequest, NextApiResponse} from 'next';
 import {ImageResponse} from 'next/server';
-import {timestampToString, accountTruncate} from '../../../../lib/common';
+import {timestampToString, accountTruncate, adjustTimestamp} from '../../../../lib/common';
 import {BADGE_LIST} from '../../../../constants/display';
-import {DOMAIN} from '../../../../constants/config';
+import {DOMAIN, API_URL} from '../../../../constants/config';
 import {BARLOW_BASE64} from '../../../../constants/fonts';
 import {Buffer} from 'buffer';
 
@@ -19,9 +19,11 @@ export interface ISharingBadge {
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   // ToDo:(20230525 - Julian) send to API
-  //const {pathname} = new URL(req?.url ?? '');
-  //const params = pathname.split('/');
-  //const cfdId = params.pop();
+  const url = new URL(req?.url ?? '');
+  const params = url.pathname.split('/');
+  const cfdId = params.pop();
+  const apiUrl = `${API_URL}/public/shared/badge/${cfdId}`;
+  const tz = Number(url.searchParams.get('tz'));
 
   // ToDo:(20230525 - Julian) get Data from API
   const dummySharingBadge = {
@@ -31,9 +33,49 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     receiveTime: 1636789600,
   };
 
-  const {badgeName, user, receiveTime} = dummySharingBadge as ISharingBadge;
+  let sharingBadge: ISharingBadge = dummySharingBadge; //getInvalidSharingBadge();
 
+  const fetchBagde = async () => {
+    try {
+      const badgeResponse = await fetch(apiUrl, {
+        method: 'GET',
+        headers: {'Content-Type': 'application/json'},
+      });
+      const badge = await badgeResponse.json();
+
+      if (badge?.success) {
+        /*         if (isSharingOrder(order?.data)) {
+          sharingOrder = order?.data;
+        } */
+      }
+    } catch (e) {
+      // TODO: error handling (20230523 - Shirley)
+    }
+
+    //return sharingOrder;
+  };
+
+  try {
+    await fetchBagde();
+
+    const offset = new Date().getTimezoneOffset() / 60;
+    const adReceiveTimestamp = adjustTimestamp(offset, sharingBadge.receiveTime ?? 0, tz);
+
+    sharingBadge = {
+      ...sharingBadge,
+      receiveTime: adReceiveTimestamp,
+    };
+  } catch (e) {
+    // Info: show the invalid dummy order img (20230523 - Shirley)
+  }
+
+  const {badgeName, user, receiveTime} = sharingBadge as ISharingBadge;
+
+  // ToDo:(20230525 - Julian) adjustTimestamp
   const {date: receiveDate} = timestampToString(receiveTime);
+
+  // ToDo: (20230525 - Julian) QRCode
+  const qrcodeUrl = DOMAIN + `/elements/tidebit_qrcode.svg`;
 
   const displayedUser = user.slice(-1).toUpperCase();
   const displayedUserName = accountTruncate(user);
@@ -42,7 +84,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const badgeImage = BADGE_LIST.find(badge => badge.name === badgeName)?.icon ?? '';
   const badgeImageUrl = DOMAIN + badgeImage;
   // ToDo: (20230525 - Julian) can't see background image
-  const bgImageUrl = DOMAIN + '/elements/share_badge_bg.svg';
+  const bgImageUrl = DOMAIN + '/elements/share_badge_bg@2x.png'; //'http://localhost:3000/elements/share_badge_bg@2x.png';
 
   const BarlowBuffer = Buffer.from(BARLOW_BASE64, 'base64');
 
@@ -51,7 +93,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       <div
         style={{
           display: 'flex',
-          position: 'relative',
           flexDirection: 'column',
           fontFamily: "'Barlow', sans-serif",
         }}
@@ -72,19 +113,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
               backgroundPosition: 'relative',
               backgroundRepeat: 'no-repeat',
 
+              padding: '50px',
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'flex-start',
               justifyContent: 'flex-start',
-              height: `100%`,
-              width: `100%`,
+              height: `630px`,
+              width: `630px`,
             }}
           >
             <div
               style={{
                 width: '100%',
-                padding: '20px',
                 display: 'flex',
+                flexDirection: 'row',
                 alignItems: 'center',
                 justifyContent: 'space-between',
               }}
@@ -99,8 +141,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 <div
                   style={{
                     position: 'relative',
-                    top: '0',
-                    left: '40px',
+                    left: '10px',
                     display: 'flex',
                     height: '60px',
                     width: '60px',
@@ -114,6 +155,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 >
                   <span
                     style={{
+                      position: 'absolute',
                       fontSize: 40,
                       fontWeight: 'extrabold',
                       color: '#F2F2F2',
@@ -121,10 +163,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                   >
                     {displayedUser}
                   </span>
-                </div>{' '}
+                </div>
                 <p
                   style={{
-                    marginLeft: '50px',
+                    position: 'relative',
+                    marginLeft: '20px',
                     fontSize: 18,
                     fontWeight: 'bolder',
                     color: '#F2F2F2',
@@ -149,28 +192,35 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 </span>
                 {receiveDate}
               </div>
-            </div>{' '}
-            <div style={{display: 'flex'}}>
-              <div
+            </div>
+            <div
+              style={{
+                width: '100%',
+                marginTop: '30px',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+              }}
+            >
+              <img src={`${badgeImageUrl}`} width={250} height={250} alt="bagde" />
+              <p
                 style={{
-                  marginTop: '40px',
-                  display: 'flex',
-                  width: '100%',
-                  flexDirection: 'column',
-                  alignItems: 'center',
+                  marginTop: '10px',
+                  fontSize: '36px',
+                  color: `#F2F2F2`,
                 }}
               >
-                <img src={`${badgeImageUrl}`} width={250} height={250} alt="bagde" />
-                <p
-                  style={{
-                    marginTop: '10px',
-                    fontSize: '36px',
-                    color: `#F2F2F2`,
-                  }}
-                >
-                  {displayedBadgeName}
-                </p>
-              </div>
+                {displayedBadgeName}
+              </p>
+            </div>
+            <div
+              style={{
+                display: 'flex',
+                justifySelf: 'end',
+                marginLeft: 'auto',
+              }}
+            >
+              <img src={`${qrcodeUrl}`} width={100} height={100} alt="qr_code" />
             </div>
           </div>
         </div>

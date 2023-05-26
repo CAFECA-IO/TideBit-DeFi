@@ -24,7 +24,7 @@ interface IUseShareProcess {
   shareType: IShareType;
   shareId: string;
   cfd?: IDisplayCFDOrder;
-  enableShare: (id: string, share: boolean) => Promise<IResult>;
+  enableShare?: (id: string, share: boolean) => Promise<IResult>;
 }
 
 /**
@@ -91,24 +91,25 @@ const useShareProcess = ({lockerName, shareType, shareId, cfd, enableShare}: IUs
     if (!lock()) return;
 
     try {
-      if (shareType === ShareType.CFD && !!!cfd) throw new CustomError(Code.NEED_CFD_ORDER);
-
       const shareUrl = getPageUrl();
       // Info: this error will make try-again button lose its functionality (20230524 - Shirley)
       if (shareUrl === '') throw new CustomError(Code.NEED_SHARE_URL);
 
-      globalCtx.dataLoadingModalHandler({
-        modalTitle: t('POSITION_MODAL.SHARING'),
-        modalContent: t('POSITION_MODAL.SHARING_LOADING'),
-        isShowZoomOutBtn: false,
-      });
-      globalCtx.visibleLoadingModalHandler();
+      switch (shareType) {
+        case ShareType.CFD:
+          if (shareType === ShareType.CFD && !!!cfd) throw new CustomError(Code.NEED_CFD_ORDER);
+          if (enableShare === undefined) throw new CustomError(Code.NEED_ENABLE_SHARE_FUNCTION);
 
-      const result = await enableShare(shareId, true);
+          globalCtx.dataLoadingModalHandler({
+            modalTitle: t('POSITION_MODAL.SHARING'),
+            modalContent: t('POSITION_MODAL.SHARING_LOADING'),
+            isShowZoomOutBtn: false,
+          });
+          globalCtx.visibleLoadingModalHandler();
 
-      if (result.success) {
-        switch (shareType) {
-          case ShareType.CFD:
+          const result = await enableShare(shareId, true);
+
+          if (result.success) {
             const order = await getCFDOrder();
             if (!order) throw new CustomError(Code.CANNOT_FETCH_CFD_SHARE_ORDER);
 
@@ -120,34 +121,50 @@ const useShareProcess = ({lockerName, shareType, shareId, cfd, enableShare}: IUs
               `${type}`,
               `${size}`
             );
-            break;
-          case ShareType.RANK:
-            // ToDo:(20230525 - Julian) Share rank
-            break;
-          case ShareType.BADGE:
+
+            globalCtx.eliminateAllProcessModals();
+          } else {
+            globalCtx.eliminateAllProcessModals();
+
+            globalCtx.dataFailedModalHandler({
+              modalTitle: t('POSITION_MODAL.SHARING'),
+              failedTitle: t('POSITION_MODAL.FAILED_TITLE'),
+              failedMsg: `${t('POSITION_MODAL.SHARING_FAILED_CONTENT')} (${result.code})`,
+              btnMsg: t('POSITION_MODAL.FAILED_BUTTON_TRY_AGAIN'),
+              btnFunction: () => {
+                shareTo({url, text, type, size});
+              },
+            });
+
+            globalCtx.visibleFailedModalHandler();
+          }
+          break;
+        case ShareType.RANK:
+          // ToDo: Share rank (20230526 - Julian)
+          break;
+        case ShareType.BADGE:
+          try {
+            globalCtx.dataLoadingModalHandler({
+              modalTitle: t('POSITION_MODAL.SHARING'),
+              modalContent: t('POSITION_MODAL.SHARING_LOADING'),
+              isShowZoomOutBtn: false,
+            });
+            globalCtx.visibleLoadingModalHandler();
+
             window.open(
               `${url}${encodeURIComponent(shareUrl)}${text ? `${text}` : ''}`,
               `${type}`,
               `${size}`
             );
-            break;
-        }
 
-        globalCtx.eliminateAllProcessModals();
-      } else {
-        globalCtx.eliminateAllProcessModals();
+            globalCtx.eliminateAllProcessModals();
+          } catch (error) {
+            // ToDo: Error handling (20230526 - Julian)
+          }
+          break;
 
-        globalCtx.dataFailedModalHandler({
-          modalTitle: t('POSITION_MODAL.SHARING'),
-          failedTitle: t('POSITION_MODAL.FAILED_TITLE'),
-          failedMsg: `${t('POSITION_MODAL.SHARING_FAILED_CONTENT')} (${result.code})`,
-          btnMsg: t('POSITION_MODAL.FAILED_BUTTON_TRY_AGAIN'),
-          btnFunction: () => {
-            shareTo({url, text, type, size});
-          },
-        });
-
-        globalCtx.visibleFailedModalHandler();
+        default:
+          break;
       }
     } catch (e: any) {
       if (e instanceof CustomError) {

@@ -1,8 +1,10 @@
 import React, {useContext} from 'react';
 import Image from 'next/image';
 import RippleButton from '../ripple_button/ripple_button';
+import {timestampToString} from '../../lib/common';
 import {UserContext} from '../../contexts/user_context';
 import {IBadgeModal} from '../../contexts/global_context';
+import {BADGE_LIST} from '../../constants/display';
 import {ImCross} from 'react-icons/im';
 import {BsFacebook, BsTwitter, BsReddit} from 'react-icons/bs';
 import {useTranslation} from 'react-i18next';
@@ -19,15 +21,19 @@ interface IBadgeModalProps {
 
 const BadgeModal = ({modalVisible, modalClickHandler, badgeData}: IBadgeModalProps) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
-
+  const {badgeId, badgeName, receiveTime} = badgeData.badgeData;
   const userCtx = useContext(UserContext);
 
   const {shareTo} = useShareProcess({
     lockerName: 'badge_modal.shareHandler',
     shareType: ShareType.BADGE,
-    shareId: badgeData.badgeId,
+    shareId: badgeId,
     enableShare: userCtx.enableShare, // ToDo: (20230525 - Julian) userCtx.enableShare 需補上 badge data
   });
+
+  const displayedBadgeImage = BADGE_LIST.find(badge => badge.name === badgeName)?.icon ?? '';
+  const displayedBadgeTitle = BADGE_LIST.find(badge => badge.name === badgeName)?.title ?? '';
+  const displayedReceiveTime = timestampToString(receiveTime).date;
 
   // ToDo: (20230517 - Julian) Sharing function
   const socialMediaList = (
@@ -65,7 +71,7 @@ const BadgeModal = ({modalVisible, modalClickHandler, badgeData}: IBadgeModalPro
             {/* Info:(20230517 - Julian) Header/Title */}
             <div className="flex items-center justify-between rounded-t pt-9">
               <h3 className="w-full text-center text-3xl font-normal text-lightWhite">
-                {t(badgeData.title)}
+                {t(displayedBadgeTitle)}
               </h3>
               <button className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
                 <span className="absolute right-5 top-5 block outline-none focus:outline-none">
@@ -77,10 +83,13 @@ const BadgeModal = ({modalVisible, modalClickHandler, badgeData}: IBadgeModalPro
             {/* Info:(20230517 - Julian) Content */}
             <div className="flex flex-col items-center px-3">
               <div className="p-4">
-                <Image src={badgeData.image} width={180} height={180} alt="badge_image" />
+                <Image src={displayedBadgeImage} width={180} height={180} alt="badge_image" />
               </div>
-              <div className="py-3 text-base">
+              <div className="flex flex-col items-center py-3 text-base">
                 {t('LEADERBOARD_PAGE.CONGRATULATION_DESCRIPTION')}
+                <span className="inline-flex items-center text-lightGray4">
+                  {displayedReceiveTime}
+                </span>
               </div>
               <div className="inline-flex items-center p-3">
                 <span className="mr-2 text-sm text-lightGray4">

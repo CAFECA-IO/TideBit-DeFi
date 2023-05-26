@@ -23,9 +23,9 @@ const BadgeSharing = (props: IPageProps) => {
   const {query} = router;
 
   // TODO: for meta content (20230525 - Julian)
-  const img = `https://tidebit-defi-bz6ij4v1m-cafeca.vercel.app/api/images/badge/${props.badgeId}?tz=${userTzRef.current}`; //`${DOMAIN}/api/images/badge/${props.badgeId}?tz=${userTzRef.current}`;
+  const img = `${DOMAIN}/api/images/badge/${props.badgeId}?tz=${userTzRef.current}`;
   const displayImg = `/api/images/badge/${props.badgeId}?tz=${userTzRef.current}`;
-  const share = `https://tidebit-defi-bz6ij4v1m-cafeca.vercel.app/share/badge/${props.badgeId}`; //`${DOMAIN}/share/badge/${props.badgeId}`;
+  const share = `${DOMAIN}/share/badge/${props.badgeId}`;
 
   useEffect(() => {
     if (!appCtx.isInit) {
@@ -40,7 +40,7 @@ const BadgeSharing = (props: IPageProps) => {
 
       setUserTz(timeDiff);
     } catch (error) {
-      // TODO: error handling (20230524 - Shirley)
+      // TODO: error handling (20230526 - Julian)
     }
   }, [appCtx.isInit]);
 

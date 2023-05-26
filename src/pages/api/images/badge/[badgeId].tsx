@@ -1,6 +1,7 @@
 import {NextApiRequest, NextApiResponse} from 'next';
 import {ImageResponse} from 'next/server';
 import {timestampToString, adjustTimestamp} from '../../../../lib/common';
+import {IBadge} from '../../../../interfaces/tidebit_defi_background/badge';
 import {
   BADGE_LIST,
   SIZE_OF_SHARING_BADGE,
@@ -15,53 +16,47 @@ export const config = {
   runtime: 'edge',
 };
 
-export interface ISharingBadge {
-  badgeId: string;
-  badgeName: string;
-  user: string;
-  receiveTime: number;
-}
-
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   // ToDo:(20230525 - Julian) send to API
   const url = new URL(req?.url ?? '');
   const params = url.pathname.split('/');
-  const cfdId = params.pop();
-  const apiUrl = `${API_URL}/public/shared/badge/${cfdId}`;
+  const badgeId = params.pop();
+  const apiUrl = `${API_URL}/public/shared/badge/${badgeId}`;
   const tz = Number(url.searchParams.get('tz'));
 
-  // ToDo:(20230525 - Julian) get Data from API
   const dummySharingBadge = {
     badgeId: 'BADGE0001',
     badgeName: 'Monthly_Top_20',
-    user: '0x553687656C04b',
+    userId: '0x553687656C04b',
     receiveTime: 1636789600,
   };
 
-  let sharingBadge: ISharingBadge = dummySharingBadge; //getInvalidSharingBadge();
+  let sharingBadge: IBadge = dummySharingBadge;
 
-  const fetchBagde = async () => {
-    try {
-      const badgeResponse = await fetch(apiUrl, {
-        method: 'GET',
-        headers: {'Content-Type': 'application/json'},
-      });
-      const badge = await badgeResponse.json();
+  // ToDo:(20230525 - Julian) get Data from API
+  // const fetchBagde = async () => {
+  //   try {
+  //     const badgeResponse = await fetch(apiUrl, {
+  //       method: 'GET',
+  //       headers: {'Content-Type': 'application/json'},
+  //     });
+  //     const badge = await badgeResponse.json();
 
-      if (badge?.success) {
-        /*         if (isSharingOrder(order?.data)) {
-          sharingOrder = order?.data;
-        } */
-      }
-    } catch (e) {
-      // TODO: error handling (20230523 - Shirley)
-    }
+  //     if (badge?.success) {
+  //       if (isSharingOrder(order?.data)) {
+  //         sharingOrder = order?.data;
+  //       }
+  //     }
+  //   } catch (e) {
+  //     // TODO: error handling
+  //   }
 
-    //return sharingOrder;
-  };
+  //   return sharingOrder;
+  // };
 
   try {
-    await fetchBagde();
+    // ToDo:(20230526 - Julian) API data
+    //await fetchBagde();
 
     const offset = new Date().getTimezoneOffset() / 60;
     const adReceiveTimestamp = adjustTimestamp(offset, sharingBadge.receiveTime ?? 0, tz);
@@ -71,25 +66,24 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       receiveTime: adReceiveTimestamp,
     };
   } catch (e) {
-    // Info: show the invalid dummy order img (20230523 - Shirley)
+    // ToDo:(20230526 - Julian) show the invalid dummy order img
   }
 
-  const {badgeName, user, receiveTime} = sharingBadge as ISharingBadge;
+  const {badgeName, userId, receiveTime} = sharingBadge as IBadge;
 
-  // ToDo:(20230525 - Julian) adjustTimestamp
+  // Info:(20230526 - Julian) adjustTimestamp
   const {date: receiveDate} = timestampToString(receiveTime);
 
   // ToDo: (20230525 - Julian) QRCode
   const qrcodeUrl = DOMAIN + `/elements/tidebit_qrcode.svg`;
 
-  const displayedUser = user.slice(-1).toUpperCase();
-  const displayedUserName = user;
+  const displayedUser = userId.slice(-1).toUpperCase();
+  const displayedUserName = userId;
   const displayedBadgeName = badgeName.replaceAll('_', ' ');
 
   const badgeImage = BADGE_LIST.find(badge => badge.name === badgeName)?.icon ?? '';
   const badgeImageUrl = DOMAIN + badgeImage;
-  // ToDo: (20230525 - Julian) can't see background image
-  const bgImageUrl = 'http://localhost:3000/elements/share_badge_bg@2x.png'; //DOMAIN + '/elements/share_badge_bg@2x.png'; //'http://localhost:3000/elements/share_badge_bg@2x.png';
+  const bgImageUrl = DOMAIN + '/elements/share_badge_bg@2x.png';
 
   const BarlowBuffer = Buffer.from(BARLOW_BASE64, 'base64');
 

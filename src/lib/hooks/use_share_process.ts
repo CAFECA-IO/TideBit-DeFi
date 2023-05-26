@@ -1,9 +1,7 @@
-import React, {useContext} from 'react';
 import {findCodeByReason, locker} from '../common';
 import {useTranslation} from 'react-i18next';
 import {TranslateFunction} from '../../interfaces/tidebit_defi_background/locale';
 import {useGlobal} from '../../contexts/global_context';
-import {UserContext} from '../../contexts/user_context';
 import {API_URL, DOMAIN} from '../../constants/config';
 import {Code} from '../../constants/code';
 import {IResult} from '../../interfaces/tidebit_defi_background/result';
@@ -27,7 +25,6 @@ interface IUseShareProcess {
  */
 const useShareProcess = ({lockerName, shareType, shareId, cfd, enableShare}: IUseShareProcess) => {
   const globalCtx = useGlobal();
-  const userCtx = useContext(UserContext);
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
   const getPageUrl = (): string => {
@@ -44,7 +41,7 @@ const useShareProcess = ({lockerName, shareType, shareId, cfd, enableShare}: IUs
         return shareUrl;
 
       case ShareType.BADGE:
-        shareUrl = `https://tidebit-defi-bz6ij4v1m-cafeca.vercel.app/share/badge/${shareId}`; //DOMAIN + `/share/badge/${shareId}`;
+        shareUrl = DOMAIN + `/share/badge/${shareId}`;
         return shareUrl;
 
       default:

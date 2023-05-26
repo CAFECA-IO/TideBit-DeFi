@@ -1,6 +1,6 @@
 import React, {useContext, createContext, useCallback} from 'react';
 import useState from 'react-usestateref';
-import {INITIAL_POSITION_LABEL_DISPLAYED_STATE} from '../constants/display';
+import {CANDLESTICK_SIZE, INITIAL_POSITION_LABEL_DISPLAYED_STATE} from '../constants/display';
 import {ITickerLiveStatistics} from '../interfaces/tidebit_defi_background/ticker_live_statistics';
 import {ITickerStatic} from '../interfaces/tidebit_defi_background/ticker_static';
 import {UserContext} from './user_context';
@@ -211,9 +211,8 @@ export const MarketProvider = ({children}: IMarketProvider) => {
   const selectTimeSpanHandler = (timeSpan: ITimeSpanUnion) => {
     tickerBook.timeSpan = timeSpan;
     setTimeSpan(tickerBook.timeSpan);
-    // TODO: switch time span (20230526 - Shirley)
-    // eslint-disable-next-line no-console
-    console.log('market context selectTimeSpanHandler, time span:', timeSpan);
+
+    syncCandlestickData(timeSpan);
   };
 
   const getTickerStatic = async (instId: string) => {
@@ -481,16 +480,25 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     return result;
   };
 
-  const syncCandlestickData = () => {
+  const syncCandlestickData = (timeSpan?: ITimeSpanUnion) => {
     if (!!candlestickIntervalRef.current) {
       clearInterval(candlestickIntervalRef.current);
       setCandlestickInterval(null);
     }
+
     const candlestickInterval = setInterval(() => {
-      const candlesticks = tradeBook.toCandlestick(millesecondsToSeconds(getTime(timeSpan)), 100);
-      // TODO: switch time span (20230526 - Shirley)
-      // console.log('inside interval, time span: ', timeSpan);
+      const ts = timeSpan ? timeSpan : timeSpanRef.current;
+      if (timeSpan) setTimeSpan(timeSpan);
+      const interval = Math.round(getTime(ts) / CANDLESTICK_SIZE);
+
+      const candlesticks = tradeBook.toCandlestick(millesecondsToSeconds(getTime(ts)), 100);
+
       setCandlestickChartData(candlesticks);
+
+      // const trades = tradeBook
+      //   .listTrades()
+      //   .map(t => t.timestampMs)
+      //   .sort();
     }, 100);
     setCandlestickInterval(candlestickInterval);
   };

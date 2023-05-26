@@ -11,7 +11,7 @@
  * 2.3 draw candlestick chart with data
  */
 
-import React, {useState, useContext, useEffect, useRef} from 'react';
+import React, {useState, useContext, useEffect, useRef, useCallback} from 'react';
 import {
   createChart,
   CrosshairMode,
@@ -65,14 +65,16 @@ import {GlobalContext} from '../../contexts/global_context';
 import {UserContext} from '../../contexts/user_context';
 import {ProfitState} from '../../constants/profit_state';
 import {TypeOfPosition} from '../../constants/type_of_position';
-import {TimeSpanUnion} from '../../constants/time_span_union';
+import {TimeSpanUnion, getTime} from '../../constants/time_span_union';
 import {freemem} from 'os';
 import {normalize} from 'path';
 import {TranslateFunction} from '../../interfaces/tidebit_defi_background/locale';
 import {useTranslation} from 'react-i18next';
+import {create} from 'domain';
 
 interface ITradingChartGraphProps {
-  timeSpan: string;
+  candleSize: number;
+  // timeSpan: number;
   strokeColor: string[];
   candlestickOn: boolean;
   lineGraphOn: boolean;
@@ -157,26 +159,31 @@ const createSpec = ({timespan, dataSize, chartHeight, chartWidth}: IChartSpecPro
 
   const getLastTime = () => {
     const now = new Date().getTime();
-    return now - (now % (timespan * 1000));
+    return now - (now % timespan);
   };
 
-  const targetTime = getLastTime() / 1000 - (dataSize - 1) * timespan;
+  const firstTime = (getLastTime() - (dataSize - 1) * timespan) / 1000;
 
-  return {targetTime, chartOptions};
+  // console.log('firstTime in createSpec', firstTime);
+
+  return {firstTime, chartOptions};
 };
 
 const filterCandlestickData = ({
   dataArray,
-  targetTime,
+  firstTime,
 }: {
   dataArray: CandlestickData[];
-  targetTime: number;
+  firstTime: number;
 }) => {
   const data = [...dataArray];
 
   const result = data.filter(d => {
-    return Number(d.time) >= targetTime;
+    return Number(d.time) >= firstTime;
   });
+
+  // eslint-disable-next-line no-console
+  console.log('firstTime', firstTime);
 
   return result;
 };
@@ -226,7 +233,7 @@ const toICandlestickData = (data: CandlestickData): ICandlestickData => {
 
 // ToDo: 從外面傳進來的參數: 1.timespan 2.style of chart
 export default function CandlestickChart({
-  timeSpan,
+  candleSize,
   strokeColor,
   candlestickOn,
   lineGraphOn,
@@ -270,9 +277,9 @@ export default function CandlestickChart({
       </p>
     ) : null;
 
-  const {targetTime, chartOptions} = createSpec({
-    dataSize: 30,
-    timespan: 1,
+  const {firstTime, chartOptions} = createSpec({
+    dataSize: candleSize,
+    timespan: getTime(marketCtx.timeSpan),
     chartWidth: width, // ToDo: candlestickChartWidth
     chartHeight: 300, // ToDo: candlestickChartHeight
   });
@@ -320,7 +327,7 @@ export default function CandlestickChart({
 
   const longShortPriceLine = () => {
     const price = marketCtx.selectedTicker?.price ?? 0;
-    const spread = marketCtx.tickerLiveStatistics?.spread ?? DEFAULT_SPREAD;
+    const spread = DEFAULT_SPREAD; // marketCtx.tickerLiveStatistics?.spread ??
 
     const buyPrice = price * (1 + spread);
     const sellPrice = price * (1 - spread);
@@ -438,7 +445,7 @@ export default function CandlestickChart({
     const originRaw = marketCtx.candlestickChartData?.map(toCandlestickData) ?? [];
     const raw = originRaw.sort((a, b) => Number(a.time) - Number(b.time));
     const cleanedData = candlestickDataCleaning(raw);
-    const filtered = filterCandlestickData({dataArray: cleanedData, targetTime: targetTime});
+    const filtered = filterCandlestickData({dataArray: cleanedData, firstTime: firstTime});
     const result = tuningTzCandlestickDataArray(filtered) as CandlestickData[];
     return result;
   };

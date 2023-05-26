@@ -4,9 +4,10 @@ import TradingChartSwitchMobile from '../trading_chart_switch_mobile/trading_cha
 import useWindowSize from '../../lib/hooks/use_window_size';
 import {MarketContext} from '../../contexts/market_context';
 import useStateRef from 'react-usestateref';
-import {INITIAL_POSITION_LABEL_DISPLAYED_STATE} from '../../constants/display';
+import {CANDLESTICK_SIZE, INITIAL_POSITION_LABEL_DISPLAYED_STATE} from '../../constants/display';
 import {useTranslation} from 'next-i18next';
 import {unitAsset} from '../../constants/config';
+import {getTime} from '../../constants/time_span_union';
 
 type TranslateFunction = (s: string) => string;
 
@@ -89,7 +90,7 @@ const TradingViewMobile = () => {
   const displayedTradingView = (
     <>
       <CandlestickChart
-        timeSpan={selectedChartIntervalRef.current}
+        candleSize={CANDLESTICK_SIZE}
         strokeColor={[`#17BF88`]}
         showPositionLabel={showPositionLabelRef.current}
         candlestickOn={candlestickOnRef.current}

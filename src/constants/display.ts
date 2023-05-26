@@ -286,3 +286,4 @@ export const DEFAULT_BEDGES = [
   {name: Badges.MASTER, receiveTime: 0, badgeId: ''},
   {name: Badges.DOCTOR, receiveTime: 0, badgeId: ''},
 ];
+export const CANDLESTICK_SIZE = 30;

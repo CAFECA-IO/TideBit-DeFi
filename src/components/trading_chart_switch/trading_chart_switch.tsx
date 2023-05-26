@@ -115,49 +115,49 @@ const TradingChartSwitch = ({
   const liveButtonClickHandler = () => {
     setActiveButton('live');
     getTradingViewInterval('live');
-    selectTimeSpanHandler(TimeSpanUnion._30s);
+    selectTimeSpanHandler(TimeSpanUnion._1s);
   };
 
   const fiveMinButtonClickHandler = () => {
     setActiveButton('5m');
     getTradingViewInterval('5m');
-    selectTimeSpanHandler(TimeSpanUnion._5m);
+    selectTimeSpanHandler(TimeSpanUnion._10s);
   };
 
   const fifteenMinButtonClickHandler = () => {
     setActiveButton('15m');
     getTradingViewInterval('15m');
-    selectTimeSpanHandler(TimeSpanUnion._15m);
+    selectTimeSpanHandler(TimeSpanUnion._30s);
   };
 
   const thirtyMinButtonClickHandler = () => {
     setActiveButton('30m');
     getTradingViewInterval('30m');
-    selectTimeSpanHandler(TimeSpanUnion._30m);
+    selectTimeSpanHandler(TimeSpanUnion._1m);
   };
 
   const oneHrButtonClickHandler = () => {
     setActiveButton('1h');
     getTradingViewInterval('1h');
-    selectTimeSpanHandler(TimeSpanUnion._1h);
+    selectTimeSpanHandler(TimeSpanUnion._2m);
   };
 
   const fourHrButtonClickHandler = () => {
     setActiveButton('4h');
     getTradingViewInterval('4h');
-    selectTimeSpanHandler(TimeSpanUnion._4h);
+    selectTimeSpanHandler(TimeSpanUnion._8m);
   };
 
   const twelveHrButtonClickHandler = () => {
     setActiveButton('12h');
     getTradingViewInterval('12h');
-    selectTimeSpanHandler(TimeSpanUnion._12h);
+    selectTimeSpanHandler(TimeSpanUnion._24m);
   };
 
   const oneDayButtonClickHandler = () => {
     setActiveButton('1d');
     getTradingViewInterval('1d');
-    selectTimeSpanHandler(TimeSpanUnion._1d);
+    selectTimeSpanHandler(TimeSpanUnion._48m);
   };
 
   const candlestickChartButton = (

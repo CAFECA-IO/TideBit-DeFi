@@ -1,9 +1,7 @@
-import React, {useContext} from 'react';
 import {findCodeByReason, locker} from '../common';
 import {useTranslation} from 'react-i18next';
 import {TranslateFunction} from '../../interfaces/tidebit_defi_background/locale';
 import {useGlobal} from '../../contexts/global_context';
-import {UserContext} from '../../contexts/user_context';
 import {API_URL, DOMAIN} from '../../constants/config';
 import {Code} from '../../constants/code';
 import {IResult} from '../../interfaces/tidebit_defi_background/result';
@@ -27,7 +25,6 @@ interface IUseShareProcess {
  */
 const useShareProcess = ({lockerName, shareType, shareId, cfd, enableShare}: IUseShareProcess) => {
   const globalCtx = useGlobal();
-  const userCtx = useContext(UserContext);
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
   const getPageUrl = (): string => {
@@ -44,8 +41,7 @@ const useShareProcess = ({lockerName, shareType, shareId, cfd, enableShare}: IUs
         return shareUrl;
 
       case ShareType.BADGE:
-        // TODO: Share badge (20230524 - Shirley)
-        shareUrl = DOMAIN + `/share/cfd/${shareId}`;
+        shareUrl = DOMAIN + `/share/badge/${shareId}`;
         return shareUrl;
 
       default:
@@ -79,7 +75,17 @@ const useShareProcess = ({lockerName, shareType, shareId, cfd, enableShare}: IUs
     return false;
   };
 
-  const shareTo = async ({URL: url, TEXT: text, TYPE: type, SIZE: size}: IShareToSocialMedia) => {
+  const shareTo = async ({
+    url,
+    text,
+    type,
+    size,
+  }: {
+    url: string;
+    text?: string;
+    type: string;
+    size: string;
+  }) => {
     const [lock, unlock] = locker(lockerName);
     if (!lock()) return;
 
@@ -124,7 +130,7 @@ const useShareProcess = ({lockerName, shareType, shareId, cfd, enableShare}: IUs
               failedMsg: `${t('POSITION_MODAL.SHARING_FAILED_CONTENT')} (${result.code})`,
               btnMsg: t('POSITION_MODAL.FAILED_BUTTON_TRY_AGAIN'),
               btnFunction: () => {
-                shareTo({URL: url, TEXT: text, TYPE: type, SIZE: size});
+                shareTo({url, text, type, size});
               },
             });
 
@@ -166,7 +172,7 @@ const useShareProcess = ({lockerName, shareType, shareId, cfd, enableShare}: IUs
           })`,
           btnMsg: t('POSITION_MODAL.FAILED_BUTTON_TRY_AGAIN'),
           btnFunction: () => {
-            shareTo({URL: url, TEXT: text, TYPE: type, SIZE: size});
+            shareTo({url, text, type, size});
           },
         });
 

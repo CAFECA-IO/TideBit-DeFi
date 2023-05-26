@@ -211,6 +211,9 @@ export const MarketProvider = ({children}: IMarketProvider) => {
   const selectTimeSpanHandler = (timeSpan: ITimeSpanUnion) => {
     tickerBook.timeSpan = timeSpan;
     setTimeSpan(tickerBook.timeSpan);
+    // TODO: switch time span (20230526 - Shirley)
+    // eslint-disable-next-line no-console
+    console.log('market context selectTimeSpanHandler, time span:', timeSpan);
   };
 
   const getTickerStatic = async (instId: string) => {
@@ -485,6 +488,8 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     }
     const candlestickInterval = setInterval(() => {
       const candlesticks = tradeBook.toCandlestick(millesecondsToSeconds(getTime(timeSpan)), 100);
+      // TODO: switch time span (20230526 - Shirley)
+      // console.log('inside interval, time span: ', timeSpan);
       setCandlestickChartData(candlesticks);
     }, 100);
     setCandlestickInterval(candlestickInterval);

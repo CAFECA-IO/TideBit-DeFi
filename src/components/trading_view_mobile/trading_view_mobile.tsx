@@ -45,7 +45,8 @@ const TradingViewMobile = () => {
   const [lineGraphOn, setLineGraphOn, lineGraphOnRef] = useStateRef(false);
 
   const [selectedChartType, setSelectedChartType] = useState('candlestick');
-  const [selectedChartInterval, setSelectedChartInterval] = useState('live');
+  const [selectedChartInterval, setSelectedChartInterval, selectedChartIntervalRef] =
+    useStateRef('live');
   const [showPositionLabel, setShowPositionLabel, showPositionLabelRef] = useStateRef(
     INITIAL_POSITION_LABEL_DISPLAYED_STATE
   );
@@ -88,6 +89,7 @@ const TradingViewMobile = () => {
   const displayedTradingView = (
     <>
       <CandlestickChart
+        timeSpan={selectedChartIntervalRef.current}
         strokeColor={[`#17BF88`]}
         showPositionLabel={showPositionLabelRef.current}
         candlestickOn={candlestickOnRef.current}

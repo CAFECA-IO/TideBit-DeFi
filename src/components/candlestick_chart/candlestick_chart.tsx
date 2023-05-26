@@ -518,7 +518,7 @@ export default function CandlestickChart({
 
   return (
     <>
-      <div className="mt-5 -mb-8 lg:-mt-8 lg:mb-5 lg:ml-5">{displayedOHLC}</div>
+      <div className="-mb-8 mt-5 lg:-mt-8 lg:mb-5 lg:ml-5">{displayedOHLC}</div>
       <div className="ml-5 pb-20 pt-20 lg:w-7/10 lg:pb-5 lg:pt-14">
         <div ref={chartContainerRef} className={`${cursorStyleRef.current}`}></div>
       </div>

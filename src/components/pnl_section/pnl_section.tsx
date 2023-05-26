@@ -14,14 +14,16 @@ const PnlSection = () => {
   const userCtx = useContext(UserContext);
 
   /* ToDo: (20230420 - Julian) getUserAssets by currency */
-  const pnlToday = userCtx.getUserAssets('')?.pnl.today ?? DEFAULT_PNL_DATA;
-  const pnl30Days = userCtx.getUserAssets('')?.pnl.monthly ?? DEFAULT_PNL_DATA;
-  const cumulativePnl = userCtx.getUserAssets('')?.pnl.cumulative ?? DEFAULT_PNL_DATA;
+  const {today, monthly, cumulative} = userCtx.getUserAssets(unitAsset)?.pnl ?? {
+    today: DEFAULT_PNL_DATA,
+    monthly: DEFAULT_PNL_DATA,
+    cumulative: DEFAULT_PNL_DATA,
+  };
 
   const statisticContent = [
-    {title: t('MY_ASSETS_PAGE.PNL_SECTION_TODAY'), ...pnlToday},
-    {title: t('MY_ASSETS_PAGE.PNL_SECTION_30_DAYS'), ...pnl30Days},
-    {title: t('MY_ASSETS_PAGE.PNL_SECTION_CUMULATIVE'), ...cumulativePnl},
+    {title: t('MY_ASSETS_PAGE.PNL_SECTION_TODAY'), ...today},
+    {title: t('MY_ASSETS_PAGE.PNL_SECTION_30_DAYS'), ...monthly},
+    {title: t('MY_ASSETS_PAGE.PNL_SECTION_CUMULATIVE'), ...cumulative},
   ].map(({amount, percentage, ...rest}) => {
     const result = {
       content:
@@ -29,12 +31,16 @@ const PnlSection = () => {
           ? `+${numberFormatted(amount.value)} ${unitAsset}`
           : amount.type === ProfitState.LOSS
           ? `-${numberFormatted(amount.value)} ${unitAsset}`
+          : amount.type === ProfitState.EQUAL
+          ? `${numberFormatted(amount.value)} ${unitAsset}`
           : '-',
       remarks:
         percentage.type === ProfitState.PROFIT
           ? `▴ ${numberFormatted(percentage.value)} %`
           : percentage.type === ProfitState.LOSS
           ? `▾ ${numberFormatted(percentage.value)} %`
+          : percentage.type === ProfitState.EQUAL
+          ? `${numberFormatted(percentage.value)} %`
           : '-',
       textColor:
         percentage.type === ProfitState.PROFIT && amount.type === ProfitState.PROFIT

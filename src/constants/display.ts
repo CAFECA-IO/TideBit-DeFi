@@ -274,14 +274,3 @@ export const DEFAULT_FLUCTUATION = 0;
 export const DEFAULT_BALANCE = {available: 0, locked: 0};
 export const DEFAULT_PNL_DATA = {amount: {type: '', value: 0}, percentage: {type: '', value: 0}};
 export const DEFAULT_INTEREST_RATE = 0;
-export const DEFAULT_BEDGES = [
-  {name: Badges.DAILY_TOP_20, receiveTime: 0, badgeId: ''},
-  {name: Badges.WEEKLY_TOP_20, receiveTime: 0, badgeId: ''},
-  {name: Badges.MONTHLY_TOP_20, receiveTime: 0, badgeId: ''},
-  {name: Badges.SHARING, receiveTime: 0, badgeId: ''},
-  {name: Badges.LINKED, receiveTime: 0, badgeId: ''},
-  {name: Badges.DEPOSIT, receiveTime: 0, badgeId: ''},
-  {name: Badges.BACHELOR, receiveTime: 0, badgeId: ''},
-  {name: Badges.MASTER, receiveTime: 0, badgeId: ''},
-  {name: Badges.DOCTOR, receiveTime: 0, badgeId: ''},
-];

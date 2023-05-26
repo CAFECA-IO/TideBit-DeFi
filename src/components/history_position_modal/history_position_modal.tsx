@@ -21,6 +21,7 @@ import {Code} from '../../constants/code';
 import {useRouter} from 'next/router';
 import useShareProcess from '../../lib/hooks/use_share_process';
 import {ShareType} from '../../constants/share_type';
+import {ShareSettings, SocialMedia, SocialMediaConstant} from '../../constants/social_media';
 
 type TranslateFunction = (s: string) => string;
 interface IHistoryPositionModal {
@@ -236,55 +237,24 @@ const HistoryPositionModal = ({
       >
         <div className="text-sm">{t('POSITION_MODAL.SHARE')}:</div>
         <div className="flex items-center justify-between">
-          <div className={`${socialMediaStyle}`}>
-            <Image
-              onClick={() =>
-                shareTo({
-                  url: 'https://www.facebook.com/sharer/sharer.php?u=',
-                  type: 'facebook-share-dialog',
-                  size: 'width=800,height=600',
-                })
-              }
-              src="/elements/group_15237.svg"
-              width={44}
-              height={44}
-              alt="Facebook"
-            />
-          </div>
-
-          <div className={`${socialMediaStyle}`}>
-            <Image
-              onClick={() =>
-                shareTo({
-                  url: 'https://twitter.com/intent/tweet?url=',
-                  text: '&text=Check%20this%20out!',
-                  type: 'twitter-share-dialog',
-                  size: 'width=800,height=600',
-                })
-              }
-              src="/elements/group_15235.svg"
-              width={44}
-              height={44}
-              alt="Twitter"
-            />
-          </div>
-
-          <div className={`${socialMediaStyle}`}>
-            <Image
-              onClick={() =>
-                shareTo({
-                  url: 'https://www.reddit.com/submit?url=',
-                  text: '&title=Check%20this%20out!',
-                  type: 'reddit-share-dialog',
-                  size: 'width=800,height=600',
-                })
-              }
-              src="/elements/group_15234.svg"
-              width={44}
-              height={44}
-              alt="Reddit"
-            />
-          </div>
+          {Object.entries(ShareSettings).map(([key, value]) => (
+            <div key={key} className={`${socialMediaStyle}`}>
+              <Image
+                onClick={() =>
+                  shareTo({
+                    URL: value.URL,
+                    TEXT: value.TEXT,
+                    TYPE: value.TYPE,
+                    SIZE: value.SIZE,
+                  })
+                }
+                src={value.ICON}
+                width={44}
+                height={44}
+                alt={key}
+              />
+            </div>
+          ))}
         </div>
       </div>
     </div>

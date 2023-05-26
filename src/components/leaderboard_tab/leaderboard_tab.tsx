@@ -180,7 +180,8 @@ const LeaderboardTab = ({timeSpan, setTimeSpan, rankings}: LeaderboardTabProps) 
   const displayedTop3List = top3Data.map(({rank, marginTop, crown, star, medalist, userData}) => {
     const isDisplayedHalo = rank === 1 ? 'block' : 'hidden';
     const achievementData =
-      userCtx.getPersonalAchievements(userData.name) ?? defaultPersonalAchievement;
+      // userCtx.getPersonalAchievements(userData.name) ?? // TODO: using async/await (20230526 - tzuhan)
+      defaultPersonalAchievement;
     const clickHandler = () => {
       globalCtx.dataPersonalAchievementModalHandler(achievementData);
       globalCtx.visiblePersonalAchievementModalHandler();
@@ -273,7 +274,8 @@ const LeaderboardTab = ({timeSpan, setTimeSpan, rankings}: LeaderboardTabProps) 
     .slice(3)
     .map(({rank, userName, userAvatar, cumulativePnl}) => {
       const achievementData =
-        userCtx.getPersonalAchievements(userName) ?? defaultPersonalAchievement;
+        // userCtx.getPersonalAchievements(userData.name) ?? // TODO: using async/await (20230526 - tzuhan)
+        defaultPersonalAchievement;
       const clickHandler = () => {
         globalCtx.dataPersonalAchievementModalHandler(achievementData);
         globalCtx.visiblePersonalAchievementModalHandler();

@@ -5,6 +5,8 @@ import {IBalance} from './balance';
 import {ICandlestickData, ITrade} from './candlestickData';
 import {ICryptocurrency} from './cryptocurrency';
 import {IOrder} from './order';
+import {IPersonalAchievement} from './personal_achievement';
+import {IPersonalRanking} from './personal_ranking';
 import {IQuotation} from './quotation';
 import {ITickerData} from './ticker_data';
 import {ITickerHistoryData} from './ticker_history_data';
@@ -43,6 +45,8 @@ export interface IResult {
     | ITideBitPromotion
     | IWebsiteReserve
     | IUserAssets
+    | IPersonalRanking
+    | IPersonalAchievement
     | null;
   code: ICode;
   reason?: string;

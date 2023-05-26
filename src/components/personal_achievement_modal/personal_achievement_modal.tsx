@@ -40,6 +40,7 @@ const PersonalAchievementModal = ({
     userName,
     userAvatar,
     tradingVolume,
+    ranking,
     onlineTime,
     diversification,
     hightestROI,
@@ -50,14 +51,10 @@ const PersonalAchievementModal = ({
   const displayedUserName = userName.length > 20 ? accountTruncate(userName) : userName;
   const isMe = userCtx.user?.id === userId ? true : false;
 
-  const userRankingDaily = userCtx.getPersonalRanking('DAILY') ?? defaultPersonalRanking;
-  const userRankingWeekly = userCtx.getPersonalRanking('WEEKLY') ?? defaultPersonalRanking;
-  const userRankingMonthly = userCtx.getPersonalRanking('MONTHLY') ?? defaultPersonalRanking;
-
   const personalRankingContent = [
-    {title: t('LEADERBOARD_PAGE.DAILY'), ...userRankingDaily},
-    {title: t('LEADERBOARD_PAGE.WEEKLY'), ...userRankingWeekly},
-    {title: t('LEADERBOARD_PAGE.MONTHLY'), ...userRankingMonthly},
+    {title: t('LEADERBOARD_PAGE.DAILY'), ...ranking.daily},
+    {title: t('LEADERBOARD_PAGE.WEEKLY'), ...ranking.weekly},
+    {title: t('LEADERBOARD_PAGE.MONTHLY'), ...ranking.monthly},
   ];
 
   const displayedOnlineTime = (onlineTime: number) => {
@@ -136,42 +133,36 @@ const PersonalAchievementModal = ({
     },
   ];
 
-  const displayedPersonalRankingList = personalRankingContent.map(
-    ({title, rank, cumulativePnl}) => {
-      const displayedRank = rank <= 0 ? '-' : rank;
+  const displayedPersonalRankingList = personalRankingContent.map(({title, rank, PnL}) => {
+    const displayedRank = rank <= 0 ? '-' : rank;
 
-      const displayedPnl =
-        rank <= 0 ? (
-          <div>-</div>
-        ) : cumulativePnl.type === ProfitState.PROFIT ? (
-          <div className={`${TypeOfPnLColor.PROFIT}`}>{`+ ${numberFormatted(
-            cumulativePnl.value
-          )}`}</div>
-        ) : cumulativePnl.type === ProfitState.LOSS ? (
-          <div className={`${TypeOfPnLColor.LOSS}`}>{`- ${numberFormatted(
-            cumulativePnl.value
-          )}`}</div>
-        ) : (
-          <div className={`${TypeOfPnLColor.EQUAL}`}>{numberFormatted(cumulativePnl.value)}</div>
-        );
+    const displayedPnl =
+      rank <= 0 ? (
+        <div>-</div>
+      ) : PnL.type === ProfitState.PROFIT ? (
+        <div className={`${TypeOfPnLColor.PROFIT}`}>{`+ ${numberFormatted(PnL.value)}`}</div>
+      ) : PnL.type === ProfitState.LOSS ? (
+        <div className={`${TypeOfPnLColor.LOSS}`}>{`- ${numberFormatted(PnL.value)}`}</div>
+      ) : (
+        <div className={`${TypeOfPnLColor.EQUAL}`}>{numberFormatted(PnL.value)}</div>
+      );
 
-      return (
-        <div key={title} className="flex items-center justify-between">
-          <div className="flex flex-col items-center">
-            <div className="text-sm text-lightGray4">{title}</div>
-            <div className="inline-flex items-center">
-              {displayedPnl}
-              <span className="ml-1 text-xs text-lightGray4">{unitAsset}</span>
-            </div>
-            <div className="inline-flex items-center">
-              <Image src="/leaderboard/crown.svg" alt="crown_icon" width={15} height={15} />
-              <span className="ml-1">{displayedRank}</span>
-            </div>
+    return (
+      <div key={title} className="flex items-center justify-between">
+        <div className="flex flex-col items-center">
+          <div className="text-sm text-lightGray4">{title}</div>
+          <div className="inline-flex items-center">
+            {displayedPnl}
+            <span className="ml-1 text-xs text-lightGray4">{unitAsset}</span>
+          </div>
+          <div className="inline-flex items-center">
+            <Image src="/leaderboard/crown.svg" alt="crown_icon" width={15} height={15} />
+            <span className="ml-1">{displayedRank}</span>
           </div>
         </div>
-      );
-    }
-  );
+      </div>
+    );
+  });
 
   const displayedDetailList = detailContent.map(({title, icon, value}) => {
     return (

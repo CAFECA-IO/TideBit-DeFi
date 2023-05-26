@@ -31,12 +31,16 @@ const UserPersonalRanking = ({timeSpan}: IUserPersonalRankingProps) => {
   }, []);
 
   useEffect(() => {
-    setUserRankData(userCtx.getPersonalRanking(timeSpan) ?? defaultPersonalRanking);
+    setUserRankData(
+      // userCtx.getPersonalRanking(timeSpan) ?? // TODO: using async/await (20230526 - tzuhan)
+      defaultPersonalRanking
+    );
   }, [timeSpan]);
 
   const username = userCtx.user?.address?.slice(-1).toUpperCase();
   const userAchievement =
-    userCtx.getPersonalAchievements(userCtx.user?.id ?? '') ?? defaultPersonalAchievement;
+    // userCtx.getPersonalAchievements(userData.name) ?? // TODO: using async/await (20230526 - tzuhan)
+    defaultPersonalAchievement;
 
   const rankingNumber = userRankData.rank;
   const pnl = userRankData.pnl;

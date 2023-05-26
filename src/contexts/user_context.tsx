@@ -116,9 +116,9 @@ export interface IUserContext {
   readNotifications: (notifications: INotificationItem[]) => Promise<IResult>;
   getBalance: (currency: string) => IBalance | null;
   getWalletBalance: (props: string) => IWalletBalance | null;
-  getUserAssets: (currency: string) => Promise<IResult>;
-  getPersonalRanking: (timeSpan: IRankingTimeSpan) => IPersonalRanking | null;
-  getPersonalAchievements: (userId: string) => IPersonalAchievement | null;
+  getUserAssets: () => Promise<IResult>;
+  getPersonalRanking: (userId: string, timeSpan: IRankingTimeSpan) => Promise<IResult>;
+  getPersonalAchievements: (userId: string) => Promise<IResult>;
   init: () => Promise<void>;
   enableShare: (cfdId: string, share: boolean) => Promise<IResult>;
   shareTradeRecord: (cfdId: string) => Promise<IResult>;
@@ -209,8 +209,12 @@ export const UserContext = createContext<IUserContext>({
   },
   getBalance: () => null,
   getWalletBalance: () => null,
-  getPersonalRanking: () => null,
-  getPersonalAchievements: () => null,
+  getPersonalRanking: (): Promise<IResult> => {
+    throw new CustomError(Code.FUNCTION_NOT_IMPLEMENTED);
+  },
+  getPersonalAchievements: (): Promise<IResult> => {
+    throw new CustomError(Code.FUNCTION_NOT_IMPLEMENTED);
+  },
   init: () => Promise.resolve(),
   enableShare: (): Promise<IResult> => {
     throw new CustomError(Code.FUNCTION_NOT_IMPLEMENTED);
@@ -219,7 +223,7 @@ export const UserContext = createContext<IUserContext>({
     throw new CustomError(Code.FUNCTION_NOT_IMPLEMENTED);
   },
   walletExtensions: [],
-  getUserAssets: function (currency: string): Promise<IResult> {
+  getUserAssets: function (): Promise<IResult> {
     throw new Error('Function not implemented.');
   },
 });
@@ -568,14 +572,13 @@ export const UserProvider = ({children}: IUserProvider) => {
     }
   };
 
-  const getUserAssets = useCallback(async (currency: string): Promise<IResult> => {
+  const getUserAssets = useCallback(async (): Promise<IResult> => {
     let result: IResult = {...defaultResultFailed};
     if (enableServiceTermRef.current) {
       try {
         result = (await privateRequestHandler({
           name: APIName.GET_USER_ASSETS,
           method: Method.GET,
-          params: currency,
         })) as IResult;
         // Deprecate: after this functions finishing (20230508 - tzuhan)
         // eslint-disable-next-line no-console
@@ -589,8 +592,66 @@ export const UserProvider = ({children}: IUserProvider) => {
         // TODO: error handle (Tzuhan - 20230421)
         // eslint-disable-next-line no-console
         console.error(`getUserAssets error`, error);
-        result.code = Code.INTERNAL_SERVER_ERROR;
-        result.reason = Reason[result.code];
+        if (!isCustomError(error)) {
+          result.code = Code.INTERNAL_SERVER_ERROR;
+          result.reason = Reason[result.code];
+        }
+      }
+    }
+    return result;
+  }, []);
+
+  const getUserPnL = useCallback(async (): Promise<IResult> => {
+    let result: IResult = {...defaultResultFailed};
+    if (enableServiceTermRef.current) {
+      try {
+        result = (await privateRequestHandler({
+          name: APIName.GET_USER_PNL,
+          method: Method.GET,
+        })) as IResult;
+        // Deprecate: after this functions finishing (20230508 - tzuhan)
+        // eslint-disable-next-line no-console
+        console.log(`getUserPnL result`, result);
+        if (result.success) {
+          // const pnl = result.data as IPnL;
+          // result.data = pnl;
+        }
+      } catch (error) {
+        // TODO: error handle (Tzuhan - 20230421)
+        // eslint-disable-next-line no-console
+        console.error(`getUserPnL error`, error);
+        if (!isCustomError(error)) {
+          result.code = Code.INTERNAL_SERVER_ERROR;
+          result.reason = Reason[result.code];
+        }
+      }
+    }
+    return result;
+  }, []);
+
+  const getUserInterest = useCallback(async (): Promise<IResult> => {
+    let result: IResult = {...defaultResultFailed};
+    if (enableServiceTermRef.current) {
+      try {
+        result = (await privateRequestHandler({
+          name: APIName.GET_USER_INTEREST,
+          method: Method.GET,
+        })) as IResult;
+        // Deprecate: after this functions finishing (20230508 - tzuhan)
+        // eslint-disable-next-line no-console
+        console.log(`getUserInterest result`, result);
+        if (result.success) {
+          // const interest = result.data as IInterest;
+          // result.data = interest;
+        }
+      } catch (error) {
+        // TODO: error handle (Tzuhan - 20230421)
+        // eslint-disable-next-line no-console
+        console.error(`getUserInterest error`, error);
+        if (!isCustomError(error)) {
+          result.code = Code.INTERNAL_SERVER_ERROR;
+          result.reason = Reason[result.code];
+        }
       }
     }
     return result;
@@ -868,13 +929,52 @@ export const UserProvider = ({children}: IUserProvider) => {
   // };
 
   /* ToDo: (20230510 - Julian) get data from backend */
-  const getPersonalRanking = (timeSpan: IRankingTimeSpan) => {
-    return getDummyPersonalRanking(timeSpan);
+  const getPersonalRanking = async (userId: string, timeSpan: IRankingTimeSpan) => {
+    let result: IResult = {...defaultResultFailed};
+    try {
+      result = (await workerCtx.requestHandler({
+        name: APIName.GET_PERSONAL_RANKING,
+        method: Method.GET,
+        params: userId,
+        query: {
+          timeSpan,
+        },
+      })) as IResult;
+      if (result.success) {
+        const ranking = result.data as IPersonalRanking;
+        result.data = ranking;
+      }
+    } catch (error) {
+      // Deprecate: error handle (Tzuhan - 20230321)
+      // eslint-disable-next-line no-console
+      console.error(`20230526 error`, error);
+      result.code = Code.INTERNAL_SERVER_ERROR;
+      result.reason = Reason[result.code];
+    }
+    return result;
   };
 
   /* ToDo: (20230517 - Julian) get data from backend */
-  const getPersonalAchievements = (userId: string) => {
-    return getDummyPersonalAchievements(userId);
+  const getPersonalAchievements = async (userId: string) => {
+    let result: IResult = {...defaultResultFailed};
+    try {
+      result = (await workerCtx.requestHandler({
+        name: APIName.GET_PERSONAL_ACHIEVEMENT,
+        method: Method.GET,
+        params: userId,
+      })) as IResult;
+      if (result.success) {
+        const personalAchievement = result.data as IPersonalAchievement;
+        result.data = personalAchievement;
+      }
+    } catch (error) {
+      // Deprecate: error handle (Tzuhan - 20230321)
+      // eslint-disable-next-line no-console
+      console.error(`20230526 error`, error);
+      result.code = Code.INTERNAL_SERVER_ERROR;
+      result.reason = Reason[result.code];
+    }
+    return result;
   };
 
   const updateBalance = (updatedBalances: IBalance[]) => {

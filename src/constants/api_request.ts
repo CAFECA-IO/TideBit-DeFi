@@ -18,6 +18,8 @@ export type IAPIName =
   // public
   | 'GET_TIDEBIT_PROMOTION'
   | 'GET_WEBSITE_RESERVE'
+  | 'GET_PERSONAL_RANKING'
+  | 'GET_PERSONAL_ACHIEVEMENT'
   // market
   | 'LIST_CURRENCIES'
   | 'LIST_TICKERS'
@@ -49,6 +51,8 @@ export type IAPIName =
   | 'REMOVE_FAVORITE_TICKERS'
   | 'LIST_BALANCES'
   | 'GET_USER_ASSETS'
+  | 'GET_USER_PNL'
+  | 'GET_USER_INTEREST'
   // | 'GET_TOTAL_BALANCE'
   | 'SEND_EMAIL_CODE'
   | 'CONNECT_EMAIL'
@@ -59,7 +63,6 @@ export type IAPIName =
   | 'SUBSCRIBE_NEWS_LETTERS'
   | 'LIST_READ_NOTIFICATIONS'
   | 'READ_NOTIFICATIONS'
-  | 'GET_PNL'
   | 'ENABLE_CFD_SHARE'
   | 'SHARE_CFD';
 export interface IAPINameConstant {
@@ -79,6 +82,8 @@ export interface IAPINameConstant {
   // public
   GET_TIDEBIT_PROMOTION: IAPIName;
   GET_WEBSITE_RESERVE: IAPIName;
+  GET_PERSONAL_RANKING: IAPIName;
+  GET_PERSONAL_ACHIEVEMENT: IAPIName;
   // market
   LIST_CURRENCIES: IAPIName;
   LIST_TICKERS: IAPIName;
@@ -110,6 +115,8 @@ export interface IAPINameConstant {
   REMOVE_FAVORITE_TICKERS: IAPIName;
   LIST_BALANCES: IAPIName;
   GET_USER_ASSETS: IAPIName;
+  GET_USER_PNL: IAPIName;
+  GET_USER_INTEREST: IAPIName;
   // GET_TOTAL_BALANCE: IAPIName;
   SEND_EMAIL_CODE: IAPIName;
   CONNECT_EMAIL: IAPIName;
@@ -120,7 +127,6 @@ export interface IAPINameConstant {
   SUBSCRIBE_NEWS_LETTERS: IAPIName;
   LIST_READ_NOTIFICATIONS: IAPIName;
   READ_NOTIFICATIONS: IAPIName;
-  GET_PNL: IAPIName;
   ENABLE_CFD_SHARE: IAPIName;
   SHARE_CFD: IAPIName;
 }
@@ -141,6 +147,8 @@ export const APIName: IAPINameConstant = {
   // public
   GET_TIDEBIT_PROMOTION: 'GET_TIDEBIT_PROMOTION',
   GET_WEBSITE_RESERVE: 'GET_WEBSITE_RESERVE',
+  GET_PERSONAL_RANKING: 'GET_PERSONAL_RANKING',
+  GET_PERSONAL_ACHIEVEMENT: 'GET_PERSONAL_ACHIEVEMENT',
   // market
   LIST_CURRENCIES: 'LIST_CURRENCIES',
   LIST_TICKERS: 'LIST_TICKERS',
@@ -172,6 +180,8 @@ export const APIName: IAPINameConstant = {
   REMOVE_FAVORITE_TICKERS: 'REMOVE_FAVORITE_TICKERS',
   LIST_BALANCES: 'LIST_BALANCES',
   GET_USER_ASSETS: 'GET_USER_ASSETS',
+  GET_USER_PNL: 'GET_USER_PNL',
+  GET_USER_INTEREST: 'GET_USER_INTEREST',
   // GET_TOTAL_BALANCE: 'GET_TOTAL_BALANCE',
   SEND_EMAIL_CODE: 'SEND_EMAIL_CODE',
   CONNECT_EMAIL: 'CONNECT_EMAIL',
@@ -182,7 +192,6 @@ export const APIName: IAPINameConstant = {
   SUBSCRIBE_NEWS_LETTERS: 'SUBSCRIBE_NEWS_LETTERS',
   LIST_READ_NOTIFICATIONS: 'LIST_READ_NOTIFICATIONS',
   READ_NOTIFICATIONS: 'READ_NOTIFICATIONS',
-  GET_PNL: 'GET_PNL',
   ENABLE_CFD_SHARE: 'ENABLE_CFD_SHARE',
   SHARE_CFD: 'SHARE_CFD',
 };
@@ -204,6 +213,8 @@ export const APIURL = {
   // public
   GET_TIDEBIT_PROMOTION: `${API_URL}/public/promotion`,
   GET_WEBSITE_RESERVE: `${API_URL}/public/reserve`,
+  GET_PERSONAL_RANKING: `${API_URL}/public/ranking`,
+  GET_PERSONAL_ACHIEVEMENT: `${API_URL}/public/achievement`,
   // market
   LIST_CURRENCIES: `${API_URL}/currencies`,
   LIST_TICKERS: `${API_URL}/market/tickers`,
@@ -231,7 +242,9 @@ export const APIURL = {
   // user
   POST_DEWT: `${API_URL}/dewt`,
   LIST_BALANCES: `${API_URL}/balances`,
-  GET_USER_ASSETS: `${API_URL}/assets`,
+  GET_USER_ASSETS: `${API_URL}/users/assets`,
+  GET_USER_PNL: `${API_URL}/users/pnl`,
+  GET_USER_INTEREST: `${API_URL}/users/interest`,
   // GET_TOTAL_BALANCE: `${API_URL}/balances/sum`,
   LIST_FAVORITE_TICKERS: '/api/user/tickers',
   ADD_FAVORITE_TICKERS: '/api/user/tickers',
@@ -245,7 +258,6 @@ export const APIURL = {
   SUBSCRIBE_NEWS_LETTERS: '/api/user/subscrible',
   LIST_READ_NOTIFICATIONS: '/api/user/notifications',
   READ_NOTIFICATIONS: '/api/user/notifications',
-  GET_PNL: '/api/user/pnl',
   ENABLE_CFD_SHARE: `${API_URL}/trade/cfds/share`,
   SHARE_CFD: `${API_URL}/public/shared/cfd`,
 };

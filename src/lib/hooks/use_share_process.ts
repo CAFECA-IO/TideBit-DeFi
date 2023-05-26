@@ -79,7 +79,7 @@ const useShareProcess = ({lockerName, shareType, shareId, cfd, enableShare}: IUs
     return false;
   };
 
-  const shareTo = async ({url, text, type, size}: IShareToSocialMedia) => {
+  const shareTo = async ({URL: url, TEXT: text, TYPE: type, SIZE: size}: IShareToSocialMedia) => {
     const [lock, unlock] = locker(lockerName);
     if (!lock()) return;
 
@@ -124,7 +124,7 @@ const useShareProcess = ({lockerName, shareType, shareId, cfd, enableShare}: IUs
               failedMsg: `${t('POSITION_MODAL.SHARING_FAILED_CONTENT')} (${result.code})`,
               btnMsg: t('POSITION_MODAL.FAILED_BUTTON_TRY_AGAIN'),
               btnFunction: () => {
-                shareTo({url, text, type, size});
+                shareTo({URL: url, TEXT: text, TYPE: type, SIZE: size});
               },
             });
 
@@ -166,7 +166,7 @@ const useShareProcess = ({lockerName, shareType, shareId, cfd, enableShare}: IUs
           })`,
           btnMsg: t('POSITION_MODAL.FAILED_BUTTON_TRY_AGAIN'),
           btnFunction: () => {
-            shareTo({url, text, type, size});
+            shareTo({URL: url, TEXT: text, TYPE: type, SIZE: size});
           },
         });
 

@@ -242,13 +242,13 @@ const HistoryPositionModal = ({
               <Image
                 onClick={() =>
                   shareTo({
-                    url: value.url,
-                    text: value.text,
-                    type: value.type,
-                    size: value.size,
+                    URL: value.URL,
+                    TEXT: value.TEXT,
+                    TYPE: value.TYPE,
+                    SIZE: value.SIZE,
                   })
                 }
-                src={value.icon}
+                src={value.ICON}
                 width={44}
                 height={44}
                 alt={key}

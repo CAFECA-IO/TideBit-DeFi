@@ -1,4 +1,4 @@
-export type SocialMedia = 'FaceBook' | 'Twitter' | 'Reddit';
+export type SocialMedia = 'FACEBOOK' | 'TWITTER' | 'REDDIT';
 export interface ISocialMediaConstant {
   FACEBOOK: SocialMedia;
   TWITTER: SocialMedia;
@@ -6,41 +6,41 @@ export interface ISocialMediaConstant {
 }
 
 export const SocialMediaConstant: ISocialMediaConstant = {
-  FACEBOOK: 'FaceBook',
-  TWITTER: 'Twitter',
-  REDDIT: 'Reddit',
+  FACEBOOK: 'FACEBOOK',
+  TWITTER: 'TWITTER',
+  REDDIT: 'REDDIT',
 };
 
 export interface IShareToSocialMedia {
-  url: string;
-  text?: string;
-  type: string;
-  size: string;
+  URL: string;
+  TEXT?: string;
+  TYPE: string;
+  SIZE: string;
 }
 
 export interface IShareSettings extends IShareToSocialMedia {
-  icon: string;
+  ICON: string;
 }
 
 export const ShareSettings: Record<SocialMedia, IShareSettings> = {
-  FaceBook: {
-    url: 'https://www.facebook.com/sharer/sharer.php?u=',
-    type: 'facebook-share-dialog',
-    size: 'width=800,height=600',
-    icon: '/elements/group_15237.svg',
+  FACEBOOK: {
+    URL: 'https://www.facebook.com/sharer/sharer.php?u=',
+    TYPE: 'facebook-share-dialog',
+    SIZE: 'width=800,height=600',
+    ICON: '/elements/group_15237.svg',
   },
-  Twitter: {
-    url: 'https://twitter.com/intent/tweet?url=',
-    text: '&text=Check%20this%20out!',
-    type: 'twitter-share-dialog',
-    size: 'width=800,height=600',
-    icon: '/elements/group_15235.svg',
+  TWITTER: {
+    URL: 'https://twitter.com/intent/tweet?url=',
+    TEXT: '&text=Check%20this%20out!',
+    TYPE: 'twitter-share-dialog',
+    SIZE: 'width=800,height=600',
+    ICON: '/elements/group_15235.svg',
   },
-  Reddit: {
-    url: 'https://www.reddit.com/submit?url=',
-    text: '&title=Check%20this%20out!',
-    type: 'reddit-share-dialog',
-    size: 'width=800,height=600',
-    icon: '/elements/group_15234.svg',
+  REDDIT: {
+    URL: 'https://www.reddit.com/submit?url=',
+    TEXT: '&title=Check%20this%20out!',
+    TYPE: 'reddit-share-dialog',
+    SIZE: 'width=800,height=600',
+    ICON: '/elements/group_15234.svg',
   },
 };

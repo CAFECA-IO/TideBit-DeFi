@@ -4,11 +4,7 @@ import {useContext, useEffect} from 'react';
 import {AppContext} from '../../../contexts/app_context';
 import {GetServerSideProps} from 'next';
 import {useRouter} from 'next/router';
-import {
-  SIZE_OF_SHARING_BADGE,
-  BG_WIDTH_OF_SHARING_RECORD,
-  BG_HEIGHT_OF_SHARING_RECORD,
-} from '../../../constants/display';
+import {BG_WIDTH_OF_SHARING_RECORD, BG_HEIGHT_OF_SHARING_RECORD} from '../../../constants/display';
 import Error from 'next/error';
 import {DOMAIN} from '../../../constants/config';
 import useStateRef from 'react-usestateref';

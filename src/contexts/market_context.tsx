@@ -44,6 +44,10 @@ import {IRankingTimeSpan} from '../constants/ranking_time_span';
 import {ILeaderboard, getDummyLeaderboard} from '../interfaces/tidebit_defi_background/leaderboard';
 import TradeBookInstance from '../lib/books/trade_book';
 import {millesecondsToSeconds} from '../lib/common';
+import {
+  IWebsiteReserve,
+  dummyWebsiteReserve,
+} from '../interfaces/tidebit_defi_background/website_reserve';
 
 export interface IMarketProvider {
   children: React.ReactNode;
@@ -63,6 +67,7 @@ export interface IMarketContext {
   depositCryptocurrencies: ICryptocurrency[];
   withdrawCryptocurrencies: ICryptocurrency[];
   tidebitPromotion: ITideBitPromotion;
+  websiteReserve: IWebsiteReserve;
   guaranteedStopFeePercentage: number | null;
   init: () => Promise<void>;
   showPositionOnChartHandler: (bool: boolean) => void;
@@ -117,8 +122,8 @@ export const MarketContext = createContext<IMarketContext>({
   // cryptoSummary: null,
   tickerStatic: null,
   tickerLiveStatistics: null,
-  depositCryptocurrencies: [...dummyCryptocurrencies], // () => [],
-  withdrawCryptocurrencies: [...dummyCryptocurrencies], // () => [],
+  depositCryptocurrencies: [...dummyCryptocurrencies],
+  withdrawCryptocurrencies: [...dummyCryptocurrencies],
   tidebitPromotion: dummyTideBitPromotion,
   init: () => Promise.resolve(),
   showPositionOnChartHandler: () => null,
@@ -137,6 +142,7 @@ export const MarketContext = createContext<IMarketContext>({
   listTickerPositions: (): number[] => {
     throw new CustomError(Code.FUNCTION_NOT_IMPLEMENTED);
   },
+  websiteReserve: dummyWebsiteReserve,
 });
 
 export const MarketProvider = ({children}: IMarketProvider) => {
@@ -174,9 +180,10 @@ export const MarketProvider = ({children}: IMarketProvider) => {
   const [isCFDTradable, setIsCFDTradable] = useState<boolean>(false);
   const [candlestickId, setCandlestickId] = useState<string>('');
   /* ToDo: (20230419 - Julian) get TideBit data from backend */
-  const [tidebitPromotion, setTidebitPromotion] =
+  const [tidebitPromotion, setTidebitPromotion, tidebitPromotionRef] =
     useState<ITideBitPromotion>(dummyTideBitPromotion);
-
+  const [websiteReserve, setWebsiteReserve, websiteReserveRef] =
+    useState<IWebsiteReserve>(dummyWebsiteReserve);
   const [showPositionOnChart, setShowPositionOnChart] = useState<boolean>(
     INITIAL_POSITION_LABEL_DISPLAYED_STATE
   );
@@ -490,10 +497,60 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     setCandlestickInterval(candlestickInterval);
   };
 
+  const getWebsiteReserve = async () => {
+    let result: IResult = {...defaultResultFailed};
+    try {
+      result = (await workerCtx.requestHandler({
+        name: APIName.GET_WEBSITE_RESERVE,
+        method: Method.GET,
+      })) as IResult;
+    } catch (error) {
+      // Deprecate: error handle (Tzuhan - 20230321)
+      // eslint-disable-next-line no-console
+      console.error(`getWebsiteReserve error`, error);
+      setIsCFDTradable(false);
+      result.code = Code.INTERNAL_SERVER_ERROR;
+      result.reason = Reason[result.code];
+    }
+    // Deprecate: [debug] (20230526 - tzuhan)
+    // eslint-disable-next-line no-console
+    console.log('getWebsiteReserve', result);
+    if (result.success) {
+      setWebsiteReserve(result.data as IWebsiteReserve);
+    }
+    return result;
+  };
+
+  const getTideBitPromotion = async () => {
+    let result: IResult = {...defaultResultFailed};
+    try {
+      result = (await workerCtx.requestHandler({
+        name: APIName.GET_TIDEBIT_PROMOTION,
+        method: Method.GET,
+      })) as IResult;
+    } catch (error) {
+      // Deprecate: error handle (Tzuhan - 20230321)
+      // eslint-disable-next-line no-console
+      console.error(`getTideBitPromotion error`, error);
+      setIsCFDTradable(false);
+      result.code = Code.INTERNAL_SERVER_ERROR;
+      result.reason = Reason[result.code];
+    }
+    // Deprecate: [debug] (20230526 - tzuhan)
+    // eslint-disable-next-line no-console
+    console.log('getTideBitPromotion', result);
+    if (result.success) {
+      setTidebitPromotion(result.data as ITideBitPromotion);
+    }
+    return result;
+  };
+
   const init = async () => {
-    setIsCFDTradable(true);
+    await getTideBitPromotion();
+    await getWebsiteReserve();
     await listTickers();
     await listCurrencies();
+    setIsCFDTradable(true);
     return await Promise.resolve();
   };
 
@@ -573,7 +630,8 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     listAvailableTickers,
     depositCryptocurrencies: depositCryptocurrenciesRef.current,
     withdrawCryptocurrencies: withdrawCryptocurrenciesRef.current,
-    tidebitPromotion,
+    tidebitPromotion: tidebitPromotionRef.current,
+    websiteReserve: websiteReserveRef.current,
     getCFDQuotation,
     getCFDSuggestion,
     getGuaranteedStopFeePercentage,

@@ -15,6 +15,9 @@ export type IAPIName =
   | 'LIST_JOBS'
   | 'GET_JOB'
   | 'APPLY_JOB'
+  // public
+  | 'GET_TIDEBIT_PROMOTION'
+  | 'GET_WEBSITE_RESERVE'
   // market
   | 'LIST_CURRENCIES'
   | 'LIST_TICKERS'
@@ -72,6 +75,9 @@ export interface IAPINameConstant {
   LIST_JOBS: IAPIName;
   GET_JOB: IAPIName;
   APPLY_JOB: IAPIName;
+  // public
+  GET_TIDEBIT_PROMOTION: IAPIName;
+  GET_WEBSITE_RESERVE: IAPIName;
   // market
   LIST_CURRENCIES: IAPIName;
   LIST_TICKERS: IAPIName;
@@ -130,6 +136,9 @@ export const APIName: IAPINameConstant = {
   LIST_JOBS: 'LIST_JOBS',
   GET_JOB: 'GET_JOB',
   APPLY_JOB: 'APPLY_JOB',
+  // public
+  GET_TIDEBIT_PROMOTION: 'GET_TIDEBIT_PROMOTION',
+  GET_WEBSITE_RESERVE: 'GET_WEBSITE_RESERVE',
   // market
   LIST_CURRENCIES: 'LIST_CURRENCIES',
   LIST_TICKERS: 'LIST_TICKERS',
@@ -189,6 +198,9 @@ export const APIURL = {
   LIST_JOBS: '/api/general/jobs',
   GET_JOB: '/api/general/jobs',
   APPLY_JOB: '/api/general/jobs',
+  // public
+  GET_TIDEBIT_PROMOTION: `${API_URL}/public/promotion`,
+  GET_WEBSITE_RESERVE: `${API_URL}/public/reserve`,
   // market
   LIST_CURRENCIES: `${API_URL}/currencies`,
   LIST_TICKERS: `${API_URL}/market/tickers`,

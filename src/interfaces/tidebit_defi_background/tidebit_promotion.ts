@@ -1,11 +1,11 @@
 export interface ITideBitPromotion {
-  volume: number;
-  users: number;
-  va: number;
+  volume: number | string;
+  users: number | string;
+  va: number | string;
 }
 
 export const dummyTideBitPromotion: ITideBitPromotion = {
-  volume: 3650000,
-  users: 300000,
-  va: 48808348,
+  volume: 'N/A',
+  users: 'N/A',
+  va: 'N/A',
 };

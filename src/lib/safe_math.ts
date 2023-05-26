@@ -1,9 +1,9 @@
 import BigNumber from 'bignumber.js';
 
 class SafeMath {
-  static isNumber(str: string) {
+  static isNumber(str: string | number) {
     const numReg = /^(([1-9]\d*)|([0]{1}))(\.\d+)?$/;
-    return numReg.test(str);
+    return numReg.test(str.toString());
   }
   /**
    * check is hex number string

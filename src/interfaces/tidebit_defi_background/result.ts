@@ -10,8 +10,10 @@ import {ITickerData} from './ticker_data';
 import {ITickerHistoryData} from './ticker_history_data';
 import {ITickerLiveStatistics} from './ticker_live_statistics';
 import {ITickerStatic} from './ticker_static';
+import {ITideBitPromotion} from './tidebit_promotion';
 import {IUser} from './user';
 import {IUserBalance} from './user_balance';
+import {IWebsiteReserve} from './website_reserve';
 
 export interface IResult {
   success: boolean;
@@ -37,6 +39,8 @@ export interface IResult {
     | ITickerStatic
     | ITickerLiveStatistics
     | ITrade[]
+    | ITideBitPromotion
+    | IWebsiteReserve
     | null;
   code: ICode;
   reason?: string;

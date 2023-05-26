@@ -11,13 +11,7 @@ import {CustomError} from '../custom_error';
 import {IShareType, ShareType} from '../../constants/share_type';
 import {IDisplayCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
 import {ISharingOrder} from '../../interfaces/tidebit_defi_background/sharing_order';
-
-interface IShareToSocialMedia {
-  url: string;
-  text?: string;
-  type: string;
-  size: string;
-}
+import {IShareToSocialMedia} from '../../constants/social_media';
 
 interface IUseShareProcess {
   lockerName: string;
@@ -62,7 +56,6 @@ const useShareProcess = ({lockerName, shareType, shareId, cfd, enableShare}: IUs
 
   const getCFDOrder = async (): Promise<ISharingOrder | undefined> => {
     const apiUrl = `${API_URL}/public/shared/cfd/${shareId}`;
-
     try {
       const res = await fetch(apiUrl);
       const data = await res.json();
@@ -86,18 +79,17 @@ const useShareProcess = ({lockerName, shareType, shareId, cfd, enableShare}: IUs
     return false;
   };
 
-  const shareTo = async ({url, text, type, size}: IShareToSocialMedia) => {
+  const shareTo = async ({URL: url, TEXT: text, TYPE: type, SIZE: size}: IShareToSocialMedia) => {
     const [lock, unlock] = locker(lockerName);
     if (!lock()) return;
 
     try {
       const shareUrl = getPageUrl();
-      // Info: this error will make try-again button lose its functionality (20230524 - Shirley)
       if (shareUrl === '') throw new CustomError(Code.NEED_SHARE_URL);
 
       switch (shareType) {
         case ShareType.CFD:
-          if (shareType === ShareType.CFD && !!!cfd) throw new CustomError(Code.NEED_CFD_ORDER);
+          if (!!!cfd) throw new CustomError(Code.NEED_CFD_ORDER);
           if (enableShare === undefined) throw new CustomError(Code.NEED_ENABLE_SHARE_FUNCTION);
 
           globalCtx.dataLoadingModalHandler({
@@ -132,7 +124,7 @@ const useShareProcess = ({lockerName, shareType, shareId, cfd, enableShare}: IUs
               failedMsg: `${t('POSITION_MODAL.SHARING_FAILED_CONTENT')} (${result.code})`,
               btnMsg: t('POSITION_MODAL.FAILED_BUTTON_TRY_AGAIN'),
               btnFunction: () => {
-                shareTo({url, text, type, size});
+                shareTo({URL: url, TEXT: text, TYPE: type, SIZE: size});
               },
             });
 
@@ -140,27 +132,14 @@ const useShareProcess = ({lockerName, shareType, shareId, cfd, enableShare}: IUs
           }
           break;
         case ShareType.RANK:
-          // ToDo: Share rank (20230526 - Julian)
           break;
+
         case ShareType.BADGE:
-          try {
-            globalCtx.dataLoadingModalHandler({
-              modalTitle: t('POSITION_MODAL.SHARING'),
-              modalContent: t('POSITION_MODAL.SHARING_LOADING'),
-              isShowZoomOutBtn: false,
-            });
-            globalCtx.visibleLoadingModalHandler();
-
-            window.open(
-              `${url}${encodeURIComponent(shareUrl)}${text ? `${text}` : ''}`,
-              `${type}`,
-              `${size}`
-            );
-
-            globalCtx.eliminateAllProcessModals();
-          } catch (error) {
-            // ToDo: Error handling (20230526 - Julian)
-          }
+          window.open(
+            `${url}${encodeURIComponent(shareUrl)}${text ? `${text}` : ''}`,
+            `${type}`,
+            `${size}`
+          );
           break;
 
         default:
@@ -187,7 +166,7 @@ const useShareProcess = ({lockerName, shareType, shareId, cfd, enableShare}: IUs
           })`,
           btnMsg: t('POSITION_MODAL.FAILED_BUTTON_TRY_AGAIN'),
           btnFunction: () => {
-            shareTo({url, text, type, size});
+            shareTo({URL: url, TEXT: text, TYPE: type, SIZE: size});
           },
         });
 

@@ -7,7 +7,7 @@ import {
 } from '../../constants/display';
 import RippleButton from '../ripple_button/ripple_button';
 import Image from 'next/image';
-import {locker, timestampToString, wait} from '../../lib/common';
+import {findCodeByReason, locker, timestampToString, wait} from '../../lib/common';
 import {useContext, useEffect, useState} from 'react';
 import {MarketContext} from '../../contexts/market_context';
 import {IUpdatedCFDInputProps, useGlobal} from '../../contexts/global_context';
@@ -21,6 +21,7 @@ import {IDisplayCFDOrder} from '../../interfaces/tidebit_defi_background/display
 import {CFDOperation} from '../../constants/cfd_order_type';
 import {OrderType} from '../../constants/order_type';
 import {Code} from '../../constants/code';
+import {CustomError} from '../../lib/custom_error';
 
 type TranslateFunction = (s: string) => string;
 interface IPositionUpdatedModal {
@@ -142,9 +143,6 @@ const PositionUpdatedModal = ({
         globalCtx.visibleUpdateFormModalHandler();
       } else if (
         // Info: cancel (20230412 - Shirley)
-        result.code === Code.SERVICE_TERM_DISABLE ||
-        result.code === Code.WALLET_IS_NOT_CONNECT ||
-        result.code === Code.EXPIRED_QUOTATION_CANCELED ||
         result.code === Code.REJECTED_SIGNATURE
       ) {
         globalCtx.eliminateAllModals();
@@ -155,40 +153,47 @@ const PositionUpdatedModal = ({
         });
 
         globalCtx.visibleCanceledModalHandler();
-      } else if (
-        result.code === Code.INTERNAL_SERVER_ERROR ||
-        result.code === Code.INVAILD_INPUTS ||
-        result.code === Code.EXPIRED_QUOTATION_FAILED ||
-        result.code === Code.UNKNOWN_ERROR ||
-        result.code === Code.BALANCE_NOT_FOUND ||
-        result.code === Code.FAILE_TO_UPDATE_BALANCE
-      ) {
+      } else {
         globalCtx.eliminateAllModals();
 
         globalCtx.dataFailedModalHandler({
           modalTitle: t('POSITION_MODAL.UPDATE_POSITION_TITLE'),
-          modalContent: `${t('POSITION_MODAL.FAILED_REASON_FAILED_TO_UPDATE')} (${result.code})`,
+          failedTitle: t('POSITION_MODAL.FAILED_TITLE'),
+          failedMsg: `${t('POSITION_MODAL.FAILED_REASON_FAILED_TO_UPDATE')} (${result.code})`,
         });
 
         globalCtx.visibleFailedModalHandler();
       }
     } catch (error: any) {
+      // ToDo: report error to backend (20230413 - Shirley)
       globalCtx.eliminateAllModals();
 
-      // ToDo: report error to backend (20230413 - Shirley)
-      // Info: Unknown error between context and component
-      globalCtx.dataFailedModalHandler({
-        modalTitle: t('POSITION_MODAL.UPDATE_POSITION_TITLE'),
-        modalContent: `${t('POSITION_MODAL.FAILED_REASON_FAILED_TO_UPDATE')} (${
-          Code.UNKNOWN_ERROR_IN_COMPONENT
-        })`,
-      });
+      if (error instanceof CustomError) {
+        const str = error.toString().split('Error: ')[1];
+        const errorCode = findCodeByReason(str);
 
-      globalCtx.visibleFailedModalHandler();
+        globalCtx.dataFailedModalHandler({
+          modalTitle: t('POSITION_MODAL.OPEN_POSITION_TITLE'),
+          failedTitle: t('POSITION_MODAL.FAILED_TITLE'),
+          failedMsg: `${t('POSITION_MODAL.FAILED_REASON_FAILED_TO_UPDATE')} (${errorCode})`,
+        });
+
+        globalCtx.visibleFailedModalHandler();
+      } else {
+        globalCtx.dataFailedModalHandler({
+          modalTitle: t('POSITION_MODAL.UPDATE_POSITION_TITLE'),
+
+          modalContent: `${t('POSITION_MODAL.FAILED_REASON_FAILED_TO_UPDATE')} (${
+            Code.UNKNOWN_ERROR_IN_COMPONENT
+          })`,
+        });
+
+        globalCtx.visibleFailedModalHandler();
+      }
+    } finally {
+      unlock();
+      return;
     }
-
-    unlock();
-    return;
   };
 
   // Info: Double check if the value is updated (20230413 - Shirley)
@@ -338,7 +343,7 @@ const PositionUpdatedModal = ({
         <RippleButton
           onClick={submitClickHandler}
           buttonType="button"
-          className={`mt-0 whitespace-nowrap rounded border-0 bg-tidebitTheme py-2 px-16 text-base text-white transition-colors duration-300 hover:bg-cyan-600 focus:outline-none`}
+          className={`mt-0 whitespace-nowrap rounded border-0 bg-tidebitTheme px-16 py-2 text-base text-white transition-colors duration-300 hover:bg-cyan-600 focus:outline-none`}
         >
           {t('POSITION_MODAL.CONFIRM_BUTTON')}
         </RippleButton>
@@ -350,7 +355,7 @@ const PositionUpdatedModal = ({
     <>
       <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">
         {/* The position of the modal */}
-        <div className="relative my-6 mx-auto w-auto max-w-xl">
+        <div className="relative mx-auto my-6 w-auto max-w-xl">
           {' '}
           {/*content & panel*/}
           <div
@@ -363,7 +368,7 @@ const PositionUpdatedModal = ({
                 {t('POSITION_MODAL.UPDATE_POSITION_TITLE')}
               </h3>
               <button className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
-                <span className="absolute top-5 right-5 block outline-none focus:outline-none">
+                <span className="absolute right-5 top-5 block outline-none focus:outline-none">
                   <ImCross onClick={modalClickHandler} />
                 </span>
               </button>

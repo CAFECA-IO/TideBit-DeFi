@@ -6,6 +6,7 @@ import RippleButton from '../ripple_button/ripple_button';
 import {
   DEFAULT_BUY_PRICE,
   DEFAULT_EXPIRY_DATE,
+  DEFAULT_FEE,
   DEFAULT_LEVERAGE,
   DEFAULT_SELL_PRICE,
   DEFAULT_SPREAD,
@@ -177,7 +178,7 @@ const TradeTab = () => {
     if (!userCtx.enableServiceTerm) return;
 
     (async () => {
-      setQuotation();
+      setPrice();
 
       setTpSlBounds();
       setSuggestions();
@@ -194,7 +195,7 @@ const TradeTab = () => {
 
   // Info: Calculate quotation when market price changes (20230427 - Shirley)
   useEffect(() => {
-    setQuotation();
+    setPrice();
     setTpSlBounds();
     checkTpSlWithinBounds();
     renewPosition();
@@ -204,7 +205,7 @@ const TradeTab = () => {
   // Info: Fetch quotation when ticker changed (20230327 - Shirley)
   useEffect(() => {
     notificationCtx.emitter.once(ClickEvent.TICKER_CHANGED, async () => {
-      setQuotation();
+      setPrice();
       setTpSlBounds();
       setSuggestions();
       renewPosition();
@@ -215,8 +216,8 @@ const TradeTab = () => {
     };
   }, [marketCtx.selectedTicker]);
 
-  const setQuotation = () => {
-    // const deadline = getTimestamp() + QUOTATION_RENEWAL_INTERVAL_SECONDS;
+  const setPrice = () => {
+    // const marketPrice = marketCtx.selectedTicker?.price ?? DEFAULT_MARKET_PRICE;
     const buyPrice = roundToDecimalPlaces(
       (marketCtx.selectedTicker?.price ?? DEFAULT_BUY_PRICE) *
         (1 + (marketCtx.tickerLiveStatistics?.spread ?? DEFAULT_SPREAD)),
@@ -573,14 +574,14 @@ const TradeTab = () => {
       typeOfPosition: TypeOfPosition.BUY,
       quotation: long,
       liquidationPrice: roundToDecimalPlaces(long.price * (1 - LIQUIDATION_FIVE_LEVERAGE), 2),
-      fee: marketCtx.tickerLiveStatistics?.fee ?? DEFAULT_BUY_PRICE,
+      fee: marketCtx.tickerLiveStatistics?.fee ?? DEFAULT_FEE,
       guaranteedStop: longSlToggle ? longGuaranteedStopChecked : false,
       guaranteedStopFee:
         longSlToggle && longGuaranteedStopChecked ? guaranteedStopFeeLongRef.current : 0,
       takeProfit: longTpToggle ? longTpValue : undefined,
       stopLoss: longSlToggle ? longSlValue : undefined,
     };
-
+    // TODO: if not getting `fee` from context, stop the transaction
     const shortOrder: IApplyCreateCFDOrder = {
       ...share,
       orderType: OrderType.CFD,
@@ -589,7 +590,7 @@ const TradeTab = () => {
       quotation: short,
       price: short.price,
       liquidationPrice: roundToDecimalPlaces(short.price * (1 + LIQUIDATION_FIVE_LEVERAGE), 2),
-      fee: marketCtx.tickerLiveStatistics?.fee ?? DEFAULT_BUY_PRICE,
+      fee: marketCtx.tickerLiveStatistics?.fee ?? DEFAULT_FEE,
       guaranteedStop: shortSlToggle ? shortGuaranteedStopChecked : false,
       guaranteedStopFee:
         shortSlToggle && shortGuaranteedStopChecked ? guaranteedStopFeeShortRef.current : 0,

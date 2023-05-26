@@ -5,7 +5,7 @@ export interface IWalletBalance {
 
 export const dummyWalletBalance_USDT: IWalletBalance = {
   currency: 'USDT',
-  balance: 1296.5,
+  balance: 100,
 };
 
 export const dummyWalletBalance_ETH: IWalletBalance = {

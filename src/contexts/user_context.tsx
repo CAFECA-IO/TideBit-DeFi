@@ -121,6 +121,7 @@ export interface IUserContext {
   init: () => Promise<void>;
   enableShare: (cfdId: string, share: boolean) => Promise<IResult>;
   shareTradeRecord: (cfdId: string) => Promise<IResult>;
+  getTotalBalance: () => Promise<IResult>;
   walletExtensions: IWalletExtension[];
 }
 
@@ -217,6 +218,9 @@ export const UserContext = createContext<IUserContext>({
     throw new CustomError(Code.FUNCTION_NOT_IMPLEMENTED);
   },
   walletExtensions: [],
+  getTotalBalance: function (): Promise<IResult> {
+    throw new Error('Function not implemented.');
+  },
 });
 
 export const UserProvider = ({children}: IUserProvider) => {
@@ -492,13 +496,21 @@ export const UserProvider = ({children}: IUserProvider) => {
         sumAvailable += balance.available * rate;
         sumLocked += balance.locked * rate;
       }
+      const PnLValue = closedCFDsRef.current.reduce((acc, cur) => {
+        return acc + (cur.pnl?.value || 0);
+      }, 0);
       setBalance({
         available: sumAvailable,
         locked: sumLocked,
         total: sumAvailable + sumLocked,
-        PNL: {
-          type: ProfitState.EQUAL,
-          value: 0,
+        PnL: {
+          type:
+            PnLValue >= 0
+              ? PnLValue === 0
+                ? ProfitState.EQUAL
+                : ProfitState.PROFIT
+              : ProfitState.LOSS,
+          value: PnLValue,
         }, // TODO: Caculate PNL (20230508 - tzuhan)
       });
     }
@@ -518,6 +530,7 @@ export const UserProvider = ({children}: IUserProvider) => {
         if (result.success) {
           const balance = result.data as IUserBalance;
           setBalance(balance);
+          result.data = balance;
         }
       } catch (error) {
         // TODO: error handle (Tzuhan - 20230421)
@@ -1578,6 +1591,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     getUserAssets,
     getPersonalRanking,
     getPersonalAchievements,
+    getTotalBalance,
     init,
     walletExtensions: walletExtensionsRef.current,
   };

@@ -1033,7 +1033,7 @@ const TradeTabMobile = () => {
             <UserOverview
               depositAvailable={userCtx?.balance?.available ?? 0}
               marginLocked={userCtx?.balance?.locked ?? 0}
-              profitOrLossAmount={userCtx?.balance?.PNL?.value ?? 0}
+              profitOrLossAmount={userCtx?.balance?.PnL?.value ?? 0}
             />
           </div>
           <div className="flex w-full items-center justify-center">{displayedTargetSetting}</div>

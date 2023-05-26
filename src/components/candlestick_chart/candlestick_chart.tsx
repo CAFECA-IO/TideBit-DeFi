@@ -36,6 +36,7 @@ import {
 import Lottie, {useLottie} from 'lottie-react';
 import spotAnimation from '../../../public/animation/circle.json';
 import {
+  DEFAULT_SPREAD,
   EXAMPLE_BLUE_COLOR,
   LIGHT_GRAY_COLOR,
   LINE_GRAPH_STROKE_COLOR,
@@ -67,6 +68,8 @@ import {TypeOfPosition} from '../../constants/type_of_position';
 import {TimeSpanUnion} from '../../constants/time_span_union';
 import {freemem} from 'os';
 import {normalize} from 'path';
+import {TranslateFunction} from '../../interfaces/tidebit_defi_background/locale';
+import {useTranslation} from 'react-i18next';
 
 interface ITradingChartGraphProps {
   strokeColor: string[];
@@ -230,6 +233,8 @@ export default function CandlestickChart({
   candlestickChartHeight,
   ...otherProps
 }: ITradingChartGraphProps) {
+  const {t}: {t: TranslateFunction} = useTranslation('common');
+
   const marketCtx = useContext(MarketContext);
   const globalCtx = useContext(GlobalContext);
   const userCtx = useContext(UserContext);
@@ -309,6 +314,67 @@ export default function CandlestickChart({
     const lastData = tuned[tuned.length - 1] as CandlestickData;
 
     updatePriceLine(lastData?.close);
+  };
+
+  const longShortPriceLine = () => {
+    const price = marketCtx.selectedTicker?.price ?? 0;
+    const spread = marketCtx.tickerLiveStatistics?.spread ?? DEFAULT_SPREAD;
+
+    const buyPrice = price * (1 + spread);
+    const sellPrice = price * (1 - spread);
+
+    const buyLineSeries = chart.addLineSeries({
+      color: LINE_GRAPH_STROKE_COLOR.UP,
+      priceLineVisible: true,
+      lineWidth: 1,
+      lineStyle: LineStyle.SparseDotted,
+      priceLineStyle: LineStyle.Dashed,
+      crosshairMarkerVisible: false,
+      lastValueVisible: false,
+      title: `${t('CANDLESTICK_CHART.LONG')} ${buyPrice.toFixed(2)}`,
+      baseLineVisible: true,
+    });
+
+    const sellLineSeries = chart.addLineSeries({
+      color: LINE_GRAPH_STROKE_COLOR.DOWN,
+      priceLineVisible: true,
+      lineWidth: 1,
+      lineStyle: LineStyle.SparseDotted,
+      priceLineStyle: LineStyle.Dashed,
+      crosshairMarkerVisible: false,
+      lastValueVisible: false,
+      title: `${t('CANDLESTICK_CHART.SHORT')} ${sellPrice.toFixed(2)}`,
+      baseLineVisible: true,
+    });
+
+    if (!buyLineSeries || !tuned || tuned.length === 0) return;
+
+    try {
+      const time = [(tuned[0]?.time as number) - 1, (tuned[tuned.length - 1]?.time as number) + 1];
+      buyLineSeries.setData([
+        {
+          time: time[0] as UTCTimestamp,
+          value: buyPrice,
+        },
+        {
+          time: time[1] as UTCTimestamp,
+          value: buyPrice,
+        },
+      ]);
+
+      sellLineSeries.setData([
+        {
+          time: time[0] as UTCTimestamp,
+          value: sellPrice,
+        },
+        {
+          time: time[1] as UTCTimestamp,
+          value: sellPrice,
+        },
+      ]);
+    } catch (err) {
+      // Info: Catch the error and do nothing (20230411 - Shirley)
+    }
   };
 
   const openPriceLine = () => {
@@ -412,6 +478,8 @@ export default function CandlestickChart({
           priceRangeChangeHandler as LogicalRangeChangeEventHandler
         );
 
+      longShortPriceLine();
+
       // Info: Draw the open price line (20230411 - Shirleey)
       // openPriceLine();
 
@@ -443,7 +511,7 @@ export default function CandlestickChart({
 
   return (
     <>
-      <div className="mt-5 -mb-8 lg:-mt-8 lg:mb-5 lg:ml-5">{displayedOHLC}</div>
+      <div className="-mb-8 mt-5 lg:-mt-8 lg:mb-5 lg:ml-5">{displayedOHLC}</div>
       <div className="ml-5 pb-20 pt-20 lg:w-7/10 lg:pb-5 lg:pt-14">
         <div ref={chartContainerRef} className={`${cursorStyleRef.current}`}></div>
       </div>

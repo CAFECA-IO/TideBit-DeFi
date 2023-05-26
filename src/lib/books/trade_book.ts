@@ -266,6 +266,10 @@ class TradeBook {
     this.config = config;
   }
 
+  listTrades() {
+    return this.predictedTrades;
+  }
+
   toLineChart(interval: number, length: number): ILine[] {
     if (this.predictedTrades.length === 0) return [];
 

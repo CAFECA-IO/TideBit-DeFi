@@ -57,6 +57,7 @@ import {
   defaultPersonalAchievement,
 } from '../interfaces/tidebit_defi_background/personal_achievement';
 import BadgeModal from '../components/badge_modal/badge_modal';
+import {IBadge} from '../interfaces/tidebit_defi_background/badge';
 import AnnouncementModal from '../components/announcement_modal/announcement_modal';
 import {MessageType, IMessageType} from '../constants/message_type';
 export interface IToastify {
@@ -201,17 +202,16 @@ export const dummyAnnouncementModal: IAnnouncementModal = {
 
 // TODO:(20230317 - Shirley) to be continued
 export interface IBadgeModal {
-  badgeName: string;
-  title: string;
-  image: string;
-  badgeId: string;
+  badgeData: IBadge;
 }
 
 export const dummyBadgeModal: IBadgeModal = {
-  badgeName: 'Badge Name',
-  title: 'Badge Title',
-  image: '',
-  badgeId: 'TBDFUTURES2023FEB05',
+  badgeData: {
+    badgeId: 'TBDBADGEDAILY20_2023FEB05',
+    badgeName: 'DAILY TOP 20',
+    userId: '202302220001234',
+    receiveTime: 1614556800,
+  },
 };
 
 // Deprecated: to be removed (20230517 - Julian)

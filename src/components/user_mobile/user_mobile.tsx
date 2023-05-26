@@ -48,12 +48,12 @@ const UserMobile = () => {
     <div
       className={`${
         avatarMenuVisible ? 'visible opacity-100' : 'invisible opacity-0'
-      } fixed top-0 left-0 z-60 flex h-14 w-full items-center divide-x divide-lightGray bg-black/100 px-5 pt-1`}
+      } fixed left-0 top-0 z-60 flex h-14 w-full items-center divide-x divide-lightGray bg-black/100 px-5 pt-1`}
     >
       <div className="relative flex basis-full items-center">
         <p className="self-center pl-5">{t('USER.PERSONAL_SETTING')}</p>
 
-        <div className="absolute top-1 right-2 block lg:hidden">
+        <div className="absolute right-2 top-1 block lg:hidden">
           <ImCross onClick={avatarClickHandler} />
         </div>
       </div>
@@ -97,7 +97,7 @@ const UserMobile = () => {
             aria-labelledby="avatarButton"
           >
             <li>
-              <Link href={TBDURL.MY_ASSETS} className="block py-4 pr-4 pl-3 hover:bg-darkGray5">
+              <Link href={TBDURL.MY_ASSETS} className="block py-4 pl-3 pr-4 hover:bg-darkGray5">
                 <div className="flex flex-row items-center space-x-2">
                   <BiWallet />
                   <p>{t('USER.ASSETS')}</p>
@@ -106,7 +106,7 @@ const UserMobile = () => {
             </li>
             <li
               onClick={depositClickHandler}
-              className="block py-4 pr-4 pl-3 hover:cursor-pointer hover:bg-darkGray5"
+              className="block py-4 pl-3 pr-4 hover:cursor-pointer hover:bg-darkGray5"
             >
               <div className="flex flex-row items-center space-x-2">
                 <FaDownload />
@@ -115,7 +115,7 @@ const UserMobile = () => {
             </li>
             <li
               onClick={withdrawClickHandler}
-              className="block py-4 pr-4 pl-3 hover:cursor-pointer hover:bg-darkGray5"
+              className="block py-4 pl-3 pr-4 hover:cursor-pointer hover:bg-darkGray5"
             >
               <div className="flex flex-row items-center space-x-2">
                 <FaUpload />
@@ -123,7 +123,7 @@ const UserMobile = () => {
               </div>
             </li>
             <li>
-              <Link href="#" className="block py-4 pr-4 pl-3 hover:bg-darkGray5">
+              <Link href="#" className="block py-4 pl-3 pr-4 hover:bg-darkGray5">
                 <div className="flex flex-row items-center space-x-2">
                   <VscAccount />
                   <p>{t('USER.ACCOUNT')}</p>
@@ -134,7 +134,7 @@ const UserMobile = () => {
               <Link
                 onClick={userCtx.disconnect}
                 href="#"
-                className="block py-4 pr-4 pl-3 hover:bg-darkGray5"
+                className="block py-4 pl-3 pr-4 hover:bg-darkGray5"
               >
                 <div className="flex flex-row items-center space-x-2">
                   <ImExit />

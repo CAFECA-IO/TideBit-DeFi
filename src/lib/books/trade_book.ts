@@ -180,7 +180,7 @@ class TradeBook {
       // Info: (20230522 - Shirley) Step 3: Predict price for the next period
       const lastTrade = trades[trades.length - 1];
       const nextTime = lastTrade.timestampMs + periodMs * (i + 1);
-      const nextPrice = m * nextTime + b;
+      const nextPrice = Number((m * nextTime + b).toFixed(2));
       const newTradeId = `-`;
 
       const newTrade = {

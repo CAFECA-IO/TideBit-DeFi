@@ -809,8 +809,17 @@ export const UserProvider = ({children}: IUserProvider) => {
     return balance;
   };
 
-  /* ToDo: (20230510 - Julian) get data from backend */
+  /* ToDo: (20230510 - Julian) get data from backend #448 */
   const getUserAssets = (currency: string) => {
+    /*     const balance = getBalance(currency);
+    const userAssets = {
+      currency: currency,
+      balance: {
+        available: balance?.available ?? 0,
+        locked: balance?.locked ?? 0,
+      },
+    }; */
+
     return getDummyUserAssets(currency);
   };
 

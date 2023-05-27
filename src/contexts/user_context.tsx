@@ -283,6 +283,7 @@ export const UserProvider = ({children}: IUserProvider) => {
       setEnableServiceTerm(true);
       setWalletBalances([dummyWalletBalance_BTC, dummyWalletBalance_ETH, dummyWalletBalance_USDT]);
 
+      await getUserAssets();
       await listBalances();
       if (selectedTickerRef.current) {
         await listCFDs(selectedTickerRef.current.currency);

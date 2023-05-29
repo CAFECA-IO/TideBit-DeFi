@@ -12,18 +12,16 @@ const PnlSection = () => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
   const userCtx = useContext(UserContext);
-
+  const {userAssets} = userCtx;
   /* ToDo: (20230420 - Julian) getUserAssets by currency */
-  const {today, monthly, cumulative} = userCtx.getUserAssets(unitAsset)?.pnl ?? {
-    today: DEFAULT_PNL_DATA,
-    monthly: DEFAULT_PNL_DATA,
-    cumulative: DEFAULT_PNL_DATA,
-  };
+  const pnlToday = userAssets?.pnl.today ?? DEFAULT_PNL_DATA;
+  const pnl30Days = userAssets?.pnl.monthly ?? DEFAULT_PNL_DATA;
+  const cumulativePnl = userAssets?.pnl.cumulative ?? DEFAULT_PNL_DATA;
 
   const statisticContent = [
-    {title: t('MY_ASSETS_PAGE.PNL_SECTION_TODAY'), ...today},
-    {title: t('MY_ASSETS_PAGE.PNL_SECTION_30_DAYS'), ...monthly},
-    {title: t('MY_ASSETS_PAGE.PNL_SECTION_CUMULATIVE'), ...cumulative},
+    {title: t('MY_ASSETS_PAGE.PNL_SECTION_TODAY'), ...pnlToday},
+    {title: t('MY_ASSETS_PAGE.PNL_SECTION_30_DAYS'), ...pnl30Days},
+    {title: t('MY_ASSETS_PAGE.PNL_SECTION_CUMULATIVE'), ...cumulativePnl},
   ].map(({amount, percentage, ...rest}) => {
     const result = {
       content:

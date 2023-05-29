@@ -38,9 +38,9 @@ const UserMobile = () => {
 
   const isDisplayedUserOverview = userCtx.enableServiceTerm ? (
     <UserOverview
-      depositAvailable={userCtx.balance?.available ?? 0}
-      marginLocked={userCtx.balance?.locked ?? 0}
-      profitOrLossAmount={userCtx.balance?.PnL?.value ?? 0}
+      depositAvailable={userCtx.userAssets?.balance?.available ?? 0}
+      marginLocked={userCtx.userAssets?.balance?.locked ?? 0}
+      profitOrLossAmount={userCtx.userAssets?.pnl?.cumulative?.amount?.value ?? 0}
     />
   ) : null;
 

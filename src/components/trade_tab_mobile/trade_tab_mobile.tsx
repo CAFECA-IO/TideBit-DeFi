@@ -71,7 +71,7 @@ const TradeTabMobile = () => {
 
   const ticker = marketCtx.selectedTicker?.currency ?? '';
 
-  const availableBalance = userCtx.balance?.available ?? DEFAULT_USER_BALANCE;
+  const availableBalance = userCtx.userAssets?.balance?.available ?? DEFAULT_USER_BALANCE;
 
   const leverage = tickerStaticStatistics?.leverage ?? DEFAULT_LEVERAGE;
   const gsl = marketCtx.guaranteedStopFeePercentage;
@@ -192,7 +192,7 @@ const TradeTabMobile = () => {
     if (!userCtx.enableServiceTerm) return;
 
     renewPosition();
-  }, [userCtx.balance?.available]);
+  }, [userCtx.userAssets?.balance?.available]);
 
   // Info: Calculate quotation when market price changes (20230427 - Shirley)
   useEffect(() => {
@@ -1031,9 +1031,9 @@ const TradeTabMobile = () => {
         <div className="flex flex-col items-center justify-between space-y-7">
           <div className="flex w-full items-center justify-center">
             <UserOverview
-              depositAvailable={userCtx?.balance?.available ?? 0}
-              marginLocked={userCtx?.balance?.locked ?? 0}
-              profitOrLossAmount={userCtx?.balance?.PnL?.value ?? 0}
+              depositAvailable={userCtx.userAssets?.balance?.available ?? 0}
+              marginLocked={userCtx.userAssets?.balance?.locked ?? 0}
+              profitOrLossAmount={userCtx.userAssets?.pnl?.cumulative?.amount?.value ?? 0}
             />
           </div>
           <div className="flex w-full items-center justify-center">{displayedTargetSetting}</div>

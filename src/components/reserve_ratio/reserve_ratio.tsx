@@ -1,8 +1,12 @@
-import React from 'react';
+import React, {useContext} from 'react';
+import {MarketContext} from '../../contexts/market_context';
 import Image from 'next/image';
 import {FaLink} from 'react-icons/fa';
 import {BiLinkAlt} from 'react-icons/bi';
 import {useTranslation} from 'next-i18next';
+import SafeMath from '../../lib/safe_math';
+import {UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
+import {FRACTION_DIGITS} from '../../constants/config';
 
 type TranslateFunction = (s: string) => string;
 
@@ -10,6 +14,14 @@ type TranslateFunction = (s: string) => string;
 const ReserveRatio = () => {
   const {i18n} = useTranslation('common');
   const {t}: {t: TranslateFunction} = useTranslation('common');
+  const {websiteReserve} = useContext(MarketContext);
+
+  const displayedTidebitUserHolding = SafeMath.isNumber(websiteReserve.usersHolding)
+    ? websiteReserve.usersHolding.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)
+    : websiteReserve.usersHolding;
+  const displayedTidebitReserve = SafeMath.isNumber(websiteReserve.tidebitReserve)
+    ? websiteReserve.tidebitReserve.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)
+    : websiteReserve.tidebitReserve;
 
   const isTw = i18n.language === 'tw';
   const cardForTwMobile = isTw ? 'w-95px ml-40' : 'w-120px ml-36';
@@ -116,14 +128,14 @@ const ReserveRatio = () => {
                       {' '}
                       {t('HOME_PAGE.RESERVE_RATIO_BLOCK_DESCRIPTION')}
                     </div>
-                    <div>3,016,827,845</div>
+                    <div>{displayedTidebitUserHolding}</div>
                   </div>
                   <div className="flex flex-col space-y-2">
                     <div className="text-base text-lightGray">
                       {' '}
                       {t('HOME_PAGE.RESERVE_RATIO_BLOCK_DESCRIPTION_2')}
                     </div>
-                    <div>3,061,068,937</div>
+                    <div>{displayedTidebitReserve}</div>
                   </div>
                 </div>
               </div>

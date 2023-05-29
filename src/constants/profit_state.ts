@@ -9,3 +9,13 @@ export const ProfitState: IProfitStateConstant = {
   LOSS: 'LOSS',
   EQUAL: 'EQUAL',
 };
+
+export const getProfitState = (value: number): IProfitState => {
+  if (value > 0) {
+    return ProfitState.PROFIT;
+  } else if (value < 0) {
+    return ProfitState.LOSS;
+  } else {
+    return ProfitState.EQUAL;
+  }
+};

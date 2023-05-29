@@ -3,6 +3,7 @@ import {MarketContext} from '../../contexts/market_context';
 import {UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
 import {FRACTION_DIGITS} from '../../constants/config';
 import {useTranslation} from 'next-i18next';
+import SafeMath from '../../lib/safe_math';
 
 type TranslateFunction = (s: string) => string;
 
@@ -11,15 +12,13 @@ const StatisticBlock = () => {
 
   const {tidebitPromotion} = useContext(MarketContext);
 
-  const displayedVolume = tidebitPromotion.volume.toLocaleString(
-    UNIVERSAL_NUMBER_FORMAT_LOCALE,
-    FRACTION_DIGITS
-  );
+  const displayedVolume = SafeMath.isNumber(tidebitPromotion.volume)
+    ? tidebitPromotion.volume.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)
+    : tidebitPromotion.volume;
   const displayedUsers = tidebitPromotion.users;
-  const displayedVa = tidebitPromotion.va.toLocaleString(
-    UNIVERSAL_NUMBER_FORMAT_LOCALE,
-    FRACTION_DIGITS
-  );
+  const displayedVa = SafeMath.isNumber(tidebitPromotion.va)
+    ? tidebitPromotion.va.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)
+    : tidebitPromotion.va;
 
   const statisticContent = [
     {

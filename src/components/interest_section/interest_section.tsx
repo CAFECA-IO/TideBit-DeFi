@@ -16,17 +16,20 @@ const InterestSection = () => {
 
   const userCtx = useContext(UserContext);
 
+  const {userAssets} = userCtx;
   /* ToDo: (20230420 - Julian) getUserAssets by currency */
   const interestInfo = {
-    APY: userCtx.getUserAssets('')?.interest.apy ?? DEFAULT_INTEREST_RATE,
+    APY: userAssets?.interest.apy ?? DEFAULT_INTEREST_RATE,
     interest30Days:
-      userCtx
-        .getUserAssets('')
-        ?.interest.monthly.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS) ?? 0,
+      userAssets?.interest.monthly.toLocaleString(
+        UNIVERSAL_NUMBER_FORMAT_LOCALE,
+        FRACTION_DIGITS
+      ) ?? 0,
     cumulativeInterest:
-      userCtx
-        .getUserAssets('')
-        ?.interest.cumulative.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS) ?? 0,
+      userAssets?.interest.cumulative.toLocaleString(
+        UNIVERSAL_NUMBER_FORMAT_LOCALE,
+        FRACTION_DIGITS
+      ) ?? 0,
   };
 
   const interestContentJsx = Object.entries(interestInfo).map(([key, value]) => (

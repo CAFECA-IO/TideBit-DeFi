@@ -1,10 +1,26 @@
 import {IBadge, getDummyBadges, defaultBadges} from './badge';
 import {randomFloatFromInterval} from '../../lib/common';
+import {IPnL} from './pnl';
+import {ProfitState} from '../../constants/profit_state';
 
 export interface IPersonalAchievement {
   userId: string;
   userName: string;
   userAvatar?: string;
+  ranking: {
+    daily: {
+      PnL: IPnL;
+      rank: number;
+    };
+    weekly: {
+      PnL: IPnL;
+      rank: number;
+    };
+    monthly: {
+      PnL: IPnL;
+      rank: number;
+    };
+  };
   tradingVolume: number;
   onlineTime: number;
   diversification: number;
@@ -16,6 +32,20 @@ export interface IPersonalAchievement {
 export const defaultPersonalAchievement: IPersonalAchievement = {
   userId: 'N/A',
   userName: 'N/A',
+  ranking: {
+    daily: {
+      PnL: {value: 0, type: ProfitState.EQUAL},
+      rank: -1,
+    },
+    weekly: {
+      PnL: {value: 0, type: ProfitState.EQUAL},
+      rank: -1,
+    },
+    monthly: {
+      PnL: {value: 0, type: ProfitState.EQUAL},
+      rank: -1,
+    },
+  },
   userAvatar: '/leaderboard/default_avatar.svg',
   tradingVolume: 0,
   onlineTime: 0,
@@ -35,6 +65,20 @@ export const getDummyPersonalAchievements = (userId: string): IPersonalAchieveme
   const personalAchievements = {
     userId: userId,
     userName: userId,
+    ranking: {
+      daily: {
+        PnL: {value: 0, type: ProfitState.EQUAL},
+        rank: -1,
+      },
+      weekly: {
+        PnL: {value: 0, type: ProfitState.EQUAL},
+        rank: -1,
+      },
+      monthly: {
+        PnL: {value: 0, type: ProfitState.EQUAL},
+        rank: -1,
+      },
+    },
     userAvatar: randomUserAvatar,
     tradingVolume: randomTradingVolume,
     onlineTime: randomOnlineTime,

@@ -180,8 +180,11 @@
     "WARNING_SUSPENDED_CONTENT": "Bitcoin hits the limit down and suspend trading temporarily.",
     "WARNING_UNFINISHED_TITLE": "Transaction unfinished",
     "WARNING_UNFINISHED_CONTENT": "There is a transaction in progress. Please wait for it to complete.",
+    "WARNING_LOGGED_OUT_TITLE": "You have logged out",
+    "WARNING_LOGGED_OUT_CONTENT": "Please log in again.",
     "WARNING_CHECK_POSITION_BUTTON": "Check the position",
     "WARNING_CHECK_TRADING_BUTTON": "Check Trading page",
+    "WARNING_GO_HOME_BUTTON": "Back to Home",
     "WARNING_OK_BUTTON": "Got it",
     "TYPE": "Type",
     "TYPE_UP": "Up",
@@ -384,7 +387,7 @@
     "CHECKBOX_DESCRIPTION": "Don’t show me this again",
     "OK_BUTTON": "OK"
   },
-  "CANDLESTICK_CHART":{
+  "CANDLESTICK_CHART": {
     "LONG": "Buy at",
     "SHORT": "Sell at"
   }

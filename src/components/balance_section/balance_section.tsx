@@ -21,7 +21,7 @@ const BalanceSection = () => {
   /* ToDo: (20230420 - Julian) getUserAssets by currency */
   const avblBalance = userAssets?.balance.available ?? DEFAULT_BALANCE;
   const lockedBalance = userAssets?.balance.locked ?? DEFAULT_BALANCE;
-  const totalBalance = avblBalance && lockedBalance ? avblBalance + lockedBalance : DEFAULT_BALANCE;
+  const totalBalance = avblBalance + lockedBalance;
 
   const [hidden, setHidden] = useState(false);
 

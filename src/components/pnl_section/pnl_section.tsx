@@ -19,9 +19,9 @@ const PnlSection = () => {
   const cumulativePnl = userAssets?.pnl.cumulative ?? DEFAULT_PNL_DATA;
 
   const statisticContent = [
-    {title: t('MY_ASSETS_PAGE.PNL_SECTION_TODAY'), ...today},
-    {title: t('MY_ASSETS_PAGE.PNL_SECTION_30_DAYS'), ...monthly},
-    {title: t('MY_ASSETS_PAGE.PNL_SECTION_CUMULATIVE'), ...cumulative},
+    {title: t('MY_ASSETS_PAGE.PNL_SECTION_TODAY'), ...pnlToday},
+    {title: t('MY_ASSETS_PAGE.PNL_SECTION_30_DAYS'), ...pnl30Days},
+    {title: t('MY_ASSETS_PAGE.PNL_SECTION_CUMULATIVE'), ...cumulativePnl},
   ].map(({amount, percentage, ...rest}) => {
     const result = {
       content:

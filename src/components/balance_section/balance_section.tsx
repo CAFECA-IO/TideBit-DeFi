@@ -19,9 +19,9 @@ const BalanceSection = () => {
   const {userAssets} = userCtx;
 
   /* ToDo: (20230420 - Julian) getUserAssets by currency */
-  const avblBalance = userAssets?.balance.available ?? DEFAULT_BALANCE;
-  const lockedBalance = userAssets?.balance.locked ?? DEFAULT_BALANCE;
-  const totalBalance = avblBalance + lockedBalance;
+  const avalibleBalance = userAssets?.balance.available ?? DEFAULT_BALANCE.available;
+  const lockedBalance = userAssets?.balance.locked ?? DEFAULT_BALANCE.locked;
+  const totalBalance = avalibleBalance + lockedBalance;
 
   const [hidden, setHidden] = useState(false);
 
@@ -72,13 +72,13 @@ const BalanceSection = () => {
     ? '********'
     : totalBalance?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
 
-  const displayedAvblBalance = hidden
+  const displayedAvalibleBalance = hidden
     ? '*****'
-    : available.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
+    : avalibleBalance.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
 
   const displayedLockedBalance = hidden
     ? '*****'
-    : locked.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
+    : lockedBalance.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
 
   const depositClickHandler = () => {
     globalCtx.visibleDepositModalHandler();
@@ -96,7 +96,7 @@ const BalanceSection = () => {
         <div className="relative pt-20 text-center">
           <CircularProgressBar
             progressBarColor={['#29C1E1']}
-            numerator={available}
+            numerator={avalibleBalance}
             denominator={totalBalance}
             hollowSize="85%"
             circularBarSize={circleSize}
@@ -122,7 +122,7 @@ const BalanceSection = () => {
           <div className="">
             <div className="text-xs text-lightGray">
               {t('MY_ASSETS_PAGE.BALANCE_SECTION_AVAILABLE')}{' '}
-              <span className="text-base text-lightWhite">{displayedAvblBalance}</span> /
+              <span className="text-base text-lightWhite">{displayedAvalibleBalance}</span> /
               {t('MY_ASSETS_PAGE.BALANCE_SECTION_LOCKED')}{' '}
               <span className="text-base text-lightWhite">{displayedLockedBalance}</span>
             </div>

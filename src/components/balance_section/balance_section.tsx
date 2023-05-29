@@ -74,11 +74,11 @@ const BalanceSection = () => {
 
   const displayedAvblBalance = hidden
     ? '*****'
-    : avblBalance?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
+    : available.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
 
   const displayedLockedBalance = hidden
     ? '*****'
-    : lockedBalance?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
+    : locked.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
 
   const depositClickHandler = () => {
     globalCtx.visibleDepositModalHandler();
@@ -96,7 +96,7 @@ const BalanceSection = () => {
         <div className="relative pt-20 text-center">
           <CircularProgressBar
             progressBarColor={['#29C1E1']}
-            numerator={avblBalance}
+            numerator={available}
             denominator={totalBalance}
             hollowSize="85%"
             circularBarSize={circleSize}

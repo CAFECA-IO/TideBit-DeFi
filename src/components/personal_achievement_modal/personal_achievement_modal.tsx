@@ -176,55 +176,55 @@ const PersonalAchievementModal = ({
     );
   });
 
-  const displayedBadgeList = BADGE_LIST.map(
-    ({name, title, description, icon, iconSkeleton}, index) => {
-      const hintFrameStyle = (index + 1) % 3 === 0 ? 'right-0' : '';
-      const hintArrowStyle = (index + 1) % 3 === 0 ? 'right-6' : 'left-6';
+  const displayedBadgeList = BADGE_LIST.map(({name, description, icon, iconSkeleton}, index) => {
+    const hintFrameStyle = (index + 1) % 3 === 0 ? 'right-0' : '';
+    const hintArrowStyle = (index + 1) % 3 === 0 ? 'right-6' : 'left-6';
 
-      /* Info: (20230517 - Julian) 如果 badges name 中包含徽章的名字 && receiveTime > 0，表示獲得該徽章 */
-      const isReceived =
-        badges[index].name.includes(name) && badges[index].receiveTime > 0 ? true : false;
+    /* Info: (20230517 - Julian) 如果 badges name 中包含徽章的名字 && receiveTime > 0，表示獲得該徽章 */
+    const isReceived =
+      badges[index].badgeName.includes(name) && badges[index].receiveTime > 0 ? true : false;
 
-      const imgSrc = isReceived ? icon : iconSkeleton;
-      const receiveTime = isReceived ? timestampToString(badges[index].receiveTime).date : null;
-      const hintArrowTop = isReceived ? 'top-12' : 'top-8';
+    const imgSrc = isReceived ? icon : iconSkeleton;
+    const receiveTime = isReceived ? timestampToString(badges[index].receiveTime).date : null;
+    const hintArrowTop = isReceived ? 'top-12' : 'top-8';
 
-      const badgeModalData = {
-        badgeName: name,
-        title: title,
-        image: icon,
+    const badgeModalData = {
+      badgeData: {
         badgeId: badges[index].badgeId,
-      };
+        badgeName: name,
+        userId: userId,
+        receiveTime: badges[index].receiveTime,
+      },
+    };
 
-      // Info: (20230517 - Julian) 只有自己的徽章才能點擊並分享
-      const clickHandler =
-        isMe && isReceived
-          ? () => {
-              globalCtx.dataBadgeModalHandler(badgeModalData);
-              globalCtx.visibleBadgeModalHandler();
-            }
-          : () => null;
+    // Info: (20230517 - Julian) 只有自己的徽章才能點擊並分享
+    const clickHandler =
+      isMe && isReceived
+        ? () => {
+            globalCtx.dataBadgeModalHandler(badgeModalData);
+            globalCtx.visibleBadgeModalHandler();
+          }
+        : () => null;
 
-      return (
+    return (
+      <div
+        key={index}
+        className="group relative bg-darkGray8 p-2 hover:cursor-pointer sm:p-4"
+        onClick={clickHandler}
+      >
+        <Image src={imgSrc} width={70} height={70} alt="badge_icon" />
         <div
-          key={index}
-          className="group relative bg-darkGray8 p-2 hover:cursor-pointer sm:p-4"
-          onClick={clickHandler}
+          className={`absolute -top-12 z-10 whitespace-nowrap rounded bg-black p-2 text-sm ${hintFrameStyle} opacity-0 transition-all duration-300 group-hover:opacity-100`}
         >
-          <Image src={imgSrc} width={70} height={70} alt="badge_icon" />
-          <div
-            className={`absolute -top-12 z-10 whitespace-nowrap rounded bg-black p-2 text-sm ${hintFrameStyle} opacity-0 transition-all duration-300 group-hover:opacity-100`}
-          >
-            <span
-              className={`absolute border-x-8 border-t-20px ${hintArrowTop} ${hintArrowStyle} border-x-transparent border-t-black`}
-            ></span>
-            <div className="">{t(description)}</div>
-            <div className="text-xs text-tidebitTheme">{receiveTime}</div>
-          </div>
+          <span
+            className={`absolute border-x-8 border-t-20px ${hintArrowTop} ${hintArrowStyle} border-x-transparent border-t-black`}
+          ></span>
+          <div className="">{t(description)}</div>
+          <div className="text-xs text-tidebitTheme">{receiveTime}</div>
         </div>
-      );
-    }
-  );
+      </div>
+    );
+  });
 
   const formContent = (
     <div className="flex w-full flex-col space-y-4 divide-y divide-lightGray overflow-y-auto overflow-x-hidden px-8 pt-4">

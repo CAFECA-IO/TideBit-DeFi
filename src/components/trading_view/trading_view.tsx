@@ -5,9 +5,10 @@ import TradingLineGraphChart from '../trading_line_graph_chart/trading_line_grap
 import useWindowSize from '../../lib/hooks/use_window_size';
 import Lottie from 'lottie-react';
 import spotAnimation from '../../../public/animation/circle.json';
-import {INITIAL_POSITION_LABEL_DISPLAYED_STATE} from '../../constants/display';
+import {CANDLESTICK_SIZE, INITIAL_POSITION_LABEL_DISPLAYED_STATE} from '../../constants/display';
 import {MarketContext} from '../../contexts/market_context';
 import useStateRef from 'react-usestateref';
+import {getTime} from '../../constants/time_span_union';
 
 const DEFAULT_CHART_WIDTH = 900;
 const DEFAULT_CHART_HEIGHT = 400;
@@ -44,14 +45,14 @@ const getSwitchWidth = () => {
 };
 
 const TradingView = () => {
-  const {showPositionOnChart} = useContext(MarketContext);
-  // console.log('showPositionOnChart in Trading view', showPositionOnChart);
+  const marketCtx = useContext(MarketContext);
 
   const [candlestickOn, setCandlestickOn, candlestickOnRef] = useStateRef(true);
   const [lineGraphOn, setLineGraphOn, lineGraphOnRef] = useStateRef(true);
 
   const [selectedChartType, setSelectedChartType] = useState('candlestick');
-  const [selectedChartInterval, setSelectedChartInterval] = useState('live');
+  const [selectedChartInterval, setSelectedChartInterval, selectedChartIntervalRef] =
+    useStateRef('live');
   const [showPositionLabel, setShowPositionLabel, showPositionLabelRef] = useStateRef(
     INITIAL_POSITION_LABEL_DISPLAYED_STATE
   );
@@ -96,31 +97,12 @@ const TradingView = () => {
     )
       return;
     setSelectedChartInterval(props);
-    // console.log('market section get chart interval: ', props);
   };
-
-  // function getRandomIntInclusive(min, max) {
-  //   min = Math.ceil(min);
-  //   max = Math.floor(max);
-  //   return Math.floor(Math.random() * (max - min + 1)) + min; //The maximum is inclusive and the minimum is inclusive
-  // }
-
-  // function getRandomArray(elementNumber: number, min: number, max: number) {
-  //   const arr: number[] = [];
-
-  //   for (let i = 0; i < elementNumber; i++) {
-  //     arr.push(getRandomIntInclusive(min, max));
-  //   }
-
-  //   return arr;
-  // }
-
-  // const randomArray = getRandomArray(18, 6582, 6612);
-  // console.log('randomArray', randomArray);
 
   const displayedTradingView = (
     <>
       <CandlestickChart
+        candleSize={CANDLESTICK_SIZE}
         showPositionLabel={showPositionLabelRef.current}
         candlestickOn={candlestickOnRef.current}
         lineGraphOn={lineGraphOnRef.current}

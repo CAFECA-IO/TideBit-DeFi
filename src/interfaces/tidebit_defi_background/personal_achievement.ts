@@ -1,5 +1,4 @@
-import {IBadge} from './badge';
-import {DEFAULT_BEDGES} from '../../constants/display';
+import {IBadge, getDummyBadges, defaultBadges} from './badge';
 import {randomFloatFromInterval} from '../../lib/common';
 import {IPnL} from './pnl';
 import {ProfitState} from '../../constants/profit_state';
@@ -53,7 +52,7 @@ export const defaultPersonalAchievement: IPersonalAchievement = {
   diversification: 0,
   hightestROI: 0,
   lowestROI: 0,
-  badges: DEFAULT_BEDGES,
+  badges: defaultBadges,
 };
 
 export const getDummyPersonalAchievements = (userId: string): IPersonalAchievement => {
@@ -61,19 +60,7 @@ export const getDummyPersonalAchievements = (userId: string): IPersonalAchieveme
   const randomTradingVolume = Math.floor(Math.random() * 100000);
   const randomOnlineTime = Math.floor(Math.random() * 1000000);
   const randomFloat = randomFloatFromInterval(10, 90, 2);
-  const randomTime = Math.floor(Math.random() * (1672531200 - 1684289192) + 1684289192);
-
-  const randomBadges = DEFAULT_BEDGES.map(badge => {
-    const randomBadge =
-      Math.random() > 0.5 ? {name: badge.name, badgeId: badge.name} : {name: '', badgeId: ''};
-    const randomReceivedTime =
-      randomTime + (randomTime % 2 === 0 ? Math.random() * 1000000 : -Math.random() * 1000000);
-
-    return {
-      ...randomBadge,
-      receiveTime: randomReceivedTime,
-    };
-  });
+  const randomBadges = getDummyBadges(userId);
 
   const personalAchievements = {
     userId: userId,

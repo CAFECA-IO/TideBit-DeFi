@@ -6,6 +6,7 @@ import {
 import Toggle from '../toggle/toggle';
 import {MarketContext} from '../../contexts/market_context';
 import useWindowSize from '../../lib/hooks/use_window_size';
+import {TimeSpanUnion} from '../../constants/time_span_union';
 
 interface ITradingChartSwitchProps {
   getTradingViewType: (tradingViewState: string) => void;
@@ -24,6 +25,7 @@ const TradingChartSwitchMobile = ({
   getTradingViewInterval,
   getDisplayedPositionLabel,
 }: ITradingChartSwitchProps) => {
+  const {selectTimeSpanHandler} = useContext(MarketContext);
   const [activeButton, setActiveButton] = useState('live');
 
   const [activeChartType, setActiveChartType] = useState('candlestick');
@@ -71,33 +73,50 @@ const TradingChartSwitchMobile = ({
   const liveButtonClickHandler = () => {
     setActiveButton('live');
     getTradingViewInterval('live');
+    selectTimeSpanHandler(TimeSpanUnion._1s);
   };
 
   const fiveMinButtonClickHandler = () => {
     setActiveButton('5m');
     getTradingViewInterval('5m');
+    selectTimeSpanHandler(TimeSpanUnion._10s);
   };
 
   const fifteenMinButtonClickHandler = () => {
     setActiveButton('15m');
     getTradingViewInterval('15m');
+    selectTimeSpanHandler(TimeSpanUnion._30s);
+  };
+
+  const thirtyMinButtonClickHandler = () => {
+    setActiveButton('30m');
+    getTradingViewInterval('30m');
+    selectTimeSpanHandler(TimeSpanUnion._1m);
   };
 
   const oneHrButtonClickHandler = () => {
     setActiveButton('1h');
     getTradingViewInterval('1h');
+    selectTimeSpanHandler(TimeSpanUnion._2m);
+  };
+
+  const fourHrButtonClickHandler = () => {
+    setActiveButton('4h');
+    getTradingViewInterval('4h');
+    selectTimeSpanHandler(TimeSpanUnion._8m);
   };
 
   const twelveHrButtonClickHandler = () => {
     setActiveButton('12h');
     getTradingViewInterval('12h');
+    selectTimeSpanHandler(TimeSpanUnion._24m);
   };
 
   const oneDayButtonClickHandler = () => {
     setActiveButton('1d');
     getTradingViewInterval('1d');
+    selectTimeSpanHandler(TimeSpanUnion._48m);
   };
-
   const stickSwitchButton = (
     <div>
       <button

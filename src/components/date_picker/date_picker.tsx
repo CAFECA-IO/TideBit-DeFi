@@ -152,7 +152,7 @@ const DatePicker = ({date, minDate, maxDate, setDate}: IDatePickerProps) => {
         openDates ? 'bg-darkGray8' : 'bg-darkGray7'
       } hover:cursor-pointer`}
     >
-      {/*       <button
+      <button
         className="inline-flex w-140px items-center justify-between px-5 py-3"
         onClick={openDateHandler}
       >
@@ -160,7 +160,7 @@ const DatePicker = ({date, minDate, maxDate, setDate}: IDatePickerProps) => {
         <Image src="/elements/date_icon.svg" alt="" width={20} height={20} />
       </button>
 
-      <div 
+      <div
         className={`absolute top-10 z-10 h-auto  w-320px flex-col bg-darkGray2 p-6 ${
           openDates ? 'flex' : 'hidden'
         }`}
@@ -182,15 +182,15 @@ const DatePicker = ({date, minDate, maxDate, setDate}: IDatePickerProps) => {
         <div className={`my-4 ${formatGridStyle} text-center text-xxs text-lightGray`}>
           {displayWeek}
         </div>
-
+        {/* 
         <PopulateDates
           daysInMonth={daysInMonth(selectedYear, selectedMonth)}
           selectedTime={new Date(formatDate(date)).getDate()}
           selectedYear={selectedYear}
           selectedMonth={selectedMonth}
           selectDate={selectDate}
-        />
-      </div> */}
+        /> */}
+      </div>
     </div>
   );
 };

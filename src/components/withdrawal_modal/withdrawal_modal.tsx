@@ -11,7 +11,8 @@ import {
 import {useGlobal} from '../../contexts/global_context';
 import useStateRef from 'react-usestateref';
 import {findCodeByReason, getTimestamp, locker, wait} from '../../lib/common';
-import {DELAYED_HIDDEN_SECONDS} from '../../constants/display';
+import {DELAYED_HIDDEN_SECONDS, UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
+import {FRACTION_DIGITS} from '../../constants/config';
 import {UserContext} from '../../contexts/user_context';
 import {OrderType} from '../../constants/order_type';
 import {useTranslation} from 'react-i18next';
@@ -342,7 +343,12 @@ const WithdrawalModal = ({
             <div className="flex justify-end">
               <p className="pt-3 text-end text-xs tracking-wide">
                 {t('D_W_MODAL.AVAILABLE_ON_TIDEBIT')}:{' '}
-                <span className="text-tidebitTheme">{userAvailableBalance}</span>{' '}
+                <span className="text-tidebitTheme">
+                  {userAvailableBalance.toLocaleString(
+                    UNIVERSAL_NUMBER_FORMAT_LOCALE,
+                    FRACTION_DIGITS
+                  )}
+                </span>{' '}
                 {selectedCrypto.symbol}
               </p>
             </div>

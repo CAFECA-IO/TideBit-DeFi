@@ -27,15 +27,12 @@ const ReceiptSearch = ({
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
   const [tradingTypeMenuOpen, setTradingTypeMenuOpen] = useState(false);
+  /* Info:(20230530 - Julian) Safari 只接受 yyyy/mm/dd 格式的日期 */
   const [dateStart, setDateStart] = useState(
-    new Date(
-      `${currentDate.getFullYear()}-${currentDate.getMonth() + 1}-${currentDate.getDate()} 08:00:00`
-    )
+    new Date(`${currentDate.getFullYear()}/${currentDate.getMonth() + 1}/${currentDate.getDate()}`)
   );
   const [dateEnd, setDateEnd] = useState(
-    new Date(
-      `${currentDate.getFullYear()}-${currentDate.getMonth() + 1}-${currentDate.getDate()} 08:00:00`
-    )
+    new Date(`${currentDate.getFullYear()}/${currentDate.getMonth() + 1}/${currentDate.getDate()}`)
   );
   //const [tickersSettings, setTickersSettings] = useState(null);
 
@@ -86,8 +83,8 @@ const ReceiptSearch = ({
   const dateStartUpdateHandler = useCallback(
     async (date: Date) => {
       setDateStart(date);
-      const end = dateEnd.toISOString().substring(0, 10);
-      const start = date.toISOString().substring(0, 10);
+      const end = dateEnd.toLocaleDateString();
+      const start = date.toLocaleDateString();
 
       setFilteredDate([start, end]);
     },
@@ -97,8 +94,8 @@ const ReceiptSearch = ({
   const dateEndUpdateHandler = useCallback(
     async (date: Date) => {
       setDateEnd(date);
-      const end = date.toISOString().substring(0, 10);
-      const start = dateStart.toISOString().substring(0, 10);
+      const end = date.toLocaleDateString();
+      const start = dateStart.toLocaleDateString();
 
       setFilteredDate([start, end]);
     },
@@ -158,7 +155,6 @@ const ReceiptSearch = ({
       {/* Info: (20230316 - Julian) Date Picker */}
       <div className="flex flex-col items-start">
         {t('MY_ASSETS_PAGE.RECEIPT_SECTION_DATE_TITLE')}
-        {/* ToDo: (20230316 - Julian) DatePicker */}
         <div className="mt-2 flex items-center space-x-2">
           <DatePicker date={dateStart} setDate={dateStartUpdateHandler} maxDate={dateEnd} />
           <p>{t('MY_ASSETS_PAGE.RECEIPT_SECTION_DATE_TO')}</p>
@@ -179,7 +175,7 @@ const ReceiptSearch = ({
       />
       <button
         type="button"
-        className="absolute top-0 right-1 rounded-lg bg-transparent px-4 py-2 text-sm font-medium text-white hover:text-gray-700/80 focus:outline-none focus:ring-0 focus:ring-blue-300"
+        className="absolute right-1 top-0 rounded-lg bg-transparent px-4 py-2 text-sm font-medium text-white hover:text-gray-700/80 focus:outline-none focus:ring-0 focus:ring-blue-300"
       >
         <CgSearch size={30} />
       </button>

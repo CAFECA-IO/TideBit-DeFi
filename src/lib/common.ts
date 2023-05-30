@@ -307,8 +307,8 @@ export const toDisplayCFDOrder = (
   // Info: (20230510 - Julian) positionLineGraph with spread
   const positionLineGraphWithSpread =
     cfdOrder.typeOfPosition === TypeOfPosition.BUY
-      ? positionLineGraph.map((v: number) => v * (1 + spreadValue))
-      : positionLineGraph.map((v: number) => v * (1 - spreadValue));
+      ? positionLineGraph.map((v: number) => v * (1 - spreadValue))
+      : positionLineGraph.map((v: number) => v * (1 + spreadValue));
 
   const openPrice = cfdOrder.openPrice;
   const nowPrice = positionLineGraph[positionLineGraph.length - 1];

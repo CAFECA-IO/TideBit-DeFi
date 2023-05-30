@@ -1,4 +1,6 @@
 import React from 'react';
+import {UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
+import {FRACTION_DIGITS} from '../../constants/config';
 import {useTranslation} from 'react-i18next';
 
 type TranslateFunction = (s: string) => string;
@@ -63,7 +65,7 @@ const TradeStatistics = ({
 
   return (
     <>
-      <div style={{width: '97%'}} className="flex-col justify-start">
+      <div className="flex-col justify-start">
         <h1 className="text-start text-xl text-lightWhite">
           {t('TRADE_PAGE.TRADE_STATISTICS_LIVE_STATISTICS')}
         </h1>
@@ -86,7 +88,7 @@ const TradeStatistics = ({
           {/* Bar */}
           <div className={`relative mb-4 h-2 w-full rounded-full bg-lightRed`}>
             <div
-              className={`absolute top-0 left-0 h-2 rounded-l bg-lightGreen5`}
+              className={`absolute left-0 top-0 h-2 rounded-l bg-lightGreen5`}
               style={{width: `${bullAndBearIndex}%`}}
             ></div>
           </div>
@@ -113,11 +115,15 @@ const TradeStatistics = ({
             </div>
 
             <div className="flex w-full justify-between">
-              <p className="text-sm text-lightWhite">{fiveMin.low}</p>
+              <p className="text-sm text-lightWhite">
+                {fiveMin.low.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)}
+              </p>
               <p className="text-sm text-lightWhite">
                 {t('TRADE_PAGE.TRADE_STATISTICS_5_MINUTES')}
               </p>
-              <p className="text-sm text-lightWhite">{fiveMin.high}</p>
+              <p className="text-sm text-lightWhite">
+                {fiveMin.high.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)}
+              </p>
             </div>
           </div>
 
@@ -131,11 +137,15 @@ const TradeStatistics = ({
             </div>
 
             <div className="flex w-full justify-between">
-              <p className="text-sm text-lightWhite">{sixtyMin.low}</p>
+              <p className="text-sm text-lightWhite">
+                {sixtyMin.low.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)}
+              </p>
               <p className="text-sm text-lightWhite">
                 {t('TRADE_PAGE.TRADE_STATISTICS_60_MINUTES')}
               </p>
-              <p className="text-sm text-lightWhite">{sixtyMin.high}</p>
+              <p className="text-sm text-lightWhite">
+                {sixtyMin.high.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)}
+              </p>
             </div>
           </div>
 
@@ -149,9 +159,13 @@ const TradeStatistics = ({
             </div>
 
             <div className="flex w-full justify-between">
-              <p className="text-sm text-lightWhite">{oneDay.low}</p>
+              <p className="text-sm text-lightWhite">
+                {oneDay.low.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)}
+              </p>
               <p className="text-sm text-lightWhite">{t('TRADE_PAGE.TRADE_STATISTICS_1_DAY')}</p>
-              <p className="text-sm text-lightWhite">{oneDay.high}</p>
+              <p className="text-sm text-lightWhite">
+                {oneDay.high.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)}
+              </p>
             </div>
           </div>
         </div>

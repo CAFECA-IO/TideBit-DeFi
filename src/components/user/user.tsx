@@ -56,50 +56,61 @@ const User = () => {
         aria-labelledby="avatarButton"
       >
         <li>
-          <Link href={TBDURL.MY_ASSETS} className="block py-2 pl-3 pr-4 hover:bg-darkGray5">
-            <div className="flex flex-row items-center space-x-2">
-              <BiWallet />
-              <p>{t('USER.ASSETS')}</p>
-            </div>
-          </Link>
-        </li>
-        <li
-          onClick={depositClickHandler}
-          className="block py-2 pl-3 pr-4 hover:cursor-pointer hover:bg-darkGray5"
-        >
-          <div className="flex flex-row items-center space-x-2">
-            <FaDownload />
-            <p>{t('USER.DEPOSIT')}</p>
-          </div>
-        </li>
-        <li
-          onClick={withdrawClickHandler}
-          className="block py-2 pl-3 pr-4 hover:cursor-pointer hover:bg-darkGray5"
-        >
-          <div className="flex flex-row items-center space-x-2">
-            <FaUpload />
-            <p>{t('USER.WITHDRAW')}</p>
-          </div>
+          <button className="block w-full py-2 pl-3 pr-4 enabled:hover:cursor-pointer enabled:hover:bg-darkGray5">
+            <Link href={TBDURL.MY_ASSETS}>
+              <div className="flex flex-row items-center space-x-2">
+                <BiWallet />
+                <p>{t('USER.ASSETS')}</p>
+              </div>
+            </Link>
+          </button>
         </li>
         <li>
-          <Link href="#" className="block py-2 pl-3 pr-4 hover:bg-darkGray5">
+          <button
+            onClick={depositClickHandler}
+            className="block w-full py-2 pl-3 pr-4 enabled:hover:cursor-pointer enabled:hover:bg-darkGray5"
+          >
+            <div className="flex flex-row items-center space-x-2">
+              <FaDownload />
+              <p>{t('USER.DEPOSIT')}</p>
+            </div>
+          </button>
+        </li>
+        <li>
+          <button
+            onClick={withdrawClickHandler}
+            className="block w-full py-2 pl-3 pr-4 enabled:hover:cursor-pointer enabled:hover:bg-darkGray5 disabled:opacity-75"
+            disabled
+          >
+            <div className="flex flex-row items-center space-x-2">
+              <FaUpload />
+              <p>{t('USER.WITHDRAW')}</p>
+            </div>
+          </button>
+        </li>
+        <li>
+          <button
+            className="block w-full py-2 pl-3 pr-4 enabled:hover:cursor-pointer enabled:hover:bg-darkGray5 disabled:opacity-75"
+            disabled
+          >
+            {/* <Link href=""> */}
             <div className="flex flex-row items-center space-x-2">
               <VscAccount />
               <p>{t('USER.ACCOUNT')}</p>
             </div>
-          </Link>
+            {/* </Link> */}
+          </button>
         </li>
         <li>
-          <Link
+          <button
             onClick={userCtx.disconnect}
-            href="#"
-            className="block py-2 pl-3 pr-4 hover:bg-darkGray5"
+            className="block w-full py-2 pl-3 pr-4 enabled:hover:cursor-pointer enabled:hover:bg-darkGray5"
           >
             <div className="flex flex-row items-center space-x-2">
               <ImExit />
               <p>{t('USER.DISCONNECT')}</p>
             </div>
-          </Link>
+          </button>
         </li>
       </ul>
     </div>

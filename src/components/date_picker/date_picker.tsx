@@ -24,6 +24,7 @@ interface IDatePickerProps {
 
 const formatGridStyle = 'grid grid-cols-7 gap-4';
 
+/* Info:(20230530 - Julian) Safari 只接受 YYYY/MM/DD 格式的日期 */
 const PopulateDates = ({
   daysInMonth,
   selectedTime,
@@ -32,7 +33,7 @@ const PopulateDates = ({
   selectDate,
 }: IPopulateDatesParams) => {
   const formatDaysInMonth = daysInMonth.map((el: Dates) => {
-    const date = el ? new Date(`${selectedYear}-${selectedMonth + 1}-${el.date}`) : null;
+    const date = el ? new Date(`${selectedYear}/${selectedMonth + 1}/${el.date}`) : null;
     const isSelected = date?.getTime() && el.date === selectedTime ? true : false;
 
     const formatDate = el?.date !== undefined ? (el.date < 10 ? `0${el.date}` : `${el.date}`) : ' ';
@@ -67,15 +68,15 @@ const DatePicker = ({date, minDate, maxDate, setDate}: IDatePickerProps) => {
   });
 
   const firstDayOfMonth = (year: number, month: number) => {
-    return new Date(year, month, 1).getDay();
+    return new Date(`${year}/${month}/01`).getDay();
   };
 
   const daysInMonth = (year: number, month: number) => {
     const day = firstDayOfMonth(year, month);
-    const dateLength = new Date(year, month + 1, 0).getDate();
+    const dateLength = new Date(`${year}/${month + 1}/00`).getDate();
     let dates: Dates[] = [];
     for (let i = 0; i < dateLength; i++) {
-      const dateTime = new Date(`${year}-${month + 1}-${i + 1}`).getTime();
+      const dateTime = new Date(`${year}/${month + 1}/${i + 1}`).getTime();
       const date = {
         date: i + 1,
         time: dateTime,
@@ -135,7 +136,7 @@ const DatePicker = ({date, minDate, maxDate, setDate}: IDatePickerProps) => {
   const selectDate = useCallback(
     (el: Dates) => {
       let newDate = new Date(el.time);
-      newDate = new Date(`${newDate.getFullYear()}-${newDate.getMonth() + 1}-${newDate.getDate()}`);
+      newDate = new Date(`${newDate.getFullYear()}/${newDate.getMonth() + 1}/${newDate.getDate()}`);
       setDate(newDate);
       setOpenDates(false);
     },
@@ -185,7 +186,7 @@ const DatePicker = ({date, minDate, maxDate, setDate}: IDatePickerProps) => {
 
         <PopulateDates
           daysInMonth={daysInMonth(selectedYear, selectedMonth)}
-          selectedTime={new Date(formatDate(date)).getDate()}
+          selectedTime={new Date(formatDate(date).replace(/-/g, '/')).getDate()}
           selectedYear={selectedYear}
           selectedMonth={selectedMonth}
           selectDate={selectDate}

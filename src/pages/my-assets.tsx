@@ -33,9 +33,9 @@ const MyAssets = () => {
             {displayedNavBar}
 
             <main>
-              {/*               <div>
+              <div>
                 <AssetsPageBody />
-              </div> */}
+              </div>
             </main>
           </div>
         </>

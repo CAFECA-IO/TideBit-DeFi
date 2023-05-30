@@ -156,14 +156,14 @@ const ReceiptSearch = ({
       </div>
 
       {/* Info: (20230316 - Julian) Date Picker */}
-      {/*       <div className="flex flex-col items-start">
+      <div className="flex flex-col items-start">
         {t('MY_ASSETS_PAGE.RECEIPT_SECTION_DATE_TITLE')}
         <div className="mt-2 flex items-center space-x-2">
           <DatePicker date={dateStart} setDate={dateStartUpdateHandler} maxDate={dateEnd} />
           <p>{t('MY_ASSETS_PAGE.RECEIPT_SECTION_DATE_TO')}</p>
           <DatePicker date={dateEnd} setDate={dateEndUpdateHandler} minDate={dateStart} />
         </div>
-      </div> */}
+      </div>
     </div>
   );
 

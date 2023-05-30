@@ -241,10 +241,6 @@ const PositionClosedModal = ({
 
       const data = quotation.data as IQuotation;
 
-      // Deprecated: (20230328 - Shirley) remove this after quotation is fixed
-      // eslint-disable-next-line no-console
-      console.log('price', data.price);
-
       // Info: if there's error fetching quotation, disable the submit btn (20230328 - Shirley)
       if (
         quotation.success &&

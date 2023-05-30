@@ -28,7 +28,7 @@ import CircularProgressBar from '../circular_progress_bar/circular_progress_bar'
 import {
   unitAsset,
   FRACTION_DIGITS,
-  TARGET_LIMIT_DIGITS,
+  TARGET_MAX_DIGITS,
   TP_SL_LIMIT_PERCENT,
 } from '../../constants/config';
 import useStateRef from 'react-usestateref';
@@ -489,7 +489,7 @@ const UpdateFormModal = ({
     const caledTpUpperLimit =
       openCfdDetails.typeOfPosition === TypeOfPosition.SELL
         ? roundToDecimalPlaces(openCfdDetails.openPrice * (1 - TP_SL_LIMIT_PERCENT), 2)
-        : TARGET_LIMIT_DIGITS;
+        : TARGET_MAX_DIGITS;
 
     const isLiquidated =
       marketCtx.selectedTicker?.price !== undefined

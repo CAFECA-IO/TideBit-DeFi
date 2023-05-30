@@ -14,6 +14,8 @@ import {
   TERM_OF_SERVICE,
   MONTH_FULL_NAME_LIST,
   FRACTION_DIGITS,
+  TARGET_MAX_DIGITS,
+  TARGET_MIN_DIGITS,
 } from '../constants/config';
 import {UNIVERSAL_NUMBER_FORMAT_LOCALE, DEFAULT_SPREAD} from '../constants/display';
 import ServiceTerm from '../constants/contracts/service_term';
@@ -330,10 +332,6 @@ export const toDisplayCFDOrder = (
       ? cfdStateCode.TAKE_PROFIT
       : cfdStateCode.COMMON;
 
-  // Deprecated: (20230328 - Shirley) remove this after quotation is fixed
-  // eslint-disable-next-line no-console
-  console.log('currentPrice', currentPrice, 'pnl', pnl);
-
   const displayCFDOrder: IDisplayCFDOrder = {
     ...cfdOrder,
     pnl: {
@@ -553,4 +551,19 @@ export const findCodeByReason = (reason: string): ICode | undefined => {
   const ReasonToCode = swapKeysAndValues(Reason);
 
   return ReasonToCode[reason] as ICode;
+};
+
+export const validateCFD = (feePercent: number, amount: number) => {
+  // Check if the `fee` and `amount` is valid
+  if (feePercent > 0.2 || feePercent < 0) {
+    // eslint-disable-next-line no-console
+    console.log(feePercent, 'feePercent invalid');
+    return false;
+  } else if (amount > TARGET_MAX_DIGITS || amount < TARGET_MIN_DIGITS) {
+    // eslint-disable-next-line no-console
+    console.log(amount, 'target limit invalid');
+    return false;
+  }
+
+  return true;
 };

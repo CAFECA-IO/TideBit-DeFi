@@ -20,7 +20,7 @@ import {
   UNIVERSAL_NUMBER_FORMAT_LOCALE,
 } from '../../constants/display';
 import {
-  TARGET_LIMIT_DIGITS,
+  TARGET_MAX_DIGITS,
   QUOTATION_RENEWAL_INTERVAL_SECONDS,
   unitAsset,
   SUGGEST_SL,
@@ -663,7 +663,7 @@ const TradeTabMobile = () => {
   const displayedTargetSetting = (
     <TradingInput
       lowerLimit={0}
-      upperLimit={TARGET_LIMIT_DIGITS}
+      upperLimit={TARGET_MAX_DIGITS}
       getInputValue={getTargetInputValue}
       inputInitialValue={targetInputValueRef.current}
       inputValueFromParent={targetInputValueRef.current}
@@ -700,7 +700,7 @@ const TradeTabMobile = () => {
     <div className={isDisplayedLongTpSetting}>
       <TradingInput
         lowerLimit={longTpLowerLimitRef.current}
-        upperLimit={TARGET_LIMIT_DIGITS}
+        upperLimit={TARGET_MAX_DIGITS}
         inputInitialValue={longTpValue}
         inputValueFromParent={longTpValue}
         setInputValueFromParent={setLongTpValue}

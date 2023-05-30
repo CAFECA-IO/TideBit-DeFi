@@ -31,7 +31,8 @@ export type ICode =
   | '10210005'
   | '60210003'
   | '30410005'
-  | '10110003';
+  | '10110003'
+  | '60220002';
 
 export type ICodeConstant = {
   SUCCESS: ICode;
@@ -69,6 +70,7 @@ export type ICodeConstant = {
   CFD_ORDER_NOT_MATCH: ICode;
   UNABLE_TO_WITHDRAW_DUE_TO_POLICY: ICode;
   NEED_ENABLE_SHARE_FUNCTION: ICode;
+  INVALID_CFD_OPEN_REQUEST: ICode;
 
   UNKNOWN_ERROR: ICode;
   UNKNOWN_ERROR_IN_COMPONENT: ICode;
@@ -114,6 +116,7 @@ export const Code: ICodeConstant = {
   INTERNAL_SERVER_ERROR: '60220001',
   CANNOT_CONVERT_TO_IMAGE: '60310001',
   CFD_ORDER_NOT_MATCH: '60210003',
+  INVALID_CFD_OPEN_REQUEST: '60220002',
 
   DEPOSIT_TOO_FREQUENCY: '80410001',
 
@@ -154,6 +157,7 @@ export const Reason: IReason = {
   '60220001': 'ERROR_MESSAGE.INTERNAL_SERVER_ERROR',
   '60310001': 'Cannot convert HTML to image',
   '60210003': 'CFD order are not consistent with the one got from API',
+  '60220002': 'CFD information is invalid',
 
   '80410001': 'Already deposit in a month',
 

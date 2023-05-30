@@ -401,7 +401,7 @@ const PositionClosedModal = ({
 
   // Info: Get quotation before the modal is shown (20230329 - Shirley)
   useEffect(() => {
-    // if (!globalCtx.visiblePositionClosedModal) return;
+    if (!globalCtx.visiblePositionClosedModal) return;
     (async () => {
       const quotation = await getQuotation();
       if (!quotation) {
@@ -426,34 +426,34 @@ const PositionClosedModal = ({
     })();
   }, [globalCtx.visiblePositionClosedModal]);
 
-  useEffect(() => {
-    if (globalCtx.visiblePositionClosedModal) return;
-    (async () => {
-      const quotation = await getQuotation();
-      // Deprecated: (20230328 - Shirley) remove this after quotation is fixed
-      // eslint-disable-next-line no-console
-      console.log('quotation when modal is not shown', quotation);
-      if (!quotation) {
-        /* Info: (20230508 - Julian) exception handling: error toast */
-        globalCtx.toast({
-          type: ToastTypeAndText.ERROR.type,
-          toastId: ToastId.GET_QUOTATION_ERROR,
-          message: `${t(
-            quotationErrorMessageRef.current.reason ?? 'ERROR_MESSAGE.UNKNOWN_ERROR'
-          )} (${quotationErrorMessageRef.current.code})`,
-          typeText: t(ToastTypeAndText.ERROR.text),
-          isLoading: false,
-          autoClose: false,
-        });
-        return;
-      }
+  // useEffect(() => {
+  //   if (globalCtx.visiblePositionClosedModal) return;
+  //   (async () => {
+  //     const quotation = await getQuotation();
+  //     // Deprecated: (20230328 - Shirley) remove this after quotation is fixed
+  //     // eslint-disable-next-line no-console
+  //     console.log('quotation when modal is not shown', quotation);
+  //     if (!quotation) {
+  //       /* Info: (20230508 - Julian) exception handling: error toast */
+  //       globalCtx.toast({
+  //         type: ToastTypeAndText.ERROR.type,
+  //         toastId: ToastId.GET_QUOTATION_ERROR,
+  //         message: `${t(
+  //           quotationErrorMessageRef.current.reason ?? 'ERROR_MESSAGE.UNKNOWN_ERROR'
+  //         )} (${quotationErrorMessageRef.current.code})`,
+  //         typeText: t(ToastTypeAndText.ERROR.text),
+  //         isLoading: false,
+  //         autoClose: false,
+  //       });
+  //       return;
+  //     }
 
-      const displayedCloseOrder = toDisplayCloseOrder(openCfdDetails, quotation);
-      globalCtx.dataPositionClosedModalHandler(displayedCloseOrder);
+  //     const displayedCloseOrder = toDisplayCloseOrder(openCfdDetails, quotation);
+  //     globalCtx.dataPositionClosedModalHandler(displayedCloseOrder);
 
-      setGQuotation(quotation);
-    })();
-  }, [marketCtx.selectedTicker?.price]);
+  //     setGQuotation(quotation);
+  //   })();
+  // }, [marketCtx.selectedTicker?.price]);
 
   // Info: renew the quotation when it expires (20230530 - Shirley)
   useEffect(() => {

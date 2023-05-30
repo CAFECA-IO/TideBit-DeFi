@@ -1172,7 +1172,7 @@ export const UserProvider = ({children}: IUserProvider) => {
       };
       const newOpenedCFDs = [...openCFDsRef.current];
       index = newOpenedCFDs.findIndex(o => o.id === updateCFDOrder.id);
-      newOpenedCFDs.splice(index, 1);
+      if (index !== -1) newOpenedCFDs.splice(index, 1);
       setOpenedCFDs(newOpenedCFDs);
       index = closedCFDsRef.current.findIndex(o => o.id === updateCFDOrder.id);
       if (index === -1) setClosedCFDs(prev => [...prev, updateCFDOrder]);

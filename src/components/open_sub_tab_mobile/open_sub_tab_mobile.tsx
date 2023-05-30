@@ -48,11 +48,6 @@ const OpenSubTabMobile = () => {
       begin: cfd.createTimestamp,
     });
 
-    const spread =
-      cfd.typeOfPosition === TypeOfPosition.BUY
-        ? 1 + (marketCtx.tickerLiveStatistics?.spread ?? DEFAULT_SPREAD)
-        : 1 - (marketCtx.tickerLiveStatistics?.spread ?? DEFAULT_SPREAD);
-
     /**
      * Info: (20230428 - Shirley)
      * without `positionLineGraph`, use market price to calculate
@@ -61,7 +56,7 @@ const OpenSubTabMobile = () => {
      */
     const currentPrice =
       positionLineGraph.length > 0
-        ? positionLineGraph[positionLineGraph.length - 1] * spread
+        ? positionLineGraph[positionLineGraph.length - 1]
         : (!!marketCtx.selectedTicker?.price &&
             ((cfd.typeOfPosition === TypeOfPosition.BUY && caledPriceRef.current.longPrice) ||
               (cfd.typeOfPosition === TypeOfPosition.SELL && caledPriceRef.current.shortPrice))) ||

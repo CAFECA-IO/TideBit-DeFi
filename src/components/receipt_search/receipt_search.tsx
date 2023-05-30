@@ -156,15 +156,14 @@ const ReceiptSearch = ({
       </div>
 
       {/* Info: (20230316 - Julian) Date Picker */}
-      <div className="flex flex-col items-start">
+      {/*       <div className="flex flex-col items-start">
         {t('MY_ASSETS_PAGE.RECEIPT_SECTION_DATE_TITLE')}
-        {/* ToDo: (20230316 - Julian) DatePicker */}
         <div className="mt-2 flex items-center space-x-2">
           <DatePicker date={dateStart} setDate={dateStartUpdateHandler} maxDate={dateEnd} />
           <p>{t('MY_ASSETS_PAGE.RECEIPT_SECTION_DATE_TO')}</p>
           <DatePicker date={dateEnd} setDate={dateEndUpdateHandler} minDate={dateStart} />
         </div>
-      </div>
+      </div> */}
     </div>
   );
 
@@ -179,7 +178,7 @@ const ReceiptSearch = ({
       />
       <button
         type="button"
-        className="absolute top-0 right-1 rounded-lg bg-transparent px-4 py-2 text-sm font-medium text-white hover:text-gray-700/80 focus:outline-none focus:ring-0 focus:ring-blue-300"
+        className="absolute right-1 top-0 rounded-lg bg-transparent px-4 py-2 text-sm font-medium text-white hover:text-gray-700/80 focus:outline-none focus:ring-0 focus:ring-blue-300"
       >
         <CgSearch size={30} />
       </button>

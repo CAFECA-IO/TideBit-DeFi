@@ -16,6 +16,8 @@ import {
   FRACTION_DIGITS,
   TARGET_MAX_DIGITS,
   TARGET_MIN_DIGITS,
+  MAX_FEE_RATE,
+  MIN_FEE_RATE,
 } from '../constants/config';
 import {UNIVERSAL_NUMBER_FORMAT_LOCALE, DEFAULT_SPREAD} from '../constants/display';
 import ServiceTerm from '../constants/contracts/service_term';
@@ -553,15 +555,10 @@ export const findCodeByReason = (reason: string): ICode | undefined => {
   return ReasonToCode[reason] as ICode;
 };
 
-export const validateCFD = (feePercent: number, amount: number) => {
-  // Check if the `fee` and `amount` is valid
-  if (feePercent > 0.2 || feePercent < 0) {
-    // eslint-disable-next-line no-console
-    console.log(feePercent, 'feePercent invalid');
+export const validateCFD = (fee: number, margin: number, amount: number) => {
+  if (fee > margin * MAX_FEE_RATE || fee < MIN_FEE_RATE) {
     return false;
   } else if (amount > TARGET_MAX_DIGITS || amount < TARGET_MIN_DIGITS) {
-    // eslint-disable-next-line no-console
-    console.log(amount, 'target limit invalid');
     return false;
   }
 

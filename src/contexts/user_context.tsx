@@ -40,6 +40,7 @@ import {
   millesecondsToSeconds,
   randomHex,
   rlpEncodeServiceTerm,
+  validateCFD,
   verifySignedServiceTerm,
 } from '../lib/common';
 import {IAcceptedOrder} from '../interfaces/tidebit_defi_background/accepted_order';
@@ -787,6 +788,7 @@ export const UserProvider = ({children}: IUserProvider) => {
         const serviceTermContract = getServiceTermContract(lunar.address);
         const encodedData = rlpEncodeServiceTerm(serviceTermContract);
         resultCode = Code.SERVICE_TERM_DISABLE;
+        // REJECTED_SIGNATURE
         eip712signature = await lunar.signTypedData(serviceTermContract);
         const verifyR: boolean = lunar.verifyTypedData(serviceTermContract, eip712signature);
         // eslint-disable-next-line no-console
@@ -1005,6 +1007,13 @@ export const UserProvider = ({children}: IUserProvider) => {
   const _createCFDOrder = async (
     applyCreateCFDOrder: IApplyCreateCFDOrder | undefined
   ): Promise<IResult> => {
+    const isValid = validateCFD(
+      applyCreateCFDOrder?.fee ?? 0,
+      applyCreateCFDOrder?.margin.amount ?? 0,
+      applyCreateCFDOrder?.amount ?? 0
+    );
+    if (!isValid) throw new CustomError(Code.INVALID_CFD_OPEN_REQUEST);
+
     let result: IResult = {...defaultResultFailed};
     result.code = Code.SERVICE_TERM_DISABLE;
     result.reason = Reason[result.code];

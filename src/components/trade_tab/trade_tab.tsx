@@ -553,6 +553,7 @@ const TradeTab = () => {
     );
 
     const feePercent = marketCtx.tickerLiveStatistics?.fee ?? DEFAULT_FEE;
+    const fee = feePercent * requiredMarginLongRef.current;
 
     const long = longQuotation.data as IQuotation;
     const short = shortQuotation.data as IQuotation;
@@ -578,7 +579,7 @@ const TradeTab = () => {
       typeOfPosition: TypeOfPosition.BUY,
       quotation: long,
       liquidationPrice: roundToDecimalPlaces(long.price * (1 - LIQUIDATION_FIVE_LEVERAGE), 2),
-      fee: feePercent,
+      fee: fee,
       guaranteedStop: longSlToggle ? longGuaranteedStopChecked : false,
       guaranteedStopFee:
         longSlToggle && longGuaranteedStopChecked ? guaranteedStopFeeLongRef.current : 0,
@@ -594,7 +595,7 @@ const TradeTab = () => {
       quotation: short,
       price: short.price,
       liquidationPrice: roundToDecimalPlaces(short.price * (1 + LIQUIDATION_FIVE_LEVERAGE), 2),
-      fee: feePercent,
+      fee: fee,
       guaranteedStop: shortSlToggle ? shortGuaranteedStopChecked : false,
       guaranteedStopFee:
         shortSlToggle && shortGuaranteedStopChecked ? guaranteedStopFeeShortRef.current : 0,
@@ -606,53 +607,25 @@ const TradeTab = () => {
   };
 
   const longOrderSubmitHandler = async () => {
-    const feePercent = marketCtx.tickerLiveStatistics?.fee ?? DEFAULT_FEE;
-    const isValid = validateCFD(feePercent, targetInputValueRef.current);
-    if (!isValid) {
-      globalCtx.toast({
-        type: ToastTypeAndText.ERROR.type,
-        toastId: ToastId.INVALID_CFD_OPEN_REQUEST,
-        message: t('ERROR_MESSAGE.INVALID_CFD_OPEN_REQUEST'),
-        typeText: t(ToastTypeAndText.ERROR.text),
-        isLoading: false,
-        autoClose: false,
-      });
-      return;
-    } else {
-      const {longOrder} = await toApplyCreateOrder();
+    const {longOrder} = await toApplyCreateOrder();
 
-      globalCtx.dataPositionOpenModalHandler({
-        openCfdRequest: longOrder,
-      });
-      globalCtx.visiblePositionOpenModalHandler();
+    globalCtx.dataPositionOpenModalHandler({
+      openCfdRequest: longOrder,
+    });
+    globalCtx.visiblePositionOpenModalHandler();
 
-      return;
-    }
+    return;
   };
 
   const shortOrderSubmitHandler = async () => {
-    const feePercent = marketCtx.tickerLiveStatistics?.fee ?? DEFAULT_FEE;
-    const isValid = validateCFD(feePercent, targetInputValueRef.current);
-    if (!isValid) {
-      globalCtx.toast({
-        type: ToastTypeAndText.ERROR.type,
-        toastId: ToastId.INVALID_CFD_OPEN_REQUEST,
-        message: t('ERROR_MESSAGE.INVALID_CFD_OPEN_REQUEST'),
-        typeText: t(ToastTypeAndText.ERROR.text),
-        isLoading: false,
-        autoClose: false,
-      });
-      return;
-    } else {
-      const {shortOrder} = await toApplyCreateOrder();
+    const {shortOrder} = await toApplyCreateOrder();
 
-      globalCtx.dataPositionOpenModalHandler({
-        openCfdRequest: shortOrder,
-      });
-      globalCtx.visiblePositionOpenModalHandler();
+    globalCtx.dataPositionOpenModalHandler({
+      openCfdRequest: shortOrder,
+    });
+    globalCtx.visiblePositionOpenModalHandler();
 
-      return;
-    }
+    return;
   };
 
   const isDisplayedLongSlSetting = longSlToggle ? 'flex' : 'invisible';
@@ -684,7 +657,7 @@ const TradeTab = () => {
   // ----------Target area----------
   const displayedTargetAmountSetting = (
     <TradingInput
-      lowerLimit={0.05} // TARGET_MIN_DIGITS
+      lowerLimit={TARGET_MIN_DIGITS}
       upperLimit={TARGET_MAX_DIGITS}
       getInputValue={getTargetInputValue}
       inputInitialValue={targetInputValueRef.current}

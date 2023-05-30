@@ -13,6 +13,7 @@ import RippleButton from '../ripple_button/ripple_button';
 import {
   DEFAULT_BUY_PRICE,
   DEFAULT_EXPIRY_DATE,
+  DEFAULT_FEE,
   DEFAULT_LEVERAGE,
   DEFAULT_SELL_PRICE,
   DEFAULT_SPREAD,
@@ -546,6 +547,9 @@ const TradeTabMobile = () => {
       marketCtx.selectedTicker?.currency ?? DEFAULT_TICKER
     );
 
+    const feePercent = marketCtx.tickerLiveStatistics?.fee ?? DEFAULT_FEE;
+    const fee = feePercent * requiredMarginLongRef.current;
+
     const long = longQuotation.data as IQuotation;
     const short = shortQuotation.data as IQuotation;
 
@@ -570,7 +574,7 @@ const TradeTabMobile = () => {
       typeOfPosition: TypeOfPosition.BUY,
       quotation: long,
       liquidationPrice: roundToDecimalPlaces(long.price * (1 - LIQUIDATION_FIVE_LEVERAGE), 2),
-      fee: marketCtx.tickerLiveStatistics?.fee ?? DEFAULT_BUY_PRICE,
+      fee: fee,
       guaranteedStop: longSlToggle ? longGuaranteedStopChecked : false,
       guaranteedStopFee:
         longSlToggle && longGuaranteedStopChecked ? guaranteedStopFeeLongRef.current : 0,
@@ -586,7 +590,7 @@ const TradeTabMobile = () => {
       quotation: short,
       price: short.price,
       liquidationPrice: roundToDecimalPlaces(short.price * (1 + LIQUIDATION_FIVE_LEVERAGE), 2),
-      fee: marketCtx.tickerLiveStatistics?.fee ?? DEFAULT_BUY_PRICE,
+      fee: fee,
       guaranteedStop: shortSlToggle ? shortGuaranteedStopChecked : false,
       guaranteedStopFee:
         shortSlToggle && shortGuaranteedStopChecked ? guaranteedStopFeeShortRef.current : 0,

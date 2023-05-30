@@ -5,7 +5,7 @@ import {useGlobal} from '../../contexts/global_context';
 import {API_URL, DOMAIN} from '../../constants/config';
 import {Code} from '../../constants/code';
 import {IResult} from '../../interfaces/tidebit_defi_background/result';
-import {CustomError} from '../custom_error';
+import {CustomError, isCustomError} from '../custom_error';
 import {IShareType, ShareType} from '../../constants/share_type';
 import {IDisplayCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
 import {ISharingOrder} from '../../interfaces/tidebit_defi_background/sharing_order';
@@ -152,7 +152,7 @@ const useShareProcess = ({lockerName, shareType, shareId, cfd, enableShare}: IUs
           break;
       }
     } catch (e: any) {
-      if (e instanceof CustomError) {
+      if (isCustomError(e)) {
         const str = e.toString().split('Error: ')[1];
         const errorCode = findCodeByReason(str);
 

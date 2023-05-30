@@ -57,7 +57,7 @@ import {ICFDOrder} from '../../interfaces/tidebit_defi_background/order';
 import {Code} from '../../constants/code';
 import {ToastTypeAndText} from '../../constants/toast_type';
 import {ToastId} from '../../constants/toast_id';
-import {CustomError} from '../../lib/custom_error';
+import {CustomError, isCustomError} from '../../lib/custom_error';
 
 type TranslateFunction = (s: string) => string;
 interface IPositionClosedModal {
@@ -345,7 +345,7 @@ const PositionClosedModal = ({
       // ToDo: report error to backend (20230413 - Shirley)
       globalCtx.eliminateAllModals();
 
-      if (error instanceof CustomError) {
+      if (isCustomError(error)) {
         const str = error.toString().split('Error: ')[1];
         const errorCode = findCodeByReason(str);
 

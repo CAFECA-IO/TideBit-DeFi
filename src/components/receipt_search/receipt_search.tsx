@@ -27,15 +27,12 @@ const ReceiptSearch = ({
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
   const [tradingTypeMenuOpen, setTradingTypeMenuOpen] = useState(false);
+  /* Info:(20230530 - Julian) Safari 只接受 yyyy/mm/dd 格式的日期 */
   const [dateStart, setDateStart] = useState(
-    new Date(
-      `${currentDate.getFullYear()}-${currentDate.getMonth() + 1}-${currentDate.getDate()} 08:00:00`
-    )
+    new Date(`${currentDate.getFullYear()}/${currentDate.getMonth() + 1}/${currentDate.getDate()}`)
   );
   const [dateEnd, setDateEnd] = useState(
-    new Date(
-      `${currentDate.getFullYear()}-${currentDate.getMonth() + 1}-${currentDate.getDate()} 08:00:00`
-    )
+    new Date(`${currentDate.getFullYear()}/${currentDate.getMonth() + 1}/${currentDate.getDate()}`)
   );
   //const [tickersSettings, setTickersSettings] = useState(null);
 
@@ -86,8 +83,8 @@ const ReceiptSearch = ({
   const dateStartUpdateHandler = useCallback(
     async (date: Date) => {
       setDateStart(date);
-      const end = dateEnd.toISOString().substring(0, 10);
-      const start = date.toISOString().substring(0, 10);
+      const end = dateEnd.toLocaleDateString();
+      const start = date.toLocaleDateString();
 
       setFilteredDate([start, end]);
     },
@@ -97,8 +94,8 @@ const ReceiptSearch = ({
   const dateEndUpdateHandler = useCallback(
     async (date: Date) => {
       setDateEnd(date);
-      const end = date.toISOString().substring(0, 10);
-      const start = dateStart.toISOString().substring(0, 10);
+      const end = date.toLocaleDateString();
+      const start = dateStart.toLocaleDateString();
 
       setFilteredDate([start, end]);
     },

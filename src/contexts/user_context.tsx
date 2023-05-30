@@ -779,17 +779,27 @@ export const UserProvider = ({children}: IUserProvider) => {
   };
 
   const signServiceTerm = async (): Promise<IResult> => {
-    let eip712signature: string,
-      result: IResult = {...defaultResultFailed},
-      resultCode = Code.UNKNOWN_ERROR;
+    let eip712signature: string;
+    let resultCode = Code.UNKNOWN_ERROR;
+    let result: IResult = {...defaultResultFailed, code: resultCode, reason: Reason[resultCode]};
 
     try {
       if (lunar.isConnected) {
+        // eslint-disable-next-line no-console
+        console.log('before serviceTermContract');
         const serviceTermContract = getServiceTermContract(lunar.address);
+        // eslint-disable-next-line no-console
+        console.log('before encodedData');
         const encodedData = rlpEncodeServiceTerm(serviceTermContract);
         resultCode = Code.SERVICE_TERM_DISABLE;
-        // REJECTED_SIGNATURE
+        // eslint-disable-next-line no-console
+        console.log('before lunar.signTypedData');
         eip712signature = await lunar.signTypedData(serviceTermContract);
+        // eslint-disable-next-line no-console
+        console.log('eip712signature', eip712signature);
+        // eslint-disable-next-line no-console
+        console.log('before lunar.verifyTypedData');
+        resultCode = Code.FAILED_TO_VERIFY_SIGNATURE;
         const verifyR: boolean = lunar.verifyTypedData(serviceTermContract, eip712signature);
         // eslint-disable-next-line no-console
         console.log(`verifyR`, verifyR);
@@ -804,7 +814,15 @@ export const UserProvider = ({children}: IUserProvider) => {
             success: true,
             code: resultCode,
           };
+        } else {
+          result.code = resultCode;
+          result.reason = Reason[resultCode];
         }
+        // eslint-disable-next-line no-console
+        console.log('result resultCode (lunar.isConnected) ', resultCode);
+        // eslint-disable-next-line no-console
+        console.log('result if (lunar.isConnected) ', result);
+
         return result;
       } else {
         const isConnected = await connect();
@@ -813,6 +831,9 @@ export const UserProvider = ({children}: IUserProvider) => {
           resultCode = Code.WALLET_IS_NOT_CONNECT;
           result.code = resultCode;
           result.reason = Reason[result.code];
+          // eslint-disable-next-line no-console
+          console.log('result else (lunar.isConnected) ', result);
+
           return result;
         }
       }
@@ -821,6 +842,9 @@ export const UserProvider = ({children}: IUserProvider) => {
       console.error(`signServiceTerm error`, error);
       result.code = resultCode;
       result.reason = Reason[resultCode];
+      // eslint-disable-next-line no-console
+      console.log('result catch ', result);
+
       return result;
     }
   };

@@ -24,7 +24,7 @@ interface IDatePickerProps {
 
 const formatGridStyle = 'grid grid-cols-7 gap-4';
 
-/* Info:(20230530 - Julian) Safari 只接受 yyyy/mm/dd 格式的日期 */
+/* Info:(20230530 - Julian) Safari 只接受 YYYY/MM/DD 格式的日期 */
 const PopulateDates = ({
   daysInMonth,
   selectedTime,

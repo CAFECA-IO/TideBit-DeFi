@@ -1,4 +1,6 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useContext} from 'react';
+import {UserContext} from '../../contexts/user_context';
+import {useGlobal} from '../../contexts/global_context';
 import BalanceSection from '../balance_section/balance_section';
 import PnlSection from '../pnl_section/pnl_section';
 import InterestSection from '../interest_section/interest_section';
@@ -6,9 +8,29 @@ import ReceiptSection from '../receipt_section/receipt_section';
 import Skeleton, {SkeletonTheme} from 'react-loading-skeleton';
 import {SKELETON_DISPLAY_TIME} from '../../constants/display';
 import Footer from '../footer/footer';
+import {useTranslation} from 'react-i18next';
+
+type TranslateFunction = (s: string) => string;
 
 const AssetsPageBody = () => {
+  const {t}: {t: TranslateFunction} = useTranslation('common');
   const [isLoading, setIsLoading] = useState(true);
+  const userCtx = useContext(UserContext);
+  const globalCtx = useGlobal();
+
+  useEffect(() => {
+    if (!userCtx.enableServiceTerm) {
+      globalCtx.dataWarningModalHandler({
+        title: t('POSITION_MODAL.WARNING_LOGGED_OUT_TITLE'),
+        content: t('POSITION_MODAL.WARNING_LOGGED_OUT_CONTENT'),
+        numberOfButton: 1,
+        pathOfButton: '/',
+        reactionOfButton: t('POSITION_MODAL.WARNING_GO_HOME_BUTTON'),
+      });
+
+      globalCtx.visibleWarningModalHandler();
+    }
+  }, [userCtx.enableServiceTerm]);
 
   useEffect(() => {
     setTimeout(() => setIsLoading(false), SKELETON_DISPLAY_TIME);

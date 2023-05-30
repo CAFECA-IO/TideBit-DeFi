@@ -317,7 +317,7 @@ const PositionOpenModal = ({
         isLoading: false,
         autoClose: false,
       });
-      // setInvalidData(true);
+      setInvalidData(true);
       return;
     }
 

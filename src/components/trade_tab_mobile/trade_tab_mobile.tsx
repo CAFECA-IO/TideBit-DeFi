@@ -32,6 +32,7 @@ import {
   TP_SL_LIMIT_PERCENT,
   DEFAULT_TICKER,
   CFD_LIQUIDATION_TIME,
+  TARGET_MIN_DIGITS,
 } from '../../constants/config';
 import {ClickEvent} from '../../constants/tidebit_event';
 import {useTranslation} from 'next-i18next';
@@ -666,7 +667,7 @@ const TradeTabMobile = () => {
   // ----------Target area----------
   const displayedTargetSetting = (
     <TradingInput
-      lowerLimit={0}
+      lowerLimit={TARGET_MIN_DIGITS}
       upperLimit={TARGET_MAX_DIGITS}
       getInputValue={getTargetInputValue}
       inputInitialValue={targetInputValueRef.current}

@@ -58,8 +58,8 @@ const OpenSubTabMobile = () => {
       positionLineGraph.length > 0
         ? positionLineGraph[positionLineGraph.length - 1]
         : (!!marketCtx.selectedTicker?.price &&
-            ((cfd.typeOfPosition === TypeOfPosition.BUY && caledPriceRef.current.longPrice) ||
-              (cfd.typeOfPosition === TypeOfPosition.SELL && caledPriceRef.current.shortPrice))) ||
+            ((cfd.typeOfPosition === TypeOfPosition.BUY && caledPriceRef.current.shortPrice) ||
+              (cfd.typeOfPosition === TypeOfPosition.SELL && caledPriceRef.current.longPrice))) ||
           0;
 
     const displayCFD: IDisplayCFDOrder = toDisplayCFDOrder(cfd, positionLineGraph, currentPrice);

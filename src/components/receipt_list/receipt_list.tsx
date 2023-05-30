@@ -23,7 +23,7 @@ const ReceiptList = ({monthData, filteredReceipts}: IReceiptListProps) => {
   return (
     <div className="py-3">
       <h1 className="text-lg text-tidebitTheme">{monthData}</h1>
-      <div className="py-4">{historyList}</div>
+      {/* <div className="py-4">{historyList}</div> */}
     </div>
   );
 };

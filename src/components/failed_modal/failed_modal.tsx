@@ -2,6 +2,9 @@ import Lottie from 'lottie-react';
 import failedAnimation from '../../../public/animation/Lottie_Main_Comp.json';
 import RippleButton from '../ripple_button/ripple_button';
 import {ImCross} from 'react-icons/im';
+import {useTranslation} from 'react-i18next';
+
+type TranslateFunction = (s: string) => string;
 
 export interface IFailedModal {
   modalRef?: React.RefObject<HTMLDivElement>;
@@ -29,8 +32,15 @@ const FailedModal = ({
   btnFunction,
   ...otherProps
 }: IFailedModal) => {
+  const {t}: {t: TranslateFunction} = useTranslation('common');
+
+  /* Info:(20230530 - Julian)
+   * 1. 如果 failedTitle 和 failedMsg 都有填入(&&)，則顯示有紅框的 Failed Modal
+   * 2. 如果只填入 modalContent，則不顯示紅框
+   * 3. 如果三者都沒有填入，則不顯示紅框，並填入預設內容 */
+
   const displayedModalContent =
-    (!failedTitle || !failedMsg) && !modalContent ? 'Failed' : modalContent;
+    !failedTitle && !failedMsg && !modalContent ? t('POSITION_MODAL.FAILED_TITLE') : modalContent;
 
   const btnClickHandler = () => {
     if (btnFunction) {
@@ -42,7 +52,7 @@ const FailedModal = ({
 
   const failContent = (
     <div className="relative flex flex-auto flex-col items-center pt-1 text-center text-lg leading-relaxed text-lightWhite">
-      <Lottie className="w-150px pt-5 pb-2" animationData={failedAnimation} />
+      <Lottie className="w-150px pb-2 pt-5" animationData={failedAnimation} />
       <div className="text-base text-lightWhite">{displayedModalContent}</div>
 
       <div className="w-full grow">
@@ -50,7 +60,7 @@ const FailedModal = ({
           <div className="mx-21px my-4 bg-lightRed">
             <p className="text-lg">{failedTitle}</p>
 
-            <p className="mt-1 bg-darkGray1/50 py-2 px-3 text-start text-xs leading-4 tracking-wide">
+            <p className="mt-1 bg-darkGray1/50 px-3 py-2 text-start text-xs leading-4 tracking-wide">
               {failedMsg}
             </p>
           </div>
@@ -83,12 +93,9 @@ const FailedModal = ({
 
   const isDisplayedModal = modalVisible ? (
     <>
-      {/*  <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">*/}
-      {/*  overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none */}
-      {/* position: relative; top: 50%; left: 50%; transform: translate(-50%, -50%) */}
       <div className="fixed inset-0 z-70 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">
         {/* The position of the modal */}
-        <div className="relative my-6 mx-auto w-auto max-w-xl">
+        <div className="relative mx-auto my-6 w-auto max-w-xl">
           {' '}
           {/*content & panel*/}
           <div
@@ -100,10 +107,9 @@ const FailedModal = ({
             <div className="flex items-start justify-between rounded-t pt-6">
               <h3 className="mx-auto mt-2 w-full text-center text-2xl font-normal text-lightWhite">
                 {modalTitle}
-                {/* {(transferProcessStep = 'deposit-' ? 'Deposit' : 'Withdraw')} */}
               </h3>
               <button className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
-                <span className="absolute top-5 right-5 block outline-none focus:outline-none">
+                <span className="absolute right-5 top-5 block outline-none focus:outline-none">
                   <ImCross onClick={modalClickHandler} />
                 </span>
               </button>

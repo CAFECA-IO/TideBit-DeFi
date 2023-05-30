@@ -540,9 +540,6 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       result.code = Code.INTERNAL_SERVER_ERROR;
       result.reason = Reason[result.code];
     }
-    // Deprecate: [debug] (20230526 - tzuhan)
-    // eslint-disable-next-line no-console
-    console.log('getWebsiteReserve', result);
     if (result.success) {
       setWebsiteReserve(result.data as IWebsiteReserve);
     }
@@ -564,9 +561,6 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       result.code = Code.INTERNAL_SERVER_ERROR;
       result.reason = Reason[result.code];
     }
-    // Deprecate: [debug] (20230526 - tzuhan)
-    // eslint-disable-next-line no-console
-    console.log('getTideBitPromotion', result);
     if (result.success) {
       setTidebitPromotion(result.data as ITideBitPromotion);
     }

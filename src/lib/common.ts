@@ -330,6 +330,10 @@ export const toDisplayCFDOrder = (
       ? cfdStateCode.TAKE_PROFIT
       : cfdStateCode.COMMON;
 
+  // Deprecated: (20230328 - Shirley) remove this after quotation is fixed
+  // eslint-disable-next-line no-console
+  console.log('currentPrice', currentPrice, 'pnl', pnl);
+
   const displayCFDOrder: IDisplayCFDOrder = {
     ...cfdOrder,
     pnl: {

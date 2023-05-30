@@ -178,7 +178,7 @@ const PositionClosedModal = ({
     return request;
   };
 
-  // TODO: (20230315 - Shirley) organize the data before history modal
+  // Info: (20230315 - Shirley) organize the data before history modal
   const toHistoryModal = (cfd: ICFDOrder, quotation: IQuotation): IDisplayCFDOrder => {
     // TODO: replace `twoDecimal` with `toLocaleString` (20230325 - Shirley)
     const openPrice = cfd.openPrice;
@@ -230,20 +230,20 @@ const PositionClosedModal = ({
   };
 
   const getQuotation = async () => {
-    let quotation = {...defaultResultSuccess};
+    let quotation = {...defaultResultFailed};
     const oppositeTypeOfPosition =
       openCfdDetails?.typeOfPosition === TypeOfPosition.BUY
         ? TypeOfPosition.SELL
         : TypeOfPosition.BUY;
 
     try {
-      quotation = await marketCtx.getCFDQuotation(
-        openCfdDetails?.ticker,
-        // openCfdDetails?.typeOfPosition
-        oppositeTypeOfPosition
-      );
+      quotation = await marketCtx.getCFDQuotation(openCfdDetails?.ticker, oppositeTypeOfPosition);
 
       const data = quotation.data as IQuotation;
+
+      // Deprecated: (20230328 - Shirley) remove this after quotation is fixed
+      // eslint-disable-next-line no-console
+      console.log('price', data.price);
 
       // Info: if there's error fetching quotation, disable the submit btn (20230328 - Shirley)
       if (
@@ -266,12 +266,6 @@ const PositionClosedModal = ({
     }
   };
 
-  /** TODO: 
-    // loading modal -> UserContext.function (負責簽名) ->
-    // 猶豫太久的話，單子會過期，就會顯示 failed modal，
-    // 用戶沒簽名才是顯示 canceled modal
-    // 用戶簽名成功，就會顯示 successful modal
-   */
   const submitClickHandler = async () => {
     const [lock, unlock] = locker('position_closed_modal.submitClickHandler');
     if (!lock()) return;
@@ -407,8 +401,7 @@ const PositionClosedModal = ({
 
   // Info: Get quotation before the modal is shown (20230329 - Shirley)
   useEffect(() => {
-    if (!globalCtx.visiblePositionClosedModal) return;
-
+    // if (!globalCtx.visiblePositionClosedModal) return;
     (async () => {
       const quotation = await getQuotation();
       if (!quotation) {
@@ -433,6 +426,36 @@ const PositionClosedModal = ({
     })();
   }, [globalCtx.visiblePositionClosedModal]);
 
+  useEffect(() => {
+    if (globalCtx.visiblePositionClosedModal) return;
+    (async () => {
+      const quotation = await getQuotation();
+      // Deprecated: (20230328 - Shirley) remove this after quotation is fixed
+      // eslint-disable-next-line no-console
+      console.log('quotation when modal is not shown', quotation);
+      if (!quotation) {
+        /* Info: (20230508 - Julian) exception handling: error toast */
+        globalCtx.toast({
+          type: ToastTypeAndText.ERROR.type,
+          toastId: ToastId.GET_QUOTATION_ERROR,
+          message: `${t(
+            quotationErrorMessageRef.current.reason ?? 'ERROR_MESSAGE.UNKNOWN_ERROR'
+          )} (${quotationErrorMessageRef.current.code})`,
+          typeText: t(ToastTypeAndText.ERROR.text),
+          isLoading: false,
+          autoClose: false,
+        });
+        return;
+      }
+
+      const displayedCloseOrder = toDisplayCloseOrder(openCfdDetails, quotation);
+      globalCtx.dataPositionClosedModalHandler(displayedCloseOrder);
+
+      setGQuotation(quotation);
+    })();
+  }, [marketCtx.selectedTicker?.price]);
+
+  // Info: renew the quotation when it expires (20230530 - Shirley)
   useEffect(() => {
     if (!globalCtx.visiblePositionClosedModal) {
       setSecondsLeft(DISPLAY_QUOTATION_RENEWAL_INTERVAL_SECONDS);

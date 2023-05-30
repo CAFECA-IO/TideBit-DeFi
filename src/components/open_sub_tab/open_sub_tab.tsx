@@ -49,6 +49,7 @@ const OpenSubTab = () => {
         begin: cfd.createTimestamp,
       });
 
+      // Info: used to calculate the closed price (20230530 - Shirley)
       const spread =
         cfd.typeOfPosition === TypeOfPosition.BUY
           ? 1 - (marketCtx.tickerLiveStatistics?.spread ?? DEFAULT_SPREAD)

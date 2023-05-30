@@ -53,7 +53,7 @@ const UserMobile = () => {
       <div className="relative flex basis-full items-center">
         <p className="self-center pl-5">{t('USER.PERSONAL_SETTING')}</p>
 
-        <div className="absolute right-2 top-1 block lg:hidden">
+        <div className="absolute right-2 top-1 block hover:cursor-pointer lg:hidden">
           <ImCross onClick={avatarClickHandler} />
         </div>
       </div>
@@ -61,21 +61,20 @@ const UserMobile = () => {
   ) : null;
 
   const isDisplayedAvatarMenu = userCtx.user?.address ? (
-    /* ToDo: (20230327 - Julian) Fix fade in animation */
     <div
-      className={`fixed left-0 ${
-        avatarMenuVisible ? 'bg-darkGray/100' : 'invisible'
+      className={`fixed left-0 bg-darkGray/100 ${
+        avatarMenuVisible ? 'visible opacity-100' : 'invisible opacity-0'
       } transition-all duration-300`}
     >
       <div
         id="userDropdown"
         className={`flex h-screen w-screen flex-col ${
-          avatarMenuVisible ? 'visible' : 'invisible'
+          avatarMenuVisible ? 'visible opacity-100' : 'invisible opacity-0'
         } divide-y divide-lightGray px-9 pt-8`}
       >
         <div className="flex flex-col items-center">
           {/* Info: (20230327 - Julian) Avatar Section */}
-          <div className="flex w-full max-w-350px items-center justify-between py-4 text-center text-sm text-lightGray">
+          <div className="flex w-full max-w-350px items-center justify-between px-2 py-4 text-center text-sm text-lightGray">
             <div className="inline-flex items-center">
               {/* Info: (20230327 - Julian) Avatar */}
               <div className="inline-flex h-16 w-16 items-center justify-center overflow-hidden rounded-full bg-tidebitTheme text-center">
@@ -93,54 +92,65 @@ const UserMobile = () => {
 
         <div className="flex justify-center">
           <ul
-            className="py-1 pb-3 text-base font-normal text-gray-200"
+            className="pb-4 pt-1 text-base font-normal text-gray-200"
             aria-labelledby="avatarButton"
           >
             <li>
-              <Link href={TBDURL.MY_ASSETS} className="block py-4 pl-3 pr-4 hover:bg-darkGray5">
-                <div className="flex flex-row items-center space-x-2">
-                  <BiWallet />
-                  <p>{t('USER.ASSETS')}</p>
-                </div>
-              </Link>
-            </li>
-            <li
-              onClick={depositClickHandler}
-              className="block py-4 pl-3 pr-4 hover:cursor-pointer hover:bg-darkGray5"
-            >
-              <div className="flex flex-row items-center space-x-2">
-                <FaDownload />
-                <p>{t('USER.DEPOSIT')}</p>
-              </div>
-            </li>
-            <li
-              onClick={withdrawClickHandler}
-              className="block py-4 pl-3 pr-4 hover:cursor-pointer hover:bg-darkGray5"
-            >
-              <div className="flex flex-row items-center space-x-2">
-                <FaUpload />
-                <p>{t('USER.WITHDRAW')}</p>
-              </div>
+              <button className="block w-full py-4 py-4 pl-8 enabled:hover:cursor-pointer enabled:hover:bg-darkGray5">
+                <Link href={TBDURL.MY_ASSETS}>
+                  <div className="flex flex-row items-center space-x-2">
+                    <BiWallet />
+                    <p>{t('USER.ASSETS')}</p>
+                  </div>
+                </Link>
+              </button>
             </li>
             <li>
-              <Link href="#" className="block py-4 pl-3 pr-4 hover:bg-darkGray5">
+              <button
+                onClick={depositClickHandler}
+                className="block w-full py-4 pl-8 pr-10 enabled:hover:cursor-pointer enabled:hover:bg-darkGray5"
+              >
+                <div className="flex flex-row items-center space-x-2">
+                  <FaDownload />
+                  <p>{t('USER.DEPOSIT')}</p>
+                </div>
+              </button>
+            </li>
+            <li>
+              <button
+                onClick={withdrawClickHandler}
+                className="block w-full py-4 pl-8 pr-10 enabled:hover:cursor-pointer enabled:hover:bg-darkGray5 disabled:opacity-75"
+                disabled
+              >
+                <div className="flex flex-row items-center space-x-2">
+                  <FaUpload />
+                  <p>{t('USER.WITHDRAW')}</p>
+                </div>
+              </button>
+            </li>
+            <li>
+              <button
+                className="block w-full py-4 pl-8 pr-10 enabled:hover:cursor-pointer enabled:hover:bg-darkGray5 disabled:opacity-75"
+                disabled
+              >
+                {/* <Link href=""> */}
                 <div className="flex flex-row items-center space-x-2">
                   <VscAccount />
                   <p>{t('USER.ACCOUNT')}</p>
                 </div>
-              </Link>
+                {/* </Link> */}
+              </button>
             </li>
             <li>
-              <Link
+              <button
                 onClick={userCtx.disconnect}
-                href="#"
-                className="block py-4 pl-3 pr-4 hover:bg-darkGray5"
+                className="block w-full py-4 pl-8 pr-10 enabled:hover:cursor-pointer enabled:hover:bg-darkGray5"
               >
                 <div className="flex flex-row items-center space-x-2">
                   <ImExit />
                   <p>{t('USER.DISCONNECT')}</p>
                 </div>
-              </Link>
+              </button>
             </li>
           </ul>
         </div>

@@ -52,6 +52,15 @@ class TradeBook {
     this.model = Model.LINEAR_REGRESSION;
   }
 
+  addTrades(trades: ITrade[]) {
+    this.trades = [];
+    this.predictedTrades = [];
+    this.resetPrediction();
+    for (const trade of trades) {
+      this.add(trade);
+    }
+  }
+
   add(trade: ITrade): void {
     if (!this.isValidTrade(trade)) {
       throw new CustomError(Code.INVALID_TRADE);

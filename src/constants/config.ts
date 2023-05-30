@@ -279,3 +279,5 @@ export const CFD_LIQUIDATION_TIME = 86400;
 export const TP_SL_LIMIT_PERCENT = 0.01;
 export const DEFAULT_TICKER = 'ETH';
 export const SHARING_BG_IMG_THRESHOLD_PNL_PERCENT = 5;
+export const INITIAL_TRADES_INTERVAL = 30 * 1000; // Info: 30 seconds in milliseconds (ms) (20230530 - tzuhhan)
+export const INITIAL_TRADES_BUFFER = 5 * 1000; // Info: 5 seconds in milliseconds (ms) (20230530 - tzuhhan)

@@ -136,7 +136,7 @@ const ReceiptSection = () => {
 
   return (
     <div className="p-4 sm:p-16">
-      {isLoading ? (
+      {/*       {isLoading ? (
         <div className="mt-4 flex items-end">
           <div className="flex flex-col">
             <Skeleton width={95} height={25} />
@@ -161,7 +161,7 @@ const ReceiptSection = () => {
           filteredDate={filteredDate}
           setFilteredDate={setFilteredDate}
         />
-      )}
+      )} */}
       <div>{listCluster}</div>
     </div>
   );

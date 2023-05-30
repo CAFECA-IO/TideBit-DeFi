@@ -85,7 +85,9 @@ const AssetsPageBody = () => {
               <InterestSection />
             )}
           </div>
-          <div className="">{/* <ReceiptSection /> */}</div>
+          <div className="">
+            <ReceiptSection />
+          </div>
         </div>
       </SkeletonTheme>
       <div className="">

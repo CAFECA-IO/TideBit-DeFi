@@ -28,7 +28,7 @@ const BalanceSection = () => {
   const circleSize = '380';
   const eyeIconSize = 30;
   const btnStyle =
-    'mt-4 w-160px rounded border-0 bg-tidebitTheme py-2 text-base text-white transition-all duration-300 hover:bg-cyan-600 md:mt-0';
+    'mt-4 w-160px rounded border-0 py-2 text-base text-white transition-all duration-300 md:mt-0 enabled:bg-tidebitTheme enabled:hover:bg-cyan-600 disabled:bg-lightGray';
 
   const depositBtn = (
     <p className="flex w-full items-center justify-center space-x-3 text-center">
@@ -91,7 +91,7 @@ const BalanceSection = () => {
   return (
     <>
       <div>
-        {/* balanceImgContainer */}
+        {/* Info: (20230530 - Julian) balance Circle Container */}
 
         <div className="relative pt-20 text-center">
           <CircularProgressBar
@@ -103,8 +103,7 @@ const BalanceSection = () => {
           />
         </div>
 
-        {/* balanceTextCentered */}
-        {/*  xl:top-[28%] */}
+        {/* Info: (20230530 - Julian) balance Text Centered */}
         <div className="absolute left-1/2 top-300px -translate-x-1/2 -translate-y-3/5 space-y-6 dark:bg-transparent">
           <div className="flex items-center justify-center space-x-2 text-center">
             <p className="text-base text-lightGray">
@@ -134,10 +133,12 @@ const BalanceSection = () => {
             {depositBtn}
           </RippleButton>
 
+          {/* Info: (20230530 - Julian) disabled withdraw */}
           <RippleButton
             className={`${btnStyle}`}
             onClick={withdrawClickHandler}
             buttonType="button"
+            disabled
           >
             {withdrawBtn}
           </RippleButton>

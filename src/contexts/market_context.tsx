@@ -29,7 +29,7 @@ import {NotificationContext} from './notification_context';
 import {WorkerContext} from './worker_context';
 import {APIName, Method} from '../constants/api_request';
 import TickerBookInstance from '../lib/books/ticker_book';
-import {unitAsset} from '../constants/config';
+import {INITIAL_TRADES_BUFFER, INITIAL_TRADES_INTERVAL, unitAsset} from '../constants/config';
 import {ITypeOfPosition} from '../constants/type_of_position';
 import {
   dummyTideBitPromotion,
@@ -456,26 +456,41 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     return result;
   };
 
-  const listMarketTrades = async (instId: string) => {
+  const listMarketTrades = async (
+    instId: string,
+    options?: {
+      begin?: number; // Info: in milliseconds (20230530 - tzuhan)
+      end?: number; // Info: in milliseconds (20230530 - tzuhan)
+      asc?: boolean;
+      limit?: number;
+    }
+  ) => {
     let result: IResult = {...defaultResultFailed};
+    if (!options) {
+      const dateTime = new Date().getTime();
+      options = {
+        begin: dateTime - INITIAL_TRADES_INTERVAL,
+        end: dateTime + INITIAL_TRADES_BUFFER,
+      };
+    }
     try {
       result = (await workerCtx.requestHandler({
         name: APIName.LIST_MARKET_TRADES,
         method: Method.GET,
         params: instId,
+        query: {...(options || {})},
       })) as IResult;
       if (result.success) {
-        for (const trade of result.data as ITrade[]) {
-          tradeBook.add({
-            tradeId: trade.tradeId,
-            targetAsset: trade.baseUnit,
-            unitAsset: trade.quoteUnit,
-            direct: TradeSideText[trade.side],
-            price: trade.price,
-            timestampMs: trade.timestamp,
-            quantity: trade.amount,
-          });
-        }
+        const trades = (result.data as ITrade[]).map(trade => ({
+          tradeId: trade.tradeId,
+          targetAsset: trade.baseUnit,
+          unitAsset: trade.quoteUnit,
+          direct: TradeSideText[trade.side],
+          price: trade.price,
+          timestampMs: trade.timestamp,
+          quantity: trade.amount,
+        }));
+        tradeBook.addTrades(trades);
       }
     } catch (error) {
       // Deprecate: error handle (Tzuhan - 20230321)

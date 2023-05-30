@@ -59,8 +59,8 @@ export const SUPPORTED_NETWORKS = [
 
 export const unitAsset = 'USDT';
 
-export const API_URL = 'https://api.tidebit-defi.com'; //'http://localhost:80';
-// export const API_URL = 'http://localhost:80'; //'https://api.tidebit-defi.com';
+// export const API_URL = 'https://api.tidebit-defi.com'; //'http://localhost:80';
+export const API_URL = 'http://localhost:80'; //'https://api.tidebit-defi.com';
 
 export const MAX_PRICE_TRADING_CHART_ONE_SEC = 1.005; // 1.005
 
@@ -279,3 +279,5 @@ export const CFD_LIQUIDATION_TIME = 86400;
 export const TP_SL_LIMIT_PERCENT = 0.01;
 export const DEFAULT_TICKER = 'ETH';
 export const SHARING_BG_IMG_THRESHOLD_PNL_PERCENT = 5;
+export const INITIAL_TRADES_INTERVAL = 30 * 1000; // Info: 30 seconds in milliseconds (ms) (20230530 - tzuhhan)
+export const INITIAL_TRADES_BUFFER = 5 * 1000; // Info: 5 seconds in milliseconds (ms) (20230530 - tzuhhan)

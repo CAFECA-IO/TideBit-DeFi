@@ -231,11 +231,16 @@ const PositionClosedModal = ({
 
   const getQuotation = async () => {
     let quotation = {...defaultResultSuccess};
+    const oppositeTypeOfPosition =
+      openCfdDetails?.typeOfPosition === TypeOfPosition.BUY
+        ? TypeOfPosition.SELL
+        : TypeOfPosition.BUY;
 
     try {
       quotation = await marketCtx.getCFDQuotation(
         openCfdDetails?.ticker,
-        openCfdDetails?.typeOfPosition
+        // openCfdDetails?.typeOfPosition
+        oppositeTypeOfPosition
       );
 
       const data = quotation.data as IQuotation;
@@ -243,7 +248,7 @@ const PositionClosedModal = ({
       // Info: if there's error fetching quotation, disable the submit btn (20230328 - Shirley)
       if (
         quotation.success &&
-        data.typeOfPosition === openCfdDetails?.typeOfPosition &&
+        data.typeOfPosition === oppositeTypeOfPosition &&
         quotation.data !== null
       ) {
         globalCtx.eliminateToasts(ToastId.GET_QUOTATION_ERROR);

@@ -924,7 +924,6 @@ export const UserProvider = ({children}: IUserProvider) => {
     return balance;
   };
 
-
   /* ToDo: (20230510 - Julian) get data from backend */
   const getPersonalRanking = async (userId: string, timeSpan: IRankingTimeSpan) => {
     let result: IResult = {...defaultResultFailed};

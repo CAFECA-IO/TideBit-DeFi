@@ -44,3 +44,7 @@ export const ShareSettings: Record<SocialMedia, IShareSettings> = {
     ICON: '/elements/group_15234.svg',
   },
 };
+
+// MOBILE_URL: 'fb://facewebmodal/f?href='; // url: encodeURIComponent(shareUrl)
+// MOBILE_URL: 'twitter://post?message='; // message: encodeURIComponent(shareUrl)
+// MOBILE_URL: 'reddit://submit?url=&title='; // url: encodeURIComponent(shareUrl), title: text

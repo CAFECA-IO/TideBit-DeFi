@@ -37,7 +37,8 @@ const useShareProcess = ({lockerName, shareType, shareId, cfd, enableShare}: IUs
 
       case ShareType.RANK:
         // TODO: Share rank (20230524 - Shirley)
-        shareUrl = '';
+        // TODO: Test (20230531 - Shirley)
+        shareUrl = DOMAIN;
         return shareUrl;
 
       case ShareType.BADGE:
@@ -165,6 +166,33 @@ const useShareProcess = ({lockerName, shareType, shareId, cfd, enableShare}: IUs
           }
           break;
         case ShareType.RANK:
+          // TODO: Test (20230531 - Shirley)
+          if (window.innerWidth <= 768) {
+            // console.log('width <= 768 encode', window.innerWidth);
+            window.open(`fb://facewebmodal/f?href=${encodeURIComponent(shareUrl)}`, '_blank');
+
+            // switch (type) {
+            //   case 'facebook':
+            //     window.open(`fb://facewebmodal/f?href=${shareUrl}`, '_blank');
+            //     break;
+            //   case 'twitter':
+            //     window.open(`twitter://post?message=${shareUrl}`, '_blank');
+            //     break;
+            //   case 'reddit':
+            //     window.open(`reddit://submit?url=${shareUrl}&title=${text}`, '_blank');
+            //     break;
+            //   default:
+            //     window.open(`${url}${shareUrl}${text ? `${text}` : ''}`, `${type}`, `${size}`);
+            // }
+          } else {
+            // Desktop behaviour
+            // window.open(`${url}${shareUrl}${text ? `${text}` : ''}`, `${type}`, `${size}`);
+            window.open(
+              `${url}${encodeURIComponent(shareUrl)}${text ? `${text}` : ''}`,
+              `${type}`,
+              `${size}`
+            );
+          }
           break;
 
         case ShareType.BADGE:

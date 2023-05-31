@@ -18,6 +18,9 @@ import {MarketContext} from '../contexts/market_context';
 import useStateRef from 'react-usestateref';
 import Image from 'next/image';
 import Head from 'next/head';
+import useShareProcess from '../lib/hooks/use_share_process';
+import {ShareType} from '../constants/share_type';
+import {ShareSettings} from '../constants/social_media';
 
 const Trial = () => {
   const appCtx = useContext(AppContext);
@@ -47,6 +50,12 @@ const Trial = () => {
     setModalVisible(!modalVisible);
   };
 
+  const {shareTo} = useShareProcess({
+    lockerName: 'trial.testShare',
+    shareType: ShareType.RANK,
+    shareId: '20230531',
+  });
+
   return (
     <>
       {appCtx.isInit ? (
@@ -54,6 +63,19 @@ const Trial = () => {
           <Head>
             <meta property="og:image" content="https://erikkarlsson.dev/assets/prev.png" />
           </Head>
+          <button
+            className="rounded-md bg-blue-300 p-2"
+            onClick={() =>
+              shareTo({
+                url: ShareSettings.FACEBOOK.URL,
+                type: ShareSettings.FACEBOOK.TYPE,
+                // text: ShareSettings.FACEBOOK.TEXT,
+                size: ShareSettings.FACEBOOK.SIZE,
+              })
+            }
+          >
+            Share test
+          </button>
         </>
       ) : (
         <div>Loading...</div>

@@ -38,6 +38,7 @@ export type ICode =
   | '60220002'
   | '60310001'
   | '80410001'
+  | '80410002'
   | '90000000'
   | '90000001';
 
@@ -87,6 +88,7 @@ export type ICodeConstant = {
   CANNOT_CONVERT_TO_IMAGE: ICode;
 
   DEPOSIT_INTERVAL_TOO_SHORT: ICode;
+  BADGE_ALREADY_EXIST: ICode;
 
   UNKNOWN_ERROR: ICode;
   UNKNOWN_ERROR_IN_COMPONENT: ICode;
@@ -142,6 +144,7 @@ export const Code: ICodeConstant = {
   CANNOT_CONVERT_TO_IMAGE: '60310001',
 
   DEPOSIT_INTERVAL_TOO_SHORT: '80410001',
+  BADGE_ALREADY_EXIST: '80410002',
 
   UNKNOWN_ERROR: '90000000',
   UNKNOWN_ERROR_IN_COMPONENT: '90000001',
@@ -192,6 +195,7 @@ export const Reason: IReason = {
   '60310001': 'Cannot convert HTML to image',
 
   '80410001': 'ERROR_MESSAGE.DEPOSIT_INTERVAL_TOO_SHORT', //'Deposit interval too short, you can deposit at most 1 times in 24 hours, please try again later',
+  '80410002': 'ERROR_MESSAGE.BADGE_ALREADY_EXIST', //'Badge already exist
 
   '90000000': 'ERROR_MESSAGE.UNKNOWN_ERROR',
   '90000001': 'ERROR_MESSAGE.UNKNOWN_ERROR_IN_COMPONENT',

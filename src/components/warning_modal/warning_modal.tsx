@@ -3,7 +3,7 @@ import Link from 'next/link';
 import RippleButton from '../ripple_button/ripple_button';
 import {IWarningModal} from '../../contexts/global_context';
 import {MODAL_BUTTON_STYLE} from '../../constants/display';
-import {ImCross, ImWarning} from 'react-icons/im';
+import {ImWarning} from 'react-icons/im';
 import {useTranslation} from 'react-i18next';
 
 type TranslateFunction = (s: string) => string;
@@ -15,12 +15,13 @@ interface IWarningModalProps {
 
 const WarningModal = ({modalVisible, modalClickHandler, getWarningData}: IWarningModalProps) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
+  const {title, content, numberOfButton, pathOfButton, reactionOfButton} = getWarningData;
 
-  const path = getWarningData.pathOfButton ?? '/';
+  const path = pathOfButton ?? '/';
   const btnPath = path.startsWith('/') || path.startsWith('http') ? path : '/';
 
   const displayedButton =
-    getWarningData.numberOfButton === 2 ? (
+    numberOfButton === 2 ? (
       <div className="flex w-full flex-row items-center justify-between whitespace-nowrap px-7">
         <Link href={btnPath}>
           <RippleButton
@@ -28,7 +29,7 @@ const WarningModal = ({modalVisible, modalClickHandler, getWarningData}: IWarnin
             onClick={modalClickHandler}
             className={`${MODAL_BUTTON_STYLE.SOLID} w-150px py-2`}
           >
-            {getWarningData.reactionOfButton}
+            {reactionOfButton}
           </RippleButton>
         </Link>
 
@@ -40,22 +41,36 @@ const WarningModal = ({modalVisible, modalClickHandler, getWarningData}: IWarnin
           {t('POSITION_MODAL.WARNING_OK_BUTTON')}
         </RippleButton>
       </div>
-    ) : getWarningData.numberOfButton === 1 ? (
-      <div className="flex flex-row items-center justify-center px-7">
-        <RippleButton
-          buttonType="button"
-          onClick={modalClickHandler}
-          className={`${MODAL_BUTTON_STYLE.SOLID} py-2 px-6`}
-        >
-          {t('POSITION_MODAL.WARNING_OK_BUTTON')}
-        </RippleButton>
-      </div>
+    ) : numberOfButton === 1 ? (
+      pathOfButton ? (
+        <div className="flex flex-row items-center justify-center px-7">
+          <Link href={btnPath}>
+            <RippleButton
+              buttonType="button"
+              onClick={modalClickHandler}
+              className={`${MODAL_BUTTON_STYLE.SOLID} px-6 py-2`}
+            >
+              {reactionOfButton}
+            </RippleButton>
+          </Link>
+        </div>
+      ) : (
+        <div className="flex flex-row items-center justify-center px-7">
+          <RippleButton
+            buttonType="button"
+            onClick={modalClickHandler}
+            className={`${MODAL_BUTTON_STYLE.SOLID} px-6 py-2`}
+          >
+            {reactionOfButton}
+          </RippleButton>
+        </div>
+      )
     ) : null;
 
   const isDisplayedModal = modalVisible ? (
     <>
       <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">
-        <div className="relative my-6 mx-auto w-auto max-w-xl">
+        <div className="relative mx-auto my-6 w-auto max-w-xl">
           <div
             id="depositHistoryModal"
             className="relative flex h-auto w-300px flex-col space-y-4 rounded-xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none"
@@ -63,19 +78,14 @@ const WarningModal = ({modalVisible, modalClickHandler, getWarningData}: IWarnin
             {/* Info:(20230418 - Julian) Header/Title */}
             <div className="flex items-center justify-between rounded-t pt-9">
               <h3 className="mt-2 w-full text-center text-xl font-normal text-lightWhite">
-                {getWarningData.title}
+                {title}
               </h3>
-              <button className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
-                <span className="absolute top-5 right-5 block outline-none focus:outline-none">
-                  <ImCross onClick={modalClickHandler} />
-                </span>
-              </button>
             </div>
 
             {/* Info:(20230418 - Julian) Content */}
             <div className="flex flex-col items-center px-3">
               <ImWarning className="h-38px w-40px text-lightYellow2" />
-              <p className="p-4 text-left text-sm text-lightGray">{getWarningData.content}</p>
+              <p className="p-4 text-left text-sm text-lightGray">{content}</p>
             </div>
 
             {/* Info:(20230418 - Julian) Buttons */}

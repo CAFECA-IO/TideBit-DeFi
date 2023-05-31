@@ -1010,100 +1010,70 @@ export const UserProvider = ({children}: IUserProvider) => {
   const _createCFDOrder = async (
     applyCreateCFDOrder: IApplyCreateCFDOrder | undefined
   ): Promise<IResult> => {
-    const isValid = validateCFD(
-      applyCreateCFDOrder?.fee ?? 0,
-      applyCreateCFDOrder?.margin.amount ?? 0,
-      applyCreateCFDOrder?.amount ?? 0
-    );
-    if (!isValid) throw new CustomError(Code.INVALID_CFD_OPEN_REQUEST);
-
-    let result: IResult = {...defaultResultFailed};
-    result.code = Code.SERVICE_TERM_DISABLE;
-    result.reason = Reason[result.code];
-    // Deprecated: [debug] (20230509 - Tzuhan)
-    // eslint-disable-next-line no-console
-    console.log('_createCFDOrder enableServiceTermRef.current', enableServiceTermRef.current);
-    if (enableServiceTermRef.current) {
-      if (applyCreateCFDOrder) {
-        const balance: IBalance | null = getBalance(applyCreateCFDOrder.margin.asset);
-        if (balance && balance.available >= applyCreateCFDOrder.margin.amount) {
-          const transferR = transactionEngine.transferCFDOrderToTransaction(applyCreateCFDOrder);
-          if (transferR.success) {
-            try {
-              result.code = Code.REJECTED_SIGNATURE;
-              const signature: string = await lunar.signTypedData(transferR.data);
-              /* Info: (20230505 - Julian) 需要再驗證一次簽名是否正確 */
-              const success = await lunar.verifyTypedData(transferR.data, signature);
-              // Deprecated: [debug] (20230509 - Tzuhan)
-              // eslint-disable-next-line no-console
-              console.log('_createCFDOrder lunar.verifyTypedData success', success);
-              if (!success) throw new Error('verify signature failed');
-              const now = getTimestamp();
-              // ToDo: Check if the quotation is expired, if so return `failed result` in `catch`. (20230414 - Shirley)
-              // Deprecated: [debug] (20230509 - Tzuhan)
-              // eslint-disable-next-line no-console
-              console.log(
-                `_createCFDOrder applyCreateCFDOrder.quotation.deadline(${
-                  applyCreateCFDOrder.quotation.deadline
-                }) ${new Date(applyCreateCFDOrder.quotation.deadline * 1000)} < now${now}`,
-                applyCreateCFDOrder.quotation.deadline < now
-              );
-              if (applyCreateCFDOrder.quotation.deadline < now) {
-                result.code = Code.EXPIRED_QUOTATION_FAILED;
-                result.code = result.code;
-                result.reason = Reason[result.code];
-                const error = new CustomError(result.code);
-                throw error;
-              }
-              result.code = Code.INTERNAL_SERVER_ERROR;
-              // Deprecated: [debug] (20230509 - Tzuhan)
-              // eslint-disable-next-line no-console
-              console.log('_createCFDOrder request is called');
-              result = (await privateRequestHandler({
-                name: APIName.CREATE_CFD_TRADE,
-                method: Method.POST,
-                body: {applyData: applyCreateCFDOrder, userSignature: signature},
-              })) as IResult;
-              // Deprecated: [debug] (20230509 - Tzuhan)
-              // eslint-disable-next-line no-console
-              console.log('_createCFDOrder result', result);
-              if (result.success) {
-                const {balanceSnapshot, orderSnapshot: CFDOrder} = result.data as {
-                  txhash: string;
-                  orderSnapshot: ICFDOrder;
-                  balanceSnapshot: IBalance[];
-                };
-                setOpenedCFDs(prev => [...prev, CFDOrder]);
-                result.code = Code.FAILE_TO_UPDATE_BALANCE;
-                updateBalance(balanceSnapshot);
-                // setHistories(prev => [...prev, acceptedCFDOrder]);
-                result.code = Code.SUCCESS;
-                result = {
-                  success: true,
-                  code: result.code,
-                  data: {order: CFDOrder},
-                };
-              }
-            } catch (error) {
-              // TODO: error handle (Tzuhan - 20230421)
-              // eslint-disable-next-line no-console
-              console.error(`${APIName.CREATE_CFD_TRADE} error`, error);
-              // Info: `updateBalance` has two options of error (20230426 - Shirley)
-              if (isCustomError(error)) {
-                if (error.code === Code.BALANCE_NOT_FOUND) {
-                  result.code = Code.BALANCE_NOT_FOUND;
-                }
-              }
-              result = {
-                success: false,
-                code: result.code || Code.INTERNAL_SERVER_ERROR,
-                reason:
-                  (error as Error)?.message || Reason[result.code || Code.INTERNAL_SERVER_ERROR],
-              };
-            }
-          }
-        }
-      }
+    let result: IResult;
+    try {
+      if (!enableServiceTermRef.current) throw new CustomError(Code.SERVICE_TERM_DISABLE);
+      if (!applyCreateCFDOrder) throw new CustomError(Code.INVAILD_ORDER_INPUTS);
+      const balance: IBalance | null = getBalance(applyCreateCFDOrder.margin.asset);
+      if (!balance || balance.available < applyCreateCFDOrder.margin.amount)
+        throw new CustomError(Code.BALANCE_IS_NOT_ENOUGH_TO_OPEN_ORDER);
+      const transferR = transactionEngine.transferCFDOrderToTransaction(applyCreateCFDOrder);
+      if (!transferR.success) throw new CustomError(Code.FAILED_TO_CREATE_TRANSACTION);
+      const signature: string = await lunar.signTypedData(transferR.data);
+      /* Info: (20230505 - Julian) 需要再驗證一次簽名是否正確 */
+      const success = lunar.verifyTypedData(transferR.data, signature);
+      // Deprecated: [debug] (20230509 - Tzuhan)
+      // eslint-disable-next-line no-console
+      console.log('_createCFDOrder lunar.verifyTypedData success', success);
+      if (!success) throw new CustomError(Code.REJECTED_SIGNATURE);
+      const now = getTimestamp();
+      // ToDo: Check if the quotation is expired, if so return `failed result` in `catch`. (20230414 - Shirley)
+      // Deprecated: [debug] (20230509 - Tzuhan)
+      // eslint-disable-next-line no-console
+      console.log(
+        `_createCFDOrder applyCreateCFDOrder.quotation.deadline(${
+          applyCreateCFDOrder.quotation.deadline
+        }) ${new Date(applyCreateCFDOrder.quotation.deadline * 1000)} < now${now}`,
+        applyCreateCFDOrder.quotation.deadline < now
+      );
+      if (applyCreateCFDOrder.quotation.deadline < now)
+        throw new CustomError(Code.EXPIRED_QUOTATION_FAILED);
+      result = (await privateRequestHandler({
+        name: APIName.CREATE_CFD_TRADE,
+        method: Method.POST,
+        body: {applyData: applyCreateCFDOrder, userSignature: signature},
+      })) as IResult;
+      // Deprecated: [debug] (20230509 - Tzuhan)
+      // eslint-disable-next-line no-console
+      console.log('_createCFDOrder result', result);
+      if (!result.success)
+        throw new CustomError(
+          isCustomError(result.code) ? result.code : Code.INTERNAL_SERVER_ERROR
+        );
+      const {balanceSnapshot, orderSnapshot: CFDOrder} = result.data as {
+        txhash: string;
+        orderSnapshot: ICFDOrder;
+        balanceSnapshot: IBalance[];
+      };
+      const index = openCFDsRef.current.findIndex(cfd => cfd.id === CFDOrder.id);
+      if (index === -1) setOpenedCFDs(prev => [...prev, CFDOrder]);
+      result.code = Code.FAILE_TO_UPDATE_BALANCE;
+      updateBalance(balanceSnapshot);
+      result.code = Code.SUCCESS;
+      result = {
+        success: true,
+        code: result.code,
+        data: {order: CFDOrder},
+      };
+    } catch (error) {
+      // Info: `updateBalance` has two options of error (20230426 - Shirley)
+      result = {
+        success: false,
+        code: isCustomError(error) ? error.code : Code.INTERNAL_SERVER_ERROR,
+        reason: isCustomError(error)
+          ? Reason[error.code]
+          : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
+      };
     }
     return result;
   };
@@ -1156,102 +1126,76 @@ export const UserProvider = ({children}: IUserProvider) => {
   const _closeCFDOrder = async (
     applyCloseCFDOrder: IApplyCloseCFDOrder | undefined
   ): Promise<IResult> => {
-    let result: IResult = {...defaultResultFailed};
-    result.code = Code.SERVICE_TERM_DISABLE;
-    result.reason = Reason[result.code];
-    // Deprecated: [debug] (20230509 - Tzuhan)
-    // eslint-disable-next-line no-console
-    console.log('closeCFDOrder enableServiceTermRef.current', enableServiceTermRef.current);
-    if (enableServiceTermRef.current) {
-      if (applyCloseCFDOrder) {
-        const index = openCFDs.findIndex(o => o.id === applyCloseCFDOrder.referenceId);
-        if (index !== -1) {
-          // const balance: IBalance | null = getBalance(openCFDs[index].targetAsset);
-          const transferR = transactionEngine.transferCFDOrderToTransaction(applyCloseCFDOrder);
-          if (transferR.success) {
-            // ++ TODO: send request to chain(use Lunar?) (20230324 - tzuhan)
-            try {
-              result.code = Code.REJECTED_SIGNATURE;
-              const signature: string = await lunar.signTypedData(transferR.data);
-              /* Info: (20230505 - Julian) 需要再驗證一次簽名是否正確 */
-              const success = await lunar.verifyTypedData(transferR.data, signature);
-              // Deprecated: [debug] (20230509 - Tzuhan)
-              // eslint-disable-next-line no-console
-              console.log('closeCFDOrder lunar.verifyTypedData success', success);
-              if (!success) throw new Error('verify signature failed');
-              const now = getTimestamp();
-              // ToDo: Check if the quotation is expired, if so return `failed result` in `catch`. (20230414 - Shirley)
-              // Deprecated: [debug] (20230509 - Tzuhan)
-              // eslint-disable-next-line no-console
-              console.log(
-                `closeCFDOrder applyCloseCFDOrder.quotation.deadline(${
-                  applyCloseCFDOrder.quotation.deadline
-                }) ${new Date(applyCloseCFDOrder.quotation.deadline * 1000)} < now${now}`,
-                applyCloseCFDOrder.quotation.deadline < now
-              );
-              if (applyCloseCFDOrder.quotation.deadline < now) {
-                result.code = Code.EXPIRED_QUOTATION_FAILED;
-                result.code = result.code;
-                result.reason = Reason[result.code];
-                const error = new CustomError(result.code);
-                throw error;
-              }
-              result.code = Code.INTERNAL_SERVER_ERROR;
-              // Deprecated: [debug] (20230509 - Tzuhan)
-              // eslint-disable-next-line no-console
-              console.log('closeCFDOrder request is called');
-              result = (await privateRequestHandler({
-                name: APIName.CLOSE_CFD_TRADE,
-                method: Method.PUT,
-                body: {
-                  applyData: applyCloseCFDOrder,
-                  userSignature: signature,
-                },
-              })) as IResult;
-              // Deprecated: [debug] (20230509 - Tzuhan)
-              // eslint-disable-next-line no-console
-              console.log('closeCFDOrder result', result);
-              if (result.success) {
-                const {balanceSnapshot, orderSnapshot: updateCFDOrder} = result.data as {
-                  txhash: string;
-                  orderSnapshot: ICFDOrder;
-                  balanceSnapshot: IBalance[];
-                };
-                const newOpenedCFDs = [...openCFDs];
-                newOpenedCFDs.splice(index, 1);
-                setOpenedCFDs(newOpenedCFDs);
-                setClosedCFDs(prev => [...prev, updateCFDOrder]);
-                result.code = Code.FAILE_TO_UPDATE_BALANCE;
-                updateBalance(balanceSnapshot);
-                // setHistories(prev => [...prev, acceptedCFDOrder]);
-
-                result.code = Code.SUCCESS;
-                result = {
-                  success: true,
-                  code: result.code,
-                  data: {order: updateCFDOrder},
-                };
-              }
-            } catch (error) {
-              // TODO: error handle (Tzuhan - 20230421)
-              // eslint-disable-next-line no-console
-              console.error(`${APIName.CLOSE_CFD_TRADE} error`, error);
-              // Info: `updateBalance` has two options of error (20230426 - Shirley)
-              if (isCustomError(error)) {
-                if (error.code === Code.BALANCE_NOT_FOUND) {
-                  result.code = Code.BALANCE_NOT_FOUND;
-                }
-              }
-              result = {
-                success: false,
-                code: result.code || Code.INTERNAL_SERVER_ERROR,
-                reason:
-                  (error as Error)?.message || Reason[result.code || Code.INTERNAL_SERVER_ERROR],
-              };
-            }
-          }
-        }
-      }
+    let result: IResult;
+    try {
+      if (!enableServiceTermRef.current) throw new CustomError(Code.SERVICE_TERM_DISABLE);
+      if (!applyCloseCFDOrder) throw new CustomError(Code.INVAILD_ORDER_INPUTS);
+      let index = openCFDs.findIndex(o => o.id === applyCloseCFDOrder.referenceId);
+      if (index === -1) throw new CustomError(Code.CFD_ORDER_NOT_FOUND);
+      // const balance: IBalance | null = getBalance(openCFDs[index].targetAsset);
+      const transferR = transactionEngine.transferCFDOrderToTransaction(applyCloseCFDOrder);
+      if (!transferR.success) throw new CustomError(Code.FAILED_TO_CREATE_TRANSACTION);
+      // ++ TODO: send request to chain(use Lunar?) (20230324 - tzuhan)
+      const signature: string = await lunar.signTypedData(transferR.data);
+      /* Info: (20230505 - Julian) 需要再驗證一次簽名是否正確 */
+      const success = lunar.verifyTypedData(transferR.data, signature);
+      // Deprecated: [debug] (20230509 - Tzuhan)
+      // eslint-disable-next-line no-console
+      console.log('closeCFDOrder lunar.verifyTypedData success', success);
+      if (!success) throw new CustomError(Code.REJECTED_SIGNATURE);
+      const now = getTimestamp();
+      // ToDo: Check if the quotation is expired, if so return `failed result` in `catch`. (20230414 - Shirley)
+      // Deprecated: [debug] (20230509 - Tzuhan)
+      // eslint-disable-next-line no-console
+      console.log(
+        `closeCFDOrder applyCloseCFDOrder.quotation.deadline(${
+          applyCloseCFDOrder.quotation.deadline
+        }) ${new Date(applyCloseCFDOrder.quotation.deadline * 1000)} < now${now}`,
+        applyCloseCFDOrder.quotation.deadline < now
+      );
+      if (applyCloseCFDOrder.quotation.deadline < now)
+        throw new CustomError(Code.EXPIRED_QUOTATION_FAILED);
+      result = (await privateRequestHandler({
+        name: APIName.CLOSE_CFD_TRADE,
+        method: Method.PUT,
+        body: {
+          applyData: applyCloseCFDOrder,
+          userSignature: signature,
+        },
+      })) as IResult;
+      // Deprecated: [debug] (20230509 - Tzuhan)
+      // eslint-disable-next-line no-console
+      console.log('closeCFDOrder result', result);
+      if (!result.success)
+        throw new CustomError(
+          isCustomError(result.code) ? result.code : Code.INTERNAL_SERVER_ERROR
+        );
+      const {balanceSnapshot, orderSnapshot: updateCFDOrder} = result.data as {
+        txhash: string;
+        orderSnapshot: ICFDOrder;
+        balanceSnapshot: IBalance[];
+      };
+      const newOpenedCFDs = [...openCFDsRef.current];
+      index = newOpenedCFDs.findIndex(o => o.id === updateCFDOrder.id);
+      if (index !== -1) newOpenedCFDs.splice(index, 1);
+      setOpenedCFDs(newOpenedCFDs);
+      index = closedCFDsRef.current.findIndex(o => o.id === updateCFDOrder.id);
+      if (index === -1) setClosedCFDs(prev => [...prev, updateCFDOrder]);
+      updateBalance(balanceSnapshot);
+      result = {
+        success: true,
+        code: Code.SUCCESS,
+        data: {order: updateCFDOrder},
+      };
+    } catch (error) {
+      // Info: `updateBalance` has two options of error (20230426 - Shirley)
+      result = {
+        success: false,
+        code: isCustomError(error) ? error.code : Code.INTERNAL_SERVER_ERROR,
+        reason: isCustomError(error)
+          ? Reason[error.code]
+          : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
+      };
     }
     return result;
   };
@@ -1296,65 +1240,60 @@ export const UserProvider = ({children}: IUserProvider) => {
   const updateCFDOrder = async (
     applyUpdateCFDOrder: IApplyUpdateCFDOrder | undefined
   ): Promise<IResult> => {
-    let result: IResult = {...defaultResultFailed};
-    result.code = Code.SERVICE_TERM_DISABLE;
-    result.reason = Reason[result.code];
-    if (enableServiceTermRef.current) {
-      if (applyUpdateCFDOrder) {
-        const index = openCFDs.findIndex(o => o.id === applyUpdateCFDOrder.referenceId);
-        if (index !== -1) {
-          const transferR = transactionEngine.transferCFDOrderToTransaction(applyUpdateCFDOrder);
-          if (transferR.success) {
-            // ++ TODO: send request to chain(use Lunar?) (20230324 - tzuhan)
-            try {
-              result.code = Code.REJECTED_SIGNATURE;
-              const signature: string = await lunar.signTypedData(transferR.data);
-              /* Info: (20230505 - Julian) 需要再驗證一次簽名是否正確 */
-              const success = await lunar.verifyTypedData(transferR.data, signature);
-              if (!success) throw new Error('verify signature failed');
-
-              result.code = Code.INTERNAL_SERVER_ERROR;
-              result = (await privateRequestHandler({
-                name: APIName.UPDATE_CFD_TRADE,
-                method: Method.PUT,
-                body: {
-                  applyData: applyUpdateCFDOrder,
-                  userSignature: signature,
-                  openCFD: openCFDs[index], // Deprecated: remove when backend is ready (20230424 - tzuhan)
-                },
-              })) as IResult;
-              if (result.success) {
-                const {orderSnapshot: updateCFDOrder} = result.data as {
-                  txhash: string;
-                  orderSnapshot: ICFDOrder;
-                  balanceSnapshot: IBalance[];
-                };
-                const updateCFDOrders = [...openCFDs];
-                updateCFDOrders[index] = updateCFDOrder;
-                setOpenedCFDs(updateCFDOrders);
-                // setHistories(prev => [...prev, acceptedCFDOrder]);
-
-                result.code = Code.SUCCESS;
-                result = {
-                  success: true,
-                  code: result.code,
-                  data: {order: updateCFDOrder},
-                };
-              }
-            } catch (error) {
-              // TODO: error handle (Tzuhan - 20230421)
-              // eslint-disable-next-line no-console
-              console.error(`${APIName.UPDATE_CFD_TRADE} error`, error);
-              result = {
-                success: false,
-                code: Code.INTERNAL_SERVER_ERROR,
-                reason: (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
-              };
-            }
-          }
-        }
-      }
+    let result: IResult;
+    try {
+      if (!enableServiceTermRef.current) throw new CustomError(Code.SERVICE_TERM_DISABLE);
+      if (!applyUpdateCFDOrder) throw new CustomError(Code.INVAILD_ORDER_INPUTS);
+      const index = openCFDs.findIndex(o => o.id === applyUpdateCFDOrder.referenceId);
+      if (index === -1) throw new CustomError(Code.CFD_ORDER_NOT_FOUND);
+      const transferR = transactionEngine.transferCFDOrderToTransaction(applyUpdateCFDOrder);
+      if (!transferR.success) throw new CustomError(Code.FAILED_TO_CREATE_TRANSACTION);
+      // ++ TODO: send request to chain(use Lunar?) (20230324 - tzuhan)
+      const signature: string = await lunar.signTypedData(transferR.data);
+      /* Info: (20230505 - Julian) 需要再驗證一次簽名是否正確 */
+      const success = lunar.verifyTypedData(transferR.data, signature);
+      // Deprecated: [debug] (20230509 - Tzuhan)
+      // eslint-disable-next-line no-console
+      console.log('updateCFDOrder lunar.verifyTypedData success', success);
+      if (!success) throw new CustomError(Code.REJECTED_SIGNATURE);
+      result = (await privateRequestHandler({
+        name: APIName.UPDATE_CFD_TRADE,
+        method: Method.PUT,
+        body: {
+          applyData: applyUpdateCFDOrder,
+          userSignature: signature,
+          openCFD: openCFDs[index], // Deprecated: remove when backend is ready (20230424 - tzuhan)
+        },
+      })) as IResult;
+      if (!result.success)
+        throw new CustomError(
+          isCustomError(result.code) ? result.code : Code.INTERNAL_SERVER_ERROR
+        );
+      const {orderSnapshot: updateCFDOrder} = result.data as {
+        txhash: string;
+        orderSnapshot: ICFDOrder;
+        balanceSnapshot: IBalance[];
+      };
+      const updateCFDOrders = [...openCFDs];
+      updateCFDOrders[index] = updateCFDOrder;
+      setOpenedCFDs(updateCFDOrders);
+      result.code = Code.SUCCESS;
+      result = {
+        success: true,
+        code: result.code,
+        data: {order: updateCFDOrder},
+      };
+    } catch (error) {
+      // TODO: error handle (Tzuhan - 20230421)
+      // eslint-disable-next-line no-console
+      console.error(`${APIName.UPDATE_CFD_TRADE} error`, error);
+      result = {
+        success: false,
+        code: Code.INTERNAL_SERVER_ERROR,
+        reason: (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
+      };
     }
+
     return result;
   };
 

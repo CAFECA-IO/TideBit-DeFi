@@ -99,7 +99,7 @@ const Footer = () => {
       {/* Info: (20230328 - Julian) Desktop */}
       <div className={`${desktopVersionBreakpoint}`}>
         <footer className="mx-auto w-screen bg-darkGray text-base lg:justify-center">
-          <div className="flex flex-col flex-wrap px-1/10 pt-24 pb-10 md:flex-row md:flex-nowrap md:items-center lg:items-start">
+          <div className="flex flex-col flex-wrap px-1/10 pb-10 pt-24 md:flex-row md:flex-nowrap md:items-center lg:items-start">
             <div className="mx-auto w-full shrink-0 text-center md:mx-0 md:w-1/4 md:text-left lg:w-1/6">
               <Link
                 href="/#"
@@ -144,14 +144,14 @@ const Footer = () => {
                     <input
                       placeholder={t('FOOTER.EMAIL_PLACEHOLDER')}
                       type="text"
-                      id="email"
+                      id="email_desktop"
                       name="email"
-                      className="block w-full rounded border border-white bg-darkGray py-1 px-3 text-sm leading-8 text-white outline-none ring-transparent transition-colors duration-200 ease-in-out focus:bg-darkGray active:bg-darkGray xl:w-220px"
+                      className="block w-full rounded border border-white bg-darkGray px-3 py-1 text-sm leading-8 text-white outline-none ring-transparent transition-colors duration-200 ease-in-out focus:bg-darkGray active:bg-darkGray xl:w-220px"
                     />
                   </div>
                   <RippleButton
                     buttonType="button"
-                    className={`mt-4 rounded border-0 bg-tidebitTheme py-2 px-5 text-sm text-white transition-colors duration-300 hover:cursor-pointer hover:bg-cyan-600 focus:outline-none md:mt-0`}
+                    className={`mt-4 rounded border-0 bg-tidebitTheme px-5 py-2 text-sm text-white transition-colors duration-300 hover:cursor-pointer hover:bg-cyan-600 focus:outline-none md:mt-0`}
                   >
                     {t('FOOTER.SUBSCRIBE_BUTTON')}
                   </RippleButton>
@@ -161,7 +161,7 @@ const Footer = () => {
           </div>
 
           <div className="mt-0 pb-0">
-            <div className="flex flex-col flex-wrap px-5 pt-1 pb-4 sm:flex-row sm:justify-center md:justify-end">
+            <div className="flex flex-col flex-wrap px-5 pb-4 pt-1 sm:flex-row sm:justify-center md:justify-end">
               <p className="text-center text-xs text-gray-400 sm:text-left md:mt-5 lg:mr-36 lg:mt-0">
                 {COPYRIGHT}
               </p>
@@ -173,7 +173,7 @@ const Footer = () => {
       {/* Info: (20230328 - Julian) Mobile */}
       <div className={`${mobileVersionBreakpoint}`}>
         <footer className="mx-auto w-screen justify-center bg-darkGray text-base">
-          <div className="flex flex-col flex-wrap px-1/10 pt-10 pb-10 md:flex-row md:flex-nowrap md:items-center lg:items-start">
+          <div className="flex flex-col flex-wrap px-1/10 pb-10 pt-10 md:flex-row md:flex-nowrap md:items-center lg:items-start">
             {/* Info: (20230328 - Julian) LOGO & Social media */}
             <div className="mx-auto w-full shrink-0 text-center">
               <Link
@@ -218,14 +218,14 @@ const Footer = () => {
                       <input
                         placeholder={t('FOOTER.EMAIL_PLACEHOLDER')}
                         type="text"
-                        id="email"
+                        id="email_mobile"
                         name="email"
-                        className="block w-full rounded border border-white bg-darkGray py-1 px-3 text-sm leading-8 text-white outline-none ring-transparent transition-colors duration-200 ease-in-out focus:bg-darkGray active:bg-darkGray"
+                        className="block w-full rounded border border-white bg-darkGray px-3 py-1 text-sm leading-8 text-white outline-none ring-transparent transition-colors duration-200 ease-in-out focus:bg-darkGray active:bg-darkGray"
                       />
                     </div>
                     <RippleButton
                       buttonType="button"
-                      className={`mt-4 rounded border-0 bg-tidebitTheme py-2 px-5 text-sm text-white transition-colors duration-300 hover:cursor-pointer hover:bg-cyan-600 focus:outline-none md:mt-0`}
+                      className={`mt-4 rounded border-0 bg-tidebitTheme px-5 py-2 text-sm text-white transition-colors duration-300 hover:cursor-pointer hover:bg-cyan-600 focus:outline-none md:mt-0`}
                     >
                       {t('FOOTER.SUBSCRIBE_BUTTON')}
                     </RippleButton>
@@ -236,7 +236,7 @@ const Footer = () => {
           </div>
 
           <div className="mt-0 pb-0">
-            <div className="flex flex-col flex-wrap px-5 pt-1 pb-8 sm:flex-row sm:justify-center md:justify-end">
+            <div className="flex flex-col flex-wrap px-5 pb-8 pt-1 sm:flex-row sm:justify-center md:justify-end">
               <p className="text-center text-xs text-gray-400 sm:text-left md:mt-5 lg:mr-36 lg:mt-0">
                 {COPYRIGHT}
               </p>

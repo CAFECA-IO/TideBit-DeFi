@@ -40,8 +40,23 @@ const OpenPositionItem = ({openCfdDetails}: IOpenPositionItemProps) => {
     visibleUpdateFormModalHandler();
   };
 
+  const {
+    openPrice,
+    openValue,
+    createTimestamp,
+    ticker,
+    typeOfPosition,
+    pnl,
+    liquidationTime,
+    liquidationPrice,
+    takeProfit,
+    stopLoss,
+    positionLineGraph,
+    stateCode,
+  } = openCfdDetails;
+
   const nowTimestamp = new Date().getTime() / 1000;
-  const remainSecs = openCfdDetails?.liquidationTime - nowTimestamp;
+  const remainSecs = liquidationTime - nowTimestamp;
 
   const remainTime =
     remainSecs < 60
@@ -64,29 +79,37 @@ const OpenPositionItem = ({openCfdDetails}: IOpenPositionItemProps) => {
     visiblePositionClosedModalHandler();
   };
 
-  const openPrice = openCfdDetails?.openPrice;
-  const liquidationPrice = openCfdDetails?.liquidationPrice;
-  const takeProfitPrice = openCfdDetails?.takeProfit ?? 0;
-  const stopLossPrice = openCfdDetails?.stopLoss ?? 0;
-
   /* Info: (20230411 - Julian) 折線圖參考線的優先顯示順序:
    * 1. Liquidation
    * 2. Stop Loss Price
    * 3. Take Profit Price
-   * 4. Open price */
+   * 4. Open price
+   * VALUE -> 數值(Number), STRING -> 參考線上的文字(String) */
   const lineGraphAnnotation = {
-    LIQUIDATION: {VALUE: liquidationPrice, STRING: t('TRADE_PAGE.OPEN_POSITION_ITEM_LIQUIDATION')},
-    STOP_LOSS: {VALUE: stopLossPrice, STRING: t('TRADE_PAGE.OPEN_POSITION_ITEM_SL')},
-    TAKE_PROFIT: {VALUE: takeProfitPrice, STRING: t('TRADE_PAGE.OPEN_POSITION_ITEM_TP')},
-    OPEN_PRICE: {VALUE: openPrice, STRING: `$ ${openPrice}`},
+    LIQUIDATION: {
+      VALUE: liquidationPrice,
+      STRING: t('TRADE_PAGE.OPEN_POSITION_ITEM_LIQUIDATION'),
+    },
+    STOP_LOSS: {
+      VALUE: stopLoss ?? 0,
+      STRING: t('TRADE_PAGE.OPEN_POSITION_ITEM_SL'),
+    },
+    TAKE_PROFIT: {
+      VALUE: takeProfit ?? 0,
+      STRING: t('TRADE_PAGE.OPEN_POSITION_ITEM_TP'),
+    },
+    OPEN_PRICE: {
+      VALUE: openPrice,
+      STRING: `$ ${openPrice.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)}`,
+    },
   };
 
   const displayedAnnotation =
-    openCfdDetails.stateCode === cfdStateCode.LIQUIDATION
+    stateCode === cfdStateCode.LIQUIDATION
       ? lineGraphAnnotation.LIQUIDATION
-      : openCfdDetails.stateCode === cfdStateCode.STOP_LOSS
+      : stateCode === cfdStateCode.STOP_LOSS
       ? lineGraphAnnotation.STOP_LOSS
-      : openCfdDetails.stateCode === cfdStateCode.TAKE_PROFIT
+      : stateCode === cfdStateCode.TAKE_PROFIT
       ? lineGraphAnnotation.TAKE_PROFIT
       : lineGraphAnnotation.OPEN_PRICE;
 
@@ -94,33 +117,32 @@ const OpenPositionItem = ({openCfdDetails}: IOpenPositionItemProps) => {
   const displayedColorHex =
     remainSecs <= POSITION_CLOSE_COUNTDOWN_SECONDS
       ? TypeOfPnLColorHex.LIQUIDATION
-      : openCfdDetails?.pnl?.type === ProfitState.PROFIT
+      : pnl?.type === ProfitState.PROFIT
       ? TypeOfPnLColorHex.PROFIT
-      : openCfdDetails?.pnl?.type === ProfitState.LOSS
+      : pnl?.type === ProfitState.LOSS
       ? TypeOfPnLColorHex.LOSS
       : TypeOfPnLColorHex.EQUAL;
 
-  /* Info: (20230411 - Julian) 折線圖參考線顏色 */
+  /* Info: (20230411 - Julian) 折線圖參考線顏色
+   * 如果 DASH_LINE 是黃色(LIQUIDATION)，文字就用黑色(其餘用白色) */
   const lineGraphAnnotationColor = {
     CLOSING_TIME: {DASH_LINE: TypeOfPnLColorHex.LIQUIDATION, STRING: LINE_GRAPH_STROKE_COLOR.BLACK},
     COMMON: {DASH_LINE: displayedColorHex, STRING: LINE_GRAPH_STROKE_COLOR.WHITE},
   };
 
   const displayedAnnotationColor =
-    openCfdDetails.stateCode === cfdStateCode.COMMON
+    stateCode === cfdStateCode.COMMON
       ? lineGraphAnnotationColor.COMMON
       : lineGraphAnnotationColor.CLOSING_TIME;
 
   const displayedTypeString =
-    openCfdDetails?.typeOfPosition === TypeOfPosition.BUY
-      ? TypeOfTransaction.LONG
-      : TypeOfTransaction.SHORT;
+    typeOfPosition === TypeOfPosition.BUY ? TypeOfTransaction.LONG : TypeOfTransaction.SHORT;
 
   const displayedTextColor =
-    openCfdDetails?.pnl?.type === ProfitState.PROFIT ? 'text-lightGreen5' : 'text-lightRed';
+    pnl?.type === ProfitState.PROFIT ? 'text-lightGreen5' : 'text-lightRed';
 
   const displayedCrossColor =
-    openCfdDetails?.pnl?.type === ProfitState.PROFIT
+    pnl?.type === ProfitState.PROFIT
       ? 'hover:before:bg-lightGreen5 hover:after:bg-lightGreen5'
       : 'hover:before:bg-lightRed hover:after:bg-lightRed';
   const displayedCrossStyle =
@@ -128,18 +150,17 @@ const OpenPositionItem = ({openCfdDetails}: IOpenPositionItemProps) => {
 
   const displayedPnLSymbol = !!!marketCtx.selectedTicker?.price
     ? ''
-    : openCfdDetails?.pnl?.type === ProfitState.PROFIT
+    : pnl?.type === ProfitState.PROFIT
     ? '+'
-    : openCfdDetails?.pnl?.type === ProfitState.LOSS
+    : pnl?.type === ProfitState.LOSS
     ? '-'
     : '';
 
   const displayedPnLValue = !!!marketCtx.selectedTicker?.price
     ? '- -'
-    : openCfdDetails?.pnl?.value.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
+    : pnl?.value.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
 
-  const displayedCreateTime = timestampToString(openCfdDetails?.createTimestamp ?? 0);
-
+  const displayedCreateTime = timestampToString(createTimestamp ?? 0);
   return (
     <div className="relative my-2 min-h-160px">
       <div
@@ -151,12 +172,12 @@ const OpenPositionItem = ({openCfdDetails}: IOpenPositionItemProps) => {
         <div className="inline-flex items-center text-sm">
           {/* ToDo: default currency icon (20230310 - Julian) issue #338 */}
           <Image
-            src={`/asset_icon/${openCfdDetails?.ticker.toLowerCase()}.svg`}
-            alt={`${openCfdDetails?.ticker} icon`}
+            src={`/asset_icon/${ticker.toLowerCase()}.svg`}
+            alt={`${ticker} icon`}
             width={15}
             height={15}
           />
-          <p className="ml-1">{openCfdDetails?.ticker}</p>
+          <p className="ml-1">{ticker}</p>
 
           <div className="ml-2 text-sm text-tidebitTheme">
             {displayedTypeString.TITLE}{' '}
@@ -178,7 +199,7 @@ const OpenPositionItem = ({openCfdDetails}: IOpenPositionItemProps) => {
             displayedAnnotationColor.DASH_LINE,
             displayedAnnotationColor.STRING,
           ]}
-          dataArray={openCfdDetails.positionLineGraph}
+          dataArray={positionLineGraph}
           lineGraphWidth={OPEN_POSITION_LINE_GRAPH_WIDTH}
           annotatedValue={displayedAnnotation.VALUE}
           annotatedString={displayedAnnotation.STRING}
@@ -189,11 +210,7 @@ const OpenPositionItem = ({openCfdDetails}: IOpenPositionItemProps) => {
         <div className="">
           <div className="text-xs text-lightGray">{t('TRADE_PAGE.OPEN_POSITION_ITEM_VALUE')}</div>
           <div className="text-sm">
-            ${' '}
-            {openCfdDetails?.openValue.toLocaleString(
-              UNIVERSAL_NUMBER_FORMAT_LOCALE,
-              FRACTION_DIGITS
-            )}
+            $ {openValue.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)}
           </div>
         </div>
 

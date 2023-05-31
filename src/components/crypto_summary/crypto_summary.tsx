@@ -1,6 +1,6 @@
-import React, {useContext} from 'react';
+import React from 'react';
+import Image from 'next/image';
 import {BiLinkAlt} from 'react-icons/bi';
-import {MarketContext} from '../../contexts/market_context';
 import {useTranslation} from 'react-i18next';
 
 type TranslateFunction = (s: string) => string;
@@ -87,7 +87,7 @@ const CryptoSummary = ({
 
   return (
     <>
-      <div style={{width: '97%'}} className="flex-col justify-start">
+      <div className="flex-col justify-start">
         {' '}
         <h1 className="pr-12 text-start text-xl text-lightWhite">
           {t('TRADE_PAGE.CRYPTO_SUMMARY_WHITEPAPER_TITLE')}
@@ -97,12 +97,11 @@ const CryptoSummary = ({
           <section className="">
             <div className="mx-auto flex flex-wrap pb-5">
               {/* Left side */}
-              <div className="mb-0 border-b border-white/30 pb-10 lg:mb-0 lg:w-1/2 lg:border-r-2 lg:border-b-0 lg:py-0 lg:pr-12">
+              <div className="mb-0 border-b border-white/30 pb-10 lg:mb-0 lg:w-1/2 lg:border-b-0 lg:border-r-2 lg:py-0 lg:pr-12">
                 {/* Icon and name */}
                 <div className="flex items-center space-x-3 text-center">
-                  {/* <div className="">{cryptoIcon}</div> */}
                   <span className="relative h-40px w-40px">
-                    <img src={icon} alt={label} />
+                    <Image src={icon} alt={label} width={40} height={40} />
                   </span>
                   <h1 className="text-lg font-medium text-white">{label}</h1>
                 </div>

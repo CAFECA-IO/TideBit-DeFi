@@ -41,33 +41,12 @@ const CryptoNewsSection = () => {
 
   return (
     <>
-      <div style={{width: '97%'}} className="flex-col justify-start">
+      <div className="flex-col justify-start">
         <h1 className="pr-12 text-start text-xl text-lightWhite">
           {t('TRADE_PAGE.CRYPTO_NEWS_SECTION_TITLE')}
         </h1>
         <span className={`${dividerWidth} mb-3 inline-block h-px rounded bg-white/30`}></span>
         {displayedCryptoNews}
-        {/* <CryptoNewsItem
-          img="/elements/rectangle_715@2x.png"
-          heading={`Add news title here`}
-          content={`Lorem ipsum dolor sit amet, 4onsetetur sadipscing elitr, sed diam nonumy eirmod tempor
-              invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et
-              accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea`}
-        />
-        <CryptoNewsItem
-          img="/elements/rectangle_716@2x.png"
-          heading={`Add news title here`}
-          content={`Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
-              invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et
-              accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea`}
-        />
-        <CryptoNewsItem
-          img="/elements/rectangle_717@2x.png"
-          heading={`Add news title here`}
-          content={`Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
-              invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et
-              accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea`}
-        /> */}
       </div>
 
       <div className={`flex justify-center ${overallWidth}`}>

@@ -128,31 +128,6 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
   });
   const cfdData = toDisplayCFDOrder(order as ICFDOrder, positionLineGraph);
 
-  // Till:(20230530 - Julian)
-  /*   const buttonClickHandler =
-    orderType === OrderType.CFD
-      ? (order as ICFDOrder).state === OrderState.OPENING
-        ? () => {
-            //ToDo: convert IAceptedOrder to IDataPositionUpdatedModal in order to use getCFD (20230324 - Luphia)
-            globalCtx.dataUpdateFormModalHandler(getCFDData);
-            globalCtx.visibleUpdateFormModalHandler();
-          }
-        : () => {
-            globalCtx.dataHistoryPositionModalHandler(receiptData);
-            globalCtx.visibleHistoryPositionModalHandler();
-          }
-      : orderType === OrderType.DEPOSIT
-      ? () => {
-          globalCtx.dataDepositHistoryModalHandler(histories.histories as IAcceptedDepositOrder);
-          globalCtx.visibleDepositHistoryModalHandler();
-        }
-      : () => {
-          globalCtx.dataWithdrawalHistoryModalHandler(
-            histories.histories as IAcceptedWithdrawOrder
-          );
-          globalCtx.visibleWithdrawalHistoryModalHandler();
-        }; */
-
   const buttonClickHandler =
     orderType === OrderType.CFD
       ? isClosed

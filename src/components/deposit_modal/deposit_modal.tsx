@@ -147,6 +147,19 @@ const DepositModal = ({
 
         globalCtx.eliminateToasts(ToastId.DEPOSIT);
         globalCtx.visibleCanceledModalHandler();
+      } else if (
+        /* Info:(20230530 - Julian) 連續入金的錯誤屬於合約內容，所以顯示沒有紅框的 Failed Modal */
+        result.code === Code.DEPOSIT_TOO_FREQUENCY
+      ) {
+        globalCtx.eliminateAllModals();
+
+        globalCtx.dataFailedModalHandler({
+          modalTitle: t('D_W_MODAL.DEPOSIT'),
+          modalContent: `${t('D_W_MODAL.FAILED_REASON_FAILED_TO_DEPOSIT')} (${result.code})`,
+        });
+
+        globalCtx.eliminateToasts(ToastId.DEPOSIT);
+        globalCtx.visibleFailedModalHandler();
       } else {
         /* Info:(20230524 - Julian) 其他沒有包含在合約內的錯誤，就顯示 Failed Modal */
         globalCtx.eliminateAllModals();

@@ -53,6 +53,7 @@ export type IAPIName =
   | 'GET_USER_ASSETS'
   | 'GET_USER_PNL'
   | 'GET_USER_INTEREST'
+  | 'GET_BADGE'
   // | 'GET_TOTAL_BALANCE'
   | 'SEND_EMAIL_CODE'
   | 'CONNECT_EMAIL'
@@ -117,6 +118,7 @@ export interface IAPINameConstant {
   GET_USER_ASSETS: IAPIName;
   GET_USER_PNL: IAPIName;
   GET_USER_INTEREST: IAPIName;
+  GET_BADGE: IAPIName;
   // GET_TOTAL_BALANCE: IAPIName;
   SEND_EMAIL_CODE: IAPIName;
   CONNECT_EMAIL: IAPIName;
@@ -182,6 +184,7 @@ export const APIName: IAPINameConstant = {
   GET_USER_ASSETS: 'GET_USER_ASSETS',
   GET_USER_PNL: 'GET_USER_PNL',
   GET_USER_INTEREST: 'GET_USER_INTEREST',
+  GET_BADGE: 'GET_BADGE',
   // GET_TOTAL_BALANCE: 'GET_TOTAL_BALANCE',
   SEND_EMAIL_CODE: 'SEND_EMAIL_CODE',
   CONNECT_EMAIL: 'CONNECT_EMAIL',
@@ -245,6 +248,7 @@ export const APIURL = {
   GET_USER_ASSETS: `${API_URL}/users/assets`,
   GET_USER_PNL: `${API_URL}/users/pnl`,
   GET_USER_INTEREST: `${API_URL}/users/interest`,
+  GET_BADGE: `${API_URL}/badges`,
   // GET_TOTAL_BALANCE: `${API_URL}/balances/sum`,
   LIST_FAVORITE_TICKERS: '/api/user/tickers',
   ADD_FAVORITE_TICKERS: '/api/user/tickers',

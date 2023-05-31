@@ -40,7 +40,8 @@ export type ICode =
   | '90000000'
   | '90000001'
   | '60220002'
-  | '40340005';
+  | '40340005'
+  | '60220003';
 
 export type ICodeConstant = {
   SUCCESS: ICode;
@@ -192,7 +193,7 @@ export const Reason: IReason = {
   '60220001': 'ERROR_MESSAGE.INTERNAL_SERVER_ERROR',
   '60220002': 'ERROR_MESSAGE.INVAILD_QUOTATION',
   '60210003': 'CFD order are not consistent with the one got from API',
-  '60220002': 'CFD information is invalid',
+  '60220003': 'CFD information is invalid',
   '60310001': 'Cannot convert HTML to image',
 
   '80410001': 'Already deposit in a month',

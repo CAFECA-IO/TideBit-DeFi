@@ -64,7 +64,7 @@ const Trial = () => {
             <meta property="og:image" content="https://erikkarlsson.dev/assets/prev.png" />
           </Head>
           <button
-            className="rounded-md bg-blue-300 p-2"
+            className="rounded-md bg-blue-300 p-2 "
             onClick={() =>
               shareTo({
                 url: ShareSettings.FACEBOOK.URL,
@@ -75,7 +75,35 @@ const Trial = () => {
               })
             }
           >
-            Share test
+            Share to FB
+          </button>
+          <button
+            className="rounded-md bg-blue-300 p-2"
+            onClick={() =>
+              shareTo({
+                url: ShareSettings.TWITTER.URL,
+                appUrl: ShareSettings.TWITTER.APP_URL,
+                type: ShareSettings.TWITTER.TYPE,
+                // text: ShareSettings.TWITTER.TEXT,
+                size: ShareSettings.TWITTER.SIZE,
+              })
+            }
+          >
+            Share to Twitter
+          </button>
+          <button
+            className="rounded-md bg-blue-300 p-2"
+            onClick={() =>
+              shareTo({
+                url: ShareSettings.REDDIT.URL,
+                appUrl: ShareSettings.REDDIT.APP_URL,
+                type: ShareSettings.REDDIT.TYPE,
+                // text: ShareSettings.REDDIT.TEXT,
+                size: ShareSettings.REDDIT.SIZE,
+              })
+            }
+          >
+            Share to REDDIT
           </button>
         </>
       ) : (

@@ -114,11 +114,38 @@ const useShareProcess = ({lockerName, shareType, shareId, cfd, enableShare}: IUs
             const isOrderMatched = compareOrder(order);
             if (!isOrderMatched) throw new CustomError(Code.CFD_ORDER_NOT_MATCH);
 
-            window.open(
-              `${url}${encodeURIComponent(shareUrl)}${text ? `${text}` : ''}`,
-              `${type}`,
-              `${size}`
-            );
+            // window.open(
+            //   `${url}${encodeURIComponent(shareUrl)}${text ? `${text}` : ''}`,
+            //   `${type}`,
+            //   `${size}`
+            // );
+
+            if (window.innerWidth <= 768) {
+              // console.log('width <= 768 encode', window.innerWidth);
+              window.open(`fb://facewebmodal/f?href=${encodeURIComponent(shareUrl)}`, '_blank');
+
+              // switch (type) {
+              //   case 'facebook':
+              //     window.open(`fb://facewebmodal/f?href=${shareUrl}`, '_blank');
+              //     break;
+              //   case 'twitter':
+              //     window.open(`twitter://post?message=${shareUrl}`, '_blank');
+              //     break;
+              //   case 'reddit':
+              //     window.open(`reddit://submit?url=${shareUrl}&title=${text}`, '_blank');
+              //     break;
+              //   default:
+              //     window.open(`${url}${shareUrl}${text ? `${text}` : ''}`, `${type}`, `${size}`);
+              // }
+            } else {
+              // Desktop behaviour
+              // window.open(`${url}${shareUrl}${text ? `${text}` : ''}`, `${type}`, `${size}`);
+              window.open(
+                `${url}${encodeURIComponent(shareUrl)}${text ? `${text}` : ''}`,
+                `${type}`,
+                `${size}`
+              );
+            }
 
             globalCtx.eliminateAllProcessModals();
           } else {

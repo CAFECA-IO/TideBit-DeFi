@@ -1293,12 +1293,10 @@ export const UserProvider = ({children}: IUserProvider) => {
   };
 
   const deposit = async (applyDepositOrder: IApplyDepositOrder): Promise<IResult> => {
-    let result: IResult = {...defaultResultFailed};
-    result.code = Code.SERVICE_TERM_DISABLE;
-    result.reason = Reason[result.code];
-    if (enableServiceTermRef.current) {
-      try {
-        /** 
+    let result: IResult;
+    try {
+      if (!enableServiceTermRef.current) throw new CustomError(Code.SERVICE_TERM_DISABLE);
+      /** 
       * TODO: temporary comment send metamask, will uncomment (20230329 - tzuhan)
       const walletBalance: IWalletBalance | null = getWalletBalance(depositOrder.targetAsset);
       if (walletBalance && walletBalance.balance >= depositOrder.targetAmount) {
@@ -1307,39 +1305,27 @@ export const UserProvider = ({children}: IUserProvider) => {
       const txhash = await lunar.send(transaction);
       // TODO: updateWalletBalances
       // */
-        const txhash = randomHex(32);
-        result = (await privateRequestHandler({
-          name: APIName.CREATE_DEPOSIT_TRADE,
-          method: Method.POST,
-          body: {
-            ...applyDepositOrder,
-            txhash,
-          },
-        })) as IResult;
-        // Deprecate: after this functions finishing (20230508 - tzuhan)
-        // eslint-disable-next-line no-console
-        console.log(`deposit result`, result);
-        if (result.success) {
-          const {orderSnapshot: depositOrder, balanceSnapshot} = result.data as {
-            txhash: string;
-            orderSnapshot: IDepositOrder;
-            balanceSnapshot: IBalance[];
-          };
-          setDeposits(prev => [...prev, depositOrder]);
-          // TODO： remove updateBalance 應該等 Pusher 通知 (20230509 - Tzuhan)
-          // updateBalance(balanceSnapshot);
-          // setHistories(prev => [...prev, acceptedDepositOrder]);}
-        }
-      } catch (error) {
-        // TODO: error handle (Tzuhan - 20230421)
-        // eslint-disable-next-line no-console
-        console.error(`${APIName.CREATE_DEPOSIT_TRADE} error`, error);
-        result = {
-          success: false,
-          code: Code.INTERNAL_SERVER_ERROR,
-          reason: (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
-        };
+      const txhash = randomHex(32);
+      result = (await privateRequestHandler({
+        name: APIName.CREATE_DEPOSIT_TRADE,
+        method: Method.POST,
+        body: {
+          ...applyDepositOrder,
+          txhash,
+        },
+      })) as IResult;
+      if (result.success) {
+        const depositOrder = result.data as IDepositOrder;
+        setDeposits(prev => [...prev, depositOrder]);
       }
+    } catch (error) {
+      result = {
+        success: false,
+        code: isCustomError(error) ? error.code : Code.INTERNAL_SERVER_ERROR,
+        reason: isCustomError(error)
+          ? Reason[error.code]
+          : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
+      };
     }
     return result;
   };

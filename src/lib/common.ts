@@ -251,14 +251,8 @@ export const toIJSON = (typeData: IEIP712Data) => {
   return JSON.parse(JSON.stringify(typeData));
 };
 
-export const randomHex = (length: number) => {
-  return (
-    '0x' +
-    Math.random()
-      .toString(16)
-      .substring(2, length + 2)
-  );
-};
+export const randomHex = (length: number) =>
+  `0x${[...Array(length)].map(() => Math.floor(Math.random() * 16).toString(16)).join('')}`;
 
 export const toDisplayCFDOrder = (
   cfdOrder: ICFDOrder,

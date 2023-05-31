@@ -10,6 +10,7 @@ import {BsFacebook, BsTwitter, BsReddit} from 'react-icons/bs';
 import {useTranslation} from 'react-i18next';
 import useShareProcess from '../../lib/hooks/use_share_process';
 import {ShareType} from '../../constants/share_type';
+import {ShareSettings} from '../../constants/social_media';
 
 type TranslateFunction = (s: string) => string;
 
@@ -41,9 +42,10 @@ const BadgeModal = ({modalVisible, modalClickHandler, badgeData}: IBadgeModalPro
       <button
         onClick={() =>
           shareTo({
-            url: 'https://www.facebook.com/sharer/sharer.php?u=',
-            type: 'facebook-share-dialog',
-            size: 'width=800,height=600',
+            url: ShareSettings.FACEBOOK.URL,
+            appUrl: ShareSettings.FACEBOOK.APP_URL,
+            type: ShareSettings.FACEBOOK.TYPE,
+            size: ShareSettings.FACEBOOK.SIZE,
           })
         }
       >
@@ -52,10 +54,11 @@ const BadgeModal = ({modalVisible, modalClickHandler, badgeData}: IBadgeModalPro
       <button
         onClick={() =>
           shareTo({
-            url: 'https://twitter.com/intent/tweet?url=',
-            text: '&text=Check%20this%20out!',
-            type: 'twitter-share-dialog',
-            size: 'width=800,height=600',
+            url: ShareSettings.TWITTER.URL,
+            appUrl: ShareSettings.TWITTER.APP_URL,
+            text: ShareSettings.TWITTER.TEXT,
+            type: ShareSettings.TWITTER.TYPE,
+            size: ShareSettings.TWITTER.SIZE,
           })
         }
       >
@@ -64,10 +67,11 @@ const BadgeModal = ({modalVisible, modalClickHandler, badgeData}: IBadgeModalPro
       <button
         onClick={() =>
           shareTo({
-            url: 'https://www.reddit.com/submit?url=',
-            text: '&title=Check%20this%20out!',
-            type: 'reddit-share-dialog',
-            size: 'width=800,height=600',
+            url: ShareSettings.REDDIT.URL,
+            appUrl: ShareSettings.REDDIT.APP_URL,
+            text: ShareSettings.REDDIT.TEXT,
+            type: ShareSettings.REDDIT.TYPE,
+            size: ShareSettings.REDDIT.SIZE,
           })
         }
       >

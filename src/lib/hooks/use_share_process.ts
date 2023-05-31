@@ -9,7 +9,7 @@ import {CustomError, isCustomError} from '../custom_error';
 import {IShareType, ShareType} from '../../constants/share_type';
 import {IDisplayCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
 import {ISharingOrder} from '../../interfaces/tidebit_defi_background/sharing_order';
-import {IShareToSocialMedia} from '../../constants/social_media';
+import {MOBILE_WIDTH} from '../../constants/display';
 
 interface IUseShareProcess {
   lockerName: string;
@@ -17,6 +17,14 @@ interface IUseShareProcess {
   shareId: string;
   cfd?: IDisplayCFDOrder;
   enableShare?: (id: string, share: boolean) => Promise<IResult>;
+}
+
+interface IShareToSocialMedia {
+  url: string;
+  appUrl: string;
+  text?: string;
+  type: string;
+  size: string;
 }
 
 /**
@@ -37,7 +45,8 @@ const useShareProcess = ({lockerName, shareType, shareId, cfd, enableShare}: IUs
 
       case ShareType.RANK:
         // TODO: Share rank (20230524 - Shirley)
-        shareUrl = '';
+        // TODO: Test (20230531 - Shirley)
+        shareUrl = `https://www.tidebit-defi.com/share/cfd/0x07d793fa5860c9435583c6dbf07b00a6`;
         return shareUrl;
 
       case ShareType.BADGE:
@@ -75,24 +84,30 @@ const useShareProcess = ({lockerName, shareType, shareId, cfd, enableShare}: IUs
     return false;
   };
 
-  const shareTo = async ({
-    url,
-    text,
-    type,
-    size,
-  }: {
-    url: string;
-    text?: string;
-    type: string;
-    size: string;
-  }) => {
+  const shareOn = ({url, appUrl, text, type, size}: IShareToSocialMedia) => {
+    const shareUrl = getPageUrl();
+    if (shareUrl === '') throw new CustomError(Code.NEED_SHARE_URL);
+
+    if (navigator.userAgent.match(/Android/i) || navigator.userAgent.match(/iPhone|iPad|iPod/i)) {
+      // TODO: Share to FB on mobile (20230531 - Shirley)
+      // if (url.includes('facebook')) {
+      // }
+      const appShareUrl = `${appUrl}${encodeURIComponent(shareUrl)}`;
+      window.location.href = appShareUrl;
+    } else {
+      window.open(
+        `${url}${encodeURIComponent(shareUrl)}${text ? `${text}` : ''}`,
+        `${type}`,
+        `${size}`
+      );
+    }
+  };
+
+  const shareTo = async ({url, appUrl, text, type, size}: IShareToSocialMedia) => {
     const [lock, unlock] = locker(lockerName);
     if (!lock()) return;
 
     try {
-      const shareUrl = getPageUrl();
-      if (shareUrl === '') throw new CustomError(Code.NEED_SHARE_URL);
-
       switch (shareType) {
         case ShareType.CFD:
           if (!!!cfd) throw new CustomError(Code.NEED_CFD_ORDER);
@@ -114,11 +129,7 @@ const useShareProcess = ({lockerName, shareType, shareId, cfd, enableShare}: IUs
             const isOrderMatched = compareOrder(order);
             if (!isOrderMatched) throw new CustomError(Code.CFD_ORDER_NOT_MATCH);
 
-            window.open(
-              `${url}${encodeURIComponent(shareUrl)}${text ? `${text}` : ''}`,
-              `${type}`,
-              `${size}`
-            );
+            shareOn({url, appUrl, text, type, size});
 
             globalCtx.eliminateAllProcessModals();
           } else {
@@ -130,7 +141,7 @@ const useShareProcess = ({lockerName, shareType, shareId, cfd, enableShare}: IUs
               failedMsg: `${t('POSITION_MODAL.SHARING_FAILED_CONTENT')} (${result.code})`,
               btnMsg: t('POSITION_MODAL.FAILED_BUTTON_TRY_AGAIN'),
               btnFunction: () => {
-                shareTo({url, text, type, size});
+                shareTo({url, appUrl, text, type, size});
               },
             });
 
@@ -138,14 +149,11 @@ const useShareProcess = ({lockerName, shareType, shareId, cfd, enableShare}: IUs
           }
           break;
         case ShareType.RANK:
+          shareOn({url, appUrl, text, type, size});
           break;
 
         case ShareType.BADGE:
-          window.open(
-            `${url}${encodeURIComponent(shareUrl)}${text ? `${text}` : ''}`,
-            `${type}`,
-            `${size}`
-          );
+          shareOn({url, appUrl, text, type, size});
           break;
 
         default:
@@ -172,7 +180,7 @@ const useShareProcess = ({lockerName, shareType, shareId, cfd, enableShare}: IUs
           })`,
           btnMsg: t('POSITION_MODAL.FAILED_BUTTON_TRY_AGAIN'),
           btnFunction: () => {
-            shareTo({url, text, type, size});
+            shareTo({url, appUrl, text, type, size});
           },
         });
 

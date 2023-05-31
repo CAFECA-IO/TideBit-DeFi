@@ -70,7 +70,6 @@ const Trial = () => {
                 url: ShareSettings.FACEBOOK.URL,
                 appUrl: ShareSettings.FACEBOOK.APP_URL,
                 type: ShareSettings.FACEBOOK.TYPE,
-                // text: ShareSettings.FACEBOOK.TEXT,
                 size: ShareSettings.FACEBOOK.SIZE,
               })
             }

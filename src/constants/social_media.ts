@@ -26,15 +26,15 @@ export interface IShareSettings extends ISocialMediaSetting {
 export const ShareSettings: Record<SocialMedia, IShareSettings> = {
   FACEBOOK: {
     URL: 'https://www.facebook.com/sharer/sharer.php?u=',
-    // APP_URL: 'fb://facewebmodal/f?href=', // url: encodeURIComponent(shareUrl)
-    APP_URL: 'fb://post/%@', // message: encodeURIComponent(shareUrl)
+    // TODO: Share to FB on mobile (20230531 - Shirley)
+    APP_URL: 'fb://post?message=',
     TYPE: 'facebook-share-dialog',
     SIZE: 'width=800,height=600',
     ICON: '/elements/group_15237.svg',
   },
   TWITTER: {
     URL: 'https://twitter.com/intent/tweet?url=',
-    APP_URL: 'twitter://post?message=', // message: encodeURIComponent(shareUrl)
+    APP_URL: 'twitter://post?message=',
     TEXT: '&text=Check%20this%20out!',
     TYPE: 'twitter-share-dialog',
     SIZE: 'width=800,height=600',
@@ -42,7 +42,8 @@ export const ShareSettings: Record<SocialMedia, IShareSettings> = {
   },
   REDDIT: {
     URL: 'https://www.reddit.com/submit?url=',
-    APP_URL: 'reddit://submit?url=', // url: encodeURIComponent(shareUrl), title: text
+    // TODO: Share to FB on mobile (20230531 - Shirley)
+    APP_URL: 'reddit://submit?url=',
     TEXT: '&title=Check%20this%20out!',
     TYPE: 'reddit-share-dialog',
     SIZE: 'width=800,height=600',

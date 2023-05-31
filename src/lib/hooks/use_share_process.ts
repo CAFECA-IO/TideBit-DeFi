@@ -9,6 +9,7 @@ import {CustomError, isCustomError} from '../custom_error';
 import {IShareType, ShareType} from '../../constants/share_type';
 import {IDisplayCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
 import {ISharingOrder} from '../../interfaces/tidebit_defi_background/sharing_order';
+import {MOBILE_WIDTH} from '../../constants/display';
 
 interface IUseShareProcess {
   lockerName: string;
@@ -83,14 +84,30 @@ const useShareProcess = ({lockerName, shareType, shareId, cfd, enableShare}: IUs
     return false;
   };
 
+  const shareOn = ({url, appUrl, text, type, size}: IShareToSocialMedia) => {
+    const shareUrl = getPageUrl();
+    if (shareUrl === '') throw new CustomError(Code.NEED_SHARE_URL);
+
+    if (navigator.userAgent.match(/Android/i) || navigator.userAgent.match(/iPhone|iPad|iPod/i)) {
+      // TODO: Share to FB on mobile (20230531 - Shirley)
+      // if (url.includes('facebook')) {
+      // }
+      const appShareUrl = `${appUrl}${encodeURIComponent(shareUrl)}`;
+      window.location.href = appShareUrl;
+    } else {
+      window.open(
+        `${url}${encodeURIComponent(shareUrl)}${text ? `${text}` : ''}`,
+        `${type}`,
+        `${size}`
+      );
+    }
+  };
+
   const shareTo = async ({url, appUrl, text, type, size}: IShareToSocialMedia) => {
     const [lock, unlock] = locker(lockerName);
     if (!lock()) return;
 
     try {
-      const shareUrl = getPageUrl();
-      if (shareUrl === '') throw new CustomError(Code.NEED_SHARE_URL);
-
       switch (shareType) {
         case ShareType.CFD:
           if (!!!cfd) throw new CustomError(Code.NEED_CFD_ORDER);
@@ -112,22 +129,8 @@ const useShareProcess = ({lockerName, shareType, shareId, cfd, enableShare}: IUs
             const isOrderMatched = compareOrder(order);
             if (!isOrderMatched) throw new CustomError(Code.CFD_ORDER_NOT_MATCH);
 
-            if (window.innerWidth <= 768) {
-              if (url.includes('facebook')) {
-                // console.log('facebook');
-              }
-              const appShareUrl = `${appUrl}${encodeURIComponent(shareUrl)}`;
-              // const desktopShareUrl = `${url}${encodeURIComponent(shareUrl)}`;
-              // window.open(`${appUrl}${encodeURIComponent(shareUrl)}`, '_blank');
-              window.location.href = appShareUrl;
-            } else {
-              window.open(
-                `${url}${encodeURIComponent(shareUrl)}${text ? `${text}` : ''}`,
-                `${type}`,
-                `${size}`
-              );
-            }
-            break;
+            shareOn({url, appUrl, text, type, size});
+
             globalCtx.eliminateAllProcessModals();
           } else {
             globalCtx.eliminateAllProcessModals();
@@ -146,32 +149,11 @@ const useShareProcess = ({lockerName, shareType, shareId, cfd, enableShare}: IUs
           }
           break;
         case ShareType.RANK:
-          // TODO: Test (20230531 - Shirley)
-          if (window.innerWidth <= 768) {
-            if (url.includes('facebook')) {
-              // console.log('facebook');
-            }
-            const appShareUrl = `${appUrl}${encodeURIComponent(shareUrl)}`;
-            const desktopShareUrl = `${url}${encodeURIComponent(shareUrl)}`;
-            // window.open(`${appUrl}${encodeURIComponent(shareUrl)}`, '_blank');
-            window.location.href = appShareUrl;
-          } else {
-            // Desktop behaviour
-            // window.open(`${url}${shareUrl}${text ? `${text}` : ''}`, `${type}`, `${size}`);
-            window.open(
-              `${url}${encodeURIComponent(shareUrl)}${text ? `${text}` : ''}`,
-              `${type}`,
-              `${size}`
-            );
-          }
+          shareOn({url, appUrl, text, type, size});
           break;
 
         case ShareType.BADGE:
-          window.open(
-            `${url}${encodeURIComponent(shareUrl)}${text ? `${text}` : ''}`,
-            `${type}`,
-            `${size}`
-          );
+          shareOn({url, appUrl, text, type, size});
           break;
 
         default:

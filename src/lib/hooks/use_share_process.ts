@@ -45,7 +45,7 @@ const useShareProcess = ({lockerName, shareType, shareId, cfd, enableShare}: IUs
       case ShareType.RANK:
         // TODO: Share rank (20230524 - Shirley)
         // TODO: Test (20230531 - Shirley)
-        shareUrl = DOMAIN;
+        shareUrl = `https://www.tidebit-defi.com/share/cfd/0x07d793fa5860c9435583c6dbf07b00a6`;
         return shareUrl;
 
       case ShareType.BADGE:
@@ -112,39 +112,22 @@ const useShareProcess = ({lockerName, shareType, shareId, cfd, enableShare}: IUs
             const isOrderMatched = compareOrder(order);
             if (!isOrderMatched) throw new CustomError(Code.CFD_ORDER_NOT_MATCH);
 
-            // window.open(
-            //   `${url}${encodeURIComponent(shareUrl)}${text ? `${text}` : ''}`,
-            //   `${type}`,
-            //   `${size}`
-            // );
-
-            // if (window.innerWidth <= 768) {
-            //   // console.log('width <= 768 encode', window.innerWidth);
-            //   window.open(`${appUrl}${encodeURIComponent(shareUrl)}`, '_blank');
-
-            //   // switch (type) {
-            //   //   case 'facebook':
-            //   //     window.open(`fb://facewebmodal/f?href=${shareUrl}`, '_blank');
-            //   //     break;
-            //   //   case 'twitter':
-            //   //     window.open(`twitter://post?message=${shareUrl}`, '_blank');
-            //   //     break;
-            //   //   case 'reddit':
-            //   //     window.open(`reddit://submit?url=${shareUrl}&title=${text}`, '_blank');
-            //   //     break;
-            //   //   default:
-            //   //     window.open(`${url}${shareUrl}${text ? `${text}` : ''}`, `${type}`, `${size}`);
-            //   // }
-            // } else {
-            //   // Desktop behaviour
-            //   // window.open(`${url}${shareUrl}${text ? `${text}` : ''}`, `${type}`, `${size}`);
-            //   window.open(
-            //     `${url}${encodeURIComponent(shareUrl)}${text ? `${text}` : ''}`,
-            //     `${type}`,
-            //     `${size}`
-            //   );
-            // }
-
+            if (window.innerWidth <= 768) {
+              if (url.includes('facebook')) {
+                // console.log('facebook');
+              }
+              const appShareUrl = `${appUrl}${encodeURIComponent(shareUrl)}`;
+              // const desktopShareUrl = `${url}${encodeURIComponent(shareUrl)}`;
+              // window.open(`${appUrl}${encodeURIComponent(shareUrl)}`, '_blank');
+              window.location.href = appShareUrl;
+            } else {
+              window.open(
+                `${url}${encodeURIComponent(shareUrl)}${text ? `${text}` : ''}`,
+                `${type}`,
+                `${size}`
+              );
+            }
+            break;
             globalCtx.eliminateAllProcessModals();
           } else {
             globalCtx.eliminateAllProcessModals();
@@ -165,27 +148,13 @@ const useShareProcess = ({lockerName, shareType, shareId, cfd, enableShare}: IUs
         case ShareType.RANK:
           // TODO: Test (20230531 - Shirley)
           if (window.innerWidth <= 768) {
-            // console.log('width <= 768 encode', window.innerWidth);
+            if (url.includes('facebook')) {
+              // console.log('facebook');
+            }
             const appShareUrl = `${appUrl}${encodeURIComponent(shareUrl)}`;
             const desktopShareUrl = `${url}${encodeURIComponent(shareUrl)}`;
             // window.open(`${appUrl}${encodeURIComponent(shareUrl)}`, '_blank');
             window.location.href = appShareUrl;
-
-            // console.log(`shareUrl: ${appUrl}${encodeURIComponent(shareUrl)}`);
-
-            // switch (type) {
-            //   case 'facebook':
-            //     window.open(`fb://facewebmodal/f?href=${shareUrl}`, '_blank');
-            //     break;
-            //   case 'twitter':
-            //     window.open(`twitter://post?message=${shareUrl}`, '_blank');
-            //     break;
-            //   case 'reddit':
-            //     window.open(`reddit://submit?url=${shareUrl}&title=${text}`, '_blank');
-            //     break;
-            //   default:
-            //     window.open(`${url}${shareUrl}${text ? `${text}` : ''}`, `${type}`, `${size}`);
-            // }
           } else {
             // Desktop behaviour
             // window.open(`${url}${shareUrl}${text ? `${text}` : ''}`, `${type}`, `${size}`);

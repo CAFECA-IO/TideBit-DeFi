@@ -9,6 +9,7 @@ import {useGlobal} from '../contexts/global_context';
 import {ILocale} from '../interfaces/tidebit_defi_background/locale';
 import Footer from '../components/footer/footer';
 import Head from 'next/head';
+import {TIDEBIT_FAVICON} from '../constants/display';
 import {useTranslation} from 'next-i18next';
 
 type TranslateFunction = (s: string) => string;
@@ -32,7 +33,7 @@ const ComingSoon = () => {
         <>
           <Head>
             <title>Coming Soon - TideBit DeFi</title>
-            <link rel="icon" href="/favicon.ico" />
+            <link rel="icon" href={TIDEBIT_FAVICON} />
           </Head>
           <div>
             {displayedNavBar}

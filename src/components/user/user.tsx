@@ -79,7 +79,7 @@ const User = () => {
         <li>
           <button
             onClick={withdrawClickHandler}
-            className="block w-full py-2 pl-3 pr-4 enabled:hover:cursor-pointer enabled:hover:bg-darkGray5 disabled:opacity-75"
+            className="block w-full py-2 pl-3 pr-4 enabled:hover:cursor-pointer enabled:hover:bg-darkGray5 disabled:opacity-30"
             disabled
           >
             <div className="flex flex-row items-center space-x-2">
@@ -90,7 +90,7 @@ const User = () => {
         </li>
         <li>
           <button
-            className="block w-full py-2 pl-3 pr-4 enabled:hover:cursor-pointer enabled:hover:bg-darkGray5 disabled:opacity-75"
+            className="block w-full py-2 pl-3 pr-4 enabled:hover:cursor-pointer enabled:hover:bg-darkGray5 disabled:opacity-30"
             disabled
           >
             {/* <Link href=""> */}

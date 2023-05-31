@@ -7,7 +7,7 @@ import {Badges} from './badges';
 // TODO: for future use, to leverage i18n needs to notice the `provider` range
 export const UNIVERSAL_NUMBER_FORMAT_LOCALE = 'en-US';
 
-export const TIDEBIT_FAVICON = '/tidebit_favicon.svg';
+export const TIDEBIT_FAVICON = '/favicon.ico';
 
 export const TRANSFER_OPTIONS = [
   {label: 'USDT', content: 'Tether'},
@@ -279,3 +279,4 @@ export const DEFAULT_BALANCE = {available: 0, locked: 0};
 export const DEFAULT_PNL_DATA = {amount: {type: '', value: 0}, percentage: {type: '', value: 0}};
 export const DEFAULT_INTEREST_RATE = 0;
 export const CANDLESTICK_SIZE = 30;
+export const MOBILE_WIDTH = 768;

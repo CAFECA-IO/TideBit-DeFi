@@ -14,6 +14,10 @@ import {
   TERM_OF_SERVICE,
   MONTH_FULL_NAME_LIST,
   FRACTION_DIGITS,
+  TARGET_MAX_DIGITS,
+  TARGET_MIN_DIGITS,
+  MAX_FEE_RATE,
+  MIN_FEE_RATE,
 } from '../constants/config';
 import {UNIVERSAL_NUMBER_FORMAT_LOCALE, DEFAULT_SPREAD} from '../constants/display';
 import ServiceTerm from '../constants/contracts/service_term';
@@ -549,4 +553,23 @@ export const findCodeByReason = (reason: string): ICode | undefined => {
   const ReasonToCode = swapKeysAndValues(Reason);
 
   return ReasonToCode[reason] as ICode;
+};
+
+/**
+ * @description Verify if the fee rate and target amount are within the specified range
+ */
+export const validateCFD = (feeRate: number, amount: number) => {
+  let result = false;
+  if (
+    MIN_FEE_RATE <= feeRate &&
+    feeRate <= MAX_FEE_RATE &&
+    TARGET_MIN_DIGITS <= amount &&
+    amount <= TARGET_MAX_DIGITS
+  ) {
+    result = true;
+  } else {
+    result = false;
+  }
+
+  return result;
 };

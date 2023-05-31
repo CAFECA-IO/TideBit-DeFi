@@ -14,7 +14,7 @@ import {
   UNIVERSAL_NUMBER_FORMAT_LOCALE,
 } from '../../constants/display';
 import {
-  TARGET_LIMIT_DIGITS,
+  TARGET_MAX_DIGITS,
   QUOTATION_RENEWAL_INTERVAL_SECONDS,
   unitAsset,
   SUGGEST_TP,
@@ -26,6 +26,7 @@ import {
   TP_SL_LIMIT_PERCENT,
   DEFAULT_TICKER,
   CFD_LIQUIDATION_TIME,
+  TARGET_MIN_DIGITS,
 } from '../../constants/config';
 import {useGlobal} from '../../contexts/global_context';
 import {MarketContext} from '../../contexts/market_context';
@@ -41,6 +42,7 @@ import {
   getTimestampInMilliseconds,
   roundToDecimalPlaces,
   twoDecimal,
+  validateCFD,
 } from '../../lib/common';
 import {IQuotation, getDummyQuotation} from '../../interfaces/tidebit_defi_background/quotation';
 import {NotificationContext} from '../../contexts/notification_context';
@@ -52,6 +54,8 @@ import {
 import {IApplyCreateCFDOrder} from '../../interfaces/tidebit_defi_background/apply_create_cfd_order';
 import {Code} from '../../constants/code';
 import {CFDOperation} from '../../constants/cfd_order_type';
+import {ToastTypeAndText} from '../../constants/toast_type';
+import {ToastId} from '../../constants/toast_id';
 
 type TranslateFunction = (s: string) => string;
 
@@ -69,8 +73,6 @@ const TradeTab = () => {
   };
 
   const tickerStaticStatistics = marketCtx.tickerStatic;
-
-  const TEMP_PLACEHOLDER = TARGET_LIMIT_DIGITS;
 
   const ticker = marketCtx.selectedTicker?.currency ?? '';
   const availableBalance = userCtx.userAssets?.balance?.available ?? DEFAULT_USER_BALANCE;
@@ -550,6 +552,8 @@ const TradeTab = () => {
       marketCtx.selectedTicker?.currency ?? DEFAULT_TICKER
     );
 
+    const feePercent = marketCtx.tickerLiveStatistics?.fee ?? DEFAULT_FEE;
+
     const long = longQuotation.data as IQuotation;
     const short = shortQuotation.data as IQuotation;
 
@@ -574,7 +578,7 @@ const TradeTab = () => {
       typeOfPosition: TypeOfPosition.BUY,
       quotation: long,
       liquidationPrice: roundToDecimalPlaces(long.price * (1 - LIQUIDATION_FIVE_LEVERAGE), 2),
-      fee: marketCtx.tickerLiveStatistics?.fee ?? DEFAULT_FEE,
+      fee: feePercent,
       guaranteedStop: longSlToggle ? longGuaranteedStopChecked : false,
       guaranteedStopFee:
         longSlToggle && longGuaranteedStopChecked ? guaranteedStopFeeLongRef.current : 0,
@@ -590,7 +594,7 @@ const TradeTab = () => {
       quotation: short,
       price: short.price,
       liquidationPrice: roundToDecimalPlaces(short.price * (1 + LIQUIDATION_FIVE_LEVERAGE), 2),
-      fee: marketCtx.tickerLiveStatistics?.fee ?? DEFAULT_FEE,
+      fee: feePercent,
       guaranteedStop: shortSlToggle ? shortGuaranteedStopChecked : false,
       guaranteedStopFee:
         shortSlToggle && shortGuaranteedStopChecked ? guaranteedStopFeeShortRef.current : 0,
@@ -652,8 +656,8 @@ const TradeTab = () => {
   // ----------Target area----------
   const displayedTargetAmountSetting = (
     <TradingInput
-      lowerLimit={0}
-      upperLimit={TARGET_LIMIT_DIGITS}
+      lowerLimit={TARGET_MIN_DIGITS}
+      upperLimit={TARGET_MAX_DIGITS}
       getInputValue={getTargetInputValue}
       inputInitialValue={targetInputValueRef.current}
       inputValueFromParent={targetInputValueRef.current}
@@ -690,7 +694,7 @@ const TradeTab = () => {
     <div className={`${isDisplayedLongTpSetting}`}>
       <TradingInput
         lowerLimit={longTpLowerLimitRef.current}
-        upperLimit={TARGET_LIMIT_DIGITS}
+        upperLimit={TARGET_MAX_DIGITS}
         inputInitialValue={longTpValue}
         inputValueFromParent={longTpValue}
         setInputValueFromParent={setLongTpValue}

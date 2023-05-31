@@ -153,8 +153,6 @@ const DepositModal = ({
         result.code === Code.DEPOSIT_INTERVAL_TOO_SHORT
       ) {
         globalCtx.eliminateAllModals();
-        // eslint-disable-next-line no-console
-        console.log('result', result);
         globalCtx.dataFailedModalHandler({
           modalTitle: t('D_W_MODAL.DEPOSIT'),
           modalContent: `${t('D_W_MODAL.FAILED_REASON_FAILED_TO_DEPOSIT')}: (${_t(

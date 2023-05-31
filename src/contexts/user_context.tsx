@@ -668,7 +668,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     let result: IResult = {...defaultResultFailed};
     if (enableServiceTermRef.current) {
       try {
-        result = (await privateRequestHandler({
+        result = (await await workerCtx.requestHandler({
           name: APIName.GET_BADGE,
           method: Method.GET,
           params: badgeId,

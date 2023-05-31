@@ -1,109 +1,64 @@
+import Image from 'next/image';
 import React from 'react';
+import {IBriefNewsItem} from '../../interfaces/tidebit_defi_background/brief_news_item';
+import {timestampToString} from '../../lib/common';
 
-const NewsItem = () => {
+const NewsItem = ({id, timestamp, title: heading, content, img, ...otherProps}: IBriefNewsItem) => {
+  const overallWidth = 'w-full pr-5';
+
+  // const displayedHeading = highlight ? (
+  //   <div className="">
+  //     {heading} <span className="text-tidebitTheme">{highlight}</span>
+  //   </div>
+  // ) : (
+  //   <div className="">{heading}</div>
+  // );
+
+  const displayedHeading = <div className="">{heading}</div>;
+
+  const displayedContent = content;
+
+  const displayedImg = img ? (
+    <Image src={img} alt="news" width={900} height={500} />
+  ) : (
+    <img
+      className="rounded object-cover object-center"
+      alt="news"
+      src="https://dummyimage.com/200x115"
+    />
+  );
+
+  const displayedTime = timestampToString(timestamp);
+
   return (
-    <div>
-      <section className="overflow-hidden bg-gray-900 text-gray-400">
-        <div className="container mx-auto px-5 py-24">
-          <div className="-my-8 divide-y-2 divide-gray-800">
-            <div className="flex flex-wrap py-8 md:flex-nowrap">
-              <div className="mb-6 flex shrink-0 flex-col md:mb-0 md:w-64">
-                <span className="font-semibold text-white">CATEGORY</span>
-                <span className="mt-1 text-sm text-gray-500">12 Jun 2019</span>
-              </div>
-              <div className="md:grow">
-                <h2 className="mb-2 text-2xl font-medium text-white">
-                  Bitters hashtag waistcoat fashion axe chia unicorn
-                </h2>
-                <p className="leading-relaxed">
-                  Glossier echo park pug, church-key sartorial biodiesel vexillologist pop-up
-                  snackwave ramps cornhole. Marfa 3 wolf moon party messenger bag selfies, poke
-                  vaporware kombucha lumbersexual pork belly polaroid hoodie portland craft beer.
-                </p>
-                <a className="mt-4 inline-flex items-center text-indigo-400">
-                  Learn More
-                  <svg
-                    className="ml-2 h-4 w-4"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    fill="none"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  >
-                    <path d="M5 12h14"></path>
-                    <path d="M12 5l7 7-7 7"></path>
-                  </svg>
-                </a>
-              </div>
+    <>
+      <section className={`${overallWidth}`}>
+        <div className="mx-auto flex flex-col items-center px-0 py-0 lg:flex-row">
+          <div className="mb-2 flex max-w-3xs justify-center md:mb-0 lg:mb-10 lg:justify-start">
+            {displayedImg}
+          </div>
+          <div className="flex flex-col items-center text-center lg:grow lg:items-start lg:pl-7 lg:text-left">
+            <div className="mt-3 mb-3 flex w-full items-center justify-center lg:justify-between">
+              <h1 className="text-lg text-lightWhite">
+                {displayedHeading}
+                {/* Add news title here */}
+                {/* <br className="hidden lg:inline-block" />
+              readymade gluten */}
+              </h1>
+              <p className="mr-5 hidden text-sm text-lightGray lg:flex">{displayedTime.date}</p>
             </div>
-            <div className="flex flex-wrap border-t-2 border-gray-800 py-8 md:flex-nowrap">
-              <div className="mb-6 flex shrink-0 flex-col md:mb-0 md:w-64">
-                <span className="font-semibold text-white">CATEGORY</span>
-                <span className="mt-1 text-sm text-gray-500">12 Jun 2019</span>
-              </div>
-              <div className="md:grow">
-                <h2 className="title-font mb-2 text-2xl font-medium text-white">
-                  Meditation bushwick direct trade taxidermy shaman
-                </h2>
-                <p className="leading-relaxed">
-                  Glossier echo park pug, church-key sartorial biodiesel vexillologist pop-up
-                  snackwave ramps cornhole. Marfa 3 wolf moon party messenger bag selfies, poke
-                  vaporware kombucha lumbersexual pork belly polaroid hoodie portland craft beer.
-                </p>
-                <a className="mt-4 inline-flex items-center text-indigo-400">
-                  Learn More
-                  <svg
-                    className="ml-2 h-4 w-4"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    fill="none"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  >
-                    <path d="M5 12h14"></path>
-                    <path d="M12 5l7 7-7 7"></path>
-                  </svg>
-                </a>
-              </div>
-            </div>
-            <div className="flex flex-wrap border-t-2 border-gray-800 py-8 md:flex-nowrap">
-              <div className="mb-6 flex shrink-0 flex-col md:mb-0 md:w-64">
-                <span className="title-font font-semibold text-white">CATEGORY</span>
-                <span className="mt-1 text-sm text-gray-500">12 Jun 2019</span>
-              </div>
-              <div className="md:grow">
-                <h2 className="title-font mb-2 text-2xl font-medium text-white">
-                  Woke master cleanse drinking vinegar salvia
-                </h2>
-                <p className="leading-relaxed">
-                  Glossier echo park pug, church-key sartorial biodiesel vexillologist pop-up
-                  snackwave ramps cornhole. Marfa 3 wolf moon party messenger bag selfies, poke
-                  vaporware kombucha lumbersexual pork belly polaroid hoodie portland craft beer.
-                </p>
-                <a className="mt-4 inline-flex items-center text-indigo-400">
-                  Learn More
-                  <svg
-                    className="ml-2 h-4 w-4"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    fill="none"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  >
-                    <path d="M5 12h14"></path>
-                    <path d="M12 5l7 7-7 7"></path>
-                  </svg>
-                </a>
-              </div>
-            </div>
+
+            <p className="mb-1 mr-5 text-xs leading-relaxed">
+              {displayedContent}
+              {/* Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
+              invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et
+              accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea */}
+            </p>
+            <p className="mb-12 flex text-xs text-lightGray lg:hidden">{displayedTime.date}</p>
           </div>
         </div>
       </section>
-      GitHub
-    </div>
+    </>
   );
 };
 

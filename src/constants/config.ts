@@ -11,6 +11,8 @@ export const POSITION_CLOSE_COUNTDOWN_SECONDS = 60;
 
 export const COPYRIGHT = 'TideBit © 2016 - 2023';
 
+export const CONTACT_EMAIL = 'contact@tidebit-defi.com';
+
 // 10 ** 9 - 0.01
 export const TARGET_LIMIT_DIGITS = 10 ** 9 - 0.01;
 

@@ -335,7 +335,8 @@
     "DEWT_IS_NOT_LEGIT": "DEWT is not legit",
     "REJECTED_SIGNATURE": "Signature rejected by user",
     "INTERNAL_SERVER_ERROR": "Internal server error",
-    "THIRD_PARTY_LIBRARY_ERROR": "Third party library error"
+    "THIRD_PARTY_LIBRARY_ERROR": "Third party library error",
+    "INVALID_CFD_OPEN_REQUEST": "CFD information is invalid"
   },
   "LEADERBOARD_PAGE": {
     "TITLE": "Leaderboard",

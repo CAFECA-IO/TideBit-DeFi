@@ -335,7 +335,9 @@
     "DEWT_IS_NOT_LEGIT": "DEWT 不合法",
     "REJECTED_SIGNATURE": "簽名已被使用者拒絕",
     "INTERNAL_SERVER_ERROR": "內部伺服器錯誤",
-    "THIRD_PARTY_LIBRARY_ERROR": "第三方函式庫錯誤"
+    "THIRD_PARTY_LIBRARY_ERROR": "第三方函式庫錯誤",
+    "INVALID_CFD_OPEN_REQUEST": "CFD 內容無效"
+
   },
   "LEADERBOARD_PAGE": {
     "TITLE": "排行榜",

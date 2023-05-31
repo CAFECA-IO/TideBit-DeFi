@@ -57,7 +57,7 @@ import {ICFDOrder} from '../../interfaces/tidebit_defi_background/order';
 import {Code} from '../../constants/code';
 import {ToastTypeAndText} from '../../constants/toast_type';
 import {ToastId} from '../../constants/toast_id';
-import {CustomError} from '../../lib/custom_error';
+import {CustomError, isCustomError} from '../../lib/custom_error';
 
 type TranslateFunction = (s: string) => string;
 interface IPositionClosedModal {
@@ -178,7 +178,7 @@ const PositionClosedModal = ({
     return request;
   };
 
-  // TODO: (20230315 - Shirley) organize the data before history modal
+  // Info: (20230315 - Shirley) organize the data before history modal
   const toHistoryModal = (cfd: ICFDOrder, quotation: IQuotation): IDisplayCFDOrder => {
     // TODO: replace `twoDecimal` with `toLocaleString` (20230325 - Shirley)
     const openPrice = cfd.openPrice;
@@ -230,20 +230,21 @@ const PositionClosedModal = ({
   };
 
   const getQuotation = async () => {
-    let quotation = {...defaultResultSuccess};
+    let quotation = {...defaultResultFailed};
+    const oppositeTypeOfPosition =
+      openCfdDetails?.typeOfPosition === TypeOfPosition.BUY
+        ? TypeOfPosition.SELL
+        : TypeOfPosition.BUY;
 
     try {
-      quotation = await marketCtx.getCFDQuotation(
-        openCfdDetails?.ticker,
-        openCfdDetails?.typeOfPosition
-      );
+      quotation = await marketCtx.getCFDQuotation(openCfdDetails?.ticker, oppositeTypeOfPosition);
 
       const data = quotation.data as IQuotation;
 
       // Info: if there's error fetching quotation, disable the submit btn (20230328 - Shirley)
       if (
         quotation.success &&
-        data.typeOfPosition === openCfdDetails?.typeOfPosition &&
+        data.typeOfPosition === oppositeTypeOfPosition &&
         quotation.data !== null
       ) {
         globalCtx.eliminateToasts(ToastId.GET_QUOTATION_ERROR);
@@ -261,12 +262,6 @@ const PositionClosedModal = ({
     }
   };
 
-  /** TODO: 
-    // loading modal -> UserContext.function (負責簽名) ->
-    // 猶豫太久的話，單子會過期，就會顯示 failed modal，
-    // 用戶沒簽名才是顯示 canceled modal
-    // 用戶簽名成功，就會顯示 successful modal
-   */
   const submitClickHandler = async () => {
     const [lock, unlock] = locker('position_closed_modal.submitClickHandler');
     if (!lock()) return;
@@ -347,7 +342,7 @@ const PositionClosedModal = ({
       // ToDo: report error to backend (20230413 - Shirley)
       globalCtx.eliminateAllModals();
 
-      if (error instanceof CustomError) {
+      if (isCustomError(error)) {
         const str = error.toString().split('Error: ')[1];
         const errorCode = findCodeByReason(str);
 
@@ -400,7 +395,6 @@ const PositionClosedModal = ({
   // Info: Get quotation before the modal is shown (20230329 - Shirley)
   useEffect(() => {
     if (!globalCtx.visiblePositionClosedModal) return;
-
     (async () => {
       const quotation = await getQuotation();
       if (!quotation) {
@@ -425,6 +419,7 @@ const PositionClosedModal = ({
     })();
   }, [globalCtx.visiblePositionClosedModal]);
 
+  // Info: renew the quotation when it expires (20230530 - Shirley)
   useEffect(() => {
     if (!globalCtx.visiblePositionClosedModal) {
       setSecondsLeft(DISPLAY_QUOTATION_RENEWAL_INTERVAL_SECONDS);

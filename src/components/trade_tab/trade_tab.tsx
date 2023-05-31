@@ -553,7 +553,6 @@ const TradeTab = () => {
     );
 
     const feePercent = marketCtx.tickerLiveStatistics?.fee ?? DEFAULT_FEE;
-    const fee = feePercent * requiredMarginLongRef.current;
 
     const long = longQuotation.data as IQuotation;
     const short = shortQuotation.data as IQuotation;
@@ -579,7 +578,7 @@ const TradeTab = () => {
       typeOfPosition: TypeOfPosition.BUY,
       quotation: long,
       liquidationPrice: roundToDecimalPlaces(long.price * (1 - LIQUIDATION_FIVE_LEVERAGE), 2),
-      fee: fee,
+      fee: feePercent,
       guaranteedStop: longSlToggle ? longGuaranteedStopChecked : false,
       guaranteedStopFee:
         longSlToggle && longGuaranteedStopChecked ? guaranteedStopFeeLongRef.current : 0,
@@ -595,7 +594,7 @@ const TradeTab = () => {
       quotation: short,
       price: short.price,
       liquidationPrice: roundToDecimalPlaces(short.price * (1 + LIQUIDATION_FIVE_LEVERAGE), 2),
-      fee: fee,
+      fee: feePercent,
       guaranteedStop: shortSlToggle ? shortGuaranteedStopChecked : false,
       guaranteedStopFee:
         shortSlToggle && shortGuaranteedStopChecked ? guaranteedStopFeeShortRef.current : 0,

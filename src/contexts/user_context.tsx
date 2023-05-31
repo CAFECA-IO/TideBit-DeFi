@@ -1012,6 +1012,8 @@ export const UserProvider = ({children}: IUserProvider) => {
   ): Promise<IResult> => {
     let result: IResult;
     try {
+      const isValid = validateCFD(applyCreateCFDOrder?.fee ?? 0, applyCreateCFDOrder?.amount ?? 0);
+      if (!isValid) throw new CustomError(Code.INVALID_CFD_OPEN_REQUEST);
       if (!enableServiceTermRef.current) throw new CustomError(Code.SERVICE_TERM_DISABLE);
       if (!applyCreateCFDOrder) throw new CustomError(Code.INVAILD_ORDER_INPUTS);
       const balance: IBalance | null = getBalance(applyCreateCFDOrder.margin.asset);
@@ -1027,7 +1029,6 @@ export const UserProvider = ({children}: IUserProvider) => {
       console.log('_createCFDOrder lunar.verifyTypedData success', success);
       if (!success) throw new CustomError(Code.REJECTED_SIGNATURE);
       const now = getTimestamp();
-      // ToDo: Check if the quotation is expired, if so return `failed result` in `catch`. (20230414 - Shirley)
       // Deprecated: [debug] (20230509 - Tzuhan)
       // eslint-disable-next-line no-console
       console.log(
@@ -1066,7 +1067,6 @@ export const UserProvider = ({children}: IUserProvider) => {
         data: {order: CFDOrder},
       };
     } catch (error) {
-      // Info: `updateBalance` has two options of error (20230426 - Shirley)
       result = {
         success: false,
         code: isCustomError(error) ? error.code : Code.INTERNAL_SERVER_ERROR,

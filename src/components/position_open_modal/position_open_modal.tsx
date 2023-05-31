@@ -302,11 +302,7 @@ const PositionOpenModal = ({
       return;
     }
 
-    const isValid = validateCFD(
-      openCfdRequest.fee,
-      openCfdRequest.margin.amount,
-      openCfdRequest.amount
-    );
+    const isValid = validateCFD(openCfdRequest.fee, openCfdRequest.amount);
     if (!isValid) {
       setSecondsLeft(0);
       globalCtx.toast({

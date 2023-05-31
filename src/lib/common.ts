@@ -555,8 +555,8 @@ export const findCodeByReason = (reason: string): ICode | undefined => {
   return ReasonToCode[reason] as ICode;
 };
 
-export const validateCFD = (fee: number, margin: number, amount: number) => {
-  if (fee > margin * MAX_FEE_RATE || fee < MIN_FEE_RATE) {
+export const validateCFD = (feeRate: number, amount: number) => {
+  if (feeRate > MAX_FEE_RATE || feeRate < MIN_FEE_RATE) {
     return false;
   } else if (amount > TARGET_MAX_DIGITS || amount < TARGET_MIN_DIGITS) {
     return false;

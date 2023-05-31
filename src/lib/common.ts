@@ -555,6 +555,9 @@ export const findCodeByReason = (reason: string): ICode | undefined => {
   return ReasonToCode[reason] as ICode;
 };
 
+/**
+ * @description Verify if the fee rate and target amount are within the specified range
+ */
 export const validateCFD = (feeRate: number, amount: number) => {
   if (feeRate > MAX_FEE_RATE || feeRate < MIN_FEE_RATE) {
     return false;

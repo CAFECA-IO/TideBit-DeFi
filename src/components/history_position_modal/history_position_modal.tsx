@@ -243,6 +243,7 @@ const HistoryPositionModal = ({
                 onClick={() =>
                   shareTo({
                     url: value.URL,
+                    appUrl: value.APP_URL,
                     text: value.TEXT,
                     type: value.TYPE,
                     size: value.SIZE,

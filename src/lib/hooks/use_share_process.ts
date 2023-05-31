@@ -9,7 +9,6 @@ import {CustomError, isCustomError} from '../custom_error';
 import {IShareType, ShareType} from '../../constants/share_type';
 import {IDisplayCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
 import {ISharingOrder} from '../../interfaces/tidebit_defi_background/sharing_order';
-import {IShareToSocialMedia} from '../../constants/social_media';
 
 interface IUseShareProcess {
   lockerName: string;
@@ -17,6 +16,14 @@ interface IUseShareProcess {
   shareId: string;
   cfd?: IDisplayCFDOrder;
   enableShare?: (id: string, share: boolean) => Promise<IResult>;
+}
+
+interface IShareToSocialMedia {
+  url: string;
+  appUrl: string;
+  text?: string;
+  type: string;
+  size: string;
 }
 
 /**
@@ -76,17 +83,7 @@ const useShareProcess = ({lockerName, shareType, shareId, cfd, enableShare}: IUs
     return false;
   };
 
-  const shareTo = async ({
-    url,
-    text,
-    type,
-    size,
-  }: {
-    url: string;
-    text?: string;
-    type: string;
-    size: string;
-  }) => {
+  const shareTo = async ({url, appUrl, text, type, size}: IShareToSocialMedia) => {
     const [lock, unlock] = locker(lockerName);
     if (!lock()) return;
 
@@ -121,32 +118,32 @@ const useShareProcess = ({lockerName, shareType, shareId, cfd, enableShare}: IUs
             //   `${size}`
             // );
 
-            if (window.innerWidth <= 768) {
-              // console.log('width <= 768 encode', window.innerWidth);
-              window.open(`fb://facewebmodal/f?href=${encodeURIComponent(shareUrl)}`, '_blank');
+            // if (window.innerWidth <= 768) {
+            //   // console.log('width <= 768 encode', window.innerWidth);
+            //   window.open(`${appUrl}${encodeURIComponent(shareUrl)}`, '_blank');
 
-              // switch (type) {
-              //   case 'facebook':
-              //     window.open(`fb://facewebmodal/f?href=${shareUrl}`, '_blank');
-              //     break;
-              //   case 'twitter':
-              //     window.open(`twitter://post?message=${shareUrl}`, '_blank');
-              //     break;
-              //   case 'reddit':
-              //     window.open(`reddit://submit?url=${shareUrl}&title=${text}`, '_blank');
-              //     break;
-              //   default:
-              //     window.open(`${url}${shareUrl}${text ? `${text}` : ''}`, `${type}`, `${size}`);
-              // }
-            } else {
-              // Desktop behaviour
-              // window.open(`${url}${shareUrl}${text ? `${text}` : ''}`, `${type}`, `${size}`);
-              window.open(
-                `${url}${encodeURIComponent(shareUrl)}${text ? `${text}` : ''}`,
-                `${type}`,
-                `${size}`
-              );
-            }
+            //   // switch (type) {
+            //   //   case 'facebook':
+            //   //     window.open(`fb://facewebmodal/f?href=${shareUrl}`, '_blank');
+            //   //     break;
+            //   //   case 'twitter':
+            //   //     window.open(`twitter://post?message=${shareUrl}`, '_blank');
+            //   //     break;
+            //   //   case 'reddit':
+            //   //     window.open(`reddit://submit?url=${shareUrl}&title=${text}`, '_blank');
+            //   //     break;
+            //   //   default:
+            //   //     window.open(`${url}${shareUrl}${text ? `${text}` : ''}`, `${type}`, `${size}`);
+            //   // }
+            // } else {
+            //   // Desktop behaviour
+            //   // window.open(`${url}${shareUrl}${text ? `${text}` : ''}`, `${type}`, `${size}`);
+            //   window.open(
+            //     `${url}${encodeURIComponent(shareUrl)}${text ? `${text}` : ''}`,
+            //     `${type}`,
+            //     `${size}`
+            //   );
+            // }
 
             globalCtx.eliminateAllProcessModals();
           } else {
@@ -158,7 +155,7 @@ const useShareProcess = ({lockerName, shareType, shareId, cfd, enableShare}: IUs
               failedMsg: `${t('POSITION_MODAL.SHARING_FAILED_CONTENT')} (${result.code})`,
               btnMsg: t('POSITION_MODAL.FAILED_BUTTON_TRY_AGAIN'),
               btnFunction: () => {
-                shareTo({url, text, type, size});
+                shareTo({url, appUrl, text, type, size});
               },
             });
 
@@ -169,7 +166,8 @@ const useShareProcess = ({lockerName, shareType, shareId, cfd, enableShare}: IUs
           // TODO: Test (20230531 - Shirley)
           if (window.innerWidth <= 768) {
             // console.log('width <= 768 encode', window.innerWidth);
-            window.open(`fb://facewebmodal/f?href=${encodeURIComponent(shareUrl)}`, '_blank');
+            window.open(`${appUrl}${encodeURIComponent(shareUrl)}`, '_blank');
+            // console.log(`shareUrl: ${appUrl}${encodeURIComponent(shareUrl)}`);
 
             // switch (type) {
             //   case 'facebook':
@@ -227,7 +225,7 @@ const useShareProcess = ({lockerName, shareType, shareId, cfd, enableShare}: IUs
           })`,
           btnMsg: t('POSITION_MODAL.FAILED_BUTTON_TRY_AGAIN'),
           btnFunction: () => {
-            shareTo({url, text, type, size});
+            shareTo({url, appUrl, text, type, size});
           },
         });
 

@@ -11,26 +11,29 @@ export const SocialMediaConstant: ISocialMediaConstant = {
   REDDIT: 'REDDIT',
 };
 
-export interface IShareToSocialMedia {
+interface ISocialMediaSetting {
   URL: string;
   TEXT?: string;
   TYPE: string;
   SIZE: string;
+  APP_URL: string;
 }
 
-export interface IShareSettings extends IShareToSocialMedia {
+export interface IShareSettings extends ISocialMediaSetting {
   ICON: string;
 }
 
 export const ShareSettings: Record<SocialMedia, IShareSettings> = {
   FACEBOOK: {
     URL: 'https://www.facebook.com/sharer/sharer.php?u=',
+    APP_URL: 'fb://facewebmodal/f?href=', // url: encodeURIComponent(shareUrl)
     TYPE: 'facebook-share-dialog',
     SIZE: 'width=800,height=600',
     ICON: '/elements/group_15237.svg',
   },
   TWITTER: {
     URL: 'https://twitter.com/intent/tweet?url=',
+    APP_URL: 'twitter://post?message=', // message: encodeURIComponent(shareUrl)
     TEXT: '&text=Check%20this%20out!',
     TYPE: 'twitter-share-dialog',
     SIZE: 'width=800,height=600',
@@ -38,13 +41,10 @@ export const ShareSettings: Record<SocialMedia, IShareSettings> = {
   },
   REDDIT: {
     URL: 'https://www.reddit.com/submit?url=',
+    APP_URL: 'reddit://submit?url=', // url: encodeURIComponent(shareUrl), title: text
     TEXT: '&title=Check%20this%20out!',
     TYPE: 'reddit-share-dialog',
     SIZE: 'width=800,height=600',
     ICON: '/elements/group_15234.svg',
   },
 };
-
-// MOBILE_URL: 'fb://facewebmodal/f?href='; // url: encodeURIComponent(shareUrl)
-// MOBILE_URL: 'twitter://post?message='; // message: encodeURIComponent(shareUrl)
-// MOBILE_URL: 'reddit://submit?url=&title='; // url: encodeURIComponent(shareUrl), title: text

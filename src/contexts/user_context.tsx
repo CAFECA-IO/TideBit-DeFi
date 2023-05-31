@@ -40,6 +40,7 @@ import {
   millesecondsToSeconds,
   randomHex,
   rlpEncodeServiceTerm,
+  validateCFD,
   verifySignedServiceTerm,
 } from '../lib/common';
 import {IAcceptedOrder} from '../interfaces/tidebit_defi_background/accepted_order';
@@ -812,9 +813,9 @@ export const UserProvider = ({children}: IUserProvider) => {
   };
 
   const signServiceTerm = async (): Promise<IResult> => {
-    let eip712signature: string,
-      result: IResult = {...defaultResultFailed},
-      resultCode = Code.UNKNOWN_ERROR;
+    let eip712signature: string;
+    let resultCode = Code.UNKNOWN_ERROR;
+    let result: IResult = {...defaultResultFailed, code: resultCode, reason: Reason[resultCode]};
 
     try {
       if (lunar.isConnected) {
@@ -822,6 +823,7 @@ export const UserProvider = ({children}: IUserProvider) => {
         const encodedData = rlpEncodeServiceTerm(serviceTermContract);
         resultCode = Code.SERVICE_TERM_DISABLE;
         eip712signature = await lunar.signTypedData(serviceTermContract);
+        resultCode = Code.FAILED_TO_VERIFY_SIGNATURE;
         const verifyR: boolean = lunar.verifyTypedData(serviceTermContract, eip712signature);
         // eslint-disable-next-line no-console
         console.log(`verifyR`, verifyR);
@@ -836,6 +838,9 @@ export const UserProvider = ({children}: IUserProvider) => {
             success: true,
             code: resultCode,
           };
+        } else {
+          result.code = resultCode;
+          result.reason = Reason[resultCode];
         }
         return result;
       } else {
@@ -1041,6 +1046,8 @@ export const UserProvider = ({children}: IUserProvider) => {
   ): Promise<IResult> => {
     let result: IResult;
     try {
+      const isValid = validateCFD(applyCreateCFDOrder?.fee ?? 0, applyCreateCFDOrder?.amount ?? 0);
+      if (!isValid) throw new CustomError(Code.INVALID_CFD_OPEN_REQUEST);
       if (!enableServiceTermRef.current) throw new CustomError(Code.SERVICE_TERM_DISABLE);
       if (!applyCreateCFDOrder) throw new CustomError(Code.INVAILD_ORDER_INPUTS);
       const balance: IBalance | null = getBalance(applyCreateCFDOrder.margin.asset);
@@ -1056,7 +1063,6 @@ export const UserProvider = ({children}: IUserProvider) => {
       console.log('_createCFDOrder lunar.verifyTypedData success', success);
       if (!success) throw new CustomError(Code.REJECTED_SIGNATURE);
       const now = getTimestamp();
-      // ToDo: Check if the quotation is expired, if so return `failed result` in `catch`. (20230414 - Shirley)
       // Deprecated: [debug] (20230509 - Tzuhan)
       // eslint-disable-next-line no-console
       console.log(
@@ -1095,7 +1101,6 @@ export const UserProvider = ({children}: IUserProvider) => {
         data: {order: CFDOrder},
       };
     } catch (error) {
-      // Info: `updateBalance` has two options of error (20230426 - Shirley)
       result = {
         success: false,
         code: isCustomError(error) ? error.code : Code.INTERNAL_SERVER_ERROR,

@@ -21,7 +21,7 @@ import {IDisplayCFDOrder} from '../../interfaces/tidebit_defi_background/display
 import {CFDOperation} from '../../constants/cfd_order_type';
 import {OrderType} from '../../constants/order_type';
 import {Code} from '../../constants/code';
-import {CustomError} from '../../lib/custom_error';
+import {CustomError, isCustomError} from '../../lib/custom_error';
 
 type TranslateFunction = (s: string) => string;
 interface IPositionUpdatedModal {
@@ -168,7 +168,7 @@ const PositionUpdatedModal = ({
       // ToDo: report error to backend (20230413 - Shirley)
       globalCtx.eliminateAllModals();
 
-      if (error instanceof CustomError) {
+      if (isCustomError(error)) {
         const str = error.toString().split('Error: ')[1];
         const errorCode = findCodeByReason(str);
 

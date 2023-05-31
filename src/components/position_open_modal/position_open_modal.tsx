@@ -13,6 +13,7 @@ import {
   getTimestamp,
   getTimestampInMilliseconds,
   findCodeByReason,
+  validateCFD,
 } from '../../lib/common';
 import {useContext, useEffect, useState} from 'react';
 import {MarketContext} from '../../contexts/market_context';
@@ -40,7 +41,7 @@ import useStateRef from 'react-usestateref';
 import {Code} from '../../constants/code';
 import {ToastTypeAndText} from '../../constants/toast_type';
 import {ToastId} from '../../constants/toast_id';
-import {CustomError} from '../../lib/custom_error';
+import {CustomError, isCustomError} from '../../lib/custom_error';
 
 type TranslateFunction = (s: string) => string;
 interface IPositionOpenModal {
@@ -68,6 +69,7 @@ const PositionOpenModal = ({
   const [quotationError, setQuotationError, quotationErrorRef] = useStateRef(false);
   const [quotationErrorMessage, setQuotationErrorMessage, quotationErrorMessageRef] =
     useStateRef<IResult>(defaultResultFailed);
+  const [invalidData, setInvalidData, invalidDataRef] = useStateRef(false);
 
   const toApplyCreateOrder = (openCfdRequest: IApplyCreateCFDOrder): IApplyCreateCFDOrder => {
     const order: IApplyCreateCFDOrder = {
@@ -153,7 +155,7 @@ const PositionOpenModal = ({
       // ToDo: report error to backend (20230413 - Shirley)
       globalCtx.eliminateAllModals();
 
-      if (error instanceof CustomError) {
+      if (isCustomError(error)) {
         const str = error.toString().split('Error: ')[1];
         const errorCode = findCodeByReason(str);
 
@@ -296,6 +298,22 @@ const PositionOpenModal = ({
   useEffect(() => {
     if (!globalCtx.visiblePositionOpenModal) {
       setDataRenewedStyle('text-lightWhite');
+      setInvalidData(false);
+      return;
+    }
+
+    const isValid = validateCFD(openCfdRequest.fee, openCfdRequest.amount);
+    if (!isValid) {
+      setSecondsLeft(0);
+      globalCtx.toast({
+        type: ToastTypeAndText.ERROR.type,
+        toastId: ToastId.INVALID_CFD_OPEN_REQUEST,
+        message: t('ERROR_MESSAGE.INVALID_CFD_OPEN_REQUEST'),
+        typeText: t(ToastTypeAndText.ERROR.text),
+        isLoading: false,
+        autoClose: false,
+      });
+      setInvalidData(true);
       return;
     }
 
@@ -306,6 +324,8 @@ const PositionOpenModal = ({
 
   useEffect(() => {
     if (!userCtx.enableServiceTerm) return;
+    if (invalidDataRef.current) return;
+
     const intervalId = setInterval(() => {
       const base = openCfdRequest.quotation.deadline - WAITING_TIME_FOR_USER_SIGNING;
       const tickingSec = (base * 1000 - getTimestampInMilliseconds()) / 1000;
@@ -438,7 +458,7 @@ const PositionOpenModal = ({
         <div className="my-4 text-xs text-lightGray">{t('POSITION_MODAL.CFD_CONTENT')}</div>
 
         <RippleButton
-          disabled={secondsLeft < 1 || quotationErrorRef.current}
+          disabled={secondsLeft < 1 || quotationErrorRef.current || invalidDataRef.current}
           onClick={submitClickHandler}
           buttonType="button"
           className={`mt-0 whitespace-nowrap rounded border-0 bg-tidebitTheme px-16 py-2 text-base text-white transition-colors duration-300 hover:bg-cyan-600 focus:outline-none disabled:bg-lightGray`}

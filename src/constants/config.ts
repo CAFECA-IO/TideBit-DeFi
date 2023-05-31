@@ -12,7 +12,8 @@ export const POSITION_CLOSE_COUNTDOWN_SECONDS = 60;
 export const COPYRIGHT = 'TideBit © 2016 - 2023';
 
 // 10 ** 9 - 0.01
-export const TARGET_LIMIT_DIGITS = 10 ** 9 - 0.01;
+export const TARGET_MAX_DIGITS = 10 ** 9 - 0.01;
+export const TARGET_MIN_DIGITS = 0.01;
 
 export const MONTH_FULL_NAME_LIST = [
   'January',
@@ -279,5 +280,7 @@ export const CFD_LIQUIDATION_TIME = 86400;
 export const TP_SL_LIMIT_PERCENT = 0.01;
 export const DEFAULT_TICKER = 'ETH';
 export const SHARING_BG_IMG_THRESHOLD_PNL_PERCENT = 5;
+export const MIN_FEE_RATE = 0;
+export const MAX_FEE_RATE = 0.2;
 export const INITIAL_TRADES_INTERVAL = 30 * 1000; // Info: 30 seconds in milliseconds (ms) (20230530 - tzuhhan)
 export const INITIAL_TRADES_BUFFER = 5 * 1000; // Info: 5 seconds in milliseconds (ms) (20230530 - tzuhhan)

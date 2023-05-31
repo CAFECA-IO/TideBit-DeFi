@@ -19,7 +19,7 @@ import {ToastId} from '../../constants/toast_id';
 import useStateRef from 'react-usestateref';
 import {IApplyDepositOrder} from '../../interfaces/tidebit_defi_background/apply_deposit_order';
 import {FRACTION_DIGITS} from '../../constants/config';
-import {CustomError} from '../../lib/custom_error';
+import {CustomError, isCustomError} from '../../lib/custom_error';
 
 type TranslateFunction = (s: string) => string;
 interface IDepositModal {
@@ -187,7 +187,7 @@ const DepositModal = ({
 
       // ToDo: Report error to backend (20230413 - Shirley)
       // Info: Unknown error
-      if (error instanceof CustomError) {
+      if (isCustomError(error)) {
         const str = error.toString().split('Error: ')[1];
         const errorCode = findCodeByReason(str);
 

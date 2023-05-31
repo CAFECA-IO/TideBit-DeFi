@@ -166,7 +166,7 @@ const SignatureProcessModal = ({
               break;
 
             default:
-              setErrorCode(Code.UNKNOWN_ERROR);
+              setErrorCode(signResult.code);
               break;
           }
 
@@ -177,9 +177,7 @@ const SignatureProcessModal = ({
         unlock();
 
         // ToDo: report error to backend (20230413 - Shirley)
-
-        setErrorCode(Code.UNKNOWN_ERROR);
-
+        setErrorCode(Code.UNKNOWN_ERROR_IN_COMPONENT);
         setConnectingProcess(ConnectingProcess.REJECTED);
       }
     }
@@ -275,7 +273,9 @@ const SignatureProcessModal = ({
       <div className="mt-7 -mb-5 w-271px space-y-1 text-lightWhite">
         <div className="text-lg">{t('WALLET_PANEL.SIGNATURE_STEP2_TITLE')}</div>
         <div className="text-sm">{t('WALLET_PANEL.SIGNATURE_STEP2_DESCRIPTION')}</div>
-        <div className="text-sm text-lightRed3">{t('WALLET_PANEL.ERROR_MESSAGE')}</div>
+        <div className="text-sm text-lightRed3">
+          {t('WALLET_PANEL.ERROR_MESSAGE')} ({errorCodeRef.current})
+        </div>
       </div>
     </>
   );
@@ -287,7 +287,7 @@ const SignatureProcessModal = ({
         <div className="text-lg">{t('WALLET_PANEL.SIGNATURE_STEP2_TITLE')}</div>
         <div className="text-sm">{t('WALLET_PANEL.SIGNATURE_STEP2_DESCRIPTION')}</div>
         <div className="text-sm text-lightRed3">
-          {t('WALLET_PANEL.DISABLE_SERVICE_TERM_ERROR_MESSAGE')}
+          {t('WALLET_PANEL.DISABLE_SERVICE_TERM_ERROR_MESSAGE')} ({errorCodeRef.current})
         </div>
       </div>
     </>

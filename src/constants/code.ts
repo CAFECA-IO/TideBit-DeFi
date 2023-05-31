@@ -31,11 +31,13 @@ export type ICode =
   | '40430002'
   | '40430003'
   | '40430004'
+  | '40340005'
   | '60210001'
   | '60210002'
   | '60210003'
   | '60220001'
   | '60220002'
+  | '60220003'
   | '60310001'
   | '80410001'
   | '80410002'
@@ -79,6 +81,7 @@ export type ICodeConstant = {
   SERVICE_TERM_DISABLE: ICode;
   DEWT_IS_NOT_LEGIT: ICode;
   REJECTED_SIGNATURE: ICode;
+  FAILED_TO_VERIFY_SIGNATURE: ICode;
 
   INVALID_TRADE: ICode;
   CANNOT_FETCH_CFD_SHARE_ORDER: ICode;
@@ -86,6 +89,7 @@ export type ICodeConstant = {
   INTERNAL_SERVER_ERROR: ICode;
   INVAILD_QUOTATION: ICode;
   CANNOT_CONVERT_TO_IMAGE: ICode;
+  INVALID_CFD_OPEN_REQUEST: ICode;
 
   DEPOSIT_INTERVAL_TOO_SHORT: ICode;
   BADGE_ALREADY_EXIST: ICode;
@@ -135,6 +139,7 @@ export const Code: ICodeConstant = {
   SERVICE_TERM_DISABLE: '40430002',
   DEWT_IS_NOT_LEGIT: '40430003',
   REJECTED_SIGNATURE: '40430004',
+  FAILED_TO_VERIFY_SIGNATURE: '40340005',
 
   INVALID_TRADE: '60210001',
   CANNOT_FETCH_CFD_SHARE_ORDER: '60210002',
@@ -142,6 +147,7 @@ export const Code: ICodeConstant = {
   INTERNAL_SERVER_ERROR: '60220001',
   INVAILD_QUOTATION: '60220002',
   CANNOT_CONVERT_TO_IMAGE: '60310001',
+  INVALID_CFD_OPEN_REQUEST: '60220003',
 
   DEPOSIT_INTERVAL_TOO_SHORT: '80410001',
   BADGE_ALREADY_EXIST: '80410002',
@@ -186,12 +192,14 @@ export const Reason: IReason = {
   '40430002': 'ERROR_MESSAGE.SERVICE_TERM_DISABLE',
   '40430003': 'ERROR_MESSAGE.DEWT_IS_NOT_LEGIT',
   '40430004': 'ERROR_MESSAGE.REJECTED_SIGNATURE',
+  '40340005': 'Failed to verify the signature of the request',
 
   '60210001': 'The format of trade is invalid',
   '60210002': 'Cannot fetch image url of Next API route',
   '60220001': 'ERROR_MESSAGE.INTERNAL_SERVER_ERROR',
   '60220002': 'ERROR_MESSAGE.INVAILD_QUOTATION',
   '60210003': 'CFD order are not consistent with the one got from API',
+  '60220003': 'CFD information is invalid',
   '60310001': 'Cannot convert HTML to image',
 
   '80410001': 'ERROR_MESSAGE.DEPOSIT_INTERVAL_TOO_SHORT', //'Deposit interval too short, you can deposit at most 1 times in 24 hours, please try again later',

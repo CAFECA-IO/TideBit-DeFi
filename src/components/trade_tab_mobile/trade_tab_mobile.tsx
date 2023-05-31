@@ -13,6 +13,7 @@ import RippleButton from '../ripple_button/ripple_button';
 import {
   DEFAULT_BUY_PRICE,
   DEFAULT_EXPIRY_DATE,
+  DEFAULT_FEE,
   DEFAULT_LEVERAGE,
   DEFAULT_SELL_PRICE,
   DEFAULT_SPREAD,
@@ -20,7 +21,7 @@ import {
   UNIVERSAL_NUMBER_FORMAT_LOCALE,
 } from '../../constants/display';
 import {
-  TARGET_LIMIT_DIGITS,
+  TARGET_MAX_DIGITS,
   QUOTATION_RENEWAL_INTERVAL_SECONDS,
   unitAsset,
   SUGGEST_SL,
@@ -31,6 +32,7 @@ import {
   TP_SL_LIMIT_PERCENT,
   DEFAULT_TICKER,
   CFD_LIQUIDATION_TIME,
+  TARGET_MIN_DIGITS,
 } from '../../constants/config';
 import {ClickEvent} from '../../constants/tidebit_event';
 import {useTranslation} from 'next-i18next';
@@ -546,6 +548,8 @@ const TradeTabMobile = () => {
       marketCtx.selectedTicker?.currency ?? DEFAULT_TICKER
     );
 
+    const feePercent = marketCtx.tickerLiveStatistics?.fee ?? DEFAULT_FEE;
+
     const long = longQuotation.data as IQuotation;
     const short = shortQuotation.data as IQuotation;
 
@@ -570,7 +574,7 @@ const TradeTabMobile = () => {
       typeOfPosition: TypeOfPosition.BUY,
       quotation: long,
       liquidationPrice: roundToDecimalPlaces(long.price * (1 - LIQUIDATION_FIVE_LEVERAGE), 2),
-      fee: marketCtx.tickerLiveStatistics?.fee ?? DEFAULT_BUY_PRICE,
+      fee: feePercent,
       guaranteedStop: longSlToggle ? longGuaranteedStopChecked : false,
       guaranteedStopFee:
         longSlToggle && longGuaranteedStopChecked ? guaranteedStopFeeLongRef.current : 0,
@@ -586,7 +590,7 @@ const TradeTabMobile = () => {
       quotation: short,
       price: short.price,
       liquidationPrice: roundToDecimalPlaces(short.price * (1 + LIQUIDATION_FIVE_LEVERAGE), 2),
-      fee: marketCtx.tickerLiveStatistics?.fee ?? DEFAULT_BUY_PRICE,
+      fee: feePercent,
       guaranteedStop: shortSlToggle ? shortGuaranteedStopChecked : false,
       guaranteedStopFee:
         shortSlToggle && shortGuaranteedStopChecked ? guaranteedStopFeeShortRef.current : 0,
@@ -662,8 +666,8 @@ const TradeTabMobile = () => {
   // ----------Target area----------
   const displayedTargetSetting = (
     <TradingInput
-      lowerLimit={0}
-      upperLimit={TARGET_LIMIT_DIGITS}
+      lowerLimit={TARGET_MIN_DIGITS}
+      upperLimit={TARGET_MAX_DIGITS}
       getInputValue={getTargetInputValue}
       inputInitialValue={targetInputValueRef.current}
       inputValueFromParent={targetInputValueRef.current}
@@ -700,7 +704,7 @@ const TradeTabMobile = () => {
     <div className={isDisplayedLongTpSetting}>
       <TradingInput
         lowerLimit={longTpLowerLimitRef.current}
-        upperLimit={TARGET_LIMIT_DIGITS}
+        upperLimit={TARGET_MAX_DIGITS}
         inputInitialValue={longTpValue}
         inputValueFromParent={longTpValue}
         setInputValueFromParent={setLongTpValue}

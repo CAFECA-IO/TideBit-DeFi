@@ -1,0 +1,140 @@
+:root {
+  --color1: #404a55;
+  --colorLoss: #e86d6d;
+  --colorProfit: #17bf88;
+  /* --toastify-color-info: #a5c4f3;
+  --toastify-color-progress-info: var(--toastify-color-info); */
+}
+
+.latestPrice {
+  width: 50px;
+  position: absolute;
+  /* Till: (20230327 - Shirley)  
+    transform: translate(160%, 60%); 
+    x replacement - width / 2 
+  */
+  transform: translate(537.5270039010129px, 223.527587387623px);
+}
+
+/* Container holding the image and the text */
+.balanceImgContainer {
+  position: relative;
+  text-align: center;
+  /* color: white; */
+}
+
+/* Centered text */
+.balanceTextCentered {
+  position: absolute;
+  top: 42%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* @media (max-width: 480px) {
+  .balanceTextCentered {
+    top: 20%;
+  }
+} */
+
+/* .thousands-separator:lang(en):before,
+.thousands-separator:lang(zh):before {
+  content: ',';
+} */
+
+/* .Toastify__progress-bar--info {
+  background-color: #a5c4f3;
+} */
+
+/* offset-x | offset-y | blur-radius | color */
+/* 1px 0 3px */
+/* 0 0 5px */
+/* text-shadow: 1px 0 3px var(--colorLoss), 1px 0 3px var(--colorLoss); */
+.priceUpShadow {
+  text-shadow: 0px 0 10px var(--colorProfit);
+}
+
+.priceDownShadow {
+  text-shadow: 0px 0 10px var(--colorLoss);
+}
+
+/* .apexchartsCandlestickTooltip {
+  background: #e86d6d;
+  color: blue;
+} */
+
+/* .apexchartHorizontalLine {
+  width: 250px;
+  font-size: 20px;
+  font-weight: bold;
+} */
+
+.apexchartHorizontalLine svg {
+  width: 280px;
+}
+
+/* .apexchartExtend rect {
+  transform: translate(100px, 100px);
+} */
+
+/* svg {
+  width: 250px;
+} */
+/* 
+#apexchartskv28bp2g {
+  width: 250px;
+} */
+
+/* .my-annotation-class {
+  font-size: 18px;
+  font-weight: bold;
+} */
+
+.avatarMenuShadow {
+  border: 1px solid #000;
+  border-radius: 5px;
+  box-shadow: 0px 5px 10px #000;
+}
+
+.effectContainer {
+  position: relative;
+  overflow: hidden;
+
+  --effect-name: ripple;
+  --effect-duration: 1000ms;
+  --effect-top: 0px;
+  --effect-left: 0px;
+  --effect-height: 100px;
+  --effect-width: 100px;
+  --effect-color: #ffffff;
+}
+
+.effectContainer::before {
+  content: '';
+  position: absolute;
+  opacity: 0.3;
+
+  top: var(--effect-top);
+  left: var(--effect-left);
+  height: var(--effect-height);
+  width: var(--effect-width);
+  border-radius: 50%;
+  transform: scale(0);
+  background: var(--effect-color);
+}
+
+.effectContainer.active::before {
+  border-radius: 50%;
+  animation: ripple var(--effect-duration) linear forwards;
+}
+
+@keyframes ripple {
+  from {
+    transform: scale(0);
+  }
+
+  to {
+    transform: scale(6);
+    opacity: 0;
+  }
+}

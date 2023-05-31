@@ -1,0 +1,25 @@
+.pointer-events-boundingBox {
+  pointer-events: bounding-box;
+}
+
+.landingPageCTA1 {
+  background-image: url(/public/elements/group_15198.png);
+  object-fit: contain;
+}
+
+@media (min-device-pixel-ratio: 2) {
+  .landingPageCTA1 {
+    background-image: url(/public/elements/group_15198@2x.png);
+  }
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.custom-no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.custom-no-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}

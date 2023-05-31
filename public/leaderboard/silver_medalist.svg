@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="200" height="200" viewBox="0 0 200 200">
+  <defs>
+    <linearGradient id="linear-gradient" x1="0.255" y1="0.074" x2="0.766" y2="0.931" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#ebe6f2"/>
+      <stop offset="0.063" stop-color="#ece8f2"/>
+      <stop offset="0.125" stop-color="#68676e"/>
+      <stop offset="0.142" stop-color="#6f6d75"/>
+      <stop offset="0.166" stop-color="#838189"/>
+      <stop offset="0.194" stop-color="#a3a0a9"/>
+      <stop offset="0.226" stop-color="#d0ccd7"/>
+      <stop offset="0.244" stop-color="#ebe6f2"/>
+      <stop offset="0.357" stop-color="#efedf2"/>
+      <stop offset="0.663" stop-color="#ebe6f2"/>
+      <stop offset="0.698" stop-color="#dedae5"/>
+      <stop offset="0.762" stop-color="#bebac5"/>
+      <stop offset="0.847" stop-color="#8a8890"/>
+      <stop offset="0.898" stop-color="#68676e"/>
+      <stop offset="0.911" stop-color="#6f6e75"/>
+      <stop offset="0.931" stop-color="#838189"/>
+      <stop offset="0.955" stop-color="#a4a1aa"/>
+      <stop offset="0.982" stop-color="#d1cdd7"/>
+      <stop offset="0.982" stop-color="#d3cfd9"/>
+      <stop offset="1" stop-color="#d3cfd9"/>
+    </linearGradient>
+  </defs>
+  <circle id="Ellipse_398" data-name="Ellipse 398" cx="100" cy="100" r="100" fill="url(#linear-gradient)"/>
+</svg>

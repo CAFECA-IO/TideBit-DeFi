@@ -4,10 +4,15 @@ import NewsSection from '../news_section/news_section';
 
 const NewsPageBody = () => {
   return (
-    <div>
-      NewsPageBody
-      <NewsHeader />
-      <NewsSection />
+    <div className="">
+      <div className="mb-16">
+        {' '}
+        <NewsHeader />
+      </div>
+      <div className="">
+        {' '}
+        <NewsSection />
+      </div>
     </div>
   );
 };

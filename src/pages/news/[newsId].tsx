@@ -3,6 +3,7 @@ import {useRouter} from 'next/router';
 import {GetServerSideProps} from 'next';
 import {serverSideTranslations} from 'next-i18next/serverSideTranslations';
 import NewsPageBody from '../../components/news_page_body/news_page_body';
+import NewsArticle from '../../components/news_article/news_article';
 
 // This data should be replaced with actual fetched data
 const data = [
@@ -26,7 +27,7 @@ const NewsPage = () => {
   return (
     <>
       {/* <News data={pageData} /> */}
-      <NewsPageBody />
+      <NewsArticle />
     </>
   );
 };

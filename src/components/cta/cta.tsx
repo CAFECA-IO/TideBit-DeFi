@@ -35,7 +35,8 @@ const Cta = () => {
             </div>
             <div className="flex items-center space-x-2 pt-6">
               <a
-                href=""
+                href={t('HOME_PAGE.WHITEPAPER_LINK')}
+                download
                 className={`flex items-center justify-center space-x-2 whitespace-nowrap rounded-full bg-lightGray3 px-3 py-1 text-sm text-lightWhite transition-colors duration-300 hover:bg-lightGray1 hover:text-black`}
               >
                 <p>{t('HOME_PAGE.WHITEPAPER')}</p>
@@ -83,7 +84,7 @@ const Cta = () => {
           </div>
           <div className="flex flex-col items-center space-y-4 pt-4">
             <a
-              href=""
+              href={t('HOME_PAGE.WHITEPAPER_LINK')}
               className={`flex items-center justify-center space-x-2 whitespace-nowrap rounded-full bg-lightGray3 px-3 py-1 text-sm text-lightWhite transition-colors duration-300 hover:bg-lightGray1 hover:text-black`}
             >
               <p>{t('HOME_PAGE.WHITEPAPER')}</p>

@@ -166,7 +166,11 @@ const useShareProcess = ({lockerName, shareType, shareId, cfd, enableShare}: IUs
           // TODO: Test (20230531 - Shirley)
           if (window.innerWidth <= 768) {
             // console.log('width <= 768 encode', window.innerWidth);
-            window.open(`${appUrl}${encodeURIComponent(shareUrl)}`, '_blank');
+            const appShareUrl = `${appUrl}${encodeURIComponent(shareUrl)}`;
+            const desktopShareUrl = `${url}${encodeURIComponent(shareUrl)}`;
+            // window.open(`${appUrl}${encodeURIComponent(shareUrl)}`, '_blank');
+            window.location.href = appShareUrl;
+
             // console.log(`shareUrl: ${appUrl}${encodeURIComponent(shareUrl)}`);
 
             // switch (type) {

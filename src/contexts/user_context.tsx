@@ -66,6 +66,7 @@ import {
   IPersonalAchievement,
   getDummyPersonalAchievements,
 } from '../interfaces/tidebit_defi_background/personal_achievement';
+import {IBadge} from '../interfaces/tidebit_defi_background/badge';
 
 export interface IUserProvider {
   children: React.ReactNode;
@@ -122,6 +123,7 @@ export interface IUserContext {
   init: () => Promise<void>;
   enableShare: (cfdId: string, share: boolean) => Promise<IResult>;
   shareTradeRecord: (cfdId: string) => Promise<IResult>;
+  getBadge: (badgeId: string) => Promise<IResult>;
   // getTotalBalance: () => Promise<IResult>;
   walletExtensions: IWalletExtension[];
 }
@@ -224,6 +226,9 @@ export const UserContext = createContext<IUserContext>({
   },
   walletExtensions: [],
   getUserAssets: function (): Promise<IResult> {
+    throw new Error('Function not implemented.');
+  },
+  getBadge: function (badgeId: string): Promise<IResult> {
     throw new Error('Function not implemented.');
   },
 });
@@ -644,6 +649,35 @@ export const UserProvider = ({children}: IUserProvider) => {
         if (result.success) {
           // const interest = result.data as IInterest;
           // result.data = interest;
+        }
+      } catch (error) {
+        // TODO: error handle (Tzuhan - 20230421)
+        // eslint-disable-next-line no-console
+        console.error(`getUserInterest error`, error);
+        if (!isCustomError(error)) {
+          result.code = Code.INTERNAL_SERVER_ERROR;
+          result.reason = Reason[result.code];
+        }
+      }
+    }
+    return result;
+  }, []);
+
+  const getBadge = useCallback(async (badgeId: string): Promise<IResult> => {
+    let result: IResult = {...defaultResultFailed};
+    if (enableServiceTermRef.current) {
+      try {
+        result = (await privateRequestHandler({
+          name: APIName.GET_BADGE,
+          method: Method.GET,
+          params: badgeId,
+        })) as IResult;
+        // Deprecate: after this functions finishing (20230508 - tzuhan)
+        // eslint-disable-next-line no-console
+        console.log(`getUserInterest result`, result);
+        if (result.success) {
+          const badge = result.data as IBadge;
+          result.data = badge;
         }
       } catch (error) {
         // TODO: error handle (Tzuhan - 20230421)
@@ -1671,6 +1705,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     getPersonalRanking,
     getPersonalAchievements,
     // getTotalBalance,
+    getBadge,
     init,
     walletExtensions: walletExtensionsRef.current,
   };

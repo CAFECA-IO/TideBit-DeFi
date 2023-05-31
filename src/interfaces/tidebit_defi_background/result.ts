@@ -1,5 +1,6 @@
 import {Code, ICode, Reason} from '../../constants/code';
 import {IAcceptedOrder} from './accepted_order';
+import {IBadge} from './badge';
 import {IBalance} from './balance';
 import {ICandlestickData, ITrade} from './candlestickData';
 import {ICryptocurrency} from './cryptocurrency';
@@ -48,6 +49,7 @@ export interface IResult {
     | IUserAssets
     | IPersonalRanking
     | IPersonalAchievement
+    | IBadge
     | null;
   code: ICode;
   reason?: string;

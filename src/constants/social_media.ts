@@ -26,7 +26,8 @@ export interface IShareSettings extends ISocialMediaSetting {
 export const ShareSettings: Record<SocialMedia, IShareSettings> = {
   FACEBOOK: {
     URL: 'https://www.facebook.com/sharer/sharer.php?u=',
-    APP_URL: 'fb://facewebmodal/f?href=', // url: encodeURIComponent(shareUrl)
+    // APP_URL: 'fb://facewebmodal/f?href=', // url: encodeURIComponent(shareUrl)
+    APP_URL: 'fb://post?message=', // message: encodeURIComponent(shareUrl)
     TYPE: 'facebook-share-dialog',
     SIZE: 'width=800,height=600',
     ICON: '/elements/group_15237.svg',

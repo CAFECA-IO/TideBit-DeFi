@@ -1,10 +1,9 @@
-import React, {useState, useEffect} from 'react';
+import React from 'react';
 import dynamic from 'next/dynamic';
 import {ApexOptions} from 'apexcharts';
 import {OPEN_POSITION_LINE_LABEL_POSITION} from '../../constants/display';
 
 const Chart = dynamic(() => import('react-apexcharts'), {ssr: false});
-// const Chart = dynamic(() => import('apexcharts'), {ssr: false});
 
 interface ILineGraphProps {
   strokeColor: string[];
@@ -13,8 +12,6 @@ interface ILineGraphProps {
   annotatedValue: number;
   annotatedString: string;
 }
-// sampleArray = [42, 50, 45, 55, 49, 52, 48],
-// sampleArray = [30, 72, 85, 65, 42, 99, 67, 55, 49, 32, 48, 20],
 
 export default function PositionLineGraph({
   strokeColor,
@@ -22,18 +19,18 @@ export default function PositionLineGraph({
   lineGraphWidth,
   annotatedValue,
   annotatedString,
-  ...otherProps
 }: ILineGraphProps): JSX.Element {
+  const yaxisMax =
+    Math.max(...dataArray) > annotatedValue ? Math.max(...dataArray) : annotatedValue;
+  const yaxisMin =
+    Math.min(...dataArray) < annotatedValue ? Math.min(...dataArray) : annotatedValue;
+
   const chartOptions: ApexOptions = {
     chart: {
       type: 'line',
-      zoom: {
-        enabled: false,
-      },
+      zoom: {enabled: false},
       foreColor: '#373d3f',
-      toolbar: {
-        show: false,
-      },
+      toolbar: {show: false},
     },
     markers: {
       discrete: [
@@ -46,50 +43,30 @@ export default function PositionLineGraph({
         },
       ],
     },
-    // grid: {
-    //   show: true,
-    //   borderColor: strokeColor[0],
-    //   strokeDashArray: 5,
-    //   position: 'back',
-    // },
-    // forecastDataPoints: {
-    //   count: 2,
-    //   fillOpacity: 0.5,
-    //   dashArray: 2,
-    // },
-    dataLabels: {
-      enabled: false,
-    },
+    dataLabels: {enabled: false},
     stroke: {
       curve: 'straight',
       colors: strokeColor,
       width: 1.2,
-      // lineCap: 'round',
     },
     xaxis: {
       axisBorder: {show: false},
       axisTicks: {show: false},
-      labels: {
-        show: false,
-      },
+      labels: {show: false},
       type: 'numeric',
     },
     yaxis: {
+      max: yaxisMax,
+      min: yaxisMin,
+      forceNiceScale: true,
       axisBorder: {show: false},
       axisTicks: {show: false},
-      labels: {
-        show: false,
-      },
+      labels: {show: false},
     },
-    grid: {
-      show: false,
-    },
-    tooltip: {
-      enabled: false,
-    },
-    // Horizontal dash line
+    grid: {show: false},
+    tooltip: {enabled: false},
+    /* Info: (20230601 - Julian) Horizontal dash line */
     annotations: {
-      // position: 'front',
       yaxis: [
         {
           y: annotatedValue,
@@ -106,7 +83,6 @@ export default function PositionLineGraph({
             style: {
               color: strokeColor[2],
               background: strokeColor[1],
-              // cssClass: 'apexchartHorizontalLine',
             },
             text: annotatedString,
             borderWidth: 20,
@@ -118,7 +94,7 @@ export default function PositionLineGraph({
     },
   };
 
-  const [dataSample, setDataSample] = useState({
+  const dataSample = {
     options: chartOptions,
     toolbar: {
       show: false,
@@ -130,7 +106,7 @@ export default function PositionLineGraph({
         data: [...dataArray],
       },
     ],
-  });
+  };
 
   return (
     <div className="apexchartHorizontalLine">

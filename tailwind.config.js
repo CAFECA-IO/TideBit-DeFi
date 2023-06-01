@@ -40,6 +40,9 @@ module.exports = {
       '3xl': '1600px',
     },
     extend: {
+      textDecorationThickness: {
+        2: '2px',
+      },
       zIndex: {
         '60': '60',
         '70': '70',

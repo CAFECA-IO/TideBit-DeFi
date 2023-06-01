@@ -7,6 +7,7 @@ import NavBarMobile from '../components/nav_bar_mobile/nav_bar_mobile';
 import NavBar from '../components/nav_bar/nav_bar';
 import {serverSideTranslations} from 'next-i18next/serverSideTranslations';
 import {ILocale} from '../interfaces/tidebit_defi_background/locale';
+import Footer from '../components/footer/footer';
 
 const News = () => {
   const {layoutAssertion} = useGlobal();
@@ -31,11 +32,13 @@ const News = () => {
 
           <nav className="">{displayedNavBar}</nav>
 
-          <main className="pt-32 pb-10">
+          <main className="">
             <div>
               <NewsPageBody />
             </div>
           </main>
+
+          <Footer />
         </>
       ) : (
         <div>Loading...</div>

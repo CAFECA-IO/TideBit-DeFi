@@ -118,21 +118,19 @@ const NewsSection = () => {
     cryptoBriefNews instanceof Array &&
     cryptoBriefNews?.map((news, index) => {
       return (
-        <Link href={`/news/${news.id}`}>
-          <NewsItem
-            key={news.img}
-            id={news.id}
-            timestamp={news.timestamp}
-            img={news.img}
-            title={news.title}
-            content={news.content}
-          />
-        </Link>
+        <NewsItem
+          key={news.img}
+          id={news.id}
+          timestamp={news.timestamp}
+          img={news.img}
+          title={news.title}
+          content={news.content}
+        />
       );
     });
 
   const pagination = (
-    <ol className="mt-10 mr-20 flex justify-end gap-1 text-sm font-medium">
+    <ol className="mt-10 mb-20 mr-20 flex justify-end gap-1 text-sm font-medium">
       <li>
         <a
           href="#"
@@ -148,7 +146,7 @@ const NewsSection = () => {
             <path
               fill-rule="evenodd"
               d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
-              clip-rule="evenodd"
+              clipRule="evenodd"
             />
           </svg>
         </a>
@@ -165,7 +163,7 @@ const NewsSection = () => {
       <li>
         <a
           href="#"
-          className="block h-8 w-8 rounded bg-white text-center leading-8 text-gray-900 underline decoration-tidebitTheme underline-offset-4 dark:bg-black dark:text-white"
+          className="block h-8 w-8 rounded bg-white text-center leading-8 text-gray-900 underline decoration-tidebitTheme decoration-2 underline-offset-4 dark:bg-black dark:text-white"
         >
           2
         </a>
@@ -204,7 +202,7 @@ const NewsSection = () => {
             <path
               fill-rule="evenodd"
               d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-              clip-rule="evenodd"
+              clipRule="evenodd"
             />
           </svg>
         </a>
@@ -214,7 +212,7 @@ const NewsSection = () => {
 
   return (
     <div>
-      <section className="overflow-hidden bg-black text-gray-400">
+      <section className="overflow-hidden text-gray-400">
         {displayedCryptoNews}
         {pagination}
       </section>

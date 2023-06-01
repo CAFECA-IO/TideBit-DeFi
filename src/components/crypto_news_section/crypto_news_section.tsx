@@ -50,7 +50,7 @@ const CryptoNewsSection = () => {
       </div>
 
       <div className={`flex justify-center ${overallWidth}`}>
-        <Link href="#" className="text-xs text-tidebitTheme underline underline-offset-2">
+        <Link href="/news" className="text-xs text-tidebitTheme underline underline-offset-2">
           {t('TRADE_PAGE.CRYPTO_NEWS_SECTION_SEE_ALL')}
         </Link>
       </div>

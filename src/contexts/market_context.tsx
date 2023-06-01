@@ -492,8 +492,6 @@ export const MarketProvider = ({children}: IMarketProvider) => {
           quantity: trade.amount,
         }));
         trades.sort((a, b) => parseInt(a.tradeId) - parseInt(b.tradeId));
-        // eslint-disable-next-line no-console
-        console.log('trades', trades);
         tradeBook.addTrades(trades);
       }
     } catch (error) {

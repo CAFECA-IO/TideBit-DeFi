@@ -18,7 +18,7 @@ export type IAPIName =
   // public
   | 'GET_TIDEBIT_PROMOTION'
   | 'GET_WEBSITE_RESERVE'
-  | 'GET_PERSONAL_RANKING'
+  | 'GET_RANKING'
   | 'GET_PERSONAL_ACHIEVEMENT'
   // market
   | 'LIST_CURRENCIES'
@@ -83,7 +83,7 @@ export interface IAPINameConstant {
   // public
   GET_TIDEBIT_PROMOTION: IAPIName;
   GET_WEBSITE_RESERVE: IAPIName;
-  GET_PERSONAL_RANKING: IAPIName;
+  GET_RANKING: IAPIName;
   GET_PERSONAL_ACHIEVEMENT: IAPIName;
   // market
   LIST_CURRENCIES: IAPIName;
@@ -149,7 +149,7 @@ export const APIName: IAPINameConstant = {
   // public
   GET_TIDEBIT_PROMOTION: 'GET_TIDEBIT_PROMOTION',
   GET_WEBSITE_RESERVE: 'GET_WEBSITE_RESERVE',
-  GET_PERSONAL_RANKING: 'GET_PERSONAL_RANKING',
+  GET_RANKING: 'GET_RANKING',
   GET_PERSONAL_ACHIEVEMENT: 'GET_PERSONAL_ACHIEVEMENT',
   // market
   LIST_CURRENCIES: 'LIST_CURRENCIES',
@@ -216,7 +216,7 @@ export const APIURL = {
   // public
   GET_TIDEBIT_PROMOTION: `${API_URL}/public/promotion`,
   GET_WEBSITE_RESERVE: `${API_URL}/public/reserve`,
-  GET_PERSONAL_RANKING: `${API_URL}/public/ranking`,
+  GET_RANKING: `${API_URL}/public/ranking`,
   GET_PERSONAL_ACHIEVEMENT: `${API_URL}/public/achievement`,
   // market
   LIST_CURRENCIES: `${API_URL}/currencies`,

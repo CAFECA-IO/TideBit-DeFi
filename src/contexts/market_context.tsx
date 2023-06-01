@@ -471,6 +471,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       options = {
         begin: dateTime - INITIAL_TRADES_INTERVAL,
         end: dateTime + INITIAL_TRADES_BUFFER,
+        asc: false,
       };
     }
     try {
@@ -490,6 +491,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
           timestampMs: trade.timestamp,
           quantity: trade.amount,
         }));
+        trades.sort((a, b) => parseInt(a.tradeId) - parseInt(b.tradeId));
         tradeBook.addTrades(trades);
       }
     } catch (error) {

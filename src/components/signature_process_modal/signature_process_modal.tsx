@@ -76,7 +76,7 @@ const SignatureProcessModal = ({
     <div className="relative flex items-center justify-center">
       <Lottie className="relative w-32" animationData={activeIconPulse} />
       <Image
-        className="absolute mr-1 mb-1px"
+        className="absolute mb-1px mr-1"
         src="/elements/group_2415.svg"
         width={33}
         height={33}
@@ -102,7 +102,7 @@ const SignatureProcessModal = ({
       <Lottie className="relative w-32" animationData={activeIconPulse} />
 
       <Image
-        className="absolute mr-1 mb-1px"
+        className="absolute mb-1px mr-1"
         src="/elements/group_2418(1).svg"
         width={33}
         height={33}
@@ -199,7 +199,7 @@ const SignatureProcessModal = ({
 
   const firstStepDefaultView = (
     <>
-      <div className="-mt-6 -mb-5 inline-flex">
+      <div className="-mb-5 -mt-6 inline-flex">
         <div className="relative -ml-11 -mt-2"> {firstStepIcon}</div>
         <div className="-ml-7 w-271px space-y-1 pt-7 text-lightWhite">
           <div className="text-lg">{t('WALLET_PANEL.SIGNATURE_STEP1_TITLE')}</div>
@@ -236,7 +236,7 @@ const SignatureProcessModal = ({
 
   const secondStepDefaultView = (
     <>
-      <div className="mt-2 mb-1 flex items-center justify-center">
+      <div className="mb-1 mt-2 flex items-center justify-center">
         <div className="mr-6">{secondStepDefaultIcon}</div>
         <div className="w-271px space-y-1 text-lightGray">
           <div className="text-lg">{t('WALLET_PANEL.SIGNATURE_STEP2_TITLE')}</div>
@@ -259,8 +259,8 @@ const SignatureProcessModal = ({
 
   const secondStepSuccessView = (
     <>
-      <div className="mr-6 mt-7 mb-1">{successIcon}</div>
-      <div className="mt-7 mb-1 w-271px space-y-1 text-lightWhite">
+      <div className="mb-1 mr-6 mt-7">{successIcon}</div>
+      <div className="mb-1 mt-7 w-271px space-y-1 text-lightWhite">
         <div className="text-lg">{t('WALLET_PANEL.SIGNATURE_STEP2_TITLE')}</div>
         <div className="text-sm">{t('WALLET_PANEL.SIGNATURE_STEP2_DESCRIPTION')}</div>
       </div>
@@ -269,8 +269,8 @@ const SignatureProcessModal = ({
 
   const secondStepErrorView = (
     <>
-      <div className="mr-6 mt-7 -mb-5">{errorIcon}</div>
-      <div className="mt-7 -mb-5 w-271px space-y-1 text-lightWhite">
+      <div className="-mb-5 mr-6 mt-7">{errorIcon}</div>
+      <div className="-mb-5 mt-7 w-271px space-y-1 text-lightWhite">
         <div className="text-lg">{t('WALLET_PANEL.SIGNATURE_STEP2_TITLE')}</div>
         <div className="text-sm">{t('WALLET_PANEL.SIGNATURE_STEP2_DESCRIPTION')}</div>
         <div className="text-sm text-lightRed3">
@@ -282,8 +282,8 @@ const SignatureProcessModal = ({
 
   const secondStepDisableServiceTermErrorView = (
     <>
-      <div className="mr-6 mt-7 -mb-5">{errorIcon}</div>
-      <div className="mt-7 -mb-5 w-271px space-y-1 text-lightWhite">
+      <div className="-mb-5 mr-6 mt-7">{errorIcon}</div>
+      <div className="-mb-5 mt-7 w-271px space-y-1 text-lightWhite">
         <div className="text-lg">{t('WALLET_PANEL.SIGNATURE_STEP2_TITLE')}</div>
         <div className="text-sm">{t('WALLET_PANEL.SIGNATURE_STEP2_DESCRIPTION')}</div>
         <div className="text-sm text-lightRed3">
@@ -327,7 +327,7 @@ const SignatureProcessModal = ({
   const isDisplayedProcessModal = processModalVisible ? (
     <>
       <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">
-        <div className="relative my-6 mx-auto w-auto max-w-xl">
+        <div className="relative mx-auto my-6 w-auto max-w-xl">
           {/*content & panel*/}
           <div
             id="connectModal"
@@ -340,7 +340,7 @@ const SignatureProcessModal = ({
                 {t('WALLET_PANEL.TITLE')}
               </h3>
               <button className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
-                <span className="absolute top-5 right-5 block outline-none focus:outline-none">
+                <span className="absolute right-5 top-5 block outline-none focus:outline-none">
                   <ImCross onClick={processClickHandler} />
                 </span>
               </button>

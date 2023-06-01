@@ -13,6 +13,7 @@ import Error from 'next/error';
 import {findCurrencyByCode, hasValue} from '../../../lib/common';
 import {tickerIds} from '../../../constants/config';
 import {Currency} from '../../../constants/currency';
+import {TIDEBIT_FAVICON} from '../../../constants/display';
 
 interface IPageProps {
   tickerId: string;
@@ -59,7 +60,7 @@ const Trading = (props: IPageProps) => {
     <>
       <Head>
         <title>CFD - TideBit DeFi</title>
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href={TIDEBIT_FAVICON} />
       </Head>
 
       {displayedNavBar}

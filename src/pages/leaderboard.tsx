@@ -7,6 +7,7 @@ import {serverSideTranslations} from 'next-i18next/serverSideTranslations';
 import {AppContext} from '../contexts/app_context';
 import {useGlobal} from '../contexts/global_context';
 import {ILocale} from '../interfaces/tidebit_defi_background/locale';
+import {TIDEBIT_FAVICON} from '../constants/display';
 
 const Leaderboard = () => {
   const {layoutAssertion} = useGlobal();
@@ -26,7 +27,7 @@ const Leaderboard = () => {
         <>
           <Head>
             <title>Leaderboard - TideBit DeFi</title>
-            <link rel="icon" href="/favicon.ico" />
+            <link rel="icon" href={TIDEBIT_FAVICON} />
           </Head>
 
           <div>

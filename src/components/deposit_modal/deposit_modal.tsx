@@ -14,7 +14,7 @@ import {useTranslation} from 'react-i18next';
 import {findCodeByReason, locker, randomHex, wait} from '../../lib/common';
 import {OrderType} from '../../constants/order_type';
 import {UserContext} from '../../contexts/user_context';
-import {Code} from '../../constants/code';
+import {Code, Reason} from '../../constants/code';
 import {ToastId} from '../../constants/toast_id';
 import useStateRef from 'react-usestateref';
 import {IApplyDepositOrder} from '../../interfaces/tidebit_defi_background/apply_deposit_order';
@@ -39,6 +39,7 @@ const DepositModal = ({
   ...otherProps
 }: IDepositModal) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
+  const {t: _t} = useTranslation();
   const {depositCryptocurrencies} = useContext(MarketContext);
   const globalCtx = useGlobal();
   const userCtx = useContext(UserContext);
@@ -149,13 +150,19 @@ const DepositModal = ({
         globalCtx.visibleCanceledModalHandler();
       } else if (
         /* Info:(20230530 - Julian) 連續入金的錯誤屬於合約內容，所以顯示沒有紅框的 Failed Modal */
-        result.code === Code.DEPOSIT_TOO_FREQUENCY
+        result.code === Code.DEPOSIT_INTERVAL_TOO_SHORT
       ) {
         globalCtx.eliminateAllModals();
-
         globalCtx.dataFailedModalHandler({
           modalTitle: t('D_W_MODAL.DEPOSIT'),
-          modalContent: `${t('D_W_MODAL.FAILED_REASON_FAILED_TO_DEPOSIT')} (${result.code})`,
+          modalContent: `${t('D_W_MODAL.FAILED_REASON_FAILED_TO_DEPOSIT')}: (${_t(
+            Reason[result.code],
+            {
+              nextAvailableTime: new Date(
+                (result.data as {nextAvailableTime: number}).nextAvailableTime * 1000
+              ).toLocaleString(),
+            }
+          )})`,
         });
 
         globalCtx.eliminateToasts(ToastId.DEPOSIT);

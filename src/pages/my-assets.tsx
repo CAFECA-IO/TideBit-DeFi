@@ -7,6 +7,7 @@ import NavBarMobile from '../components/nav_bar_mobile/nav_bar_mobile';
 import AssetsPageBody from '../components/assets_page_body/assets_page_body';
 import Head from 'next/head';
 import {ILocale} from '../interfaces/tidebit_defi_background/locale';
+import {TIDEBIT_FAVICON} from '../constants/display';
 
 const MyAssets = () => {
   const {layoutAssertion} = useGlobal();
@@ -26,7 +27,7 @@ const MyAssets = () => {
         <>
           <Head>
             <title>My Assets - TideBit DeFi</title>
-            <link rel="icon" href="/favicon.ico" />
+            <link rel="icon" href={TIDEBIT_FAVICON} />
           </Head>
 
           <div>

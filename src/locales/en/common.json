@@ -38,6 +38,8 @@
     "CTA_REST_TITLE": "platform for Crypto investment",
     "CTA_DESCRIPTION": "Start investing now. On TideBit you can learn, buy and sell cryptocurrency assets with the best quality.",
     "CTA_BUTTON": "GET STARTED",
+    "WHITEPAPER": "Whitepaper",
+    "WHITEPAPER_LINK": "/whitepaper/TideBit_Tech_Whitepaper_v2.0.4_EN.pdf",
     "STATISTIC_BLOCK_TITLE_1": "24h volume",
     "STATISTIC_BLOCK_TITLE_2": "Users",
     "STATISTIC_BLOCK_TITLE_3": "Volume Accumulation",
@@ -336,6 +338,7 @@
     "REJECTED_SIGNATURE": "Signature rejected by user",
     "INTERNAL_SERVER_ERROR": "Internal server error",
     "THIRD_PARTY_LIBRARY_ERROR": "Third party library error",
+    "DEPOSIT_INTERVAL_TOO_SHORT": "you can deposit at most 1 times in 24 hours, next available deposit time is: {{nextAvailableTime}}",
     "INVALID_CFD_OPEN_REQUEST": "CFD information is invalid"
   },
   "LEADERBOARD_PAGE": {

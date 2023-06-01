@@ -67,6 +67,7 @@ import {
   IPersonalAchievement,
   getDummyPersonalAchievements,
 } from '../interfaces/tidebit_defi_background/personal_achievement';
+import {IBadge} from '../interfaces/tidebit_defi_background/badge';
 
 export interface IUserProvider {
   children: React.ReactNode;
@@ -123,6 +124,7 @@ export interface IUserContext {
   init: () => Promise<void>;
   enableShare: (cfdId: string, share: boolean) => Promise<IResult>;
   shareTradeRecord: (cfdId: string) => Promise<IResult>;
+  getBadge: (badgeId: string) => Promise<IResult>;
   // getTotalBalance: () => Promise<IResult>;
   walletExtensions: IWalletExtension[];
 }
@@ -227,6 +229,9 @@ export const UserContext = createContext<IUserContext>({
   getUserAssets: function (): Promise<IResult> {
     throw new Error('Function not implemented.');
   },
+  getBadge: function (badgeId: string): Promise<IResult> {
+    throw new Error('Function not implemented.');
+  },
 });
 
 export const UserProvider = ({children}: IUserProvider) => {
@@ -284,11 +289,11 @@ export const UserProvider = ({children}: IUserProvider) => {
       setEnableServiceTerm(true);
       setWalletBalances([dummyWalletBalance_BTC, dummyWalletBalance_ETH, dummyWalletBalance_USDT]);
 
-      await getUserAssets();
-      await listBalances();
       if (selectedTickerRef.current) {
         await listCFDs(selectedTickerRef.current.currency);
       }
+      await getUserAssets();
+      await listBalances();
       await listFavoriteTickers();
       await listHistories();
 
@@ -645,6 +650,35 @@ export const UserProvider = ({children}: IUserProvider) => {
         if (result.success) {
           // const interest = result.data as IInterest;
           // result.data = interest;
+        }
+      } catch (error) {
+        // TODO: error handle (Tzuhan - 20230421)
+        // eslint-disable-next-line no-console
+        console.error(`getUserInterest error`, error);
+        if (!isCustomError(error)) {
+          result.code = Code.INTERNAL_SERVER_ERROR;
+          result.reason = Reason[result.code];
+        }
+      }
+    }
+    return result;
+  }, []);
+
+  const getBadge = useCallback(async (badgeId: string): Promise<IResult> => {
+    let result: IResult = {...defaultResultFailed};
+    if (enableServiceTermRef.current) {
+      try {
+        result = (await await workerCtx.requestHandler({
+          name: APIName.GET_BADGE,
+          method: Method.GET,
+          params: badgeId,
+        })) as IResult;
+        // Deprecate: after this functions finishing (20230508 - tzuhan)
+        // eslint-disable-next-line no-console
+        console.log(`getUserInterest result`, result);
+        if (result.success) {
+          const badge = result.data as IBadge;
+          result.data = badge;
         }
       } catch (error) {
         // TODO: error handle (Tzuhan - 20230421)
@@ -1298,12 +1332,10 @@ export const UserProvider = ({children}: IUserProvider) => {
   };
 
   const deposit = async (applyDepositOrder: IApplyDepositOrder): Promise<IResult> => {
-    let result: IResult = {...defaultResultFailed};
-    result.code = Code.SERVICE_TERM_DISABLE;
-    result.reason = Reason[result.code];
-    if (enableServiceTermRef.current) {
-      try {
-        /** 
+    let result: IResult;
+    try {
+      if (!enableServiceTermRef.current) throw new CustomError(Code.SERVICE_TERM_DISABLE);
+      /** 
       * TODO: temporary comment send metamask, will uncomment (20230329 - tzuhan)
       const walletBalance: IWalletBalance | null = getWalletBalance(depositOrder.targetAsset);
       if (walletBalance && walletBalance.balance >= depositOrder.targetAmount) {
@@ -1312,39 +1344,27 @@ export const UserProvider = ({children}: IUserProvider) => {
       const txhash = await lunar.send(transaction);
       // TODO: updateWalletBalances
       // */
-        const txhash = randomHex(32);
-        result = (await privateRequestHandler({
-          name: APIName.CREATE_DEPOSIT_TRADE,
-          method: Method.POST,
-          body: {
-            ...applyDepositOrder,
-            txhash,
-          },
-        })) as IResult;
-        // Deprecate: after this functions finishing (20230508 - tzuhan)
-        // eslint-disable-next-line no-console
-        console.log(`deposit result`, result);
-        if (result.success) {
-          const {orderSnapshot: depositOrder, balanceSnapshot} = result.data as {
-            txhash: string;
-            orderSnapshot: IDepositOrder;
-            balanceSnapshot: IBalance[];
-          };
-          setDeposits(prev => [...prev, depositOrder]);
-          // TODO： remove updateBalance 應該等 Pusher 通知 (20230509 - Tzuhan)
-          // updateBalance(balanceSnapshot);
-          // setHistories(prev => [...prev, acceptedDepositOrder]);}
-        }
-      } catch (error) {
-        // TODO: error handle (Tzuhan - 20230421)
-        // eslint-disable-next-line no-console
-        console.error(`${APIName.CREATE_DEPOSIT_TRADE} error`, error);
-        result = {
-          success: false,
-          code: Code.INTERNAL_SERVER_ERROR,
-          reason: (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
-        };
+      const txhash = randomHex(32);
+      result = (await privateRequestHandler({
+        name: APIName.CREATE_DEPOSIT_TRADE,
+        method: Method.POST,
+        body: {
+          ...applyDepositOrder,
+          txhash,
+        },
+      })) as IResult;
+      if (result.success) {
+        const depositOrder = result.data as IDepositOrder;
+        setDeposits(prev => [...prev, depositOrder]);
       }
+    } catch (error) {
+      result = {
+        success: false,
+        code: isCustomError(error) ? error.code : Code.INTERNAL_SERVER_ERROR,
+        reason: isCustomError(error)
+          ? Reason[error.code]
+          : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
+      };
     }
     return result;
   };
@@ -1690,6 +1710,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     getPersonalRanking,
     getPersonalAchievements,
     // getTotalBalance,
+    getBadge,
     init,
     walletExtensions: walletExtensionsRef.current,
   };

@@ -38,6 +38,8 @@
     "CTA_REST_TITLE": "加密貨幣投資平台",
     "CTA_DESCRIPTION": "現在就開始投資。 在 TideBit ，您可以免費學習以及買賣最優質的加密貨幣資產。",
     "CTA_BUTTON": "開始交易",
+    "WHITEPAPER": "白皮書",
+    "WHITEPAPER_LINK": "/whitepaper/TideBit_Tech_Whitepaper_v2.0.4_ZH.pdf",
     "STATISTIC_BLOCK_TITLE_1": "24h 交易量",
     "STATISTIC_BLOCK_TITLE_2": "累積用戶",
     "STATISTIC_BLOCK_TITLE_3": "累積成交量",
@@ -336,6 +338,7 @@
     "REJECTED_SIGNATURE": "簽名已被使用者拒絕",
     "INTERNAL_SERVER_ERROR": "內部伺服器錯誤",
     "THIRD_PARTY_LIBRARY_ERROR": "第三方函式庫錯誤",
+    "DEPOSIT_INTERVAL_TOO_SHORT": "24hrs 內只能入金一次， 下次可入金時間為： {{nextAvailableTime}}",
     "INVALID_CFD_OPEN_REQUEST": "CFD 內容無效"
 
   },

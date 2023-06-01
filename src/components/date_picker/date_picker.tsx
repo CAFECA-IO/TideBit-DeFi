@@ -44,7 +44,7 @@ const PopulateDates = ({
 
     return (
       <div
-        key={formatDate}
+        key={el?.date}
         className={`whitespace-nowrap rounded-full text-center hover:cursor-pointer hover:bg-cuteBlue ${
           isSelected ? 'bg-tidebitTheme' : ''
         }${el?.disable ? 'text-lightGray' : ''}`}

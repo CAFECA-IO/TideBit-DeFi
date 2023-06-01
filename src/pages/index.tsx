@@ -7,6 +7,7 @@ import {useGlobal} from '../contexts/global_context';
 import NavBarMobile from '../components/nav_bar_mobile/nav_bar_mobile';
 import {AppContext} from '../contexts/app_context';
 import {ILocale} from '../interfaces/tidebit_defi_background/locale';
+import {TIDEBIT_FAVICON} from '../constants/display';
 
 const Home = () => {
   const {layoutAssertion} = useGlobal();
@@ -24,7 +25,7 @@ const Home = () => {
     <>
       <Head>
         <title>TideBit DeFi</title>
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href={TIDEBIT_FAVICON} />
       </Head>
 
       {displayedNavBar}

@@ -61,14 +61,10 @@ const OpenSubTab = () => {
       });
 
       const tickerPrice = marketCtx.availableTickers[cfd.targetAsset]?.price;
-      // ToDo: (20230602 - Julian) get ticker spread
+      // ToDo: (20230602 - Julian) 算出點差後帶入 toDisplayCFDOrder()
       //const spread = getTickerSpread(cfd.targetAsset);
-      const buyPrice = !!tickerPrice
-        ? roundToDecimalPlaces(tickerPrice * (1 + DEFAULT_SPREAD), 2)
-        : 0;
-      const sellPrice = !!tickerPrice
-        ? roundToDecimalPlaces(tickerPrice * (1 - DEFAULT_SPREAD), 2)
-        : 0;
+      const buyPrice = !!tickerPrice ? roundToDecimalPlaces(tickerPrice, 2) : 0;
+      const sellPrice = !!tickerPrice ? roundToDecimalPlaces(tickerPrice, 2) : 0;
       /**
        * Info: (20230428 - Shirley)
        * without `positionLineGraph`, use market price to calculate
@@ -83,7 +79,12 @@ const OpenSubTab = () => {
                 (cfd.typeOfPosition === TypeOfPosition.SELL && sellPrice))) ||
             0;
 
-      const displayCFD: IDisplayCFDOrder = toDisplayCFDOrder(cfd, positionLineGraph, currentPrice);
+      const displayCFD: IDisplayCFDOrder = toDisplayCFDOrder(
+        cfd,
+        positionLineGraph,
+        currentPrice,
+        DEFAULT_SPREAD
+      );
 
       return displayCFD;
     })

@@ -138,3 +138,14 @@
     opacity: 0;
   }
 }
+
+.mirrorEffect {
+  perspective: 1px;
+  transform-style: preserve-3d;
+}
+
+.reflection {
+  display: block;
+  transform: scaleY(-1);
+  opacity: 0.3;
+}

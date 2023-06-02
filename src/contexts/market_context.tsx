@@ -48,6 +48,15 @@ import {
   IWebsiteReserve,
   dummyWebsiteReserve,
 } from '../interfaces/tidebit_defi_background/website_reserve';
+import {
+  INews,
+  IRecommendedNews,
+  dummyNews,
+  dummyRecommendationNews,
+  dummyRecommendedNewsList,
+  getDummyNews,
+  getDummyRecommendationNews,
+} from '../interfaces/tidebit_defi_background/news';
 
 export interface IMarketProvider {
   children: React.ReactNode;
@@ -103,6 +112,13 @@ export interface IMarketContext {
       limit?: number;
     }
   ) => number[];
+  getNews: (currency: ICurrency, newsId: string) => INews;
+  getPaginationNews: (
+    currency: ICurrency,
+    page?: number,
+    itemsPerPage?: number
+  ) => IRecommendedNews[];
+  getRecommendedNews: (currency: ICurrency) => IRecommendedNews[];
 }
 // TODO: Note: _app.tsx 啟動的時候 => createContext
 export const MarketContext = createContext<IMarketContext>({
@@ -143,6 +159,9 @@ export const MarketContext = createContext<IMarketContext>({
     throw new CustomError(Code.FUNCTION_NOT_IMPLEMENTED);
   },
   websiteReserve: dummyWebsiteReserve,
+  getNews: () => dummyNews,
+  getPaginationNews: () => dummyRecommendedNewsList,
+  getRecommendedNews: () => dummyRecommendationNews,
 });
 
 export const MarketProvider = ({children}: IMarketProvider) => {
@@ -196,6 +215,28 @@ export const MarketProvider = ({children}: IMarketProvider) => {
   const candlestickChartIdHandler = (id: string) => {
     setCandlestickId(id);
     // console.log('in market context, candlestick id:', id);
+  };
+
+  const getNews = (currency: ICurrency, newsId: string) => {
+    const news: INews = getDummyNews(currency);
+    return news;
+  };
+
+  const getPaginationNews = (currency: ICurrency, page?: number, itemsPerPage?: number) => {
+    const paginationNews: IRecommendedNews[] = dummyRecommendedNewsList;
+    // TODO:? 每次拿 itemsPerPage 筆新聞 (20230602 - Shirley)
+    // if (page && itemsPerPage) {
+    //   const start = (page - 1) * itemsPerPage;
+    //   const end = start + itemsPerPage;
+
+    //   return paginationNews.slice(start, end);
+    // }
+    return paginationNews;
+  };
+
+  const getRecommendedNews = (currency: ICurrency) => {
+    const briefNews = getDummyRecommendationNews(currency);
+    return briefNews;
   };
 
   const listAvailableTickers = useCallback(() => {
@@ -665,6 +706,9 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     */
     listTickerPositions,
     init,
+    getNews,
+    getRecommendedNews,
+    getPaginationNews,
   };
 
   return <MarketContext.Provider value={defaultValue}>{children}</MarketContext.Provider>;

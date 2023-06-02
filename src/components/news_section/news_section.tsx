@@ -4,6 +4,7 @@ import {MarketContext} from '../../contexts/market_context';
 import {dummyTickerStatic} from '../../interfaces/tidebit_defi_background/ticker_static';
 import NewsItem from '../news_item/news_item';
 import Link from 'next/link';
+import Pagination from '../pagination/pagination';
 
 const NewsSection = () => {
   const overallWidth = 'w-full pr-5 lg:p-0 lg:w-2/3 xl:w-3/4';
@@ -129,92 +130,11 @@ const NewsSection = () => {
       );
     });
 
-  const pagination = (
-    <ol className="mt-10 mb-20 mr-20 flex justify-end gap-1 text-sm font-medium">
-      <li>
-        <a
-          href="#"
-          className="inline-flex h-8 w-8 items-center justify-center rounded bg-transparent text-white rtl:rotate-180 "
-        >
-          <span className="sr-only">Prev Page</span>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-          >
-            <path
-              fill-rule="evenodd"
-              d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
-              clipRule="evenodd"
-            />
-          </svg>
-        </a>
-      </li>
-
-      <li>
-        <a
-          href="#"
-          className="block h-8 w-8 rounded bg-transparent text-center leading-8 text-white"
-        >
-          1
-        </a>
-      </li>
-      <li>
-        <a
-          href="#"
-          className="block h-8 w-8 rounded bg-transparent text-center leading-8 text-white underline decoration-tidebitTheme decoration-2 underline-offset-4"
-        >
-          2
-        </a>
-      </li>
-
-      <li>
-        <a
-          href="#"
-          className="block h-8 w-8 rounded bg-transparent text-center leading-8 text-white"
-        >
-          3
-        </a>
-      </li>
-
-      <li>
-        <a
-          href="#"
-          className="block h-8 w-8 rounded bg-transparent text-center leading-8 text-white"
-        >
-          4
-        </a>
-      </li>
-
-      <li>
-        <a
-          href="#"
-          className="inline-flex h-8 w-8 items-center justify-center rounded bg-transparent text-white rtl:rotate-180 "
-        >
-          <span className="sr-only">Next Page</span>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-          >
-            <path
-              fill-rule="evenodd"
-              d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-              clipRule="evenodd"
-            />
-          </svg>
-        </a>
-      </li>
-    </ol>
-  );
-
   return (
     <div>
       <section className="overflow-hidden text-gray-400">
         {displayedCryptoNews}
-        {pagination}
+        <Pagination />
       </section>
     </div>
   );

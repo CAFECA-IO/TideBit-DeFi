@@ -12,37 +12,33 @@ import {ShareType} from '../../constants/share_type';
 interface IRecommendedNews {
   newsId: string;
   img: string;
-  date: number;
+  timestamp: number;
   title: string;
   description: string;
 }
 
-interface IArticle {
+interface INews {
   newsId: string;
   img: string;
-  date: number;
+  timestamp: number;
   title: string;
   content: string;
 }
+
 interface INewsArticle {
-  img: string;
   shareId: string;
 
-  article?: IArticle;
+  news: INews;
   recommendations?: Array<IRecommendedNews>;
 }
 
-const NewsArticle = ({img, shareId, article, recommendations}: INewsArticle) => {
-  const router = useRouter();
-  const {query} = router;
-  // const time = timestampToString(article?.date || 0).date
+const NewsArticle = ({shareId, news, recommendations}: INewsArticle) => {
+  const date = timestampToString(news.timestamp || 0).date;
   const socialMediaStyle = 'hover:cursor-pointer hover:opacity-80';
-  // console.log('query', query);
 
   const {shareTo} = useShareProcess({
     lockerName: 'news_article.shareHandler',
     shareType: ShareType.ARTICLE,
-    // shareId: article?.newsId || '',
     shareId: shareId,
   });
 
@@ -61,30 +57,15 @@ const NewsArticle = ({img, shareId, article, recommendations}: INewsArticle) => 
           </Link>
         </div>
         <div className="w-600px px-5">
-          <Image src={img} width={600} height={100} alt="image" />
+          <Image src={news.img} width={600} height={100} alt="image" />
           <div className="my-8 flex justify-between">
             {' '}
-            <h1 className="text-xl font-normal leading-8 tracking-wider">Add news title here</h1>
-            <p className="mt-2 mr-2 text-sm text-lightGray">2023/06/01</p>
+            <h1 className="text-xl font-normal leading-8 tracking-wider">{news.title}</h1>
+            <p className="mt-2 mr-2 text-sm text-lightGray">{date}</p>
           </div>
           <p className="text-base leading-10 tracking-normal text-lightGray1">
-            Lorem ipsum dolor sit amet, consectetuer{' '}
-            <span className="bg-blue-500">a over 5% depreciation</span> elit. Aenean commodo ligula
-            eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes,
-            nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis,
-            sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec,
-            vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo.
-            Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus
-            elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor
-            eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis,
-            feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum.
-            Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi.
-            Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam
-            semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel,
-            luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec
-            vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget
-            eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Donec sodales
-            sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc,
+            {news.content}
+            <span className="bg-blue-500">a over 5% depreciation</span>
           </p>
 
           <div className="my-16 text-lightGray">
@@ -125,26 +106,26 @@ const NewsArticle = ({img, shareId, article, recommendations}: INewsArticle) => 
             </div>
             <div className="mx-0 flex-col space-y-16 lg:grid lg:grid-cols-3 lg:gap-2 xl:mx-12">
               {/*  h-full w-full flex-wrap content-center items-center justify-center text-center */}
-              {recommendations.map((news, index) => (
+              {recommendations.map((item, index) => (
                 <div
-                  key={news.newsId}
+                  key={item.newsId}
                   className={`${
                     index === 0 ? `mt-16` : ``
                   } mx-auto w-300px flex-col items-center space-y-4 md:w-400px lg:w-250px xl:w-300px 2xl:w-400px`}
                 >
-                  <Link href={`/news/${news.newsId}`}>
+                  <Link href={`/news/${item.newsId}`}>
                     <Image
                       className=""
-                      src={news.img}
+                      src={item.img}
                       style={{objectFit: 'cover'}}
                       width={400}
                       height={100}
                       alt={`news img`}
                     />
-                    <div className="my-5 text-xl text-lightWhite">{news.title}</div>
-                    <div className="text-sm text-lightWhite">{news.description}</div>
+                    <div className="my-5 text-xl text-lightWhite">{item.title}</div>
+                    <div className="text-sm text-lightWhite">{item.description}</div>
                     <div className="my-5 text-sm text-lightGray">
-                      {timestampToString(news.date).date}
+                      {timestampToString(item.timestamp).date}
                     </div>
                   </Link>
                 </div>

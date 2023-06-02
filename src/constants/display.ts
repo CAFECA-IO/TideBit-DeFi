@@ -280,3 +280,4 @@ export const DEFAULT_PNL_DATA = {amount: {type: '', value: 0}, percentage: {type
 export const DEFAULT_INTEREST_RATE = 0;
 export const CANDLESTICK_SIZE = 30;
 export const MOBILE_WIDTH = 768;
+export const ITEMS_PER_PAGE = 10;

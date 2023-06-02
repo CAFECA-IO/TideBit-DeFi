@@ -2,7 +2,6 @@ import React from 'react';
 import {CgSearch} from 'react-icons/cg';
 
 const NewsHeader = () => {
-  // TODO: i18n (20230531 - Shirley)
   const heading = 'News';
   return (
     <>

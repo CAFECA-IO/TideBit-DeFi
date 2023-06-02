@@ -24,7 +24,7 @@ const CryptoNewsSection = () => {
           timestamp={news.timestamp}
           img={news.img}
           title={news.title}
-          description={news.description}
+          content={news.content}
         />
       );
     });

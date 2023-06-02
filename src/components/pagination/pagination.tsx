@@ -1,8 +1,12 @@
-import React, {useState} from 'react';
+import React, {Dispatch, SetStateAction, useState} from 'react';
 
-const Pagination = () => {
-  const [activePage, setActivePage] = useState(1);
-  const totalPages = 25;
+interface IPagination {
+  activePage: number;
+  setActivePage: Dispatch<SetStateAction<number>>;
+  totalPages: number;
+}
+
+const Pagination = ({activePage, setActivePage, totalPages}: IPagination) => {
   const arrowSize = 'h-6 w-6';
   const truncationLimit = 5;
   const surroundPage = Math.floor(truncationLimit / 2);
@@ -31,17 +35,13 @@ const Pagination = () => {
   };
 
   const pages = pagesNum.map((page, i, arr) => {
-    // const shouldTruncate = i > 0 && isPageVisible(page) !== isPageVisible(arr[i - 1]);
     const isPrevPageVisible = arr[i - 1] ? isPageVisible(arr[i - 1]) : false;
-    const isNextPageVisible = arr[i + 1] ? isPageVisible(arr[i + 1]) : false;
     const shouldTruncateBefore = page !== 1 && !isPrevPageVisible && isPageVisible(page);
-    const shouldTruncateAfter = page !== totalPages && !isNextPageVisible && isPageVisible(page);
-
     return (
       <>
         {shouldTruncateBefore && <li>...</li>}
         {isPageVisible(page) && (
-          <li key={page}>
+          <li key={`page-section-${page}`}>
             <button
               onClick={() => setActivePage(page)}
               className={`block h-8 w-8 rounded bg-transparent text-center leading-8 text-white hover:cursor-pointer `}
@@ -53,7 +53,6 @@ const Pagination = () => {
             ></div>
           </li>
         )}
-        {/* {shouldTruncateAfter && <li>...</li>} */}
       </>
     );
   });
@@ -76,7 +75,7 @@ const Pagination = () => {
             fill="currentColor"
           >
             <path
-              fill-rule="evenodd"
+              fillRule="evenodd"
               d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
               clipRule="evenodd"
             />
@@ -98,7 +97,7 @@ const Pagination = () => {
             fill="currentColor"
           >
             <path
-              fill-rule="evenodd"
+              fillRule="evenodd"
               d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
               clipRule="evenodd"
             />
@@ -109,7 +108,9 @@ const Pagination = () => {
   );
 
   return (
-    <ol className="mt-10 mb-20 mr-20 flex justify-end gap-1 text-sm font-medium">{pagination}</ol>
+    <ol className="flex justify-center gap-1 text-sm font-medium lg:mr-20 lg:justify-end">
+      {pagination}
+    </ol>
   );
 };
 

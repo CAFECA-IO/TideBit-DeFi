@@ -4,10 +4,10 @@ import {IBriefNewsItem} from '../../interfaces/tidebit_defi_background/brief_new
 import {timestampToString} from '../../lib/common';
 
 const CryptoNewsItem = ({
-  id,
+  id: id,
   timestamp,
   title: heading,
-  description: content,
+  content: content,
   img,
   ...otherProps
 }: IBriefNewsItem) => {

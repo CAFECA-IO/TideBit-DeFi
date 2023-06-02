@@ -5,22 +5,31 @@ import {dummyTickerStatic} from '../../interfaces/tidebit_defi_background/ticker
 import NewsItem from '../news_item/news_item';
 import Link from 'next/link';
 import Pagination from '../pagination/pagination';
+import {
+  IRecommendedNews,
+  getDummyRecommendationNews,
+} from '../../interfaces/tidebit_defi_background/news';
+import {Currency} from '../../constants/currency';
+import {ITEMS_PER_PAGE} from '../../constants/display';
 
-const NewsSection = () => {
-  const overallWidth = 'w-full pr-5 lg:p-0 lg:w-2/3 xl:w-3/4';
-  const dividerWidth = 'w-full lg:w-2/3 xl:w-3/4';
-  const marketCtx = useContext(MarketContext);
-
-  // const cryptoBriefNews = marketCtx.tickerStatic?.cryptoBriefNews ?? [];
-  const cryptoBriefNews = dummyTickerStatic.cryptoBriefNews;
+const NewsSection = ({
+  activePage,
+  briefNews,
+}: {
+  activePage: number;
+  briefNews: IRecommendedNews[];
+}) => {
+  const start = (activePage - 1) * ITEMS_PER_PAGE;
+  const end = start + ITEMS_PER_PAGE;
+  const newsForCurrentPage = briefNews.slice(start, end);
 
   const displayedCryptoNews =
-    cryptoBriefNews instanceof Array &&
-    cryptoBriefNews?.map((news, index) => {
+    briefNews instanceof Array &&
+    briefNews.map((news, index) => {
       return (
         <NewsItem
-          key={news.img}
-          id={news.id}
+          key={news.newsId}
+          newsId={news.newsId}
           timestamp={news.timestamp}
           img={news.img}
           title={news.title}
@@ -31,10 +40,7 @@ const NewsSection = () => {
 
   return (
     <div>
-      <section className="overflow-hidden text-gray-400">
-        {displayedCryptoNews}
-        <Pagination />
-      </section>
+      <section className="overflow-hidden text-gray-400">{displayedCryptoNews}</section>
     </div>
   );
 };

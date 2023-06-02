@@ -12,9 +12,11 @@ import {useContext, useEffect} from 'react';
 import {AppContext} from '../../contexts/app_context';
 import Footer from '../../components/footer/footer';
 import {
-  dummyNews,
-  dummyRecommendationNews,
-} from '../../interfaces/tidebit_defi_background/ticker_static';
+  getDummyNews,
+  getDummyRecommendationNews,
+} from '../../interfaces/tidebit_defi_background/news';
+import {Currency} from '../../constants/currency';
+
 interface IPageProps {
   newsId: string;
 }
@@ -41,6 +43,9 @@ const NewsPage = (props: IPageProps) => {
   const pageNumber = page ? parseInt(page as string, 10) : 1;
   const pageData = data.slice((pageNumber - 1) * 10, pageNumber * 10);
 
+  const news = getDummyNews(Currency.ETH);
+  const recommendationNews = getDummyRecommendationNews(Currency.ETH);
+
   useEffect(() => {
     if (!appCtx.isInit) {
       appCtx.init();
@@ -64,9 +69,8 @@ const NewsPage = (props: IPageProps) => {
             <div>
               <NewsArticle
                 shareId={props.newsId}
-                img="/news/rectangle_809@2x.png"
-                recommendations={dummyRecommendationNews}
-                article={dummyNews}
+                news={news}
+                recommendations={recommendationNews}
               />
             </div>
             <Footer />

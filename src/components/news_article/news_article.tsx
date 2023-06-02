@@ -94,8 +94,6 @@ const NewsArticle = ({shareId, news, recommendations}: INewsArticle) => {
           </div>
         </div>
       </div>
-      {/* After divider */}
-
       {recommendations ? (
         <>
           <div className="mx-10 border-b border-dashed border-white/50"></div>

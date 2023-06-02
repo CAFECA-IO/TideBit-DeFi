@@ -10,7 +10,7 @@ const NewsHeader = ({searchChangeHandler}: INewsHeader) => {
   return (
     <>
       <div className="flex w-full justify-center text-6xl">
-        <div className="relative ">
+        <div className="relative">
           <div className="font-bold">{heading}</div>
           <div className="reflection bg-gradient-to-b from-black to-gray-400 bg-clip-text text-transparent">
             {heading}

@@ -112,7 +112,7 @@ export interface IMarketContext {
       limit?: number;
     }
   ) => number[];
-  getNews: (currency: ICurrency) => INews;
+  getNews: (currency: ICurrency, newsId: string) => INews;
   getPaginationNews: (
     currency: ICurrency,
     page?: number,
@@ -217,14 +217,14 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     // console.log('in market context, candlestick id:', id);
   };
 
-  const getNews = (currency: ICurrency) => {
+  const getNews = (currency: ICurrency, newsId: string) => {
     const news: INews = getDummyNews(currency);
     return news;
   };
 
   const getPaginationNews = (currency: ICurrency, page?: number, itemsPerPage?: number) => {
     const paginationNews: IRecommendedNews[] = dummyRecommendedNewsList;
-    // TODO: 每次拿 itemsPerPage 筆新聞 (20230602 - Shirley)
+    // TODO:? 每次拿 itemsPerPage 筆新聞 (20230602 - Shirley)
     // if (page && itemsPerPage) {
     //   const start = (page - 1) * itemsPerPage;
     //   const end = start + itemsPerPage;

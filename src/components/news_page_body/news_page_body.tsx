@@ -22,6 +22,7 @@ const NewsPageBody = () => {
     const searchTerm = event.target.value;
     setSearch(searchTerm);
   };
+
   useEffect(() => {
     setActivePage(1);
   }, [searchRef.current]);

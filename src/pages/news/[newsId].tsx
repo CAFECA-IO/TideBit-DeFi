@@ -16,6 +16,7 @@ import {
   getDummyRecommendationNews,
 } from '../../interfaces/tidebit_defi_background/news';
 import {Currency} from '../../constants/currency';
+import {MarketContext} from '../../contexts/market_context';
 
 interface IPageProps {
   newsId: string;
@@ -36,15 +37,11 @@ const data = [
 const NewsPage = (props: IPageProps) => {
   const {layoutAssertion} = useGlobal();
   const displayedNavBar = layoutAssertion === 'mobile' ? <NavBarMobile /> : <NavBar />;
-  const router = useRouter();
-  const {page} = router.query;
   const appCtx = useContext(AppContext);
+  const marketCtx = useContext(MarketContext);
 
-  const pageNumber = page ? parseInt(page as string, 10) : 1;
-  const pageData = data.slice((pageNumber - 1) * 10, pageNumber * 10);
-
-  const news = getDummyNews(Currency.ETH);
-  const recommendationNews = getDummyRecommendationNews(Currency.ETH);
+  const news = marketCtx.getNews(Currency.ETH, props?.newsId ?? '');
+  const recommendationNews = marketCtx.getRecommendedNews(Currency.ETH);
 
   useEffect(() => {
     if (!appCtx.isInit) {
@@ -83,14 +80,6 @@ const NewsPage = (props: IPageProps) => {
   );
 
   return <>{initUI}</>;
-
-  // return (
-  //   <>
-  //     {/* <News data={pageData} /> */}
-  //     <NewsArticle img="/news/rectangle_809@2x.png" />
-  //   </>
-
-  // );
 };
 
 export default NewsPage;
@@ -109,35 +98,3 @@ export const getServerSideProps: GetServerSideProps<IPageProps> = async ({params
     },
   };
 };
-
-// export const getStaticPaths = async () => {
-//   /* ToDo:React Hook useEffect has a missing dependency: 'newsId'. Either include it or remove the dependency array.
-//   const res = await fetch(new URL("/api/news", baseUrl));
-//   const news: INewsDetail[] = await res.json();
-
-//   const paths = news.map((v) => ({
-//     params: { newsId: v.id },
-//   })); */
-
-//   return {
-//     paths: [
-//       {params: {newsId: 'n001'}},
-//       {params: {newsId: 'n002'}},
-//       {params: {newsId: 'n003'}},
-//       {params: {newsId: 'n004'}},
-//       {params: {newsId: 'n005'}},
-//       {params: {newsId: 'n006'}},
-//       {params: {newsId: 'n007'}},
-//     ],
-//     fallback: 'blocking',
-//   };
-// };
-
-// export async function getStaticProps({locale}: any) {
-//   return {
-//     props: {
-//       ...(await serverSideTranslations(locale, ['common'])),
-//       // Will be passed to the page component as props
-//     },
-//   };
-// }

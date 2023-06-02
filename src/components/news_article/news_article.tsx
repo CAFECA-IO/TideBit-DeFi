@@ -4,28 +4,34 @@ import {BiArrowBack} from 'react-icons/bi';
 import NavBar from '../nav_bar/nav_bar';
 import {useRouter} from 'next/router';
 import Link from 'next/link';
+import {timestampToString} from '../../lib/common';
 
+interface IRecommendedNews {
+  newsId: string;
+  img: string;
+  date: number;
+  title: string;
+  description: string;
+}
+
+interface IArticle {
+  img: string;
+  date: number;
+  title: string;
+  content: string;
+}
 interface INewsArticle {
   img: string;
 
-  article?: {
-    newsId: string;
-    img: string;
-    date: number;
-    title: string;
-    content: string;
-  };
-  recommendation?: Array<{
-    img: string;
-    date: number;
-    title: string;
-    description: string;
-  }>;
+  article?: IArticle;
+  recommendations?: Array<IRecommendedNews>;
 }
 
-const NewsArticle = ({img, recommendation}: INewsArticle) => {
+const NewsArticle = ({img, article, recommendations}: INewsArticle) => {
+  const router = useRouter();
+  // const time = timestampToString(article?.date || 0).date
   return (
-    <div className="bg-gradient-to-r from-darkGray1/80 via-black to-black">
+    <div className="bg-gradient-to-r from-darkGray1/80 via-black to-black pb-20">
       <div className="ml-5 h-10 w-6 pt-24 pb-14 transition-all duration-200 hover:opacity-70 lg:hidden">
         <Link href="/news">
           <BiArrowBack size={25} />
@@ -77,15 +83,39 @@ const NewsArticle = ({img, recommendation}: INewsArticle) => {
       </div>
       {/* After divider */}
 
-      {recommendation ? (
+      {recommendations ? (
         <>
           <div className="mx-10 border-b border-dashed border-white/50"></div>
 
-          <div className="text-base text-lightGray">You might also like ...</div>
-          <div className="flex">
-            <div className=""></div>
-            <div className=""></div>
-            <div className=""></div>
+          <div className="mx-20">
+            <div className="my-10 text-base text-lightGray">You might also like ...</div>
+            <div className="mx-0 flex-col space-y-16 lg:grid lg:grid-cols-3 lg:gap-2 xl:mx-12">
+              {/*  h-full w-full flex-wrap content-center items-center justify-center text-center */}
+              {recommendations.map((news, index) => (
+                <div
+                  key={news.newsId}
+                  className={`${
+                    index === 0 ? `mt-16` : ``
+                  } mx-auto w-300px flex-col items-center space-y-4 md:w-400px lg:w-250px 2xl:w-400px`}
+                >
+                  <Link href={`/news/${news.newsId}`}>
+                    <Image
+                      className=""
+                      src={news.img}
+                      style={{objectFit: 'cover'}}
+                      width={400}
+                      height={100}
+                      alt={`news img`}
+                    />
+                    <div className="text-xl text-lightWhite">{news.title}</div>
+                    <div className="text-sm text-lightWhite">{news.description}</div>
+                    <div className="text-sm text-lightGray">
+                      {timestampToString(news.date).date}
+                    </div>
+                  </Link>
+                </div>
+              ))}
+            </div>
           </div>
         </>
       ) : null}

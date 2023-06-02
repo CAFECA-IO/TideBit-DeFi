@@ -5,6 +5,14 @@ import {IFluctuating} from './fluctuating';
 import {IPriceStatistics} from './price_statistics';
 import {getDummyTicker, ITickerData} from './ticker_data';
 
+interface IRecommendedNews {
+  newsId: string;
+  img: string;
+  date: number;
+  title: string;
+  description: string;
+}
+
 export interface ITickerStatic {
   id: string;
   label: string; // 交易對名稱
@@ -100,14 +108,14 @@ export const getDummyTickerStatic = (currency: ICurrency) => {
   return tickerStatic;
 };
 
-function generateDummyData(numData: number) {
+function generateDummyData(length: number) {
   const cryptoBriefNews = [];
 
-  for (let i = 0; i < numData; i++) {
+  for (let i = 0; i < length; i++) {
     const imgName = i === 0 ? `/news/rectangle_767` : `/news/rectangle_767-${i}`;
 
     const data = {
-      id: 'NEWS2023021000' + i,
+      id: 'news-eth-20230602' + i,
       timestamp: 1685496317,
       title: 'Add news title here',
       content:
@@ -120,3 +128,50 @@ function generateDummyData(numData: number) {
 
   return cryptoBriefNews;
 }
+
+export const dummyRecommendationNews: IRecommendedNews[] = [
+  {
+    newsId: 'news-eth-20230531001',
+    img: '/news/rectangle_767-5@2x.png',
+    date: 1685673712,
+    title: 'Add news title here',
+    description:
+      'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt',
+  },
+
+  {
+    newsId: 'news-eth-20230601001',
+    img: '/news/rectangle_767-6@2x.png',
+    date: 1685673712,
+    title: 'Add news title here',
+    description:
+      'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt',
+  },
+
+  {
+    newsId: 'news-eth-20230602001',
+    img: '/news/rectangle_767-7@2x.png',
+    date: 1685673712,
+    title: 'Add news title here',
+    description:
+      'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt',
+  },
+
+  {
+    newsId: 'news-eth-20230602002',
+    img: '/news/rectangle_767-8@2x.png',
+    date: 1685673712,
+    title: 'Add news title here',
+    description:
+      'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt',
+  },
+
+  {
+    newsId: 'news-eth-20230602003',
+    img: '/news/rectangle_767-4@2x.png',
+    date: 1685673712,
+    title: 'Add news title here',
+    description:
+      'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt',
+  },
+];

@@ -11,6 +11,7 @@ import Head from 'next/head';
 import {useContext, useEffect} from 'react';
 import {AppContext} from '../../contexts/app_context';
 import Footer from '../../components/footer/footer';
+import {dummyRecommendationNews} from '../../interfaces/tidebit_defi_background/ticker_static';
 
 // This data should be replaced with actual fetched data
 const data = [
@@ -55,7 +56,10 @@ const NewsPage = () => {
 
           <main className="">
             <div>
-              <NewsArticle img="/news/rectangle_809@2x.png" />
+              <NewsArticle
+                img="/news/rectangle_809@2x.png"
+                recommendations={dummyRecommendationNews}
+              />
             </div>
             <Footer />
           </main>

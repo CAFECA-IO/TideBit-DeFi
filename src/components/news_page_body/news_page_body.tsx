@@ -6,6 +6,7 @@ import {Currency} from '../../constants/currency';
 import {MarketContext} from '../../contexts/market_context';
 import useStateRef from 'react-usestateref';
 import {tempRecommendedNews} from '../../interfaces/tidebit_defi_background/news';
+import {ITEMS_PER_PAGE} from '../../constants/display';
 
 const NewsPageBody = () => {
   const marketCtx = useContext(MarketContext);
@@ -26,7 +27,7 @@ const NewsPageBody = () => {
   // news.description.toLowerCase().includes(searchRef.current.toLowerCase())
   // );
 
-  const totalPages = Math.ceil(filteredNews.length / 10);
+  const totalPages = Math.ceil(filteredNews.length / ITEMS_PER_PAGE);
 
   const searchChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     const searchTerm = event.target.value;

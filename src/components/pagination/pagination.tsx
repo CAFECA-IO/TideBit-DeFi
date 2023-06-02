@@ -3,6 +3,7 @@ import React, {useState} from 'react';
 const Pagination = () => {
   const [activePage, setActivePage] = useState(2); // Default page number is 2.
   const totalPages = 4; // The total number of pages. You should adjust this as needed.
+  const arrowSize = 'h-6 w-6';
 
   const pagesNum = Array.from({length: totalPages}, (_, i) => i + 1);
 
@@ -20,17 +21,20 @@ const Pagination = () => {
     </li>
   ));
 
+  const isDisplayedNextPage = activePage === totalPages ? 'invisible' : 'inline-flex';
+  const isDisplayedPrevPage = activePage === 1 ? 'invisible' : 'inline-flex';
+
   const pagination = (
     <>
       <li>
         <a
           onClick={() => setActivePage((prev: number) => Math.max(prev - 1, 1))}
-          className="inline-flex h-8 w-8 items-center justify-center rounded bg-transparent text-white hover:cursor-pointer rtl:rotate-180 "
+          className={`${isDisplayedPrevPage} inline-flex h-8 w-8 items-center justify-center rounded bg-transparent text-white hover:cursor-pointer rtl:rotate-180`}
         >
           <span className="sr-only">Prev Page</span>
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5"
+            className={arrowSize}
             viewBox="0 0 20 20"
             fill="currentColor"
           >
@@ -42,16 +46,18 @@ const Pagination = () => {
           </svg>
         </a>
       </li>
+
       {pages}
+      {/* {activePage === totalPages ? null : ( */}
       <li>
         <a
           onClick={() => setActivePage((prev: number) => Math.min(prev + 1, totalPages))}
-          className="inline-flex h-8 w-8 items-center justify-center rounded bg-transparent text-white hover:cursor-pointer rtl:rotate-180 "
+          className={`${isDisplayedNextPage} inline-flex h-8 w-8 items-center justify-center rounded bg-transparent text-white hover:cursor-pointer rtl:rotate-180`}
         >
           <span className="sr-only">Next Page</span>
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5"
+            className={arrowSize}
             viewBox="0 0 20 20"
             fill="currentColor"
           >

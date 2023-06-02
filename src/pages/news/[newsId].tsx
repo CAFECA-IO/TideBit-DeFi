@@ -14,9 +14,11 @@ import Footer from '../../components/footer/footer';
 import {
   getDummyNews,
   getDummyRecommendationNews,
+  tempNews,
 } from '../../interfaces/tidebit_defi_background/news';
 import {Currency} from '../../constants/currency';
 import {MarketContext} from '../../contexts/market_context';
+import {DOMAIN} from '../../constants/config';
 
 interface IPageProps {
   newsId: string;
@@ -42,6 +44,15 @@ const NewsPage = (props: IPageProps) => {
 
   const news = marketCtx.getNews(Currency.ETH, props?.newsId ?? '');
   const recommendationNews = marketCtx.getRecommendedNews(Currency.ETH);
+  const finishedNews = tempNews;
+  const newsTitle = finishedNews.title;
+  const newsDescription = finishedNews.content;
+  const newsImg = finishedNews.img;
+
+  const imgWidth = 600;
+  const imgHeight = 100;
+  const share = `${DOMAIN}/news/${props.newsId}`;
+  const img = `${DOMAIN}/news/${newsImg}`;
 
   useEffect(() => {
     if (!appCtx.isInit) {
@@ -54,10 +65,37 @@ const NewsPage = (props: IPageProps) => {
       {appCtx.isInit ? (
         <>
           <Head>
-            {/* TODO: Title of this piece of news (20230601 - Shirley) */}
-            {/* TODO: OG */}
-            <title>News - TideBit DeFi</title>
+            {/* TODO: Title of this piece of news (20230602 - Shirley) */}
+            {/* TODO: OG (20230602 - Shirley) */}
+            <title>{newsTitle}</title>
             <link rel="icon" href="/favicon.ico" />
+
+            <meta name="description" content="CFD Sharing" />
+            <meta name="keywords" content="CFD Sharing" />
+            <meta name="author" content="TideBit" />
+            <meta name="application-name" content="TideBit DeFi" />
+            <meta name="apple-mobile-web-app-title" content="TideBit DeFi" />
+            <meta name="apple-mobile-web-app-capable" content="yes" />
+            <meta name="apple-mobile-web-app-status-bar-style" />
+
+            <meta property="og:title" content={newsTitle} />
+            <meta property="og:type" content="website" />
+            <meta property="og:url" content={share} />
+            <meta property="og:image" content={img} />
+            <meta property="og:image:width" content={imgWidth.toString()} />
+            <meta property="og:image:height" content={imgHeight.toString()} />
+            <meta property="og:description" content={newsDescription} />
+            <meta property="og:site_name" content="TideBit DeFi" />
+            <meta property="og:locale" content="en_US" />
+
+            <meta name="twitter:card" content="summary" />
+            <meta name="twitter:site" content="@tidebit" />
+            <meta name="twitter:creator" content="@tidebit" />
+            <meta name="twitter:url" content={DOMAIN} />
+            <meta name="twitter:title" content={newsTitle} />
+            <meta name="twitter:description" content={newsDescription} />
+            <meta name="twitter:image" content={img} />
+            <meta name="twitter:image:alt" content={newsTitle} />
           </Head>
 
           <nav className="">{displayedNavBar}</nav>
@@ -66,8 +104,8 @@ const NewsPage = (props: IPageProps) => {
             <div>
               <NewsArticle
                 shareId={props.newsId}
-                news={news}
-                recommendations={recommendationNews}
+                news={finishedNews}
+                // recommendations={recommendationNews}
               />
             </div>
             <Footer />

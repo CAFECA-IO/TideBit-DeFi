@@ -5,6 +5,7 @@ import Pagination from '../pagination/pagination';
 import {Currency} from '../../constants/currency';
 import {MarketContext} from '../../contexts/market_context';
 import useStateRef from 'react-usestateref';
+import {tempRecommendedNews} from '../../interfaces/tidebit_defi_background/news';
 
 const NewsPageBody = () => {
   const marketCtx = useContext(MarketContext);
@@ -12,9 +13,18 @@ const NewsPageBody = () => {
   const [activePage, setActivePage] = React.useState(1);
   const [search, setSearch, searchRef] = useStateRef('');
 
-  const filteredNews = allNews.filter(
-    news => news.title.includes(searchRef.current) || news.description.includes(searchRef.current)
+  const tempRecommenation = tempRecommendedNews;
+
+  const filteredNews = tempRecommenation.filter(
+    news =>
+      news.title.toLowerCase().includes(searchRef.current.toLowerCase()) ||
+      news.description.toLowerCase().includes(searchRef.current.toLowerCase())
   );
+  // TODO: markdown (20230602 - Shirley)
+  // allNews.filter(
+  // news.title.toLowerCase().includes(searchRef.current.toLowerCase()) ||
+  // news.description.toLowerCase().includes(searchRef.current.toLowerCase())
+  // );
 
   const totalPages = Math.ceil(filteredNews.length / 10);
 
@@ -29,7 +39,7 @@ const NewsPageBody = () => {
 
   return (
     <div className="bg-gradient-to-r from-darkGray1/80 via-black to-black pt-40 pb-20">
-      <div className="mb-12">
+      <div className="mb-20">
         {' '}
         <NewsHeader searchChangeHandler={searchChangeHandler} />
       </div>

@@ -44,12 +44,14 @@ const NewsItem = ({
                 <h1 className="text-lg text-lightWhite">{displayedHeading}</h1>
               </div>
 
-              <p className="mb-1 w-3/4 text-xs leading-relaxed lg:mr-5">{displayedContent}</p>
+              <p className="mb-1 w-10/11 text-xs leading-relaxed lg:mr-5">{displayedContent}</p>
               <p className="my-3 mb-12 flex text-xs text-lightGray lg:hidden">
                 {displayedTime.date}
               </p>
             </div>
-            <p className="mb-10 hidden w-40 text-sm text-lightGray lg:flex">{displayedTime.date}</p>
+            <p className="mb-10 hidden w-300px text-sm text-lightGray lg:flex">
+              {displayedTime.date}
+            </p>
           </div>
         </Link>
 

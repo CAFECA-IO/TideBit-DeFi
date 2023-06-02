@@ -16,7 +16,7 @@ const NewsHeader = () => {
       </div>
 
       <div className="flex w-full justify-center pl-250px lg:hidden">
-        <div className="mb-5lg:mr-100px relative mt-0">
+        <div className="relative mb-5 mt-5 lg:mr-100px">
           <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center"></div>
           <input
             type="search"

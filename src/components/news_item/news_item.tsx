@@ -4,7 +4,14 @@ import {IBriefNewsItem} from '../../interfaces/tidebit_defi_background/brief_new
 import {timestampToString} from '../../lib/common';
 import Link from 'next/link';
 
-const NewsItem = ({id, timestamp, title: heading, content, img, ...otherProps}: IBriefNewsItem) => {
+const NewsItem = ({
+  id,
+  timestamp,
+  title: heading,
+  description: content,
+  img,
+  ...otherProps
+}: IBriefNewsItem) => {
   const overallWidth = 'mx-20';
 
   const displayedHeading = <div className="">{heading}</div>;
@@ -32,12 +39,14 @@ const NewsItem = ({id, timestamp, title: heading, content, img, ...otherProps}: 
               {displayedImg}
             </div>
             <div className="flex flex-col items-center text-center lg:grow lg:items-start lg:pl-7 lg:text-left">
-              <div className="flex w-full items-center justify-center lg:-mt-10 lg:justify-between">
+              <div className="my-3 flex w-full items-center justify-center lg:my-0 lg:-mt-10 lg:justify-between">
                 <h1 className="text-lg text-lightWhite">{displayedHeading}</h1>
               </div>
 
-              <p className="mb-1 mr-5 w-3/4 text-xs leading-relaxed">{displayedContent}</p>
-              <p className="mb-12 flex text-xs text-lightGray lg:hidden">{displayedTime.date}</p>
+              <p className="mb-1 w-3/4 text-xs leading-relaxed lg:mr-5">{displayedContent}</p>
+              <p className="my-3 mb-12 flex text-xs text-lightGray lg:hidden">
+                {displayedTime.date}
+              </p>
             </div>
             <p className="mb-10 hidden w-40 text-sm text-lightGray lg:flex">{displayedTime.date}</p>
           </div>

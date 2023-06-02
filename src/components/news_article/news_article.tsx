@@ -5,6 +5,9 @@ import NavBar from '../nav_bar/nav_bar';
 import {useRouter} from 'next/router';
 import Link from 'next/link';
 import {timestampToString} from '../../lib/common';
+import {ShareSettings} from '../../constants/social_media';
+import useShareProcess from '../../lib/hooks/use_share_process';
+import {ShareType} from '../../constants/share_type';
 
 interface IRecommendedNews {
   newsId: string;
@@ -15,6 +18,7 @@ interface IRecommendedNews {
 }
 
 interface IArticle {
+  newsId: string;
   img: string;
   date: number;
   title: string;
@@ -29,7 +33,17 @@ interface INewsArticle {
 
 const NewsArticle = ({img, article, recommendations}: INewsArticle) => {
   const router = useRouter();
+  const {query} = router;
   // const time = timestampToString(article?.date || 0).date
+  const socialMediaStyle = 'hover:cursor-pointer hover:opacity-80';
+  // console.log('query', query);
+
+  const {shareTo} = useShareProcess({
+    lockerName: 'news_article.shareHandler',
+    shareType: ShareType.ARTICLE,
+    shareId: article?.newsId || '',
+  });
+
   return (
     <div className="bg-gradient-to-r from-darkGray1/80 via-black to-black pb-20">
       <div className="ml-5 h-10 w-6 pt-24 pb-14 transition-all duration-200 hover:opacity-70 lg:hidden">
@@ -74,9 +88,25 @@ const NewsArticle = ({img, article, recommendations}: INewsArticle) => {
           <div className="my-16 text-lightGray">
             <div className="mb-3">Share this on</div>
             <div className="flex justify-start space-x-5">
-              <div className="">FB</div>
-              <div className="">Twitter</div>
-              <div className="">Reddit</div>
+              {Object.entries(ShareSettings).map(([key, value]) => (
+                <div key={key} className={`${socialMediaStyle}`}>
+                  <Image
+                    onClick={() =>
+                      shareTo({
+                        url: value.URL,
+                        appUrl: value.APP_URL,
+                        text: value.TEXT,
+                        type: value.TYPE,
+                        size: value.SIZE,
+                      })
+                    }
+                    src={value.ICON}
+                    width={44}
+                    height={44}
+                    alt={key}
+                  />
+                </div>
+              ))}
             </div>
           </div>
         </div>
@@ -87,8 +117,10 @@ const NewsArticle = ({img, article, recommendations}: INewsArticle) => {
         <>
           <div className="mx-10 border-b border-dashed border-white/50"></div>
 
-          <div className="mx-20">
-            <div className="my-10 text-base text-lightGray">You might also like ...</div>
+          <div className="md:mx-20">
+            <div className="mx-5 my-10 text-base text-lightGray md:mx-0">
+              You might also like ...
+            </div>
             <div className="mx-0 flex-col space-y-16 lg:grid lg:grid-cols-3 lg:gap-2 xl:mx-12">
               {/*  h-full w-full flex-wrap content-center items-center justify-center text-center */}
               {recommendations.map((news, index) => (
@@ -96,7 +128,7 @@ const NewsArticle = ({img, article, recommendations}: INewsArticle) => {
                   key={news.newsId}
                   className={`${
                     index === 0 ? `mt-16` : ``
-                  } mx-auto w-300px flex-col items-center space-y-4 md:w-400px lg:w-250px 2xl:w-400px`}
+                  } mx-auto w-300px flex-col items-center space-y-4 md:w-400px lg:w-250px xl:w-300px 2xl:w-400px`}
                 >
                   <Link href={`/news/${news.newsId}`}>
                     <Image
@@ -107,9 +139,9 @@ const NewsArticle = ({img, article, recommendations}: INewsArticle) => {
                       height={100}
                       alt={`news img`}
                     />
-                    <div className="text-xl text-lightWhite">{news.title}</div>
+                    <div className="my-5 text-xl text-lightWhite">{news.title}</div>
                     <div className="text-sm text-lightWhite">{news.description}</div>
-                    <div className="text-sm text-lightGray">
+                    <div className="my-5 text-sm text-lightGray">
                       {timestampToString(news.date).date}
                     </div>
                   </Link>

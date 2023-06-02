@@ -7,7 +7,7 @@ const CryptoNewsItem = ({
   id,
   timestamp,
   title: heading,
-  content,
+  description: content,
   img,
   ...otherProps
 }: IBriefNewsItem) => {

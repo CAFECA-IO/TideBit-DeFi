@@ -5,7 +5,7 @@ import NewsSection from '../news_section/news_section';
 const NewsPageBody = () => {
   return (
     <div className="bg-gradient-to-r from-darkGray1/80 via-black to-black pt-40">
-      <div className="mb-16">
+      <div className="mb-12">
         {' '}
         <NewsHeader />
       </div>

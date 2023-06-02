@@ -5,14 +5,6 @@ import {IFluctuating} from './fluctuating';
 import {IPriceStatistics} from './price_statistics';
 import {getDummyTicker, ITickerData} from './ticker_data';
 
-interface IRecommendedNews {
-  newsId: string;
-  img: string;
-  date: number;
-  title: string;
-  description: string;
-}
-
 export interface ITickerStatic {
   id: string;
   label: string; // 交易對名稱
@@ -65,7 +57,7 @@ export const getDummyTickerStatic = (currency: ICurrency) => {
         id: 'NEWS20230210001',
         timestamp: 1675299651,
         title: `Add news title here(${currency})`,
-        content:
+        description:
           'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea',
         // img: 'https://www.tidebit.com/wp-content/uploads/2020/09/20200915_1.jpg',
         img: '/news/rectangle_715@2x.png',
@@ -74,7 +66,7 @@ export const getDummyTickerStatic = (currency: ICurrency) => {
         id: 'NEWS20230210002',
         timestamp: 1675299651,
         title: `Add news title here(${currency})`,
-        content:
+        description:
           'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea',
         img: '/news/rectangle_716@2x.png',
       },
@@ -82,7 +74,7 @@ export const getDummyTickerStatic = (currency: ICurrency) => {
         id: 'NEWS20230210003',
         timestamp: 1675299651,
         title: `Add news title here(${currency})`,
-        content:
+        description:
           'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea',
         img: '/news/rectangle_717@2x.png',
       },
@@ -108,6 +100,22 @@ export const getDummyTickerStatic = (currency: ICurrency) => {
   return tickerStatic;
 };
 
+interface IRecommendedNews {
+  newsId: string;
+  img: string;
+  date: number;
+  title: string;
+  description: string;
+}
+
+interface IArticle {
+  newsId: string;
+  img: string;
+  date: number;
+  title: string;
+  content: string;
+}
+
 function generateDummyData(length: number) {
   const cryptoBriefNews = [];
 
@@ -118,7 +126,7 @@ function generateDummyData(length: number) {
       id: 'news-eth-20230602' + i,
       timestamp: 1685496317,
       title: 'Add news title here',
-      content:
+      description:
         'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea',
       img: imgName + '@2x.png',
     };
@@ -175,3 +183,13 @@ export const dummyRecommendationNews: IRecommendedNews[] = [
       'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt',
   },
 ];
+
+export const dummyNews: IArticle = {
+  newsId: 'news-eth-20230602003',
+  img: '/news/rectangle_767-4@2x.png',
+  // TODO: /news/rectangle_809@2x.png
+  date: 1685673712,
+  title: 'Add news title here',
+  content:
+    'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt',
+};

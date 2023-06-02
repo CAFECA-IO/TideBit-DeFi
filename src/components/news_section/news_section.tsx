@@ -124,7 +124,7 @@ const NewsSection = () => {
           timestamp={news.timestamp}
           img={news.img}
           title={news.title}
-          content={news.content}
+          description={news.description}
         />
       );
     });
@@ -134,12 +134,12 @@ const NewsSection = () => {
       <li>
         <a
           href="#"
-          className="inline-flex h-8 w-8 items-center justify-center rounded  bg-white text-gray-900 rtl:rotate-180  dark:bg-black dark:text-white"
+          className="inline-flex h-8 w-8 items-center justify-center rounded bg-transparent text-white rtl:rotate-180 "
         >
           <span className="sr-only">Prev Page</span>
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="h-3 w-3"
+            className="h-5 w-5"
             viewBox="0 0 20 20"
             fill="currentColor"
           >
@@ -155,7 +155,7 @@ const NewsSection = () => {
       <li>
         <a
           href="#"
-          className="block h-8 w-8 rounded  bg-white text-center leading-8 text-gray-900  dark:bg-black dark:text-white"
+          className="block h-8 w-8 rounded bg-transparent text-center leading-8 text-white"
         >
           1
         </a>
@@ -163,7 +163,7 @@ const NewsSection = () => {
       <li>
         <a
           href="#"
-          className="block h-8 w-8 rounded bg-white text-center leading-8 text-gray-900 underline decoration-tidebitTheme decoration-2 underline-offset-4 dark:bg-black dark:text-white"
+          className="block h-8 w-8 rounded bg-transparent text-center leading-8 text-white underline decoration-tidebitTheme decoration-2 underline-offset-4"
         >
           2
         </a>
@@ -172,7 +172,7 @@ const NewsSection = () => {
       <li>
         <a
           href="#"
-          className="block h-8 w-8 rounded  bg-white text-center leading-8 text-gray-900  dark:bg-black dark:text-white"
+          className="block h-8 w-8 rounded bg-transparent text-center leading-8 text-white"
         >
           3
         </a>
@@ -181,7 +181,7 @@ const NewsSection = () => {
       <li>
         <a
           href="#"
-          className="block h-8 w-8 rounded  bg-white text-center leading-8 text-gray-900  dark:bg-black dark:text-white"
+          className="block h-8 w-8 rounded bg-transparent text-center leading-8 text-white"
         >
           4
         </a>
@@ -190,12 +190,12 @@ const NewsSection = () => {
       <li>
         <a
           href="#"
-          className="inline-flex h-8 w-8 items-center justify-center rounded  bg-white text-gray-900 rtl:rotate-180  dark:bg-black dark:text-white"
+          className="inline-flex h-8 w-8 items-center justify-center rounded bg-transparent text-white rtl:rotate-180 "
         >
           <span className="sr-only">Next Page</span>
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="h-3 w-3"
+            className="h-5 w-5"
             viewBox="0 0 20 20"
             fill="currentColor"
           >

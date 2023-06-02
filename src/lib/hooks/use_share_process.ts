@@ -53,6 +53,10 @@ const useShareProcess = ({lockerName, shareType, shareId, cfd, enableShare}: IUs
         shareUrl = DOMAIN + `/share/badge/${shareId}`;
         return shareUrl;
 
+      case ShareType.ARTICLE:
+        shareUrl = DOMAIN + `/news/${shareId}`;
+        return shareUrl;
+
       default:
         // Info: Nothing happens (20230524 - Shirley)
         return '';
@@ -153,6 +157,10 @@ const useShareProcess = ({lockerName, shareType, shareId, cfd, enableShare}: IUs
           break;
 
         case ShareType.BADGE:
+          shareOn({url, appUrl, text, type, size});
+          break;
+
+        case ShareType.ARTICLE:
           shareOn({url, appUrl, text, type, size});
           break;
 

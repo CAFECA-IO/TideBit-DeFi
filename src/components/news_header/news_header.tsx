@@ -1,7 +1,11 @@
 import React from 'react';
 import {CgSearch} from 'react-icons/cg';
 
-const NewsHeader = () => {
+interface INewsHeader {
+  searchChangeHandler: (e: React.ChangeEvent<HTMLInputElement>) => void;
+}
+
+const NewsHeader = ({searchChangeHandler}: INewsHeader) => {
   const heading = 'News';
   return (
     <>
@@ -19,11 +23,10 @@ const NewsHeader = () => {
           <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center"></div>
           <input
             type="search"
-            // value={searches}
             className="absolute right-0 block w-250px rounded-full bg-darkGray p-3 pl-5 pr-10 text-base text-white focus:border-blue-500 focus:outline-none focus:ring-0 focus:ring-blue-500"
             placeholder={`Search news`}
             required
-            // onChange={onSearchChange}
+            onChange={searchChangeHandler}
           />
           <button
             type="button"
@@ -38,11 +41,10 @@ const NewsHeader = () => {
         <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center"></div>
         <input
           type="search"
-          // value={searches}
           className="absolute right-0 block w-250px rounded-full bg-darkGray p-3 pl-5 pr-10 text-base text-white focus:border-blue-500 focus:outline-none focus:ring-0 focus:ring-blue-500"
           placeholder={`Search news`}
           required
-          // onChange={onSearchChange}
+          onChange={searchChangeHandler}
         />
         <button
           type="button"

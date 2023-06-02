@@ -54,44 +54,57 @@ const ReceiptSection = () => {
         return result;
       });
       setFilteredReceipts(searchResult);
+    } else if (filteredTradingType !== '') {
+      switch (filteredTradingType) {
+        case OrderType.DEPOSIT:
+          setFilteredReceipts(
+            listHistories.filter(v => {
+              return v.receipt.orderSnapshot.orderType === OrderType.DEPOSIT;
+            })
+          );
+          break;
+        case OrderType.WITHDRAW:
+          setFilteredReceipts(
+            listHistories.filter(v => {
+              return v.receipt.orderSnapshot.orderType === OrderType.WITHDRAW;
+            })
+          );
+          break;
+        case OrderState.OPENING:
+          setFilteredReceipts(
+            listHistories.filter(v => {
+              return (
+                v.receipt.orderSnapshot.orderType === OrderType.CFD &&
+                (v.receipt.orderSnapshot as ICFDOrder).state === OrderState.OPENING
+              );
+            })
+          );
+          break;
+        case OrderState.CLOSED:
+          setFilteredReceipts(
+            listHistories.filter(v => {
+              return (
+                v.receipt.orderSnapshot.orderType === OrderType.CFD &&
+                (v.receipt.orderSnapshot as ICFDOrder).state === OrderState.CLOSED
+              );
+            })
+          );
+          break;
+        default:
+          setFilteredReceipts(listHistories);
+      }
     } else if (filteredDate.length > 0) {
       /* Info: (20230602 - Julian) from filteredDate[0] 00:00:00 to filteredDate[1] 23:59:59 */
       const startTime = new Date(filteredDate[0]).getTime() / 1000;
       const endTime = new Date(filteredDate[1]).getTime() / 1000 + 86399;
 
-      const searchResult = listHistories.filter(v => {
-        return v.createTimestamp >= startTime && v.createTimestamp <= endTime;
-      });
-      setFilteredReceipts(searchResult);
-    } else if (filteredTradingType === '' && searches === '' && filteredDate.length <= 0) {
-      setFilteredReceipts(listHistories);
-    } else if (filteredTradingType === OrderType.DEPOSIT) {
       setFilteredReceipts(
         listHistories.filter(v => {
-          const orderType = v.receipt.orderSnapshot.orderType;
-          return orderType === OrderType.DEPOSIT;
+          return v.createTimestamp >= startTime && v.createTimestamp <= endTime;
         })
       );
-    } else if (filteredTradingType === OrderType.WITHDRAW) {
-      setFilteredReceipts(
-        listHistories.filter(v => v.receipt.orderSnapshot.orderType === OrderType.WITHDRAW)
-      );
-    } else if (filteredTradingType === OrderState.OPENING) {
-      setFilteredReceipts(
-        listHistories.filter(
-          v =>
-            v.receipt.orderSnapshot.orderType === OrderType.CFD &&
-            (v.receipt.orderSnapshot as ICFDOrder).state === OrderState.OPENING
-        )
-      );
-    } else if (filteredTradingType === OrderState.CLOSED) {
-      setFilteredReceipts(
-        listHistories.filter(
-          v =>
-            v.receipt.orderSnapshot.orderType === OrderType.CFD &&
-            (v.receipt.orderSnapshot as ICFDOrder).state === OrderState.CLOSED
-        )
-      );
+    } else if (filteredTradingType === '' && searches === '' && filteredDate.length <= 0) {
+      setFilteredReceipts(listHistories);
     }
   }, [filteredTradingType, searches, filteredDate]);
 

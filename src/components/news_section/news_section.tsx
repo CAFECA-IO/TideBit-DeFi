@@ -24,8 +24,8 @@ const NewsSection = ({
   const newsForCurrentPage = briefNews.slice(start, end);
 
   const displayedCryptoNews =
-    briefNews instanceof Array &&
-    briefNews.map((news, index) => {
+    newsForCurrentPage instanceof Array &&
+    newsForCurrentPage.map((news, index) => {
       return (
         <NewsItem
           key={news.newsId}

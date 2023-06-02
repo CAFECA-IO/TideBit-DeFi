@@ -224,12 +224,13 @@ export const MarketProvider = ({children}: IMarketProvider) => {
 
   const getPaginationNews = (currency: ICurrency, page?: number, itemsPerPage?: number) => {
     const paginationNews: IRecommendedNews[] = dummyRecommendedNewsList;
-    if (page && itemsPerPage) {
-      const start = (page - 1) * itemsPerPage;
-      const end = start + itemsPerPage;
+    // TODO: 每次拿 itemsPerPage 筆新聞 (20230602 - Shirley)
+    // if (page && itemsPerPage) {
+    //   const start = (page - 1) * itemsPerPage;
+    //   const end = start + itemsPerPage;
 
-      return paginationNews.slice(start, end);
-    }
+    //   return paginationNews.slice(start, end);
+    // }
     return paginationNews;
   };
 

@@ -34,6 +34,7 @@ interface ITradeBookConfig {
   intervalMs: number;
   minMsForLinearRegression: number; // Info: 拿幾秒內的資料做預測 (20230522 - Shirley)
   minLengthForLinearRegression: number; // Info: 規定幾秒內至少要有幾筆資料 (20230522 - Shirley)
+  holdingTradesMs: number; // Info: 持有多久的資料 (20230601 - Tzuhans)
 }
 
 class TradeBook {
@@ -55,10 +56,24 @@ class TradeBook {
   addTrades(trades: ITrade[]) {
     this.trades = [];
     this.predictedTrades = [];
+    const vaildTrades = trades.filter(trade => this.isValidTrade(trade));
+
     this.resetPrediction();
-    for (const trade of trades) {
-      this.add(trade);
+
+    for (const trade of vaildTrades) {
+      if (this.trades.length >= this.config.minLengthForLinearRegression) {
+        const lastTrade = this.trades[this.trades.length - 1];
+        const timestampDifference = trade.timestampMs - lastTrade.timestampMs;
+
+        if (timestampDifference > this.config.intervalMs) {
+          this.fillPredictedData(this.trades, trade.timestampMs);
+        }
+      }
+
+      this._add(trade);
     }
+
+    this.startPredictionLoop();
   }
 
   add(trade: ITrade): void {
@@ -109,6 +124,33 @@ class TradeBook {
     }
   }
 
+  private _trim(): void {
+    const now = Date.now();
+    const cutoffTime = now - this.config.holdingTradesMs;
+    if (
+      this.trades[0].timestampMs < cutoffTime ||
+      this.predictedTrades[0].timestampMs < cutoffTime
+    ) {
+      this.trades = Object.values(
+        this.trades
+          .filter(trade => trade.timestampMs >= cutoffTime) // Info: 保留 15 分鐘內的資料 (20230601 - Tzuhan)
+          .reduce((acc, cur) => {
+            // Info: remove duplicate tradeId (20230601 - Tzuhan)
+            acc[cur.tradeId] = cur;
+            return acc;
+          }, {} as {[key: string]: ITrade})
+      ).sort((a, b) => +a.tradeId - +b.tradeId); // Info: sort by tradeId (20230601 - Tzuhan)
+      this.predictedTrades = Object.values(
+        this.predictedTrades
+          .filter(trade => trade.timestampMs >= cutoffTime)
+          .reduce((acc, cur) => {
+            acc[cur.tradeId] = cur;
+            return acc;
+          }, {} as {[key: string]: ITrade})
+      ).sort((a, b) => +a.tradeId - +b.tradeId);
+    }
+  }
+
   private startPredictionLoop = () => {
     this.resetPrediction();
 
@@ -118,6 +160,7 @@ class TradeBook {
         this.predictNextTrade(this.predictedTrades, this.config.intervalMs, 1);
         this.startPredictionLoop();
       }
+      this._trim();
     }, this.config.intervalMs);
   };
 
@@ -316,7 +359,6 @@ class TradeBook {
     }
     const firstTimestamp = lastTimestamp - length * intervalMs;
 
-    let candlestick: ICandlestick | undefined;
     for (let i = firstTimestamp; i <= lastTimestamp; i += intervalMs) {
       const trades = this.predictedTrades.filter(
         t => t.timestampMs >= i && t.timestampMs < i + intervalMs
@@ -331,7 +373,6 @@ class TradeBook {
         const high = Math.max(...trades.map(t => t.price));
         const low = Math.min(...trades.map(t => t.price));
         const volume = trades.reduce((sum, t) => sum + t.quantity, 0);
-        candlestick = {open, high, low, close, volume, timestamp: i};
         candleSticks.push({
           x: new Date(i),
           y: {
@@ -366,6 +407,7 @@ const TradeBookInstance = new TradeBook({
   model: Model.LINEAR_REGRESSION,
   minLengthForLinearRegression: 2,
   minMsForLinearRegression: 1000 * 30,
+  holdingTradesMs: 1000 * 60 * 15, // Info: 15 minutes in milliseconds (ms) (20230601 - Tzuhan)
 });
 
 export default TradeBookInstance;

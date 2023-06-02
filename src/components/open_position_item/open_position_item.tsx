@@ -162,7 +162,7 @@ const OpenPositionItem = ({openCfdDetails}: IOpenPositionItemProps) => {
 
   const displayedCreateTime = timestampToString(createTimestamp ?? 0);
   return (
-    <div className="relative my-2 min-h-160px">
+    <div className="relative my-2 min-h-140px">
       <div
         className="absolute z-10 h-150px w-280px bg-transparent hover:cursor-pointer"
         onClick={openItemClickHandler}
@@ -192,7 +192,7 @@ const OpenPositionItem = ({openCfdDetails}: IOpenPositionItemProps) => {
       </div>
 
       {/* Info: (20230411 - Julian) Line graph */}
-      <div className="-mx-4 -my-6">
+      <div className="-mx-4 -mb-10 -mt-6">
         <PositionLineGraph
           strokeColor={[
             displayedColorHex,

@@ -4,7 +4,6 @@ import useWindowSize from '../../lib/hooks/use_window_size';
 import UserPersonalRanking from '../user_personal_ranking/user_personal_ranking';
 import Skeleton from 'react-loading-skeleton';
 import {GlobalContext} from '../../contexts/global_context';
-import {UserContext} from '../../contexts/user_context';
 import {TypeOfPnLColor, DEFAULT_USER_AVATAR, SKELETON_DISPLAY_TIME} from '../../constants/display';
 import {unitAsset} from '../../constants/config';
 import {IPnL} from '../../interfaces/tidebit_defi_background/pnl';
@@ -43,7 +42,6 @@ const LeaderboardTab = ({timeSpan, setTimeSpan, rankings}: LeaderboardTabProps) 
   const [isLoading, setIsLoading] = useState(true);
   const windowSize = useWindowSize();
   const globalCtx = useContext(GlobalContext);
-  const userCtx = useContext(UserContext);
 
   const podiumWidth =
     windowSize.width > DEFAULT_PODIUM_WIDTH ? windowSize.width : DEFAULT_PODIUM_WIDTH;

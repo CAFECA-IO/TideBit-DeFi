@@ -54,7 +54,16 @@ const ReceiptSection = () => {
         return result;
       });
       setFilteredReceipts(searchResult);
-    } else if (filteredTradingType === '' && searches === '') {
+    } else if (filteredDate.length > 0) {
+      /* Info: (20230602 - Julian) from filteredDate[0] 00:00:00 to filteredDate[1] 23:59:59 */
+      const startTime = new Date(filteredDate[0]).getTime() / 1000;
+      const endTime = new Date(filteredDate[1]).getTime() / 1000 + 86399;
+
+      const searchResult = listHistories.filter(v => {
+        return v.createTimestamp >= startTime && v.createTimestamp <= endTime;
+      });
+      setFilteredReceipts(searchResult);
+    } else if (filteredTradingType === '' && searches === '' && filteredDate.length <= 0) {
       setFilteredReceipts(listHistories);
     } else if (filteredTradingType === OrderType.DEPOSIT) {
       setFilteredReceipts(
@@ -84,7 +93,7 @@ const ReceiptSection = () => {
         )
       );
     }
-  }, [filteredTradingType, searches]);
+  }, [filteredTradingType, searches, filteredDate]);
 
   const dataMonthList = filteredReceipts
     /* Info: (20230322 - Julian) sort by desc */

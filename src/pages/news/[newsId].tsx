@@ -15,6 +15,9 @@ import {
   dummyNews,
   dummyRecommendationNews,
 } from '../../interfaces/tidebit_defi_background/ticker_static';
+interface IPageProps {
+  newsId: string;
+}
 
 // This data should be replaced with actual fetched data
 const data = [
@@ -28,7 +31,7 @@ const data = [
   {params: {newsId: 'n007'}},
 ];
 
-const NewsPage = () => {
+const NewsPage = (props: IPageProps) => {
   const {layoutAssertion} = useGlobal();
   const displayedNavBar = layoutAssertion === 'mobile' ? <NavBarMobile /> : <NavBar />;
   const router = useRouter();
@@ -60,6 +63,7 @@ const NewsPage = () => {
           <main className="">
             <div>
               <NewsArticle
+                shareId={props.newsId}
                 img="/news/rectangle_809@2x.png"
                 recommendations={dummyRecommendationNews}
                 article={dummyNews}
@@ -87,49 +91,49 @@ const NewsPage = () => {
 
 export default NewsPage;
 
-// export const getServerSideProps: GetServerSideProps<IPageProps> = async ({params, locale}) => {
-//   if (!params || !params.newsId || typeof params.newsId !== 'string') {
-//     return {
-//       notFound: true,
-//     };
-//   }
-
-//   return {
-//     props: {
-//       newsId: params.newsId,
-//       ...(await serverSideTranslations(locale as string, ['common', 'footer'])),
-//     },
-//   };
-// };
-
-export const getStaticPaths = async () => {
-  /* ToDo:React Hook useEffect has a missing dependency: 'newsId'. Either include it or remove the dependency array. 
-  const res = await fetch(new URL("/api/news", baseUrl));
-  const news: INewsDetail[] = await res.json();
-
-  const paths = news.map((v) => ({
-    params: { newsId: v.id },
-  })); */
+export const getServerSideProps: GetServerSideProps<IPageProps> = async ({params, locale}) => {
+  if (!params || !params.newsId || typeof params.newsId !== 'string') {
+    return {
+      notFound: true,
+    };
+  }
 
   return {
-    paths: [
-      {params: {newsId: 'n001'}},
-      {params: {newsId: 'n002'}},
-      {params: {newsId: 'n003'}},
-      {params: {newsId: 'n004'}},
-      {params: {newsId: 'n005'}},
-      {params: {newsId: 'n006'}},
-      {params: {newsId: 'n007'}},
-    ],
-    fallback: 'blocking',
+    props: {
+      newsId: params.newsId,
+      ...(await serverSideTranslations(locale as string, ['common', 'footer'])),
+    },
   };
 };
 
-export async function getStaticProps({locale}: any) {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale, ['common'])),
-      // Will be passed to the page component as props
-    },
-  };
-}
+// export const getStaticPaths = async () => {
+//   /* ToDo:React Hook useEffect has a missing dependency: 'newsId'. Either include it or remove the dependency array.
+//   const res = await fetch(new URL("/api/news", baseUrl));
+//   const news: INewsDetail[] = await res.json();
+
+//   const paths = news.map((v) => ({
+//     params: { newsId: v.id },
+//   })); */
+
+//   return {
+//     paths: [
+//       {params: {newsId: 'n001'}},
+//       {params: {newsId: 'n002'}},
+//       {params: {newsId: 'n003'}},
+//       {params: {newsId: 'n004'}},
+//       {params: {newsId: 'n005'}},
+//       {params: {newsId: 'n006'}},
+//       {params: {newsId: 'n007'}},
+//     ],
+//     fallback: 'blocking',
+//   };
+// };
+
+// export async function getStaticProps({locale}: any) {
+//   return {
+//     props: {
+//       ...(await serverSideTranslations(locale, ['common'])),
+//       // Will be passed to the page component as props
+//     },
+//   };
+// }

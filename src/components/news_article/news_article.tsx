@@ -26,12 +26,13 @@ interface IArticle {
 }
 interface INewsArticle {
   img: string;
+  shareId: string;
 
   article?: IArticle;
   recommendations?: Array<IRecommendedNews>;
 }
 
-const NewsArticle = ({img, article, recommendations}: INewsArticle) => {
+const NewsArticle = ({img, shareId, article, recommendations}: INewsArticle) => {
   const router = useRouter();
   const {query} = router;
   // const time = timestampToString(article?.date || 0).date
@@ -41,7 +42,8 @@ const NewsArticle = ({img, article, recommendations}: INewsArticle) => {
   const {shareTo} = useShareProcess({
     lockerName: 'news_article.shareHandler',
     shareType: ShareType.ARTICLE,
-    shareId: article?.newsId || '',
+    // shareId: article?.newsId || '',
+    shareId: shareId,
   });
 
   return (

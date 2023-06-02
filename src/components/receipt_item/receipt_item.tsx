@@ -5,10 +5,11 @@ import Image from 'next/image';
 import {GlobalContext} from '../../contexts/global_context';
 import {MarketContext} from '../../contexts/market_context';
 import {UserContext} from '../../contexts/user_context';
-import {timestampToString, toDisplayCFDOrder} from '../../lib/common';
+import {timestampToString, toDisplayCFDOrder, roundToDecimalPlaces} from '../../lib/common';
 import {OrderType} from '../../constants/order_type';
 import {OrderState} from '../../constants/order_state';
 import {OrderStatusUnion} from '../../constants/order_status_union';
+import {TypeOfPosition} from '../../constants/type_of_position';
 import {UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
 import {useTranslation} from 'next-i18next';
 import {IAcceptedOrder} from '../../interfaces/tidebit_defi_background/accepted_order';
@@ -122,20 +123,37 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
       ? t('MY_ASSETS_PAGE.RECEIPT_SECTION_ORDER_STATUS_FAILED')
       : '-';
 
-  /* Info: (20230523 - Julian) CFD Data */
+  /* Info: (20230523 - Julian) Line Graph Data */
   const positionLineGraph = marketCtx.listTickerPositions(targetAsset as ICurrency, {
     begin: createTimestamp,
   });
-  const cfdData = toDisplayCFDOrder(order as ICFDOrder, positionLineGraph);
 
   const buttonClickHandler =
     orderType === OrderType.CFD
       ? isClosed
         ? () => {
+            /* Info: (20230602 - Julian) isClosed: 到 userCtx 找出已關閉倉位的資料 */
+            const closedCfd = userCtx.closedCFDs.find(cfd => cfd.id === order.id)! as ICFDOrder;
+            const cfdData = toDisplayCFDOrder(closedCfd, []);
+
             globalCtx.dataHistoryPositionModalHandler(cfdData);
             globalCtx.visibleHistoryPositionModalHandler();
           }
         : () => {
+            const updateCfd = order as ICFDOrder;
+            /* Info: (20230602 - Julian) 拿到該 ticker 的當前價格 */
+            const tickerPrice = marketCtx.availableTickers[updateCfd.targetAsset]?.price;
+            const buyPrice = !!tickerPrice ? roundToDecimalPlaces(tickerPrice, 2) : 0;
+            const sellPrice = !!tickerPrice ? roundToDecimalPlaces(tickerPrice, 2) : 0;
+            const currentPrice =
+              positionLineGraph.length > 0
+                ? positionLineGraph[positionLineGraph.length - 1]
+                : (!!tickerPrice &&
+                    ((updateCfd.typeOfPosition === TypeOfPosition.BUY && buyPrice) ||
+                      (updateCfd.typeOfPosition === TypeOfPosition.SELL && sellPrice))) ||
+                  0;
+            const cfdData = toDisplayCFDOrder(updateCfd, positionLineGraph, currentPrice);
+
             globalCtx.dataUpdateFormModalHandler(cfdData);
             globalCtx.visibleUpdateFormModalHandler();
           }

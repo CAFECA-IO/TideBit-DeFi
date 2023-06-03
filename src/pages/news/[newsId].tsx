@@ -62,58 +62,52 @@ const NewsPage = (props: IPageProps) => {
 
   const initUI = (
     <>
-      {appCtx.isInit ? (
-        <>
-          <Head>
-            {/* TODO: Title of this piece of news (20230602 - Shirley) */}
-            {/* TODO: OG (20230602 - Shirley) */}
-            <title>{newsTitle}</title>
-            <link rel="icon" href="/favicon.ico" />
+      <Head>
+        {/* TODO: Title of this piece of news (20230602 - Shirley) */}
+        {/* TODO: OG (20230602 - Shirley) */}
+        <title>{newsTitle}</title>
+        <link rel="icon" href="/favicon.ico" />
 
-            <meta name="description" content="CFD Sharing" />
-            <meta name="keywords" content="CFD Sharing" />
-            <meta name="author" content="TideBit" />
-            <meta name="application-name" content="TideBit DeFi" />
-            <meta name="apple-mobile-web-app-title" content="TideBit DeFi" />
-            <meta name="apple-mobile-web-app-capable" content="yes" />
-            <meta name="apple-mobile-web-app-status-bar-style" />
+        <meta name="description" content="CFD Sharing" />
+        <meta name="keywords" content="CFD Sharing" />
+        <meta name="author" content="TideBit" />
+        <meta name="application-name" content="TideBit DeFi" />
+        <meta name="apple-mobile-web-app-title" content="TideBit DeFi" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" />
 
-            <meta property="og:title" content={newsTitle} />
-            <meta property="og:type" content="website" />
-            <meta property="og:url" content={share} />
-            <meta property="og:image" content={img} />
-            <meta property="og:image:width" content={imgWidth.toString()} />
-            <meta property="og:image:height" content={imgHeight.toString()} />
-            <meta property="og:description" content={newsDescription} />
-            <meta property="og:site_name" content="TideBit DeFi" />
-            <meta property="og:locale" content="en_US" />
+        <meta name="og:title" content={newsTitle} />
+        <meta name="og:type" content="website" />
+        <meta name="og:url" content={share} />
+        <meta name="og:image" content={img} />
+        <meta name="og:image:width" content={imgWidth.toString()} />
+        <meta name="og:image:height" content={imgHeight.toString()} />
+        <meta name="og:description" content={newsDescription} />
+        <meta name="og:site_name" content="TideBit DeFi" />
+        <meta name="og:locale" content="en_US" />
 
-            <meta name="twitter:card" content="summary" />
-            <meta name="twitter:site" content="@tidebit" />
-            <meta name="twitter:creator" content="@tidebit" />
-            <meta name="twitter:url" content={DOMAIN} />
-            <meta name="twitter:title" content={newsTitle} />
-            <meta name="twitter:description" content={newsDescription} />
-            <meta name="twitter:image" content={img} />
-            <meta name="twitter:image:alt" content={newsTitle} />
-          </Head>
+        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:site" content="@tidebit" />
+        <meta name="twitter:creator" content="@tidebit" />
+        <meta name="twitter:url" content={DOMAIN} />
+        <meta name="twitter:title" content={newsTitle} />
+        <meta name="twitter:description" content={newsDescription} />
+        <meta name="twitter:image" content={img} />
+        <meta name="twitter:image:alt" content={newsTitle} />
+      </Head>
 
-          <nav className="">{displayedNavBar}</nav>
+      <nav className="">{displayedNavBar}</nav>
 
-          <main className="">
-            <div>
-              <NewsArticle
-                shareId={props.newsId}
-                news={finishedNews}
-                // recommendations={recommendationNews}
-              />
-            </div>
-            <Footer />
-          </main>
-        </>
-      ) : (
-        <div>Loading...</div>
-      )}
+      <main className="">
+        <div>
+          <NewsArticle
+            shareId={props.newsId}
+            news={finishedNews}
+            // recommendations={recommendationNews}
+          />
+        </div>
+        <Footer />
+      </main>
     </>
   );
 

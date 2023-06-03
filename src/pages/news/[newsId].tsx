@@ -49,8 +49,8 @@ const NewsPage = (props: IPageProps) => {
   const newsDescription = finishedNews.content;
   const newsImg = finishedNews.img;
 
-  const imgWidth = 600;
-  const imgHeight = 100;
+  const imgWidth = 1440;
+  const imgHeight = 753;
   const share = `${DOMAIN}/news/${props.newsId}`;
   const img = `${DOMAIN}/news/${newsImg}`;
 

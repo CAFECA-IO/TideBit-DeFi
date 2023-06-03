@@ -112,7 +112,7 @@ export const dummyRecommendedNewsList = generateDummyData(100);
 export const tempRecommendedNews: IRecommendedNews[] = [
   {
     newsId: 'news-eth-20230602001',
-    img: '/news/rectangle_809@2x.png',
+    img: '/news/news-eth-20230602001@2x.png',
     timestamp: 1685673712,
     title: `Upcoming Week Brings Uncertainty for Ethereum's Price`,
     description: ` The unpredictable terrain of cryptocurrencies is experiencing a considerable degree of turbulence. It is looking down the barrel of an uncertain week ahead, with a potential downturn in its value. After an in-depth analysis of international policy shifts, technical market predictions, and overarching economic news, a plausible outcome could be a over 5% depreciation in Ethereum's value from June 3-9, 2023. In this comprehensive exploration, we will delve into these three major dimensions and the multifaceted factors that support them, to fully understand the composite factors contributing to this market prediction.
@@ -122,7 +122,7 @@ export const tempRecommendedNews: IRecommendedNews[] = [
 
 export const tempNews: INews = {
   newsId: 'news-eth-20230602001',
-  img: '/news/rectangle_809@2x.png',
+  img: '/news/news-eth-20230602001@2x.png',
   timestamp: 1685673712,
   title: `Upcoming Week Brings Uncertainty for Ethereum's Price`,
   content: `

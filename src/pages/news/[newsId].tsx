@@ -52,7 +52,7 @@ const NewsPage = (props: IPageProps) => {
   const imgWidth = 1440;
   const imgHeight = 753;
   const share = `${DOMAIN}/news/${props.newsId}`;
-  const img = `${DOMAIN}/news/${newsImg}`;
+  const img = `${DOMAIN}${newsImg}`;
 
   useEffect(() => {
     if (!appCtx.isInit) {
@@ -78,15 +78,15 @@ const NewsPage = (props: IPageProps) => {
             <meta name="apple-mobile-web-app-capable" content="yes" />
             <meta name="apple-mobile-web-app-status-bar-style" />
 
-            <meta property="og:title" content={newsTitle} />
-            <meta property="og:type" content="website" />
-            <meta property="og:url" content={share} />
-            <meta property="og:image" content={img} />
-            <meta property="og:image:width" content={imgWidth.toString()} />
-            <meta property="og:image:height" content={imgHeight.toString()} />
-            <meta property="og:description" content={newsDescription} />
-            <meta property="og:site_name" content="TideBit DeFi" />
-            <meta property="og:locale" content="en_US" />
+            <meta name="og:title" content={newsTitle} />
+            <meta name="og:type" content="website" />
+            <meta name="og:url" content={share} />
+            <meta name="og:image" content={img} />
+            <meta name="og:image:width" content={imgWidth.toString()} />
+            <meta name="og:image:height" content={imgHeight.toString()} />
+            <meta name="og:description" content={newsDescription} />
+            <meta name="og:site_name" content="TideBit DeFi" />
+            <meta name="og:locale" content="en_US" />
 
             <meta name="twitter:card" content="summary" />
             <meta name="twitter:site" content="@tidebit" />

@@ -17,7 +17,12 @@ import {
 const ReceiptSection = () => {
   const userCtx = useContext(UserContext);
 
-  const listHistories = userCtx.histories;
+  const listHistories: IAcceptedOrder[] = userCtx.histories.map(v => {
+    return {
+      ...v,
+      isClosed: false,
+    };
+  });
 
   /* Info: (20230605 - Julian) 用於 isClosed 的判斷 */
   const [receipts, setReceipts] = useState<IAcceptedOrder[]>(listHistories);
@@ -37,22 +42,25 @@ const ReceiptSection = () => {
      * 1. 先將已關閉的 CFD 訂單列出來
      * 2. 再去找出 txhash 一樣的訂單，並將 isClosed 設為 true */
     const closedReceipts = listHistories.filter(v => {
-      v.receipt.orderSnapshot.orderType === OrderType.CFD &&
-        (v.receipt.orderSnapshot as ICFDOrder).state === OrderState.CLOSED;
-      //console.log('closedReceipts id:', v.id);
+      return (
+        v.receipt.orderSnapshot.orderType === OrderType.CFD &&
+        (v.receipt.orderSnapshot as ICFDOrder).state === OrderState.CLOSED
+      );
     });
 
-    const result: IAcceptedOrder[] = listHistories.map(v => {
-      const isCFDClosed = closedReceipts.find(c => c.id === v.id)?.txhash ?? 'flse5';
-      //console.log('isCFDClosed:', isCFDClosed);
-
-      return {
+    const result = listHistories.map(v => {
+      const isClosed = closedReceipts.some(closed => {
+        return closed.receipt.orderSnapshot.id === v.receipt.orderSnapshot.id;
+      });
+      const d = {
         ...v,
-        //isClosed: isCFDClosed,
+        isClosed,
       };
+      return d;
     });
+
     setReceipts(result);
-  }, [listHistories]);
+  }, [userCtx.histories]);
 
   useEffect(() => {
     const searchResult = receipts
@@ -123,7 +131,7 @@ const ReceiptSection = () => {
       });
 
     setFilteredReceipts(searchResult);
-  }, [filteredTradingType, searches, filteredDate]);
+  }, [filteredTradingType, searches, filteredDate, receipts]);
 
   const dataMonthList = filteredReceipts
     /* Info: (20230322 - Julian) sort by desc */

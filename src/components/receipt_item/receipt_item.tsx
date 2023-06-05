@@ -128,7 +128,7 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
 
   const buttonClickHandler =
     orderType === OrderType.CFD
-      ? isClosed === true
+      ? isClosed
         ? () => {
             const closedCfd = userCtx.closedCFDs.find(cfd => cfd.id === order.id)! as ICFDOrder;
             const cfdData = toDisplayCFDOrder(closedCfd, []);
@@ -186,7 +186,7 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
       : order.fee.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
 
   const displayedReceiptAvailableText =
-    orderStatus === OrderStatusUnion.PROCESSING || orderStatus === OrderStatusUnion.WAITING ? (
+    orderStatus === OrderStatusUnion.WAITING ? (
       <Lottie className="w-20px" animationData={smallConnectingAnimation} />
     ) : (
       balance?.available.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS) ?? '-'

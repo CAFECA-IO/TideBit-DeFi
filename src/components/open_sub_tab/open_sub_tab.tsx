@@ -21,6 +21,7 @@ const OpenSubTab = () => {
   // };
   //const [caledPrice, setCaledPrice, caledPriceRef] = useStateRef(initState);
   const [isLoading, setIsLoading] = useState(true);
+  const [cfds, setCfds] = useState<IDisplayCFDOrder[]>([]);
 
   const getTickerSpread = async (instId: string) => {
     let tickerSpread = {...defaultResultFailed};
@@ -55,50 +56,54 @@ const OpenSubTab = () => {
   //   });
   // }, [marketCtx.selectedTicker?.price]);
 
-  const cfds = openCFDs
-    .map(cfd => {
-      const positionLineGraph = marketCtx.listTickerPositions(cfd.targetAsset, {
-        begin: cfd.createTimestamp,
+  useEffect(() => {
+    const cfdList = openCFDs
+      .map(cfd => {
+        const positionLineGraph = marketCtx.listTickerPositions(cfd.targetAsset, {
+          begin: cfd.createTimestamp,
+        });
+
+        const tickerPrice = marketCtx.availableTickers[cfd.targetAsset]?.price;
+        const spread = getTickerSpread(cfd.targetAsset);
+
+        const buyPrice = !!tickerPrice ? roundToDecimalPlaces(tickerPrice, 2) : 0;
+        const sellPrice = !!tickerPrice ? roundToDecimalPlaces(tickerPrice, 2) : 0;
+        /**
+         * Info: (20230428 - Shirley)
+         * without `positionLineGraph`, use market price to calculate
+         * without `market price`, use the open price of the CFD to get PNL === 0 and display `--`
+         * (OpenPositionItem & UpdateFormModal)
+         */
+        const currentPrice =
+          positionLineGraph.length > 0
+            ? positionLineGraph[positionLineGraph.length - 1]
+            : (!!tickerPrice &&
+                ((cfd.typeOfPosition === TypeOfPosition.BUY && buyPrice) ||
+                  (cfd.typeOfPosition === TypeOfPosition.SELL && sellPrice))) ||
+              0;
+
+        const displayCFD: IDisplayCFDOrder = toDisplayCFDOrder(
+          cfd,
+          positionLineGraph,
+          currentPrice,
+          Number(spread)
+        );
+
+        return displayCFD;
+      })
+      .sort((a, b) => {
+        return a.createTimestamp - b.createTimestamp;
+      })
+      .sort((a, b) => {
+        return b.stateCode - a.stateCode;
       });
 
-      const tickerPrice = marketCtx.availableTickers[cfd.targetAsset]?.price;
-      const spread = getTickerSpread(cfd.targetAsset);
-
-      const buyPrice = !!tickerPrice ? roundToDecimalPlaces(tickerPrice, 2) : 0;
-      const sellPrice = !!tickerPrice ? roundToDecimalPlaces(tickerPrice, 2) : 0;
-      /**
-       * Info: (20230428 - Shirley)
-       * without `positionLineGraph`, use market price to calculate
-       * without `market price`, use the open price of the CFD to get PNL === 0 and display `--`
-       * (OpenPositionItem & UpdateFormModal)
-       */
-      const currentPrice =
-        positionLineGraph.length > 0
-          ? positionLineGraph[positionLineGraph.length - 1]
-          : (!!tickerPrice &&
-              ((cfd.typeOfPosition === TypeOfPosition.BUY && buyPrice) ||
-                (cfd.typeOfPosition === TypeOfPosition.SELL && sellPrice))) ||
-            0;
-
-      const displayCFD: IDisplayCFDOrder = toDisplayCFDOrder(
-        cfd,
-        positionLineGraph,
-        currentPrice,
-        Number(spread)
-      );
-
-      return displayCFD;
-    })
-    .sort((a, b) => {
-      return a.createTimestamp - b.createTimestamp;
-    })
-    .sort((a, b) => {
-      return b.stateCode - a.stateCode;
-    });
+    setCfds(cfdList);
+  }, [openCFDs]);
 
   useEffect(() => {
     setTimeout(() => setIsLoading(false), SKELETON_DISPLAY_TIME);
-  }, [cfds]);
+  }, [openCFDs]);
 
   const openPositionList = cfds.map(cfd => {
     return (

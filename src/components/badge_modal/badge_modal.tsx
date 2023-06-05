@@ -10,7 +10,7 @@ import {BsFacebook, BsTwitter, BsReddit} from 'react-icons/bs';
 import {useTranslation} from 'react-i18next';
 import useShareProcess from '../../lib/hooks/use_share_process';
 import {ShareType} from '../../constants/share_type';
-import {ShareSettings} from '../../constants/social_media';
+import {ISocialMedia, ShareSettings, SocialMediaConstant} from '../../constants/social_media';
 
 type TranslateFunction = (s: string) => string;
 
@@ -24,7 +24,7 @@ const BadgeModal = ({modalVisible, modalClickHandler, badgeData}: IBadgeModalPro
   const {t}: {t: TranslateFunction} = useTranslation('common');
   const {badgeId, badgeName, receiveTime} = badgeData.badgeData;
 
-  const {shareTo} = useShareProcess({
+  const {share} = useShareProcess({
     lockerName: 'badge_modal.shareHandler',
     shareType: ShareType.BADGE,
     shareId: badgeId,
@@ -41,11 +41,8 @@ const BadgeModal = ({modalVisible, modalClickHandler, badgeData}: IBadgeModalPro
     >
       <button
         onClick={() =>
-          shareTo({
-            url: ShareSettings.FACEBOOK.URL,
-            appUrl: ShareSettings.FACEBOOK.APP_URL,
-            type: ShareSettings.FACEBOOK.TYPE,
-            size: ShareSettings.FACEBOOK.SIZE,
+          share({
+            socialMedia: SocialMediaConstant.FACEBOOK,
           })
         }
       >
@@ -53,12 +50,9 @@ const BadgeModal = ({modalVisible, modalClickHandler, badgeData}: IBadgeModalPro
       </button>
       <button
         onClick={() =>
-          shareTo({
-            url: ShareSettings.TWITTER.URL,
-            appUrl: ShareSettings.TWITTER.APP_URL,
+          share({
+            socialMedia: SocialMediaConstant.TWITTER,
             text: ShareSettings.TWITTER.TEXT,
-            type: ShareSettings.TWITTER.TYPE,
-            size: ShareSettings.TWITTER.SIZE,
           })
         }
       >
@@ -66,12 +60,9 @@ const BadgeModal = ({modalVisible, modalClickHandler, badgeData}: IBadgeModalPro
       </button>
       <button
         onClick={() =>
-          shareTo({
-            url: ShareSettings.REDDIT.URL,
-            appUrl: ShareSettings.REDDIT.APP_URL,
+          share({
+            socialMedia: SocialMediaConstant.REDDIT,
             text: ShareSettings.REDDIT.TEXT,
-            type: ShareSettings.REDDIT.TYPE,
-            size: ShareSettings.REDDIT.SIZE,
           })
         }
       >

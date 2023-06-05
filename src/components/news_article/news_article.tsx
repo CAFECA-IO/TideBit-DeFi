@@ -5,7 +5,7 @@ import NavBar from '../nav_bar/nav_bar';
 import {useRouter} from 'next/router';
 import Link from 'next/link';
 import {timestampToString} from '../../lib/common';
-import {ShareSettings} from '../../constants/social_media';
+import {ISocialMedia, ShareSettings, SocialMediaConstant} from '../../constants/social_media';
 import useShareProcess from '../../lib/hooks/use_share_process';
 import {ShareType} from '../../constants/share_type';
 import {NEWS_IMG_HEIGHT, NEWS_IMG_WIDTH} from '../../constants/display';
@@ -37,7 +37,7 @@ const NewsArticle = ({shareId, news, recommendations}: INewsArticle) => {
   const date = timestampToString(news.timestamp || 0).date;
   const socialMediaStyle = 'hover:cursor-pointer hover:opacity-80';
 
-  const {shareTo} = useShareProcess({
+  const {share} = useShareProcess({
     lockerName: 'news_article.shareHandler',
     shareType: ShareType.ARTICLE,
     shareId: shareId,
@@ -251,15 +251,7 @@ const NewsArticle = ({shareId, news, recommendations}: INewsArticle) => {
               {Object.entries(ShareSettings).map(([key, value]) => (
                 <div key={key} className={`${socialMediaStyle}`}>
                   <Image
-                    onClick={() =>
-                      shareTo({
-                        url: value.URL,
-                        appUrl: value.APP_URL,
-                        text: value.TEXT,
-                        type: value.TYPE,
-                        size: value.SIZE,
-                      })
-                    }
+                    onClick={() => share({socialMedia: key as ISocialMedia, text: value.TEXT})}
                     src={value.ICON}
                     width={44}
                     height={44}

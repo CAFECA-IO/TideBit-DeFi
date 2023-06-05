@@ -133,7 +133,7 @@ const TickerSelectorBoxMobile = ({
           cardClickHandler={() => cardClickHandler(cryptoCard.currency)}
           className="mt-4 ml-4"
           lineGraphProps={cryptoCard.lineGraphProps}
-          star={cryptoCard.star}
+          star={true}
           starColor={cryptoCard.starColor}
           starred={cryptoCard.starred}
           chain={cryptoCard.chain}
@@ -152,7 +152,7 @@ const TickerSelectorBoxMobile = ({
         cardClickHandler={() => cardClickHandler(cryptoCard.currency)}
         className="mt-0"
         lineGraphProps={cryptoCard.lineGraphProps}
-        star={cryptoCard.star}
+        star={true}
         starColor={cryptoCard.starColor}
         starred={cryptoCard.starred}
         chain={cryptoCard.chain}
@@ -174,7 +174,7 @@ const TickerSelectorBoxMobile = ({
           cardClickHandler={() => cardClickHandler(cryptoCard.currency)}
           className="mt-4 ml-4"
           lineGraphProps={cryptoCard.lineGraphProps}
-          star={cryptoCard.star}
+          star={true}
           starColor={cryptoCard.starColor}
           starred={cryptoCard.starred}
           chain={cryptoCard.chain}
@@ -193,7 +193,7 @@ const TickerSelectorBoxMobile = ({
         cardClickHandler={() => cardClickHandler(cryptoCard.currency)}
         className="mt-0"
         lineGraphProps={cryptoCard.lineGraphProps}
-        star={cryptoCard.star}
+        star={true}
         starColor={cryptoCard.starColor}
         starred={cryptoCard.starred}
         chain={cryptoCard.chain}

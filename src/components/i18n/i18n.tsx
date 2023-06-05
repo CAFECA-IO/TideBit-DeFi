@@ -32,11 +32,13 @@ const I18n = ({langIsOpen, setLangIsOpen}: II18nParams) => {
     {label: '简体中文', value: 'cn'},
   ];
 
-  const displayedDesktopMenu = openMenu ? (
+  const displayedDesktopMenu = (
     <div className="hidden lg:flex">
       <div
         id="i18nDropdown"
-        className="absolute top-16 right-40 z-10 w-150px divide-y divide-lightGray rounded-none bg-darkGray shadow"
+        className={`absolute right-40 top-16 z-10 w-150px ${
+          openMenu ? 'opacity-100' : 'opacity-0'
+        } divide-y divide-lightGray rounded-none bg-darkGray shadow transition-all duration-300`}
       >
         <ul className="mx-3 py-1 pb-3 text-base text-gray-200" aria-labelledby="i18nButton">
           {internationalizationList.map((item, index) => (
@@ -53,13 +55,15 @@ const I18n = ({langIsOpen, setLangIsOpen}: II18nParams) => {
         </ul>
       </div>
     </div>
-  ) : null;
+  );
 
-  const displayedMobileMenu = openMenu ? (
-    <div className="opacity-100 transition-opacity lg:hidden">
+  const displayedMobileMenu = (
+    <div
+      className={`transition-all duration-300 ${openMenu ? 'opacity-100' : 'opacity-0'} lg:hidden`}
+    >
       <div
         id="i18nDropdown"
-        className="absolute top-28 left-0 z-10 h-full w-screen bg-darkGray shadow"
+        className="absolute left-0 top-28 z-10 h-full w-screen bg-darkGray shadow"
       >
         <ul className="text-center text-base dark:text-gray-200" aria-labelledby="i18nButton">
           {internationalizationList.map((item, index) => (
@@ -76,12 +80,18 @@ const I18n = ({langIsOpen, setLangIsOpen}: II18nParams) => {
         </ul>
       </div>
     </div>
-  ) : (
-    <div className="invisible opacity-0 transition-opacity"></div>
   );
+
+  const displayedCover = openMenu ? (
+    <div
+      className="absolute left-0 top-0 hidden h-screen w-screen lg:flex"
+      onClick={clickHandler}
+    ></div>
+  ) : null;
 
   const displayedI18n = (
     <>
+      {displayedCover}
       <div className="hidden lg:flex">
         <div
           ref={globalRef}

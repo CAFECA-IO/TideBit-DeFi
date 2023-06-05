@@ -37,7 +37,7 @@ const User = () => {
   const isDisplayedAvatarMenu = userCtx.user?.address ? (
     <div
       id="userDropdown"
-      className={`avatarMenuShadow absolute right-8 top-16 -z-10 flex w-285px flex-col ${
+      className={`avatarMenuShadow absolute right-8 top-16 z-10 flex w-285px flex-col ${
         avatarMenuVisible ? 'translate-y-0 opacity-100' : '-translate-y-450px opacity-0'
       } divide-y divide-lightGray rounded-none bg-darkGray shadow transition-all duration-300 ease-in`}
     >
@@ -127,9 +127,15 @@ const User = () => {
     </>
   ) : null;
 
+  const isDisplayedCover = avatarMenuVisible ? (
+    <div className="absolute left-0 top-0 h-screen w-screen" onClick={avatarClickHandler}></div>
+  ) : null;
+
   return (
     <div>
-      {isDisplayedUserAvatar} {isDisplayedAvatarMenu}
+      {isDisplayedUserAvatar}
+      {isDisplayedCover}
+      {isDisplayedAvatarMenu}
     </div>
   );
 };

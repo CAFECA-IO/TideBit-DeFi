@@ -51,11 +51,13 @@
 /* 0 0 5px */
 /* text-shadow: 1px 0 3px var(--colorLoss), 1px 0 3px var(--colorLoss); */
 .priceUpShadow {
-  text-shadow: 3px 1px 5px var(--colorProfit), -1px 1px 5px var(--colorProfit);
+  text-shadow: 0px 0px 5px var(--colorProfit), 0px 0px 10px var(--colorProfit),
+    0px 0px 15px var(--colorProfit);
 }
 
 .priceDownShadow {
-  text-shadow: 3px 1px 5px var(--colorLoss), -1px 1px 5px var(--colorLoss);
+  text-shadow: 0px 0px 5px var(--colorLoss), 0px 0px 10px var(--colorLoss),
+    0px 0px 15px var(--colorLoss);
 }
 
 /* .apexchartsCandlestickTooltip {

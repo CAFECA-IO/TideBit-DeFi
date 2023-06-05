@@ -37,7 +37,7 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
   const marketCtx = useContext(MarketContext);
   const userCtx = useContext(UserContext);
 
-  const {createTimestamp, receipt} = histories.histories;
+  const {createTimestamp, receipt, isClosed} = histories.histories;
   const {orderSnapshot: order, balanceSnapshot} = receipt;
 
   const balance = balanceSnapshot.shift();
@@ -63,8 +63,6 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
 
   /* Info: (20230524 - Julian) CFD Type : create / update / close */
   const cfdType = (histories.histories as IAcceptedCFDOrder).applyData.operation;
-  /* Info: (20230524 - Julian) if can't get CFD by id, it means CFD is closed */
-  const isClosed = userCtx.getCFD(order.id) ? false : true;
 
   const displayedButtonColor =
     targetAmount == 0 ? 'bg-lightGray' : targetAmount > 0 ? 'bg-lightGreen5' : 'bg-lightRed';
@@ -130,9 +128,8 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
 
   const buttonClickHandler =
     orderType === OrderType.CFD
-      ? isClosed
+      ? isClosed === true
         ? () => {
-            /* Info: (20230602 - Julian) isClosed: 到 userCtx 找出已關閉倉位的資料 */
             const closedCfd = userCtx.closedCFDs.find(cfd => cfd.id === order.id)! as ICFDOrder;
             const cfdData = toDisplayCFDOrder(closedCfd, []);
 

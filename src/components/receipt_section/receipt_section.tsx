@@ -19,6 +19,9 @@ const ReceiptSection = () => {
 
   const listHistories = userCtx.histories;
 
+  /* Info: (20230605 - Julian) 用於 isClosed 的判斷 */
+  const [receipts, setReceipts] = useState<IAcceptedOrder[]>(listHistories);
+
   const [searches, setSearches] = useState('');
   const [filteredTradingType, setFilteredTradingType] = useState('');
   const [filteredDate, setFilteredDate] = useState<string[]>([]);
@@ -30,7 +33,29 @@ const ReceiptSection = () => {
   }, []);
 
   useEffect(() => {
-    const searchResult = listHistories
+    /* Info: (20230605 - Julian)
+     * 1. 先將已關閉的 CFD 訂單列出來
+     * 2. 再去找出 txhash 一樣的訂單，並將 isClosed 設為 true */
+    const closedReceipts = listHistories.filter(v => {
+      v.receipt.orderSnapshot.orderType === OrderType.CFD &&
+        (v.receipt.orderSnapshot as ICFDOrder).state === OrderState.CLOSED;
+      //console.log('closedReceipts id:', v.id);
+    });
+
+    const result: IAcceptedOrder[] = listHistories.map(v => {
+      const isCFDClosed = closedReceipts.find(c => c.id === v.id)?.txhash ?? 'flse5';
+      //console.log('isCFDClosed:', isCFDClosed);
+
+      return {
+        ...v,
+        //isClosed: isCFDClosed,
+      };
+    });
+    setReceipts(result);
+  }, [listHistories]);
+
+  useEffect(() => {
+    const searchResult = receipts
       .filter(v => {
         /* Info: (20230605 - Julian) Search by trading type
          * if filteredTradingType is empty, return all */

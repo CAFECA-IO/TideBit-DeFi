@@ -31,6 +31,7 @@ const OpenSubTab = () => {
     return spread;
   };
 
+  // Deprecated (20230610 - Julian)
   // useEffect(() => {
   //   const buyPrice = !!marketCtx.selectedTicker?.price
   //     ? roundToDecimalPlaces(

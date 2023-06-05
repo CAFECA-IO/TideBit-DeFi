@@ -91,15 +91,15 @@ const CfdSharing = (props: IPageProps) => {
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" />
 
-        <meta property="og:title" content="TideBit DeFi CFD" />
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content={share} />
-        <meta property="og:image" content={img} />
-        <meta property="og:image:width" content={BG_WIDTH_OF_SHARING_RECORD.toString()} />
-        <meta property="og:image:height" content={BG_HEIGHT_OF_SHARING_RECORD.toString()} />
-        <meta property="og:description" content="TideBit DeFi CFD Sharing" />
-        <meta property="og:site_name" content="TideBit DeFi" />
-        <meta property="og:locale" content="en_US" />
+        <meta name="og:title" content="TideBit DeFi CFD" />
+        <meta name="og:type" content="website" />
+        <meta name="og:url" content={share} />
+        <meta name="og:image" content={img} />
+        <meta name="og:image:width" content={BG_WIDTH_OF_SHARING_RECORD.toString()} />
+        <meta name="og:image:height" content={BG_HEIGHT_OF_SHARING_RECORD.toString()} />
+        <meta name="og:description" content="TideBit DeFi CFD Sharing" />
+        <meta name="og:site_name" content="TideBit DeFi" />
+        <meta name="og:locale" content="en_US" />
 
         <meta name="twitter:card" content="summary" />
         <meta name="twitter:site" content="@tidebit" />

@@ -10,11 +10,7 @@ const HistorySubTab = () => {
 
   const [isLoading, setIsLoading] = useState(true);
 
-  const cfds = userCtx.closedCFDs.sort((a, b) =>
-    !!b.closeTimestamp && !!a.closeTimestamp
-      ? b.closeTimestamp - a.closeTimestamp
-      : a.createTimestamp - b.createTimestamp
-  );
+  const cfds = userCtx.closedCFDs.sort((a, b) => b.closeTimestamp! - a.closeTimestamp!);
 
   const historyPositionList = cfds.map(cfd =>
     cfd ? (

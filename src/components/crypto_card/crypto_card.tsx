@@ -13,12 +13,6 @@ import {useTranslation} from 'react-i18next';
 import {FRACTION_DIGITS} from '../../constants/config';
 
 type TranslateFunction = (s: string) => string;
-/**
- * @dev used when it needs the star functionality
- * @param {star} empty star
- * @param {starred} filled star or not
- *
- */
 
 const Chart = dynamic(() => import('react-apexcharts'), {ssr: false});
 
@@ -47,6 +41,12 @@ export interface ICardProps {
   cardClickHandler?: () => void;
 }
 
+/**
+ * @dev used when it needs the star functionality
+ * @param {star} empty star
+ * @param {starred} filled star or not
+ *
+ */
 const CryptoCard = ({
   gradientColor,
   tokenImg,

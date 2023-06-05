@@ -65,9 +65,6 @@ const OpenSubTab = () => {
 
         const tickerPrice = marketCtx.availableTickers[cfd.targetAsset]?.price;
         const spread = getTickerSpread(cfd.targetAsset);
-
-        const buyPrice = !!tickerPrice ? roundToDecimalPlaces(tickerPrice, 2) : 0;
-        const sellPrice = !!tickerPrice ? roundToDecimalPlaces(tickerPrice, 2) : 0;
         /**
          * Info: (20230428 - Shirley)
          * without `positionLineGraph`, use market price to calculate
@@ -78,8 +75,10 @@ const OpenSubTab = () => {
           positionLineGraph.length > 0
             ? positionLineGraph[positionLineGraph.length - 1]
             : (!!tickerPrice &&
-                ((cfd.typeOfPosition === TypeOfPosition.BUY && buyPrice) ||
-                  (cfd.typeOfPosition === TypeOfPosition.SELL && sellPrice))) ||
+                ((cfd.typeOfPosition === TypeOfPosition.BUY &&
+                  roundToDecimalPlaces(tickerPrice, 2)) ||
+                  (cfd.typeOfPosition === TypeOfPosition.SELL &&
+                    roundToDecimalPlaces(tickerPrice, 2)))) ||
               0;
 
         const displayCFD: IDisplayCFDOrder = toDisplayCFDOrder(

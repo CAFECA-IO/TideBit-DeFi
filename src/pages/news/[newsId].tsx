@@ -1,5 +1,3 @@
-import {useRouter} from 'next/router';
-// import News from '../../components/News';
 import {GetServerSideProps} from 'next';
 import {serverSideTranslations} from 'next-i18next/serverSideTranslations';
 import NewsPageBody from '../../components/news_page_body/news_page_body';
@@ -19,22 +17,13 @@ import {
 import {Currency} from '../../constants/currency';
 import {MarketContext} from '../../contexts/market_context';
 import {DOMAIN} from '../../constants/config';
+import {NEWS_IMG_HEIGHT, NEWS_IMG_WIDTH} from '../../constants/display';
 
 interface IPageProps {
   newsId: string;
 }
 
-// This data should be replaced with actual fetched data
-const data = [
-  /* Dummy data of news here */
-  {params: {newsId: 'n001'}},
-  {params: {newsId: 'n002'}},
-  {params: {newsId: 'n003'}},
-  {params: {newsId: 'n004'}},
-  {params: {newsId: 'n005'}},
-  {params: {newsId: 'n006'}},
-  {params: {newsId: 'n007'}},
-];
+// TODO: Check dynamic routing (20230605 - Shirley)
 
 const NewsPage = (props: IPageProps) => {
   const {layoutAssertion} = useGlobal();
@@ -49,8 +38,6 @@ const NewsPage = (props: IPageProps) => {
   const newsDescription = finishedNews.content;
   const newsImg = finishedNews.img;
 
-  const imgWidth = 1440;
-  const imgHeight = 753;
   const share = `${DOMAIN}/news/${props.newsId}`;
   const img = `${DOMAIN}${newsImg}`;
 
@@ -63,8 +50,6 @@ const NewsPage = (props: IPageProps) => {
   const initUI = (
     <>
       <Head>
-        {/* TODO: Title of this piece of news (20230602 - Shirley) */}
-        {/* TODO: OG (20230602 - Shirley) */}
         <title>{newsTitle}</title>
         <link rel="icon" href="/favicon.ico" />
 
@@ -80,8 +65,8 @@ const NewsPage = (props: IPageProps) => {
         <meta name="og:type" content="website" />
         <meta name="og:url" content={share} />
         <meta name="og:image" content={img} />
-        <meta name="og:image:width" content={imgWidth.toString()} />
-        <meta name="og:image:height" content={imgHeight.toString()} />
+        <meta name="og:image:width" content={NEWS_IMG_WIDTH.toString()} />
+        <meta name="og:image:height" content={NEWS_IMG_HEIGHT.toString()} />
         <meta name="og:description" content={newsDescription} />
         <meta name="og:site_name" content="TideBit DeFi" />
         <meta name="og:locale" content="en_US" />

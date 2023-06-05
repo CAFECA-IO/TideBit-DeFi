@@ -281,3 +281,5 @@ export const DEFAULT_INTEREST_RATE = 0;
 export const CANDLESTICK_SIZE = 30;
 export const MOBILE_WIDTH = 768;
 export const ITEMS_PER_PAGE = 10;
+export const NEWS_IMG_WIDTH = 1440;
+export const NEWS_IMG_HEIGHT = 753;

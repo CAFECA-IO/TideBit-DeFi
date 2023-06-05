@@ -8,6 +8,7 @@ import {timestampToString} from '../../lib/common';
 import {ShareSettings} from '../../constants/social_media';
 import useShareProcess from '../../lib/hooks/use_share_process';
 import {ShareType} from '../../constants/share_type';
+import {NEWS_IMG_HEIGHT, NEWS_IMG_WIDTH} from '../../constants/display';
 
 interface IRecommendedNews {
   newsId: string;
@@ -56,12 +57,18 @@ const NewsArticle = ({shareId, news, recommendations}: INewsArticle) => {
             <BiArrowBack size={25} />
           </Link>
         </div>
-        <div className="w-600px px-5">
-          <Image src={news.img} width={600} height={100} alt="image" />
+        <div className="w-full px-5 md:w-90vw lg:w-70vw xl:w-3/5">
+          <Image
+            src={news.img}
+            style={{objectFit: 'cover'}}
+            width={NEWS_IMG_WIDTH}
+            height={NEWS_IMG_HEIGHT}
+            alt="image"
+          />
           <div className="my-8 flex justify-between">
             {' '}
             <h1 className="text-xl font-normal leading-8 tracking-wider">{news.title}</h1>
-            <p className="mt-2 mr-2 text-sm text-lightGray">{date}</p>
+            <p className="mt-2 text-xs text-lightGray lg:text-sm">{date}</p>
           </div>
           {/* TODO: markdown (20230602 - Shirley) */}
           {/* <p className="text-base leading-10 tracking-normal text-lightGray1">{news.content}</p> */}

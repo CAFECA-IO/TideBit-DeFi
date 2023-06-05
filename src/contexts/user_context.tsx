@@ -1642,10 +1642,10 @@ export const UserProvider = ({children}: IUserProvider) => {
   );
   React.useMemo(
     () =>
-      notificationCtx.emitter.on(TideBitEvent.TICKER_CHANGE, (ticker: ITickerData) => {
+      notificationCtx.emitter.on(TideBitEvent.TICKER_CHANGE, async (ticker: ITickerData) => {
         if (!selectedTickerRef.current || ticker.instId !== selectedTickerRef.current?.instId) {
           setSelectedTicker(ticker);
-          listCFDs(ticker?.currency);
+          await listCFDs(ticker?.currency);
         }
       }),
     []

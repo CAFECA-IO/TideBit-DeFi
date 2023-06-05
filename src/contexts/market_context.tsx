@@ -265,7 +265,6 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     const ticker: ITickerData = availableTickersRef.current[tickerId];
     if (!ticker) return {...defaultResultFailed};
     setSelectedTicker(ticker);
-    notificationCtx.emitter.emit(TideBitEvent.TICKER_CHANGE, ticker);
     await listMarketTrades(ticker.instId);
     syncCandlestickData();
     // ++ TODO: get from api
@@ -278,6 +277,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     if (isGetTickerLiveStatisticsSuccess)
       setTickerLiveStatistics(tickerLiveStatistics as ITickerLiveStatistics);
     await getGuaranteedStopFeePercentage(ticker.instId);
+    notificationCtx.emitter.emit(TideBitEvent.TICKER_CHANGE, ticker);
     return {...defaultResultSuccess};
   };
 
@@ -570,8 +570,8 @@ export const MarketProvider = ({children}: IMarketProvider) => {
   const init = async () => {
     await getTideBitPromotion();
     await getWebsiteReserve();
-    await listTickers();
     await listCurrencies();
+    await listTickers();
     setIsCFDTradable(true);
     return await Promise.resolve();
   };

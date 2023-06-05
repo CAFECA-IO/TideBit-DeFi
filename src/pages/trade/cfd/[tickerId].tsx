@@ -47,10 +47,10 @@ const Trading = (props: IPageProps) => {
     }
   }, []);
 
-  useEffect(() => {
-    if ((marketCtx?.selectedTickerRef?.current?.currency?.toString() ?? '') === currency) return;
-    redirectToTicker();
-  }, [marketCtx.availableTickers]);
+  // useEffect(() => {
+  //   if ((marketCtx?.selectedTickerRef?.current?.currency?.toString() ?? '') === currency) return;
+  //   redirectToTicker();
+  // }, [marketCtx.availableTickers]);
 
   if (!router.isFallback && !props.tickerId) {
     return <Error statusCode={404} />;

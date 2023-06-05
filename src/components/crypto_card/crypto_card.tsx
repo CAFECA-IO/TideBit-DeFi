@@ -43,8 +43,8 @@ export interface ICardProps {
 
 /**
  * @dev used when it needs the star functionality
- * @param {star} empty star
- * @param {starred} filled star or not
+ * @param {boolean} star blank star
+ * @param {boolean} starred fill star or not
  *
  */
 const CryptoCard = ({

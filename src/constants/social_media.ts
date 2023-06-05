@@ -1,8 +1,8 @@
-export type SocialMedia = 'FACEBOOK' | 'TWITTER' | 'REDDIT';
+export type ISocialMedia = 'FACEBOOK' | 'TWITTER' | 'REDDIT';
 export interface ISocialMediaConstant {
-  FACEBOOK: SocialMedia;
-  TWITTER: SocialMedia;
-  REDDIT: SocialMedia;
+  FACEBOOK: ISocialMedia;
+  TWITTER: ISocialMedia;
+  REDDIT: ISocialMedia;
 }
 
 export const SocialMediaConstant: ISocialMediaConstant = {
@@ -23,7 +23,7 @@ export interface IShareSettings extends ISocialMediaSetting {
   ICON: string;
 }
 
-export const ShareSettings: Record<SocialMedia, IShareSettings> = {
+export const ShareSettings: Record<ISocialMedia, IShareSettings> = {
   FACEBOOK: {
     URL: 'https://www.facebook.com/sharer/sharer.php?u=',
     // TODO: Share to FB on mobile (20230531 - Shirley)

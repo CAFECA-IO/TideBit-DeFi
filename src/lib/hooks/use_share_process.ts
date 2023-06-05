@@ -10,6 +10,7 @@ import {IShareType, ShareType} from '../../constants/share_type';
 import {IDisplayCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
 import {ISharingOrder} from '../../interfaces/tidebit_defi_background/sharing_order';
 import {MOBILE_WIDTH} from '../../constants/display';
+import {ISocialMedia, ShareSettings, SocialMediaConstant} from '../../constants/social_media';
 
 interface IUseShareProcess {
   lockerName: string;
@@ -27,8 +28,14 @@ interface IShareToSocialMedia {
   size: string;
 }
 
+interface IShare {
+  socialMedia: ISocialMedia;
+  text?: string;
+  size?: string;
+}
+
 /**
- * @param lockerName: unique name `'filename_functionname'` `e.g.'history_position_modal.shareHandler'`
+ * @param lockerName: unique name `'file_name.function_name'` `e.g.'history_position_modal.shareHandler'`
  * @param cfd: for checking if the order from API is consistent with the order in the page
  */
 const useShareProcess = ({lockerName, shareType, shareId, cfd, enableShare}: IUseShareProcess) => {
@@ -45,8 +52,7 @@ const useShareProcess = ({lockerName, shareType, shareId, cfd, enableShare}: IUs
 
       case ShareType.RANK:
         // TODO: Share rank (20230524 - Shirley)
-        // TODO: Test (20230531 - Shirley)
-        shareUrl = `https://www.tidebit-defi.com/share/cfd/0x07d793fa5860c9435583c6dbf07b00a6`;
+        shareUrl = ``;
         return shareUrl;
 
       case ShareType.BADGE:
@@ -88,26 +94,41 @@ const useShareProcess = ({lockerName, shareType, shareId, cfd, enableShare}: IUs
     return false;
   };
 
-  const shareOn = ({url, appUrl, text, type, size}: IShareToSocialMedia) => {
-    const shareUrl = getPageUrl();
-    if (shareUrl === '') throw new CustomError(Code.NEED_SHARE_URL);
+  const share = async ({socialMedia, text, size}: IShare) => {
+    switch (socialMedia) {
+      case SocialMediaConstant.FACEBOOK:
+        await shareTo({
+          url: ShareSettings.FACEBOOK.URL,
+          appUrl: ShareSettings.FACEBOOK.APP_URL,
+          type: ShareSettings.FACEBOOK.TYPE,
+          text,
+          size: size ? size : ShareSettings.FACEBOOK.SIZE,
+        });
+        break;
 
-    if (navigator.userAgent.match(/Android/i) || navigator.userAgent.match(/iPhone|iPad|iPod/i)) {
-      // TODO: Share to FB on mobile (20230531 - Shirley)
-      // if (url.includes('facebook')) {
-      // }
-      const appShareUrl = `${appUrl}${encodeURIComponent(shareUrl)}`;
-      window.location.href = appShareUrl;
-    } else {
-      window.open(
-        `${url}${encodeURIComponent(shareUrl)}${text ? `${text}` : ''}`,
-        `${type}`,
-        `${size}`
-      );
+      case SocialMediaConstant.TWITTER:
+        await shareTo({
+          url: ShareSettings.TWITTER.URL,
+          appUrl: ShareSettings.TWITTER.APP_URL,
+          type: ShareSettings.TWITTER.TYPE,
+          text,
+          size: size ? size : ShareSettings.TWITTER.SIZE,
+        });
+        break;
+
+      case SocialMediaConstant.REDDIT:
+        await shareTo({
+          url: ShareSettings.REDDIT.URL,
+          appUrl: ShareSettings.REDDIT.APP_URL,
+          type: ShareSettings.REDDIT.TYPE,
+          text,
+          size: size ? size : ShareSettings.REDDIT.SIZE,
+        });
+        break;
     }
   };
 
-  const shareTo = async ({url, appUrl, text, type, size}: IShareToSocialMedia) => {
+  const shareTo = async ({url, appUrl, type, text, size}: IShareToSocialMedia) => {
     const [lock, unlock] = locker(lockerName);
     if (!lock()) return;
 
@@ -199,7 +220,26 @@ const useShareProcess = ({lockerName, shareType, shareId, cfd, enableShare}: IUs
     }
   };
 
-  return {shareTo};
+  const shareOn = ({url, appUrl, text, type, size}: IShareToSocialMedia) => {
+    const shareUrl = getPageUrl();
+    if (shareUrl === '') throw new CustomError(Code.NEED_SHARE_URL);
+
+    if (navigator.userAgent.match(/Android/i) || navigator.userAgent.match(/iPhone|iPad|iPod/i)) {
+      // TODO: Share to FB on mobile (20230531 - Shirley)
+      // if (url.includes('facebook')) {
+      // }
+      const appShareUrl = `${appUrl}${encodeURIComponent(shareUrl)}`;
+      window.location.href = appShareUrl;
+    } else {
+      window.open(
+        `${url}${encodeURIComponent(shareUrl)}${text ? `${text}` : ''}`,
+        `${type}`,
+        `${size}`
+      );
+    }
+  };
+
+  return {share};
 };
 
 export default useShareProcess;

@@ -30,82 +30,74 @@ const ReceiptSection = () => {
   }, []);
 
   useEffect(() => {
-    /* Todo: (20230412 - Julian)
-     * filter receipts by filteredDate #289 */
-    if (searches !== '') {
-      const searchResult = listHistories.filter(v => {
-        const orderType = v.receipt.orderSnapshot.orderType;
-        const targetAsset =
-          orderType === OrderType.CFD
-            ? (v.receipt.orderSnapshot as ICFDOrder).margin.asset
-            : orderType === OrderType.DEPOSIT
-            ? (v.receipt.orderSnapshot as IDepositOrder).targetAsset
-            : (v.receipt.orderSnapshot as IWithdrawOrder).targetAsset;
-        const targetAmount =
-          orderType === OrderType.CFD
-            ? (v.receipt.orderSnapshot as ICFDOrder).margin.amount
-            : orderType === OrderType.DEPOSIT
-            ? (v.receipt.orderSnapshot as IDepositOrder).targetAmount
-            : (v.receipt.orderSnapshot as IWithdrawOrder).targetAmount;
-        const result =
-          orderType.includes(searches || '') ||
-          targetAsset.toLocaleLowerCase().includes(searches || '') ||
-          targetAmount.toString().includes(searches || '');
-        return result;
-      });
-      setFilteredReceipts(searchResult);
-    } else if (filteredTradingType !== '') {
-      switch (filteredTradingType) {
-        case OrderType.DEPOSIT:
-          setFilteredReceipts(
-            listHistories.filter(v => {
+    const searchResult = listHistories
+      .filter(v => {
+        /* Info: (20230605 - Julian) Search by trading type
+         * if filteredTradingType is empty, return all */
+        if (filteredTradingType !== '') {
+          switch (filteredTradingType) {
+            case OrderType.DEPOSIT:
               return v.receipt.orderSnapshot.orderType === OrderType.DEPOSIT;
-            })
-          );
-          break;
-        case OrderType.WITHDRAW:
-          setFilteredReceipts(
-            listHistories.filter(v => {
+            case OrderType.WITHDRAW:
               return v.receipt.orderSnapshot.orderType === OrderType.WITHDRAW;
-            })
-          );
-          break;
-        case OrderState.OPENING:
-          setFilteredReceipts(
-            listHistories.filter(v => {
+            case OrderState.OPENING:
               return (
                 v.receipt.orderSnapshot.orderType === OrderType.CFD &&
                 (v.receipt.orderSnapshot as ICFDOrder).state === OrderState.OPENING
               );
-            })
-          );
-          break;
-        case OrderState.CLOSED:
-          setFilteredReceipts(
-            listHistories.filter(v => {
+            case OrderState.CLOSED:
               return (
                 v.receipt.orderSnapshot.orderType === OrderType.CFD &&
                 (v.receipt.orderSnapshot as ICFDOrder).state === OrderState.CLOSED
               );
-            })
-          );
-          break;
-        default:
-          setFilteredReceipts(listHistories);
-      }
-    } else if (filteredDate.length > 0) {
-      /* Info: (20230602 - Julian) from filteredDate[0] 00:00:00 to filteredDate[1] 23:59:59 */
-      const startTime = new Date(filteredDate[0]).getTime() / 1000;
-      const endTime = new Date(filteredDate[1]).getTime() / 1000 + 86399;
+            default:
+              return true;
+          }
+        } else {
+          return true;
+        }
+      })
+      .filter(v => {
+        /* Info: (20230605 - Julian) search by keyword
+         * include orderType, targetAsset, targetAmount, if searches is empty, return all */
+        if (searches.length > 0) {
+          const orderType = v.receipt.orderSnapshot.orderType;
+          const targetAsset =
+            orderType === OrderType.CFD
+              ? (v.receipt.orderSnapshot as ICFDOrder).margin.asset
+              : orderType === OrderType.DEPOSIT
+              ? (v.receipt.orderSnapshot as IDepositOrder).targetAsset
+              : (v.receipt.orderSnapshot as IWithdrawOrder).targetAsset;
+          const targetAmount =
+            orderType === OrderType.CFD
+              ? (v.receipt.orderSnapshot as ICFDOrder).margin.amount
+              : orderType === OrderType.DEPOSIT
+              ? (v.receipt.orderSnapshot as IDepositOrder).targetAmount
+              : (v.receipt.orderSnapshot as IWithdrawOrder).targetAmount;
 
-      setFilteredReceipts(
-        listHistories.filter(v => {
+          const result =
+            orderType.toLocaleLowerCase().includes(searches) ||
+            targetAsset.toLocaleLowerCase().includes(searches) ||
+            targetAmount.toString().includes(searches);
+          return result;
+        } else {
+          return true;
+        }
+      })
+      .filter(v => {
+        if (filteredDate.length > 0) {
+          /* Info: (20230602 - Julian) search by date
+           * from filteredDate[0] 00:00:00 to filteredDate[1] 23:59:59, if filteredDate is empty, return all */
+          const startTime = new Date(filteredDate[0]).getTime() / 1000;
+          const endTime = new Date(filteredDate[1]).getTime() / 1000 + 86399;
+
           return v.createTimestamp >= startTime && v.createTimestamp <= endTime;
-        })
-      );
-    } else if (filteredTradingType === '' && searches === '' && filteredDate.length <= 0) {
-      setFilteredReceipts(listHistories);
-    }
+        } else {
+          return true;
+        }
+      });
+
+    setFilteredReceipts(searchResult);
   }, [filteredTradingType, searches, filteredDate]);
 
   const dataMonthList = filteredReceipts

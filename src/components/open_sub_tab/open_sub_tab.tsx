@@ -7,7 +7,7 @@ import {roundToDecimalPlaces, toDisplayCFDOrder} from '../../lib/common';
 import {IDisplayCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
 import {TypeOfPosition} from '../../constants/type_of_position';
 //import useStateRef from 'react-usestateref';
-import {DEFAULT_SPREAD, SKELETON_DISPLAY_TIME} from '../../constants/display';
+import {SKELETON_DISPLAY_TIME} from '../../constants/display';
 import {defaultResultFailed} from '../../interfaces/tidebit_defi_background/result';
 import {ITickerLiveStatistics} from '../../interfaces/tidebit_defi_background/ticker_live_statistics';
 
@@ -61,8 +61,8 @@ const OpenSubTab = () => {
       });
 
       const tickerPrice = marketCtx.availableTickers[cfd.targetAsset]?.price;
-      // ToDo: (20230602 - Julian) 算出點差後帶入 toDisplayCFDOrder()
-      //const spread = getTickerSpread(cfd.targetAsset);
+      const spread = getTickerSpread(cfd.targetAsset);
+
       const buyPrice = !!tickerPrice ? roundToDecimalPlaces(tickerPrice, 2) : 0;
       const sellPrice = !!tickerPrice ? roundToDecimalPlaces(tickerPrice, 2) : 0;
       /**
@@ -83,7 +83,7 @@ const OpenSubTab = () => {
         cfd,
         positionLineGraph,
         currentPrice,
-        DEFAULT_SPREAD
+        Number(spread)
       );
 
       return displayCFD;

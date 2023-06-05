@@ -140,15 +140,15 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
             const updateCfd = order as ICFDOrder;
             /* Info: (20230602 - Julian) 拿到該 ticker 的當前價格 */
             const tickerPrice = marketCtx.availableTickers[updateCfd.targetAsset]?.price;
-            const buyPrice = !!tickerPrice ? roundToDecimalPlaces(tickerPrice, 2) : 0;
-            const sellPrice = !!tickerPrice ? roundToDecimalPlaces(tickerPrice, 2) : 0;
             const currentPrice =
+              (!!tickerPrice &&
+                ((updateCfd.typeOfPosition === TypeOfPosition.BUY &&
+                  roundToDecimalPlaces(tickerPrice, 2)) ||
+                  (updateCfd.typeOfPosition === TypeOfPosition.SELL &&
+                    roundToDecimalPlaces(tickerPrice, 2)))) ||
               positionLineGraph.length > 0
                 ? positionLineGraph[positionLineGraph.length - 1]
-                : (!!tickerPrice &&
-                    ((updateCfd.typeOfPosition === TypeOfPosition.BUY && buyPrice) ||
-                      (updateCfd.typeOfPosition === TypeOfPosition.SELL && sellPrice))) ||
-                  0;
+                : 0;
             const cfdData = toDisplayCFDOrder(updateCfd, positionLineGraph, currentPrice);
 
             globalCtx.dataUpdateFormModalHandler(cfdData);

@@ -73,14 +73,13 @@ const OpenSubTabMobile = () => {
          * (OpenPositionItem & UpdateFormModal)
          */
         const currentPrice =
+          (!!tickerPrice &&
+            ((cfd.typeOfPosition === TypeOfPosition.BUY && roundToDecimalPlaces(tickerPrice, 2)) ||
+              (cfd.typeOfPosition === TypeOfPosition.SELL &&
+                roundToDecimalPlaces(tickerPrice, 2)))) ||
           positionLineGraph.length > 0
             ? positionLineGraph[positionLineGraph.length - 1]
-            : (!!tickerPrice &&
-                ((cfd.typeOfPosition === TypeOfPosition.BUY &&
-                  roundToDecimalPlaces(tickerPrice, 2)) ||
-                  (cfd.typeOfPosition === TypeOfPosition.SELL &&
-                    roundToDecimalPlaces(tickerPrice, 2)))) ||
-              0;
+            : 0;
 
         const displayCFD: IDisplayCFDOrder = toDisplayCFDOrder(
           cfd,

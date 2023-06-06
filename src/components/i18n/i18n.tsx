@@ -1,21 +1,14 @@
-import {Dispatch, SetStateAction, useState} from 'react';
 import {useRouter} from 'next/router';
 import Link from 'next/link';
 import useOuterClick from '../../lib/hooks/use_outer_click';
 import {useTranslation} from 'next-i18next';
 
 type TranslateFunction = (s: string) => string;
-interface II18nParams {
-  langIsOpen?: boolean;
-  setLangIsOpen?: Dispatch<SetStateAction<boolean>>;
-}
 
-const I18n = ({langIsOpen, setLangIsOpen}: II18nParams) => {
+const I18n = () => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
-  /*   const [openMenu, setOpenMenu] =
-    typeof setLangIsOpen !== 'function' ? useState(false) : [langIsOpen, setLangIsOpen]; */
 
-  const {locale, locales, defaultLocale, asPath} = useRouter();
+  const {asPath} = useRouter();
   const {
     targetRef: globalRef,
     componentVisible: globalVisible,
@@ -23,7 +16,6 @@ const I18n = ({langIsOpen, setLangIsOpen}: II18nParams) => {
   } = useOuterClick<HTMLDivElement>(false);
 
   const clickHandler = () => {
-    //setOpenMenu(!openMenu);
     setGlobalVisible(!globalVisible);
   };
 
@@ -37,8 +29,8 @@ const I18n = ({langIsOpen, setLangIsOpen}: II18nParams) => {
     <div className="hidden lg:flex">
       <div
         id="i18nDropdown"
-        className={`absolute right-40 top-16 z-10 w-150px ${
-          globalVisible ? 'opacity-100' : 'opacity-0'
+        className={`absolute right-32 top-16 z-10 w-150px ${
+          globalVisible ? 'visible opacity-100' : 'invisible opacity-0'
         } divide-y divide-lightGray rounded-none bg-darkGray shadow transition-all duration-300`}
       >
         <ul className="mx-3 py-1 pb-3 text-base text-gray-200" aria-labelledby="i18nButton">

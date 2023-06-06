@@ -163,8 +163,7 @@ const UpdateFormModal = ({
   );
 
   const guaranteedCheckedChangeHandler = () => {
-    const isValidInput = validateInput();
-    if (!isValidInput) return;
+    validateInput();
 
     if (!openCfdDetails.guaranteedStop) {
       setGuaranteedChecked(!guaranteedChecked);

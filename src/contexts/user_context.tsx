@@ -1194,7 +1194,7 @@ export const UserProvider = ({children}: IUserProvider) => {
       // const balance: IBalance | null = getBalance(openCFDs[index].targetAsset);
       const transferR = transactionEngine.transferCFDOrderToTransaction(applyCloseCFDOrder);
       if (!transferR.success) throw new CustomError(Code.FAILED_TO_CREATE_TRANSACTION);
-      // ++ TODO: send request to chain(use Lunar?) (20230324 - tzuhan)
+      // TODO: send request to chain(use Lunar?) (20230324 - tzuhan)
       const signature: string = await lunar.signTypedData(transferR.data);
       /* Info: (20230505 - Julian) 需要再驗證一次簽名是否正確 */
       const success = lunar.verifyTypedData(transferR.data, signature);
@@ -1307,7 +1307,7 @@ export const UserProvider = ({children}: IUserProvider) => {
       if (index === -1) throw new CustomError(Code.CFD_ORDER_NOT_FOUND);
       const transferR = transactionEngine.transferCFDOrderToTransaction(applyUpdateCFDOrder);
       if (!transferR.success) throw new CustomError(Code.FAILED_TO_CREATE_TRANSACTION);
-      // ++ TODO: send request to chain(use Lunar?) (20230324 - tzuhan)
+      // TODO: send request to chain(use Lunar?) (20230324 - tzuhan)
       const signature: string = await lunar.signTypedData(transferR.data);
       /* Info: (20230505 - Julian) 需要再驗證一次簽名是否正確 */
       const success = lunar.verifyTypedData(transferR.data, signature);
@@ -1432,8 +1432,6 @@ export const UserProvider = ({children}: IUserProvider) => {
               };
               setWithdraws(prev => [...prev, withdrawOrder]);
               updateBalance(balanceSnapshot);
-              // setHistories(prev => [...prev, acceptedWithdrawOrder]);
-
               result.code = Code.SUCCESS;
               result = {
                 success: success,
@@ -1667,10 +1665,10 @@ export const UserProvider = ({children}: IUserProvider) => {
   );
   React.useMemo(
     () =>
-      notificationCtx.emitter.on(TideBitEvent.TICKER_CHANGE, (ticker: ITickerData) => {
+      notificationCtx.emitter.on(TideBitEvent.TICKER_CHANGE, async (ticker: ITickerData) => {
         if (!selectedTickerRef.current || ticker.instId !== selectedTickerRef.current?.instId) {
           setSelectedTicker(ticker);
-          listCFDs(ticker?.currency);
+          await listCFDs(ticker?.currency);
         }
       }),
     []

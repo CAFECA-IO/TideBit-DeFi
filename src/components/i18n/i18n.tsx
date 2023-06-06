@@ -12,18 +12,19 @@ interface II18nParams {
 
 const I18n = ({langIsOpen, setLangIsOpen}: II18nParams) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
-  const [openMenu, setOpenMenu] =
-    typeof setLangIsOpen !== 'function' ? useState(false) : [langIsOpen, setLangIsOpen];
+  /*   const [openMenu, setOpenMenu] =
+    typeof setLangIsOpen !== 'function' ? useState(false) : [langIsOpen, setLangIsOpen]; */
 
   const {locale, locales, defaultLocale, asPath} = useRouter();
   const {
     targetRef: globalRef,
-    componentVisible,
-    setComponentVisible,
+    componentVisible: globalVisible,
+    setComponentVisible: setGlobalVisible,
   } = useOuterClick<HTMLDivElement>(false);
 
   const clickHandler = () => {
-    setOpenMenu(!openMenu);
+    //setOpenMenu(!openMenu);
+    setGlobalVisible(!globalVisible);
   };
 
   const internationalizationList = [
@@ -37,7 +38,7 @@ const I18n = ({langIsOpen, setLangIsOpen}: II18nParams) => {
       <div
         id="i18nDropdown"
         className={`absolute right-40 top-16 z-10 w-150px ${
-          openMenu ? 'opacity-100' : 'opacity-0'
+          globalVisible ? 'opacity-100' : 'opacity-0'
         } divide-y divide-lightGray rounded-none bg-darkGray shadow transition-all duration-300`}
       >
         <ul className="mx-3 py-1 pb-3 text-base text-gray-200" aria-labelledby="i18nButton">
@@ -59,7 +60,9 @@ const I18n = ({langIsOpen, setLangIsOpen}: II18nParams) => {
 
   const displayedMobileMenu = (
     <div
-      className={`transition-all duration-300 ${openMenu ? 'opacity-100' : 'opacity-0'} lg:hidden`}
+      className={`transition-all duration-300 ${
+        globalVisible ? 'opacity-100' : 'opacity-0'
+      } lg:hidden`}
     >
       <div
         id="i18nDropdown"
@@ -82,16 +85,8 @@ const I18n = ({langIsOpen, setLangIsOpen}: II18nParams) => {
     </div>
   );
 
-  const displayedCover = openMenu ? (
-    <div
-      className="absolute left-0 top-0 hidden h-screen w-screen lg:flex"
-      onClick={clickHandler}
-    ></div>
-  ) : null;
-
   const displayedI18n = (
     <>
-      {displayedCover}
       <div className="hidden lg:flex">
         <div
           ref={globalRef}

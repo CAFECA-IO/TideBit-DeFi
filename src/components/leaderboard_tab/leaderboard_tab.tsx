@@ -96,12 +96,12 @@ const LeaderboardTab = ({timeSpan, setTimeSpan, rankings}: LeaderboardTabProps) 
   }, []);
 
   const displayPnl = (pnl: IPnL) =>
-    pnl.type === ProfitState.PROFIT ? (
+    pnl?.type === ProfitState.PROFIT ? (
       <div className={TypeOfPnLColor.PROFIT}>+ {numberFormatted(pnl.value)}</div>
-    ) : pnl.type === ProfitState.LOSS ? (
+    ) : pnl?.type === ProfitState.LOSS ? (
       <div className={TypeOfPnLColor.LOSS}>- {numberFormatted(pnl.value)}</div>
     ) : (
-      <div className={TypeOfPnLColor.EQUAL}>{numberFormatted(pnl.value)}</div>
+      <div className={TypeOfPnLColor.EQUAL}>{numberFormatted(pnl?.value || 0)}</div>
     );
 
   const defaultTop3Data = {
@@ -169,10 +169,10 @@ const LeaderboardTab = ({timeSpan, setTimeSpan, rankings}: LeaderboardTabProps) 
       rank <= 0
         ? defaultTop3Data
         : {
-            name: rankingData[rank - 1].userName,
-            id: rankingData[rank - 1].userId,
-            avatar: rankingData[rank - 1].userAvatar ?? DEFAULT_USER_AVATAR,
-            displayedPnl: displayPnl(rankingData[rank - 1].cumulativePnl),
+            name: rankingData[rank - 1]?.userName,
+            id: rankingData[rank - 1]?.userId,
+            avatar: rankingData[rank - 1]?.userAvatar ?? DEFAULT_USER_AVATAR,
+            displayedPnl: displayPnl(rankingData[rank - 1]?.cumulativePnl),
           };
     return {...top3[sorted], userData};
   });

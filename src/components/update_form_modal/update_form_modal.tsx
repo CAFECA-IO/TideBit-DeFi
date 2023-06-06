@@ -163,11 +163,12 @@ const UpdateFormModal = ({
   );
 
   const guaranteedCheckedChangeHandler = () => {
+    const isValidInput = validateInput();
+    if (!isValidInput) return;
+
     if (!openCfdDetails.guaranteedStop) {
       setGuaranteedChecked(!guaranteedChecked);
       setSlToggle(true);
-      setSlLowerLimit(0);
-      setSlUpperLimit(Infinity);
 
       return;
     } else {
@@ -426,28 +427,85 @@ const UpdateFormModal = ({
     setEstimatedLossValue(loss);
   };
 
+  const validateInput = () => {
+    let isTpValid = true;
+    let isSlValid = true;
+
+    if (tpToggleRef.current) {
+      if (
+        openCfdDetails.typeOfPosition === TypeOfPosition.BUY &&
+        (tpValueRef.current > tpUpperLimitRef.current ||
+          tpValueRef.current < tpLowerLimitRef.current)
+      ) {
+        isTpValid = false;
+      } else if (
+        openCfdDetails.typeOfPosition === TypeOfPosition.SELL &&
+        (tpValueRef.current < tpUpperLimitRef.current ||
+          tpValueRef.current > tpLowerLimitRef.current)
+      ) {
+        isTpValid = false;
+      }
+    }
+
+    // TODO: dev (20230606 - Shirley)
+    // eslint-disable-next-line no-console
+    console.log(
+      'slUpperLimitRef.current',
+      slUpperLimitRef.current,
+      'slLowerLimitRef.current',
+      slLowerLimitRef.current,
+      'slValueRef.current',
+      slValueRef.current
+    );
+
+    if (slToggleRef.current) {
+      if (
+        openCfdDetails.typeOfPosition === TypeOfPosition.BUY &&
+        (slValueRef.current > slUpperLimitRef.current ||
+          slValueRef.current < slLowerLimitRef.current)
+      ) {
+        isSlValid = false;
+      } else if (
+        openCfdDetails.typeOfPosition === TypeOfPosition.SELL &&
+        (slValueRef.current < slUpperLimitRef.current ||
+          slValueRef.current > slLowerLimitRef.current)
+      ) {
+        isSlValid = false;
+      }
+    }
+    // TODO: dev (20230606 - Shirley)
+    // eslint-disable-next-line no-console
+    console.log('isTpValid', isTpValid, 'isSlValid', isSlValid);
+
+    if (isTpValid && isSlValid) {
+      const valid = true;
+
+      return valid;
+    } else {
+      const valid = false;
+
+      return valid;
+    }
+  };
+
   const compareChange = () => {
     if (tpToggleRef.current && tpValueRef.current !== openCfdDetails?.takeProfit) {
       setSubmitDisabled(false);
       calculateProfit();
-    }
-
-    if (slToggleRef.current && slValueRef.current !== openCfdDetails?.stopLoss) {
+    } else if (slToggleRef.current && slValueRef.current !== openCfdDetails?.stopLoss) {
       setSubmitDisabled(false);
       calculateLoss();
-    }
-
-    if (tpToggleRef.current !== initialTpToggle) {
+    } else if (
+      tpToggleRef.current !== initialTpToggle ||
+      slToggleRef.current !== initialSlToggle ||
+      guaranteedpCheckedRef.current !== openCfdDetails?.guaranteedStop
+    ) {
       setSubmitDisabled(false);
     }
 
-    if (slToggleRef.current !== initialSlToggle) {
-      setSubmitDisabled(false);
-    }
-
-    if (guaranteedpCheckedRef.current !== openCfdDetails?.guaranteedStop) {
-      setSubmitDisabled(false);
-    }
+    // TODO: dev (20230606 - Shirley)
+    // eslint-disable-next-line no-console
+    console.log('compareChange, submitDisable', submitDisabledRef.current);
   };
 
   const nowTimestamp = getTimestamp();
@@ -574,7 +632,11 @@ const UpdateFormModal = ({
 
   useEffect(() => {
     setSubmitDisabled(true);
-    compareChange();
+    const isValidInput = validateInput();
+
+    if (isValidInput) {
+      compareChange();
+    }
   }, [
     tpValueRef.current,
     slValueRef.current,
@@ -584,6 +646,8 @@ const UpdateFormModal = ({
   ]);
 
   useEffect(() => {
+    setSubmitDisabled(true);
+
     initPosition();
   }, [globalCtx.visibleUpdateFormModal]);
 

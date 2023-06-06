@@ -236,7 +236,7 @@ const TradeTab = () => {
     setShortPrice(sellPrice);
   };
 
-  // TODO: To get quotation to let user sign, if fail, make the quotation itself with already expired deadline
+  // Info: To get quotation to let user sign, if fail, make the quotation itself with already expired deadline (20230606 - Shirley)
   const getQuotation = async (tickerId: string) => {
     let longQuotation = {...defaultResultFailed};
     let shortQuotation = {...defaultResultFailed};
@@ -606,6 +606,8 @@ const TradeTab = () => {
   };
 
   const longOrderSubmitHandler = async () => {
+    checkTpSlWithinBounds();
+
     const {longOrder} = await toApplyCreateOrder();
 
     globalCtx.dataPositionOpenModalHandler({

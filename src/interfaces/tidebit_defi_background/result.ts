@@ -4,6 +4,7 @@ import {IBadge} from './badge';
 import {IBalance} from './balance';
 import {ICandlestickData, ITrade} from './candlestickData';
 import {ICryptocurrency} from './cryptocurrency';
+import {IRanking} from './leaderboard';
 import {IDepositOrder, IOrder} from './order';
 import {IPersonalAchievement} from './personal_achievement';
 import {IPersonalRanking} from './personal_ranking';
@@ -50,6 +51,7 @@ export interface IResult {
     | IPersonalRanking
     | IPersonalAchievement
     | IBadge
+    | IRanking[]
     | null;
   code: ICode;
   reason?: string;

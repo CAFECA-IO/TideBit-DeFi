@@ -21,7 +21,7 @@ import {Code} from '../../constants/code';
 import {useRouter} from 'next/router';
 import useShareProcess from '../../lib/hooks/use_share_process';
 import {ShareType} from '../../constants/share_type';
-import {ShareSettings, SocialMedia, SocialMediaConstant} from '../../constants/social_media';
+import {ISocialMedia, ShareSettings, SocialMediaConstant} from '../../constants/social_media';
 
 type TranslateFunction = (s: string) => string;
 interface IHistoryPositionModal {
@@ -95,7 +95,7 @@ const HistoryPositionModal = ({
   const openTime = timestampToString(closedCfdDetails.createTimestamp ?? 0);
   const closedTime = timestampToString(closedCfdDetails?.closeTimestamp ?? 0);
 
-  const {shareTo} = useShareProcess({
+  const {share} = useShareProcess({
     lockerName: 'history_position_modal.shareHandler',
     cfd: closedCfdDetails,
     shareType: ShareType.CFD,
@@ -240,15 +240,7 @@ const HistoryPositionModal = ({
           {Object.entries(ShareSettings).map(([key, value]) => (
             <div key={key} className={`${socialMediaStyle}`}>
               <Image
-                onClick={() =>
-                  shareTo({
-                    url: value.URL,
-                    appUrl: value.APP_URL,
-                    text: value.TEXT,
-                    type: value.TYPE,
-                    size: value.SIZE,
-                  })
-                }
+                onClick={() => share({socialMedia: key as ISocialMedia, text: value.TEXT})}
                 src={value.ICON}
                 width={44}
                 height={44}

@@ -40,6 +40,9 @@ module.exports = {
       '3xl': '1600px',
     },
     extend: {
+      textDecorationThickness: {
+        2: '2px',
+      },
       zIndex: {
         '60': '60',
         '70': '70',
@@ -71,7 +74,7 @@ module.exports = {
         '1200px': '1200px',
       },
       minHeight: {
-        '160px': '160px',
+        '140px': '140px',
         '420px': '420px',
         '600px': '600px',
       },
@@ -266,6 +269,8 @@ module.exports = {
         '80vh': '80vh',
         '95vh': '95vh',
 
+        '70vw': '70vw',
+        '85vw': '85vw',
         '90vw': '90vw',
       },
       margin: {

@@ -33,7 +33,7 @@ const PopulateDates = ({
   selectDate,
 }: IPopulateDatesParams) => {
   const formatDaysInMonth = daysInMonth.map((el: Dates) => {
-    const date = el ? new Date(`${selectedYear}/${selectedMonth + 1}/${el.date}`) : null;
+    const date = el ? new Date(`${selectedYear}/${selectedMonth}/${el.date}`) : null;
     const isSelected = date?.getTime() && el.date === selectedTime ? true : false;
 
     const formatDate = el?.date !== undefined ? (el.date < 10 ? `0${el.date}` : `${el.date}`) : ' ';
@@ -59,7 +59,7 @@ const PopulateDates = ({
 };
 
 const DatePicker = ({date, minDate, maxDate, setDate}: IDatePickerProps) => {
-  const [selectedMonth, setSelectedMonth] = useState(date.getMonth()); // 0 (January) to 11 (December).
+  const [selectedMonth, setSelectedMonth] = useState(date.getMonth() + 1); // 0 (January) to 11 (December).
   const [selectedYear, setSelectedYear] = useState(date.getFullYear());
   const [openDates, setOpenDates] = useState(false);
 
@@ -67,13 +67,14 @@ const DatePicker = ({date, minDate, maxDate, setDate}: IDatePickerProps) => {
     return <div key={v}>{v}</div>;
   });
 
+  // Info: (20230601 - Julian) 取得該月份第一天是星期幾
   const firstDayOfMonth = (year: number, month: number) => {
     return new Date(`${year}/${month}/01`).getDay();
   };
 
   const daysInMonth = (year: number, month: number) => {
     const day = firstDayOfMonth(year, month);
-    const dateLength = new Date(`${year}/${month + 1}/00`).getDate();
+    const dateLength = new Date(year, month, 0).getDate();
     let dates: Dates[] = [];
     for (let i = 0; i < dateLength; i++) {
       const dateTime = new Date(`${year}/${month + 1}/${i + 1}`).getTime();
@@ -98,15 +99,6 @@ const DatePicker = ({date, minDate, maxDate, setDate}: IDatePickerProps) => {
     }
     dates = Array(...Array(day)).concat(dates);
     return dates;
-  };
-
-  const formatDate = (obj: Date) => {
-    const day = obj.getDate();
-    const month = obj.getMonth() + 1;
-    const formatDay = day < 10 ? '0' + day : `${day}`;
-    const formatMonth = month < 10 ? '0' + month : `${month}`;
-    const year = obj.getFullYear();
-    return year + '-' + formatMonth + '-' + formatDay;
   };
 
   const goToNextMonth = useCallback(() => {
@@ -147,6 +139,15 @@ const DatePicker = ({date, minDate, maxDate, setDate}: IDatePickerProps) => {
     setOpenDates(!openDates);
   };
 
+  const formatDate = (obj: Date) => {
+    const day = obj.getDate();
+    const month = obj.getMonth();
+    const formatDay = day < 10 ? '0' + day : `${day}`;
+    const formatMonth = month < 10 ? '0' + month : `${month}`;
+    const year = obj.getFullYear();
+    return year + '-' + formatMonth + '-' + formatDay;
+  };
+
   return (
     <div
       className={`relative flex h-48px flex-col items-start justify-center transition-all duration-200 ease-in-out ${
@@ -167,7 +168,9 @@ const DatePicker = ({date, minDate, maxDate, setDate}: IDatePickerProps) => {
         }`}
       >
         <div className="flex items-center justify-between py-2">
-          <div className="text-2xl">{`${MONTH_FULL_NAME_LIST[selectedMonth]} ${selectedYear}`}</div>
+          <div className="text-2xl">{`${
+            MONTH_FULL_NAME_LIST[selectedMonth - 1]
+          } ${selectedYear}`}</div>
           <div className="flex">
             <div
               className="h-10px w-10px rotate-45 border-b-2 border-l-2 border-lightWhite"
@@ -186,7 +189,7 @@ const DatePicker = ({date, minDate, maxDate, setDate}: IDatePickerProps) => {
 
         <PopulateDates
           daysInMonth={daysInMonth(selectedYear, selectedMonth)}
-          selectedTime={new Date(formatDate(date).replace(/-/g, '/')).getDate()}
+          selectedTime={date.getDate()}
           selectedYear={selectedYear}
           selectedMonth={selectedMonth}
           selectDate={selectDate}

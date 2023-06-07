@@ -25,10 +25,10 @@ const ServiceTerm: IEIP712Data = {
     from: '0xCAFECAAd15f96E1EfcD846e1ae27115645C6D606',
     to: 'TideBit-DeFi',
     */
-    domain: 'https://www.tidebit-defi.com',
+    domain: 'https://tidebit-defi.com',
     agree: [
-      'https://www.tidebit-defi.com/term_of_service/{hash}',
-      'https://www.tidebit-defi.com/private_policy/{hash}',
+      'https://tidebit-defi.com/term_of_service/{hash}',
+      'https://tidebit-defi.com/private_policy/{hash}',
     ],
     signer: '0xfc657dAf7D901982a75ee4eCD4bDCF93bd767CA4',
     // expired: getTimestamp() + 3600,

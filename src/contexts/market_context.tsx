@@ -154,7 +154,6 @@ export const MarketContext = createContext<IMarketContext>({
     throw new Error('Function not implemented.');
   },
   getTickerLiveStatistics: () => Promise.resolve(defaultResultSuccess),
-  getLeaderboard: () => null,
   /** Deprecated: replaced by pusher (20230424 - tzuhan)
    getTickerHistory: (): IResult => {
      throw new CustomError(Code.FUNCTION_NOT_IMPLEMENTED);

@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext} from 'react';
 import Link from 'next/link';
 import {UserContext} from '../../contexts/user_context';
 import {ImExit} from 'react-icons/im';
@@ -9,21 +9,26 @@ import {accountTruncate} from '../../lib/common';
 import {useGlobal} from '../../contexts/global_context';
 import {useTranslation} from 'next-i18next';
 import {TBDURL} from '../../constants/api_request';
+import useOuterClick from '../../lib/hooks/use_outer_click';
 
 type TranslateFunction = (s: string) => string;
 
 const User = () => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
+  const {
+    targetRef: userRef,
+    componentVisible: userVisible,
+    setComponentVisible: setUserVisible,
+  } = useOuterClick<HTMLDivElement>(false);
+
   const userCtx = useContext(UserContext);
   const globalCtx = useGlobal();
-
-  const [avatarMenuVisible, setAvatarMenuVisible] = useState(false);
 
   const username = userCtx.user?.address?.slice(-1).toUpperCase();
 
   const avatarClickHandler = () => {
-    setAvatarMenuVisible(!avatarMenuVisible);
+    setUserVisible(!userVisible);
   };
 
   const depositClickHandler = () => {
@@ -37,8 +42,9 @@ const User = () => {
   const isDisplayedAvatarMenu = userCtx.user?.address ? (
     <div
       id="userDropdown"
-      className={`avatarMenuShadow absolute right-8 top-16 -z-10 flex w-285px flex-col ${
-        avatarMenuVisible ? 'translate-y-0 opacity-100' : '-translate-y-450px opacity-0'
+      ref={userRef}
+      className={`avatarMenuShadow absolute right-8 top-16 z-10 flex w-285px flex-col ${
+        userVisible ? 'translate-y-0 opacity-100' : '-translate-y-450px opacity-0'
       } divide-y divide-lightGray rounded-none bg-darkGray shadow transition-all duration-300 ease-in`}
     >
       {/* Info: (20230327 - Julian) Avatar Section */}
@@ -129,7 +135,8 @@ const User = () => {
 
   return (
     <div>
-      {isDisplayedUserAvatar} {isDisplayedAvatarMenu}
+      {isDisplayedUserAvatar}
+      {isDisplayedAvatarMenu}
     </div>
   );
 };

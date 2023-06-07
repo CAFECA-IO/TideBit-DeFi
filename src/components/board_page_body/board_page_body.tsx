@@ -3,7 +3,10 @@ import LeaderboardTab from '../leaderboard_tab/leaderboard_tab';
 import Footer from '../footer/footer';
 import {RankingInterval} from '../../constants/ranking_time_span';
 import {MarketContext} from '../../contexts/market_context';
-import {defaultLeaderboard} from '../../interfaces/tidebit_defi_background/leaderboard';
+import {
+  ILeaderboard,
+  defaultLeaderboard,
+} from '../../interfaces/tidebit_defi_background/leaderboard';
 import {timestampToString} from '../../lib/common';
 import Skeleton, {SkeletonTheme} from 'react-loading-skeleton';
 import {SKELETON_DISPLAY_TIME} from '../../constants/display';
@@ -28,7 +31,14 @@ const BoardPageBody = () => {
   }, []);
 
   useEffect(() => {
-    setLeaderboardData(marketCtx.getLeaderboard(timeSpan) ?? defaultLeaderboard);
+    marketCtx
+      .getLeaderboard(timeSpan)
+      .then(result => {
+        setLeaderboardData(result.success ? (result.data as ILeaderboard) : defaultLeaderboard);
+      })
+      .catch(() => {
+        setLeaderboardData(defaultLeaderboard);
+      });
   }, [timeSpan]);
 
   useEffect(() => {

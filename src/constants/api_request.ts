@@ -20,6 +20,7 @@ export type IAPIName =
   | 'GET_WEBSITE_RESERVE'
   | 'GET_RANKING'
   | 'GET_PERSONAL_ACHIEVEMENT'
+  | 'GET_LEADERBOARD'
   // market
   | 'LIST_CURRENCIES'
   | 'LIST_TICKERS'
@@ -85,6 +86,7 @@ export interface IAPINameConstant {
   GET_WEBSITE_RESERVE: IAPIName;
   GET_RANKING: IAPIName;
   GET_PERSONAL_ACHIEVEMENT: IAPIName;
+  GET_LEADERBOARD: IAPIName;
   // market
   LIST_CURRENCIES: IAPIName;
   LIST_TICKERS: IAPIName;
@@ -151,6 +153,7 @@ export const APIName: IAPINameConstant = {
   GET_WEBSITE_RESERVE: 'GET_WEBSITE_RESERVE',
   GET_RANKING: 'GET_RANKING',
   GET_PERSONAL_ACHIEVEMENT: 'GET_PERSONAL_ACHIEVEMENT',
+  GET_LEADERBOARD: 'GET_LEADERBOARD',
   // market
   LIST_CURRENCIES: 'LIST_CURRENCIES',
   LIST_TICKERS: 'LIST_TICKERS',
@@ -218,6 +221,7 @@ export const APIURL = {
   GET_WEBSITE_RESERVE: `${API_URL}/public/reserve`,
   GET_RANKING: `${API_URL}/public/ranking`,
   GET_PERSONAL_ACHIEVEMENT: `${API_URL}/public/achievement`,
+  GET_LEADERBOARD: `${API_URL}/public/leaderboard`,
   // market
   LIST_CURRENCIES: `${API_URL}/currencies`,
   LIST_TICKERS: `${API_URL}/market/tickers`,

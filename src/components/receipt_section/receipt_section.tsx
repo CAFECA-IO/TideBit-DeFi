@@ -17,7 +17,15 @@ import {
 const ReceiptSection = () => {
   const userCtx = useContext(UserContext);
 
-  const listHistories = userCtx.histories;
+  const listHistories: IAcceptedOrder[] = userCtx.histories.map(v => {
+    return {
+      ...v,
+      isClosed: false,
+    };
+  });
+
+  /* Info: (20230605 - Julian) 用於 isClosed 的判斷 */
+  const [receipts, setReceipts] = useState<IAcceptedOrder[]>(listHistories);
 
   const [searches, setSearches] = useState('');
   const [filteredTradingType, setFilteredTradingType] = useState('');
@@ -30,61 +38,100 @@ const ReceiptSection = () => {
   }, []);
 
   useEffect(() => {
-    /* Todo: (20230412 - Julian)
-     * filter receipts by filteredDate #289 */
-    if (searches !== '') {
-      const searchResult = listHistories.filter(v => {
-        const orderType = v.receipt.orderSnapshot.orderType;
-        const targetAsset =
-          orderType === OrderType.CFD
-            ? (v.receipt.orderSnapshot as ICFDOrder).margin.asset
-            : orderType === OrderType.DEPOSIT
-            ? (v.receipt.orderSnapshot as IDepositOrder).targetAsset
-            : (v.receipt.orderSnapshot as IWithdrawOrder).targetAsset;
-        const targetAmount =
-          orderType === OrderType.CFD
-            ? (v.receipt.orderSnapshot as ICFDOrder).margin.amount
-            : orderType === OrderType.DEPOSIT
-            ? (v.receipt.orderSnapshot as IDepositOrder).targetAmount
-            : (v.receipt.orderSnapshot as IWithdrawOrder).targetAmount;
-        const result =
-          orderType.includes(searches || '') ||
-          targetAsset.toLocaleLowerCase().includes(searches || '') ||
-          targetAmount.toString().includes(searches || '');
-        return result;
+    /* Info: (20230605 - Julian)
+     * 1. 先將已關閉的 CFD 訂單列出來
+     * 2. 再去找出 txhash 一樣的訂單，並將 isClosed 設為 true */
+    const closedReceipts = listHistories.filter(v => {
+      return (
+        v.receipt.orderSnapshot.orderType === OrderType.CFD &&
+        (v.receipt.orderSnapshot as ICFDOrder).state === OrderState.CLOSED
+      );
+    });
+
+    const result = listHistories.map(v => {
+      const isClosed = closedReceipts.some(closed => {
+        return closed.receipt.orderSnapshot.id === v.receipt.orderSnapshot.id;
       });
-      setFilteredReceipts(searchResult);
-    } else if (filteredTradingType === '' && searches === '') {
-      setFilteredReceipts(listHistories);
-    } else if (filteredTradingType === OrderType.DEPOSIT) {
-      setFilteredReceipts(
-        listHistories.filter(v => {
+      const d = {
+        ...v,
+        isClosed,
+      };
+      return d;
+    });
+
+    setReceipts(result);
+  }, [userCtx.histories]);
+
+  useEffect(() => {
+    const searchResult = receipts
+      .filter(v => {
+        /* Info: (20230605 - Julian) Search by trading type
+         * if filteredTradingType is empty, return all */
+        if (filteredTradingType !== '') {
+          switch (filteredTradingType) {
+            case OrderType.DEPOSIT:
+              return v.receipt.orderSnapshot.orderType === OrderType.DEPOSIT;
+            case OrderType.WITHDRAW:
+              return v.receipt.orderSnapshot.orderType === OrderType.WITHDRAW;
+            case OrderState.OPENING:
+              return (
+                v.receipt.orderSnapshot.orderType === OrderType.CFD &&
+                (v.receipt.orderSnapshot as ICFDOrder).state === OrderState.OPENING
+              );
+            case OrderState.CLOSED:
+              return (
+                v.receipt.orderSnapshot.orderType === OrderType.CFD &&
+                (v.receipt.orderSnapshot as ICFDOrder).state === OrderState.CLOSED
+              );
+            default:
+              return true;
+          }
+        } else {
+          return true;
+        }
+      })
+      .filter(v => {
+        /* Info: (20230605 - Julian) search by keyword
+         * include orderType, targetAsset, targetAmount, if searches is empty, return all */
+        if (searches.length > 0) {
           const orderType = v.receipt.orderSnapshot.orderType;
-          return orderType === OrderType.DEPOSIT;
-        })
-      );
-    } else if (filteredTradingType === OrderType.WITHDRAW) {
-      setFilteredReceipts(
-        listHistories.filter(v => v.receipt.orderSnapshot.orderType === OrderType.WITHDRAW)
-      );
-    } else if (filteredTradingType === OrderState.OPENING) {
-      setFilteredReceipts(
-        listHistories.filter(
-          v =>
-            v.receipt.orderSnapshot.orderType === OrderType.CFD &&
-            (v.receipt.orderSnapshot as ICFDOrder).state === OrderState.OPENING
-        )
-      );
-    } else if (filteredTradingType === OrderState.CLOSED) {
-      setFilteredReceipts(
-        listHistories.filter(
-          v =>
-            v.receipt.orderSnapshot.orderType === OrderType.CFD &&
-            (v.receipt.orderSnapshot as ICFDOrder).state === OrderState.CLOSED
-        )
-      );
-    }
-  }, [filteredTradingType, searches]);
+          const targetAsset =
+            orderType === OrderType.CFD
+              ? (v.receipt.orderSnapshot as ICFDOrder).margin.asset
+              : orderType === OrderType.DEPOSIT
+              ? (v.receipt.orderSnapshot as IDepositOrder).targetAsset
+              : (v.receipt.orderSnapshot as IWithdrawOrder).targetAsset;
+          const targetAmount =
+            orderType === OrderType.CFD
+              ? (v.receipt.orderSnapshot as ICFDOrder).margin.amount
+              : orderType === OrderType.DEPOSIT
+              ? (v.receipt.orderSnapshot as IDepositOrder).targetAmount
+              : (v.receipt.orderSnapshot as IWithdrawOrder).targetAmount;
+
+          const result =
+            orderType.toLocaleLowerCase().includes(searches) ||
+            targetAsset.toLocaleLowerCase().includes(searches) ||
+            targetAmount.toString().includes(searches);
+          return result;
+        } else {
+          return true;
+        }
+      })
+      .filter(v => {
+        if (filteredDate.length > 0) {
+          /* Info: (20230602 - Julian) search by date
+           * from filteredDate[0] 00:00:00 to filteredDate[1] 23:59:59, if filteredDate is empty, return all */
+          const startTime = new Date(filteredDate[0]).getTime() / 1000;
+          const endTime = new Date(filteredDate[1]).getTime() / 1000 + 86399;
+
+          return v.createTimestamp >= startTime && v.createTimestamp <= endTime;
+        } else {
+          return true;
+        }
+      });
+
+    setFilteredReceipts(searchResult);
+  }, [filteredTradingType, searches, filteredDate, receipts]);
 
   const dataMonthList = filteredReceipts
     /* Info: (20230322 - Julian) sort by desc */

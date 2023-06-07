@@ -92,6 +92,7 @@ export interface IMarketContext {
   ) => Promise<IResult>;
   getGuaranteedStopFeePercentage: (instId: string) => Promise<IResult>;
   getLeaderboard: (timeSpan: IRankingTimeSpan) => Promise<IResult>;
+  getTickerLiveStatistics: (instId: string) => Promise<IResult>;
   /** Deprecated: replaced by pusher (20230424 - tzuhan)
   getTickerHistory: (
     ticker: string,
@@ -152,11 +153,13 @@ export const MarketContext = createContext<IMarketContext>({
   getLeaderboard: function (timeSpan: IRankingTimeSpan): Promise<IResult> {
     throw new Error('Function not implemented.');
   },
+  getTickerLiveStatistics: () => Promise.resolve(defaultResultSuccess),
+  getLeaderboard: () => null,
   /** Deprecated: replaced by pusher (20230424 - tzuhan)
    getTickerHistory: (): IResult => {
      throw new CustomError(Code.FUNCTION_NOT_IMPLEMENTED);
     },
-    */
+   */
   listTickerPositions: (): number[] => {
     throw new CustomError(Code.FUNCTION_NOT_IMPLEMENTED);
   },
@@ -312,7 +315,6 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     const ticker: ITickerData = availableTickersRef.current[tickerId];
     if (!ticker) return {...defaultResultFailed};
     setSelectedTicker(ticker);
-    notificationCtx.emitter.emit(TideBitEvent.TICKER_CHANGE, ticker);
     await listMarketTrades(ticker.instId);
     syncCandlestickData();
     // ++ TODO: get from api
@@ -325,6 +327,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     if (isGetTickerLiveStatisticsSuccess)
       setTickerLiveStatistics(tickerLiveStatistics as ITickerLiveStatistics);
     await getGuaranteedStopFeePercentage(ticker.instId);
+    notificationCtx.emitter.emit(TideBitEvent.TICKER_CHANGE, ticker);
     return {...defaultResultSuccess};
   };
 
@@ -659,8 +662,8 @@ export const MarketProvider = ({children}: IMarketProvider) => {
   const init = async () => {
     await getTideBitPromotion();
     await getWebsiteReserve();
-    await listTickers();
     await listCurrencies();
+    await listTickers();
     setIsCFDTradable(true);
     return await Promise.resolve();
   };
@@ -747,6 +750,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     getCFDSuggestion,
     getGuaranteedStopFeePercentage,
     getLeaderboard,
+    getTickerLiveStatistics,
     /** Deprecated: replaced by pusher (20230424 - tzuhan)
     getTickerHistory,
     */

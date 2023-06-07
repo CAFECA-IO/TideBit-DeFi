@@ -29,6 +29,13 @@ import {CustomError} from './custom_error';
 import {Code, ICode, Reason} from '../constants/code';
 import {ITypeOfValidation, TypeOfValidation} from '../constants/validation';
 
+interface IValidateInput {
+  typeOfValidation: ITypeOfValidation;
+  value?: number;
+  upperLimit?: number;
+  lowerLimit?: number;
+}
+
 export const roundToDecimalPlaces = (val: number, precision: number): number => {
   const roundedNumber = Number(val.toFixed(precision));
   return roundedNumber;
@@ -569,14 +576,6 @@ export const validateCFD = (feeRate: number, amount: number) => {
   return result;
 };
 
-// export const validateTpSlInput = (typeOfPosition: ITypeOfPosition, tp: number, sl: number) => {};
-
-interface IValidateInput {
-  typeOfValidation: ITypeOfValidation;
-  value?: number;
-  upperLimit?: number;
-  lowerLimit?: number;
-}
 export const validateAllInput = ({
   typeOfValidation,
   value,

@@ -42,6 +42,7 @@ import {
   getTimestampInMilliseconds,
   roundToDecimalPlaces,
   twoDecimal,
+  validateAllInput,
 } from '../../lib/common';
 import {IQuotation, getDummyQuotation} from '../../interfaces/tidebit_defi_background/quotation';
 import {NotificationContext} from '../../contexts/notification_context';
@@ -53,6 +54,7 @@ import {
 } from '../../interfaces/tidebit_defi_background/result';
 import {OrderType} from '../../constants/order_type';
 import {CFDOperation} from '../../constants/cfd_order_type';
+import {TypeOfValidation} from '../../constants/validation';
 
 type TranslateFunction = (s: string) => string;
 
@@ -402,24 +404,47 @@ const TradeTabMobile = () => {
   };
 
   const validateTpSlInput = () => {
-    if (
-      longSlValueRef.current < longSlLowerLimitRef.current ||
-      longSlValueRef.current > longSlUpperLimitRef.current ||
-      longTpValueRef.current < longTpLowerLimitRef.current
-    ) {
-      setLongBtnDisabled(true);
-    } else {
+    const longTpValid = validateAllInput({
+      typeOfValidation: TypeOfValidation.TPSL,
+      value: longTpValueRef.current,
+      upperLimit: Infinity,
+      lowerLimit: longTpLowerLimitRef.current,
+    });
+
+    const longSlValid = validateAllInput({
+      typeOfValidation: TypeOfValidation.TPSL,
+
+      value: longSlValueRef.current,
+      upperLimit: longSlUpperLimitRef.current,
+      lowerLimit: longSlLowerLimitRef.current,
+    });
+
+    const shortTpValid = validateAllInput({
+      typeOfValidation: TypeOfValidation.TPSL,
+
+      value: shortTpValueRef.current,
+      upperLimit: shortTpUpperLimitRef.current,
+      lowerLimit: 0,
+    });
+
+    const shortSlValid = validateAllInput({
+      typeOfValidation: TypeOfValidation.TPSL,
+
+      value: shortSlValueRef.current,
+      upperLimit: shortSlUpperLimitRef.current,
+      lowerLimit: shortSlLowerLimitRef.current,
+    });
+
+    if (longTpValid && longSlValid) {
       setLongBtnDisabled(false);
+    } else {
+      setLongBtnDisabled(true);
     }
 
-    if (
-      shortSlValueRef.current > shortSlUpperLimitRef.current ||
-      shortSlValueRef.current < shortSlLowerLimitRef.current ||
-      shortTpValueRef.current > shortTpUpperLimitRef.current
-    ) {
-      setShortBtnDisabled(true);
-    } else {
+    if (shortTpValid && shortSlValid) {
       setShortBtnDisabled(false);
+    } else {
+      setShortBtnDisabled(true);
     }
   };
 

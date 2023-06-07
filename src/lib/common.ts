@@ -27,6 +27,7 @@ import {ICFDOrder} from '../interfaces/tidebit_defi_background/order';
 import {Currency, ICurrency, ICurrencyConstant} from '../constants/currency';
 import {CustomError} from './custom_error';
 import {Code, ICode, Reason} from '../constants/code';
+import {ITypeOfValidation, TypeOfValidation} from '../constants/validation';
 
 export const roundToDecimalPlaces = (val: number, precision: number): number => {
   const roundedNumber = Number(val.toFixed(precision));
@@ -571,132 +572,29 @@ export const validateCFD = (feeRate: number, amount: number) => {
 // export const validateTpSlInput = (typeOfPosition: ITypeOfPosition, tp: number, sl: number) => {};
 
 interface IValidateInput {
-  typeOfPosition: ITypeOfPosition;
-  tpValue?: number;
-  slValue?: number;
-  tpUpperLimit?: number;
-  slUpperLimit?: number;
-  tpLowerLimit?: number;
-  slLowerLimit?: number;
+  typeOfValidation: ITypeOfValidation;
+  value?: number;
+  upperLimit?: number;
+  lowerLimit?: number;
 }
+export const validateAllInput = ({
+  typeOfValidation,
+  value,
+  upperLimit: upperLimit,
+  lowerLimit: lowerLimit,
+}: IValidateInput): boolean => {
+  let isValid = true;
 
-export const validateTpSlInput = ({
-  typeOfPosition,
-  tpValue,
-  slValue,
-  tpUpperLimit,
-  slUpperLimit,
-  tpLowerLimit,
-  slLowerLimit,
-}: IValidateInput) => {
-  let isLongTpValid = true;
-  let isLongSlValid = true;
-  let isShortTpValid = true;
-  let isShortSlValid = true;
-
-  // let
-
-  // let isLongBtnDisabled = false;
-  // let isShortBtnDisabled = false;
-  switch (typeOfPosition) {
-    case TypeOfPosition.BUY:
-      if (tpValue && tpUpperLimit && tpLowerLimit) {
-        if (tpValue > tpUpperLimit || tpValue < tpLowerLimit) {
-          isLongTpValid = false;
+  switch (typeOfValidation) {
+    case TypeOfValidation.TPSL:
+      if (value !== undefined && upperLimit !== undefined && lowerLimit !== undefined) {
+        if (value > upperLimit || value < lowerLimit) {
+          isValid = false;
         } else {
-          isLongTpValid = true;
+          isValid = true;
         }
       }
-      if (slValue && slUpperLimit && slLowerLimit) {
-        if (slValue > slUpperLimit || slValue < slLowerLimit) {
-          isLongSlValid = false;
-        } else {
-          isLongSlValid = true;
-        }
-      }
-      break;
-
-    case TypeOfPosition.SELL:
-      if (tpValue && tpUpperLimit && tpLowerLimit) {
-        if (tpValue > tpUpperLimit || tpValue < tpLowerLimit) {
-          isShortSlValid = false;
-        } else {
-          isShortSlValid = true;
-        }
-      }
-      if (slValue && slUpperLimit && slLowerLimit) {
-        if (slValue > slUpperLimit || slValue < slLowerLimit) {
-          isShortTpValid = false;
-        } else {
-          isShortTpValid = true;
-        }
-      }
-      break;
-
-    default:
-      break;
   }
 
-  // if (typeOfPosition === TypeOfPosition.BUY) {
-  //   if (tpValue && tpUpperLimit && tpLowerLimit) {
-  //     if (tpValue > tpUpperLimit || tpValue < tpLowerLimit) {
-  //       isLongTpValid = false;
-  //     } else {
-  //       isLongTpValid = true;
-  //     }
-  //   }
-  //   if (slValue && slUpperLimit && slLowerLimit) {
-  //     if (slValue > slUpperLimit || slValue < slLowerLimit) {
-  //       isLongSlValid = false;
-  //     } else {
-  //       isLongSlValid = true;
-  //     }
-  //   }
-  // } else if (typeOfPosition === TypeOfPosition.SELL) {
-  //   if (tpValue && tpUpperLimit && tpLowerLimit) {
-  //     if (tpValue < tpUpperLimit || tpValue > tpLowerLimit) {
-  //       isShortSlValid = false;
-  //     } else {
-  //       isShortSlValid = true;
-  //     }
-  //   }
-  //   if (slValue && slUpperLimit && slLowerLimit) {
-  //     if (slValue < slUpperLimit || slValue > slLowerLimit) {
-  //       isShortTpValid = false;
-  //     } else {
-  //       isShortTpValid = true;
-  //     }
-  //   }
-  // }
-
-  // if (
-  //   longSlValue < longSlLowerLimit ||
-  //   longSlValue > longSlUpperLimit ||
-  //   longTpValue < longTpLowerLimit
-  // ) {
-  //   isLongBtnDisabled = true;
-  // }
-
-  // if (
-  //   shortSlValue > shortSlUpperLimit ||
-  //   shortSlValue < shortSlLowerLimit ||
-  //   shortTpValue > shortTpUpperLimit
-  // ) {
-  //   isShortBtnDisabled = true;
-  // }
-
-  if (isLongSlValid && isLongTpValid && isShortSlValid && isShortTpValid) {
-    return true;
-  } else {
-    return false;
-  }
-
-  return {
-    isLongTpValid,
-    isLongSlValid,
-    isShortTpValid,
-    isShortSlValid,
-    // isLongBtnDisabled,
-    // isShortBtnDisabled,
-  };
+  return isValid;
 };

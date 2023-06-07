@@ -21,7 +21,7 @@ import {
   randomIntFromInterval,
   roundToDecimalPlaces,
   timestampToString,
-  validateTpSlInput,
+  validateAllInput,
 } from '../../lib/common';
 import {MarketContext} from '../../contexts/market_context';
 import useState from 'react-usestateref';
@@ -39,6 +39,7 @@ import {OrderState} from '../../constants/order_state';
 import {IApplyUpdateCFDOrder} from '../../interfaces/tidebit_defi_background/apply_update_cfd_order';
 import {CFDOperation} from '../../constants/cfd_order_type';
 import {OrderType} from '../../constants/order_type';
+import {TypeOfValidation} from '../../constants/validation';
 
 type TranslateFunction = (s: string) => string;
 interface IUpdatedFormModal {
@@ -432,76 +433,26 @@ const UpdateFormModal = ({
     let isSlValid = true;
 
     if (tpToggleRef.current) {
-      const tpValid = validateTpSlInput({
-        typeOfPosition: openCfdDetails.typeOfPosition,
-        tpValue: tpValueRef.current,
-        tpUpperLimit: tpUpperLimitRef.current,
-        tpLowerLimit: tpLowerLimitRef.current,
+      const tpValid = validateAllInput({
+        typeOfValidation: TypeOfValidation.TPSL,
+        value: tpValueRef.current,
+        upperLimit: tpUpperLimitRef.current,
+        lowerLimit: tpLowerLimitRef.current,
       });
 
-      // TODO: valid (20230607 - Shirley)
-
-      // isTpValid = tpValid;
-
-      // console.log('tpValid', tpValid);
-
-      if (
-        openCfdDetails.typeOfPosition === TypeOfPosition.BUY &&
-        (tpValueRef.current > tpUpperLimitRef.current ||
-          tpValueRef.current < tpLowerLimitRef.current)
-      ) {
-        isTpValid = false;
-      } else if (
-        openCfdDetails.typeOfPosition === TypeOfPosition.SELL &&
-        (tpValueRef.current < tpUpperLimitRef.current ||
-          tpValueRef.current > tpLowerLimitRef.current)
-      ) {
-        isTpValid = false;
-      }
+      isTpValid = tpValid;
     }
 
     if (slToggleRef.current) {
-      const slValid = validateTpSlInput({
-        typeOfPosition: openCfdDetails.typeOfPosition,
-        slValue: slValueRef.current,
-        slUpperLimit: slUpperLimitRef.current,
-        slLowerLimit: slLowerLimitRef.current,
+      const slValid = validateAllInput({
+        typeOfValidation: TypeOfValidation.TPSL,
+        value: slValueRef.current,
+        upperLimit: slUpperLimitRef.current,
+        lowerLimit: slLowerLimitRef.current,
       });
 
-      // TODO: valid (20230607 - Shirley)
-      // isSlValid = slValid;
-
-      // console.log('slValid', slValid);
-      // }
-
-      if (
-        openCfdDetails.typeOfPosition === TypeOfPosition.BUY &&
-        (slValueRef.current > slUpperLimitRef.current ||
-          slValueRef.current < slLowerLimitRef.current)
-      ) {
-        isSlValid = false;
-      } else if (
-        openCfdDetails.typeOfPosition === TypeOfPosition.SELL &&
-        (slValueRef.current < slUpperLimitRef.current ||
-          slValueRef.current > slLowerLimitRef.current)
-      ) {
-        isSlValid = false;
-      }
+      isSlValid = slValid;
     }
-    // TODO: dev (20230606 - Shirley)
-    // eslint-disable-next-line no-console
-    // console.log('isTpValid', isTpValid, 'isSlValid', isSlValid);
-
-    // TODO: dev (20230606 - Shirley)
-    // eslint-disable-next-line no-console
-    console.log(
-      'slUpperLimitRef.current',
-      slUpperLimitRef.current,
-      'slLowerLimitRef.current',
-      slLowerLimitRef.current,
-      'slValueRef.current',
-      slValueRef.current
-    );
 
     if (isTpValid && isSlValid) {
       const valid = true;
@@ -528,10 +479,6 @@ const UpdateFormModal = ({
     ) {
       setSubmitDisabled(false);
     }
-
-    // TODO: dev (20230606 - Shirley)
-    // eslint-disable-next-line no-console
-    console.log('compareChange, submitDisable', submitDisabledRef.current);
   };
 
   const nowTimestamp = getTimestamp();

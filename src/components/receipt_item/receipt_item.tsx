@@ -5,10 +5,11 @@ import Image from 'next/image';
 import {GlobalContext} from '../../contexts/global_context';
 import {MarketContext} from '../../contexts/market_context';
 import {UserContext} from '../../contexts/user_context';
-import {timestampToString, toDisplayCFDOrder} from '../../lib/common';
+import {timestampToString, toDisplayCFDOrder, roundToDecimalPlaces} from '../../lib/common';
 import {OrderType} from '../../constants/order_type';
 import {OrderState} from '../../constants/order_state';
 import {OrderStatusUnion} from '../../constants/order_status_union';
+import {TypeOfPosition} from '../../constants/type_of_position';
 import {UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
 import {useTranslation} from 'next-i18next';
 import {IAcceptedOrder} from '../../interfaces/tidebit_defi_background/accepted_order';
@@ -36,7 +37,7 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
   const marketCtx = useContext(MarketContext);
   const userCtx = useContext(UserContext);
 
-  const {createTimestamp, receipt} = histories.histories;
+  const {createTimestamp, receipt, isClosed} = histories.histories;
   const {orderSnapshot: order, balanceSnapshot} = receipt;
 
   const balance = balanceSnapshot.shift();
@@ -62,8 +63,6 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
 
   /* Info: (20230524 - Julian) CFD Type : create / update / close */
   const cfdType = (histories.histories as IAcceptedCFDOrder).applyData.operation;
-  /* Info: (20230524 - Julian) if can't get CFD by id, it means CFD is closed */
-  const isClosed = userCtx.getCFD(order.id) ? false : true;
 
   const displayedButtonColor =
     targetAmount == 0 ? 'bg-lightGray' : targetAmount > 0 ? 'bg-lightGreen5' : 'bg-lightRed';
@@ -122,20 +121,36 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
       ? t('MY_ASSETS_PAGE.RECEIPT_SECTION_ORDER_STATUS_FAILED')
       : '-';
 
-  /* Info: (20230523 - Julian) CFD Data */
+  /* Info: (20230523 - Julian) Line Graph Data */
   const positionLineGraph = marketCtx.listTickerPositions(targetAsset as ICurrency, {
     begin: createTimestamp,
   });
-  const cfdData = toDisplayCFDOrder(order as ICFDOrder, positionLineGraph);
 
   const buttonClickHandler =
     orderType === OrderType.CFD
       ? isClosed
         ? () => {
+            const closedCfd = userCtx.closedCFDs.find(cfd => cfd.id === order.id)! as ICFDOrder;
+            const cfdData = toDisplayCFDOrder(closedCfd, []);
+
             globalCtx.dataHistoryPositionModalHandler(cfdData);
             globalCtx.visibleHistoryPositionModalHandler();
           }
         : () => {
+            const updateCfd = order as ICFDOrder;
+            /* Info: (20230602 - Julian) 拿到該 ticker 的當前價格 */
+            const tickerPrice = marketCtx.availableTickers[updateCfd.targetAsset]?.price;
+            const currentPrice =
+              (!!tickerPrice &&
+                ((updateCfd.typeOfPosition === TypeOfPosition.BUY &&
+                  roundToDecimalPlaces(tickerPrice, 2)) ||
+                  (updateCfd.typeOfPosition === TypeOfPosition.SELL &&
+                    roundToDecimalPlaces(tickerPrice, 2)))) ||
+              positionLineGraph.length > 0
+                ? positionLineGraph[positionLineGraph.length - 1]
+                : 0;
+            const cfdData = toDisplayCFDOrder(updateCfd, positionLineGraph, currentPrice);
+
             globalCtx.dataUpdateFormModalHandler(cfdData);
             globalCtx.visibleUpdateFormModalHandler();
           }
@@ -171,7 +186,7 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
       : order.fee.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
 
   const displayedReceiptAvailableText =
-    orderStatus === OrderStatusUnion.PROCESSING || orderStatus === OrderStatusUnion.WAITING ? (
+    orderStatus === OrderStatusUnion.WAITING ? (
       <Lottie className="w-20px" animationData={smallConnectingAnimation} />
     ) : (
       balance?.available.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS) ?? '-'

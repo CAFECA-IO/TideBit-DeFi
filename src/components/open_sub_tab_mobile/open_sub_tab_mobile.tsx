@@ -6,21 +6,34 @@ import {IDisplayCFDOrder} from '../../interfaces/tidebit_defi_background/display
 import {roundToDecimalPlaces, toDisplayCFDOrder} from '../../lib/common';
 import {MarketContext} from '../../contexts/market_context';
 import {TypeOfPosition} from '../../constants/type_of_position';
-import useStateRef from 'react-usestateref';
-import {DEFAULT_SPREAD, SKELETON_DISPLAY_TIME} from '../../constants/display';
+//import useStateRef from 'react-usestateref';
+import {SKELETON_DISPLAY_TIME} from '../../constants/display';
+import {defaultResultFailed} from '../../interfaces/tidebit_defi_background/result';
+import {ITickerLiveStatistics} from '../../interfaces/tidebit_defi_background/ticker_live_statistics';
 
 const OpenSubTabMobile = () => {
   const {openCFDs} = useContext(UserContext);
   const marketCtx = useContext(MarketContext);
 
-  const initState = {
+  /*   const initState = {
     longPrice: 0,
     shortPrice: 0,
   };
-  const [caledPrice, setCaledPrice, caledPriceRef] = useStateRef(initState);
+  const [caledPrice, setCaledPrice, caledPriceRef] = useStateRef(initState); */
   const [isLoading, setIsLoading] = useState(true);
+  const [cfds, setCfds] = useState<IDisplayCFDOrder[]>([]);
 
-  useEffect(() => {
+  const getTickerSpread = async (instId: string) => {
+    let tickerSpread = {...defaultResultFailed};
+    tickerSpread = await marketCtx.getTickerLiveStatistics(instId);
+    const data = tickerSpread.data as ITickerLiveStatistics;
+    const spread = data.spread;
+
+    return spread;
+  };
+
+  // Deprecated (20230610 - Julian)
+  /*   useEffect(() => {
     const buyPrice = !!marketCtx.selectedTicker?.price
       ? roundToDecimalPlaces(
           marketCtx.selectedTicker.price *
@@ -41,31 +54,51 @@ const OpenSubTabMobile = () => {
       longPrice: buyPrice,
       shortPrice: sellPrice,
     });
-  }, [marketCtx.selectedTicker?.price]);
+  }, [marketCtx.selectedTicker?.price]); */
 
-  const cfds = openCFDs.map(cfd => {
-    const positionLineGraph = marketCtx.listTickerPositions(cfd.targetAsset, {
-      begin: cfd.createTimestamp,
-    });
+  useEffect(() => {
+    const cfdList = openCFDs
+      .map(cfd => {
+        const positionLineGraph = marketCtx.listTickerPositions(cfd.targetAsset, {
+          begin: cfd.createTimestamp,
+        });
 
-    /**
-     * Info: (20230428 - Shirley)
-     * without `positionLineGraph`, use market price to calculate
-     * without `market price`, use the open price of the CFD to get PNL === 0 and display `--`
-     * (OpenPositionItem & UpdateFormModal)
-     */
-    const currentPrice =
-      positionLineGraph.length > 0
-        ? positionLineGraph[positionLineGraph.length - 1]
-        : (!!marketCtx.selectedTicker?.price &&
-            ((cfd.typeOfPosition === TypeOfPosition.BUY && caledPriceRef.current.shortPrice) ||
-              (cfd.typeOfPosition === TypeOfPosition.SELL && caledPriceRef.current.longPrice))) ||
-          0;
+        const tickerPrice = marketCtx.availableTickers[cfd.targetAsset]?.price;
+        const spread = getTickerSpread(cfd.targetAsset);
 
-    const displayCFD: IDisplayCFDOrder = toDisplayCFDOrder(cfd, positionLineGraph, currentPrice);
-    return displayCFD;
-  });
+        /**
+         * Info: (20230428 - Shirley)
+         * without `positionLineGraph`, use market price to calculate
+         * without `market price`, use the open price of the CFD to get PNL === 0 and display `--`
+         * (OpenPositionItem & UpdateFormModal)
+         */
+        const currentPrice =
+          (!!tickerPrice &&
+            ((cfd.typeOfPosition === TypeOfPosition.BUY && roundToDecimalPlaces(tickerPrice, 2)) ||
+              (cfd.typeOfPosition === TypeOfPosition.SELL &&
+                roundToDecimalPlaces(tickerPrice, 2)))) ||
+          positionLineGraph.length > 0
+            ? positionLineGraph[positionLineGraph.length - 1]
+            : 0;
 
+        const displayCFD: IDisplayCFDOrder = toDisplayCFDOrder(
+          cfd,
+          positionLineGraph,
+          currentPrice,
+          Number(spread)
+        );
+
+        return displayCFD;
+      })
+      .sort((a, b) => {
+        return a.createTimestamp - b.createTimestamp;
+      })
+      .sort((a, b) => {
+        return b.stateCode - a.stateCode;
+      });
+
+    setCfds(cfdList);
+  }, [openCFDs]);
   useEffect(() => {
     setTimeout(() => setIsLoading(false), SKELETON_DISPLAY_TIME);
   }, [cfds]);

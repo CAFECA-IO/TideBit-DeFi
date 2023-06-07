@@ -16,6 +16,7 @@ export interface IAcceptedOrder {
   droneSignature: string;
   locutusSignature: string;
   createTimestamp: number;
+  isClosed?: boolean;
 }
 
 export const dummyAcceptedOrders: IAcceptedOrder[] = [

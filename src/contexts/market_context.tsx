@@ -92,6 +92,7 @@ export interface IMarketContext {
   ) => Promise<IResult>;
   getGuaranteedStopFeePercentage: (instId: string) => Promise<IResult>;
   getLeaderboard: (timeSpan: IRankingTimeSpan) => ILeaderboard | null;
+  getTickerLiveStatistics: (instId: string) => Promise<IResult>;
   /** Deprecated: replaced by pusher (20230424 - tzuhan)
   getTickerHistory: (
     ticker: string,
@@ -150,6 +151,7 @@ export const MarketContext = createContext<IMarketContext>({
   getCFDSuggestion: () => Promise.resolve(defaultResultSuccess),
   getGuaranteedStopFeePercentage: () => Promise.resolve(defaultResultSuccess),
   getLeaderboard: () => null,
+  getTickerLiveStatistics: () => Promise.resolve(defaultResultSuccess),
   /** Deprecated: replaced by pusher (20230424 - tzuhan)
   getTickerHistory: (): IResult => {
     throw new CustomError(Code.FUNCTION_NOT_IMPLEMENTED);
@@ -701,6 +703,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     getCFDSuggestion,
     getGuaranteedStopFeePercentage,
     getLeaderboard,
+    getTickerLiveStatistics,
     /** Deprecated: replaced by pusher (20230424 - tzuhan)
     getTickerHistory,
     */

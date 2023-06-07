@@ -139,6 +139,9 @@ const TradeTabMobile = () => {
   const [marginWarningLong, setMarginWarningLong, marginWarningLongRef] = useStateRef(false);
   const [marginWarningShort, setMarginWarningShort, marginWarningShortRef] = useStateRef(false);
 
+  const [longBtnDisabled, setLongBtnDisabled, longBtnDisabledRef] = useStateRef(false);
+  const [shortBtnDisabled, setShortBtnDisabled, shortBtnDisabledRef] = useStateRef(false);
+
   const [targetLengthLong, setTargetLengthLong] = useState(
     roundToDecimalPlaces((targetInputValue * Number(longPriceRef.current)) / leverage, 2).toString()
       .length
@@ -217,6 +220,15 @@ const TradeTabMobile = () => {
       notificationCtx.emitter.removeAllListeners(ClickEvent.TICKER_CHANGED);
     };
   }, [marketCtx.selectedTicker]);
+
+  useEffect(() => {
+    validateTpSlInput();
+  }, [
+    longTpValueRef.current,
+    longSlValueRef.current,
+    shortTpValueRef.current,
+    shortSlValueRef.current,
+  ]);
 
   const setQuotation = () => {
     const buyPrice = roundToDecimalPlaces(
@@ -387,6 +399,28 @@ const TradeTabMobile = () => {
     setShortSlValue(value);
 
     calculateShortLoss();
+  };
+
+  const validateTpSlInput = () => {
+    if (
+      longSlValueRef.current < longSlLowerLimitRef.current ||
+      longSlValueRef.current > longSlUpperLimitRef.current ||
+      longTpValueRef.current < longTpLowerLimitRef.current
+    ) {
+      setLongBtnDisabled(true);
+    } else {
+      setLongBtnDisabled(false);
+    }
+
+    if (
+      shortSlValueRef.current > shortSlUpperLimitRef.current ||
+      shortSlValueRef.current < shortSlLowerLimitRef.current ||
+      shortTpValueRef.current > shortTpUpperLimitRef.current
+    ) {
+      setShortBtnDisabled(true);
+    } else {
+      setShortBtnDisabled(false);
+    }
   };
 
   const checkTpSlWithinBounds = () => {
@@ -1100,7 +1134,7 @@ const TradeTabMobile = () => {
         {/* Long Button */}
         <div className={`bg-black/100 transition-all duration-300 ease-in-out ${longButtonStyles}`}>
           <RippleButton
-            disabled={openSubMenu && marginWarningLongRef.current}
+            disabled={(openSubMenu && marginWarningLongRef.current) || longBtnDisabledRef.current}
             buttonType="button"
             className={`w-full rounded-md bg-lightGreen5 py-2 text-sm font-medium tracking-wide text-white transition-colors duration-300 hover:bg-lightGreen5/80 disabled:bg-lightGray`}
             onClick={longSectionClickHandler}
@@ -1121,7 +1155,7 @@ const TradeTabMobile = () => {
           className={`bg-black/100 transition-all duration-300 ease-in-out ${shortButtonStyles}`}
         >
           <RippleButton
-            disabled={openSubMenu && marginWarningShortRef.current}
+            disabled={(openSubMenu && marginWarningShortRef.current) || shortBtnDisabledRef.current}
             buttonType="button"
             className={`w-full rounded-md bg-lightRed py-2 text-sm font-medium tracking-wide text-white transition-colors duration-300 hover:bg-lightRed/80 disabled:bg-lightGray`}
             onClick={shortSectionClickHandler}

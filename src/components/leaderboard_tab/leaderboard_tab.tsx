@@ -7,8 +7,7 @@ import {GlobalContext} from '../../contexts/global_context';
 import {TypeOfPnLColor, DEFAULT_USER_AVATAR, SKELETON_DISPLAY_TIME} from '../../constants/display';
 import {unitAsset} from '../../constants/config';
 import {IPnL} from '../../interfaces/tidebit_defi_background/pnl';
-import {defaultPersonalAchievement} from '../../interfaces/tidebit_defi_background/personal_achievement';
-import {numberFormatted} from '../../lib/common';
+import {numberFormatted, accountTruncate} from '../../lib/common';
 import {RankingInterval, IRankingTimeSpan} from '../../constants/ranking_time_span';
 import {defaultLeaderboard, IRanking} from '../../interfaces/tidebit_defi_background/leaderboard';
 import {useTranslation} from 'next-i18next';
@@ -167,7 +166,11 @@ const LeaderboardTab = ({timeSpan, setTimeSpan, rankings}: LeaderboardTabProps) 
       rank <= 0
         ? defaultTop3Data
         : {
-            name: rankingData[rank - 1]?.userName,
+            /* Info: (20230607 - Julian) If User Name length > 20, then truncate */
+            name:
+              rankingData[rank - 1]?.userName.length > 20
+                ? accountTruncate(rankingData[rank - 1]?.userName)
+                : rankingData[rank - 1]?.userName,
             id: rankingData[rank - 1]?.userId,
             avatar: rankingData[rank - 1]?.userAvatar ?? DEFAULT_USER_AVATAR,
             displayedPnl: displayPnl(rankingData[rank - 1]?.cumulativePnl),
@@ -177,11 +180,9 @@ const LeaderboardTab = ({timeSpan, setTimeSpan, rankings}: LeaderboardTabProps) 
 
   const displayedTop3List = top3Data.map(({rank, marginTop, crown, star, medalist, userData}) => {
     const isDisplayedHalo = rank === 1 ? 'block' : 'hidden';
-    const achievementData =
-      // userCtx.getPersonalAchievements(userData.name) ?? // TODO: using async/await (20230526 - tzuhan)
-      defaultPersonalAchievement;
+
     const clickHandler = () => {
-      globalCtx.dataPersonalAchievementModalHandler(achievementData);
+      globalCtx.dataPersonalAchievementModalHandler(userData.id);
       globalCtx.visiblePersonalAchievementModalHandler();
     };
 
@@ -241,7 +242,7 @@ const LeaderboardTab = ({timeSpan, setTimeSpan, rankings}: LeaderboardTabProps) 
 
   const displayedTop3 = (
     <div className="relative w-screen md:w-8/10">
-      <div className="absolute -top-48 flex w-full justify-between space-x-4 px-4 md:-top-56 md:px-16">
+      <div className="absolute -top-48 flex w-full justify-between space-x-4 px-4 md:-top-72 md:px-16">
         {displayedTop3List}
       </div>
       <Image
@@ -270,18 +271,17 @@ const LeaderboardTab = ({timeSpan, setTimeSpan, rankings}: LeaderboardTabProps) 
   /* Info: (20230511 - Julian) Leaderboard List (4th ~) */
   const displayedleaderboardList = rankingData
     .slice(3)
-    .map(({rank, userName, userAvatar, cumulativePnl}) => {
-      const achievementData =
-        // userCtx.getPersonalAchievements(userData.name) ?? // TODO: using async/await (20230526 - tzuhan)
-        defaultPersonalAchievement;
+    .map(({rank, userName, userAvatar, cumulativePnl, userId}) => {
       const clickHandler = () => {
-        globalCtx.dataPersonalAchievementModalHandler(achievementData);
+        globalCtx.dataPersonalAchievementModalHandler(userId);
         globalCtx.visiblePersonalAchievementModalHandler();
       };
 
       const displayedRank = rank <= 0 ? '-' : rank;
       const displayedPnl = rank <= 0 ? '-' : displayPnl(cumulativePnl);
-      const displayedName = rank <= 0 ? 'N/A' : userName;
+      /* Info: (20230607 - Julian) If User Name length > 20, then truncate */
+      const displayedName =
+        rank <= 0 ? 'N/A' : userName.length > 20 ? accountTruncate(userName) : userName;
       const displayedAvatar = rank <= 0 ? DEFAULT_USER_AVATAR : userAvatar;
       return isLoading ? (
         <div key={rank} className="flex items-center justify-between px-4 py-6">

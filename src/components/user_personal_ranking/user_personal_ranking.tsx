@@ -9,7 +9,6 @@ import {unitAsset} from '../../constants/config';
 import {IRankingTimeSpan, RankingInterval} from '../../constants/ranking_time_span';
 import {ProfitState} from '../../constants/profit_state';
 import {defaultPersonalRanking} from '../../interfaces/tidebit_defi_background/personal_ranking';
-import {defaultPersonalAchievement} from '../../interfaces/tidebit_defi_background/personal_achievement';
 import {ImArrowUp, ImArrowDown, ImArrowRight} from 'react-icons/im';
 import {RiShareForwardFill} from 'react-icons/ri';
 import {BsFacebook, BsTwitter, BsReddit} from 'react-icons/bs';
@@ -21,6 +20,8 @@ export interface IUserPersonalRankingProps {
 const UserPersonalRanking = ({timeSpan}: IUserPersonalRankingProps) => {
   const userCtx = useContext(UserContext);
   const globalCtx = useContext(GlobalContext);
+
+  const userId = userCtx.user?.id ?? '';
 
   const [isLoading, setIsLoading] = useState(true);
   const [showShareList, setShowShareList] = useState(false);
@@ -38,9 +39,6 @@ const UserPersonalRanking = ({timeSpan}: IUserPersonalRankingProps) => {
   }, [timeSpan]);
 
   const username = userCtx.user?.address?.slice(-1).toUpperCase();
-  const userAchievement =
-    // userCtx.getPersonalAchievements(userData.name) ?? // TODO: using async/await (20230526 - tzuhan)
-    defaultPersonalAchievement;
 
   const rankingNumber = userRankData.rank;
   const pnl = userRankData.pnl;
@@ -49,7 +47,7 @@ const UserPersonalRanking = ({timeSpan}: IUserPersonalRankingProps) => {
   const shareClickHandler = () => setShowShareList(!showShareList);
 
   const personalInfoClickHandler = () => {
-    globalCtx.dataPersonalAchievementModalHandler(userAchievement);
+    globalCtx.dataPersonalAchievementModalHandler(userId);
     globalCtx.visiblePersonalAchievementModalHandler();
   };
 

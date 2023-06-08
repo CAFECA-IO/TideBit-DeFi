@@ -18,7 +18,7 @@ type TranslateFunction = (s: string) => string;
 
 const AssetsPageBody = () => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
-  const [init, setInit] = useState(false);
+  const [isInit, setIsInit] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const userCtx = useContext(UserContext);
   const globalCtx = useGlobal();
@@ -40,13 +40,14 @@ const AssetsPageBody = () => {
       const {success: isGetUserAssetsSuccess, code: userAssetsCode} = await userCtx.getUserAssets();
       if (!isGetUserAssetsSuccess)
         throw new CustomError(isCustomError(userAssetsCode) ? userAssetsCode : Code.UNKNOWN_ERROR);
-      const {success: isListHistoriesSuccess, code: listHistoriesCode} =
-        await userCtx.listHistories();
-      if (!isListHistoriesSuccess)
-        throw new CustomError(
-          isCustomError(listHistoriesCode) ? listHistoriesCode : Code.UNKNOWN_ERROR
-        );
-      setInit(true);
+      // const {success: isListHistoriesSuccess, code: listHistoriesCode} =
+      //   await
+      userCtx.listHistories();
+      // if (!isListHistoriesSuccess)
+      //   throw new CustomError(
+      //     isCustomError(listHistoriesCode) ? listHistoriesCode : Code.UNKNOWN_ERROR
+      //   );
+      setIsInit(true);
       setIsLoading(false);
     } catch (err) {
       // Deprecated: [debug] (20230608 - tzuhan)
@@ -57,16 +58,14 @@ const AssetsPageBody = () => {
   };
 
   useEffect(() => {
-    if (!userCtx.enableServiceTerm) {
-      redirect();
+    if (userCtx.isInit) {
+      if (!userCtx.enableServiceTerm) {
+        redirect();
+      } else {
+        if (!isInit) getUserPrivateInfo();
+      }
     }
-  }, [userCtx.enableServiceTerm]);
-
-  useEffect(() => {
-    if (userCtx.isInit && !init) {
-      getUserPrivateInfo();
-    }
-  }, [userCtx.isInit]);
+  }, [isInit, userCtx.isInit, userCtx.enableServiceTerm]);
 
   return (
     <div className="overflow-x-hidden">

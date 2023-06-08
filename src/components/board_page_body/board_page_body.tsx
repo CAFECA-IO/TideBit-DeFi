@@ -27,19 +27,17 @@ const BoardPageBody = () => {
   const {startTime, endTime, rankings} = leaderboardData;
 
   useEffect(() => {
-    setTimeout(() => setIsLoading(false), SKELETON_DISPLAY_TIME);
-  }, []);
-
-  useEffect(() => {
+    if (!marketCtx.isInit) return;
     marketCtx
       .getLeaderboard(timeSpan)
       .then(result => {
         setLeaderboardData(result.success ? (result.data as ILeaderboard) : defaultLeaderboard);
+        setIsLoading(false);
       })
       .catch(() => {
         setLeaderboardData(defaultLeaderboard);
       });
-  }, [timeSpan]);
+  }, [marketCtx.isInit, timeSpan]);
 
   useEffect(() => {
     const countdownInterval = setTimeout(() => {

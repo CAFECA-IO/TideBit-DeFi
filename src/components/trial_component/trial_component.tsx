@@ -1,10 +1,12 @@
 import Image from 'next/image';
-import {useEffect, useRef, useState} from 'react';
+import {useEffect, useRef, useState, useContext} from 'react';
 // import useRippleAnimation from '../../lib/hooks/use_ripple_animation';
 import {config} from 'process';
+import {MarketContext} from '../../contexts/market_context';
 
 const TrialComponent = () => {
   const [tooltipStatus, setTooltipStatus] = useState(0);
+  const marketCtx = useContext(MarketContext);
 
   // const bgNextTailwindImage = (
   //   <div className="h-96 bg-slate-700 bg-[url('/public/elements/2634.png')] bg-scroll"></div>
@@ -97,11 +99,11 @@ const TrialComponent = () => {
                 </a> */}
               <div className="mb-5 flex flex-col space-y-2">
                 <div className="text-base text-lightGray">TideBit user asset holdings</div>
-                <div>3,016,827,845</div>
+                <div>{marketCtx.websiteReserve.usersHolding}</div>
               </div>
               <div className="flex flex-col space-y-2">
                 <div className="text-base text-lightGray">TideBit wallet assets</div>
-                <div>3,061,068,937</div>
+                <div>{marketCtx.websiteReserve.tidebitReserve}</div>
               </div>
             </div>
           </div>

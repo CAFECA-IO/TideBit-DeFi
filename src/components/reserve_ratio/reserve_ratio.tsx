@@ -201,14 +201,14 @@ const ReserveRatio = () => {
                       {' '}
                       {t('HOME_PAGE.RESERVE_RATIO_BLOCK_DESCRIPTION')}
                     </div>
-                    <div>3,016,827,845</div>
+                    <div>{displayedTidebitUserHolding}</div>
                   </div>
                   <div className="flex flex-col space-y-2">
                     <div className="text-base text-lightGray">
                       {' '}
                       {t('HOME_PAGE.RESERVE_RATIO_BLOCK_DESCRIPTION_2')}
                     </div>
-                    <div>3,061,068,937</div>
+                    <div>{displayedTidebitReserve}</div>
                   </div>
                 </div>
               </div>

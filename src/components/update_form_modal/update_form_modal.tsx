@@ -21,6 +21,7 @@ import {
   randomIntFromInterval,
   roundToDecimalPlaces,
   timestampToString,
+  validateAllInput,
 } from '../../lib/common';
 import {MarketContext} from '../../contexts/market_context';
 import useState from 'react-usestateref';
@@ -38,6 +39,7 @@ import {OrderState} from '../../constants/order_state';
 import {IApplyUpdateCFDOrder} from '../../interfaces/tidebit_defi_background/apply_update_cfd_order';
 import {CFDOperation} from '../../constants/cfd_order_type';
 import {OrderType} from '../../constants/order_type';
+import {TypeOfValidation} from '../../constants/validation';
 
 type TranslateFunction = (s: string) => string;
 interface IUpdatedFormModal {
@@ -163,11 +165,11 @@ const UpdateFormModal = ({
   );
 
   const guaranteedCheckedChangeHandler = () => {
+    validateInput();
+
     if (!openCfdDetails.guaranteedStop) {
       setGuaranteedChecked(!guaranteedChecked);
       setSlToggle(true);
-      setSlLowerLimit(0);
-      setSlUpperLimit(Infinity);
 
       return;
     } else {
@@ -426,26 +428,55 @@ const UpdateFormModal = ({
     setEstimatedLossValue(loss);
   };
 
+  const validateInput = () => {
+    let isTpValid = true;
+    let isSlValid = true;
+
+    if (tpToggleRef.current) {
+      const tpValid = validateAllInput({
+        typeOfValidation: TypeOfValidation.TPSL,
+        value: tpValueRef.current,
+        upperLimit: tpUpperLimitRef.current,
+        lowerLimit: tpLowerLimitRef.current,
+      });
+
+      isTpValid = tpValid;
+    }
+
+    if (slToggleRef.current) {
+      const slValid = validateAllInput({
+        typeOfValidation: TypeOfValidation.TPSL,
+        value: slValueRef.current,
+        upperLimit: slUpperLimitRef.current,
+        lowerLimit: slLowerLimitRef.current,
+      });
+
+      isSlValid = slValid;
+    }
+
+    if (isTpValid && isSlValid) {
+      const valid = true;
+
+      return valid;
+    } else {
+      const valid = false;
+
+      return valid;
+    }
+  };
+
   const compareChange = () => {
     if (tpToggleRef.current && tpValueRef.current !== openCfdDetails?.takeProfit) {
       setSubmitDisabled(false);
       calculateProfit();
-    }
-
-    if (slToggleRef.current && slValueRef.current !== openCfdDetails?.stopLoss) {
+    } else if (slToggleRef.current && slValueRef.current !== openCfdDetails?.stopLoss) {
       setSubmitDisabled(false);
       calculateLoss();
-    }
-
-    if (tpToggleRef.current !== initialTpToggle) {
-      setSubmitDisabled(false);
-    }
-
-    if (slToggleRef.current !== initialSlToggle) {
-      setSubmitDisabled(false);
-    }
-
-    if (guaranteedpCheckedRef.current !== openCfdDetails?.guaranteedStop) {
+    } else if (
+      tpToggleRef.current !== initialTpToggle ||
+      slToggleRef.current !== initialSlToggle ||
+      guaranteedpCheckedRef.current !== openCfdDetails?.guaranteedStop
+    ) {
       setSubmitDisabled(false);
     }
   };
@@ -574,7 +605,11 @@ const UpdateFormModal = ({
 
   useEffect(() => {
     setSubmitDisabled(true);
-    compareChange();
+    const isValidInput = validateInput();
+
+    if (isValidInput) {
+      compareChange();
+    }
   }, [
     tpValueRef.current,
     slValueRef.current,
@@ -584,6 +619,8 @@ const UpdateFormModal = ({
   ]);
 
   useEffect(() => {
+    setSubmitDisabled(true);
+
     initPosition();
   }, [globalCtx.visibleUpdateFormModal]);
 

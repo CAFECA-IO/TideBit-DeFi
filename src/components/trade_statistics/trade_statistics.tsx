@@ -61,7 +61,6 @@ const TradeStatistics = ({
       </svg>
     </div>
   );
-  // console.log(displayedBBI);
 
   return (
     <>
@@ -78,18 +77,18 @@ const TradeStatistics = ({
         <div className={`${overallWidth}`}>
           {/* Text */}
           <div className="flex w-full justify-between">
-            <p className="text-sm text-lightGreen5">
-              {long}% {t('TRADE_PAGE.TRADE_STATISTICS_BUYERS')}
-            </p>
             <p className="text-sm text-lightRed">
               {short}% {t('TRADE_PAGE.TRADE_STATISTICS_SELLERS')}
             </p>
+            <p className="text-sm text-lightGreen5">
+              {long}% {t('TRADE_PAGE.TRADE_STATISTICS_BUYERS')}
+            </p>
           </div>
           {/* Bar */}
-          <div className={`relative mb-4 h-2 w-full rounded-full bg-lightRed`}>
+          <div className={`relative mb-4 h-2 w-full rounded-full bg-lightGreen5`}>
             <div
-              className={`absolute left-0 top-0 h-2 rounded-l bg-lightGreen5`}
-              style={{width: `${bullAndBearIndex}%`}}
+              className={`absolute left-0 top-0 h-2 rounded-l bg-lightRed`}
+              style={{width: `${100 - bullAndBearIndex}%`}}
             ></div>
           </div>
         </div>

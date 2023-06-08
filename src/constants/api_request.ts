@@ -241,7 +241,7 @@ export const APIURL = {
   GET_CFD_TRADE: '/api/trades/cfds',
   CREATE_CFD_TRADE: `${API_URL}/trade/cfds`,
   UPDATE_CFD_TRADE: `${API_URL}/trade/cfds/update`,
-  CLOSE_CFD_TRADE: `${API_URL}/trade/cfds/close`,
+  CLOSE_CFD_TRADE: `${API_URL}/users/cfds/close`,
   CREATE_DEPOSIT_TRADE: `${API_URL}/deposit`,
   LIST_DEPOSIT_TRADES: '/api/trades/deposits',
   LIST_WITHDRAW_TRADES: '/api/trades/withdraws',

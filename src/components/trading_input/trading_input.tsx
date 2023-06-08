@@ -60,7 +60,7 @@ const TradingInput = ({
     typeof setTimeout
   > | null>(null);
 
-  const regex = /^\d*\.?\d{0,2}$/;
+  const regex = /^(0(\.0)?|[1-9]\d*(\.\d{0,2})?|0\.\d*[1-9]\d*)$/;
 
   const passValueHandler = useCallback(
     (data: number) => {

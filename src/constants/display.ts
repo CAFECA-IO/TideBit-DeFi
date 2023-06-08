@@ -188,7 +188,7 @@ export const TIDEBIT_BUTTON_CONFIG =
 
 export const DELAYED_HIDDEN_SECONDS = 1000;
 
-export const INPUT_VALIDATION_DELAY = 7000;
+export const INPUT_VALIDATION_DELAY = 5000;
 
 export const TRADING_INPUT_STEP = 0.01;
 
@@ -278,7 +278,7 @@ export const DEFAULT_FLUCTUATION = 0;
 export const DEFAULT_BALANCE = {available: 0, locked: 0};
 export const DEFAULT_PNL_DATA = {amount: {type: '', value: 0}, percentage: {type: '', value: 0}};
 export const DEFAULT_INTEREST_RATE = 0;
-export const CANDLESTICK_SIZE = 30;
+export const CANDLESTICK_SIZE = 50;
 export const MOBILE_WIDTH = 768;
 export const ITEMS_PER_PAGE = 10;
 export const NEWS_IMG_WIDTH = 1440;

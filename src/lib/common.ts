@@ -27,6 +27,14 @@ import {ICFDOrder} from '../interfaces/tidebit_defi_background/order';
 import {Currency, ICurrency, ICurrencyConstant} from '../constants/currency';
 import {CustomError} from './custom_error';
 import {Code, ICode, Reason} from '../constants/code';
+import {ITypeOfValidation, TypeOfValidation} from '../constants/validation';
+
+interface IValidateInput {
+  typeOfValidation: ITypeOfValidation;
+  value?: number;
+  upperLimit?: number;
+  lowerLimit?: number;
+}
 
 export const roundToDecimalPlaces = (val: number, precision: number): number => {
   const roundedNumber = Number(val.toFixed(precision));
@@ -574,4 +582,26 @@ export const validateCFD = (feeRate: number, amount: number) => {
   }
 
   return result;
+};
+
+export const validateAllInput = ({
+  typeOfValidation,
+  value,
+  upperLimit: upperLimit,
+  lowerLimit: lowerLimit,
+}: IValidateInput): boolean => {
+  let isValid = true;
+
+  switch (typeOfValidation) {
+    case TypeOfValidation.TPSL:
+      if (value !== undefined && upperLimit !== undefined && lowerLimit !== undefined) {
+        if (value > upperLimit || value < lowerLimit) {
+          isValid = false;
+        } else {
+          isValid = true;
+        }
+      }
+  }
+
+  return isValid;
 };

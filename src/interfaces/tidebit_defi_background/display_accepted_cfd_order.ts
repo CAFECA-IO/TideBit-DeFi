@@ -9,12 +9,14 @@ import {getDummyAcceptedCloseCFDOrder} from './accepted_cfd_order';
 import {ICurrency} from '../../constants/currency';
 
 export interface IDisplayCFDOrder extends ICFDOrder {
+  /** Deprecated: (20230608 - tzuhan)
   pnl: IPnL;
-  openValue: number;
   closeValue?: number;
   positionLineGraph: number[];
+  */
+  openValue: number;
   suggestion: ICFDSuggestion;
-  stateCode: number;
+  stateCode?: number;
 }
 
 export const getDummyDisplayCFDOrder = (currency: ICurrency) => {
@@ -28,10 +30,7 @@ export const getDummyDisplayCFDOrder = (currency: ICurrency) => {
   );
   const dummyPositionLineGraph: number[] = [90, 72, 60, 65, 42, 25, 32, 20, 15, 32, 90, 10];
   CFDOrder.openPrice = dummyPositionLineGraph[0];
-  const dummyDisplayCFDOrder: IDisplayCFDOrder = toDisplayCFDOrder(
-    CFDOrder,
-    dummyPositionLineGraph
-  );
+  const dummyDisplayCFDOrder: IDisplayCFDOrder = toDisplayCFDOrder(CFDOrder);
   return dummyDisplayCFDOrder;
 };
 

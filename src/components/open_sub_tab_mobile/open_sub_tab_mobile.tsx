@@ -3,7 +3,7 @@ import Skeleton, {SkeletonTheme} from 'react-loading-skeleton';
 import OpenPositionItem from '../open_position_item/open_position_item';
 import {UserContext} from '../../contexts/user_context';
 import {IDisplayCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
-import {roundToDecimalPlaces, toDisplayCFDOrder} from '../../lib/common';
+import {getStateCode, toDisplayCFDOrder} from '../../lib/common';
 import {MarketContext} from '../../contexts/market_context';
 import {TypeOfPosition} from '../../constants/type_of_position';
 //import useStateRef from 'react-usestateref';
@@ -63,12 +63,13 @@ const OpenSubTabMobile = () => {
   useEffect(() => {
     const cfdList = openCFDs
       .map(cfd => {
+        /** Deprecated: (20230608 - tzuhan)
         const positionLineGraph = marketCtx.listTickerPositions(cfd.targetAsset, {
           begin: cfd.createTimestamp,
         });
-
-        const tickerPrice = marketCtx.availableTickers[cfd.targetAsset]?.price;
         const spread = marketCtx.getTickerSpread(cfd.targetAsset);
+     */
+        const tickerPrice = marketCtx.availableTickers[cfd.targetAsset]?.price;
 
         /**
          * Info: (20230428 - Shirley)
@@ -76,6 +77,7 @@ const OpenSubTabMobile = () => {
          * without `market price`, use the open price of the CFD to get PNL === 0 and display `--`
          * (OpenPositionItem & UpdateFormModal)
          */
+        /** Deprecated: (20230608 - tzuhan)
         const currentPrice =
           (!!tickerPrice &&
             ((cfd.typeOfPosition === TypeOfPosition.BUY && roundToDecimalPlaces(tickerPrice, 2)) ||
@@ -84,14 +86,11 @@ const OpenSubTabMobile = () => {
           positionLineGraph.length > 0
             ? positionLineGraph[positionLineGraph.length - 1]
             : 0;
-
-        const displayCFD: IDisplayCFDOrder = toDisplayCFDOrder(
-          cfd,
-          positionLineGraph,
-          currentPrice,
-          Number(spread),
-          marketCtx.predictCFDClosePrice(cfd.targetAsset, cfd.typeOfPosition)
-        );
+        */
+        const displayCFD: IDisplayCFDOrder = {
+          ...toDisplayCFDOrder(cfd),
+          stateCode: getStateCode(cfd, tickerPrice),
+        };
 
         return displayCFD;
       })
@@ -99,7 +98,7 @@ const OpenSubTabMobile = () => {
         return a.createTimestamp - b.createTimestamp;
       })
       .sort((a, b) => {
-        return b.stateCode - a.stateCode;
+        return b.stateCode! - a.stateCode!;
       });
 
     setCfds(cfdList);

@@ -332,6 +332,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     if (!tickerId) return {...defaultResultFailed};
     const ticker: ITickerData = availableTickersRef.current[tickerId];
     if (!ticker) return {...defaultResultFailed};
+    notificationCtx.emitter.emit(TideBitEvent.CHANGE_TICKER, ticker);
     setSelectedTicker(ticker);
     await listMarketTrades(ticker.instId);
     syncCandlestickData();

@@ -843,8 +843,6 @@ export const UserProvider = ({children}: IUserProvider) => {
         if (verifyR) {
           const deWT = `${encodedData}.${eip712signature.replace('0x', '')}`;
           setDeWT(deWT);
-          // setEnableServiceTerm(true);
-          // ++ TODO to checksum address
           await setPrivateData(lunar.address, deWT);
           resultCode = Code.SUCCESS;
           result = {
@@ -1679,18 +1677,26 @@ export const UserProvider = ({children}: IUserProvider) => {
     () => notificationCtx.emitter.on(TideBitEvent.UPDATE_READ_NOTIFICATIONS, readNotifications),
     []
   );
-  /** Decrepted: called by page (20230608 - tzuhan)
+
   React.useMemo(
     () =>
-      notificationCtx.emitter.on(TideBitEvent.TICKER_CHANGE, async (ticker: ITickerData) => {
+      notificationCtx.emitter.on(TideBitEvent.CHANGE_TICKER, async (ticker: ITickerData) => {
         if (!selectedTickerRef.current || ticker.instId !== selectedTickerRef.current?.instId) {
           setSelectedTicker(ticker);
-          await listCFDs(ticker?.currency);
+          setOpenedCFDs([]);
+          setClosedCFDs([]);
         }
       }),
     []
   );
- */
+
+  React.useMemo(
+    () =>
+      notificationCtx.emitter.on(TideBitEvent.TICKER_CHANGE, async (ticker: ITickerData) => {
+        await listCFDs(ticker.currency);
+      }),
+    []
+  );
 
   const init = async () => {
     const {isDeWTLegit, signer, deWT} = checkDeWT();

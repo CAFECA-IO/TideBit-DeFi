@@ -9,6 +9,7 @@ export type ITideBitEvent =
   | 'BALANCE'
   | 'BALANCES'
   | 'FAVORITE_TICKER'
+  | 'CHANGE_TICKER'
   | 'TICKER_CHANGE'
   | 'TICKER'
   | 'TICKER_STATISTIC'
@@ -33,6 +34,7 @@ export interface ITideBitEventConstant {
   BALANCES: ITideBitEvent;
   FAVORITE_TICKER: ITideBitEvent;
   TICKER: ITideBitEvent;
+  CHANGE_TICKER: ITideBitEvent;
   TICKER_CHANGE: ITideBitEvent;
   TICKER_STATISTIC: ITideBitEvent;
   TICKER_LIVE_STATISTIC: ITideBitEvent;
@@ -57,6 +59,7 @@ export const TideBitEvent: ITideBitEventConstant = {
   BALANCES: 'BALANCES',
   FAVORITE_TICKER: 'FAVORITE_TICKER',
   TICKER: 'TICKER',
+  CHANGE_TICKER: 'CHANGE_TICKER',
   TICKER_CHANGE: 'TICKER_CHANGE',
   TICKER_STATISTIC: 'TICKER_STATISTIC',
   TICKER_LIVE_STATISTIC: 'TICKER_LIVE_STATISTIC',

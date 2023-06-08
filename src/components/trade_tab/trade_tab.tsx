@@ -42,6 +42,7 @@ import {
   getTimestampInMilliseconds,
   roundToDecimalPlaces,
   twoDecimal,
+  validateAllInput,
   validateCFD,
 } from '../../lib/common';
 import {IQuotation, getDummyQuotation} from '../../interfaces/tidebit_defi_background/quotation';
@@ -56,6 +57,7 @@ import {Code} from '../../constants/code';
 import {CFDOperation} from '../../constants/cfd_order_type';
 import {ToastTypeAndText} from '../../constants/toast_type';
 import {ToastId} from '../../constants/toast_id';
+import {TypeOfValidation} from '../../constants/validation';
 
 type TranslateFunction = (s: string) => string;
 
@@ -138,6 +140,9 @@ const TradeTab = () => {
   const [marginWarningLong, setMarginWarningLong, marginWarningLongRef] = useStateRef(false);
   const [marginWarningShort, setMarginWarningShort, marginWarningShortRef] = useStateRef(false);
 
+  const [longBtnDisabled, setLongBtnDisabled, longBtnDisabledRef] = useStateRef(false);
+  const [shortBtnDisabled, setShortBtnDisabled, shortBtnDisabledRef] = useStateRef(false);
+
   const [targetLengthLong, setTargetLengthLong] = useState(
     roundToDecimalPlaces((targetInputValue * Number(longPriceRef.current)) / leverage, 2).toString()
       .length
@@ -218,6 +223,15 @@ const TradeTab = () => {
     };
   }, [marketCtx.selectedTicker]);
 
+  useEffect(() => {
+    validateTpSlInput();
+  }, [
+    longTpValueRef.current,
+    longSlValueRef.current,
+    shortTpValueRef.current,
+    shortSlValueRef.current,
+  ]);
+
   const setPrice = () => {
     // const marketPrice = marketCtx.selectedTicker?.price ?? DEFAULT_MARKET_PRICE;
     const buyPrice = roundToDecimalPlaces(
@@ -236,7 +250,7 @@ const TradeTab = () => {
     setShortPrice(sellPrice);
   };
 
-  // TODO: To get quotation to let user sign, if fail, make the quotation itself with already expired deadline
+  // Info: To get quotation to let user sign, if fail, make the quotation itself with already expired deadline (20230606 - Shirley)
   const getQuotation = async (tickerId: string) => {
     let longQuotation = {...defaultResultFailed};
     let shortQuotation = {...defaultResultFailed};
@@ -389,6 +403,51 @@ const TradeTab = () => {
     setShortSlValue(value);
 
     calculateShortLoss();
+  };
+
+  const validateTpSlInput = () => {
+    const longTpValid = validateAllInput({
+      typeOfValidation: TypeOfValidation.TPSL,
+      value: longTpValueRef.current,
+      upperLimit: Infinity,
+      lowerLimit: longTpLowerLimitRef.current,
+    });
+
+    const longSlValid = validateAllInput({
+      typeOfValidation: TypeOfValidation.TPSL,
+
+      value: longSlValueRef.current,
+      upperLimit: longSlUpperLimitRef.current,
+      lowerLimit: longSlLowerLimitRef.current,
+    });
+
+    const shortTpValid = validateAllInput({
+      typeOfValidation: TypeOfValidation.TPSL,
+
+      value: shortTpValueRef.current,
+      upperLimit: shortTpUpperLimitRef.current,
+      lowerLimit: 0,
+    });
+
+    const shortSlValid = validateAllInput({
+      typeOfValidation: TypeOfValidation.TPSL,
+
+      value: shortSlValueRef.current,
+      upperLimit: shortSlUpperLimitRef.current,
+      lowerLimit: shortSlLowerLimitRef.current,
+    });
+
+    if (longTpValid && longSlValid) {
+      setLongBtnDisabled(false);
+    } else {
+      setLongBtnDisabled(true);
+    }
+
+    if (shortTpValid && shortSlValid) {
+      setShortBtnDisabled(false);
+    } else {
+      setShortBtnDisabled(true);
+    }
   };
 
   const checkTpSlWithinBounds = () => {
@@ -1040,7 +1099,7 @@ const TradeTab = () => {
               {/* Long Button */}
               <div className="flex justify-center">
                 <RippleButton
-                  disabled={marginWarningLongRef.current}
+                  disabled={marginWarningLongRef.current || longBtnDisabledRef.current}
                   onClick={longOrderSubmitHandler}
                   buttonType="button"
                   className="w-125px rounded-md bg-lightGreen5 px-7 py-1 text-sm font-medium tracking-wide text-white transition-colors duration-300 hover:bg-lightGreen5/80 disabled:bg-lightGray"
@@ -1124,7 +1183,7 @@ const TradeTab = () => {
               {/* Short Button */}
               <div className="flex justify-center">
                 <RippleButton
-                  disabled={marginWarningShortRef.current}
+                  disabled={marginWarningShortRef.current || shortBtnDisabledRef.current}
                   onClick={shortOrderSubmitHandler}
                   buttonType="button"
                   className="w-125px rounded-md bg-lightRed px-7 py-1 text-sm font-medium tracking-wide text-white transition-colors duration-300 hover:bg-lightRed/80 disabled:bg-lightGray"

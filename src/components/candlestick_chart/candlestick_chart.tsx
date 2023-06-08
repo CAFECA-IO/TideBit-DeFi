@@ -487,7 +487,8 @@ export default function CandlestickChart({
           priceRangeChangeHandler as LogicalRangeChangeEventHandler
         );
 
-      longShortPriceLine();
+      // TODO: for observation (20230607 - Shirley)
+      // longShortPriceLine();
 
       // Info: Draw the open price line (20230411 - Shirleey)
       // openPriceLine();

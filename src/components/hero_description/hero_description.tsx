@@ -11,11 +11,32 @@ import HeroReverse1 from '../hero_reverse1/hero_reverse1';
 import StatisticBlock from '../statistic/statistic';
 import ReserveRatio from '../reserve_ratio/reserve_ratio';
 import {useTranslation} from 'react-i18next';
+import {MarketContext} from '../../contexts/market_context';
 
 type TranslateFunction = (s: string) => string;
 
 export default function HeroDescription() {
   const {t}: {t: TranslateFunction} = useTranslation('common');
+  const [init, setInit] = React.useState(false);
+  const marketCtx = React.useContext(MarketContext);
+
+  const getMarketInfo = async () => {
+    try {
+      await marketCtx.getTideBitPromotion();
+      await marketCtx.getWebsiteReserve();
+    } catch (err) {
+      // Deprecated: [debug] (20230608 - tzuhan)
+      // eslint-disable-next-line no-console
+      console.log(`HeroDescription getMarketInfo error: `, err);
+    }
+  };
+
+  React.useEffect(() => {
+    if (marketCtx.isInit && !init) {
+      getMarketInfo();
+    }
+    setInit(true);
+  }, [marketCtx.isInit]);
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center overflow-hidden pt-24">

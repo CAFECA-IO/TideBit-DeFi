@@ -74,6 +74,7 @@ export interface IUserProvider {
   children: React.ReactNode;
 }
 export interface IUserContext {
+  isInit: boolean;
   user: IUser | null;
   userAssets: IUserAssets | null;
   walletBalances: IWalletBalance[] | null;
@@ -101,7 +102,7 @@ export interface IUserContext {
   disconnect: () => Promise<IResult>;
   addFavorites: (props: string) => Promise<IResult>;
   removeFavorites: (props: string) => Promise<IResult>;
-  listHistories: (props: string) => Promise<IResult>;
+  listHistories: () => Promise<IResult>;
   listCFDs: (props: string) => Promise<IResult>;
   getCFD: (props: string) => ICFDOrder | null;
   createCFDOrder: (props: IApplyCreateCFDOrder | undefined) => Promise<IResult>;
@@ -132,6 +133,7 @@ export interface IUserContext {
 }
 
 export const UserContext = createContext<IUserContext>({
+  isInit: false,
   user: null,
   walletBalances: null,
   // balance: null,
@@ -244,6 +246,7 @@ export const UserProvider = ({children}: IUserProvider) => {
   const transactionEngine = React.useMemo(() => TransactionEngineInstance, []);
   const workerCtx = useContext(WorkerContext);
   const notificationCtx = useContext(NotificationContext);
+  const [isInit, setIsInit, isInitRef] = useState<boolean>(false);
   const [user, setUser, userRef] = useState<IUser | null>(null);
   const [walletBalances, setWalletBalances, walletBalancesRef] = useState<IWalletBalance[] | null>(
     null
@@ -300,7 +303,9 @@ export const UserProvider = ({children}: IUserProvider) => {
       await getUserAssets();
       await listBalances();
       await listFavoriteTickers();
+      /** Deprecated: call by page (20230608 - tzuhan)
       await listHistories();
+       */
 
       workerCtx.subscribeUser(address);
     } else {
@@ -331,6 +336,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     if (!userRef.current) {
       const {isDeWTLegit, signer, deWT} = checkDeWT();
       if (isDeWTLegit && signer && deWT) await setPrivateData(signer, deWT);
+      setIsInit(true);
     }
   });
   lunar.on('disconnected', () => {
@@ -592,9 +598,10 @@ export const UserProvider = ({children}: IUserProvider) => {
           name: APIName.GET_USER_ASSETS,
           method: Method.GET,
         })) as IResult;
-        // Deprecate: after this functions finishing (20230508 - tzuhan)
+        /**  Deprecate: after this functions finishing (20230508 - tzuhan)
         // eslint-disable-next-line no-console
         console.log(`getUserAssets result`, result);
+        */
         if (result.success) {
           const userAssets = result.data as IUserAssets;
           setUserAssets(userAssets);
@@ -1687,6 +1694,7 @@ export const UserProvider = ({children}: IUserProvider) => {
   };
 
   const defaultValue = {
+    isInit: isInitRef.current,
     user: userRef.current,
     walletBalances: walletBalancesRef.current,
     // balance: balanceRef.current,

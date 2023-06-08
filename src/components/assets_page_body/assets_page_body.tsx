@@ -6,35 +6,67 @@ import PnlSection from '../pnl_section/pnl_section';
 import InterestSection from '../interest_section/interest_section';
 import ReceiptSection from '../receipt_section/receipt_section';
 import Skeleton, {SkeletonTheme} from 'react-loading-skeleton';
-import {SKELETON_DISPLAY_TIME} from '../../constants/display';
+/** Deprecated: call by fetching data (20230608 - tzuhan)
+// import {SKELETON_DISPLAY_TIME} from '../../constants/display';
+*/
 import Footer from '../footer/footer';
 import {useTranslation} from 'react-i18next';
+import {CustomError, isCustomError} from '../../lib/custom_error';
+import {Code} from '../../constants/code';
 
 type TranslateFunction = (s: string) => string;
 
 const AssetsPageBody = () => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
+  const [init, setInit] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const userCtx = useContext(UserContext);
   const globalCtx = useGlobal();
 
+  const redirect = () => {
+    globalCtx.dataWarningModalHandler({
+      title: t('POSITION_MODAL.WARNING_LOGGED_OUT_TITLE'),
+      content: t('POSITION_MODAL.WARNING_LOGGED_OUT_CONTENT'),
+      numberOfButton: 1,
+      pathOfButton: '/',
+      reactionOfButton: t('POSITION_MODAL.WARNING_GO_HOME_BUTTON'),
+    });
+
+    globalCtx.visibleWarningModalHandler();
+  };
+
+  const getUserPrivateInfo = async () => {
+    try {
+      const {success: isGetUserAssetsSuccess, code: userAssetsCode} = await userCtx.getUserAssets();
+      if (!isGetUserAssetsSuccess)
+        throw new CustomError(isCustomError(userAssetsCode) ? userAssetsCode : Code.UNKNOWN_ERROR);
+      const {success: isListHistoriesSuccess, code: listHistoriesCode} =
+        await userCtx.listHistories();
+      if (!isListHistoriesSuccess)
+        throw new CustomError(
+          isCustomError(listHistoriesCode) ? listHistoriesCode : Code.UNKNOWN_ERROR
+        );
+      setInit(true);
+      setIsLoading(false);
+    } catch (err) {
+      // Deprecated: [debug] (20230608 - tzuhan)
+      // eslint-disable-next-line no-console
+      console.log(`MyAssets getUserAssets error: `, err);
+      redirect();
+    }
+  };
+
   useEffect(() => {
     if (!userCtx.enableServiceTerm) {
-      globalCtx.dataWarningModalHandler({
-        title: t('POSITION_MODAL.WARNING_LOGGED_OUT_TITLE'),
-        content: t('POSITION_MODAL.WARNING_LOGGED_OUT_CONTENT'),
-        numberOfButton: 1,
-        pathOfButton: '/',
-        reactionOfButton: t('POSITION_MODAL.WARNING_GO_HOME_BUTTON'),
-      });
-
-      globalCtx.visibleWarningModalHandler();
+      redirect();
     }
   }, [userCtx.enableServiceTerm]);
 
   useEffect(() => {
-    setTimeout(() => setIsLoading(false), SKELETON_DISPLAY_TIME);
-  }, []);
+    if (userCtx.isInit && !init) {
+      getUserPrivateInfo();
+    }
+  }, [userCtx.isInit]);
 
   return (
     <div className="overflow-x-hidden">

@@ -262,14 +262,15 @@ export const toDisplayCFDOrder = (
   cfdOrder: ICFDOrder,
   positionLineGraph: number[],
   currentPrice?: number,
-  spread?: number
+  spread?: number,
+  closePrice?: number
 ) => {
   const spreadValue = spread ? spread : 0;
   const openValue = roundToDecimalPlaces(cfdOrder.openPrice * cfdOrder.amount, 2);
   const closeValue =
     cfdOrder.state === OrderState.CLOSED && cfdOrder.closePrice
       ? roundToDecimalPlaces(cfdOrder.closePrice * cfdOrder.amount, 2)
-      : 0;
+      : closePrice || 0;
   const currentValue = currentPrice
     ? roundToDecimalPlaces(Number(currentPrice) * cfdOrder.amount, 2)
     : positionLineGraph.length > 0

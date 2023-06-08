@@ -8,8 +8,10 @@ import {MarketContext} from '../../contexts/market_context';
 import {TypeOfPosition} from '../../constants/type_of_position';
 //import useStateRef from 'react-usestateref';
 import {SKELETON_DISPLAY_TIME} from '../../constants/display';
+/**  Deprecated: replace by maketContext.getTickerSpread (20230610 - tzuhan)
 import {defaultResultFailed} from '../../interfaces/tidebit_defi_background/result';
 import {ITickerLiveStatistics} from '../../interfaces/tidebit_defi_background/ticker_live_statistics';
+*/
 
 const OpenSubTabMobile = () => {
   const {openCFDs} = useContext(UserContext);
@@ -23,6 +25,7 @@ const OpenSubTabMobile = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [cfds, setCfds] = useState<IDisplayCFDOrder[]>([]);
 
+  /**  Deprecated: replace by maketContext.getTickerSpread (20230610 - tzuhan)
   const getTickerSpread = async (instId: string) => {
     let tickerSpread = {...defaultResultFailed};
     tickerSpread = await marketCtx.getTickerLiveStatistics(instId);
@@ -31,6 +34,7 @@ const OpenSubTabMobile = () => {
 
     return spread;
   };
+  */
 
   // Deprecated (20230610 - Julian)
   /*   useEffect(() => {
@@ -64,7 +68,7 @@ const OpenSubTabMobile = () => {
         });
 
         const tickerPrice = marketCtx.availableTickers[cfd.targetAsset]?.price;
-        const spread = getTickerSpread(cfd.targetAsset);
+        const spread = marketCtx.getTickerSpread(cfd.targetAsset);
 
         /**
          * Info: (20230428 - Shirley)
@@ -85,7 +89,8 @@ const OpenSubTabMobile = () => {
           cfd,
           positionLineGraph,
           currentPrice,
-          Number(spread)
+          Number(spread),
+          marketCtx.predictCFDClosePrice(cfd.targetAsset, cfd.typeOfPosition)
         );
 
         return displayCFD;

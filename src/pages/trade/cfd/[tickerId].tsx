@@ -47,12 +47,10 @@ const Trading = (props: IPageProps) => {
     }
   }, []);
 
-  /** Depreccated: these will cause duplicated request (20230601 - tzuhan)
   useEffect(() => {
-    if ((marketCtx?.selectedTickerRef?.current?.currency?.toString() ?? '') === currency) return;
+    if (!marketCtx.isInit) return;
     redirectToTicker();
-  }, [marketCtx.availableTickers]);
-  */
+  }, [marketCtx.isInit]);
 
   if (!router.isFallback && !props.tickerId) {
     return <Error statusCode={404} />;

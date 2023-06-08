@@ -167,10 +167,7 @@ const LeaderboardTab = ({timeSpan, setTimeSpan, rankings}: LeaderboardTabProps) 
         ? defaultTop3Data
         : {
             /* Info: (20230607 - Julian) If User Name length > 20, then truncate */
-            name:
-              rankingData[rank - 1]?.userName.length > 20
-                ? accountTruncate(rankingData[rank - 1]?.userName)
-                : rankingData[rank - 1]?.userName,
+            name: accountTruncate(rankingData[rank - 1]?.userName, 20),
             id: rankingData[rank - 1]?.userId,
             avatar: rankingData[rank - 1]?.userAvatar ?? DEFAULT_USER_AVATAR,
             displayedPnl: displayPnl(rankingData[rank - 1]?.cumulativePnl),
@@ -279,9 +276,7 @@ const LeaderboardTab = ({timeSpan, setTimeSpan, rankings}: LeaderboardTabProps) 
 
       const displayedRank = rank <= 0 ? '-' : rank;
       const displayedPnl = rank <= 0 ? '-' : displayPnl(cumulativePnl);
-      /* Info: (20230607 - Julian) If User Name length > 20, then truncate */
-      const displayedName =
-        rank <= 0 ? 'N/A' : userName.length > 20 ? accountTruncate(userName) : userName;
+      const displayedName = rank <= 0 ? 'N/A' : accountTruncate(userName, 20);
       const displayedAvatar = rank <= 0 ? DEFAULT_USER_AVATAR : userAvatar;
       return isLoading ? (
         <div key={rank} className="flex items-center justify-between px-4 py-6">

@@ -49,8 +49,6 @@ const PersonalAchievementModal = ({
   );
 
   useEffect(() => {
-    setIsLoading(true);
-
     userCtx
       .getPersonalAchievements(userId)
       .then(result => {
@@ -63,7 +61,7 @@ const PersonalAchievementModal = ({
       });
 
     setTimeout(() => setIsLoading(false), SKELETON_DISPLAY_TIME);
-  }, [userId]);
+  }, [userId, modalVisible]);
 
   const {
     userName,
@@ -112,6 +110,12 @@ const PersonalAchievementModal = ({
       );
 
     return formattedOnlineTime;
+  };
+
+  const closeModalHandler = () => {
+    modalClickHandler();
+    setPersonalAchievement(defaultPersonalAchievement);
+    setIsLoading(true);
   };
 
   const displayedROI = (roi: number) => {
@@ -230,8 +234,8 @@ const PersonalAchievementModal = ({
       },
     };
 
-    // Info: (20230517 - Julian) 只有自己的徽章才能點擊並分享
-    const clickHandler =
+    /* Info: (20230517 - Julian) 只有自己的徽章才能點擊並分享 */
+    const clickBadgeHandler =
       isMe && isReceived
         ? () => {
             globalCtx.dataBadgeModalHandler(badgeModalData);
@@ -243,7 +247,7 @@ const PersonalAchievementModal = ({
       <div
         key={index}
         className="group relative bg-darkGray8 p-2 hover:cursor-pointer sm:p-4"
-        onClick={clickHandler}
+        onClick={clickBadgeHandler}
       >
         <Image src={imgSrc} width={70} height={70} alt="badge_icon" />
         <div
@@ -260,9 +264,33 @@ const PersonalAchievementModal = ({
   });
 
   const formContent = isLoading ? (
-    // ToDo: (20230607 - Julian) Loading Skeleton
-    <div className="flex flex-col">
-      <Skeleton width={150} height={30} />
+    <div className="flex flex-col items-center space-y-4 px-10 pt-4">
+      <Skeleton width={150} height={40} />
+      <Skeleton width={120} height={120} circle />
+      <div className="flex w-full justify-between">
+        <div className="flex flex-col items-center">
+          <Skeleton width={50} height={20} />
+          <Skeleton width={70} height={20} />
+          <Skeleton width={50} height={20} />
+        </div>
+        <div className="flex flex-col items-center">
+          <Skeleton width={50} height={20} />
+          <Skeleton width={70} height={20} />
+          <Skeleton width={50} height={20} />
+        </div>
+        <div className="flex flex-col items-center">
+          <Skeleton width={50} height={20} />
+          <Skeleton width={70} height={20} />
+          <Skeleton width={50} height={20} />
+        </div>
+      </div>
+      <div className="flex flex-col space-y-4 pt-4">
+        <Skeleton width={320} height={30} />
+        <Skeleton width={320} height={30} />
+        <Skeleton width={320} height={30} />
+        <Skeleton width={320} height={30} />
+        <Skeleton width={320} height={30} />
+      </div>
     </div>
   ) : (
     <div className="flex w-full flex-col space-y-4 divide-y divide-lightGray overflow-y-auto overflow-x-hidden px-8 pt-4">
@@ -308,7 +336,7 @@ const PersonalAchievementModal = ({
               <div className="flex items-center justify-between rounded-t pt-9">
                 <button className="float-right ml-auto bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
                   <span className="absolute right-5 top-5 block outline-none focus:outline-none">
-                    <ImCross onClick={modalClickHandler} />
+                    <ImCross onClick={closeModalHandler} />
                   </span>
                 </button>
               </div>

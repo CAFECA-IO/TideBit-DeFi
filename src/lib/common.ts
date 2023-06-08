@@ -169,9 +169,11 @@ export const timestampToString = (timestamp: number, timezoneOffset?: number) =>
  * @returns '0x1234...12345'
  */
 export const accountTruncate = (text: string, limitLength: number) => {
-  return text?.length >= limitLength
-    ? text?.substring(0, 6) + '...' + text?.substring(text.length - 5)
-    : text;
+  const result =
+    text?.length >= limitLength
+      ? text?.substring(0, 6) + '...' + text?.substring(text.length - 5)
+      : text;
+  return result;
 };
 
 /**

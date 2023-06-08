@@ -333,7 +333,6 @@ export const UserProvider = ({children}: IUserProvider) => {
     if (!userRef.current) {
       const {isDeWTLegit, signer, deWT} = checkDeWT();
       if (isDeWTLegit && signer && deWT) await setPrivateData(signer, deWT);
-      setIsInit(true);
     }
   });
   lunar.on('disconnected', () => {
@@ -1706,7 +1705,7 @@ export const UserProvider = ({children}: IUserProvider) => {
       `app init is called: lunar.isConnected: ${lunar.isConnected}, isDeWTLegit: ${isDeWTLegit}, signer: ${signer}`
     );
     if (isDeWTLegit && signer && deWT) await setPrivateData(signer, deWT);
-
+    setIsInit(true);
     return await Promise.resolve();
   };
 

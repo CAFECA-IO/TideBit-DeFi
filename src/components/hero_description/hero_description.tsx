@@ -17,13 +17,14 @@ type TranslateFunction = (s: string) => string;
 
 export default function HeroDescription() {
   const {t}: {t: TranslateFunction} = useTranslation('common');
-  const [init, setInit] = React.useState(false);
+  const [isInit, setIsInit] = React.useState(false);
   const marketCtx = React.useContext(MarketContext);
 
   const getMarketInfo = async () => {
     try {
       await marketCtx.getTideBitPromotion();
       await marketCtx.getWebsiteReserve();
+      setIsInit(true);
     } catch (err) {
       // Deprecated: [debug] (20230608 - tzuhan)
       // eslint-disable-next-line no-console
@@ -32,11 +33,10 @@ export default function HeroDescription() {
   };
 
   React.useEffect(() => {
-    if (marketCtx.isInit && !init) {
+    if (marketCtx.isInit && !isInit) {
       getMarketInfo();
     }
-    setInit(true);
-  }, [marketCtx.isInit]);
+  }, [isInit, marketCtx.isInit]);
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center overflow-hidden pt-24">

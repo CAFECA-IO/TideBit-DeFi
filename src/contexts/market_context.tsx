@@ -93,7 +93,7 @@ export interface IMarketContext {
     typeOfPosition: ITypeOfPosition,
     price: number
   ) => Promise<IResult>;
-  getGuaranteedStopFeePercentage: (instId: string) => Promise<IResult>;
+  getGuaranteedStopFeePercentage: () => Promise<IResult>;
   getTickerSpread: (tickerId: ICurrency) => number;
   predictCFDClosePrice: (tickerId: ICurrency, typeOfPosition: ITypeOfPosition) => number;
   getLeaderboard: (timeSpan: IRankingTimeSpan) => Promise<IResult>;
@@ -345,7 +345,6 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       await getTickerLiveStatistics(ticker.instId);
     if (isGetTickerLiveStatisticsSuccess)
       setTickerLiveStatistics(tickerLiveStatistics as ITickerLiveStatistics);
-    await getGuaranteedStopFeePercentage(ticker.instId);
     notificationCtx.emitter.emit(TideBitEvent.TICKER_CHANGE, ticker);
     return {...defaultResultSuccess};
   };
@@ -452,13 +451,13 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     return positions;
   };
 
-  const getGuaranteedStopFeePercentage = async (instId: string) => {
+  const getGuaranteedStopFeePercentage = async () => {
     let result: IResult = {...defaultResultFailed};
     try {
       result = (await workerCtx.requestHandler({
         name: APIName.GET_GUARANTEED_STOP_FEE_PERCENTAGE,
         method: Method.GET,
-        params: instId,
+        params: '_', // Deprecated: after backend update (20230609 - tzuhhan)
       })) as IResult;
       if (result.success) {
         const data = result.data as number;
@@ -645,7 +644,6 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       // Deprecate: error handle (Tzuhan - 20230321)
       // eslint-disable-next-line no-console
       console.error(`getWebsiteReserve error`, error);
-      setIsCFDTradable(false);
       if (!isCustomError(error)) {
         result.code = Code.INTERNAL_SERVER_ERROR;
         result.reason = Reason[result.code];
@@ -668,7 +666,6 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       // Deprecate: error handle (Tzuhan - 20230321)
       // eslint-disable-next-line no-console
       console.error(`getTideBitPromotion error`, error);
-      setIsCFDTradable(false);
       if (!isCustomError(error)) {
         result.code = Code.INTERNAL_SERVER_ERROR;
         result.reason = Reason[result.code];
@@ -700,20 +697,16 @@ export const MarketProvider = ({children}: IMarketProvider) => {
   };
 
   const init = async () => {
-    await listCurrencies();
-    await listTickers();
-    setIsCFDTradable(true);
+    // eslint-disable-next-line no-console
+    console.log(`MarketContext.init is called`);
+    const {success: listCurrenciesIsSuccess} = await listCurrencies();
+    const {success: listTickersIsSuccess} = await listTickers();
+    const {success: getStopFeeIsSuccess} = await getGuaranteedStopFeePercentage();
+    if (listCurrenciesIsSuccess && listTickersIsSuccess && getStopFeeIsSuccess)
+      setIsCFDTradable(true);
     setIsInit(true);
     return await Promise.resolve();
   };
-
-  React.useMemo(
-    () =>
-      notificationCtx.emitter.on(TideBitEvent.IS_CFD_TRADEBLE, (isCFDTradable: boolean) => {
-        setIsCFDTradable(isCFDTradable);
-      }),
-    []
-  );
 
   React.useMemo(
     () =>

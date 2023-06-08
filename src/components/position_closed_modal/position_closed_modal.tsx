@@ -245,6 +245,7 @@ const PositionClosedModal = ({
       if (
         quotation.success &&
         data.typeOfPosition === oppositeTypeOfPosition &&
+        data.ticker === openCfdDetails.ticker &&
         quotation.data !== null
       ) {
         globalCtx.eliminateToasts(ToastId.GET_QUOTATION_ERROR);

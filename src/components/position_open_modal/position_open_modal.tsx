@@ -219,6 +219,7 @@ const PositionOpenModal = ({
       if (
         quotation.success &&
         data.typeOfPosition === openCfdRequest.typeOfPosition &&
+        data.ticker === openCfdRequest.ticker &&
         quotation.data !== null
       ) {
         globalCtx.eliminateToasts(ToastId.GET_QUOTATION_ERROR);

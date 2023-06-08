@@ -139,6 +139,7 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
         },
       },
     });
+    setPuser(pusher);
     pusher.connection.bind('connected', function () {
       const socketId = pusher.connection.socket_id;
       setSocketId(socketId);

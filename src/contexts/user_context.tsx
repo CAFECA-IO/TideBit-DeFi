@@ -294,13 +294,13 @@ export const UserProvider = ({children}: IUserProvider) => {
       setEnableServiceTerm(true);
       setWalletBalances([dummyWalletBalance_BTC, dummyWalletBalance_ETH, dummyWalletBalance_USDT]);
 
-      if (selectedTickerRef.current) {
-        await listCFDs(selectedTickerRef.current.currency);
-      }
       await getUserAssets();
       await listBalances();
       await listFavoriteTickers();
       await listHistories();
+      if (selectedTickerRef.current) {
+        await listCFDs(selectedTickerRef.current.currency);
+      }
 
       workerCtx.subscribeUser(address);
     } else {
@@ -506,6 +506,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     return result;
   }, []);
 
+  /** Deprecated by pusher: Event.ASSETS (2023067 -tzuhan)
   const sumBalance = () => {
     let sumAvailable = 0,
       sumLocked = 0;
@@ -583,6 +584,7 @@ export const UserProvider = ({children}: IUserProvider) => {
       setUserAssets(updateUserAssets);
     }
   };
+  */
 
   const getUserAssets = useCallback(async (): Promise<IResult> => {
     let result: IResult = {...defaultResultFailed};
@@ -711,7 +713,9 @@ export const UserProvider = ({children}: IUserProvider) => {
             convertBalanceDetailsToBalance(detail)
           );
           setBalances(balances);
+          /** Deprecated by pusher: Event.ASSETS (2023067 -tzuhan)
           sumBalance();
+          */
         }
       } catch (error) {
         // TODO: error handle (Tzuhan - 20230421)
@@ -1049,7 +1053,9 @@ export const UserProvider = ({children}: IUserProvider) => {
             const updateBalances = [...balancesRef.current];
             updateBalances[index] = updatedBalance;
             setBalances(updateBalances);
+            /** Deprecated by pusher: Event.ASSETS (2023067 -tzuhan)
             sumBalance();
+            */
           } else throw new CustomError(Code.BALANCE_NOT_FOUND);
         } else throw new CustomError(Code.BALANCE_NOT_FOUND);
       } catch (error) {
@@ -1580,6 +1586,10 @@ export const UserProvider = ({children}: IUserProvider) => {
     return result;
   };
 
+  const updateUserAssetsHandler = useCallback((userAssets: IUserAssets) => {
+    setUserAssets({...userAssets});
+  }, []);
+
   const updateBalanceHandler = useCallback((updateBalanceDetails: IBalanceDetails) => {
     const updateBalance = convertBalanceDetailsToBalance(updateBalanceDetails);
     if (balancesRef.current) {
@@ -1593,7 +1603,9 @@ export const UserProvider = ({children}: IUserProvider) => {
         updatedBalances[index] = updatedBalance;
       } else updatedBalances.push(updateBalance);
       setBalances(updatedBalances);
+      /** Deprecated by pusher: Event.ASSETS (2023067 -tzuhan)
       sumBalance();
+      */
     }
   }, []);
 
@@ -1651,7 +1663,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     //   historiesRef.current
     // );
   }, []);
-
+  React.useMemo(() => notificationCtx.emitter.on(Events.ASSETS, updateUserAssetsHandler), []);
   React.useMemo(() => notificationCtx.emitter.on(Events.BALANCE, updateBalanceHandler), []);
   React.useMemo(() => notificationCtx.emitter.on(Events.CFD, updateCFDHandler), []);
   React.useMemo(

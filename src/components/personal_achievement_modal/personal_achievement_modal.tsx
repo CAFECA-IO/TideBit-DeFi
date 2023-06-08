@@ -3,16 +3,11 @@ import {UserContext} from '../../contexts/user_context';
 import {useGlobal} from '../../contexts/global_context';
 import Image from 'next/image';
 import {defaultBadges} from '../../interfaces/tidebit_defi_background/badge';
-import {
-  DEFAULT_USER_AVATAR,
-  BADGE_LIST,
-  TypeOfPnLColor,
-  SKELETON_DISPLAY_TIME,
-} from '../../constants/display';
+import {DEFAULT_USER_AVATAR, BADGE_LIST, TypeOfPnLColor} from '../../constants/display';
 import Skeleton, {SkeletonTheme} from 'react-loading-skeleton';
 import {unitAsset} from '../../constants/config';
 import {ProfitState} from '../../constants/profit_state';
-import {numberFormatted, timestampToString} from '../../lib/common';
+import {numberFormatted, timestampToString, accountTruncate} from '../../lib/common';
 import {useTranslation} from 'react-i18next';
 import {
   IPersonalAchievement,
@@ -49,19 +44,22 @@ const PersonalAchievementModal = ({
   );
 
   useEffect(() => {
+    setIsLoading(true);
+
     userCtx
       .getPersonalAchievements(userId)
       .then(result => {
         result.success
           ? setPersonalAchievement(result.data as IPersonalAchievement)
           : setPersonalAchievement(defaultPersonalAchievement);
+
+        setIsLoading(false);
       })
       .catch(() => {
         setPersonalAchievement(defaultPersonalAchievement);
+        setIsLoading(false);
       });
-
-    setTimeout(() => setIsLoading(false), SKELETON_DISPLAY_TIME);
-  }, [userId, modalVisible]);
+  }, [modalVisible]);
 
   const {
     userName,
@@ -75,7 +73,7 @@ const PersonalAchievementModal = ({
     badges,
   } = personalAchievement;
 
-  const displayedUserName = userName;
+  const displayedUserName = accountTruncate(userName, 20);
   const isMe = userCtx.user?.id === userId ? true : false;
 
   const personalRankingContent = [
@@ -114,8 +112,8 @@ const PersonalAchievementModal = ({
 
   const closeModalHandler = () => {
     modalClickHandler();
-    setPersonalAchievement(defaultPersonalAchievement);
     setIsLoading(true);
+    setPersonalAchievement(defaultPersonalAchievement);
   };
 
   const displayedROI = (roi: number) => {
@@ -182,7 +180,7 @@ const PersonalAchievementModal = ({
 
     return (
       <div key={title} className="flex items-center justify-between">
-        <div className="flex flex-col items-center">
+        <div className="flex w-120px flex-col items-center">
           <div className="text-sm text-lightGray4">{title}</div>
           <div className="inline-flex items-center">
             {displayedPnl}
@@ -267,7 +265,7 @@ const PersonalAchievementModal = ({
     <div className="flex flex-col items-center space-y-4 px-10 pt-4">
       <Skeleton width={150} height={40} />
       <Skeleton width={120} height={120} circle />
-      <div className="flex w-full justify-between">
+      <div className="flex w-full justify-between px-6">
         <div className="flex flex-col items-center">
           <Skeleton width={50} height={20} />
           <Skeleton width={70} height={20} />
@@ -296,9 +294,7 @@ const PersonalAchievementModal = ({
     <div className="flex w-full flex-col space-y-4 divide-y divide-lightGray overflow-y-auto overflow-x-hidden px-8 pt-4">
       {/* Info:(20230515 - Julian) User Name */}
       <div className="flex flex-col items-center space-y-6 text-lightWhite">
-        <div className="no-scrollbar max-w-350px overflow-x-auto overflow-y-hidden text-2xl sm:text-4xl">
-          {displayedUserName}
-        </div>
+        <div className="text-2xl sm:text-4xl">{displayedUserName}</div>
         <div>
           <Image
             src={userAvatar ?? DEFAULT_USER_AVATAR}

@@ -36,7 +36,7 @@ import {
   ITideBitPromotion,
 } from '../interfaces/tidebit_defi_background/tidebit_promotion';
 import {ICurrency} from '../constants/currency';
-import {CustomError} from '../lib/custom_error';
+import {CustomError, isCustomError} from '../lib/custom_error';
 import {Code, Reason} from '../constants/code';
 import {IPusherAction} from '../interfaces/tidebit_defi_background/pusher_data';
 import {IQuotation} from '../interfaces/tidebit_defi_background/quotation';
@@ -91,7 +91,8 @@ export interface IMarketContext {
     price: number
   ) => Promise<IResult>;
   getGuaranteedStopFeePercentage: (instId: string) => Promise<IResult>;
-  getLeaderboard: (timeSpan: IRankingTimeSpan) => ILeaderboard | null;
+  getLeaderboard: (timeSpan: IRankingTimeSpan) => Promise<IResult>;
+  getTickerLiveStatistics: (instId: string) => Promise<IResult>;
   /** Deprecated: replaced by pusher (20230424 - tzuhan)
   getTickerHistory: (
     ticker: string,
@@ -149,12 +150,15 @@ export const MarketContext = createContext<IMarketContext>({
   getCFDQuotation: () => Promise.resolve(defaultResultSuccess),
   getCFDSuggestion: () => Promise.resolve(defaultResultSuccess),
   getGuaranteedStopFeePercentage: () => Promise.resolve(defaultResultSuccess),
-  getLeaderboard: () => null,
-  /** Deprecated: replaced by pusher (20230424 - tzuhan)
-  getTickerHistory: (): IResult => {
-    throw new CustomError(Code.FUNCTION_NOT_IMPLEMENTED);
+  getLeaderboard: function (timeSpan: IRankingTimeSpan): Promise<IResult> {
+    throw new Error('Function not implemented.');
   },
-  */
+  getTickerLiveStatistics: () => Promise.resolve(defaultResultSuccess),
+  /** Deprecated: replaced by pusher (20230424 - tzuhan)
+   getTickerHistory: (): IResult => {
+     throw new CustomError(Code.FUNCTION_NOT_IMPLEMENTED);
+    },
+   */
   listTickerPositions: (): number[] => {
     throw new CustomError(Code.FUNCTION_NOT_IMPLEMENTED);
   },
@@ -276,8 +280,10 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       // Deprecate: error handle (Tzuhan - 20230321)
       // eslint-disable-next-line no-console
       console.error(`getTickerStatic error`, error);
-      result.code = Code.INTERNAL_SERVER_ERROR;
-      result.reason = Reason[result.code];
+      if (!isCustomError(error)) {
+        result.code = Code.INTERNAL_SERVER_ERROR;
+        result.reason = Reason[result.code];
+      }
     }
     return result;
   };
@@ -295,8 +301,10 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       // eslint-disable-next-line no-console
       console.error(`getTickerLiveStatistics error`, error);
       setIsCFDTradable(false);
-      result.code = Code.INTERNAL_SERVER_ERROR;
-      result.reason = Reason[result.code];
+      if (!isCustomError(error)) {
+        result.code = Code.INTERNAL_SERVER_ERROR;
+        result.reason = Reason[result.code];
+      }
     }
     return result;
   };
@@ -306,7 +314,6 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     const ticker: ITickerData = availableTickersRef.current[tickerId];
     if (!ticker) return {...defaultResultFailed};
     setSelectedTicker(ticker);
-    notificationCtx.emitter.emit(TideBitEvent.TICKER_CHANGE, ticker);
     await listMarketTrades(ticker.instId);
     syncCandlestickData();
     // ++ TODO: get from api
@@ -319,6 +326,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     if (isGetTickerLiveStatisticsSuccess)
       setTickerLiveStatistics(tickerLiveStatistics as ITickerLiveStatistics);
     await getGuaranteedStopFeePercentage(ticker.instId);
+    notificationCtx.emitter.emit(TideBitEvent.TICKER_CHANGE, ticker);
     return {...defaultResultSuccess};
   };
 
@@ -340,8 +348,10 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       // Deprecate: error handle (Tzuhan - 20230327)
       // eslint-disable-next-line no-console
       console.error(`listTradesData error`, error);
-      result.code = Code.INTERNAL_SERVER_ERROR;
-      result.reason = Reason[result.code];
+      if (!isCustomError(error)) {
+          result.code = Code.INTERNAL_SERVER_ERROR;
+          result.reason = Reason[result.code];
+        }
     }
     return result;
   };
@@ -367,8 +377,10 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       // Deprecate: error handle (Tzuhan - 20230321)
       // eslint-disable-next-line no-console
       console.error(`getCFDQuotation error`, error);
-      result.code = Code.INTERNAL_SERVER_ERROR;
-      result.reason = Reason[result.code];
+      if (!isCustomError(error)) {
+        result.code = Code.INTERNAL_SERVER_ERROR;
+        result.reason = Reason[result.code];
+      }
     }
     return result;
   };
@@ -394,8 +406,10 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       // Deprecate: error handle (Tzuhan - 20230321)
       // eslint-disable-next-line no-console
       console.error(`getCFDSuggestion error`, error);
-      result.code = Code.INTERNAL_SERVER_ERROR;
-      result.reason = Reason[result.code];
+      if (!isCustomError(error)) {
+        result.code = Code.INTERNAL_SERVER_ERROR;
+        result.reason = Reason[result.code];
+      }
     }
     return result;
   };
@@ -434,15 +448,39 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       // Deprecate: error handle (Tzuhan - 20230321)
       // eslint-disable-next-line no-console
       console.error(`getGuaranteedStopFeePercentage error`, error);
-      result.code = Code.INTERNAL_SERVER_ERROR;
-      result.reason = Reason[result.code];
+      if (!isCustomError(error)) {
+        result.code = Code.INTERNAL_SERVER_ERROR;
+        result.reason = Reason[result.code];
+      }
     }
     return result;
   };
 
   // TODO: (20230511 - Julian) get data from backend
-  const getLeaderboard = (timeSpan: IRankingTimeSpan) => {
-    return getDummyLeaderboard(timeSpan);
+  const getLeaderboard = async (timeSpan: IRankingTimeSpan): Promise<IResult> => {
+    let result: IResult = {...defaultResultFailed};
+    try {
+      // 1. get tickers from backend
+      result = (await workerCtx.requestHandler({
+        name: APIName.GET_LEADERBOARD,
+        method: Method.GET,
+        query: {
+          timeSpan,
+        },
+      })) as IResult;
+      if (result.success) {
+        result.data = result.data as ILeaderboard;
+      }
+    } catch (error) {
+      // Deprecate: error handle (Tzuhan - 20230321)
+      // eslint-disable-next-line no-console
+      console.error(`listTickers error`, error);
+      if (!isCustomError(error)) {
+        result.code = Code.INTERNAL_SERVER_ERROR;
+        result.reason = Reason[result.code];
+      }
+    }
+    return result;
   };
 
   const listTickers = async (selectedTickerCurrency?: ICurrency) => {
@@ -463,8 +501,10 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       // Deprecate: error handle (Tzuhan - 20230321)
       // eslint-disable-next-line no-console
       console.error(`listTickers error`, error);
-      result.code = Code.INTERNAL_SERVER_ERROR;
-      result.reason = Reason[result.code];
+      if (!isCustomError(error)) {
+        result.code = Code.INTERNAL_SERVER_ERROR;
+        result.reason = Reason[result.code];
+      }
     }
     return result;
   };
@@ -491,8 +531,10 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       // Deprecate: error handle (Tzuhan - 20230321)
       // eslint-disable-next-line no-console
       console.error(`listCurrencies error`, error);
-      result.code = Code.INTERNAL_SERVER_ERROR;
-      result.reason = Reason[result.code];
+      if (!isCustomError(error)) {
+        result.code = Code.INTERNAL_SERVER_ERROR;
+        result.reason = Reason[result.code];
+      }
     }
     return result;
   };
@@ -539,8 +581,10 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       // Deprecate: error handle (Tzuhan - 20230321)
       // eslint-disable-next-line no-console
       console.error(`listMarketTrades error`, error);
-      result.code = Code.INTERNAL_SERVER_ERROR;
-      result.reason = Reason[result.code];
+      if (!isCustomError(error)) {
+        result.code = Code.INTERNAL_SERVER_ERROR;
+        result.reason = Reason[result.code];
+      }
     }
     return result;
   };
@@ -580,8 +624,10 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       // eslint-disable-next-line no-console
       console.error(`getWebsiteReserve error`, error);
       setIsCFDTradable(false);
-      result.code = Code.INTERNAL_SERVER_ERROR;
-      result.reason = Reason[result.code];
+      if (!isCustomError(error)) {
+        result.code = Code.INTERNAL_SERVER_ERROR;
+        result.reason = Reason[result.code];
+      }
     }
     if (result.success) {
       setWebsiteReserve(result.data as IWebsiteReserve);
@@ -601,8 +647,10 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       // eslint-disable-next-line no-console
       console.error(`getTideBitPromotion error`, error);
       setIsCFDTradable(false);
-      result.code = Code.INTERNAL_SERVER_ERROR;
-      result.reason = Reason[result.code];
+      if (!isCustomError(error)) {
+        result.code = Code.INTERNAL_SERVER_ERROR;
+        result.reason = Reason[result.code];
+      }
     }
     if (result.success) {
       setTidebitPromotion(result.data as ITideBitPromotion);
@@ -613,8 +661,8 @@ export const MarketProvider = ({children}: IMarketProvider) => {
   const init = async () => {
     await getTideBitPromotion();
     await getWebsiteReserve();
-    await listTickers();
     await listCurrencies();
+    await listTickers();
     setIsCFDTradable(true);
     return await Promise.resolve();
   };
@@ -701,6 +749,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     getCFDSuggestion,
     getGuaranteedStopFeePercentage,
     getLeaderboard,
+    getTickerLiveStatistics,
     /** Deprecated: replaced by pusher (20230424 - tzuhan)
     getTickerHistory,
     */

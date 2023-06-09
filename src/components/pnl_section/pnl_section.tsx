@@ -13,7 +13,7 @@ const PnlSection = () => {
 
   const userCtx = useContext(UserContext);
   const {userAssets} = userCtx;
-  /* ToDo: (20230420 - Julian) getUserAssets by currency */
+
   const pnlToday = userAssets?.pnl.today ?? DEFAULT_PNL_DATA;
   const pnl30Days = userAssets?.pnl.monthly ?? DEFAULT_PNL_DATA;
   const cumulativePnl = userAssets?.pnl.cumulative ?? DEFAULT_PNL_DATA;
@@ -33,12 +33,13 @@ const PnlSection = () => {
           ? `${numberFormatted(amount.value)} ${unitAsset}`
           : '-',
       remarks:
+        /* Info: (20230602 - Julian) 調整 format (e.g. 0.012 -> 1.2%)  */
         percentage.type === ProfitState.PROFIT
-          ? `▴ ${numberFormatted(percentage.value)} %`
+          ? `▴ ${numberFormatted(percentage.value * 100)} %`
           : percentage.type === ProfitState.LOSS
-          ? `▾ ${numberFormatted(percentage.value)} %`
+          ? `▾ ${numberFormatted(percentage.value * 100)} %`
           : percentage.type === ProfitState.EQUAL
-          ? `${numberFormatted(percentage.value)} %`
+          ? `${numberFormatted(percentage.value * 100)} %`
           : '-',
       textColor:
         percentage.type === ProfitState.PROFIT && amount.type === ProfitState.PROFIT

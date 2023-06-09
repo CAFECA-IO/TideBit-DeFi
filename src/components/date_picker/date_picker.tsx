@@ -78,19 +78,27 @@ const DatePicker = ({date, minDate, maxDate, setDate}: IDatePickerProps) => {
     let dates: Dates[] = [];
     for (let i = 0; i < dateLength; i++) {
       const dateTime = new Date(`${year}/${month + 1}/${i + 1}`).getTime();
+
+      const maxTime = maxDate
+        ? new Date(maxDate.getFullYear(), maxDate.getMonth() + 1, maxDate.getDate()).getTime()
+        : null;
+      const minTime = minDate
+        ? new Date(minDate.getFullYear(), minDate.getMonth() + 1, minDate.getDate()).getTime()
+        : null;
+
       const date = {
         date: i + 1,
         time: dateTime,
-        disable: minDate
-          ? dateTime < minDate.getTime()
+        disable: minTime
+          ? dateTime < minTime
             ? true
-            : maxDate
-            ? dateTime > maxDate.getTime()
+            : maxTime
+            ? dateTime > maxTime
               ? true
               : false
             : false
-          : maxDate
-          ? dateTime > maxDate.getTime()
+          : maxTime
+          ? dateTime > maxTime
             ? true
             : false
           : false,
@@ -128,7 +136,7 @@ const DatePicker = ({date, minDate, maxDate, setDate}: IDatePickerProps) => {
   const selectDate = useCallback(
     (el: Dates) => {
       let newDate = new Date(el.time);
-      newDate = new Date(`${newDate.getFullYear()}/${newDate.getMonth() + 1}/${newDate.getDate()}`);
+      newDate = new Date(`${newDate.getFullYear()}/${newDate.getMonth()}/${newDate.getDate()}`);
       setDate(newDate);
       setOpenDates(false);
     },
@@ -141,7 +149,7 @@ const DatePicker = ({date, minDate, maxDate, setDate}: IDatePickerProps) => {
 
   const formatDate = (obj: Date) => {
     const day = obj.getDate();
-    const month = obj.getMonth();
+    const month = obj.getMonth() + 1;
     const formatDay = day < 10 ? '0' + day : `${day}`;
     const formatMonth = month < 10 ? '0' + month : `${month}`;
     const year = obj.getFullYear();
@@ -182,7 +190,6 @@ const DatePicker = ({date, minDate, maxDate, setDate}: IDatePickerProps) => {
             ></div>
           </div>
         </div>
-
         <div className={`my-4 ${formatGridStyle} text-center text-xxs text-lightGray`}>
           {displayWeek}
         </div>

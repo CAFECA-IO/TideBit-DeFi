@@ -57,7 +57,7 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
   const [publicChannel, setPublicChannel, publicChannelRef] = useState<Channel | null>(null);
   const jobQueueOfWS = useRef<((...args: []) => Promise<void>)[]>([]);
   const jobQueueOfAPI = useRef<((...args: []) => Promise<void>)[]>([]);
-  const [sockedId, setSocketId, sockedIdRef] = useState<string | null>(null);
+  const [socketId, setSocketId, socketIdRef] = useState<string | null>(null);
   /* Deprecated: callback in requestHandler (Tzuhan - 20230420)
   const requests = useRef<IRequest>({});
   */
@@ -139,19 +139,11 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
         },
       },
     });
-    // eslint-disable-next-line no-console
-    console.log('pusher', pusher);
     setPuser(pusher);
     pusher.connection.bind('connected', function () {
       const socketId = pusher.connection.socket_id;
-      // Deprecated: [debug] (20230523 - tzuhan)
-      // eslint-disable-next-line no-console
-      console.log('pusher My socket ID is ' + socketId);
-      setSocketId(sockedId);
+      setSocketId(socketId);
       const channel = pusherRef.current?.subscribe(PusherChannel.GLOBAL_CHANNEL);
-      // Deprecated: [debug] (20230523 - tzuhan)
-      // eslint-disable-next-line no-console
-      console.log('channel ', channel);
       if (channel) {
         setPublicChannel(channel);
         subscribeTickers();

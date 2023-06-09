@@ -272,6 +272,7 @@ export const toDisplayCFDOrder = (
   currentPrice?: number,
   spread?: number
 ) => {
+  const spreadValue = spread ? spread : 0;
   const openValue = roundToDecimalPlaces(cfdOrder.openPrice * cfdOrder.amount, 2);
   const closeValue =
     cfdOrder.state === OrderState.CLOSED && cfdOrder.closePrice
@@ -285,14 +286,21 @@ export const toDisplayCFDOrder = (
         2
       )
     : roundToDecimalPlaces(Number(cfdOrder.openPrice) * cfdOrder.amount, 2);
+  /* Info: (20230602 - Julian) pnl with spread
+   * BUY -> closeValue - openValue
+   * SELL -> openValue - closeValue */
   const pnl =
     cfdOrder.state === OrderState.CLOSED && cfdOrder.closePrice
       ? roundToDecimalPlaces(
-          (closeValue - openValue) * (cfdOrder.typeOfPosition === TypeOfPosition.BUY ? 1 : -1),
+          (closeValue - openValue) *
+            (cfdOrder.typeOfPosition === TypeOfPosition.BUY ? 1 : -1) *
+            (cfdOrder.typeOfPosition === TypeOfPosition.BUY ? 1 + spreadValue : 1 - spreadValue),
           2
         )
       : roundToDecimalPlaces(
-          (currentValue - openValue) * (cfdOrder.typeOfPosition === TypeOfPosition.BUY ? 1 : -1),
+          (currentValue - openValue) *
+            (cfdOrder.typeOfPosition === TypeOfPosition.BUY ? 1 : -1) *
+            (cfdOrder.typeOfPosition === TypeOfPosition.BUY ? 1 + spreadValue : 1 - spreadValue),
           2
         );
   const pnlPerncent = roundToDecimalPlaces((pnl / openValue) * 100, 2);
@@ -309,7 +317,6 @@ export const toDisplayCFDOrder = (
     stopLoss: rSl,
   };
 
-  const spreadValue = spread ? spread : DEFAULT_SPREAD;
   // Info: (20230510 - Julian) positionLineGraph with spread
   const positionLineGraphWithSpread =
     cfdOrder.typeOfPosition === TypeOfPosition.BUY

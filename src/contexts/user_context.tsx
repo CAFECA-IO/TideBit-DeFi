@@ -294,13 +294,13 @@ export const UserProvider = ({children}: IUserProvider) => {
       setEnableServiceTerm(true);
       setWalletBalances([dummyWalletBalance_BTC, dummyWalletBalance_ETH, dummyWalletBalance_USDT]);
 
-      if (selectedTickerRef.current) {
-        await listCFDs(selectedTickerRef.current.currency);
-      }
       await getUserAssets();
       await listBalances();
       await listFavoriteTickers();
       await listHistories();
+      if (selectedTickerRef.current) {
+        await listCFDs(selectedTickerRef.current.currency);
+      }
 
       workerCtx.subscribeUser(address);
     } else {
@@ -506,6 +506,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     return result;
   }, []);
 
+  /** Deprecated by pusher: Event.ASSETS (2023067 -tzuhan)
   const sumBalance = () => {
     let sumAvailable = 0,
       sumLocked = 0;
@@ -583,6 +584,7 @@ export const UserProvider = ({children}: IUserProvider) => {
       setUserAssets(updateUserAssets);
     }
   };
+  */
 
   const getUserAssets = useCallback(async (): Promise<IResult> => {
     let result: IResult = {...defaultResultFailed};
@@ -711,7 +713,9 @@ export const UserProvider = ({children}: IUserProvider) => {
             convertBalanceDetailsToBalance(detail)
           );
           setBalances(balances);
+          /** Deprecated by pusher: Event.ASSETS (2023067 -tzuhan)
           sumBalance();
+          */
         }
       } catch (error) {
         // TODO: error handle (Tzuhan - 20230421)
@@ -1049,7 +1053,9 @@ export const UserProvider = ({children}: IUserProvider) => {
             const updateBalances = [...balancesRef.current];
             updateBalances[index] = updatedBalance;
             setBalances(updateBalances);
+            /** Deprecated by pusher: Event.ASSETS (2023067 -tzuhan)
             sumBalance();
+            */
           } else throw new CustomError(Code.BALANCE_NOT_FOUND);
         } else throw new CustomError(Code.BALANCE_NOT_FOUND);
       } catch (error) {
@@ -1194,7 +1200,7 @@ export const UserProvider = ({children}: IUserProvider) => {
       // const balance: IBalance | null = getBalance(openCFDs[index].targetAsset);
       const transferR = transactionEngine.transferCFDOrderToTransaction(applyCloseCFDOrder);
       if (!transferR.success) throw new CustomError(Code.FAILED_TO_CREATE_TRANSACTION);
-      // ++ TODO: send request to chain(use Lunar?) (20230324 - tzuhan)
+      // TODO: send request to chain(use Lunar?) (20230324 - tzuhan)
       const signature: string = await lunar.signTypedData(transferR.data);
       /* Info: (20230505 - Julian) 需要再驗證一次簽名是否正確 */
       const success = lunar.verifyTypedData(transferR.data, signature);
@@ -1307,7 +1313,7 @@ export const UserProvider = ({children}: IUserProvider) => {
       if (index === -1) throw new CustomError(Code.CFD_ORDER_NOT_FOUND);
       const transferR = transactionEngine.transferCFDOrderToTransaction(applyUpdateCFDOrder);
       if (!transferR.success) throw new CustomError(Code.FAILED_TO_CREATE_TRANSACTION);
-      // ++ TODO: send request to chain(use Lunar?) (20230324 - tzuhan)
+      // TODO: send request to chain(use Lunar?) (20230324 - tzuhan)
       const signature: string = await lunar.signTypedData(transferR.data);
       /* Info: (20230505 - Julian) 需要再驗證一次簽名是否正確 */
       const success = lunar.verifyTypedData(transferR.data, signature);
@@ -1432,8 +1438,6 @@ export const UserProvider = ({children}: IUserProvider) => {
               };
               setWithdraws(prev => [...prev, withdrawOrder]);
               updateBalance(balanceSnapshot);
-              // setHistories(prev => [...prev, acceptedWithdrawOrder]);
-
               result.code = Code.SUCCESS;
               result = {
                 success: success,
@@ -1582,6 +1586,10 @@ export const UserProvider = ({children}: IUserProvider) => {
     return result;
   };
 
+  const updateUserAssetsHandler = useCallback((userAssets: IUserAssets) => {
+    setUserAssets({...userAssets});
+  }, []);
+
   const updateBalanceHandler = useCallback((updateBalanceDetails: IBalanceDetails) => {
     const updateBalance = convertBalanceDetailsToBalance(updateBalanceDetails);
     if (balancesRef.current) {
@@ -1595,7 +1603,9 @@ export const UserProvider = ({children}: IUserProvider) => {
         updatedBalances[index] = updatedBalance;
       } else updatedBalances.push(updateBalance);
       setBalances(updatedBalances);
+      /** Deprecated by pusher: Event.ASSETS (2023067 -tzuhan)
       sumBalance();
+      */
     }
   }, []);
 
@@ -1653,7 +1663,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     //   historiesRef.current
     // );
   }, []);
-
+  React.useMemo(() => notificationCtx.emitter.on(Events.ASSETS, updateUserAssetsHandler), []);
   React.useMemo(() => notificationCtx.emitter.on(Events.BALANCE, updateBalanceHandler), []);
   React.useMemo(() => notificationCtx.emitter.on(Events.CFD, updateCFDHandler), []);
   React.useMemo(
@@ -1667,10 +1677,10 @@ export const UserProvider = ({children}: IUserProvider) => {
   );
   React.useMemo(
     () =>
-      notificationCtx.emitter.on(TideBitEvent.TICKER_CHANGE, (ticker: ITickerData) => {
+      notificationCtx.emitter.on(TideBitEvent.TICKER_CHANGE, async (ticker: ITickerData) => {
         if (!selectedTickerRef.current || ticker.instId !== selectedTickerRef.current?.instId) {
           setSelectedTicker(ticker);
-          listCFDs(ticker?.currency);
+          await listCFDs(ticker?.currency);
         }
       }),
     []

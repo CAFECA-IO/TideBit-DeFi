@@ -18,9 +18,11 @@ import {Currency} from '../../constants/currency';
 import {MarketContext} from '../../contexts/market_context';
 import {DOMAIN} from '../../constants/config';
 import {NEWS_IMG_HEIGHT, NEWS_IMG_WIDTH} from '../../constants/display';
+import {IPost, getPost, getPosts} from '../../lib/posts';
 
 interface IPageProps {
   newsId: string;
+  newsData: IPost; // Add this to represent the fetched news data
 }
 
 // TODO: Check dynamic routing (20230605 - Shirley)
@@ -33,10 +35,14 @@ const NewsPage = (props: IPageProps) => {
 
   const news = marketCtx.getNews(Currency.ETH, props?.newsId ?? '');
   const recommendationNews = marketCtx.getRecommendedNews(Currency.ETH);
-  const finishedNews = tempNews;
-  const newsTitle = finishedNews.title;
-  const newsDescription = finishedNews.content;
-  const newsImg = finishedNews.img;
+
+  const post = props.newsData;
+  // const finishedNews = tempNews;
+  const newsTitle = post.title;
+  const newsDescription = post.body.substring(0, 100);
+
+  // TODO: img src (20230609 - Shirley)
+  const newsImg = `/news/${props.newsId}@2x.png`;
 
   const share = `${DOMAIN}/news/${props.newsId}`;
   const img = `${DOMAIN}${newsImg}`;
@@ -87,8 +93,10 @@ const NewsPage = (props: IPageProps) => {
           <main className="">
             <div>
               <NewsArticle
+                post={props.newsData}
                 shareId={props.newsId}
-                news={finishedNews}
+                // news={finishedNews}
+                img={newsImg}
                 // recommendations={recommendationNews}
               />
             </div>
@@ -113,10 +121,38 @@ export const getServerSideProps: GetServerSideProps<IPageProps> = async ({params
     };
   }
 
+  const newsData = await getPost(params.newsId);
+
+  if (!newsData) {
+    return {
+      notFound: true,
+    };
+  }
+
   return {
     props: {
       newsId: params.newsId,
+      newsData,
       ...(await serverSideTranslations(locale as string, ['common', 'footer'])),
     },
   };
 };
+
+// export const getServerSideProps: GetServerSideProps<IPageProps> = async ({ params, locale }) => {
+//   if (!params || !params.newsId || typeof params.newsId !== 'string') {
+//     return {
+//       notFound: true,
+//     };
+//   }
+
+//   // Fetch the news data using the getPost function
+//   const newsData = await getPost(params.newsId);
+
+//   return {
+//     props: {
+//       newsId: params.newsId,
+//       newsData, // Return the fetched data as a prop
+//       ...(await serverSideTranslations(locale as string, ['common', 'footer'])),
+//     },
+//   };
+// };

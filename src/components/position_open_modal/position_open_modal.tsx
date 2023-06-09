@@ -38,7 +38,7 @@ import {
 } from '../../interfaces/tidebit_defi_background/result';
 import {IQuotation} from '../../interfaces/tidebit_defi_background/quotation';
 import useStateRef from 'react-usestateref';
-import {Code} from '../../constants/code';
+import {Code, Reason} from '../../constants/code';
 import {ToastTypeAndText} from '../../constants/toast_type';
 import {ToastId} from '../../constants/toast_id';
 import {CustomError, isCustomError} from '../../lib/custom_error';
@@ -219,7 +219,7 @@ const PositionOpenModal = ({
       if (
         quotation.success &&
         data.typeOfPosition === openCfdRequest.typeOfPosition &&
-        data.ticker === openCfdRequest.ticker &&
+        data.ticker.split('-')[0] === openCfdRequest.ticker &&
         quotation.data !== null
       ) {
         globalCtx.eliminateToasts(ToastId.GET_QUOTATION_ERROR);
@@ -227,6 +227,26 @@ const PositionOpenModal = ({
         return data;
       } else {
         setQuotationError(true);
+
+        if (data.ticker.split('-')[0] !== openCfdRequest.ticker) {
+          setQuotationErrorMessage({
+            success: false,
+            code: Code.INCONSISTENT_TICKER_OF_QUOTATION,
+            reason: Reason[Code.INCONSISTENT_TICKER_OF_QUOTATION],
+          });
+
+          // Deprecated: for debug (20230609 - Shirley)
+          globalCtx.toast({
+            type: ToastTypeAndText.ERROR.type,
+            toastId: ToastId.INCONSISTENT_TICKER_OF_QUOTATION,
+            message: `[dev] ${quotationErrorMessageRef.current.reason} (${quotationErrorMessageRef.current.code})`,
+            typeText: t(ToastTypeAndText.ERROR.text),
+            isLoading: false,
+            autoClose: false,
+          });
+
+          return;
+        }
         /* Info: (20230508 - Julian) get quotation error message */
         setQuotationErrorMessage({success: false, code: quotation.code, reason: quotation.reason});
       }
@@ -303,6 +323,27 @@ const PositionOpenModal = ({
       return;
     }
 
+    if (openCfdRequest.quotation.ticker.split('-')[0] !== openCfdRequest.ticker) {
+      setQuotationError(true);
+      setQuotationErrorMessage({
+        success: false,
+        code: Code.INCONSISTENT_TICKER_OF_QUOTATION,
+        reason: Reason[Code.INCONSISTENT_TICKER_OF_QUOTATION],
+      });
+
+      // Deprecated: for debug (20230609 - Shirley)
+      globalCtx.toast({
+        type: ToastTypeAndText.ERROR.type,
+        toastId: ToastId.INCONSISTENT_TICKER_OF_QUOTATION,
+        message: `[dev] ${quotationErrorMessageRef.current.reason} (${quotationErrorMessageRef.current.code})`,
+        typeText: t(ToastTypeAndText.ERROR.text),
+        isLoading: false,
+        autoClose: false,
+      });
+    } else {
+      setQuotationError(false);
+    }
+
     const isValid = validateCFD(openCfdRequest.fee, openCfdRequest.amount);
     if (!isValid) {
       setSecondsLeft(0);
@@ -323,6 +364,7 @@ const PositionOpenModal = ({
     setSecondsLeft(tickingSec > 0 ? Math.floor(tickingSec) : 0);
   }, [globalCtx.visiblePositionOpenModal]);
 
+  // Info: countdown (20230609 - Shirley)
   useEffect(() => {
     if (!userCtx.enableServiceTerm) return;
     if (invalidDataRef.current) return;
@@ -341,7 +383,6 @@ const PositionOpenModal = ({
       clearInterval(intervalId);
     };
   }, [secondsLeft, globalCtx.visiblePositionOpenModal]);
-  // TODO: modal check if tradable
 
   const formContent = (
     <div className="mt-4 flex flex-col px-6 pb-2">

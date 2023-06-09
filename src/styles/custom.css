@@ -151,3 +151,11 @@
   transform: scaleY(-1);
   opacity: 0.3;
 }
+
+.h3-bold {
+  font-weight: bold;
+}
+
+.a-blue {
+  color: blue;
+}

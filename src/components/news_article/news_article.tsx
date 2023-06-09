@@ -45,8 +45,12 @@ const NewsArticle = ({shareId, img, post, recommendations}: INewsArticle) => {
     shareId: shareId,
   });
 
-  // eslint-disable-next-line no-console
-  console.log('post in newsArticle', post);
+  const parsedBody = post.body
+    .replace(
+      /<h3 id="([^"]+)"><strong>([^<]+)<\/strong><\/h3>/g,
+      `<h3 id="$1" class="font-bold text-xl my-3">$2</h3>`
+    )
+    .replace(/<a /g, `<a class="text-blue-300 underline" `);
 
   return (
     <div className="bg-gradient-to-r from-darkGray1/80 via-black to-black pb-20">
@@ -79,7 +83,16 @@ const NewsArticle = ({shareId, img, post, recommendations}: INewsArticle) => {
           {/* <p className="text-base leading-10 tracking-normal text-lightGray1">{news.content}</p> */}
 
           <div className="prose mt-5 max-w-none leading-10 tracking-normal">
-            <article dangerouslySetInnerHTML={{__html: post.body}} />
+            <style jsx>{`
+              h3 {
+                font-weight: bold;
+              }
+              a {
+                color: #c83636;
+              }
+            `}</style>
+
+            <article dangerouslySetInnerHTML={{__html: parsedBody}} />
 
             {/* <h2 className="mb-5 text-xl font-bold">Introduction</h2>
             <p className="mb-5">

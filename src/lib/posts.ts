@@ -11,15 +11,6 @@ export interface IPost {
 }
 
 export async function getPost(slug: string): Promise<IPost | null> {
-  // const route = `${ETH_NEWS_FOLDER}/${slug}.md`;
-  // const source = await readFile(route, 'utf-8');
-  // const {
-  //   data: {date, title},
-  //   content,
-  // } = matter(source);
-  // const body = marked(content);
-
-  // return {date, title, body};
   try {
     const source = await readFile(`src/news/eth/${slug}.md`, 'utf-8');
     const {
@@ -30,7 +21,7 @@ export async function getPost(slug: string): Promise<IPost | null> {
 
     return {date, title, body};
   } catch (error) {
-    // If the file can't be read (for example, if it doesn't exist), return null
+    // Info: (20230609 - Shirley) If the file can't be read (for example, if it doesn't exist), return null
     return null;
   }
 }

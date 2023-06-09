@@ -83,15 +83,6 @@ const NewsArticle = ({shareId, img, post, recommendations}: INewsArticle) => {
           {/* <p className="text-base leading-10 tracking-normal text-lightGray1">{news.content}</p> */}
 
           <div className="prose mt-5 max-w-none leading-10 tracking-normal">
-            <style jsx>{`
-              h3 {
-                font-weight: bold;
-              }
-              a {
-                color: #c83636;
-              }
-            `}</style>
-
             <article dangerouslySetInnerHTML={{__html: parsedBody}} />
 
             {/* <h2 className="mb-5 text-xl font-bold">Introduction</h2>

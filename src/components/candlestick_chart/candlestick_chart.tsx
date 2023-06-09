@@ -447,6 +447,26 @@ export default function CandlestickChart({
     const cleanedData = candlestickDataCleaning(raw);
     const filtered = filterCandlestickData({dataArray: cleanedData, startTime: firstTime});
     const result = tuningTzCandlestickDataArray(filtered) as CandlestickData[];
+
+    const times = filtered.map(i => {
+      const t = new Date((i.time as number) * 1000);
+      return `(Close:${i.close} Time:${t.getHours().toString().padStart(2, '0')}:${t
+        .getMinutes()
+        .toString()
+        .padStart(2, '0')}:${t.getSeconds().toString().padStart(2, '0')}.${t
+        .getMilliseconds()
+        .toString()
+        .padStart(3, '0')})`;
+    });
+
+    const date = new Date().getTime();
+    const now = `${new Date(date).getHours()}:${new Date(date).getMinutes()}:${new Date(
+      date
+    ).getSeconds()}.${new Date(date).getMilliseconds()}`;
+
+    // Deprecated: debug the 0.1s updated candlestick chart data (20230609 - Shirley)
+    // eslint-disable-next-line no-console
+    console.log('filteredData', times, 'now:', now);
     return result;
   };
 

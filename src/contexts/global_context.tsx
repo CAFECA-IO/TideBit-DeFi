@@ -346,8 +346,8 @@ export interface IGlobalContext {
 
   visiblePersonalAchievementModal: boolean;
   visiblePersonalAchievementModalHandler: () => void;
-  dataPersonalAchievementModal: IPersonalAchievement | null;
-  dataPersonalAchievementModalHandler: (data: IPersonalAchievement) => void;
+  dataPersonalAchievementModal: string | null;
+  dataPersonalAchievementModalHandler: (userId: string) => void;
 
   visibleBadgeModal: boolean;
   visibleBadgeModalHandler: () => void;
@@ -607,8 +607,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     useState<IAnnouncementModal>(dummyAnnouncementModal);
 
   const [visiblePersonalAchievementModal, setVisiblePersonalAchievementModal] = useState(false);
-  const [dataPersonalAchievementModal, setDataPersonalAchievementModal] =
-    useState<IPersonalAchievement>(defaultPersonalAchievement);
+  const [dataPersonalAchievementModal, setDataPersonalAchievementModal] = useState<string>('');
 
   const [visibleBadgeModal, setVisibleBadgeModal] = useState(false);
   const [dataBadgeModal, setDataBadgeModal] = useState<IBadgeModal>(dummyBadgeModal);
@@ -992,8 +991,8 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     setVisiblePersonalAchievementModal(!visiblePersonalAchievementModal);
   };
 
-  const dataPersonalAchievementModalHandler = (data: IPersonalAchievement) => {
-    setDataPersonalAchievementModal(data);
+  const dataPersonalAchievementModalHandler = (userId: string) => {
+    setDataPersonalAchievementModal(userId);
   };
 
   const visibleBadgeModalHandler = () => {
@@ -1347,7 +1346,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
       <PersonalAchievementModal
         modalVisible={visiblePersonalAchievementModal}
         modalClickHandler={visiblePersonalAchievementModalHandler}
-        getPersonalAchievementData={dataPersonalAchievementModal}
+        personalAchievementUserId={dataPersonalAchievementModal}
       />
       <BadgeModal
         modalVisible={visibleBadgeModal}

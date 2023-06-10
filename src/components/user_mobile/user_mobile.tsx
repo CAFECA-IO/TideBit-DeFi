@@ -81,7 +81,9 @@ const UserMobile = () => {
                 <span className="text-4xl font-bold text-lightWhite">{username}</span>
               </div>
               {/* Info: (20230327 - Julian) Account */}
-              <div className="ml-4 truncate text-sm">{accountTruncate(userCtx.user?.address)}</div>
+              <div className="ml-4 truncate text-sm">
+                {accountTruncate(userCtx.user?.address, 20)}
+              </div>
             </div>
             <button className="p-4">
               <Image src="/elements/edit_icon.svg" alt="edit_icon" width={25} height={25} />

@@ -176,8 +176,12 @@ export const timestampToString = (timestamp: number, timezoneOffset?: number) =>
  * @param address to be truncated
  * @returns '0x1234...12345'
  */
-export const accountTruncate = (text: string) => {
-  return text?.substring(0, 6) + '...' + text?.substring(text.length - 5);
+export const accountTruncate = (text: string, limitLength: number) => {
+  const result =
+    text?.length >= limitLength
+      ? text?.substring(0, 6) + '...' + text?.substring(text.length - 5)
+      : text;
+  return result;
 };
 
 /**

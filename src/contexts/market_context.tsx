@@ -30,7 +30,7 @@ import {WorkerContext} from './worker_context';
 import {APIName, Method} from '../constants/api_request';
 import TickerBookInstance from '../lib/books/ticker_book';
 import {INITIAL_TRADES_BUFFER, INITIAL_TRADES_INTERVAL, unitAsset} from '../constants/config';
-import {ITypeOfPosition} from '../constants/type_of_position';
+import {ITypeOfPosition, TypeOfPosition} from '../constants/type_of_position';
 import {
   dummyTideBitPromotion,
   ITideBitPromotion,
@@ -63,6 +63,7 @@ export interface IMarketProvider {
 }
 
 export interface IMarketContext {
+  isInit: boolean;
   selectedTicker: ITickerData | null;
   selectedTickerRef: React.MutableRefObject<ITickerData | null>;
   availableTickers: {[currency: string]: ITickerData};
@@ -79,6 +80,8 @@ export interface IMarketContext {
   websiteReserve: IWebsiteReserve;
   guaranteedStopFeePercentage: number | null;
   init: () => Promise<void>;
+  getTideBitPromotion: () => Promise<IResult>;
+  getWebsiteReserve: () => Promise<IResult>;
   showPositionOnChartHandler: (bool: boolean) => void;
   candlestickChartIdHandler: (id: string) => void;
   listAvailableTickers: () => ITickerData[];
@@ -90,7 +93,9 @@ export interface IMarketContext {
     typeOfPosition: ITypeOfPosition,
     price: number
   ) => Promise<IResult>;
-  getGuaranteedStopFeePercentage: (instId: string) => Promise<IResult>;
+  getGuaranteedStopFeePercentage: () => Promise<IResult>;
+  getTickerSpread: (tickerId: ICurrency) => number;
+  predictCFDClosePrice: (tickerId: ICurrency, typeOfPosition: ITypeOfPosition) => number;
   getLeaderboard: (timeSpan: IRankingTimeSpan) => Promise<IResult>;
   getTickerLiveStatistics: (instId: string) => Promise<IResult>;
   /** Deprecated: replaced by pusher (20230424 - tzuhan)
@@ -123,6 +128,7 @@ export interface IMarketContext {
 }
 // TODO: Note: _app.tsx 啟動的時候 => createContext
 export const MarketContext = createContext<IMarketContext>({
+  isInit: false,
   selectedTicker: dummyTicker,
   selectedTickerRef: React.createRef<ITickerData>(),
   availableTickers: {},
@@ -166,6 +172,18 @@ export const MarketContext = createContext<IMarketContext>({
   getNews: () => dummyNews,
   getPaginationNews: () => dummyRecommendedNewsList,
   getRecommendedNews: () => dummyRecommendationNews,
+  getTickerSpread: function (tickerId: ICurrency): number {
+    throw new Error('Function not implemented.');
+  },
+  predictCFDClosePrice: function (tickerId: ICurrency, typeOfPosition: ITypeOfPosition): number {
+    throw new Error('Function not implemented.');
+  },
+  getTideBitPromotion: function (): Promise<IResult> {
+    throw new Error('Function not implemented.');
+  },
+  getWebsiteReserve: function (): Promise<IResult> {
+    throw new Error('Function not implemented.');
+  },
 });
 
 export const MarketProvider = ({children}: IMarketProvider) => {
@@ -174,6 +192,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
   const userCtx = useContext(UserContext);
   const notificationCtx = useContext(NotificationContext);
   const workerCtx = useContext(WorkerContext);
+  const [isInit, setIsInit, isInitRef] = useState<boolean>(false);
   const [selectedTicker, setSelectedTicker, selectedTickerRef] = useState<ITickerData | null>(null);
   const [cryptocurrencies, setCryptocurrencies, cryptocurrenciesRef] = useState<ICryptocurrency[]>(
     []
@@ -313,6 +332,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     if (!tickerId) return {...defaultResultFailed};
     const ticker: ITickerData = availableTickersRef.current[tickerId];
     if (!ticker) return {...defaultResultFailed};
+    notificationCtx.emitter.emit(TideBitEvent.CHANGE_TICKER, ticker);
     setSelectedTicker(ticker);
     await listMarketTrades(ticker.instId);
     syncCandlestickData();
@@ -325,7 +345,6 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       await getTickerLiveStatistics(ticker.instId);
     if (isGetTickerLiveStatisticsSuccess)
       setTickerLiveStatistics(tickerLiveStatistics as ITickerLiveStatistics);
-    await getGuaranteedStopFeePercentage(ticker.instId);
     notificationCtx.emitter.emit(TideBitEvent.TICKER_CHANGE, ticker);
     return {...defaultResultSuccess};
   };
@@ -432,13 +451,13 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     return positions;
   };
 
-  const getGuaranteedStopFeePercentage = async (instId: string) => {
+  const getGuaranteedStopFeePercentage = async () => {
     let result: IResult = {...defaultResultFailed};
     try {
       result = (await workerCtx.requestHandler({
         name: APIName.GET_GUARANTEED_STOP_FEE_PERCENTAGE,
         method: Method.GET,
-        params: instId,
+        params: '_', // Deprecated: after backend update (20230609 - tzuhhan)
       })) as IResult;
       if (result.success) {
         const data = result.data as number;
@@ -483,7 +502,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     return result;
   };
 
-  const listTickers = async (selectedTickerCurrency?: ICurrency) => {
+  const listTickers = async () => {
     let result: IResult = {...defaultResultFailed};
     try {
       // 1. get tickers from backend
@@ -495,7 +514,9 @@ export const MarketProvider = ({children}: IMarketProvider) => {
         const tickers = result.data as ITickerData[];
         tickerBook.updateTickers(tickers);
         setAvailableTickers({...tickerBook.listTickers()});
+        /* Depreccated: call by page(20230608 - tzuhan)
         await selectTickerHandler(selectedTickerCurrency || tickers[0].currency);
+        */
       }
     } catch (error) {
       // Deprecate: error handle (Tzuhan - 20230321)
@@ -623,7 +644,6 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       // Deprecate: error handle (Tzuhan - 20230321)
       // eslint-disable-next-line no-console
       console.error(`getWebsiteReserve error`, error);
-      setIsCFDTradable(false);
       if (!isCustomError(error)) {
         result.code = Code.INTERNAL_SERVER_ERROR;
         result.reason = Reason[result.code];
@@ -646,7 +666,6 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       // Deprecate: error handle (Tzuhan - 20230321)
       // eslint-disable-next-line no-console
       console.error(`getTideBitPromotion error`, error);
-      setIsCFDTradable(false);
       if (!isCustomError(error)) {
         result.code = Code.INTERNAL_SERVER_ERROR;
         result.reason = Reason[result.code];
@@ -658,22 +677,36 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     return result;
   };
 
-  const init = async () => {
-    await getTideBitPromotion();
-    await getWebsiteReserve();
-    await listCurrencies();
-    await listTickers();
-    setIsCFDTradable(true);
-    return await Promise.resolve();
+  const getTickerSpread = (tickerId: ICurrency): number => {
+    if (!guaranteedStopFeePercentageRef.current) return 0;
+    const ticker: ITickerData = tickerBook.tickers[tickerId];
+    if (!ticker) return 0;
+    const {fluctuating} = ticker;
+    const spread = guaranteedStopFeePercentageRef.current * Math.abs(fluctuating);
+    return spread;
   };
 
-  React.useMemo(
-    () =>
-      notificationCtx.emitter.on(TideBitEvent.IS_CFD_TRADEBLE, (isCFDTradable: boolean) => {
-        setIsCFDTradable(isCFDTradable);
-      }),
-    []
-  );
+  const predictCFDClosePrice = (tickerId: ICurrency, typeOfPosition: ITypeOfPosition): number => {
+    const ticker: ITickerData = tickerBook.tickers[tickerId];
+    if (!ticker) return 0;
+    const {price} = ticker;
+    const spread = getTickerSpread(tickerId);
+    const closePrice =
+      typeOfPosition === TypeOfPosition.BUY ? price * (1 + spread) : price * (1 - spread);
+    return closePrice;
+  };
+
+  const init = async () => {
+    // eslint-disable-next-line no-console
+    console.log(`MarketContext.init is called`);
+    const {success: listCurrenciesIsSuccess} = await listCurrencies();
+    const {success: listTickersIsSuccess} = await listTickers();
+    const {success: getStopFeeIsSuccess} = await getGuaranteedStopFeePercentage();
+    if (listCurrenciesIsSuccess && listTickersIsSuccess && getStopFeeIsSuccess)
+      setIsCFDTradable(true);
+    setIsInit(true);
+    return await Promise.resolve();
+  };
 
   React.useMemo(
     () =>
@@ -725,6 +758,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
   );
 
   const defaultValue = {
+    isInit,
     selectedTicker: selectedTickerRef.current,
     selectedTickerRef,
     guaranteedStopFeePercentage: guaranteedStopFeePercentageRef.current,
@@ -755,9 +789,13 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     */
     listTickerPositions,
     init,
+    getTideBitPromotion,
+    getWebsiteReserve,
     getNews,
     getRecommendedNews,
     getPaginationNews,
+    getTickerSpread,
+    predictCFDClosePrice,
   };
 
   return <MarketContext.Provider value={defaultValue}>{children}</MarketContext.Provider>;

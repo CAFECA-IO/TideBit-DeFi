@@ -74,6 +74,7 @@ export interface IUserProvider {
   children: React.ReactNode;
 }
 export interface IUserContext {
+  isInit: boolean;
   user: IUser | null;
   userAssets: IUserAssets | null;
   walletBalances: IWalletBalance[] | null;
@@ -101,7 +102,7 @@ export interface IUserContext {
   disconnect: () => Promise<IResult>;
   addFavorites: (props: string) => Promise<IResult>;
   removeFavorites: (props: string) => Promise<IResult>;
-  listHistories: (props: string) => Promise<IResult>;
+  listHistories: () => Promise<IResult>;
   listCFDs: (props: string) => Promise<IResult>;
   getCFD: (props: string) => ICFDOrder | null;
   createCFDOrder: (props: IApplyCreateCFDOrder | undefined) => Promise<IResult>;
@@ -132,6 +133,7 @@ export interface IUserContext {
 }
 
 export const UserContext = createContext<IUserContext>({
+  isInit: false,
   user: null,
   walletBalances: null,
   // balance: null,
@@ -244,6 +246,7 @@ export const UserProvider = ({children}: IUserProvider) => {
   const transactionEngine = React.useMemo(() => TransactionEngineInstance, []);
   const workerCtx = useContext(WorkerContext);
   const notificationCtx = useContext(NotificationContext);
+  const [isInit, setIsInit, isInitRef] = useState<boolean>(false);
   const [user, setUser, userRef] = useState<IUser | null>(null);
   const [walletBalances, setWalletBalances, walletBalancesRef] = useState<IWalletBalance[] | null>(
     null
@@ -297,10 +300,9 @@ export const UserProvider = ({children}: IUserProvider) => {
       await getUserAssets();
       await listBalances();
       await listFavoriteTickers();
+      /** Deprecated: call by page (20230608 - tzuhan)
       await listHistories();
-      if (selectedTickerRef.current) {
-        await listCFDs(selectedTickerRef.current.currency);
-      }
+       */
 
       workerCtx.subscribeUser(address);
     } else {
@@ -594,9 +596,10 @@ export const UserProvider = ({children}: IUserProvider) => {
           name: APIName.GET_USER_ASSETS,
           method: Method.GET,
         })) as IResult;
-        // Deprecate: after this functions finishing (20230508 - tzuhan)
+        /**  Deprecate: after this functions finishing (20230508 - tzuhan)
         // eslint-disable-next-line no-console
         console.log(`getUserAssets result`, result);
+        */
         if (result.success) {
           const userAssets = result.data as IUserAssets;
           setUserAssets(userAssets);
@@ -839,8 +842,6 @@ export const UserProvider = ({children}: IUserProvider) => {
         if (verifyR) {
           const deWT = `${encodedData}.${eip712signature.replace('0x', '')}`;
           setDeWT(deWT);
-          // setEnableServiceTerm(true);
-          // ++ TODO to checksum address
           await setPrivateData(lunar.address, deWT);
           resultCode = Code.SUCCESS;
           result = {
@@ -1675,13 +1676,23 @@ export const UserProvider = ({children}: IUserProvider) => {
     () => notificationCtx.emitter.on(TideBitEvent.UPDATE_READ_NOTIFICATIONS, readNotifications),
     []
   );
+
+  React.useMemo(
+    () =>
+      notificationCtx.emitter.on(TideBitEvent.CHANGE_TICKER, async (ticker: ITickerData) => {
+        if (!selectedTickerRef.current || ticker.instId !== selectedTickerRef.current?.instId) {
+          setSelectedTicker(ticker);
+          setOpenedCFDs([]);
+          setClosedCFDs([]);
+        }
+      }),
+    []
+  );
+
   React.useMemo(
     () =>
       notificationCtx.emitter.on(TideBitEvent.TICKER_CHANGE, async (ticker: ITickerData) => {
-        if (!selectedTickerRef.current || ticker.instId !== selectedTickerRef.current?.instId) {
-          setSelectedTicker(ticker);
-          await listCFDs(ticker?.currency);
-        }
+        await listCFDs(ticker.currency);
       }),
     []
   );
@@ -1694,11 +1705,12 @@ export const UserProvider = ({children}: IUserProvider) => {
       `app init is called: lunar.isConnected: ${lunar.isConnected}, isDeWTLegit: ${isDeWTLegit}, signer: ${signer}`
     );
     if (isDeWTLegit && signer && deWT) await setPrivateData(signer, deWT);
-
+    setIsInit(true);
     return await Promise.resolve();
   };
 
   const defaultValue = {
+    isInit: isInitRef.current,
     user: userRef.current,
     walletBalances: walletBalancesRef.current,
     // balance: balanceRef.current,

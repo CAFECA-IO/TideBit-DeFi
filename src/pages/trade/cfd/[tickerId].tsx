@@ -1,7 +1,7 @@
 import Head from 'next/head';
 import NavBar from '../../../components/nav_bar/nav_bar';
 import {serverSideTranslations} from 'next-i18next/serverSideTranslations';
-import {useContext, useEffect} from 'react';
+import {useContext, useEffect, useState} from 'react';
 import {AppContext} from '../../../contexts/app_context';
 import TradePageBody from '../../../components/trade_page_body/trade_page_body';
 import {MarketContext} from '../../../contexts/market_context';
@@ -21,6 +21,7 @@ interface IPageProps {
 
 const Trading = (props: IPageProps) => {
   const marketCtx = useContext(MarketContext);
+  const [isInit, setIsInit] = useState(false);
   const {layoutAssertion} = useGlobal();
   const appCtx = useContext(AppContext);
 
@@ -38,21 +39,18 @@ const Trading = (props: IPageProps) => {
   const redirectToTicker = async () => {
     if (hasValue(marketCtx.availableTickers) && currency) {
       marketCtx.selectTickerHandler(currency);
+      setIsInit(true);
     }
   };
 
   useEffect(() => {
     if (!appCtx.isInit) {
       appCtx.init();
+      return;
     }
-  }, []);
-
-  /** Depreccated: these will cause duplicated request (20230601 - tzuhan)
-  useEffect(() => {
-    if ((marketCtx?.selectedTickerRef?.current?.currency?.toString() ?? '') === currency) return;
+    if (!marketCtx.isInit && isInit) return;
     redirectToTicker();
-  }, [marketCtx.availableTickers]);
-  */
+  }, [isInit, appCtx.isInit, marketCtx.isInit]);
 
   if (!router.isFallback && !props.tickerId) {
     return <Error statusCode={404} />;

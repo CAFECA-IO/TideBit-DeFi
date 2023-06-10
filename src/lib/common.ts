@@ -1,8 +1,7 @@
 import IEIP712Data from '../interfaces/ieip712data';
-import {OrderState} from '../constants/order_state';
 import {ITypeOfPosition, TypeOfPosition} from '../constants/type_of_position';
 import {IDisplayCFDOrder} from '../interfaces/tidebit_defi_background/display_accepted_cfd_order';
-import {ProfitState} from '../constants/profit_state';
+import {getProfitState} from '../constants/profit_state';
 import {cfdStateCode} from '../constants/cfd_state_code';
 import {
   DeWT_VALIDITY_PERIOD,
@@ -270,18 +269,35 @@ export const toIJSON = (typeData: IEIP712Data) => {
 export const randomHex = (length: number) =>
   `0x${[...Array(length)].map(() => Math.floor(Math.random() * 16).toString(16)).join('')}`;
 
-export const toDisplayCFDOrder = (
-  cfdOrder: ICFDOrder,
-  positionLineGraph: number[],
-  currentPrice?: number,
-  spread?: number
-) => {
-  const spreadValue = spread ? spread : 0;
+export const toPnl = (data: {
+  openPrice: number;
+  closePrice: number;
+  amount: number;
+  typeOfPosition: ITypeOfPosition;
+  spread: number;
+}) => {
+  const pnlValue = roundToDecimalPlaces(
+    (data.closePrice - data.openPrice) *
+      data.amount *
+      (data.typeOfPosition === TypeOfPosition.BUY ? 1 : -1) *
+      (data.typeOfPosition === TypeOfPosition.BUY ? 1 + data.spread : 1 - data.spread),
+    2
+  );
+  const pnl = {
+    value: pnlValue,
+    type: getProfitState(pnlValue),
+  };
+  return pnl;
+};
+
+export const toDisplayCFDOrder = (cfdOrder: ICFDOrder): IDisplayCFDOrder => {
   const openValue = roundToDecimalPlaces(cfdOrder.openPrice * cfdOrder.amount, 2);
+  /** Deprecated: (20230608 - tzuhan)
+  const spreadValue = spread ? spread : 0;
   const closeValue =
     cfdOrder.state === OrderState.CLOSED && cfdOrder.closePrice
       ? roundToDecimalPlaces(cfdOrder.closePrice * cfdOrder.amount, 2)
-      : 0;
+      : closePrice || 0;
   const currentValue = currentPrice
     ? roundToDecimalPlaces(Number(currentPrice) * cfdOrder.amount, 2)
     : positionLineGraph.length > 0
@@ -290,9 +306,13 @@ export const toDisplayCFDOrder = (
         2
       )
     : roundToDecimalPlaces(Number(cfdOrder.openPrice) * cfdOrder.amount, 2);
+    */
+
   /* Info: (20230602 - Julian) pnl with spread
    * BUY -> closeValue - openValue
    * SELL -> openValue - closeValue */
+
+  /** Deprecated: (20230608 - tzuhan)
   const pnl =
     cfdOrder.state === OrderState.CLOSED && cfdOrder.closePrice
       ? roundToDecimalPlaces(
@@ -308,6 +328,7 @@ export const toDisplayCFDOrder = (
           2
         );
   const pnlPerncent = roundToDecimalPlaces((pnl / openValue) * 100, 2);
+  */
   const rTp =
     cfdOrder.typeOfPosition === TypeOfPosition.BUY
       ? twoDecimal(cfdOrder.openPrice * (1 + SUGGEST_TP / cfdOrder.leverage))
@@ -321,6 +342,8 @@ export const toDisplayCFDOrder = (
     stopLoss: rSl,
   };
 
+  /** Deprecated: (20230608 - tzuhan)
+
   // Info: (20230510 - Julian) positionLineGraph with spread
   const positionLineGraphWithSpread =
     cfdOrder.typeOfPosition === TypeOfPosition.BUY
@@ -329,37 +352,61 @@ export const toDisplayCFDOrder = (
 
   const openPrice = cfdOrder.openPrice;
   const nowPrice = positionLineGraph[positionLineGraph.length - 1];
-  const liquidationPrice = cfdOrder.liquidationPrice;
-  const takeProfitPrice = cfdOrder.takeProfit ?? 0;
-  const stopLossPrice = cfdOrder.stopLoss ?? 0;
+  */
+  // const liquidationPrice = cfdOrder.liquidationPrice;
+  // const takeProfitPrice = cfdOrder.takeProfit ?? 0;
+  // const stopLossPrice = cfdOrder.stopLoss ?? 0;
 
-  const rangingLiquidation = Math.abs(openPrice - liquidationPrice);
-  const rangingTP = Math.abs(openPrice - takeProfitPrice);
-  const rangingSL = Math.abs(openPrice - stopLossPrice);
+  // const rangingLiquidation = Math.abs(cfdOrder.openPrice - liquidationPrice);
+  // const rangingTP = Math.abs(cfdOrder.openPrice - takeProfitPrice);
+  // const rangingSL = Math.abs(cfdOrder.openPrice - stopLossPrice);
 
-  /* Info: (20230411 - Julian) sort by stateCode (liquidation -> SL -> TP -> createTimestamp) */
-  const stateCode =
-    Math.abs(nowPrice - liquidationPrice) <= rangingLiquidation * 0.1
-      ? cfdStateCode.LIQUIDATION
-      : Math.abs(nowPrice - stopLossPrice) <= rangingSL * 0.1
-      ? cfdStateCode.STOP_LOSS
-      : Math.abs(nowPrice - takeProfitPrice) <= rangingTP * 0.1
-      ? cfdStateCode.TAKE_PROFIT
-      : cfdStateCode.COMMON;
+  // /* Info: (20230411 - Julian) sort by stateCode (liquidation -> SL -> TP -> createTimestamp) */
+  // const stateCode =
+  //   Math.abs(currentPrice - liquidationPrice) <= rangingLiquidation * 0.1
+  //     ? cfdStateCode.LIQUIDATION
+  //     : Math.abs(currentPrice - stopLossPrice) <= rangingSL * 0.1
+  //     ? cfdStateCode.STOP_LOSS
+  //     : Math.abs(currentPrice - takeProfitPrice) <= rangingTP * 0.1
+  //     ? cfdStateCode.TAKE_PROFIT
+  //     : cfdStateCode.COMMON;
 
   const displayCFDOrder: IDisplayCFDOrder = {
     ...cfdOrder,
+    openValue: openValue,
+    /** 
     pnl: {
       type: pnl > 0 ? ProfitState.PROFIT : ProfitState.LOSS,
       value: Math.abs(pnl),
     },
-    openValue: openValue,
     closeValue: closeValue,
     positionLineGraph: positionLineGraphWithSpread,
+    */
     suggestion,
-    stateCode: stateCode,
+    // stateCode: stateCode,
   };
   return displayCFDOrder;
+};
+
+export const getStateCode = (cfd: ICFDOrder, tickerPrice: number): number => {
+  const liquidationPrice = cfd.liquidationPrice;
+  const takeProfitPrice = cfd.takeProfit ?? 0;
+  const stopLossPrice = cfd.stopLoss ?? 0;
+
+  const rangingLiquidation = Math.abs(cfd.openPrice - liquidationPrice);
+  const rangingTP = Math.abs(cfd.openPrice - takeProfitPrice);
+  const rangingSL = Math.abs(cfd.openPrice - stopLossPrice);
+
+  /* Info: (20230411 - Julian) sort by stateCode (liquidation -> SL -> TP -> createTimestamp) */
+  const stateCode =
+    Math.abs(tickerPrice - liquidationPrice) <= rangingLiquidation * 0.1
+      ? cfdStateCode.LIQUIDATION
+      : Math.abs(tickerPrice - stopLossPrice) <= rangingSL * 0.1
+      ? cfdStateCode.STOP_LOSS
+      : Math.abs(tickerPrice - takeProfitPrice) <= rangingTP * 0.1
+      ? cfdStateCode.TAKE_PROFIT
+      : cfdStateCode.COMMON;
+  return stateCode;
 };
 
 export const getServiceTermContract = (address: string) => {

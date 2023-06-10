@@ -1,13 +1,14 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import Image from 'next/image';
 import {TypeOfTransaction, UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
 import {FRACTION_DIGITS} from '../../constants/config';
 import {ProfitState} from '../../constants/profit_state';
-import {timestampToString} from '../../lib/common';
+import {roundToDecimalPlaces, timestampToString, toPnl} from '../../lib/common';
 import {TypeOfPosition} from '../../constants/type_of_position';
 import {useGlobal} from '../../contexts/global_context';
 import {IDisplayCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
 import {useTranslation} from 'react-i18next';
+import {MarketContext} from '../../contexts/market_context';
 
 type TranslateFunction = (s: string) => string;
 interface IHistoryPositionItemProps {
@@ -17,26 +18,35 @@ interface IHistoryPositionItemProps {
 const HistoryPositionItem = ({closedCfdDetails, ...otherProps}: IHistoryPositionItemProps) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
   const globalCtx = useGlobal();
+  const marketCtx = useContext(MarketContext);
 
   const displayedString =
     closedCfdDetails.typeOfPosition === TypeOfPosition.BUY
       ? TypeOfTransaction.LONG
       : TypeOfTransaction.SHORT;
 
-  const displayedTextColor =
-    closedCfdDetails.pnl.type === ProfitState.PROFIT ? 'text-lightGreen5' : 'text-lightRed';
+  const closeValue = roundToDecimalPlaces(
+    closedCfdDetails.closePrice! * closedCfdDetails.amount,
+    2
+  );
+  const spread = marketCtx.getTickerSpread(closedCfdDetails.targetAsset);
+  const pnl = toPnl({
+    openPrice: closedCfdDetails.openPrice,
+    closePrice: closedCfdDetails.closePrice!,
+    amount: closedCfdDetails.amount,
+    typeOfPosition: closedCfdDetails.typeOfPosition,
+    spread: spread,
+  });
 
-  const displayedPnLValue = Math.abs(closedCfdDetails.pnl.value).toLocaleString(
+  const displayedTextColor = pnl.type === ProfitState.PROFIT ? 'text-lightGreen5' : 'text-lightRed';
+
+  const displayedPnLValue = Math.abs(pnl.value).toLocaleString(
     UNIVERSAL_NUMBER_FORMAT_LOCALE,
     FRACTION_DIGITS
   );
 
   const displayedPnLSymbol =
-    closedCfdDetails.pnl.type === ProfitState.PROFIT
-      ? '+'
-      : closedCfdDetails.pnl.type === ProfitState.LOSS
-      ? '-'
-      : '';
+    pnl.type === ProfitState.PROFIT ? '+' : pnl.type === ProfitState.LOSS ? '-' : '';
 
   const itemClickHandler = () => {
     globalCtx.dataHistoryPositionModalHandler(closedCfdDetails);
@@ -82,11 +92,7 @@ const HistoryPositionItem = ({closedCfdDetails, ...otherProps}: IHistoryPosition
                 UNIVERSAL_NUMBER_FORMAT_LOCALE,
                 FRACTION_DIGITS
               )}
-              / $
-              {(closedCfdDetails.closeValue || 0).toLocaleString(
-                UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                FRACTION_DIGITS
-              )}
+              / ${(closeValue || 0).toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)}
             </div>
           </div>
 

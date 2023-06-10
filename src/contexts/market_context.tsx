@@ -457,7 +457,6 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       result = (await workerCtx.requestHandler({
         name: APIName.GET_GUARANTEED_STOP_FEE_PERCENTAGE,
         method: Method.GET,
-        params: '_', // Deprecated: after backend update (20230609 - tzuhhan)
       })) as IResult;
       if (result.success) {
         const data = result.data as number;

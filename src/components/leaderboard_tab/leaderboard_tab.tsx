@@ -113,7 +113,7 @@ const LeaderboardTab = ({timeSpan, setTimeSpan, rankings}: LeaderboardTabProps) 
     {
       sorted: 0,
       rank: 2,
-      marginTop: 'mt-28 md:mt-24',
+      marginTop: 'mt-24',
       crown: '/leaderboard/silver_crown@2x.png',
       star: '/leaderboard/silver_star.svg',
       medalist: '/leaderboard/silver_medalist.svg',
@@ -121,7 +121,7 @@ const LeaderboardTab = ({timeSpan, setTimeSpan, rankings}: LeaderboardTabProps) 
     {
       sorted: 1,
       rank: 1,
-      marginTop: 'mt-20 md:mt-8',
+      marginTop: 'mt-20 md:mt-12',
       crown: '/leaderboard/gold_crown@2x.png',
       star: '/leaderboard/gold_star.svg',
       medalist: '/leaderboard/gold_medalist.svg',
@@ -129,7 +129,7 @@ const LeaderboardTab = ({timeSpan, setTimeSpan, rankings}: LeaderboardTabProps) 
     {
       sorted: 2,
       rank: 3,
-      marginTop: 'mt-32',
+      marginTop: 'mt-28 md:mt-32',
       crown: '/leaderboard/bronze_crown@2x.png',
       star: '/leaderboard/bronze_star.svg',
       medalist: '/leaderboard/bronze_medalist.svg',
@@ -167,10 +167,7 @@ const LeaderboardTab = ({timeSpan, setTimeSpan, rankings}: LeaderboardTabProps) 
         ? defaultTop3Data
         : {
             /* Info: (20230607 - Julian) If User Name length > 20, then truncate */
-            name:
-              rankingData[rank - 1]?.userName.length > 20
-                ? accountTruncate(rankingData[rank - 1]?.userName)
-                : rankingData[rank - 1]?.userName,
+            name: accountTruncate(rankingData[rank - 1]?.userName, 20),
             id: rankingData[rank - 1]?.userId,
             avatar: rankingData[rank - 1]?.userAvatar ?? DEFAULT_USER_AVATAR,
             displayedPnl: displayPnl(rankingData[rank - 1]?.cumulativePnl),
@@ -242,7 +239,7 @@ const LeaderboardTab = ({timeSpan, setTimeSpan, rankings}: LeaderboardTabProps) 
 
   const displayedTop3 = (
     <div className="relative w-screen md:w-8/10">
-      <div className="absolute -top-48 flex w-full justify-between space-x-4 px-4 md:-top-72 md:px-16">
+      <div className="absolute -top-48 flex w-full justify-between space-x-4 px-4 md:-top-60 md:px-16">
         {displayedTop3List}
       </div>
       <Image
@@ -279,9 +276,7 @@ const LeaderboardTab = ({timeSpan, setTimeSpan, rankings}: LeaderboardTabProps) 
 
       const displayedRank = rank <= 0 ? '-' : rank;
       const displayedPnl = rank <= 0 ? '-' : displayPnl(cumulativePnl);
-      /* Info: (20230607 - Julian) If User Name length > 20, then truncate */
-      const displayedName =
-        rank <= 0 ? 'N/A' : userName.length > 20 ? accountTruncate(userName) : userName;
+      const displayedName = rank <= 0 ? 'N/A' : accountTruncate(userName, 20);
       const displayedAvatar = rank <= 0 ? DEFAULT_USER_AVATAR : userAvatar;
       return isLoading ? (
         <div key={rank} className="flex items-center justify-between px-4 py-6">

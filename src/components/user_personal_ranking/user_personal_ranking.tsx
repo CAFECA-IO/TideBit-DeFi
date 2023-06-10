@@ -7,8 +7,11 @@ import Skeleton from 'react-loading-skeleton';
 import {TypeOfPnLColor, SKELETON_DISPLAY_TIME} from '../../constants/display';
 import {unitAsset} from '../../constants/config';
 import {IRankingTimeSpan, RankingInterval} from '../../constants/ranking_time_span';
+import {
+  IPersonalRanking,
+  defaultPersonalRanking,
+} from '../../interfaces/tidebit_defi_background/personal_ranking';
 import {ProfitState} from '../../constants/profit_state';
-import {defaultPersonalRanking} from '../../interfaces/tidebit_defi_background/personal_ranking';
 import {ImArrowUp, ImArrowDown, ImArrowRight} from 'react-icons/im';
 import {RiShareForwardFill} from 'react-icons/ri';
 import {BsFacebook, BsTwitter, BsReddit} from 'react-icons/bs';
@@ -32,10 +35,16 @@ const UserPersonalRanking = ({timeSpan}: IUserPersonalRankingProps) => {
   }, []);
 
   useEffect(() => {
-    setUserRankData(
-      // userCtx.getPersonalRanking(timeSpan) ?? // TODO: using async/await (20230526 - tzuhan)
-      defaultPersonalRanking
-    );
+    userCtx
+      .getPersonalRanking(userId, timeSpan)
+      .then(result => {
+        result.success
+          ? setUserRankData(result.data as IPersonalRanking)
+          : setUserRankData(defaultPersonalRanking);
+      })
+      .catch(() => {
+        setUserRankData(defaultPersonalRanking);
+      });
   }, [timeSpan]);
 
   const username = userCtx.user?.address?.slice(-1).toUpperCase();
@@ -148,7 +157,7 @@ const UserPersonalRanking = ({timeSpan}: IUserPersonalRankingProps) => {
           </div>
           {/* Info: (20230510 - Julian) User Name */}
           <div className="truncate text-sm sm:text-xl">
-            {accountTruncate(userCtx.user?.address)}
+            {accountTruncate(userCtx.user?.address, 20)}
           </div>
         </div>
         <div className="flex items-center space-x-3 text-base md:text-xl">

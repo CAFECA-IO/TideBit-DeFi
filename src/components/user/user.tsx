@@ -54,7 +54,9 @@ const User = () => {
           <span className="text-5xl font-bold text-lightWhite">{username}</span>
         </div>
         {/* Info: (20230327 - Julian) Account */}
-        <div className="ml-4 mt-2 truncate text-sm">{accountTruncate(userCtx.user?.address)}</div>
+        <div className="ml-4 mt-2 truncate text-sm">
+          {accountTruncate(userCtx.user?.address, 20)}
+        </div>
       </div>
 
       <ul

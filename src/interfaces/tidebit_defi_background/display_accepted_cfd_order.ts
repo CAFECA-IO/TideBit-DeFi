@@ -9,9 +9,8 @@ import {getDummyAcceptedCloseCFDOrder} from './accepted_cfd_order';
 import {ICurrency} from '../../constants/currency';
 
 export interface IDisplayCFDOrder extends ICFDOrder {
+  pnl?: IPnL;
   /** Deprecated: (20230608 - tzuhan)
-  pnl: IPnL;
-  closeValue?: number;
   positionLineGraph: number[];
   */
   openValue: number;

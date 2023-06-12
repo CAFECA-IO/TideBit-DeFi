@@ -279,13 +279,13 @@ export const toPnl = (data: {
   const pnlValue = roundToDecimalPlaces(
     (data.closePrice - data.openPrice) *
       data.amount *
-      (data.typeOfPosition === TypeOfPosition.BUY ? 1 : -1) *
-      (data.typeOfPosition === TypeOfPosition.BUY ? 1 + data.spread : 1 - data.spread),
+      (data.typeOfPosition === TypeOfPosition.BUY ? 1 : -1),
     2
   );
+  const pnlType = getProfitState(pnlValue);
   const pnl = {
-    value: pnlValue,
-    type: getProfitState(pnlValue),
+    type: pnlType,
+    value: Math.abs(pnlValue),
   };
   return pnl;
 };

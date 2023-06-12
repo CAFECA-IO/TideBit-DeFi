@@ -65,7 +65,7 @@ const MarketSection = () => {
 
       <div className="mt-5 lg:mt-8 lg:pl-5">
         <CryptoSummary
-          icon={icon ?? ''}
+          icon={icon ?? marketCtx.selectedTicker?.tokenImg ?? ''}
           label={label ?? ''}
           introduction={introduction ?? ''}
           whitePaperLink={whitePaperLink ?? ''}

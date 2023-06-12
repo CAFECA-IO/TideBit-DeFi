@@ -233,20 +233,20 @@ const TradeTabMobile = () => {
   ]);
 
   const setQuotation = () => {
-    const buyPrice = roundToDecimalPlaces(
-      (marketCtx.selectedTicker?.price ?? DEFAULT_BUY_PRICE) *
-        (1 + (marketCtx.tickerLiveStatistics?.spread ?? DEFAULT_SPREAD)),
-      2
-    );
+    if (marketCtx.selectedTicker?.currency) {
+      const buyPrice = roundToDecimalPlaces(
+        marketCtx.predictCFDClosePrice(marketCtx.selectedTicker?.currency, TypeOfPosition.SELL),
+        2
+      );
 
-    const sellPrice = roundToDecimalPlaces(
-      (marketCtx.selectedTicker?.price ?? DEFAULT_SELL_PRICE) *
-        (1 - (marketCtx.tickerLiveStatistics?.spread ?? DEFAULT_SPREAD)),
-      2
-    );
+      const sellPrice = roundToDecimalPlaces(
+        marketCtx.predictCFDClosePrice(marketCtx.selectedTicker?.currency, TypeOfPosition.BUY),
+        2
+      );
 
-    setLongPrice(buyPrice);
-    setShortPrice(sellPrice);
+      setLongPrice(buyPrice);
+      setShortPrice(sellPrice);
+    }
   };
 
   // Info: To get quotation to let user sign, if fail, make the quotation itself with already expired deadline (20230606 - Shirley)

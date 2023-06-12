@@ -206,10 +206,9 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     useState<ICryptocurrency[]>([...dummyCryptocurrencies]);
   const [withdrawCryptocurrencies, setWithdrawCryptocurrencies, withdrawCryptocurrenciesRef] =
     useState<ICryptocurrency[]>([...dummyCryptocurrencies]);
-  const [tickerStatic, setTickerStatic] = useState<ITickerStatic | null>(null);
-  const [tickerLiveStatistics, setTickerLiveStatistics] = useState<ITickerLiveStatistics | null>(
-    null
-  );
+  const [tickerStatic, setTickerStatic, tickerStaticRef] = useState<ITickerStatic | null>(null);
+  const [tickerLiveStatistics, setTickerLiveStatistics, tickerLiveStatisticsRef] =
+    useState<ITickerLiveStatistics | null>(null);
   const [candlestickChartData, setCandlestickChartData, candlestickChartDataRef] = useState<
     ICandlestickData[] | null
   >(null);
@@ -333,6 +332,8 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     const ticker: ITickerData = availableTickersRef.current[tickerId];
     if (!ticker) return {...defaultResultFailed};
     notificationCtx.emitter.emit(TideBitEvent.CHANGE_TICKER, ticker);
+    setTickerLiveStatistics(null);
+    setTickerStatic(null);
     setSelectedTicker(ticker);
     await listMarketTrades(ticker.instId);
     syncCandlestickData();
@@ -688,10 +689,12 @@ export const MarketProvider = ({children}: IMarketProvider) => {
   const predictCFDClosePrice = (tickerId: ICurrency, typeOfPosition: ITypeOfPosition): number => {
     const ticker: ITickerData = tickerBook.tickers[tickerId];
     if (!ticker) return 0;
+    const oppositeTypeOfPosition =
+      typeOfPosition === TypeOfPosition.BUY ? TypeOfPosition.SELL : TypeOfPosition.BUY;
     const {price} = ticker;
     const spread = getTickerSpread(tickerId);
     const closePrice =
-      typeOfPosition === TypeOfPosition.BUY ? price * (1 + spread) : price * (1 - spread);
+      oppositeTypeOfPosition === TypeOfPosition.BUY ? price * (1 + spread) : price * (1 - spread);
     return closePrice;
   };
 
@@ -771,8 +774,8 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     candlestickChartData: candlestickChartDataRef.current,
     timeSpan,
     candlestickChartIdHandler,
-    tickerStatic,
-    tickerLiveStatistics,
+    tickerStatic: tickerStaticRef.current,
+    tickerLiveStatistics: tickerLiveStatisticsRef.current,
     listAvailableTickers,
     depositCryptocurrencies: depositCryptocurrenciesRef.current,
     withdrawCryptocurrencies: withdrawCryptocurrenciesRef.current,

@@ -98,6 +98,7 @@ const NewsPage = (props: IPageProps) => {
         <meta name="og:image" content={img} />
         <meta name="og:image:width" content={NEWS_IMG_WIDTH.toString()} />
         <meta name="og:image:height" content={NEWS_IMG_HEIGHT.toString()} />
+        <meta name="og:image:alt" content={newsTitle} />
         <meta name="og:description" content={newsDescription} />
         <meta name="og:site_name" content="TideBit DeFi" />
         <meta name="og:locale" content="en_US" />

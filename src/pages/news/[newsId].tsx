@@ -17,6 +17,7 @@ import {
   tempNews,
   tempNewsArray,
   tempRecommendedNewsArray,
+  getBriefNewsById,
 } from '../../interfaces/tidebit_defi_background/news';
 import {Currency} from '../../constants/currency';
 import {MarketContext} from '../../contexts/market_context';
@@ -43,10 +44,11 @@ const NewsPage = (props: IPageProps) => {
   const recommendtaion = getRecommendatedNewsById(props.newsId);
 
   const theNews = getNewsById(props.newsId);
+  const briefNews = getBriefNewsById(props.newsId);
 
-  const newsTitle = theNews.title;
-  const newsDescription = theNews.content;
-  const newsImg = theNews.img;
+  const newsTitle = theNews?.title;
+  const newsDescription = briefNews?.description;
+  const newsImg = theNews?.img;
 
   const share = `${DOMAIN}/news/${props.newsId}`;
   const img = `${DOMAIN}${newsImg}`;
@@ -54,7 +56,9 @@ const NewsPage = (props: IPageProps) => {
   const id = props.newsId.split('-')[2];
 
   const displayedNews =
-    id === '20230602001' ? (
+    theNews === undefined ? (
+      <Custom404 />
+    ) : id === '20230602001' ? (
       <>
         <NewsArticle0602 shareId={props.newsId} news={theNews} recommendations={recommendtaion} />
         <Footer />
@@ -80,8 +84,8 @@ const NewsPage = (props: IPageProps) => {
         <title>{newsTitle}</title>
         <link rel="icon" href="/favicon.ico" />
 
-        <meta name="description" content="CFD Sharing" />
-        <meta name="keywords" content="CFD Sharing" />
+        <meta name="description" content={newsDescription} />
+        <meta name="keywords" content={newsTitle} />
         <meta name="author" content="TideBit" />
         <meta name="application-name" content="TideBit DeFi" />
         <meta name="apple-mobile-web-app-title" content="TideBit DeFi" />

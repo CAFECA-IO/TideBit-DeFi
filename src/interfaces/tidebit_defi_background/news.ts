@@ -281,15 +281,21 @@ As these elements intertwine, they reshape cryptocurrency. We'll continue monito
   },
 ];
 
-export const getNewsById = (newsId: string) => {
+export const getNewsById = (newsId: string): INews | undefined => {
   const newsItem = tempNewsArray.find(item => item.newsId === newsId);
   if (newsItem) {
     return newsItem;
   } else {
-    return tempNewsArray[0];
+    return undefined;
   }
 };
 
-export const getRecommendatedNewsById = (newsId: string) => {
-  return tempRecommendedNewsArray.filter(news => news.newsId !== newsId);
+export const getRecommendatedNewsById = (newsId: string): IRecommendedNews[] => {
+  const news = tempRecommendedNewsArray.filter(news => news.newsId !== newsId);
+  return news;
+};
+
+export const getBriefNewsById = (newsId: string): IRecommendedNews => {
+  const news = tempRecommendedNewsArray.filter(news => news.newsId === newsId)[0];
+  return news;
 };

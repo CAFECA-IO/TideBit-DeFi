@@ -70,8 +70,6 @@ const NewsArticle0609 = ({shareId, news, recommendations}: INewsArticle) => {
             <h1 className="pr-10 text-xl font-normal leading-8 tracking-wider">{news.title}</h1>
             <p className="mt-2 text-xs text-lightGray lg:text-sm">{date}</p>
           </div>
-          {/* TODO: markdown (20230602 - Shirley) */}
-          {/* <p className="text-base leading-10 tracking-normal text-lightGray1">{news.content}</p> */}
 
           <div className="prose mt-5 max-w-none leading-10 tracking-normal">
             <h2 className="mb-5 text-xl font-bold">Introduction</h2>

@@ -55,7 +55,7 @@ import {OrderType} from '../../constants/order_type';
 import {CFDClosedType} from '../../constants/cfd_closed_type';
 import {cfdStateCode} from '../../constants/cfd_state_code';
 import {ICFDOrder} from '../../interfaces/tidebit_defi_background/order';
-import {Code} from '../../constants/code';
+import {Code, Reason} from '../../constants/code';
 import {ToastTypeAndText} from '../../constants/toast_type';
 import {ToastId} from '../../constants/toast_id';
 import {CustomError, isCustomError} from '../../lib/custom_error';
@@ -256,6 +256,7 @@ const PositionClosedModal = ({
       if (
         quotation.success &&
         data.typeOfPosition === oppositeTypeOfPosition &&
+        data.ticker.split('-')[0] === openCfdDetails.ticker &&
         quotation.data !== null
       ) {
         globalCtx.eliminateToasts(ToastId.GET_QUOTATION_ERROR);
@@ -263,6 +264,26 @@ const PositionClosedModal = ({
         return data;
       } else {
         setQuotationError(true);
+
+        // TODO: check the unit asset (20230612 - Shirley)
+        if (data.ticker.split('-')[0] !== openCfdDetails.ticker) {
+          setQuotationErrorMessage({
+            success: false,
+            code: Code.INCONSISTENT_TICKER_OF_QUOTATION,
+            reason: Reason[Code.INCONSISTENT_TICKER_OF_QUOTATION],
+          });
+
+          // Deprecated: for debug (20230609 - Shirley)
+          globalCtx.toast({
+            type: ToastTypeAndText.ERROR.type,
+            toastId: ToastId.INCONSISTENT_TICKER_OF_QUOTATION,
+            message: `[dev] ${quotationErrorMessageRef.current.reason} (${quotationErrorMessageRef.current.code})`,
+            typeText: t(ToastTypeAndText.ERROR.text),
+            isLoading: false,
+            autoClose: false,
+          });
+        }
+
         /* Info: (20230508 - Julian) get quotation error message */
         setQuotationErrorMessage({success: false, code: quotation.code, reason: quotation.reason});
       }
@@ -422,7 +443,6 @@ const PositionClosedModal = ({
         });
         return;
       }
-
       const displayedCloseOrder = toDisplayCloseOrder(openCfdDetails, quotation);
       globalCtx.dataPositionClosedModalHandler(displayedCloseOrder);
 

@@ -154,16 +154,16 @@ const PositionClosedModal = ({
   const displayedTime = timestampToString(openCfdDetails?.createTimestamp ?? 0);
 
   const toDisplayCloseOrder = (cfd: IDisplayCFDOrder, quotation: IQuotation): IDisplayCFDOrder => {
-    const openValue = cfd.openPrice * cfd.amount;
-    const nowValue = quotation.price * cfd.amount;
-    const pnlSoFar =
-      cfd.typeOfPosition === TypeOfPosition.BUY ? nowValue - openValue : openValue - nowValue;
+    const pnlSoFar = toPnl({
+      openPrice: cfd.openPrice,
+      closePrice: quotation.price,
+      amount: cfd.amount,
+      typeOfPosition: cfd.typeOfPosition,
+      spread: marketCtx.getTickerSpread(cfd.targetAsset),
+    });
     return {
       ...cfd,
-      pnl: {
-        type: pnlSoFar > 0 ? ProfitState.PROFIT : ProfitState.LOSS,
-        value: Math.abs(pnlSoFar),
-      },
+      pnl: pnlSoFar,
     };
   };
 
@@ -197,18 +197,14 @@ const PositionClosedModal = ({
     const leverage = marketCtx.tickerStatic?.leverage ?? DEFAULT_LEVERAGE;
 
     const openValue = twoDecimal(openPrice * cfd.amount);
-    const closeValue = twoDecimal(closePrice * cfd.amount);
 
-    const pnlValue =
-      cfd.typeOfPosition === TypeOfPosition.BUY
-        ? twoDecimal(closeValue - openValue)
-        : twoDecimal(openValue - closeValue);
-
-    const pnl: IPnL = {
-      type: pnlValue > 0 ? ProfitState.PROFIT : pnlValue < 0 ? ProfitState.LOSS : ProfitState.EQUAL,
-      value: Math.abs(pnlValue),
-    };
-
+    const pnl: IPnL = toPnl({
+      openPrice: openPrice,
+      closePrice: closePrice,
+      amount: cfd.amount,
+      typeOfPosition: cfd.typeOfPosition,
+      spread: marketCtx.getTickerSpread(cfd.targetAsset),
+    });
     // const positionLineGraph = [100, 100]; // TODO: (20230316 - Shirley) from `marketCtx`
 
     const suggestion: ICFDSuggestion = {

@@ -10,14 +10,20 @@ import {useContext, useEffect} from 'react';
 import {AppContext} from '../../contexts/app_context';
 import Footer from '../../components/footer/footer';
 import {
+  getRecommendatedNewsById,
   getDummyNews,
   getDummyRecommendationNews,
+  getNewsById,
   tempNews,
+  tempNewsArray,
+  tempRecommendedNewsArray,
 } from '../../interfaces/tidebit_defi_background/news';
 import {Currency} from '../../constants/currency';
 import {MarketContext} from '../../contexts/market_context';
 import {DOMAIN} from '../../constants/config';
 import {NEWS_IMG_HEIGHT, NEWS_IMG_WIDTH} from '../../constants/display';
+import NewsArticle0602 from '../../components/news_article/news_article_0602';
+import NewsArticle0609 from '../../components/news_article/news_article_0609';
 
 interface IPageProps {
   newsId: string;
@@ -33,13 +39,26 @@ const NewsPage = (props: IPageProps) => {
 
   const news = marketCtx.getNews(Currency.ETH, props?.newsId ?? '');
   const recommendationNews = marketCtx.getRecommendedNews(Currency.ETH);
-  const finishedNews = tempNews;
-  const newsTitle = finishedNews.title;
-  const newsDescription = finishedNews.content;
-  const newsImg = finishedNews.img;
+  const recommendtaion = getRecommendatedNewsById(props.newsId);
+  // tempRecommendedNewsArray;
+
+  const theNews = getNewsById(props.newsId);
+
+  const newsTitle = theNews.title;
+  const newsDescription = theNews.content;
+  const newsImg = theNews.img;
 
   const share = `${DOMAIN}/news/${props.newsId}`;
   const img = `${DOMAIN}${newsImg}`;
+
+  const id = props.newsId.split('-')[2];
+
+  const displayedNews =
+    id === '20230602001' ? (
+      <NewsArticle0602 shareId={props.newsId} news={theNews} recommendations={recommendtaion} />
+    ) : id === '20230609001' ? (
+      <NewsArticle0609 shareId={props.newsId} news={theNews} recommendations={recommendtaion} />
+    ) : null;
 
   useEffect(() => {
     if (!appCtx.isInit) {
@@ -85,13 +104,7 @@ const NewsPage = (props: IPageProps) => {
         <>
           <nav className="">{displayedNavBar}</nav>
           <main className="">
-            <div>
-              <NewsArticle
-                shareId={props.newsId}
-                news={finishedNews}
-                // recommendations={recommendationNews}
-              />
-            </div>
+            <div>{displayedNews}</div>
             <Footer />
           </main>
         </>

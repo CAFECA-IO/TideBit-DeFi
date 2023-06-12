@@ -33,53 +33,15 @@ interface INewsArticle {
   recommendations?: Array<IRecommendedNews>;
 }
 
-const NewsArticle = ({shareId, news, recommendations}: INewsArticle) => {
+const NewsArticle0602 = ({shareId, news, recommendations}: INewsArticle) => {
   const date = timestampToString(news.timestamp || 0).date;
   const socialMediaStyle = 'hover:cursor-pointer hover:opacity-80';
 
   const {share} = useShareProcess({
-    lockerName: 'news_article.shareHandler',
+    lockerName: 'news_article_0602.shareHandler',
     shareType: ShareType.ARTICLE,
     shareId: shareId,
   });
-
-  // TODO: parse the content as temporary solution (20230612 - Shirley)
-  // const parseContent = (content: string) => {
-  //   const lines = content.split('\n');
-  //   // console.log('content', content);
-  //   return lines.map((line, index) => {
-  //     if (line.startsWith('###')) {
-  //       const title = line.substring(3).trim(); // remove '###'
-  //       return (
-  //         <h2 key={index} className="mb-5 text-xl font-bold">
-  //           {title}
-  //         </h2>
-  //       );
-  //     } else if (line.includes('https')) {
-  //       const url = line.substring(2); // remove '- '
-  //       return (
-  //         <p key={index} className="mb-5">
-  //           <a
-  //             className="text-blue-400 underline"
-  //             href={url}
-  //             target="_blank"
-  //             rel="noopener noreferrer"
-  //           >
-  //             {url}
-  //           </a>
-  //         </p>
-  //       );
-  //       // const url = line.substring(2); // remove '- '
-  //       // return <a key={index} className="text-blue-400 underline" href={url}>{url}</a>;
-  //     } else {
-  //       return (
-  //         <p key={index} className="mb-5">
-  //           {line}
-  //         </p>
-  //       );
-  //     }
-  //   });
-  // };
 
   return (
     <div className="bg-gradient-to-r from-darkGray1/80 via-black to-black pb-20">
@@ -112,8 +74,7 @@ const NewsArticle = ({shareId, news, recommendations}: INewsArticle) => {
           {/* <p className="text-base leading-10 tracking-normal text-lightGray1">{news.content}</p> */}
 
           <div className="prose mt-5 max-w-none leading-10 tracking-normal">
-            {/* {parseContent(news.content)} */}
-            {/* <h2 className="mb-5 text-xl font-bold">Introduction</h2>
+            <h2 className="mb-5 text-xl font-bold">Introduction</h2>
             <p className="mb-5">
               The unpredictable terrain of cryptocurrencies is experiencing a considerable degree of
               turbulence. It is looking down the barrel of an uncertain week ahead, with a potential
@@ -281,7 +242,7 @@ const NewsArticle = ({shareId, news, recommendations}: INewsArticle) => {
                   cointelegraph.com
                 </a>
               </li>
-            </ul> */}
+            </ul>
           </div>
 
           <div className="my-16 text-lightGray">
@@ -343,4 +304,4 @@ const NewsArticle = ({shareId, news, recommendations}: INewsArticle) => {
   );
 };
 
-export default NewsArticle;
+export default NewsArticle0602;

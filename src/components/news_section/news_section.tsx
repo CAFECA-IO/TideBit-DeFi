@@ -25,18 +25,20 @@ const NewsSection = ({
 
   const displayedCryptoNews =
     newsForCurrentPage instanceof Array &&
-    newsForCurrentPage.map((news, index) => {
-      return (
-        <NewsItem
-          key={news.newsId}
-          newsId={news.newsId}
-          timestamp={news.timestamp}
-          img={news.img}
-          title={news.title}
-          description={news.description}
-        />
-      );
-    });
+    newsForCurrentPage
+      .sort((a, b) => b.timestamp - a.timestamp)
+      .map((news, index) => {
+        return (
+          <NewsItem
+            key={news.newsId}
+            newsId={news.newsId}
+            timestamp={news.timestamp}
+            img={news.img}
+            title={news.title}
+            description={news.description}
+          />
+        );
+      });
 
   return (
     <div>

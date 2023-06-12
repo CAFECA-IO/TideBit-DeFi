@@ -5,7 +5,7 @@ import Pagination from '../pagination/pagination';
 import {Currency} from '../../constants/currency';
 import {MarketContext} from '../../contexts/market_context';
 import useStateRef from 'react-usestateref';
-import {tempRecommendedNews} from '../../interfaces/tidebit_defi_background/news';
+import {tempRecommendedNewsArray} from '../../interfaces/tidebit_defi_background/news';
 import {ITEMS_PER_PAGE} from '../../constants/display';
 
 const NewsPageBody = () => {
@@ -14,7 +14,7 @@ const NewsPageBody = () => {
   const [activePage, setActivePage] = React.useState(1);
   const [search, setSearch, searchRef] = useStateRef('');
 
-  const tempRecommenation = tempRecommendedNews;
+  const tempRecommenation = tempRecommendedNewsArray;
 
   const filteredNews = tempRecommenation.filter(
     news =>

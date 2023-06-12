@@ -79,30 +79,35 @@ const NewsArticle0609 = ({shareId, news, recommendations}: INewsArticle) => {
               The dynamism of the global financial landscape, particularly the crypto market, is
               marked by the interplay of policies, technology, and economics. We'll focus on these
               aspects, playing pivotal roles in sculpting the future of cryptocurrency. Further, our
-              analysis suggests a potential 3% increase in the Ethereum price from June 10-16, 2023.
+              analysis suggests{' '}
+              <span className="font-bold">
+                a potential 3% increase in the Ethereum price from June 10-16, 2023.
+              </span>
             </p>
             <h2 className="mb-5 text-xl font-bold">International Policy</h2>
             <p className="mb-5">
-              Hong Kong is becoming a major crypto hub due to its strategic regulatory moves. Hong
-              Kong's distinct approach to regulation, including recognition of crypto assets under
-              existing laws and the requirement for all crypto firms to be licensed, is fostering a
-              conducive environment for crypto growth.
+              <span className="font-bold">Hong Kong</span> is becoming a major crypto hub due to its
+              strategic regulatory moves. Hong Kong's distinct approach to regulation, including
+              recognition of crypto assets under existing laws and the requirement for all crypto
+              firms to be licensed, is fostering a conducive environment for crypto growth.
             </p>
             <p className="mb-5">
-              Japan's policies, leveraging its tech strength, have made strides in the crypto
-              sector. Japan's introduction of the Payment Services Act, which recognizes crypto as a
-              legal form of payment, has boosted the country's crypto growth. Meanwhile, Japan's
-              regulatory body, the Financial Services Agency, has created a regulatory sandbox for
-              fintech innovation, thereby nurturing a favorable environment.
+              <span className="font-bold">Japan's</span> policies, leveraging its tech strength,
+              have made strides in the crypto sector. Japan's introduction of the Payment Services
+              Act, which recognizes crypto as a legal form of payment, has boosted the country's
+              crypto growth. Meanwhile, Japan's regulatory body, the Financial Services Agency, has
+              created a regulatory sandbox for fintech innovation, thereby nurturing a favorable
+              environment.
             </p>
             <p className="mb-5">
-              London's regulatory environment is also fueling its crypto market. Evertas, a
-              London-based crypto insurer, was granted authorization to offer services, suggesting
-              London's flexible regulatory stance.
+              <span className="font-bold">London's</span> regulatory environment is also fueling its
+              crypto market. Evertas, a London-based crypto insurer, was granted authorization to
+              offer services, suggesting London's flexible regulatory stance.
             </p>
             <p className="mb-5">
-              Moreover, European officials believe US SEC's intensified enforcement could create
-              opportunities for Europe, including the UK, to attract more crypto-related businesses.
+              Moreover, European officials believe <span className="font-bold">US SEC's</span>{' '}
+              intensified enforcement could create opportunities for Europe, including the UK, to
+              attract more crypto-related businesses.
             </p>
             <h2 className="mb-5 text-xl font-bold">Technological advancements</h2>
             <p className="mb-5">
@@ -110,37 +115,40 @@ const NewsArticle0609 = ({shareId, news, recommendations}: INewsArticle) => {
               zkSync and Optimism.
             </p>
             <p className="mb-5">
-              zkSync, a Layer-2 scaling solution, is pioneering efficiency and scalability in
-              blockchain transactions. Its notable development, the "Era Rocket Pool," uses
-              zero-knowledge proofs to achieve significant transaction speed and reduce gas costs.
-              This step represents a critical breakthrough, as the technology resolves two of the
-              most pressing concerns in blockchain applications: scalability and high transaction
-              fees. The innovation promises to revolutionize not just the DeFi sector but the entire
-              cryptocurrency landscape, by allowing for more participants and transactions at a
-              lower cost.
+              <span className="font-bold">zkSync</span>, a Layer-2 scaling solution, is pioneering
+              efficiency and scalability in blockchain transactions. Its notable development, the{' '}
+              <span className="font-bold">"Era Rocket Pool"</span>, uses zero-knowledge proofs to
+              achieve significant transaction speed and reduce gas costs. This step represents a
+              critical breakthrough, as the technology resolves two of the most pressing concerns in
+              blockchain applications: scalability and high transaction fees. The innovation
+              promises to revolutionize not just the DeFi sector but the entire cryptocurrency
+              landscape, by allowing for more participants and transactions at a lower cost.
             </p>
             <p className="mb-5">
-              Optimism is another trailblazer in this field. The company's recently completed
-              "Bedrock" hard fork introduces a new era in transaction speed and security. The hard
-              fork involves an upgraded Ethereum Layer-2 scaling solution, designed to handle more
-              transactions while increasing their security. This advancement is especially crucial
-              in the context of the growing demand for secure and efficient crypto transactions. The
-              "Bedrock" hard fork underscores the progress being made in the realm of blockchain
-              technology and lays the foundation for further advancements in transactional speed and
-              security in the crypto world.
+              <span className="font-bold">
+                Optimism is another trailblazer in this field. The company's recently completed
+                "Bedrock" hard fork introduces a new era in transaction speed and security.
+              </span>{' '}
+              The hard fork involves an upgraded Ethereum Layer-2 scaling solution, designed to
+              handle more transactions while increasing their security. This advancement is
+              especially crucial in the context of the growing demand for secure and efficient
+              crypto transactions. The "Bedrock" hard fork underscores the progress being made in
+              the realm of blockchain technology and lays the foundation for further advancements in
+              transactional speed and security in the crypto world.
             </p>
             <h2 className="mb-5 text-xl font-bold">Economic Outlook and Trends</h2>
             <p className="mb-5">
-              US President Biden's recent signing of the debt ceiling bill averts a default crisis,
-              ensuring economic stability. Coupled with the BLS's latest employment report
-              indicating job growth, these factors are fostering a healthy investment environment.
+              US President Biden's recent signing of the{' '}
+              <span className="font-bold">debt ceiling bill averts a default crisis</span>, ensuring
+              economic stability. Coupled with the BLS's latest employment report indicating job
+              growth, these factors are fostering a healthy investment environment.
             </p>
             <p className="mb-5">
-              Moreover, the Bureau of Labor Statistics (BLS) released a promising employment report.
-              It shows encouraging signs of job growth, a key indicator of a healthy and recovering
-              economy. The positive economic news suggests a robust job market, increased consumer
-              spending, and overall economic growth, conditions typically associated with a thriving
-              investment ecosystem.
+              Moreover, the Bureau of Labor Statistics (BLS) released{' '}
+              <span className="font-bold">a promising employment report</span>. It shows encouraging
+              signs of job growth, a key indicator of a healthy and recovering economy. The positive
+              economic news suggests a robust job market, increased consumer spending, and overall
+              economic growth, conditions typically associated with a thriving investment ecosystem.
             </p>
             <p className="mb-5">
               Together, these economic factors provide a supportive backdrop for the cryptocurrency

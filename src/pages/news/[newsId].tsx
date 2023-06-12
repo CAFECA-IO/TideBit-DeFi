@@ -24,6 +24,7 @@ import {DOMAIN} from '../../constants/config';
 import {NEWS_IMG_HEIGHT, NEWS_IMG_WIDTH} from '../../constants/display';
 import NewsArticle0602 from '../../components/news_article/news_article_0602';
 import NewsArticle0609 from '../../components/news_article/news_article_0609';
+import Custom404 from '../404';
 
 interface IPageProps {
   newsId: string;
@@ -40,7 +41,6 @@ const NewsPage = (props: IPageProps) => {
   const news = marketCtx.getNews(Currency.ETH, props?.newsId ?? '');
   const recommendationNews = marketCtx.getRecommendedNews(Currency.ETH);
   const recommendtaion = getRecommendatedNewsById(props.newsId);
-  // tempRecommendedNewsArray;
 
   const theNews = getNewsById(props.newsId);
 
@@ -55,10 +55,18 @@ const NewsPage = (props: IPageProps) => {
 
   const displayedNews =
     id === '20230602001' ? (
-      <NewsArticle0602 shareId={props.newsId} news={theNews} recommendations={recommendtaion} />
+      <>
+        <NewsArticle0602 shareId={props.newsId} news={theNews} recommendations={recommendtaion} />
+        <Footer />
+      </>
     ) : id === '20230609001' ? (
-      <NewsArticle0609 shareId={props.newsId} news={theNews} recommendations={recommendtaion} />
-    ) : null;
+      <>
+        <NewsArticle0609 shareId={props.newsId} news={theNews} recommendations={recommendtaion} />
+        <Footer />
+      </>
+    ) : (
+      <Custom404 />
+    );
 
   useEffect(() => {
     if (!appCtx.isInit) {
@@ -105,7 +113,6 @@ const NewsPage = (props: IPageProps) => {
           <nav className="">{displayedNavBar}</nav>
           <main className="">
             <div>{displayedNews}</div>
-            <Footer />
           </main>
         </>
       ) : (

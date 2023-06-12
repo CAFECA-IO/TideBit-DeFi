@@ -10,14 +10,22 @@ import {useContext, useEffect} from 'react';
 import {AppContext} from '../../contexts/app_context';
 import Footer from '../../components/footer/footer';
 import {
+  getRecommendatedNewsById,
   getDummyNews,
   getDummyRecommendationNews,
+  getNewsById,
   tempNews,
+  tempNewsArray,
+  tempRecommendedNewsArray,
+  getBriefNewsById,
 } from '../../interfaces/tidebit_defi_background/news';
 import {Currency} from '../../constants/currency';
 import {MarketContext} from '../../contexts/market_context';
 import {DOMAIN} from '../../constants/config';
 import {NEWS_IMG_HEIGHT, NEWS_IMG_WIDTH} from '../../constants/display';
+import NewsArticle0602 from '../../components/news_article/news_article_0602';
+import NewsArticle0609 from '../../components/news_article/news_article_0609';
+import Custom404 from '../404';
 
 interface IPageProps {
   newsId: string;
@@ -33,13 +41,36 @@ const NewsPage = (props: IPageProps) => {
 
   const news = marketCtx.getNews(Currency.ETH, props?.newsId ?? '');
   const recommendationNews = marketCtx.getRecommendedNews(Currency.ETH);
-  const finishedNews = tempNews;
-  const newsTitle = finishedNews.title;
-  const newsDescription = finishedNews.content;
-  const newsImg = finishedNews.img;
+  const recommendtaion = getRecommendatedNewsById(props.newsId);
+
+  const theNews = getNewsById(props.newsId);
+  const briefNews = getBriefNewsById(props.newsId);
+
+  const newsTitle = theNews?.title;
+  const newsDescription = briefNews?.description;
+  const newsImg = theNews?.img;
 
   const share = `${DOMAIN}/news/${props.newsId}`;
   const img = `${DOMAIN}${newsImg}`;
+
+  const id = props.newsId.split('-')[2];
+
+  const displayedNews =
+    theNews === undefined ? (
+      <Custom404 />
+    ) : id === '20230602001' ? (
+      <>
+        <NewsArticle0602 shareId={props.newsId} news={theNews} recommendations={recommendtaion} />
+        <Footer />
+      </>
+    ) : id === '20230609001' ? (
+      <>
+        <NewsArticle0609 shareId={props.newsId} news={theNews} recommendations={recommendtaion} />
+        <Footer />
+      </>
+    ) : (
+      <Custom404 />
+    );
 
   useEffect(() => {
     if (!appCtx.isInit) {
@@ -53,8 +84,8 @@ const NewsPage = (props: IPageProps) => {
         <title>{newsTitle}</title>
         <link rel="icon" href="/favicon.ico" />
 
-        <meta name="description" content="CFD Sharing" />
-        <meta name="keywords" content="CFD Sharing" />
+        <meta name="description" content={newsDescription} />
+        <meta name="keywords" content={newsTitle} />
         <meta name="author" content="TideBit" />
         <meta name="application-name" content="TideBit DeFi" />
         <meta name="apple-mobile-web-app-title" content="TideBit DeFi" />
@@ -67,6 +98,7 @@ const NewsPage = (props: IPageProps) => {
         <meta name="og:image" content={img} />
         <meta name="og:image:width" content={NEWS_IMG_WIDTH.toString()} />
         <meta name="og:image:height" content={NEWS_IMG_HEIGHT.toString()} />
+        <meta name="og:image:alt" content={newsTitle} />
         <meta name="og:description" content={newsDescription} />
         <meta name="og:site_name" content="TideBit DeFi" />
         <meta name="og:locale" content="en_US" />
@@ -85,14 +117,7 @@ const NewsPage = (props: IPageProps) => {
         <>
           <nav className="">{displayedNavBar}</nav>
           <main className="">
-            <div>
-              <NewsArticle
-                shareId={props.newsId}
-                news={finishedNews}
-                // recommendations={recommendationNews}
-              />
-            </div>
-            <Footer />
+            <div>{displayedNews}</div>
           </main>
         </>
       ) : (

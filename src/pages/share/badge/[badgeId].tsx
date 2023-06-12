@@ -78,6 +78,7 @@ const BadgeSharing = (props: IPageProps) => {
         <meta property="og:type" content="website" />
         <meta property="og:url" content={share} />
         <meta property="og:image" content={img} />
+        <meta property="og:image:alt" content="TideBit DeFi Badge" />
         <meta property="og:image:width" content={BG_WIDTH_OF_SHARING_RECORD.toString()} />
         <meta property="og:image:height" content={BG_HEIGHT_OF_SHARING_RECORD.toString()} />
         <meta property="og:description" content="TideBit DeFi Badge Sharing" />

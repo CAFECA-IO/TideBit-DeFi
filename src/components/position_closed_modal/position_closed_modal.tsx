@@ -19,6 +19,7 @@ import {
   getTimestampInMilliseconds,
   roundToDecimalPlaces,
   findCodeByReason,
+  toPnl,
 } from '../../lib/common';
 import {useContext, useEffect, useState} from 'react';
 import {MarketContext} from '../../contexts/market_context';
@@ -79,6 +80,20 @@ const PositionClosedModal = ({
   const globalCtx = useGlobal();
   const userCtx = useContext(UserContext);
 
+  const predictedClosePrice = marketCtx.predictCFDClosePrice(
+    openCfdDetails.targetAsset,
+    openCfdDetails.typeOfPosition
+  );
+
+  const spread = marketCtx.getTickerSpread(openCfdDetails.targetAsset);
+  const pnl = toPnl({
+    openPrice: openCfdDetails.openPrice,
+    closePrice: predictedClosePrice,
+    amount: openCfdDetails.amount,
+    typeOfPosition: openCfdDetails.typeOfPosition,
+    spread: spread,
+  });
+
   const [quotationError, setQuotationError, quotationErrorRef] = useStateRef(false);
   const [quotationErrorMessage, setQuotationErrorMessage, quotationErrorMessageRef] =
     useStateRef<IResult>(defaultResultFailed);
@@ -106,11 +121,7 @@ const PositionClosedModal = ({
   const displayedGuaranteedStopSetting = !!openCfdDetails?.guaranteedStop ? 'Yes' : 'No';
 
   const displayedPnLSymbol =
-    openCfdDetails?.pnl?.type === ProfitState.PROFIT
-      ? '+'
-      : openCfdDetails?.pnl?.type === ProfitState.LOSS
-      ? '-'
-      : '';
+    pnl?.type === ProfitState.PROFIT ? '+' : pnl?.type === ProfitState.LOSS ? '-' : '';
 
   const displayedTypeOfPosition =
     openCfdDetails?.typeOfPosition === TypeOfPosition.BUY
@@ -123,16 +134,16 @@ const PositionClosedModal = ({
       : t('POSITION_MODAL.TYPE_SELL');
 
   const displayedPnLColor =
-    openCfdDetails?.pnl.type === ProfitState.PROFIT
+    pnl.type === ProfitState.PROFIT
       ? TypeOfPnLColor.PROFIT
-      : openCfdDetails?.pnl.type === ProfitState.LOSS
+      : pnl.type === ProfitState.LOSS
       ? TypeOfPnLColor.LOSS
       : TypeOfPnLColor.EQUAL;
 
   const displayedBorderColor =
-    openCfdDetails?.pnl.type === ProfitState.PROFIT
+    pnl.type === ProfitState.PROFIT
       ? TypeOfBorderColor.PROFIT
-      : openCfdDetails?.pnl.type === ProfitState.LOSS
+      : pnl.type === ProfitState.LOSS
       ? TypeOfBorderColor.LOSS
       : TypeOfBorderColor.EQUAL;
 
@@ -198,7 +209,7 @@ const PositionClosedModal = ({
       value: Math.abs(pnlValue),
     };
 
-    const positionLineGraph = [100, 100]; // TODO: (20230316 - Shirley) from `marketCtx`
+    // const positionLineGraph = [100, 100]; // TODO: (20230316 - Shirley) from `marketCtx`
 
     const suggestion: ICFDSuggestion = {
       takeProfit:
@@ -215,10 +226,10 @@ const PositionClosedModal = ({
       ...cfd,
       pnl: pnl,
       openValue: openValue,
-      closeValue: closeValue,
-      positionLineGraph: positionLineGraph,
+      // closeValue: closeValue,
+      // positionLineGraph: positionLineGraph,
       suggestion: suggestion,
-      stateCode: cfdStateCode.COMMON,
+      // stateCode: cfdStateCode.COMMON,
 
       closeTimestamp: quotation.deadline,
       closePrice: closePrice,
@@ -540,10 +551,7 @@ const PositionClosedModal = ({
               <div className="text-lightGray">{t('POSITION_MODAL.PNL')}</div>
               <div className={`${pnlRenewedStyle} ${displayedPnLColor}`}>
                 {displayedPnLSymbol} ${' '}
-                {openCfdDetails?.pnl?.value.toLocaleString(
-                  UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                  FRACTION_DIGITS
-                )}
+                {pnl?.value.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)}
               </div>
             </div>
 

@@ -1,12 +1,13 @@
-import React, {useContext} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {UserContext} from '../../contexts/user_context';
 import {useGlobal} from '../../contexts/global_context';
 import Image from 'next/image';
-import {defaultPersonalRanking} from '../../interfaces/tidebit_defi_background/personal_ranking';
+import {defaultBadges} from '../../interfaces/tidebit_defi_background/badge';
 import {DEFAULT_USER_AVATAR, BADGE_LIST, TypeOfPnLColor} from '../../constants/display';
+import Skeleton, {SkeletonTheme} from 'react-loading-skeleton';
 import {unitAsset} from '../../constants/config';
 import {ProfitState} from '../../constants/profit_state';
-import {numberFormatted, accountTruncate, timestampToString} from '../../lib/common';
+import {numberFormatted, timestampToString, accountTruncate} from '../../lib/common';
 import {useTranslation} from 'react-i18next';
 import {
   IPersonalAchievement,
@@ -22,33 +23,57 @@ type TranslateFunction = (s: string) => string;
 interface IPersonalAchievementModal {
   modalVisible: boolean;
   modalClickHandler: () => void;
-  getPersonalAchievementData: IPersonalAchievement;
+  personalAchievementUserId: string;
 }
 
 const PersonalAchievementModal = ({
   modalVisible,
   modalClickHandler,
-  getPersonalAchievementData,
+  personalAchievementUserId,
 }: IPersonalAchievementModal) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
   const globalCtx = useGlobal();
   const userCtx = useContext(UserContext);
 
+  const userId = personalAchievementUserId;
+
+  const [isLoading, setIsLoading] = useState(true);
+  const [personalAchievement, setPersonalAchievement] = useState<IPersonalAchievement>(
+    defaultPersonalAchievement
+  );
+
+  useEffect(() => {
+    setIsLoading(true);
+
+    userCtx
+      .getPersonalAchievements(userId)
+      .then(result => {
+        result.success
+          ? setPersonalAchievement(result.data as IPersonalAchievement)
+          : setPersonalAchievement(defaultPersonalAchievement);
+
+        setIsLoading(false);
+      })
+      .catch(() => {
+        setPersonalAchievement(defaultPersonalAchievement);
+        setIsLoading(false);
+      });
+  }, [modalVisible]);
+
   const {
-    userId,
     userName,
     userAvatar,
-    tradingVolume,
     ranking,
+    tradingVolume,
     onlineTime,
     diversification,
     hightestROI,
     lowestROI,
     badges,
-  } = getPersonalAchievementData ?? defaultPersonalAchievement;
+  } = personalAchievement;
 
-  const displayedUserName = userName.length > 20 ? accountTruncate(userName) : userName;
+  const displayedUserName = accountTruncate(userName, 20);
   const isMe = userCtx.user?.id === userId ? true : false;
 
   const personalRankingContent = [
@@ -83,6 +108,12 @@ const PersonalAchievementModal = ({
       );
 
     return formattedOnlineTime;
+  };
+
+  const closeModalHandler = () => {
+    modalClickHandler();
+    setIsLoading(true);
+    setPersonalAchievement(defaultPersonalAchievement);
   };
 
   const displayedROI = (roi: number) => {
@@ -149,7 +180,7 @@ const PersonalAchievementModal = ({
 
     return (
       <div key={title} className="flex items-center justify-between">
-        <div className="flex flex-col items-center">
+        <div className="flex w-120px flex-col items-center">
           <div className="text-sm text-lightGray4">{title}</div>
           <div className="inline-flex items-center">
             {displayedPnl}
@@ -180,25 +211,29 @@ const PersonalAchievementModal = ({
     const hintFrameStyle = (index + 1) % 3 === 0 ? 'right-0' : '';
     const hintArrowStyle = (index + 1) % 3 === 0 ? 'right-6' : 'left-6';
 
+    /* ToDo: (20230607 - Julian) 徽章尚未實作，先放入 defaultBadges */
+    const badgeList = defaultBadges;
+
     /* Info: (20230517 - Julian) 如果 badges name 中包含徽章的名字 && receiveTime > 0，表示獲得該徽章 */
     const isReceived =
-      badges[index].badgeName.includes(name) && badges[index].receiveTime > 0 ? true : false;
+      badgeList[index].badgeName.includes(name) && badgeList[index].receiveTime > 0 ? true : false;
+    //badges[index].badgeName.includes(name) && badges[index].receiveTime > 0 ? true : false;
 
     const imgSrc = isReceived ? icon : iconSkeleton;
-    const receiveTime = isReceived ? timestampToString(badges[index].receiveTime).date : null;
+    const receiveTime = isReceived ? timestampToString(badgeList[index].receiveTime).date : null;
     const hintArrowTop = isReceived ? 'top-12' : 'top-8';
 
     const badgeModalData = {
       badgeData: {
-        badgeId: badges[index].badgeId,
+        badgeId: badgeList[index].badgeId,
         badgeName: name,
         userId: userId,
-        receiveTime: badges[index].receiveTime,
+        receiveTime: badgeList[index].receiveTime,
       },
     };
 
-    // Info: (20230517 - Julian) 只有自己的徽章才能點擊並分享
-    const clickHandler =
+    /* Info: (20230517 - Julian) 只有自己的徽章才能點擊並分享 */
+    const clickBadgeHandler =
       isMe && isReceived
         ? () => {
             globalCtx.dataBadgeModalHandler(badgeModalData);
@@ -210,7 +245,7 @@ const PersonalAchievementModal = ({
       <div
         key={index}
         className="group relative bg-darkGray8 p-2 hover:cursor-pointer sm:p-4"
-        onClick={clickHandler}
+        onClick={clickBadgeHandler}
       >
         <Image src={imgSrc} width={70} height={70} alt="badge_icon" />
         <div
@@ -226,7 +261,36 @@ const PersonalAchievementModal = ({
     );
   });
 
-  const formContent = (
+  const formContent = isLoading ? (
+    <div className="flex flex-col items-center space-y-4 px-10 pt-4">
+      <Skeleton width={150} height={40} />
+      <Skeleton width={120} height={120} circle />
+      <div className="flex w-full justify-between px-6">
+        <div className="flex flex-col items-center">
+          <Skeleton width={50} height={20} />
+          <Skeleton width={70} height={20} />
+          <Skeleton width={50} height={20} />
+        </div>
+        <div className="flex flex-col items-center">
+          <Skeleton width={50} height={20} />
+          <Skeleton width={70} height={20} />
+          <Skeleton width={50} height={20} />
+        </div>
+        <div className="flex flex-col items-center">
+          <Skeleton width={50} height={20} />
+          <Skeleton width={70} height={20} />
+          <Skeleton width={50} height={20} />
+        </div>
+      </div>
+      <div className="flex flex-col space-y-4 pt-4">
+        <Skeleton width={320} height={30} />
+        <Skeleton width={320} height={30} />
+        <Skeleton width={320} height={30} />
+        <Skeleton width={320} height={30} />
+        <Skeleton width={320} height={30} />
+      </div>
+    </div>
+  ) : (
     <div className="flex w-full flex-col space-y-4 divide-y divide-lightGray overflow-y-auto overflow-x-hidden px-8 pt-4">
       {/* Info:(20230515 - Julian) User Name */}
       <div className="flex flex-col items-center space-y-6 text-lightWhite">
@@ -257,29 +321,31 @@ const PersonalAchievementModal = ({
 
   const isDisplayedModal = modalVisible ? (
     <>
-      <div className="fixed inset-0 z-50 flex items-center justify-center overflow-x-hidden overflow-y-hidden outline-none backdrop-blur-sm focus:outline-none">
-        <div className="relative mx-auto my-6 w-auto max-w-xl">
-          <div
-            id="personalInfoModal"
-            className="relative flex h-530px w-screen flex-col rounded-xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none sm:w-450px md:h-726px"
-          >
-            {/* Info:(20230515 - Julian) Header */}
-            <div className="flex items-center justify-between rounded-t pt-9">
-              <button className="float-right ml-auto bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
-                <span className="absolute right-5 top-5 block outline-none focus:outline-none">
-                  <ImCross onClick={modalClickHandler} />
-                </span>
-              </button>
+      <SkeletonTheme baseColor="#1E2329" highlightColor="#444">
+        <div className="fixed inset-0 z-50 flex items-center justify-center overflow-x-hidden overflow-y-hidden outline-none backdrop-blur-sm focus:outline-none">
+          <div className="relative mx-auto my-6 w-auto max-w-xl">
+            <div
+              id="personalInfoModal"
+              className="relative flex h-530px w-screen flex-col rounded-xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none sm:w-450px md:h-726px"
+            >
+              {/* Info:(20230515 - Julian) Header */}
+              <div className="flex items-center justify-between rounded-t pt-9">
+                <button className="float-right ml-auto bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
+                  <span className="absolute right-5 top-5 block outline-none focus:outline-none">
+                    <ImCross onClick={closeModalHandler} />
+                  </span>
+                </button>
+              </div>
+
+              {/* Info:(20230515 - Julian) Body */}
+              {formContent}
+
+              {/* Info:(20230515 - Julian) Footer */}
+              <div className="flex items-center justify-end rounded-b p-4"></div>
             </div>
-
-            {/* Info:(20230515 - Julian) Body */}
-            {formContent}
-
-            {/* Info:(20230515 - Julian) Footer */}
-            <div className="flex items-center justify-end rounded-b p-4"></div>
           </div>
         </div>
-      </div>
+      </SkeletonTheme>
     </>
   ) : null;
 

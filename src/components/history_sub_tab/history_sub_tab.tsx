@@ -18,7 +18,7 @@ const HistorySubTab = () => {
         {isLoading ? (
           <Skeleton count={1} height={55} />
         ) : (
-          <HistoryPositionItem closedCfdDetails={toDisplayCFDOrder(cfd, [])} />
+          <HistoryPositionItem closedCfdDetails={toDisplayCFDOrder(cfd)} />
         )}
       </div>
     ) : null

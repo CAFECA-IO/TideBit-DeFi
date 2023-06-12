@@ -11,7 +11,7 @@ import {useContext, useRef, useState} from 'react';
 import TradingInput from '../trading_input/trading_input';
 import {AiOutlineQuestionCircle} from 'react-icons/ai';
 import {useGlobal} from '../../contexts/global_context';
-import {locker, timestampToString} from '../../lib/common';
+import {locker, roundToDecimalPlaces, timestampToString, toPnl} from '../../lib/common';
 import {CFDClosedType} from '../../constants/cfd_closed_type';
 import {OrderState} from '../../constants/order_state';
 import {IDisplayCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
@@ -22,6 +22,7 @@ import {useRouter} from 'next/router';
 import useShareProcess from '../../lib/hooks/use_share_process';
 import {ShareType} from '../../constants/share_type';
 import {ISocialMedia, ShareSettings, SocialMediaConstant} from '../../constants/social_media';
+import {MarketContext} from '../../contexts/market_context';
 
 type TranslateFunction = (s: string) => string;
 interface IHistoryPositionModal {
@@ -38,6 +39,7 @@ const HistoryPositionModal = ({
 }: IHistoryPositionModal) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
   const userCtx = useContext(UserContext);
+  const marketCtx = useContext(MarketContext);
 
   const displayedClosedReason =
     closedCfdDetails.closedType === CFDClosedType.SCHEDULE
@@ -58,8 +60,20 @@ const HistoryPositionModal = ({
 
   const layoutInsideBorder = 'mx-5 my-4 flex justify-between';
 
-  const displayedPnLSymbol =
-    closedCfdDetails.pnl.type === 'PROFIT' ? '+' : closedCfdDetails.pnl.type === 'LOSS' ? '-' : '';
+  const closeValue = roundToDecimalPlaces(
+    closedCfdDetails.closePrice! * closedCfdDetails.amount,
+    2
+  );
+  const spread = marketCtx.getTickerSpread(closedCfdDetails.targetAsset);
+  const pnl = toPnl({
+    openPrice: closedCfdDetails.openPrice,
+    closePrice: closedCfdDetails.closePrice!,
+    amount: closedCfdDetails.amount,
+    typeOfPosition: closedCfdDetails.typeOfPosition,
+    spread: spread,
+  });
+
+  const displayedPnLSymbol = pnl.type === 'PROFIT' ? '+' : pnl.type === 'LOSS' ? '-' : '';
 
   const displayedTypeOfPosition =
     closedCfdDetails?.typeOfPosition === 'BUY'
@@ -72,16 +86,16 @@ const HistoryPositionModal = ({
       : t('POSITION_MODAL.TYPE_SELL');
 
   const displayedPnLColor =
-    closedCfdDetails?.pnl.type === 'PROFIT'
+    pnl.type === 'PROFIT'
       ? TypeOfPnLColor.PROFIT
-      : closedCfdDetails?.pnl.type === 'LOSS'
+      : pnl.type === 'LOSS'
       ? TypeOfPnLColor.LOSS
       : TypeOfPnLColor.EQUAL;
 
   const displayedBorderColor =
-    closedCfdDetails?.pnl.type === 'PROFIT'
+    pnl.type === 'PROFIT'
       ? TypeOfBorderColor.PROFIT
-      : closedCfdDetails?.pnl.type === 'LOSS'
+      : pnl.type === 'LOSS'
       ? TypeOfBorderColor.LOSS
       : TypeOfBorderColor.EQUAL;
 
@@ -132,10 +146,7 @@ const HistoryPositionModal = ({
             <div className="text-lightGray">{t('POSITION_MODAL.PNL')}</div>
             <div className={`${displayedPnLColor}`}>
               {displayedPnLSymbol} ${' '}
-              {closedCfdDetails?.pnl.value?.toLocaleString(
-                UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                FRACTION_DIGITS
-              )}
+              {pnl.value?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)}
             </div>
           </div>
 
@@ -154,10 +165,8 @@ const HistoryPositionModal = ({
             <div className="text-lightGray">{t('POSITION_MODAL.CLOSED_VALUE')}</div>
             <div className="">
               ${' '}
-              {(closedCfdDetails?.closeValue ?? 0)?.toLocaleString(
-                UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                FRACTION_DIGITS
-              ) ?? 0}
+              {(closeValue ?? 0)?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS) ??
+                0}
             </div>
           </div>
 

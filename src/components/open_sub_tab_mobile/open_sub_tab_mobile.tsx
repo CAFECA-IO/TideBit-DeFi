@@ -14,7 +14,7 @@ import {ITickerLiveStatistics} from '../../interfaces/tidebit_defi_background/ti
 */
 
 const OpenSubTabMobile = () => {
-  const {openCFDs} = useContext(UserContext);
+  const userCtx = useContext(UserContext);
   const marketCtx = useContext(MarketContext);
 
   /*   const initState = {
@@ -61,7 +61,7 @@ const OpenSubTabMobile = () => {
   }, [marketCtx.selectedTicker?.price]); */
 
   useEffect(() => {
-    const cfdList = openCFDs
+    const cfdList = userCtx.openCFDs
       .map(cfd => {
         /** Deprecated: (20230608 - tzuhan)
         const positionLineGraph = marketCtx.listTickerPositions(cfd.targetAsset, {
@@ -102,19 +102,25 @@ const OpenSubTabMobile = () => {
       });
 
     setCfds(cfdList);
-  }, [openCFDs]);
+  }, [userCtx.openCFDs]);
+
   useEffect(() => {
     setTimeout(() => setIsLoading(false), SKELETON_DISPLAY_TIME);
   }, [cfds]);
 
-  const openPositionList = cfds.map(cfd => {
-    return (
-      <div key={cfd.id}>
-        {isLoading ? <Skeleton count={5} height={30} /> : <OpenPositionItem openCfdDetails={cfd} />}
-        <div className="my-auto h-px w-full rounded bg-white/50"></div>
-      </div>
+  const openPositionList =
+    isLoading || userCtx.isLoadingCFDs ? (
+      <Skeleton count={10} height={150} />
+    ) : (
+      cfds.map(cfd => {
+        return (
+          <div key={cfd.id}>
+            {<OpenPositionItem openCfdDetails={cfd} />}
+            <div className="my-auto h-px w-full rounded bg-white/50"></div>
+          </div>
+        );
+      })
     );
-  });
 
   return (
     <>

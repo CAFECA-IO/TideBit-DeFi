@@ -75,6 +75,7 @@ export interface IUserProvider {
 }
 export interface IUserContext {
   isInit: boolean;
+  isLoadingCFDs: boolean;
   user: IUser | null;
   userAssets: IUserAssets | null;
   walletBalances: IWalletBalance[] | null;
@@ -134,6 +135,7 @@ export interface IUserContext {
 
 export const UserContext = createContext<IUserContext>({
   isInit: false,
+  isLoadingCFDs: false,
   user: null,
   walletBalances: null,
   // balance: null,
@@ -247,6 +249,7 @@ export const UserProvider = ({children}: IUserProvider) => {
   const workerCtx = useContext(WorkerContext);
   const notificationCtx = useContext(NotificationContext);
   const [isInit, setIsInit, isInitRef] = useState<boolean>(false);
+  const [isLoadingCFDs, setIsLoadingCFDs, isLoadingCFDsRef] = useState<boolean>(false);
   const [user, setUser, userRef] = useState<IUser | null>(null);
   const [walletBalances, setWalletBalances, walletBalancesRef] = useState<IWalletBalance[] | null>(
     null
@@ -300,6 +303,7 @@ export const UserProvider = ({children}: IUserProvider) => {
       await getUserAssets();
       await listBalances();
       await listFavoriteTickers();
+      if (selectedTickerRef.current) await listCFDs(selectedTickerRef.current.currency);
       /** Deprecated: call by page (20230608 - tzuhan)
       await listHistories();
        */
@@ -405,6 +409,7 @@ export const UserProvider = ({children}: IUserProvider) => {
   }, []);
 
   const listCFDs = useCallback(async (ticker: string) => {
+    setIsLoadingCFDs(true);
     let result: IResult = {...defaultResultFailed};
     result.code = Code.SERVICE_TERM_DISABLE;
     result.reason = Reason[result.code];
@@ -445,6 +450,7 @@ export const UserProvider = ({children}: IUserProvider) => {
         result.reason = Reason[result.code];
       }
     }
+    setIsLoadingCFDs(false);
     return result;
   }, []);
 
@@ -1684,6 +1690,7 @@ export const UserProvider = ({children}: IUserProvider) => {
           setSelectedTicker(ticker);
           setOpenedCFDs([]);
           setClosedCFDs([]);
+          setIsLoadingCFDs(true);
         }
       }),
     []
@@ -1711,6 +1718,7 @@ export const UserProvider = ({children}: IUserProvider) => {
 
   const defaultValue = {
     isInit: isInitRef.current,
+    isLoadingCFDs: isLoadingCFDsRef.current,
     user: userRef.current,
     walletBalances: walletBalancesRef.current,
     // balance: balanceRef.current,

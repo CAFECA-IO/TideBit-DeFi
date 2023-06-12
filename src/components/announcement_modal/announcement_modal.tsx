@@ -72,7 +72,7 @@ const AnnouncementModal = ({
             {/* Info:(20230519 - Julian) Header/Title */}
             <div className="flex items-center justify-between rounded-t pt-9">
               <h3 className="w-full text-center text-xl font-normal text-lightWhite md:text-3xl">
-                {announcementData.title}
+                {t(announcementData.title)}
               </h3>
               <button className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
                 <span className="absolute right-5 top-5 block outline-none focus:outline-none">
@@ -83,8 +83,8 @@ const AnnouncementModal = ({
 
             {/* Info:(20230519 - Julian) Content */}
             <div className="flex flex-col items-center overflow-y-hidden px-8">
-              <div className="w-full overflow-y-auto bg-darkGray8 px-4 py-3 text-sm text-lightWhite md:py-6 md:text-base">
-                {announcementData.content}
+              <div className="w-full overflow-y-auto whitespace-pre-line bg-darkGray8 px-4 py-3 text-sm text-lightWhite md:py-6 md:text-base">
+                {t(announcementData.content)}
               </div>
             </div>
 

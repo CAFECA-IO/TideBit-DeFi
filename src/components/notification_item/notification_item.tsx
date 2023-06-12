@@ -6,8 +6,13 @@ import {INotificationItem} from '../../interfaces/tidebit_defi_background/notifi
 import {timestampToString} from '../../lib/common';
 import {MessageType} from '../../constants/message_type';
 import {NotificationLevel} from '../../constants/notification_level';
+import {useTranslation} from 'react-i18next';
+
+type TranslateFunction = (s: string) => string;
 
 export default function NotificationItem(notificationItem: INotificationItem) {
+  const {t}: {t: TranslateFunction} = useTranslation('common');
+
   const {id, title, content, timestamp, notificationLevel} = notificationItem;
   const notificationCtx = useContext(NotificationContext);
   const globalCtx = useGlobal();
@@ -68,7 +73,7 @@ export default function NotificationItem(notificationItem: INotificationItem) {
             <div className="relative mb-3 ml-3 basis-full text-start sm:mb-7">
               <div className="flex pr-2">
                 <div className="mr-5px text-xl text-lightWhite sm:whitespace-nowrap sm:text-2xl">
-                  {title}
+                  {t(title)}
                 </div>
                 <div className="ml-auto whitespace-nowrap text-end text-xs text-lightGray">
                   <div>{displayTime.date}</div>
@@ -80,7 +85,7 @@ export default function NotificationItem(notificationItem: INotificationItem) {
 
           {/* Info: (20230420 - Julian) Content */}
           <div className="mb-5 mt-0 flex w-11/12 flex-wrap pl-12 pt-0 text-xs text-lightGray">
-            {content}
+            {t(content)}
           </div>
         </div>
       </div>

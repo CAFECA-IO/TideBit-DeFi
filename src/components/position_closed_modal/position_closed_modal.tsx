@@ -254,6 +254,7 @@ const PositionClosedModal = ({
       } else {
         setQuotationError(true);
 
+        // TODO: check the unit asset (20230612 - Shirley)
         if (data.ticker.split('-')[0] !== openCfdDetails.ticker) {
           setQuotationErrorMessage({
             success: false,

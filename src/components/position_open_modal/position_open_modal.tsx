@@ -228,6 +228,7 @@ const PositionOpenModal = ({
       } else {
         setQuotationError(true);
 
+        // TODO: check the unit asset (20230612 - Shirley)
         if (data.ticker.split('-')[0] !== openCfdRequest.ticker) {
           setQuotationErrorMessage({
             success: false,
@@ -323,6 +324,7 @@ const PositionOpenModal = ({
       return;
     }
 
+    // TODO: check the unit asset (20230612 - Shirley)
     if (openCfdRequest.quotation.ticker.split('-')[0] !== openCfdRequest.ticker) {
       setQuotationError(true);
       setQuotationErrorMessage({

@@ -5,22 +5,29 @@ import Pagination from '../pagination/pagination';
 import {Currency} from '../../constants/currency';
 import {MarketContext} from '../../contexts/market_context';
 import useStateRef from 'react-usestateref';
-import {tempRecommendedNews} from '../../interfaces/tidebit_defi_background/news';
+import {IRecommendedNews, tempRecommendedNews} from '../../interfaces/tidebit_defi_background/news';
 import {ITEMS_PER_PAGE} from '../../constants/display';
+import {ETH_NEWS_FOLDER} from '../../constants/config';
 
-const NewsPageBody = () => {
+interface IPageProps {
+  briefs: IRecommendedNews[];
+}
+
+const NewsPageBody = (props: IPageProps) => {
   const marketCtx = useContext(MarketContext);
   const allNews = marketCtx.getPaginationNews(Currency.ETH);
   const [activePage, setActivePage] = React.useState(1);
   const [search, setSearch, searchRef] = useStateRef('');
 
-  const tempRecommenation = tempRecommendedNews;
+  const tempRecommenation = props.briefs;
 
-  const filteredNews = tempRecommenation.filter(
-    news =>
-      news.title.toLowerCase().includes(searchRef.current.toLowerCase()) ||
-      news.description.toLowerCase().includes(searchRef.current.toLowerCase())
-  );
+  const filteredNews = tempRecommenation
+    .sort((a, b) => b.timestamp - a.timestamp)
+    .filter(
+      news =>
+        news.title.toLowerCase().includes(searchRef.current.toLowerCase()) ||
+        news.description.toLowerCase().includes(searchRef.current.toLowerCase())
+    );
   // TODO: markdown (20230602 - Shirley)
   // allNews.filter(
   // news.title.toLowerCase().includes(searchRef.current.toLowerCase()) ||

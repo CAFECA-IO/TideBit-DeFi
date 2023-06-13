@@ -45,12 +45,18 @@ const NewsArticle = ({shareId, img, post, recommendations}: INewsArticle) => {
     shareId: shareId,
   });
 
+  const displayedDate = timestampToString(post.date).date;
+
   const parsedBody = post.body
     .replace(
       /<h3 id="([^"]+)"><strong>([^<]+)<\/strong><\/h3>/g,
       `<h3 id="$1" class="font-bold text-xl my-3">$2</h3>`
     )
-    .replace(/<a /g, `<a class="text-blue-300 underline" `);
+    .replace(/<li>(<\/li>)?/g, `<li class="list-disc ml-5">$1`)
+    .replace(
+      /<a /g,
+      `<a class="text-blue-300 underline hover:text-blue-500 transition-all duration-150" `
+    );
 
   return (
     <div className="bg-gradient-to-r from-darkGray1/80 via-black to-black pb-20">
@@ -77,7 +83,7 @@ const NewsArticle = ({shareId, img, post, recommendations}: INewsArticle) => {
           <div className="my-8 flex justify-between">
             {' '}
             <h1 className="text-xl font-normal leading-8 tracking-wider">{post.title}</h1>
-            <p className="mt-2 text-xs text-lightGray lg:text-sm">{post.date}</p>
+            <p className="mt-2 text-xs text-lightGray lg:text-sm">{displayedDate}</p>
           </div>
           {/* TODO: markdown (20230602 - Shirley) */}
           {/* <p className="text-base leading-10 tracking-normal text-lightGray1">{news.content}</p> */}

@@ -16,7 +16,7 @@ import {
 } from '../../interfaces/tidebit_defi_background/news';
 import {Currency} from '../../constants/currency';
 import {MarketContext} from '../../contexts/market_context';
-import {DOMAIN} from '../../constants/config';
+import {DOMAIN, ETH_NEWS_FOLDER} from '../../constants/config';
 import {NEWS_IMG_HEIGHT, NEWS_IMG_WIDTH} from '../../constants/display';
 import {IPost, getPost, getPosts, getSlugs} from '../../lib/posts';
 
@@ -33,8 +33,9 @@ const NewsPage = (props: IPageProps) => {
   const appCtx = useContext(AppContext);
   const marketCtx = useContext(MarketContext);
 
-  const news = marketCtx.getNews(Currency.ETH, props?.newsId ?? '');
-  const recommendationNews = marketCtx.getRecommendedNews(Currency.ETH);
+  // TODO: get news from context (20230613 - Shirley)
+  // const news = marketCtx.getNews(Currency.ETH, props?.newsId ?? '');
+  // const recommendationNews = marketCtx.getRecommendedNews(Currency.ETH);
 
   const post = props.newsData;
   // const finishedNews = tempNews;
@@ -118,7 +119,7 @@ const NewsPage = (props: IPageProps) => {
 export default NewsPage;
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const slugs = await getSlugs();
+  const slugs = await getSlugs(ETH_NEWS_FOLDER);
   const paths = slugs.map(slug => ({params: {newsId: slug}}));
   return {paths, fallback: false};
 };
@@ -130,7 +131,7 @@ export const getStaticProps: GetStaticProps<IPageProps> = async ({params, locale
     };
   }
 
-  const newsData = await getPost(params.newsId);
+  const newsData = await getPost(ETH_NEWS_FOLDER, params.newsId);
 
   if (!newsData) {
     return {

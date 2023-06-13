@@ -8,8 +8,16 @@ import NavBar from '../components/nav_bar/nav_bar';
 import {serverSideTranslations} from 'next-i18next/serverSideTranslations';
 import {ILocale} from '../interfaces/tidebit_defi_background/locale';
 import Footer from '../components/footer/footer';
+import {IPost, getPost, getPosts, getSlugs} from '../lib/posts';
+import {ETH_NEWS_FOLDER} from '../constants/config';
+import {GetStaticProps} from 'next';
+import {IRecommendedNews} from '../interfaces/tidebit_defi_background/news';
 
-const News = () => {
+interface IPageProps {
+  briefs: IRecommendedNews[];
+}
+
+const News = (props: IPageProps) => {
   const {layoutAssertion} = useGlobal();
   const displayedNavBar = layoutAssertion === 'mobile' ? <NavBarMobile /> : <NavBar />;
 
@@ -34,7 +42,7 @@ const News = () => {
 
           <main className="">
             <div>
-              <NewsPageBody />
+              <NewsPageBody briefs={props.briefs} />
             </div>
           </main>
 
@@ -49,12 +57,39 @@ const News = () => {
   return <>{initUI}</>;
 };
 
-const getStaticPropsFunction = async ({locale}: ILocale) => ({
-  props: {
-    ...(await serverSideTranslations(locale, ['common', 'footer'])),
-  },
-});
+// const getStaticPropsFunction = async ({locale}: ILocale) => ({
+//   props: {
+//     ...(await serverSideTranslations(locale, ['common', 'footer'])),
+//   },
+// });
 
-export const getStaticProps = getStaticPropsFunction;
+// export const getStaticProps = getStaticPropsFunction;
 
 export default News;
+
+export const getStaticProps: GetStaticProps<IPageProps> = async ({params, locale}) => {
+  const newsData = await getPosts(ETH_NEWS_FOLDER);
+
+  const briefs: IRecommendedNews[] = newsData.map(news => {
+    return {
+      newsId: news.slug ?? '',
+      img: `/news/${news.slug}@2x.png`,
+      timestamp: news.date,
+      title: news.title,
+      description: news.description,
+    };
+  });
+
+  if (!newsData) {
+    return {
+      notFound: true,
+    };
+  }
+
+  return {
+    props: {
+      briefs,
+      ...(await serverSideTranslations(locale as string, ['common', 'footer'])),
+    },
+  };
+};

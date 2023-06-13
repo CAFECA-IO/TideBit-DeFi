@@ -3,16 +3,19 @@ import Skeleton, {SkeletonTheme} from 'react-loading-skeleton';
 import OpenPositionItem from '../open_position_item/open_position_item';
 import {UserContext} from '../../contexts/user_context';
 import {MarketContext} from '../../contexts/market_context';
-import {roundToDecimalPlaces, toDisplayCFDOrder} from '../../lib/common';
+import {getStateCode, toDisplayCFDOrder} from '../../lib/common';
 import {IDisplayCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
 import {TypeOfPosition} from '../../constants/type_of_position';
 //import useStateRef from 'react-usestateref';
 import {SKELETON_DISPLAY_TIME} from '../../constants/display';
+import {cfdStateCode} from '../../constants/cfd_state_code';
+/**  Deprecated: replace by maketContext.getTickerSpread (20230610 - tzuhan)
 import {defaultResultFailed} from '../../interfaces/tidebit_defi_background/result';
 import {ITickerLiveStatistics} from '../../interfaces/tidebit_defi_background/ticker_live_statistics';
+*/
 
 const OpenSubTab = () => {
-  const {openCFDs} = useContext(UserContext);
+  const userCtx = useContext(UserContext);
   const marketCtx = useContext(MarketContext);
 
   // const initState = {
@@ -23,6 +26,7 @@ const OpenSubTab = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [cfds, setCfds] = useState<IDisplayCFDOrder[]>([]);
 
+  /**  Deprecated: replace by maketContext.getTickerSpread (20230610 - tzuhan)
   const getTickerSpread = async (instId: string) => {
     let tickerSpread = {...defaultResultFailed};
     tickerSpread = await marketCtx.getTickerLiveStatistics(instId);
@@ -31,6 +35,7 @@ const OpenSubTab = () => {
 
     return spread;
   };
+  */
 
   // Deprecated (20230610 - Julian)
   // useEffect(() => {
@@ -57,20 +62,23 @@ const OpenSubTab = () => {
   // }, [marketCtx.selectedTicker?.price]);
 
   useEffect(() => {
-    const cfdList = openCFDs
+    const cfdList = userCtx.openCFDs
       .map(cfd => {
+        /** Deprecated: (20230608 - tzuhan)
         const positionLineGraph = marketCtx.listTickerPositions(cfd.targetAsset, {
           begin: cfd.createTimestamp,
         });
-
+        const spread = marketCtx.getTickerSpread(cfd.targetAsset);
+        */
         const tickerPrice = marketCtx.availableTickers[cfd.targetAsset]?.price;
-        const spread = getTickerSpread(cfd.targetAsset);
         /**
          * Info: (20230428 - Shirley)
          * without `positionLineGraph`, use market price to calculate
          * without `market price`, use the open price of the CFD to get PNL === 0 and display `--`
          * (OpenPositionItem & UpdateFormModal)
          */
+
+        /** Deprecated: (20230608 - tzuhan)
         const currentPrice =
           (!!tickerPrice &&
             ((cfd.typeOfPosition === TypeOfPosition.BUY && roundToDecimalPlaces(tickerPrice, 2)) ||
@@ -79,13 +87,12 @@ const OpenSubTab = () => {
           positionLineGraph.length > 0
             ? positionLineGraph[positionLineGraph.length - 1]
             : 0;
+        */
 
-        const displayCFD: IDisplayCFDOrder = toDisplayCFDOrder(
-          cfd,
-          positionLineGraph,
-          currentPrice,
-          Number(spread)
-        );
+        const displayCFD: IDisplayCFDOrder = {
+          ...toDisplayCFDOrder(cfd),
+          stateCode: getStateCode(cfd, tickerPrice),
+        };
 
         return displayCFD;
       })
@@ -93,24 +100,27 @@ const OpenSubTab = () => {
         return a.createTimestamp - b.createTimestamp;
       })
       .sort((a, b) => {
-        return b.stateCode - a.stateCode;
+        return b.stateCode! - a.stateCode!;
       });
 
     setCfds(cfdList);
-  }, [openCFDs]);
-
+  }, [userCtx.openCFDs]);
   useEffect(() => {
     setTimeout(() => setIsLoading(false), SKELETON_DISPLAY_TIME);
-  }, [openCFDs]);
-
-  const openPositionList = cfds.map(cfd => {
-    return (
-      <div key={cfd.id}>
-        {isLoading ? <Skeleton count={5} height={30} /> : <OpenPositionItem openCfdDetails={cfd} />}
-        <div className="my-auto h-px w-full rounded bg-white/50"></div>
-      </div>
+  }, [userCtx.openCFDs]);
+  const openPositionList =
+    isLoading || userCtx.isLoadingCFDs ? (
+      <Skeleton count={10} height={150} />
+    ) : (
+      cfds.map(cfd => {
+        return (
+          <div key={cfd.id}>
+            {<OpenPositionItem openCfdDetails={cfd} />}
+            <div className="my-auto h-px w-full rounded bg-white/50"></div>
+          </div>
+        );
+      })
     );
-  });
 
   return (
     <>

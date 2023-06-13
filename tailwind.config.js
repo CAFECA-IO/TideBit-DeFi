@@ -226,6 +226,8 @@ module.exports = {
         '726px': '726px',
         '1000px': '1000px',
         '1200px': '1200px',
+        '1500px': '1500px',
+        '2000px': '2000px',
         '2rem': '2rem',
         '3rem': '3rem',
         '4rem': '4rem',

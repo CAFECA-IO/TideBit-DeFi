@@ -19,6 +19,7 @@ import {
   getTimestampInMilliseconds,
   roundToDecimalPlaces,
   findCodeByReason,
+  toPnl,
 } from '../../lib/common';
 import {useContext, useEffect, useState} from 'react';
 import {MarketContext} from '../../contexts/market_context';
@@ -54,7 +55,7 @@ import {OrderType} from '../../constants/order_type';
 import {CFDClosedType} from '../../constants/cfd_closed_type';
 import {cfdStateCode} from '../../constants/cfd_state_code';
 import {ICFDOrder} from '../../interfaces/tidebit_defi_background/order';
-import {Code} from '../../constants/code';
+import {Code, Reason} from '../../constants/code';
 import {ToastTypeAndText} from '../../constants/toast_type';
 import {ToastId} from '../../constants/toast_id';
 import {CustomError, isCustomError} from '../../lib/custom_error';
@@ -78,6 +79,20 @@ const PositionClosedModal = ({
   const marketCtx = useContext(MarketContext);
   const globalCtx = useGlobal();
   const userCtx = useContext(UserContext);
+
+  const predictedClosePrice = marketCtx.predictCFDClosePrice(
+    openCfdDetails.targetAsset,
+    openCfdDetails.typeOfPosition
+  );
+
+  const spread = marketCtx.getTickerSpread(openCfdDetails.targetAsset);
+  const pnl = toPnl({
+    openPrice: openCfdDetails.openPrice,
+    closePrice: predictedClosePrice,
+    amount: openCfdDetails.amount,
+    typeOfPosition: openCfdDetails.typeOfPosition,
+    spread: spread,
+  });
 
   const [quotationError, setQuotationError, quotationErrorRef] = useStateRef(false);
   const [quotationErrorMessage, setQuotationErrorMessage, quotationErrorMessageRef] =
@@ -106,11 +121,7 @@ const PositionClosedModal = ({
   const displayedGuaranteedStopSetting = !!openCfdDetails?.guaranteedStop ? 'Yes' : 'No';
 
   const displayedPnLSymbol =
-    openCfdDetails?.pnl?.type === ProfitState.PROFIT
-      ? '+'
-      : openCfdDetails?.pnl?.type === ProfitState.LOSS
-      ? '-'
-      : '';
+    pnl?.type === ProfitState.PROFIT ? '+' : pnl?.type === ProfitState.LOSS ? '-' : '';
 
   const displayedTypeOfPosition =
     openCfdDetails?.typeOfPosition === TypeOfPosition.BUY
@@ -123,16 +134,16 @@ const PositionClosedModal = ({
       : t('POSITION_MODAL.TYPE_SELL');
 
   const displayedPnLColor =
-    openCfdDetails?.pnl.type === ProfitState.PROFIT
+    pnl.type === ProfitState.PROFIT
       ? TypeOfPnLColor.PROFIT
-      : openCfdDetails?.pnl.type === ProfitState.LOSS
+      : pnl.type === ProfitState.LOSS
       ? TypeOfPnLColor.LOSS
       : TypeOfPnLColor.EQUAL;
 
   const displayedBorderColor =
-    openCfdDetails?.pnl.type === ProfitState.PROFIT
+    pnl.type === ProfitState.PROFIT
       ? TypeOfBorderColor.PROFIT
-      : openCfdDetails?.pnl.type === ProfitState.LOSS
+      : pnl.type === ProfitState.LOSS
       ? TypeOfBorderColor.LOSS
       : TypeOfBorderColor.EQUAL;
 
@@ -143,16 +154,16 @@ const PositionClosedModal = ({
   const displayedTime = timestampToString(openCfdDetails?.createTimestamp ?? 0);
 
   const toDisplayCloseOrder = (cfd: IDisplayCFDOrder, quotation: IQuotation): IDisplayCFDOrder => {
-    const openValue = cfd.openPrice * cfd.amount;
-    const nowValue = quotation.price * cfd.amount;
-    const pnlSoFar =
-      cfd.typeOfPosition === TypeOfPosition.BUY ? nowValue - openValue : openValue - nowValue;
+    const pnlSoFar = toPnl({
+      openPrice: cfd.openPrice,
+      closePrice: quotation.price,
+      amount: cfd.amount,
+      typeOfPosition: cfd.typeOfPosition,
+      spread: marketCtx.getTickerSpread(cfd.targetAsset),
+    });
     return {
       ...cfd,
-      pnl: {
-        type: pnlSoFar > 0 ? ProfitState.PROFIT : ProfitState.LOSS,
-        value: Math.abs(pnlSoFar),
-      },
+      pnl: pnlSoFar,
     };
   };
 
@@ -186,19 +197,15 @@ const PositionClosedModal = ({
     const leverage = marketCtx.tickerStatic?.leverage ?? DEFAULT_LEVERAGE;
 
     const openValue = twoDecimal(openPrice * cfd.amount);
-    const closeValue = twoDecimal(closePrice * cfd.amount);
 
-    const pnlValue =
-      cfd.typeOfPosition === TypeOfPosition.BUY
-        ? twoDecimal(closeValue - openValue)
-        : twoDecimal(openValue - closeValue);
-
-    const pnl: IPnL = {
-      type: pnlValue > 0 ? ProfitState.PROFIT : pnlValue < 0 ? ProfitState.LOSS : ProfitState.EQUAL,
-      value: Math.abs(pnlValue),
-    };
-
-    const positionLineGraph = [100, 100]; // TODO: (20230316 - Shirley) from `marketCtx`
+    const pnl: IPnL = toPnl({
+      openPrice: openPrice,
+      closePrice: closePrice,
+      amount: cfd.amount,
+      typeOfPosition: cfd.typeOfPosition,
+      spread: marketCtx.getTickerSpread(cfd.targetAsset),
+    });
+    // const positionLineGraph = [100, 100]; // TODO: (20230316 - Shirley) from `marketCtx`
 
     const suggestion: ICFDSuggestion = {
       takeProfit:
@@ -215,10 +222,10 @@ const PositionClosedModal = ({
       ...cfd,
       pnl: pnl,
       openValue: openValue,
-      closeValue: closeValue,
-      positionLineGraph: positionLineGraph,
+      // closeValue: closeValue,
+      // positionLineGraph: positionLineGraph,
       suggestion: suggestion,
-      stateCode: cfdStateCode.COMMON,
+      // stateCode: cfdStateCode.COMMON,
 
       closeTimestamp: quotation.deadline,
       closePrice: closePrice,
@@ -245,6 +252,7 @@ const PositionClosedModal = ({
       if (
         quotation.success &&
         data.typeOfPosition === oppositeTypeOfPosition &&
+        data.ticker.split('-')[0] === openCfdDetails.ticker &&
         quotation.data !== null
       ) {
         globalCtx.eliminateToasts(ToastId.GET_QUOTATION_ERROR);
@@ -252,6 +260,26 @@ const PositionClosedModal = ({
         return data;
       } else {
         setQuotationError(true);
+
+        // TODO: check the unit asset (20230612 - Shirley)
+        if (data.ticker.split('-')[0] !== openCfdDetails.ticker) {
+          setQuotationErrorMessage({
+            success: false,
+            code: Code.INCONSISTENT_TICKER_OF_QUOTATION,
+            reason: Reason[Code.INCONSISTENT_TICKER_OF_QUOTATION],
+          });
+
+          // Deprecated: for debug (20230609 - Shirley)
+          globalCtx.toast({
+            type: ToastTypeAndText.ERROR.type,
+            toastId: ToastId.INCONSISTENT_TICKER_OF_QUOTATION,
+            message: `[dev] ${quotationErrorMessageRef.current.reason} (${quotationErrorMessageRef.current.code})`,
+            typeText: t(ToastTypeAndText.ERROR.text),
+            isLoading: false,
+            autoClose: false,
+          });
+        }
+
         /* Info: (20230508 - Julian) get quotation error message */
         setQuotationErrorMessage({success: false, code: quotation.code, reason: quotation.reason});
       }
@@ -411,7 +439,6 @@ const PositionClosedModal = ({
         });
         return;
       }
-
       const displayedCloseOrder = toDisplayCloseOrder(openCfdDetails, quotation);
       globalCtx.dataPositionClosedModalHandler(displayedCloseOrder);
 
@@ -520,10 +547,7 @@ const PositionClosedModal = ({
               <div className="text-lightGray">{t('POSITION_MODAL.PNL')}</div>
               <div className={`${pnlRenewedStyle} ${displayedPnLColor}`}>
                 {displayedPnLSymbol} ${' '}
-                {openCfdDetails?.pnl?.value.toLocaleString(
-                  UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                  FRACTION_DIGITS
-                )}
+                {pnl?.value.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)}
               </div>
             </div>
 

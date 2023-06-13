@@ -9,7 +9,6 @@ import {ISocialMedia, ShareSettings, SocialMediaConstant} from '../../constants/
 import useShareProcess from '../../lib/hooks/use_share_process';
 import {ShareType} from '../../constants/share_type';
 import {NEWS_IMG_HEIGHT, NEWS_IMG_WIDTH} from '../../constants/display';
-import {IPost} from '../../lib/posts';
 
 interface IRecommendedNews {
   newsId: string;
@@ -29,34 +28,20 @@ interface INews {
 
 interface INewsArticle {
   shareId: string;
-  post: IPost;
-  img: string;
-  // news: INews;
+
+  news: INews;
   recommendations?: Array<IRecommendedNews>;
 }
 
-const NewsArticle = ({shareId, img, post, recommendations}: INewsArticle) => {
-  // const date = timestampToString(news.timestamp || 0).date;
+const NewsArticle0602 = ({shareId, news, recommendations}: INewsArticle) => {
+  const date = timestampToString(news.timestamp || 0).date;
   const socialMediaStyle = 'hover:cursor-pointer hover:opacity-80';
 
   const {share} = useShareProcess({
-    lockerName: 'news_article.shareHandler',
+    lockerName: 'news_article_0602.shareHandler',
     shareType: ShareType.ARTICLE,
     shareId: shareId,
   });
-
-  const displayedDate = timestampToString(post.date).date;
-
-  const parsedBody = post.body
-    .replace(
-      /<h3 id="([^"]+)"><strong>([^<]+)<\/strong><\/h3>/g,
-      `<h3 id="$1" class="font-bold text-xl my-3">$2</h3>`
-    )
-    .replace(/<li>(<\/li>)?/g, `<li class="list-disc ml-5">$1`)
-    .replace(
-      /<a /g,
-      `<a class="text-blue-300 underline hover:text-blue-500 transition-all duration-150" `
-    );
 
   return (
     <div className="bg-gradient-to-r from-darkGray1/80 via-black to-black pb-20">
@@ -67,14 +52,14 @@ const NewsArticle = ({shareId, img, post, recommendations}: INewsArticle) => {
       </div>
 
       <div className="flex w-full justify-center lg:pt-36">
-        <div className="hidden h-10 w-6 transition-all duration-200 hover:opacity-70 lg:-ml-10 lg:mr-20 lg:flex">
+        <div className="hidden h-10 w-6 transition-all duration-200 hover:opacity-70 lg:-ml-20 lg:mr-20 lg:flex">
           <Link href="/news">
             <BiArrowBack size={25} />
           </Link>
         </div>
-        <div className="w-full px-5 md:w-90vw lg:w-80vw xl:w-70vw">
+        <div className="w-full px-5 md:w-90vw lg:w-70vw xl:w-3/5">
           <Image
-            src={img}
+            src={news.img}
             style={{objectFit: 'cover'}}
             width={NEWS_IMG_WIDTH}
             height={NEWS_IMG_HEIGHT}
@@ -82,14 +67,12 @@ const NewsArticle = ({shareId, img, post, recommendations}: INewsArticle) => {
           />
           <div className="my-8 flex justify-between">
             {' '}
-            <h1 className="text-xl font-normal leading-8 tracking-wider">{post.title}</h1>
-            <p className="mt-2 text-xs text-lightGray lg:text-sm">{displayedDate}</p>
+            <h1 className="pr-10 text-xl font-normal leading-8 tracking-wider">{news.title}</h1>
+            <p className="mt-2 text-xs text-lightGray lg:text-sm">{date}</p>
           </div>
 
           <div className="prose mt-5 max-w-none leading-10 tracking-normal">
-            <article dangerouslySetInnerHTML={{__html: parsedBody}} />
-
-            {/* <h2 className="mb-5 text-xl font-bold">Introduction</h2>
+            <h2 className="mb-5 text-xl font-bold">Introduction</h2>
             <p className="mb-5">
               The unpredictable terrain of cryptocurrencies is experiencing a considerable degree of
               turbulence. It is looking down the barrel of an uncertain week ahead, with a potential
@@ -257,7 +240,7 @@ const NewsArticle = ({shareId, img, post, recommendations}: INewsArticle) => {
                   cointelegraph.com
                 </a>
               </li>
-            </ul> */}
+            </ul>
           </div>
 
           <div className="my-16 text-lightGray">
@@ -319,4 +302,4 @@ const NewsArticle = ({shareId, img, post, recommendations}: INewsArticle) => {
   );
 };
 
-export default NewsArticle;
+export default NewsArticle0602;

@@ -5,7 +5,7 @@ import Pagination from '../pagination/pagination';
 import {Currency} from '../../constants/currency';
 import {MarketContext} from '../../contexts/market_context';
 import useStateRef from 'react-usestateref';
-import {IRecommendedNews, tempRecommendedNews} from '../../interfaces/tidebit_defi_background/news';
+import {IRecommendedNews} from '../../interfaces/tidebit_defi_background/news';
 import {ITEMS_PER_PAGE} from '../../constants/display';
 import {ETH_NEWS_FOLDER} from '../../constants/config';
 

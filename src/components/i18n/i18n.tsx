@@ -53,7 +53,7 @@ const I18n = () => {
   const displayedMobileMenu = (
     <div
       className={`transition-all duration-300 ${
-        globalVisible ? 'opacity-100' : 'opacity-0'
+        globalVisible ? 'visible opacity-100' : 'invisible opacity-0'
       } lg:hidden`}
     >
       <div
@@ -80,11 +80,7 @@ const I18n = () => {
   const displayedI18n = (
     <>
       <div className="hidden lg:flex">
-        <div
-          ref={globalRef}
-          onClick={clickHandler}
-          className="hover:cursor-pointer hover:text-cyan-300"
-        >
+        <div onClick={clickHandler} className="hover:cursor-pointer hover:text-cyan-300">
           <svg
             id="globe"
             xmlns="http://www.w3.org/2000/svg"
@@ -113,7 +109,7 @@ const I18n = () => {
   );
 
   return (
-    <div>
+    <div ref={globalRef}>
       {displayedI18n}
       {displayedDesktopMenu}
       {displayedMobileMenu}

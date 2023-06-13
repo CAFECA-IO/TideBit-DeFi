@@ -13,7 +13,11 @@ import {
   IRecommendedNews,
   getDummyNews,
   getDummyRecommendationNews,
+  getNewsById,
   tempNews,
+  tempNewsArray,
+  tempRecommendedNewsArray,
+  getBriefNewsById,
 } from '../../interfaces/tidebit_defi_background/news';
 import {Currency} from '../../constants/currency';
 import {MarketContext} from '../../contexts/market_context';
@@ -40,9 +44,7 @@ const NewsPage = (props: IPageProps) => {
   const post = props.newsData;
   const newsTitle = post.title;
   const newsDescription = post.body.substring(0, 100);
-
   const newsImg = `/news/${props.newsId}@2x.png`;
-
   const share = `${DOMAIN}/news/${props.newsId}`;
   const img = `${DOMAIN}${newsImg}`;
 
@@ -58,8 +60,8 @@ const NewsPage = (props: IPageProps) => {
         <title>{newsTitle}</title>
         <link rel="icon" href="/favicon.ico" />
 
-        <meta name="description" content="CFD Sharing" />
-        <meta name="keywords" content="CFD Sharing" />
+        <meta name="description" content={newsDescription} />
+        <meta name="keywords" content={newsTitle} />
         <meta name="author" content="TideBit" />
         <meta name="application-name" content="TideBit DeFi" />
         <meta name="apple-mobile-web-app-title" content="TideBit DeFi" />
@@ -72,6 +74,7 @@ const NewsPage = (props: IPageProps) => {
         <meta name="og:image" content={img} />
         <meta name="og:image:width" content={NEWS_IMG_WIDTH.toString()} />
         <meta name="og:image:height" content={NEWS_IMG_HEIGHT.toString()} />
+        <meta name="og:image:alt" content={newsTitle} />
         <meta name="og:description" content={newsDescription} />
         <meta name="og:site_name" content="TideBit DeFi" />
         <meta name="og:locale" content="en_US" />

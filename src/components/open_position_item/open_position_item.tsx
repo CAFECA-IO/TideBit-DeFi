@@ -12,7 +12,7 @@ import PositionLineGraph from '../position_line_graph/position_line_graph';
 import {useGlobal} from '../../contexts/global_context';
 import {ProfitState} from '../../constants/profit_state';
 import {TypeOfPosition} from '../../constants/type_of_position';
-import {timestampToString} from '../../lib/common';
+import {timestampToString, toPnl} from '../../lib/common';
 import {cfdStateCode} from '../../constants/cfd_state_code';
 import {POSITION_CLOSE_COUNTDOWN_SECONDS, FRACTION_DIGITS} from '../../constants/config';
 import {MarketContext} from '../../contexts/market_context';
@@ -46,14 +46,36 @@ const OpenPositionItem = ({openCfdDetails}: IOpenPositionItemProps) => {
     createTimestamp,
     ticker,
     typeOfPosition,
-    pnl,
+    // pnl,
     liquidationTime,
     liquidationPrice,
     takeProfit,
     stopLoss,
-    positionLineGraph,
+    // positionLineGraph,
     stateCode,
   } = openCfdDetails;
+
+  const spread = marketCtx.getTickerSpread(openCfdDetails.targetAsset);
+  const positionLineGraph = marketCtx.listTickerPositions(openCfdDetails.targetAsset, {
+    begin: openCfdDetails.createTimestamp,
+  });
+
+  const positionLineGraphWithSpread =
+    typeOfPosition === TypeOfPosition.BUY
+      ? positionLineGraph.map((v: number) => v * (1 - spread))
+      : positionLineGraph.map((v: number) => v * (1 + spread));
+
+  const closePrice = marketCtx.predictCFDClosePrice(
+    openCfdDetails.targetAsset,
+    openCfdDetails.typeOfPosition
+  );
+  const pnl = toPnl({
+    openPrice,
+    closePrice,
+    amount: openCfdDetails.amount,
+    typeOfPosition: openCfdDetails.typeOfPosition,
+    spread,
+  });
 
   const nowTimestamp = new Date().getTime() / 1000;
   const remainSecs = liquidationTime - nowTimestamp;
@@ -199,7 +221,7 @@ const OpenPositionItem = ({openCfdDetails}: IOpenPositionItemProps) => {
             displayedAnnotationColor.DASH_LINE,
             displayedAnnotationColor.STRING,
           ]}
-          dataArray={positionLineGraph}
+          dataArray={positionLineGraphWithSpread}
           lineGraphWidth={OPEN_POSITION_LINE_GRAPH_WIDTH}
           annotatedValue={displayedAnnotation.VALUE}
           annotatedString={displayedAnnotation.STRING}

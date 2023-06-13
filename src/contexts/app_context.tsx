@@ -28,11 +28,11 @@ export const AppProvider = ({children}: IAppProvider) => {
 
   const init = async () => {
     if (!isInitRef.current) {
-      setIsInit(true);
       workerCtx.init();
       await notificationCtx.init();
       await userCtx.init();
       await marketCtx.init();
+      setIsInit(true);
     }
     return;
   };

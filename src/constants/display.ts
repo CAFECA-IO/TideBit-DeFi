@@ -196,7 +196,7 @@ export const TypeOfPnLColorHex = {
   PROFIT: '#17BF88',
   LOSS: '#E86D6D',
   TIDEBIT_THEME: '#29C1E1',
-  EQUAL: '#8B8E91',
+  EQUAL: '#F2F2F2',
   LIQUIDATION: '#F8E71C',
 };
 

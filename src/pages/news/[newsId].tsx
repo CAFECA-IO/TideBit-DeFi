@@ -47,6 +47,9 @@ const NewsPage = (props: IPageProps) => {
   const share = `${DOMAIN}/news/${props.newsId}`;
   const img = `${DOMAIN}${newsImg}`;
 
+  // eslint-disable-next-line no-console
+  console.log('newsData in page', props.newsData);
+
   useEffect(() => {
     if (!appCtx.isInit) {
       appCtx.init();
@@ -122,6 +125,8 @@ export const getServerSideProps: GetServerSideProps<IPageProps> = async ({params
   }
 
   const newsData = await getPost(params.newsId);
+  // eslint-disable-next-line no-console
+  console.log('newsData in getServerSideProps', newsData);
 
   if (!newsData) {
     return {

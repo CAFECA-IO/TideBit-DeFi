@@ -19,20 +19,15 @@ const NewsPageBody = (props: IPageProps) => {
   const [activePage, setActivePage] = React.useState(1);
   const [search, setSearch, searchRef] = useStateRef('');
 
-  const tempRecommenation = props.briefs;
+  const recommenation = props.briefs;
 
-  const filteredNews = tempRecommenation
+  const filteredNews = recommenation
     .sort((a, b) => b.timestamp - a.timestamp)
     .filter(
       news =>
         news.title.toLowerCase().includes(searchRef.current.toLowerCase()) ||
         news.description.toLowerCase().includes(searchRef.current.toLowerCase())
     );
-  // TODO: markdown (20230602 - Shirley)
-  // allNews.filter(
-  // news.title.toLowerCase().includes(searchRef.current.toLowerCase()) ||
-  // news.description.toLowerCase().includes(searchRef.current.toLowerCase())
-  // );
 
   const totalPages = Math.ceil(filteredNews.length / ITEMS_PER_PAGE);
 

@@ -57,14 +57,6 @@ const News = (props: IPageProps) => {
   return <>{initUI}</>;
 };
 
-// const getStaticPropsFunction = async ({locale}: ILocale) => ({
-//   props: {
-//     ...(await serverSideTranslations(locale, ['common', 'footer'])),
-//   },
-// });
-
-// export const getStaticProps = getStaticPropsFunction;
-
 export default News;
 
 export const getStaticProps: GetStaticProps<IPageProps> = async ({params, locale}) => {

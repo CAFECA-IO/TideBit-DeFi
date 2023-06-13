@@ -10,6 +10,7 @@ import {useContext, useEffect} from 'react';
 import {AppContext} from '../../contexts/app_context';
 import Footer from '../../components/footer/footer';
 import {
+  IRecommendedNews,
   getDummyNews,
   getDummyRecommendationNews,
   tempNews,
@@ -18,14 +19,13 @@ import {Currency} from '../../constants/currency';
 import {MarketContext} from '../../contexts/market_context';
 import {DOMAIN, ETH_NEWS_FOLDER} from '../../constants/config';
 import {NEWS_IMG_HEIGHT, NEWS_IMG_WIDTH} from '../../constants/display';
-import {IPost, getPost, getPosts, getSlugs} from '../../lib/posts';
+import {IPost, getFilteredPosts, getPost, getPosts, getSlugs} from '../../lib/posts';
 
 interface IPageProps {
   newsId: string;
-  newsData: IPost; // Add this to represent the fetched news data
+  newsData: IPost;
+  brief: IRecommendedNews[];
 }
-
-// TODO: Check dynamic routing (20230605 - Shirley)
 
 const NewsPage = (props: IPageProps) => {
   const {layoutAssertion} = useGlobal();
@@ -38,18 +38,13 @@ const NewsPage = (props: IPageProps) => {
   // const recommendationNews = marketCtx.getRecommendedNews(Currency.ETH);
 
   const post = props.newsData;
-  // const finishedNews = tempNews;
   const newsTitle = post.title;
   const newsDescription = post.body.substring(0, 100);
 
-  // TODO: img src (20230609 - Shirley)
   const newsImg = `/news/${props.newsId}@2x.png`;
 
   const share = `${DOMAIN}/news/${props.newsId}`;
   const img = `${DOMAIN}${newsImg}`;
-
-  // eslint-disable-next-line no-console
-  console.log('newsData in page by static server function', props.newsData);
 
   useEffect(() => {
     if (!appCtx.isInit) {
@@ -99,9 +94,8 @@ const NewsPage = (props: IPageProps) => {
               <NewsArticle
                 post={props.newsData}
                 shareId={props.newsId}
-                // news={finishedNews}
                 img={newsImg}
-                // recommendations={recommendationNews}
+                recommendations={props.brief}
               />
             </div>
             <Footer />
@@ -132,6 +126,17 @@ export const getStaticProps: GetStaticProps<IPageProps> = async ({params, locale
   }
 
   const newsData = await getPost(ETH_NEWS_FOLDER, params.newsId);
+  const allPost = await getFilteredPosts(ETH_NEWS_FOLDER, [params.newsId]);
+
+  const recommendations = allPost.map(news => {
+    return {
+      newsId: news.slug ?? '',
+      img: `/news/${news.slug}@2x.png`,
+      timestamp: news.date,
+      title: news.title,
+      description: news.description,
+    };
+  });
 
   if (!newsData) {
     return {
@@ -143,52 +148,8 @@ export const getStaticProps: GetStaticProps<IPageProps> = async ({params, locale
     props: {
       newsId: params.newsId,
       newsData,
+      brief: recommendations,
       ...(await serverSideTranslations(locale as string, ['common', 'footer'])),
     },
   };
 };
-
-// export const getServerSideProps: GetServerSideProps<IPageProps> = async ({params, locale}) => {
-//   if (!params || !params.newsId || typeof params.newsId !== 'string') {
-//     return {
-//       notFound: true,
-//     };
-//   }
-
-//   const newsData = await getPost(params.newsId);
-//   // eslint-disable-next-line no-console
-//   console.log('newsData in getServerSideProps', newsData);
-
-//   if (!newsData) {
-//     return {
-//       notFound: true,
-//     };
-//   }
-
-//   return {
-//     props: {
-//       newsId: params.newsId,
-//       newsData,
-//       ...(await serverSideTranslations(locale as string, ['common', 'footer'])),
-//     },
-//   };
-// };
-
-// export const getServerSideProps: GetServerSideProps<IPageProps> = async ({ params, locale }) => {
-//   if (!params || !params.newsId || typeof params.newsId !== 'string') {
-//     return {
-//       notFound: true,
-//     };
-//   }
-
-//   // Fetch the news data using the getPost function
-//   const newsData = await getPost(params.newsId);
-
-//   return {
-//     props: {
-//       newsId: params.newsId,
-//       newsData, // Return the fetched data as a prop
-//       ...(await serverSideTranslations(locale as string, ['common', 'footer'])),
-//     },
-//   };
-// };

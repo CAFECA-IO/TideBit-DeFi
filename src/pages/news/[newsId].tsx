@@ -1,4 +1,4 @@
-import {GetServerSideProps} from 'next';
+import {GetServerSideProps, GetStaticPaths, GetStaticProps} from 'next';
 import {serverSideTranslations} from 'next-i18next/serverSideTranslations';
 import NewsPageBody from '../../components/news_page_body/news_page_body';
 import NewsArticle from '../../components/news_article/news_article';
@@ -18,7 +18,7 @@ import {Currency} from '../../constants/currency';
 import {MarketContext} from '../../contexts/market_context';
 import {DOMAIN} from '../../constants/config';
 import {NEWS_IMG_HEIGHT, NEWS_IMG_WIDTH} from '../../constants/display';
-import {IPost, getPost, getPosts} from '../../lib/posts';
+import {IPost, getPost, getPosts, getSlugs} from '../../lib/posts';
 
 interface IPageProps {
   newsId: string;
@@ -48,7 +48,7 @@ const NewsPage = (props: IPageProps) => {
   const img = `${DOMAIN}${newsImg}`;
 
   // eslint-disable-next-line no-console
-  console.log('newsData in page', props.newsData);
+  console.log('newsData in page by static server function', props.newsData);
 
   useEffect(() => {
     if (!appCtx.isInit) {
@@ -117,7 +117,13 @@ const NewsPage = (props: IPageProps) => {
 
 export default NewsPage;
 
-export const getServerSideProps: GetServerSideProps<IPageProps> = async ({params, locale}) => {
+export const getStaticPaths: GetStaticPaths = async () => {
+  const slugs = await getSlugs();
+  const paths = slugs.map(slug => ({params: {newsId: slug}}));
+  return {paths, fallback: false};
+};
+
+export const getStaticProps: GetStaticProps<IPageProps> = async ({params, locale}) => {
   if (!params || !params.newsId || typeof params.newsId !== 'string') {
     return {
       notFound: true,
@@ -125,8 +131,6 @@ export const getServerSideProps: GetServerSideProps<IPageProps> = async ({params
   }
 
   const newsData = await getPost(params.newsId);
-  // eslint-disable-next-line no-console
-  console.log('newsData in getServerSideProps', newsData);
 
   if (!newsData) {
     return {
@@ -142,6 +146,32 @@ export const getServerSideProps: GetServerSideProps<IPageProps> = async ({params
     },
   };
 };
+
+// export const getServerSideProps: GetServerSideProps<IPageProps> = async ({params, locale}) => {
+//   if (!params || !params.newsId || typeof params.newsId !== 'string') {
+//     return {
+//       notFound: true,
+//     };
+//   }
+
+//   const newsData = await getPost(params.newsId);
+//   // eslint-disable-next-line no-console
+//   console.log('newsData in getServerSideProps', newsData);
+
+//   if (!newsData) {
+//     return {
+//       notFound: true,
+//     };
+//   }
+
+//   return {
+//     props: {
+//       newsId: params.newsId,
+//       newsData,
+//       ...(await serverSideTranslations(locale as string, ['common', 'footer'])),
+//     },
+//   };
+// };
 
 // export const getServerSideProps: GetServerSideProps<IPageProps> = async ({ params, locale }) => {
 //   if (!params || !params.newsId || typeof params.newsId !== 'string') {

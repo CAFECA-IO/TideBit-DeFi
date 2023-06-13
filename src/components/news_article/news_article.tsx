@@ -9,6 +9,7 @@ import {ISocialMedia, ShareSettings, SocialMediaConstant} from '../../constants/
 import useShareProcess from '../../lib/hooks/use_share_process';
 import {ShareType} from '../../constants/share_type';
 import {NEWS_IMG_HEIGHT, NEWS_IMG_WIDTH} from '../../constants/display';
+import {IPost} from '../../lib/posts';
 
 interface IRecommendedNews {
   newsId: string;
@@ -28,13 +29,14 @@ interface INews {
 
 interface INewsArticle {
   shareId: string;
-
-  news: INews;
+  post: IPost;
+  img: string;
+  // news: INews;
   recommendations?: Array<IRecommendedNews>;
 }
 
-const NewsArticle = ({shareId, news, recommendations}: INewsArticle) => {
-  const date = timestampToString(news.timestamp || 0).date;
+const NewsArticle = ({shareId, img, post, recommendations}: INewsArticle) => {
+  // const date = timestampToString(news.timestamp || 0).date;
   const socialMediaStyle = 'hover:cursor-pointer hover:opacity-80';
 
   const {share} = useShareProcess({
@@ -42,6 +44,19 @@ const NewsArticle = ({shareId, news, recommendations}: INewsArticle) => {
     shareType: ShareType.ARTICLE,
     shareId: shareId,
   });
+
+  const displayedDate = timestampToString(post.date).date;
+
+  const parsedBody = post.body
+    .replace(
+      /<h3 id="([^"]+)"><strong>([^<]+)<\/strong><\/h3>/g,
+      `<h3 id="$1" class="font-bold text-xl my-3">$2</h3>`
+    )
+    .replace(/<li>(<\/li>)?/g, `<li class="list-disc ml-5">$1`)
+    .replace(
+      /<a /g,
+      `<a class="text-blue-300 underline hover:text-blue-500 transition-all duration-150" `
+    );
 
   return (
     <div className="bg-gradient-to-r from-darkGray1/80 via-black to-black pb-20">
@@ -52,14 +67,14 @@ const NewsArticle = ({shareId, news, recommendations}: INewsArticle) => {
       </div>
 
       <div className="flex w-full justify-center lg:pt-36">
-        <div className="hidden h-10 w-6 transition-all duration-200 hover:opacity-70 lg:-ml-20 lg:mr-20 lg:flex">
+        <div className="hidden h-10 w-6 transition-all duration-200 hover:opacity-70 lg:-ml-10 lg:mr-20 lg:flex">
           <Link href="/news">
             <BiArrowBack size={25} />
           </Link>
         </div>
-        <div className="w-full px-5 md:w-90vw lg:w-70vw xl:w-3/5">
+        <div className="w-full px-5 md:w-90vw lg:w-80vw xl:w-70vw">
           <Image
-            src={news.img}
+            src={img}
             style={{objectFit: 'cover'}}
             width={NEWS_IMG_WIDTH}
             height={NEWS_IMG_HEIGHT}
@@ -67,13 +82,183 @@ const NewsArticle = ({shareId, news, recommendations}: INewsArticle) => {
           />
           <div className="my-8 flex justify-between">
             {' '}
-            <h1 className="pr-10 text-xl font-normal leading-8 tracking-wider">{news.title}</h1>
-            <p className="mt-2 text-xs text-lightGray lg:text-sm">{date}</p>
+            <h1 className="text-xl font-normal leading-8 tracking-wider">{post.title}</h1>
+            <p className="mt-2 text-xs text-lightGray lg:text-sm">{displayedDate}</p>
           </div>
 
-          {/* TODO: markdown (20230602 - Shirley) */}
-          {/* <p className="text-base leading-10 tracking-normal text-lightGray1"></p> */}
-          {/* <div className="prose mt-5 max-w-none leading-10 tracking-normal">{news.content}</div> */}
+          <div className="prose mt-5 max-w-none leading-10 tracking-normal">
+            <article dangerouslySetInnerHTML={{__html: parsedBody}} />
+
+            {/* <h2 className="mb-5 text-xl font-bold">Introduction</h2>
+            <p className="mb-5">
+              The unpredictable terrain of cryptocurrencies is experiencing a considerable degree of
+              turbulence. It is looking down the barrel of an uncertain week ahead, with a potential
+              downturn in its value. After an in-depth analysis of international policy shifts,
+              technical market predictions, and overarching economic news, a plausible outcome could
+              be{' '}
+              <span className="font-bold">
+                a over 5% depreciation in Ethereum's value from June 3-9, 2023.
+              </span>{' '}
+              In this comprehensive exploration, we will delve into these three major dimensions and
+              the multifaceted factors that support them, to fully understand the composite factors
+              contributing to this market prediction.
+            </p>
+            <h2 className="mb-5 text-xl font-bold">Global Regulatory Stance</h2>
+            <p className="mb-5">
+              On the international policy front, there are a couple of significant developments that
+              might potentially drive down Ethereum's price.{' '}
+              <span className="font-bold">
+                Russia, a country that holds considerable sway in the global crypto market, is
+                poised to implement new regulations on the establishment and operation of
+                cryptocurrency exchanges.
+              </span>{' '}
+              These proposed regulations signal a stark shift in Russia's stance towards
+              cryptocurrencies, casting a cloud of uncertainty over the market. Given the scale of
+              Russia's involvement in the crypto market, these changes could potentially trigger
+              market instability, which may, in turn, negatively affect the demand for and
+              consequently the price of Ethereum. This uncertainty, coupled with a potential
+              reduction in the participation of Russian players in the crypto market, forms a
+              compelling case for a potential downturn in Ethereum's value.
+            </p>
+            <p className="mb-5">
+              A similar development is occurring in Bali, Indonesia, where the government has
+              initiated a crackdown on foreign tourists using cryptocurrencies for payment.{' '}
+              <span className="font-bold">
+                Bali, with its thriving tourism industry, forms a significant chunk of Indonesia's
+                economy. If the use of cryptocurrencies like Ethereum is curtailed in such a major
+                economy, it could inevitably lead to a decline in the global demand for Ethereum.
+              </span>{' '}
+              These restrictions could create a challenging environment for the use of
+              cryptocurrencies, further exacerbating the potential decline in Ethereum's value.
+              Given these shifting sands in the international policy landscape, Ethereum may well be
+              set for a potentially significant decline.
+            </p>
+            <h2 className="mb-5 text-xl font-bold">Market Indicators</h2>
+            <p className="mb-5">
+              From a technical analysis standpoint, the prognosis for Ethereum isn't very optimistic
+              either. Indications are that Bitcoin and Ethereum possess further correction
+              potential, hinting at the possibility of a continuation of the recent downward trends.
+              Given the correlation between Bitcoin and Ethereum, it stands to reason that if
+              Bitcoin is likely to continue its descent, Ethereum might not be far behind. The
+              market dynamics that have driven Bitcoin's recent declines could very well influence
+              Ethereum's trajectory in a similar fashion.
+            </p>
+            <p className="mb-5">
+              Ethereum's market sentiment has been depicted as negative. A negative market sentiment
+              could indicate a reduced appetite for Ethereum among investors, thereby potentially
+              leading to lower demand and subsequently, a decline in Ethereum's price. This
+              analysis, coupled with the potential for market correction, paints a fairly bleak
+              picture for Ethereum in the week ahead.
+            </p>
+            <h2 className="mb-5 text-xl font-bold">Economic Outlook and Trends</h2>
+            <p className="mb-5">
+              On the overall economic news front, several significant global developments could
+              potentially contribute to a decline in Ethereum's price. The uncertainty surrounding
+              the US debt ceiling and its potential impact on Bitcoin is notable. Considering that
+              Ethereum often follows similar market trends to Bitcoin, this uncertainty could also
+              weigh heavily on Ethereum's price. The potential for increased market volatility could
+              spur risk-averse behavior among investors, leading to a reduction in the demand for
+              Ethereum, thereby potentially causing a downturn in its value.
+            </p>
+            <p className="mb-5">
+              A cautious trend for the stock market in the week ahead is observed, owing to ongoing
+              geopolitical tensions and economic uncertainty. Given the correlation between
+              cryptocurrency markets and traditional financial markets, this trend of caution and
+              uncertainty could potentially spill over into Ethereum's market, exerting downward
+              pressure on its price. The role of regulatory uncertainty and global economic
+              conditions in determining cryptocurrency prices is emphasized. Given the current
+              global uncertainties, it's conceivable that Ethereum might be on the brink of a
+              negative price trend.
+            </p>
+            <p className="mb-5">
+              The possible impact of the ongoing banking crisis and the US debt ceiling issue on the
+              cryptocurrency market is noteworthy.
+            </p>
+            <p className="mb-5">
+              Given that the US is a major economy, any uncertainty originating here can have a
+              ripple effect across global markets. Such uncertainty could cause investors to become
+              risk-averse, potentially leading to a sell-off in the cryptocurrency market, which
+              could then affect Ethereum's price.
+            </p>
+            <h2 className="mb-5 text-xl font-bold">Summary</h2>
+            <p className="mb-5">
+              In conclusion, the convergence of the international policy shifts, market indicators,
+              and global economic trends point towards a potential 5% downturn in Ethereum's value
+              in the week ahead. The week will be largely dictated by the looming regulatory changes
+              in Russia and Bali, the negative market sentiment, the potential for further market
+              correction, and the wider economic uncertainties. While the cryptocurrency terrain is
+              notoriously unpredictable, these factors collectively suggest a possible dip in
+              Ethereum's value. In the following week, our focus will be on monitoring these events
+              closely and evaluating their impacts on Ethereum's trajectory.
+            </p>
+            <h2 className="mb-5 text-xl font-bold">Reference</h2>
+            <ul className="mb-5 list-inside list-disc">
+              <li>
+                <a
+                  className="text-blue-400 underline"
+                  href="https://iz-ru.translate.goog/1519017/mariia-kolobova/novyi-bitok-v-rossii-poiaviatsia-pravila-sozdaniia-i-raboty-kriptobirzh?_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en-US&_x_tr_pto=wapp"
+                >
+                  iz-ru.translate
+                </a>
+              </li>
+              <li>
+                <a
+                  className="text-blue-400 underline"
+                  href="https://www.channelnewsasia.com/asia/bali-crack-down-foreign-tourists-using-crypto-payment-3521321"
+                >
+                  channelnewsasia.com
+                </a>
+              </li>
+              <li>
+                <a
+                  className="text-blue-400 underline"
+                  href="https://coinmarketcap.com/community/articles/6476c4ef3b4ced4c1ed259d2/"
+                >
+                  coinmarketcap.com
+                </a>
+              </li>
+              <li>
+                <a
+                  className="text-blue-400 underline"
+                  href="https://forkast.news/weekly-market-wrap-bitcoin-weighed-down-debt-ceiling-uncertainty/"
+                >
+                  forkast.news
+                </a>
+              </li>
+              <li>
+                <a
+                  className="text-blue-400 underline"
+                  href="https://www.fxstreet.com/cryptocurrencies/news/bitcoin-and-ethereum-have-further-correction-potential-202305250851"
+                >
+                  fxstreet.com
+                </a>
+              </li>
+              <li>
+                <a
+                  className="text-blue-400 underline"
+                  href="https://app.intotheblock.com/coin/ETH?pid=fxstreet&utm_source=fxstreet_widget"
+                >
+                  intotheblock.com
+                </a>
+              </li>
+              <li>
+                <a
+                  className="text-blue-400 underline"
+                  href="https://edition.cnn.com/2023/05/28/business/stocks-week-ahead/index.html"
+                >
+                  edition.cnn.com
+                </a>
+              </li>
+              <li>
+                <a
+                  className="text-blue-400 underline"
+                  href="https://cointelegraph.com/news/bank-crisis-debt-ceiling-powder-keg-bitmex-arthur-hayes"
+                >
+                  cointelegraph.com
+                </a>
+              </li>
+            </ul> */}
+          </div>
 
           <div className="my-16 text-lightGray">
             <div className="mb-3">Share this on</div>

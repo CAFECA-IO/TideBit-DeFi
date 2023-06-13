@@ -1,4 +1,4 @@
-import {GetServerSideProps} from 'next';
+import {GetServerSideProps, GetStaticPaths, GetStaticProps} from 'next';
 import {serverSideTranslations} from 'next-i18next/serverSideTranslations';
 import NewsPageBody from '../../components/news_page_body/news_page_body';
 import NewsArticle from '../../components/news_article/news_article';
@@ -10,7 +10,7 @@ import {useContext, useEffect} from 'react';
 import {AppContext} from '../../contexts/app_context';
 import Footer from '../../components/footer/footer';
 import {
-  getRecommendatedNewsById,
+  IRecommendedNews,
   getDummyNews,
   getDummyRecommendationNews,
   getNewsById,
@@ -21,17 +21,15 @@ import {
 } from '../../interfaces/tidebit_defi_background/news';
 import {Currency} from '../../constants/currency';
 import {MarketContext} from '../../contexts/market_context';
-import {DOMAIN} from '../../constants/config';
+import {DOMAIN, ETH_NEWS_FOLDER} from '../../constants/config';
 import {NEWS_IMG_HEIGHT, NEWS_IMG_WIDTH} from '../../constants/display';
-import NewsArticle0602 from '../../components/news_article/news_article_0602';
-import NewsArticle0609 from '../../components/news_article/news_article_0609';
-import Custom404 from '../404';
+import {IPost, getFilteredPosts, getPost, getPosts, getSlugs} from '../../lib/posts';
 
 interface IPageProps {
   newsId: string;
+  newsData: IPost;
+  brief: IRecommendedNews[];
 }
-
-// TODO: Check dynamic routing (20230605 - Shirley)
 
 const NewsPage = (props: IPageProps) => {
   const {layoutAssertion} = useGlobal();
@@ -39,38 +37,16 @@ const NewsPage = (props: IPageProps) => {
   const appCtx = useContext(AppContext);
   const marketCtx = useContext(MarketContext);
 
-  const news = marketCtx.getNews(Currency.ETH, props?.newsId ?? '');
-  const recommendationNews = marketCtx.getRecommendedNews(Currency.ETH);
-  const recommendtaion = getRecommendatedNewsById(props.newsId);
+  // TODO: get news from context (20230613 - Shirley)
+  // const news = marketCtx.getNews(Currency.ETH, props?.newsId ?? '');
+  // const recommendationNews = marketCtx.getRecommendedNews(Currency.ETH);
 
-  const theNews = getNewsById(props.newsId);
-  const briefNews = getBriefNewsById(props.newsId);
-
-  const newsTitle = theNews?.title;
-  const newsDescription = briefNews?.description;
-  const newsImg = theNews?.img;
-
+  const post = props.newsData;
+  const newsTitle = post.title;
+  const newsDescription = post.body.substring(0, 100);
+  const newsImg = `/news/${props.newsId}@2x.png`;
   const share = `${DOMAIN}/news/${props.newsId}`;
   const img = `${DOMAIN}${newsImg}`;
-
-  const id = props.newsId.split('-')[2];
-
-  const displayedNews =
-    theNews === undefined ? (
-      <Custom404 />
-    ) : id === '20230602001' ? (
-      <>
-        <NewsArticle0602 shareId={props.newsId} news={theNews} recommendations={recommendtaion} />
-        <Footer />
-      </>
-    ) : id === '20230609001' ? (
-      <>
-        <NewsArticle0609 shareId={props.newsId} news={theNews} recommendations={recommendtaion} />
-        <Footer />
-      </>
-    ) : (
-      <Custom404 />
-    );
 
   useEffect(() => {
     if (!appCtx.isInit) {
@@ -117,7 +93,15 @@ const NewsPage = (props: IPageProps) => {
         <>
           <nav className="">{displayedNavBar}</nav>
           <main className="">
-            <div>{displayedNews}</div>
+            <div>
+              <NewsArticle
+                post={props.newsData}
+                shareId={props.newsId}
+                img={newsImg}
+                recommendations={props.brief}
+              />
+            </div>
+            <Footer />
           </main>
         </>
       ) : (
@@ -131,8 +115,33 @@ const NewsPage = (props: IPageProps) => {
 
 export default NewsPage;
 
-export const getServerSideProps: GetServerSideProps<IPageProps> = async ({params, locale}) => {
+export const getStaticPaths: GetStaticPaths = async () => {
+  const slugs = await getSlugs(ETH_NEWS_FOLDER);
+  const paths = slugs.map(slug => ({params: {newsId: slug}}));
+  return {paths, fallback: false};
+};
+
+export const getStaticProps: GetStaticProps<IPageProps> = async ({params, locale}) => {
   if (!params || !params.newsId || typeof params.newsId !== 'string') {
+    return {
+      notFound: true,
+    };
+  }
+
+  const newsData = await getPost(ETH_NEWS_FOLDER, params.newsId);
+  const allPost = await getFilteredPosts(ETH_NEWS_FOLDER, [params.newsId]);
+
+  const recommendations = allPost.map(news => {
+    return {
+      newsId: news.slug ?? '',
+      img: `/news/${news.slug}@2x.png`,
+      timestamp: news.date,
+      title: news.title,
+      description: news.description,
+    };
+  });
+
+  if (!newsData) {
     return {
       notFound: true,
     };
@@ -141,6 +150,8 @@ export const getServerSideProps: GetServerSideProps<IPageProps> = async ({params
   return {
     props: {
       newsId: params.newsId,
+      newsData,
+      brief: recommendations,
       ...(await serverSideTranslations(locale as string, ['common', 'footer'])),
     },
   };

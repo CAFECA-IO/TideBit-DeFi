@@ -157,7 +157,11 @@ const OpenPositionItem = ({openCfdDetails}: IOpenPositionItemProps) => {
     typeOfPosition === TypeOfPosition.BUY ? TypeOfTransaction.LONG : TypeOfTransaction.SHORT;
 
   const displayedTextColor =
-    pnl?.type === ProfitState.PROFIT ? 'text-lightGreen5' : 'text-lightRed';
+    pnl?.type === ProfitState.PROFIT
+      ? 'text-lightGreen5'
+      : pnl?.type === ProfitState.LOSS
+      ? 'text-lightRed'
+      : 'text-lightWhite';
 
   const displayedCrossColor =
     pnl?.type === ProfitState.PROFIT

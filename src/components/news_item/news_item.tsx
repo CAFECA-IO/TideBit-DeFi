@@ -52,6 +52,7 @@ const NewsItem = ({
               </p>
             </div>
             <p className="absolute right-85px mb-10 hidden text-xs text-lightGray lg:flex xl:text-sm">
+              {' '}
               {displayedTime.date}
             </p>
           </div>

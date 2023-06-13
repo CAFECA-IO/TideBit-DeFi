@@ -52,12 +52,10 @@ const OpenPositionItem = ({openCfdDetails}: IOpenPositionItemProps) => {
     createTimestamp,
     ticker,
     typeOfPosition,
-    // pnl,
     liquidationTime,
     liquidationPrice,
     takeProfit,
     stopLoss,
-    // positionLineGraph,
     stateCode,
   } = openCfdDetails;
 
@@ -214,22 +212,24 @@ const OpenPositionItem = ({openCfdDetails}: IOpenPositionItemProps) => {
       : TypeOfPnLColorHex.EQUAL;
 
   /* Info: (20230411 - Julian) 折線圖參考線顏色
-   * 如果 DASH_LINE 是黃色(LIQUIDATION)，文字就用黑色(其餘用白色) */
-  const lineGraphAnnotationColor = {
-    CLOSING_TIME: {DASH_LINE: TypeOfPnLColorHex.LIQUIDATION, STRING: LINE_GRAPH_STROKE_COLOR.BLACK},
-    COMMON: {DASH_LINE: displayedColorHex, STRING: LINE_GRAPH_STROKE_COLOR.WHITE},
-  };
+   * 如果 DASH_LINE 是黃色(LIQUIDATION)或白色(EQUAL)，文字就用黑色(其餘用白色) */
+  const lineGraphAnnotationColor =
+    displayedColorHex === TypeOfPnLColorHex.LIQUIDATION ||
+    displayedColorHex === TypeOfPnLColorHex.EQUAL
+      ? LINE_GRAPH_STROKE_COLOR.BLACK
+      : LINE_GRAPH_STROKE_COLOR.WHITE;
 
-  const displayedAnnotationColor =
-    stateCode === cfdStateCode.COMMON
-      ? lineGraphAnnotationColor.COMMON
-      : lineGraphAnnotationColor.CLOSING_TIME;
+  const displayedAnnotationColor = {DASH_LINE: displayedColorHex, STRING: lineGraphAnnotationColor};
 
   const displayedTypeString =
     typeOfPosition === TypeOfPosition.BUY ? TypeOfTransaction.LONG : TypeOfTransaction.SHORT;
 
   const displayedTextColor =
-    pnl?.type === ProfitState.PROFIT ? 'text-lightGreen5' : 'text-lightRed';
+    pnl?.type === ProfitState.PROFIT
+      ? 'text-lightGreen5'
+      : pnl?.type === ProfitState.LOSS
+      ? 'text-lightRed'
+      : 'text-lightWhite';
 
   const displayedCrossColor =
     pnl?.type === ProfitState.PROFIT

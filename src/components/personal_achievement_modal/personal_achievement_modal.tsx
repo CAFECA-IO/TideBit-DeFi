@@ -46,19 +46,21 @@ const PersonalAchievementModal = ({
   useEffect(() => {
     setIsLoading(true);
 
-    userCtx
-      .getPersonalAchievements(userId)
-      .then(result => {
-        result.success
-          ? setPersonalAchievement(result.data as IPersonalAchievement)
-          : setPersonalAchievement(defaultPersonalAchievement);
+    if (userId !== '') {
+      userCtx
+        .getPersonalAchievements(userId)
+        .then(result => {
+          result.success
+            ? setPersonalAchievement(result.data as IPersonalAchievement)
+            : setPersonalAchievement(defaultPersonalAchievement);
 
-        setIsLoading(false);
-      })
-      .catch(() => {
-        setPersonalAchievement(defaultPersonalAchievement);
-        setIsLoading(false);
-      });
+          setIsLoading(false);
+        })
+        .catch(() => {
+          setPersonalAchievement(defaultPersonalAchievement);
+          setIsLoading(false);
+        });
+    }
   }, [modalVisible]);
 
   const {

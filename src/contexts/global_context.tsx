@@ -573,8 +573,8 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
 
   const [visiblePositionClosedModal, setVisiblePositionClosedModal, visiblePositionClosedModalRef] =
     useStateRef<boolean>(false);
-  const [dataPositionClosedModal, setDataPositionClosedModal] =
-    useState<IDisplayCFDOrder>(dummyOpenCFD);
+  const [dataPositionClosedModal, setDataPositionClosedModal, dataPositionClosedModalRef] =
+    useStateRef<IDisplayCFDOrder>(dummyOpenCFD);
 
   const [visiblePositionOpenModal, setVisiblePositionOpenModal] = useState(false);
   const [dataPositionOpenModal, setDataPositionOpenModal] = useState<IDataPositionOpenModal>(
@@ -1163,7 +1163,7 @@ export const GlobalProvider = ({children}: IGlobalProvider) => {
     visiblePositionClosedModal,
     visiblePositionClosedModalRef,
     visiblePositionClosedModalHandler,
-    dataPositionClosedModal,
+    dataPositionClosedModal: dataPositionClosedModalRef.current,
     dataPositionClosedModalHandler,
 
     visiblePositionOpenModal,

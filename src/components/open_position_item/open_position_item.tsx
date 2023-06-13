@@ -18,6 +18,11 @@ import {POSITION_CLOSE_COUNTDOWN_SECONDS, FRACTION_DIGITS} from '../../constants
 import {MarketContext} from '../../contexts/market_context';
 import {IDisplayCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
 import {useTranslation} from 'react-i18next';
+import {defaultResultFailed} from '../../interfaces/tidebit_defi_background/result';
+import {IQuotation} from '../../interfaces/tidebit_defi_background/quotation';
+import {ToastTypeAndText} from '../../constants/toast_type';
+import {ToastId} from '../../constants/toast_id';
+import {Code} from '../../constants/code';
 
 type TranslateFunction = (s: string) => string;
 interface IOpenPositionItemProps {
@@ -33,6 +38,7 @@ const OpenPositionItem = ({openCfdDetails}: IOpenPositionItemProps) => {
     dataUpdateFormModalHandler,
     visiblePositionClosedModalHandler,
     dataPositionClosedModalHandler,
+    toast,
   } = useGlobal();
 
   const openItemClickHandler = () => {
@@ -67,6 +73,7 @@ const OpenPositionItem = ({openCfdDetails}: IOpenPositionItemProps) => {
     openCfdDetails.targetAsset,
     openCfdDetails.typeOfPosition
   );
+
   const pnl = toPnl({
     openPrice,
     closePrice,
@@ -94,9 +101,70 @@ const OpenPositionItem = ({openCfdDetails}: IOpenPositionItemProps) => {
 
   const denominator = remainSecs < 60 ? 60 : remainSecs < 3600 ? 60 : 24;
 
-  const squareClickHandler = () => {
-    dataPositionClosedModalHandler(openCfdDetails);
-    visiblePositionClosedModalHandler();
+  const squareClickHandler = async () => {
+    await getQuotation();
+  };
+
+  const toDisplayCloseOrder = (cfd: IDisplayCFDOrder, quotation: IQuotation): IDisplayCFDOrder => {
+    const pnlSoFar = toPnl({
+      openPrice: cfd.openPrice,
+      closePrice: quotation.price,
+      amount: cfd.amount,
+      typeOfPosition: cfd.typeOfPosition,
+      spread: marketCtx.getTickerSpread(cfd.targetAsset),
+    });
+
+    return {
+      ...cfd,
+      closePrice: quotation.price,
+      pnl: pnlSoFar,
+    };
+  };
+
+  const getQuotation = async () => {
+    let quotation = {...defaultResultFailed};
+    const oppositeTypeOfPosition =
+      openCfdDetails?.typeOfPosition === TypeOfPosition.BUY
+        ? TypeOfPosition.SELL
+        : TypeOfPosition.BUY;
+
+    try {
+      quotation = await marketCtx.getCFDQuotation(openCfdDetails?.ticker, oppositeTypeOfPosition);
+
+      const data = quotation.data as IQuotation;
+      if (
+        quotation.success &&
+        data.typeOfPosition === oppositeTypeOfPosition &&
+        data.ticker.split('-')[0] === openCfdDetails.ticker &&
+        quotation.data !== null
+      ) {
+        const displayedCloseOrder = toDisplayCloseOrder(openCfdDetails, data);
+        dataPositionClosedModalHandler(displayedCloseOrder);
+
+        visiblePositionClosedModalHandler();
+      } else {
+        toast({
+          type: ToastTypeAndText.ERROR.type,
+          toastId: ToastId.GET_QUOTATION_ERROR,
+          message: `${t('POSITION_MODAL.ERROR_MESSAGE')} (${
+            Code.CANNOT_GET_QUOTATION_FROM_CONTEXT
+          })`,
+          typeText: t(ToastTypeAndText.ERROR.text),
+          isLoading: false,
+          autoClose: false,
+        });
+      }
+    } catch (err) {
+      // TODO: Report error to backend (20230613 - Shirley)
+      toast({
+        type: ToastTypeAndText.ERROR.type,
+        toastId: ToastId.GET_QUOTATION_ERROR,
+        message: `${t('POSITION_MODAL.ERROR_MESSAGE')} (${Code.UNKNOWN_ERROR_IN_COMPONENT})`,
+        typeText: t(ToastTypeAndText.ERROR.text),
+        isLoading: false,
+        autoClose: false,
+      });
+    }
   };
 
   /* Info: (20230411 - Julian) 折線圖參考線的優先顯示順序:

@@ -80,19 +80,20 @@ const PositionClosedModal = ({
   const globalCtx = useGlobal();
   const userCtx = useContext(UserContext);
 
-  const predictedClosePrice = marketCtx.predictCFDClosePrice(
-    openCfdDetails.targetAsset,
-    openCfdDetails.typeOfPosition
-  );
-
-  const spread = marketCtx.getTickerSpread(openCfdDetails.targetAsset);
-  const pnl = toPnl({
-    openPrice: openCfdDetails.openPrice,
-    closePrice: predictedClosePrice,
-    amount: openCfdDetails.amount,
-    typeOfPosition: openCfdDetails.typeOfPosition,
-    spread: spread,
-  });
+  /* Deprecated: changing pnl when fixed closed price
+  // const predictedClosePrice = marketCtx.predictCFDClosePrice(
+  //   openCfdDetails.targetAsset,
+  //   openCfdDetails.typeOfPosition
+  // );
+  // const spread = marketCtx.getTickerSpread(openCfdDetails.targetAsset);
+  // const pnl = toPnl({
+  //   openPrice: openCfdDetails.openPrice,
+  //   closePrice: predictedClosePrice,
+  //   amount: openCfdDetails.amount,
+  //   typeOfPosition: openCfdDetails.typeOfPosition,
+  //   spread: spread,
+  // });
+  */
 
   const [quotationError, setQuotationError, quotationErrorRef] = useStateRef(false);
   const [quotationErrorMessage, setQuotationErrorMessage, quotationErrorMessageRef] =
@@ -121,7 +122,11 @@ const PositionClosedModal = ({
   const displayedGuaranteedStopSetting = !!openCfdDetails?.guaranteedStop ? 'Yes' : 'No';
 
   const displayedPnLSymbol =
-    pnl?.type === ProfitState.PROFIT ? '+' : pnl?.type === ProfitState.LOSS ? '-' : '';
+    openCfdDetails?.pnl?.type === ProfitState.PROFIT
+      ? '+'
+      : openCfdDetails?.pnl?.type === ProfitState.LOSS
+      ? '-'
+      : '';
 
   const displayedTypeOfPosition =
     openCfdDetails?.typeOfPosition === TypeOfPosition.BUY
@@ -134,16 +139,16 @@ const PositionClosedModal = ({
       : t('POSITION_MODAL.TYPE_SELL');
 
   const displayedPnLColor =
-    pnl.type === ProfitState.PROFIT
+    openCfdDetails?.pnl?.type === ProfitState.PROFIT
       ? TypeOfPnLColor.PROFIT
-      : pnl.type === ProfitState.LOSS
+      : openCfdDetails?.pnl?.type === ProfitState.LOSS
       ? TypeOfPnLColor.LOSS
       : TypeOfPnLColor.EQUAL;
 
   const displayedBorderColor =
-    pnl.type === ProfitState.PROFIT
+    openCfdDetails?.pnl?.type === ProfitState.PROFIT
       ? TypeOfBorderColor.PROFIT
-      : pnl.type === ProfitState.LOSS
+      : openCfdDetails?.pnl?.type === ProfitState.LOSS
       ? TypeOfBorderColor.LOSS
       : TypeOfBorderColor.EQUAL;
 
@@ -163,6 +168,7 @@ const PositionClosedModal = ({
     });
     return {
       ...cfd,
+      closePrice: 0,
       pnl: pnlSoFar,
     };
   };
@@ -273,7 +279,7 @@ const PositionClosedModal = ({
           globalCtx.toast({
             type: ToastTypeAndText.ERROR.type,
             toastId: ToastId.INCONSISTENT_TICKER_OF_QUOTATION,
-            message: `[dev] ${quotationErrorMessageRef.current.reason} (${quotationErrorMessageRef.current.code})`,
+            message: `[t] ${quotationErrorMessageRef.current.reason} (${quotationErrorMessageRef.current.code})`,
             typeText: t(ToastTypeAndText.ERROR.text),
             isLoading: false,
             autoClose: false,
@@ -287,6 +293,15 @@ const PositionClosedModal = ({
       setQuotationError(true);
       /* Info: (20230508 - Julian) get quotation error message */
       setQuotationErrorMessage({success: false, code: quotation.code, reason: quotation.reason});
+      // Deprecated: for debug (20230609 - Shirley)
+      globalCtx.toast({
+        type: ToastTypeAndText.ERROR.type,
+        toastId: ToastId.UNKNOWN_ERROR_IN_COMPONENT,
+        message: `[t] ${quotationErrorMessageRef.current.reason} (${quotationErrorMessageRef.current.code})`,
+        typeText: t(ToastTypeAndText.ERROR.text),
+        isLoading: false,
+        autoClose: false,
+      });
     }
   };
 
@@ -438,11 +453,15 @@ const PositionClosedModal = ({
           autoClose: false,
         });
         return;
-      }
-      const displayedCloseOrder = toDisplayCloseOrder(openCfdDetails, quotation);
-      globalCtx.dataPositionClosedModalHandler(displayedCloseOrder);
+        // TODO: check users' signature in userCtx (20230613 - Shirley)
+      } else if (quotation.ticker.split('-')[0] === openCfdDetails.ticker) {
+        const displayedCloseOrder = toDisplayCloseOrder(openCfdDetails, quotation);
+        globalCtx.dataPositionClosedModalHandler(displayedCloseOrder);
 
-      setGQuotation(quotation);
+        setGQuotation(quotation);
+        setDataRenewedStyle('text-lightWhite');
+        setQuotationError(false);
+      }
     })();
   }, [globalCtx.visiblePositionClosedModal]);
 
@@ -451,7 +470,7 @@ const PositionClosedModal = ({
     if (!globalCtx.visiblePositionClosedModal) {
       setSecondsLeft(DISPLAY_QUOTATION_RENEWAL_INTERVAL_SECONDS);
       setDataRenewedStyle('text-lightWhite');
-
+      setQuotationError(true);
       return;
     }
 
@@ -535,10 +554,15 @@ const PositionClosedModal = ({
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">{t('POSITION_MODAL.CLOSED_PRICE')}</div>
               <div className={`${dataRenewedStyle}`}>
-                {gQuotationRef.current.price?.toLocaleString(
-                  UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                  FRACTION_DIGITS
-                ) ?? 0}{' '}
+                {openCfdDetails.closePrice
+                  ? openCfdDetails.closePrice.toLocaleString(
+                      UNIVERSAL_NUMBER_FORMAT_LOCALE,
+                      FRACTION_DIGITS
+                    )
+                  : gQuotationRef.current.price?.toLocaleString(
+                      UNIVERSAL_NUMBER_FORMAT_LOCALE,
+                      FRACTION_DIGITS
+                    ) ?? 0}{' '}
                 <span className="ml-1 text-lightGray">{unitAsset}</span>
               </div>
             </div>
@@ -547,7 +571,10 @@ const PositionClosedModal = ({
               <div className="text-lightGray">{t('POSITION_MODAL.PNL')}</div>
               <div className={`${pnlRenewedStyle} ${displayedPnLColor}`}>
                 {displayedPnLSymbol} ${' '}
-                {pnl?.value.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)}
+                {openCfdDetails?.pnl?.value.toLocaleString(
+                  UNIVERSAL_NUMBER_FORMAT_LOCALE,
+                  FRACTION_DIGITS
+                )}
               </div>
             </div>
 

@@ -274,7 +274,7 @@ const PositionClosedModal = ({
           globalCtx.toast({
             type: ToastTypeAndText.ERROR.type,
             toastId: ToastId.INCONSISTENT_TICKER_OF_QUOTATION,
-            message: `[dev] ${quotationErrorMessageRef.current.reason} (${quotationErrorMessageRef.current.code})`,
+            message: `[t] ${quotationErrorMessageRef.current.reason} (${quotationErrorMessageRef.current.code})`,
             typeText: t(ToastTypeAndText.ERROR.text),
             isLoading: false,
             autoClose: false,
@@ -288,6 +288,15 @@ const PositionClosedModal = ({
       setQuotationError(true);
       /* Info: (20230508 - Julian) get quotation error message */
       setQuotationErrorMessage({success: false, code: quotation.code, reason: quotation.reason});
+      // Deprecated: for debug (20230609 - Shirley)
+      globalCtx.toast({
+        type: ToastTypeAndText.ERROR.type,
+        toastId: ToastId.UNKNOWN_ERROR_IN_COMPONENT,
+        message: `[t] ${quotationErrorMessageRef.current.reason} (${quotationErrorMessageRef.current.code})`,
+        typeText: t(ToastTypeAndText.ERROR.text),
+        isLoading: false,
+        autoClose: false,
+      });
     }
   };
 
@@ -425,10 +434,6 @@ const PositionClosedModal = ({
   useEffect(() => {
     if (!globalCtx.visiblePositionClosedModal) return;
     (async () => {
-      // Deprecated: Show correct quotation after ticker changed (20230613 - Shirley)
-      // eslint-disable-next-line no-console
-      console.log('getQuotation before the modal is shown');
-
       const quotation = await getQuotation();
       if (!quotation) {
         /* Info: (20230508 - Julian) exception handling: error toast */
@@ -451,12 +456,6 @@ const PositionClosedModal = ({
         setDataRenewedStyle('text-lightWhite');
         setQuotationError(false);
       }
-
-      // Deprecated: Show correct quotation after ticker changed (20230613 - Shirley)
-      // eslint-disable-next-line no-console
-      console.log('quotation', quotation.ticker);
-      // eslint-disable-next-line no-console
-      console.log('openCfdDetails', openCfdDetails.ticker);
     })();
   }, [globalCtx.visiblePositionClosedModal]);
 
@@ -552,7 +551,10 @@ const PositionClosedModal = ({
               <div className="text-lightGray">{t('POSITION_MODAL.CLOSED_PRICE')}</div>
               <div className={`${dataRenewedStyle}`}>
                 {openCfdDetails.closePrice
-                  ? openCfdDetails.closePrice
+                  ? openCfdDetails.closePrice.toLocaleString(
+                      UNIVERSAL_NUMBER_FORMAT_LOCALE,
+                      FRACTION_DIGITS
+                    )
                   : gQuotationRef.current.price?.toLocaleString(
                       UNIVERSAL_NUMBER_FORMAT_LOCALE,
                       FRACTION_DIGITS

@@ -38,7 +38,6 @@ const OpenPositionItem = ({openCfdDetails}: IOpenPositionItemProps) => {
     dataUpdateFormModalHandler,
     visiblePositionClosedModalHandler,
     dataPositionClosedModalHandler,
-    dataPositionClosedModal,
     toast,
   } = useGlobal();
 
@@ -143,12 +142,6 @@ const OpenPositionItem = ({openCfdDetails}: IOpenPositionItemProps) => {
       ) {
         const displayedCloseOrder = toDisplayCloseOrder(openCfdDetails, data);
         dataPositionClosedModalHandler(displayedCloseOrder);
-
-        // Deprecated: Show correct quotation after ticker changed (20230613 - Shirley)
-        // eslint-disable-next-line no-console
-        console.log('displayedCloseOrder', displayedCloseOrder);
-        // eslint-disable-next-line no-console
-        console.log('dataPositionClosedModal', dataPositionClosedModal);
 
         visiblePositionClosedModalHandler();
       } else {

@@ -80,12 +80,12 @@ const PositionClosedModal = ({
   const globalCtx = useGlobal();
   const userCtx = useContext(UserContext);
 
-  const predictedClosePrice = marketCtx.predictCFDClosePrice(
-    openCfdDetails.targetAsset,
-    openCfdDetails.typeOfPosition
-  );
-
-  const spread = marketCtx.getTickerSpread(openCfdDetails.targetAsset);
+  /* Deprecated: changing pnl when fixed closed price
+  // const predictedClosePrice = marketCtx.predictCFDClosePrice(
+  //   openCfdDetails.targetAsset,
+  //   openCfdDetails.typeOfPosition
+  // );
+  // const spread = marketCtx.getTickerSpread(openCfdDetails.targetAsset);
   // const pnl = toPnl({
   //   openPrice: openCfdDetails.openPrice,
   //   closePrice: predictedClosePrice,
@@ -93,6 +93,7 @@ const PositionClosedModal = ({
   //   typeOfPosition: openCfdDetails.typeOfPosition,
   //   spread: spread,
   // });
+  */
 
   const [quotationError, setQuotationError, quotationErrorRef] = useStateRef(false);
   const [quotationErrorMessage, setQuotationErrorMessage, quotationErrorMessageRef] =
@@ -452,6 +453,7 @@ const PositionClosedModal = ({
           autoClose: false,
         });
         return;
+        // TODO: check users' signature in userCtx (20230613 - Shirley)
       } else if (quotation.ticker.split('-')[0] === openCfdDetails.ticker) {
         const displayedCloseOrder = toDisplayCloseOrder(openCfdDetails, quotation);
         globalCtx.dataPositionClosedModalHandler(displayedCloseOrder);

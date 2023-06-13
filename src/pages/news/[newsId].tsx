@@ -1,4 +1,4 @@
-import {GetServerSideProps} from 'next';
+import {GetServerSideProps, GetStaticPaths, GetStaticProps} from 'next';
 import {serverSideTranslations} from 'next-i18next/serverSideTranslations';
 import NewsPageBody from '../../components/news_page_body/news_page_body';
 import NewsArticle from '../../components/news_article/news_article';
@@ -10,22 +10,22 @@ import {useContext, useEffect} from 'react';
 import {AppContext} from '../../contexts/app_context';
 import Footer from '../../components/footer/footer';
 import {
+  IRecommendedNews,
   getDummyNews,
   getDummyRecommendationNews,
   tempNews,
 } from '../../interfaces/tidebit_defi_background/news';
 import {Currency} from '../../constants/currency';
 import {MarketContext} from '../../contexts/market_context';
-import {DOMAIN} from '../../constants/config';
+import {DOMAIN, ETH_NEWS_FOLDER} from '../../constants/config';
 import {NEWS_IMG_HEIGHT, NEWS_IMG_WIDTH} from '../../constants/display';
-import {IPost, getPost, getPosts} from '../../lib/posts';
+import {IPost, getFilteredPosts, getPost, getPosts, getSlugs} from '../../lib/posts';
 
 interface IPageProps {
   newsId: string;
-  newsData: IPost; // Add this to represent the fetched news data
+  newsData: IPost;
+  brief: IRecommendedNews[];
 }
-
-// TODO: Check dynamic routing (20230605 - Shirley)
 
 const NewsPage = (props: IPageProps) => {
   const {layoutAssertion} = useGlobal();
@@ -33,15 +33,14 @@ const NewsPage = (props: IPageProps) => {
   const appCtx = useContext(AppContext);
   const marketCtx = useContext(MarketContext);
 
-  const news = marketCtx.getNews(Currency.ETH, props?.newsId ?? '');
-  const recommendationNews = marketCtx.getRecommendedNews(Currency.ETH);
+  // TODO: get news from context (20230613 - Shirley)
+  // const news = marketCtx.getNews(Currency.ETH, props?.newsId ?? '');
+  // const recommendationNews = marketCtx.getRecommendedNews(Currency.ETH);
 
   const post = props.newsData;
-  // const finishedNews = tempNews;
   const newsTitle = post.title;
   const newsDescription = post.body.substring(0, 100);
 
-  // TODO: img src (20230609 - Shirley)
   const newsImg = `/news/${props.newsId}@2x.png`;
 
   const share = `${DOMAIN}/news/${props.newsId}`;
@@ -95,9 +94,8 @@ const NewsPage = (props: IPageProps) => {
               <NewsArticle
                 post={props.newsData}
                 shareId={props.newsId}
-                // news={finishedNews}
                 img={newsImg}
-                // recommendations={recommendationNews}
+                recommendations={props.brief}
               />
             </div>
             <Footer />
@@ -114,14 +112,31 @@ const NewsPage = (props: IPageProps) => {
 
 export default NewsPage;
 
-export const getServerSideProps: GetServerSideProps<IPageProps> = async ({params, locale}) => {
+export const getStaticPaths: GetStaticPaths = async () => {
+  const slugs = await getSlugs(ETH_NEWS_FOLDER);
+  const paths = slugs.map(slug => ({params: {newsId: slug}}));
+  return {paths, fallback: false};
+};
+
+export const getStaticProps: GetStaticProps<IPageProps> = async ({params, locale}) => {
   if (!params || !params.newsId || typeof params.newsId !== 'string') {
     return {
       notFound: true,
     };
   }
 
-  const newsData = await getPost(params.newsId);
+  const newsData = await getPost(ETH_NEWS_FOLDER, params.newsId);
+  const allPost = await getFilteredPosts(ETH_NEWS_FOLDER, [params.newsId]);
+
+  const recommendations = allPost.map(news => {
+    return {
+      newsId: news.slug ?? '',
+      img: `/news/${news.slug}@2x.png`,
+      timestamp: news.date,
+      title: news.title,
+      description: news.description,
+    };
+  });
 
   if (!newsData) {
     return {
@@ -133,26 +148,8 @@ export const getServerSideProps: GetServerSideProps<IPageProps> = async ({params
     props: {
       newsId: params.newsId,
       newsData,
+      brief: recommendations,
       ...(await serverSideTranslations(locale as string, ['common', 'footer'])),
     },
   };
 };
-
-// export const getServerSideProps: GetServerSideProps<IPageProps> = async ({ params, locale }) => {
-//   if (!params || !params.newsId || typeof params.newsId !== 'string') {
-//     return {
-//       notFound: true,
-//     };
-//   }
-
-//   // Fetch the news data using the getPost function
-//   const newsData = await getPost(params.newsId);
-
-//   return {
-//     props: {
-//       newsId: params.newsId,
-//       newsData, // Return the fetched data as a prop
-//       ...(await serverSideTranslations(locale as string, ['common', 'footer'])),
-//     },
-//   };
-// };

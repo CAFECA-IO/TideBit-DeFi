@@ -163,6 +163,7 @@ const PositionClosedModal = ({
     });
     return {
       ...cfd,
+      closePrice: 0,
       pnl: pnlSoFar,
     };
   };
@@ -424,6 +425,10 @@ const PositionClosedModal = ({
   useEffect(() => {
     if (!globalCtx.visiblePositionClosedModal) return;
     (async () => {
+      // Deprecated: Show correct quotation after ticker changed (20230613 - Shirley)
+      // eslint-disable-next-line no-console
+      console.log('getQuotation before the modal is shown');
+
       const quotation = await getQuotation();
       if (!quotation) {
         /* Info: (20230508 - Julian) exception handling: error toast */
@@ -438,11 +443,20 @@ const PositionClosedModal = ({
           autoClose: false,
         });
         return;
-      }
-      const displayedCloseOrder = toDisplayCloseOrder(openCfdDetails, quotation);
-      globalCtx.dataPositionClosedModalHandler(displayedCloseOrder);
+      } else if (quotation.ticker.split('-')[0] === openCfdDetails.ticker) {
+        const displayedCloseOrder = toDisplayCloseOrder(openCfdDetails, quotation);
+        globalCtx.dataPositionClosedModalHandler(displayedCloseOrder);
 
-      setGQuotation(quotation);
+        setGQuotation(quotation);
+        setDataRenewedStyle('text-lightWhite');
+        setQuotationError(false);
+      }
+
+      // Deprecated: Show correct quotation after ticker changed (20230613 - Shirley)
+      // eslint-disable-next-line no-console
+      console.log('quotation', quotation.ticker);
+      // eslint-disable-next-line no-console
+      console.log('openCfdDetails', openCfdDetails.ticker);
     })();
   }, [globalCtx.visiblePositionClosedModal]);
 
@@ -451,6 +465,8 @@ const PositionClosedModal = ({
     if (!globalCtx.visiblePositionClosedModal) {
       setSecondsLeft(DISPLAY_QUOTATION_RENEWAL_INTERVAL_SECONDS);
       setDataRenewedStyle('text-lightWhite');
+      // setDataRenewedStyle('skeleton skeletonText');
+      setQuotationError(true);
 
       return;
     }
@@ -535,10 +551,12 @@ const PositionClosedModal = ({
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">{t('POSITION_MODAL.CLOSED_PRICE')}</div>
               <div className={`${dataRenewedStyle}`}>
-                {gQuotationRef.current.price?.toLocaleString(
-                  UNIVERSAL_NUMBER_FORMAT_LOCALE,
-                  FRACTION_DIGITS
-                ) ?? 0}{' '}
+                {openCfdDetails.closePrice
+                  ? openCfdDetails.closePrice
+                  : gQuotationRef.current.price?.toLocaleString(
+                      UNIVERSAL_NUMBER_FORMAT_LOCALE,
+                      FRACTION_DIGITS
+                    ) ?? 0}{' '}
                 <span className="ml-1 text-lightGray">{unitAsset}</span>
               </div>
             </div>

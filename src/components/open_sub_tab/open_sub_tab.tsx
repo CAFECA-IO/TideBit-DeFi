@@ -18,10 +18,6 @@ const OpenSubTab = () => {
   const userCtx = useContext(UserContext);
   const marketCtx = useContext(MarketContext);
 
-  // const initState = {
-  //   longPrice: 0,
-  //   shortPrice: 0,
-  // };
   //const [caledPrice, setCaledPrice, caledPriceRef] = useStateRef(initState);
   const [isLoading, setIsLoading] = useState(true);
   const [cfds, setCfds] = useState<IDisplayCFDOrder[]>([]);
@@ -37,30 +33,6 @@ const OpenSubTab = () => {
   };
   */
 
-  // Deprecated (20230610 - Julian)
-  // useEffect(() => {
-  //   const buyPrice = !!marketCtx.selectedTicker?.price
-  //     ? roundToDecimalPlaces(
-  //         marketCtx.selectedTicker.price *
-  //           (1 + (marketCtx.tickerLiveStatistics?.spread ?? DEFAULT_SPREAD)),
-  //         2
-  //       )
-  //     : 0;
-
-  //   const sellPrice = !!marketCtx.selectedTicker?.price
-  //     ? roundToDecimalPlaces(
-  //         marketCtx.selectedTicker.price *
-  //           (1 - (marketCtx.tickerLiveStatistics?.spread ?? DEFAULT_SPREAD)),
-  //         2
-  //       )
-  //     : 0;
-
-  //   setCaledPrice({
-  //     longPrice: buyPrice,
-  //     shortPrice: sellPrice,
-  //   });
-  // }, [marketCtx.selectedTicker?.price]);
-
   useEffect(() => {
     const cfdList = userCtx.openCFDs
       .map(cfd => {
@@ -71,12 +43,6 @@ const OpenSubTab = () => {
         const spread = marketCtx.getTickerSpread(cfd.targetAsset);
         */
         const tickerPrice = marketCtx.availableTickers[cfd.targetAsset]?.price;
-        /**
-         * Info: (20230428 - Shirley)
-         * without `positionLineGraph`, use market price to calculate
-         * without `market price`, use the open price of the CFD to get PNL === 0 and display `--`
-         * (OpenPositionItem & UpdateFormModal)
-         */
 
         /** Deprecated: (20230608 - tzuhan)
         const currentPrice =
@@ -105,9 +71,11 @@ const OpenSubTab = () => {
 
     setCfds(cfdList);
   }, [userCtx.openCFDs]);
+
   useEffect(() => {
     setTimeout(() => setIsLoading(false), SKELETON_DISPLAY_TIME);
   }, [userCtx.openCFDs]);
+
   const openPositionList =
     isLoading || userCtx.isLoadingCFDs ? (
       <Skeleton count={10} height={150} />

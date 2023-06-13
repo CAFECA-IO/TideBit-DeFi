@@ -86,13 +86,13 @@ const PositionClosedModal = ({
   );
 
   const spread = marketCtx.getTickerSpread(openCfdDetails.targetAsset);
-  const pnl = toPnl({
-    openPrice: openCfdDetails.openPrice,
-    closePrice: predictedClosePrice,
-    amount: openCfdDetails.amount,
-    typeOfPosition: openCfdDetails.typeOfPosition,
-    spread: spread,
-  });
+  // const pnl = toPnl({
+  //   openPrice: openCfdDetails.openPrice,
+  //   closePrice: predictedClosePrice,
+  //   amount: openCfdDetails.amount,
+  //   typeOfPosition: openCfdDetails.typeOfPosition,
+  //   spread: spread,
+  // });
 
   const [quotationError, setQuotationError, quotationErrorRef] = useStateRef(false);
   const [quotationErrorMessage, setQuotationErrorMessage, quotationErrorMessageRef] =
@@ -121,7 +121,11 @@ const PositionClosedModal = ({
   const displayedGuaranteedStopSetting = !!openCfdDetails?.guaranteedStop ? 'Yes' : 'No';
 
   const displayedPnLSymbol =
-    pnl?.type === ProfitState.PROFIT ? '+' : pnl?.type === ProfitState.LOSS ? '-' : '';
+    openCfdDetails?.pnl?.type === ProfitState.PROFIT
+      ? '+'
+      : openCfdDetails?.pnl?.type === ProfitState.LOSS
+      ? '-'
+      : '';
 
   const displayedTypeOfPosition =
     openCfdDetails?.typeOfPosition === TypeOfPosition.BUY
@@ -134,16 +138,16 @@ const PositionClosedModal = ({
       : t('POSITION_MODAL.TYPE_SELL');
 
   const displayedPnLColor =
-    pnl.type === ProfitState.PROFIT
+    openCfdDetails?.pnl?.type === ProfitState.PROFIT
       ? TypeOfPnLColor.PROFIT
-      : pnl.type === ProfitState.LOSS
+      : openCfdDetails?.pnl?.type === ProfitState.LOSS
       ? TypeOfPnLColor.LOSS
       : TypeOfPnLColor.EQUAL;
 
   const displayedBorderColor =
-    pnl.type === ProfitState.PROFIT
+    openCfdDetails?.pnl?.type === ProfitState.PROFIT
       ? TypeOfBorderColor.PROFIT
-      : pnl.type === ProfitState.LOSS
+      : openCfdDetails?.pnl?.type === ProfitState.LOSS
       ? TypeOfBorderColor.LOSS
       : TypeOfBorderColor.EQUAL;
 
@@ -464,9 +468,7 @@ const PositionClosedModal = ({
     if (!globalCtx.visiblePositionClosedModal) {
       setSecondsLeft(DISPLAY_QUOTATION_RENEWAL_INTERVAL_SECONDS);
       setDataRenewedStyle('text-lightWhite');
-      // setDataRenewedStyle('skeleton skeletonText');
       setQuotationError(true);
-
       return;
     }
 
@@ -567,7 +569,10 @@ const PositionClosedModal = ({
               <div className="text-lightGray">{t('POSITION_MODAL.PNL')}</div>
               <div className={`${pnlRenewedStyle} ${displayedPnLColor}`}>
                 {displayedPnLSymbol} ${' '}
-                {pnl?.value.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)}
+                {openCfdDetails?.pnl?.value.toLocaleString(
+                  UNIVERSAL_NUMBER_FORMAT_LOCALE,
+                  FRACTION_DIGITS
+                )}
               </div>
             </div>
 

@@ -42,7 +42,7 @@ const OpenPositionItem = ({openCfdDetails}: IOpenPositionItemProps) => {
   } = useGlobal();
 
   const openItemClickHandler = () => {
-    dataUpdateFormModalHandler(openCfdDetails);
+    dataUpdateFormModalHandler({...openCfdDetails, pnl: pnl});
     visibleUpdateFormModalHandler();
   };
 

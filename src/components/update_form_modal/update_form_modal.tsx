@@ -503,9 +503,6 @@ const UpdateFormModal = ({
   const closedModalClickHandler = async () => {
     globalCtx.visibleUpdateFormModalHandler();
     await getQuotation();
-
-    // globalCtx.dataPositionClosedModalHandler(openCfdDetails);
-    // globalCtx.visiblePositionClosedModalHandler();
   };
 
   const toDisplayCloseOrder = (cfd: IDisplayCFDOrder, quotation: IQuotation): IDisplayCFDOrder => {

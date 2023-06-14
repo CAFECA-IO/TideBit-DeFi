@@ -21,6 +21,7 @@ import {
   randomIntFromInterval,
   roundToDecimalPlaces,
   timestampToString,
+  toPnl,
   validateAllInput,
 } from '../../lib/common';
 import {MarketContext} from '../../contexts/market_context';
@@ -40,6 +41,11 @@ import {IApplyUpdateCFDOrder} from '../../interfaces/tidebit_defi_background/app
 import {CFDOperation} from '../../constants/cfd_order_type';
 import {OrderType} from '../../constants/order_type';
 import {TypeOfValidation} from '../../constants/validation';
+import {defaultResultFailed} from '../../interfaces/tidebit_defi_background/result';
+import {IQuotation} from '../../interfaces/tidebit_defi_background/quotation';
+import {Code} from '../../constants/code';
+import {ToastTypeAndText} from '../../constants/toast_type';
+import {ToastId} from '../../constants/toast_id';
 
 type TranslateFunction = (s: string) => string;
 interface IUpdatedFormModal {
@@ -246,13 +252,6 @@ const UpdateFormModal = ({
   const gslFee = openCfdDetails?.guaranteedStop
     ? openCfdDetails?.guaranteedStopFee
     : guaranteedStopFeeRef.current;
-
-  const toDisplayCloseOrder = (cfd: IDisplayCFDOrder): IDisplayCFDOrder => {
-    const order = {
-      ...cfd,
-    };
-    return order;
-  };
 
   const toApplyUpdateOrder = () => {
     let changedProperties: IApplyUpdateCFDOrder = {
@@ -501,11 +500,74 @@ const UpdateFormModal = ({
 
   const denominator = remainSecs < 60 ? 60 : remainSecs < 3600 ? 60 : 24;
 
-  const squareClickHandler = () => {
+  const closedModalClickHandler = async () => {
     globalCtx.visibleUpdateFormModalHandler();
+    await getQuotation();
 
-    globalCtx.dataPositionClosedModalHandler(openCfdDetails);
-    globalCtx.visiblePositionClosedModalHandler();
+    // globalCtx.dataPositionClosedModalHandler(openCfdDetails);
+    // globalCtx.visiblePositionClosedModalHandler();
+  };
+
+  const toDisplayCloseOrder = (cfd: IDisplayCFDOrder, quotation: IQuotation): IDisplayCFDOrder => {
+    const pnlSoFar = toPnl({
+      openPrice: cfd.openPrice,
+      closePrice: quotation.price,
+      amount: cfd.amount,
+      typeOfPosition: cfd.typeOfPosition,
+      spread: marketCtx.getTickerSpread(cfd.targetAsset),
+    });
+
+    return {
+      ...cfd,
+      closePrice: quotation.price,
+      pnl: pnlSoFar,
+    };
+  };
+
+  const getQuotation = async () => {
+    let quotation = {...defaultResultFailed};
+    const oppositeTypeOfPosition =
+      openCfdDetails?.typeOfPosition === TypeOfPosition.BUY
+        ? TypeOfPosition.SELL
+        : TypeOfPosition.BUY;
+
+    try {
+      quotation = await marketCtx.getCFDQuotation(openCfdDetails?.ticker, oppositeTypeOfPosition);
+
+      const data = quotation.data as IQuotation;
+      if (
+        quotation.success &&
+        data.typeOfPosition === oppositeTypeOfPosition &&
+        data.ticker.split('-')[0] === openCfdDetails.ticker &&
+        quotation.data !== null
+      ) {
+        const displayedCloseOrder = toDisplayCloseOrder(openCfdDetails, data);
+        globalCtx.dataPositionClosedModalHandler(displayedCloseOrder);
+
+        globalCtx.visiblePositionClosedModalHandler();
+      } else {
+        globalCtx.toast({
+          type: ToastTypeAndText.ERROR.type,
+          toastId: ToastId.GET_QUOTATION_ERROR,
+          message: `${t('POSITION_MODAL.ERROR_MESSAGE')} (${
+            Code.CANNOT_GET_QUOTATION_FROM_CONTEXT
+          })`,
+          typeText: t(ToastTypeAndText.ERROR.text),
+          isLoading: false,
+          autoClose: false,
+        });
+      }
+    } catch (err) {
+      // TODO: Report error to backend (20230613 - Shirley)
+      globalCtx.toast({
+        type: ToastTypeAndText.ERROR.type,
+        toastId: ToastId.GET_QUOTATION_ERROR,
+        message: `${t('POSITION_MODAL.ERROR_MESSAGE')} (${Code.UNKNOWN_ERROR_IN_COMPONENT})`,
+        typeText: t(ToastTypeAndText.ERROR.text),
+        isLoading: false,
+        autoClose: false,
+      });
+    }
   };
 
   const initPosition = () => {
@@ -650,7 +712,7 @@ const UpdateFormModal = ({
                     <div
                       className={`absolute left-12px top-10px z-30 h-7 w-7 rounded-full hover:cursor-pointer hover:bg-darkGray1 
                       ${displayedCrossColor} ${displayedCrossStyle} transition-all duration-150`}
-                      onClick={squareClickHandler}
+                      onClick={closedModalClickHandler}
                     ></div>
 
                     <div className="">

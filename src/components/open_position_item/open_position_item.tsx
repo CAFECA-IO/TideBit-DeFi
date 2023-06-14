@@ -41,7 +41,7 @@ const OpenPositionItem = ({openCfdDetails}: IOpenPositionItemProps) => {
     toast,
   } = useGlobal();
 
-  const openItemClickHandler = () => {
+  const updatedModalClickHandler = () => {
     dataUpdateFormModalHandler({...openCfdDetails, pnl: pnl});
     visibleUpdateFormModalHandler();
   };
@@ -101,7 +101,7 @@ const OpenPositionItem = ({openCfdDetails}: IOpenPositionItemProps) => {
 
   const denominator = remainSecs < 60 ? 60 : remainSecs < 3600 ? 60 : 24;
 
-  const squareClickHandler = async () => {
+  const closedModalClickHandler = async () => {
     await getQuotation();
   };
 
@@ -255,7 +255,7 @@ const OpenPositionItem = ({openCfdDetails}: IOpenPositionItemProps) => {
     <div className="relative my-2 min-h-140px">
       <div
         className="absolute z-10 h-150px w-280px bg-transparent hover:cursor-pointer"
-        onClick={openItemClickHandler}
+        onClick={updatedModalClickHandler}
       ></div>
       {/* Info: (20230411 - Julian) brief of this open position */}
       <div className="mt-2 flex justify-between">
@@ -316,7 +316,7 @@ const OpenPositionItem = ({openCfdDetails}: IOpenPositionItemProps) => {
           <div
             className={`absolute left-12px top-21px z-30 h-28px w-28px rounded-full hover:cursor-pointer hover:bg-darkGray
               ${displayedCrossColor} ${displayedCrossStyle} transition-all duration-150`}
-            onClick={squareClickHandler}
+            onClick={closedModalClickHandler}
           ></div>
 
           <CircularProgressBar

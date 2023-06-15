@@ -93,8 +93,8 @@ const TickerSelectorBoxMobile = ({
       if (activeTab === 'All') {
         const newSearchResult = cryptoCardsData.filter(each => {
           const result =
-            each.chain.toLocaleLowerCase().includes(searches || '') ||
-            each.currency.toLocaleLowerCase().includes(searches || '');
+            each.chain?.toLocaleLowerCase().includes(searches || '') ||
+            each.currency?.toLocaleLowerCase().includes(searches || '');
           return result;
         });
 
@@ -103,8 +103,8 @@ const TickerSelectorBoxMobile = ({
         const newSearchResult = cryptoCardsData?.filter(each => {
           const result =
             each.starred &&
-            (each.chain.toLocaleLowerCase().includes(searches || '') ||
-              each.currency.toLocaleLowerCase().includes(searches || ''));
+            (each.chain?.toLocaleLowerCase().includes(searches || '') ||
+              each.currency?.toLocaleLowerCase().includes(searches || ''));
           return result;
         });
 

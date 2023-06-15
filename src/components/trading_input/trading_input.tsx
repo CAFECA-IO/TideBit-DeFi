@@ -60,7 +60,8 @@ const TradingInput = ({
     typeof setTimeout
   > | null>(null);
 
-  const regex = /^(0(\.0)?|[1-9]\d*(\.\d{0,2})?|0\.\d*[1-9]\d*)$/;
+  // const regex = /^(0(\.0)?|[1-9]\d*(\.\d{0,2})?|0\.\d*[1-9]\d*)$/;
+  const regex = /^\d*\.?\d{0,2}$/;
 
   const passValueHandler = useCallback(
     (data: number) => {
@@ -89,6 +90,8 @@ const TradingInput = ({
       // Do nothing
       return;
     } else {
+      // const num = Number(Number(value).toString().replace(/^0+/, ''));
+      // /(\d)(?=(\d{3})+(?!\d))/g, '$1,'
       setInputValue(value);
       passValueHandler(value);
       return;
@@ -120,8 +123,6 @@ const TradingInput = ({
       passValueHandler(numberValue);
 
       debounceValidation(numberValue);
-    } else {
-      setInputValue(0);
     }
   };
 

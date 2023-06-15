@@ -82,7 +82,11 @@ const TickerSelectorBox = ({
 
   const [filteredCards, setFilteredCards] = useState<ICryptoCardData[]>([]);
 
-  const availableTickers = useMemo(() => marketCtx.listAvailableTickers(), [marketCtx]);
+  const [availableTickers, setAvailableTickers] = useState(marketCtx.listAvailableTickers());
+
+  useEffect(() => {
+    setAvailableTickers(marketCtx.listAvailableTickers());
+  }, [marketCtx]);
 
   const onSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const searchString = event.target.value.toLocaleLowerCase();

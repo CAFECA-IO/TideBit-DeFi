@@ -1,7 +1,7 @@
 import {CRYPTO_CARD_COLORS} from '../../constants/display';
 import {ImCross} from 'react-icons/im';
 import {CgSearch} from 'react-icons/cg';
-import {useContext, useEffect, useMemo, useState} from 'react';
+import {useContext, useEffect, useState} from 'react';
 import CryptoCard from '../crypto_card/crypto_card';
 import {MarketContext, IMarketContext} from '../../contexts/market_context';
 import {UserContext, IUserContext} from '../../contexts/user_context';
@@ -82,7 +82,11 @@ const TickerSelectorBoxMobile = ({
 
   const [filteredCards, setFilteredCards] = useState<ICryptoCardData[]>([]);
 
-  const availableTickers = useMemo(() => marketCtx.listAvailableTickers(), [marketCtx]);
+  const [availableTickers, setAvailableTickers] = useState(marketCtx.listAvailableTickers());
+
+  useEffect(() => {
+    setAvailableTickers(marketCtx.listAvailableTickers());
+  }, [marketCtx]);
 
   const onSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const searchString = event.target.value.toLocaleLowerCase();

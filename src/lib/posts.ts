@@ -28,6 +28,7 @@ export async function getPost(src: string, slug: string): Promise<IPost | null> 
 
 export async function getPosts(src: string): Promise<IPost[]> {
   const slugs = await getSlugs(src);
+  if (!slugs) return [];
   const posts: IPost[] = [];
   for (const slug of slugs) {
     const post = await getPost(src, slug);
@@ -38,25 +39,39 @@ export async function getPosts(src: string): Promise<IPost[]> {
   return posts;
 }
 
-export async function getSlugs(src: string): Promise<string[]> {
+export async function getSlugs(src: string): Promise<string[] | undefined> {
   const suffix = '.md';
-  const files = await readdir(src);
-  return files.filter(file => file.endsWith(suffix)).map(file => file.slice(0, -suffix.length));
+  try {
+    const files = await readdir(src);
+    return files.filter(file => file.endsWith(suffix)).map(file => file.slice(0, -suffix.length));
+  } catch (e) {
+    // Info: do nothing if the directory doesn't exist (20230616 - Shirley)
+  }
 }
 
 // Info: Exclude the certain slugs from the list (20230613 - Shirley)
-export async function getFilteredSlugs(src: string, exclude: string[]): Promise<string[]> {
+export async function getFilteredSlugs(
+  src: string,
+  exclude: string[]
+): Promise<string[] | undefined> {
   const suffix = '.md';
-  const files = await readdir(src);
-  return files
-    .filter(file => file.endsWith(suffix))
-    .map(file => file.slice(0, -suffix.length))
-    .filter(slug => !exclude.includes(slug));
+  try {
+    const files = await readdir(src);
+    const result = files
+      .filter(file => file.endsWith(suffix))
+      .map(file => file.slice(0, -suffix.length))
+      .filter(slug => !exclude.includes(slug));
+
+    return result;
+  } catch (e) {
+    // Info: do nothing if the directory doesn't exist (20230616 - Shirley)
+  }
 }
 
 // Info: Exclude the certain posts from the list by the slug id (20230613 - Shirley)
 export async function getFilteredPosts(src: string, exclude: string[]): Promise<IPost[]> {
   const slugs = await getFilteredSlugs(src, exclude);
+  if (!slugs) return [];
   const posts: IPost[] = [];
   for (const slug of slugs) {
     const post = await getPost(src, slug);

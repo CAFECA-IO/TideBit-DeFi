@@ -1,6 +1,6 @@
 import {CRYPTO_CARD_COLORS} from '../../constants/display';
 import {CgSearch} from 'react-icons/cg';
-import {useContext, useEffect, useState} from 'react';
+import {useContext, useEffect, useMemo, useState} from 'react';
 import CryptoCard from '../crypto_card/crypto_card';
 import {useTranslation} from 'next-i18next';
 import {MarketContext, IMarketContext} from '../../contexts/market_context';
@@ -82,6 +82,8 @@ const TickerSelectorBox = ({
 
   const [filteredCards, setFilteredCards] = useState<ICryptoCardData[]>([]);
 
+  const availableTickers = useMemo(() => marketCtx.listAvailableTickers(), [marketCtx]);
+
   const onSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const searchString = event.target.value.toLocaleLowerCase();
     setSearches(searchString);
@@ -89,7 +91,7 @@ const TickerSelectorBox = ({
 
   useEffect(() => {
     if (tickerSelectorBoxVisible) {
-      const cryptoCardsData = convertTickersToCryptoCardsData(marketCtx.listAvailableTickers());
+      const cryptoCardsData = convertTickersToCryptoCardsData(availableTickers);
       if (activeTab === 'All') {
         const newSearchResult = cryptoCardsData.filter(each => {
           const result =
@@ -111,7 +113,7 @@ const TickerSelectorBox = ({
         setFilteredFavorites(newSearchResult);
       }
     }
-  }, [tickerSelectorBoxVisible, searches, activeTab, marketCtx.listAvailableTickers()]);
+  }, [tickerSelectorBoxVisible, searches, activeTab, availableTickers]);
 
   const allTabClickHandler = () => {
     setActiveTab('All');

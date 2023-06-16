@@ -232,7 +232,7 @@ const CryptoCard = ({
       {/* -----Desktop (width > 500px) version (Card 200x120)----- */}
       <div
         // type="button"
-        className={`${desktopVersionBreakpoint} ${otherProps?.className} relative m-0 hidden h-120px w-200px rounded-2xl border-0.5px p-0 hover:cursor-pointer ${gradientColor} bg-black bg-gradient-to-b opacity-90 shadow-lg`}
+        className={`${desktopVersionBreakpoint} ${otherProps?.className} relative m-0 hidden h-120px w-200px rounded-2xl border-0.5px p-0 hover:cursor-pointer ${gradientColor} bg-transparent bg-gradient-to-b opacity-90 shadow-lg`}
         onClick={() => {
           marketCtx.selectTickerHandler(currency);
           cardClickHandler && cardClickHandler();

@@ -564,14 +564,6 @@ export function getChainNameByCurrency(
   }
 }
 
-export function truncateStringAfterEqual(inputString: string): string {
-  const equalIndex = inputString.indexOf('=');
-  if (equalIndex >= 0) {
-    return inputString.substring(0, equalIndex + 1);
-  }
-  return inputString;
-}
-
 export const numberFormatted = (n: number) => {
   const result =
     n === 0 ? '0' : Math.abs(n).toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS);
@@ -654,4 +646,28 @@ export const validateAllInput = ({
   }
 
   return isValid;
+};
+
+/**
+ *
+ * @param text to be truncated
+ * @param limitLength the maximum length for the string
+ * @returns truncated text at word boundary
+ */
+export const truncateText = (text: string, limitLength: number) => {
+  const words = text.split(' ');
+
+  let result = '';
+
+  for (let i = 0; i < words.length; i++) {
+    if ((result + words[i]).length > limitLength) break;
+
+    if (result.length != 0) result += ' ';
+
+    result += words[i];
+  }
+
+  if (text.length > limitLength) result += '...';
+
+  return result;
 };

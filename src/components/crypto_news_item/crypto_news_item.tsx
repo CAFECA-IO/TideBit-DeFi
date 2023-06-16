@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import React from 'react';
 import {IBriefNewsItem} from '../../interfaces/tidebit_defi_background/brief_news_item';
-import {timestampToString} from '../../lib/common';
+import {truncateText, timestampToString} from '../../lib/common';
 import Link from 'next/link';
 
 const CryptoNewsItem = ({
@@ -13,14 +13,6 @@ const CryptoNewsItem = ({
   ...otherProps
 }: IBriefNewsItem) => {
   const overallWidth = 'w-full pr-5 lg:p-0 lg:w-2/3 xl:w-3/4';
-
-  // const displayedHeading = highlight ? (
-  //   <div className="">
-  //     {heading} <span className="text-tidebitTheme">{highlight}</span>
-  //   </div>
-  // ) : (
-  //   <div className="">{heading}</div>
-  // );
 
   const displayedHeading = <div className="">{heading}</div>;
 
@@ -48,21 +40,13 @@ const CryptoNewsItem = ({
             </div>
             <div className="flex flex-col items-center text-center lg:grow lg:items-start lg:pl-7 lg:text-left">
               <div className="mt-3 mb-3 flex w-full items-center justify-between">
-                <h1 className="w-full justify-center text-lg text-lightWhite lg:w-300px">
+                <h1 className="w-full justify-center text-lg text-lightWhite lg:w-4/5">
                   {displayedHeading}
-                  {/* Add news title here */}
-                  {/* <br className="hidden lg:inline-block" />
-              readymade gluten */}
                 </h1>
                 <p className="mr-5 hidden text-sm text-lightGray lg:flex">{displayedTime.date}</p>
               </div>
 
-              <p className="text-xs lg:mr-5 lg:mb-12">
-                {displayedContent.substring(0, 200) + '...'}
-                {/* Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
-              invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et
-              accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea */}
-              </p>
+              <p className="text-xs lg:mr-5 lg:mb-12">{truncateText(displayedContent, 200)}</p>
               <p className="mt-3 mb-10 flex text-xs text-lightGray lg:hidden">
                 {displayedTime.date}
               </p>

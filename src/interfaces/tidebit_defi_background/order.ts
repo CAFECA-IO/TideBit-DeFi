@@ -9,7 +9,6 @@ import {IPnL} from './pnl';
 
 export interface IOrder {
   id: string;
-  state: IOrderState;
   orderType: IOrderType;
   orderStatus: IOrderStatusUnion;
   txhash: string;

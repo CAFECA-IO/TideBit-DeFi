@@ -135,9 +135,11 @@ const PositionOpenModal = ({
           ...openCfdRequest,
           openPrice: openCfdRequest.price,
           ...receipt.order,
+          state: OrderState.OPENING,
         };
         const closePrice = marketCtx.predictCFDClosePrice(cfd.targetAsset, cfd.typeOfPosition);
         const spread = marketCtx.getTickerSpread(cfd.targetAsset);
+
         const pnl = toPnl({
           openPrice: cfd.openPrice,
           closePrice,
@@ -145,6 +147,7 @@ const PositionOpenModal = ({
           amount: cfd.amount,
           spread,
         });
+
         const display = toDisplayCFDOrder(cfd);
 
         globalCtx.dataUpdateFormModalHandler({...display, pnl});

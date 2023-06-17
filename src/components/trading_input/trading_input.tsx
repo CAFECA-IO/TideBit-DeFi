@@ -60,7 +60,7 @@ const TradingInput = ({
     typeof setTimeout
   > | null>(null);
 
-  const regex = /^(0(\.0)?|[1-9]\d*(\.\d{0,2})?|0\.\d*[1-9]\d*)$/;
+  const regex = /^\d*\.?\d{0,2}$/;
 
   const passValueHandler = useCallback(
     (data: number) => {
@@ -86,7 +86,7 @@ const TradingInput = ({
       passValueHandler(lowerLimit);
       return;
     } else if (upperLimit && lowerLimit === upperLimit) {
-      // Do nothing
+      // Info: Do nothing (20230617 - Shirley)
       return;
     } else {
       setInputValue(value);
@@ -120,8 +120,6 @@ const TradingInput = ({
       passValueHandler(numberValue);
 
       debounceValidation(numberValue);
-    } else {
-      setInputValue(0);
     }
   };
 

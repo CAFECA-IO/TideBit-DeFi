@@ -98,6 +98,7 @@ class TradeBook {
   }
 
   private resetPrediction() {
+    this.togglePredicting(false);
     clearTimeout(this.predictionTimer);
   }
 
@@ -153,6 +154,7 @@ class TradeBook {
 
   private startPredictionLoop = () => {
     this.resetPrediction();
+    this.togglePredicting(true);
 
     // Info: setTimeout + 遞迴 (20230522 - Shirley)
     this.predictionTimer = setTimeout(() => {

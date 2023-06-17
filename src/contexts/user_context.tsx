@@ -31,13 +31,11 @@ import TransactionEngineInstance from '../lib/engines/transaction_engine';
 import {IApplyDepositOrder} from '../interfaces/tidebit_defi_background/apply_deposit_order';
 import {IApplyWithdrawOrder} from '../interfaces/tidebit_defi_background/apply_withdraw_order';
 import {APIName, Method, TypeRequest} from '../constants/api_request';
-// import SafeMath from '../lib/safe_math';
 import {Code, Reason} from '../constants/code';
 import {
   getCookieByName,
   getServiceTermContract,
   getTimestamp,
-  millesecondsToSeconds,
   randomHex,
   rlpEncodeServiceTerm,
   validateCFD,
@@ -50,25 +48,16 @@ import {
   IWithdrawOrder,
 } from '../interfaces/tidebit_defi_background/order';
 import {CustomError, isCustomError} from '../lib/custom_error';
-//import {setTimeout} from 'timers/promises';
 import {IWalletExtension, WalletExtension} from '../constants/wallet_extension';
 import {Events} from '../constants/events';
 import {IUser} from '../interfaces/tidebit_defi_background/user';
-import TickerBookInstance from '../lib/books/ticker_book';
-import {IUserBalance} from '../interfaces/tidebit_defi_background/user_balance';
-import {ProfitState, getProfitState} from '../constants/profit_state';
 import {IRankingTimeSpan} from '../constants/ranking_time_span';
-import {IUserAssets, getDummyUserAssets} from '../interfaces/tidebit_defi_background/user_assets';
-import {
-  IPersonalRanking,
-  getDummyPersonalRanking,
-} from '../interfaces/tidebit_defi_background/personal_ranking';
-import {
-  IPersonalAchievement,
-  getDummyPersonalAchievements,
-} from '../interfaces/tidebit_defi_background/personal_achievement';
+import {IUserAssets} from '../interfaces/tidebit_defi_background/user_assets';
+import {IPersonalRanking} from '../interfaces/tidebit_defi_background/personal_ranking';
+import {IPersonalAchievement} from '../interfaces/tidebit_defi_background/personal_achievement';
 import {IBadge} from '../interfaces/tidebit_defi_background/badge';
 import {IRanking} from '../interfaces/tidebit_defi_background/leaderboard';
+import {IPnL} from '../interfaces/tidebit_defi_background/pnl';
 
 export interface IUserProvider {
   children: React.ReactNode;
@@ -79,7 +68,6 @@ export interface IUserContext {
   user: IUser | null;
   userAssets: IUserAssets | null;
   walletBalances: IWalletBalance[] | null;
-  // balance: IUserBalance | null;
   balances: IBalance[] | null;
   favoriteTickers: string[];
   isConnected: boolean;
@@ -88,11 +76,6 @@ export interface IUserContext {
   isEnabledEmailNotification: boolean;
   isConnectedWithEmail: boolean;
   isConnectedWithTideBit: boolean;
-  /**
-   * openCFDs: {
-   *   [id: string (createId)]: IAcceptedCFDOrder[]
-   * }
-   */
   openCFDs: ICFDOrder[];
   closedCFDs: ICFDOrder[];
   deposits: IDepositOrder[];
@@ -129,7 +112,6 @@ export interface IUserContext {
   enableShare: (cfdId: string, share: boolean) => Promise<IResult>;
   shareTradeRecord: (cfdId: string) => Promise<IResult>;
   getBadge: (badgeId: string) => Promise<IResult>;
-  // getTotalBalance: () => Promise<IResult>;
   walletExtensions: IWalletExtension[];
 }
 
@@ -138,7 +120,6 @@ export const UserContext = createContext<IUserContext>({
   isLoadingCFDs: false,
   user: null,
   walletBalances: null,
-  // balance: null,
   userAssets: null,
   balances: null,
   favoriteTickers: [],
@@ -244,7 +225,6 @@ export const UserContext = createContext<IUserContext>({
 });
 
 export const UserProvider = ({children}: IUserProvider) => {
-  const tickerBook = React.useMemo(() => TickerBookInstance, []);
   const transactionEngine = React.useMemo(() => TransactionEngineInstance, []);
   const workerCtx = useContext(WorkerContext);
   const notificationCtx = useContext(NotificationContext);
@@ -304,9 +284,6 @@ export const UserProvider = ({children}: IUserProvider) => {
       await listBalances();
       await listFavoriteTickers();
       if (selectedTickerRef.current) await listCFDs(selectedTickerRef.current.currency);
-      /** Deprecated: call by page (20230608 - tzuhan)
-      await listHistories();
-       */
 
       workerCtx.subscribeUser(address);
     } else {
@@ -323,7 +300,6 @@ export const UserProvider = ({children}: IUserProvider) => {
     setEnableServiceTerm(false);
     setUser(null);
     setWalletBalances(null);
-    // setBalance(null);
     setUserAssets(null);
     setOpenedCFDs([]);
     setClosedCFDs([]);
@@ -384,16 +360,13 @@ export const UserProvider = ({children}: IUserProvider) => {
     }
   }, []);
 
-  const listFavoriteTickers = useCallback(async (address?: string) => {
+  const listFavoriteTickers = useCallback(async () => {
     let result: IResult = {...defaultResultFailed};
     if (enableServiceTermRef.current) {
       try {
         const tickers = (await privateRequestHandler({
           name: APIName.LIST_FAVORITE_TICKERS,
           method: Method.GET,
-          // query: {
-          //   address,
-          // },
         })) as string[];
         setFavoriteTickers(tickers);
         result = defaultResultSuccess;
@@ -466,11 +439,6 @@ export const UserProvider = ({children}: IUserProvider) => {
           query: {
             address,
           },
-          /* Deprecated: callback in requestHandler (Tzuhan - 20230420)
-          callback: (deposits: IAcceptedDepositOrder[]) => {
-            setDeposits(deposits);
-          },
-          */
         })) as IDepositOrder[];
         setDeposits(deposits);
         result = defaultResultSuccess;
@@ -514,86 +482,6 @@ export const UserProvider = ({children}: IUserProvider) => {
     return result;
   }, []);
 
-  /** Deprecated by pusher: Event.ASSETS (2023067 -tzuhan)
-  const sumBalance = () => {
-    let sumAvailable = 0,
-      sumLocked = 0;
-    const dayString = `${new Date().getFullYear()}-${
-      new Date().getMonth() + 1
-    }-${new Date().getDate()}`;
-    const dayBegin = millesecondsToSeconds(new Date(`${dayString} 00:00:00`).getTime());
-    const dayEnd = millesecondsToSeconds(new Date(`${dayString} 23:59:59`).getTime());
-    const monthBegin = millesecondsToSeconds(
-      new Date(`${new Date().getFullYear()}-${new Date().getMonth() + 1}-01 00:00:00`).getTime()
-    );
-    const monthEnd = millesecondsToSeconds(
-      new Date(
-        `${new Date().getFullYear()}-${new Date().getMonth() + 1}-${new Date().getDate()} 23:59:59`
-      ).getTime()
-    );
-    let dayPnLValue = 0,
-      monthPnLValue = 0,
-      PnLValue = 0;
-    if (balancesRef.current && userAssetsRef.current) {
-      for (const balance of balancesRef.current) {
-        const rate = tickerBook.getCurrencyRate(balance.currency);
-        sumAvailable += balance.available * rate;
-        sumLocked += balance.locked * rate;
-      }
-      for (const closedCFD of closedCFDsRef.current) {
-        if (closedCFD.closeTimestamp! >= dayBegin && closedCFD.closeTimestamp! <= dayEnd) {
-          dayPnLValue += closedCFD.pnl?.value || 0;
-        }
-        if (closedCFD.closeTimestamp! >= monthBegin && closedCFD.closeTimestamp! <= monthEnd) {
-          monthPnLValue += closedCFD.pnl?.value || 0;
-        }
-        PnLValue += closedCFD.pnl?.value || 0;
-      }
-      const updateUserAssets: IUserAssets = {
-        ...userAssetsRef.current,
-        balance: {
-          available: sumAvailable,
-          locked: sumLocked,
-        },
-        pnl: {
-          ...userAssetsRef.current.pnl,
-          today: {
-            amount: {
-              type: getProfitState(dayPnLValue),
-              value: dayPnLValue,
-            },
-            percentage: {
-              type: getProfitState(dayPnLValue),
-              value: dayPnLValue / (sumAvailable + sumLocked),
-            },
-          },
-          monthly: {
-            amount: {
-              type: getProfitState(monthPnLValue),
-              value: monthPnLValue,
-            },
-            percentage: {
-              type: getProfitState(monthPnLValue),
-              value: monthPnLValue / (sumAvailable + sumLocked),
-            },
-          },
-          cumulative: {
-            amount: {
-              type: getProfitState(PnLValue),
-              value: PnLValue,
-            },
-            percentage: {
-              type: getProfitState(PnLValue),
-              value: PnLValue / (sumAvailable + sumLocked),
-            },
-          },
-        },
-      };
-      setUserAssets(updateUserAssets);
-    }
-  };
-  */
-
   const getUserAssets = useCallback(async (): Promise<IResult> => {
     let result: IResult = {...defaultResultFailed};
     if (enableServiceTermRef.current) {
@@ -624,6 +512,8 @@ export const UserProvider = ({children}: IUserProvider) => {
     return result;
   }, []);
 
+  /**
+   * Deprecated: this function is unused (20230620 - tzuhan)
   const getUserPnL = useCallback(async (): Promise<IResult> => {
     let result: IResult = {...defaultResultFailed};
     if (enableServiceTermRef.current) {
@@ -651,7 +541,10 @@ export const UserProvider = ({children}: IUserProvider) => {
     }
     return result;
   }, []);
+  */
 
+  /**
+   * Deprecated: this function is unused (20230620 - tzuhan)
   const getUserInterest = useCallback(async (): Promise<IResult> => {
     let result: IResult = {...defaultResultFailed};
     if (enableServiceTermRef.current) {
@@ -679,6 +572,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     }
     return result;
   }, []);
+  */
 
   const getBadge = useCallback(async (badgeId: string): Promise<IResult> => {
     let result: IResult = {...defaultResultFailed};
@@ -689,9 +583,6 @@ export const UserProvider = ({children}: IUserProvider) => {
           method: Method.GET,
           params: badgeId,
         })) as IResult;
-        // Deprecate: after this functions finishing (20230508 - tzuhan)
-        // eslint-disable-next-line no-console
-        console.log(`getUserInterest result`, result);
         if (result.success) {
           const badge = result.data as IBadge;
           result.data = badge;
@@ -699,7 +590,7 @@ export const UserProvider = ({children}: IUserProvider) => {
       } catch (error) {
         // TODO: error handle (Tzuhan - 20230421)
         // eslint-disable-next-line no-console
-        console.error(`getUserInterest error`, error);
+        console.error(`getBadge error`, error);
         if (!isCustomError(error)) {
           result.code = Code.INTERNAL_SERVER_ERROR;
           result.reason = Reason[result.code];
@@ -722,9 +613,6 @@ export const UserProvider = ({children}: IUserProvider) => {
             convertBalanceDetailsToBalance(detail)
           );
           setBalances(balances);
-          /** Deprecated by pusher: Event.ASSETS (2023067 -tzuhan)
-          sumBalance();
-          */
         }
       } catch (error) {
         // TODO: error handle (Tzuhan - 20230421)
@@ -1060,9 +948,6 @@ export const UserProvider = ({children}: IUserProvider) => {
             const updateBalances = [...balancesRef.current];
             updateBalances[index] = updatedBalance;
             setBalances(updateBalances);
-            /** Deprecated by pusher: Event.ASSETS (2023067 -tzuhan)
-            sumBalance();
-            */
           } else throw new CustomError(Code.BALANCE_NOT_FOUND);
         } else throw new CustomError(Code.BALANCE_NOT_FOUND);
       } catch (error) {
@@ -1593,9 +1478,21 @@ export const UserProvider = ({children}: IUserProvider) => {
     return result;
   };
 
-  const updateUserAssetsHandler = useCallback((userAssets: IUserAssets) => {
-    setUserAssets({...userAssets});
-  }, []);
+  const updateUserAssetsHandler = useCallback(
+    (userAssetsBrief: {
+      available: number;
+      locked: number;
+      PnL?: {amount: IPnL; percentage: IPnL};
+    }) => {
+      if (!userAssetsRef.current) return;
+      const userAssets = {...userAssetsRef.current};
+      userAssets.balance.available = userAssetsBrief.available;
+      userAssets.balance.locked = userAssetsBrief.locked;
+      if (userAssetsBrief.PnL) userAssets.pnl.cumulative = userAssetsBrief.PnL;
+      setUserAssets({...userAssets});
+    },
+    []
+  );
 
   const updateBalanceHandler = useCallback((updateBalanceDetails: IBalanceDetails) => {
     const updateBalance = convertBalanceDetailsToBalance(updateBalanceDetails);
@@ -1610,9 +1507,6 @@ export const UserProvider = ({children}: IUserProvider) => {
         updatedBalances[index] = updatedBalance;
       } else updatedBalances.push(updateBalance);
       setBalances(updatedBalances);
-      /** Deprecated by pusher: Event.ASSETS (2023067 -tzuhan)
-      sumBalance();
-      */
     }
   }, []);
 
@@ -1626,49 +1520,25 @@ export const UserProvider = ({children}: IUserProvider) => {
       updatedCFDs = [...updatedCFDs, ...closedCFDsRef.current];
     }
     const index = updatedCFDs.findIndex(obj => obj.id === updateCFD.id);
-    // Deprecated: when this function is finished, remove this console (20230504 - tzuhan)
-    // eslint-disable-next-line no-console
-    // console.log(`updateCFDHandler is called updateCFD: index:[${index}]`, _updateCFD, updatedCFDs);
     if (index !== -1) {
       updatedCFDs[index] = _updateCFD;
     } else {
       updatedCFDs.push(_updateCFD);
     }
-    // Deprecated: when this function is finished, remove this console (20230504 - tzuhan)
-    // eslint-disable-next-line no-console
-    // console.log(`updateCFDHandler after update`, index !== -1 ? updatedCFDs[index] : updatedCFDs);
     const openCFDs = updatedCFDs.filter(obj => obj.state === OrderState.OPENING);
     const closedCFDs = updatedCFDs.filter(obj => obj.state === OrderState.CLOSED);
     setOpenedCFDs(openCFDs);
-    // Deprecated: when this function is finished, remove this console (20230504 - tzuhan)
-    // eslint-disable-next-line no-console
-    // console.log(`updateCFDHandler after update openCFDs`, openCFDsRef.current);
     setClosedCFDs(closedCFDs);
-    // Deprecated: when this function is finished, remove this console (20230504 - tzuhan)
-    // eslint-disable-next-line no-console
-    // console.log(`updateCFDHandler after update closedCFDs`, closedCFDsRef.current);
   }, []);
 
   const updateHistoryHandler = useCallback((history: IAcceptedOrder) => {
     const index = historiesRef.current.findIndex(obj => obj.id === history.id);
-    // Deprecated: when this function is finished, remove this console (20230504 - tzuhan)
-    // eslint-disable-next-line no-console
-    // console.log(
-    //   `updateHistoryHandler is called history: index[${index}]`,
-    //   history,
-    //   historiesRef.current
-    // );
+
     if (index === -1) {
       const updatedHistory: IAcceptedOrder[] = [...historiesRef.current];
       updatedHistory.push(history);
       setHistories(updatedHistory);
     }
-    // Deprecated: when this function is finished, remove this console (20230504 - tzuhan)
-    // eslint-disable-next-line no-console
-    // console.log(
-    //   `updateHistoryHandler after update historiesRef.current, index:[${index}]`,
-    //   historiesRef.current
-    // );
   }, []);
   React.useMemo(() => notificationCtx.emitter.on(Events.ASSETS, updateUserAssetsHandler), []);
   React.useMemo(() => notificationCtx.emitter.on(Events.BALANCE, updateBalanceHandler), []);

@@ -29,16 +29,6 @@ const CryptoNewsSection = () => {
       );
     });
 
-  // if (cryptoBriefNews instanceof Array) {
-  //   const displayedCryptoNews = cryptoBriefNews?.map((news, index) => {
-  //     return (
-  //       <CryptoNewsItem key={news.img} img={news.img} title={news.title} content={news.content} />
-  //     );
-  //   });
-  // }
-
-  // console.log('crypto news', cryptoBriefNews);
-
   return (
     <>
       <div className="flex-col justify-start">

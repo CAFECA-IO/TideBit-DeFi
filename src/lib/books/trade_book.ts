@@ -98,7 +98,6 @@ class TradeBook {
   }
 
   private resetPrediction() {
-    // this.togglePredicting(false);
     clearTimeout(this.predictionTimer);
   }
 

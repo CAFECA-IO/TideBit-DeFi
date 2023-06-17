@@ -547,8 +547,9 @@ export function findCurrencyByCode(code: string): ICurrency | undefined {
 export function getChainNameByCurrency(
   currency: ICurrency,
   tradingData: {
+    instId: string;
     currency: ICurrency;
-    chain: string;
+    name: string;
     star: boolean;
     starred: boolean;
     tokenImg: string;
@@ -557,8 +558,8 @@ export function getChainNameByCurrency(
 ) {
   const foundCurrency = tradingData.find(item => item.currency === currency);
 
-  if (foundCurrency && !!foundCurrency.chain) {
-    return foundCurrency.chain;
+  if (foundCurrency && !!foundCurrency.name) {
+    return foundCurrency.name;
   } else {
     throw new CustomError(Code.CANNOT_FIND_CHAIN_BY_CURRENCY);
   }

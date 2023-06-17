@@ -21,7 +21,7 @@ interface ITickerSelectorBox {
 
 interface ICryptoCardData {
   currency: ICurrency;
-  chain: string;
+  name: string;
   star: boolean;
   starred: boolean;
   price: number;
@@ -93,7 +93,7 @@ const TickerSelectorBox = ({
       if (activeTab === 'All') {
         const newSearchResult = cryptoCardsData.filter(each => {
           const result =
-            each.chain?.toLocaleLowerCase().includes(searches || '') ||
+            each.name?.toLocaleLowerCase().includes(searches || '') ||
             each.currency?.toLocaleLowerCase().includes(searches || '');
           return result;
         });
@@ -103,7 +103,7 @@ const TickerSelectorBox = ({
         const newSearchResult = cryptoCardsData?.filter(each => {
           const result =
             each.starred &&
-            (each.chain?.toLocaleLowerCase().includes(searches || '') ||
+            (each.name?.toLocaleLowerCase().includes(searches || '') ||
               each.currency?.toLocaleLowerCase().includes(searches || ''));
           return result;
         });
@@ -138,7 +138,7 @@ const TickerSelectorBox = ({
           star={true}
           starColor={cryptoCard.starColor}
           starred={cryptoCard.starred}
-          chain={cryptoCard.chain}
+          chain={cryptoCard.name}
           currency={cryptoCard.currency}
           price={cryptoCard.price}
           fluctuating={cryptoCard.fluctuating}
@@ -157,7 +157,7 @@ const TickerSelectorBox = ({
         star={true}
         starColor={cryptoCard.starColor}
         starred={cryptoCard.starred}
-        chain={cryptoCard.chain}
+        chain={cryptoCard.name}
         currency={cryptoCard.currency}
         price={cryptoCard.price}
         fluctuating={cryptoCard.fluctuating}
@@ -179,7 +179,7 @@ const TickerSelectorBox = ({
           star={true}
           starColor={cryptoCard.starColor}
           starred={cryptoCard.starred}
-          chain={cryptoCard.chain}
+          chain={cryptoCard.name}
           currency={cryptoCard.currency}
           price={cryptoCard.price}
           fluctuating={cryptoCard.fluctuating}
@@ -198,7 +198,7 @@ const TickerSelectorBox = ({
         star={true}
         starColor={cryptoCard.starColor}
         starred={cryptoCard.starred}
-        chain={cryptoCard.chain}
+        chain={cryptoCard.name}
         currency={cryptoCard.currency}
         price={cryptoCard.price}
         fluctuating={cryptoCard.fluctuating}

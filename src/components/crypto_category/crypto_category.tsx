@@ -32,7 +32,7 @@ const CryptoCategory = ({...otherProps}) => {
             <CryptoCard
               className="mt-4 ml-4"
               lineGraphProps={cryptoCard.lineGraphProps}
-              chain={cryptoCard.chain}
+              chain={cryptoCard.name}
               currency={cryptoCard.currency}
               price={cryptoCard.price}
               fluctuating={cryptoCard.fluctuating}
@@ -49,7 +49,7 @@ const CryptoCategory = ({...otherProps}) => {
         <Link href={`/trade/cfd/${cryptoCard.currency?.toLowerCase()}usdt`}>
           <CryptoCard
             lineGraphProps={cryptoCard.lineGraphProps}
-            chain={cryptoCard.chain}
+            chain={cryptoCard.name}
             currency={cryptoCard.currency}
             price={cryptoCard.price}
             fluctuating={cryptoCard.fluctuating}

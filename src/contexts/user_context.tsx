@@ -1072,6 +1072,8 @@ export const UserProvider = ({children}: IUserProvider) => {
       }
     }
   };
+
+  // Deprecated: fee depends on the PNL when closing the position `validateCFD` (20230617 - Shirley)
   /**
    *
    * @param applyCreateCFDOrder

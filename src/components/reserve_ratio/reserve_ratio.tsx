@@ -59,7 +59,7 @@ const ReserveRatio = () => {
             <span className="my-auto h-px w-1/11 rounded bg-white/50 xs:inline-block xs:w-1/10 lg:w-1/5 xl:mx-2"></span>
           </div>
         </div>
-        <div className="flex w-full justify-end pr-1/6 transition-all duration-150 lg:pr-1/11">
+        <div className="flex w-full justify-end pr-1/6 transition-all duration-150 lg:pr-1/8 2xl:pr-1/5">
           <Link
             // TODO: Report updated from context (20230619 - Shirley)
             href={t('HOME_PAGE.REPORTS_LINK')}

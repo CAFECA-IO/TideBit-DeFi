@@ -50,8 +50,8 @@ export default function HeroDescription() {
 
         {/* <MarketProvider> */}
         <ReserveRatio />
-        <div className="pb-40 lg:pb-60 2xl:pb-72"></div>
-        <div className="pt-52"></div>
+        <div className="pb-40 lg:pb-40"></div>
+        <div className="pt-0"></div>
 
         <CryptoCategory />
         {/* </MarketProvider> */}

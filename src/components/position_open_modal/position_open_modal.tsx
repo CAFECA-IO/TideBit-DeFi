@@ -130,13 +130,25 @@ const PositionOpenModal = ({
 
         globalCtx.eliminateAllModals();
 
-        const receipt = result.data as {order: IOrder};
-        const cfd: ICFDOrder = {
+        const receipt = result.data as {order: ICFDOrder};
+        const cfd = userCtx.getCFD(receipt.order.id) ?? {
           ...openCfdRequest,
-          openPrice: openCfdRequest.price,
+          // openPrice: openCfdRequest.price,
           ...receipt.order,
-          state: OrderState.OPENING,
+          // state: OrderState.OPENING,
         };
+
+        // console.log('cfd from getCFD', userCtx.getCFD(receipt.order.id), 'scrambled cfd', {
+        //   ...openCfdRequest,
+        //   ...receipt.order,
+        // });
+
+        // const cfd: ICFDOrder = {
+        //   ...openCfdRequest,
+        //   // openPrice: openCfdRequest.price,
+        //   ...receipt.order,
+        //   // state: OrderState.OPENING,
+        // };
         const closePrice = marketCtx.predictCFDClosePrice(cfd.targetAsset, cfd.typeOfPosition);
         const spread = marketCtx.getTickerSpread(cfd.targetAsset);
 

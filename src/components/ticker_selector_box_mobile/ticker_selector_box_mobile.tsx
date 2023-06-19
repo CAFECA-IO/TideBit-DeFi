@@ -82,6 +82,12 @@ const TickerSelectorBoxMobile = ({
 
   const [filteredCards, setFilteredCards] = useState<ICryptoCardData[]>([]);
 
+  const [availableTickers, setAvailableTickers] = useState(marketCtx.listAvailableTickers());
+
+  useEffect(() => {
+    setAvailableTickers(marketCtx.listAvailableTickers());
+  }, [marketCtx]);
+
   const onSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const searchString = event.target.value.toLocaleLowerCase();
     setSearches(searchString);
@@ -89,7 +95,7 @@ const TickerSelectorBoxMobile = ({
 
   useEffect(() => {
     if (tickerSelectorBoxVisible) {
-      const cryptoCardsData = convertTickersToCryptoCardsData(marketCtx.listAvailableTickers());
+      const cryptoCardsData = convertTickersToCryptoCardsData(availableTickers);
       if (activeTab === 'All') {
         const newSearchResult = cryptoCardsData.filter(each => {
           const result =
@@ -111,7 +117,7 @@ const TickerSelectorBoxMobile = ({
         setFilteredFavorites(newSearchResult);
       }
     }
-  }, [tickerSelectorBoxVisible, searches, activeTab, marketCtx.listAvailableTickers()]);
+  }, [tickerSelectorBoxVisible, searches, activeTab, availableTickers]);
 
   const allTabClickHandler = () => {
     setMenuOpen(false);

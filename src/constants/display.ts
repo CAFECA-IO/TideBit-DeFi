@@ -104,82 +104,82 @@ export const CRYPTO_CARD_COLORS = [
   {
     label: 'ETH',
     starColor: 'text-bluePurple',
-    gradientColor: 'border-bluePurple/50 bg-black from-bluePurple/50 to-black',
+    gradientColor: 'border-bluePurple/50 bg-transparent from-bluePurple/50 to-black/0',
   },
   {
     label: 'BTC',
     starColor: 'text-lightOrange',
-    gradientColor: 'border-lightOrange/50 bg-black from-lightOrange/50 to-black',
+    gradientColor: 'border-lightOrange/50 bg-transparent from-lightOrange/50 to-black/0',
   },
   {
     label: 'LTC',
     starColor: 'text-lightGray2',
-    gradientColor: 'border-lightGray2/50 bg-black from-lightGray2/50 to-black',
+    gradientColor: 'border-lightGray2/50 bg-transparent from-lightGray2/50 to-black/0',
   },
   {
     label: 'MATIC',
     starColor: 'text-lightPurple',
-    gradientColor: 'border-lightPurple/50 bg-black from-lightPurple/50 to-black',
+    gradientColor: 'border-lightPurple/50 bg-transparent from-lightPurple/50 to-black/0',
   },
   {
     label: 'BNB',
     starColor: 'text-lightYellow',
-    gradientColor: 'border-lightYellow/50 bg-black from-lightYellow/50 to-black',
+    gradientColor: 'border-lightYellow/50 bg-transparent from-lightYellow/50 to-black/0',
   },
   {
     label: 'SOL',
     starColor: 'text-lightPurple2',
-    gradientColor: 'border-lightPurple2/50 from-lightPurple2/50 to-black',
+    gradientColor: 'border-lightPurple2/50 from-lightPurple2/50 to-black/0',
   },
   {
     label: 'SHIB',
     starColor: 'text-lightRed1',
-    gradientColor: 'border-lightRed1/50 from-lightRed1/50 to-black',
+    gradientColor: 'border-lightRed1/50 from-lightRed1/50 to-black/0',
   },
   {
     label: 'DOT',
     starColor: 'text-lightPink',
-    gradientColor: 'border-lightPink/50 from-lightPink/50 to-black',
+    gradientColor: 'border-lightPink/50 from-lightPink/50 to-black/0',
   },
   {
     label: 'ADA',
     starColor: 'text-lightGreen1',
-    gradientColor: 'border-lightGreen1/50 from-lightGreen1/50 to-black',
+    gradientColor: 'border-lightGreen1/50 from-lightGreen1/50 to-black/0',
   },
   {
     label: 'AVAX',
     starColor: 'text-lightRed2',
-    gradientColor: 'border-lightRed2/50 from-lightRed2/50 to-black',
+    gradientColor: 'border-lightRed2/50 from-lightRed2/50 to-black/0',
   },
   {
     label: 'Dai',
     starColor: 'text-lightOrange1',
-    gradientColor: 'border-lightOrange1/50 from-lightOrange1/50 to-black',
+    gradientColor: 'border-lightOrange1/50 from-lightOrange1/50 to-black/0',
   },
   {
     label: 'MKR',
     starColor: 'text-lightGreen3',
-    gradientColor: 'border-lightGreen3/50 from-lightGreen3/50 to-black',
+    gradientColor: 'border-lightGreen3/50 from-lightGreen3/50 to-black/0',
   },
   {
     label: 'XRP',
     starColor: 'text-lightGray4',
-    gradientColor: 'border-lightGray4/50 from-lightGray4/50 to-black',
+    gradientColor: 'border-lightGray4/50 from-lightGray4/50 to-black/0',
   },
   {
     label: 'DOGE',
     starColor: 'text-lightYellow1',
-    gradientColor: 'border-lightYellow1/50 from-lightYellow1/50 to-black',
+    gradientColor: 'border-lightYellow1/50 from-lightYellow1/50 to-black/0',
   },
   {
     label: 'UNI',
     starColor: 'text-lightPink1',
-    gradientColor: 'border-lightPink1/50 from-lightPink1/50 to-black',
+    gradientColor: 'border-lightPink1/50 from-lightPink1/50 to-black/0',
   },
   {
     label: 'Flow',
     starColor: 'text-lightGreen4',
-    gradientColor: 'border-lightGreen4/50 from-lightGreen4/50 to-black',
+    gradientColor: 'border-lightGreen4/50 from-lightGreen4/50 to-black/0',
   },
 ];
 

@@ -70,7 +70,21 @@
     "APP_DOWLOAD_CONTAINER_TITLE": "Trade on",
     "APP_DOWLOAD_CONTAINER_TITLE_HIGHLIGHT": "TideBit",
     "APP_DOWLOAD_CONTAINER_TITLE_2": "anywhere, anytime",
-    "DOWNLOAD_REPORT": "Download Report"
+    "DOWNLOAD_REPORT": "Download Report",
+    "REPORTS_LINK": "/whitepaper/TideBit_Tech_Whitepaper_v2.0.4_EN.pdf",
+    "INCOME_STATEMENT_LINK": "/whitepaper/TideBit_Tech_Whitepaper_v2.0.4_EN.pdf",
+    "BALANCE_SHEET_LINK": "/whitepaper/TideBit_Tech_Whitepaper_v2.0.4_EN.pdf",
+    "CASH_FLOW_STATEMENT_LINK": "/whitepaper/TideBit_Tech_Whitepaper_v2.0.4_EN.pdf",
+    "RED_FLAG_ANALYSIS_LINK": "/whitepaper/TideBit_Tech_Whitepaper_v2.0.4_EN.pdf",
+    "SMART": "Smart",
+    "AUDITING": "Auditing",
+    "REPORTS": "Reports",
+    "LAST_UPDATED": "Last Updated",
+    "INCOME_STATEMENT": "Income Statement",
+    "BALANCE_SHEET": "Balance Sheet",
+    "CASH_FLOW_STATEMENT": "Cash Flow Statement",
+    "RED_FLAG_ANALYSIS": "Red Flag Analysis",
+    "POWERED_BY": "Powered by"
   },
   "TRADE_PAGE": {
     "WALLET_CONNECT_BUTTON": "Wallet Connect",

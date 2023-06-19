@@ -23,6 +23,7 @@ const ReserveRatio = () => {
     ? websiteReserve.tidebitReserve.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)
     : websiteReserve.tidebitReserve;
 
+  // TODO: ETH reserve ratio (20230619 - Shirley)
   const ethUserHolding = SafeMath.isNumber(websiteReserve.usersHolding)
     ? websiteReserve.usersHolding.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)
     : websiteReserve.usersHolding;
@@ -30,6 +31,7 @@ const ReserveRatio = () => {
     ? websiteReserve.tidebitReserve.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)
     : websiteReserve.tidebitReserve;
 
+  // TODO: BTC reserve ratio (20230619 - Shirley)
   const btcUserHolding = SafeMath.isNumber(websiteReserve.usersHolding)
     ? websiteReserve.usersHolding.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)
     : websiteReserve.usersHolding;
@@ -58,7 +60,12 @@ const ReserveRatio = () => {
           </div>
         </div>
         <div className="flex w-full justify-end pr-1/6 transition-all duration-150 lg:pr-1/11">
-          <Link href={`/`} className="flex space-x-2 hover:text-tidebitTheme">
+          <Link
+            href={t('HOME_PAGE.REPORTS_LINK')}
+            download
+            target="_blank"
+            className="flex space-x-2 hover:text-tidebitTheme"
+          >
             <p className="text-sm">{t('HOME_PAGE.DOWNLOAD_REPORT')}</p>
             <FiDownload size={20} />
           </Link>

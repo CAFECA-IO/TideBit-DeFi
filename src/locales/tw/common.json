@@ -70,7 +70,21 @@
     "APP_DOWLOAD_CONTAINER_TITLE": "隨時隨地在",
     "APP_DOWLOAD_CONTAINER_TITLE_HIGHLIGHT": "TideBit",
     "APP_DOWLOAD_CONTAINER_TITLE_2": "進行交易。",
-    "DOWNLOAD_REPORT": "下載報告"
+    "DOWNLOAD_REPORT": "下載報告",
+    "REPORTS_LINK": "/whitepaper/TideBit_Tech_Whitepaper_v2.0.4_ZH.pdf",
+    "INCOME_STATEMENT_LINK": "/whitepaper/TideBit_Tech_Whitepaper_v2.0.4_ZH.pdf",
+    "BALANCE_SHEET_LINK": "/whitepaper/TideBit_Tech_Whitepaper_v2.0.4_ZH.pdf",
+    "CASH_FLOW_STATEMENT_LINK": "/whitepaper/TideBit_Tech_Whitepaper_v2.0.4_ZH.pdf",
+    "RED_FLAG_ANALYSIS_LINK": "/whitepaper/TideBit_Tech_Whitepaper_v2.0.4_ZH.pdf",
+    "SMART": "智能",
+    "AUDITING": "審計",
+    "REPORTS": "報告",
+    "LAST_UPDATED": "最後更新",
+    "INCOME_STATEMENT": "損益表",
+    "BALANCE_SHEET": "資產負債表",
+    "CASH_FLOW_STATEMENT": "現金流量表",
+    "RED_FLAG_ANALYSIS": "風險分析",
+    "POWERED_BY": "技术支持"
   },
   "TRADE_PAGE": {
     "WALLET_CONNECT_BUTTON": "連接錢包",

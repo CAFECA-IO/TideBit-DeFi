@@ -91,8 +91,8 @@ const NavBar = () => {
                 </Link>
                 {/* Info: (20230327 - Julian) Desktop menu */}
                 <div className={`hidden pb-5 text-base text-lightGray1 lg:block`}>
-                  <div className="ml-10 mt-5 flex flex-1 items-center space-x-4 xl:ml-10">
-                    <Image src="/elements/testnet.svg" width={80} height={25} alt="testnet" />
+                  <div className="ml-10 mt-8 flex flex-1 items-center space-x-4 xl:ml-10">
+                    <Image src="/elements/testnet.svg" width={65} height={25} alt="testnet" />
                     <Link
                       href={TBDURL.TRADE}
                       className="hover:cursor-pointer hover:text-tidebitTheme"

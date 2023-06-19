@@ -10,6 +10,7 @@ import UserMobile from '../user_mobile/user_mobile';
 import {NotificationContext} from '../../contexts/notification_context';
 import {TBDURL} from '../../constants/api_request';
 import {WalletConnectButton} from '../wallet_connect_button/wallet_connect_button';
+import version from '../../lib/version';
 
 type TranslateFunction = (s: string) => string;
 
@@ -152,6 +153,16 @@ const NavBarMobile = () => {
                         width={150}
                         alt="TideBit_logo"
                       />
+                      <Image
+                        className="absolute right-58px bottom-1"
+                        src="/elements/beta.svg"
+                        width={35}
+                        height={13}
+                        alt="beta"
+                      />
+                      <p className="absolute bottom-1 right-0 text-end text-xxs text-lightGray">
+                        v {version}
+                      </p>
                     </div>
                   </div>
                 </Link>

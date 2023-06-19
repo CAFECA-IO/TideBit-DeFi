@@ -16,10 +16,24 @@ const ReserveRatio = () => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
   const {websiteReserve} = useContext(MarketContext);
 
-  const displayedTidebitUserHolding = SafeMath.isNumber(websiteReserve.usersHolding)
+  const usdtUserHolding = SafeMath.isNumber(websiteReserve.usersHolding)
     ? websiteReserve.usersHolding.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)
     : websiteReserve.usersHolding;
-  const displayedTidebitReserve = SafeMath.isNumber(websiteReserve.tidebitReserve)
+  const usdtReserve = SafeMath.isNumber(websiteReserve.tidebitReserve)
+    ? websiteReserve.tidebitReserve.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)
+    : websiteReserve.tidebitReserve;
+
+  const ethUserHolding = SafeMath.isNumber(websiteReserve.usersHolding)
+    ? websiteReserve.usersHolding.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)
+    : websiteReserve.usersHolding;
+  const ethReserve = SafeMath.isNumber(websiteReserve.tidebitReserve)
+    ? websiteReserve.tidebitReserve.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)
+    : websiteReserve.tidebitReserve;
+
+  const btcUserHolding = SafeMath.isNumber(websiteReserve.usersHolding)
+    ? websiteReserve.usersHolding.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)
+    : websiteReserve.usersHolding;
+  const btcReserve = SafeMath.isNumber(websiteReserve.tidebitReserve)
     ? websiteReserve.tidebitReserve.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)
     : websiteReserve.tidebitReserve;
 
@@ -43,13 +57,12 @@ const ReserveRatio = () => {
             <span className="my-auto h-px w-1/11 rounded bg-white/50 xs:inline-block xs:w-1/10 lg:w-1/5 xl:mx-2"></span>
           </div>
         </div>
-        <Link
-          className="flex w-full items-center justify-center space-x-2 transition-all duration-150 hover:text-tidebitTheme lg:justify-end lg:pr-24"
-          href={`/`}
-        >
-          <p className="text-sm">Download Report</p>
-          <FiDownload size={20} />
-        </Link>
+        <div className="flex w-full justify-end pr-1/6 transition-all duration-150 lg:pr-1/11">
+          <Link href={`/`} className="flex space-x-2 hover:text-tidebitTheme">
+            <p className="text-sm">{t('HOME_PAGE.DOWNLOAD_REPORT')}</p>
+            <FiDownload size={20} />
+          </Link>
+        </div>
 
         <div
           className="mt-28 hidden lg:flex"
@@ -66,8 +79,8 @@ const ReserveRatio = () => {
               percentage="150"
               icon="/asset_icon/usdt.svg"
               link="/"
-              userHoldings={displayedTidebitUserHolding}
-              walletAssets={displayedTidebitReserve}
+              userHoldings={usdtUserHolding}
+              walletAssets={usdtReserve}
             />
             <ReserveCard
               name="ETH"
@@ -75,8 +88,8 @@ const ReserveRatio = () => {
               percentage="150"
               icon="/asset_icon/eth.svg"
               link="/"
-              userHoldings={displayedTidebitUserHolding}
-              walletAssets={displayedTidebitReserve}
+              userHoldings={ethUserHolding}
+              walletAssets={ethReserve}
             />
             <ReserveCard
               name="BTC"
@@ -84,8 +97,8 @@ const ReserveRatio = () => {
               percentage="150"
               icon="/asset_icon/btc.svg"
               link="/"
-              userHoldings={displayedTidebitUserHolding}
-              walletAssets={displayedTidebitReserve}
+              userHoldings={btcUserHolding}
+              walletAssets={btcReserve}
             />
           </div>
         </div>
@@ -105,8 +118,8 @@ const ReserveRatio = () => {
               percentage="150"
               icon="/asset_icon/usdt.svg"
               link="/"
-              userHoldings={displayedTidebitUserHolding}
-              walletAssets={displayedTidebitReserve}
+              userHoldings={usdtUserHolding}
+              walletAssets={usdtReserve}
             />
           </div>
         </div>
@@ -125,8 +138,8 @@ const ReserveRatio = () => {
               percentage="150"
               icon="/asset_icon/eth.svg"
               link="/"
-              userHoldings={displayedTidebitUserHolding}
-              walletAssets={displayedTidebitReserve}
+              userHoldings={ethUserHolding}
+              walletAssets={ethReserve}
             />{' '}
           </div>
         </div>
@@ -145,8 +158,8 @@ const ReserveRatio = () => {
               percentage="150"
               icon="/asset_icon/btc.svg"
               link="/"
-              userHoldings={displayedTidebitUserHolding}
-              walletAssets={displayedTidebitReserve}
+              userHoldings={btcUserHolding}
+              walletAssets={btcReserve}
             />
           </div>
         </div>

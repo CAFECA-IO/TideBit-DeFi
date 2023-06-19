@@ -69,7 +69,8 @@
     "FREE_ONLINE_COURSES_DESCRIPTION": "TideBit 大学提供免费的线上课程，内容涵盖区块链原理、交易所使用和安全储存、加密货币与投资标的介绍等多个方面，帮助初学者深入了解金融相关知识。完成所有课程后，我们将会颁发一份结业证书给您，欢迎加入学习，开启加密货币之旅！",
     "APP_DOWLOAD_CONTAINER_TITLE": "随时随地在",
     "APP_DOWLOAD_CONTAINER_TITLE_HIGHLIGHT": "TideBit",
-    "APP_DOWLOAD_CONTAINER_TITLE_2": "进行交易。"
+    "APP_DOWLOAD_CONTAINER_TITLE_2": "进行交易。",
+    "DOWNLOAD_REPORT": "下载报告"
   },
   "TRADE_PAGE": {
     "WALLET_CONNECT_BUTTON": "连接钱包",

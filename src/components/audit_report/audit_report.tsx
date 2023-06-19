@@ -31,6 +31,7 @@ const AuditReport = () => {
           <div className="mx-0 grid grid-cols-2 items-center justify-center gap-x-5 gap-y-5 lg:mx-0 lg:flex lg:w-full lg:flex-row lg:items-center lg:justify-center lg:space-x-12 lg:space-y-0">
             <div className="flex h-100px w-100px items-center justify-center rounded-xl border-1px border-transparent bg-darkGray4 transition-all duration-150 hover:cursor-pointer hover:border-tidebitTheme xs:h-130px xs:w-130px lg:h-200px lg:w-200px">
               <Link
+                // TODO: Report updated from context (20230619 - Shirley)
                 href={t('HOME_PAGE.INCOME_STATEMENT_LINK')}
                 download
                 target="_blank"
@@ -49,6 +50,7 @@ const AuditReport = () => {
 
             <div className="flex h-100px w-100px items-center  justify-center rounded-xl border-1px border-transparent bg-darkGray4 transition-all duration-150 hover:cursor-pointer hover:border-tidebitTheme xs:h-130px xs:w-130px lg:h-200px lg:w-200px">
               <Link
+                // TODO: Report updated from context (20230619 - Shirley)
                 href={t('HOME_PAGE.BALANCE_SHEET_LINK')}
                 download
                 target="_blank"
@@ -67,6 +69,7 @@ const AuditReport = () => {
 
             <div className="flex h-100px w-100px items-center  justify-center rounded-xl border-1px border-transparent bg-darkGray4 transition-all duration-150 hover:cursor-pointer hover:border-tidebitTheme xs:h-130px xs:w-130px lg:h-200px lg:w-200px">
               <Link
+                // TODO: Report updated from context (20230619 - Shirley)
                 href={t('HOME_PAGE.CASH_FLOW_STATEMENT_LINK')}
                 download
                 target="_blank"
@@ -87,6 +90,7 @@ const AuditReport = () => {
 
             <div className="flex h-100px w-100px items-center  justify-center rounded-xl border-1px border-transparent bg-darkGray4 transition-all duration-150 hover:cursor-pointer hover:border-tidebitTheme xs:h-130px xs:w-130px lg:h-200px lg:w-200px">
               <Link
+                // TODO: Report updated from context (20230619 - Shirley)
                 href={t('HOME_PAGE.RED_FLAG_ANALYSIS_LINK')}
                 download
                 target="_blank"

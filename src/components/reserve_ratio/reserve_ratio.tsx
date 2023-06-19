@@ -61,6 +61,7 @@ const ReserveRatio = () => {
         </div>
         <div className="flex w-full justify-end pr-1/6 transition-all duration-150 lg:pr-1/11">
           <Link
+            // TODO: Report updated from context (20230619 - Shirley)
             href={t('HOME_PAGE.REPORTS_LINK')}
             download
             target="_blank"

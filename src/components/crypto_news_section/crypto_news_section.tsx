@@ -1,7 +1,6 @@
-import React, {useContext} from 'react';
+import React from 'react';
 import Link from 'next/link';
 import CryptoNewsItem from '../crypto_news_item/crypto_news_item';
-import {MarketContext} from '../../contexts/market_context';
 import {useTranslation} from 'next-i18next';
 import {IRecommendedNews} from '../../interfaces/tidebit_defi_background/news';
 
@@ -16,9 +15,7 @@ const CryptoNewsSection = (props: ICryptoNewsSectionProps) => {
 
   const overallWidth = 'w-full pr-5 lg:p-0 lg:w-2/3 xl:w-3/4';
   const dividerWidth = 'w-full lg:w-2/3 xl:w-3/4';
-  const marketCtx = useContext(MarketContext);
 
-  // const cryptoBriefNews = marketCtx.tickerStatic?.cryptoBriefNews ?? [];
   const cryptoBriefNews = props.briefs;
 
   const displayedCryptoNews =

@@ -5,7 +5,7 @@ import Image from 'next/image';
 import {GlobalContext} from '../../contexts/global_context';
 import {MarketContext} from '../../contexts/market_context';
 import {UserContext} from '../../contexts/user_context';
-import {timestampToString, toDisplayCFDOrder} from '../../lib/common';
+import {timestampToString, toDisplayCFDOrder, toPnl} from '../../lib/common';
 import {OrderType} from '../../constants/order_type';
 import {OrderState} from '../../constants/order_state';
 import {OrderStatusUnion} from '../../constants/order_status_union';
@@ -150,8 +150,21 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
             //     ? positionLineGraph[positionLineGraph.length - 1]
             //     : 0;
             const cfdData = toDisplayCFDOrder(updateCfd);
+            const spread = marketCtx.getTickerSpread(cfdData.targetAsset);
+            const closePrice = marketCtx.predictCFDClosePrice(
+              cfdData.targetAsset,
+              cfdData.typeOfPosition
+            );
 
-            globalCtx.dataUpdateFormModalHandler(cfdData);
+            const pnl = toPnl({
+              openPrice: cfdData.openPrice,
+              closePrice: cfdData?.closePrice ?? closePrice,
+              typeOfPosition: cfdData.typeOfPosition,
+              amount: cfdData.amount,
+              spread,
+            });
+
+            globalCtx.dataUpdateFormModalHandler({...cfdData, pnl});
             globalCtx.visibleUpdateFormModalHandler();
           }
       : orderType === OrderType.DEPOSIT

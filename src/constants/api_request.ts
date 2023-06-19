@@ -1,6 +1,7 @@
 import {toQuery} from '../lib/common';
 import {API_URL} from './config';
 
+const apiUrl = process.env.API_URL ?? API_URL;
 export type IAPIName =
   // general
   | 'LIST_NEWS'
@@ -217,43 +218,43 @@ export const APIURL = {
   GET_JOB: '/api/general/jobs',
   APPLY_JOB: '/api/general/jobs',
   // public
-  GET_TIDEBIT_PROMOTION: `${API_URL}/public/promotion`,
-  GET_WEBSITE_RESERVE: `${API_URL}/public/reserve`,
-  GET_RANKING: `${API_URL}/public/ranking`,
-  GET_PERSONAL_ACHIEVEMENT: `${API_URL}/public/achievement`,
-  GET_LEADERBOARD: `${API_URL}/public/leaderboard`,
+  GET_TIDEBIT_PROMOTION: `${apiUrl}/public/promotion`,
+  GET_WEBSITE_RESERVE: `${apiUrl}/public/reserve`,
+  GET_RANKING: `${apiUrl}/public/ranking`,
+  GET_PERSONAL_ACHIEVEMENT: `${apiUrl}/public/achievement`,
+  GET_LEADERBOARD: `${apiUrl}/public/leaderboard`,
   // market
-  LIST_CURRENCIES: `${API_URL}/currencies`,
-  LIST_TICKERS: `${API_URL}/market/tickers`,
+  LIST_CURRENCIES: `${apiUrl}/currencies`,
+  LIST_TICKERS: `${apiUrl}/market/tickers`,
   // LIST_DEPOSIT_CRYPTO_CURRENCIES: '/api/market/deposit-currencies',
   // LIST_WITHDRAW_CRYPTO_CURRENCIES: '/api/market/withdraw-currencies',
-  GET_CANDLESTICK_DATA: `${API_URL}/market/candlesticks`,
-  GET_CFD_QUOTATION: `${API_URL}/market/qutation`,
-  GET_CFD_SUGGESTION: `${API_URL}/market/suggestion`,
+  GET_CANDLESTICK_DATA: `${apiUrl}/market/candlesticks`,
+  GET_CFD_QUOTATION: `${apiUrl}/market/qutation`,
+  GET_CFD_SUGGESTION: `${apiUrl}/market/suggestion`,
   GET_TICKER_HISTORY: '/api/market/histories', // deprecated: '/api/market/tickerhistory' (20230323 - tzuhan)
-  GET_GUARANTEED_STOP_FEE_PERCENTAGE: `${API_URL}/market/guaranteed-stop-fee`,
-  GET_TICKER_STATIC: `${API_URL}/market/ticker-static`,
-  GET_TICKER_LIVE_STATISTICS: `${API_URL}/market/ticker-live-statistics`,
-  LIST_MARKET_TRADES: `${API_URL}/market/trades`,
+  GET_GUARANTEED_STOP_FEE_PERCENTAGE: `${apiUrl}/market/guaranteed-stop-fee`,
+  GET_TICKER_STATIC: `${apiUrl}/market/ticker-static`,
+  GET_TICKER_LIVE_STATISTICS: `${apiUrl}/market/ticker-live-statistics`,
+  LIST_MARKET_TRADES: `${apiUrl}/market/trades`,
   // trades
-  LIST_CFD_TRADES: `${API_URL}/trade/cfds`,
-  LIST_HISTORIES: `${API_URL}/trade/history`,
-  GET_CFD_TRADE: '/api/trades/cfds',
-  CREATE_CFD_TRADE: `${API_URL}/trade/cfds`,
-  UPDATE_CFD_TRADE: `${API_URL}/trade/cfds/update`,
-  CLOSE_CFD_TRADE: `${API_URL}/users/cfds/close`,
-  CREATE_DEPOSIT_TRADE: `${API_URL}/deposit`,
+  LIST_CFD_TRADES: `${apiUrl}/cfds`,
+  LIST_HISTORIES: `${apiUrl}/bolt-transactions/history`,
+  GET_CFD_TRADE: '/api/cfds',
+  CREATE_CFD_TRADE: `${apiUrl}/users/cfds/create`,
+  UPDATE_CFD_TRADE: `${apiUrl}/cfds/update`,
+  CLOSE_CFD_TRADE: `${apiUrl}/users/cfds/close`,
+  CREATE_DEPOSIT_TRADE: `${apiUrl}/users/deposit`,
   LIST_DEPOSIT_TRADES: '/api/trades/deposits',
   LIST_WITHDRAW_TRADES: '/api/trades/withdraws',
   CREATE_WITHDRAW_TRADE: '/api/trades/withdraws',
   // user
-  POST_DEWT: `${API_URL}/dewt`,
-  LIST_BALANCES: `${API_URL}/balances`,
-  GET_USER_ASSETS: `${API_URL}/users/assets`,
-  GET_USER_PNL: `${API_URL}/users/pnl`,
-  GET_USER_INTEREST: `${API_URL}/users/interest`,
-  GET_BADGE: `${API_URL}/badges`,
-  // GET_TOTAL_BALANCE: `${API_URL}/balances/sum`,
+  POST_DEWT: `${apiUrl}/dewt`,
+  LIST_BALANCES: `${apiUrl}/balances`,
+  GET_USER_ASSETS: `${apiUrl}/users/assets`,
+  GET_USER_PNL: `${apiUrl}/users/pnl`,
+  GET_USER_INTEREST: `${apiUrl}/users/interest`,
+  GET_BADGE: `${apiUrl}/badges`,
+  // GET_TOTAL_BALANCE: `${apiUrl}/balances/sum`,
   LIST_FAVORITE_TICKERS: '/api/user/tickers',
   ADD_FAVORITE_TICKERS: '/api/user/tickers',
   REMOVE_FAVORITE_TICKERS: '/api/user/tickers',
@@ -266,8 +267,8 @@ export const APIURL = {
   SUBSCRIBE_NEWS_LETTERS: '/api/user/subscrible',
   LIST_READ_NOTIFICATIONS: '/api/user/notifications',
   READ_NOTIFICATIONS: '/api/user/notifications',
-  ENABLE_CFD_SHARE: `${API_URL}/trade/cfds/share`,
-  SHARE_CFD: `${API_URL}/public/shared/cfd`,
+  ENABLE_CFD_SHARE: `${apiUrl}/cfds/share`,
+  SHARE_CFD: `${apiUrl}/public/shared/cfd`,
 };
 
 export const TBEURL = {

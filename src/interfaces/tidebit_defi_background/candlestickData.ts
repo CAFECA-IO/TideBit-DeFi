@@ -153,3 +153,57 @@ export const updateDummyCandlestickChartData = (
 
   return newData;
 };
+
+export const generateDummyTrade = (): {
+  tradeId: string;
+  targetAsset: string;
+  unitAsset: string;
+  direct: string;
+  price: number;
+  timestampMs: number;
+  quantity: number;
+} => {
+  const direction = ['SELL', 'BUY'];
+  const now = Date.now();
+  const trade = {
+    'tradeId': now.toString(),
+    'targetAsset': 'ETH',
+    'unitAsset': 'USDT',
+    'direct': direction[Math.floor(Math.random() * direction.length)],
+    'price': Number((Math.random() * 1000 + 1000).toFixed(2)),
+    'timestampMs': Date.now(),
+    'quantity': Number(Math.random().toFixed(5)),
+  };
+  return trade;
+};
+
+export const generateDummyTrades = (
+  numTrades: number
+): {
+  tradeId: string;
+  targetAsset: string;
+  unitAsset: string;
+  direct: string;
+  price: number;
+  timestampMs: number;
+  quantity: number;
+}[] => {
+  const dummyTrades = [];
+  const direction = ['SELL', 'BUY'];
+  const now = Date.now() - numTrades * 1000 - 5 * 1000; // Info: generate trades with timestamp 5 seconds before now plus the number of trades by seconds (20230407 - Shirley)
+  for (let i = 0; i < numTrades; i++) {
+    const trade = {
+      'tradeId': (now + i).toString(),
+      'targetAsset': 'ETH',
+      'unitAsset': 'USDT',
+      'direct': direction[Math.floor(Math.random() * direction.length)],
+      'price': Number((Math.random() * 1000 + 1000).toFixed(2)),
+      'timestampMs': now + i * 1000,
+      'quantity': Number(Math.random().toFixed(5)),
+    };
+    dummyTrades.push(trade);
+  }
+  return dummyTrades;
+};
+
+export const dummyRandomTrades = generateDummyTrades(50);

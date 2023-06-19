@@ -9,6 +9,7 @@ const nextConfig = {
     PUSHER_APP_KEY: process.env.PUSHER_APP_KEY,
     PUSHER_HOST: process.env.PUSHER_HOST,
     PUSHER_PORT: process.env.PUSHER_PORT,
+    API_URL: process.env.API_URL,
   },
   async headers() {
     return [

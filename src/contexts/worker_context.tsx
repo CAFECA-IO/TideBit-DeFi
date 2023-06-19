@@ -120,6 +120,9 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
       channel.bind(Events.BOLT_TRANSACTION, (data: IPusherPrivateData) => {
         notificationCtx.emitter.emit(Events.BOLT_TRANSACTION, data);
       });
+      channel.bind(Events.ASSETS, (data: IPusherPrivateData) => {
+        notificationCtx.emitter.emit(Events.ASSETS, data);
+      });
     }
   };
 

@@ -18,6 +18,8 @@ export async function getPost(src: string, slug: string): Promise<IPost | null> 
       content,
     } = matter(source);
 
+    marked.setOptions({headerIds: false, mangle: false});
+
     const body = marked(content);
     return {date, title, description, body};
   } catch (error) {

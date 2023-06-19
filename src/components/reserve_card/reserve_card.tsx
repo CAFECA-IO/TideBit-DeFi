@@ -26,10 +26,10 @@ const ReserveCard = ({
 
   const {i18n} = useTranslation('common');
 
-  const isTw = i18n.language === 'tw';
+  const isMandarin = i18n.language === 'tw' || i18n.language === 'cn';
 
-  const cardForTwMobile = isTw ? 'w-95px ml-40' : 'w-120px ml-36';
-  const cardForTwDesktop = isTw ? 'w-95px ml-52' : 'w-120px ml-48';
+  const cardForTwMobile = isMandarin ? 'w-95px ml-40' : 'w-120px ml-36';
+  const cardForTwDesktop = isMandarin ? 'w-95px ml-52' : 'w-120px ml-48';
 
   return (
     <>
@@ -101,14 +101,15 @@ const ReserveCard = ({
                 <span className="pr-2 text-6xl font-bold leading-relaxed">{percentage}</span> %
               </p>
 
-              <div
-                className={`${cardForTwMobile} flex flex-row items-center rounded-full bg-lightGray3 px-3 py-1 text-sm text-lightWhite`}
+              <Link
+                // TODO: link on Etherscan and other blockchain explorers (20230619 - Shirley)
+                href={link}
+                target="_blank"
+                className={`space-x-2 font-bold text-lightWhite transition-colors duration-300 hover:bg-lightGray1 hover:text-black ${cardForTwMobile} flex flex-row items-center rounded-full bg-lightGray3 px-3 py-1 text-sm text-lightWhite`}
               >
                 <p> {t('HOME_PAGE.RESERVE_RATIO_BLOCK_CARD_2')}</p>
-                <Link className="pl-2" href={link} target="_blank">
-                  <BiLinkAlt size={20} />
-                </Link>
-              </div>
+                <BiLinkAlt size={20} />
+              </Link>
               <span className="my-auto inline-block h-px w-full rounded bg-lightGray1/30"></span>
 
               <div className="mb-5 flex flex-col space-y-2">

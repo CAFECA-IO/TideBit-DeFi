@@ -116,7 +116,8 @@ const AuditReport = () => {
             target="_blank"
             className={`flex w-100px items-center justify-center space-x-2 whitespace-nowrap rounded-full bg-lightGray3 px-3 py-1 text-sm font-bold text-lightWhite transition-colors duration-300 hover:bg-lightGray1 hover:text-black`}
           >
-            BAIFA
+            <p className="">BAIFA</p>
+
             <BiLinkAlt size={20} />
           </a>
         </div>

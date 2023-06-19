@@ -2,6 +2,7 @@ import React from 'react';
 import Image from 'next/image';
 import {BiLinkAlt} from 'react-icons/bi';
 import {useTranslation} from 'react-i18next';
+import Link from 'next/link';
 
 type TranslateFunction = (s: string) => string;
 interface ICryptoSummary {
@@ -110,39 +111,24 @@ const CryptoSummary = ({
 
                 {/* Links */}
                 <div className="mt-5 flex space-x-2">
-                  <div
-                    className={`flex flex-row items-center justify-center whitespace-nowrap rounded-full bg-lightGray3 px-3 py-1 text-sm text-lightWhite`}
+                  <Link
+                    href={whitePaperLink}
+                    target="_blank"
+                    className={`flex flex-row items-center space-x-2 rounded-full bg-lightGray3 px-3 py-1 text-sm font-bold  text-lightWhite transition-colors duration-300 hover:bg-lightGray1 hover:text-black`}
                   >
                     <p>{t('TRADE_PAGE.CRYPTO_SUMMARY_WHITEPAPER')}</p>
-                    <a href={whitePaperLink} className="pl-2">
-                      <BiLinkAlt size={20} />
-                    </a>
-                  </div>
+                    <BiLinkAlt size={20} />
+                  </Link>
 
-                  <div
-                    className={`flex flex-row items-center justify-center whitespace-nowrap rounded-full bg-lightGray3 px-3 py-1 text-sm text-lightWhite`}
+                  <Link
+                    href={websiteLink}
+                    target="_blank"
+                    className={`flex flex-row items-center space-x-2 rounded-full bg-lightGray3 px-3 py-1 text-sm font-bold  text-lightWhite transition-colors duration-300 hover:bg-lightGray1 hover:text-black`}
                   >
                     <p>{t('TRADE_PAGE.CRYPTO_SUMMARY_WEBSITE')}</p>
-                    <a href={websiteLink} className="pl-2">
-                      <BiLinkAlt size={20} />
-                    </a>
-                  </div>
+                    <BiLinkAlt size={20} />
+                  </Link>
                 </div>
-
-                {/* <a className="mt-4 inline-flex items-center text-blue-400">
-                  Learn More
-                  <svg
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    className="ml-2 h-4 w-4"
-                    viewBox="0 0 24 24"
-                  >
-                    <path d="M5 12h14M12 5l7 7-7 7"></path>
-                  </svg>
-                </a> */}
               </div>
 
               {/* Right side */}

@@ -99,7 +99,7 @@ export const TRADING_CRYPTO_DATA = [
   {
     instId: `${Currency.ETH}-${unitAsset}`,
     currency: Currency.ETH,
-    chain: 'Ethereum',
+    name: 'Ethereum',
     star: true,
     starred: false,
     // price: 1288.4,
@@ -110,7 +110,7 @@ export const TRADING_CRYPTO_DATA = [
   {
     instId: `${Currency.BTC}-${unitAsset}`,
     currency: Currency.BTC,
-    chain: 'Bitcoin',
+    name: 'Bitcoin',
     star: true,
     starred: false,
     // price: 1288.4,
@@ -121,7 +121,7 @@ export const TRADING_CRYPTO_DATA = [
   {
     instId: `${Currency.LTC}-${unitAsset}`,
     currency: Currency.LTC,
-    chain: 'Litecoin',
+    name: 'Litecoin',
     star: true,
     starred: false,
     // price: 1288.4,
@@ -132,7 +132,7 @@ export const TRADING_CRYPTO_DATA = [
   {
     instId: `${Currency.MATIC}-${unitAsset}`,
     currency: Currency.MATIC,
-    chain: 'Polygon',
+    name: 'Polygon',
     star: true,
     starred: false,
     // price: 1288.4,
@@ -143,7 +143,7 @@ export const TRADING_CRYPTO_DATA = [
   {
     instId: `${Currency.BNB}-${unitAsset}`,
     currency: Currency.BNB,
-    chain: 'BNB',
+    name: 'BNB',
     star: true,
     starred: false,
     // price: 1288.4,
@@ -154,7 +154,7 @@ export const TRADING_CRYPTO_DATA = [
   {
     instId: `${Currency.SOL}-${unitAsset}`,
     currency: Currency.SOL,
-    chain: 'Solana',
+    name: 'Solana',
     star: true,
     starred: false,
     // price: 1288.4,
@@ -165,7 +165,7 @@ export const TRADING_CRYPTO_DATA = [
   {
     instId: `${Currency.SHIB}-${unitAsset}`,
     currency: Currency.SHIB,
-    chain: 'Shiba Inu',
+    name: 'Shiba Inu',
     star: true,
     starred: false,
     // price: 1288.4,
@@ -176,7 +176,7 @@ export const TRADING_CRYPTO_DATA = [
   {
     instId: `${Currency.DOT}-${unitAsset}`,
     currency: Currency.DOT,
-    chain: 'Polkadot',
+    name: 'Polkadot',
     star: true,
     starred: false,
     // price: 1288.4,
@@ -187,7 +187,7 @@ export const TRADING_CRYPTO_DATA = [
   {
     instId: `${Currency.ADA}-${unitAsset}`,
     currency: Currency.ADA,
-    chain: 'Cardano',
+    name: 'Cardano',
     star: true,
     starred: false,
     // price: 1288.4,
@@ -198,7 +198,7 @@ export const TRADING_CRYPTO_DATA = [
   {
     instId: `${Currency.AVAX}-${unitAsset}`,
     currency: Currency.AVAX,
-    chain: 'Avalanche',
+    name: 'Avalanche',
     star: true,
     starred: false,
     // price: 1288.4,
@@ -209,7 +209,7 @@ export const TRADING_CRYPTO_DATA = [
   {
     instId: `${Currency.DAI}-${unitAsset}`,
     currency: Currency.DAI,
-    chain: 'Dai',
+    name: 'Dai',
     star: true,
     starred: false,
     // price: 1288.4,
@@ -220,7 +220,7 @@ export const TRADING_CRYPTO_DATA = [
   {
     instId: `${Currency.MKR}-${unitAsset}`,
     currency: Currency.MKR,
-    chain: 'Maker',
+    name: 'Maker',
     star: true,
     starred: false,
     // price: 1288.4,
@@ -231,7 +231,7 @@ export const TRADING_CRYPTO_DATA = [
   {
     instId: `${Currency.XRP}-${unitAsset}`,
     currency: Currency.XRP,
-    chain: 'XRP',
+    name: 'XRP',
     star: true,
     starred: false,
     // price: 1288.4,
@@ -242,7 +242,7 @@ export const TRADING_CRYPTO_DATA = [
   {
     instId: `${Currency.DOGE}-${unitAsset}`,
     currency: Currency.DOGE,
-    chain: 'Dogecoin',
+    name: 'Dogecoin',
     star: true,
     starred: false,
     // price: 1288.4,
@@ -253,7 +253,7 @@ export const TRADING_CRYPTO_DATA = [
   {
     instId: `${Currency.UNI}-${unitAsset}`,
     currency: Currency.UNI,
-    chain: 'Uniswap',
+    name: 'Uniswap',
     star: true,
     starred: false,
     // price: 1288.4,
@@ -264,7 +264,7 @@ export const TRADING_CRYPTO_DATA = [
   {
     instId: `${Currency.FLOW}-${unitAsset}`,
     currency: Currency.FLOW,
-    chain: 'Flow',
+    name: 'Flow',
     star: true,
     starred: false,
     // price: 1288.4,

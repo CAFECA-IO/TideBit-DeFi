@@ -8,8 +8,13 @@ import TradeStatistics from '../trade_statistics/trade_statistics';
 import {MarketContext} from '../../contexts/market_context';
 import CryptoSummary from '../crypto_summary/crypto_summary';
 import CryptoNewsSection from '../crypto_news_section/crypto_news_section';
+import {IRecommendedNews} from '../../interfaces/tidebit_defi_background/news';
 
-const MarketSection = () => {
+interface IMarketSectionProps {
+  briefs: IRecommendedNews[];
+}
+
+const MarketSection = (props: IMarketSectionProps) => {
   const marketCtx = useContext(MarketContext);
   const {layoutAssertion} = useGlobal();
 
@@ -81,7 +86,7 @@ const MarketSection = () => {
       </div>
 
       <div className="mb-10 mt-5 lg:mt-8 lg:pl-5">
-        <CryptoNewsSection />
+        <CryptoNewsSection briefs={props.briefs} />
       </div>
     </div>
   );

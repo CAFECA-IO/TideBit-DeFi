@@ -249,7 +249,7 @@ const TickerSelectorBox = ({
 
   const isDisplayedTickerSelectorBox = tickerSelectorBoxVisible ? (
     <>
-      <div className="fixed inset-0 z-50 hidden items-center justify-center overflow-x-auto overflow-y-auto outline-none backdrop-blur-sm focus:outline-none lg:flex">
+      <div className="fixed inset-0 z-80 hidden items-center justify-center overflow-x-auto overflow-y-auto outline-none backdrop-blur-sm focus:outline-none lg:flex">
         {/* The position of the box */}
         <div
           className="relative my-6 mx-auto min-w-fit"

@@ -1,4 +1,5 @@
 import React, {useState, useEffect, useRef, forwardRef} from 'react';
+import useStateRef from 'react-usestateref';
 
 // interface UseOuterClickProps { // initialVisibleState: boolean; // componentVisible: boolean; //
 // setComponentVisible?: React.Dispatch<React.SetStateAction<boolean>>; // }
@@ -6,7 +7,8 @@ import React, {useState, useEffect, useRef, forwardRef} from 'react';
 // ClassAttributes<HTMLDivElement>.ref?: LegacyRef<HTMLDivElement>
 
 function useOuterClick<T extends HTMLElement>(initialVisibleState: boolean) {
-  const [componentVisible, setComponentVisible] = useState<boolean>(initialVisibleState);
+  const [componentVisible, setComponentVisible, componentVisibleRef] =
+    useStateRef<boolean>(initialVisibleState);
 
   // const ref = useRef<HTMLDivElement>(null); // forwardRef(otherProps?.refP) ?? // const ref =
 
@@ -44,7 +46,7 @@ function useOuterClick<T extends HTMLElement>(initialVisibleState: boolean) {
     };
   }, []);
 
-  return {targetRef: targetRef, componentVisible, setComponentVisible};
+  return {targetRef: targetRef, componentVisible: componentVisibleRef.current, setComponentVisible};
 }
 
 export default useOuterClick;

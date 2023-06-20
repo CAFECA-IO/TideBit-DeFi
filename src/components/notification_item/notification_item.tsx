@@ -51,7 +51,7 @@ export default function NotificationItem(notificationItem: INotificationItem) {
 
   return (
     <div
-      className={`relative cursor-pointer ${itemStyle} transition-all duration-500 ease-in-out`}
+      className={`relative cursor-pointer ${itemStyle} w-full transition-all duration-100 ease-in-out lg:duration-500`}
       onClick={itemClickHandler}
     >
       <div className="flex">
@@ -71,11 +71,11 @@ export default function NotificationItem(notificationItem: INotificationItem) {
             />
 
             <div className="relative mb-3 ml-3 basis-full text-start sm:mb-7">
-              <div className="flex pr-2">
+              <div className="mx-auto flex justify-between">
                 <div className="mr-5px text-xl text-lightWhite sm:whitespace-nowrap sm:text-2xl">
                   {t(title)}
                 </div>
-                <div className="ml-auto whitespace-nowrap text-end text-xs text-lightGray">
+                <div className="whitespace-nowrap pr-0 text-end text-xs text-lightGray">
                   <div>{displayTime.date}</div>
                   <div>{displayTime.time}</div>
                 </div>
@@ -90,7 +90,7 @@ export default function NotificationItem(notificationItem: INotificationItem) {
         </div>
       </div>
 
-      <span className="absolute ml-2 inline-block h-1px w-438px shrink-0 bg-lightGray"></span>
+      <div className="ml-2 border-b border-lightGray"></div>
     </div>
   );
 }

@@ -267,7 +267,7 @@ const TickerSelectorBoxMobile = ({
 
   const isDisplayedTickerSelectorBox = tickerSelectorBoxVisible ? (
     <>
-      <div className="fixed inset-0 z-50 flex items-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">
+      <div className="fixed inset-0 z-80 flex items-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">
         {/* Info: (20230427 - Julian) The position of the box */}
         <div
           className="relative mx-auto my-10px min-w-fit"

@@ -72,6 +72,7 @@ const ReserveRatio = () => {
           </Link>
         </div>
 
+        {/* Info: desktop (20230620 - Shirley) */}
         <div
           className="mt-28 hidden lg:flex"
           style={{
@@ -111,14 +112,8 @@ const ReserveRatio = () => {
           </div>
         </div>
 
-        <div
-          className="mt-10 flex lg:hidden"
-          style={{
-            backgroundImage: `url(/elements/group_15244.svg)`,
-            backgroundSize: '100% 100%',
-            backgroundRepeat: 'no-repeat',
-          }}
-        >
+        {/* Info: mobile (20230620 - Shirley) */}
+        <div className="mt-10 flex lg:hidden">
           <div className={mobileCardLayout}>
             <ReserveCard
               name="USDT"
@@ -129,17 +124,7 @@ const ReserveRatio = () => {
               userHoldings={usdtUserHolding}
               walletAssets={usdtReserve}
             />
-          </div>
-        </div>
-        <div
-          className="flex lg:hidden"
-          style={{
-            backgroundImage: `url(/elements/group_15244.svg)`,
-            backgroundSize: '100% 100%',
-            backgroundRepeat: 'no-repeat',
-          }}
-        >
-          <div className={mobileCardLayout}>
+
             <ReserveCard
               name="ETH"
               color="text-bluePurple"
@@ -148,18 +133,8 @@ const ReserveRatio = () => {
               link="/"
               userHoldings={ethUserHolding}
               walletAssets={ethReserve}
-            />{' '}
-          </div>
-        </div>
-        <div
-          className="flex lg:hidden"
-          style={{
-            backgroundImage: `url(/elements/group_15244.svg)`,
-            backgroundSize: '100% 100%',
-            backgroundRepeat: 'no-repeat',
-          }}
-        >
-          <div className={mobileCardLayout}>
+            />
+
             <ReserveCard
               name="BTC"
               color="text-lightOrange"

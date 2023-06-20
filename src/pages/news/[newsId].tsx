@@ -1,6 +1,5 @@
-import {GetServerSideProps, GetStaticPaths, GetStaticProps} from 'next';
+import {GetStaticPaths, GetStaticProps} from 'next';
 import {serverSideTranslations} from 'next-i18next/serverSideTranslations';
-import NewsPageBody from '../../components/news_page_body/news_page_body';
 import NewsArticle from '../../components/news_article/news_article';
 import {useGlobal} from '../../contexts/global_context';
 import NavBarMobile from '../../components/nav_bar_mobile/nav_bar_mobile';
@@ -9,26 +8,16 @@ import Head from 'next/head';
 import {useContext, useEffect} from 'react';
 import {AppContext} from '../../contexts/app_context';
 import Footer from '../../components/footer/footer';
-import {
-  IRecommendedNews,
-  getDummyNews,
-  getDummyRecommendationNews,
-  getNewsById,
-  tempNews,
-  tempNewsArray,
-  tempRecommendedNewsArray,
-  getBriefNewsById,
-} from '../../interfaces/tidebit_defi_background/news';
-import {Currency} from '../../constants/currency';
+import {IRecommendedNews} from '../../interfaces/tidebit_defi_background/news';
 import {MarketContext} from '../../contexts/market_context';
-import {DOMAIN, ETH_NEWS_FOLDER} from '../../constants/config';
+import {BTC_NEWS_FOLDER, DOMAIN, ETH_NEWS_FOLDER} from '../../constants/config';
 import {NEWS_IMG_HEIGHT, NEWS_IMG_WIDTH} from '../../constants/display';
-import {IPost, getFilteredPosts, getPost, getPosts, getSlugs} from '../../lib/posts';
+import {IPost, getFilteredPosts, getPost, getSlugs} from '../../lib/posts';
 
 interface IPageProps {
   newsId: string;
   newsData: IPost;
-  brief: IRecommendedNews[];
+  brief?: IRecommendedNews[];
 }
 
 const NewsPage = (props: IPageProps) => {
@@ -116,7 +105,18 @@ const NewsPage = (props: IPageProps) => {
 export default NewsPage;
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const slugs = await getSlugs(ETH_NEWS_FOLDER);
+  const ethSlugs = await getSlugs(ETH_NEWS_FOLDER);
+  const btcSlugs = await getSlugs(BTC_NEWS_FOLDER);
+
+  const slugs =
+    ethSlugs && btcSlugs
+      ? [...ethSlugs, ...btcSlugs]
+      : ethSlugs && !btcSlugs
+      ? ethSlugs
+      : btcSlugs
+      ? btcSlugs
+      : [];
+
   const paths = slugs.map(slug => ({params: {newsId: slug}}));
   return {paths, fallback: false};
 };
@@ -128,8 +128,10 @@ export const getStaticProps: GetStaticProps<IPageProps> = async ({params, locale
     };
   }
 
-  const newsData = await getPost(ETH_NEWS_FOLDER, params.newsId);
-  const allPost = await getFilteredPosts(ETH_NEWS_FOLDER, [params.newsId]);
+  const dir = params.newsId.includes('eth') ? ETH_NEWS_FOLDER : BTC_NEWS_FOLDER;
+
+  const newsData = await getPost(dir, params.newsId);
+  const allPost = await getFilteredPosts(dir, [params.newsId]);
 
   const recommendations = allPost.map(news => {
     return {

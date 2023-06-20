@@ -14,6 +14,8 @@ import {
   getTimestampInMilliseconds,
   findCodeByReason,
   validateCFD,
+  toDisplayCFDOrder,
+  toPnl,
 } from '../../lib/common';
 import {useContext, useEffect, useState} from 'react';
 import {MarketContext} from '../../contexts/market_context';
@@ -42,6 +44,8 @@ import {Code, Reason} from '../../constants/code';
 import {ToastTypeAndText} from '../../constants/toast_type';
 import {ToastId} from '../../constants/toast_id';
 import {CustomError, isCustomError} from '../../lib/custom_error';
+import {ICFDOrder, IOrder} from '../../interfaces/tidebit_defi_background/order';
+import {OrderState} from '../../constants/order_state';
 
 type TranslateFunction = (s: string) => string;
 interface IPositionOpenModal {
@@ -81,12 +85,6 @@ const PositionOpenModal = ({
     return order;
   };
 
-  /** ToDo: (20230329 - Shirley)
-    // loading modal -> UserContext.function (負責簽名) ->
-    // 猶豫太久的話，單子會過期，就會顯示 canceled modal (User context)，
-    // 用戶沒簽名也是顯示 canceled modal (User context)
-    // 用戶簽名成功，就會顯示 successful modal (User context)
-   */
   const submitClickHandler = async () => {
     const [lock, unlock] = locker('position_open_modal.submitClickHandler');
 
@@ -115,7 +113,6 @@ const PositionOpenModal = ({
           isShowZoomOutBtn: false,
         });
 
-        // ToDo: Need to get a singnal from somewhere to show the successful modal
         await wait(DELAYED_HIDDEN_SECONDS);
 
         globalCtx.eliminateAllModals();
@@ -128,6 +125,45 @@ const PositionOpenModal = ({
         });
 
         globalCtx.visibleSuccessfulModalHandler();
+
+        await wait(DELAYED_HIDDEN_SECONDS);
+
+        globalCtx.eliminateAllModals();
+
+        const receipt = result.data as {order: ICFDOrder};
+        const cfd = userCtx.getCFD(receipt.order.id) ?? {
+          ...openCfdRequest,
+          // openPrice: openCfdRequest.price,
+          ...receipt.order,
+          // state: OrderState.OPENING,
+        };
+
+        // console.log('cfd from getCFD', userCtx.getCFD(receipt.order.id), 'scrambled cfd', {
+        //   ...openCfdRequest,
+        //   ...receipt.order,
+        // });
+
+        // const cfd: ICFDOrder = {
+        //   ...openCfdRequest,
+        //   // openPrice: openCfdRequest.price,
+        //   ...receipt.order,
+        //   // state: OrderState.OPENING,
+        // };
+        const closePrice = marketCtx.predictCFDClosePrice(cfd.targetAsset, cfd.typeOfPosition);
+        const spread = marketCtx.getTickerSpread(cfd.targetAsset);
+
+        const pnl = toPnl({
+          openPrice: cfd.openPrice,
+          closePrice,
+          typeOfPosition: cfd.typeOfPosition,
+          amount: cfd.amount,
+          spread,
+        });
+
+        const display = toDisplayCFDOrder(cfd);
+
+        globalCtx.dataUpdateFormModalHandler({...display, pnl});
+        globalCtx.visibleUpdateFormModalHandler();
       } else if (
         // Info: cancel (20230412 - Shirley)
         result.code === Code.REJECTED_SIGNATURE

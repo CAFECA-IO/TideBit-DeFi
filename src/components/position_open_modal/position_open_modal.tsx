@@ -552,16 +552,12 @@ const PositionOpenModal = ({
   const isDisplayedModal = modalVisible ? (
     <>
       <div className="fixed inset-0 z-80 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">
-        {/* The position of the modal */}
         <div className="relative mx-auto my-6 w-auto max-w-xl">
           {' '}
-          {/*content & panel*/}
           <div
             id="PositionOpenModal"
-            // ref={modalRef}
             className="relative flex h-auto w-300px flex-col rounded-xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none"
           >
-            {/*header*/}
             <div className="flex items-start justify-between rounded-t pt-9">
               <h3 className="w-full text-center text-xl font-normal text-lightWhite">
                 {t('POSITION_MODAL.OPEN_POSITION_TITLE')}
@@ -572,9 +568,8 @@ const PositionOpenModal = ({
                 </span>
               </button>
             </div>
-            {/*body*/}
             {formContent}
-            {/*footer*/}
+
             <div className="flex items-center justify-end rounded-b p-2"></div>
           </div>
         </div>

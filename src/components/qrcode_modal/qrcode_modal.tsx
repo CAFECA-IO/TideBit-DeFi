@@ -21,13 +21,11 @@ const QrcodeModal = ({
     <>
       <div className="fixed inset-0 z-80 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">
         <div className="relative my-6 mx-auto w-auto max-w-xl">
-          {/*content & panel*/}
           <div
             id="connectModal"
             ref={qrcodeModalRef}
             className="relative flex h-600px w-450px flex-col rounded-xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none"
           >
-            {/*header*/}
             <div className="flex items-start justify-between rounded-t pt-6">
               <h3 className="ml-1/8 mt-2 w-20rem pl-1/8 text-4xl font-semibold text-lightWhite">
                 {t('WALLET_PANEL.TITLE')}
@@ -38,7 +36,6 @@ const QrcodeModal = ({
                 </span>
               </button>
             </div>
-            {/*body*/}
             <div className="relative flex-auto pt-1">
               <div className="text-lg leading-relaxed text-lightWhite">
                 <div className="flex-col justify-center text-center">
@@ -59,7 +56,7 @@ const QrcodeModal = ({
                 </div>
               </div>
             </div>
-            {/*footer*/}
+
             <div className="flex items-center justify-end rounded-b p-2"></div>
           </div>
         </div>

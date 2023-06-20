@@ -250,22 +250,18 @@ const TickerSelectorBox = ({
   const isDisplayedTickerSelectorBox = tickerSelectorBoxVisible ? (
     <>
       <div className="fixed inset-0 z-80 hidden items-center justify-center overflow-x-auto overflow-y-auto outline-none backdrop-blur-sm focus:outline-none lg:flex">
-        {/* The position of the box */}
         <div
           className="relative my-6 mx-auto min-w-fit"
           id="tickerSelectorModal"
           ref={tickerSelectorBoxRef}
         >
-          {/* tab section */}
+          {/* Info: tab section (20230620 - Shirley) */}
           <div className="">{tabPart}</div>
 
-          {/* ticker cards section */}
+          {/* Info: ticker cards section (20230620 - Shirley) */}
           <div className="mx-auto flex h-640px w-90vw max-w-1200px flex-col rounded rounded-t-none border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none">
-            {/*header*/}
+            {/* Info: ----- body ----- (20230620 - Shirley) */}
 
-            {/* ----- body ----- */}
-
-            {/* `border border-gray-300` for input border */}
             <div className="relative mr-60px mt-5 mb-5">
               <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center"></div>
               <input
@@ -284,12 +280,12 @@ const TickerSelectorBox = ({
               </button>
             </div>
 
-            {/* Card section */}
+            {/* Info: Card section (20230620 - Shirley) */}
             <div className="flex flex-auto flex-col items-center pt-10">
               <div className="text-lg leading-relaxed text-lightWhite">
                 <div className="mx-auto flex flex-col items-center">
                   <div className="flex w-full items-center justify-center">
-                    {/* 多出來的高度不會出現y卷軸 */}
+                    {/* Info: 多出來的高度不會出現y卷軸 (20230620 - Shirley) */}
                     <div className="mb-5 grid grid-cols-4 space-y-4 space-x-4 overflow-x-hidden overflow-y-clip xl:grid-cols-5">
                       {displayedCryptoCards}
                     </div>
@@ -297,7 +293,7 @@ const TickerSelectorBox = ({
                 </div>
               </div>
             </div>
-            {/*footer*/}
+
             <div className="flex items-center justify-end rounded-b p-2"></div>
           </div>
         </div>

@@ -688,9 +688,7 @@ const UpdateFormModal = ({
     <div {...otherProps}>
       <div className="fixed inset-0 z-80 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">
         <div className="relative mx-auto my-6 w-auto max-w-xl">
-          {/*content & panel*/}
           <div className="relative flex h-auto w-90vw flex-col rounded-xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none xs:w-400px">
-            {/*header*/}
             <div className="flex items-start justify-between rounded-t pt-6">
               <div className="mx-10 mt-6 flex w-full justify-between">
                 <div className="flex items-center space-x-3 text-center text-lightWhite">
@@ -733,7 +731,6 @@ const UpdateFormModal = ({
                 </span>
               </button>
             </div>
-            {/*body*/}
             <div className="relative flex flex-auto flex-col items-center px-10 pt-0">
               <div
                 className={`${displayedBorderColor} mt-2 w-full border-1px text-xs leading-relaxed text-lightWhite`}
@@ -872,7 +869,7 @@ const UpdateFormModal = ({
                 </RippleButton>
               </div>
             </div>
-            {/*footer*/}
+
             <div className="flex items-center justify-end rounded-b p-2"></div>
           </div>
         </div>

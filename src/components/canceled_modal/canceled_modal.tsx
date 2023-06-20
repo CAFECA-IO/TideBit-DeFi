@@ -63,16 +63,12 @@ const CanceledModal = ({
   const isDisplayedModal = modalVisible ? (
     <>
       <div className="fixed inset-0 z-70 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">
-        {/* The position of the modal */}
         <div className="relative my-6 mx-auto w-auto max-w-xl">
           {' '}
-          {/*content & panel*/}
           <div
             id="canceledModal"
-            // ref={modalRef}
             className="relative flex h-420px w-296px flex-col rounded-xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none"
           >
-            {/*header*/}
             <div className="flex items-start justify-between rounded-t pt-6">
               <h3 className="mx-auto mt-2 w-full text-center text-2xl font-normal text-lightWhite">
                 {modalTitle}
@@ -84,9 +80,8 @@ const CanceledModal = ({
                 </span>
               </button>
             </div>
-            {/*body*/}
             {cancellationContent}
-            {/*footer*/}
+
             <div className="flex items-center justify-end rounded-b p-2"></div>
           </div>
         </div>

@@ -94,16 +94,12 @@ const FailedModal = ({
   const isDisplayedModal = modalVisible ? (
     <>
       <div className="fixed inset-0 z-70 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">
-        {/* The position of the modal */}
         <div className="relative mx-auto my-6 w-auto max-w-xl">
           {' '}
-          {/*content & panel*/}
           <div
             id="failedModal"
-            // ref={modalRef}
             className="relative flex h-auto min-h-420px w-300px flex-col rounded-xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none"
           >
-            {/*header*/}
             <div className="flex items-start justify-between rounded-t pt-6">
               <h3 className="mx-auto mt-2 w-full text-center text-2xl font-normal text-lightWhite">
                 {modalTitle}
@@ -114,9 +110,8 @@ const FailedModal = ({
                 </span>
               </button>
             </div>
-            {/*body*/}
             {failContent}
-            {/*footer*/}
+
             <div className="flex items-center justify-end rounded-b p-2"></div>
           </div>
         </div>

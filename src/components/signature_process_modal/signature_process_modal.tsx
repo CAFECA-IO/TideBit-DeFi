@@ -328,13 +328,11 @@ const SignatureProcessModal = ({
     <>
       <div className="fixed inset-0 z-80 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">
         <div className="relative mx-auto my-6 w-auto max-w-xl">
-          {/*content & panel*/}
           <div
             id="connectModal"
             ref={processModalRef}
             className="relative flex h-auto w-full flex-col items-center rounded-xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none md:w-450px"
           >
-            {/*header*/}
             <div className="mx-auto flex items-start justify-between rounded-t pt-6">
               <h3 className="mx-auto mt-2 text-xl font-semibold text-lightWhite md:text-4xl">
                 {t('WALLET_PANEL.TITLE')}
@@ -345,7 +343,6 @@ const SignatureProcessModal = ({
                 </span>
               </button>
             </div>
-            {/*body*/}
 
             <div className="flex flex-auto flex-col items-center py-5">
               <div className="text-lg leading-relaxed text-lightWhite">
@@ -370,7 +367,7 @@ const SignatureProcessModal = ({
                 </div>
               </div>
             </div>
-            {/*footer*/}
+
             <div className="flex items-center justify-end rounded-b p-2"></div>
           </div>
         </div>

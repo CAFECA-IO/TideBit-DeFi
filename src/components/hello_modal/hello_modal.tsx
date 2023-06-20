@@ -24,13 +24,11 @@ const HelloModal = ({
     <>
       <div className="fixed inset-0 z-80 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">
         <div className="relative my-6 mx-auto w-auto max-w-xl">
-          {/*content & panel*/}
           <div
             id="connectModal"
             ref={helloModalRef}
             className="relative flex h-auto w-full flex-col rounded-xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none md:w-450px"
           >
-            {/*header*/}
             <div className="mx-auto flex items-start justify-between rounded-t pt-6">
               <button className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
                 <span className="absolute top-5 right-5 block outline-none focus:outline-none">
@@ -38,7 +36,6 @@ const HelloModal = ({
                 </span>
               </button>
             </div>
-            {/*body*/}
             <div className="flex flex-auto flex-col items-center pt-32 pb-5">
               <div className="text-lg leading-relaxed text-lightWhite">
                 <div className="flex flex-col items-center px-10">
@@ -68,7 +65,7 @@ const HelloModal = ({
                 </div>
               </div>
             </div>
-            {/*footer*/}
+
             <div className="flex items-center justify-end rounded-b p-2"></div>
           </div>
         </div>

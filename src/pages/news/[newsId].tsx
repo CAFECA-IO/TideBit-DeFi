@@ -104,7 +104,7 @@ const NewsPage = (props: IPageProps) => {
 
 export default NewsPage;
 
-export const getStaticPaths: GetStaticPaths = async () => {
+export const getStaticPaths: GetStaticPaths = async ({locales}) => {
   const ethSlugs = await getSlugs(ETH_NEWS_FOLDER);
   const btcSlugs = await getSlugs(BTC_NEWS_FOLDER);
 
@@ -117,7 +117,11 @@ export const getStaticPaths: GetStaticPaths = async () => {
       ? btcSlugs
       : [];
 
-  const paths = slugs.map(slug => ({params: {newsId: slug}}));
+  const paths = slugs
+    .flatMap(slug => {
+      return locales?.map(locale => ({params: {newsId: slug}, locale}));
+    })
+    .filter((path): path is {params: {newsId: string}; locale: string} => !!path);
   return {paths, fallback: false};
 };
 

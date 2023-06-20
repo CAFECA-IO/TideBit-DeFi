@@ -92,7 +92,6 @@ export default function Notification({
           {' '}
           <div className={`relative`}>
             {/* Info: (20230420 - Julian) sidebar self */}
-            {/* sm:w-640px md:w-768px */}
             <div
               ref={notifyRef}
               className={`pointer-events-auto min-h-screen w-screen ${`lg:w-479px`} ${

@@ -23,7 +23,7 @@ const ReserveRatio = () => {
     ? websiteReserve.tidebitReserve.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)
     : websiteReserve.tidebitReserve;
 
-  // TODO: ETH reserve ratio (20230619 - Shirley)
+  // TODO: ETH reserve ratio from context (20230619 - Shirley)
   const ethUserHolding = SafeMath.isNumber(websiteReserve.usersHolding)
     ? websiteReserve.usersHolding.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)
     : websiteReserve.usersHolding;
@@ -31,7 +31,7 @@ const ReserveRatio = () => {
     ? websiteReserve.tidebitReserve.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)
     : websiteReserve.tidebitReserve;
 
-  // TODO: BTC reserve ratio (20230619 - Shirley)
+  // TODO: BTC reserve ratio from context (20230619 - Shirley)
   const btcUserHolding = SafeMath.isNumber(websiteReserve.usersHolding)
     ? websiteReserve.usersHolding.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)
     : websiteReserve.usersHolding;

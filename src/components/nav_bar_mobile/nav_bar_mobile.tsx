@@ -139,7 +139,7 @@ const NavBarMobile = () => {
           <div className="flex h-screen flex-col items-center justify-start px-2 pb-24 pt-8 text-base sm:px-3">
             <div className="flex h-full w-screen flex-col items-center justify-start">
               <div className="flex w-full items-center justify-around space-x-5 px-3 pt-3">
-                <Link className="shrink-0" href="/">
+                <Link className="shrink-0" href="/" onClick={clickHanlder}>
                   <div className="inline-flex items-center hover:cursor-pointer hover:text-cyan-300 hover:opacity-100">
                     <div className="relative h-55px w-150px flex-col justify-center hover:cursor-pointer hover:opacity-80">
                       <Image

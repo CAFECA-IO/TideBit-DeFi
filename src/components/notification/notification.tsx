@@ -88,7 +88,7 @@ export default function Notification({
           componentVisible ? 'z-60' : 'z-60'
         } flex overflow-x-hidden overflow-y-hidden outline-none focus:outline-none`}
       >
-        <div className="relative mx-auto my-3 w-auto max-w-xl">
+        <div className="relative mx-auto my-3 w-auto">
           {' '}
           <div className={`relative`}>
             {/* Info: (20230420 - Julian) sidebar self */}
@@ -147,9 +147,9 @@ export default function Notification({
     </>
   ) : null;
 
+  /* Deprecated: Use the title in NavBarMobile instead (20230620 - Shirley) 
   /* Info: (20230420 - Julian) Cover for Mobile notification drawer
    * 如果用戶為登入狀態， cover width 改為 7/10 讓頭貼可以被看到 */
-  /* Deprecated: Use the title in NavBarMobile instead (20230620 - Shirley) 
   // const isDisplayedNotificationSidebarMobileCover = (
   //   <div
   //     className={`sm:hidden ${enableServiceTerm ? 'w-7/10' : 'w-screen'} ${
@@ -171,7 +171,7 @@ export default function Notification({
   //     </div>
   //   </div>
   // );
-  */
+  // */
 
   return (
     <div>

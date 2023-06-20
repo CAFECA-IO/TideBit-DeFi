@@ -36,7 +36,7 @@ const NavBarMobile = () => {
   const menuText = langIsOpen
     ? t('NAV_BAR.LANGUAGE')
     : sidebarOpenRef.current
-    ? t('NAV_BAR.NOTIFICATION_TITLE') // TODO: i18n (20230620 - Shirley)
+    ? t('NAV_BAR.NOTIFICATION_TITLE')
     : t('NAV_BAR.MENU');
 
   const clickHanlder = () => {

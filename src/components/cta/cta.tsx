@@ -74,7 +74,6 @@ const Cta = () => {
         </p>
       </div>
 
-      {/* absolute top-24 right-40 */}
       <section className="mb-1/10 flex flex-col items-center justify-center lg:hidden">
         <Image
           className="ml-1/10"

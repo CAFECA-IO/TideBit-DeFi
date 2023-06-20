@@ -177,8 +177,8 @@ export default function Notification({
     <div>
       {/* Info: (20230420 - Julian) Notification Sidebar */}
       {isDisplayedNotificationSidebarCover}
-      {/* Deprecated: Use the title in NavBarMobile instead (20230620 - Shirley) */}
-      {/* {isDisplayedNotificationSidebarMobileCover} */}
+      {/* Deprecated: Use the title in NavBarMobile instead (20230620 - Shirley) 
+      {isDisplayedNotificationSidebarMobileCover}*/}
       {isDisplayedNotificationSidebarSection}
     </div>
   );

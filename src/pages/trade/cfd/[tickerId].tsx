@@ -11,12 +11,15 @@ import {GetStaticPaths, GetStaticProps} from 'next';
 import {useRouter} from 'next/router';
 import Error from 'next/error';
 import {findCurrencyByCode, hasValue} from '../../../lib/common';
-import {tickerIds} from '../../../constants/config';
+import {BTC_NEWS_FOLDER, ETH_NEWS_FOLDER, tickerIds} from '../../../constants/config';
 import {Currency} from '../../../constants/currency';
 import {TIDEBIT_FAVICON} from '../../../constants/display';
+import {getPosts} from '../../../lib/posts';
+import {IRecommendedNews} from '../../../interfaces/tidebit_defi_background/news';
 
 interface IPageProps {
   tickerId: string;
+  briefs: IRecommendedNews[];
 }
 
 const Trading = (props: IPageProps) => {
@@ -66,7 +69,7 @@ const Trading = (props: IPageProps) => {
       {displayedNavBar}
 
       <main>
-        <TradePageBody />
+        <TradePageBody briefs={props.briefs} />
       </main>
     </>
   ) : (
@@ -81,9 +84,23 @@ export const getStaticProps: GetStaticProps<IPageProps> = async ({params, locale
     };
   }
 
+  const dir = params.tickerId === 'ethusdt' ? ETH_NEWS_FOLDER : BTC_NEWS_FOLDER;
+
+  const newsData = await getPosts(dir);
+  const briefs: IRecommendedNews[] = newsData.map(news => {
+    return {
+      newsId: news.slug ?? '',
+      img: `/news/${news.slug}@2x.png`,
+      timestamp: news.date,
+      title: news.title,
+      description: news.description,
+    };
+  });
+
   return {
     props: {
       tickerId: params.tickerId,
+      briefs,
       ...(await serverSideTranslations(locale as string, ['common', 'footer'])),
     },
   };

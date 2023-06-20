@@ -35,7 +35,7 @@ export interface ILineGraphProps {
 export interface ITicker {
   instId: string;
   currency: ICurrency;
-  chain: string;
+  name: string;
 }
 
 export interface ITickerProperty extends ITicker {
@@ -175,7 +175,7 @@ export const convertToTickerMartket = (tickerProperty: ITickerProperty, marketDa
   const ticker: ITickerMarket = {
     instId: `${tickerProperty.currency}-${unitAsset}`,
     currency: tickerProperty.currency,
-    chain: tickerProperty.chain,
+    name: tickerProperty.name,
     tradingVolume: marketData.volume,
     price: parseFloat(marketData.last),
     upOrDown:

@@ -214,6 +214,7 @@ const PersonalAchievementModal = ({
     return badgeName;
   });
 
+  // ToDo: (20230621 - Julian) 優化巢狀迴圈
   /* Info: (20230621 - Julian) 2. 將已獲得徽章的資料放入預設徽章清單中 */
   const receivedBadgeList = defaultBadges.map(badge => {
     /* Info: (20230621 - Julian) 如果 receivedBadges 中有這個徽章，就將 badges 的資料放入清單中，沒有就回傳 default 值 */

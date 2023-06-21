@@ -120,8 +120,8 @@ const NavBarMobile = () => {
                 </div>
               </button>
             </div>
-            <div className="z-50 ml-4 flex h-50px pt-3">
-              <Image src="/elements/group_16025.svg" width={33} height={29} alt="testnet" />
+            <div className="z-50 ml-4 -mb-4 flex">
+              <Image src="/elements/testnet_mobile@2x.png" width={33} height={33} alt="testnet" />
             </div>
 
             <div className="z-50 flex grow justify-end">{isDisplayedUser}</div>
@@ -150,7 +150,7 @@ const NavBarMobile = () => {
                       />
                       <Image
                         className="absolute right-58px bottom-1"
-                        src="/elements/beta.svg"
+                        src="/elements/beta@2x.png"
                         width={35}
                         height={13}
                         alt="beta"

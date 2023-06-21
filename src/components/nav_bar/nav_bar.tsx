@@ -77,7 +77,7 @@ const NavBar = () => {
 
                       <Image
                         className="absolute right-58px bottom-1"
-                        src="/elements/beta.svg"
+                        src="/elements/beta@2x.png"
                         width={35}
                         height={13}
                         alt="beta"
@@ -92,7 +92,7 @@ const NavBar = () => {
                 {/* Info: (20230327 - Julian) Desktop menu */}
                 <div className={`hidden pb-5 text-base text-lightGray1 lg:block`}>
                   <div className="ml-10 mt-8 flex flex-1 items-center space-x-4 xl:ml-10">
-                    <Image src="/elements/testnet.svg" width={65} height={25} alt="testnet" />
+                    <Image src="/elements/testnet@2x.png" width={65} height={25} alt="testnet" />
                     <Link
                       href={TBDURL.TRADE}
                       className="hover:cursor-pointer hover:text-tidebitTheme"

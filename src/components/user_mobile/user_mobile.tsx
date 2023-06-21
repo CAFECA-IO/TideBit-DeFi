@@ -48,7 +48,7 @@ const UserMobile = () => {
     <div
       className={`${
         avatarMenuVisible ? 'visible opacity-100' : 'invisible opacity-0'
-      } fixed left-0 top-0 z-60 flex h-14 w-full items-center divide-x divide-lightGray bg-black/100 px-5 pt-1`}
+      } fixed left-0 top-0 z-80 flex h-14 w-full items-center divide-x divide-lightGray bg-black px-5 pt-1`}
     >
       <div className="relative flex basis-full items-center">
         <p className="self-center pl-5">{t('USER.PERSONAL_SETTING')}</p>

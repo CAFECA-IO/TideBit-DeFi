@@ -12,6 +12,7 @@ import StatisticBlock from '../statistic/statistic';
 import ReserveRatio from '../reserve_ratio/reserve_ratio';
 import {useTranslation} from 'react-i18next';
 import {MarketContext} from '../../contexts/market_context';
+import AuditReport from '../audit_report/audit_report';
 
 type TranslateFunction = (s: string) => string;
 
@@ -43,22 +44,24 @@ export default function HeroDescription() {
       {/* Body */}
       <div className="">
         <Cta />
-        <div className="py-5 lg:py-20"></div>
+        <div className="py-0"></div>
 
         <StatisticBlock />
-        <div className="py-10 lg:py-40"></div>
+        <div className="py-10"></div>
 
         {/* <MarketProvider> */}
         <ReserveRatio />
-        <div className="pb-40 lg:pb-60 2xl:pb-72"></div>
-        <div className="pt-52"></div>
+        <div className="py-10"></div>
+
+        <AuditReport />
+        <div className="py-10"></div>
 
         <CryptoCategory />
         {/* </MarketProvider> */}
-        <div className="py-10 lg:py-40"></div>
+        <div className="py-10 lg:py-20"></div>
 
         <Banner />
-        <div className="py-16 lg:pb-2/5 lg:pt-40"></div>
+        <div className="py-16 lg:pb-2/5 lg:pt-20"></div>
 
         {/* Web3.0 */}
         <HeroReverse

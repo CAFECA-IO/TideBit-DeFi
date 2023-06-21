@@ -10,6 +10,8 @@ import UserMobile from '../user_mobile/user_mobile';
 import {NotificationContext} from '../../contexts/notification_context';
 import {TBDURL} from '../../constants/api_request';
 import {WalletConnectButton} from '../wallet_connect_button/wallet_connect_button';
+import version from '../../lib/version';
+import useStateRef from 'react-usestateref';
 
 type TranslateFunction = (s: string) => string;
 
@@ -20,12 +22,9 @@ const NavBarMobile = () => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
   const [navOpen, setNavOpen] = useState(false);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen, sidebarOpenRef] = useStateRef(false);
 
   const [langIsOpen, setLangIsOpen] = useState(false);
-
-  /* Info: (20230327 - Julian) Menu Text */
-  const menuText = langIsOpen ? t('NAV_BAR.LANGUAGE') : t('NAV_BAR.MENU');
 
   const {
     targetRef: notifyRef,
@@ -33,9 +32,19 @@ const NavBarMobile = () => {
     setComponentVisible,
   } = useOuterClick<HTMLDivElement>(false);
 
+  /* Info: (20230327 - Julian) Menu Text */
+  const menuText = langIsOpen
+    ? t('NAV_BAR.LANGUAGE')
+    : sidebarOpenRef.current
+    ? t('NAV_BAR.NOTIFICATION_TITLE')
+    : t('NAV_BAR.MENU');
+
   const clickHanlder = () => {
     if (langIsOpen) {
       setLangIsOpen(false);
+    } else if (sidebarOpenRef.current) {
+      setComponentVisible(false);
+      setSidebarOpen(!sidebarOpen);
     } else {
       setNavOpen(!navOpen);
     }
@@ -69,7 +78,7 @@ const NavBarMobile = () => {
     <div
       className={`${userCtx.enableServiceTerm ? 'w-5/10' : 'w-screen'} ${
         navOpen ? 'visible opacity-100' : 'invisible opacity-0'
-      } fixed left-20 top-0 z-50 flex h-14 items-center overflow-x-hidden overflow-y-hidden bg-black/100 outline-none`}
+      } fixed top-0 left-20 z-50 flex h-14 items-center overflow-x-hidden overflow-y-hidden bg-black outline-none`}
     >
       <p className="pl-5">{menuText}</p>
     </div>
@@ -98,7 +107,7 @@ const NavBarMobile = () => {
     <>
       <div className="container fixed inset-x-0 z-40 mx-auto inline-flex max-w-full items-end justify-center bg-black/100 pb-1 text-white lg:hidden">
         <div className="flex w-full items-center justify-between px-5 pb-2">
-          <div className="flex basis-full items-baseline">
+          <div className="flex basis-full items-center">
             <div className="mr-0 mt-3 flex border-r border-lightGray1 lg:hidden">
               <button
                 onClick={clickHanlder}
@@ -111,29 +120,16 @@ const NavBarMobile = () => {
                 </div>
               </button>
             </div>
-
-            <div className="z-50 ml-4 flex">
-              <button onClick={sidebarOpenHandler} className="relative hover:cursor-pointer">
-                {isDisplayedUnreadnumber}
-
-                <Image
-                  src="/elements/notifications_outline.svg"
-                  width={25}
-                  height={25}
-                  className="hover:cursor-pointer hover:text-cyan-300"
-                  alt="notification icon"
-                />
-              </button>
+            <div className="z-50 ml-4 flex h-50px pt-3">
+              <Image src="/elements/group_16025.svg" width={33} height={29} alt="testnet" />
             </div>
 
             <div className="z-50 flex grow justify-end">{isDisplayedUser}</div>
-
             <div className="invisible ml-auto lg:visible"></div>
           </div>
         </div>
 
         <div
-          ref={notifyRef}
           className={`absolute transition-all duration-300 lg:hidden ${isDisplayedMobileNavBar}`}
         >
           {/* Info: (20230327 - Julian) Cover for mobile bell icon */}
@@ -142,8 +138,8 @@ const NavBarMobile = () => {
           {/* Info: (20230327 - Julian) Mobile menu section */}
           <div className="flex h-screen flex-col items-center justify-start px-2 pb-24 pt-8 text-base sm:px-3">
             <div className="flex h-full w-screen flex-col items-center justify-start">
-              <div className="flex items-center justify-start px-3 pt-3">
-                <Link className="shrink-0" href="/">
+              <div className="flex w-full items-center justify-around space-x-5 px-3 pt-3">
+                <Link className="shrink-0" href="/" onClick={clickHanlder}>
                   <div className="inline-flex items-center hover:cursor-pointer hover:text-cyan-300 hover:opacity-100">
                     <div className="relative h-55px w-150px flex-col justify-center hover:cursor-pointer hover:opacity-80">
                       <Image
@@ -152,10 +148,33 @@ const NavBarMobile = () => {
                         width={150}
                         alt="TideBit_logo"
                       />
+                      <Image
+                        className="absolute right-58px bottom-1"
+                        src="/elements/beta.svg"
+                        width={35}
+                        height={13}
+                        alt="beta"
+                      />
+                      <p className="absolute bottom-1 right-0 text-end text-xxs text-lightGray">
+                        v {version}
+                      </p>
                     </div>
                   </div>
                 </Link>
+
+                <button onClick={sidebarOpenHandler} className="relative hover:cursor-pointer">
+                  {isDisplayedUnreadnumber}
+
+                  <Image
+                    src="/elements/notifications_outline.svg"
+                    width={25}
+                    height={25}
+                    className="hover:cursor-pointer hover:text-cyan-300"
+                    alt="notification icon"
+                  />
+                </button>
               </div>
+
               <div className="flex items-center justify-start px-3">
                 <Link href={TBDURL.TRADE} className={menuItemStyles}>
                   {t('NAV_BAR.TRADE')}
@@ -183,7 +202,7 @@ const NavBarMobile = () => {
         </div>
       </div>
 
-      <Notification notifyRef={notifyRef} componentVisible={componentVisible} />
+      <Notification componentVisible={sidebarOpenRef.current} />
     </>
   );
 };

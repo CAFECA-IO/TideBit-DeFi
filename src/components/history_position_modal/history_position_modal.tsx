@@ -264,11 +264,9 @@ const HistoryPositionModal = ({
 
   const isDisplayedDetailedPositionModal = modalVisible ? (
     <div {...otherProps}>
-      <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">
+      <div className="fixed inset-0 z-80 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">
         <div className="relative mx-auto my-6 w-auto max-w-xl">
-          {/*content & panel*/}
           <div className="relative flex h-auto w-300px flex-col rounded-xl border-0 bg-darkGray1 shadow-lg shadow-black/80 outline-none focus:outline-none">
-            {/*header*/}
             <div className="flex items-start justify-between rounded-t pt-6">
               <div className="mx-7 mb-1 mt-5 flex w-full justify-between">
                 <div className="flex w-full items-center justify-center space-x-2 text-center text-2xl text-lightWhite">
@@ -289,9 +287,8 @@ const HistoryPositionModal = ({
                 </span>
               </button>
             </div>
-            {/*body*/}
             {formContent}
-            {/*footer*/}
+
             <div className="flex items-center justify-end rounded-b p-2"></div>
           </div>
         </div>

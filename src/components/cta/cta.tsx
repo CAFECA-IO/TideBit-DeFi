@@ -6,6 +6,7 @@ import {CONTACT_EMAIL} from '../../constants/config';
 import {useTranslation} from 'next-i18next';
 import {FiMail, FiBookOpen} from 'react-icons/fi';
 import {TBDURL} from '../../constants/api_request';
+import version from '../../lib/version';
 
 type TranslateFunction = (s: string) => string;
 
@@ -64,6 +65,15 @@ const Cta = () => {
       </section>
 
       {/* Mobile version (width < 1024 px) */}
+      <div className="w-full">
+        <div className="mb-10 flex justify-center">
+          <Image src="/elements/nav_logo.svg" height={50} width={150} alt="TideBit_logo" />
+        </div>
+        <p className="-mt-20 mb-20 flex justify-end pr-1/11 text-end text-xs text-lightGray">
+          v {version}
+        </p>
+      </div>
+
       <section className="mb-1/10 flex flex-col items-center justify-center lg:hidden">
         <Image
           className="ml-1/10"

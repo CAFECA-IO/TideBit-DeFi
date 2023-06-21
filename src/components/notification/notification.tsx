@@ -10,7 +10,7 @@ import {useTranslation} from 'next-i18next';
 type TranslateFunction = (s: string) => string;
 
 interface INotificationProps {
-  notifyRef: HTMLDivElement extends HTMLElement ? React.RefObject<HTMLDivElement> : null;
+  notifyRef?: HTMLDivElement extends HTMLElement ? React.RefObject<HTMLDivElement> : null;
   componentVisible: boolean;
 }
 
@@ -42,27 +42,29 @@ export default function Notification({
     });
   }, []);
 
+  /* Deprecated: Use the title in NavBarMobile instead (20230620 - Shirley) 
   const hamburgerStyles =
     'block bg-lightWhite h-3px opacity-100 rounded-12px opacity-100 ease-in duration-300';
 
   /* Info: (20230327 - Julian) Hamburger Animation */
-  const displayedMobileNavBarLine1 = !componentVisible
-    ? 'translate-y-0 rotate-0'
-    : 'translate-y-1.5 origin-left w-3/4 -rotate-35';
-  const displayedMobileNavBarLine2 = !componentVisible ? 'translate-y-1.5 w-full' : 'w-0';
-  const displayedMobileNavBarLine3 = !componentVisible
-    ? 'translate-y-3 rotate-0'
-    : 'translate-y-0 origin-left w-3/4 rotate-35';
+  // const displayedMobileNavBarLine1 = !componentVisible
+  //   ? 'translate-y-0 rotate-0'
+  //   : 'translate-y-1.5 origin-left w-3/4 -rotate-35';
+  // const displayedMobileNavBarLine2 = !componentVisible ? 'translate-y-1.5 w-full' : 'w-0';
+  // const displayedMobileNavBarLine3 = !componentVisible
+  //   ? 'translate-y-3 rotate-0'
+  //   : 'translate-y-0 origin-left w-3/4 rotate-35';
+  //   */
 
   const readAllHandler = () => {
-    setReadAllanim('translate-x-500px opacity-10');
+    setReadAllanim('translate-x-0 opacity-10');
 
     setTimeout(notificationCtx.readAll, 500);
   };
 
   const displayedNotificationList = notificationCtx.unreadNotifications.map(v => {
     return (
-      <div key={v.id} className={`transition-all duration-500 ${readAllanim}`}>
+      <div key={v.id} className={`${readAllanim}`}>
         <NotificationItem
           id={v.id}
           title={v.title}
@@ -83,27 +85,27 @@ export default function Notification({
       {/* Info: (20230420 - Julian) sidebar section */}
       <div
         className={`pointer-events-none fixed right-1 top-44px ${
-          componentVisible ? 'z-30' : 'z-30'
+          componentVisible ? 'z-60' : 'z-60'
         } flex overflow-x-hidden overflow-y-hidden outline-none focus:outline-none`}
       >
-        <div className="relative mx-auto my-3 w-auto max-w-xl">
+        <div className="relative mx-auto my-3 w-auto">
           {' '}
           <div className={`relative`}>
             {/* Info: (20230420 - Julian) sidebar self */}
             <div
               ref={notifyRef}
-              className={`pointer-events-auto min-h-screen w-screen ${`sm:w-479px`} ${
+              className={`pointer-events-auto min-h-screen w-screen ${`lg:w-479px`} ${
                 componentVisible
-                  ? 'visible opacity-100 sm:translate-x-0'
-                  : 'invisible opacity-10 sm:translate-x-full'
-              } flex flex-col bg-darkGray/90 pb-20 pt-8 text-white transition-all duration-300 sm:p-5`}
+                  ? 'visible opacity-100 lg:translate-x-0'
+                  : 'invisible opacity-10 lg:translate-x-full'
+              } flex flex-col bg-darkGray pb-20 pt-8 text-white transition-all duration-100 sm:p-5 lg:bg-darkGray/90 lg:duration-300`}
             >
-              <div className="mb-10 flex flex items-center">
-                <h1 className="hidden pl-5 text-2xl font-bold sm:block">
+              <div className="mb-10 flex items-center">
+                <h1 className="hidden justify-start text-2xl font-bold lg:flex lg:w-1/2 lg:shrink-0">
                   {t('NAV_BAR.NOTIFICATION_TITLE')}
                 </h1>
                 <div
-                  className="ml-auto pr-30px text-sm text-tidebitTheme underline hover:cursor-pointer"
+                  className="flex w-full shrink-0 justify-end text-sm text-tidebitTheme underline hover:cursor-pointer lg:w-1/2"
                   onClick={readAllHandler}
                 >
                   {t('NAV_BAR.NOTIFICATION_READ_ALL')}
@@ -111,7 +113,7 @@ export default function Notification({
               </div>
 
               {/* Info: (20230420 - Julian) Notification List*/}
-              <div className="flex h-80vh flex-col space-y-5 overflow-y-auto overflow-x-hidden pb-40 sm:pb-10">
+              <div className="flex h-80vh w-full flex-col space-y-5 overflow-y-auto overflow-x-hidden pb-40 sm:pb-10">
                 {displayedNotificationList}
               </div>
             </div>
@@ -128,7 +130,7 @@ export default function Notification({
       <div
         className={`${
           componentVisible ? 'visible duration-700 ease-in-out' : 'invisible'
-        } invisible fixed z-50 flex h-16 items-center justify-center overflow-x-hidden overflow-y-hidden bg-transparent outline-none hover:cursor-pointer focus:outline-none lg:visible lg:right-52 lg:top-6 lg:h-8 lg:w-8`}
+        } invisible fixed z-80 flex h-16 items-center justify-center overflow-x-hidden overflow-y-hidden bg-transparent outline-none hover:cursor-pointer focus:outline-none lg:visible lg:right-52 lg:top-6 lg:h-8 lg:w-8`}
       >
         {' '}
       </div>
@@ -144,35 +146,38 @@ export default function Notification({
     </>
   ) : null;
 
+  /* Deprecated: Use the title in NavBarMobile instead (20230620 - Shirley) 
   /* Info: (20230420 - Julian) Cover for Mobile notification drawer
    * 如果用戶為登入狀態， cover width 改為 7/10 讓頭貼可以被看到 */
-  const isDisplayedNotificationSidebarMobileCover = (
-    <div
-      className={`sm:hidden ${enableServiceTerm ? 'w-7/10' : 'w-screen'} ${
-        componentVisible ? 'visible opacity-100' : 'invisible opacity-0'
-      } fixed z-50 flex h-14 items-center justify-center overflow-x-hidden overflow-y-hidden bg-black/100 px-5 pt-1 outline-none transition-all delay-150 duration-300 hover:cursor-pointer focus:outline-none`}
-    >
-      <div className="flex basis-full items-end">
-        <div className="flex border-r border-lightGray1 lg:hidden">
-          <button className="z-50 inline-flex items-center justify-center rounded-md p-2">
-            <div className="relative h-20px w-30px cursor-pointer">
-              <span className={`${hamburgerStyles} ${displayedMobileNavBarLine1}`}></span>
-              <span className={`${hamburgerStyles} ${displayedMobileNavBarLine2}`}></span>
-              <span className={`${hamburgerStyles} ${displayedMobileNavBarLine3}`}></span>
-            </div>
-          </button>
-        </div>
+  // const isDisplayedNotificationSidebarMobileCover = (
+  //   <div
+  //     className={`sm:hidden ${enableServiceTerm ? 'w-7/10' : 'w-screen'} ${
+  //       componentVisible ? 'visible opacity-100' : 'invisible opacity-0'
+  //     } fixed z-80 flex h-14 items-center justify-center overflow-x-hidden overflow-y-hidden bg-black/100 px-5 pt-1 outline-none transition-all delay-150 duration-300 hover:cursor-pointer focus:outline-none`}
+  //   >
+  //     <div className="flex basis-full items-end">
+  //       <div className="flex border-r border-lightGray1 lg:hidden">
+  //         <button className="z-50 inline-flex items-center justify-center rounded-md p-2">
+  //           <div className="relative h-20px w-30px cursor-pointer">
+  //             <span className={`${hamburgerStyles} ${displayedMobileNavBarLine1}`}></span>
+  //             <span className={`${hamburgerStyles} ${displayedMobileNavBarLine2}`}></span>
+  //             <span className={`${hamburgerStyles} ${displayedMobileNavBarLine3}`}></span>
+  //           </div>
+  //         </button>
+  //       </div>
 
-        <p className="self-center pl-5">{t('NAV_BAR.NOTIFICATION_TITLE')}</p>
-      </div>
-    </div>
-  );
+  //       <p className="self-center pl-5">{t('NAV_BAR.NOTIFICATION_TITLE')}</p>
+  //     </div>
+  //   </div>
+  // );
+  // */
 
   return (
     <div>
       {/* Info: (20230420 - Julian) Notification Sidebar */}
       {isDisplayedNotificationSidebarCover}
-      {isDisplayedNotificationSidebarMobileCover}
+      {/* Deprecated: Use the title in NavBarMobile instead (20230620 - Shirley) 
+      {isDisplayedNotificationSidebarMobileCover}*/}
       {isDisplayedNotificationSidebarSection}
     </div>
   );

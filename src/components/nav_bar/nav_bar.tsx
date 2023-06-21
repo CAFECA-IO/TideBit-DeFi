@@ -75,6 +75,14 @@ const NavBar = () => {
                         alt="TideBit_logo"
                       />
 
+                      <Image
+                        className="absolute right-58px bottom-1"
+                        src="/elements/beta.svg"
+                        width={35}
+                        height={13}
+                        alt="beta"
+                      />
+
                       <p className="absolute bottom-1 right-0 text-end text-xxs text-lightGray">
                         v {version}
                       </p>
@@ -83,7 +91,8 @@ const NavBar = () => {
                 </Link>
                 {/* Info: (20230327 - Julian) Desktop menu */}
                 <div className={`hidden pb-5 text-base text-lightGray1 lg:block`}>
-                  <div className="ml-10 mt-5 flex flex-1 items-center space-x-4 xl:ml-10">
+                  <div className="ml-10 mt-8 flex flex-1 items-center space-x-4 xl:ml-10">
+                    <Image src="/elements/testnet.svg" width={65} height={25} alt="testnet" />
                     <Link
                       href={TBDURL.TRADE}
                       className="hover:cursor-pointer hover:text-tidebitTheme"
@@ -114,7 +123,6 @@ const NavBar = () => {
                   <div>
                     <I18n />
                   </div>
-                  {/* <TbMinusVertical size={30} className="" /> */}
                   <span className="mx-2 inline-block h-10 w-px rounded bg-lightGray1"></span>
 
                   <button onClick={sidebarOpenHandler} className="relative hover:cursor-pointer">

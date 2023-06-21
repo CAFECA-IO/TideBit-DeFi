@@ -223,7 +223,7 @@ const PersonalAchievementModal = ({
     return data;
   });
 
-  const displayedBadgeList = BADGE_LIST.map(({name, description, icon, iconSkeleton}, index) => {
+  const displayedBadgeList = BADGE_LIST.map(({description, icon, iconSkeleton}, index) => {
     const hintFrameStyle = (index + 1) % 3 === 0 ? 'right-0' : '';
     const hintArrowStyle = (index + 1) % 3 === 0 ? 'right-6' : 'left-6';
 

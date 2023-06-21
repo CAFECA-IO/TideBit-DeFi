@@ -33,7 +33,8 @@ const UserPersonalRanking = ({timeSpan}: IUserPersonalRankingProps) => {
   useEffect(() => {
     setTimeout(() => setIsLoading(false), SKELETON_DISPLAY_TIME);
   }, []);
-
+  // ToDo: (20230621 - Julian) get Personal Ranking data
+  /* 
   useEffect(() => {
     userCtx
       .getPersonalRanking(userId, timeSpan)
@@ -45,7 +46,7 @@ const UserPersonalRanking = ({timeSpan}: IUserPersonalRankingProps) => {
       .catch(() => {
         setUserRankData(defaultPersonalRanking);
       });
-  }, [timeSpan]);
+  }, [timeSpan]); */
 
   const username = userCtx.user?.address?.slice(-1).toUpperCase();
 

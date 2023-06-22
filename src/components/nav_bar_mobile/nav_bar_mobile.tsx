@@ -192,7 +192,7 @@ const NavBarMobile = () => {
               </div>
               <div className="flex items-center justify-start px-3">
                 <div className="px-3 py-5">
-                  <I18n /* langIsOpen={langIsOpen} setLangIsOpen={setLangIsOpen} */ />
+                  <I18n langIsOpen={langIsOpen} setLangIsOpen={setLangIsOpen} />
                 </div>
               </div>
               <span className={`${dividerInsideMobileNavBar}`}></span>

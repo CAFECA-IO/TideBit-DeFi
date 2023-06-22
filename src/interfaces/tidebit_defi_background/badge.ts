@@ -7,7 +7,7 @@ export interface IBadge {
   receiveTime: number; //0: not achieve yet
 }
 
-export const defaultBadges = [
+export const defaultBadges: IBadge[] = [
   {badgeName: Badges.DAILY_TOP_20, receiveTime: 0, badgeId: '', userId: ''},
   {badgeName: Badges.WEEKLY_TOP_20, receiveTime: 0, badgeId: '', userId: ''},
   {badgeName: Badges.MONTHLY_TOP_20, receiveTime: 0, badgeId: '', userId: ''},

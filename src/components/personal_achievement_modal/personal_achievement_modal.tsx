@@ -209,29 +209,43 @@ const PersonalAchievementModal = ({
     );
   });
 
-  const displayedBadgeList = BADGE_LIST.map(({name, description, icon, iconSkeleton}, index) => {
+  /* Info: (20230621 - Julian) 1. 先取出已獲得徽章的名字清單 */
+  const receivedBadges = badges.map(({badgeName}) => {
+    return badgeName;
+  });
+
+  // ToDo: (20230621 - Julian) 優化巢狀迴圈
+  /* Info: (20230621 - Julian) 2. 將已獲得徽章的資料放入預設徽章清單中 */
+  const receivedBadgeList = defaultBadges.map(badge => {
+    /* Info: (20230621 - Julian) 如果 receivedBadges 中有這個徽章，就將 badges 的資料放入清單中，沒有就回傳 default 值 */
+    const data = receivedBadges.includes(badge.badgeName)
+      ? badges[receivedBadges.indexOf(badge.badgeName)]
+      : badge;
+    return data;
+  });
+
+  const displayedBadgeList = BADGE_LIST.map(({description, icon, iconSkeleton}, index) => {
     const hintFrameStyle = (index + 1) % 3 === 0 ? 'right-0' : '';
     const hintArrowStyle = (index + 1) % 3 === 0 ? 'right-6' : 'left-6';
 
-    /* ToDo: (20230607 - Julian) 徽章尚未實作，先放入 defaultBadges */
-    const badgeList = defaultBadges;
-
     /* Info: (20230517 - Julian) 如果 badges name 中包含徽章的名字 && receiveTime > 0，表示獲得該徽章 */
-    const isReceived =
-      badgeList[index].badgeName.includes(name) && badgeList[index].receiveTime > 0 ? true : false;
-    //badges[index].badgeName.includes(name) && badges[index].receiveTime > 0 ? true : false;
+    const isReceived = receivedBadgeList[index].receiveTime > 0 ? true : false;
 
     const imgSrc = isReceived ? icon : iconSkeleton;
-    const receiveTime = isReceived ? timestampToString(badgeList[index].receiveTime).date : null;
+    const receiveTime = isReceived
+      ? timestampToString(receivedBadgeList[index].receiveTime).date
+      : null;
     const hintArrowTop = isReceived ? 'top-12' : 'top-8';
 
     const badgeModalData = {
-      badgeData: {
-        badgeId: badgeList[index].badgeId,
-        badgeName: name,
-        userId: userId,
-        receiveTime: badgeList[index].receiveTime,
-      },
+      badgeData: receivedBadgeList[index],
+      // Desprecated: (20230628 - Julian) 這邊的 badgeData 是舊的資料，不需要再傳入
+      // badgeData: {
+      //   badgeId: badgeList[index].badgeId,
+      //   badgeName: name,
+      //   userId: userId,
+      //   receiveTime: badgeList[index].receiveTime,
+      // },
     };
 
     /* Info: (20230517 - Julian) 只有自己的徽章才能點擊並分享 */

@@ -1,12 +1,20 @@
+import {Dispatch, SetStateAction, useState} from 'react';
 import {useRouter} from 'next/router';
 import Link from 'next/link';
 import useOuterClick from '../../lib/hooks/use_outer_click';
 import {useTranslation} from 'next-i18next';
 
 type TranslateFunction = (s: string) => string;
+interface II18nParams {
+  langIsOpen?: boolean;
+  setLangIsOpen?: Dispatch<SetStateAction<boolean>>;
+}
 
-const I18n = () => {
+const I18n = ({langIsOpen, setLangIsOpen}: II18nParams) => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
+
+  const [openMenu, setOpenMenu] =
+    typeof setLangIsOpen !== 'function' ? useState(false) : [langIsOpen, setLangIsOpen];
 
   const {asPath} = useRouter();
   const {
@@ -15,8 +23,12 @@ const I18n = () => {
     setComponentVisible: setGlobalVisible,
   } = useOuterClick<HTMLDivElement>(false);
 
-  const clickHandler = () => {
+  /* Info: (20230621 - Julian) 用 globalVisible 當作電腦版的選單開關，因為手機版則由 openMenu 控制 */
+  const desktopClickHandler = () => {
     setGlobalVisible(!globalVisible);
+  };
+  const mobileClickHandler = () => {
+    setOpenMenu(!openMenu);
   };
 
   const internationalizationList = [
@@ -29,13 +41,13 @@ const I18n = () => {
     <div className="hidden lg:flex">
       <div
         id="i18nDropdown"
-        className={`absolute right-32 top-16 z-10 w-150px ${
+        className={`absolute right-32 top-16 z-20 w-150px ${
           globalVisible ? 'visible opacity-100' : 'invisible opacity-0'
         } divide-y divide-lightGray rounded-none bg-darkGray shadow transition-all duration-300`}
       >
         <ul className="mx-3 py-1 pb-3 text-base text-gray-200" aria-labelledby="i18nButton">
           {internationalizationList.map((item, index) => (
-            <li key={index} onClick={clickHandler}>
+            <li key={index} onClick={desktopClickHandler}>
               <Link
                 locale={item.value}
                 href={asPath}
@@ -53,7 +65,7 @@ const I18n = () => {
   const displayedMobileMenu = (
     <div
       className={`transition-all duration-300 ${
-        globalVisible ? 'visible opacity-100' : 'invisible opacity-0'
+        openMenu ? 'visible opacity-100' : 'invisible opacity-0'
       } lg:hidden`}
     >
       <div
@@ -62,7 +74,7 @@ const I18n = () => {
       >
         <ul className="text-center text-base dark:text-gray-200" aria-labelledby="i18nButton">
           {internationalizationList.map((item, index) => (
-            <li key={index} onClick={clickHandler}>
+            <li key={index} onClick={mobileClickHandler}>
               <Link
                 locale={item.value}
                 href={asPath}
@@ -80,7 +92,7 @@ const I18n = () => {
   const displayedI18n = (
     <>
       <div className="hidden lg:flex">
-        <div onClick={clickHandler} className="hover:cursor-pointer hover:text-cyan-300">
+        <div onClick={desktopClickHandler} className="hover:cursor-pointer hover:text-cyan-300">
           <svg
             id="globe"
             xmlns="http://www.w3.org/2000/svg"
@@ -99,7 +111,7 @@ const I18n = () => {
         </div>
       </div>
       <button
-        onClick={clickHandler}
+        onClick={mobileClickHandler}
         type="button"
         className="inline-flex hover:text-tidebitTheme lg:hidden"
       >

@@ -105,7 +105,6 @@ export interface IUserContext {
   getBalance: (currency: string) => IBalance | null;
   getWalletBalance: (props: string) => IWalletBalance | null;
   getUserAssets: () => Promise<IResult>;
-  getRanking: (timeSpan: IRankingTimeSpan) => Promise<IResult>;
   getPersonalRanking: (userId: string, timeSpan: IRankingTimeSpan) => Promise<IResult>;
   getPersonalAchievements: (userId: string) => Promise<IResult>;
   init: () => Promise<void>;
@@ -217,9 +216,6 @@ export const UserContext = createContext<IUserContext>({
     throw new Error('Function not implemented.');
   },
   getBadge: function (badgeId: string): Promise<IResult> {
-    throw new Error('Function not implemented.');
-  },
-  getRanking: function (timeSpan: IRankingTimeSpan): Promise<IResult> {
     throw new Error('Function not implemented.');
   },
 });
@@ -865,26 +861,6 @@ export const UserProvider = ({children}: IUserProvider) => {
       if (index !== -1) balance = balancesRef.current[index];
     }
     return balance;
-  };
-
-  const getRanking = async (timeSpan?: IRankingTimeSpan) => {
-    let result: IResult = {...defaultResultFailed};
-    try {
-      const query = timeSpan ? {timeSpan} : undefined;
-      result = (await workerCtx.requestHandler({
-        name: APIName.GET_RANKING,
-        method: Method.GET,
-        query: query,
-      })) as IResult;
-      if (result.success) {
-        const ranking = result.data as IRanking[];
-        result.data = ranking;
-      }
-    } catch (error) {
-      result.code = Code.INTERNAL_SERVER_ERROR;
-      result.reason = Reason[result.code];
-    }
-    return result;
   };
 
   /* ToDo: (20230510 - Julian) get data from backend */
@@ -1634,7 +1610,6 @@ export const UserProvider = ({children}: IUserProvider) => {
     getBalance,
     getWalletBalance,
     getUserAssets,
-    getRanking,
     getPersonalRanking,
     getPersonalAchievements,
     // getTotalBalance,

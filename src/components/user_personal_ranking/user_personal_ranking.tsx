@@ -30,6 +30,7 @@ const UserPersonalRanking = ({timeSpan, rankingData}: IUserPersonalRankingProps)
   const [showShareList, setShowShareList] = useState(false);
 
   useEffect(() => {
+    setIsLoading(true);
     setTimeout(() => setIsLoading(false), SKELETON_DISPLAY_TIME);
   }, [timeSpan]);
 

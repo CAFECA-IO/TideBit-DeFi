@@ -89,8 +89,9 @@ const LeaderboardTab = ({timeSpan, setTimeSpan, rankings}: LeaderboardTabProps) 
       : 'bg-darkGray6 text-lightGray';
 
   useEffect(() => {
+    setIsLoading(true);
     setTimeout(() => setIsLoading(false), SKELETON_DISPLAY_TIME);
-  }, []);
+  }, [timeSpan]);
 
   const displayPnl = (pnl: IPnL) =>
     pnl?.type === ProfitState.PROFIT ? (

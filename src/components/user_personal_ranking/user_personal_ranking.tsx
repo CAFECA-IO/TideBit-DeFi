@@ -7,52 +7,35 @@ import Skeleton from 'react-loading-skeleton';
 import {TypeOfPnLColor, SKELETON_DISPLAY_TIME} from '../../constants/display';
 import {unitAsset} from '../../constants/config';
 import {IRankingTimeSpan, RankingInterval} from '../../constants/ranking_time_span';
-import {
-  IPersonalRanking,
-  defaultPersonalRanking,
-} from '../../interfaces/tidebit_defi_background/personal_ranking';
+import {IRanking, defaultRanking} from '../../interfaces/tidebit_defi_background/leaderboard';
 import {ProfitState} from '../../constants/profit_state';
-import {ImArrowUp, ImArrowDown, ImArrowRight} from 'react-icons/im';
+import {ImArrowUp} from 'react-icons/im';
 import {RiShareForwardFill} from 'react-icons/ri';
 import {BsFacebook, BsTwitter, BsReddit} from 'react-icons/bs';
 
 export interface IUserPersonalRankingProps {
   timeSpan: IRankingTimeSpan;
+  rankingData: IRanking[];
 }
 
-const UserPersonalRanking = ({timeSpan}: IUserPersonalRankingProps) => {
+const UserPersonalRanking = ({timeSpan, rankingData}: IUserPersonalRankingProps) => {
   const userCtx = useContext(UserContext);
   const globalCtx = useContext(GlobalContext);
 
+  /* Info: (20230626 - Julian) 找到當前使用者的排行資料 */
+  const myRanking = rankingData.find(data => data.userId === userCtx.user?.id) ?? defaultRanking;
   const userId = userCtx.user?.id ?? '';
 
   const [isLoading, setIsLoading] = useState(true);
   const [showShareList, setShowShareList] = useState(false);
-  const [userRankData, setUserRankData] = useState(defaultPersonalRanking);
 
   useEffect(() => {
     setTimeout(() => setIsLoading(false), SKELETON_DISPLAY_TIME);
-  }, []);
-  // ToDo: (20230621 - Julian) get Personal Ranking data
-  /* 
-  useEffect(() => {
-    userCtx
-      .getPersonalRanking(userId, timeSpan)
-      .then(result => {
-        result.success
-          ? setUserRankData(result.data as IPersonalRanking)
-          : setUserRankData(defaultPersonalRanking);
-      })
-      .catch(() => {
-        setUserRankData(defaultPersonalRanking);
-      });
-  }, [timeSpan]); */
+  }, [timeSpan]);
 
   const username = userCtx.user?.address?.slice(-1).toUpperCase();
-
-  const rankingNumber = userRankData.rank;
-  const pnl = userRankData.pnl;
-  const cumulativePnl = userRankData.cumulativePnl;
+  const rankingNumber = myRanking.rank;
+  const pnl = myRanking.cumulativePnl;
 
   const shareClickHandler = () => setShowShareList(!showShareList);
 
@@ -75,25 +58,31 @@ const UserPersonalRanking = ({timeSpan}: IUserPersonalRankingProps) => {
       <div className={TypeOfPnLColor.EQUAL}>{numberFormatted(pnl.value)}</div>
     );
 
-  const displayedCumulativePnl =
-    rankingNumber <= 0 ? (
-      '-'
-    ) : cumulativePnl.type === ProfitState.PROFIT ? (
-      <div className="text-lightYellow2">+ {numberFormatted(cumulativePnl.value)}</div>
-    ) : cumulativePnl.type === ProfitState.LOSS ? (
-      <div className="text-lightYellow2">- {numberFormatted(cumulativePnl.value)}</div>
-    ) : (
-      <div className="text-lightYellow2">{numberFormatted(cumulativePnl.value)}</div>
-    );
+  const displayedGapPnl = () => {
+    const previousPnl = (myRanking.rank > 1
+      ? rankingData[myRanking.rank - 2]?.cumulativePnl
+      : rankingData[0]?.cumulativePnl) ?? {
+      type: ProfitState.EQUAL,
+      value: 0,
+    };
+    const myPnl = myRanking.cumulativePnl;
 
-  const displayedArrow =
-    cumulativePnl.type === ProfitState.PROFIT ? (
-      <ImArrowUp width={20} height={26} />
-    ) : cumulativePnl.type === ProfitState.LOSS ? (
-      <ImArrowDown width={20} height={26} />
-    ) : (
-      <ImArrowRight width={20} height={26} />
-    );
+    const gapPnl =
+      // Info: (20230626 - Julian) 如果前一名和我的 PNL 都是正的，則 previousPnl.value - myPnl.value
+      previousPnl.type === ProfitState.PROFIT && myPnl.type === ProfitState.PROFIT
+        ? previousPnl.value - myPnl.value
+        : // Info: (20230626 - Julian) 如果前一名是正的，我的 PNL 是負的，則 previousPnl.value - (-myPnl.value) ，也就是 previousPnl.value + myPnl.value)
+        previousPnl.type === ProfitState.PROFIT && myPnl.type === ProfitState.LOSS
+        ? previousPnl.value + myPnl.value
+        : // Info: (20230626 - Julian) 如果兩者都是負的，則(-previousPnl.value) - (-myPnl.value) ，也就是 myPnl.value - previousPnl.value
+        previousPnl.type === ProfitState.LOSS && myPnl.type === ProfitState.LOSS
+        ? myPnl.value - previousPnl.value
+        : 0;
+
+    return gapPnl !== 0 ? gapPnl.toFixed(2) : '-';
+  };
+
+  const displayedPreviousRankingNumber = myRanking.rank - 1 <= 0 ? '-' : myRanking.rank - 1;
 
   /* ToDo: (20230512 - Julian) Share function */
   const socialMediaList = (
@@ -125,9 +114,11 @@ const UserPersonalRanking = ({timeSpan}: IUserPersonalRankingProps) => {
   const isDisplayedLiveRank =
     timeSpan === RankingInterval.LIVE ? (
       <div className="inline-flex items-center space-x-1 text-sm text-lightYellow2 sm:text-lg md:space-x-3">
-        <div className="hidden sm:block">{displayedCumulativePnl}</div>
-        <div>{displayedArrow}</div>
-        <div>{displayedRankingNumber}</div>
+        <div>+ {displayedGapPnl()}</div>
+        <div>
+          <ImArrowUp width={20} height={26} />
+        </div>
+        <div className="hidden sm:block">{displayedPreviousRankingNumber}</div>
       </div>
     ) : null;
 

@@ -51,12 +51,9 @@ import {CustomError, isCustomError} from '../lib/custom_error';
 import {IWalletExtension, WalletExtension} from '../constants/wallet_extension';
 import {Events} from '../constants/events';
 import {IUser} from '../interfaces/tidebit_defi_background/user';
-import {IRankingTimeSpan} from '../constants/ranking_time_span';
 import {IUserAssets} from '../interfaces/tidebit_defi_background/user_assets';
-import {IPersonalRanking} from '../interfaces/tidebit_defi_background/personal_ranking';
 import {IPersonalAchievement} from '../interfaces/tidebit_defi_background/personal_achievement';
 import {IBadge} from '../interfaces/tidebit_defi_background/badge';
-import {IRanking} from '../interfaces/tidebit_defi_background/leaderboard';
 import {IPnL} from '../interfaces/tidebit_defi_background/pnl';
 
 export interface IUserProvider {
@@ -105,7 +102,6 @@ export interface IUserContext {
   getBalance: (currency: string) => IBalance | null;
   getWalletBalance: (props: string) => IWalletBalance | null;
   getUserAssets: () => Promise<IResult>;
-  getPersonalRanking: (userId: string, timeSpan: IRankingTimeSpan) => Promise<IResult>;
   getPersonalAchievements: (userId: string) => Promise<IResult>;
   init: () => Promise<void>;
   enableShare: (cfdId: string, share: boolean) => Promise<IResult>;
@@ -198,9 +194,6 @@ export const UserContext = createContext<IUserContext>({
   },
   getBalance: () => null,
   getWalletBalance: () => null,
-  getPersonalRanking: (): Promise<IResult> => {
-    throw new CustomError(Code.FUNCTION_NOT_IMPLEMENTED);
-  },
   getPersonalAchievements: (): Promise<IResult> => {
     throw new CustomError(Code.FUNCTION_NOT_IMPLEMENTED);
   },
@@ -861,32 +854,6 @@ export const UserProvider = ({children}: IUserProvider) => {
       if (index !== -1) balance = balancesRef.current[index];
     }
     return balance;
-  };
-
-  /* ToDo: (20230510 - Julian) get data from backend */
-  const getPersonalRanking = async (userId: string, timeSpan: IRankingTimeSpan) => {
-    let result: IResult = {...defaultResultFailed};
-    try {
-      result = (await workerCtx.requestHandler({
-        name: APIName.GET_RANKING,
-        method: Method.GET,
-        params: userId,
-        query: {
-          timeSpan,
-        },
-      })) as IResult;
-      if (result.success) {
-        const ranking = result.data as IPersonalRanking;
-        result.data = ranking;
-      }
-    } catch (error) {
-      // Deprecate: error handle (Tzuhan - 20230321)
-      // eslint-disable-next-line no-console
-      console.error(`20230526 error`, error);
-      result.code = Code.INTERNAL_SERVER_ERROR;
-      result.reason = Reason[result.code];
-    }
-    return result;
   };
 
   /* ToDo: (20230517 - Julian) get data from backend */
@@ -1610,7 +1577,6 @@ export const UserProvider = ({children}: IUserProvider) => {
     getBalance,
     getWalletBalance,
     getUserAssets,
-    getPersonalRanking,
     getPersonalAchievements,
     // getTotalBalance,
     getBadge,

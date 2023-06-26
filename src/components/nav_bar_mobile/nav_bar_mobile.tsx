@@ -149,14 +149,14 @@ const NavBarMobile = () => {
                         alt="TideBit_logo"
                       />
                       <Image
-                        className="absolute right-58px bottom-1"
+                        className="absolute right-60px bottom-1"
                         src="/elements/beta@2x.png"
-                        width={35}
+                        width={30}
                         height={13}
                         alt="beta"
                       />
-                      <p className="absolute bottom-1 right-0 text-end text-xxs text-lightGray">
-                        v {version}
+                      <p className="absolute bottom-1 right-0 text-end text-xs leading-tight tracking-tighter text-lightGray">
+                        v{version}
                       </p>
                     </div>
                   </div>

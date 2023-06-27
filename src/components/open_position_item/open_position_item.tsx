@@ -44,6 +44,9 @@ const OpenPositionItem = ({openCfdDetails}: IOpenPositionItemProps) => {
   const updatedModalClickHandler = () => {
     dataUpdateFormModalHandler({...openCfdDetails, pnl: pnl});
     visibleUpdateFormModalHandler();
+    // depracated: observe if there's gap between the current price and the line graph (20230710 - Shirley)
+    // eslint-disable-next-line no-console
+    console.log('line graph array: ', positionLineGraphWithSpread);
   };
 
   const {

@@ -89,8 +89,9 @@ const LeaderboardTab = ({timeSpan, setTimeSpan, rankings}: LeaderboardTabProps) 
       : 'bg-darkGray6 text-lightGray';
 
   useEffect(() => {
+    setIsLoading(true);
     setTimeout(() => setIsLoading(false), SKELETON_DISPLAY_TIME);
-  }, []);
+  }, [timeSpan]);
 
   const displayPnl = (pnl: IPnL) =>
     pnl?.type === ProfitState.PROFIT ? (
@@ -327,7 +328,7 @@ const LeaderboardTab = ({timeSpan, setTimeSpan, rankings}: LeaderboardTabProps) 
         <div className="inline-flex w-full text-center font-medium md:space-x-3px">{tabList}</div>
         <div className="relative flex w-full flex-col bg-darkGray7 pt-2">
           {displayedleaderboardList}
-          <UserPersonalRanking timeSpan={timeSpan} />
+          <UserPersonalRanking timeSpan={timeSpan} rankingData={rankingData} />
         </div>
       </div>
     </div>

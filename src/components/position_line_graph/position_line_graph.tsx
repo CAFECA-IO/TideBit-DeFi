@@ -42,6 +42,7 @@ export default function PositionLineGraph({
           shape: 'circle',
         },
       ],
+      showNullDataPoints: false,
     },
     dataLabels: {enabled: false},
     stroke: {

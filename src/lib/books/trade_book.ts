@@ -401,6 +401,10 @@ class TradeBook {
       'quantity' in trade
     );
   }
+
+  setHoldingTradesMs(holdingTradesMs: number) {
+    this.config.holdingTradesMs = holdingTradesMs;
+  }
 }
 
 const TradeBookInstance = new TradeBook({

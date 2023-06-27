@@ -22,6 +22,7 @@ import {ITimeSpanUnion, TimeSpanUnion, getTime} from '../constants/time_span_uni
 import {
   ICandlestickData,
   ITrade,
+  ITradeSideText,
   TradeSideText,
 } from '../interfaces/tidebit_defi_background/candlestickData';
 import {TideBitEvent} from '../constants/tidebit_event';
@@ -29,7 +30,13 @@ import {NotificationContext} from './notification_context';
 import {WorkerContext} from './worker_context';
 import {APIName, Method} from '../constants/api_request';
 import TickerBookInstance from '../lib/books/ticker_book';
-import {INITIAL_TRADES_BUFFER, INITIAL_TRADES_INTERVAL, unitAsset} from '../constants/config';
+import {
+  INITIAL_TRADES_BUFFER,
+  INITIAL_TRADES_INTERVAL,
+  TRADES_RECURSIVE_BUFFER,
+  TRADES_RECURSIVE_STEP,
+  unitAsset,
+} from '../constants/config';
 import {ITypeOfPosition, TypeOfPosition} from '../constants/type_of_position';
 import {
   dummyTideBitPromotion,
@@ -43,7 +50,7 @@ import {IQuotation} from '../interfaces/tidebit_defi_background/quotation';
 import {IRankingTimeSpan} from '../constants/ranking_time_span';
 import {ILeaderboard, getDummyLeaderboard} from '../interfaces/tidebit_defi_background/leaderboard';
 import TradeBookInstance from '../lib/books/trade_book';
-import {millesecondsToSeconds} from '../lib/common';
+import {millesecondsToSeconds, timestampToString} from '../lib/common';
 import {
   IWebsiteReserve,
   dummyWebsiteReserve,
@@ -569,7 +576,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       limit?: number;
     }
   ) => {
-    let result: IResult = {...defaultResultFailed};
+    const result: IResult = {...defaultResultFailed};
     if (!options) {
       const dateTime = new Date().getTime();
       options = {
@@ -579,6 +586,8 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       };
     }
     try {
+      await listMarketTradesForTimespan(instId, TimeSpanUnion._4h, []);
+      /* ToDo: Replaced by `listMarketTradesForTimespan` (20230627 - Shirley)
       result = (await workerCtx.requestHandler({
         name: APIName.LIST_MARKET_TRADES,
         method: Method.GET,
@@ -597,7 +606,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
         }));
         trades.sort((a, b) => parseInt(a.tradeId) - parseInt(b.tradeId));
         tradeBook.addTrades(trades);
-      }
+        */
     } catch (error) {
       // Deprecate: error handle (Tzuhan - 20230321)
       // eslint-disable-next-line no-console
@@ -608,6 +617,91 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       }
     }
     return result;
+  };
+
+  const listMarketTradesForTimespan = async (
+    instId: string,
+    timeSpan: ITimeSpanUnion,
+    allTrades: {
+      tradeId: string;
+      targetAsset: string;
+      unitAsset: string;
+      direct: ITradeSideText;
+      price: number;
+      timestampMs: number;
+      quantity: number;
+    }[],
+    options?: {
+      begin?: number;
+      end?: number;
+      asc?: boolean;
+      limit?: number;
+    }
+  ) => {
+    tradeBook.setHoldingTradesMs(getTime(timeSpan));
+
+    const now = new Date().getTime();
+    const end = now + INITIAL_TRADES_BUFFER;
+    const begin = now - getTime(timeSpan);
+
+    let currentTime = options && options.end ? options.end : end;
+
+    options = {
+      begin,
+      end: currentTime,
+      asc: false,
+    };
+
+    try {
+      const rs = (await workerCtx.requestHandler({
+        name: APIName.LIST_MARKET_TRADES,
+        method: Method.GET,
+        params: instId,
+        query: {...(options || {})},
+      })) as IResult;
+
+      if (rs.success) {
+        const trades = (rs.data as ITrade[]).map(trade => ({
+          tradeId: trade.tradeId,
+          targetAsset: trade.baseUnit,
+          unitAsset: trade.quoteUnit,
+          direct: TradeSideText[trade.side],
+          price: trade.price,
+          timestampMs: trade.timestamp,
+          quantity: trade.amount,
+        }));
+
+        if (trades.length === 0) {
+          currentTime -= TRADES_RECURSIVE_STEP;
+          await listMarketTradesForTimespan(instId, timeSpan, allTrades, {
+            ...options,
+            end: currentTime,
+          });
+        }
+
+        allTrades.push(...trades);
+
+        const earliestTimestamp = trades[trades.length - 1].timestampMs;
+
+        if (earliestTimestamp <= begin + TRADES_RECURSIVE_BUFFER) {
+          allTrades.sort((a, b) => a.timestampMs - b.timestampMs);
+          tradeBook.addTrades(allTrades);
+
+          return rs;
+        } else {
+          currentTime = earliestTimestamp; // Info: Adjust currentTime timestamp for the next iteration (20230627 - Shirley)
+          await listMarketTradesForTimespan(instId, timeSpan, allTrades, {
+            ...options,
+            end: currentTime,
+          });
+        }
+      }
+    } catch (error) {
+      // Deprecated: debug (20230627 - Shirley)
+      // eslint-disable-next-line no-console
+      console.error(`listMarketTradesForTimespan error`, error);
+      throw new CustomError(Code.INTERNAL_SERVER_ERROR);
+    }
   };
 
   const syncCandlestickData = (timeSpan?: ITimeSpanUnion) => {

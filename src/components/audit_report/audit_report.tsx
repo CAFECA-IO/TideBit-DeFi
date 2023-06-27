@@ -27,7 +27,7 @@ const AuditReport = () => {
           <span className="text-lightWhite">&nbsp;January 17, 2023</span>
         </div>
 
-        <div className="mb-5 flex w-full justify-center lg:-mt-20 lg:mb-20 lg:justify-end">
+        <div className="mb-5 flex w-full justify-center lg:-mt-20 lg:mb-20 lg:justify-end xl:pr-1/10">
           <Image src={`/certificate/1-v@2x.png`} alt="certificate" width={60} height={60} />
         </div>
 

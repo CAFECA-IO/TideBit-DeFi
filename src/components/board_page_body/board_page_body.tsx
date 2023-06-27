@@ -9,7 +9,6 @@ import {
 } from '../../interfaces/tidebit_defi_background/leaderboard';
 import {timestampToString} from '../../lib/common';
 import Skeleton, {SkeletonTheme} from 'react-loading-skeleton';
-import {SKELETON_DISPLAY_TIME} from '../../constants/display';
 import {useTranslation} from 'next-i18next';
 
 type TranslateFunction = (s: string) => string;
@@ -20,6 +19,8 @@ const BoardPageBody = () => {
   const marketCtx = useContext(MarketContext);
 
   const [isLoading, setIsLoading] = useState(true);
+  // Info: (20230626 - Julian) 倒數計時的 loading 另外處理
+  const [isTimeSpanLoading, setIsTimeSpanLoading] = useState(true);
   const [timeSpan, setTimeSpan] = useState(RankingInterval.LIVE);
   const [leaderboardLiveRemains, setLeaderboardLiveRemains] = useState(0);
   const [leaderboardData, setLeaderboardData] = useState(defaultLeaderboard);
@@ -27,6 +28,7 @@ const BoardPageBody = () => {
   const {startTime, endTime, rankings} = leaderboardData;
 
   useEffect(() => {
+    setIsLoading(true);
     if (!marketCtx.isInit) return;
     marketCtx
       .getLeaderboard(timeSpan)
@@ -45,6 +47,12 @@ const BoardPageBody = () => {
       const remains = endTime - now;
       setLeaderboardLiveRemains(remains);
     }, 1000);
+
+    /* Info: (20230626 - Julian) 剛進入頁面時，起始時間的時區校正尚未完成，須等到校正完成後(倒數計時大於0)才將 loading 設成 false
+     * 基本上每次進入 Leaderboard 只會進行一次 */
+    if (timeSpan === RankingInterval.LIVE && leaderboardLiveRemains > 0) {
+      setIsTimeSpanLoading(false);
+    }
 
     return () => clearTimeout(countdownInterval);
   }, [leaderboardLiveRemains]);
@@ -86,7 +94,8 @@ const BoardPageBody = () => {
     <h1 className="text-3xl">{t('LEADERBOARD_PAGE.TITLE')}</h1>
   );
 
-  const displayedSubtitle = isLoading ? <Skeleton width={300} height={25} /> : subtitle;
+  const displayedSubtitle =
+    isTimeSpanLoading || isLoading ? <Skeleton width={300} height={25} /> : subtitle;
 
   return (
     <div className="pt-12 md:pt-20">

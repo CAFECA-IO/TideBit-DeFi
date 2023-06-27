@@ -28,7 +28,7 @@ const AuditReport = () => {
         </div>
 
         <div className="mb-5 flex w-full justify-center lg:-mt-20 lg:mb-20 lg:justify-end xl:pr-1/10">
-          <Image src={`/certificate/1-v@2x.png`} alt="certificate" width={60} height={60} />
+          <Image src={`/certificate/3-v@2x.png`} alt="certificate" width={60} height={60} />
         </div>
 
         <div className="flex w-full justify-around">

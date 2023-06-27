@@ -10,21 +10,25 @@ const AuditReport = () => {
 
   return (
     <section>
-      <div className="mb-10 items-center text-2xl font-medium text-white lg:text-3xl xl:text-4xl">
+      <div className="mb-5 items-center text-2xl font-medium text-white lg:mb-10 lg:text-3xl xl:text-4xl">
         <div className="flex items-center justify-center">
           <span className="my-auto h-px w-1/11 rounded bg-white/50 xs:inline-block xs:w-1/10 lg:w-3/10 xl:mx-2"></span>
           <h1 className="mx-5 text-center">
-            {t('HOME_PAGE.SMART')}
-            <span className="text-tidebitTheme"> {t('HOME_PAGE.AUDITING')}</span>{' '}
-            {t('HOME_PAGE.REPORTS')}
+            <span className="text-tidebitTheme">{t('HOME_PAGE.SMART')} </span>{' '}
+            {t('HOME_PAGE.AUDITING_REPORTS')}
           </h1>
           <span className="my-auto h-px w-1/11 rounded bg-white/50 xs:inline-block xs:w-1/10 lg:w-3/10 xl:mx-2"></span>
         </div>
       </div>
 
       <div className="mx-20">
-        <div className="mb-10 flex w-full justify-center text-lightGray">
-          {t('HOME_PAGE.LAST_UPDATED')} <span className="text-lightWhite">&nbsp;June 19, 2023</span>
+        <div className="mb-5 flex w-full justify-center text-lightGray lg:mb-10">
+          {t('HOME_PAGE.LAST_UPDATED')}{' '}
+          <span className="text-lightWhite">&nbsp;January 17, 2023</span>
+        </div>
+
+        <div className="mb-5 flex w-full justify-center lg:-mt-20 lg:mb-20 lg:justify-end">
+          <Image src={`/certificate/1-v@2x.png`} alt="certificate" width={60} height={60} />
         </div>
 
         <div className="flex w-full justify-around">
@@ -109,7 +113,7 @@ const AuditReport = () => {
           </div>
         </div>
 
-        <div className="flex w-full justify-center space-x-3 pt-16">
+        <div className="flex w-full justify-center space-x-3 pt-10">
           <p className=""> {t('HOME_PAGE.POWERED_BY')}</p>
           <a
             href={`https://baifa.io`}

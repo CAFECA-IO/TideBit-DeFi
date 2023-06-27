@@ -66,7 +66,7 @@ const OpenSubTab = () => {
         return a.createTimestamp - b.createTimestamp;
       })
       .sort((a, b) => {
-        return b.stateCode! - a.stateCode!;
+        return a.stateCode! - b.stateCode!;
       });
 
     setCfds(cfdList);

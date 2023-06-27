@@ -1,14 +1,14 @@
 export type IModifyType = 1 | 2 | 3 | 4;
 export interface IModifyTypeConstant {
-  COMMON: number;
-  TAKE_PROFIT: number;
-  STOP_LOSS: number;
-  LIQUIDATION: number;
+  COMMON: IModifyType;
+  TAKE_PROFIT: IModifyType;
+  STOP_LOSS: IModifyType;
+  LIQUIDATION: IModifyType;
 }
 
 export const cfdStateCode = {
-  TAKE_PROFIT: 1,
+  LIQUIDATION: 1,
   STOP_LOSS: 2,
-  LIQUIDATION: 3,
+  TAKE_PROFIT: 3,
   COMMON: 4,
 };

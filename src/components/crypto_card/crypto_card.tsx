@@ -41,7 +41,7 @@ export interface ICardProps {
   cardClickHandler?: () => void;
 }
 
-/**
+/** Info: (20230628 - Shirley)
  * @dev used when it needs the star functionality
  * @param {boolean} star blank star
  * @param {boolean} starred fill star or not
@@ -70,7 +70,6 @@ const CryptoCard = ({
   const fluctuatingRate = priceRise
     ? `▴ ${fluctuatingAbs.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)}%`
     : `▾ ${fluctuatingAbs.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)}%`;
-  // TODO: input the data and price color change as props
   const priceColor = priceRise ? `text-lightGreen5` : `text-lightRed`;
   const strokeColor = priceRise ? [TypeOfPnLColorHex.PROFIT] : [TypeOfPnLColorHex.LOSS];
 

@@ -79,44 +79,45 @@ const TradingChartSwitchMobile = ({
   const fiveMinButtonClickHandler = () => {
     setActiveButton('5m');
     getTradingViewInterval('5m');
-    selectTimeSpanHandler(TimeSpanUnion._10s);
+    selectTimeSpanHandler(TimeSpanUnion._5m);
   };
 
   const fifteenMinButtonClickHandler = () => {
     setActiveButton('15m');
     getTradingViewInterval('15m');
-    selectTimeSpanHandler(TimeSpanUnion._30s);
+    selectTimeSpanHandler(TimeSpanUnion._15m);
   };
 
   const thirtyMinButtonClickHandler = () => {
     setActiveButton('30m');
     getTradingViewInterval('30m');
-    selectTimeSpanHandler(TimeSpanUnion._1m);
+    selectTimeSpanHandler(TimeSpanUnion._30m);
   };
 
   const oneHrButtonClickHandler = () => {
     setActiveButton('1h');
     getTradingViewInterval('1h');
-    selectTimeSpanHandler(TimeSpanUnion._2m);
+    selectTimeSpanHandler(TimeSpanUnion._1h);
   };
 
   const fourHrButtonClickHandler = () => {
     setActiveButton('4h');
     getTradingViewInterval('4h');
-    selectTimeSpanHandler(TimeSpanUnion._8m);
+    selectTimeSpanHandler(TimeSpanUnion._4h);
   };
 
   const twelveHrButtonClickHandler = () => {
     setActiveButton('12h');
     getTradingViewInterval('12h');
-    selectTimeSpanHandler(TimeSpanUnion._24m);
+    selectTimeSpanHandler(TimeSpanUnion._12h);
   };
 
   const oneDayButtonClickHandler = () => {
     setActiveButton('1d');
     getTradingViewInterval('1d');
-    selectTimeSpanHandler(TimeSpanUnion._48m);
+    selectTimeSpanHandler(TimeSpanUnion._1d);
   };
+
   const stickSwitchButton = (
     <div>
       <button
@@ -189,10 +190,7 @@ const TradingChartSwitchMobile = ({
   return (
     <>
       <div className="flex w-full items-center justify-between space-x-1 md:space-x-5">
-        {/* Switch chart types */}
         <div className="flex space-x-2">{stickSwitchButton}</div>
-
-        {/* Diplaying position info toggle */}
         <div className="hidden items-center space-x-5 md:flex">
           <p className="text-lightGray">Positions</p>
           <div className="pt-1">
@@ -203,8 +201,6 @@ const TradingChartSwitchMobile = ({
             />
           </div>
         </div>
-
-        {/* Switch time interval */}
         <div className="flex w-full justify-between whitespace-nowrap rounded-sm bg-darkGray6 py-2 px-2">
           <button type="button" className={`${liveButtonStyle}`} onClick={liveButtonClickHandler}>
             Live

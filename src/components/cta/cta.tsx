@@ -15,7 +15,7 @@ const Cta = () => {
 
   return (
     <>
-      {/* Desktop version (width >= 1024 px) */}
+      {/* Info: Desktop version (width >= 1024 px) (20230628 - Shirley) */}
       <section className="relative hidden w-screen pl-50px lg:flex">
         <Image
           width={2409}
@@ -64,8 +64,8 @@ const Cta = () => {
         </div>
       </section>
 
-      {/* Mobile version (width < 1024 px) */}
-      <div className="w-full">
+      {/* Info: Mobile version (width < 1024 px) (20230628 - Shirley) */}
+      <div className="w-full lg:hidden">
         <div className="mb-10 flex justify-center">
           <Image src="/elements/nav_logo.svg" height={50} width={150} alt="TideBit_logo" />
         </div>

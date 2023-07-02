@@ -41,7 +41,7 @@ export interface ICardProps {
   cardClickHandler?: () => void;
 }
 
-/**
+/** Info: (20230628 - Shirley)
  * @dev used when it needs the star functionality
  * @param {boolean} star blank star
  * @param {boolean} starred fill star or not
@@ -70,8 +70,8 @@ const CryptoCard = ({
   const fluctuatingRate = priceRise
     ? `▴ ${fluctuatingAbs.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)}%`
     : `▾ ${fluctuatingAbs.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)}%`;
-  // TODO: input the data and price color change as props
   const priceColor = priceRise ? `text-lightGreen5` : `text-lightRed`;
+  const strokeColor = priceRise ? [TypeOfPnLColorHex.PROFIT] : [TypeOfPnLColorHex.LOSS];
 
   const globalCtx = useGlobal();
 
@@ -229,7 +229,7 @@ const CryptoCard = ({
 
   return (
     <>
-      {/* -----Desktop (width > 500px) version (Card 200x120)----- */}
+      {/* -----Info: Desktop (width > 500px) version (Card 200x120) (20230628 - Shirley)----- */}
       <div
         className={`${desktopVersionBreakpoint} ${otherProps?.className} relative m-0 hidden h-120px w-200px rounded-2xl border-0.5px p-0 hover:cursor-pointer ${gradientColor} bg-transparent bg-gradient-to-b opacity-90 shadow-lg`}
         onClick={() => {
@@ -238,7 +238,6 @@ const CryptoCard = ({
         }}
       >
         <div className="px-2 py-1">
-          {/* token icon & chain & coin name */}
           <div className="flex items-center">
             <Image src={tokenImg} alt={currency} height={40} width={40} />
 
@@ -246,34 +245,17 @@ const CryptoCard = ({
               <p className="text-lg leading-6 text-lightWhite"> {chain}</p>
               <p className="text-sm text-lightWhite opacity-60">{currency}</p>
             </div>
-            <div
-              className=""
-              // No execution to the below function actually
-              // onClick={() => {
-              //   console.log('start clicked');
-              // }}
-            >
-              {showStar}
-            </div>
+            <div className="">{showStar}</div>
           </div>
 
-          {/* line graph & price & fluctuating rate */}
           <div className="flex flex-col justify-start">
             <div className="pointer-events-none absolute top-4 h-96 bg-transparent">
               {lineGraph({
                 dataArray: lineGraphProps?.dataArray || sampleArray,
-                strokeColor: lineGraphProps?.strokeColor || thisRandomColor,
+                strokeColor: strokeColor || lineGraphProps?.strokeColor || thisRandomColor,
                 lineGraphWidth: lineGraphProps?.lineGraphWidth || '170',
               })}
-              {/* <LineGraph
-                sampleArray={sampleArray}
-                strokeColor={thisRandomColor}
-                lineGraphWidth="170"
-              /> */}
-
-              {/* <div className="absolute top-0 left-0 h-2 w-2/3 rounded bg-blue-200"></div> */}
             </div>
-            {/**@note no default text color, otherwise it will make actual text color not work */}
             <div className="absolute bottom-0 flex w-200px justify-between">
               <span
                 className={`flex items-center justify-between text-sm ${priceColor} mt-3 align-middle`}
@@ -288,7 +270,7 @@ const CryptoCard = ({
         </div>
       </div>
 
-      {/* -----Mobile (width < 500px) version (Card 134x81)----- */}
+      {/* -----Info: Mobile (width < 500px) version (Card 134x81) (20230628 - Shirley)----- */}
       <div
         className={`${mobileVersionBreakpoint} ${otherProps?.className} relative m-0 h-81px w-134px rounded-2xl border-0.5px p-0 ${gradientColor} bg-black bg-gradient-to-b opacity-90 shadow-lg`}
         onClick={() => {
@@ -297,7 +279,6 @@ const CryptoCard = ({
         }}
       >
         <div className="px-2 py-1">
-          {/* token icon & chain & coin name */}
           <div className="mb-1 flex items-center">
             <Image src={tokenImg} alt={currency} width={28} height={28} />
 
@@ -308,22 +289,14 @@ const CryptoCard = ({
             <div className="">{showStarMobile}</div>
           </div>
 
-          {/* line graph & price & fluctuating rate */}
           <div className="flex flex-col justify-start">
             <div className="pointer-events-none absolute right-0 top-1 bg-transparent">
-              {/* <div className="absolute top-0 left-0 h-2 w-2/3 rounded bg-blue-200"></div> */}
               {lineGraph({
                 dataArray: lineGraphProps?.dataArray || sampleArray,
-                strokeColor: lineGraphProps?.strokeColor || thisRandomColor,
+                strokeColor: strokeColor || lineGraphProps?.strokeColor || thisRandomColor,
                 lineGraphWidth: lineGraphProps?.lineGraphWidthMobile || '140',
               })}
-              {/* <LineGraph
-                sampleArray={sampleArray}
-                strokeColor={thisRandomColor}
-                lineGraphWidth="140"
-              /> */}
             </div>
-            {/**@note no default text color, otherwise it will make actual text color not work */}
             <div className="absolute bottom-0 flex w-134px justify-between">
               <span
                 className={`flex items-center justify-between text-xs ${priceColor} mt-3 align-middle`}

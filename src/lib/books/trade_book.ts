@@ -113,15 +113,10 @@ class TradeBook {
 
     if (!isPredictedData) {
       trades.push(trade);
-      // this.trades.push(trade);
-
       predictedTrades.push(trade);
-      // this.predictedTrades.push(trade);
     } else {
       if (predictedTrades.length < 1) throw new Error('Invalid predicted trade');
 
-      // const lastTradeId =
-      // 	this.predictedTrades[this.predictedTrades.length - 1].tradeId.split('-');
       const lastTradeId = this.getLastPredictedTrade(ticker).tradeId.split('-');
 
       const tradeId = `${
@@ -130,7 +125,6 @@ class TradeBook {
           : `${lastTradeId[0]}-1`
       }`;
 
-      // this.predictedTrades.push({...trade, tradeId});
       this.predictedTrades.get(ticker)!.push({...trade, tradeId});
     }
   }
@@ -200,6 +194,7 @@ class TradeBook {
             this.config.intervalMs,
             1
           );
+          this._trim(ticker);
           this.startPredictionLoop(ticker);
         }
       }, this.config.intervalMs)
@@ -363,7 +358,6 @@ class TradeBook {
         this.model = Model.LINEAR_REGRESSION;
         break;
 
-      // Info: default is linear regression (20230522 - Shirley)
       default:
         this.model = Model.LINEAR_REGRESSION;
     }
@@ -379,19 +373,14 @@ class TradeBook {
 
   toLineChart(ticker: string, interval: number, length: number): ILine[] {
     this.ensureTickerExists(ticker);
-
     const trades = this.predictedTrades.get(ticker)!;
-    if (trades.length === 0) return [];
 
-    // [change]
-    // if (this.predictedTrades.get.length === 0) return [];
+    if (trades.length === 0) return [];
 
     const lines: ILine[] = [];
     const intervalMs = interval * 1000;
 
     let lastTimestamp = trades[trades.length - 1].timestampMs;
-    // let lastTimestamp =
-    // 	this.predictedTrades[this.predictedTrades.length - 1].timestampMs;
     const remainderLastTimestamp = lastTimestamp % intervalMs;
     if (remainderLastTimestamp !== 0) {
       lastTimestamp = intervalMs - remainderLastTimestamp + lastTimestamp;
@@ -414,11 +403,8 @@ class TradeBook {
 
   toCandlestick(ticker: string, interval: number, length: number): ICandlestickData[] {
     this.ensureTickerExists(ticker);
-
-    // [change]
-    // if (this.predictedTrades.length === 0) return [];
-
     const trades = this.predictedTrades.get(ticker)!;
+
     if (trades.length === 0) return [];
 
     const candleSticks: ICandlestickData[] = [];

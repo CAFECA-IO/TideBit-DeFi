@@ -29,7 +29,12 @@ import {NotificationContext} from './notification_context';
 import {WorkerContext} from './worker_context';
 import {APIName, Method} from '../constants/api_request';
 import TickerBookInstance from '../lib/books/ticker_book';
-import {INITIAL_TRADES_BUFFER, INITIAL_TRADES_INTERVAL, unitAsset} from '../constants/config';
+import {
+  DEFAULT_TICKER,
+  INITIAL_TRADES_BUFFER,
+  INITIAL_TRADES_INTERVAL,
+  unitAsset,
+} from '../constants/config';
 import {ITypeOfPosition, TypeOfPosition} from '../constants/type_of_position';
 import {
   dummyTideBitPromotion,
@@ -282,7 +287,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     tickerBook.timeSpan = timeSpan;
     setTimeSpan(tickerBook.timeSpan);
 
-    syncCandlestickData(timeSpan);
+    syncCandlestickData(selectedTickerRef.current?.currency ?? DEFAULT_TICKER, timeSpan);
   };
 
   const getTickerStatic = async (instId: string) => {
@@ -336,7 +341,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     setTickerStatic(null);
     setSelectedTicker(ticker);
     await listMarketTrades(ticker.instId);
-    syncCandlestickData();
+    syncCandlestickData(tickerId);
     // ++ TODO: get from api
     const {success: isGetTickerStaticSuccess, data: tickerStatic} = await getTickerStatic(
       ticker.instId
@@ -595,8 +600,9 @@ export const MarketProvider = ({children}: IMarketProvider) => {
           timestampMs: trade.timestamp,
           quantity: trade.amount,
         }));
+        const target = trades[0].targetAsset;
         trades.sort((a, b) => parseInt(a.tradeId) - parseInt(b.tradeId));
-        tradeBook.addTrades(trades);
+        tradeBook.addTrades(target, trades);
       }
     } catch (error) {
       // Deprecate: error handle (Tzuhan - 20230321)
@@ -610,7 +616,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     return result;
   };
 
-  const syncCandlestickData = (timeSpan?: ITimeSpanUnion) => {
+  const syncCandlestickData = (tickerId: ICurrency, timeSpan?: ITimeSpanUnion) => {
     if (!!candlestickIntervalRef.current) {
       clearInterval(candlestickIntervalRef.current);
       setCandlestickInterval(null);
@@ -621,7 +627,11 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       if (timeSpan) setTimeSpan(timeSpan);
       const interval = Math.round(getTime(ts) / CANDLESTICK_SIZE);
 
-      const candlesticks = tradeBook.toCandlestick(millesecondsToSeconds(getTime(ts)), 100);
+      const candlesticks = tradeBook.toCandlestick(
+        tickerId,
+        millesecondsToSeconds(getTime(ts)),
+        100
+      );
 
       setCandlestickChartData(candlesticks);
 
@@ -745,7 +755,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     () =>
       notificationCtx.emitter.on(TideBitEvent.TRADES, (action: IPusherAction, trade: ITrade) => {
         if (trade.instId === selectedTickerRef.current?.instId) {
-          tradeBook.add({
+          tradeBook.add(trade.baseUnit, {
             tradeId: trade.tradeId,
             targetAsset: trade.baseUnit,
             unitAsset: trade.quoteUnit,

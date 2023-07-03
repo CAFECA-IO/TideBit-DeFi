@@ -38,81 +38,91 @@ interface ITradeBookConfig {
 }
 
 class TradeBook {
-  private trades: ITrade[];
-  private predictedTrades: ITrade[];
-  private isPredicting: boolean;
-  private predictionTimer: any;
+  private trades: Map<string, ITrade[]>;
+  private predictedTrades: Map<string, ITrade[]>;
+  private isPredicting: Map<string, boolean>;
+  private predictionTimers: Map<string, NodeJS.Timeout>;
   private config: ITradeBookConfig;
   private model: string;
 
   constructor(config: ITradeBookConfig) {
     this.config = config;
-    this.trades = config.initialTrades || [];
-    this.predictedTrades = config.initialTrades || [];
-    this.isPredicting = false;
+    this.trades = new Map();
+    this.predictedTrades = new Map();
+    this.isPredicting = new Map();
+    this.predictionTimers = new Map();
     this.model = Model.LINEAR_REGRESSION;
   }
 
-  addTrades(trades: ITrade[]) {
-    this.trades = [];
-    this.predictedTrades = [];
+  addTrades(ticker: string, trades: ITrade[]) {
+    this.ensureTickerExists(ticker);
     const vaildTrades = trades.filter(trade => this.isValidTrade(trade));
 
-    this.resetPrediction();
+    this.resetPrediction(ticker);
 
     for (const trade of vaildTrades) {
-      if (this.trades.length >= this.config.minLengthForLinearRegression) {
-        const lastTrade = this.trades[this.trades.length - 1];
+      if (this.trades.get(ticker)!.length >= this.config.minLengthForLinearRegression) {
+        const lastTrade = this.getLastTrade(ticker);
         const timestampDifference = trade.timestampMs - lastTrade.timestampMs;
 
         if (timestampDifference > this.config.intervalMs) {
-          this.fillPredictedData(this.trades, trade.timestampMs);
+          this.fillPredictedData(ticker, trades, trade.timestampMs);
         }
       }
 
-      this._add(trade);
+      this._add(ticker, trade);
     }
 
-    this.startPredictionLoop();
+    this.startPredictionLoop(ticker);
   }
+  add(ticker: string, trade: ITrade): void {
+    this.ensureTickerExists(ticker);
+    const trades = this.trades.get(ticker)!;
 
-  add(trade: ITrade): void {
     if (!this.isValidTrade(trade)) {
-      throw new CustomError(Code.INVALID_TRADE);
+      throw new Error('Invalid trade');
     }
 
-    this.resetPrediction();
+    this.resetPrediction(ticker);
 
-    if (this.trades.length >= this.config.minLengthForLinearRegression) {
-      const lastTrade = this.trades[this.trades.length - 1];
+    if (trades.length >= this.config.minLengthForLinearRegression) {
+      const lastTrade = this.getLastTrade(ticker);
       const timestampDifference = trade.timestampMs - lastTrade.timestampMs;
 
       if (timestampDifference > this.config.intervalMs) {
-        this.fillPredictedData(this.trades, trade.timestampMs);
+        this.fillPredictedData(ticker, trades, trade.timestampMs);
       }
     }
 
-    this._add(trade);
+    this._add(ticker, trade);
 
-    this.startPredictionLoop();
+    this.startPredictionLoop(ticker);
   }
 
-  private resetPrediction() {
-    clearTimeout(this.predictionTimer);
+  private resetPrediction(ticker: string): void {
+    if (this.predictionTimers.has(ticker)) {
+      clearTimeout(this.predictionTimers.get(ticker)!);
+      this.predictionTimers.delete(ticker);
+    }
   }
 
-  private _add(trade: ITrade): void {
+  private _add(ticker: string, trade: ITrade): void {
     const isPredictedData = trade.tradeId.includes('-');
+    const trades = this.trades.get(ticker)!;
+    const predictedTrades = this.predictedTrades.get(ticker)!;
 
     if (!isPredictedData) {
-      this.trades.push(trade);
+      trades.push(trade);
+      // this.trades.push(trade);
 
-      this.predictedTrades.push(trade);
+      predictedTrades.push(trade);
+      // this.predictedTrades.push(trade);
     } else {
-      if (this.predictedTrades.length < 1)
-        throw new CustomError(Code.INSUFFICIENT_PREDICTED_TRADES);
+      if (predictedTrades.length < 1) throw new Error('Invalid predicted trade');
 
-      const lastTradeId = this.predictedTrades[this.predictedTrades.length - 1].tradeId.split('-');
+      // const lastTradeId =
+      // 	this.predictedTrades[this.predictedTrades.length - 1].tradeId.split('-');
+      const lastTradeId = this.getLastPredictedTrade(ticker).tradeId.split('-');
 
       const tradeId = `${
         lastTradeId.length > 1
@@ -120,10 +130,12 @@ class TradeBook {
           : `${lastTradeId[0]}-1`
       }`;
 
-      this.predictedTrades.push({...trade, tradeId});
+      // this.predictedTrades.push({...trade, tradeId});
+      this.predictedTrades.get(ticker)!.push({...trade, tradeId});
     }
   }
 
+  /* Deprecated: replaced by _trim() (20230703 - Shirley)
   private _trim(): void {
     const now = Date.now();
     const cutoffTime = now - this.config.holdingTradesMs;
@@ -150,22 +162,51 @@ class TradeBook {
       ).sort((a, b) => +a.tradeId - +b.tradeId);
     }
   }
+  */
 
-  private startPredictionLoop = () => {
-    this.resetPrediction();
-    this.togglePredicting(true);
+  private _trim(ticker: string): void {
+    const trades = this.trades.get(ticker)!;
+    const predictedTrades = this.predictedTrades.get(ticker)!;
+
+    const now = Date.now();
+    const cutoffTime = now - this.config.holdingTradesMs;
+
+    const trimmedTrades = trades
+      .filter(trade => trade.timestampMs >= cutoffTime)
+      .sort((a, b) => +a.tradeId - +b.tradeId);
+
+    this.trades.set(ticker, trimmedTrades);
+
+    const trimmedPredictedTrades = predictedTrades
+      .filter(trade => trade.timestampMs >= cutoffTime)
+      .sort((a, b) => +a.tradeId - +b.tradeId);
+
+    this.predictedTrades.set(ticker, trimmedPredictedTrades);
+  }
+
+  private startPredictionLoop = (ticker: string) => {
+    this.resetPrediction(ticker);
+    this.ensureTickerExists(ticker);
+    this.togglePredicting(ticker, true);
 
     // Info: setTimeout + 遞迴 (20230522 - Shirley)
-    this.predictionTimer = setTimeout(() => {
-      if (this.isPredicting) {
-        this.predictNextTrade(this.predictedTrades, this.config.intervalMs, 1);
-        this.startPredictionLoop();
-      }
-      this._trim();
-    }, this.config.intervalMs);
+    this.predictionTimers.set(
+      ticker,
+      setTimeout(() => {
+        if (this.isPredicting.get(ticker)) {
+          this.predictNextTrade(
+            ticker,
+            this.predictedTrades.get(ticker)!,
+            this.config.intervalMs,
+            1
+          );
+          this.startPredictionLoop(ticker);
+        }
+      }, this.config.intervalMs)
+    );
   };
 
-  predictNextTrade(trades: ITrade[], periodMs: number, length: number) {
+  predictNextTrade(ticker: string, trades: ITrade[], periodMs: number, length: number) {
     let prediction: ITrade[] | undefined;
 
     switch (this.model) {
@@ -179,12 +220,14 @@ class TradeBook {
 
     if (prediction !== undefined) {
       for (let i = 0; i < length; i++) {
-        this._add(prediction[i]);
+        this._add(ticker, prediction[i]);
       }
     }
   }
 
-  fillPredictedData(trades: ITrade[], targetTimestampMs: number) {
+  fillPredictedData(ticker: string, trades: ITrade[], targetTimestampMs: number) {
+    this.ensureTickerExists(ticker);
+
     const lastTradeTimestamp = trades[trades.length - 1]?.timestampMs;
 
     if (!!lastTradeTimestamp && !!targetTimestampMs) {
@@ -193,7 +236,14 @@ class TradeBook {
       if (timestampDifference > this.config.intervalMs) {
         const counts = Math.floor(timestampDifference / 100) - 1;
 
-        this.predictNextTrade(trades, this.config.intervalMs, counts);
+        const predictedTrades = this.predictNextTrade(
+          ticker,
+          trades,
+          this.config.intervalMs,
+          counts
+        );
+
+        if (predictedTrades !== undefined) this.predictedTrades.set(ticker, predictedTrades);
       }
     }
   }
@@ -287,11 +337,15 @@ class TradeBook {
     return {m, b};
   }
 
-  togglePredicting = (value?: boolean) => {
+  togglePredicting = (ticker: string, value?: boolean) => {
+    if (!this.isPredicting.has(ticker)) {
+      this.isPredicting.set(ticker, false);
+    }
+
     if (value === undefined) {
-      this.isPredicting = !this.isPredicting;
+      this.isPredicting.set(ticker, !this.isPredicting.get(ticker));
     } else {
-      this.isPredicting = value;
+      this.isPredicting.set(ticker, value);
     }
   };
 
@@ -319,17 +373,25 @@ class TradeBook {
     this.config = config;
   }
 
-  listTrades() {
-    return this.predictedTrades;
+  listTrades(ticker: string) {
+    return this.predictedTrades.get(ticker);
   }
 
-  toLineChart(interval: number, length: number): ILine[] {
-    if (this.predictedTrades.length === 0) return [];
+  toLineChart(ticker: string, interval: number, length: number): ILine[] {
+    this.ensureTickerExists(ticker);
+
+    const trades = this.predictedTrades.get(ticker)!;
+    if (trades.length === 0) return [];
+
+    // [change]
+    // if (this.predictedTrades.get.length === 0) return [];
 
     const lines: ILine[] = [];
     const intervalMs = interval * 1000;
 
-    let lastTimestamp = this.predictedTrades[this.predictedTrades.length - 1].timestampMs;
+    let lastTimestamp = trades[trades.length - 1].timestampMs;
+    // let lastTimestamp =
+    // 	this.predictedTrades[this.predictedTrades.length - 1].timestampMs;
     const remainderLastTimestamp = lastTimestamp % intervalMs;
     if (remainderLastTimestamp !== 0) {
       lastTimestamp = intervalMs - remainderLastTimestamp + lastTimestamp;
@@ -337,23 +399,33 @@ class TradeBook {
     const firstTimestamp = lastTimestamp - length * intervalMs;
 
     for (let i = firstTimestamp; i <= lastTimestamp; i += intervalMs) {
-      const trades = this.trades.filter(t => t.timestampMs >= i && t.timestampMs < i + intervalMs);
-      if (trades.length > 0) {
-        const average = trades.reduce((sum, t) => sum + t.price, 0) / trades.length;
-        const volume = trades.reduce((sum, t) => sum + t.quantity, 0);
+      const tradesInInterval = trades.filter(
+        t => t.timestampMs >= i && t.timestampMs < i + intervalMs
+      );
+      if (tradesInInterval.length > 0) {
+        const average =
+          tradesInInterval.reduce((sum, t) => sum + t.price, 0) / tradesInInterval.length;
+        const volume = tradesInInterval.reduce((sum, t) => sum + t.quantity, 0);
         lines.push({average, volume, timestamp: i});
       }
     }
     return lines;
   }
 
-  toCandlestick(interval: number, length: number): ICandlestickData[] {
-    if (this.predictedTrades.length === 0) return [];
+  toCandlestick(ticker: string, interval: number, length: number): ICandlestickData[] {
+    this.ensureTickerExists(ticker);
+
+    // [change]
+    // if (this.predictedTrades.length === 0) return [];
+
+    const trades = this.predictedTrades.get(ticker)!;
+    if (trades.length === 0) return [];
 
     const candleSticks: ICandlestickData[] = [];
     const intervalMs = interval * 1000;
 
-    let lastTimestamp = this.predictedTrades[this.predictedTrades.length - 1].timestampMs;
+    let lastTimestamp = trades[trades.length - 1].timestampMs;
+
     const remainderLastTimestamp = lastTimestamp % intervalMs;
     if (remainderLastTimestamp !== 0) {
       lastTimestamp = intervalMs - remainderLastTimestamp + lastTimestamp;
@@ -361,19 +433,19 @@ class TradeBook {
     const firstTimestamp = lastTimestamp - length * intervalMs;
 
     for (let i = firstTimestamp; i <= lastTimestamp; i += intervalMs) {
-      const trades = this.predictedTrades.filter(
+      const tradesInInterval = trades.filter(
         t => t.timestampMs >= i && t.timestampMs < i + intervalMs
       );
       /** Deprecated: [debug] (20230524 - tzuhan)
       // eslint-disable-next-line no-console
       console.log(`toCandlestick trades`, trades);
       */
-      if (trades.length > 0) {
-        const open = trades[0].price;
-        const close = trades[trades.length - 1].price;
-        const high = Math.max(...trades.map(t => t.price));
-        const low = Math.min(...trades.map(t => t.price));
-        const volume = trades.reduce((sum, t) => sum + t.quantity, 0);
+      if (tradesInInterval.length > 0) {
+        const open = tradesInInterval[0].price;
+        const close = tradesInInterval[tradesInInterval.length - 1].price;
+        const high = Math.max(...tradesInInterval.map(t => t.price));
+        const low = Math.min(...tradesInInterval.map(t => t.price));
+        const volume = tradesInInterval.reduce((sum, t) => sum + t.quantity, 0);
         candleSticks.push({
           x: new Date(i),
           y: {
@@ -400,6 +472,26 @@ class TradeBook {
       'timestampMs' in trade &&
       'quantity' in trade
     );
+  }
+
+  private ensureTickerExists(ticker: string) {
+    if (!this.trades.has(ticker)) {
+      this.trades.set(ticker, []);
+    }
+
+    if (!this.predictedTrades.has(ticker)) {
+      this.predictedTrades.set(ticker, []);
+    }
+  }
+
+  private getLastTrade(ticker: string) {
+    const trades = this.trades.get(ticker);
+    return trades![trades!.length - 1];
+  }
+
+  private getLastPredictedTrade(ticker: string) {
+    const predictedTrades = this.predictedTrades.get(ticker);
+    return predictedTrades![predictedTrades!.length - 1];
   }
 }
 

@@ -3,6 +3,7 @@
 // };
 
 import {Badges} from './badges';
+import {Currency} from './currency';
 
 // TODO: for future use, to leverage i18n needs to notice the `provider` range
 export const UNIVERSAL_NUMBER_FORMAT_LOCALE = 'en-US';

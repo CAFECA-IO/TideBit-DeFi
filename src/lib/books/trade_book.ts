@@ -38,9 +38,6 @@ interface ITradeBookConfig {
 }
 
 function ensureTickerExistsDecorator(target: any, key: string, descriptor: PropertyDescriptor) {
-  // Deprecated: Test decorator (20230704 - Shirley)
-  // eslint-disable-next-line no-console
-  console.log('descriptor: ', descriptor);
   const originalMethod = descriptor.value;
   descriptor.value = function (this: any, ticker: string, ...args: any[]) {
     this.ensureTickerExists(ticker);

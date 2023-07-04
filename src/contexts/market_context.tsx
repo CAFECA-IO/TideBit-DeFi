@@ -592,6 +592,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       })) as IResult;
       if (result.success) {
         const trades = (result.data as ITrade[]).map(trade => ({
+          ...trade,
           tradeId: trade.tradeId,
           targetAsset: trade.baseUnit,
           unitAsset: trade.quoteUnit,
@@ -600,7 +601,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
           timestampMs: trade.timestamp,
           quantity: trade.amount,
         }));
-        const target = trades[0].targetAsset;
+        const target = trades[0].instId;
         trades.sort((a, b) => parseInt(a.tradeId) - parseInt(b.tradeId));
         tradeBook.addTrades(target, trades);
       }

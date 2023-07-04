@@ -87,8 +87,9 @@ class TradeBook {
 
     this.startPredictionLoop(ticker);
   }
+
+  @ensureTickerExistsDecorator
   add(ticker: string, trade: ITrade): void {
-    this.ensureTickerExists(ticker);
     const trades = this.trades.get(ticker)!;
 
     if (!this.isValidTrade(trade)) {
@@ -190,9 +191,9 @@ class TradeBook {
     this.predictedTrades.set(ticker, trimmedPredictedTrades);
   }
 
-  private startPredictionLoop = (ticker: string) => {
+  @ensureTickerExistsDecorator
+  private startPredictionLoop(ticker: string) {
     this.resetPrediction(ticker);
-    this.ensureTickerExists(ticker);
     this.togglePredicting(ticker, true);
 
     // Info: setTimeout + 遞迴 (20230522 - Shirley)
@@ -211,7 +212,7 @@ class TradeBook {
         }
       }, this.config.intervalMs)
     );
-  };
+  }
 
   predictNextTrade(ticker: string, trades: ITrade[], periodMs: number, length: number) {
     let prediction: ITrade[] | undefined;
@@ -232,9 +233,8 @@ class TradeBook {
     }
   }
 
+  @ensureTickerExistsDecorator
   fillPredictedData(ticker: string, trades: ITrade[], targetTimestampMs: number) {
-    this.ensureTickerExists(ticker);
-
     const lastTradeTimestamp = trades[trades.length - 1]?.timestampMs;
 
     if (!!lastTradeTimestamp && !!targetTimestampMs) {
@@ -383,8 +383,8 @@ class TradeBook {
     return this.predictedTrades.get(ticker);
   }
 
+  @ensureTickerExistsDecorator
   toLineChart(ticker: string, interval: number, length: number): ILine[] {
-    this.ensureTickerExists(ticker);
     const trades = this.predictedTrades.get(ticker)!;
 
     if (trades.length === 0) return [];
@@ -413,8 +413,8 @@ class TradeBook {
     return lines;
   }
 
+  @ensureTickerExistsDecorator
   toCandlestick(ticker: string, interval: number, length: number): ICandlestickData[] {
-    this.ensureTickerExists(ticker);
     const trades = this.predictedTrades.get(ticker)!;
 
     if (trades.length === 0) return [];

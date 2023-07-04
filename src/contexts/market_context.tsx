@@ -23,6 +23,7 @@ import {
   ICandlestickData,
   ITrade,
   TradeSideText,
+  generateDummyTrades,
 } from '../interfaces/tidebit_defi_background/candlestickData';
 import {TideBitEvent} from '../constants/tidebit_event';
 import {NotificationContext} from './notification_context';
@@ -584,6 +585,11 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       };
     }
     try {
+      // const trades = generateDummyTrades(50);
+      // tradeBook.addTrades('ETH', trades);
+      // tradeBook.addTrades('BTC', trades);
+
+      // result = {...defaultResultSuccess};
       result = (await workerCtx.requestHandler({
         name: APIName.LIST_MARKET_TRADES,
         method: Method.GET,

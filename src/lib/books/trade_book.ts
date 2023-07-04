@@ -37,6 +37,18 @@ interface ITradeBookConfig {
   holdingTradesMs: number; // Info: 持有多久的資料 (20230601 - Tzuhans)
 }
 
+function ensureTickerExistsDecorator(target: any, key: string, descriptor: PropertyDescriptor) {
+  // Deprecated: Test decorator (20230704 - Shirley)
+  // eslint-disable-next-line no-console
+  console.log('descriptor: ', descriptor);
+  const originalMethod = descriptor.value;
+  descriptor.value = function (this: any, ticker: string, ...args: any[]) {
+    this.ensureTickerExists(ticker);
+    return originalMethod.apply(this, [ticker, ...args]);
+  };
+  return descriptor;
+}
+
 class TradeBook {
   private trades: Map<string, ITrade[]>;
   private predictedTrades: Map<string, ITrade[]>;
@@ -54,8 +66,8 @@ class TradeBook {
     this.model = Model.LINEAR_REGRESSION;
   }
 
+  @ensureTickerExistsDecorator
   addTrades(ticker: string, trades: ITrade[]) {
-    this.ensureTickerExists(ticker);
     const vaildTrades = trades.filter(trade => this.isValidTrade(trade));
 
     this.resetPrediction(ticker);

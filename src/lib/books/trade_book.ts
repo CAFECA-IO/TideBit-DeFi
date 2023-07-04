@@ -109,6 +109,7 @@ class TradeBook {
     this.startPredictionLoop(ticker);
   }
 
+  @ensureTickerExistsDecorator
   private resetPrediction(ticker: string): void {
     if (this.predictionTimers.has(ticker)) {
       clearTimeout(this.predictionTimers.get(ticker)!);
@@ -116,6 +117,7 @@ class TradeBook {
     }
   }
 
+  @ensureTickerExistsDecorator
   private _add(ticker: string, trade: ITrade): void {
     const isPredictedData = trade.tradeId.includes('-');
     const trades = this.trades.get(ticker)!;
@@ -168,6 +170,7 @@ class TradeBook {
   }
   */
 
+  @ensureTickerExistsDecorator
   private _trim(ticker: string): void {
     const trades = this.trades.get(ticker)!;
     const predictedTrades = this.predictedTrades.get(ticker)!;
@@ -376,6 +379,11 @@ class TradeBook {
     this.config = config;
   }
 
+  get allTrades() {
+    return this.predictedTrades;
+  }
+
+  @ensureTickerExistsDecorator
   listTrades(ticker: string) {
     return this.predictedTrades.get(ticker);
   }
@@ -479,11 +487,13 @@ class TradeBook {
     }
   }
 
+  @ensureTickerExistsDecorator
   private getLastTrade(ticker: string) {
     const trades = this.trades.get(ticker);
     return trades![trades!.length - 1];
   }
 
+  @ensureTickerExistsDecorator
   private getLastPredictedTrade(ticker: string) {
     const predictedTrades = this.predictedTrades.get(ticker);
     return predictedTrades![predictedTrades!.length - 1];

@@ -109,7 +109,8 @@ const OpenSubTabMobile = () => {
       setIsLoading(true);
       return;
     }
-    setTimeout(() => setIsLoading(false), SKELETON_DISPLAY_TIME);
+    const timer = setTimeout(() => setIsLoading(false), SKELETON_DISPLAY_TIME);
+    return () => clearTimeout(timer);
   }, [cfds, userCtx.isLoadingCFDs]);
 
   const openPositionList = isLoading ? (

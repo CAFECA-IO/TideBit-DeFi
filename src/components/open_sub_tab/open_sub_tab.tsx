@@ -77,7 +77,8 @@ const OpenSubTab = () => {
       setIsLoading(true);
       return;
     }
-    setTimeout(() => setIsLoading(false), SKELETON_DISPLAY_TIME);
+    const timer = setTimeout(() => setIsLoading(false), SKELETON_DISPLAY_TIME);
+    return () => clearTimeout(timer);
   }, [userCtx.openCFDs, userCtx.isLoadingCFDs]);
 
   const openPositionList = isLoading ? (

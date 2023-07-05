@@ -25,8 +25,9 @@ const HistorySubTab = () => {
       setIsLoading(true);
       return;
     }
-    setTimeout(() => setIsLoading(false), SKELETON_DISPLAY_TIME);
-  }, [historyPositionList, userCtx.isLoadingCFDs]);
+    const timer = setTimeout(() => setIsLoading(false), SKELETON_DISPLAY_TIME);
+    return () => clearTimeout(timer);
+  }, [cfds, userCtx.isLoadingCFDs]);
 
   return (
     <>

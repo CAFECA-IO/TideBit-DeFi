@@ -617,7 +617,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     return result;
   };
 
-  const syncCandlestickData = (tickerId: string, timeSpan?: ITimeSpanUnion) => {
+  const syncCandlestickData = (instId: string, timeSpan?: ITimeSpanUnion) => {
     if (!!candlestickIntervalRef.current) {
       clearInterval(candlestickIntervalRef.current);
       setCandlestickInterval(null);
@@ -628,11 +628,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       if (timeSpan) setTimeSpan(timeSpan);
       const interval = Math.round(getTime(ts) / CANDLESTICK_SIZE);
 
-      const candlesticks = tradeBook.toCandlestick(
-        tickerId,
-        millesecondsToSeconds(getTime(ts)),
-        100
-      );
+      const candlesticks = tradeBook.toCandlestick(instId, millesecondsToSeconds(getTime(ts)), 100);
 
       setCandlestickChartData(candlesticks);
     }, 100);

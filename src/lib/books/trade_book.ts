@@ -39,9 +39,9 @@ interface ITradeBookConfig {
 
 function ensureTickerExistsDecorator(target: any, key: string, descriptor: PropertyDescriptor) {
   const originalMethod = descriptor.value;
-  descriptor.value = function (this: any, ticker: string, ...args: any[]) {
-    this.ensureTickerExists(ticker);
-    return originalMethod.apply(this, [ticker, ...args]);
+  descriptor.value = function (this: any, instId: string, ...args: any[]) {
+    this.ensureTickerExists(instId);
+    return originalMethod.apply(this, [instId, ...args]);
   };
   return descriptor;
 }
@@ -64,64 +64,64 @@ class TradeBook {
   }
 
   @ensureTickerExistsDecorator
-  addTrades(ticker: string, trades: ITrade[]) {
+  addTrades(instId: string, trades: ITrade[]) {
     const vaildTrades = trades.filter(trade => this.isValidTrade(trade));
 
-    this.resetPrediction(ticker);
+    this.resetPrediction(instId);
 
     for (const trade of vaildTrades) {
-      if (this.trades.get(ticker)!.length >= this.config.minLengthForLinearRegression) {
-        const lastTrade = this.getLastTrade(ticker);
+      if (this.trades.get(instId)!.length >= this.config.minLengthForLinearRegression) {
+        const lastTrade = this.getLastTrade(instId);
         const timestampDifference = trade.timestampMs - lastTrade.timestampMs;
 
         if (timestampDifference > this.config.intervalMs) {
-          this.fillPredictedData(ticker, trades, trade.timestampMs);
+          this.fillPredictedData(instId, trades, trade.timestampMs);
         }
       }
 
-      this._add(ticker, trade);
+      this._add(instId, trade);
     }
 
-    this.startPredictionLoop(ticker);
+    this.startPredictionLoop(instId);
   }
 
   @ensureTickerExistsDecorator
-  add(ticker: string, trade: ITrade): void {
-    const trades = this.trades.get(ticker)!;
+  add(instId: string, trade: ITrade): void {
+    const trades = this.trades.get(instId)!;
 
     if (!this.isValidTrade(trade)) {
       throw new Error('Invalid trade');
     }
 
-    this.resetPrediction(ticker);
+    this.resetPrediction(instId);
 
     if (trades.length >= this.config.minLengthForLinearRegression) {
-      const lastTrade = this.getLastTrade(ticker);
+      const lastTrade = this.getLastTrade(instId);
       const timestampDifference = trade.timestampMs - lastTrade.timestampMs;
 
       if (timestampDifference > this.config.intervalMs) {
-        this.fillPredictedData(ticker, trades, trade.timestampMs);
+        this.fillPredictedData(instId, trades, trade.timestampMs);
       }
     }
 
-    this._add(ticker, trade);
+    this._add(instId, trade);
 
-    this.startPredictionLoop(ticker);
+    this.startPredictionLoop(instId);
   }
 
   @ensureTickerExistsDecorator
-  private resetPrediction(ticker: string): void {
-    if (this.predictionTimers.has(ticker)) {
-      clearTimeout(this.predictionTimers.get(ticker)!);
-      this.predictionTimers.delete(ticker);
+  private resetPrediction(instId: string): void {
+    if (this.predictionTimers.has(instId)) {
+      clearTimeout(this.predictionTimers.get(instId)!);
+      this.predictionTimers.delete(instId);
     }
   }
 
   @ensureTickerExistsDecorator
-  private _add(ticker: string, trade: ITrade): void {
+  private _add(instId: string, trade: ITrade): void {
     const isPredictedData = trade.tradeId.includes('-');
-    const trades = this.trades.get(ticker)!;
-    const predictedTrades = this.predictedTrades.get(ticker)!;
+    const trades = this.trades.get(instId)!;
+    const predictedTrades = this.predictedTrades.get(instId)!;
 
     if (!isPredictedData) {
       trades.push(trade);
@@ -129,7 +129,7 @@ class TradeBook {
     } else {
       if (predictedTrades.length < 1) throw new Error('Invalid predicted trade');
 
-      const lastTradeId = this.getLastPredictedTrade(ticker).tradeId.split('-');
+      const lastTradeId = this.getLastPredictedTrade(instId).tradeId.split('-');
 
       const tradeId = `${
         lastTradeId.length > 1
@@ -137,7 +137,7 @@ class TradeBook {
           : `${lastTradeId[0]}-1`
       }`;
 
-      this.predictedTrades.get(ticker)!.push({...trade, tradeId});
+      this.predictedTrades.get(instId)!.push({...trade, tradeId});
     }
   }
 
@@ -171,9 +171,9 @@ class TradeBook {
   */
 
   @ensureTickerExistsDecorator
-  private _trim(ticker: string): void {
-    const trades = this.trades.get(ticker)!;
-    const predictedTrades = this.predictedTrades.get(ticker)!;
+  private _trim(instId: string): void {
+    const trades = this.trades.get(instId)!;
+    const predictedTrades = this.predictedTrades.get(instId)!;
 
     const now = Date.now();
     const cutoffTime = now - this.config.holdingTradesMs;
@@ -182,39 +182,39 @@ class TradeBook {
       .filter(trade => trade.timestampMs >= cutoffTime)
       .sort((a, b) => +a.tradeId - +b.tradeId);
 
-    this.trades.set(ticker, trimmedTrades);
+    this.trades.set(instId, trimmedTrades);
 
     const trimmedPredictedTrades = predictedTrades
       .filter(trade => trade.timestampMs >= cutoffTime)
       .sort((a, b) => +a.tradeId - +b.tradeId);
 
-    this.predictedTrades.set(ticker, trimmedPredictedTrades);
+    this.predictedTrades.set(instId, trimmedPredictedTrades);
   }
 
   @ensureTickerExistsDecorator
-  private startPredictionLoop(ticker: string) {
-    this.resetPrediction(ticker);
-    this.togglePredicting(ticker, true);
+  private startPredictionLoop(instId: string) {
+    this.resetPrediction(instId);
+    this.togglePredicting(instId, true);
 
     // Info: setTimeout + 遞迴 (20230522 - Shirley)
     this.predictionTimers.set(
-      ticker,
+      instId,
       setTimeout(() => {
-        if (this.isPredicting.get(ticker)) {
+        if (this.isPredicting.get(instId)) {
           this.predictNextTrade(
-            ticker,
-            this.predictedTrades.get(ticker)!,
+            instId,
+            this.predictedTrades.get(instId)!,
             this.config.intervalMs,
             1
           );
-          this._trim(ticker);
-          this.startPredictionLoop(ticker);
+          this._trim(instId);
+          this.startPredictionLoop(instId);
         }
       }, this.config.intervalMs)
     );
   }
 
-  predictNextTrade(ticker: string, trades: ITrade[], periodMs: number, length: number) {
+  predictNextTrade(instId: string, trades: ITrade[], periodMs: number, length: number) {
     let prediction: ITrade[] | undefined;
 
     switch (this.model) {
@@ -228,13 +228,13 @@ class TradeBook {
 
     if (prediction !== undefined) {
       for (let i = 0; i < length; i++) {
-        this._add(ticker, prediction[i]);
+        this._add(instId, prediction[i]);
       }
     }
   }
 
   @ensureTickerExistsDecorator
-  fillPredictedData(ticker: string, trades: ITrade[], targetTimestampMs: number) {
+  fillPredictedData(instId: string, trades: ITrade[], targetTimestampMs: number) {
     const lastTradeTimestamp = trades[trades.length - 1]?.timestampMs;
 
     if (!!lastTradeTimestamp && !!targetTimestampMs) {
@@ -244,13 +244,13 @@ class TradeBook {
         const counts = Math.floor(timestampDifference / 100) - 1;
 
         const predictedTrades = this.predictNextTrade(
-          ticker,
+          instId,
           trades,
           this.config.intervalMs,
           counts
         );
 
-        if (predictedTrades !== undefined) this.predictedTrades.set(ticker, predictedTrades);
+        if (predictedTrades !== undefined) this.predictedTrades.set(instId, predictedTrades);
       }
     }
   }
@@ -344,15 +344,15 @@ class TradeBook {
     return {m, b};
   }
 
-  togglePredicting = (ticker: string, value?: boolean) => {
-    if (!this.isPredicting.has(ticker)) {
-      this.isPredicting.set(ticker, false);
+  togglePredicting = (instId: string, value?: boolean) => {
+    if (!this.isPredicting.has(instId)) {
+      this.isPredicting.set(instId, false);
     }
 
     if (value === undefined) {
-      this.isPredicting.set(ticker, !this.isPredicting.get(ticker));
+      this.isPredicting.set(instId, !this.isPredicting.get(instId));
     } else {
-      this.isPredicting.set(ticker, value);
+      this.isPredicting.set(instId, value);
     }
   };
 
@@ -384,13 +384,13 @@ class TradeBook {
   }
 
   @ensureTickerExistsDecorator
-  listTrades(ticker: string) {
-    return this.predictedTrades.get(ticker);
+  listTrades(instId: string) {
+    return this.predictedTrades.get(instId);
   }
 
   @ensureTickerExistsDecorator
-  toLineChart(ticker: string, interval: number, length: number): ILine[] {
-    const trades = this.predictedTrades.get(ticker)!;
+  toLineChart(instId: string, interval: number, length: number): ILine[] {
+    const trades = this.predictedTrades.get(instId)!;
 
     if (trades.length === 0) return [];
 
@@ -419,8 +419,8 @@ class TradeBook {
   }
 
   @ensureTickerExistsDecorator
-  toCandlestick(ticker: string, interval: number, length: number): ICandlestickData[] {
-    const trades = this.predictedTrades.get(ticker)!;
+  toCandlestick(instId: string, interval: number, length: number): ICandlestickData[] {
+    const trades = this.predictedTrades.get(instId)!;
 
     if (trades.length === 0) return [];
 
@@ -477,25 +477,25 @@ class TradeBook {
     );
   }
 
-  private ensureTickerExists(ticker: string) {
-    if (!this.trades.has(ticker)) {
-      this.trades.set(ticker, []);
+  private ensureTickerExists(instId: string) {
+    if (!this.trades.has(instId)) {
+      this.trades.set(instId, []);
     }
 
-    if (!this.predictedTrades.has(ticker)) {
-      this.predictedTrades.set(ticker, []);
+    if (!this.predictedTrades.has(instId)) {
+      this.predictedTrades.set(instId, []);
     }
   }
 
   @ensureTickerExistsDecorator
-  private getLastTrade(ticker: string) {
-    const trades = this.trades.get(ticker);
+  private getLastTrade(instId: string) {
+    const trades = this.trades.get(instId);
     return trades![trades!.length - 1];
   }
 
   @ensureTickerExistsDecorator
-  private getLastPredictedTrade(ticker: string) {
-    const predictedTrades = this.predictedTrades.get(ticker);
+  private getLastPredictedTrade(instId: string) {
+    const predictedTrades = this.predictedTrades.get(instId);
     return predictedTrades![predictedTrades!.length - 1];
   }
 }

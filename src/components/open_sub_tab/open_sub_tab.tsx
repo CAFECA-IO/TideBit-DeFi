@@ -73,12 +73,16 @@ const OpenSubTab = () => {
   }, [userCtx.openCFDs]);
 
   useEffect(() => {
+    if (userCtx.isLoadingCFDs) {
+      setIsLoading(false);
+      return;
+    }
     setTimeout(() => setIsLoading(false), SKELETON_DISPLAY_TIME);
   }, [userCtx.openCFDs]);
 
   const openPositionList =
     isLoading || userCtx.isLoadingCFDs ? (
-      <Skeleton count={10} height={150} />
+      <Skeleton count={5} height={150} />
     ) : (
       cfds.map(cfd => {
         return (

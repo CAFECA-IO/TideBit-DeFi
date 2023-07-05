@@ -22,6 +22,10 @@ const HistorySubTab = () => {
     );
 
   useEffect(() => {
+    if (userCtx.isLoadingCFDs) {
+      setIsLoading(false);
+      return;
+    }
     setTimeout(() => setIsLoading(false), SKELETON_DISPLAY_TIME);
   }, [historyPositionList]);
 

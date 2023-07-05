@@ -74,25 +74,24 @@ const OpenSubTab = () => {
 
   useEffect(() => {
     if (userCtx.isLoadingCFDs) {
-      setIsLoading(false);
+      setIsLoading(true);
       return;
     }
     setTimeout(() => setIsLoading(false), SKELETON_DISPLAY_TIME);
-  }, [userCtx.openCFDs]);
+  }, [userCtx.openCFDs, userCtx.isLoadingCFDs]);
 
-  const openPositionList =
-    isLoading || userCtx.isLoadingCFDs ? (
-      <Skeleton count={5} height={150} />
-    ) : (
-      cfds.map(cfd => {
-        return (
-          <div key={cfd.id}>
-            {<OpenPositionItem openCfdDetails={cfd} />}
-            <div className="my-auto h-px w-full rounded bg-white/50"></div>
-          </div>
-        );
-      })
-    );
+  const openPositionList = isLoading ? (
+    <Skeleton count={5} height={150} />
+  ) : (
+    cfds.map(cfd => {
+      return (
+        <div key={cfd.id}>
+          {<OpenPositionItem openCfdDetails={cfd} />}
+          <div className="my-auto h-px w-full rounded bg-white/50"></div>
+        </div>
+      );
+    })
+  );
 
   return (
     <>

@@ -71,7 +71,7 @@ const SuccessfulModal = ({
 
   const isDisplayedModal = modalVisible ? (
     <>
-      <div className="fixed inset-0 z-70 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">
+      <div className="fixed inset-0 z-80 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">
         <div className="relative my-6 mx-auto w-auto max-w-xl">
           {' '}
           <div

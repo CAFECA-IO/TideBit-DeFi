@@ -23,6 +23,7 @@ import {
   ICandlestickData,
   ITrade,
   TradeSideText,
+  generateDummyTrades,
 } from '../interfaces/tidebit_defi_background/candlestickData';
 import {TideBitEvent} from '../constants/tidebit_event';
 import {NotificationContext} from './notification_context';
@@ -30,6 +31,7 @@ import {WorkerContext} from './worker_context';
 import {APIName, Method} from '../constants/api_request';
 import TickerBookInstance from '../lib/books/ticker_book';
 import {
+  DEFAULT_INSTID,
   DEFAULT_TICKER,
   INITIAL_TRADES_BUFFER,
   INITIAL_TRADES_INTERVAL,
@@ -236,12 +238,10 @@ export const MarketProvider = ({children}: IMarketProvider) => {
 
   const showPositionOnChartHandler = (bool: boolean) => {
     setShowPositionOnChart(bool);
-    // console.log('in market context, position context boolean:', bool);
   };
 
   const candlestickChartIdHandler = (id: string) => {
     setCandlestickId(id);
-    // console.log('in market context, candlestick id:', id);
   };
 
   const getNews = (currency: ICurrency, newsId: string) => {
@@ -287,7 +287,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     tickerBook.timeSpan = timeSpan;
     setTimeSpan(tickerBook.timeSpan);
 
-    syncCandlestickData(selectedTickerRef.current?.currency ?? DEFAULT_TICKER, timeSpan);
+    syncCandlestickData(selectedTickerRef.current?.instId ?? DEFAULT_INSTID, timeSpan);
   };
 
   const getTickerStatic = async (instId: string) => {
@@ -341,7 +341,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     setTickerStatic(null);
     setSelectedTicker(ticker);
     await listMarketTrades(ticker.instId);
-    syncCandlestickData(tickerId);
+    syncCandlestickData(ticker.instId);
     // ++ TODO: get from api
     const {success: isGetTickerStaticSuccess, data: tickerStatic} = await getTickerStatic(
       ticker.instId
@@ -592,6 +592,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       })) as IResult;
       if (result.success) {
         const trades = (result.data as ITrade[]).map(trade => ({
+          ...trade,
           tradeId: trade.tradeId,
           targetAsset: trade.baseUnit,
           unitAsset: trade.quoteUnit,
@@ -600,7 +601,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
           timestampMs: trade.timestamp,
           quantity: trade.amount,
         }));
-        const target = trades[0].targetAsset;
+        const target = trades[0]?.instId;
         trades.sort((a, b) => parseInt(a.tradeId) - parseInt(b.tradeId));
         tradeBook.addTrades(target, trades);
       }
@@ -616,7 +617,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     return result;
   };
 
-  const syncCandlestickData = (tickerId: ICurrency, timeSpan?: ITimeSpanUnion) => {
+  const syncCandlestickData = (instId: string, timeSpan?: ITimeSpanUnion) => {
     if (!!candlestickIntervalRef.current) {
       clearInterval(candlestickIntervalRef.current);
       setCandlestickInterval(null);
@@ -627,18 +628,9 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       if (timeSpan) setTimeSpan(timeSpan);
       const interval = Math.round(getTime(ts) / CANDLESTICK_SIZE);
 
-      const candlesticks = tradeBook.toCandlestick(
-        tickerId,
-        millesecondsToSeconds(getTime(ts)),
-        100
-      );
+      const candlesticks = tradeBook.toCandlestick(instId, millesecondsToSeconds(getTime(ts)), 100);
 
       setCandlestickChartData(candlesticks);
-
-      // const trades = tradeBook
-      //   .listTrades()
-      //   .map(t => t.timestampMs)
-      //   .sort();
     }, 100);
     setCandlestickInterval(candlestickInterval);
   };
@@ -755,7 +747,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     () =>
       notificationCtx.emitter.on(TideBitEvent.TRADES, (action: IPusherAction, trade: ITrade) => {
         if (trade.instId === selectedTickerRef.current?.instId) {
-          tradeBook.add(trade.baseUnit, {
+          tradeBook.add(trade.instId, {
             tradeId: trade.tradeId,
             targetAsset: trade.baseUnit,
             unitAsset: trade.quoteUnit,

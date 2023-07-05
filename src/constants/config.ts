@@ -281,6 +281,7 @@ export const DeWT_VALIDITY_PERIOD = 60 * 60; // seconds
 export const CFD_LIQUIDATION_TIME = 86400;
 export const TP_SL_LIMIT_PERCENT = 0.01;
 export const DEFAULT_TICKER = Currency.ETH;
+export const DEFAULT_INSTID = 'ETH-USDT';
 export const SHARING_BG_IMG_THRESHOLD_PNL_PERCENT = 5;
 export const MIN_FEE_RATE = 0;
 export const MAX_FEE_RATE = 0.2;

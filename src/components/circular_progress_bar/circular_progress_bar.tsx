@@ -87,6 +87,18 @@ const CircularProgressBar = ({
         show: false,
       },
     },
+    states: {
+      hover: {
+        filter: {
+          type: 'none',
+        },
+      },
+      active: {
+        filter: {
+          type: 'none',
+        },
+      },
+    },
   };
 
   return (

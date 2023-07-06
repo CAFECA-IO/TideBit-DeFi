@@ -20,12 +20,15 @@ const HistorySubTabMobile = () => {
     ))
   );
 
+  let timer: NodeJS.Timeout;
+
   useEffect(() => {
+    clearTimeout(timer);
     if (userCtx.isLoadingCFDs) {
       setIsLoading(true);
       return;
     }
-    const timer = setTimeout(() => setIsLoading(false), SKELETON_DISPLAY_TIME);
+    timer = setTimeout(() => setIsLoading(false), SKELETON_DISPLAY_TIME);
     return () => clearTimeout(timer);
   }, [cfds, userCtx.isLoadingCFDs]);
 

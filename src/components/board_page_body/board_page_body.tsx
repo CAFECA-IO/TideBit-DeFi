@@ -41,8 +41,12 @@ const BoardPageBody = () => {
       });
   }, [marketCtx.isInit, timeSpan]);
 
+  let timer: NodeJS.Timeout;
+
   useEffect(() => {
-    const countdownInterval = setTimeout(() => {
+    clearTimeout(timer);
+
+    timer = setTimeout(() => {
       const now = Math.floor(Date.now() / 1000);
       const remains = endTime - now;
       setLeaderboardLiveRemains(remains);
@@ -54,7 +58,7 @@ const BoardPageBody = () => {
       setIsTimeSpanLoading(false);
     }
 
-    return () => clearTimeout(countdownInterval);
+    return () => clearTimeout(timer);
   }, [leaderboardLiveRemains]);
 
   const subtitle =

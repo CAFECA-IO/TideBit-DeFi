@@ -178,17 +178,31 @@ class TradeBook {
     const now = Date.now();
     const cutoffTime = now - this.config.holdingTradesMs;
 
-    const trimmedTrades = trades
-      .filter(trade => trade.timestampMs >= cutoffTime)
-      .sort((a, b) => +a.tradeId - +b.tradeId);
+    if (trades[0]?.timestampMs < cutoffTime || predictedTrades[0]?.timestampMs < cutoffTime) {
+      const trimmedTrades = Object.values(
+        trades
+          .filter(trade => {
+            return trade.timestampMs >= cutoffTime;
+          })
+          .reduce((acc, cur) => {
+            acc[cur.tradeId] = cur;
+            return acc;
+          }, {} as {[key: string]: ITrade})
+      ).sort((a, b) => +a.tradeId - +b.tradeId);
 
-    this.trades.set(instId, trimmedTrades);
+      this.trades.set(instId, trimmedTrades);
 
-    const trimmedPredictedTrades = predictedTrades
-      .filter(trade => trade.timestampMs >= cutoffTime)
-      .sort((a, b) => +a.tradeId - +b.tradeId);
+      const trimmedPredictedTrades = Object.values(
+        predictedTrades
+          .filter(trade => trade.timestampMs >= cutoffTime)
+          .reduce((acc, cur) => {
+            acc[cur.tradeId] = cur;
+            return acc;
+          }, {} as {[key: string]: ITrade})
+      ).sort((a, b) => +a.tradeId - +b.tradeId);
 
-    this.predictedTrades.set(instId, trimmedPredictedTrades);
+      this.predictedTrades.set(instId, trimmedPredictedTrades);
+    }
   }
 
   @ensureTickerExistsDecorator

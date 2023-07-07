@@ -10,7 +10,8 @@ export interface ICandle {
   high: number | null;
   low: number | null;
   close: number | null;
-  volume: number;
+  volume: number | null;
+  value: number | null;
 }
 
 export interface ISortedCandlestick {
@@ -98,6 +99,7 @@ export const getDummyCandlestickChartData = (
         low: y[2],
         close: y[3],
         volume: 0,
+        value: 0,
       },
     };
     return result;
@@ -146,6 +148,7 @@ export const updateDummyCandlestickChartData = (
       low: y[2],
       close: y[3],
       volume: 0,
+      value: 0,
     },
   };
 

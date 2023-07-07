@@ -374,6 +374,7 @@ class TradeBook {
         const high = Math.max(...trades.map(t => t.price));
         const low = Math.min(...trades.map(t => t.price));
         const volume = trades.reduce((sum, t) => sum + t.quantity, 0);
+        const value = trades.reduce((sum, t) => sum + t.quantity * t.price, 0);
         candleSticks.push({
           x: new Date(i),
           y: {
@@ -382,6 +383,7 @@ class TradeBook {
             low,
             close,
             volume,
+            value,
           },
         });
       }

@@ -35,6 +35,7 @@ export type IAPIName =
   | 'GET_TICKER_STATIC'
   | 'GET_TICKER_LIVE_STATISTICS'
   | 'LIST_MARKET_TRADES'
+  | 'LIST_CANDLESTICKS'
   // trades
   | 'LIST_CFD_TRADES'
   | 'GET_CFD_TRADE'
@@ -101,6 +102,7 @@ export interface IAPINameConstant {
   GET_TICKER_STATIC: IAPIName;
   GET_TICKER_LIVE_STATISTICS: IAPIName;
   LIST_MARKET_TRADES: IAPIName;
+  LIST_CANDLESTICKS: IAPIName;
   // trades
   LIST_CFD_TRADES: IAPIName;
   GET_CFD_TRADE: IAPIName;
@@ -168,6 +170,7 @@ export const APIName: IAPINameConstant = {
   GET_TICKER_STATIC: 'GET_TICKER_STATIC',
   GET_TICKER_LIVE_STATISTICS: 'GET_TICKER_LIVE_STATISTICS',
   LIST_MARKET_TRADES: 'LIST_MARKET_TRADES',
+  LIST_CANDLESTICKS: 'LIST_CANDLESTICKS',
   // trades
   LIST_CFD_TRADES: 'LIST_CFD_TRADES',
   GET_CFD_TRADE: 'GET_CFD_TRADE',
@@ -236,6 +239,7 @@ export const APIURL = {
   GET_TICKER_STATIC: `${apiUrl}/market/ticker-static`,
   GET_TICKER_LIVE_STATISTICS: `${apiUrl}/market/ticker-live-statistics`,
   LIST_MARKET_TRADES: `${apiUrl}/market/trades`,
+  LIST_CANDLESTICKS: `${apiUrl}/candlesticks`,
   // trades
   LIST_CFD_TRADES: `${apiUrl}/cfds`,
   LIST_HISTORIES: `${apiUrl}/bolt-transactions/history`,

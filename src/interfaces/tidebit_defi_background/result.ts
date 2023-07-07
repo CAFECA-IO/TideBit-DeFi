@@ -2,6 +2,7 @@ import {Code, ICode, Reason} from '../../constants/code';
 import {IAcceptedOrder} from './accepted_order';
 import {IBadge} from './badge';
 import {IBalance} from './balance';
+import {ICandlestick} from './candlestick';
 import {ICandlestickData, ITrade} from './candlestickData';
 import {ICryptocurrency} from './cryptocurrency';
 import {ILeaderboard, IRanking} from './leaderboard';
@@ -25,6 +26,7 @@ export interface IResult {
     | IBalance[]
     | IOrder[]
     | ICandlestickData[]
+    | ICandlestick
     | ITickerData[]
     | ICryptocurrency[]
     | IAcceptedOrder

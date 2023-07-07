@@ -55,6 +55,8 @@ import {IUserAssets} from '../interfaces/tidebit_defi_background/user_assets';
 import {IPersonalAchievement} from '../interfaces/tidebit_defi_background/personal_achievement';
 import {IBadge} from '../interfaces/tidebit_defi_background/badge';
 import {IPnL} from '../interfaces/tidebit_defi_background/pnl';
+import {OrderType} from '../constants/order_type';
+import {ICFDReceipt} from '../interfaces/tidebit_defi_background/receipt';
 
 export interface IUserProvider {
   children: React.ReactNode;
@@ -230,6 +232,7 @@ export const UserProvider = ({children}: IUserProvider) => {
   const [isConnected, setIsConnected, isConnectedRef] = useState<boolean>(false);
   const [enableServiceTerm, setEnableServiceTerm, enableServiceTermRef] = useState<boolean>(false);
   const [histories, setHistories, historiesRef] = useState<IAcceptedOrder[]>([]);
+  const [CFDs, setCFDs, CFDsRef] = useState<{[orderId: string]: ICFDOrder}>({});
   const [openCFDs, setOpenedCFDs, openCFDsRef] = useState<Array<ICFDOrder>>([]);
   const [closedCFDs, setClosedCFDs, closedCFDsRef] = useState<Array<ICFDOrder>>([]);
   const [deposits, setDeposits, depositsRef] = useState<Array<IDepositOrder>>([]);
@@ -836,7 +839,19 @@ export const UserProvider = ({children}: IUserProvider) => {
     return result;
   };
 
-  const getCFD = (id: string) => openCFDs.find(o => o.id === id) || null;
+  const getCFD = (id: string) => {
+    const CFD = CFDsRef.current[id];
+    // Deprecate: [debug] (20230707 - tzuhan)
+    // eslint-disable-next-line no-console
+    console.log(`getCFD CFD`, CFD);
+    const histories = historiesRef.current.filter(
+      history => history.receipt.orderSnapshot.id === id
+    );
+    // Deprecate: [debug] (20230707 - tzuhan)
+    // eslint-disable-next-line no-console
+    console.log(`getCFD histories`, histories);
+    return CFD;
+  };
 
   const getWalletBalance = (props: string) => {
     let walletBalance: IWalletBalance | null = null;
@@ -1314,6 +1329,23 @@ export const UserProvider = ({children}: IUserProvider) => {
         console.log(`listHistories result`, result);
         if (result.success) {
           const histories = result.data as IAcceptedOrder[];
+          const CFDs = histories
+            .filter(history => history.orderType === OrderType.CFD)
+            .reduce((acc, history) => {
+              const receipt = history.receipt as ICFDReceipt;
+              const orderSnapshot = receipt.orderSnapshot as ICFDOrder;
+              if (!acc[orderSnapshot.id]) acc[orderSnapshot.id] = orderSnapshot;
+              else {
+                if (orderSnapshot.updatedTimestamp > acc[orderSnapshot.id].updatedTimestamp) {
+                  acc[orderSnapshot.id] = orderSnapshot;
+                }
+              }
+              return acc;
+            }, {} as {[orderId: string]: ICFDOrder});
+          setCFDs(CFDs);
+          // Deprecate: [debug] (20230707 - tzuhan)
+          // eslint-disable-next-line no-console
+          console.log(`listHistories CFDs`, CFDs);
           setHistories(histories);
         }
       } catch (error) {

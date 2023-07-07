@@ -844,12 +844,14 @@ export const UserProvider = ({children}: IUserProvider) => {
     // Deprecate: [debug] (20230707 - tzuhan)
     // eslint-disable-next-line no-console
     console.log(`getCFD CFD`, CFD);
+    /** Deprecate: [debug] (20230707 - tzuhan)
     const histories = historiesRef.current.filter(
       history => history.receipt.orderSnapshot.id === id
     );
     // Deprecate: [debug] (20230707 - tzuhan)
     // eslint-disable-next-line no-console
     console.log(`getCFD histories`, histories);
+      */
     return CFD;
   };
 

@@ -843,7 +843,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     const CFD = CFDsRef.current[id];
     // Deprecate: [debug] (20230707 - tzuhan)
     // eslint-disable-next-line no-console
-    console.log(`getCFD CFD`, CFD);
+    // console.log(`getCFD CFD`, CFD);
     /** Deprecate: [debug] (20230707 - tzuhan)
     const histories = historiesRef.current.filter(
       history => history.receipt.orderSnapshot.id === id
@@ -1049,8 +1049,10 @@ export const UserProvider = ({children}: IUserProvider) => {
     try {
       if (!enableServiceTermRef.current) throw new CustomError(Code.SERVICE_TERM_DISABLE);
       if (!applyCloseCFDOrder) throw new CustomError(Code.INVAILD_ORDER_INPUTS);
-      let index = openCFDs.findIndex(o => o.id === applyCloseCFDOrder.referenceId);
-      if (index === -1) throw new CustomError(Code.CFD_ORDER_NOT_FOUND);
+      const closeAppliedCFD = CFDs[applyCloseCFDOrder.referenceId];
+      if (!closeAppliedCFD) throw new CustomError(Code.CFD_ORDER_NOT_FOUND);
+      if (closeAppliedCFD.state !== OrderState.OPENING)
+        throw new CustomError(Code.CFD_ORDER_IS_ALREADY_CLOSED);
       // const balance: IBalance | null = getBalance(openCFDs[index].targetAsset);
       const transferR = transactionEngine.transferCFDOrderToTransaction(applyCloseCFDOrder);
       if (!transferR.success) throw new CustomError(Code.FAILED_TO_CREATE_TRANSACTION);
@@ -1095,16 +1097,17 @@ export const UserProvider = ({children}: IUserProvider) => {
         balanceSnapshot: IBalance[];
       };
       const newOpenedCFDs = [...openCFDsRef.current];
-      index = newOpenedCFDs.findIndex(o => o.id === updateCFDOrder.id);
+      let index = newOpenedCFDs.findIndex(o => o.id === updateCFDOrder.id);
       if (index !== -1) newOpenedCFDs.splice(index, 1);
       setOpenedCFDs(newOpenedCFDs);
       index = closedCFDsRef.current.findIndex(o => o.id === updateCFDOrder.id);
-      if (index === -1) setClosedCFDs(prev => [...prev, updateCFDOrder]);
+      if (index === -1) setClosedCFDs(prev => [...prev, {...updateCFDOrder}]);
       updateBalance(balanceSnapshot);
+      setCFDs({...CFDsRef.current, [updateCFDOrder.id]: {...updateCFDOrder}});
       result = {
         success: true,
         code: Code.SUCCESS,
-        data: {order: updateCFDOrder},
+        data: {order: {...updateCFDOrder}},
       };
     } catch (error) {
       // Info: `updateBalance` has two options of error (20230426 - Shirley)
@@ -1163,8 +1166,10 @@ export const UserProvider = ({children}: IUserProvider) => {
     try {
       if (!enableServiceTermRef.current) throw new CustomError(Code.SERVICE_TERM_DISABLE);
       if (!applyUpdateCFDOrder) throw new CustomError(Code.INVAILD_ORDER_INPUTS);
-      const index = openCFDs.findIndex(o => o.id === applyUpdateCFDOrder.referenceId);
-      if (index === -1) throw new CustomError(Code.CFD_ORDER_NOT_FOUND);
+      const updateAppliedCFD = CFDs[applyUpdateCFDOrder.referenceId];
+      if (!updateAppliedCFD) throw new CustomError(Code.CFD_ORDER_NOT_FOUND);
+      if (updateAppliedCFD.state !== OrderState.OPENING)
+        throw new CustomError(Code.CFD_ORDER_IS_ALREADY_CLOSED);
       const transferR = transactionEngine.transferCFDOrderToTransaction(applyUpdateCFDOrder);
       if (!transferR.success) throw new CustomError(Code.FAILED_TO_CREATE_TRANSACTION);
       // TODO: send request to chain(use Lunar?) (20230324 - tzuhan)
@@ -1181,7 +1186,6 @@ export const UserProvider = ({children}: IUserProvider) => {
         body: {
           applyData: applyUpdateCFDOrder,
           userSignature: signature,
-          openCFD: openCFDs[index], // Deprecated: remove when backend is ready (20230424 - tzuhan)
         },
       })) as IResult;
       if (!result.success)
@@ -1194,8 +1198,10 @@ export const UserProvider = ({children}: IUserProvider) => {
         balanceSnapshot: IBalance[];
       };
       const updateCFDOrders = [...openCFDs];
-      updateCFDOrders[index] = updateCFDOrder;
+      const index = updateCFDOrders.findIndex(o => o.id === updateCFDOrder.id);
+      if (index !== -1) updateCFDOrders[index] = updateCFDOrder;
       setOpenedCFDs(updateCFDOrders);
+      setCFDs({...CFDsRef.current, [updateCFDOrder.id]: {...updateCFDOrder}});
       result.code = Code.SUCCESS;
       result = {
         success: true,

@@ -33,8 +33,12 @@ const ReceiptSection = () => {
   const [filteredReceipts, setFilteredReceipts] = useState<IAcceptedOrder[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  let timer: NodeJS.Timeout;
+
   useEffect(() => {
-    setTimeout(() => setIsLoading(false), SKELETON_DISPLAY_TIME);
+    clearTimeout(timer);
+    timer = setTimeout(() => setIsLoading(false), SKELETON_DISPLAY_TIME);
+    return () => clearTimeout(timer);
   }, []);
 
   useEffect(() => {

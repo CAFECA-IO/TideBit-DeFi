@@ -10,18 +10,27 @@ const HistorySubTabMobile = () => {
 
   const [isLoading, setIsLoading] = useState(true);
 
-  const historyPositionList =
-    isLoading || userCtx.isLoadingCFDs ? (
-      <Skeleton count={10} height={55} />
-    ) : (
-      userCtx.closedCFDs.map(cfd => (
-        <div key={cfd.id}>{<HistoryPositionItem closedCfdDetails={toDisplayCFDOrder(cfd)} />}</div>
-      ))
-    );
+  const cfds = userCtx.closedCFDs.sort((a, b) => b.closeTimestamp! - a.closeTimestamp!);
+
+  const historyPositionList = isLoading ? (
+    <Skeleton count={10} height={55} />
+  ) : (
+    cfds.map(cfd => (
+      <div key={cfd.id}>{<HistoryPositionItem closedCfdDetails={toDisplayCFDOrder(cfd)} />}</div>
+    ))
+  );
+
+  let timer: NodeJS.Timeout;
 
   useEffect(() => {
-    setTimeout(() => setIsLoading(false), SKELETON_DISPLAY_TIME);
-  }, [historyPositionList]);
+    clearTimeout(timer);
+    if (userCtx.isLoadingCFDs) {
+      setIsLoading(true);
+      return;
+    }
+    timer = setTimeout(() => setIsLoading(false), SKELETON_DISPLAY_TIME);
+    return () => clearTimeout(timer);
+  }, [cfds, userCtx.isLoadingCFDs]);
 
   return (
     <>

@@ -32,7 +32,7 @@ const PopulateDates = ({
   selectedMonth,
   selectDate,
 }: IPopulateDatesParams) => {
-  const formatDaysInMonth = daysInMonth.map((el: Dates) => {
+  const formatDaysInMonth = daysInMonth.map((el: Dates, index) => {
     const date = el ? new Date(`${selectedYear}/${selectedMonth}/${el.date}`) : null;
     const isSelected = date?.getTime() && el.date === selectedTime ? true : false;
 
@@ -44,7 +44,7 @@ const PopulateDates = ({
 
     return (
       <div
-        key={el?.date}
+        key={index}
         className={`whitespace-nowrap rounded-full text-center hover:cursor-pointer hover:bg-cuteBlue ${
           isSelected ? 'bg-tidebitTheme' : ''
         }${el?.disable ? 'text-lightGray' : ''}`}

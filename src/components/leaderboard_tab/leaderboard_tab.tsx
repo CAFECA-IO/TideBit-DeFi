@@ -88,9 +88,13 @@ const LeaderboardTab = ({timeSpan, setTimeSpan, rankings}: LeaderboardTabProps) 
       ? 'bg-darkGray7 text-lightWhite'
       : 'bg-darkGray6 text-lightGray';
 
+  let timer: NodeJS.Timeout;
+
   useEffect(() => {
+    clearTimeout(timer);
     setIsLoading(true);
-    setTimeout(() => setIsLoading(false), SKELETON_DISPLAY_TIME);
+    timer = setTimeout(() => setIsLoading(false), SKELETON_DISPLAY_TIME);
+    return () => clearTimeout(timer);
   }, [timeSpan]);
 
   const displayPnl = (pnl: IPnL) =>

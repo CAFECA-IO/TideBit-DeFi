@@ -29,9 +29,13 @@ const UserPersonalRanking = ({timeSpan, rankingData}: IUserPersonalRankingProps)
   const [isLoading, setIsLoading] = useState(true);
   const [showShareList, setShowShareList] = useState(false);
 
+  let timer: NodeJS.Timeout;
+
   useEffect(() => {
+    clearTimeout(timer);
     setIsLoading(true);
-    setTimeout(() => setIsLoading(false), SKELETON_DISPLAY_TIME);
+    timer = setTimeout(() => setIsLoading(false), SKELETON_DISPLAY_TIME);
+    return () => clearTimeout(timer);
   }, [timeSpan]);
 
   const username = userCtx.user?.address?.slice(-1).toUpperCase();

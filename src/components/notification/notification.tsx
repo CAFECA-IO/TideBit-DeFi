@@ -56,15 +56,19 @@ export default function Notification({
   //   : 'translate-y-0 origin-left w-3/4 rotate-35';
   //   */
 
-  const readAllHandler = () => {
-    setReadAllanim('translate-x-0 opacity-10');
+  let timer: NodeJS.Timeout;
 
-    setTimeout(notificationCtx.readAll, 500);
+  const readAllHandler = () => {
+    clearTimeout(timer);
+    setReadAllanim('translate-x-96 opacity-0');
+
+    timer = setTimeout(notificationCtx.readAll, 500);
+    return () => clearTimeout(timer);
   };
 
   const displayedNotificationList = notificationCtx.unreadNotifications.map(v => {
     return (
-      <div key={v.id} className={`${readAllanim}`}>
+      <div key={v.id} className={`${readAllanim} transition-all duration-300 ease-in-out`}>
         <NotificationItem
           id={v.id}
           title={v.title}

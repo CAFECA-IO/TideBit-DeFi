@@ -3,6 +3,7 @@
 // };
 
 import {Badges} from './badges';
+import {Currency} from './currency';
 
 // TODO: for future use, to leverage i18n needs to notice the `provider` range
 export const UNIVERSAL_NUMBER_FORMAT_LOCALE = 'en-US';
@@ -230,7 +231,7 @@ export const InvisibleStrokeColor = {
   TRANSPARENT: '#A16171900',
 };
 
-export const SKELETON_DISPLAY_TIME = 1000;
+export const SKELETON_DISPLAY_TIME = 500;
 
 export const TRADING_CHART_SWITCH_BUTTON_SIZE = 30;
 
@@ -264,7 +265,7 @@ export const DEFAULT_USER_AVATAR = '/leaderboard/default_avatar.svg';
 export const DEFAULT_FEE = 0;
 export const DEFAULT_SELL_PRICE = 0;
 export const DEFAULT_BUY_PRICE = 9999999999;
-export const DEFAULT_LEVERAGE = 1;
+export const DEFAULT_LEVERAGE = 5;
 export const DEFAULT_USER_BALANCE = 0;
 export const DEFAULT_SPREAD = 0.001;
 export const DEFAULT_EXPIRY_DATE = 1;

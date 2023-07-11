@@ -72,23 +72,31 @@ const OpenSubTab = () => {
     setCfds(cfdList);
   }, [userCtx.openCFDs]);
 
-  useEffect(() => {
-    setTimeout(() => setIsLoading(false), SKELETON_DISPLAY_TIME);
-  }, [userCtx.openCFDs]);
+  let timer: NodeJS.Timeout;
 
-  const openPositionList =
-    isLoading || userCtx.isLoadingCFDs ? (
-      <Skeleton count={10} height={150} />
-    ) : (
-      cfds.map(cfd => {
-        return (
-          <div key={cfd.id}>
-            {<OpenPositionItem openCfdDetails={cfd} />}
-            <div className="my-auto h-px w-full rounded bg-white/50"></div>
-          </div>
-        );
-      })
-    );
+  useEffect(() => {
+    clearTimeout(timer);
+    if (userCtx.isLoadingCFDs) {
+      setIsLoading(true);
+      return;
+    }
+
+    timer = setTimeout(() => setIsLoading(false), SKELETON_DISPLAY_TIME);
+    return () => clearTimeout(timer);
+  }, [userCtx.openCFDs, userCtx.isLoadingCFDs]);
+
+  const openPositionList = isLoading ? (
+    <Skeleton count={5} height={150} />
+  ) : (
+    cfds.map(cfd => {
+      return (
+        <div key={cfd.id}>
+          {<OpenPositionItem openCfdDetails={cfd} />}
+          <div className="my-auto h-px w-full rounded bg-white/50"></div>
+        </div>
+      );
+    })
+  );
 
   return (
     <>

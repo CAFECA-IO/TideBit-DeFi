@@ -460,6 +460,7 @@ class TradeBook {
         const high = Math.max(...tradesInInterval.map(t => t.price));
         const low = Math.min(...tradesInInterval.map(t => t.price));
         const volume = tradesInInterval.reduce((sum, t) => sum + t.quantity, 0);
+        const value = tradesInInterval.reduce((sum, t) => sum + t.quantity * t.price, 0);
         candleSticks.push({
           x: new Date(i),
           y: {

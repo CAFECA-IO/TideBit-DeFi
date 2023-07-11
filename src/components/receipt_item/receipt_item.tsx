@@ -130,9 +130,8 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
     orderType === OrderType.CFD
       ? isClosed
         ? () => {
-            const closedCfd = userCtx.closedCFDs.find(cfd => cfd.id === order.id)! as ICFDOrder;
-            const cfdData = toDisplayCFDOrder(closedCfd);
-
+            const closedOrder = userCtx.getCFD(order.id) ?? (order as ICFDOrder);
+            const cfdData = toDisplayCFDOrder(closedOrder);
             globalCtx.dataHistoryPositionModalHandler(cfdData);
             globalCtx.visibleHistoryPositionModalHandler();
           }

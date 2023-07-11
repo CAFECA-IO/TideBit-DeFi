@@ -453,16 +453,14 @@ class TradeBook {
       const tradesInInterval = trades.filter(
         t => t.timestampMs >= i && t.timestampMs < i + intervalMs
       );
-      /** Deprecated: [debug] (20230524 - tzuhan)
-      // eslint-disable-next-line no-console
-      console.log(`toCandlestick trades`, trades);
-      */
+
       if (tradesInInterval.length > 0) {
         const open = tradesInInterval[0].price;
         const close = tradesInInterval[tradesInInterval.length - 1].price;
         const high = Math.max(...tradesInInterval.map(t => t.price));
         const low = Math.min(...tradesInInterval.map(t => t.price));
         const volume = tradesInInterval.reduce((sum, t) => sum + t.quantity, 0);
+        const value = tradesInInterval.reduce((sum, t) => sum + t.quantity * t.price, 0);
         candleSticks.push({
           x: new Date(i),
           y: {
@@ -471,6 +469,7 @@ class TradeBook {
             low,
             close,
             volume,
+            value,
           },
         });
       }

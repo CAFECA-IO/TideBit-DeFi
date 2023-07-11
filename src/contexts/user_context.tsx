@@ -55,6 +55,8 @@ import {IUserAssets} from '../interfaces/tidebit_defi_background/user_assets';
 import {IPersonalAchievement} from '../interfaces/tidebit_defi_background/personal_achievement';
 import {IBadge} from '../interfaces/tidebit_defi_background/badge';
 import {IPnL} from '../interfaces/tidebit_defi_background/pnl';
+import {OrderType} from '../constants/order_type';
+import {ICFDReceipt} from '../interfaces/tidebit_defi_background/receipt';
 
 export interface IUserProvider {
   children: React.ReactNode;
@@ -230,6 +232,7 @@ export const UserProvider = ({children}: IUserProvider) => {
   const [isConnected, setIsConnected, isConnectedRef] = useState<boolean>(false);
   const [enableServiceTerm, setEnableServiceTerm, enableServiceTermRef] = useState<boolean>(false);
   const [histories, setHistories, historiesRef] = useState<IAcceptedOrder[]>([]);
+  const [CFDs, setCFDs, CFDsRef] = useState<{[orderId: string]: ICFDOrder}>({});
   const [openCFDs, setOpenedCFDs, openCFDsRef] = useState<Array<ICFDOrder>>([]);
   const [closedCFDs, setClosedCFDs, closedCFDsRef] = useState<Array<ICFDOrder>>([]);
   const [deposits, setDeposits, depositsRef] = useState<Array<IDepositOrder>>([]);
@@ -836,7 +839,21 @@ export const UserProvider = ({children}: IUserProvider) => {
     return result;
   };
 
-  const getCFD = (id: string) => openCFDs.find(o => o.id === id) || null;
+  const getCFD = (id: string) => {
+    const CFD = CFDsRef.current[id];
+    // Deprecate: [debug] (20230707 - tzuhan)
+    // eslint-disable-next-line no-console
+    // console.log(`getCFD CFD`, CFD);
+    /** Deprecate: [debug] (20230707 - tzuhan)
+    const histories = historiesRef.current.filter(
+      history => history.receipt.orderSnapshot.id === id
+    );
+    // Deprecate: [debug] (20230707 - tzuhan)
+    // eslint-disable-next-line no-console
+    console.log(`getCFD histories`, histories);
+      */
+    return CFD;
+  };
 
   const getWalletBalance = (props: string) => {
     let walletBalance: IWalletBalance | null = null;
@@ -1032,8 +1049,10 @@ export const UserProvider = ({children}: IUserProvider) => {
     try {
       if (!enableServiceTermRef.current) throw new CustomError(Code.SERVICE_TERM_DISABLE);
       if (!applyCloseCFDOrder) throw new CustomError(Code.INVAILD_ORDER_INPUTS);
-      let index = openCFDs.findIndex(o => o.id === applyCloseCFDOrder.referenceId);
-      if (index === -1) throw new CustomError(Code.CFD_ORDER_NOT_FOUND);
+      const closeAppliedCFD = CFDs[applyCloseCFDOrder.referenceId];
+      if (!closeAppliedCFD) throw new CustomError(Code.CFD_ORDER_NOT_FOUND);
+      if (closeAppliedCFD.state !== OrderState.OPENING)
+        throw new CustomError(Code.CFD_ORDER_IS_ALREADY_CLOSED);
       // const balance: IBalance | null = getBalance(openCFDs[index].targetAsset);
       const transferR = transactionEngine.transferCFDOrderToTransaction(applyCloseCFDOrder);
       if (!transferR.success) throw new CustomError(Code.FAILED_TO_CREATE_TRANSACTION);
@@ -1078,16 +1097,17 @@ export const UserProvider = ({children}: IUserProvider) => {
         balanceSnapshot: IBalance[];
       };
       const newOpenedCFDs = [...openCFDsRef.current];
-      index = newOpenedCFDs.findIndex(o => o.id === updateCFDOrder.id);
+      let index = newOpenedCFDs.findIndex(o => o.id === updateCFDOrder.id);
       if (index !== -1) newOpenedCFDs.splice(index, 1);
       setOpenedCFDs(newOpenedCFDs);
       index = closedCFDsRef.current.findIndex(o => o.id === updateCFDOrder.id);
-      if (index === -1) setClosedCFDs(prev => [...prev, updateCFDOrder]);
+      if (index === -1) setClosedCFDs(prev => [...prev, {...updateCFDOrder}]);
       updateBalance(balanceSnapshot);
+      setCFDs({...CFDsRef.current, [updateCFDOrder.id]: {...updateCFDOrder}});
       result = {
         success: true,
         code: Code.SUCCESS,
-        data: {order: updateCFDOrder},
+        data: {order: {...updateCFDOrder}},
       };
     } catch (error) {
       // Info: `updateBalance` has two options of error (20230426 - Shirley)
@@ -1146,8 +1166,10 @@ export const UserProvider = ({children}: IUserProvider) => {
     try {
       if (!enableServiceTermRef.current) throw new CustomError(Code.SERVICE_TERM_DISABLE);
       if (!applyUpdateCFDOrder) throw new CustomError(Code.INVAILD_ORDER_INPUTS);
-      const index = openCFDs.findIndex(o => o.id === applyUpdateCFDOrder.referenceId);
-      if (index === -1) throw new CustomError(Code.CFD_ORDER_NOT_FOUND);
+      const updateAppliedCFD = CFDs[applyUpdateCFDOrder.referenceId];
+      if (!updateAppliedCFD) throw new CustomError(Code.CFD_ORDER_NOT_FOUND);
+      if (updateAppliedCFD.state !== OrderState.OPENING)
+        throw new CustomError(Code.CFD_ORDER_IS_ALREADY_CLOSED);
       const transferR = transactionEngine.transferCFDOrderToTransaction(applyUpdateCFDOrder);
       if (!transferR.success) throw new CustomError(Code.FAILED_TO_CREATE_TRANSACTION);
       // TODO: send request to chain(use Lunar?) (20230324 - tzuhan)
@@ -1164,7 +1186,6 @@ export const UserProvider = ({children}: IUserProvider) => {
         body: {
           applyData: applyUpdateCFDOrder,
           userSignature: signature,
-          openCFD: openCFDs[index], // Deprecated: remove when backend is ready (20230424 - tzuhan)
         },
       })) as IResult;
       if (!result.success)
@@ -1177,8 +1198,10 @@ export const UserProvider = ({children}: IUserProvider) => {
         balanceSnapshot: IBalance[];
       };
       const updateCFDOrders = [...openCFDs];
-      updateCFDOrders[index] = updateCFDOrder;
+      const index = updateCFDOrders.findIndex(o => o.id === updateCFDOrder.id);
+      if (index !== -1) updateCFDOrders[index] = updateCFDOrder;
       setOpenedCFDs(updateCFDOrders);
+      setCFDs({...CFDsRef.current, [updateCFDOrder.id]: {...updateCFDOrder}});
       result.code = Code.SUCCESS;
       result = {
         success: true,
@@ -1314,6 +1337,23 @@ export const UserProvider = ({children}: IUserProvider) => {
         console.log(`listHistories result`, result);
         if (result.success) {
           const histories = result.data as IAcceptedOrder[];
+          const CFDs = histories
+            .filter(history => history.orderType === OrderType.CFD)
+            .reduce((acc, history) => {
+              const receipt = history.receipt as ICFDReceipt;
+              const orderSnapshot = receipt.orderSnapshot as ICFDOrder;
+              if (!acc[orderSnapshot.id]) acc[orderSnapshot.id] = orderSnapshot;
+              else {
+                if (orderSnapshot.updatedTimestamp > acc[orderSnapshot.id].updatedTimestamp) {
+                  acc[orderSnapshot.id] = orderSnapshot;
+                }
+              }
+              return acc;
+            }, {} as {[orderId: string]: ICFDOrder});
+          setCFDs(CFDs);
+          // Deprecate: [debug] (20230707 - tzuhan)
+          // eslint-disable-next-line no-console
+          console.log(`listHistories CFDs`, CFDs);
           setHistories(histories);
         }
       } catch (error) {

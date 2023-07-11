@@ -48,7 +48,7 @@ import {Code, Reason} from '../constants/code';
 import {IPusherAction} from '../interfaces/tidebit_defi_background/pusher_data';
 import {IQuotation} from '../interfaces/tidebit_defi_background/quotation';
 import {IRankingTimeSpan} from '../constants/ranking_time_span';
-import {ILeaderboard, getDummyLeaderboard} from '../interfaces/tidebit_defi_background/leaderboard';
+import {ILeaderboard} from '../interfaces/tidebit_defi_background/leaderboard';
 import TradeBookInstance from '../lib/books/trade_book';
 import {millesecondsToSeconds} from '../lib/common';
 import {
@@ -64,6 +64,7 @@ import {
   getDummyNews,
   getDummyRecommendationNews,
 } from '../interfaces/tidebit_defi_background/news';
+import {ICandlestick} from '../interfaces/tidebit_defi_background/candlestick';
 
 export interface IMarketProvider {
   children: React.ReactNode;
@@ -132,6 +133,15 @@ export interface IMarketContext {
     itemsPerPage?: number
   ) => IRecommendedNews[];
   getRecommendedNews: (currency: ICurrency) => IRecommendedNews[];
+  listCandlesticks: (
+    instId: string,
+    options: {
+      timeSpan: ITimeSpanUnion;
+      begin?: number;
+      end?: number;
+      limit?: number;
+    }
+  ) => Promise<IResult>;
 }
 // TODO: Note: _app.tsx 啟動的時候 => createContext
 export const MarketContext = createContext<IMarketContext>({
@@ -189,6 +199,9 @@ export const MarketContext = createContext<IMarketContext>({
     throw new Error('Function not implemented.');
   },
   getWebsiteReserve: function (): Promise<IResult> {
+    throw new Error('Function not implemented.');
+  },
+  listCandlesticks: function (): Promise<IResult> {
     throw new Error('Function not implemented.');
   },
 });
@@ -617,6 +630,35 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     return result;
   };
 
+  const listCandlesticks = async (
+    instId: string,
+    options: {
+      begin?: number; // Info: in milliseconds (20230530 - tzuhan)
+      end?: number; // Info: in milliseconds (20230530 - tzuhan)
+      timeSpan: ITimeSpanUnion;
+      limit?: number;
+    }
+  ) => {
+    let result: IResult = {...defaultResultFailed};
+    try {
+      result = (await workerCtx.requestHandler({
+        name: APIName.LIST_CANDLESTICKS,
+        method: Method.GET,
+        params: instId,
+        query: {...options},
+      })) as IResult;
+      if (result.success) {
+        const candlesticks = result.data as ICandlestick;
+      }
+    } catch (error) {
+      if (!isCustomError(error)) {
+        result.code = Code.INTERNAL_SERVER_ERROR;
+        result.reason = Reason[result.code];
+      }
+    }
+    return result;
+  };
+
   const syncCandlestickData = (instId: string, timeSpan?: ITimeSpanUnion) => {
     if (!!candlestickIntervalRef.current) {
       clearInterval(candlestickIntervalRef.current);
@@ -800,6 +842,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     getPaginationNews,
     getTickerSpread,
     predictCFDClosePrice,
+    listCandlesticks,
   };
 
   return <MarketContext.Provider value={defaultValue}>{children}</MarketContext.Provider>;

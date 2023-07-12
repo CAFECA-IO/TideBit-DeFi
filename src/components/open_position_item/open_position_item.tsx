@@ -258,7 +258,7 @@ const OpenPositionItem = ({openCfdDetails}: IOpenPositionItemProps) => {
   return (
     <div className="relative my-2 min-h-140px">
       <div
-        className="absolute z-10 h-150px w-280px bg-transparent hover:cursor-pointer"
+        className="absolute z-10 h-160px w-280px bg-transparent hover:cursor-pointer"
         onClick={updatedModalClickHandler}
       ></div>
       {/* Info: (20230411 - Julian) brief of this open position */}
@@ -286,7 +286,7 @@ const OpenPositionItem = ({openCfdDetails}: IOpenPositionItemProps) => {
       </div>
 
       {/* Info: (20230411 - Julian) Line graph */}
-      <div className="-mx-4 -mb-10 -mt-6">
+      <div className="-mx-4 mb-0 mt-3 h-60px">
         <PositionLineGraph
           strokeColor={[
             displayedColorHex,

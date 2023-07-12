@@ -24,7 +24,6 @@ interface IPageProps {
 
 const Trading = (props: IPageProps) => {
   const marketCtx = useContext(MarketContext);
-  const [isInit, setIsInit] = useState(false);
   const {layoutAssertion} = useGlobal();
   const appCtx = useContext(AppContext);
 
@@ -42,7 +41,6 @@ const Trading = (props: IPageProps) => {
   const redirectToTicker = async () => {
     if (hasValue(marketCtx.availableTickers) && currency) {
       marketCtx.selectTickerHandler(currency);
-      setIsInit(true);
     }
   };
 
@@ -51,9 +49,8 @@ const Trading = (props: IPageProps) => {
       appCtx.init();
       return;
     }
-    if (!marketCtx.isInit && isInit) return;
     redirectToTicker();
-  }, [isInit, appCtx.isInit, marketCtx.isInit]);
+  }, [appCtx.isInit]);
 
   if (!router.isFallback && !props.tickerId) {
     return <Error statusCode={404} />;

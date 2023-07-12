@@ -840,18 +840,9 @@ export const UserProvider = ({children}: IUserProvider) => {
   };
 
   const getCFD = (id: string) => {
-    const CFD = CFDsRef.current[id];
-    // Deprecate: [debug] (20230707 - tzuhan)
-    // eslint-disable-next-line no-console
-    // console.log(`getCFD CFD`, CFD);
-    /** Deprecate: [debug] (20230707 - tzuhan)
-    const histories = historiesRef.current.filter(
-      history => history.receipt.orderSnapshot.id === id
-    );
-    // Deprecate: [debug] (20230707 - tzuhan)
-    // eslint-disable-next-line no-console
-    console.log(`getCFD histories`, histories);
-      */
+    let CFD: ICFDOrder | null = CFDsRef.current[id] ?? null;
+    if (!CFD) CFD = openCFDsRef.current.find(openCFD => openCFD.id === id) ?? null;
+    if (!CFD) CFD = closedCFDsRef.current.find(closeCFD => closeCFD.id === id) ?? null;
     return CFD;
   };
 
@@ -1054,7 +1045,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     try {
       if (!enableServiceTermRef.current) throw new CustomError(Code.SERVICE_TERM_DISABLE);
       if (!applyCloseCFDOrder) throw new CustomError(Code.INVAILD_ORDER_INPUTS);
-      const closeAppliedCFD = CFDs[applyCloseCFDOrder.referenceId];
+      const closeAppliedCFD = getCFD(applyCloseCFDOrder.referenceId);
       if (!closeAppliedCFD) throw new CustomError(Code.CFD_ORDER_NOT_FOUND);
       if (closeAppliedCFD.state !== OrderState.OPENING)
         throw new CustomError(Code.CFD_ORDER_IS_ALREADY_CLOSED);
@@ -1171,7 +1162,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     try {
       if (!enableServiceTermRef.current) throw new CustomError(Code.SERVICE_TERM_DISABLE);
       if (!applyUpdateCFDOrder) throw new CustomError(Code.INVAILD_ORDER_INPUTS);
-      const updateAppliedCFD = CFDs[applyUpdateCFDOrder.referenceId];
+      const updateAppliedCFD = getCFD(applyUpdateCFDOrder.referenceId);
       if (!updateAppliedCFD) throw new CustomError(Code.CFD_ORDER_NOT_FOUND);
       if (updateAppliedCFD.state !== OrderState.OPENING)
         throw new CustomError(Code.CFD_ORDER_IS_ALREADY_CLOSED);

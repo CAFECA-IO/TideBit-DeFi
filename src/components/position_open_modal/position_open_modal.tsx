@@ -431,7 +431,7 @@ const PositionOpenModal = ({
           height={30}
           alt="ticker icon"
         />
-        <div className="text-2xl">{marketCtx.selectedTicker?.currency}</div>
+        <div className="text-2xl">{marketCtx.selectedTicker?.instId}</div>
       </div>
 
       <div className="absolute right-6 top-90px flex items-center space-x-1 text-center">

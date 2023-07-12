@@ -751,7 +751,7 @@ const UpdateFormModal = ({
                         UNIVERSAL_NUMBER_FORMAT_LOCALE,
                         FRACTION_DIGITS
                       ) ?? 0}
-                      <span className="ml-1 text-lightGray">{openCfdDetails?.ticker}</span>
+                      <span className="ml-1 text-lightGray">{openCfdDetails?.targetAsset}</span>
                     </div>
                   </div>
 

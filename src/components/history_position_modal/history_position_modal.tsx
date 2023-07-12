@@ -138,7 +138,7 @@ const HistoryPositionModal = ({
                 UNIVERSAL_NUMBER_FORMAT_LOCALE,
                 FRACTION_DIGITS
               ) ?? 0}
-              <span className="ml-1 text-lightGray">{closedCfdDetails.ticker}</span>
+              <span className="ml-1 text-lightGray">{closedCfdDetails.targetAsset}</span>
             </div>
           </div>
 

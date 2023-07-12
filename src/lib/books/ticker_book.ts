@@ -7,38 +7,40 @@ class TickerBook {
   private _dataLength = 1000;
   private _timeSpan: ITimeSpanUnion = TimeSpanUnion._1s;
   private _limit = 50;
-  private _tickers: {[currency in ICurrency]: ITickerData};
+  private _tickers: {[instId: string]: ITickerData};
 
   constructor() {
     this._tickers = {...toDummyTickers};
   }
 
   listTickerPositions(
-    ticker: ICurrency,
+    instId: string,
     options: {begin?: number; end?: number; limit?: number; timeSpan?: ITimeSpanUnion}
   ): number[] {
     // TODO: temporary need further discussion on how to calculate the position (20230424 - tzuhan)
-    return this.tickers[ticker]?.lineGraphProps.dataArray || ([] as number[]);
+    return this.tickers[instId]?.lineGraphProps.dataArray || ([] as number[]);
   }
 
-  listTickers(): {[currency in ICurrency]: ITickerData} {
+  listTickers(): {[instId: string]: ITickerData} {
     return this.tickers;
   }
 
   updateTicker(value: ITickerData) {
-    const updateTicker: ITickerData = {...this._tickers[value.currency]};
+    const updateTicker: ITickerData = {...this._tickers[value.instId]};
     updateTicker.lineGraphProps = value.lineGraphProps;
     updateTicker.fluctuating = value.fluctuating;
     updateTicker.price = value.price;
     updateTicker.priceChange = value.priceChange;
     updateTicker.tradingVolume = value.tradingVolume;
     updateTicker.upOrDown = value.upOrDown;
-    this._tickers[value.currency] = updateTicker;
+    this._tickers[value.instId] = updateTicker;
   }
 
   updateTickers(value: ITickerData[]) {
     const tickers = [...value].reduce((prev, curr) => {
-      if (!prev[curr.currency])
+      // eslint-disable-next-line no-console
+      console.log(`updateTickers currency: ${curr.currency}, instId: ${curr.instId}`);
+      if (!prev[curr.instId])
         prev[curr.currency] = {
           ...curr,
           lineGraphProps: {
@@ -46,7 +48,7 @@ class TickerBook {
           },
         };
       return prev;
-    }, {} as {[currency in ICurrency]: ITickerData});
+    }, {} as {[instId: string]: ITickerData});
     this.tickers = tickers;
     return tickers;
   }
@@ -55,15 +57,15 @@ class TickerBook {
     return currency === unitAsset
       ? 1
       : Object.values(Currency).includes(currency as ICurrency)
-      ? this._tickers[currency as ICurrency]?.price || 0
+      ? this._tickers[`${currency}-${unitAsset}`]?.price || 0
       : 0;
   }
 
-  get tickers(): {[currency in ICurrency]: ITickerData} {
+  get tickers(): {[instId: string]: ITickerData} {
     return this._tickers;
   }
 
-  set tickers(value: {[currency in ICurrency]: ITickerData}) {
+  set tickers(value: {[instId: string]: ITickerData}) {
     this._tickers = value;
   }
 

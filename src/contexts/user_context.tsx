@@ -275,7 +275,7 @@ export const UserProvider = ({children}: IUserProvider) => {
       await getUserAssets();
       await listBalances();
       await listFavoriteTickers();
-      if (selectedTickerRef.current) await listCFDs(selectedTickerRef.current.currency);
+      if (selectedTickerRef.current) await listCFDs(selectedTickerRef.current.instId);
 
       workerCtx.subscribeUser(address);
     } else {
@@ -373,7 +373,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     return result;
   }, []);
 
-  const listCFDs = useCallback(async (ticker: string) => {
+  const listCFDs = useCallback(async (instId: string) => {
     setIsLoadingCFDs(true);
     let result: IResult = {...defaultResultFailed};
     result.code = Code.SERVICE_TERM_DISABLE;
@@ -384,7 +384,7 @@ export const UserProvider = ({children}: IUserProvider) => {
           name: APIName.LIST_CFD_TRADES,
           method: Method.GET,
           query: {
-            ticker,
+            ticker: instId,
           },
         })) as IResult;
         if (result.success) {
@@ -1496,7 +1496,7 @@ export const UserProvider = ({children}: IUserProvider) => {
   }, []);
 
   const updateCFDHandler = useCallback((updateCFD: ICFDOrder) => {
-    const _updateCFD = {...updateCFD, ticker: updateCFD.ticker.split('-')[0]};
+    const _updateCFD = {...updateCFD};
     let updatedCFDs: ICFDOrder[] = [];
     if (openCFDsRef.current) {
       updatedCFDs = [...updatedCFDs, ...openCFDsRef.current];
@@ -1554,7 +1554,7 @@ export const UserProvider = ({children}: IUserProvider) => {
   React.useMemo(
     () =>
       notificationCtx.emitter.on(TideBitEvent.TICKER_CHANGE, async (ticker: ITickerData) => {
-        await listCFDs(ticker.currency);
+        await listCFDs(ticker.instId);
       }),
     []
   );

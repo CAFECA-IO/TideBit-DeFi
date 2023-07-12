@@ -149,8 +149,8 @@ const PositionOpenModal = ({
         //   ...receipt.order,
         //   // state: OrderState.OPENING,
         // };
-        const closePrice = marketCtx.predictCFDClosePrice(cfd.targetAsset, cfd.typeOfPosition);
-        const spread = marketCtx.getTickerSpread(cfd.targetAsset);
+        const closePrice = marketCtx.predictCFDClosePrice(cfd.ticker, cfd.typeOfPosition);
+        const spread = marketCtx.getTickerSpread(cfd.ticker);
 
         const pnl = toPnl({
           openPrice: cfd.openPrice,

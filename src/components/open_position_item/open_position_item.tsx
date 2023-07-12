@@ -62,8 +62,8 @@ const OpenPositionItem = ({openCfdDetails}: IOpenPositionItemProps) => {
     stateCode,
   } = openCfdDetails;
 
-  const spread = marketCtx.getTickerSpread(openCfdDetails.targetAsset);
-  const positionLineGraph = marketCtx.listTickerPositions(openCfdDetails.targetAsset, {
+  const spread = marketCtx.getTickerSpread(openCfdDetails.ticker);
+  const positionLineGraph = marketCtx.listTickerPositions(openCfdDetails.ticker, {
     begin: openCfdDetails.createTimestamp,
   });
 
@@ -73,7 +73,7 @@ const OpenPositionItem = ({openCfdDetails}: IOpenPositionItemProps) => {
       : positionLineGraph.map((v: number) => v * (1 + spread));
 
   const closePrice = marketCtx.predictCFDClosePrice(
-    openCfdDetails.targetAsset,
+    openCfdDetails.ticker,
     openCfdDetails.typeOfPosition
   );
 
@@ -114,7 +114,7 @@ const OpenPositionItem = ({openCfdDetails}: IOpenPositionItemProps) => {
       closePrice: quotation.price,
       amount: cfd.amount,
       typeOfPosition: cfd.typeOfPosition,
-      spread: marketCtx.getTickerSpread(cfd.targetAsset),
+      spread: marketCtx.getTickerSpread(cfd.ticker),
     });
 
     return {

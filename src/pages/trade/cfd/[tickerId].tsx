@@ -10,9 +10,9 @@ import NavBarMobile from '../../../components/nav_bar_mobile/nav_bar_mobile';
 import {GetStaticPaths, GetStaticProps} from 'next';
 import {useRouter} from 'next/router';
 import Error from 'next/error';
-import {findCurrencyByCode, hasValue} from '../../../lib/common';
+import {hasValue} from '../../../lib/common';
 import {BTC_NEWS_FOLDER, ETH_NEWS_FOLDER, tickerIds} from '../../../constants/config';
-import {Currency} from '../../../constants/currency';
+import {CodeToTicker} from '../../../constants/ticker';
 import {TIDEBIT_FAVICON} from '../../../constants/display';
 import {getPosts} from '../../../lib/posts';
 import {IRecommendedNews} from '../../../interfaces/tidebit_defi_background/news';
@@ -33,15 +33,11 @@ const Trading = (props: IPageProps) => {
   const router = useRouter();
   const {tickerId} = router.query;
 
-  const currencyCode = tickerId
-    ? tickerId.toString().replace('usdt', '').toUpperCase()
-    : Currency.ETH;
-
-  const currency = findCurrencyByCode(currencyCode);
+  const ticker = CodeToTicker[(tickerId as string).toUpperCase()];
 
   const redirectToTicker = async () => {
-    if (hasValue(marketCtx.availableTickers) && currency) {
-      marketCtx.selectTickerHandler(currency);
+    if (hasValue(marketCtx.availableTickers) && ticker) {
+      marketCtx.selectTickerHandler(ticker);
       setIsInit(true);
     }
   };

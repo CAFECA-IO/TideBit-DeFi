@@ -6,11 +6,11 @@ import CryptoCard from '../crypto_card/crypto_card';
 import {MarketContext, IMarketContext} from '../../contexts/market_context';
 import {UserContext, IUserContext} from '../../contexts/user_context';
 import {useTranslation} from 'next-i18next';
-import {ILineGraphProps, ITickerData} from '../../interfaces/tidebit_defi_background/ticker_data';
+import {ITickerData} from '../../interfaces/tidebit_defi_background/ticker_data';
 import {useRouter} from 'next/router';
 import {ClickEvent} from '../../constants/tidebit_event';
 import {NotificationContext} from '../../contexts/notification_context';
-import {ICurrency} from '../../constants/currency';
+import {ICryptoCardData} from '../ticker_selector_box/ticker_selector_box';
 
 type TranslateFunction = (s: string) => string;
 
@@ -18,19 +18,6 @@ interface ITickerSelectorBox {
   tickerSelectorBoxRef: React.RefObject<HTMLDivElement>;
   tickerSelectorBoxVisible: boolean;
   tickerSelectorBoxClickHandler: () => void;
-}
-
-interface ICryptoCardData {
-  currency: ICurrency;
-  name: string;
-  star: boolean;
-  starred: boolean;
-  price: number;
-  fluctuating: number;
-  tokenImg: string;
-  lineGraphProps: ILineGraphProps;
-  starColor?: string;
-  gradientColor?: string;
 }
 
 const TickerSelectorBoxMobile = ({
@@ -138,6 +125,7 @@ const TickerSelectorBoxMobile = ({
           key={cryptoCard.currency}
           cardClickHandler={() => cardClickHandler(cryptoCard.currency)}
           className="mt-4 ml-4"
+          instId={cryptoCard.instId}
           lineGraphProps={cryptoCard.lineGraphProps}
           star={true}
           starColor={cryptoCard.starColor}
@@ -157,6 +145,7 @@ const TickerSelectorBoxMobile = ({
         key={cryptoCard.currency}
         cardClickHandler={() => cardClickHandler(cryptoCard.currency)}
         className="mt-0"
+        instId={cryptoCard.instId}
         lineGraphProps={cryptoCard.lineGraphProps}
         star={true}
         starColor={cryptoCard.starColor}
@@ -179,6 +168,7 @@ const TickerSelectorBoxMobile = ({
           key={cryptoCard.currency}
           cardClickHandler={() => cardClickHandler(cryptoCard.currency)}
           className="mt-4 ml-4"
+          instId={cryptoCard.instId}
           lineGraphProps={cryptoCard.lineGraphProps}
           star={true}
           starColor={cryptoCard.starColor}
@@ -198,6 +188,7 @@ const TickerSelectorBoxMobile = ({
         key={cryptoCard.currency}
         cardClickHandler={() => cardClickHandler(cryptoCard.currency)}
         className="mt-0"
+        instId={cryptoCard.instId}
         lineGraphProps={cryptoCard.lineGraphProps}
         star={true}
         starColor={cryptoCard.starColor}

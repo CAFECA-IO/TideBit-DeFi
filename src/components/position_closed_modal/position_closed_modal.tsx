@@ -45,15 +45,10 @@ import {ICFDSuggestion} from '../../interfaces/tidebit_defi_background/cfd_sugge
 import {IQuotation} from '../../interfaces/tidebit_defi_background/quotation';
 import useStateRef from 'react-usestateref';
 import {OrderState} from '../../constants/order_state';
-import {
-  defaultResultSuccess,
-  defaultResultFailed,
-  IResult,
-} from '../../interfaces/tidebit_defi_background/result';
+import {defaultResultFailed, IResult} from '../../interfaces/tidebit_defi_background/result';
 import {CFDOperation} from '../../constants/cfd_order_type';
 import {OrderType} from '../../constants/order_type';
 import {CFDClosedType} from '../../constants/cfd_closed_type';
-import {cfdStateCode} from '../../constants/cfd_state_code';
 import {ICFDOrder} from '../../interfaces/tidebit_defi_background/order';
 import {Code, Reason} from '../../constants/code';
 import {ToastTypeAndText} from '../../constants/toast_type';
@@ -79,21 +74,6 @@ const PositionClosedModal = ({
   const marketCtx = useContext(MarketContext);
   const globalCtx = useGlobal();
   const userCtx = useContext(UserContext);
-
-  /* Deprecated: changing pnl when fixed closed price
-  // const predictedClosePrice = marketCtx.predictCFDClosePrice(
-  //   openCfdDetails.targetAsset,
-  //   openCfdDetails.typeOfPosition
-  // );
-  // const spread = marketCtx.getTickerSpread(openCfdDetails.targetAsset);
-  // const pnl = toPnl({
-  //   openPrice: openCfdDetails.openPrice,
-  //   closePrice: predictedClosePrice,
-  //   amount: openCfdDetails.amount,
-  //   typeOfPosition: openCfdDetails.typeOfPosition,
-  //   spread: spread,
-  // });
-  */
 
   const [quotationError, setQuotationError, quotationErrorRef] = useStateRef(false);
   const [quotationErrorMessage, setQuotationErrorMessage, quotationErrorMessageRef] =
@@ -164,7 +144,7 @@ const PositionClosedModal = ({
       closePrice: quotation.price,
       amount: cfd.amount,
       typeOfPosition: cfd.typeOfPosition,
-      spread: marketCtx.getTickerSpread(cfd.targetAsset),
+      spread: marketCtx.getTickerSpread(cfd.ticker),
     });
     return {
       ...cfd,
@@ -209,7 +189,7 @@ const PositionClosedModal = ({
       closePrice: closePrice,
       amount: cfd.amount,
       typeOfPosition: cfd.typeOfPosition,
-      spread: marketCtx.getTickerSpread(cfd.targetAsset),
+      spread: marketCtx.getTickerSpread(cfd.ticker),
     });
     // const positionLineGraph = [100, 100]; // TODO: (20230316 - Shirley) from `marketCtx`
 

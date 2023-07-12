@@ -511,7 +511,7 @@ const UpdateFormModal = ({
       closePrice: quotation.price,
       amount: cfd.amount,
       typeOfPosition: cfd.typeOfPosition,
-      spread: marketCtx.getTickerSpread(cfd.targetAsset),
+      spread: marketCtx.getTickerSpread(cfd.ticker),
     });
 
     return {

@@ -64,7 +64,7 @@ const HistoryPositionModal = ({
     closedCfdDetails.closePrice! * closedCfdDetails.amount,
     2
   );
-  const spread = marketCtx.getTickerSpread(closedCfdDetails.targetAsset);
+  const spread = marketCtx.getTickerSpread(closedCfdDetails.ticker);
   const pnl = toPnl({
     openPrice: closedCfdDetails.openPrice,
     closePrice: closedCfdDetails.closePrice!,

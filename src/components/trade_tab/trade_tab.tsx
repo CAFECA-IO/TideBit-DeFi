@@ -91,19 +91,19 @@ const TradeTab = () => {
   const [targetInputValue, setTargetInputValue, targetInputValueRef] = useStateRef(0.02);
 
   const [longTpValue, setLongTpValue, longTpValueRef] = useStateRef(
-    Number((Number(longPriceRef.current) * (1 + SUGGEST_TP / leverage)).toFixed(2))
+    roundToDecimalPlaces(Number(longPriceRef.current) * (1 + SUGGEST_TP / leverage), 2)
   );
   const [longSlValue, setLongSlValue, longSlValueRef] = useStateRef(
-    Number((Number(longPriceRef.current) * (1 - SUGGEST_SL / leverage)).toFixed(2))
+    roundToDecimalPlaces(Number(longPriceRef.current) * (1 - SUGGEST_SL / leverage), 2)
   );
   const [longTpToggle, setLongTpToggle] = useState(false);
   const [longSlToggle, setLongSlToggle] = useState(false);
 
   const [shortTpValue, setShortTpValue, shortTpValueRef] = useStateRef(
-    Number((Number(shortPriceRef.current) * (1 - SUGGEST_TP / leverage)).toFixed(2))
+    roundToDecimalPlaces(Number(shortPriceRef.current) * (1 - SUGGEST_TP / leverage), 2)
   );
   const [shortSlValue, setShortSlValue, shortSlValueRef] = useStateRef(
-    Number((Number(shortPriceRef.current) * (1 + SUGGEST_SL / leverage)).toFixed(2))
+    roundToDecimalPlaces(Number(shortPriceRef.current) * (1 + SUGGEST_SL / leverage), 2)
   );
   const [shortTpToggle, setShortTpToggle] = useState(false);
   const [shortSlToggle, setShortSlToggle] = useState(false);
@@ -518,10 +518,10 @@ const TradeTab = () => {
     const tpTimes = SUGGEST_TP / leverage;
     const slTimes = SUGGEST_SL / leverage;
 
-    setLongTpSuggestion(Number((Number(longPriceRef.current) * (1 + tpTimes)).toFixed(2)));
-    setLongSlSuggestion(Number((Number(longPriceRef.current) * (1 - slTimes)).toFixed(2)));
-    setShortTpSuggestion(Number((Number(shortPriceRef.current) * (1 - tpTimes)).toFixed(2)));
-    setShortSlSuggestion(Number((Number(shortPriceRef.current) * (1 + slTimes)).toFixed(2)));
+    setLongTpSuggestion(roundToDecimalPlaces(Number(longPriceRef.current) * (1 + tpTimes), 2));
+    setLongSlSuggestion(roundToDecimalPlaces(Number(longPriceRef.current) * (1 - slTimes), 2));
+    setShortTpSuggestion(roundToDecimalPlaces(Number(shortPriceRef.current) * (1 - tpTimes), 2));
+    setShortSlSuggestion(roundToDecimalPlaces(Number(shortPriceRef.current) * (1 + slTimes), 2));
   };
 
   // Info: suggest the tp / sl in the beginning (20230329 - Shirley)
@@ -552,7 +552,7 @@ const TradeTab = () => {
     calculateLongProfit();
     calculateLongLoss();
 
-    setGuaranteedStopFeeLong(Number(gsl) * valueOfPositionLongRef.current);
+    setGuaranteedStopFeeLong(roundToDecimalPlaces(Number(gsl) * valueOfPositionLongRef.current, 2));
 
     // Short
     const newShortValue = targetInputValueRef.current * Number(shortPriceRef.current);

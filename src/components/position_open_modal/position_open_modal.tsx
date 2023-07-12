@@ -466,7 +466,7 @@ const PositionOpenModal = ({
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">{t('POSITION_MODAL.AMOUNT')}</div>
               <div className="">
-                {openCfdRequest.amount.toFixed(2)}
+                {openCfdRequest.amount}
                 <span className="ml-1 text-lightGray">{marketCtx.selectedTicker?.currency}</span>
               </div>
             </div>
@@ -474,7 +474,7 @@ const PositionOpenModal = ({
             <div className={`${layoutInsideBorder} whitespace-nowrap`}>
               <div className="text-lightGray">{t('POSITION_MODAL.REQUIRED_MARGIN')}</div>
               <div className={`${dataRenewedStyle}`}>
-                {openCfdRequest.margin.amount.toFixed(2)}
+                {openCfdRequest.margin.amount}
                 <span className="ml-1 text-lightGray">{unitAsset}</span>
               </div>
             </div>

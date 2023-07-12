@@ -50,7 +50,7 @@ import {IQuotation} from '../interfaces/tidebit_defi_background/quotation';
 import {IRankingTimeSpan} from '../constants/ranking_time_span';
 import {ILeaderboard} from '../interfaces/tidebit_defi_background/leaderboard';
 import TradeBookInstance from '../lib/books/trade_book';
-import {millesecondsToSeconds} from '../lib/common';
+import {millesecondsToSeconds, roundToDecimalPlaces} from '../lib/common';
 import {
   IWebsiteReserve,
   dummyWebsiteReserve,
@@ -727,6 +727,9 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     if (!ticker) return 0;
     const {fluctuating} = ticker;
     const spread = guaranteedStopFeePercentageRef.current * Math.abs(fluctuating);
+    // Deprecated: [debug] (tzuhan - 20230712)
+    // eslint-disable-next-line no-console
+    // console.log(`getTickerSpread fluctuating: ${fluctuating}, spread: ${spread}, guaranteedStopFeePercentage: ${guaranteedStopFeePercentageRef.current}`);
     return spread;
   };
 
@@ -739,7 +742,10 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     const spread = getTickerSpread(tickerId);
     const closePrice =
       oppositeTypeOfPosition === TypeOfPosition.BUY ? price * (1 + spread) : price * (1 - spread);
-    return closePrice;
+    // Deprecated: [debug] (tzuhan - 20230712)
+    // eslint-disable-next-line no-console
+    // console.log(`predictCFDClosePrice price: ${price}, closePrice: ${closePrice}`);
+    return roundToDecimalPlaces(closePrice, 2);
   };
 
   const init = async () => {

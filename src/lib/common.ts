@@ -35,9 +35,8 @@ interface IValidateInput {
   lowerLimit?: number;
 }
 
-export const roundToDecimalPlaces = (val: number, precision: number): number => {
-  const roundedNumber = Number(val.toFixed(precision));
-  return roundedNumber;
+export const roundToDecimalPlaces = (number: number, decimal: number): number => {
+  return Math.ceil((number + Number.EPSILON) * Math.pow(10, decimal)) / Math.pow(10, decimal);
 };
 
 export function randomIntFromInterval(min: number, max: number) {

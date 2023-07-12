@@ -7,7 +7,13 @@ import {
 } from '../../constants/display';
 import RippleButton from '../ripple_button/ripple_button';
 import Image from 'next/image';
-import {findCodeByReason, locker, timestampToString, wait} from '../../lib/common';
+import {
+  findCodeByReason,
+  locker,
+  roundToDecimalPlaces,
+  timestampToString,
+  wait,
+} from '../../lib/common';
 import {useContext, useEffect, useState} from 'react';
 import {MarketContext} from '../../contexts/market_context';
 import {IUpdatedCFDInputProps, useGlobal} from '../../contexts/global_context';
@@ -51,7 +57,7 @@ const PositionUpdatedModal = ({
   const toApplyUpdateOrder = (position: IDisplayCFDOrder): IApplyUpdateCFDOrder => {
     const gsl = marketCtx.guaranteedStopFeePercentage;
     const gslFee = updatedProps?.guaranteedStop
-      ? Number((Number(gsl) * position.openValue).toFixed(2))
+      ? roundToDecimalPlaces(Number(gsl) * position.openValue, 2)
       : 0;
     const request: IApplyUpdateCFDOrder = {
       operation: CFDOperation.UPDATE,

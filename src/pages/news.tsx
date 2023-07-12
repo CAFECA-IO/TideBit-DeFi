@@ -9,9 +9,11 @@ import {serverSideTranslations} from 'next-i18next/serverSideTranslations';
 import {ILocale} from '../interfaces/tidebit_defi_background/locale';
 import Footer from '../components/footer/footer';
 import {IPost, getPost, getPosts, getSlugs} from '../lib/posts';
-import {ETH_NEWS_FOLDER} from '../constants/config';
+import {BTC_NEWS_FOLDER, ETH_NEWS_FOLDER} from '../constants/config';
 import {GetStaticProps} from 'next';
 import {IRecommendedNews} from '../interfaces/tidebit_defi_background/news';
+import {truncateText} from '../lib/common';
+import {NEWS_INTRODUCTION_IN_GENERAL_MAX_LENGTH} from '../constants/display';
 
 interface IPageProps {
   briefs: IRecommendedNews[];
@@ -60,15 +62,18 @@ const News = (props: IPageProps) => {
 export default News;
 
 export const getStaticProps: GetStaticProps<IPageProps> = async ({params, locale}) => {
-  const newsData = await getPosts(ETH_NEWS_FOLDER);
+  const ethNews = await getPosts(ETH_NEWS_FOLDER);
+  const btcNews = await getPosts(BTC_NEWS_FOLDER);
+  const newsData = [...ethNews, ...btcNews];
 
   const briefs: IRecommendedNews[] = newsData.map(news => {
+    const description = truncateText(news.description, NEWS_INTRODUCTION_IN_GENERAL_MAX_LENGTH);
     return {
       newsId: news.slug ?? '',
       img: `/news/${news.slug}@2x.png`,
       timestamp: news.date,
       title: news.title,
-      description: news.description,
+      description: description,
     };
   });
 

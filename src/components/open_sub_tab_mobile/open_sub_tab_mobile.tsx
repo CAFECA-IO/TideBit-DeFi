@@ -5,8 +5,6 @@ import {UserContext} from '../../contexts/user_context';
 import {IDisplayCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
 import {getStateCode, toDisplayCFDOrder} from '../../lib/common';
 import {MarketContext} from '../../contexts/market_context';
-import {TypeOfPosition} from '../../constants/type_of_position';
-//import useStateRef from 'react-usestateref';
 import {SKELETON_DISPLAY_TIME} from '../../constants/display';
 /**  Deprecated: replace by maketContext.getTickerSpread (20230610 - tzuhan)
 import {defaultResultFailed} from '../../interfaces/tidebit_defi_background/result';
@@ -17,11 +15,6 @@ const OpenSubTabMobile = () => {
   const userCtx = useContext(UserContext);
   const marketCtx = useContext(MarketContext);
 
-  /*   const initState = {
-    longPrice: 0,
-    shortPrice: 0,
-  };
-  const [caledPrice, setCaledPrice, caledPriceRef] = useStateRef(initState); */
   const [isLoading, setIsLoading] = useState(true);
   const [cfds, setCfds] = useState<IDisplayCFDOrder[]>([]);
 

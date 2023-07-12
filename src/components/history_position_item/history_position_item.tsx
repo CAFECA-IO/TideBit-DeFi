@@ -71,7 +71,7 @@ const HistoryPositionItem = ({closedCfdDetails, ...otherProps}: IHistoryPosition
             <div className="inline-flex items-center">
               {/* ToDo: default currency icon (20230310 - Julian) issue #338 */}
               <Image
-                src={`/asset_icon/${closedCfdDetails.ticker.toLowerCase()}.svg` ?? ''}
+                src={`/asset_icon/${closedCfdDetails.targetAsset.toLowerCase()}.svg` ?? ''}
                 alt="currency icon"
                 width={15}
                 height={15}

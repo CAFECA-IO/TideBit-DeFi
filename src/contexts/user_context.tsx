@@ -945,7 +945,12 @@ export const UserProvider = ({children}: IUserProvider) => {
       const success = lunar.verifyTypedData(transferR.data, signature);
       // Deprecated: [debug] (20230509 - Tzuhan)
       // eslint-disable-next-line no-console
-      console.log('_createCFDOrder lunar.verifyTypedData success', success);
+      console.log(
+        '_createCFDOrder lunar.verifyTypedData success',
+        success,
+        `transferR.data`,
+        transferR.data
+      );
       if (!success) throw new CustomError(Code.REJECTED_SIGNATURE);
       const now = getTimestamp();
       // Deprecated: [debug] (20230509 - Tzuhan)

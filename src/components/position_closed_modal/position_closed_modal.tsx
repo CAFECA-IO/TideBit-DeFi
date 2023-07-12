@@ -238,7 +238,7 @@ const PositionClosedModal = ({
       if (
         quotation.success &&
         data.typeOfPosition === oppositeTypeOfPosition &&
-        data.ticker.split('-')[0] === openCfdDetails.ticker &&
+        data.ticker === openCfdDetails.ticker &&
         quotation.data !== null
       ) {
         globalCtx.eliminateToasts(ToastId.GET_QUOTATION_ERROR);
@@ -248,7 +248,7 @@ const PositionClosedModal = ({
         setQuotationError(true);
 
         // TODO: check the unit asset (20230612 - Shirley)
-        if (data.ticker.split('-')[0] !== openCfdDetails.ticker) {
+        if (data.ticker !== openCfdDetails.ticker) {
           setQuotationErrorMessage({
             success: false,
             code: Code.INCONSISTENT_TICKER_OF_QUOTATION,
@@ -434,7 +434,7 @@ const PositionClosedModal = ({
         });
         return;
         // TODO: check users' signature in userCtx (20230613 - Shirley)
-      } else if (quotation.ticker.split('-')[0] === openCfdDetails.ticker) {
+      } else if (quotation.ticker === openCfdDetails.ticker) {
         const displayedCloseOrder = toDisplayCloseOrder(openCfdDetails, quotation);
         globalCtx.dataPositionClosedModalHandler(displayedCloseOrder);
 
@@ -483,7 +483,7 @@ const PositionClosedModal = ({
     <div className="mt-4 flex flex-col px-6 pb-2">
       <div className="flex items-center justify-center space-x-2 text-center">
         <Image
-          src={`/asset_icon/${openCfdDetails?.ticker.toLowerCase()}.svg`}
+          src={`/asset_icon/${openCfdDetails?.targetAsset.toLowerCase()}.svg`}
           width={30}
           height={30}
           alt="ticker icon"

@@ -54,6 +54,7 @@ const OpenPositionItem = ({openCfdDetails}: IOpenPositionItemProps) => {
     openValue,
     createTimestamp,
     ticker,
+    targetAsset,
     typeOfPosition,
     liquidationTime,
     liquidationPrice,
@@ -138,7 +139,7 @@ const OpenPositionItem = ({openCfdDetails}: IOpenPositionItemProps) => {
       if (
         quotation.success &&
         data.typeOfPosition === oppositeTypeOfPosition &&
-        data.ticker.split('-')[0] === openCfdDetails.ticker &&
+        data.ticker === openCfdDetails.ticker &&
         quotation.data !== null
       ) {
         const displayedCloseOrder = toDisplayCloseOrder(openCfdDetails, data);
@@ -265,8 +266,8 @@ const OpenPositionItem = ({openCfdDetails}: IOpenPositionItemProps) => {
         <div className="inline-flex items-center text-sm">
           {/* ToDo: default currency icon (20230310 - Julian) issue #338 */}
           <Image
-            src={`/asset_icon/${ticker.toLowerCase()}.svg`}
-            alt={`${ticker} icon`}
+            src={`/asset_icon/${targetAsset.toLowerCase()}.svg`}
+            alt={`${targetAsset} icon`}
             width={15}
             height={15}
           />

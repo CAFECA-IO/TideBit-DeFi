@@ -53,22 +53,22 @@ export const Ticker: ITickerConstant = {
 };
 
 export const TickerCode = {
-  [Ticker.ETH_USDT]: 'ETHUSDT',
-  [Ticker.BTC_USDT]: 'BTCUSDT',
-  // [Ticker.LTC_USDT]: 'LTCUSDT',
-  // [Ticker.MATIC_USDT]: 'MATICUSDT',
-  // [Ticker.BNB_USDT]: 'BNBUSDT',
-  // [Ticker.SOL_USDT]: 'SOLUSDT',
-  // [Ticker.SHIB_USDT]: 'SHIBUSDT',
-  // [Ticker.DOT_USDT]: 'DOTUSDT',
-  // [Ticker.ADA_USDT]: 'ADAUSDT',
-  // [Ticker.AVAX_USDT]: 'AVAXUSDT',
-  // [Ticker.DAI_USDT]: 'DAIUSDT',
-  // [Ticker.MKR_USDT]: 'MKRUSDT',
-  // [Ticker.XRP_USDT]: 'XRPUSDT',
-  // [Ticker.DOGE_USDT]: 'DOGEUSDT',
-  // [Ticker.UNI_USDT]: 'UNIUSDT',
-  // [Ticker.FLOW_USDT]: 'FLOWUSDT',
+  ETHUSDT: 'ETHUSDT',
+  BTCUSDT: 'BTCUSDT',
+  // LTCUSDT: 'LTCUSDT',
+  // MATICUSDT: 'MATICUSDT',
+  // BNBUSDT: 'BNBUSDT',
+  // SOLUSDT: 'SOLUSDT',
+  // SHIBUSDT: 'SHIBUSDT',
+  // DOTUSDT: 'DOTUSDT',
+  // ADAUSDT: 'ADAUSDT',
+  // AVAXUSDT: 'AVAXUSDT',
+  // DAIUSDT: 'DAIUSDT',
+  // MKRUSDT: 'MKRUSDT',
+  // XRPUSDT: 'XRPUSDT',
+  // DOGEUSDT: 'DOGEUSDT',
+  // UNIUSDT: 'UNIUSDT',
+  // FLOWUSDT: 'FLOWUSDT',
 };
 
 export const CodeToTicker = {

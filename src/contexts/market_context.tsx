@@ -521,13 +521,8 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       })) as IResult;
       if (result.success) {
         const tickers = result.data as ITickerData[];
-        // eslint-disable-next-line no-console
-        console.log(`listTickers tickers`, tickers);
         tickerBook.updateTickers(tickers);
         setAvailableTickers({...tickerBook.listTickers()});
-        /* Depreccated: call by page(20230608 - tzuhan)
-        await selectTickerHandler(selectedTickerCurrency || tickers[0].currency);
-        */
       }
     } catch (error) {
       // Deprecate: error handle (Tzuhan - 20230321)
@@ -753,8 +748,8 @@ export const MarketProvider = ({children}: IMarketProvider) => {
         tickerBook.updateTicker(tickerData);
         const updateTickers = {...tickerBook.listTickers()};
         setAvailableTickers({...updateTickers});
-        if (tickerData.currency === selectedTickerRef.current?.currency)
-          setSelectedTicker(updateTickers[tickerData.currency]);
+        if (tickerData.instId === selectedTickerRef.current?.instId)
+          setSelectedTicker(updateTickers[tickerData.instId]);
       }),
     []
   );

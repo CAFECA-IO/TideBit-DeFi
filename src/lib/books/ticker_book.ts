@@ -38,10 +38,8 @@ class TickerBook {
 
   updateTickers(value: ITickerData[]) {
     const tickers = [...value].reduce((prev, curr) => {
-      // eslint-disable-next-line no-console
-      console.log(`updateTickers currency: ${curr.currency}, instId: ${curr.instId}`);
       if (!prev[curr.instId])
-        prev[curr.currency] = {
+        prev[curr.instId] = {
           ...curr,
           lineGraphProps: {
             dataArray: curr.lineGraphProps.dataArray ? [...curr.lineGraphProps.dataArray] : [],
@@ -51,14 +49,6 @@ class TickerBook {
     }, {} as {[instId: string]: ITickerData});
     this.tickers = tickers;
     return tickers;
-  }
-
-  getCurrencyRate(currency: string): number {
-    return currency === unitAsset
-      ? 1
-      : Object.values(Currency).includes(currency as ICurrency)
-      ? this._tickers[`${currency}-${unitAsset}`]?.price || 0
-      : 0;
   }
 
   get tickers(): {[instId: string]: ITickerData} {

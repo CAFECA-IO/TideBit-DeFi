@@ -255,7 +255,7 @@ const PositionOpenModal = ({
       if (
         quotation.success &&
         data.typeOfPosition === openCfdRequest.typeOfPosition &&
-        data.ticker.split('-')[0] === openCfdRequest.ticker &&
+        data.ticker === openCfdRequest.ticker &&
         quotation.data !== null
       ) {
         globalCtx.eliminateToasts(ToastId.GET_QUOTATION_ERROR);
@@ -265,7 +265,7 @@ const PositionOpenModal = ({
         setQuotationError(true);
 
         // TODO: check the unit asset (20230612 - Shirley)
-        if (data.ticker.split('-')[0] !== openCfdRequest.ticker) {
+        if (data.ticker !== openCfdRequest.ticker) {
           setQuotationErrorMessage({
             success: false,
             code: Code.INCONSISTENT_TICKER_OF_QUOTATION,
@@ -361,7 +361,7 @@ const PositionOpenModal = ({
     }
 
     // TODO: check the unit asset (20230612 - Shirley)
-    if (openCfdRequest.quotation.ticker.split('-')[0] !== openCfdRequest.ticker) {
+    if (openCfdRequest.quotation.ticker !== openCfdRequest.ticker) {
       setQuotationError(true);
       setQuotationErrorMessage({
         success: false,

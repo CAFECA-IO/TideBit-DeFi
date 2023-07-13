@@ -645,13 +645,13 @@ const UpdateFormModal = ({
     setTpUpperLimit(caledTpUpperLimit);
 
     setTpValue(
-      openCfdDetails.takeProfit === 0 || openCfdDetails.takeProfit === undefined
+      openCfdDetails.takeProfit === 0 || !openCfdDetails.takeProfit
         ? openCfdDetails.suggestion.takeProfit
         : openCfdDetails.takeProfit
     );
 
     setSlValue(
-      openCfdDetails.stopLoss === 0 || openCfdDetails.stopLoss === undefined
+      openCfdDetails.stopLoss === 0 || !openCfdDetails.stopLoss
         ? suggestedSl
         : openCfdDetails.stopLoss
     );
@@ -796,13 +796,13 @@ const UpdateFormModal = ({
                     <div className="text-lightGray">{t('POSITION_MODAL.TP_AND_SL')}</div>
                     <div className="">
                       <span className={`text-lightWhite`}>
-                        {cfdTp === undefined || cfdTp === 0
+                        {!cfdTp || cfdTp === 0
                           ? '-'
                           : cfdTp.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)}
                       </span>{' '}
                       /{' '}
                       <span className={`text-lightWhite`}>
-                        {cfdSl === undefined || cfdSl === 0
+                        {!cfdSl || cfdSl === 0
                           ? '-'
                           : cfdSl.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)}
                       </span>

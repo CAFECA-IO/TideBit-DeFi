@@ -231,39 +231,34 @@ const PositionUpdatedModal = ({
     ? t('POSITION_MODAL.GUARANTEED_STOP_YES')
     : t('POSITION_MODAL.GUARANTEED_STOP_NO');
 
-  const displayedTakeProfit =
-    updatedProps?.takeProfit !== undefined
-      ? updatedProps.takeProfit === 0
-        ? '-'
-        : updatedProps.takeProfit !== 0
-        ? `$ ${updatedProps.takeProfit.toLocaleString(
-            UNIVERSAL_NUMBER_FORMAT_LOCALE,
-            FRACTION_DIGITS
-          )}`
-        : undefined
-      : openCfdDetails?.takeProfit
-      ? `$ ${openCfdDetails?.takeProfit.toLocaleString(
+  const displayedTakeProfit = !!updatedProps?.takeProfit
+    ? updatedProps.takeProfit === 0
+      ? '-'
+      : updatedProps.takeProfit !== 0
+      ? `$ ${updatedProps.takeProfit.toLocaleString(
           UNIVERSAL_NUMBER_FORMAT_LOCALE,
           FRACTION_DIGITS
         )}`
-      : '-';
+      : undefined
+    : openCfdDetails?.takeProfit
+    ? `$ ${openCfdDetails?.takeProfit.toLocaleString(
+        UNIVERSAL_NUMBER_FORMAT_LOCALE,
+        FRACTION_DIGITS
+      )}`
+    : '-';
 
-  const displayedStopLoss =
-    updatedProps?.stopLoss !== undefined
-      ? updatedProps.stopLoss === 0
-        ? '-'
-        : updatedProps.stopLoss !== 0
-        ? `$ ${updatedProps.stopLoss.toLocaleString(
-            UNIVERSAL_NUMBER_FORMAT_LOCALE,
-            FRACTION_DIGITS
-          )}`
-        : undefined
-      : openCfdDetails?.stopLoss
-      ? `$ ${openCfdDetails?.stopLoss.toLocaleString(
-          UNIVERSAL_NUMBER_FORMAT_LOCALE,
-          FRACTION_DIGITS
-        )}`
-      : '-';
+  const displayedStopLoss = !!updatedProps?.stopLoss
+    ? updatedProps.stopLoss === 0
+      ? '-'
+      : updatedProps.stopLoss !== 0
+      ? `$ ${updatedProps.stopLoss.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)}`
+      : undefined
+    : openCfdDetails?.stopLoss
+    ? `$ ${openCfdDetails?.stopLoss.toLocaleString(
+        UNIVERSAL_NUMBER_FORMAT_LOCALE,
+        FRACTION_DIGITS
+      )}`
+    : '-';
 
   const displayedTypeOfPosition =
     openCfdDetails?.typeOfPosition === TypeOfPosition.BUY

@@ -10,6 +10,7 @@ import {SKELETON_DISPLAY_TIME} from '../../constants/display';
 const OpenSubTabMobile = () => {
   const userCtx = useContext(UserContext);
   const marketCtx = useContext(MarketContext);
+
   const [isLoading, setIsLoading] = useState(true);
   const [cfds, setCfds] = useState<IDisplayCFDOrder[]>([]);
 

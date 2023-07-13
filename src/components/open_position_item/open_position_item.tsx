@@ -44,9 +44,6 @@ const OpenPositionItem = ({openCfdDetails}: IOpenPositionItemProps) => {
   const updatedModalClickHandler = () => {
     dataUpdateFormModalHandler({...openCfdDetails, pnl: pnl});
     visibleUpdateFormModalHandler();
-    // depracated: observe if there's gap between the current price and the line graph (20230710 - Shirley)
-    // eslint-disable-next-line no-console
-    console.log('line graph array: ', positionLineGraphWithSpread);
   };
 
   const {
@@ -94,16 +91,20 @@ const OpenPositionItem = ({openCfdDetails}: IOpenPositionItemProps) => {
       ? Math.round(remainSecs)
       : remainSecs < 3600
       ? Math.round(remainSecs / 60)
-      : Math.round(remainSecs / 3600);
+      : remainSecs < 86400
+      ? Math.round(remainSecs / 3600)
+      : Math.round(remainSecs / 86400);
 
   const label =
     remainSecs < 60
       ? [`${Math.round(remainSecs)} S`]
       : remainSecs < 3600
       ? [`${Math.round(remainSecs / 60)} M`]
-      : [`${Math.round(remainSecs / 3600)} H`];
+      : remainSecs < 86400
+      ? [`${Math.round(remainSecs / 3600)} H`]
+      : [`${Math.round(remainSecs / 86400)} D`];
 
-  const denominator = remainSecs < 60 ? 60 : remainSecs < 3600 ? 60 : 24;
+  const denominator = remainSecs < 60 ? 60 : remainSecs < 3600 ? 60 : remainSecs < 86400 ? 24 : 7;
 
   const closedModalClickHandler = async () => {
     await getQuotation();
@@ -258,7 +259,7 @@ const OpenPositionItem = ({openCfdDetails}: IOpenPositionItemProps) => {
   return (
     <div className="relative my-2 min-h-140px">
       <div
-        className="absolute z-10 h-150px w-280px bg-transparent hover:cursor-pointer"
+        className="absolute z-10 h-160px w-280px bg-transparent hover:cursor-pointer"
         onClick={updatedModalClickHandler}
       ></div>
       {/* Info: (20230411 - Julian) brief of this open position */}
@@ -286,7 +287,7 @@ const OpenPositionItem = ({openCfdDetails}: IOpenPositionItemProps) => {
       </div>
 
       {/* Info: (20230411 - Julian) Line graph */}
-      <div className="-mx-4 -mb-10 -mt-6">
+      <div className="-mx-4 mb-0 mt-3 h-60px">
         <PositionLineGraph
           strokeColor={[
             displayedColorHex,

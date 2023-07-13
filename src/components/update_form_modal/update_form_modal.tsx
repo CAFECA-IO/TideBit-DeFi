@@ -481,7 +481,7 @@ const UpdateFormModal = ({
     }
   };
 
-  const nowTimestamp = getTimestamp();
+  const nowTimestamp = getTimestamp() as number;
   const remainSecs = openCfdDetails?.liquidationTime - nowTimestamp;
 
   const remainTime =
@@ -489,16 +489,20 @@ const UpdateFormModal = ({
       ? Math.round(remainSecs)
       : remainSecs < 3600
       ? Math.round(remainSecs / 60)
-      : Math.round(remainSecs / 3600);
+      : remainSecs < 86400
+      ? Math.round(remainSecs / 3600)
+      : Math.round(remainSecs / 86400);
 
   const label =
     remainSecs < 60
       ? [`${Math.round(remainSecs)} S`]
       : remainSecs < 3600
       ? [`${Math.round(remainSecs / 60)} M`]
-      : [`${Math.round(remainSecs / 3600)} H`];
+      : remainSecs < 86400
+      ? [`${Math.round(remainSecs / 3600)} H`]
+      : [`${Math.round(remainSecs / 86400)} D`];
 
-  const denominator = remainSecs < 60 ? 60 : remainSecs < 3600 ? 60 : 24;
+  const denominator = remainSecs < 60 ? 60 : remainSecs < 3600 ? 60 : remainSecs < 86400 ? 24 : 7;
 
   const closedModalClickHandler = async () => {
     globalCtx.visibleUpdateFormModalHandler();
@@ -645,13 +649,13 @@ const UpdateFormModal = ({
     setTpUpperLimit(caledTpUpperLimit);
 
     setTpValue(
-      openCfdDetails.takeProfit === 0 || openCfdDetails.takeProfit === undefined
+      openCfdDetails.takeProfit === 0 || !openCfdDetails.takeProfit
         ? openCfdDetails.suggestion.takeProfit
         : openCfdDetails.takeProfit
     );
 
     setSlValue(
-      openCfdDetails.stopLoss === 0 || openCfdDetails.stopLoss === undefined
+      openCfdDetails.stopLoss === 0 || !openCfdDetails.stopLoss
         ? suggestedSl
         : openCfdDetails.stopLoss
     );
@@ -796,13 +800,13 @@ const UpdateFormModal = ({
                     <div className="text-lightGray">{t('POSITION_MODAL.TP_AND_SL')}</div>
                     <div className="">
                       <span className={`text-lightWhite`}>
-                        {cfdTp === undefined || cfdTp === 0
+                        {!cfdTp || cfdTp === 0
                           ? '-'
                           : cfdTp.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)}
                       </span>{' '}
                       /{' '}
                       <span className={`text-lightWhite`}>
-                        {cfdSl === undefined || cfdSl === 0
+                        {!cfdSl || cfdSl === 0
                           ? '-'
                           : cfdSl.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)}
                       </span>

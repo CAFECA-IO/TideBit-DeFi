@@ -29,7 +29,7 @@ import {
   LIQUIDATION_FIVE_LEVERAGE,
   WAITING_TIME_FOR_USER_SIGNING,
   FRACTION_DIGITS,
-  TP_SL_LIMIT_PERCENT,
+  TP_SL_LIMIT_RATIO,
   DEFAULT_TICKER,
   CFD_LIQUIDATION_TIME,
   TARGET_MIN_DIGITS,
@@ -474,31 +474,31 @@ const TradeTabMobile = () => {
 
   const setTpSlBounds = () => {
     const longTpLowerBound = roundToDecimalPlaces(
-      Number(longPriceRef.current) * (1 + TP_SL_LIMIT_PERCENT),
+      Number(longPriceRef.current) * (1 + TP_SL_LIMIT_RATIO),
       2
     );
     const shortTpUpperBound = roundToDecimalPlaces(
-      Number(shortPriceRef.current) * (1 - TP_SL_LIMIT_PERCENT),
+      Number(shortPriceRef.current) * (1 - TP_SL_LIMIT_RATIO),
       2
     );
 
     const longSlLowerBound = roundToDecimalPlaces(
-      Number(longPriceRef.current) * (1 - LIQUIDATION_FIVE_LEVERAGE) * (1 + TP_SL_LIMIT_PERCENT),
+      Number(longPriceRef.current) * (1 - LIQUIDATION_FIVE_LEVERAGE) * (1 + TP_SL_LIMIT_RATIO),
       2
     );
 
     const shortSlUpperBound = roundToDecimalPlaces(
-      Number(shortPriceRef.current) * (1 + LIQUIDATION_FIVE_LEVERAGE) * (1 - TP_SL_LIMIT_PERCENT),
+      Number(shortPriceRef.current) * (1 + LIQUIDATION_FIVE_LEVERAGE) * (1 - TP_SL_LIMIT_RATIO),
       2
     );
 
     const longSlUpperBound = roundToDecimalPlaces(
-      Number(longPriceRef.current) * (1 - TP_SL_LIMIT_PERCENT),
+      Number(longPriceRef.current) * (1 - TP_SL_LIMIT_RATIO),
       2
     );
 
     const shortSlLowerBound = roundToDecimalPlaces(
-      Number(shortPriceRef.current) * (1 + TP_SL_LIMIT_PERCENT),
+      Number(shortPriceRef.current) * (1 + TP_SL_LIMIT_RATIO),
       2
     );
 

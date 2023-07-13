@@ -276,7 +276,7 @@ const PositionUpdatedModal = ({
     <div className="mt-8 flex flex-col px-6 pb-2">
       <div className="flex items-center justify-center space-x-2 text-center">
         <Image
-          src={`/asset_icon/${openCfdDetails?.ticker.toLowerCase()}.svg`}
+          src={`/asset_icon/${openCfdDetails?.targetAsset.toLowerCase()}.svg`}
           width={30}
           height={30}
           alt="ticker icon"

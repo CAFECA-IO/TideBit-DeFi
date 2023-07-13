@@ -16,21 +16,19 @@ import {
   DEFAULT_FEE,
   DEFAULT_LEVERAGE,
   DEFAULT_SELL_PRICE,
-  DEFAULT_SPREAD,
   DEFAULT_USER_BALANCE,
   UNIVERSAL_NUMBER_FORMAT_LOCALE,
 } from '../../constants/display';
 import {
   TARGET_MAX_DIGITS,
-  QUOTATION_RENEWAL_INTERVAL_SECONDS,
   unitAsset,
   SUGGEST_SL,
   SUGGEST_TP,
   LIQUIDATION_FIVE_LEVERAGE,
-  WAITING_TIME_FOR_USER_SIGNING,
   FRACTION_DIGITS,
   TP_SL_LIMIT_PERCENT,
   DEFAULT_TICKER,
+  DEFAULT_CURRENCY,
   CFD_LIQUIDATION_TIME,
   TARGET_MIN_DIGITS,
 } from '../../constants/config';
@@ -39,19 +37,13 @@ import {useTranslation} from 'next-i18next';
 import {
   getEstimatedPnL,
   getTimestamp,
-  getTimestampInMilliseconds,
   roundToDecimalPlaces,
-  twoDecimal,
   validateAllInput,
 } from '../../lib/common';
-import {IQuotation, getDummyQuotation} from '../../interfaces/tidebit_defi_background/quotation';
+import {IQuotation} from '../../interfaces/tidebit_defi_background/quotation';
 import {NotificationContext} from '../../contexts/notification_context';
 import {IApplyCreateCFDOrder} from '../../interfaces/tidebit_defi_background/apply_create_cfd_order';
-import {Code} from '../../constants/code';
-import {
-  defaultResultFailed,
-  defaultResultSuccess,
-} from '../../interfaces/tidebit_defi_background/result';
+import {defaultResultFailed} from '../../interfaces/tidebit_defi_background/result';
 import {OrderType} from '../../constants/order_type';
 import {CFDOperation} from '../../constants/cfd_order_type';
 import {TypeOfValidation} from '../../constants/validation';
@@ -73,7 +65,7 @@ const TradeTabMobile = () => {
     symbol: '',
   };
 
-  const ticker = marketCtx.selectedTicker?.currency ?? '';
+  const ticker = marketCtx.selectedTicker?.instId ?? '';
 
   const availableBalance = userCtx.userAssets?.balance?.available ?? DEFAULT_USER_BALANCE;
 
@@ -233,14 +225,14 @@ const TradeTabMobile = () => {
   ]);
 
   const setQuotation = () => {
-    if (marketCtx.selectedTicker?.currency) {
+    if (marketCtx.selectedTicker?.instId) {
       const buyPrice = roundToDecimalPlaces(
-        marketCtx.predictCFDClosePrice(marketCtx.selectedTicker?.currency, TypeOfPosition.SELL),
+        marketCtx.predictCFDClosePrice(marketCtx.selectedTicker?.instId, TypeOfPosition.SELL),
         2
       );
 
       const sellPrice = roundToDecimalPlaces(
-        marketCtx.predictCFDClosePrice(marketCtx.selectedTicker?.currency, TypeOfPosition.BUY),
+        marketCtx.predictCFDClosePrice(marketCtx.selectedTicker?.instId, TypeOfPosition.BUY),
         2
       );
 
@@ -250,13 +242,13 @@ const TradeTabMobile = () => {
   };
 
   // Info: To get quotation to let user sign, if fail, make the quotation itself with already expired deadline (20230606 - Shirley)
-  const getQuotation = async (tickerId: string) => {
+  const getQuotation = async (instId: string) => {
     let longQuotation = {...defaultResultFailed};
     let shortQuotation = {...defaultResultFailed};
 
     try {
-      longQuotation = await marketCtx.getCFDQuotation(tickerId, TypeOfPosition.BUY);
-      shortQuotation = await marketCtx.getCFDQuotation(tickerId, TypeOfPosition.SELL);
+      longQuotation = await marketCtx.getCFDQuotation(instId, TypeOfPosition.BUY);
+      shortQuotation = await marketCtx.getCFDQuotation(instId, TypeOfPosition.SELL);
 
       const long = longQuotation.data as IQuotation;
       const short = shortQuotation.data as IQuotation;
@@ -268,8 +260,8 @@ const TradeTabMobile = () => {
       ) {
       } else {
         const buyQuotation: IQuotation = {
-          ticker: marketCtx.selectedTicker?.currency ?? DEFAULT_TICKER,
-          targetAsset: marketCtx.selectedTicker?.currency ?? DEFAULT_TICKER,
+          ticker: marketCtx.selectedTicker?.instId ?? DEFAULT_TICKER,
+          targetAsset: marketCtx.selectedTicker?.currency ?? DEFAULT_CURRENCY,
           typeOfPosition: TypeOfPosition.BUY,
           unitAsset: unitAsset,
           price: longPriceRef.current,
@@ -287,8 +279,8 @@ const TradeTabMobile = () => {
       ) {
       } else {
         const sellQuotation: IQuotation = {
-          ticker: marketCtx.selectedTicker?.currency ?? DEFAULT_TICKER,
-          targetAsset: marketCtx.selectedTicker?.currency ?? DEFAULT_TICKER,
+          ticker: marketCtx.selectedTicker?.instId ?? DEFAULT_TICKER,
+          targetAsset: marketCtx.selectedTicker?.currency ?? DEFAULT_CURRENCY,
           typeOfPosition: TypeOfPosition.SELL,
           unitAsset: unitAsset,
           price: shortPriceRef.current,
@@ -300,8 +292,8 @@ const TradeTabMobile = () => {
       }
     } catch (err) {
       const buyQuotation: IQuotation = {
-        ticker: marketCtx.selectedTicker?.currency ?? DEFAULT_TICKER,
-        targetAsset: marketCtx.selectedTicker?.currency ?? DEFAULT_TICKER,
+        ticker: marketCtx.selectedTicker?.instId ?? DEFAULT_TICKER,
+        targetAsset: marketCtx.selectedTicker?.currency ?? DEFAULT_CURRENCY,
         typeOfPosition: TypeOfPosition.BUY,
         unitAsset: unitAsset,
         price: longPriceRef.current,
@@ -310,8 +302,8 @@ const TradeTabMobile = () => {
       };
 
       const sellQuotation: IQuotation = {
-        ticker: marketCtx.selectedTicker?.currency ?? DEFAULT_TICKER,
-        targetAsset: marketCtx.selectedTicker?.currency ?? DEFAULT_TICKER,
+        ticker: marketCtx.selectedTicker?.instId ?? DEFAULT_TICKER,
+        targetAsset: marketCtx.selectedTicker?.currency ?? DEFAULT_CURRENCY,
         typeOfPosition: TypeOfPosition.SELL,
         unitAsset: unitAsset,
         price: shortPriceRef.current,
@@ -604,7 +596,7 @@ const TradeTabMobile = () => {
 
   const toApplyCreateOrder = async () => {
     const {longQuotation, shortQuotation} = await getQuotation(
-      marketCtx.selectedTicker?.currency ?? DEFAULT_TICKER
+      marketCtx.selectedTicker?.instId ?? DEFAULT_TICKER
     );
 
     const feePercent = marketCtx.tickerLiveStatistics?.fee ?? DEFAULT_FEE;
@@ -613,8 +605,8 @@ const TradeTabMobile = () => {
     const short = shortQuotation.data as IQuotation;
 
     const share = {
-      ticker: marketCtx.selectedTicker?.currency ?? DEFAULT_TICKER,
-      targetAsset: marketCtx.selectedTicker?.currency ?? DEFAULT_TICKER,
+      ticker: marketCtx.selectedTicker?.instId ?? DEFAULT_TICKER,
+      targetAsset: marketCtx.selectedTicker?.currency ?? DEFAULT_CURRENCY,
       unitAsset: unitAsset,
       amount: targetInputValueRef.current,
       leverage: marketCtx.tickerStatic?.leverage ?? DEFAULT_LEVERAGE,

@@ -149,9 +149,9 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
             //     ? positionLineGraph[positionLineGraph.length - 1]
             //     : 0;
             const cfdData = toDisplayCFDOrder(updateCfd);
-            const spread = marketCtx.getTickerSpread(cfdData.targetAsset);
+            const spread = marketCtx.getTickerSpread(cfdData.ticker);
             const closePrice = marketCtx.predictCFDClosePrice(
-              cfdData.targetAsset,
+              cfdData.ticker,
               cfdData.typeOfPosition
             );
 

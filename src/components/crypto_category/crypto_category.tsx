@@ -28,9 +28,10 @@ const CryptoCategory = ({...otherProps}) => {
     if (i === 0) {
       return (
         <div key={i}>
-          <Link href={`/trade/cfd/${cryptoCard.currency?.toLowerCase()}usdt`}>
+          <Link href={`/trade/cfd/${cryptoCard.instId?.toLowerCase()}`}>
             <CryptoCard
               className="mt-4 ml-4"
+              instId={cryptoCard.instId}
               lineGraphProps={cryptoCard.lineGraphProps}
               chain={cryptoCard.name}
               currency={cryptoCard.currency}
@@ -46,8 +47,9 @@ const CryptoCategory = ({...otherProps}) => {
 
     return (
       <div key={i}>
-        <Link href={`/trade/cfd/${cryptoCard.currency?.toLowerCase()}usdt`}>
+        <Link href={`/trade/cfd/${cryptoCard.instId?.toLowerCase()}`}>
           <CryptoCard
+            instId={cryptoCard.instId}
             lineGraphProps={cryptoCard.lineGraphProps}
             chain={cryptoCard.name}
             currency={cryptoCard.currency}

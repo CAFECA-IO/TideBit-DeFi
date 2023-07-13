@@ -51,6 +51,7 @@ const OpenPositionItem = ({openCfdDetails}: IOpenPositionItemProps) => {
     openValue,
     createTimestamp,
     ticker,
+    targetAsset,
     typeOfPosition,
     liquidationTime,
     liquidationPrice,
@@ -59,8 +60,8 @@ const OpenPositionItem = ({openCfdDetails}: IOpenPositionItemProps) => {
     stateCode,
   } = openCfdDetails;
 
-  const spread = marketCtx.getTickerSpread(openCfdDetails.targetAsset);
-  const positionLineGraph = marketCtx.listTickerPositions(openCfdDetails.targetAsset, {
+  const spread = marketCtx.getTickerSpread(openCfdDetails.ticker);
+  const positionLineGraph = marketCtx.listTickerPositions(openCfdDetails.ticker, {
     begin: openCfdDetails.createTimestamp,
   });
 
@@ -70,7 +71,7 @@ const OpenPositionItem = ({openCfdDetails}: IOpenPositionItemProps) => {
       : positionLineGraph.map((v: number) => v * (1 + spread));
 
   const closePrice = marketCtx.predictCFDClosePrice(
-    openCfdDetails.targetAsset,
+    openCfdDetails.ticker,
     openCfdDetails.typeOfPosition
   );
 
@@ -115,7 +116,7 @@ const OpenPositionItem = ({openCfdDetails}: IOpenPositionItemProps) => {
       closePrice: quotation.price,
       amount: cfd.amount,
       typeOfPosition: cfd.typeOfPosition,
-      spread: marketCtx.getTickerSpread(cfd.targetAsset),
+      spread: marketCtx.getTickerSpread(cfd.ticker),
     });
 
     return {
@@ -139,7 +140,7 @@ const OpenPositionItem = ({openCfdDetails}: IOpenPositionItemProps) => {
       if (
         quotation.success &&
         data.typeOfPosition === oppositeTypeOfPosition &&
-        data.ticker.split('-')[0] === openCfdDetails.ticker &&
+        data.ticker === openCfdDetails.ticker &&
         quotation.data !== null
       ) {
         const displayedCloseOrder = toDisplayCloseOrder(openCfdDetails, data);
@@ -266,8 +267,8 @@ const OpenPositionItem = ({openCfdDetails}: IOpenPositionItemProps) => {
         <div className="inline-flex items-center text-sm">
           {/* ToDo: default currency icon (20230310 - Julian) issue #338 */}
           <Image
-            src={`/asset_icon/${ticker.toLowerCase()}.svg`}
-            alt={`${ticker} icon`}
+            src={`/asset_icon/${targetAsset.toLowerCase()}.svg`}
+            alt={`${targetAsset} icon`}
             width={15}
             height={15}
           />

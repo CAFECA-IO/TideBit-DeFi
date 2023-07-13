@@ -64,7 +64,7 @@ const HistoryPositionModal = ({
     closedCfdDetails.closePrice! * closedCfdDetails.amount,
     2
   );
-  const spread = marketCtx.getTickerSpread(closedCfdDetails.targetAsset);
+  const spread = marketCtx.getTickerSpread(closedCfdDetails.ticker);
   const pnl = toPnl({
     openPrice: closedCfdDetails.openPrice,
     closePrice: closedCfdDetails.closePrice!,
@@ -138,7 +138,7 @@ const HistoryPositionModal = ({
                 UNIVERSAL_NUMBER_FORMAT_LOCALE,
                 FRACTION_DIGITS
               ) ?? 0}
-              <span className="ml-1 text-lightGray">{closedCfdDetails.ticker}</span>
+              <span className="ml-1 text-lightGray">{closedCfdDetails.targetAsset}</span>
             </div>
           </div>
 
@@ -272,7 +272,7 @@ const HistoryPositionModal = ({
                 <div className="flex w-full items-center justify-center space-x-2 text-center text-2xl text-lightWhite">
                   {/* ToDo: default currency icon (20230310 - Julian) issue #338 */}
                   <Image
-                    src={`/asset_icon/${closedCfdDetails?.ticker.toLowerCase()}.svg`}
+                    src={`/asset_icon/${closedCfdDetails?.targetAsset.toLowerCase()}.svg`}
                     alt="currency icon"
                     width={30}
                     height={30}

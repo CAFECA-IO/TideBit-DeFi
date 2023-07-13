@@ -48,7 +48,6 @@ import {defaultResultFailed, IResult} from '../../interfaces/tidebit_defi_backgr
 import {CFDOperation} from '../../constants/cfd_order_type';
 import {OrderType} from '../../constants/order_type';
 import {CFDClosedType} from '../../constants/cfd_closed_type';
-
 import {ICFDOrder} from '../../interfaces/tidebit_defi_background/order';
 import {Code, Reason} from '../../constants/code';
 import {ToastTypeAndText} from '../../constants/toast_type';

@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef, forwardRef} from 'react';
+import {useEffect, useRef} from 'react';
 import useStateRef from 'react-usestateref';
 
 function useOuterClick<T extends HTMLElement>(initialVisibleState: boolean) {

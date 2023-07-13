@@ -9,6 +9,7 @@ import {useGlobal} from '../../contexts/global_context';
 import {IDisplayCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
 import {useTranslation} from 'react-i18next';
 import {MarketContext} from '../../contexts/market_context';
+import SafeMath from '../../lib/safe_math';
 
 type TranslateFunction = (s: string) => string;
 interface IHistoryPositionItemProps {
@@ -26,7 +27,7 @@ const HistoryPositionItem = ({closedCfdDetails, ...otherProps}: IHistoryPosition
       : TypeOfTransaction.SHORT;
 
   const closeValue = roundToDecimalPlaces(
-    closedCfdDetails.closePrice! * closedCfdDetails.amount,
+    +SafeMath.mult(closedCfdDetails.closePrice!, closedCfdDetails.amount),
     2
   );
   const spread = marketCtx.getTickerSpread(closedCfdDetails.targetAsset);

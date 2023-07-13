@@ -23,6 +23,7 @@ import {IQuotation} from '../../interfaces/tidebit_defi_background/quotation';
 import {ToastTypeAndText} from '../../constants/toast_type';
 import {ToastId} from '../../constants/toast_id';
 import {Code} from '../../constants/code';
+import SafeMath from '../../lib/safe_math';
 
 type TranslateFunction = (s: string) => string;
 interface IOpenPositionItemProps {
@@ -69,8 +70,8 @@ const OpenPositionItem = ({openCfdDetails}: IOpenPositionItemProps) => {
 
   const positionLineGraphWithSpread =
     typeOfPosition === TypeOfPosition.BUY
-      ? positionLineGraph.map((v: number) => v * (1 - spread))
-      : positionLineGraph.map((v: number) => v * (1 + spread));
+      ? positionLineGraph.map((v: number) => +SafeMath.mult(v, SafeMath.minus(1, spread)))
+      : positionLineGraph.map((v: number) => +SafeMath.mult(v, SafeMath.plus(1, spread)));
 
   const closePrice = marketCtx.predictCFDClosePrice(
     openCfdDetails.targetAsset,

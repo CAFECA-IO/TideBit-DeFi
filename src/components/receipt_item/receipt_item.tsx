@@ -24,6 +24,7 @@ import {
 import {ICurrency} from '../../constants/currency';
 import {CFDOperation} from '../../constants/cfd_order_type';
 import {FRACTION_DIGITS} from '../../constants/config';
+import SafeMath from '../../lib/safe_math';
 
 type TranslateFunction = (s: string) => string;
 interface IReceiptItemProps {
@@ -53,13 +54,16 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
   const targetAmount =
     orderType === OrderType.CFD
       ? (order as ICFDOrder).state === OrderState.CLOSED
-        ? (order as ICFDOrder).margin.amount + ((order as ICFDOrder).pnl?.value ?? 0) > 0
-          ? (order as ICFDOrder).margin.amount + ((order as ICFDOrder).pnl?.value ?? 0)
+        ? SafeMath.gt(
+            SafeMath.plus((order as ICFDOrder).margin.amount, (order as ICFDOrder).pnl?.value ?? 0),
+            0
+          )
+          ? SafeMath.plus((order as ICFDOrder).margin.amount, (order as ICFDOrder).pnl?.value ?? 0)
           : 0
-        : (order as ICFDOrder).margin.amount * -1
+        : +SafeMath.mult((order as ICFDOrder).margin.amount, -1)
       : orderType === OrderType.DEPOSIT
       ? (order as IDepositOrder).targetAmount
-      : (order as IWithdrawOrder).targetAmount * -1;
+      : +SafeMath.mult((order as IWithdrawOrder).targetAmount, -1);
 
   /* Info: (20230524 - Julian) CFD Type : create / update / close */
   const cfdType = (histories.histories as IAcceptedCFDOrder).applyData.operation;

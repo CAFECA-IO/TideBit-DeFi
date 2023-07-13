@@ -36,6 +36,7 @@ import {
 import {useRouter} from 'next/router';
 import {BARLOW_BASE64} from '../../../../constants/fonts';
 import {Buffer} from 'buffer';
+import SafeMath from '../../../../lib/safe_math';
 
 export const config = {
   runtime: 'edge',
@@ -112,8 +113,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     !!!openPrice || !!!closePrice
       ? 0
       : typeOfPosition === TypeOfPosition.BUY
-      ? roundToDecimalPlaces(((closePrice - openPrice) / openPrice) * 100, 2)
-      : roundToDecimalPlaces(((openPrice - closePrice) / openPrice) * 100, 2);
+      ? roundToDecimalPlaces(
+          +SafeMath.mult(SafeMath.div(SafeMath.minus(closePrice, openPrice), openPrice), 100),
+          2
+        )
+      : roundToDecimalPlaces(
+          +SafeMath.mult(SafeMath.div(SafeMath.minus(openPrice, closePrice), openPrice), 100),
+          2
+        );
 
   const bg =
     pnlPercent > 0

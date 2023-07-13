@@ -28,6 +28,7 @@ import {CFDOperation} from '../../constants/cfd_order_type';
 import {OrderType} from '../../constants/order_type';
 import {Code} from '../../constants/code';
 import {CustomError, isCustomError} from '../../lib/custom_error';
+import SafeMath from '../../lib/safe_math';
 
 type TranslateFunction = (s: string) => string;
 interface IPositionUpdatedModal {
@@ -57,7 +58,7 @@ const PositionUpdatedModal = ({
   const toApplyUpdateOrder = (position: IDisplayCFDOrder): IApplyUpdateCFDOrder => {
     const gsl = marketCtx.guaranteedStopFeePercentage;
     const gslFee = updatedProps?.guaranteedStop
-      ? roundToDecimalPlaces(Number(gsl) * position.openValue, 2)
+      ? roundToDecimalPlaces(+SafeMath.mult(gsl ?? 0, position.openValue), 2)
       : 0;
     const request: IApplyUpdateCFDOrder = {
       operation: CFDOperation.UPDATE,

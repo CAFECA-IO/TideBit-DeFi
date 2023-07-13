@@ -62,9 +62,7 @@ const News = (props: IPageProps) => {
 export default News;
 
 export const getStaticProps: GetStaticProps<IPageProps> = async ({params, locale}) => {
-  const ethNews = await getPosts(ETH_NEWS_FOLDER);
-  const btcNews = await getPosts(BTC_NEWS_FOLDER);
-  const newsData = [...ethNews, ...btcNews];
+  const newsData = await getPosts();
 
   const briefs: IRecommendedNews[] = newsData.map(news => {
     const description = truncateText(news.description, NEWS_INTRODUCTION_IN_GENERAL_MAX_LENGTH);

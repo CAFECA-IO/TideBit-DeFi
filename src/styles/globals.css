@@ -26,6 +26,7 @@
 @layer base {
   html {
     font-family: barlow;
+    scroll-behavior: smooth;
   }
 }
 

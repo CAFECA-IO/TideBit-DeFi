@@ -146,6 +146,7 @@ const CryptoCard = ({
         toolbar: {
           show: false,
         },
+        sparkline: {enabled: true},
       },
 
       dataLabels: {
@@ -193,12 +194,13 @@ const CryptoCard = ({
     });
 
     return (
-      <div>
+      <div className="pt-8 h-40px">
         <Chart
           options={dataSample.options}
           series={dataSample.series}
           type="line"
           width={lineGraphWidth}
+          height="40px"
         />
       </div>
     );
@@ -249,7 +251,7 @@ const CryptoCard = ({
           </div>
 
           <div className="flex flex-col justify-start">
-            <div className="pointer-events-none absolute top-4 h-96 bg-transparent">
+            <div className="pointer-events-none absolute top-4 h-60px z-100 bg-transparent">
               {lineGraph({
                 dataArray: lineGraphProps?.dataArray || sampleArray,
                 strokeColor: strokeColor || lineGraphProps?.strokeColor || thisRandomColor,

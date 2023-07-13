@@ -31,6 +31,8 @@ export default function PositionLineGraph({
       zoom: {enabled: false},
       foreColor: '#373d3f',
       toolbar: {show: false},
+      // height: '50px',
+      sparkline: {enabled: true},
     },
     markers: {
       discrete: [
@@ -110,12 +112,13 @@ export default function PositionLineGraph({
   };
 
   return (
-    <div className="apexchartHorizontalLine">
+    <div className="apexchartHorizontalLine h-20px">
       <Chart
         options={dataSample.options}
         series={dataSample.series}
         type="line"
         width={lineGraphWidth}
+        height="50px"
       />
     </div>
   );

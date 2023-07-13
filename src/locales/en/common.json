@@ -225,7 +225,7 @@
     "GUARANTEED_STOP_YES": "Yes",
     "GUARANTEED_STOP_NO": "No",
     "EXPIRATION_TIME": "Expiration Time",
-    "LIQUIDATION_TIME": "Close in 24 hrs",
+    "LIQUIDATION_TIME": "Close in 7 days",
     "LIQUIDATION_PRICE": "Liquidation Price",
     "PNL": "PNL",
     "FEE": "Fee",

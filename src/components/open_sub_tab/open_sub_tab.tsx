@@ -6,7 +6,6 @@ import {MarketContext} from '../../contexts/market_context';
 import {getStateCode, toDisplayCFDOrder} from '../../lib/common';
 import {IDisplayCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
 import {TypeOfPosition} from '../../constants/type_of_position';
-//import useStateRef from 'react-usestateref';
 import {SKELETON_DISPLAY_TIME} from '../../constants/display';
 import {cfdStateCode} from '../../constants/cfd_state_code';
 /**  Deprecated: replace by maketContext.getTickerSpread (20230610 - tzuhan)
@@ -18,7 +17,6 @@ const OpenSubTab = () => {
   const userCtx = useContext(UserContext);
   const marketCtx = useContext(MarketContext);
 
-  //const [caledPrice, setCaledPrice, caledPriceRef] = useStateRef(initState);
   const [isLoading, setIsLoading] = useState(true);
   const [cfds, setCfds] = useState<IDisplayCFDOrder[]>([]);
 

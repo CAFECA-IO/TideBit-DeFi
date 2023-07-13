@@ -10,10 +10,10 @@ import NavBarMobile from '../../../components/nav_bar_mobile/nav_bar_mobile';
 import {GetStaticPaths, GetStaticProps} from 'next';
 import {useRouter} from 'next/router';
 import Error from 'next/error';
-import {findCurrencyByCode, hasValue} from '../../../lib/common';
+import {findCurrencyByCode, hasValue, truncateText} from '../../../lib/common';
 import {BTC_NEWS_FOLDER, ETH_NEWS_FOLDER, tickerIds} from '../../../constants/config';
 import {Currency} from '../../../constants/currency';
-import {TIDEBIT_FAVICON} from '../../../constants/display';
+import {NEWS_INTRODUCTION_IN_TRADE_MAX_LENGTH, TIDEBIT_FAVICON} from '../../../constants/display';
 import {getPosts} from '../../../lib/posts';
 import {IRecommendedNews} from '../../../interfaces/tidebit_defi_background/news';
 
@@ -24,7 +24,6 @@ interface IPageProps {
 
 const Trading = (props: IPageProps) => {
   const marketCtx = useContext(MarketContext);
-  const [isInit, setIsInit] = useState(false);
   const {layoutAssertion} = useGlobal();
   const appCtx = useContext(AppContext);
 
@@ -42,7 +41,6 @@ const Trading = (props: IPageProps) => {
   const redirectToTicker = async () => {
     if (hasValue(marketCtx.availableTickers) && currency) {
       marketCtx.selectTickerHandler(currency);
-      setIsInit(true);
     }
   };
 
@@ -51,9 +49,8 @@ const Trading = (props: IPageProps) => {
       appCtx.init();
       return;
     }
-    if (!marketCtx.isInit && isInit) return;
     redirectToTicker();
-  }, [isInit, appCtx.isInit, marketCtx.isInit]);
+  }, [appCtx.isInit]);
 
   if (!router.isFallback && !props.tickerId) {
     return <Error statusCode={404} />;
@@ -88,12 +85,13 @@ export const getStaticProps: GetStaticProps<IPageProps> = async ({params, locale
 
   const newsData = await getPosts(dir);
   const briefs: IRecommendedNews[] = newsData.map(news => {
+    const description = truncateText(news.description, NEWS_INTRODUCTION_IN_TRADE_MAX_LENGTH);
     return {
       newsId: news.slug ?? '',
       img: `/news/${news.slug}@2x.png`,
       timestamp: news.date,
       title: news.title,
-      description: news.description,
+      description: description,
     };
   });
 

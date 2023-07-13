@@ -1,6 +1,8 @@
-import {readdir, readFile} from 'fs/promises';
+import {readdir, readFile, stat} from 'fs/promises';
 import matter from 'gray-matter';
 import {marked} from 'marked';
+import {join} from 'path';
+import {NEWS_FOLDER} from '../constants/config';
 
 export interface IPost {
   date: number;
@@ -28,17 +30,43 @@ export async function getPost(src: string, slug: string): Promise<IPost | null> 
   }
 }
 
-export async function getPosts(src: string): Promise<IPost[]> {
-  const slugs = await getSlugs(src);
-  if (!slugs) return [];
+export async function getPosts(src?: string): Promise<IPost[]> {
   const posts: IPost[] = [];
-  for (const slug of slugs) {
-    const post = await getPost(src, slug);
-    if (post) {
-      posts.push({slug, ...post});
+  if (!src) {
+    const directories = await getDirectories(NEWS_FOLDER);
+    for (const directory of directories) {
+      const slugs = await getSlugs(directory);
+      if (!slugs) continue;
+      for (const slug of slugs) {
+        const post = await getPost(directory, slug);
+        if (post) {
+          posts.push({slug, ...post});
+        }
+      }
+    }
+  } else {
+    const slugs = await getSlugs(src);
+    if (!slugs) return [];
+    for (const slug of slugs) {
+      const post = await getPost(src, slug);
+      if (post) {
+        posts.push({slug, ...post});
+      }
     }
   }
   return posts;
+}
+
+export async function getDirectories(src: string): Promise<string[]> {
+  const subdirs = await readdir(src);
+  const directories = [];
+  for (const subdir of subdirs) {
+    const absolutePath = join(src, subdir);
+    if ((await stat(absolutePath)).isDirectory()) {
+      directories.push(absolutePath);
+    }
+  }
+  return directories;
 }
 
 export async function getSlugs(src: string): Promise<string[] | undefined> {

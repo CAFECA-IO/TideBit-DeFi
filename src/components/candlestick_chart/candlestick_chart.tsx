@@ -11,7 +11,7 @@
  * 2.3 draw candlestick chart with data
  */
 
-import React, {useState, useContext, useEffect, useRef, useCallback} from 'react';
+import React, {useState, useContext, useEffect, useRef, useCallback, useMemo} from 'react';
 import {
   createChart,
   CrosshairMode,
@@ -163,6 +163,7 @@ const createSpec = ({timespan, dataSize, chartHeight, chartWidth}: IChartSpecPro
   };
 
   const firstTime = (getLastTime() - (dataSize - 1) * timespan) / 1000;
+  // console.log('calculate first time: ', firstTime);
 
   return {firstTime, chartOptions};
 };
@@ -249,16 +250,6 @@ export default function CandlestickChart({
   const globalCtx = useContext(GlobalContext);
   const userCtx = useContext(UserContext);
 
-  const [ohlcInfo, setOhlcInfo] = useState<IOHLCInfo>({
-    open: 0,
-    high: 0,
-    low: 0,
-    close: 0,
-  });
-  const [cursorStyle, setCursorStyle, cursorStyleRef] = useStateRef<
-    'hover:cursor-crosshair' | 'hover:cursor-pointer'
-  >('hover:cursor-crosshair');
-
   const chartContainerRef = useRef<HTMLDivElement>(null);
   let chart: IChartApi;
   let candlestickSeries: ISeriesApi<'Candlestick'>;
@@ -270,6 +261,29 @@ export default function CandlestickChart({
       ? globalCtx.width * 0.6 - 2000 / globalCtx.width + (globalCtx.width - 1150) * 0.5
       : globalCtx.width * 0.9;
 
+  const [ohlcInfo, setOhlcInfo] = useState<IOHLCInfo>({
+    open: 0,
+    high: 0,
+    low: 0,
+    close: 0,
+  });
+
+  const [cursorStyle, setCursorStyle, cursorStyleRef] = useStateRef<
+    'hover:cursor-crosshair' | 'hover:cursor-pointer'
+  >('hover:cursor-crosshair');
+
+  const [spec, setSpec, specRef] = useStateRef<{
+    firstTime: number;
+    chartOptions: any;
+  }>(
+    createSpec({
+      dataSize: candleSize,
+      timespan: getTime(marketCtx.timeSpan),
+      chartWidth: width, // ToDo: candlestickChartWidth
+      chartHeight: 300, // ToDo: candlestickChartHeight
+    })
+  );
+
   const displayedOHLC =
     ohlcInfo.close !== 0 ? (
       <p className="text-sm text-lightGray">
@@ -278,12 +292,14 @@ export default function CandlestickChart({
       </p>
     ) : null;
 
-  const {firstTime, chartOptions} = createSpec({
-    dataSize: candleSize,
-    timespan: getTime(marketCtx.timeSpan),
-    chartWidth: width, // ToDo: candlestickChartWidth
-    chartHeight: 300, // ToDo: candlestickChartHeight
-  });
+  // console.log('time span', marketCtx.timeSpan);
+
+  // const {firstTime, chartOptions} = createSpec({
+  //   dataSize: candleSize,
+  //   timespan: getTime(marketCtx.timeSpan),
+  //   chartWidth: width, // ToDo: candlestickChartWidth
+  //   chartHeight: 300, // ToDo: candlestickChartHeight
+  // });
 
   const handleResize = () => {
     chart.applyOptions({width: Number(chartContainerRef?.current?.clientWidth) - 50});
@@ -446,7 +462,10 @@ export default function CandlestickChart({
     const originRaw = marketCtx.candlestickChartData?.map(toCandlestickData) ?? [];
     const raw = originRaw.sort((a, b) => Number(a.time) - Number(b.time));
     const cleanedData = candlestickDataCleaning(raw);
-    const filtered = filterCandlestickData({dataArray: cleanedData, startTime: firstTime});
+    const filtered = filterCandlestickData({
+      dataArray: cleanedData,
+      startTime: specRef.current.firstTime,
+    });
     const result = tuningTzCandlestickDataArray(filtered) as CandlestickData[];
     return result;
   };
@@ -455,7 +474,7 @@ export default function CandlestickChart({
     if (chartContainerRef.current) {
       // Info: Get data and draw the chart
       tuned = fetchCandlestickData();
-      chart = createChart(chartContainerRef.current, chartOptions);
+      chart = createChart(chartContainerRef.current, specRef.current.chartOptions);
       candlestickSeries = chart.addCandlestickSeries({
         // ToDo: `createSpec` 可以讀外面的參數，但這邊直接拿createSpec
         upColor: LINE_GRAPH_STROKE_COLOR.UP,
@@ -517,8 +536,24 @@ export default function CandlestickChart({
   };
 
   useEffect(() => {
+    // eslint-disable-next-line no-console
+    console.log('in chart', marketCtx.candlestickChartData);
     return drawChart();
   }, [marketCtx.candlestickChartData]);
+
+  useEffect(() => {
+    setSpec(
+      createSpec({
+        dataSize: candleSize,
+        timespan: getTime(marketCtx.timeSpan),
+        chartWidth: width, // ToDo: candlestickChartWidth
+        chartHeight: 300, // ToDo: candlestickChartHeight
+      })
+    );
+
+    // eslint-disable-next-line no-console
+    console.log('spec', specRef.current);
+  }, [marketCtx.candlestickChartData, marketCtx.timeSpan]);
 
   return (
     <>

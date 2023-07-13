@@ -20,6 +20,7 @@ import {
 } from '../interfaces/tidebit_defi_background/ticker_data';
 import {ITimeSpanUnion, TimeSpanUnion, getTime} from '../constants/time_span_union';
 import {
+  ICandle,
   ICandlestickData,
   ITrade,
   TradeSideText,
@@ -64,7 +65,6 @@ import {
   getDummyNews,
   getDummyRecommendationNews,
 } from '../interfaces/tidebit_defi_background/news';
-import {ICandlestick} from '../interfaces/tidebit_defi_background/candlestick';
 
 export interface IMarketProvider {
   children: React.ReactNode;
@@ -648,7 +648,44 @@ export const MarketProvider = ({children}: IMarketProvider) => {
         query: {...options},
       })) as IResult;
       if (result.success) {
-        const candlesticks = result.data as ICandlestick;
+        const candlesticks = result.data as {
+          instId: string;
+          candlesticks: {x: string; y: ICandle}[];
+        };
+
+        const organized = candlesticks.candlesticks.map(candlestick => ({
+          x: new Date(candlestick.x),
+          y: candlestick.y,
+        }));
+
+        // const candlesticks = result.data as ICandlestick;
+        setCandlestickChartData(prev => {
+          const data = !!prev ? [...prev, ...organized] : organized;
+          // eslint-disable-next-line no-console
+          console.log('data 0', data[0], 'data 1', data[1]);
+          // data.sort((a, b) => a.x.getTime() - b.x.getTime());
+
+          // return data;
+
+          const uniqueData = data.reduce((acc: ICandlestickData[], current: ICandlestickData) => {
+            const xtime = current.x.getTime();
+            if (acc.findIndex(item => item.x.getTime() === xtime) === -1) {
+              acc.push(current);
+            }
+            return acc;
+          }, []);
+
+          uniqueData.sort((a, b) => a.x.getTime() - b.x.getTime());
+
+          // eslint-disable-next-line no-console
+          console.log('uniqueData', uniqueData);
+
+          return uniqueData;
+        });
+
+        // console.log('candlesticks', candlesticks);
+        // eslint-disable-next-line no-console
+        console.log('organized', organized);
       }
     } catch (error) {
       if (!isCustomError(error)) {
@@ -665,16 +702,17 @@ export const MarketProvider = ({children}: IMarketProvider) => {
       setCandlestickInterval(null);
     }
 
-    const candlestickInterval = setInterval(() => {
-      const ts = timeSpan ? timeSpan : timeSpanRef.current;
-      if (timeSpan) setTimeSpan(timeSpan);
-      const interval = Math.round(getTime(ts) / CANDLESTICK_SIZE);
+    // const candlestickInterval = setInterval(() => {
+    //   const ts = timeSpan ? timeSpan : timeSpanRef.current;
+    //   if (timeSpan) setTimeSpan(timeSpan);
+    //   const interval = Math.round(getTime(ts) / CANDLESTICK_SIZE);
 
-      const candlesticks = tradeBook.toCandlestick(instId, millesecondsToSeconds(getTime(ts)), 100);
+    //   const candlesticks = tradeBook.toCandlestick(instId, millesecondsToSeconds(getTime(ts)), 100);
 
-      setCandlestickChartData(candlesticks);
-    }, 100);
-    setCandlestickInterval(candlestickInterval);
+    //   setCandlestickChartData(candlesticks);
+    //   // console.log('syncCandlestickData', candlestickChartDataRef.current);
+    // }, 100);
+    // setCandlestickInterval(candlestickInterval);
   };
 
   const getWebsiteReserve = async () => {
@@ -788,17 +826,17 @@ export const MarketProvider = ({children}: IMarketProvider) => {
   React.useMemo(
     () =>
       notificationCtx.emitter.on(TideBitEvent.TRADES, (action: IPusherAction, trade: ITrade) => {
-        if (trade.instId === selectedTickerRef.current?.instId) {
-          tradeBook.add(trade.instId, {
-            tradeId: trade.tradeId,
-            targetAsset: trade.baseUnit,
-            unitAsset: trade.quoteUnit,
-            direct: TradeSideText[trade.side],
-            price: trade.price,
-            timestampMs: trade.timestamp,
-            quantity: trade.amount,
-          });
-        }
+        // if (trade.instId === selectedTickerRef.current?.instId) {
+        //   tradeBook.add(trade.instId, {
+        //     tradeId: trade.tradeId,
+        //     targetAsset: trade.baseUnit,
+        //     unitAsset: trade.quoteUnit,
+        //     direct: TradeSideText[trade.side],
+        //     price: trade.price,
+        //     timestampMs: trade.timestamp,
+        //     quantity: trade.amount,
+        //   });
+        // }
       }),
     []
   );

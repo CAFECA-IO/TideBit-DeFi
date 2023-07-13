@@ -1,7 +1,7 @@
 import Head from 'next/head';
 import NavBar from '../../../components/nav_bar/nav_bar';
 import {serverSideTranslations} from 'next-i18next/serverSideTranslations';
-import {useContext, useEffect, useState} from 'react';
+import {useContext, useEffect} from 'react';
 import {AppContext} from '../../../contexts/app_context';
 import TradePageBody from '../../../components/trade_page_body/trade_page_body';
 import {MarketContext} from '../../../contexts/market_context';
@@ -10,9 +10,8 @@ import NavBarMobile from '../../../components/nav_bar_mobile/nav_bar_mobile';
 import {GetStaticPaths, GetStaticProps} from 'next';
 import {useRouter} from 'next/router';
 import Error from 'next/error';
-import {findCurrencyByCode, hasValue, truncateText} from '../../../lib/common';
+import {hasValue, truncateText} from '../../../lib/common';
 import {BTC_NEWS_FOLDER, ETH_NEWS_FOLDER, tickerIds} from '../../../constants/config';
-import {Currency} from '../../../constants/currency';
 import {CodeToTicker} from '../../../constants/ticker';
 import {NEWS_INTRODUCTION_IN_TRADE_MAX_LENGTH, TIDEBIT_FAVICON} from '../../../constants/display';
 import {getPosts} from '../../../lib/posts';
@@ -38,7 +37,6 @@ const Trading = (props: IPageProps) => {
   const redirectToTicker = async () => {
     if (hasValue(marketCtx.availableTickers) && ticker) {
       marketCtx.selectTickerHandler(ticker);
-      setIsInit(true);
     }
   };
 

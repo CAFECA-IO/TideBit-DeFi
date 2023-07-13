@@ -9,7 +9,6 @@ import {timestampToString, toDisplayCFDOrder, toPnl} from '../../lib/common';
 import {OrderType} from '../../constants/order_type';
 import {OrderState} from '../../constants/order_state';
 import {OrderStatusUnion} from '../../constants/order_status_union';
-import {TypeOfPosition} from '../../constants/type_of_position';
 import {UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
 import {useTranslation} from 'next-i18next';
 import {IAcceptedOrder} from '../../interfaces/tidebit_defi_background/accepted_order';
@@ -21,7 +20,6 @@ import {
   IDepositOrder,
   IWithdrawOrder,
 } from '../../interfaces/tidebit_defi_background/order';
-import {ICurrency} from '../../constants/currency';
 import {CFDOperation} from '../../constants/cfd_order_type';
 import {FRACTION_DIGITS} from '../../constants/config';
 
@@ -121,51 +119,50 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
       ? t('MY_ASSETS_PAGE.RECEIPT_SECTION_ORDER_STATUS_FAILED')
       : '-';
 
-  /* Info: (20230523 - Julian) Line Graph Data */
-  // const positionLineGraph = marketCtx.listTickerPositions(targetAsset as ICurrency, {
-  //   begin: createTimestamp,
-  // });
+  /* Info: (20230713 - Julian) show history modal */
+  const closedCfdHandler = () => {
+    const closedOrder = userCtx.getCFD(order.id) ?? (order as ICFDOrder);
+    const cfdData = toDisplayCFDOrder(closedOrder);
+    globalCtx.dataHistoryPositionModalHandler(cfdData);
+    globalCtx.visibleHistoryPositionModalHandler();
+  };
 
+  /* Info: (20230713 - Julian) show update CFD modal */
+  const updateCfdHandler = () => {
+    const updateCfd = order as ICFDOrder;
+    // Deprecated: (20230720 - Julian)
+    // const tickerPrice = marketCtx.availableTickers[updateCfd.targetAsset]?.price;
+    // const currentPrice =
+    //   (!!tickerPrice &&
+    //     ((updateCfd.typeOfPosition === TypeOfPosition.BUY &&
+    //       roundToDecimalPlaces(tickerPrice, 2)) ||
+    //       (updateCfd.typeOfPosition === TypeOfPosition.SELL &&
+    //         roundToDecimalPlaces(tickerPrice, 2)))) ||
+    //   positionLineGraph.length > 0
+    //     ? positionLineGraph[positionLineGraph.length - 1]
+    //     : 0;
+    const cfdData = toDisplayCFDOrder(updateCfd);
+    const spread = marketCtx.getTickerSpread(cfdData.targetAsset);
+    const closePrice = marketCtx.predictCFDClosePrice(cfdData.targetAsset, cfdData.typeOfPosition);
+
+    const pnl = toPnl({
+      openPrice: cfdData.openPrice,
+      closePrice: cfdData?.closePrice ?? closePrice,
+      typeOfPosition: cfdData.typeOfPosition,
+      amount: cfdData.amount,
+      spread,
+    });
+
+    globalCtx.dataUpdateFormModalHandler({...cfdData, pnl});
+    globalCtx.visibleUpdateFormModalHandler();
+  };
+
+  // Info: (20230713 - Julian) when click position or d/w history button
   const buttonClickHandler =
     orderType === OrderType.CFD
       ? isClosed
-        ? () => {
-            const closedOrder = userCtx.getCFD(order.id) ?? (order as ICFDOrder);
-            const cfdData = toDisplayCFDOrder(closedOrder);
-            globalCtx.dataHistoryPositionModalHandler(cfdData);
-            globalCtx.visibleHistoryPositionModalHandler();
-          }
-        : () => {
-            const updateCfd = order as ICFDOrder;
-            /* Info: (20230602 - Julian) 拿到該 ticker 的當前價格 */
-            // const tickerPrice = marketCtx.availableTickers[updateCfd.targetAsset]?.price;
-            // const currentPrice =
-            //   (!!tickerPrice &&
-            //     ((updateCfd.typeOfPosition === TypeOfPosition.BUY &&
-            //       roundToDecimalPlaces(tickerPrice, 2)) ||
-            //       (updateCfd.typeOfPosition === TypeOfPosition.SELL &&
-            //         roundToDecimalPlaces(tickerPrice, 2)))) ||
-            //   positionLineGraph.length > 0
-            //     ? positionLineGraph[positionLineGraph.length - 1]
-            //     : 0;
-            const cfdData = toDisplayCFDOrder(updateCfd);
-            const spread = marketCtx.getTickerSpread(cfdData.targetAsset);
-            const closePrice = marketCtx.predictCFDClosePrice(
-              cfdData.targetAsset,
-              cfdData.typeOfPosition
-            );
-
-            const pnl = toPnl({
-              openPrice: cfdData.openPrice,
-              closePrice: cfdData?.closePrice ?? closePrice,
-              typeOfPosition: cfdData.typeOfPosition,
-              amount: cfdData.amount,
-              spread,
-            });
-
-            globalCtx.dataUpdateFormModalHandler({...cfdData, pnl});
-            globalCtx.visibleUpdateFormModalHandler();
-          }
+        ? closedCfdHandler
+        : updateCfdHandler
       : orderType === OrderType.DEPOSIT
       ? () => {
           globalCtx.dataDepositHistoryModalHandler(histories.histories as IAcceptedDepositOrder);

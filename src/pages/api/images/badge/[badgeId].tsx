@@ -1,3 +1,5 @@
+import {useContext} from 'react';
+import {UserContext} from '../../../../contexts/user_context';
 import {NextApiRequest, NextApiResponse} from 'next';
 import {ImageResponse} from 'next/server';
 import {timestampToString, adjustTimestamp} from '../../../../lib/common';
@@ -8,7 +10,7 @@ import {
   BG_WIDTH_OF_SHARING_RECORD,
   BG_HEIGHT_OF_SHARING_RECORD,
 } from '../../../../constants/display';
-import {DOMAIN, API_URL} from '../../../../constants/config';
+import {DOMAIN} from '../../../../constants/config';
 import {BARLOW_BASE64} from '../../../../constants/fonts';
 import {Buffer} from 'buffer';
 
@@ -17,46 +19,40 @@ export const config = {
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  // ToDo:(20230525 - Julian) send to API
   const url = new URL(req?.url ?? '');
   const params = url.pathname.split('/');
   const badgeId = params.pop();
-  const apiUrl = `${API_URL}/public/shared/badge/${badgeId}`;
   const tz = Number(url.searchParams.get('tz'));
 
-  const dummySharingBadge = {
-    badgeId: 'BADGE0001',
-    badgeName: 'Monthly_Top_20',
-    userId: '0x553687656C04b',
-    receiveTime: 1636789600,
+  const {getBadge} = useContext(UserContext);
+
+  const dummySharingBadge: IBadge = {
+    badgeId: 'BADGE_ID',
+    badgeName: '',
+    userId: 'X',
+    receiveTime: 0,
   };
 
   let sharingBadge: IBadge = dummySharingBadge;
 
-  // ToDo:(20230525 - Julian) get Data from API
-  // const fetchBagde = async () => {
-  //   try {
-  //     const badgeResponse = await fetch(apiUrl, {
-  //       method: 'GET',
-  //       headers: {'Content-Type': 'application/json'},
-  //     });
-  //     const badge = await badgeResponse.json();
+  // ToDo:(20230525 - Julian) get Data from context
+  const fetchBagde = async () => {
+    try {
+      const result = await getBadge(badgeId ?? '');
 
-  //     if (badge?.success) {
-  //       if (isSharingOrder(order?.data)) {
-  //         sharingOrder = order?.data;
-  //       }
-  //     }
-  //   } catch (e) {
-  //     // TODO: error handling
-  //   }
+      if (result.success) {
+        sharingBadge = result.data as IBadge;
+      }
+    } catch (e) {
+      // TODO: error handling (20230713 - Julian)
+    }
 
-  //   return sharingOrder;
-  // };
+    return sharingBadge;
+  };
 
   try {
     // ToDo:(20230526 - Julian) API data
-    //await fetchBagde();
+    await fetchBagde();
 
     const offset = new Date().getTimezoneOffset() / 60;
     const adReceiveTimestamp = adjustTimestamp(offset, sharingBadge.receiveTime ?? 0, tz);

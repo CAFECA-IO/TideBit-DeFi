@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useRef, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import Toggle from '../toggle/toggle';
 import TradingInput from '../trading_input/trading_input';
 import {AiOutlineQuestionCircle} from 'react-icons/ai';
@@ -9,19 +9,15 @@ import {
   DEFAULT_FEE,
   DEFAULT_LEVERAGE,
   DEFAULT_SELL_PRICE,
-  DEFAULT_SPREAD,
   DEFAULT_USER_BALANCE,
   UNIVERSAL_NUMBER_FORMAT_LOCALE,
 } from '../../constants/display';
 import {
   TARGET_MAX_DIGITS,
-  QUOTATION_RENEWAL_INTERVAL_SECONDS,
   unitAsset,
   SUGGEST_TP,
   SUGGEST_SL,
   LIQUIDATION_FIVE_LEVERAGE,
-  DISPLAY_QUOTATION_RENEWAL_INTERVAL_SECONDS,
-  WAITING_TIME_FOR_USER_SIGNING,
   FRACTION_DIGITS,
   TP_SL_LIMIT_PERCENT,
   DEFAULT_TICKER,
@@ -34,29 +30,19 @@ import {UserContext} from '../../contexts/user_context';
 import useStateRef from 'react-usestateref';
 import {TypeOfPosition} from '../../constants/type_of_position';
 import {OrderType} from '../../constants/order_type';
-import {OrderStatusUnion} from '../../constants/order_status_union';
 import {ClickEvent} from '../../constants/tidebit_event';
 import {
   getEstimatedPnL,
   getTimestamp,
-  getTimestampInMilliseconds,
   roundToDecimalPlaces,
-  twoDecimal,
   validateAllInput,
-  validateCFD,
 } from '../../lib/common';
-import {IQuotation, getDummyQuotation} from '../../interfaces/tidebit_defi_background/quotation';
+import {IQuotation} from '../../interfaces/tidebit_defi_background/quotation';
 import {NotificationContext} from '../../contexts/notification_context';
 import {useTranslation} from 'next-i18next';
-import {
-  defaultResultFailed,
-  defaultResultSuccess,
-} from '../../interfaces/tidebit_defi_background/result';
+import {defaultResultFailed} from '../../interfaces/tidebit_defi_background/result';
 import {IApplyCreateCFDOrder} from '../../interfaces/tidebit_defi_background/apply_create_cfd_order';
-import {Code} from '../../constants/code';
 import {CFDOperation} from '../../constants/cfd_order_type';
-import {ToastTypeAndText} from '../../constants/toast_type';
-import {ToastId} from '../../constants/toast_id';
 import {TypeOfValidation} from '../../constants/validation';
 
 type TranslateFunction = (s: string) => string;

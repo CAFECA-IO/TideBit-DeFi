@@ -15,7 +15,6 @@ import {
   wait,
   getDeadline,
   getTimestamp,
-  twoDecimal,
   getTimestampInMilliseconds,
   roundToDecimalPlaces,
   findCodeByReason,
@@ -33,7 +32,7 @@ import {
   FRACTION_DIGITS,
 } from '../../constants/config';
 import {TypeOfPosition} from '../../constants/type_of_position';
-import {IClosedCFDInfoProps, useGlobal} from '../../contexts/global_context';
+import {useGlobal} from '../../contexts/global_context';
 import {BsClockHistory} from 'react-icons/bs';
 import {ProfitState} from '../../constants/profit_state';
 import {UserContext} from '../../contexts/user_context';
@@ -45,15 +44,11 @@ import {ICFDSuggestion} from '../../interfaces/tidebit_defi_background/cfd_sugge
 import {IQuotation} from '../../interfaces/tidebit_defi_background/quotation';
 import useStateRef from 'react-usestateref';
 import {OrderState} from '../../constants/order_state';
-import {
-  defaultResultSuccess,
-  defaultResultFailed,
-  IResult,
-} from '../../interfaces/tidebit_defi_background/result';
+import {defaultResultFailed, IResult} from '../../interfaces/tidebit_defi_background/result';
 import {CFDOperation} from '../../constants/cfd_order_type';
 import {OrderType} from '../../constants/order_type';
 import {CFDClosedType} from '../../constants/cfd_closed_type';
-import {cfdStateCode} from '../../constants/cfd_state_code';
+
 import {ICFDOrder} from '../../interfaces/tidebit_defi_background/order';
 import {Code, Reason} from '../../constants/code';
 import {ToastTypeAndText} from '../../constants/toast_type';
@@ -202,7 +197,7 @@ const PositionClosedModal = ({
     const closePrice = quotation.price;
     const leverage = marketCtx.tickerStatic?.leverage ?? DEFAULT_LEVERAGE;
 
-    const openValue = twoDecimal(openPrice * cfd.amount);
+    const openValue = roundToDecimalPlaces(openPrice * cfd.amount, 2);
 
     const pnl: IPnL = toPnl({
       openPrice: openPrice,

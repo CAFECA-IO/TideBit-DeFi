@@ -16,18 +16,15 @@ import {
   DEFAULT_FEE,
   DEFAULT_LEVERAGE,
   DEFAULT_SELL_PRICE,
-  DEFAULT_SPREAD,
   DEFAULT_USER_BALANCE,
   UNIVERSAL_NUMBER_FORMAT_LOCALE,
 } from '../../constants/display';
 import {
   TARGET_MAX_DIGITS,
-  QUOTATION_RENEWAL_INTERVAL_SECONDS,
   unitAsset,
   SUGGEST_SL,
   SUGGEST_TP,
   LIQUIDATION_FIVE_LEVERAGE,
-  WAITING_TIME_FOR_USER_SIGNING,
   FRACTION_DIGITS,
   TP_SL_LIMIT_PERCENT,
   DEFAULT_TICKER,
@@ -39,19 +36,13 @@ import {useTranslation} from 'next-i18next';
 import {
   getEstimatedPnL,
   getTimestamp,
-  getTimestampInMilliseconds,
   roundToDecimalPlaces,
-  twoDecimal,
   validateAllInput,
 } from '../../lib/common';
-import {IQuotation, getDummyQuotation} from '../../interfaces/tidebit_defi_background/quotation';
+import {IQuotation} from '../../interfaces/tidebit_defi_background/quotation';
 import {NotificationContext} from '../../contexts/notification_context';
 import {IApplyCreateCFDOrder} from '../../interfaces/tidebit_defi_background/apply_create_cfd_order';
-import {Code} from '../../constants/code';
-import {
-  defaultResultFailed,
-  defaultResultSuccess,
-} from '../../interfaces/tidebit_defi_background/result';
+import {defaultResultFailed} from '../../interfaces/tidebit_defi_background/result';
 import {OrderType} from '../../constants/order_type';
 import {CFDOperation} from '../../constants/cfd_order_type';
 import {TypeOfValidation} from '../../constants/validation';

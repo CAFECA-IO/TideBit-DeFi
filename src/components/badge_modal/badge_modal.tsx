@@ -42,6 +42,7 @@ const BadgeModal = ({modalVisible, modalClickHandler, badgeData}: IBadgeModalPro
         onClick={() =>
           share({
             socialMedia: SocialMediaConstant.FACEBOOK,
+            text: ShareSettings.FACEBOOK.TEXT,
           })
         }
       >

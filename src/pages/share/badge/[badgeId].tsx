@@ -9,6 +9,7 @@ import Error from 'next/error';
 import {DOMAIN} from '../../../constants/config';
 import useStateRef from 'react-usestateref';
 import Link from 'next/link';
+import {TBDURL} from '../../../constants/api_request';
 
 interface IPageProps {
   badgeId: string;
@@ -19,8 +20,6 @@ const BadgeSharing = (props: IPageProps) => {
   const router = useRouter();
 
   const [userTz, setUserTz, userTzRef] = useStateRef<number>(0);
-
-  const {query} = router;
 
   // TODO: for meta content (20230525 - Julian)
   const img = `${DOMAIN}/api/images/badge/${props.badgeId}?tz=${userTzRef.current}`;
@@ -49,17 +48,30 @@ const BadgeSharing = (props: IPageProps) => {
   }
 
   const displayedImage = appCtx.isInit ? (
-    <Link href="/">
-      <div className="flex w-full justify-center">
+    <div className="flex w-full justify-center">
+      <Link href="/">
         <img
           src={displayImg}
           width={BG_WIDTH_OF_SHARING_RECORD}
           height={BG_HEIGHT_OF_SHARING_RECORD}
           alt="Badge record"
-          className="hover:opacity-90"
+          className="relative hover:cursor-pointer hover:opacity-90"
         />
+      </Link>
+
+      <div className="absolute top-0 z-10 h-630px w-630px">
+        <div className="absolute bottom-16 right-0 mx-8 flex items-center space-x-8">
+          {/* Info:(20230714 - Julian) Market Link */}
+          <Link href={TBDURL.TRADE}>
+            <div className="flex h-100px w-70px"></div>
+          </Link>
+          {/* Info:(20230714 - Julian) Leaderboard Link */}
+          <Link href={TBDURL.LEADERBOARD}>
+            <div className="flex h-100px w-70px"></div>
+          </Link>
+        </div>
       </div>
-    </Link>
+    </div>
   ) : null;
 
   return (

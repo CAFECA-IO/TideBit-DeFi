@@ -210,6 +210,7 @@ const TradeTab = () => {
 
     renewPosition();
 
+    // TODO: FIXME: [To be optimized] May run more than 10 times in a second (20230714 - Shirley)
     if (!longTpToggle && !shortTpToggle) setSuggestions();
   }, [marketCtx.selectedTicker?.price, isTypingRef.current]);
 

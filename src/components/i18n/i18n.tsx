@@ -52,7 +52,6 @@ const I18n = ({langIsOpen, setLangIsOpen}: II18nParams) => {
                 scroll={false}
                 locale={item.value}
                 href={asPath}
-                scroll={false}
                 className="block rounded-none py-2 text-center hover:bg-darkGray5"
               >
                 {item.label}
@@ -81,7 +80,6 @@ const I18n = ({langIsOpen, setLangIsOpen}: II18nParams) => {
                 scroll={false}
                 locale={item.value}
                 href={asPath}
-                scroll={false}
                 className="block rounded-none px-3 py-7 font-medium hover:cursor-pointer hover:text-tidebitTheme"
               >
                 {item.label}

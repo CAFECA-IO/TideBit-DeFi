@@ -15,7 +15,6 @@ import {
   wait,
   getDeadline,
   getTimestamp,
-  twoDecimal,
   getTimestampInMilliseconds,
   roundToDecimalPlaces,
   findCodeByReason,
@@ -33,7 +32,7 @@ import {
   FRACTION_DIGITS,
 } from '../../constants/config';
 import {TypeOfPosition} from '../../constants/type_of_position';
-import {IClosedCFDInfoProps, useGlobal} from '../../contexts/global_context';
+import {useGlobal} from '../../contexts/global_context';
 import {BsClockHistory} from 'react-icons/bs';
 import {ProfitState} from '../../constants/profit_state';
 import {UserContext} from '../../contexts/user_context';
@@ -54,6 +53,7 @@ import {Code, Reason} from '../../constants/code';
 import {ToastTypeAndText} from '../../constants/toast_type';
 import {ToastId} from '../../constants/toast_id';
 import {CustomError, isCustomError} from '../../lib/custom_error';
+import SafeMath from '../../lib/safe_math';
 
 type TranslateFunction = (s: string) => string;
 interface IPositionClosedModal {
@@ -182,7 +182,7 @@ const PositionClosedModal = ({
     const closePrice = quotation.price;
     const leverage = marketCtx.tickerStatic?.leverage ?? DEFAULT_LEVERAGE;
 
-    const openValue = twoDecimal(openPrice * cfd.amount);
+    const openValue = roundToDecimalPlaces(+SafeMath.mult(openPrice, cfd.amount), 2);
 
     const pnl: IPnL = toPnl({
       openPrice: openPrice,
@@ -196,12 +196,12 @@ const PositionClosedModal = ({
     const suggestion: ICFDSuggestion = {
       takeProfit:
         cfd.typeOfPosition === TypeOfPosition.BUY
-          ? openValue * (1 + SUGGEST_TP / leverage)
-          : openValue * (1 - SUGGEST_TP / leverage),
+          ? +SafeMath.mult(openValue, SafeMath.plus(1, SafeMath.div(SUGGEST_TP, leverage)))
+          : +SafeMath.mult(openValue, SafeMath.minus(1, SafeMath.div(SUGGEST_TP, leverage))),
       stopLoss:
         cfd.typeOfPosition === TypeOfPosition.BUY
-          ? openValue * (1 - SUGGEST_SL / leverage)
-          : openValue * (1 + SUGGEST_SL / leverage),
+          ? +SafeMath.mult(openValue, SafeMath.minus(1, SafeMath.div(SUGGEST_SL, leverage)))
+          : +SafeMath.mult(openValue, SafeMath.plus(1, SafeMath.div(SUGGEST_SL, leverage))),
     };
 
     const historyCfd: IDisplayCFDOrder = {

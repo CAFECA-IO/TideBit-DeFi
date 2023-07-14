@@ -51,7 +51,7 @@ const FailedModal = ({
   };
 
   const failContent = (
-    <div className="relative flex flex-auto flex-col items-center pt-1 text-center text-lg leading-relaxed text-lightWhite">
+    <div className="relative mx-6 flex flex-auto flex-col items-center pt-1 text-center text-lg leading-relaxed text-lightWhite">
       <Lottie className="w-150px pb-2 pt-5" animationData={failedAnimation} />
       <div className="text-base text-lightWhite">{displayedModalContent}</div>
 

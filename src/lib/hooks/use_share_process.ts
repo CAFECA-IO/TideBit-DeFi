@@ -56,7 +56,7 @@ const useShareProcess = ({lockerName, shareType, shareId, cfd, enableShare}: IUs
         return shareUrl;
 
       case ShareType.BADGE:
-        shareUrl = `https://tidebit-defi-o7sfp9uq6-cafeca.vercel.app/share/badge/${shareId}`; //DOMAIN + `/share/badge/${shareId}`;
+        shareUrl = `https://tidebit-defi-1gnq146up-cafeca.vercel.app/share/badge/${shareId}`; //DOMAIN + `/share/badge/${shareId}`;
         return shareUrl;
 
       case ShareType.ARTICLE:

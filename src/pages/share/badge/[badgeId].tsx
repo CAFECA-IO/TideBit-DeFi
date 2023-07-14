@@ -26,9 +26,9 @@ const BadgeSharing = (props: IPageProps) => {
   const [userTz, setUserTz, userTzRef] = useStateRef<number>(0);
 
   // TODO: for meta content (20230525 - Julian)
-  const img = `https://tidebit-defi-e1weaey40-cafeca.vercel.app/api/images/badge/${props.badgeId}?tz=${userTzRef.current}`; //`${DOMAIN}/api/images/badge/${props.badgeId}?tz=${userTzRef.current}`;
-  const displayImg = `https://tidebit-defi-e1weaey40-cafeca.vercel.app/images/badge/${props.badgeId}?tz=${userTzRef.current}`; //`/api/images/badge/${props.badgeId}?tz=${userTzRef.current}`;
-  const share = `https://tidebit-defi-e1weaey40-cafeca.vercel.app/share/badge/${props.badgeId}`; //`${DOMAIN}/share/badge/${props.badgeId}`;
+  const img = `https://tidebit-defi-qdh433fek-cafeca.vercel.app/api/images/badge/${props.badgeId}`; //`${DOMAIN}/api/images/badge/${props.badgeId}?tz=${userTzRef.current}`;
+  const displayImg = `https://tidebit-defi-qdh433fek-cafeca.vercel.app/api/images/badge/${props.badgeId}`; //`/api/images/badge/${props.badgeId}?tz=${userTzRef.current}`;
+  const share = `https://tidebit-defi-o7sfp9uq6-cafeca.vercel.app/share/badge/${props.badgeId}`; //`${DOMAIN}/share/badge/${props.badgeId}`;
 
   useEffect(() => {
     if (!appCtx.isInit) {
@@ -52,32 +52,30 @@ const BadgeSharing = (props: IPageProps) => {
   }
 
   const displayedImage = appCtx.isInit ? (
-    <Link href="/">
-      <div className="flex w-full justify-center">
-        <img
-          src={displayImg}
-          width={BG_WIDTH_OF_SHARING_RECORD}
-          height={BG_HEIGHT_OF_SHARING_RECORD}
-          alt="Badge record"
-          className="relative hover:opacity-90"
-        />
+    <div className="flex w-full justify-center">
+      <img
+        src={displayImg}
+        width={BG_WIDTH_OF_SHARING_RECORD}
+        height={BG_HEIGHT_OF_SHARING_RECORD}
+        alt="Badge record"
+        className="relative"
+      />
 
-        <div
-          className={`absolute top-0 z-10 h-${SIZE_OF_SHARING_BADGE}px w-${SIZE_OF_SHARING_BADGE}px`}
-        >
-          <div className="absolute bottom-16 right-0 mx-8 flex items-center space-x-8">
-            {/* Info:(20230714 - Julian) Market Link */}
-            <Link href={TBDURL.TRADE}>
-              <div className="flex h-100px w-70px"></div>
-            </Link>
-            {/* Info:(20230714 - Julian) Leaderboard Link */}
-            <Link href={TBDURL.LEADERBOARD}>
-              <div className="flex h-100px w-70px"></div>
-            </Link>
-          </div>
+      <div
+        className={`absolute top-0 z-10 h-${SIZE_OF_SHARING_BADGE}px w-${SIZE_OF_SHARING_BADGE}px`}
+      >
+        <div className="absolute bottom-16 right-0 mx-8 flex items-center space-x-8">
+          {/* Info:(20230714 - Julian) Market Link */}
+          <Link href={TBDURL.TRADE}>
+            <div className="flex h-100px w-70px"></div>
+          </Link>
+          {/* Info:(20230714 - Julian) Leaderboard Link */}
+          <Link href={TBDURL.LEADERBOARD}>
+            <div className="flex h-100px w-70px"></div>
+          </Link>
         </div>
       </div>
-    </Link>
+    </div>
   ) : null;
 
   return (

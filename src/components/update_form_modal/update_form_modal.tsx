@@ -46,6 +46,7 @@ import {IQuotation} from '../../interfaces/tidebit_defi_background/quotation';
 import {Code} from '../../constants/code';
 import {ToastTypeAndText} from '../../constants/toast_type';
 import {ToastId} from '../../constants/toast_id';
+import SafeMath from '../../lib/safe_math';
 
 type TranslateFunction = (s: string) => string;
 interface IUpdatedFormModal {
@@ -103,7 +104,10 @@ const UpdateFormModal = ({
     useStateRef(initialState);
 
   const [guaranteedStopFee, setGuaranteedStopFee, guaranteedStopFeeRef] = useStateRef(
-    Number(gsl) * openCfdDetails?.openPrice * openCfdDetails?.amount
+    +SafeMath.mult(
+      Number(gsl),
+      SafeMath.mult(openCfdDetails?.openPrice ?? 0, openCfdDetails?.amount ?? 0)
+    )
   );
 
   const [disableSlInput, setDisableSlInput, disableSlInputRef] = useStateRef(false);
@@ -579,11 +583,17 @@ const UpdateFormModal = ({
     // Info: minimum price (open price) with buffer (20230426 - Shirley)
     const caledTpLowerLimit =
       openCfdDetails.typeOfPosition === TypeOfPosition.BUY
-        ? roundToDecimalPlaces(openCfdDetails.openPrice * (1 + TP_SL_LIMIT_RATIO), 2)
+        ? roundToDecimalPlaces(
+            +SafeMath.mult(openCfdDetails.openPrice, SafeMath.plus(1, TP_SL_LIMIT_RATIO)),
+            2
+          )
         : 0;
     const caledTpUpperLimit =
       openCfdDetails.typeOfPosition === TypeOfPosition.SELL
-        ? roundToDecimalPlaces(openCfdDetails.openPrice * (1 - TP_SL_LIMIT_RATIO), 2)
+        ? roundToDecimalPlaces(
+            +SafeMath.mult(openCfdDetails.openPrice, SafeMath.minus(1, TP_SL_LIMIT_RATIO)),
+            2
+          )
         : TARGET_MAX_DIGITS;
 
     const isLiquidated =
@@ -598,14 +608,26 @@ const UpdateFormModal = ({
     const caledSlLowerLimit = isLiquidated
       ? roundToDecimalPlaces(openCfdDetails.liquidationPrice, 2) // Info: 相當於不能設定 SL (20230426 - Shirley)
       : openCfdDetails.typeOfPosition === TypeOfPosition.BUY
-      ? roundToDecimalPlaces(openCfdDetails.liquidationPrice * (1 + TP_SL_LIMIT_RATIO), 2)
-      : roundToDecimalPlaces(openCfdDetails.openPrice * (1 + TP_SL_LIMIT_RATIO), 2);
+      ? roundToDecimalPlaces(
+          +SafeMath.mult(openCfdDetails.liquidationPrice, SafeMath.plus(1, TP_SL_LIMIT_RATIO)),
+          2
+        )
+      : roundToDecimalPlaces(
+          +SafeMath.mult(openCfdDetails.openPrice, SafeMath.plus(1, TP_SL_LIMIT_RATIO)),
+          2
+        );
 
     const caledSlUpperLimit = isLiquidated
       ? roundToDecimalPlaces(openCfdDetails.liquidationPrice, 2) // Info: 相當於不能設定 SL (20230426 - Shirley)
       : openCfdDetails.typeOfPosition === TypeOfPosition.BUY
-      ? roundToDecimalPlaces(openCfdDetails.openPrice * (1 - TP_SL_LIMIT_RATIO), 2)
-      : roundToDecimalPlaces(openCfdDetails.liquidationPrice * (1 - TP_SL_LIMIT_RATIO), 2);
+      ? roundToDecimalPlaces(
+          +SafeMath.mult(openCfdDetails.openPrice, SafeMath.minus(1, TP_SL_LIMIT_RATIO)),
+          2
+        )
+      : roundToDecimalPlaces(
+          +SafeMath.mult(openCfdDetails.liquidationPrice, SafeMath.minus(1, TP_SL_LIMIT_RATIO)),
+          2
+        );
 
     const caledSl =
       marketCtx.selectedTicker?.price !== undefined
@@ -615,7 +637,7 @@ const UpdateFormModal = ({
             marketCtx.selectedTicker.price > openCfdDetails.liquidationPrice)
           ? roundToDecimalPlaces(openCfdDetails.liquidationPrice, 2)
           : roundToDecimalPlaces(
-              (marketCtx.selectedTicker.price + openCfdDetails.liquidationPrice) / 2,
+              +SafeMath.plus(marketCtx.selectedTicker.price, openCfdDetails.liquidationPrice) / 2,
               2
             )
         : roundToDecimalPlaces(openCfdDetails.liquidationPrice, 2);
@@ -631,10 +653,13 @@ const UpdateFormModal = ({
           : openCfdDetails.suggestion.stopLoss
         : openCfdDetails.suggestion.stopLoss;
 
-    const gslFee =
-      Number(marketCtx.guaranteedStopFeePercentage) *
-      openCfdDetails?.openPrice *
-      openCfdDetails?.amount;
+    const gslFee = roundToDecimalPlaces(
+      +SafeMath.mult(
+        SafeMath.mult(Number(marketCtx.guaranteedStopFeePercentage), openCfdDetails?.openPrice),
+        openCfdDetails?.amount
+      ),
+      2
+    );
 
     setDisableSlInput(isLiquidated);
 
@@ -664,7 +689,15 @@ const UpdateFormModal = ({
   };
 
   useEffect(() => {
-    setGuaranteedStopFee(Number(gsl) * openCfdDetails?.openPrice * openCfdDetails?.amount);
+    setGuaranteedStopFee(
+      roundToDecimalPlaces(
+        +SafeMath.mult(
+          Number(gsl),
+          SafeMath.mult(openCfdDetails?.openPrice, openCfdDetails?.amount)
+        ),
+        2
+      )
+    );
   }, [gsl, openCfdDetails?.openPrice, openCfdDetails?.amount]);
 
   useEffect(() => {

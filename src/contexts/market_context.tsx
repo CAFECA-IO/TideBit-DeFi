@@ -43,7 +43,7 @@ import {IQuotation} from '../interfaces/tidebit_defi_background/quotation';
 import {IRankingTimeSpan} from '../constants/ranking_time_span';
 import {ILeaderboard} from '../interfaces/tidebit_defi_background/leaderboard';
 import TradeBookInstance from '../lib/books/trade_book';
-import {millesecondsToSeconds} from '../lib/common';
+import {millesecondsToSeconds, roundToDecimalPlaces} from '../lib/common';
 import {
   IWebsiteReserve,
   dummyWebsiteReserve,
@@ -58,6 +58,7 @@ import {
   getDummyRecommendationNews,
 } from '../interfaces/tidebit_defi_background/news';
 import {ICandlestick} from '../interfaces/tidebit_defi_background/candlestick';
+import SafeMath from '../lib/safe_math';
 
 export interface IMarketProvider {
   children: React.ReactNode;
@@ -714,7 +715,10 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     const ticker: ITickerData = tickerBook.tickers[instId];
     if (!ticker) return 0;
     const {fluctuating} = ticker;
-    const spread = guaranteedStopFeePercentageRef.current * Math.abs(fluctuating);
+    const spread = +SafeMath.mult(guaranteedStopFeePercentageRef.current, Math.abs(fluctuating));
+    // Deprecated: [debug] (tzuhan - 20230712)
+    // eslint-disable-next-line no-console
+    // console.log(`getTickerSpread fluctuating: ${fluctuating}, spread: ${spread}, guaranteedStopFeePercentage: ${guaranteedStopFeePercentageRef.current}`);
     return spread;
   };
 
@@ -726,8 +730,13 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     const {price} = ticker;
     const spread = getTickerSpread(instId);
     const closePrice =
-      oppositeTypeOfPosition === TypeOfPosition.BUY ? price * (1 + spread) : price * (1 - spread);
-    return closePrice;
+      oppositeTypeOfPosition === TypeOfPosition.BUY
+        ? +SafeMath.mult(price, SafeMath.plus(1, spread))
+        : +SafeMath.mult(price, SafeMath.minus(1, spread));
+    // Deprecated: [debug] (tzuhan - 20230712)
+    // eslint-disable-next-line no-console
+    // console.log(`predictCFDClosePrice price: ${price}, closePrice: ${closePrice}`);
+    return roundToDecimalPlaces(closePrice, 2);
   };
 
   const init = async () => {

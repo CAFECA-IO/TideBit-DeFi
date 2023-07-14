@@ -19,7 +19,8 @@ import {ToastId} from '../../constants/toast_id';
 import useStateRef from 'react-usestateref';
 import {IApplyDepositOrder} from '../../interfaces/tidebit_defi_background/apply_deposit_order';
 import {FRACTION_DIGITS} from '../../constants/config';
-import {CustomError, isCustomError} from '../../lib/custom_error';
+import {isCustomError} from '../../lib/custom_error';
+import {useRouter} from 'next/router';
 
 type TranslateFunction = (s: string) => string;
 interface IDepositModal {
@@ -43,6 +44,7 @@ const DepositModal = ({
   const {depositCryptocurrencies} = useContext(MarketContext);
   const globalCtx = useGlobal();
   const userCtx = useContext(UserContext);
+  const {locale} = useRouter();
 
   const [showCryptoMenu, setShowCryptoMenu, showCryptoMenuRef] = useStateRef(false);
   const [selectedCrypto, setSelectedCrypto, selectedCryptoRef] = useStateRef(
@@ -160,7 +162,7 @@ const DepositModal = ({
             {
               nextAvailableTime: new Date(
                 (result.data as {nextAvailableTime: number}).nextAvailableTime * 1000
-              ).toLocaleString(),
+              ).toLocaleString(locale),
             }
           )})`,
         });

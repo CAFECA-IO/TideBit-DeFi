@@ -1,8 +1,7 @@
-import React, {useContext} from 'react';
+import React from 'react';
 import Image from 'next/image';
 import RippleButton from '../ripple_button/ripple_button';
 import {timestampToString} from '../../lib/common';
-import {UserContext} from '../../contexts/user_context';
 import {IBadgeModal} from '../../contexts/global_context';
 import {BADGE_LIST} from '../../constants/display';
 import {ImCross} from 'react-icons/im';
@@ -10,7 +9,7 @@ import {BsFacebook, BsTwitter, BsReddit} from 'react-icons/bs';
 import {useTranslation} from 'react-i18next';
 import useShareProcess from '../../lib/hooks/use_share_process';
 import {ShareType} from '../../constants/share_type';
-import {ISocialMedia, ShareSettings, SocialMediaConstant} from '../../constants/social_media';
+import {ShareSettings, SocialMediaConstant} from '../../constants/social_media';
 
 type TranslateFunction = (s: string) => string;
 

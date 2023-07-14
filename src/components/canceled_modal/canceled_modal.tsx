@@ -1,7 +1,6 @@
 import Lottie from 'lottie-react';
 import canceledAnimation from '../../../public/animation/lf30_editor_frrs7znj.json';
 import RippleButton from '../ripple_button/ripple_button';
-import Image from 'next/image';
 import {ImCross} from 'react-icons/im';
 
 export interface IFailedModal {
@@ -63,7 +62,7 @@ const CanceledModal = ({
   const isDisplayedModal = modalVisible ? (
     <>
       <div className="fixed inset-0 z-80 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur-sm focus:outline-none">
-        <div className="relative my-6 mx-auto w-auto max-w-xl">
+        <div className="relative mx-auto my-6 w-auto max-w-xl">
           {' '}
           <div
             id="canceledModal"
@@ -75,7 +74,7 @@ const CanceledModal = ({
                 {/* {(transferProcessStep = 'deposit-' ? 'Deposit' : 'Withdraw')} */}
               </h3>
               <button className="float-right ml-auto border-0 bg-transparent p-1 text-base font-semibold leading-none text-gray-300 outline-none focus:outline-none">
-                <span className="absolute top-5 right-5 block outline-none focus:outline-none">
+                <span className="absolute right-5 top-5 block outline-none focus:outline-none">
                   <ImCross onClick={modalClickHandler} />
                 </span>
               </button>

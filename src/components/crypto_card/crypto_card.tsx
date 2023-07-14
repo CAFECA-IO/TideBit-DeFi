@@ -26,6 +26,7 @@ export interface ILineGraphProps {
 export interface ICardProps {
   tokenImg: string;
   chain: string;
+  instId: string;
   currency: ICurrency;
   price: number;
   fluctuating: number;
@@ -51,6 +52,7 @@ const CryptoCard = ({
   gradientColor,
   tokenImg,
   chain,
+  instId,
   currency,
   price = 0,
   fluctuating = -1,
@@ -146,6 +148,7 @@ const CryptoCard = ({
         toolbar: {
           show: false,
         },
+        sparkline: {enabled: true},
       },
 
       dataLabels: {
@@ -193,12 +196,13 @@ const CryptoCard = ({
     });
 
     return (
-      <div>
+      <div className="pt-8 h-40px">
         <Chart
           options={dataSample.options}
           series={dataSample.series}
           type="line"
           width={lineGraphWidth}
+          height="40px"
         />
       </div>
     );
@@ -233,7 +237,7 @@ const CryptoCard = ({
       <div
         className={`${desktopVersionBreakpoint} ${otherProps?.className} relative m-0 hidden h-120px w-200px rounded-2xl border-0.5px p-0 hover:cursor-pointer ${gradientColor} bg-transparent bg-gradient-to-b opacity-90 shadow-lg`}
         onClick={() => {
-          marketCtx.selectTickerHandler(currency);
+          marketCtx.selectTickerHandler(instId);
           cardClickHandler && cardClickHandler();
         }}
       >
@@ -249,7 +253,7 @@ const CryptoCard = ({
           </div>
 
           <div className="flex flex-col justify-start">
-            <div className="pointer-events-none absolute top-4 h-96 bg-transparent">
+            <div className="pointer-events-none absolute top-4 h-60px z-100 bg-transparent">
               {lineGraph({
                 dataArray: lineGraphProps?.dataArray || sampleArray,
                 strokeColor: strokeColor || lineGraphProps?.strokeColor || thisRandomColor,
@@ -274,7 +278,7 @@ const CryptoCard = ({
       <div
         className={`${mobileVersionBreakpoint} ${otherProps?.className} relative m-0 h-81px w-134px rounded-2xl border-0.5px p-0 ${gradientColor} bg-black bg-gradient-to-b opacity-90 shadow-lg`}
         onClick={() => {
-          marketCtx.selectTickerHandler(currency);
+          marketCtx.selectTickerHandler(instId);
           cardClickHandler && cardClickHandler();
         }}
       >

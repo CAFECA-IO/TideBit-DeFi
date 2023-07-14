@@ -225,7 +225,7 @@
     "GUARANTEED_STOP_YES": "是",
     "GUARANTEED_STOP_NO": "否",
     "EXPIRATION_TIME": "到期時間",
-    "LIQUIDATION_TIME": "24 小時後到期",
+    "LIQUIDATION_TIME": "7 日後到期",
     "LIQUIDATION_PRICE": "清算價格",
     "PNL": "損益",
     "FEE": "手續費",

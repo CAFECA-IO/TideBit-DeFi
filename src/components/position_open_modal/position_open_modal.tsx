@@ -149,8 +149,8 @@ const PositionOpenModal = ({
         //   ...receipt.order,
         //   // state: OrderState.OPENING,
         // };
-        const closePrice = marketCtx.predictCFDClosePrice(cfd.targetAsset, cfd.typeOfPosition);
-        const spread = marketCtx.getTickerSpread(cfd.targetAsset);
+        const closePrice = marketCtx.predictCFDClosePrice(cfd.ticker, cfd.typeOfPosition);
+        const spread = marketCtx.getTickerSpread(cfd.ticker);
 
         const pnl = toPnl({
           openPrice: cfd.openPrice,
@@ -255,7 +255,7 @@ const PositionOpenModal = ({
       if (
         quotation.success &&
         data.typeOfPosition === openCfdRequest.typeOfPosition &&
-        data.ticker.split('-')[0] === openCfdRequest.ticker &&
+        data.ticker === openCfdRequest.ticker &&
         quotation.data !== null
       ) {
         globalCtx.eliminateToasts(ToastId.GET_QUOTATION_ERROR);
@@ -265,7 +265,7 @@ const PositionOpenModal = ({
         setQuotationError(true);
 
         // TODO: check the unit asset (20230612 - Shirley)
-        if (data.ticker.split('-')[0] !== openCfdRequest.ticker) {
+        if (data.ticker !== openCfdRequest.ticker) {
           setQuotationErrorMessage({
             success: false,
             code: Code.INCONSISTENT_TICKER_OF_QUOTATION,
@@ -361,7 +361,7 @@ const PositionOpenModal = ({
     }
 
     // TODO: check the unit asset (20230612 - Shirley)
-    if (openCfdRequest.quotation.ticker.split('-')[0] !== openCfdRequest.ticker) {
+    if (openCfdRequest.quotation.ticker !== openCfdRequest.ticker) {
       setQuotationError(true);
       setQuotationErrorMessage({
         success: false,
@@ -431,7 +431,7 @@ const PositionOpenModal = ({
           height={30}
           alt="ticker icon"
         />
-        <div className="text-2xl">{marketCtx.selectedTicker?.currency}</div>
+        <div className="text-2xl">{marketCtx.selectedTicker?.instId}</div>
       </div>
 
       <div className="absolute right-6 top-90px flex items-center space-x-1 text-center">

@@ -17,10 +17,11 @@ function randomIntFromInterval(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
-export const getDummyQuotation = (currency: ICurrency, typeOfPosition: ITypeOfPosition) => {
+export const getDummyQuotation = (ticker: string, typeOfPosition: ITypeOfPosition) => {
+  const [targetAsset, unitAsset] = ticker.split('-');
   const quotation: IQuotation = {
-    ticker: currency,
-    targetAsset: currency,
+    ticker: ticker,
+    targetAsset: targetAsset as ICurrency,
     unitAsset: unitAsset,
     typeOfPosition,
     price: randomIntFromInterval(1300, 2200),

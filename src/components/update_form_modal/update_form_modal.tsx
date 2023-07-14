@@ -481,7 +481,7 @@ const UpdateFormModal = ({
     }
   };
 
-  const nowTimestamp = getTimestamp();
+  const nowTimestamp = getTimestamp() as number;
   const remainSecs = openCfdDetails?.liquidationTime - nowTimestamp;
 
   const remainTime =
@@ -489,16 +489,20 @@ const UpdateFormModal = ({
       ? Math.round(remainSecs)
       : remainSecs < 3600
       ? Math.round(remainSecs / 60)
-      : Math.round(remainSecs / 3600);
+      : remainSecs < 86400
+      ? Math.round(remainSecs / 3600)
+      : Math.round(remainSecs / 86400);
 
   const label =
     remainSecs < 60
       ? [`${Math.round(remainSecs)} S`]
       : remainSecs < 3600
       ? [`${Math.round(remainSecs / 60)} M`]
-      : [`${Math.round(remainSecs / 3600)} H`];
+      : remainSecs < 86400
+      ? [`${Math.round(remainSecs / 3600)} H`]
+      : [`${Math.round(remainSecs / 86400)} D`];
 
-  const denominator = remainSecs < 60 ? 60 : remainSecs < 3600 ? 60 : 24;
+  const denominator = remainSecs < 60 ? 60 : remainSecs < 3600 ? 60 : remainSecs < 86400 ? 24 : 7;
 
   const closedModalClickHandler = async () => {
     globalCtx.visibleUpdateFormModalHandler();
@@ -511,7 +515,7 @@ const UpdateFormModal = ({
       closePrice: quotation.price,
       amount: cfd.amount,
       typeOfPosition: cfd.typeOfPosition,
-      spread: marketCtx.getTickerSpread(cfd.targetAsset),
+      spread: marketCtx.getTickerSpread(cfd.ticker),
     });
 
     return {
@@ -535,7 +539,7 @@ const UpdateFormModal = ({
       if (
         quotation.success &&
         data.typeOfPosition === oppositeTypeOfPosition &&
-        data.ticker.split('-')[0] === openCfdDetails.ticker &&
+        data.ticker === openCfdDetails.ticker &&
         quotation.data !== null
       ) {
         const displayedCloseOrder = toDisplayCloseOrder(openCfdDetails, data);
@@ -693,7 +697,7 @@ const UpdateFormModal = ({
               <div className="mx-10 mt-6 flex w-full justify-between">
                 <div className="flex items-center space-x-3 text-center text-lightWhite">
                   <Image
-                    src={`/asset_icon/${openCfdDetails?.ticker.toLowerCase()}.svg`}
+                    src={`/asset_icon/${openCfdDetails?.targetAsset.toLowerCase()}.svg`}
                     width={30}
                     height={30}
                     alt="icon"
@@ -751,7 +755,7 @@ const UpdateFormModal = ({
                         UNIVERSAL_NUMBER_FORMAT_LOCALE,
                         FRACTION_DIGITS
                       ) ?? 0}
-                      <span className="ml-1 text-lightGray">{openCfdDetails?.ticker}</span>
+                      <span className="ml-1 text-lightGray">{openCfdDetails?.targetAsset}</span>
                     </div>
                   </div>
 

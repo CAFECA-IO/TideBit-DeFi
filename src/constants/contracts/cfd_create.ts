@@ -56,7 +56,7 @@ const CFDOrderCreate: IEIP712Data = {
       - This is DApp Specific
       - Be as explicit as possible when building out the message schema.
       */
-    ticker: 'ETH',
+    ticker: 'ETH-USDT',
     typeOfPosition: 'BUY',
     price: 21023,
     amount: 2,
@@ -74,7 +74,7 @@ const CFDOrderCreate: IEIP712Data = {
     createTimestamp: Math.ceil(Date.now()),
     fee: 0,
     quotation: {
-      ticker: 'ETH',
+      ticker: 'ETH-USDT',
       targetAsset: 'ETH',
       unitAsset: 'USDT',
       price: 21023,

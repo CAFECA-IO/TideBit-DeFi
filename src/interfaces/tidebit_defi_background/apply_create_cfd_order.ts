@@ -33,23 +33,24 @@ function randomIntFromInterval(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
-export const getDummyApplyCreateCFDOrder = (currency: ICurrency) => {
+export const getDummyApplyCreateCFDOrder = (ticker: string) => {
   const typeOfPosition = Math.random() > 0.5 ? TypeOfPosition.BUY : TypeOfPosition.SELL;
+  const [targetAsset, unitAsset] = ticker.split('-');
   const dummyApplyCreateCFDOrder: IApplyCreateCFDOrder = {
     orderType: OrderType.CFD,
     operation: CFDOperation.CREATE,
-    ticker: currency,
+    ticker: ticker,
     amount: 1.8,
     typeOfPosition: typeOfPosition,
     leverage: 5,
     price: randomIntFromInterval(1000, 10000),
-    targetAsset: currency,
+    targetAsset: targetAsset as ICurrency,
     unitAsset: unitAsset,
     margin: {asset: unitAsset, amount: randomIntFromInterval(10, 100)},
     takeProfit: 0,
     stopLoss: 0,
     fee: 0,
-    quotation: getDummyQuotation(currency, typeOfPosition), // 報價單
+    quotation: getDummyQuotation(ticker, typeOfPosition), // 報價單
     liquidationPrice: randomIntFromInterval(1000, 10000),
     liquidationTime: getTimestamp() + 86400, // openTimestamp + 86400
     guaranteedStop: false,

@@ -19,7 +19,8 @@ interface ITickerSelectorBox {
   tickerSelectorBoxClickHandler: () => void;
 }
 
-interface ICryptoCardData {
+export interface ICryptoCardData {
+  instId: string;
   currency: ICurrency;
   name: string;
   star: boolean;
@@ -140,6 +141,7 @@ const TickerSelectorBox = ({
           key={cryptoCard.currency}
           cardClickHandler={() => cardClickHandler(cryptoCard.currency)}
           className="mt-4 ml-4"
+          instId={cryptoCard.instId}
           lineGraphProps={cryptoCard.lineGraphProps}
           star={true}
           starColor={cryptoCard.starColor}
@@ -159,6 +161,7 @@ const TickerSelectorBox = ({
         key={cryptoCard.currency}
         cardClickHandler={() => cardClickHandler(cryptoCard.currency)}
         className="mt-0"
+        instId={cryptoCard.instId}
         lineGraphProps={cryptoCard.lineGraphProps}
         star={true}
         starColor={cryptoCard.starColor}
@@ -181,6 +184,7 @@ const TickerSelectorBox = ({
           key={cryptoCard.currency}
           cardClickHandler={() => cardClickHandler(cryptoCard.currency)}
           className="mt-4 ml-4"
+          instId={cryptoCard.instId}
           lineGraphProps={cryptoCard.lineGraphProps}
           star={true}
           starColor={cryptoCard.starColor}
@@ -200,6 +204,7 @@ const TickerSelectorBox = ({
         key={cryptoCard.currency}
         cardClickHandler={() => cardClickHandler(cryptoCard.currency)}
         className="mt-0"
+        instId={cryptoCard.instId}
         lineGraphProps={cryptoCard.lineGraphProps}
         star={true}
         starColor={cryptoCard.starColor}

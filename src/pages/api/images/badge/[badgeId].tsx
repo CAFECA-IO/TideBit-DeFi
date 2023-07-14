@@ -69,7 +69,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   // Info:(20230526 - Julian) adjustTimestamp
   const {date: receiveDate} = timestampToString(receiveTime);
 
-  // ToDo: (20230525 - Julian) QRCode
+  // Info: (20230525 - Julian) QRCode
   const qrcodeUrl = DOMAIN + `/elements/tidebit_qrcode.svg`;
 
   const displayedUser = userId.slice(-1).toUpperCase();
@@ -79,6 +79,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const badgeImage = BADGE_LIST.find(badge => badge.name === badgeName)?.icon ?? '';
   const badgeImageUrl = DOMAIN + badgeImage;
   const bgImageUrl = DOMAIN + '/elements/share_badge_bg@2x.png';
+
+  // Info:(20230714 - Julian) Page Link icon
+  const marketIconUrl = DOMAIN + '/elements/market_icon@2x.png';
+  const leaderboardIconUrl = DOMAIN + '/elements/leaderboard_icon@2x.png';
 
   const BarlowBuffer = Buffer.from(BARLOW_BASE64, 'base64');
 
@@ -219,9 +223,26 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
               style={{
                 display: 'flex',
                 justifySelf: 'end',
+                marginTop: 'auto',
                 marginLeft: 'auto',
               }}
-            ></div>
+            >
+              <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                <img src={`${marketIconUrl}`} width={70} height={70} alt="market_icon" />
+                <p style={{fontSize: '12px', color: '#F2F2F2', marginTop: '0px'}}>Market</p>
+              </div>
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  marginLeft: '30px',
+                }}
+              >
+                <img src={`${leaderboardIconUrl}`} width={70} height={70} alt="market_icon" />
+                <p style={{fontSize: '12px', color: '#F2F2F2', marginTop: '0px'}}>Leaderboard</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>

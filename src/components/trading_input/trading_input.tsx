@@ -3,6 +3,7 @@ import {
   DELAYED_HIDDEN_SECONDS,
   INPUT_VALIDATION_DELAY,
   TRADING_INPUT_STEP,
+  TYPING_KEYUP_DELAY,
 } from '../../constants/display';
 import useStateRef from 'react-usestateref';
 
@@ -129,7 +130,7 @@ const TradingInput = ({
 
     const newTimeout = setTimeout(() => {
       setIsTyping(false);
-    }, INPUT_VALIDATION_DELAY);
+    }, TYPING_KEYUP_DELAY);
 
     setTypingTimeout(newTimeout);
   };

@@ -23,6 +23,7 @@ import useShareProcess from '../../lib/hooks/use_share_process';
 import {ShareType} from '../../constants/share_type';
 import {ISocialMedia, ShareSettings, SocialMediaConstant} from '../../constants/social_media';
 import {MarketContext} from '../../contexts/market_context';
+import SafeMath from '../../lib/safe_math';
 
 type TranslateFunction = (s: string) => string;
 interface IHistoryPositionModal {
@@ -61,7 +62,7 @@ const HistoryPositionModal = ({
   const layoutInsideBorder = 'mx-5 my-4 flex justify-between';
 
   const closeValue = roundToDecimalPlaces(
-    closedCfdDetails.closePrice! * closedCfdDetails.amount,
+    +SafeMath.mult(closedCfdDetails.closePrice!, closedCfdDetails.amount),
     2
   );
   const spread = marketCtx.getTickerSpread(closedCfdDetails.ticker);

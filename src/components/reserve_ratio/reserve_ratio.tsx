@@ -1,8 +1,5 @@
 import React, {useContext} from 'react';
 import {MarketContext} from '../../contexts/market_context';
-import Image from 'next/image';
-import {FaLink} from 'react-icons/fa';
-import {BiLinkAlt} from 'react-icons/bi';
 import {useTranslation} from 'next-i18next';
 import SafeMath from '../../lib/safe_math';
 import {UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';

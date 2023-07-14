@@ -49,6 +49,7 @@ const I18n = ({langIsOpen, setLangIsOpen}: II18nParams) => {
           {internationalizationList.map((item, index) => (
             <li key={index} onClick={desktopClickHandler}>
               <Link
+                scroll={false}
                 locale={item.value}
                 href={asPath}
                 className="block rounded-none py-2 text-center hover:bg-darkGray5"
@@ -76,6 +77,7 @@ const I18n = ({langIsOpen, setLangIsOpen}: II18nParams) => {
           {internationalizationList.map((item, index) => (
             <li key={index} onClick={mobileClickHandler}>
               <Link
+                scroll={false}
                 locale={item.value}
                 href={asPath}
                 className="block rounded-none px-3 py-7 font-medium hover:cursor-pointer hover:text-tidebitTheme"

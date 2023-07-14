@@ -35,9 +35,8 @@ interface IValidateInput {
   lowerLimit?: number;
 }
 
-export const roundToDecimalPlaces = (val: number, precision: number): number => {
-  const roundedNumber = Number(val.toFixed(precision));
-  return roundedNumber;
+export const roundToDecimalPlaces = (number: number, decimal: number): number => {
+  return Math.ceil((number + Number.EPSILON) * Math.pow(10, decimal)) / Math.pow(10, decimal);
 };
 
 export function randomIntFromInterval(min: number, max: number) {
@@ -238,17 +237,6 @@ export const getTimestampInMilliseconds = () => Date.now();
 
 export const millesecondsToSeconds = (milleseconds: number) => Math.ceil(milleseconds / 1000);
 
-export const twoDecimal = (num: number, mul?: number): number => {
-  const roundedNum = Math.round(num * 100) / 100;
-  const str = roundedNum.toFixed(2).replace(/\.?0+$/, '');
-  const dec = str.split('.');
-  const numDec = dec.length === 2 ? dec[1].length : 0;
-
-  return mul
-    ? Number((num * mul).toFixed(numDec).replace(/\.?0+$/, ''))
-    : Number(num.toFixed(numDec).replace(/\.?0+$/, ''));
-};
-
 export const getNowSeconds = () => {
   return Math.ceil(new Date().getTime() / 1000);
 };
@@ -331,12 +319,12 @@ export const toDisplayCFDOrder = (cfdOrder: ICFDOrder): IDisplayCFDOrder => {
   */
   const rTp =
     cfdOrder.typeOfPosition === TypeOfPosition.BUY
-      ? twoDecimal(cfdOrder.openPrice * (1 + SUGGEST_TP / cfdOrder.leverage))
-      : twoDecimal(cfdOrder.openPrice * (1 - SUGGEST_TP / cfdOrder.leverage));
+      ? roundToDecimalPlaces(cfdOrder.openPrice * (1 + SUGGEST_TP / cfdOrder.leverage), 2)
+      : roundToDecimalPlaces(cfdOrder.openPrice * (1 - SUGGEST_TP / cfdOrder.leverage), 2);
   const rSl =
     cfdOrder.typeOfPosition === TypeOfPosition.BUY
-      ? twoDecimal(cfdOrder.openPrice * (1 - SUGGEST_SL / cfdOrder.leverage))
-      : twoDecimal(cfdOrder.openPrice * (1 + SUGGEST_SL / cfdOrder.leverage));
+      ? roundToDecimalPlaces(cfdOrder.openPrice * (1 - SUGGEST_SL / cfdOrder.leverage), 2)
+      : roundToDecimalPlaces(cfdOrder.openPrice * (1 + SUGGEST_SL / cfdOrder.leverage), 2);
   const suggestion = {
     takeProfit: rTp,
     stopLoss: rSl,

@@ -46,6 +46,7 @@ import {ToastId} from '../../constants/toast_id';
 import {CustomError, isCustomError} from '../../lib/custom_error';
 import {ICFDOrder, IOrder} from '../../interfaces/tidebit_defi_background/order';
 import {OrderState} from '../../constants/order_state';
+import SafeMath from '../../lib/safe_math';
 
 type TranslateFunction = (s: string) => string;
 interface IPositionOpenModal {
@@ -323,12 +324,12 @@ const PositionOpenModal = ({
 
     const newPrice = newQuotation.price;
 
-    const newMargin = (Number(newQuotation.price) * Number(openCfdRequest.amount)) / 5;
+    const newMargin = +SafeMath.div(SafeMath.mult(newQuotation.price, openCfdRequest.amount), 5);
     const newLiquidationPrice =
       openCfdRequest.typeOfPosition === TypeOfPosition.BUY
-        ? newQuotation.price * (1 - LIQUIDATION_FIVE_LEVERAGE)
-        : newQuotation.price * (1 + LIQUIDATION_FIVE_LEVERAGE);
-    const gslFee = Number(gsl) * openCfdRequest.amount * newPrice;
+        ? +SafeMath.mult(newQuotation.price, SafeMath.minus(1, LIQUIDATION_FIVE_LEVERAGE))
+        : +SafeMath.mult(newQuotation.price, SafeMath.plus(1, LIQUIDATION_FIVE_LEVERAGE));
+    const gslFee = +SafeMath.mult(gsl ?? 0, SafeMath.mult(openCfdRequest.amount, newPrice));
 
     globalCtx.dataPositionOpenModalHandler({
       openCfdRequest: {
@@ -466,7 +467,7 @@ const PositionOpenModal = ({
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">{t('POSITION_MODAL.AMOUNT')}</div>
               <div className="">
-                {openCfdRequest.amount.toFixed(2)}
+                {openCfdRequest.amount}
                 <span className="ml-1 text-lightGray">{marketCtx.selectedTicker?.currency}</span>
               </div>
             </div>
@@ -474,7 +475,7 @@ const PositionOpenModal = ({
             <div className={`${layoutInsideBorder} whitespace-nowrap`}>
               <div className="text-lightGray">{t('POSITION_MODAL.REQUIRED_MARGIN')}</div>
               <div className={`${dataRenewedStyle}`}>
-                {openCfdRequest.margin.amount.toFixed(2)}
+                {openCfdRequest.margin.amount}
                 <span className="ml-1 text-lightGray">{unitAsset}</span>
               </div>
             </div>

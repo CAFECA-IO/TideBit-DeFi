@@ -237,16 +237,7 @@ const PersonalAchievementModal = ({
       : null;
     const hintArrowTop = isReceived ? 'top-12' : 'top-8';
 
-    const badgeModalData = {
-      badgeData: receivedBadgeList[index],
-      // Desprecated: (20230628 - Julian) 這邊的 badgeData 是舊的資料，不需要再傳入
-      // badgeData: {
-      //   badgeId: badgeList[index].badgeId,
-      //   badgeName: name,
-      //   userId: userId,
-      //   receiveTime: badgeList[index].receiveTime,
-      // },
-    };
+    const badgeModalData = {badgeData: receivedBadgeList[index]};
 
     /* Info: (20230517 - Julian) 只有自己的徽章才能點擊並分享 */
     const clickBadgeHandler =

@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useRef, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import Toggle from '../toggle/toggle';
 import TradingInput from '../trading_input/trading_input';
 import {AiOutlineQuestionCircle} from 'react-icons/ai';
@@ -19,7 +19,7 @@ import {
   SUGGEST_SL,
   LIQUIDATION_FIVE_LEVERAGE,
   FRACTION_DIGITS,
-  TP_SL_LIMIT_PERCENT,
+  TP_SL_LIMIT_RATIO,
   DEFAULT_TICKER,
   DEFAULT_CURRENCY,
   CFD_LIQUIDATION_TIME,
@@ -45,6 +45,7 @@ import {defaultResultFailed} from '../../interfaces/tidebit_defi_background/resu
 import {IApplyCreateCFDOrder} from '../../interfaces/tidebit_defi_background/apply_create_cfd_order';
 import {CFDOperation} from '../../constants/cfd_order_type';
 import {TypeOfValidation} from '../../constants/validation';
+import SafeMath from '../../lib/safe_math';
 
 type TranslateFunction = (s: string) => string;
 
@@ -78,19 +79,31 @@ const TradeTab = () => {
   const [targetInputValue, setTargetInputValue, targetInputValueRef] = useStateRef(0.02);
 
   const [longTpValue, setLongTpValue, longTpValueRef] = useStateRef(
-    Number((Number(longPriceRef.current) * (1 + SUGGEST_TP / leverage)).toFixed(2))
+    roundToDecimalPlaces(
+      +SafeMath.mult(longPriceRef.current, SafeMath.plus(1, SafeMath.div(SUGGEST_TP, leverage))),
+      2
+    )
   );
   const [longSlValue, setLongSlValue, longSlValueRef] = useStateRef(
-    Number((Number(longPriceRef.current) * (1 - SUGGEST_SL / leverage)).toFixed(2))
+    roundToDecimalPlaces(
+      +SafeMath.mult(longPriceRef.current, SafeMath.minus(1, SafeMath.div(SUGGEST_SL, leverage))),
+      2
+    )
   );
   const [longTpToggle, setLongTpToggle] = useState(false);
   const [longSlToggle, setLongSlToggle] = useState(false);
 
   const [shortTpValue, setShortTpValue, shortTpValueRef] = useStateRef(
-    Number((Number(shortPriceRef.current) * (1 - SUGGEST_TP / leverage)).toFixed(2))
+    roundToDecimalPlaces(
+      +SafeMath.mult(shortPriceRef.current, SafeMath.minus(1, SafeMath.div(SUGGEST_TP, leverage))),
+      2
+    )
   );
   const [shortSlValue, setShortSlValue, shortSlValueRef] = useStateRef(
-    Number((Number(shortPriceRef.current) * (1 + SUGGEST_SL / leverage)).toFixed(2))
+    roundToDecimalPlaces(
+      +SafeMath.mult(shortPriceRef.current, SafeMath.plus(1, SafeMath.div(SUGGEST_SL, leverage))),
+      2
+    )
   );
   const [shortTpToggle, setShortTpToggle] = useState(false);
   const [shortSlToggle, setShortSlToggle] = useState(false);
@@ -111,17 +124,23 @@ const TradeTab = () => {
   const [shortGuaranteedStopChecked, setShortGuaranteedStopChecked] = useState(false);
 
   const [requiredMarginLong, setRequiredMarginLong, requiredMarginLongRef] = useStateRef(
-    roundToDecimalPlaces((targetInputValue * Number(longPriceRef.current)) / leverage, 2)
+    roundToDecimalPlaces(
+      +SafeMath.div(SafeMath.mult(targetInputValue, longPriceRef.current), leverage),
+      2
+    )
   );
   const [valueOfPositionLong, setValueOfPositionLong, valueOfPositionLongRef] = useStateRef(
-    roundToDecimalPlaces(targetInputValue * Number(longPriceRef.current), 2)
+    roundToDecimalPlaces(+SafeMath.mult(targetInputValue, longPriceRef.current), 2)
   );
 
   const [requiredMarginShort, setRequiredMarginShort, requiredMarginShortRef] = useStateRef(
-    roundToDecimalPlaces((targetInputValue * Number(shortPriceRef.current)) / leverage, 2)
+    roundToDecimalPlaces(
+      +SafeMath.div(SafeMath.mult(targetInputValue, shortPriceRef.current), leverage),
+      2
+    )
   );
   const [valueOfPositionShort, setValueOfPositionShort, valueOfPositionShortRef] = useStateRef(
-    roundToDecimalPlaces(targetInputValue * Number(shortPriceRef.current), 2)
+    roundToDecimalPlaces(+SafeMath.mult(targetInputValue, shortPriceRef.current), 2)
   );
 
   const [marginWarningLong, setMarginWarningLong, marginWarningLongRef] = useStateRef(false);
@@ -131,28 +150,32 @@ const TradeTab = () => {
   const [shortBtnDisabled, setShortBtnDisabled, shortBtnDisabledRef] = useStateRef(false);
 
   const [targetLengthLong, setTargetLengthLong] = useState(
-    roundToDecimalPlaces((targetInputValue * Number(longPriceRef.current)) / leverage, 2).toString()
-      .length
+    roundToDecimalPlaces(
+      +SafeMath.div(SafeMath.mult(targetInputValue, longPriceRef.current), leverage),
+      2
+    ).toString().length
   );
   const [targetLengthShort, setTargetLengthShort] = useState(
     roundToDecimalPlaces(
-      (targetInputValue * Number(shortPriceRef.current)) / leverage,
+      +SafeMath.div(SafeMath.mult(targetInputValue, shortPriceRef.current), leverage),
       2
     ).toString().length
   );
 
   const [valueOfPositionLengthLong, setValueOfPositionLengthLong] = useState(
-    roundToDecimalPlaces(targetInputValue * Number(longPriceRef.current), 2).toString().length
+    roundToDecimalPlaces(+SafeMath.mult(targetInputValue, longPriceRef.current), 2).toString()
+      .length
   );
   const [valueOfPositionLengthShort, setValueOfPositionLengthShort] = useState(
-    roundToDecimalPlaces(targetInputValue * Number(shortPriceRef.current), 2).toString().length
+    roundToDecimalPlaces(+SafeMath.mult(targetInputValue, shortPriceRef.current), 2).toString()
+      .length
   );
 
   const [guaranteedStopFeeLong, setGuaranteedStopFeeLong, guaranteedStopFeeLongRef] = useStateRef(
-    Number(gsl) * valueOfPositionLongRef.current
+    +SafeMath.mult(gsl ?? 0, valueOfPositionLongRef.current)
   );
   const [guaranteedStopFeeShort, setGuaranteedStopFeeShort, guaranteedStopFeeShortRef] =
-    useStateRef(Number(gsl) * valueOfPositionShortRef.current);
+    useStateRef(+SafeMath.mult(gsl ?? 0, valueOfPositionShortRef.current));
 
   const [longSlLowerLimit, setLongSlLowerLimit, longSlLowerLimitRef] = useStateRef(0);
   const [longSlUpperLimit, setLongSlUpperLimit, longSlUpperLimitRef] = useStateRef(0);
@@ -166,6 +189,13 @@ const TradeTab = () => {
   const [longSlSuggestion, setLongSlSuggestion, longSlSuggestionRef] = useStateRef(0);
   const [shortTpSuggestion, setShortTpSuggestion, shortTpSuggestionRef] = useStateRef(0);
   const [shortSlSuggestion, setShortSlSuggestion, shortSlSuggestionRef] = useStateRef(0);
+
+  const [isTyping, setIsTyping, isTypingRef] = useStateRef({
+    longTp: false,
+    longSl: false,
+    shortTp: false,
+    shortSl: false,
+  });
 
   // Info: Fetch quotation the first time (20230327 - Shirley)
   useEffect(() => {
@@ -191,10 +221,21 @@ const TradeTab = () => {
   useEffect(() => {
     setPrice();
     setTpSlBounds();
-    checkTpSlWithinBounds();
+
+    if (
+      !isTypingRef.current.longSl &&
+      !isTypingRef.current.shortSl &&
+      !isTypingRef.current.longTp &&
+      !isTypingRef.current.shortTp
+    ) {
+      checkTpSlWithinBounds();
+    }
+
     renewPosition();
-    // eslint-disable-next-line no-console
-  }, [marketCtx.selectedTicker?.price]);
+
+    // TODO: FIXME: [To be optimized] May run more than 10 times in a second (20230714 - Shirley)
+    if (!longTpToggle && !shortTpToggle) setSuggestions();
+  }, [marketCtx.selectedTicker?.price, isTypingRef.current]);
 
   // Info: Fetch quotation when ticker changed (20230327 - Shirley)
   useEffect(() => {
@@ -218,6 +259,45 @@ const TradeTab = () => {
     shortTpValueRef.current,
     shortSlValueRef.current,
   ]);
+
+  const handleTypingStatusChangeRouter = (typingStatus: boolean) => {
+    const longTp = (typingStatus: boolean) => {
+      setIsTyping(prev => ({
+        ...prev,
+        longTp: typingStatus,
+      }));
+    };
+
+    const longSl = (typingStatus: boolean) => {
+      setIsTyping(prev => ({
+        ...prev,
+        longSl: typingStatus,
+      }));
+    };
+
+    const shortTp = (typingStatus: boolean) => {
+      setIsTyping(prev => ({
+        ...prev,
+        shortTp: typingStatus,
+      }));
+    };
+
+    const shortSl = (typingStatus: boolean) => {
+      setIsTyping(prev => ({
+        ...prev,
+        shortSl: typingStatus,
+      }));
+    };
+
+    return {
+      longTp,
+      longSl,
+      shortTp,
+      shortSl,
+    };
+  };
+
+  const handleTypingStatusChange = handleTypingStatusChangeRouter(false);
 
   const setPrice = () => {
     if (marketCtx.selectedTicker?.instId) {
@@ -462,31 +542,43 @@ const TradeTab = () => {
 
   const setTpSlBounds = () => {
     const longTpLowerBound = roundToDecimalPlaces(
-      Number(longPriceRef.current) * (1 + TP_SL_LIMIT_PERCENT),
+      +SafeMath.mult(longPriceRef.current, SafeMath.plus(1, TP_SL_LIMIT_RATIO)),
       2
     );
     const shortTpUpperBound = roundToDecimalPlaces(
-      Number(shortPriceRef.current) * (1 - TP_SL_LIMIT_PERCENT),
+      +SafeMath.mult(shortPriceRef.current, SafeMath.minus(1, TP_SL_LIMIT_RATIO)),
       2
     );
 
     const longSlLowerBound = roundToDecimalPlaces(
-      Number(longPriceRef.current) * (1 - LIQUIDATION_FIVE_LEVERAGE) * (1 + TP_SL_LIMIT_PERCENT),
+      +SafeMath.mult(
+        longPriceRef.current,
+        SafeMath.mult(
+          SafeMath.minus(1, LIQUIDATION_FIVE_LEVERAGE),
+          SafeMath.plus(1, TP_SL_LIMIT_RATIO)
+        )
+      ),
       2
     );
 
     const shortSlUpperBound = roundToDecimalPlaces(
-      Number(shortPriceRef.current) * (1 + LIQUIDATION_FIVE_LEVERAGE) * (1 - TP_SL_LIMIT_PERCENT),
+      +SafeMath.mult(
+        shortPriceRef.current,
+        SafeMath.mult(
+          SafeMath.plus(1, LIQUIDATION_FIVE_LEVERAGE),
+          SafeMath.minus(1, TP_SL_LIMIT_RATIO)
+        )
+      ),
       2
     );
 
     const longSlUpperBound = roundToDecimalPlaces(
-      Number(longPriceRef.current) * (1 - TP_SL_LIMIT_PERCENT),
+      +SafeMath.mult(longPriceRef.current, SafeMath.minus(1, TP_SL_LIMIT_RATIO)),
       2
     );
 
     const shortSlLowerBound = roundToDecimalPlaces(
-      Number(shortPriceRef.current) * (1 + TP_SL_LIMIT_PERCENT),
+      +SafeMath.mult(shortPriceRef.current, SafeMath.plus(1, TP_SL_LIMIT_RATIO)),
       2
     );
 
@@ -505,10 +597,18 @@ const TradeTab = () => {
     const tpTimes = SUGGEST_TP / leverage;
     const slTimes = SUGGEST_SL / leverage;
 
-    setLongTpSuggestion(Number((Number(longPriceRef.current) * (1 + tpTimes)).toFixed(2)));
-    setLongSlSuggestion(Number((Number(longPriceRef.current) * (1 - slTimes)).toFixed(2)));
-    setShortTpSuggestion(Number((Number(shortPriceRef.current) * (1 - tpTimes)).toFixed(2)));
-    setShortSlSuggestion(Number((Number(shortPriceRef.current) * (1 + slTimes)).toFixed(2)));
+    setLongTpSuggestion(
+      roundToDecimalPlaces(+SafeMath.mult(longPriceRef.current, SafeMath.plus(1, tpTimes)), 2)
+    );
+    setLongSlSuggestion(
+      roundToDecimalPlaces(+SafeMath.mult(longPriceRef.current, SafeMath.minus(1, slTimes)), 2)
+    );
+    setShortTpSuggestion(
+      roundToDecimalPlaces(+SafeMath.mult(shortPriceRef.current, SafeMath.minus(1, tpTimes)), 2)
+    );
+    setShortSlSuggestion(
+      roundToDecimalPlaces(+SafeMath.mult(shortPriceRef.current, SafeMath.plus(1, slTimes)), 2)
+    );
   };
 
   // Info: suggest the tp / sl in the beginning (20230329 - Shirley)
@@ -520,18 +620,18 @@ const TradeTab = () => {
   };
 
   // Info: renew the value of position when target input changed (20230328 - Shirley)
-  const renewPosition = async () => {
+  const renewPosition = () => {
     // Long
-    const newLongValue = targetInputValueRef.current * Number(longPriceRef.current);
+    const newLongValue = +SafeMath.mult(targetInputValueRef.current, longPriceRef.current);
 
     const roundedLongValue = roundToDecimalPlaces(newLongValue, 2);
     setValueOfPositionLong(roundedLongValue);
 
-    const marginLong = newLongValue / leverage;
+    const marginLong = +SafeMath.div(newLongValue, leverage);
     const roundedMarginLong = roundToDecimalPlaces(marginLong, 2);
     setRequiredMarginLong(roundedMarginLong);
 
-    setMarginWarningLong(marginLong > availableBalance);
+    setMarginWarningLong(SafeMath.gt(marginLong, availableBalance));
 
     setTargetLengthLong(roundedMarginLong.toString().length);
     setValueOfPositionLengthLong(roundedLongValue.toString().length);
@@ -539,19 +639,21 @@ const TradeTab = () => {
     calculateLongProfit();
     calculateLongLoss();
 
-    setGuaranteedStopFeeLong(Number(gsl) * valueOfPositionLongRef.current);
+    setGuaranteedStopFeeLong(
+      roundToDecimalPlaces(+SafeMath.mult(gsl ?? 0, valueOfPositionLongRef.current), 2)
+    );
 
     // Short
-    const newShortValue = targetInputValueRef.current * Number(shortPriceRef.current);
+    const newShortValue = +SafeMath.mult(targetInputValueRef.current, shortPriceRef.current);
 
     const roundedShortValue = roundToDecimalPlaces(newShortValue, 2);
     setValueOfPositionShort(roundedShortValue);
 
-    const marginShort = newShortValue / leverage;
+    const marginShort = +SafeMath.div(newShortValue, leverage);
     const roundedMarginShort = roundToDecimalPlaces(marginShort, 2);
     setRequiredMarginShort(roundedMarginShort);
 
-    setMarginWarningShort(marginShort > availableBalance);
+    setMarginWarningShort(SafeMath.gt(marginShort, availableBalance));
 
     setTargetLengthShort(roundedMarginShort.toString().length);
     setValueOfPositionLengthShort(roundedShortValue.toString().length);
@@ -559,7 +661,9 @@ const TradeTab = () => {
     calculateShortProfit();
     calculateShortLoss();
 
-    setGuaranteedStopFeeShort(Number(gsl) * valueOfPositionShortRef.current);
+    setGuaranteedStopFeeShort(
+      roundToDecimalPlaces(+SafeMath.mult(gsl ?? 0, valueOfPositionShortRef.current), 2)
+    );
   };
 
   const targetAmountDetection = (value?: number) => {
@@ -622,7 +726,10 @@ const TradeTab = () => {
       price: long.price,
       typeOfPosition: TypeOfPosition.BUY,
       quotation: long,
-      liquidationPrice: roundToDecimalPlaces(long.price * (1 - LIQUIDATION_FIVE_LEVERAGE), 2),
+      liquidationPrice: roundToDecimalPlaces(
+        +SafeMath.mult(long.price, SafeMath.minus(1, LIQUIDATION_FIVE_LEVERAGE)),
+        2
+      ),
       fee: feePercent,
       guaranteedStop: longSlToggle ? longGuaranteedStopChecked : false,
       guaranteedStopFee:
@@ -638,7 +745,10 @@ const TradeTab = () => {
       typeOfPosition: TypeOfPosition.SELL,
       quotation: short,
       price: short.price,
-      liquidationPrice: roundToDecimalPlaces(short.price * (1 + LIQUIDATION_FIVE_LEVERAGE), 2),
+      liquidationPrice: roundToDecimalPlaces(
+        +SafeMath.mult(short.price, SafeMath.plus(1, LIQUIDATION_FIVE_LEVERAGE)),
+        2
+      ),
       fee: feePercent,
       guaranteedStop: shortSlToggle ? shortGuaranteedStopChecked : false,
       guaranteedStopFee:
@@ -749,6 +859,7 @@ const TradeTab = () => {
         inputSize="h-25px w-70px text-sm"
         decrementBtnSize="25"
         incrementBtnSize="25"
+        onTypingStatusChange={handleTypingStatusChange.longTp}
       />
     </div>
   );
@@ -785,6 +896,7 @@ const TradeTab = () => {
         inputSize="h-25px w-70px text-sm"
         decrementBtnSize="25"
         incrementBtnSize="25"
+        onTypingStatusChange={handleTypingStatusChange.longSl}
       />
     </div>
   );
@@ -891,6 +1003,7 @@ const TradeTab = () => {
         inputSize="h-25px w-70px text-sm"
         decrementBtnSize="25"
         incrementBtnSize="25"
+        onTypingStatusChange={handleTypingStatusChange.shortTp}
       />
     </div>
   );
@@ -927,6 +1040,7 @@ const TradeTab = () => {
         inputSize="h-25px w-70px text-sm"
         decrementBtnSize="25"
         incrementBtnSize="25"
+        onTypingStatusChange={handleTypingStatusChange.shortSl}
       />
     </div>
   );

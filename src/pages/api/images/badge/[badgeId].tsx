@@ -1,8 +1,6 @@
-import {useContext} from 'react';
-import {UserContext} from '../../../../contexts/user_context';
 import {NextApiRequest, NextApiResponse} from 'next';
 import {ImageResponse} from 'next/server';
-import {timestampToString, adjustTimestamp} from '../../../../lib/common';
+import {timestampToString, adjustTimestamp, accountTruncate} from '../../../../lib/common';
 import {IBadge} from '../../../../interfaces/tidebit_defi_background/badge';
 import {
   BADGE_LIST,
@@ -10,7 +8,7 @@ import {
   BG_WIDTH_OF_SHARING_RECORD,
   BG_HEIGHT_OF_SHARING_RECORD,
 } from '../../../../constants/display';
-import {DOMAIN} from '../../../../constants/config';
+import {DOMAIN, API_URL} from '../../../../constants/config';
 import {BARLOW_BASE64} from '../../../../constants/fonts';
 import {Buffer} from 'buffer';
 
@@ -22,9 +20,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const url = new URL(req?.url ?? '');
   const params = url.pathname.split('/');
   const badgeId = params.pop();
+  const apiUrl = `${API_URL}/badges/${badgeId}`;
   const tz = Number(url.searchParams.get('tz'));
-
-  const {getBadge} = useContext(UserContext);
 
   const dummySharingBadge: IBadge = {
     badgeId: 'BADGE_ID',
@@ -38,10 +35,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   // ToDo:(20230525 - Julian) get Data from context
   const fetchBagde = async () => {
     try {
-      const result = await getBadge(badgeId ?? '');
+      const badgeResponse = await fetch(apiUrl, {
+        method: 'GET',
+      });
+      const badge = await badgeResponse.json();
 
-      if (result.success) {
-        sharingBadge = result.data as IBadge;
+      if (badge?.success) {
+        sharingBadge = badge?.data;
       }
     } catch (e) {
       // TODO: error handling (20230713 - Julian)
@@ -51,7 +51,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   };
 
   try {
-    // ToDo:(20230526 - Julian) API data
     await fetchBagde();
 
     const offset = new Date().getTimezoneOffset() / 60;
@@ -74,7 +73,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const qrcodeUrl = DOMAIN + `/elements/tidebit_qrcode.svg`;
 
   const displayedUser = userId.slice(-1).toUpperCase();
-  const displayedUserName = userId;
+  const displayedUserName = accountTruncate(userId, 16);
   const displayedBadgeName = badgeName.replaceAll('_', ' ');
 
   const badgeImage = BADGE_LIST.find(badge => badge.name === badgeName)?.icon ?? '';
@@ -123,7 +122,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 width: '100%',
                 display: 'flex',
                 flexDirection: 'row',
-                alignItems: 'center',
+                alignItems: 'flex-start',
                 justifyContent: 'space-between',
               }}
             >
@@ -131,7 +130,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 style={{
                   display: 'flex',
                   flexDirection: 'row',
-                  alignItems: 'center',
+                  alignItems: 'flex-start',
                 }}
               >
                 <div
@@ -152,7 +151,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                   <span
                     style={{
                       position: 'absolute',
-                      fontSize: 40,
+                      fontSize: 30,
                       fontWeight: 'extrabold',
                       color: '#F2F2F2',
                     }}
@@ -172,42 +171,49 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                   {displayedUserName}
                 </p>
               </div>
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  color: '#F2F2F2',
-                }}
-              >
-                <span
-                  style={{
-                    color: '#8B8E91',
-                  }}
-                >
-                  Date :
-                </span>
-                {receiveDate}
+              <div style={{display: 'flex'}}>
+                <img src={`${qrcodeUrl}`} width={70} height={70} alt="qr_code" />
               </div>
             </div>
             <div
               style={{
                 width: '100%',
-                marginTop: '30px',
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
               }}
             >
-              <img src={`${badgeImageUrl}`} width={250} height={250} alt="bagde" />
-              <p
+              <img src={`${badgeImageUrl}`} width={250} height={250} alt="bagde_image" />
+
+              <div
                 style={{
-                  marginTop: '10px',
-                  fontSize: '36px',
-                  color: `#F2F2F2`,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  marginTop: '-20px',
                 }}
               >
-                {displayedBadgeName}
-              </p>
+                <p
+                  style={{
+                    fontSize: '40px',
+                    fontWeight: 'bold',
+                    color: `#F2F2F2`,
+                  }}
+                >
+                  {displayedBadgeName}
+                </p>
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    fontSize: '18px',
+                    marginTop: '-20px',
+                  }}
+                >
+                  <span style={{color: '#8B8E91'}}>Date : </span>
+                  <p style={{color: '#F2F2F2'}}>{receiveDate}</p>
+                </div>
+              </div>
             </div>
             <div
               style={{
@@ -215,9 +221,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 justifySelf: 'end',
                 marginLeft: 'auto',
               }}
-            >
-              <img src={`${qrcodeUrl}`} width={100} height={100} alt="qr_code" />
-            </div>
+            ></div>
           </div>
         </div>
       </div>

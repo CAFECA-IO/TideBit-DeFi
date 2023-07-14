@@ -81,10 +81,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const bgImageUrl = DOMAIN + '/elements/share_badge_bg@2x.png';
 
   // Info:(20230714 - Julian) Page Link icon
-  const marketIconUrl =
-    'https://tidebit-defi-auizplqag-cafeca.vercel.app/elements/market_icon@2x.png'; //DOMAIN + '/elements/market_icon@2x.png';
-  const leaderboardIconUrl =
-    'https://tidebit-defi-auizplqag-cafeca.vercel.app/elements/leaderboard_icon@2x.png'; //DOMAIN + '/elements/leaderboard_icon@2x.png';
+  const marketIconUrl = DOMAIN + '/elements/market_icon@2x.png';
+  const leaderboardIconUrl = DOMAIN + '/elements/leaderboard_icon@2x.png';
 
   const BarlowBuffer = Buffer.from(BARLOW_BASE64, 'base64');
 

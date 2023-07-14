@@ -22,9 +22,9 @@ const BadgeSharing = (props: IPageProps) => {
   const [userTz, setUserTz, userTzRef] = useStateRef<number>(0);
 
   // TODO: for meta content (20230525 - Julian)
-  const img = `https://tidebit-defi-1gnq146up-cafeca.vercel.app/api/images/badge/${props.badgeId}?tz=${userTzRef.current}`; //`${DOMAIN}/api/images/badge/${props.badgeId}?tz=${userTzRef.current}`;
-  const displayImg = `https://tidebit-defi-1gnq146up-cafeca.vercel.app/api/images/badge/${props.badgeId}?tz=${userTzRef.current}`; //`/api/images/badge/${props.badgeId}?tz=${userTzRef.current}`;
-  const share = `https://tidebit-defi-1gnq146up-cafeca.vercel.app/share/badge/${props.badgeId}`; //`${DOMAIN}/share/badge/${props.badgeId}`;
+  const img = `${DOMAIN}/api/images/badge/${props.badgeId}?tz=${userTzRef.current}`;
+  const displayImg = `/api/images/badge/${props.badgeId}?tz=${userTzRef.current}`;
+  const share = `${DOMAIN}/share/badge/${props.badgeId}`;
 
   useEffect(() => {
     if (!appCtx.isInit) {

@@ -4,11 +4,7 @@ import {useContext, useEffect} from 'react';
 import {AppContext} from '../../../contexts/app_context';
 import {GetServerSideProps} from 'next';
 import {useRouter} from 'next/router';
-import {
-  BG_WIDTH_OF_SHARING_RECORD,
-  BG_HEIGHT_OF_SHARING_RECORD,
-  SIZE_OF_SHARING_BADGE,
-} from '../../../constants/display';
+import {BG_WIDTH_OF_SHARING_RECORD, BG_HEIGHT_OF_SHARING_RECORD} from '../../../constants/display';
 import Error from 'next/error';
 import {DOMAIN} from '../../../constants/config';
 import useStateRef from 'react-usestateref';
@@ -26,8 +22,8 @@ const BadgeSharing = (props: IPageProps) => {
   const [userTz, setUserTz, userTzRef] = useStateRef<number>(0);
 
   // TODO: for meta content (20230525 - Julian)
-  const img = `https://tidebit-defi-qdh433fek-cafeca.vercel.app/api/images/badge/${props.badgeId}`; //`${DOMAIN}/api/images/badge/${props.badgeId}?tz=${userTzRef.current}`;
-  const displayImg = `https://tidebit-defi-qdh433fek-cafeca.vercel.app/api/images/badge/${props.badgeId}`; //`/api/images/badge/${props.badgeId}?tz=${userTzRef.current}`;
+  const img = `https://tidebit-defi-1g3ozv9eu-cafeca.vercel.app/api/images/badge/${props.badgeId}`; //`${DOMAIN}/api/images/badge/${props.badgeId}?tz=${userTzRef.current}`;
+  const displayImg = `https://tidebit-defi-1g3ozv9eu-cafeca.vercel.app/api/images/badge/${props.badgeId}`; //`/api/images/badge/${props.badgeId}?tz=${userTzRef.current}`;
   const share = `https://tidebit-defi-o7sfp9uq6-cafeca.vercel.app/share/badge/${props.badgeId}`; //`${DOMAIN}/share/badge/${props.badgeId}`;
 
   useEffect(() => {
@@ -53,17 +49,17 @@ const BadgeSharing = (props: IPageProps) => {
 
   const displayedImage = appCtx.isInit ? (
     <div className="flex w-full justify-center">
-      <img
-        src={displayImg}
-        width={BG_WIDTH_OF_SHARING_RECORD}
-        height={BG_HEIGHT_OF_SHARING_RECORD}
-        alt="Badge record"
-        className="relative"
-      />
+      <Link href="/">
+        <img
+          src={displayImg}
+          width={BG_WIDTH_OF_SHARING_RECORD}
+          height={BG_HEIGHT_OF_SHARING_RECORD}
+          alt="Badge record"
+          className="relative hover:cursor-pointer hover:opacity-90"
+        />
+      </Link>
 
-      <div
-        className={`absolute top-0 z-10 h-${SIZE_OF_SHARING_BADGE}px w-${SIZE_OF_SHARING_BADGE}px`}
-      >
+      <div className="absolute top-0 z-10 h-630px w-630px">
         <div className="absolute bottom-16 right-0 mx-8 flex items-center space-x-8">
           {/* Info:(20230714 - Julian) Market Link */}
           <Link href={TBDURL.TRADE}>

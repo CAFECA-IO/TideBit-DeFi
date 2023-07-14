@@ -26,7 +26,7 @@ import {
   SUGGEST_TP,
   LIQUIDATION_FIVE_LEVERAGE,
   FRACTION_DIGITS,
-  TP_SL_LIMIT_PERCENT,
+  TP_SL_LIMIT_RATIO,
   DEFAULT_TICKER,
   DEFAULT_CURRENCY,
   CFD_LIQUIDATION_TIME,
@@ -489,11 +489,11 @@ const TradeTabMobile = () => {
 
   const setTpSlBounds = () => {
     const longTpLowerBound = roundToDecimalPlaces(
-      +SafeMath.mult(longPriceRef.current, SafeMath.plus(1, TP_SL_LIMIT_PERCENT)),
+      +SafeMath.mult(longPriceRef.current, SafeMath.plus(1, TP_SL_LIMIT_RATIO)),
       2
     );
     const shortTpUpperBound = roundToDecimalPlaces(
-      +SafeMath.mult(shortPriceRef.current, SafeMath.minus(1, TP_SL_LIMIT_PERCENT)),
+      +SafeMath.mult(shortPriceRef.current, SafeMath.minus(1, TP_SL_LIMIT_RATIO)),
       2
     );
 
@@ -502,7 +502,7 @@ const TradeTabMobile = () => {
         longPriceRef.current,
         SafeMath.mult(
           SafeMath.minus(1, LIQUIDATION_FIVE_LEVERAGE),
-          SafeMath.plus(1, TP_SL_LIMIT_PERCENT)
+          SafeMath.plus(1, TP_SL_LIMIT_RATIO)
         )
       ),
       2
@@ -513,19 +513,19 @@ const TradeTabMobile = () => {
         shortPriceRef.current,
         SafeMath.mult(
           SafeMath.plus(1, LIQUIDATION_FIVE_LEVERAGE),
-          SafeMath.minus(1, TP_SL_LIMIT_PERCENT)
+          SafeMath.minus(1, TP_SL_LIMIT_RATIO)
         )
       ),
       2
     );
 
     const longSlUpperBound = roundToDecimalPlaces(
-      +SafeMath.mult(longPriceRef.current, SafeMath.minus(1, TP_SL_LIMIT_PERCENT)),
+      +SafeMath.mult(longPriceRef.current, SafeMath.minus(1, TP_SL_LIMIT_RATIO)),
       2
     );
 
     const shortSlLowerBound = roundToDecimalPlaces(
-      +SafeMath.mult(shortPriceRef.current, SafeMath.plus(1, TP_SL_LIMIT_PERCENT)),
+      +SafeMath.mult(shortPriceRef.current, SafeMath.plus(1, TP_SL_LIMIT_RATIO)),
       2
     );
 

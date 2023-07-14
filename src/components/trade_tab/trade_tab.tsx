@@ -190,6 +190,13 @@ const TradeTab = () => {
   const [shortTpSuggestion, setShortTpSuggestion, shortTpSuggestionRef] = useStateRef(0);
   const [shortSlSuggestion, setShortSlSuggestion, shortSlSuggestionRef] = useStateRef(0);
 
+  const [isTyping, setIsTyping, isTypingRef] = useStateRef({
+    longTp: false,
+    longSl: false,
+    shortTp: false,
+    shortSl: false,
+  });
+
   // Info: Fetch quotation the first time (20230327 - Shirley)
   useEffect(() => {
     if (!userCtx.enableServiceTerm) return;
@@ -214,10 +221,21 @@ const TradeTab = () => {
   useEffect(() => {
     setPrice();
     setTpSlBounds();
-    checkTpSlWithinBounds();
+
+    if (
+      !isTypingRef.current.longSl &&
+      !isTypingRef.current.shortSl &&
+      !isTypingRef.current.longTp &&
+      !isTypingRef.current.shortTp
+    ) {
+      checkTpSlWithinBounds();
+    }
+
     renewPosition();
-    // eslint-disable-next-line no-console
-  }, [marketCtx.selectedTicker?.price]);
+
+    // TODO: FIXME: [To be optimized] May run more than 10 times in a second (20230714 - Shirley)
+    if (!longTpToggle && !shortTpToggle) setSuggestions();
+  }, [marketCtx.selectedTicker?.price, isTypingRef.current]);
 
   // Info: Fetch quotation when ticker changed (20230327 - Shirley)
   useEffect(() => {
@@ -241,6 +259,45 @@ const TradeTab = () => {
     shortTpValueRef.current,
     shortSlValueRef.current,
   ]);
+
+  const handleTypingStatusChangeRouter = (typingStatus: boolean) => {
+    const longTp = (typingStatus: boolean) => {
+      setIsTyping(prev => ({
+        ...prev,
+        longTp: typingStatus,
+      }));
+    };
+
+    const longSl = (typingStatus: boolean) => {
+      setIsTyping(prev => ({
+        ...prev,
+        longSl: typingStatus,
+      }));
+    };
+
+    const shortTp = (typingStatus: boolean) => {
+      setIsTyping(prev => ({
+        ...prev,
+        shortTp: typingStatus,
+      }));
+    };
+
+    const shortSl = (typingStatus: boolean) => {
+      setIsTyping(prev => ({
+        ...prev,
+        shortSl: typingStatus,
+      }));
+    };
+
+    return {
+      longTp,
+      longSl,
+      shortTp,
+      shortSl,
+    };
+  };
+
+  const handleTypingStatusChange = handleTypingStatusChangeRouter(false);
 
   const setPrice = () => {
     if (marketCtx.selectedTicker?.instId) {
@@ -802,6 +859,7 @@ const TradeTab = () => {
         inputSize="h-25px w-70px text-sm"
         decrementBtnSize="25"
         incrementBtnSize="25"
+        onTypingStatusChange={handleTypingStatusChange.longTp}
       />
     </div>
   );
@@ -838,6 +896,7 @@ const TradeTab = () => {
         inputSize="h-25px w-70px text-sm"
         decrementBtnSize="25"
         incrementBtnSize="25"
+        onTypingStatusChange={handleTypingStatusChange.longSl}
       />
     </div>
   );
@@ -944,6 +1003,7 @@ const TradeTab = () => {
         inputSize="h-25px w-70px text-sm"
         decrementBtnSize="25"
         incrementBtnSize="25"
+        onTypingStatusChange={handleTypingStatusChange.shortTp}
       />
     </div>
   );
@@ -980,6 +1040,7 @@ const TradeTab = () => {
         inputSize="h-25px w-70px text-sm"
         decrementBtnSize="25"
         incrementBtnSize="25"
+        onTypingStatusChange={handleTypingStatusChange.shortSl}
       />
     </div>
   );

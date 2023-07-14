@@ -26,7 +26,7 @@ import {
   SUGGEST_TP,
   LIQUIDATION_FIVE_LEVERAGE,
   FRACTION_DIGITS,
-  TP_SL_LIMIT_PERCENT,
+  TP_SL_LIMIT_RATIO,
   DEFAULT_TICKER,
   DEFAULT_CURRENCY,
   CFD_LIQUIDATION_TIME,
@@ -173,12 +173,19 @@ const TradeTabMobile = () => {
   const [shortTpSuggestion, setShortTpSuggestion, shortTpSuggestionRef] = useStateRef(0);
   const [shortSlSuggestion, setShortSlSuggestion, shortSlSuggestionRef] = useStateRef(0);
 
+  const [isTyping, setIsTyping, isTypingRef] = useStateRef({
+    longTp: false,
+    longSl: false,
+    shortTp: false,
+    shortSl: false,
+  });
+
   // Info: Fetch quotation the first time (20230327 - Shirley)
   useEffect(() => {
     if (!userCtx.enableServiceTerm) return;
 
     (async () => {
-      setQuotation();
+      setPrice();
 
       setTpSlBounds();
       setSuggestions();
@@ -195,16 +202,24 @@ const TradeTabMobile = () => {
 
   // Info: Calculate quotation when market price changes (20230427 - Shirley)
   useEffect(() => {
-    setQuotation();
+    setPrice();
     setTpSlBounds();
-    checkTpSlWithinBounds();
+    if (
+      !isTypingRef.current.longSl &&
+      !isTypingRef.current.shortSl &&
+      !isTypingRef.current.longTp &&
+      !isTypingRef.current.shortTp
+    ) {
+      checkTpSlWithinBounds();
+    }
+
     renewPosition();
   }, [marketCtx.selectedTicker?.price]);
 
   // Info: Fetch quotation when ticker changed (20230327 - Shirley)
   useEffect(() => {
     notificationCtx.emitter.once(ClickEvent.TICKER_CHANGED, async () => {
-      setQuotation();
+      setPrice();
       setTpSlBounds();
       setSuggestions();
       renewPosition();
@@ -224,7 +239,46 @@ const TradeTabMobile = () => {
     shortSlValueRef.current,
   ]);
 
-  const setQuotation = () => {
+  const handleTypingStatusChangeRouter = (typingStatus: boolean) => {
+    const longTp = (typingStatus: boolean) => {
+      setIsTyping(prev => ({
+        ...prev,
+        longTp: typingStatus,
+      }));
+    };
+
+    const longSl = (typingStatus: boolean) => {
+      setIsTyping(prev => ({
+        ...prev,
+        longSl: typingStatus,
+      }));
+    };
+
+    const shortTp = (typingStatus: boolean) => {
+      setIsTyping(prev => ({
+        ...prev,
+        shortTp: typingStatus,
+      }));
+    };
+
+    const shortSl = (typingStatus: boolean) => {
+      setIsTyping(prev => ({
+        ...prev,
+        shortSl: typingStatus,
+      }));
+    };
+
+    return {
+      longTp,
+      longSl,
+      shortTp,
+      shortSl,
+    };
+  };
+
+  const handleTypingStatusChange = handleTypingStatusChangeRouter(false);
+
+  const setPrice = () => {
     if (marketCtx.selectedTicker?.instId) {
       const buyPrice = roundToDecimalPlaces(
         marketCtx.predictCFDClosePrice(marketCtx.selectedTicker?.instId, TypeOfPosition.SELL),
@@ -466,31 +520,31 @@ const TradeTabMobile = () => {
 
   const setTpSlBounds = () => {
     const longTpLowerBound = roundToDecimalPlaces(
-      Number(longPriceRef.current) * (1 + TP_SL_LIMIT_PERCENT),
+      Number(longPriceRef.current) * (1 + TP_SL_LIMIT_RATIO),
       2
     );
     const shortTpUpperBound = roundToDecimalPlaces(
-      Number(shortPriceRef.current) * (1 - TP_SL_LIMIT_PERCENT),
+      Number(shortPriceRef.current) * (1 - TP_SL_LIMIT_RATIO),
       2
     );
 
     const longSlLowerBound = roundToDecimalPlaces(
-      Number(longPriceRef.current) * (1 - LIQUIDATION_FIVE_LEVERAGE) * (1 + TP_SL_LIMIT_PERCENT),
+      Number(longPriceRef.current) * (1 - LIQUIDATION_FIVE_LEVERAGE) * (1 + TP_SL_LIMIT_RATIO),
       2
     );
 
     const shortSlUpperBound = roundToDecimalPlaces(
-      Number(shortPriceRef.current) * (1 + LIQUIDATION_FIVE_LEVERAGE) * (1 - TP_SL_LIMIT_PERCENT),
+      Number(shortPriceRef.current) * (1 + LIQUIDATION_FIVE_LEVERAGE) * (1 - TP_SL_LIMIT_RATIO),
       2
     );
 
     const longSlUpperBound = roundToDecimalPlaces(
-      Number(longPriceRef.current) * (1 - TP_SL_LIMIT_PERCENT),
+      Number(longPriceRef.current) * (1 - TP_SL_LIMIT_RATIO),
       2
     );
 
     const shortSlLowerBound = roundToDecimalPlaces(
-      Number(shortPriceRef.current) * (1 + TP_SL_LIMIT_PERCENT),
+      Number(shortPriceRef.current) * (1 + TP_SL_LIMIT_RATIO),
       2
     );
 
@@ -765,6 +819,7 @@ const TradeTabMobile = () => {
         inputSize="h-25px w-70px text-sm"
         decrementBtnSize="25"
         incrementBtnSize="25"
+        onTypingStatusChange={handleTypingStatusChange.longTp}
       />
     </div>
   );
@@ -796,6 +851,7 @@ const TradeTabMobile = () => {
         inputSize="h-25px w-70px text-sm"
         decrementBtnSize="25"
         incrementBtnSize="25"
+        onTypingStatusChange={handleTypingStatusChange.longSl}
       />
     </div>
   );
@@ -929,6 +985,7 @@ const TradeTabMobile = () => {
         inputSize="h-25px w-70px text-sm"
         decrementBtnSize="25"
         incrementBtnSize="25"
+        onTypingStatusChange={handleTypingStatusChange.shortTp}
       />
     </div>
   );
@@ -962,6 +1019,7 @@ const TradeTabMobile = () => {
         inputSize="h-25px w-70px text-sm"
         decrementBtnSize="25"
         incrementBtnSize="25"
+        onTypingStatusChange={handleTypingStatusChange.shortSl}
       />
     </div>
   );

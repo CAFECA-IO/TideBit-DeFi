@@ -31,7 +31,7 @@ import {
   unitAsset,
   FRACTION_DIGITS,
   TARGET_MAX_DIGITS,
-  TP_SL_LIMIT_PERCENT,
+  TP_SL_LIMIT_RATIO,
 } from '../../constants/config';
 import useStateRef from 'react-usestateref';
 import {useTranslation} from 'react-i18next';
@@ -579,11 +579,11 @@ const UpdateFormModal = ({
     // Info: minimum price (open price) with buffer (20230426 - Shirley)
     const caledTpLowerLimit =
       openCfdDetails.typeOfPosition === TypeOfPosition.BUY
-        ? roundToDecimalPlaces(openCfdDetails.openPrice * (1 + TP_SL_LIMIT_PERCENT), 2)
+        ? roundToDecimalPlaces(openCfdDetails.openPrice * (1 + TP_SL_LIMIT_RATIO), 2)
         : 0;
     const caledTpUpperLimit =
       openCfdDetails.typeOfPosition === TypeOfPosition.SELL
-        ? roundToDecimalPlaces(openCfdDetails.openPrice * (1 - TP_SL_LIMIT_PERCENT), 2)
+        ? roundToDecimalPlaces(openCfdDetails.openPrice * (1 - TP_SL_LIMIT_RATIO), 2)
         : TARGET_MAX_DIGITS;
 
     const isLiquidated =
@@ -598,14 +598,14 @@ const UpdateFormModal = ({
     const caledSlLowerLimit = isLiquidated
       ? roundToDecimalPlaces(openCfdDetails.liquidationPrice, 2) // Info: 相當於不能設定 SL (20230426 - Shirley)
       : openCfdDetails.typeOfPosition === TypeOfPosition.BUY
-      ? roundToDecimalPlaces(openCfdDetails.liquidationPrice * (1 + TP_SL_LIMIT_PERCENT), 2)
-      : roundToDecimalPlaces(openCfdDetails.openPrice * (1 + TP_SL_LIMIT_PERCENT), 2);
+      ? roundToDecimalPlaces(openCfdDetails.liquidationPrice * (1 + TP_SL_LIMIT_RATIO), 2)
+      : roundToDecimalPlaces(openCfdDetails.openPrice * (1 + TP_SL_LIMIT_RATIO), 2);
 
     const caledSlUpperLimit = isLiquidated
       ? roundToDecimalPlaces(openCfdDetails.liquidationPrice, 2) // Info: 相當於不能設定 SL (20230426 - Shirley)
       : openCfdDetails.typeOfPosition === TypeOfPosition.BUY
-      ? roundToDecimalPlaces(openCfdDetails.openPrice * (1 - TP_SL_LIMIT_PERCENT), 2)
-      : roundToDecimalPlaces(openCfdDetails.liquidationPrice * (1 - TP_SL_LIMIT_PERCENT), 2);
+      ? roundToDecimalPlaces(openCfdDetails.openPrice * (1 - TP_SL_LIMIT_RATIO), 2)
+      : roundToDecimalPlaces(openCfdDetails.liquidationPrice * (1 - TP_SL_LIMIT_RATIO), 2);
 
     const caledSl =
       marketCtx.selectedTicker?.price !== undefined

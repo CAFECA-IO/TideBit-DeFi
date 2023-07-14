@@ -9,6 +9,7 @@ import useStateRef from 'react-usestateref';
 interface ITradingInputProps {
   inputInitialValue: number;
   getInputValue?: (props: number) => void;
+  onTypingStatusChange?: (props: boolean) => void;
 
   inputValueFromParent?: number;
   setInputValueFromParent?: Dispatch<SetStateAction<number>>;
@@ -50,6 +51,7 @@ const TradingInput = ({
 
   reachOppositeLimit,
   disabled,
+  onTypingStatusChange,
 
   ...otherProps
 }: ITradingInputProps) => {
@@ -59,6 +61,11 @@ const TradingInput = ({
   const [validationTimeout, setValidationTimeout, validationTimeoutRef] = useStateRef<ReturnType<
     typeof setTimeout
   > | null>(null);
+
+  const [typingTimeout, setTypingTimeout, typingTimeoutRef] = useStateRef<ReturnType<
+    typeof setTimeout
+  > | null>(null);
+  const [isTyping, setIsTyping, isTypingRef] = useStateRef<boolean>(false);
 
   const regex = /^\d*\.?\d{0,2}$/;
 
@@ -107,6 +114,26 @@ const TradingInput = ({
     setValidationTimeout(newTimeout);
   };
 
+  const onKeyDown = () => {
+    if (typingTimeout) {
+      clearTimeout(typingTimeout);
+    }
+
+    setIsTyping(true);
+  };
+
+  const onKeyUp = () => {
+    if (typingTimeout) {
+      clearTimeout(typingTimeout);
+    }
+
+    const newTimeout = setTimeout(() => {
+      setIsTyping(false);
+    }, INPUT_VALIDATION_DELAY);
+
+    setTypingTimeout(newTimeout);
+  };
+
   const inputChangeHandler: React.ChangeEventHandler<HTMLInputElement> = event => {
     const value = event.target.value;
 
@@ -143,7 +170,7 @@ const TradingInput = ({
     const change = inputValue - TRADING_INPUT_STEP;
     const changeRounded = Math.round(change * 100) / 100;
 
-    // minimum margin is 0.01
+    // Info: minimum margin is 0.01 (20230714 - Shirley)
     if (inputValue <= 0 || changeRounded < 0.01 || changeRounded < lowerLimit) {
       return;
     }
@@ -160,13 +187,21 @@ const TradingInput = ({
   }, [inputValueFromParent, setInputValueFromParent, disabled]);
 
   useEffect(() => {
-    // Info: Clean up validation timeout on unmount (20230424 - Shirley)
+    // Info: Clean up validation timeout when unmount (20230424 - Shirley)
     return () => {
       if (validationTimeout) {
         clearTimeout(validationTimeout);
       }
+
+      if (typingTimeout) {
+        clearTimeout(typingTimeout);
+      }
     };
-  }, [validationTimeout]);
+  }, [validationTimeout, typingTimeout]);
+
+  useEffect(() => {
+    onTypingStatusChange && onTypingStatusChange(isTypingRef.current);
+  }, [isTypingRef.current]);
 
   return (
     <>
@@ -215,6 +250,8 @@ const TradingInput = ({
             name={inputName}
             onChange={inputChangeHandler}
             placeholder={inputPlaceholder}
+            onKeyDown={onKeyDown}
+            onKeyUp={onKeyUp}
           />
         </div>
 

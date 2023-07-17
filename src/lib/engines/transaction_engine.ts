@@ -168,7 +168,14 @@ class TransactionEngine {
       default:
         break;
     }
-    return typeData;
+    return typeData
+      ? {
+          domain: {...typeData.domain},
+          types: typeData.types,
+          primaryType: typeData.primaryType,
+          message: typeData.message,
+        }
+      : typeData;
   }
 
   transferDepositOrderToTransaction(depositOrder: IApplyDepositOrder) {

@@ -945,16 +945,13 @@ export const UserProvider = ({children}: IUserProvider) => {
       if (!balance || balance.available < applyCreateCFDOrder.margin.amount)
         throw new CustomError(Code.BALANCE_IS_NOT_ENOUGH_TO_OPEN_ORDER);
       const typeData = transactionEngine.transferCFDOrderToTransaction(applyCreateCFDOrder);
-      // Deprecated: [debug] (20230717 - Tzuhan)
-      // eslint-disable-next-line no-console
-      console.log(`_createCFDOrder typeData`, typeData);
       if (!typeData) throw new CustomError(Code.FAILED_TO_CREATE_TRANSACTION);
       const signature: string = await lunar.signTypedData(typeData);
       /* Info: (20230505 - Julian) 需要再驗證一次簽名是否正確 */
       const success = lunar.verifyTypedData(typeData, signature);
       // Deprecated: [debug] (20230509 - Tzuhan)
       // eslint-disable-next-line no-console
-      console.log('_createCFDOrder lunar.verifyTypedData success', success);
+      console.log('_createCFDOrder lunar.verifyTypedData success', success, `typeData`, typeData);
       if (!success) throw new CustomError(Code.REJECTED_SIGNATURE);
       const now = getTimestamp();
       // Deprecated: [debug] (20230509 - Tzuhan)
@@ -1071,7 +1068,7 @@ export const UserProvider = ({children}: IUserProvider) => {
       const success = lunar.verifyTypedData(typeData, signature);
       // Deprecated: [debug] (20230509 - Tzuhan)
       // eslint-disable-next-line no-console
-      console.log('closeCFDOrder lunar.verifyTypedData success', success);
+      console.log('closeCFDOrder lunar.verifyTypedData success', success, `typeData`, typeData);
       if (!success) throw new CustomError(Code.REJECTED_SIGNATURE);
       const now = getTimestamp();
       // ToDo: Check if the quotation is expired, if so return `failed result` in `catch`. (20230414 - Shirley)
@@ -1187,7 +1184,7 @@ export const UserProvider = ({children}: IUserProvider) => {
       const success = lunar.verifyTypedData(typeData, signature);
       // Deprecated: [debug] (20230509 - Tzuhan)
       // eslint-disable-next-line no-console
-      console.log('updateCFDOrder lunar.verifyTypedData success', success);
+      console.log('updateCFDOrder lunar.verifyTypedData success', success, `typeData`, typeData);
       if (!success) throw new CustomError(Code.REJECTED_SIGNATURE);
       result = (await privateRequestHandler({
         name: APIName.UPDATE_CFD_TRADE,

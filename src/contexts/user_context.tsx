@@ -38,6 +38,7 @@ import {
   getTimestamp,
   randomHex,
   rlpEncodeServiceTerm,
+  toChecksumAddress,
   validateCFD,
   verifySignedServiceTerm,
 } from '../lib/common';
@@ -315,19 +316,20 @@ export const UserProvider = ({children}: IUserProvider) => {
     clearPrivateData();
   });
   lunar.on('accountsChanged', async (address: string) => {
+    const checksumAddress = toChecksumAddress(address);
     // Deprecate: [debug] (20230524 - tzuhan)
     // eslint-disable-next-line no-console
     console.log(
-      `accountsChanged address: ${address}, userRef.current?.address: ${userRef.current?.address}`
+      `accountsChanged checksumAddress: ${checksumAddress}, userRef.current?.address: ${userRef.current?.address}`
     );
-    if (!!userRef.current && address !== userRef.current.address) {
+    if (!!userRef.current && checksumAddress !== userRef.current.address) {
       // Deprecate: [debug] (20230524 - tzuhan)
       // eslint-disable-next-line no-console
       console.log(
         `userRef.current: ${JSON.stringify(
           userRef.current
-        )} !!userRef.current(${!!userRef.current}) && address !== userRef.current?.address ${
-          !!userRef.current && address !== userRef.current?.address
+        )} !!userRef.current(${!!userRef.current}) && checksumAddress !== userRef.current?.address ${
+          !!userRef.current && checksumAddress !== userRef.current?.address
         }? clearPrivateData`
       );
       clearPrivateData();
@@ -337,6 +339,9 @@ export const UserProvider = ({children}: IUserProvider) => {
   const privateRequestHandler = useCallback(async (data: TypeRequest) => {
     try {
       const isDeWTLegit = checkDeWT();
+      // Deprecate: [debug] (20230717 - tzuhan)
+      // eslint-disable-next-line no-console
+      console.log(`privateRequestHandler isDeWTLegit`, isDeWTLegit);
       if (isDeWTLegit) {
         return await workerCtx.requestHandler({
           ...data,
@@ -348,6 +353,9 @@ export const UserProvider = ({children}: IUserProvider) => {
         throw new CustomError(Code.DEWT_IS_NOT_LEGIT);
       }
     } catch (error) {
+      // Deprecate: [debug] (20230717 - tzuhan)
+      // eslint-disable-next-line no-console
+      console.log(`privateRequestHandler error`, error);
       throw error;
     }
   }, []);
@@ -654,14 +662,18 @@ export const UserProvider = ({children}: IUserProvider) => {
     // 1. get DeWT from cookie
     const deWT = getCookieByName('DeWT');
     if (!!deWT) {
-      const tmp = deWT.split('.');
-      const encodedData = tmp[0];
-      const signature = tmp[1];
+      const [encodedData, signature] = deWT.split('.');
       // 2. decode and verify signed serviceTermContract
       const result = verifySignedServiceTerm(encodedData);
+      // Deprecated: (20230717 - tzuhan) [debug]
+      // eslint-disable-next-line no-console
+      console.log(`checkDeWT: `, ` result: `, result);
       isDeWTLegit = result.isDeWTLegit;
-      if (isDeWTLegit) {
-        signer = result.serviceTerm?.message?.signer;
+      if (isDeWTLegit && result.serviceTerm?.message?.signer) {
+        signer = toChecksumAddress(result.serviceTerm.message.signer);
+        // Deprecated: (20230717 - tzuhan) [debug]
+        // eslint-disable-next-line no-console
+        console.log(`checkDeWT: `, ` signer: `, signer);
         // 3. verify signature with recreate serviceTermContract
         const serviceTermContractTemplate = getServiceTermContract(lunar.address);
         const serviceTermContract = {
@@ -669,6 +681,9 @@ export const UserProvider = ({children}: IUserProvider) => {
           ...result.serviceTerm,
         };
         const verifyR = lunar.verifyTypedData(serviceTermContract, `0x${signature}`);
+        // Deprecated: (20230717 - tzuhan) [debug]
+        // eslint-disable-next-line no-console
+        console.log(`checkDeWT: `, ` verifyR: `, verifyR);
         isDeWTLegit = isDeWTLegit && !!signer && verifyR;
       }
     }
@@ -707,7 +722,7 @@ export const UserProvider = ({children}: IUserProvider) => {
   };
 
   const setDeWT = async (deWT: string) => {
-    document.cookie = `DeWT=${deWT}`;
+    document.cookie = `DeWT=${deWT}; path=/;`;
   };
 
   const signServiceTerm = async (): Promise<IResult> => {
@@ -929,19 +944,14 @@ export const UserProvider = ({children}: IUserProvider) => {
       const balance: IBalance | null = getBalance(applyCreateCFDOrder.margin.asset);
       if (!balance || balance.available < applyCreateCFDOrder.margin.amount)
         throw new CustomError(Code.BALANCE_IS_NOT_ENOUGH_TO_OPEN_ORDER);
-      const transferR = transactionEngine.transferCFDOrderToTransaction(applyCreateCFDOrder);
-      if (!transferR.success) throw new CustomError(Code.FAILED_TO_CREATE_TRANSACTION);
-      const signature: string = await lunar.signTypedData(transferR.data);
+      const typeData = transactionEngine.transferCFDOrderToTransaction(applyCreateCFDOrder);
+      if (!typeData) throw new CustomError(Code.FAILED_TO_CREATE_TRANSACTION);
+      const signature: string = await lunar.signTypedData(typeData);
       /* Info: (20230505 - Julian) 需要再驗證一次簽名是否正確 */
-      const success = lunar.verifyTypedData(transferR.data, signature);
+      const success = lunar.verifyTypedData(typeData, signature);
       // Deprecated: [debug] (20230509 - Tzuhan)
       // eslint-disable-next-line no-console
-      console.log(
-        '_createCFDOrder lunar.verifyTypedData success',
-        success,
-        `transferR.data`,
-        transferR.data
-      );
+      console.log('_createCFDOrder lunar.verifyTypedData success', success, `typeData`, typeData);
       if (!success) throw new CustomError(Code.REJECTED_SIGNATURE);
       const now = getTimestamp();
       // Deprecated: [debug] (20230509 - Tzuhan)
@@ -1050,15 +1060,15 @@ export const UserProvider = ({children}: IUserProvider) => {
       if (closeAppliedCFD.state !== OrderState.OPENING)
         throw new CustomError(Code.CFD_ORDER_IS_ALREADY_CLOSED);
       // const balance: IBalance | null = getBalance(openCFDs[index].targetAsset);
-      const transferR = transactionEngine.transferCFDOrderToTransaction(applyCloseCFDOrder);
-      if (!transferR.success) throw new CustomError(Code.FAILED_TO_CREATE_TRANSACTION);
+      const typeData = transactionEngine.transferCFDOrderToTransaction(applyCloseCFDOrder);
+      if (!typeData) throw new CustomError(Code.FAILED_TO_CREATE_TRANSACTION);
       // TODO: send request to chain(use Lunar?) (20230324 - tzuhan)
-      const signature: string = await lunar.signTypedData(transferR.data);
+      const signature: string = await lunar.signTypedData(typeData);
       /* Info: (20230505 - Julian) 需要再驗證一次簽名是否正確 */
-      const success = lunar.verifyTypedData(transferR.data, signature);
+      const success = lunar.verifyTypedData(typeData, signature);
       // Deprecated: [debug] (20230509 - Tzuhan)
       // eslint-disable-next-line no-console
-      console.log('closeCFDOrder lunar.verifyTypedData success', success);
+      console.log('closeCFDOrder lunar.verifyTypedData success', success, `typeData`, typeData);
       if (!success) throw new CustomError(Code.REJECTED_SIGNATURE);
       const now = getTimestamp();
       // ToDo: Check if the quotation is expired, if so return `failed result` in `catch`. (20230414 - Shirley)
@@ -1166,15 +1176,15 @@ export const UserProvider = ({children}: IUserProvider) => {
       if (!updateAppliedCFD) throw new CustomError(Code.CFD_ORDER_NOT_FOUND);
       if (updateAppliedCFD.state !== OrderState.OPENING)
         throw new CustomError(Code.CFD_ORDER_IS_ALREADY_CLOSED);
-      const transferR = transactionEngine.transferCFDOrderToTransaction(applyUpdateCFDOrder);
-      if (!transferR.success) throw new CustomError(Code.FAILED_TO_CREATE_TRANSACTION);
+      const typeData = transactionEngine.transferCFDOrderToTransaction(applyUpdateCFDOrder);
+      if (!typeData) throw new CustomError(Code.FAILED_TO_CREATE_TRANSACTION);
       // TODO: send request to chain(use Lunar?) (20230324 - tzuhan)
-      const signature: string = await lunar.signTypedData(transferR.data);
+      const signature: string = await lunar.signTypedData(typeData);
       /* Info: (20230505 - Julian) 需要再驗證一次簽名是否正確 */
-      const success = lunar.verifyTypedData(transferR.data, signature);
+      const success = lunar.verifyTypedData(typeData, signature);
       // Deprecated: [debug] (20230509 - Tzuhan)
       // eslint-disable-next-line no-console
-      console.log('updateCFDOrder lunar.verifyTypedData success', success);
+      console.log('updateCFDOrder lunar.verifyTypedData success', success, `typeData`, typeData);
       if (!success) throw new CustomError(Code.REJECTED_SIGNATURE);
       result = (await privateRequestHandler({
         name: APIName.UPDATE_CFD_TRADE,
@@ -1263,14 +1273,14 @@ export const UserProvider = ({children}: IUserProvider) => {
     if (enableServiceTermRef.current) {
       const balance: IBalance | null = getBalance(applyWithdrawOrder.targetAsset); // TODO: ticker is not currency
       if (balance && balance.available >= applyWithdrawOrder.targetAmount) {
-        const transferR = transactionEngine.transferWithdrawOrderToTransaction(applyWithdrawOrder);
-        if (transferR.success) {
+        const typeData = transactionEngine.transferWithdrawOrderToTransaction(applyWithdrawOrder);
+        if (typeData) {
           // ++ TODO: send request to chain(use Lunar?) (20230324 - tzuhan)
           try {
             result.code = Code.REJECTED_SIGNATURE;
-            const signature: string = await lunar.signTypedData(transferR.data);
+            const signature: string = await lunar.signTypedData(typeData);
             /* Info: (20230505 - Julian) 需要再驗證一次簽名是否正確 */
-            const success = await lunar.verifyTypedData(transferR.data, signature);
+            const success = await lunar.verifyTypedData(typeData, signature);
             if (!success) throw new Error('verify signature failed');
 
             result.code = Code.INTERNAL_SERVER_ERROR;

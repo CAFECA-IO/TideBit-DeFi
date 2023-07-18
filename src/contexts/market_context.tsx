@@ -785,6 +785,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
   React.useMemo(
     () =>
       notificationCtx.emitter.on(TideBitEvent.TRADES, (trades: ITrade[]) => {
+        // Deprecated: [debug] (20230720 - tzuhan)
         // eslint-disable-next-line no-console
         console.log(`notificationCtx.emitter.on(TideBitEvent.TRADES trades`, trades);
         for (const trade of trades) {

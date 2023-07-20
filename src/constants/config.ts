@@ -76,7 +76,7 @@ export const SUGGEST_SL = 0.1;
 
 export const LIQUIDATION_FIVE_LEVERAGE = 0.2;
 
-export const tickerIds = [
+export const instIds = [
   'eth-usdt',
   'btc-usdt',
   // 'ltc-usdt',

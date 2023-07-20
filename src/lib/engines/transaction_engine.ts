@@ -1,9 +1,5 @@
 import keccak from '@cafeca/keccak';
 import SafeMath from '../safe_math';
-import CFDOrderClose from '../../constants/contracts/cfd_close';
-import CFDOrderCreate from '../../constants/contracts/cfd_create';
-import CFDOrderUpdate from '../../constants/contracts/cfd_update';
-import Withdraw from '../../constants/contracts/withdraw';
 import {CFDOperation} from '../../constants/cfd_order_type';
 import {IApplyCFDOrder} from '../../interfaces/tidebit_defi_background/apply_cfd_order';
 import {IApplyCloseCFDOrder} from '../../interfaces/tidebit_defi_background/apply_close_cfd_order';
@@ -11,9 +7,16 @@ import {IApplyUpdateCFDOrder} from '../../interfaces/tidebit_defi_background/app
 import {IApplyCreateCFDOrder} from '../../interfaces/tidebit_defi_background/apply_create_cfd_order';
 import {IApplyDepositOrder} from '../../interfaces/tidebit_defi_background/apply_deposit_order';
 import {IApplyWithdrawOrder} from '../../interfaces/tidebit_defi_background/apply_withdraw_order';
-import {IResult} from '../../interfaces/tidebit_defi_background/result';
-import {Code} from '../../constants/code';
-import {getTimestamp, toIJSON} from '../common';
+import {getTimestamp} from '../common';
+import IEIP712Data from '../../interfaces/ieip712data';
+import {
+  EIP712_DOMAIN,
+  EIP712_PRIMARY_TYPE_CLOSE,
+  EIP712_PRIMARY_TYPE_CREATE,
+  EIP712_PRIMARY_TYPE_UPDATE,
+  EIP712_PRIMARY_TYPE_WITHDRAW,
+  EIP712_TYPES,
+} from '../../constants/contracts/icontract';
 
 class TransactionEngine {
   isApplyCreateCFDOrder(obj: object): obj is IApplyCreateCFDOrder {
@@ -106,49 +109,73 @@ class TransactionEngine {
   }
 
   transferCFDOrderToTransaction(order: IApplyCFDOrder) {
-    let result: IResult = {
-      success: false,
-      code: Code.INVAILD_INPUTS,
-      reason: 'data and type is not match',
-    };
+    let typeData: IEIP712Data | undefined = undefined;
+    // Deprecated: [debug] (20230717 - Tzuhan)
+    // eslint-disable-next-line no-console
+    console.log(`transferCFDOrderToTransaction order.operation`, order.operation);
     switch (order.operation) {
       case CFDOperation.CREATE:
         if (this.isApplyCreateCFDOrder(order)) {
-          const typeData = CFDOrderCreate;
-          typeData.message = this.convertCreateCFDOrderData(order);
-          result = {
-            success: true,
-            code: Code.SUCCESS,
-            data: toIJSON(typeData),
+          const message = this.convertCreateCFDOrderData(order);
+          typeData = {
+            domain: {...EIP712_DOMAIN},
+            types: EIP712_TYPES,
+            primaryType: EIP712_PRIMARY_TYPE_CREATE,
+            message,
           };
         }
+        // Deprecated: [debug] (20230717 - Tzuhan)
+        // eslint-disable-next-line no-console
+        console.log(`transferCFDOrderToTransaction EIP712_DOMAIN`, EIP712_DOMAIN);
+        // Deprecated: [debug] (20230717 - Tzuhan)
+        // eslint-disable-next-line no-console
+        console.log(`transferCFDOrderToTransaction typeData`, typeData);
         break;
       case CFDOperation.UPDATE:
         if (this.isApplyUpdateCFDOrder(order)) {
-          const typeData = CFDOrderUpdate;
-          typeData.message = this.convertUpdateCFDOrderData(order);
-          result = {
-            success: true,
-            code: Code.SUCCESS,
-            data: toIJSON(typeData),
+          const message = this.convertUpdateCFDOrderData(order);
+          typeData = {
+            domain: {...EIP712_DOMAIN},
+            types: EIP712_TYPES,
+            primaryType: EIP712_PRIMARY_TYPE_UPDATE,
+            message,
           };
         }
+        // Deprecated: [debug] (20230717 - Tzuhan)
+        // eslint-disable-next-line no-console
+        console.log(`transferCFDOrderToTransaction EIP712_DOMAIN`, EIP712_DOMAIN);
+        // Deprecated: [debug] (20230717 - Tzuhan)
+        // eslint-disable-next-line no-console
+        console.log(`transferCFDOrderToTransaction typeData`, typeData);
         break;
       case CFDOperation.CLOSE:
         if (this.isApplyCloseCFDOrderData(order)) {
-          const typeData = CFDOrderClose;
-          typeData.message = this.convertCloseCFDOrderData(order);
-          result = {
-            success: true,
-            code: Code.SUCCESS,
-            data: toIJSON(typeData),
+          const message = this.convertCloseCFDOrderData(order);
+          typeData = {
+            domain: {...EIP712_DOMAIN},
+            types: EIP712_TYPES,
+            primaryType: EIP712_PRIMARY_TYPE_CLOSE,
+            message,
           };
         }
+        // Deprecated: [debug] (20230717 - Tzuhan)
+        // eslint-disable-next-line no-console
+        console.log(`transferCFDOrderToTransaction EIP712_DOMAIN`, EIP712_DOMAIN);
+        // Deprecated: [debug] (20230717 - Tzuhan)
+        // eslint-disable-next-line no-console
+        console.log(`transferCFDOrderToTransaction typeData`, typeData);
         break;
       default:
         break;
     }
-    return result;
+    return typeData
+      ? {
+          domain: {...typeData.domain},
+          types: typeData.types,
+          primaryType: typeData.primaryType,
+          message: typeData.message,
+        }
+      : typeData;
   }
 
   transferDepositOrderToTransaction(depositOrder: IApplyDepositOrder) {
@@ -172,14 +199,14 @@ class TransactionEngine {
   }
 
   transferWithdrawOrderToTransaction(withdrawOrder: IApplyWithdrawOrder) {
-    const typeData = Withdraw;
-    typeData.message = this.convertWithdrawOrderData(withdrawOrder);
-    const result: IResult = {
-      success: true,
-      code: Code.SUCCESS,
-      data: toIJSON(typeData),
+    const message = this.convertWithdrawOrderData(withdrawOrder);
+    const typeData = {
+      domain: EIP712_DOMAIN,
+      types: EIP712_TYPES,
+      primaryType: EIP712_PRIMARY_TYPE_WITHDRAW,
+      message,
     };
-    return result;
+    return typeData;
   }
 }
 

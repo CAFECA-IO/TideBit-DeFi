@@ -7,6 +7,7 @@ import RippleButton from '../ripple_button/ripple_button';
 import {DEFAULT_BALANCE, UNIVERSAL_NUMBER_FORMAT_LOCALE} from '../../constants/display';
 import {unitAsset, FRACTION_DIGITS} from '../../constants/config';
 import {useTranslation} from 'next-i18next';
+import SafeMath from '../../lib/safe_math';
 
 type TranslateFunction = (s: string) => string;
 
@@ -21,7 +22,7 @@ const BalanceSection = () => {
   /* ToDo: (20230420 - Julian) getUserAssets by currency */
   const avalibleBalance = userAssets?.balance.available ?? DEFAULT_BALANCE.available;
   const lockedBalance = userAssets?.balance.locked ?? DEFAULT_BALANCE.locked;
-  const totalBalance = avalibleBalance + lockedBalance;
+  const totalBalance = SafeMath.plus(avalibleBalance, lockedBalance);
 
   const [hidden, setHidden] = useState(false);
 

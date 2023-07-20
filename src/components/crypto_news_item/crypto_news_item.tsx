@@ -8,7 +8,7 @@ const CryptoNewsItem = ({
   id: id,
   timestamp,
   title: heading,
-  content: content,
+  content,
   img,
   ...otherProps
 }: IBriefNewsItem) => {
@@ -46,7 +46,7 @@ const CryptoNewsItem = ({
                 <p className="mr-5 hidden text-sm text-lightGray lg:flex">{displayedTime.date}</p>
               </div>
 
-              <p className="text-xs lg:mr-5 lg:mb-12">{truncateText(displayedContent, 200)}</p>
+              <p className="text-xs lg:mr-5 lg:mb-12">{displayedContent}</p>
               <p className="mt-3 mb-10 flex text-xs text-lightGray lg:hidden">
                 {displayedTime.date}
               </p>

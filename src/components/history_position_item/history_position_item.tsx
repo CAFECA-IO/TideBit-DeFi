@@ -9,6 +9,7 @@ import {useGlobal} from '../../contexts/global_context';
 import {IDisplayCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
 import {useTranslation} from 'react-i18next';
 import {MarketContext} from '../../contexts/market_context';
+import SafeMath from '../../lib/safe_math';
 
 type TranslateFunction = (s: string) => string;
 interface IHistoryPositionItemProps {
@@ -26,10 +27,10 @@ const HistoryPositionItem = ({closedCfdDetails, ...otherProps}: IHistoryPosition
       : TypeOfTransaction.SHORT;
 
   const closeValue = roundToDecimalPlaces(
-    closedCfdDetails.closePrice! * closedCfdDetails.amount,
+    +SafeMath.mult(closedCfdDetails.closePrice!, closedCfdDetails.amount),
     2
   );
-  const spread = marketCtx.getTickerSpread(closedCfdDetails.targetAsset);
+  const spread = marketCtx.getTickerSpread(closedCfdDetails.ticker);
   const pnl = toPnl({
     openPrice: closedCfdDetails.openPrice,
     closePrice: closedCfdDetails.closePrice!,
@@ -71,7 +72,7 @@ const HistoryPositionItem = ({closedCfdDetails, ...otherProps}: IHistoryPosition
             <div className="inline-flex items-center">
               {/* ToDo: default currency icon (20230310 - Julian) issue #338 */}
               <Image
-                src={`/asset_icon/${closedCfdDetails.ticker.toLowerCase()}.svg` ?? ''}
+                src={`/asset_icon/${closedCfdDetails.targetAsset.toLowerCase()}.svg` ?? ''}
                 alt="currency icon"
                 width={15}
                 height={15}

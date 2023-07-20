@@ -284,3 +284,6 @@ export const MOBILE_WIDTH = 768;
 export const ITEMS_PER_PAGE = 10;
 export const NEWS_IMG_WIDTH = 1440;
 export const NEWS_IMG_HEIGHT = 753;
+export const NEWS_INTRODUCTION_IN_TRADE_MAX_LENGTH = 200;
+export const NEWS_INTRODUCTION_IN_GENERAL_MAX_LENGTH = 400;
+export const TYPING_KEYUP_DELAY = 5000;

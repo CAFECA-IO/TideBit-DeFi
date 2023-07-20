@@ -15,7 +15,6 @@ import {
   wait,
   getDeadline,
   getTimestamp,
-  twoDecimal,
   getTimestampInMilliseconds,
   roundToDecimalPlaces,
   findCodeByReason,
@@ -33,7 +32,7 @@ import {
   FRACTION_DIGITS,
 } from '../../constants/config';
 import {TypeOfPosition} from '../../constants/type_of_position';
-import {IClosedCFDInfoProps, useGlobal} from '../../contexts/global_context';
+import {useGlobal} from '../../contexts/global_context';
 import {BsClockHistory} from 'react-icons/bs';
 import {ProfitState} from '../../constants/profit_state';
 import {UserContext} from '../../contexts/user_context';
@@ -45,20 +44,16 @@ import {ICFDSuggestion} from '../../interfaces/tidebit_defi_background/cfd_sugge
 import {IQuotation} from '../../interfaces/tidebit_defi_background/quotation';
 import useStateRef from 'react-usestateref';
 import {OrderState} from '../../constants/order_state';
-import {
-  defaultResultSuccess,
-  defaultResultFailed,
-  IResult,
-} from '../../interfaces/tidebit_defi_background/result';
+import {defaultResultFailed, IResult} from '../../interfaces/tidebit_defi_background/result';
 import {CFDOperation} from '../../constants/cfd_order_type';
 import {OrderType} from '../../constants/order_type';
 import {CFDClosedType} from '../../constants/cfd_closed_type';
-import {cfdStateCode} from '../../constants/cfd_state_code';
 import {ICFDOrder} from '../../interfaces/tidebit_defi_background/order';
 import {Code, Reason} from '../../constants/code';
 import {ToastTypeAndText} from '../../constants/toast_type';
 import {ToastId} from '../../constants/toast_id';
 import {CustomError, isCustomError} from '../../lib/custom_error';
+import SafeMath from '../../lib/safe_math';
 
 type TranslateFunction = (s: string) => string;
 interface IPositionClosedModal {
@@ -79,21 +74,6 @@ const PositionClosedModal = ({
   const marketCtx = useContext(MarketContext);
   const globalCtx = useGlobal();
   const userCtx = useContext(UserContext);
-
-  /* Deprecated: changing pnl when fixed closed price
-  // const predictedClosePrice = marketCtx.predictCFDClosePrice(
-  //   openCfdDetails.targetAsset,
-  //   openCfdDetails.typeOfPosition
-  // );
-  // const spread = marketCtx.getTickerSpread(openCfdDetails.targetAsset);
-  // const pnl = toPnl({
-  //   openPrice: openCfdDetails.openPrice,
-  //   closePrice: predictedClosePrice,
-  //   amount: openCfdDetails.amount,
-  //   typeOfPosition: openCfdDetails.typeOfPosition,
-  //   spread: spread,
-  // });
-  */
 
   const [quotationError, setQuotationError, quotationErrorRef] = useStateRef(false);
   const [quotationErrorMessage, setQuotationErrorMessage, quotationErrorMessageRef] =
@@ -164,7 +144,7 @@ const PositionClosedModal = ({
       closePrice: quotation.price,
       amount: cfd.amount,
       typeOfPosition: cfd.typeOfPosition,
-      spread: marketCtx.getTickerSpread(cfd.targetAsset),
+      spread: marketCtx.getTickerSpread(cfd.ticker),
     });
     return {
       ...cfd,
@@ -202,26 +182,26 @@ const PositionClosedModal = ({
     const closePrice = quotation.price;
     const leverage = marketCtx.tickerStatic?.leverage ?? DEFAULT_LEVERAGE;
 
-    const openValue = twoDecimal(openPrice * cfd.amount);
+    const openValue = roundToDecimalPlaces(+SafeMath.mult(openPrice, cfd.amount), 2);
 
     const pnl: IPnL = toPnl({
       openPrice: openPrice,
       closePrice: closePrice,
       amount: cfd.amount,
       typeOfPosition: cfd.typeOfPosition,
-      spread: marketCtx.getTickerSpread(cfd.targetAsset),
+      spread: marketCtx.getTickerSpread(cfd.ticker),
     });
     // const positionLineGraph = [100, 100]; // TODO: (20230316 - Shirley) from `marketCtx`
 
     const suggestion: ICFDSuggestion = {
       takeProfit:
         cfd.typeOfPosition === TypeOfPosition.BUY
-          ? openValue * (1 + SUGGEST_TP / leverage)
-          : openValue * (1 - SUGGEST_TP / leverage),
+          ? +SafeMath.mult(openValue, SafeMath.plus(1, SafeMath.div(SUGGEST_TP, leverage)))
+          : +SafeMath.mult(openValue, SafeMath.minus(1, SafeMath.div(SUGGEST_TP, leverage))),
       stopLoss:
         cfd.typeOfPosition === TypeOfPosition.BUY
-          ? openValue * (1 - SUGGEST_SL / leverage)
-          : openValue * (1 + SUGGEST_SL / leverage),
+          ? +SafeMath.mult(openValue, SafeMath.minus(1, SafeMath.div(SUGGEST_SL, leverage)))
+          : +SafeMath.mult(openValue, SafeMath.plus(1, SafeMath.div(SUGGEST_SL, leverage))),
     };
 
     const historyCfd: IDisplayCFDOrder = {
@@ -258,7 +238,7 @@ const PositionClosedModal = ({
       if (
         quotation.success &&
         data.typeOfPosition === oppositeTypeOfPosition &&
-        data.ticker.split('-')[0] === openCfdDetails.ticker &&
+        data.ticker === openCfdDetails.ticker &&
         quotation.data !== null
       ) {
         globalCtx.eliminateToasts(ToastId.GET_QUOTATION_ERROR);
@@ -268,7 +248,7 @@ const PositionClosedModal = ({
         setQuotationError(true);
 
         // TODO: check the unit asset (20230612 - Shirley)
-        if (data.ticker.split('-')[0] !== openCfdDetails.ticker) {
+        if (data.ticker !== openCfdDetails.ticker) {
           setQuotationErrorMessage({
             success: false,
             code: Code.INCONSISTENT_TICKER_OF_QUOTATION,
@@ -454,7 +434,7 @@ const PositionClosedModal = ({
         });
         return;
         // TODO: check users' signature in userCtx (20230613 - Shirley)
-      } else if (quotation.ticker.split('-')[0] === openCfdDetails.ticker) {
+      } else if (quotation.ticker === openCfdDetails.ticker) {
         const displayedCloseOrder = toDisplayCloseOrder(openCfdDetails, quotation);
         globalCtx.dataPositionClosedModalHandler(displayedCloseOrder);
 
@@ -503,7 +483,7 @@ const PositionClosedModal = ({
     <div className="mt-4 flex flex-col px-6 pb-2">
       <div className="flex items-center justify-center space-x-2 text-center">
         <Image
-          src={`/asset_icon/${openCfdDetails?.ticker.toLowerCase()}.svg`}
+          src={`/asset_icon/${openCfdDetails?.targetAsset.toLowerCase()}.svg`}
           width={30}
           height={30}
           alt="ticker icon"

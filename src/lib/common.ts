@@ -27,6 +27,8 @@ import {Currency, ICurrency, ICurrencyConstant} from '../constants/currency';
 import {CustomError} from './custom_error';
 import {Code, ICode, Reason} from '../constants/code';
 import {ITypeOfValidation, TypeOfValidation} from '../constants/validation';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const Keccak = require('@cafeca/keccak');
 
 interface IValidateInput {
   typeOfValidation: ITypeOfValidation;
@@ -35,9 +37,8 @@ interface IValidateInput {
   lowerLimit?: number;
 }
 
-export const roundToDecimalPlaces = (val: number, precision: number): number => {
-  const roundedNumber = Number(val.toFixed(precision));
-  return roundedNumber;
+export const roundToDecimalPlaces = (number: number, decimal: number): number => {
+  return Math.ceil((number + Number.EPSILON) * Math.pow(10, decimal)) / Math.pow(10, decimal);
 };
 
 export function randomIntFromInterval(min: number, max: number) {
@@ -238,17 +239,6 @@ export const getTimestampInMilliseconds = () => Date.now();
 
 export const millesecondsToSeconds = (milleseconds: number) => Math.ceil(milleseconds / 1000);
 
-export const twoDecimal = (num: number, mul?: number): number => {
-  const roundedNum = Math.round(num * 100) / 100;
-  const str = roundedNum.toFixed(2).replace(/\.?0+$/, '');
-  const dec = str.split('.');
-  const numDec = dec.length === 2 ? dec[1].length : 0;
-
-  return mul
-    ? Number((num * mul).toFixed(numDec).replace(/\.?0+$/, ''))
-    : Number(num.toFixed(numDec).replace(/\.?0+$/, ''));
-};
-
 export const getNowSeconds = () => {
   return Math.ceil(new Date().getTime() / 1000);
 };
@@ -260,10 +250,6 @@ export const toQuery = (params: {[key: string]: string | number | boolean} | und
         .join('&')}`
     : ``;
   return query;
-};
-
-export const toIJSON = (typeData: IEIP712Data) => {
-  return JSON.parse(JSON.stringify(typeData));
 };
 
 export const randomHex = (length: number) =>
@@ -331,12 +317,12 @@ export const toDisplayCFDOrder = (cfdOrder: ICFDOrder): IDisplayCFDOrder => {
   */
   const rTp =
     cfdOrder.typeOfPosition === TypeOfPosition.BUY
-      ? twoDecimal(cfdOrder.openPrice * (1 + SUGGEST_TP / cfdOrder.leverage))
-      : twoDecimal(cfdOrder.openPrice * (1 - SUGGEST_TP / cfdOrder.leverage));
+      ? roundToDecimalPlaces(cfdOrder.openPrice * (1 + SUGGEST_TP / cfdOrder.leverage), 2)
+      : roundToDecimalPlaces(cfdOrder.openPrice * (1 - SUGGEST_TP / cfdOrder.leverage), 2);
   const rSl =
     cfdOrder.typeOfPosition === TypeOfPosition.BUY
-      ? twoDecimal(cfdOrder.openPrice * (1 - SUGGEST_SL / cfdOrder.leverage))
-      : twoDecimal(cfdOrder.openPrice * (1 + SUGGEST_SL / cfdOrder.leverage));
+      ? roundToDecimalPlaces(cfdOrder.openPrice * (1 - SUGGEST_SL / cfdOrder.leverage), 2)
+      : roundToDecimalPlaces(cfdOrder.openPrice * (1 + SUGGEST_SL / cfdOrder.leverage), 2);
   const suggestion = {
     takeProfit: rTp,
     stopLoss: rSl,
@@ -497,6 +483,9 @@ export const rlpDecodeServiceTerm = (data: string) => {
 export const verifySignedServiceTerm = (encodedServiceTerm: string) => {
   let isDeWTLegit = true;
   const serviceTerm = rlpDecodeServiceTerm(encodedServiceTerm);
+  // Deprecated: (20230717 - tzuhan) [debug]
+  // eslint-disable-next-line no-console
+  console.log(`verifySignedServiceTerm: `, ` serviceTerm: `, serviceTerm);
   // Info: 1. verify contract domain (20230411 - tzuhan)
   if (serviceTerm.message.domain !== DOMAIN) isDeWTLegit = false && isDeWTLegit;
   // Info: 2. verify contract agreement (20230411 - tzuhan)
@@ -513,6 +502,31 @@ export const verifySignedServiceTerm = (encodedServiceTerm: string) => {
     getTimestamp() - serviceTerm.message.iat > DeWT_VALIDITY_PERIOD // Info: 現在時間與 iat 的時間間隔大於 DeWT 的有效時間 (20230411 - tzuhan)
   )
     isDeWTLegit = false && isDeWTLegit;
+  // Deprecated: (20230717 - tzuhan) [debug]
+  // eslint-disable-next-line no-console
+  console.log(
+    `verifySignedServiceTerm:`,
+    `serviceTerm.message.domain(${serviceTerm.message.domain}) !== DOMAIN(${DOMAIN})`,
+    serviceTerm.message.domain !== DOMAIN,
+    `serviceTerm.message.agree[0](${serviceTerm.message.agree[0]}) !== TERM_OF_SERVICE(${TERM_OF_SERVICE})`,
+    serviceTerm.message.agree[0] !== TERM_OF_SERVICE,
+    `serviceTerm.message.agree[1](${serviceTerm.message.agree[1]}) !== PRIVATE_POLICY(${PRIVATE_POLICY})`,
+    serviceTerm.message.agree[1] !== PRIVATE_POLICY,
+    `serviceTerm.message.iat(${serviceTerm.message.iat}) > serviceTerm.message.expired(${serviceTerm.message.expired})`,
+    (serviceTerm.message?.iat ?? 0) > (serviceTerm.message?.expired ?? 0),
+    `getTimestamp()`,
+    getTimestamp(),
+    `serviceTerm.message.iat(${serviceTerm.message?.iat ?? 0}) > getTimestamp()(${getTimestamp()})`,
+    (serviceTerm.message?.iat ?? 0) > getTimestamp(),
+    `serviceTerm.message.expired(${
+      serviceTerm.message?.expired ?? 0
+    }) < getTimestamp()(${getTimestamp()})`,
+    (serviceTerm.message?.expired ?? 0) < getTimestamp(),
+    `getTimestamp()(${getTimestamp()}) - serviceTerm.message.iat(${
+      serviceTerm.message?.iat ?? 0
+    }) > DeWT_VALIDITY_PERIOD(${DeWT_VALIDITY_PERIOD})`,
+    getTimestamp() - (serviceTerm.message?.iat ?? 0) > DeWT_VALIDITY_PERIOD
+  );
   return {isDeWTLegit, serviceTerm};
 };
 
@@ -521,6 +535,16 @@ export const getCookieByName = (name: string): string | undefined => {
     .split('; ')
     .find(row => row.startsWith(`${name}=`))
     ?.split('=')[1];
+  /**  Deprecated: (20230717 - tzuhan) [debug]
+  // eslint-disable-next-line no-console
+  console.log(
+    `getCookieByName: ${name}`,
+    ` document.cookie: `,
+    document.cookie,
+    `cookieValue: `,
+    cookieValue
+  );
+  */
   return cookieValue;
 };
 
@@ -671,4 +695,28 @@ export const truncateText = (text: string, limitLength: number) => {
   if (text.length > limitLength) result += '...';
 
   return result;
+};
+
+export const getKeccak256Hash = (data: string) => {
+  data = data.toLowerCase().replace('0x', '');
+  const keccak256 = new Keccak('keccak256');
+  const hash = keccak256.update(data).digest('hex');
+  return hash;
+};
+
+export const toChecksumAddress = (address: string) => {
+  address = address.toLowerCase().replace('0x', '');
+  const hash = getKeccak256Hash(address);
+
+  let checksumAddress = '0x';
+
+  for (let i = 0; i < address.length; i++) {
+    if (parseInt(hash[i], 16) >= 8) {
+      checksumAddress += address[i].toUpperCase();
+    } else {
+      checksumAddress += address[i];
+    }
+  }
+
+  return checksumAddress;
 };

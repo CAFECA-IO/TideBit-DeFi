@@ -46,6 +46,7 @@ import {ToastId} from '../../constants/toast_id';
 import {CustomError, isCustomError} from '../../lib/custom_error';
 import {ICFDOrder, IOrder} from '../../interfaces/tidebit_defi_background/order';
 import {OrderState} from '../../constants/order_state';
+import SafeMath from '../../lib/safe_math';
 
 type TranslateFunction = (s: string) => string;
 interface IPositionOpenModal {
@@ -149,8 +150,8 @@ const PositionOpenModal = ({
         //   ...receipt.order,
         //   // state: OrderState.OPENING,
         // };
-        const closePrice = marketCtx.predictCFDClosePrice(cfd.targetAsset, cfd.typeOfPosition);
-        const spread = marketCtx.getTickerSpread(cfd.targetAsset);
+        const closePrice = marketCtx.predictCFDClosePrice(cfd.ticker, cfd.typeOfPosition);
+        const spread = marketCtx.getTickerSpread(cfd.ticker);
 
         const pnl = toPnl({
           openPrice: cfd.openPrice,
@@ -255,7 +256,7 @@ const PositionOpenModal = ({
       if (
         quotation.success &&
         data.typeOfPosition === openCfdRequest.typeOfPosition &&
-        data.ticker.split('-')[0] === openCfdRequest.ticker &&
+        data.ticker === openCfdRequest.ticker &&
         quotation.data !== null
       ) {
         globalCtx.eliminateToasts(ToastId.GET_QUOTATION_ERROR);
@@ -265,7 +266,7 @@ const PositionOpenModal = ({
         setQuotationError(true);
 
         // TODO: check the unit asset (20230612 - Shirley)
-        if (data.ticker.split('-')[0] !== openCfdRequest.ticker) {
+        if (data.ticker !== openCfdRequest.ticker) {
           setQuotationErrorMessage({
             success: false,
             code: Code.INCONSISTENT_TICKER_OF_QUOTATION,
@@ -323,12 +324,12 @@ const PositionOpenModal = ({
 
     const newPrice = newQuotation.price;
 
-    const newMargin = (Number(newQuotation.price) * Number(openCfdRequest.amount)) / 5;
+    const newMargin = +SafeMath.div(SafeMath.mult(newQuotation.price, openCfdRequest.amount), 5);
     const newLiquidationPrice =
       openCfdRequest.typeOfPosition === TypeOfPosition.BUY
-        ? newQuotation.price * (1 - LIQUIDATION_FIVE_LEVERAGE)
-        : newQuotation.price * (1 + LIQUIDATION_FIVE_LEVERAGE);
-    const gslFee = Number(gsl) * openCfdRequest.amount * newPrice;
+        ? +SafeMath.mult(newQuotation.price, SafeMath.minus(1, LIQUIDATION_FIVE_LEVERAGE))
+        : +SafeMath.mult(newQuotation.price, SafeMath.plus(1, LIQUIDATION_FIVE_LEVERAGE));
+    const gslFee = +SafeMath.mult(gsl ?? 0, SafeMath.mult(openCfdRequest.amount, newPrice));
 
     globalCtx.dataPositionOpenModalHandler({
       openCfdRequest: {
@@ -361,7 +362,7 @@ const PositionOpenModal = ({
     }
 
     // TODO: check the unit asset (20230612 - Shirley)
-    if (openCfdRequest.quotation.ticker.split('-')[0] !== openCfdRequest.ticker) {
+    if (openCfdRequest.quotation.ticker !== openCfdRequest.ticker) {
       setQuotationError(true);
       setQuotationErrorMessage({
         success: false,
@@ -431,7 +432,7 @@ const PositionOpenModal = ({
           height={30}
           alt="ticker icon"
         />
-        <div className="text-2xl">{marketCtx.selectedTicker?.currency}</div>
+        <div className="text-2xl">{marketCtx.selectedTicker?.instId}</div>
       </div>
 
       <div className="absolute right-6 top-90px flex items-center space-x-1 text-center">
@@ -466,7 +467,7 @@ const PositionOpenModal = ({
             <div className={`${layoutInsideBorder}`}>
               <div className="text-lightGray">{t('POSITION_MODAL.AMOUNT')}</div>
               <div className="">
-                {openCfdRequest.amount.toFixed(2)}
+                {openCfdRequest.amount}
                 <span className="ml-1 text-lightGray">{marketCtx.selectedTicker?.currency}</span>
               </div>
             </div>
@@ -474,7 +475,7 @@ const PositionOpenModal = ({
             <div className={`${layoutInsideBorder} whitespace-nowrap`}>
               <div className="text-lightGray">{t('POSITION_MODAL.REQUIRED_MARGIN')}</div>
               <div className={`${dataRenewedStyle}`}>
-                {openCfdRequest.margin.amount.toFixed(2)}
+                {openCfdRequest.margin.amount}
                 <span className="ml-1 text-lightGray">{unitAsset}</span>
               </div>
             </div>

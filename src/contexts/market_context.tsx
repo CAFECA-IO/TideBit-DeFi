@@ -24,20 +24,13 @@ import {
   ICandlestickData,
   ITrade,
   TradeSideText,
-  generateDummyTrades,
 } from '../interfaces/tidebit_defi_background/candlestickData';
 import {TideBitEvent} from '../constants/tidebit_event';
 import {NotificationContext} from './notification_context';
 import {WorkerContext} from './worker_context';
 import {APIName, Method} from '../constants/api_request';
 import TickerBookInstance from '../lib/books/ticker_book';
-import {
-  DEFAULT_INSTID,
-  DEFAULT_TICKER,
-  INITIAL_TRADES_BUFFER,
-  INITIAL_TRADES_INTERVAL,
-  unitAsset,
-} from '../constants/config';
+import {DEFAULT_INSTID, INITIAL_TRADES_BUFFER, INITIAL_TRADES_INTERVAL} from '../constants/config';
 import {ITypeOfPosition, TypeOfPosition} from '../constants/type_of_position';
 import {
   dummyTideBitPromotion,
@@ -51,7 +44,7 @@ import {IQuotation} from '../interfaces/tidebit_defi_background/quotation';
 import {IRankingTimeSpan} from '../constants/ranking_time_span';
 import {ILeaderboard} from '../interfaces/tidebit_defi_background/leaderboard';
 import TradeBookInstance from '../lib/books/trade_book';
-import {millesecondsToSeconds} from '../lib/common';
+import {millesecondsToSeconds, roundToDecimalPlaces} from '../lib/common';
 import {
   IWebsiteReserve,
   dummyWebsiteReserve,
@@ -65,6 +58,7 @@ import {
   getDummyNews,
   getDummyRecommendationNews,
 } from '../interfaces/tidebit_defi_background/news';
+import SafeMath from '../lib/safe_math';
 
 export interface IMarketProvider {
   children: React.ReactNode;
@@ -74,7 +68,7 @@ export interface IMarketContext {
   isInit: boolean;
   selectedTicker: ITickerData | null;
   selectedTickerRef: React.MutableRefObject<ITickerData | null>;
-  availableTickers: {[currency: string]: ITickerData};
+  availableTickers: {[instId: string]: ITickerData};
   isCFDTradable: boolean;
   showPositionOnChart: boolean;
   candlestickId: string;
@@ -93,17 +87,17 @@ export interface IMarketContext {
   showPositionOnChartHandler: (bool: boolean) => void;
   candlestickChartIdHandler: (id: string) => void;
   listAvailableTickers: () => ITickerData[];
-  selectTickerHandler: (props: ICurrency) => Promise<IResult>;
+  selectTickerHandler: (instId: string) => Promise<IResult>;
   selectTimeSpanHandler: (props: ITimeSpanUnion) => void;
-  getCFDQuotation: (tickerId: string, typeOfPosition: ITypeOfPosition) => Promise<IResult>;
+  getCFDQuotation: (instId: string, typeOfPosition: ITypeOfPosition) => Promise<IResult>;
   getCFDSuggestion: (
-    tickerId: string,
+    instId: string,
     typeOfPosition: ITypeOfPosition,
     price: number
   ) => Promise<IResult>;
   getGuaranteedStopFeePercentage: () => Promise<IResult>;
-  getTickerSpread: (tickerId: ICurrency) => number;
-  predictCFDClosePrice: (tickerId: ICurrency, typeOfPosition: ITypeOfPosition) => number;
+  getTickerSpread: (instId: string) => number;
+  predictCFDClosePrice: (instId: string, typeOfPosition: ITypeOfPosition) => number;
   getLeaderboard: (timeSpan: IRankingTimeSpan) => Promise<IResult>;
   getTickerLiveStatistics: (instId: string) => Promise<IResult>;
   /** Deprecated: replaced by pusher (20230424 - tzuhan)
@@ -118,7 +112,7 @@ export interface IMarketContext {
   ) => IResult;
     */
   listTickerPositions: (
-    ticker: ICurrency,
+    instId: string,
     options: {
       timespan?: ITimeSpanUnion;
       begin?: number;
@@ -189,10 +183,10 @@ export const MarketContext = createContext<IMarketContext>({
   getNews: () => dummyNews,
   getPaginationNews: () => dummyRecommendedNewsList,
   getRecommendedNews: () => dummyRecommendationNews,
-  getTickerSpread: function (tickerId: ICurrency): number {
+  getTickerSpread: function (instId: string): number {
     throw new Error('Function not implemented.');
   },
-  predictCFDClosePrice: function (tickerId: ICurrency, typeOfPosition: ITypeOfPosition): number {
+  predictCFDClosePrice: function (instId: string, typeOfPosition: ITypeOfPosition): number {
     throw new Error('Function not implemented.');
   },
   getTideBitPromotion: function (): Promise<IResult> {
@@ -236,7 +230,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     useState<NodeJS.Timer | null>(null);
   const [timeSpan, setTimeSpan, timeSpanRef] = useState<ITimeSpanUnion>(tickerBook.timeSpan);
   const [availableTickers, setAvailableTickers, availableTickersRef] = useState<{
-    [currency in ICurrency]: ITickerData;
+    [instId: string]: ITickerData;
   }>(toDummyTickers);
   const [isCFDTradable, setIsCFDTradable] = useState<boolean>(false);
   const [candlestickId, setCandlestickId] = useState<string>('');
@@ -280,7 +274,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
   };
 
   const listAvailableTickers = useCallback(() => {
-    const availableTickers: {[currency: string]: ITickerData} = {...availableTickersRef.current};
+    const availableTickers: {[instId: string]: ITickerData} = {...availableTickersRef.current};
     if (userCtx.enableServiceTerm) {
       for (const favoriteTicker of userCtx.favoriteTickers) {
         if (availableTickers[favoriteTicker])
@@ -345,9 +339,9 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     return result;
   };
 
-  const selectTickerHandler = async (tickerId: ICurrency) => {
-    if (!tickerId) return {...defaultResultFailed};
-    const ticker: ITickerData = availableTickersRef.current[tickerId];
+  const selectTickerHandler = async (instId: string) => {
+    if (!instId) return {...defaultResultFailed};
+    const ticker: ITickerData = availableTickersRef.current[instId];
     if (!ticker) return {...defaultResultFailed};
     notificationCtx.emitter.emit(TideBitEvent.CHANGE_TICKER, ticker);
     setTickerLiveStatistics(null);
@@ -395,9 +389,8 @@ export const MarketProvider = ({children}: IMarketProvider) => {
   };
   */
 
-  const getCFDQuotation = async (currency: string, typeOfPosition: ITypeOfPosition) => {
+  const getCFDQuotation = async (instId: string, typeOfPosition: ITypeOfPosition) => {
     let result: IResult = {...defaultResultFailed};
-    const instId = `${currency}-${unitAsset}`;
     try {
       result = (await workerCtx.requestHandler({
         name: APIName.GET_CFD_QUOTATION,
@@ -424,12 +417,11 @@ export const MarketProvider = ({children}: IMarketProvider) => {
   };
 
   const getCFDSuggestion = async (
-    currency: string,
+    instId: string,
     typeOfPosition: ITypeOfPosition,
     price: number
   ) => {
     let result: IResult = {...defaultResultFailed};
-    const instId = `${currency}-${unitAsset}`;
     try {
       result = (await workerCtx.requestHandler({
         name: APIName.GET_CFD_QUOTATION,
@@ -453,7 +445,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
   };
 
   const listTickerPositions = (
-    ticker: ICurrency,
+    instId: string,
     options: {
       timespan?: ITimeSpanUnion;
       begin?: number;
@@ -463,7 +455,7 @@ export const MarketProvider = ({children}: IMarketProvider) => {
   ) => {
     let positions: number[] = [];
     try {
-      positions = tickerBook.listTickerPositions(ticker, options);
+      positions = tickerBook.listTickerPositions(instId, options);
     } catch (error) {
       // TODO: error handle (20230331 - tzuhan)
     }
@@ -532,9 +524,6 @@ export const MarketProvider = ({children}: IMarketProvider) => {
         const tickers = result.data as ITickerData[];
         tickerBook.updateTickers(tickers);
         setAvailableTickers({...tickerBook.listTickers()});
-        /* Depreccated: call by page(20230608 - tzuhan)
-        await selectTickerHandler(selectedTickerCurrency || tickers[0].currency);
-        */
       }
     } catch (error) {
       // Deprecate: error handle (Tzuhan - 20230321)
@@ -759,25 +748,33 @@ export const MarketProvider = ({children}: IMarketProvider) => {
     return result;
   };
 
-  const getTickerSpread = (tickerId: ICurrency): number => {
+  const getTickerSpread = (instId: string): number => {
     if (!guaranteedStopFeePercentageRef.current) return 0;
-    const ticker: ITickerData = tickerBook.tickers[tickerId];
+    const ticker: ITickerData = tickerBook.tickers[instId];
     if (!ticker) return 0;
     const {fluctuating} = ticker;
-    const spread = guaranteedStopFeePercentageRef.current * Math.abs(fluctuating);
+    const spread = +SafeMath.mult(guaranteedStopFeePercentageRef.current, Math.abs(fluctuating));
+    // Deprecated: [debug] (tzuhan - 20230712)
+    // eslint-disable-next-line no-console
+    // console.log(`getTickerSpread fluctuating: ${fluctuating}, spread: ${spread}, guaranteedStopFeePercentage: ${guaranteedStopFeePercentageRef.current}`);
     return spread;
   };
 
-  const predictCFDClosePrice = (tickerId: ICurrency, typeOfPosition: ITypeOfPosition): number => {
-    const ticker: ITickerData = tickerBook.tickers[tickerId];
+  const predictCFDClosePrice = (instId: string, typeOfPosition: ITypeOfPosition): number => {
+    const ticker: ITickerData = tickerBook.tickers[instId];
     if (!ticker) return 0;
     const oppositeTypeOfPosition =
       typeOfPosition === TypeOfPosition.BUY ? TypeOfPosition.SELL : TypeOfPosition.BUY;
     const {price} = ticker;
-    const spread = getTickerSpread(tickerId);
+    const spread = getTickerSpread(instId);
     const closePrice =
-      oppositeTypeOfPosition === TypeOfPosition.BUY ? price * (1 + spread) : price * (1 - spread);
-    return closePrice;
+      oppositeTypeOfPosition === TypeOfPosition.BUY
+        ? +SafeMath.mult(price, SafeMath.plus(1, spread))
+        : +SafeMath.mult(price, SafeMath.minus(1, spread));
+    // Deprecated: [debug] (tzuhan - 20230712)
+    // eslint-disable-next-line no-console
+    // console.log(`predictCFDClosePrice price: ${price}, closePrice: ${closePrice}`);
+    return roundToDecimalPlaces(closePrice, 2);
   };
 
   const init = async () => {
@@ -798,8 +795,8 @@ export const MarketProvider = ({children}: IMarketProvider) => {
         tickerBook.updateTicker(tickerData);
         const updateTickers = {...tickerBook.listTickers()};
         setAvailableTickers({...updateTickers});
-        if (tickerData.currency === selectedTickerRef.current?.currency)
-          setSelectedTicker(updateTickers[tickerData.currency]);
+        if (tickerData.instId === selectedTickerRef.current?.instId)
+          setSelectedTicker(updateTickers[tickerData.instId]);
       }),
     []
   );
@@ -825,18 +822,23 @@ export const MarketProvider = ({children}: IMarketProvider) => {
 
   React.useMemo(
     () =>
-      notificationCtx.emitter.on(TideBitEvent.TRADES, (action: IPusherAction, trade: ITrade) => {
-        // if (trade.instId === selectedTickerRef.current?.instId) {
-        //   tradeBook.add(trade.instId, {
-        //     tradeId: trade.tradeId,
-        //     targetAsset: trade.baseUnit,
-        //     unitAsset: trade.quoteUnit,
-        //     direct: TradeSideText[trade.side],
-        //     price: trade.price,
-        //     timestampMs: trade.timestamp,
-        //     quantity: trade.amount,
-        //   });
-        // }
+      notificationCtx.emitter.on(TideBitEvent.TRADES, (trades: ITrade[]) => {
+        // Deprecated: [debug] (20230720 - tzuhan)
+        // eslint-disable-next-line no-console
+        console.log(`notificationCtx.emitter.on(TideBitEvent.TRADES trades`, trades);
+        for (const trade of trades) {
+          if (trade.instId === selectedTickerRef.current?.instId) {
+            tradeBook.add(trade.instId, {
+              tradeId: trade.tradeId,
+              targetAsset: trade.baseUnit,
+              unitAsset: trade.quoteUnit,
+              direct: TradeSideText[trade.side],
+              price: trade.price,
+              timestampMs: trade.timestamp,
+              quantity: trade.amount,
+            });
+          }
+        }
       }),
     []
   );

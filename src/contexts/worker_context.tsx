@@ -78,19 +78,8 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
     if (pusherRef.current) {
       const channel = pusherRef.current.subscribe(PusherChannel.GLOBAL_CHANNEL);
       channel.bind(Events.TICKERS, (pusherData: IPusherData) => {
-        const {data} = pusherData;
-        const tickerData = data as ITickerData;
+        const tickerData = pusherData as ITickerData;
         notificationCtx.emitter.emit(TideBitEvent.TICKER, tickerData);
-      });
-    }
-  };
-
-  const subscribeCandlesticks = () => {
-    if (publicChannelRef.current) {
-      publicChannelRef.current.bind(Events.CANDLE_ON_UPDATE, (pusherData: IPusherData) => {
-        const {action, data} = pusherData;
-        const candlesticks = data as ICandlestick;
-        notificationCtx.emitter.emit(TideBitEvent.CANDLESTICK, action, candlesticks);
       });
     }
   };
@@ -98,9 +87,8 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
   const subscribeTrades = () => {
     if (publicChannelRef.current) {
       publicChannelRef.current.bind(Events.TRADES, (pusherData: IPusherData) => {
-        const {action, data} = pusherData;
-        const trade = data as ITrade;
-        notificationCtx.emitter.emit(TideBitEvent.TRADES, action, trade);
+        const trade = pusherData as ITrade;
+        notificationCtx.emitter.emit(TideBitEvent.TRADES, trade);
       });
     }
   };
@@ -151,7 +139,6 @@ export const WorkerProvider = ({children}: IWorkerProvider) => {
         setPublicChannel(channel);
         subscribeTickers();
         subscribeTrades();
-        subscribeCandlesticks();
       }
     });
   };

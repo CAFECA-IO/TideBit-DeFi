@@ -6,10 +6,7 @@ import {ICFDOrder} from './order';
 import {IPnL} from './pnl';
 import {ITickerData} from './ticker_data';
 
-export interface IPusherData {
-  action: IPusherAction;
-  data: ICandlestick | ITickerData | ITrade;
-}
+export type IPusherData = ICandlestick | ITickerData | ITrade;
 
 export interface IPusherPrivateData {
   data:

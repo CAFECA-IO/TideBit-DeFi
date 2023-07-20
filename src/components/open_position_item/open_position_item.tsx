@@ -23,6 +23,7 @@ import {IQuotation} from '../../interfaces/tidebit_defi_background/quotation';
 import {ToastTypeAndText} from '../../constants/toast_type';
 import {ToastId} from '../../constants/toast_id';
 import {Code} from '../../constants/code';
+import SafeMath from '../../lib/safe_math';
 
 type TranslateFunction = (s: string) => string;
 interface IOpenPositionItemProps {
@@ -44,9 +45,6 @@ const OpenPositionItem = ({openCfdDetails}: IOpenPositionItemProps) => {
   const updatedModalClickHandler = () => {
     dataUpdateFormModalHandler({...openCfdDetails, pnl: pnl});
     visibleUpdateFormModalHandler();
-    // depracated: observe if there's gap between the current price and the line graph (20230710 - Shirley)
-    // eslint-disable-next-line no-console
-    console.log('line graph array: ', positionLineGraphWithSpread);
   };
 
   const {
@@ -54,6 +52,7 @@ const OpenPositionItem = ({openCfdDetails}: IOpenPositionItemProps) => {
     openValue,
     createTimestamp,
     ticker,
+    targetAsset,
     typeOfPosition,
     liquidationTime,
     liquidationPrice,
@@ -62,18 +61,18 @@ const OpenPositionItem = ({openCfdDetails}: IOpenPositionItemProps) => {
     stateCode,
   } = openCfdDetails;
 
-  const spread = marketCtx.getTickerSpread(openCfdDetails.targetAsset);
-  const positionLineGraph = marketCtx.listTickerPositions(openCfdDetails.targetAsset, {
+  const spread = marketCtx.getTickerSpread(openCfdDetails.ticker);
+  const positionLineGraph = marketCtx.listTickerPositions(openCfdDetails.ticker, {
     begin: openCfdDetails.createTimestamp,
   });
 
   const positionLineGraphWithSpread =
     typeOfPosition === TypeOfPosition.BUY
-      ? positionLineGraph.map((v: number) => v * (1 - spread))
-      : positionLineGraph.map((v: number) => v * (1 + spread));
+      ? positionLineGraph.map((v: number) => +SafeMath.mult(v, SafeMath.minus(1, spread)))
+      : positionLineGraph.map((v: number) => +SafeMath.mult(v, SafeMath.plus(1, spread)));
 
   const closePrice = marketCtx.predictCFDClosePrice(
-    openCfdDetails.targetAsset,
+    openCfdDetails.ticker,
     openCfdDetails.typeOfPosition
   );
 
@@ -93,16 +92,20 @@ const OpenPositionItem = ({openCfdDetails}: IOpenPositionItemProps) => {
       ? Math.round(remainSecs)
       : remainSecs < 3600
       ? Math.round(remainSecs / 60)
-      : Math.round(remainSecs / 3600);
+      : remainSecs < 86400
+      ? Math.round(remainSecs / 3600)
+      : Math.round(remainSecs / 86400);
 
   const label =
     remainSecs < 60
       ? [`${Math.round(remainSecs)} S`]
       : remainSecs < 3600
       ? [`${Math.round(remainSecs / 60)} M`]
-      : [`${Math.round(remainSecs / 3600)} H`];
+      : remainSecs < 86400
+      ? [`${Math.round(remainSecs / 3600)} H`]
+      : [`${Math.round(remainSecs / 86400)} D`];
 
-  const denominator = remainSecs < 60 ? 60 : remainSecs < 3600 ? 60 : 24;
+  const denominator = remainSecs < 60 ? 60 : remainSecs < 3600 ? 60 : remainSecs < 86400 ? 24 : 7;
 
   const closedModalClickHandler = async () => {
     await getQuotation();
@@ -114,7 +117,7 @@ const OpenPositionItem = ({openCfdDetails}: IOpenPositionItemProps) => {
       closePrice: quotation.price,
       amount: cfd.amount,
       typeOfPosition: cfd.typeOfPosition,
-      spread: marketCtx.getTickerSpread(cfd.targetAsset),
+      spread: marketCtx.getTickerSpread(cfd.ticker),
     });
 
     return {
@@ -138,7 +141,7 @@ const OpenPositionItem = ({openCfdDetails}: IOpenPositionItemProps) => {
       if (
         quotation.success &&
         data.typeOfPosition === oppositeTypeOfPosition &&
-        data.ticker.split('-')[0] === openCfdDetails.ticker &&
+        data.ticker === openCfdDetails.ticker &&
         quotation.data !== null
       ) {
         const displayedCloseOrder = toDisplayCloseOrder(openCfdDetails, data);
@@ -257,7 +260,7 @@ const OpenPositionItem = ({openCfdDetails}: IOpenPositionItemProps) => {
   return (
     <div className="relative my-2 min-h-140px">
       <div
-        className="absolute z-10 h-150px w-280px bg-transparent hover:cursor-pointer"
+        className="absolute z-10 h-160px w-280px bg-transparent hover:cursor-pointer"
         onClick={updatedModalClickHandler}
       ></div>
       {/* Info: (20230411 - Julian) brief of this open position */}
@@ -265,8 +268,8 @@ const OpenPositionItem = ({openCfdDetails}: IOpenPositionItemProps) => {
         <div className="inline-flex items-center text-sm">
           {/* ToDo: default currency icon (20230310 - Julian) issue #338 */}
           <Image
-            src={`/asset_icon/${ticker.toLowerCase()}.svg`}
-            alt={`${ticker} icon`}
+            src={`/asset_icon/${targetAsset.toLowerCase()}.svg`}
+            alt={`${targetAsset} icon`}
             width={15}
             height={15}
           />
@@ -285,7 +288,7 @@ const OpenPositionItem = ({openCfdDetails}: IOpenPositionItemProps) => {
       </div>
 
       {/* Info: (20230411 - Julian) Line graph */}
-      <div className="-mx-4 -mb-10 -mt-6">
+      <div className="-mx-4 mb-0 mt-3 h-60px">
         <PositionLineGraph
           strokeColor={[
             displayedColorHex,

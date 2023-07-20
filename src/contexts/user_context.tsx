@@ -38,6 +38,7 @@ import {
   getTimestamp,
   randomHex,
   rlpEncodeServiceTerm,
+  toChecksumAddress,
   validateCFD,
   verifySignedServiceTerm,
 } from '../lib/common';
@@ -275,7 +276,7 @@ export const UserProvider = ({children}: IUserProvider) => {
       await getUserAssets();
       await listBalances();
       await listFavoriteTickers();
-      if (selectedTickerRef.current) await listCFDs(selectedTickerRef.current.currency);
+      if (selectedTickerRef.current) await listCFDs(selectedTickerRef.current.instId);
 
       workerCtx.subscribeUser(address);
     } else {
@@ -315,19 +316,20 @@ export const UserProvider = ({children}: IUserProvider) => {
     clearPrivateData();
   });
   lunar.on('accountsChanged', async (address: string) => {
+    const checksumAddress = toChecksumAddress(address);
     // Deprecate: [debug] (20230524 - tzuhan)
     // eslint-disable-next-line no-console
     console.log(
-      `accountsChanged address: ${address}, userRef.current?.address: ${userRef.current?.address}`
+      `accountsChanged checksumAddress: ${checksumAddress}, userRef.current?.address: ${userRef.current?.address}`
     );
-    if (!!userRef.current && address !== userRef.current.address) {
+    if (!!userRef.current && checksumAddress !== userRef.current.address) {
       // Deprecate: [debug] (20230524 - tzuhan)
       // eslint-disable-next-line no-console
       console.log(
         `userRef.current: ${JSON.stringify(
           userRef.current
-        )} !!userRef.current(${!!userRef.current}) && address !== userRef.current?.address ${
-          !!userRef.current && address !== userRef.current?.address
+        )} !!userRef.current(${!!userRef.current}) && checksumAddress !== userRef.current?.address ${
+          !!userRef.current && checksumAddress !== userRef.current?.address
         }? clearPrivateData`
       );
       clearPrivateData();
@@ -337,6 +339,9 @@ export const UserProvider = ({children}: IUserProvider) => {
   const privateRequestHandler = useCallback(async (data: TypeRequest) => {
     try {
       const isDeWTLegit = checkDeWT();
+      // Deprecate: [debug] (20230717 - tzuhan)
+      // eslint-disable-next-line no-console
+      console.log(`privateRequestHandler isDeWTLegit`, isDeWTLegit);
       if (isDeWTLegit) {
         return await workerCtx.requestHandler({
           ...data,
@@ -348,6 +353,9 @@ export const UserProvider = ({children}: IUserProvider) => {
         throw new CustomError(Code.DEWT_IS_NOT_LEGIT);
       }
     } catch (error) {
+      // Deprecate: [debug] (20230717 - tzuhan)
+      // eslint-disable-next-line no-console
+      console.log(`privateRequestHandler error`, error);
       throw error;
     }
   }, []);
@@ -373,7 +381,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     return result;
   }, []);
 
-  const listCFDs = useCallback(async (ticker: string) => {
+  const listCFDs = useCallback(async (instId: string) => {
     setIsLoadingCFDs(true);
     let result: IResult = {...defaultResultFailed};
     result.code = Code.SERVICE_TERM_DISABLE;
@@ -384,7 +392,7 @@ export const UserProvider = ({children}: IUserProvider) => {
           name: APIName.LIST_CFD_TRADES,
           method: Method.GET,
           query: {
-            ticker,
+            ticker: instId,
           },
         })) as IResult;
         if (result.success) {
@@ -654,14 +662,18 @@ export const UserProvider = ({children}: IUserProvider) => {
     // 1. get DeWT from cookie
     const deWT = getCookieByName('DeWT');
     if (!!deWT) {
-      const tmp = deWT.split('.');
-      const encodedData = tmp[0];
-      const signature = tmp[1];
+      const [encodedData, signature] = deWT.split('.');
       // 2. decode and verify signed serviceTermContract
       const result = verifySignedServiceTerm(encodedData);
+      // Deprecated: (20230717 - tzuhan) [debug]
+      // eslint-disable-next-line no-console
+      console.log(`checkDeWT: `, ` result: `, result);
       isDeWTLegit = result.isDeWTLegit;
-      if (isDeWTLegit) {
-        signer = result.serviceTerm?.message?.signer;
+      if (isDeWTLegit && result.serviceTerm?.message?.signer) {
+        signer = toChecksumAddress(result.serviceTerm.message.signer);
+        // Deprecated: (20230717 - tzuhan) [debug]
+        // eslint-disable-next-line no-console
+        console.log(`checkDeWT: `, ` signer: `, signer);
         // 3. verify signature with recreate serviceTermContract
         const serviceTermContractTemplate = getServiceTermContract(lunar.address);
         const serviceTermContract = {
@@ -669,6 +681,9 @@ export const UserProvider = ({children}: IUserProvider) => {
           ...result.serviceTerm,
         };
         const verifyR = lunar.verifyTypedData(serviceTermContract, `0x${signature}`);
+        // Deprecated: (20230717 - tzuhan) [debug]
+        // eslint-disable-next-line no-console
+        console.log(`checkDeWT: `, ` verifyR: `, verifyR);
         isDeWTLegit = isDeWTLegit && !!signer && verifyR;
       }
     }
@@ -707,7 +722,7 @@ export const UserProvider = ({children}: IUserProvider) => {
   };
 
   const setDeWT = async (deWT: string) => {
-    document.cookie = `DeWT=${deWT}`;
+    document.cookie = `DeWT=${deWT}; path=/;`;
   };
 
   const signServiceTerm = async (): Promise<IResult> => {
@@ -840,18 +855,9 @@ export const UserProvider = ({children}: IUserProvider) => {
   };
 
   const getCFD = (id: string) => {
-    const CFD = CFDsRef.current[id];
-    // Deprecate: [debug] (20230707 - tzuhan)
-    // eslint-disable-next-line no-console
-    // console.log(`getCFD CFD`, CFD);
-    /** Deprecate: [debug] (20230707 - tzuhan)
-    const histories = historiesRef.current.filter(
-      history => history.receipt.orderSnapshot.id === id
-    );
-    // Deprecate: [debug] (20230707 - tzuhan)
-    // eslint-disable-next-line no-console
-    console.log(`getCFD histories`, histories);
-      */
+    let CFD: ICFDOrder | null = CFDsRef.current[id] ?? null;
+    if (!CFD) CFD = openCFDsRef.current.find(openCFD => openCFD.id === id) ?? null;
+    if (!CFD) CFD = closedCFDsRef.current.find(closeCFD => closeCFD.id === id) ?? null;
     return CFD;
   };
 
@@ -938,14 +944,14 @@ export const UserProvider = ({children}: IUserProvider) => {
       const balance: IBalance | null = getBalance(applyCreateCFDOrder.margin.asset);
       if (!balance || balance.available < applyCreateCFDOrder.margin.amount)
         throw new CustomError(Code.BALANCE_IS_NOT_ENOUGH_TO_OPEN_ORDER);
-      const transferR = transactionEngine.transferCFDOrderToTransaction(applyCreateCFDOrder);
-      if (!transferR.success) throw new CustomError(Code.FAILED_TO_CREATE_TRANSACTION);
-      const signature: string = await lunar.signTypedData(transferR.data);
+      const typeData = transactionEngine.transferCFDOrderToTransaction(applyCreateCFDOrder);
+      if (!typeData) throw new CustomError(Code.FAILED_TO_CREATE_TRANSACTION);
+      const signature: string = await lunar.signTypedData(typeData);
       /* Info: (20230505 - Julian) 需要再驗證一次簽名是否正確 */
-      const success = lunar.verifyTypedData(transferR.data, signature);
+      const success = lunar.verifyTypedData(typeData, signature);
       // Deprecated: [debug] (20230509 - Tzuhan)
       // eslint-disable-next-line no-console
-      console.log('_createCFDOrder lunar.verifyTypedData success', success);
+      console.log('_createCFDOrder lunar.verifyTypedData success', success, `typeData`, typeData);
       if (!success) throw new CustomError(Code.REJECTED_SIGNATURE);
       const now = getTimestamp();
       // Deprecated: [debug] (20230509 - Tzuhan)
@@ -1049,20 +1055,20 @@ export const UserProvider = ({children}: IUserProvider) => {
     try {
       if (!enableServiceTermRef.current) throw new CustomError(Code.SERVICE_TERM_DISABLE);
       if (!applyCloseCFDOrder) throw new CustomError(Code.INVAILD_ORDER_INPUTS);
-      const closeAppliedCFD = CFDs[applyCloseCFDOrder.referenceId];
+      const closeAppliedCFD = getCFD(applyCloseCFDOrder.referenceId);
       if (!closeAppliedCFD) throw new CustomError(Code.CFD_ORDER_NOT_FOUND);
       if (closeAppliedCFD.state !== OrderState.OPENING)
         throw new CustomError(Code.CFD_ORDER_IS_ALREADY_CLOSED);
       // const balance: IBalance | null = getBalance(openCFDs[index].targetAsset);
-      const transferR = transactionEngine.transferCFDOrderToTransaction(applyCloseCFDOrder);
-      if (!transferR.success) throw new CustomError(Code.FAILED_TO_CREATE_TRANSACTION);
+      const typeData = transactionEngine.transferCFDOrderToTransaction(applyCloseCFDOrder);
+      if (!typeData) throw new CustomError(Code.FAILED_TO_CREATE_TRANSACTION);
       // TODO: send request to chain(use Lunar?) (20230324 - tzuhan)
-      const signature: string = await lunar.signTypedData(transferR.data);
+      const signature: string = await lunar.signTypedData(typeData);
       /* Info: (20230505 - Julian) 需要再驗證一次簽名是否正確 */
-      const success = lunar.verifyTypedData(transferR.data, signature);
+      const success = lunar.verifyTypedData(typeData, signature);
       // Deprecated: [debug] (20230509 - Tzuhan)
       // eslint-disable-next-line no-console
-      console.log('closeCFDOrder lunar.verifyTypedData success', success);
+      console.log('closeCFDOrder lunar.verifyTypedData success', success, `typeData`, typeData);
       if (!success) throw new CustomError(Code.REJECTED_SIGNATURE);
       const now = getTimestamp();
       // ToDo: Check if the quotation is expired, if so return `failed result` in `catch`. (20230414 - Shirley)
@@ -1166,19 +1172,19 @@ export const UserProvider = ({children}: IUserProvider) => {
     try {
       if (!enableServiceTermRef.current) throw new CustomError(Code.SERVICE_TERM_DISABLE);
       if (!applyUpdateCFDOrder) throw new CustomError(Code.INVAILD_ORDER_INPUTS);
-      const updateAppliedCFD = CFDs[applyUpdateCFDOrder.referenceId];
+      const updateAppliedCFD = getCFD(applyUpdateCFDOrder.referenceId);
       if (!updateAppliedCFD) throw new CustomError(Code.CFD_ORDER_NOT_FOUND);
       if (updateAppliedCFD.state !== OrderState.OPENING)
         throw new CustomError(Code.CFD_ORDER_IS_ALREADY_CLOSED);
-      const transferR = transactionEngine.transferCFDOrderToTransaction(applyUpdateCFDOrder);
-      if (!transferR.success) throw new CustomError(Code.FAILED_TO_CREATE_TRANSACTION);
+      const typeData = transactionEngine.transferCFDOrderToTransaction(applyUpdateCFDOrder);
+      if (!typeData) throw new CustomError(Code.FAILED_TO_CREATE_TRANSACTION);
       // TODO: send request to chain(use Lunar?) (20230324 - tzuhan)
-      const signature: string = await lunar.signTypedData(transferR.data);
+      const signature: string = await lunar.signTypedData(typeData);
       /* Info: (20230505 - Julian) 需要再驗證一次簽名是否正確 */
-      const success = lunar.verifyTypedData(transferR.data, signature);
+      const success = lunar.verifyTypedData(typeData, signature);
       // Deprecated: [debug] (20230509 - Tzuhan)
       // eslint-disable-next-line no-console
-      console.log('updateCFDOrder lunar.verifyTypedData success', success);
+      console.log('updateCFDOrder lunar.verifyTypedData success', success, `typeData`, typeData);
       if (!success) throw new CustomError(Code.REJECTED_SIGNATURE);
       result = (await privateRequestHandler({
         name: APIName.UPDATE_CFD_TRADE,
@@ -1267,14 +1273,14 @@ export const UserProvider = ({children}: IUserProvider) => {
     if (enableServiceTermRef.current) {
       const balance: IBalance | null = getBalance(applyWithdrawOrder.targetAsset); // TODO: ticker is not currency
       if (balance && balance.available >= applyWithdrawOrder.targetAmount) {
-        const transferR = transactionEngine.transferWithdrawOrderToTransaction(applyWithdrawOrder);
-        if (transferR.success) {
+        const typeData = transactionEngine.transferWithdrawOrderToTransaction(applyWithdrawOrder);
+        if (typeData) {
           // ++ TODO: send request to chain(use Lunar?) (20230324 - tzuhan)
           try {
             result.code = Code.REJECTED_SIGNATURE;
-            const signature: string = await lunar.signTypedData(transferR.data);
+            const signature: string = await lunar.signTypedData(typeData);
             /* Info: (20230505 - Julian) 需要再驗證一次簽名是否正確 */
-            const success = await lunar.verifyTypedData(transferR.data, signature);
+            const success = await lunar.verifyTypedData(typeData, signature);
             if (!success) throw new Error('verify signature failed');
 
             result.code = Code.INTERNAL_SERVER_ERROR;
@@ -1496,7 +1502,7 @@ export const UserProvider = ({children}: IUserProvider) => {
   }, []);
 
   const updateCFDHandler = useCallback((updateCFD: ICFDOrder) => {
-    const _updateCFD = {...updateCFD, ticker: updateCFD.ticker.split('-')[0]};
+    const _updateCFD = {...updateCFD};
     let updatedCFDs: ICFDOrder[] = [];
     if (openCFDsRef.current) {
       updatedCFDs = [...updatedCFDs, ...openCFDsRef.current];
@@ -1554,7 +1560,7 @@ export const UserProvider = ({children}: IUserProvider) => {
   React.useMemo(
     () =>
       notificationCtx.emitter.on(TideBitEvent.TICKER_CHANGE, async (ticker: ITickerData) => {
-        await listCFDs(ticker.currency);
+        await listCFDs(ticker.instId);
       }),
     []
   );

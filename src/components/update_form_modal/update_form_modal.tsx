@@ -31,7 +31,7 @@ import {
   unitAsset,
   FRACTION_DIGITS,
   TARGET_MAX_DIGITS,
-  TP_SL_LIMIT_PERCENT,
+  TP_SL_LIMIT_RATIO,
 } from '../../constants/config';
 import useStateRef from 'react-usestateref';
 import {useTranslation} from 'react-i18next';
@@ -46,6 +46,7 @@ import {IQuotation} from '../../interfaces/tidebit_defi_background/quotation';
 import {Code} from '../../constants/code';
 import {ToastTypeAndText} from '../../constants/toast_type';
 import {ToastId} from '../../constants/toast_id';
+import SafeMath from '../../lib/safe_math';
 
 type TranslateFunction = (s: string) => string;
 interface IUpdatedFormModal {
@@ -103,7 +104,10 @@ const UpdateFormModal = ({
     useStateRef(initialState);
 
   const [guaranteedStopFee, setGuaranteedStopFee, guaranteedStopFeeRef] = useStateRef(
-    Number(gsl) * openCfdDetails?.openPrice * openCfdDetails?.amount
+    +SafeMath.mult(
+      Number(gsl),
+      SafeMath.mult(openCfdDetails?.openPrice ?? 0, openCfdDetails?.amount ?? 0)
+    )
   );
 
   const [disableSlInput, setDisableSlInput, disableSlInputRef] = useStateRef(false);
@@ -481,7 +485,7 @@ const UpdateFormModal = ({
     }
   };
 
-  const nowTimestamp = getTimestamp();
+  const nowTimestamp = getTimestamp() as number;
   const remainSecs = openCfdDetails?.liquidationTime - nowTimestamp;
 
   const remainTime =
@@ -489,16 +493,20 @@ const UpdateFormModal = ({
       ? Math.round(remainSecs)
       : remainSecs < 3600
       ? Math.round(remainSecs / 60)
-      : Math.round(remainSecs / 3600);
+      : remainSecs < 86400
+      ? Math.round(remainSecs / 3600)
+      : Math.round(remainSecs / 86400);
 
   const label =
     remainSecs < 60
       ? [`${Math.round(remainSecs)} S`]
       : remainSecs < 3600
       ? [`${Math.round(remainSecs / 60)} M`]
-      : [`${Math.round(remainSecs / 3600)} H`];
+      : remainSecs < 86400
+      ? [`${Math.round(remainSecs / 3600)} H`]
+      : [`${Math.round(remainSecs / 86400)} D`];
 
-  const denominator = remainSecs < 60 ? 60 : remainSecs < 3600 ? 60 : 24;
+  const denominator = remainSecs < 60 ? 60 : remainSecs < 3600 ? 60 : remainSecs < 86400 ? 24 : 7;
 
   const closedModalClickHandler = async () => {
     globalCtx.visibleUpdateFormModalHandler();
@@ -511,7 +519,7 @@ const UpdateFormModal = ({
       closePrice: quotation.price,
       amount: cfd.amount,
       typeOfPosition: cfd.typeOfPosition,
-      spread: marketCtx.getTickerSpread(cfd.targetAsset),
+      spread: marketCtx.getTickerSpread(cfd.ticker),
     });
 
     return {
@@ -535,7 +543,7 @@ const UpdateFormModal = ({
       if (
         quotation.success &&
         data.typeOfPosition === oppositeTypeOfPosition &&
-        data.ticker.split('-')[0] === openCfdDetails.ticker &&
+        data.ticker === openCfdDetails.ticker &&
         quotation.data !== null
       ) {
         const displayedCloseOrder = toDisplayCloseOrder(openCfdDetails, data);
@@ -575,11 +583,17 @@ const UpdateFormModal = ({
     // Info: minimum price (open price) with buffer (20230426 - Shirley)
     const caledTpLowerLimit =
       openCfdDetails.typeOfPosition === TypeOfPosition.BUY
-        ? roundToDecimalPlaces(openCfdDetails.openPrice * (1 + TP_SL_LIMIT_PERCENT), 2)
+        ? roundToDecimalPlaces(
+            +SafeMath.mult(openCfdDetails.openPrice, SafeMath.plus(1, TP_SL_LIMIT_RATIO)),
+            2
+          )
         : 0;
     const caledTpUpperLimit =
       openCfdDetails.typeOfPosition === TypeOfPosition.SELL
-        ? roundToDecimalPlaces(openCfdDetails.openPrice * (1 - TP_SL_LIMIT_PERCENT), 2)
+        ? roundToDecimalPlaces(
+            +SafeMath.mult(openCfdDetails.openPrice, SafeMath.minus(1, TP_SL_LIMIT_RATIO)),
+            2
+          )
         : TARGET_MAX_DIGITS;
 
     const isLiquidated =
@@ -594,14 +608,26 @@ const UpdateFormModal = ({
     const caledSlLowerLimit = isLiquidated
       ? roundToDecimalPlaces(openCfdDetails.liquidationPrice, 2) // Info: 相當於不能設定 SL (20230426 - Shirley)
       : openCfdDetails.typeOfPosition === TypeOfPosition.BUY
-      ? roundToDecimalPlaces(openCfdDetails.liquidationPrice * (1 + TP_SL_LIMIT_PERCENT), 2)
-      : roundToDecimalPlaces(openCfdDetails.openPrice * (1 + TP_SL_LIMIT_PERCENT), 2);
+      ? roundToDecimalPlaces(
+          +SafeMath.mult(openCfdDetails.liquidationPrice, SafeMath.plus(1, TP_SL_LIMIT_RATIO)),
+          2
+        )
+      : roundToDecimalPlaces(
+          +SafeMath.mult(openCfdDetails.openPrice, SafeMath.plus(1, TP_SL_LIMIT_RATIO)),
+          2
+        );
 
     const caledSlUpperLimit = isLiquidated
       ? roundToDecimalPlaces(openCfdDetails.liquidationPrice, 2) // Info: 相當於不能設定 SL (20230426 - Shirley)
       : openCfdDetails.typeOfPosition === TypeOfPosition.BUY
-      ? roundToDecimalPlaces(openCfdDetails.openPrice * (1 - TP_SL_LIMIT_PERCENT), 2)
-      : roundToDecimalPlaces(openCfdDetails.liquidationPrice * (1 - TP_SL_LIMIT_PERCENT), 2);
+      ? roundToDecimalPlaces(
+          +SafeMath.mult(openCfdDetails.openPrice, SafeMath.minus(1, TP_SL_LIMIT_RATIO)),
+          2
+        )
+      : roundToDecimalPlaces(
+          +SafeMath.mult(openCfdDetails.liquidationPrice, SafeMath.minus(1, TP_SL_LIMIT_RATIO)),
+          2
+        );
 
     const caledSl =
       marketCtx.selectedTicker?.price !== undefined
@@ -611,7 +637,7 @@ const UpdateFormModal = ({
             marketCtx.selectedTicker.price > openCfdDetails.liquidationPrice)
           ? roundToDecimalPlaces(openCfdDetails.liquidationPrice, 2)
           : roundToDecimalPlaces(
-              (marketCtx.selectedTicker.price + openCfdDetails.liquidationPrice) / 2,
+              +SafeMath.plus(marketCtx.selectedTicker.price, openCfdDetails.liquidationPrice) / 2,
               2
             )
         : roundToDecimalPlaces(openCfdDetails.liquidationPrice, 2);
@@ -627,10 +653,13 @@ const UpdateFormModal = ({
           : openCfdDetails.suggestion.stopLoss
         : openCfdDetails.suggestion.stopLoss;
 
-    const gslFee =
-      Number(marketCtx.guaranteedStopFeePercentage) *
-      openCfdDetails?.openPrice *
-      openCfdDetails?.amount;
+    const gslFee = roundToDecimalPlaces(
+      +SafeMath.mult(
+        SafeMath.mult(Number(marketCtx.guaranteedStopFeePercentage), openCfdDetails?.openPrice),
+        openCfdDetails?.amount
+      ),
+      2
+    );
 
     setDisableSlInput(isLiquidated);
 
@@ -645,13 +674,13 @@ const UpdateFormModal = ({
     setTpUpperLimit(caledTpUpperLimit);
 
     setTpValue(
-      openCfdDetails.takeProfit === 0 || openCfdDetails.takeProfit === undefined
+      openCfdDetails.takeProfit === 0 || !openCfdDetails.takeProfit
         ? openCfdDetails.suggestion.takeProfit
         : openCfdDetails.takeProfit
     );
 
     setSlValue(
-      openCfdDetails.stopLoss === 0 || openCfdDetails.stopLoss === undefined
+      openCfdDetails.stopLoss === 0 || !openCfdDetails.stopLoss
         ? suggestedSl
         : openCfdDetails.stopLoss
     );
@@ -660,7 +689,15 @@ const UpdateFormModal = ({
   };
 
   useEffect(() => {
-    setGuaranteedStopFee(Number(gsl) * openCfdDetails?.openPrice * openCfdDetails?.amount);
+    setGuaranteedStopFee(
+      roundToDecimalPlaces(
+        +SafeMath.mult(
+          Number(gsl),
+          SafeMath.mult(openCfdDetails?.openPrice, openCfdDetails?.amount)
+        ),
+        2
+      )
+    );
   }, [gsl, openCfdDetails?.openPrice, openCfdDetails?.amount]);
 
   useEffect(() => {
@@ -693,7 +730,7 @@ const UpdateFormModal = ({
               <div className="mx-10 mt-6 flex w-full justify-between">
                 <div className="flex items-center space-x-3 text-center text-lightWhite">
                   <Image
-                    src={`/asset_icon/${openCfdDetails?.ticker.toLowerCase()}.svg`}
+                    src={`/asset_icon/${openCfdDetails?.targetAsset.toLowerCase()}.svg`}
                     width={30}
                     height={30}
                     alt="icon"
@@ -751,7 +788,7 @@ const UpdateFormModal = ({
                         UNIVERSAL_NUMBER_FORMAT_LOCALE,
                         FRACTION_DIGITS
                       ) ?? 0}
-                      <span className="ml-1 text-lightGray">{openCfdDetails?.ticker}</span>
+                      <span className="ml-1 text-lightGray">{openCfdDetails?.targetAsset}</span>
                     </div>
                   </div>
 
@@ -796,13 +833,13 @@ const UpdateFormModal = ({
                     <div className="text-lightGray">{t('POSITION_MODAL.TP_AND_SL')}</div>
                     <div className="">
                       <span className={`text-lightWhite`}>
-                        {cfdTp === undefined || cfdTp === 0
+                        {!cfdTp || cfdTp === 0
                           ? '-'
                           : cfdTp.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)}
                       </span>{' '}
                       /{' '}
                       <span className={`text-lightWhite`}>
-                        {cfdSl === undefined || cfdSl === 0
+                        {!cfdSl || cfdSl === 0
                           ? '-'
                           : cfdSl.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)}
                       </span>

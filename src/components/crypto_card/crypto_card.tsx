@@ -40,6 +40,7 @@ export interface ICardProps {
 
   className?: string;
   cardClickHandler?: () => void;
+  inSamePage?: boolean;
 }
 
 /** Info: (20230628 - Shirley)
@@ -61,6 +62,7 @@ const CryptoCard = ({
   starColor,
   lineGraphProps,
   cardClickHandler,
+  inSamePage = true,
   ...otherProps
 }: ICardProps): JSX.Element => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
@@ -76,6 +78,8 @@ const CryptoCard = ({
   const strokeColor = priceRise ? [TypeOfPnLColorHex.PROFIT] : [TypeOfPnLColorHex.LOSS];
 
   const globalCtx = useGlobal();
+  // eslint-disable-next-line no-console
+  console.log('insamepage', inSamePage);
 
   const starClickHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
     if (!userCtx.enableServiceTerm) {
@@ -237,7 +241,7 @@ const CryptoCard = ({
       <div
         className={`${desktopVersionBreakpoint} ${otherProps?.className} relative m-0 hidden h-120px w-200px rounded-2xl border-0.5px p-0 hover:cursor-pointer ${gradientColor} bg-transparent bg-gradient-to-b opacity-90 shadow-lg`}
         onClick={() => {
-          marketCtx.selectTickerHandler(instId);
+          inSamePage && marketCtx.selectTickerHandler(instId);
           cardClickHandler && cardClickHandler();
         }}
       >
@@ -278,7 +282,7 @@ const CryptoCard = ({
       <div
         className={`${mobileVersionBreakpoint} ${otherProps?.className} relative m-0 h-81px w-134px rounded-2xl border-0.5px p-0 ${gradientColor} bg-black bg-gradient-to-b opacity-90 shadow-lg`}
         onClick={() => {
-          marketCtx.selectTickerHandler(instId);
+          inSamePage && marketCtx.selectTickerHandler(instId);
           cardClickHandler && cardClickHandler();
         }}
       >

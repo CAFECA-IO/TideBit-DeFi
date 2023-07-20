@@ -84,6 +84,7 @@ const PositionClosedModal = ({
     ticker: openCfdDetails?.ticker,
     typeOfPosition: openCfdDetails?.typeOfPosition,
     price: randomIntFromInterval(20, 29),
+    spotPrice: randomIntFromInterval(20, 29),
     targetAsset: openCfdDetails?.targetAsset,
     unitAsset: openCfdDetails?.unitAsset,
     deadline: getDeadline(QUOTATION_RENEWAL_INTERVAL_SECONDS),

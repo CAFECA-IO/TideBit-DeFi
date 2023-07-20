@@ -12,12 +12,15 @@ import User from '../user/user';
 import {NotificationContext} from '../../contexts/notification_context';
 import {TBDURL} from '../../constants/api_request';
 import {WalletConnectButton} from '../wallet_connect_button/wallet_connect_button';
+import {useRouter} from 'next/router';
 
 type TranslateFunction = (s: string) => string;
 
 const NavBar = () => {
   const userCtx = useContext(UserContext);
   const notificationCtx = useContext(NotificationContext);
+  const router = useRouter();
+  const tradeLink = router.asPath.includes('trade') ? router.asPath : TBDURL.TRADE;
 
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
@@ -93,10 +96,7 @@ const NavBar = () => {
                 <div className={`hidden pb-5 text-base text-lightGray1 lg:block`}>
                   <div className="ml-10 mt-8 flex flex-1 items-center space-x-4 xl:ml-10">
                     <Image src="/elements/testnet@2x.png" width={65} height={25} alt="testnet" />
-                    <Link
-                      href={TBDURL.TRADE}
-                      className="hover:cursor-pointer hover:text-tidebitTheme"
-                    >
+                    <Link href={tradeLink} className="hover:cursor-pointer hover:text-tidebitTheme">
                       {t('NAV_BAR.TRADE')}
                     </Link>
                     <Link

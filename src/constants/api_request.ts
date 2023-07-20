@@ -283,7 +283,7 @@ export const TBEURL = {
 
 export const TBDURL = {
   COMING_SOON: '/coming-soon',
-  TRADE: '/trade/cfd/ethusdt',
+  TRADE: '/trade/cfd/eth-usdt',
   MY_ASSETS: '/my-assets',
   LEADERBOARD: '/leaderboard',
 };

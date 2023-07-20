@@ -57,9 +57,9 @@ const TickerSelectorBox = ({
     });
   };
 
-  const routing = (currency: string) => {
-    const base = currency.toLocaleLowerCase();
-    router.push(`/trade/cfd/${base}usdt`);
+  const routing = (instId: string) => {
+    const base = instId.toLocaleLowerCase();
+    router.push(`/trade/cfd/${base}`);
   };
 
   const convertTickersToCryptoCardsData = (availableTickers: ITickerData[]) => {
@@ -139,7 +139,7 @@ const TickerSelectorBox = ({
       return (
         <CryptoCard
           key={cryptoCard.currency}
-          cardClickHandler={() => cardClickHandler(cryptoCard.currency)}
+          cardClickHandler={() => cardClickHandler(cryptoCard.instId)}
           className="mt-4 ml-4"
           instId={cryptoCard.instId}
           lineGraphProps={cryptoCard.lineGraphProps}
@@ -159,7 +159,7 @@ const TickerSelectorBox = ({
     return (
       <CryptoCard
         key={cryptoCard.currency}
-        cardClickHandler={() => cardClickHandler(cryptoCard.currency)}
+        cardClickHandler={() => cardClickHandler(cryptoCard.instId)}
         className="mt-0"
         instId={cryptoCard.instId}
         lineGraphProps={cryptoCard.lineGraphProps}
@@ -182,7 +182,7 @@ const TickerSelectorBox = ({
       return (
         <CryptoCard
           key={cryptoCard.currency}
-          cardClickHandler={() => cardClickHandler(cryptoCard.currency)}
+          cardClickHandler={() => cardClickHandler(cryptoCard.instId)}
           className="mt-4 ml-4"
           instId={cryptoCard.instId}
           lineGraphProps={cryptoCard.lineGraphProps}
@@ -202,7 +202,7 @@ const TickerSelectorBox = ({
     return (
       <CryptoCard
         key={cryptoCard.currency}
-        cardClickHandler={() => cardClickHandler(cryptoCard.currency)}
+        cardClickHandler={() => cardClickHandler(cryptoCard.instId)}
         className="mt-0"
         instId={cryptoCard.instId}
         lineGraphProps={cryptoCard.lineGraphProps}

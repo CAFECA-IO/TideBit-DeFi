@@ -12,7 +12,7 @@ import {useRouter} from 'next/router';
 import Error from 'next/error';
 import {hasValue, truncateText} from '../../../lib/common';
 import {BTC_NEWS_FOLDER, ETH_NEWS_FOLDER, tickerIds} from '../../../constants/config';
-import {CodeToTicker} from '../../../constants/ticker';
+import {Ticker} from '../../../constants/ticker';
 import {NEWS_INTRODUCTION_IN_TRADE_MAX_LENGTH, TIDEBIT_FAVICON} from '../../../constants/display';
 import {getPosts} from '../../../lib/posts';
 import {IRecommendedNews} from '../../../interfaces/tidebit_defi_background/news';
@@ -30,9 +30,8 @@ const Trading = (props: IPageProps) => {
   const displayedNavBar = layoutAssertion === 'mobile' ? <NavBarMobile /> : <NavBar />;
 
   const router = useRouter();
-  const {tickerId} = router.query;
-
-  const ticker = CodeToTicker[(tickerId as string).toUpperCase()];
+  const tickerId = router.query?.tickerId as string;
+  const ticker = tickerId?.toUpperCase();
 
   const redirectToTicker = async () => {
     if (hasValue(marketCtx.availableTickers) && ticker) {
@@ -77,7 +76,7 @@ export const getStaticProps: GetStaticProps<IPageProps> = async ({params, locale
     };
   }
 
-  const dir = params.tickerId === 'ethusdt' ? ETH_NEWS_FOLDER : BTC_NEWS_FOLDER;
+  const dir = params.tickerId.toUpperCase() === Ticker.ETH_USDT ? ETH_NEWS_FOLDER : BTC_NEWS_FOLDER;
 
   const newsData = await getPosts(dir);
   const briefs: IRecommendedNews[] = newsData.map(news => {

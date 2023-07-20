@@ -196,7 +196,7 @@ const CryptoCard = ({
     });
 
     return (
-      <div className="pt-8 h-40px">
+      <div className="h-40px pt-8">
         <Chart
           options={dataSample.options}
           series={dataSample.series}
@@ -253,7 +253,7 @@ const CryptoCard = ({
           </div>
 
           <div className="flex flex-col justify-start">
-            <div className="pointer-events-none absolute top-4 h-60px z-100 bg-transparent">
+            <div className="pointer-events-none absolute top-4 z-100 h-60px bg-transparent">
               {lineGraph({
                 dataArray: lineGraphProps?.dataArray || sampleArray,
                 strokeColor: strokeColor || lineGraphProps?.strokeColor || thisRandomColor,

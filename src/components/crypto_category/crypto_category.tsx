@@ -30,7 +30,7 @@ const CryptoCategory = ({...otherProps}) => {
         <div key={i}>
           <Link href={`/trade/cfd/${cryptoCard.instId?.toLowerCase()}`}>
             <CryptoCard
-              inSamePage={false}
+              onTheSamePage={false}
               className="mt-4 ml-4"
               instId={cryptoCard.instId}
               lineGraphProps={cryptoCard.lineGraphProps}
@@ -50,7 +50,7 @@ const CryptoCategory = ({...otherProps}) => {
       <div key={i}>
         <Link href={`/trade/cfd/${cryptoCard.instId?.toLowerCase()}`}>
           <CryptoCard
-            inSamePage={false}
+            onTheSamePage={false}
             instId={cryptoCard.instId}
             lineGraphProps={cryptoCard.lineGraphProps}
             chain={cryptoCard.name}

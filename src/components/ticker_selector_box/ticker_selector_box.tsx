@@ -138,7 +138,6 @@ const TickerSelectorBox = ({
     if (i === 0) {
       return (
         <CryptoCard
-          // inSamePage={true}
           key={cryptoCard.currency}
           cardClickHandler={() => cardClickHandler(cryptoCard.instId)}
           className="mt-4 ml-4"
@@ -159,7 +158,6 @@ const TickerSelectorBox = ({
 
     return (
       <CryptoCard
-        // inSamePage={true}
         key={cryptoCard.currency}
         cardClickHandler={() => cardClickHandler(cryptoCard.instId)}
         className="mt-0"
@@ -183,7 +181,6 @@ const TickerSelectorBox = ({
     if (i === 0) {
       return (
         <CryptoCard
-          // inSamePage={true}
           key={cryptoCard.currency}
           cardClickHandler={() => cardClickHandler(cryptoCard.instId)}
           className="mt-4 ml-4"
@@ -204,7 +201,6 @@ const TickerSelectorBox = ({
 
     return (
       <CryptoCard
-        // inSamePage={true}
         key={cryptoCard.currency}
         cardClickHandler={() => cardClickHandler(cryptoCard.instId)}
         className="mt-0"

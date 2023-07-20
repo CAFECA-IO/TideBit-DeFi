@@ -826,19 +826,19 @@ export const MarketProvider = ({children}: IMarketProvider) => {
         // Deprecated: [debug] (20230720 - tzuhan)
         // eslint-disable-next-line no-console
         console.log(`notificationCtx.emitter.on(TideBitEvent.TRADES trades`, trades);
-        for (const trade of trades) {
-          if (trade.instId === selectedTickerRef.current?.instId) {
-            tradeBook.add(trade.instId, {
-              tradeId: trade.tradeId,
-              targetAsset: trade.baseUnit,
-              unitAsset: trade.quoteUnit,
-              direct: TradeSideText[trade.side],
-              price: trade.price,
-              timestampMs: trade.timestamp,
-              quantity: trade.amount,
-            });
-          }
-        }
+        // for (const trade of trades) {
+        //   if (trade.instId === selectedTickerRef.current?.instId) {
+        //     tradeBook.add(trade.instId, {
+        //       tradeId: trade.tradeId,
+        //       targetAsset: trade.baseUnit,
+        //       unitAsset: trade.quoteUnit,
+        //       direct: TradeSideText[trade.side],
+        //       price: trade.price,
+        //       timestampMs: trade.timestamp,
+        //       quantity: trade.amount,
+        //     });
+        //   }
+        // }
       }),
     []
   );

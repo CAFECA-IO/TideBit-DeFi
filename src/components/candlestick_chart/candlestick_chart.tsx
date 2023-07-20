@@ -553,7 +553,7 @@ export default function CandlestickChart({
 
     // eslint-disable-next-line no-console
     console.log('spec', specRef.current);
-  }, [marketCtx.candlestickChartData, marketCtx.timeSpan]);
+  }, [marketCtx.timeSpan]);
 
   return (
     <>

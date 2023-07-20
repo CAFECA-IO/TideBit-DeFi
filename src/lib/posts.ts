@@ -60,9 +60,17 @@ export async function getPosts(src?: string): Promise<IPost[]> {
 export async function getDirectories(src: string): Promise<string[]> {
   const subdirs = await readdir(src);
   const directories = [];
+
   for (const subdir of subdirs) {
+    const regex = /^[a-zA-Z0-9_]+$/;
+    const isValidSubdir = regex.test(subdir);
+
+    if (!isValidSubdir) continue;
+
     const absolutePath = join(src, subdir);
-    if ((await stat(absolutePath)).isDirectory()) {
+    const isDirectory = (await stat(absolutePath)).isDirectory();
+
+    if (isDirectory && isValidSubdir) {
       directories.push(absolutePath);
     }
   }

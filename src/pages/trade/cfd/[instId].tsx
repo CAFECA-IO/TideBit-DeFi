@@ -13,7 +13,11 @@ import Error from 'next/error';
 import {hasValue, truncateText} from '../../../lib/common';
 import {BTC_NEWS_FOLDER, ETH_NEWS_FOLDER, instIds} from '../../../constants/config';
 import {Ticker} from '../../../constants/ticker';
-import {NEWS_INTRODUCTION_IN_TRADE_MAX_LENGTH, TIDEBIT_FAVICON} from '../../../constants/display';
+import {
+  NEWS_AMOUNT_ON_TRADE_PAGE,
+  NEWS_INTRODUCTION_IN_TRADE_MAX_LENGTH,
+  TIDEBIT_FAVICON,
+} from '../../../constants/display';
 import {getPosts} from '../../../lib/posts';
 import {IRecommendedNews} from '../../../interfaces/tidebit_defi_background/news';
 
@@ -90,7 +94,7 @@ export const getStaticProps: GetStaticProps<IPageProps> = async ({params, locale
         description: description,
       };
     })
-    .slice(-3);
+    .slice(-NEWS_AMOUNT_ON_TRADE_PAGE);
 
   return {
     props: {

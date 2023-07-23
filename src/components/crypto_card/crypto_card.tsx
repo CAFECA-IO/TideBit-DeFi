@@ -40,6 +40,7 @@ export interface ICardProps {
 
   className?: string;
   cardClickHandler?: () => void;
+  onTheSamePage?: boolean;
 }
 
 /** Info: (20230628 - Shirley)
@@ -61,6 +62,7 @@ const CryptoCard = ({
   starColor,
   lineGraphProps,
   cardClickHandler,
+  onTheSamePage = true,
   ...otherProps
 }: ICardProps): JSX.Element => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
@@ -76,6 +78,8 @@ const CryptoCard = ({
   const strokeColor = priceRise ? [TypeOfPnLColorHex.PROFIT] : [TypeOfPnLColorHex.LOSS];
 
   const globalCtx = useGlobal();
+  // eslint-disable-next-line no-console
+  console.log('insamepage', onTheSamePage);
 
   const starClickHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
     if (!userCtx.enableServiceTerm) {
@@ -196,7 +200,7 @@ const CryptoCard = ({
     });
 
     return (
-      <div className="pt-8 h-40px">
+      <div className="h-40px pt-8">
         <Chart
           options={dataSample.options}
           series={dataSample.series}
@@ -237,7 +241,7 @@ const CryptoCard = ({
       <div
         className={`${desktopVersionBreakpoint} ${otherProps?.className} relative m-0 hidden h-120px w-200px rounded-2xl border-0.5px p-0 hover:cursor-pointer ${gradientColor} bg-transparent bg-gradient-to-b opacity-90 shadow-lg`}
         onClick={() => {
-          marketCtx.selectTickerHandler(instId);
+          onTheSamePage && marketCtx.selectTickerHandler(instId);
           cardClickHandler && cardClickHandler();
         }}
       >
@@ -253,7 +257,7 @@ const CryptoCard = ({
           </div>
 
           <div className="flex flex-col justify-start">
-            <div className="pointer-events-none absolute top-4 h-60px z-100 bg-transparent">
+            <div className="pointer-events-none absolute top-4 z-100 h-60px bg-transparent">
               {lineGraph({
                 dataArray: lineGraphProps?.dataArray || sampleArray,
                 strokeColor: strokeColor || lineGraphProps?.strokeColor || thisRandomColor,
@@ -278,7 +282,7 @@ const CryptoCard = ({
       <div
         className={`${mobileVersionBreakpoint} ${otherProps?.className} relative m-0 h-81px w-134px rounded-2xl border-0.5px p-0 ${gradientColor} bg-black bg-gradient-to-b opacity-90 shadow-lg`}
         onClick={() => {
-          marketCtx.selectTickerHandler(instId);
+          onTheSamePage && marketCtx.selectTickerHandler(instId);
           cardClickHandler && cardClickHandler();
         }}
       >

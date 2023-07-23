@@ -11,14 +11,18 @@ import {GetStaticPaths, GetStaticProps} from 'next';
 import {useRouter} from 'next/router';
 import Error from 'next/error';
 import {hasValue, truncateText} from '../../../lib/common';
-import {BTC_NEWS_FOLDER, ETH_NEWS_FOLDER, tickerIds} from '../../../constants/config';
-import {CodeToTicker} from '../../../constants/ticker';
-import {NEWS_INTRODUCTION_IN_TRADE_MAX_LENGTH, TIDEBIT_FAVICON} from '../../../constants/display';
+import {BTC_NEWS_FOLDER, ETH_NEWS_FOLDER, instIds} from '../../../constants/config';
+import {Ticker} from '../../../constants/ticker';
+import {
+  NEWS_AMOUNT_ON_TRADE_PAGE,
+  NEWS_INTRODUCTION_IN_TRADE_MAX_LENGTH,
+  TIDEBIT_FAVICON,
+} from '../../../constants/display';
 import {getPosts} from '../../../lib/posts';
 import {IRecommendedNews} from '../../../interfaces/tidebit_defi_background/news';
 
 interface IPageProps {
-  tickerId: string;
+  instId: string;
   briefs: IRecommendedNews[];
 }
 
@@ -30,9 +34,8 @@ const Trading = (props: IPageProps) => {
   const displayedNavBar = layoutAssertion === 'mobile' ? <NavBarMobile /> : <NavBar />;
 
   const router = useRouter();
-  const {tickerId} = router.query;
-
-  const ticker = CodeToTicker[(tickerId as string).toUpperCase()];
+  const instId = router.query?.instId as string;
+  const ticker = instId?.toUpperCase();
 
   const redirectToTicker = async () => {
     if (hasValue(marketCtx.availableTickers) && ticker) {
@@ -48,7 +51,7 @@ const Trading = (props: IPageProps) => {
     redirectToTicker();
   }, [appCtx.isInit]);
 
-  if (!router.isFallback && !props.tickerId) {
+  if (!router.isFallback && !props.instId) {
     return <Error statusCode={404} />;
   }
 
@@ -71,29 +74,31 @@ const Trading = (props: IPageProps) => {
 };
 
 export const getStaticProps: GetStaticProps<IPageProps> = async ({params, locale}) => {
-  if (!params || !params.tickerId || typeof params.tickerId !== 'string') {
+  if (!params || !params.instId || typeof params.instId !== 'string') {
     return {
       notFound: true,
     };
   }
 
-  const dir = params.tickerId === 'ethusdt' ? ETH_NEWS_FOLDER : BTC_NEWS_FOLDER;
+  const dir = params.instId.toUpperCase() === Ticker.ETH_USDT ? ETH_NEWS_FOLDER : BTC_NEWS_FOLDER;
 
   const newsData = await getPosts(dir);
-  const briefs: IRecommendedNews[] = newsData.map(news => {
-    const description = truncateText(news.description, NEWS_INTRODUCTION_IN_TRADE_MAX_LENGTH);
-    return {
-      newsId: news.slug ?? '',
-      img: `/news/${news.slug}@2x.png`,
-      timestamp: news.date,
-      title: news.title,
-      description: description,
-    };
-  });
+  const briefs: IRecommendedNews[] = newsData
+    .map(news => {
+      const description = truncateText(news.description, NEWS_INTRODUCTION_IN_TRADE_MAX_LENGTH);
+      return {
+        newsId: news.slug ?? '',
+        img: `/news/${news.slug}@2x.png`,
+        timestamp: news.date,
+        title: news.title,
+        description: description,
+      };
+    })
+    .slice(-NEWS_AMOUNT_ON_TRADE_PAGE);
 
   return {
     props: {
-      tickerId: params.tickerId,
+      instId: params.instId,
       briefs,
       ...(await serverSideTranslations(locale as string, ['common', 'footer'])),
     },
@@ -106,14 +111,14 @@ export const getStaticProps: GetStaticProps<IPageProps> = async ({params, locale
  * In production, `getStaticPaths` runs at build time.
  */
 export const getStaticPaths: GetStaticPaths = async ({locales}) => {
-  const paths = tickerIds
+  const paths = instIds
     .flatMap(id => {
       return locales?.map(locale => ({
-        params: {tickerId: id},
+        params: {instId: id},
         locale: locale,
       }));
     })
-    .filter((path): path is {params: {tickerId: string}; locale: string} => !!path);
+    .filter((path): path is {params: {instId: string}; locale: string} => !!path);
 
   return {
     paths: paths,

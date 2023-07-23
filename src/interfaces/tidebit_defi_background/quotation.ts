@@ -1,5 +1,5 @@
 import {ICurrency} from '../../constants/currency';
-import {QUOTATION_RENEWAL_INTERVAL_SECONDS, unitAsset} from '../../constants/config';
+import {QUOTATION_RENEWAL_INTERVAL_SECONDS} from '../../constants/config';
 import {ITypeOfPosition} from '../../constants/type_of_position';
 import {getTimestamp} from '../../lib/common';
 
@@ -8,6 +8,7 @@ export interface IQuotation {
   targetAsset: ICurrency;
   unitAsset: string;
   typeOfPosition: ITypeOfPosition;
+  spotPrice: number;
   price: number;
   deadline: number;
   signature: string;
@@ -25,6 +26,7 @@ export const getDummyQuotation = (ticker: string, typeOfPosition: ITypeOfPositio
     unitAsset: unitAsset,
     typeOfPosition,
     price: randomIntFromInterval(1300, 2200),
+    spotPrice: randomIntFromInterval(1300, 2200),
     deadline: getTimestamp() + QUOTATION_RENEWAL_INTERVAL_SECONDS,
     signature: '0x',
   };

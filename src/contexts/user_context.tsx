@@ -218,6 +218,7 @@ export const UserContext = createContext<IUserContext>({
 
 export const UserProvider = ({children}: IUserProvider) => {
   const transactionEngine = React.useMemo(() => TransactionEngineInstance, []);
+  const lunar = React.useMemo(() => Lunar.getInstance(), []);
   const workerCtx = useContext(WorkerContext);
   const notificationCtx = useContext(NotificationContext);
   const [isInit, setIsInit, isInitRef] = useState<boolean>(false);
@@ -251,7 +252,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     [WalletExtension.META_MASK]
   ); // ToDo: Get user wallet extension (20230419 - Shirley)
 
-  const setPrivateData = async (address: string, deWT: string) => {
+  const setPrivateData = useCallback(async (address: string, deWT: string) => {
     let result: IResult = {
       success: false,
       code: Code.INTERNAL_SERVER_ERROR,
@@ -285,9 +286,9 @@ export const UserProvider = ({children}: IUserProvider) => {
       console.log('setPrivateData deWTLogin.result.success false => clearPrivateData');
       clearPrivateData();
     }
-  };
+  }, []);
 
-  const clearPrivateData = () => {
+  const clearPrivateData = useCallback(() => {
     // clear DeWT
     setDeWT('');
     setEnableServiceTerm(false);
@@ -298,43 +299,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     setClosedCFDs([]);
     setFavoriteTickers([]);
     notificationCtx.emitter.emit(TideBitEvent.DISCONNECTED);
-  };
-
-  const lunar = Lunar.getInstance();
-  lunar.on('connected', async () => {
-    setIsConnected(true);
-    if (!userRef.current) {
-      const {isDeWTLegit, signer, deWT} = checkDeWT();
-      if (isDeWTLegit && signer && deWT) await setPrivateData(signer, deWT);
-    }
-  });
-  lunar.on('disconnected', () => {
-    // Deprecate: [debug] (20230524 - tzuhan)
-    // eslint-disable-next-line no-console
-    console.log(`lunar.on('disconnected') => clearPrivateData`);
-    setIsConnected(false);
-    clearPrivateData();
-  });
-  lunar.on('accountsChanged', async (address: string) => {
-    const checksumAddress = toChecksumAddress(address);
-    // Deprecate: [debug] (20230524 - tzuhan)
-    // eslint-disable-next-line no-console
-    console.log(
-      `accountsChanged checksumAddress: ${checksumAddress}, userRef.current?.address: ${userRef.current?.address}`
-    );
-    if (!!userRef.current && checksumAddress !== userRef.current.address) {
-      // Deprecate: [debug] (20230524 - tzuhan)
-      // eslint-disable-next-line no-console
-      console.log(
-        `userRef.current: ${JSON.stringify(
-          userRef.current
-        )} !!userRef.current(${!!userRef.current}) && checksumAddress !== userRef.current?.address ${
-          !!userRef.current && checksumAddress !== userRef.current?.address
-        }? clearPrivateData`
-      );
-      clearPrivateData();
-    }
-  });
+  }, []);
 
   const privateRequestHandler = useCallback(async (data: TypeRequest) => {
     try {
@@ -512,68 +477,6 @@ export const UserProvider = ({children}: IUserProvider) => {
     return result;
   }, []);
 
-  /**
-   * Deprecated: this function is unused (20230620 - tzuhan)
-  const getUserPnL = useCallback(async (): Promise<IResult> => {
-    let result: IResult = {...defaultResultFailed};
-    if (enableServiceTermRef.current) {
-      try {
-        result = (await privateRequestHandler({
-          name: APIName.GET_USER_PNL,
-          method: Method.GET,
-        })) as IResult;
-        // Deprecate: after this functions finishing (20230508 - tzuhan)
-        // eslint-disable-next-line no-console
-        console.log(`getUserPnL result`, result);
-        if (result.success) {
-          // const pnl = result.data as IPnL;
-          // result.data = pnl;
-        }
-      } catch (error) {
-        // TODO: error handle (Tzuhan - 20230421)
-        // eslint-disable-next-line no-console
-        console.error(`getUserPnL error`, error);
-        if (!isCustomError(error)) {
-          result.code = Code.INTERNAL_SERVER_ERROR;
-          result.reason = Reason[result.code];
-        }
-      }
-    }
-    return result;
-  }, []);
-  */
-
-  /**
-   * Deprecated: this function is unused (20230620 - tzuhan)
-  const getUserInterest = useCallback(async (): Promise<IResult> => {
-    let result: IResult = {...defaultResultFailed};
-    if (enableServiceTermRef.current) {
-      try {
-        result = (await privateRequestHandler({
-          name: APIName.GET_USER_INTEREST,
-          method: Method.GET,
-        })) as IResult;
-        // Deprecate: after this functions finishing (20230508 - tzuhan)
-        // eslint-disable-next-line no-console
-        console.log(`getUserInterest result`, result);
-        if (result.success) {
-          // const interest = result.data as IInterest;
-          // result.data = interest;
-        }
-      } catch (error) {
-        // TODO: error handle (Tzuhan - 20230421)
-        // eslint-disable-next-line no-console
-        console.error(`getUserInterest error`, error);
-        if (!isCustomError(error)) {
-          result.code = Code.INTERNAL_SERVER_ERROR;
-          result.reason = Reason[result.code];
-        }
-      }
-    }
-    return result;
-  }, []);
-  */
-
   const getBadge = useCallback(async (badgeId: string): Promise<IResult> => {
     let result: IResult = {...defaultResultFailed};
     if (enableServiceTermRef.current) {
@@ -625,7 +528,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     return result;
   }, []);
 
-  const connect = async () => {
+  const connect = useCallback(async () => {
     let result: IResult = {...defaultResultFailed},
       resultCode = Code.UNKNOWN_ERROR;
 
@@ -650,9 +553,9 @@ export const UserProvider = ({children}: IUserProvider) => {
       result.reason = Reason[result.code];
     }
     return result;
-  };
+  }, []);
 
-  const checkDeWT = (): {
+  const checkDeWT = useCallback((): {
     isDeWTLegit: boolean;
     signer: string | undefined;
     deWT: string | undefined;
@@ -694,9 +597,9 @@ export const UserProvider = ({children}: IUserProvider) => {
       clearPrivateData();
     }
     return {isDeWTLegit, signer, deWT};
-  };
+  }, []);
 
-  const deWTLogin = async (address: string, deWT: string) => {
+  const deWTLogin = useCallback(async (address: string, deWT: string) => {
     let result: IResult = {...defaultResultFailed};
     if (address && deWT) {
       // Info postDeWT and get User data
@@ -719,13 +622,13 @@ export const UserProvider = ({children}: IUserProvider) => {
       }
     }
     return result;
-  };
+  }, []);
 
-  const setDeWT = async (deWT: string) => {
+  const setDeWT = useCallback(async (deWT: string) => {
     document.cookie = `DeWT=${deWT}; path=/;`;
-  };
+  }, []);
 
-  const signServiceTerm = async (): Promise<IResult> => {
+  const signServiceTerm = useCallback(async (): Promise<IResult> => {
     let eip712signature: string;
     let resultCode = Code.UNKNOWN_ERROR;
     let result: IResult = {...defaultResultFailed, code: resultCode, reason: Reason[resultCode]};
@@ -771,9 +674,9 @@ export const UserProvider = ({children}: IUserProvider) => {
       result.reason = Reason[resultCode];
       return result;
     }
-  };
+  }, []);
 
-  const disconnect = async () => {
+  const disconnect = useCallback(async () => {
     let result: IResult = {...defaultResultFailed};
     try {
       // Deprecate: [debug] (20230524 - tzuhan)
@@ -793,9 +696,9 @@ export const UserProvider = ({children}: IUserProvider) => {
       // await disconnect();
     }
     return result;
-  };
+  }, []);
 
-  const addFavorites = async (newFavorite: string) => {
+  const addFavorites = useCallback(async (newFavorite: string) => {
     let result: IResult = {...defaultResultFailed};
     if (isConnectedRef.current) {
       try {
@@ -821,9 +724,9 @@ export const UserProvider = ({children}: IUserProvider) => {
       }
     }
     return result;
-  };
+  }, []);
 
-  const removeFavorites = async (ticker: string) => {
+  const removeFavorites = useCallback(async (ticker: string) => {
     let result: IResult = {...defaultResultFailed};
     if (isConnectedRef.current) {
       try {
@@ -852,35 +755,35 @@ export const UserProvider = ({children}: IUserProvider) => {
       }
     }
     return result;
-  };
+  }, []);
 
-  const getCFD = (id: string) => {
+  const getCFD = useCallback((id: string) => {
     let CFD: ICFDOrder | null = CFDsRef.current[id] ?? null;
     if (!CFD) CFD = openCFDsRef.current.find(openCFD => openCFD.id === id) ?? null;
     if (!CFD) CFD = closedCFDsRef.current.find(closeCFD => closeCFD.id === id) ?? null;
     return CFD;
-  };
+  }, []);
 
-  const getWalletBalance = (props: string) => {
+  const getWalletBalance = useCallback((props: string) => {
     let walletBalance: IWalletBalance | null = null;
     if (walletBalancesRef.current) {
       const index: number = walletBalancesRef.current.findIndex(wb => wb.currency === props);
       if (index !== -1) walletBalance = walletBalancesRef.current[index];
     }
     return walletBalance;
-  };
+  }, []);
 
-  const getBalance = (currency: string) => {
+  const getBalance = useCallback((currency: string) => {
     let balance: IBalance | null = null;
     if (balancesRef.current) {
       const index: number = balancesRef.current.findIndex(wb => wb.currency === currency);
       if (index !== -1) balance = balancesRef.current[index];
     }
     return balance;
-  };
+  }, []);
 
   /* ToDo: (20230517 - Julian) get data from backend */
-  const getPersonalAchievements = async (userId: string) => {
+  const getPersonalAchievements = useCallback(async (userId: string) => {
     let result: IResult = {...defaultResultFailed};
     try {
       result = (await workerCtx.requestHandler({
@@ -900,9 +803,9 @@ export const UserProvider = ({children}: IUserProvider) => {
       result.reason = Reason[result.code];
     }
     return result;
-  };
+  }, []);
 
-  const updateBalance = (updatedBalances: IBalance[]) => {
+  const updateBalance = useCallback((updatedBalances: IBalance[]) => {
     for (const updatedBalance of updatedBalances) {
       if (!isIBalance(updatedBalance)) throw new CustomError(Code.BALANCE_NOT_FOUND);
       try {
@@ -922,7 +825,7 @@ export const UserProvider = ({children}: IUserProvider) => {
         throw new CustomError(Code.FAILE_TO_UPDATE_BALANCE);
       }
     }
-  };
+  }, []);
 
   // Deprecated: fee depends on the PNL when closing the position `validateCFD` (20230617 - Shirley)
   /**
@@ -932,303 +835,311 @@ export const UserProvider = ({children}: IUserProvider) => {
    * amount: >= 0
    * @returns
    */
-  const _createCFDOrder = async (
-    applyCreateCFDOrder: IApplyCreateCFDOrder | undefined
-  ): Promise<IResult> => {
-    let result: IResult;
-    try {
-      const isValid = validateCFD(applyCreateCFDOrder?.fee ?? 0, applyCreateCFDOrder?.amount ?? 0);
-      if (!isValid) throw new CustomError(Code.INVALID_CFD_OPEN_REQUEST);
-      if (!enableServiceTermRef.current) throw new CustomError(Code.SERVICE_TERM_DISABLE);
-      if (!applyCreateCFDOrder) throw new CustomError(Code.INVAILD_ORDER_INPUTS);
-      const balance: IBalance | null = getBalance(applyCreateCFDOrder.margin.asset);
-      if (!balance || balance.available < applyCreateCFDOrder.margin.amount)
-        throw new CustomError(Code.BALANCE_IS_NOT_ENOUGH_TO_OPEN_ORDER);
-      const typeData = transactionEngine.transferCFDOrderToTransaction(applyCreateCFDOrder);
-      if (!typeData) throw new CustomError(Code.FAILED_TO_CREATE_TRANSACTION);
-      const signature: string = await lunar.signTypedData(typeData);
-      /* Info: (20230505 - Julian) 需要再驗證一次簽名是否正確 */
-      const success = lunar.verifyTypedData(typeData, signature);
-      // Deprecated: [debug] (20230509 - Tzuhan)
-      // eslint-disable-next-line no-console
-      console.log('_createCFDOrder lunar.verifyTypedData success', success, `typeData`, typeData);
-      if (!success) throw new CustomError(Code.REJECTED_SIGNATURE);
-      const now = getTimestamp();
-      // Deprecated: [debug] (20230509 - Tzuhan)
-      // eslint-disable-next-line no-console
-      console.log(
-        `_createCFDOrder applyCreateCFDOrder.quotation.deadline(${
-          applyCreateCFDOrder.quotation.deadline
-        }) ${new Date(applyCreateCFDOrder.quotation.deadline * 1000)} < now${now}`,
-        applyCreateCFDOrder.quotation.deadline < now
-      );
-      if (applyCreateCFDOrder.quotation.deadline < now)
-        throw new CustomError(Code.EXPIRED_QUOTATION_FAILED);
-      result = (await privateRequestHandler({
-        name: APIName.CREATE_CFD_TRADE,
-        method: Method.POST,
-        body: {applyData: applyCreateCFDOrder, userSignature: signature},
-      })) as IResult;
-      // Deprecated: [debug] (20230509 - Tzuhan)
-      // eslint-disable-next-line no-console
-      console.log('_createCFDOrder result', result);
-      if (!result.success)
-        throw new CustomError(
-          isCustomError(result.code) ? result.code : Code.INTERNAL_SERVER_ERROR
+  const _createCFDOrder = useCallback(
+    async (applyCreateCFDOrder: IApplyCreateCFDOrder | undefined): Promise<IResult> => {
+      let result: IResult;
+      try {
+        const isValid = validateCFD(
+          applyCreateCFDOrder?.fee ?? 0,
+          applyCreateCFDOrder?.amount ?? 0
         );
-      const {balanceSnapshot, orderSnapshot: CFDOrder} = result.data as {
-        txhash: string;
-        orderSnapshot: ICFDOrder;
-        balanceSnapshot: IBalance[];
-      };
-      const index = openCFDsRef.current.findIndex(cfd => cfd.id === CFDOrder.id);
-      if (index === -1) setOpenedCFDs(prev => [...prev, CFDOrder]);
-      result.code = Code.FAILE_TO_UPDATE_BALANCE;
-      updateBalance(balanceSnapshot);
-      result.code = Code.SUCCESS;
-      result = {
-        success: true,
-        code: result.code,
-        data: {order: CFDOrder},
-      };
-    } catch (error) {
-      result = {
-        success: false,
-        code: isCustomError(error) ? error.code : Code.INTERNAL_SERVER_ERROR,
-        reason: isCustomError(error)
-          ? Reason[error.code]
-          : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
-      };
-    }
-    return result;
-  };
-
-  const createCFDOrder = async (
-    applyCreateCFDOrder: IApplyCreateCFDOrder | undefined
-  ): Promise<IResult> => {
-    const timeLeft = (Number(applyCreateCFDOrder?.quotation.deadline) - getTimestamp()) * 1000;
-
-    if (timeLeft < 0) {
-      const result: IResult = {...defaultResultFailed};
-      const resultCode = Code.EXPIRED_QUOTATION_CANCELED;
-      result.code = resultCode;
-      result.reason = Reason[resultCode];
+        if (!isValid) throw new CustomError(Code.INVALID_CFD_OPEN_REQUEST);
+        if (!enableServiceTermRef.current) throw new CustomError(Code.SERVICE_TERM_DISABLE);
+        if (!applyCreateCFDOrder) throw new CustomError(Code.INVAILD_ORDER_INPUTS);
+        const balance: IBalance | null = getBalance(applyCreateCFDOrder.margin.asset);
+        if (!balance || balance.available < applyCreateCFDOrder.margin.amount)
+          throw new CustomError(Code.BALANCE_IS_NOT_ENOUGH_TO_OPEN_ORDER);
+        const typeData = transactionEngine.transferCFDOrderToTransaction(applyCreateCFDOrder);
+        if (!typeData) throw new CustomError(Code.FAILED_TO_CREATE_TRANSACTION);
+        const signature: string = await lunar.signTypedData(typeData);
+        /* Info: (20230505 - Julian) 需要再驗證一次簽名是否正確 */
+        const success = lunar.verifyTypedData(typeData, signature);
+        // Deprecated: [debug] (20230509 - Tzuhan)
+        // eslint-disable-next-line no-console
+        console.log('_createCFDOrder lunar.verifyTypedData success', success, `typeData`, typeData);
+        if (!success) throw new CustomError(Code.REJECTED_SIGNATURE);
+        const now = getTimestamp();
+        // Deprecated: [debug] (20230509 - Tzuhan)
+        // eslint-disable-next-line no-console
+        console.log(
+          `_createCFDOrder applyCreateCFDOrder.quotation.deadline(${
+            applyCreateCFDOrder.quotation.deadline
+          }) ${new Date(applyCreateCFDOrder.quotation.deadline * 1000)} < now${now}`,
+          applyCreateCFDOrder.quotation.deadline < now
+        );
+        if (applyCreateCFDOrder.quotation.deadline < now)
+          throw new CustomError(Code.EXPIRED_QUOTATION_FAILED);
+        result = (await privateRequestHandler({
+          name: APIName.CREATE_CFD_TRADE,
+          method: Method.POST,
+          body: {applyData: applyCreateCFDOrder, userSignature: signature},
+        })) as IResult;
+        // Deprecated: [debug] (20230509 - Tzuhan)
+        // eslint-disable-next-line no-console
+        console.log('_createCFDOrder result', result);
+        if (!result.success)
+          throw new CustomError(
+            isCustomError(result.code) ? result.code : Code.INTERNAL_SERVER_ERROR
+          );
+        const {balanceSnapshot, orderSnapshot: CFDOrder} = result.data as {
+          txhash: string;
+          orderSnapshot: ICFDOrder;
+          balanceSnapshot: IBalance[];
+        };
+        const index = openCFDsRef.current.findIndex(cfd => cfd.id === CFDOrder.id);
+        if (index === -1) setOpenedCFDs(prev => [...prev, CFDOrder]);
+        result.code = Code.FAILE_TO_UPDATE_BALANCE;
+        updateBalance(balanceSnapshot);
+        result.code = Code.SUCCESS;
+        result = {
+          success: true,
+          code: result.code,
+          data: {order: CFDOrder},
+        };
+      } catch (error) {
+        result = {
+          success: false,
+          code: isCustomError(error) ? error.code : Code.INTERNAL_SERVER_ERROR,
+          reason: isCustomError(error)
+            ? Reason[error.code]
+            : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
+        };
+      }
       return result;
-    }
+    },
+    []
+  );
 
-    const countdown = () =>
-      new Promise<IResult>(resolve => {
-        window.setTimeout(() => {
-          const result: IResult = {...defaultResultFailed};
-          const resultCode = Code.EXPIRED_QUOTATION_CANCELED;
-          result.code = resultCode;
-          result.reason = Reason[resultCode];
-          resolve(result);
-        }, timeLeft);
-      });
-    // Deprecate: [debug] (20230509 - tzuhan)
-    // eslint-disable-next-line no-console
-    console.log(`createCFDOrder lunar.isConnected`, lunar.isConnected);
+  const createCFDOrder = useCallback(
+    async (applyCreateCFDOrder: IApplyCreateCFDOrder | undefined): Promise<IResult> => {
+      const timeLeft = (Number(applyCreateCFDOrder?.quotation.deadline) - getTimestamp()) * 1000;
 
-    if (!lunar.isConnected) {
-      const isConnected = await connect();
+      if (timeLeft < 0) {
+        const result: IResult = {...defaultResultFailed};
+        const resultCode = Code.EXPIRED_QUOTATION_CANCELED;
+        result.code = resultCode;
+        result.reason = Reason[resultCode];
+        return result;
+      }
+
+      const countdown = () =>
+        new Promise<IResult>(resolve => {
+          window.setTimeout(() => {
+            const result: IResult = {...defaultResultFailed};
+            const resultCode = Code.EXPIRED_QUOTATION_CANCELED;
+            result.code = resultCode;
+            result.reason = Reason[resultCode];
+            resolve(result);
+          }, timeLeft);
+        });
       // Deprecate: [debug] (20230509 - tzuhan)
       // eslint-disable-next-line no-console
-      console.log(`createCFDOrder isConnected`, isConnected);
+      console.log(`createCFDOrder lunar.isConnected`, lunar.isConnected);
 
-      if (!isConnected) {
-        const result: IResult = {...defaultResultFailed};
-        const resultCode = Code.WALLET_IS_NOT_CONNECT;
-        result.code = resultCode;
-        result.reason = Reason[result.code];
-        return result;
-      }
-    }
+      if (!lunar.isConnected) {
+        const isConnected = await connect();
+        // Deprecate: [debug] (20230509 - tzuhan)
+        // eslint-disable-next-line no-console
+        console.log(`createCFDOrder isConnected`, isConnected);
 
-    return Promise.race([_createCFDOrder(applyCreateCFDOrder), countdown()]);
-  };
-
-  const _closeCFDOrder = async (
-    applyCloseCFDOrder: IApplyCloseCFDOrder | undefined
-  ): Promise<IResult> => {
-    let result: IResult;
-    try {
-      if (!enableServiceTermRef.current) throw new CustomError(Code.SERVICE_TERM_DISABLE);
-      if (!applyCloseCFDOrder) throw new CustomError(Code.INVAILD_ORDER_INPUTS);
-      const closeAppliedCFD = getCFD(applyCloseCFDOrder.referenceId);
-      if (!closeAppliedCFD) throw new CustomError(Code.CFD_ORDER_NOT_FOUND);
-      if (closeAppliedCFD.state !== OrderState.OPENING)
-        throw new CustomError(Code.CFD_ORDER_IS_ALREADY_CLOSED);
-      // const balance: IBalance | null = getBalance(openCFDs[index].targetAsset);
-      const typeData = transactionEngine.transferCFDOrderToTransaction(applyCloseCFDOrder);
-      if (!typeData) throw new CustomError(Code.FAILED_TO_CREATE_TRANSACTION);
-      // TODO: send request to chain(use Lunar?) (20230324 - tzuhan)
-      const signature: string = await lunar.signTypedData(typeData);
-      /* Info: (20230505 - Julian) 需要再驗證一次簽名是否正確 */
-      const success = lunar.verifyTypedData(typeData, signature);
-      // Deprecated: [debug] (20230509 - Tzuhan)
-      // eslint-disable-next-line no-console
-      console.log('closeCFDOrder lunar.verifyTypedData success', success, `typeData`, typeData);
-      if (!success) throw new CustomError(Code.REJECTED_SIGNATURE);
-      const now = getTimestamp();
-      // ToDo: Check if the quotation is expired, if so return `failed result` in `catch`. (20230414 - Shirley)
-      // Deprecated: [debug] (20230509 - Tzuhan)
-      // eslint-disable-next-line no-console
-      console.log(
-        `closeCFDOrder applyCloseCFDOrder.quotation.deadline(${
-          applyCloseCFDOrder.quotation.deadline
-        }) ${new Date(applyCloseCFDOrder.quotation.deadline * 1000)} < now${now}`,
-        applyCloseCFDOrder.quotation.deadline < now
-      );
-      if (applyCloseCFDOrder.quotation.deadline < now)
-        throw new CustomError(Code.EXPIRED_QUOTATION_FAILED);
-      result = (await privateRequestHandler({
-        name: APIName.CLOSE_CFD_TRADE,
-        method: Method.PUT,
-        body: {
-          applyData: applyCloseCFDOrder,
-          userSignature: signature,
-        },
-      })) as IResult;
-      // Deprecated: [debug] (20230509 - Tzuhan)
-      // eslint-disable-next-line no-console
-      console.log('closeCFDOrder result', result);
-      if (!result.success)
-        throw new CustomError(
-          isCustomError(result.code) ? result.code : Code.INTERNAL_SERVER_ERROR
-        );
-      const {balanceSnapshot, orderSnapshot: updateCFDOrder} = result.data as {
-        txhash: string;
-        orderSnapshot: ICFDOrder;
-        balanceSnapshot: IBalance[];
-      };
-      const newOpenedCFDs = [...openCFDsRef.current];
-      let index = newOpenedCFDs.findIndex(o => o.id === updateCFDOrder.id);
-      if (index !== -1) newOpenedCFDs.splice(index, 1);
-      setOpenedCFDs(newOpenedCFDs);
-      index = closedCFDsRef.current.findIndex(o => o.id === updateCFDOrder.id);
-      if (index === -1) setClosedCFDs(prev => [...prev, {...updateCFDOrder}]);
-      updateBalance(balanceSnapshot);
-      setCFDs({...CFDsRef.current, [updateCFDOrder.id]: {...updateCFDOrder}});
-      result = {
-        success: true,
-        code: Code.SUCCESS,
-        data: {order: {...updateCFDOrder}},
-      };
-    } catch (error) {
-      // Info: `updateBalance` has two options of error (20230426 - Shirley)
-      result = {
-        success: false,
-        code: isCustomError(error) ? error.code : Code.INTERNAL_SERVER_ERROR,
-        reason: isCustomError(error)
-          ? Reason[error.code]
-          : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
-      };
-    }
-    return result;
-  };
-
-  const closeCFDOrder = async (
-    applyCloseCFDOrder: IApplyCloseCFDOrder | undefined
-  ): Promise<IResult> => {
-    const timeLeft = (Number(applyCloseCFDOrder?.quotation.deadline) - getTimestamp()) * 1000;
-    if (timeLeft < 0) {
-      const result: IResult = {...defaultResultFailed};
-      const resultCode = Code.EXPIRED_QUOTATION_CANCELED;
-      result.code = resultCode;
-      result.reason = Reason[resultCode];
-      return result;
-    }
-
-    const countdown = () =>
-      new Promise<IResult>(resolve => {
-        window.setTimeout(() => {
+        if (!isConnected) {
           const result: IResult = {...defaultResultFailed};
-          const resultCode = Code.EXPIRED_QUOTATION_CANCELED;
+          const resultCode = Code.WALLET_IS_NOT_CONNECT;
           result.code = resultCode;
-          result.reason = Reason[resultCode];
-          resolve(result);
-        }, timeLeft);
-      });
+          result.reason = Reason[result.code];
+          return result;
+        }
+      }
 
-    if (!lunar.isConnected) {
-      const isConnected = await connect();
-      if (!isConnected) {
+      return Promise.race([_createCFDOrder(applyCreateCFDOrder), countdown()]);
+    },
+    []
+  );
+
+  const _closeCFDOrder = useCallback(
+    async (applyCloseCFDOrder: IApplyCloseCFDOrder | undefined): Promise<IResult> => {
+      let result: IResult;
+      try {
+        if (!enableServiceTermRef.current) throw new CustomError(Code.SERVICE_TERM_DISABLE);
+        if (!applyCloseCFDOrder) throw new CustomError(Code.INVAILD_ORDER_INPUTS);
+        const closeAppliedCFD = getCFD(applyCloseCFDOrder.referenceId);
+        if (!closeAppliedCFD) throw new CustomError(Code.CFD_ORDER_NOT_FOUND);
+        if (closeAppliedCFD.state !== OrderState.OPENING)
+          throw new CustomError(Code.CFD_ORDER_IS_ALREADY_CLOSED);
+        // const balance: IBalance | null = getBalance(openCFDs[index].targetAsset);
+        const typeData = transactionEngine.transferCFDOrderToTransaction(applyCloseCFDOrder);
+        if (!typeData) throw new CustomError(Code.FAILED_TO_CREATE_TRANSACTION);
+        // TODO: send request to chain(use Lunar?) (20230324 - tzuhan)
+        const signature: string = await lunar.signTypedData(typeData);
+        /* Info: (20230505 - Julian) 需要再驗證一次簽名是否正確 */
+        const success = lunar.verifyTypedData(typeData, signature);
+        // Deprecated: [debug] (20230509 - Tzuhan)
+        // eslint-disable-next-line no-console
+        console.log('closeCFDOrder lunar.verifyTypedData success', success, `typeData`, typeData);
+        if (!success) throw new CustomError(Code.REJECTED_SIGNATURE);
+        const now = getTimestamp();
+        // ToDo: Check if the quotation is expired, if so return `failed result` in `catch`. (20230414 - Shirley)
+        // Deprecated: [debug] (20230509 - Tzuhan)
+        // eslint-disable-next-line no-console
+        console.log(
+          `closeCFDOrder applyCloseCFDOrder.quotation.deadline(${
+            applyCloseCFDOrder.quotation.deadline
+          }) ${new Date(applyCloseCFDOrder.quotation.deadline * 1000)} < now${now}`,
+          applyCloseCFDOrder.quotation.deadline < now
+        );
+        if (applyCloseCFDOrder.quotation.deadline < now)
+          throw new CustomError(Code.EXPIRED_QUOTATION_FAILED);
+        result = (await privateRequestHandler({
+          name: APIName.CLOSE_CFD_TRADE,
+          method: Method.PUT,
+          body: {
+            applyData: applyCloseCFDOrder,
+            userSignature: signature,
+          },
+        })) as IResult;
+        // Deprecated: [debug] (20230509 - Tzuhan)
+        // eslint-disable-next-line no-console
+        console.log('closeCFDOrder result', result);
+        if (!result.success)
+          throw new CustomError(
+            isCustomError(result.code) ? result.code : Code.INTERNAL_SERVER_ERROR
+          );
+        const {balanceSnapshot, orderSnapshot: updateCFDOrder} = result.data as {
+          txhash: string;
+          orderSnapshot: ICFDOrder;
+          balanceSnapshot: IBalance[];
+        };
+        const newOpenedCFDs = [...openCFDsRef.current];
+        let index = newOpenedCFDs.findIndex(o => o.id === updateCFDOrder.id);
+        if (index !== -1) newOpenedCFDs.splice(index, 1);
+        setOpenedCFDs(newOpenedCFDs);
+        index = closedCFDsRef.current.findIndex(o => o.id === updateCFDOrder.id);
+        if (index === -1) setClosedCFDs(prev => [...prev, {...updateCFDOrder}]);
+        updateBalance(balanceSnapshot);
+        setCFDs({...CFDsRef.current, [updateCFDOrder.id]: {...updateCFDOrder}});
+        result = {
+          success: true,
+          code: Code.SUCCESS,
+          data: {order: {...updateCFDOrder}},
+        };
+      } catch (error) {
+        // Info: `updateBalance` has two options of error (20230426 - Shirley)
+        result = {
+          success: false,
+          code: isCustomError(error) ? error.code : Code.INTERNAL_SERVER_ERROR,
+          reason: isCustomError(error)
+            ? Reason[error.code]
+            : (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
+        };
+      }
+      return result;
+    },
+    []
+  );
+
+  const closeCFDOrder = useCallback(
+    async (applyCloseCFDOrder: IApplyCloseCFDOrder | undefined): Promise<IResult> => {
+      const timeLeft = (Number(applyCloseCFDOrder?.quotation.deadline) - getTimestamp()) * 1000;
+      if (timeLeft < 0) {
         const result: IResult = {...defaultResultFailed};
-        const resultCode = Code.WALLET_IS_NOT_CONNECT;
+        const resultCode = Code.EXPIRED_QUOTATION_CANCELED;
         result.code = resultCode;
-        result.reason = Reason[result.code];
+        result.reason = Reason[resultCode];
         return result;
       }
-    }
 
-    return Promise.race([_closeCFDOrder(applyCloseCFDOrder), countdown()]);
-  };
+      const countdown = () =>
+        new Promise<IResult>(resolve => {
+          window.setTimeout(() => {
+            const result: IResult = {...defaultResultFailed};
+            const resultCode = Code.EXPIRED_QUOTATION_CANCELED;
+            result.code = resultCode;
+            result.reason = Reason[resultCode];
+            resolve(result);
+          }, timeLeft);
+        });
 
-  const updateCFDOrder = async (
-    applyUpdateCFDOrder: IApplyUpdateCFDOrder | undefined
-  ): Promise<IResult> => {
-    let result: IResult;
-    try {
-      if (!enableServiceTermRef.current) throw new CustomError(Code.SERVICE_TERM_DISABLE);
-      if (!applyUpdateCFDOrder) throw new CustomError(Code.INVAILD_ORDER_INPUTS);
-      const updateAppliedCFD = getCFD(applyUpdateCFDOrder.referenceId);
-      if (!updateAppliedCFD) throw new CustomError(Code.CFD_ORDER_NOT_FOUND);
-      if (updateAppliedCFD.state !== OrderState.OPENING)
-        throw new CustomError(Code.CFD_ORDER_IS_ALREADY_CLOSED);
-      const typeData = transactionEngine.transferCFDOrderToTransaction(applyUpdateCFDOrder);
-      if (!typeData) throw new CustomError(Code.FAILED_TO_CREATE_TRANSACTION);
-      // TODO: send request to chain(use Lunar?) (20230324 - tzuhan)
-      const signature: string = await lunar.signTypedData(typeData);
-      /* Info: (20230505 - Julian) 需要再驗證一次簽名是否正確 */
-      const success = lunar.verifyTypedData(typeData, signature);
-      // Deprecated: [debug] (20230509 - Tzuhan)
-      // eslint-disable-next-line no-console
-      console.log('updateCFDOrder lunar.verifyTypedData success', success, `typeData`, typeData);
-      if (!success) throw new CustomError(Code.REJECTED_SIGNATURE);
-      result = (await privateRequestHandler({
-        name: APIName.UPDATE_CFD_TRADE,
-        method: Method.PUT,
-        body: {
-          applyData: applyUpdateCFDOrder,
-          userSignature: signature,
-        },
-      })) as IResult;
-      if (!result.success)
-        throw new CustomError(
-          isCustomError(result.code) ? result.code : Code.INTERNAL_SERVER_ERROR
-        );
-      const {orderSnapshot: updateCFDOrder} = result.data as {
-        txhash: string;
-        orderSnapshot: ICFDOrder;
-        balanceSnapshot: IBalance[];
-      };
-      const updateCFDOrders = [...openCFDs];
-      const index = updateCFDOrders.findIndex(o => o.id === updateCFDOrder.id);
-      if (index !== -1) updateCFDOrders[index] = updateCFDOrder;
-      setOpenedCFDs(updateCFDOrders);
-      setCFDs({...CFDsRef.current, [updateCFDOrder.id]: {...updateCFDOrder}});
-      result.code = Code.SUCCESS;
-      result = {
-        success: true,
-        code: result.code,
-        data: {order: updateCFDOrder},
-      };
-    } catch (error) {
-      // TODO: error handle (Tzuhan - 20230421)
-      // eslint-disable-next-line no-console
-      console.error(`${APIName.UPDATE_CFD_TRADE} error`, error);
-      result = {
-        success: false,
-        code: Code.INTERNAL_SERVER_ERROR,
-        reason: (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
-      };
-    }
+      if (!lunar.isConnected) {
+        const isConnected = await connect();
+        if (!isConnected) {
+          const result: IResult = {...defaultResultFailed};
+          const resultCode = Code.WALLET_IS_NOT_CONNECT;
+          result.code = resultCode;
+          result.reason = Reason[result.code];
+          return result;
+        }
+      }
 
-    return result;
-  };
+      return Promise.race([_closeCFDOrder(applyCloseCFDOrder), countdown()]);
+    },
+    []
+  );
 
-  const deposit = async (applyDepositOrder: IApplyDepositOrder): Promise<IResult> => {
+  const updateCFDOrder = useCallback(
+    async (applyUpdateCFDOrder: IApplyUpdateCFDOrder | undefined): Promise<IResult> => {
+      let result: IResult;
+      try {
+        if (!enableServiceTermRef.current) throw new CustomError(Code.SERVICE_TERM_DISABLE);
+        if (!applyUpdateCFDOrder) throw new CustomError(Code.INVAILD_ORDER_INPUTS);
+        const updateAppliedCFD = getCFD(applyUpdateCFDOrder.referenceId);
+        if (!updateAppliedCFD) throw new CustomError(Code.CFD_ORDER_NOT_FOUND);
+        if (updateAppliedCFD.state !== OrderState.OPENING)
+          throw new CustomError(Code.CFD_ORDER_IS_ALREADY_CLOSED);
+        const typeData = transactionEngine.transferCFDOrderToTransaction(applyUpdateCFDOrder);
+        if (!typeData) throw new CustomError(Code.FAILED_TO_CREATE_TRANSACTION);
+        // TODO: send request to chain(use Lunar?) (20230324 - tzuhan)
+        const signature: string = await lunar.signTypedData(typeData);
+        /* Info: (20230505 - Julian) 需要再驗證一次簽名是否正確 */
+        const success = lunar.verifyTypedData(typeData, signature);
+        // Deprecated: [debug] (20230509 - Tzuhan)
+        // eslint-disable-next-line no-console
+        console.log('updateCFDOrder lunar.verifyTypedData success', success, `typeData`, typeData);
+        if (!success) throw new CustomError(Code.REJECTED_SIGNATURE);
+        result = (await privateRequestHandler({
+          name: APIName.UPDATE_CFD_TRADE,
+          method: Method.PUT,
+          body: {
+            applyData: applyUpdateCFDOrder,
+            userSignature: signature,
+          },
+        })) as IResult;
+        if (!result.success)
+          throw new CustomError(
+            isCustomError(result.code) ? result.code : Code.INTERNAL_SERVER_ERROR
+          );
+        const {orderSnapshot: updateCFDOrder} = result.data as {
+          txhash: string;
+          orderSnapshot: ICFDOrder;
+          balanceSnapshot: IBalance[];
+        };
+        const updateCFDOrders = [...openCFDs];
+        const index = updateCFDOrders.findIndex(o => o.id === updateCFDOrder.id);
+        if (index !== -1) updateCFDOrders[index] = updateCFDOrder;
+        setOpenedCFDs(updateCFDOrders);
+        setCFDs({...CFDsRef.current, [updateCFDOrder.id]: {...updateCFDOrder}});
+        result.code = Code.SUCCESS;
+        result = {
+          success: true,
+          code: result.code,
+          data: {order: updateCFDOrder},
+        };
+      } catch (error) {
+        // TODO: error handle (Tzuhan - 20230421)
+        // eslint-disable-next-line no-console
+        console.error(`${APIName.UPDATE_CFD_TRADE} error`, error);
+        result = {
+          success: false,
+          code: Code.INTERNAL_SERVER_ERROR,
+          reason: (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
+        };
+      }
+
+      return result;
+    },
+    []
+  );
+
+  const deposit = useCallback(async (applyDepositOrder: IApplyDepositOrder): Promise<IResult> => {
     let result: IResult;
     try {
       if (!enableServiceTermRef.current) throw new CustomError(Code.SERVICE_TERM_DISABLE);
@@ -1264,71 +1175,74 @@ export const UserProvider = ({children}: IUserProvider) => {
       };
     }
     return result;
-  };
+  }, []);
 
-  const withdraw = async (applyWithdrawOrder: IApplyWithdrawOrder): Promise<IResult> => {
-    let result: IResult = defaultResultFailed;
-    result.code = Code.SERVICE_TERM_DISABLE;
-    result.reason = Reason[result.code];
-    if (enableServiceTermRef.current) {
-      const balance: IBalance | null = getBalance(applyWithdrawOrder.targetAsset); // TODO: ticker is not currency
-      if (balance && balance.available >= applyWithdrawOrder.targetAmount) {
-        const typeData = transactionEngine.transferWithdrawOrderToTransaction(applyWithdrawOrder);
-        if (typeData) {
-          // ++ TODO: send request to chain(use Lunar?) (20230324 - tzuhan)
-          try {
-            result.code = Code.REJECTED_SIGNATURE;
-            const signature: string = await lunar.signTypedData(typeData);
-            /* Info: (20230505 - Julian) 需要再驗證一次簽名是否正確 */
-            const success = await lunar.verifyTypedData(typeData, signature);
-            if (!success) throw new Error('verify signature failed');
+  const withdraw = useCallback(
+    async (applyWithdrawOrder: IApplyWithdrawOrder): Promise<IResult> => {
+      let result: IResult = defaultResultFailed;
+      result.code = Code.SERVICE_TERM_DISABLE;
+      result.reason = Reason[result.code];
+      if (enableServiceTermRef.current) {
+        const balance: IBalance | null = getBalance(applyWithdrawOrder.targetAsset); // TODO: ticker is not currency
+        if (balance && balance.available >= applyWithdrawOrder.targetAmount) {
+          const typeData = transactionEngine.transferWithdrawOrderToTransaction(applyWithdrawOrder);
+          if (typeData) {
+            // ++ TODO: send request to chain(use Lunar?) (20230324 - tzuhan)
+            try {
+              result.code = Code.REJECTED_SIGNATURE;
+              const signature: string = await lunar.signTypedData(typeData);
+              /* Info: (20230505 - Julian) 需要再驗證一次簽名是否正確 */
+              const success = await lunar.verifyTypedData(typeData, signature);
+              if (!success) throw new Error('verify signature failed');
 
-            result.code = Code.INTERNAL_SERVER_ERROR;
-            result = (await privateRequestHandler({
-              name: APIName.CREATE_WITHDRAW_TRADE,
-              method: Method.POST,
-              body: {
-                applyData: applyWithdrawOrder,
-                userSignature: signature,
-                balance: getBalance(applyWithdrawOrder.targetAsset),
-              },
-            })) as IResult;
-            // Deprecate: after this functions finishing (20230508 - tzuhan)
-            // eslint-disable-next-line no-console
-            console.log(`withdraw result`, result);
-            if (result.success) {
-              const {orderSnapshot: withdrawOrder, balanceSnapshot} = result.data as {
-                txhash: string;
-                orderSnapshot: IWithdrawOrder;
-                balanceSnapshot: IBalance[];
-              };
-              setWithdraws(prev => [...prev, withdrawOrder]);
-              updateBalance(balanceSnapshot);
-              result.code = Code.SUCCESS;
+              result.code = Code.INTERNAL_SERVER_ERROR;
+              result = (await privateRequestHandler({
+                name: APIName.CREATE_WITHDRAW_TRADE,
+                method: Method.POST,
+                body: {
+                  applyData: applyWithdrawOrder,
+                  userSignature: signature,
+                  balance: getBalance(applyWithdrawOrder.targetAsset),
+                },
+              })) as IResult;
+              // Deprecate: after this functions finishing (20230508 - tzuhan)
+              // eslint-disable-next-line no-console
+              console.log(`withdraw result`, result);
+              if (result.success) {
+                const {orderSnapshot: withdrawOrder, balanceSnapshot} = result.data as {
+                  txhash: string;
+                  orderSnapshot: IWithdrawOrder;
+                  balanceSnapshot: IBalance[];
+                };
+                setWithdraws(prev => [...prev, withdrawOrder]);
+                updateBalance(balanceSnapshot);
+                result.code = Code.SUCCESS;
+                result = {
+                  success: success,
+                  code: result.code,
+                  data: {order: withdrawOrder},
+                };
+              }
+            } catch (error) {
+              // TODO: error handle (Tzuhan - 20230421)
+              // eslint-disable-next-line no-console
+              console.error(`${APIName.CREATE_WITHDRAW_TRADE} error`, error);
               result = {
-                success: success,
-                code: result.code,
-                data: {order: withdrawOrder},
+                success: false,
+                code: Code.INTERNAL_SERVER_ERROR,
+                reason: (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
               };
             }
-          } catch (error) {
-            // TODO: error handle (Tzuhan - 20230421)
-            // eslint-disable-next-line no-console
-            console.error(`${APIName.CREATE_WITHDRAW_TRADE} error`, error);
-            result = {
-              success: false,
-              code: Code.INTERNAL_SERVER_ERROR,
-              reason: (error as Error)?.message || Reason[Code.INTERNAL_SERVER_ERROR],
-            };
           }
         }
       }
-    }
-    return result;
-  };
+      return result;
+    },
+    []
+  );
 
   // TODO: update histories api and dummy data(20230331 - tzuhan)
-  const listHistories = async () => {
+  const listHistories = useCallback(async () => {
     let result: IResult = {...defaultResultFailed};
     result.code = Code.SERVICE_TERM_DISABLE;
     result.reason = Reason[result.code];
@@ -1371,9 +1285,9 @@ export const UserProvider = ({children}: IUserProvider) => {
       }
     }
     return result;
-  };
+  }, []);
 
-  const enableShare = async (cfdId: string, share: boolean) => {
+  const enableShare = useCallback(async (cfdId: string, share: boolean) => {
     let result: IResult = {...defaultResultFailed};
     try {
       result = (await privateRequestHandler({
@@ -1388,9 +1302,9 @@ export const UserProvider = ({children}: IUserProvider) => {
       result = {...defaultResultFailed};
     }
     return result;
-  };
+  }, []);
 
-  const shareTradeRecord = async (cfdId: string) => {
+  const shareTradeRecord = useCallback(async (cfdId: string) => {
     let result: IResult = {...defaultResultFailed};
     try {
       // TODO: call 3rd party api (Tzuhan - 20230317)
@@ -1403,9 +1317,9 @@ export const UserProvider = ({children}: IUserProvider) => {
       result = {...defaultResultFailed};
     }
     return result;
-  };
+  }, []);
 
-  const sendEmailCode = async (email: string, hashCash: string) => {
+  const sendEmailCode = useCallback(async (email: string, hashCash: string) => {
     let result: IResult = {...defaultResultFailed};
     try {
       // TODO: post request (Tzuhan - 20230317)
@@ -1414,8 +1328,9 @@ export const UserProvider = ({children}: IUserProvider) => {
       result = {...defaultResultFailed};
     }
     return result;
-  };
-  const connectEmail = async (email: string, code: number) => {
+  }, []);
+
+  const connectEmail = useCallback(async (email: string, code: number) => {
     let result: IResult = {...defaultResultFailed};
     try {
       // TODO: post request (Tzuhan - 20230317)
@@ -1424,8 +1339,9 @@ export const UserProvider = ({children}: IUserProvider) => {
       result = {...defaultResultFailed};
     }
     return result;
-  };
-  const toggleEmailNotification = async (props: boolean) => {
+  }, []);
+
+  const toggleEmailNotification = useCallback(async (props: boolean) => {
     let result: IResult = {...defaultResultFailed};
     try {
       // TODO: put request (Tzuhan - 20230317)
@@ -1433,8 +1349,9 @@ export const UserProvider = ({children}: IUserProvider) => {
       result = {...defaultResultFailed};
     }
     return result;
-  };
-  const subscribeNewsletters = async (props: boolean) => {
+  }, []);
+
+  const subscribeNewsletters = useCallback(async (props: boolean) => {
     let result: IResult = {...defaultResultFailed};
     try {
       // TODO: put request (Tzuhan - 20230317)
@@ -1442,8 +1359,9 @@ export const UserProvider = ({children}: IUserProvider) => {
       result = {...defaultResultFailed};
     }
     return result;
-  };
-  const connectTideBit = async (email: string, password: string) => {
+  }, []);
+
+  const connectTideBit = useCallback(async (email: string, password: string) => {
     let result: IResult = {...defaultResultFailed};
     try {
       // TODO: post request (Tzuhan - 20230317)
@@ -1452,9 +1370,9 @@ export const UserProvider = ({children}: IUserProvider) => {
       result = {...defaultResultFailed};
     }
     return result;
-  };
+  }, []);
 
-  const readNotifications = async (notifications: INotificationItem[]) => {
+  const readNotifications = useCallback(async (notifications: INotificationItem[]) => {
     let result: IResult = {...defaultResultFailed};
     if (enableServiceTermRef.current) {
       try {
@@ -1467,7 +1385,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     }
 
     return result;
-  };
+  }, []);
 
   const updateUserAssetsHandler = useCallback(
     (userAssetsBrief: {
@@ -1531,9 +1449,25 @@ export const UserProvider = ({children}: IUserProvider) => {
       setHistories(updatedHistory);
     }
   }, []);
+
+  const init = useCallback(async () => {
+    const {isDeWTLegit, signer, deWT} = checkDeWT();
+    // Deprecate: [debug] (20230524 - tzuhan)
+    // eslint-disable-next-line no-console
+    console.log(
+      `app init is called: lunar.isConnected: ${lunar.isConnected}, isDeWTLegit: ${isDeWTLegit}, signer: ${signer}`
+    );
+    if (isDeWTLegit && signer && deWT) await setPrivateData(signer, deWT);
+    setIsInit(true);
+    return await Promise.resolve();
+  }, []);
+
   React.useMemo(() => notificationCtx.emitter.on(Events.ASSETS, updateUserAssetsHandler), []);
+
   React.useMemo(() => notificationCtx.emitter.on(Events.BALANCE, updateBalanceHandler), []);
+
   React.useMemo(() => notificationCtx.emitter.on(Events.CFD, updateCFDHandler), []);
+
   React.useMemo(
     () => notificationCtx.emitter.on(Events.BOLT_TRANSACTION, updateHistoryHandler),
     []
@@ -1565,17 +1499,54 @@ export const UserProvider = ({children}: IUserProvider) => {
     []
   );
 
-  const init = async () => {
-    const {isDeWTLegit, signer, deWT} = checkDeWT();
-    // Deprecate: [debug] (20230524 - tzuhan)
+  React.useMemo(
+    () =>
+      lunar.on('connected', async () => {
+        setIsConnected(true);
+        if (!userRef.current) {
+          const {isDeWTLegit, signer, deWT} = checkDeWT();
+          if (isDeWTLegit && signer && deWT) await setPrivateData(signer, deWT);
+        }
+      }),
+    [lunar]
+  );
+
+  React.useMemo(
+    () =>
+      lunar.on('disconnected', () => {
+        // Deprecate: [debug] (20230524 - tzuhan)
+        // eslint-disable-next-line no-console
+        console.log(`lunar.on('disconnected') => clearPrivateData`);
+        setIsConnected(false);
+        clearPrivateData();
+      }),
+    [lunar]
+  );
+
+  React.useMemo(() => {
     // eslint-disable-next-line no-console
-    console.log(
-      `app init is called: lunar.isConnected: ${lunar.isConnected}, isDeWTLegit: ${isDeWTLegit}, signer: ${signer}`
-    );
-    if (isDeWTLegit && signer && deWT) await setPrivateData(signer, deWT);
-    setIsInit(true);
-    return await Promise.resolve();
-  };
+    console.log(`add lunar.on('accountsChanged')`);
+    lunar.on('accountsChanged', async (address: string) => {
+      const checksumAddress = toChecksumAddress(address);
+      // Deprecate: [debug] (20230524 - tzuhan)
+      // eslint-disable-next-line no-console
+      console.log(
+        `accountsChanged checksumAddress: ${checksumAddress}, userRef.current?.address: ${userRef.current?.address}`
+      );
+      if (!!userRef.current && checksumAddress !== userRef.current.address) {
+        // Deprecate: [debug] (20230524 - tzuhan)
+        // eslint-disable-next-line no-console
+        console.log(
+          `userRef.current: ${JSON.stringify(
+            userRef.current
+          )} !!userRef.current(${!!userRef.current}) && checksumAddress !== userRef.current?.address ${
+            !!userRef.current && checksumAddress !== userRef.current?.address
+          }? clearPrivateData`
+        );
+        clearPrivateData();
+      }
+    });
+  }, [lunar]);
 
   const defaultValue = {
     isInit: isInitRef.current,

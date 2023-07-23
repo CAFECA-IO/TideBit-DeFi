@@ -12,12 +12,14 @@ import {TBDURL} from '../../constants/api_request';
 import {WalletConnectButton} from '../wallet_connect_button/wallet_connect_button';
 import version from '../../lib/version';
 import useStateRef from 'react-usestateref';
+import {useRouter} from 'next/router';
 
 type TranslateFunction = (s: string) => string;
 
 const NavBarMobile = () => {
   const userCtx = useContext(UserContext);
   const notificationCtx = useContext(NotificationContext);
+  const router = useRouter();
 
   const {t}: {t: TranslateFunction} = useTranslation('common');
 
@@ -31,6 +33,8 @@ const NavBarMobile = () => {
     componentVisible,
     setComponentVisible,
   } = useOuterClick<HTMLDivElement>(false);
+
+  const tradeLink = router.asPath.includes('trade') ? router.asPath : TBDURL.TRADE;
 
   /* Info: (20230327 - Julian) Menu Text */
   const menuText = langIsOpen
@@ -176,7 +180,7 @@ const NavBarMobile = () => {
               </div>
 
               <div className="flex items-center justify-start px-3">
-                <Link href={TBDURL.TRADE} className={menuItemStyles}>
+                <Link href={tradeLink} className={menuItemStyles}>
                   {t('NAV_BAR.TRADE')}
                 </Link>
               </div>

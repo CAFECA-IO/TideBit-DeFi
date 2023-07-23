@@ -342,6 +342,7 @@ const TradeTabMobile = () => {
           typeOfPosition: TypeOfPosition.BUY,
           unitAsset: unitAsset,
           price: longPriceRef.current,
+          spotPrice: marketCtx.selectedTicker?.price ?? 0,
           deadline: DEFAULT_EXPIRY_DATE,
           signature: '0x',
         };
@@ -361,6 +362,7 @@ const TradeTabMobile = () => {
           typeOfPosition: TypeOfPosition.SELL,
           unitAsset: unitAsset,
           price: shortPriceRef.current,
+          spotPrice: marketCtx.selectedTicker?.price ?? 0,
           deadline: DEFAULT_EXPIRY_DATE,
           signature: '0x',
         };
@@ -374,6 +376,7 @@ const TradeTabMobile = () => {
         typeOfPosition: TypeOfPosition.BUY,
         unitAsset: unitAsset,
         price: longPriceRef.current,
+        spotPrice: marketCtx.selectedTicker?.price ?? 0,
         deadline: DEFAULT_EXPIRY_DATE,
         signature: '0x',
       };
@@ -384,6 +387,7 @@ const TradeTabMobile = () => {
         typeOfPosition: TypeOfPosition.SELL,
         unitAsset: unitAsset,
         price: shortPriceRef.current,
+        spotPrice: marketCtx.selectedTicker?.price ?? 0,
         deadline: DEFAULT_EXPIRY_DATE,
         signature: '0x',
       };

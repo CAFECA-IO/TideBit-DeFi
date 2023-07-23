@@ -76,23 +76,23 @@ export const SUGGEST_SL = 0.1;
 
 export const LIQUIDATION_FIVE_LEVERAGE = 0.2;
 
-export const tickerIds = [
-  'ethusdt',
-  'btcusdt',
-  'ltcusdt',
-  'maticusdt',
-  'bnbusdt',
-  'solusdt',
-  'shibusdt',
-  'dotusdt',
-  'adausdt',
-  'avaxusdt',
-  'daiusdt',
-  'mkrusdt',
-  'xrpusdt',
-  'dogeusdt',
-  'uniusdt',
-  'flowusdt',
+export const instIds = [
+  'eth-usdt',
+  'btc-usdt',
+  // 'ltc-usdt',
+  // 'matic-usdt',
+  // 'bnb-usdt',
+  // 'sol-usdt',
+  // 'shi-busdt',
+  // 'dot-usdt',
+  // 'ada-usdt',
+  // 'avax-usdt',
+  // 'dai-usdt',
+  // 'mkr-usdt',
+  // 'xrp-usdt',
+  // 'doge-usdt',
+  // 'uni-usdt',
+  // 'flow-usdt',
 ];
 
 export const TRADING_CRYPTO_DATA = [

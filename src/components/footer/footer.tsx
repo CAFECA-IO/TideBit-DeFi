@@ -6,11 +6,15 @@ import RippleButton from '../ripple_button/ripple_button';
 import {useTranslation} from 'react-i18next';
 import {TBDURL} from '../../constants/api_request';
 import {COPYRIGHT} from '../../constants/config';
+import {useRouter} from 'next/router';
 
 type TranslateFunction = (s: string) => string;
 
 const Footer = () => {
   const {t}: {t: TranslateFunction} = useTranslation('common');
+  const router = useRouter();
+
+  const tradeLink = router.asPath.includes('trade') ? router.asPath : TBDURL.TRADE;
 
   const ICON_SIZE = 30;
   const socialMediaLinks = [
@@ -50,7 +54,7 @@ const Footer = () => {
   ];
 
   const servicesLinks = [
-    {label: t('NAV_BAR.TRADE'), path: TBDURL.TRADE},
+    {label: t('NAV_BAR.TRADE'), path: tradeLink},
     {label: t('NAV_BAR.TIDEBIT_UNIVERSITY'), path: TBDURL.COMING_SOON},
     {label: t('NAV_BAR.HELP_CENTER'), path: TBDURL.COMING_SOON},
   ];

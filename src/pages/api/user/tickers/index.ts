@@ -1,5 +1,7 @@
 import {NextApiRequest, NextApiResponse} from 'next';
-let favoriteTickers = ['ETH', 'BTC'];
+import {instIds} from '../../../../constants/config';
+// let favoriteTickers = ['ETH-USDT', 'BTC-USDT'];
+let favoriteTickers = instIds.map(i => i.toUpperCase());
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'GET') {
     res.status(200).json(favoriteTickers);

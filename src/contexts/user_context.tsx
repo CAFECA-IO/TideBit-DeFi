@@ -702,7 +702,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     let result: IResult = {...defaultResultFailed};
     if (isConnectedRef.current) {
       try {
-        const updatedFavoriteTickers = [...favoriteTickers];
+        const updatedFavoriteTickers = [...favoriteTickersRef.current];
         (await workerCtx.requestHandler({
           name: APIName.ADD_FAVORITE_TICKERS,
           method: Method.PUT,
@@ -730,8 +730,8 @@ export const UserProvider = ({children}: IUserProvider) => {
     let result: IResult = {...defaultResultFailed};
     if (isConnectedRef.current) {
       try {
-        const updatedFavoriteTickers = [...favoriteTickers];
-        const index: number = updatedFavoriteTickers.findIndex(currency => currency === ticker);
+        const updatedFavoriteTickers = [...favoriteTickersRef.current];
+        const index: number = updatedFavoriteTickers.findIndex(instId => instId === ticker);
         if (index !== -1) {
           (await privateRequestHandler({
             name: APIName.REMOVE_FAVORITE_TICKERS,

@@ -295,7 +295,7 @@ export default function CandlestickChart({
     }
 
     if (param.seriesData) {
-      param.seriesData.forEach(series => {
+      param.seriesData?.forEach(series => {
         const candle = series as CandlestickData;
         setOhlcInfo({
           open: candle.open,

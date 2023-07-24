@@ -53,7 +53,7 @@ export const isSharingOrder = (order: any) => {
     typeof order.userName !== 'string'
   ) {
     return false;
-  } else if (!Object.values(Currency).includes(order.ticker as ICurrency)) {
+  } else if (!Object.values(Currency).includes(order.targetAsset as ICurrency)) {
     // Info: (20230508 - Shirley) Check if tickerId is a valid ICurrency
     return false;
   } else if (

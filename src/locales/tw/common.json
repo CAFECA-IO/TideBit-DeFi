@@ -142,7 +142,8 @@
     "OPEN_POSITION_ITEM_TP": "止盈線",
     "OPEN_POSITION_ITEM_SL": "止損線",
     "HISTORY_POSITION_ITEM_VALUE": "建倉 / 關倉價值",
-    "HISTORY_POSITION_ITEM_PNL": "損益"
+    "HISTORY_POSITION_ITEM_PNL": "損益",
+    "LOGIN_TO_ADD_FAVORTIE": "請登入以使用追蹤清單功能"
   },
   "WALLET_PANEL": {
     "TITLE": "連接錢包",

@@ -142,7 +142,8 @@
     "OPEN_POSITION_ITEM_TP": "Take Profit",
     "OPEN_POSITION_ITEM_SL": "Stop Loss",
     "HISTORY_POSITION_ITEM_VALUE": "Open / Close Value",
-    "HISTORY_POSITION_ITEM_PNL": "PNL"
+    "HISTORY_POSITION_ITEM_PNL": "PNL",
+    "LOGIN_TO_ADD_FAVORTIE": "Please login to add to favorites"
   },
   "WALLET_PANEL": {
     "TITLE": "Wallet Connect",

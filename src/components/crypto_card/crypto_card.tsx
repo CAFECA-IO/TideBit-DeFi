@@ -78,14 +78,12 @@ const CryptoCard = ({
   const strokeColor = priceRise ? [TypeOfPnLColorHex.PROFIT] : [TypeOfPnLColorHex.LOSS];
 
   const globalCtx = useGlobal();
-  // eslint-disable-next-line no-console
-  console.log('insamepage', onTheSamePage);
 
   const starClickHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
     if (!userCtx.enableServiceTerm) {
       globalCtx.toast({
         type: ToastTypeAndText.INFO.type,
-        message: 'Please login to add to favorites',
+        message: t('LOGIN_TO_ADD_FAVORTIE'),
         typeText: t(ToastTypeAndText.INFO.text),
         autoClose: 3000,
         isLoading: false,
@@ -95,9 +93,9 @@ const CryptoCard = ({
     event.stopPropagation(); // Prevent the div click handler from firing
 
     if (!starred) {
-      userCtx.addFavorites(currency);
+      userCtx.addFavorites(instId);
     } else {
-      userCtx.removeFavorites(currency);
+      userCtx.removeFavorites(instId);
     }
   };
 

@@ -88,7 +88,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
   // TODO: Data from API (20230508 - Shirley)
   const {
-    ticker: tickerId,
     userName,
     targetAssetName,
     typeOfPosition,
@@ -106,7 +105,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const displayedUser = userName.slice(-1).toUpperCase();
 
   const logoUrl = DOMAIN + `/elements/group_15944.svg`;
-  const iconUrl = DOMAIN + `/asset_icon/${tickerId.toLowerCase()}.svg`;
+  const iconUrl = DOMAIN + `/asset_icon/${targetAssetName.toLowerCase()}.svg`;
   const qrcodeUrl = DOMAIN + `/elements/tidebit_qrcode.svg`;
 
   const pnlPercent =

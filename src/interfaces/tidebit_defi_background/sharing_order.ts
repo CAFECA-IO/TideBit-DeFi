@@ -5,7 +5,8 @@ import {getChainNameByCurrency, getTimestamp, randomIntFromInterval} from '../..
 
 export interface ISharingOrder {
   id: string;
-  ticker: ICurrency;
+  instId: string;
+  targetAsset: ICurrency;
   targetAssetName: string;
   typeOfPosition: ITypeOfPosition;
   openPrice: number;
@@ -22,11 +23,14 @@ export const getDummySharingOrder = (
   typeOfPosition?: ITypeOfPosition
 ): ISharingOrder => {
   const currencies: ICurrency[] = Object.values(Currency);
-  const ticker = currency ? currency : currencies[randomIntFromInterval(0, currencies.length - 1)];
+  const targetAsset = currency
+    ? currency
+    : currencies[randomIntFromInterval(0, currencies.length - 1)];
   const order: ISharingOrder = {
     id: 'dummy_id',
-    ticker: ticker,
-    targetAssetName: getChainNameByCurrency(ticker, TRADING_CRYPTO_DATA),
+    instId: `${targetAsset}-USDT`,
+    targetAsset: targetAsset,
+    targetAssetName: getChainNameByCurrency(targetAsset, TRADING_CRYPTO_DATA),
     typeOfPosition: typeOfPosition
       ? typeOfPosition
       : randomIntFromInterval(0, 1) === 0
@@ -44,7 +48,8 @@ export const getDummySharingOrder = (
 
 export const isSharingOrder = (order: any) => {
   if (
-    typeof order.ticker !== 'string' ||
+    // TODO: Validate the `instId` when data has the property (20230724 - Shirley)
+    // typeof order.instId !== 'string' ||
     typeof order.targetAssetName !== 'string' ||
     typeof order.typeOfPosition !== 'string' ||
     typeof order.openPrice !== 'number' ||
@@ -53,7 +58,7 @@ export const isSharingOrder = (order: any) => {
     typeof order.userName !== 'string'
   ) {
     return false;
-  } else if (!Object.values(Currency).includes(order.ticker as ICurrency)) {
+  } else if (!Object.values(Currency).includes(order.targetAsset as ICurrency)) {
     // Info: (20230508 - Shirley) Check if tickerId is a valid ICurrency
     return false;
   } else if (
@@ -68,7 +73,8 @@ export const isSharingOrder = (order: any) => {
 
 export const isDummySharingOrder = (order: ISharingOrder): boolean => {
   if (
-    typeof order.ticker !== 'string' ||
+    typeof order.instId !== 'string' ||
+    typeof order.targetAsset !== 'string' ||
     typeof order.targetAssetName !== 'string' ||
     typeof order.typeOfPosition !== 'string' ||
     typeof order.openPrice !== 'number' ||
@@ -80,7 +86,7 @@ export const isDummySharingOrder = (order: ISharingOrder): boolean => {
   }
 
   // Info: (20230508 - Shirley) Check if tickerId is a valid ICurrency
-  if (!Object.values(Currency).includes(order.ticker as ICurrency)) {
+  if (!Object.values(Currency).includes(order.targetAsset as ICurrency)) {
     return false;
   }
 
@@ -104,7 +110,8 @@ export const getInvalidSharingOrder = (
   const now = getTimestamp();
   const order: ISharingOrder = {
     id: '_id',
-    ticker: Currency.ETH,
+    instId: `${Currency.ETH}-USDT`,
+    targetAsset: Currency.ETH,
     targetAssetName: getChainNameByCurrency(Currency.ETH, TRADING_CRYPTO_DATA),
     typeOfPosition: TypeOfPosition.BUY,
     openPrice: 0,

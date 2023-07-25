@@ -65,6 +65,9 @@ module.exports = {
         '3px': '3px',
         '20px': '20px',
       },
+      minWidth: {
+        '120px': '120px',
+      },
       maxWidth: {
         '100px': '100px',
         '160px': '160px',

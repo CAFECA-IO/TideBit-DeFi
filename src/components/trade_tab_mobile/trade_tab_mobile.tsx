@@ -777,7 +777,6 @@ const TradeTabMobile = () => {
       setOpenSubMenu(true);
     } else {
       {
-        /* ToDo: 接 PositionOpenModal (20230313 - Julian) */
         globalCtx.dataPositionOpenModalHandler({
           openCfdRequest: longOrder,
         });
@@ -795,7 +794,6 @@ const TradeTabMobile = () => {
       setOpenSubMenu(true);
     } else {
       {
-        /* ToDo: 接 PositionOpenModal (20230313 - Julian) */
         globalCtx.dataPositionOpenModalHandler({
           openCfdRequest: shortOrder,
         });
@@ -1262,7 +1260,7 @@ const TradeTabMobile = () => {
 
   return (
     <>
-      <div className="relative flex items-center justify-between">
+      <div className="relative flex items-center">
         {/* Long Button */}
         <div
           className={`min-w-120px bg-black/100 transition-all duration-300 ease-in-out ${longButtonStyles}`}

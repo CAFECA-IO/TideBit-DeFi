@@ -945,7 +945,7 @@ const TradeTabMobile = () => {
             )}{' '}
             {unitAsset})
           </span>
-          {/* tooltip */}
+          {/* Info: (20230725 - Julian) tooltip */}
           <div className="ml-2">
             <div
               className="relative"
@@ -978,7 +978,7 @@ const TradeTabMobile = () => {
         isActiveTabLong ? 'flex' : 'hidden'
       } w-full flex-col items-center justify-center space-y-5`}
     >
-      {/* Take Profit Setting */}
+      {/* Info: (20230725 - Julian) Take Profit Setting */}
       <div className="flex w-full flex-col items-center">
         <div className="flex w-full items-center justify-between">
           <div className="text-sm text-lightGray">{t('TRADE_PAGE.TRADE_TAB_TP_SETTING')}</div>
@@ -988,7 +988,7 @@ const TradeTabMobile = () => {
         <div className="mb-5 mt-2 h-4 w-full">{displayedExpectedLongProfit}</div>
       </div>
 
-      {/* Stop Loss Setting */}
+      {/* Info: (20230725 - Julian) Stop Loss Setting */}
       <div className="flex w-full flex-col items-center space-y-5">
         <div className="flex w-full items-center justify-between">
           <div className="text-sm text-lightGray">{t('TRADE_PAGE.TRADE_TAB_SL_SETTING')}</div>
@@ -997,7 +997,7 @@ const TradeTabMobile = () => {
         </div>
         <div className="w-full">{displayedExpectedLongLoss}</div>
 
-        {/* Guaranteed stop */}
+        {/* Info: (20230725 - Julian) Guaranteed stop */}
         {longGuaranteedStop}
       </div>
     </div>
@@ -1149,7 +1149,7 @@ const TradeTabMobile = () => {
         isActiveTabLong ? 'hidden' : 'flex'
       } w-full flex-col items-center justify-center space-y-5`}
     >
-      {/* Take Profit Setting */}
+      {/* Info: (20230725 - Julian) Take Profit Setting */}
       <div className="flex w-full flex-col items-center">
         <div className="flex w-full items-center justify-between">
           <div className="text-sm text-lightGray">{t('TRADE_PAGE.TRADE_TAB_TP_SETTING')}</div>
@@ -1184,7 +1184,7 @@ const TradeTabMobile = () => {
         <ImCross onClick={() => setOpenSubMenu(false)} className="z-20 cursor-pointer" />
       </div>
 
-      {/* ---------- margin setting ---------- */}
+      {/* Info: (20230725 - Julian) ---------- margin setting ---------- */}
       <div className="w-screen overflow-y-auto overflow-x-hidden px-8 sm:w-1/2">
         <div className="flex flex-col items-center justify-between space-y-7">
           <div className="flex w-full items-center justify-center">

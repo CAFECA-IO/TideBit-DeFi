@@ -1179,20 +1179,20 @@ const TradeTabMobile = () => {
   const longButtonStyles =
     activeTab === 'Long' && openSubMenu
       ? 'z-20 w-320px -translate-x-16 absolute left-0'
-      : 'w-120px translate-x-0';
+      : 'w-120px translate-x-0 relative';
 
   const shortButtonStyles =
     activeTab === 'Short' && openSubMenu
-      ? 'z-20 w-320px -translate-x-16 absolute left-0'
-      : 'ml-4 w-120px translate-x-0';
+      ? 'z-20 w-320px ml-0 -translate-x-16 absolute left-0 '
+      : 'ml-4 w-120px translate-x-0 relative';
 
   const subMenu = (
     <div
       className={`flex h-screen w-screen flex-col items-center overflow-x-hidden overflow-y-hidden bg-darkGray ${
         openSubMenu ? 'visible translate-y-0 opacity-100' : 'invisible translate-y-full opacity-0'
-      } absolute left-0 ${'bottom-76px'} overflow-hidden pt-40 transition-all duration-150`}
+      } absolute left-0 ${'bottom-76px'} overflow-hidden pt-36 transition-all duration-150`}
     >
-      <div className="mr-30px mt-10px flex self-end sm:pr-30px">
+      <div className="flex self-end px-30px py-20px">
         <ImCross onClick={() => setOpenSubMenu(false)} className="z-20 cursor-pointer" />
       </div>
 

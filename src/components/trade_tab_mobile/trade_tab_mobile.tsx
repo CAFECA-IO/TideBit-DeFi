@@ -1192,8 +1192,8 @@ const TradeTabMobile = () => {
         openSubMenu ? 'visible translate-y-0 opacity-100' : 'invisible translate-y-full opacity-0'
       } absolute left-0 ${'bottom-76px'} overflow-hidden pt-40 transition-all duration-150`}
     >
-      <div className="mb-3 mr-30px flex self-end sm:pr-30px">
-        <ImCross onClick={() => setOpenSubMenu(false)} className="cursor-pointer" />
+      <div className="mr-30px mt-10px flex self-end sm:pr-30px">
+        <ImCross onClick={() => setOpenSubMenu(false)} className="z-20 cursor-pointer" />
       </div>
 
       {/* ---------- margin setting ---------- */}
@@ -1264,11 +1264,13 @@ const TradeTabMobile = () => {
     <>
       <div className="flex items-center justify-between">
         {/* Long Button */}
-        <div className={`bg-black/100 transition-all duration-300 ease-in-out ${longButtonStyles}`}>
+        <div
+          className={`min-w-120px bg-black/100 transition-all duration-300 ease-in-out ${longButtonStyles}`}
+        >
           <RippleButton
             disabled={(openSubMenu && marginWarningLongRef.current) || longBtnDisabledRef.current}
             buttonType="button"
-            className={`w-full min-w-120px rounded-md bg-lightGreen5 py-2 text-sm font-medium tracking-wide text-white transition-colors duration-300 hover:bg-lightGreen5/80 disabled:bg-lightGray`}
+            className={`w-full rounded-md bg-lightGreen5 py-2 text-sm font-medium tracking-wide text-white transition-colors duration-300 hover:bg-lightGreen5/80 disabled:bg-lightGray`}
             onClick={longSectionClickHandler}
           >
             <b>{t('TRADE_PAGE.TRADE_TAB_LONG_BUTTON')}</b> <br />
@@ -1284,12 +1286,12 @@ const TradeTabMobile = () => {
 
         {/* Short Button */}
         <div
-          className={`bg-black/100 transition-all duration-300 ease-in-out ${shortButtonStyles}`}
+          className={`min-w-120px bg-black/100 transition-all duration-300 ease-in-out ${shortButtonStyles}`}
         >
           <RippleButton
             disabled={(openSubMenu && marginWarningShortRef.current) || shortBtnDisabledRef.current}
             buttonType="button"
-            className={`w-full min-w-120px rounded-md bg-lightRed py-2 text-sm font-medium tracking-wide text-white transition-colors duration-300 hover:bg-lightRed/80 disabled:bg-lightGray`}
+            className={`w-full rounded-md bg-lightRed py-2 text-sm font-medium tracking-wide text-white transition-colors duration-300 hover:bg-lightRed/80 disabled:bg-lightGray`}
             onClick={shortSectionClickHandler}
           >
             <b>{t('TRADE_PAGE.TRADE_TAB_SHORT_BUTTON')}</b> <br />

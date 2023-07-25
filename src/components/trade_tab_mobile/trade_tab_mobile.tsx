@@ -1250,8 +1250,8 @@ const TradeTabMobile = () => {
 
   const expandedButton = (
     <div
-      className={`absolute z-20 grid w-320px grid-rows-1 bg-black/100 ${
-        openSubMenu ? 'visible grid-cols-1 opacity-100' : 'invisible grid-cols-0 opacity-0'
+      className={`absolute z-20 w-320px bg-black/100 ${
+        openSubMenu ? 'visible opacity-100' : 'invisible opacity-0'
       } transition-all duration-500 ease-in-out`}
     >
       <RippleButton

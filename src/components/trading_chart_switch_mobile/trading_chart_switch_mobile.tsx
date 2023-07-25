@@ -189,7 +189,7 @@ const TradingChartSwitchMobile = ({
 
   return (
     <>
-      <div className="hidden w-full items-center justify-between space-x-1 md:space-x-5">
+      <div className="flex w-full items-center justify-between space-x-1 md:space-x-5">
         <div className="flex space-x-2">{stickSwitchButton}</div>
         <div className="hidden items-center space-x-5 md:flex">
           <p className="text-lightGray">Positions</p>

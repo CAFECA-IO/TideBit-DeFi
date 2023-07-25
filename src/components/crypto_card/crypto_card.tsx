@@ -78,8 +78,6 @@ const CryptoCard = ({
   const strokeColor = priceRise ? [TypeOfPnLColorHex.PROFIT] : [TypeOfPnLColorHex.LOSS];
 
   const globalCtx = useGlobal();
-  // eslint-disable-next-line no-console
-  console.log('insamepage', onTheSamePage);
 
   const starClickHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
     if (!userCtx.enableServiceTerm) {
@@ -102,14 +100,14 @@ const CryptoCard = ({
   };
 
   const showStar = starred ? (
-    <button type="button" onClick={starClickHandler} className="absolute top-2 right-3">
+    <button type="button" onClick={starClickHandler} className="absolute right-3 top-2">
       <BsStarFill size={20} className={`${starColor} hover:cursor-pointer`} />
     </button>
   ) : star ? (
     <button
       type="button"
       onClick={starClickHandler}
-      className="absolute top-2 right-3 hover:cursor-pointer"
+      className="absolute right-3 top-2 hover:cursor-pointer"
     >
       <BsStar size={20} className={`${starColor}`} />
     </button>
@@ -119,7 +117,7 @@ const CryptoCard = ({
     <button
       type="button"
       onClick={starClickHandler}
-      className="absolute top-1 right-1 hover:cursor-pointer"
+      className="absolute right-1 top-1 hover:cursor-pointer"
     >
       <BsStarFill size={13} className={`${starColor}`} />
     </button>
@@ -127,7 +125,7 @@ const CryptoCard = ({
     <button
       type="button"
       onClick={starClickHandler}
-      className="absolute top-1 right-1 hover:cursor-pointer"
+      className="absolute right-1 top-1 hover:cursor-pointer"
     >
       <BsStar size={13} className={`${starColor}`} />
     </button>
@@ -309,7 +307,7 @@ const CryptoCard = ({
               <span
                 className={`flex items-center justify-between text-xs ${priceColor} mt-3 align-middle`}
               >
-                <p className="ml-0 mb-1 text-left text-xs font-normal tracking-wide">
+                <p className="mb-1 ml-0 text-left text-xs font-normal tracking-wide">
                   ₮ {price.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE)}
                 </p>
                 <div className="absolute bottom-5px right-4 flex">

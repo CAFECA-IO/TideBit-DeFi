@@ -1178,12 +1178,12 @@ const TradeTabMobile = () => {
 
   const longButtonStyles =
     activeTab === 'Long' && openSubMenu
-      ? 'z-20 w-320px -translate-x-16 absolute'
+      ? 'z-20 w-320px -translate-x-16 absolute left-0'
       : 'w-120px translate-x-0';
 
   const shortButtonStyles =
     activeTab === 'Short' && openSubMenu
-      ? 'z-20 w-320px -translate-x-16 absolute'
+      ? 'z-20 w-320px -translate-x-16 absolute left-0'
       : 'ml-4 w-120px translate-x-0';
 
   const subMenu = (
@@ -1262,7 +1262,7 @@ const TradeTabMobile = () => {
 
   return (
     <>
-      <div className="flex items-center justify-between">
+      <div className="relative flex items-center justify-between">
         {/* Long Button */}
         <div
           className={`min-w-120px bg-black/100 transition-all duration-300 ease-in-out ${longButtonStyles}`}

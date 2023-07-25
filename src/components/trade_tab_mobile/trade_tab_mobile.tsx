@@ -1258,13 +1258,55 @@ const TradeTabMobile = () => {
     </div>
   );
 
+  const expandedButton = (
+    <div
+      className={`absolute z-20 w-320px bg-black/100 ${
+        openSubMenu ? 'visible opacity-100' : 'invisible opacity-0'
+      } transition-all duration-300 ease-in-out`}
+    >
+      <RippleButton
+        disabled={
+          (openSubMenu && marginWarningShortRef.current) ||
+          longBtnDisabledRef.current ||
+          shortBtnDisabledRef.current
+        }
+        buttonType="button"
+        className={`w-full rounded-md py-2 text-sm font-medium tracking-wide text-white ${
+          activeTab === 'Long'
+            ? 'bg-lightGreen5 hover:bg-lightGreen5/80'
+            : 'bg-lightRed hover:bg-lightRed/80'
+        } transition-colors duration-300 disabled:bg-lightGray`}
+        onClick={activeTab === 'Long' ? longSectionClickHandler : shortSectionClickHandler}
+      >
+        <b>
+          {activeTab === 'Long'
+            ? t('TRADE_PAGE.TRADE_TAB_LONG_BUTTON')
+            : t('TRADE_PAGE.TRADE_TAB_SHORT_BUTTON')}
+        </b>{' '}
+        <br />
+        <p className="text-xs">
+          ₮{' '}
+          {activeTab === 'Long'
+            ? Number(longPriceRef.current).toLocaleString(
+                UNIVERSAL_NUMBER_FORMAT_LOCALE,
+                FRACTION_DIGITS
+              )
+            : Number(shortPriceRef.current).toLocaleString(
+                UNIVERSAL_NUMBER_FORMAT_LOCALE,
+                FRACTION_DIGITS
+              )}
+        </p>
+      </RippleButton>
+    </div>
+  );
+
   return (
     <>
       <div className="relative flex items-center">
-        {/* Long Button */}
-        <div
-          className={`min-w-120px bg-black/100 transition-all duration-300 ease-in-out ${longButtonStyles}`}
-        >
+        {/* Info: (20230725 - Julian) Expanded Button (for open position) */}
+        {expandedButton}
+        {/* Info: (20230725 - Julian) Long Button */}
+        <div className={`w-120px bg-black/100`}>
           <RippleButton
             disabled={(openSubMenu && marginWarningLongRef.current) || longBtnDisabledRef.current}
             buttonType="button"
@@ -1282,10 +1324,8 @@ const TradeTabMobile = () => {
           </RippleButton>
         </div>
 
-        {/* Short Button */}
-        <div
-          className={`min-w-120px bg-black/100 transition-all duration-300 ease-in-out ${shortButtonStyles}`}
-        >
+        {/* Info: (20230725 - Julian) Short Button */}
+        <div className={`ml-4 w-120px bg-black/100`}>
           <RippleButton
             disabled={(openSubMenu && marginWarningShortRef.current) || shortBtnDisabledRef.current}
             buttonType="button"

@@ -398,6 +398,12 @@ module.exports = {
       backgroundImage: {
         landingPageCta1: "url('~/public/elements/Group_15198@2x.png')",
       },
+      gridTemplateColumns: {
+        0: 'repeat(1, minmax(0px, 0fr))',
+      },
+      transitionProperty: {
+        grid: 'grid-template-rows',
+      },
       // animation class
       animation: {
         'spin-slow': 'spin 3s linear infinite',

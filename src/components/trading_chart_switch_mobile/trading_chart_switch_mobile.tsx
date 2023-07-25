@@ -189,7 +189,7 @@ const TradingChartSwitchMobile = ({
 
   return (
     <>
-      <div className="flex w-full items-center justify-between space-x-1 md:space-x-5">
+      <div className="hidden w-full items-center justify-between space-x-1 md:space-x-5">
         <div className="flex space-x-2">{stickSwitchButton}</div>
         <div className="hidden items-center space-x-5 md:flex">
           <p className="text-lightGray">Positions</p>
@@ -201,7 +201,7 @@ const TradingChartSwitchMobile = ({
             />
           </div>
         </div>
-        <div className="flex w-full justify-between whitespace-nowrap rounded-sm bg-darkGray6 py-2 px-2">
+        <div className="flex w-full justify-between whitespace-nowrap rounded-sm bg-darkGray6 px-2 py-2">
           <button type="button" className={`${liveButtonStyle}`} onClick={liveButtonClickHandler}>
             Live
           </button>

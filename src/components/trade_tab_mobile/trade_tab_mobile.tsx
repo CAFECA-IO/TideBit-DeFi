@@ -111,7 +111,7 @@ const TradeTabMobile = () => {
   const [shortTpToggle, setShortTpToggle] = useState(false);
   const [shortSlToggle, setShortSlToggle] = useState(false);
 
-  const [activeTab, setActiveTab] = useState('Long');
+  const [isActiveTabLong, setIsActiveTabLong] = useState(true);
   const [openSubMenu, setOpenSubMenu] = useState(false);
 
   const [estimatedLongProfitValue, setEstimatedLongProfitValue, estimatedLongProfitValueRef] =
@@ -770,7 +770,7 @@ const TradeTabMobile = () => {
   const shortToolMouseLeaveHandler = () => setShortTooltipStatus(0);
 
   const longSectionClickHandler = async () => {
-    setActiveTab('Long');
+    setIsActiveTabLong(true);
     const {longOrder} = await toApplyCreateOrder();
 
     if (!openSubMenu) {
@@ -787,7 +787,7 @@ const TradeTabMobile = () => {
   };
 
   const shortSectionClickHandler = async () => {
-    setActiveTab('Short');
+    setIsActiveTabLong(false);
     const {shortOrder} = await toApplyCreateOrder();
 
     if (!openSubMenu) {
@@ -975,7 +975,7 @@ const TradeTabMobile = () => {
   const longSetting = (
     <div
       className={`${
-        activeTab === 'Long' ? 'flex' : 'hidden'
+        isActiveTabLong ? 'flex' : 'hidden'
       } w-full flex-col items-center justify-center space-y-5`}
     >
       {/* Take Profit Setting */}
@@ -1146,7 +1146,7 @@ const TradeTabMobile = () => {
   const shortSetting = (
     <div
       className={`${
-        activeTab === 'Short' ? 'flex' : 'hidden'
+        isActiveTabLong ? 'hidden' : 'flex'
       } w-full flex-col items-center justify-center space-y-5`}
     >
       {/* Take Profit Setting */}
@@ -1173,16 +1173,6 @@ const TradeTabMobile = () => {
       </div>
     </div>
   );
-
-  const longButtonStyles =
-    activeTab === 'Long' && openSubMenu
-      ? 'z-20 w-320px -translate-x-16 absolute left-0'
-      : 'w-120px translate-x-0 relative';
-
-  const shortButtonStyles =
-    activeTab === 'Short' && openSubMenu
-      ? 'z-20 w-320px ml-0 -translate-x-16 absolute left-0 '
-      : 'ml-4 w-120px translate-x-0 relative';
 
   const subMenu = (
     <div
@@ -1221,7 +1211,7 @@ const TradeTabMobile = () => {
               <div className="text-sm text-lightGray">
                 {t('TRADE_PAGE.TRADE_TAB_REQUIRED_MARGIN')}
               </div>
-              {activeTab === 'Long'
+              {isActiveTabLong
                 ? displayedRequiredMarginLongStyle
                 : displayedRequiredMarginShortStyle}
             </div>
@@ -1232,7 +1222,7 @@ const TradeTabMobile = () => {
 
             <div className="w-1/2">
               <div className="text-sm text-lightGray">{t('TRADE_PAGE.TRADE_TAB_VALUE')}</div>
-              {activeTab === 'Long' ? (
+              {isActiveTabLong ? (
                 <div className={`text-base text-lightWhite ${isDisplayedValueLongSize}`}>
                   {valueOfPositionLongRef.current?.toLocaleString(
                     UNIVERSAL_NUMBER_FORMAT_LOCALE,
@@ -1260,9 +1250,9 @@ const TradeTabMobile = () => {
 
   const expandedButton = (
     <div
-      className={`absolute z-20 w-320px bg-black/100 ${
-        openSubMenu ? 'visible opacity-100' : 'invisible opacity-0'
-      } transition-all duration-300 ease-in-out`}
+      className={`absolute z-20 grid w-320px grid-rows-1 bg-black/100 ${
+        openSubMenu ? 'visible grid-cols-1 opacity-100' : 'invisible grid-cols-0 opacity-0'
+      } transition-all duration-500 ease-in-out`}
     >
       <RippleButton
         disabled={
@@ -1272,21 +1262,21 @@ const TradeTabMobile = () => {
         }
         buttonType="button"
         className={`w-full rounded-md py-2 text-sm font-medium tracking-wide text-white ${
-          activeTab === 'Long'
+          isActiveTabLong
             ? 'bg-lightGreen5 hover:bg-lightGreen5/80'
             : 'bg-lightRed hover:bg-lightRed/80'
         } transition-colors duration-300 disabled:bg-lightGray`}
-        onClick={activeTab === 'Long' ? longSectionClickHandler : shortSectionClickHandler}
+        onClick={isActiveTabLong ? longSectionClickHandler : shortSectionClickHandler}
       >
         <b>
-          {activeTab === 'Long'
+          {isActiveTabLong
             ? t('TRADE_PAGE.TRADE_TAB_LONG_BUTTON')
             : t('TRADE_PAGE.TRADE_TAB_SHORT_BUTTON')}
         </b>{' '}
         <br />
         <p className="text-xs">
           ₮{' '}
-          {activeTab === 'Long'
+          {isActiveTabLong
             ? Number(longPriceRef.current).toLocaleString(
                 UNIVERSAL_NUMBER_FORMAT_LOCALE,
                 FRACTION_DIGITS

@@ -1132,7 +1132,7 @@ const TradeTabMobile = () => {
             )}{' '}
             {unitAsset})
           </span>
-          {/* tooltip */}
+          {/* Info: (20230725 - Julian) tooltip */}
           <div className="ml-2">
             <div
               className="relative"

@@ -1,6 +1,5 @@
 import {ICurrency} from '../../constants/currency';
 import {CFDOperation} from '../../constants/cfd_order_type';
-import {unitAsset} from '../../constants/config';
 import {OrderType} from '../../constants/order_type';
 import {ITypeOfPosition, TypeOfPosition} from '../../constants/type_of_position';
 import {getTimestamp} from '../../lib/common';
@@ -9,7 +8,7 @@ import {IMargin} from './margin';
 import {getDummyQuotation, IQuotation} from './quotation';
 
 export interface IApplyCreateCFDOrder extends IApplyCFDOrder {
-  ticker: string;
+  instId: string;
   quotation: IQuotation; // 報價單
   typeOfPosition: ITypeOfPosition;
   price: number;
@@ -33,13 +32,13 @@ function randomIntFromInterval(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
-export const getDummyApplyCreateCFDOrder = (ticker: string) => {
+export const getDummyApplyCreateCFDOrder = (instId: string) => {
   const typeOfPosition = Math.random() > 0.5 ? TypeOfPosition.BUY : TypeOfPosition.SELL;
-  const [targetAsset, unitAsset] = ticker.split('-');
+  const [targetAsset, unitAsset] = instId.split('-');
   const dummyApplyCreateCFDOrder: IApplyCreateCFDOrder = {
     orderType: OrderType.CFD,
     operation: CFDOperation.CREATE,
-    ticker: ticker,
+    instId: instId,
     amount: 1.8,
     typeOfPosition: typeOfPosition,
     leverage: 5,
@@ -50,7 +49,7 @@ export const getDummyApplyCreateCFDOrder = (ticker: string) => {
     takeProfit: 0,
     stopLoss: 0,
     fee: 0,
-    quotation: getDummyQuotation(ticker, typeOfPosition), // 報價單
+    quotation: getDummyQuotation(instId, typeOfPosition), // 報價單
     liquidationPrice: randomIntFromInterval(1000, 10000),
     liquidationTime: getTimestamp() + 86400, // openTimestamp + 86400
     guaranteedStop: false,

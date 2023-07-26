@@ -329,11 +329,11 @@ export const UserProvider = ({children}: IUserProvider) => {
     let result: IResult = {...defaultResultFailed};
     if (enableServiceTermRef.current) {
       try {
-        const tickers = (await privateRequestHandler({
+        const instIds = (await privateRequestHandler({
           name: APIName.LIST_FAVORITE_TICKERS,
           method: Method.GET,
         })) as string[];
-        setFavoriteTickers(tickers);
+        setFavoriteTickers(instIds);
         result = defaultResultSuccess;
       } catch (error) {
         // TODO: error handle (Tzuhan - 20230421)
@@ -357,7 +357,7 @@ export const UserProvider = ({children}: IUserProvider) => {
           name: APIName.LIST_CFD_TRADES,
           method: Method.GET,
           query: {
-            ticker: instId,
+            instId: instId,
           },
         })) as IResult;
         if (result.success) {
@@ -698,7 +698,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     return result;
   }, []);
 
-  const addFavorites = useCallback(async (newFavorite: string) => {
+  const addFavorites = useCallback(async (instId: string) => {
     let result: IResult = {...defaultResultFailed};
     if (isConnectedRef.current) {
       try {
@@ -707,11 +707,11 @@ export const UserProvider = ({children}: IUserProvider) => {
           name: APIName.ADD_FAVORITE_TICKERS,
           method: Method.PUT,
           body: {
-            ticker: newFavorite,
+            instId,
             starred: true,
           },
         })) as string[];
-        updatedFavoriteTickers.push(newFavorite);
+        updatedFavoriteTickers.push(instId);
         setFavoriteTickers(updatedFavoriteTickers);
         notificationCtx.emitter.emit(TideBitEvent.FAVORITE_TICKER, updatedFavoriteTickers);
         result = defaultResultSuccess;
@@ -726,18 +726,18 @@ export const UserProvider = ({children}: IUserProvider) => {
     return result;
   }, []);
 
-  const removeFavorites = useCallback(async (ticker: string) => {
+  const removeFavorites = useCallback(async (instId: string) => {
     let result: IResult = {...defaultResultFailed};
     if (isConnectedRef.current) {
       try {
         const updatedFavoriteTickers = [...favoriteTickers];
-        const index: number = updatedFavoriteTickers.findIndex(currency => currency === ticker);
+        const index: number = updatedFavoriteTickers.findIndex(id => id === instId);
         if (index !== -1) {
           (await privateRequestHandler({
             name: APIName.REMOVE_FAVORITE_TICKERS,
             method: Method.PUT,
             body: {
-              ticker,
+              instId,
               starred: false,
             },
           })) as string[];

@@ -2,6 +2,8 @@ import {toQuery} from '../lib/common';
 import {API_URL} from './config';
 
 const apiUrl = process.env.API_URL ?? API_URL;
+// eslint-disable-next-line no-console
+console.log(`API_REQUEST API_URL: ${API_URL} apiUrl: ${apiUrl}`);
 export type IAPIName =
   // general
   | 'LIST_NEWS'

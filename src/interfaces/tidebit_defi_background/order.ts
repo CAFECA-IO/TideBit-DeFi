@@ -19,7 +19,7 @@ export interface IOrder {
 }
 
 export interface ICFDOrder extends IOrder {
-  ticker: string;
+  instId: string;
   // fee: number;
   state: IOrderState;
   openPrice: number;

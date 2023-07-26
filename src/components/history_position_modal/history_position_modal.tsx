@@ -65,7 +65,7 @@ const HistoryPositionModal = ({
     +SafeMath.mult(closedCfdDetails.closePrice!, closedCfdDetails.amount),
     2
   );
-  const spread = marketCtx.getTickerSpread(closedCfdDetails.ticker);
+  const spread = marketCtx.getTickerSpread(closedCfdDetails.instId);
   const pnl = toPnl({
     openPrice: closedCfdDetails.openPrice,
     closePrice: closedCfdDetails.closePrice!,
@@ -278,7 +278,7 @@ const HistoryPositionModal = ({
                     width={30}
                     height={30}
                   />
-                  <h3 className="">{closedCfdDetails.ticker} </h3>
+                  <h3 className="">{closedCfdDetails.instId} </h3>
                 </div>
               </div>
 

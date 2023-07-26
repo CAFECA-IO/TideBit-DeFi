@@ -4,7 +4,7 @@ import {ITypeOfPosition} from '../../constants/type_of_position';
 import {getTimestamp} from '../../lib/common';
 
 export interface IQuotation {
-  ticker: string;
+  instId: string;
   targetAsset: ICurrency;
   unitAsset: string;
   typeOfPosition: ITypeOfPosition;
@@ -18,10 +18,10 @@ function randomIntFromInterval(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
-export const getDummyQuotation = (ticker: string, typeOfPosition: ITypeOfPosition) => {
-  const [targetAsset, unitAsset] = ticker.split('-');
+export const getDummyQuotation = (instId: string, typeOfPosition: ITypeOfPosition) => {
+  const [targetAsset, unitAsset] = instId.split('-');
   const quotation: IQuotation = {
-    ticker: ticker,
+    instId: instId,
     targetAsset: targetAsset as ICurrency,
     unitAsset: unitAsset,
     typeOfPosition,

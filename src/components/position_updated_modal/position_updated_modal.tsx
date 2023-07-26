@@ -288,7 +288,7 @@ const PositionUpdatedModal = ({
           height={30}
           alt="ticker icon"
         />
-        <div className="text-2xl">{openCfdDetails?.ticker}</div>
+        <div className="text-2xl">{openCfdDetails?.instId}</div>
       </div>
 
       <div className="relative flex flex-col items-center pt-1">

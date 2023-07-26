@@ -519,7 +519,7 @@ const UpdateFormModal = ({
       closePrice: quotation.price,
       amount: cfd.amount,
       typeOfPosition: cfd.typeOfPosition,
-      spread: marketCtx.getTickerSpread(cfd.ticker),
+      spread: marketCtx.getTickerSpread(cfd.instId),
     });
 
     return {
@@ -537,13 +537,13 @@ const UpdateFormModal = ({
         : TypeOfPosition.BUY;
 
     try {
-      quotation = await marketCtx.getCFDQuotation(openCfdDetails?.ticker, oppositeTypeOfPosition);
+      quotation = await marketCtx.getCFDQuotation(openCfdDetails?.instId, oppositeTypeOfPosition);
 
       const data = quotation.data as IQuotation;
       if (
         quotation.success &&
         data.typeOfPosition === oppositeTypeOfPosition &&
-        data.ticker === openCfdDetails.ticker &&
+        data.instId === openCfdDetails.instId &&
         quotation.data !== null
       ) {
         const displayedCloseOrder = toDisplayCloseOrder(openCfdDetails, data);
@@ -735,7 +735,7 @@ const UpdateFormModal = ({
                     height={30}
                     alt="icon"
                   />
-                  <h3 className="text-2xl">{openCfdDetails?.ticker} </h3>
+                  <h3 className="text-2xl">{openCfdDetails?.instId} </h3>
                 </div>
 
                 <div className="inline-flex items-center">

@@ -335,7 +335,7 @@ const TradeTab = () => {
       ) {
       } else {
         const buyQuotation: IQuotation = {
-          ticker: marketCtx.selectedTicker?.instId ?? DEFAULT_TICKER,
+          instId: marketCtx.selectedTicker?.instId ?? DEFAULT_TICKER,
           targetAsset: marketCtx.selectedTicker?.currency ?? DEFAULT_CURRENCY,
           typeOfPosition: TypeOfPosition.BUY,
           unitAsset: unitAsset,
@@ -355,7 +355,7 @@ const TradeTab = () => {
       ) {
       } else {
         const sellQuotation: IQuotation = {
-          ticker: marketCtx.selectedTicker?.instId ?? DEFAULT_TICKER,
+          instId: marketCtx.selectedTicker?.instId ?? DEFAULT_TICKER,
           targetAsset: marketCtx.selectedTicker?.currency ?? DEFAULT_CURRENCY,
           typeOfPosition: TypeOfPosition.SELL,
           unitAsset: unitAsset,
@@ -369,7 +369,7 @@ const TradeTab = () => {
       }
     } catch (err) {
       const buyQuotation: IQuotation = {
-        ticker: marketCtx.selectedTicker?.instId ?? DEFAULT_TICKER,
+        instId: marketCtx.selectedTicker?.instId ?? DEFAULT_TICKER,
         targetAsset: marketCtx.selectedTicker?.currency ?? DEFAULT_CURRENCY,
         typeOfPosition: TypeOfPosition.BUY,
         unitAsset: unitAsset,
@@ -380,7 +380,7 @@ const TradeTab = () => {
       };
 
       const sellQuotation: IQuotation = {
-        ticker: marketCtx.selectedTicker?.instId ?? DEFAULT_TICKER,
+        instId: marketCtx.selectedTicker?.instId ?? DEFAULT_TICKER,
         targetAsset: marketCtx.selectedTicker?.currency ?? DEFAULT_CURRENCY,
         typeOfPosition: TypeOfPosition.SELL,
         unitAsset: unitAsset,
@@ -711,7 +711,7 @@ const TradeTab = () => {
     const short = shortQuotation.data as IQuotation;
 
     const share = {
-      ticker: marketCtx.selectedTicker?.instId ?? DEFAULT_TICKER,
+      instId: marketCtx.selectedTicker?.instId ?? DEFAULT_TICKER,
       targetAsset: marketCtx.selectedTicker?.currency ?? DEFAULT_CURRENCY,
       unitAsset: unitAsset,
       amount: targetInputValueRef.current,

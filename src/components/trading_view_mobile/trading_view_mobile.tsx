@@ -89,7 +89,7 @@ const TradingViewMobile = () => {
 
   const displayedTradingView = (
     <>
-      <CandlestickChart
+      {/* <CandlestickChart
         candleSize={CANDLESTICK_SIZE}
         strokeColor={[`#17BF88`]}
         showPositionLabel={showPositionLabelRef.current}
@@ -97,7 +97,7 @@ const TradingViewMobile = () => {
         lineGraphOn={lineGraphOnRef.current}
         candlestickChartWidth={chartSize.width}
         candlestickChartHeight={chartSize.height}
-      />
+      /> */}
     </>
   );
 

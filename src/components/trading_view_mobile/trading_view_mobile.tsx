@@ -89,7 +89,7 @@ const TradingViewMobile = () => {
 
   const displayedTradingView = (
     <>
-      {/* <CandlestickChart
+      <CandlestickChart
         candleSize={CANDLESTICK_SIZE}
         strokeColor={[`#17BF88`]}
         showPositionLabel={showPositionLabelRef.current}
@@ -97,7 +97,7 @@ const TradingViewMobile = () => {
         lineGraphOn={lineGraphOnRef.current}
         candlestickChartWidth={chartSize.width}
         candlestickChartHeight={chartSize.height}
-      /> */}
+      />
     </>
   );
 
@@ -107,7 +107,7 @@ const TradingViewMobile = () => {
         {t('TRADE_PAGE.TRADING_VIEW_24H_VOLUME')} {marketCtx.selectedTicker?.tradingVolume}{' '}
         {unitAsset}
       </div>
-      <div className="">{displayedTradingView}</div>
+      {/* <div className="">{displayedTradingView}</div> */}
       <div
         className="pb-16"
         style={{width: `${switchSize.width}px`, height: `${switchSize.height}px`}}

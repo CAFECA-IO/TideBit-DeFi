@@ -34,10 +34,10 @@ const MarketSection = (props: IMarketSectionProps) => {
   } = marketCtx.tickerStatic?.cryptoSummary ?? {};
 
   const displayedTickerHeader =
-    layoutAssertion === 'mobile' ? <TradingHeaderMobile /> : <TradingHeader />;
+    layoutAssertion === 'mobile' ? <></> /* <TradingHeaderMobile /> */ : <TradingHeader />;
 
   const displayedTradingView =
-    layoutAssertion === 'mobile' ? <TradingViewMobile /> : <TradingView />;
+    layoutAssertion === 'mobile' ? <></> /* <TradingViewMobile /> */ : <TradingView />;
 
   return (
     <div className="ml-5 py-100px">

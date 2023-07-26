@@ -3,6 +3,7 @@ import Image from 'next/image';
 import {ImCross} from 'react-icons/im';
 import OpenSubTabMobile from '../open_sub_tab_mobile/open_sub_tab_mobile';
 import HistorySubTabMobile from '../history_sub_tab_mobile/history_sub_tab_mobile';
+import {useGlobal} from '../../contexts/global_context';
 
 interface PositionTabMobileProps {
   showSubMenu: boolean;
@@ -11,8 +12,18 @@ interface PositionTabMobileProps {
 }
 
 const PositionTabMobile = ({showSubMenu, setShowSubMenu, activeTab}: PositionTabMobileProps) => {
+  const globalCtx = useGlobal();
+
   const subMenuHandler = () => {
     setShowSubMenu(!showSubMenu);
+
+    globalCtx.toast({
+      type: 'info',
+      message: 'Click position tab',
+      typeText: 'Info',
+      autoClose: 3000,
+      isLoading: false,
+    });
   };
 
   const currentSubTab = activeTab === 'Open' ? <OpenSubTabMobile /> : <HistorySubTabMobile />;

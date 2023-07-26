@@ -26,6 +26,13 @@ const UserMobile = () => {
 
   const avatarClickHandler = () => {
     setAvatarMenuVisible(!avatarMenuVisible);
+    globalCtx.toast({
+      type: 'info',
+      message: 'Click avatar',
+      typeText: 'Info',
+      autoClose: 3000,
+      isLoading: false,
+    });
   };
 
   const depositClickHandler = () => {

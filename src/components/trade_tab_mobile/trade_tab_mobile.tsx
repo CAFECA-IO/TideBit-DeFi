@@ -773,6 +773,14 @@ const TradeTabMobile = () => {
     setIsActiveTabLong(true);
     const {longOrder} = await toApplyCreateOrder();
 
+    globalCtx.toast({
+      type: 'success',
+      message: 'Click long button',
+      typeText: 'long',
+      autoClose: 3000,
+      isLoading: false,
+    });
+
     if (!openSubMenu) {
       setOpenSubMenu(true);
     } else {
@@ -789,6 +797,14 @@ const TradeTabMobile = () => {
   const shortSectionClickHandler = async () => {
     setIsActiveTabLong(false);
     const {shortOrder} = await toApplyCreateOrder();
+
+    globalCtx.toast({
+      type: 'error',
+      message: 'Click short button',
+      typeText: 'short',
+      autoClose: 3000,
+      isLoading: false,
+    });
 
     if (!openSubMenu) {
       setOpenSubMenu(true);

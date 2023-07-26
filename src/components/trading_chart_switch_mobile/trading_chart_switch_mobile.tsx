@@ -201,7 +201,7 @@ const TradingChartSwitchMobile = ({
             />
           </div>
         </div>
-        <div className="flex w-full justify-between whitespace-nowrap rounded-sm bg-darkGray6 px-2 py-2">
+        <div className="flex w-full justify-between whitespace-nowrap rounded-sm bg-darkGray6 p-2">
           <button type="button" className={`${liveButtonStyle}`} onClick={liveButtonClickHandler}>
             Live
           </button>

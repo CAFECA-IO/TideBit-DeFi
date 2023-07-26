@@ -24,24 +24,10 @@ const UserMobile = () => {
 
   const username = userCtx.user?.address?.slice(-1).toUpperCase();
 
-  const avatarClickHandler = () => {
-    setAvatarMenuVisible(!avatarMenuVisible);
-    globalCtx.toast({
-      type: 'info',
-      message: 'Click avatar',
-      typeText: 'Info',
-      autoClose: 3000,
-      isLoading: false,
-    });
-  };
+  const avatarClickHandler = () => setAvatarMenuVisible(!avatarMenuVisible);
 
-  const depositClickHandler = () => {
-    globalCtx.visibleDepositModalHandler();
-  };
-
-  const withdrawClickHandler = () => {
-    globalCtx.visibleWithdrawalModalHandler();
-  };
+  const depositClickHandler = () => globalCtx.visibleDepositModalHandler();
+  const withdrawClickHandler = () => globalCtx.visibleWithdrawalModalHandler();
 
   const isDisplayedUserOverview = userCtx.enableServiceTerm ? (
     <UserOverview

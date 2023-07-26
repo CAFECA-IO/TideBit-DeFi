@@ -78,8 +78,6 @@ const CryptoCard = ({
   const strokeColor = priceRise ? [TypeOfPnLColorHex.PROFIT] : [TypeOfPnLColorHex.LOSS];
 
   const globalCtx = useGlobal();
-  // eslint-disable-next-line no-console
-  console.log('insamepage', onTheSamePage);
 
   const starClickHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
     if (!userCtx.enableServiceTerm) {

@@ -1,7 +1,7 @@
-import {useState, useContext} from 'react';
+import {useContext} from 'react';
 import TradingHeader from '../trading_header/trading_header';
 import TradingView from '../trading_view/trading_view';
-import {GlobalContext, useGlobal} from '../../contexts/global_context';
+import {useGlobal} from '../../contexts/global_context';
 import TradingViewMobile from '../trading_view_mobile/trading_view_mobile';
 import TradingHeaderMobile from '../trading_header_mobile/trading_header_mobile';
 import TradeStatistics from '../trade_statistics/trade_statistics';

@@ -137,6 +137,7 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
     const cfdData = toDisplayCFDOrder(updateCfd);
     const spread = marketCtx.getTickerSpread(cfdData.targetAsset);
     const closePrice = marketCtx.predictCFDClosePrice(cfdData.ticker, cfdData.typeOfPosition);
+    marketCtx.selectTickerHandler(cfdData.ticker);
 
     const pnl = toPnl({
       openPrice: cfdData.openPrice,

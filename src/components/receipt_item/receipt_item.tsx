@@ -134,20 +134,9 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
   /* Info: (20230713 - Julian) show update CFD modal */
   const updateCfdHandler = () => {
     const updateCfd = order as ICFDOrder;
-    // Deprecated: (20230720 - Julian)
-    // const tickerPrice = marketCtx.availableTickers[updateCfd.targetAsset]?.price;
-    // const currentPrice =
-    //   (!!tickerPrice &&
-    //     ((updateCfd.typeOfPosition === TypeOfPosition.BUY &&
-    //       roundToDecimalPlaces(tickerPrice, 2)) ||
-    //       (updateCfd.typeOfPosition === TypeOfPosition.SELL &&
-    //         roundToDecimalPlaces(tickerPrice, 2)))) ||
-    //   positionLineGraph.length > 0
-    //     ? positionLineGraph[positionLineGraph.length - 1]
-    //     : 0;
     const cfdData = toDisplayCFDOrder(updateCfd);
     const spread = marketCtx.getTickerSpread(cfdData.targetAsset);
-    const closePrice = marketCtx.predictCFDClosePrice(cfdData.targetAsset, cfdData.typeOfPosition);
+    const closePrice = marketCtx.predictCFDClosePrice(cfdData.ticker, cfdData.typeOfPosition);
 
     const pnl = toPnl({
       openPrice: cfdData.openPrice,

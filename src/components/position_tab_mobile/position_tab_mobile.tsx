@@ -11,9 +11,7 @@ interface PositionTabMobileProps {
 }
 
 const PositionTabMobile = ({showSubMenu, setShowSubMenu, activeTab}: PositionTabMobileProps) => {
-  const subMenuHandler = () => {
-    setShowSubMenu(!showSubMenu);
-  };
+  const subMenuHandler = () => setShowSubMenu(!showSubMenu);
 
   const currentSubTab = activeTab === 'Open' ? <OpenSubTabMobile /> : <HistorySubTabMobile />;
 

@@ -111,7 +111,7 @@ const TradeTabMobile = () => {
   const [shortTpToggle, setShortTpToggle] = useState(false);
   const [shortSlToggle, setShortSlToggle] = useState(false);
 
-  const [activeTab, setActiveTab] = useState('Long');
+  const [isActiveTabLong, setIsActiveTabLong] = useState(true);
   const [openSubMenu, setOpenSubMenu] = useState(false);
 
   const [estimatedLongProfitValue, setEstimatedLongProfitValue, estimatedLongProfitValueRef] =
@@ -770,14 +770,13 @@ const TradeTabMobile = () => {
   const shortToolMouseLeaveHandler = () => setShortTooltipStatus(0);
 
   const longSectionClickHandler = async () => {
-    setActiveTab('Long');
+    setIsActiveTabLong(true);
     const {longOrder} = await toApplyCreateOrder();
 
     if (!openSubMenu) {
       setOpenSubMenu(true);
     } else {
       {
-        /* ToDo: 接 PositionOpenModal (20230313 - Julian) */
         globalCtx.dataPositionOpenModalHandler({
           openCfdRequest: longOrder,
         });
@@ -788,14 +787,13 @@ const TradeTabMobile = () => {
   };
 
   const shortSectionClickHandler = async () => {
-    setActiveTab('Short');
+    setIsActiveTabLong(false);
     const {shortOrder} = await toApplyCreateOrder();
 
     if (!openSubMenu) {
       setOpenSubMenu(true);
     } else {
       {
-        /* ToDo: 接 PositionOpenModal (20230313 - Julian) */
         globalCtx.dataPositionOpenModalHandler({
           openCfdRequest: shortOrder,
         });
@@ -947,7 +945,7 @@ const TradeTabMobile = () => {
             )}{' '}
             {unitAsset})
           </span>
-          {/* tooltip */}
+          {/* Info: (20230725 - Julian) tooltip */}
           <div className="ml-2">
             <div
               className="relative"
@@ -977,10 +975,10 @@ const TradeTabMobile = () => {
   const longSetting = (
     <div
       className={`${
-        activeTab === 'Long' ? 'flex' : 'hidden'
+        isActiveTabLong ? 'flex' : 'hidden'
       } w-full flex-col items-center justify-center space-y-5`}
     >
-      {/* Take Profit Setting */}
+      {/* Info: (20230725 - Julian) Take Profit Setting */}
       <div className="flex w-full flex-col items-center">
         <div className="flex w-full items-center justify-between">
           <div className="text-sm text-lightGray">{t('TRADE_PAGE.TRADE_TAB_TP_SETTING')}</div>
@@ -990,7 +988,7 @@ const TradeTabMobile = () => {
         <div className="mb-5 mt-2 h-4 w-full">{displayedExpectedLongProfit}</div>
       </div>
 
-      {/* Stop Loss Setting */}
+      {/* Info: (20230725 - Julian) Stop Loss Setting */}
       <div className="flex w-full flex-col items-center space-y-5">
         <div className="flex w-full items-center justify-between">
           <div className="text-sm text-lightGray">{t('TRADE_PAGE.TRADE_TAB_SL_SETTING')}</div>
@@ -999,7 +997,7 @@ const TradeTabMobile = () => {
         </div>
         <div className="w-full">{displayedExpectedLongLoss}</div>
 
-        {/* Guaranteed stop */}
+        {/* Info: (20230725 - Julian) Guaranteed stop */}
         {longGuaranteedStop}
       </div>
     </div>
@@ -1118,7 +1116,7 @@ const TradeTabMobile = () => {
             )}{' '}
             {unitAsset})
           </span>
-          {/* tooltip */}
+          {/* Info: (20230725 - Julian) tooltip */}
           <div className="ml-2">
             <div
               className="relative"
@@ -1148,10 +1146,10 @@ const TradeTabMobile = () => {
   const shortSetting = (
     <div
       className={`${
-        activeTab === 'Short' ? 'flex' : 'hidden'
+        isActiveTabLong ? 'hidden' : 'flex'
       } w-full flex-col items-center justify-center space-y-5`}
     >
-      {/* Take Profit Setting */}
+      {/* Info: (20230725 - Julian) Take Profit Setting */}
       <div className="flex w-full flex-col items-center">
         <div className="flex w-full items-center justify-between">
           <div className="text-sm text-lightGray">{t('TRADE_PAGE.TRADE_TAB_TP_SETTING')}</div>
@@ -1176,27 +1174,17 @@ const TradeTabMobile = () => {
     </div>
   );
 
-  const longButtonStyles =
-    activeTab === 'Long' && openSubMenu
-      ? 'z-20 w-320px -translate-x-16 absolute'
-      : 'w-120px translate-x-0';
-
-  const shortButtonStyles =
-    activeTab === 'Short' && openSubMenu
-      ? 'z-20 w-320px -translate-x-16 absolute'
-      : 'ml-4 w-120px translate-x-0';
-
   const subMenu = (
     <div
       className={`flex h-screen w-screen flex-col items-center overflow-x-hidden overflow-y-hidden bg-darkGray ${
         openSubMenu ? 'visible translate-y-0 opacity-100' : 'invisible translate-y-full opacity-0'
-      } absolute left-0 ${'bottom-76px'} overflow-hidden pt-40 transition-all duration-150`}
+      } absolute left-0 ${'bottom-76px'} overflow-hidden pt-36 transition-all duration-150`}
     >
-      <div className="mb-3 mr-30px flex self-end sm:pr-30px">
-        <ImCross onClick={() => setOpenSubMenu(false)} className="cursor-pointer" />
+      <div className="flex self-end px-30px py-20px">
+        <ImCross onClick={() => setOpenSubMenu(false)} className="z-20 cursor-pointer" />
       </div>
 
-      {/* ---------- margin setting ---------- */}
+      {/* Info: (20230725 - Julian) ---------- margin setting ---------- */}
       <div className="w-screen overflow-y-auto overflow-x-hidden px-8 sm:w-1/2">
         <div className="flex flex-col items-center justify-between space-y-7">
           <div className="flex w-full items-center justify-center">
@@ -1223,7 +1211,7 @@ const TradeTabMobile = () => {
               <div className="text-sm text-lightGray">
                 {t('TRADE_PAGE.TRADE_TAB_REQUIRED_MARGIN')}
               </div>
-              {activeTab === 'Long'
+              {isActiveTabLong
                 ? displayedRequiredMarginLongStyle
                 : displayedRequiredMarginShortStyle}
             </div>
@@ -1234,7 +1222,7 @@ const TradeTabMobile = () => {
 
             <div className="w-1/2">
               <div className="text-sm text-lightGray">{t('TRADE_PAGE.TRADE_TAB_VALUE')}</div>
-              {activeTab === 'Long' ? (
+              {isActiveTabLong ? (
                 <div className={`text-base text-lightWhite ${isDisplayedValueLongSize}`}>
                   {valueOfPositionLongRef.current?.toLocaleString(
                     UNIVERSAL_NUMBER_FORMAT_LOCALE,
@@ -1260,11 +1248,55 @@ const TradeTabMobile = () => {
     </div>
   );
 
+  const expandedButton = (
+    <div
+      className={`absolute z-20 w-320px bg-black/100 ${
+        openSubMenu ? 'visible opacity-100' : 'invisible opacity-0'
+      } transition-all duration-500 ease-in-out`}
+    >
+      <RippleButton
+        disabled={
+          (openSubMenu && marginWarningShortRef.current) ||
+          longBtnDisabledRef.current ||
+          shortBtnDisabledRef.current
+        }
+        buttonType="button"
+        className={`w-full rounded-md py-2 text-sm font-medium tracking-wide text-white ${
+          isActiveTabLong
+            ? 'bg-lightGreen5 hover:bg-lightGreen5/80'
+            : 'bg-lightRed hover:bg-lightRed/80'
+        } transition-colors duration-300 disabled:bg-lightGray`}
+        onClick={isActiveTabLong ? longSectionClickHandler : shortSectionClickHandler}
+      >
+        <b>
+          {isActiveTabLong
+            ? t('TRADE_PAGE.TRADE_TAB_LONG_BUTTON')
+            : t('TRADE_PAGE.TRADE_TAB_SHORT_BUTTON')}
+        </b>{' '}
+        <br />
+        <p className="text-xs">
+          ₮{' '}
+          {isActiveTabLong
+            ? Number(longPriceRef.current).toLocaleString(
+                UNIVERSAL_NUMBER_FORMAT_LOCALE,
+                FRACTION_DIGITS
+              )
+            : Number(shortPriceRef.current).toLocaleString(
+                UNIVERSAL_NUMBER_FORMAT_LOCALE,
+                FRACTION_DIGITS
+              )}
+        </p>
+      </RippleButton>
+    </div>
+  );
+
   return (
     <>
-      <div className="flex items-center justify-between">
-        {/* Long Button */}
-        <div className={`bg-black/100 transition-all duration-300 ease-in-out ${longButtonStyles}`}>
+      <div className="relative flex items-center">
+        {/* Info: (20230725 - Julian) Expanded Button (for open position) */}
+        {expandedButton}
+        {/* Info: (20230725 - Julian) Long Button */}
+        <div className={`w-120px bg-black/100`}>
           <RippleButton
             disabled={(openSubMenu && marginWarningLongRef.current) || longBtnDisabledRef.current}
             buttonType="button"
@@ -1282,10 +1314,8 @@ const TradeTabMobile = () => {
           </RippleButton>
         </div>
 
-        {/* Short Button */}
-        <div
-          className={`bg-black/100 transition-all duration-300 ease-in-out ${shortButtonStyles}`}
-        >
+        {/* Info: (20230725 - Julian) Short Button */}
+        <div className={`ml-4 w-120px bg-black/100`}>
           <RippleButton
             disabled={(openSubMenu && marginWarningShortRef.current) || shortBtnDisabledRef.current}
             buttonType="button"

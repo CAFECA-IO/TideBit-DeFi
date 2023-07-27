@@ -36,7 +36,7 @@ const OrderSectionMobile = () => {
         <li className="w-full">
           <button
             onClick={openTabClickHandler}
-            className={`${activeOpenTabStyle} inline-block w-full rounded-md py-3 px-7`}
+            className={`${activeOpenTabStyle} inline-block w-full rounded-md px-7 py-3`}
           >
             {t('TRADE_PAGE.POSITION_TAB_OPEN')}
           </button>
@@ -44,7 +44,7 @@ const OrderSectionMobile = () => {
         <li className="ml-1 w-full">
           <button
             onClick={historyTabClickHandler}
-            className={`${activeHistoryTabStyle} inline-block w-full rounded-md py-3 px-7`}
+            className={`${activeHistoryTabStyle} inline-block w-full rounded-md px-7 py-3`}
           >
             {t('TRADE_PAGE.POSITION_TAB_HISTORY')}
           </button>
@@ -56,7 +56,7 @@ const OrderSectionMobile = () => {
   );
 
   const displayedTab = userCtx.enableServiceTerm ? (
-    <>
+    <div className="flex items-center">
       {displayedPositionSubTab}
       <div className="ml-4">
         <PositionTabMobile
@@ -65,20 +65,20 @@ const OrderSectionMobile = () => {
           activeTab={positionActiveTab}
         />
       </div>
-    </>
+    </div>
   ) : (
     <div className="flex items-center justify-center">
       <div className="mr-10 text-center text-sm text-lightGray">
         {t('TRADE_PAGE.WALLET_CONNECT_DESCRIPTION_MOBILE')}
       </div>
 
-      <WalletConnectButton className="py-2 px-5" />
+      <WalletConnectButton className="px-5 py-2" />
     </div>
   );
 
   return (
     <div
-      className={`z-10 ${'h-76px'} fixed bottom-0 flex w-screen basis-full items-center justify-center bg-darkGray py-3 px-5`}
+      className={`z-10 ${'h-76px'} fixed bottom-0 flex w-screen basis-full items-center justify-center bg-darkGray px-5 py-3`}
     >
       {displayedTab}
     </div>

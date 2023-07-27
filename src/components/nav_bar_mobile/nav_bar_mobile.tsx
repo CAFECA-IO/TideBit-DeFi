@@ -75,14 +75,14 @@ const NavBarMobile = () => {
 
   const dividerInsideMobileNavBar = navOpen && `inline-block h-px w-11/12 rounded bg-lightGray`;
 
-  const isDisplayedMobileNavBar = navOpen ? 'top-14 min-h-screen inset-0 bg-darkGray/100' : '';
+  const isDisplayedMobileNavBar = navOpen ? 'visible opacity-100' : 'invisible opacity-0';
 
   /* Info: (20230424 - Julian) 如果用戶為登入狀態， cover width 改為 5/10 讓頭貼可以被看到 */
   const isDisplayedNotificationSidebarMobileCover = (
     <div
       className={`${userCtx.enableServiceTerm ? 'w-5/10' : 'w-screen'} ${
         navOpen ? 'visible opacity-100' : 'invisible opacity-0'
-      } fixed top-0 left-20 z-50 flex h-14 items-center overflow-x-hidden overflow-y-hidden bg-black outline-none`}
+      } fixed left-20 top-0 z-50 flex h-14 items-center overflow-x-hidden overflow-y-hidden bg-black outline-none`}
     >
       <p className="pl-5">{menuText}</p>
     </div>
@@ -110,12 +110,12 @@ const NavBarMobile = () => {
   return (
     <>
       <div className="container fixed inset-x-0 z-40 mx-auto inline-flex max-w-full items-end justify-center bg-black/100 pb-1 text-white lg:hidden">
-        <div className="flex w-full items-center justify-between px-5 pb-2">
+        <div className="flex w-full items-center justify-between px-5 py-3">
           <div className="flex basis-full items-center">
-            <div className="mr-0 mt-3 flex border-r border-lightGray1 lg:hidden">
+            <div className="flex border-r border-lightGray1 lg:hidden">
               <button
                 onClick={clickHanlder}
-                className="z-50 inline-flex items-center justify-center rounded-md p-2"
+                className="z-50 inline-flex items-center justify-center rounded-md px-3 py-2"
               >
                 <div className="relative h-20px w-30px cursor-pointer">
                   <span className={`${hamburgerStyles} ${displayedMobileNavBarLine1}`}></span>
@@ -124,7 +124,7 @@ const NavBarMobile = () => {
                 </div>
               </button>
             </div>
-            <div className="z-50 ml-4 -mb-4 flex">
+            <div className="z-50 ml-4 flex">
               <Image src="/elements/testnet_mobile@2x.png" width={33} height={33} alt="testnet" />
             </div>
 
@@ -134,7 +134,7 @@ const NavBarMobile = () => {
         </div>
 
         <div
-          className={`absolute transition-all duration-300 lg:hidden ${isDisplayedMobileNavBar}`}
+          className={`absolute inset-0 top-14 min-h-screen bg-darkGray/100 transition-all duration-300 lg:hidden ${isDisplayedMobileNavBar}`}
         >
           {/* Info: (20230327 - Julian) Cover for mobile bell icon */}
           {isDisplayedNotificationSidebarMobileCover}
@@ -153,7 +153,7 @@ const NavBarMobile = () => {
                         alt="TideBit_logo"
                       />
                       <Image
-                        className="absolute right-60px bottom-1"
+                        className="absolute bottom-1 right-60px"
                         src="/elements/beta@2x.png"
                         width={30}
                         height={13}

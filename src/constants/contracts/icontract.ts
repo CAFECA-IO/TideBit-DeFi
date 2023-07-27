@@ -9,7 +9,7 @@ export const EIP712_DOMAIN: IDomain = {
 
 export const EIP712_TYPES: ITypes = {
   CreateCFDOrderData: [
-    {name: 'ticker', type: 'string'},
+    {name: 'instId', type: 'string'},
     {name: 'quotation', type: 'Quotation'},
     {name: 'typeOfPosition', type: 'string'},
     {name: 'price', type: 'uint256'},
@@ -39,7 +39,7 @@ export const EIP712_TYPES: ITypes = {
     {name: 'amount', type: 'uint256'},
   ],
   Quotation: [
-    {name: 'ticker', type: 'string'},
+    {name: 'instId', type: 'string'},
     {name: 'targetAsset', type: 'string'},
     {name: 'unitAsset', type: 'string'},
     {name: 'price', type: 'uint256'},

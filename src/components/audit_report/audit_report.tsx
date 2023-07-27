@@ -22,7 +22,7 @@ const AuditReport = () => {
 
       <div className="mx-20">
         <div className="mb-5 flex w-full justify-center text-lightGray lg:mb-10">
-          {t('HOME_PAGE.LAST_UPDATED')} <span className="text-lightWhite">&nbsp;July 26, 2023</span>
+          {t('HOME_PAGE.LAST_UPDATED')} <span className="text-lightWhite">&nbsp;July 27, 2023</span>
         </div>
 
         <div className="mb-5 flex w-full justify-center lg:-mt-20 lg:mb-20 lg:justify-end xl:pr-1/10">
@@ -34,7 +34,7 @@ const AuditReport = () => {
             <div className="flex h-100px w-100px items-center justify-center rounded-xl border-1px border-transparent bg-darkGray4 transition-all duration-150 hover:cursor-pointer hover:border-tidebitTheme xs:h-130px xs:w-130px lg:h-200px lg:w-200px">
               <Link
                 // TODO: Report updated from context (20230619 - Shirley)
-                href={t('HOME_PAGE.INCOME_STATEMENT_LINK')}
+                href={t('HOME_PAGE.COMPREHENSIVE_INCOME_STATEMENT_LINK')}
                 download
                 target="_blank"
                 className="flex flex-col items-center justify-center space-y-5"
@@ -46,7 +46,9 @@ const AuditReport = () => {
                   height={80}
                   alt="Income Statement"
                 />
-                <p className="text-xs lg:text-lg">{t('HOME_PAGE.INCOME_STATEMENT')}</p>
+                <p className=" text-xs lg:text-lg text-center">
+                  {t('HOME_PAGE.COMPREHENSIVE_INCOME_STATEMENT')}
+                </p>
               </Link>
             </div>
 

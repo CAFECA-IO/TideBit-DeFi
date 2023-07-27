@@ -1,4 +1,3 @@
-import {t} from 'i18next';
 import Image from 'next/image';
 import Link from 'next/link';
 import {BiLinkAlt} from 'react-icons/bi';

@@ -5,23 +5,17 @@ import {
   TypeOfPnLColor,
   UNIVERSAL_NUMBER_FORMAT_LOCALE,
 } from '../../constants/display';
-import {DOMAIN, FRACTION_DIGITS, unitAsset} from '../../constants/config';
-import Toggle from '../toggle/toggle';
-import {useContext, useRef, useState} from 'react';
-import TradingInput from '../trading_input/trading_input';
-import {AiOutlineQuestionCircle} from 'react-icons/ai';
-import {useGlobal} from '../../contexts/global_context';
-import {locker, roundToDecimalPlaces, timestampToString, toPnl} from '../../lib/common';
+import {FRACTION_DIGITS, unitAsset} from '../../constants/config';
+import {useContext} from 'react';
+import {roundToDecimalPlaces, timestampToString, toPnl} from '../../lib/common';
 import {CFDClosedType} from '../../constants/cfd_closed_type';
 import {OrderState} from '../../constants/order_state';
 import {IDisplayCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
 import {useTranslation} from 'react-i18next';
 import {UserContext} from '../../contexts/user_context';
-import {Code} from '../../constants/code';
-import {useRouter} from 'next/router';
 import useShareProcess from '../../lib/hooks/use_share_process';
 import {ShareType} from '../../constants/share_type';
-import {ISocialMedia, ShareSettings, SocialMediaConstant} from '../../constants/social_media';
+import {ISocialMedia, ShareSettings} from '../../constants/social_media';
 import {MarketContext} from '../../contexts/market_context';
 import SafeMath from '../../lib/safe_math';
 

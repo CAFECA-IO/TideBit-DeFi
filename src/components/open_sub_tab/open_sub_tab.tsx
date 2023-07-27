@@ -5,7 +5,6 @@ import {UserContext} from '../../contexts/user_context';
 import {MarketContext} from '../../contexts/market_context';
 import {getStateCode, toDisplayCFDOrder} from '../../lib/common';
 import {IDisplayCFDOrder} from '../../interfaces/tidebit_defi_background/display_accepted_cfd_order';
-import {TypeOfPosition} from '../../constants/type_of_position';
 import {SKELETON_DISPLAY_TIME} from '../../constants/display';
 
 const OpenSubTab = () => {

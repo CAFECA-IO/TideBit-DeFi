@@ -1112,7 +1112,7 @@ export const UserProvider = ({children}: IUserProvider) => {
           orderSnapshot: ICFDOrder;
           balanceSnapshot: IBalance[];
         };
-        const updateCFDOrders = [...openCFDs];
+        const updateCFDOrders = [...openCFDsRef.current];
         const index = updateCFDOrders.findIndex(o => o.id === updateCFDOrder.id);
         if (index !== -1) updateCFDOrders[index] = updateCFDOrder;
         setOpenedCFDs(updateCFDOrders);

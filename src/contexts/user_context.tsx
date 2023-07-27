@@ -271,7 +271,7 @@ export const UserProvider = ({children}: IUserProvider) => {
       // TODO: setTimeOut to clearPrivateData() (20230508 - tzuhan)
       setUser(user);
 
-      // setIsConnected(true);
+      setIsConnected(true);
       setEnableServiceTerm(true);
       setWalletBalances([dummyWalletBalance_BTC, dummyWalletBalance_ETH, dummyWalletBalance_USDT]);
 

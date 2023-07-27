@@ -139,13 +139,15 @@ const ReceiptItem = (histories: IReceiptItemProps) => {
     const closePrice = marketCtx.predictCFDClosePrice(cfdData.instId, cfdData.typeOfPosition);
     marketCtx.selectTickerHandler(cfdData.instId);
 
-    const pnl = toPnl({
-      openPrice: cfdData.openPrice,
-      closePrice: cfdData?.closePrice ?? closePrice,
-      typeOfPosition: cfdData.typeOfPosition,
-      amount: cfdData.amount,
-      spread,
-    });
+    const pnl =
+      cfdData?.pnl ||
+      toPnl({
+        openPrice: cfdData.openPrice,
+        closePrice: cfdData?.closePrice ?? closePrice,
+        typeOfPosition: cfdData.typeOfPosition,
+        amount: cfdData.amount,
+        spread,
+      });
 
     globalCtx.dataUpdateFormModalHandler({...cfdData, pnl});
     globalCtx.visibleUpdateFormModalHandler();

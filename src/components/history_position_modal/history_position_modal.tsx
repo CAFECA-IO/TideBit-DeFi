@@ -60,13 +60,15 @@ const HistoryPositionModal = ({
     2
   );
   const spread = marketCtx.getTickerSpread(closedCfdDetails.instId);
-  const pnl = toPnl({
-    openPrice: closedCfdDetails.openPrice,
-    closePrice: closedCfdDetails.closePrice!,
-    amount: closedCfdDetails.amount,
-    typeOfPosition: closedCfdDetails.typeOfPosition,
-    spread: spread,
-  });
+  const pnl =
+    closedCfdDetails?.pnl ||
+    toPnl({
+      openPrice: closedCfdDetails.openPrice,
+      closePrice: closedCfdDetails.closePrice!,
+      amount: closedCfdDetails.amount,
+      typeOfPosition: closedCfdDetails.typeOfPosition,
+      spread: spread,
+    });
 
   const displayedPnLSymbol = pnl.type === 'PROFIT' ? '+' : pnl.type === 'LOSS' ? '-' : '';
 
@@ -224,6 +226,15 @@ const HistoryPositionModal = ({
             <div className="text-lightGray">{t('POSITION_MODAL.GUARANTEED_STOP')}</div>
             <div className={``}>{displayedGuaranteedStopSetting}</div>
           </div>
+
+          {closedCfdDetails.guaranteedStop && (
+            <div className={`${layoutInsideBorder}`}>
+              <div className="text-lightGray">{t('POSITION_MODAL.GUARANTEED_STOP_FEE')}</div>
+              <div className={`${TypeOfPnLColor.LOSS}`}>
+                {`- $ ${roundToDecimalPlaces(closedCfdDetails?.guaranteedStopFee ?? 0, 2)}`}
+              </div>
+            </div>
+          )}
 
           <div className={`${layoutInsideBorder}`}>
             <div className="text-lightGray">{t('POSITION_MODAL.STATE')}</div>

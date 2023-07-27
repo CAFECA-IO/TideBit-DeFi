@@ -468,7 +468,7 @@ const PositionOpenModal = ({
               <div className="text-lightGray">{t('POSITION_MODAL.AMOUNT')}</div>
               <div className="">
                 {openCfdRequest.amount}
-                <span className="ml-1 text-lightGray">{marketCtx.selectedTicker?.currency}</span>
+                <span className="ml-1 text-lightGray">{openCfdRequest.targetAsset}</span>
               </div>
             </div>
 

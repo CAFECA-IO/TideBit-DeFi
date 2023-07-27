@@ -122,6 +122,7 @@
     "TRADE_TAB_TP_SETTING": "止盈設定",
     "TRADE_TAB_SL_SETTING": "止損設定",
     "TRADE_TAB_GUARANTEED_STOP": "保證止損",
+    "TRADE_TAB_GUARANTEED_STOP_FEE": "保證止損手續費",
     "TRADE_TAB_GUARANTEED_STOP_HINT": "保證止損可強制平倉於您選定的價格，即使市場價格超過此價格也一樣。",
     "TRADE_TAB_FEE": "手續費",
     "TRADE_TAB_LEVERAGE": "槓杆",

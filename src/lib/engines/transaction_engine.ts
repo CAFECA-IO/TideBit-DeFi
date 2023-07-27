@@ -22,7 +22,7 @@ class TransactionEngine {
   isApplyCreateCFDOrder(obj: object): obj is IApplyCreateCFDOrder {
     return (
       obj instanceof Object &&
-      'ticker' in obj &&
+      'instId' in obj &&
       'quotation' in obj &&
       'typeOfPosition' in obj &&
       'price' in obj &&

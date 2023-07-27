@@ -2,6 +2,7 @@ import {toQuery} from '../lib/common';
 import {API_URL} from './config';
 
 const apiUrl = process.env.API_URL ?? API_URL;
+
 export type IAPIName =
   // general
   | 'LIST_NEWS'

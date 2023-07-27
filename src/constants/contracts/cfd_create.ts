@@ -16,7 +16,7 @@ const CFDOrderCreate: IEIP712Data = {
   primaryType: 'CreateCFDOrderData',
   types: {
     CreateCFDOrderData: [
-      {name: 'ticker', type: 'string'},
+      {name: 'instId', type: 'string'},
       {name: 'quotation', type: 'Quotation'},
       {name: 'typeOfPosition', type: 'string'},
       {name: 'price', type: 'uint256'},
@@ -40,7 +40,7 @@ const CFDOrderCreate: IEIP712Data = {
       {name: 'amount', type: 'uint256'},
     ],
     Quotation: [
-      {name: 'ticker', type: 'string'},
+      {name: 'instId', type: 'string'},
       {name: 'targetAsset', type: 'string'},
       {name: 'unitAsset', type: 'string'},
       {name: 'price', type: 'uint256'},
@@ -56,7 +56,7 @@ const CFDOrderCreate: IEIP712Data = {
       - This is DApp Specific
       - Be as explicit as possible when building out the message schema.
       */
-    ticker: 'ETH-USDT',
+    instId: 'ETH-USDT',
     typeOfPosition: 'BUY',
     price: 21023,
     amount: 2,
@@ -74,7 +74,7 @@ const CFDOrderCreate: IEIP712Data = {
     createTimestamp: Math.ceil(Date.now()),
     fee: 0,
     quotation: {
-      ticker: 'ETH-USDT',
+      instId: 'ETH-USDT',
       targetAsset: 'ETH',
       unitAsset: 'USDT',
       price: 21023,

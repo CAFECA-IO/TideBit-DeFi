@@ -81,7 +81,7 @@ const PositionClosedModal = ({
 
   // Info: dummy data (20230329 - Shirley)
   const quotation: IQuotation = {
-    ticker: openCfdDetails?.ticker,
+    instId: openCfdDetails?.instId,
     typeOfPosition: openCfdDetails?.typeOfPosition,
     price: randomIntFromInterval(20, 29),
     spotPrice: randomIntFromInterval(20, 29),
@@ -145,7 +145,7 @@ const PositionClosedModal = ({
       closePrice: quotation.price,
       amount: cfd.amount,
       typeOfPosition: cfd.typeOfPosition,
-      spread: marketCtx.getTickerSpread(cfd.ticker),
+      spread: marketCtx.getTickerSpread(cfd.instId),
     });
     return {
       ...cfd,
@@ -190,7 +190,7 @@ const PositionClosedModal = ({
       closePrice: closePrice,
       amount: cfd.amount,
       typeOfPosition: cfd.typeOfPosition,
-      spread: marketCtx.getTickerSpread(cfd.ticker),
+      spread: marketCtx.getTickerSpread(cfd.instId),
     });
     // const positionLineGraph = [100, 100]; // TODO: (20230316 - Shirley) from `marketCtx`
 
@@ -231,7 +231,7 @@ const PositionClosedModal = ({
         : TypeOfPosition.BUY;
 
     try {
-      quotation = await marketCtx.getCFDQuotation(openCfdDetails?.ticker, oppositeTypeOfPosition);
+      quotation = await marketCtx.getCFDQuotation(openCfdDetails?.instId, oppositeTypeOfPosition);
 
       const data = quotation.data as IQuotation;
 
@@ -239,7 +239,7 @@ const PositionClosedModal = ({
       if (
         quotation.success &&
         data.typeOfPosition === oppositeTypeOfPosition &&
-        data.ticker === openCfdDetails.ticker &&
+        data.instId === openCfdDetails.instId &&
         quotation.data !== null
       ) {
         globalCtx.eliminateToasts(ToastId.GET_QUOTATION_ERROR);
@@ -249,7 +249,7 @@ const PositionClosedModal = ({
         setQuotationError(true);
 
         // TODO: check the unit asset (20230612 - Shirley)
-        if (data.ticker !== openCfdDetails.ticker) {
+        if (data.instId !== openCfdDetails.instId) {
           setQuotationErrorMessage({
             success: false,
             code: Code.INCONSISTENT_TICKER_OF_QUOTATION,
@@ -435,7 +435,7 @@ const PositionClosedModal = ({
         });
         return;
         // TODO: check users' signature in userCtx (20230613 - Shirley)
-      } else if (quotation.ticker === openCfdDetails.ticker) {
+      } else if (quotation.instId === openCfdDetails.instId) {
         const displayedCloseOrder = toDisplayCloseOrder(openCfdDetails, quotation);
         globalCtx.dataPositionClosedModalHandler(displayedCloseOrder);
 
@@ -489,7 +489,7 @@ const PositionClosedModal = ({
           height={30}
           alt="ticker icon"
         />
-        <div className="text-2xl">{openCfdDetails?.ticker}</div>
+        <div className="text-2xl">{openCfdDetails?.instId}</div>
       </div>
 
       <div className="absolute right-6 top-90px flex items-center space-x-1 text-center">
@@ -528,7 +528,7 @@ const PositionClosedModal = ({
                   UNIVERSAL_NUMBER_FORMAT_LOCALE,
                   FRACTION_DIGITS
                 )}{' '}
-                <span className="ml-1 text-lightGray">{openCfdDetails?.ticker}</span>
+                <span className="ml-1 text-lightGray">{openCfdDetails?.instId}</span>
               </div>
             </div>
 

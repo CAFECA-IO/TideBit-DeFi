@@ -337,7 +337,7 @@ const TradeTabMobile = () => {
       ) {
       } else {
         const buyQuotation: IQuotation = {
-          ticker: marketCtx.selectedTicker?.instId ?? DEFAULT_TICKER,
+          instId: marketCtx.selectedTicker?.instId ?? DEFAULT_TICKER,
           targetAsset: marketCtx.selectedTicker?.currency ?? DEFAULT_CURRENCY,
           typeOfPosition: TypeOfPosition.BUY,
           unitAsset: unitAsset,
@@ -357,7 +357,7 @@ const TradeTabMobile = () => {
       ) {
       } else {
         const sellQuotation: IQuotation = {
-          ticker: marketCtx.selectedTicker?.instId ?? DEFAULT_TICKER,
+          instId: marketCtx.selectedTicker?.instId ?? DEFAULT_TICKER,
           targetAsset: marketCtx.selectedTicker?.currency ?? DEFAULT_CURRENCY,
           typeOfPosition: TypeOfPosition.SELL,
           unitAsset: unitAsset,
@@ -371,7 +371,7 @@ const TradeTabMobile = () => {
       }
     } catch (err) {
       const buyQuotation: IQuotation = {
-        ticker: marketCtx.selectedTicker?.instId ?? DEFAULT_TICKER,
+        instId: marketCtx.selectedTicker?.instId ?? DEFAULT_TICKER,
         targetAsset: marketCtx.selectedTicker?.currency ?? DEFAULT_CURRENCY,
         typeOfPosition: TypeOfPosition.BUY,
         unitAsset: unitAsset,
@@ -382,7 +382,7 @@ const TradeTabMobile = () => {
       };
 
       const sellQuotation: IQuotation = {
-        ticker: marketCtx.selectedTicker?.instId ?? DEFAULT_TICKER,
+        instId: marketCtx.selectedTicker?.instId ?? DEFAULT_TICKER,
         targetAsset: marketCtx.selectedTicker?.currency ?? DEFAULT_CURRENCY,
         typeOfPosition: TypeOfPosition.SELL,
         unitAsset: unitAsset,
@@ -710,7 +710,7 @@ const TradeTabMobile = () => {
     const short = shortQuotation.data as IQuotation;
 
     const share = {
-      ticker: marketCtx.selectedTicker?.instId ?? DEFAULT_TICKER,
+      instId: marketCtx.selectedTicker?.instId ?? DEFAULT_TICKER,
       targetAsset: marketCtx.selectedTicker?.currency ?? DEFAULT_CURRENCY,
       unitAsset: unitAsset,
       amount: targetInputValueRef.current,

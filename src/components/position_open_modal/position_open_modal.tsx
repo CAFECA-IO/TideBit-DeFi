@@ -150,8 +150,8 @@ const PositionOpenModal = ({
         //   ...receipt.order,
         //   // state: OrderState.OPENING,
         // };
-        const closePrice = marketCtx.predictCFDClosePrice(cfd.ticker, cfd.typeOfPosition);
-        const spread = marketCtx.getTickerSpread(cfd.ticker);
+        const closePrice = marketCtx.predictCFDClosePrice(cfd.instId, cfd.typeOfPosition);
+        const spread = marketCtx.getTickerSpread(cfd.instId);
 
         const pnl = toPnl({
           openPrice: cfd.openPrice,
@@ -246,7 +246,7 @@ const PositionOpenModal = ({
     let quotation = {...defaultResultSuccess};
     try {
       quotation = await marketCtx.getCFDQuotation(
-        openCfdRequest.ticker,
+        openCfdRequest.instId,
         openCfdRequest.typeOfPosition
       );
 
@@ -256,7 +256,7 @@ const PositionOpenModal = ({
       if (
         quotation.success &&
         data.typeOfPosition === openCfdRequest.typeOfPosition &&
-        data.ticker === openCfdRequest.ticker &&
+        data.instId === openCfdRequest.instId &&
         quotation.data !== null
       ) {
         globalCtx.eliminateToasts(ToastId.GET_QUOTATION_ERROR);
@@ -266,7 +266,7 @@ const PositionOpenModal = ({
         setQuotationError(true);
 
         // TODO: check the unit asset (20230612 - Shirley)
-        if (data.ticker !== openCfdRequest.ticker) {
+        if (data.instId !== openCfdRequest.instId) {
           setQuotationErrorMessage({
             success: false,
             code: Code.INCONSISTENT_TICKER_OF_QUOTATION,
@@ -362,7 +362,7 @@ const PositionOpenModal = ({
     }
 
     // TODO: check the unit asset (20230612 - Shirley)
-    if (openCfdRequest.quotation.ticker !== openCfdRequest.ticker) {
+    if (openCfdRequest.quotation.instId !== openCfdRequest.instId) {
       setQuotationError(true);
       setQuotationErrorMessage({
         success: false,

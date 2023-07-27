@@ -38,7 +38,7 @@ export const convertApplyCreateCFDToAcceptedCFD = (
     txhash,
     fee: 0,
     remark: '',
-    ticker: applyCFDData.ticker,
+    instId: applyCFDData.instId,
     state: OrderState.OPENING,
     openPrice: applyCFDData.price,
     createTimestamp: timestamp,

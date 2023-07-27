@@ -17,7 +17,7 @@ const OpenSubTabMobile = () => {
   useEffect(() => {
     const cfdList = userCtx.openCFDs
       .map(cfd => {
-        const tickerPrice = marketCtx.availableTickers[cfd.ticker]?.price;
+        const tickerPrice = marketCtx.availableTickers[cfd.instId]?.price;
         const displayCFD: IDisplayCFDOrder = {
           ...toDisplayCFDOrder(cfd),
           stateCode: getStateCode(cfd, tickerPrice),

@@ -51,7 +51,7 @@ const OpenPositionItem = ({openCfdDetails}: IOpenPositionItemProps) => {
     openPrice,
     openValue,
     createTimestamp,
-    ticker,
+    instId,
     targetAsset,
     typeOfPosition,
     liquidationTime,
@@ -61,8 +61,8 @@ const OpenPositionItem = ({openCfdDetails}: IOpenPositionItemProps) => {
     stateCode,
   } = openCfdDetails;
 
-  const spread = marketCtx.getTickerSpread(openCfdDetails.ticker);
-  const positionLineGraph = marketCtx.listTickerPositions(openCfdDetails.ticker, {
+  const spread = marketCtx.getTickerSpread(openCfdDetails.instId);
+  const positionLineGraph = marketCtx.listTickerPositions(openCfdDetails.instId, {
     begin: openCfdDetails.createTimestamp,
   });
 
@@ -72,7 +72,7 @@ const OpenPositionItem = ({openCfdDetails}: IOpenPositionItemProps) => {
       : positionLineGraph.map((v: number) => +SafeMath.mult(v, SafeMath.plus(1, spread)));
 
   const closePrice = marketCtx.predictCFDClosePrice(
-    openCfdDetails.ticker,
+    openCfdDetails.instId,
     openCfdDetails.typeOfPosition
   );
 
@@ -117,7 +117,7 @@ const OpenPositionItem = ({openCfdDetails}: IOpenPositionItemProps) => {
       closePrice: quotation.price,
       amount: cfd.amount,
       typeOfPosition: cfd.typeOfPosition,
-      spread: marketCtx.getTickerSpread(cfd.ticker),
+      spread: marketCtx.getTickerSpread(cfd.instId),
     });
 
     return {
@@ -135,13 +135,13 @@ const OpenPositionItem = ({openCfdDetails}: IOpenPositionItemProps) => {
         : TypeOfPosition.BUY;
 
     try {
-      quotation = await marketCtx.getCFDQuotation(openCfdDetails?.ticker, oppositeTypeOfPosition);
+      quotation = await marketCtx.getCFDQuotation(openCfdDetails?.instId, oppositeTypeOfPosition);
 
       const data = quotation.data as IQuotation;
       if (
         quotation.success &&
         data.typeOfPosition === oppositeTypeOfPosition &&
-        data.ticker === openCfdDetails.ticker &&
+        data.instId === openCfdDetails.instId &&
         quotation.data !== null
       ) {
         const displayedCloseOrder = toDisplayCloseOrder(openCfdDetails, data);
@@ -273,7 +273,7 @@ const OpenPositionItem = ({openCfdDetails}: IOpenPositionItemProps) => {
             width={15}
             height={15}
           />
-          <p className="ml-1">{ticker}</p>
+          <p className="ml-1">{instId}</p>
 
           <div className="ml-2 text-sm text-tidebitTheme">
             {displayedTypeString.TITLE}{' '}

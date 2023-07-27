@@ -30,7 +30,7 @@ const HistoryPositionItem = ({closedCfdDetails, ...otherProps}: IHistoryPosition
     +SafeMath.mult(closedCfdDetails.closePrice!, closedCfdDetails.amount),
     2
   );
-  const spread = marketCtx.getTickerSpread(closedCfdDetails.ticker);
+  const spread = marketCtx.getTickerSpread(closedCfdDetails.instId);
   const pnl = toPnl({
     openPrice: closedCfdDetails.openPrice,
     closePrice: closedCfdDetails.closePrice!,
@@ -77,7 +77,7 @@ const HistoryPositionItem = ({closedCfdDetails, ...otherProps}: IHistoryPosition
                 width={15}
                 height={15}
               />
-              <p className="ml-1">{closedCfdDetails.ticker}</p>
+              <p className="ml-1">{closedCfdDetails.instId}</p>
             </div>
             <div className="text-lightWhite">
               {displayedString.TITLE}{' '}

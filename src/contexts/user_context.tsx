@@ -271,6 +271,7 @@ export const UserProvider = ({children}: IUserProvider) => {
       // TODO: setTimeOut to clearPrivateData() (20230508 - tzuhan)
       setUser(user);
 
+      // setIsConnected(true);
       setEnableServiceTerm(true);
       setWalletBalances([dummyWalletBalance_BTC, dummyWalletBalance_ETH, dummyWalletBalance_USDT]);
 
@@ -702,7 +703,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     let result: IResult = {...defaultResultFailed};
     if (isConnectedRef.current) {
       try {
-        const updatedFavoriteTickers = [...favoriteTickers];
+        const updatedFavoriteTickers = [...favoriteTickersRef.current];
         (await workerCtx.requestHandler({
           name: APIName.ADD_FAVORITE_TICKERS,
           method: Method.PUT,
@@ -730,7 +731,7 @@ export const UserProvider = ({children}: IUserProvider) => {
     let result: IResult = {...defaultResultFailed};
     if (isConnectedRef.current) {
       try {
-        const updatedFavoriteTickers = [...favoriteTickers];
+        const updatedFavoriteTickers = [...favoriteTickersRef.current];
         const index: number = updatedFavoriteTickers.findIndex(id => id === instId);
         if (index !== -1) {
           (await privateRequestHandler({
@@ -1259,17 +1260,20 @@ export const UserProvider = ({children}: IUserProvider) => {
           const histories = result.data as IAcceptedOrder[];
           const CFDs = histories
             .filter(history => history.orderType === OrderType.CFD)
-            .reduce((acc, history) => {
-              const receipt = history.receipt as ICFDReceipt;
-              const orderSnapshot = receipt.orderSnapshot as ICFDOrder;
-              if (!acc[orderSnapshot.id]) acc[orderSnapshot.id] = orderSnapshot;
-              else {
-                if (orderSnapshot.updatedTimestamp > acc[orderSnapshot.id].updatedTimestamp) {
-                  acc[orderSnapshot.id] = orderSnapshot;
+            .reduce(
+              (acc, history) => {
+                const receipt = history.receipt as ICFDReceipt;
+                const orderSnapshot = receipt.orderSnapshot as ICFDOrder;
+                if (!acc[orderSnapshot.id]) acc[orderSnapshot.id] = orderSnapshot;
+                else {
+                  if (orderSnapshot.updatedTimestamp > acc[orderSnapshot.id].updatedTimestamp) {
+                    acc[orderSnapshot.id] = orderSnapshot;
+                  }
                 }
-              }
-              return acc;
-            }, {} as {[orderId: string]: ICFDOrder});
+                return acc;
+              },
+              {} as {[orderId: string]: ICFDOrder}
+            );
           setCFDs(CFDs);
           // Deprecate: [debug] (20230707 - tzuhan)
           // eslint-disable-next-line no-console
@@ -1503,6 +1507,9 @@ export const UserProvider = ({children}: IUserProvider) => {
     () =>
       lunar.on('connected', async () => {
         setIsConnected(true);
+        // TODO: Remove log when we can use lunar.on('connected') (20230727 - Shirley)
+        // eslint-disable-next-line no-console
+        console.log('lunar.on(connected), isConnectedRef.current', isConnectedRef.current);
         if (!userRef.current) {
           const {isDeWTLegit, signer, deWT} = checkDeWT();
           if (isDeWTLegit && signer && deWT) await setPrivateData(signer, deWT);

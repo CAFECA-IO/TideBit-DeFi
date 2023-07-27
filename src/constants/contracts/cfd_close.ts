@@ -41,7 +41,7 @@ const CFDOrderClose: IEIP712Data = {
     */
     referenceId: `TB202303020001ETH`,
     quotation: {
-      ticker: 'ETH-USDT',
+      instId: 'ETH-USDT',
       targetAsset: 'ETH',
       unitAsset: 'USDT',
       price: 21023,

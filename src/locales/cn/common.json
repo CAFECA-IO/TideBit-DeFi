@@ -221,6 +221,7 @@
     "EXPECTED_PROFIT": "预期利润",
     "EXPECTED_LOSS": "预期损失",
     "GUARANTEED_STOP": "保證止损",
+    "GUARANTEED_STOP_FEE": "保證止损手续费",
     "GUARANTEED_STOP_HINT": "保证止损可强制关仓于您选定的价格，即使市场价格超过此价格也一样。",
     "GUARANTEED_STOP_YES": "是",
     "GUARANTEED_STOP_NO": "否",

@@ -31,13 +31,15 @@ const HistoryPositionItem = ({closedCfdDetails, ...otherProps}: IHistoryPosition
     2
   );
   const spread = marketCtx.getTickerSpread(closedCfdDetails.instId);
-  const pnl = toPnl({
-    openPrice: closedCfdDetails.openPrice,
-    closePrice: closedCfdDetails.closePrice!,
-    amount: closedCfdDetails.amount,
-    typeOfPosition: closedCfdDetails.typeOfPosition,
-    spread: spread,
-  });
+  const pnl =
+    closedCfdDetails?.pnl ||
+    toPnl({
+      openPrice: closedCfdDetails.openPrice,
+      closePrice: closedCfdDetails.closePrice!,
+      amount: closedCfdDetails.amount,
+      typeOfPosition: closedCfdDetails.typeOfPosition,
+      spread: spread,
+    });
 
   const displayedTextColor = pnl.type === ProfitState.PROFIT ? 'text-lightGreen5' : 'text-lightRed';
 

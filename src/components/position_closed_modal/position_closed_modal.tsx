@@ -185,13 +185,15 @@ const PositionClosedModal = ({
 
     const openValue = roundToDecimalPlaces(+SafeMath.mult(openPrice, cfd.amount), 2);
 
-    const pnl: IPnL = toPnl({
-      openPrice: openPrice,
-      closePrice: closePrice,
-      amount: cfd.amount,
-      typeOfPosition: cfd.typeOfPosition,
-      spread: marketCtx.getTickerSpread(cfd.instId),
-    });
+    const pnl: IPnL =
+      cfd?.pnl ||
+      toPnl({
+        openPrice: openPrice,
+        closePrice: closePrice,
+        amount: cfd.amount,
+        typeOfPosition: cfd.typeOfPosition,
+        spread: marketCtx.getTickerSpread(cfd.instId),
+      });
     // const positionLineGraph = [100, 100]; // TODO: (20230316 - Shirley) from `marketCtx`
 
     const suggestion: ICFDSuggestion = {
@@ -528,7 +530,7 @@ const PositionClosedModal = ({
                   UNIVERSAL_NUMBER_FORMAT_LOCALE,
                   FRACTION_DIGITS
                 )}{' '}
-                <span className="ml-1 text-lightGray">{openCfdDetails?.instId}</span>
+                <span className="ml-1 text-lightGray">{openCfdDetails?.targetAsset}</span>
               </div>
             </div>
 
@@ -570,6 +572,15 @@ const PositionClosedModal = ({
               <div className="text-lightGray">{t('POSITION_MODAL.GUARANTEED_STOP')}</div>
               <div className={``}>{displayedGuaranteedStopSetting}</div>
             </div>
+
+            {openCfdDetails.guaranteedStop && (
+              <div className={`${layoutInsideBorder}`}>
+                <div className="text-lightGray">{t('POSITION_MODAL.GUARANTEED_STOP_FEE')}</div>
+                <div className={`${TypeOfPnLColor.LOSS}`}>
+                  {`- $ ${roundToDecimalPlaces(openCfdDetails?.guaranteedStopFee ?? 0, 2)}`}
+                </div>
+              </div>
+            )}
           </div>
         </div>
 

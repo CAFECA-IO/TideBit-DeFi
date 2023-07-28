@@ -337,6 +337,18 @@ const PositionUpdatedModal = ({
               <div className="text-lightGray">{t('POSITION_MODAL.GUARANTEED_STOP')}</div>
               <div className={`${gtslTextStyle}`}>{displayedGuaranteedStopSetting}</div>
             </div>
+
+            {(updatedProps?.guaranteedStop || openCfdDetails.guaranteedStop) && (
+              <div className={`${layoutInsideBorder}`}>
+                <div className="text-lightGray">{t('POSITION_MODAL.GUARANTEED_STOP_FEE')}</div>
+                <div className={`${TypeOfPnLColor.LOSS}`}>
+                  {`- $ ${roundToDecimalPlaces(
+                    (updatedProps?.guaranteedStopFee || openCfdDetails.guaranteedStopFee) ?? 0,
+                    2
+                  )}`}
+                </div>
+              </div>
+            )}
           </div>
         </div>
 

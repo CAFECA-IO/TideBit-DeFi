@@ -701,7 +701,7 @@ export const UserProvider = ({children}: IUserProvider) => {
 
   const addFavorites = useCallback(async (instId: string) => {
     let result: IResult = {...defaultResultFailed};
-    if (isConnectedRef.current) {
+    if (enableServiceTermRef.current) {
       try {
         const updatedFavoriteTickers = [...favoriteTickersRef.current];
         (await workerCtx.requestHandler({
@@ -729,7 +729,7 @@ export const UserProvider = ({children}: IUserProvider) => {
 
   const removeFavorites = useCallback(async (instId: string) => {
     let result: IResult = {...defaultResultFailed};
-    if (isConnectedRef.current) {
+    if (enableServiceTermRef.current) {
       try {
         const updatedFavoriteTickers = [...favoriteTickersRef.current];
         const index: number = updatedFavoriteTickers.findIndex(id => id === instId);

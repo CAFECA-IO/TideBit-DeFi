@@ -93,9 +93,9 @@ const CryptoCard = ({
     event.stopPropagation(); // Prevent the div click handler from firing
 
     if (!starred) {
-      userCtx.addFavorites(currency);
+      userCtx.addFavorites(instId);
     } else {
-      userCtx.removeFavorites(currency);
+      userCtx.removeFavorites(instId);
     }
   };
 

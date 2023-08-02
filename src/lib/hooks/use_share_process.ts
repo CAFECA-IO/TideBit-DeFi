@@ -162,16 +162,6 @@ const useShareProcess = ({lockerName, shareType, shareId, cfd, enableShare}: IUs
 
             // use fetch to access our image api
             const res = await fetch(`${DOMAIN}/api/images/cfd/${shareId}?tz=0`);
-            // const res = await fetch(`${DOMAIN}/share/cfd/${shareId}?tz=0`);
-            // res.headers.set('Content-Type', 'image/png');
-            // res.headers.set('Accept', 'image/png');
-            // res.headers.set('Access-Control-Allow-Origin', '*');
-            // res.headers.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-            // res.headers.set('Access-Control-Allow-Headers', 'Content-Type');
-            // res.headers.set('Access-Control-Allow-Credentials', 'true');
-            // res.headers.set('Access-Control-Max-Age', '86400');
-            // res.headers.set('Cache-Control', 'public, max-age=86400');
-
             // eslint-disable-next-line no-console
             console.log('res (tz=0 img)', res);
 

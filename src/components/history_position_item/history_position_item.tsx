@@ -52,6 +52,9 @@ const HistoryPositionItem = ({closedCfdDetails, ...otherProps}: IHistoryPosition
     pnl.type === ProfitState.PROFIT ? '+' : pnl.type === ProfitState.LOSS ? '-' : '';
 
   const itemClickHandler = () => {
+    // Deprecated: (20230802 - Shirley)
+    // eslint-disable-next-line no-console
+    console.log('history in items', closedCfdDetails);
     globalCtx.dataHistoryPositionModalHandler(closedCfdDetails);
     globalCtx.visibleHistoryPositionModalHandler();
   };

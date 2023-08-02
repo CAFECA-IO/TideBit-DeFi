@@ -143,7 +143,7 @@ const HistoryPositionModal = ({
             <div className="text-lightGray">{t('POSITION_MODAL.PNL')}</div>
             <div className={`${displayedPnLColor}`}>
               {displayedPnLSymbol} ${' '}
-              {pnl.value?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)}
+              {Math.abs(pnl.value)?.toLocaleString(UNIVERSAL_NUMBER_FORMAT_LOCALE, FRACTION_DIGITS)}
             </div>
           </div>
 

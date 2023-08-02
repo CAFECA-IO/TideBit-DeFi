@@ -48,6 +48,12 @@ const useShareProcess = ({lockerName, shareType, shareId, cfd, enableShare}: IUs
     switch (shareType) {
       case ShareType.CFD:
         shareUrl = DOMAIN + `/share/cfd/${shareId}`;
+
+        const img = `${DOMAIN}/api/images/cfd/${shareId}?tz=0`;
+        // Deprecated: (2023-08-02 Shirley)
+        // eslint-disable-next-line no-console
+        console.log('log tz=0 img', img);
+
         return shareUrl;
 
       case ShareType.RANK:
